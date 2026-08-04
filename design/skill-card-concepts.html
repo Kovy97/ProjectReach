@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hearthforge — Skill-Card Konzepte</title>
+    <style>
+      /* Schriftart wie im Spiel (lokal). Fallback: Google Fonts, sonst serif. */
+      @font-face {
+        font-family: "IM Fell English SC";
+        src: url("../apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2");
+        font-display: swap;
+      }
+      @import url("https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap");
+
+      :root {
+        --bg: #14161a;
+        --bg-deep: #0d0f12;
+        --panel: #1e2329;
+        --panel-hover: #262d34;
+        --slot: #0f1216;
+        --border: #333c44;
+        --border-bright: #4d5963;
+        --text: #ccd5db;
+        --muted: #79848c;
+        --accent: #6f97b3;
+        --accent-2: #9fc4dc;
+        --danger: #a85a52;
+        --gold: #d8c06a;
+        --radius: 4px;
+        --glow: 0 0 16px rgba(111, 151, 179, 0.3);
+        --head: "IM Fell English SC", serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: radial-gradient(circle at 50% 0%, #181b20, var(--bg-deep));
+        color: var(--text);
+        font-family: "Segoe UI", system-ui, sans-serif;
+        padding: 40px clamp(16px, 5vw, 80px) 120px;
+      }
+      h1 { font-family: var(--head); font-size: 38px; margin: 0 0 6px; }
+      .intro { color: var(--muted); max-width: 820px; line-height: 1.6; }
+      .intro b { color: var(--accent-2); }
+      .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 0; font-size: 13px; color: var(--muted); }
+      .legend span b { color: var(--text); }
+
+      .variant { margin-top: 56px; }
+      .variant > header { border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 22px; }
+      .variant h2 { font-family: var(--head); font-size: 26px; margin: 0 0 4px; color: var(--text); }
+      .variant .why { color: var(--muted); font-size: 14px; max-width: 760px; line-height: 1.55; }
+      .variant .why b { color: var(--accent-2); }
+      .row { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+
+      .ic { line-height: 1; }
+      .ok { color: #8fbf8f; }
+      .bad { color: var(--danger); }
+      .muted { color: var(--muted); }
+      .gold { color: var(--gold); }
+      .acc { color: var(--accent-2); }
+
+      /* ════════════════ V1 — GRIMOIRE (Buchseite) ════════════════ */
+      .v1-card {
+        width: 320px;
+        background: linear-gradient(180deg, #20242b, #191c21);
+        border: 1px solid var(--border-bright);
+        border-radius: var(--radius);
+        padding: 16px 18px 14px;
+        position: relative;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4), inset 0 0 24px rgba(0, 0, 0, 0.5);
+      }
+      .v1-card.active { border-color: var(--accent); box-shadow: var(--glow), inset 0 0 24px rgba(0,0,0,.5); }
+      .v1-card.locked { opacity: 0.72; }
+      .v1-top { display: flex; gap: 14px; align-items: center; }
+      .v1-medallion {
+        width: 56px; height: 56px; flex: 0 0 56px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; font-size: 30px;
+        background: radial-gradient(circle at 50% 40%, #2a333d, #11151a);
+        border: 2px solid var(--border-bright);
+      }
+      .v1-name { font-family: var(--head); font-size: 21px; line-height: 1.05; }
+      .v1-rule { height: 1px; background: linear-gradient(90deg, var(--border-bright), transparent); margin: 4px 0 0; }
+      .v1-sub { font-size: 12px; color: var(--muted); }
+      .v1-table { margin: 12px 0 10px; font-size: 13px; }
+      .v1-table div { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted #2a323a; }
+      .v1-table div span:first-child { color: var(--muted); }
+      .v1-reward { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-bottom: 12px; }
+      .v1-progress { height: 3px; background: var(--slot); border-radius: 2px; overflow: hidden; }
+      .v1-progress > i { display: block; height: 100%; width: 64%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+      .v1-cta { display: block; width: 100%; margin-top: 12px; padding: 8px; font-family: var(--head); letter-spacing: .5px;
+        background: var(--panel-hover); border: 1px solid var(--border-bright); border-radius: var(--radius); color: var(--text); cursor: pointer; }
+      .v1-cta.stop { border-color: var(--accent); color: var(--accent-2); }
+
+      /* ════════════════ V2 — DENSE (Chip-Zeile) ════════════════ */
+      .v2-card {
+        width: 380px; display: flex; gap: 12px; align-items: stretch;
+        background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 10px; position: relative; overflow: hidden;
+      }
+      .v2-card.active { border-color: var(--accent); }
+      .v2-card.locked { opacity: .7; }
+      .v2-iconbox {
+        width: 60px; height: 60px; flex: 0 0 60px; border-radius: var(--radius); position: relative;
+        background: linear-gradient(160deg, var(--panel-hover), var(--slot)); border: 1px solid var(--border-bright);
+        display: flex; align-items: center; justify-content: center; font-size: 30px;
+      }
+      .v2-lvl { position: absolute; top: -7px; left: -7px; background: var(--bg-deep); border: 1px solid var(--border-bright);
+        border-radius: 10px; font-size: 11px; padding: 1px 6px; color: var(--accent-2); }
+      .v2-body { flex: 1; min-width: 0; }
+      .v2-name { font-family: var(--head); font-size: 18px; }
+      .v2-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+      .v2-chip { font-size: 11.5px; padding: 2px 7px; border-radius: 10px; background: var(--slot); border: 1px solid var(--border); color: var(--muted); }
+      .v2-chip b { color: var(--text); font-weight: 600; }
+      .v2-rewards { display: flex; align-items: center; gap: 8px; margin-top: 7px; font-size: 13px; }
+      .v2-mat { font-size: 12px; }
+      .v2-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--slot); }
+      .v2-bar > i { display: block; height: 100%; width: 64%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+      .v2-act { align-self: center; padding: 7px 14px; border-radius: var(--radius); border: 1px solid var(--border-bright);
+        background: var(--panel-hover); color: var(--text); cursor: pointer; font-weight: 600; white-space: nowrap; }
+      .v2-act.stop { border-color: var(--accent); color: var(--accent-2); }
+
+      /* ════════════════ V3 — HERO (Banner + Glow) ════════════════ */
+      .v3-card {
+        width: 260px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+      }
+      .v3-card.active { border-color: var(--accent); box-shadow: var(--glow); }
+      .v3-card.locked { opacity: .72; }
+      .v3-banner {
+        height: 104px; display: flex; align-items: center; justify-content: center; position: relative;
+        background: radial-gradient(circle at 50% 42%, #2c3742, #0e1216);
+        border-bottom: 1px solid var(--border-bright);
+      }
+      .v3-banner .ic { font-size: 54px; filter: drop-shadow(0 4px 10px rgba(0,0,0,.6)); }
+      .v3-banner.rare { background: radial-gradient(circle at 50% 42%, #3a3320, #0e1216); }
+      .v3-lvl2 { position: absolute; top: 8px; right: 8px; font-size: 11px; padding: 2px 7px; border-radius: 10px;
+        background: rgba(0,0,0,.5); border: 1px solid var(--border-bright); color: var(--accent-2); }
+      .v3-title { position: absolute; bottom: 6px; left: 0; right: 0; text-align: center; font-family: var(--head); font-size: 19px;
+        text-shadow: 0 2px 6px #000; }
+      .v3-body { padding: 12px 14px 14px; }
+      .v3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .v3-tile { background: var(--slot); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; text-align: center; }
+      .v3-tile small { display: block; color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; }
+      .v3-tile b { font-size: 15px; }
+      .v3-loot { display: flex; align-items: center; gap: 7px; margin-top: 10px; font-size: 13px; }
+      .v3-cta { display: block; width: 100%; margin-top: 12px; padding: 9px; border-radius: var(--radius); font-family: var(--head); letter-spacing: .5px;
+        border: 1px solid var(--accent); background: linear-gradient(180deg, #2b3a45, #1c252c); color: var(--accent-2); cursor: pointer; }
+
+      /* ════════════════ V4 — DUAL-PANEL (Tätigkeit | Ertrag) ════════════════ */
+      .v4-card { width: 420px; display: flex; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      .v4-card.active { border-color: var(--accent); box-shadow: var(--glow); }
+      .v4-card.locked { opacity: .72; }
+      .v4-left { width: 52%; padding: 14px 16px; }
+      .v4-left .ic { font-size: 38px; }
+      .v4-name { font-family: var(--head); font-size: 20px; margin-top: 6px; }
+      .v4-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+      .v4-cta { margin-top: 12px; width: 100%; padding: 8px; border-radius: var(--radius); border: 1px solid var(--border-bright);
+        background: var(--panel-hover); color: var(--text); cursor: pointer; font-weight: 600; }
+      .v4-cta.stop { border-color: var(--accent); color: var(--accent-2); }
+      .v4-right { width: 48%; padding: 14px 16px; background: var(--slot); border-left: 1px solid var(--border-bright); }
+      .v4-right h4 { margin: 0 0 8px; font-family: var(--head); font-size: 14px; color: var(--accent); letter-spacing: .5px; }
+      .v4-line { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+      .v4-line span:first-child { color: var(--muted); }
+      .v4-bar { height: 4px; background: var(--bg-deep); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+      .v4-bar > i { display: block; height: 100%; width: 64%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+
+      /* ════════════════ V5 — STATUS-SLATE (Minimal) ════════════════ */
+      .v5-card { width: 360px; display: flex; gap: 12px; background: var(--panel); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 12px 14px 12px 0; position: relative; }
+      .v5-status { width: 4px; border-radius: 4px; background: var(--muted); margin-left: 0; flex: 0 0 4px; }
+      .v5-card.active .v5-status { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+      .v5-card.locked .v5-status { background: var(--danger); }
+      .v5-card.blocked .v5-status { background: var(--gold); }
+      .v5-card.locked { opacity: .8; }
+      .v5-main { flex: 1; min-width: 0; padding-left: 12px; }
+      .v5-h { display: flex; align-items: center; gap: 10px; }
+      .v5-h .ic { font-size: 26px; }
+      .v5-name { font-family: var(--head); font-size: 18px; flex: 1; }
+      .v5-lvl { font-size: 12px; color: var(--accent-2); }
+      .v5-info { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+      .v5-reward { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 13px; }
+      .v5-pill { background: var(--slot); border: 1px solid var(--border); border-radius: 10px; padding: 2px 8px; font-size: 12px; }
+      .v5-bar { height: 3px; background: var(--slot); border-radius: 2px; margin-top: 9px; overflow: hidden; }
+      .v5-bar > i { display: block; height: 100%; width: 64%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+      .v5-act { align-self: center; margin-right: 0; padding: 6px 12px; border-radius: var(--radius); border: 1px solid var(--border-bright);
+        background: var(--panel-hover); color: var(--text); cursor: pointer; font-weight: 600; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <h1>Hearthforge — Skill-Card Konzepte</h1>
+    <p class="intro">
+      Fünf Richtungen für die Aktions-Cards auf den Skill-Seiten. Alle nutzen die echte <b>Ashen-Iron</b>-Palette
+      und die Spielschrift <b>IM Fell English SC</b>. Jede Variante zeigt dieselben drei Beispiel-Zustände, damit du
+      siehst, wie sie mit allem umgeht: eine <b>laufende Sammel-Aktion</b>, eine <b>Thieving-Aktion</b>
+      (Erfolgschance + Gold + Beute) und eine <b>gesperrte Verarbeitung</b> (Material-Bedarf).
+    </p>
+    <div class="legend">
+      <span><b>Relevante Card-Info (überall):</b></span>
+      <span>🎯 Erfolgschance</span><span>⏱ Dauer</span><span>✦ XP / XP/h</span>
+      <span>🪙 Gold</span><span>🎁 Beute + Chance</span><span>📦 Material (haben/brauchen)</span>
+      <span>🔒 Levelsperre</span><span>▮ Fortschritt (aktiv)</span>
+    </div>
+
+    <!-- ═══════════ VARIANT 1 ═══════════ -->
+    <section class="variant">
+      <header>
+        <h2>Variante 1 — „Grimoire" (Buchseite)</h2>
+        <p class="why">
+          Lore-Look passend zur Schrift: Medaillon-Icon, Name mit Haarlinie, Werte als <b>Ledger-Tabelle</b>
+          (Label … Wert), Beute als Icon-Zeile, dünner Gold-Fortschritt. <b>Stärke:</b> edel, ruhig, sehr lesbar.
+          <b>Schwäche:</b> nimmt mehr Höhe, weniger Cards pro Bildschirm.
+        </p>
+      </header>
+      <div class="row">
+        <div class="v1-card active">
+          <div class="v1-top">
+            <div class="v1-medallion ic">🪓</div>
+            <div><div class="v1-name">Eiche fällen</div><div class="v1-rule"></div><div class="v1-sub">Holzfällen · läuft</div></div>
+          </div>
+          <div class="v1-table">
+            <div><span>Dauer</span><span>3,0 s</span></div>
+            <div><span>Erfahrung</span><span class="acc">+28 ✦ · 16.800/h</span></div>
+            <div><span>Ertrag</span><span>🪵 Eichenholz · ~600/h</span></div>
+          </div>
+          <div class="v1-progress"><i></i></div>
+          <button class="v1-cta stop">Anhalten</button>
+        </div>
+
+        <div class="v1-card">
+          <div class="v1-top">
+            <div class="v1-medallion ic">🗝️</div>
+            <div><div class="v1-name">Adligen bestehlen</div><div class="v1-rule"></div><div class="v1-sub">Diebeskunst · Stufe 65</div></div>
+          </div>
+          <div class="v1-table">
+            <div><span>Erfolg</span><span class="acc">🎯 64 %</span></div>
+            <div><span>Dauer / XP</span><span>4,6 s · +175 ✦</span></div>
+            <div><span>Gold</span><span class="gold">🪙 90–180</span></div>
+          </div>
+          <div class="v1-reward"><span class="muted">Beute:</span> 💍 12 % · 💎 6 %</div>
+          <div class="v1-progress"><i style="width:0"></i></div>
+          <button class="v1-cta">Beginnen</button>
+        </div>
+
+        <div class="v1-card locked">
+          <div class="v1-top">
+            <div class="v1-medallion ic">🔨</div>
+            <div><div class="v1-name">Schwarzguss schmieden</div><div class="v1-rule"></div><div class="v1-sub bad">🔒 Benötigt Schmieden 35</div></div>
+          </div>
+          <div class="v1-table">
+            <div><span>Dauer / XP</span><span>4,0 s · +120 ✦</span></div>
+            <div><span>Benötigt</span><span class="bad">Schwarzgusserz 0/2</span></div>
+            <div><span>Ertrag</span><span>🟪 Schwarzgussbarren</span></div>
+          </div>
+          <div class="v1-progress"><i style="width:0"></i></div>
+          <button class="v1-cta" disabled style="opacity:.5;cursor:not-allowed">Gesperrt</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ VARIANT 2 ═══════════ -->
+    <section class="variant">
+      <header>
+        <h2>Variante 2 — „Dense" (Chip-Zeile, RuneScape-Stil)</h2>
+        <p class="why">
+          Kompakt & horizontal: gerahmtes Icon mit Level-Badge, Name, eine Reihe <b>Info-Chips</b>, Belohnungs-Zeile,
+          Fortschrittsbalken an der Unterkante. <b>Stärke:</b> maximale Dichte — viele Cards auf einen Blick, ideal für
+          lange Aktionslisten. <b>Schwäche:</b> weniger „premium", mehr Werkzeug.
+        </p>
+      </header>
+      <div class="row">
+        <div class="v2-card active">
+          <div class="v2-iconbox"><span class="ic">🪓</span><span class="v2-lvl">Lv 1</span></div>
+          <div class="v2-body">
+            <div class="v2-name">Eiche fällen</div>
+            <div class="v2-chips"><span class="v2-chip">⏱ <b>3,0s</b></span><span class="v2-chip">✦ <b>28</b></span><span class="v2-chip">📈 <b>16.8k/h</b></span></div>
+            <div class="v2-rewards"><span>🪵 <b class="acc">~600/h</b></span></div>
+          </div>
+          <button class="v2-act stop">Stop</button>
+          <div class="v2-bar"><i></i></div>
+        </div>
+
+        <div class="v2-card">
+          <div class="v2-iconbox"><span class="ic">🗝️</span><span class="v2-lvl">Lv 65</span></div>
+          <div class="v2-body">
+            <div class="v2-name">Adligen bestehlen</div>
+            <div class="v2-chips"><span class="v2-chip">🎯 <b>64%</b></span><span class="v2-chip">⏱ <b>4,6s</b></span><span class="v2-chip">✦ <b>175</b></span><span class="v2-chip gold">🪙 <b>90–180</b></span></div>
+            <div class="v2-rewards"><span class="muted">🎁</span> 💍 12% · 💎 6%</div>
+          </div>
+          <button class="v2-act">Start</button>
+        </div>
+
+        <div class="v2-card locked">
+          <div class="v2-iconbox"><span class="ic">🔨</span><span class="v2-lvl">Lv 35</span></div>
+          <div class="v2-body">
+            <div class="v2-name">Schwarzguss schmieden</div>
+            <div class="v2-chips"><span class="v2-chip">⏱ <b>4,0s</b></span><span class="v2-chip">✦ <b>120</b></span></div>
+            <div class="v2-rewards v2-mat"><span class="bad">📦 Schwarzgusserz 0/2</span></div>
+          </div>
+          <button class="v2-act" style="opacity:.5">🔒</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ VARIANT 3 ═══════════ -->
+    <section class="variant">
+      <header>
+        <h2>Variante 3 — „Hero" (Banner + Glow)</h2>
+        <p class="why">
+          Bühne fürs (spätere) Pixelart: Icon groß im Banner mit Radial-Glow (seltenheits-tönbar), Name overlay,
+          Werte als <b>Stat-Kacheln</b>, Beute-Zeile, großer Aktions-Button. <b>Stärke:</b> zeigt Items prominent,
+          wirkt wie ein echtes Game. <b>Schwäche:</b> groß — eher 2–3 pro Reihe, Listen werden lang.
+        </p>
+      </header>
+      <div class="row">
+        <div class="v3-card active">
+          <div class="v3-banner"><span class="ic">🪓</span><span class="v3-lvl2">Lv 1</span><div class="v3-title">Eiche fällen</div></div>
+          <div class="v3-body">
+            <div class="v3-grid">
+              <div class="v3-tile"><small>XP</small><b class="acc">+28</b></div>
+              <div class="v3-tile"><small>XP / h</small><b>16,8k</b></div>
+              <div class="v3-tile"><small>Dauer</small><b>3,0s</b></div>
+              <div class="v3-tile"><small>Ertrag/h</small><b>~600</b></div>
+            </div>
+            <div class="v3-loot"><span class="muted">Ertrag:</span> 🪵 Eichenholz</div>
+            <button class="v3-cta">Anhalten ▮▮</button>
+          </div>
+        </div>
+
+        <div class="v3-card">
+          <div class="v3-banner rare"><span class="ic">🗝️</span><span class="v3-lvl2">Lv 65</span><div class="v3-title">Adligen bestehlen</div></div>
+          <div class="v3-body">
+            <div class="v3-grid">
+              <div class="v3-tile"><small>Erfolg</small><b class="acc">64%</b></div>
+              <div class="v3-tile"><small>Gold</small><b class="gold">90–180</b></div>
+              <div class="v3-tile"><small>XP</small><b>+175</b></div>
+              <div class="v3-tile"><small>Dauer</small><b>4,6s</b></div>
+            </div>
+            <div class="v3-loot"><span class="muted">Beute:</span> 💍 12% · 💎 6%</div>
+            <button class="v3-cta">Beginnen</button>
+          </div>
+        </div>
+
+        <div class="v3-card locked">
+          <div class="v3-banner"><span class="ic" style="opacity:.5;filter:grayscale(1)">🔨</span><span class="v3-lvl2 bad">🔒 35</span><div class="v3-title">Schwarzguss</div></div>
+          <div class="v3-body">
+            <div class="v3-grid">
+              <div class="v3-tile"><small>XP</small><b>+120</b></div>
+              <div class="v3-tile"><small>Dauer</small><b>4,0s</b></div>
+            </div>
+            <div class="v3-loot"><span class="bad">📦 Schwarzgusserz 0/2</span></div>
+            <button class="v3-cta" style="opacity:.5;border-color:var(--border)">Gesperrt</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ VARIANT 4 ═══════════ -->
+    <section class="variant">
+      <header>
+        <h2>Variante 4 — „Dual-Panel" (Tätigkeit | Ertrag)</h2>
+        <p class="why">
+          Klare Zweiteilung: links <b>was ich tue</b> (Icon, Name, Level, Start), rechts <b>was es bringt</b>
+          (XP/h, Gold, Beute, Material). <b>Stärke:</b> perfektes mentales Modell zum Vergleichen von Belohnungen.
+          <b>Schwäche:</b> breit — meist eine Card pro Reihe.
+        </p>
+      </header>
+      <div class="row">
+        <div class="v4-card active">
+          <div class="v4-left">
+            <span class="ic">🪓</span>
+            <div class="v4-name">Eiche fällen</div>
+            <div class="v4-meta">Holzfällen · 3,0 s</div>
+            <button class="v4-cta stop">Anhalten</button>
+            <div class="v4-bar"><i></i></div>
+          </div>
+          <div class="v4-right">
+            <h4>Ertrag</h4>
+            <div class="v4-line"><span>XP / h</span><span class="acc">16.800</span></div>
+            <div class="v4-line"><span>pro Aktion</span><span>+28 ✦</span></div>
+            <div class="v4-line"><span>Holz / h</span><span>~600 🪵</span></div>
+          </div>
+        </div>
+
+        <div class="v4-card">
+          <div class="v4-left">
+            <span class="ic">🗝️</span>
+            <div class="v4-name">Adligen bestehlen</div>
+            <div class="v4-meta">Diebeskunst · Stufe 65 · 4,6 s</div>
+            <button class="v4-cta">Beginnen</button>
+          </div>
+          <div class="v4-right">
+            <h4>Ertrag</h4>
+            <div class="v4-line"><span>Erfolg</span><span class="acc">🎯 64 %</span></div>
+            <div class="v4-line"><span>Gold</span><span class="gold">🪙 90–180</span></div>
+            <div class="v4-line"><span>XP</span><span>+175 ✦</span></div>
+            <div class="v4-line"><span>Beute</span><span>💍 12% · 💎 6%</span></div>
+          </div>
+        </div>
+
+        <div class="v4-card locked">
+          <div class="v4-left">
+            <span class="ic" style="filter:grayscale(1);opacity:.6">🔨</span>
+            <div class="v4-name">Schwarzguss schmieden</div>
+            <div class="v4-meta bad">🔒 Benötigt Schmieden 35</div>
+            <button class="v4-cta" style="opacity:.5">Gesperrt</button>
+          </div>
+          <div class="v4-right">
+            <h4>Bedarf & Ertrag</h4>
+            <div class="v4-line"><span>Material</span><span class="bad">Erz 0/2</span></div>
+            <div class="v4-line"><span>XP</span><span>+120 ✦</span></div>
+            <div class="v4-line"><span>Ergibt</span><span>🟪 Barren</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ VARIANT 5 ═══════════ -->
+    <section class="variant">
+      <header>
+        <h2>Variante 5 — „Status-Slate" (Minimal, Status zuerst)</h2>
+        <p class="why">
+          Sehr clean: eine farbige <b>Status-Leiste</b> links codiert den Zustand (grau = bereit, blau = aktiv,
+          rot = gesperrt, gold = blockiert/Material). Tight 2-Zeilen-Kopf + Belohnungs-Pillen.
+          <b>Stärke:</b> ruhig, schnell scanbar, viele Cards pro Seite, Status sofort erkennbar.
+          <b>Schwäche:</b> am wenigsten „verziert".
+        </p>
+      </header>
+      <div class="row">
+        <div class="v5-card active">
+          <div class="v5-status"></div>
+          <div class="v5-main">
+            <div class="v5-h"><span class="ic">🪓</span><span class="v5-name">Eiche fällen</span><span class="v5-lvl">Lv 1</span></div>
+            <div class="v5-info">⏱ 3,0s · ✦ 28 · 📈 16,8k/h</div>
+            <div class="v5-reward"><span class="v5-pill">🪵 ~600/h</span></div>
+            <div class="v5-bar"><i></i></div>
+          </div>
+          <button class="v5-act">Stop</button>
+        </div>
+
+        <div class="v5-card">
+          <div class="v5-status"></div>
+          <div class="v5-main">
+            <div class="v5-h"><span class="ic">🗝️</span><span class="v5-name">Adligen bestehlen</span><span class="v5-lvl">Lv 65</span></div>
+            <div class="v5-info">🎯 64% · ⏱ 4,6s · ✦ 175 · <span class="gold">🪙 90–180</span></div>
+            <div class="v5-reward"><span class="v5-pill">💍 12%</span><span class="v5-pill">💎 6%</span></div>
+          </div>
+          <button class="v5-act">Start</button>
+        </div>
+
+        <div class="v5-card blocked">
+          <div class="v5-status"></div>
+          <div class="v5-main">
+            <div class="v5-h"><span class="ic">🔨</span><span class="v5-name">Schwarzguss schmieden</span><span class="v5-lvl">Lv 35</span></div>
+            <div class="v5-info">⏱ 4,0s · ✦ 120 · ergibt 🟪 Barren</div>
+            <div class="v5-reward"><span class="v5-pill bad">📦 Erz 0/2</span></div>
+          </div>
+          <button class="v5-act" style="opacity:.6">Start</button>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

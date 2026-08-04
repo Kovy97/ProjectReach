@@ -1,0 +1,45 @@
+{
+  "version": 2,
+  "rule": "No unique detail may appear in a stretchable edge or center segment.",
+  "buttons/primary": {
+    "sourceSize": [1826, 331],
+    "slice": { "top": 64, "right": 160, "bottom": 64, "left": 160 },
+    "runtimeBorder": {
+      "large": { "top": 8, "right": 18, "bottom": 8, "left": 18 },
+      "compact": { "top": 6, "right": 12, "bottom": 6, "left": 12 }
+    }
+  },
+  "buttons/alternate": {
+    "sourceSize": [1826, 331],
+    "slice": { "top": 64, "right": 160, "bottom": 64, "left": 160 },
+    "runtimeBorder": {
+      "large": { "top": 8, "right": 18, "bottom": 8, "left": 18 },
+      "compact": { "top": 6, "right": 12, "bottom": 6, "left": 12 }
+    }
+  },
+  "buttons/square": {
+    "sourceSize": [512, 512],
+    "slice": { "top": 64, "right": 64, "bottom": 64, "left": 64 },
+    "runtimeBorder": { "top": 6, "right": 6, "bottom": 6, "left": 6 }
+  },
+  "tabs": {
+    "sourceSize": [1024, 228],
+    "slice": { "top": 64, "right": 192, "bottom": 64, "left": 192 },
+    "runtimeBorder": { "top": 7, "right": 14, "bottom": 7, "left": 14 }
+  },
+  "misc/badge": {
+    "sourceSize": [512, 128],
+    "slice": { "top": 32, "right": 64, "bottom": 32, "left": 64 },
+    "runtimeBorder": { "top": 5, "right": 10, "bottom": 5, "left": 10 }
+  },
+  "scrollbars/track": {
+    "sourceSize": [128, 256],
+    "mode": "repeat-y",
+    "rule": "No end caps or unique vertical-position details."
+  },
+  "scrollbars/handle": {
+    "sourceSize": [128, 384],
+    "slice": { "top": 48, "right": 32, "bottom": 48, "left": 32 },
+    "runtimeBorder": { "top": 10, "right": 5, "bottom": 10, "left": 5 }
+  }
+}

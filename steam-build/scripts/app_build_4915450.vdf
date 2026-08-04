@@ -1,0 +1,30 @@
+// ============================================================
+//  Grim Reach — SteamPipe Build-Script (AppID 4915450)
+//  Einzeldatei-Format: Depot ist unten INLINE definiert.
+//  Aufruf:  steamcmd +login DEIN_ACCOUNT +run_app_build "G:\GameDev\steam-build\scripts\app_build_4915450.vdf" +quit
+// ============================================================
+"appbuild"
+{
+	"appid"		"4915450"
+	"desc"		"Grim Reach 0.1.0 EA — Erst-Build"   // Build-Notiz in Steamworks; pro Update anpassen
+
+	"buildoutput"	"G:\GameDev\steam-build\output\"                  // Log-/Cache-Ordner (wird angelegt)
+	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"    // die echten Spieldateien
+	"setlive"		""                                                // LEER lassen! Live-Schalten im Web (siehe Guide)
+
+	"depots"
+	{
+		// >>> DEPOT-ID PRÜFEN <<<  Bei frisch angelegten Apps ist die Depot-ID meist AppID+1
+		// (also 4915451). Nachsehen: Steamworks → App 4915450 → SteamPipe → Depots.
+		// Falls dort eine ANDERE Nummer steht, diese "4915451" hier ersetzen.
+		"4915451"
+		{
+			"FileMapping"
+			{
+				"LocalPath"		"*"     // alles unter contentroot
+				"DepotPath"		"."
+				"recursive"		"1"
+			}
+		}
+	}
+}

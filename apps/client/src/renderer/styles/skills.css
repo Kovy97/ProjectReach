@@ -1,0 +1,2565 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   SKILLS — panels, skill summaries, skillcards, mastery v2,
+   action, bar, row, skill-head/active state
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Panels & Skill-Seite ──────────────────────────────── */
+
+/* Regression-Fix (Chef, 2026-07-02): die Perf-#206/P3-Seiten-Backdrop (.skill-page-backdrop)
+   ist komplett entfernt — sie hatte die Skill-Art auf den SEITEN-Container verschoben statt auf
+   die einzelnen Aktionskarten zu zeigen (z.B. Mining-Höhle als Container-Hintergrund statt auf
+   jeder Karte). Der Seiten-Container braucht keine eigene Textur mehr — er zeigt wieder die
+   normale App-Hintergrundtextur wie jede andere Seite; die Karten tragen ihr Bild wieder selbst
+   (siehe .skillcard-banner-bg unten). */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.panel h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.skill-summary {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.skill-level {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.skill-xp {
+  flex: 1;
+}
+
+.skill-xp-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(260px, calc((100% - 54px) / 4)), 1fr));
+  gap: 18px;
+}
+
+/* ─── Rezept-Suche (Chef-Auftrag): prominente Leiste oben auf der Skill-Seite, reuses .invf-search
+   (styles/inv-filter.css) — nur die Such-Eingabe, keine Typ-Filter-Chips (Rezepte haben keine
+   Item-Kategorien). ─── */
+.skill-search-bar {
+  margin-bottom: 16px;
+}
+
+.skill-search-bar .invf-search {
+  flex: 1 1 auto;
+  min-width: 100%;
+}
+
+.skill-search-empty {
+  margin: -8px 0 16px;
+}
+
+/* ─── Skill-Aktions-Kategorien (einklappbar) ─── */
+.action-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.category-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  /* Chef-Fix 2026-07-24 ("Stein auf Stein geht unter!"): war bg_black (Stein) auf dem
+     ebenfalls steinernen Seiten-Hintergrund — kein Kontrast. Holz-Textur statt Stein, exakt das
+     etablierte Muster aus Options/Companions (opz-section, .pet-slot-btn-Umfeld, 2026-07-23):
+     gekachelt (NIE gestreckt), url() gequotet (Standing Rules). */
+  /* Chef-Umbau 2026-07-24 v2: Leder statt Holz („Taschen-Look", Background_Leather aus der
+     Juli-Lieferung). Die Textur ist von Haus aus dunkel — nur hauchdünnes Overlay, sonst
+     säuft die Marmorierung ab. Kachel 320px statt nativ 1254px. */
+  background:
+    linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)),
+    url("../assets/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+  border-style: solid;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 19px;
+}
+
+.category-header:hover {
+  /* border-color wirkungslos bei border-image → Glow-Akzent + minimal aufgehellter Overlay,
+     damit sich Hover/Aufgeklappt (Caret dreht bereits ▸→▾) zusätzlich vom Ruhezustand abhebt. */
+  background:
+    linear-gradient(rgba(60, 42, 22, 0.16), rgba(60, 42, 22, 0.22)),
+    url("../assets/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+  box-shadow: 0 0 10px rgba(154, 128, 96, 0.22);
+}
+
+.category-caret {
+  color: var(--accent-2);
+  width: 14px;
+}
+
+.category-name {
+  flex: 1;
+  text-align: left;
+  /* Chef-Fix 2026-07-24: Kategorie-Namen als echte Überschriften lesbar. */
+  font-size: 24px;
+  letter-spacing: 0.4px;
+}
+
+.category-count {
+  font-size: 17px;
+}
+
+/* Level-Spanne der Items in der Kategorie — auf einen Blick erkennbar, auch eingeklappt. */
+.category-range {
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  padding: 2px 9px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(154, 128, 96, 0.32);
+  color: var(--accent-2);
+  white-space: nowrap;
+}
+
+/* Inline discovery hint shown below the category header (e.g. fence chain). */
+.category-hint {
+  margin: -6px 0 10px;
+  padding: 6px 18px;
+  font-size: 15px;
+  font-style: italic;
+}
+
+/* ─── Skill-Card „Hero" ────────────────────────── */
+.skillcard {
+  /* Wooden 9-slice frame matching attribute-cards / ds-frame pattern */
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 7px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  /* border-radius must be 0 — border-image and border-radius are incompatible */
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* Container-Kontext: erlaubt Body-Inhalt (Kacheln/Mats/Buttons/Mastery), Größe via
+     cqw-Einheiten fließend an die tatsächliche Kartenbreite anzupassen — dieselbe
+     Technik wie .monster-card (siehe combat.css), damit die Karte auch bei kleinen
+     Fenstern/Auflösungen kompakt bleibt statt überzulaufen. */
+  container-type: inline-size;
+  /* Perf (#206/P2): Offscreen-Karten überspringen Layout/Paint (Banner-Bild, Mats-Icons, …)
+     bis sie in den Viewport scrollen. Höhe grob geschätzt (Banner 190px + Body). */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 460px;
+}
+
+/* Hover: subtle warm-gold shimmer */
+.skillcard:hover {
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.18);
+}
+
+/* Active/running: accent glow + inset ring (border-color is ineffective with border-image) */
+.skillcard.active {
+  box-shadow: none;
+}
+
+/* Wiki→Rezept-Sprung (Chef-Auftrag): kurzer Puls, sobald SkillPage.tsx per
+   document.getElementById zur Zielkarte scrollt (className wird per JS nach ~1,8s wieder
+   entfernt, s. dortiges JSDoc) — reines Flash/Glow, keine Bewegung, daher IMMER aktiv (nicht an
+   den Kampf-FX-Options-Toggle gekoppelt, der nur die Juice-Momente in ActionCard betrifft). */
+@keyframes skillcard-jump-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(216, 192, 106, 0); }
+  50% { box-shadow: 0 0 26px 6px rgba(216, 192, 106, 0.85); }
+}
+
+.skillcard-jump-highlight {
+  animation: skillcard-jump-pulse 0.75s ease-in-out 2;
+}
+
+/* Locked: dim the whole card; banner gets grayscale via its own rule below */
+.skillcard.locked {
+  /* brightness statt opacity → dimmt, ohne den Hintergrund durchscheinen zu lassen. */
+  filter: brightness(0.8);
+}
+
+.skillcard.locked .skillcard-banner {
+  filter: grayscale(1);
+}
+
+.skillcard-banner {
+  height: 190px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 42%, #2c3742, #0e1216);
+  border-bottom: 1px solid var(--border-bright);
+}
+
+.skillcard-banner.rarity-magic {
+  background: radial-gradient(circle at 50% 42%, #243a52, #0e1216);
+}
+.skillcard-banner.rarity-rare {
+  background: radial-gradient(circle at 50% 42%, #3a3320, #0e1216);
+}
+.skillcard-banner.rarity-epic {
+  background: radial-gradient(circle at 50% 42%, #34243f, #0e1216);
+}
+.skillcard-banner.rarity-legendary {
+  background: radial-gradient(circle at 50% 42%, #3f2c18, #0e1216);
+}
+
+.skillcard-banner-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(1px);
+  transform: scale(1.04);
+  z-index: 0;
+}
+
+.skillcard-banner.has-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.22) 0%, rgba(10, 8, 6, 0.55) 55%, rgba(10, 8, 6, 0.88) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.skillcard-banner.has-bg > *:not(.skillcard-banner-bg):not(.skillcard-lvl):not(.skillcard-invcount):not(.skillcard-title):not(.skillcard-topright):not(.skillcard-sparks):not(.skillcard-xp-floater) {
+  position: relative;
+  z-index: 2;
+}
+
+.skillcard-img {
+  max-width: 160px;
+  max-height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+}
+
+.skillcard-emoji {
+  font-size: 76px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+}
+
+.skillcard.locked .skillcard-emoji,
+.skillcard.locked .skillcard-img {
+  /* Sweep6-W2: brightness(0) machte konturlose Vollschwarz-Blobs — gedimmte
+     Graustufen-Silhouette behält die Form erkennbar („was schalte ich frei?"). */
+  filter: grayscale(1) brightness(0.35) contrast(0.9);
+  opacity: 0.75;
+}
+
+/* Oben-rechts-Leiste der Karte: Flex-Container fürs LV-Badge (früher auch den inzwischen
+   entfernten Rezept-Pin-Button — s. Action-Queue-Panel, das die Pin-Liste ersetzt hat). */
+.skillcard-topright {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* LV-Badge — Citadel-Holzrahmen + bg_black-Textur (jetzt Flex-Kind von .skillcard-topright,
+   keine eigene Positionierung mehr). */
+.skillcard-lvl {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 4px 11px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.skillcard-lvl.locked {
+  color: var(--danger);
+}
+
+/* Inventar-Zähler oben LINKS — Citadel-Holzrahmen + bg_black-Textur */
+.skillcard-invcount {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 4px 11px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold, #e8c46a);
+  pointer-events: none;
+}
+.skillcard-invcount-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.skillcard-title {
+  position: absolute;
+  bottom: 10%;
+  left: auto;
+  right: 10%;
+  text-align: right;
+  font-family: var(--font-head);
+  font-size: 24px;
+  line-height: 1.05;
+  color: #9a8060; /* sepia-gold, wie .sb-skill-name */
+  text-shadow: 0 2px 6px #000, 0 0 4px #000;
+  z-index: 2;
+}
+
+.skillcard-body {
+  /* Fließt mit der Kartenbreite (cqw) mit — bei schmalen Karten weniger Innenabstand,
+     damit mehr Platz für Inhalt bleibt statt zu überlaufen. */
+  padding: clamp(10px, 2.5cqw, 14px) clamp(10px, 2.86cqw, 16px) clamp(12px, 2.86cqw, 16px);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.skillcard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(6px, 1.79cqw, 10px);
+}
+
+.skillcard-tile {
+  /* Sidebar-Button-Hintergrundtextur (wie .sb-skill-btn / .topbar-item) */
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  /* Holz-9-Slice-Rahmen, slice 28, ~5 px, eckig */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28;
+  border-image-width: 5px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  padding: clamp(4px, 1.43cqw, 8px) clamp(6px, 1.79cqw, 10px);
+  text-align: center;
+}
+
+.skillcard-tile small {
+  display: block;
+  color: #9a8060; /* sepia-gold, wie .sb-skill-name */
+  font-size: clamp(11px, 2.86cqw, 16px);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.skillcard-tile b {
+  font-size: clamp(14px, 3.57cqw, 20px);
+  color: #9a8060; /* sepia-gold Basisfarbe; b.acc / b.gold überschreiben gezielt */
+}
+
+.skillcard-tile b.acc {
+  color: var(--accent-2);
+}
+
+.skillcard-tile b.gold {
+  color: var(--gold, #d8c06a);
+}
+
+.skillcard-loot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 17px;
+  /* Chef-Fix: Citadel-Holzrahmen + dunkle Textur (konsistent mit .monster-card-drops /
+     .bestiary-drops) — hebt das Drop-Grid als eigenes Panel von der Skill-Karte ab. */
+  padding: 8px 10px;
+  background: linear-gradient(rgba(10, 8, 6, 0.5), rgba(10, 8, 6, 0.55)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+  /* Chef 2026-07-21: einheitliche Mindesthöhe, damit die Loot-Box bei 1–3 Drops gleich hoch bleibt
+     und „Locked"/„Mastery" darunter über alle Karten auf gleicher Höhe sitzen. Zeilen oben halten
+     (align-content), Karten mit weniger Drops zeigen unten freien Raum statt zu schrumpfen. */
+  min-height: 150px;
+  align-content: flex-start;
+}
+
+.skillcard-drop {
+  cursor: help;
+}
+/* Klickbarer Loot-Chip (Foraging entdeckt + Thieving): ganzer Chip öffnet den Item-Tooltip. */
+.skillcard-drop.clickable {
+  cursor: pointer;
+  transition: filter 0.1s;
+}
+.skillcard-drop.clickable:hover {
+  filter: brightness(1.18);
+}
+/* Unentdeckte Foraging-Beute: gedämpftes, deutlich abgesetztes „???" (kein Klick). */
+.skillcard-drop.undiscovered {
+  cursor: default;
+  opacity: 0.72;
+  letter-spacing: 1px;
+}
+/* Task #248: schwarze Item-Silhouette statt „???"-Text (Größe via .item-chip-img, s.
+   components.css — dieselbe Größe wie der entdeckte ItemChip-Icon). */
+.skillcard-drop-silhouette {
+  filter: brightness(0);
+}
+
+.skillcard-mats {
+  margin-top: clamp(6px, 1.79cqw, 10px);
+  /* Chips links, „craftable"-Badge rechts in DERSELBEN Zeile, gleich hoch (stretch).
+     Nutzt horizontalen Platz, spart die vertikale Extra-Zeile. Bei schmalen Karten
+     bricht das auf zwei Zeilen um (siehe @container-Regel weiter unten), damit die
+     Mats-Spalten + das Badge genug Breite behalten. */
+  display: flex;
+  align-items: stretch;
+  gap: clamp(5px, 1.43cqw, 8px);
+}
+
+.mats-list {
+  /* 2-spaltiges Grid statt einer einzelnen vertikalen Spalte (Chef-Wunsch) — passt
+     immer exakt 2 Kacheln nebeneinander, egal wie viele Zutaten das Rezept hat.
+     min-width:0 verhindert, dass das Grid den Flex-Parent aufbläht (Flex-Item-
+     Default wäre min-width:auto = Inhaltsbreite). */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(5px, 1.43cqw, 8px);
+  flex: 1; /* nimmt den horizontalen Restplatz, schiebt craftable nach rechts */
+  min-width: 0;
+}
+
+.mat-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(3px, 1.07cqw, 7px);
+  padding: clamp(3px, 0.89cqw, 5px) clamp(6px, 1.96cqw, 11px);
+  cursor: pointer;
+  /* position + z-index ensure no ancestor overlay blocks pointer events / mouseenter. */
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  /* Eckiger Holz-9-Slice-Rahmen + leicht grünlich getönte Textur = vorhanden. */
+  border-style: solid;
+  border-width: clamp(3px, 1.43cqw, 5px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / clamp(3px, 1.43cqw, 5px);
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(20, 44, 18, 0.45), rgba(11, 24, 10, 0.52)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.mat-chip.lacking {
+  /* leicht rötlich = nicht genug Material (border-color wirkungslos bei border-image). */
+  background:
+    linear-gradient(rgba(48, 16, 12, 0.46), rgba(28, 9, 7, 0.54)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.mat-img {
+  /* Skaliert mit der Kartenbreite (war fix 52px) → Karte bleibt bei schmalen
+     Auflösungen kompakt, ohne dass die Icons abgeschnitten werden. */
+  width: clamp(28px, 9.29cqw, 52px);
+  height: clamp(28px, 9.29cqw, 52px);
+  object-fit: contain;
+}
+
+.mat-emoji {
+  font-size: clamp(24px, 7.86cqw, 44px);
+  line-height: 1;
+}
+
+.mat-count {
+  font-size: clamp(13px, 3.57cqw, 20px);
+  white-space: nowrap;
+}
+
+.mat-count b {
+  font-size: clamp(13px, 3.39cqw, 19px);
+  color: #8fbf8f;
+}
+
+.mat-chip.lacking .mat-count b {
+  color: var(--danger);
+}
+
+.craftable {
+  /* sitzt rechts neben den Mat-Chips in derselben Zeile, gleich hoch (Parent: align-items stretch). */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: clamp(3px, 0.71cqw, 4px) clamp(8px, 2.5cqw, 14px);
+  font-size: clamp(13px, 3.21cqw, 18px);
+  font-weight: 700;
+  color: #8fbf8f;
+  /* Eckiger Holz-9-Slice-Rahmen + leicht grünlich getönte Textur = craftbar. */
+  border-style: solid;
+  border-width: clamp(3px, 1.43cqw, 5px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / clamp(3px, 1.43cqw, 5px);
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(20, 44, 18, 0.42), rgba(11, 24, 10, 0.50)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.craftable.none {
+  /* leicht rötlich = nicht craftbar. */
+  color: var(--danger);
+  background:
+    linear-gradient(rgba(48, 16, 12, 0.44), rgba(28, 9, 7, 0.52)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+/* Fix #368-5 (Bot-Sweep #367): gesperrte Karten (Level-Gate nicht erfüllt, `.skillcard.locked`)
+   zeigten trotzdem die GRÜNE „Herstellbar: N×"-Zeile — Widerspruch zum ausgegrauten „Gesperrt"-
+   Button direkt darunter (der Spieler kann eh nicht herstellen, egal ob Material reicht). Neutrales
+   Grau statt Grün/Rot, unabhängig von `.none` — höhere Selektor-Spezifität (3 Klassen) gewinnt
+   gegen `.craftable`/`.craftable.none` (je 2), kein `!important` nötig. Gilt für Skill-Karten
+   generell (nicht nur Bauteile) — `.craftable` sitzt in derselben `ActionCard`, die JEDE
+   Crafting-Aktion mit Level-Gate rendert. */
+.skillcard.locked .craftable {
+  color: #9a9384;
+  background:
+    linear-gradient(rgba(28, 26, 22, 0.42), rgba(14, 13, 11, 0.5)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+/* ─── Responsive Fallbacks: schmale Karte (kleines Fenster / viele Spalten) ───
+   Unter ~460px Kartenbreite reicht die Zeile nicht mehr für 2 Mat-Spalten +
+   das „Craftable"-Badge nebeneinander (Badge-Text ist bei DE-Übersetzung lang) →
+   Mats-Reihe bricht auf zwei Zeilen um, Badge bekommt die volle Breite darunter.
+   Unter ~260px (Grid-Untergrenze aus .actions) greift zusätzlich die 1-Spalten-
+   Notbremse fürs Mats-Grid selbst. */
+@container (max-width: 460px) {
+  .skillcard-mats {
+    flex-direction: column;
+  }
+}
+
+@container (max-width: 260px) {
+  .mats-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skillcard-cta {
+  width: 100%;
+  padding: clamp(7px, 2.86cqw, 12px);
+  margin-top: clamp(8px, 2.86cqw, 12px);
+  /* Holz-9-Slice-Frame + Textur — wie die Citadel-Buttons. */
+  border-radius: 0;
+  border-style: solid;
+  border-width: clamp(5px, 2.14cqw, 8px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / clamp(5px, 2.14cqw, 8px);
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.5), rgba(8, 6, 4, 0.5)),
+    url("../assets/bg_black.webp") repeat;
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
+  font-size: clamp(14px, 3.57cqw, 20px);
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.skillcard-cta:hover:not(:disabled) {
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.25);
+  color: #e6c878;
+}
+
+/* Stop = warnender Rot-Ton, gleicher Holz-Frame */
+.skillcard-cta.stop {
+  background:
+    linear-gradient(rgba(42, 12, 8, 0.42), rgba(42, 12, 8, 0.42)),
+    url("../assets/bg_black.webp") repeat;
+  color: #d98a6a;
+}
+
+.skillcard-cta:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  color: var(--muted);
+}
+
+/* Mengen-Craft: 1 / 5 / 10 / Alle nebeneinander im selben Holz-Frame-Stil wie der Start-Button. */
+.skillcard-craft-cta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(4px, 1.43cqw, 6px);
+  margin-top: clamp(8px, 2.86cqw, 12px);
+}
+
+/* Einzelner Mengen-Button: kompakter (kleineres Padding/Font), erbt sonst die .skillcard-cta-Optik. */
+.skillcard-craft-cta .skillcard-cta.qty {
+  margin-top: 0;
+  padding: clamp(6px, 2.14cqw, 9px) clamp(2px, 1cqw, 4px);
+  font-size: clamp(12px, 3.04cqw, 17px);
+}
+
+/* „Alle"-Button etwas hervorgehoben (wärmerer Gold-Ton), bleibt im Frame-Stil. */
+.skillcard-craft-cta .skillcard-cta.qty.all {
+  color: #e6c878;
+}
+
+/* Zur-Queue-hinzufügen-Hinweis (Chef-Auftrag): dezente Zeile unter den Mengen-Buttons — Shift+Klick
+   auf denselben Button reiht die Aktion ein statt sie sofort zu starten (s. SkillPage.tsx). */
+.skillcard-queue-hint {
+  margin-top: 4px;
+  font-size: 11px;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+.skillcard-bar {
+  margin-top: 10px;
+}
+
+.skillcard-mastery {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 1.43cqw, 8px);
+  margin-top: clamp(6px, 1.79cqw, 10px);
+  font-size: 0.78rem;
+  padding: clamp(3px, 0.71cqw, 4px) clamp(5px, 1.43cqw, 8px);
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.60), rgba(8, 6, 4, 0.60)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid rgba(216, 179, 90, 0.26);
+  border-radius: var(--radius);
+}
+.mastery-label {
+  color: var(--gold, #d8b35a);
+  white-space: nowrap;
+  font-weight: 600;
+}
+.mastery-bar {
+  flex: 1;
+  height: 5px;
+}
+.mastery-bar .bar-fill {
+  background: var(--gold, #d8b35a);
+}
+.mastery-bonus {
+  color: var(--accent, #6fae6f);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* Welle OO (Chef-GO "UI-Juice Stufe 1"), Moment 5 "Fast geschafft": <5% XP bis zum nächsten
+   Mastery-Level → statisch wärmere Bar-Farbe. Reiner Zustand (wie die Rang-Farben oben), IMMER
+   sichtbar, kein Effekt → nicht an fxLevel gekoppelt (s. ActionCard `mProg >= 0.95`). */
+.mastery-bar.near-complete .bar-fill {
+  background: linear-gradient(90deg, #d98a3a, #f2c878);
+}
+
+/* Moment 3 "Überschwapp": während der kurzen Level-Up-Sequenz (s. ActionCard `overflowMasteryBar`)
+   bekommt die Breiten-Transition eine deutlich langsamere, weichere Kurve als der übliche
+   0,12s-Live-Tick-Nachzieher (.bar-fill Basisregel weiter unten) — dadurch "schwappt" die Bar
+   sichtbar von 100% in den neuen (niedrigeren) Fortschritt über, statt hart zu springen. Die
+   Klasse wird nach ~650ms wieder entfernt (s. ActionCard), damit normale Ticks danach wieder die
+   schnelle 0,12s-Transition nutzen.
+   Bei fxLevel "off" wird diese Klasse nie gesetzt (ActionCard) — dort springt die Bar nüchtern. */
+.mastery-bar.bar-overflow .bar-fill {
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Moment 1 "Tick-Befriedigung": 2–3 Funken, die beim Ertrags-Ereignis vom Kartenzentrum radial
+   auseinanderfliegen (WAAPI, s. ActionCard `burstSparks`/util burstSparks in SkillPage.tsx). Im
+   Ruhezustand unsichtbar (opacity 0) — nur fxLevel "full" spielt sie überhaupt ab, daher KEINE
+   CSS-`animation` hier (rein WAAPI-getrieben, endet von selbst, keine Ruhezustands-Last). */
+.skillcard-sparks {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.skillcard-spark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff2c8 0%, #d8b35a 55%, rgba(216, 179, 90, 0) 75%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Moment 2 "XP-Floater": „+N XP" steigt vom Kartenzentrum auf und blendet aus — EIN finiter
+   CSS-Keyframe (750ms, `forwards` hält nur den unsichtbaren Endzustand, bis React das Element
+   nach Ablauf komplett entfernt, s. ActionCard `pushFloater`/`floaterTimerRef`). Mehrere
+   Abschlüsse im selben Zeitfenster aktualisieren nur den Text desselben Elements (kein Restart,
+   kein Stapel-Spam). */
+.skillcard-xp-floater {
+  position: absolute;
+  left: 50%;
+  bottom: 16%;
+  transform: translate(-50%, 0);
+  z-index: 2;
+  pointer-events: none;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  color: #f0dca0;
+  text-shadow: 0 2px 5px #000, 0 0 6px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  animation: skillcard-xp-rise 750ms ease-out forwards;
+}
+.skillcard-xp-floater-mastery {
+  margin-left: 6px;
+  font-size: 0.78em;
+  color: var(--accent, #6fae6f);
+}
+@keyframes skillcard-xp-rise {
+  0%   { opacity: 0; transform: translate(-50%, 0); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -34px); }
+}
+
+/* Welle EE (Mona M3): Rang-Sterne an der Aktionskarte — dieselbe Farbabstufung wie die
+   Mastery-Seite (util/masteryRank.ts), rein kosmetisch. */
+.mastery-label--bronze   { color: #cd7f32; }
+.mastery-label--silver   { color: #e2e2ec; text-shadow: 0 0 5px rgba(226, 226, 236, 0.55); }
+.mastery-label--gold     { color: var(--gold, #d8b35a); }
+.mastery-label--platinum { color: #b8e0e6; text-shadow: 0 0 5px rgba(184, 224, 230, 0.5); }
+.mastery-label--diamond  {
+  color: #9fe0ff;
+  text-shadow: 0 0 6px rgba(159, 224, 255, 0.7);
+  animation: ms2-diamond-shimmer 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mastery-label--diamond { animation: none; }
+}
+
+/* Welle EE (Riko R2): Suffix-Chance-Chip auf Equipment-Craft-Karten. */
+.skillcard-suffix-chance {
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
+
+/* Welle EE (Fenn F2): aktives Skilling-Pet — dezenter Streifen oben auf der Skill-Seite. */
+.skill-active-pet {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  margin-bottom: 8px;
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid rgba(216, 179, 90, 0.26);
+  border-radius: var(--radius);
+  transition: box-shadow 0.2s ease-out;
+}
+.skill-active-pet-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.skill-active-pet-emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+.skill-active-pet.pulse {
+  box-shadow: 0 0 14px 3px rgba(216, 179, 90, 0.55);
+}
+@media (prefers-reduced-motion: reduce) {
+  .skill-active-pet { transition: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Mastery Page v2
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ms2-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+.ms2-agg-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ms2-agg-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ms2-agg-stat-label {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ms2-agg-stat-val {
+  font-family: var(--font-head);
+  font-size: 19px;
+  color: #9a8060;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.ms2-ring-svg { flex-shrink: 0; }
+.ms2-ring-bg  { stroke: var(--border); fill: none; }
+.ms2-ring-fill {
+  fill: none;
+  stroke: #c8772e;
+  stroke-linecap: round;
+  transform-origin: center;
+  filter: drop-shadow(0 0 4px rgba(200, 119, 46, 0.5));
+  transition: stroke-dasharray 0.3s ease;
+}
+.ms2-ring-text {
+  font-family: var(--font-head);
+  font-size: 17px;
+  fill: #9a8060;
+  font-weight: 700;
+}
+
+.ms2-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.50)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  padding: 14px;
+}
+
+/* Citadel-Konsistenz-Welle (Chef-GO 2026-07-09): Titel-Zeile über Ring+Tabs — gleiche
+   Ikonografie/Typografie wie OptSection (options.css .opz-section-head), skaliert für ein
+   Panel statt eine eigenständige Kopfzeile. */
+.ms2-tabs-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 12px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+.ms2-tabs-head-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  overflow: hidden;
+  background: radial-gradient(circle at 35% 30%, rgba(216, 192, 106, 0.22), rgba(14, 10, 6, 0.92) 72%);
+  border: 2px solid rgba(216, 192, 106, 0.5);
+  box-shadow: 0 0 14px rgba(216, 192, 106, 0.24);
+}
+
+.ms2-tabs-head-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.ms2-tabs-head-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 22px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.ms2-tabs-head-desc {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--muted);
+  max-width: 760px;
+}
+
+.ms2-tabs-summary {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.ms2-tab-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ms2-tab {
+  padding: 9px 20px;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ms2-tab:hover {
+  color: var(--text);
+  background:
+    linear-gradient(rgba(28, 18, 8, 0.40), rgba(28, 18, 8, 0.40)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.ms2-tab--active {
+  color: #9a8060;
+  background:
+    linear-gradient(rgba(32, 22, 8, 0.75), rgba(32, 22, 8, 0.75)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.ms2-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ms2-skill-block {
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.50)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.ms2-skill-hdr {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.ms2-skill-hdr:hover {
+  background: rgba(154, 128, 96, 0.07);
+}
+
+.ms2-skill-emblem {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.65), rgba(10, 12, 15, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.ms2-skill-emblem.ms2-rarity--common    { border-color: #454d54; }
+.ms2-skill-emblem.ms2-rarity--uncommon  { border-color: rgba(91, 143, 214, 0.55); }
+.ms2-skill-emblem.ms2-rarity--rare      { border-color: rgba(216, 192, 106, 0.6); }
+.ms2-skill-emblem.ms2-rarity--epic      { border-color: rgba(170, 80, 200, 0.6); }
+.ms2-skill-emblem.ms2-rarity--legendary { border-color: rgba(217, 138, 74, 0.65); }
+
+.ms2-skill-emblem-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Citadel-Konsistenz-Welle: war 25px — KLEINER als die verschachtelten .ms2-action-name-Zeilen
+   (28px) darunter, eine invertierte Überschriften-Hierarchie (Kind größer als Elternteil).
+   Jetzt eindeutig die größte Textzeile im Skill-Block. */
+.ms2-skill-name {
+  font-size: 32px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ms2-skill-badge {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 3px 9px;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Rarity-specific tints — border-image handles the frame; only color + bg-overlay vary */
+.ms2-skill-badge.ms2-rarity--common    { color: var(--text); }
+.ms2-skill-badge.ms2-rarity--uncommon  { color: #8fbfdf; background: linear-gradient(rgba(14, 22, 36, 0.65), rgba(10, 16, 28, 0.70)), url("../assets/bg_black.webp") repeat; }
+.ms2-skill-badge.ms2-rarity--rare      { color: var(--gold); background: linear-gradient(rgba(32, 26, 8, 0.65), rgba(20, 16, 4, 0.70)), url("../assets/bg_black.webp") repeat; }
+.ms2-skill-badge.ms2-rarity--epic      { color: #c080e0; background: linear-gradient(rgba(30, 12, 42, 0.65), rgba(18, 7, 26, 0.70)), url("../assets/bg_black.webp") repeat; }
+.ms2-skill-badge.ms2-rarity--legendary { color: #e08030; background: linear-gradient(rgba(38, 18, 6, 0.65), rgba(24, 11, 3, 0.70)), url("../assets/bg_black.webp") repeat; }
+
+/* Welle EE (Mona M2): zweizeilig — Zeile 1 bleibt die bestehende Label+Bar+Perks-Reihe
+   (jetzt .ms2-skill-pool-row), Zeile 2 ist die neue "nächster Checkpoint"-ETA-Zeile darunter.
+   Kein Layout-Umbau der Kopfzeile selbst — nur dieser eine Flex-Slot wird zweizeilig. */
+.ms2-skill-pool {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ms2-skill-pool-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ms2-pool-next {
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ms2-skill-pool-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ms2-pool-bar {
+  position: relative;
+  flex: 1;
+  height: 10px;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_empty.webp") repeat-x left center / auto 100%;
+  border-style: solid;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+  overflow: visible; /* allow cp markers to extend above/below */
+  min-width: 60px;
+}
+
+.ms2-pool-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_gloss.webp") repeat-x left center / auto 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ms2-pool-fill {
+  height: 100%;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_fill.webp") repeat-x left center / auto 100%;
+}
+
+.ms2-pool-cp {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  transform: translateX(-1px);
+  z-index: 3; /* above gloss overlay */
+}
+
+.ms2-pool-cp.reached {
+  background: #8fd28f;
+  box-shadow: 0 0 4px #8fd28f;
+}
+
+.ms2-pool-perks {
+  display: flex;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ms2-skill-lvl-text {
+  font-size: 14px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ms2-chevron {
+  font-size: 14px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+  display: inline-block;
+}
+
+.ms2-chevron.open {
+  transform: rotate(90deg);
+}
+
+.ms2-actions {
+  padding: 4px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ms2-action-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.4fr) auto minmax(90px, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.ms2-action-row.ms2-maxed .ms2-action-lvl {
+  color: var(--gold);
+}
+
+/* Schrift in den Kategorien ~doppelt so groß (Chef-Wunsch). */
+.ms2-action-name {
+  font-size: 28px;
+  font-variant: small-caps;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ms2-action-lvl {
+  font-weight: 700;
+  white-space: nowrap;
+  font-size: 26px;
+}
+
+/* Welle QQ: echtes Stern-Icon statt ★-Glyphe im Rang-Badge. */
+.ms2-action-lvl-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -3px;
+  object-fit: contain;
+}
+
+.ms2-action-bar {
+  height: 12px;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_empty.webp") repeat-x left center / auto 100%;
+  border-style: solid;
+  border-width: 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 3px;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.ms2-action-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_gloss.webp") repeat-x left center / auto 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ms2-action-fill {
+  height: 100%;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_fill.webp") repeat-x left center / auto 100%;
+}
+
+.ms2-action-perks {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  white-space: nowrap;
+  font-size: 22px;
+  color: var(--muted);
+}
+
+/* Welle EE (Mona M3): Rang-Sterne — reine CSS-Farb-/Glanzabstufung des bestehenden "★ {lvl}"-
+   Badges, KEIN neues Asset, KEIN neuer Zahlen-Bonus. Dieselben 5 Stufen wie util/masteryRank.ts. */
+.ms2-action-lvl--bronze   { color: #cd7f32; }
+.ms2-action-lvl--silver   { color: #e2e2ec; text-shadow: 0 0 5px rgba(226, 226, 236, 0.55); }
+.ms2-action-lvl--gold     { color: var(--gold, #d8b35a); }
+.ms2-action-lvl--platinum { color: #b8e0e6; text-shadow: 0 0 6px rgba(184, 224, 230, 0.5); }
+.ms2-action-lvl--diamond  {
+  color: #9fe0ff;
+  text-shadow: 0 0 8px rgba(159, 224, 255, 0.75);
+  animation: ms2-diamond-shimmer 2.4s ease-in-out infinite;
+}
+@keyframes ms2-diamond-shimmer {
+  0%, 100% { text-shadow: 0 0 6px rgba(159, 224, 255, 0.55); }
+  50%      { text-shadow: 0 0 14px rgba(159, 224, 255, 0.95); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ms2-action-lvl--diamond { animation: none; }
+}
+
+/* Welle EE (Mona M2): "nächster Rang"-Zeile unter der Aktions-Reihe — spannt die volle Grid-Breite
+   (Grid-Item Nr. 5 fließt automatisch in eine implizite neue Zeile, s. .ms2-action-row). */
+.ms2-action-next {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 15px;
+  margin-top: -4px;
+}
+.ms2-action-next-rank {
+  color: var(--accent-2, #c9a869);
+}
+.ms2-action-next-eta {
+  font-size: 14px;
+}
+
+.action {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  padding: 14px;
+  background: var(--panel-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.action:hover {
+  border-color: var(--accent-dim);
+}
+
+.action.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent) inset;
+}
+
+.action small {
+  color: var(--muted);
+}
+
+.bar {
+  margin-top: 6px;
+  height: 6px;
+  background: var(--slot);
+  /* Fix #368-4 (Bot-Sweep #367): `--slot` (#0f1216) auf den überall fast-schwarzen Panel-/
+     Textur-Hintergründen war bei 0% praktisch unsichtbar — ein leerer Balken las sich als
+     „Element fehlt", nicht als „Fortschritt: keiner". Ein heller Rand macht die leere Spur
+     sichtbar, ohne die gefüllte Optik zu verändern (`.bar-fill` deckt ihn innen ab, `overflow:
+     hidden` + `box-sizing:border-box` halten die Außenmaße exakt gleich). Betrifft global JEDEN
+     `.bar`-Nutzer (Skill-Aktionen, Mastery, New-Haven-Bau UND -Veredelung teilen sich diese eine
+     Basisregel) — ein Fix an einer Stelle behebt beide vom Sweep gemeldeten Fälle. */
+  border: 1px solid var(--border-bright);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* Perf-Welle (2026-07-22): width→transform:scaleX (Compositor statt Layout+Paint pro Tick, betrifft
+   ALLE Skill-/Bestiarium-/Farm-/Quest-/Slayer-Seiten, die diese Klasse teilen). Ausnahme:
+   `.skilloverview-bar .bar-fill` weiter unten — Textur-Fill, dort clip-path statt scaleX. */
+.bar-fill {
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: var(--accent);
+  /* 0.12s linear überbrückt die ~100-ms-Render-Drosselung (GameContext-Loop) ⇒ Bar bleibt flüssig. */
+  transition: transform 0.12s linear;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+/* ─── Skill-Seite (neu) ─────────────────────────────────── */
+.skill-head {
+  /* Wooden 9-slice frame + bg_black texture — same as skillcard */
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 7px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.skill-head-title {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.skill-head-title h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+/* Header-LV-Badge — Citadel-Holzrahmen + bg_black-Textur (wie .skillcard-lvl) */
+.skill-level-badge {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 5px 15px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.bar.tall {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.bar.glow {
+  box-shadow: 0 0 12px rgba(111, 151, 179, 0.4);
+}
+
+/* Sweep 5, Finding 4: hatte keinen Hintergrund — auf hellen Szenen-Artworks (z.B.
+   Holzfällen bei Tageslicht) verschwand der gestrichelte Rahmen + muted-Text fast
+   komplett. Dunkles Backdrop analog Panel-Standard macht "nichts aktiv" immer lesbar. */
+.skill-idle {
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: rgba(8, 10, 14, 0.82);
+  text-align: center;
+}
+
+/* Höhere Spezifität als .muted allein (components.css lädt NACH skills.css und würde
+   die Textfarbe sonst zurück auf --muted überschreiben — das war ja Teil des Kontrast-
+   problems). */
+.skill-idle.muted {
+  color: var(--text);
+}
+
+.skill-stopped {
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border: 1px solid #7a5a32;
+  border-radius: var(--radius);
+  background: rgba(122, 90, 50, 0.15);
+  color: #d9a86b;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Thieving risk toggle (careful | bold) */
+.thieving-risk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.thieving-risk-label {
+  font-weight: 600;
+}
+
+.thieving-risk-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.thieving-risk-toggle .risk-option {
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.thieving-risk-toggle .risk-option + .risk-option {
+  border-left: 1px solid var(--border);
+}
+
+.thieving-risk-toggle .risk-option.active {
+  background: rgba(122, 90, 50, 0.3);
+  color: #d9a86b;
+}
+
+.thieving-risk-hint {
+  font-size: 0.85em;
+}
+
+.skill-active {
+  /* Wooden 9-slice frame + bg_black texture — same as skillcard */
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 7px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  /* Accent glow as inset ring (border-image makes border-color ineffective) */
+  box-shadow: none;
+}
+
+.skill-active.stunned {
+  box-shadow: 0 0 16px rgba(168, 90, 82, 0.35), 0 0 0 2px var(--danger) inset;
+}
+
+/* Progress bar inside active panel: square corners to match frame aesthetic */
+.skill-active .bar.tall {
+  border-radius: 0;
+}
+
+.skill-stunned {
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: rgba(168, 90, 82, 0.15);
+  color: #d98a7e;
+  font-weight: 600;
+  text-align: center;
+}
+
+.skill-active-top {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.skill-active-label {
+  font-family: var(--font-head);
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.skill-active-name {
+  font-size: 19px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Echtes Aktions-/Item-Icon im IN-PROGRESS-Bereich (statt Emoji) */
+.skill-active-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.skill-active-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.skill-active-rates {
+  margin-left: auto;
+  font-size: 17px;
+}
+
+.action-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-state {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-2);
+  opacity: 0.8;
+}
+
+.action.active .action-state {
+  color: var(--danger);
+}
+
+.action-output {
+  font-size: 15px;
+  margin-top: 2px;
+}
+
+.action.disabled {
+  opacity: 0.7;
+}
+
+.action.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.action-state.locked {
+  color: var(--muted);
+}
+
+.lacking-note {
+  color: var(--danger);
+  font-size: 15px;
+}
+
+/* ─── Skilloverview ─────────────────────────────────────── */
+.skilloverview-page {
+  width: 100%;
+}
+
+/* Citadel-Panels für die Overview-Seite */
+.skilloverview-page .panel {
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.50)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+}
+
+.skilloverview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.skilloverview-head h2 {
+  margin: 0;
+}
+
+.skilloverview-total {
+  text-align: right;
+  line-height: 1.1;
+}
+
+.skilloverview-total-num {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 34px;
+  font-weight: 700;
+  color: #9a8060;
+  line-height: 1;
+}
+
+.skilloverview-total-label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.skilloverview-group {
+  margin: 0 0 12px;
+  font-size: 20px;
+  color: #9a8060;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.skilloverview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 18px;
+}
+
+/* Karten (#205): größer + eigener (wärmerer, holzgetönter) Hintergrund, der sich klar vom
+   flachen bg_black-Panel dahinter abhebt — vorher identische Textur wie der Container. */
+.skilloverview-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 22px;
+  background:
+    linear-gradient(rgba(28, 17, 9, 0.55), rgba(18, 11, 6, 0.68)),
+    url("../assets/bg_tileable_wood.webp") center / 260px repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.4);
+}
+
+button.skilloverview-card {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.skilloverview-card.clickable {
+  transition: box-shadow 0.12s, transform 0.12s, border-color 0.12s;
+}
+
+.skilloverview-card.clickable:hover {
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.4), 0 0 14px rgba(216, 192, 106, 0.30);
+  transform: translateY(-2px);
+}
+
+.skilloverview-icon-wrap {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.skilloverview-icon-img {
+  display: block;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+.skilloverview-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.skilloverview-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.skilloverview-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+/* Task #298 (Chef-1080p-Audit): war single-line + ellipsis — bei 4 Spalten/Reihe schnitt das
+   lange Skill-Namen wie „Juwelierskunst" mitten im Wort ab (echter Lesbarkeits-Befund, kein
+   gewolltes Kürzen wie bei der Guide-Beschreibung darunter). Jetzt 2-zeilig statt abgeschnitten —
+   robuster für alle 7 Sprachen, ohne die Grid-Spaltenzahl anzufassen. */
+.skilloverview-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.15;
+  color: var(--text);
+  overflow: hidden;
+  /* Selbst-Audit 2026-07-09: lange EINZELWÖRTER (Juwelierskunst…) clippten horizontal im
+     2-Zeilen-Clamp — anywhere/hyphens lässt sie umbrechen statt stumm abzuschneiden. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Meisterweihe-Insignie (design/master-capes-konzept.md §3): kleiner Gold-Stern am Titel bei
+   Level 99 — bewusst nur ein Text-Glyph in Gold, kein Glow/Filter (Chef-Regel "kein Rarity-Glow"). */
+.skilloverview-mastery-star {
+  color: var(--gold, #d8c06a);
+  font-size: 0.85em;
+}
+
+.skilloverview-level {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 17px;
+  color: #9a8060;
+  flex-shrink: 0;
+  margin-left: 8px;
+  display: inline-block;
+  padding: 2px 8px;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+}
+
+.skilloverview-bar {
+  margin-bottom: 5px;
+  height: 8px;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_empty.webp") repeat-x left center / auto 100%;
+  border-style: solid;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Textur-Fill (repeat-x) — scaleX aus der .bar-fill-Basisregel würde die Kacheln horizontal
+   stauchen (gleiches Problem wie .tb-bar-fill in topbar.css), daher hier clip-path statt
+   transform (SkillsOverviewPage.tsx setzt `clipPath` statt `transform` inline). */
+.skilloverview-bar .bar-fill {
+  height: 100%;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_fill.webp") repeat-x left center / auto 100%;
+  transition: clip-path 0.12s linear;
+}
+
+.skilloverview-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_gloss.webp") repeat-x left center / auto 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.skilloverview-xp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+  min-height: 16px;
+}
+
+.skilloverview-xp-nums {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.skilloverview-xp-pct {
+  font-size: 15px;
+  font-weight: 700;
+  color: #9a8060;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.skilloverview-xp-max {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--gold);
+  color: #11161a;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.skilloverview-guide {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  /* Selbst-Audit 2026-07-09: Beschreibungen brachen mitten im Satz ab, obwohl die Seite
+     vertikal viel Luft hat — 3 Zeilen lassen fast alle Guides komplett ausreden. */
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.stats-page .row {
+  font-size: 19px;
+}
+
+/* ─── Citadel XP-Bar Animationsleiste ──────────────────────────────────
+   Asset-Map:
+     xp_bar_empty.png   → Track-Hintergrund (alle 4 Skill-Bars)
+     xp_bar_fill.png    → Füllbalken-Textur (width via inline-style)
+     xp_bar_gloss.png   → Glanz-Overlay  (::after, z-index 2)
+     casting_effect.png → Schimmer-Shimmer (::before, nur in-progress)
+   Füllung per filter hue-rotate(30deg) saturate(1.4) brightness(1.05)
+   auf Gold (#d8c06a) gezogen (xp_bar_fill.png ist naturfarben / warm).
+   ─────────────────────────────────────────────────────────────────── */
+
+@keyframes casting-shimmer {
+  0%   { transform: translateX(-150%); }
+  100% { transform: translateX(250%); }
+}
+
+/* Track: solider dunkler Hintergrund + Holz-9-Slice-Rahmen (die PNG-Textur-
+   Variante wirkte gequetscht/komisch — Chef). */
+.skill-head .bar.tall,
+.skill-active .bar.tall,
+.skillcard-bar,
+.mastery-bar {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.72));
+  border-style: solid;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+  min-height: 16px;
+}
+
+/* Füllung: solide Gold→Kupfer-Gradient (kein PNG mehr), klar gefüllt. */
+.skill-head .bar.tall .bar-fill,
+.skill-active .bar.tall .bar-fill,
+.skillcard-bar .bar-fill,
+.mastery-bar .bar-fill {
+  background: linear-gradient(180deg, #f0dca0 0%, #d8b35a 42%, #c8842a 100%);
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.45);
+  /* KEINE width-Transition: Fortschritt wird pro Frame gesetzt (sonst rückwärts-Zucken). */
+}
+
+/* Glanz-Overlay: subtiler CSS-Top-Highlight (kein PNG mehr). */
+.skill-head .bar.tall::after,
+.skill-active .bar.tall::after,
+.skillcard-bar::after,
+.mastery-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 55% 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Casting-Schimmer: dezenter CSS-Lichtsweep (kein PNG), nur auf aktiven Leisten */
+.skill-active .bar.tall::before,
+.skillcard-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  animation: casting-shimmer 1.8s linear infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FARM PAGE — Plot grid, plot cards, crop picker
+   ═══════════════════════════════════════════════════════════ */
+
+.farm-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ─── Farm info bar ─────────────────────────────────────── */
+.farm-info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 16px;
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.60), rgba(8, 6, 4, 0.60)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 5px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+}
+
+/* ─── Plot grid ─────────────────────────────────────────── */
+.farm-plots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .farm-plots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .farm-plots {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Plot card — wooden 9-slice frame + dark texture ────── */
+.plot-card {
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 7px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.plot-card.locked {
+  filter: brightness(0.65);
+}
+
+.plot-card.ready {
+  box-shadow: 0 0 18px rgba(111, 200, 111, 0.35);
+}
+
+/* ─── Plot card header ──────────────────────────────────── */
+.plot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.plot-label {
+  font-family: var(--font-head);
+  font-size: 16px;
+  color: #9a8060;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.plot-lv-badge {
+  font-size: 14px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(154, 128, 96, 0.30);
+  white-space: nowrap;
+}
+
+/* ─── Plot card body ────────────────────────────────────── */
+.plot-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 14px 12px;
+}
+
+/* Centered layout (locked / empty) */
+.plot-state-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  min-height: 160px;
+}
+
+.plot-state-icon {
+  font-size: 40px;
+  opacity: 0.5;
+  line-height: 1;
+}
+
+.plot-state-text {
+  font-size: 15px;
+  max-width: 180px;
+  line-height: 1.4;
+}
+
+/* Column layout (growing / ready) */
+.plot-state-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Crop visual area */
+.plot-crop-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 76px;
+}
+
+.plot-crop-img {
+  max-width: 68px;
+  max-height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.55));
+}
+
+.plot-crop-fallback {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.plot-crop-name {
+  font-family: var(--font-head);
+  font-size: 16px;
+  color: #9a8060;
+  text-align: center;
+}
+
+/* Ready state */
+.plot-ready-badge {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 700;
+  color: #8fd28f;
+  text-align: center;
+  text-shadow: 0 0 12px rgba(111, 200, 111, 0.45);
+}
+
+.plot-ready-yield {
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Growing state */
+.plot-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Farm plot progress bar: green hue-shift of the standard XP bar */
+.plot-bar {
+  height: 10px;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_empty.webp") repeat-x left center / auto 100%;
+  border-style: solid;
+  border-width: 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 3px;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Textur-Fill (repeat-x) — wie .skilloverview-bar .bar-fill oben: scaleX aus der .bar-fill-
+   Basisregel würde die Kacheln horizontal stauchen, daher hier clip-path statt transform
+   (FarmPage.tsx setzt `clipPath` statt `transform` inline für diesen Balken). */
+.plot-bar .bar-fill {
+  height: 100%;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_fill.webp") repeat-x left center / auto 100%;
+  /* Bugfix 27.07. (Fund der New-Haven-Welle): `hue-rotate(80deg)` allein ergab MAGENTA statt
+     Grün — das Fill-Asset ist nativ dunkles Indigo (~240°), +80° landet bei ~320°. Fix nach
+     dem in topbar.css dokumentierten Muster: sepia() zieht erst JEDE Quellfarbe auf eine warme
+     Braun-Basislinie, danach dreht hue-rotate() gezielt ins Grün. */
+  filter: sepia(1) saturate(2.2) hue-rotate(65deg) brightness(1.1);
+  transition: clip-path 0.12s linear;
+}
+
+.plot-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ui/citadel/action-bar/xp_bar_gloss.webp") repeat-x left center / auto 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.plot-remaining {
+  font-size: 15px;
+  text-align: right;
+}
+
+.plot-yield-info {
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Auto-replant toggle */
+.plot-autoreplant {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--muted);
+  user-select: none;
+  padding: 2px 0;
+}
+
+.plot-autoreplant input[type="checkbox"] {
+  accent-color: #8fd28f;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Uproot confirmation inline block */
+.plot-uproot-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plot-uproot-warn {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.plot-uproot-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.plot-uproot-btns .skillcard-cta {
+  margin-top: 0;
+  font-size: 15px;
+  padding: 8px 6px;
+}
+
+/* ─── Crop Picker Modal ──────────────────────────────────── */
+
+.farm-picker-modal {
+  max-width: 880px;
+  max-height: 80vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.farm-picker-title {
+  margin: 0 0 14px;
+  font-family: var(--font-head);
+  font-size: 22px;
+  color: #9a8060;
+  letter-spacing: 1px;
+}
+
+/* 2 columns by default (bigger cards need room to breathe); collapses to a
+   single column once the modal/window gets too narrow for a comfortable pair. */
+.farm-picker-list {
+  display: grid;
+  /* minmax(0, 1fr) statt 1fr: 1fr = minmax(auto, 1fr) respektiert die Mindestbreite der Karten,
+     wodurch zwei große Karten breiter werden als das Modal und rechts überlaufen (horizontaler
+     Scrollbalken). minmax(0, …) erlaubt den Spalten, in die halbe Modalbreite zu schrumpfen. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 680px) {
+  .farm-picker-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Karten (Chef-Feedback): Holztextur statt dunklem Stein (bg_black), gekachelt
+   (nie gestreckt) + dunkler Gradient-Overlay für Textkontrast — dieselbe
+   Behandlung wie .skilloverview-card. Zugleich größer (mehr Padding/Icon/Font). */
+.farm-picker-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  text-align: left;
+  background:
+    linear-gradient(rgba(28, 17, 9, 0.58), rgba(18, 11, 6, 0.7)),
+    url("../assets/bg_tileable_wood.webp") center / 260px repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  width: 100%;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.35);
+}
+
+.farm-picker-card:hover:not(:disabled) {
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.35), 0 0 10px rgba(154, 128, 96, 0.22);
+}
+
+.farm-picker-card.no-seed {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.farm-picker-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.farm-picker-icon img {
+  max-width: 58px;
+  max-height: 58px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.6));
+}
+
+.farm-crop-fallback {
+  font-size: 38px;
+  line-height: 1;
+}
+
+.farm-picker-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.farm-picker-name {
+  font-family: var(--font-head);
+  font-size: 18px;
+  color: #9a8060;
+}
+
+.farm-picker-meta {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.farm-picker-seeds {
+  font-size: 15px;
+  color: #8fd28f;
+  font-weight: 600;
+}
+
+.farm-picker-seeds.none {
+  color: var(--danger);
+}
+
+.farm-picker-lv {
+  flex-shrink: 0;
+  font-size: 15px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(154, 128, 96, 0.32);
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* ─── Farm collapsible-section body ─────────────────────────────────────────
+   Wraps the info-bar + plot-grid when the Plots section is expanded.
+   Provides the gap that .farm-page previously supplied as a flex parent.
+   ─────────────────────────────────────────────────────────────────────────── */
+.farm-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+/* ─── Crop Catalogue (redesigned detail card — Name top, image centre, info below)
+   Max 6 columns: minmax(max(160px, (100%-70px)/6), 1fr) → exactly 6 at full width,
+   fewer on narrow containers.
+   ─────────────────────────────────────────────────────────────────────────── */
+.farm-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(160px, calc((100% - 70px) / 6)), 1fr));
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+/* Card wrapper — Citadel wood frame + dark texture (matches .skillcard aesthetic) */
+.farm-catalogue-card {
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 7px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.farm-catalogue-card:hover {
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.18);
+}
+
+/* ── Name + level badge on top ── */
+.farm-cat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border);
+  min-height: 48px;
+}
+
+.farm-cat-name {
+  font-family: var(--font-head);
+  font-size: 16px;
+  color: #9a8060;
+  line-height: 1.2;
+  flex: 1;
+  /* Sweep6-T9: hard-clip ohne Ellipsis → sauberes Kürzen (min-width:0 nötig,
+     sonst floort Flex die Content-Breite nie unter min-content). */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.farm-cat-lvl {
+  font-size: 14px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(154, 128, 96, 0.30);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Large image area ── */
+.farm-cat-img-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  background: radial-gradient(circle at 50% 42%, #2c3742, #0e1216);
+  border-bottom: 1px solid var(--border);
+}
+
+.farm-cat-img {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+}
+
+.farm-cat-emoji {
+  font-size: 60px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+}
+
+/* ── Info body ── */
+.farm-cat-body {
+  padding: 10px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.farm-catalogue-meta {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.farm-catalogue-yield {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.farm-catalogue-seed {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--accent-2, #7a9aaa);
+}
+
+.farm-catalogue-sink {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--accent-2, #7a9aaa);
+}
+
+/* ─── Growing crop: two-layer colour-fill effect ──────────────────────────
+   Two stacked instances of the crop icon sit inside .plot-crop-grow-wrap:
+     1. Base layer (.plot-crop-base)  — greyscale + dimmed (the "unripe" look).
+     2. Colour layer (.plot-crop-color-layer) — full colour, clipped from the
+        top via clip-path inset(X% 0 0 0).  X = 100 − pct, so at 0 % growth
+        the whole colour layer is hidden; at 100 % it is fully visible.
+        The inline clip-path is updated every tick; the 0.3 s ease transition
+        smooths the reveal between frames.
+   Works identically for PNG icons and emoji fallbacks.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Relative-positioned container; inline-flex so the parent flex (.plot-crop-visual)
+   centres it without needing an explicit width/height on the wrapper. */
+.plot-crop-grow-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Base layer: desaturated and dimmed — the "unripe" silhouette. */
+.plot-crop-base {
+  filter: grayscale(1) brightness(0.45) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.55));
+}
+
+/* Colour layer: absolute, fills the wrapper (sized by the base layer), centred.
+   clip-path is set via inline style each render tick; transition smooths it. */
+.plot-crop-color-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: clip-path 0.3s ease;
+}
+
+/* ─── Ready state: green glow on the fully-ripened crop icon ─ */
+.plot-crop-img--ready {
+  filter: drop-shadow(0 0 10px rgba(111, 200, 111, 0.65)) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.55));
+}
+
+.plot-crop-fallback--ready {
+  filter: drop-shadow(0 0 10px rgba(111, 200, 111, 0.65));
+}

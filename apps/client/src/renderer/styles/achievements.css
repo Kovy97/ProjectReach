@@ -1,0 +1,722 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   ACHIEVEMENTS PAGE — Citadel "trophy room" rework (Task #270)
+   Self-contained: imported directly by AchievementsPage.tsx.
+   Uses fresh `achv-*` classnames so nothing here fights the
+   legacy `ach2-*` rules still living in pages.css (dead weight,
+   left for the CEO to prune later — see task handoff notes).
+   ═══════════════════════════════════════════════════════════ */
+
+.achv-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ─── Hero panel: emblem + title + prominent unlock bar + AP/ring cluster ── */
+.achv-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  flex-wrap: wrap;
+  padding: 22px 28px;
+  background:
+    radial-gradient(ellipse 90% 140% at 8% 15%, rgba(216, 192, 106, 0.10), transparent 62%),
+    linear-gradient(rgba(10, 12, 15, 0.48), rgba(10, 12, 15, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 10px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.achv-hero-emblem {
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, rgba(216, 192, 106, 0.22), rgba(14, 10, 6, 0.92) 72%);
+  border: 3px solid rgba(216, 192, 106, 0.5);
+  box-shadow: 0 0 24px rgba(216, 192, 106, 0.32), inset 0 0 16px rgba(0, 0, 0, 0.65);
+  font-size: 42px;
+}
+
+.achv-hero-emblem img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(216, 192, 106, 0.5));
+}
+
+.achv-hero-title {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1 1 320px;
+  min-width: 260px;
+}
+
+.achv-hero-title h1 {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 30px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.achv-hero-sub {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.achv-hero-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.achv-hero-bar-label {
+  flex-shrink: 0;
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+
+.achv-hero-bar-track {
+  flex: 1 1 auto;
+  min-width: 140px;
+  height: 15px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.achv-hero-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-2), var(--gold));
+  box-shadow: 0 0 12px rgba(216, 192, 106, 0.55);
+  transition: width 0.4s ease;
+}
+
+.achv-hero-bar-pct {
+  flex-shrink: 0;
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--gold);
+  min-width: 62px;
+  text-align: right;
+}
+
+.achv-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 24px;
+  border-left: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+.achv-hero-ap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.achv-hero-ap-val {
+  font-family: var(--font-head);
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--accent-2);
+  line-height: 1.1;
+}
+
+.achv-hero-ap-label {
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.achv-hero-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.achv-hero-ring-label {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .achv-hero-stats {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid rgba(216, 192, 106, 0.16);
+  }
+}
+
+/* SVG progress ring (shared markup, achv-* renamed from legacy ach2-ring-*) */
+.achv-ring-svg { flex-shrink: 0; }
+.achv-ring-bg { stroke: var(--border); fill: none; }
+.achv-ring-fill {
+  stroke: var(--gold);
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.4s ease;
+  filter: drop-shadow(0 0 4px rgba(216, 192, 106, 0.55));
+}
+.achv-ring-text {
+  fill: var(--gold);
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ─── AP-Meilenstein-Leiste (Fun-Sweep Programm Welle II §1): kompakter Fortschrittsstreifen
+   innerhalb der aktuellen 5-%-Bande, mit Token-Vorschau im Text. ─────────────────────────────── */
+.achv-milestone-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: linear-gradient(rgba(10, 12, 15, 0.4), rgba(10, 12, 15, 0.4)), url("../assets/bg_black.webp") repeat;
+  border: 1px solid rgba(216, 192, 106, 0.22);
+}
+
+.achv-milestone-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+}
+
+.achv-milestone-body {
+  flex: 1 1 auto;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.achv-milestone-track {
+  height: 8px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.achv-milestone-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-2), var(--gold));
+  transition: width 0.4s ease;
+}
+
+.achv-milestone-text {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ─── "Kurz davor" (Welle EE, Pip P2) — die nächsten Häkchen, global sortiert, klickbar ──
+   Pip-Urteil: "291 der 474 gesperrten Karten stehen bei 0 % [...] es fehlt eine globale
+   'fast fertig'-Sicht." Kompakte Karten-Reihe, wiederverwendet dieselben Rarity-Farbtöne wie
+   die volle Karte (achv-rarity--*), damit nichts Neues gelernt werden muss. ─────────────────── */
+.achv-almost {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.achv-almost-title {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.achv-almost-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.achv-almost-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 260px;
+  padding: 8px 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.achv-almost-card:hover {
+  border-color: var(--accent-dim);
+  transform: translateY(-1px);
+}
+
+.achv-almost-card.achv-rarity--uncommon  { border-color: rgba(91, 143, 214, 0.4); }
+.achv-almost-card.achv-rarity--rare      { border-color: rgba(216, 192, 106, 0.45); }
+.achv-almost-card.achv-rarity--epic      { border-color: rgba(170, 80, 200, 0.45); }
+.achv-almost-card.achv-rarity--legendary { border-color: rgba(217, 138, 74, 0.5); }
+
+.achv-almost-emblem {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.achv-almost-emblem img { width: 26px; height: 26px; object-fit: contain; }
+
+.achv-almost-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.achv-almost-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.achv-almost-bar-track {
+  display: block;
+  height: 5px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.achv-almost-bar-fill {
+  display: block;
+  height: 100%;
+  background: #79848c;
+}
+.achv-almost-bar-fill.achv-rarity--uncommon  { background: #5b8fd6; }
+.achv-almost-bar-fill.achv-rarity--rare      { background: var(--gold); }
+.achv-almost-bar-fill.achv-rarity--epic      { background: #c080e0; }
+.achv-almost-bar-fill.achv-rarity--legendary { background: #e08030; }
+
+.achv-almost-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+/* Kurzer Hervorheb-Puls, wenn per Klick auf eine "Kurz davor"-Karte zur vollen Karte gesprungen wird. */
+@keyframes achv-card-flash {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 0 3px rgba(216, 192, 106, 0.7), 0 0 20px 4px rgba(216, 192, 106, 0.5); }
+}
+.achv-card--flash {
+  animation: achv-card-flash 0.8s ease-in-out 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .achv-card--flash { animation: none; outline: 3px solid rgba(216, 192, 106, 0.8); }
+}
+
+/* ─── Kurz-davor-Schimmer (Welle PP, Antizipation-Moment 1b): ≥90% Fortschritt, noch gesperrt.
+   Statischer Glanz-Zustand (hellt die sonst gedimmte gesperrte Karte leicht auf + dünner Gold-
+   Rand) + EINMALIGER Sweep beim Karten-Mount (kein Dauer-Glitzern, s. .achv-card-almost-sweep
+   unten — läuft ohne `forwards` sauber aus). ── */
+.achv-card--almost {
+  filter: saturate(0.92) brightness(0.98);
+  box-shadow:
+    0 0 0 1px rgba(216, 192, 106, 0.24),
+    0 0 16px rgba(216, 192, 106, 0.12);
+}
+
+@keyframes achv-almost-sweep {
+  0%   { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+  18%  { opacity: 0.85; }
+  100% { transform: translateX(220%) skewX(-18deg); opacity: 0; }
+}
+
+.achv-card-almost-sweep {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.achv-card-almost-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(240, 220, 160, 0.35), transparent);
+  animation: achv-almost-sweep 0.9s ease-out; /* bewusst ohne `forwards`, s. mastery-anticipation.css */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .achv-card-almost-sweep { display: none; }
+}
+
+/* ─── Controls: filter toggle + category tabs ── */
+.achv-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.5)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+}
+
+.achv-filter-group {
+  display: flex;
+  /* Citadel: Holz-9-Slice-Rahmen statt schlichtem 1px-Strich (wie die umgebende .achv-controls-Leiste). */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.achv-filter-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s;
+}
+.achv-filter-btn:last-child { border-right: none; }
+.achv-filter-btn:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+.achv-filter-btn--active { color: var(--gold); background: rgba(216, 192, 106, 0.14); }
+
+.achv-controls-divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(216, 192, 106, 0.16);
+  flex-shrink: 0;
+}
+
+.achv-cat-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.achv-cat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s, border-color 0.12s;
+}
+.achv-cat-btn img { width: 1.3em; height: 1.3em; object-fit: contain; }
+.achv-cat-btn:hover { color: var(--text); border-color: var(--accent-2); }
+.achv-cat-btn--active {
+  color: var(--gold);
+  border-color: rgba(216, 192, 106, 0.5);
+  background: rgba(216, 192, 106, 0.1);
+}
+
+/* ─── Category group (shown when "All" categories are active) ── */
+.achv-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.achv-group-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 2px 9px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.22);
+}
+
+.achv-group-icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+.achv-group-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+.achv-group-name {
+  font-family: var(--font-head);
+  font-size: 18px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.achv-group-count {
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--muted);
+}
+.achv-group-count strong { color: var(--gold); }
+
+/* ─── Card grid ── */
+.achv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+/* ─── Achievement card — dimmed wood-plaque when locked, warm gold-lit
+   medallion plaque when unlocked. This is the "invitingness" centerpiece. ── */
+.achv-card {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  padding: 15px 16px;
+  background: linear-gradient(rgba(8, 9, 11, 0.58), rgba(8, 9, 11, 0.62)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  filter: saturate(0.72) brightness(0.84);
+  transition: transform 0.15s, filter 0.15s, box-shadow 0.15s;
+  /* Perf-Audit 2026-07-22: 537 Karten auf einmal im DOM — content-visibility überspringt Layout/
+     Paint/Style für Karten außerhalb des Viewports komplett (senkt auch den Mount-Ruckler beim
+     ersten Öffnen). contain-intrinsic-size gibt eine Platzhaltergröße vor, bis eine Karte einmal
+     tatsächlich gerendert wurde, damit die Scrollbar nicht springt. */
+  content-visibility: auto;
+  contain-intrinsic-size: 300px 190px;
+}
+
+.achv-card:hover {
+  transform: translateY(-2px);
+}
+
+.achv-card--unlocked {
+  filter: none;
+  background:
+    linear-gradient(160deg, rgba(96, 70, 24, 0.30), rgba(10, 10, 12, 0.62) 60%),
+    url("../assets/bg_black.webp") repeat;
+  box-shadow:
+    0 0 0 1px rgba(216, 192, 106, 0.28),
+    0 0 22px rgba(216, 192, 106, 0.16),
+    0 8px 20px rgba(0, 0, 0, 0.5);
+}
+.achv-card--unlocked:hover {
+  box-shadow:
+    0 0 0 1px rgba(216, 192, 106, 0.48),
+    0 0 30px rgba(216, 192, 106, 0.28),
+    0 10px 24px rgba(0, 0, 0, 0.55);
+}
+
+/* Corner badge — unlocked laurel-checkmark or locked padlock (real PNGs, emoji fallback).
+   Pinned OUTSIDE the padding box (negative offset) like a medal hung on the plaque's frame
+   corner — keeps it clear of the name/rarity-badge row no matter how long the (German!) name
+   wraps, instead of colliding with it (Sweep note: a two-line "Universalgelehrter" used to
+   collide with this badge when it sat inside the card at top:8/right:8). */
+.achv-card-corner {
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  opacity: 0.9;
+  z-index: 2;
+  background: radial-gradient(circle, rgba(10, 8, 6, 0.92) 52%, transparent 74%);
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.8));
+}
+.achv-card-corner img { width: 100%; height: 100%; object-fit: contain; }
+.achv-card:not(.achv-card--unlocked) .achv-card-corner { opacity: 0.42; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.75)) grayscale(0.3); }
+
+.achv-emblem {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.06), rgba(10, 8, 6, 0.85) 74%);
+  border: 2px solid #454d54;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+}
+.achv-emblem img { width: 28px; height: 28px; object-fit: contain; }
+.achv-card:not(.achv-card--unlocked) .achv-emblem { filter: grayscale(0.45); }
+
+.achv-emblem.achv-rarity--common    { border-color: #454d54; }
+.achv-emblem.achv-rarity--uncommon  { border-color: rgba(91, 143, 214, 0.6); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 10px rgba(91, 143, 214, 0.24); }
+.achv-emblem.achv-rarity--rare      { border-color: rgba(216, 192, 106, 0.65); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 10px rgba(216, 192, 106, 0.3); }
+.achv-emblem.achv-rarity--epic      { border-color: rgba(170, 80, 200, 0.65); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 10px rgba(170, 80, 200, 0.3); }
+.achv-emblem.achv-rarity--legendary { border-color: rgba(217, 138, 74, 0.7); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6), 0 0 14px rgba(217, 138, 74, 0.4); }
+
+.achv-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.achv-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.achv-name {
+  font-family: var(--font-head);
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  line-height: 1.25;
+  color: var(--text);
+  /* Sweep-Fund T5/T6: `anywhere` brach lange DE/RU-Titel mitten im Wort („UNIVERSALGELE/HRTER",
+     einzelne Buchstaben in eigener Zeile). Jetzt: normale Umbrüche + echte Silbentrennung mit
+     Bindestrich (html[lang] wird vom I18nProvider gesetzt); break-word bleibt als Notanker. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.achv-card--unlocked .achv-name { color: var(--gold); }
+
+.achv-badge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.achv-badge.achv-rarity--common    { color: var(--text); border-color: #454d54; background: rgba(255, 255, 255, 0.04); }
+.achv-badge.achv-rarity--uncommon  { color: #8fbfdf; border-color: rgba(91, 143, 214, 0.4); background: rgba(91, 143, 214, 0.08); }
+.achv-badge.achv-rarity--rare      { color: var(--gold); border-color: rgba(216, 192, 106, 0.45); background: rgba(216, 192, 106, 0.08); }
+.achv-badge.achv-rarity--epic      { color: #c080e0; border-color: rgba(170, 80, 200, 0.45); background: rgba(170, 80, 200, 0.08); }
+.achv-badge.achv-rarity--legendary { color: #e08030; border-color: rgba(217, 138, 74, 0.5); background: rgba(217, 138, 74, 0.1); }
+
+.achv-ap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  color: var(--accent-2);
+}
+
+.achv-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.achv-card--unlocked .achv-desc { color: #cdbb8e; }
+
+.achv-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.achv-progress-bar {
+  height: 7px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.achv-progress-fill {
+  height: 100%;
+  background: #79848c;
+}
+.achv-progress-fill.achv-rarity--uncommon  { background: #5b8fd6; }
+.achv-progress-fill.achv-rarity--rare      { background: var(--gold); }
+.achv-progress-fill.achv-rarity--epic      { background: #c080e0; }
+.achv-progress-fill.achv-rarity--legendary { background: #e08030; }
+
+.achv-progress-count {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+.achv-status {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--gold);
+}
+
+.achv-footer {
+  padding: 14px 4px 4px;
+  text-align: center;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .achv-grid { grid-template-columns: 1fr; }
+  .achv-hero { padding: 18px 20px; }
+}

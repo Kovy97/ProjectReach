@@ -1,0 +1,40 @@
+HAUPT-POST fuer r/incremental_games — plain text, direkt copy-paste-fertig.
+Vor dem Posten: Sub-Regeln/Flair pruefen. Nach dem Posten: erste 2-3 Stunden aktiv antworten!
+Regie-Notiz: KI-Kunst wird im Post NICHT erwaehnt (Steam-Seite disclosed es ohnehin).
+Falls es in den Kommentaren aufkommt: ehrlich und entspannt antworten, nicht defensiv.
+
+================================================================================
+TITEL (einen waehlen):
+
+1. My Melvor-like got called "just a clone" at launch. Fair. Here's the game I'm actually trying to build.
+2. I grew up on RuneScape, loved Melvor, but always missed actually seeing the world. So I'm building the idle RPG I always wanted.
+3. Lost my job two months ago and went all-in on my hobby idle RPG. Here's the core idea behind it, and what launch taught me.
+
+================================================================================
+BODY (ab hier alles einfuegen):
+
+Quick context on who's writing this: I'm a programmer, a dad of one, and a RuneScape kid. That was THE game of my childhood. Years later Melvor scratched that itch harder than anything since, but one thing always nagged me. I missed actually seeing stuff. The world, the monsters, the gear, the gritty dark fantasy of it all. So "the idle RPG I actually wanted to play" slowly turned into my hobby project. Then two months ago I lost my job, and once the initial panic settled I figured this is my window. Grim Reach is that bet.
+
+Before I get to the launch story, here's the core thought behind the game, because "Melvor with graphics" isn't quite it. What I loved about RuneScape wasn't just the skilling loop. It was that Gielinor felt like a place. Things happened there whether you cared or not. You recognized monsters from across the screen. You had personal beef with specific bosses. Most idle games kept the loop but threw away the place. Grim Reach is my attempt to keep the depth of a Melvor-like and give it back a world you can actually look at and live in. Dark, muddy, torchlit fantasy, on purpose.
+
+That thought turned into a handful of rules I build by:
+
+The world moves without you. It shouldn't feel like a menu waiting for your click. Named elite champions roam the zones on their own schedules, announce themselves with an alert, and leave after 15 minutes ("Greytooth the Famished" has places to be). Every real weekday carries a different world blessing, from Blood Moon to the Wild Hunt. NPCs comment on what's happening. The Warden reports what really went down while you were away, and writes your deaths into a chronicle with increasingly dry remarks. And none of it is FOMO bait: blessings are deliberately mild, champions only spawn while you're actually playing, and being offline never costs you anything.
+
+You see everything. Every monster, every zone, every weapon and armor piece has real art. Fights play out on painted battle screens where your character and the enemy actually stand in the scene. If a champion drops its unique, you're not reading a table row, you're looking at the thing.
+
+Loot has a soul. Rare gear drops are individual items, not spreadsheet entries. Each one rolls its own suffix, so two identical swords are never actually identical. Zone rare drops are intentionally strong for their level requirements, the kind of item you farm on purpose and then keep for twenty levels. The 28 champions each guard one named unique with its own effect. And your very first equipment drop is guaranteed to roll a suffix, so you see the system in your first minutes instead of hour ten.
+
+Combat is the spine, not a side tab. Twenty skills all feed your combat attributes, so the gatherer and the fighter in you are building the same character. Three combat styles that actually play differently, three armor philosophies (plate soaks hits, leather dodges them, cloth wards them off). Some walls are meant to stop you until you gear up. The Reach pushes back, that's the point.
+
+Your time is respected, period. Offline progress runs through the exact same engine as online play, down to the same dice rolls. No microtransactions, no energy bars, no boosters, ever. One purchase. And saves survive every single update. I've written that into the project as a hard law, because I hate wipes as much as you do.
+
+So that's the idea. Now the reality check: I launched into Early Access two weeks ago. Day one was great (88 sales!). Then came a 25% refund rate and the same review over and over: "It's fine, but it's just Melvor again." Honest answer? The launch version deserved that. The bones were solid, but most of the identity I just described existed only in my head and my design docs. The world didn't move yet. So instead of arguing with reviews, I spent two weeks building the first big piece of it, and it went live today as Patch #1: the champions, the blessings, the talking world, 14 new weapon drops across all level bands, plus a QoL wave straight from player reports (action queue with stacking, a mailbox so full-inventory loot never vanishes, smarter auto-eat, and one very embarrassing fix: backgrounds were invisible for everyone who installed to the default Steam folder. If you refunded over that one: sorry. It's fixed.).
+
+There's a lot left to build. Bigger quest arcs, more zones, the endgame tower, and a proper tutorial flow are all on the public roadmap. But the direction is set, and Patch #1 is the first real proof of it.
+
+If "Melvor, but the world hunts back" sounds like your kind of game, it's on Steam for 7.99: https://store.steampowered.com/app/4915450/Grim_Reach/
+
+And if you bounced off it at launch: fair. I'd genuinely love to hear where it lost you. This community's criticism shaped everything in Patch #1, and it'll shape Patch #2 too.
+
+All of this is one person, a programmer and dad who's currently between jobs, plus an unhealthy amount of idle game obsession. Happy to answer anything.

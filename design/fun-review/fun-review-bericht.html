@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grim Reach — Fun- &amp; Sucht-Review · Alle Bewertungsbögen</title>
+<style>
+  :root{
+    --bg:#131009; --surface:#1c180f; --surface-2:#241f14; --raise:#2c2517;
+    --ink:#ece2cd; --ink-2:#ab9f84; --ink-3:#776c55; --line:#302819; --line-2:#3c3320;
+    --gold:#e2c877; --gold-deco:#caa244; --ember:#df6a44; --ember-fill:225,118,64;
+    --crit:#dc6446; --warn:#d6a445; --ok:#93b06a; --sys:#9a9ad0;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 34px rgba(0,0,0,.5);
+  }
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#e4ddca; --surface:#efe9da; --surface-2:#f5f0e4; --raise:#faf6ec;
+      --ink:#231f17; --ink-2:#5c5342; --ink-3:#8a8069; --line:#d0c7b0; --line-2:#c2b89e;
+      --gold:#9c6f18; --gold-deco:#c39a38; --ember:#b23f22; --ember-fill:194,65,12;
+      --crit:#a83318; --warn:#a9741a; --ok:#5f7a44; --sys:#5a5a86;
+      --shadow:0 1px 2px rgba(60,45,20,.10), 0 8px 26px rgba(60,45,20,.09);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px; margin:0 auto; padding:clamp(20px,4vw,56px) clamp(16px,4vw,40px) 90px}
+  .serif{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+
+  header.mast{border-bottom:1px solid var(--line); padding-bottom:26px; margin-bottom:30px; position:relative}
+  .mast-glow{position:absolute; left:0; bottom:-1px; height:2px; width:190px;
+    background:linear-gradient(90deg,var(--gold-deco),rgba(0,0,0,0)); box-shadow:0 0 14px var(--gold-deco)}
+  .eyebrow{font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+  h1{font-weight:600; font-size:clamp(28px,5vw,46px); line-height:1.06; margin:12px 0 0; letter-spacing:-.01em}
+  h1 .sub{display:block; font-style:italic; color:var(--gold); font-size:.52em; margin-top:6px; font-weight:500}
+  .lead{max-width:68ch; margin:16px 0 0; color:var(--ink-2); font-size:16.5px}
+  .lead strong{color:var(--ink)}
+
+  /* Vergleichs-Heatmap */
+  .heat{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface); margin-top:26px}
+  .heat table{border-collapse:collapse; width:100%; min-width:780px}
+  .heat th{font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); font-weight:600;
+    padding:12px 6px 8px; text-align:center; border-bottom:1px solid var(--line)}
+  .heat th.lbl{text-align:left; padding-left:16px}
+  .heat td{padding:3px}
+  .heat td.lbl{font-size:13.5px; font-weight:600; white-space:nowrap; padding:3px 10px 3px 16px}
+  .heat td.lbl small{color:var(--ink-3); font-weight:500}
+  .hcell{height:34px; border-radius:5px; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; border:1px solid rgba(120,90,30,.07)}
+
+  h2.sec{font-weight:600; font-size:clamp(20px,3vw,25px); margin:52px 0 18px; letter-spacing:-.01em;
+    display:flex; align-items:baseline; gap:12px}
+  h2.sec::after{content:""; flex:1; height:1px; background:var(--line)}
+
+  /* Agenten-Karten */
+  .agent{background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
+    padding:24px 26px; margin-bottom:22px}
+  .ag-head{display:flex; gap:16px; align-items:baseline; flex-wrap:wrap; margin-bottom:4px}
+  .ag-name{font-family:"Iowan Old Style",Palatino,Georgia,serif; font-size:23px; font-weight:600}
+  .ag-sys{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); font-weight:700}
+  .ag-total{margin-left:auto; display:flex; align-items:center; gap:10px}
+  .ag-total .n{font-family:"Iowan Old Style",Palatino,Georgia,serif; font-size:30px; font-weight:700; color:var(--gold)}
+  .ag-total .n small{font-size:.45em; color:var(--ink-3)}
+  .again{font-size:11px; font-weight:700; letter-spacing:.06em; padding:5px 11px; border-radius:18px; white-space:nowrap}
+  .again.yes{color:var(--ok); background:color-mix(in srgb,var(--ok) 14%,transparent); border:1px solid color-mix(in srgb,var(--ok) 34%,transparent)}
+  .again.no{color:#fff; background:var(--crit)}
+  .ag-bio{color:var(--ink-2); font-size:14px; margin:0 0 16px; max-width:78ch}
+  .ag-bio em{color:var(--ink)}
+
+  .ag-grid{display:grid; grid-template-columns:minmax(300px,0.95fr) 1.05fr; gap:22px}
+  @media (max-width:860px){ .ag-grid{grid-template-columns:1fr} }
+
+  .bogen{background:var(--surface-2); border:1px solid var(--line-2); border-radius:11px; padding:16px 18px}
+  .bogen h5{margin:0 0 12px; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); font-weight:700}
+  .meter{display:grid; grid-template-columns:128px 1fr 30px; align-items:center; gap:10px; margin-bottom:8px}
+  .meter .ml{font-size:12.5px; color:var(--ink-2); font-weight:600}
+  .meter .track{height:8px; background:var(--bg); border-radius:5px; overflow:hidden; border:1px solid var(--line)}
+  .meter .fill{height:100%; border-radius:5px 4px 4px 5px; min-width:5px}
+  .meter .mv{font-size:13px; font-weight:700; text-align:right; font-variant-numeric:tabular-nums}
+  .meter.total{margin-top:12px; padding-top:12px; border-top:1px solid var(--line-2)}
+  .meter.total .ml{color:var(--gold); font-weight:700}
+  .verdikt{margin:13px 0 0; font-size:13.5px; line-height:1.5; color:var(--ink-2); font-style:italic;
+    border-left:2px solid var(--gold-deco); padding-left:10px}
+  .verdikt b{color:var(--ink); font-style:normal}
+
+  .ag-right h5{margin:0 0 8px; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); font-weight:700}
+  .ag-right ul{margin:0 0 16px; padding-left:18px; color:var(--ink-2); font-size:13.5px; line-height:1.55}
+  .ag-right li{margin-bottom:5px}
+  .ag-right li b{color:var(--ink)}
+  .buglist li{color:var(--ink-2)}
+  .tag-bug{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.07em; color:#fff;
+    background:var(--crit); border-radius:5px; padding:1px 7px; margin-right:6px; vertical-align:1px}
+  .tag-fix{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.07em; color:var(--ink);
+    background:var(--warn); border-radius:5px; padding:1px 7px; margin-right:6px; vertical-align:1px}
+
+  footer{margin-top:52px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink-3);
+    font-size:12.5px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+
+  .status-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px; margin-top:14px}
+  .status{width:100%; border-collapse:collapse; font-size:13.5px; min-width:640px}
+  .status th{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line);
+    font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)}
+  .status td{padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  .status tr:last-child td{border-bottom:none}
+  .status .agent-cell{white-space:nowrap; color:var(--ink-3)}
+  .done-badge{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.05em;
+    color:#fff; background:#2e7d4f; border-radius:5px; padding:1px 7px; margin-right:6px;
+    vertical-align:1px}
+  .note-badge{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.05em;
+    color:#fff; background:var(--warn); border-radius:5px; padding:1px 7px; margin-right:6px;
+    vertical-align:1px}
+  .status .rest{color:var(--ink-3); font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-glow"></div>
+    <div class="eyebrow">Fun-Sweep 2026-07-14 · 7 Sim-Agenten · einheitlicher Bewertungsbogen (1–10)</div>
+    <h1 class="serif">Fun- &amp; Sucht-Review<span class="sub">Jeder Agent, jeder Bogen — vollständig</span></h1>
+    <p class="lead"><strong>Sieben Systeme, die noch nie ein Spaß-Urteil bekamen, bewertet von sieben Personas mit identischem Bogen.</strong> Diagnose über alle Bögen: starke Systeme, stumme Momente — die Mechanik trägt, aber Meilensteine feiern nicht. <strong>Stand 16.07.: Alle 21 Top-3-Empfehlungen und alle 8 Bugs sind umgesetzt</strong> (Status-Tabelle unten).</p>
+    <div class="heat"><table id="heat"></table></div>
+  </header>
+
+  <h2 class="sec serif">Umsetzungs-Status (16.07.2026)</h2>
+  <p class="lead">Alle Top-3-Empfehlungen der sieben Bögen wurden auf Chef-GO implementiert, dazu sämtliche gemeldeten Bugs. Save-Stand: Version 67 (drei Migrationen, Kompat-Vault grün). Bewusst in den Balance-Block der nächsten Session verschoben: Mastery-Zahlenboni an Rängen, spürbares Suffix-Varianz-Raster, echtes Pity-Tracking, Turm-Safespots.</p>
+  <div class="status-wrap"><table class="status">
+    <tr><th>Agent</th><th>Top-3-Empfehlung</th><th>Status</th></tr>
+    <tr><td class="agent-cell">Fenn (Pets)</td><td>Kein Drop darf je stumm sein</td><td><span class="done-badge">UMGESETZT</span>Drop-Zähler jetzt dauerhaft im Save, der zweite Fund derselben Session feiert wieder; Offline-Funde erscheinen als eigene Sektion im Willkommen-Popup</td></tr>
+    <tr><td class="agent-cell"></td><td>Skilling-Pets sichtbar machen</td><td><span class="done-badge">UMGESETZT</span>Aktives Pet als Mini-Sprite auf der passenden Skill-Seite, mit Puls beim Ertrag</td></tr>
+    <tr><td class="agent-cell"></td><td>Drop-Moment zu Ende bauen</td><td><span class="done-badge">UMGESETZT</span>Effekt-Zeilen + „Ausrüsten"-Button direkt im Feier-Overlay, Achievement „Ein Freund in der Asche" für das erste Pet, Picker größer und gruppiert</td></tr>
+    <tr><td class="agent-cell">Mona (Mastery)</td><td>Mastery-Momente feiern</td><td><span class="done-badge">UMGESETZT</span>Dreistufige Toasts: Level dezent, Rang mit Stern, Pool-Checkpoint mit Gold-Puls</td></tr>
+    <tr><td class="agent-cell"></td><td>Ziele sichtbar machen</td><td><span class="done-badge">UMGESETZT</span>„Nächster Rang"-Zeile mit Bonus-Vorschau und XP-Rest je Aktion, Checkpoint-Hover am Pool</td></tr>
+    <tr><td class="agent-cell"></td><td>Fühlbare Meilenstein-Stufen</td><td><span class="done-badge">UMGESETZT</span>Rang-Sterne Bronze bis Diamant an jeder Aktionskarte; neue Zahlen-Boni bewusst in den Balance-Block verschoben</td></tr>
+    <tr><td class="agent-cell">Riko (Enchanting)</td><td>Roll-Qualität sichtbar</td><td><span class="done-badge">UMGESETZT</span>„87 % vom Maximalwurf" im Tooltip und in der Varianten-Tasche</td></tr>
+    <tr><td class="agent-cell"></td><td>Chancen in % überall</td><td><span class="done-badge">UMGESETZT</span>Suffix-Chance-Chip auf Craft-Karten, inklusive Live-Glücksbonus</td></tr>
+    <tr><td class="agent-cell"></td><td>Reveal-Moment + Reroll</td><td><span class="done-badge">UMGESETZT</span>Jackpot-Reveal beim Suffix-Craft; „Suffix neu würfeln" gegen Gold mit ehrlichem Confirm und Ergebnis-Toast</td></tr>
+    <tr><td class="agent-cell">Vesna (Slayer)</td><td>Kopfgeld auf den Zettel</td><td><span class="done-badge">UMGESETZT</span>XP- und Punkte-Chips am Task-Zettel; Punkte skalieren jetzt mit der Task-Größe</td></tr>
+    <tr><td class="agent-cell"></td><td>Task-Streak einführen</td><td><span class="done-badge">UMGESETZT</span>Serie zählt sichtbar, jeder 5. Task gibt Tokens, jeder 10. Bonus-Punkte; nur bezahltes Skippen bricht sie (mit Warnung)</td></tr>
+    <tr><td class="agent-cell"></td><td>Endgame-Pool retten</td><td><span class="done-badge">UMGESETZT</span>Auswahl-Fenster streckt sich automatisch, bis mindestens 4 Kandidaten da sind</td></tr>
+    <tr><td class="agent-cell">Aldric (Paragon)</td><td>Einstiegskurve kalibrieren</td><td><span class="done-badge">UMGESETZT</span>Der Blocker-Fix: Sekundärwerte rampen von 30 % auf Etage 1 bis 100 % auf Etage 20; Etage 1 bis 5 schafft jetzt jeder Stil, ab 5 gilt exakt die alte Kurve</td></tr>
+    <tr><td class="agent-cell"></td><td>Aufstieg flüssig machen</td><td><span class="done-badge">UMGESETZT</span>Großer „Weiter ab Etage N"-Knopf + Auto-Aufstieg-Schalter (klettert bis zum Tod oder Abbruch); Safespot-Staffel als Empfehlung im Balance-Block dokumentiert</td></tr>
+    <tr><td class="agent-cell"></td><td>Aufstieg veredeln</td><td><span class="done-badge">UMGESETZT</span>Achievement-Leiter „First Ascent" bis „Beyond the Ash-Sky" (Etage 5 bis 30), sichtbare Meilenstein-Truhen-Leiste, lesbare Vorschau-Karte mit allen Werten</td></tr>
+    <tr><td class="agent-cell">Grete (Dungeons)</td><td>Beute-Vorschau auf der Karte</td><td><span class="done-badge">UMGESETZT</span>Top-Drops mit Prozent und Fund-Haken direkt auf jeder Dungeon-Karte, Unbekanntes als Silhouette</td></tr>
+    <tr><td class="agent-cell"></td><td>Chase-Fortschritt zeigen</td><td><span class="done-badge">UMGESETZT</span>Lauf-Zähler an der Karte + Fund-Status je Beute; echtes Pity-System liegt im Balance-Block</td></tr>
+    <tr><td class="agent-cell"></td><td>Thron-Dramaturgie</td><td><span class="done-badge">UMGESETZT</span>Boss-Intro feuert jetzt auch bei Ein-Wellen-Dungeons — Drazhan bekommt seinen Auftritt</td></tr>
+    <tr><td class="agent-cell">Pip (Achievements)</td><td>AP-Meilensteine belohnen</td><td><span class="done-badge">UMGESETZT</span>Alle 5 % Gesamt-Fortschritt gibt es Quest-Tokens (165 über die volle Staffel), bei 100 % eine große Zeremonie; Alt-Saves holen alles als einen Stapel nach</td></tr>
+    <tr><td class="agent-cell"></td><td>„Kurz davor"-Leiste</td><td><span class="done-badge">UMGESETZT</span>Die 5 nächsten Erfolge mit Fortschrittsbalken oben auf der Seite, Klick springt zur Karte; Massen-Unlocks kommen als ein Sammel-Toast</td></tr>
+    <tr><td class="agent-cell"></td><td>Bestiarium als Jagdliste</td><td><span class="done-badge">UMGESETZT</span>„Nur Unbesiegte"-Filter, Kill-Leiter-Häkchen je Monster, Fund-Badges an der Drop-Liste</td></tr>
+    <tr><td class="agent-cell">Alle</td><td>Die 8 gemeldeten Bugs</td><td><span class="done-badge">UMGESETZT</span>Skip-Gnade, falscher Rare-Toast, „−0 %"-Chip, „Next milestone: 100%", Preview-Clipping, Death-Popup-Widerspruch, Prozent-Rundung, Picker-Enge — alle gefixt und im Sim verifiziert. <span class="rest"><span class="note-badge">OFFEN</span>goblin_reaver-Artwork wartet auf die Chef-Asset-Lieferung (Batch 4)</span></td></tr>
+  </table></div>
+
+  <h2 class="sec serif">Die Bögen im Einzelnen</h2>
+  <div id="agents"></div>
+
+  <footer>
+    <span>Grim Reach EA 0.1 · Fun-Sweep 2026-07-14 · Voll-Berichte: design/fun-review/*.md</span>
+    <span>7 Agenten · Ø Gesamt-Sucht 5,6/10 · Stand 16.07.: alle 21 Empfehlungen + 8 Bugs umgesetzt</span>
+  </footer>
+</div>
+
+<script>
+const ASPECTS = ["Spaß sofort","Spaß über Zeit","Sucht-Faktor","Belohnungs-Dichte","Ziel-Klarheit","Tiefe & Entscheidungen","Frustfreiheit","Verzahnung"];
+
+const AGENTS = [
+ {sys:"Pets & Companions", name:"Fenn Flauschhand", arch:"Der Begleiter-Sammler", total:7, again:true,
+  bio:"Spielt Spiele für die Pets; 200 Stunden für das letzte Vieh sind ein Versprechen, wenn die Jagd sich gut anfühlt. <em>2 Sessions, 10 Screenshots, echter Combat-Drop-Moment, Ability live in der Arena.</em>",
+  s:[6,7,7,5,9,6,5,9],
+  verdikt:"<b>Ja</b> — jeder Timer über Nacht ist zehntausend Lose für die nächste dunkle Karte in meiner Galerie.",
+  momente:["Leere Galerie = perfektes <b>Want-Board</b>: jede ???-Karte zeigt Quelle + ehrliche Drop-Chance („1 / 60.000\").","Drop-Moment = <b>beste Bühne des Spiels</b> (Strahlenkranz, ULTRA RARE, Lore) — aber ohne „Ausrüsten\"-Knopf.","Im Kampf Darsteller (eigenes Sprite, Lunge, Flavor-Zeile) — beim Skilling unsichtbare Geister (14 von 21 Pets)."],
+  top3:["Kein Drop darf je stumm sein: Seq-Bug fixen, Offline-Drops nachfeiern.","Skilling-Pets sichtbar machen (Mini-Sprite + Proc-Moment).","Drop-Moment zu Ende bauen + Picker als Entscheidungshilfe gruppieren."],
+  bugs:["<span class=tag-bug>BUG</span>Zweiter Session-Drop wird verschluckt (Zähler-Reset vs. Hochwassermarke) — bestätigt.","<span class=tag-bug>BUG</span>Offline-Pet-Drops werden NIE gefeiert (kein Pet-Feld in der Offline-Zusammenfassung).","4,5-%-Passive als „+5%\" gerundet · Picker-Fenster nur 280px hoch."]},
+
+ {sys:"Slayer", name:"Vesna Schwurklinge", arch:"Die Kopfgeldjägerin", total:7, again:true,
+  bio:"Lebt den Auftrags-Loop: Task holen → jagen → kassieren → nächster. <em>32 volle Task-Zyklen auf 3 Ständen, 80 Angebots-Ziehungen, Kill-Zeiten per Sim vermessen.</em>",
+  s:[8,6,7,6,9,4,6,8],
+  verdikt:"<b>Ja</b> — die 3–10-Minuten-Häppchen und die Shop-Leiter ziehen; aber ab Slayer-Level 80 käme ich für Hirsch Nr. 40 nicht mehr.",
+  momente:["Die Jagd selbst ist der stärkste Moment: Ziel-Ribbons, omnipräsenter Topbar-Chip, fetter Abschluss-Toast.","<b>Endgame-Monotonie</b>: Welt-Pool kollabiert auf 1–2 Monster (60 % aller Tasks = derselbe Hirsch).","703 Tasks für Slayer-Level 80→99; der Turm schickt 97er zurück zu Level-3-Ratten."],
+  top3:["Kopfgeld auf den Zettel: Belohnung im Task-Panel zeigen + Punkte mit Task-Größe skalieren.","Task-Streak (jeder 5./10. = Bonus) — der fehlende „eine Runde noch\"-Hebel.","Endgame-Pool retten: untere Turm-Kante + Welt-Fenster nach oben strecken."],
+  bugs:["<span class=tag-bug>BUG</span>Gratis-Skip-Gnade unter SL 10 unbenutzbar (roher statt effektiver Preis geprüft) — der Anti-Sackgassen-Fix erreicht Spieler nie.","Skip (sofort) vs. Cancel (Confirm): doppelter Pfad, identischer Effekt.","Pool-Kollaps ohne Chronik-Fortschritt wird von Brenna nicht kommuniziert."]},
+
+ {sys:"Dungeon-Farming", name:"Grete Beutezug", arch:"Die Dungeon-Farmerin", total:7, again:true,
+  bio:"Wiederholt Dungeons für Chase-Drops und Clear-Effizienz. <em>Echte runDungeon-Sims + 3 Live-Warband-Läufe; Warband 80 s/Run, ~6,5 Runs pro 10-Minuten-Block.</em>",
+  s:[8,6,7,8,4,6,6,8],
+  verdikt:"<b>Ja</b> — für den Lauf-Rhythmus; für die 0,1-%-Kette nur, wenn das Spiel mir je verrät, dass es sie gibt.",
+  momente:["Belohnungs-Schichtung sitzt: Wellen-Loot → Chest → Boss → Clear → Suffix → Erstclear ×2. Nicht anfassen.","Spaltbeil-Chase (0,3 % ≈ 9 h) = hart, aber fair. <b>Kronen-Kette (0,1 % ≈ 120–480 h) = Wand, keine Jagd.</b>","Chases sind vor dem Erstfund KOMPLETT unsichtbar — man farmt, ohne zu wissen wofür. Ziel-Klarheit 4/10."],
+  top3:["Beute-Vorschau auf der Dungeon-Karte (Silhouetten + % im Bestiarium-Stil) — größter Einzelhebel.","Chase-Fortschritt: „Läufe seit letztem Fund\" oder sanftes Pity für die 0,1-%-Klasse.","Thron-Dramaturgie: Boss-Intro auch für 1-Wellen-Dungeons — das Finale ist der ärmste Dungeon."],
+  bugs:["<span class=tag-fix>ASSET</span>goblin_reaver ohne Art (lila Platzhalter in Welle 1 des Einstiegs-Dungeons).","Meisterweihe-Queue poppt beim Alt-Save-Load mitten in Kämpfe.","Melee-Ward-Wand (aether_wraith) nirgendwo erklärt: 0/10 Läufe, 10 Tode ohne wardBreak."]},
+
+ {sys:"Achievements & Bestiarium", name:"Pip Hakenliste", arch:"Der Komplettist", total:6, again:true,
+  bio:"Lebt von Häkchen; öffnet die Achievements-Seite öfter als das Charakterblatt. <em>530 Achievements / 10.335 AP vermessen, 100-%-Zustand simuliert, Massen-Unlock getestet.</em>",
+  s:[7,5,6,5,7,3,7,6],
+  verdikt:"<b>Ja</b> — aber wegen der 24/30-Balken und Zonen-Alben, nicht wegen der AP-Zahl; die verpufft ohne Gegenwert.",
+  momente:["Trophäensaal überzeugt sofort: Hero-Bar, live tickende Fortschritts-Balken auf gesperrten Karten.","<b>AP ist reiner Score</b>: 10.335 Punkte, die nirgends im Spiel gelesen werden — kein Titel, keine Belohnung.","100-%-Simulation: nichts passiert („Next milestone: 100%\"-Bug am wichtigsten Moment) · Massen-Unlock verschluckt 17 von 21 Toasts."],
+  top3:["AP-Meilensteine belohnen (alle 5 % Titel/Kosmetik/Tokens; 100 % mit Zeremonie).","„Nächste Häkchen\"-Leiste + Stapel-Toast („21 freigeschaltet, +1.020 AP\").","Bestiarium als Jagdliste: „Nur Unbesiegte\"-Filter + Kill-Leiter-Häkchen auf der Monsterkarte."],
+  bugs:["<span class=tag-bug>BUG</span>„Next milestone: 100%\" bei Vollendung (fehlender Clamp).","<span class=tag-bug>BUG</span>Massen-Unlock: Toast-Limit schneidet ohne Sammel-Hinweis ab.","Invertierte Raritäts-Pyramide: „rare\" ist die HÄUFIGSTE Stufe (180 von 530)."]},
+
+ {sys:"Verzauberung & Suffixe", name:"Riko Rollwut", arch:"Der Perfekt-Roll-Bastler", total:5, again:true,
+  bio:"Steht in ARPGs 40 % der Zeit am Verzauberungs-Altar. <em>2 Sessions, ~10 Altar-Interaktionen, 8 Crafts inkl. 2 Void-Fusionen, injizierte Roll-Vergleichs-Instanzen.</em>",
+  s:[7,5,4,6,6,7,6,8],
+  verdikt:"<b>Ja</b> — wegen Runen-Leiter und Drops, nicht wegen der Rolls: Solange ein 98er-Roll nicht von einem 2er unterscheidbar ist, gibt es für meinen Spielertyp nichts zu jagen.",
+  momente:["Erster Altar-Enchant stark: Preview, grünes ENCHANTED!, das Item trägt fortan seinen Namen.","Faire Regeln vor Kosten (Duplikatsperre, Slot-Cap geprüft, bevor Gold fließt) — kein Fehlversuch kostet.","<b>Der Kernmoment existiert nicht:</b> Roll 0.02 vs. 0.98 ist nach Rundung ZEICHENGLEICH. Slot-Machine ohne Walzen."],
+  top3:["Roll-Qualität sichtbar UND spürbar machen (Roll-% im Tooltip + Varianz/Raster) — die eine Änderung, die eine Jagd daraus macht.","Chancen in % überall (Suffix-Chip auf Craft-Karten, Drop-Chance im Loot-Tooltip).","Reveal-Moment + Reroll-Rezept als „ein Versuch noch\"-Knopf."],
+  bugs:["<span class=tag-bug>BUG</span>Falscher „Rare find!\"-Toast beim Verzaubern angelegter Items (Doppelzählung).","Roll-Varianz kollabiert in der Rundung (gegen die eigene ±15-%-Spec).","Suffix-Chancen (20 % Craft / 8 % Drop) nirgends angezeigt · „Rune of Precision\" gibt +Luck (Begriffskollision)."]},
+
+ {sys:"Mastery", name:"Mona Feilgrund", arch:"Die Perfektionistin", total:4, again:true,
+  bio:"Zieht jede Mastery-Bar auf 99 — wenn es sich lohnt. <em>Zeitraffer ★1→99, Pool-Checkpoint-Sprünge live abgepasst, 760 Aktionen über 11 Skills vermessen.</em>",
+  s:[3,6,3,2,4,5,7,6],
+  verdikt:"<b>Ja, aber</b> — wegen der Skills, nicht wegen Mastery; die Seite gibt mir keinen Termin, keinen nächsten Stern, kein „noch 20 Minuten bis zum Checkpoint\".",
+  momente:["Der erste Mastery-Level-Up war <b>unsichtbar</b>: kein Toast, kein Aufblitzen, kein Ton — verifiziert.","Pool-Checkpoint ebenso stumm: ein DAUERHAFTER Skill-Bonus fällt, und das Spiel sagt es niemandem.","★99 fühlt man wirklich (2,8s→2,2s, +93 % Ertrag) — aber zwischen ★2 und ★30 ist der Zuwachs unfühlbar."],
+  top3:["Mastery-Momente einbauen: Toast je Level-Up, Feier bei Checkpoints — größter Hebel, kleinster Aufwand.","Ziele sichtbar: Checkpoint-Marker beschriften, „nächster Checkpoint in ~X min\", ETA im Tooltip.","Meilenstein-Sprünge bei ★10/25/50 statt 0,5-%-Tropf; „0/760 maximiert\" durch erreichbare Ränge ersetzen."],
+  bugs:["<span class=tag-bug>BUG</span>„−0 % ⏱\"-Chip bei Mastery 2–4 (ungerundete Bedingung).","Alle Skills tragen dasselbe „Legendary\"-Badge (hängt an Aktions-Anzahl — Information null).","Endgame-Fixture ohne Mastery-Daten (verzerrt jeden Endgame-Sweep) · Pool füllt sich als Beifang, nicht ansteuerbar."]},
+
+ {sys:"Paragonturm", name:"Aldric Steigeisen", arch:"Der Kletterer", total:3, again:false,
+  bio:"Endgame-Grinder auf der Suche nach dem System, das Monate trägt. <em>Locked→Unlock→Etage-1-Kampf live, Boss-Previews, Tod auf E20, 6 deterministische Kletter-Sims.</em>",
+  s:[5,2,3,2,8,4,3,8],
+  verdikt:"<b>Nein</b> — solange Etage 3 die Decke des besten Builds ist, gibt es dort oben für mich nichts zu klettern.",
+  momente:["Das Gerüst stimmt: Checkpoint-Pause, Rekord bleibt beim Tod, ehrliche Tod-Kommunikation, sauberer Kapitel-21-Anschluss.","<b>BLOCKER:</b> Der Story-Sieger (Gesamt-Level 1915, bestes Story-Gear) stirbt reproduzierbar auf Etage 3 — die Skalierung erbt Rüstung/Regen/Enrage/Ausweichen roh von Level-242-Monstern.","Kein „Weiter\"-Knopf im Clear-Moment; Re-Climb nach Tod = 40+ Minuten Handarbeit ohne eine Entscheidung."],
+  top3:["Einstiegskurve an den Kapitel-19-Sieger kalibrieren (Sekundärwerte über Etagen einblenden). → FIX LÄUFT","„Eine Etage noch\": Weiter-Knopf am Kampfschirm + Auto-Aufstieg mit Stopp-Regeln.","Aufstieg sichtbar veredeln: Achievement-Leiter, Truhen-Staffelung anzeigen, lesbare Previews."],
+  bugs:["<span class=tag-bug>BLOCKER</span>Kapitel 21 mit realistischem Gear unabschließbar (Etage-3-Wand) — Fix-Welle läuft.","Preview-Karte schneidet Namen + alle Stat-Kacheln ab („LE… 1…\") · Preview verschweigt Ward + Sekundärwerte.","Death-Popup-Widerspruch: „Kein Verlust: Du behältst alles\" + „Zurück auf Etage 1\" nach 19 verlorenen Etagen."]},
+];
+
+function ember(v){ const t=Math.max(0,Math.min(1,(v-1)/9)); return `rgba(var(--ember-fill),${(0.07+t*0.85).toFixed(3)})`; }
+
+// Vergleichs-Heatmap oben
+let h = `<thead><tr><th class="lbl">System · Agent</th>${ASPECTS.map(a=>`<th>${a.split(" ")[0]}</th>`).join("")}<th>Gesamt</th><th>Wieder?</th></tr></thead><tbody>`;
+for (const a of AGENTS){
+  h += `<tr><td class="lbl">${a.sys} <small>· ${a.name.split(" ")[0]}</small></td>`+
+    a.s.map((v,i)=>`<td><div class="hcell" style="background:${ember(v)}" title="${ASPECTS[i]}: ${v}/10">${v}</div></td>`).join("")+
+    `<td><div class="hcell" style="background:${ember(a.total)};border:1.5px solid var(--gold-deco)">${a.total}</div></td>`+
+    `<td><div class="hcell" style="font-size:15px">${a.again?"✔":"✖"}</div></td></tr>`;
+}
+document.getElementById("heat").innerHTML = h + "</tbody>";
+
+// Agenten-Karten
+document.getElementById("agents").innerHTML = AGENTS.map(a=>`
+ <article class="agent">
+   <div class="ag-head">
+     <span class="ag-sys">${a.sys}</span>
+     <span class="ag-name serif">${a.name}</span>
+     <span style="color:var(--ink-3); font-size:13.5px">· ${a.arch}</span>
+     <span class="ag-total"><span class="n">${a.total}<small>/10</small></span>
+       <span class="again ${a.again?"yes":"no"}">${a.again?"Kommt morgen wieder":"Kommt NICHT wieder"}</span></span>
+   </div>
+   <p class="ag-bio">${a.bio}</p>
+   <div class="ag-grid">
+     <div class="bogen">
+       <h5>Bewertungsbogen</h5>
+       ${a.s.map((v,i)=>`<div class="meter"><span class="ml">${ASPECTS[i]}</span><span class="track"><span class="fill" style="width:${v*10}%;background:${ember(v)}"></span></span><span class="mv">${v}</span></div>`).join("")}
+       <div class="meter total"><span class="ml">Gesamt-Sucht-Urteil</span><span class="track"><span class="fill" style="width:${a.total*10}%;background:${ember(a.total)}"></span></span><span class="mv">${a.total}</span></div>
+       <p class="verdikt">Komme ich morgen wieder? ${a.verdikt}</p>
+     </div>
+     <div class="ag-right">
+       <h5>Erlebte Momente</h5>
+       <ul>${a.momente.map(m=>`<li>${m}</li>`).join("")}</ul>
+       <h5>Top-3 für mehr Sucht-Faktor</h5>
+       <ul>${a.top3.map(m=>`<li>${m}</li>`).join("")}</ul>
+       <h5>Bugs &amp; Befunde</h5>
+       <ul class="buglist">${a.bugs.map(m=>`<li>${m}</li>`).join("")}</ul>
+     </div>
+   </div>
+ </article>`).join("");
+</script>
+</body>
+</html>

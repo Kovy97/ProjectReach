@@ -1,0 +1,95 @@
+=== ChatGPT Icon-Generierungs-Prompts — Grim Reach (Runde 3) ===
+Generiert: 2026-07-01
+Fehlende Item-Icons: 22  |  Fehlende Monster-Bilder: 1
+Jeder Block = ~10 Einträge. Format pro Eintrag: Name (dateiname.png) — Aussehens-Beschreibung.
+Durchgängiger Stil: dunkles Dark-Fantasy, KEIN Pixel-Art, EIN einzelnes Icon pro Bild, zentriert, auf transparentem oder schlichtem dunklem Hintergrund.
+Reihenfolge: TEIL A (NEU seit Runde 2 — bitte zuerst), dann TEIL B (noch offen aus Runde 2), dann das Monster.
+Hinweis: Die 8 neuen Slayer-Tower-Monster (tower_goblin, tower_skeleton_warrior …) NICHT generieren — sie nutzen automatisch die Art ihres Basis-Monsters.
+
+
+############### TEIL A — NEU SEIT RUNDE 2 (11 Items — höchste Priorität) ###############
+
+############### A · RÜSTUNG / WAFFEN / SCHMUCK (3) ###############
+
+--- A-RÜSTUNG/WAFFEN/SCHMUCK Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Aetherschuppen-Kürass (aetherscale_cuirass.png) — Ein hochwertiger Brustpanzer aus überlappenden, ätherisch schimmernden Aether-Schuppen — wie die Schuppen eines Himmelsdrachen, blass türkis-blau und perlmuttartig irisierend. Die Schuppenreihen fächern sich von der Brustmitte nach außen; kantige Schulterstücke tragen feine arkane Gravuren. Epische Verteidigungsrüstung mit einem Hauch Magie. Kühler türkis-weißer Aether-Schimmer über den Schuppenkanten.
+• Frostkavernen-Bogen (frostcaverns_bow.png) — Ein epischer Langbogen, geborgen aus den eisigen Frostkavernen — die Bogenarme wirken wie aus klarem Gletschereis gewachsen, mit Raureif überzogen. Kristalline eisblaue Struktur mit weißen Frostadern; die Sehne glitzert wie gefrorener Faden, an den Limbspitzen hängen kleine Eiszapfen. Starker eisig-blauer Frost-Glow, kalte Nebelschwaden angedeutet.
+• Edelsteinamulett (gemstone_amulet.png) — Ein Amulett aus poliertem Eisen mit einem großen facettierten Edelstein in schlichter Krallenfassung, an einer feinen Kette — das Gegenstück zum Edelsteinring, saubere Juwelierskunst. Blau-grüner Edelstein, poliertes Silber-Eisen der Fassung, elegante aber schlichte Handwerksqualität. Kühler blauer Schimmer des Steins; dezent und edel.
+
+
+############### A · RUNEN (Schock / Sturm — Tier 1 & 2) (2) ###############
+
+--- A-RUNEN Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Rune des Sturms I (rune_storm_i.png) — Ein kleiner, flacher Runenstein der ersten Stufe, in dessen Oberfläche eine Sturm-/Blitzrune eingraviert ist. Grauer Stein mit schwach gelb glimmenden Rune-Linien und einzelnen winzigen Funken — die schwächste Sturmrune, nur ein leises Knistern. Dezentes gelbliches Glühen, minimaler Blitz-Effekt.
+• Rune des Sturms II (rune_storm_ii.png) — Ein Runenstein der zweiten Stufe mit tiefer eingebrannter Sturmrune, die deutlich heller gelb-weiß leuchtet; feine violette Blitzbögen zucken über die Steinoberfläche. Kräftigeres Knistern als Stufe I, aber noch nicht das volle Gewitter. Mittleres gelb-weißes Kernleuchten mit kleinen violetten Blitz-Ausläufern.
+
+
+############### A · FARMING — SAMEN & ERNTE (2) ###############
+
+--- A-FARMING Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Dämmerkappen-Saat (duskcap_seed.png) — Ein kleiner Lederbeutel mit dunklen Pilzsporen der Dämmerkappe — aus diesen Sporen sprießt der Dämmerpilz. Fein-körnige, violett-braune Sporen quellen leicht aus der geöffneten Beutelöffnung; die Naht ist mit einem Pilz-Symbol versiegelt. Gedämpftes Violett-Braun, kein Glow.
+• Dämmerkappe (duskcap.png) — Ein Büschel dunkler Dämmerpilze — gedrungene Hüte in dämmrigem Grau-Violett, deren Ränder ins tiefe Zwielichtblau verlaufen; die blassen Stiele stehen dicht beieinander. Auf der Kappenoberfläche ein feiner, staubartiger Sporenüberzug. Kein grelles Leuchten; höchstens ein sanft violettes Zwielicht-Glimmen an den Kappenrändern.
+
+
+############### A · TRÄNKE / TONIKA (2) ###############
+
+--- A-TRÄNKE Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Dämmerkappen-Tonikum (duskcap_tonic.png) — Ein Heiltrank, gebraut aus Dämmerpilzen — eine bauchige Glasphiole mit dämmrig violett-braunem Sud, in dem winzige Pilzstückchen schweben. Der Korkstopfen trägt ein kleines Mond-/Pilz-Motiv; die Flüssigkeit schimmert sanft im Zwielicht. Weiches violettes Innenleuchten, ruhig und heilsam wirkend.
+• Ergiebigkeits-Tonikum (tonic_bounty.png) — Ein Sammler-Tonikum, das den Ertrag beim Sammeln steigert — eine gedrungene Phiole mit warm bernstein-goldenem Sud, der wie flüssiger Honig glänzt. Ein kleines Ähren-/Blätter-Motiv ziert das Etikett oder den Korkverschluss; ein paar goldene Blattfragmente schweben im Trank. Warmes goldgelbes Leuchten — Fülle und Ernte.
+
+
+############### A · SLAYER-ZWISCHENPRODUKTE (Crafting) (2) ###############
+
+--- A-SLAYER-CRAFTING Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Slayer-Schutzkapsel (slayer_ward_capsule.png) — Eine versiegelte, längliche Metallkapsel, in der alle vier Turmschutz-Komponenten zu einem einzigen Schutzkern verschmolzen sind — ein seltenes Zwischenprodukt der Slayer-Helm-Kette. Dunkles, poliertes Metallgehäuse mit einem schmalen Sichtfenster, durch das ein violett pulsierender Kern glüht; feine Schutzrunen umlaufen die Naht. Violett-blauer Kernschimmer, technisch-arkan.
+• Turmschmiedeschmelze (tower_forge_compound.png) — Ein dichter, ziegelartiger Barren einer schweren Legierung aus Leerenessenz, Pestknochenasche und Schmiedeglut-Schlacke, stabilisiert durch einen abyssalen Kern. Tiefschwarz-graues, grob gegossenes Metallblock mit erstarrten Schlackenblasen; durch die Risse glüht orange-rote Restglut, durchzogen von violetten Leerenadern. Roter Glut-Glow in den Rissen plus schwaches violettes Adernleuchten.
+
+
+############### TEIL B — NOCH OFFEN AUS RUNDE 2 (11 Items) ###############
+
+############### B · BÖGEN / RANGED-RÜSTUNG (2) ###############
+
+--- B-BÖGEN/RANGED Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Pestholz-Kurzbogen (mithril_shortbow.png) — Ein schmaler Kurzbogen aus Pestholz, gemustert in kränklichem Olivgrün und Grau. Trotz seines unappetitlichen Materials besitzt er außergewöhnliche Federkraft; die Sehne summt giftig. Olivgrau mit schwach violettem Randleuchten.
+• Leerenleder-Beinschienen (voidhide_legs.png) — Beinschutz aus Schattenleder mit Leerenrunen durchwirkt — der Träger bewegt sich lautlos wie ein Schatten. Tiefschwarz, mit violetten Runenlinien längs der Außennaht; der Schnitt ist schlank und präzise. Violetter Schimmer, intensiv längs der Runenlinien.
+
+
+############### B · SLAYER-AUSRÜSTUNG (2) ###############
+
+--- B-SLAYER-AUSRÜSTUNG Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Seuchenmaske (plague_mask.png) — Eine versiegelte Schnabelmaske aus gewachstem Leder und Sumpfwurzel-Paste — gebaut, um den schlimmsten Gestank des Fäulnisturms fernzuhalten. Die lange Schnabelnase enthält getrocknete Kräuterbündel; Metallschnallen sichern sie eng am Gesicht. Dunkelbraunes gewachstes Leder, kein Glow — zweckgebunden und unappetitlich.
+• Spiegelschutz (mirror_ward.png) — Ein kleiner polierter Eisentalisman in Form eines runden Spiegels, mit Anti-Reflexions-Runen auf der Rückseite graviert. Das Spiegelglas reflektiert unnatürlich klar; die Rückseite trägt eingravierte Schutz-Glyphen. Silbernes Metall mit leichtem blaugrauem Schimmer.
+
+
+############### B · MATERIALIEN / MONSTER-DROPS (4) ###############
+
+--- B-MATERIALIEN Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 4 angefragte Icons = 4 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Trübergaderz (murkvein_ore.png) — Ein roher Erzbrocken aus den mittleren Minenschächten — grau-oliv gefärbt mit dunklen, trübgrünen Schlieren wie getrübtes Wasser im Stein. Die Oberfläche ist unregelmäßig und rissig; das Erz riecht leicht metallisch-faulig. Mattes Oliv-Grau, kein Glow.
+• Trübergadbarren (murkvein_bar.png) — Ein gegossener Barren aus erschmolzenem Trübergaderz — länglich, mit der charakteristischen grün-grauen Tönung des Metalls. Glatte Oberfläche mit leichten Farbflecken durch mineralische Verunreinigungen; das Metall wirkt gedämpft. Gedämpftes Oliv-Grau, leichter metallischer Glanz.
+• Verfaulte Drüse (rot_gland.png) — Eine eiternde, schwabbelige Drüse eines Seuchenwesens — Kräuterkunde-Zutat für Resistenz-Tonika. Unappetitlich gelblich-grün, leicht durchsichtig mit dunklen organischen Einschlüssen. Kein Glow; reines, schlichtes Ekelmaterial.
+• Seelenschinder-Reißzahn (soul_flayer_fang.png) — Ein geschwungener Reißzahn, der nach verbrannten Seelen riecht — seltener Drop des Seelenschinders. Elfenbeinweiß, stark eingebogen, mit einem bläulichen Unterton aus kristallisierter Seelen-Energie. Schwacher bläulich-weißer Glow, unheimlich und kalt.
+
+
+############### B · SAMEN / KRÄUTER / RUNEN (3) ###############
+
+--- B-SAMEN/KRÄUTER/RUNEN Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Nachtschatten-Saat (nightshade_seed.png) — Ein Beutel kleiner, tiefdunkler Samenkörner — die Nachtschatten-Pflanze, giftig und magisch zugleich. Dunkelviolett-schwarze Körnchen in einem schlichten Lederbeutel mit einem Warnsymbol eingebrannt. Kein Glow; gedämpftes, bedrohliches Erscheinungsbild.
+• Alraunenwurzel (mandrake_root.png) — Eine frische, fleischige Alraunenwurzel mit einer unheimlich menschenähnlichen, gegabelten Form. Blassgelb mit braunen Erdflecken; die Gabelung der Wurzel erinnert an zwei Beine, der obere Knoten an einen Kopf. Kein Glow; reines Naturmaterial mit makabrer Silhouette.
+• Rune des Sturms III (rune_storm_iii.png) — Ein mächtiger Runenstein der dritten Stufe — in gelb-violetten Blitzen knisternd, als wäre ein volles Gewitter ins Gestein eingesperrt. Die eingravierten Sturmrunen leuchten intensiv weiß mit violetten Blitzbögen; der Stein vibriert spürbar. Starkes weißes Kernleuchten mit violetten Blitz-Ausstülpungen — der stärkste Sturmrunenstein (Abschluss der Reihe I/II/III).
+
+
+############### MONSTER (Gegner-Illustration) (1) ###############
+
+--- MONSTER Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 1 angefragtes Icon = 1 einzelnes Bild. Hier also das nächste Bild das ich brauche:
+• Drachenhaut-Skarn (scale_skarn.png) — Ein gedrungener, panzerhäutiger Saurier aus den Tiefen der Idolhalle: ein gedrungener Biped mit massigem Torso, der von überlappenden Drachenschuppen bedeckt ist, rostbraun und bronzefarbig schimmernd wie verwittertes Eisen. Kurze, muskulöse Arme enden in vierfingrigen Klauen, die sich tief in den Steinboden graben; aus den breiten, abgeplatteten Nüstern steigt hitzeflimmernder Dampf auf, der die Luft um den Kopf verzerrt. Der kurze, keilförmige Schwanz ist erhoben und kampfbereit; aus kleinen, tief eingesunkenen Augen glüht ein orangefarbenes Raubtierleuchten, das die übrige Monstrosität des Körpers unterstreicht.
+(Hinweis für Chef/asset-integrator: In assets/items/ liegt bereits eine dragonhide_skarn.png — evtl. ist das schon dieses Bild, dann muss es nur als assets/monsters/scale_skarn.png gebunden werden und muss NICHT neu generiert werden.)

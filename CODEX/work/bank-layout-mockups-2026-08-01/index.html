@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grim Reach — Bank Layout Studies</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- codex:2026-08-01T18:18:00+02:00 — Bank-only functional layout comparison based on BankPage.tsx. -->
+  <main class="workbench">
+    <header class="study-head">
+      <div>
+        <p>Grim Reach · Bank redesign</p>
+        <h1 id="concept-title">01 · The Twin Vault</h1>
+        <span id="concept-summary">Equal inventory and storage panes with a persistent transfer bridge.</span>
+      </div>
+      <div class="coverage"><b>Real feature coverage</b><span>Search · filters · sort · capacity · quantities · variants · equip · drag/drop</span></div>
+    </header>
+
+    <nav class="concept-nav" aria-label="Bank design">
+      <button class="is-active" data-concept="1"><b>01</b><span>Twin Vault</span></button>
+      <button data-concept="2"><b>02</b><span>Quartermaster Desk</span></button>
+      <button data-concept="3"><b>03</b><span>Vault Ledger</span></button>
+      <button data-concept="4"><b>04</b><span>Cabinet Wall</span></button>
+      <button data-concept="5"><b>05</b><span>Transfer Table</span></button>
+    </nav>
+
+    <section id="bank-shell" class="bank-shell concept-1">
+      <header class="bank-banner framed">
+        <div class="npc-medallion">V</div>
+        <div class="npc-copy"><span>Voss, Keeper of Accounts</span><strong>“Everything has a place. Decide which side of the ledger it belongs on.”</strong></div>
+        <div class="capacity"><span>Vault capacity</span><strong><i></i>84 / 120</strong></div>
+      </header>
+
+      <section class="bank-command framed">
+        <label class="search"><span>Search</span><input id="search" placeholder="Name, item ID or enchanted variant…"></label>
+        <div class="category-chips" role="group" aria-label="Item type">
+          <button class="is-active" data-filter="all">All <b>37</b></button>
+          <button data-filter="material">Materials <b>14</b></button>
+          <button data-filter="equipment">Equipment <b>9</b></button>
+          <button data-filter="food">Food <b>6</b></button>
+          <button data-filter="other">Other <b>8</b></button>
+        </div>
+        <label class="sort"><span>Sort</span><select><option>Newest</option><option>Name</option><option>Value</option><option>Rarity</option><option>Quantity</option></select></label>
+        <button class="upgrade-btn" id="upgrade"><span>Expand +10 slots</span><b>12,500</b></button>
+      </section>
+
+      <section class="inventory-panel storage-panel framed" data-zone="inventory">
+        <header class="panel-head"><div><span class="panel-kicker">Carried goods</span><h2>Inventory</h2></div><strong>37 / 38</strong><button id="deposit-all">Deposit all</button></header>
+        <div class="items" id="inventory-items"></div>
+        <footer><span>Shift-click: deposit whole group</span><span class="drop-state">Drop here to withdraw</span></footer>
+      </section>
+
+      <aside class="transfer-rail framed">
+        <span class="rail-title">Transfer</span>
+        <button data-transfer="deposit-one">Deposit 1 <i>→</i></button>
+        <button data-open-qty="inventory">Choose amount <i>→</i></button>
+        <button data-transfer="deposit-all">Deposit group <i>→</i></button>
+        <div class="rail-divider"></div>
+        <button data-transfer="withdraw-one"><i>←</i> Withdraw 1</button>
+        <button data-open-qty="bank"><i>←</i> Choose amount</button>
+        <button data-transfer="withdraw-all"><i>←</i> Withdraw group</button>
+      </aside>
+
+      <section class="vault-panel storage-panel framed" data-zone="bank">
+        <header class="panel-head"><div><span class="panel-kicker">Voss’ counted vault</span><h2>Bank Storage</h2></div><strong>84 / 120</strong></header>
+        <div class="items" id="bank-items"></div>
+        <footer><span>Variants share one pouch-marked cell</span><span class="drop-state">Drop here to deposit</span></footer>
+      </section>
+
+      <aside class="selection-panel framed">
+        <div class="selected-visual"><img id="selected-image" alt=""></div>
+        <div class="selected-copy"><span class="panel-kicker">Selected record</span><h2 id="selected-name">Steel Platebody</h2><p id="selected-meta">Equipment · Rare · 1 variant</p><div class="selected-stats"><span>Armor <b>17</b></span><span>Mitigation <b>12%</b></span><span>Value <b>380</b></span></div></div>
+        <div class="selection-actions"><button>Equip from bank</button><button data-open-qty="bank">Withdraw amount</button><button>Open variants</button></div>
+      </aside>
+
+      <footer class="bank-status framed"><span><b>Drag & drop enabled</b> — move a complete base-item group between both zones.</span><span id="action-log">Ready for transfer.</span></footer>
+    </section>
+
+    <aside class="design-notes">
+      <div><span>Strength</span><b id="strength">Fastest mental model; both destinations stay visible.</b></div>
+      <div><span>Best for</span><b id="best">Routine banking and drag-heavy play.</b></div>
+      <div><span>Trade-off</span><b id="tradeoff">The equal split gives the bank less dominance.</b></div>
+    </aside>
+  </main>
+
+  <div class="qty-overlay" id="qty-overlay" hidden>
+    <section class="qty-modal framed" role="dialog" aria-modal="true" aria-labelledby="qty-title">
+      <button class="close" id="qty-close" aria-label="Close">×</button>
+      <span class="panel-kicker">Partial transfer</span><h2 id="qty-title">Choose quantity</h2>
+      <div class="qty-picked"><img id="qty-image" alt=""><div><strong id="qty-name">Copper Ore</strong><span>Available: <b>1,195</b></span></div></div>
+      <input type="range" min="1" max="1195" value="250" id="qty-range">
+      <output id="qty-output">250</output>
+      <div class="qty-presets"><button>1</button><button>25</button><button>50</button><button>All</button></div>
+      <button class="confirm" id="qty-confirm">Confirm transfer</button>
+    </section>
+  </div>
+  <script src="preview.js"></script>
+</body>
+</html>

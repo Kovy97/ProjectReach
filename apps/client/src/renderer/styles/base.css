@@ -1,0 +1,228 @@
+/* ═══════════════════════════════════════════════════════════
+   BASE — Font faces, CSS variables, global reset, layout shell
+   ═══════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Metamorphous";
+  src: url("../fonts/Metamorphous-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cinzel";
+  src: url("../fonts/Cinzel-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+/* codex:2026-08-01T17:42:00+02:00 — Globale Ziffernschicht: dieselbe gebuendelte OFL-Schrift
+   liefert nur Ziffern und direkt zugehoerige Rechen-/Zeitzeichen. Alle Buchstaben fallen danach
+   weiterhin in Fell Chronicle bzw. den sprachspezifischen Stack zurueck. */
+@font-face {
+  font-family: "Grim Reach Numerals";
+  src: url("../fonts/Cinzel-Regular.ttf") format("truetype");
+  font-display: swap;
+  unicode-range:
+    U+0025,
+    U+002B-003A,
+    U+00D7,
+    U+2013,
+    U+2212,
+    U+221E;
+}
+@font-face {
+  font-family: "Marcellus SC";
+  src: url("../fonts/MarcellusSC-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Grenze Gotisch";
+  src: url("../fonts/GrenzeGotisch-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "MedievalSharp";
+  src: url("../fonts/MedievalSharp-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "IM Fell English SC";
+  src: url("../fonts/IMFellEnglishSC-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+/* Task #316 (B3): "Cormorant Garamond" @font-face removed — the shipped woff2 (13.9 KB, roughly
+   a quarter the size of comparable display fonts here) was a heavily-subsetted/corrupted dummy
+   file missing glyphs, and the unrelated "Cormorant-Regular.ttf" sitting next to it in fonts/ was
+   never referenced by any @font-face at all. Both files deleted; the font-preview picker's
+   Cormorant Garamond entry was removed to match (pages/FontPreview.tsx) rather than left pointing
+   at a fallback. Re-add properly (real Google Fonts file) if the Chef picks this typeface later. */
+
+/* ─── Ashen Iron Theme ──────────────────────────────────── */
+:root {
+  --bg: #14161a;
+  --bg-deep: #0d0f12;
+  --bg-sidebar: #0d0f12;
+  --panel: #1e2329;
+  --panel-hover: #262d34;
+  --slot: #0f1216;
+  --border: #333c44;
+  --border-bright: #4d5963;
+  --text: #ccd5db;
+  --muted: #79848c;
+  /* Chef: Akzent = die Sidebar-Schriftfarbe (gedämpftes Sepia, kein Gold/Blau/Weiß).
+     Aktiv-Ringe/Glow bleiben neutralisiert. */
+  --accent: #9a8060;
+  --accent-2: #b39468;
+  --accent-dim: #5a4a30;
+  --danger: #a85a52;
+  --gold: #d8c06a;
+  /* OSRS-Stil Buff-Grün (Itemization 2.0 §4.5: geboostete Kampf-Skill-Level) und die Shift-Compare-
+     Pfeile (Chef-Feature: grün = besser, rot/--danger = schlechter). */
+  --boost: #7fc76b;
+  --radius: 4px;
+  --glow: 0 0 12px rgba(150, 160, 170, 0.10);
+  /* codex:2026-08-01T10:04:43+02:00 — Finale Chef-Auswahl „Fell Chronicle“ als globale
+     Hausschrift. Der Body und sämtliche Controls erben `--font-head`, daher gilt sie appweit. */
+  --font-head: "Grim Reach Numerals", "IM Fell English SC", Georgia, "Times New Roman", serif;
+  --font-info: "Grim Reach Numerals", "Cinzel", Georgia, "Times New Roman", serif;
+}
+
+/* codex:2026-08-01T10:04:43+02:00 — IM Fell English SC besitzt kein vollständiges Kyrillisch/CJK.
+   Sprachgebundene Stacks vermeiden zufällige Glyphenmischung innerhalb russischer/chinesischer
+   Wörter. `:lang(ru/zh)` trifft die von i18n gesetzten BCP-47-Tags ru-RU und zh-CN. */
+:root:lang(ru) {
+  --font-head: "Grim Reach Numerals", Georgia, "Times New Roman", "Noto Serif", serif;
+  --font-info: "Grim Reach Numerals", Georgia, "Times New Roman", "Noto Serif", serif;
+}
+
+:root:lang(zh) {
+  --font-head: "Grim Reach Numerals", "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
+  --font-info: "Grim Reach Numerals", "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Eigene Scrollbar im Ashen-Iron-Stil (statt Windows-Default) — Geschmeidigkeits-Bundle
+   (Chef-GO): schmal, Spur fast unsichtbar dunkel, Griff dunkles Bronze/Braun mit feiner
+   Gold-Kante beim Hover, dezent runde Enden. Electron/Chromium-only (kein Firefox-Fallback
+   nötig) — der universelle Selektor erfasst automatisch JEDEN verschachtelten Scroller
+   (Bank-Grid, Kampf-/Achievement-Log, Modals, Bestiarium, Sidebar, …), ohne dass jede Stelle
+   einzeln gepflegt werden muss. Hover-Kante läuft über einen inset box-shadow statt über eine
+   breitere border — dadurch bleibt die sichtbare Griff-Größe beim Hover exakt gleich (kein
+   Springen), nur der feine Goldrand blendet ein. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(13, 15, 18, 0.4);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--accent-dim);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-dim);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+::-webkit-scrollbar-corner {
+  background: rgba(13, 15, 18, 0.4);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Custom-Cursor wirklich ÜBERALL erzwingen — auch über Buttons/Links/Inputs/Hover (Chef-Wunsch).
+   `!important` überschreibt komponenten-eigene `cursor: pointer/text/...`. 39×38 px.
+   Hinweis: Dateiname im Pack ist "cusor_default.png" (kein zweites 'r'). */
+*,
+*::before,
+*::after {
+  cursor: url("../assets/ui/citadel/cursors/cusor_default.webp") 0 0, auto !important;
+}
+
+body {
+  /* Spiel-Schrift überall (Body, UI, Werte). Sans nur als Notfall-Fallback. */
+  font-family: var(--font-head), "Segoe UI", system-ui, sans-serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+  /* Deutlich größer für klare Lesbarkeit (Kapitälchen-Schrift ist sonst dünn). Task #316 (B3):
+     was a hardcoded "21px" duplicate of design-system.css's own scale — now reads the scale's
+     `--ds-fs-base` token directly (design-system.css defines it as 21px specifically to match
+     this rule; see its comment for the full reasoning). Single source of truth, same 21px as
+     before — no visual change, just no more silently-drifting duplicate. */
+  font-size: var(--ds-fs-base);
+  font-weight: 700;
+  line-height: 1.45;
+  /* Chef 2026-07-21: zurück zur STEINWAND als Backdrop — diesmal der ordentliche kachelbare
+     `bg_tileable_stone` (nicht das alte raue Grau von vor dem 09.07.). Die Content-Panels/Docks sind
+     jetzt HOLZ → Holz-Panels auf einer Steinwand. GEKACHELT, kein Stretch (Standing Rule). Neutral-
+     dunkle Abdunklung, damit der Stein grau bleibt (nicht braun) und Panels/Text lesbar bleiben. */
+  background:
+    linear-gradient(rgba(14, 14, 16, 0.42), rgba(14, 14, 16, 0.42)),
+    /* codex:2026-07-31T00:32:37+02:00 — Kein `fixed`-Attachment: bei großen
+       Viewports musste Chromium die Steinfläche sonst bei vielen UI-Paints neu zusammensetzen. */
+    url("../assets/bg_tileable_stone.webp") top left repeat scroll,
+    var(--bg);
+  background-size: auto, 450px 450px;
+  color: var(--text);
+}
+
+/* Formular-Elemente erben Font/Gewicht nicht automatisch → erzwingen. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+/* codex:2026-07-31T00:32:37+02:00 — Der bisherige SVG-feTurbulence-Filter lag als
+   bildschirmfüllende Ebene über jedem Menü und verursachte unnötiges Compositing.
+   Die bereits gerasterte Steintextur liefert genug Materialwirkung ohne diesen Live-Filter. */
+body::after {
+  content: none;
+}
+
+h1,
+h2,
+h3,
+.brand-name,
+.sheet-title,
+.menu-title,
+.content-header h1 {
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
+}
+
+/* ─── Inline UI-Icons (gemappt via getUiIcon) ──────────── */
+/* Skaliert mit dem umgebenden Font-Size-Kontext; image-rendering: auto
+   für fotorealistische PNGs (keine Pixel-Art-Schärfung). */
+.ui-icon {
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
+  image-rendering: auto;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* ─── Layout ────────────────────────────────────────────── */
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── Content shell ─────────────────────────────────────── */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

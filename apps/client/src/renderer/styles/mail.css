@@ -1,0 +1,271 @@
+/* ═══════════════════════════════════════════════════════════
+   MAIL / POSTFACH — WoW-artiges Postfach (packages/engine/src/mail.ts)
+   Liste (links) + geöffnete Nachricht mit Anhänge-Grid (rechts). Reuses die globalen Citadel-
+   Bausteine (.shop-panel, .shop-citadel-btn, .cs-inv-grid/.inv-slot) statt eigener Rahmen-/
+   Grid-CSS — hier nur das Seiten-Layout + mail-spezifische Zeilen.
+   ═══════════════════════════════════════════════════════════ */
+
+.mail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+/* ─── Teil-Abhol-Hinweis (Chef-Vorgabe: „Inventar voll — Rest bleibt im Postfach") ───────────
+   Gleiche Optik wie .quest-shop-notice (quests.css) — eine dezente Warn-Zeile, kein globaler
+   Toast nötig (die Seite lebt lange genug, dass ein Inline-Hinweis reicht). */
+.mail-notice {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1.5px solid rgba(200, 100, 60, 0.55);
+  background: rgba(200, 100, 60, 0.12);
+  color: #e08060;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.mail-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) 1fr;
+  gap: 16px;
+  align-items: start;
+  min-height: 0;
+  flex: 1;
+}
+
+/* ─── Liste (links) ───────────────────────────────────────────── */
+.mail-list {
+  min-width: 0;
+  max-height: 76vh;
+}
+
+.mail-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mail-list-title {
+  font-family: var(--font-head);
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.mail-list-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.mail-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.mail-row:hover {
+  background: rgba(216, 192, 106, 0.08);
+}
+
+.mail-row--active {
+  background: rgba(216, 192, 106, 0.14);
+  border-left-color: var(--gold, #d8c06a);
+}
+
+.mail-row-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--gold, #d8c06a);
+}
+
+/* Wachssiegel-Icon (Jagd-Paket Task 4, Raben-Post) statt des ✉-Zeichens auf Brief-Zeilen. */
+.mail-row-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+.mail-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mail-row-subject {
+  font-family: var(--font-head);
+  font-size: 14.5px;
+  color: var(--ds-parch-ink, #e8d8b0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mail-row--active .mail-row-subject {
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.mail-row-meta {
+  font-size: 12px;
+}
+
+/* ─── Geöffnete Nachricht (rechts) ────────────────────────────── */
+.mail-detail {
+  min-width: 0;
+}
+
+.mail-detail-panel {
+  min-height: 0;
+}
+
+.mail-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mail-detail-headtext {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mail-detail-subject {
+  font-family: var(--font-head);
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.mail-detail-meta {
+  font-size: 13px;
+}
+
+.mail-attachments-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9a8060;
+}
+
+/* ─── Raben-Post (Jagd-Paket Task 4): Briefe von Brenna/dem Wächter — Wachssiegel-/Pergament-
+   Optik statt der schlichten Betreff-Kopfzeile. Reuses `.shop-panel` als Rahmen (via
+   `.mail-detail-panel`), hier nur der Brief-eigene Innen-Aufbau. ─── */
+.mail-detail-panel--letter {
+  background:
+    linear-gradient(160deg, var(--ds-parch-mid, #261e14), var(--ds-parch-dark, #16120c)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.mail-letter-sender {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(216, 184, 112, 0.28);
+}
+
+.mail-letter-sender-portrait {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border: 1px solid var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mail-letter-sender-sealfallback {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.mail-letter-sender-name {
+  font-family: var(--font-head);
+  font-size: 18px;
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.mail-letter-body {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px dashed rgba(216, 184, 112, 0.28);
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-size: 15px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.mail-letter-attach-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.mail-attachments-grid {
+  min-height: 100px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+}
+
+/* ─── Leerzustand — „Dein Postfach ist leer." ─────────────────── */
+.mail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 60px 30px;
+  text-align: center;
+}
+
+.mail-empty-icon {
+  font-size: 46px;
+  /* ui-dev 2026-08-03 (QA-Kosmetik): 0.6 war deutlich dunkler als die Nachbar-Leerzustände
+     (.ofs-empty-icon 0.85, .slayer-task-empty-icon-img 0.75) — auf demselben Basalt-Hintergrund
+     wirkte das Postfach-Icon "fast unsichtbar" statt nur dezent. */
+  opacity: 0.82;
+}
+
+.mail-empty p.muted {
+  /* ui-dev 2026-08-03 (QA-Kosmetik): eigener, hellerer Ton statt des globalen --muted
+     (#79848c) — nur hier im Leerzustand, damit der Satz auf Anhieb lesbar ist, ohne die
+     generische `.muted`-Klasse (und damit andere Seiten) global aufzuhellen. */
+  color: #a9b1b6;
+}
+
+/* ─── Responsiv: schmal → gestapelt statt Zwei-Spalten ─────────── */
+@media (max-width: 900px) {
+  .mail-layout {
+    grid-template-columns: 1fr;
+  }
+  .mail-list {
+    max-height: 40vh;
+  }
+}

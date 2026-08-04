@@ -1,0 +1,5392 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   PAGES — shop, bank, toast, stats/options/bestiary,
+   dev-tools (font-preview, city-map, item-browser,
+   zone-map-editor), quest log, achievements v2, pets
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Shop ──────────────────────────────────────────────── */
+.shop-gold {
+  font-family: var(--font-head);
+  font-size: 24px;
+  color: var(--accent-2);
+  margin-bottom: 18px;
+}
+
+.shop-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .shop-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.shop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 18px;
+}
+
+.shop-row:last-child {
+  border-bottom: none;
+}
+
+.shop-row.special {
+  color: var(--accent-2);
+}
+
+.shop-row-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shop-btn {
+  padding: 6px 12px;
+  background: var(--panel-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.shop-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.shop-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.shop-sell-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0; /* Buttons nie zusammenstauchen */
+  flex-wrap: wrap; /* in schmalen Fenstern umbrechen statt abschneiden */
+  justify-content: flex-end;
+}
+
+.gold-display {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+.slots-display {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 17px;
+  cursor: help;
+}
+
+.slots-display.full {
+  color: #d9a86b;
+}
+
+/* Chef-Bugfix 22.07.: übervoll (Ist > Kapazität) — eigene Rot-Stufe statt der amber "genau voll"-
+   Farbe oben, kein Blinken. */
+.slots-display.over {
+  color: var(--danger, #c84a3a);
+}
+
+/* ─── Bank / Lager ───────────────────────────────────────── */
+/* Citadel-Konsistenz-Welle (Chef-GO 2026-07-09): war nackter Text auf der gekachelten
+   Bodentextur — jetzt ein schmaler Holzrahmen-Streifen (gleiches Muster wie .status-legend).
+   Task #316 (B3): padding auf die --ds-gap-Skala umgestellt (war 11px 16px), s. .status-legend-
+   Kommentar für die volle Begründung. */
+.bank-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  padding: var(--ds-gap) var(--ds-gap-lg);
+  background: linear-gradient(rgba(10, 12, 15, 0.4), rgba(10, 12, 15, 0.45)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+}
+
+.bank-count {
+  font-weight: 600;
+}
+
+.bank-head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Such-/Typ-Filter-Kopfzeile (Chef-Auftrag Suche/Filter/Sortierung 2026-07-09) ──────────
+   ItemFilterBar (invf-*, styles/inv-filter.css) links, bestehendes Sortier-Dropdown rechts —
+   eine gemeinsame Leiste für BEIDE Bank-Spalten (Inventar+Lager teilen sich Suche/Filter/Sort). */
+.bank-filter-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.bank-sort-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-top: 3px;
+}
+
+.bank-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .bank-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bank-col-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+/* Icon-Medaillon + Cinzel-Gold-Titel — OptSection-/StatsPage-Muster (BankColTitle, BankPage.tsx),
+   ersetzt den vorherigen nackten <h3>. */
+.bank-col-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.bank-col-icon {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.05), rgba(10, 8, 6, 0.85) 74%);
+  border: 2px solid rgba(216, 192, 106, 0.42);
+}
+
+.bank-col-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.bank-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 18px;
+}
+
+.bank-row:last-child {
+  border-bottom: none;
+}
+
+.bank-row-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bank-actions {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* Volle Bank: ruhiger Hinweis + akzentuierte Slot-Zählung. */
+.bank-count.full {
+  color: #d9a86b;
+}
+
+.bank-full-note {
+  margin: -4px 0 14px;
+  padding: 8px 12px;
+  color: #d9a86b;
+  background: rgba(217, 168, 107, 0.1);
+  border: 1px solid rgba(217, 168, 107, 0.4);
+  border-radius: var(--radius);
+  font-size: 15px;
+}
+
+.bank-blocked {
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Bank-Slot-Raster — erbt die Inventar-Slot-Optik (cs-inv-grid + inv-slot),
+   wird hier nur als block-level Grid mit eigener Scroll-Höhe gezähmt. */
+.bank-grid {
+  flex: none;
+  max-height: 62vh;
+  margin-top: 4px;
+  /* Task #314: Übergangs-Rahmenfarbe für die Drop-Zonen-Highlights unten — kurz & dezent statt
+     eines harten Umschaltens. */
+  transition: box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+/* UI-Brainstorm 3.2-Pendant für die Bank (bisher nur im Shop, .shopv2-hint). */
+.bank-hint {
+  font-size: 14px;
+  margin: -6px 0 12px;
+}
+
+/* ─── Task #314 — Pointer-basiertes Drag & Drop (Inventar ⇄ Bank) ───────────────────────────
+   Ersetzt natives HTML5 draggable/dragstart/drop NUR hier (BankPage.tsx `beginBankDrag`) — echte
+   Pointer-Events (Maus+Touch). Ghost-Element + Zonen-Highlight sind reine DOM-Mutation (kein
+   React-State pro Pixel), s. dortiger Kopfkommentar. */
+
+/* Wrapper-Zelle, auf der der Pointer-Drag beginnt (`cs-inv-slot-wrap` liefert Größe/Position
+   bereits mit) — touch-action:none verhindert, dass ein Touch-Drag stattdessen die Seite scrollt. */
+.bank-drag-cell {
+  touch-action: none;
+}
+
+/* Cursor-Geist: Item-Icon, leicht transparent, folgt dem Zeiger (transform per rAF-freiem
+   pointermove — die Bewegung selbst ist billig genug ohne rAF-Drosselung). */
+.item-drag-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10050;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0.82;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+  font-size: 34px;
+}
+
+.item-drag-ghost img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* Gültige Ziel-Spalte: dezenter Gold-Glow. Ungültige (z.B. Ziel-Bank voll ohne bestehende Zelle,
+   Ziel-Inventar ohne Platz): gedimmt. Beide gelten NUR für die jeweils ANDERE Spalte (die
+   Quell-Spalte bleibt neutral, s. `beginBankDrag`s `overZone`-Logik). */
+.bank-grid.bank-grid--drop-valid {
+  box-shadow: inset 0 0 0 2px var(--gold, #d8b35a), 0 0 18px rgba(216, 179, 90, 0.35);
+}
+
+.bank-grid.bank-grid--drop-invalid {
+  filter: brightness(0.6) saturate(0.7);
+}
+
+/* Während eines aktiven Drags: kein Text-Selektieren irgendwo auf der Seite (Chef-Vorgabe „kein
+   Text-Selektieren während des Zugs") — auf <body>, da der Zeiger die Bank-Spalten verlässt. */
+body.bank-dragging-noselect {
+  user-select: none;
+  cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bank-grid {
+    transition: none;
+  }
+}
+
+/* ─── Toast-Benachrichtigungen ───────────────────────────── */
+.toast-stack {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+/* Citadel-Look + ~100% größer (Chef-Wunsch) */
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 440px;
+  max-width: 640px;
+  padding: 22px 28px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background: linear-gradient(rgba(14, 9, 4, 0.92), rgba(14, 9, 4, 0.92)),
+    url("../assets/bg_black.webp") repeat;
+  box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 10px 30px rgba(0, 0, 0, 0.55);
+  animation: toast-in 0.25s ease-out;
+}
+
+/* Elite-/World-Spawns (design/elite-spawns-concept.md §2.1): der erste klickbare Toast — der
+   Stack selbst ist `pointer-events: none` (Klicks fallen sonst durch zur Seite dahinter), also
+   muss GENAU dieser Toast seine Klickbarkeit einzeln zurückholen. */
+.toast-clickable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Auflösungs-Stufen (Chef 2026-07-22: „bei 1920×1080 sehr groß" — die Basis-Maße oben sind
+   4K-tariert). Zwei Overrides statt vw-Mathe: 1440p-Klasse mittel, 1080p-Klasse kompakt;
+   ab >2900px Viewport-Breite gilt weiter die große Basis. */
+@media (max-width: 2900px) {
+  .toast { min-width: 360px; max-width: 520px; padding: 16px 20px; gap: 14px; border-width: 8px; }
+  .toast-stack { gap: 12px; right: 18px; bottom: 18px; }
+  .toast-title { font-size: 17px; }
+  .toast-detail { font-size: 14px; }
+  .toast-icon { font-size: 30px; }
+  .toast-icon img { width: 44px; height: 44px; }
+}
+@media (max-width: 2100px) {
+  .toast { min-width: 300px; max-width: 430px; padding: 12px 16px; gap: 12px; border-width: 7px; }
+  .toast-title { font-size: 15px; }
+  .toast-detail { font-size: 13px; }
+  .toast-icon { font-size: 24px; }
+  .toast-icon img { width: 36px; height: 36px; }
+}
+
+/* Typ-Akzent als linker Inset-Balken (border-image überschreibt border-left) */
+.toast-drop        { box-shadow: inset 5px 0 0 var(--accent, #6fae6f), 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-total       { box-shadow: inset 5px 0 0 #c87f3a, 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-achievement { box-shadow: inset 5px 0 0 #b76fd0, 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-pet         { box-shadow: inset 5px 0 0 var(--gold), 0 10px 30px rgba(0, 0, 0, 0.55); }
+/* .toast-rare (Basis-Look, ALLE FX-Stufen inkl. "off"): gold-Inset erbt bereits von der .toast-
+   Basisregel oben — hier nur betonter Titel/Item-Name (reine Typografie, kein "Effekt", bleibt in
+   jeder Stufe gleich). Rahmen-Puls + Licht-Sweep (Jackpot-Look) folgen weiter unten, FX-gated. */
+.toast-rare         { box-shadow: inset 5px 0 0 var(--gold), 0 10px 30px rgba(0, 0, 0, 0.55); }
+
+/* ─── Elite-/World-Spawns („Champions des Reach", design/elite-spawns-concept.md §2.1) ───────
+   Episch/dunkelrot statt Gold — bewusst UNTERSCHIEDLICH vom Rare-Drop-Jackpot (gold): ein Elite-
+   Spawn ist ein GEGNER-Ereignis (Bedrohung + Gelegenheit), keine Belohnung. Dauerhaft pulsend
+   (nicht FX-gated wie der Jackpot-Look — dies ist Kerninformation "ein Fenster läuft", keine reine
+   Belohnungs-Zier), Bewegungs-Empfindliche s. Reduced-Motion-Block unten. */
+.toast-elite {
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 5px 0 0 var(--danger, #a85a52), 0 10px 30px rgba(0, 0, 0, 0.55);
+  animation: toast-in 0.25s ease-out, toast-elite-pulse 1.5s ease-in-out 0.25s 3;
+}
+.toast-elite .toast-title { color: #e0604b; }
+.toast-elite .toast-detail { font-weight: 700; color: #f5ecd6; }
+
+@keyframes toast-elite-pulse {
+  0%, 100% { box-shadow: inset 5px 0 0 var(--danger, #a85a52), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  50% { box-shadow: inset 5px 0 0 var(--danger, #a85a52), 0 0 32px 8px rgba(224, 96, 75, 0.65), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+
+/* ─── Belohnungs-Juice-Welle #2 (Chef-GO) — Rare-Drop-Jackpot ────────────────────────────────
+   Der bestehende Rare-Announcement-Toast wird zum Jackpot: Gold-Rahmen-Puls (Farbe/box-shadow,
+   KEINE Bewegung — läuft daher auch unter CombatFxLevel "reduced") + kurzer Licht-Sweep (Bewegung,
+   NUR "full") + betonter Item-Name. "off" zeigt exakt den normalen Toast von oben (Kernfeedback
+   bleibt immer lesbar, s. Toasts.tsx effectiveFxLevel/toast.fx). Legendary bekommt denselben Look
+   eine Spur kräftiger (stärkerer Glow, ein Wiederholungs-Zyklus mehr). */
+.toast-rare .toast-title { color: var(--gold, #d8b35a); }
+.toast-rare .toast-detail { font-weight: 700; color: #f5ecd6; }
+
+.toast-rare.fx-reduced,
+.toast-rare.fx-full {
+  position: relative;
+  overflow: hidden;
+  animation: toast-in 0.25s ease-out, toast-jackpot-pulse 1.5s ease-in-out 0.25s 2;
+}
+
+.toast-rare-legendary.fx-reduced,
+.toast-rare-legendary.fx-full {
+  animation: toast-in 0.25s ease-out, toast-jackpot-pulse-legendary 1.3s ease-in-out 0.25s 3;
+}
+
+/* Welle KK (Grete-Retest, Fund #1): superRare/godly bekommen die GRÖSSTE Jackpot-Stufe — der
+   0,1-%-Fund war bisher LEISER als ein 0,8-%-Fund (nur der generische Rare-Puls). Eigene Rahmen-
+   Farbe (--rar-godly, sattes Gold statt des gedeckten --gold-Tons) + stärkster Glow + meiste
+   Wiederholungen; Dauer/Sound kommen aus Toasts.tsx (jackpotDurationMs/playSfx, bestehende Mittel). */
+.toast-rare-godly { box-shadow: inset 5px 0 0 var(--rar-godly, #ffd700), 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-rare-godly .toast-title { color: var(--rar-godly, #ffd700); }
+
+.toast-rare-godly.fx-reduced,
+.toast-rare-godly.fx-full {
+  animation: toast-in 0.25s ease-out, toast-jackpot-pulse-godly 1.1s ease-in-out 0.25s 4;
+}
+
+@keyframes toast-jackpot-pulse {
+  0%, 100% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  50% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 0 26px 6px rgba(216, 179, 90, 0.75), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+
+@keyframes toast-jackpot-pulse-legendary {
+  0%, 100% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  50% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 0 36px 10px rgba(255, 205, 100, 0.9), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+
+@keyframes toast-jackpot-pulse-godly {
+  0%, 100% { box-shadow: inset 5px 0 0 var(--rar-godly, #ffd700), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  50% { box-shadow: inset 5px 0 0 var(--rar-godly, #ffd700), 0 0 44px 14px rgba(255, 215, 0, 0.95), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+
+/* Licht-Sweep — NUR "full" (Bewegung, daher bei "reduced" ausgeschlossen, s. Chef-Gate oben). */
+.toast-rare.fx-full::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 244, 214, 0.55) 48%, transparent 66%);
+  transform: translateX(-120%);
+  animation: toast-jackpot-sweep 0.9s ease-out 0.15s;
+  pointer-events: none;
+}
+
+.toast-rare-legendary.fx-full::after {
+  animation: toast-jackpot-sweep 0.9s ease-out 0.15s 2;
+}
+
+.toast-rare-godly.fx-full::after {
+  background: linear-gradient(115deg, transparent 25%, rgba(255, 236, 150, 0.75) 48%, transparent 71%);
+  animation: toast-jackpot-sweep 0.9s ease-out 0.15s 3;
+}
+
+@keyframes toast-jackpot-sweep {
+  to { transform: translateX(120%); }
+}
+
+/* ─── Mastery-Momente (Welle EE, Mona M1) ─────────────────────────────────────
+   "Kein Mastery-Stern hatte einen Moment" (Mona-Urteil) — eigener Stern-Stil, drei Größen:
+   --level (dezent, jeder normale Mastery-Level-Up), --milestone (Rang-Stern 10/25/50/75/99,
+   Akzentfarbe je Tier), --pool (skillweiter Pool-Checkpoint 5/25/50/95 % — der seltenste,
+   wertvollste Moment, größter Puls). Bewusst ein STEEL-BLAU statt Gold/Lila, damit Mastery nicht
+   mit Item-Rare-Funden (toast-rare, gold) oder Achievements (lila) verwechselt wird. */
+.toast-mastery--level {
+  box-shadow: inset 5px 0 0 #7fb0d8, 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+.toast-mastery--level .toast-title { color: #9fc6e6; }
+
+.toast-mastery--milestone,
+.toast-mastery--pool {
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 5px 0 0 #7fb0d8, 0 10px 30px rgba(0, 0, 0, 0.55);
+  animation: toast-in 0.25s ease-out, toast-mastery-pulse 1.4s ease-in-out 0.25s 2;
+}
+.toast-mastery--milestone .toast-title,
+.toast-mastery--pool .toast-title { color: #9fc6e6; }
+.toast-mastery--milestone .toast-icon,
+.toast-mastery--pool .toast-icon { color: #9fc6e6; }
+
+@keyframes toast-mastery-pulse {
+  0%, 100% { box-shadow: inset 5px 0 0 #7fb0d8, 0 10px 30px rgba(0, 0, 0, 0.55); }
+  50% { box-shadow: inset 5px 0 0 #7fb0d8, 0 0 24px 5px rgba(127, 176, 216, 0.65), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+
+/* Rang-Akzentfarbe (dieselben 5 Stufen wie die Aktionskarten-Ränge, s. util/masteryRank.ts). */
+.toast-mastery-rank--bronze   { box-shadow: inset 5px 0 0 #cd7f32, 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-mastery-rank--bronze   .toast-title { color: #d99a5c; }
+.toast-mastery-rank--silver   { box-shadow: inset 5px 0 0 #c0c0c8, 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-mastery-rank--silver   .toast-title { color: #eaeaf4; text-shadow: 0 0 6px rgba(226, 226, 236, 0.5); }
+.toast-mastery-rank--gold     { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-mastery-rank--gold     .toast-title { color: var(--gold, #d8b35a); }
+.toast-mastery-rank--platinum { box-shadow: inset 5px 0 0 #b8e0e6, 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-mastery-rank--platinum .toast-title { color: #cdf0f4; }
+.toast-mastery-rank--diamond  { box-shadow: inset 5px 0 0 #9fe0ff, 0 10px 30px rgba(0, 0, 0, 0.55); }
+.toast-mastery-rank--diamond  .toast-title { color: #bcecff; }
+
+/* Pool-Checkpoint: größter Puls (Mona: "seltenste und wertvollste Ereignisse des Systems").
+   Welle MM (Mona R3-Fund, "Gold-Streifen verblasst nach dem Puls"): der Basis-box-shadow kam
+   bisher aus der geteilten `.toast-mastery--milestone, .toast-mastery--pool`-Regel weiter oben
+   (Blau) — ohne `animation-fill-mode` kehrte die Puls-Animation nach ihren 3 Iterationen genau
+   dorthin zurück, der seltenste Mastery-Moment stand am Ende wieder blassblau da, während ein
+   Sekunden vorher gefeuerter 5-%-Toast noch golden glühte. Eigener GOLDENER Basis-Streifen statt
+   des geteilten Blaus behebt das dauerhaft (Ruhezustand = Endzustand), nicht nur während des
+   Pulses. */
+.toast-mastery--pool {
+  box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 10px 30px rgba(0, 0, 0, 0.55);
+  animation: toast-in 0.25s ease-out, toast-mastery-pool-pulse 1.5s ease-in-out 0.25s 3;
+}
+@keyframes toast-mastery-pool-pulse {
+  0%, 100% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 10px 30px rgba(0, 0, 0, 0.55); }
+  50% { box-shadow: inset 5px 0 0 var(--gold, #d8b35a), 0 0 30px 8px rgba(216, 179, 90, 0.8), 0 10px 30px rgba(0, 0, 0, 0.55); }
+}
+.toast-mastery--pool .toast-title { color: var(--gold, #d8b35a); }
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-mastery--milestone,
+  .toast-mastery--pool,
+  .toast-elite {
+    animation: toast-in 0.25s ease-out !important;
+  }
+}
+
+.toast-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.toast-icon img,
+.toast-icon .ui-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.toast-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.toast-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.7rem;
+  letter-spacing: 0.5px;
+  color: var(--gold, #d8b35a);
+}
+
+/* Welle Y (Jorin-Fund): war auf eine einzeilige `nowrap`+Ellipse getrimmt — passte für kurze
+   Details ("Level 5", ein Item-Name), schnitt aber längere Sätze (Import-Bestätigung, Achievement-
+   Text) mitten im Wort ab. Jetzt normaler Umbruch statt Kürzung — der Toast wächst in der Höhe
+   (`.toast` hat keine feste Höhe), bleibt aber innerhalb seiner max-width. */
+.toast-detail {
+  font-size: 1.45rem;
+  color: var(--text, #d8d2c8);
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Zweite Absicherung (1:1 nach Vorbild combat.css Task #296 P0 §1.6): der Jackpot-Puls/-Sweep wird
+   bereits in JS über `getCombatFxLevel()`/matchMedia auf "off" gesetzt (Toasts.tsx
+   effectiveFxLevel) — dieser Block fängt den Fall ab, dass matchMedia zur Laufzeit nicht verfügbar
+   ist. Endzustand bleibt der normale (unanimierte) Toast von oben, Text bleibt unverändert lesbar. */
+@media (prefers-reduced-motion: reduce) {
+  .toast-rare.fx-reduced,
+  .toast-rare.fx-full,
+  .toast-rare-legendary.fx-reduced,
+  .toast-rare-legendary.fx-full,
+  .toast-rare-godly.fx-reduced,
+  .toast-rare-godly.fx-full {
+    animation: toast-in 0.25s ease-out !important;
+  }
+  .toast-rare.fx-full::after,
+  .toast-rare-legendary.fx-full::after,
+  .toast-rare-godly.fx-full::after {
+    display: none !important;
+  }
+}
+
+/* ─── Game Alert (WoW-Stil-Fehlermeldung, Chef-Bugfix 22.07.) ──────────────
+   Rote Fehlertext-Einblendung oben-mittig über dem Content (component/GameAlert.tsx). Anders als
+   `.toast-stack` (unten rechts, Erfolgs-/Fund-Feedback) meldet dies FEHLGESCHLAGENE Aktionen —
+   knapp, zentral, sofort ins Auge. Viewport-fixed wie die übrigen globalen Overlays (Toasts/
+   Ceremonies), zentriert über die volle Fensterbreite. */
+.game-alert-stack {
+  position: fixed;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 4000;
+  pointer-events: none;
+}
+
+.game-alert {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.3px;
+  color: var(--danger, #c84a3a);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 14px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  animation: game-alert-life 2.45s ease-out forwards;
+}
+
+@keyframes game-alert-life {
+  0%   { opacity: 0; transform: translateY(-6px); }
+  6%   { opacity: 1; transform: translateY(0); }
+  88%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+@media (max-width: 2900px) {
+  .game-alert-stack { top: 76px; }
+  .game-alert { font-size: 1rem; }
+}
+
+/* prefers-reduced-motion: nur Ein/Aus (kein Fade) — die Meldung erscheint/verschwindet hart,
+   bleibt aber dieselbe Gesamtdauer sichtbar (JS-Timer in GameAlert.tsx bleibt unverändert). */
+@media (prefers-reduced-motion: reduce) {
+  .game-alert { animation: none; opacity: 1; }
+}
+
+/* ─── Statistik-Seite ────────────────────────────────────── */
+.stats-page {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* Citadel: Panels auf der Stats-Seite mit Holzrahmen + bg_black */
+.stats-page .panel {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+}
+
+.stats-page .row {
+  font-size: 19px;
+}
+
+.stats-page .val {
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+/* ─── Bestiary ───────────────────────────────────────────── */
+.bestiary-page {
+  width: 100%;
+}
+
+/* Citadel: Panels auf der Bestiary-Seite */
+.bestiary-page .panel {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+}
+
+.bestiary-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.bestiary-head h2 {
+  margin: 0;
+  color: var(--accent);
+}
+
+.bestiary-count {
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.bestiary-count strong {
+  color: var(--accent-2);
+}
+
+/* Sammel-Fortschritt (SAVE 58): trennt die Item- und Monster-Progress-Phrasen im Kopf. */
+.bestiary-count-sep {
+  margin: 0 8px;
+  color: var(--border);
+}
+
+/* Bestiarium-Jagdliste (Fun-Sweep FF, Pip P3a): "Nur Unbesiegte"-Toggle, Stil der Achievements-
+   Filter-Buttons (achievements.css `.achv-filter-btn`), hier als eigenständiger Chip statt
+   3-Way-Leiste (nur EIN Toggle) — kein Import aus dem AchievementsPage-Revier (Kollisionsschutz). */
+.bestiary-filters {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.bestiary-filter-chip {
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s, border-color 0.12s;
+}
+
+.bestiary-filter-chip:hover {
+  color: var(--text);
+  border-color: var(--accent-2);
+}
+
+.bestiary-filter-chip.active {
+  color: var(--gold);
+  background: rgba(216, 192, 106, 0.14);
+  border-color: rgba(216, 192, 106, 0.5);
+}
+
+/* Status-Legende: texturierter Rahmen. Task #316 (B3): padding auf die --ds-gap-Skala umgestellt
+   (war 12px flach) — gleicher "Holzrahmen-Streifen"-Zweck wie .bank-head/.shop-upgrade-card
+   (s. dortige Kommentare), jetzt alle drei auf demselben var(--ds-gap) var(--ds-gap-lg)-Innenabstand. */
+.status-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 12px;
+  padding: var(--ds-gap) var(--ds-gap-lg);
+  background: linear-gradient(rgba(10,12,15,0.35), rgba(10,12,15,0.40)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+}
+
+.status-legend-title {
+  width: 100%;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-legend-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.status-legend-icon { font-size: 18px; }
+.status-legend-name { font-weight: 600; color: var(--text); }
+.status-legend-desc { font-size: 15px; }
+
+/* ─── Zonen-Sektionen (einklappbar) — Design-System-Muster: SkillPage-
+   Kategorien-Collapse (.category-header) auf die Bestiary-Zonen übertragen. ─── */
+.bestiary-zone-section {
+  margin-bottom: 22px;
+}
+
+.bestiary-zone-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  margin-bottom: 14px;
+  /* Chef-Fix 2026-07-24 ("Stein auf Stein geht unter!"): dasselbe Kategorie-Muster wie
+     .category-header (skills.css) — beide teilen sich denselben Design-System-Baustein (s.
+     Kommentar oben), also auch denselben Holz- statt Stein-Fix (Options/Companions-Muster,
+     2026-07-23). Gekachelt, nie gestreckt; url() gequotet (Standing Rules). */
+  background:
+    linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)),
+    url("../assets/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px; /* Chef-Umbau 2026-07-24 v2: Leder („Taschen-Look"), Kachel klein */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 19px;
+  text-align: left;
+}
+
+.bestiary-zone-header:hover {
+  background:
+    linear-gradient(rgba(60, 42, 22, 0.16), rgba(60, 42, 22, 0.22)),
+    url("../assets/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+  box-shadow: 0 0 10px rgba(154, 128, 96, 0.22);
+}
+
+/* Champion-Kodex-Sektionen (Jagd-Paket Task 3) klappen NICHT ein — derselbe Kopf-Look, aber ohne
+   den Klick-Cursor der Bestiarium-Collapse-Header. */
+.bestiary-zone-header--static {
+  cursor: default;
+}
+
+.bestiary-zone-caret {
+  color: var(--accent-2);
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.bestiary-zone-name {
+  flex: 1;
+  min-width: 0;
+  font-variant: small-caps;
+  font-size: 24px; /* Chef-Fix 2026-07-24: Kategorie-Namen als echte Überschriften */
+  letter-spacing: 0.03em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bestiary-zone-levels {
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  padding: 2px 9px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(154, 128, 96, 0.32);
+  color: var(--accent-2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bestiary-zone-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.bestiary-zone-progress-num {
+  font-size: 15px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Kombiniert mit der generischen .bar-Leiste (skills.css) — höhere Spezifität
+   überschreibt nur Breite/Abstand, die Fülloptik bleibt einheitlich. */
+.bestiary-zone-progress-bar.bar {
+  width: 90px;
+  margin-top: 0;
+}
+
+/* ─── Monster-Karten-Grid — größer, luftig, 3-4 Spalten je nach Breite ─── */
+.bestiary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+/* Karte: Kunst-Fenster oben (Zonen-Hintergrund + Monster-Porträt) + opaker
+   Stat-/Button-Block unten — Citadel-Look analog den Monster-Auswahlkarten
+   der CombatPage (.monster-card), hier als eigene Klassen damit sich beide
+   Seiten unabhängig weiterentwickeln können. */
+.bestiary-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 10px;
+  border-radius: 0;
+  background: var(--slot);
+  /* Perf (#206/P2): Offscreen-Karten überspringen Layout/Paint bis sie in den Viewport scrollen. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
+}
+
+.bestiary-card.unknown {
+  opacity: 0.62;
+  filter: grayscale(0.35);
+}
+
+.bestiary-card:hover {
+  box-shadow: 0 0 14px rgba(154, 128, 96, 0.22);
+}
+
+/* Kunst-Fenster: zeigt die Zonen-Art (Kampf-Backdrop) als Kartenhintergrund. */
+.bestiary-card-art {
+  position: relative;
+  height: 220px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 32%, #2c3742, #0e1216);
+  background-size: cover;
+  background-position: center;
+}
+
+.bestiary-card-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Abdunkelung/Vignette über dem Zonen-Bild, damit Porträt + Badges immer lesbar bleiben. */
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.18) 0%, rgba(10, 8, 6, 0.30) 55%, rgba(10, 8, 6, 0.88) 100%);
+  pointer-events: none;
+}
+
+.bestiary-card-portrait {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.7));
+}
+
+.bestiary-portrait-ph {
+  position: relative;
+  z-index: 1;
+  font-size: 52px;
+  opacity: 0.45;
+  margin-bottom: 14px;
+}
+.bestiary-card.unknown .bestiary-portrait-ph { font-size: 60px; }
+
+/* Level-Badge oben rechts im Kunst-Fenster (eigene Holztextur + 9-Slice-Rahmen,
+   wie .monster-card-level-badge auf der CombatPage). */
+.bestiary-card-level-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  padding: 5px 11px;
+  background:
+    linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)),
+    url("../assets/bg_tileable_wood.webp") center / 130px repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--gold);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* Enrage-Marker als kleines Eck-Badge oben LINKS (Level-Badge sitzt jetzt rechts) —
+   bewusst klein gehalten (Chef), Quelle ist 128px. */
+.bestiary-enrage-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 50%;
+  background: rgba(20, 6, 6, 0.78);
+  border: 1px solid rgba(224, 90, 60, 0.55);
+  box-shadow: 0 0 6px rgba(224, 60, 40, 0.35);
+  cursor: help;
+}
+
+/* Stat-/Button-Block unten: opake Holztextur (wie .monster-card-footer). */
+.bestiary-card-footer {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+  background:
+    linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)),
+    url("../assets/bg_tileable_wood.webp") center / 320px repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px 0 0 0;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px 0 0 0;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+
+/* Name darf zweizeilig umbrechen statt zu clippen (Chef: lange Namen nicht abschneiden). */
+.bestiary-name {
+  font-family: var(--font-head);
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 0 1px 4px #000;
+  text-align: center;
+  margin-bottom: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+}
+
+.bestiary-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  font-size: 15px;
+  color: #e6d8bf;
+}
+
+/* Kill-Zähler-Badge (SAVE 58): dezent, IMMER sichtbar (bekannte + unbekannte Karten) —
+   knapp unter dem Namen, klein & gedämpft statt die Stat-Zeile zu dominieren. */
+.bestiary-kill-badge {
+  align-self: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent-2);
+  cursor: help;
+}
+
+.bestiary-kill-badge.dim {
+  color: var(--muted);
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+/* Kill-Leiter-Häkchen (Fun-Sweep FF, Pip P3b): die echten 10/100/1000-Kill-Meilensteine als
+   Mini-Häkchen-Reihe — bewusst dezent (schon eine Zeile über den Stats), reached-Chips grün. */
+.bestiary-kill-ladder {
+  align-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px 8px;
+  font-size: 11px;
+}
+
+.bestiary-kill-ladder-step {
+  color: var(--muted);
+  cursor: help;
+}
+
+.bestiary-kill-ladder-step.reached {
+  color: #8fd28f;
+  font-weight: 600;
+}
+
+.bestiary-resist {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 14px;
+  cursor: help;
+}
+
+.bestiary-drops {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  font-size: 15px;
+  /* Chef-Fix: Citadel-Holzrahmen + dunkle Textur ums Drop-Icon-Grid (konsistent mit dem
+     Kampf-Gegnerkarten-Pendant .monster-card-drops und dem Skill-Karten-Pendant .skillcard-loot). */
+  padding: 8px 10px;
+  background: linear-gradient(rgba(10, 8, 6, 0.5), rgba(10, 8, 6, 0.55)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+}
+.bestiary-drops-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--muted);
+}
+.bestiary-drops-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+/* Einzelner Drop: echtes Item-Icon + Dropchance darunter. Entdeckte Drops sind klickbar
+   (öffnet das Item-Wiki-Modal, s. BestiaryPage.tsx openItemWikiModal). */
+.bestiary-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 6px 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-width: 46px;
+  cursor: pointer;
+}
+
+.bestiary-drop:not(.undiscovered):hover {
+  border-color: var(--accent-2);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 8px rgba(154, 128, 96, 0.28);
+}
+.bestiary-drop .bestiary-drop-chip .item-chip-img,
+.bestiary-drop .bestiary-drop-chip .item-chip-emoji {
+  width: 34px;
+  height: 34px;
+  font-size: 28px;
+}
+.bestiary-drop-pct {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Item-Checkliste (Fun-Sweep FF, Pip P3c): explizites ✓-Badge auf gefundenen Drops — anchored
+   auf `.bestiary-drop-chip` (braucht dafür `position: relative`, sonst inline/statisch). */
+.bestiary-drop-chip {
+  position: relative;
+  display: inline-flex;
+}
+
+.bestiary-drop-check {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: #3a7a3a;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Unerbeutete Drops (Chef #239, Collection-Log-Stil — gespiegelt von .skillcard-drop.undiscovered
+   in skills.css): derselbe Slot-Look wie ein entdeckter Drop (Hintergrund/Rahmen von .bestiary-drop
+   bleibt bestehen), aber gedämpft und ohne Klick-Interaktion — erst nach dem ersten Loot wird der
+   echte Drop enthüllt. */
+.bestiary-drop.undiscovered {
+  cursor: default;
+  opacity: 0.6;
+}
+.bestiary-drop-mystery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+/* Task #248: schwarze Item-Silhouette statt „???"-Text (Größe kommt von der bestehenden
+   .bestiary-drop .bestiary-drop-chip .item-chip-img Regel, s. o.). */
+.bestiary-drop-silhouette {
+  filter: brightness(0);
+}
+/* „?"-Overlay über der Silhouette (SAVE 58 Sweep): macht auf den ersten Blick klar, dass hier
+   ein maskiertes Item sitzt, statt nur eine dunkle Form zu zeigen. */
+.bestiary-drop-mystery-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.bestiary-drop-mystery-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--muted);
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
+.bestiary-unknown-hint {
+  font-size: 16px;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Fight-Button: universeller 9-Slice-Button (Task #332, Chef 24.07.) — ersetzt die alte rote
+   sidebar_btn_{normal,hover,active}-Bannerfamilie (Chef 2026-07-02, „vermehrt hernehmen") durch
+   dasselbe ButtonNew-Rezept wie Sidebar/TopBar/`.combat-btn` (combat.css): border-image mit
+   "fill" trägt Rand + Füllung, Hover/Active tauschen nur die border-image-source. */
+.bestiary-fight-btn {
+  margin-top: auto;
+  width: 100%;
+  height: 46px;
+  padding: 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image: url("../assets/ui/buttons/button_new.webp") 90 92 90 90 fill / 12px 12px 12px 12px;
+  border-radius: 0;
+  color: #ffffff;
+  text-shadow: 0 1px 3px #000;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.bestiary-fight-btn:hover:not(:disabled) {
+  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
+  color: #fff;
+}
+
+.bestiary-fight-btn:active:not(:disabled) {
+  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
+}
+
+.bestiary-fight-btn:disabled {
+  cursor: default;
+  filter: grayscale(0.7) brightness(0.55);
+}
+
+.bestiary-resist.warn {
+  color: #c98b6b;
+}
+
+/* ─── Champion-Kodex (Jagd-Paket Task 3, Chef-GO) — Tab neben dem normalen Bestiarium.
+   Reuses `.bestiary-grid`/`.bestiary-card`/`.bestiary-card-art`/`.bestiary-card-footer`/
+   `.bestiary-name`/`.bestiary-zone-section`/`.bestiary-zone-header`/`.bestiary-portrait-ph`
+   1:1 (dasselbe Discovery-Muster) — hier nur die codex-eigene Stat-Zeile + Tab-Leiste. ─── */
+.bestiary-view-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 4px;
+}
+
+.codex-card-zonehint {
+  font-size: 13px;
+  text-align: center;
+  margin-top: -4px;
+}
+
+.codex-stat-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 14px;
+  font-size: 14px;
+}
+
+.codex-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--border);
+}
+
+.codex-stat-label {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.codex-stat-val {
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+/* ─── Completion ─────────────────────────────────────────── */
+.completion-title {
+  margin: 0 0 12px;
+  font-size: 21px;
+  color: var(--text);
+}
+
+.completion-row {
+  margin-bottom: 12px;
+}
+
+.completion-row:last-child {
+  margin-bottom: 0;
+}
+
+.completion-row-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.completion-row-head .val {
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+/* ─── Optionen ───────────────────────────────────────────── */
+.options-page {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+  align-items: start;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* Seiten-Kopf über die volle Breite */
+.options-header {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4px 0 12px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.22);
+}
+
+.options-header h2 {
+  font-family: var(--font-head);
+  font-size: 34px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.options-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* Citadel: Panels auf der Options-Seite */
+.options-page .panel {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+  padding: 16px 18px;
+}
+
+.options-page .panel h3 {
+  font-family: var(--font-head);
+  font-size: 20px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+}
+
+/* Volle-Breite-Panels (Spielstand-Daten, Über) */
+.options-panel--wide {
+  grid-column: 1 / -1;
+}
+
+/* Beschriftete Einstellungs-Zeile: Label links, Steuerelemente rechts */
+.opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  flex-wrap: wrap;
+}
+
+.opt-row + .opt-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.opt-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 130px;
+  flex: 1 1 auto;
+}
+
+.opt-row-label {
+  font-family: var(--font-head);
+  font-size: 16px;
+  color: var(--text);
+}
+
+.opt-row-hint {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.35;
+  max-width: 380px;
+}
+
+.opt-row-control {
+  flex-shrink: 0;
+}
+
+/* Segment-Gruppe (Buttons nebeneinander, rechtsbündig) */
+.opt-segment {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.opt-segment .lang-btn {
+  padding: 9px 16px;
+  font-size: 16px;
+}
+
+/* Lautstärke-Regler (Citadel-Stil): dunkle Rille + goldener Metall-Griff statt Browser-Default. */
+.opt-slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.opt-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 160px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+  outline: none;
+}
+
+.opt-range:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.opt-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: transparent;
+}
+
+.opt-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--gold), var(--accent-2) 65%, var(--accent) 100%);
+  border: 2px solid rgba(20, 14, 8, 0.9);
+  box-shadow: 0 0 6px rgba(216, 192, 106, 0.45);
+  cursor: pointer;
+  transition: box-shadow 0.12s, transform 0.12s;
+}
+
+.opt-range::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.75);
+  transform: scale(1.08);
+}
+
+.opt-range::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+}
+
+.opt-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--gold), var(--accent-2) 65%, var(--accent) 100%);
+  border: 2px solid rgba(20, 14, 8, 0.9);
+  box-shadow: 0 0 6px rgba(216, 192, 106, 0.45);
+  cursor: pointer;
+}
+
+.opt-slider-val {
+  min-width: 42px;
+  text-align: right;
+  font-family: var(--font-head);
+  font-size: 15px;
+  color: var(--gold);
+}
+
+/* Legacy-Klasse (Abwärtskompatibilität, falls noch irgendwo genutzt) */
+.options-langs {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.options-langs .lang-btn {
+  padding: 10px 20px;
+  font-size: 18px;
+}
+
+.options-hint {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.options-import {
+  width: 100%;
+  min-height: 110px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  resize: vertical;
+  background: var(--bg-deep);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.options-import-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.import-ok { color: #8fd28f; font-weight: 600; }
+.import-error { color: var(--danger, #c84a3a); font-weight: 600; }
+
+/* ─── Dev: Schriftart-Vorschau ───────────────────────────── */
+.font-preview-overlay {
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 32px 60px;
+  background: var(--bg);
+}
+
+.font-preview-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.font-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 900px;
+}
+
+.font-preview-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 16px 20px;
+}
+
+.font-preview-card.active {
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+
+.font-preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.font-preview-name {
+  font-weight: 700;
+  color: var(--accent-2);
+  min-width: 200px;
+}
+
+.font-apply-btn {
+  margin-left: auto;
+  padding: 6px 16px;
+  border: 1px solid var(--border-bright);
+  border-radius: 5px;
+  background: var(--panel-hover);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.font-apply-btn:hover {
+  border-color: var(--accent);
+}
+
+.font-preview-sample .fp-title  { font-size: 40px; line-height: 1.1; color: var(--text); }
+.font-preview-sample .fp-heading { font-size: 24px; color: var(--accent-2); margin-top: 6px; }
+.font-preview-sample .fp-menu   { font-size: 20px; color: var(--text); margin-top: 6px; }
+.font-preview-sample .fp-misc   { font-size: 19px; color: var(--muted); margin-top: 6px; }
+
+/* ─── Dev: Item Browser ──────────────────────────────────── */
+.ib-root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}
+
+.ib-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.ib-badge {
+  font-size: 14px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.ib-search {
+  flex: 1;
+  min-width: 160px;
+  padding: 6px 10px;
+  background: var(--slot);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 16px;
+}
+
+.ib-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.ib-select {
+  padding: 6px 8px;
+  background: var(--slot);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.ib-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.ib-split {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ib-split--detail .ib-list {
+  flex: 0 0 55%;
+}
+
+.ib-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ib-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-size: 15px;
+}
+
+.ib-row:hover { background: var(--panel-hover); }
+
+.ib-row--active {
+  background: var(--panel-hover);
+  outline: 1px solid var(--accent-dim);
+  outline-offset: -1px;
+}
+
+.ib-thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.ib-thumb-emoji {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.ib-row-name {
+  flex: 0 0 auto;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ib-row-id {
+  flex: 1;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ib-row-type  { flex-shrink: 0; font-size: 13px; min-width: 80px; text-align: right; }
+.ib-row-rarity { flex-shrink: 0; font-size: 12px; min-width: 60px; text-align: right; text-transform: capitalize; }
+.ib-row-val   { flex-shrink: 0; font-size: 13px; min-width: 55px; text-align: right; }
+
+.ib-detail {
+  flex: 0 0 44%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ib-detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.ib-detail-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.ib-detail-emoji {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  flex-shrink: 0;
+}
+
+.ib-detail-title-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ib-detail-name {
+  margin: 0;
+  font-size: 18px;
+  font-family: var(--font-head);
+}
+
+.ib-detail-id { font-size: 13px; }
+
+.ib-close-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.ib-close-btn:hover {
+  color: var(--text);
+  border-color: var(--border-bright);
+}
+
+.ib-detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ib-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ib-section-title {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.ib-kv-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ib-kv {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ib-kv-key {
+  flex-shrink: 0;
+  min-width: 110px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ib-kv-val {
+  color: var(--text);
+  word-break: break-all;
+}
+
+.ib-desc {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.ib-json {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 2;
+}
+
+/* ─── Dev: Zone Map Editor ───────────────────────────────── */
+.zonemap-editor-root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+}
+
+.zonemap-editor-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.zonemap-editor-label {
+  color: var(--muted);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.zonemap-editor-hint {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zonemap-editor-btn {
+  padding: 6px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent-2);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.zonemap-editor-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.zonemap-editor-btn.secondary {
+  border-color: var(--border);
+  background: var(--slot);
+  color: var(--text);
+}
+
+.zonemap-editor-btn.secondary:hover { border-color: var(--accent); }
+.zonemap-editor-btn.secondary.ok { border-color: #4caf50; color: #4caf50; }
+
+.zonemap-editor-btn.danger {
+  border-color: var(--danger);
+  background: transparent;
+  color: var(--danger);
+  width: 100%;
+  margin-top: 6px;
+}
+
+.zonemap-editor-btn.danger:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+.zonemap-editor-status {
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+
+.zonemap-editor-status.ok {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.12);
+  color: #4caf50;
+}
+
+.zonemap-editor-status.error {
+  border-color: var(--danger);
+  background: rgba(168, 90, 82, 0.15);
+  color: var(--danger);
+}
+
+.zonemap-editor-status-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+  opacity: 0.7;
+}
+
+.zonemap-editor-status-close:hover { opacity: 1; }
+
+.zonemap-editor-body {
+  display: flex;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.zonemap-editor-stage-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.zonemap-editor-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--slot);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.zonemap-editor-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.zonemap-editor-token {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: grab;
+  transform-origin: center center;
+}
+
+.zonemap-editor-token:active { cursor: grabbing; }
+
+.zonemap-editor-token .zonemap-token-ring {
+  border-color: var(--border-bright);
+  transition: border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+}
+
+.zonemap-editor-token:hover .zonemap-token-ring,
+.zonemap-editor-token.selected .zonemap-token-ring {
+  border-color: var(--accent);
+  box-shadow: 0 0 14px rgba(111, 151, 179, 0.7), 0 2px 8px rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.zonemap-editor-token.selected .zonemap-token-ring {
+  border-color: var(--gold, #d8c06a);
+  box-shadow: 0 0 16px rgba(216, 192, 106, 0.6), 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.zonemap-editor-hud {
+  position: absolute;
+  transform: translate(8px, -100%);
+  background: rgba(0, 0, 0, 0.72);
+  color: var(--accent-2);
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+  pointer-events: none;
+  z-index: 20;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+}
+
+.zonemap-editor-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.zonemap-editor-sidebar-title {
+  font-size: 17px;
+  color: var(--accent-2);
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+}
+
+.zonemap-editor-inspector {
+  background: var(--slot);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zonemap-editor-inspector-title {
+  font-size: 13px;
+  color: var(--gold, #d8c06a);
+  font-weight: 700;
+  margin-bottom: 2px;
+  word-break: break-all;
+}
+
+.zonemap-editor-coord-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zonemap-editor-coord-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 26px;
+  flex-shrink: 0;
+}
+
+.zonemap-editor-coord-input {
+  flex: 1;
+  padding: 4px 6px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.zonemap-editor-coord-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.zonemap-editor-size-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zonemap-editor-size-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 36px;
+  flex-shrink: 0;
+}
+
+.zonemap-editor-size-slider {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.zonemap-editor-size-input {
+  width: 54px;
+  padding: 4px 6px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.zonemap-editor-size-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.zonemap-editor-default-size {
+  background: var(--slot);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zonemap-editor-default-size-title {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.zonemap-editor-palette-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zonemap-editor-palette-heading {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+.zonemap-editor-mob-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.zonemap-editor-mob-row:hover {
+  background: var(--panel-hover);
+  border-color: var(--border);
+}
+
+.zonemap-editor-mob-row.placed {
+  background: rgba(111, 151, 179, 0.08);
+  border-color: var(--border);
+}
+
+.zonemap-editor-mob-row.placed.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.zonemap-editor-mob-thumb {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--slot);
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+
+.zonemap-editor-mob-thumb img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.zonemap-editor-mob-name {
+  flex: 1;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zonemap-editor-mob-place {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-dim);
+  background: transparent;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.zonemap-editor-mob-place:hover {
+  background: var(--accent-dim);
+  color: var(--accent-2);
+}
+
+.zonemap-editor-mob-remove {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.1s, background 0.1s;
+}
+
+.zonemap-editor-mob-remove:hover {
+  opacity: 1;
+  background: var(--danger);
+  color: #fff;
+}
+
+/* Quest Log CSS ist umgezogen nach styles/quests.css (Task #274, direkt in QuestsPage.tsx
+   importiert — Muster wie achievements.css/shop.css/options.css: page-scoped Stylesheet statt
+   Sammelablage hier). Die drei ehemals toten `.quests-summary*`-Regeln (nie in QuestsPage.tsx
+   verdrahtet) sind bei dem Umzug entfallen statt migriert. */
+
+/* ═══════════════════════════════════════════════════════════
+   ACHIEVEMENTS v2
+   ═══════════════════════════════════════════════════════════ */
+
+.ach2-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Citadel: Achievements-Header mit Holzrahmen + bg_black */
+.ach2-page-header {
+  /* Chef: komplett entfernt — die Topbar-Banderole trägt den Seitentitel bereits. */
+  display: none;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 28px;
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.ach2-page-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 10% 50%, rgba(154, 128, 96, 0.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.ach2-header-emblem {
+  font-size: 52px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.ach2-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.ach2-header-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 34px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-shadow: none;
+}
+
+.ach2-header-sub {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  color: var(--muted);
+}
+
+.ach2-stat-panels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 800px) {
+  .ach2-stat-panels { grid-template-columns: 1fr; }
+}
+
+/* Citadel: Achievements-Stat-Karten mit Holzrahmen + bg_black */
+.ach2-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.ach2-stat-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ach2-stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ach2-stat-big {
+  font-family: var(--font-head);
+  font-size: 24px;
+  color: var(--accent-2);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.ach2-stat-label {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ach2-stat-sub { font-size: 14px; color: var(--muted); }
+
+/* SVG progress ring */
+.ach2-ring-svg { flex-shrink: 0; }
+.ach2-ring-bg { stroke: var(--border); fill: none; }
+
+.ach2-ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  transform-origin: center;
+  transition: stroke-dasharray 0.3s ease;
+}
+
+.ach2-ring-text {
+  font-family: var(--font-head);
+  font-size: 15px;
+  fill: var(--accent-2);
+  font-weight: 700;
+}
+
+/* Citadel: Controls-Panel in Achievements */
+.ach2-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+}
+
+.ach2-filter-group {
+  display: flex;
+  background: var(--slot);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ach2-filter-btn {
+  padding: 6px 16px;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s;
+  white-space: nowrap;
+}
+
+.ach2-filter-btn:last-child { border-right: none; }
+.ach2-filter-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.ach2-filter-btn--active { color: var(--accent-2); background: rgba(154,128,96,0.14); }
+
+.ach2-controls-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-bright);
+  flex-shrink: 0;
+}
+
+.ach2-cat-group {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.ach2-cat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  white-space: nowrap;
+}
+
+.ach2-cat-btn:hover {
+  color: var(--text);
+  border-color: var(--accent-dim);
+  background: rgba(111,151,179,0.05);
+}
+
+.ach2-cat-btn--active {
+  color: var(--accent-2);
+  border-color: var(--accent-dim);
+  background: rgba(154,128,96,0.10);
+}
+
+.ach2-grid {
+  display: grid;
+  /* Max. 5 Spalten (Chef-Wunsch); skaliert mit dem globalen Zoom. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 1350px) {
+  .ach2-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1100px) {
+  .ach2-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Citadel: Achievement-Karten mit Holzrahmen + bg_black */
+.ach2-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  /* Nicht freigeschaltet = rötlicher Hue. */
+  background: linear-gradient(rgba(48,16,12,0.46), rgba(28,9,7,0.52)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  /* Kein opacity mehr — machte die ganze Karte inkl. Text durchscheinend/unleserlich.
+     Gesperrt vs. freigeschaltet unterscheidet sich über den Hue (rötlich vs. grünlich). */
+  transition: filter 0.12s;
+}
+
+.ach2-card--unlocked {
+  /* Freigeschaltet = grünlicher Hue. */
+  background: linear-gradient(rgba(20,44,18,0.45), rgba(11,24,10,0.50)), url("../assets/bg_black.webp") repeat;
+}
+
+.ach2-emblem {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.ach2-emblem.ach2-rarity--common    { border-color: #454d54; }
+.ach2-emblem.ach2-rarity--uncommon  { border-color: rgba(91,143,214,0.55); }
+.ach2-emblem.ach2-rarity--rare      { border-color: rgba(216,192,106,0.6); }
+.ach2-emblem.ach2-rarity--epic      { border-color: rgba(170,80,200,0.6); }
+.ach2-emblem.ach2-rarity--legendary { border-color: rgba(217,138,74,0.7); }
+
+.ach2-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* UI-Audit-Fund: Name + Rarity-Badge nebeneinander in einer Reihe quetschten sich bei den
+   schmalen 5-Spalten-Karten gegenseitig — lange (v.a. deutsche Verbund-)Wörter ohne Leerzeichen
+   liefen dadurch über die Flex-Box hinweg ins Badge hinein ("GewöhnlichLehrling"). Name jetzt auf
+   eigener Zeile über volle Kartenbreite, Badge darunter — nie mehr Konkurrenz um denselben Platz. */
+.ach2-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.ach2-name {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant: small-caps;
+  line-height: 1.25;
+  width: 100%;
+  min-width: 0;
+  /* Sicherheitsnetz für einzelne, extrem lange Wörter, die selbst auf voller Kartenbreite nicht
+     umbrechen würden. */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.ach2-badge {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ach2-badge.ach2-rarity--common    { color: var(--text); border-color: #454d54; background: rgba(255,255,255,0.04); }
+.ach2-badge.ach2-rarity--uncommon  { color: #8fbfdf; border-color: rgba(91,143,214,0.4); background: rgba(91,143,214,0.08); }
+.ach2-badge.ach2-rarity--rare      { color: var(--gold); border-color: rgba(216,192,106,0.45); background: rgba(216,192,106,0.08); }
+.ach2-badge.ach2-rarity--epic      { color: #c080e0; border-color: rgba(170,80,200,0.45); background: rgba(170,80,200,0.08); }
+.ach2-badge.ach2-rarity--legendary { color: #e08030; border-color: rgba(217,138,74,0.5); background: rgba(217,138,74,0.1); }
+
+.ach2-ap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--gold);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ach2-ap-icon { font-size: 13px; }
+
+.ach2-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  /* Gleicher Fund wie .ach2-name: lange deutsche Verbundwörter in der Beschreibung konnten
+     nicht umbrechen und liefen über die Karte hinaus (schob dadurch auch .ach2-body/.ach2-card
+     in den horizontalen Overflow). */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.ach2-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.ach2-progress-bar {
+  height: 4px;
+  background: var(--bg-deep);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ach2-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: #454d54;
+  transition: width 0.15s;
+}
+
+.ach2-progress-fill.ach2-rarity--uncommon  { background: #5b8fd6; }
+.ach2-progress-fill.ach2-rarity--rare      { background: var(--gold); }
+.ach2-progress-fill.ach2-rarity--epic      { background: #c080e0; }
+.ach2-progress-fill.ach2-rarity--legendary { background: #e08030; }
+
+.ach2-progress-count {
+  font-size: 13px;
+  text-align: right;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.ach2-unlocked {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-2);
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
+.ach2-footer {
+  text-align: center;
+  font-size: 13px;
+  font-style: italic;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+}
+
+/* extra source-tag color from ach2 section */
+.cs-source-more { color: var(--muted); border-color: rgba(255,255,255,0.08); }
+
+/* ═══════════════════════════════════════════════════════════
+   PETS / COMPANIONS
+   ═══════════════════════════════════════════════════════════ */
+
+.pet-gallery-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Citadel: Header-Panel im Companions-Screen
+   Chef 2026-07-23: Holz statt Stein (gekachelt, nie gestretcht — BG-Textur-Regel, Muster options.css). */
+.pet-gallery-page .panel {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/bg_tileable_wood.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+}
+
+.pet-gallery-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.pet-gallery-head h2 {
+  margin: 0;
+  font-size: 26px;
+  color: var(--accent);
+}
+
+.pet-gallery-counter {
+  font-size: 18px;
+  color: var(--muted);
+}
+
+.pet-slot-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 4px;
+}
+
+.pet-slot-label { font-size: 17px; white-space: nowrap; }
+
+/* Companion-Slot-Button: App-Button-Look */
+.pet-slot-btn {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)), url("../assets/bg_black.webp") repeat;
+  border: none;
+  border-radius: 0;
+  padding: 7px 12px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 18px;
+  font-family: var(--font-head);
+  transition: background 0.15s, color 0.15s;
+}
+
+.pet-slot-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pet-slot-btn:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/bg_black.webp") repeat;
+  color: var(--accent-2);
+}
+
+.pet-slot-icon    { font-size: 22px; }
+.pet-slot-name    { font-weight: 700; color: var(--accent-2); }
+.pet-slot-none    { font-size: 17px; }
+.pet-slot-chevron { margin-left: auto; font-size: 14px; color: var(--muted); }
+
+.pet-slot-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* Companion-Auswahl-Dropdown: Holzrahmen + Holztextur
+   Chef 2026-07-23: Holz statt Stein (gekachelt, nie gestretcht — BG-Textur-Regel, Muster options.css). */
+.pet-select-panel {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/bg_tileable_wood.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Fix-Welle CC (Fenn, Befund 2): 280px zeigte bei mehreren besessenen Pets kaum mehr als eine
+     Gruppe auf einmal — vh-Deckel (Muster: andere Auswahl-Panels wie .enchant-instance-list)
+     gibt deutlich mehr Scrollraum, bleibt aber auf kleinen Fenstern gedeckelt. */
+  max-height: min(50vh, 480px);
+  overflow-y: auto;
+}
+
+.pet-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pet-select-group + .pet-select-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.pet-select-group-head {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 10px 4px;
+}
+
+.pet-select-title {
+  font-size: 15px;
+  padding: 2px 4px 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.pet-select-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pet-select-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 17px;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.pet-select-entry:hover { background: rgba(154,128,96,0.08); border-color: var(--accent-dim); }
+.pet-select-entry.active { border-color: var(--accent); color: var(--accent-2); }
+
+.pet-select-icon { font-size: 20px; flex-shrink: 0; display: flex; align-items: center; }
+.pet-select-name { flex: 1; font-weight: 700; }
+.pet-select-eff  { font-size: 15px; }
+
+.pet-select-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* Gallery grid */
+.pet-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .pet-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .pet-gallery-grid { grid-template-columns: 1fr; }
+}
+
+/* Companion-Karten: Holzrahmen + Holztextur (Chef 2026-07-23: Stein → Holz, Muster options.css),
+   plus optionaler Zonen-Hintergrund je Pet (s. .pet-card.has-bg unten) — Zonen-Mapping in pets.ts
+   (PET_ZONE_ID), Karten-Variante via getZoneBackgroundCard (Perf). */
+.pet-card {
+  position: relative;
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/bg_tileable_wood.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* Perf (#206/P2): Offscreen-Karten überspringen Layout/Paint bis sie in den Viewport scrollen. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
+
+/* Zonen-Hintergrund (Chef-Auftrag 2026-07-23, Teil 2): thematisch passendes Zonenbild als
+   Karten-Hintergrund, Muster wie .zone-card.has-bg/.monster-card.has-bg — dunkler Verlauf oben→
+   unten fürs Textlesen, bestehende Inhalte (Portrait/Info/Actions) unverändert per z-index darüber. */
+.pet-card.has-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.pet-card.has-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 8, 6, 0.20) 0%,
+    rgba(10, 8, 6, 0.38) 30%,
+    rgba(10, 8, 6, 0.80) 55%,
+    rgba(10, 8, 6, 0.94) 100%
+  );
+  pointer-events: none;
+}
+
+.pet-card.has-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+.pet-card-owned   { /* Holzrahmen kommt vom Basis-.pet-card */ }
+.pet-card-equipped { box-shadow: 0 0 10px rgba(154,128,96,0.22); }
+/* Sweep 5, Finding 9: opacity:0.45 auf der GANZEN Karte (inkl. Skill-/Drop-Chance-Text) machte
+   die Companions-Seite im Midgame (0/21 Begleiter) fast unlesbar — wirkte wie eine leere
+   Fläche statt "21 Begleiter zu jagen". Dimmen jetzt nur das Portrait/den Namen; Skill- und
+   Drop-Chance-Zeilen bleiben in normaler .muted-Lesbarkeit. */
+.pet-card-locked { opacity: 1; }
+.pet-card-locked .pet-card-portrait { opacity: 0.6; filter: grayscale(0.7); }
+.pet-card-locked .pet-card-name { opacity: 0.65; }
+
+/* Portrait-Kasten: Holzrahmen */
+.pet-card-portrait {
+  position: relative;
+  background: #080a0d;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  box-shadow: inset 0 3px 12px rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 260px;
+  font-size: 110px;
+  overflow: hidden;
+}
+
+.pet-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
+}
+
+.pet-card-silhouette {
+  font-size: 44px;
+  color: var(--muted);
+  background: var(--slot);
+  border-radius: var(--radius);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pet-equipped-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(rgba(10,12,15,0.55), rgba(10,12,15,0.60)), url("../assets/bg_black.webp") repeat;
+  color: var(--accent-2);
+  font-size: 11px;
+  padding: 3px 7px;
+  font-weight: 700;
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.pet-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pet-card-name { font-size: 19px; font-weight: 700; color: var(--accent); }
+.pet-card-desc { font-size: 15px; line-height: 1.4; }
+.pet-card-effect { font-size: 15px; }
+
+.pet-effect-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pet-effect-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+/* Effekt-Tags: texturierte Chips mit Holzrahmen */
+.pet-effect-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  background: linear-gradient(rgba(10,12,15,0.50), rgba(10,12,15,0.55)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+}
+
+.pet-effect-tag-passive { color: #82c882; }
+
+.pet-effect-tag-active { color: #d89650; }
+
+.pet-effect-value { color: var(--accent-2); }
+
+.pet-card-source,
+.pet-card-drop { font-size: 14px; }
+
+.pet-card-actions { margin-top: 4px; }
+
+/* EQUIP/UNEQUIP-Buttons: App-Button-Look */
+.pet-card-btn {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)), url("../assets/bg_black.webp") repeat;
+  border: none;
+  border-radius: 0;
+  padding: 6px 14px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  width: 100%;
+  transition: background 0.12s, color 0.12s;
+}
+
+.pet-card-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pet-card-btn-equip:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/bg_black.webp") repeat;
+  color: var(--accent-2);
+}
+
+.pet-card-btn-unequip:hover {
+  background: linear-gradient(rgba(40, 10, 8, 0.55), rgba(40, 10, 8, 0.55)), url("../assets/bg_black.webp") repeat;
+  color: #c87070;
+}
+
+/* codex:2026-08-02T01:15:48+02:00 — Companion Layout 03 „Feldjournal des Jägers“.
+   Die Seite belegt die verfügbare App-Höhe. Nur Fundindex und lange Dossiertexte scrollen intern;
+   Rahmen und aktive Begleiteranzeige bleiben stabil sichtbar. Große Tafeln nutzen Ironwood
+   Bastion, innere Einträge und Aktionen den Bronze-Lipped-Iron-Rahmen. */
+#root .content-body:has(.pet-field-journal) {
+  overflow: hidden;
+}
+
+#root .page-transition:has(> .pet-field-journal) {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pet-gallery-page.pet-field-journal {
+  height: 100%;
+  min-height: 0;
+  gap: clamp(8px, 0.65vw, 14px);
+  overflow: hidden;
+}
+
+.pet-field-header,
+.pet-field-index,
+.pet-field-detail,
+.pet-field-empty {
+  position: relative;
+  border-style: solid;
+  border-color: transparent;
+  border-width: clamp(12px, 0.8vw, 18px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 fill stretch;
+  background:
+    linear-gradient(rgba(10, 13, 14, 0.84), rgba(8, 10, 11, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.56), 0 7px 20px rgba(0, 0, 0, 0.34);
+}
+
+.pet-field-header {
+  flex: 0 0 auto;
+  padding: clamp(8px, 0.55vw, 14px) clamp(12px, 0.8vw, 20px);
+}
+
+.pet-field-header .pet-gallery-head {
+  min-height: clamp(64px, 5.3vw, 92px);
+  margin: 0;
+  align-items: center;
+}
+
+.pet-field-header .pet-gallery-head h2 {
+  margin-top: 3px;
+  font-size: clamp(23px, 1.55vw, 34px);
+  color: var(--accent-2);
+}
+
+.pet-field-kicker {
+  display: block;
+  color: #87959c;
+  font-family: var(--font-info);
+  font-size: clamp(10px, 0.62vw, 13px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pet-field-head-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(12px, 1.2vw, 24px);
+  min-width: 0;
+}
+
+.pet-field-header .pet-gallery-counter {
+  color: #9eabb1;
+  font-family: var(--font-info);
+  font-size: clamp(13px, 0.84vw, 17px);
+  white-space: nowrap;
+}
+
+.pet-field-active {
+  display: grid;
+  grid-template-columns: auto auto minmax(90px, auto);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 9px;
+  min-width: min(34vw, 520px);
+  max-width: min(42vw, 660px);
+  padding: 8px 12px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(12, 14, 15, 0.76), rgba(7, 9, 10, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+}
+
+.pet-field-active .pet-slot-label {
+  grid-column: 1 / -1;
+  color: #7e8e95;
+  font-family: var(--font-info);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pet-field-active-img {
+  grid-row: 2;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.72));
+}
+
+.pet-field-active .pet-slot-name,
+.pet-field-active .pet-slot-none {
+  grid-row: 2;
+  color: var(--accent-2);
+  font-size: clamp(14px, 0.82vw, 17px);
+  white-space: nowrap;
+}
+
+.pet-field-active-effect {
+  grid-row: 2;
+  min-width: 0;
+  overflow: hidden;
+  color: #8e9ca2;
+  font-family: var(--font-info);
+  font-size: clamp(10px, 0.62vw, 13px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-field-layout {
+  display: grid;
+  grid-template-columns: clamp(300px, 25vw, 430px) minmax(0, 1fr);
+  gap: clamp(8px, 0.65vw, 14px);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pet-field-index {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+}
+
+.pet-field-index-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid rgba(177, 132, 75, 0.45);
+  color: var(--accent-2);
+  font-size: clamp(14px, 0.88vw, 18px);
+}
+
+.pet-field-count {
+  color: #94a1a6;
+  font-family: var(--font-info);
+  font-size: 13px;
+}
+
+.pet-field-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  padding: 7px 3px 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.pet-field-entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(58px, 4vw, 74px) minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  min-height: clamp(72px, 5vw, 88px);
+  padding: 5px 8px;
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(13, 16, 17, 0.85), rgba(8, 10, 11, 0.92)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: filter 120ms ease, background-color 120ms ease;
+}
+
+.pet-field-entry:hover {
+  filter: brightness(1.13);
+}
+
+.pet-field-entry.is-selected {
+  background:
+    linear-gradient(rgba(58, 45, 26, 0.72), rgba(20, 19, 16, 0.9)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  box-shadow: inset 3px 0 0 #c59b51;
+}
+
+.pet-field-entry.is-locked {
+  filter: saturate(0.2) brightness(0.72);
+}
+
+.pet-field-entry.is-locked:hover {
+  filter: saturate(0.25) brightness(0.86);
+}
+
+.pet-field-entry-portrait {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 4px solid rgba(145, 105, 63, 0.56);
+  background: radial-gradient(circle at 50% 42%, #273033, #080a0b 72%);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+.pet-field-entry-portrait img {
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.68));
+}
+
+.pet-field-entry-unknown {
+  color: #6f7a7e;
+  font-family: var(--font-info);
+  font-size: clamp(24px, 2vw, 34px);
+}
+
+.pet-field-entry-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.pet-field-entry-copy strong {
+  overflow: hidden;
+  color: #dac477;
+  font-size: clamp(14px, 0.86vw, 18px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-field-entry-copy small {
+  overflow: hidden;
+  color: #819097;
+  font-family: var(--font-info);
+  font-size: clamp(10px, 0.62vw, 12px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-field-entry-mark {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  padding: 2px 5px;
+  border: 1px solid rgba(99, 165, 112, 0.58);
+  background: rgba(17, 54, 31, 0.88);
+  color: #9bd0a4;
+  font-family: var(--font-info);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pet-field-detail {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.9fr) minmax(390px, 1.1fr);
+  gap: clamp(12px, 1.05vw, 22px);
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(12px, 1vw, 22px);
+  overflow: hidden;
+}
+
+.pet-field-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: clamp(10px, 0.72vw, 15px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    radial-gradient(ellipse at 50% 44%, rgba(55, 68, 69, 0.8), rgba(9, 11, 12, 0.96) 68%),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  box-shadow: inset 0 0 44px rgba(0, 0, 0, 0.82);
+}
+
+.pet-field-stage.has-bg {
+  background-position: center;
+  background-size: cover;
+}
+
+.pet-field-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 46%, rgba(8, 10, 10, 0.06), rgba(7, 9, 10, 0.78) 88%);
+  pointer-events: none;
+}
+
+.pet-field-stage.is-locked::before {
+  background: rgba(5, 7, 8, 0.76);
+}
+
+.pet-field-stage-img {
+  position: relative;
+  z-index: 1;
+  width: 94%;
+  height: 94%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 17px rgba(0, 0, 0, 0.78));
+}
+
+.pet-field-stage-fallback,
+.pet-field-stage-unknown {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: #758186;
+  font-family: var(--font-info);
+  font-size: clamp(72px, 9vw, 150px);
+}
+
+.pet-field-stage-fallback img {
+  width: clamp(100px, 12vw, 200px);
+  height: clamp(100px, 12vw, 200px);
+  object-fit: contain;
+}
+
+.pet-field-stage .pet-equipped-badge {
+  top: 13px;
+  right: 13px;
+  z-index: 2;
+  padding: 6px 9px;
+  border: 1px solid rgba(105, 177, 119, 0.64);
+  background: rgba(17, 54, 31, 0.9);
+  color: #b3d8b8;
+}
+
+.pet-field-dossier {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(8px, 0.6vw, 14px);
+  overflow-y: auto;
+}
+
+.pet-field-dossier-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(181, 137, 75, 0.48);
+}
+
+.pet-field-dossier-head h3 {
+  margin: 4px 0 0;
+  color: var(--accent-2);
+  font-size: clamp(25px, 2vw, 40px);
+  line-height: 1.08;
+}
+
+.pet-field-drop {
+  flex: 0 0 auto;
+  padding: 7px 9px;
+  border: 1px solid rgba(155, 112, 62, 0.48);
+  background: rgba(8, 10, 11, 0.62);
+  color: #9ba7ac;
+  font-family: var(--font-info);
+  font-size: clamp(11px, 0.66vw, 13px);
+  white-space: nowrap;
+}
+
+.pet-field-description {
+  margin: clamp(14px, 1vw, 22px) 0;
+  color: #aeb7ba;
+  font-size: clamp(14px, 0.92vw, 18px);
+  line-height: 1.6;
+}
+
+.pet-field-effects {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.pet-field-effects .pet-effect-rows {
+  gap: 10px;
+}
+
+.pet-field-effects .pet-effect-row {
+  display: grid;
+  grid-template-columns: clamp(82px, 6.2vw, 112px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  min-height: clamp(64px, 4.8vw, 82px);
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(10, 13, 14, 0.74), rgba(7, 9, 10, 0.88)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+}
+
+.pet-field-effects .pet-effect-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 0;
+  border-right: 1px solid rgba(167, 123, 67, 0.43);
+  background: rgba(17, 21, 21, 0.72);
+  font-family: var(--font-info);
+  font-size: clamp(10px, 0.65vw, 13px);
+}
+
+.pet-field-effects .pet-effect-value {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  color: #ddd1a4;
+  font-size: clamp(13px, 0.84vw, 17px);
+  line-height: 1.35;
+}
+
+.pet-field-source-seal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: clamp(14px, 1.1vw, 24px);
+  padding: 11px 13px;
+  border-top: 1px solid rgba(166, 123, 68, 0.4);
+  border-bottom: 1px solid rgba(166, 123, 68, 0.4);
+  color: #87969d;
+  font-family: var(--font-info);
+  font-size: clamp(11px, 0.7vw, 14px);
+}
+
+.pet-field-actions {
+  margin-top: auto;
+  padding-top: clamp(16px, 1.2vw, 26px);
+}
+
+.pet-field-journal .pet-card-btn {
+  min-height: clamp(50px, 3.6vw, 64px);
+  padding: 9px 16px;
+  border: clamp(9px, 0.68vw, 14px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(20, 23, 23, 0.72), rgba(9, 11, 12, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  color: #dcc477;
+  font-size: clamp(14px, 0.9vw, 18px);
+}
+
+.pet-field-journal .pet-card-btn::before {
+  content: none;
+}
+
+.pet-field-journal .pet-card-btn:hover {
+  filter: brightness(1.16);
+  color: #f0d98a;
+}
+
+.pet-field-journal .pet-card-btn-unequip {
+  background:
+    linear-gradient(rgba(59, 23, 19, 0.52), rgba(22, 12, 11, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  color: #d8a093;
+}
+
+.pet-field-empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 300px;
+}
+
+@media (max-width: 1180px) {
+  .pet-field-layout {
+    grid-template-columns: 310px minmax(0, 1fr);
+  }
+
+  .pet-field-detail {
+    grid-template-columns: minmax(280px, 0.82fr) minmax(340px, 1.18fr);
+  }
+
+  .pet-field-active-effect {
+    display: none;
+  }
+
+  .pet-field-active {
+    grid-template-columns: auto auto;
+    min-width: 260px;
+  }
+}
+
+@media (max-width: 900px) {
+  #root .content-body:has(.pet-field-journal),
+  #root .page-transition:has(> .pet-field-journal) {
+    height: auto;
+    overflow: auto;
+  }
+
+  .pet-gallery-page.pet-field-journal {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .pet-field-header .pet-gallery-head,
+  .pet-field-head-meta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pet-field-active {
+    max-width: none;
+    width: 100%;
+  }
+
+  .pet-field-layout {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .pet-field-index {
+    max-height: 360px;
+  }
+
+  .pet-field-detail {
+    grid-template-columns: 1fr;
+    min-height: 820px;
+    overflow: visible;
+  }
+
+  .pet-field-stage {
+    min-height: 430px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ENCHANTING PAGE (Verzauberungstisch, Gear Vault, Salvage)
+   Citadel DS — 9-slice wooden frames, Cinzel headers, bg_black
+   ═══════════════════════════════════════════════════════════ */
+
+.enchant-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+/* ─── Tab bar ─────────────────────────────────────────────── */
+.enchant-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid rgba(216, 192, 106, 0.18);
+  padding-bottom: 0;
+}
+
+.enchant-tab-btn {
+  padding: 9px 26px;
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.enchant-tab-btn:hover {
+  color: var(--text);
+}
+
+.enchant-tab-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+/* ─── Bench: 3-Zonen-Runen-Tisch (Ziel · Grimoire · Vorschau+Anwenden) ────── */
+.enchant-bench {
+  display: grid;
+  grid-template-columns: 0.95fr 1.3fr 1.05fr;
+  gap: 16px;
+  align-items: start;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .enchant-bench {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 9-slice wooden-frame panels (matches .shop-panel spec) */
+.enchant-panel {
+  position: relative;
+  isolation: isolate;
+  padding: 14px 16px 16px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+/* ─── Selectable rows ────────────────────────────────────── */
+.enchant-select-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.enchant-section-label {
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  padding: 6px 0 2px;
+}
+
+.enchant-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  /* Citadel: dünner Holz-9-Slice-Rahmen statt schlichtem 1px-Strich — konsistent mit der
+     umgebenden .enchant-preview (gleiches Muster, dünner). */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.1s, box-shadow 0.1s;
+}
+
+.enchant-item-row:hover {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.22);
+}
+
+.enchant-item-row.selected {
+  background: rgba(216, 192, 106, 0.10);
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.4);
+}
+
+.enchant-item-name {
+  flex: 1;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.enchant-item-sub {
+  font-size: 14px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ─── Preview panel (9-slice frame, same as enchant-panel) ── */
+.enchant-preview {
+  position: relative;
+  isolation: isolate;
+  padding: 14px 16px 16px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.enchant-preview-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.enchant-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  /* Citadel: dünner Holz-9-Slice-Rahmen statt schlichtem 1px-Strich (wie .enchant-item-row). */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+}
+
+.enchant-preview-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.enchant-preview-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.enchant-slots-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.enchant-preview-affix {
+  padding: 10px 12px;
+  background: rgba(216, 192, 106, 0.07);
+  border: 1px solid rgba(216, 192, 106, 0.25);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.enchant-preview-affix-name {
+  font-size: 16px;
+  font-family: var(--font-head);
+  color: var(--gold);
+}
+
+.enchant-preview-bonus {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.enchant-bonus-line {
+  font-size: 14px;
+  color: var(--accent-2);
+}
+
+/* ─── Enchant-Preview-Panel: Vorher/Nachher-Item-Stat-Block (#219) ──────────── */
+.enchant-preview-statblock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  /* Citadel: dünner Holz-9-Slice-Rahmen statt schlichtem 1px-Strich (wie .enchant-item-row). */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+}
+
+.enchant-preview-statblock-head {
+  display: grid;
+  grid-template-columns: 1fr 70px 16px 70px;
+  gap: 4px;
+  font-size: 11px;
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.15);
+  margin-bottom: 2px;
+}
+.enchant-preview-statblock-head span:nth-child(2),
+.enchant-preview-statblock-head span:nth-child(4) {
+  text-align: right;
+}
+
+.enchant-preview-stat-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 16px 70px;
+  gap: 4px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 2px 0;
+}
+
+.enchant-preview-stat-row .eps-before,
+.enchant-preview-stat-row .eps-after {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.enchant-preview-stat-row .eps-arrow {
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Geänderte Zeile (Delta durch die Kandidat-Rune): gold hervorgehoben, "Nachher" betont. */
+.enchant-preview-stat-row.changed {
+  color: var(--text);
+}
+.enchant-preview-stat-row.changed .eps-label {
+  color: var(--gold);
+}
+.enchant-preview-stat-row.changed .eps-after {
+  color: var(--gold);
+  font-weight: 600;
+}
+.enchant-preview-stat-row.changed .eps-arrow {
+  color: var(--gold);
+}
+
+.enchant-preview-newfx {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: rgba(216, 192, 106, 0.07);
+  border: 1px solid rgba(216, 192, 106, 0.25);
+  border-radius: 2px;
+}
+
+.enchant-preview-newfx-label {
+  font-size: 11px;
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gold);
+}
+
+.enchant-preview-newfx-line {
+  font-size: 14px;
+  color: var(--accent-2);
+  font-style: italic;
+}
+
+.enchant-cost {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.enchant-feedback {
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
+.enchant-feedback.danger {
+  color: #d87070;
+  background: rgba(200, 74, 58, 0.12);
+  border: 1px solid rgba(200, 74, 58, 0.3);
+}
+
+.enchant-feedback.success {
+  color: #7fce8c;
+  background: rgba(94, 196, 110, 0.12);
+  border: 1px solid rgba(94, 196, 110, 0.3);
+}
+
+.enchant-btn {
+  align-self: flex-start;
+}
+
+/* ─── Current affixes / disenchant ──────────────────────── */
+.enchant-current-affixes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.enchant-affix-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.enchant-affix-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.enchant-affix-gem {
+  color: var(--gold);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.enchant-affix-name {
+  color: var(--text);
+  flex: 1;
+  min-width: 80px;
+}
+
+.enchant-affix-tier {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.enchant-affix-bonus {
+  font-size: 14px;
+  color: var(--muted);
+  flex: 1 1 100%;
+  padding-left: 16px;
+}
+
+.enchant-disenchant-btn {
+  margin-left: auto;
+}
+
+.enchant-no-affixes {
+  font-size: 14px;
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ─── Vault tab ──────────────────────────────────────────── */
+.enchant-vault {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ─── Salvage tab ────────────────────────────────────────── */
+.enchant-salvage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.enchant-autosalvage-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.enchant-autosalvage-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.enchant-autosalvage-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--gold);
+}
+
+.enchant-autosalvage-hint {
+  margin: 0;
+  padding-left: 28px;
+}
+
+.enchant-salvage-affixes {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RUNEN-TISCH-REDESIGN (Chef: „gib dir Mühe" — Ziel / Grimoire /
+   Vorschau+Anwenden). Ergänzt die Bench-Regeln oben.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Zone 1 (Ziel): der Item-Steckbrief + die aktuellen Verzauberungen sitzen jetzt UNTER der
+   Auswahlliste im selben Panel. `.enchant-panel` deckelt auf max-height:70vh + overflow:hidden
+   (richtig für die reine Auswahlliste) — hier würde das den Steckbrief/die Affix-Liste aber
+   hart abschneiden. Override: das Zone-Panel wächst frei (der äußere `.content-body`-Scroll
+   fängt es auf), nur die Auswahlliste selbst bekommt eine feste Scroll-Höhe statt flex:1.
+   Gleiche Spezifität wie `.enchant-panel` (1 Klasse) — gewinnt per Reihenfolge (steht danach). */
+.enchant-zone-target {
+  max-height: none;
+  overflow: visible;
+}
+
+.enchant-zone-target .enchant-select-list {
+  flex: none;
+  max-height: 32vh;
+  overflow-y: auto;
+}
+
+.enchant-target-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-top: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+/* Item-Typ-Badge (Ziel-Steckbrief) — Ton-Familie identisch zum Grimoire darunter. */
+.enchant-type-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11px;
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.enchant-type-badge--weapon {
+  color: #e0a088;
+  border-color: rgba(200, 90, 60, 0.45);
+  background: rgba(200, 90, 60, 0.10);
+}
+
+.enchant-type-badge--armor {
+  color: #9fc0dc;
+  border-color: rgba(110, 150, 190, 0.45);
+  background: rgba(110, 150, 190, 0.10);
+}
+
+.enchant-type-badge--other {
+  color: var(--accent-2);
+  border-color: rgba(216, 192, 106, 0.30);
+  background: rgba(216, 192, 106, 0.06);
+}
+
+.enchant-slots-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.enchant-slot-pips {
+  display: flex;
+  gap: 3px;
+}
+
+.enchant-slot-pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+}
+
+.enchant-slot-pip.filled {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 4px rgba(216, 192, 106, 0.5);
+}
+
+/* Zone 2 (Grimoire): Waffen-/Rüstungs-/Sonstige-Sektionen, jede optional (nur gerendert,
+   wenn die Kategorie mind. eine besessene Rune hat). Ein Scroll-Container über allen drei
+   Sektionen — dieselbe flex:1-im-70vh-Panel-Technik wie die alte `.enchant-select-list`. */
+.enchant-rune-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.enchant-rune-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.enchant-rune-section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.enchant-rune-section-icon {
+  font-size: 13px;
+}
+
+.enchant-rune-section-head--weapon { color: #d88a6e; border-bottom-color: rgba(200, 90, 60, 0.30); }
+.enchant-rune-section-head--armor  { color: #8fb8d8; border-bottom-color: rgba(110, 150, 190, 0.30); }
+.enchant-rune-section-head--other  { color: var(--gold); border-bottom-color: rgba(216, 192, 106, 0.25); }
+
+.enchant-rune-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.enchant-rune-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, opacity 0.1s;
+}
+
+.enchant-rune-card--weapon {
+  background: rgba(200, 90, 60, 0.06);
+  border-color: rgba(200, 90, 60, 0.22);
+}
+
+.enchant-rune-card--armor {
+  background: rgba(110, 150, 190, 0.06);
+  border-color: rgba(110, 150, 190, 0.22);
+}
+
+.enchant-rune-card--other {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.enchant-rune-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.enchant-rune-card.selected {
+  border-color: var(--gold);
+  background: rgba(216, 192, 106, 0.12);
+}
+
+/* Inkompatibel zum aktuell gewählten Ziel (affixAppliesToItem === false): ausgegraut, Tooltip
+   trägt den Grund ("nur für Waffen"/"nur für Rüstung"). Bleibt klickbar — die Vorschau rechts
+   bestätigt den Mismatch dann nochmal explizit über `enchant.preview.blocked.*`. */
+.enchant-rune-card.incompatible {
+  opacity: 0.42;
+  filter: grayscale(0.5);
+}
+
+.enchant-rune-card.incompatible:hover {
+  opacity: 0.62;
+}
+
+.enchant-rune-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.enchant-rune-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.enchant-rune-card-name {
+  font-size: 15px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.enchant-rune-card-tier {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.enchant-rune-card-effect {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.enchant-rune-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.enchant-rune-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.enchant-rune-badge--weapon { color: #d88a6e; border-color: rgba(200, 90, 60, 0.35); }
+.enchant-rune-badge--armor  { color: #8fb8d8; border-color: rgba(110, 150, 190, 0.35); }
+.enchant-rune-badge--other  { color: var(--gold); border-color: rgba(216, 192, 106, 0.30); }
+
+.enchant-rune-card-qty {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ─── Shop v2 (Citadel rework) ───────────────────────────── */
+
+/* Override page layout to flex column */
+.shop-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Gold balance bar */
+.shop-balance {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px 8px 14px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  /* Chef 25.07.: Shop von Stein auf Holz — exakt das Options-Rezept (280px = „feiner"-Standard). */
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)),
+    url("../assets/bg_tileable_wood.webp") repeat;
+  background-size: auto, 280px 280px;
+  align-self: flex-start;
+}
+
+.shop-balance-icon {
+  display: flex;
+  align-items: center;
+}
+
+.shop-balance-amount {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
+.shop-balance-label {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+}
+
+/* Section panel (replaces .panel in shop) */
+.shop-panel {
+  position: relative;
+  isolation: isolate;
+  padding: 14px 16px 16px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  /* Chef 25.07.: Shop von Stein auf Holz — exakt das Options-Rezept (280px = „feiner"-Standard). */
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)),
+    url("../assets/bg_tileable_wood.webp") repeat;
+  background-size: auto, 280px 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Section heading inside a shop panel */
+.shop-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 4px;
+}
+
+.shop-section-orn {
+  font-size: 13px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.shop-section-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.shop-section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(216, 192, 106, 0.35), transparent);
+}
+
+/* Upgrade cards — NUR in BankPage.tsx verwendet (grep-geprüft), sicher hier anzupassen ohne
+   Shop/Slayer zu berühren. Citadel-Konsistenz-Welle: war eine generische abgerundete rgba-Box,
+   jetzt ein Holzrahmen-Streifen im selben Sprachgebrauch wie .bank-head/.status-legend.
+   Task #316 (B3): padding auf die --ds-gap-Skala umgestellt (war 11px 16px, identisch zu
+   .bank-head vor dessen eigener Umstellung — beide bleiben dadurch weiter im Gleichschritt). */
+.shop-upgrade-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: var(--ds-gap) var(--ds-gap-lg);
+  background: linear-gradient(rgba(10, 12, 15, 0.42), rgba(10, 12, 15, 0.48)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+}
+
+.shop-upgrade-text {
+  font-size: 15px;
+  color: var(--accent-2);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.shop-upgrade-icon { object-fit: contain; flex-shrink: 0; }
+
+/* Icon-Medaillon vor dem "Lager erweitern"-Text (Chef-Wunsch "Button-Muster hübscher"). */
+.shop-upgrade-icon-medal {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.05), rgba(10, 8, 6, 0.85) 74%);
+  border: 2px solid rgba(216, 192, 106, 0.42);
+}
+.shop-upgrade-icon-medal img { width: 18px; height: 18px; object-fit: contain; }
+
+/* Buy item grid — genau 4 Spalten, scrollbarer Bereich.
+   Sweep 5, Finding 8: "repeat(4, 1fr)" gab jedem Track eine implizite min-width:auto (=
+   Content-Breite der 2×2-Preis-Buttons, die nicht schrumpfen können) — Karten wurden dadurch
+   breiter gezwungen als ihr Track und hart geclippt (scrollWidth 183 vs. clientWidth 146).
+   minmax(0,1fr) erlaubt den Tracks, unter die Content-Breite zu schrumpfen. */
+.shop-items-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  max-height: 58vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* YGO-Stil: hölzerner Rahmen ums Ganze, Bild oben, Info unten */
+.shop-item-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: linear-gradient(rgba(12, 8, 4, 0.88), rgba(12, 8, 4, 0.88)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 6px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  text-align: center;
+  overflow: hidden;
+  /* Muss als Grid-Item zusätzlich zum Track selbst schrumpfen dürfen (Grid-Items haben eine
+     eigene automatische Mindestbreite = Content-Breite, unabhängig vom Track). */
+  min-width: 0;
+  /* Mit dem Bildfenster (220→160px, Finding 8) proportional verkleinert — mehr Kartenreihen
+     pro Viewport, weniger Clip. */
+  min-height: 270px;
+}
+
+/* Rarity-Tints: dünner, ungeglowter Innenring statt Blur-Halo (Studio-Regel:
+   kein Glow auf Equipment-Art) — border-image belegt den echten border, daher
+   box-shadow INSET mit 0 Blur-Radius. Reuse der zentralen --rar-*-Palette
+   (components.css :root) statt eigener Werte. */
+.shop-item-card.rarity-magic     { box-shadow: inset 0 0 0 2px var(--rar-magic); }
+.shop-item-card.rarity-rare      { box-shadow: inset 0 0 0 2px var(--rar-rare); }
+.shop-item-card.rarity-superRare { box-shadow: inset 0 0 0 2px var(--rar-superRare); }
+.shop-item-card.rarity-epic      { box-shadow: inset 0 0 0 2px var(--rar-epic); }
+.shop-item-card.rarity-legendary { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
+.shop-item-card.rarity-godly     { box-shadow: inset 0 0 0 2px var(--rar-godly); }
+
+/* Gerahmtes Bildfenster oben (innerer Holzrahmen + bg_black).
+   Sweep 5, Finding 8: 220px min-height ließ das Artwork die Karte dominieren (nur ~1,5
+   Kartenreihen sichtbar) — auf ~160px reduziert, mehr Karten pro Viewport. min-width:0 UND
+   kleinere feste Größen darunter: bei 4 Spalten ist die Karte oft nur ~146px breit — ein
+   130px-Icon + 9px-Rand + 7px-Rahmen passte da schlicht nicht rein (weiterhin hard-clip laut
+   ui-audit trotz min-width:0-Kette). */
+.shop-item-image-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 140px;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 42%, rgba(216,192,106,0.06), transparent 72%),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 5px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  margin: 6px 6px 0;
+}
+
+/* Großes Item-Icon im gerahmten Bildfenster — passt jetzt auch in schmale 4-Spalten-Karten
+   (~146px) mit Rand+Rahmen der Bildfläche. */
+.shop-item-image-area .shop-cell            { width: 96px; height: 96px; background: transparent; border: none; }
+.shop-item-image-area .shop-cell .item-cell-emoji { font-size: 56px; }
+/* Echtes PNG explizit groß (überschreibt die 88%-Basisbreite, nicht nur max) */
+.shop-item-image-area .shop-cell .item-cell-img {
+  width: 90px;
+  height: 90px;
+  max-width: 90px;
+  max-height: 90px;
+  object-fit: contain;
+}
+
+/* Info-Block unten: Name + Kauf-Button (inhaltsgroß, Bildfenster bekommt den Platz).
+   min-width:0 lässt den Block (und damit die Preis-Buttons) tatsächlich unter die Grid-Track-
+   Content-Breite schrumpfen — sonst zwang das Preis-Button-Grid die ganze Karte breiter als
+   ihre Spalte (Sweep 5, Finding 8). */
+.shop-item-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px 12px;
+  flex: 0 0 auto;
+  min-width: 0;
+  width: 100%;
+}
+/* Größerer Goldpreis im Kauf-Button (Chef) */
+.shop-item-info .shop-citadel-btn {
+  font-size: 18px;
+  padding: 10px 16px;
+}
+.shop-item-info .shop-price-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.shop-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sweep 5, Finding 8 (Nachtrag): war der eigentliche Rest-Übeltäter hinter dem verbliebenen
+   .shop-item-card-Clip — ein langes deutsches Kompositum ("Bernsteingetreide-Saat") hat nur
+   einen Bindestrich als Umbruchpunkt und rendert sonst als EIN Wort, das in der 4-Spalten-Karte
+   (~146px) nicht annähernd Platz hat (gemessen: 219px). width:100% + break-word geben ihm die
+   Kartenbreite als harte Grenze und erlauben Not-Umbrüche auch mitten im Wort. */
+.shop-item-name {
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.4px;
+  line-height: 1.25;
+}
+
+.shop-item-price {
+  margin-top: auto;
+}
+
+/* 2×2-Kauf-Buttons pro Karte: 1× / 5× / 25× / 100×.
+   Sweep 5, Finding 8: "1fr 1fr" gab den Tracks eine implizite min-width:auto — bei 4-stelligen
+   Preisen ("100× 2000") mit Coin-Icon quetschten sich die Buttons dadurch über den Kartenrand
+   hinaus statt im Button zu bleiben. minmax(0,1fr) erlaubt den Tracks zu schrumpfen. */
+.shop-item-buys {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 6px;
+  width: 100%;
+  margin-top: auto;
+}
+/* Spezifität 0,3,0 schlägt die generische .shop-item-info .shop-citadel-btn-Regel (0,2,0).
+   min-width:0 nötig, damit der Button (Grid-Item) tatsächlich unter seine Content-Breite auf
+   die minmax(0,1fr)-Trackbreite schrumpfen darf (Sweep 5, Finding 8). Reichte allein aber NICHT:
+   align-items:center gibt Flex-Kindern in einer Column ihre eigene Content-Breite (shrink-to-fit)
+   statt der Button-Breite — die Kinder (qty-n/qty-cost) zwangen den Button dadurch trotzdem
+   wieder breiter. Fix unten: Kinder auf width:100% (siehe .shop-buy-qty-n/.shop-buy-qty-cost). */
+.shop-item-info .shop-item-buys .shop-buy-qty-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px 4px;
+  font-size: 13px;
+  line-height: 1.1;
+  min-width: 0;
+}
+.shop-buy-qty-n {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--gold, #e8c46a);
+  letter-spacing: 0.5px;
+}
+.shop-buy-qty-cost {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.shop-buy-qty-cost img {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+}
+
+/* Sell list — contained scroll area (legacy, kept for reference) */
+.shop-sell-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 62vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Sell grid — Inventar-Raster-Optik (cs-inv-grid + inv-slot wie BankPage) */
+.shop-sell-grid {
+  flex: none;
+  max-height: 50vh;
+  margin-top: 4px;
+}
+
+/* Sell-Grid-Zelle: klickbar zum Auswählen, Gold-Glow bei Auswahl. */
+.shop-sell-cell {
+  position: relative;
+  cursor: pointer;
+}
+.shop-sell-cell.selected {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+  box-shadow: var(--glow);
+}
+
+.shop-sell-hint {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Detail-Menü unter dem Sell-Grid: Item-Kopf + 2×2-Mengen-Buttons. */
+.shop-sell-detail {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.shop-sell-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.shop-sell-detail-icon {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+}
+.shop-sell-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.shop-sell-detail-name {
+  font-family: var(--font-head, inherit);
+  font-size: 21px;
+  font-weight: 700;
+}
+.shop-sell-detail-meta {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+/* 2 Spalten × 2 Reihen Mengen-Buttons. */
+.shop-sell-detail-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.shop-sell-detail-actions .shop-citadel-btn {
+  width: 100%;
+  font-size: 18px;
+  padding: 12px 10px;
+}
+
+/* Shift-Schnellverkauf-Hinweis über dem Sell-Grid (dezenter als der Auswahl-Hint). */
+.shop-shift-hint {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Buy-Back-Liste: zuletzt verkaufte Items/Instanzen, zum Verkaufspreis zurückkaufbar. */
+.shop-buyback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.shop-buyback-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.shop-buyback-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+}
+.shop-buyback-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.shop-buyback-name {
+  font-family: var(--font-head, inherit);
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.shop-buyback-price {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.shop-buyback-row .shop-citadel-btn {
+  flex: 0 0 auto;
+}
+
+.shop-sell-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  flex-wrap: wrap; /* schmale Fenster: Aktionen brechen um statt rechts abzuschneiden */
+}
+
+.shop-sell-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Größere Item-Icons im Verkaufs-Inventar (Chef) */
+.shop-sell-card .shop-cell {
+  width: 74px;
+  height: 74px;
+  flex: 0 0 74px;
+}
+.shop-sell-card .shop-cell .item-cell-img {
+  max-width: 64px;
+  max-height: 64px;
+  object-fit: contain;
+}
+.shop-sell-card .shop-cell .item-cell-emoji {
+  font-size: 40px;
+}
+
+.shop-sell-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.shop-sell-name {
+  font-size: 16px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shop-sell-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-sell-qty {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.shop-sell-price {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 16px;
+  color: var(--accent-2);
+}
+
+/* Gold coin icon (inline price display) */
+.shop-price-icon {
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+/* Citadel wooden-frame button (price buttons in shop) */
+.shop-citadel-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 72px;
+  min-height: 30px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: #e8d8b0;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.shop-citadel-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shop-citadel-btn:hover:not(:disabled) {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.25);
+}
+
+.shop-citadel-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* Small variant — for sell buttons and item buy buttons */
+.shop-citadel-btn--sm {
+  min-width: 44px;
+  min-height: 24px;
+  padding: 3px 8px;
+  font-size: 14px;
+}
+
+/* Größere Buttons (Chef): Upgrade-Kauf-Buttons + Verkaufs-Mengen-Buttons */
+.shop-upgrade-card .shop-citadel-btn {
+  min-width: 118px;
+  min-height: 46px;
+  padding: 11px 18px;
+  font-size: 18px;
+}
+.shop-upgrade-card .shop-price-icon { width: 22px; height: 22px; }
+.shop-sell-actions .shop-citadel-btn--sm {
+  min-width: 58px;
+  min-height: 40px;
+  padding: 9px 14px;
+  font-size: 17px;
+}
+
+/* Kauf-Menge-Umschalter (1/5/10/50) — gilt für alle Kauf-Buttons */
+.shop-buyqty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 12px;
+  flex-wrap: wrap;
+}
+.shop-buyqty-label {
+  font-family: var(--font-head);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 13px;
+}
+.shop-buyqty-btn {
+  min-width: 50px;
+}
+/* Aktive Menge hervorheben (Gold-Glow, frame-neutral) */
+.shop-buyqty-btn.active {
+  color: var(--gold, #e8c46a);
+  box-shadow:
+    0 0 9px rgba(232, 196, 106, 0.5),
+    inset 0 0 0 1px rgba(232, 196, 106, 0.6);
+}
+
+/* codex:2026-08-01T18:39:00+02:00 — Bank „Vault Ledger“ (Chef-GO): Die Seite belegt exakt die
+   verfügbare Content-Höhe. Nur die beiden Ledger-Listen scrollen intern; Kopf, Filter und
+   Kapazitätsausbau bleiben sichtbar. Das Layout bleibt auch auf 1920×1080 zweispaltig. */
+.content-body:has(.bank-page) {
+  overflow-y: hidden;
+}
+
+.page-transition:has(> .bank-page) {
+  height: 100%;
+  min-height: 0;
+}
+
+.bank-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(8px, 0.7vw, 14px);
+  color: #d8d0bf;
+}
+
+.bank-ledger-intro {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+  gap: clamp(8px, 0.7vw, 14px);
+  align-items: stretch;
+}
+
+.bank-ledger-intro .npc-greeting {
+  min-width: 0;
+  margin: 0;
+  align-items: stretch;
+}
+
+.bank-ledger-intro .npc-greeting-head {
+  width: clamp(58px, 4vw, 72px);
+  height: clamp(58px, 4vw, 72px);
+  border-width: 8px;
+  border-image-width: 8px;
+}
+
+.bank-ledger-intro .npc-bubble {
+  flex: 1 1 auto;
+  max-width: none;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px 14px;
+  border-radius: 0;
+  border: 1px solid rgba(133, 105, 67, 0.64);
+  background:
+    linear-gradient(rgba(8, 10, 12, 0.82), rgba(12, 10, 8, 0.88)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px 256px repeat;
+}
+
+.bank-ledger-intro .npc-bubble--tail-left::before,
+.bank-ledger-intro .npc-bubble--tail-left::after {
+  top: 20px;
+}
+
+.bank-ledger-intro .npc-bubble-name {
+  font-size: clamp(12px, 0.82vw, 16px);
+}
+
+.bank-ledger-intro .npc-bubble-text {
+  font-size: clamp(13px, 0.92vw, 17px);
+  line-height: 1.25;
+}
+
+.bank-page .bank-head {
+  min-width: 0;
+  margin: 0;
+  padding: 9px 14px;
+  border-width: 7px;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 7px stretch;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  background:
+    linear-gradient(rgba(8, 10, 12, 0.72), rgba(8, 10, 12, 0.78)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 256px 256px repeat;
+}
+
+.bank-page .bank-head > .muted {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(11px, 0.72vw, 14px);
+}
+
+.bank-page .bank-count {
+  font-family: var(--font-info);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--accent-2);
+  font-size: clamp(14px, 0.92vw, 18px);
+}
+
+.bank-ledger-command {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
+  grid-template-rows: auto auto;
+  gap: 5px clamp(8px, 0.7vw, 14px);
+  align-items: stretch;
+}
+
+.bank-page .bank-filter-row {
+  min-width: 0;
+  margin: 0;
+  padding: 6px 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+  border: 1px solid rgba(124, 91, 52, 0.56);
+  background:
+    linear-gradient(rgba(7, 9, 11, 0.72), rgba(7, 9, 11, 0.82)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px 256px repeat;
+}
+
+.bank-page .bank-filter-row > :first-child {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.bank-page .bank-sort-inline {
+  padding: 0;
+}
+
+.bank-page .shop-upgrade-card {
+  min-width: 0;
+  margin: 0 !important;
+  padding: 6px 8px;
+  border-width: 7px;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 7px stretch;
+  background:
+    linear-gradient(rgba(25, 17, 10, 0.7), rgba(15, 12, 9, 0.82)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 256px 256px repeat;
+}
+
+.bank-page .shop-upgrade-text {
+  min-width: 0;
+  font-size: clamp(12px, 0.8vw, 15px);
+  line-height: 1.15;
+}
+
+.bank-page .shop-upgrade-card .shop-citadel-btn {
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 12px;
+  font-size: clamp(13px, 0.84vw, 16px);
+  white-space: nowrap;
+}
+
+.bank-page .bank-full-note,
+.bank-page .bank-hint {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+  padding: 2px 8px;
+  font-size: clamp(11px, 0.7vw, 13px);
+  line-height: 1.2;
+}
+
+.bank-page .bank-columns {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: clamp(8px, 0.8vw, 16px);
+  align-items: stretch;
+}
+
+.bank-page .bank-ledger-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 10px 12px 12px;
+  gap: 6px;
+  border-width: clamp(8px, 0.62vw, 12px);
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / clamp(8px, 0.62vw, 12px) stretch;
+  background:
+    linear-gradient(rgba(8, 10, 12, 0.7), rgba(7, 8, 10, 0.82)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 320px 320px repeat;
+}
+
+.bank-page .bank-ledger-panel--storage {
+  background:
+    linear-gradient(rgba(16, 12, 8, 0.68), rgba(8, 9, 10, 0.82)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+
+.bank-page .bank-col-head {
+  flex: 0 0 auto;
+  min-height: 38px;
+  margin: 0;
+  padding: 0 0 7px;
+}
+
+.bank-page .bank-col-title {
+  font-size: clamp(15px, 1.02vw, 20px);
+}
+
+.bank-page .bank-col-icon {
+  width: clamp(25px, 1.65vw, 32px);
+  height: clamp(25px, 1.65vw, 32px);
+}
+
+.bank-page .bank-grid.bank-ledger-list {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  /* codex:2026-08-01T18:48:00+02:00 — Chef-Korrektur: Vault Ledger beschreibt den festen
+     Seitenaufbau, die Gegenstände selbst bleiben das vertraute quadratische Inventar-Grid. */
+  grid-template-columns: repeat(auto-fill, clamp(58px, 4vw, 92px));
+  grid-auto-rows: clamp(58px, 4vw, 92px);
+  gap: clamp(4px, 0.35vw, 7px);
+  padding: clamp(6px, 0.55vw, 10px);
+  align-content: start;
+  scrollbar-gutter: stable;
+}
+
+.bank-page .bank-grid.bank-ledger-list > .inv-slot,
+.bank-page .bank-grid.bank-ledger-list > .cs-inv-slot-wrap,
+.bank-page .bank-grid.bank-ledger-list > .cs-inv-slot-wrap > .inv-slot {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.bank-page .bank-grid.bank-ledger-list .item-cell-img {
+  max-width: 84%;
+  max-height: 84%;
+}
+
+.bank-page .bank-grid.bank-ledger-list .item-cell-qty {
+  font-family: var(--font-info);
+  font-size: clamp(13px, 0.92vw, 18px);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.bank-page .invf-empty-note {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1250px) {
+  .bank-ledger-intro,
+  .bank-ledger-command {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.38fr);
+  }
+
+  .bank-page .bank-grid.bank-ledger-list {
+    grid-template-columns: repeat(auto-fill, clamp(52px, 4vw, 78px));
+    grid-auto-rows: clamp(52px, 4vw, 78px);
+  }
+}
+
+@media (max-height: 820px) {
+  .bank-page {
+    gap: 6px;
+  }
+
+  .bank-ledger-intro .npc-greeting-head {
+    width: 54px;
+    height: 54px;
+  }
+
+  .bank-ledger-intro .npc-bubble,
+  .bank-page .bank-head {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .bank-page .bank-grid.bank-ledger-list {
+    grid-template-columns: repeat(auto-fill, clamp(48px, 3.65vw, 70px));
+    grid-auto-rows: clamp(48px, 3.65vw, 70px);
+  }
+}

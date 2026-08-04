@@ -1,0 +1,44 @@
+/* ═══════════════════════════════════════════════════════════
+   MASTERY — KURZ-DAVOR-SCHIMMER (Welle PP, Antizipation-Moment 1a)
+   Component-scoped file (ms2-almost-*/ms2-action-row--almost), imported directly by
+   MasteryPage.tsx — NICHT Teil von skills.css (das gehört einer parallel laufenden Welle) und
+   NICHT Teil von styles/index.css. Dezenter, statischer Glanz-Zustand + EINMALIGER Sweep beim
+   Zeilen-Mount (kein Dauer-Glitzern, s. CSS-Kommentar unten — die Sweep-Animation läuft ohne
+   `forwards` aus und hält sich damit an "Effekte enden", nicht "Effekte bleiben aktiv hängen").
+   ═══════════════════════════════════════════════════════════ */
+
+.ms2-action-row--almost {
+  position: relative;
+  background: linear-gradient(90deg, rgba(216, 192, 106, 0.12), transparent 70%);
+  box-shadow: inset 0 0 0 1px rgba(216, 192, 106, 0.30);
+}
+
+@keyframes ms2-almost-sweep {
+  0%   { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+  18%  { opacity: 0.9; }
+  100% { transform: translateX(220%) skewX(-18deg); opacity: 0; }
+}
+
+.ms2-almost-sweep {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ms2-almost-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(240, 220, 160, 0.38), transparent);
+  /* Bewusst OHNE `forwards` — die letzte Keyframe-Stufe (opacity:0) entspricht bereits dem
+     Ruhezustand, die Animation verschwindet nach 0.9s vollständig aus getAnimations(). */
+  animation: ms2-almost-sweep 0.9s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ms2-almost-sweep { display: none; }
+}

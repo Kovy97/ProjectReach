@@ -1,0 +1,2807 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   New Haven — Lager-Screen (0.3.0 „Das Lager", Task #361)
+
+   Eigene, in pages/NewHavenPage.tsx DIREKT importierte Datei (Kollisions-Schutz wie shop.css/
+   mail.css/inv-filter.css: andere Agenten arbeiten parallel in pages.css/skills.css). Namensraum
+   durchgängig `nh-*`, Seiten-Wurzel `.newhaven-page`.
+
+   Geerbt statt neu erfunden: `.shop-panel` (Kopfzeile), `.combat-btn` (+ `.ghost`/`.flee`),
+   `.bar`/`.bar-fill`/`.bar.tall` (Fortschritt), `.mat-chip`/`.mats-list`/`.mat-count`
+   (Kosten-Chips inkl. grün/rot), `.modal-overlay`/`.modal` (Abbruch-Rückfrage).
+   Abstände ausschließlich über die --ds-gap-Skala (4/8/12/20/32), Schriftgrößen über --ds-fs-*.
+   Alle url() bewusst GEQUOTET (Launch-Regel: Installpfade mit Klammern).
+   ═══════════════════════════════════════════════════════════ */
+
+.newhaven-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-lg);
+  min-height: 0;
+}
+
+/* ─── Kopfzeile ─────────────────────────────────────────── */
+
+.nh-header {
+  gap: var(--ds-gap-sm);
+}
+
+.nh-header-flavor {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-base);
+  color: var(--ds-parch-ink, #e8d8b0);
+  letter-spacing: 0.3px;
+}
+
+.nh-header-facts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ds-gap);
+}
+
+.nh-fact {
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-gold, #d8b870);
+}
+
+.nh-fact-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--ds-border-bright, rgba(80, 58, 30, 0.9));
+}
+
+.nh-crew {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--ds-gap);
+  padding: var(--ds-gap-sm) var(--ds-gap);
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+}
+
+.nh-crew.is-busy {
+  border-color: var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+}
+
+.nh-crew-text {
+  flex: 1 1 auto;
+  font-size: var(--ds-fs-sm);
+}
+
+.nh-crew.is-busy .nh-crew-text {
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.nh-crew-cancel {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 var(--ds-gap);
+  font-size: var(--ds-fs-xs);
+}
+
+/* ─── Karten-Grid ───────────────────────────────────────── */
+
+/* `align-items: start` = jede Karte nur so hoch wie ihr Inhalt. Der Gegenentwurf (gestreckte
+   Karten + `margin-top:auto` auf dem Kosten-Block) wurde verworfen: sobald eine Veredelungs-Karte
+   mit ihrem Rezept-Panel in der Reihe steht, reißt sie alle Nachbarn auf ihre Höhe und hinterlässt
+   dort ein handtellergroßes Loch zwischen Wirkung und Kosten. Die Bodenkante franst jetzt leicht
+   aus, dafür steht überall Inhalt statt Leere — mit dem 2-Zeilen-Klammer auf dem Flavor-Text
+   (s. .nh-card-flavor) bleibt der Versatz zwischen normalen Karten klein. */
+.nh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--ds-gap-lg);
+  align-items: start;
+}
+
+.nh-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-sm);
+  padding: var(--ds-gap);
+  /* Holzrahmen-Rezept der Karten (identisch zu .shopv2-card/.skillcard): 8px 9-slice über
+     bg_black-Kachel; die 8px sind Asset-Geometrie und bleiben daher literal. */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background: linear-gradient(rgba(6, 5, 4, 0.7), rgba(6, 5, 4, 0.7)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.nh-card.is-built {
+  background: linear-gradient(rgba(20, 14, 8, 0.62), rgba(6, 5, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.nh-card.is-building {
+  box-shadow: inset 0 0 24px rgba(216, 184, 112, 0.16);
+}
+
+/* ─── Gebäude-Bild / Platzhalter ────────────────────────── */
+
+.nh-art {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.6)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+}
+
+.nh-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  display: block;
+}
+
+/* Platzhalter bis die Chef-PNGs liegen: kleine gezeichnete Giebel-Silhouette in einem gestrichelten
+   Rahmen, KEIN Emoji. Bewusst zurückgenommen — sie soll „hier kommt noch Kunst hin" sagen und
+   nicht selbst wie ein Motiv wirken. Der gestrichelte Rahmen ist das Signal dafür. */
+.nh-art--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nh-art--empty::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(216, 184, 112, 0.18);
+  pointer-events: none;
+}
+
+.nh-art-silhouette {
+  width: 74px;
+  height: 58px;
+  background: rgba(216, 184, 112, 0.14);
+  /* Giebelhaus: Dachspitze, Traufen, Wandkanten, Sockel. */
+  clip-path: polygon(50% 0%, 100% 40%, 86% 40%, 86% 100%, 14% 100%, 14% 40%, 0% 40%);
+}
+
+.nh-art--empty.is-built .nh-art-silhouette {
+  background: rgba(216, 184, 112, 0.3);
+}
+
+.nh-art-level {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-md);
+  font-weight: 700;
+  color: var(--ds-gold, #d8b870);
+  text-shadow: 0 2px 4px #000;
+  pointer-events: none;
+}
+
+/* ─── Kopf + Flavor ─────────────────────────────────────── */
+
+.nh-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-card-name {
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-base);
+  color: var(--ds-gold-bright, #f0dca0);
+  line-height: 1.2;
+}
+
+.nh-card-level {
+  flex: 0 0 auto;
+  font-size: var(--ds-fs-xs);
+  letter-spacing: 0.5px;
+  color: var(--ds-gold, #d8b870);
+  padding: 2px var(--ds-gap-sm);
+  border: 1px solid var(--ds-border-bright, rgba(80, 58, 30, 0.9));
+  background: rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+.nh-card-level.is-none {
+  color: var(--muted);
+}
+
+/* Flavor auf ZWEI Zeilen festgenagelt (min-height = max-height): die Lore-Zeilen sind zwischen
+   einer und fünf Zeilen lang, ungeklammert rutschen Kosten und Bau-Button auf jeder Karte auf eine
+   andere Höhe und das Raster franst sichtbar aus. Der volle Text lebt ohnehin in der Lore. */
+.nh-card-flavor {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+  line-height: 1.35;
+  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(2 * 1.35 * var(--ds-fs-xs));
+}
+
+/* ─── Wirkung jetzt / nächste Stufe ─────────────────────── */
+
+.nh-effects {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-xs);
+  padding: var(--ds-gap-sm);
+  background: rgba(0, 0, 0, 0.4);
+  border-left: 2px solid var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+}
+
+.nh-effect {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-effect-label {
+  flex: 0 0 auto;
+  font-size: var(--ds-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.nh-effect-value {
+  flex: 1 1 auto;
+  text-align: right;
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+.nh-effect-value--next {
+  color: #8fbf8f;
+}
+
+/* ─── Kosten ────────────────────────────────────────────── */
+
+.nh-costs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-cost-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-cost-title {
+  font-size: var(--ds-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.nh-cost-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-gap-xs);
+  font-size: var(--ds-fs-sm);
+  color: #8fbf8f;
+}
+
+.nh-cost-gold.lacking {
+  color: var(--danger);
+}
+
+.nh-cost-gold-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: auto;
+}
+
+/* .mats-list ist ein festes 2-Spalten-Grid (skills.css) — hier darf es bei nur einer Zutat
+   nicht die halbe Karte leer lassen. */
+.nh-mats {
+  margin: 0;
+}
+
+.nh-cost-time {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+}
+
+/* ─── Aktionen + Sperr-Gründe ───────────────────────────── */
+
+.nh-build-btn {
+  width: 100%;
+  min-height: 40px;
+  font-size: var(--ds-fs-sm);
+}
+
+.nh-blocked {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+  line-height: 1.35;
+  color: #d8a05a;
+  text-align: center;
+}
+
+.nh-maxed {
+  margin: 0;
+  padding: var(--ds-gap-sm);
+  text-align: center;
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-gold, #d8b870);
+  border: 1px dashed var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+}
+
+/* ─── Laufender Bau ─────────────────────────────────────── */
+
+.nh-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-progress-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-gap-sm);
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+/* codex:2026-08-03T15:00:00+02:00 (Task #334) — Bautrupp-Tempo-Ausweis: nur sichtbar, solange der
+   Schreibzelt-Boost tatsächlich > 0 ist (BuildingCardImpl `buildSpeedCut`); knapp unter dem
+   ETA-Label, kein eigener Gap-Sprung. */
+.nh-progress-speednote {
+  font-size: var(--ds-fs-xs);
+  margin-top: -2px;
+}
+
+.nh-progress-bar {
+  margin-top: 0;
+}
+
+.nh-cancel-btn {
+  width: 100%;
+  min-height: 38px;
+  font-size: var(--ds-fs-xs);
+}
+
+/* ─── Veredelung (Schmelzofen / Räucherhaus) ────────────── */
+
+.nh-refine {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-xs);
+  padding: var(--ds-gap-sm);
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+}
+
+.nh-refine-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-refine-title {
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-gold, #d8b870);
+  letter-spacing: 0.5px;
+}
+
+.nh-refine-rate {
+  font-size: var(--ds-fs-xs);
+  color: #8fbf8f;
+}
+
+.nh-refine-idle {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+}
+
+.nh-refine-active {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-refine-icon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.nh-refine-name {
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+/* Fix #368-3: Zutaten-Chips des LAUFENDEN Rezepts — dieselbe `.mat-chip`-Optik wie die Bau-Kosten
+   und die Rezept-Auswahlzeile oben, hier ohne Button-Semantik (reine Anzeige). */
+.nh-refine-mats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-gap-xs);
+  margin-top: var(--ds-gap-xs);
+}
+
+.nh-refine-stalled {
+  margin: var(--ds-gap-xs) 0 0;
+  font-size: var(--ds-fs-xs);
+  color: var(--danger);
+}
+
+.nh-refine-bar {
+  margin-top: var(--ds-gap-xs);
+}
+
+.nh-refine-produced {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+}
+
+.nh-refine-actions {
+  display: flex;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-refine-btn {
+  flex: 1 1 0;
+  min-height: 34px;
+  padding: 0 var(--ds-gap-sm);
+  font-size: var(--ds-fs-xs);
+}
+
+.nh-refine-error {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+  color: var(--danger);
+}
+
+/* Rezept-Liste (Muster .farm-picker-list, hier inline in der Karte statt als Modal) */
+.nh-recipe-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-xs);
+  max-height: 260px;
+  overflow-y: auto;
+  padding: var(--ds-gap-xs);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+}
+
+.nh-recipe-empty {
+  margin: 0;
+  padding: var(--ds-gap-sm);
+  font-size: var(--ds-fs-xs);
+  text-align: center;
+}
+
+.nh-recipe-row {
+  display: flex;
+  /* Fix #368-1: Zeile war für GENAU EINEN Zutaten-Chip gebaut (kein flex-wrap) — seit Task #366
+     haben 11 von 13 Schmelz-Rezepten zwei Zutaten (Erz + Kohle), die zweite lief bei 1920×1080
+     aus dem Rahmen und war bei 2560×1440/6 Spalten komplett unsichtbar (Bot-Sweep #367 Fix 1).
+     `.nh-recipe-mats` (s.u.) erzwingt per `flex:1 1 100%` ohnehin IMMER einen Umbruch auf eine
+     eigene Zeile — `flex-wrap` hier ist die Voraussetzung dafür, dass dieser Umbruch überhaupt
+     greift statt die Chips seitlich abzuschneiden. */
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-gap-sm);
+  width: 100%;
+  padding: var(--ds-gap-xs) var(--ds-gap-sm);
+  background: rgba(30, 22, 16, 0.55);
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+  color: var(--ds-parch-ink, #e8d8b0);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nh-recipe-row:hover {
+  background: rgba(58, 42, 24, 0.7);
+  border-color: var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+}
+
+/* Aktives Rezept: dunkel bleiben, das Signal trägt der goldene Balken links + die goldene Schrift.
+   Eine flächige Aufhellung wirkt in dieser Palette sofort wie „ausgegraut/deaktiviert". */
+.nh-recipe-row.is-active {
+  border-color: var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+  border-left: 3px solid var(--ds-gold, #d8b870);
+  background: #241a0e;
+}
+
+.nh-recipe-row.is-active .nh-recipe-name {
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.nh-recipe-icon {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nh-recipe-icon img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.nh-recipe-name {
+  flex: 1 1 auto;
+  /* min-width:0 statt des Flex-Default (auto = Inhaltsbreite) — sonst drückt ein langer Rezept-
+     name die Zeile in die Breite, statt selbst zu schrumpfen (Fix #368-1). */
+  min-width: 0;
+  font-size: var(--ds-fs-xs);
+  line-height: 1.25;
+}
+
+/* Fix #368-1: eigene, IMMER umgebrochene Zeile für die Zutaten-Chips (s. JSDoc in
+   NewHavenPage.tsx `RefinePanel`) — `flex-basis:100%` reißt die Chip-Gruppe unabhängig von der
+   Kartenbreite auf eine neue Zeile, rechtsbündig unter Icon+Name eingerückt. Verhält sich bei
+   1 UND 2 Zutaten identisch (kein Springen zwischen "passt noch"/"passt nicht mehr" je nach
+   Fenstergröße). */
+.nh-recipe-mats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ds-gap-xs);
+  flex: 1 1 100%;
+  padding-left: calc(26px + var(--ds-gap-sm)); /* rückt unter den Namen ein, nicht unters Icon */
+}
+
+.nh-recipe-mat {
+  flex: 0 0 auto;
+}
+
+/* Kein „Gesperrtes Lager"-Block mehr (Task #365): New Haven ist ab Spielstart die Heimatbasis,
+   der Screen zeigt immer das Bau-Grid — .nh-locked/-title/-body waren damit tote Regeln. */
+
+/* ─── Abbruch-Rückfrage ─────────────────────────────────── */
+
+.nh-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap);
+  text-align: center;
+}
+
+.nh-confirm-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-md);
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.nh-confirm-body {
+  margin: 0;
+  font-size: var(--ds-fs-sm);
+  line-height: 1.45;
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+.nh-confirm-actions {
+  display: flex;
+  gap: var(--ds-gap);
+  justify-content: center;
+}
+
+.nh-confirm-actions .combat-btn {
+  min-width: 160px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Dorfkarte (Task #371) — freie Platzierung statt Karten-Grid.
+   Namensraum `nh-map-*`/`nh-buildmenu-*`/`nh-place-*`/`nh-popup`/`nh-demolish-*`, alles unter
+   demselben `nh-*`-Dach wie das Grid oben. Border-Rezept/Farbwerte identisch zu `.nh-card`
+   (derselbe Holzrahmen-Asset, dieselbe --ds-*-Palette) — die Karte soll nicht wie ein
+   Fremdkörper neben dem Grid wirken.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Ansichts-Umschalter „Karte | Liste" (Muster CharacterPage .cs-tabbar/.cs-tab-btn) ─── */
+
+.nh-view-tabbar {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.nh-view-tab {
+  position: relative;
+  isolation: isolate;
+  min-width: 120px;
+  min-height: 34px;
+  padding: 0 var(--ds-gap);
+  border: none;
+  border-radius: 0;
+  background: linear-gradient(rgba(18, 12, 6, 0.7), rgba(18, 12, 6, 0.7)), url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, box-shadow 0.12s;
+}
+
+.nh-view-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 5px;
+  border-image-repeat: stretch;
+  pointer-events: none;
+}
+
+.nh-view-tab:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold, #d8b870);
+}
+
+.nh-view-tab.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.3), inset 0 0 8px rgba(216, 184, 112, 0.1);
+}
+
+.nh-view-tab:focus-visible {
+  outline: 2px solid var(--ds-gold, #d8b870);
+  outline-offset: -2px;
+}
+
+/* ─── Layout: Karte links, Bau-Menü/Platzierungs-Banner rechts ─── */
+
+.nh-map-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-gap-lg);
+}
+
+.nh-map-stage {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.nh-map {
+  position: relative;
+  /* Fix-Welle New Haven #1 (2026-08-03, Audit newhaven-audit-335.mjs): `.nh-map-tile` bekommt sein
+     z-index inline aus der Tiefensortierungs-Formel ((pos.y+halfH)*10000, bis ~20000 bei Auswahl).
+     Ohne eigenen Stacking-Context lief dieser Wert direkt gegen `.modal-overlay` (z-index:200,
+     modals.css) — und gewann, weil die Kachel-Werte um Größenordnungen höher liegen. Popups
+     (Gebäude-Popup, Abbruch-/Abriss-Bestätigung) wurden dadurch von Gebäude-Sprites/-Namensschildern
+     durchschienen (elementFromPoint-Probe bestätigte das an camp_townhalls Position, s. Audit).
+     `isolation: isolate` kapselt JEDE Tiefensortierung innerhalb der Karte — nach außen zählt nur
+     noch `.nh-map`s eigener (impliziter) z-index:auto, klar unter jedem `position:fixed`-Modal. */
+  isolation: isolate;
+  flex: none;
+  min-width: 0;
+  aspect-ratio: 1672 / 941;
+  overflow: hidden;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  cursor: default;
+}
+
+.nh-map.is-placing {
+  cursor: crosshair;
+}
+
+.nh-map-side {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap);
+}
+
+/* ─── Kartengrund: Platzhalter-Lichtung (Erdton + angedeutete Waldkante/Bach/Fels) ───
+   Bewusst reine CSS-Verläufe/Clip-Paths statt Emoji oder gekauftem Bild — s. Datei-Kopf
+   campMapArt.ts. `getCampMapBackground()` ersetzt `background-image` später 1:1 durch
+   `assets/camp/camp_map_day.webp`, ohne dass diese Regeln angefasst werden müssen. */
+
+.nh-map-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #2c2113;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 50% 48%, rgba(94, 74, 42, 0.55) 0%, rgba(58, 44, 24, 0.35) 55%, transparent 80%),
+    repeating-linear-gradient(115deg, rgba(0, 0, 0, 0.06) 0px, rgba(0, 0, 0, 0.06) 2px, transparent 2px, transparent 10px);
+  background-size: 100% 100%;
+  background-position: center;
+}
+
+.nh-map-edge {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Waldkante: dunkler, unscharfer Saum entlang oben/unten/links (rechts bleibt offen — der
+   „Eingang" der Lichtung, rein kosmetisch, keine Spielbedeutung). */
+.nh-map-edge--forest-n,
+.nh-map-edge--forest-s {
+  left: 0;
+  right: 0;
+  height: 14%;
+  background: linear-gradient(to bottom, rgba(10, 22, 10, 0.75), transparent);
+}
+
+.nh-map-edge--forest-n {
+  top: 0;
+}
+
+.nh-map-edge--forest-s {
+  bottom: 0;
+  transform: scaleY(-1);
+}
+
+.nh-map-edge--forest-w {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 10%;
+  background: linear-gradient(to right, rgba(10, 22, 10, 0.7), transparent);
+}
+
+/* Bach: schmales, leicht geschwungenes helles Band am rechten Rand. */
+.nh-map-edge--creek {
+  top: 8%;
+  bottom: 8%;
+  right: 0;
+  width: 9%;
+  background: linear-gradient(to left, rgba(72, 108, 118, 0.55), rgba(72, 108, 118, 0.15) 60%, transparent);
+  clip-path: polygon(30% 0%, 100% 0%, 100% 100%, 10% 100%, 30% 55%);
+}
+
+/* Fels: ein paar überlappende helle Rundungen in der unteren linken Ecke. */
+.nh-map-edge--rock {
+  left: 2%;
+  bottom: 2%;
+  width: 16%;
+  height: 16%;
+  background:
+    radial-gradient(circle at 30% 70%, rgba(150, 144, 132, 0.5) 0%, transparent 55%),
+    radial-gradient(circle at 65% 40%, rgba(120, 114, 104, 0.45) 0%, transparent 50%);
+}
+
+.nh-map-empty-hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: var(--ds-gap-sm) var(--ds-gap);
+  max-width: 60%;
+  text-align: center;
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-parch-ink, #e8d8b0);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px dashed rgba(216, 184, 112, 0.3);
+  pointer-events: none;
+}
+
+/* ─── Bebaubare Fläche (nur im Platzierungs-Modus sichtbar) ─── */
+
+.nh-map-buildable {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.nh-map-buildable-poly {
+  position: absolute;
+  inset: 0;
+  background: rgba(143, 191, 143, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(143, 191, 143, 0.4);
+}
+
+/* ─── Platzierte Gebäude ─── */
+
+.nh-map-tile {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+  /* codex:2026-07-31T20:21:01+02:00 — reine transparente Spritebühne: kein brauner/ schwarzer
+     Kartenrahmen. Größe und Seitenverhältnis kommen aus dem prozentualen Shared-Footprint. */
+  background: transparent;
+  border: 0;
+  cursor: grab;
+  touch-action: none;
+  transition: box-shadow 0.12s;
+}
+
+.nh-map-tile:hover {
+  box-shadow: none;
+  z-index: 2;
+}
+
+.nh-map-tile:hover .nh-map-tile-img {
+  filter: brightness(1.08);
+}
+
+.nh-map-tile:focus-visible {
+  outline: 2px solid var(--ds-gold, #d8b870);
+  outline-offset: 2px;
+}
+
+.nh-map-tile.is-building {
+  cursor: pointer;
+}
+
+.nh-map-tile--dragging {
+  opacity: 0.35;
+}
+
+.nh-map-tile-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+  aspect-ratio: auto;
+  transform: scaleX(var(--nh-map-sprite-flip, 1)) scale(var(--nh-map-sprite-scale, 1));
+  transform-origin: center bottom;
+  /* codex:2026-08-02T22:45:00+02:00 — Chefkorrektur: keine CSS-Schlagschatten auf den bereits
+     ausgeleuchteten Sprites; bei doppeltem Kartenmaßstab erzeugten sie breite Geisterkonturen. */
+  filter: none;
+  pointer-events: none;
+}
+
+/* codex:2026-08-03T09:30:00+02:00 — Selektions- und objektgebundene Kalibrieroberfläche des
+   flüchtigen Move-Werkzeugs. Das Sprite skaliert separat; Schild und Werkzeugleiste bleiben fest
+   am Footprint-Anker und verändern weder Größe noch Position mit dem Gebäudemaßstab. */
+.nh-map.is-move-mode .nh-map-tile.is-selected {
+  isolation: isolate;
+}
+
+.nh-map.is-move-mode .nh-map-tile.is-selected .nh-map-tile-img {
+  filter: brightness(1.18) saturate(1.08);
+}
+
+.nh-map.is-move-mode .nh-map-tile.is-selected .nh-map-tile-label {
+  color: #fff0b0;
+  box-shadow: 0 0 0 1px rgba(214, 169, 79, 0.72), 0 0 12px rgba(183, 111, 38, 0.48);
+}
+
+.nh-map-object-tools {
+  position: absolute;
+  left: 50%;
+  z-index: 30;
+  display: grid;
+  gap: 5px;
+  width: clamp(220px, 18vw, 292px);
+  padding: 7px 8px;
+  border: 4px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 5px;
+  background:
+    linear-gradient(rgba(13, 16, 17, 0.35), rgba(4, 6, 7, 0.72)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.62);
+  pointer-events: auto;
+  container-type: inline-size;
+}
+
+.nh-map-object-tools.is-below {
+  top: calc(100% + clamp(30px, 2.4vw, 42px));
+  transform: translateX(-50%);
+}
+
+.nh-map-object-tools.is-above {
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+}
+
+.nh-map-object-tools.is-left-edge {
+  left: 0;
+  transform: translateX(0);
+}
+
+.nh-map-object-tools.is-right-edge {
+  left: 100%;
+  transform: translateX(-100%);
+}
+
+.nh-map-object-tools-head,
+.nh-map-object-tools-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nh-map-object-tools-head {
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.nh-map-object-tools-head label {
+  min-width: 0;
+  overflow: hidden;
+  color: #aeb9ba;
+  font-family: var(--font-info);
+  font-size: clamp(11px, 4.4cqw, 13px);
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nh-map-object-tools-head output,
+.nh-map-object-tools-foot {
+  font-family: var(--font-info);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.nh-map-object-tools-head output {
+  color: #f0d487;
+  font-size: clamp(15px, 6cqw, 20px);
+  font-weight: 700;
+}
+
+.nh-map-object-tools-slider {
+  width: 100%;
+  height: 16px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+}
+
+.nh-map-object-tools-slider::-webkit-slider-runnable-track {
+  height: 5px;
+  border: 1px solid rgba(181, 126, 56, 0.62);
+  background: linear-gradient(90deg, #45301b, #111719);
+  box-shadow: inset 0 1px 2px #000;
+}
+
+.nh-map-object-tools-slider::-webkit-slider-thumb {
+  width: 15px;
+  height: 15px;
+  margin-top: -6px;
+  appearance: none;
+  border: 2px solid #2b1b0e;
+  border-radius: 50%;
+  background: #c58a3f;
+  box-shadow: 0 0 0 1px #dfbd75, 0 2px 5px #000;
+}
+
+.nh-map-calibration-empty {
+  margin: 0;
+  color: #aeb9ba;
+  font-family: var(--font-info);
+  font-size: clamp(12px, 1vw, 14px);
+  line-height: 1.35;
+}
+
+.nh-map-object-tools-foot {
+  justify-content: flex-end;
+  color: #8f9b9d;
+  font-size: clamp(10px, 3.8cqw, 12px);
+}
+
+.nh-map-object-tools-foot > span {
+  margin-right: auto;
+  white-space: nowrap;
+}
+
+.nh-map-object-tools .combat-btn {
+  min-width: 0;
+  width: auto;
+  min-height: 27px;
+  padding: 2px 8px;
+  border-width: 3px;
+  font-family: var(--font-info);
+  font-size: clamp(11px, 4.4cqw, 13px);
+  line-height: 1;
+}
+
+.nh-map-object-tools .combat-btn.active {
+  color: #fff0b0;
+  filter: brightness(1.16);
+}
+
+/* codex:2026-08-03T09:46:00+02:00 — Scroll-Listenvertrag: Baukarten dürfen nie auf die
+   verfügbare Seitenhöhe zusammengestaucht werden; ausschließlich die Liste scrollt. */
+.nh-buildmenu-list > .nh-buildmenu-item {
+  flex: 0 0 auto;
+}
+
+/* codex:2026-08-02T21:42:00+02:00 — Nachtfassungen sitzen im kühlen Kartenlicht; nur ihre
+   im Asset vorhandenen Fenster-/Feuerpunkte bleiben warm. */
+.nh-map[data-light-phase="night"] .nh-map-tile-img {
+  filter: brightness(0.96) saturate(0.92);
+}
+
+.nh-map[data-light-phase="night"] .nh-map-tile:hover .nh-map-tile-img {
+  filter: brightness(1.05) saturate(0.96);
+}
+
+/* codex:2026-08-02T23:02:00+02:00 — statischer Nachtnebel über der GESAMTEN Kartenbühne. Dadurch
+   teilen Hintergrund und freigestellte Gebäude dieselbe Atmosphäre, ohne Animation, Backdrop-Blur
+   oder zusätzliche Repaints im Idle-Betrieb. */
+.nh-map[data-light-phase="night"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 48% 18% at 24% 40%, rgba(182, 197, 211, 0.16) 0%, rgba(128, 148, 169, 0.08) 48%, transparent 78%),
+    radial-gradient(ellipse 55% 20% at 72% 63%, rgba(169, 188, 207, 0.13) 0%, rgba(109, 132, 157, 0.07) 52%, transparent 80%),
+    linear-gradient(176deg, transparent 22%, rgba(139, 159, 180, 0.055) 47%, transparent 69%);
+  mix-blend-mode: screen;
+  opacity: 0.78;
+}
+
+/* Kein Bild hinterlegt: dieselbe gezeichnete Giebel-Silhouette wie das Grid (`.nh-art-silhouette`),
+   hier nur klein genug für eine 10%-Kachel. */
+.nh-map-tile-placeholder {
+  position: absolute;
+  inset: 12%;
+  background: rgba(216, 184, 112, 0.28);
+  clip-path: polygon(50% 0%, 100% 40%, 86% 40%, 86% 100%, 14% 100%, 14% 40%, 0% 40%);
+  pointer-events: none;
+}
+
+/* Baustelle (Neubau, Stufe 0): Warnschraffur statt Gebäude-Silhouette — es steht ja noch nichts. */
+.nh-map-tile-site-placeholder {
+  position: absolute;
+  inset: 6%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(216, 184, 112, 0.3) 0px,
+    rgba(216, 184, 112, 0.3) 6px,
+    rgba(20, 14, 8, 0.15) 6px,
+    rgba(20, 14, 8, 0.15) 12px
+  );
+  border: 1px dashed rgba(216, 184, 112, 0.55);
+  pointer-events: none;
+}
+
+.nh-map-tile-scaffold-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Gerüst (Ausbau): dieselbe Schraffur, aber ALS OVERLAY über dem bestehenden Gebäudebild
+   (halbtransparent, damit die Kachel darunter noch als „ihr" Gebäude erkennbar bleibt). */
+.nh-map-tile-scaffold-placeholder {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(216, 184, 112, 0.22) 0px,
+    rgba(216, 184, 112, 0.22) 5px,
+    transparent 5px,
+    transparent 10px
+  );
+  pointer-events: none;
+}
+
+/* Release-Fix-Welle 0.3.0 Fix 4 (Kosmetik): das war früher ein vollständiger `.nh-map-tile-label`-
+   Regelblock, komplett verdeckt vom jüngeren (Namensschild-Positionierung, siehe der spätere
+   `.nh-map-tile-label` weiter unten in dieser Datei — "später gewinnt" in der Cascade) — eine
+   Falle für den nächsten Bearbeiter, der zwei scheinbar vollständige Definitionen findet und nicht
+   weiß, welche lebt. Übrig bleiben NUR die drei Eigenschaften, die der jüngere Block NICHT selbst
+   setzt und die dadurch tatsächlich noch wirken (Kürzung langer Gebäudenamen im Kartenlabel). */
+.nh-map-tile-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nh-map-tile-progress {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 4px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.nh-map-tile-progress-fill {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--ds-gold, #d8b870);
+}
+
+/* ─── Geist (Platzieren + Verschieben) — außerhalb von React, s. NewHavenPage.tsx CampMapView ─── */
+
+.nh-map-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 500;
+  pointer-events: none;
+  border: 2px dashed rgba(216, 184, 112, 0.8);
+  background: rgba(216, 184, 112, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nh-map-ghost img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+.nh-map-ghost--valid {
+  border-color: rgba(143, 191, 143, 0.95);
+  background: rgba(143, 191, 143, 0.22);
+}
+
+.nh-map-ghost--invalid {
+  border-color: rgba(214, 90, 74, 0.95);
+  background: rgba(214, 90, 74, 0.2);
+}
+
+/* ─── Bau-Menü ─── */
+
+.nh-buildmenu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-sm);
+  padding: var(--ds-gap);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  background: linear-gradient(rgba(6, 5, 4, 0.7), rgba(6, 5, 4, 0.7)), url("../assets/bg_black.webp") repeat;
+}
+
+.nh-buildmenu-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-sm);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--ds-gold, #d8b870);
+}
+
+.nh-buildmenu-empty {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+}
+
+.nh-buildmenu-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-xs);
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.nh-buildmenu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-gap-sm);
+  padding: var(--ds-gap-xs) var(--ds-gap-sm);
+  background: rgba(30, 22, 16, 0.55);
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+  color: var(--ds-parch-ink, #e8d8b0);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nh-buildmenu-item:hover {
+  background: rgba(58, 42, 24, 0.7);
+  border-color: var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+}
+
+.nh-buildmenu-item.is-active {
+  border-color: var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+  border-left: 3px solid var(--ds-gold, #d8b870);
+  background: #241a0e;
+}
+
+.nh-buildmenu-art {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+}
+
+.nh-buildmenu-art img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.nh-buildmenu-silhouette {
+  width: 18px;
+  height: 14px;
+  background: rgba(216, 184, 112, 0.28);
+  clip-path: polygon(50% 0%, 100% 40%, 86% 40%, 86% 100%, 14% 100%, 14% 40%, 0% 40%);
+}
+
+.nh-buildmenu-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nh-buildmenu-name {
+  font-size: var(--ds-fs-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nh-buildmenu-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--ds-fs-xs);
+  color: #8fbf8f;
+}
+
+.nh-buildmenu-cost.lacking {
+  color: var(--danger);
+}
+
+/* ─── Platzierungs-Banner ─── */
+
+.nh-place-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-xs);
+  padding: var(--ds-gap-sm) var(--ds-gap);
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("../assets/bg_black.webp") repeat;
+  border: 1px solid var(--ds-border-gold, rgba(216, 184, 112, 0.5));
+}
+
+.nh-place-hint {
+  margin: 0;
+  font-size: var(--ds-fs-sm);
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.nh-place-reason {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+  color: #d8a05a;
+}
+
+.nh-place-cancel {
+  align-self: flex-start;
+  min-height: 32px;
+  padding: 0 var(--ds-gap);
+  font-size: var(--ds-fs-xs);
+}
+
+/* ─── Gebäude-Popup ─── */
+
+.nh-popup {
+  /* codex:2026-07-31T20:21:01+02:00 — EIN Modalrahmen statt Modal + Card + Bildrahmen.
+     Die lange Funktionshaus-Fassung scrollt innerhalb dieses Owners, nie in verschachtelten Rahmen. */
+  position: relative;
+  width: min(520px, 94vw);
+  max-width: min(520px, 94vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 34px 18px 18px !important;
+  border: 14px solid transparent !important;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 14px !important;
+  background:
+    linear-gradient(rgba(10, 8, 6, 0.76), rgba(7, 6, 5, 0.84)),
+    var(--gw-action-leather) center / 256px 256px repeat !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-popup .nh-card {
+  width: 100%;
+  padding: 0;
+  border: 0 !important;
+  border-image: none !important;
+  background: transparent !important;
+  box-shadow: none;
+}
+
+.nh-popup .nh-art {
+  aspect-ratio: 16 / 7;
+  border: 0;
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(60, 72, 78, 0.24), transparent 66%),
+    rgba(5, 7, 8, 0.58);
+}
+
+.nh-popup .nh-art-img {
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.nh-popup .nh-effects {
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.nh-popup .nh-effect {
+  display: grid;
+  grid-template-rows: auto minmax(46px, 1fr);
+  align-items: center;
+  justify-items: center;
+  min-width: 0;
+  min-height: 96px;
+}
+
+.nh-popup .nh-effect-label,
+.nh-popup .nh-effect-value {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.nh-popup .nh-effect-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(13px, 2.8cqw, 17px);
+  line-height: 1.22;
+}
+
+.nh-popup :is(.nh-costs, .nh-progress, .nh-refine) {
+  padding: 10px;
+  border: 5px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 5px;
+  background:
+    linear-gradient(rgba(9, 7, 5, 0.66), rgba(5, 5, 4, 0.76)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+}
+
+.nh-popup :is(.nh-build-btn, .nh-cancel-btn, .nh-demolish-btn, .nh-refine-btn) {
+  border: 7px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 7px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(207, 151, 72, 0.12), transparent 64%),
+    var(--gw-action-wood) center / 256px 256px repeat;
+}
+
+.nh-popup :is(.nh-cancel-btn, .nh-demolish-btn) {
+  color: #efcfaf;
+  background:
+    linear-gradient(rgba(72, 16, 12, 0.3), rgba(31, 9, 7, 0.38)),
+    var(--gw-action-wood) center / 256px 256px repeat;
+}
+
+.nh-demolish-btn {
+  width: 100%;
+  min-height: 38px;
+  font-size: var(--ds-fs-sm);
+}
+
+/* ─── Abriss-Bestätigung ─── */
+
+.nh-demolish-refund {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap-xs);
+  text-align: left;
+}
+
+.nh-demolish-refund-title {
+  font-size: var(--ds-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.nh-demolish-refund-none {
+  margin: 0;
+  font-size: var(--ds-fs-xs);
+}
+
+.nh-demolish-refund-list {
+  margin: 0;
+}
+
+/* ─── Schmale Fenster ───────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .nh-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nh-map-layout {
+    flex-direction: column;
+  }
+
+  .nh-map-side {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .nh-buildmenu-list {
+    max-height: 260px;
+  }
+}
+
+/* codex:2026-07-31T19:00:03+02:00 — New Haven nutzt exakt die verfügbare Seitenhöhe.
+   Nur Liste und Baumenü scrollen intern; Karte und Gesamtseite erzeugen keinen Scrollbalken. */
+.content-body:has(.newhaven-page) {
+  overflow-y: hidden;
+}
+
+.page-transition:has(> .newhaven-page) {
+  height: 100%;
+  min-height: 0;
+}
+
+/* Fix-Welle New Haven #3 (2026-08-03): `.toast-stack` (pages.css, position:fixed; right:22px;
+   bottom:22px) ist app-weit dieselbe Instanz (App.tsx MainLayout, Geschwister von `<main>`, s.
+   `.layout:has(...)` unten) — auf JEDER anderen Seite unproblematisch, weil dort unten rechts nichts
+   Wichtiges sitzt. `.nh-buildmenu-list` (Karten-Ansicht) reicht dagegen bis an den unteren
+   Seitenrand (`.nh-map-side{height:100%}`, `.nh-buildmenu{flex:1 1 0}`) — Onboarding-/Meilenstein-
+   Toasts legten sich dadurch über die unterste sichtbare Baumenü-Karte. Kleinstmöglicher Eingriff:
+   NUR auf dieser Seite (`.layout:has(.newhaven-page)`) startet der Toast-Stapel weiter oben, sodass
+   er über statt auf dem Baumenü wächst — keine globale Toast-Umarchitektur, keine Änderung an
+   `.nh-buildmenu`/`.nh-map-side` selbst (deren Höhenvertrag bleibt unangetastet). */
+.layout:has(.newhaven-page) .toast-stack {
+  /* Live vermessen (Playwright, `?toastTest=legendary`-Devhook, s. Audit-Sektion 8 „Toast-Stapel vs.
+     Baumenü"): `.nh-buildmenu-list` füllt praktisch die GESAMTE Seitenhöhe (`.nh-map-side{height:
+     100%}`) — ein vertikales Höherstapeln (erster Versuch, per `bottom`) verlagert das Überdecken
+     dadurch nur auf eine ANDERE Karte (z.B. die erste statt der dritten), löst es aber nicht: es
+     gibt keine "sichere Höhe" innerhalb der Liste. Stattdessen horizontal ausweichen: `.nh-buildmenu`
+     beginnt bei BEIDEN Testauflösungen exakt 470px vom rechten Viewportrand (380px Seitenpanel-
+     Breite, deckelt via `--nh-side-width: clamp(300px,20vw,380px)` bei ≥1900px Fensterbreite +
+     Gap/Padding-Kette) — ein auf 490px erhöhter `right`-Versatz schiebt den Toast-Stapel komplett
+     über die (rein dekorative) Karte, nie über die anklickbare Baumenü-Spalte. `bottom` bleibt der
+     Seiten-Standard (pages.css, 22px) — vertraute Ecken-Position, keine neue Schwebe-Optik. */
+  right: 490px;
+}
+
+.newhaven-page {
+  height: 100%;
+  overflow: hidden;
+  gap: var(--ds-gap-sm);
+}
+
+.nh-view-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.nh-capacity {
+  margin-left: auto;
+  padding: 5px 12px;
+  border: 1px solid rgba(168, 117, 56, 0.72);
+  background: rgba(10, 8, 6, 0.78);
+  color: var(--ds-gold, #d8b870);
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-xs);
+  letter-spacing: 0.45px;
+  white-space: nowrap;
+}
+
+.nh-debug-toggle {
+  color: #d49a72;
+}
+
+.nh-debug-toggle.active {
+  color: #ffe0a0;
+  box-shadow: inset 0 0 18px rgba(173, 55, 32, 0.3), 0 0 8px rgba(202, 105, 54, 0.22);
+}
+
+/* codex:2026-07-31T20:21:01+02:00 — separater Einmalbefehl neben dem Kosten-Debugmodus. */
+.nh-debug-complete {
+  color: #d8b870;
+}
+
+.nh-debug-complete:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.65) brightness(0.55);
+}
+
+.nh-map-layout {
+  flex: 1 1 0;
+  min-height: 0;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+/* codex:2026-07-31T23:59:00+02:00 — Auflösungsfeste Weltprojektion. Die Stage darf jedes
+   Bildschirmformat annehmen; die eigentliche Karte wählt darin das größtmögliche 1672:941-Rechteck.
+   Prozentpositionen und Footprints beziehen sich ausschließlich auf dieses Rechteck. */
+.nh-map-stage {
+  container-type: size;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.nh-map {
+  /* Fix-Welle New Haven #2 (2026-08-03, Audit newhaven-audit-335.mjs): `width` ist ab hier die
+     CONTENT-Breite (s. `box-sizing: content-box`-Override weiter unten) — der 9-Slice-Rahmen kommt
+     ONBEN drauf, statt wie zuvor Teil derselben aspect-ratio-Box zu sein. Beide Grenzen um 2× die
+     Rahmenbreite verkleinert, sonst wüchse die Bühne über `.nh-map-stage` hinaus (die hat
+     overflow:hidden → die Kante würde abgeschnitten). `--nh-map-border` ist unten (finale
+     Kaskaden-Regel) definiert, aber Custom Properties binden spät (used-value time) — die
+     Reihenfolge der Blöcke im File spielt dafür keine Rolle. */
+  width: min(
+    calc(100cqw - 2 * var(--nh-map-border, 0px)),
+    calc((100cqh - 2 * var(--nh-map-border, 0px)) * 1672 / 941)
+  );
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  aspect-ratio: 1672 / 941;
+}
+
+.nh-map-side {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.nh-buildmenu {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.nh-buildmenu-list {
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.nh-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* codex:2026-07-31T19:00:03+02:00 — volle Kosten und echte Verfügbarkeit im Karten-Baumenü. */
+.nh-buildmenu-item {
+  align-items: stretch;
+  min-height: 76px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent;
+  border-image: var(--gw-action-frame) 28 / 5px;
+  background:
+    linear-gradient(rgba(17, 11, 7, 0.55), rgba(8, 7, 6, 0.7)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+}
+
+.nh-buildmenu-item:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.38) brightness(0.7);
+}
+
+.nh-buildmenu-art {
+  width: 62px;
+  height: 58px;
+  align-self: center;
+}
+
+.nh-buildmenu-costs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+}
+
+.nh-buildmenu-cost img {
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+}
+
+.nh-buildmenu-reason {
+  color: #d49a72;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.nh-debug-free-note {
+  margin: 3px 0 0;
+  color: #e8b86a;
+  font-size: var(--ds-fs-xs);
+  text-align: center;
+}
+
+/* codex:2026-07-31T19:00:03+02:00 — Listenkarten folgen der normalen Action-Card-Hierarchie. */
+.nh-card {
+  container-type: inline-size;
+  border-width: 7px;
+  border-image-width: 7px;
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.78)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+}
+
+.nh-card.is-built {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(188, 126, 54, 0.12), transparent 58%),
+    linear-gradient(rgba(13, 9, 6, 0.65), rgba(7, 6, 5, 0.78)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+}
+
+.nh-effects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-gap-sm);
+}
+
+.nh-effect {
+  min-height: 72px;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: 8px;
+  border: 5px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 5px;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(205, 146, 70, 0.17), transparent 60%),
+    var(--gw-action-bronze) center / 256px 256px repeat;
+}
+
+.nh-build-btn {
+  min-height: 48px;
+  border: 7px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 7px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(207, 151, 72, 0.13), transparent 64%),
+    var(--gw-action-wood) center / 256px 256px repeat;
+  font-size: clamp(16px, 4cqw, 22px);
+}
+
+@media (max-width: 900px) {
+  .nh-map-layout {
+    flex-direction: column;
+  }
+
+  .nh-map-stage {
+    flex: 0 1 58%;
+    width: 100%;
+  }
+
+  .nh-map-side {
+    flex: 1 1 0;
+    width: 100%;
+  }
+
+  .nh-buildmenu-list {
+    max-height: none;
+  }
+
+  .nh-capacity {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nh-view-tab,
+  .nh-debug-toggle {
+    min-width: 0;
+  }
+}
+
+/* codex:2026-07-31T23:42:00+02:00 — New-Haven Action-Card-Vertrag.
+   Die Liste besitzt feste Layoutzonen wie Skill-Layout 01: Art, Identität, Flavor, Effekte,
+   Bauaktion und Funktionsdock ändern ihre Außenmaße in keinem Zustand. */
+.nh-grid {
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-auto-rows: auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.nh-grid > .nh-card {
+  box-sizing: border-box;
+  height: 640px;
+  min-height: 640px;
+  display: grid;
+  grid-template-rows: 145px 38px 40px 92px minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px;
+  overflow: hidden;
+  border-width: 14px;
+  border-image: var(--gw-action-frame) 28 / 14px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(171, 113, 48, 0.13), transparent 48%),
+    linear-gradient(rgba(9, 7, 5, 0.68), rgba(5, 5, 4, 0.82)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+  box-shadow: inset 0 0 0 1px rgba(205, 147, 74, 0.1), 0 8px 18px rgba(0, 0, 0, 0.34);
+}
+
+.nh-grid > .nh-card.is-built {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(193, 128, 52, 0.18), transparent 52%),
+    linear-gradient(rgba(13, 9, 6, 0.62), rgba(6, 5, 4, 0.8)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+}
+
+.nh-grid > .nh-card.is-refinery {
+  height: 760px;
+  min-height: 760px;
+  grid-template-rows: 145px 38px 40px 92px 200px minmax(148px, 1fr);
+}
+
+.nh-art {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: auto;
+  padding: 6px 10px 2px;
+  border: 7px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 7px;
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(70, 82, 88, 0.2), transparent 66%),
+    linear-gradient(rgba(4, 6, 7, 0.62), rgba(3, 4, 5, 0.82)),
+    url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 256px 256px repeat;
+}
+
+.nh-art-img {
+  object-fit: contain;
+  object-position: center;
+}
+
+.nh-card-head {
+  min-width: 0;
+  align-items: center;
+}
+
+.nh-card-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.nh-card-flavor {
+  min-height: 40px;
+  max-height: 40px;
+}
+
+.nh-effects {
+  min-width: 0;
+  min-height: 0;
+}
+
+.nh-effect {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 92px;
+  border-width: 6px;
+  border-image-width: 6px;
+}
+
+.nh-card-action-slot {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow: hidden;
+  padding: 8px;
+  border: 6px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 6px;
+  background:
+    linear-gradient(rgba(9, 7, 5, 0.58), rgba(5, 5, 4, 0.72)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+}
+
+.nh-card-action-slot > .nh-costs,
+.nh-card-action-slot > .nh-progress {
+  min-height: 0;
+  flex: 0 0 auto;
+}
+
+.nh-card-action-slot .nh-mats {
+  min-height: 66px;
+  align-content: start;
+}
+
+.nh-card-action-slot .nh-build-btn,
+.nh-card-action-slot .nh-cancel-btn {
+  flex: 0 0 auto;
+}
+
+.nh-card-action-slot .nh-build-btn,
+.nh-card-action-slot .nh-cancel-btn,
+.nh-card-action-slot .nh-maxed {
+  margin-top: auto;
+}
+
+.nh-card-function-slot {
+  min-width: 0;
+  min-height: 148px;
+  overflow: hidden;
+}
+
+.nh-card-function-slot.is-empty {
+  display: none;
+}
+
+.nh-card-function-slot > .nh-refine {
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  border: 6px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 6px;
+  background:
+    linear-gradient(rgba(12, 8, 5, 0.56), rgba(5, 5, 4, 0.76)),
+    var(--gw-action-wood) center / 256px 256px repeat;
+}
+
+/* Das Karten-Popup verwendet dieselben Module, aber keinen künstlich reservierten Listenplatz. */
+.nh-popup .nh-card {
+  display: flex;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  gap: 8px;
+}
+
+.nh-popup .nh-art {
+  aspect-ratio: 16 / 7;
+  padding: 4px 8px 0;
+  border: 7px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 7px;
+}
+
+.nh-popup .nh-card-action-slot {
+  min-height: 0;
+  overflow: visible;
+}
+
+.nh-popup .nh-card-function-slot {
+  min-height: 0;
+  overflow: visible;
+}
+
+.nh-popup .nh-card-function-slot.is-empty {
+  display: none;
+}
+
+.nh-popup .nh-card-function-slot > .nh-refine {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+.nh-popup-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.nh-popup-actions > :only-child {
+  grid-column: 1 / -1;
+}
+
+.nh-move-btn,
+.nh-demolish-btn {
+  width: 100%;
+  min-height: 44px;
+  border: 7px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 7px;
+}
+
+.nh-move-btn {
+  color: var(--ds-gold-bright, #f0dca0);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(207, 151, 72, 0.15), transparent 64%),
+    var(--gw-action-wood) center / 256px 256px repeat;
+}
+
+/* codex:2026-07-31T23:42:00+02:00 — explizites, kostenloses Move-Feedback. */
+.nh-move-toggle {
+  color: #d9bb78;
+}
+
+.nh-move-toggle.active {
+  color: #fff0b7;
+  box-shadow: inset 0 0 18px rgba(154, 111, 44, 0.3), 0 0 9px rgba(216, 184, 112, 0.25);
+}
+
+/* codex:2026-08-01T09:30:10+02:00 — New-Haven Action-Card V2: dieselbe feste Informations-
+   hierarchie in Liste und Popup, aber flüssige Maße zwischen 1920×1080 und Ultrawide. Kleine
+   Inhaltsmodule verwenden ruhige Steinflächen statt verkleinerter Zierrahmen und Lederteppiche. */
+.nh-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(330px, 18vw, 430px)), 1fr));
+  gap: clamp(10px, 0.75vw, 16px);
+}
+
+.nh-grid > .nh-card {
+  height: clamp(680px, 178cqw, 760px);
+  min-height: clamp(680px, 178cqw, 760px);
+  grid-template-rows:
+    clamp(154px, 42cqw, 188px)
+    auto
+    clamp(48px, 13cqw, 58px)
+    clamp(100px, 27cqw, 118px)
+    minmax(0, 1fr);
+  gap: clamp(7px, 2.2cqw, 11px);
+  padding: clamp(8px, 2.4cqw, 12px);
+  border-width: clamp(10px, 3cqw, 14px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / clamp(10px, 3cqw, 14px);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(147, 91, 40, 0.12), transparent 52%),
+    linear-gradient(rgba(10, 9, 8, 0.66), rgba(4, 5, 6, 0.86)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+
+.nh-grid > .nh-card.is-built {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(184, 112, 43, 0.16), transparent 55%),
+    linear-gradient(rgba(13, 10, 8, 0.6), rgba(4, 5, 6, 0.84)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+
+/* Release-Fix-Welle 0.3.0 Fix 2 (+ Nachschlag nach Abschluss-Smoke): die Aktionszone war zu knapp
+   fuer die Reason-Zeile (`.nh-blocked`), sobald ein Veredelungsgebaeude (Smelter/Smokehouse)
+   blockiert ist — bei 1920×1080/4 Spalten bekam die fr-Verteilung der Zeile real nur ~223px, der
+   Inhalt (Kostenkopf + 2 Chip-Zeilen + Bauzeit + Button + Sperr-Zeile) braucht ~245px, und
+   `overflow: hidden` liess das LETZTE Kind komplett verschwinden statt zu quetschen. Deshalb ist
+   das Aktionszonen-MINIMUM jetzt ein harter 248px-Boden (fr-unabhaengig, gemessen + Reserve);
+   Kartenhoehe waechst um denselben Betrag mit, damit die Funktionszone (Veredelungspanel) ihre
+   Groesse behaelt. Smoke-Beleg: nh-finalsmoke 06/07 (FAIL bei 218px-Min) → Re-Fix. */
+.nh-grid > .nh-card.is-refinery {
+  height: clamp(868px, 219cqw, 978px);
+  min-height: clamp(868px, 219cqw, 978px);
+  grid-template-rows:
+    clamp(154px, 42cqw, 188px)
+    auto
+    clamp(48px, 13cqw, 58px)
+    clamp(100px, 27cqw, 118px)
+    minmax(248px, 1fr)
+    minmax(160px, 0.9fr);
+}
+
+.nh-card .nh-art {
+  padding: clamp(4px, 1.6cqw, 8px);
+  border-width: clamp(5px, 1.8cqw, 8px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / clamp(5px, 1.8cqw, 8px);
+  background:
+    radial-gradient(ellipse at 50% 66%, rgba(95, 77, 54, 0.16), transparent 68%),
+    linear-gradient(rgba(10, 12, 13, 0.22), rgba(3, 4, 5, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 320px 320px repeat;
+}
+
+.nh-card .nh-art-img {
+  object-fit: contain;
+  object-position: center;
+}
+
+.nh-card-head {
+  align-items: center;
+  min-height: 34px;
+}
+
+.nh-card-name {
+  font-size: clamp(17px, 5cqw, 23px);
+  line-height: 1.08;
+}
+
+.nh-card-level {
+  padding: 4px clamp(7px, 2.2cqw, 11px);
+  border-color: rgba(145, 105, 53, 0.62);
+  background: rgba(4, 5, 6, 0.72);
+}
+
+.nh-card-flavor {
+  min-height: 48px;
+  max-height: 48px;
+  font-size: clamp(12px, 3.7cqw, 16px);
+  line-height: 1.42;
+  font-style: normal;
+  color: #9eabb1;
+}
+
+.nh-effects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(4px, 1.4cqw, 7px);
+  border: clamp(5px, 1.7cqw, 7px) solid transparent;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / clamp(5px, 1.7cqw, 7px);
+  background:
+    linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+}
+
+.nh-effect {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+  justify-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(6px, 2cqw, 10px);
+  border: 0;
+  border-image: none;
+  background: transparent;
+  text-align: center;
+}
+
+.nh-effect + .nh-effect {
+  border-left: 1px solid rgba(169, 123, 61, 0.44);
+}
+
+.nh-effect-label {
+  color: #a9936e;
+  font-size: clamp(11px, 3.2cqw, 14px);
+  letter-spacing: 0.08em;
+}
+
+.nh-effect-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  padding-top: 4px;
+  color: #e4d6b6;
+  font-size: clamp(13px, 3.8cqw, 17px);
+  font-weight: 700;
+  line-height: 1.28;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.nh-effect-value--next {
+  color: #8fc49a;
+}
+
+.nh-card-action-slot {
+  gap: clamp(6px, 1.8cqw, 9px);
+  padding: clamp(8px, 2.4cqw, 12px);
+  border-width: clamp(5px, 1.8cqw, 8px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / clamp(5px, 1.8cqw, 8px);
+  background:
+    linear-gradient(rgba(15, 10, 7, 0.64), rgba(6, 5, 4, 0.82)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 280px 280px repeat;
+}
+
+.nh-cost-title,
+.nh-cost-time {
+  color: #9eabb1;
+  font-style: normal;
+  font-size: clamp(11px, 3.2cqw, 14px);
+}
+
+.nh-card .mat-chip {
+  min-width: 0;
+  min-height: clamp(38px, 11cqw, 48px);
+  border: 1px solid rgba(112, 91, 62, 0.52) !important;
+  border-image: none !important;
+  background:
+    linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.52)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 180px 180px repeat !important;
+}
+
+.nh-card .mat-chip.lacking {
+  background:
+    linear-gradient(rgba(72, 18, 15, 0.28), rgba(24, 7, 7, 0.54)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 180px 180px repeat !important;
+}
+
+.nh-card :is(.nh-build-btn, .nh-cancel-btn, .nh-refine-btn),
+.nh-popup-actions :is(.nh-move-btn, .nh-demolish-btn) {
+  min-height: clamp(46px, 13cqw, 56px);
+  padding: 6px clamp(12px, 4cqw, 20px);
+  border: clamp(6px, 2cqw, 9px) solid transparent !important;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / clamp(8px, 2.6cqw, 12px) !important;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(177, 113, 49, 0.13), transparent 68%),
+    linear-gradient(rgba(9, 12, 14, 0.12), rgba(3, 5, 6, 0.4)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 190px 190px repeat !important;
+  color: #eadab8;
+  font-size: clamp(13px, 3.8cqw, 18px);
+  line-height: 1.15;
+  box-shadow: inset 0 0 0 1px rgba(202, 139, 66, 0.1);
+}
+
+.nh-card :is(.nh-build-btn, .nh-cancel-btn, .nh-refine-btn):hover,
+.nh-popup-actions :is(.nh-move-btn, .nh-demolish-btn):hover {
+  filter: brightness(1.12);
+}
+
+.nh-card :is(.nh-build-btn, .nh-cancel-btn, .nh-refine-btn)[disabled] {
+  color: #7e7e79;
+  filter: grayscale(0.55) brightness(0.7);
+}
+
+.nh-card-function-slot > .nh-refine {
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  background:
+    linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.62)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+}
+
+/* codex:2026-08-01T09:30:10+02:00 — Popup-Fassung: echte adaptive Breite, vollständiger Flavor,
+   großzügigere Artworkzone und ein eigener quadratischer Eisen-Schließenknopf ohne rotes Fremdasset. */
+.nh-popup {
+  container-type: inline-size;
+  width: min(clamp(500px, 34vw, 680px), calc(100vw - 28px));
+  max-width: min(680px, calc(100vw - 28px));
+  max-height: min(92dvh, 1060px);
+  padding: clamp(50px, 8cqw, 62px) clamp(14px, 3.5cqw, 24px) clamp(16px, 3.5cqw, 24px) !important;
+  border-width: clamp(12px, 2.6cqw, 18px) !important;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / clamp(12px, 2.6cqw, 18px) !important;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%),
+    linear-gradient(rgba(9, 9, 8, 0.7), rgba(3, 4, 5, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px 360px repeat !important;
+}
+
+.nh-popup-close {
+  position: absolute;
+  z-index: 5;
+  top: clamp(9px, 2cqw, 14px);
+  right: clamp(9px, 2cqw, 14px);
+  width: clamp(36px, 7cqw, 46px);
+  height: clamp(36px, 7cqw, 46px);
+  padding: 0;
+  border: clamp(6px, 1.6cqw, 9px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / clamp(7px, 2cqw, 10px);
+  background:
+    linear-gradient(rgba(45, 16, 13, 0.3), rgba(10, 7, 7, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 128px 128px repeat;
+  cursor: pointer;
+}
+
+.nh-popup-close::before,
+.nh-popup-close::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 48%;
+  height: 2px;
+  background: #d7bd83;
+  box-shadow: 0 1px 2px #000;
+  transform-origin: center;
+}
+
+.nh-popup-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.nh-popup-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.nh-popup-close:hover {
+  filter: brightness(1.2);
+}
+
+.nh-popup .nh-card {
+  gap: clamp(8px, 2cqw, 13px);
+}
+
+.nh-popup .nh-art {
+  height: clamp(180px, 38cqw, 245px);
+  aspect-ratio: auto;
+}
+
+.nh-popup .nh-card-flavor {
+  display: block;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  font-size: clamp(14px, 3.1cqw, 18px);
+  line-height: 1.45;
+  -webkit-line-clamp: unset;
+}
+
+.nh-popup .nh-effects {
+  min-height: clamp(102px, 18cqw, 126px);
+  padding: clamp(4px, 1.4cqw, 7px);
+  border: clamp(5px, 1.7cqw, 7px) solid transparent;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / clamp(5px, 1.7cqw, 7px);
+  background:
+    linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+}
+
+/* codex:2026-08-01T09:30:10+02:00 — Der Action-Slot ist der einzige Kostenrahmen im Popup;
+   die frühere verschachtelte Lederbox wird entfernt und erzeugt keine doppelten Kanten mehr. */
+.nh-popup :is(.nh-costs, .nh-progress) {
+  padding: 0;
+  border: 0;
+  border-image: none;
+  background: transparent;
+}
+
+.nh-popup .nh-card-action-slot {
+  overflow: visible;
+}
+
+.nh-popup .nh-blocked {
+  min-height: 0;
+  padding-top: 2px;
+}
+
+.nh-popup-actions {
+  gap: clamp(8px, 2cqw, 12px);
+}
+
+.nh-popup-actions .nh-demolish-btn {
+  background:
+    linear-gradient(rgba(86, 18, 14, 0.35), rgba(25, 7, 7, 0.58)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 190px 190px repeat !important;
+}
+
+@media (max-width: 1180px) {
+  .nh-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .nh-popup {
+    width: calc(100vw - 14px);
+    max-width: calc(100vw - 14px);
+    max-height: 96dvh;
+  }
+
+  .nh-popup-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* codex:2026-08-03T00:02:00+02:00 — Die produktiven Encampment-Sprites besitzen bewusst eine
+   großzügige transparente 1536er Sicherheitsfläche. In Listen-/Detailkarten wird nur die sichtbare
+   Gebäudemasse vergrößert; Container, Seitenverhältnis und Tag-Asset bleiben unverändert. */
+.nh-card .nh-art {
+  overflow: hidden;
+}
+
+.nh-card .nh-art-img {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.65);
+  transform-origin: center 72%;
+}
+
+.nh-move-banner {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 8px;
+  padding: 9px;
+  border: 6px solid transparent;
+  border-image: var(--gw-action-frame) 28 / 6px;
+  background:
+    linear-gradient(rgba(20, 14, 8, 0.58), rgba(7, 6, 5, 0.76)),
+    var(--gw-action-leather) center / 256px 256px repeat;
+}
+
+.nh-move-banner p {
+  margin: 0;
+  color: var(--ds-gold-bright, #f0dca0);
+  font-size: var(--ds-fs-xs);
+  line-height: 1.35;
+}
+
+.nh-map-tile {
+  cursor: pointer;
+}
+
+.nh-map.is-move-mode .nh-map-tile.is-movable {
+  cursor: grab;
+}
+
+.nh-map.is-move-mode .nh-map-tile.is-movable .nh-map-tile-img {
+  /* codex:2026-08-02T22:45:00+02:00 — Move-Modus bleibt über Helligkeit lesbar, ohne erneut einen
+     Schatten-/Glow-Rand um die Gebäudesilhouette zu legen. */
+  filter: brightness(1.08);
+}
+
+.nh-map.is-move-mode .nh-map-tile.is-building {
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .nh-grid {
+    grid-auto-rows: auto;
+  }
+
+  .nh-popup-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* codex:2026-08-01T11:03:00+02:00 — Finaler Cascade-Lock nach allen älteren New-Haven-Pässen:
+   zwei kompakte Einzelkarten statt der überhohen gemeinsamen Current-/Next-Tafel. */
+.nh-popup {
+  padding-top: clamp(28px, 5cqw, 38px) !important;
+}
+
+.nh-popup .nh-effects {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(8px, 2cqw, 12px);
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-image: none;
+  background: transparent;
+}
+
+.nh-popup .nh-effect {
+  grid-template-rows: auto auto;
+  align-content: center;
+  min-height: clamp(70px, 12cqw, 86px);
+  padding: clamp(8px, 2cqw, 12px);
+  border: clamp(4px, 1.2cqw, 6px) solid transparent;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / clamp(4px, 1.2cqw, 6px);
+  background:
+    linear-gradient(rgba(10, 13, 15, 0.46), rgba(3, 5, 6, 0.68)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 240px 240px repeat;
+}
+
+.nh-popup .nh-effect-label {
+  font-size: clamp(11px, 2.5cqw, 13px);
+  line-height: 1;
+}
+
+.nh-popup .nh-effect-value {
+  padding-top: 6px;
+  font-size: clamp(13px, 3cqw, 16px);
+  line-height: 1.22;
+}
+
+.nh-popup-close {
+  top: clamp(2px, 0.7cqw, 5px);
+  right: clamp(2px, 0.7cqw, 5px);
+  width: clamp(27px, 5cqw, 33px);
+  height: clamp(27px, 5cqw, 33px);
+  border-width: clamp(4px, 1cqw, 6px);
+  border-image-width: clamp(5px, 1.2cqw, 7px);
+}
+
+.nh-popup-close::before,
+.nh-popup-close::after {
+  width: 42%;
+  height: 1.5px;
+}
+
+@media (max-width: 460px) {
+  .nh-popup .nh-effects {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* codex:2026-08-02T23:34:00+02:00 — Verbindlicher Map-Mode-Pass. Diese Abschluss-Schicht
+   vereinheitlicht Toolbar, Kartenbühne, Baupalette und Kartenbeschriftung nach den zahlreichen
+   historischen New-Haven-Overrides. Spiel-, Kosten-, Positions- und Save-Logik bleiben unberührt. */
+.newhaven-page {
+  --nh-map-gap: clamp(8px, 0.7vw, 14px);
+  --nh-side-width: clamp(300px, 20vw, 380px);
+  gap: var(--nh-map-gap);
+}
+
+.nh-view-controls {
+  /* Release-Fix-Welle 0.3.0 Fix 1: war ein `display:grid` mit fest gezählten
+     "auto auto auto auto auto minmax(...)"-Spalten (Kartenwahl + Verschieben + zwei Debug-Knöpfe +
+     Licht-Umschalter + Kapazität) — seit die beiden Debug-Knöpfe hinter `import.meta.env.DEV`
+     verschwinden, hat der Prod-Bundle-Baum zwei Kinder WENIGER als der Dev-Baum, aber dieselbe
+     Spaltenzahl hätte die Kapazitäts-Pille (die flexible `1fr`-Spur) aus der letzten Spalte
+     gerissen — sie wäre in Spalte 4 gelandet, mit toter Leerfläche rechts danach. Flexbox macht
+     die Spaltenzahl irrelevant: jeder Knopf bleibt `auto`-breit, `.nh-capacity` allein bekommt
+     unten `flex: 1 1 auto` und füllt IMMER den Rest, egal wie viele Geschwister davor stehen. */
+  display: flex;
+  align-items: stretch;
+  gap: clamp(5px, 0.45vw, 9px);
+  min-height: clamp(42px, 3.2vw, 54px);
+  padding: 5px 7px;
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 9px;
+  background:
+    linear-gradient(rgba(8, 9, 10, 0.62), rgba(3, 4, 5, 0.78)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+}
+
+.nh-view-tabbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(92px, 1fr));
+  gap: 5px;
+}
+
+.nh-view-controls .nh-view-tab {
+  min-width: 0;
+  min-height: 100%;
+  padding: 6px clamp(10px, 1vw, 18px);
+  border: 5px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 7px;
+  background:
+    linear-gradient(rgba(12, 13, 14, 0.35), rgba(3, 4, 5, 0.62)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 220px 220px repeat;
+  font-size: clamp(12px, 0.8vw, 16px);
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.nh-view-controls .nh-view-tab:hover:not(:disabled),
+.nh-view-controls .nh-view-tab.active {
+  background:
+    linear-gradient(rgba(104, 68, 28, 0.2), rgba(20, 15, 9, 0.48)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 220px 220px repeat;
+}
+
+.nh-view-controls .nh-view-tab:disabled {
+  opacity: 0.48;
+}
+
+.nh-capacity {
+  /* Fix 1: nimmt den kompletten Rest der Zeile ein (statt einer festen `1fr`-Grid-Spur), egal ob
+     davor 2 (Prod) oder 4 (Dev) Werkzeugschalter stehen — s. `.nh-view-controls`. */
+  flex: 1 1 auto;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  margin-left: 0;
+  padding: 5px clamp(10px, 1vw, 18px);
+  border: 1px solid rgba(170, 119, 57, 0.55);
+  background: rgba(3, 4, 5, 0.62);
+  font-size: clamp(12px, 0.75vw, 15px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nh-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--nh-side-width);
+  gap: var(--nh-map-gap);
+  min-height: 0;
+}
+
+.nh-map-stage {
+  min-width: 0;
+  padding: clamp(5px, 0.45vw, 9px);
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 9px;
+  background:
+    linear-gradient(rgba(5, 6, 7, 0.54), rgba(2, 3, 4, 0.74)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+
+.nh-map {
+  container-type: inline-size;
+  /* Fix-Welle New Haven #2 (2026-08-03, Audit newhaven-audit-335.mjs): `* {box-sizing:border-box}`
+     (base.css) macht `aspect-ratio: 1672/941` (s.o.) sonst zur BORDER-Box-Vorgabe — der 9-Slice-
+     Rahmen ist auf allen vier Seiten gleich breit, zieht also von Breite UND Höhe denselben Pixel-
+     betrag ab. Bei einem 1672:941-Seitenverhältnis (Breite ≫ Höhe) verzerrt das die CONTENT-Box
+     (in der `.nh-map-bg` + alle Gebäude-Prozentpositionen leben, s. `.nh-map-bg{inset:0}`) je nach
+     Viewport um bis zu ~1,3% horizontal. `box-sizing: content-box` hier lässt `aspect-ratio` direkt
+     auf die Content-Box wirken — exakt 1672:941, unabhängig von der (responsiven) Rahmenbreite. Der
+     sichtbare Rahmen selbst wächst dadurch minimal über 1672:941 hinaus (Bruchteil eines Pixels,
+     reine Zierkante, nie die Kartenfläche) — s. Breiten-Kompensation weiter oben, die verhindert,
+     dass die Bühne dadurch über die Stage hinausragt. */
+  box-sizing: content-box;
+  --nh-map-border: clamp(5px, 0.5vw, 9px);
+  border-width: var(--nh-map-border);
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / clamp(7px, 0.65vw, 11px);
+  background: #050607;
+}
+
+.nh-map-side {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  gap: var(--nh-map-gap);
+}
+
+.nh-buildmenu {
+  container-type: inline-size;
+  padding: clamp(8px, 0.7vw, 13px);
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 9px;
+  background:
+    linear-gradient(rgba(9, 10, 11, 0.48), rgba(3, 4, 5, 0.72)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+}
+
+.nh-buildmenu-title {
+  flex: 0 0 auto;
+  padding: 5px 8px 8px;
+  border-bottom: 1px solid rgba(183, 130, 61, 0.52);
+  font-size: clamp(14px, 4.5cqw, 18px);
+  line-height: 1.15;
+}
+
+.nh-buildmenu-list {
+  gap: clamp(6px, 1.8cqw, 10px);
+  padding: 2px 5px 2px 1px;
+  scrollbar-gutter: stable;
+}
+
+.nh-buildmenu-item {
+  display: grid;
+  grid-template-columns: clamp(70px, 25cqw, 92px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(7px, 2.2cqw, 11px);
+  min-height: clamp(86px, 27cqw, 106px);
+  padding: clamp(5px, 1.6cqw, 8px);
+  border: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  background:
+    linear-gradient(rgba(25, 18, 11, 0.32), rgba(5, 6, 7, 0.62)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+}
+
+.nh-buildmenu-item:hover:not(:disabled),
+.nh-buildmenu-item.is-active {
+  filter: brightness(1.1);
+  background:
+    linear-gradient(rgba(92, 57, 23, 0.2), rgba(8, 7, 6, 0.55)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+}
+
+.nh-buildmenu-item:disabled {
+  filter: grayscale(0.3) brightness(0.72);
+}
+
+.nh-buildmenu-art {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  padding: 3px;
+  border: 1px solid rgba(156, 109, 53, 0.55);
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(151, 112, 65, 0.15), transparent 68%),
+    rgba(3, 4, 5, 0.7);
+}
+
+.nh-buildmenu-art img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+}
+
+.nh-buildmenu-info {
+  justify-content: center;
+  gap: clamp(4px, 1.3cqw, 7px);
+}
+
+.nh-buildmenu-name {
+  color: var(--ds-gold-bright, #f0dca0);
+  font-size: clamp(13px, 4.2cqw, 17px);
+  line-height: 1.15;
+}
+
+.nh-buildmenu-costs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.nh-buildmenu-cost {
+  min-width: 0;
+  padding: 2px 4px;
+  border: 1px solid rgba(112, 91, 62, 0.38);
+  background: rgba(2, 3, 4, 0.48);
+  font-size: clamp(11px, 3.4cqw, 14px);
+  white-space: nowrap;
+}
+
+.nh-buildmenu-cost img {
+  width: clamp(17px, 5cqw, 22px);
+  height: clamp(17px, 5cqw, 22px);
+}
+
+.nh-buildmenu-reason {
+  font-size: clamp(10px, 3.1cqw, 13px);
+  line-height: 1.25;
+}
+
+.nh-map-tile-label {
+  /* codex:2026-08-03T12:10:00+02:00 — Namen sitzen im oberen Viertel der logischen Hitbox und
+     bleiben dadurch bei Sprite-Skalierung und Spiegelung stabil am Gebäude verankert. */
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  z-index: 3;
+  max-width: max(145%, 118px);
+  padding: clamp(2px, 0.25cqw, 4px) clamp(5px, 0.55cqw, 9px);
+  border: 1px solid rgba(181, 126, 56, 0.55);
+  background: rgba(2, 3, 4, 0.84);
+  color: #f0dca0;
+  font-family: var(--font-ui, var(--font-head));
+  font-size: clamp(10px, 0.78cqw, 15px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  text-shadow: 0 1px 1px #000;
+  /* Release-Fix-Welle 0.3.0 Fix 4: bei dicht stehenden Gebäuden überlappten sich die Namensschilder
+     dauerhaft ("Label-Kollision") und verunstalteten Marketing-Screenshots. Default unsichtbar,
+     nur bei Hover der eigenen Kachel oder im Verschieben-Modus (dort muss man Gebäude an ihrem
+     Namen erkennen können, um sie auszuwählen) eingeblendet — dezenter Fade statt Hart-Umschalten. */
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.nh-map-tile:hover .nh-map-tile-label,
+.nh-map.is-move-mode .nh-map-tile-label {
+  opacity: 1;
+}
+
+.nh-map-tile-progress {
+  left: 4%;
+  right: 4%;
+  bottom: -10px;
+  z-index: 4;
+  height: clamp(4px, 0.35cqw, 7px);
+  border-color: rgba(181, 126, 56, 0.62);
+  background: rgba(1, 2, 3, 0.86);
+}
+
+.nh-place-banner,
+.nh-move-banner {
+  padding: clamp(8px, 2.4cqw, 12px);
+  border: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  background:
+    linear-gradient(rgba(26, 17, 9, 0.42), rgba(4, 5, 6, 0.68)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+}
+
+@media (max-width: 1180px) {
+  .nh-view-controls {
+    /* Fix 1: bei wenig Breite bricht die Kapazität in eine eigene Zeile um — `flex-wrap` statt
+       fester Spaltenzahl übernimmt das unabhängig davon, ob 2 (Prod) oder 4 (Dev)
+       Werkzeugschalter neben der Karten-/Listenwahl stehen. */
+    flex-wrap: wrap;
+  }
+
+  .nh-view-tabbar {
+    flex: 1 1 200px;
+  }
+
+  .nh-capacity {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .nh-map-layout {
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 26vw, 330px);
+  }
+}
+
+@media (max-width: 900px) {
+  .newhaven-page {
+    overflow-y: auto;
+  }
+
+  .nh-view-tabbar {
+    flex: 1 1 100%;
+  }
+
+  .nh-move-toggle,
+  .nh-debug-toggle,
+  .nh-debug-complete,
+  .nh-debug-light {
+    /* Fix 1: je zwei Werkzeugschalter pro Zeile, egal ob 2 (Prod) oder 4 (Dev) vorhanden sind. */
+    flex: 1 1 40%;
+  }
+
+  .nh-capacity {
+    flex: 1 1 100%;
+  }
+
+  .nh-map-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(300px, 58vh) minmax(260px, 42vh);
+    overflow: visible;
+  }
+
+  .nh-map-stage,
+  .nh-map-side {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .nh-view-controls {
+    padding: 4px;
+    border-width: 5px;
+    border-image-width: 7px;
+  }
+
+  .nh-view-controls .nh-view-tab {
+    white-space: normal;
+  }
+
+  .nh-map-layout {
+    grid-template-rows: minmax(240px, 48vh) minmax(280px, 48vh);
+  }
+}
+
+/* ── New-Haven-Emblem in Boost-Zeilen (03.08., CampBoostNote.tsx) ──
+   Wachfeuer-Icon vor jeder "Aus New Haven: …"-Zeile (Bank/Slayer/Skill/Shop/Farm/Offline/
+   New-Haven-Bautempo/Segen-Panel) — reine Attribution, keine Layoutänderung der Wirtsklassen. */
+.camp-boost-note {
+  display: inline-flex;
+  /* flex-start statt center: der Text bricht in engen Karten (New-Haven-Bautempo-Note) auf 2
+     Zeilen um — bei center-Ausrichtung schwebt das Icon dann vertikal zwischen beiden Zeilen
+     statt an der ersten ("Aus New Haven: …") zu kleben. */
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.camp-boost-note-ico {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  /* 1px Feinjustage: gleicht die Cap-Height-Differenz zwischen Icon-Oberkante und Textzeile aus
+     (flex-start allein setzt beide Boxen bündig, wirkt ohne den Versatz leicht zu hoch). */
+  margin-top: 1px;
+}

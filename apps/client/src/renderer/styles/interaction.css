@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════════════════════
+   INTERACTION FEEL — projektweiter UI-Politur-Pass (Chef-Auftrag „das generelle Gefühl
+   verbessern"): konsistentes Hover-/Press-Feedback + Fokus-Sichtbarkeit + Popover-Fade-in über
+   generische Basis-Selektoren statt hunderter Einzelstellen. Bewusst NIEDRIGE Spezifität
+   (Element + Pseudoklasse/einzelnes Attribut) — jede spezifischere Komponentenregel (`.hf-btn:hover`,
+   `.sb-*:hover`, `.cs-attr-card:focus-visible`, …) gewinnt automatisch weiter und wird hier NICHT
+   dupliziert/gebrochen, sondern nur additiv ergänzt (andere CSS-Property, kein Konflikt). Früh
+   importiert (index.css, direkt nach design-system.css) — bei einer echten Spezifitäts-GLEICHHEIT
+   (nur `.cs-attr-card:focus-visible`, s. u.) gewinnt dadurch bewusst die spätere, spezifischere
+   Komponentenregel. Kein Layout-Umbau — reine Feedback-Politur. `prefers-reduced-motion` nullt
+   alle neuen Übergänge/Animationen hier zentral.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Hover/Press für ALLE <button>-Elemente ────────────────────────────────────────────────
+   Additiv: setzt nur `filter`/`transform` — Properties, die bestehende spezifischere Hover-Regeln
+   (Hintergrund/Farbe/Box-Shadow, z. B. .hf-btn:hover, .ds-button:hover) normalerweise NICHT selbst
+   belegen, überlagern sich also einfach statt zu kollidieren. `:not(:disabled):not(.disabled)`
+   hält deaktivierte Buttons unverändert (keine irreführende Aufhellung auf Klick, der nichts tut). */
+button {
+  transition: filter 0.12s ease, transform 0.08s ease;
+}
+
+button:not(:disabled):not(.disabled):hover {
+  filter: brightness(1.08);
+}
+
+button:not(:disabled):not(.disabled):active {
+  filter: brightness(0.93);
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+  button:not(:disabled):not(.disabled):active {
+    transform: none;
+  }
+}
+
+/* ─── Fokus-Sichtbarkeit ─────────────────────────────────────────────────────────────────────
+   Gold-Ring im Design-Ton für native interaktive Elemente UND generische klickbare Custom-
+   Elemente (role="button"-Karten wie Menü-Slots/Attribut-Karten/Wiki-Zeilen), überall dort, wo
+   heute noch der nackte Browser-Default (oder gar kein Ring) durchschlägt. Komponenten mit
+   bereits eigener :focus-visible-Behandlung bleiben unangetastet bzw. bekommen den Ring additiv
+   dazu (unterschiedliche Zielelemente, z. B. .sb-blessing ↔ .sb-blessing-card). */
+:is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+[role="button"]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ─── Tooltip/Popover-Fade-in ────────────────────────────────────────────────────────────────
+   Ein gemeinsames, kurzes Fade-in statt hartem Aufpoppen — global definiert, damit jede Stelle,
+   die heute hart erscheint, dieselbe eine Animation referenziert (s. components.css .item-tooltip,
+   combat.css .zonemap-tooltip). `animation` statt `transition`: die Overlays mounten/unmounten
+   pro Erscheinen (kein persistentes Hidden-Element) — ein Animation-Trigger feuert zuverlässig bei
+   jedem echten DOM-Insert, ohne dass jede Stelle ihre eigene Keyframe-Kopie pflegen muss. */
+@keyframes ui-fade-in {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item-tooltip,
+  .zonemap-tooltip {
+    animation: none;
+  }
+}

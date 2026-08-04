@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Grim Reach · Action Queue · 5 funktionelle Entwürfe</title>
+  <style>
+    /* codex:2026-08-01T12:18:00+02:00 — Lokaler Auswahl-Prototyp; keine Produktionsbindung. */
+    :root {
+      color-scheme: dark;
+      --gold:#d8bd72; --bright:#f2dfaa; --muted:#82909b; --iron:#5d6260;
+      --brown:#24160f; --danger:#a74739; --green:#79aa70;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;color:#d8d3c7;background:#090b0d;padding:24px}
+    body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+      linear-gradient(rgba(6,8,10,.74),rgba(5,4,3,.84)),
+      url("../../../apps/client/src/renderer/assets/ui/gravewood/textures/texture-gravewood.webp") 0 0/320px repeat}
+    .workbench{max-width:1420px;margin:auto}.intro{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:18px}
+    h1{margin:0;color:var(--bright);font-size:clamp(24px,3vw,40px);letter-spacing:.035em}.intro p{margin:5px 0 0;color:var(--muted)}
+    .chooser{display:flex;flex-wrap:wrap;gap:7px}.chooser button,.global button,.q-btn{font:700 13px/1 Georgia,serif;color:#c8b477;background:#171a1c;border:1px solid #604728;padding:9px 12px;cursor:pointer}
+    .chooser button.active,.chooser button:hover,.global button:hover,.q-btn:hover{color:#fff0bc;border-color:#b28642;background:#292019}
+    .stage{display:grid;grid-template-columns:minmax(620px,1fr) 330px;gap:24px;min-height:720px;padding:26px;border:1px solid #513820;background:rgba(5,6,7,.76);box-shadow:0 22px 55px #000}
+    .notes{padding:20px;border:1px solid #43362b;background:rgba(13,12,11,.9)}.notes h2{margin-top:0;color:var(--gold)}.notes li{margin:9px 0;color:#b8b2a4}
+    .global{display:flex;gap:8px;margin-top:18px}.queue{width:100%;max-width:390px;height:100%;min-height:650px;margin:auto;display:flex;flex-direction:column;overflow:hidden;position:relative}
+    .q-head{display:flex;align-items:center;gap:10px;padding:14px}.q-head strong{flex:1;color:var(--bright);font-size:18px}.q-count{color:#15100b;background:var(--gold);padding:2px 8px;border-radius:10px;font-weight:800}
+    .q-body{display:flex;flex:1;min-height:0;flex-direction:column;padding:12px;gap:12px}.section-title{color:#94a2ad;text-transform:uppercase;letter-spacing:.09em;font-size:12px}
+    .active-card,.q-row,.empty-card{position:relative}.active-card{padding:12px}.active-card .main,.q-row .main{display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center}
+    .ico{width:40px;height:40px;display:grid;place-items:center;font-size:24px;background:#0a0b0c;border:1px solid #57422e}.name{color:#eee3c5;font-weight:700}.sub{font-size:11px;color:#8ea0ab;margin-top:3px}.target{color:var(--gold);font-weight:800}
+    .progress{height:6px;margin-top:9px;background:#070809;border:1px solid #483821}.progress i{display:block;width:46%;height:100%;background:linear-gradient(90deg,#74441c,#e0b85a)}
+    .q-list{display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:0}.q-row{padding:9px}.q-controls{display:flex;gap:4px;margin-top:7px;justify-content:flex-end}.q-btn{padding:5px 7px;font-size:11px}
+    .empty-card{padding:14px;text-align:center;color:#7e8992;font-style:italic;border:1px dashed #4d443a}.footer-note{margin-top:auto;padding:9px 12px;font-size:11px;color:#7e8992}
+    .queue.collapsed{max-width:52px}.queue.collapsed :is(.q-body,.q-head strong){display:none}.queue.collapsed .q-head{justify-content:center;padding:10px 4px}.queue.collapsed .q-count{padding:2px 6px}
+    /* 01 Iron Ledger — klare, produktionsnahe Standardlösung. */
+    .v1{background:#13171a url("../../../apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0/192px repeat;border:8px solid #363a39;outline:1px solid #8a6235}
+    .v1 .q-head{background:#20150f url("../../../apps/client/src/renderer/assets/ui/gravewood/textures/texture-gravewood.webp") 0 0/220px repeat;border-bottom:2px solid #80603a}
+    .v1 :is(.active-card,.q-row){background:linear-gradient(90deg,#20150fda,#101416ed);border:1px solid #664927;box-shadow:inset 0 0 0 2px #0b0d0e}
+    .v1 .active-card{border-left:4px solid #c08a42}
+    /* 02 Field Orders — warme Befehlszettel auf dunklem Brett. */
+    .v2{background:#17100c url("../../../apps/client/src/renderer/assets/ui/gravewood/textures/texture-gravewood.webp") 0 0/280px repeat;border:10px solid #2f2118;outline:2px solid #6b4728}
+    .v2 .q-head{background:#3a2819;border-bottom:1px solid #a17842}.v2 :is(.active-card,.q-row){background:linear-gradient(100deg,#3a2b1c,#231a13);border:1px solid #8a6336;clip-path:polygon(0 0,97% 0,100% 18%,100% 100%,3% 100%,0 84%)}
+    .v2 .q-row:nth-child(even){transform:translateX(6px)}
+    /* 03 War Chain — vertikale Einsatzkette mit sichtbarer Reihenfolge. */
+    .v3{background:#0d1114;border:7px solid #414544;outline:1px solid #9a6b34}.v3 .q-head{background:linear-gradient(#292d2d,#151819);border-bottom:1px solid #836038}
+    .v3 .q-list{position:relative;padding-left:18px}.v3 .q-list::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:linear-gradient(#c49148,#3c4141)}
+    .v3 .q-row{background:#15191b;border:1px solid #4d5352}.v3 .q-row::before{content:attr(data-index);position:absolute;left:-29px;top:22px;width:21px;height:21px;display:grid;place-items:center;border-radius:50%;background:#111;border:2px solid #a87839;color:#e7cf91;font-size:10px}
+    .v3 .active-card{background:#23160f;border:1px solid #91663b;box-shadow:0 0 16px #a85d1f33}
+    /* 04 Command Rack — kompaktes Slot-Rack, maximal informationsdicht. */
+    .v4{background:#171411;border:9px solid #33261d;outline:1px solid #8f6738}.v4 .q-head{background:#0c0d0e;border-bottom:3px double #79532e}.v4 .q-body{gap:7px}.v4 .q-list{display:grid;grid-template-columns:1fr 1fr;align-content:start}.v4 .q-row{min-height:118px;background:#21170f;border:2px solid #4d3928}.v4 .q-row .main{grid-template-columns:34px 1fr}.v4 .q-row .target{grid-column:2}.v4 .q-row .ico{width:32px;height:32px;font-size:19px}.v4 .q-controls{justify-content:stretch}.v4 .q-btn{flex:1;padding:5px 2px}.v4 .active-card{background:#2b1c10;border:2px solid #a87534}
+    /* 05 Ember Slate — kühler Kontrast mit gezielten Glutakzenten. */
+    .v5{background:#11161a url("../../../apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0/256px repeat;border:8px solid #262e31;outline:1px solid #90562d}.v5 .q-head{background:linear-gradient(90deg,#2b120d,#15191b);border-bottom:1px solid #b85b31}.v5 :is(.active-card,.q-row){background:linear-gradient(90deg,#12171aef,#191514ef);border:1px solid #3f484a;border-left:3px solid #75412c}.v5 .active-card{border-left-color:#e47437}.v5 .progress i{background:linear-gradient(90deg,#742410,#ef743a);box-shadow:0 0 8px #e24d21}
+    @media(max-width:900px){body{padding:10px}.stage{grid-template-columns:1fr;padding:12px}.notes{order:-1}.queue{min-height:620px}}
+  </style>
+</head>
+<body>
+  <main class="workbench">
+    <div class="intro"><div><h1>Action Queue · Five Directions</h1><p>Alle fünf Varianten nutzen dieselben realistisch umsetzbaren HTML-Strukturen und Zustände.</p></div><nav class="chooser" aria-label="Design wählen"></nav></div>
+    <section class="stage">
+      <div id="preview"></div>
+      <aside class="notes"><h2 id="noteTitle"></h2><ul id="noteList"></ul><div class="global"><button data-global="add">+ Eintrag</button><button data-global="pause">Pause</button><button data-global="collapse">Einklappen</button></div></aside>
+    </section>
+  </main>
+  <script>
+    // codex:2026-08-01T12:18:00+02:00 — Kleine lokale Interaktionssimulation für Vergleich/Abnahme.
+    const variants=[
+      ["Iron Ledger",["Produktionsnaher Favorit","Warme Kopfplatte, kühle Eisenliste","Sehr klare aktive Aktion"]],
+      ["Field Orders",["Mehr mittelalterliches Befehlsbrett","Warme, versetzte Auftragszettel","Atmosphärisch, etwas verspielter"]],
+      ["War Chain",["Reihenfolge ist sofort sichtbar","Schwere vertikale Kette","Ideal für lange Queues"]],
+      ["Command Rack",["Zweispaltig und informationsdicht","Mehr Einträge ohne Scrollen","Gut für Ultrawide, dichter auf 1080p"]],
+      ["Ember Slate",["Kalter Stein gegen warme Glut","Stärkster Dark-Fantasy-Kontrast","Aktive Zustände leuchten ohne Vollflächen-Glow"]]
+    ];
+    let selected=0, paused=false, collapsed=false;
+    let rows=[{icon:"⛏",name:"Copper Vein",sub:"Mining · 2.1s",target:"×50"},{icon:"🌲",name:"Oak Tree",sub:"Woodcutting · 3.5s",target:"×25"},{icon:"⚒",name:"Timber Beam",sub:"Crafting · 4 inputs",target:"×10"}];
+    const chooser=document.querySelector('.chooser'),preview=document.querySelector('#preview');
+    function row(r,i){return `<article class="q-row" data-index="${i+1}"><div class="main"><span class="ico">${r.icon}</span><span><span class="name">${r.name}</span><span class="sub">${r.sub}</span></span><span class="target">${r.target}</span></div><div class="q-controls"><button class="q-btn" data-act="start" data-i="${i}">Jetzt</button><button class="q-btn" data-act="up" data-i="${i}">↑</button><button class="q-btn" data-act="down" data-i="${i}">↓</button><button class="q-btn" data-act="remove" data-i="${i}">×</button></div></article>`}
+    function render(){chooser.innerHTML=variants.map((v,i)=>`<button class="${i===selected?'active':''}" data-v="${i}">${String(i+1).padStart(2,'0')} ${v[0]}</button>`).join('');document.querySelector('#noteTitle').textContent=`${String(selected+1).padStart(2,'0')} · ${variants[selected][0]}`;document.querySelector('#noteList').innerHTML=variants[selected][1].map(x=>`<li>${x}</li>`).join('');preview.innerHTML=`<section class="queue v${selected+1}${collapsed?' collapsed':''}"><header class="q-head"><span>⚙</span><strong>Action Queue</strong><span class="q-count">${rows.length}</span></header><div class="q-body"><span class="section-title">Doing</span><article class="active-card"><div class="main"><span class="ico">🧪</span><span><span class="name">Minor Healing Potion</span><span class="sub">${paused?'Paused':'Crafting · 3.5s'}</span></span><span class="target">×44</span></div><div class="progress"><i style="width:${paused?46:68}%"></i></div></article><span class="section-title">Queue</span><div class="q-list">${rows.length?rows.map(row).join(''):'<div class="empty-card">The queue is empty.</div>'}</div><footer class="footer-note">Drag-Reihenfolge ist im Spiel möglich; diese Vorschau nutzt ↑/↓.</footer></div></section>`;}
+    document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.v!==undefined){selected=+b.dataset.v;render();return}const a=b.dataset.act,i=+b.dataset.i;if(a==='remove')rows.splice(i,1);if(a==='up'&&i>0)[rows[i-1],rows[i]]=[rows[i],rows[i-1]];if(a==='down'&&i<rows.length-1)[rows[i+1],rows[i]]=[rows[i],rows[i+1]];if(a==='start'&&rows[i])rows.unshift(rows.splice(i,1)[0]);if(b.dataset.global==='add')rows.push({icon:'🛡',name:'Town Watch',sub:'New Haven · 1h',target:'×1'});if(b.dataset.global==='pause')paused=!paused;if(b.dataset.global==='collapse')collapsed=!collapsed;render()});
+    render();
+  </script>
+</body>
+</html>

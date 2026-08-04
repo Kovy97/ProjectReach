@@ -1,0 +1,450 @@
+/* codex:2026-08-03T17:02:00+02:00 — Chef-Auswahl Gear-Dock 03 „Frontline Harness“:
+   isolierter Materialvertrag für Zonenwahl und laufenden Kampf. Der Layer verändert ausschließlich
+   Darstellung; EquipmentDoll, Stats, Buffs, Stances, Prep-Handler und Engine-Daten bleiben intakt. */
+.combat-frontline-dock {
+  --fh-line: rgba(184, 132, 62, 0.52);
+  --fh-line-soft: rgba(184, 132, 62, 0.24);
+  --fh-panel: rgba(5, 7, 8, 0.86);
+  --fh-panel-deep: rgba(2, 3, 4, 0.92);
+  min-width: 0;
+  padding: 8px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+  border-image-width: 10px;
+  border-image-repeat: stretch;
+  /* codex:2026-08-03T17:36:00+02:00 — Chef-Nachfix: Außenhülle exakt wie der rechte
+     `.combat-select`-Zonencontainer (Bronze-Lipped-Iron 10px + Umber Cloth), während die
+     Frontline-Harness-Bühnen innen weiterhin ihren kontrastierenden Basalt behalten. */
+  background:
+    linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.52);
+}
+
+/* codex:2026-08-03T17:02:00+02:00 — Kompakte Kopfleiste und gleichwertige Tabs: eingelassene
+   Eisenfelder, Bronze-Unterkante nur am aktiven Tab, keine größenändernde Hover-Animation. */
+.combat-frontline-dock .cl-dock-toggle {
+  min-height: 28px;
+  border-bottom: 1px solid var(--fh-line);
+  background:
+    linear-gradient(rgba(5, 6, 7, 0.9), rgba(13, 15, 16, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+
+.combat-frontline-dock .cl-dock-tabs {
+  gap: clamp(4px, 0.32vw, 7px);
+  padding: 7px 8px 8px;
+  border-bottom: 1px solid var(--fh-line);
+  background: rgba(3, 4, 5, 0.86);
+}
+
+.combat-frontline-dock .cl-dock-tab {
+  min-height: clamp(42px, 4.2vh, 50px);
+  padding: 6px 3px;
+  border-width: 6px;
+  border-image-width: 6px;
+  background:
+    linear-gradient(rgba(26, 30, 31, 0.72), rgba(9, 11, 12, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  color: #9aa4a5;
+  font-family: var(--font-info);
+  font-size: clamp(11px, 0.72vw, 16px);
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  text-shadow: 0 1px 2px #000;
+  transition: color 0.14s ease, filter 0.14s ease, box-shadow 0.14s ease;
+}
+
+.combat-frontline-dock .cl-dock-tab:hover {
+  color: #d9c690;
+  filter: brightness(1.08);
+}
+
+.combat-frontline-dock .cl-dock-tab.active {
+  color: var(--gold);
+  background:
+    linear-gradient(rgba(69, 48, 24, 0.48), rgba(13, 15, 16, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  box-shadow: inset 0 -3px 0 #c69b4b, inset 0 0 18px rgba(177, 123, 48, 0.12);
+}
+
+/* codex:2026-08-03T17:02:00+02:00 — Gemeinsame Bühne für alle vier Tabs. Der Körper scrollt
+   intern, Außenmaß und Tabzeile bleiben bei wechselndem Inhalt unverändert. */
+.combat-frontline-dock .cl-dock-body {
+  padding: clamp(7px, 0.5vw, 11px);
+  scrollbar-gutter: stable;
+  background:
+    linear-gradient(90deg, transparent 49.75%, rgba(193, 143, 70, 0.08) 49.75% 50.25%, transparent 50.25%);
+}
+
+.combat-frontline-dock .cl-dock-pane {
+  gap: clamp(8px, 0.6vw, 12px);
+}
+
+.combat-frontline-dock .cl-section,
+.combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll,
+.combat-frontline-dock .cl-dock-pane-gear .cs-stats-scroll {
+  min-width: 0;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(5, 7, 8, 0.86), rgba(2, 3, 4, 0.92)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.42);
+}
+
+.combat-frontline-dock .cl-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 25px;
+  font-family: var(--font-info);
+  font-size: clamp(11px, 0.7vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.11em;
+}
+
+.combat-frontline-dock .cl-title::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, var(--fh-line), transparent);
+}
+
+/* codex:2026-08-03T17:02:00+02:00 — Paperdoll wird zur Frontline-Harness-Bühne: zentrale
+   Ausrüstungsachse plus zwei schräge Gurtrahmen hinter den echten, unveränderten Slots. */
+.combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(430px, 48vh, 590px);
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, transparent 49.55%, rgba(207, 154, 76, 0.3) 49.55% 50.45%, transparent 50.45%),
+    linear-gradient(rgba(3, 4, 5, 0.74), rgba(2, 3, 4, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll::before,
+.combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 13%;
+  bottom: 12%;
+  width: 29%;
+  border: 1px solid rgba(153, 101, 46, 0.38);
+  background: linear-gradient(135deg, rgba(119, 76, 34, 0.08), transparent 44%);
+  pointer-events: none;
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll::before {
+  left: 7%;
+  transform: skewY(-8deg);
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll::after {
+  right: 7%;
+  transform: skewY(8deg) scaleX(-1);
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cs-doll-wrap {
+  z-index: 1;
+  min-height: 400px;
+  padding: 9px 7px;
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cs-doll-silhouette-ph {
+  width: 22%;
+  height: 18%;
+  border: 1px solid rgba(194, 145, 72, 0.36);
+  border-radius: 50% 50% 38% 38%;
+  background: rgba(155, 111, 54, 0.18);
+  opacity: 0.44;
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cs-doll-silhouette-ph::after {
+  top: 86%;
+  width: 185%;
+  height: 310%;
+  margin-top: 0;
+  border: 1px solid rgba(194, 145, 72, 0.25);
+  border-radius: 28% 28% 14% 14%;
+  background: linear-gradient(rgba(146, 99, 44, 0.2), rgba(25, 29, 30, 0.04));
+  clip-path: polygon(19% 0, 81% 0, 100% 18%, 78% 43%, 68% 100%, 32% 100%, 22% 43%, 0 18%);
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cs-doll {
+  z-index: 2;
+  transform: none;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.38));
+}
+
+/* codex:2026-08-03T17:02:00+02:00 — Gear-Stats und Buffs folgen derselben Ledger-Dichte wie
+   der Battle Record; kein schwarzer Leerblock zwischen Wertefamilien. */
+.combat-frontline-dock .cl-dock-pane-gear .cs-stats-scroll {
+  padding: 9px 11px;
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cs-stat-row {
+  min-height: 31px;
+  padding: 5px 4px;
+  border-bottom: 1px solid rgba(151, 113, 61, 0.2);
+  background: linear-gradient(90deg, rgba(16, 19, 20, 0.58), transparent);
+}
+
+.combat-frontline-dock .cl-dock-pane-gear .cs-stat-label,
+.combat-frontline-dock .cl-dock-pane-gear .cs-stat-val {
+  font-family: var(--font-info);
+  font-size: clamp(11px, 0.68vw, 15px);
+}
+
+.combat-frontline-dock .cl-section-buffs {
+  padding: 8px 10px;
+}
+
+/* codex:2026-08-03T17:02:00+02:00 — Skills, Style und Prep teilen die Frontline-Ledger-Zeile:
+   robuste Typografie, feste Innenabstände und nur farbliche statt geometrische Interaktion. */
+.combat-frontline-dock .cl-skill,
+.combat-frontline-dock .cl-stance,
+.combat-frontline-dock .cl-food-item,
+.combat-frontline-dock .cl-potion-item {
+  border: 1px solid var(--fh-line-soft);
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, rgba(15, 18, 19, 0.92), rgba(6, 8, 9, 0.82)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.32);
+}
+
+.combat-frontline-dock .cl-skill {
+  min-height: 62px;
+  padding: 8px 10px;
+}
+
+.combat-frontline-dock .cl-skill-icon {
+  width: 36px;
+  height: 36px;
+  padding: 3px;
+  border: 1px solid rgba(168, 119, 55, 0.44);
+  background: #0a0c0d;
+}
+
+.combat-frontline-dock .cl-skill-name,
+.combat-frontline-dock .cl-skill-lvl,
+.combat-frontline-dock .cl-skill-xptext {
+  font-family: var(--font-info);
+}
+
+.combat-frontline-dock .cl-stance {
+  min-height: 78px;
+  padding: 10px 12px;
+  text-align: left;
+  transition: border-color 0.14s ease, background-color 0.14s ease;
+}
+
+.combat-frontline-dock .cl-stance:hover:not(:disabled) {
+  border-color: rgba(208, 164, 87, 0.72);
+}
+
+.combat-frontline-dock .cl-stance.active {
+  border-color: var(--fh-line);
+  border-left: 4px solid #c99c4c;
+  background:
+    linear-gradient(90deg, rgba(104, 64, 23, 0.38), rgba(7, 9, 10, 0.9) 62%),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  box-shadow: inset 0 0 15px rgba(177, 123, 48, 0.1);
+}
+
+.combat-frontline-dock .cl-stance-head {
+  justify-content: space-between;
+}
+
+.combat-frontline-dock .cl-stance-name,
+.combat-frontline-dock .cl-stance-lvl,
+.combat-frontline-dock .cl-stance-effect {
+  font-family: var(--font-info);
+}
+
+.combat-frontline-dock .cl-section-food,
+.combat-frontline-dock .cl-section-potion {
+  flex-basis: auto;
+  min-width: 0;
+  max-width: none;
+  padding: 10px 11px;
+}
+
+/* codex:2026-08-03T17:12:00+02:00 — Reale Prep-Unterkomponenten statt nur ihrer Hülle:
+   ausgewähltes Verbrauchsgut als Ledger-Kopf, anschließend gleichmäßige kompakte Wahl-Slots. */
+.combat-frontline-dock .cl-food-body {
+  gap: 9px;
+}
+
+.combat-frontline-dock .cl-food-current {
+  min-height: 58px;
+  padding: 7px 8px;
+  border: 1px solid var(--fh-line-soft);
+  background: linear-gradient(90deg, rgba(17, 20, 21, 0.94), rgba(5, 7, 8, 0.76));
+}
+
+.combat-frontline-dock .cl-food-slot {
+  width: 44px;
+  height: 44px;
+  border: 5px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 5px stretch;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(96, 104, 103, 0.3), rgba(6, 8, 9, 0.94) 72%),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+
+.combat-frontline-dock .cl-food-name,
+.combat-frontline-dock .cl-food-heal,
+.combat-frontline-dock .cl-food-hint,
+.combat-frontline-dock .cl-autoeat-tier,
+.combat-frontline-dock .cl-autoeat-detail,
+.combat-frontline-dock .cl-potion-threshold-label,
+.combat-frontline-dock .cl-potion-rebuff-label,
+.combat-frontline-dock .cl-potion-rebuff-copy,
+.combat-frontline-dock .cl-potion-cooldown-hint {
+  font-family: var(--font-info);
+}
+
+.combat-frontline-dock .cl-food-choices {
+  gap: 6px;
+  min-height: 44px;
+  padding: 5px;
+  border: 1px solid rgba(151, 113, 61, 0.28);
+  background: rgba(2, 3, 4, 0.48);
+}
+
+.combat-frontline-dock .cl-food-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(176, 126, 58, 0.38);
+  border-radius: 0;
+  background:
+    radial-gradient(circle, rgba(63, 70, 70, 0.32), rgba(6, 8, 9, 0.92) 72%),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+
+.combat-frontline-dock .cl-food-btn:hover,
+.combat-frontline-dock .cl-food-btn.active {
+  border-color: #c69b4b;
+  box-shadow: inset 0 0 10px rgba(198, 155, 75, 0.14);
+}
+
+.combat-frontline-dock .cl-autoeat,
+.combat-frontline-dock .cl-potion-threshold,
+.combat-frontline-dock .cl-potion-rebuff-label,
+.combat-frontline-dock .cl-potion-rebuff-locked {
+  padding: 8px;
+  border: 1px solid var(--fh-line-soft);
+  background: rgba(4, 6, 7, 0.68);
+}
+
+.combat-frontline-dock .cl-autoeat-upgrade {
+  min-height: 38px;
+  border-width: 6px;
+  border-image-source: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+  border-image-width: 6px;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(18, 20, 21, 0.78), rgba(5, 7, 8, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  font-family: var(--font-info);
+  font-size: clamp(12px, 0.68vw, 15px);
+}
+
+/* codex:2026-08-03T17:02:00+02:00 — Eigenständiger 44px-Frontline-Rail: vollständiger
+   Klickbereich, sichtbare Metallkante und vertikale Führungsachse statt leerem schwarzem Streifen. */
+.combat-frontline-dock.cl-dock--collapsed {
+  width: 44px;
+  padding: 0;
+  overflow: hidden;
+  border-width: 6px;
+  border-image-width: 6px;
+  background:
+    linear-gradient(90deg, rgba(4, 5, 6, 0.96), rgba(27, 29, 29, 0.94) 50%, rgba(4, 5, 6, 0.96)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+
+.combat-frontline-dock .cl-dock-rail {
+  position: relative;
+  z-index: 1;
+  gap: 12px;
+  padding: 10px 0;
+  border: 0;
+  background: transparent;
+  color: #9ca6a8;
+}
+
+.combat-frontline-dock .cl-dock-rail::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 42px;
+  bottom: 12px;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(#a26f35, rgba(162, 111, 53, 0.08));
+}
+
+.combat-frontline-dock .cl-dock-rail:hover {
+  color: var(--gold);
+  background: linear-gradient(rgba(75, 49, 22, 0.2), transparent 45%);
+}
+
+.combat-frontline-dock .cl-dock-rail-label {
+  padding: 7px 0;
+  border-block: 1px solid rgba(169, 119, 54, 0.36);
+  font-family: var(--font-info);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+/* codex:2026-08-03T17:02:00+02:00 — Auflösungsvertrag: Slots bleiben vollständig sichtbar;
+   nur Bühne und Typografie verdichten sich, bevor die äußere Combat-Seite stapelt. */
+@media (min-width: 2200px) {
+  .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
+    min-height: clamp(540px, 52vh, 700px);
+  }
+
+  .combat-frontline-dock .cl-dock-pane-gear .cs-doll {
+    max-height: 640px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
+    min-height: 410px;
+  }
+
+  .combat-frontline-dock .cl-dock-pane-gear .cs-doll {
+    transform: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .combat-frontline-dock .cl-dock-tab {
+    min-height: 40px;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+
+  .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
+    min-height: 380px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .combat-frontline-dock .cl-dock-tab,
+  .combat-frontline-dock .cl-stance {
+    transition: none;
+  }
+}

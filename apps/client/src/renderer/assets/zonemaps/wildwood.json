@@ -1,0 +1,35 @@
+{
+  "zoneId": "wildwood",
+  "hotspots": [
+    {
+      "monsterId": "forest_hare",
+      "x": 22,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "gray_wolf",
+      "x": 50,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "wild_stag",
+      "x": 78,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "dire_wolf",
+      "x": 22,
+      "y": 71,
+      "size": 2.33
+    },
+    {
+      "monsterId": "forest_bear",
+      "x": 50,
+      "y": 71,
+      "size": 2.33
+    }
+  ]
+}

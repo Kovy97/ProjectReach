@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>New Haven — Consistent Asset Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- codex:2026-08-02T10:44:59+02:00 -->
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">Grim Reach · Design Production</p>
+      <h1>New Haven Asset Foundry</h1>
+      <p>Eine Kamera. Ein Maßstab. Eine nachvollziehbare Serie.</p>
+    </div>
+    <div class="status"><span></span> Tool bereit · Kalibrierung ungeprüft</div>
+  </header>
+
+  <nav class="tabs" aria-label="Werkzeugbereiche">
+    <button class="active" data-tab="contract">01 Vertrag</button>
+    <button data-tab="calibration">02 Kalibrierung</button>
+    <button data-tab="prompts">03 Promptpaket</button>
+    <button data-tab="qa">04 Intake-QA</button>
+    <button data-tab="preview">05 Kartenprüfung</button>
+  </nav>
+
+  <main>
+    <section class="panel active" id="contract">
+      <div class="section-head"><div><span>Production Lock</span><h2>Der Sechs-Schritte-Vertrag</h2></div><b>Keine freie Seriengenerierung</b></div>
+      <div class="step-grid">
+        <article><em>01</em><h3>Kamera sperren</h3><p>Orthografisch, 45° Azimut, 35.264° Elevation, 1536² RGBA, Anker 768/1352.</p></article>
+        <article><em>02</em><h3>Vierfach kalibrieren</h3><p>Town Hall, Fisher’s Hut, Watchtower und Seed Garden prüfen groß, klein, hoch und breit.</p></article>
+        <article><em>03</em><h3>Datenblatt erzwingen</h3><p>Footprint, Ziel-Bounds, Größenklasse, Baseline und Rangwachstum kommen aus dem Manifest.</p></article>
+        <article><em>04</em><h3>Referenzen binden</h3><p>Dieselben vier freigegebenen Bilder begleiten jeden Prompt. Ränge wachsen aus ihrem Vorgänger.</p></article>
+        <article><em>05</em><h3>Technisch prüfen</h3><p>Alpha, Canvas, Außenrand, Bounding Box, Zentrum, Baseline und Bodenverdacht vor Sichtabnahme.</p></article>
+        <article><em>06</em><h3>Auf Karte abnehmen</h3><p>Dieselbe Geometrie bei 1920×1080, 3440×1440, Tag und Nacht. Positionen bleiben normalisiert.</p></article>
+      </div>
+      <div class="lock-strip"><strong>Verboten:</strong> Boden · Terrainpatch · Grundplatte · Bodenschatten · wechselnde Kamera · separate Nacht-Neugenerierung</div>
+    </section>
+
+    <section class="panel" id="calibration">
+      <div class="section-head"><div><span>Mandatory Gate</span><h2>Vierer-Kalibrierungsset</h2></div><b>Nur Rank I</b></div>
+      <div class="calibration-grid" id="calibrationGrid"></div>
+      <p class="notice">Diese Karten sind Arbeitsdefinitionen, keine vorhandenen Bilder. Erst nach gemeinsamer Abnahme werden reale PNGs als Referenzen festgeschrieben.</p>
+    </section>
+
+    <section class="panel" id="prompts">
+      <div class="section-head"><div><span>Deterministic Handoff</span><h2>Prompt- und Referenzpaket</h2></div><b id="promptTarget">—</b></div>
+      <div class="controls">
+        <label>Gebäude<select id="buildingSelect"></select></label>
+        <label>Rang<select id="rankSelect"><option value="1">I</option><option value="2">II</option><option value="3">III</option></select></label>
+        <button id="copyPrompt">Prompt kopieren</button>
+        <button id="downloadPrompt">Als TXT speichern</button>
+      </div>
+      <textarea id="promptOutput" spellcheck="false" aria-label="Generierter Assetprompt"></textarea>
+      <div class="reference-lock"><strong>Pflichtreferenzen:</strong> <span id="referenceList"></span></div>
+    </section>
+
+    <section class="panel" id="qa">
+      <div class="section-head"><div><span>Local Pixel Inspection</span><h2>Intake-QA</h2></div><b>Keine Datei wird hochgeladen</b></div>
+      <label class="dropzone" for="assetInput"><strong>PNG-Kandidaten auswählen</strong><span>1536×1536 · RGBA · camp_&lt;id&gt;_&lt;rank&gt;.png</span><input id="assetInput" type="file" accept="image/png" multiple></label>
+      <div class="qa-summary" id="qaSummary">Noch keine Assets geprüft.</div>
+      <div class="qa-results" id="qaResults"></div>
+    </section>
+
+    <section class="panel" id="preview">
+      <div class="section-head"><div><span>Responsive Composition Gate</span><h2>Kartenprüfung</h2></div><b id="viewportLabel">1920 × 1080</b></div>
+      <div class="controls preview-controls">
+        <button class="active" data-viewport="1920">1920×1080</button>
+        <button data-viewport="3440">3440×1440</button>
+        <button class="active" data-light="day">Tag</button>
+        <button data-light="night">Nacht</button>
+        <span>Gebäude aus der Intake-QA erscheinen automatisch mit identischer Geometrie.</span>
+      </div>
+      <div class="viewport-shell" id="viewportShell">
+        <div class="map-stage day" id="mapStage">
+          <div class="safe-area"></div>
+          <div class="map-label">16:9 World Stage · normalized positions</div>
+          <div class="calibration-ghost large" style="--x:35%;--y:51%">Town Hall</div>
+          <div class="calibration-ghost small" style="--x:62%;--y:38%">Fisher's Hut</div>
+          <div class="calibration-ghost tall" style="--x:77%;--y:59%">Watchtower</div>
+          <div class="calibration-ghost wide" style="--x:54%;--y:69%">Seed Garden</div>
+        </div>
+      </div>
+      <p class="notice">Die Ansicht skaliert nur die Bühne. Die 16:9-Karte und prozentualen Anker bleiben identisch; Ultrawide zeigt nicht plötzlich einen anderen Ausschnitt.</p>
+    </section>
+  </main>
+
+  <footer>New Haven Foundry · Arbeitswerkzeug · Keine Produktionsbindung ohne Chef-GO</footer>
+  <script src="app.js"></script>
+</body>
+</html>
+

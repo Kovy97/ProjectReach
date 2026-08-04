@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fun-Retest — Vorher/Nachher</title>
+<style>
+  :root{
+    --bg:#f5f1e8; --card:#fffdf7; --ink:#2b2620; --ink-2:#57503f; --ink-3:#8a8170;
+    --line:#ded5c2; --ember:#b4541e; --ember-soft:#fdeadb; --good:#2e7d4f; --good-soft:#e2f2e8;
+    --half:#a86a00; --half-soft:#fdf1d8; --open:#a13030; --open-soft:#fbe4e4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#191512; --card:#231e19; --ink:#ece4d4; --ink-2:#c2b7a0; --ink-3:#8a8170;
+      --line:#3a332a; --ember:#e07a3a; --ember-soft:#3a2617; --good:#5fc08c; --good-soft:#1d3527;
+      --half:#e0a83a; --half-soft:#38290e; --open:#e06a6a; --open-soft:#3a1d1d; }
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:var(--bg); color:var(--ink); font:15px/1.55 "Segoe UI",system-ui,sans-serif; padding:28px 16px}
+  .wrap{max-width:1060px; margin:0 auto}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  h1{font-size:30px; margin-bottom:4px}
+  h1 .sub{display:block; font-size:15px; color:var(--ink-3); font-weight:400; margin-top:4px}
+  .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ember); margin-bottom:8px}
+  .lead{color:var(--ink-2); max-width:74ch; margin:12px 0 4px}
+  .bignums{display:flex; gap:14px; flex-wrap:wrap; margin:18px 0 6px}
+  .bignum{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 18px; min-width:150px}
+  .bignum .v{font-size:26px; font-weight:700}
+  .bignum .v .up{color:var(--good)}
+  .bignum .l{font-size:12px; color:var(--ink-3); letter-spacing:.06em; text-transform:uppercase}
+  h2.sec{font-size:21px; margin:34px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--ember)}
+  .heat-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--card)}
+  table.heat{border-collapse:collapse; width:100%; min-width:900px; font-size:12.5px}
+  .heat th{padding:8px 8px; border-bottom:1px solid var(--line); color:var(--ink-3); font-size:10.5px;
+    letter-spacing:.06em; text-transform:uppercase; text-align:center}
+  .heat th:first-child{text-align:left}
+  .heat td{padding:7px 8px; border-bottom:1px solid var(--line); text-align:center; white-space:nowrap}
+  .heat tr:last-child td{border-bottom:none}
+  .heat td.agent{text-align:left; font-weight:600; white-space:nowrap}
+  .heat td.agent .sys{display:block; font-weight:400; font-size:11px; color:var(--ink-3)}
+  .cell .old{color:var(--ink-3)}
+  .cell .arrow{color:var(--ink-3); padding:0 2px}
+  .cell .new{font-weight:700}
+  .cell .d{display:block; font-size:10.5px}
+  .d.pos{color:var(--good)} .d.zero{color:var(--ink-3)}
+  .again-yes{color:var(--good); font-weight:700}
+  .again-flip{background:var(--good-soft); border-radius:6px; padding:1px 6px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin:16px 0}
+  .card h3{font-size:18px; margin-bottom:2px}
+  .card .meta{font-size:12.5px; color:var(--ink-3); margin-bottom:10px}
+  .verdict{border-left:3px solid var(--ember); background:var(--ember-soft); padding:8px 12px;
+    border-radius:0 8px 8px 0; font-style:italic; margin:10px 0}
+  .card h4{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin:14px 0 6px}
+  .card ul{padding-left:20px; color:var(--ink-2)}
+  .card li{margin:4px 0}
+  .b{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.05em; border-radius:5px;
+    padding:1px 7px; margin-right:6px; vertical-align:1px}
+  .b.gut{background:var(--good-soft); color:var(--good)}
+  .b.halb{background:var(--half-soft); color:var(--half)}
+  .b.offen{background:var(--open-soft); color:var(--open)}
+  .b.fixed{background:var(--good-soft); color:var(--good)}
+  .total-chip{float:right; font-size:15px; background:var(--good-soft); color:var(--good);
+    border-radius:8px; padding:3px 12px; font-weight:700}
+  footer{margin-top:44px; padding-top:18px; border-top:1px solid var(--line); color:var(--ink-3);
+    font-size:12.5px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Fun-RETEST 2026-07-16 · dieselben 7 Personas · identischer Bogen · Urteil nur aus dem Spiel</div>
+    <h1 class="serif">Vorher / Nachher<span class="sub">Hat das Umsetzungsprogramm den Sucht-Faktor wirklich gehoben?</span></h1>
+    <p class="lead"><strong>Ja, messbar bei allen sieben.</strong> Jede Persona bewertet ihr System heute höher als vor dem Programm, der stärkste Sprung liegt genau dort, wo die Diagnose saß: Belohnungs-Dichte. Aldric, der einzige, der nicht wiederkommen wollte, will jetzt wieder in den Turm.</p>
+    <div class="bignums">
+      <div class="bignum"><div class="v">5,6 <span class="up">→ 7,6</span></div><div class="l">Ø Gesamt-Sucht (+2,0)</div></div>
+      <div class="bignum"><div class="v">6/7 <span class="up">→ 7/7</span></div><div class="l">„Komme ich morgen wieder?"</div></div>
+      <div class="bignum"><div class="v">4,9 <span class="up">→ 7,1</span></div><div class="l">Ø Belohnungs-Dichte (+2,2)</div></div>
+      <div class="bignum"><div class="v">21/21</div><div class="l">Top-3 nachgetestet</div></div>
+    </div>
+  </header>
+
+  <h2 class="sec serif">Delta-Heatmap — alle Aspekte, alt → neu</h2>
+  <div class="heat-wrap"><table class="heat" id="heat"></table></div>
+
+  <h2 class="sec serif">Die Retest-Bögen im Einzelnen</h2>
+  <div id="cards"></div>
+
+  <footer>
+    <span>Grim Reach EA 0.1 · Fun-RETEST 2026-07-16 · Voll-Berichte: design/fun-review/retest-*.md</span>
+    <span>Erst-Sweep zum Vergleich: fun-review-bericht.html</span>
+  </footer>
+</div>
+
+<script>
+const ASPECTS = ["Spaß sofort","Spaß über Zeit","Sucht-Faktor","Belohnungs-Dichte","Ziel-Klarheit","Tiefe & Entscheidungen","Frustfreiheit","Verzahnung"];
+
+const A = [
+ {name:"Mona Feilgrund", sys:"Mastery", alt:[3,6,3,2,4,5,7,6], neu:[7,7,7,8,8,5,7,7], tAlt:4, tNeu:7,
+  wieder:"Ja, diesmal wegen Mastery.", flip:false,
+  verdict:"Der namensgebende Moment existiert jetzt: Stern nach einer Minute Hacken, mit Toast, Sound und Rangfarbe. Belohnungs-Dichte 2 auf 8 ist der größte Einzelsprung des Retests.",
+  top3:[["gut","Mastery-Momente: Toasts je Stern, Meilensteine mit Sound und Rangfarbe, Pool-Checkpoints gefeiert, sauberes Batching. Nur der Karten-Puls fehlt."],
+        ["halb","Ziele sichtbar: auf der Mastery-Seite vorbildlich (Next-Rank, Rest-XP, ETA, Checkpoint-Hover), an der Skill-Karte selbst aber weiterhin nichts."],
+        ["halb","Meilenstein-Stufen: Kosmetik komplett (Bronze bis Diamant), mechanisch unverändert — die Zahlenboni liegen bewusst im Balance-Block."]],
+  bugs:[["fixed","„−0 % ⏱"-Chip weg"],["offen","„Legendary" auf allen Skills bleibt Rauschen"],["offen","Pool füllt sich komplett als Beifang einer einzigen ★50-Aktion"]],
+  funde:["★2-Chip rundet 0,5 % auf „+1 %" hoch","Smithing aufgeklappt: 261 Zeilen ohne Sortierung oder Filter","Dreistellige Stunden-ETAs ohne näheres Zwischenziel"],
+  neu3:["Die Anker (Rest-XP, nächster Rang) an die Skill-Karte holen, wo man spielt","Meilensteine mechanisch fühlbar machen plus Zwischenziel-Zähler","Den Pool zum ansteuerbaren Ziel machen statt Beifang"]},
+ {name:"Fenn Flauschhand", sys:"Pets & Companions", alt:[6,7,7,5,9,6,5,9], neu:[8,8,8,7,9,7,8,9], tAlt:7, tNeu:8.5,
+  wieder:"Ja, ohne Angst um verschluckte Jackpots.", flip:false,
+  verdict:"Beide Sammler-Todsünden live sterben sehen: drei Feiern in einer Session, und der Offline-Drop steht als „Companions Found" ganz oben im Rückkehr-Popup. Vertrauen ist bei 0,0017-%-Würfen die halbe Sucht.",
+  top3:[["gut","Kein Drop stumm: Sequenz zählt monoton durch, Offline-Sektion prominent — live verifiziert."],
+        ["halb","Skilling-Pets sichtbar: Sprite und Puls ja, aber kein echtes Proc-Feedback — der Puls ist generisch."],
+        ["gut","Drop-Moment komplett: Effekt-Zeilen, Equip-Button mit Zustandswechsel, „A Friend in the Ash", gruppierter Picker, ehrliche 4,5 %."]],
+  bugs:[["fixed","Verschluckter Zweit-Drop tot"],["fixed","Stummer Offline-Drop tot"]],
+  funde:["„Lifesteal heals you for 0."-Spam im Kampf-Log","Pet-Ability-Logzeile verletzt die Ein-Dash-Regel","Offline verdiente Achievements bleiben komplett lautlos"],
+  neu3:["„Lose seit letztem Fund"-Zähler in der Galerie","Echte Proc-Momente für die 14 Skilling-Pets (etwa ein Mini-Jackpot pro Minute)","Log-Hygiene: Null-Heil-Zeilen raus, ein Dash"]},
+ {name:"Riko Rollwut", sys:"Verzauberung & Suffixe", alt:[7,5,4,6,6,7,6,8], neu:[8,7,7,7,8,8,7,9], tAlt:5, tNeu:7.5,
+  wieder:"Ja, und zum ersten Mal wegen der Rolls.", flip:false,
+  verdict:"Die Slot-Machine hat jetzt Vertrag, Reveal und Hebel. Der Live-Chip hält der Nachrechnung mathematisch exakt stand (25,7 % bei lck 19, plus 3,0 Punkte je 10 lck, Caps bei 35 und 95 %).",
+  top3:[["halb","Roll-Sichtbarkeit: „98 % of max roll" in Tooltip und Tasche ist da — aber Attribut-Suffixe bleiben über die ganze Spanne wertidentisch: Roll-% droht als Deko gelernt zu werden."],
+        ["halb","Chancen in %: auf der Craft-Seite exakt und live, auf der Drop-Seite (Bestiarium, Loot) weiterhin zahlenlos."],
+        ["gut","Reveal + Reroll: Jackpot-Toast mit Sound, ehrliches Confirm, formelgetreue Kosten, sechsmal exakt abgebucht."]],
+  bugs:[["fixed","Fehl-Toast beim Verzaubern angelegter Rares weg"],["fixed","B3/B4 behoben"],["halb","B2 teilbehoben"],["offen","B5: Precise-Rune gibt Luck neben Precision-Stat"]],
+  funde:["„Rare find!" feuert bei jedem deterministischen Craft eines rare-Items — vier Crafts, vier Jackpot-Toasts","Disabled-Confirm bei Goldmangel optisch nicht unterscheidbar","Kein Reroll-Einstieg am angelegten Item"],
+  neu3:["Attribut-Rolls Substanz geben (Balance-Block)","Rare-find-Spam vom Fließband nehmen, Suffix-Reveal solo auf die Bühne","Reroll in den Equip-Tooltip plus Drop-Suffix-Chance ans Bestiarium"]},
+ {name:"Vesna Schwurklinge", sys:"Slayer", alt:[8,6,7,6,9,4,6,8], neu:[9,7,9,8,9,6,8,8], tAlt:7, tNeu:8,
+  wieder:"Ja — und übermorgen.", flip:false,
+  verdict:"Der 5er/10er-Serien-Takt ist exakt der fehlende Kettenzug — bei Serie 7 holt man freiwillig drei weitere Tasks. Sucht-Faktor 7 auf 9.",
+  top3:[["gut","Kopfgeld auf dem Zettel: REWARDS-Chips plus skalierende Punkte — gut, aber zahm (ein 50er zahlt nur das 1,5-fache eines 15ers bei 3,3-facher Arbeit)."],
+        ["gut","Task-Streak: voll da — Chip, Warnung, Toast-Stack, Marken beim 5., Punkte beim 10."],
+        ["halb","Endgame-Pool: Welt gerettet (6 statt 2 Kandidaten), aber die Turm-Unterkante blieb — 25 % der Endgame-Tasks sind Trivial-Pendeln mit 74-fachem XP-Nachteil."]],
+  bugs:[["fixed","Gratis-Skip-Blocker tot: „Skip Task (Free)" klickbar bei 0 Punkten, Serie bleibt"],["fixed","Skip/Cancel-Doppel konsolidiert"]],
+  funde:["iron_sentinel und dg_skeleton_nekro ohne Monster-Art (16 % der Endgame-Ziehungen zeigen den Fallback-Schädel)","Serien-Takt unsichtbar, bis der erste Bonus überrascht","Dissonanz: „too weak — NO COMBAT XP" bei Vollpreis-Auftrag"],
+  neu3:["Serien-Countdown plus Meilensteine bei 25/50/100","Gefahrenzulage: Punkte nach Ziel-Nähe, Trivial-Etagen unterwichten","Zwei Zettel am Brett: Task-Wahl oder zweiter Master"]},
+ {name:"Aldric Steigeisen", sys:"Paragonturm", alt:[5,2,3,2,8,4,3,8], neu:[7,5,6,4,9,6,6,9], tAlt:3, tNeu:6,
+  wieder:"Morgen ja — Rekord 13 will auf 15. In zwei Wochen nur, wenn Truhen sichtbar und Nicht-Platte-Builds gangbar werden.", flip:true,
+  verdict:"Der alte Blocker ist tot — für Platte: echter 25-Minuten-Bogen bis Rekord 13 ohne Tod. Der ehrliche Stoff-Caster stirbt weiter auf Etage 3 bis 4 (0 % Kapitel 21 in 8 von 8 Seeds): die Wand ist für die halbe Garderobe nur eine Etage gewandert.",
+  top3:[["halb","Einstiegskurve: exakt wie vorgeschlagen gebaut, aber am Platte-Build kalibriert — Stoff und Leder bleiben draußen (Balance-Block, dringend)."],
+        ["halb","Aufstieg flüssig: Auto-Aufstieg und Weiter-Knopf da, aber der Clear-Moment wirft an den Seitenanfang und Stopp-Regeln fehlen."],
+        ["gut","Aufstieg veredelt: Achievement-Leiter E5 bis E30 mit Live-Balken plus Truhen-Strip — vorbildliche Ziel-Klarheit (9/10)."]],
+  bugs:[["fixed","Death-Popup-Widerspruch weg (rekord-bewusste Zusicherung)"],["fixed","Preview lesbar plus Ward-Zeile"],["offen","Deutsche Labels clippen weiter"],["offen","Rekord-Toast-Inflation: 13 Legendäre pro Erstaufstieg-Session"]],
+  funde:["NEUER P1-BUG: Meilenstein-Truhen (E5/E10/E20) kommen ohne jedes sichtbare Feedback an — drei Barren und Essenz, auf dem Schirm stand nur „Neuer Rekord!"","Man stirbt an unsichtbaren Werten: Enrage und Inflict fehlen in der Preview"],
+  neu3:["Truhen-Toast plus E20-Chase-Vorschau","Der Turm muss lehren, was er prüft: Tod-Analyse, Enrage/Inflict sichtbar, Stoff/Leder-Leitern kalibrieren","Auto-Aufstieg finishen: Stopp-Regeln, Panel-Anker, „Wieder hinein" im Todes-Popup"]},
+ {name:"Grete Beutezug", sys:"Dungeon-Farming", alt:[8,6,7,8,4,6,6,8], neu:[9,7,8,8,9,7,7,9], tAlt:7, tNeu:8,
+  wieder:"Ja, wissentlich.", flip:false,
+  verdict:"Der Kernbefund ist behoben, über die Forderung hinaus: volle Beute-Tabelle mit Prozenten immer sichtbar, Silhouetten als Köder, Wiki-Verzahnung. Ziel-Klarheit 4 auf 9 — größter Aspekt-Sprung des gesamten Retests.",
+  top3:[["gut","Beute-Vorschau: voll umgesetzt, die 0,1-%-Kette steht jetzt öffentlich auf der Thron-Karte."],
+        ["offen","Chase-Fortschritt/Pity: gar nicht umgesetzt — liegt im Balance-Block."],
+        ["gut","Thron-Dramaturgie: Vollbild-Boss-Intro vor Welle 1, ohne Chest-Lüge."]],
+  bugs:[["fixed","Weihe-Photobomb weg"],["fixed","Ultra-Chase-Unsichtbarkeit weg"],["offen","goblin_reaver-Art fehlt — alle 5 Warband-Wellen ohne Artwork"],["offen","Ward-Wand unerklärt: Badge-Übersetzungen existieren verwaist, nichts rendert sie"]],
+  funde:["BUG (hoch, vom CEO sofort gefixt): „Seltener Fund!"-Toast kannte superRare und godly nicht — der größte Jackpot des Spiels war sein leisester Moment","ASSET (hoch): Drazhan ohne Monster-Art — das neue Finale-Intro inszeniert eine lila Platzhalter-Silhouette","„Lv 95 · 1 Wellen" (Singular fehlt), Dezimaltrennzeichen-Mix, Scroll-Reset nach Zeremonie"],
+  neu3:["Godly-Fanfare mit eigener Eskalationsstufe","Dry-Streak-Zähler oder sanftes Pity plus Zeremonie-Auto-Skip für Vielfahrer","Drazhan-, Warband- und Chase-Item-Art für die bereits gebauten Bühnen"]},
+ {name:"Pip Hakenliste", sys:"Achievements & Bestiarium", alt:[7,5,6,5,7,3,7,6], neu:[8,7,8,8,8,4,8,8], tAlt:6, tNeu:8,
+  wieder:"Ja: um zu kassieren, nicht nur um Balken zu füllen.", flip:false,
+  verdict:"Jeder Unlock zahlt jetzt doppelt (AP plus Meilenstein-Fortschritt), Massen-Unlocks sind ein Jackpot-Toast, der Catch-up zahlte 121 Tokens auf einen Schlag, und die 100-%-Zeremonie „Every Trial Conquered" steht würdig am Ende.",
+  top3:[["gut","AP kauft etwas: eskalierende Token-Staffel, Catch-up-Bündelung, Zeremonie mit Warden-Text."],
+        ["gut","Kompass plus Sammel-Toast: „Almost there"-Zeile mit Klick-Scroll, Flut wird gebündelt."],
+        ["halb","Bestiarium-Jagdliste: Filter und Kill-Leiter da, die Item-Checkliste hinter „Discovered: x/1061" fehlt weiter."]],
+  bugs:[["fixed","„Next milestone: 100%" weg — jetzt „All milestones reached" plus Zeremonie"],["fixed","Verschluckte Massen-Toasts weg"]],
+  funde:["BUG: Zwei widersprüchliche Discovery-Zähler — Bestiarium/Wiki zählen 28/1061, die Collection-Achievements 14/50 aus anderer Quelle, die sogar sinken kann","Token-Shop enthält kein Traumziel (nur Proviant), Shop-Copy erwähnt die Meilenstein-Quelle nicht","Endspurt leer: bei 535/537 zeigt „Almost there" nichts, ???-Karten sind aktionslose Sackgassen"],
+  neu3:["Discovery vereinheitlichen plus Checkliste","Dem Token-Shop eine Chase-Etage geben","Den Endspurt inszenieren (letzte Karten, Kürzlich-Log)"]}
+];
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function cell(o,n){
+  const d=n-o;
+  const dTxt=d>0?`+${d}`:d===0?"±0":`${d}`;
+  return `<td class="cell"><span class="old">${o}</span><span class="arrow">→</span><span class="new">${n}</span><span class="d ${d>0?"pos":"zero"}">${dTxt}</span></td>`;
+}
+const heat=document.getElementById("heat");
+heat.innerHTML =
+  `<tr><th>Agent</th>${ASPECTS.map(a=>`<th>${a}</th>`).join("")}<th>Gesamt</th><th>Wieder?</th></tr>` +
+  A.map(a=>{
+    const total=cell(a.tAlt,a.tNeu).replace('class="cell"','class="cell" style="font-size:13.5px"');
+    const again=a.flip?`<td><span class="again-yes again-flip">Nein → Ja</span></td>`:`<td><span class="again-yes">Ja → Ja</span></td>`;
+    return `<tr><td class="agent">${a.name}<span class="sys">${a.sys}</span></td>${a.alt.map((o,i)=>cell(o,a.neu[i])).join("")}${total}${again}</tr>`;
+  }).join("");
+
+const badge={gut:'<span class="b gut">GUT</span>',halb:'<span class="b halb">HALBHERZIG</span>',offen:'<span class="b offen">OFFEN</span>',fixed:'<span class="b fixed">BEHOBEN</span>'};
+document.getElementById("cards").innerHTML = A.map(a=>`
+  <div class="card">
+    <span class="total-chip">${String(a.tAlt).replace(".",",")} → ${String(a.tNeu).replace(".",",")}</span>
+    <h3 class="serif">${a.name}</h3>
+    <div class="meta">${a.sys} · Voll-Bericht: retest-*.md</div>
+    <div class="verdict">„${esc(a.wieder)}"</div>
+    <p style="color:var(--ink-2)">${esc(a.verdict)}</p>
+    <h4>Top-3-Verifikation</h4>
+    <ul>${a.top3.map(t=>`<li>${badge[t[0]]}${esc(t[1])}</li>`).join("")}</ul>
+    <h4>Alte Bugs</h4>
+    <ul>${a.bugs.map(t=>`<li>${badge[t[0]]}${esc(t[1])}</li>`).join("")}</ul>
+    <h4>Wichtigste neue Funde</h4>
+    <ul>${a.funde.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+    <h4>Neue Top-3 für mehr Sucht</h4>
+    <ul>${a.neu3.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+  </div>`).join("");
+</script>
+</body>
+</html>

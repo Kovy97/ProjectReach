@@ -1,0 +1,7 @@
+// codex:2026-08-01T13:30:36+02:00 — Lokale Zustands-/Konzeptsteuerung, keine App-Abhängigkeit.
+const concepts=["Keep Command","Warden Ledger","Iron Spine","Hunter Contract","Quiet Citadel"];
+const preview=document.querySelector("#preview");
+const conceptControls=document.querySelector("#concept-controls");
+concepts.forEach((name,index)=>{const button=document.createElement("button");button.textContent=`0${index+1} ${name}`;button.className=index===4?"is-active":"";button.addEventListener("click",()=>{document.querySelectorAll("#concept-controls button").forEach(el=>el.classList.remove("is-active"));button.classList.add("is-active");preview.className=preview.className.replace(/concept-\d/,`concept-${index+1}`)});conceptControls.append(button)});
+document.querySelectorAll("[data-state]").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll("[data-state]").forEach(el=>el.classList.remove("is-active"));button.classList.add("is-active");preview.classList.remove("state-idle","state-training","state-combat");preview.classList.add(`state-${button.dataset.state}`)}));
+document.querySelector("#density-toggle").addEventListener("click",event=>{const compact=preview.classList.toggle("is-compact");event.currentTarget.classList.toggle("is-active",compact);event.currentTarget.setAttribute("aria-pressed",String(compact));event.currentTarget.textContent=compact?"Details ausklappen":"Details einklappen"});

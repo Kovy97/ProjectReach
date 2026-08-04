@@ -1,0 +1,594 @@
+════════════════════════════════════════════════════════════════════════════
+GRIM REACH — Spieler-RASSEN-GALERIEN, 196 Bilder in 20 Batches (v5, 19.07.2026)
+Struktur: Sektion A = 16 T-Pose-Volksreferenzen (Batches 1–2), Sektionen B–I =
+Rassen-Galerien (Menschen 20 Designs, jedes andere Volk 10 Designs, je m+f).
+Jeden Batch-Block KOMPLETT in ChatGPT einfügen. Kein "transparent" — jedes
+Motiv bekommt einen VOLLFARBIGEN Chroma-Hintergrund (Farbe steht im Prompt),
+Freistellen macht unser Chroma-Key-Tool. Dateinamen exakt übernehmen. Fertige
+Bilder in den Undone-Ordner. Die 25 abgenommenen v4-Designs sind übernommen
+und in ihre Rassen-Galerien einsortiert; die Rakhari-Designs sind auf das
+neue Tiger-Profil umgeschrieben, kleine/große Völker tragen jetzt in jedem
+Prompt ihre Größenangabe.
+════════════════════════════════════════════════════════════════════════════
+
+
+════ SEKTION A — T-POSE-VOLKSREFERENZEN (16 Bilder, Batches 1–2) ════
+
+── BATCH 1 — T-POSE-REFERENZEN I: MENSCHEN, ORKS, RAKHARI, GOBLINS (8 Bilder) ──
+
+Erstelle nacheinander ACHT EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Diese acht Bilder
+sind ANATOMIE-REFERENZEN der spielbaren Völker (Referenzblätter für weitere
+Generierungen und für das Wiki), kein Charakter-Artwork. Stil für alle acht
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte Palette,
+GANZKÖRPER-Figur im Hochformat (ca. 1122×1402), Kopf bis Fuß VOLLSTÄNDIG im
+Bild. Haltung für alle: frontale, symmetrische T-POSE — aufrecht zur Kamera,
+beide Arme waagrecht seitlich ausgestreckt, Handflächen nach unten, Füße
+hüftbreit; neutrale Mimik, Blick geradeaus in die Kamera. Kleidung für alle
+identisch: schlichte dunkelgraue Leinen-Unterkleidung (ärmelloses Hemd,
+einfache Hose), barfuß; KEINE Ausrüstung, KEINE Waffen, KEIN Schmuck.
+Mattes, neutrales, gleichmäßiges Licht, alle Oberflächen MATT ohne Glühen.
+Hintergrund: eine KOMPLETT EINFARBIGE, SATTE Fläche in der im Prompt
+genannten Farbe — kein Verlauf, kein Schatten, keine Vignette.
+
+1. ref_human_m.png — T-Pose-Referenz: Mensch, männlich. Menschen sind das Referenz-Volk des Rosters: etwa 1,70 bis 1,90 m, normale menschliche Anatomie und Proportionen, an denen alle anderen Völker lesbar werden. Wettergegerbte Gesichter, eine sichtbare Narben-Kultur (gut verheilte Narben werden offen getragen), volles Spektrum an Haut- und Haartönen. Hier: ein Mann in den Dreißigern, mittelgroß und arbeitsgestählt, kurzes dunkelbraunes Haar, Bartschatten, eine blasse alte Narbe über der linken Braue. Hintergrund: sattes Magenta.
+2. ref_human_f.png — T-Pose-Referenz: Mensch, weiblich. Menschen sind das Referenz-Volk des Rosters: etwa 1,70 bis 1,90 m, normale menschliche Anatomie und Proportionen, an denen alle anderen Völker lesbar werden. Wettergegerbte Gesichter, eine sichtbare Narben-Kultur, volles Spektrum an Haut- und Haartönen. Hier: eine Frau in den Dreißigern, sehnig und aufrecht, dunkelblondes streng zurückgebundenes Haar, wettergegerbte Züge, eine feine alte Narbe am Kinn. Hintergrund: sattes Magenta.
+3. ref_orc_m.png — T-Pose-Referenz: Ork, männlich. Orks sind gut 2,10 m groß und massiv gebaut, deutlich breiter und schwerer als Menschen: dunkelolive bis graugrüne Haut, sichtbare untere Hauer, breiter Kiefer, flache Nase, schwere Braue. Das Haar wird in Kriegszöpfen oder zu geschorenen Mustern getragen, Narben gelten als Ehrenzeichen und werden offen gezeigt. Hier: ein Ork-Mann, hünenhaft, dunkelolive Haut, schwarzes Haar in schweren Kriegszöpfen, kurze kräftige untere Hauer, alte Narben an Unterarmen und Brust. Hintergrund: sattes Magenta.
+4. ref_orc_f.png — T-Pose-Referenz: Ork, weiblich. Orks sind gut 2,10 m groß und massiv gebaut, deutlich breiter und schwerer als Menschen: dunkelolive bis graugrüne Haut, sichtbare untere Hauer, breiter Kiefer, flache Nase, schwere Braue; Kriegszöpfe oder geschorene Muster, Narben als Ehrenzeichen. Hier: eine Ork-Frau, ebenso hochgewachsen und muskulös, graugrüne Haut, seitlich geschorenes Haar mit einem einzelnen Kriegszopf, sichtbare untere Hauer, eine gerade Ehrennarbe über dem Schlüsselbein. Hintergrund: sattes Magenta.
+5. ref_rakhari_m.png — T-Pose-Referenz: Rakhari, männlich. Die Rakhari sind Tiger-Menschen: etwa 1,90 m, athletisch und aufrecht, mit menschlicher Statur und Haltung. Der Gesichtsschnitt ist kräftig und fast menschlich, mit kurzer, breiter Raubtiernase und markantem Kiefer; angedeutete Reißzähne, gold-bernsteinfarbene Tigeraugen, kleine runde Ohren hoch am Kopf. Das Fell ist sand- bis rostfarben mit dunklen Tigerstreifen (seltene dunkle Varianten kommen vor), die Hände sind kräftig, mit Krallen, dazu ein langer Tigerschwanz; die Bewegung ist Raubtier-Grazie mit Gewicht. Hier: ein Rakhari-Mann, breitschultrig, sandfarbenes Fell mit klaren dunklen Streifen an Schläfen, Schultern und Unterarmen. Hintergrund: sattes Grün.
+6. ref_rakhari_f.png — T-Pose-Referenz: Rakhari, weiblich. Die Rakhari sind Tiger-Menschen: etwa 1,90 m, athletisch und aufrecht, mit menschlicher Statur und Haltung. Der Gesichtsschnitt ist kräftig und fast menschlich, mit kurzer, breiter Raubtiernase und markantem Kiefer; angedeutete Reißzähne, gold-bernsteinfarbene Tigeraugen, kleine runde Ohren hoch am Kopf. Das Fell ist sand- bis rostfarben mit dunklen Tigerstreifen, die Hände sind kräftig, mit Krallen, dazu ein langer Tigerschwanz; die Bewegung ist Raubtier-Grazie mit Gewicht. Hier: eine Rakhari-Frau, sehnig-athletisch, rostfarbenes Fell mit feiner dunkler Streifung im Gesicht und an den Armen. Hintergrund: sattes Grün.
+7. ref_goblin_m.png — T-Pose-Referenz: Goblin, männlich. Goblins sind klein, etwa anderthalb Meter — der Kopf reicht einem Menschen auf Brusthöhe — und drahtig-sehnig gebaut: moosgrüne bis dunkelgrüne Haut, große bewegliche spitze Ohren, scharfe Züge, spitze Zähne, lange flinke Finger. Die spielbaren Goblins sind Freie; ihre Kleidung ist zusammengetragen, aber erstaunlich funktional und gut gearbeitet, nie ärmlich. Hier: ein Goblin-Mann, moosgrüne Haut, wache dunkle Augen, ein kleiner alter Riss im linken Ohr; die Leinen-Unterkleidung ist sauber auf seine Größe geschneidert. Hintergrund: sattes Magenta.
+8. ref_goblin_f.png — T-Pose-Referenz: Goblin, weiblich. Goblins sind klein, etwa anderthalb Meter — der Kopf reicht einem Menschen auf Brusthöhe — und drahtig-sehnig gebaut: moosgrüne bis dunkelgrüne Haut, große bewegliche spitze Ohren, scharfe Züge, spitze Zähne, lange flinke Finger. Die spielbaren Goblins sind Freie; ihre Kleidung ist zusammengetragen, aber funktional und gut gearbeitet. Hier: eine Goblin-Frau, dunkelgrüne Haut, schwarzes kurz gebundenes Haar, schmales waches Gesicht; die Leinen-Unterkleidung sauber auf ihre Größe geschneidert. Hintergrund: sattes Magenta.
+
+
+── BATCH 2 — T-POSE-REFERENZEN II: DUVRA, SESSKAR, ASCHGÄNGER, FARYN (8 Bilder) ──
+
+Erstelle nacheinander ACHT EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Diese acht Bilder
+sind ANATOMIE-REFERENZEN der spielbaren Völker (Referenzblätter für weitere
+Generierungen und für das Wiki), kein Charakter-Artwork. Stil für alle acht
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte Palette,
+GANZKÖRPER-Figur im Hochformat (ca. 1122×1402), Kopf bis Fuß VOLLSTÄNDIG im
+Bild. Haltung für alle: frontale, symmetrische T-POSE — aufrecht zur Kamera,
+beide Arme waagrecht seitlich ausgestreckt, Handflächen nach unten, Füße
+hüftbreit; neutrale Mimik, Blick geradeaus in die Kamera. Kleidung für alle
+identisch: schlichte dunkelgraue Leinen-Unterkleidung (ärmelloses Hemd,
+einfache Hose), barfuß; KEINE Ausrüstung, KEINE Waffen, KEIN Schmuck.
+Mattes, neutrales, gleichmäßiges Licht, alle Oberflächen MATT ohne Glühen.
+Hintergrund: eine KOMPLETT EINFARBIGE, SATTE Fläche in der im Prompt
+genannten Farbe — kein Verlauf, kein Schatten, keine Vignette.
+
+9. ref_duvra_m.png — T-Pose-Referenz: Duvra, männlich. Die Duvra sind kaum anderthalb Meter hoch, aber FASSBREIT — massige Gedrungenheit mit schweren Schultern, klar unterschieden vom schmalen Goblin. Graustichige Steinhaut mit dunkleren mineralischen Sprenkeln (ihr Alleinstellungsmerkmal), breite flache Züge, tiefliegende dunkle Augen unter schweren Brauen, dichtes dunkles Haar; die Hände wie Schraubstöcke. Männer tragen Bärte, mit Steinperlen und Eisenringen geflochten. Hier: ein Duvra-Mann, gedrungen und blockhaft, eisengraues Haar, dichter dunkler Bart mit zwei Steinperlen, deutliche mineralische Sprenkelung an Schultern und Unterarmen. Hintergrund: sattes Grün.
+10. ref_duvra_f.png — T-Pose-Referenz: Duvra, weiblich. Die Duvra sind kaum anderthalb Meter hoch, aber FASSBREIT — massige Gedrungenheit mit schweren Schultern, klar unterschieden vom schmalen Goblin. Graustichige Steinhaut mit dunkleren mineralischen Sprenkeln, breite flache Züge, tiefliegende dunkle Augen unter schweren Brauen, dichtes dunkles Haar, Hände wie Schraubstöcke. Frauen sind bartlos und tragen das Haar kunstvoll geflochten, mit Steinperlen durchzogen. Hier: eine Duvra-Frau, kompakt und kraftvoll, schwarzes geflochtenes Haar mit Steinperlen, mineralische Sprenkel über Wangenknochen und Armen. Hintergrund: sattes Grün.
+11. ref_sesskar_m.png — T-Pose-Referenz: Sesskar, männlich. Die Sesskar sind etwa 1,80 m groß und schlank: feine graublaue bis salzgraue Schuppenhaut wie Haifischhaut — glatt und fein, keine groben Echsenplatten — mit hellerer Kehl- und Bauchseite. Kein Haar, stattdessen Flossenkämme an Schädel und Nacken; Kiemenlinien seitlich am Hals; Nickhaut über bernsteinfarbenen Augen; leicht verlängerte Finger mit Schwimmhaut-Ansätzen. Hier: ein Sesskar-Mann, sehnig, graublaue Haut mit heller Kehle, ein hoher, leicht zerkerbter Flossenkamm vom Scheitel in den Nacken. Hintergrund: sattes Magenta.
+12. ref_sesskar_f.png — T-Pose-Referenz: Sesskar, weiblich. Die Sesskar sind etwa 1,80 m groß und schlank: feine graublaue bis salzgraue Schuppenhaut wie Haifischhaut — glatt und fein, keine groben Echsenplatten — mit hellerer Kehl- und Bauchseite. Kein Haar, stattdessen Flossenkämme an Schädel und Nacken, deren Linie so individuell ist wie ein Gesicht; Kiemenlinien seitlich am Hals; Nickhaut über bernsteinfarbenen Augen; leicht verlängerte Finger mit Schwimmhaut-Ansätzen. Hier: eine Sesskar-Frau, schlank, salzgraue Haut mit hellem Kehlmuster, eine elegante, niedrige Kammlinie. Hintergrund: sattes Magenta.
+13. ref_ashwalker_m.png — T-Pose-Referenz: Aschgänger, männlich. Die Aschgänger sind etwa 1,90 m groß und hager: blassgraue Haut mit dunklen Asche-Sprenkeln, besonders um Augen, Schläfen und Unterarme; die Augen natürlich dunkel gerändert; früh weißes oder aschgraues Haar. Sie wirken älter, als sie sind, und tragen eine ruhige, langsame Präsenz. Hier: ein Aschgänger-Mann, hager und aufrecht, weißes kurzes Haar, deutliche dunkle Sprenkelzeichnung um Augen und Schläfen, die Unterarme grau gezeichnet. Hintergrund: sattes Grün.
+14. ref_ashwalker_f.png — T-Pose-Referenz: Aschgänger, weiblich. Die Aschgänger sind etwa 1,90 m groß und hager: blassgraue Haut mit dunklen Asche-Sprenkeln, besonders um Augen, Schläfen und Unterarme; die Augen natürlich dunkel gerändert; früh weißes oder aschgraues Haar. Sie wirken älter, als sie sind, und tragen eine ruhige, langsame Präsenz. Hier: eine Aschgänger-Frau, schmal und aufrecht, langes aschweißes Haar offen über den Schultern, feine dunkle Sprenkel um Augen und Schläfen. Hintergrund: sattes Grün.
+15. ref_faryn_m.png — T-Pose-Referenz: Faryn, männlich. Die Faryn sind mit 2,00 bis 2,10 m das größte Volk, windschlank und hager, mit langen Gliedern und langen Fingern. Fast weiße Haut mit kühlem Unterton, lange schmale Gesichter, hohe scharfe Wangenknochen, weißes bis silbernes Haar, sehr helle Augen von Eisgrau bis Blassviolett. An Schläfen und Unterarmen tragen sie feine helle Windzeichen-Linien als traditionelle Tätowierung. Die Ohren sind gewöhnliche menschliche Ohren, nicht spitz. Hier: ein Faryn-Mann, hoch aufgeschossen, silbernes langes Haar offen, eisgraue Augen, Windzeichen-Linien an beiden Schläfen und Unterarmen. Hintergrund: sattes Grün.
+16. ref_faryn_f.png — T-Pose-Referenz: Faryn, weiblich. Die Faryn sind mit 2,00 bis 2,10 m das größte Volk, windschlank und hager, mit langen Gliedern und langen Fingern. Fast weiße Haut mit kühlem Unterton, lange schmale Gesichter, hohe scharfe Wangenknochen, weißes bis silbernes Haar, sehr helle Augen von Eisgrau bis Blassviolett. An Schläfen und Unterarmen tragen sie feine helle Windzeichen-Linien als traditionelle Tätowierung. Die Ohren sind gewöhnliche menschliche Ohren, nicht spitz. Hier: eine Faryn-Frau, sehr groß und schmal, weißes glatt fallendes Haar, blassviolette Augen, Windzeichen-Linien an Schläfen und Unterarmen. Hintergrund: sattes Grün.
+
+
+════ SEKTION B — MENSCHEN (20 Designs, 40 Bilder, Batches 3–6) ════
+
+── BATCH 3 — MENSCHEN I: NAHKAMPF + FRÜHER FERNKAMPF (10 Bilder) ────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Schützen: Pfeil aufgelegt, Bogen GESENKT, kein voller Auszug. Alle
+Oberflächen MATT: kein Glühen, kein Schimmer, keine Magie-Leuchteffekte.
+Hintergrund: eine KOMPLETT EINFARBIGE, SATTE Fläche in der im Prompt
+genannten Farbe — kein Verlauf, kein Schatten, keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Menschen des Reachs, etwa 1,70 bis
+1,90 m — wettergegerbte Gesichter, sichtbare, gut verheilte Narben, volles
+Spektrum an Haut- und Haartönen; die Referenz-Anatomie des Rosters.
+
+17. player_human_sellsword_m.png — Ein junger, sehniger Söldner in gut sitzendem, geschwärztem Gambeson unter einer geschnürten Halbplatte aus dunklem Stahl; ein graues Wolfsfell über der linken Schulter, ein Streifen aschgrauer Kriegsbemalung quer über dem Gesicht. Das Langschwert gezogen, aber locker gesenkt in einer Hand, das Gewicht ruhig verteilt — jung, aber gefährlich, einer der schon überlebt hat. Hintergrund: sattes Magenta.
+18. player_human_sellsword_f.png — Eine junge Söldnerin gleichen Schlags: geschwärzter Gambeson, dunkle Halbplatte, Wolfsfell über der Schulter; das dunkle Haar streng zurückgebunden, eine schmale Narbe über der Braue, dieselbe aschgraue Kriegsbemalung. Langschwert gezogen und gesenkt, wacher, harter Blick nach rechts. Hintergrund: sattes Magenta.
+19. player_human_gravesworn_m.png — Ein Erbe des erloschenen Grabwächter-Ordens: brünierte graue Halbplatte über dunklem Gambeson, auf der Brust das eingeschlagene Spatenzeichen des Ordens, am Gurt eine Reihe kleiner eiserner Grabmarken. Der Streitkolben gesenkt in der Rechten, der Rundschild mit dem Ordenszeichen am linken Arm. Einer, der ein Amt weiterträgt, das offiziell niemand mehr bezahlt. Hintergrund: sattes Grün.
+20. player_human_gravesworn_f.png — Eine Erbin des Grabwächter-Ordens: brünierte graue Halbplatte, das Spatenzeichen auf der Brust, aschblondes streng geflochtenes Haar, ein ernstes, junges Gesicht mit altem Blick. Streitkolben gesenkt, der Ordensschild am Arm, eiserne Grabmarken am Gurt. Hintergrund: sattes Grün.
+21. player_human_banneret_m.png — Ein Wall-Veteran in schwerer, geschwärzter Feldplatte mit zerkratzten Schulterstücken; über dem Rücken ein kurzer Schaft mit einem zerschlissenen, verblichen grauen Banner, dessen Zeichen kaum noch lesbar ist. Die Streitaxt gesenkt in der Faust, der graue Bart kurz geschnitten, das Gesicht voller alter Wetter. Einer, der Abschnitte gehalten hat, von denen keine Lieder erzählen. Hintergrund: sattes Magenta.
+22. player_human_banneret_f.png — Eine Wall-Veteranin derselben Garde: geschwärzte Feldplatte, das zerschlissene graue Banner am Rückenschaft, dunkles kurzes Haar mit grauen Strähnen, eine alte Narbe über dem Wangenknochen. Die Streitaxt gesenkt, der Stand breit und unaufgeregt. Hintergrund: sattes Magenta.
+23. player_human_thronewalker_m.png — Ein hünenhafter Ritter in nachtschwarzer Vollplatte, deren Panzerung wie übereinander geschichtete Obsidianscherben gearbeitet ist; über der linken Schulter ein schwerer, zerschlissener blutroter Mantel. Der geschlossene Turmhelm trägt eine Krone aus abgebrochenen Eisendornen, die senkrechte Sichtscharte liegt im Schatten. Beide Panzerhandschuhe ruhen auf dem Knauf eines riesigen, runengekerbten Zweihänders, dessen Spitze im Boden steckt. Hintergrund: sattes Grün.
+24. player_human_thronewalker_f.png — Eine Ritterin in derselben nachtschwarzen Obsidianscherben-Vollplatte mit blutrotem, zerschlissenem Mantel; der Dornenkronen-Helm hängt am Gurt, das schwarze Haar ist kurz geschnitten, ein blasses, hartes Gesicht mit kalten Augen. Beide Hände auf dem Knauf des riesigen, im Boden steckenden Zweihänders. Hintergrund: sattes Grün.
+25. player_human_trapper_m.png — Ein wettergegerbter Jäger in dunklem, präzise vernähtem Leder mit hochgeschlagener Kapuze über scharfen Zügen; über Brust und Rücken Riemen mit Messern und gefiederten Pfeilen. Der Kurzbogen in der gesenkten Linken, ein Pfeil locker aufgelegt, der Blick liest das Gelände nach rechts. Ein Mann, der wochenlang allein im Grau überlebt. Hintergrund: sattes Magenta.
+26. player_human_trapper_f.png — Eine Jägerin desselben Schlags: dunkles, enges Lederzeug, Kapuze über rotbraunem, geflochtenem Haar, drei feine Narben am Kinn; Kurzbogen gesenkt mit aufgelegtem Pfeil, am Gurt Schlingen und ein Jagdmesser. Wach, geduldig, gnadenlos präzise. Hintergrund: sattes Magenta.
+
+
+── BATCH 4 — MENSCHEN II: FERNKAMPF + FRÜHE MAGIE (10 Bilder) ───────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, kampfbereiter ruhiger Stand (Schützen: Pfeil
+aufgelegt, Bogen GESENKT, kein voller Auszug; Armbrüste gesenkt getragen;
+Magier: keine Wirkgeste, Stab ruhig geführt), alles MATT ohne Glühen.
+Hintergrund: komplett einfarbige satte Fläche in der genannten Farbe, ohne
+Verlauf/Schatten/Vignette.
+Alle zehn Figuren gehören demselben Volk: Menschen des Reachs, etwa 1,70 bis
+1,90 m — wettergegerbte Gesichter, sichtbare, gut verheilte Narben, volles
+Spektrum an Haut- und Haartönen; die Referenz-Anatomie des Rosters.
+
+27. player_human_outrider_m.png — Ein Vorreiter der Glutfeste, der die grauen Straßen abreitet: leichte dunkle Brigantine über staubbraunem Reitermantel, hohe abgewetzte Stiefel, ein Signalhorn am Gurt. Der Langbogen gesenkt in der Linken, ein Pfeil aufgelegt, der Blick weit voraus nach rechts. Einer, der schlechte Nachrichten schneller bringt, als sie reiten. Hintergrund: sattes Grün.
+28. player_human_outrider_f.png — Eine Vorreiterin desselben Schlags: dunkle Brigantine, staubbrauner Reitermantel, das braune Haar zum Reiterzopf gebunden, Wetterhaut und wache Augen. Langbogen gesenkt mit aufgelegtem Pfeil, das Signalhorn griffbereit. Hintergrund: sattes Grün.
+29. player_human_manhunter_m.png — Ein Kopfgeldjäger in schwerem, gewachstem dunklem Mantel mit eisenbeschlagenem Kragen; am Gurt eiserne Schellen und gerollte Steckbriefe, quer vor der Brust ein Bandolier mit Bolzen. Die schwere Armbrust gesenkt in beiden Händen, das Gesicht hart, halb im Schatten der Krempe. Er findet jeden, das ist sein ganzes Handwerk. Hintergrund: sattes Magenta.
+30. player_human_manhunter_f.png — Eine Kopfgeldjägerin: gewachster dunkler Mantel, Eisenkragen, das schwarze Haar streng gebunden, eine schmale Narbe durch die Lippe; schwere Armbrust gesenkt, Schellen und Steckbriefe am Gurt. Der geduldige Blick einer Frau, die nie zweimal fragen muss. Hintergrund: sattes Magenta.
+31. player_human_veilarrow_m.png — Ein Meisterschütze am Ende seines Weges: fast schwarzes, eng geschnürtes Schuppenleder mit knochenweißen Beschlägen, über Helm und Nacken ein dünner grauer Stoffschleier; der lange Kriegsbogen aus dunklem Horn gesenkt, ein bleich gefiederter Pfeil aufgelegt. Still wie ein Ort, an dem niemand mehr wohnt. Hintergrund: sattes Blau.
+32. player_human_veilarrow_f.png — Eine Meisterschützin: fast schwarzes Schuppenleder mit knochenweißen Beschlägen, der graue Schleier über Nacken und Schultern, ein bleiches, ruhiges Gesicht. Der dunkle Kriegsbogen gesenkt, der bleiche Pfeil aufgelegt, der Blick weit nach rechts. Hintergrund: sattes Blau.
+33. player_human_novice_m.png — Ein junger Magier in einer dunklen, schweren Robe mit sauber gearbeiteten Lederbesätzen und hochgeschlagenem Kragen; am Gurt ein beschlagenes Grimoire und Phiolen, in der Hand ein schlichter, eisenbeschlagener Kampfstab, aufrecht gehalten. Konzentriert, ehrgeizig, wach — am Anfang eines gefährlichen Weges. Hintergrund: sattes Grün.
+34. player_human_novice_f.png — Eine junge Magierin: dunkle schwere Robe mit Lederbesätzen, das Haar zu einem strengen Knoten gebunden, Tintenflecken an den Fingern; Grimoire am Gurt, der eisenbeschlagene Kampfstab ruhig in beiden Händen. Kluger, entschlossener Blick nach rechts. Hintergrund: sattes Grün.
+35. player_human_hexward_m.png — Ein Bannmagier im Feldornat: feinmaschiges geschwärztes Kettenhemd unter einer dunklen, geschnürten Robe, am Gurt zinngraue Bannsiegel und ein an einer Kette getragenes Grimoire. Der eisenbeschlagene Stab ruhig gesenkt, keine Wirkgeste, der Blick nüchtern wie ein Riegel. Einer, den man ruft, wenn etwas nicht draußen bleiben will. Hintergrund: sattes Magenta.
+36. player_human_hexward_f.png — Eine Bannmagierin: geschwärztes Kettenhemd unter dunkler Robe, das aschbraune Haar kurz, zinngraue Bannsiegel am Gurt, das Grimoire an der Kette. Der Stab ruhig gesenkt, der Blick von jemandem, der Türen zweimal prüft. Hintergrund: sattes Magenta.
+
+
+── BATCH 5 — MENSCHEN III: HOHE MAGIE + BERUFE I (10 Bilder) ────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Kämpfer (Prompts
+37–40): kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren (41–46):
+ruhige, selbstsichere Meister-Haltung mit ihrem Werkzeug. Hintergrund:
+komplett einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Menschen des Reachs, etwa 1,70 bis
+1,90 m — wettergegerbte Gesichter, sichtbare, gut verheilte Narben, volles
+Spektrum an Haut- und Haartönen; die Referenz-Anatomie des Rosters.
+
+37. player_human_pyrekeeper_m.png — Ein Scheiterwart, Priester der Brandriten: anthrazitgraue, schwere Robe mit rostroten Saumbändern, Ketten aus verkohlten Holzperlen um den Hals, ein breiter Aschestreifen quer über der Stirn. Der hohe Stab trägt eine kalte, geschwärzte Eisenschale ohne Flamme. Würde, die nach Rauch riecht. Hintergrund: sattes Grün.
+38. player_human_pyrekeeper_f.png — Eine Scheiterwartin: anthrazitgraue Robe mit rostroten Saumbändern, das dunkle Haar streng verhüllt, verkohlte Holzperlen, der Aschestreifen über der Stirn. Der Stab mit der kalten Eisenschale ruhig aufgesetzt. Sie hat mehr verabschiedet, als sie begrüßt hat. Hintergrund: sattes Grün.
+39. player_human_voidwarden_m.png — Ein Erzmagier an der Grenze zur Leere: vielschichtige nachtschwarze Robe mit knochenweißen Schließen, dunkle Panzerhandschuhe, über den Schultern ein schwerer Kragen aus mattem schwarzem Eisen. Der hohe Stab endet in einer stumpfen Scheibe aus schwarzem Stein. Keine Geste, kein Leuchten — nur eine Kälte, die den Raum leiser macht. Hintergrund: sattes Grün.
+40. player_human_voidwarden_f.png — Eine Erzmagierin derselben Schule: nachtschwarze Schichtenrobe mit knochenweißen Schließen, weißgraues, streng gebundenes Haar, dunkle Panzerhandschuhe. Der Stab mit der schwarzen Steinscheibe ruhig neben ihr, der Blick ruhig und sehr weit weg. Hintergrund: sattes Grün.
+41. player_human_hearthkeeper_m.png — Ein Feldkoch wie ein Quartiermeister-Veteran: breit, wettergegerbt, kurzer grauer Bart, ein dunkles Wams mit aufgerollten Ärmeln unter einer ledernen Kochschürze; quer über der Brust ein Gurt mit blitzblanken Messern, in der Hand ein schwerer gusseiserner Kessel wie ein Schild. Einer, der Armeen satt und bei Laune hält. Hintergrund: sattes Blau.
+42. player_human_hearthkeeper_f.png — Eine Feldköchin desselben Schlags: kräftig, resolut, das Haar unter einem dunklen Tuch, Messergurt quer über der Lederschürze, den gusseisernen Kessel am Henkel in der Faust. Der Blick einer Frau, deren Küche niemand zweimal kritisiert. Hintergrund: sattes Blau.
+43. player_human_herbwise_m.png — Ein Giftmeister mit der Aura eines Arztes, dem man besser nicht widerspricht: schlank, präzise, dunkler Mantel mit hohem Kragen über einer Weste voller Phiolen in Lederschlaufen, die Flüssigkeiten dunkel und matt; in der Hand ein Mörser aus schwarzem Stein, am Gurt getrocknete Kräuterbündel und ein silbernes Seziermesser. Hintergrund: sattes Magenta.
+44. player_human_herbwise_f.png — Eine Giftmeisterin: streng zurückgebundenes dunkles Haar, wache graue Augen, dunkler Hochkragen-Mantel über der Phiolen-Weste, schwarzer Steinmörser in der Armbeuge, Seziermesser am Gurt. Freundlich wie eine Apothekerin, tödlich wie ihr Regal. Hintergrund: sattes Magenta.
+45. player_human_swordsmith_m.png — Ein Klingenschmied, sehnig statt massig, mit den präzisen Händen eines Uhrmachers: dunkle Lederschürze mit Messingnieten über rußgrauem Leinen, die Unterarme narbig von Funken. Über dem Amboss-Arm ein Lederband mit einer frisch geschliffenen, matten Klinge, in der Rechten der Schmiedehammer, gesenkt. Der prüfende Blick, der jeden Grat findet. Hintergrund: sattes Blau.
+46. player_human_swordsmith_f.png — Eine Klingenschmiedin: das dunkle Haar hochgebunden, Rußspuren am Kinn, Lederschürze mit Messingnieten, die matte, frisch geschliffene Klinge über dem Lederband, der Hammer gesenkt. Sie spricht wenig; ihre Klingen sprechen vor Gericht. Hintergrund: sattes Blau.
+
+
+── BATCH 6 — MENSCHEN IV: BERUFE II (10 Bilder) ─────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, ruhige selbstsichere Meister-Haltung mit
+Werkzeug, alles MATT ohne Glühen. Hintergrund: komplett einfarbige satte
+Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Menschen des Reachs, etwa 1,70 bis
+1,90 m — wettergegerbte Gesichter, sichtbare, gut verheilte Narben, volles
+Spektrum an Haut- und Haartönen; die Referenz-Anatomie des Rosters.
+
+47. player_human_harvestreeve_m.png — Ein Erntevogt mit der Präsenz eines Feldherrn: robuste dunkle Feldkleidung mit Ledergamaschen und breitem Gurt, die Sichel daran wie ein Kurzschwert; der Dreschflegel geschultert, unter dem Arm eine fest gebundene Korngarbe. Wettergesicht, grauer Stoppelbart, der Blick über Felder, die ihm gehorchen. Hintergrund: sattes Blau.
+48. player_human_harvestreeve_f.png — Eine Erntevogtin: kräftig, aufrecht, das dunkelblonde Haar unter einem Tuch, Feldkleidung mit Ledergamaschen, Sichel am Gurt, der Dreschflegel geschultert, die Korngarbe unterm Arm. Jahreszeiten diskutieren nicht mit ihr. Hintergrund: sattes Blau.
+49. player_human_delver_m.png — Ein Schachtgänger: verstärkte dunkle Lederkluft mit eisernen Knieplatten, der Helm mit unbeleuchteter Blendlaterne, quer über der Brust Seilrollen und Haken, Grubenstaub in jeder Falte. Die schwere Spitzhacke geschultert, der Stand sicher wie ein gesetzter Stützbalken. Hintergrund: sattes Magenta.
+50. player_human_delver_f.png — Eine Schachtgängerin: sehnig und kompakt, das Haar kurz unter dem Laternenhelm, verstärkte Lederkluft, Seilrollen über der Brust, die Spitzhacke geschultert. Der ruhige Blick von jemandem, der Dunkelheit als Arbeitsplatz betrachtet. Hintergrund: sattes Magenta.
+51. player_human_ferryman_m.png — Ein Fährmann und Flussfischer: langer geteerter Mantel, breitkrempiger dunkler Hut, der lange Bootshaken aufrecht wie ein Stab, über dem Rücken gebündelte Aalreusen. Ein hageres Flussgesicht mit grauen Bartstoppeln und dem Blick von jemandem, der weiß, was nachts im Wasser schwimmt. Hintergrund: sattes Grün.
+52. player_human_ferryman_f.png — Eine Fährfrau: geteerter Mantel, das graubraune Haar geflochten unter dem Hutrand, der Bootshaken aufrecht in der Hand, Aalreusen über dem Rücken, ein Fangkorb an der Hüfte. Sie zählt die Fahrgäste zweimal, hin und zurück. Hintergrund: sattes Grün.
+53. player_human_woodreeve_m.png — Ein Forstvogt: wattiertes braunes Wams mit eisernen Plättchen an den Schultern, schwere Stiefel, am Gurt Keile und aufgerolltes Seil, Sägemehl in den Falten. Die große Fällaxt geschultert, der Bart voll, der Blick ruhig wie ein alter Baumbestand. Hintergrund: sattes Magenta.
+54. player_human_woodreeve_f.png — Eine Forstvogtin: hochgewachsen und kräftig, das rotbraune Haar geflochten, wattiertes Wams mit Eisenplättchen, Keile und Seil am Gurt, die Fällaxt geschultert. Sie fällt nichts, was sie nicht vorher gegrüßt hat. Hintergrund: sattes Magenta.
+55. player_human_nightkey_m.png — Ein Einsteiger der leisen Sorte, Der Nachtschlüssel genannt: enganliegendes schwarzes Leder unter einem weichen dunklen Mantel, an der Hüfte ein Ring feiner Dietriche wie der Schlüsselbund eines Kastellans, über der Schulter eine gerollte Strickleiter mit Wurfhaken. Keine sichtbare Waffe, ein höfliches, gefährliches Lächeln. Hintergrund: sattes Grün.
+56. player_human_nightkey_f.png — Eine Nachtschlüsslerin: schwarzes enganliegendes Leder, weicher Mantel, das dunkle Haar eng gebunden, der Dietrich-Ring an der Hüfte, Strickleiter und Wurfhaken über der Schulter. Sie besucht nur Häuser, deren Besitzer zu viel haben und zu wenig zählen. Hintergrund: sattes Grün.
+
+
+════ SEKTION C — ORKS (10 Designs, 20 Bilder, Batches 7–8) ════
+
+── BATCH 7 — ORKS I: KÄMPFER (10 Bilder) ────────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Schützen: Pfeil aufgelegt, Bogen GESENKT. Alle Oberflächen MATT:
+kein Glühen, kein Schimmer, keine Magie-Leuchteffekte. Hintergrund: eine
+KOMPLETT EINFARBIGE, SATTE Fläche in der im Prompt genannten Farbe — kein
+Verlauf, kein Schatten, keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Orks — gut 2,10 m groß und massiv,
+dunkelolive bis graugrüne Haut, sichtbare untere Hauer, breiter Kiefer,
+flache Nase, schwere Braue; Kriegszöpfe oder geschorene Muster, Narben als
+Ehrenzeichen.
+
+57. player_orc_youngtusk_m.png — Ein junger Ork vor seiner ersten Schlacht, gut zwei Meter, aber für einen Ork noch schlaksig: geschwärztes Kettenhemd über Leder, ein schlichter Rundschild am Arm, die Handaxt gesenkt. Auf dem Unterarm eine einzige, frisch verheilte Ehrennarbe, der Blick ernst und ein wenig zu jung für das, was kommt. Hintergrund: sattes Magenta.
+58. player_orc_youngtusk_f.png — Eine junge Ork-Kriegerin, gut zwei Meter, sehnig und noch nicht in voller Breite: geschwärztes Kettenhemd, Rundschild, Handaxt gesenkt; das schwarze Haar zu einem ersten, kurzen Kriegszopf gebunden, die erste Ehrennarbe am Unterarm. Entschlossen, wach, ungeduldig. Hintergrund: sattes Magenta.
+59. player_orc_bulwark_m.png — Ein hünenhafter, gut zwei Meter großer Ork-Krieger mit dunkeloliver Haut und hervorstehenden Hauern, in schwerer, kantiger Plattenrüstung aus geschwärztem Eisen mit Nietenreihen; über dem Rücken ein zerschrammter Turmschild, in der Faust ein Streithammer, dessen Kopf auf dem Boden ruht. Breitbeiniger, unerschütterlicher Stand — eine lebende Mauer. Hintergrund: sattes Magenta.
+60. player_orc_bulwark_f.png — Eine Ork-Kriegerin derselben Garde, ebenso gut zwei Meter hoch: dunkelolive Haut, kurzes zurückgeschorenes Haar mit Kriegszöpfen, schwere geschwärzte Plattenrüstung, Turmschild am Arm, Streithammer über der Schulter. Ruhig, massiv, unbezwingbar wirkend. Hintergrund: sattes Magenta.
+61. player_orc_gatebreaker_m.png — Ein Ork-Brecher, weit über zwei Meter hoch und massiv, in Plattenrüstung mit torbeschlagartigen Eisenbändern; in beiden Fäusten ruht quer ein gewaltiger Zweihand-Rammhammer, dessen Kopf mit Eisenringen bandiert ist. Auf der Brustplatte eingeschlagene Kerben, eine je gehaltener Bresche. Er öffnet Wege, wo keine sind. Hintergrund: sattes Blau.
+62. player_orc_gatebreaker_f.png — Eine Ork-Brecherin: gut zwei Meter zehn, Schultern wie Torpfosten, Plattenrüstung mit Eisenbändern, der Rammhammer quer in beiden Fäusten, das Haar zu einem geschorenen Muster rasiert. Ihre Kerbenreihe auf der Brustplatte ist länger als die der meisten Männer. Hintergrund: sattes Blau.
+63. player_orc_warchief_m.png — Ein Ork-Kriegsfürst am Ende aller Beweise: gut zwei Meter zehn, prunkvoll-schwere geschwärzte Vollplatte, über den Schultern ein Mantel aus dunklem Bärenfell, die Brustplatte dicht an dicht mit eingeschlagenen Ehrenzeichen. Ein gebrochener und ein ganzer Hauer, graue Kriegszöpfe, die gewaltige Kriegsaxt aufgestützt wie ein Zepter. Hintergrund: sattes Magenta.
+64. player_orc_warchief_f.png — Eine Ork-Kriegsfürstin: gut zwei Meter zehn, geschwärzte Vollplatte mit Ehrenzeichen-Reihen, der Bärenfell-Mantel über einer Schulter, graues Haar in schweren Kriegszöpfen, ein kaltes, ruhiges Herrschergesicht mit sichtbaren Hauern. Die Kriegsaxt aufgestützt, nichts an ihr muss laut sein. Hintergrund: sattes Magenta.
+65. player_orc_warbow_m.png — Ein Ork-Bogner, gut zwei Meter massige Ruhe: ein Kriegsbogen aus schwarzem Horn, so hoch wie ein Mensch, gesenkt in der Faust, ein Pfeil wie ein kurzer Speer aufgelegt; Lederharnisch mit Eisenplatten, der Köcher wie ein Speerbündel über dem Rücken. Nur ein Ork spannt dieses Holz. Hintergrund: sattes Blau.
+66. player_orc_warbow_f.png — Eine Ork-Bognerin: gut zwei Meter, muskulöse Arme mit Ehrennarben, der mannshohe schwarze Hornbogen gesenkt, der Speerpfeil aufgelegt; Lederharnisch mit Eisenplatten, das Haar seitlich geschoren mit einem Kriegszopf. Ihr Auszug hält, was drei Männer versprechen. Hintergrund: sattes Blau.
+
+
+── BATCH 8 — ORKS II: MAGIE + BERUFE (10 Bilder) ────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Magier (Prompts 67–68):
+kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren (69–76): ruhige,
+selbstsichere Meister-Haltung mit ihrem Werkzeug. Hintergrund: komplett
+einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Orks — gut 2,10 m groß und massiv,
+dunkelolive bis graugrüne Haut, sichtbare untere Hauer, breiter Kiefer,
+flache Nase, schwere Braue; Kriegszöpfe oder geschorene Muster, Narben als
+Ehrenzeichen.
+
+67. player_orc_ashspeaker_m.png — Ein Aschesprecher, Priester der Ahnen, gut zwei Meter massive Würde: schwerer Mantel aus dunklen Tuchbahnen über Plattenstücken, weiße Tonerde-Zeichen auf Stirn und Unterarmen, um den Hals geschnitzte Ahnenmarken aus Knochen. Der Stab aus verkohlter Eiche mit eisernen Kappen ruhig gesenkt, keine Geste, kein Leuchten. Hintergrund: sattes Magenta.
+68. player_orc_ashspeaker_f.png — Eine Aschesprecherin: gut zwei Meter, graugrüne Haut, weiße Tonerde-Zeichen über den Augen, das graue Haar streng geflochten; dunkler Tuchbahnen-Mantel über Plattenstücken, Ahnenmarken aus Knochen, der verkohlte Eichenstab ruhig aufgesetzt. Die Ahnen reden durch sie, und sie reden leise. Hintergrund: sattes Magenta.
+69. player_orc_anvilborn_m.png — Ein massiger Ork-Schmied wie ein Waffenfürst, gut zwei Meter hoch: dunkelolive Haut, nackte vernarbte Unterarme mit dunklen eingebrannten Zeichen, rußgeschwärzte, eisenbeschlagene Lederschürze mit schweren Nieten; der Bart mit Eisenringen geflochten, über der Schulter ein gewaltiger Doppelhammer mit graviertem Kopf. Breitbeinig und ruhig — einer, dessen Klingen Könige tragen. Hintergrund: sattes Magenta.
+70. player_orc_anvilborn_f.png — Eine Ork-Schmiedin: muskulös, gut zwei Meter hoch, dunkelolive Haut, das Haar zu einem harten Kamm gebunden, Brandnarben wie Ehrenzeichen auf den Unterarmen; eisenbeschlagene Lederschürze, der schwere Gravurkopf-Hammer über der Schulter. Der abschätzende Blick einer Meisterin, die jeden Stahl liest. Hintergrund: sattes Magenta.
+71. player_orc_thornfeller_m.png — Ein Ork-Holzfäller wie ein wandelnder Baum: riesig, gut zwei Meter zehn, dunkelolive Haut, nackter vernarbter Oberkörper unter gekreuzten Ledergurten, schwere Stiefel; über der Schulter eine gewaltige Doppelaxt mit schartigem, dunklem Blatt. Ruhige, urgewaltige Präsenz. Hintergrund: sattes Magenta.
+72. player_orc_thornfeller_f.png — Eine Ork-Holzfällerin: gut zwei Meter hochgewachsen und muskulös, dunkelolive Haut, das Haar zu Kriegszöpfen geflochten, Ledergurte über einem dunklen ärmellosen Wams; die Doppelaxt lässig über der Schulter. Ein Lächeln, das Wälder nervös macht. Hintergrund: sattes Magenta.
+73. player_orc_orebreaker_m.png — Ein Ork-Erzbrecher: gut zwei Meter kompakter Masse, dunkle Lederkluft mit eisernen Knieplatten, auf dem Rücken eine hölzerne Kiepe voll dunkler Erzbrocken; in beiden Fäusten die doppelköpfige Brechhacke, quer und ruhig. Wo Duvra zirkeln, bricht er einfach durch. Hintergrund: sattes Blau.
+74. player_orc_orebreaker_f.png — Eine Ork-Erzbrecherin: gut zwei Meter, muskulöse Schultern, Lederkluft mit Eisenknien, die Erzkiepe auf dem Rücken, die Brechhacke quer in den Fäusten; das Haar seitlich geschoren, Staub auf der graugrünen Haut. Der Berg gibt schneller nach als sie. Hintergrund: sattes Blau.
+75. player_orc_hidetanner_m.png — Ein Ork-Häutegerber: gut zwei Meter, schwere fleckige Gerberschürze über nacktem Oberkörper, die Unterarme dunkel verfärbt von Lohe, über der Schulter gerollte dunkle Häute; in beiden Händen das zweigriffige Schabmesser, ruhig wie ein Ehrengruß. Sein Leder überlebt seine Träger. Hintergrund: sattes Magenta.
+76. player_orc_hidetanner_f.png — Eine Ork-Häutegerberin: gut zwei Meter, kräftig, das Haar hochgebunden, fleckige Gerberschürze, lohe-dunkle Unterarme, Häute über der Schulter und das zweigriffige Schabmesser in den Händen. Sie erkennt gutes Leder am Geruch, schlechtes am Besitzer. Hintergrund: sattes Magenta.
+
+
+════ SEKTION D — RAKHARI (10 Designs, 20 Bilder, Batches 9–10) ════
+
+── BATCH 9 — RAKHARI I: KÄMPFER (10 Bilder) ─────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Schützen: Pfeil aufgelegt, Bogen GESENKT. Alle Oberflächen MATT:
+kein Glühen, kein Schimmer, keine Magie-Leuchteffekte. Hintergrund: eine
+KOMPLETT EINFARBIGE, SATTE Fläche in der im Prompt genannten Farbe — kein
+Verlauf, kein Schatten, keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Rakhari, Tiger-Menschen — etwa
+1,90 m, athletisch und aufrecht, menschliche Statur und Haltung; kräftiger,
+fast menschlicher Gesichtsschnitt mit kurzer breiter Raubtiernase und
+markantem Kiefer; gestreiftes Fell in Sand und Rost mit dunklen
+Tigerstreifen (seltene dunkle Varianten), kleine runde Ohren hoch am Kopf,
+angedeutete Reißzähne, gold-bernsteinfarbene Tigeraugen, kräftige Hände mit
+Krallen, langer Tigerschwanz; Raubtier-Grazie mit Gewicht.
+
+77. player_rakhari_clawsworn_m.png — Ein junger Krieger des Tigervolks: sandfarbenes Fell mit klaren dunklen Tigerstreifen, frische Ritual-Aschezeichen auf den Unterarmen; leichter dunkler Lederharnisch mit einem Gurt aus Karawanenknoten, in beiden Händen je ein kurzes Krummmesser, gesenkt. Der erste Schwur ist geleistet, der Rest ist Übung. Hintergrund: sattes Grün.
+78. player_rakhari_clawsworn_f.png — Eine junge Kriegerin des Tigervolks: rostfarbenes Fell mit dunklen Streifen, Aschezeichen auf den Unterarmen, leichter Lederharnisch mit Knotengurt; die beiden Krummmesser gesenkt, der lange Tigerschwanz ruhig, die bernsteinfarbenen Augen wach nach rechts. Hintergrund: sattes Grün.
+79. player_rakhari_speardancer_m.png — Ein hochgewachsener Krieger des Tigervolks: fast einen Meter neunzig, athletisch aufrecht, sandfarbenes Fell mit dunklen Tigerstreifen, kurze breite Raubtiernase, markanter Kiefer, kleine runde Ohren durch die Helmzier geführt; in dunkelrot lackiertem Lamellenpanzer mit schwarzen Seidenbändern, die lange Stangenwaffe mit geschwungener Klinge steht gepflanzt neben ihm, beide Hände am Schaft. Aufrecht, still, tödlich elegant. Hintergrund: sattes Grün.
+80. player_rakhari_speardancer_f.png — Eine Kriegerin des Tigervolks: athletisch und aufrecht, rostfarbenes Fell mit dunklen Tigerstreifen, markanter Kiefer, gold-bernsteinfarbene Augen; dunkelrot lackierter Lamellenpanzer mit schwarzen Bändern, die Glefe gepflanzt, der Blick ruhig und wach nach rechts. Anmut, die jederzeit in Gewalt kippen kann. Hintergrund: sattes Grün.
+81. player_rakhari_emberfang_m.png — Ein Veteran des Tigervolks in der schwersten Rüstung seiner Art: schwarz lackierte Plattenrüstung mit sparsamen mattgoldenen Nieten und rostroten Riemen, der Kopf frei — sandfarbenes Fell mit breiten dunklen Streifen, ein zerkerbtes rundes Ohr. Der gewaltige Zweihand-Krummsäbel gesenkt in beiden Händen, der Schwanz ruhig wie ein gespanntes Seil. Hintergrund: sattes Grün.
+82. player_rakhari_emberfang_f.png — Eine Veteranin des Tigervolks: schwarz lackierte Plattenrüstung mit mattgoldenen Nieten, der Kopf frei, rostfarbenes Fell mit breiten dunklen Streifen und einer alten Narbe über der Braue. Der Zweihand-Krummsäbel gesenkt, die Tigeraugen ruhig und sehr wach. Hintergrund: sattes Grün.
+83. player_rakhari_dunestalker_m.png — Ein Pirschjäger des Tigervolks aus der verbrannten Karawanenheimat: staubfarbene Wickelkleidung unter einem leichten dunklen Schuppenharnisch, ein loses Tuch um den Hals, ein Wasserschlauch am Gurt. Der Recurvebogen gesenkt, ein Pfeil aufgelegt, das sandfarbene, dunkel gestreifte Fell wie Tarnung im Ödland. Hintergrund: sattes Blau.
+84. player_rakhari_dunestalker_f.png — Eine Pirschjägerin des Tigervolks: staubfarbene Wickelkleidung, leichter Schuppenharnisch, Halstuch und Wasserschlauch; der Recurvebogen gesenkt mit aufgelegtem Pfeil, das gestreifte Fell staubgepudert, der Blick liest die Ferne nach rechts. Hintergrund: sattes Blau.
+85. player_rakhari_farspear_m.png — Ein Speerwerfer des Tigervolks: dunkler Lederharnisch mit matten Metallscheiben, über dem Rücken ein Köcher kurzer Wurfspeere, einer davon locker gesenkt in der rechten Hand, nicht erhoben. Sandfarbenes Fell, breite Schultern, der lange Schwanz als Gegengewicht. Auf hundert Schritt trifft er ein Handgelenk. Hintergrund: sattes Grün.
+86. player_rakhari_farspear_f.png — Eine Speerwerferin des Tigervolks: dunkler Lederharnisch mit Metallscheiben, der Rückenköcher voller kurzer Wurfspeere, einer gesenkt in der Hand; rostfarbenes, dunkel gestreiftes Fell, die Haltung entspannt wie vor einem langen Tag. Hintergrund: sattes Grün.
+
+
+── BATCH 10 — RAKHARI II: MAGIE + BERUFE (10 Bilder) ────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Magier (Prompts 87–88):
+kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren (89–96): ruhige,
+selbstsichere Meister-Haltung mit ihrem Werkzeug. Hintergrund: komplett
+einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Rakhari, Tiger-Menschen — etwa
+1,90 m, athletisch und aufrecht, menschliche Statur und Haltung; kräftiger,
+fast menschlicher Gesichtsschnitt mit kurzer breiter Raubtiernase und
+markantem Kiefer; gestreiftes Fell in Sand und Rost mit dunklen
+Tigerstreifen (seltene dunkle Varianten), kleine runde Ohren hoch am Kopf,
+angedeutete Reißzähne, gold-bernsteinfarbene Tigeraugen, kräftige Hände mit
+Krallen, langer Tigerschwanz; Raubtier-Grazie mit Gewicht.
+
+87. player_rakhari_ritesinger_m.png — Ein Erzmagier des Tigervolks, eine der seltenen dunklen Varianten: fast schwarzes Fell mit schattenhaft dunkleren Streifen, schmale goldene Tigeraugen, markanter Kiefer; in einem prächtigen, tiefroten Ornat mit schwarzen Lackplatten an Schultern und Unterarmen, hohe Kopfzier mit Aussparungen für die kleinen runden Ohren; der Zeremonienstab aus dunklem Metall mit stumpfen Glocken ruht in der Armbeuge. Macht, die nichts beweisen muss. Hintergrund: sattes Grün.
+88. player_rakhari_ritesinger_f.png — Eine Erzmagierin des Tigervolks: schlank, nachtdunkles Fell mit schattenhafter Streifung, goldene Tigeraugen, tiefroter Ornat mit schwarzen Lackplatten und hoher Kopfzier; der Glockenstab ruhig in beiden Händen. Getragene, gefährliche Würde. Hintergrund: sattes Grün.
+89. player_rakhari_sower_m.png — Ein Farmer des Tigervolks mit der Präsenz eines Schnitters: hochgewachsen, graubraunes Fell mit dunklen Tigerstreifen, ein dunkler, offener Arbeitsmantel über robustem Leinen; in beiden Händen ruht eine lange, geschwungene Sense mit dunklem Blatt, wie ein Zeremonienstab gehalten. Ernst und still — die Ernte wartet auf niemanden. Hintergrund: sattes Magenta.
+90. player_rakhari_sower_f.png — Eine Farmerin des Tigervolks: schlank, graubraunes Fell mit dunklen Tigerstreifen, ein dunkles Kopftuch zwischen den kleinen runden Ohren, offener Arbeitsmantel; die geschwungene Sense aufgestützt, am Gurt kleine Saatbeutel wie Munitionstaschen. Der geduldige Blick einer Frau, die Jahreszeiten befehligt. Hintergrund: sattes Magenta.
+91. player_rakhari_spiceward_m.png — Ein Karawanenkoch des Tigervolks, Gewürzwart genannt: dunkler Mantel mit Reihen kleiner verkorkter Gewürzgläser in Lederschlaufen, eine geschwärzte gusseiserne Pfanne am Rückengurt, die lange eiserne Schöpfkelle in der Hand wie ein Amtsstab. Sandfarbenes, gestreiftes Fell, ein abgewogener, prüfender Blick. Seine Küche hat Karawanen durch Hungerjahre getragen. Hintergrund: sattes Blau.
+92. player_rakhari_spiceward_f.png — Eine Gewürzwartin des Tigervolks: dunkler Mantel voller kleiner Gewürzgläser, die Eisenpfanne am Rücken, die Schöpfkelle ruhig in der Hand; rostfarbenes, dunkel gestreiftes Fell, das Kinn angehoben wie bei einer Verkostung. Sie würzt nach Erinnerung, und die Erinnerung ist lang. Hintergrund: sattes Blau.
+93. player_rakhari_rootbinder_m.png — Ein Wurzelbinder des Tigervolks: robuste Lederweste mit dunklen Phiolen, am Gurt geschnürte Bündel getrockneter Wurzeln, in den Händen eine dunkle hölzerne Reibschale; das sandfarbene Fell an den Fingern von Pflanzensäften verfärbt. Er kennt jede Wurzel, die tötet, und jede, die es wiedergutmacht. Hintergrund: sattes Magenta.
+94. player_rakhari_rootbinder_f.png — Eine Wurzelbinderin des Tigervolks: Lederweste mit Phiolen, Wurzelbündel am Gurt, die Reibschale in der Armbeuge; rostfarbenes gestreiftes Fell, verfärbte Fingerspitzen, ein ruhiger, abwägender Blick. Ihre Rezepte sind älter als die Straßen, auf denen sie kamen. Hintergrund: sattes Magenta.
+95. player_rakhari_nightstripe_m.png — Ein Schleicher des Tigervolks, eine dunkle Variante: fast schwarzes Fell mit schattenhaften Streifen, ideal für Nachtarbeit; enganliegende anthrazitgraue Kleidung mit weichen Wickelstiefeln, ein flaches Dietrich-Etui an der Brust, der Hakendolch gesenkt. Er ist da gewesen, bevor jemand fragt, und weg, bevor jemand antwortet. Hintergrund: sattes Magenta.
+96. player_rakhari_nightstripe_f.png — Eine Schleicherin des Tigervolks: nachtdunkles Fell mit schattenhafter Streifung, enganliegende anthrazitgraue Kleidung, Dietrich-Etui, der Hakendolch locker gesenkt; die goldenen Tigeraugen das Hellste am ganzen Bild. Türen sind für sie eine Höflichkeitsfrage. Hintergrund: sattes Magenta.
+
+
+════ SEKTION E — GOBLINS (10 Designs, 20 Bilder, Batches 11–12) ════
+
+── BATCH 11 — GOBLINS I: KÄMPFER (10 Bilder) ────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Schützen: Pfeil aufgelegt, Bogen GESENKT, Armbrüste gesenkt. Alle
+Oberflächen MATT: kein Glühen, kein Schimmer, keine Magie-Leuchteffekte.
+Hintergrund: eine KOMPLETT EINFARBIGE, SATTE Fläche in der im Prompt
+genannten Farbe — kein Verlauf, kein Schatten, keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Goblins — klein, etwa anderthalb
+Meter, der Kopf auf Brusthöhe eines Menschen; drahtig-sehnig, moosgrüne bis
+dunkelgrüne Haut, große bewegliche spitze Ohren, scharfe Züge, spitze Zähne,
+lange flinke Finger; Kleidung zusammengetragen, aber funktional und gut
+gearbeitet, nie ärmlich.
+
+97. player_goblin_redknife_m.png — Ein Goblin-Klingenkämpfer, klein, kaum anderthalb Meter, aber mit der Haltung eines Duellanten: gestepptes dunkles Wams mit aufgenähten Metallplättchen, ein roter Kriegsbemalungs-Streifen quer über den Augen; in jeder Hand ein langes Kampfmesser, beide gesenkt. Wer über ihn lacht, tut es genau einmal. Hintergrund: sattes Blau.
+98. player_goblin_redknife_f.png — Eine Goblin-Klingenkämpferin: klein, kaum anderthalb Meter, sehnig, dunkelgrüne Haut, der rote Streifen über den Augen, schwarzes kurz gebundenes Haar; gesteppte Panzerung mit Metallplättchen, die beiden langen Kampfmesser gesenkt. Schnell wie ein schlechtes Gewissen. Hintergrund: sattes Blau.
+99. player_goblin_spikeshield_m.png — Ein Goblin-Schildträger, etwa anderthalb Meter klein und dennoch eine Wand: hinter einem für ihn übermannshohen Stachelschild aus geschwärztem Holz und Eisen fast verschwindend, nur Kopf und wache Augen darüber; ein kurzer Streitkolben gesenkt in der freien Hand, erstaunlich schwere, sauber gearbeitete Panzerung. Klein ist, wer weicht. Hintergrund: sattes Magenta.
+100. player_goblin_spikeshield_f.png — Eine Goblin-Schildträgerin: kaum anderthalb Meter, kompakt und zäh, moosgrüne Haut, das Haar unter einer eisernen Sturmhaube; der übermannshohe Stachelschild vor ihr aufgesetzt, der Streitkolben gesenkt. Ihr Abschnitt hat noch nie nachgegeben. Hintergrund: sattes Magenta.
+101. player_goblin_kingsknife_m.png — Ein Goblin-Duellant, den man Das Königsmesser nennt: kaum anderthalb Meter, aber mit der Präsenz von zweien; feiner geschwärzter Kettenpanzer unter einem dunklen, gut geschnittenen Mantel, ein einzelner matter Goldring im spitzen Ohr. Zwei schmale Dolche gesenkt in den Händen, das Grinsen höflich und gefährlich. Hintergrund: sattes Blau.
+102. player_goblin_kingsknife_f.png — Eine Goblin-Duellantin desselben Rangs: kaum anderthalb Meter, dunkelgrüne Haut, schwarzes streng gebundenes Haar, feiner geschwärzter Kettenpanzer, dunkler Mantel, die beiden schmalen Dolche gesenkt. Elegant wie ein gebrochenes Versprechen. Hintergrund: sattes Blau.
+103. player_goblin_turncloak_m.png — Ein drahtiger Goblin-Deserteur, klein, kaum anderthalb Meter, mit dunkelgrüner Haut und zerrissenem Ohr, in einem erstaunlich gut gearbeiteten dunklen Ledermantel mit hochgestelltem Kragen; ein kompakter schwarzer Kurzbogen gesenkt in der Hand, quer über der Brust ein Bandolier mit Pfeilen und zwei Dolchen. Listig, schnell, unterschätzt — zum letzten Mal. Hintergrund: sattes Magenta.
+104. player_goblin_turncloak_f.png — Eine Goblin-Deserteurin: klein, kaum anderthalb Meter, sehnig, dunkelgrüne Haut, wildes schwarzes Haar unter einer ledernen Sturmhaube; dunkler Ledermantel, Kurzbogen gesenkt mit aufgelegtem Pfeil, ein schiefes, gefährliches Grinsen. Hintergrund: sattes Magenta.
+105. player_goblin_quickbolt_m.png — Ein Goblin-Armbrustschütze: etwa anderthalb Meter, flink und präzise; eine kompakte, sauber gebaute leichte Armbrust gesenkt in beiden Händen, quer über der Brust ein Bandolier kurzer Bolzen, dunkler Lederharnisch mit weicher Kapuze. Er lädt schneller, als andere zielen. Hintergrund: sattes Magenta.
+106. player_goblin_quickbolt_f.png — Eine Goblin-Armbrustschützin: klein, etwa anderthalb Meter, moosgrüne Haut, wache dunkle Augen unter der Lederkapuze; die kompakte Armbrust gesenkt, das Bolzen-Bandolier stramm, ein Ohrring aus einem plattgeklopften Bolzenkopf. Hintergrund: sattes Magenta.
+
+
+── BATCH 12 — GOBLINS II: MAGIE + BERUFE (10 Bilder) ────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Magier (Prompts
+107–108): kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren
+(109–116): ruhige, selbstsichere Meister-Haltung mit ihrem Werkzeug.
+Hintergrund: komplett einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Goblins — klein, etwa anderthalb
+Meter, der Kopf auf Brusthöhe eines Menschen; drahtig-sehnig, moosgrüne bis
+dunkelgrüne Haut, große bewegliche spitze Ohren, scharfe Züge, spitze Zähne,
+lange flinke Finger; Kleidung zusammengetragen, aber funktional und gut
+gearbeitet, nie ärmlich.
+
+107. player_goblin_hexfinger_m.png — Ein Goblin-Magier, den sie Hexfinger nennen: klein, etwa anderthalb Meter, in einer dunklen Robe, die sauber auf seine Größe geschneidert ist, nichts Abgeschnittenes, nichts Geliehenes; ein kurzer eisenbeschlagener Stab ruhig gesenkt, an einer Kette ein selbstgeschriebenes Grimoire mit Messingschließen. Der wache Blick von jemandem, der das Feuer nicht mehr leiht. Hintergrund: sattes Magenta.
+108. player_goblin_hexfinger_f.png — Eine Goblin-Magierin: klein, etwa anderthalb Meter, dunkelgrüne Haut, das schwarze Haar streng geflochten; die maßgeschneiderte dunkle Robe, der kurze eisenbeschlagene Stab gesenkt, das eigene Grimoire an der Kette. Klug, präzise, ohne jede Eile. Hintergrund: sattes Magenta.
+109. player_goblin_lockwhisper_m.png — Ein Goblin-Meisterdieb: klein, etwa anderthalb Meter, drahtig, dunkelgrüne Haut, in einem eleganten, enganliegenden Schattenanzug aus dunklem Leder mit weicher Kapuze; an der Brust ein aufgeklapptes Etui feinster Dietriche wie chirurgisches Besteck, in der Hand ein schmaler schwarzer Dolch, gesenkt. Ein Lächeln wie ein Schlüssel, der jedes Schloss kennt. Hintergrund: sattes Magenta.
+110. player_goblin_lockwhisper_f.png — Eine Goblin-Meisterdiebin: zierlich, kaum anderthalb Meter groß und blitzschnell wirkend, dunkelgrüne Haut, ein feiner Silberring im Ohr; enganliegender dunkler Lederanzug, Dietrich-Etui an der Hüfte, der schmale Dolch locker gesenkt. Elegant, amüsiert, gefährlich. Hintergrund: sattes Magenta.
+111. player_goblin_deeprunner_m.png — Ein Goblin-Tiefenläufer, Bergmann der engen Stollen: klein, etwa anderthalb Meter — genau richtig für Gänge, in die sonst niemand passt; enganliegende Lederkluft mit Kriechpolstern an Knien und Ellbogen, ein Helm mit kleiner unbeleuchteter Lampe, die kurze Spitzhacke geschultert, am Gurt Meißel und Seil. Hintergrund: sattes Blau.
+112. player_goblin_deeprunner_f.png — Eine Goblin-Tiefenläuferin: kaum anderthalb Meter, sehnig, moosgrüne Haut, der Lampenhelm über festgebundenem Haar; Lederkluft mit Kriechpolstern, die kurze Spitzhacke geschultert. Sie findet Adern, an denen breite Schultern scheitern. Hintergrund: sattes Blau.
+113. player_goblin_sporehand_m.png — Ein Goblin-Sammler, Sporenhand genannt: klein, etwa anderthalb Meter, in robuster dunkler Wanderkleidung mit langen Handschuhen, ein loses Tuch um den Hals; auf dem Rücken ein geflochtener Korb voll bleicher Pilze, in der Hand der Grabstock. Er weiß, welche Kappe nährt und welche erzählt, dass man stirbt. Hintergrund: sattes Magenta.
+114. player_goblin_sporehand_f.png — Eine Goblin-Sammlerin: kaum anderthalb Meter, dunkelgrüne Haut, waches schmales Gesicht unter der Kapuze; Handschuhe, Halstuch, der Pilzkorb auf dem Rücken, der Grabstock in der Hand. Ihre Ernte kommt aus Stollen, die keine Karte kennt. Hintergrund: sattes Magenta.
+115. player_goblin_bittertooth_m.png — Ein Goblin-Giftbrauer, Bitterzahn genannt: klein, etwa anderthalb Meter, in einer Lederweste voller dunkel verkorkter Phiolen, lange Handschuhe, am Gurt ein kleiner gusseiserner Brennkolben; in der ruhig gehaltenen Hand eine dunkle Phiole, prüfend betrachtet. Seine Rezepte heilen oder erledigen, je nach Bestellung. Hintergrund: sattes Blau.
+116. player_goblin_bittertooth_f.png — Eine Goblin-Giftbrauerin: kaum anderthalb Meter, moosgrüne Haut, das Haar unter einem dunklen Tuch, die Lederweste voller dunkler Phiolen, lange Handschuhe, der Brennkolben am Gurt; eine Phiole ruhig prüfend in der Hand. Freundlich bis zur letzten Zutat. Hintergrund: sattes Blau.
+
+
+════ SEKTION F — DUVRA (10 Designs, 20 Bilder, Batches 13–14) ════
+
+── BATCH 13 — DUVRA I: KÄMPFER (10 Bilder) ──────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Armbrüste gesenkt getragen. Alle Oberflächen MATT: kein Glühen,
+kein Schimmer, keine Magie-Leuchteffekte. Hintergrund: eine KOMPLETT
+EINFARBIGE, SATTE Fläche in der im Prompt genannten Farbe — kein Verlauf,
+kein Schatten, keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Duvra — kaum anderthalb Meter
+hoch, aber fassbreit und massig, klar unterschieden vom schmalen Goblin;
+graustichige Steinhaut mit dunkleren mineralischen Sprenkeln, breite flache
+Züge, tiefliegende dunkle Augen, schwere Brauen; dichtes dunkles Haar und
+Bärte mit Steinperlen und Eisenringen, Hände wie Schraubstöcke.
+
+117. player_duvra_shaleguard_m.png — Ein junger Tiefenwächter der Duvra: kaum anderthalb Meter hoch, aber fassbreit, graustichige Steinhaut mit dunklen mineralischen Sprenkeln; schlichte graue Platte aus kantigen Segmenten, ein kleiner eckiger Schild am Arm, der Streitkolben gesenkt. Der Bart noch kurz, erst eine Steinperle darin. Hintergrund: sattes Magenta.
+118. player_duvra_shaleguard_f.png — Eine junge Tiefenwächterin: kaum anderthalb Meter, massig-kompakt, mineralisch gesprenkelte Steinhaut, das dunkle Haar in einem ersten kunstvollen Zopf mit einer Steinperle; graue Segmentplatte, eckiger Schild, Streitkolben gesenkt. Sie steht, als hätte man sie vermauert. Hintergrund: sattes Magenta.
+119. player_duvra_tunnelbreak_m.png — Ein Stollenbrecher der Duvra: kaum anderthalb Meter, aber breit wie ein Fass, Plattenpanzer mit aufgesetzten Stützstreben-Profilen wie Grubenausbau; in beiden Schraubstock-Händen ein Streitkolben, geschmiedet aus einer schweren Brechstange. Wo er durch ist, ist ein Gang. Hintergrund: sattes Grün.
+120. player_duvra_tunnelbreak_f.png — Eine Stollenbrecherin: kaum anderthalb Meter, massig, graue Steinhaut mit dunklen Sprenkeln, geflochtenes dunkles Haar mit Eisenringen; der Stützstreben-Panzer, der Brechstangen-Streitkolben quer in beiden Händen. Geduld aus Granit. Hintergrund: sattes Grün.
+121. player_duvra_stonewarden_m.png — Ein gedrungener, fassbrüstiger Krieger des Tiefenvolks: kaum anderthalb Meter hoch, aber fassbreit, graustichige Steinhaut mit dunklen mineralischen Sprenkeln, breite Züge, dichter dunkler Bart mit Steinperlen; in einer wuchtigen Schwerplatte aus granitgrauem, kantig geschmiedetem Stahl, die Schultern wie behauene Blöcke; in beiden Händen ruht ein gewaltiger Kriegspickel quer vor dem Körper. Stand wie in den Fels gewachsen. Hintergrund: sattes Grün.
+122. player_duvra_stonewarden_f.png — Eine Kriegerin des Tiefenvolks: kaum anderthalb Meter, aber massig wie ein Amboss, graustichige Haut mit mineralischen Sprenkeln, geflochtenes dunkles Haar mit Eisenringen, dieselbe granitgraue Schwerplatte mit blockhaften Schultern; der Kriegspickel aufgestützt wie ein Wanderstab aus Eisen. Ruhige, felsenfeste Präsenz. Hintergrund: sattes Grün.
+123. player_duvra_oathanvil_m.png — Ein Duvra-Veteran, den sie den Eidamboss nennen: kaum anderthalb Meter, dafür breiter als jede Tür; monumentale Schwerplatte, deren Brust wie ein Ambossblock geformt ist, in die Platten eingeschlagene Zeichen wie Zeilen aus einem Schuldenbuch. Der gewaltige Schmiedehammer als Kriegswaffe aufgestützt, der graue Bart schwer von Eisenringen. Ein Versprechen mit Beinen. Hintergrund: sattes Magenta.
+124. player_duvra_oathanvil_f.png — Eine Duvra-Veteranin desselben Rangs: kaum anderthalb Meter, massig, die Ambossblock-Schwerplatte mit eingeschlagenen Schuldenbuch-Zeichen, das dunkle Haar in schweren Flechten mit Steinperlen; der Kriegs-Schmiedehammer aufgestützt. Ihr Wort hat einen Preis in Metall, und sie hat immer bezahlt. Hintergrund: sattes Magenta.
+125. player_duvra_boltwright_m.png — Ein Duvra-Armbrustmeister: kaum anderthalb Meter, fassbreit, halbe graue Platte über dunklem Wams; die schwere Stollen-Armbrust mit Kurbelwinde gesenkt in beiden Händen, im Seitenköcher Bolzen wie Meißel. Er schießt, wie Duvra rechnen: einmal, richtig. Hintergrund: sattes Grün.
+126. player_duvra_boltwright_f.png — Eine Duvra-Armbrustmeisterin: kaum anderthalb Meter, massig-kompakt, mineralisch gesprenkelte Steinhaut, geflochtenes Haar mit Steinperlen; halbe Platte, die schwere Kurbelarmbrust gesenkt, Meißelbolzen im Köcher. Ruhig wie ein Stollen vor dem Sprengschlag. Hintergrund: sattes Grün.
+
+
+── BATCH 14 — DUVRA II: MAGIE + BERUFE (10 Bilder) ──────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Magier (Prompts
+127–128): kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren
+(129–136): ruhige, selbstsichere Meister-Haltung mit ihrem Werkzeug.
+Hintergrund: komplett einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Duvra — kaum anderthalb Meter
+hoch, aber fassbreit und massig, klar unterschieden vom schmalen Goblin;
+graustichige Steinhaut mit dunkleren mineralischen Sprenkeln, breite flache
+Züge, tiefliegende dunkle Augen, schwere Brauen; dichtes dunkles Haar und
+Bärte mit Steinperlen und Eisenringen, Hände wie Schraubstöcke.
+
+127. player_duvra_deepchant_m.png — Ein Flözkantor der Duvra, Magier der Tiefe: kaum anderthalb Meter, fassbreit, schwere steingraue Robe über Plattenstücken, um den Hals eine Kette aus Steinperlen; der hohe Stab aus dunklem, matt poliertem Stein ruht in der Schraubstock-Faust. Sein Lied hält Stollen, die kein Balken mehr hält. Hintergrund: sattes Magenta.
+128. player_duvra_deepchant_f.png — Eine Flözkantorin: kaum anderthalb Meter, massig, mineralisch gesprenkelte Steinhaut, kunstvoll geflochtenes dunkles Haar mit Steinperlen; die steingraue Robe über Plattenstücken, der dunkle Steinstab ruhig aufgesetzt. Sie singt leise, und der Berg hört zu. Hintergrund: sattes Magenta.
+129. player_duvra_seamsinger_m.png — Ein Bergmann des Tiefenvolks: kaum anderthalb Meter hoch, gedrungen und fassbrüstig, graustichige Haut mit mineralischen Sprenkeln und rußgeränderten Augen, dunkle Lederkluft mit eisernen Knieplatten, am Gurt Meißel und eine unbeleuchtete Grubenlaterne; über der Schulter eine schwere, zweischneidige Spitzhacke mit graviertem Kopf. Einer, der das Gestein singen hört. Hintergrund: sattes Grün.
+130. player_duvra_seamsinger_f.png — Eine Bergfrau des Tiefenvolks: kaum anderthalb Meter, kompakt und kraftvoll, dunkles geflochtenes Haar mit Steinperlen, Lederkluft mit Eisenknien, die gravierte Spitzhacke über der Schulter, die Grubenlaterne am Gurt. Ruhig wie ein Stollen tief unter dem Sturm. Hintergrund: sattes Grün.
+131. player_duvra_gemwright_m.png — Ein Juwelenschleifer des Tiefenvolks wie ein Uhrmacher-Fürst: kaum anderthalb Meter, gedrungen, graustichige Haut mit mineralischen Sprenkeln, ein präzises Monokel-Gestell mit mehreren klappbaren Linsen vor dem Auge; dunkle Lederweste mit Dutzenden Mini-Werkzeugen in Schlaufen, in der Hand eine feine Fassungszange, auf der offenen Handfläche ein großer, MATT geschliffener dunkelroter Stein. Hintergrund: sattes Grün.
+132. player_duvra_gemwright_f.png — Eine Juwelenschleiferin des Tiefenvolks: kaum anderthalb Meter, kompakt, konzentriert, dunkles Haar streng gebunden, Mehrfachlinsen-Monokel hochgeklappt; Werkzeugweste, Fassungszange in der Hand, ein matter dunkelgrüner Stein zwischen den Fingern. Die Ruhe absoluter Präzision. Hintergrund: sattes Magenta.
+133. player_duvra_forgevein_m.png — Ein Adernschmied der Duvra: kaum anderthalb Meter, fassbreit, rußgeschwärzte schwere Schmiedeschürze, die gesprenkelten Unterarme nackt und narbig; in der Zange ein dunkles, abgekühltes Werkstück, der Hammer gesenkt in der anderen Faust, der Bart mit Eisenringen gegen die Funken gebunden. Er schmiedet, was seine Ahnen schuldeten. Hintergrund: sattes Grün.
+134. player_duvra_forgevein_f.png — Eine Adernschmiedin: kaum anderthalb Meter, massig-kompakt, das dunkle Haar streng hochgeflochten, die Schmiedeschürze rußgeschwärzt, Zange mit dunklem Werkstück und gesenkter Hammer. Ihre Nähte im Stahl sind gerade wie Erzadern im Buch. Hintergrund: sattes Grün.
+135. player_duvra_saltbaker_m.png — Ein Duvra-Bäcker, Salzbäcker der Tiefe: kaum anderthalb Meter, fassbreit, bemehlte dunkle Bäckerschürze über grauem Leinen, der Bart sorgfältig gebunden mit zwei Steinperlen; der lange hölzerne Brotschieber geschultert wie eine Hellebarde, am Rückengestell dunkle runde Brotlaibe. Sein Brot hält Wochen und Wintern stand. Hintergrund: sattes Blau.
+136. player_duvra_saltbaker_f.png — Eine Salzbäckerin: kaum anderthalb Meter, massig, mineralisch gesprenkelte Steinhaut, das dunkle Haar unter einem bemehlten Tuch geflochten; Bäckerschürze, der Brotschieber geschultert, Brotlaibe am Rückengestell. Bei den Duvra ist Brot eine Währung mit Kruste. Hintergrund: sattes Blau.
+
+
+════ SEKTION G — SESSKAR (10 Designs, 20 Bilder, Batches 15–16) ════
+
+── BATCH 15 — SESSKAR I: KÄMPFER (10 Bilder) ────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Schützen: Pfeil aufgelegt, Bogen GESENKT; Wurfwaffen gesenkt
+gehalten, nie im Wurf. Alle Oberflächen MATT: kein Glühen, kein Schimmer,
+keine Magie-Leuchteffekte. Hintergrund: eine KOMPLETT EINFARBIGE, SATTE
+Fläche in der im Prompt genannten Farbe — kein Verlauf, kein Schatten,
+keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Sesskar — etwa 1,80 m, schlank;
+feine graublaue bis salzgraue Schuppenhaut wie Haifischhaut mit hellerer
+Kehl- und Bauchseite, kein Haar, sondern Flossenkämme an Schädel und Nacken,
+Kiemenlinien seitlich am Hals, Nickhaut über bernsteinfarbenen Augen, leicht
+verlängerte Finger mit Schwimmhaut-Ansätzen.
+
+137. player_sesskar_tidehook_m.png — Ein junger Ufer-Kämpfer der Sesskar: geöltes dunkles Leder mit aufgenähten Schalenplättchen, ein kurzes Enterbeil gesenkt in der Hand, am Gurt ein Eisenhaken an aufgerollter Kette. Graublaue Haifischhaut mit heller Kehle, ein niedriger, zerkerbter Flossenkamm. Die Watten haben ihn erzogen, die Ertrunkenen haben ihn geprüft. Hintergrund: sattes Grün.
+138. player_sesskar_tidehook_f.png — Eine junge Ufer-Kämpferin: geöltes Leder mit Schalenplättchen, das Enterbeil gesenkt, Haken und Kette am Gurt; salzgraue Schuppenhaut, eine feine helle Kammlinie, wacher Blick unter der Nickhaut. Hintergrund: sattes Grün.
+139. player_sesskar_reefblade_m.png — Ein Sesskar-Klingenkämpfer: ein gebogener Säbel mit gezahntem Rücken wie ein Riffkamm, gesenkt; Rundschild aus überlappenden dunklen Schalensegmenten, Küraß aus geölten Lederbahnen. Graublaue Haifischhaut, die Kiemenlinien ruhig, der Stand tief und sicher wie auf nassem Deck. Hintergrund: sattes Magenta.
+140. player_sesskar_reefblade_f.png — Eine Sesskar-Klingenkämpferin: der Riffkamm-Säbel gesenkt, der Schalensegment-Schild am Arm, geölter Lederküraß; salzgraue Schuppenhaut mit hellem Kehlmuster, ein eleganter Flossenkamm mit kleinen Knochenringen. Sie ficht wie eine ablaufende Welle: erst weg, dann über dir. Hintergrund: sattes Magenta.
+141. player_sesskar_stormtide_m.png — Ein Veteran der Sturmflut-Garde: schwere dunkle Rüstung aus überlappenden Tiefseeschalen-Platten, ein Turmschild mit geschwungener Wellenschliff-Kante, die Harpunen-Lanze aufgestützt. Graublaue Haifischhaut, ein hoher vernarbter Flossenkamm, der Blick still wie Wasser vor dem Sturm. Hintergrund: sattes Grün.
+142. player_sesskar_stormtide_f.png — Eine Veteranin der Sturmflut-Garde: die dunkle Tiefseeschalen-Rüstung, der Wellenschliff-Turmschild, die Harpunen-Lanze aufgestützt; salzgraue Schuppenhaut, an der Hüfte die Namensschnur ihrer Ertrunkenen. Sie weicht nicht; sie hat es dem Wasser abgeschworen. Hintergrund: sattes Grün.
+143. player_sesskar_shoalspear_m.png — Ein Sesskar-Harpunier: knappes geöltes Lederzeug über der graublauen Haifischhaut, über dem Rücken ein Köcher kurzer Wurfharpunen, eine davon gesenkt in der Hand, dazu eine aufgerollte Wurfleine am Gurt. Er trifft den Fisch unter der spiegelnden Fläche und den Feind dahinter. Hintergrund: sattes Magenta.
+144. player_sesskar_shoalspear_f.png — Eine Sesskar-Harpunierin: geöltes Lederzeug, der Harpunenköcher über dem Rücken, eine Wurfharpune gesenkt, die Leine aufgerollt; helle Kehle, niedriger eleganter Flossenkamm, die Nickhaut halb über den bernsteinfarbenen Augen. Hintergrund: sattes Magenta.
+145. player_sesskar_saltarrow_m.png — Ein hochgewachsener Schütze der Sesskar: salzgebleichte, graublaue Schuppenhaut, schmale Kiemenlinien am Hals, bernsteinfarbene Augen; in einem dunklen Küraß aus überlappenden Schalenplatten mit schwerem, netzartig gewebtem Halbumhang; der lange Kompositbogen gesenkt, Pfeil aufgelegt. Still wie Wasser vor dem Sturm. Hintergrund: sattes Magenta.
+146. player_sesskar_saltarrow_f.png — Eine Schützin der Sesskar: schlank, graublaue Schuppenhaut mit hellerem Kehlmuster, Flossenkämme statt Haar, dunkler Schalenplatten-Küraß und Netz-Halbumhang; Langbogen gesenkt, Pfeil aufgelegt, der Blick ruhig auf die Ferne nach rechts. Hintergrund: sattes Magenta.
+
+
+── BATCH 16 — SESSKAR II: MAGIE + BERUFE (10 Bilder) ────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Magier (Prompts
+147–148): kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren
+(149–156): ruhige, selbstsichere Meister-Haltung mit ihrem Werkzeug.
+Hintergrund: komplett einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Sesskar — etwa 1,80 m, schlank;
+feine graublaue bis salzgraue Schuppenhaut wie Haifischhaut mit hellerer
+Kehl- und Bauchseite, kein Haar, sondern Flossenkämme an Schädel und Nacken,
+Kiemenlinien seitlich am Hals, Nickhaut über bernsteinfarbenen Augen, leicht
+verlängerte Finger mit Schwimmhaut-Ansätzen.
+
+147. player_sesskar_tidecaller_m.png — Ein Magier der Sesskar: graublaue Haifischhaut, Kiemenlinien, bernsteinfarbene Augen; in einer dunkelblauen, schweren Robe, deren Saum wie erstarrte Gischt gearbeitet ist, darüber ein Schulterharnisch aus dunklen Schalenplatten; der hohe Stab aus schwarzem Treibholz trägt eine stumpfe, matt geschliffene Glaskugel. Still und tief wie das Meer. Hintergrund: sattes Magenta.
+148. player_sesskar_tidecaller_f.png — Eine Magierin der Sesskar: schlank, graublaue Schuppen mit hellem Kehlmuster, Flossenkämme; dunkelblaue Gischtsaum-Robe, Schalenplatten-Schultern, der Treibholzstab mit matter Glaskugel ruhig neben ihr. Der Blick wie eine ablaufende Flut — ruhig und unausweichlich. Hintergrund: sattes Magenta.
+149. player_sesskar_weirkeeper_m.png — Ein narbiger Fischer-Veteran der Sesskar: breitschultrig, salzgraue Schuppenhaut, ein Auge von einer alten Hakennarbe gezeichnet; schwerer geölter Ledermantel über nackter, muskulöser Brust, in der Faust eine mannshohe Harpune mit Widerhaken, über der Schulter ein aufgerolltes dunkles Netz mit Bleigewichten. Ein Seewolf, dem das Meer nichts mehr erzählen kann. Hintergrund: sattes Magenta.
+150. player_sesskar_weirkeeper_f.png — Eine Fischerin der Sesskar: sehnig und wettergezeichnet, salzgraue Schuppen, Flossenkämme mit kleinen Knochenringen; geölter Ledermantel, die Harpune aufgestützt, das Wurfnetz über der Schulter. Ruhige Autorität einer Frau, die Stürme überstanden hat. Hintergrund: sattes Magenta.
+151. player_sesskar_brinecook_m.png — Ein Sesskar-Koch, Salzsud-Meister: Ölzeug-Schürze über dunklem Leinen, am Gurt Bündel getrockneter Fische und ein Ring geschmiedeter Haken, in der einen Hand der gusseiserne Suppenkessel, in der anderen die lange eiserne Fleischgabel. Graublaue Haifischhaut, prüfender Feinschmecker-Blick. Sein Sud wärmt Kähne durch Nebelnächte. Hintergrund: sattes Grün.
+152. player_sesskar_brinecook_f.png — Eine Salzsud-Köchin: Ölzeug-Schürze, getrocknete Fische und Hakenring am Gurt, Suppenkessel und lange Fleischgabel in den Händen; salzgraue Schuppenhaut, helle Kehle, eine ruhige, resolute Miene. Wer ihren Sud verschmäht, rudert selbst. Hintergrund: sattes Grün.
+153. player_sesskar_kelpwise_m.png — Ein Tangkundiger der Sesskar: langer dunkler Mantel, an dem gebündelte, getrocknete Algenstränge hängen, dazu Glasphiolen mit dunklem Sud in Lederschlaufen; in der Hand ein Erntemesser mit Hakenklinge. Graublaue Haifischhaut, bedächtige Bewegungen. Das Watt ist seine Apotheke. Hintergrund: sattes Magenta.
+154. player_sesskar_kelpwise_f.png — Eine Tangkundige: dunkler Mantel mit hängenden Algenbündeln und Sud-Phiolen, das Hakenmesser ruhig in der Hand; salzgraue Schuppenhaut, eine niedrige elegante Kammlinie, der Blick geduldig wie eine Ebbe. Hintergrund: sattes Magenta.
+155. player_sesskar_skinwright_m.png — Ein Hautwirker der Sesskar, Meister des Fischleders: eine Schürze aus glattem, dunklem Fischleder, über der Schulter fein geschuppte, matte Lederbahnen, in den Händen Ahle und Falzbein. Graublaue Haifischhaut, konzentrierte Ruhe. Sein Leder ist leicht, zäh und wasserdicht wie er selbst. Hintergrund: sattes Grün.
+156. player_sesskar_skinwright_f.png — Eine Hautwirkerin: Fischleder-Schürze, gerollte dunkle Lederbahnen über der Schulter, Ahle und Falzbein in den langen Fingern mit Schwimmhaut-Ansätzen; salzgraue Schuppenhaut, heller Kehlfleck, prüfender Blick auf die Naht. Hintergrund: sattes Grün.
+
+
+════ SEKTION H — ASCHGÄNGER (10 Designs, 20 Bilder, Batches 17–18) ════
+
+── BATCH 17 — ASCHGÄNGER I: KÄMPFER (10 Bilder) ─────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Schützen: Pfeil aufgelegt, Bogen GESENKT; Magier: keine Wirkgeste.
+Alle Oberflächen MATT: kein Glühen, kein Schimmer, keine Magie-
+Leuchteffekte. Hintergrund: eine KOMPLETT EINFARBIGE, SATTE Fläche in der im
+Prompt genannten Farbe — kein Verlauf, kein Schatten, keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Aschgänger — etwa 1,90 m, hager;
+blassgraue Haut mit dunklen Asche-Sprenkeln um Augen, Schläfen und
+Unterarme, natürlich dunkel geränderte Augen, früh weißes oder aschgraues
+Haar; sie wirken älter, als sie sind, mit ruhiger, langsamer Präsenz.
+
+157. player_ashwalker_roadwarden_m.png — Ein Straßenwart der Aschgänger, Kärrner der Totenstraßen: grauer Fuhrmannsmantel über leichtem dunklem Panzer, am Gurt eiserne Grabmarken und das kleine Spaten-Amulett; in der Faust eine Kampfaxt, deren Blatt aus einem geschärften Eisenspaten geschmiedet ist, gesenkt. Blassgraue, gesprenkelte Haut, weißes kurzes Haar. Er verteidigt Straßen, die sonst niemand geht. Hintergrund: sattes Grün.
+158. player_ashwalker_roadwarden_f.png — Eine Straßenwartin: grauer Fuhrmannsmantel über leichtem Panzer, Grabmarken und Spaten-Amulett am Gurt, die Spatenblatt-Axt gesenkt; aschweißes, streng gebundenes Haar, dunkel geränderte Augen, ruhige langsame Präsenz. Hintergrund: sattes Grün.
+159. player_ashwalker_cairnblade_m.png — Ein Aschgänger-Schwertträger: brünierte graue Halbplatte über dunklem Tuch, ein grauer Halbmantel, am Gurt eine Reihe kleiner Zinn-Namensmarken; das schwere gerade Schwert gesenkt in der Rechten. Hagere Gestalt, blassgraue gesprenkelte Haut, der Blick still wie ein gepflegtes Grab. Hintergrund: sattes Magenta.
+160. player_ashwalker_cairnblade_f.png — Eine Aschgänger-Schwertträgerin: brünierte graue Halbplatte, grauer Halbmantel, Zinn-Namensmarken am Gurt, das gerade Schwert gesenkt; aschgraues geflochtenes Haar, dunkle Augenränder, feine Sprenkel an den Schläfen. Sie grüßt die Toten zuerst, auch auf dem Schlachtfeld. Hintergrund: sattes Magenta.
+161. player_ashwalker_mournplate_m.png — Ein Aschgänger-Veteran in der Trauerplatte: mattschwarze Vollplatte, behängt mit Dutzenden kleiner Zinn-Grabmarken, die sich wie Schuppen überlagern; der Zweihand-Streithammer, dessen Kopf wie ein Grabstein-Quader geschmiedet ist, aufgestützt. Weißes Haar über hagerem, gesprenkeltem Gesicht. Jede Marke ein Name, jeder Name ein Grund. Hintergrund: sattes Grün.
+162. player_ashwalker_mournplate_f.png — Eine Aschgänger-Veteranin in der Trauerplatte: die mattschwarze Vollplatte mit überlappenden Zinn-Grabmarken, der Grabstein-Streithammer aufgestützt; aschweißes kurzes Haar, dunkel geränderte Augen mit ruhigem, sehr altem Blick. Hintergrund: sattes Grün.
+163. player_ashwalker_stillbow_m.png — Ein Aschgänger-Schütze, der Stille genannt: aschgrauer Kapuzenmantel über grauem Leder, der Bogen mit Stoff umwickelt, damit nichts klappert, die Pfeile grau gefiedert; der Bogen gesenkt, ein Pfeil aufgelegt. Blassgraue gesprenkelte Haut, farblos wie Nebel, geduldig wie Staub. Hintergrund: sattes Magenta.
+164. player_ashwalker_stillbow_f.png — Eine Aschgänger-Schützin: aschgrauer Kapuzenmantel, der umwickelte Bogen gesenkt mit aufgelegtem grauem Pfeil; unter der Kapuze weißes Haar und dunkel geränderte Augen. Man hört sie nicht kommen, man hört sie auch nicht gehen. Hintergrund: sattes Magenta.
+165. player_ashwalker_candlebearer_m.png — Ein Grenzpriester der Aschgänger, Kerzenträger genannt: anthrazitgraue Robe mit weicher Kapuze, quer über der Brust ein Bandelier mit unangezündeten bleichen Kerzen, in der Hand ein Stab mit einer dunklen, lichtlosen Eisenlaterne. Hagere Gestalt, gesprenkelte blassgraue Haut. Er trägt Licht für später, nicht für jetzt. Hintergrund: sattes Grün.
+166. player_ashwalker_candlebearer_f.png — Eine Grenzpriesterin: anthrazitgraue Robe, das Kerzen-Bandelier über der Brust, der Laternenstab ruhig aufgesetzt, die Laterne dunkel; aschweißes Haar unter der Kapuze, dunkle Augenränder, stille Würde. Hintergrund: sattes Grün.
+
+
+── BATCH 18 — ASCHGÄNGER II: MAGIE + BERUFE (10 Bilder) ─────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Magier (Prompts
+167–168): kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren
+(169–176): ruhige, selbstsichere Meister-Haltung mit ihrem Werkzeug.
+Hintergrund: komplett einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Aschgänger — etwa 1,90 m, hager;
+blassgraue Haut mit dunklen Asche-Sprenkeln um Augen, Schläfen und
+Unterarme, natürlich dunkel geränderte Augen, früh weißes oder aschgraues
+Haar; sie wirken älter, als sie sind, mit ruhiger, langsamer Präsenz.
+
+167. player_ashwalker_shroudweaver_m.png — Ein hochgewachsener Magier der Aschgänger: blassgrau gesprenkelte Haut, dunkle Augenränder wie Ruß, in einer vielschichtigen, anthrazitgrauen Robe aus schweren Tuchbahnen mit fein gearbeiteten Zinn-Schließen; das Gesicht halb von einer weichen Kapuze gerahmt, in der Hand ein hoher Stab aus schwarzem Eisen mit ringförmigem Kopf. Würdevoll und unheimlich still — ein Priester der Grenze. Hintergrund: sattes Grün.
+168. player_ashwalker_shroudweaver_f.png — Eine Magierin der Aschgänger: blassgrau gesprenkelte Haut, weiße Strähnen im dunklen Haar, anthrazitgraue Schichtenrobe mit Zinn-Schließen und weicher Kapuze; der schwarze Eisenstab mit Ringkopf ruhig aufgesetzt. Sanfte Stimme, harte Grenze — man spürt beides. Hintergrund: sattes Grün.
+169. player_ashwalker_gleaner_m.png — Ein Sammler der Aschgänger wie ein Grenzgänger: hager, blassgrau gesprenkelte Haut, ein weiter, kapuzentragender Wandermantel in Aschgrau mit vielen präzise gearbeiteten Taschen und Lederrollen; in der Hand ein hoher Wanderstab mit eiserner Spitze, am Gurt gebündelte dunkle Kräuter. Einer, der dorthin geht, wo sonst niemand erntet. Hintergrund: sattes Magenta.
+170. player_ashwalker_gleaner_f.png — Eine Sammlerin der Aschgänger: schmal, wach, weiße Strähnen unter der aschgrauen Kapuze, der Wandermantel voller geordneter Taschen; Wanderstab mit Eisenspitze, ein Bund dunkler Kräuter am Gurt. Leise, schnell, unbeirrbar. Hintergrund: sattes Magenta.
+171. player_ashwalker_greytiller_m.png — Ein Aschenbauer: graue, robuste Feldkleidung mit Ledergamaschen, ein Tuch locker um den Hals, am Schultergurt Saatbeutel, in den Händen eine langstielige Hacke, ruhig aufgesetzt. Blassgraue gesprenkelte Haut, weißes kurzes Haar. Er erntet auf Boden, den andere für tot erklärt haben, und der Boden dankt es ihm. Hintergrund: sattes Magenta.
+172. player_ashwalker_greytiller_f.png — Eine Aschenbäuerin: graue Feldkleidung, Halstuch, Saatbeutel am Gurt, die langstielige Hacke aufgesetzt; aschweißes, unter einem Tuch gebundenes Haar, dunkel geränderte Augen. Ihre Beete liegen ordentlich wie Gräberreihen, und beides pflegt sie gleich. Hintergrund: sattes Magenta.
+173. player_ashwalker_salvewright_m.png — Ein Salbenwirker der Kärrner: grauer Mantel mit geordneten Taschenreihen, am Gurt Zinntiegel mit Salben und gerollte Binden, in den Händen ein flacher dunkler Reibstein. Hagere Gestalt, gesprenkelte Haut, ruhige präzise Bewegungen. Wer die Straßen fährt, näht und salbt selbst — er tut es besser als die meisten Heiler. Hintergrund: sattes Grün.
+174. player_ashwalker_salvewright_f.png — Eine Salbenwirkerin: grauer Mantel mit Taschenreihen, Zinntiegel und Binden am Gurt, der Reibstein in den Händen; weißes streng gebundenes Haar, dunkle Augenränder, der nüchterne Blick einer Frau, die Wunden nach Dringlichkeit sortiert. Hintergrund: sattes Grün.
+175. player_ashwalker_wakekeeper_m.png — Ein Leichenschmaus-Wirt der Aschgänger — bei diesem Volk ein geachtetes Amt: würdevolle dunkle Schürze über grauem Tuch, in der einen Hand ein großer gedeckelter Eisentopf, in der anderen die lange Kelle; am Gurt kleine Brotmarken aus Zinn. Blassgraue gesprenkelte Haut, weißes Haar, milde Ernsthaftigkeit. Er kocht das Mahl, das nach dem Begraben kommt. Hintergrund: sattes Magenta.
+176. player_ashwalker_wakekeeper_f.png — Eine Leichenschmaus-Wirtin: dunkle Schürze über grauem Tuch, der gedeckelte Eisentopf und die lange Kelle in den Händen, Zinn-Brotmarken am Gurt; aschweißes gebundenes Haar, ruhige, tröstliche Präsenz. Bei ihr isst die Trauer zuerst. Hintergrund: sattes Magenta.
+
+
+════ SEKTION I — FARYN (10 Designs, 20 Bilder, Batches 19–20) ════
+
+── BATCH 19 — FARYN I: KÄMPFER (10 Bilder) ──────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff; Schützen: Pfeil aufgelegt, Bogen GESENKT; Magier: keine Wirkgeste.
+Alle Oberflächen MATT: kein Glühen, kein Schimmer, keine Magie-
+Leuchteffekte. Hintergrund: eine KOMPLETT EINFARBIGE, SATTE Fläche in der im
+Prompt genannten Farbe — kein Verlauf, kein Schatten, keine Vignette.
+Alle zehn Figuren gehören demselben Volk: Faryn — 2,00 bis 2,10 m,
+windschlank und hager, das größte Volk; fast weiße Haut mit kühlem
+Unterton, lange schmale Gesichter mit hohen scharfen Wangenknochen, weißes
+bis silbernes Haar, sehr helle Augen von Eisgrau bis Blassviolett, lange
+Finger, feine helle Windzeichen-Linien als Tätowierung an Schläfen und
+Unterarmen; gewöhnliche menschliche Ohren, nicht spitz.
+
+177. player_faryn_ridgeblade_m.png — Ein über zwei Meter großer, windschlanker Schwertträger der Faryn: graues Windleder mit schmalen dunklen Plattensegmenten, ein knapper Mantel, der im Höhenwind anliegt; das überlange, schmale Großschwert gesenkt in beiden Händen. Fast weiße Haut, silbernes gebundenes Haar, Windzeichen-Linien an den Schläfen. Er ficht wie Wetter: erst still, dann vorbei. Hintergrund: sattes Magenta.
+178. player_faryn_ridgeblade_f.png — Eine Schwertträgerin der Faryn: über zwei Meter groß und schmal, graues Windleder mit dunklen Plattensegmenten, das weiße Haar streng geflochten, Windzeichen an Schläfen und Unterarmen; das überlange schmale Großschwert gesenkt. Ihre Reichweite ist ein Gerücht, bis man es prüft. Hintergrund: sattes Magenta.
+179. player_faryn_galeplate_m.png — Ein Faryn-Veteran in hoher, schmaler Vollplatte: dunkelgraue, kantige Panzerung mit einer Silhouette wie eine Klippennadel, der gratlose schmale Helm unterm Arm, das weiße Haar offen; die schwere schmale Stangenaxt aufgestützt. Gut zwei Meter stille Höhe, eisgraue Augen, Windzeichen an den Schläfen. Hintergrund: sattes Grün.
+180. player_faryn_galeplate_f.png — Eine Faryn-Veteranin in der Klippennadel-Vollplatte: dunkelgraue kantige Panzerung, der Helm unterm Arm, silbernes offenes Haar, blassvioletter Blick; die Stangenaxt aufgestützt. Über zwei Meter Ruhe, die niemand zweimal stört. Hintergrund: sattes Grün.
+181. player_faryn_mistarrow_m.png — Ein Faryn-Schütze der mittleren Höhenpfade: grauer Kapuzenmantel über dunklem Windleder, gut zwei Meter hager; der Langbogen gesenkt, ein Pfeil aufgelegt, am Gurt ein Bündel grau gefiederter Pfeile. Fast weiße Haut, Windzeichen an den Unterarmen. Er schießt in Nebel, in dem andere nicht einmal stehen bleiben würden. Hintergrund: sattes Magenta.
+182. player_faryn_mistarrow_f.png — Eine Faryn-Schützin: über zwei Meter groß und schmal, grauer Kapuzenmantel über Windleder, weißes Haar unter der Kapuze, helle eisgraue Augen; der Langbogen gesenkt mit aufgelegtem Pfeil. Ihre Pfeile kommen aus dem Grau wie eine Entscheidung. Hintergrund: sattes Magenta.
+183. player_faryn_wyvernbane_m.png — Ein großer, hagerer Schütze der Faryn, gut zwei Meter hoch: sehr blasse Haut, scharfe Züge, weißes langes Haar im Wind; in dunkelgrauem Schuppenleder unter einem Mantel aus schwarzen Schwingen-Federn; um den Hals eine Kette aus Wyvern-Fangzähnen, der mannshohe Kriegsbogen gesenkt, ein schwerer Pfeil aufgelegt. Einer, der Drachenbrut vom Himmel holt. Hintergrund: sattes Grün.
+184. player_faryn_wyvernbane_f.png — Eine Schützin der Faryn: über zwei Meter groß, blass, weißes streng geflochtenes Haar, dunkles Schuppenleder und schwarzer Federmantel, Wyvernzahn-Kette; der Kriegsbogen gesenkt mit aufgelegtem Pfeil, das Gesicht ruhig wie dünne Höhenluft. Hintergrund: sattes Grün.
+185. player_faryn_windcaller_m.png — Ein junger Windrufer der Faryn: schmale graue Robe mit hellem Saum, gut zwei Meter hoch und noch schlaksig; der hohe, schlanke Stab aus hellem Klippenholz mit ledernen Federbändern ruhig gesenkt, keine Geste. Fast weiße Haut, frisch gestochene Windzeichen an den Schläfen. Der Himmel hat angefangen, ihm zu antworten. Hintergrund: sattes Grün.
+186. player_faryn_windcaller_f.png — Eine junge Windruferin: gut zwei Meter groß und schmal, graue Robe mit hellem Saum, silbernes offen fallendes Haar, blassviolette Augen; der helle Klippenholz-Stab mit Federbändern ruhig in beiden Händen. Sie zählt Winde, wie andere Münzen zählen. Hintergrund: sattes Grün.
+
+
+── BATCH 20 — FARYN II: MAGIE + BERUFE (10 Bilder) ──────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Magier (Prompts
+187–188): kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren
+(189–196): ruhige, selbstsichere Meister-Haltung mit ihrem Werkzeug.
+Hintergrund: komplett einfarbige satte Fläche in der genannten Farbe.
+Alle zehn Figuren gehören demselben Volk: Faryn — 2,00 bis 2,10 m,
+windschlank und hager, das größte Volk; fast weiße Haut mit kühlem
+Unterton, lange schmale Gesichter mit hohen scharfen Wangenknochen, weißes
+bis silbernes Haar, sehr helle Augen von Eisgrau bis Blassviolett, lange
+Finger, feine helle Windzeichen-Linien als Tätowierung an Schläfen und
+Unterarmen; gewöhnliche menschliche Ohren, nicht spitz.
+
+187. player_faryn_skyreader_m.png — Ein Himmelsleser der Faryn im Feldornat: lange dunkelgraue Robe, in deren Bahnen matte, helle Sternkarten-Linien eingestickt sind, gut zwei Meter hagere Würde; der hohe Stab trägt einen Ring aus dunklem Metall mit beweglichen, matten Innenringen. Silbernes gebundenes Haar, Windzeichen an Schläfen und Unterarmen, keine Geste, kein Leuchten. Hintergrund: sattes Magenta.
+188. player_faryn_skyreader_f.png — Eine Himmelsleserin: über zwei Meter, windschlank, die dunkelgraue Robe mit matten Sternkarten-Linien, der Ringstab ruhig aufgesetzt; weißes streng gebundenes Haar, eisgraue weitsichtige Augen. Sie hat den Himmel gelesen, als er noch sauber war, und liest ihn immer noch. Hintergrund: sattes Magenta.
+189. player_faryn_veilscribe_m.png — Ein Runenschreiber der Faryn: gut zwei Meter groß, hager, sehr blasse Haut und weißes, streng gebundenes Haar, in einer dunkelgrauen Gelehrtenrobe mit schwarzen Lederbesätzen; in einer Hand ein schwerer eiserner Gravurmeißel, in der Armbeuge eine dunkle Steintafel voller präzise geschlagener Zeichen, matt und nicht leuchtend. Die Konzentration eines Mannes, der mit Worten Berge bindet. Hintergrund: sattes Grün.
+190. player_faryn_veilscribe_f.png — Eine Runenschreiberin der Faryn: über zwei Meter groß, blass, weißes geflochtenes Haar, dunkelgraue Gelehrtenrobe mit Lederbesätzen; Gravurmeißel und Steintafel ruhig in den Händen, der Blick messerscharf auf das nächste Zeichen. Hintergrund: sattes Grün.
+191. player_faryn_saddlewright_m.png — Ein Ledermeister der Faryn wie ein Rüstmeister: gut zwei Meter groß, hager, blass, die Ärmel hochgerollt über sehnigen Unterarmen mit Windzeichen-Linien; eine dunkle, beschlagene Arbeitsschürze über schwarzem Leinen, über der Schulter schwere, sauber gerollte Lederbahnen, in der Hand eine schwere Sattlerahle wie ein Dolch geführt. Einer, der Rüstungen baut, die Leben retten. Hintergrund: sattes Grün.
+192. player_faryn_saddlewright_f.png — Eine Ledermeisterin der Faryn: über zwei Meter groß, blass, weißes kurz gebundenes Haar, beschlagene dunkle Arbeitsschürze, Lederbahnen über der Schulter, die Ahle präzise in der Hand. Der prüfende Blick, dem keine schiefe Naht entgeht. Hintergrund: sattes Grün.
+193. player_faryn_cragwise_m.png — Ein Höhenkräutler der Faryn: gut zwei Meter, hager, dunkle windfeste Kleidung unter einem Gurtwerk mit Seilrollen und Haken der Klippenkunst; an der Hüfte eine Sammeltasche mit gebündelten, hellen Höhenkräutern, in der Hand das kurze Erntemesser. Fast weiße Haut, Windzeichen an den Schläfen. Seine Apotheke wächst dort, wo man festgebunden erntet. Hintergrund: sattes Magenta.
+194. player_faryn_cragwise_f.png — Eine Höhenkräutlerin: über zwei Meter groß und schmal, windfeste dunkle Kleidung, Seilgurtwerk, die Sammeltasche mit hellen Kräuterbündeln, das Erntemesser ruhig in den langen Fingern; silbernes geflochtenes Haar, eisgraue Augen. Was bei ihr im Beutel liegt, hat den Abgrund gesehen. Hintergrund: sattes Magenta.
+195. player_faryn_highfield_m.png — Ein Hochfeld-Bauer der Faryn, Herr der Terrassenfelder in den Klippen: gut zwei Meter, hager, graue windfeste Arbeitskleidung mit Ledergamaschen, auf dem Rücken eine schmale Kiepe mit Setzlingen, in den Händen eine schmale, langstielige Terrassen-Hacke. Fast weiße Haut, Windzeichen an den Unterarmen. Seine Felder hängen im Wind und tragen trotzdem. Hintergrund: sattes Blau.
+196. player_faryn_highfield_f.png — Eine Hochfeld-Bäuerin: über zwei Meter, windschlank, graue Arbeitskleidung mit Gamaschen, die Setzlings-Kiepe auf dem Rücken, die Terrassen-Hacke ruhig aufgesetzt; weißes, gegen den Wind gebundenes Haar, blassviolette Augen. Sie sät in Höhen, in denen andere beten. Hintergrund: sattes Blau.
+
+
+════════════════════════════════════════════════════════════════════════════
+ENDE — 196 Dateinamen: 16 × ref_<rasse>_<m/f>.png + 180 × player_<rasse>_
+<slug>_<m/f>.png. Chroma-Farben je Prompt so gewählt, dass sie im Motiv
+nicht vorkommen (grünhäutige Völker nie auf Grün, Sesskar nie auf Blau).
+════════════════════════════════════════════════════════════════════════════

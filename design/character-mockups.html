@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hearthforge — Charakter-Stil-Mockups</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital@0;1&family=Spectral:wght@400;600&family=MedievalSharp&family=Metamorphous&family=Uncial+Antiqua&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ─── Theme-Variablen (Standard = Emberforge) ─────────────────── */
+      :root {
+        --bg: #1a1410;
+        --bg-deep: #110d0a;
+        --panel: #241c16;
+        --panel-2: #2e241b;
+        --slot: #15100c;
+        --border: #3a2e24;
+        --border-bright: #5a4632;
+        --text: #e8ddca;
+        --muted: #9a8c78;
+        --accent: #d9853b;
+        --accent-2: #ff7a40;
+        --danger: #b5483a;
+        --font-head: "Cinzel", serif;
+        --font-body: "Spectral", Georgia, serif;
+        --radius: 10px;
+        --slot-radius: 8px;
+        --glow: 0 0 18px rgba(217, 133, 59, 0.35);
+      }
+
+      [data-theme="ashen-iron"] {
+        --bg: #14161a;
+        --bg-deep: #0d0f12;
+        --panel: #1e2329;
+        --panel-2: #262d34;
+        --slot: #0f1216;
+        --border: #333c44;
+        --border-bright: #4d5963;
+        --text: #ccd5db;
+        --muted: #79848c;
+        --accent: #6f97b3;
+        --accent-2: #9fc4dc;
+        --danger: #a85a52;
+        --font-head: "Metamorphous", serif;
+        --font-body: "Spectral", Georgia, serif;
+        --radius: 3px;
+        --slot-radius: 3px;
+        --glow: 0 0 16px rgba(111, 151, 179, 0.3);
+      }
+
+      [data-theme="blood-parchment"] {
+        --bg: #1b1714;
+        --bg-deep: #120f0c;
+        --panel: #2c261f;
+        --panel-2: #38301f;
+        --slot: #1d1813;
+        --border: #4c3f30;
+        --border-bright: #6b5739;
+        --text: #ece0c8;
+        --muted: #a8967a;
+        --accent: #9c3535;
+        --accent-2: #c75050;
+        --danger: #8a2f2f;
+        --font-head: "Cinzel Decorative", serif;
+        --font-body: "EB Garamond", Georgia, serif;
+        --radius: 6px;
+        --slot-radius: 4px;
+        --glow: 0 0 16px rgba(156, 53, 53, 0.35);
+      }
+
+      [data-theme="necrotic"] {
+        --bg: #0e1413;
+        --bg-deep: #080d0c;
+        --panel: #15201d;
+        --panel-2: #1b2a26;
+        --slot: #0b1311;
+        --border: #294039;
+        --border-bright: #3c5e53;
+        --text: #cfe6dc;
+        --muted: #6f8b81;
+        --accent: #46d39c;
+        --accent-2: #7df0c2;
+        --danger: #b5604a;
+        --font-head: "MedievalSharp", serif;
+        --font-body: "Spectral", Georgia, serif;
+        --radius: 8px;
+        --slot-radius: 6px;
+        --glow: 0 0 20px rgba(70, 211, 156, 0.4);
+      }
+
+      [data-theme="royal-arcane"] {
+        --bg: #14101e;
+        --bg-deep: #0d0a15;
+        --panel: #1f1830;
+        --panel-2: #2a2140;
+        --slot: #140f20;
+        --border: #392f55;
+        --border-bright: #d9b35b;
+        --text: #e4ddf2;
+        --muted: #948aac;
+        --accent: #9d7bff;
+        --accent-2: #d9b35b;
+        --danger: #b0506a;
+        --font-head: "Cinzel", serif;
+        --font-body: "EB Garamond", Georgia, serif;
+        --radius: 10px;
+        --slot-radius: 8px;
+        --glow: 0 0 20px rgba(157, 123, 255, 0.4);
+      }
+
+      [data-theme="obsidian-gold"] {
+        --bg: #0c0c0e;
+        --bg-deep: #050506;
+        --panel: #161619;
+        --panel-2: #1f1f24;
+        --slot: #0a0a0c;
+        --border: #2a2a31;
+        --border-bright: #c9a13b;
+        --text: #e9e7e0;
+        --muted: #8a8780;
+        --accent: #c9a13b;
+        --accent-2: #f0cf76;
+        --danger: #9a4a3a;
+        --font-head: "Cinzel", serif;
+        --font-body: "Spectral", Georgia, serif;
+        --radius: 6px;
+        --slot-radius: 5px;
+        --glow: 0 0 18px rgba(201, 161, 59, 0.4);
+      }
+
+      [data-theme="bone-shadow"] {
+        --bg: #121110;
+        --bg-deep: #0a0908;
+        --panel: #1b1917;
+        --panel-2: #242120;
+        --slot: #100f0d;
+        --border: #34302b;
+        --border-bright: #5b554c;
+        --text: #ded8cc;
+        --muted: #8c8478;
+        --accent: #b8ad99;
+        --accent-2: #e6dcc6;
+        --danger: #9a6a5a;
+        --font-head: "Uncial Antiqua", serif;
+        --font-body: "EB Garamond", Georgia, serif;
+        --radius: 5px;
+        --slot-radius: 4px;
+        --glow: 0 0 14px rgba(184, 173, 153, 0.25);
+      }
+
+      [data-theme="verdant-ruin"] {
+        --bg: #11140f;
+        --bg-deep: #0a0d08;
+        --panel: #1a2016;
+        --panel-2: #232b1d;
+        --slot: #0f130c;
+        --border: #313a28;
+        --border-bright: #4d5b38;
+        --text: #dde3cf;
+        --muted: #889078;
+        --accent: #8aa84e;
+        --accent-2: #b6d472;
+        --danger: #a5603a;
+        --font-head: "MedievalSharp", serif;
+        --font-body: "Spectral", Georgia, serif;
+        --radius: 8px;
+        --slot-radius: 6px;
+        --glow: 0 0 18px rgba(138, 168, 78, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: radial-gradient(circle at 50% 0%, var(--bg) 0%, var(--bg-deep) 90%);
+        color: var(--text);
+        font-family: var(--font-body);
+        min-height: 100vh;
+      }
+
+      /* Feine Grit-Textur über allem */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.05;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+
+      /* ─── Theme-Umschalter ────────────────────────────────────────── */
+      .switcher {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 14px 20px;
+        background: var(--bg-deep);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .switcher button {
+        font-family: var(--font-head);
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        padding: 8px 14px;
+        background: var(--panel);
+        color: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .switcher button:hover {
+        color: var(--text);
+        border-color: var(--border-bright);
+      }
+
+      .switcher button.active {
+        color: var(--accent-2);
+        border-color: var(--accent);
+        box-shadow: var(--glow);
+      }
+
+      .theme-desc {
+        padding: 16px 20px 0;
+        text-align: center;
+      }
+
+      .theme-desc h1 {
+        font-family: var(--font-head);
+        font-size: 26px;
+        margin: 0;
+        color: var(--accent);
+        letter-spacing: 1px;
+      }
+
+      .theme-desc p {
+        color: var(--muted);
+        margin: 6px 0 0;
+        font-size: 14px;
+      }
+
+      /* ─── Charakter-Karte ─────────────────────────────────────────── */
+      .stage {
+        max-width: 940px;
+        margin: 24px auto 60px;
+        padding: 0 20px;
+      }
+
+      .sheet {
+        background: linear-gradient(180deg, var(--panel) 0%, var(--bg) 100%);
+        border: 1px solid var(--border-bright);
+        border-radius: var(--radius);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+      }
+
+      .sheet-title {
+        font-family: var(--font-head);
+        font-size: 20px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-align: center;
+        padding: 14px;
+        color: var(--accent);
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-deep);
+      }
+
+      .sheet-body {
+        display: grid;
+        grid-template-columns: 230px 1fr 220px;
+        gap: 18px;
+        padding: 20px;
+      }
+
+      /* Linke Spalte: Portrait + Identität */
+      .identity {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .portrait-frame {
+        width: 180px;
+        height: 200px;
+        border: 2px solid var(--border-bright);
+        border-radius: var(--radius);
+        background: radial-gradient(circle at 50% 35%, var(--panel-2), var(--slot));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6), var(--glow);
+      }
+
+      .portrait-frame::before {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border: 1px solid var(--border);
+        border-radius: calc(var(--radius) - 4px);
+      }
+
+      .portrait-silhouette {
+        font-size: 90px;
+        opacity: 0.5;
+        filter: grayscale(0.4);
+      }
+
+      .hero-name {
+        font-family: var(--font-head);
+        font-size: 22px;
+        margin: 0;
+        text-align: center;
+      }
+
+      .hero-title {
+        color: var(--muted);
+        font-style: italic;
+        font-size: 14px;
+        margin-top: -6px;
+      }
+
+      .vitals {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .vital {
+        font-size: 12px;
+      }
+
+      .vital-bar {
+        height: 14px;
+        border-radius: 7px;
+        background: var(--slot);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        margin-top: 3px;
+      }
+
+      .vital-fill {
+        height: 100%;
+      }
+
+      .hp .vital-fill {
+        width: 78%;
+        background: linear-gradient(90deg, #7a2218, var(--danger));
+      }
+
+      .mp .vital-fill {
+        width: 55%;
+        background: linear-gradient(90deg, #1f3d6b, #3f7bd6);
+      }
+
+      .xp .vital-fill {
+        width: 40%;
+        background: linear-gradient(90deg, var(--border-bright), var(--accent));
+      }
+
+      /* Mittlere Spalte: Ausrüstungs-Paperdoll */
+      .equipment {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .doll {
+        display: grid;
+        grid-template-columns: repeat(3, 66px);
+        grid-template-rows: repeat(6, 66px);
+        gap: 12px;
+        justify-content: center;
+      }
+
+      .slot {
+        background: var(--slot);
+        border: 1px solid var(--border);
+        border-radius: var(--slot-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.15s;
+        box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.5);
+      }
+
+      .slot:hover {
+        border-color: var(--accent);
+        box-shadow: var(--glow), inset 0 0 14px rgba(0, 0, 0, 0.5);
+      }
+
+      .slot .slot-label {
+        position: absolute;
+        bottom: 2px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 8px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .slot.filled {
+        border-color: var(--border-bright);
+        background: linear-gradient(160deg, var(--panel-2), var(--slot));
+      }
+
+      .slot.filled.rare {
+        border-color: var(--accent);
+        box-shadow: var(--glow), inset 0 0 14px rgba(0, 0, 0, 0.5);
+      }
+
+      .helmet { grid-column: 2; grid-row: 1; }
+      .amulet { grid-column: 2; grid-row: 2; }
+      .offhand { grid-column: 1; grid-row: 3; }
+      .body { grid-column: 2; grid-row: 3; }
+      .mainhand { grid-column: 3; grid-row: 3; }
+      .legs { grid-column: 2; grid-row: 4; }
+      .gloves { grid-column: 1; grid-row: 5; }
+      .boots { grid-column: 2; grid-row: 5; }
+      .cape { grid-column: 3; grid-row: 5; }
+      .ring1 { grid-column: 1; grid-row: 6; }
+      .ring2 { grid-column: 3; grid-row: 6; }
+
+      .equip-caption {
+        margin-top: 14px;
+        font-size: 12px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      /* Rechte Spalte: Attribute + abgeleitete Werte */
+      .stats h3 {
+        font-family: var(--font-head);
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 0 0 8px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 6px;
+      }
+
+      .stats h3:not(:first-child) {
+        margin-top: 18px;
+      }
+
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        padding: 4px 0;
+      }
+
+      .stat-row .val {
+        font-weight: 700;
+        color: var(--accent-2);
+      }
+
+      .attr-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 14px;
+      }
+
+      /* Inventar unten */
+      .inventory {
+        border-top: 1px solid var(--border);
+        padding: 18px 20px 22px;
+      }
+
+      .inventory h3 {
+        font-family: var(--font-head);
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 0 0 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+
+      .inventory h3 span {
+        font-family: var(--font-body);
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 0;
+        text-transform: none;
+      }
+
+      .inv-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 60px);
+        gap: 8px;
+      }
+
+      .inv-slot {
+        width: 60px;
+        height: 60px;
+        background: var(--slot);
+        border: 1px solid var(--border);
+        border-radius: var(--slot-radius);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        position: relative;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .inv-slot.filled {
+        border-color: var(--border-bright);
+        background: linear-gradient(160deg, var(--panel-2), var(--slot));
+      }
+
+      .inv-slot .qty {
+        position: absolute;
+        bottom: 2px;
+        right: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent-2);
+        text-shadow: 0 1px 2px #000;
+      }
+
+      @media (max-width: 880px) {
+        .sheet-body {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body data-theme="emberforge">
+    <div class="switcher" id="switcher"></div>
+    <div class="theme-desc">
+      <h1 id="theme-name"></h1>
+      <p id="theme-text"></p>
+    </div>
+
+    <div class="stage">
+      <div class="sheet">
+        <div class="sheet-title">Charakter</div>
+        <div class="sheet-body">
+          <!-- Identität -->
+          <div class="identity">
+            <div class="portrait-frame">
+              <span class="portrait-silhouette">👤</span>
+            </div>
+            <h2 class="hero-name">Aldric</h2>
+            <div class="hero-title">Wanderer der Asche · Lv 14</div>
+            <div class="vitals">
+              <div class="vital hp">
+                Leben <span style="float: right">156 / 200</span>
+                <div class="vital-bar"><div class="vital-fill"></div></div>
+              </div>
+              <div class="vital mp">
+                Mana <span style="float: right">33 / 60</span>
+                <div class="vital-bar"><div class="vital-fill"></div></div>
+              </div>
+              <div class="vital xp">
+                Erfahrung <span style="float: right">40%</span>
+                <div class="vital-bar"><div class="vital-fill"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ausrüstung (Paperdoll) -->
+          <div class="equipment">
+            <div class="doll">
+              <div class="slot filled helmet">⛑️<span class="slot-label">Helm</span></div>
+              <div class="slot filled amulet">📿<span class="slot-label">Hals</span></div>
+              <div class="slot filled rare offhand">🗡️<span class="slot-label">Li. Hand</span></div>
+              <div class="slot filled body">🛡️<span class="slot-label">Brust</span></div>
+              <div class="slot filled rare mainhand">⚔️<span class="slot-label">Re. Hand</span></div>
+              <div class="slot filled legs">👖<span class="slot-label">Beine</span></div>
+              <div class="slot gloves">🧤<span class="slot-label">Hände</span></div>
+              <div class="slot filled boots">🥾<span class="slot-label">Füße</span></div>
+              <div class="slot filled cape">🧥<span class="slot-label">Umhang</span></div>
+              <div class="slot filled ring1">💍<span class="slot-label">Ring</span></div>
+              <div class="slot ring2">💍<span class="slot-label">Ring</span></div>
+            </div>
+            <div class="equip-caption">Klicke einen Slot, um auszurüsten</div>
+          </div>
+
+          <!-- Werte -->
+          <div class="stats">
+            <h3>Attribute</h3>
+            <div class="attr-grid">
+              <div class="stat-row">STR <span class="val">22</span></div>
+              <div class="stat-row">DEX <span class="val">17</span></div>
+              <div class="stat-row">CON <span class="val">19</span></div>
+              <div class="stat-row">INT <span class="val">9</span></div>
+              <div class="stat-row">WIS <span class="val">11</span></div>
+              <div class="stat-row">LCK <span class="val">14</span></div>
+            </div>
+            <h3>Kampf</h3>
+            <div class="stat-row">Nahkampf <span class="val">34</span></div>
+            <div class="stat-row">Verteidigung <span class="val">28</span></div>
+            <div class="stat-row">Krit-Chance <span class="val">7.4%</span></div>
+            <div class="stat-row">Tempo <span class="val">2.6s</span></div>
+          </div>
+        </div>
+
+        <!-- Inventar im selben Screen -->
+        <div class="inventory">
+          <h3>Inventar <span>14 / 20 Slots</span></h3>
+          <div class="inv-grid" id="inv-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const THEMES = [
+        ["emberforge", "Emberforge", "Warme Schmiede-Glut auf dunklem Eisenholz — passt zum Namen Hearthforge. Einladend, aber düster."],
+        ["ashen-iron", "Ashen Iron", "Kaltes, entsättigtes Stahlgrau-Blau. Rau, industriell, militärisch. Sehr „gritty“ und ernst."],
+        ["blood-parchment", "Blood & Parchment", "Altes Pergament, Blutrot, verzierte Schrift. Mittelalterliches Manuskript / Dark-Souls-Notiz-Vibe."],
+        ["necrotic", "Necrotic", "Giftgrünes Glühen in feuchter Finsternis. Untot, nekromantisch, leicht eklig — sehr atmosphärisch."],
+        ["royal-arcane", "Royal Arcane", "Tiefes Violett mit Goldzier. Arkan, edel, magielastig. Etwas pompöser, weniger „dreckig“."],
+        ["obsidian-gold", "Obsidian & Gold", "Fast schwarzer Obsidian mit Gold-Akzenten. Hoher Kontrast, premium, hochwertig-elegant."],
+        ["bone-shadow", "Bone & Shadow", "Bleiche Knochentöne auf Schwarz. Reduziert, unheimlich, still — Horror-Einschlag."],
+        ["verdant-ruin", "Verdant Ruin", "Mooriges Dunkelgrün & Stein. Überwucherte Ruinen, erdig, naturverfallen."],
+      ];
+
+      const switcher = document.getElementById("switcher");
+      const nameEl = document.getElementById("theme-name");
+      const textEl = document.getElementById("theme-text");
+
+      function setTheme(id) {
+        document.body.dataset.theme = id;
+        const t = THEMES.find((x) => x[0] === id);
+        nameEl.textContent = t[1];
+        textEl.textContent = t[2];
+        [...switcher.children].forEach((b) => b.classList.toggle("active", b.dataset.id === id));
+      }
+
+      THEMES.forEach(([id, label]) => {
+        const b = document.createElement("button");
+        b.textContent = label;
+        b.dataset.id = id;
+        b.onclick = () => setTheme(id);
+        switcher.appendChild(b);
+      });
+
+      // Inventar-Demo füllen
+      const ITEMS = ["🪵", "🪨", "🐟", "🧪", "💎", "🔩", "🦴", "🌿", "📜", "🍖", "⚗️", "🗝️", "🪙", "🥚"];
+      const invGrid = document.getElementById("inv-grid");
+      for (let i = 0; i < 20; i++) {
+        const s = document.createElement("div");
+        s.className = "inv-slot" + (i < ITEMS.length ? " filled" : "");
+        if (i < ITEMS.length) {
+          s.innerHTML = ITEMS[i] + '<span class="qty">' + (1 + ((i * 7) % 64)) + "</span>";
+        }
+        invGrid.appendChild(s);
+      }
+
+      setTheme("emberforge");
+    </script>
+  </body>
+</html>

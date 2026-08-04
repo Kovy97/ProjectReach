@@ -1,0 +1,505 @@
+/* ═══════════════════════════════════════════════════════════
+   KONZEPT 1 — JÄGER-JOURNAL
+   Ein aufgeschlagenes Feldbuch auf einem dunklen Schreibtisch: Doppelseiten je Zone,
+   Monster als Studieneinträge mit handschriftlichen Notizen, Kills als Stempelzahl,
+   Drops als angeheftete Fundstück-Marken, Unentdecktes als leere Bleistift-Silhouette.
+   ═══════════════════════════════════════════════════════════ */
+
+* { box-sizing: border-box; }
+
+:root {
+  --ink: #3a2a18;
+  --ink-soft: #5c4830;
+  --parchment: #e6d7ab;
+  --parchment-dark: #d9c690;
+  --parchment-edge: #b89a5e;
+  --desk: #1c140c;
+  --gold: #a97a2e;
+  --wax: #7a2a20;
+  --wax-bright: #9c3a28;
+  --danger-ink: #7a2a20;
+  --green-ink: #2f5c30;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--desk);
+}
+body {
+  font-family: "IM Fell English SC", Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  padding-bottom: 60px;
+}
+
+/* Schreibtisch-Hintergrund: dunkle gekachelte Holzmaserung, gedämpft, damit das Buch heraussticht. */
+#app {
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(80, 56, 24, 0.35), transparent 60%),
+    linear-gradient(rgba(10, 7, 4, 0.55), rgba(10, 7, 4, 0.65)),
+    url("../../../apps/client/src/renderer/assets/ui/gravewood/textures/texture-gravewood.webp");
+  background-size: auto, auto, 420px 420px;
+  padding: 36px 24px 80px;
+}
+
+.book-title-bar {
+  max-width: 1720px;
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  color: #e8d8ac;
+}
+.book-title-bar h1 {
+  font-family: "Grenze Gotisch", "Cinzel", serif;
+  font-size: 40px;
+  margin: 0;
+  color: #f0dfae;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.02em;
+}
+.book-title-bar .subtitle {
+  font-size: 15px;
+  color: #b7a071;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.book-seals {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.seal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #c9a458, #8a6a2e 70%, #5e4a20 100%);
+  border: 2px solid #6b5426;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.35);
+  color: #2a1d0c;
+  text-align: center;
+  font-family: "Cinzel", serif;
+}
+.seal strong { font-size: 17px; line-height: 1; }
+.seal span { font-size: 8px; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 3px; }
+
+/* ─── Werkzeugzeile: Tabs, Filter, Legende — wie lose Notizzettel oben aufs Buch geheftet ─── */
+.book-toolbar {
+  max-width: 1720px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ribbon-tabs { display: flex; gap: 4px; }
+.ribbon-tab {
+  font-family: "Cinzel", serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 9px 18px 10px;
+  background: linear-gradient(180deg, #8a6a34, #6b4f22);
+  color: #f2e3b4;
+  border: none;
+  border-radius: 3px 3px 0 0;
+  cursor: pointer;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.15) inset, 0 3px 6px rgba(0, 0, 0, 0.4);
+  opacity: 0.72;
+  transform: translateY(3px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.ribbon-tab:hover { opacity: 0.9; }
+.ribbon-tab.active {
+  opacity: 1;
+  transform: translateY(0);
+  background: linear-gradient(180deg, #c9a458, #a3782e);
+  color: #241a0a;
+}
+
+.quill-toggle {
+  margin-left: auto;
+  font-family: "IM Fell English SC", serif;
+  font-size: 14px;
+  padding: 8px 16px;
+  background: var(--parchment-dark);
+  border: 1px solid var(--parchment-edge);
+  border-radius: 3px;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+}
+.quill-toggle.active {
+  background: var(--wax);
+  color: #f2e3c8;
+  border-color: #4c1a12;
+}
+
+.legend-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: baseline;
+  padding: 10px 16px;
+  background: var(--parchment);
+  border: 1px solid var(--parchment-edge);
+  border-radius: 2px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+  color: var(--ink-soft);
+  width: 100%;
+}
+.legend-note .ln-title { font-family: "Cinzel", serif; font-weight: 700; color: var(--ink); text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; }
+.legend-note .ln-item { display: inline-flex; gap: 4px; align-items: baseline; }
+.legend-note .ln-item b { color: var(--ink); }
+
+/* ─── Das Buch ─── */
+.book {
+  max-width: 1720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.spread {
+  position: relative;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  background: var(--parchment);
+  border-radius: 3px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+/* Buchbindung: Schattennaht in der Mitte */
+.spread::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 320px;
+  width: 26px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.16), rgba(0,0,0,0.02) 40%, rgba(0,0,0,0.02) 60%, rgba(0,0,0,0.16));
+  pointer-events: none;
+  z-index: 3;
+}
+@media (max-width: 900px) {
+  .spread { grid-template-columns: 1fr; }
+  .spread::before { display: none; }
+}
+
+.spread.locked { filter: grayscale(0.55) brightness(0.62); }
+.spread.locked .page-left::after {
+  content: "VERSIEGELT";
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-14deg);
+  font-family: "Cinzel", serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--wax);
+  border: 4px solid var(--wax);
+  padding: 6px 18px;
+  border-radius: 4px;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.page-left {
+  position: relative;
+  padding: 22px 24px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.12), transparent 50%),
+    var(--parchment);
+  border-right: 1px solid rgba(0,0,0,0.06);
+}
+.page-left h2 {
+  font-family: "Grenze Gotisch", serif;
+  font-size: 28px;
+  margin: 0 0 2px;
+  color: var(--ink);
+}
+.page-left .lvl-tag {
+  display: inline-block;
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  color: var(--ink-soft);
+  border-bottom: 1px dotted var(--parchment-edge);
+  margin-bottom: 12px;
+}
+.page-left .gate-note {
+  font-size: 13px;
+  color: var(--wax);
+  font-style: italic;
+  margin: 4px 0 10px;
+}
+
+.field-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin: 6px 0 14px;
+  padding: 8px 8px 22px;
+  background: #efe6c8;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  transform: rotate(-1.4deg);
+}
+.field-photo img { width: 100%; height: 100%; object-fit: cover; display: block; filter: sepia(0.35) contrast(1.05); }
+.field-photo .fp-cap { position: absolute; bottom: 3px; left: 10px; font-size: 11px; color: #6b5a38; font-style: italic; }
+.field-photo .fp-tape {
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+  width: 60px; height: 18px; background: rgba(230, 220, 190, 0.55); box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+.discovery-line {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.discovery-line strong { color: var(--ink); }
+.discovery-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.12);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.discovery-bar > span { display: block; height: 100%; background: linear-gradient(90deg, #7a5a24, var(--gold)); }
+
+.page-left .flavor {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  font-style: italic;
+  border-top: 1px dashed var(--parchment-edge);
+  padding-top: 10px;
+}
+
+.page-right {
+  padding: 20px 22px 26px;
+  background:
+    radial-gradient(circle at 85% 8%, rgba(255,255,255,0.10), transparent 45%),
+    var(--parchment);
+}
+.entries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px 14px;
+}
+
+/* ─── Einzelner Studieneintrag (Monsterkarte) ─── */
+.entry {
+  position: relative;
+  background: #f1e6c4;
+  border: 1px solid rgba(90, 62, 20, 0.35);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.28);
+  padding: 10px 10px 12px;
+}
+.entry:nth-child(3n) { transform: rotate(-0.6deg); }
+.entry:nth-child(3n+1) { transform: rotate(0.5deg); }
+.entry:nth-child(3n+2) { transform: rotate(-0.2deg); }
+.entry::before {
+  /* Tesafilm-Ecke oben links */
+  content: "";
+  position: absolute;
+  top: -7px; left: 14px;
+  width: 34px; height: 14px;
+  background: rgba(235, 226, 196, 0.55);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  transform: rotate(-4deg);
+}
+
+.entry-art {
+  position: relative;
+  height: 128px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 20%, #ded0a4, #c9b57e);
+  border: 1px solid rgba(90,62,20,0.3);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.entry-art img { max-width: 92%; max-height: 100%; object-fit: contain; filter: sepia(0.25) drop-shadow(0 4px 6px rgba(0,0,0,0.35)); }
+.entry-art .qmark {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: "Cinzel", serif; font-size: 30px; color: rgba(58, 42, 24, 0.55);
+}
+.entry-art .lvl-badge {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(58, 42, 24, 0.85); color: #f0dfae;
+  font-family: "Cinzel", serif; font-size: 10px; padding: 2px 6px; border-radius: 2px;
+}
+.entry-art .enrage-mark {
+  position: absolute; top: 4px; left: 4px; font-size: 13px;
+}
+
+.entry-name {
+  font-family: "Grenze Gotisch", serif;
+  font-size: 16px;
+  text-align: center;
+  color: var(--ink);
+  margin: 2px 0 2px;
+  min-height: 20px;
+}
+.entry-defense {
+  text-align: center;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  cursor: help;
+}
+.entry-defense.dt-armor { color: #8a6a2e; }
+.entry-defense.dt-evasion { color: #2f6b30; }
+.entry-defense.dt-ward { color: #1f7a86; }
+
+.entry-kills {
+  text-align: center;
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.entry-kills .stamp {
+  display: inline-block;
+  border: 2px solid var(--wax);
+  color: var(--wax);
+  transform: rotate(-3deg);
+  padding: 1px 7px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+.entry-kills.dim { color: #9c8a5e; }
+
+.ladder-row {
+  display: flex; justify-content: center; gap: 5px; flex-wrap: wrap;
+  font-size: 10px; margin-bottom: 4px; color: #8a7648;
+}
+.ladder-row .reached { color: var(--green-ink); font-weight: 700; }
+
+.stat-row {
+  display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+  font-size: 11px; color: var(--ink-soft); margin-bottom: 4px;
+}
+.stat-row b { color: var(--ink); }
+
+.status-row {
+  display: flex; justify-content: center; gap: 6px; font-size: 12px; margin-bottom: 4px; cursor: help;
+}
+.status-row .inflict { filter: sepia(0.4); }
+
+.slayer-note {
+  font-size: 10px; text-align: center; color: var(--wax); font-style: italic; margin-bottom: 4px;
+}
+
+.drops-row {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 5px;
+  margin: 6px 0 8px;
+  padding: 6px 4px;
+  background: rgba(0,0,0,0.045);
+  border-top: 1px dashed var(--parchment-edge);
+  border-bottom: 1px dashed var(--parchment-edge);
+}
+.drop-tag {
+  position: relative;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: #e9dcb2;
+  border: 1px solid rgba(90,62,20,0.4);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.drop-tag img { width: 20px; height: 20px; object-fit: contain; }
+.drop-tag.undiscovered img { filter: brightness(0) opacity(0.5); }
+.drop-tag.undiscovered::after { content: "?"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #6b5a38; }
+.drop-tag .pct { position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); font-size: 8px; color: #6b5a38; white-space: nowrap; }
+
+.unknown-note {
+  text-align: center;
+  font-size: 11px;
+  font-style: italic;
+  color: #8a7648;
+  padding: 8px 4px 2px;
+}
+
+.fight-ticket {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 7px 6px;
+  font-family: "Cinzel", serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  background: linear-gradient(180deg, #7a5a24, #5c4218);
+  color: #f2e3b4;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.fight-ticket[disabled] {
+  cursor: default;
+  background: #cfc19a;
+  color: #7a6a48;
+}
+.fight-ticket-note {
+  font-size: 9px;
+  color: var(--wax);
+  text-align: center;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+/* ─── Champion-Anhang ─── */
+.appendix-heading {
+  font-family: "Grenze Gotisch", serif;
+  font-size: 22px;
+  color: #f0dfae;
+  margin: 4px 0 2px;
+}
+.champ-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+}
+.champ-entry {
+  background: #f1e6c4;
+  border: 1px solid rgba(90,62,20,0.35);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.28);
+  padding: 10px 10px 12px;
+}
+.champ-art {
+  height: 130px;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: radial-gradient(circle at 50% 20%, #ded0a4, #c9b57e);
+  border: 1px solid rgba(90,62,20,0.3);
+  margin-bottom: 6px;
+  position: relative;
+  overflow: hidden;
+}
+.champ-art img { max-width: 90%; max-height: 100%; object-fit: contain; filter: sepia(0.25) drop-shadow(0 4px 6px rgba(0,0,0,0.35)); }
+.champ-art .lvl-badge { position: absolute; top: 4px; right: 4px; background: rgba(58,42,24,0.85); color: #f0dfae; font-family: "Cinzel", serif; font-size: 10px; padding: 2px 6px; border-radius: 2px; }
+.champ-name { font-family: "Grenze Gotisch", serif; font-size: 15px; text-align: center; margin-bottom: 6px; }
+.champ-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 11px; }
+.champ-stats div { display: flex; justify-content: space-between; border-bottom: 1px dotted var(--parchment-edge); }
+.champ-stats b { color: var(--ink); }
+.champ-hint { font-size: 11px; font-style: italic; text-align: center; color: #8a7648; padding-top: 6px; }
+
+.zone-section-title {
+  grid-column: 1 / -1;
+}
+
+.empty-state { color: #d8c69a; text-align: center; padding: 60px 20px; font-style: italic; }

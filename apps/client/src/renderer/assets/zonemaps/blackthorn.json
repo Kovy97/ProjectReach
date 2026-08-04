@@ -1,0 +1,59 @@
+{
+  "zoneId": "blackthorn",
+  "hotspots": [
+    {
+      "monsterId": "rootling_grunt",
+      "x": 18.5,
+      "y": 22,
+      "size": 1.75
+    },
+    {
+      "monsterId": "rootling_gimp",
+      "x": 39.5,
+      "y": 22,
+      "size": 1.75
+    },
+    {
+      "monsterId": "rootling_gimp2",
+      "x": 60.5,
+      "y": 22,
+      "size": 1.75
+    },
+    {
+      "monsterId": "rootling_treemonster",
+      "x": 81.5,
+      "y": 22,
+      "size": 1.75
+    },
+    {
+      "monsterId": "thorn_wolf",
+      "x": 18.5,
+      "y": 50,
+      "size": 1.75
+    },
+    {
+      "monsterId": "moss_golem",
+      "x": 39.5,
+      "y": 50,
+      "size": 1.75
+    },
+    {
+      "monsterId": "spectral_stag",
+      "x": 60.5,
+      "y": 50,
+      "size": 1.75
+    },
+    {
+      "monsterId": "bramble_witch",
+      "x": 81.5,
+      "y": 50,
+      "size": 1.75
+    },
+    {
+      "monsterId": "forest_warden",
+      "x": 18.5,
+      "y": 78,
+      "size": 1.75
+    }
+  ]
+}

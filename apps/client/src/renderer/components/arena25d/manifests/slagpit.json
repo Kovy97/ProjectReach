@@ -1,0 +1,51 @@
+{
+  "zoneId": "slagpit",
+  "ground": "arena_slagpit_ground.webp",
+  "backdrop": "arena_slagpit_backdrop.webp",
+  "lighting": {
+    "sunColor": "#ff8a3d",
+    "sunIntensity": 3.1,
+    "sunAngleDeg": 16,
+    "sunAzimuthDeg": -44,
+    "ambientColor": "#6d7d8c",
+    "ambientIntensity": 0.86,
+    "fogColor": "#3a2721",
+    "fogDensity": 0.022,
+    "grade": {
+      "saturation": 0.86,
+      "temperature": 0.32,
+      "lift": -0.1
+    }
+  },
+  "props": [
+    {
+      "file": "arena_slagpit_prop_01.webp",
+      "x": -7.4,
+      "z": 2,
+      "scale": 1.6,
+      "layer": "back"
+    },
+    {
+      "file": "arena_slagpit_prop_02.webp",
+      "x": 5.9,
+      "z": 5.3,
+      "scale": 0.9,
+      "layer": "mid"
+    },
+    {
+      "file": "arena_slagpit_prop_03.webp",
+      "x": 7.3,
+      "z": 2,
+      "scale": 1.5,
+      "flip": true,
+      "layer": "back"
+    },
+    {
+      "file": "arena_slagpit_prop_04.webp",
+      "x": -5.2,
+      "z": 8,
+      "scale": 0.85,
+      "layer": "mid"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "status": "production_regeneration_rank_readability_gate",
+  "canvas": { "width": 1536, "height": 1536, "format": "png", "colorSpace": "srgb", "alpha": true },
+  "camera": { "projection": "orthographic", "azimuthDeg": 45, "elevationDeg": 35.264, "groundAxisScreenDeg": [-30, 30], "verticals": "vertical" },
+  "lighting": { "keyDirection": "screen-upper-left", "keyElevationDeg": 35, "keySoftness": "broad-soft", "ambient": "cool-low", "castGroundShadow": false },
+  "anchor": { "x": 768, "y": 1352, "normalizedX": 0.5, "normalizedY": 0.8802, "toleranceX": 24, "toleranceY": 20 },
+  "rankScale": { "1": 1, "2": 1.15, "3": 1.3 },
+  "tolerances": { "boundsPercent": 8, "edgeOccupiedPixels": 0, "minTransparentRatio": 0.35 },
+  "night": { "mode": "same-geometry-grade", "separateGenerationAllowed": false, "emissiveMaskAllowed": true },
+  "calibrationIds": ["camp_townhall", "camp_fishing_hut", "camp_watchtower", "camp_seed_garden"],
+  "buildings": [
+    { "id": "camp_townhall", "order": 1, "name": "Town Hall", "sizeClass": "large", "footprint": [7.5, 5.8], "rank1Bounds": [760, 590], "zone": "center", "visual": "low settler hall growing into a fieldstone-and-timber meeting house with a restrained bell frame; administrative, practical, no heraldry" },
+    { "id": "camp_watchtower", "order": 2, "name": "Watchtower", "sizeClass": "tall", "footprint": [3.4, 3.4], "rank1Bounds": [410, 760], "zone": "high-ground", "visual": "narrow timber lookout on a stone-footed base, readable ladder and platform, no oversized fantasy spire" },
+    { "id": "camp_storehouse", "order": 3, "name": "Storehouse", "sizeClass": "medium", "footprint": [4.6, 4.2], "rank1Bounds": [560, 500], "zone": "dry-edge", "visual": "raised storage house on stone stilts, sealed timber walls, practical loading step, protected from flood and rats" },
+    { "id": "camp_scrivener_tent", "order": 4, "name": "The Scrivener's Tent", "sizeClass": "wide", "footprint": [5.2, 3.8], "rank1Bounds": [620, 410], "zone": "center-edge", "visual": "patched record-keeper awning with desk, stools, ledger chest and hanging lantern; civilian rather than military" },
+    { "id": "camp_fishing_hut", "order": 5, "name": "Fisher's Hut", "sizeClass": "small", "footprint": [3.6, 3], "rank1Bounds": [430, 370], "zone": "water-edge", "visual": "compact weathered fisher shelter with racks, baskets and coiled nets attached to the structure; no water or dock terrain" },
+    { "id": "camp_sawpit", "order": 6, "name": "The Sawpit", "sizeClass": "wide", "footprint": [5.2, 3.2], "rank1Bounds": [610, 350], "zone": "forest-edge", "visual": "beam-framed work rig with a log and long pit saw, restrained timber stacks; represent the pit only through structure, never a ground hole" },
+    { "id": "camp_mine_adit", "order": 7, "name": "The Adit", "sizeClass": "wide", "footprint": [4.8, 3.4], "rank1Bounds": [560, 400], "zone": "rock-edge", "visual": "heavy timber mine portal with doors, baskets and an ore sled attached; no cliff, rubble field or terrain chunk" },
+    { "id": "camp_seed_garden", "order": 8, "name": "The Seed Garden", "sizeClass": "wide", "footprint": [5.6, 3.6], "rank1Bounds": [650, 350], "zone": "open-ground", "visual": "four raised planting beds enclosed by low wattle fencing, seed sacks and rain barrel; beds are constructed objects, no surrounding soil patch" },
+    { "id": "camp_fence_tent", "order": 9, "name": "The Fence's Tent", "sizeClass": "small", "footprint": [3.8, 3], "rank1Bounds": [450, 340], "zone": "entrance", "visual": "low patched trading tent with lockbox and concealed shelves, discreet and weathered, no carnival styling" },
+    { "id": "camp_workyard", "order": 10, "name": "The Workyard", "sizeClass": "large", "footprint": [6.6, 5], "rank1Bounds": [720, 500], "zone": "work-edge", "visual": "open timber workshop combining benches, hoist and tool racks beneath partial roofs, visually busy but one coherent structure" },
+    { "id": "camp_smelter", "order": 11, "name": "The Smelter", "sizeClass": "medium", "footprint": [4.5, 4.2], "rank1Bounds": [520, 520], "zone": "rock-edge", "visual": "masonry furnace with short chimney, bellows and attached work canopy, honest ember light only, no smoke cloud or ground scorch" },
+    { "id": "camp_smokehouse", "order": 12, "name": "The Smokehouse", "sizeClass": "medium", "footprint": [4.7, 4.1], "rank1Bounds": [540, 500], "zone": "water-edge", "visual": "tight timber smokehouse with vented roof, hanging hooks under a small side awning and stacked fuel, no detached food spread" },
+    { "id": "camp_trophy_wall", "order": 13, "name": "The Trophy Wall", "sizeClass": "wide", "footprint": [5.8, 3.2], "rank1Bounds": [680, 420], "zone": "outer-edge", "visual": "freestanding fortified timber wall displaying restrained hunt trophies and iron hooks, not a full hall and not a gore shrine" },
+    { "id": "camp_warden_shrine", "order": 14, "name": "Shrine of the Silent", "sizeClass": "tall-small", "footprint": [3.2, 3], "rank1Bounds": [380, 500], "zone": "quiet-grove", "visual": "empty aniconic roadside shrine of dark stone and timber with no statue or face, one modest offering ledge" },
+    { "id": "camp_trade_post", "order": 15, "name": "The Trading Post", "sizeClass": "wide", "footprint": [5.7, 4], "rank1Bounds": [650, 430], "zone": "entrance", "visual": "sturdy covered counter and store room with tied crates, scales and a restrained hanging sign, practical frontier commerce" }
+  ]
+}

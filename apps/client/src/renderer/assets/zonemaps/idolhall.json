@@ -1,0 +1,29 @@
+{
+  "zoneId": "idolhall",
+  "hotspots": [
+    {
+      "monsterId": "idol_warden",
+      "x": 22,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "aether_wraith",
+      "x": 50,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "scale_skarn",
+      "x": 78,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "last_idol",
+      "x": 22,
+      "y": 71,
+      "size": 2.33
+    }
+  ]
+}

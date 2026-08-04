@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grim Reach — Patchnotes Runde 3</title>
+<style>
+  :root{
+    --bg:#f5f1e8; --card:#fffdf7; --ink:#2b2620; --ink-2:#57503f; --ink-3:#8a8170;
+    --line:#ded5c2; --ember:#b4541e; --ember-soft:#fdeadb;
+    --good:#2e7d4f; --good-soft:#e2f2e8; --fix:#8a4d9e; --fix-soft:#f3e8f8;
+    --pol:#a86a00; --pol-soft:#fdf1d8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#191512; --card:#231e19; --ink:#ece4d4; --ink-2:#c2b7a0; --ink-3:#8a8170;
+      --line:#3a332a; --ember:#e07a3a; --ember-soft:#3a2617;
+      --good:#5fc08c; --good-soft:#1d3527; --fix:#c48ad6; --fix-soft:#2e2136;
+      --pol:#e0a83a; --pol-soft:#38290e; }
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:var(--bg); color:var(--ink); font:15px/1.55 "Segoe UI",system-ui,sans-serif; padding:28px 16px}
+  .wrap{max-width:880px; margin:0 auto}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ember); margin-bottom:8px}
+  h1{font-size:30px; margin-bottom:4px}
+  h1 .sub{display:block; font-size:15px; color:var(--ink-3); font-weight:400; margin-top:4px}
+  .lead{color:var(--ink-2); max-width:72ch; margin:12px 0 22px}
+  .sec{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px 24px; margin:16px 0}
+  .sec h2{font-size:19px; margin-bottom:2px; display:flex; align-items:center; gap:10px}
+  .sec .count{font-size:12px; color:var(--ink-3); font-weight:400}
+  .tag{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.07em;
+    border-radius:6px; padding:2px 9px}
+  .tag.neu{background:var(--good-soft); color:var(--good)}
+  .tag.fix{background:var(--fix-soft); color:var(--fix)}
+  .tag.pol{background:var(--pol-soft); color:var(--pol)}
+  .sec ul{list-style:none; margin-top:12px}
+  .sec li{padding:9px 0 9px 26px; border-top:1px solid var(--line); position:relative; color:var(--ink-2)}
+  .sec li::before{content:"✦"; position:absolute; left:4px; color:var(--ember); font-size:12px; top:11px}
+  .sec li strong{color:var(--ink)}
+  .sec li .who{font-size:11.5px; color:var(--ink-3); white-space:nowrap}
+  .techbox{border-left:3px solid var(--ember); background:var(--ember-soft); border-radius:0 10px 10px 0;
+    padding:12px 16px; margin:20px 0; color:var(--ink-2); font-size:13.5px}
+  footer{margin-top:36px; padding-top:16px; border-top:1px solid var(--line); color:var(--ink-3);
+    font-size:12.5px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Grim Reach · Early Access 0.1 (in Vorbereitung) · Build 16.07.2026 · Runde-3-Fixes · Save-Version 68</div>
+    <h1 class="serif">Patchnotes — Runde 3<span class="sub">14 Änderungen aus dem dritten Besuch der sieben Test-Personas (Ø Sucht-Faktor jetzt 7,9)</span></h1>
+    <p class="lead">Der dritte Test-Durchlauf bestätigte alle bisherigen Fixes im Spiel und fand die letzten präzisen Kanten: Ereignisse, die beim Laden verschluckt wurden, Feiern, die sich gegenseitig verdrängten, und einen Knochen-Koloss, der ein Viertel aller Aufträge kaperte. Diese Runde räumt sie ab.</p>
+  </header>
+
+  <div class="sec">
+    <h2 class="serif"><span class="tag neu">NEU &amp; GEFEIERT</span><span class="count">4 Änderungen</span></h2>
+    <ul>
+      <li><strong>Der Lade-Moment hat jetzt eine Stimme.</strong> Wer einen älteren Spielstand lädt und nachträglich Erfolge, Meilenstein-Tokens, Truhen oder Pets gutgeschrieben bekommt, sieht das jetzt als Feier beim Ankommen. Vorher wurde genau dieser Jackpot lautlos verbucht. <span class="who">— Fund von Pip</span></li>
+      <li><strong>Wichtige Feiern lassen sich nicht mehr verdrängen.</strong> Jackpot-, Serien-, Truhen- und Meilenstein-Meldungen haben jetzt Vorrang im Meldungs-Stapel — Level-Ups müssen warten, nicht umgekehrt. Vorher fiel die Serien-Feier genau in den größten Momenten aus. <span class="who">— Fund von Vesna &amp; Pip</span></li>
+      <li><strong>Sagenhafte Funde heißen jetzt auch so.</strong> Der größte Jackpot des Spiels trägt einen eigenen Titel („Sagenhafter Fund!") statt des wortgleichen „Seltener Fund!". <span class="who">— Fund von Grete</span></li>
+      <li><strong>Heimkehr mit Namen:</strong> Das „Während du weg warst"-Popup nennt jetzt die ersten drei offline verdienten Erfolge beim Namen („… und 2 weitere"). <span class="who">— Fund von Fenn &amp; Pip</span></li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2 class="serif"><span class="tag fix">BEHOBEN</span><span class="count">6 Änderungen</span></h2>
+    <ul>
+      <li><strong>Keine Knochen-Koloss-Monokultur mehr.</strong> Das Slayer-Los gewichtet Etagen jetzt nach der Zahl ihrer Monster — der Koloss fällt von 26 % auf unter 8 % aller Endgame-Aufträge, alle Kandidaten sind gleich wahrscheinlich. <span class="who">— Fund von Vesna</span></li>
+      <li><strong>Kein Rauswurf nach dem Sieg.</strong> Der Bildschirm bleibt nach einem Etagen- oder Dungeon-Abschluss endgültig stehen — der Fix greift jetzt am tatsächlich scrollenden Bereich. <span class="who">— Root-Cause von Aldric</span></li>
+      <li><strong>Die Null-Heilungs-Zeile ist wirklich weg:</strong> Kleine Lebensraub-Heilungen (0,1+) werden jetzt mit einer Dezimale angezeigt statt auf „0" abgerundet. <span class="who">— Fund von Fenn</span></li>
+      <li><strong>Der letzte Craft eines Auftrags</strong> feuert keinen falschen „Seltener Fund!"-Toast mehr — die Lücke am Serien-Ende ist geschlossen. <span class="who">— Fund von Riko</span></li>
+      <li><strong>Skill-Karten runden ehrlich:</strong> Mastery-Chips und Tooltips zeigen jetzt „+12,5 %" statt aufgerundeter „+13 %" — dieselbe Präzision wie die Mastery-Seite. <span class="who">— Fund von Mona</span></li>
+      <li><strong>Der Gold-Checkpoint-Toast bleibt golden</strong> — er fiel nach seiner Puls-Animation auf das Standard-Blau zurück. <span class="who">— Fund von Mona</span></li>
+    </ul>
+  </div>
+
+  <div class="sec">
+    <h2 class="serif"><span class="tag pol">POLIERT</span><span class="count">4 Änderungen</span></h2>
+    <ul>
+      <li><strong>Verteidigungs-Badges jetzt auch im Bestiarium</strong> („Gepanzert / Ausweichend / Ward" mit Konter-Tipp auf allen Karten) und als Farbpunkt mit Tooltip an der Dungeon-Wellen-Vorschau — genau dort, wo die Ward-Frage wohnt. <span class="who">— Fund von Grete</span></li>
+      <li><strong>Zeremonie-Abschluss ohne Positionsverlust</strong> — nach der Weihe geht es an derselben Stelle weiter (gleicher Mechanismus wie der Sieg-Fix). <span class="who">— Fund von Grete</span></li>
+      <li><strong>Slayer-Zettel ohne toten Fallback-Wert</strong> im Code — Anzeige-Logik aufgeräumt. <span class="who">— Fund von Vesna</span></li>
+      <li><strong>Toter Winkel geschlossen:</strong> Pet-Feier und alle Ereignis-Meldungen nutzen jetzt dieselbe robuste Startlogik — kein Ereignis kann mehr zwischen Laden und Ankommen verloren gehen. <span class="who">— Systemfix aus Pips Fund</span></li>
+    </ul>
+  </div>
+
+  <div class="techbox">
+    <strong>Technik:</strong> Keine neue Save-Version nötig (reine Anzeige- und Auswahl-Logik; Save-Stand bleibt 68, alte Spielstände laden verlustfrei). Engine 938 Tests grün, das Frühspiel-Verhalten des Slayer-Loses ist bit-identisch zum Vorstand. Bewusst offen: die Layout-Verdichtung der Zeremonie-Seite für 1080p (braucht eine visuelle Session) und das volle Badge in der Wellen-Leiste (Platzfrage) — beides notiert.
+  </div>
+
+  <footer>
+    <span>Grim Reach · Runde-3-Fix-Runde nach Fun-Sweep 16.07.2026</span>
+    <span>Berichte: runde3-trend.html · retest-vergleich.html · fun-review-bericht.html</span>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   BUG REPORT — entry banners (Options/Main Menu) + report dialog
+   Self-contained: imported directly by BugReportDialog.tsx /
+   the pages that render the entry banner.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Prominent entry banner ("ganz oben") — Options page + Main Menu options panel ── */
+.bugreport-entry-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(rgba(216, 192, 106, 0.1), rgba(10, 12, 15, 0.5)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 9px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 9px;
+  border-radius: 0;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.bugreport-entry-banner:hover {
+  background: linear-gradient(rgba(216, 192, 106, 0.2), rgba(10, 12, 15, 0.5)), url("../assets/bg_black.webp") repeat;
+}
+
+.bugreport-entry-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.bugreport-entry-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bugreport-entry-title {
+  font-family: var(--font-head);
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.bugreport-entry-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ─── Dialog ─────────────────────────────────────────────── */
+.bugreport-modal {
+  max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.bugreport-title {
+  margin: 0 0 4px;
+  font-family: var(--font-head);
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.bugreport-subtitle {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.bugreport-desc-label {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-head);
+  font-size: 15px;
+  color: var(--text);
+}
+
+.bugreport-textarea {
+  min-height: 100px;
+}
+
+/* ─── Attachment zone (Chef-Korrektur: der Spieler hängt SEINEN Screenshot an) ─────────────── */
+.bugreport-dropzone {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px dashed var(--border);
+  background: rgba(10, 12, 15, 0.35);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.bugreport-dropzone.drag-over {
+  border-color: var(--gold);
+  background: rgba(216, 192, 106, 0.08);
+}
+
+.bugreport-dropzone-hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.bugreport-dropzone-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bugreport-clipboard-empty {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.bugreport-max-images {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.bugreport-thumbs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.bugreport-thumb-wrap {
+  position: relative;
+  width: 84px;
+  height: 84px;
+}
+
+.bugreport-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  display: block;
+}
+
+.bugreport-thumb-remove {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--slot);
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bugreport-thumb-remove:hover {
+  border-color: var(--accent);
+  color: var(--gold);
+}
+
+/* ─── Auto-attached collapsible block ────────────────────── */
+.bugreport-toggle {
+  display: block;
+  margin-top: 14px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--accent-2);
+  font-family: var(--font-head);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.bugreport-toggle:hover {
+  color: var(--gold);
+}
+
+.bugreport-auto-block {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+}
+
+.bugreport-auto-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  color: var(--muted);
+}
+
+.bugreport-auto-row span:last-child {
+  color: var(--text);
+  text-align: right;
+  word-break: break-word;
+}
+
+/* ─── Privacy note ───────────────────────────────────────── */
+.bugreport-privacy {
+  margin: 14px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ─── Primary send (Discord webhook) ─────────────────────── */
+.bugreport-primary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* ─── Fallback (mailto / copy) ────────────────────────────── */
+.bugreport-fallback {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bugreport-fallback-toggle {
+  display: block;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 8px;
+  color: var(--accent-2);
+  font-family: var(--font-head);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.bugreport-fallback-toggle:hover {
+  color: var(--gold);
+}
+
+.bugreport-fallback-explain {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.bugreport-fallback-body .opz-status-ok {
+  margin-left: 10px;
+}
+
+.bugreport-email-target {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.bugreport-mailto-hint {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* codex:2026-08-01T13:02:00+02:00 — Bug/Feature-Dialog im aktuellen Gravewood-Vertrag:
+   breiter, lesbarer, kräftiger gerahmt und ohne alte gestrichelte/ungefasste Hilfsflächen. */
+#root .bugreport-entry-banner {
+  padding: 14px 20px;
+  border-width: 22px;
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 22px;
+  background:
+    linear-gradient(90deg, rgba(45, 18, 13, 0.36), rgba(7, 11, 14, 0.7)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .bugreport-entry-title {
+  font-size: clamp(17px, 1.2vw, 21px);
+}
+
+#root .bugreport-entry-hint {
+  font-size: clamp(13px, 0.9vw, 16px);
+}
+
+/* codex:2026-08-01T13:30:36+02:00 — Der Feedback-Banner nutzt das neue eigene Bug-SVG. */
+#root .bugreport-entry-icon .opz-system-icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+#root .bugreport-modal {
+  width: min(92vw, 720px);
+  max-width: 720px;
+  max-height: 90vh;
+  padding: 24px 26px 26px;
+  border-width: 12px;
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 12px;
+  background:
+    radial-gradient(ellipse at 18% 0%, rgba(139, 81, 36, 0.14), transparent 48%),
+    linear-gradient(rgba(5, 8, 10, 0.22), rgba(4, 6, 8, 0.46)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 256px 256px repeat;
+}
+
+#root .bugreport-title {
+  padding-right: 42px;
+  font-size: clamp(24px, 2vw, 31px);
+  color: #e4c777;
+}
+
+#root .bugreport-subtitle,
+#root .bugreport-dropzone-hint,
+#root .bugreport-privacy,
+#root .bugreport-fallback-explain {
+  font-size: clamp(13px, 0.95vw, 16px);
+  line-height: 1.5;
+}
+
+#root .bugreport-desc-label {
+  font-size: clamp(16px, 1.1vw, 19px);
+}
+
+#root .bugreport-textarea {
+  min-height: 132px;
+  padding: 12px 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  border: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
+  background: rgba(4, 6, 8, 0.78);
+}
+
+#root .bugreport-dropzone {
+  padding: 16px;
+  border: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
+  background:
+    linear-gradient(rgba(8, 12, 14, 0.42), rgba(6, 8, 10, 0.58)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
+}
+
+#root .bugreport-dropzone .combat-btn,
+#root .bugreport-fallback .combat-btn,
+#root .bugreport-primary .combat-btn {
+  min-height: 38px;
+  font-size: 14px;
+}
+
+#root .bugreport-auto-block {
+  border: 5px solid transparent;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 5px;
+  background: rgba(4, 6, 8, 0.72);
+  font-size: 13px;
+}
+
+/* codex:2026-08-01T13:28:00+02:00 — Produktionsgerechter Feedback-Dialog: mehr nutzbare Fläche,
+   dunkles Basaltmaterial, doppelte Rahmentiefe und lesbare aktuelle Buttons statt kleiner Altcontrols. */
+#root .bugreport-modal {
+  width: min(94vw, 1040px);
+  max-width: 1040px;
+  max-height: 92vh;
+  padding: clamp(26px, 2.2vw, 38px);
+  border-width: 22px;
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 22px;
+  background-color: #090b0c;
+  background-image:
+    radial-gradient(ellipse at 18% 0%, rgba(141, 78, 31, 0.2), transparent 50%),
+    linear-gradient(rgba(3, 5, 6, 0.16), rgba(2, 3, 4, 0.56)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 224px 224px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .bugreport-title {
+  font-size: clamp(28px, 2.4vw, 38px);
+}
+
+#root .bugreport-textarea {
+  min-height: 190px;
+  padding: 16px 18px;
+  border-width: 10px;
+  border-image-width: 10px;
+  font-size: clamp(16px, 1vw, 19px);
+}
+
+#root .bugreport-dropzone {
+  min-height: 150px;
+  padding: 20px;
+  border-width: 10px;
+  border-image-width: 10px;
+}
+
+#root .bugreport-dropzone .combat-btn,
+#root .bugreport-fallback .combat-btn,
+#root .bugreport-primary .combat-btn {
+  min-height: 48px;
+  height: auto;
+  padding: 7px 16px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill / 8px;
+  background-color: #111315;
+  background-image:
+    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  color: #ead8a0;
+  font-family: var(--font-head);
+  font-size: clamp(15px, 1vw, 19px);
+  line-height: 1.15;
+  white-space: normal;
+}
+
+#root .bugreport-auto-block {
+  border-width: 9px;
+  border-image-width: 9px;
+  font-size: clamp(14px, 0.9vw, 17px);
+}
+
+@media (max-height: 820px) {
+  #root .bugreport-modal {
+    overflow-y: auto;
+  }
+}

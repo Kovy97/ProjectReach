@@ -1,0 +1,36 @@
+/* ═══════════════════════════════════════════════════════════
+   SHARED FONTS — dieselben gebündelten Fonts wie im echten Client
+   (apps/client/src/renderer/fonts/*), nur lokal referenziert.
+   Keine Google-Fonts-CDN, keine externen Abhängigkeiten.
+   ═══════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Cinzel";
+  src: url("../../../apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "IM Fell English SC";
+  src: url("../../../apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Grenze Gotisch";
+  src: url("../../../apps/client/src/renderer/fonts/GrenzeGotisch-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "MedievalSharp";
+  src: url("../../../apps/client/src/renderer/fonts/MedievalSharp-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marcellus SC";
+  src: url("../../../apps/client/src/renderer/fonts/MarcellusSC-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Metamorphous";
+  src: url("../../../apps/client/src/renderer/fonts/Metamorphous-Regular.ttf") format("truetype");
+  font-display: swap;
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- codex:2026-08-01T13:30:36+02:00 — Funktionelle Info-Bar-Studien V2, keine Produktionsbindung. -->
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Grim Reach · Info-Bar V2</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="lab-head">
+    <div><span class="eyebrow">Codex Design Control</span><h1>Info-Bar · zweite Runde</h1></div>
+    <p>Fünf umsetzbare Hierarchien mit bestehenden Frames, Texturen und echten responsiven Regeln.</p>
+  </header>
+
+  <nav class="controls" aria-label="Mockup-Steuerung">
+    <div class="control-group" id="concept-controls"></div>
+    <div class="control-group state-controls">
+      <button data-state="idle">Idle</button>
+      <button data-state="training" class="is-active">Training</button>
+      <button data-state="combat">Combat</button>
+    </div>
+    <button id="density-toggle" aria-pressed="false">Details einklappen</button>
+  </nav>
+
+  <main>
+    <section class="viewport-shell">
+      <div id="preview" class="infobar concept-5 state-training">
+        <div class="identity cluster">
+          <span class="cluster-kicker">Warden</span>
+          <strong class="player-name">Kovy</strong>
+          <span class="level-pair"><b>Combat 38</b><i></i><b>Total 604</b></span>
+        </div>
+
+        <div class="screen-context cluster">
+          <span class="cluster-kicker">Screen</span>
+          <strong>Character</strong>
+        </div>
+
+        <div class="activity cluster">
+          <span class="activity-state">In progress</span>
+          <strong class="activity-name">Cook Dark Feast</strong>
+          <span class="activity-meta"><b>18 / 50</b><i></i><b>2.8s</b><i></i><b>Queue 3</b></span>
+        </div>
+
+        <div class="economy cluster">
+          <span><small>Inventory</small><b>37 / 38</b></span>
+          <span><small>Gold</small><b>9,526</b></span>
+        </div>
+
+        <div class="contract cluster">
+          <span class="cluster-kicker">Slayer Contract</span>
+          <strong>Goblin 0 / 37</strong>
+          <span>21,680 XP/h</span>
+        </div>
+
+        <div class="progress-stack">
+          <div class="progress-row action-progress"><span>Action</span><div class="track"><i></i></div><b>36%</b></div>
+          <div class="progress-row xp-progress"><span>Level 60</span><div class="track"><i></i></div><b>16%</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="notes">
+      <article><span>01</span><h2>Keep Command</h2><p>Ausgewogene Dreiteilung. Aktion ist dominant, Screenname nur ein leiser Orientierungschip.</p></article>
+      <article><span>02</span><h2>Warden Ledger</h2><p>Charakter und Ökonomie als kompakte Seitenakten. Viel Raum für lange Aktionsnamen und Übersetzungen.</p></article>
+      <article><span>03</span><h2>Iron Spine</h2><p>Konsequent einzeilig. Entfernt den redundanten Screen-Titel und priorisiert Aktion, Queue und Fortschritt.</p></article>
+      <article><span>04</span><h2>Hunter Contract</h2><p>Slayer- und Zielspieler-Fokus. Gut, wenn tägliche Verträge künftig das zentrale Langzeitziel werden.</p></article>
+      <article><span>05</span><h2>Quiet Citadel</h2><p>Ruhigste Standardlösung: nur das Entscheidungsrelevante; Sekundärinfos lassen sich einklappen.</p></article>
+    </section>
+  </main>
+
+  <script src="preview.js"></script>
+</body>
+</html>

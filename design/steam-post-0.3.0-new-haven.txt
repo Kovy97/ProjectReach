@@ -1,0 +1,48 @@
+Grim Reach Patch 0.3.0 - New Haven
+
+NEW FEATURE: NEW HAVEN, BUILD YOUR SETTLEMENT
+
+The Reach finally has a place that pushes back. New Haven is your own settlement: 15 different buildings, each with 3 ranks, and every single one gives you a permanent passive bonus. A few examples:
+
+- The Watchtower extends your offline progression, from 8 hours up to 11 at max rank
+- The Smelter and the Smokehouse work while you are away. They slowly smelt ores and cook food on their own, even while you are offline
+- The Shrine strengthens your weekday blessing effects
+- The Storehouse adds bank space, and the workshops speed up your gathering and crafting skills
+
+Building costs gold and materials, and your work crew needs real time to finish. The first buildings go up in minutes, the final ranks take up to two days. Come back tomorrow and the hands will have worked.
+
+You can manage everything from a simple list view. If you like it visual, switch to the 2D map and place your buildings wherever you want, without restrictions. You can also scale and mirror every building freely, so the settlement looks exactly the way you want it to. In the evening (from 7pm local time) the map shifts from day to night.
+
+Every bonus is honest and visible: wherever a New Haven boost applies in the game, the tooltip shows you exactly what comes from your settlement.
+
+This version is the base. I have more ideas for New Haven that I can't share just yet, and I want to expand on this feature over the coming updates.
+
+WOODCUTTING FINALLY MATTERS
+
+To support the settlement, Woodcutting got a real purpose. You now use it to craft dedicated building materials, and higher settlement ranks require them. If you ignored the skill so far, there is finally a good reason to train it.
+
+COMPLETE UI OVERHAUL
+
+The UI is going through many changes over the course of the next updates. I am always learning, and I want the game to feel cozy, immersive and cohesive. A lot of pages had their layout completely reworked: Companions, Shop, Bank, Quests, the Zone overview and the Battle Screen have all been optimized and unified.
+
+Some highlights:
+
+- The Battle Screen has a new dock on the left with Gear, Skills, Style and Prep tabs. Both the dock and the combat log on the right can be collapsed in case you just want to watch the fight
+- The combat log got filter settings so you decide what shows up in it, and you can resize it freely
+- The action queue was reworked to be easier on the eyes and easier to handle
+- Zones and dungeons are now sorted by level
+- Dozens of small hand drawn icons replaced the old emoji placeholders across the whole interface
+
+QUALITY OF LIFE AND FIXES
+
+- Equipment loadouts: save and swap between 3 gear sets
+- Fights can now be queued like any other action, with repeat counts
+- Mass sell in the shop, and a big bank rework with proper drag and drop
+- Defeating a champion now comes with a proper victory ceremony and loot overview
+- Thieving now shows your real success chance with a full breakdown
+- Better healing balance across all foods and potions, and a fairer early game
+- Countless smaller fixes, from tooltips to translations in all 7 languages
+
+Your existing saves are fully compatible, as always. If you are returning after a break, a short tour will point you to the new settlement.
+
+Thanks for playing Grim Reach. See you in New Haven.

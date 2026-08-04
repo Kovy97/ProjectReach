@@ -1,0 +1,591 @@
+/* ═══════════════════════════════════════════════════════════
+   BESTIARY — "REISE DURCH DEN REACH" (Konzept 4, Chef-Wahl 2026-08-03)
+   Bindende Vorlage: design/mockups/bestiary-2026-08-03/concept-4-reise.{html,css,js} (+ Screenshots).
+   Zonen als vertikale Kulissen-Bänder mit den echten Kampf-Backdrops großformatig; Monster/Champions
+   als Wegpunkt-Karten entlang eines gestrichelten Pfads durchs Band — das Bestiarium als Wanderung
+   von den Weiden bis in die Götzenhalle.
+
+   EIGENE Klassen-Familie (`bjw-*` = "Bestiary Journey Waypoint") statt der alten `.bestiary-card`/
+   `.bestiary-grid`/`.bestiary-zone-*`-Familie (weiter unten in pages.css) — die alten Regeln bleiben
+   dort bewusst unangetastet liegen (Kollisionsschutz für parallele Arbeit an der Achievements-Seite),
+   sie sind seit diesem Umbau nur noch unbenutzter Altcode. Wo es sich anbietet, werden trotzdem
+   generische, NICHT bestiary-eigene Bausteine wiederverwendet (StatLine/DefenseTypeBadge-Klassen aus
+   combat.css, `.bar`/`.bar-fill` aus skills.css, `.status-legend*`/`.bestiary-filter-chip`/
+   `.bestiary-fight-btn`/`.bestiary-card-level-badge`/`.bestiary-enrage-badge`/`.bestiary-card-portrait`/
+   `.bestiary-portrait-ph`/`.bestiary-unknown-hint`/`.codex-stat-*` aus dem bestehenden Bestiary-CSS,
+   `.ms2-tab*` aus skills.css) — s. Kommentare an den jeweiligen Stellen unten, WARUM diese konkret
+   sicher sind (kleine, in sich geschlossene Bausteine ohne Layout-Kollision mit der neuen Band-Optik).
+
+   Perf-Pflicht (Fill-Rate großer Kulissen-Bänder, Lektion aus dem Repo): KEIN `will-change` auf den
+   großen Ebenen (Band-Hintergrund/Scrim), KEINE dauerlaufenden Animationen — nur eine optionale,
+   `prefers-reduced-motion`-gegatete Hover-Transition auf einzelnen Karten. `content-visibility: auto`
+   + `contain-intrinsic-size` auf Band UND Karte (Muster `.bestiary-card` weiter unten in pages.css).
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Kopfleiste: ruhiger Einstieg, kein Band ─── */
+.bjw-head {
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  background: linear-gradient(180deg, rgba(20, 22, 26, 0.9), rgba(11, 12, 14, 0.65));
+  border: 1px solid var(--border);
+}
+
+.bjw-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.bjw-head-title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 30px;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+
+.bjw-head-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.bjw-seals {
+  display: flex;
+  gap: 10px;
+}
+
+.bjw-seal {
+  padding: 7px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.bjw-seal strong {
+  display: block;
+  font-size: 19px;
+  color: var(--gold);
+  font-family: var(--font-head);
+}
+
+.bjw-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+/* Status-Legende (Bestand, `.status-legend*` in pages.css unverändert): erzwingt nur den Umbruch
+   auf eine eigene Zeile innerhalb der neuen Kopf-Controls-Reihe. */
+.bjw-controls .status-legend {
+  flex-basis: 100%;
+}
+
+/* ─── Zonen-Band: Vollbild-Backdrop + Verlaufs-Scrim + Inhalt ─── */
+.bjw-band {
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-bottom: 3px solid #000;
+  /* Perf-Pflicht: großes Band = Fill-Rate-Risiko — offscreen-Bänder überspringen Layout/Paint/
+     Bild-Decode komplett (zusammen mit `loading="lazy"` auf `.bjw-band-bg` unten). */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
+/* Echtes `<img loading="lazy">` statt CSS `background-image` (Vorgabe: Bilder lazy laden) —
+   dieselbe Asset-Quelle wie der Kampf-Backdrop (getBattleScreen/getZoneBackground, BestiaryPage.tsx). */
+.bjw-band-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.bjw-band-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(6, 6, 8, 0.35) 0%,
+    rgba(6, 6, 8, 0.15) 28%,
+    rgba(6, 6, 8, 0.55) 66%,
+    rgba(6, 6, 8, 0.93) 100%
+  );
+}
+
+/* Gesperrte Zone: dunklere Scrim statt eines laufenden `backdrop-filter` (Fill-Rate-Vorgabe — ein
+   Filter auf einer vollbild-großen Ebene ist teuer, eine zweite statische Gradient-Klasse ist gratis). */
+.bjw-band.locked .bjw-band-scrim {
+  background: linear-gradient(180deg, rgba(6, 6, 8, 0.78) 0%, rgba(6, 6, 8, 0.62) 38%, rgba(6, 6, 8, 0.95) 100%);
+}
+
+.bjw-band-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.bjw-band-header {
+  padding: 22px 30px 8px;
+}
+
+.bjw-band-header h2 {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: 32px;
+  color: #fff;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.85);
+  letter-spacing: 0.03em;
+}
+
+.bjw-band-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--accent-2);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* `.bar`/`.bar-fill` (skills.css) unverändert wiederverwendet — nur Breite/Abstand angepasst,
+   dasselbe Muster wie die alte `.bestiary-zone-progress-bar.bar`-Regel (pages.css). */
+.bjw-band-bar.bar {
+  width: 130px;
+  margin-top: 0;
+}
+
+.bjw-band-locked-note {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 30px 12px;
+  padding: 10px 16px;
+  background: rgba(10, 8, 6, 0.55);
+  border: 1px solid rgba(216, 192, 106, 0.35);
+  font-size: 13px;
+  font-style: italic;
+  color: #e8dcc0;
+  max-width: 560px;
+}
+
+.bjw-band-locked-note .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Pfad: horizontal scrollende Wegpunkt-Reihe. */
+.bjw-track-wrap {
+  position: relative;
+  padding: 8px 30px 26px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.bjw-track {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  padding-top: 10px;
+  width: max-content;
+}
+
+.bjw-track::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 24px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(216, 192, 106, 0.5) 0 10px, transparent 10px 20px);
+  z-index: 0;
+}
+
+.bjw-scroll-hint {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 50px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(6, 6, 8, 0.5));
+}
+
+/* ─── Wegpunkt-Karte (Monster ODER Champion) ─── */
+.bjw-card {
+  position: relative;
+  z-index: 1;
+  width: 200px;
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 10, 8, 0.82);
+  border: 1px solid rgba(216, 192, 106, 0.3);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  /* Bis zu 15 Karten in einem einzigen Band (Grenzlande) — auch offscreen-nach-rechts-Karten
+     überspringen Layout/Paint, solange sie nicht ins horizontale Scroll-Fenster rücken. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
+}
+
+/* Wegpunkt-Markierung: goldener Punkt auf der gestrichelten Pfadlinie, grau für Unentdecktes. */
+.bjw-card::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(12, 10, 8, 0.9), 0 0 7px rgba(216, 192, 106, 0.65);
+  z-index: 3;
+}
+
+.bjw-card.unknown::before {
+  background: #6a6252;
+  box-shadow: 0 0 0 3px rgba(12, 10, 8, 0.9);
+}
+
+.bjw-card.unknown {
+  opacity: 0.72;
+  filter: grayscale(0.3);
+}
+
+.bjw-card:hover {
+  border-color: rgba(216, 192, 106, 0.55);
+}
+
+/* Hover-Lift NUR ohne Bewegungspräferenz-Einschränkung (Vorgabe: Reduced-Motion respektieren) —
+   kein Dauerlauf, rein interaktiv/einmalig pro Hover. */
+@media (prefers-reduced-motion: no-preference) {
+  .bjw-card {
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .bjw-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.bjw-art {
+  position: relative;
+  height: 104px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.07), transparent 70%);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+/* Erstfund-Flip-Wrapper (FlipReveal, s. BestiaryPage.tsx) — füllt `.bjw-art` komplett, ersetzt die
+   frühere `.bestiary-card-art-flip`-Größenregel (styles/bestiary-flip.css, dort jetzt ungenutzt). */
+.bjw-art-flip {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.bjw-body {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 9px 10px;
+  background: rgba(10, 8, 6, 0.35);
+}
+
+.bjw-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 0 1px 3px #000;
+  text-align: center;
+  min-height: 2.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+}
+
+/* Rüstungs-Trinität-Badge (`.monster-card-defense-badge`, combat.css) unverändert wiederverwendet,
+   hier nur zentriert statt linksbündig (Original ist für die breite Kampf-Zonenkarte gedacht). */
+.bjw-card .monster-card-defense-badge {
+  align-self: center;
+  margin: 0 0 3px;
+}
+
+.bjw-kills {
+  align-self: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent-2);
+  cursor: help;
+  margin-bottom: 1px;
+}
+
+.bjw-kills.dim {
+  color: var(--muted);
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.bjw-kill-ladder {
+  align-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 6px;
+  font-size: 9px;
+  margin-bottom: 1px;
+}
+
+.bjw-kill-ladder-step {
+  color: var(--muted);
+  cursor: help;
+}
+
+.bjw-kill-ladder-step.reached {
+  color: #8fd28f;
+  font-weight: 600;
+}
+
+/* StatLine (components/StatLine.tsx) über die `.bjw-stats`-Zusatzklasse verkleinert — die generische
+   `.stat-line`/`.stat-line-item`-Basisregel (combat.css) bleibt für alle anderen Verwender (Fighter-
+   Footer, Kampf-Zonenkarte) unverändert. */
+.bjw-stats.stat-line {
+  gap: 3px 10px;
+  justify-content: center;
+  margin: 2px 0;
+}
+
+.bjw-stats .stat-line-item {
+  font-size: 11px;
+  gap: 3px;
+  color: #dcd0b4;
+}
+
+.bjw-stats .stat-line-item .ui-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.bjw-resist.stat-line-immune {
+  justify-content: center;
+  gap: 4px;
+  font-size: 10.5px;
+}
+
+.bjw-resist .stat-line-immune-icons {
+  font-size: 15px;
+  gap: 3px;
+}
+
+.bjw-resist .stat-line-immune-icons img,
+.bjw-resist .stat-line-immune-icons .ui-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.bjw-resist.warn {
+  color: #c98b6b;
+}
+
+.bjw-slayer-req {
+  font-size: 10px;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.bjw-slayer-req.warn {
+  color: #c98b6b;
+}
+
+/* ─── Beute-Chips: kompakte Variante der Drop-Silhouetten/Discovery-Optik ─── */
+.bjw-drops {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.bjw-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 3px 4px 2px;
+  min-width: 32px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.bjw-drop:not(.undiscovered):hover {
+  border-color: var(--accent-2);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 6px rgba(154, 128, 96, 0.28);
+}
+
+.bjw-drop.undiscovered {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.bjw-drop-chip {
+  position: relative;
+  display: inline-flex;
+}
+
+/* `.item-chip-img`/`.item-chip-emoji` (components.css) sind generische, seitenübergreifende
+   Item-Icon-Klassen (Vorgabe: ItemCell/getItemImage-Muster wiederverwenden) — hier nur unter der
+   NEUEN `.bjw-drop-chip`-Ahnenklasse verkleinert, die alte `.bestiary-drop .bestiary-drop-chip
+   .item-chip-img`-Regel (pages.css) greift ohne diese Ahnenklasse gar nicht mehr. */
+.bjw-drop-chip .item-chip-img,
+.bjw-drop-chip .item-chip-emoji {
+  width: 24px;
+  height: 24px;
+  font-size: 19px;
+}
+
+.bjw-drop-check {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: #3a7a3a;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+}
+
+.bjw-drop-mystery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.bjw-drop-silhouette {
+  filter: brightness(0);
+}
+
+.bjw-drop-mystery-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.bjw-drop-mystery-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-shadow: 0 1px 2px #000;
+  pointer-events: none;
+}
+
+.bjw-drop-pct {
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+/* Erstfund-Flip des einzelnen Beute-Chips (FlipReveal) — ersetzt `.bestiary-drop-flip`
+   (styles/bestiary-flip.css, dort jetzt ungenutzt). */
+.bjw-drop-flip {
+  width: 24px;
+  height: 24px;
+}
+
+/* Kämpfen-Button: `.bestiary-fight-btn` (pages.css, 9-Slice-ButtonNew) unverändert wiederverwendet —
+   nur Höhe/Schrift für die schmale Wegpunkt-Karte verkleinert (kombinierte Selektor-Spezifität
+   schlägt die Basisregel unabhängig von Importreihenfolge). */
+.bestiary-fight-btn.bjw-fight-btn {
+  height: 34px;
+  font-size: 11.5px;
+  letter-spacing: 0.3px;
+}
+
+.bjw-unknown-hint {
+  font-size: 11px;
+  font-style: italic;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Champion-Kodex (Jagd-Paket Task 3): dieselbe `.bjw-card`/`.bjw-art`/`.bjw-body`/`.bjw-name`-Hülle,
+   nur die Stat-Zeile ist die bestehende `.codex-stat-*`-Familie (pages.css) — hier verkleinert, weil
+   die Wegpunkt-Karte (200px) deutlich schmaler ist als die alte Grid-Karte (340px+). Nur unter
+   `.bjw-card` gescoped — `.codex-stat-*` wird sonst nirgends im Client verwendet (kein Kollisionsrisiko). */
+.bjw-card .codex-stat-row {
+  gap: 4px 7px;
+  font-size: 11px;
+}
+
+.bjw-card .codex-stat {
+  padding: 3px 5px;
+}
+
+.bjw-card .codex-stat-label {
+  font-size: 9.5px;
+}
+
+.bjw-card .codex-stat-val {
+  font-size: 11px;
+}
+
+.bjw-card .codex-card-zonehint {
+  font-size: 10.5px;
+  text-align: center;
+}

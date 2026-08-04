@@ -1,0 +1,192 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   ELITE-MINI-FENSTER — schwebendes, verschiebbares + einklappbares Panel
+   (Spieler-Feedback 0.2.2 Punkt 3). Ersetzt das frühere Inline-Kopfgeld-Brett auf der
+   Slayer-Seite (BountyBoard.tsx) — zeigt app-weit den dringendsten aktiven Champion, ohne im
+   Hauptinterface Platz zu belegen. Eigener Namensraum "emw-*", direkt importiert von
+   components/EliteMiniWindow.tsx (Kollisions-Schutz, gleiches Muster wie styles/action-queue.css).
+   Default-Position: oben-rechts unter der TopBar (right:22px spiegelt .toast-stack, die unten-
+   rechts sitzen — keine Kollision). z-index unter Toasts (1200)/Ceremonies (2000+), über normalem
+   Seiteninhalt.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.emw-panel {
+  position: fixed;
+  width: 260px;
+  z-index: 900;
+  background:
+    linear-gradient(rgba(14, 9, 4, 0.92), rgba(14, 9, 4, 0.92)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+  animation: ui-fade-in 120ms ease-out;
+}
+
+.emw-panel--collapsed {
+  width: auto;
+}
+
+.emw-panel--dragging {
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(216, 192, 106, 0.4);
+}
+
+.emw-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 6px 8px 10px;
+  cursor: grab;
+  /* Chef-Vorgabe: per Header draggbar. Analog zu .queue-row (ActionQueuePanel.tsx): Touch-Drag
+     statt Browser-Scroll/Zoom auf diesem Streifen. */
+  touch-action: none;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+}
+
+.emw-panel--dragging .emw-header {
+  cursor: grabbing;
+}
+
+.emw-header-icon {
+  font-size: 15px;
+  color: #e0604b;
+  flex-shrink: 0;
+}
+
+.emw-header-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emw-collapse-btn {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--muted);
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 3px;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.emw-collapse-btn:hover {
+  color: var(--gold);
+  box-shadow: 0 0 6px rgba(216, 192, 106, 0.35);
+}
+
+.emw-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.emw-art {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.22);
+}
+
+.emw-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.emw-art-ph {
+  font-size: 22px;
+  opacity: 0.6;
+}
+
+.emw-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.emw-name {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--gold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emw-zone {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emw-countdown {
+  font-family: var(--font-head);
+  font-size: 12px;
+  color: #e0604b;
+  margin-bottom: 2px;
+}
+
+.emw-jump {
+  align-self: flex-start;
+}
+
+/* ─── Eingeklappt: kompakter Badge (nur Schwert-Icon + Countdown, Chef-Vorgabe) ─── */
+.emw-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--gold);
+}
+
+.emw-badge-icon {
+  font-size: 15px;
+  color: #e0604b;
+}
+
+.emw-badge-countdown {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.emw-badge:hover {
+  color: #f5ecd6;
+}

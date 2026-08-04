@@ -1,0 +1,42 @@
+node_modules/
+dist/
+out/
+.turbo/
+coverage/
+*.log
+.DS_Store
+Thumbs.db
+
+# Electron build artifacts
+apps/client/out/
+apps/client/dist/
+apps/client/release/
+apps/client/src/renderer/out-verify/
+
+# Testlauf-Ausgaben (Screenshots/Videos/Rohdaten der Bot-Sweeps — werden immer frisch erzeugt)
+apps/client/ui-audit/bot-runs/
+apps/client/ui-audit/_shots-*/
+apps/client/ui-audit/*.png
+apps/client/ui-audit/*.webm
+
+# Steam: nur Skripte/Doku versionieren, keine Pakete/Logs
+steam/*.zip
+steam/output/
+
+# Drittanbieter (Steamworks SDK — kommt von Valve, nicht von uns)
+SDK/
+
+# CODEX: Dokumente/Aufträge JA, schwere Binär-Staging-Archive NEIN
+# (Deren Sicherungszweck übernimmt ab jetzt Git; produktiv übernommene
+#  Fassungen liegen ohnehin unter apps/** und werden versioniert.)
+CODEX/assets/
+CODEX/AssetControl/
+CODEX/CityAssets/
+CODEX/NEW-HAVEN-ASSET-CONTROL-2026-07-30/
+CODEX/backups/
+CODEX/outbox/
+
+# Lokales/Altes
+.backup-armor-iter2/
+.codex/
+.claude/settings.local.json

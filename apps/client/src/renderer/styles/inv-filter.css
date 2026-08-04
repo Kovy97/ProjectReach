@@ -1,0 +1,165 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   ITEM-FILTER-LEISTE — Bank + Charakter-Inventar (Suche/Filter/Sortierung,
+   Chef-Auftrag 2026-07-09). Eigener Namensraum "invf-*", geteilt zwischen
+   BankPage (voll) und CharacterPage (kompakt, .invf-bar--compact). Citadel-
+   9-slice-Chip-Optik nach shopv2-chip-Vorbild (shop.css) nachgebaut, aber
+   unabhängig gehalten (kein Cross-Import) — Shop-Änderungen anderer Agenten
+   können hier nichts brechen.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.invf-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.invf-search {
+  min-width: 220px;
+  flex: 0 1 260px;
+  background: var(--ds-metal-3);
+  border: 1px solid var(--ds-border-gold);
+  border-radius: var(--ds-radius);
+  color: var(--ds-parch-ink);
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 6px 10px;
+  outline: none;
+  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+}
+
+.invf-search::placeholder {
+  color: var(--ds-parch-muted);
+  font-weight: 600;
+}
+
+.invf-search:hover {
+  border-color: var(--ds-gold-dim);
+  background: var(--ds-metal-4);
+}
+
+.invf-search:focus {
+  border-color: var(--ds-gold);
+  box-shadow: var(--ds-glow-gold);
+}
+
+.invf-chiprow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.invf-chip {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 4px 11px 4px 7px;
+  border: none;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-family: var(--font-head);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+}
+
+.invf-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 5px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.invf-chip:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+}
+
+.invf-chip.active {
+  background:
+    linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: 0 0 8px rgba(216, 184, 112, 0.28), inset 0 0 6px rgba(216, 184, 112, 0.10);
+}
+
+.invf-chip-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.invf-chip-icon-img { width: 100%; height: 100%; object-fit: contain; }
+.invf-chip-icon-emoji { font-size: 14px; line-height: 1; }
+
+.invf-chip-count {
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 1px 6px;
+}
+
+/* ─── Kompakt-Variante (Charakter-Inventar-Toolbar, schmale Spalte) ──────────────────────
+   Kompakt = EINE Zeile, Icon-only-Chips (Label per title-Tooltip) — Chef-Befund 2026-07-09:
+   die zweizeilig umbrechende Leiste (101 px) machte die Charakterseite bei 1080p scrollbar.
+   Seit dem Inventar-Header-Umbau (Chef 2026-07-23) stehen Suche/Chips im Charakter-Inventar
+   NICHT mehr zwingend unter einem gemeinsamen `.invf-bar--compact`-Wrapper (eigenes Zwei-
+   Zeilen-Layout, s. CharacterPage.tsx) — die Kompakt-Regeln sitzen deshalb direkt auf den
+   `--compact`-Modifier-Klassen der Teilkomponenten (ItemFilterChips/ItemFilterSearch), nicht
+   mehr nur als Ableitung des Eltern-Wrappers. `.invf-bar--compact` bleibt für die kombinierte
+   ItemFilterBar (compact=true) als Container-Regel erhalten. */
+.invf-bar--compact { gap: 5px 6px; flex-wrap: nowrap; }
+
+.invf-chiprow--compact { flex-wrap: nowrap; }
+.invf-chiprow--compact .invf-chip { min-height: 26px; padding: 4px 7px; font-size: 10.5px; }
+.invf-chiprow--compact .invf-chip-icon { width: 14px; height: 14px; }
+.invf-chiprow--compact .invf-chip-label,
+.invf-chiprow--compact .invf-chip-count { display: none; }
+
+.invf-search--compact { min-width: 90px; flex: 1 1 110px; font-size: 12px; padding: 4px 8px; }
+
+/* ─── Leer-Hinweis innerhalb eines gefilterten Grids (Drop-Ziel bleibt erhalten) ───────── */
+.invf-empty-note {
+  padding: 14px 4px;
+  color: var(--muted);
+  font-size: 14px;
+  grid-column: 1 / -1;
+}
+
+/* ─── Charakter-Inventar: Nicht-Treffer werden GEDIMMT statt entfernt — die echte
+   Slot-Reihenfolge im State ändert sich NIE durch Suche/Filter, Drag&Drop-Ziele bleiben stabil. */
+.invf-dim {
+  opacity: 0.26;
+  filter: grayscale(60%);
+  transition: opacity 0.12s ease, filter 0.12s ease;
+}
+.invf-dim:hover { opacity: 0.55; }

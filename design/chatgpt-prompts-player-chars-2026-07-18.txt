@@ -1,0 +1,114 @@
+════════════════════════════════════════════════════════════════════════════
+GRIM REACH — Spieler-Charaktere, 50 Bilder in 5 Batches (v4 final, 18.07.2026)
+25 Designs × männlich/weiblich. Jeden Batch-Block KOMPLETT in ChatGPT einfügen.
+Kein "transparent" — jedes Motiv bekommt einen VOLLFARBIGEN Chroma-Hintergrund
+(Farbe steht im Prompt), Freistellen macht unser Chroma-Key-Tool.
+Dateinamen exakt übernehmen. Fertige Bilder in den Undone-Ordner.
+════════════════════════════════════════════════════════════════════════════
+
+
+── BATCH 1 — KÄMPFER: NAHKAMPF (10 Bilder) ─────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Bild. Stil für alle zehn
+konsistent: dunkle, gemalte Fantasy (painterly), gedeckte erdig-düstere
+Palette, GANZKÖRPER-Figur im Hochformat (ca. 1122×1402). Die Figur ist IMMER
+von links nach rechts orientiert: Körper im Dreiviertel-Profil nach rechts
+gewandt, Blick nach rechts. Haltung: kampfbereiter, ruhiger Stand — Waffe
+gezogen, aber gesenkt, geschultert oder aufgestützt, NIEMALS mitten im
+Angriff. Alle Oberflächen MATT: kein Glühen, kein Schimmer, keine Magie-
+Leuchteffekte. Hintergrund: eine KOMPLETT EINFARBIGE, SATTE Fläche in der im
+Prompt genannten Farbe — kein Verlauf, kein Schatten, keine Vignette.
+
+1. player_human_sellsword_m.png — Ein junger, sehniger Söldner in gut sitzendem, geschwärztem Gambeson unter einer geschnürten Halbplatte aus dunklem Stahl; ein graues Wolfsfell über der linken Schulter, ein Streifen aschgrauer Kriegsbemalung quer über dem Gesicht. Das Langschwert gezogen, aber locker gesenkt in einer Hand, das Gewicht ruhig verteilt — jung, aber gefährlich, einer der schon überlebt hat. Hintergrund: sattes Magenta.
+2. player_human_sellsword_f.png — Eine junge Söldnerin gleichen Schlags: geschwärzter Gambeson, dunkle Halbplatte, Wolfsfell über der Schulter; das dunkle Haar streng zurückgebunden, eine schmale Narbe über der Braue, dieselbe aschgraue Kriegsbemalung. Langschwert gezogen und gesenkt, wacher, harter Blick nach rechts. Hintergrund: sattes Magenta.
+3. player_orc_bulwark_m.png — Ein hünenhafter Ork-Krieger mit dunkeloliver Haut und hervorstehenden Hauern, in schwerer, kantiger Plattenrüstung aus geschwärztem Eisen mit Nietenreihen; über dem Rücken ein zerschrammter Turmschild, in der Faust ein Streithammer, dessen Kopf auf dem Boden ruht. Breitbeiniger, unerschütterlicher Stand — eine lebende Mauer. Hintergrund: sattes Magenta.
+4. player_orc_bulwark_f.png — Eine Ork-Kriegerin derselben Garde: dunkelolive Haut, kurzes zurückgeschorenes Haar mit Kriegszöpfen, schwere geschwärzte Plattenrüstung, Turmschild am Arm, Streithammer über der Schulter. Ruhig, massiv, unbezwingbar wirkend. Hintergrund: sattes Magenta.
+5. player_duvra_stonewarden_m.png — Ein gedrungener, fassbrüstiger Krieger des Tiefenvolks (graustichige Haut, breite Züge, dichter dunkler Bart mit Steinperlen), in einer wuchtigen Schwerplatte aus granitgrauem, kantig geschmiedetem Stahl, die Schultern wie behauene Blöcke; in beiden Händen ruht ein gewaltiger Kriegspickel quer vor dem Körper. Stand wie in den Fels gewachsen. Hintergrund: sattes Grün.
+6. player_duvra_stonewarden_f.png — Eine Kriegerin des Tiefenvolks: gedrungen und kraftvoll, graustichige Haut, geflochtenes dunkles Haar mit Eisenringen, dieselbe granitgraue Schwerplatte mit blockhaften Schultern; der Kriegspickel aufgestützt wie ein Wanderstab aus Eisen. Ruhige, felsenfeste Präsenz. Hintergrund: sattes Grün.
+7. player_rakhari_speardancer_m.png — Ein hochgewachsener Krieger eines Katzenvolks (kurzes sandfarbenes Fell, Raubtieraugen, schmale Ohren durch die Helmzier geführt), in dunkelrot lackiertem Lamellenpanzer mit schwarzen Seidenbändern; die lange Stangenwaffe mit geschwungener Klinge steht gepflanzt neben ihm, beide Hände am Schaft. Aufrecht, still, tödlich elegant. Hintergrund: sattes Grün.
+8. player_rakhari_speardancer_f.png — Eine Kriegerin des Katzenvolks: schlank und aufrecht, geflecktes sandfarbenes Fell, dunkelrot lackierter Lamellenpanzer mit schwarzen Bändern, die Glefe gepflanzt, der Blick ruhig und wach nach rechts. Anmut, die jederzeit in Gewalt kippen kann. Hintergrund: sattes Grün.
+9. player_human_thronewalker_m.png — Ein hünenhafter Ritter in nachtschwarzer Vollplatte, deren Panzerung wie übereinander geschichtete Obsidianscherben gearbeitet ist; über der linken Schulter ein schwerer, zerschlissener blutroter Mantel. Der geschlossene Turmhelm trägt eine Krone aus abgebrochenen Eisendornen, die senkrechte Sichtscharte liegt im Schatten. Beide Panzerhandschuhe ruhen auf dem Knauf eines riesigen, runengekerbten Zweihänders, dessen Spitze im Boden steckt. Hintergrund: sattes Grün.
+10. player_human_thronewalker_f.png — Eine Ritterin in derselben nachtschwarzen Obsidianscherben-Vollplatte mit blutrotem, zerschlissenem Mantel; der Dornenkronen-Helm hängt am Gurt, das schwarze Haar ist kurz geschnitten, ein blasses, hartes Gesicht mit kalten Augen. Beide Hände auf dem Knauf des riesigen, im Boden steckenden Zweihänders. Hintergrund: sattes Grün.
+
+
+── BATCH 2 — KÄMPFER: FERNKAMPF + FRÜHE MAGIE (10 Bilder) ──────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, kampfbereiter ruhiger Stand (Schützen: Pfeil
+aufgelegt, Bogen GESENKT, kein voller Auszug; Magier: keine Wirkgeste, Stab
+ruhig geführt), alles MATT ohne Glühen. Hintergrund: komplett einfarbige
+satte Fläche in der genannten Farbe, ohne Verlauf/Schatten/Vignette.
+
+11. player_human_trapper_m.png — Ein wettergegerbter Jäger in dunklem, präzise vernähtem Leder mit hochgeschlagener Kapuze über scharfen Zügen; über Brust und Rücken Riemen mit Messern und gefiederten Pfeilen. Der Kurzbogen in der gesenkten Linken, ein Pfeil locker aufgelegt, der Blick liest das Gelände nach rechts. Ein Mann, der wochenlang allein im Grau überlebt. Hintergrund: sattes Magenta.
+12. player_human_trapper_f.png — Eine Jägerin desselben Schlags: dunkles, enges Lederzeug, Kapuze über rotbraunem, geflochtenem Haar, drei feine Narben am Kinn; Kurzbogen gesenkt mit aufgelegtem Pfeil, am Gurt Schlingen und ein Jagdmesser. Wach, geduldig, gnadenlos präzise. Hintergrund: sattes Magenta.
+13. player_goblin_turncloak_m.png — Ein drahtiger Goblin-Deserteur mit dunkelgrüner Haut und zerrissenem Ohr, in einem erstaunlich gut gearbeiteten dunklen Ledermantel mit hochgestelltem Kragen; ein kompakter schwarzer Kurzbogen gesenkt in der Hand, quer über der Brust ein Bandolier mit Pfeilen und zwei Dolchen. Listig, schnell, unterschätzt — zum letzten Mal. Hintergrund: sattes Magenta.
+14. player_goblin_turncloak_f.png — Eine Goblin-Deserteurin: klein, sehnig, dunkelgrüne Haut, wildes schwarzes Haar unter einer ledernen Sturmhaube; dunkler Ledermantel, Kurzbogen gesenkt mit aufgelegtem Pfeil, ein schiefes, gefährliches Grinsen. Hintergrund: sattes Magenta.
+15. player_sesskar_saltarrow_m.png — Ein hochgewachsener Schütze eines Schuppenvolks (salzgebleichte, graublaue Schuppenhaut, schmale Kiemenlinien am Hals, bernsteinfarbene Augen), in einem dunklen Küraß aus überlappenden Schalenplatten mit schwerem, netzartig gewebtem Halbumhang; der lange Kompositbogen gesenkt, Pfeil aufgelegt. Still wie Wasser vor dem Sturm. Hintergrund: sattes Magenta.
+16. player_sesskar_saltarrow_f.png — Eine Schützin des Schuppenvolks: schlank, graublaue Schuppenhaut mit hellerem Kehlmuster, Flossenkämme statt Haar, dunkler Schalenplatten-Küraß und Netz-Halbumhang; Langbogen gesenkt, Pfeil aufgelegt, der Blick ruhig auf die Ferne nach rechts. Hintergrund: sattes Magenta.
+17. player_faryn_wyvernbane_m.png — Ein großer, hagerer Schütze eines Klippenvolks (sehr blasse Haut, scharfe Züge, weißes langes Haar im Wind), in dunkelgrauem Schuppenleder unter einem Mantel aus schwarzen Schwingen-Federn; um den Hals eine Kette aus Wyvern-Fangzähnen, der mannshohe Kriegsbogen gesenkt, ein schwerer Pfeil aufgelegt. Einer, der Drachenbrut vom Himmel holt. Hintergrund: sattes Grün.
+18. player_faryn_wyvernbane_f.png — Eine Schützin des Klippenvolks: groß, blass, weißes streng geflochtenes Haar, dunkles Schuppenleder und schwarzer Federmantel, Wyvernzahn-Kette; der Kriegsbogen gesenkt mit aufgelegtem Pfeil, das Gesicht ruhig wie dünne Höhenluft. Hintergrund: sattes Grün.
+19. player_human_novice_m.png — Ein junger Magier in einer dunklen, schweren Robe mit sauber gearbeiteten Lederbesätzen und hochgeschlagenem Kragen; am Gurt ein beschlagenes Grimoire und Phiolen, in der Hand ein schlichter, eisenbeschlagener Kampfstab, aufrecht gehalten. Konzentriert, ehrgeizig, wach — am Anfang eines gefährlichen Weges. Hintergrund: sattes Grün.
+20. player_human_novice_f.png — Eine junge Magierin: dunkle schwere Robe mit Lederbesätzen, das Haar zu einem strengen Knoten gebunden, Tintenflecken an den Fingern; Grimoire am Gurt, der eisenbeschlagene Kampfstab ruhig in beiden Händen. Kluger, entschlossener Blick nach rechts. Hintergrund: sattes Grün.
+
+
+── BATCH 3 — KÄMPFER: HOHE MAGIE + BERUFE I (10 Bilder) ────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, alles MATT ohne Glühen. Kämpfer (Prompts 21–26):
+kampfbereiter ruhiger Stand ohne Wirkgeste. Berufs-Figuren (27–30): ruhige,
+selbstsichere Meister-Haltung mit ihrem Werkzeug. Hintergrund: komplett
+einfarbige satte Fläche in der genannten Farbe.
+
+21. player_sesskar_tidecaller_m.png — Ein Magier des Schuppenvolks (graublaue Schuppenhaut, Kiemenlinien, bernsteinfarbene Augen) in einer dunkelblauen, schweren Robe, deren Saum wie erstarrte Gischt gearbeitet ist, darüber ein Schulterharnisch aus dunklen Schalenplatten; der hohe Stab aus schwarzem Treibholz trägt eine stumpfe, matt geschliffene Glaskugel. Still und tief wie das Meer. Hintergrund: sattes Magenta.
+22. player_sesskar_tidecaller_f.png — Eine Magierin des Schuppenvolks: schlank, graublaue Schuppen mit hellem Kehlmuster, Flossenkämme; dunkelblaue Gischtsaum-Robe, Schalenplatten-Schultern, der Treibholzstab mit matter Glaskugel ruhig neben ihr. Der Blick wie eine ablaufende Flut — ruhig und unausweichlich. Hintergrund: sattes Magenta.
+23. player_ashwalker_shroudweaver_m.png — Ein hochgewachsener Magier eines aschgezeichneten Volks (grau gesprenkelte Haut, dunkle Augenränder wie Ruß), in einer vielschichtigen, anthrazitgrauen Robe aus schweren Tuchbahnen mit fein gearbeiteten Zinn-Schließen; das Gesicht halb von einer weichen Kapuze gerahmt, in der Hand ein hoher Stab aus schwarzem Eisen mit ringförmigem Kopf. Würdevoll und unheimlich still — ein Priester der Grenze. Hintergrund: sattes Grün.
+24. player_ashwalker_shroudweaver_f.png — Eine Magierin des aschgezeichneten Volks: grau gesprenkelte Haut, weiße Strähnen im dunklen Haar, anthrazitgraue Schichtenrobe mit Zinn-Schließen und weicher Kapuze; der schwarze Eisenstab mit Ringkopf ruhig aufgesetzt. Sanfte Stimme, harte Grenze — man spürt beides. Hintergrund: sattes Grün.
+25. player_rakhari_ritesinger_m.png — Ein Erzmagier des Katzenvolks (dunkles, fast schwarzes Fell, schmale goldene Augen), in einem prächtigen, tiefroten Ornat mit schwarzen Lackplatten an Schultern und Unterarmen, hohe Kopfzier mit Aussparungen für die Ohren; der Zeremonienstab aus dunklem Metall mit stumpfen Glocken ruht in der Armbeuge. Macht, die nichts beweisen muss. Hintergrund: sattes Grün.
+26. player_rakhari_ritesinger_f.png — Eine Erzmagierin des Katzenvolks: schlank, nachtdunkles Fell, goldene Augen, tiefroter Ornat mit schwarzen Lackplatten und hoher Kopfzier; der Glockenstab ruhig in beiden Händen. Getragene, gefährliche Würde. Hintergrund: sattes Grün.
+27. player_sesskar_weirkeeper_m.png — Ein narbiger Fischer-Veteran des Schuppenvolks: breitschultrig, salzgraue Schuppenhaut, ein Auge von einer alten Hakennarbe gezeichnet; schwerer geölter Ledermantel über nackter, muskulöser Brust, in der Faust eine mannshohe Harpune mit Widerhaken, über der Schulter ein aufgerolltes dunkles Netz mit Bleigewichten. Ein Seewolf, dem das Meer nichts mehr erzählen kann. Hintergrund: sattes Magenta.
+28. player_sesskar_weirkeeper_f.png — Eine Fischerin des Schuppenvolks: sehnig und wettergezeichnet, salzgraue Schuppen, Flossenkämme mit kleinen Knochenringen; geölter Ledermantel, die Harpune aufgestützt, das Wurfnetz über der Schulter. Ruhige Autorität einer Frau, die Stürme überstanden hat. Hintergrund: sattes Magenta.
+29. player_orc_anvilborn_m.png — Ein massiger Ork-Schmied wie ein Waffenfürst: dunkelolive Haut, nackte vernarbte Unterarme mit dunklen eingebrannten Zeichen, rußgeschwärzte, eisenbeschlagene Lederschürze mit schweren Nieten; der Bart mit Eisenringen geflochten, über der Schulter ein gewaltiger Doppelhammer mit graviertem Kopf. Breitbeinig und ruhig — einer, dessen Klingen Könige tragen. Hintergrund: sattes Magenta.
+30. player_orc_anvilborn_f.png — Eine Ork-Schmiedin: muskulös, dunkelolive Haut, das Haar zu einem harten Kamm gebunden, Brandnarben wie Ehrenzeichen auf den Unterarmen; eisenbeschlagene Lederschürze, der schwere Gravurkopf-Hammer über der Schulter. Der abschätzende Blick einer Meisterin, die jeden Stahl liest. Hintergrund: sattes Magenta.
+
+
+── BATCH 4 — BERUFE II (10 Bilder) ─────────────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, ruhige selbstsichere Meister-Haltung mit
+Werkzeug, alles MATT ohne Glühen. Hintergrund: komplett einfarbige satte
+Fläche in der genannten Farbe.
+
+31. player_human_hearthkeeper_m.png — Ein Feldkoch wie ein Quartiermeister-Veteran: breit, wettergegerbt, kurzer grauer Bart, ein dunkles Wams mit aufgerollten Ärmeln unter einer ledernen Kochschürze; quer über der Brust ein Gurt mit blitzblanken Messern, in der Hand ein schwerer gusseiserner Kessel wie ein Schild. Einer, der Armeen satt und bei Laune hält. Hintergrund: sattes Blau.
+32. player_human_hearthkeeper_f.png — Eine Feldköchin desselben Schlags: kräftig, resolut, das Haar unter einem dunklen Tuch, Messergurt quer über der Lederschürze, den gusseisernen Kessel am Henkel in der Faust. Der Blick einer Frau, deren Küche niemand zweimal kritisiert. Hintergrund: sattes Blau.
+33. player_duvra_seamsinger_m.png — Ein Bergmann des Tiefenvolks: gedrungen, fassbrüstig, graustichige Haut und rußgeränderte Augen, dunkle Lederkluft mit eisernen Knieplatten, am Gurt Meißel und eine unbeleuchtete Grubenlaterne; über der Schulter eine schwere, zweischneidige Spitzhacke mit graviertem Kopf. Einer, der das Gestein singen hört. Hintergrund: sattes Grün.
+34. player_duvra_seamsinger_f.png — Eine Bergfrau des Tiefenvolks: kompakt und kraftvoll, dunkles geflochtenes Haar mit Steinperlen, Lederkluft mit Eisenknien, die gravierte Spitzhacke über der Schulter, die Grubenlaterne am Gurt. Ruhig wie ein Stollen tief unter dem Sturm. Hintergrund: sattes Grün.
+35. player_orc_thornfeller_m.png — Ein Ork-Holzfäller wie ein wandelnder Baum: riesig, dunkelolive Haut, nackter vernarbter Oberkörper unter gekreuzten Ledergurten, schwere Stiefel; über der Schulter eine gewaltige Doppelaxt mit schartigem, dunklem Blatt. Ruhige, urgewaltige Präsenz. Hintergrund: sattes Magenta.
+36. player_orc_thornfeller_f.png — Eine Ork-Holzfällerin: hochgewachsen und muskulös, dunkelolive Haut, das Haar zu Kriegszöpfen geflochten, Ledergurte über einem dunklen ärmellosen Wams; die Doppelaxt lässig über der Schulter. Ein Lächeln, das Wälder nervös macht. Hintergrund: sattes Magenta.
+37. player_rakhari_sower_m.png — Ein Farmer des Katzenvolks mit der Präsenz eines Schnitters: hochgewachsen, geflecktes graubraunes Fell, ein dunkler, offener Arbeitsmantel über robustem Leinen; in beiden Händen ruht eine lange, geschwungene Sense mit dunklem Blatt, wie ein Zeremonienstab gehalten. Ernst und still — die Ernte wartet auf niemanden. Hintergrund: sattes Magenta.
+38. player_rakhari_sower_f.png — Eine Farmerin des Katzenvolks: schlank, graubraunes Fell, ein dunkles Kopftuch zwischen den Ohren, offener Arbeitsmantel; die geschwungene Sense aufgestützt, am Gurt kleine Saatbeutel wie Munitionstaschen. Der geduldige Blick einer Frau, die Jahreszeiten befehligt. Hintergrund: sattes Magenta.
+39. player_ashwalker_gleaner_m.png — Ein Sammler des aschgezeichneten Volks wie ein Grenzgänger: hager, grau gesprenkelte Haut, ein weiter, kapuzentragender Wandermantel in Aschgrau mit vielen präzise gearbeiteten Taschen und Lederrollen; in der Hand ein hoher Wanderstab mit eiserner Spitze, am Gurt gebündelte dunkle Kräuter. Einer, der dorthin geht, wo sonst niemand erntet. Hintergrund: sattes Magenta.
+40. player_ashwalker_gleaner_f.png — Eine Sammlerin des aschgezeichneten Volks: schmal, wach, weiße Strähnen unter der aschgrauen Kapuze, der Wandermantel voller geordneter Taschen; Wanderstab mit Eisenspitze, ein Bund dunkler Kräuter am Gurt. Leise, schnell, unbeirrbar. Hintergrund: sattes Magenta.
+
+
+── BATCH 5 — BERUFE III (10 Bilder) ────────────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt — KEINE Collage.
+Gleicher Stil: dunkle gemalte Fantasy, Ganzkörper Hochformat ~1122×1402,
+Figur nach rechts orientiert, ruhige selbstsichere Meister-Haltung, alles
+MATT ohne Glühen. Hintergrund: komplett einfarbige satte Fläche in der
+genannten Farbe.
+
+41. player_goblin_lockwhisper_m.png — Ein Goblin-Meisterdieb: klein, drahtig, dunkelgrüne Haut, in einem eleganten, enganliegenden Schattenanzug aus dunklem Leder mit weicher Kapuze; an der Brust ein aufgeklapptes Etui feinster Dietriche wie chirurgisches Besteck, in der Hand ein schmaler schwarzer Dolch, gesenkt. Ein Lächeln wie ein Schlüssel, der jedes Schloss kennt. Hintergrund: sattes Magenta.
+42. player_goblin_lockwhisper_f.png — Eine Goblin-Meisterdiebin: zierlich und blitzschnell wirkend, dunkelgrüne Haut, ein feiner Silberring im Ohr; enganliegender dunkler Lederanzug, Dietrich-Etui an der Hüfte, der schmale Dolch locker gesenkt. Elegant, amüsiert, gefährlich. Hintergrund: sattes Magenta.
+43. player_human_herbwise_m.png — Ein Giftmeister mit der Aura eines Arztes, dem man besser nicht widerspricht: schlank, präzise, dunkler Mantel mit hohem Kragen über einer Weste voller Phiolen in Lederschlaufen, die Flüssigkeiten dunkel und matt; in der Hand ein Mörser aus schwarzem Stein, am Gurt getrocknete Kräuterbündel und ein silbernes Seziermesser. Hintergrund: sattes Magenta.
+44. player_human_herbwise_f.png — Eine Giftmeisterin: streng zurückgebundenes dunkles Haar, wache graue Augen, dunkler Hochkragen-Mantel über der Phiolen-Weste, schwarzer Steinmörser in der Armbeuge, Seziermesser am Gurt. Freundlich wie eine Apothekerin, tödlich wie ihr Regal. Hintergrund: sattes Magenta.
+45. player_faryn_veilscribe_m.png — Ein Runenschreiber des Klippenvolks: groß, hager, sehr blasse Haut und weißes, streng gebundenes Haar, in einer dunkelgrauen Gelehrtenrobe mit schwarzen Lederbesätzen; in einer Hand ein schwerer eiserner Gravurmeißel, in der Armbeuge eine dunkle Steintafel voller präzise geschlagener Zeichen, matt und nicht leuchtend. Die Konzentration eines Mannes, der mit Worten Berge bindet. Hintergrund: sattes Grün.
+46. player_faryn_veilscribe_f.png — Eine Runenschreiberin des Klippenvolks: groß, blass, weißes geflochtenes Haar, dunkelgraue Gelehrtenrobe mit Lederbesätzen; Gravurmeißel und Steintafel ruhig in den Händen, der Blick messerscharf auf das nächste Zeichen. Hintergrund: sattes Grün.
+47. player_duvra_gemwright_m.png — Ein Juwelenschleifer des Tiefenvolks wie ein Uhrmacher-Fürst: gedrungen, graustichige Haut, ein präzises Monokel-Gestell mit mehreren klappbaren Linsen vor dem Auge; dunkle Lederweste mit Dutzenden Mini-Werkzeugen in Schlaufen, in der Hand eine feine Fassungszange, auf der offenen Handfläche ein großer, MATT geschliffener dunkelroter Stein. Hintergrund: sattes Grün.
+48. player_duvra_gemwright_f.png — Eine Juwelenschleiferin des Tiefenvolks: kompakt, konzentriert, dunkles Haar streng gebunden, Mehrfachlinsen-Monokel hochgeklappt; Werkzeugweste, Fassungszange in der Hand, ein matter dunkelgrüner Stein zwischen den Fingern. Die Ruhe absoluter Präzision. Hintergrund: sattes Magenta.
+49. player_faryn_saddlewright_m.png — Ein Ledermeister des Klippenvolks wie ein Rüstmeister: groß, hager, blass, die Ärmel hochgerollt über sehnigen Unterarmen; eine dunkle, beschlagene Arbeitsschürze über schwarzem Leinen, über der Schulter schwere, sauber gerollte Lederbahnen, in der Hand eine schwere Sattlerahle wie ein Dolch geführt. Einer, der Rüstungen baut, die Leben retten. Hintergrund: sattes Grün.
+50. player_faryn_saddlewright_f.png — Eine Ledermeisterin des Klippenvolks: groß, blass, weißes kurz gebundenes Haar, beschlagene dunkle Arbeitsschürze, Lederbahnen über der Schulter, die Ahle präzise in der Hand. Der prüfende Blick, dem keine schiefe Naht entgeht. Hintergrund: sattes Grün.

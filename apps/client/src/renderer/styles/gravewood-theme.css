@@ -1,0 +1,1928 @@
+/*
+ * Gravewood & Bronze — global renderer skin.
+ * This file is intentionally imported last: it replaces visual bindings without changing
+ * component structure, state logic, layout ownership, or Claude's renderer architecture.
+ */
+
+/* codex:2026-07-30T20:34:06+02:00 — zentrale Gravewood-Assetverträge und warme Oberflächenpalette. */
+:root {
+  --gw-button-primary-normal: url("../assets/ui/gravewood/buttons/primary/primary-normal.webp");
+  --gw-button-primary-hover: url("../assets/ui/gravewood/buttons/primary/primary-hover.webp");
+  --gw-button-primary-pressed: url("../assets/ui/gravewood/buttons/primary/primary-pressed.webp");
+  --gw-button-primary-disabled: url("../assets/ui/gravewood/buttons/primary/primary-disabled.webp");
+  --gw-button-alt-normal: url("../assets/ui/gravewood/buttons/alternate/alternate-normal.webp");
+  --gw-button-alt-hover: url("../assets/ui/gravewood/buttons/alternate/alternate-hover.webp");
+  --gw-button-alt-pressed: url("../assets/ui/gravewood/buttons/alternate/alternate-pressed.webp");
+  --gw-button-alt-disabled: url("../assets/ui/gravewood/buttons/alternate/alternate-disabled.webp");
+  --gw-button-square-normal: url("../assets/ui/gravewood/buttons/square/square-normal.webp");
+  --gw-button-square-hover: url("../assets/ui/gravewood/buttons/square/square-hover.webp");
+  --gw-button-square-pressed: url("../assets/ui/gravewood/buttons/square/square-pressed.webp");
+  --gw-button-square-disabled: url("../assets/ui/gravewood/buttons/square/square-disabled.webp");
+  --gw-frame-panel: url("../assets/ui/gravewood/frames/frame-panel.webp");
+  --gw-frame-card: url("../assets/ui/gravewood/frames/frame-card.webp");
+  --gw-slot-empty: url("../assets/ui/gravewood/slots/slot-empty.webp");
+  --gw-progress-track: url("../assets/ui/gravewood/progress/progress-track.webp");
+  --gw-progress-fill: url("../assets/ui/gravewood/progress/progress-fill.webp");
+  --gw-tab-inactive: url("../assets/ui/gravewood/tabs/tab-inactive.webp");
+  --gw-tab-active: url("../assets/ui/gravewood/tabs/tab-active.webp");
+  --gw-tab-lever: url("../assets/ui/gravewood/tabs/tab-lever.webp");
+  --gw-texture-gravewood: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+  --gw-texture-parchment: url("../assets/ui/gravewood/textures/texture-parchment.webp");
+  --gw-texture-umber: url("../assets/ui/gravewood/textures/texture-umber-cloth.webp");
+  --gw-texture-leather: url("../assets/ui/gravewood/textures/texture-leather.webp");
+  --gw-texture-bronze: url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp");
+  --gw-bronze: #9b6a32;
+  --gw-bronze-bright: #d0a35d;
+  --gw-ink: #130e09;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — mittelalterliche Hand-Cursor mit eigenem Auswahl- und Klickzustand. */
+*,
+*::before,
+*::after {
+  cursor: url("../assets/ui/gravewood/cursors/cursor-normal-64.png") 2 2, auto !important;
+}
+
+:is(button, a, [role="button"], summary, label[for], select, option):not(:disabled),
+:is(input[type="button"], input[type="submit"], input[type="reset"]):not(:disabled) {
+  cursor: url("../assets/ui/gravewood/cursors/cursor-select-64.png") 2 2, pointer !important;
+}
+
+:is(button, a, [role="button"], summary):not(:disabled):active,
+:is(input[type="button"], input[type="submit"], input[type="reset"]):not(:disabled):active {
+  cursor: url("../assets/ui/gravewood/cursors/cursor-pressed-64.png") 2 2, pointer !important;
+}
+
+/* codex:2026-07-30T21:12:22+02:00 — V2-Scrollbar: Track kachelt, Thumb nutzt echte Endkappen statt Vollbild-Stretch. */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track:vertical {
+  background: url("../assets/ui/gravewood/scrollbars/scrollbar-track.webp")
+    center top / 100% auto repeat-y !important;
+}
+
+::-webkit-scrollbar-track:horizontal,
+::-webkit-scrollbar-corner {
+  background: var(--gw-texture-gravewood) center / 64px 64px repeat !important;
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 34px;
+  min-width: 34px;
+  border-style: solid;
+  border-color: transparent;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  border-width: 10px 5px;
+  border-image: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-normal.webp")
+    48 32 48 32 fill / 10px 5px !important;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  border-width: 5px 10px;
+  border-image: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-normal.webp")
+    48 32 48 32 fill / 5px 10px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  border-image-source: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-hover.webp") !important;
+  box-shadow: none;
+}
+
+::-webkit-scrollbar-thumb:active {
+  border-image-source: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-pressed.webp") !important;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — Button 1 ist der globale Arbeitsbutton; bestehende Handler bleiben unverändert. */
+#root :is(
+  .ds-button,
+  .ds-footer-button,
+  .combat-btn,
+  .it-action-btn,
+  .bestiary-fight-btn,
+  .eq-loadout-btn,
+  .skillcard-cta,
+  .shop-btn,
+  .quest-claim-btn,
+  .quest-shop-buy-btn,
+  .nh-build-btn,
+  .nh-refine-btn,
+  .slayer-get-task-btn,
+  .slayer-locate-btn,
+  .font-apply-btn,
+  .zonemap-editor-btn,
+  .dcc-next-btn,
+  .mwc-next-btn,
+  .ofs-empty-btn,
+  button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item)
+) {
+  position: relative;
+  isolation: isolate;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-button-primary-normal) 64 160 64 160 fill / 9px 24px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  text-shadow: 0 1px 3px #000;
+  transform-origin: center;
+  transition:
+    transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 150ms ease,
+    color 120ms ease !important;
+}
+
+#root :is(
+  .ds-button,
+  .ds-footer-button,
+  .combat-btn,
+  .it-action-btn,
+  .bestiary-fight-btn,
+  .eq-loadout-btn,
+  .skillcard-cta,
+  .shop-btn,
+  .quest-claim-btn,
+  .quest-shop-buy-btn,
+  .nh-build-btn,
+  .nh-refine-btn,
+  .slayer-get-task-btn,
+  .slayer-locate-btn,
+  .font-apply-btn,
+  .zonemap-editor-btn,
+  .dcc-next-btn,
+  .mwc-next-btn,
+  .ofs-empty-btn,
+  button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item)
+):not(:disabled):not(.disabled):hover {
+  border-image-source: var(--gw-button-primary-hover) !important;
+  transform: translateY(-1px) scale(1.018);
+  filter: brightness(1.04);
+  z-index: 3;
+}
+
+:is(
+  .ds-button,
+  .ds-footer-button,
+  .combat-btn,
+  .it-action-btn,
+  .bestiary-fight-btn,
+  .eq-loadout-btn,
+  .skillcard-cta,
+  .shop-btn,
+  .quest-claim-btn,
+  .quest-shop-buy-btn,
+  .nh-build-btn,
+  .nh-refine-btn,
+  .slayer-get-task-btn,
+  .slayer-locate-btn,
+  .font-apply-btn,
+  .zonemap-editor-btn,
+  .dcc-next-btn,
+  .mwc-next-btn,
+  .ofs-empty-btn,
+  button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item)
+):not(:disabled):not(.disabled):active,
+.ds-button.active {
+  border-image-source: var(--gw-button-primary-pressed) !important;
+  transform: translateY(1px) scale(0.985);
+  filter: brightness(0.97);
+}
+
+:is(
+  .ds-button,
+  .ds-footer-button,
+  .combat-btn,
+  .it-action-btn,
+  .bestiary-fight-btn,
+  .eq-loadout-btn,
+  .skillcard-cta,
+  .shop-btn,
+  .quest-claim-btn,
+  .quest-shop-buy-btn,
+  .nh-build-btn,
+  .nh-refine-btn,
+  .slayer-get-task-btn,
+  .slayer-locate-btn,
+  .font-apply-btn,
+  .zonemap-editor-btn,
+  .dcc-next-btn,
+  .mwc-next-btn,
+  .ofs-empty-btn,
+  button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item)
+):is(:disabled, .disabled) {
+  border-image-source: var(--gw-button-primary-disabled) !important;
+  transform: none !important;
+  filter: none !important;
+  opacity: 0.62;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — alternative Buttonfamilie signalisiert Abbruch, Gefahr und Verkauf. */
+:is(
+  button.danger,
+  button[class*="danger"],
+  button[class*="cancel"],
+  button[class*="demolish"],
+  button[class*="clear"],
+  button[class*="sell"],
+  .combat-btn.stop,
+  .hf-btn--danger
+) {
+  border-image-source: var(--gw-button-alt-normal) !important;
+}
+
+:is(
+  button.danger,
+  button[class*="danger"],
+  button[class*="cancel"],
+  button[class*="demolish"],
+  button[class*="clear"],
+  button[class*="sell"],
+  .combat-btn.stop,
+  .hf-btn--danger
+):not(:disabled):hover {
+  border-image-source: var(--gw-button-alt-hover) !important;
+}
+
+:is(
+  button.danger,
+  button[class*="danger"],
+  button[class*="cancel"],
+  button[class*="demolish"],
+  button[class*="clear"],
+  button[class*="sell"],
+  .combat-btn.stop,
+  .hf-btn--danger
+):not(:disabled):active {
+  border-image-source: var(--gw-button-alt-pressed) !important;
+}
+
+:is(
+  button.danger,
+  button[class*="danger"],
+  button[class*="cancel"],
+  button[class*="demolish"],
+  button[class*="clear"],
+  button[class*="sell"],
+  .combat-btn.stop,
+  .hf-btn--danger
+):disabled {
+  border-image-source: var(--gw-button-alt-disabled) !important;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — kompakte Icon-Controls nutzen das quadratische Kit-Element. */
+:is(
+  .ds-icon-button,
+  .ds-close-button,
+  .modal-close,
+  .eq-loadout-save-btn,
+  .cs-portrait-settings-btn,
+  .queue-row-btn,
+  .queue-panel-skip-dismiss,
+  .emw-collapse-btn,
+  .ib-close-btn
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-button-square-normal) 64 fill / 8px !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+}
+
+:is(
+  .ds-icon-button,
+  .ds-close-button,
+  .modal-close,
+  .eq-loadout-save-btn,
+  .cs-portrait-settings-btn,
+  .queue-row-btn,
+  .queue-panel-skip-dismiss,
+  .emw-collapse-btn,
+  .ib-close-btn
+):not(:disabled):hover {
+  border-image-source: var(--gw-button-square-hover) !important;
+}
+
+:is(
+  .ds-icon-button,
+  .ds-close-button,
+  .modal-close,
+  .eq-loadout-save-btn,
+  .cs-portrait-settings-btn,
+  .queue-row-btn,
+  .queue-panel-skip-dismiss,
+  .emw-collapse-btn,
+  .ib-close-btn
+):not(:disabled):active {
+  border-image-source: var(--gw-button-square-pressed) !important;
+}
+
+:is(.ds-icon-button, .ds-close-button, .modal-close, .eq-loadout-save-btn):disabled {
+  border-image-source: var(--gw-button-square-disabled) !important;
+}
+
+/* codex:2026-07-30T21:12:22+02:00 — V2-Tabs: breitere feste Eckzonen, vollständig detailfreie Stretchsegmente. */
+:is(
+  .topbar-item,
+  .quests-tab-btn,
+  .shopv2-maintab,
+  .nh-view-tab,
+  .slayer-master-tab,
+  .ms2-tab,
+  .chronicle-tab,
+  .achv-filter-btn,
+  .achv-cat-btn,
+  .ach2-filter-btn,
+  .ach2-cat-btn
+) {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-tab-inactive) 64 192 64 192 fill / 10px 22px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  transform-origin: center;
+  transition:
+    transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 150ms ease !important;
+}
+
+:is(
+  .topbar-item,
+  .quests-tab-btn,
+  .shopv2-maintab,
+  .nh-view-tab,
+  .slayer-master-tab,
+  .ms2-tab,
+  .chronicle-tab,
+  .achv-filter-btn,
+  .achv-cat-btn,
+  .ach2-filter-btn,
+  .ach2-cat-btn
+):not(:disabled):hover {
+  border-image-source: var(--gw-tab-active) !important;
+  transform: translateY(-1px) scale(1.018);
+  filter: brightness(1.04);
+  z-index: 4;
+}
+
+:is(
+  .topbar-item.active,
+  .quests-tab-btn--active,
+  .shopv2-maintab.active,
+  .nh-view-tab.active,
+  .slayer-master-tab.active,
+  .ms2-tab--active,
+  .chronicle-tab.active,
+  .achv-filter-btn--active,
+  .achv-cat-btn--active,
+  .ach2-filter-btn--active,
+  .ach2-cat-btn--active
+) {
+  border-image-source: var(--gw-tab-active) !important;
+  color: #fff !important;
+}
+
+:is(
+  .topbar-item.active,
+  .quests-tab-btn--active,
+  .shopv2-maintab.active,
+  .nh-view-tab.active,
+  .slayer-master-tab.active,
+  .ms2-tab--active,
+  .chronicle-tab.active,
+  .achv-filter-btn--active,
+  .achv-cat-btn--active,
+  .ach2-filter-btn--active,
+  .ach2-cat-btn--active
+)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  width: clamp(30px, 42%, 76px);
+  height: 6px;
+  transform: translateX(-50%);
+  background: var(--gw-tab-lever) center / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — Sidebar bleibt Hauptbutton, Topbar wird zum echten Tab-System. */
+.sb-skill-btn,
+.sb-skill-btn:hover,
+.sb-skill-btn.active {
+  border-image: var(--gw-button-primary-normal) 64 160 64 160 fill / 9px 24px !important;
+}
+
+.sb-skill-btn:hover {
+  border-image-source: var(--gw-button-primary-hover) !important;
+}
+
+.sb-skill-btn.active {
+  border-image-source: var(--gw-button-primary-pressed) !important;
+}
+
+.topbar-item:active {
+  border-image-source: var(--gw-tab-active) !important;
+  transform: translateY(1px) scale(0.988);
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — Rahmen werden ohne dicke Layoutsprünge auf Hauptflächen gelegt. */
+.topbar::before,
+.sidebar::before,
+.content-body-frame::after {
+  border-image-source: var(--gw-frame-panel) !important;
+  border-image-slice: 80 !important;
+  border-image-repeat: stretch !important;
+}
+
+.ds-frame,
+.ds-frame--headed {
+  border-width: 16px !important;
+  border-image: var(--gw-frame-panel) 80 / 16px !important;
+  background:
+    linear-gradient(rgba(12, 8, 5, 0.88), rgba(12, 8, 5, 0.88)),
+    var(--gw-texture-gravewood) center / 256px 256px repeat !important;
+}
+
+:is(
+  .panel,
+  .modal,
+  .menu-panel,
+  .creation-panel,
+  .char-stats-panel,
+  .queue-panel,
+  .emw-panel,
+  .slayer-task-panel,
+  .quest-shop-panel,
+  .shopv2-sell-detail-panel,
+  .shopv2-buyback-panel,
+  .pouch-modal,
+  .iwk-modal,
+  .bugreport-modal,
+  .qty-modal
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 10px !important;
+  border-image: var(--gw-frame-panel) 80 / 10px !important;
+  border-radius: 0 !important;
+}
+
+:is(
+  .skillcard,
+  .zone-card,
+  .monster-card,
+  .bestiary-card,
+  .quest-card,
+  .nh-card,
+  .shopv2-card,
+  .achv-card,
+  .ach2-card,
+  .creation-style-card,
+  .mshop-mode-card
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 7px !important;
+  border-image: var(--gw-frame-card) 64 / 7px !important;
+  border-radius: 0 !important;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — fünf Kit-Texturen verteilen sich nach Funktion statt zufällig. */
+:is(.panel, .menu-panel, .creation-panel, .char-stats-panel) {
+  background-image:
+    linear-gradient(rgba(15, 10, 6, 0.78), rgba(15, 10, 6, 0.78)),
+    var(--gw-texture-gravewood) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+:is(.modal, .qty-modal, .iwk-modal, .bugreport-modal) {
+  background-image:
+    linear-gradient(rgba(18, 12, 7, 0.72), rgba(18, 12, 7, 0.72)),
+    var(--gw-texture-parchment) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+:is(.queue-panel, .emw-panel, .quest-shop-panel, .slayer-task-panel) {
+  background-image:
+    linear-gradient(rgba(12, 8, 5, 0.76), rgba(12, 8, 5, 0.76)),
+    var(--gw-texture-umber) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+:is(.skillcard, .quest-card, .nh-card, .shopv2-card, .mshop-mode-card) {
+  background-image:
+    linear-gradient(rgba(13, 9, 6, 0.72), rgba(13, 9, 6, 0.72)),
+    var(--gw-texture-leather) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+:is(.ds-section-header, .cs-panel-header, .queue-panel-header, .quest-shop-panel-head) {
+  background-image:
+    linear-gradient(rgba(14, 9, 5, 0.58), rgba(14, 9, 5, 0.58)),
+    var(--gw-texture-bronze) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — leere Inventar-, Ausrüstungs- und Charakterplätze teilen ein Slot-Relief. */
+:is(
+  .ds-slot,
+  .slot:not(.filled),
+  .bag-slot:not(.filled),
+  .inv-slot:not(.filled),
+  .cs-slot:not(:has(.slot-item)),
+  .cs-bag-slot:not(.filled),
+  .menu-slot--empty
+) {
+  background-color: transparent !important;
+  background-image: var(--gw-slot-empty) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+  border-radius: 0 !important;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — einheitliche 9-Slice-Tracks und dehnungsfeste Füllungen. */
+:is(
+  .ds-bar,
+  .activity-bar,
+  .mastery-bar,
+  .tb-bar,
+  .gamestats-hpbar,
+  .achv-hero-bar-track,
+  .achv-almost-bar-track,
+  .achv-progress-bar,
+  .ach2-progress-bar,
+  .nh-progress-bar,
+  .nh-map-tile-progress,
+  .quest-obj-bar,
+  .quest-strand-progress,
+  .slayer-task-progress,
+  .stx-completion-bar,
+  .chronicle-obj-bar
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-progress-track) 32 64 32 64 fill / 5px 12px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  overflow: hidden;
+}
+
+:is(
+  .ds-bar-fill,
+  .bar-fill,
+  .activity-bar > span,
+  .tb-bar-fill,
+  .gamestats-hpbar-fill,
+  .achv-hero-bar-fill,
+  .achv-almost-bar-fill,
+  .achv-progress-fill,
+  .ach2-progress-fill,
+  .nh-map-tile-progress-fill
+) {
+  box-sizing: border-box;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-progress-fill) 18 48 18 48 fill / 2px 7px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — Tooltips, Badges und Trenner schließen die verbleibenden UI-Bausteine. */
+:is(.ds-tooltip, .item-tooltip, .ct-tip, .zonemap-tooltip) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 8px !important;
+  border-image: var(--gw-frame-card) 64 / 8px !important;
+  border-radius: 0 !important;
+  background-image:
+    linear-gradient(rgba(10, 7, 5, 0.72), rgba(10, 7, 5, 0.72)),
+    var(--gw-texture-umber) !important;
+}
+
+:is(.ds-badge, .ds-stat-pill, .slayer-target-badge, .zone-card-story-lock-badge) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: url("../assets/ui/gravewood/misc/badge.webp") 32 64 32 64 fill / 5px 10px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+:is(hr, .ds-divider, .topbar-divider) {
+  border: 0 !important;
+  background: url("../assets/ui/gravewood/misc/divider.webp") center / 100% 100% no-repeat !important;
+}
+
+/* codex:2026-07-30T20:34:06+02:00 — reduzierte Bewegung respektiert weiterhin die Systemeinstellung. */
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    button,
+    .topbar-item,
+    .quests-tab-btn,
+    .shopv2-maintab,
+    .nh-view-tab,
+    .slayer-master-tab,
+    .ms2-tab
+  ) {
+    transition-duration: 0.01ms !important;
+  }
+
+  :is(button, .topbar-item):hover,
+  :is(button, .topbar-item):active {
+    transform: none !important;
+  }
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — Korrekturlauf nach Live-QA: alte Stein-/Citadel-Flächen vollständig aus dem Hauptshell lösen. */
+body {
+  background:
+    linear-gradient(rgba(10, 7, 5, 0.64), rgba(10, 7, 5, 0.64)),
+    var(--gw-texture-bronze) top left / 512px 512px repeat fixed,
+    var(--gw-ink) !important;
+}
+
+.sidebar,
+.topbar {
+  background:
+    linear-gradient(rgba(9, 6, 4, 0.56), rgba(9, 6, 4, 0.56)),
+    var(--gw-texture-gravewood) top left / 256px 256px repeat !important;
+}
+
+.sb-footer,
+.content-body {
+  background:
+    linear-gradient(rgba(10, 7, 5, 0.36), rgba(10, 7, 5, 0.36)),
+    var(--gw-texture-umber) top left / 256px 256px repeat !important;
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — alte dekorative ::before-Rahmen entfernen, wenn der Gravewood-Rahmen bereits direkt auf dem Control sitzt. */
+#root :is(
+  .ds-button,
+  .hf-btn,
+  .menu-lang .lang-btn,
+  .cs-tab-btn,
+  .battle-log-tab,
+  .battle-log-settings-btn,
+  .invf-chip,
+  .nh-view-tab,
+  .pet-slot-btn,
+  .pet-card-btn,
+  .shop-citadel-btn,
+  .quests-tab-btn,
+  .shopv2-maintab,
+  .shopv2-chip,
+  .slayer-master-tab,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+)::before {
+  content: none !important;
+  border: 0 !important;
+  border-image: none !important;
+  background: none !important;
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — Dock-Container mit eigenem Overlay behalten genau einen neuen Rahmen statt Alt+Neu. */
+#root .queue-panel {
+  border: 0 !important;
+}
+
+#root .queue-panel::before,
+#root .cs-detail-panel::before,
+#root .cs-detail-meta::after {
+  border-image-source: var(--gw-frame-panel) !important;
+  border-image-slice: 80 !important;
+  border-image-repeat: stretch !important;
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — horizontale Button-Endkappen kompakter halten; Nieten und Endplatten werden nicht in die Mitte gezogen. */
+#root button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item),
+#root .combat-btn,
+#root .it-action-btn,
+#root .bestiary-fight-btn,
+#root .eq-loadout-btn,
+#root .skillcard-cta,
+#root .shop-btn,
+#root .quest-claim-btn,
+#root .quest-shop-buy-btn,
+#root .nh-build-btn,
+#root .nh-refine-btn,
+#root .slayer-get-task-btn,
+#root .slayer-locate-btn,
+#root .font-apply-btn,
+#root .zonemap-editor-btn,
+#root .menu-lang .lang-btn {
+  border-image-width: 6px 12px !important;
+}
+
+#root .hf-btn.menu-nav-btn {
+  min-height: clamp(50px, 6.2vh, 64px) !important;
+  padding: clamp(8px, 1vh, 12px) clamp(22px, 2vw, 32px) !important;
+  border-image-width: 8px 18px !important;
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — zuvor übersehene Sidebar-Footeraktionen vollständig auf Button 1 umstellen. */
+#root .sb-footer > :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-button-primary-normal) 64 160 64 160 fill / 5px 10px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  transform-origin: center;
+  transition:
+    transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 140ms ease,
+    opacity 120ms ease !important;
+}
+
+#root .sb-footer > :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options
+):hover {
+  border-image-source: var(--gw-button-primary-hover) !important;
+  transform: translateY(-1px) scale(1.012);
+}
+
+#root .sb-footer > :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options
+):active {
+  border-image-source: var(--gw-button-primary-pressed) !important;
+  transform: translateY(1px) scale(0.99);
+}
+
+#root .sb-footer > .sb-footer-quit {
+  border-image-source: var(--gw-button-alt-normal) !important;
+}
+
+#root .sb-footer > .sb-footer-quit:hover {
+  border-image-source: var(--gw-button-alt-hover) !important;
+}
+
+#root .sb-footer > .sb-footer-quit:active {
+  border-image-source: var(--gw-button-alt-pressed) !important;
+}
+
+/* codex:2026-07-30T21:12:22+02:00 — V2-Slicewerte auch für alle ergänzten Navigationsreiter. */
+#root :is(
+  .topbar-item,
+  .quests-tab-btn,
+  .shopv2-maintab,
+  .nh-view-tab,
+  .slayer-master-tab,
+  .ms2-tab,
+  .chronicle-tab,
+  .achv-filter-btn,
+  .achv-cat-btn,
+  .ach2-filter-btn,
+  .ach2-cat-btn,
+  .cs-tab-btn,
+  .battle-log-tab
+) {
+  border-image: var(--gw-tab-inactive) 64 192 64 192 fill / 7px 14px !important;
+}
+
+#root .topbar-item {
+  min-height: calc(42px * var(--tb-scale)) !important;
+  padding-block: calc(3px * var(--tb-scale)) !important;
+  border-image-width: calc(6px * var(--tb-scale)) calc(12px * var(--tb-scale)) !important;
+}
+
+#root :is(
+  .topbar-item.active,
+  .quests-tab-btn--active,
+  .shopv2-maintab.active,
+  .nh-view-tab.active,
+  .slayer-master-tab.active,
+  .ms2-tab--active,
+  .chronicle-tab.active,
+  .achv-filter-btn--active,
+  .achv-cat-btn--active,
+  .ach2-filter-btn--active,
+  .ach2-cat-btn--active,
+  .cs-tab-btn.active,
+  .battle-log-tab.active
+) {
+  border-image-source: var(--gw-tab-active) !important;
+}
+
+#root :is(
+  .topbar-item.active,
+  .quests-tab-btn--active,
+  .shopv2-maintab.active,
+  .nh-view-tab.active,
+  .slayer-master-tab.active,
+  .ms2-tab--active,
+  .chronicle-tab.active,
+  .achv-filter-btn--active,
+  .achv-cat-btn--active,
+  .ach2-filter-btn--active,
+  .ach2-cat-btn--active,
+  .cs-tab-btn.active,
+  .battle-log-tab.active
+)::after {
+  height: 4px;
+  width: clamp(24px, 36%, 58px);
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — Sidebar-Hauptbuttons folgen derselben schlanken Endkappen-Geometrie. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn.active {
+  border-image-width: 6px 14px !important;
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — zuvor ungemappte große Citadel-Flächen direkt ersetzen, nicht zusätzlich umrahmen. */
+#root :is(
+  .achv-hero,
+  .achv-controls,
+  .bugreport-entry-banner,
+  .chdef-card,
+  .cs-portrait-wrap,
+  .cs-vitals,
+  .chronicle-stage,
+  .battle,
+  .battle-arena,
+  .battle-controls,
+  .battle-log-panel,
+  .dungeon-progress,
+  .kill-summary-card,
+  .dcc-card,
+  .offline-stage,
+  .guide-bubble,
+  .opz-header,
+  .opz-section,
+  .bank-head,
+  .bestiary-zone-header,
+  .ach2-page-header,
+  .enchant-panel,
+  .shop-panel,
+  .nh-map,
+  .nh-buildmenu,
+  .skill-head,
+  .skill-active,
+  .skilloverview-page .panel
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-frame-panel) 80 / 8px !important;
+  border-radius: 0 !important;
+}
+
+#root :is(.opz-header, .skill-head, .bank-head, .ach2-page-header) {
+  background-image:
+    linear-gradient(rgba(12, 8, 5, 0.62), rgba(12, 8, 5, 0.62)),
+    var(--gw-texture-gravewood) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+#root :is(.opz-section, .battle-controls, .battle-log-panel, .nh-buildmenu, .shop-panel) {
+  background-image:
+    linear-gradient(rgba(10, 7, 5, 0.7), rgba(10, 7, 5, 0.7)),
+    var(--gw-texture-leather) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+#root .bugreport-entry-banner {
+  background-image:
+    linear-gradient(rgba(13, 9, 6, 0.58), rgba(13, 9, 6, 0.58)),
+    var(--gw-texture-bronze) !important;
+  background-size: auto, 256px 256px !important;
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — kompakte Karten, Statusblöcke und alte Slot-Consumer vervollständigen. */
+#root :is(
+  .achv-filter-group,
+  .achv-card,
+  .queue-panel-header,
+  .queue-panel-paused,
+  .queue-panel-blocked,
+  .queue-row,
+  .cs-attr-card,
+  .cs-detail-img-wrap,
+  .fighter-sub-drops,
+  .fighter-sub-drops-grid,
+  .fighter-nameplate,
+  .battle-log-settings-pop,
+  .quest-strand,
+  .quest-shop-offer,
+  .shop-upgrade-card,
+  .shop-item-card,
+  .pet-select-panel,
+  .pet-card,
+  .skilloverview-card
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-frame-card) 64 / 6px !important;
+  border-radius: 0 !important;
+}
+
+#root :is(
+  .shop-cell,
+  .kill-summary-loot-item,
+  .ofs-pet-icon,
+  .ofs-loot-item
+) {
+  background-color: transparent !important;
+  background-image: var(--gw-slot-empty) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% 100% !important;
+}
+
+/* codex:2026-07-30T20:49:05+02:00 — weitere alte XP-/Kampfbar-Consumer auf das getrennte Track/Fill-Paar heben. */
+#root :is(
+  .ms2-pool-bar,
+  .ms2-action-bar,
+  .cbar.cbar-hp,
+  .cbar.cbar-enemy-hp,
+  .cbar.cbar-mana,
+  .cbar.cbar-ward,
+  .cbar.cbar-timer
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-progress-track) 32 64 32 64 fill / 4px 10px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+#root :is(.ms2-pool-fill, .ms2-action-fill, .cbar-fill) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-image: var(--gw-progress-fill) 18 48 18 48 fill / 2px 6px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — V3-Grundvertrag: Materialfläche und skalierbarer Rahmen sind vollständig getrennt. */
+:root {
+  --gw-v3-frame-button: url("../assets/ui/gravewood/v3/frames/button-frame.webp");
+  --gw-v3-frame-tab: url("../assets/ui/gravewood/v3/frames/tab-frame.webp");
+  --gw-v3-frame-slot: url("../assets/ui/gravewood/v3/frames/slot-frame.webp");
+  --gw-v3-frame-panel: url("../assets/ui/gravewood/v3/frames/panel-frame.webp");
+  --gw-v3-frame-card: url("../assets/ui/gravewood/v3/frames/card-frame.webp");
+  --gw-texture-cold-slate: url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  --gw-texture-basalt: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  --gw-texture-ash-stone: url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp");
+
+  /* Alle Zustände verwenden dieselbe Frame-Geometrie. Feedback kommt ausschließlich
+     aus Licht, Kontur, Schatten und Bewegung; die Materialmaserung bleibt ortsfest. */
+  --gw-button-primary-normal: var(--gw-v3-frame-button);
+  --gw-button-primary-hover: var(--gw-v3-frame-button);
+  --gw-button-primary-pressed: var(--gw-v3-frame-button);
+  --gw-button-primary-disabled: var(--gw-v3-frame-button);
+  --gw-button-alt-normal: var(--gw-v3-frame-button);
+  --gw-button-alt-hover: var(--gw-v3-frame-button);
+  --gw-button-alt-pressed: var(--gw-v3-frame-button);
+  --gw-button-alt-disabled: var(--gw-v3-frame-button);
+  --gw-button-square-normal: var(--gw-v3-frame-slot);
+  --gw-button-square-hover: var(--gw-v3-frame-slot);
+  --gw-button-square-pressed: var(--gw-v3-frame-slot);
+  --gw-button-square-disabled: var(--gw-v3-frame-slot);
+  --gw-tab-inactive: var(--gw-v3-frame-tab);
+  --gw-tab-active: var(--gw-v3-frame-tab);
+  --gw-frame-panel: var(--gw-v3-frame-panel);
+  --gw-frame-card: var(--gw-v3-frame-card);
+  --gw-slot-empty: var(--gw-v3-frame-slot);
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Kalte Welt: Shell und große Inhaltsflächen erhalten Schiefer/Basalt statt durchgehendem Braun. */
+body {
+  background:
+    linear-gradient(rgba(5, 7, 9, 0.66), rgba(5, 7, 9, 0.66)),
+    var(--gw-texture-basalt) top left / 512px 512px repeat fixed,
+    #07090b !important;
+}
+
+.sidebar,
+.topbar {
+  background:
+    linear-gradient(rgba(7, 9, 12, 0.68), rgba(7, 9, 12, 0.68)),
+    var(--gw-texture-cold-slate) top left / 512px 512px repeat !important;
+}
+
+.sb-footer,
+.content-body {
+  background:
+    linear-gradient(rgba(5, 7, 9, 0.5), rgba(5, 7, 9, 0.5)),
+    var(--gw-texture-basalt) top left / 512px 512px repeat !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Warme Interaktion: Buttonfläche bleibt in jedem State dieselbe ruhige Gravewood-Kachel. */
+#root :is(
+  .ds-button,
+  .ds-footer-button,
+  .combat-btn,
+  .it-action-btn,
+  .bestiary-fight-btn,
+  .eq-loadout-btn,
+  .skillcard-cta,
+  .shop-btn,
+  .quest-claim-btn,
+  .quest-shop-buy-btn,
+  .nh-build-btn,
+  .nh-refine-btn,
+  .slayer-get-task-btn,
+  .slayer-locate-btn,
+  .font-apply-btn,
+  .zonemap-editor-btn,
+  .dcc-next-btn,
+  .mwc-next-btn,
+  .ofs-empty-btn,
+  button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item)
+) {
+  border-image: var(--gw-v3-frame-button) 64 120 64 120 / 6px 12px !important;
+  background-color: #17120e !important;
+  background-image:
+    linear-gradient(rgba(19, 12, 7, 0.34), rgba(19, 12, 7, 0.34)),
+    var(--gw-texture-gravewood) !important;
+  background-position: center, center !important;
+  background-size: auto, 256px 256px !important;
+  background-repeat: no-repeat, repeat !important;
+  background-origin: padding-box !important;
+  background-clip: padding-box !important;
+  box-shadow:
+    inset 0 1px 0 rgba(236, 188, 112, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: none;
+  transition:
+    transform 150ms cubic-bezier(0.18, 0.72, 0.22, 1),
+    filter 150ms ease,
+    box-shadow 150ms ease,
+    color 120ms ease !important;
+}
+
+#root :is(
+  .ds-button,
+  .ds-footer-button,
+  .combat-btn,
+  .it-action-btn,
+  .bestiary-fight-btn,
+  .eq-loadout-btn,
+  .skillcard-cta,
+  .shop-btn,
+  .quest-claim-btn,
+  .quest-shop-buy-btn,
+  .nh-build-btn,
+  .nh-refine-btn,
+  .slayer-get-task-btn,
+  .slayer-locate-btn,
+  .font-apply-btn,
+  .zonemap-editor-btn,
+  .dcc-next-btn,
+  .mwc-next-btn,
+  .ofs-empty-btn,
+  button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item)
+):not(:disabled):not(.disabled):hover {
+  border-image-source: var(--gw-v3-frame-button) !important;
+  transform: translateY(-1px);
+  filter: brightness(1.09) saturate(1.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 211, 136, 0.22),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+#root :is(
+  .ds-button,
+  .ds-footer-button,
+  .combat-btn,
+  .it-action-btn,
+  .bestiary-fight-btn,
+  .eq-loadout-btn,
+  .skillcard-cta,
+  .shop-btn,
+  .quest-claim-btn,
+  .quest-shop-buy-btn,
+  .nh-build-btn,
+  .nh-refine-btn,
+  .slayer-get-task-btn,
+  .slayer-locate-btn,
+  .font-apply-btn,
+  .zonemap-editor-btn,
+  .dcc-next-btn,
+  .mwc-next-btn,
+  .ofs-empty-btn,
+  button[class*="-btn"]:not([class*="tab"]):not([class*="slot"]):not(.topbar-item)
+):not(:disabled):not(.disabled):active,
+#root .ds-button.active {
+  border-image-source: var(--gw-v3-frame-button) !important;
+  transform: translateY(1px);
+  filter: brightness(0.9) saturate(0.94);
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.52),
+    0 1px 2px rgba(0, 0, 0, 0.34);
+  transition-duration: 80ms !important;
+}
+
+#root :is(
+  button.danger,
+  button[class*="danger"],
+  button[class*="cancel"],
+  button[class*="demolish"],
+  button[class*="clear"],
+  button[class*="sell"],
+  .combat-btn.stop,
+  .hf-btn--danger
+) {
+  background-image:
+    linear-gradient(rgba(72, 15, 13, 0.24), rgba(38, 8, 7, 0.3)),
+    var(--gw-texture-gravewood) !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Quadratcontrols teilen die statische Oberfläche, aber einen eigenen unverzerrten Rahmenvertrag. */
+#root button:is(
+  .ds-icon-button,
+  .ds-close-button,
+  .modal-close,
+  .eq-loadout-save-btn,
+  .cs-portrait-settings-btn,
+  .queue-row-btn,
+  .queue-panel-skip-dismiss,
+  .emw-collapse-btn,
+  .ib-close-btn
+):not([data-gw-horizontal]):not([data-gw-slot]):not([aria-hidden="true"]) {
+  border-image: var(--gw-v3-frame-slot) 64 / 5px !important;
+  background-color: #15181a !important;
+  background-image:
+    linear-gradient(rgba(10, 13, 16, 0.24), rgba(10, 13, 16, 0.24)),
+    var(--gw-texture-cold-slate) !important;
+  background-size: auto, 256px 256px !important;
+  background-repeat: no-repeat, repeat !important;
+  background-clip: padding-box !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Tabs sind flache kalte Navigation; aktiv wird nur Kante, Licht und Hebel. */
+#root :is(
+  .topbar-item,
+  .quests-tab-btn,
+  .shopv2-maintab,
+  .nh-view-tab,
+  .slayer-master-tab,
+  .ms2-tab,
+  .chronicle-tab,
+  .achv-filter-btn,
+  .achv-cat-btn,
+  .ach2-filter-btn,
+  .ach2-cat-btn,
+  .cs-tab-btn,
+  .battle-log-tab
+) {
+  border-image: var(--gw-v3-frame-tab) 64 100 64 100 / 5px 10px !important;
+  background-color: #101417 !important;
+  background-image:
+    linear-gradient(rgba(4, 7, 9, 0.36), rgba(4, 7, 9, 0.36)),
+    var(--gw-texture-basalt) !important;
+  background-size: auto, 256px 256px !important;
+  background-repeat: no-repeat, repeat !important;
+  background-origin: padding-box !important;
+  background-clip: padding-box !important;
+  box-shadow: inset 0 1px 0 rgba(184, 198, 205, 0.06);
+  transform: none;
+  transition:
+    transform 155ms cubic-bezier(0.18, 0.72, 0.22, 1),
+    filter 155ms ease,
+    box-shadow 155ms ease,
+    color 120ms ease !important;
+}
+
+#root :is(
+  .topbar-item,
+  .quests-tab-btn,
+  .shopv2-maintab,
+  .nh-view-tab,
+  .slayer-master-tab,
+  .ms2-tab,
+  .chronicle-tab,
+  .achv-filter-btn,
+  .achv-cat-btn,
+  .ach2-filter-btn,
+  .ach2-cat-btn,
+  .cs-tab-btn,
+  .battle-log-tab
+):not(:disabled):hover {
+  border-image-source: var(--gw-v3-frame-tab) !important;
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow:
+    inset 0 1px 0 rgba(223, 174, 94, 0.2),
+    0 3px 7px rgba(0, 0, 0, 0.36);
+}
+
+#root :is(
+  .topbar-item.active,
+  .quests-tab-btn--active,
+  .shopv2-maintab.active,
+  .nh-view-tab.active,
+  .slayer-master-tab.active,
+  .ms2-tab--active,
+  .chronicle-tab.active,
+  .achv-filter-btn--active,
+  .achv-cat-btn--active,
+  .ach2-filter-btn--active,
+  .ach2-cat-btn--active,
+  .cs-tab-btn.active,
+  .battle-log-tab.active
+) {
+  border-image-source: var(--gw-v3-frame-tab) !important;
+  color: #f4d28c !important;
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 -2px 7px rgba(188, 126, 52, 0.2),
+    inset 0 1px 0 rgba(255, 211, 132, 0.2);
+}
+
+#root .topbar-item:active {
+  transform: translateY(1px);
+  filter: brightness(0.92);
+  transition-duration: 90ms !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Volle und leere Slots verwenden denselben Rahmen, dieselbe Basaltfläche und einen separaten Rarity-Glow. */
+#root :is(
+  .ds-slot,
+  .slot,
+  .bag-slot,
+  .inv-slot,
+  .cs-slot,
+  .cs-bag-slot,
+  .cl-slot,
+  .cl-food-slot,
+  .shop-cell,
+  .kill-summary-loot-item,
+  .ofs-pet-icon,
+  .ofs-loot-item
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 5px !important;
+  border-image: var(--gw-v3-frame-slot) 64 / 5px !important;
+  border-radius: 0 !important;
+  background-color: #0d1114 !important;
+  background-image:
+    var(--slot-glow, linear-gradient(transparent, transparent)),
+    linear-gradient(rgba(3, 6, 8, 0.3), rgba(3, 6, 8, 0.3)),
+    var(--gw-texture-basalt) !important;
+  background-position: center, center, center !important;
+  background-size: 100% 100%, auto, 256px 256px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-origin: padding-box !important;
+  background-clip: padding-box !important;
+  transition:
+    filter 150ms ease,
+    box-shadow 150ms ease !important;
+}
+
+#root :is(
+  .ds-slot,
+  .slot,
+  .bag-slot,
+  .inv-slot,
+  .cs-slot,
+  .cs-bag-slot,
+  .cl-slot,
+  .cl-food-slot,
+  .shop-cell,
+  .kill-summary-loot-item,
+  .ofs-pet-icon,
+  .ofs-loot-item
+):hover {
+  filter: brightness(1.1);
+  box-shadow:
+    inset 0 0 0 1px rgba(207, 157, 79, 0.28),
+    0 2px 5px rgba(0, 0, 0, 0.36);
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Ein sichtbarer Container besitzt genau einen schmalen Frame-Owner. */
+.topbar::before,
+.sidebar::before,
+.content-body-frame::after {
+  border-image-source: var(--gw-v3-frame-panel) !important;
+  border-image-slice: 48 !important;
+}
+
+#root :is(.ds-frame, .ds-frame--headed) {
+  border-width: 8px !important;
+  border-image: var(--gw-v3-frame-panel) 48 / 8px !important;
+  background:
+    linear-gradient(rgba(6, 9, 12, 0.58), rgba(6, 9, 12, 0.58)),
+    var(--gw-texture-cold-slate) center / 512px 512px repeat !important;
+}
+
+#root :is(
+  .modal,
+  .menu-panel,
+  .creation-panel,
+  .char-stats-panel,
+  .queue-panel,
+  .emw-panel,
+  .slayer-task-panel,
+  .quest-shop-panel,
+  .shopv2-sell-detail-panel,
+  .shopv2-buyback-panel,
+  .pouch-modal,
+  .iwk-modal,
+  .bugreport-modal,
+  .qty-modal
+) {
+  border-width: 7px !important;
+  border-image: var(--gw-v3-frame-panel) 48 / 7px !important;
+}
+
+#root :is(
+  .skillcard,
+  .zone-card,
+  .monster-card,
+  .bestiary-card,
+  .quest-card,
+  .nh-card,
+  .shopv2-card,
+  .achv-card,
+  .ach2-card,
+  .creation-style-card,
+  .mshop-mode-card,
+  .cs-attr-card
+) {
+  border-width: 5px !important;
+  border-image: var(--gw-v3-frame-card) 48 / 5px !important;
+}
+
+#root :is(.opz-section, .battle-controls, .battle-log-panel, .nh-buildmenu, .shop-panel) {
+  background-image:
+    linear-gradient(rgba(5, 8, 11, 0.66), rgba(5, 8, 11, 0.66)),
+    var(--gw-texture-cold-slate) !important;
+  background-size: auto, 512px 512px !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Character besitzt drei äußere Frame-Owner; innere Flächen werden nicht nochmals vollständig gerahmt. */
+#root :is(.cs-col-left, .cs-col-tabpanel, .cs-col-right) {
+  border-width: 7px !important;
+  border-image: var(--gw-v3-frame-panel) 48 / 7px !important;
+}
+
+#root .cs-col-left {
+  background:
+    linear-gradient(rgba(5, 8, 11, 0.48), rgba(5, 8, 11, 0.48)),
+    var(--gw-texture-cold-slate) center / 512px 512px repeat !important;
+}
+
+#root :is(.cs-col-tabpanel, .cs-col-right) {
+  background:
+    linear-gradient(rgba(3, 6, 8, 0.5), rgba(3, 6, 8, 0.5)),
+    var(--gw-texture-basalt) center / 512px 512px repeat !important;
+}
+
+#root :is(.cs-col-mid, .cs-col-mid-stack) {
+  background: transparent !important;
+}
+
+#root .cs-portrait-wrap {
+  border-width: 5px !important;
+  border-image: var(--gw-v3-frame-card) 48 / 5px !important;
+}
+
+#root .cs-vitals {
+  border-width: 1px 0 0 !important;
+  border-style: solid !important;
+  border-color: rgba(190, 137, 70, 0.42) !important;
+  border-image: none !important;
+  background:
+    linear-gradient(rgba(4, 7, 9, 0.5), rgba(4, 7, 9, 0.5)),
+    var(--gw-texture-cold-slate) center / 512px 512px repeat !important;
+}
+
+#root .content-body-frame:has(.cs-layout)::after {
+  content: none !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Topbar-Balken höher, ruhiger und kontinuierlich; Citadel-Mehrfachrahmen entfallen. */
+#root .content-header-progress {
+  bottom: calc(8px * var(--tb-scale)) !important;
+  gap: calc(2px * var(--tb-scale)) !important;
+}
+
+#root .tb-bar {
+  height: calc(15px * var(--tb-scale)) !important;
+  min-height: calc(15px * var(--tb-scale));
+  border: 1px solid rgba(150, 107, 55, 0.72) !important;
+  border-image: none !important;
+  border-radius: 2px !important;
+  background:
+    linear-gradient(rgba(3, 6, 8, 0.62), rgba(3, 6, 8, 0.62)),
+    var(--gw-texture-basalt) left center / 256px 256px repeat !important;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.82),
+    0 1px 0 rgba(218, 166, 89, 0.12);
+}
+
+#root .tb-bar-track-bg {
+  background: transparent !important;
+}
+
+#root .tb-bar-fill {
+  top: 2px;
+  bottom: 2px;
+  border: 0 !important;
+  border-image: none !important;
+  border-radius: 1px !important;
+  background: linear-gradient(90deg, #3e2c17, #9c6f2c 62%, #d5aa52) !important;
+  transition: clip-path 115ms linear !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 172, 0.2),
+    0 0 4px rgba(183, 124, 44, 0.24);
+}
+
+#root .tb-bar--action .tb-bar-fill {
+  background: linear-gradient(90deg, #554019, #b3912e 60%, #ddc15a) !important;
+  filter: none !important;
+}
+
+#root .tb-bar--level .tb-bar-fill {
+  background: linear-gradient(90deg, #2d2849, #58478d 60%, #8973c4) !important;
+}
+
+#root .tb-bar-gloss {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 48%, rgba(0, 0, 0, 0.18)) !important;
+  opacity: 0.72;
+}
+
+#root .tb-bar-frame-row {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(10% - 1px),
+    rgba(177, 129, 69, 0.38) calc(10% - 1px),
+    rgba(177, 129, 69, 0.38) 10%
+  );
+}
+
+#root .tb-bar-frame-seg {
+  border: 0 !important;
+  border-image: none !important;
+  background: transparent !important;
+}
+
+/* codex:2026-07-30T21:44:25+02:00 — Scrollgefühl: schwere, ruhige Reaktion ohne Austausch oder Streckung der Grifftextur. */
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  border-image-source: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-normal.webp") !important;
+  transition:
+    filter 180ms cubic-bezier(0.18, 0.72, 0.22, 1),
+    box-shadow 180ms ease !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.12) saturate(1.04);
+}
+
+::-webkit-scrollbar-thumb:active {
+  filter: brightness(0.86) saturate(0.92);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.56);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root :is(button, .topbar-item, .inv-slot, .cs-slot),
+  ::-webkit-scrollbar-thumb {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Ultrawide-Performance: große Viewport-Flächen besitzen nur eine gekachelte Rasterlage, ohne fixed-Compositing. */
+body {
+  background-color: #07090b !important;
+  background-image: var(--gw-texture-basalt) !important;
+  background-position: top left !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-attachment: scroll !important;
+}
+
+.sidebar,
+.topbar {
+  background-color: #0b0e11 !important;
+  background-image: var(--gw-texture-cold-slate) !important;
+  background-position: top left !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+
+.sb-footer,
+.content-body {
+  background-color: #080a0c !important;
+  background-image: var(--gw-texture-basalt) !important;
+  background-position: top left !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Topbar reserviert die volle Höhe ihrer beiden Fortschrittszeilen; kein Überlappen mit Titel oder Status. */
+#root .content-header {
+  padding-bottom: calc(42px * var(--tb-scale)) !important;
+  min-height: calc(86px * var(--tb-scale)) !important;
+}
+
+#root .content-header-progress {
+  bottom: calc(6px * var(--tb-scale)) !important;
+  gap: calc(3px * var(--tb-scale)) !important;
+}
+
+#root .tb-bar {
+  height: calc(16px * var(--tb-scale)) !important;
+  min-height: calc(16px * var(--tb-scale)) !important;
+}
+
+#root .tb-bar-fill {
+  transition: clip-path 180ms linear !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Warmes Navigationstemplate: Topbar, Sidebar und Footer teilen Rahmen, Fläche und State-Geometrie. */
+#root :is(
+  .sb-skill-btn,
+  .topbar-item,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit,
+  .ds-footer-button
+) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 6px 14px !important;
+  border-image: var(--gw-v3-frame-button) 64 120 64 120 / 6px 14px !important;
+  background-color: #17120e !important;
+  background-image: var(--gw-texture-gravewood) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  box-shadow:
+    inset 0 1px 0 rgba(236, 188, 112, 0.09),
+    0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+#root .topbar-item {
+  min-height: calc(44px * var(--tb-scale)) !important;
+  padding-block: calc(3px * var(--tb-scale)) !important;
+}
+
+#root .topbar-divider {
+  width: 1px !important;
+  height: 70% !important;
+  margin-inline: 1px !important;
+  border: 0 !important;
+  background-color: #6e4b28 !important;
+  background-image: none !important;
+  opacity: 0.62;
+}
+
+#root :is(
+  .sb-skill-btn,
+  .topbar-item,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit,
+  .ds-footer-button
+):not(:disabled):hover {
+  border-image-source: var(--gw-v3-frame-button) !important;
+  filter: brightness(1.09) saturate(1.03) !important;
+}
+
+#root :is(
+  .sb-skill-btn,
+  .topbar-item,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit,
+  .ds-footer-button
+):not(:disabled):active,
+#root :is(.sb-skill-btn.active, .topbar-item.active) {
+  border-image-source: var(--gw-v3-frame-button) !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Main Menu: Rahmen und Material schließen bündig; kein transparenter Innen-Graben zwischen beiden Ebenen. */
+#root .hf-btn.menu-nav-btn {
+  min-height: clamp(72px, 7.2vh, 82px) !important;
+  padding: clamp(12px, 1.25vh, 16px) clamp(26px, 2.2vw, 36px) !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 10px 18px !important;
+  border-image: var(--gw-v3-frame-button) 64 120 64 120 / 10px 18px !important;
+  background-color: #17120e !important;
+  background-image: var(--gw-texture-gravewood) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  clip-path: polygon(
+    8px 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    8px 100%,
+    0 calc(100% - 8px),
+    0 8px
+  );
+}
+
+#root .hf-btn.menu-nav-btn::before {
+  content: none !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Fertiger universeller Slot ersetzt den ungewohnten Rahmen-Baukasten bei leeren und belegten Zellen. */
+#root :is(
+  .ds-slot,
+  .inv-slot,
+  .cs-slot,
+  .cs-bag-slot,
+  .cl-slot,
+  .cl-food-slot,
+  .shop-cell,
+  .kill-summary-loot-item,
+  .ofs-pet-icon,
+  .ofs-loot-item
+) {
+  border: 0 !important;
+  border-image: none !important;
+  background-color: transparent !important;
+  background-image:
+    var(--slot-glow, linear-gradient(transparent, transparent)),
+    url("../assets/ui/gravewood/slots/slot-empty.webp") !important;
+  background-position: center, center !important;
+  background-size: 100% 100%, 100% 100% !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Character/Inventory: drei klare äußere Frame-Owner mit sichtbarer kalter Materialfläche. */
+#root :is(.cs-col-left, .cs-col-tabpanel, .cs-col-right) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 10px !important;
+  border-image: var(--gw-v3-frame-panel) 48 / 10px !important;
+  background-color: #0b0f12 !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root .cs-col-left {
+  background-image: var(--gw-texture-cold-slate) !important;
+}
+
+#root .cs-col-tabpanel {
+  background-image: var(--gw-texture-basalt) !important;
+}
+
+#root .cs-col-right {
+  background-image: var(--gw-texture-ash-stone) !important;
+}
+
+#root :is(
+  .cs-col-mid-stack,
+  .cs-tabpanel-content.cs-col-mid,
+  .cs-tabpanel-content.cs-col-stats
+) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+#root .cs-portrait-wrap {
+  border-width: 7px !important;
+  border-image: var(--gw-v3-frame-card) 48 / 7px !important;
+  background-color: #0c1013 !important;
+  background-image: var(--gw-texture-cold-slate) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root .cs-vitals {
+  background-color: #0b0f12 !important;
+  background-image: var(--gw-texture-cold-slate) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Offline-Bühne: kräftiger Modalrahmen, kompakte kalte Berichtskarten und vollständiger Collect-Button. */
+#root .offline-stage {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 12px !important;
+  border-image: var(--gw-v3-frame-panel) 48 / 12px !important;
+  background-color: #0b0f12 !important;
+  background-image: var(--gw-texture-cold-slate) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root :is(.offline-stage-duration, .ofs-warden, .ofs-skill-row) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 5px !important;
+  border-image: var(--gw-v3-frame-card) 48 / 5px !important;
+  background-color: #0d1114 !important;
+  background-image: var(--gw-texture-basalt) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root .offline-stage-duration {
+  padding: 4px 12px !important;
+}
+
+#root .ofs-warden {
+  width: min(100%, 560px);
+  align-self: center;
+  padding: 7px 12px !important;
+}
+
+#root .ofs-skill-row {
+  padding: 4px 9px !important;
+}
+
+#root .offline-stage .ofs-skills {
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 320px));
+  justify-content: center;
+}
+
+#root .ofs-collect {
+  min-height: 64px !important;
+  border-width: 8px 16px !important;
+  border-image: var(--gw-v3-frame-button) 64 120 64 120 / 8px 16px !important;
+  background-color: #17120e !important;
+  background-image: var(--gw-texture-gravewood) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Action Cards: ein kräftiger Außenrahmen, lesbare Innenkarten und lückenlos gefüllte Mengenbuttons. */
+#root .skillcard {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 10px !important;
+  border-image: var(--gw-v3-frame-panel) 48 / 10px !important;
+  background-color: #0b0f12 !important;
+  background-image: var(--gw-texture-cold-slate) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root .skillcard-body {
+  background-color: #090c0f !important;
+  background-image: var(--gw-texture-basalt) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+
+#root :is(.skillcard-tile, .skillcard-produces, .mat-chip, .craftable) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 5px !important;
+  border-image: var(--gw-v3-frame-card) 48 / 5px !important;
+  background-color: #0d1114 !important;
+  background-image: var(--gw-texture-basalt) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root .skillcard-produces {
+  padding: 5px 8px !important;
+}
+
+#root :is(.mat-chip, .craftable) {
+  background-image:
+    linear-gradient(rgba(20, 44, 18, 0.34), rgba(11, 24, 10, 0.4)),
+    var(--gw-texture-basalt) !important;
+}
+
+#root :is(.mat-chip.lacking, .craftable.none) {
+  background-image:
+    linear-gradient(rgba(58, 15, 12, 0.42), rgba(30, 8, 7, 0.48)),
+    var(--gw-texture-basalt) !important;
+}
+
+#root .skillcard-craft-cta .skillcard-cta.qty {
+  border-width: 6px 12px !important;
+  border-image: var(--gw-v3-frame-button) 64 120 64 120 / 6px 12px !important;
+  background-color: #17120e !important;
+  background-image: var(--gw-texture-gravewood) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Options ersetzt die letzten Citadel-Holzkästen durch kräftige Gravewood-Rahmen auf kaltem Stein. */
+#root :is(.opz-header, .opz-section, .bugreport-entry-banner) {
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 10px !important;
+  border-image: var(--gw-v3-frame-panel) 48 / 10px !important;
+  background-color: #0b0f12 !important;
+  background-image: var(--gw-texture-cold-slate) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root .bugreport-entry-banner {
+  filter: none !important;
+}
+
+/* codex:2026-07-30T22:24:34+02:00 — Scrollgriff ohne vertikal gestreckte Rastermaserung; Lichtwechsel bleibt schwer und ruhig. */
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  border: 2px solid #6e4b28 !important;
+  border-image: none !important;
+  border-radius: 3px !important;
+  background:
+    linear-gradient(90deg, #1b1713 0%, #5b4025 46%, #8c6636 50%, #5b4025 54%, #1b1713 100%) !important;
+  background-clip: padding-box !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.12) !important;
+}
+
+::-webkit-scrollbar-thumb:active {
+  filter: brightness(0.86) !important;
+}
+
+@media (min-width: 2560px) {
+  /* codex:2026-07-30T22:24:34+02:00 — Ultrawide vermeidet großflächige Hover-Glows auf Karten; Controls behalten ihr direktes Feedback. */
+  #root :is(.skillcard, .quest-card, .monster-card, .zone-card):hover {
+    box-shadow: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* codex:2026-07-30T22:24:34+02:00 — Kompakte Topbar behält denselben Rahmenvertrag ohne die 36-px-Leiste zu überragen. */
+  #root .topbar-item {
+    min-height: calc(32px * var(--tb-scale)) !important;
+    padding-block: calc(1px * var(--tb-scale)) !important;
+    border-width: 4px 9px !important;
+    border-image-width: 4px 9px !important;
+  }
+}
+
+@media (max-width: 800px) {
+  /* codex:2026-07-30T22:24:34+02:00 — Sehr schmale Layouts nutzen die vorhandene 38-px-Topbar vollständig, aber ohne Clipping. */
+  #root .topbar-item {
+    min-height: calc(34px * var(--tb-scale)) !important;
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "zoneId": "slagpit",
+  "hotspots": [
+    {
+      "monsterId": "pit_spider",
+      "x": 18.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "slag_kobold",
+      "x": 39.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "ember_elemental",
+      "x": 60.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "iron_revenant",
+      "x": 81.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "frost_hound",
+      "x": 18.5,
+      "y": 71,
+      "size": 1.75
+    },
+    {
+      "monsterId": "frost_hexer",
+      "x": 39.5,
+      "y": 71,
+      "size": 1.75
+    }
+  ]
+}

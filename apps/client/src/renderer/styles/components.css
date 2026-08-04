@@ -1,0 +1,2617 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   COMPONENTS — shared reusables: placeholder, portrait, bar,
+   muted, rarity vars, item-cell, item-tooltip, drop icons,
+   item-chip, toasts, shop-cell, ornamental tooltip (itip-*),
+   cs-detail upgrades, activity indicator
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Locked icon image (replaces 🔒 emoji across all pages) ──────────────
+   Uses em units so it scales with surrounding font size automatically.      */
+.locked-icon-img {
+  width: 1.2em;
+  height: 1.2em;
+  object-fit: contain;
+  vertical-align: middle;
+  opacity: 0.65;
+  image-rendering: auto;
+}
+
+/* ─── Platzhalter ───────────────────────────────────────── */
+.placeholder {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--muted);
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.placeholder h2 {
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+/* ─── Portrait (Komponente) ─────────────────────────────── */
+.portrait {
+  flex-shrink: 0;
+  border: 2px solid var(--border-bright);
+  border-radius: var(--radius);
+  background: var(--slot);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portrait-empty {
+  font-size: 32px;
+  color: var(--accent-dim);
+}
+
+/* ─── Utility ───────────────────────────────────────────── */
+.muted {
+  color: var(--muted);
+  font-size: 19px;
+}
+
+/* Geboostetes Kampf-Skill-Level (OSRS-Stil, Itemization 2.0 §4.5): "42/99 (+2)" — die effektive
+   Zahl in Buff-Grün, der "(+2)"-Zusatz dezent kleiner daneben. Erbt font-size/-weight vom
+   umgebenden Kontext (Sidebar/Skills-Übersicht/Combat-Loadout haben je eigene Level-Typografie);
+   nur die Farbe wird hier fest auf --boost gesetzt. */
+.skill-boost-value {
+  color: var(--boost);
+}
+.skill-boost-tag {
+  font-size: 0.8em;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* ─── Item-Framework: Zellen, Seltenheit, Tooltip ───────── */
+/*
+  Rarity-Farbprogression (WoW-artig, niedrig→hoch):
+    poor       = dunkelgrau   (Junk/Schrott)
+    common     = hellgrau     (Standard/Rohstoffe)
+    magic      = blau (Legacy-Tier, kein neues Content)
+    rare       = GRÜN         (frühe/mittlere Ausrüstung — der erste sichtbare "Qualitäts"-Tier)
+    superRare  = BLAU         (mittlere/gehobene Ausrüstung — Hauptband)
+    epic       = LILA         (nur echtes Top-Tier: Titan/Aether/Götzeneisen)
+    legendary  = ORANGE       (Spezial-/Boss-Drops)
+    godly      = GOLD/ROT     (Ultra-Rare)
+*/
+:root {
+  --rar-poor:      #555555;   /* dunkelgrau */
+  --rar-common:    #c8c8c8;   /* hellgrau/weiß */
+  /* UI-Brainstorm A1 (2026-07-24, design/ui-brainstorm/2026-07-24-designsystem.md §5.1): war
+     identisch mit --rar-superRare (#5b8fd6) — Legacy-Items und Hauptband-Ausrüstung waren farblich
+     ununterscheidbar. Jetzt ein erkennbar dunklerer/entsättigterer Blauton ("älter/blasser" statt
+     gleichwertig), klarer Abstand zu allen anderen Rarity-Tönen (Grau/Grün/Blau/Lila/Orange/Gold). */
+  --rar-magic:     #4a6d99;   /* blau, gedämpft (Legacy) */
+  --rar-rare:      #3cb043;   /* GRÜN — sattes Waldgrün (Chef 2026-07-02: altes Mint #4ec46e "zu minzig") */
+  --rar-superRare: #5b8fd6;   /* BLAU, kräftig */
+  --rar-epic:      #b07fd8;   /* lila */
+  --rar-legendary: #e0902a;   /* orange */
+  --rar-godly:     #ffd700;   /* gold */
+}
+
+.pixelart {
+  image-rendering: auto;
+}
+
+.item-cell {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.inv-slot.filled:hover {
+  box-shadow: var(--glow);
+}
+
+.item-cell-img {
+  width: 88%;
+  height: 88%;
+  max-width: 64px;
+  max-height: 64px;
+  object-fit: contain;
+}
+
+.item-cell-emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.item-cell-name {
+  font-size: 14px;
+  line-height: 1.15;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.item-cell-qty {
+  position: absolute;
+  bottom: 8%;
+  right: 13%;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px #000;
+}
+
+/* Vierstellige Mengen (Stack-Cap 9999, Welle SS): etwas kleiner statt "9,9k"-Kürzung — echte
+   Zahlen bleiben echte Zahlen, nur die Zell-Ecke bekommt mehr Luft. */
+.item-cell-qty--wide {
+  font-size: 12px;
+  right: 6%;
+}
+
+/* ── Rarity-Rahmen (dezent, nach item.rarity) ────────────────────────────
+   Common/Poor bleiben absichtlich UNVERÄNDERT (kein Rahmen — sonst
+   Grundrauschen, da die meisten Items common sind). Ab "magic" markiert ein
+   dünner, ungeglowter Rahmen die Seltenheit — dieselbe --rar-*-Palette wie
+   Tooltip/Bestiarium/Achievements (s. :root oben) — KEINE neue Palette.
+   Legendary/Godly bekommen zusätzlich eine hauchfeine zweite Innenkante
+   (outline, kein box-shadow-Blur) — die Studio-Regel "kein Glow auf
+   Equipment-Art" (s. .shopv2-card weiter unten) gilt weiter: nur Kanten.
+   `body`-Präfix erzwingt Vorrang vor seiten-eigenem CSS (z.B. shop.css wird
+   separat importiert, s. index.css-Kommentar) — Spezifität statt
+   Lade-Reihenfolge, damit die Zelle immer den Rahmen behält. */
+body .item-cell.rarity-magic     { border: 1px solid var(--rar-magic); }
+body .item-cell.rarity-rare      { border: 1px solid var(--rar-rare); }
+body .item-cell.rarity-superRare { border: 1px solid var(--rar-superRare); }
+body .item-cell.rarity-epic      { border: 1px solid var(--rar-epic); }
+body .item-cell.rarity-legendary { border: 1px solid var(--rar-legendary); }
+body .item-cell.rarity-godly     { border: 1px solid var(--rar-godly); }
+
+body .item-cell.rarity-legendary,
+body .item-cell.rarity-godly {
+  outline: 1px solid rgba(255, 255, 255, 0.22);
+  outline-offset: -3px;
+}
+
+/* ── Mikrointeraktionen (interaktive Zellen) ─────────────────────────────
+   Sanftes Anheben + Aufhellung bei Hover, kurzes Eindrücken bei Press —
+   dasselbe "Button-Politur"-Muster wie an anderer Stelle etabliert (vgl.
+   .skilloverview-card.clickable, .menu-slot), auf die Item-Zelle übertragen.
+   Reine Anzeige-Gitter (Offline-Beute-Bühne, Kill-Overlay-Beute) sind
+   bewusst NICHT interaktiv — s. Overrides unten. */
+.item-cell:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.item-cell:active {
+  filter: brightness(0.93);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition-duration: 0.06s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .item-cell:hover  { transform: translateY(-2px); }
+  .item-cell:active { transform: translateY(0) scale(0.97); }
+}
+
+/* Statische Anzeige-Zellen (kein Drag/Equip) — keine Mikrointeraktion. */
+.item-cell.ofs-loot-item:hover,
+.item-cell.ofs-loot-item:active,
+.kill-summary-loot-item .item-cell:hover,
+.kill-summary-loot-item .item-cell:active {
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
+/* Shop-Zellen (kompakt) */
+.shop-row-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shop-cell {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  /* Universeller Slot-Rahmen (Chef) — gotischer Eck-Spike-Rahmen + Steinfläche baked-in,
+     ersetzt die flache --slot-Farbe. */
+  background-image: url("../assets/ui/citadel/box-inventory/slot_universal.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shop-cell .item-cell-emoji {
+  font-size: 32px;
+}
+
+.shop-cell .item-cell-img {
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: contain;
+}
+
+.shop-cell .item-cell-name {
+  font-size: 12px;
+}
+
+/* Paperdoll-Item innerhalb eines Slots — echtes Flex-Centering, kein Offset-Hack mehr
+   (die alten padding-bottom-Werte drückten das Item sichtbar nach oben aus der Mitte). */
+.slot .item-cell.slot-item {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot .item-cell.slot-item .item-cell-emoji {
+  font-size: min(44px, 5vh);
+}
+
+.slot .item-cell.slot-item .item-cell-img {
+  max-width: 88%;
+  max-height: 88%;
+  object-fit: contain;
+}
+
+.cs-slot .item-cell.slot-item {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-slot .item-cell.slot-item .item-cell-emoji {
+  font-size: clamp(38px, 4.5vh, 54px);
+}
+
+/* Chef-Feedback: Item-Icons klebten am gotischen Rahmen (98%) — auf ~80% verkleinert,
+   damit der Rahmen sichtbar "atmet"; einheitlich für alle Equip-Slots (Rüstung/Waffen/Tools). */
+.cs-slot .item-cell.slot-item .item-cell-img {
+  max-width: 80%;
+  max-height: 80%;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+/* Drop-Ziel-Glühen beim Drag */
+.slot.slot-valid,
+.bag-slot.slot-valid {
+  box-shadow: var(--glow);
+  animation: dropPulse 0.9s ease-in-out infinite;
+}
+.bag-slot.slot-valid {
+  background-image: none;
+  background-color: rgba(200, 119, 46, 0.18);
+}
+@keyframes dropPulse {
+  0%, 100% { box-shadow: 0 0 6px var(--accent); }
+  50% { box-shadow: 0 0 18px var(--accent), 0 0 30px var(--accent); }
+}
+
+/* Seltenheit als dezenter, kreisförmiger Glow hinterm Item (zum Rand transparent), nicht als flaches
+   Quadrat. Layered als --slot-glow ÜBER dem slot_universal-Hintergrund (siehe .inv-slot in
+   character.css) statt background-image zu ersetzen — sonst verschwindet der Rahmen bei gefüllten Slots. */
+.inv-slot.rarity-magic.filled     { --slot-glow: radial-gradient(circle at 50% 45%, rgba(91, 143, 214, 0.32), transparent 66%); }
+.inv-slot.rarity-rare.filled      { --slot-glow: radial-gradient(circle at 50% 45%, rgba(60, 176, 67, 0.32), transparent 66%); }
+.inv-slot.rarity-superRare.filled { --slot-glow: radial-gradient(circle at 50% 45%, rgba(91, 143, 214, 0.32), transparent 66%); }
+.inv-slot.rarity-epic.filled      { --slot-glow: radial-gradient(circle at 50% 45%, rgba(176, 127, 216, 0.34), transparent 66%); }
+.inv-slot.rarity-legendary.filled { --slot-glow: radial-gradient(circle at 50% 45%, rgba(224, 144, 42, 0.34), transparent 66%); }
+.inv-slot.rarity-godly.filled     { --slot-glow: radial-gradient(circle at 50% 45%, rgba(255, 215, 0, 0.32), transparent 66%); }
+
+/* Großes RPG-Tooltip am Cursor — Citadel: Holz-9-Slice-Rahmen statt schlichtem 1px-Strich (wie
+   .stx-section/.category-header). border-radius entfällt (border-image + border-radius sind
+   inkompatibel) — deckt sich mit dem app-weiten quadratischen Citadel-Kartenlook. */
+.item-tooltip {
+  position: fixed;
+  z-index: 500;
+  width: 280px;
+  background: linear-gradient(180deg, #1a1f25, #12161a);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 9px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 9px;
+  border-radius: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  padding: 14px;
+  font-size: 17px;
+  /* UI-Feel-Pass: kurzes Fade-in statt hartem Aufpoppen (interaction.css @keyframes ui-fade-in,
+     dasselbe Muster wie .ct-tip unten). Der Overlay-Wrapper mountet/unmountet pro
+     Erscheinen (ItemTooltip.tsx gibt bei leerem Payload null zurück) — die Animation feuert
+     dadurch zuverlässig bei jedem echten Öffnen, nicht bei jedem Cursor-Folgen-Reposition. */
+  animation: ui-fade-in 100ms ease-out;
+}
+
+/* ─── Citadel-Tooltip-Basis (Chef-Auftrag „Tooltip-Vereinheitlichung", 2026-07-23) ──────────────
+   App-weite Grundlage für kompakte Hover-Erklärungen (Ward-/Elite-/Spuren-Badges, Bounty-Zeilen,
+   Slot-Zähler, Queue-Rechtsklick, Diff-Namens-Legende …) — Portal an document.body (Komponente
+   components/CitadelTip.tsx), gleicher Holzrahmen wie `.item-tooltip` oben, nur kompakter. Der
+   Glow-Ring (`.ct-tip-glow`) ist eine reine ZUSATZ-Klasse und bleibt exklusiv den Attribut-Karten
+   vorbehalten (EquipmentOverview.tsx AttributesGrid) — jeder andere Aufrufer lässt sie weg. */
+.ct-tip {
+  z-index: 9999;
+  pointer-events: none;
+  max-width: 240px;
+  padding: 10px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: center;
+  background:
+    linear-gradient(rgba(20,16,11,0.97), rgba(11,9,7,0.98)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: auto, 200px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+  animation: ui-fade-in 90ms ease-out;
+}
+/* Glow-Modifier — NUR Attribut-Karten (Chef-Vorgabe „Glow bleibt exklusiv bei den Attributen"). */
+.ct-tip-glow {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--attr-color, var(--gold)) 55%, #2a2015),
+    0 8px 22px rgba(0,0,0,0.6);
+}
+.ct-tip-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--attr-color, var(--gold));
+  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+}
+.ct-tip-desc {
+  font-size: 12px;
+  line-height: 1.32;
+  color: #d9cca9;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ct-tip { animation: none; }
+}
+
+/* Diff-Namens-Farblegende (CombatPage MonsterCard/EliteMonsterCard, Chef-Spec 2026-07-23): Hover
+   auf den eingefärbten Monster-Namen erklärt, was die 5 `diffname-*`-Farben bedeuten — die aktuell
+   zutreffende Zeile wird fett + leicht angehoben hervorgehoben, s. `.ct-difflegend-current`. Die
+   Zeilenfarben spiegeln exakt combat.css `.monster-card-name.diffname-*`. */
+.ct-difflegend {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 168px;
+}
+.ct-difflegend-row {
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: left;
+  opacity: 0.72;
+}
+.ct-difflegend-row.diffname-zero { color: var(--muted); }
+.ct-difflegend-row.diffname-easy { color: #5ec46e; }
+.ct-difflegend-row.diffname-close { color: #e0a64b; }
+.ct-difflegend-row.diffname-caution { color: #e0862a; }
+.ct-difflegend-row.diffname-danger { color: #e0604b; }
+.ct-difflegend-row.ct-difflegend-current {
+  opacity: 1;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+}
+
+.it-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96px;
+  margin-bottom: 10px;
+  background: radial-gradient(circle at 50% 45%, #232c35, #0e1216);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+
+.it-image .pixelart {
+  max-width: 88px;
+  max-height: 88px;
+  object-fit: contain;
+}
+
+.it-emoji {
+  font-size: 56px;
+  line-height: 1;
+}
+
+.it-placeholder {
+  font-size: 40px;
+  color: var(--muted);
+}
+
+.it-name {
+  font-family: var(--font-head);
+  font-size: 19px;
+  text-align: center;
+  color: var(--text);
+}
+
+.it-type {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.it-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.it-stat {
+  color: var(--accent-2);
+}
+
+.it-twohand {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--accent-2);
+  color: var(--bg, #000);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.it-req {
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.it-req.unmet {
+  color: var(--danger);
+}
+
+.it-desc {
+  margin-top: 8px;
+  font-style: italic;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.it-value {
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+.it-actions {
+  display: flex;
+  gap: 8px;
+  margin: 14px 22px 0;
+}
+
+/* Action buttons — universal 9-slice button set (Task #332, Chef 24.07.): ersetzt die alte rote
+   sidebar_btn_{normal,hover,active} Bannerfamilie (Chef 2026-07-02, "vermehrt hernehmen") durch
+   dasselbe ButtonNew-Rezept wie Sidebar/TopBar/`.combat-btn` (combat.css) — border-image mit
+   "fill" trägt Rand + Füllung, Hover/Active tauschen nur die border-image-source. */
+.it-action-btn {
+  flex: 1;
+  height: 44px;
+  padding: 0 10px;
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image: url("../assets/ui/buttons/button_new.webp") 90 92 90 90 fill / 12px 12px 12px 12px;
+  border-radius: 0;
+  color: #ffffff;
+  text-shadow: 0 1px 3px #000;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  transition: color 0.12s;
+}
+
+.it-action-btn:hover {
+  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
+}
+
+.it-action-btn:active {
+  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
+}
+
+/* Welle KK (Riko-Retest N2): Disabled-Confirm sah identisch zum aktiven Button aus (kein Grau, kein
+   Hinweis) — wer zu wenig Gold hat, sieht einen saftig-roten Knopf, der nichts tut. Grayscale +
+   gedämpfte Helligkeit signalisieren "tot"; kein `cursor: not-allowed` hier — base.css erzwingt den
+   Citadel-Custom-Cursor global per `*` + `!important` (Chef-Wunsch), ein Cursor-Override auf diesem
+   Selektor bliebe also ohnehin wirkungslos. :hover/:active werden explizit auf den Normal-Zustand
+   zurückgezwungen (sonst gewinnt die spätere Hover-Regel per Selektor-Reihenfolge weiter). */
+.it-action-btn:disabled {
+  filter: grayscale(75%) brightness(0.6);
+  opacity: 0.7;
+}
+
+.it-action-btn:disabled:hover,
+.it-action-btn:disabled:active {
+  border-image-source: url("../assets/ui/buttons/button_new.webp");
+}
+
+.it-hint {
+  margin-top: 8px;
+  padding: 0 20px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.item-tooltip.rarity-poor {
+  border-color: var(--rar-poor);
+}
+.item-tooltip.rarity-magic {
+  border-color: var(--rar-magic);
+}
+.item-tooltip.rarity-rare {
+  border-color: var(--rar-rare);
+}
+.item-tooltip.rarity-superRare {
+  border-color: var(--rar-superRare);
+}
+.item-tooltip.rarity-epic {
+  border-color: var(--rar-epic);
+}
+.item-tooltip.rarity-legendary {
+  border-color: var(--rar-legendary);
+}
+.item-tooltip.rarity-godly {
+  border-color: var(--rar-godly);
+}
+.item-tooltip.rarity-poor .it-name {
+  color: var(--rar-poor);
+}
+.item-tooltip.rarity-magic .it-name {
+  color: var(--rar-magic);
+}
+.item-tooltip.rarity-rare .it-name {
+  color: var(--rar-rare);
+}
+.item-tooltip.rarity-superRare .it-name {
+  color: var(--rar-superRare);
+}
+.item-tooltip.rarity-epic .it-name {
+  color: var(--rar-epic);
+}
+.item-tooltip.rarity-legendary .it-name {
+  color: var(--rar-legendary);
+}
+.item-tooltip.rarity-godly .it-name {
+  color: var(--rar-godly);
+}
+
+/* Drop-Icons mit echtem Item-Bild */
+.drop-icon-img {
+  width: 1.5em;
+  height: 1.5em;
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
+}
+.drop-icon.clickable {
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.drop-icon.clickable:hover {
+  transform: scale(1.2);
+}
+.drop-icon.undiscovered {
+  color: var(--muted);
+  opacity: 0.7;
+  filter: grayscale(1);
+}
+/* Task #248: schwarze Item-Silhouette statt „???"-Text — echtes Bild, alle Pixel schwarz. */
+.drop-icon-silhouette {
+  filter: brightness(0);
+}
+
+/* ── ItemChip ── */
+.item-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.1s;
+  vertical-align: middle;
+}
+.item-chip:hover {
+  transform: scale(1.15);
+  opacity: 0.9;
+}
+.item-chip-img {
+  width: 1.6em;
+  height: 1.6em;
+  object-fit: contain;
+  display: inline-block;
+}
+.item-chip-emoji {
+  font-size: 1.4em;
+  line-height: 1;
+}
+.item-chip-name {
+  font-size: 0.95em;
+}
+
+.skillcard-produces {
+  /* Sitzt innerhalb von .skillcard (container-type: inline-size, siehe skills.css)
+     → cqw-Skalierung macht die Zeile bei schmalen Karten kompakter statt zu überlaufen. */
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 1.43cqw, 8px);
+  margin-top: clamp(6px, 1.79cqw, 10px);
+  font-size: clamp(13px, 3.04cqw, 17px);
+}
+.skillcard-produces .item-chip-img {
+  width: clamp(18px, 4.64cqw, 26px);
+  height: clamp(18px, 4.64cqw, 26px);
+}
+.skillcard-produces .item-chip-emoji {
+  font-size: clamp(16px, 3.93cqw, 22px);
+}
+
+/* ─── Aktivitäts-Indikator ──────────────────────────────── */
+.activity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+}
+
+.activity-stopped {
+  color: #d9a86b;
+  cursor: help;
+}
+
+.activity-bar {
+  display: inline-block;
+  width: 80px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--slot);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.activity-bar > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: var(--accent);
+  transition: transform 0.08s linear;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ITEM TOOLTIP — "Path of Exile" redesign  (.itip-*)
+   Task #210 (Chef 2026-07-02): Design #3 from design/tooltip-prototypes/index.html,
+   widened/heightened (480px, was a deliberately narrow 320px prototype) with a much
+   bigger hero image stage and a strongly emphasised on-hit EFFECT block. A double-
+   line rarity header, small-caps stat GROUPS separated by hairlines (Offense/
+   Defense/Attributes/Skill/Suffix/Enchantment), and a compact requires/value
+   footer. --rarity-col (hex, set inline per card) drives the header tint, stage
+   glow, name colour and the effect block's accent edge.
+   Chef-Nachbesserung (2026-07-02, "schon cooler" + 4 Punkte): (1) Header-Texte
+   explizit text-align:center statt nur geerbt. (2) Unsere Texturen statt flacher
+   Gradients — bg_sidebar im Header, bg_equipment (Leder) auf der Hero-Bühne,
+   attribute_bg dezent hinter den Stat-Gruppen, bg_black als Karten-Grund (alle
+   gekachelt/gestreckt wie an ihrer jeweiligen Stammstelle im Rest der App). (3)
+   Breiter (404→480px) + alle Stat-/Fließtexte deutlich größer (Lesbarkeit zuerst).
+   (4) Holzrahmen ums GANZE Tooltip zurück — derselbe wooden_frame_with_corners
+   9-Slice (28er-Slices) wie .modal, direkt als border-image auf dem Karten-Root
+   (kein ::after-Overlay mehr nötig, da border-image außerhalb der Padding-Box
+   liegt und mit overflow-y:auto auf demselben Element harmoniert — wie .modal).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.item-tooltip.itip-panel {
+  box-sizing: border-box;
+  width: 480px;
+  max-height: 97vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.58), rgba(10, 12, 15, 0.58)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 16px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 16px;
+  outline: none;
+  border-radius: 0;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.85);
+  padding: 0 0 18px;
+}
+
+/* WoW-Stil-Vergleich: Wrapper hält gehoverte + angelegte Karte nebeneinander (fixed positioniert). */
+.itip-compare-wrap {
+  position: fixed;
+  z-index: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+/* In der Vergleichs-Anordnung fließen die Karten im Flex (relative) statt fixed — und werden zum
+   Positionierungs-Anker für das „Angelegt"-Tag. */
+.item-tooltip.itip-card {
+  position: relative;
+}
+/* Ecken-Cluster oben rechts im Panel (Task #308): hält das optionale „Angelegt"-Tag + den neuen
+   Wiki-„?"-Button zusammen, statt beide unabhängig auf dieselbe absolute Ecke zu positionieren
+   (sonst würden sie sich überlappen, sobald eine Karte BEIDES zeigt). */
+.itip-card-corner {
+  position: absolute;
+  top: 10px;
+  right: 6px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* „Angelegt"-Tag — dezent, stört den Inhalt nicht. */
+.itip-equipped-badge {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(8, 6, 4, 0.72);
+  border: 1px solid rgba(180, 150, 80, 0.45);
+  border-radius: var(--radius);
+  padding: 2px 9px;
+  opacity: 0.85;
+}
+
+/* Wiki-„?"-Button (Task #308, Chef-Feature): kleiner runder Knopf, öffnet ItemWikiModal mit
+   Quelle/Verwendung dieses Items UND schließt dabei die Tooltip-Karte (s. onClick in
+   ItemTooltip.tsx) — nur noch ein Overlay offen, ein Escape-Druck reicht zum Schließen. Dezenter
+   Gold-Ton wie der Rest des Tooltip-Chroms, hellt beim Hover auf. Funktioniert zuverlässig nur auf
+   GEPINNTEN Tooltips — beim bloßen Hover verlässt der Cursor beim Anvisieren des Buttons
+   zwangsläufig die Item-Zelle (ItemCell.onMouseLeave ruft `tooltip.hide()`), bevor er den Button
+   erreicht; derselbe seit je bestehende Klick-Vorbehalt wie bei den `.it-action-btn`-Aktionsknöpfen
+   weiter unten in der Karte. Absichtlich kein Sonderfall dafür (s. Bericht) — der Button bleibt
+   trotzdem sichtbar, auch im reinen Hover-Zustand. */
+/* codex:2026-07-31T00:32:37+02:00 — Wiki und explizites Card-Schließen teilen dieselbe kompakte Kopfsteuerung. */
+:is(.itip-wiki-btn, .itip-close-btn) {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(180, 150, 80, 0.55);
+  background: rgba(8, 6, 4, 0.72);
+  color: var(--gold);
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+
+:is(.itip-wiki-btn, .itip-close-btn):hover {
+  color: #fff2c8;
+  border-color: var(--gold);
+  background: rgba(28, 22, 12, 0.85);
+}
+
+.itip-close-btn {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* ─── Doppelzeilen-Header: Name groß (Band 1) + Typ · Seltenheit (Band 2) ───
+   Chef-Nachbesserung Runde 2: KEIN volles Rarity-Farbband mehr ("wirkt billig") —
+   beide Bänder sind jetzt transparent und zeigen einfach die dunkle bg_black-
+   Textur des Karten-Grunds durch (nahtlos, ein einziges durchgehendes Material
+   statt zweier separat gekachelter Flächen). Rarity ist nur noch ein AKZENT: der
+   Name selbst in Rarity-Farbe + eine feine farbige Trennlinie darunter. Je Text
+   weiterhin explizit zentriert (nicht nur vom Elternteil geerbt — Chef-Fund
+   Runde 1: "nicht richtig zentriert"). */
+.itip-header-band-1 {
+  position: relative;
+  padding: 15px 24px 16px;
+}
+/* Gold ornament line under the name (Chef 2026-07-02: "Neon-Glow-Unterstreichung" replaced —
+   same thin transparent-ends gradient language as .cs-section-line/.shop-section-line/
+   .creation-divider-line, plus a small centred ◆, instead of a solid rarity-coloured bar+glow. */
+.itip-header-band-1::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  width: 55%;
+  max-width: 220px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(216, 192, 106, 0.55), transparent);
+}
+.itip-header-band-1::before {
+  content: "\25C6";
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  transform: translateX(-50%);
+  font-size: 9px;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0.8;
+}
+.itip-name {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--rarity-col, var(--gold));
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+.itip-header-band-2 {
+  position: relative;
+  padding: 8px 24px 9px;
+  text-align: center;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.14);
+}
+.itip-type-line {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 16.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(216, 192, 106, 0.75);
+}
+
+/* Weapon specialty — role blurb below the header bands */
+.itip-specialty {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--muted);
+  opacity: 0.9;
+  padding: 9px 24px 0;
+}
+
+/* ─── Hero-Bühne: großes Item-Bild über die volle Breite, Leder-Textur (bg_equipment)
+   + Rarity-Glow, PLUS eigener schmaler Holzrahmen (Chef-Nachbesserung Runde 2 §C —
+   zusätzlich zum großen Außenrahmen ums ganze Tooltip). Bild darf mit der breiteren
+   Karte mitwachsen (Chef-Nachbesserung Runde 1 §3). ─── */
+.itip-stage {
+  position: relative;
+  /* KEIN isolation:isolate mehr (Chef Bild #43): das erzeugte einen eigenen Stacking-Context, der
+     das per Hover vergrößerte Item-Bild einsperrte → es verschwand hinter dem Stat-Block darunter.
+     Ohne Isolation greift der z-index:200 des Bildes im Tooltip-Kontext und es liegt ÜBER allem.
+     Der ::before-Glow (inset:0 der Stage, pointer-events:none) bleibt auf die Stage-Fläche begrenzt. */
+  box-sizing: border-box;
+  /* overflow sichtbar, damit das per Fake-3D-Tilt vergrößerte Item-Bild (siehe .itip-img /
+     TiltImage) beim Hover aus der Bühne herauswachsen darf, statt am Rahmen abgeschnitten zu werden. */
+  overflow: visible;
+  /* Chef 2026-07-03: Hero-Bühne ~2× so hoch ("unsere Bilder haben sehr gute Auflösung, mehr
+     Tiefe") — war 222px. Der Holzrahmen (border-image, 8px Border-Width) skaliert automatisch
+     mit der Box mit, keine separate Anpassung nötig. */
+  height: 444px;
+  margin: 12px 22px 2px;
+  background: url("../assets/bg_equipment.webp") center / 100% 100% no-repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.55);
+}
+.itip-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 46%, var(--rarity-col, var(--gold)) 0%, transparent 68%);
+  opacity: 0.32;
+  pointer-events: none;
+}
+.itip-img {
+  position: relative;
+  z-index: 1;
+  /* max-width bumped 68%→80% alongside the taller stage so a roughly square item image
+     actually fills ~2× the pixel area it used to (height was the binding constraint before;
+     both axes now allow the doubled size instead of width capping it early). */
+  max-width: 80%;
+  max-height: 78%;
+  object-fit: contain;
+  image-rendering: auto;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.75));
+  /* Fake-3D-Tilt (TiltImage in ItemTooltip.tsx): weicher Übergang für das Wachsen/Kippen beim
+     Hover und das Zurückschrumpfen beim Verlassen der Hitbox. transform-origin center = kippt/
+     wächst um die Bildmitte. */
+  transform-origin: center center;
+  transition: transform 0.14s ease-out;
+  will-change: transform;
+  cursor: zoom-in;
+}
+
+/* ─── Schärfe-Fix Hover-Zoom (Chef Bild #67) ───
+   Der Wrapper übernimmt die alte LAYOUT-Rolle des Bildes in der Bühne (Flex-Kind, ~78% Höhe,
+   quadratisch — alle Item-Assets sind 1:1); das img darin wird in der ZIELGRÖSSE (210%)
+   gelayoutet, damit Chromium es scharf rastert (will-change pinnt die Rasterung auf die
+   Layout-Größe!), und im Ruhezustand per scale(1/2.1) verkleinert dargestellt. Der Hover in
+   TiltImage entfernt nur den scale → 2.1×-Zoom in voller Quell-Auflösung. */
+.itip-tilt-wrap {
+  position: relative;
+  z-index: 1;
+  height: 78%;
+  max-width: 80%;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+}
+
+.itip-img.itip-tilt-img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 210%;
+  height: 210%;
+  max-width: none;
+  max-height: none;
+  transform: translate(-50%, -50%) scale(0.4762);
+}
+.itip-emoji {
+  position: relative;
+  z-index: 1;
+  font-size: 320px;
+  line-height: 1;
+}
+.itip-placeholder {
+  position: relative;
+  z-index: 1;
+  font-size: 220px;
+  color: var(--muted);
+}
+
+/* ─── Stat-Gruppen: Kapitälchen-Label + Haarlinien-Trenner. attribute_bg (grauer
+   Stein, dezent/dunkel) als leichte Textur hinter der ganzen Stat-Liste statt
+   flachem Schwarz — "es soll nach Spiel-Material aussehen" (Chef). ─── */
+/* Chef 2026-07-02: eigener schmaler Holzrahmen (8px wooden_frame_with_corners, wie .itip-stage) +
+   dieselben 22px Seiten-Margins wie .itip-stage/.itip-effect-block/.itip-footer-block — Kanten
+   fluchten dadurch exakt mit der Hero-Bühne (identische Border-Box-Breite). */
+.itip-body {
+  position: relative;
+  isolation: isolate;
+  margin: 10px 22px 0;
+  padding: 12px 15px 6px;
+  display: flex;
+  flex-direction: column;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+}
+.itip-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgba(8, 7, 6, 0.86), rgba(8, 7, 6, 0.86)),
+    url("../assets/attribute_bg.webp") repeat;
+  background-size: auto, 180px;
+  filter: saturate(0.35) brightness(0.8);
+  pointer-events: none;
+}
+.itip-group {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.itip-group:last-child {
+  border-bottom: none;
+}
+.itip-group-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+.itip-misc {
+  gap: 5px;
+}
+
+.itip-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  padding: 3px 0;
+}
+.itip-stat-icon {
+  flex-shrink: 0;
+  font-size: 18px;
+  width: 25px;
+  text-align: center;
+}
+/* PNG-Stat-Icons im Tooltip. */
+.itip-stat-icon img,
+.itip-stat-icon .ui-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+.itip-stat-label {
+  flex: 1;
+  color: #d0c9b8;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+.itip-stat-value {
+  flex-shrink: 0;
+  color: var(--gold);
+  font-size: 16.5px;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+}
+.itip-stat-unmet .itip-stat-value {
+  color: var(--danger);
+}
+
+/* Shift-Compare-Pfeil (Chef-Feature): pro Stat-Zeile rechts neben dem Wert — grün-hoch wenn DIESE
+   Seite bei diesem Stat besser ist als die verglichene Seite, rot-runter wenn schlechter. Fixe
+   Höhe statt Breite: die Quellbilder (compare_better_up/compare_worse_down) haben unterschiedliche
+   Seitenverhältnisse, sollen aber in jeder Zeile gleich hoch wirken. */
+/* Chef-Feedback (2026-07-03, 2. Runde): nochmal DOPPELT so groß (48px) + Glow praktisch weg
+   (nur noch ein minimaler Kontur-Schatten für Lesbarkeit auf hellen Item-Bildern). */
+.itip-compare-arrow {
+  flex-shrink: 0;
+  height: 48px;
+  width: auto;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.itip-compare-arrow.better {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+.itip-compare-arrow.worse {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+}
+
+/* Chef-GO ▲/▼-Vergleichs-Delta: kompakte farbige Zahl direkt neben dem Stat-Wert, STÄNDIG sichtbar
+   (kein Shift nötig, anders als .itip-compare-arrow oben) — grün/rot/gedimmt via bestehende
+   Theme-Vars (--boost/--danger/--muted), kein neues Farbpaar. `min-width` hält die Spalte ruhig,
+   wenn Zeilen mit/ohne Delta in derselben Gruppe wechseln. */
+.itip-delta {
+  flex-shrink: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-left: 6px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.itip-delta-up {
+  color: var(--boost);
+}
+.itip-delta-down {
+  color: var(--danger);
+}
+.itip-delta-zero {
+  color: var(--muted);
+  opacity: 0.65;
+}
+
+/* 2H / consumable badge — chip with accent-2 border */
+.itip-badge {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 4px 14px;
+  border-radius: var(--radius);
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.65), rgba(8, 6, 4, 0.65)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid rgba(159, 196, 220, 0.38);
+  color: var(--accent-2);
+  font-size: 14.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Flavor tag (buff duration, cures poison) — shrink-wrap chip */
+.itip-tag {
+  align-self: flex-start;
+  color: var(--accent-2);
+  font-size: 15px;
+  font-style: italic;
+  margin-top: 2px;
+  padding: 3px 10px;
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid rgba(111, 151, 179, 0.28);
+  border-radius: var(--radius);
+}
+
+/* Werkzeug-Hinweis: volle Breite, kleiner & gedämpft (kein Chip-Look, da längerer Satz) */
+.itip-tool-hint {
+  align-self: stretch;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.35;
+  font-style: normal;
+  background: none;
+  border: none;
+  padding: 3px 0 0;
+}
+
+/* Chef-GO ▲/▼-Deltas, Regel 2: "Slot frei"-Hinweis sitzt direkt unter der Kopfzeile (KEIN
+   Flex-Listen-Kontext wie .itip-tool-hint sonst) — eigene horizontale Innenabstände wie
+   .itip-specialty, zentriert statt linksbündig. */
+.itip-slot-free-hint {
+  display: block;
+  text-align: center;
+  font-style: italic;
+  padding: 6px 24px 0;
+}
+
+/* ─── Enchantment-Gruppe: Instanz-Affixe (Runen-Verzauberungen) ─── */
+.itip-inst-affix-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.itip-inst-affix-entry + .itip-inst-affix-entry {
+  margin-top: 7px;
+}
+.itip-inst-affix-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+}
+.itip-inst-affix-gem {
+  color: var(--gold);
+  font-size: 13px;
+}
+.itip-inst-affix-name {
+  color: var(--text);
+  flex: 1;
+}
+.itip-inst-affix-tier {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.itip-inst-affix-val {
+  margin-left: 19px;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--gold, #d8b35a);
+}
+
+/* ─── EFFECT-Block: On-Hit-/Waffen-Effekt-Prosa, klar hervorgehoben ───
+   Rarity-farbene Border-Left-Kante + leicht getönter Grund (Opacity-Overlay) +
+   kursive Gold-Prosa — das Auge soll sofort hier landen (Chef-Vorgabe Task #210). */
+.itip-effect-block {
+  position: relative;
+  isolation: isolate;
+  margin: 10px 22px 0;
+  padding: 9px 14px;
+  background:
+    linear-gradient(rgba(10, 8, 6, 0.6), rgba(10, 8, 6, 0.6)),
+    url("../assets/bg_black.webp") repeat;
+  border-left: 4px solid var(--rarity-col, var(--gold));
+  border-radius: 0 3px 3px 0;
+}
+.itip-effect-block::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--rarity-col, var(--gold));
+  opacity: 0.09;
+  pointer-events: none;
+}
+.itip-effect-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-style: italic;
+  color: var(--gold);
+  font-size: 16px;
+  line-height: 1.48;
+}
+.itip-effect-line + .itip-effect-line {
+  margin-top: 7px;
+}
+.itip-effect-icon {
+  flex-shrink: 0;
+  font-size: 17px;
+  width: 24px;
+  text-align: center;
+  line-height: 1.48;
+}
+.itip-effect-icon img,
+.itip-effect-icon .ui-icon {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+/* ─── Set-Bonus (WoW-Stil, Chef Bild #68) ─── Set-Name + Getragen-Zähler (n/Gesamt), darunter
+   die Bonus-Zeile mit Teile-Schwelle in Klammern. AKTIV (genug Teile getragen) = warmes Gold,
+   inaktiv = gedimmt — exakt die WoW-Lesart „grau bis das Set voll ist". */
+.itip-set {
+  margin: 10px 22px 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(216, 192, 106, 0.14);
+  font-size: 14.5px;
+  color: var(--muted);
+}
+
+.itip-set-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: rgba(216, 192, 106, 0.62);
+}
+
+.itip-set-count {
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.itip-set-bonus {
+  margin-top: 3px;
+  color: rgba(200, 190, 170, 0.55);
+}
+
+.itip-set.active .itip-set-name,
+.itip-set.active .itip-set-count {
+  color: var(--gold);
+}
+
+.itip-set.active .itip-set-bonus {
+  color: #9fd88a; /* aktiver Set-Bonus: dasselbe zurückhaltende Grün wie erfüllte Boni */
+}
+
+/* ─── Requires/Value-Fußzeile ─── Chef-Nachbesserung Runde 2 §B: kein andersfarbiger
+   Block mehr — sitzt auf demselben dunklen Karten-Grund (keine eigene background),
+   Beschriftungen in gedämpftem GOLD statt dem kühlen Blaugrau von --muted (passt
+   sonst nicht zur warmen Ashen-Iron-Palette), Werte bleiben weiß/gold. */
+.itip-footer-block {
+  margin: 11px 22px 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(216, 192, 106, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.itip-req-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 14.5px;
+  color: rgba(216, 192, 106, 0.6);
+}
+.itip-req-label {
+  color: rgba(216, 192, 106, 0.6);
+}
+.itip-req-skill {
+  color: #ece4d0;
+}
+.itip-req-val {
+  flex-shrink: 0;
+  color: var(--gold);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.itip-req-unmet .itip-req-val,
+.itip-req-unmet .itip-req-skill,
+.itip-req-x {
+  color: var(--danger);
+}
+.itip-value-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14.5px;
+  color: rgba(216, 192, 106, 0.6);
+}
+.itip-value-amount {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.itip-coin {
+  font-size: 17px;
+  color: var(--gold);
+}
+
+/* Flavor / lore line — italic, muted, always rendered at the bottom of the tooltip */
+.itip-flavor {
+  font-style: italic;
+  font-size: 15.5px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 11px;
+  opacity: 0.8;
+  line-height: 1.4;
+  padding: 0 22px;
+}
+
+/* codex:2026-08-01T10:20:00+02:00 — Item-Card „Warbanner Record“: breite Informationskarte
+   ohne eigenen Scrollcontainer. Bild/Lore bilden die linke Bannerhälfte; Werte, Effekte und
+   Anforderungen liegen rechts und dürfen ihre vorhandenen Daten vollständig zeigen. */
+.item-tooltip.itip-panel {
+  width: min(860px, calc(100vw - 24px));
+  max-height: none;
+  overflow: visible;
+  padding-bottom: 16px;
+  border-width: 12px;
+  border-image-width: 12px;
+  background:
+    linear-gradient(90deg, rgba(7, 7, 7, 0.94), rgba(27, 19, 12, 0.9) 48%, rgba(8, 8, 8, 0.95)),
+    url("../assets/bg_tileable_wood.webp") 0 0 / 320px 320px repeat;
+  box-shadow:
+    0 28px 65px rgba(0, 0, 0, 0.9),
+    inset 0 0 54px rgba(0, 0, 0, 0.72);
+}
+
+.itip-warbanner-main {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(250px, 0.82fr) minmax(390px, 1.18fr);
+  align-items: start;
+  gap: 14px;
+  margin: 12px 18px 0;
+  padding: 12px;
+  background:
+    linear-gradient(rgba(10, 9, 8, 0.68), rgba(10, 8, 6, 0.82)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 280px 280px repeat;
+  border-top: 1px solid rgba(216, 192, 106, 0.28);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.16);
+}
+
+.itip-warbanner-main::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: calc(39.5% + 1px);
+  width: 1px;
+  background: linear-gradient(transparent, rgba(216, 192, 106, 0.5) 14%, rgba(216, 192, 106, 0.5) 86%, transparent);
+  pointer-events: none;
+}
+
+.itip-warbanner-visual,
+.itip-warbanner-record {
+  min-width: 0;
+}
+
+.itip-warbanner-visual {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.itip-warbanner-record {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.itip-warbanner-main .itip-stage {
+  height: clamp(250px, 31vh, 330px);
+  margin: 0;
+  background:
+    radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--rarity-col, var(--gold)) 14%, transparent), transparent 68%),
+    linear-gradient(rgba(12, 14, 15, 0.56), rgba(7, 8, 9, 0.78)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 192px 192px repeat;
+  border-width: 7px;
+  border-image-width: 7px;
+}
+
+.itip-warbanner-main .itip-stage::before {
+  opacity: 0.2;
+}
+
+.itip-warbanner-main .itip-tilt-wrap {
+  height: 82%;
+  max-width: 88%;
+}
+
+.itip-warbanner-main .itip-flavor {
+  position: relative;
+  margin: 9px 0 0;
+  padding: 10px 12px 4px;
+  font-size: 16px;
+  line-height: 1.35;
+  text-align: left;
+  color: #c5b99f;
+  border-top: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+.itip-warbanner-main .itip-flavor::before {
+  content: "◆";
+  margin-right: 8px;
+  color: var(--rarity-col, var(--gold));
+  font-style: normal;
+  font-size: 10px;
+}
+
+.itip-warbanner-record .itip-body {
+  margin: 0;
+  padding: 9px 12px 7px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 0 16px;
+  border-width: 7px;
+  border-image-width: 7px;
+}
+
+.itip-warbanner-record .itip-group {
+  min-width: 0;
+  padding: 6px 0;
+}
+
+.itip-warbanner-record .itip-group-title {
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.itip-warbanner-record .itip-stat-row {
+  gap: 6px;
+  padding: 2px 0;
+  font-size: 15px;
+}
+
+.itip-warbanner-record .itip-stat-label {
+  min-width: 0;
+  font-size: 15px;
+}
+
+.itip-warbanner-record .itip-stat-value {
+  min-width: 38px;
+  font-size: 15.5px;
+}
+
+.itip-warbanner-record :is(.itip-effect-block, .itip-set, .itip-footer-block) {
+  margin: 0;
+}
+
+.itip-warbanner-record .itip-effect-block {
+  padding: 8px 12px;
+}
+
+.itip-warbanner-record .itip-set,
+.itip-warbanner-record .itip-footer-block {
+  padding: 8px 4px 0;
+}
+
+.item-tooltip.itip-panel .it-actions {
+  width: min(520px, calc(100% - 44px));
+  margin: 13px auto 0;
+}
+
+.item-tooltip.itip-panel .it-hint {
+  margin-top: 7px;
+}
+
+@media (max-width: 1260px) {
+  .itip-compare-wrap .item-tooltip.itip-panel {
+    width: calc((100vw - 52px) / 2);
+  }
+
+  .itip-compare-wrap .itip-warbanner-main {
+    grid-template-columns: minmax(180px, 0.72fr) minmax(280px, 1.28fr);
+    margin-inline: 10px;
+    gap: 10px;
+  }
+
+  .itip-compare-wrap .itip-warbanner-main::after {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .itip-compare-wrap .item-tooltip.itip-panel {
+    width: calc(100vw - 16px);
+  }
+
+  .itip-compare-wrap {
+    flex-direction: column;
+  }
+
+  .itip-warbanner-main {
+    grid-template-columns: 1fr;
+  }
+
+  .itip-warbanner-main::after {
+    display: none;
+  }
+
+  .itip-warbanner-main .itip-stage {
+    height: 230px;
+  }
+}
+
+/* codex:2026-08-01T12:18:00+02:00 — Offense-Zeilen erhalten feste Grid-Spuren. Lange Labels
+   dürfen umbrechen, Zahlen bleiben rechts in ihrer eigenen Spur und können nie mehr in
+   „Damage“ hineinlaufen. Die pensionierten Bildpfeile bleiben zusätzlich defensiv verborgen. */
+#root .itip-offense-group .itip-stat-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) max-content max-content;
+  align-items: center;
+  column-gap: 7px;
+}
+
+#root .itip-offense-group .itip-stat-icon { grid-column: 1; }
+
+#root .itip-offense-group .itip-stat-label {
+  grid-column: 2;
+  min-width: 0;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+#root .itip-offense-group .itip-stat-value {
+  grid-column: 3;
+  justify-self: end;
+  min-width: max-content;
+  /* Hotfix 2026-08-04: war `nowrap` — the only offense value with a space in it is the
+     tempo-cap hint ("2,2s (max)"); `normal` lets exactly that wrap onto a second line under
+     real space pressure (s. .itip-stat-row grid-template-columns above) instead of forcing an
+     overflow that the ancestor's `overflow: hidden` then rendered as an invisible value cell.
+     Every other offense value (damage range, flat %/flat numbers) has no space to break at, so
+     this is a no-op for them. */
+  white-space: normal;
+  text-align: right;
+}
+
+#root .itip-offense-group .itip-delta {
+  grid-column: 4;
+  justify-self: end;
+}
+
+#root .itip-compare-arrow { display: none !important; }
+
+/* codex:2026-08-01T20:18:00+02:00 — Responsiver Zwei-Waffen-Vergleich.
+   Zwei 860-px-Warbannerkarten durften bisher bereits zwischen 1261 und 1733 px zusammen breiter
+   als der Viewport werden. Jede Karte teilt nun die tatsächlich verfügbare Breite; der Wrapper
+   bleibt vollständig im Fenster und übernimmt bei zu großer Gesamthöhe kontrolliert das Scrollen. */
+#root .itip-compare-wrap {
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+#root .itip-compare-wrap .item-tooltip.itip-panel {
+  flex: 0 1 860px;
+  width: min(860px, calc((100vw - 52px) / 2));
+  min-width: 0;
+  max-width: none;
+}
+
+@media (max-width: 1500px) {
+  #root .itip-compare-wrap .itip-warbanner-main {
+    grid-template-columns: minmax(138px, 0.62fr) minmax(0, 1.38fr);
+    margin-inline: 8px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  #root .itip-compare-wrap .itip-warbanner-record .itip-body {
+    grid-template-columns: 1fr;
+  }
+
+  #root .itip-compare-wrap .itip-warbanner-main::after {
+    display: none;
+  }
+
+  #root .itip-compare-wrap .itip-warbanner-main .itip-stage {
+    height: clamp(190px, 27vh, 280px);
+  }
+}
+
+@media (max-width: 940px) {
+  #root .itip-compare-wrap {
+    flex-direction: column;
+  }
+
+  #root .itip-compare-wrap .item-tooltip.itip-panel {
+    flex-basis: auto;
+    width: min(860px, calc(100vw - 40px));
+  }
+
+  #root .itip-compare-wrap .itip-warbanner-main {
+    grid-template-columns: minmax(190px, 0.78fr) minmax(280px, 1.22fr);
+  }
+
+  #root .itip-compare-wrap .itip-warbanner-record .itip-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  #root .itip-compare-wrap .itip-warbanner-main,
+  #root .itip-compare-wrap .itip-warbanner-record .itip-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* codex:2026-08-01T12:47:00+02:00 — Diablo-nahe Effektlesung: Enchantment und On-Hit teilen
+   dieselbe orange Legendary-Platte, bleiben aber zwei getrennte, schnell erfassbare Blöcke. */
+#root .itip-offense-group > .itip-stat-row:nth-child(2) .itip-stat-value {
+  font-size: 17px;
+}
+
+#root .itip-warbanner-record .itip-special-effect {
+  margin: 0;
+  padding: 10px 13px;
+  border: 1px solid rgba(179, 92, 34, 0.5);
+  border-left: 3px solid #d56f2f;
+  background:
+    linear-gradient(90deg, rgba(88, 35, 12, 0.34), rgba(24, 15, 10, 0.74)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 240px 240px repeat;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.54);
+}
+
+#root .itip-warbanner-record .itip-enchant-group {
+  display: block;
+  grid-column: auto;
+  border-bottom: 1px solid rgba(179, 92, 34, 0.5);
+}
+
+#root .itip-warbanner-record .itip-enchant-group .itip-group-title {
+  color: #e08a45;
+  font-size: 13px;
+  letter-spacing: 0.09em;
+}
+
+#root .itip-warbanner-record .itip-enchant-group :is(.itip-inst-affix-name, .itip-inst-affix-part) {
+  color: #e7a257;
+  font-style: normal;
+  line-height: 1.42;
+}
+
+#root .itip-warbanner-record .itip-onhit-special .itip-effect-line,
+#root .itip-warbanner-record .itip-onhit-special .itip-effect-icon {
+  color: #e7a257;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHARACTER PAGE — DETAIL PANEL UPGRADES  (.cs-detail-*)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.cs-detail-panel-tall {
+  max-height: 240px;
+  min-height: 180px;
+}
+
+.cs-detail-inner-col {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cs-detail-top-row {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.cs-detail-img-large {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+.cs-detail-img-big {
+  max-width: 98px;
+  max-height: 98px;
+  width: 98px;
+  height: 98px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.cs-detail-emoji-big {
+  font-size: 64px;
+  line-height: 1;
+}
+
+/* ─── ItemCell: enchanted-instance badge ──────────────────
+   Chef 2026-07-02: oben LINKS mit spürbarem Abstand zu Top-/Left-Rand (gut sichtbar,
+   kollidiert nicht mit Qty unten rechts). */
+.item-cell-inst-badge {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(216, 192, 106, 0.7);
+  pointer-events: none;
+}
+/* Glut-Stern-Icon als Suffix-/Instanz-Marker — MUSS klein bleiben (Quelle ist 128px). */
+.item-cell-inst-badge-img {
+  width: 15px;
+  height: 15px;
+  display: block;
+  filter: drop-shadow(0 0 4px rgba(216, 140, 60, 0.7));
+}
+/* ─── ItemCell: „NEU"-Sammel-Funkel (Welle PP) ──────────────────────────────────────────────
+   Oben RECHTS (Instanz-Stern sitzt oben LINKS, Qty unten rechts — kollisionsfrei). Statischer
+   Punkt bleibt IMMER sichtbar bis Hover/Klick (auch bei fxLevel "off" — s. Chef-Vorgabe "dauer-
+   hafte Zustände sind statische Styles"); der Funkel-Sweep obendrauf ist die einmalige, FX-
+   gegatete Zusatzanimation beim ersten Erscheinen (s. ItemCell.tsx `sparkle`). */
+.item-cell-new-badge {
+  position: absolute;
+  top: 6%;
+  right: 8%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff3c4, var(--gold) 65%);
+  box-shadow: 0 0 4px rgba(216, 192, 106, 0.85);
+  /* Wie .item-cell-inst-badge: kein Klick-/Hover-Ziel für sich selbst — die Zelle (Elternelement)
+     behandelt Hover/Klick vollständig (s. ItemCell.tsx `onMouseEnter`/`onClick`). */
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes item-cell-new-sparkle {
+  0%   { transform: scale(0.4); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+.item-cell-new-sparkle {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 240, 190, 0.85) 0%, transparent 72%);
+  /* Bewusst OHNE `forwards` — die letzte Stufe (opacity:0) entspricht der impliziten
+     Ruhe-Deklaration, die Animation verschwindet nach Ablauf vollständig aus `getAnimations()`. */
+  animation: item-cell-new-sparkle 0.7s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item-cell-new-sparkle { display: none; }
+}
+
+/* Enrage-Bär als Eck-Badge im Bestiarium. */
+.bestiary-enrage-img {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* ─── CharacterPage: detail-panel affix list ────────────── */
+.cs-detail-affixes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.cs-detail-affixes-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+/* Affix tag — Citadel chip mit Gold-Tint */
+.cs-detail-affix-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  color: var(--gold);
+  padding: 2px 8px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(216,192,106,0.08), rgba(216,192,106,0.08)),
+    url("../assets/bg_black.webp") repeat;
+}
+.cs-source-more    { color: var(--muted); opacity: 0.75; }
+
+/* ─── ActiveBuffsBar (components/ActiveBuffs.tsx) ──────────────────────────
+   Citadel-Chip je aktivem Tränke-/Runen-Buff — geteilt von CharacterPage UND CombatPage
+   (Chef-Feedback #239: vorher nur Icon+Timer ohne erkennbaren Effekt). Icon + Item-Name + Timer
+   sind direkt im Chip lesbar; der volle Effekt (Bonus/Trinity/Modifier) steckt im Hover-Tooltip
+   (derselbe Item-Tooltip wie überall sonst). Selber 9-slice-Holzrahmen-Look wie .cs-detail-affix-tag. */
+.active-buffs-bar {
+  /* Kein justify-content hier: CharacterPage zentriert über den .cs-buffs-Wrapper (dieser Block
+     bleibt content-breit, wird also als Ganzes zentriert); CombatPage lässt die Chips wie die
+     benachbarten .fighter-stats/.fighter-drops-Zeilen links ausgerichtet. */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  /* min-width:0 + max-width:100% (Flexbox-Klassiker): ohne das weigert sich dieser verschachtelte
+     Flex-Container (selbst flex-wrap, UND Flex-Item seines Elternteils .cs-buffs/.fighter-buffs),
+     unter seine "alle Chips in einer Zeile"-Breite zu schrumpfen — er lief seitlich aus dem
+     Panel heraus (Icon landete unsichtbar hinter dem Nachbar-Rahmen), statt intern umzubrechen. */
+  min-width: 0;
+  max-width: 100%;
+}
+.active-buff-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 13px;
+  padding: 3px 9px 3px 4px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(216, 192, 106, 0.08), rgba(216, 192, 106, 0.08)),
+    url("../assets/bg_black.webp") repeat;
+  transition: filter 0.1s;
+}
+.active-buff-chip:hover {
+  filter: brightness(1.18);
+}
+.active-buff-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.active-buff-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.active-buff-name {
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Lange Item-Namen dürfen den Chip nicht aus seinem (teils schmalen, z.B. .fighter-buffs im
+     Kampf-Panel) Container drücken — sauber abgeschnitten statt hart geclippt/überlaufend; der
+     volle Name steht ohnehin im Hover-Tooltip. */
+  max-width: 130px;
+}
+.active-buff-timer {
+  color: var(--accent-2);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Task #283: bei niedrigen Fensterhöhen (Chef-Testauflösung 1280×720) kompakter — auf der
+   CharacterPage stapeln sich mehrere Buff-Chips über .cs-buffs (kein eigener Scroll, s. dortiger
+   Kommentar) in mehrere Zeilen; jede Zeile schlanker hält die Spalte insgesamt überschneidungsfrei. */
+@media (max-height: 800px) {
+  .active-buff-chip {
+    gap: 4px;
+    font-size: 11px;
+    padding: 2px 7px 2px 3px;
+    border-width: 3px;
+  }
+  .active-buff-icon {
+    width: 15px;
+    height: 15px;
+    font-size: 12px;
+  }
+}
+
+/* codex:2026-08-01T10:55:00+02:00 — Warbanner-Lesbarkeitspass mit Diablo-artiger Hierarchie.
+   Exocet ist nicht gebündelt und als kommerzielle Adobe-Schrift nicht ungeprüft redistribuierbar;
+   deshalb nutzt die Card die bereits lizenzierte/bündelte Cinzel+Metamorphous-Kombination. */
+.item-tooltip.itip-panel {
+  font-family: "Cinzel", Georgia, "Times New Roman", serif;
+}
+
+.item-tooltip.itip-panel :is(.itip-name, .itip-group-title, .itip-effect-line) {
+  font-family: "Metamorphous", "Cinzel", Georgia, serif;
+}
+
+:root:lang(ru) .item-tooltip.itip-panel {
+  font-family: Georgia, "Times New Roman", "Noto Serif", serif;
+}
+
+:root:lang(ru) .item-tooltip.itip-panel :is(.itip-name, .itip-group-title, .itip-effect-line) {
+  font-family: Georgia, "Times New Roman", "Noto Serif", serif;
+}
+
+:root:lang(zh) .item-tooltip.itip-panel {
+  font-family: "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
+}
+
+:root:lang(zh) .item-tooltip.itip-panel :is(.itip-name, .itip-group-title, .itip-effect-line) {
+  font-family: "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
+}
+
+.itip-warbanner-main::after {
+  display: none;
+}
+
+.itip-warbanner-record {
+  padding-left: 14px;
+  border-left: 1px solid rgba(216, 192, 106, 0.34);
+}
+
+.itip-offense-group .itip-stat-row {
+  min-height: 30px;
+  padding: 4px 5px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.08);
+}
+
+.itip-offense-group .itip-stat-row:last-child {
+  border-bottom: 0;
+}
+
+.itip-offense-group .itip-stat-label {
+  color: #c9c0ad;
+  font-size: 14.5px;
+  letter-spacing: 0.035em;
+}
+
+.itip-offense-group .itip-stat-value {
+  min-width: 62px;
+  color: #f0d08a;
+  /* codex:2026-08-01T18:06:00+02:00 — Der spaete Metamorphous-Override umging die globale
+     Ziffernschicht. Werte und Compare-Deltas folgen nun explizit der lesbaren Info-Typografie. */
+  font-family: var(--font-info);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+#root .item-tooltip.itip-panel :is(.itip-stat-value, .itip-delta, .itip-value-amount, .itip-value-weight) {
+  font-family: var(--font-info);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
+.itip-offense-group > .itip-stat-row:nth-child(2) .itip-stat-value {
+  color: #fff0bd;
+  font-size: 21px;
+}
+
+.itip-suffix-group .itip-group-title {
+  color: var(--rarity-col, var(--gold));
+  font-size: 15.5px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.itip-suffix-group .itip-stat-row {
+  padding-inline: 5px;
+}
+
+.itip-warbanner-record .itip-effect-block {
+  padding: 11px 14px;
+  border: 1px solid rgba(151, 112, 58, 0.38);
+  border-left: 3px solid var(--rarity-col, var(--gold));
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, rgba(27, 20, 13, 0.88), rgba(8, 10, 11, 0.9)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 240px 240px repeat;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.52);
+}
+
+.itip-warbanner-record .itip-effect-block::before {
+  display: none;
+}
+
+.itip-warbanner-record .itip-effect-line {
+  color: #e7d29e;
+  font-size: 15.5px;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+}
+
+.itip-warbanner-record .itip-effect-icon {
+  color: var(--rarity-col, var(--gold));
+}
+
+@media (max-width: 760px) {
+  .itip-warbanner-record {
+    padding-left: 0;
+    padding-top: 10px;
+    border-left: 0;
+    border-top: 1px solid rgba(216, 192, 106, 0.28);
+  }
+}
+
+/* codex:2026-08-01T13:28:00+02:00 — Verbindlicher Item-Card-Rastervertrag: Equipment erhält
+   eine breite, belastbare Datenspalte mit festen Label-/Wertspuren. Reine Materialien wechseln
+   in eine vertikale Einspaltenkarte. Alle Tooltip-Aktionen nutzen den aktuellen Eisenrahmen. */
+#root .item-tooltip.itip-panel {
+  width: min(1040px, calc(100vw - 32px));
+}
+
+#root .itip-warbanner-main {
+  grid-template-columns: minmax(330px, 0.86fr) minmax(560px, 1.14fr);
+  gap: 18px;
+}
+
+#root .itip-warbanner-record .itip-body {
+  grid-template-columns: minmax(285px, 1.1fr) minmax(210px, 0.9fr);
+  grid-template-areas:
+    "offense suffix"
+    "defense attributes"
+    "skill misc"
+    "rune rune";
+  gap: 0 18px;
+}
+
+#root .itip-offense-group { grid-area: offense; }
+#root .itip-suffix-group { grid-area: suffix; }
+#root .itip-defense-group { grid-area: defense; }
+#root .itip-attributes-group { grid-area: attributes; }
+#root .itip-skill-group { grid-area: skill; }
+#root .itip-misc-group { grid-area: misc; }
+#root .itip-rune-group { grid-area: rune; }
+
+/* Hotfix 2026-08-04 (Discord-Bugreport, Folgefund): Wert-/Delta-Spur waren starres `max-content`
+   (nie kleiner als ihr ungebrochener Inhalt) — die "Effektiv"-Zeile hängt bei aktiver Tempo-Kappung
+   ein " (max)"-Suffix an ("2,2s (max)"), und in der schmalsten Warbanner-Spalte (Chef-Repro: ~215px
+   verfügbare Breite) sprengte dieser eine lange Wert die Zeile über ihren Container hinaus, den
+   `overflow:hidden` auf `.itip-offense-group` unsichtbar abschnitt. `minmax(0, max-content)` erlaubt
+   der Spur, unter Druck zu schrumpfen; zusammen mit `white-space: normal` (s. .itip-stat-value
+   unten) bricht der Wert dann an der vorhandenen Leerstelle vor "(max)" um, statt zu clippen. */
+#root .itip-offense-group .itip-stat-row {
+  grid-template-columns: 24px minmax(108px, 1fr) minmax(0, max-content) minmax(0, max-content);
+  column-gap: 8px;
+}
+
+#root .itip-offense-group .itip-stat-label {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: auto;
+}
+
+#root .itip-offense-group .itip-stat-value {
+  min-width: 58px;
+  font-size: 17px;
+}
+
+#root .itip-offense-group > .itip-stat-row:nth-child(2) .itip-stat-value {
+  font-size: 18px;
+}
+
+#root .item-tooltip.itip-panel .it-action-btn {
+  min-height: 48px;
+  height: auto;
+  padding: 7px 16px;
+  border: 16px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill / 16px;
+  background-color: #101315;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.13), transparent 72%),
+    linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.34)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, auto, 192px 192px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  color: #f0dfaa;
+  font-size: clamp(15px, 1.05vw, 19px);
+}
+
+#root .itip-warbanner-main .itip-stage,
+#root .itip-warbanner-record .itip-body {
+  border-width: 14px;
+  border-image-width: 14px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .item-tooltip.itip-panel .it-action-btn:hover {
+  filter: brightness(1.12);
+  color: #fff1bd;
+}
+
+#root .item-tooltip.itip-panel .it-action-btn:active {
+  filter: brightness(0.9);
+  transform: translateY(1px);
+}
+
+#root .item-tooltip.itip-panel.itip-card--simple {
+  width: min(620px, calc(100vw - 28px));
+}
+
+#root .itip-card--simple .itip-warbanner-main {
+  grid-template-columns: minmax(0, 1fr);
+  margin-inline: 18px;
+}
+
+#root .itip-card--simple .itip-warbanner-main .itip-stage {
+  height: clamp(280px, 39vh, 380px);
+}
+
+#root .itip-card--simple .itip-warbanner-record {
+  padding: 10px 0 0;
+  border-left: 0;
+  border-top: 1px solid rgba(216, 192, 106, 0.28);
+}
+
+#root .itip-card--simple .itip-footer-block {
+  padding: 0 8px;
+}
+
+@media (max-width: 1120px) {
+  #root .item-tooltip.itip-panel:not(.itip-card--simple) {
+    width: min(900px, calc(100vw - 24px));
+  }
+
+  #root .item-tooltip.itip-panel:not(.itip-card--simple) .itip-warbanner-main {
+    grid-template-columns: minmax(290px, 0.8fr) minmax(500px, 1.2fr);
+  }
+
+  #root .item-tooltip.itip-panel:not(.itip-card--simple) .itip-warbanner-record .itip-body {
+    grid-template-columns: minmax(250px, 1.1fr) minmax(180px, 0.9fr);
+  }
+}
+
+@media (max-width: 820px) {
+  #root .item-tooltip.itip-panel:not(.itip-card--simple) .itip-warbanner-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .item-tooltip.itip-panel:not(.itip-card--simple) .itip-warbanner-record {
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(216, 192, 106, 0.28);
+  }
+
+  #root .item-tooltip.itip-panel:not(.itip-card--simple) .itip-warbanner-record .itip-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "offense"
+      "suffix"
+      "defense"
+      "attributes"
+      "skill"
+      "misc"
+      "rune";
+  }
+}
+
+/* codex:2026-08-02T10:41:06+02:00 — Stabiler Warbanner-Datenvertrag fuer Ausruestung:
+   Waffen behalten Offense links und Suffix rechts. Ruestungen ohne Offense reservieren Attribute
+   oben links, Defense darunter und den vollstaendigen Suffix oben rechts. Die rechte Spalte erhaelt
+   mehr Mindestbreite und Innenluft, damit lange lokalisierte Suffixnamen nie am Modalrand enden. */
+#root .itip-warbanner-record .itip-body {
+  grid-template-columns: minmax(230px, 0.84fr) minmax(290px, 1.16fr);
+  grid-template-areas:
+    "offense suffix"
+    "defense attributes"
+    "skill misc"
+    "rune rune";
+  grid-auto-flow: row;
+  column-gap: 18px;
+  padding-right: 18px;
+}
+
+#root .itip-warbanner-record .itip-body > * {
+  grid-area: auto !important;
+  min-width: 0;
+}
+
+#root .itip-warbanner-record .itip-offense-group { grid-area: offense !important; }
+#root .itip-warbanner-record .itip-suffix-group { grid-area: suffix !important; }
+#root .itip-warbanner-record .itip-defense-group { grid-area: defense !important; }
+#root .itip-warbanner-record .itip-attributes-group { grid-area: attributes !important; }
+#root .itip-warbanner-record .itip-skill-group { grid-area: skill !important; }
+#root .itip-warbanner-record .itip-misc-group { grid-area: misc !important; }
+#root .itip-warbanner-record .itip-rune-group { grid-area: rune !important; }
+
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) {
+  grid-template-areas:
+    "attributes suffix"
+    "defense skill"
+    "misc misc"
+    "rune rune";
+}
+
+#root .itip-suffix-group {
+  padding-right: 6px;
+  overflow: visible;
+}
+
+#root .itip-suffix-group .itip-group-title {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}
+
+@media (max-width: 820px) {
+  #root .itip-warbanner-record .itip-body,
+  #root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "offense"
+      "attributes"
+      "suffix"
+      "defense"
+      "skill"
+      "misc"
+      "rune";
+    padding-right: 12px;
+  }
+}
+
+/* codex:2026-08-01T13:30:36+02:00 — Datenraster V4: Gruppen werden dicht gepackt, statt leere
+   benannte Rasterzellen zu reservieren. Der Statrahmen füllt die rechte Spalte vollständig und
+   erhält rechts dieselbe Luft wie links am echten Divider. Verbrauchsgüter nutzen eine kompakte
+   Effektplatte, nicht den großen Ausrüstungs-Datenkasten. */
+#root .itip-warbanner-main {
+  grid-template-columns: minmax(330px, 0.78fr) minmax(0, 1.22fr);
+  gap: 12px;
+}
+
+#root .itip-warbanner-main::after {
+  display: none;
+}
+
+#root .itip-warbanner-record {
+  box-sizing: border-box;
+  width: 100%;
+  align-self: stretch;
+  padding-left: 12px;
+  border-left: 1px solid rgba(216, 192, 106, 0.38);
+}
+
+#root .itip-warbanner-record .itip-body {
+  box-sizing: border-box;
+  width: 100%;
+  grid-template-columns: minmax(250px, 0.96fr) minmax(250px, 1.04fr);
+  grid-template-areas: none;
+  grid-auto-flow: row dense;
+  grid-auto-rows: max-content;
+  align-content: start;
+}
+
+#root .itip-warbanner-record .itip-body > * {
+  grid-area: auto !important;
+}
+
+#root .itip-offense-group { order: 1; }
+#root .itip-suffix-group { order: 2; }
+#root .itip-defense-group { order: 3; }
+#root .itip-attributes-group { order: 4; }
+#root .itip-skill-group { order: 5; }
+#root .itip-misc-group { order: 6; }
+#root .itip-rune-group { order: 7; }
+
+#root .itip-body:not(:has(.itip-offense-group)) .itip-defense-group,
+#root .itip-body:not(:has(.itip-offense-group)):not(:has(.itip-defense-group)) .itip-attributes-group {
+  order: 1;
+}
+
+/* Hotfix 2026-08-04 (Discord-Bugreport, Warbanner-Offense-Tooltip zeigt leere Wertespalten):
+   Der V4-Dense-Flow-Block weiter oben setzt `grid-area: auto !important` auf JEDES Kind von
+   `.itip-body` (Zeile ~2315) — bei einem einzelnen Kind (z.B. eine reine Offense-Waffe ohne
+   Suffix/Defense/Attribute, wie der gemeldete Zauberstab) gewinnt dieses `!important` gegen die
+   hier ungewichtete `grid-column: 1 / -1`-Regel, egal wie spezifisch/spät sie steht — `!important`
+   schlägt Spezifität immer. Die Offense-Gruppe blieb dadurch in NUR der ersten Grid-Spur (~halbe
+   Datenspaltenbreite) gefangen; ihre eigenen Stat-Zeilen (`grid-template-columns: 24px minmax(0,1fr)
+   max-content max-content`) passten dort nicht mehr, liefen über die halbierte Box hinaus und wurden
+   vom `overflow: hidden` auf `.itip-group`/`.itip-offense-group` unsichtbar abgeschnitten — Label
+   sichtbar, Wert weg. Fix: dieselbe `!important`-Waffe wie der Rest des Blocks, damit ein einzelnes
+   Kind wirklich beide Spuren bekommt (bestätigt per ui-audit-Diagnose: vorher lag `.itip-offense-group`
+   bei 195–258px Breite trotz 529–874px verfügbarer Body-Breite, danach spannt es voll). */
+#root .itip-warbanner-record .itip-body > :only-child {
+  grid-column: 1 / -1 !important;
+}
+
+#root .item-tooltip.itip-card--consumable {
+  width: min(860px, calc(100vw - 32px));
+}
+
+#root .itip-card--consumable .itip-warbanner-main {
+  grid-template-columns: minmax(300px, 0.9fr) minmax(320px, 1.1fr);
+}
+
+#root .itip-card--consumable .itip-warbanner-record .itip-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 5px 12px;
+}
+
+#root .itip-card--consumable .itip-misc-group {
+  min-height: 0;
+  padding: 2px 0;
+  border-bottom: 0;
+}
+
+#root .itip-card--consumable .itip-stat-row {
+  min-height: 38px;
+  padding: 3px 4px;
+}
+
+@media (max-width: 820px) {
+  #root .itip-warbanner-record {
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(216, 192, 106, 0.28);
+  }
+
+  #root .itip-card--consumable .itip-warbanner-main,
+  #root .itip-warbanner-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .itip-warbanner-record .itip-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* codex:2026-08-02T12:07:01+02:00 — Integrations-QA: Der spaeter stehende V4-Dense-Flow darf
+   den freigegebenen Warbanner-Vertrag nicht wieder aufheben. Ausruestung ohne Offense reserviert
+   Attribute oben links, Defense darunter und den vollstaendig umbrechbaren Suffix rechts. */
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) {
+  grid-template-columns: minmax(250px, 0.96fr) minmax(250px, 1.04fr);
+  grid-template-areas:
+    "attributes suffix"
+    "defense suffix"
+    "skill misc"
+    "rune rune";
+  grid-auto-flow: row;
+}
+
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > .itip-attributes-group {
+  grid-area: attributes !important;
+  order: initial;
+}
+
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > .itip-defense-group {
+  grid-area: defense !important;
+  order: initial;
+}
+
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > .itip-suffix-group {
+  grid-area: suffix !important;
+  order: initial;
+  min-width: 0;
+}
+
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > .itip-skill-group {
+  grid-area: skill !important;
+}
+
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > .itip-misc-group {
+  grid-area: misc !important;
+}
+
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > .itip-rune-group {
+  grid-area: rune !important;
+}
+
+@media (max-width: 820px) {
+  #root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "attributes"
+      "suffix"
+      "defense"
+      "skill"
+      "misc"
+      "rune";
+  }
+}
+
+/* codex:2026-08-03T00:37:00+02:00 — Verbindlicher Overflow-Schutz fuer Item-Warbanner:
+   Die Datenspalte waechst auf breiten Viewports wirklich mit, waehrend ihre beiden inneren
+   Spalten unterhalb ihrer Inhaltsbreite schrumpfen duerfen. Statzeilen besitzen feste Icon-,
+   Text-, Wert- und Delta-Spuren; damit koennen lokalisierte Labels weder Suffixwerte noch
+   Compare-Deltas ueber den rechten Modalrahmen schieben. */
+#root .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) {
+  width: min(1220px, calc(100vw - 32px));
+}
+
+#root .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) .itip-warbanner-main {
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+}
+
+#root .itip-warbanner-record {
+  min-width: 0;
+  padding-right: 12px;
+  overflow: hidden;
+}
+
+#root .itip-warbanner-record .itip-body,
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) {
+  min-width: 0;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+}
+
+#root .itip-warbanner-record .itip-body > .itip-group {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+#root .itip-warbanner-record :is(
+  .itip-suffix-group,
+  .itip-attributes-group,
+  .itip-defense-group,
+  .itip-skill-group,
+  .itip-misc-group
+) .itip-stat-row {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr) max-content max-content;
+  align-items: center;
+  column-gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+#root .itip-warbanner-record :is(
+  .itip-suffix-group,
+  .itip-attributes-group,
+  .itip-defense-group,
+  .itip-skill-group,
+  .itip-misc-group
+) .itip-stat-label {
+  grid-column: 2;
+  min-width: 0;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+#root .itip-warbanner-record :is(
+  .itip-suffix-group,
+  .itip-attributes-group,
+  .itip-defense-group,
+  .itip-skill-group,
+  .itip-misc-group
+) .itip-stat-value {
+  grid-column: 3;
+  justify-self: end;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+#root .itip-warbanner-record :is(
+  .itip-suffix-group,
+  .itip-attributes-group,
+  .itip-defense-group,
+  .itip-skill-group,
+  .itip-misc-group
+) .itip-delta {
+  grid-column: 4;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+#root .itip-suffix-group {
+  padding-right: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 1040px) {
+  #root .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) .itip-warbanner-main {
+    grid-template-columns: minmax(250px, 0.76fr) minmax(0, 1.24fr);
+  }
+
+  #root .itip-warbanner-record .itip-body,
+  #root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "offense"
+      "attributes"
+      "suffix"
+      "defense"
+      "skill"
+      "misc"
+      "rune";
+  }
+}
+
+@media (max-width: 760px) {
+  #root .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) .itip-warbanner-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .itip-warbanner-record {
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(216, 192, 106, 0.28);
+  }
+}
+
+/* codex:2026-08-03T08:18:00+02:00 — Compare-Schutz zum breiteren Einzelkartenvertrag:
+   Zwei Ausruestungskarten teilen sich den real verfuegbaren Viewport und duerfen die allgemeine
+   1220-px-Breite nicht erben. Ihre Datenspalte behaelt dennoch dieselben sicheren Wertespuren. */
+#root .itip-compare-wrap .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) {
+  flex: 1 1 0;
+  width: min(1040px, calc((100vw - 52px) / 2));
+  min-width: 0;
+  max-width: 1040px;
+}
+
+#root .itip-compare-wrap .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) .itip-warbanner-main {
+  grid-template-columns: minmax(250px, 0.68fr) minmax(0, 1.32fr);
+  gap: 10px;
+}
+
+@media (max-width: 1700px) {
+  #root .itip-compare-wrap .itip-warbanner-record .itip-body,
+  #root .itip-compare-wrap .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "offense"
+      "attributes"
+      "suffix"
+      "defense"
+      "skill"
+      "misc"
+      "rune";
+  }
+}
+
+@media (max-width: 1100px) {
+  #root .itip-compare-wrap {
+    flex-direction: column;
+  }
+
+  #root .itip-compare-wrap .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) {
+    flex-basis: auto;
+    width: min(1040px, calc(100vw - 40px));
+  }
+}

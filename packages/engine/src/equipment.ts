@@ -1,0 +1,249 @@
+import type { ContentDB, EquipSlot, GameState, ItemDef, ItemId } from "@hearthforge/shared";
+import { levelFromXp } from "./leveling";
+import { addInstance, addItem, freeSlots, getInstance, isFull, removeInstance, removeItem } from "./inventory";
+
+/**
+ * Legt das aktuell in `slot` getragene Item zurück ins Inventar und leert den Slot — egal ob es
+ * eine modifizierte Instanz (→ `equippedInstances`, wandert in die unbegrenzte Instanz-Tasche) oder
+ * ein plain Item ist. So geht beim Tauschen KEINE Verzauberung verloren.
+ *
+ * DATENVERLUST-SICHER: Der Slot wird NUR geleert, wenn das Einlagern wirklich gelingt. Eine Instanz
+ * geht immer in die unbegrenzte Tasche (nie „voll"); ein plain Item braucht einen freien Slot — fehlt
+ * er (addItem schlägt fehl), bleibt es ausgerüstet und es wird `false` zurückgegeben. Der Aufrufer MUSS
+ * das prüfen (bzw. via Kapazitäts-Vorprüfung sicherstellen, dass Platz da ist), sonst würde ein
+ * nachfolgendes Überschreiben des Equipment-Slots das Item vernichten.
+ */
+function stowEquipped(state: GameState, content: ContentDB, slot: EquipSlot): boolean {
+  const inst = state.character.equippedInstances[slot];
+  const id = state.character.equipment[slot];
+  if (!id && !inst) return false;
+  if (inst) {
+    if (!addInstance(state.inventory, inst)) return false; // unbegrenzte Tasche → nie „voll"
+    delete state.character.equippedInstances[slot];
+    state.character.equipment[slot] = null;
+  } else if (id) {
+    if (addItem(state.inventory, content, id, 1) < 1) return false; // kein Platz → ausgerüstet lassen
+    state.character.equipment[slot] = null;
+  }
+  return true;
+}
+
+/** Trägt der Slot (plain ODER Instanz) etwas, das beim Tausch zurück ins Inventar müsste? */
+function slotOccupied(state: GameState, slot: EquipSlot): boolean {
+  return !!state.character.equipment[slot] || !!state.character.equippedInstances[slot];
+}
+
+/**
+ * Trägt der Slot ein PLAIN Item (keine Instanz)? NUR das braucht beim Verdrängen einen freien
+ * Inventar-Slot — eine verdrängte Item-INSTANZ (verzaubert/gesuffixt) geht über `stowEquipped` immer
+ * in die unbegrenzte Instanz-Tasche (0 Kapazität nötig). Chef-Bugfix „22/20" (2026-07-23): die
+ * Kapazitäts-Vorprüfungen zählten vorher `slotOccupied` (Plain UND Instanz gleich als „1 Stow") —
+ * das verweigerte einen eigentlich machbaren Tausch (neues plain Item rein, Instanz raus) fälschlich
+ * bei vollem Inventar. `equipInstance` unterschied das schon korrekt (lokales `plainAt`); jetzt
+ * gemeinsam für `equipItem`/`equipTool`/`equipInstance`.
+ */
+function plainOccupied(state: GameState, slot: EquipSlot): boolean {
+  return !!state.character.equipment[slot] && !state.character.equippedInstances[slot];
+}
+
+export interface EquipResult {
+  ok: boolean;
+  reason?: string;
+}
+
+/** Prüft, ob alle Skill-Anforderungen eines Items erfüllt sind. */
+export function meetsRequirements(state: GameState, item: ItemDef): boolean {
+  if (!item.requirements) return true;
+  for (const [skillId, level] of Object.entries(item.requirements)) {
+    if (level === undefined) continue;
+    if (levelFromXp(state.skills[skillId]?.xp ?? 0) < level) return false;
+  }
+  return true;
+}
+
+/**
+ * Rüstet ein Item aus dem Inventar aus. Tauscht ein bereits getragenes Item im
+ * selben Slot zurück ins Inventar. Prüft Typ & Skill-Anforderungen.
+ */
+export function equipItem(state: GameState, content: ContentDB, itemId: ItemId): EquipResult {
+  const item = content.items[itemId];
+  // Munition/Köcher: ENTFERNT (#286 Ammo-Removal) — es gibt keinen ammo-Slot mehr; Pfeile
+  // (bis Stage B noch im Katalog) sind schlicht nicht ausrüstbar und fallen unten durch.
+  // Werkzeuge (Spitzhacke, Angel, Sichel …): in einen freien Werkzeug-Slot. Sie wirken zwar AUCH
+  // passiv aus dem Inventar (bestToolSpeed liest beides), aber Ausrüsten hält das Inventar frei.
+  if (item && item.type === "tool") {
+    return equipTool(state, content, itemId);
+  }
+  if (!item || item.type !== "equipment" || !item.slot) {
+    return { ok: false, reason: "Nicht ausrüstbar" };
+  }
+  if (!meetsRequirements(state, item)) {
+    return { ok: false, reason: "Skill-Anforderung nicht erfüllt" };
+  }
+  const slot = item.slot;
+  // Ringe deklarieren kanonisch "ring1", dürfen aber beide Ring-Slots belegen:
+  // bevorzugt den ersten freien Slot, sonst wird ring1 ersetzt.
+  let target = slot;
+  if (slot === "ring1" && state.character.equipment.ring1 && !state.character.equipment.ring2) {
+    target = "ring2";
+  }
+  // Zweihandwaffe ↔ Schild: schließen sich gegenseitig aus → zusätzliche Verdrängung bestimmen.
+  const displacesOffhand = slot === "mainhand" && !!item.twoHanded && slotOccupied(state, "offhand");
+  const main = state.character.equipment.mainhand;
+  const displacesMain =
+    slot === "offhand" && !!main && !!content.items[main]?.twoHanded && slotOccupied(state, "mainhand");
+  // DATENVERLUST-SCHUTZ: so viele getragene PLAIN Items müssen zurück in einen freien Inventar-Slot
+  // (Stows) — eine verdrängte Instanz braucht KEINEN (geht in die unbegrenzte Tasche, `plainOccupied`).
+  // Das Entnehmen der neuen Ausrüstung gibt nur dann einen Slot frei, wenn ihr Quell-Stack genau 1
+  // Stück groß war.
+  const targetPlain = plainOccupied(state, target);
+  const offhandPlain = displacesOffhand && plainOccupied(state, "offhand");
+  const mainPlain = displacesMain && plainOccupied(state, "mainhand");
+  const stows = (targetPlain ? 1 : 0) + (offhandPlain ? 1 : 0) + (mainPlain ? 1 : 0);
+  const srcIdx = state.inventory.slots.findIndex((s) => s !== null && s.itemId === itemId && !s.instance);
+  const sourceFrees = srcIdx >= 0 && state.inventory.slots[srcIdx]!.qty === 1 ? 1 : 0;
+  if (freeSlots(state.inventory) + sourceFrees < stows) {
+    return { ok: false, reason: "Inventar voll" };
+  }
+  if (removeItem(state.inventory, itemId, 1) < 1) {
+    return { ok: false, reason: "Nicht im Inventar" };
+  }
+  // ATOMAR (Chef-Bugfix „22/20"): der frei gewordene Inventar-Slot nimmt das vorher getragene Item auf
+  // (Instanz ODER plain) — `stowEquipped`s Rückgabe wird geprüft. Schlägt sie TROTZ der obigen
+  // Vorprüfung fehl (sollte dank `plainOccupied` nie mehr passieren — Verteidigungslinie), rollen wir
+  // das entnommene Item zurück statt es beim Überschreiben von `equipment[target]` zu vernichten.
+  const targetStowed = stowEquipped(state, content, target);
+  if (targetPlain && !targetStowed) {
+    addItem(state.inventory, content, itemId, 1);
+    return { ok: false, reason: "Inventar voll" };
+  }
+  state.character.equipment[target] = itemId;
+  if (displacesOffhand) {
+    const stowed = stowEquipped(state, content, "offhand");
+    if (offhandPlain && !stowed) return { ok: false, reason: "Inventar voll" };
+  } else if (displacesMain) {
+    const stowed = stowEquipped(state, content, "mainhand");
+    if (mainPlain && !stowed) return { ok: false, reason: "Inventar voll" };
+  }
+  return { ok: true };
+}
+
+/**
+ * Werkzeug-Slots in Vorzugsreihenfolge (erster freier wird belegt, sonst tool1 ersetzt).
+ * Dritter Slot `tool3` (Spieler-Feedback „komisch, 2 ausgerüstet + 1 im Inventar", SAVE_VERSION 72
+ * NACHTRAG): reines Ordnungs-Feature — `bestToolSpeed` (tools.ts) scannt ohnehin generisch das
+ * GESAMTE Equipment-Record UND das Inventar, ein drittes ausgerüstetes Werkzeug wirkt also exakt
+ * wie eines lose im Inventar (keine Tempo-Verdopplung).
+ */
+const TOOL_SLOTS: EquipSlot[] = ["tool1", "tool2", "tool3"];
+
+/**
+ * Rüstet ein Werkzeug in einen freien Werkzeug-Slot aus. Akzeptiert reine Werkzeuge (type "tool")
+ * UND dual-use-Items mit `tool`-Feld (z.B. Äxte — Waffe in Mainhand ODER Holzfäll-Werkzeug im Slot;
+ * Chef 2026-07-21). Prüft die Skill-Anforderung; das vorher dort getragene Werkzeug wandert zurück ins
+ * Inventar. Exportiert, damit die UI beim Drop auf einen Werkzeug-Slot gezielt hierher routet — der
+ * generische `equipItem` schickt eine Axt weiterhin per `item.slot` in die Mainhand.
+ */
+export function equipTool(state: GameState, content: ContentDB, itemId: ItemId): EquipResult {
+  const item = content.items[itemId];
+  if (!item || !item.tool) return { ok: false, reason: "Nicht ausrüstbar" };
+  if (!meetsRequirements(state, item)) {
+    return { ok: false, reason: "Skill-Anforderung nicht erfüllt" };
+  }
+  const target: EquipSlot = TOOL_SLOTS.find((s) => !state.character.equipment[s]) ?? "tool1";
+  // DATENVERLUST-SCHUTZ: ist der Ziel-Werkzeug-Slot mit einem PLAIN Werkzeug belegt, muss es zurück in
+  // einen freien Inventar-Slot — eine (theoretisch mögliche) verzauberte Instanz braucht keinen
+  // (Muster equipItem, Chef-Bugfix „22/20").
+  const targetPlain = plainOccupied(state, target);
+  const stows = targetPlain ? 1 : 0;
+  const srcIdx = state.inventory.slots.findIndex((s) => s !== null && s.itemId === itemId && !s.instance);
+  const sourceFrees = srcIdx >= 0 && state.inventory.slots[srcIdx]!.qty === 1 ? 1 : 0;
+  if (freeSlots(state.inventory) + sourceFrees < stows) {
+    return { ok: false, reason: "Inventar voll" };
+  }
+  if (removeItem(state.inventory, itemId, 1) < 1) {
+    return { ok: false, reason: "Nicht im Inventar" };
+  }
+  // ATOMAR: der frei gewordene Inventar-Slot nimmt das bisher getragene Werkzeug auf — Rückgabe
+  // geprüft (Verteidigungslinie, s. equipItem).
+  const targetStowed = stowEquipped(state, content, target);
+  if (targetPlain && !targetStowed) {
+    addItem(state.inventory, content, itemId, 1);
+    return { ok: false, reason: "Inventar voll" };
+  }
+  state.character.equipment[target] = itemId;
+  return { ok: true };
+}
+
+/**
+ * Rüstet eine modifizierte Item-Instanz aus der Inventar-Tasche (`inventory.instances`, per
+ * `instanceId`) aus. Die Modifikation reist mit: `equipment[slot] = baseItemId` UND
+ * `equippedInstances[slot] = instance` (Architektur-B-Kern). Der bisherige Slot-Inhalt wandert zurück
+ * ins Inventar (eine Instanz in die unbegrenzte Tasche, ein plain Item in einen freien Slot).
+ */
+export function equipInstance(
+  state: GameState,
+  content: ContentDB,
+  instanceId: string,
+): EquipResult {
+  const instance = getInstance(state.inventory, instanceId);
+  if (!instance) return { ok: false, reason: "Keine Instanz gefunden" };
+  const item = content.items[instance.baseItemId];
+  if (!item || item.type !== "equipment" || !item.slot) {
+    return { ok: false, reason: "Nicht ausrüstbar" };
+  }
+  if (!meetsRequirements(state, item)) {
+    return { ok: false, reason: "Skill-Anforderung nicht erfüllt" };
+  }
+  const slot = item.slot;
+  let target = slot;
+  if (slot === "ring1" && state.character.equipment.ring1 && !state.character.equipment.ring2) {
+    target = "ring2";
+  }
+  const displacesOffhand = slot === "mainhand" && !!item.twoHanded && slotOccupied(state, "offhand");
+  const main = state.character.equipment.mainhand;
+  const displacesMain =
+    slot === "offhand" && !!main && !!content.items[main]?.twoHanded && slotOccupied(state, "mainhand");
+  // DATENVERLUST-SCHUTZ: NUR verdrängte PLAIN Items brauchen je einen freien Inventar-Slot; verdrängte
+  // Instanzen wandern in die unbegrenzte Tasche. Die Quell-Instanz kommt selbst aus der Tasche (belegt
+  // keinen Slot), daher — anders als bei `equipItem` — KEIN „+1" für einen frei werdenden Quell-Slot.
+  const targetPlain = plainOccupied(state, target);
+  const offhandPlain = displacesOffhand && plainOccupied(state, "offhand");
+  const mainPlain = displacesMain && plainOccupied(state, "mainhand");
+  const plainStows = (targetPlain ? 1 : 0) + (offhandPlain ? 1 : 0) + (mainPlain ? 1 : 0);
+  if (freeSlots(state.inventory) < plainStows) {
+    return { ok: false, reason: "Inventar voll" };
+  }
+  // Quell-Instanz aus der Tasche nehmen (das Slot-Gitter bleibt unberührt).
+  removeInstance(state.inventory, instanceId);
+  // ATOMAR: Rückgabe geprüft — schlägt der Stow trotz Vorprüfung fehl (Verteidigungslinie), Instanz
+  // zurück in die Tasche statt sie beim Überschreiben des Equipment-Slots zu vernichten.
+  const targetStowed = stowEquipped(state, content, target);
+  if (targetPlain && !targetStowed) {
+    addInstance(state.inventory, instance);
+    return { ok: false, reason: "Inventar voll" };
+  }
+  state.character.equipment[target] = instance.baseItemId;
+  state.character.equippedInstances[target] = instance;
+  if (displacesOffhand) {
+    const stowed = stowEquipped(state, content, "offhand");
+    if (offhandPlain && !stowed) return { ok: false, reason: "Inventar voll" };
+  } else if (displacesMain) {
+    const stowed = stowEquipped(state, content, "mainhand");
+    if (mainPlain && !stowed) return { ok: false, reason: "Inventar voll" };
+  }
+  return { ok: true };
+}
+
+// equipAmmo: ENTFERNT (#286 Ammo-Removal) — der Köcher-Slot existiert nicht mehr.
+
+/** Legt das Item eines Slots ab (zurück ins Inventar, falls Platz). */
+export function unequipItem(state: GameState, content: ContentDB, slot: EquipSlot): boolean {
+  const itemId = state.character.equipment[slot];
+  if (!itemId) return false;
+  // Eine Instanz geht in die unbegrenzte Tasche (kein freier Slot nötig); ein plain Item braucht
+  // einen freien Inventar-Slot. Nur im plain-Fall bei vollem Inventar abbrechen.
+  if (!state.character.equippedInstances[slot] && isFull(state.inventory)) return false;
+  // stowEquipped legt plain Item ODER Instanz (mit Modifikation) korrekt zurück ins Inventar.
+  return stowEquipped(state, content, slot);
+}

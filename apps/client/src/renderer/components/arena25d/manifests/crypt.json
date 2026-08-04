@@ -1,0 +1,51 @@
+{
+  "zoneId": "crypt",
+  "ground": "arena_crypt_ground.webp",
+  "backdrop": "arena_crypt_backdrop.webp",
+  "lighting": {
+    "sunColor": "#b8d6ed",
+    "sunIntensity": 2.55,
+    "sunAngleDeg": 58,
+    "sunAzimuthDeg": -18,
+    "ambientColor": "#40566a",
+    "ambientIntensity": 0.82,
+    "fogColor": "#1c2730",
+    "fogDensity": 0.024,
+    "grade": {
+      "saturation": 0.68,
+      "temperature": -0.45,
+      "lift": -0.16
+    }
+  },
+  "props": [
+    {
+      "file": "arena_crypt_prop_01.webp",
+      "x": -7.3,
+      "z": 2,
+      "scale": 1.6,
+      "layer": "back"
+    },
+    {
+      "file": "arena_crypt_prop_02.webp",
+      "x": 7.2,
+      "z": 2,
+      "scale": 1.8,
+      "flip": true,
+      "layer": "back"
+    },
+    {
+      "file": "arena_crypt_prop_03.webp",
+      "x": -5.1,
+      "z": 5,
+      "scale": 0.8,
+      "layer": "mid"
+    },
+    {
+      "file": "arena_crypt_prop_04.webp",
+      "x": 5.3,
+      "z": 7.7,
+      "scale": 0.85,
+      "layer": "mid"
+    }
+  ]
+}

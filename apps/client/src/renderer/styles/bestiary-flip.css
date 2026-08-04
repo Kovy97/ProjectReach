@@ -1,0 +1,24 @@
+/* ═══════════════════════════════════════════════════════════
+   BESTIARY — ERSTFUND-FLIP (Welle PP, Antizipation-Moment 4)
+   Sizing-Overrides für die generischen `.flip-reveal`-Klassen (styles/flip-reveal.css) in den
+   beiden Bestiarium-Kontexten: die Monster-Porträt-Fläche (füllt `.bestiary-card-art`) und der
+   kleine Beute-Chip (füllt `.bestiary-drop-chip`-Größe). Component-scoped, direkt von
+   BestiaryPage.tsx importiert.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Monster-Porträt: derselbe Platz wie vorher der direkte <img>/<span> — UND derselbe z-index wie
+   `.bestiary-card-portrait` (pages.css), damit die Vignette (`.bestiary-card-art::after`) weiter
+   HINTER dem Porträt bleibt, nicht davor. */
+.bestiary-card-art-flip {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Beute-Chip: feste Größe statt 100%/100% (der generische Default würde den Flip-Wrapper auf die
+   volle Breite der `.bestiary-drop`-Spalte strecken) — deckt sich mit der bisherigen
+   `.bestiary-drop-chip .item-chip-img`-Größe (34px). */
+.bestiary-drop-flip {
+  width: 34px;
+  height: 34px;
+}

@@ -1,0 +1,621 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   CHARACTER CREATION (Task #282 redesign) — "forge your hero" moment.
+   Reading order: Name → Look (portrait) → Style → Begin. Left: large arch showcase
+   (live portrait preview). Right: form panel with a horizontal portrait filmstrip
+   (replaces the old prev/next click-through) and large weapon-art style cards.
+   Shares `.portrait-thumb` / `.portrait-gallery-*` / `.modal.portrait-gallery-modal`
+   with character.css — those stay there since CharacterPage's gear-button portrait
+   picker uses the same PortraitPickerModal component.
+   ═══════════════════════════════════════════════════════════ */
+
+.creation {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Linke Vitrine — Arch-Rahmen (Task #282: etwas größer inszeniert, 44% statt 42%) ── */
+.creation-showcase {
+  flex: 0 0 44%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.12) 42%, rgba(0,0,0,0.42) 100%),
+    url("../assets/bg_tileable_wood.webp") top left / 300px 300px repeat;
+  border-right: 2px solid rgba(216,192,106,0.30);
+}
+
+/* Radial gold glow at top — suggests pointed-arch window */
+.creation-showcase::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 58%;
+  background: radial-gradient(ellipse 72% 88% at 50% -4%, rgba(216,192,106,0.14) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Charakter-Container — eigener dunkler Hintergrund, vom Holz als Matte umrahmt.
+   Top-Inset 92px (war 52px): reserviert eine freie Kopf-Zeile für den „Zurück"-Button —
+   vorher schnitt dessen eigener Holzrahmen durch den oberen Rahmenbalken dieses Panels (Chef #60). */
+.creation-portrait-frame {
+  position: absolute;
+  inset: 92px 38px 38px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 62% at 50% 8%, rgba(216,192,106,0.16) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(26,21,16,0.62) 0%, rgba(9,7,5,0.92) 100%),
+    url("../assets/bg_black.webp") center / 420px repeat;
+  border-style: solid;
+  border-color: transparent;
+  /* Dickerer Rahmen (18px statt 12px) — bei der Größe dieses Rahmens bleiben die Eck-Medaillons
+     der 9-slice-Textur damit klar erkennbar statt zu einer dünnen Linie zu verschwimmen. */
+  border-width: 18px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 18px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  box-shadow: inset 0 0 70px rgba(0,0,0,0.78), 0 6px 26px rgba(0,0,0,0.6);
+}
+
+/* Eigenes Bild hochladen (Chef 2026-07-11) — kleiner Holzrahmen-Button oben rechts im
+   Porträt-Rahmen der Erstellung, Pendant zu .cs-portrait-upload-btn im Charakterbogen. */
+.creation-portrait-upload-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+  opacity: 0.85;
+  cursor: pointer;
+  transition: opacity 0.14s, box-shadow 0.14s;
+}
+
+.creation-portrait-upload-btn:hover {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.32);
+}
+
+.creation-portrait-upload-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.showcase-img {
+  height: 96%;
+  max-width: 94%;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 10px 34px rgba(0, 0, 0, 0.82));
+  position: relative;
+  z-index: 2;
+}
+
+.showcase-silhouette {
+  font-size: 200px;
+  opacity: 0.3;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Hero name — gold Cinzel, uppercase, at the arch base */
+.showcase-name {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  padding: 48px 24px 26px;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: clamp(20px, 3.2vw, 44px);
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-shadow: 0 2px 14px #000, 0 0 40px rgba(0,0,0,0.9);
+  background: linear-gradient(0deg, rgba(0,0,0,0.84) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Top ornament diamonds */
+.creation-showcase-ornament {
+  position: absolute;
+  top: 14px;
+  left: 0; right: 0;
+  text-align: center;
+  z-index: 3;
+  font-size: 13px;
+  color: rgba(216,192,106,0.48);
+  letter-spacing: 10px;
+  pointer-events: none;
+}
+
+/* Back button — wooden 9-slice frame style, positioned top-left */
+.creation-back {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 18px;
+  padding: 9px 20px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 12px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 12px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background:
+    linear-gradient(rgba(0,0,0,0.74), rgba(0,0,0,0.74)),
+    url("../assets/bg_black.webp") repeat;
+  background-clip: padding-box;
+  color: #e8d8b0;
+  transition: color 0.12s, box-shadow 0.12s;
+}
+
+.creation-back:hover {
+  color: var(--gold);
+  box-shadow: 0 0 10px rgba(216,192,106,0.30);
+}
+
+/* ── Rechtes Formular-Panel ──────────────────────────────────── */
+.creation-panel {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  /* `center` allein ist ein bekannter Flexbox-Fallstrick: läuft der Inhalt über (kleine
+     Fenster/720p mit vielen Feldern), wird der obere Teil unerreichbar abgeschnitten — der
+     Container zentriert auch dann noch, statt an den Scroll-Anfang zu springen. `flex-start` als
+     Basis garantiert, dass IMMER alles per Scroll erreichbar ist; `safe center` (moderne Browser,
+     Electrons Chromium inklusive) verbessert das dann zu echtem Zentrieren, sobald der Inhalt passt. */
+  align-items: flex-start;
+  padding: clamp(24px, 4vh, 56px) clamp(28px, 5vw, 64px);
+  background:
+    linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0.50)),
+    url("../assets/bg_tileable_wood.webp") top left / 300px 300px repeat;
+}
+
+@supports (align-items: safe center) {
+  .creation-panel {
+    align-items: safe center;
+  }
+}
+
+.creation-panel-inner {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* Gold Cinzel title — uppercase */
+.creation-panel h1 {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: clamp(20px, 2.6vw, 36px);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  text-shadow: 0 0 22px rgba(216,192,106,0.32);
+  line-height: 1.1;
+}
+
+.creation-subtitle {
+  margin: -14px 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+  font-style: italic;
+}
+
+/* Ornamental ◆──────◆ divider */
+.creation-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -4px 0;
+}
+
+.creation-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(216,192,106,0.55), transparent);
+}
+
+.creation-divider-diamond {
+  color: var(--gold);
+  font-size: 14px;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* Field labels — mit kleiner Schritt-Nummer davor (Name → Look → Style Journey). */
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.creation-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(216, 192, 106, 0.55);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  background: rgba(216, 192, 106, 0.08);
+}
+
+/* Name input — wooden 9-slice frame */
+.creation-input {
+  width: 100%;
+  box-sizing: border-box;
+  background:
+    linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 12px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 12px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  padding: 13px 16px;
+  color: var(--text);
+  font-size: 19px;
+  font-family: var(--font-head);
+  letter-spacing: 1px;
+}
+
+.creation-input:focus {
+  outline: none;
+  box-shadow: 0 0 14px rgba(216,192,106,0.22);
+}
+
+/* ── Portrait-Filmstreifen (Task #282: ersetzt die Pfeil-Navigation) ──────────
+   Zeigt alle Portraits als klickbare Miniaturen in einer horizontal scrollbaren Reihe —
+   sofortige Auswahl statt blindem Durchblättern. "Alle anzeigen" bleibt als Button daneben
+   für die große Modal-Galerie (PortraitPickerModal, geteilt mit CharacterPage). */
+.creation-portrait-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.creation-portrait-strip {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 4px 8px;
+  /* Firefox-only scrollbar-Regeln entfernt (2026-07-09): Chromium 121+ honoriert sie und
+     überschrieb die globalen Citadel-Scrollbalken (base.css) — global gilt jetzt überall. */
+  /* Weicher Fade an beiden Rändern — signalisiert "hier geht's weiter" statt eines hart
+     abgeschnittenen letzten Portraits am Rand. */
+  mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+}
+
+.creation-portrait-chip {
+  flex-shrink: 0;
+  width: 56px;
+  height: 74px;
+  padding: 0;
+  border: 2px solid rgba(216, 192, 106, 0.16);
+  border-radius: 3px;
+  background: radial-gradient(ellipse at 50% 30%, var(--panel-hover), var(--slot) 76%);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+}
+
+.creation-portrait-chip img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.creation-portrait-chip:hover {
+  border-color: rgba(216, 192, 106, 0.45);
+  transform: translateY(-2px);
+}
+
+.creation-portrait-chip.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.4);
+}
+
+/* "Alle anzeigen" — ghost wooden frame, feststehend rechts vom Streifen. */
+.creation-portrait-more-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background:
+    linear-gradient(rgba(18,12,6,0.68), rgba(18,12,6,0.68)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--accent);
+  transition: color 0.12s, box-shadow 0.12s;
+}
+
+.creation-portrait-more-btn:hover {
+  color: var(--gold);
+  box-shadow: 0 0 10px rgba(216,192,106,0.28);
+}
+
+/* ── Startstil-Auswahl — große Waffen-Art-Karten (Task #282: deutlich größer inszeniert) ── */
+.creation-style-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.creation-style-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 10px 14px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: linear-gradient(rgba(18, 12, 6, 0.68), rgba(18, 12, 6, 0.68)),
+    url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  cursor: pointer;
+  transition: box-shadow 0.15s, filter 0.12s, transform 0.12s;
+}
+
+.creation-style-card:hover {
+  filter: brightness(1.10);
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.20);
+  transform: translateY(-2px);
+}
+
+.creation-style-card.active {
+  background: linear-gradient(rgba(60, 42, 12, 0.62), rgba(60, 42, 12, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  box-shadow: 0 0 16px rgba(216, 192, 106, 0.4), inset 0 0 12px rgba(216, 192, 106, 0.12);
+}
+
+/* Gold Häkchen oben rechts auf der gewählten Karte — sofort erkennbar welcher Stil aktiv ist. */
+.creation-style-card.active::after {
+  content: "\2713";
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(216, 192, 106, 0.7);
+}
+
+.creation-style-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+}
+
+.creation-style-icon-img {
+  width: 92px;
+  height: 92px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+  transition: filter 0.15s;
+}
+
+.creation-style-card.active .creation-style-icon-img,
+.creation-style-card:hover .creation-style-icon-img {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 14px rgba(216, 192, 106, 0.35));
+}
+
+.creation-style-name {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+}
+
+.creation-style-card.active .creation-style-name {
+  text-shadow: 0 0 10px rgba(216, 192, 106, 0.45);
+}
+
+.creation-style-desc {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+}
+
+.creation-style-card.active .creation-style-desc {
+  color: var(--accent);
+}
+
+.creation-style-hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+  font-style: italic;
+}
+
+/* BEGIN ADVENTURE button — full-width primary wooden-frame button */
+.creation-start {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 18px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 18px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: clamp(15px, 1.8vw, 21px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background:
+    linear-gradient(rgba(35,24,10,0.62), rgba(35,24,10,0.62)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+  box-shadow: 0 0 14px rgba(216,192,106,0.22);
+  transition: box-shadow 0.15s, filter 0.15s;
+}
+
+.creation-start:hover:not(:disabled) {
+  box-shadow: 0 0 22px rgba(216,192,106,0.44);
+  filter: brightness(1.10);
+}
+
+.creation-start:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Schmale Fenster (1280×720-Referenz): Vitrine etwas schmaler zugunsten des Formulars. */
+@media (max-width: 1400px) {
+  .creation-showcase {
+    flex: 0 0 38%;
+  }
+}
+
+/* Niedrige Fenster (1280×720-Referenz): das Formular hat 3 Schritte + Startknopf — auf 720px
+   Höhe reicht das ohne Straffung nicht aus. Kompaktere Abstände/Karten statt Scroll-Zwang;
+   dank `align-items: flex-start/safe center` auf .creation-panel bleibt der Rest per Scroll
+   trotzdem immer vollständig erreichbar, falls es doch mal knapp wird. */
+@media (max-height: 820px) {
+  .creation-panel-inner {
+    gap: 16px;
+  }
+  .creation-subtitle {
+    margin-top: -8px;
+  }
+  .field-label {
+    margin-bottom: 6px;
+  }
+  .creation-portrait-chip {
+    width: 46px;
+    height: 60px;
+  }
+  .creation-style-card {
+    padding: 10px 8px 8px;
+    gap: 4px;
+  }
+  .creation-style-icon,
+  .creation-style-icon-img {
+    width: 64px;
+    height: 64px;
+  }
+  .creation-style-desc {
+    display: none;
+  }
+  .creation-style-hint {
+    margin-top: 2px;
+  }
+  .creation-start {
+    padding: 12px 24px;
+    border-width: 12px;
+    border-image-width: 12px;
+  }
+}

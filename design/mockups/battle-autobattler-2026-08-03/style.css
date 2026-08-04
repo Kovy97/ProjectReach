@@ -1,0 +1,236 @@
+/* Interaktiver Motion-Beweis "Auto-Battler-Choreografie" — 0.4.0 "Kampfgefühl"
+   Reines Wegwerf-Mockup (kein Produktivcode). Palette 1:1 aus dem 2.5D-light-Beweis vom selben Tag
+   (design/mockups/battle-25d-light-2026-08-03/index.html) übernommen, damit die beiden Assessments
+   optisch als ein Tag zusammengehören. */
+
+:root {
+  --bg: #14161a;
+  --panel: #1e2329;
+  --panel-2: #252b32;
+  --border: #333c44;
+  --text: #ccd5db;
+  --dim: #8b95a0;
+  --accent: #9a8060;
+  --gold: #d8c06a;
+  --hp: #a23b3b;
+  --hp-bg: #3a1414;
+  --hp-fill: linear-gradient(180deg, #c24f4f, #7a2424);
+  --timer-fill: linear-gradient(180deg, #7a9ac2, #2c4a70);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; background: #0b0c0e; color: var(--text);
+  font-family: Georgia, "Times New Roman", serif;
+}
+.wrap { max-width: 1440px; margin: 0 auto; padding: 18px 22px 70px; }
+
+h1 { font-size: 20px; color: var(--gold); margin: 0 0 4px; letter-spacing: 0.03em; }
+.sub { font-size: 13px; color: var(--dim); margin: 0 0 14px; max-width: 1000px; line-height: 1.55; }
+.sub b { color: #c9b98a; }
+.sub code { color: #a9b6c0; }
+
+/* ── Kontrollleiste ─────────────────────────────────────────────────────── */
+.controls {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;
+  padding: 10px 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 4px;
+}
+.control-group { display: flex; align-items: center; gap: 5px; padding-right: 10px; border-right: 1px solid var(--border); }
+.control-group:last-of-type { border-right: none; }
+.control-group .grp-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 2px; }
+
+button {
+  background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+  padding: 6px 12px; font-family: inherit; font-size: 12.5px; cursor: pointer; border-radius: 3px;
+  white-space: nowrap;
+}
+button:hover { border-color: var(--accent); }
+button.active { border-color: var(--gold); color: var(--gold); background: #2a2418; }
+button.danger.active { border-color: #d88a6a; color: #f0a97e; background: #2e1c16; }
+button:disabled { opacity: 0.4; cursor: default; }
+
+.meta-readout {
+  font-size: 10.5px; color: #7c8792; font-family: Consolas, monospace; margin-left: auto;
+  white-space: pre; text-align: right; line-height: 1.5;
+}
+
+.mode-tabs button { padding: 7px 16px; font-size: 13px; }
+.mode-tabs button b { color: inherit; }
+
+/* ── Bühne ──────────────────────────────────────────────────────────────── */
+.stage-wrap {
+  position: relative; width: 100%; aspect-ratio: 16 / 8.4; max-height: 70vh; overflow: hidden;
+  border: 10px solid #000;
+  border-image: repeating-linear-gradient(45deg, #2a2018, #2a2018 4px, #1a1410 4px, #1a1410 8px) 10;
+  background: #050505; margin-top: 10px;
+}
+.stage {
+  position: absolute; inset: 0; background-size: cover; background-position: bottom center;
+  overflow: hidden;
+}
+.stage::after {
+  /* Lesbarkeits-Vignette, entspricht .battle-arena.has-backdrop::before im echten Spiel */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(8,6,4,0.1) 0%, rgba(8,6,4,0.5) 100%);
+}
+
+/* Modus C: leichte Bodenebene statt vollem rotateX-Kipp-Boden (bewusste Entscheidung — s. README:
+   der 2.5D-light-Beweis vom selben Tag zeigte sichtbare Doppelperspektive auf gemalten Kulissen ohne
+   dediziertes Bodenbild; hier bleibt es bei reiner Ebenen-Staffelung, die mit JEDER Kulisse funktioniert). */
+.stage.depth::before {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%; z-index: 1;
+  background: linear-gradient(180deg, rgba(10,8,6,0) 0%, rgba(6,5,4,0.42) 100%);
+  pointer-events: none;
+}
+
+.actor {
+  position: absolute; bottom: 9%;
+  will-change: transform;
+  transform-origin: 50% 100%;
+  transition: transform 0.4s ease;
+}
+.actor.player { left: 21%; z-index: 3; }
+.actor.monster { right: 19%; z-index: 2; }
+/* Modus C: Gegner minimal höher/kleiner gestaffelt — sitzt auf .actor (Parent von .actor-idle), NICHT
+   auf .actor-idle selbst, weil die Idle-Atmen-Keyframe-Animation dort läuft (CSS-Animationen ersetzen
+   den Basiswert einer Eigenschaft komplett statt ihn zu kombinieren — auf verschachtelten Elementen
+   summieren sich Transforms dagegen ganz normal). */
+.stage.depth .actor.monster { transform: translateY(-18px) scale(0.94); }
+
+/* Ebene 1 (entspricht figureRef-Analog + Idle): Grundposition + Idle-Atmen + (Modus C) Tiefen-Staffelung.
+   Idle-Animation läuft HIER, damit sie nie mit Windup/Dash/Return (Ebene 2) auf demselben Element
+   kollidiert — exakt dasselbe Trennungsprinzip wie figureRef/artRef im echten Fighter (CombatPage.tsx). */
+.actor-idle {
+  transform-origin: 50% 100%;
+}
+.actor.player .actor-idle { animation: idle-breathe-player 3.1s ease-in-out infinite; }
+.actor.monster .actor-idle { animation: idle-breathe-monster 3.6s ease-in-out infinite; animation-delay: -1.5s; }
+@keyframes idle-breathe-player {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-5px) rotate(-0.6deg); }
+}
+@keyframes idle-breathe-monster {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-4px) rotate(0.7deg); }
+}
+.stage.mode-a .actor-idle,
+.stage.paused-idle .actor-idle { animation: none; }
+
+/* Ebene 2 (entspricht figureRef: Windup/Dash/Return) — reiner WAAPI-Ziel-Layer, keine CSS-Animation hier.
+   transform-origin MUSS auf den Fußpunkt (50% 100%) zeigen, sonst pivotiert rotate()/scale() um die
+   Boxmitte und injiziert eine Origin-Verschiebung, die den expliziten translateX(dashDx) verfälscht
+   (realer Bug hier: ohne dies kam beim Bullen nur ~60% der berechneten Dash-Distanz sichtbar an). */
+.actor-lunge {
+  position: relative;
+  transform-origin: 50% 100%;
+}
+
+/* Kontaktschatten — Kind von .actor-lunge, wandert dadurch AUTOMATISCH mit dem Dash mit (Modus C). */
+.shadow {
+  position: absolute; left: 50%; bottom: -4px; width: 70%; height: 18px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.3) 50%, transparent 74%);
+  border-radius: 50%; z-index: 1; opacity: 0;
+}
+.stage.depth .shadow { opacity: 1; }
+
+/* Ebene 3 (entspricht artRef: Recoil/Knockback) — eigener WAAPI-Ziel-Layer, NUR translateX. */
+.actor-art { position: relative; z-index: 2; transform-origin: 50% 100%; }
+
+/* Ebene 4 (entspricht punchRef: Scale-Punch/Dying-Dissolve/Sieger-Hop) — eigener WAAPI-Ziel-Layer,
+   getrennt von .actor-art, damit Recoil-translateX und Punch-scale sich nicht auf demselben Element
+   überschreiben (dasselbe Kollisions-Problem, das artRef/punchRef im echten Fighter lösen). */
+.actor-punch { position: relative; transform-origin: 50% 100%; }
+.actor-punch img {
+  display: block; position: relative;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5));
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Ebene 5: reiner Opacity-Treffer-Flash, transform-frei (entspricht hit-flash-overlay). */
+.hit-flash {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none; mix-blend-mode: screen; z-index: 3;
+  background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,70,50,0.55) 55%, transparent 78%);
+}
+.hit-flash.crit {
+  background: radial-gradient(circle, rgba(255,244,200,0.98) 0%, rgba(216,192,106,0.85) 55%, transparent 78%);
+}
+
+/* ── Projektil (Ranged/Magie) ──────────────────────────────────────────── */
+.projectile {
+  position: absolute; top: 0; left: 0; width: 16px; height: 16px; z-index: 4;
+  border-radius: 50%; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle, #fff 0%, #9ad0ff 40%, rgba(90,160,255,0) 75%);
+  box-shadow: 0 0 14px 4px rgba(120,180,255,0.75);
+}
+.projectile.magic {
+  background: radial-gradient(circle, #fff 0%, #c9a6ff 40%, rgba(170,110,255,0) 75%);
+  box-shadow: 0 0 16px 5px rgba(170,110,255,0.8);
+}
+
+/* ── Spark-Partikel beim Clash ──────────────────────────────────────────── */
+.spark {
+  position: absolute; width: 5px; height: 5px; border-radius: 50%; z-index: 5;
+  background: radial-gradient(circle, #fff 0%, #ffd98a 55%, rgba(255,180,60,0) 80%);
+  pointer-events: none; opacity: 0;
+}
+
+/* ── Nameplate ──────────────────────────────────────────────────────────── */
+.plate {
+  position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%);
+  width: 172px; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  pointer-events: none;
+}
+.plate .name { font-size: 13px; color: #f5ecd6; text-shadow: 0 1px 2px #000, 0 0 5px rgba(0,0,0,0.9); white-space: nowrap; }
+.bar { width: 100%; height: 10px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+.bar.hp { background: var(--hp-bg); }
+.bar.hp > i { position: absolute; inset: 0; background: var(--hp-fill); transform-origin: left; display: block; transition: transform 0.25s ease-out; }
+.bar.hp > span {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: #f5ecd6; text-shadow: 0 1px 1px #000;
+}
+.bar.timer { background: #101820; height: 6px; margin-top: 1px; }
+.bar.timer > i { position: absolute; inset: 0; background: var(--timer-fill); transform-origin: left; display: block; }
+.timer-label { font-size: 9px; color: #93a4b3; font-family: Consolas, monospace; }
+
+/* ── Floater (Dmg-Zahlen) — Namenskonvention 1:1 an .dmg-number aus combat.css angelehnt ───────────
+   .floaters selbst ist EIN Vollflächen-Layer über der ganzen Bühne (inset:0) — jedes Kind bekommt
+   seine Position per JS als stage-relative px (s. anchorPoint() in script.js). Ein zusätzlicher
+   Offset HIER (z.B. left:50%) würde sich mit den bereits stage-relativen Kind-Koordinaten addieren
+   und die Zahlen weit neben die Figur schieben (realer Bug hier: Floater landeten ~50% Stage-Breite
+   zu weit rechts). */
+.floaters { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+.dmg-number {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, 0); white-space: nowrap;
+  font-family: Georgia, serif; font-weight: 700; font-size: 20px; color: #f0e4c8;
+  text-shadow: 0 2px 3px rgba(0,0,0,0.8); opacity: 0; pointer-events: none;
+}
+.dmg-number.crit { font-size: 27px; color: var(--gold); text-shadow: 0 0 8px rgba(216,192,106,0.85), 0 2px 3px #000; }
+.dmg-number.miss { color: #9aa6b0; font-style: italic; font-size: 16px; }
+
+/* ── Freeze-Leiste unter der Bühne ─────────────────────────────────────── */
+.freeze-row {
+  display: flex; align-items: center; gap: 14px; margin-top: 10px; padding: 10px 12px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 4px; flex-wrap: wrap;
+}
+.freeze-col { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.freeze-col .col-label { font-size: 10.5px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 2px; }
+.freeze-state {
+  margin-left: auto; font-size: 12px; color: var(--gold); font-family: Consolas, monospace;
+}
+
+/* ── Befunde ────────────────────────────────────────────────────────────── */
+.findings { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.findings .box { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; }
+.findings h2 { font-size: 14px; color: var(--gold); margin: 0 0 8px; }
+.findings ul { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.6; color: #c3ccd3; }
+.findings li b { color: #e8d9ad; }
+.findings li + li { margin-top: 5px; }
+.tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+.tag.ok { background: #24421f; color: #9fd88a; }
+.tag.risk { background: #4a2320; color: #e8a08a; }
+.tag.info { background: #2a3a4a; color: #9ac0e8; }
+
+@media (prefers-color-scheme: light) {
+  html, body { background: #0b0c0e; }
+}

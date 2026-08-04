@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grim Reach — Major Page Layout Studies</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- codex:2026-08-01T17:28:00+02:00 — Functional comparison shell for four major-page redesigns. -->
+  <main class="workbench">
+    <header class="workbench__header">
+      <div>
+        <p class="eyebrow">Grim Reach · UI layout study</p>
+        <h1 id="page-title">Companions</h1>
+        <p id="page-summary">Five production-feasible structures using the current Ashen Iron vocabulary.</p>
+      </div>
+      <div class="viewport-note"><strong>Responsive targets</strong><span>1920×1080 · 3440×1440</span></div>
+    </header>
+
+    <nav class="surface-tabs" aria-label="Page to preview">
+      <button class="is-active" data-surface="companions">Companions</button>
+      <button data-surface="shop">Shop</button>
+      <button data-surface="bank">Bank</button>
+      <button data-surface="quests">Quests</button>
+    </nav>
+
+    <nav class="concept-tabs" aria-label="Layout concept">
+      <button class="is-active" data-concept="1"><b>01</b><span>Command Split</span></button>
+      <button data-concept="2"><b>02</b><span>Feature Deck</span></button>
+      <button data-concept="3"><b>03</b><span>Dense Ledger</span></button>
+      <button data-concept="4"><b>04</b><span>Board + Drawer</span></button>
+      <button data-concept="5"><b>05</b><span>Chronicle Rail</span></button>
+    </nav>
+
+    <section class="prototype-frame">
+      <div class="prototype-frame__topline">
+        <span id="concept-kicker">Companions · Concept 01</span>
+        <strong id="concept-name">Command Roster</strong>
+        <span class="prototype-state"><i></i> Functional HTML</span>
+      </div>
+      <div id="prototype" class="prototype layout-1" aria-live="polite"></div>
+    </section>
+
+    <aside class="decision-notes">
+      <div><span>Intent</span><strong id="intent"></strong></div>
+      <div><span>Best at</span><strong id="best-at"></strong></div>
+      <div><span>Trade-off</span><strong id="tradeoff"></strong></div>
+    </aside>
+  </main>
+  <script src="preview.js"></script>
+</body>
+</html>

@@ -1,0 +1,1079 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHOP PAGE — Task #269 Buy/Sell-Tab-Rework
+   Eigene, in ShopPage.tsx direkt importierte Stylesheet-Datei (Kollisions-
+   Schutz: andere Agenten arbeiten parallel in pages.css/components.css).
+   Namensraum "shopv2-*" durchgängig — bewusst NICHT die alten "shop-*"-Klassen
+   aus pages.css wiederverwendet, damit unabhängig von der CSS-Ladereihenfolge
+   nichts mit den (jetzt toten) Altregeln dort kollidiert.
+   Citadel-Design-System: 9-slice Holzrahmen (wooden_frame_with_corners.png),
+   bg_black.png-Kacheltextur, --font-head/Cinzel, gedämpftes Gold. Referenz-
+   Muster: combat.css .battle-log-tab(s), design-system.css .ds-button/.ds-frame.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Seiten-Grundgerüst ─────────────────────────────────────────────────── */
+.shopv2-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  min-height: 0;
+}
+
+/* ─── Kopfzeile: Gold-Saldo + Haupt-Tabs (Buy/Sell) ──────────────────────── */
+.shopv2-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.shopv2-balance {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 22px 8px 14px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.shopv2-balance-icon { display: flex; align-items: center; }
+
+.shopv2-balance-amount {
+  font-family: var(--font-head);
+  font-size: 23px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  /* Welle OO: tickt jetzt beim Kauf/Verkauf hoch/runter (useAnimatedNumber) — tabellarische
+     Ziffern verhindern Breiten-Zittern der Zahl während des Tweens (Chef-Vorgabe). */
+  font-variant-numeric: tabular-nums;
+}
+
+.shopv2-balance-label {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 2px;
+}
+
+.shopv2-maintabs-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.shopv2-maintabs {
+  display: flex;
+  gap: 10px;
+}
+
+/* Chef-GO Hotkeys: dezenter Hinweis auf die Pfeiltasten/Q-E-Tab-Umschaltung — unauffällig
+   (kleine gedämpfte Schrift), aber per Hover-Tooltip (title=) auffindbar für Power-User. */
+.shopv2-tab-hotkey-hint {
+  font-family: var(--font-head);
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  opacity: 0.55;
+  cursor: default;
+  user-select: none;
+}
+
+/* Große Haupt-Navigation (Buy/Sell) — bewusst prominenter als die Kategorie-
+   Chips darunter: eigene 9-slice-Rahmen-Optik nach dem battle-log-tab-Muster
+   (combat.css), aber größer/breiter, weil sie den GANZEN Seiteninhalt umschaltet. */
+.shopv2-maintab {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 170px;
+  min-height: 48px;
+  padding: 8px 28px;
+  border: none;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+}
+
+.shopv2-maintab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 9px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 9px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shopv2-maintab:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+}
+
+.shopv2-maintab.active {
+  background:
+    linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: 0 0 12px rgba(216, 184, 112, 0.34), inset 0 0 10px rgba(216, 184, 112, 0.12);
+}
+
+.shopv2-tab-icon { object-fit: contain; flex-shrink: 0; }
+.shopv2-price-icon { object-fit: contain; flex-shrink: 0; vertical-align: -2px; }
+
+/* ─── Haupt-Container: der GANZE Seitenrest gehört dem aktiven Tab ──────── */
+.shopv2-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  padding: 18px 22px 20px;
+  gap: 14px;
+}
+
+/* ─── Kategorie-Chip-Leiste (Buy-Tab) ────────────────────────────────────── */
+.shopv2-chiprow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+}
+
+.shopv2-chip {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 5px 14px 5px 9px;
+  border: none;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+}
+
+.shopv2-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 6px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shopv2-chip:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+}
+
+.shopv2-chip.active {
+  background:
+    linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.30), inset 0 0 8px rgba(216, 184, 112, 0.10);
+}
+
+.shopv2-chip-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.shopv2-chip-icon-img { width: 100%; height: 100%; object-fit: contain; }
+.shopv2-chip-icon-emoji { font-size: 18px; line-height: 1; }
+
+.shopv2-chip-count {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 1px 7px;
+}
+
+/* ─── Buy-Tab: scrollbarer Sektionsbereich ───────────────────────────────── */
+.shopv2-buy-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-right: 6px;
+}
+
+.shopv2-section { display: flex; flex-direction: column; gap: 12px; }
+
+.shopv2-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shopv2-section-orn { color: var(--ds-gold-dim, #a07840); font-size: 13px; flex-shrink: 0; }
+
+.shopv2-section-title {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--ds-gold-bright, #f0dca0);
+  white-space: nowrap;
+}
+
+.shopv2-section-count {
+  font-family: var(--font-head);
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.shopv2-section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--ds-border-bright, rgba(80, 58, 30, 0.9)), transparent);
+}
+
+/* ─── Upgrades-Sektion (eigene Kategorie-Kachel, keine Ware) ─────────────── */
+.shopv2-upgrade-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 12px;
+}
+
+.shopv2-upgrade-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/bg_black.webp") repeat;
+  border-radius: 4px;
+}
+
+.shopv2-upgrade-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.shopv2-upgrade-icon { object-fit: contain; flex-shrink: 0; }
+
+.shopv2-upgrade-btn { white-space: nowrap; }
+
+/* ─── Buy-Warengrid ───────────────────────────────────────────────────────── */
+.shopv2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.shopv2-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  /* Chef 2026-07-10 (Screenshot): „nicht Citadel-würdig, da fehlt der Rand" → echter
+     Holz-9-Slice-Rahmen statt 1px-Linie; Rarity wandert auf einen Innen-Ring (s.u.). */
+  border-style: solid;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-radius: 0;
+  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/bg_black.webp") repeat;
+  transition: box-shadow 0.15s, filter 0.15s;
+}
+
+.shopv2-card:hover { filter: brightness(1.06); }
+
+/* Kein Rarity-Glow auf Equipment-Art (Studio-Regel) — Seltenheit als feiner INNEN-Ring
+   (der Rahmen gehört jetzt dem Holz-border-image; zentrale --rar-*-Palette, kein Blur). */
+.shopv2-card.rarity-magic     { box-shadow: inset 0 0 0 2px var(--rar-magic); }
+.shopv2-card.rarity-rare      { box-shadow: inset 0 0 0 2px var(--rar-rare); }
+.shopv2-card.rarity-superRare { box-shadow: inset 0 0 0 2px var(--rar-superRare); }
+.shopv2-card.rarity-epic      { box-shadow: inset 0 0 0 2px var(--rar-epic); }
+.shopv2-card.rarity-legendary { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
+.shopv2-card.rarity-godly     { box-shadow: inset 0 0 0 2px var(--rar-godly); }
+
+.shopv2-card-image-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.shopv2-card-image-area .shopv2-cell {
+  width: 84px;
+  height: 84px;
+  background: transparent;
+  border: none;
+}
+.shopv2-card-image-area .shopv2-cell .item-cell-img { max-width: 72px; max-height: 72px; }
+.shopv2-card-image-area .shopv2-cell .item-cell-emoji { font-size: 46px; }
+
+.shopv2-card-name {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.25;
+  min-height: 2.5em;
+  display: flex;
+  align-items: center;
+}
+
+/* Task #314 B2: BuyCard nutzt jetzt das gemeinsame QuantityPicker-Widget (Presets sitzen in
+   dessen eigener `.qty-picker-presets`-Flex-Reihe, s. styles/quantity-picker.css) — hier nur noch
+   volle Breite für den Widget-Root innerhalb der zentrierten `.shopv2-card`-Spalte. Die frühere
+   2×2-CSS-Grid-Regel + der `.shopv2-buyqty-btn`-Rahmen-Fix leben jetzt generisch in
+   `.qty-picker-btn` (quantity-picker.css), da Verkauf/Bank denselben Klein-Button-Zuschnitt teilen. */
+.shopv2-card-buys {
+  width: 100%;
+}
+
+.shopv2-buyqty-n { font-size: 12px; opacity: 0.8; }
+.shopv2-buyqty-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+}
+
+/* ─── Sell-Tab: Inventar-Grid (voller Container) + Detail-/Rückkauf-Spalte ── */
+.shopv2-sell-layout {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 18px;
+}
+
+.shopv2-sell-main {
+  flex: 1 1 65%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shopv2-hint { font-size: 14px; flex-shrink: 0; }
+.shopv2-empty { padding: 20px 4px; }
+
+.shopv2-sell-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.shopv2-sell-cell { position: relative; cursor: pointer; }
+.shopv2-sell-cell.selected {
+  box-shadow: 0 0 0 2px var(--gold) inset;
+  border-radius: 4px;
+}
+
+.shopv2-sell-aside {
+  flex: 0 0 clamp(300px, 23vw, 400px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+}
+
+.shopv2-detail-box {
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/bg_black.webp") repeat;
+  border-radius: 4px;
+  padding: 14px;
+}
+
+.shopv2-sell-detail-panel { flex-shrink: 0; }
+
+.shopv2-sell-detail { display: flex; flex-direction: column; gap: 12px; }
+
+.shopv2-sell-detail-head { display: flex; align-items: center; gap: 12px; }
+
+.shopv2-sell-detail-icon { width: 60px; height: 60px; flex-shrink: 0; }
+
+.shopv2-sell-detail-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.shopv2-sell-detail-name {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.shopv2-sell-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+/* Task #314 B2: trägt jetzt das gemeinsame QuantityPicker-Widget (eigenes internes Layout, s.
+   quantity-picker.css) statt der früheren eigenen 2-Spalten-Buttons + separatem "Alles"-Button. */
+.shopv2-sell-detail-actions {
+  width: 100%;
+}
+
+.shopv2-buyback-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.shopv2-buyback-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.shopv2-buyback-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.shopv2-buyback-icon { width: 48px; height: 48px; flex-shrink: 0; }
+
+.shopv2-buyback-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shopv2-buyback-name {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shopv2-buyback-price {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+/* ─── Meisterring-Sicherheitsnetz (Welle SS) — reuses the Buy-Back row look, plain flex list
+   (kein flex:1/overflow wie .shopv2-buyback-list, das ist der aside-Panel-Variante mit fester
+   Höhe vorbehalten; hier lebt die Sektion im normal fließenden .shopv2-buy-scroll). ────────── */
+.shopv2-masterring-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ─── Schmalere Breiten (bis 1280×720) ───────────────────────────────────── */
+@media (max-width: 1440px) {
+  .shopv2-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .shopv2-sell-aside { flex-basis: clamp(260px, 26vw, 340px); }
+}
+
+@media (max-width: 1300px) {
+  .shopv2-sell-layout { flex-direction: column; }
+  .shopv2-sell-aside { flex: 0 0 auto; flex-direction: row; }
+  .shopv2-sell-aside .shopv2-detail-box { flex: 1; min-width: 0; }
+  .shopv2-sell-main { flex: 1 1 auto; min-height: 200px; }
+}
+
+/* codex:2026-08-01T19:42:00+02:00 — Freigegebenes Shop-Konzept 01 „Mux' Counter“.
+   Der drei-Zonen-Vertrag bleibt bei 1920×1080 und Ultrawide stabil: Kategorien links,
+   Warenraster mittig, Kaufentscheidung rechts. Nur der mittlere Warenbestand scrollt. */
+#root .shopv2-body {
+  padding: 12px;
+  gap: 0;
+  background-color: #0a0d0f;
+  background-image:
+    linear-gradient(rgba(6, 9, 11, 0.76), rgba(6, 9, 11, 0.76)),
+    var(--gw-texture-basalt, url("../assets/ui/gravewood/v3/textures/texture-basalt.webp")) !important;
+  background-size: auto, 384px 384px !important;
+}
+
+/* codex:2026-08-01T20:18:00+02:00 — Geschlossene Viewport-Höhenkette für den Shop.
+   Der globale `.content-body` darf auf dieser Seite nicht selbst scrollen; Page-Transition und
+   Shopwurzel erhalten stattdessen die restliche Fensterhöhe. Im Kaufen-Tab scrollt ausschließlich
+   `.shopv2-buy-scroll`, im Verkaufen-Tab das vorhandene Inventarraster. */
+#root .content-body:has(.shopv2-page) {
+  overflow: hidden;
+}
+
+#root .page-transition:has(> .shopv2-page) {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#root .shopv2-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#root .shopv2-page > :is(.npc-greeting, .shopv2-topbar) {
+  flex-shrink: 0;
+}
+
+#root .shopv2-page > .shopv2-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#root .shopv2-buy-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: clamp(190px, 14vw, 250px) minmax(440px, 1fr) clamp(310px, 23vw, 390px);
+  gap: 12px;
+  overflow: hidden;
+}
+
+#root .shopv2-category-rail,
+#root .shopv2-buy-counter {
+  min-width: 0;
+  min-height: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: var(--gw-v3-frame-panel, url("../assets/ui/gravewood/v3/frames/panel-frame.webp")) 48 / 8px;
+  background-color: #0d1114;
+  background-image:
+    linear-gradient(rgba(9, 12, 14, 0.7), rgba(9, 12, 14, 0.7)),
+    var(--gw-texture-cold-slate, url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+  background-repeat: repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .shopv2-category-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#root .shopv2-category-rail > .shopv2-section-head,
+#root .shopv2-counter > .shopv2-section-head {
+  min-height: 34px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(171, 128, 65, 0.38);
+}
+
+#root .shopv2-category-rail .shopv2-section-title,
+#root .shopv2-counter .shopv2-section-title {
+  font-size: clamp(14px, 0.9vw, 17px);
+}
+
+#root .shopv2-chiprow {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+}
+
+#root .shopv2-chip {
+  width: 100%;
+  min-height: 48px;
+  justify-content: flex-start;
+  padding: 7px 10px;
+  text-align: left;
+  background-color: #111619;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.42), rgba(5, 8, 10, 0.42)),
+    var(--gw-texture-cold-slate, url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+}
+
+#root .shopv2-chip::before {
+  border-width: 6px;
+  border-image-source: var(--gw-v3-frame-button, url("../assets/ui/gravewood/v3/frames/button-frame.webp"));
+  border-image-slice: 48;
+  border-image-width: 6px;
+}
+
+#root .shopv2-chip:hover {
+  transform: none;
+  filter: brightness(1.12);
+  background-image:
+    linear-gradient(rgba(86, 60, 30, 0.18), rgba(20, 23, 23, 0.34)),
+    var(--gw-texture-cold-slate, url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+}
+
+#root .shopv2-chip.active {
+  color: var(--gold);
+  background-image:
+    linear-gradient(rgba(117, 75, 25, 0.28), rgba(22, 22, 20, 0.4)),
+    var(--gw-texture-cold-slate, url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  box-shadow: inset 3px 0 0 #c8a15a, inset 0 0 14px rgba(188, 135, 62, 0.14);
+}
+
+#root .shopv2-chip-label {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+}
+
+#root .shopv2-buy-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 12px 14px 18px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: var(--gw-v3-frame-panel, url("../assets/ui/gravewood/v3/frames/panel-frame.webp")) 48 / 8px;
+  background-color: #0d1114;
+  background-image:
+    linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)),
+    var(--gw-texture-basalt, url("../assets/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 320px 320px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+/* codex:2026-08-02T10:52:55+02:00 — Shop-Warenkarten als kompakte Ironwood-Auslage.
+   Der echte Holz-/Eisen-9-Slice bleibt in beiden Zielauflösungen sichtbar; die warme,
+   dunkle Gravewood-Fläche ersetzt die graue Schieferplatte. Das feste Zeilenraster hält
+   Bild, Name und Preis unabhängig von Übersetzung und Spaltenbreite an derselben Position. */
+#root .shopv2-grid {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(158px, 10.5vw, 196px), 1fr));
+  gap: clamp(10px, 0.72vw, 15px);
+  align-items: stretch;
+}
+
+#root .shopv2-card {
+  min-width: 0;
+  min-height: clamp(194px, 14.2vh, 226px);
+  display: grid;
+  grid-template-rows: minmax(104px, 1fr) minmax(2.45em, auto) 24px;
+  align-items: stretch;
+  gap: 5px;
+  padding: 11px 11px 10px;
+  cursor: pointer;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 10px;
+  background-color: #17110c;
+  background-image:
+    linear-gradient(180deg, rgba(6, 7, 7, 0.18), rgba(10, 6, 3, 0.58)),
+    var(--gw-texture-gravewood, url("../assets/ui/gravewood/textures/texture-gravewood.webp"));
+  background-size: auto, 256px 256px;
+  background-repeat: repeat;
+  background-origin: padding-box;
+  background-clip: padding-box;
+  outline: none;
+  overflow: hidden;
+  transition: filter 140ms ease, box-shadow 140ms ease;
+}
+
+#root .shopv2-card:hover,
+#root .shopv2-card:focus-visible {
+  filter: brightness(1.1) saturate(1.04);
+  box-shadow: inset 0 0 0 1px rgba(220, 185, 112, 0.48), 0 5px 14px rgba(0, 0, 0, 0.54);
+}
+
+#root .shopv2-card.selected {
+  filter: brightness(1.08);
+  box-shadow: inset 0 0 0 2px #cda85d, inset 0 0 18px rgba(205, 151, 72, 0.15), 0 4px 16px rgba(0, 0, 0, 0.58);
+}
+
+#root .shopv2-card.unavailable:not(.selected) {
+  filter: saturate(0.62) brightness(0.72);
+}
+
+#root .shopv2-card-image-area {
+  min-width: 0;
+  min-height: 104px;
+  padding: 4px;
+  border: 1px solid rgba(144, 105, 62, 0.46);
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(137, 107, 68, 0.2), transparent 62%),
+    linear-gradient(rgba(5, 7, 7, 0.36), rgba(5, 4, 3, 0.64));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.68), inset 0 0 18px rgba(0, 0, 0, 0.38);
+}
+
+#root .shopv2-card-image-area .shopv2-cell {
+  width: 100%;
+  height: 100%;
+  min-height: 96px;
+}
+
+#root .shopv2-card-image-area .shopv2-cell .item-cell-img {
+  width: min(82%, 112px);
+  height: min(82%, 112px);
+  max-width: 112px;
+  max-height: 112px;
+  object-fit: contain;
+}
+
+#root .shopv2-card-name {
+  min-width: 0;
+  min-height: 2.45em;
+  justify-content: center;
+  overflow-wrap: anywhere;
+  font-size: clamp(14px, 0.84vw, 17px);
+  line-height: 1.18;
+  text-wrap: balance;
+  text-shadow: 0 1px 2px #000;
+}
+
+#root .shopv2-card-unit-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--gold);
+  font-family: var(--font-number, var(--font-head));
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  min-height: 24px;
+  justify-content: center;
+  font-size: clamp(14px, 0.78vw, 16px);
+  text-shadow: 0 1px 2px #000;
+}
+
+/* codex:2026-08-01T19:42:00+02:00 — Rechter Kauf-Tresen: konstante Geometrie, deutlich lesbare
+   Auswahl, Kosten und Mengen. Auch ein volles Inventar bleibt erklärbar statt nur „disabled“. */
+#root .shopv2-buy-counter {
+  overflow-y: auto;
+  padding: 11px;
+}
+
+#root .shopv2-counter {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#root .shopv2-counter-item {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: var(--gw-v3-frame-card, url("../assets/ui/gravewood/v3/frames/card-frame.webp")) 48 / 6px;
+  background-color: #0b0f11;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
+    var(--gw-texture-cold-slate, url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+}
+
+#root .shopv2-counter-cell {
+  width: 112px;
+  height: 112px;
+  background: radial-gradient(circle, rgba(76, 83, 81, 0.36), rgba(6, 8, 9, 0.72));
+}
+
+#root .shopv2-counter-cell .item-cell-img {
+  max-width: 98px;
+  max-height: 98px;
+}
+
+#root .shopv2-counter-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+}
+
+#root .shopv2-counter-name {
+  font-family: var(--font-head);
+  font-size: clamp(17px, 1.15vw, 23px);
+  line-height: 1.15;
+}
+
+#root .shopv2-counter-stock {
+  padding: 2px 7px;
+  border: 1px solid rgba(115, 157, 125, 0.45);
+  color: #82b88d;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+#root .shopv2-counter-copy p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-family: Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+#root .shopv2-counter-ledger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(171, 128, 65, 0.38);
+  background: rgba(3, 5, 6, 0.5);
+  color: var(--muted);
+}
+
+#root .shopv2-counter-ledger strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gold);
+  font-family: var(--font-number, var(--font-head));
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+
+#root .shopv2-counter-qty-label {
+  color: var(--ds-gold-bright, #f0dca0);
+  font-family: var(--font-head);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+#root .shopv2-counter-quantity {
+  width: 100%;
+}
+
+#root .shopv2-counter-quantity .qty-picker-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+#root .shopv2-counter-quantity .qty-picker-btn {
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+
+#root .shopv2-counter-quantity .qty-picker-custom {
+  margin-top: 6px;
+}
+
+#root .shopv2-counter-reason {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 3px solid #a94c45;
+  background: rgba(82, 24, 20, 0.24);
+  color: #dc8b82;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+#root .shopv2-counter-empty {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+}
+
+#root .shopv2-category-rail .shopv2-masterring-list {
+  display: grid;
+  gap: 6px;
+}
+
+#root .shopv2-category-rail .shopv2-buyback-row {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  padding: 5px;
+}
+
+#root .shopv2-category-rail .shopv2-buyback-row > .ds-button {
+  grid-column: 1 / -1;
+}
+
+/* codex:2026-08-01T19:42:00+02:00 — Händlerkopf und Buy/Sell-Schalter als kompakte Thekenkante,
+   damit die drei Arbeitszonen mehr Höhe erhalten, ohne die NPC-Persönlichkeit zu verlieren. */
+#root .shopv2-page > .npc-greeting {
+  min-height: 72px;
+  margin-bottom: 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(133, 102, 63, 0.34);
+  background:
+    linear-gradient(90deg, rgba(12, 15, 16, 0.96), rgba(31, 24, 17, 0.84)),
+    var(--gw-texture-basalt, url("../assets/ui/gravewood/v3/textures/texture-basalt.webp"));
+}
+
+#root .shopv2-page > .npc-greeting .npc-greeting-head {
+  width: 68px;
+  height: 68px;
+  border-width: 7px;
+}
+
+#root .shopv2-page > .npc-greeting .npc-bubble {
+  max-width: none;
+  flex: 1;
+  min-height: 56px;
+}
+
+/* codex:2026-08-01T19:42:00+02:00 — Sinnvolle Rückfallstufen. Bei 1280 wird die Kategorienavigation
+   horizontal; der Kauf-Tresen bleibt sichtbar. Erst auf sehr schmalen Fenstern stapeln die Zonen. */
+@media (max-width: 1500px) {
+  #root .shopv2-buy-layout {
+    grid-template-columns: 184px minmax(390px, 1fr) 300px;
+    gap: 8px;
+  }
+
+  #root .shopv2-counter-item {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+
+  #root .shopv2-counter-cell {
+    width: 88px;
+    height: 88px;
+  }
+
+  /* codex:2026-08-02T11:24:00+02:00 — Der zentrale ItemCell-Bildpfad skaliert im verdichteten Tresen mit seiner Spalte. */
+  #root .shopv2-counter-cell .item-cell-img {
+    max-width: 78px;
+    max-height: 78px;
+  }
+}
+
+@media (max-width: 1180px) {
+  #root .shopv2-buy-layout {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  #root .shopv2-category-rail {
+    grid-column: 1 / -1;
+    overflow: visible;
+  }
+
+  #root .shopv2-category-rail > .shopv2-section-head,
+  #root .shopv2-category-rail > .shopv2-section {
+    display: none;
+  }
+
+  #root .shopv2-category-rail .shopv2-chiprow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #root .shopv2-chip {
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 820px) {
+  #root .shopv2-buy-layout {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  #root .shopv2-category-rail .shopv2-chiprow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #root .shopv2-buy-scroll,
+  #root .shopv2-buy-counter {
+    flex: 0 0 auto;
+    min-height: 460px;
+    overflow: visible;
+  }
+}

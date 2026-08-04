@@ -1,0 +1,418 @@
+/*
+ * Frontline Candidate — Chef-Auswahl 10 aus den Fight-Card-Studien vom 2026-08-03.
+ * Ausschließlich visuelle Überschreibung der bestehenden MonsterCard-Datenstruktur.
+ */
+
+/* codex:2026-08-03T14:52:00+02:00 — Kartenraster und gemeinsamer Ironwood-/Basalt-Rahmenvertrag. */
+#root .monster-grid {
+  grid-template-columns: repeat(auto-fill, minmax(max(270px, calc((100% - 60px) / 4)), 1fr));
+  gap: clamp(14px, 1.15vw, 20px);
+  align-items: start;
+}
+
+#root .monster-card {
+  --fc-frame: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  --fc-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  --fc-rule: rgba(181, 131, 67, 0.38);
+  --fc-rule-soft: rgba(150, 159, 163, 0.2);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: auto;
+  aspect-ratio: auto;
+  overflow: hidden;
+  container-type: inline-size;
+  border: 12px solid transparent;
+  border-image: var(--fc-frame) 28 / 12px / 0 stretch;
+  border-radius: 0;
+  background-color: #0c0f10;
+  background-image:
+    linear-gradient(rgba(7, 9, 10, 0.74), rgba(4, 5, 6, 0.9)),
+    var(--fc-surface);
+  background-position: center, 0 0;
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.54),
+    inset 0 0 26px rgba(0, 0, 0, 0.54);
+}
+
+#root .monster-card::before {
+  content: none;
+  display: none;
+}
+
+/* codex:2026-08-03T14:52:00+02:00 — Ruhiges Artwork-Fenster mit unveränderten echten Zonen- und Monsterassets. */
+#root .monster-card-artwork {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: auto;
+  min-height: clamp(230px, 78cqw, 320px);
+  aspect-ratio: 16 / 11;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-bottom: 1px solid var(--fc-rule);
+  background-color: #100c08;
+}
+
+#root .monster-card.has-bg .monster-card-artwork {
+  background-size: cover;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+}
+
+#root .monster-card-artwork::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 5, 6, 0.02) 34%,
+    rgba(4, 5, 6, 0.08) 58%,
+    rgba(4, 5, 6, 0.72) 100%
+  );
+}
+
+#root .monster-card-artwork > img {
+  z-index: 1;
+  width: 100%;
+  height: 91%;
+  align-self: flex-end;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 8px 13px rgba(0, 0, 0, 0.72));
+}
+
+#root .monster-card-tl-stack,
+#root .monster-card-bl-stack,
+#root .monster-card-level-badge,
+#root .elite-card-chip,
+#root .elite-card-countdown {
+  z-index: 3;
+}
+
+#root .monster-card-xp-badge,
+#root .monster-card-level-badge,
+#root .mc-trait-badge {
+  border-image-source: var(--fc-frame);
+  background-color: rgba(7, 9, 10, 0.9);
+  background-image:
+    linear-gradient(rgba(8, 10, 11, 0.22), rgba(4, 5, 6, 0.56)),
+    var(--fc-surface);
+  background-position: center, 0 0;
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
+}
+
+/* codex:2026-08-03T14:52:00+02:00 — Frontline-Identitätsband und festes zweispaltiges Stat-Register. */
+#root .monster-card-footer {
+  position: relative;
+  inset: auto;
+  z-index: 2;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: clamp(440px, 145cqw, 560px);
+  gap: clamp(5px, 1.7cqw, 8px);
+  padding: clamp(10px, 3.2cqw, 15px) clamp(10px, 3.5cqw, 17px) clamp(12px, 4cqw, 18px);
+  border: 0;
+  border-top: 1px solid rgba(214, 176, 105, 0.22);
+  background-color: #0c0f10;
+  background-image:
+    linear-gradient(rgba(8, 10, 11, 0.72), rgba(3, 4, 5, 0.9)),
+    var(--fc-surface);
+  background-position: center, 0 0;
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.38);
+}
+
+#root .monster-card-name {
+  width: 100%;
+  min-width: 0;
+  min-height: 1.25em;
+  margin: 0;
+  padding: 0 4px clamp(7px, 2.4cqw, 11px);
+  flex: 0 0 auto;
+  overflow: visible;
+  color: #d3dde1;
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--fc-rule), transparent) 1;
+  font-family: var(--font-head);
+  font-size: clamp(20px, 7.2cqw, 30px);
+  line-height: 1.08;
+  letter-spacing: 0.025em;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  text-overflow: clip;
+}
+
+#root .monster-card-defense-badge {
+  align-self: center;
+  min-height: 22px;
+  margin: -2px 0 2px;
+  padding: 3px clamp(8px, 3cqw, 13px);
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: rgba(5, 7, 8, 0.64);
+  font-family: var(--font-info);
+  font-size: clamp(9px, 2.8cqw, 12px);
+  line-height: 1.1;
+  letter-spacing: 0.075em;
+}
+
+#root .monster-card-stats.stat-line {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(clamp(40px, 11.5cqw, 52px), auto);
+  gap: 0 clamp(8px, 3cqw, 16px);
+  min-width: 0;
+  margin: 1px 0 3px;
+  padding: 0;
+}
+
+#root .monster-card-stats.stat-line .stat-line-item {
+  display: grid;
+  grid-template-columns: clamp(16px, 4.8cqw, 22px) minmax(0, 1fr) auto;
+  grid-template-rows: 1fr;
+  align-items: center;
+  justify-content: stretch;
+  gap: clamp(5px, 1.8cqw, 9px);
+  min-width: 0;
+  min-height: clamp(40px, 11.5cqw, 52px);
+  padding: clamp(5px, 1.8cqw, 8px) clamp(2px, 0.8cqw, 5px);
+  border: 0;
+  border-bottom: 1px solid var(--fc-rule-soft);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#root .monster-card-stats.stat-line .stat-line-item-icon {
+  display: grid;
+  grid-row: auto;
+  place-items: center;
+  width: clamp(16px, 4.8cqw, 22px);
+  min-width: 0;
+}
+
+#root .monster-card-stats.stat-line .stat-line-item .ui-icon {
+  width: clamp(15px, 4.5cqw, 21px);
+  height: clamp(15px, 4.5cqw, 21px);
+}
+
+#root .monster-card-stats.stat-line .stat-line-item-label {
+  display: block;
+  min-width: 0;
+  width: auto;
+  color: #c7b889;
+  font-family: var(--font-info);
+  font-size: clamp(8px, 2.55cqw, 12px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: 0.025em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+#root .monster-card-stats.stat-line .stat-line-item-value {
+  display: block;
+  width: auto;
+  min-width: 2.4ch;
+  overflow: visible;
+  color: #f0e4bd;
+  font-family: var(--font-info);
+  font-size: clamp(13px, 4.4cqw, 19px);
+  font-weight: 700;
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: clip;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* codex:2026-08-03T14:52:00+02:00 — Prognose, Anforderungen und Loot als größenstabile Informationsmodule. */
+#root .monster-card-prognosis {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(5px, 1.8cqw, 9px);
+  min-height: clamp(34px, 9.5cqw, 43px);
+  margin: 1px 0 2px;
+  padding: clamp(5px, 1.7cqw, 8px) clamp(7px, 2.4cqw, 12px);
+  border: 1px solid rgba(138, 102, 57, 0.5);
+  background:
+    linear-gradient(90deg, rgba(42, 18, 14, 0.34), rgba(10, 14, 16, 0.86), rgba(12, 27, 34, 0.34)),
+    var(--fc-surface) 0 0 / 128px 128px repeat;
+  color: var(--text);
+  font-family: var(--font-info);
+  font-size: clamp(11px, 3.55cqw, 15px);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+#root .mc-prognosis-chance {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+#root .mc-prognosis-chance:first-child { color: #e2a08d; }
+#root .mc-prognosis-chance:last-child { color: #91bad1; }
+#root .mc-prognosis-sep { color: #6f787c; opacity: 0.8; }
+
+#root .monster-card-slayer-req {
+  min-height: clamp(30px, 8.5cqw, 40px);
+  padding: clamp(6px, 1.8cqw, 9px) clamp(8px, 2.8cqw, 13px);
+  border: 1px solid rgba(135, 96, 52, 0.42);
+  border-left-width: 3px;
+  background: rgba(17, 14, 11, 0.76);
+  font-family: var(--font-info);
+  font-size: clamp(10px, 3.05cqw, 13px);
+  line-height: 1.2;
+}
+
+#root .monster-card-slayer-req.missing {
+  border-color: rgba(180, 75, 65, 0.72);
+  color: #d99589;
+  background: rgba(48, 15, 13, 0.68);
+}
+
+#root .monster-card-drops {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: clamp(6px, 2.1cqw, 10px);
+  min-height: clamp(42px, 12cqw, 56px);
+  margin: 0;
+  padding: clamp(5px, 1.5cqw, 8px) clamp(7px, 2.4cqw, 12px);
+  border: 1px solid rgba(82, 72, 57, 0.48);
+  background: rgba(4, 6, 7, 0.58);
+}
+
+#root .monster-card-drops .drop-icon {
+  font-size: clamp(22px, 7.2cqw, 30px);
+}
+
+#root .monster-card-drops .drop-icon-img {
+  width: clamp(28px, 8.6cqw, 38px);
+  height: clamp(28px, 8.6cqw, 38px);
+  object-fit: contain;
+}
+
+/* codex:2026-08-03T14:52:00+02:00 — Bestehende Gravewood-Aktionen bleiben unverändert funktional, erhalten aber feste Frontline-Abstände. */
+#root .monster-card-actions {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  gap: 7px;
+  margin-top: auto;
+  padding-top: clamp(4px, 1.4cqw, 7px);
+}
+
+#root .monster-card-actions .mc-fight-now-btn {
+  width: 100%;
+  min-height: clamp(46px, 13cqw, 58px);
+  margin: 0;
+  padding: clamp(8px, 2.5cqw, 12px) 16px;
+  font-family: var(--font-head);
+  font-size: clamp(15px, 5.2cqw, 21px);
+  line-height: 1;
+  letter-spacing: 0.045em;
+}
+
+#root .monster-card-actions .mc-queue-picker {
+  width: 100%;
+}
+
+#root .mc-queue-picker .qty-picker-presets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(4px, 1.4cqw, 7px);
+  width: 100%;
+}
+
+#root .mc-queue-picker .qty-picker-btn {
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(32px, 9.6cqw, 43px);
+  padding: clamp(4px, 1.5cqw, 7px) 2px;
+  font-family: var(--font-info);
+  font-size: clamp(10px, 3.2cqw, 14px);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+#root .mc-shift-hint {
+  min-height: 16px;
+  margin-top: 0;
+  font-family: var(--font-info);
+}
+
+/* codex:2026-08-03T14:52:00+02:00 — Sonderkarten teilen das Register, behalten aber ihre freigegebenen Statusakzente. */
+#root .monster-card.elite-monster-card {
+  border-image-source: var(--fc-frame);
+  box-shadow:
+    0 0 0 2px rgba(224, 144, 42, 0.62),
+    0 0 20px rgba(224, 112, 35, 0.25),
+    0 12px 28px rgba(0, 0, 0, 0.58);
+}
+
+#root .monster-card.slayer-target {
+  box-shadow:
+    0 0 0 2px rgba(216, 192, 106, 0.82),
+    0 0 18px rgba(216, 192, 106, 0.28),
+    0 12px 28px rgba(0, 0, 0, 0.54);
+}
+
+@container (max-width: 300px) {
+  /* codex:2026-08-03T14:52:00+02:00 — 1080p-Sicherheitsnetz ohne dritte Mini-Spalte oder abgeschnittene Zahlen. */
+  #root .monster-card-footer {
+    padding-inline: 8px;
+  }
+
+  #root .monster-card-stats.stat-line {
+    gap: 0 6px;
+  }
+
+  #root .monster-card-stats.stat-line .stat-line-item {
+    grid-template-columns: 15px minmax(0, 1fr) auto;
+    gap: 4px;
+  }
+
+  #root .monster-card-stats.stat-line .stat-line-item-label {
+    font-size: 8px;
+  }
+
+  #root .monster-card-stats.stat-line .stat-line-item-value {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1180px) {
+  /* codex:2026-08-03T14:52:00+02:00 — Schmalere Spielfenster reduzieren Spaltenzahl statt Karteninhalt zu quetschen. */
+  #root .monster-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* codex:2026-08-03T14:52:00+02:00 — Karten reagieren ohne geometrische Animation. */
+  #root .monster-card,
+  #root .monster-card * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

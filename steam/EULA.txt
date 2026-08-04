@@ -1,0 +1,398 @@
+GRIM REACH — END USER LICENSE AGREEMENT (7 Sprachen: EN / DE / ZH / RU / ES / PT-BR / FR)
+
+Für Steamworks → Installation → EULA: pro angebotener Sprache die passende Version einfügen (Steam
+erlaubt je Sprache eine eigene EULA-Fassung). Platzhalter [DATUM] / [GERICHTSSTAND] / [KONTAKT]
+ausfüllen. Solide Standard-Vorlage, KEIN anwaltlich geprüfter Rechtstext. Schnellste Alternative:
+leere EULA entfernen → Steams Subscriber Agreement greift (schon in allen Sprachen lokalisiert).
+
+================================================================================
+ENGLISH
+================================================================================
+GRIM REACH — END USER LICENSE AGREEMENT
+
+Last updated: [DATE]
+
+This End User License Agreement ("Agreement") is a legally binding agreement between you ("User")
+and Hearthforge Studio ("Licensor") for the video game "Grim Reach" ("Game"). By installing or using
+the Game, you agree to be bound by this Agreement and by the Steam Subscriber Agreement
+(https://store.steampowered.com/subscriber_agreement/). If you do not agree, do not install or use
+the Game.
+
+1. LICENSE. Licensor grants you a personal, non-exclusive, non-transferable, revocable license to
+install and use the Game for your own private, non-commercial entertainment on devices you own or
+control, in accordance with this Agreement and the Steam Subscriber Agreement.
+
+2. RESTRICTIONS. You may not: (a) copy, distribute, sell, rent, lease, sublicense or otherwise
+transfer the Game except as expressly permitted by Steam; (b) reverse engineer, decompile or
+disassemble the Game, except to the extent this restriction is prohibited by applicable law;
+(c) modify, adapt or create derivative works of the Game; (d) remove or alter any proprietary
+notices; or (e) use the Game for any unlawful purpose.
+
+3. OWNERSHIP. The Game and all intellectual property rights therein are and remain the property of
+Licensor and its licensors. This Agreement grants you no ownership rights in the Game.
+
+4. EARLY ACCESS. The Game is offered as an Early Access title. It is a work in progress and may
+contain bugs, incomplete features, and content that may change or be removed. Features, content,
+balance and availability may change during development.
+
+5. SAVE DATA. Save data is stored locally and, where enabled, synchronized via Steam Cloud. Licensor
+is not responsible for lost or corrupted save data.
+
+6. DISCLAIMER OF WARRANTY. THE GAME IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT, TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE
+LAW.
+
+7. LIMITATION OF LIABILITY. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, LICENSOR SHALL NOT BE
+LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR FOR ANY LOSS OF
+DATA, ARISING OUT OF OR RELATED TO YOUR USE OF THE GAME. Nothing in this Agreement limits liability
+that cannot be limited under applicable law.
+
+8. TERMINATION. This Agreement is effective until terminated. Your rights under it terminate
+automatically if you fail to comply with its terms.
+
+9. GOVERNING LAW. This Agreement shall be governed by the laws of [COUNTRY/JURISDICTION, e.g. Germany],
+without regard to its conflict-of-law principles, and without prejudice to any mandatory
+consumer-protection rights available to you in your country of residence.
+
+10. CONTACT. Questions regarding this Agreement: [CONTACT EMAIL].
+
+By installing or using Grim Reach, you acknowledge that you have read this Agreement and agree to be
+bound by it.
+
+
+================================================================================
+DEUTSCH
+================================================================================
+GRIM REACH — ENDBENUTZER-LIZENZVERTRAG
+
+Zuletzt aktualisiert: [DATUM]
+
+Dieser Endbenutzer-Lizenzvertrag („Vertrag") ist eine rechtsverbindliche Vereinbarung zwischen dir
+(„Nutzer") und Hearthforge Studio („Lizenzgeber") über das Videospiel „Grim Reach" („Spiel"). Durch
+Installation oder Nutzung des Spiels erklärst du dich mit diesem Vertrag sowie mit dem
+Steam-Nutzungsvertrag (Steam Subscriber Agreement,
+https://store.steampowered.com/subscriber_agreement/) einverstanden. Wenn du nicht einverstanden bist,
+installiere oder nutze das Spiel nicht.
+
+1. LIZENZ. Der Lizenzgeber gewährt dir eine persönliche, nicht-exklusive, nicht übertragbare,
+widerrufliche Lizenz zur Installation und Nutzung des Spiels für deine private, nicht-kommerzielle
+Unterhaltung auf Geräten, die du besitzt oder kontrollierst, gemäß diesem Vertrag und dem
+Steam-Nutzungsvertrag.
+
+2. EINSCHRÄNKUNGEN. Du darfst nicht: (a) das Spiel kopieren, verbreiten, verkaufen, vermieten,
+verleasen, unterlizenzieren oder anderweitig übertragen, außer soweit von Steam ausdrücklich
+gestattet; (b) das Spiel zurückentwickeln, dekompilieren oder disassemblieren, außer soweit diese
+Einschränkung nach geltendem Recht unzulässig ist; (c) das Spiel verändern, anpassen oder abgeleitete
+Werke davon erstellen; (d) Eigentums- oder Schutzrechtshinweise entfernen oder ändern; oder (e) das
+Spiel für rechtswidrige Zwecke nutzen.
+
+3. EIGENTUM. Das Spiel und alle daran bestehenden geistigen Eigentumsrechte sind und bleiben Eigentum
+des Lizenzgebers und seiner Lizenzgeber. Dieser Vertrag gewährt dir keine Eigentumsrechte am Spiel.
+
+4. EARLY ACCESS. Das Spiel wird als Early-Access-Titel angeboten. Es befindet sich in Entwicklung und
+kann Fehler, unvollständige Funktionen und Inhalte enthalten, die sich ändern oder entfernt werden
+können. Funktionen, Inhalte, Balance und Verfügbarkeit können sich während der Entwicklung ändern.
+
+5. SPIELSTÄNDE. Spielstände werden lokal gespeichert und, sofern aktiviert, über Steam Cloud
+synchronisiert. Der Lizenzgeber haftet nicht für verlorene oder beschädigte Spielstände.
+
+6. GEWÄHRLEISTUNGSAUSSCHLUSS. Das Spiel wird „wie besehen" und „wie verfügbar" ohne jegliche
+ausdrückliche oder stillschweigende Gewährleistung bereitgestellt, einschließlich, aber nicht
+beschränkt auf die stillschweigenden Gewährleistungen der Marktgängigkeit, der Eignung für einen
+bestimmten Zweck und der Nichtverletzung von Rechten, soweit nach geltendem Recht zulässig.
+
+7. HAFTUNGSBESCHRÄNKUNG. Soweit nach geltendem Recht zulässig, haftet der Lizenzgeber nicht für
+indirekte, zufällige, besondere, Folge- oder Strafschäden oder für Datenverluste, die sich aus oder
+im Zusammenhang mit deiner Nutzung des Spiels ergeben. Dieser Vertrag beschränkt keine Haftung, die
+nach geltendem Recht nicht beschränkt werden kann (insbesondere bei Vorsatz und grober Fahrlässigkeit
+sowie bei Verletzung von Leben, Körper oder Gesundheit).
+
+8. BEENDIGUNG. Dieser Vertrag gilt bis zu seiner Beendigung. Deine Rechte aus diesem Vertrag enden
+automatisch, wenn du gegen seine Bedingungen verstößt.
+
+9. ANWENDBARES RECHT. Dieser Vertrag unterliegt dem Recht von [LAND/GERICHTSSTAND, z. B. Deutschland],
+ungeachtet kollisionsrechtlicher Grundsätze und unbeschadet zwingender Verbraucherschutzrechte, die
+dir in deinem Wohnsitzland zustehen.
+
+10. KONTAKT. Fragen zu diesem Vertrag: [KONTAKT-E-MAIL].
+
+Durch Installation oder Nutzung von Grim Reach bestätigst du, dass du diesen Vertrag gelesen hast und
+dich damit einverstanden erklärst.
+
+
+================================================================================
+简体中文
+================================================================================
+《GRIM REACH》最终用户许可协议
+
+最后更新：[日期]
+
+本最终用户许可协议（“本协议”）是您（“用户”）与 Hearthforge Studio（“许可方”）之间就电子游戏
+《Grim Reach》（“本游戏”）达成的具有法律约束力的协议。安装或使用本游戏，即表示您同意受本协议以及
+Steam 订户协议（https://store.steampowered.com/subscriber_agreement/）的约束。如您不同意，请勿安装
+或使用本游戏。
+
+1. 许可。许可方授予您一项个人的、非独占的、不可转让的、可撤销的许可，允许您在自己拥有或控制的设备上，
+为个人非商业娱乐目的安装和使用本游戏，并须遵守本协议及 Steam 订户协议。
+
+2. 限制。您不得：(a) 复制、分发、出售、出租、租赁、再许可或以其他方式转让本游戏，除非 Steam 明确允许；
+(b) 对本游戏进行反向工程、反编译或反汇编，但适用法律禁止此项限制的除外；(c) 修改、改编本游戏或创作其
+衍生作品；(d) 删除或更改任何专有权利声明；或 (e) 将本游戏用于任何非法目的。
+
+3. 所有权。本游戏及其中的所有知识产权均属于并始终属于许可方及其许可人。本协议不授予您对本游戏的任何
+所有权。
+
+4. 抢先体验。本游戏以抢先体验形式提供。它仍在开发中，可能包含缺陷、不完整的功能，以及可能变更或移除的
+内容。功能、内容、平衡性与可用性在开发过程中可能发生变化。
+
+5. 存档数据。存档数据保存在本地，并在启用时通过 Steam 云同步。许可方对丢失或损坏的存档数据不承担责任。
+
+6. 免责声明。本游戏按“现状”和“现有”提供，不作任何明示或默示的保证，包括但不限于适销性、特定用途适用性
+及不侵权的默示保证，以适用法律允许的最大范围为限。
+
+7. 责任限制。在适用法律允许的最大范围内，对于因您使用本游戏而产生或与之相关的任何间接、偶然、特殊、
+后果性或惩罚性损害，或任何数据丢失，许可方概不负责。本协议不限制依适用法律不可被限制的任何责任。
+
+8. 终止。本协议在终止前持续有效。若您未遵守本协议条款，您据本协议享有的权利将自动终止。
+
+9. 适用法律。本协议受 [国家/司法管辖区，例如 德国] 法律管辖，不考虑其冲突法原则，且不影响您在居住国
+依法享有的强制性消费者保护权利。
+
+10. 联系方式。有关本协议的问题：[联系邮箱]。
+
+安装或使用 Grim Reach，即表示您确认已阅读本协议并同意受其约束。
+
+
+================================================================================
+РУССКИЙ
+================================================================================
+GRIM REACH — ЛИЦЕНЗИОННОЕ СОГЛАШЕНИЕ С КОНЕЧНЫМ ПОЛЬЗОВАТЕЛЕМ
+
+Последнее обновление: [ДАТА]
+
+Настоящее Лицензионное соглашение с конечным пользователем («Соглашение») является юридически
+обязательным соглашением между вами («Пользователь») и Hearthforge Studio («Лицензиар») в отношении
+видеоигры «Grim Reach» («Игра»). Устанавливая или используя Игру, вы соглашаетесь соблюдать настоящее
+Соглашение, а также Соглашение подписчика Steam
+(https://store.steampowered.com/subscriber_agreement/). Если вы не согласны, не устанавливайте и не
+используйте Игру.
+
+1. ЛИЦЕНЗИЯ. Лицензиар предоставляет вам персональную, неисключительную, непередаваемую, отзывную
+лицензию на установку и использование Игры для личного некоммерческого развлечения на устройствах,
+которыми вы владеете или которые контролируете, в соответствии с настоящим Соглашением и Соглашением
+подписчика Steam.
+
+2. ОГРАНИЧЕНИЯ. Вы не вправе: (a) копировать, распространять, продавать, сдавать в аренду или лизинг,
+сублицензировать или иным образом передавать Игру, кроме случаев, прямо разрешённых Steam;
+(b) осуществлять обратную разработку, декомпиляцию или дизассемблирование Игры, за исключением
+случаев, когда такое ограничение запрещено применимым правом; (c) изменять, адаптировать Игру или
+создавать производные произведения на её основе; (d) удалять или изменять уведомления о правах; или
+(e) использовать Игру в любых незаконных целях.
+
+3. ПРАВА СОБСТВЕННОСТИ. Игра и все права интеллектуальной собственности на неё принадлежат и остаются
+собственностью Лицензиара и его лицензиаров. Настоящее Соглашение не предоставляет вам никаких прав
+собственности на Игру.
+
+4. РАННИЙ ДОСТУП. Игра предоставляется в раннем доступе. Она находится в разработке и может содержать
+ошибки, незавершённые функции и контент, который может измениться или быть удалён. Функции, контент,
+баланс и доступность могут меняться в ходе разработки.
+
+5. СОХРАНЕНИЯ. Данные сохранений хранятся локально и, если включено, синхронизируются через Steam
+Cloud. Лицензиар не несёт ответственности за утраченные или повреждённые данные сохранений.
+
+6. ОТКАЗ ОТ ГАРАНТИЙ. Игра предоставляется «как есть» и «как доступно», без каких-либо явных или
+подразумеваемых гарантий, включая, помимо прочего, подразумеваемые гарантии товарной пригодности,
+пригодности для определённой цели и ненарушения прав, в максимальной степени, допустимой применимым
+правом.
+
+7. ОГРАНИЧЕНИЕ ОТВЕТСТВЕННОСТИ. В максимальной степени, допустимой применимым правом, Лицензиар не
+несёт ответственности за любые косвенные, случайные, специальные, последующие или штрафные убытки, а
+также за любую потерю данных, возникающие из использования вами Игры или в связи с ним. Настоящее
+Соглашение не ограничивает ответственность, которая не может быть ограничена согласно применимому
+праву.
+
+8. ПРЕКРАЩЕНИЕ. Настоящее Соглашение действует до его прекращения. Ваши права по нему прекращаются
+автоматически при несоблюдении вами его условий.
+
+9. ПРИМЕНИМОЕ ПРАВО. Настоящее Соглашение регулируется правом [СТРАНА/ЮРИСДИКЦИЯ, например Германия],
+без учёта коллизионных норм и без ущерба для императивных прав защиты потребителей, предоставленных вам
+в стране вашего проживания.
+
+10. КОНТАКТ. Вопросы по настоящему Соглашению: [КОНТАКТНЫЙ EMAIL].
+
+Устанавливая или используя Grim Reach, вы подтверждаете, что прочитали настоящее Соглашение и согласны
+соблюдать его.
+
+
+================================================================================
+ESPAÑOL
+================================================================================
+GRIM REACH — CONTRATO DE LICENCIA DE USUARIO FINAL
+
+Última actualización: [FECHA]
+
+Este Contrato de Licencia de Usuario Final («Contrato») es un acuerdo jurídicamente vinculante entre
+usted («Usuario») y Hearthforge Studio («Licenciante») relativo al videojuego «Grim Reach» («Juego»).
+Al instalar o usar el Juego, usted acepta quedar vinculado por este Contrato y por el Acuerdo de
+Suscriptor de Steam (https://store.steampowered.com/subscriber_agreement/). Si no está de acuerdo, no
+instale ni use el Juego.
+
+1. LICENCIA. El Licenciante le concede una licencia personal, no exclusiva, intransferible y revocable
+para instalar y usar el Juego para su entretenimiento privado y no comercial en dispositivos de su
+propiedad o bajo su control, de conformidad con este Contrato y el Acuerdo de Suscriptor de Steam.
+
+2. RESTRICCIONES. Usted no podrá: (a) copiar, distribuir, vender, alquilar, arrendar, sublicenciar ni
+transferir de otro modo el Juego, salvo lo expresamente permitido por Steam; (b) aplicar ingeniería
+inversa, descompilar o desensamblar el Juego, salvo en la medida en que esta restricción esté prohibida
+por la ley aplicable; (c) modificar, adaptar o crear obras derivadas del Juego; (d) eliminar o alterar
+los avisos de propiedad; ni (e) usar el Juego con fines ilícitos.
+
+3. PROPIEDAD. El Juego y todos los derechos de propiedad intelectual sobre él son y seguirán siendo
+propiedad del Licenciante y sus licenciantes. Este Contrato no le concede ningún derecho de propiedad
+sobre el Juego.
+
+4. ACCESO ANTICIPADO. El Juego se ofrece como título de Acceso Anticipado. Está en desarrollo y puede
+contener errores, funciones incompletas y contenido que puede cambiar o eliminarse. Las funciones, el
+contenido, el equilibrio y la disponibilidad pueden cambiar durante el desarrollo.
+
+5. DATOS DE PARTIDA. Los datos de las partidas se guardan localmente y, cuando está habilitado, se
+sincronizan mediante Steam Cloud. El Licenciante no se responsabiliza de la pérdida o corrupción de los
+datos de partida.
+
+6. RENUNCIA DE GARANTÍAS. El Juego se proporciona «tal cual» y «según disponibilidad», sin garantía de
+ningún tipo, expresa o implícita, incluidas, entre otras, las garantías implícitas de comerciabilidad,
+idoneidad para un fin determinado y no infracción, en la máxima medida permitida por la ley aplicable.
+
+7. LIMITACIÓN DE RESPONSABILIDAD. En la máxima medida permitida por la ley aplicable, el Licenciante no
+será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos, ni de la
+pérdida de datos, derivados de o relacionados con su uso del Juego. Nada en este Contrato limita la
+responsabilidad que no pueda limitarse conforme a la ley aplicable.
+
+8. RESOLUCIÓN. Este Contrato tendrá vigencia hasta su resolución. Sus derechos en virtud del mismo se
+extinguirán automáticamente si incumple sus términos.
+
+9. LEY APLICABLE. Este Contrato se regirá por las leyes de [PAÍS/JURISDICCIÓN, p. ej. Alemania], sin
+atención a sus principios sobre conflicto de leyes y sin perjuicio de los derechos imperativos de
+protección al consumidor que le correspondan en su país de residencia.
+
+10. CONTACTO. Consultas sobre este Contrato: [CORREO DE CONTACTO].
+
+Al instalar o usar Grim Reach, usted reconoce que ha leído este Contrato y acepta quedar vinculado por
+él.
+
+
+================================================================================
+PORTUGUÊS (BRASIL)
+================================================================================
+GRIM REACH — CONTRATO DE LICENÇA DE USUÁRIO FINAL
+
+Última atualização: [DATA]
+
+Este Contrato de Licença de Usuário Final ("Contrato") é um acordo juridicamente vinculativo entre você
+("Usuário") e a Hearthforge Studio ("Licenciante") referente ao videogame "Grim Reach" ("Jogo"). Ao
+instalar ou usar o Jogo, você concorda em se vincular a este Contrato e ao Acordo de Assinante Steam
+(https://store.steampowered.com/subscriber_agreement/). Se você não concordar, não instale nem use o
+Jogo.
+
+1. LICENÇA. O Licenciante concede a você uma licença pessoal, não exclusiva, intransferível e revogável
+para instalar e usar o Jogo para seu entretenimento privado e não comercial em dispositivos de sua
+propriedade ou sob seu controle, de acordo com este Contrato e o Acordo de Assinante Steam.
+
+2. RESTRIÇÕES. Você não pode: (a) copiar, distribuir, vender, alugar, arrendar, sublicenciar ou de outra
+forma transferir o Jogo, exceto conforme expressamente permitido pela Steam; (b) fazer engenharia
+reversa, descompilar ou desmontar o Jogo, exceto na medida em que essa restrição seja proibida pela lei
+aplicável; (c) modificar, adaptar ou criar obras derivadas do Jogo; (d) remover ou alterar avisos de
+propriedade; ou (e) usar o Jogo para qualquer finalidade ilícita.
+
+3. PROPRIEDADE. O Jogo e todos os direitos de propriedade intelectual sobre ele são e permanecerão de
+propriedade do Licenciante e de seus licenciantes. Este Contrato não concede a você quaisquer direitos
+de propriedade sobre o Jogo.
+
+4. ACESSO ANTECIPADO. O Jogo é oferecido como um título de Acesso Antecipado. Ele está em desenvolvimento
+e pode conter erros, recursos incompletos e conteúdo que pode mudar ou ser removido. Recursos, conteúdo,
+equilíbrio e disponibilidade podem mudar durante o desenvolvimento.
+
+5. DADOS DE JOGO. Os dados de save são armazenados localmente e, quando habilitado, sincronizados via
+Steam Cloud. O Licenciante não se responsabiliza por dados de save perdidos ou corrompidos.
+
+6. ISENÇÃO DE GARANTIA. O Jogo é fornecido "no estado em que se encontra" e "conforme disponível", sem
+garantia de qualquer tipo, expressa ou implícita, incluindo, mas não se limitando às garantias implícitas
+de comercialização, adequação a uma finalidade específica e não violação, na máxima extensão permitida
+pela lei aplicável.
+
+7. LIMITAÇÃO DE RESPONSABILIDADE. Na máxima extensão permitida pela lei aplicável, o Licenciante não será
+responsável por quaisquer danos indiretos, incidentais, especiais, consequenciais ou punitivos, nem por
+qualquer perda de dados, decorrentes de ou relacionados ao seu uso do Jogo. Nada neste Contrato limita a
+responsabilidade que não possa ser limitada nos termos da lei aplicável.
+
+8. RESCISÃO. Este Contrato vigora até ser rescindido. Seus direitos sob ele terminam automaticamente se
+você deixar de cumprir seus termos.
+
+9. LEI APLICÁVEL. Este Contrato será regido pelas leis de [PAÍS/FORO, p. ex. Alemanha], sem consideração
+a princípios de conflito de leis e sem prejuízo de quaisquer direitos imperativos de proteção ao
+consumidor disponíveis a você em seu país de residência.
+
+10. CONTATO. Dúvidas sobre este Contrato: [E-MAIL DE CONTATO].
+
+Ao instalar ou usar Grim Reach, você reconhece que leu este Contrato e concorda em se vincular a ele.
+
+
+================================================================================
+FRANÇAIS
+================================================================================
+GRIM REACH — CONTRAT DE LICENCE UTILISATEUR FINAL
+
+Dernière mise à jour : [DATE]
+
+Le présent Contrat de licence utilisateur final (« Contrat ») est un accord juridiquement contraignant
+entre vous (« Utilisateur ») et Hearthforge Studio (« Concédant ») concernant le jeu vidéo « Grim Reach »
+(« Jeu »). En installant ou en utilisant le Jeu, vous acceptez d'être lié par le présent Contrat ainsi
+que par le Contrat d'abonnement Steam (https://store.steampowered.com/subscriber_agreement/). Si vous
+n'acceptez pas, n'installez pas et n'utilisez pas le Jeu.
+
+1. LICENCE. Le Concédant vous accorde une licence personnelle, non exclusive, non transférable et
+révocable pour installer et utiliser le Jeu à des fins de divertissement privé et non commercial, sur
+des appareils dont vous êtes propriétaire ou que vous contrôlez, conformément au présent Contrat et au
+Contrat d'abonnement Steam.
+
+2. RESTRICTIONS. Vous ne pouvez pas : (a) copier, distribuer, vendre, louer, donner en location,
+sous-licencier ou transférer de toute autre manière le Jeu, sauf autorisation expresse de Steam ;
+(b) rétroconcevoir, décompiler ou désassembler le Jeu, sauf dans la mesure où cette restriction est
+interdite par la loi applicable ; (c) modifier, adapter ou créer des œuvres dérivées du Jeu ; (d)
+supprimer ou altérer les mentions de propriété ; ou (e) utiliser le Jeu à des fins illicites.
+
+3. PROPRIÉTÉ. Le Jeu et l'ensemble des droits de propriété intellectuelle y afférents sont et demeurent
+la propriété du Concédant et de ses concédants. Le présent Contrat ne vous confère aucun droit de
+propriété sur le Jeu.
+
+4. ACCÈS ANTICIPÉ. Le Jeu est proposé en tant que titre en Accès anticipé. Il est en cours de
+développement et peut contenir des bugs, des fonctionnalités incomplètes et du contenu susceptible d'être
+modifié ou supprimé. Les fonctionnalités, le contenu, l'équilibrage et la disponibilité peuvent évoluer
+pendant le développement.
+
+5. DONNÉES DE SAUVEGARDE. Les données de sauvegarde sont stockées localement et, lorsque cette option est
+activée, synchronisées via Steam Cloud. Le Concédant n'est pas responsable de la perte ou de la
+corruption des données de sauvegarde.
+
+6. EXCLUSION DE GARANTIE. Le Jeu est fourni « en l'état » et « selon disponibilité », sans garantie
+d'aucune sorte, expresse ou implicite, y compris, sans s'y limiter, les garanties implicites de qualité
+marchande, d'adéquation à un usage particulier et d'absence de contrefaçon, dans toute la mesure permise
+par la loi applicable.
+
+7. LIMITATION DE RESPONSABILITÉ. Dans toute la mesure permise par la loi applicable, le Concédant ne
+saurait être tenu responsable de tout dommage indirect, accessoire, spécial, consécutif ou punitif, ni de
+toute perte de données, découlant de ou lié à votre utilisation du Jeu. Rien dans le présent Contrat ne
+limite une responsabilité qui ne peut être limitée en vertu de la loi applicable.
+
+8. RÉSILIATION. Le présent Contrat produit ses effets jusqu'à sa résiliation. Vos droits au titre du
+Contrat prennent fin automatiquement si vous ne respectez pas ses conditions.
+
+9. DROIT APPLICABLE. Le présent Contrat est régi par le droit de [PAYS/RESSORT, p. ex. Allemagne], sans
+égard à ses règles de conflit de lois et sans préjudice des droits impératifs de protection des
+consommateurs dont vous bénéficiez dans votre pays de résidence.
+
+10. CONTACT. Pour toute question concernant le présent Contrat : [E-MAIL DE CONTACT].
+
+En installant ou en utilisant Grim Reach, vous reconnaissez avoir lu le présent Contrat et acceptez
+d'être lié par celui-ci.

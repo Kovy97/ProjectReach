@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <mask id="gearHole">
+    <rect x="0" y="0" width="512" height="512" fill="#000"/>
+    <circle cx="256" cy="256" r="165" fill="#fff"/>
+    <g fill="#fff">
+      <rect x="406" y="221" width="75" height="70" transform="rotate(0 256 256)"/>
+      <rect x="406" y="221" width="75" height="70" transform="rotate(45 256 256)"/>
+      <rect x="406" y="221" width="75" height="70" transform="rotate(90 256 256)"/>
+      <rect x="406" y="221" width="75" height="70" transform="rotate(135 256 256)"/>
+      <rect x="406" y="221" width="75" height="70" transform="rotate(180 256 256)"/>
+      <rect x="406" y="221" width="75" height="70" transform="rotate(225 256 256)"/>
+      <rect x="406" y="221" width="75" height="70" transform="rotate(270 256 256)"/>
+      <rect x="406" y="221" width="75" height="70" transform="rotate(315 256 256)"/>
+    </g>
+    <circle cx="256" cy="256" r="85" fill="#000"/>
+  </mask>
+  <rect x="0" y="0" width="512" height="512" fill="#d8b24a" mask="url(#gearHole)"/>
+</svg>

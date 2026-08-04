@@ -1,0 +1,130 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   QUANTITY-PICKER — gemeinsames "Wie viele?"-Mengen-Widget (Task #314 B2).
+   Presets (.ds-button/.ds-button--sm, Citadel-Optik erben sie bereits) + eine
+   schmale freie Zahleneingabe darunter. Eigener Namensraum "qty-picker-*",
+   direkt importiert von components/QuantityPicker.tsx (Kollisions-Schutz,
+   gleiches Muster wie styles/action-queue.css).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.qty-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qty-picker-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Chef 2026-07-10-Fix (ursprünglich .shopv2-buyqty-btn, jetzt generisch für ALLE Presets — Bank/
+   Sell teilen denselben kleinen 2-Zeilen-Zuschnitt): der 10px-Holzrahmen des .ds-button liegt ÜBER
+   dem Text (::before, z:1) — bei kleinen Buttons schnitt das Preise/Mengen ab. Schlankerer
+   6px-Rahmen + Innenabstand ≥ Rahmenstärke behebt das für jeden Preset-Button dieses Widgets. */
+.qty-picker-btn {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 6px 7px;
+  min-height: 46px;
+  line-height: 1.2;
+}
+
+.qty-picker-btn::before {
+  border-width: 6px;
+  border-image-width: 6px;
+}
+
+.qty-picker-btn--max {
+  flex-direction: row;
+}
+
+/* Task #315 — eigenständiger "unbegrenzt"-Knopf (Kampf-Queue ∞): größeres Glyph, sonst gleiche
+   Kachel-Optik wie die Zahlen-Presets. */
+.qty-picker-btn--infinite {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.qty-picker-custom {
+  display: flex;
+  gap: 6px;
+}
+
+.qty-picker-input {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  background: rgba(10, 8, 6, 0.55);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.qty-picker-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+/* Chrome/Firefox Spin-Buttons dezent lassen statt der lauten OS-Default-Pfeile. */
+.qty-picker-input::-webkit-inner-spin-button,
+.qty-picker-input::-webkit-outer-spin-button {
+  opacity: 0.6;
+}
+
+.qty-picker-confirm {
+  flex-shrink: 0;
+}
+
+/* ─── Bank-Teilmengen-Modal (Task #314 B2, components/pages BankPage.tsx BankQtyModal) ────────
+   Kompakte Variante des Basis-`.modal` (modals.css) — nur Item-Kopf + QuantityPicker, kein langer
+   Inhalt nötig. */
+.qty-modal {
+  max-width: 340px;
+}
+
+.qty-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.qty-modal-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.05), rgba(10, 8, 6, 0.85) 74%);
+  border: 2px solid rgba(216, 192, 106, 0.42);
+}
+
+.qty-modal-icon img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.qty-modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.qty-modal-name {
+  font-family: var(--font-head);
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.qty-modal-avail {
+  font-size: 13px;
+}

@@ -1,0 +1,101 @@
+/* ═══════════════════════════════════════════════════════════
+   CHROME — Werkzeugleiste der Layout-Studien (NICHT Teil des Spiel-UI).
+   Bewusst neutral/grau gehalten, damit sie sich klar vom jeweiligen
+   Konzept darunter absetzt — Werkzeug, kein Diegese-Element.
+   ═══════════════════════════════════════════════════════════ */
+
+#studio-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  background: #17181b;
+  border-bottom: 1px solid #35383e;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+  color: #b8bcc4;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+#studio-chrome a.sc-back {
+  color: #d8c06a;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border: 1px solid #4a4d54;
+  border-radius: 3px;
+  transition: background 0.12s, border-color 0.12s;
+}
+#studio-chrome a.sc-back:hover {
+  background: rgba(216, 192, 106, 0.1);
+  border-color: #d8c06a;
+}
+
+#studio-chrome .sc-title {
+  font-weight: 700;
+  color: #e8e4d8;
+  white-space: nowrap;
+  margin-right: auto;
+}
+#studio-chrome .sc-title small {
+  display: block;
+  font-weight: 400;
+  color: #82868f;
+  font-size: 11px;
+}
+
+#studio-chrome .sc-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+#studio-chrome .sc-group-label {
+  color: #6f737b;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+#studio-chrome button.sc-btn {
+  padding: 6px 12px;
+  background: #24262b;
+  border: 1px solid #3f434b;
+  border-radius: 3px;
+  color: #c6cad2;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+#studio-chrome button.sc-btn:hover {
+  border-color: #6a6e78;
+  color: #fff;
+}
+#studio-chrome button.sc-btn.active {
+  background: #4a3d1f;
+  border-color: #d8c06a;
+  color: #f0dd9a;
+}
+
+#studio-chrome .sc-stat {
+  font-size: 11px;
+  color: #82868f;
+  white-space: nowrap;
+}
+#studio-chrome .sc-stat strong {
+  color: #d8c06a;
+}
+
+@media (max-width: 1100px) {
+  #studio-chrome { flex-wrap: wrap; }
+  #studio-chrome .sc-title { margin-right: 0; width: 100%; }
+}

@@ -1,0 +1,290 @@
+ANLEITUNG: Steamworks → App-Verwaltung → Store-Seite bearbeiten → Tab "Beschreibung": im Sprach-Dropdown die Sprache wählen, dann den About-Block der Sprache komplett in "Infos zum Spiel" einfügen; die Kurzbeschreibung darunter gehört in ihr eigenes Feld derselben Sprache.
+Die 5 Panel-PNGs (panel_numbers.png, panel_worldfightsback.png, panel_skills.png, panel_newhaven.png, panel_promise.png) einmal im Store-Editor als Extra-Assets hochladen; die [img]-Slots referenzieren sie über das {STEAM_APP_IMAGE}-Makro und greifen damit in allen Sprachen. (panel_newhaven.png = neues New-Haven-Beschreibungsbild von Mira, Stand 03.08. in Produktion.)
+Die Panels bleiben englisch, nur der Fließtext ist lokalisiert. Die Zeichenzahl jeder Kurzbeschreibung steht an ihrem Block (Steam-Limit: 300).
+
+
+===== ENGLISH =====
+
+--- ABOUT THE GAME (BBCode) ---
+
+Grim Reach is a dark fantasy idle RPG where the world does not wait for you. It fights back: 28 named Elite Champions stalk the zones on their own schedule, and every real-world weekday carries a Blessing that changes how the whole Reach behaves.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_numbers.png[/img]
+
+When a Champion surfaces you get the call, a countdown starts, and fifteen minutes later it is gone. Each of the 28 guards a named unique with its own effect, tracked in your codex and on Brenna's bounty board, and the locals comment on all of it. The seven Blessings of the Reach give the real week a rhythm, from richer beast loot under the Blood Moon to faster blades during the Wild Hunt: deliberately mild, no FOMO, and Champions only appear while you play.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_worldfightsback.png[/img]
+
+Underneath runs a full idle RPG: 20 skills from Woodcutting and Mining to Runecrafting, Herblore and Slayer, plus an action queue that works through your plans even while you are offline. Battles fight themselves but are worth watching: three combat styles, three armor families, pets at your side, dungeons with waves and bosses. And every rare drop is its own instance with a fresh suffix roll — two identical swords are never identical.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_skills.png[/img]
+
+The Reach now has an answer of its own: New Haven, your settlement. Raise 15 buildings through three ranks on a hand-painted map, place them wherever you like, and every single one pays you back with a permanent bonus — longer offline progression, more bank space, faster skills. The smelter and the smokehouse even keep working while you are away, and at nightfall the whole camp lights its fires.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_newhaven.png[/img]
+
+[list]
+[*]28 named Elite Champions with 28 unique drops, your first within about 20 minutes
+[*]7 weekday Blessings: the world changes with the real day
+[*]New Haven: build your own 15-building settlement with permanent bonuses, by day and by night
+[*]20 skills to gather, craft, steal and fight
+[*]Watchable auto-battles: 3 styles, 3 armor families, pets, dungeon bosses
+[*]Loot with a soul: suffix rolls on rare drops, rune enchanting on top
+[*]Real offline progress, an action queue and a mailbox so nothing is ever lost
+[*]No microtransactions, no wipes: saves stay compatible, always
+[*]7 languages and frequent updates built on player reports
+[/list]
+
+[img]{STEAM_APP_IMAGE}/extras/panel_promise.png[/img]
+
+Grim Reach is in Early Access: everything above is playable today, and the game grows through frequent updates, many of them built directly from player reports. Rough edges will appear and get polished — and your save survives every single update, that is a promise.
+
+--- SHORT DESCRIPTION (292 Zeichen) ---
+
+A dark fantasy idle RPG where the world fights back. 28 named Elite Champions stalk the zones on their own timers, weekday Blessings reshape the Reach, and every rare drop rolls its own stats. Train 20 skills, progress offline, and become a hero the Reach will remember. No microtransactions.
+
+
+===== DEUTSCH =====
+
+--- INFOS ZUM SPIEL (BBCode) ---
+
+Grim Reach ist ein düsteres Fantasy-Idle-RPG, in dem die Welt nicht auf dich wartet. Sie schlägt zurück: 28 benannte Elite-Champions streifen nach eigenem Rhythmus durch die Gebiete, und jeder echte Wochentag bringt einen Segen, der das Verhalten des ganzen Reachs verändert.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_numbers.png[/img]
+
+Taucht ein Champion auf, kommt die Meldung, ein Countdown startet, und nach fünfzehn Minuten ist er wieder verschwunden. Jeder der 28 bewacht ein benanntes Unique mit eigenem Effekt, festgehalten in deinem Kodex und auf Brennas Kopfgeld-Brett, und die Bewohner reden über all das. Die sieben Segen des Reachs geben der echten Woche einen Rhythmus, von fetterer Bestien-Beute am Blutmond bis zu schnelleren Klingen zur Wilden Jagd: bewusst sanft, kein FOMO, und Champions erscheinen nur, solange du spielst.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_worldfightsback.png[/img]
+
+Darunter läuft ein komplettes Idle-RPG: 20 Fertigkeiten von Holzfällen und Bergbau über Runenkunst und Kräuterkunde bis zum Monsterjäger, dazu eine Aktions-Warteschlange, die deine Pläne auch offline abarbeitet. Kämpfe laufen von selbst und sind trotzdem sehenswert: drei Kampfstile, drei Rüstungswege, Begleiter an deiner Seite, Dungeons mit Wellen und Bossen. Und jeder seltene Fund ist ein eigenes Exemplar mit frischem Suffix-Wurf, zwei gleiche Schwerter sind nie wirklich gleich.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_skills.png[/img]
+
+Der Reach hat jetzt eine eigene Antwort: New Haven, deine Siedlung. Errichte 15 Gebäude über drei Ausbaustufen auf einer handgemalten Karte, platziere sie völlig frei, und jedes einzelne zahlt es dir mit einem dauerhaften Bonus zurück — längerer Offline-Fortschritt, mehr Bankplätze, schnellere Fertigkeiten. Schmelzofen und Räucherhaus arbeiten sogar weiter, während du fort bist, und bei Einbruch der Nacht entzündet das ganze Lager seine Feuer.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_newhaven.png[/img]
+
+[list]
+[*]28 benannte Elite-Champions mit 28 Unique-Drops, der erste schon in den ersten 20 Minuten
+[*]7 Wochentags-Segen: Die Welt ändert sich mit dem echten Tag
+[*]New Haven: Baue deine eigene Siedlung mit 15 Gebäuden und dauerhaften Boni, bei Tag und bei Nacht
+[*]20 Fertigkeiten zum Sammeln, Craften, Stehlen und Kämpfen
+[*]Sehenswerte Auto-Kämpfe: 3 Stile, 3 Rüstungswege, Begleiter, Dungeon-Bosse
+[*]Beute mit Seele: Suffix-Wurf auf jedem seltenen Fund, Runen-Verzauberung obendrauf
+[*]Echter Offline-Fortschritt, Aktions-Warteschlange und ein Postfach, damit nichts verloren geht
+[*]Keine Mikrotransaktionen, keine Wipes: Spielstände bleiben immer kompatibel
+[*]7 Sprachen und häufige Updates, gebaut aus Spieler-Reports
+[/list]
+
+[img]{STEAM_APP_IMAGE}/extras/panel_promise.png[/img]
+
+Grim Reach ist im Early Access: Alles hier oben ist heute spielbar, und das Spiel wächst durch häufige Updates, viele davon direkt aus Spieler-Reports entstanden. Ecken und Kanten wird es geben, sie werden abgeschliffen — und dein Spielstand übersteht jedes einzelne Update, versprochen.
+
+--- KURZBESCHREIBUNG (298 Zeichen) ---
+
+Ein düsteres Fantasy-Idle-RPG, in dem die Welt zurückschlägt. 28 Elite-Champions streifen nach eigenen Timern durch die Gebiete, Wochentags-Segen verändern das Reach, und jeder seltene Fund würfelt eigene Werte. Trainiere 20 Fertigkeiten, komm offline voran, werde Legende. Ohne Mikrotransaktionen.
+
+
+===== FRANÇAIS =====
+
+--- À PROPOS DU JEU (BBCode) ---
+
+Grim Reach est un idle RPG dark fantasy où le monde ne vous attend pas : il riposte. 28 Champions d'élite nommés rôdent dans les zones selon leur propre rythme, et chaque jour réel de la semaine apporte une Bénédiction qui change le comportement de tout le Domaine.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_numbers.png[/img]
+
+Quand un Champion apparaît, l'alerte tombe, un compte à rebours démarre, et quinze minutes plus tard il a disparu. Chacun des 28 garde un butin unique nommé avec son propre effet, consigné dans votre codex et sur le tableau de primes de Brenna, et les habitants commentent tout cela. Les sept Bénédictions du Domaine donnent un rythme à la semaine réelle, du butin plus riche sous la Lune de Sang aux lames plus rapides pendant la Chasse Sauvage : des bonus volontairement doux, sans FOMO, et les Champions n'apparaissent que pendant que vous jouez.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_worldfightsback.png[/img]
+
+En dessous tourne un idle RPG complet : 20 compétences, du Bûcheronnage et du Minage à la Runécriture, l'Herboristerie et le Chasseur, plus une file d'attente d'actions qui déroule vos plans même hors ligne. Les combats se jouent tout seuls mais valent le coup d'œil : trois styles de combat, trois familles d'armures, des compagnons à vos côtés, des donjons avec vagues et boss. Et chaque objet rare est un exemplaire à part avec son propre tirage de suffixe — deux épées identiques ne le sont jamais vraiment.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_skills.png[/img]
+
+Le Domaine a désormais sa propre réponse : New Haven, votre campement. Érigez 15 bâtiments sur trois rangs sur une carte peinte à la main, placez-les où bon vous semble, et chacun vous le rend par un bonus permanent : progression hors ligne prolongée, banque agrandie, compétences accélérées. La fonderie et le fumoir continuent même de travailler en votre absence, et à la tombée de la nuit, tout le camp allume ses feux.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_newhaven.png[/img]
+
+[list]
+[*]28 Champions d'élite nommés, 28 butins uniques, le premier dès vos 20 premières minutes
+[*]7 Bénédictions hebdomadaires : le monde change avec le jour réel
+[*]New Haven : bâtissez votre campement de 15 bâtiments aux bonus permanents, de jour comme de nuit
+[*]20 compétences pour récolter, fabriquer, voler et combattre
+[*]Des combats automatiques qui valent le coup d'œil : 3 styles, 3 familles d'armures, compagnons, boss de donjon
+[*]Du butin avec une âme : suffixes aléatoires sur les objets rares, enchantements de runes en plus
+[*]Vraie progression hors ligne, file d'actions et boîte aux lettres : rien n'est jamais perdu
+[*]Zéro microtransaction, zéro wipe : les sauvegardes restent toujours compatibles
+[*]7 langues et des mises à jour fréquentes, nourries par les retours des joueurs
+[/list]
+
+[img]{STEAM_APP_IMAGE}/extras/panel_promise.png[/img]
+
+Grim Reach est en accès anticipé : tout ce qui précède est jouable dès aujourd'hui, et le jeu grandit à travers des mises à jour fréquentes, souvent construites directement sur les rapports des joueurs. Il restera des aspérités et elles seront polies — et votre sauvegarde survivra à chaque mise à jour, c'est une promesse.
+
+--- SHORT DESCRIPTION / DESCRIPTION COURTE (294 Zeichen) ---
+
+Un idle RPG dark fantasy où le monde riposte. 28 Champions d'élite nommés rôdent dans les zones selon leurs timers, les Bénédictions transforment le Domaine au fil des jours réels, et chaque objet rare tire ses propres stats. Montez 20 compétences, progressez hors ligne. Zéro microtransaction.
+
+
+===== ESPAÑOL (ES) =====
+
+--- ACERCA DEL JUEGO (BBCode) ---
+
+Grim Reach es un idle RPG de fantasía oscura donde el mundo no espera por ti: contraataca. 28 Campeones de élite con nombre propio recorren las zonas a su propio ritmo, y cada día real de la semana trae una Bendición que cambia el comportamiento de toda la Reach.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_numbers.png[/img]
+
+Cuando aparece un Campeón llega el aviso, arranca una cuenta atrás y quince minutos después ya no está. Cada uno de los 28 guarda un botín único con nombre y efecto propio, registrado en tu códice y en el tablón de recompensas de Brenna, y los habitantes comentan todo lo que pasa. Las siete Bendiciones de la Reach marcan el ritmo de la semana real, del botín más rico bajo la Luna de Sangre a los golpes más rápidos durante la Cacería Salvaje: bonus suaves a propósito, sin FOMO, y los Campeones solo aparecen mientras juegas.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_worldfightsback.png[/img]
+
+Debajo corre un idle RPG completo: 20 habilidades, de la Tala y la Minería a la Creación de runas, la Herboristería y el Cazador, más una cola de acciones que ejecuta tus planes incluso sin conexión. Los combates se libran solos pero dan gusto verlos: tres estilos de combate, tres familias de armadura, compañeros a tu lado, mazmorras con oleadas y jefes. Y cada objeto raro es un ejemplar propio con su tirada de sufijo — dos espadas idénticas nunca lo son de verdad.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_skills.png[/img]
+
+La Reach ahora tiene su propia respuesta: New Haven, tu asentamiento. Levanta 15 edificios con tres niveles de mejora sobre un mapa pintado a mano, colócalos donde quieras, y cada uno te lo devuelve con un bonus permanente: más progreso sin conexión, más espacio en el banco, habilidades más rápidas. La fundición y el ahumadero siguen trabajando incluso mientras no estás, y al caer la noche todo el campamento enciende sus fuegos.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_newhaven.png[/img]
+
+[list]
+[*]28 Campeones de élite con nombre, 28 botines únicos, el primero en tus primeros 20 minutos
+[*]7 Bendiciones semanales: el mundo cambia con el día real
+[*]New Haven: construye tu asentamiento de 15 edificios con bonus permanentes, de día y de noche
+[*]20 habilidades para recolectar, fabricar, robar y luchar
+[*]Combates automáticos que dan gusto ver: 3 estilos, 3 familias de armadura, compañeros, jefes de mazmorra
+[*]Botín con alma: sufijos aleatorios en los objetos raros y encantamientos de runas encima
+[*]Progreso real sin conexión, cola de acciones y un buzón: nada se pierde nunca
+[*]Sin microtransacciones y sin wipes: las partidas guardadas siempre siguen siendo compatibles
+[*]7 idiomas y actualizaciones frecuentes nacidas de los reportes de los jugadores
+[/list]
+
+[img]{STEAM_APP_IMAGE}/extras/panel_promise.png[/img]
+
+Grim Reach está en acceso anticipado: todo lo de arriba se puede jugar hoy, y el juego crece con actualizaciones frecuentes, muchas construidas directamente sobre los reportes de los jugadores. Habrá aristas y se irán puliendo — y tu partida guardada sobrevivirá a cada actualización, es una promesa.
+
+--- DESCRIPCIÓN CORTA (296 Zeichen) ---
+
+Un idle RPG de fantasía oscura donde el mundo contraataca. 28 Campeones de élite con nombre recorren las zonas con sus propios timers, las Bendiciones cambian la Reach con cada día real y cada objeto raro tira sus propias stats. Sube 20 habilidades, progresa sin conexión. Sin microtransacciones.
+
+
+===== PORTUGUÊS (BR) =====
+
+--- SOBRE O JOGO (BBCode) ---
+
+Grim Reach é um idle RPG de fantasia sombria em que o mundo não espera por você: ele revida. 28 Campeões de elite com nome próprio vagam pelas zonas no ritmo deles, e cada dia real da semana traz uma Bênção que muda o comportamento de todo o Confim.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_numbers.png[/img]
+
+Quando um Campeão aparece, o aviso chega, a contagem começa e quinze minutos depois ele se foi. Cada um dos 28 guarda um item único com nome e efeito próprios, registrado no seu códice e no quadro de recompensas da Brenna, e os moradores comentam tudo o que acontece. As sete Bênçãos do Confim dão ritmo à semana real, do butim mais rico sob a Lua de Sangue aos golpes mais rápidos na Caçada Selvagem: bônus suaves de propósito, sem FOMO, e Campeões só aparecem enquanto você joga.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_worldfightsback.png[/img]
+
+Por baixo roda um idle RPG completo: 20 habilidades, do Corte de Lenha e da Mineração à Criação de Runas, Herbologia e Caçador, além de uma fila de ações que executa seus planos mesmo offline. As lutas acontecem sozinhas, mas valem a pena assistir: três estilos de combate, três famílias de armadura, companheiros ao seu lado, masmorras com ondas e chefes. E todo item raro é um exemplar próprio com rolagem de sufixo — duas espadas idênticas nunca são idênticas de verdade.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_skills.png[/img]
+
+O Confim agora tem uma resposta própria: New Haven, o seu assentamento. Erga 15 construções com três níveis de melhoria em um mapa pintado à mão, posicione tudo onde quiser, e cada uma retribui com um bônus permanente: mais progresso offline, mais espaço no banco, habilidades mais rápidas. A fundição e o defumadouro continuam trabalhando até enquanto você está fora, e ao cair da noite o acampamento inteiro acende suas fogueiras.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_newhaven.png[/img]
+
+[list]
+[*]28 Campeões de elite com nome, 28 itens únicos, o primeiro nos seus primeiros 20 minutos
+[*]7 Bênçãos semanais: o mundo muda com o dia real
+[*]New Haven: construa seu assentamento com 15 construções e bônus permanentes, de dia e de noite
+[*]20 habilidades para coletar, criar, roubar e lutar
+[*]Lutas automáticas que valem a pena assistir: 3 estilos, 3 famílias de armadura, companheiros, chefes de masmorra
+[*]Loot com alma: sufixos aleatórios nos itens raros e encantamentos de runas por cima
+[*]Progresso offline de verdade, fila de ações e uma caixa de correio: nada se perde
+[*]Sem microtransações e sem wipes: os saves continuam sempre compatíveis
+[*]7 idiomas e atualizações frequentes nascidas dos reports dos jogadores
+[/list]
+
+[img]{STEAM_APP_IMAGE}/extras/panel_promise.png[/img]
+
+Grim Reach está em acesso antecipado: tudo o que está acima já é jogável hoje, e o jogo cresce com atualizações frequentes, muitas construídas direto dos reports dos jogadores. Arestas vão existir e serão lixadas — e o seu save sobrevive a cada atualização, isso é uma promessa.
+
+--- DESCRIÇÃO CURTA (271 Zeichen) ---
+
+Um idle RPG de fantasia sombria em que o mundo revida. 28 Campeões de elite com nome próprio vagam pelas zonas com timers próprios, Bênçãos mudam o Confim a cada dia real e todo item raro rola os próprios stats. Suba 20 habilidades, progrida offline. Sem microtransações.
+
+
+===== РУССКИЙ =====
+
+--- ОБ ИГРЕ (BBCode) ---
+
+Grim Reach — мрачная фэнтезийная idle-RPG, где мир не ждёт вас, а отвечает ударом. 28 именных элитных Чемпионов бродят по зонам по собственному расписанию, а каждый реальный день недели приносит Благословение, меняющее поведение всего Предела.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_numbers.png[/img]
+
+Когда появляется Чемпион, приходит оповещение, запускается отсчёт, и через пятнадцать минут он исчезает. Каждый из 28 охраняет именной трофей с собственным эффектом, ваши охоты попадают в кодекс и на доску наград Бренны, а жители комментируют происходящее. Семь Благословений Предела задают ритм реальной неделе, от богатой добычи под Кровавой Луной до быстрых клинков во время Дикой Охоты: бонусы намеренно мягкие, без FOMO, а Чемпионы появляются только пока вы играете.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_worldfightsback.png[/img]
+
+Под всем этим работает полноценная idle-RPG: 20 навыков, от Древорубства и Горного дела до Рунотворчества, Травничества и Истребления, плюс очередь действий, которая выполняет ваши планы даже офлайн. Бои идут сами, но за ними интересно наблюдать: три боевых стиля, три типа брони, спутники рядом с вами, подземелья с волнами и боссами. И каждый редкий предмет — отдельный экземпляр со своим суффиксом: два одинаковых меча никогда не одинаковы по-настоящему.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_skills.png[/img]
+
+Теперь у Предела есть и собственный ответ: New Haven, ваше поселение. Возведите 15 построек с тремя уровнями развития на нарисованной вручную карте, расставьте их как угодно, и каждая отплатит постоянным бонусом: дольше офлайн-прогресс, больше места в банке, быстрее навыки. Плавильня и коптильня продолжают работать даже пока вас нет, а с наступлением ночи весь лагерь зажигает свои огни.
+
+[img]{STEAM_APP_IMAGE}/extras/panel_newhaven.png[/img]
+
+[list]
+[*]28 именных элитных Чемпионов и 28 уникальных трофеев, первый уже в первые 20 минут
+[*]7 Благословений по дням недели: мир меняется вместе с реальным днём
+[*]New Haven: постройте своё поселение из 15 зданий с постоянными бонусами, днём и ночью
+[*]20 навыков: собирайте, создавайте, воруйте, сражайтесь
+[*]Автобои, за которыми интересно наблюдать: 3 стиля, 3 типа брони, спутники, боссы подземелий
+[*]Добыча с душой: случайные суффиксы на редких предметах и рунные зачарования сверху
+[*]Настоящий офлайн-прогресс, очередь действий и почтовый ящик: ничего не пропадает
+[*]Без микротранзакций и без вайпов: сохранения всегда остаются совместимыми
+[*]7 языков и частые обновления, собранные из отчётов игроков
+[/list]
+
+[img]{STEAM_APP_IMAGE}/extras/panel_promise.png[/img]
+
+Grim Reach — это ранний доступ: всё описанное выше играбельно уже сегодня, а игра растёт за счёт частых обновлений, многие из которых собраны прямо из отчётов игроков. Шероховатости будут и их отполируют — а ваше сохранение переживёт каждое обновление, это обещание.
+
+--- КОРОТКОЕ ОПИСАНИЕ (288 Zeichen) ---
+
+Мрачная фэнтезийная idle-RPG, где мир даёт сдачи. 28 именных элитных Чемпионов бродят по зонам по своим таймерам, Благословения меняют Предел с каждым реальным днём, а каждый редкий предмет получает собственные характеристики. Качайте 20 навыков, растите даже офлайн. Без микротранзакций.
+
+
+===== 简体中文 =====
+
+--- 关于这款游戏 (BBCode) ---
+
+《Grim Reach》是一款黑暗奇幻放置RPG，这里的世界不会静静等你，它会反击。28名有名有姓的精英按自己的节奏在各区域游荡，现实中的每个星期几都会带来一种边域祝福，改变整个世界的运作方式。
+
+[img]{STEAM_APP_IMAGE}/extras/panel_numbers.png[/img]
+
+精英现身时你会立刻收到提示，倒计时开始，十五分钟后它便再度消失。28名精英每个都守着一件效果独特的专属掉落，你的战绩会记入图鉴和布伦娜的悬赏板，居民们也会议论这一切。七种边域祝福让现实的一周有了节奏，从血月之下更肥的野兽掉落，到狂猎期间更快的出手：加成刻意温和、没有FOMO，而且精英只在你游玩时出现。
+
+[img]{STEAM_APP_IMAGE}/extras/panel_worldfightsback.png[/img]
+
+底层是一款完整的放置RPG：20项技能，从伐木、采矿到符文制作、草药学和猎魔，行动队列会在你离线时继续执行计划。战斗自动进行却值得一看：三种战斗流派、三系护甲、并肩作战的伙伴、有波次和首领的地下城。每件稀有装备都是独立个体，自带随机词缀，两把相同的剑永远不会真正相同。
+
+[img]{STEAM_APP_IMAGE}/extras/panel_skills.png[/img]
+
+如今边域也有了属于你的答案：New Haven，你的营地。在一张手绘地图上建造15种建筑，每种可升三级，想放哪就放哪，而每一座建筑都会以永久加成回报你：更长的离线进度、更多的银行空间、更快的技能。熔炉和熏制房甚至会在你离开时继续劳作，夜幕降临时，整个营地都会点起火光。
+
+[img]{STEAM_APP_IMAGE}/extras/panel_newhaven.png[/img]
+
+[list]
+[*]28名精英、28件专属掉落，你的第一场遭遇就在开局20分钟内
+[*]7种星期祝福：世界随现实日期变化
+[*]New Haven：建造你的专属营地，15种建筑、永久加成、昼夜交替
+[*]20项技能：采集、制造、偷窃、战斗
+[*]可观赏的自动战斗：3种流派、3系护甲、伙伴、地下城首领
+[*]有灵魂的战利品：稀有装备随机词缀，附魔符文再叠一层
+[*]真实离线进度、行动队列和邮箱，战利品永不丢失
+[*]零内购、零清档：存档永远兼容
+[*]7种语言，更新频繁，许多改动直接来自玩家反馈
+[/list]
+
+[img]{STEAM_APP_IMAGE}/extras/panel_promise.png[/img]
+
+《Grim Reach》正处于抢先体验阶段：以上内容今天就能玩到，游戏通过频繁更新持续成长，许多改动直接来自玩家反馈。粗糙之处会有，也会被逐一打磨，而你的存档能安然渡过每一次更新，说到做到。
+
+--- 简介 / SHORT DESCRIPTION (201 Zeichen) ---
+
+《Grim Reach》是一款会反击的黑暗奇幻放置RPG。28名有名有姓的精英按各自的隐藏计时在区域间现身又消失，每个都守着一件效果独特的专属掉落；七种边域祝福随现实中的星期几改变整个世界的规则；每件稀有装备都会随机生成自己的词缀，没有两件完全相同。修炼从伐木、采矿到符文制作、猎魔的20项技能，排好行动队列，离线也在稳步成长。零内购、零清档，存档永远兼容，更新持续不断。来吧，让整个边域记住你的名字。

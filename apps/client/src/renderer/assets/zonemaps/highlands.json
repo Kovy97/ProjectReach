@@ -1,0 +1,29 @@
+{
+  "zoneId": "highlands",
+  "hotspots": [
+    {
+      "monsterId": "roc",
+      "x": 22,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "roc_hunter",
+      "x": 50,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "roc_elder",
+      "x": 78,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "roc_storm",
+      "x": 22,
+      "y": 71,
+      "size": 2.33
+    }
+  ]
+}

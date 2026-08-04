@@ -1,0 +1,77 @@
+{
+  "camp_townhall": [
+    "improvised field-command post: low command tent reinforced by a squat timber map shelter, small fieldstone footing and integrated iron signal frame",
+    "fortified command hall: expanded enclosed timber mass on a continuous stone plinth, broad covered map annex, iron-bound records room and heavier signal-bell gantry",
+    "frontier commandery: dominant squat fieldstone keep mass, enclosed archive wing, raised protected watch deck and two-bay command porch under one coherent roofline"
+  ],
+  "camp_watchtower": [
+    "narrow four-post siege-camp lookout with open ladder, small protected platform and compact stone foot",
+    "hybrid watchtower with a tall fieldstone lower chamber, enclosed timber guard room, larger roofed platform and external stair",
+    "massive freestanding fieldstone watchtower with iron-braced parapet, roofed signal platform and attached protected guardhouse"
+  ],
+  "camp_storehouse": [
+    "raised timber provision cage on separate stone feet with a dark tarp roof and one locked loading step",
+    "sealed camp warehouse on a continuous stone plinth with loading lean-to, hand winch and iron-bound double doors",
+    "armored quartermaster granary with stone lower vault, expanded upper store, twin loading bays and an integrated hoist tower"
+  ],
+  "camp_scrivener_tent": [
+    "heavy archive tent with protected writing desk, ledger chest and one lockable document cabinet integrated into the frame",
+    "timber field chancery with shuttered service counter, iron-bound document room and a covered clerk annex",
+    "fortified registry house with a stone archive cell, expanded records hall, two covered service windows and protected lantern mast"
+  ],
+  "camp_fishing_hut": [
+    "compact fishing supply shelter with low blackened frame, patched-hide lean-to and attached net-and-trap rail",
+    "fortified fish provision hut with enclosed workroom, covered net loft, wider drying gallery and small integrated smoking annex",
+    "dark provisioning lodge with stone chill-store base, enclosed drying hall, reinforced steep roof and two attached processing bays"
+  ],
+  "camp_sawpit": [
+    "open military saw frame supporting one log and long pit saw, represented entirely as constructed equipment without a ground hole",
+    "roofed field saw rig with heavy timber staging, hand winch, one enclosed tool bay and enlarged log cradle",
+    "fortified engineering saw hall with twin work bays, overhead crane beam, enclosed blade store and broad iron-braced roof"
+  ],
+  "camp_mine_adit": [
+    "heavy timber mine portal with doors, compact ore sled and baskets attached, with no cliff or terrain",
+    "reinforced adit house with stone-faced portal, hand winch tower and roofed ore-sorting canopy integrated into one structure",
+    "fortified minehead gatehouse with massive stone portal, enclosed winding frame, protected loading bay and iron-braced sorting wing"
+  ],
+  "camp_seed_garden": [
+    "four shallow planting boxes inside a low joined wattle windbreak, with rolled dark canvas cover, rain barrel and seed chest",
+    "protected survival garden with taller defensive wattle wall, two covered growing frames, compact tool shelter and integrated cistern",
+    "walled medicinal seed compound with dark canvas coldhouse, stone-lined cistern, locked seed vault and two distinct growing sections"
+  ],
+  "camp_fence_tent": [
+    "low concealed exchange tent with dark patched canopy, lockbox and discreet shuttered shelf",
+    "fortified black-market kiosk with iron-bound counter shutters, enclosed locked store and screened receiving hatch",
+    "armored contraband depot with stone strongroom, two protected exchange counters, watch slit and heavy covered loading recess"
+  ],
+  "camp_workyard": [
+    "open pioneer workyard with partial dark tarp roofs, one bench, tool rack and simple timber hoist",
+    "covered military workshop with two work bays, heavier hoist, enclosed tool room and expanded roof mass",
+    "fortified engineering hall with twin roofed bays, overhead crane, iron-clad tool vault and broad masonry-supported work porch"
+  ],
+  "camp_smelter": [
+    "compact field bloomery furnace with attached bellows and one small iron-braced work canopy",
+    "masonry furnace house with roofed bellows chamber, casting bench, taller chimney and enclosed fuel store",
+    "heavy frontier foundry with twin furnace masses, tall stone chimney, integrated crane bay and expanded iron-working hall"
+  ],
+  "camp_smokehouse": [
+    "low sealed smoking cabinet beneath a dark weather canopy with small attached fuel rack",
+    "tight timber smokehouse with vented roof, enclosed curing room, covered preparation porch and fuel lean-to",
+    "stone-based provisioning house with separate curing chamber, tall controlled chimney, broad preparation bay and locked salt store"
+  ],
+  "camp_trophy_wall": [
+    "freestanding hunt rack beneath a narrow weather roof with restrained trophies and iron hooks",
+    "reinforced covered trophy wall with stone feet, secured wild-game chamber and broader working canopy",
+    "fortified warden lodge facade with enclosed game store, covered trophy gallery and two protected processing recesses, never a gore shrine"
+  ],
+  "camp_warden_shrine": [
+    "small aniconic field shrine of dark stone and timber with one offering ledge and no statue",
+    "walled stone wayshrine with protective roof, iron gate, offering rail and a taller unlit lantern frame",
+    "compact fortress chapel with buttressed stone mass, enclosed silent chamber, high iron lantern and protected votive porch, still aniconic"
+  ],
+  "camp_trade_post": [
+    "covered frontier supply counter with tied crates, weighing scales and one lockable rear cabinet",
+    "stockade trade post with enclosed store room, two protected counters, iron-bound shutters and integrated scale mast",
+    "armored quartermaster depot with stone safe room, broad covered loading porch, two trading bays and a compact crane arm"
+  ]
+}

@@ -1,0 +1,181 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══ NPC-Begrüßung („Speaking Head", Chef-GO 2026-07-13) ══════════════════════
+   Kopf-Medaillon im Holz-9-Slice + Sprechblase im dunklen Citadel-Ton, oben auf
+   Bank/Shop/Slayer/Quests. Wird — wie shop.css/inv-filter.css — DIREKT von der
+   Komponente importiert (components/NpcGreeting.tsx), nicht über index.css
+   (Kollisions-Schutz bei parallelen Agenten).
+
+   Größen-Update (Chef-Zusatzauftrag 2026-07-13, „Speaking Head etwas zu klein"):
+   Kopf 72→96px, Sprechblasen-Text/Name spürbar größer. EINE gemeinsame Größenbasis
+   für alle Einbindungen — die Seiten-Begrüßung (Bank/Shop/Slayer/Quests) UND die
+   Guide-/Tour-Sprechblase (components/SpotlightGuide.tsx, .guide-bubble-speaker
+   unten) teilen sich exakt dieselben .npc-greeting-head/.npc-bubble-Regeln. */
+
+.npc-greeting {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+  animation: npc-greeting-in 200ms ease-out both;
+}
+
+@keyframes npc-greeting-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .npc-greeting {
+    animation: none;
+  }
+}
+
+/* ── Kopf-Medaillon: derselbe selbstgebaute Citadel-Kasten wie .fighter-level-badge /
+   .cs-portrait-settings-btn (Holz-9-Slice + bg_black-Textur). Porträts sind 3:4 —
+   cover + object-position:top zeigt den Kopfbereich. ── */
+.npc-greeting-head {
+  flex: 0 0 auto;
+  width: 96px;
+  height: 96px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 12px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 12px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.6), rgba(18, 12, 6, 0.6)),
+    url("../assets/bg_black.webp") repeat;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.npc-greeting-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.npc-greeting-fallback {
+  font-size: 34px;
+  opacity: 0.6;
+}
+
+/* ── Sprechblase: dunkler Pergament-/Citadel-Ton, Name in Cinzel-Gold, Text kursiv.
+   Standalone nutzbar (Onboarding-Guide) — der Zeiger kommt nur über den Modifier. ── */
+.npc-bubble {
+  position: relative;
+  flex: 0 1 auto;
+  max-width: 620px;
+  min-height: 50px;
+  padding: 10px 18px 11px;
+  background:
+    linear-gradient(rgba(30, 21, 12, 0.92), rgba(19, 13, 8, 0.95)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid var(--border-bright, #4d5963);
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+/* Zeiger-Dreieck zum Kopf: zwei überlagerte CSS-Dreiecke (Rand hinten, Füllung vorn).
+   top:30px ≈ oberes Drittel des 96px-Kopfs (dieselbe Proportion wie zuvor bei 72px). */
+.npc-bubble--tail-left::before,
+.npc-bubble--tail-left::after {
+  content: "";
+  position: absolute;
+  top: 30px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.npc-bubble--tail-left::before {
+  left: -9px;
+  border-width: 8px 9px 8px 0;
+  border-right-color: var(--border-bright, #4d5963);
+}
+
+.npc-bubble--tail-left::after {
+  left: -8px;
+  border-width: 7px 8px 7px 0;
+  /* Füllton = Blasen-Hintergrund auf Höhe des Zeigers (Verlauf oben). */
+  border-right-color: #1c140c;
+}
+
+.npc-bubble-name {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: var(--gold, #d8c06a);
+  text-shadow: 0 1px 2px #000;
+  margin-bottom: 4px;
+}
+
+.npc-bubble-text {
+  font-size: 16px;
+  line-height: 1.45;
+  font-style: italic;
+  color: var(--text, #ccd5db);
+  opacity: 0.92;
+}
+
+/* ═══ Guide-/Tour-Sprechblase (components/SpotlightGuide.tsx) ══════════════════════
+   Dieselbe Kopf-/Blasen-Optik wie oben, aber als Rahmen für STRUKTURIERTEN Schritt-
+   Text (Überschrift + Absatz statt einer kurzen Flavor-Zeile) — daher Kursiv-/
+   Opacity-Stil hier deaktiviert, die Blase wächst auf die volle Restbreite der
+   schwebenden Guide-Box (s. onboarding-guide.css .guide-bubble).
+
+   Porträt-Update (Chef-Auftrag 2026-07-22, „mehr Platz für Bild"): der Wächter ist in
+   diesem Moment der Hauptdarsteller — Medaillon deutlich über das normale
+   Seiten-Begrüßungsmaß (96px) hinaus, analog zum bereits bestehenden Präzedenzfall
+   `.chronicle-stage-npc .npc-greeting-head` (120px) weiter oben in dieser Datei, hier
+   sogar noch etwas größer und vw-gekoppelt (skaliert mit auf 4K, s. onboarding-guide.css
+   .guide-bubble-Doc). Nur dieser Scope ist betroffen — die normale Seiten-Begrüßung
+   (Bank/Shop/Slayer/Quests, `.npc-greeting-head` oben) bleibt unverändert bei 96px. */
+.guide-bubble-speaker {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(16px, 1.2vw, 22px);
+  margin-bottom: 14px;
+}
+
+.guide-bubble-speaker .npc-greeting-head {
+  width: clamp(120px, 9vw, 168px);
+  height: clamp(120px, 9vw, 168px);
+  border-width: clamp(13px, 1vw, 18px);
+  border-image-width: clamp(13px, 1vw, 18px);
+}
+
+.guide-bubble-speaker .npc-greeting-fallback {
+  font-size: clamp(38px, 3vw, 54px);
+}
+
+.guide-bubble-speaker .npc-bubble-name {
+  font-size: clamp(15px, 1vw, 18px);
+}
+
+.guide-bubble-speaker .npc-bubble {
+  flex: 1 1 auto;
+  max-width: none;
+}
+
+.guide-bubble-speaker .npc-bubble-text {
+  font-style: normal;
+  opacity: 1;
+}

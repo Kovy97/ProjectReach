@@ -1,0 +1,242 @@
+═══════════════════════════════════════════════════════════════════════════════
+  GRIM REACH — ULTIMATIVE ChatGPT-ASSET-LISTE (Stand 2026-07-11, per Ist-Scan)
+═══════════════════════════════════════════════════════════════════════════════
+Quelle: automatischer Abgleich Content-Katalog ↔ Asset-Ordner + Emoji-Scan des
+gesamten UI-Codes (keine veralteten Runden-Listen). FEHLEN aktuell wirklich:
+35 Item-Bilder + 10 Monster + 21 UI-Icons = 66 Bilder. Ersetzt die Runden-Listen
+6+7 und meisterumhang-prompts.txt komplett.
+
+HINWEIS ZU DEN EMOJI-PLATZHALTERN: Der Code-Scan fand 117 verschiedene Zeichen —
+das meiste sind Zier-Linien/Pfeile (kein Asset nötig) oder Emojis, für die Icons
+LÄNGST existieren (Skill-/Stat-/Sidebar-Icons, Enrage-Bär, Erfolge-Pokal …); die
+verdrahtet Claude per Code-Welle, dafür musst du NICHTS generieren. Wirklich
+generieren musst du nur TEIL 8+9 unten (21 UI-Icons, kuratiert).
+
+DURCHGÄNGIGER STIL (gilt für alles):
+- Gemaltes Dark-Fantasy, KEIN Pixel-Art. EIN Motiv pro Bild, zentriert.
+- HINTERGRUND: KOMPLETT TRANSPARENT (PNG mit Alpha) — bei ALLEM, auch Monstern.
+  Kein Rahmen, kein Boden, keine Vignette.
+- NIEMALS Collagen/Sammelblätter: jedes Motiv ist ein EIGENES Bild. Mehrfach-
+  Blöcke am Ende als EINE ZIP mit EXAKT benannten Dateien liefern lassen.
+- WICHTIGSTE REGEL: Ausrüstung (Waffen/Rüstung/Umhänge/Schmuck) OHNE Schimmer,
+  Glühen oder Leuchten. NUR Runen und Tränke/Speisen dürfen dezent glühen.
+- Monster: ganze Kreatur sichtbar, gemalter Stil, ebenfalls transparenter Hintergrund.
+
+EMPFOHLENE REIHENFOLGE:
+  TEIL 1  Meisterumhänge (21)     — Feature ist LIVE, größte sichtbare Lücke
+  TEIL 2  Knochenkappe (1) — Starter-Leder-Hose+Stiefel: ERLEDIGT (lagen im Archiv)
+  TEIL 3  Sterngewebe-Set + Bogen (6) — Endgame-Magier-Set, seit Runde 3 offen
+  TEIL 4  Runen des Ausweichens (3)
+  TEIL 5  Endgame-Speisen (3)
+  TEIL 6  Paragon-Schlüssel (1)   — NEU (Endlos-Turm)
+  TEIL 7  Monster (10)            — 5 Kriegsbande (Endgame-Dungeon live!) + 5 Zonen
+  TEIL 8  UI-Icon Quest-Token (1)
+  TEIL 9  UI-Icon-Bibliothek (20) — Emoji-Ersatz; 5 davon wirken SOFORT nach Ablage
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 1 — MEISTERUMHÄNGE (21) · Level-99-Belohnungen
+███████████████████████████████████████████████████████████████████████████████
+ABLAUF: Pro Umhang EINEN Prompt nutzen und das passende icon_<skill>.png aus
+Downloads\ASSETS\resources\done\chatGPT\ ANHÄNGEN — das Symbol wird NICHT
+beschrieben, die KI übernimmt es vom angehängten Bild als Rücken-Emblem.
+
+1) icon_woodcutting.png anhängen → cape_master_woodcutting.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Hainhüters": tiefes Waldgrün mit moosgrauem Innenfutter, Saum wie geflochtene Rinde, Schließe aus dunklem Astholz. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_woodcutting.png
+
+2) icon_mining.png anhängen → cape_master_mining.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Tiefenbrechers": schiefergrauer schwerer Stoff mit eingewebten dunklen Erzadern, Saum aus stumpfem Eisen-Kettengeflecht, Schließe ein roher Erzbrocken in Eisenfassung. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_mining.png
+
+3) icon_fishing.png anhängen → cape_master_fishing.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Leerenanglers": tiefes Meerblau-Schwarz mit Schuppen-Textur im Stoff, Saum wie feines Netzgeflecht mit kleinen Knochenhaken, Schließe eine dunkle Perlmutt-Muschel. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_fishing.png
+
+4) icon_smithing.png anhängen → cape_master_smithing.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Essenmeisters": rußgeschwärztes dunkles Leder-Tuch mit glutorange abgesetzten Nähten (matte Farbe, kein Leuchten), Saum mit genieteten Stahlplättchen, Schließe ein kleiner Amboss aus Eisen. Das beigefügte Symbol als geprägtes Metall-Wappen mittig auf dem Rückenfeld übernehmen. Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_smithing.png
+
+5) icon_cooking.png anhängen → cape_master_cooking.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Seelenkochs": warmes Bordeauxrot mit cremefarbenem Innenfutter, Saum mit feiner Gewürzranken-Stickerei, Schließe ein kleiner Kupferkessel. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_cooking.png
+
+6) icon_farming.png anhängen → cape_master_farming.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Grabgärtners": erdbraunes grobes Tuch mit dunkelgrünen Ranken-Applikationen, Saum aus geflochtenem Stroh mit vereinzelten getrockneten Blüten, Schließe eine kleine Bronzesichel. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_farming.png
+
+7) icon_foraging.png anhängen → cape_master_foraging.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Wildsammlers": gedecktes Oliv mit aufgenähten Kräuterbündeln und kleinen Ledertaschen am Saum, Kapuzenrand mit Federbesatz, Schließe aus Hirschhorn. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_foraging.png
+
+8) icon_thieving.png anhängen → cape_master_thieving.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Schattengriffs": mattes Nachtschwarz mit kaum sichtbarem rauchgrauem Muster, innen dutzende kleine Diebestaschen angedeutet, Saum asymmetrisch zerschlissen-elegant, Schließe ein stumpfer Dietrich aus Silber. Das beigefügte Symbol als dezent eingewebtes, dunkelgraues Wappen mittig auf dem Rückenfeld übernehmen (Ton in Ton, verstohlen). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_thieving.png
+
+9) icon_leatherworking.png anhängen → cape_master_leatherworking.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Gerbermeisters": aus edlen, verschiedenfarbigen Lederbahnen (cognac, umbra, schwarzbraun) kunstvoll vernäht, sichtbare Meister-Sattlernähte, Saum mit Lederflechtband, Schließe eine große Messing-Ahle. Das beigefügte Symbol als gepunztes Leder-Wappen mittig auf dem Rückenfeld übernehmen. Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_leatherworking.png
+
+10) icon_jewelcrafting.png anhängen → cape_master_jewelcrafting.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Steinschleifers": tiefviolettes Samttuch, Saum mit einer Reihe kleiner, MATT gefasster Edelsteine in verschiedenen Farben (keine Funkel-Effekte), Schließe eine silberne Juwelierszange. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Silber). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_jewelcrafting.png
+
+11) icon_runecrafting.png anhängen → cape_master_runecrafting.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Runenbinders": steingraues schweres Tuch mit eingemeißelten wirkenden, dunkel eingefärbten Runenreihen entlang des Saums (matte Gravur-Optik, kein Leuchten), Schließe ein kleiner Runenstein in Eisenfassung. Das beigefügte Symbol als großes, eingraviert wirkendes Wappen mittig auf dem Rückenfeld übernehmen. Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_runecrafting.png
+
+12) icon_herblore.png anhängen → cape_master_herblore.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Giftbrauers": dunkles Flaschengrün mit violetten Schlieren im Stoff, am Saum hängen kleine verkorkte Phiolen und getrocknete Kräuter, Schließe ein Mörser aus dunklem Stein. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_herblore.png
+
+13) icon_slayer.png anhängen → cape_master_slayer.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Kopfgeldmeisters": geschwärztes Leder mit blutroten Innenfutter-Blitzen, am Saum eine Reihe kleiner Monster-Trophäen (Zähne, Klauen, ein Hornsplitter), Schließe ein eiserner Totenschädel-Knebel. Das beigefügte Symbol als genietetes Metall-Wappen mittig auf dem Rückenfeld übernehmen. Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_slayer.png
+
+14) icon_attack.png anhängen → cape_master_attack.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Klingenmeisters": stahlgraues, schweres Tuch mit feinen parallelen Schnittnarben-Nähten quer über das Feld, Saum mit poliertem Stahlband, Schließe zwei gekreuzte Miniatur-Klingen. Das beigefügte Symbol als geprägtes Stahl-Wappen mittig auf dem Rückenfeld übernehmen. Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_attack.png
+
+15) icon_power.png anhängen → cape_master_power.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Kriegsherrn": tiefes Blutrot mit schwarzem Fellkragen, das Tuch schwer und leicht zerschlissen wie nach hundert Schlachten, Saum mit dunklen Eisenringen beschwert, Schließe eine eiserne Faust. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in dunklem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_power.png
+
+16) icon_defence.png anhängen → cape_master_defence.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Bollwerks": gunmetal-graues Tuch, das Rückenfeld mit überlappenden kleinen Stahlplatten wie Schuppenpanzer besetzt, breiter genieteter Saum, Schließe ein Turmschild-Miniatur aus Eisen. Das beigefügte Symbol als geprägtes Wappen mittig auf der zentralen Platte übernehmen. Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_defence.png
+
+17) icon_ranged.png anhängen → cape_master_ranged.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Falkenauges": gedecktes Jägergrün-Braun mit Kapuze, Federbesatz an den Schultern (Falkenfedern), Saum mit Lederriemen und einer kleinen Zielring-Applikation, Schließe eine Falkenkralle aus Bronze. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_ranged.png
+
+18) icon_magic.png anhängen → cape_master_magic.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Erzmagiers": mitternachtsblauer schwerer Samt mit silbernen Konstellations-Stickereien (matte Fäden, kein Leuchten), hoher Stehkragen, Saum mit arkanen Schriftzeichen-Bordüre, Schließe ein silberner Halbmond. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in mattem Silber). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_magic.png
+
+19) icon_warding.png anhängen → cape_master_warding.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Seelenwächters": blasses Elfenbein-Weiß mit hellblauen Schutzsiegel-Stickereien in konzentrischen Bögen über das Rückenfeld, Saum mit feinen Silberkettchen, Schließe ein rundes Schutzamulett. Das beigefügte Symbol als zentrales Siegel-Wappen mittig übernehmen (matte Stickerei, kein Leuchten). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_warding.png
+
+20) icon_vitality.png anhängen → cape_master_vitality.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang des Unbeugsamen": erdiges Dunkelrot-Braun, robuster mehrfach geflickter Stoff, dessen Flicken wie Ehrenabzeichen wirken, Saum mit geflochtenem Lederband, Schließe ein eisernes Herz. Das beigefügte Symbol als großes, aufgesticktes Wappen mittig auf dem Rückenfeld übernehmen (Stickerei-Optik in gedecktem Gold). Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_vitality.png
+
+21) KEIN Icon anhängen → cape_master_completion.png
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: ein meisterlicher Umhang (Rückansicht, drapiert), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha, kein Rahmen, kein Boden), ohne jedes Glühen. Der „Umhang der Vollendung" — die höchste Auszeichnung des Spiels: tiefschwarzer Samt, dessen gesamtes Rückenfeld von einer reichen, ineinander verwobenen Gold-Bordüre aus zwanzig kleinen Zunft-Ornamenten gerahmt wird (Andeutungen von Amboss, Angelhaken, Ähre, Klinge, Rune — als feine Gold-Stickerei, bewusst klein und zahlreich), mittig ein großes, leeres gekröntes Wappenschild aus geprägtem Gold. Kapuze mit Goldsaum, Schließe eine kleine goldene Krone. Majestätisch und schwer, matte Goldfäden, absolut kein Leuchten. Liefere GENAU EIN Bild (keine Collage) und stelle es als PNG-Datei mit exakt diesem Dateinamen zum Download bereit: cape_master_completion.png
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 2 — KNOCHENKAPPE (1) · [ERLEDIGT 2026-07-11: leather_legs + leather_boots
+lagen fertig im Archiv (t1Softleather-Set, „softleather_pants/boots") — Claude
+hat sie eingebunden. Nur die Mark-Kappe fehlt noch.]
+███████████████████████████████████████████████████████████████████████████████
+
+--- Block 1/1 ---
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: GENAU EIN Bild (keine Collage), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha). Stelle das Ergebnis als PNG-Datei mit exakt dem angegebenen Dateinamen zum Download bereit:
+• Mark-Kappe (marrow_cap.png) — Ein grober Kopfschutz, zusammengesetzt aus bleichen, ausgehöhlten Knochenplatten und -kappen, mit Lederriemen verzurrt. Die Knochen wirken porös und markig-hohl, elfenbein- bis gelblich-bleich; ein leicht unheimliches Früh-Spiel-Trophäenstück. Matt, knochig, kein Leuchten.
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 3 — STERNGEWEBE-SET + FROSTBOGEN (6) · Endgame, seit Runde 3 offen
+███████████████████████████████████████████████████████████████████████████████
+
+--- Block 1/1 ---
+Ich brauche 6 Spiel-Asset-Icons im gemalten Dark-Fantasy-Stil. ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 6 PNG-Dateien EXAKT so: starweave_coronet.png, starweave_vestment.png, starweave_skirt.png, starweave_handwraps.png, starweave_sandals.png, frostcaverns_bow.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Sterngewebe-Krone (starweave_coronet.png) — Ein filigraner Stirnreif aus mitternachtsblauem, dicht gewebtem Sternenstoff über einem schmalen Silbergestell. In den Stoff sind winzige silberne Sternchen und feine Konstellations-Linien eingestickt, wie ein Nachthimmel als Textil. Vorne ein kleines, mattes Silbermedaillon mit Sternprägung. Edle Magier-Kopfbedeckung, matte Stoffoberfläche, kein Leuchten.
+• Sterngewebe-Ornat (starweave_vestment.png) — Eine epische Magier-Robe (Brustteil) aus tiefem Mitternachtsblau mit violettem Schimmerton im Stoffverlauf. Silberne Stickerei zeichnet Sternbilder über Brust und Schultern; die Säume tragen ein feines Bordürenmuster aus winzigen Sternen. Weite, elegante Ärmelansätze, hochwertiger fallender Stoff. Matt, edel, kein Leuchten.
+• Sterngewebe-Gewand (Beine) (starweave_skirt.png) — Ein bodenlanger, leicht fallender Magier-Rock aus mitternachtsblauem Sternenstoff, seitlich geschlitzt. Eingestickte silberne Sternbilder ziehen sich wie eine Himmelskarte über den Stoff nach unten; silberner Gürtelbund mit Mondsichel-Schließe. Matte Textiloberfläche, kein Leuchten.
+• Sterngewebe-Handwickel (starweave_handwraps.png) — Handgelenk-Wickel aus schmalen Bahnen mitternachtsblauen Sternenstoffs, mehrfach um Handfläche und Unterarm gewunden. Auf dem Handrücken ein aufgesticktes silbernes Sternbild als Abschluss-Ornament; die Bahnenkanten silbern eingefasst. Stoffstruktur sichtbar, matt, kein Leuchten.
+• Sterngewebe-Sandalen (starweave_sandals.png) — Leichte Magier-Sandalen mit Sohlen aus dunklem Leder und Riemen aus mitternachtsblauem Sternenstoff, die sich bis über den Knöchel kreuzen. Kleine silberne Stern-Nieten an den Riemenkreuzungen, silberne Zierkante an der Sohle. Elegant und leicht, matt, kein Leuchten.
+• Frostkavernen-Bogen (frostcaverns_bow.png) — Ein epischer Langbogen, geborgen aus den eisigen Frostkavernen — die Bogenarme wie aus klarem Gletschereis gewachsen, mit Raureif und feinen weißen Frostadern überzogen. Die Sehne wirkt wie gefrorener Faden, an den Enden kleine Eiszapfen. Kristalline, kalte Optik — aber OHNE Glow: nur Eis, Reif und matte Kälte.
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 4 — RUNEN DES AUSWEICHENS (3) · dürfen glühen, Tier-Stufung
+███████████████████████████████████████████████████████████████████████████████
+
+--- Block 1/1 ---
+Ich brauche 3 Spiel-Asset-Icons im gemalten Dark-Fantasy-Stil. ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 3 PNG-Dateien EXAKT so: rune_evasion_i.png, rune_evasion_ii.png, rune_evasion_iii.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Rune des Ausweichens I (rune_evasion_i.png) — Ein kleiner, flacher Runenstein der ersten Stufe, in dessen Oberfläche eine geschwungene Wind-/Ausweich-Rune (wehende Doppellinie) eingraviert ist. Grauer Stein, die Rune-Linien glimmen schwach blassgrün, ein einzelnes angedeutetes Blatt-Motiv. Sehr dezentes grünliches Glühen — die schwächste Stufe.
+• Rune des Ausweichens II (rune_evasion_ii.png) — Runenstein der zweiten Stufe: die Wind-Rune ist tiefer eingebrannt und leuchtet klar grün; um den Stein wehen zwei feine, angedeutete Luftschlieren mit winzigen Blättern. Mittleres grünes Leuchten, spürbar mehr Bewegung als Stufe I.
+• Rune des Ausweichens III (rune_evasion_iii.png) — Runenstein der dritten Stufe: die Rune strahlt hell smaragdgrün-weiß, der Stein ist von einem sichtbaren Wirbel aus Luftschlieren und tanzenden Blättern umgeben, als würde er der Hand ausweichen wollen. Kräftiges grünes Kernleuchten — die stärkste Stufe.
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 5 — ENDGAME-SPEISEN (3) · dezentes Glühen erlaubt
+███████████████████████████████████████████████████████████████████████████████
+
+--- Block 1/1 ---
+Ich brauche 3 Spiel-Asset-Icons im gemalten Dark-Fantasy-Stil. ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 3 PNG-Dateien EXAKT so: voidray_banquet.png, abyssal_feast.png, soulfire_banquet.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Leerenrochen-Bankett (voidray_banquet.png) — Ein festlich angerichtetes Endgame-Gericht: das gebratene Flügelfilet eines Leerenrochens auf einer dunklen Steinplatte, das Fleisch außen gebräunt, innen dunkelviolett schimmernd wie der Nachthimmel. Garniert mit dunklen Kräutern und ein paar tiefvioletten Beeren; hauchzarter violetter Dampf steigt auf.
+• Abgrund-Festmahl (abyssal_feast.png) — Ein brodelnder gusseiserner Kessel voll tiefseeblauer Suppe, in der Tentakelstücke, Muscheln und ein ganzer Tiefseefisch angerichtet sind. Die Oberfläche schimmert dunkelblau-türkis wie die Tiefsee, feiner blauer Dampf; rustikale Kelle am Kesselrand.
+• Seelenfeuer-Bankett (soulfire_banquet.png) — Ein herrschaftlicher Braten auf silberner Platte, der über blassblauen Seelenfeuer-Flammen ruht — die Flammen züngeln geisterhaft kühl-blau statt orange um das Fleisch, das dadurch appetitlich glasiert wirkt. Beilagen aus dunklem Wurzelgemüse; dezent blau glühende Glut darunter.
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 6 — PARAGON-SCHLÜSSEL (1) · NEU: schaltet den endlosen Paragon-Turm frei
+███████████████████████████████████████████████████████████████████████████████
+
+--- Block 1/1 ---
+Ich brauche ein einzelnes Spiel-Item-Icon im gemalten Dark-Fantasy-Stil: GENAU EIN Bild (keine Collage), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha). Stelle das Ergebnis als PNG-Datei mit exakt dem angegebenen Dateinamen zum Download bereit:
+• Paragon-Schlüssel (paragon_key.png) — Ein monumentaler, alter Zeremonienschlüssel aus geschwärztem Sternenmetall mit matten Goldeinlagen. Die Reide (der Griffring) ist als aufragender, endloser Turm geformt, dessen Spitze sich in feine Stufen verliert; der lange Schaft trägt eingravierte, aufsteigende Etagen-Marken wie Stockwerks-Striche. Der Bart ist ein stilisiertes Zinnen-Profil. Würdevoll, schwer und uralt — die Eintrittskarte in den endlosen Turm. Matte Metalle, KEIN Leuchten.
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 7 — MONSTER (10) · ganze Kreatur, gemalter Stil, TRANSPARENTER Hintergrund
+███████████████████████████████████████████████████████████████████████████████
+
+--- MONSTER Block 1/2: Die Kriegsbande (5) — Endgame-Dungeon „Goblin-Kriegsbande" (Stufe 50–60, LIVE!) ---
+Ich brauche 5 Spiel-Monster-Artworks im gemalten Dark-Fantasy-Stil (ganze Kreatur sichtbar). ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 5 PNG-Dateien EXAKT so: goblin_reaver.png, goblin_pikeman.png, goblin_siegebrute.png, goblin_bloodshaman.png, goblin_warchief.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Goblin-Plünderer (goblin_reaver.png) — Ein sehniger, flinker Goblin-Räuber (Stufe 50) der Kriegsbande: zwei gekrümmte, angerostete Dolche in den Händen, leichte Lederriemen-Rüstung mit aufgenähten Trophäen (getrocknete Ohren, kleine Knochen), Kapuze aus Fellresten. Geduckte, sprungbereite Haltung, hinterhältiger Blick — der Vorhut-Späher der Bande.
+• Goblin-Pikenier (goblin_pikeman.png) — Ein stämmiger Goblin-Speerträger (Stufe 52) in geflickter Schrottplatten-über-Leder-Rüstung, eine lange, rostige Pike fest im Anschlag, ein runder Holz-und-Eisen-Schild am Arm. Kampfformation-Haltung wie eine lebende Speerwand, entschlossener, verbissener Ausdruck.
+• Goblin-Belagerungsbestie (goblin_siegebrute.png) — Ein massiger, muskulöser Goblin-Elitekämpfer (Stufe 55) der Kriegsbande: trägt eine improvisierte Belagerungswaffe wie einen riesigen, kettenbehangenen Rammbock-Arm oder einen überdimensionierten Kriegshammer aus Schrottmetall. Dicke, genietete Schrottplatten-Panzerung, breite kampferprobte Statur, einschüchternde Präsenz.
+• Goblin-Blutschamane (goblin_bloodshaman.png) — Ein hagerer Goblin-Blutmagier (Stufe 57): rituelle Narben und rote Kriegsbemalung über den ganzen Körper, ein blutverkrusteter Knochendolch/Totem in erhobener Hand, dunkelrote magische Energie umspielt die Finger. Behängt mit klappernden Knochen- und Zahnamuletten, unheilvoller, konzentrierter Ausdruck.
+• Goblin-Kriegshäuptling (goblin_warchief.png) — Ein großer, narbenübersäter Goblin-Kriegsherr (Stufe 60, Boss der Kriegsbande): breiter als jeder gewöhnliche Goblin, schwingt ein riesiges Spaltbeil oder einen Kriegshammer aus Schrott- und Beutemetall, trägt einen zerfledderten Trophäen-Umhang/Banner-Fetzen der Bande über der Schulter. Wuchtige, aggressive Kampfhaltung, Anführer-Ausstrahlung — der Endboss-Moment des Laufs.
+
+--- MONSTER Block 2/2: Zonen-Kreaturen (5) ---
+Ich brauche 5 Spiel-Monster-Artworks im gemalten Dark-Fantasy-Stil (ganze Kreatur sichtbar). ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 5 PNG-Dateien EXAKT so: hollow_marrow.png, mire_wisp.png, barrow_chanter.png, hollow_choir.png, iron_sentinel.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Hohles Mark (hollow_marrow.png) — Eine kleine, kauernde Untoten-Kreatur der frühen Gebiete (Stufe 16): ein zusammengesetztes Wesen aus ausgehöhlten, bleichen Knochen, durch deren hohle Mark-Kanäle fahles Grau wabert. Krumme Haltung, zu lange Fingerknochen, leere Augenhöhlen. Bedrohlich, aber erkennbar schwach — ein Früh-Spiel-Gegner.
+• Sumpfirrlicht (mire_wisp.png) — Ein schwebendes Irrlicht (Stufe 30) über brackigem Sumpfboden: eine flackernde, blaugrün leuchtende Lichtkugel, umweht von Nebelfetzen und Sumpfgas-Schlieren, darin schemenhaft ein verzerrtes Gesicht. Um es herum tropfende Schlammfäden und ein fauliger Grünstich.
+• Hügelgrab-Chorist (barrow_chanter.png) — Ein untoter Kult-Sänger (Stufe 55) in zerfallener, erdverkrusteter Grabrobe mit Kapuze; der Kiefer weit aufgerissen mitten im Grabgesang, aus dem Mund wehen sichtbare Klage-Schwaden. Knochige Hände halten ein zerbrochenes Räuchergefäß; Grabbeigaben-Schmuck um den Hals.
+• Hohler Chor (hollow_choir.png) — Ein unheimliches Kollektiv-Wesen (Stufe 80): drei bis vier ausgezehrte, hohle Gestalten in fahlen Roben, die zu EINER Kreatur verwachsen sind — mehrere aufgerissene Münder singen gleichzeitig, die Körper gehen ineinander über wie geschmolzenes Wachs. Aus den hohlen Brustkörben hallt sichtbarer Schall als feine Druckwellen-Ringe.
+• Eiserner Wächter (iron_sentinel.png) — Ein massiver Konstrukt-Koloss (Stufe 90) aus vernietetem, angelaufenem Eisen: turmschildartige Panzerplatten, ein schmaler glimmender Sehschlitz im Helmblock, Fäuste wie Ambosse. Uralt und unbeirrbar, mit Scharten und Rostspuren vergangener Kämpfe.
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 8 — UI-ICON (1)
+███████████████████████████████████████████████████████████████████████████████
+
+--- Block 1/1 ---
+Ich brauche ein einzelnes UI-Icon im selben Dark-Fantasy-Stil wie meine Item-Icons: GENAU EIN Bild (keine Collage), zentriert, KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha). Stelle das Ergebnis als PNG-Datei mit exakt dem angegebenen Dateinamen zum Download bereit:
+• Quest-Token (icon_quest_token.png) — Eine geprägte Belohnungsmünze/Marke aus dunkler Bronze mit erhabenem Pergamentrollen-Symbol (Questrolle) in der Mitte und einem gezackten, leicht abgegriffenen Rand. Wertig wie eine Gildenmarke, klar als Währungs-Icon lesbar auch in kleiner Größe (32px). Matte Bronze, dezente Gold-Akzente auf den erhabenen Kanten.
+
+
+███████████████████████████████████████████████████████████████████████████████
+TEIL 9 — UI-ICON-BIBLIOTHEK (20) · ersetzt die Emoji-Platzhalter im Interface
+███████████████████████████████████████████████████████████████████████████████
+Stil für ALLE UI-Icons: einzelnes Symbol-Icon im Dark-Fantasy-Stil, zentriert,
+KOMPLETT TRANSPARENTER Hintergrund (PNG mit Alpha), klar lesbar auch KLEIN (32px!),
+matte Materialien mit dezenten Gold-/Bronze-Akzenten. Ausnahme: Mana/Tränke/XP
+dürfen dezent glühen. Die ersten 5 wirken SOFORT (Code-Hook existiert schon).
+
+--- UI Block 1/4: Kampf-Attribute (5 — Hook existiert, nur Datei ablegen) ---
+Ich brauche 5 Spiel-Asset-Icons im gemalten Dark-Fantasy-Stil. ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 5 PNG-Dateien EXAKT so: icon_attribute_armorpen.png, icon_attribute_block.png, icon_attribute_precision.png, icon_attribute_wardbreak.png, icon_autoeat.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Rüstungsdurchdringung (icon_attribute_armorpen.png) — Ein stählerner Bolzen/Pfeilkopf, der eine dunkle Panzerplatte durchschlägt; von der Einschlagstelle laufen feine Risse durchs Metall. Matt, wuchtig, klar als „durchdringt Rüstung" lesbar.
+• Blocken (icon_attribute_block.png) — Ein frontaler eiserner Turmschild mit genietetem Rand, an dessen Kante ein Schwerthieb soeben abprallt (kleiner matter Funkenschlag seitlich). Massiv und stoisch.
+• Präzision (icon_attribute_precision.png) — Ein fein graviertes Fadenkreuz aus dunklem Stahl, in dessen Zentrum ein scharf fokussiertes Auge liegt. Dünne, elegante Linien, chirurgisch exakt.
+• Zauberschild-Brecher (icon_attribute_wardbreak.png) — Eine halbrunde, kristallin-blaue Barriere, die soeben zersplittert: Bruchstücke fliegen nach außen, in der Mitte das Loch eines Einschlags. Mattes Blau, kein starkes Leuchten.
+• Auto-Essen (icon_autoeat.png) — Eine gebratene Fleischkeule, umschlossen von einem dünnen bronzenen Kreispfeil (Automatik-Symbol). Rustikal und sofort verständlich: „isst von selbst".
+
+--- UI Block 2/4: Ressourcen & Fortschritt (5) ---
+Ich brauche 5 Spiel-Asset-Icons im gemalten Dark-Fantasy-Stil. ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 5 PNG-Dateien EXAKT so: icon_mana.png, icon_xp.png, icon_mastery_star.png, icon_regen.png, icon_potion.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Mana (icon_mana.png) — Ein facettierter, tiefblauer Arkankristall in Tropfenform, innen ein sanftes Kernlicht (dezent!). Die Ressource der Magier — edel, kühl, sofort von Leben (rot) unterscheidbar.
+• Erfahrung (icon_xp.png) — Ein aufsteigender goldener Stern mit kurzem Funkenschweif nach unten, wie ein Aufstiegs-Moment. Warmes mattes Gold, dezenter Schimmer erlaubt.
+• Meisterschafts-Stern (icon_mastery_star.png) — Ein geprägter, fünfzackiger Stern aus gebürstetem Gold auf dunklem Medaillon-Grund, mit feiner Gravur-Bordüre. Wie ein Ordensabzeichen, matt und wertig.
+• Regeneration (icon_regen.png) — Ein dunkelrotes Herz, umschlossen von einem feinen grünen Kreispfeil aus Ranken/Blattwerk. Klar als „erholt sich stetig" lesbar, matte Farben.
+• Trank (icon_potion.png) — Eine kleine bauchige Glasphiole mit verkorktem Hals, gefüllt mit rubinroter Flüssigkeit (dezentes inneres Glühen erlaubt), Lederband um den Hals. Klassisches Alchemie-Fläschchen.
+
+--- UI Block 3/4: Kampf & Loot (5) ---
+Ich brauche 5 Spiel-Asset-Icons im gemalten Dark-Fantasy-Stil. ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 5 PNG-Dateien EXAKT so: icon_attribute_critchance.png, icon_attribute_critdamage.png, icon_dice.png, icon_food.png, icon_paw.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Kritische Chance (icon_attribute_critchance.png) — Ein vierzackiger, klingenscharfer Stern aus poliertem Stahl in einem dünnen Ziel-Ring — der Moment, in dem ein Treffer „sitzt". Kühl, präzise, matt.
+• Kritischer Schaden (icon_attribute_critdamage.png) — Ein berstender Einschlag-Stern: gezackte Bruchlinien explodieren von einem zentralen Punkt nach außen, in dunklem Rot-Orange (matt, kein Glow). Rohe Wucht.
+• Würfelglück (icon_dice.png) — Ein einzelner knochenweißer Würfel aus geschnitztem Bein mit dunklen Augen, leicht gekippt in der Drehung. Abgegriffen und alt, wie aus einer Spelunke.
+• Speise (icon_food.png) — Eine goldbraun gebratene Fleischkeule mit glänzender (aber matter) Kruste auf einem Hauch dunklem Holzbrett. Deftig, appetitlich, sofort als „Essen" lesbar.
+• Pfote (icon_paw.png) — Ein geprägter Pfotenabdruck (vier Ballen + Hauptballen) in dunkler Bronze auf rundem Medaillon-Grund. Der Begleiter-Marker — schlicht und warm.
+
+--- UI Block 4/4: Welt & Interface (5) ---
+Ich brauche 5 Spiel-Asset-Icons im gemalten Dark-Fantasy-Stil. ABSOLUT WICHTIG: Generiere JEDES Motiv als EIGENES, SEPARATES Bild — auf KEINEN Fall eine Collage, kein Sammelblatt, keine mehreren Motive in einem Bild. Hintergrund: KOMPLETT TRANSPARENT (PNG mit Alpha), kein Rahmen, kein Boden. Am Ende benenne die 5 PNG-Dateien EXAKT so: icon_key.png, icon_lock.png, icon_buff.png, icon_tower.png, icon_pin.png — und stelle sie ZUSAMMEN ALS EINE ZIP-DATEI zum Download bereit. Hier die Motive:
+• Schlüssel (icon_key.png) — Ein schlichter alter Bronzeschlüssel mit runder Reide und zweistufigem Bart, leicht angelaufen mit dunkler Patina. Das universelle „schaltet frei"-Symbol.
+• Schloss (icon_lock.png) — Ein schweres eisernes Vorhängeschloss mit genietetem Korpus und dunklem Schlüsselloch, geschlossen. Matt, massiv, unmissverständlich „noch gesperrt".
+• Segen (icon_buff.png) — Drei kleine aufsteigende Funken/Sterne in Gold über einem angedeuteten, nach oben weisenden Bogen — „gestärkt". Dezent, positiv, matt-golden.
+• Turm (icon_tower.png) — Die dunkle Silhouette eines endlos hohen, schlanken Turms, dessen Spitze in feinen Stufen im Nichts verschwindet; ein einzelnes glimmendes Fenster (dezent). Das Paragon-Symbol.
+• Siegelnadel (icon_pin.png) — Eine elegante Nadel mit rundem Wachssiegel-Kopf in dunklem Rot, leicht schräg wie in Pergament gesteckt. Das „angepinnt"-Symbol, wertig statt Büroklammer.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+ABLIEFERUNG: Fertige PNGs wie gewohnt in Downloads\ASSETS\... legen — Claude
+bindet sie ein (Auto-Discovery über den Dateinamen; bei den neuen UI-Icons aus
+Teil 9 verdrahtet Claude die restlichen Code-Hooks gleich mit) und archiviert
+die Originale.
+Zähl-Kontrolle: 21 Umhänge + 1 Knochenkappe + 6 Sterngewebe + 3 Runen + 3 Speisen
++ 1 Schlüssel + 10 Monster + 1 Quest-Token + 20 UI-Icons = 68 Bilder.
+═══════════════════════════════════════════════════════════════════════════════

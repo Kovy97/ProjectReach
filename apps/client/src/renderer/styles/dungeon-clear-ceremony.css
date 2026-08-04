@@ -1,0 +1,362 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   DUNGEON CLEAR CEREMONY — Dungeon-Rework-Spec §5.6.4
+   Solemn/triumphant Vollbild-Moment beim Dungeon-Abschluss — same weight class as
+   mastery-ceremony.css (dignified, not the pet-celebration sunburst exception). Component-scoped
+   file (dcc-* namespace), imported directly by DungeonClearCeremony.tsx, NOT part of styles/index.css.
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes dcc-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dcc-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes dcc-card-in {
+  from { opacity: 0; transform: scale(0.85) translateY(18px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+@keyframes dcc-card-out {
+  from { opacity: 1; transform: scale(1)    translateY(0);    }
+  to   { opacity: 0; transform: scale(0.92) translateY(-10px); }
+}
+
+@keyframes dcc-shine-sweep {
+  0%   { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX( 250%) skewX(-20deg); }
+}
+
+@keyframes dcc-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(224, 144, 42, 0.55); }
+  60%      { box-shadow: 0 0 0 10px rgba(224, 144, 42, 0); }
+  100%     { box-shadow: 0 0 0 10px rgba(224, 144, 42, 0); }
+}
+
+.dcc-backdrop {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(12, 9, 5, 0.82) 0%, rgba(2, 2, 1, 0.95) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: dcc-backdrop-in 0.35s ease-out forwards;
+}
+
+.dcc-backdrop.dcc-exit {
+  animation: dcc-backdrop-out 0.42s ease-in forwards;
+}
+
+.dcc-backdrop.dcc-exit .dcc-card {
+  animation: dcc-card-out 0.42s ease-in forwards;
+}
+
+/* Same 9-slice wooden-frame + tiled bg_black technique as the other ceremonies. Optional dungeon
+   backdrop image (has-bg) darkened via a gradient overlay, matching .zone-card.has-bg/.dungeon-card. */
+.dcc-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 30px 38px 26px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 20px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 20px;
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: auto, auto;
+  border-radius: 0;
+  box-shadow:
+    0 0    0   1px rgba(216, 192, 106, 0.16),
+    0 0   44px  6px rgba(216, 192, 106, 0.10),
+    0 24px 70px rgba(0, 0, 0, 0.8);
+  overflow: visible;
+  animation: dcc-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  min-width: 380px;
+  max-width: 480px;
+  max-height: 82vh;
+  overflow-y: auto;
+  text-align: center;
+}
+
+/* Optionaler Dungeon-Hintergrund: das Bild sitzt im React `style`-Attribut (background-image) —
+   inline Styles gewinnen immer gegen die `background`-Shorthand einer Klassenregel, darum die
+   Abdunklung als eigenes `::before` (dasselbe Muster wie `.zone-card.has-bg::before`), statt
+   beides in einer Shorthand zu kombinieren. */
+.dcc-card.has-bg {
+  background-size: cover;
+  background-position: center;
+}
+
+.dcc-card.has-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, rgba(8, 6, 4, 0.55) 0%, rgba(8, 6, 4, 0.72) 55%, rgba(8, 6, 4, 0.88) 100%);
+  pointer-events: none;
+}
+
+.dcc-shine {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(216, 192, 106, 0.1) 50%, transparent 100%);
+  animation: dcc-shine-sweep 1.8s ease-out 0.4s forwards;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dcc-tag {
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.22em;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: var(--ds-gold-bright, #f0dca0);
+  background: rgba(216, 192, 106, 0.12);
+  border: 1px solid rgba(216, 192, 106, 0.35);
+  border-radius: 3px;
+  padding: 3px 11px;
+  text-transform: uppercase;
+}
+
+.dcc-title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-head);
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: 0 0 18px rgba(216, 192, 106, 0.4);
+  margin: 2px 0 0;
+}
+
+.dcc-first-badge {
+  position: relative;
+  z-index: 1;
+  padding: 5px 16px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--rar-legendary, #e0902a);
+  background: rgba(224, 144, 42, 0.14);
+  border: 1px solid var(--rar-legendary, #e0902a);
+  border-radius: 3px;
+  animation: dcc-badge-pulse 2s ease-out 0.6s 2;
+}
+
+.dcc-rewards {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.dcc-rewards-title,
+.dcc-loot-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.dcc-rewards-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dcc-reward-chip {
+  padding: 6px 14px;
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(216, 192, 106, 0.24);
+}
+
+.dcc-loot {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* ─── Truhen-Enthüllung (Welle PP, Antizipation-Moment 2) ──────────────────────────────────
+   Chest-Symbol "klappt auf" (Pop, ~500ms) BEVOR die Items gestaffelt erscheinen — s.
+   DungeonClearCeremony.tsx `DungeonLootReveal`. Bewusst OHNE `animation-fill-mode: forwards` auf
+   den Chest-Keyframes: die jeweils letzte Stufe (Pop: scale(1)/opacity:1 · Burst: opacity:0)
+   entspricht bereits dem deklarierten Ruhezustand der Regel selbst, die Animation verschwindet
+   also nach Ablauf vollständig aus `getAnimations()` statt "in effect" hängen zu bleiben. */
+@keyframes dcc-chest-pop {
+  0%   { transform: scale(0.6) rotate(-8deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1)    rotate(0deg); opacity: 1; }
+}
+
+@keyframes dcc-chest-burst {
+  0%   { opacity: 0; transform: scale(0.3); }
+  40%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.7); }
+}
+
+.dcc-chest {
+  position: relative;
+  height: 44px;
+  margin: 2px 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sweep-Fix-Welle B, Fix 2d: löst das frühere 🧰-Emoji (::before-content, rendert unter der
+   Windows-Emoji-Schrift knallpink) durch ein Inline-SVG in DungeonClearCeremony.tsx ab — dieselbe
+   Pop-Animation, jetzt auf dem <svg> statt einem ::before. */
+.dcc-chest-svg {
+  display: block;
+  width: 2.4rem;
+  height: 2.4rem;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
+  animation: dcc-chest-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dcc-chest::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 70px;
+  height: 70px;
+  margin: -35px 0 0 -35px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(216, 192, 106, 0.55) 0%, transparent 70%);
+  opacity: 0;
+  animation: dcc-chest-burst 0.6s ease-out 0.05s;
+  pointer-events: none;
+}
+
+.dcc-loot-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.dcc-loot-item .item-cell {
+  width: 46px;
+  height: 46px;
+}
+
+.dcc-loot-item .item-cell-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Gestaffeltes Erscheinen: common zuerst (niedrigster Index, kürzeste Verzögerung), Jackpot als
+   Finale (höchster Index in der nach Rarity aufsteigend sortierten Liste, s. `rarityRank`).
+   `forwards` ist hier NÖTIG (anders als der Chest oben) — die Basisregel setzt `opacity:0`, damit
+   ein Item VOR seiner verzögerten Animation unsichtbar bleibt; ohne `forwards` würde es nach dem
+   Animationsende sofort auf diese 0-Opacity zurückfallen. Dasselbe etablierte Muster wie
+   `.dcc-card`/`.dcc-first-badge` oben (permanent an der Klasse hängendes `forwards`). */
+@keyframes dcc-loot-reveal {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.dcc-loot-item {
+  opacity: 0;
+  animation: dcc-loot-reveal 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: calc(560ms + var(--i, 0) * 100ms);
+}
+
+/* Skip: ein Klick auf die Beute-Fläche zeigt sofort alles (Vielfahrer-Respekt) — erzwingt eine
+   quasi-sofortige (nicht literal 0s, s. Kommentar) Animation ohne die Verzögerungs-Kette. */
+.dcc-loot-grid--skip .dcc-loot-item {
+  animation-duration: 0.01s !important;
+  animation-delay: 0s !important;
+}
+
+.dcc-loot-skiphint {
+  font-size: 0.72rem;
+  text-align: center;
+  margin-top: 6px;
+  opacity: 0.75;
+}
+
+/* ─── Sticky action footer (C8: Weiter/Betreten immer sichtbar bei 1080p) ──────────────────────
+   Die primäre Aktion bleibt am sichtbaren unteren Rand der Karte verankert, auch wenn reichlich
+   Beute die Karte intern scrollen lässt (Befund: Button-Oberkante rutschte knapp unter die 1080er-
+   Falz — Warband ~1081 px, Thron ~1431 px). `position: sticky` heftet den Footer an die Unterkante
+   des Karten-Scroll-Viewports; die Karte SELBST bleibt unverändert scrollbar (`overflow-y: auto`,
+   Scroll-Restore-Verhalten unangetastet) und die Truhen-Enthüllung (Welle PP) läuft unberührt in
+   der frei fließenden Beute-Fläche darüber. `align-self: stretch` spannt den Footer über die volle
+   Beute-Breite (Content-Box), die Abdunklung nach oben lässt durchscrollende Beute hinter dem
+   Button ausblenden statt hart gegen ihn zu stoßen. `pointer-events` bleibt am Verlauf durchlässig,
+   damit ein Klick auf die (überlagerte) Beute-Fläche weiterhin die Reveal-Abkürzung auslöst. */
+.dcc-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  align-self: stretch;
+  margin-top: 4px;
+  padding: 16px 0 4px;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(
+    to top,
+    rgba(8, 6, 4, 0.97) 0%,
+    rgba(8, 6, 4, 0.9) 55%,
+    rgba(8, 6, 4, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.dcc-next-btn {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .dcc-backdrop,
+  .dcc-backdrop.dcc-exit,
+  .dcc-card,
+  .dcc-backdrop.dcc-exit .dcc-card,
+  .dcc-shine,
+  .dcc-first-badge {
+    animation: none !important;
+  }
+  .dcc-shine { display: none; }
+  /* Truhen-Enthüllung: JS gated bereits über `effectiveFxLevel()` auf den Sofort-Zustand — diese
+     Regel ist reine Verteidigungslinie, falls die Klasse dennoch einmal anliegt. */
+  .dcc-chest::before,
+  .dcc-chest::after,
+  .dcc-loot-item {
+    animation: none !important;
+  }
+  .dcc-loot-item { opacity: 1 !important; }
+}
+
+/* ─── Short viewports (1280×720 minimum supported resolution) ──────────────────────────────── */
+@media (max-height: 760px) {
+  .dcc-card { padding: 22px 30px 20px; gap: 8px; max-height: 90vh; }
+  .dcc-title { font-size: 1.4rem; }
+  .dcc-footer { padding: 10px 0 2px; }
+}

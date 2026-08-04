@@ -1,0 +1,180 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   STATS PAGE — Citadel-Konsistenz-Welle (Chef-GO 2026-07-09)
+   Self-contained: imported directly by StatsPage.tsx. Fresh `stx-*`
+   classnames so nothing here fights the legacy `.stats-page .row/.panel/
+   .completion-*` rules still living in pages.css (dead weight, left for
+   the CEO to prune later — same pattern as options.css/achievements.css,
+   see their file-header comments). Section shell mirrors OptSection
+   (options.css `.opz-section*`), medallions mirror the offline-stage
+   "stat medallion" (offline-stage.css `.ofs-medallion*`) — both are the
+   Chef's named style references for this rework.
+   ═══════════════════════════════════════════════════════════ */
+
+.stx-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.stx-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .stx-grid { grid-template-columns: 1fr; }
+}
+
+.stx-section {
+  background: linear-gradient(rgba(10, 12, 15, 0.46), rgba(10, 12, 15, 0.52)), url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 9px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 9px;
+  border-radius: 0;
+  padding: 18px 20px;
+}
+
+.stx-section--wide {
+  grid-column: 1 / -1;
+}
+
+.stx-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+.stx-section-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.05), rgba(10, 8, 6, 0.85) 74%);
+  border: 2px solid rgba(216, 192, 106, 0.42);
+}
+
+/* Echtes PNG statt Emoji im Sektions-Medaillon (Emoji→Icon-Welle). */
+.stx-section-icon img.ui-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.stx-section-title {
+  font-family: var(--font-head);
+  font-size: 18px;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ─── Stat medallions — icon-in-circle + big number + label, same
+   Citadel bronze-on-wood language as the offline-stage popup. ── */
+.stx-medallion-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px 30px;
+}
+
+.stx-medallion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 92px;
+}
+
+.stx-medallion-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 26px;
+  background: radial-gradient(circle, rgba(216, 192, 106, 0.16), rgba(216, 192, 106, 0.03) 70%, transparent);
+  border: 2px solid rgba(216, 192, 106, 0.4);
+  box-shadow: 0 0 14px rgba(216, 192, 106, 0.16);
+}
+
+.stx-medallion-icon img.ui-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.stx-medallion-value {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-top: 6px;
+  white-space: nowrap;
+}
+
+.stx-medallion-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* ─── Gesamtfortschritt — Erfolge/Item-Sammlung/Bestiarium/Meisterschaft.
+   Bar look matches achv-hero-bar-track/fill (achievements.css). ── */
+.stx-completion-row {
+  margin-bottom: 16px;
+}
+.stx-completion-row:last-child { margin-bottom: 0; }
+
+.stx-completion-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.stx-completion-label {
+  font-family: var(--font-head);
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  color: var(--text);
+}
+
+.stx-completion-val {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.stx-completion-bar {
+  height: 13px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.stx-completion-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-2), var(--gold));
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.5);
+  transition: width 0.4s ease;
+}

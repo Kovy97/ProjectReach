@@ -1,0 +1,439 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   DESIGN SYSTEM — Citadel RPG GUI tokens + ds-* components
+   Phase 1: 9-slice frames, Citadel buttons, bars, tooltip
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── DS Tokens — aligned to Citadel warm wood/bronze palette ── */
+:root {
+  /* Gold / Bronze */
+  --ds-gold-bright:    #f0dca0;
+  --ds-gold:           #d8b870;
+  --ds-gold-dim:       #a07840;
+  --ds-bronze-bright:  #d8904a;
+  --ds-bronze:         #b86030;
+  --ds-bronze-dim:     #7a3c18;
+
+  /* Dark wood / metal levels */
+  --ds-metal-0: #050404;
+  --ds-metal-1: #0c0a08;
+  --ds-metal-2: #140e0a;
+  --ds-metal-3: #1e1610;
+  --ds-metal-4: #2a1e14;
+
+  /* Parchment tones */
+  --ds-parch-dark:  #16120c;
+  --ds-parch-mid:   #261e14;
+  --ds-parch-light: #382a1c;
+  --ds-parch-ink:   #e8d8b0;
+  --ds-parch-muted: #806840;
+
+  /* Border / glow */
+  --ds-border:        rgba(50, 36, 20, 0.9);
+  --ds-border-bright: rgba(80, 58, 30, 0.9);
+  --ds-border-gold:   rgba(216, 184, 112, 0.5);
+  --ds-glow-gold:     0 0 14px rgba(216, 184, 112, 0.35);
+  --ds-glow-accent:   0 0 14px rgba(90, 130, 160, 0.35);
+
+  /* Radius */
+  --ds-radius-sm: 2px;
+  --ds-radius:    4px;
+  --ds-radius-lg: 6px;
+  --ds-radius-xl: 10px;
+
+  /* ─── Spacing scale — LEITPLANKE für JEDE künftige gap/padding-Deklaration ──────────────
+     Task #316 (B3, 2026-07-24): Audit fand 929 rohe px-gap/-padding-Werte über 31 Style-Dateien,
+     während diese Skala bis dahin AUSSCHLIESSLICH von design-system.css selbst gelesen wurde —
+     mit derselben "Holzrahmen-Panel"-Rolle drei-, vierfach neu erfunden (929× Werte statt einmal
+     eine Skala). Rückwirkend alle 929 Stellen zu migrieren war explizit NICHT der Auftrag (zu
+     riskant so kurz vor Ship, reiner Kosmetik-Umbau ohne Spielwert) — stattdessen gilt ab jetzt:
+       - JEDE NEUE `gap`-/`padding`-Deklaration referenziert eine dieser fünf Stufen (4/8/12/20/32px)
+         statt einer handgerollten Zahl. Passt keine Stufe exakt, nimm die NÄCHSTLIEGENDE — nicht
+         dazwischen erfinden.
+       - Bestehender Code wird NICHT proaktiv umgeschrieben nur um die Var zu benutzen (929 Diffs
+         ohne sichtbaren Nutzen sind selbst ein Risiko). Fasst du eine Stelle ohnehin an (Bugfix,
+         Redesign, neue Feature-Arbeit in der Nähe), wandle sie bei der Gelegenheit mit um.
+       - Ausnahme: Werte, die an ein Border-Image/9-Slice-Asset gekoppelt sind (z. B. die 28px-
+         Slice-Breite der wooden_frame-Assets weiter unten in dieser Datei) bleiben literale Pixel
+         — sie beschreiben eine Asset-Geometrie, keinen Layout-Rhythmus, und dürfen nicht an der
+         Gap-Skala hängen.
+     4 sichtbare Hotspots wurden im selben Task exemplarisch auf diese Skala umgestellt (drei
+     namensgleiche "Holzrahmen-Streifen"-Komponenten mit zuvor drei verschiedenen Innenabständen):
+     `.status-legend`, `.bank-head`, `.shop-upgrade-card` (alle drei pages.css) → jetzt einheitlich
+     `var(--ds-gap) var(--ds-gap-lg)`; `.opz-section` (options.css) → `var(--ds-gap-lg)`. */
+  --ds-gap-xs: 4px;
+  --ds-gap-sm: 8px;
+  --ds-gap:    12px;
+  --ds-gap-lg: 20px;
+  --ds-gap-xl: 32px;
+
+  /* ─── Font-size scale ───────────────────────────────────────────────
+     Task #316 (B3, 2026-07-24): `--ds-fs-base` used to sit at 18px while the ACTUAL app-wide
+     body base (base.css `body{font-size}`) has been 21px since the "UI durchgängig etwas größer"
+     pass — the scale's own "base" tier was one full step smaller than the real base it was meant
+     to describe, so `body{}` kept a hardcoded 21px literal instead of trusting its own token.
+     Resolved by letting the scale catch up to the LIVED value (Chef-Regel: bigger, not smaller)
+     instead of shrinking body text down to the old 18px:
+       - `--ds-fs-base` now IS the literal 21px body base — base.css references this token instead
+         of repeating the number, so there is exactly one source of truth for "the app's body size".
+       - `--ds-fs-md/-lg/-xl/-2xl` shifted up by the same +3px `--ds-fs-base` moved, keeping the
+         original step pattern (+3/+7/+14/+24 from base) intact above the new anchor.
+       - `--ds-fs-xs`/`--ds-fs-sm` are UNCHANGED (13px/15px) — these two are the only tiers any
+         live component currently consumes (`.ds-button`/`.ds-button--sm`, both already shipped and
+         visually tuned as a deliberately denser "component chrome" size sitting below the bold
+         body-weight text around them); touching them would be a visible regression for zero
+         benefit, so they stay pinned. Net effect of this whole change: ZERO pixels moved on any
+         screen a player has ever seen — only the unused base/md/lg/xl/2xl tiers (nothing in the
+         renderer references them yet) were renumbered to be internally honest.
+     Usage going forward: reach for `--ds-fs-base` (21px) for new body-weight text, `-sm`/`-xs` for
+     compact component chrome (buttons/badges/pills), `-md`/`-lg`/`-xl`/`-2xl` for sub-heading/
+     heading tiers. Don't hand-roll a new literal px value if one of these already fits. */
+  --ds-fs-xs:   13px;
+  --ds-fs-sm:   15px;
+  --ds-fs-base: 21px;
+  --ds-fs-md:   24px;
+  --ds-fs-lg:   28px;
+  --ds-fs-xl:   35px;
+  --ds-fs-2xl:  45px;
+}
+
+/* codex:2026-07-31T20:21:01+02:00 — Ironwood Bastion ersetzt zentral den bisherigen Citadel-Standardrahmen.
+   Der Produktions-WebP ist auf dessen bestehenden 28-px-9-Slice-Vertrag normalisiert, damit alle
+   historischen Konsumenten ohne Geometrie- oder Layoutbruch dieselbe neue Rahmenfamilie erhalten. */
+/* ─── ds-frame — Ironwood-Bastion-9-slice panel (wooden_frame_with_corners.webp) ─
+   Image: 224×149 px. Technische 9-slice-Grenze: 28 px auf allen Seiten.
+   border-image slice = 28 px; rendered border-width = 28 px.
+   No "fill" — background: bg_black.png provides a sharp tiled interior
+   instead of stretching the blurry image center over large panels.   ── */
+.ds-frame {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 28px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 28px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ─── ds-frame--headed — 9-slice panel with built-in title shelf ─
+   Image: content_box_2.png, 305×303 px.
+   Title shelf (gray label holder): ~58 px from top.
+   Side lion-head ornaments: ~38 px. Bottom corners: ~22 px.
+   Padding-top 62 px pushes content below the title shelf.
+   No "fill" — bg_black.png provides a sharp tiled interior.        ── */
+.ds-frame--headed {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 58px 38px 22px 38px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-2/content_box_2.webp");
+  border-image-slice: 58 38 22 38;
+  border-image-width: 58px 38px 22px 38px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ─── ds-button — Slim 9-slice wooden frame + dark metal texture ─────
+   Frame: wooden_frame_with_corners.png rendered at 10 px via ::before
+   (absolute, inset: 0, no fill — center transparent so text shows).
+   Interior: bg_black.png tiled texture + gradient overlay on element bg.
+   States: hover = lighter overlay + faint gold glow;
+           active/.active = warm gold tint + stronger glow;
+           disabled = dimmed.
+   Variants --sm / --wide keep the same frame, differ only in size.   ── */
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-gap-xs);
+  position: relative;
+  isolation: isolate;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px 18px;
+  min-height: 38px;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink);
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+}
+
+/* 9-slice wooden frame — decorative only, no layout effect.
+   No fill: center of ::before is transparent so content shows through.
+   z-index: 1 puts it above the element bg; frame only covers edges.    */
+.ds-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ds-button:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.20);
+}
+
+/* .active mirrors CSS :active so JS-toggled class uses the warm gold state */
+.ds-button:active,
+.ds-button.active {
+  background:
+    linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright);
+  box-shadow:
+    0 0 14px rgba(216, 184, 112, 0.38),
+    inset 0 0 10px rgba(216, 184, 112, 0.12);
+}
+
+.ds-button[disabled],
+.ds-button.disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+/* ─── ds-button--sm ──────────────────────────────────────────────── */
+.ds-button--sm {
+  min-height: 30px;
+  padding: 4px 12px;
+  font-size: var(--ds-fs-xs);
+}
+
+/* ─── ds-button--wide ────────────────────────────────────────────── */
+.ds-button--wide {
+  min-height: 38px;
+  padding: 8px 24px;
+}
+
+/* ─── ds-close-button  (25×25, fixed square) ────────────────────── */
+.ds-close-button {
+  width: 25px;
+  height: 25px;
+  background: url("../assets/ui/citadel/standalone-close-button/close_n.webp")
+              center / contain no-repeat;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+.ds-close-button:hover {
+  background-image: url("../assets/ui/citadel/standalone-close-button/close_h.webp");
+}
+.ds-close-button:active {
+  background-image: url("../assets/ui/citadel/standalone-close-button/close_p.webp");
+}
+.ds-close-button[disabled],
+.ds-close-button.disabled {
+  background-image: url("../assets/ui/citadel/standalone-close-button/close_d.webp");
+  cursor: default;
+}
+
+/* ─── ds-bar  — XP / HP / progress track ────────────────────────────
+   cb_frame_empty.png: 263×27 — outer track frame.
+   .ds-bar-fill uses cb_fill.png: 253×15 — red fill bar.
+   Caller sets inline width (%) on .ds-bar-fill.                    ── */
+.ds-bar {
+  position: relative;
+  height: 27px;
+  background: url("../assets/ui/citadel/player-cast-bar/cb_frame_empty.webp")
+              center / 100% 100% no-repeat;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ds-bar-fill {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  height: 15px;
+  transform: translateY(-50%);
+  max-width: calc(100% - 10px);
+  background: url("../assets/ui/citadel/player-cast-bar/cb_fill.webp")
+              left center / auto 100% repeat-x;
+  border-radius: 2px;
+  transition: width 0.25s linear;
+  pointer-events: none;
+}
+
+/* ─── ds-tooltip — 9-slice metallic tooltip box ─────────────────────
+   tt_texture.png: 231×96. Thin metallic border ~10 px on each side. ── */
+.ds-tooltip {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/tooltip/tt_texture.webp");
+  border-image-slice: 10 10 10 10 fill;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  color: var(--ds-parch-ink);
+  font-size: var(--ds-fs-sm);
+  padding: var(--ds-gap);
+}
+
+/* ─── ds-section-header — wooden banner with lion-head corners ───────
+   heading_type_2.png: 451×47. Horizontal bar, corner lions ~40 px.
+   Padding 0 48 px guards the corner ornaments.                      ── */
+.ds-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-gap-sm);
+  min-height: 47px;
+  padding: 6px 48px;
+  background: url("../assets/ui/citadel/various-content-box-slices/heading_type_2.webp")
+              center / 100% 100% no-repeat;
+  border: none;
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-sm);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ds-parch-ink);
+}
+
+/* ─── ds-slot — inventory/equipment slot (Citadel box-loot slot_frame) ──
+   slot_frame.png is the metallic dark inset cell used across Citadel's
+   loot and inventory panels. Stretched 1:1 over a 52×52 square.
+   Item icons render as flex children above the background layer.        ── */
+.ds-slot {
+  width: 52px;
+  height: 52px;
+  background: url("../assets/ui/citadel/box-loot/slot_frame.webp")
+              center / 100% 100% no-repeat;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ─── ds-row ─────────────────────────────────────────────────────── */
+.ds-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-gap-sm);
+}
+
+/* ─── ds-icon-button ─────────────────────────────────────────────── */
+.ds-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--ds-metal-3);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.ds-icon-button:hover {
+  border-color: var(--ds-border-bright);
+  background: var(--ds-metal-4);
+}
+
+/* ─── ds-footer-button ───────────────────────────────────────────── */
+.ds-footer-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-gap-xs);
+  padding: 8px 18px;
+  background: var(--ds-metal-3);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  color: var(--text);
+  font-family: var(--font-head);
+  font-size: var(--ds-fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+}
+.ds-footer-button:hover {
+  border-color: var(--ds-gold-dim);
+  background: var(--ds-metal-4);
+  color: var(--ds-gold);
+}
+
+/* ─── ds-emblem ──────────────────────────────────────────────────── */
+.ds-emblem {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--ds-border-gold);
+  background: var(--ds-metal-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+  box-shadow: var(--ds-glow-gold);
+}
+
+/* ─── ds-badge / ds-stat-pill ────────────────────────────────────── */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-metal-2);
+  font-size: var(--ds-fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ds-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-gap-xs);
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-metal-2);
+  font-size: var(--ds-fs-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ─── ds-parchment-panel ─────────────────────────────────────────── */
+.ds-parchment-panel {
+  background: linear-gradient(160deg, var(--ds-parch-mid), var(--ds-parch-dark));
+  border: 1px solid rgba(100, 70, 30, 0.5);
+  border-radius: var(--ds-radius);
+  color: var(--ds-parch-ink);
+  padding: var(--ds-gap);
+}

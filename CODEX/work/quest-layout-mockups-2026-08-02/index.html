@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grim Reach · Quest-Seite · 5 Layoutstudien</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-concept="1" data-tab="chronicle" data-state="active">
+  <!-- codex:2026-08-02T00:15:00+02:00 — Funktionsnahe Quest-Einzelstudie mit allen vier realen Produktionsbereichen. -->
+  <header class="labbar">
+    <div class="labbar__identity">
+      <span class="eyebrow">Grim Reach · Quest UI Study</span>
+      <strong id="conceptName">01 · The Warden's Dispatch</strong>
+      <small id="conceptSummary">A command desk: quest families left, current order center, consequence ledger right.</small>
+    </div>
+    <nav class="concept-nav" aria-label="Quest designs">
+      <button class="is-active" data-concept="1"><b>01</b><span>Warden's Dispatch</span></button>
+      <button data-concept="2"><b>02</b><span>Ashen Procession</span></button>
+      <button data-concept="3"><b>03</b><span>Contract Wall</span></button>
+      <button data-concept="4"><b>04</b><span>Hunter's Ledger</span></button>
+      <button data-concept="5"><b>05</b><span>Twin-Leaf Codex</span></button>
+    </nav>
+    <div class="state-controls" aria-label="Quest test state">
+      <button class="is-active" data-state="active">Active</button>
+      <button data-state="completed">Claimable</button>
+      <button data-state="locked">Locked</button>
+    </div>
+  </header>
+
+  <!-- codex:2026-08-02T00:15:00+02:00 — Gemeinsame Datenbasis; Anordnung und Gewichtung wechseln je Konzept. -->
+  <main class="preview-stage">
+    <section class="quest-shell frame-panel">
+      <header class="quest-masthead">
+        <div class="warden">
+          <img src="../../../apps/client/src/renderer/assets/portraits/npc_warden.webp" alt="Wächter">
+          <div class="warden-copy">
+            <span class="eyebrow">The Warden · Keeper of Oaths</span>
+            <h1 id="pageTitle">The Warden's Dispatch</h1>
+            <p id="wardenLine">“An oath is only worth the road you walk for it.”</p>
+          </div>
+        </div>
+        <div class="quest-balance" title="Quest tokens">
+          <img src="../../../apps/client/src/renderer/assets/icons/icon_quest_token.webp" alt="">
+          <div><span>Quest tokens</span><strong id="tokenBalance" class="numeric">148</strong></div>
+        </div>
+      </header>
+
+      <nav class="quest-tabs" aria-label="Quest sections">
+        <button class="is-active" data-tab="chronicle"><span>Aschechronik</span><b class="numeric">18/21</b></button>
+        <button data-tab="contracts"><span>Aufträge</span><b class="numeric">9/14</b></button>
+        <button data-tab="daily"><span>Tägliche Quests</span><b class="numeric">2/6</b></button>
+        <button data-tab="shop"><span>Belohnungslager</span><b class="numeric">148</b></button>
+        <span id="resetClock" class="reset-clock numeric" hidden>Reset 06:42:18</span>
+      </nav>
+
+      <section id="questWorkspace" class="quest-workspace" aria-live="polite"></section>
+
+      <footer class="quest-footer">
+        <span id="coverageNote">Real feature coverage: chapters · objectives · unlocks · claim states</span>
+        <span id="actionLog" role="status">Bereit für einen Auftrag.</span>
+      </footer>
+    </section>
+  </main>
+
+  <script src="preview.js"></script>
+</body>
+</html>

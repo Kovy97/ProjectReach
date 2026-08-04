@@ -1,0 +1,1362 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   QUEST BOARD — page-scoped stylesheet (Task #274)
+   Imported directly by pages/QuestsPage.tsx (pattern like shop.css/achievements.css/options.css)
+   instead of living in the generic pages.css collection. Contains the original Quest Log rules
+   (moved 1:1 from pages.css, Citadel 9-slice framing) PLUS the new Task #274 additions: page-head
+   token balance, token reward chip, and the Rewards Shop tab scaffold.
+   ═══════════════════════════════════════════════════════════ */
+
+.quests-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.quests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ─── Quest card — Citadel 9-slice panel ─────────────────── */
+.quest-card {
+  position: relative;
+  isolation: isolate;
+  padding: 16px 18px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.15s;
+}
+
+.quest-card--completed { box-shadow: 0 0 18px rgba(216, 192, 106, 0.22); }
+.quest-card--active    { /* no extra */ }
+.quest-card--locked    { opacity: 0.55; }
+.quest-card--claimed   { opacity: 0.45; }
+
+.quest-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quest-card-name {
+  font-family: var(--font-head);
+  font-size: 17px;
+  color: var(--ds-gold-bright, #f0dca0);
+  letter-spacing: 0.4px;
+}
+
+.quest-card-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ─── Status badge — Citadel chip ────────────────────────── */
+.quest-status-badge {
+  font-family: var(--font-head);
+  font-size: 13px;
+  padding: 2px 9px;
+  border-radius: 0;
+  border: 1.5px solid var(--border);
+  white-space: nowrap;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.quest-status-badge--completed {
+  background: rgba(216, 192, 106, 0.12);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.quest-status-badge--active {
+  background: rgba(111, 151, 179, 0.10);
+  border-color: var(--accent-dim);
+  color: var(--accent-2);
+}
+
+.quest-status-badge--claimed {
+  background: rgba(60, 68, 76, 0.20);
+  border-color: var(--muted);
+  color: var(--muted);
+}
+
+.quest-status-badge--locked {
+  background: rgba(30, 36, 44, 0.30);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+/* ─── Objectives ─────────────────────────────────────────── */
+.quest-objectives {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quest-obj {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quest-obj-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.quest-obj-label {
+  color: var(--ds-parch-ink, #e8d8b0);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quest-obj-label--done {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.quest-obj-count {
+  color: var(--gold);
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-head);
+}
+
+.quest-obj-bar { height: 5px; border-radius: 0; }
+.bar-fill--done { background: var(--muted); }
+
+.quest-locked-hint { font-size: 15px; }
+
+/* ─── Rewards ────────────────────────────────────────────── */
+.quest-rewards {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.quest-rewards-label {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+/* Reward chip — small Citadel-framed badge */
+.quest-reward-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 0;
+  border: 1.5px solid var(--border);
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.quest-reward-chip--attr {
+  background: rgba(111, 151, 179, 0.10);
+  border-color: var(--accent-dim);
+  color: var(--accent-2);
+}
+
+.quest-reward-chip--gold {
+  background: rgba(216, 192, 106, 0.10);
+  border-color: rgba(216, 192, 106, 0.50);
+  color: var(--gold);
+}
+
+.quest-reward-chip--item {
+  background: rgba(14, 10, 6, 0.80);
+  border-color: rgba(50, 40, 26, 0.80);
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+/* Quest-token reward chip (Task #274/#271) — violet accent, clearly distinct from gold. */
+.quest-reward-chip--tokens {
+  background: rgba(150, 110, 190, 0.12);
+  border-color: rgba(180, 140, 220, 0.50);
+  color: #c9a8ec;
+}
+
+/* Gold coin icon inside reward chip */
+.quest-reward-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.quest-reward-img {
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.quest-reward-qty {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ─── Claim button — Citadel 9-slice wooden button ───────── */
+.quest-claim-btn {
+  align-self: flex-start;
+  position: relative;
+  isolation: isolate;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(60, 40, 8, 0.70), rgba(40, 26, 6, 0.85)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  padding: 6px 18px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 12px rgba(216, 192, 106, 0.25);
+  transition: filter 0.12s, box-shadow 0.12s;
+}
+
+.quest-claim-btn:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 18px rgba(216, 192, 106, 0.40);
+}
+.quest-claim-btn:active { filter: brightness(0.90); }
+
+.quest-claimed-mark {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ─── Tabs bar — Citadel wooden-frame buttons ────────────── */
+.quests-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quests-tab-btn {
+  position: relative;
+  isolation: isolate;
+  border: none;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  min-height: 34px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+}
+
+/* 9-slice wooden frame overlay on tabs */
+.quests-tab-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.quests-tab-btn:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold, #d8b870);
+  box-shadow: 0 0 8px rgba(216, 184, 112, 0.20);
+}
+
+.quests-tab-btn--active {
+  background:
+    linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: 0 0 12px rgba(216, 184, 112, 0.35), inset 0 0 8px rgba(216, 184, 112, 0.10);
+}
+
+.quests-tab-count {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ─── Daily reset countdown — Citadel framed chip ────────── */
+.daily-reset-countdown {
+  margin-left: auto;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 7px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 7px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)),
+    url("../assets/bg_black.webp") repeat;
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--gold, #d8b870);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ─── Daily difficulty badge — Citadel chip, Cinzel caps ─── */
+.daily-diff-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-head);
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 0;
+  border: 1.5px solid var(--border);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.daily-diff--very-easy { background: rgba(80,160,100,0.12); border-color: rgba(100,180,120,0.55); color: #7ec89a; }
+.daily-diff--easy      { background: rgba(90,140,170,0.12); border-color: rgba(111,151,179,0.55); color: var(--accent-2); }
+.daily-diff--medium    { background: rgba(216,192,106,0.10); border-color: rgba(216,192,106,0.50); color: var(--gold); }
+.daily-diff--hard      { background: rgba(200,100,60,0.12); border-color: rgba(200,100,60,0.55); color: #e08060; }
+.daily-diff--master    { background: rgba(170,80,200,0.12); border-color: rgba(170,80,200,0.55); color: #c080e0; }
+
+/* ═══════════════════════════════════════════════════════════
+   QUEST TOKENS — page-head balance + Rewards Shop scaffold (Task #274/#271)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Prominent page-head row — token balance, visible above all 3 tabs. */
+.quests-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Token balance badge — icon + count + label, Citadel framed chip.
+   `--lg` (page head) is a beefier version of the `--md` default (Rewards Shop panel). */
+.quest-token-badge {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(40, 24, 52, 0.55), rgba(40, 24, 52, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  padding: 6px 14px;
+}
+
+.quest-token-badge--lg {
+  padding: 9px 20px;
+  box-shadow: 0 0 14px rgba(180, 140, 220, 0.20);
+}
+
+.quest-token-badge-icon-img {
+  /* Chef 2026-07-17: „mind. 2,5× so groß" — 20px→52px. Das neue Token-PNG ist hochauflösende
+     Malerei (1254px), kein Pixelart mehr: pixelated raus, sonst Treppenkanten beim Skalieren. */
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.quest-token-badge--lg .quest-token-badge-icon-img {
+  width: 64px;
+  height: 64px;
+}
+
+.quest-token-badge--lg .quest-token-badge-icon {
+  font-size: 22px;
+}
+
+.quest-token-badge-count {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 16px;
+  color: #d9bdf2;
+}
+
+.quest-token-badge--lg .quest-token-badge-count {
+  font-size: 20px;
+}
+
+.quest-token-badge-label {
+  font-family: var(--font-head);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+}
+
+.quest-token-badge--lg .quest-token-badge-label {
+  font-size: 14px;
+}
+
+/* ─── Rewards Shop panel — Citadel box, grid + "coming soon" placeholder ─── */
+.quest-shop-panel {
+  position: relative;
+  isolation: isolate;
+  padding: 22px 24px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.quest-shop-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quest-shop-panel-title {
+  font-family: var(--font-head);
+  font-size: 19px;
+  color: var(--ds-gold-bright, #f0dca0);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.quest-shop-panel-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.quest-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  padding: 4px;
+}
+
+/* Leerer Shop (kein Angebot im Content): dashed Platzhalter-Rahmen wie bisher. */
+.quest-shop-grid--empty {
+  min-height: 160px;
+  border: 1.5px dashed var(--border);
+}
+
+/* ─── Offer-Karten (Task #284) — Citadel-Karte: Holzrahmen, Item-Bild, Bündel + Token-Preis ─── */
+.quest-shop-offer {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 12px 14px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 9px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 9px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(24, 16, 8, 0.78), rgba(24, 16, 8, 0.78)),
+    url("../assets/bg_black.webp") repeat;
+  text-align: center;
+}
+
+.quest-shop-offer--locked {
+  filter: saturate(0.75);
+}
+
+.quest-shop-offer-imgwrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quest-shop-offer-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.quest-shop-offer-emoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+/* Bündelgrößen-Badge — klebt unten rechts am Item-Bild (wie Stack-Zähler im Inventar). */
+.quest-shop-offer-qty {
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+  padding: 1px 7px;
+  background: rgba(18, 12, 6, 0.92);
+  border: 1.5px solid var(--border);
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ds-gold-bright, #f0dca0);
+  white-space: nowrap;
+}
+
+.quest-shop-offer-name {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ds-parch-ink, #e8d8b0);
+  line-height: 1.25;
+  min-height: 2.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Token-Preis — violette Token-Farbwelt wie das Balance-Badge. */
+.quest-shop-offer-cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  background: rgba(40, 24, 52, 0.60);
+  border: 1.5px solid rgba(170, 80, 200, 0.45);
+}
+
+.quest-shop-offer-cost-num {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: #d9bdf2;
+}
+
+.quest-shop-buy-btn {
+  align-self: stretch;
+  text-align: center;
+  justify-content: center;
+}
+
+.quest-shop-buy-btn:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.7) brightness(0.75);
+  box-shadow: none;
+}
+
+.quest-shop-offer-hint {
+  font-size: 13px;
+}
+
+/* Platz-Hinweis (Kauf trotz genug Tokens fehlgeschlagen → Inventar/Bank voll). */
+.quest-shop-notice {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1.5px solid rgba(200, 100, 60, 0.55);
+  background: rgba(200, 100, 60, 0.12);
+  color: #e08060;
+  font-size: 14px;
+}
+
+/* Placeholder fills the whole (currently empty) grid — reuses the generic .placeholder look
+   (components.css) so the "coming soon" state matches every other not-yet-built page. */
+.quest-shop-empty {
+  grid-column: 1 / -1;
+  padding: 36px 20px;
+}
+
+/* Token-Shop-Inspektion (Chef 2026-07-08): Bild + Name sind klickbar (pinnen das Item-Tooltip). */
+.quest-shop-offer-inspect {
+  cursor: pointer;
+}
+.quest-shop-offer-inspect:hover {
+  filter: brightness(1.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AUFTRÄGE / CONTRACTS — Master-Detail (Chef-Auftrag Welle X, 2026-07-16)
+   "keine einfache Liste, komplexeres und interessanteres Layout, Platz für Quest-NPCs mit Kopf
+   und Sprechblase". Master (links, Strang-Liste) + Detail-Bühne (rechts). Die Bühne selbst reuses
+   .chronicle-stage/.chronicle-obj/.npc-greeting/.npc-bubble 1:1 (chronicle.css/npc-greeting.css,
+   beide bereits von QuestsPage.tsx importiert) — hier nur das Zwei-Spalten-Grid + die neue
+   Stranglisten-Optik im Master. pages/QuestsPage.tsx `ContractsTab`/`ContractDetailStage`.
+   ═══════════════════════════════════════════════════════════ */
+
+.quest-contracts {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* ─── Master — Strang-Liste ───────────────────────────────── */
+.quest-master {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.quest-master-heading {
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 2px 2px 0;
+}
+
+/* Aufklappbarer Master-Umschalter — per Default unsichtbar, wird erst ≤1100px (gestapeltes
+   Layout, s. Media-Query unten) zur sichtbaren Sektions-Kopfzeile; `.quest-master-heading`
+   übernimmt exakt denselben Text (kein neuer i18n-Key) als statische Überschrift auf breiten
+   Bildschirmen, wo die Liste immer offen ist. */
+.quest-master-toggle {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 2px;
+  width: 100%;
+  text-align: left;
+}
+
+.quest-master-toggle:hover { color: var(--gold, #d8c06a); }
+
+.quest-master-toggle-caret {
+  font-size: 11px;
+  width: 12px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.quest-strand-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 74vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.quest-strand {
+  position: relative;
+  isolation: isolate;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 9px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 9px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(14, 9, 4, 0.68), rgba(14, 9, 4, 0.68)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+.quest-strand-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--ds-parch-ink, #e8d8b0);
+  text-align: left;
+  padding: 9px 10px;
+  cursor: pointer;
+  font-family: var(--font-head);
+}
+
+.quest-strand-head:hover { color: var(--gold, #d8c06a); }
+
+.quest-strand-caret {
+  font-size: 11px;
+  width: 12px;
+  flex-shrink: 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+.quest-strand-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quest-strand-progress {
+  font-size: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.quest-strand-rows {
+  display: flex;
+  flex-direction: column;
+  padding: 0 6px 8px;
+}
+
+.quest-strand-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--text);
+  text-align: left;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 14.5px;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.quest-strand-row:hover {
+  background: rgba(216, 192, 106, 0.06);
+}
+
+/* Citadel-Akzent für die aktuelle Bühnen-Auswahl (Chef-Vorgabe "Auswahl-Zustand klar sichtbar") —
+   Gold-Kante links + leichtes Glühen, dasselbe Vokabular wie chronicle-stage/sb-skill-btn.active. */
+.quest-strand-row--selected {
+  background: rgba(216, 192, 106, 0.12);
+  border-left-color: var(--gold, #d8c06a);
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.quest-strand-row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quest-strand-row--claimed .quest-strand-row-name,
+.quest-strand-row--locked .quest-strand-row-name {
+  color: var(--muted);
+}
+
+/* ─── Status-Punkte — aktiv=Gold, claimbar=pulsierend, erledigt=Häkchen matt, gesperrt=Schloss ─── */
+.quest-strand-dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  line-height: 1;
+}
+
+.quest-strand-dot--active {
+  background: var(--gold, #d8c06a);
+  box-shadow: 0 0 5px rgba(216, 192, 106, 0.6);
+}
+
+.quest-strand-dot--completed {
+  background: var(--gold, #d8c06a);
+  box-shadow: 0 0 6px rgba(216, 192, 106, 0.7);
+  animation: quest-dot-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes quest-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(0.8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quest-strand-dot--completed { animation: none; }
+}
+
+.quest-strand-dot--claimed {
+  background: transparent;
+  border-radius: 0;
+  width: auto;
+  height: auto;
+  color: var(--muted);
+  opacity: 0.8;
+}
+.quest-strand-dot--claimed::before { content: "✓"; }
+
+.quest-strand-dot--locked {
+  background: transparent;
+  border-radius: 0;
+  width: auto;
+  height: auto;
+  opacity: 0.5;
+  font-size: 11px;
+}
+.quest-strand-dot--locked::before { content: "🔒"; }
+
+/* ─── Detail-Bühne — rechte Spalte, reuses .chronicle-stage (chronicle.css) ──────────────── */
+.quest-detail {
+  min-width: 0;
+}
+
+.quest-detail-stage--locked {
+  opacity: 0.72;
+}
+
+.quest-detail-empty {
+  align-items: center;
+  text-align: center;
+  padding: 40px 30px;
+}
+
+/* ─── Responsiv (Chef-Vorgabe): ≤1100px bricht auf gestapelt, Master wird aufklappbare Sektion ─── */
+@media (max-width: 1100px) {
+  .quest-contracts {
+    grid-template-columns: 1fr;
+  }
+  .quest-master-heading {
+    display: none;
+  }
+  .quest-master-toggle {
+    display: flex;
+  }
+  .quest-strand-list {
+    display: none;
+    max-height: 50vh;
+  }
+  .quest-master--open .quest-strand-list {
+    display: flex;
+  }
+}
+
+/* codex:2026-08-02T01:15:48+02:00 — Produktionslayout 03 „Contract Wall“.
+   Große Tafeln verwenden den freigegebenen Ironwood-Bastion-Holzrahmen; innere Karten, Tabs und
+   Aktionen den aktuellen Bronze-Lipped-Iron-Rahmen. Kopf und Tabs bleiben fest, ausschließlich die
+   jeweilige Quest-Arbeitsfläche scrollt intern. */
+#root .content-body:has(.quests-contract-wall) {
+  overflow: hidden;
+}
+
+#root .page-transition:has(> .quests-contract-wall) {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.quests-contract-wall {
+  height: 100%;
+  min-height: 0;
+  gap: clamp(7px, 0.52vw, 11px);
+  overflow: hidden;
+}
+
+.quests-contract-wall .quests-command-header,
+.quests-contract-wall .quests-content {
+  position: relative;
+  border-style: solid;
+  border-color: transparent;
+  border-width: clamp(12px, 0.78vw, 18px);
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 fill stretch;
+  background:
+    linear-gradient(rgba(8, 11, 12, 0.86), rgba(5, 7, 8, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.58), 0 7px 18px rgba(0, 0, 0, 0.34);
+}
+
+.quests-contract-wall .quests-command-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: clamp(82px, 6.6vw, 112px);
+  padding: 4px clamp(9px, 0.72vw, 16px);
+  background:
+    linear-gradient(90deg, rgba(9, 12, 13, 0.91), rgba(29, 20, 12, 0.78)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+
+.quests-contract-wall .quests-command-header > .npc-greeting {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.quests-contract-wall .quests-command-header > .npc-greeting .npc-greeting-head {
+  width: clamp(62px, 4.8vw, 88px);
+  height: clamp(62px, 4.8vw, 88px);
+  flex-basis: clamp(62px, 4.8vw, 88px);
+}
+
+.quests-contract-wall .quests-command-header > .npc-greeting .npc-bubble {
+  max-width: min(68vw, 1120px);
+  min-height: 54px;
+}
+
+.quests-contract-wall .npc-greeting-head {
+  border: clamp(8px, 0.58vw, 12px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(12, 15, 16, 0.76), rgba(5, 7, 8, 0.92)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+}
+
+.quests-contract-wall .npc-bubble {
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(20, 16, 12, 0.78), rgba(7, 9, 10, 0.92)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+
+.quests-contract-wall .npc-bubble--tail-left::before,
+.quests-contract-wall .npc-bubble--tail-left::after {
+  content: none;
+}
+
+.quests-contract-wall .quests-header {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 0 0 clamp(9px, 0.8vw, 18px);
+  border-left: 1px solid rgba(161, 115, 61, 0.46);
+}
+
+.quests-contract-wall .quest-token-badge {
+  min-width: clamp(150px, 11vw, 210px);
+  border: clamp(8px, 0.56vw, 12px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(12, 15, 16, 0.8), rgba(6, 8, 9, 0.93)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+}
+
+.quests-contract-wall .quests-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  align-items: stretch;
+  flex: 0 0 auto;
+  gap: clamp(5px, 0.42vw, 9px);
+  min-height: clamp(50px, 3.8vw, 64px);
+  padding: 3px 5px;
+  overflow: hidden;
+  background: rgba(4, 6, 7, 0.72);
+}
+
+.quests-contract-wall .quests-tab-btn {
+  justify-content: center;
+  min-width: 0;
+  min-height: 100%;
+  padding: 5px clamp(7px, 0.72vw, 16px);
+  border: clamp(8px, 0.58vw, 12px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(14, 17, 18, 0.86), rgba(7, 9, 10, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  color: #a9b1b2;
+  box-shadow: none;
+}
+
+.quests-contract-wall .quests-tab-btn::before {
+  content: none;
+}
+
+.quests-contract-wall .quests-tab-btn:hover {
+  background:
+    linear-gradient(rgba(31, 34, 33, 0.72), rgba(9, 11, 12, 0.92)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  color: var(--gold, #d8c06a);
+  box-shadow: none;
+  filter: brightness(1.08);
+}
+
+.quests-contract-wall .quests-tab-btn--active {
+  background:
+    linear-gradient(rgba(75, 53, 25, 0.69), rgba(18, 16, 13, 0.92)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: inset 0 -2px 0 rgba(215, 173, 83, 0.76);
+}
+
+.quests-contract-wall .daily-reset-countdown {
+  align-self: stretch;
+  margin-left: 0;
+  border: clamp(8px, 0.58vw, 12px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(26, 19, 11, 0.76), rgba(8, 10, 10, 0.93)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  font-family: var(--font-info);
+  font-variant-numeric: tabular-nums;
+}
+
+.quests-contract-wall .quests-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: clamp(7px, 0.58vw, 12px);
+  overflow: hidden;
+}
+
+.quests-contract-wall .quests-content > * {
+  height: 100%;
+  min-height: 0;
+}
+
+/* Contract Wall: breite zweispaltige Auftragswand links, stabile Detailentscheidung rechts. */
+.quests-contract-wall .quest-contracts {
+  grid-template-columns: minmax(520px, 1.16fr) minmax(430px, 0.84fr);
+  gap: clamp(9px, 0.72vw, 15px);
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.quests-contract-wall .quest-master,
+.quests-contract-wall .quest-detail {
+  min-height: 0;
+  border: clamp(9px, 0.64vw, 14px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(11, 14, 15, 0.82), rgba(6, 8, 9, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+}
+
+.quests-contract-wall .quest-master {
+  padding: clamp(8px, 0.62vw, 13px);
+  overflow: hidden;
+}
+
+.quests-contract-wall .quest-master-heading {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 4px 7px 8px;
+  border-bottom: 1px solid rgba(159, 113, 58, 0.42);
+  color: var(--gold, #d8c06a);
+}
+
+.quests-contract-wall .quest-strand-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 8px;
+  flex: 1 1 auto;
+  max-height: none;
+  min-height: 0;
+  padding: 7px 3px 4px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.quests-contract-wall .quest-strand {
+  align-self: start;
+  border: clamp(7px, 0.5vw, 11px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(21, 16, 12, 0.78), rgba(8, 10, 10, 0.94)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+
+.quests-contract-wall .quest-strand-head {
+  min-height: 48px;
+  padding: 8px 9px;
+}
+
+.quests-contract-wall .quest-strand-row {
+  min-height: 34px;
+  padding: 6px 7px;
+  background: rgba(5, 7, 8, 0.38);
+}
+
+.quests-contract-wall .quest-strand-row + .quest-strand-row {
+  border-top: 1px solid rgba(115, 83, 46, 0.24);
+}
+
+.quests-contract-wall .quest-strand-row--selected {
+  border-left-color: var(--gold, #d8c06a);
+  background: linear-gradient(90deg, rgba(116, 77, 31, 0.36), rgba(7, 9, 10, 0.58));
+}
+
+.quests-contract-wall .quest-detail {
+  border: 0;
+  background: transparent;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.quests-contract-wall .quest-detail > .chronicle-stage {
+  min-height: 100%;
+}
+
+/* Dailies bleiben sechs echte Karten, werden aber als breite, intern scrollende Vertragswand
+   statt als endlose vertikale Liste gesetzt. */
+.quests-contract-wall .quests-content--daily .quests-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: clamp(8px, 0.65vw, 14px);
+  height: 100%;
+  min-height: 0;
+  padding: 2px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.quests-contract-wall .quest-card {
+  min-height: clamp(245px, 23vh, 360px);
+  padding: clamp(11px, 0.82vw, 17px);
+  border: clamp(9px, 0.64vw, 14px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(18, 15, 12, 0.78), rgba(7, 9, 10, 0.94)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+
+.quests-contract-wall .quest-card--completed {
+  box-shadow: inset 3px 0 0 rgba(103, 166, 112, 0.72), 0 0 16px rgba(81, 146, 92, 0.16);
+}
+
+.quests-contract-wall .quest-card--claimed {
+  opacity: 0.62;
+}
+
+/* Belohnungslager: stabiler Panelkopf, nur das Angebotssortiment scrollt. */
+.quests-contract-wall .quest-shop-panel {
+  padding: clamp(12px, 0.95vw, 20px);
+  border: clamp(9px, 0.64vw, 14px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(12, 15, 16, 0.84), rgba(6, 8, 9, 0.95)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  overflow: hidden;
+}
+
+.quests-contract-wall .quest-shop-grid {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(170px, 12vw, 230px), 1fr));
+  align-content: start;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.quests-contract-wall .quest-shop-offer {
+  min-height: 250px;
+  border: clamp(8px, 0.58vw, 12px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(21, 16, 12, 0.76), rgba(7, 9, 10, 0.94)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+
+.quests-contract-wall .quest-shop-offer-img {
+  image-rendering: auto;
+}
+
+/* Gemeinsame V3-Steuerung: kein zusätzlicher Altframe in ::before. */
+.quests-contract-wall .quest-claim-btn {
+  min-height: 48px;
+  border: clamp(9px, 0.64vw, 14px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(57, 42, 23, 0.72), rgba(12, 13, 12, 0.93)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+
+.quests-contract-wall .quest-claim-btn::before {
+  content: none;
+}
+
+.quests-contract-wall .quest-obj-count,
+.quests-contract-wall .quests-tab-count,
+.quests-contract-wall .quest-token-badge-count,
+.quests-contract-wall .quest-shop-offer-cost-num,
+.quests-contract-wall .chronicle-obj-count {
+  font-family: var(--font-info);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 2500px) {
+  .quests-contract-wall .quests-content--daily .quests-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .quests-contract-wall .quest-contracts {
+    grid-template-columns: minmax(850px, 1.24fr) minmax(620px, 0.76fr);
+  }
+}
+
+@media (max-width: 1180px) {
+  .quests-contract-wall .quests-command-header {
+    grid-template-columns: 1fr;
+  }
+
+  .quests-contract-wall .quests-header {
+    display: none;
+  }
+
+  .quests-contract-wall .quests-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .quests-contract-wall .daily-reset-countdown {
+    display: none;
+  }
+
+  .quests-contract-wall .quest-contracts {
+    grid-template-columns: minmax(360px, 0.9fr) minmax(420px, 1.1fr);
+  }
+
+  .quests-contract-wall .quest-strand-list {
+    display: flex;
+  }
+
+  .quests-contract-wall .quest-master-heading {
+    display: block;
+  }
+
+  .quests-contract-wall .quest-master-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  #root .content-body:has(.quests-contract-wall),
+  #root .page-transition:has(> .quests-contract-wall) {
+    height: auto;
+    overflow: auto;
+  }
+
+  .quests-contract-wall {
+    height: auto;
+    overflow: visible;
+  }
+
+  .quests-contract-wall .quests-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .quests-contract-wall .quests-content {
+    min-height: 780px;
+    overflow: visible;
+  }
+
+  .quests-contract-wall .quest-contracts {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .quests-contract-wall .quest-master {
+    max-height: 340px;
+  }
+
+  .quests-contract-wall .quest-master-heading {
+    display: none;
+  }
+
+  .quests-contract-wall .quest-master-toggle {
+    display: flex;
+  }
+
+  .quests-contract-wall .quest-master:not(.quest-master--open) .quest-strand-list {
+    display: none;
+  }
+
+  .quests-contract-wall .quests-content--daily .quests-list {
+    grid-template-columns: 1fr;
+  }
+}

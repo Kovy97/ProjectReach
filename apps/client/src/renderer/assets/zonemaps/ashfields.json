@@ -1,0 +1,35 @@
+{
+  "zoneId": "ashfields",
+  "hotspots": [
+    {
+      "monsterId": "ash_rat",
+      "x": 22,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "dust_vulture",
+      "x": 50,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "mire_crawler",
+      "x": 78,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "pitch_beetle",
+      "x": 22,
+      "y": 71,
+      "size": 2.33
+    },
+    {
+      "monsterId": "ash_tyrant",
+      "x": 50,
+      "y": 71,
+      "size": 2.33
+    }
+  ]
+}

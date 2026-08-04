@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>2.5D-Light Beweis (DOM/CSS, kein WebGL) — Grim Reach 0.4.0 Assessment</title>
+<style>
+  :root {
+    --bg: #14161a;
+    --panel: #1e2329;
+    --border: #333c44;
+    --text: #ccd5db;
+    --accent: #9a8060;
+    --gold: #d8c06a;
+    --hp: #a23b3b;
+    --hp-bg: #3a1414;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: #0b0c0e; color: var(--text);
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  .wrap {
+    max-width: 1400px; margin: 0 auto; padding: 18px 20px 60px;
+  }
+  h1 { font-size: 20px; color: var(--gold); margin: 0 0 4px; letter-spacing: 0.03em; }
+  .sub { font-size: 13px; color: #8b95a0; margin: 0 0 16px; max-width: 900px; line-height: 1.5; }
+  .sub b { color: #c9b98a; }
+  .controls {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  button.tab, button.fx {
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    padding: 7px 14px; font-family: inherit; font-size: 13px; cursor: pointer; border-radius: 3px;
+  }
+  button.tab.active, button.fx.active { border-color: var(--gold); color: var(--gold); }
+  .meta-readout {
+    font-size: 11px; color: #7c8792; font-family: Consolas, monospace; margin-left: auto;
+    white-space: pre; text-align: right;
+  }
+
+  /* ── Die eigentliche 2.5D-light-Bühne ─────────────────────────────────── */
+  .stage-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 74vh;
+    overflow: hidden;
+    border: 10px solid #000;
+    border-image: repeating-linear-gradient(45deg, #2a2018, #2a2018 4px, #1a1410 4px, #1a1410 8px) 10;
+    background: #000;
+    perspective: 1300px;
+    perspective-origin: 50% 22%;
+  }
+  .stage {
+    position: absolute; inset: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* Parallax-Ebene 1: fernes Himmel/Horizont-Band (leicht geblurrt, langsame Drift) */
+  .layer-sky {
+    position: absolute; inset: -6%;
+    background-size: cover;
+    background-position: center 18%;
+    filter: blur(1.5px) brightness(0.88) saturate(0.95);
+    transform: translateZ(-420px) scale(1.34);
+    transition: transform 0.6s ease-out;
+  }
+  /* Parallax-Ebene 2: näherer Bildstreifen (Zaun/Hügel/Wand), schärfer */
+  .layer-mid {
+    position: absolute; inset: -2%;
+    background-size: cover;
+    background-position: center 30%;
+    filter: brightness(0.94);
+    transform: translateZ(-180px) scale(1.14);
+    transition: transform 0.6s ease-out;
+  }
+  /* Dunkler Verlauf für Lesbarkeit (entspricht .battle-arena.has-backdrop::before im echten Spiel) */
+  .layer-vignette {
+    position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    background: linear-gradient(180deg, rgba(10,8,6,0.15) 0%, rgba(10,8,6,0.55) 100%);
+  }
+
+  /* Boden: gekippte Ebene. transform-origin oben = Kippachse liegt am Horizont. */
+  .floor {
+    position: absolute;
+    left: -20%; right: -20%; bottom: 0; height: 46%;
+    background-size: 100% 240%;
+    background-position: center top;
+    background-repeat: no-repeat;
+    transform-origin: 50% 0%;
+    transform: rotateX(56deg) translateZ(0);
+    box-shadow: inset 0 40px 60px -20px rgba(0,0,0,0.55);
+  }
+  .floor::after {
+    /* Naht-Kaschierung Boden↔Kulisse, wie fogSeam im three.js-Prototyp, hier simpler Gradient */
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(20,16,10,0.55) 0%, rgba(20,16,10,0) 22%);
+  }
+
+  .actor {
+    position: absolute; bottom: 6%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease-out;
+  }
+  .actor .shadow {
+    position: absolute; left: 50%; bottom: -6px; width: 78%; height: 22%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.28) 48%, transparent 72%);
+    border-radius: 50%;
+    z-index: 1;
+  }
+  .actor img {
+    position: relative; z-index: 2;
+    display: block;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5));
+  }
+  .actor.player { left: 20%; }
+  .actor.player img { height: 340px; transform: translateZ(60px); }
+  .actor.monster { right: 18%; }
+  .actor.monster img { height: 250px; transform: translateZ(-20px); }
+
+  /* Nameplate — grobe Näherung der echten .cbar/.a25-bar-card-Optik, nicht 1:1-Klassenwiederverwendung
+     (Mockup ist ein eigenständiges Dokument, keine Referenz auf combat.css). */
+  .plate {
+    position: absolute; left: 50%; bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    width: 168px; z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    pointer-events: none;
+  }
+  .plate .name {
+    font-size: 13px; color: #f5ecd6; text-shadow: 0 1px 2px #000, 0 0 5px rgba(0,0,0,0.9);
+    white-space: nowrap;
+  }
+  .plate .bar {
+    width: 100%; height: 11px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.6);
+    background: var(--hp-bg); position: relative; overflow: hidden;
+  }
+  .plate .bar > i {
+    position: absolute; inset: 0; background: linear-gradient(180deg, #c24f4f, #7a2424);
+    transform-origin: left; display: block;
+  }
+  .plate.enemy .bar > i { background: linear-gradient(180deg, #c24f4f, #7a2424); }
+  .plate .bar > span {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: #f5ecd6; text-shadow: 0 1px 1px #000;
+  }
+
+  /* Klick-Ziel-Demo: die Monster-Figur muss trotz 3D-Kontext klickbar bleiben */
+  .actor.monster img { cursor: pointer; }
+  .hit-flash { animation: hitflash 0.32s ease-out; }
+  @keyframes hitflash { 0% { filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5)) brightness(2.4); } 100% { filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5)) brightness(1); } }
+
+  .findings {
+    margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .findings .box {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px;
+  }
+  .findings h2 { font-size: 14px; color: var(--gold); margin: 0 0 8px; }
+  .findings ul { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.6; color: #c3ccd3; }
+  .findings li b { color: #e8d9ad; }
+  .tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+  .tag.ok { background: #24421f; color: #9fd88a; }
+  .tag.risk { background: #4a2320; color: #e8a08a; }
+
+  @media (prefers-color-scheme: light) {
+    html, body { background: #0b0c0e; } /* Bühne bleibt bewusst dunkel wie im Spiel, unabhängig vom OS-Theme */
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>2.5D-Light Beweis — reines DOM/CSS, kein WebGL/three.js</h1>
+  <p class="sub">
+    Wegwerf-Technik-Beweis für den 0.4.0-Assessment (<b>kein Produktivcode</b>, keine App-Datei berührt).
+    Zeigt <b>zwei echte Zonen-Kulissen</b> aus dem Repo (unverändert, per relativem Pfad geladen) in einer
+    <code>perspective</code>-Bühne mit gekipptem Boden, zwei Parallax-Ebenen und aufrechten Sprites mit
+    elliptischem Kontaktschatten und Tiefen-Staffelung. <b>Weiden</b> nutzt die dedizierte, bereits vom
+    Chef gelieferte <code>pastures_ground.webp</code> (das Chef-Bodenbild aus dem three.js-Prototyp — ein
+    reines Asset, technikneutral wiederverwendbar). <b>Gruft</b> hat <u>keine</u> dedizierte Bodenplatte —
+    dort wird testweise der untere Streifen der normalen 2D-Kampf-Kulisse gekippt, um das Verzerrungsrisiko
+    ehrlich sichtbar zu machen (siehe Befunde unten).
+  </p>
+  <div class="controls">
+    <button class="tab active" data-zone="pastures">Weiden (dediziertes Bodenbild)</button>
+    <button class="tab" data-zone="crypt">Gruft (Kulisse gekippt, kein Bodenbild)</button>
+    <button class="fx active" data-fx="full">FX: voll</button>
+    <button class="fx" data-fx="reduced">FX: reduziert</button>
+    <button class="fx" data-fx="off">FX: aus</button>
+    <span class="meta-readout" id="meta"></span>
+  </div>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <div class="layer-sky" id="layerSky"></div>
+      <div class="layer-mid" id="layerMid"></div>
+      <div class="floor" id="floor"></div>
+      <div class="layer-vignette"></div>
+
+      <div class="actor player">
+        <div class="plate">
+          <div class="name">Held</div>
+          <div class="bar"><i style="transform: scaleX(0.82)"></i><span>82 / 100</span></div>
+        </div>
+        <div class="shadow"></div>
+        <img src="../../../apps/client/src/renderer/assets/portraits/char_1.webp" alt="Spieler-Platzhalter" />
+      </div>
+
+      <div class="actor monster" id="monsterActor">
+        <div class="plate enemy">
+          <div class="name" id="monsterName">Rasender Bulle</div>
+          <div class="bar"><i style="transform: scaleX(0.58)"></i><span>58%</span></div>
+        </div>
+        <div class="shadow"></div>
+        <img id="monsterImg" src="../../../apps/client/src/renderer/assets/monsters/bull_boss.webp" alt="Monster-Platzhalter" />
+      </div>
+    </div>
+  </div>
+
+  <div class="findings">
+    <div class="box">
+      <h2>Was hier funktioniert <span class="tag ok">bestätigt</span></h2>
+      <ul>
+        <li>Gekippter Boden per <code>perspective</code> + <code>rotateX</code> liefert einen klar
+          erkennbaren "Bühne mit Tiefe"-Eindruck ohne jede GPU-Textur/Canvas — reines Compositing.</li>
+        <li>Aufrechte Sprites mit <code>translateZ</code>-Staffelung + elliptischem Radial-Gradient-Schatten
+          lesen sich sofort als "stehen auf dem Boden", genau wie die three.js-Billboards.</li>
+        <li>Text bleibt echtes, scharfes DOM (Nameplates) — keine Canvas-Text-Rasterisierung nötig,
+          exakt derselbe Vorteil wie beim three.js-Prototyp (DOM-Anker statt Textur).</li>
+        <li>Klick-Ziel auf der Monster-Figur bleibt trivial (<code>pointer-events</code>/normales
+          <code>&lt;img&gt;</code>-Element, kein Raycasting nötig) — anklicken oben rechts zum Test.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h2>Was hier bricht / Risiko <span class="tag risk">beobachtet</span></h2>
+      <ul>
+        <li><b>Gruft-Boden verzerrt sichtbar</b> — die Kulisse hat eine EIGENE gemalte Perspektive
+          (Fluchtpunkt der Illustration); die CSS-<code>rotateX</code> legt eine ZWEITE Perspektive
+          darüber → "Doppelperspektive", am unteren Bildrand am stärksten. Ohne dedizierte flache
+          Bodenplatte pro Zone bleibt das ein Kompromiss, kein sauberer Boden.</li>
+        <li><b>Bottom-Alpha-Padding</b> — <code>bull_boss.webp</code> hat ~17% transparente Fußzone,
+          <code>skeleton_warrior.webp</code> ~9% (real gemessen, nicht geschätzt). Ohne Pro-Sprite-
+          Kalibrierung (Foot-Inset wie im three.js-Prototyp) schweben Figuren unterschiedlich stark
+          über dem Boden — <b>dasselbe Problem wie bei WebGL, nicht durch DOM/CSS vermieden</b>.</li>
+        <li>Drei transformierte, überlappende Vollbild-Ebenen (Sky/Mid/Floor) + 2 Sprite-Layer erzeugen
+          mind. 5-6 eigene Compositor-Layer bei Ultrawide-Fläche — DevTools „Layers"-Panel zur Probe
+          empfohlen, bevor das für alle ~10 Zonen ausgerollt wird.</li>
+        <li>Bei <code>fxLevel="off"</code>/<code>prefers-reduced-motion</code> (Buttons oben) friert die
+          Parallax-Drift ein — funktioniert hier bereits als Beweis, dass sich das bestehende FX-Gate
+          1:1 auf diese Technik überträgt.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ZONES = {
+    pastures: {
+      sky: "../../../apps/client/src/renderer/assets/battlescreens/pastures.webp",
+      mid: "../../../apps/client/src/renderer/assets/battlescreens/pastures.webp",
+      floor: "../../../apps/client/src/renderer/assets/arena25d/pastures_ground.webp",
+      floorSize: "100% 100%", // dediziertes Bodenbild: 1:1 gestreckt, kein Crop nötig
+      monsterName: "Rasender Bulle",
+      monsterImg: "../../../apps/client/src/renderer/assets/monsters/bull_boss.webp",
+    },
+    crypt: {
+      sky: "../../../apps/client/src/renderer/assets/battlescreens/crypt.webp",
+      mid: "../../../apps/client/src/renderer/assets/battlescreens/crypt.webp",
+      floor: "../../../apps/client/src/renderer/assets/battlescreens/crypt.webp",
+      floorSize: "100% 260%", // Notlösung: unterer Streifen der Kulisse selbst, hochskaliert
+      monsterName: "Skelettkrieger",
+      monsterImg: "../../../apps/client/src/renderer/assets/monsters/skeleton_warrior.webp",
+    },
+  };
+
+  const stageWrap = document.getElementById("stageWrap");
+  const layerSky = document.getElementById("layerSky");
+  const layerMid = document.getElementById("layerMid");
+  const floor = document.getElementById("floor");
+  const monsterImg = document.getElementById("monsterImg");
+  const monsterName = document.getElementById("monsterName");
+  const meta = document.getElementById("meta");
+
+  let fxLevel = "full";
+  let currentZone = "pastures";
+
+  function applyZone(id) {
+    currentZone = id;
+    const z = ZONES[id];
+    layerSky.style.backgroundImage = `url("${z.sky}")`;
+    layerMid.style.backgroundImage = `url("${z.mid}")`;
+    floor.style.backgroundImage = `url("${z.floor}")`;
+    floor.style.backgroundSize = z.floorSize;
+    monsterImg.src = z.monsterImg;
+    monsterName.textContent = z.monsterName;
+    document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b.dataset.zone === id));
+    updateMeta();
+  }
+
+  function updateMeta() {
+    meta.textContent = `Zone: ${currentZone} | FX: ${fxLevel} | Compositor-Layer (Sky/Mid/Floor/Player/Monster): ~5-6`;
+  }
+
+  document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => applyZone(b.dataset.zone)));
+  document.querySelectorAll(".fx").forEach((b) =>
+    b.addEventListener("click", () => {
+      fxLevel = b.dataset.fx;
+      document.querySelectorAll(".fx").forEach((x) => x.classList.toggle("active", x === b));
+      updateMeta();
+    }),
+  );
+
+  // Dezente Mausparallax — NUR bei fxLevel "full", genau das Gating-Muster aus dem three.js-Prototyp
+  // (Arena25DStage.tsx: Idle-Drift/Kamera-Kick nur bei fxMotion). prefers-reduced-motion übersteuert
+  // zusätzlich hart, wie im echten Spiel gefordert.
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  stageWrap.addEventListener("mousemove", (e) => {
+    if (fxLevel !== "full" || prefersReduced) return;
+    const r = stageWrap.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5;
+    const ny = (e.clientY - r.top) / r.height - 0.5;
+    layerSky.style.transform = `translateZ(-420px) scale(1.34) translate(${nx * -14}px, ${ny * -6}px)`;
+    layerMid.style.transform = `translateZ(-180px) scale(1.14) translate(${nx * -26}px, ${ny * -10}px)`;
+  });
+  stageWrap.addEventListener("mouseleave", () => {
+    layerSky.style.transform = "translateZ(-420px) scale(1.34)";
+    layerMid.style.transform = "translateZ(-180px) scale(1.14)";
+  });
+
+  // Treffer-Demo: Klick auf Monster löst Weißblitz aus (belegt: Klick-Ziele bleiben trivial in 3D-CSS)
+  document.getElementById("monsterActor").addEventListener("click", () => {
+    monsterImg.classList.remove("hit-flash");
+    void monsterImg.offsetWidth;
+    monsterImg.classList.add("hit-flash");
+  });
+
+  applyZone("pastures");
+</script>
+</body>
+</html>

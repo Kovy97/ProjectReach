@@ -1,0 +1,633 @@
+import { describe, expect, it } from "vitest";
+import { content } from "@hearthforge/content";
+import type { ItemInstance, WeaponStyle } from "@hearthforge/shared";
+import {
+  ARMOR_PEN_CAP,
+  ATTACK_INTERVAL_FLOOR_MS,
+  BLOCK_CAP,
+  CRIT_CHANCE_CAP,
+  CRIT_DAMAGE_CAP,
+  DEFENSE_MITIGATION_K,
+  DEFENSE_MITIGATION_MAX,
+  DMG_MAX_HIT_MULT,
+  DMG_ROLL_FLOOR,
+  DODGE_CAP,
+  LEATHER_HIT_FLOOR,
+  MASTER_PERK_CAP,
+  MASTERY_DOUBLE_CAP,
+  PET_SKILL_EFFECT_CAP,
+  poolCheckpointBonus,
+  PRECISION_CAP,
+  RANGED_INTERVAL_FLOOR_MS,
+  SELL_FRACTION,
+  TEMPO_REDUCTION_CAP,
+  WARD_BREAK_CAP,
+  instanceBonusDelta,
+  masterRingItemId,
+} from "@hearthforge/shared";
+import { computeStats } from "./character";
+import { combinedFloorDodge, enemyEffectiveAccuracy } from "./combat";
+import { combatLevel } from "./dungeon";
+import { buildBisCharacter, monsterClosestTo } from "./balance-envelope-helpers";
+import type { BisBuild, BisTarget } from "./balance-envelope-helpers";
+
+/**
+ * Balance-Envelope-Suite („BiS-Red-Team", Chef-GO 2026-07-09).
+ *
+ * Hintergrund: Stacking-Lecks tauchten wiederholt erst im Live-Test auf (Crit-One-Hit → gezähmt
+ * #294; aktuell offen: Evasion-Stacking + Attack-Speed-Stacking). Diese Suite baut die Worst-Case-
+ * Charaktere AUTOMATISCH aus dem echten Content-Katalog (buildBisCharacter, verallgemeinert den
+ * Voll-Stack-Guard aus crit-taming.test.ts) und friert die Stat-Envelopes ein:
+ *
+ *  §1 Existenz-Guards — die Suite darf nie stumm degradieren, wenn Content umbenannt wird.
+ *  §2 Harte Caps — alles bereits Gezähmte/Gebodente hält auch im maximal legalen Voll-Stack.
+ *  §3 Cap-Bindungs-Detektoren — wo der Voll-Stack den Cap HEUTE exakt erreicht, wird das gepinnt
+ *     (erreicht er ihn plötzlich nicht mehr ODER erst gar nicht, hat sich die Balance verschoben).
+ *  §4 Gepinnte Worst-Case-Tabelle — reale Messwerte als Regression-Detektor (KEINE Wunschwerte).
+ *  §5 Messmatrix Evasion/Tempo/TTK — seit #301 (evasion-tempo-taming-spec, CHEF-GO) GEZÄHMT und
+ *     NEU GEPINNT: aus den Mess-Pins des kaputten Zustands wurden harte Cap-Asserts
+ *     (Dodge ≤ 0.40, Intervall ≥ base·0.8, Boss-Land-Chance real) plus frische Messwerte.
+ *  §6 Duplikat-Verzauberung — seit #303 (red-team L4) BLOCKIERT (`duplicate_affix`); Alt-Save-
+ *     Instanzen mit Bestands-Duplikaten bleiben geduldet (instanceBonusDelta summiert weiter).
+ *  §7 Ökonomie-Schnellcheck — kein profitabler Kauf→Verkauf-Loop im Shop (inkl. Pet-Verkaufsbonus).
+ *
+ * NEU VERMESSEN 2026-07-09 (#303, red-team L3+L4): „Voll-Stack" heißt seit der Buff-Kategorie-
+ * Exklusivität „bester Buff JE Kategorie" (nicht mehr 24 parallel) und Verzauberung „Top-N
+ * VERSCHIEDENE Affixe" (nicht mehr der beste dupliziert). Folge (GEWOLLT): Dodge- und Mitigations-
+ * Cap binden nicht mehr — nur Krit (Gear+Suffix-Träger) und Block (CL 90) erreichen ihre Deckel.
+ *
+ * Alle Builds sind deterministisch (kein RNG-Draw) und rein content-gescannt (kein Id-Hardcoding
+ * im Builder; Pins nennen Ids nur als DETEKTOR — reißt ein Pin, bewusst neu messen & pinnen).
+ */
+
+const STYLES: WeaponStyle[] = ["melee", "ranged", "magic"];
+const TIERS = [30, 60, 90] as const;
+const TARGETS: BisTarget[] = ["crit", "haste", "dodge", "tank", "lifesteal", "ward", "damage"];
+
+/** Trefferchancen-Boden aus combat.ts (MIN_HIT_CHANCE, dort modul-lokal). */
+const MIN_HIT_CHANCE = 0.1;
+
+/** Build-Cache (Suite baut jede Kombination genau einmal — rein deterministisch). */
+const buildCache = new Map<string, BisBuild>();
+function bis(style: WeaponStyle, lvl: number, target: BisTarget): BisBuild {
+  const key = `${style}|${lvl}|${target}`;
+  let b = buildCache.get(key);
+  if (!b) {
+    b = buildBisCharacter(content, style, lvl, target, { allBuffs: true });
+    buildCache.set(key, b);
+  }
+  return b;
+}
+
+/** Gedeckelte Gegner-Mitigation wie in resolveAttack (combat.ts). */
+function mitigation(defense: number): number {
+  return Math.min(DEFENSE_MITIGATION_MAX, defense / (defense + DEFENSE_MITIGATION_K));
+}
+
+/** Trefferchance des Accuracy-Contests wie in resolveAttack (inkl. MIN_HIT_CHANCE-Boden). */
+function hitChance(accuracy: number, evasion: number): number {
+  const sum = accuracy + evasion;
+  return Math.max(MIN_HIT_CHANCE, sum > 0 ? accuracy / sum : 0.5);
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// §1 Existenz-Guards: Content-Anker der Suite (nie stumm degradieren)
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §1: Existenz-Guards", () => {
+  it("Referenz-Bosse existieren mit den erwarteten Leveln (Basis der ±Level-Messungen)", () => {
+    expect(content.monsters.idol_warden?.level, "idol_warden Level").toBe(245);
+    expect(content.monsters.last_idol?.level, "last_idol Level").toBe(295);
+  });
+
+  it("die Stack-Träger existieren: Tempo-/Krit-Suffixe, Evasion-Rune/-Tonikum, Kriegsgebräu, Pets", () => {
+    // Soft-Stat-Suffixe (Tempo/Krit) — ohne sie prüft die Suite nicht mehr den Stack, den sie behauptet.
+    expect(content.suffixes?.suffix_wolf?.softStats).toContain("attackIntervalMs");
+    expect(content.suffixes?.suffix_viper?.softStats).toContain("attackIntervalMs");
+    expect(content.suffixes?.suffix_executioner?.softStats).toEqual(
+      expect.arrayContaining(["critChance", "critDamage"]),
+    );
+    // Evasion-Schiene: Leder-Rune + Tonikum (Trinity-Schicht).
+    expect(content.affixes?.affix_evasion?.trinityByTier?.[2]?.evasionRating).toBeGreaterThan(0);
+    expect(content.items.tonic_keeneye?.buff?.trinity?.evasionRating).toBeGreaterThan(0);
+    // Stärkster Tempo/Krit-Buff (crit-taming-Anker) trägt beide Zeilen.
+    const brew = content.items.slayer_war_brew?.buff?.bonus;
+    expect(brew?.attackIntervalMs).toBeLessThan(0);
+    expect(brew?.critChance).toBeGreaterThan(0);
+    // Globale Kampf-Pet-Passiva (lifesteal/damageReduction/sellBonus) existieren im Katalog.
+    const kinds = new Set(Object.values(content.pets ?? {}).map((p) => p.skillEffect?.kind));
+    for (const kind of ["lifesteal", "damageReduction", "sellBonus"]) {
+      expect(kinds, `Pet-Passiv ${kind}`).toContain(kind);
+    }
+  });
+
+  it("buildBisCharacter liefert volle Kits und exakt das Ziel-Kampflevel (CL == targetLevel)", () => {
+    for (const lvl of TIERS) {
+      const b = bis("melee", lvl, "crit");
+      expect(combatLevel(b.state), `CL bei targetLevel ${lvl}`).toBe(lvl);
+      // Kein still-leeres Kit: Waffe + alle 7 Rüstungs-/Schmuck-Kernslots + beide Ringe belegt.
+      for (const slot of ["mainhand", "helmet", "amulet", "body", "legs", "gloves", "boots", "cape", "ring1", "ring2"] as const) {
+        expect(b.kit[slot], `Slot ${slot} bei CL ${lvl}`).toBeTruthy();
+      }
+      // Der Voll-Stack trägt wirklich Suffixe + Buffs (sonst misst die Suite einen leeren Build).
+      expect(Object.keys(b.suffixBySlot).length).toBeGreaterThan(5);
+      // #303 L3: „alle Buffs" = bester Buff JE Kategorie — für crit sind das heute genau
+      // offense (slayer_war_brew) + food (soulfire_banquet); andere Kategorien scoren crit nicht.
+      expect(b.buffIds.length).toBeGreaterThanOrEqual(2);
+      expect(b.buffIds).toContain("slayer_war_brew");
+      // Exklusivitäts-Invariante des Helpers: keine zwei kategorisierten Buffs teilen eine Kategorie.
+      const cats = b.buffIds
+        .map((id) => content.items[id]?.buff?.category)
+        .filter((c): c is NonNullable<typeof c> => !!c);
+      expect(new Set(cats).size).toBe(cats.length);
+    }
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// §2 Harte Caps im Voll-Stack (CL 30/60/90 × 3 Stile × alle Ziel-Builds)
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §2: harte Caps halten im maximal legalen Voll-Stack", () => {
+  for (const lvl of TIERS) {
+    for (const style of STYLES) {
+      it(`CL ${lvl} / ${style}: alle Deckel halten über alle Ziel-Builds`, () => {
+        for (const target of TARGETS) {
+          const st = computeStats(bis(style, lvl, target).state, content);
+          const tag = `${target}@CL${lvl}/${style}`;
+          // Crit-Zähmung #294 — beide Deckel auch im Voll-Stack (Gear+Suffix+alle Buffs).
+          expect(st.critChance, `critChance ${tag}`).toBeLessThanOrEqual(CRIT_CHANCE_CAP);
+          expect(st.critDamage, `critDamage ${tag}`).toBeLessThanOrEqual(CRIT_DAMAGE_CAP);
+          // Tempo-Boden: kein Build unterschreitet das harte 800-ms-Intervall.
+          expect(st.attackIntervalMs, `interval ${tag}`).toBeGreaterThanOrEqual(ATTACK_INTERVAL_FLOOR_MS);
+          // Defensiv-Deckel: Dodge/Block/Mitigation/Lifesteal/Pet-DR.
+          expect(st.dodgeChance, `dodge ${tag}`).toBeLessThanOrEqual(DODGE_CAP);
+          expect(st.blockChance, `block ${tag}`).toBeLessThanOrEqual(BLOCK_CAP);
+          expect(mitigation(st.defense), `mitigation ${tag}`).toBeLessThanOrEqual(DEFENSE_MITIGATION_MAX);
+          expect(st.lifestealPct, `lifesteal ${tag}`).toBeLessThanOrEqual(1);
+          expect(st.damageReduction, `petDR ${tag}`).toBeLessThanOrEqual(
+            PET_SKILL_EFFECT_CAP.damageReduction ?? 0.04,
+          );
+          // Konter-Signaturen bleiben in ihren Caps.
+          expect(st.armorPen, `armorPen ${tag}`).toBeLessThanOrEqual(ARMOR_PEN_CAP);
+          expect(st.precision, `precision ${tag}`).toBeLessThanOrEqual(PRECISION_CAP);
+          expect(st.wardBreak, `wardBreak ${tag}`).toBeLessThanOrEqual(WARD_BREAK_CAP);
+        }
+      });
+    }
+  }
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// §3 Cap-Bindungs-Detektoren: wo der Voll-Stack den Deckel HEUTE exakt erreicht
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", () => {
+  it("Krit-Voll-Stack erreicht BEIDE Caps exakt — auch nach #303 (Gear+Suffix tragen; Buffs geben nur noch max +0.20 via war_brew)", () => {
+    // Re-Messung 2026-07-09 nach L3-Exklusivität: der Buff-Anteil fällt von Σ +1.04 auf +0.20
+    // (bestes offense-Tonikum), die Caps binden TROTZDEM ab CL 30 — der Krit-Träger ist die
+    // Gear-/Suffix-/Attribut-Schiene, nicht das Tonika-Stacking. Bewusst gepinnt als Detektor.
+    for (const lvl of TIERS) {
+      for (const style of STYLES) {
+        const st = computeStats(bis(style, lvl, "crit").state, content);
+        expect(st.critChance, `critChance CL${lvl}/${style}`).toBe(CRIT_CHANCE_CAP);
+        expect(st.critDamage, `critDamage CL${lvl}/${style}`).toBe(CRIT_DAMAGE_CAP);
+      }
+    }
+  });
+
+  it("Haste-Voll-Stack schlägt an den RELATIVEN T1-Boden (base·0.8, #301) — der 800er-Einheitsbrei ist weg", () => {
+    // Evasion-Tempo-Zähmung #301 (CHEF-ENTSCHEID −20 %): Flat-Quellen (DEX-Kurve + Suffixe + Tonika)
+    // drücken das Intervall max. 20 % unter die WAFFEN-Basis — der Voll-Stack bindet den relativen
+    // Boden exakt (Cap erreichbar, by design), der absolute 800er-Boden bindet nie mehr.
+    for (const lvl of TIERS) {
+      const melee = bis("melee", lvl, "haste");
+      expect(computeStats(melee.state, content).attackIntervalMs, `melee CL${lvl}`).toBe(
+        melee.weaponBaseIntervalMs * (1 - TEMPO_REDUCTION_CAP),
+      );
+      const magic = bis("magic", lvl, "haste");
+      expect(computeStats(magic.state, content).attackIntervalMs, `magic CL${lvl}`).toBe(
+        magic.weaponBaseIntervalMs * (1 - TEMPO_REDUCTION_CAP),
+      );
+      // Fernkampf: relativer Boden → Stil-Mult ×0.9 (Zwischen-Boden 1000) → Fast-Stance ×0.85
+      // (Stil-/Stance-Mults bleiben AUSSERHALB des relativen Bodens, Spec §3.5) ⇒ 2650er-Bogen 1621,8 ms.
+      const ranged = bis("ranged", lvl, "haste");
+      expect(computeStats(ranged.state, content).attackIntervalMs, `ranged CL${lvl}`).toBeCloseTo(
+        Math.max(RANGED_INTERVAL_FLOOR_MS, ranged.weaponBaseIntervalMs * (1 - TEMPO_REDUCTION_CAP) * 0.9) * 0.85,
+        6,
+      );
+    }
+  });
+
+  it("Dodge-Voll-Stack: der 0.40-Cap ist seit #303 (L4 distinct-Runen) NICHT mehr erreichbar — alle Tiers bleiben darunter", () => {
+    // Re-Messung 2026-07-09 nach L4: ohne duplizierte Evasion-III-Runen (je Teil nur noch 1×) fällt
+    // Σevr unter die Cap-Schwelle 240 (Kurve 0.5·Σevr/(Σevr+60)) — der Deckel bindet auf KEINEM
+    // Tier mehr (CL 30 0.3584 / CL 60 0.3751 / CL 90 0.3913). Das ist die GEWOLLTE Wirkung der
+    // Duplikat-Sperre. Erreicht ein künftiger Content-Stack den Cap wieder, reißt es hier sichtbar.
+    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2, design/elite-balance-spec.md §4):
+    // quietstep_boots (evasionRating 8.7, req ranged 12) und ridgetyrant_greaves (evasionRating 31,
+    // req defence 80 + ranged 72) schlagen die vorherigen BiS-Leder-Teile bei CL 30/90 — CL 60
+    // bleibt unverändert (Requirements dort noch nicht erreichbar). Cap bindet weiterhin auf KEINEM
+    // Tier (alle drei klar unter 0.40).
+    // Re-Messung 2026-07-26 (#354 Paket 2 Chef-Erweiterung): neues buckhide-Set (req ranged 10,
+    // EVR-Zwischentier cured→hardened) schlägt bei CL 30 in mindestens einem Slot die vorherige
+    // BiS-Wahl — CL 60/90 unverändert (buckhide req10 dort längst dominiert von höheren Tiers).
+    const expected: Record<number, number> = { 30: 0.3583, 60: 0.3751, 90: 0.3934 };
+    for (const lvl of TIERS) {
+      for (const style of STYLES) {
+        const d = computeStats(bis(style, lvl, "dodge").state, content).dodgeChance;
+        expect(d, `CL${lvl}/${style}`).toBeLessThan(DODGE_CAP);
+        expect(d, `CL${lvl}/${style}`).toBeCloseTo(expected[lvl]!, 4);
+      }
+    }
+  });
+
+  it("Tank-Voll-Stack CL 90 bindet nur noch den Block-Cap — Mitigation bleibt seit #303 unter dem Deckel", () => {
+    // Re-Messung 2026-07-09 nach L3+L4: ohne duplizierte Aegis-III-Runen und mit max. 1 Defensiv-
+    // Tonikum bindet der Mitigations-Cap nicht mehr (CL 90: 0.7047 < Cap) — GEWOLLT. Der Block-Cap
+    // bindet weiter exakt ab CL 90: blockChance war nie ein additives Stacking-Opfer (MAX-Faltung
+    // je Quelle + Suffix), die Duplikat-/Buff-Sperre ändert an seiner Spitze nichts.
+    const st90 = computeStats(bis("melee", 90, "tank").state, content);
+    expect(mitigation(st90.defense)).toBeLessThan(DEFENSE_MITIGATION_MAX);
+    expect(mitigation(st90.defense)).toBeCloseTo(0.7047, 3);
+    expect(st90.blockChance).toBe(BLOCK_CAP);
+    const st60 = computeStats(bis("melee", 60, "tank").state, content);
+    expect(mitigation(st60.defense)).toBeLessThan(DEFENSE_MITIGATION_MAX);
+    expect(st60.blockChance).toBeLessThan(BLOCK_CAP);
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// §4 Gepinnte Worst-Case-Tabelle (reale Messwerte 2026-07-09 — Regression-Detektor:
+//    JEDES neue Item/Suffix/Tonikum, das diese Envelope verschiebt, reißt hier sichtbar)
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () => {
+  it("Tank-Schiene (armorRating → Mitigation, Block) wächst kontrolliert über die Bänder", () => {
+    // Re-Messung 2026-07-09 nach #303 (1H+Schild, Aegis-III nur noch 1× je Teil [L4], genau EIN
+    // Defensiv-Tonikum [L3, stoneskin verdrängt bulwark], carapace-Pet). Vorher/Nachher:
+    // armor 350.97/379.79/538.23 → 230.97/259.79/298.23; mit 0.7374/0.7524 → 0.6488/0.6751.
+    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): morvane_warplate (armorRating 27.5, req
+    // defence 62) schlägt bei CL 60 die vorherige BiS-Platte — CL 30/90 unverändert (Requirements
+    // dort außerhalb der jeweiligen Build-Reichweite).
+    // Re-Messung 2026-07-25 (item-drop-audit P1, #339, Chef-GO, Variante A — Req UND Stats angehoben):
+    // cinderhusk_bulwark (AR 11.5→13.4, Block 28%→33.5%, req defence 16→30) schlägt jetzt bei CL 30
+    // bark_bulwark (AR 11.57/28.7 %) als BiS-Offhand → armor/mitigation/block bei t30 steigen.
+    // morvane_warplate (req defence 62→80) UND shellfather_aegis (req defence 55→82) fallen aus der
+    // CL-60-Build-Reichweite (waren vorher BiS-Body/BiS-Offhand dort) → t60 fällt auf die nächst-
+    // schwächere Platte/Schild zurück (armor/mitigation/block sinken leicht). CL 90 unverändert
+    // (dort war keines der drei je BiS).
+    const t30 = computeStats(bis("melee", 30, "tank").state, content);
+    expect(t30.armorRating).toBeCloseTo(232.23, 2);
+    expect(mitigation(t30.defense)).toBeCloseTo(0.6501, 3);
+    expect(t30.blockChance).toBeCloseTo(0.415, 3);
+    const t60 = computeStats(bis("melee", 60, "tank").state, content);
+    expect(t60.armorRating).toBeCloseTo(259.79, 2);
+    expect(mitigation(t60.defense)).toBeCloseTo(0.6751, 3);
+    expect(t60.blockChance).toBeCloseTo(0.468, 3);
+    // Re-Messung 2026-07-26 (#354 Paket 3.2 Nachschärfung): shellfather_aegis AR 19.6→21.5, Block
+    // 45%→47% (Marge über titanium_kiteshield) — schlägt bei CL 90 jetzt klar als BiS-Offhand.
+    const t90 = computeStats(bis("melee", 90, "tank").state, content);
+    expect(t90.armorRating).toBeCloseTo(298.53, 2);
+    // Pet-Schadensreduktion obendrauf (multiplikativ NACH Armor/Ward/Block): heute max. 3 %.
+    expect(t90.damageReduction).toBeCloseTo(0.03, 5);
+  });
+
+  it("Lifesteal-Schiene: max. 9,5 % (Melee-Waffe 5 % + gorehound 1,5 % + greytooth_mantle 3 %) ab CL 60; sonst 4,5 %", () => {
+    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): greytooth_mantle (bonus.lifesteal 0.03,
+    // rarity legendary, KEIN Requirement) ist ab CL 30 auf JEDEM Stil BiS-Cape für das
+    // "lifesteal"-Ziel — +3 pp auf der gesamten Schiene gegenüber der alten Baseline (1,5 %/6,5 %).
+    expect(computeStats(bis("melee", 30, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
+    expect(computeStats(bis("melee", 60, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.095, 5);
+    expect(computeStats(bis("melee", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.095, 5);
+    expect(computeStats(bis("ranged", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
+    expect(computeStats(bis("magic", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
+  });
+
+  it("Ward-Schiene: BiS-Pool 383 / 537 / 779,5 (CL 30/60/90) — Stoff-EHP bleibt beobachtenswert, aber gezähmt", () => {
+    // Re-Messung 2026-07-09 nach #303: Warding-III nur noch 1× je Teil (L4) — der CL-90-Pool fällt
+    // von 1156 auf 756 (≈ BiS-maxHp-Größenordnung statt ×1,6 drüber). Ward regeneriert nur im Kampf
+    // (Cast/Warding-Skill), absorbiert 1:1 — weiter als Beobachtungs-Pin geführt.
+    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): thorncrown (wc 48, req magic 45) und
+    // pyrebound_vestment (wc 101, req magic 58) schlagen ab CL 60 ihre bisherigen BiS-Stoff-Teile;
+    // tideterror_grip (wc 90, req magic 88) zusätzlich ab CL 90. CL 30 unverändert.
+    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(383, 0);
+    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(537, 0);
+    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(779.5, 1);
+  });
+
+  it("Buff-Exklusivitäts-Inventur (#303 L3): alle Tempo-/Krit-Tonika sind 'offense' ⇒ aktiv max. −750 ms / +0.20 crit", () => {
+    // Vorher (Frühwarner-Pin): 9 stapelbare Tempo-Tonika Σ −5100 ms, 9 Krit-Tonika Σ +1.04.
+    // Jetzt: die Katalog-ZAHL bleibt der Detektor für neue Tonika-Zeilen, aber die AKTIVE Decke ist
+    // per Kategorie-Verdrängung das beste Einzel-Item — heute slayer_war_brew (−750 ms, +0.20).
+    // Reißt einer der Asserts, hat jemand ein neues Tempo-/Krit-Consumable ergänzt (Zahl), es NICHT
+    // als "offense" getaggt (Kategorie-Assert) oder die Spitze verschoben (Max-Asserts) — bewusst
+    // entscheiden & neu pinnen.
+    const consumables = Object.values(content.items).filter((it) => it.type === "consumable");
+    const haste = consumables.filter((it) => (it.buff?.bonus?.attackIntervalMs ?? 0) < 0);
+    const crit = consumables.filter((it) => (it.buff?.bonus?.critChance ?? 0) > 0);
+    expect(haste.length).toBe(9);
+    expect(crit.length).toBe(9);
+    // JEDES Tempo-/Krit-Tonikum trägt die offense-Kategorie ⇒ es ist immer nur EINES aktiv.
+    for (const it of [...haste, ...crit]) {
+      expect(it.buff?.category, `${it.id} muss 'offense' sein (L3-Exklusivität)`).toBe("offense");
+    }
+    // Aktive Worst-Case-Decke = bestes Einzel-Item (statt Σ über alle 9).
+    expect(Math.min(...haste.map((it) => it.buff?.bonus?.attackIntervalMs ?? 0))).toBe(-750);
+    expect(Math.max(...crit.map((it) => it.buff?.bonus?.critChance ?? 0))).toBeCloseTo(0.2, 5);
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// §5 Messmatrix Evasion/Tempo/TTK — NEU GEPINNT mit evasion-tempo-taming-spec (#301,
+//    CHEF-GO 2026-07-09): aus den Mess-Pins des Evasion-/Tempo-Lecks wurden harte Asserts
+//    (Dodge ≤ 0.40, Intervall ≥ base·(1−TEMPO_REDUCTION_CAP), reale Boss-Land-Chancen).
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", () => {
+  it("Gegner-Trefferchance gegen den BiS-Evasion-Build (CL 90): on-level ~24 %, +150 Level ~47 % Land-Chance", () => {
+    const b = bis("ranged", 90, "dodge");
+    const st = computeStats(b.state, content);
+    // #303 L4: ohne duplizierte Evasion-Runen bleibt der Dodge UNTER dem Cap.
+    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): ridgetyrant_greaves (evasionRating 31,
+    // req defence 80 + ranged 72) schlägt die vorherige BiS-Leder-Hose (0.3913 → 0.3934) — leicht
+    // WENIGER `evasion` (der flache DEX-Kontest-Stat, 16.34 → 15.92), da die Beinschienen ein
+    // anderes Modifiers-Profil tragen. Beide bleiben klar unter dem 0.40-Cap.
+    expect(st.dodgeChance).toBeLessThan(DODGE_CAP);
+    expect(st.dodgeChance).toBeCloseTo(0.3934, 4);
+    expect(st.evasion).toBeCloseTo(15.919, 3);
+
+    const onLevel = monsterClosestTo(content, 90);
+    const plus150 = monsterClosestTo(content, 240);
+    // Detektor: verschiebt sich die Monster-Landschaft, ändern sich die Referenzgegner sichtbar.
+    expect(onLevel.id).toBe("forest_hare");
+    expect(onLevel.level).toBe(90);
+    expect(plus150.id).toBe("void_titan");
+    expect(plus150.level).toBe(242);
+
+    // #301-Gegenrechnung, re-gemessen nach #303 (weniger Buff-Evasion/-Dodge ⇒ Gegner landen etwas
+    // MEHR): on-level 0.2308 → 0.2449, +150 Level 0.4570 → 0.4716 — die Zähmung wirkt in die
+    // richtige Richtung, das Chef-Leck („Gegner verfehlt IMMER") bleibt geschlossen.
+    // Re-Messung 2026-07-22: die etwas niedrigere `evasion` oben (s. Kommentar) lässt den Gegner
+    // etwas häufiger landen (0.2449 → 0.2479 / 0.4716 → 0.4727) — marginal, kein neuer Wall.
+    const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
+    expect(hcOn).toBeCloseTo(0.4086, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2479, 3);
+    const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
+    expect(hc150).toBeCloseTo(0.7793, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4727, 3);
+    // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
+  });
+
+  it("BiS-Haste-Build (CL 90): Waffen-Tempo-Identität steht wieder — Kompression hart bei 80 % (Ranged-Stance 61 %)", () => {
+    // #301: vorher drückte der Stack JEDE Waffe auf 800 ms (Kompression 31–33 %, Waffenwahl
+    // tempo-seitig bedeutungslos). Jetzt bindet das relative Cap: base·0.8; Ranged zusätzlich
+    // ×0.9·×0.85 (Stil/Stance außerhalb des Bodens, Spec §3.5) ⇒ 0.612·base — der Tempo-König.
+    const melee = bis("melee", 90, "haste");
+    expect(melee.weaponBaseIntervalMs).toBe(2400);
+    expect(computeStats(melee.state, content).attackIntervalMs / melee.weaponBaseIntervalMs).toBe(
+      1 - TEMPO_REDUCTION_CAP,
+    );
+    const ranged = bis("ranged", 90, "haste");
+    expect(ranged.weaponBaseIntervalMs).toBe(2650);
+    expect(computeStats(ranged.state, content).attackIntervalMs / ranged.weaponBaseIntervalMs).toBeCloseTo(
+      (1 - TEMPO_REDUCTION_CAP) * 0.9 * 0.85,
+      6,
+    );
+    const magic = bis("magic", 90, "haste");
+    expect(magic.weaponBaseIntervalMs).toBe(2600);
+    expect(computeStats(magic.state, content).attackIntervalMs / magic.weaponBaseIntervalMs).toBe(
+      1 - TEMPO_REDUCTION_CAP,
+    );
+  });
+
+  /**
+   * Analytischer Erwartungswert-TTK (kein RNG, Formeln aus resolveAttack/strikeEnemy repliziert —
+   * Muster endgame-danger.test.ts). Vereinfachungen (dokumentiert, konstant über Re-Messungen):
+   * Magier castet immer (Mana-Druck ignoriert), Gegner-Ward zählt als (1−wardBreak)-EHP, Spieler-
+   * Ward als 1:1-EHP (Regen/Refill ignoriert), Enrage/DoTs/Auto-Eat ignoriert, One-Shot-Cap auf dem
+   * Mittelwert angewandt.
+   */
+  function expectedTtk(style: WeaponStyle, monsterId: string): { player: number; enemy: number } {
+    const b = bis(style, 90, "damage");
+    const st = computeStats(b.state, content);
+    const m = content.monsters[monsterId]!;
+    // Spieler → Gegner
+    const hcP = hitChance(st.accuracy, m.evasion * (1 - st.precision));
+    const red = mitigation(m.defense * (1 - st.armorPen));
+    const mean = ((st.attackDamageMin + st.attackDamageMax) / 2) * (1 - red);
+    const eOut = hcP * mean * (1 + st.critChance * (st.critDamage - 1));
+    const effHp = m.maxHp + (m.wardCapacity ?? 0) * (1 - st.wardBreak);
+    // Gegner → Spieler (#301: E2-Accuracy-Skalierung + L5-Kombiboden — Spiegel des Kampf-Pfads)
+    const hc = hitChance(enemyEffectiveAccuracy(m), st.evasion);
+    const land = (1 - combinedFloorDodge(st.dodgeChance, hc)) * hc;
+    let hit = m.damage * DMG_MAX_HIT_MULT * ((1 + DMG_ROLL_FLOOR) / 2) * (1 - mitigation(st.defense));
+    if (st.dodgeChance > 0) hit *= 1 - LEATHER_HIT_FLOOR; // Leder-Floor (#301: 0.12 → 0.18)
+    hit *= 1 - st.blockChance * 0.85; // erwarteter Block-Anteil (BLOCK_DAMAGE_REDUCTION)
+    hit = Math.min(hit, 0.5 * st.maxHp); // One-Shot-Cap
+    hit *= 1 - st.damageReduction;
+    return {
+      player: (effHp / eOut) * (st.attackIntervalMs / 1000),
+      enemy: ((st.maxHp + st.maxWard) / (land * hit)) * (m.attackIntervalMs / 1000),
+    };
+  }
+
+  it("TTK-Matrix (CL-90-BiS-Damage-Builds vs. Idol-Bosse): red-team #302 L2-Re-Pin — Idol-Halle ist keine Farm-Node mehr", () => {
+    // red-team #302 L2-Re-Pin (2026-07-09, monster-threat-spec §6): idol_warden/last_idol dmg+hp+acc
+    // stark angehoben (Papier-Monster-Fix, §6-Apply-Liste). Ein reiner CL-90-BiS-DAMAGE-Build (kein
+    // Block/Tank-Fokus, diese Formel ignoriert Food/Enrage/Regen) kann die Idol-Halle jetzt NICHT
+    // mehr im 8–21-s-Farm-Modus clearen (Spieler-TTK springt auf ~47–250 s, proportional zum ~6×-
+    // HP-Sprung) — das ist die vom Chef gewollte Konsequenz des Threat-Fixes: DPS-only stirbt hier
+    // eher als er killt, Mitigation/Sustain sind wieder Pflicht (s. monster-threat-spec §8, Chef-GO
+    // sim-realistic-Endgame-Verschiebung ist explizit erwünscht). Gegenrichtung (Boss→Spieler) fällt
+    // von ~1,4–2 min auf ~12–24 s — der Boss tötet einen ungeblockten Damage-Build sehr real.
+    // #303-Re-Pin: L3 (nur noch 1 offense-Tonikum statt 9) + L4 (distinct-Runen statt dupliziertem
+    // Top-Affix) senken den BiS-DPS-Output ⇒ Spieler-TTK +25–35 % über alle Stile (z.B. melee vs
+    // last_idol 155 s → 196 s); die Boss-Seite wird leicht schneller (weniger Buff-HP/-Ward).
+    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): furnaceheart_core (offhand magic, req
+    // magic 90, surplus-Effekt) ist jetzt BiS-Offhand für den CL-90-Magic-"damage"-Build — nur die
+    // MAGIC-Zeilen verschieben sich (melee/ranged unverändert, deren BiS-Kits enthalten keines der
+    // neuen Uniques auf dem "damage"-Ziel).
+    // Re-Messung 2026-07-25 (item-drop-audit P1, #339, Chef-GO): palemourn_shroud (requirement-frei,
+    // modifiers int4/wis3→int6/wis6/lck3) bleibt BiS-Cape auf JEDEM Ziel/Level, liefert dem CL-90-
+    // Magic-"damage"-Build jetzt mehr int → minimal höherer Output ⇒ Spieler-TTK vs. idol_warden
+    // sinkt leicht (78.3s→78.05s); alle anderen Stil/Ziel-Paare unverändert.
+    const pins: Array<[WeaponStyle, string, number, number]> = [
+      ["melee", "idol_warden", 59.67, 18.9],
+      ["melee", "last_idol", 195.51, 13.4],
+      ["ranged", "idol_warden", 91.59, 14.1],
+      ["ranged", "last_idol", 302.85, 12.2],
+      ["magic", "idol_warden", 78.05, 23.7],
+      ["magic", "last_idol", 262.73, 25.6],
+    ];
+    for (const [style, monsterId, playerS, enemyS] of pins) {
+      const ttk = expectedTtk(style, monsterId);
+      expect(ttk.player, `TTK Spieler→${monsterId} (${style})`).toBeCloseTo(playerS, 2);
+      expect(ttk.enemy, `TTK ${monsterId}→Spieler (${style})`).toBeCloseTo(enemyS, 1);
+    }
+  });
+
+  it("MIN_HIT_CHANCE-Boden: selbst gegen den BiS-Evasion-Build fällt die Contest-Chance nie unter 10 %", () => {
+    // Der Unverwundbarkeits-Riegel aus combat.ts — hier gegen die real höchste erreichbare
+    // Evasion verifiziert. Der 40-%-Dodge liegt zusätzlich davor, wird aber seit #301 (L5-NACHTRAG)
+    // vom Kombiboden geklemmt: auch Dodge × Contest zusammen fällt nie unter 10 % (Guard in
+    // evasion-tempo-taming.test.ts; hier der reine Contest-Anteil).
+    const st = computeStats(bis("ranged", 90, "dodge").state, content);
+    const weakest = Object.values(content.monsters).reduce((a, m) => (m.accuracy < a.accuracy ? m : a));
+    expect(hitChance(enemyEffectiveAccuracy(weakest), st.evasion)).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// §6 Duplikat-Verzauberung: seit #303 (red-team L4) BLOCKIERT — Guard statt Pin
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §6: Duplikat-Verzauberungen sind blockiert (#303 L4-Guard)", () => {
+  it("Alt-Save-Duldung: eine BESTEHENDE Duplikat-Instanz summiert weiter voll (2× Swift III ⇒ +6 dex)", () => {
+    // Save-Kompat-Gesetz: Alt-Saves mit vor-#303 duplizierten Runen laden und WIRKEN unverändert —
+    // instanceBonusDelta kennt bewusst keinen Dedup (nur NEUE Anwendungen blockiert applyEnchant,
+    // s. duplicate_affix-Guards in enchant.test.ts). Reißt dieser Pin, wurde die Duldung gebrochen.
+    expect(content.affixes?.affix_swift?.modifiersByTier?.[2]?.dex).toBe(3);
+    const inst: ItemInstance = {
+      instanceId: "t-dup",
+      baseItemId: "adamantium_dagger",
+      affixes: [
+        { affixId: "affix_swift", tier: 3 },
+        { affixId: "affix_swift", tier: 3 },
+      ],
+    };
+    expect(instanceBonusDelta(inst, content).modifiers.dex).toBe(6);
+  });
+
+  it("Worst-Case-Builds tragen keine Duplikat-Affixe mehr (Helper spiegelt die L4-Rechtslage)", () => {
+    // Detektor: baut der Envelope-Helper je wieder Duplikate (oder erlaubt applyEnchant sie erneut),
+    // misst die ganze Suite einen ILLEGALEN Stack — hier reißt es zuerst.
+    for (const lvl of TIERS) {
+      for (const target of TARGETS) {
+        const b = bis("melee", lvl, target);
+        for (const inst of Object.values(b.state.character.equippedInstances)) {
+          if (!inst) continue;
+          const ids = inst.affixes.map((a) => a.affixId);
+          expect(new Set(ids).size, `distinct Affixe auf ${inst.baseItemId} (${target}@CL${lvl})`).toBe(ids.length);
+        }
+      }
+    }
+  });
+
+  it("Bogen-Inkonsequenz: die GECRAFTETE Bogen-Leiter ist 1H (Schild+Block legal), Drop-Bögen sind 2H", () => {
+    // Realität 2026-07-09: thematische Drop-Bögen tragen `twoHanded: true` (abyssal_tide_bow,
+    // antler_warbow, …), die komplette gefletchte Tier-Leiter (copper→godiron short-/longbow)
+    // NICHT — ein Fernkämpfer mit Craft-Bogen darf also Kiteschild+Block stacken (fließt in die
+    // §4-Tank-Pins ein). Content-Frage an CEO/content-dev; ändert sich das, reißt dieser Detektor
+    // und die Tank-/Block-Pins müssen neu gemessen werden.
+    expect(content.items.adamantium_longbow?.twoHanded ?? false).toBe(false);
+    expect(content.items.godiron_longbow?.twoHanded ?? false).toBe(false);
+    expect(content.items.abyssal_tide_bow?.twoHanded).toBe(true);
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// §8 Meister-Perk-Inventur (Meisterweihe-Fundament, master-capes-konzept.md — Content-Welle
+//    2026-07-10; seit SAVE 69 sind die Meister-Items RINGE statt Capes, Chef-Entscheid
+//    2026-07-17, Stats/Perks 1:1 übernommen): 13 der 20 Meisterringe tragen einen `masterPerk`
+//    (die Ökonomie-Perks); die 7 Kampf-Ringe (attack/power/defence/ranged/magic/warding/
+//    vitality) nutzen bestehende Bonus-/Signaturfelder — KEIN masterPerk (Konzept §2).
+//    `ring_master_completion` trägt ebenfalls keinen masterPerk (Krönung, kein Stapeln).
+//    Der vormals geparkte `ring_master_enchanting` ist ENTFERNT (Welle TT, Chef-Entscheid
+//    2026-07-18: Enchanting in Runecrafting integriert — es kommt kein Enchanting-Skill).
+//    Kampf-Envelopes (§2-§5) bleiben unverändert: die Suite misst nur bei targetLevel 30/60/90
+//    (TIERS), die Ringe verlangen 99 → requirementsOk schließt sie dort aus (s. balance-envelope-
+//    helpers.ts Kopfkommentar „MEISTERRINGE"); nur ein einzelner Level-99-Build außerhalb dieser
+//    Suite (idol-sanctum-clear.test.ts) kann sie tragen, dort rein verhaltensbasiert geprüft.
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () => {
+  it("Ring-Umbau SAVE 69: alle 20 Meisterringe existieren, GENAU 13 tragen einen masterPerk", () => {
+    // Detektor: reißt dieser Pin, hat sich die Perk-Verteilung der Meisterringe verschoben —
+    // bewusst neu messen & pinnen (Anzahl Träger, Kampf-Envelopes §2-§5 gegenprüfen).
+    const carriers = Object.values(content.items)
+      .filter((it) => it.masterPerk)
+      .map((it) => it.id)
+      .sort();
+    expect(carriers, "masterPerk-Träger im Katalog").toEqual(
+      [
+        "ring_master_cooking",
+        "ring_master_farming",
+        "ring_master_fishing",
+        "ring_master_foraging",
+        "ring_master_herblore",
+        "ring_master_jewelcrafting",
+        "ring_master_leatherworking",
+        "ring_master_mining",
+        "ring_master_runecrafting",
+        "ring_master_slayer",
+        "ring_master_smithing",
+        "ring_master_thieving",
+        "ring_master_woodcutting",
+      ].sort(),
+    );
+    const ringIds = Object.keys(content.skills)
+      .filter((s) => content.items[masterRingItemId(s)])
+      .sort();
+    expect(ringIds, "existierende ring_master_*-Items je Skill").toEqual(
+      Object.keys(content.skills).sort(),
+    ); // alle 20 Skills haben ihren Ring
+  });
+
+  it("alle deklarierten masterPerk-Werte liegen in [0, MASTER_PERK_CAP] (heute vakuum-wahr — Guard für die Content-Welle)", () => {
+    for (const it of Object.values(content.items)) {
+      const perk = it.masterPerk;
+      if (!perk) continue;
+      expect(Number.isFinite(perk.value), `${it.id}.masterPerk.value endlich`).toBe(true);
+      expect(perk.value, `${it.id}.masterPerk.value ≥ 0`).toBeGreaterThanOrEqual(0);
+      expect(perk.value, `${it.id}.masterPerk.value ≤ Cap(${perk.kind})`).toBeLessThanOrEqual(
+        MASTER_PERK_CAP[perk.kind],
+      );
+      // Skill-Scope muss (falls deklariert) auf einen existierenden Skill zeigen.
+      if (perk.skill !== undefined) {
+        expect(content.skills[perk.skill], `${it.id}.masterPerk.skill existiert`).toBeDefined();
+      }
+    }
+  });
+
+  it("Worst-Case-Doppelertrag-Kette bleibt eine CHANCE < 1: Mastery-Cap + Pool + Pet-Cap + bester Buff + masterPerk-Decke", () => {
+    // Ehrliche Messung der additiven bonusChance-Kette (tick.ts): masteryDoubleChance-Cap (0.5)
+    // + Pool-Capstone (poolCheckpointBonus(1).double) + Pet-Familien-Cap (doubleDrop) + stärkster
+    // gatherYieldMult-Buff im Katalog + masterPerk-DECKE (MASTER_PERK_CAP.doubleYield — heute
+    // trägt kein Item einen Perk, der Cap ist die obere Schranke jeder künftigen Content-Welle).
+    // Solange die Summe < 1 bleibt, ist der Doppelertrag nie ein Automatismus.
+    const bestBuff = Math.max(
+      0,
+      ...Object.values(content.items).map((it) => it.buff?.bonus?.gatherYieldMult ?? 0),
+    );
+    const petCap = PET_SKILL_EFFECT_CAP.doubleDrop ?? 0;
+    const worst =
+      MASTERY_DOUBLE_CAP + poolCheckpointBonus(1).double + petCap + bestBuff + MASTER_PERK_CAP.doubleYield;
+    // Gemessen 2026-07-09: 0.5 + 0.08 (Pool 0.03+0.05) + 0.05 + 0.20 + 0.10 = 0.93. Detektor:
+    // hebt jemand eine der Quellen an, reißt zuerst dieser Pin (Summe), dann die < 1-Schranke.
+    expect(bestBuff).toBeCloseTo(0.2, 5); // stärkstes Ertrag-Tonikum im Katalog (Detektor)
+    expect(worst).toBeCloseTo(0.93, 5);
+    expect(worst).toBeLessThan(1);
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// §7 Ökonomie-Schnellcheck: kein profitabler Kauf→Verkauf-Loop im Shop
+// ───────────────────────────────────────────────────────────────────────────
+describe("Balance-Envelope §7: Shop-Ökonomie", () => {
+  it("Worst-Case-Verkaufspreis (inkl. bestem sellBonus-Pet) liegt bei JEDEM Shop-Item unter dem Kaufpreis", () => {
+    // Spiegelt effectiveSellPrice (shop.ts): sellPrice = max(1, round(value·SELL_FRACTION)),
+    // dann ×(1+petSellBonus) gerundet, min 1. petSellBonus über PET_SKILL_EFFECT_CAP gedeckelt.
+    const maxSellBonus = Math.max(
+      0,
+      ...Object.values(content.pets ?? {}).map((p) =>
+        p.skillEffect?.kind === "sellBonus"
+          ? Math.min(PET_SKILL_EFFECT_CAP.sellBonus ?? 0, p.skillEffect.value ?? 0)
+          : 0,
+      ),
+    );
+    expect(maxSellBonus).toBeCloseTo(0.05, 5); // vellumoth „Appraiser's Eye" (Detektor)
+    expect(content.shop.length).toBeGreaterThan(0);
+    for (const entry of content.shop) {
+      const item = content.items[entry.itemId];
+      expect(item, `Shop-Item ${entry.itemId} existiert`).toBeTruthy();
+      const sellBase = Math.max(1, Math.round((item!.value ?? 0) * SELL_FRACTION));
+      const sellEff = Math.max(1, Math.round(sellBase * (1 + maxSellBonus)));
+      expect(sellEff, `Kauf→Verkauf-Loop bei ${entry.itemId}`).toBeLessThan(entry.cost);
+    }
+  });
+});

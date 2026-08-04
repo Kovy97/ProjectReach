@@ -1,0 +1,355 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   MASTERY CEREMONY — Meisterweihe (Level 99, design/master-capes-konzept.md §3).
+   Deliberately its OWN look, not a PetCelebration reskin: a solemn dark curtain instead of pets'
+   rotating gold sunburst — pets are the one popup allowed to genuinely shine (see
+   pet-celebration.css header comment); this is dignified/triumphant, not flashy. Component-scoped
+   file (mwc-* namespace), imported directly by MasteryCeremony.tsx, NOT part of styles/index.css.
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes mwc-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes mwc-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes mwc-card-in {
+  from { opacity: 0; transform: scale(0.85) translateY(18px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+@keyframes mwc-card-out {
+  from { opacity: 1; transform: scale(1)    translateY(0);    }
+  to   { opacity: 0; transform: scale(0.92) translateY(-10px); }
+}
+
+/* "Skill-Icon steigt groß auf" (Konzept §3) — die Portrait-Gruppe hebt sich sanft aus der Tiefe. */
+@keyframes mwc-icon-rise {
+  from { opacity: 0; transform: translateY(34px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0)     scale(1);   }
+}
+
+@keyframes mwc-ring-breathe {
+  0%, 100% { opacity: 0.45; transform: scale(1);    }
+  50%      { opacity: 0.85; transform: scale(1.04); }
+}
+
+@keyframes mwc-shine-sweep {
+  0%   { transform: translateX(-150%) skewX(-20deg); }
+  100% { transform: translateX( 250%) skewX(-20deg); }
+}
+
+/* ─── Backdrop — darker/heavier than PetCelebration's, a drawn curtain rather than a spotlight. ─ */
+.mwc-backdrop {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(12, 9, 5, 0.82) 0%, rgba(2, 2, 1, 0.95) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: mwc-backdrop-in 0.35s ease-out forwards;
+}
+
+.mwc-backdrop.mwc-exit {
+  animation: mwc-backdrop-out 0.42s ease-in forwards;
+}
+
+.mwc-backdrop.mwc-exit .mwc-card {
+  animation: mwc-card-out 0.42s ease-in forwards;
+}
+
+/* ─── Card — same 9-slice wooden-frame + tiled bg_black technique as PetCelebration/SkillsOverview,
+   keeps the ceremony visually part of the same Ashen Iron design system without copying its FX. ── */
+.mwc-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 30px 38px 26px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 20px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 20px;
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  box-shadow:
+    0 0    0   1px rgba(216, 192, 106, 0.16),
+    0 0   44px  6px rgba(216, 192, 106, 0.10),
+    0 24px 70px rgba(0, 0, 0, 0.8);
+  overflow: visible;
+  animation: mwc-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  min-width: 360px;
+  max-width: 460px;
+  text-align: center;
+}
+
+.mwc-shine {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(216, 192, 106, 0.1) 50%, transparent 100%);
+  animation: mwc-shine-sweep 1.8s ease-out 0.4s forwards;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.mwc-tag {
+  letter-spacing: 0.22em;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: var(--ds-gold-bright, #f0dca0);
+  background: rgba(216, 192, 106, 0.12);
+  border: 1px solid rgba(216, 192, 106, 0.35);
+  border-radius: 3px;
+  padding: 3px 11px;
+  text-transform: uppercase;
+}
+
+/* ─── Portrait cluster — dezent: soft breathing ring + a few drifting sparks (WAAPI-driven from
+   MasteryCeremony.tsx), no rotating sunburst (that stays a PetCelebration-only exception). ────── */
+.mwc-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 132px;
+  height: 132px;
+  margin: 2px 0;
+  animation: mwc-icon-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mwc-icon-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 170, 90, 0.22), rgba(200, 170, 90, 0.06) 55%, transparent 76%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mwc-icon-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(216, 192, 106, 0.4);
+  z-index: 1;
+  animation: mwc-ring-breathe 3.2s ease-in-out infinite;
+}
+
+/* WAAPI-Flash beim Erscheinen (opacity, per JS animiert). */
+.mwc-icon-flash {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(240, 220, 160, 0.5), transparent 70%);
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mwc-icon-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mwc-icon-particles span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ds-gold-bright, #f0dca0);
+  box-shadow: 0 0 5px 1px rgba(240, 220, 160, 0.8);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+.mwc-icon-img {
+  position: relative;
+  z-index: 2;
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(200, 170, 90, 0.4));
+}
+
+.mwc-icon-fallback {
+  position: relative;
+  z-index: 2;
+  font-size: 4.4rem;
+  line-height: 1;
+}
+
+.mwc-title {
+  font-family: var(--font-head);
+  font-size: 1.9rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: 0 0 18px rgba(216, 192, 106, 0.4);
+  margin: 2px 0 0;
+}
+
+.mwc-subtitle {
+  font-family: var(--font-head);
+  font-size: 1.02rem;
+  color: var(--ds-gold-dim, #a07840);
+}
+
+.mwc-divider {
+  width: 70%;
+  height: 1px;
+  margin: 2px 0;
+  background: linear-gradient(90deg, transparent, rgba(216, 192, 106, 0.4), transparent);
+}
+
+.mwc-journey {
+  width: 100%;
+}
+
+.mwc-journey-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.mwc-stats {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mwc-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 84px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(216, 192, 106, 0.18);
+}
+
+.mwc-stat-value {
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mwc-stat-label {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Cape presentation — only rendered when the item exists in content (parallel content-dev
+   wave); the ceremony stays complete and dignified WITHOUT it (pure Weihe-Feier, no placeholder
+   text pretending a cape exists — Konzept-Auftrag "ohne Item nur Weihe-Feier ohne Cape-Block"). ── */
+.mwc-cape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.mwc-cape-tag {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.mwc-cape-art-frame {
+  width: 68px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border: 2px solid var(--rar-legendary, #e0902a);
+  margin-bottom: 4px;
+}
+
+.mwc-cape-art {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+}
+
+.mwc-cape-art-emoji {
+  font-size: 2rem;
+}
+
+.mwc-cape-name {
+  font-family: var(--font-head);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--rar-legendary, #e0902a);
+}
+
+.mwc-cape-perk {
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--ds-parch-ink, #e8d8b0);
+  max-width: 340px;
+}
+
+.mwc-queue-hint {
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.mwc-next-btn {
+  margin-top: 6px;
+}
+
+/* ─── Reduced motion: disable all ambient/entry animations, keep the popup instantly legible.
+   The WAAPI particle burst already skips itself in JS when this media query matches
+   (effectiveFxLevel() returns "off"), this only covers the pure-CSS entrance/ring/shine. ──────── */
+@media (prefers-reduced-motion: reduce) {
+  .mwc-backdrop,
+  .mwc-backdrop.mwc-exit,
+  .mwc-card,
+  .mwc-backdrop.mwc-exit .mwc-card,
+  .mwc-icon-wrap,
+  .mwc-icon-ring,
+  .mwc-shine {
+    animation: none !important;
+  }
+  .mwc-shine { display: none; }
+}
+
+/* ─── Short viewports (1280×720 minimum supported resolution) ──────── */
+@media (max-height: 760px) {
+  .mwc-card { padding: 20px 28px 18px; gap: 7px; }
+  .mwc-icon-wrap { width: 100px; height: 100px; margin: 0; }
+  .mwc-icon-img { width: 74px; height: 74px; }
+  .mwc-icon-fallback { font-size: 3.2rem; }
+  .mwc-title { font-size: 1.5rem; }
+  .mwc-subtitle { font-size: 0.9rem; }
+  .mwc-stat { min-width: 72px; padding: 4px 8px; }
+}

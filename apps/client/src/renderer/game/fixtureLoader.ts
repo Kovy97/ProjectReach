@@ -1,0 +1,120 @@
+import { content } from "@hearthforge/content";
+import { ITEM_RARITIES, type OfflineSummary } from "@hearthforge/shared";
+
+/**
+ * UI-Audit fixture hook (dev-only). Lets `apps/client/ui-audit/tour.mjs` (a headless Playwright
+ * screenshot tour) jump straight into a prepared GameState via `?fixture=<name>`, skipping the
+ * main menu/character creation entirely — the tour needs deterministic, instantly-reachable pages
+ * to screenshot, not a fresh save.
+ *
+ * Gated on `import.meta.env.DEV`, exactly like `devtools.ts`: Vite inlines that check to the
+ * literal `false` in production builds, so the dead `if (import.meta.env.DEV)` branch (including
+ * the `fetch` call below) is stripped by the build's minifier — none of this exists in the shipped
+ * Electron app. See apps/client/ui-audit/README.md for how the fixtures are generated/served.
+ */
+
+/** Reads `?fixture=<name>` from the current URL. `null` outside dev builds or without the param. */
+export function getFixtureParam(): string | null {
+  if (!import.meta.env.DEV) return null;
+  try {
+    return new URLSearchParams(window.location.search).get("fixture");
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reads `?offlineTest=<variant>` from the current URL (dev-only, same gating as `getFixtureParam`
+ * above) — lets a screenshot script force-open the OfflinePopup "Beute-Bühne" without waiting for
+ * a real offline gap (fixtures load with `now = savedAt`, i.e. always 0 offline time, see
+ * README.md "How the fixture hook works"). Combine with `?fixture=<name>` so a real GameState is
+ * active first (OfflinePopup only mounts inside MainLayout, which requires one) — e.g.
+ * `?fixture=endgame&offlineTest=1`. `variant` picks the mock scenario: "1"/anything = rich loot +
+ * a stalemate combat-stop hint, "death" = same loot but an offline-death block instead.
+ */
+export function getOfflineTestParam(): string | null {
+  if (!import.meta.env.DEV) return null;
+  try {
+    return new URLSearchParams(window.location.search).get("offlineTest");
+  } catch {
+    return null;
+  }
+}
+
+const RARE_RANK = ITEM_RARITIES.indexOf("rare");
+
+/**
+ * Builds a realistic `OfflineSummary` for the `?offlineTest=` preview — content-driven (filters
+ * the live `@hearthforge/content` catalog by rarity/type instead of hardcoding item/skill/monster
+ * IDs, same idiom as `ui-audit/gen-fixtures.mjs`) so it keeps working as content-dev adds/renames
+ * things. NEVER touches real game state/persistence — purely a UI-preview payload.
+ */
+export function buildOfflineTestSummary(variant: string): OfflineSummary {
+  const allItems = Object.values(content.items);
+  const rares = allItems.filter((it) => ITEM_RARITIES.indexOf(it.rarity ?? "common") >= RARE_RANK);
+  const commons = allItems.filter((it) => ITEM_RARITIES.indexOf(it.rarity ?? "common") < RARE_RANK);
+
+  const items: Record<string, number> = {};
+  for (const it of rares.slice(0, 2)) items[it.id] = 1;
+  commons.slice(0, 8).forEach((it, i) => { items[it.id] = 3 + i * 7; });
+
+  const skillIds = Object.keys(content.skills).slice(0, 6);
+  const skillXp: Record<string, { xp: number; levels: number }> = {};
+  skillIds.forEach((id, i) => {
+    skillXp[id] = { xp: 480 + i * 213, levels: i === 0 ? 3 : i % 2 };
+  });
+  const totalXp = Object.values(skillXp).reduce((sum, g) => sum + g.xp, 0);
+
+  // Welle EE (Fenn F1-Offline, "der Drop ist komplett stumm"): 2 Pet-Drops in der Preview, damit
+  // `?offlineTest=` die neue prominente ofs-pets-section mitzeigt (Muster wie die anderen Felder
+  // hier — content-getrieben, keine hartkodierten IDs, überlebt Content-Änderungen).
+  const petIds = Object.keys(content.pets).slice(0, 2);
+
+  // Das Lager (Task #361): die zwei neuen Offline-Zeilen („Dein Lager hat gebaut" / „veredelt")
+  // ebenfalls in der Vorschau zeigen. Content-getrieben wie alles hier — das erste Gebäude des
+  // Katalogs und der Ausstoß des ersten Schmelz-Rezepts, keine ID-Literale.
+  const campBuilding = (content.campBuildings ?? [])[0];
+  const smeltOutput = Object.values(content.actions).find(
+    (a) => a.id.startsWith("smelt_") && a.loot.length === 1,
+  )?.loot[0]?.itemId;
+
+  const summary: OfflineSummary = {
+    ms: 6 * 60 * 60 * 1000, // 6h
+    gold: 4820,
+    xp: totalXp,
+    items,
+    skillXp,
+    kills: 214, // Kill-Medaillon (Feld seit #306 in der echten Offline-Auswertung)
+    ...(petIds.length > 0 ? { petDrops: petIds } : {}),
+    ...(campBuilding ? { campBuilds: [{ buildingId: campBuilding.id, level: 2 }] } : {}),
+    ...(campBuilding && smeltOutput
+      ? { campRefined: [{ buildingId: campBuilding.id, itemId: smeltOutput, qty: 240 }] }
+      : {}),
+  };
+
+  if (variant === "death") {
+    const monster = Object.values(content.monsters)[0];
+    summary.deaths = 1;
+    summary.diedAgainst = monster?.id ?? null;
+  } else {
+    summary.combatStopped = true;
+    summary.combatStopReason = "stalemate";
+  }
+  return summary;
+}
+
+/**
+ * Fetches a fixture save's raw JSON. Fixtures are generated by `ui-audit/gen-fixtures.mjs` and
+ * served as static files from `src/renderer/public/ui-audit-fixtures/<name>.json` (Vite's default
+ * `publicDir` — reachable at `/ui-audit-fixtures/<name>.json` with zero extra dev-server config).
+ */
+export async function fetchFixtureJson(name: string): Promise<string | null> {
+  if (!import.meta.env.DEV) return null;
+  try {
+    const res = await fetch(`/ui-audit-fixtures/${encodeURIComponent(name)}.json`);
+    if (!res.ok) return null;
+    return await res.text();
+  } catch {
+    return null;
+  }
+}

@@ -1,0 +1,198 @@
+/* codex:2026-08-01T19:22:00+02:00 — Lokale Grim-Reach-Schriften und Ashen-Iron-Grundsystem. */
+@font-face { font-family: "Fell"; src: url("../../../apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; src: url("../../../apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype"); }
+:root {
+  --ink:#080a0b; --panel:#111415; --panel-2:#181716; --panel-3:#20201e;
+  --iron:#6f7473; --iron-hi:#b0b4ac; --bronze:#8b6136; --gold:#d5b35d;
+  --text:#ddd7c8; --muted:#899397; --green:#72b47f; --red:#c55c54; --orange:#d98242;
+  --line:rgba(184,138,75,.36); --shadow:0 18px 52px rgba(0,0,0,.58);
+}
+* { box-sizing:border-box; }
+html,body { width:100%; min-height:100%; margin:0; }
+body {
+  color:var(--text); background:#080a0b url("../../../apps/client/src/renderer/assets/bg_tileable_stone.webp") repeat;
+  font:600 14px/1.35 Cinzel,serif; letter-spacing:.02em; overflow-x:hidden;
+}
+button,input { font:inherit; }
+button { color:inherit; cursor:pointer; }
+button:focus-visible,input:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+.numeric { font-family:Cinzel,serif; font-variant-numeric:tabular-nums; }
+.eyebrow { color:var(--muted); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Vorschau-Navigation bleibt außerhalb des Spielkonzepts. */
+.labbar {
+  position:sticky; top:0; z-index:20; display:grid; grid-template-columns:220px minmax(600px,1fr) auto;
+  align-items:center; gap:16px; min-height:76px; padding:10px 18px;
+  background:linear-gradient(180deg,#15191b,#090b0c); border-bottom:1px solid #454a49; box-shadow:0 8px 28px #000;
+}
+.labbar__title { display:grid; }
+.labbar__title strong { color:var(--gold); font:22px Fell,serif; }
+.concept-nav { display:grid; grid-template-columns:repeat(5,minmax(110px,1fr)); gap:6px; }
+.concept-button,.state-button {
+  border:1px solid #474d4d; background:linear-gradient(#242829,#111415); padding:8px 10px;
+}
+.concept-button { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:8px; min-height:48px; text-align:left; }
+.concept-button b { color:var(--gold); font-size:18px; }
+.concept-button span { font-size:11px; }
+.concept-button.is-active,.state-button.is-active { border-color:var(--gold); background:linear-gradient(#3b3023,#171717); box-shadow:inset 0 0 0 2px #111; }
+.state-controls { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
+.state-button { font-size:10px; padding:7px 8px; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Robuste Vollflächen-Bühne und rahmenbasierte Shop-Hülle. */
+.shop-stage { min-height:calc(100vh - 76px); padding:clamp(12px,1.5vw,26px); background:radial-gradient(circle at 70% 12%,rgba(120,76,32,.12),transparent 36%); }
+.shop-shell {
+  width:min(1900px,100%); min-height:calc(100vh - 126px); margin:auto; display:grid; grid-template-rows:auto minmax(0,1fr) auto;
+  background:linear-gradient(135deg,rgba(34,33,30,.97),rgba(8,10,11,.98)); box-shadow:var(--shadow); overflow:hidden;
+}
+.ash-frame { border:4px solid #282c2c; outline:1px solid #7f6849; box-shadow:inset 0 0 0 2px #050607,var(--shadow); }
+.shop-masthead { display:grid; grid-template-columns:minmax(360px,1fr) auto auto; align-items:center; gap:22px; padding:14px 18px; border-bottom:2px solid #424645; background:linear-gradient(90deg,#171a1b,#201a15 55%,#111415); }
+.merchant { display:flex; align-items:center; gap:14px; min-width:0; }
+.merchant img { width:66px; height:66px; object-fit:cover; object-position:top; border:2px solid #666b69; background:#0a0b0b; box-shadow:inset 0 0 0 2px #111; }
+.merchant h1 { margin:2px 0 0; color:var(--gold); font:30px Fell,serif; }
+.merchant p { margin:1px 0 0; color:#aaa498; font:italic 13px/1.2 Georgia,serif; }
+.wallet { display:flex; align-items:center; gap:10px; min-width:150px; padding:8px 12px; border:1px solid var(--line); background:#0b0d0e; }
+.wallet img { width:30px; height:30px; object-fit:contain; }
+.wallet div { display:grid; }
+.wallet span { color:var(--muted); font-size:10px; text-transform:uppercase; }
+.wallet strong { color:var(--gold); font-size:20px; }
+.shop-mode { display:flex; padding:3px; border:1px solid #4b4f4e; background:#090b0c; }
+.mode-button { min-width:112px; min-height:44px; border:0; background:transparent; color:#9ba1a0; }
+.mode-button.is-active { color:#f0d67f; background:linear-gradient(#4b3825,#1c1b19); box-shadow:inset 0 0 0 1px #997047; }
+kbd { margin-left:8px; color:#777; font:10px Cinzel,serif; }
+.shop-workspace { min-height:0; overflow:hidden; }
+.shop-footer { display:flex; justify-content:space-between; gap:20px; padding:8px 16px; border-top:1px solid #3f4342; background:#090b0c; color:var(--muted); font-size:11px; }
+#actionLog { color:#bda86c; text-align:right; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Gemeinsame Handelskomponenten für alle fünf Konzepte. */
+.workspace { height:100%; min-height:600px; display:grid; gap:12px; padding:12px; }
+.panel { min-width:0; min-height:0; border:2px solid #3b4141; outline:1px solid #191b1c; background:rgba(13,15,16,.92); box-shadow:inset 0 0 30px rgba(0,0,0,.55); }
+.panel-title { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:42px; margin:0; padding:8px 12px; border-bottom:1px solid var(--line); background:linear-gradient(90deg,#24211d,#111415); color:#d4bd79; font:18px Fell,serif; }
+.panel-title small { color:var(--muted); font:10px Cinzel,serif; }
+.category-list { display:flex; gap:6px; padding:8px; overflow:auto; scrollbar-width:thin; }
+.category-button { flex:0 0 auto; min-height:38px; border:1px solid #444a49; background:#171a1b; padding:7px 12px; color:#aeb4b2; }
+.category-button.is-active { color:var(--gold); border-color:#89663f; background:#322719; }
+.catalog-scroll { min-height:0; overflow:auto; scrollbar-width:thin; }
+.item-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(164px,1fr)); gap:8px; padding:10px; }
+.item-card { position:relative; display:grid; grid-template-rows:minmax(108px,1fr) auto; min-height:170px; padding:0; border:2px solid #3c4140; background:linear-gradient(#1d2020,#0c0e0f); text-align:left; overflow:hidden; }
+.item-card::after { content:""; position:absolute; inset:3px; pointer-events:none; border:1px solid rgba(184,138,75,.16); }
+.item-card.is-selected { border-color:#b58a4d; box-shadow:0 0 0 2px #0a0b0b,0 0 18px rgba(211,166,87,.2); }
+.item-card.is-disabled { opacity:.58; }
+.item-art { display:grid; place-items:center; min-height:108px; background:radial-gradient(circle,#363c3b,#15191a 65%,#090b0c); }
+.item-art img { width:88%; height:110px; object-fit:contain; filter:drop-shadow(0 8px 8px #000); }
+.item-meta { position:relative; padding:8px 10px 10px; background:rgba(8,10,11,.88); }
+.item-meta strong { display:block; color:#ddd4bf; font:17px Fell,serif; }
+.item-meta span { color:var(--muted); font-size:10px; }
+.price { color:var(--gold)!important; float:right; font-size:13px!important; }
+.rarity-rare .item-meta strong { color:#76a6da; }
+.rarity-uncommon .item-meta strong { color:#6fbd78; }
+.inspector { display:grid; grid-template-rows:auto auto 1fr auto; min-height:0; }
+.selected-hero { display:grid; grid-template-columns:112px 1fr; gap:12px; padding:12px; border-bottom:1px solid var(--line); }
+.selected-hero img { width:112px; height:112px; object-fit:contain; background:radial-gradient(circle,#303837,#0c0e0f 70%); border:2px solid #444b4a; }
+.selected-hero h2 { margin:4px 0; color:#e2d3a8; font:24px Fell,serif; }
+.selected-hero p { margin:6px 0; color:#9aa2a4; font:italic 13px Georgia,serif; }
+.tag { display:inline-flex; margin:2px 4px 2px 0; padding:3px 7px; border:1px solid #444a49; color:#aab2b0; font-size:9px; text-transform:uppercase; }
+.trade-details { display:grid; gap:8px; align-content:start; padding:12px; overflow:auto; }
+.detail-row { display:flex; justify-content:space-between; gap:12px; padding-bottom:7px; border-bottom:1px solid rgba(173,136,75,.16); color:#a7aeac; }
+.detail-row strong { color:#e3d39f; }
+.quantity { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; padding:12px; border-top:1px solid var(--line); }
+.quantity button,.trade-button,.small-button { border:2px solid #4b504f; background:linear-gradient(#2b2c2b,#111415); box-shadow:inset 0 0 0 1px #171918; }
+.quantity button { min-height:40px; }
+.quantity button.is-active { color:var(--gold); border-color:#a07443; background:#38291d; }
+.custom-quantity { grid-column:1/-1; display:grid; grid-template-columns:1fr auto; gap:6px; }
+.custom-quantity input { min-width:0; border:1px solid #525756; background:#090b0c; color:#eee4ce; padding:8px; }
+.trade-button { width:calc(100% - 24px); min-height:52px; margin:0 12px 12px; border-color:#8b6740; color:#f0d47b; font:20px Fell,serif; }
+.trade-button:disabled { color:#777; border-color:#3e4241; cursor:not-allowed; }
+.reason { margin:-4px 12px 10px; color:var(--red); font-size:10px; text-align:center; }
+.upgrade-list,.recovery-list,.buyback-list { display:grid; gap:8px; padding:10px; }
+.upgrade-card,.recovery-card,.buyback-card { display:grid; grid-template-columns:48px 1fr auto; align-items:center; gap:10px; padding:9px; border:1px solid #434846; background:#151818; }
+.upgrade-card img,.recovery-card img,.buyback-card img { width:46px; height:46px; object-fit:contain; }
+.upgrade-card strong,.recovery-card strong,.buyback-card strong { display:block; color:#d6c698; }
+.upgrade-card span,.recovery-card span,.buyback-card span { color:var(--muted); font-size:10px; }
+.small-button { min-height:34px; padding:6px 10px; color:#d7be76; }
+.sell-toolbar { display:flex; flex-wrap:wrap; gap:6px; padding:8px; border-bottom:1px solid var(--line); }
+.sell-summary { display:grid; grid-template-columns:1fr auto; align-items:center; gap:10px; padding:10px; border-top:1px solid var(--line); background:#1c1813; }
+.sell-summary strong { color:var(--gold); }
+.selection-mark { position:absolute; top:7px; right:7px; z-index:2; display:none; width:24px; height:24px; place-items:center; background:#bb8c43; color:#090a0a; font-weight:900; }
+.mass-mode .item-card.is-selected .selection-mark { display:grid; }
+.empty-slot { min-height:120px; display:grid; place-items:center; color:#5f6665; border:1px dashed #343938; }
+.split-line { height:1px; background:var(--line); margin:4px 10px; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Konzept 01: vertraute Händler-Theke, starke feste Kaufentscheidung rechts. */
+body[data-concept="1"] .workspace { grid-template-columns:210px minmax(460px,1fr) 360px; grid-template-rows:minmax(0,1fr); }
+body[data-concept="1"] .category-panel .category-list { height:100%; flex-direction:column; }
+body[data-concept="1"] .category-panel .category-button { width:100%; text-align:left; }
+body[data-concept="1"] .catalog-panel { display:grid; grid-template-rows:auto minmax(0,1fr); }
+body[data-concept="1"] .extras-panel { grid-column:1/3; display:grid; grid-template-columns:1fr 1fr; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Konzept 02: Quartermaster Ledger, katalogartige Zeilen statt Bildkacheln. */
+body[data-concept="2"] .workspace { grid-template-columns:minmax(580px,1.35fr) minmax(360px,.65fr); grid-template-rows:auto minmax(0,1fr); }
+body[data-concept="2"] .category-panel { grid-column:1/-1; }
+body[data-concept="2"] .category-panel .category-list { justify-content:center; }
+body[data-concept="2"] .item-grid { display:flex; flex-direction:column; }
+body[data-concept="2"] .item-card { grid-template-columns:104px 1fr auto; grid-template-rows:92px; min-height:92px; }
+body[data-concept="2"] .item-art { min-height:92px; }
+body[data-concept="2"] .item-art img { height:82px; }
+body[data-concept="2"] .item-meta { display:grid; align-content:center; }
+body[data-concept="2"] .item-card .ledger-stock { display:grid; place-items:center; min-width:94px; color:var(--gold); border-left:1px solid var(--line); }
+body[data-concept="2"] .extras-panel { display:grid; grid-template-columns:1fr; max-height:290px; overflow:auto; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Konzept 03: horizontale Warenregale mit festem Transaktionsdock. */
+body[data-concept="3"] .workspace { grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr) 235px; }
+body[data-concept="3"] .category-panel .category-list { justify-content:center; }
+body[data-concept="3"] .catalog-panel { display:grid; grid-template-rows:auto minmax(0,1fr); }
+body[data-concept="3"] .item-grid { grid-template-columns:repeat(6,minmax(145px,1fr)); }
+body[data-concept="3"] .inspector { grid-template-columns:220px minmax(260px,1fr) 270px; grid-template-rows:1fr; }
+body[data-concept="3"] .selected-hero { grid-template-columns:82px 1fr; border:0; border-right:1px solid var(--line); }
+body[data-concept="3"] .selected-hero img { width:82px; height:82px; }
+body[data-concept="3"] .trade-details { border-right:1px solid var(--line); }
+body[data-concept="3"] .transaction-zone { display:grid; align-content:center; }
+body[data-concept="3"] .extras-panel { position:absolute; left:-10000px; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Konzept 04: Handelsbörse, Listen- und Massenverkaufswerkzeuge im Vordergrund. */
+body[data-concept="4"] .workspace { grid-template-columns:minmax(420px,.9fr) minmax(500px,1.1fr); grid-template-rows:auto minmax(0,1fr); }
+body[data-concept="4"] .category-panel { grid-column:1/-1; }
+body[data-concept="4"] .catalog-panel { order:2; }
+body[data-concept="4"] .inspector-panel { order:1; }
+body[data-concept="4"] .item-grid { grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); }
+body[data-concept="4"] .item-card { min-height:148px; }
+body[data-concept="4"] .item-art img { height:92px; }
+body[data-concept="4"] .extras-panel { grid-column:1/-1; display:grid; grid-template-columns:repeat(2,1fr); }
+
+/* codex:2026-08-01T19:22:00+02:00 — Konzept 05: War Table, großes Fokusobjekt und kompakte rechte Warenrolle. */
+body[data-concept="5"] .workspace { grid-template-columns:minmax(500px,1.25fr) minmax(330px,.75fr); grid-template-rows:auto minmax(0,1fr); }
+body[data-concept="5"] .category-panel { grid-column:1/-1; }
+body[data-concept="5"] .inspector-panel { grid-row:2; grid-column:1; }
+body[data-concept="5"] .catalog-panel { grid-row:2; grid-column:2; }
+body[data-concept="5"] .item-grid { grid-template-columns:repeat(2,minmax(140px,1fr)); }
+body[data-concept="5"] .selected-hero { grid-template-columns:minmax(180px,38%) 1fr; padding:18px; }
+body[data-concept="5"] .selected-hero img { width:100%; height:230px; }
+body[data-concept="5"] .extras-panel { display:grid; grid-template-columns:1fr; max-height:230px; overflow:auto; }
+
+/* codex:2026-08-01T19:22:00+02:00 — Responsive Schutz: Shop bleibt intern organisiert statt die Seite endlos zu verlängern. */
+@media (max-width:1250px) {
+  .labbar { position:relative; grid-template-columns:1fr; }
+  .concept-nav { grid-template-columns:repeat(5,1fr); }
+  .shop-stage { min-height:auto; }
+  .shop-shell { min-height:820px; }
+  .shop-masthead { grid-template-columns:1fr auto; }
+  .shop-mode { grid-column:1/-1; justify-self:stretch; }
+  .mode-button { flex:1; }
+  body[data-concept] .workspace { grid-template-columns:minmax(0,1fr) 330px; grid-template-rows:auto minmax(0,1fr); }
+  body[data-concept] .category-panel { grid-column:1/-1; }
+  body[data-concept] .category-panel .category-list { flex-direction:row; height:auto; }
+  body[data-concept] .catalog-panel { grid-column:1; grid-row:2; }
+  body[data-concept] .inspector-panel { grid-column:2; grid-row:2; }
+  body[data-concept] .extras-panel { display:none; }
+  body[data-concept="2"] .item-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
+  body[data-concept="2"] .item-card { display:grid; grid-template-columns:1fr; grid-template-rows:108px auto; min-height:168px; }
+  body[data-concept="2"] .ledger-stock { display:none!important; }
+}
+@media (max-width:760px) {
+  .concept-nav { grid-template-columns:1fr 1fr; }
+  .shop-masthead { grid-template-columns:1fr; }
+  .wallet { justify-self:stretch; }
+  body[data-concept] .workspace { height:auto; display:flex; flex-direction:column; }
+  .catalog-panel { min-height:520px; }
+  .inspector-panel { min-height:520px; }
+  .shop-footer { flex-direction:column; }
+}

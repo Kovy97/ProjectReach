@@ -1,0 +1,65 @@
+{
+  "zoneId": "borderlands",
+  "hotspots": [
+    {
+      "monsterId": "goblin",
+      "x": 16.4,
+      "y": 29,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_shaman",
+      "x": 33.2,
+      "y": 29,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_rogue",
+      "x": 50,
+      "y": 29,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_spearman",
+      "x": 66.8,
+      "y": 29,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_archer",
+      "x": 83.6,
+      "y": 29,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_crossbower",
+      "x": 16.4,
+      "y": 71,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_butcher",
+      "x": 33.2,
+      "y": 71,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_felmagician",
+      "x": 50,
+      "y": 71,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_stormcaller",
+      "x": 66.8,
+      "y": 71,
+      "size": 1.4
+    },
+    {
+      "monsterId": "goblin_warlock",
+      "x": 83.6,
+      "y": 71,
+      "size": 1.4
+    }
+  ]
+}

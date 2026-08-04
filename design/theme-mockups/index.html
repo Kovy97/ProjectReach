@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hearthforge Idle — Theme-Auswahl (Runde 3)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Cormorant Garamond', 'Garamond', Georgia, serif;
+  background: #100c06;
+  color: #e8d8a0;
+  min-height: 100vh;
+  padding: 40px 36px 64px;
+}
+
+/* Hintergrund-Noise */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200,140,32,.1) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+
+.inner { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; }
+
+/* Ornament-Header */
+.page-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 28px; font-weight: 700;
+  color: #f0b830;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 20px rgba(212,160,32,.4);
+  margin-bottom: 6px;
+}
+.page-round {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 11px; font-weight: 400;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: #9a7830;
+  margin-bottom: 14px;
+}
+.page-ornament {
+  color: #9a7830; font-size: 14px; letter-spacing: 0.3em;
+  margin-bottom: 22px; opacity: 0.7;
+}
+
+.intro {
+  font-size: 16px; line-height: 1.72;
+  color: #c8a868;
+  max-width: 780px;
+  margin-bottom: 14px;
+}
+.intro strong { color: #f0d090; }
+.intro em { font-style: italic; color: #d4a050; }
+
+/* Lernhinweis */
+.hinweis {
+  background: rgba(100,60,10,.3);
+  border: 1px solid rgba(192,120,40,.25);
+  border-left: 3px solid #c07020;
+  border-radius: 3px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #b09060;
+  margin-bottom: 36px;
+  max-width: 780px;
+}
+.hinweis strong { color: #d4a040; }
+
+/* Swatch-Legende */
+.swatches {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.swatch {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: #a08858;
+}
+.swatch-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  flex-shrink: 0; border: 1px solid rgba(255,255,255,.1);
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 22px;
+}
+
+.card {
+  background: #1e1408;
+  border: 1px solid #6a4a18;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 3px 14px rgba(0,0,0,.5);
+  text-decoration: none; color: inherit; display: block;
+  transition: box-shadow .2s, transform .18s, border-color .2s;
+}
+.card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,.6), 0 0 20px rgba(192,144,32,.15);
+  transform: translateY(-3px);
+  border-color: #c09030;
+}
+
+.card-preview {
+  height: 170px; overflow: hidden;
+  position: relative; display: flex;
+  align-items: center; justify-content: center;
+}
+.card-preview-label {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.12em;
+  text-shadow: 0 1px 4px rgba(0,0,0,.8);
+  position: relative; z-index: 1;
+  padding: 10px 18px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 3px;
+  backdrop-filter: blur(2px);
+}
+
+/* Preview-Gradients — je Theme */
+.t1 {
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 40%, rgba(212,160,32,.25) 0%, transparent 60%),
+    linear-gradient(135deg, #3a2808 0%, #1e1004 60%, #2a2010 100%);
+  color: #f0b830;
+}
+.t2 {
+  background:
+    radial-gradient(ellipse 50% 60% at 50% 30%, rgba(200,120,20,.22) 0%, transparent 65%),
+    linear-gradient(135deg, #281806 0%, #140a02 60%, #1c1208 100%);
+  color: #e8b840;
+}
+.t3 {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(80,128,200,.18) 0%, transparent 55%),
+    linear-gradient(135deg, #1e3a14 0%, #f4f0e4 100%);
+  color: #1e4080;
+}
+.t4 {
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 80%, rgba(224,96,32,.25) 0%, transparent 65%),
+    linear-gradient(135deg, #2a1408 0%, #120a04 60%, #1e1006 100%);
+  color: #f0b030;
+}
+.t5 {
+  background:
+    radial-gradient(ellipse 45% 55% at 20% 50%, rgba(196,72,32,.22) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 55% at 80% 50%, rgba(138,24,48,.15) 0%, transparent 55%),
+    linear-gradient(135deg, #281408 0%, #160a04 60%, #1e1008 100%);
+  color: #e8aa30;
+}
+
+.card-body {
+  padding: 16px 20px 18px;
+  border-top: 1px solid rgba(192,120,40,.2);
+}
+.card-number {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+  color: #907040; margin-bottom: 4px;
+}
+.card-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 15px; font-weight: 600;
+  color: #e8c070;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+.card-desc {
+  font-size: 14px; line-height: 1.65; color: #a08858;
+}
+.card-desc strong { color: #c8a060; }
+
+/* Palette-Dots unter der Karte */
+.card-palette {
+  display: flex; gap: 5px; margin-top: 10px;
+}
+.p-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+/* Footer */
+.page-footer {
+  margin-top: 48px;
+  text-align: center;
+  font-size: 13px; color: #6a5030;
+  letter-spacing: 0.08em;
+}
+.page-footer strong { color: #9a7040; }
+</style>
+</head>
+<body>
+<div class="inner">
+
+  <div class="page-round">Hearthforge Idle — Runde 3 der Theme-Auswahl</div>
+  <h1 class="page-title">Fünf Welten, ein Schmiedeherz</h1>
+  <div class="page-ornament">✦ ————————— ✦ ————————— ✦</div>
+
+  <p class="intro">
+    Runde 3 zielt auf den <strong>Mittelweg zwischen Runde 1 und 2</strong>: kein Dungeon-Schwarz, kein flaches Minimal-Modern —
+    sondern <em>warm, malerisch, gemütlich und unverkennbar Fantasy</em>. Alle fünf Themes verwenden
+    mittelalterliche Display-Fonts (Cinzel, IM Fell English SC, Marcellus SC, Grenze Gotisch),
+    CSS-Textur-Overlays (Noise-Gradients, Holzmaserung), Ornament-Elemente und warme Gold/Bronze-Akzente.
+  </p>
+
+  <div class="hinweis">
+    <strong>Vergleichshinweis:</strong> Gleicher UI-Ausschnitt in allen Themes — Titel, Sidebar-Nav,
+    Stat-Panel, Item-Kacheln (alle 5 Rarities), Fliesstext mit Drop-Cap, Ornament-Banner-Buttons.
+    Alle Fonts via Google-CDN, funktioniert offline nur mit Serif-Fallback.
+  </div>
+
+  <div class="grid">
+
+    <!-- THEME 1 -->
+    <a href="theme-1.html" class="card">
+      <div class="card-preview t1">
+        <div class="card-preview-label">Goldener Nachmittag</div>
+      </div>
+      <div class="card-body">
+        <div class="card-number">Theme 1</div>
+        <div class="card-title">Goldener Nachmittag im Dorf</div>
+        <p class="card-desc">
+          <strong>Cinzel + EB Garamond</strong> auf tiefem Dunkelbraun. Sonnenlicht fällt
+          golden auf Pergament-Panels. Warme Erdtöne mit sattem Grün als Akzent.
+          Das Hauptmenü-Key-Art-Gefühl direkt im Spiel.
+        </p>
+        <div class="card-palette">
+          <div class="p-dot" style="background:#1e1508" title="Hintergrund"></div>
+          <div class="p-dot" style="background:#3a2812" title="Panel"></div>
+          <div class="p-dot" style="background:#f0c040" title="Gold"></div>
+          <div class="p-dot" style="background:#4a8030" title="Grün-Akzent"></div>
+          <div class="p-dot" style="background:#c07830" title="Kupfer"></div>
+          <div class="p-dot" style="background:#f0e0b0" title="Text"></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- THEME 2 -->
+    <a href="theme-2.html" class="card">
+      <div class="card-preview t2">
+        <div class="card-preview-label">Kerzenlicht-Skriptorium</div>
+      </div>
+      <div class="card-body">
+        <div class="card-number">Theme 2</div>
+        <div class="card-title">Kerzenlicht-Skriptorium</div>
+        <p class="card-desc">
+          <strong>IM Fell English SC + IM Fell English</strong> — der unverkennbarste
+          Fantasy-Font. Tiefes Leder-Braun, flackerndes Kerzengold, Pergament-Noise,
+          Punkt-Linien wie in alten Manuskripten.
+        </p>
+        <div class="card-palette">
+          <div class="p-dot" style="background:#140e04" title="Hintergrund"></div>
+          <div class="p-dot" style="background:#321e0a" title="Panel"></div>
+          <div class="p-dot" style="background:#e8b840" title="Gold"></div>
+          <div class="p-dot" style="background:#d47820" title="Amber"></div>
+          <div class="p-dot" style="background:#7a3a08" title="Leder"></div>
+          <div class="p-dot" style="background:#f0e4c0" title="Elfenbein"></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- THEME 3 -->
+    <a href="theme-3.html" class="card">
+      <div class="card-preview t3">
+        <div class="card-preview-label" style="color:#e0d080;background:rgba(30,60,20,.6)">Frühlingswiese mit Schloss</div>
+      </div>
+      <div class="card-body">
+        <div class="card-number">Theme 3</div>
+        <div class="card-title">Frühlingswiese mit Schloss</div>
+        <p class="card-desc">
+          <strong>Cinzel Decorative + Marcellus SC</strong>. Das einzige helle Theme —
+          cremefarbenes Pergament, heraldisches Dunkelgrün in der Sidebar,
+          Königsblau als Haupt-Akzent. Malerisch-romantisch wie ein Gemälde.
+        </p>
+        <div class="card-palette">
+          <div class="p-dot" style="background:#f4f0e4" title="Pergament"></div>
+          <div class="p-dot" style="background:#1e3a14" title="Heraldisch-Grün"></div>
+          <div class="p-dot" style="background:#e0b030" title="Gold"></div>
+          <div class="p-dot" style="background:#2040a0" title="Heraldisch-Blau"></div>
+          <div class="p-dot" style="background:#3a7a20" title="Frühlingsgrün"></div>
+          <div class="p-dot" style="background:#2a2010" title="Text"></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- THEME 4 -->
+    <a href="theme-4.html" class="card">
+      <div class="card-preview t4">
+        <div class="card-preview-label">Schmiede-Werkstatt</div>
+      </div>
+      <div class="card-body">
+        <div class="card-number">Theme 4</div>
+        <div class="card-title">Warme Schmiede-Werkstatt</div>
+        <p class="card-desc">
+          <strong>Cinzel + Grenze Gotisch</strong> (Fraktur-Drop-Cap). Holzmaserung,
+          Eisen-Niet-Optik, glühendes Kupfer-Orange, Funken-Gold. Handwerklich,
+          robust, thematisch am nächsten am Spielnamen.
+        </p>
+        <div class="card-palette">
+          <div class="p-dot" style="background:#120a04" title="Hintergrund"></div>
+          <div class="p-dot" style="background:#241408" title="Panel"></div>
+          <div class="p-dot" style="background:#f0b030" title="Gold"></div>
+          <div class="p-dot" style="background:#e06020" title="Kupfer-Glut"></div>
+          <div class="p-dot" style="background:#6a5040" title="Eisen"></div>
+          <div class="p-dot" style="background:#f0d4a0" title="Text"></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- THEME 5 -->
+    <a href="theme-5.html" class="card">
+      <div class="card-preview t5">
+        <div class="card-preview-label">Herbst-Erntefest</div>
+      </div>
+      <div class="card-body">
+        <div class="card-number">Theme 5</div>
+        <div class="card-title">Herbst-Erntefest</div>
+        <p class="card-desc">
+          <strong>Marcellus SC + Crimson Text</strong>. Weinrot, Kürbis-Orange, Stroh-Gold,
+          Ahornrot — die Wärme eines mittelalterlichen Ernte- und Herbstmarkts.
+          Drei-Farben-Stat-Bars von Weinrot über Orange nach Gold.
+        </p>
+        <div class="card-palette">
+          <div class="p-dot" style="background:#160e06" title="Hintergrund"></div>
+          <div class="p-dot" style="background:#321c0c" title="Panel"></div>
+          <div class="p-dot" style="background:#e8aa30" title="Stroh-Gold"></div>
+          <div class="p-dot" style="background:#d45820" title="Kürbis"></div>
+          <div class="p-dot" style="background:#8a1830" title="Weinrot"></div>
+          <div class="p-dot" style="background:#f0d4a0" title="Text"></div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="page-footer">
+    <strong>Runde 3</strong> — Warm, malerisch, idyllisch, unverkennbar Fantasy ·
+    Alle Themes: Textur-Overlays, mittelalterliche Fonts, Ornamentik, Gold/Bronze-Akzente
+  </div>
+
+</div>
+</body>
+</html>

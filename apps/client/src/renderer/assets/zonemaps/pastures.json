@@ -1,0 +1,29 @@
+{
+  "zoneId": "pastures",
+  "hotspots": [
+    {
+      "monsterId": "chicken",
+      "x": 22,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "cow",
+      "x": 50,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "boar",
+      "x": 78,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "bull_boss",
+      "x": 22,
+      "y": 71,
+      "size": 2.33
+    }
+  ]
+}

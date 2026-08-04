@@ -1,0 +1,221 @@
+NEW HAVEN — GEBÄUDE-ASSETS (Neufassung 2, real-life-Referenzen + Tag/Nacht)
+============================================================================
+15 Gebäude · je 3 Ausbaustufen · je Tag- UND Nachtfassung = 6 Bilder pro Prompt.
+EIN Gebäude = EIN Prompt. Immer STIL-KOPF + EIN Gebäude-Block zusammen einfügen.
+
+WARUM NEU: Die erste Fassung beschrieb ausgedachte Sonderkonstruktionen (Grubensägen,
+Pilzstelzen, leere Schrein-Nischen). Ergebnis war unlesbar. Diese Fassung nennt für jede
+Stufe ein REALES Vorbild, das ChatGPT kennt — der Rest ist Beiwerk.
+
+CHROMA-KEY: MAGENTA statt Grün (Chef-Entscheid 28.07.). Grund: Bei Holz, Stein und Eisen
+kommt Magenta nie natürlich vor, Grün dagegen ständig (Moos, Pflanzen, Grünspan). Mit
+Magenta darf das Motiv so grün sein, wie es sein soll, ohne dass beim Freistellen etwas
+verlorengeht. Das Freistell-Skript beherrscht Magenta bereits (Downloads\ASSETS\chroma-key.py).
+
+ZIEL-DATEINAMEN (exakt so, = Engine-IDs):
+  Tag:    <id>_1.png   <id>_2.png   <id>_3.png
+  Nacht:  <id>_1_night.png   <id>_2_night.png   <id>_3_night.png
+  IDs: camp_townhall · camp_watchtower · camp_storehouse · camp_scrivener_tent ·
+       camp_fishing_hut · camp_sawpit · camp_mine_adit · camp_seed_garden ·
+       camp_fence_tent · camp_workyard · camp_smelter · camp_smokehouse ·
+       camp_trophy_wall · camp_warden_shrine · camp_trade_post
+Fertige PNGs → Downloads\ASSETS\resources\done\
+
+============================================================================
+STIL-KOPF (in JEDEN Prompt kopieren, vor den Gebäude-Block)
+============================================================================
+
+Ich brauche 6 Bilder als Spiel-Assets für ein Dark-Fantasy-Aufbauspiel: EIN Gebäude in
+3 Ausbaustufen, jede Stufe einmal bei TAG und einmal bei NACHT.
+
+ANSICHT (für alle 6 Bilder identisch):
+- Isometrisch: Das Gebäude ist 45° um die Hochachse gedreht, man sieht zwei Seiten über
+  Eck; die Kamera blickt aus etwa 45° von oben, das Dach ist gut sichtbar.
+- Parallele/isometrische Projektion, KEINE starke Fluchtpunkt-Perspektive, KEINE reine
+  Frontansicht, KEINE senkrechte Vogelperspektive.
+- Alle 6 Bilder aus exakt demselben Winkel, dieselbe Ecke zeigt zum Betrachter, dieselbe
+  Bildgröße des Gebäudes.
+
+HINTERGRUND (für alle 6 Bilder identisch, auch nachts):
+- Einfarbig MAGENTA als Chroma-Key-Fläche (#FF00FF). Auch die NACHT-Bilder behalten den
+  MAGENTA Hintergrund unverändert hell — nur das Gebäude wird nächtlich beleuchtet.
+- Kein Boden, kein Gras, kein Weg, kein geworfener Schatten, keine Landschaft, kein Himmel.
+- Das Gebäude endet unten sauber an seiner eigenen Grundfläche (Rhombus-Grundriss).
+- Kein magentafarbenes/pinkes Element am Gebäude selbst (bei Holz, Stein und Eisen kommt
+  das ohnehin nicht vor). Grün am Gebäude ist ausdrücklich ERLAUBT — Moos, Kletterpflanzen,
+  Beetpflanzen, Grünspan auf Kupfer sind willkommen und gehen beim Freistellen nicht verloren.
+
+STIL:
+- Verwittertes, dunkles Bauholz mit sichtbarer Maserung, schwarze Eisenbeschläge, grauer
+  Bruchstein. Gedeckte Erdtöne, malerischer Handmal-Look, mittlerer Detailgrad.
+- Es ist eine karge Grenzsiedlung, kein Prunk, keine Fantasy-Verzierung, keine Runen,
+  kein Leuchten außer echtem Feuer-/Lampenlicht in den Nachtbildern.
+- Keine Menschen, keine Tiere, kein Text, kein Wasserzeichen.
+
+TAG vs. NACHT (nur die Beleuchtung ändert sich, NIE die Bausubstanz):
+- TAG: neutrales, weiches Tageslicht von schräg oben links, klare Materialfarben.
+- NACHT: dasselbe Gebäude bei Mondlicht — kühle blaugraue Außenflächen, dazu WARMES
+  oranges Licht aus Fenstern, Türspalten und einer Laterne am Gebäude. Das Gebäude bleibt
+  gut erkennbar, KEINE schwarze Silhouette. Struktur, Dach und Form müssen lesbar bleiben.
+- Stufe 1 hat nachts nur eine kleine Lichtquelle, Stufe 3 deutlich mehr Fenster/Laternen —
+  so wird der Ausbau auch nachts sofort sichtbar.
+- Das Nachtbild zeigt EXAKT dasselbe Gebäude wie das Tagbild davor — gleiche Form, gleiche
+  Fensterpositionen, gleiches Dach, gleicher Winkel. NUR die Beleuchtung ändert sich, es wird
+  kein neues Gebäude entworfen.
+- Das nächtliche Holz darf kühl blaugrau wirken (Mondlicht), aber es bleibt als Holz mit
+  sichtbarer Maserung erkennbar und wird NICHT fast schwarz — das Gebäude muss sich später
+  auch vor einem dunklen Hintergrund klar abheben. Mitteltöne statt Silhouette.
+
+AUSBAU-LOGIK: Stufe 1 klein und roh, Stufe 2 deutlich größer und fester, Stufe 3 am
+größten und solidesten. Die Grundform bleibt über alle Stufen wiedererkennbar.
+
+MERKTABELLE — nach jedem Bild neu ausgeben und die gelieferte Zeile abhaken:
+  [ ] 1/6 Stufe 1 — TAG      [ ] 2/6 Stufe 1 — NACHT
+  [ ] 3/6 Stufe 2 — TAG      [ ] 4/6 Stufe 2 — NACHT
+  [ ] 5/6 Stufe 3 — TAG      [ ] 6/6 Stufe 3 — NACHT
+ZIP-KLAUSEL: Sind alle 6 Häkchen gesetzt, alle 6 PNGs zusätzlich als ZIP anbieten.
+
+============================================================================
+DIE 15 GEBÄUDE-BLÖCKE
+============================================================================
+
+--- 1) camp_townhall — ZENTRALHAUS -----------------------------------------
+Stufe 1: Eine einfache Blockhütte aus Rundstämmen, wie eine skandinavische Waldhütte.
+         Ein Fenster, eine Tür, Satteldach mit Holzschindeln, Steinsockel.
+Stufe 2: Ein Gemeindehaus wie ein norwegisches Loftshaus: zweifach so groß, überdachter
+         Eingangsvorbau auf zwei Pfosten, mehrere Fenster, Holzschindeldach.
+Stufe 3: Ein Fachwerk-Rathaus wie ein kleines deutsches Dorfrathaus: Erdgeschoss aus
+         Naturstein, Obergeschoss Fachwerk, mittig ein hölzerner Glockenturm mit Bronzeglocke,
+         überdachte Freitreppe.
+NICHT: keine Stadtmauer, keine Wappen, keine Fahnen, keine Uhr am Turm.
+
+--- 2) camp_watchtower — WACHTURM ------------------------------------------
+Stufe 1: Ein hölzerner Jagd-Hochsitz: vier schräge Stämme, Leiter, oben eine offene
+         Plattform mit Brüstung.
+Stufe 2: Ein hölzerner Feuerwachturm wie die US Forest Service Fire Lookout Tower:
+         Gerüstturm mit geschlossener Kabine oben, Umlauf-Galerie, Schindeldach.
+Stufe 3: Ein mittelalterlicher steinerner Wachturm wie ein Grenzturm: quadratischer
+         Steinturm, Zinnenkranz, hölzerner Wehrgang-Ausleger, schmale Fenster.
+NICHT: keine Burg, keine Fahnen, keine Kanonen, keine Scheinwerfer.
+
+--- 3) camp_storehouse — VORRATSSPEICHER -----------------------------------
+Stufe 1: Ein kleiner Bretterschuppen mit Pultdach auf niedrigem Steinsockel, eine
+         Holztür mit Riegel.
+Stufe 2: Ein norwegisches Stabbur (aufgeständerter Vorratsspeicher): quadratisches
+         Holzhaus auf kurzen Stützen, Freitreppe, kräftiges Schindeldach mit Überstand.
+Stufe 3: Eine große Holzscheune wie eine alpine Vorratsscheune: zweistöckig, breites
+         Doppeltor, Schindeldach, Ladeluke im Giebel.
+NICHT: kein Erdhügel, kein Schornstein, keine Tiere, keine Marktware davor.
+
+--- 4) camp_scrivener_tent — SCHREIBZELT -----------------------------------
+Stufe 1: Ein einfaches Sonnensegel: eine schräg gespannte Leinenplane an zwei Stangen,
+         darunter ein Klapptisch und ein Hocker.
+Stufe 2: Ein Feldzelt wie ein historisches Offizierszelt: rechteckiges Leinenzelt mit
+         Firststange, offener Eingangsklappe und Holzrahmen-Tür.
+Stufe 3: Ein großes Stabszelt wie ein mittelalterliches Turnierzelt: Leinen über
+         Holz-Halbwänden, breites Vordach, Kartentisch darunter, Fahnenstange OHNE Fahne.
+NICHT: keine Wappen, keine Waffen, keine Menschen, kein Lagerfeuer.
+
+--- 5) camp_fishing_hut — FISCHERHÜTTE -------------------------------------
+Stufe 1: Ein norwegisches Fischtrockengestell (Hjell): zwei Holzrahmen mit Querstangen,
+         daran ein paar hängende Fische, daneben ein Korb.
+Stufe 2: Eine Fischerkate wie ein norwegisches Rorbu: kleines Holzhaus mit Satteldach,
+         Netz an der Wand, Fässer und Trockengestell daneben.
+Stufe 3: Ein größeres Fischerhaus mit Steg-Anbau: Rorbu-Bauweise, angebauter Schuppen,
+         großes aufgespanntes Netz, Reusen an der Wand, kurzer Holzsteg als Sockel.
+NICHT: kein Wasser, kein Boot, kein Leuchtturm, keine grünen Netze.
+
+--- 6) camp_sawpit — SÄGEGRUBE ---------------------------------------------
+Stufe 1: Ein Sägeplatz: ein schwerer Sägebock mit eingelegtem Stamm, eine große
+         Zweimannsäge lehnt daran, ein Hackklotz mit Axt, gestapelte Rundhölzer.
+Stufe 2: Ein offener Sägeschuppen wie ein historischer Zimmererplatz: Pultdach auf vier
+         Pfosten, Werkbank, Bretterstapel, Sägen an der Rückwand.
+Stufe 3: Eine kleine Holzsägerei: geschlossenes Fachwerk-Werkstattgebäude mit breitem
+         Tor, davor sortierte Balken- und Bretterstapel, Rundholz-Rampe.
+NICHT: kein Wasserrad, keine Maschinen, keine belaubten Bäume, kein Wald.
+
+--- 7) camp_mine_adit — STOLLENMUND ----------------------------------------
+Stufe 1: Ein roher Stolleneingang wie ein kornisches Bergwerks-Adit: ein Loch in einem
+         grauen Felsblock, grob mit Balken abgestützt, Spitzhacke und Eimer davor.
+Stufe 2: Ein befestigter Stollenmund: sauber gezimmerter Balkenrahmen mit Eisenbeschlägen,
+         kurzes Loregleis heraus, eine kleine Kipplore, Erzhaufen.
+Stufe 3: Ein Bergwerksportal mit Fördergerüst: gemauerter Portalbogen, hölzernes
+         Förderturm-Gerüst mit Seilrolle darüber, Erzkisten, Werkzeugregal.
+NICHT: kein Berg-Panorama, keine leuchtenden Kristalle, keine Dampfmaschine.
+
+--- 8) camp_seed_garden — SAATGARTEN ---------------------------------------
+Stufe 1: Zwei rohe Hochbeete aus Halbstämmen mit dunkler Erde und ersten Trieben,
+         daneben eine Blechgießkanne und eine Harke.
+Stufe 2: Ein umzäunter Bauerngarten: niedriger Flechtzaun um vier Beete, kleiner
+         Geräteschuppen mit Pultdach, Regentonne.
+Stufe 3: Ein ummauerter Nutzgarten wie ein englischer Walled Kitchen Garden: niedrige
+         Bruchsteinmauer, geordnete Beetreihen mit Rankgittern, ein Frühbeetkasten mit
+         Glasklappen, Geräteschuppen mit Schindeldach.
+HINWEIS: Die Pflanzen dürfen hier satt grün sein (Magenta-Hintergrund, kein Konflikt).
+NICHT: keine bunten Blumen, keine Vogelscheuche, kein Gewächshaus aus Metall.
+
+--- 9) camp_fence_tent — HEHLERZELT ----------------------------------------
+Stufe 1: Ein schäbiger Marktstand: ein klappriger Holztisch unter einer fleckigen Plane
+         auf zwei Stangen, darauf verschnürte Bündel und eine offene Kiste.
+Stufe 2: Ein geschlossenes dunkles Handelszelt: rechteckiges Leinenzelt mit halb offener
+         Klappe, davor ein Tisch mit Waage, eine Truhe mit schwerem Vorhängeschloss.
+Stufe 3: Ein Basar-Pavillon: großes zweimastiges Zelt mit Vorzelt und Markise, offene
+         Ausstellungstruhen, hängende Beutel und Schatullen.
+NICHT: keine Diebes-Symbole, keine Masken, keine Menschen, kein Gold-Haufen.
+
+--- 10) camp_workyard — WERKHOF --------------------------------------------
+Stufe 1: Eine Werkbank im Freien: schwere Hobelbank mit Schraubstock, Werkzeugkiste,
+         daneben ein Amboss auf einem Holzklotz.
+Stufe 2: Eine offene Schmiede-Werkstatt wie eine historische Dorfschmiede: Satteldach auf
+         Balken, gemauerte Esse mit Blasebalg, Werkbank, Werkzeugwand.
+Stufe 3: Ein Fachwerk-Werkstattgebäude: halb geschlossene Halle mit Schindeldach,
+         gemauerter Essenkamin mit Rauchabzug, mehrere Werkbänke, Materialregale.
+NICHT: kein glühendes Metall, kein Funkenflug, keine Menschen, keine Maschinen.
+
+--- 11) camp_smelter — SCHMELZOFEN -----------------------------------------
+Stufe 1: Ein kleiner Rennofen (bloomery): kniehoher Lehmkuppelofen mit kleiner
+         Eisenluke, daneben ein Blasebalg und ein Holzkohlehaufen.
+Stufe 2: Ein gemauerter Schmelzofen: mannshoher Steinofen mit kurzem Schornstein,
+         Eisenklappen, Erzmulden und Barrenformen auf einem Steintisch.
+Stufe 3: Ein Schmelzturm wie ein historischer Hochofen im Kleinformat: hoher gemauerter
+         Ofenturm mit Blechschornstein, seitliche Beschickungsrampe, Abstichrinne,
+         gestapelte dunkle Barren.
+NICHT: keine Lava, kein glühender Ausfluss, kein Rauch, keine Dampfmaschine.
+
+--- 12) camp_smokehouse — RÄUCHERHAUS --------------------------------------
+Stufe 1: Ein Räucherdreibein: drei Stangen über einer Feuerstelle, daran hängende
+         Fische und Speckseiten, ein Windschutz aus Flechtwerk.
+Stufe 2: Eine kleine Räucherhütte wie eine alpine Selchkammer: schmales hohes
+         Bretterhäuschen mit Lüftungsschlitzen und Blechhaube auf dem Dach, Holzstapel.
+Stufe 3: Ein Räucherhaus mit zwei Kammern: gemauerter Sockel, zwei Blechhauben auf dem
+         Dach, Vordach mit hängenden Würsten und Schinken, Fasslager.
+NICHT: kein sichtbarer Rauch, kein Feuerschein bei Tag, keine Tiere.
+
+--- 13) camp_trophy_wall — TROPHÄENWAND ------------------------------------
+Stufe 1: Ein Trophäenpfahl: ein schwerer geschnitzter Holzpfahl mit aufgehängten
+         Geweihen und einem Tierschädel, Fuß aus geschichteten Steinen.
+Stufe 2: Ein Trophäengestell: eine freistehende Balkenwand zwischen zwei Pfosten, behängt
+         mit Geweihen, Hauern und Panzerplatten, kleines Schutzdach-Brett darüber.
+Stufe 3: Eine lange Trophäenwand mit Schindel-Schutzdach: dicht behängt mit Schädeln,
+         Geweihen und Panzersegmenten, davor eine niedrige Steinbank.
+NICHT: keine menschlichen Schädel, kein Blut, keine leuchtenden Augen, kein Gebäude.
+
+--- 14) camp_warden_shrine — SCHREIN DER STILLEN ---------------------------
+Stufe 1: Ein Steinhügel wie ein schottischer Cairn: aufgeschichtete Feldsteine mit einer
+         schmalen leeren Nische in der Mitte, davor ein einfaches Opferbrett.
+Stufe 2: Ein Wegschrein wie ein bayerischer Bildstock: steinerne Säule mit leerer Nische
+         und kleinem Holzschindel-Dächlein, zwei kalte Kerzenständer davor.
+Stufe 3: Eine kleine Feldkapelle aus Bruchstein: offenes Portal, im Inneren ein leerer
+         Steinsockel unter einer leeren Nische, Steinbänke an den Seiten, Schindeldach.
+WICHTIG: Die Nische bleibt LEER — keine Statue, keine Figur, kein Kreuz, kein Symbol.
+NICHT: kein Glühen, keine Aura, keine Heiligenfiguren, keine Inschrift.
+
+--- 15) camp_trade_post — HÄNDLERPOSTEN ------------------------------------
+Stufe 1: Ein Handelskarren: ein robuster einachsiger Holzkarren mit aufgeklappter
+         Seitenwand als Verkaufsbrett, Kisten und ein Fässchen daneben.
+Stufe 2: Ein Marktstand mit Vordach: fester Holzstand mit Schindel-Vordach, Theke mit
+         Waage, Warenregal, verschnürte Ballen.
+Stufe 3: Ein Handelskontor wie ein historisches Kaufmannshaus im Kleinformat:
+         zweigeschossiges Fachwerkhaus mit Ladenfront und Klappladen als Theke, Lastenkran-
+         Ausleger am Giebel, Warenlager unterm Vordach.
+NICHT: keine lesbaren Schilder, keine Preisangaben, keine Münzhaufen, keine Menschen.

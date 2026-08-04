@@ -1,0 +1,158 @@
+=== ChatGPT Icon-Generierungs-Prompts — Grim Reach (Runde 4) ===
+Generiert: 2026-07-04
+Fehlende Item-Icons: 45  |  Fehlende Monster-Bilder: 3  (zusätzlich 8 Slayer-Tower-Kopien mit Art-Fallback — NICHT generieren)
+Jeder Block = ~10 Einträge oder weniger (thematisch gruppiert). Format pro Eintrag: Name (dateiname.png) — Aussehens-Beschreibung.
+Durchgängiger Stil: dunkles Dark-Fantasy, KEIN Pixel-Art, EIN einzelnes Icon pro Bild, zentriert, auf transparentem oder schlichtem dunklem Hintergrund.
+Reihenfolge: TEIL A (NEU seit Runde 3 — bitte zuerst: 23 Items + 3 Monster), dann TEIL B (noch offen aus Runde 3: 22 Items).
+Hinweis 1: scale_skarn ist inzwischen eingebunden (aus der früheren dragonhide_skarn.png) — entfällt, KEIN Prompt mehr nötig.
+Hinweis 2: Die 8 Slayer-Tower-Monster (tower_goblin, tower_goblin_rogue, tower_skeleton_warrior, tower_skeleton_archer, tower_ember_elemental, tower_iron_revenant, tower_frost_hound, tower_roc_void) NICHT generieren — sie nutzen automatisch die Art ihres Basis-Monsters.
+
+
+###############################################################################
+############### TEIL A — NEU SEIT RUNDE 3 (23 Items + 3 Monster — höchste Priorität) ###############
+###############################################################################
+
+############### A · LEDER-RÜSTUNG — DÄMMERLEDER-SET (Duskhide, L40 Fernkampf, rare, Ausweichen) (5) ###############
+
+--- A-DÄMMERLEDER Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 5 angefragte Icons = 5 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Dämmerleder-Haube (duskhide_helm.png) — Eine geschmeidige Lederhaube/Kapuze in Dämmerungstönen — tief dämmerblaues, rauchgraues Leder, weich vernäht, mit kleinem Visierrand vorn. Leicht und flexibel, gemacht für lautlose Fernkämpfer. Kein Glow; mattes Leder mit einem feinen kühl-bläulichen Zwielicht-Schimmer entlang der Nähte.
+• Dämmerleder-Kürass (duskhide_body.png) — Ein geschichteter Leder-Brustkürass aus demselben dämmerblau-grauen Häutewerk, überlappende Panels, seitlich geschnürt, mit kurzen Schulterlappen. Leicht und beweglich, auf Ausweichen ausgelegt. Feiner kühl-bläulicher Zwielicht-Schimmer, kein grelles Leuchten.
+• Dämmerleder-Beinlinge (duskhide_legs.png) — Leder-Beinlinge in Dämmerblau, mit Schnürung längs der Außenseite und verstärkten Kniepartien. Geschmeidig und leise. Matt, mit dezentem bläulichem Zwielicht-Schimmer an den Kanten.
+• Dämmerleder-Armschützer (duskhide_vambraces.png) — Leder-Unterarmschienen mit leichten Handschuhen, dämmerblau-graues Häutewerk, eng anliegend geschnürt für freie Fingerbewegung beim Bogenschießen. Kein Glow, feiner Zwielicht-Schimmer.
+• Dämmerleder-Stiefel (duskhide_boots.png) — Weichsohlige Lederstiefel in Dämmerblau-Grau, seitlich geschnürt, gemacht für lautloses Anschleichen. Matt, mit leisem bläulichem Zwielicht-Schimmer.
+
+
+############### A · LEDER-RÜSTUNG — GEISTERLEDER-SET (Wraithhide, L90 Fernkampf, epic, Ausweichen) (5) ###############
+
+--- A-GEISTERLEDER Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 5 angefragte Icons = 5 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Geisterleder-Haube (wraithhide_helm.png) — Eine gespenstische Lederkapuze/-haube aus aschgrau-anthrazitfarbenem Häutewerk, an dessen Rändern feine Schwaden fahl-grünlichen Geisternebels emporkräuseln. Epische Fernkampf-Rüstung, unheimlich und wie halb entrückt. Aschgrau-schwarz mit schwachem geisterhaft blass-grünem Nebelglühen an den Kanten.
+• Geisterleder-Kürass (wraithhide_body.png) — Ein gespenstischer Leder-Brustkürass, überlappende anthrazitgraue Panels wie totes, verblichenes Leder, aus dessen Nähten leise fahl-grüner Geisternebel quillt. Epische Qualität. Aschgrau-schwarz, schwaches blass-grünes Geisterschimmern.
+• Geisterleder-Beinschienen (wraithhide_legs.png) — Gespenstische Leder-Beinschienen in Aschgrau-Anthrazit, an den Kanten von fahlem Geisternebel umspielt, schlanker präziser Schnitt. Kaltes blass-grünes Geisterschimmern.
+• Geisterleder-Armschützer (wraithhide_vambraces.png) — Anthrazitgraue Leder-Unterarmschützer mit leichten Handschuhen, aus deren Fingerspitzen dünne Geisternebel-Fäden ziehen. Aschig, mit schwachem blass-grünem Glimmen.
+• Geisterleder-Stiefel (wraithhide_boots.png) — Weichsohlige gespenstische Lederstiefel in Aschgrau-Anthrazit, um die Sohle kräuselt fahl-grüner Nebel, als berührten sie kaum den Boden. Schwaches blass-grünes Geisterglühen.
+
+
+############### A · STOFF-RÜSTUNG — DÄMMERGEWEBE-SET (Duskweave, magic 64, superRare, Ward) (5) ###############
+
+--- A-DÄMMERGEWEBE Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 5 angefragte Icons = 5 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Dämmergewebe-Kapuze (duskweave_cowl.png) — Eine Magier-Kapuze, gewoben aus dämmerungsberührtem Faden — tief indigoviolette arkane Seide, die zum Saum hin in leerenschwarzen Schatten übergeht, mit feiner runischer Ziernaht. Summt schwach zwischen Arkanem und Leere. Kühler violetter Arkan-Schimmer.
+• Dämmergewebe-Robe (duskweave_robe_body.png) — Eine volle Magierrobe, in der Dämmerung gesponnen: obere Hälfte indigoviolette arkane Seide, untere Hälfte leerenschwarzer Schattenstoff, durchzogen von feinen arkanen Fäden. Kühler violetter Schimmer, an den Schattenpartien fast lichtschluckend.
+• Dämmergewebe-Gewand (Beine) (duskweave_robe_legs.png) — Ein nachschleifendes Robengewand für die Beine, indigoviolett nach unten in Schatten verlaufend, das das Licht um die Füße des Trägers zu dämpfen scheint. Dezenter violetter Schimmer oben, dunkler Saum.
+• Dämmergewebe-Handwickel (duskweave_handwraps.png) — Stoff-Handwickel aus dämmerungsberührtem Faden, indigoviolett mit schattenschwarzen Enden, arkane Fäden eingewoben — sie dämpfen den eigenen Schatten des Zauberers beim Wirken. Kühler violetter Schimmer.
+• Dämmergewebe-Schrittschuhe (duskweave_treads.png) — Weichsohlige Stoffschuhe aus Dämmergewebe, indigoviolett-schwarz, die keinen Abdruck hinterlassen, nur ein Dämmern des Staubs. Dezenter violetter Zwielicht-Schimmer.
+
+
+############### A · STOFF-RÜSTUNG — STERNGEWEBE-SET (Starweave, magic 92, epic, Ward) (5) ###############
+
+--- A-STERNGEWEBE Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 5 angefragte Icons = 5 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Sterngewebe-Krone (starweave_coronet.png) — Ein feiner Magier-Reif/Diadem aus dunklem Himmelsmetall, besetzt mit winzigen sternartigen Edelsteinsplittern — tief mitternachtsblau mit Punkten silberweißen Sternenlichts. Kühles, kosmisches Leuchten, edel und arkan. Epische Ward-Rüstung.
+• Sterngewebe-Ornat (starweave_vestment.png) — Ein prächtiger Magier-Ornat (Robenkörper) aus mitternachtsblauem Stoff, übersät mit winzigen Sternenlicht-Punkten wie ein Nachthimmel, silberne Sternbild-Stickerei ziert Brust und Ärmel. Kühles kosmisches Silber-Blau-Leuchten.
+• Sterngewebe-Gewand (Beine) (starweave_skirt.png) — Ein nachschleifendes Robengewand für die Beine aus mitternachtsblauem Sternenstoff, mit vereinzelten silbrig funkelnden Sternenpunkten, Saum in Silberfaden gefasst. Kühles kosmisches Schimmern.
+• Sterngewebe-Handwickel (starweave_handwraps.png) — Stoff-Handwickel aus Sterngewebe, mitternachtsblau mit winzigen Sternenlicht-Punkten und silbernen Runenfäden an den Handrücken. Kühles kosmisches Silber-Blau-Glühen.
+• Sterngewebe-Sandalen (starweave_sandals.png) — Leichte Stoffsandalen aus Sterngewebe, mitternachtsblau mit funkelnden Sternenpunkten, silberne Bänder, wie in Sternenlicht getauchte Schritte. Kühles kosmisches Schimmern.
+
+
+############### A · GRABSTAHL-AUSRÜSTUNG (Gravesteel — Krypta-Schmiede, L24–26, rare) (3) ###############
+
+--- A-GRABSTAHL Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Grabstahlklinge (gravesteel_blade.png) — Ein einhändiges Schwert, geschmiedet aus Grabstahl — Erz, das man aus den Knochen der Krypta selbst gräbt. Kalte blau-schwarze Klinge mit fahlem Grabfrost-Schimmer, ein Griff aus dunklem Leder, das Parierstück von kleinen Knochen-/Grabstein-Motiven gesäumt. Ein Fluch für alles Untote, das sich nicht mehr regen sollte. Schwaches fahl-grünes Grablicht in der Klingenrille.
+• Grabstahl-Grabmal (gravesteel_gravemark.png) — Ein Nebenhand-Schutzzeichen (Ward) in Form eines kleinen Grabsteins/Grabmals, umgeschmiedet zu einem Talisman — eine Platte aus dunklem Grabstahl mit eingravierten Epitaph-Glyphen, wie ein kleines, wachsames Grab in der Hand. Fahl-grünes Glimmen in den Gravuren, düster und wachsam.
+• Grabstahl-Kriegsplatte (gravesteel_warplate.png) — Ein schwerer Brustpanzer, aus Grabstahlbarren gehämmert — dunkles blau-schwarzes Metall, massive vernietete Platten, so schwer, als schlüge die Krypta selbst zurück. Ein kleines Grabkreuz-Motiv ziert die Brust. Grimmig, mattschwarzer Metallglanz, kein Glow (höchstens schwaches fahl-grünes Grablicht in den Fugen).
+
+
+############### A · MONSTER (Gegner-Illustration — 3 neue Zonen-Mobs) (3) ###############
+
+--- A-MONSTER Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Wildziege (feral_goat.png) — Eine verwilderte Bergziege der Weiden (Lvl 12): struppiges, schmutzig grau-braunes Fell, lange geschwungene, geriffelte Hörner, wilde gelbe Schlitzaugen; der Kopf gesenkt, kampfbereit zum Rammstoß, die Hufe auf steinig-kargem Weideboden. Kein Glow — ein zotteliges, aggressives wildes Tier in düsterer Dark-Fantasy-Stimmung.
+• Aschfeld-Schakal (ashfield_jackal.png) — Ein hagerer Schakal, der durch die aschbedeckten Aschfelder streift (Lvl 32): räudiges grau-schwarzes Fell, aschgrau überstäubt, die Rippen zeichnen sich ab; matt orange glühende Augen spiegeln die schwelende Asche wider, die Fänge entblößt, um die Pfoten treiben Asche und Glutflocken. Dunkel und bedrohlich, kalt-glimmender Blick.
+• The Imp (the_imp.png) — Ein kleiner, hämischer magischer Kobold-Dämon der Weiden/Pastures: schmächtige, spindeldürre Gestalt mit gräulich-violetter Haut, spitzen Ohren und kleinen Hörnern, ein boshaftes Grinsen mit spitzen Zähnchen. In der Klaue flackert ein Fünkchen dämmriger Arkan-Energie (dim essence). Dunkle Dark-Fantasy, KEIN Pixel-Art, ein einzelnes zentriertes Bild, dunkler/transparenter Hintergrund, dezenter violett-arkaner Glow.
+
+
+###############################################################################
+############### TEIL B — NOCH OFFEN AUS RUNDE 3 (22 Items — vom Chef noch nicht geliefert) ###############
+###############################################################################
+
+############### B · RÜSTUNG / WAFFEN / SCHMUCK (3) ###############
+
+--- B-RÜSTUNG/WAFFEN/SCHMUCK Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Aetherschuppen-Kürass (aetherscale_cuirass.png) — Ein hochwertiger Brustpanzer aus überlappenden, ätherisch schimmernden Aether-Schuppen — wie die Schuppen eines Himmelsdrachen, blass türkis-blau und perlmuttartig irisierend. Die Schuppenreihen fächern sich von der Brustmitte nach außen; kantige Schulterstücke tragen feine arkane Gravuren. Epische Verteidigungsrüstung mit einem Hauch Magie. Kühler türkis-weißer Aether-Schimmer über den Schuppenkanten.
+• Frostkavernen-Bogen (frostcaverns_bow.png) — Ein epischer Langbogen, geborgen aus den eisigen Frostkavernen — die Bogenarme wirken wie aus klarem Gletschereis gewachsen, mit Raureif überzogen. Kristalline eisblaue Struktur mit weißen Frostadern; die Sehne glitzert wie gefrorener Faden, an den Limbspitzen hängen kleine Eiszapfen. Starker eisig-blauer Frost-Glow, kalte Nebelschwaden angedeutet.
+• Edelsteinamulett (gemstone_amulet.png) — Ein Amulett aus poliertem Eisen mit einem großen facettierten Edelstein in schlichter Krallenfassung, an einer feinen Kette — das Gegenstück zum Edelsteinring, saubere Juwelierskunst. Blau-grüner Edelstein, poliertes Silber-Eisen der Fassung, elegante aber schlichte Handwerksqualität. Kühler blauer Schimmer des Steins; dezent und edel.
+
+
+############### B · RUNEN (Schock / Sturm — Tier 1 & 2) (2) ###############
+
+--- B-RUNEN Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Rune des Sturms I (rune_storm_i.png) — Ein kleiner, flacher Runenstein der ersten Stufe, in dessen Oberfläche eine Sturm-/Blitzrune eingraviert ist. Grauer Stein mit schwach gelb glimmenden Rune-Linien und einzelnen winzigen Funken — die schwächste Sturmrune, nur ein leises Knistern. Dezentes gelbliches Glühen, minimaler Blitz-Effekt.
+• Rune des Sturms II (rune_storm_ii.png) — Ein Runenstein der zweiten Stufe mit tiefer eingebrannter Sturmrune, die deutlich heller gelb-weiß leuchtet; feine violette Blitzbögen zucken über die Steinoberfläche. Kräftigeres Knistern als Stufe I, aber noch nicht das volle Gewitter. Mittleres gelb-weißes Kernleuchten mit kleinen violetten Blitz-Ausläufern.
+
+
+############### B · FARMING — SAMEN & ERNTE (2) ###############
+
+--- B-FARMING Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Dämmerkappen-Saat (duskcap_seed.png) — Ein kleiner Lederbeutel mit dunklen Pilzsporen der Dämmerkappe — aus diesen Sporen sprießt der Dämmerpilz. Fein-körnige, violett-braune Sporen quellen leicht aus der geöffneten Beutelöffnung; die Naht ist mit einem Pilz-Symbol versiegelt. Gedämpftes Violett-Braun, kein Glow.
+• Dämmerkappe (duskcap.png) — Ein Büschel dunkler Dämmerpilze — gedrungene Hüte in dämmrigem Grau-Violett, deren Ränder ins tiefe Zwielichtblau verlaufen; die blassen Stiele stehen dicht beieinander. Auf der Kappenoberfläche ein feiner, staubartiger Sporenüberzug. Kein grelles Leuchten; höchstens ein sanft violettes Zwielicht-Glimmen an den Kappenrändern.
+
+
+############### B · TRÄNKE / TONIKA (2) ###############
+
+--- B-TRÄNKE Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Dämmerkappen-Tonikum (duskcap_tonic.png) — Ein Heiltrank, gebraut aus Dämmerpilzen — eine bauchige Glasphiole mit dämmrig violett-braunem Sud, in dem winzige Pilzstückchen schweben. Der Korkstopfen trägt ein kleines Mond-/Pilz-Motiv; die Flüssigkeit schimmert sanft im Zwielicht. Weiches violettes Innenleuchten, ruhig und heilsam wirkend.
+• Ergiebigkeits-Tonikum (tonic_bounty.png) — Ein Sammler-Tonikum, das den Ertrag beim Sammeln steigert — eine gedrungene Phiole mit warm bernstein-goldenem Sud, der wie flüssiger Honig glänzt. Ein kleines Ähren-/Blätter-Motiv ziert das Etikett oder den Korkverschluss; ein paar goldene Blattfragmente schweben im Trank. Warmes goldgelbes Leuchten — Fülle und Ernte.
+
+
+############### B · SLAYER-ZWISCHENPRODUKTE (Crafting) (2) ###############
+
+--- B-SLAYER-CRAFTING Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Slayer-Schutzkapsel (slayer_ward_capsule.png) — Eine versiegelte, längliche Metallkapsel, in der alle vier Turmschutz-Komponenten zu einem einzigen Schutzkern verschmolzen sind — ein seltenes Zwischenprodukt der Slayer-Helm-Kette. Dunkles, poliertes Metallgehäuse mit einem schmalen Sichtfenster, durch das ein violett pulsierender Kern glüht; feine Schutzrunen umlaufen die Naht. Violett-blauer Kernschimmer, technisch-arkan.
+• Turmschmiedeschmelze (tower_forge_compound.png) — Ein dichter, ziegelartiger Barren einer schweren Legierung aus Leerenessenz, Pestknochenasche und Schmiedeglut-Schlacke, stabilisiert durch einen abyssalen Kern. Tiefschwarz-graues, grob gegossenes Metallblock mit erstarrten Schlackenblasen; durch die Risse glüht orange-rote Restglut, durchzogen von violetten Leerenadern. Roter Glut-Glow in den Rissen plus schwaches violettes Adernleuchten.
+
+
+############### B · BÖGEN / RANGED-RÜSTUNG (2) ###############
+
+--- B-BÖGEN/RANGED Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Pestholz-Kurzbogen (mithril_shortbow.png) — Ein schmaler Kurzbogen aus Pestholz, gemustert in kränklichem Olivgrün und Grau. Trotz seines unappetitlichen Materials besitzt er außergewöhnliche Federkraft; die Sehne summt giftig. Olivgrau mit schwach violettem Randleuchten.
+• Leerenleder-Beinschienen (voidhide_legs.png) — Beinschutz aus Schattenleder mit Leerenrunen durchwirkt — der Träger bewegt sich lautlos wie ein Schatten. Tiefschwarz, mit violetten Runenlinien längs der Außennaht; der Schnitt ist schlank und präzise. Violetter Schimmer, intensiv längs der Runenlinien.
+
+
+############### B · SLAYER-AUSRÜSTUNG (2) ###############
+
+--- B-SLAYER-AUSRÜSTUNG Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 2 angefragte Icons = 2 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Seuchenmaske (plague_mask.png) — Eine versiegelte Schnabelmaske aus gewachstem Leder und Sumpfwurzel-Paste — gebaut, um den schlimmsten Gestank des Fäulnisturms fernzuhalten. Die lange Schnabelnase enthält getrocknete Kräuterbündel; Metallschnallen sichern sie eng am Gesicht. Dunkelbraunes gewachstes Leder, kein Glow — zweckgebunden und unappetitlich.
+• Spiegelschutz (mirror_ward.png) — Ein kleiner polierter Eisentalisman in Form eines runden Spiegels, mit Anti-Reflexions-Runen auf der Rückseite graviert. Das Spiegelglas reflektiert unnatürlich klar; die Rückseite trägt eingravierte Schutz-Glyphen. Silbernes Metall mit leichtem blaugrauem Schimmer.
+
+
+############### B · MATERIALIEN / MONSTER-DROPS (4) ###############
+
+--- B-MATERIALIEN Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 4 angefragte Icons = 4 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Trübergaderz (murkvein_ore.png) — Ein roher Erzbrocken aus den mittleren Minenschächten — grau-oliv gefärbt mit dunklen, trübgrünen Schlieren wie getrübtes Wasser im Stein. Die Oberfläche ist unregelmäßig und rissig; das Erz riecht leicht metallisch-faulig. Mattes Oliv-Grau, kein Glow.
+• Trübergadbarren (murkvein_bar.png) — Ein gegossener Barren aus erschmolzenem Trübergaderz — länglich, mit der charakteristischen grün-grauen Tönung des Metalls. Glatte Oberfläche mit leichten Farbflecken durch mineralische Verunreinigungen; das Metall wirkt gedämpft. Gedämpftes Oliv-Grau, leichter metallischer Glanz.
+• Verfaulte Drüse (rot_gland.png) — Eine eiternde, schwabbelige Drüse eines Seuchenwesens — Kräuterkunde-Zutat für Resistenz-Tonika. Unappetitlich gelblich-grün, leicht durchsichtig mit dunklen organischen Einschlüssen. Kein Glow; reines, schlichtes Ekelmaterial.
+• Seelenschinder-Reißzahn (soul_flayer_fang.png) — Ein geschwungener Reißzahn, der nach verbrannten Seelen riecht — seltener Drop des Seelenschinders. Elfenbeinweiß, stark eingebogen, mit einem bläulichen Unterton aus kristallisierter Seelen-Energie. Schwacher bläulich-weißer Glow, unheimlich und kalt.
+
+
+############### B · SAMEN / KRÄUTER / RUNEN (3) ###############
+
+--- B-SAMEN/KRÄUTER/RUNEN Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Nachtschatten-Saat (nightshade_seed.png) — Ein Beutel kleiner, tiefdunkler Samenkörner — die Nachtschatten-Pflanze, giftig und magisch zugleich. Dunkelviolett-schwarze Körnchen in einem schlichten Lederbeutel mit einem Warnsymbol eingebrannt. Kein Glow; gedämpftes, bedrohliches Erscheinungsbild.
+• Alraunenwurzel (mandrake_root.png) — Eine frische, fleischige Alraunenwurzel mit einer unheimlich menschenähnlichen, gegabelten Form. Blassgelb mit braunen Erdflecken; die Gabelung der Wurzel erinnert an zwei Beine, der obere Knoten an einen Kopf. Kein Glow; reines Naturmaterial mit makabrer Silhouette.
+• Rune des Sturms III (rune_storm_iii.png) — Ein mächtiger Runenstein der dritten Stufe — in gelb-violetten Blitzen knisternd, als wäre ein volles Gewitter ins Gestein eingesperrt. Die eingravierten Sturmrunen leuchten intensiv weiß mit violetten Blitzbögen; der Stein vibriert spürbar. Starkes weißes Kernleuchten mit violetten Blitz-Ausstülpungen — der stärkste Sturmrunenstein (Abschluss der Reihe I/II/III).
+
+
+=== ENDE — 45 Item-Icons + 3 Monster-Bilder (23 Items + 3 Monster NEU seit Runde 3; 22 Items offen aus Runde 3). ===
+Hinweis the_imp: wird gerade parallel als Content angelegt und taucht im Scan vom 2026-07-04 evtl. noch nicht auf — auf Chef-Wunsch bereits hier mit aufgenommen.

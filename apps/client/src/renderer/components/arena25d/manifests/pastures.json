@@ -1,0 +1,51 @@
+{
+  "zoneId": "pastures",
+  "ground": "arena_pastures_ground.webp",
+  "backdrop": "arena_pastures_backdrop.webp",
+  "lighting": {
+    "sunColor": "#ffd9a0",
+    "sunIntensity": 3.4,
+    "sunAngleDeg": 46,
+    "sunAzimuthDeg": 26,
+    "ambientColor": "#9fb8dd",
+    "ambientIntensity": 1.1,
+    "fogColor": "#e8c98a",
+    "fogDensity": 0,
+    "grade": {
+      "saturation": 1,
+      "temperature": 0,
+      "lift": 0
+    }
+  },
+  "props": [
+    {
+      "file": "arena_pastures_prop_01.webp",
+      "x": -7.4,
+      "z": 2,
+      "scale": 1.7,
+      "layer": "back"
+    },
+    {
+      "file": "arena_pastures_prop_02.webp",
+      "x": 7.1,
+      "z": 2.2,
+      "scale": 1,
+      "flip": true,
+      "layer": "back"
+    },
+    {
+      "file": "arena_pastures_prop_03.webp",
+      "x": -4.4,
+      "z": 8.6,
+      "scale": 1,
+      "layer": "mid"
+    },
+    {
+      "file": "arena_pastures_prop_04.webp",
+      "x": 5.7,
+      "z": 5.3,
+      "scale": 0.9,
+      "layer": "mid"
+    }
+  ]
+}

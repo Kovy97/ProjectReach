@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Button-Board — Task #322</title>
+<style>
+
+@font-face {
+  font-family: "Cinzel";
+  src: url("../src/renderer/fonts/Cinzel-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  /* mirrors apps/client/src/renderer/styles/base.css + design-system.css */
+  --bg-deep: #0d0f12;
+  --panel: #1e2329;
+  --border: #333c44;
+  --border-bright: #4d5963;
+  --text: #ccd5db;
+  --muted: #79848c;
+  --accent: #9a8060;
+  --accent-2: #b39468;
+  --danger: #a85a52;
+  --gold: #d8c06a;
+
+  --ds-gold-bright: #f0dca0;
+  --ds-gold: #d8b870;
+  --ds-gold-dim: #a07840;
+  --ds-bronze-bright: #d8904a;
+  --ds-bronze: #b86030;
+  --ds-bronze-dim: #7a3c18;
+  --ds-parch-ink: #e8d8b0;
+  --ds-border: rgba(50, 36, 20, 0.9);
+
+  --font-head: "Cinzel", "Segoe UI", serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  /* Prose stays in a readable sans — this is a decision document, not in-game chrome.
+     Cinzel (var(--font-head)) is applied explicitly below to headings/labels/buttons only,
+     since those ARE the actual UI chrome being compared. */
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background:
+    linear-gradient(rgba(10,10,12,0.55), rgba(10,10,12,0.55)),
+    url("../src/renderer/assets/bg_tileable_stone.webp") top left repeat;
+  background-size: auto, 420px 420px;
+  padding: 40px 0 90px;
+}
+
+.board {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ─── Page header ─────────────────────────────────────── */
+.page-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.page-head h1 {
+  font-family: var(--font-head);
+  font-size: 34px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ds-gold-bright);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  margin: 0 0 8px;
+}
+.page-head p {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--muted);
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ─── Recommendation callout ─────────────────────────── */
+.reco {
+  max-width: 1100px;
+  margin: 24px auto 40px;
+  padding: 18px 26px;
+  border: 1px solid var(--ds-gold-dim);
+  background: linear-gradient(160deg, rgba(38,30,20,0.9), rgba(20,16,12,0.9));
+  border-radius: 3px;
+  box-shadow: 0 0 24px rgba(216,184,112,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.reco h2 {
+  font-family: var(--font-head);
+  margin: 0 0 8px;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ds-gold-bright);
+}
+.reco p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ds-parch-ink);
+}
+.reco p:last-child { margin-bottom: 0; }
+.reco b { color: var(--ds-gold-bright); }
+
+/* ─── Variant card (9-slice wooden frame, like .ds-frame) ── */
+.card {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 26px;
+  border-image-source: url("../src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 26px;
+  border-image-repeat: stretch;
+  background: url("../src/renderer/assets/bg_black.webp") repeat;
+  margin-bottom: 34px;
+}
+.card-inner {
+  padding: 4px 10px 18px;
+}
+.card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.card-head .tag {
+  font-family: var(--font-head);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ds-bronze-bright);
+  border: 1px solid var(--ds-bronze-dim);
+  padding: 2px 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.card-head h3 {
+  font-family: var(--font-head);
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ds-gold-bright);
+}
+.card-desc {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.55;
+  max-width: 980px;
+  margin: 4px 0 18px;
+}
+.card-desc b { color: var(--ds-parch-ink); font-weight: 700; }
+
+/* ─── State matrix ────────────────────────────────────── */
+.state-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.state-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 10px;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 2px;
+}
+.state-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ─── Context row ─────────────────────────────────────── */
+.context-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 20px;
+  border-image-source: url("../src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 20px;
+  border-image-repeat: stretch;
+  background: url("../src/renderer/assets/bg_black.webp") repeat;
+}
+.context-caption {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px 2px;
+}
+
+/* ══════════════════════════════════════════════════════
+   BUTTON BASE — shared by all candidate variants
+   ══════════════════════════════════════════════════════ */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 196px;
+  min-height: 50px;
+  padding: 12px 26px;
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  isolation: isolate;
+  transition: filter 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s, border-color 0.15s, transform 0.06s;
+}
+.btn:active, .btn.is-active { transform: translateY(1px); }
+
+/* Uniform disabled recipe for ALL new candidates — resolves audit finding 1.3
+   (4 different disabled recipes app-wide). V0 keeps its real current recipe
+   below for an honest baseline comparison. */
+.btn:disabled {
+  cursor: default;
+  filter: grayscale(0.6) brightness(0.6);
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn-secondary {
+  min-width: 150px;
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  color: var(--accent-2);
+  border-radius: 2px;
+}
+.btn-secondary:hover {
+  background: var(--panel);
+  border-color: var(--accent);
+}
+
+/* ══════════════════════════════════════════════════════
+   V0 — IST-ZUSTAND (aktuelles .combat-btn, unverändert)
+   ══════════════════════════════════════════════════════ */
+.btn-v0 {
+  border-radius: 0;
+  background-color: transparent;
+  background-image: url("../src/renderer/assets/ui/buttons/sidebar_btn_normal.webp");
+  background-size: 100% 125%;
+  background-position: 50% 44%;
+  background-repeat: no-repeat;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 3px #000;
+}
+.btn-v0:hover, .btn-v0.is-hover {
+  background-image: url("../src/renderer/assets/ui/buttons/sidebar_btn_hover.webp");
+  color: #fff;
+}
+.btn-v0:active, .btn-v0.is-active {
+  background-image: url("../src/renderer/assets/ui/buttons/sidebar_btn_active.webp");
+  color: #fff;
+  transform: none;
+}
+.btn-v0:disabled {
+  background-image: url("../src/renderer/assets/ui/buttons/sidebar_btn_normal.webp");
+  filter: none;
+  opacity: 0.45;
+}
+
+/* ══════════════════════════════════════════════════════
+   V1 — GEPRÄGTES GOLD
+   Dunkler Holzgrund (bg_tileable_wood) + geprägte Gold-Schrift.
+   ══════════════════════════════════════════════════════ */
+.btn-v1 {
+  border-radius: 2px;
+  border: 2px solid var(--ds-gold-dim);
+  background:
+    linear-gradient(rgba(8,6,3,0.58), rgba(8,6,3,0.58)),
+    url("../src/renderer/assets/bg_tileable_wood.webp") repeat;
+  background-size: auto, 200px 200px;
+  color: var(--ds-gold-bright);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 -1px 0 rgba(255,224,170,0.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 0 0 1px rgba(0,0,0,0.55);
+}
+.btn-v1:hover, .btn-v1.is-hover {
+  border-color: var(--ds-gold-bright);
+  background:
+    linear-gradient(rgba(24,16,7,0.42), rgba(24,16,7,0.42)),
+    url("../src/renderer/assets/bg_tileable_wood.webp") repeat;
+  background-size: auto, 200px 200px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 0 18px rgba(216,144,74,0.45);
+}
+.btn-v1:active, .btn-v1.is-active {
+  border-color: var(--ds-gold-dim);
+  background:
+    linear-gradient(rgba(3,2,1,0.72), rgba(3,2,1,0.72)),
+    url("../src/renderer/assets/bg_tileable_wood.webp") repeat;
+  background-size: auto, 200px 200px;
+  box-shadow: inset 0 3px 7px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(0,0,0,0.5);
+  color: var(--ds-gold-bright);
+}
+
+/* ══════════════════════════════════════════════════════
+   V2 — ROT VEREDELT
+   Evolution des Bestands: tiefes Karmesin + Gold-Trim, echter Bevel.
+   ══════════════════════════════════════════════════════ */
+.btn-v2 {
+  border-radius: 2px;
+  border: 1px solid var(--ds-gold-dim);
+  background: linear-gradient(180deg, #641c14 0%, #400f0a 55%, #2a0806 100%);
+  color: var(--ds-parch-ink);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255,205,165,0.20),
+    inset 0 -12px 16px rgba(0,0,0,0.40),
+    0 1px 2px rgba(0,0,0,0.6);
+}
+.btn-v2:hover, .btn-v2.is-hover {
+  border-color: var(--ds-gold-bright);
+  background: linear-gradient(180deg, #822b1f 0%, #55130d 55%, #390b08 100%);
+  color: #ffe9d8;
+  box-shadow:
+    inset 0 1px 0 rgba(255,215,175,0.26),
+    inset 0 -12px 16px rgba(0,0,0,0.35),
+    0 0 16px rgba(170,45,28,0.55);
+}
+.btn-v2:active, .btn-v2.is-active {
+  border-color: var(--ds-gold-dim);
+  background: linear-gradient(180deg, #260906 0%, #180504 100%);
+  box-shadow: inset 0 4px 9px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(0,0,0,0.5);
+  color: var(--ds-parch-ink);
+}
+
+/* ══════════════════════════════════════════════════════
+   V3 — GESCHMIEDETES EISEN
+   Dunkles Metall, Nieten in den Ecken, Gold-Akzent nur bei Hover.
+   ══════════════════════════════════════════════════════ */
+.btn-v3 {
+  border-radius: 2px;
+  border: 1px solid #53565c;
+  background:
+    radial-gradient(circle 3px at 11px 11px, #cfc196 0 45%, transparent 46%),
+    radial-gradient(circle 3px at calc(100% - 11px) 11px, #cfc196 0 45%, transparent 46%),
+    radial-gradient(circle 3px at 11px calc(100% - 11px), #cfc196 0 45%, transparent 46%),
+    radial-gradient(circle 3px at calc(100% - 11px) calc(100% - 11px), #cfc196 0 45%, transparent 46%),
+    linear-gradient(180deg, #3d4046 0%, #202226 55%, #17181b 100%);
+  color: #d9dee3;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.09), inset 0 -9px 13px rgba(0,0,0,0.35);
+}
+.btn-v3:hover, .btn-v3.is-hover {
+  border-color: var(--ds-gold-dim);
+  color: var(--ds-gold-bright);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.11),
+    inset 0 -9px 13px rgba(0,0,0,0.3),
+    0 0 13px rgba(216,184,112,0.35);
+}
+.btn-v3:active, .btn-v3.is-active {
+  background:
+    radial-gradient(circle 3px at 11px 11px, #cfc196 0 45%, transparent 46%),
+    radial-gradient(circle 3px at calc(100% - 11px) 11px, #cfc196 0 45%, transparent 46%),
+    radial-gradient(circle 3px at 11px calc(100% - 11px), #cfc196 0 45%, transparent 46%),
+    radial-gradient(circle 3px at calc(100% - 11px) calc(100% - 11px), #cfc196 0 45%, transparent 46%),
+    linear-gradient(180deg, #202226 0%, #141517 100%);
+  box-shadow: inset 0 4px 9px rgba(0,0,0,0.6);
+  color: var(--ds-gold-bright);
+}
+
+/* ══════════════════════════════════════════════════════
+   V4 — WACHSSIEGEL-AKZENT
+   Neutraler Citadel-Button; Rot lebt nur noch als kleines Siegel.
+   ══════════════════════════════════════════════════════ */
+.btn-v4 {
+  border-radius: 2px;
+  border: 1px solid var(--ds-border);
+  background:
+    linear-gradient(rgba(20,14,8,0.72), rgba(20,14,8,0.72)),
+    url("../src/renderer/assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink);
+}
+.btn-v4::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 35% 30%, #c23f2f 0%, #6e120c 75%);
+  box-shadow: 0 0 0 2px var(--ds-gold-dim), inset 0 0 5px rgba(0,0,0,0.6);
+  transition: box-shadow 0.15s;
+}
+.btn-v4:hover, .btn-v4.is-hover {
+  border-color: var(--ds-gold-dim);
+  box-shadow: 0 0 12px rgba(216,184,112,0.22);
+  color: var(--ds-gold-bright);
+}
+.btn-v4:hover::before, .btn-v4.is-hover::before {
+  box-shadow: 0 0 0 2px var(--ds-gold-bright), 0 0 9px rgba(200,50,30,0.65);
+}
+.btn-v4:active, .btn-v4.is-active {
+  background:
+    linear-gradient(rgba(70,46,16,0.55), rgba(70,46,16,0.55)),
+    url("../src/renderer/assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright);
+}
+.btn-v4:disabled::before { box-shadow: 0 0 0 2px var(--ds-gold-dim); }
+
+/* ══════════════════════════════════════════════════════
+   V5 — ORNAMENT-UNDERSTATEMENT
+   Fast flächenlos, Gold-Ornamente flankieren den Text.
+   ══════════════════════════════════════════════════════ */
+.btn-v5 {
+  min-width: unset;
+  padding: 10px 6px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ds-gold-dim);
+  color: var(--ds-gold);
+}
+.btn-v5::before, .btn-v5::after {
+  content: "❖";
+  font-size: 11px;
+  color: var(--ds-gold-dim);
+  transition: color 0.15s, transform 0.15s;
+}
+.btn-v5:hover, .btn-v5.is-hover {
+  color: var(--ds-gold-bright);
+  border-color: var(--ds-gold-bright);
+}
+.btn-v5:hover::before, .btn-v5:hover::after,
+.btn-v5.is-hover::before, .btn-v5.is-hover::after {
+  color: var(--ds-gold-bright);
+}
+.btn-v5:active, .btn-v5.is-active {
+  color: var(--ds-bronze-bright);
+  border-color: var(--ds-bronze-bright);
+}
+.btn-v5:active::before, .btn-v5:active::after,
+.btn-v5.is-active::before, .btn-v5.is-active::after {
+  color: var(--ds-bronze-bright);
+}
+.btn-v5:disabled { border-color: var(--ds-gold-dim); }
+
+/* ─── Asset/token footer per card ─────────────────────── */
+.card-tokens {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--muted);
+  border-top: 1px dashed rgba(255,255,255,0.08);
+  padding-top: 10px;
+}
+.card-tokens code {
+  color: var(--ds-bronze-bright);
+  background: rgba(0,0,0,0.3);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+</style>
+</head>
+<body>
+<div class="board">
+
+  <div class="page-head">
+    <h1>Button-Board — Task #322</h1>
+    <p>Design-Exploration für einen neuen Primär-Button. Chef-O-Ton: „unsere roten Buttons gefallen mir nicht
+      mehr ganz so." Alle Varianten sind reines CSS + bestehende Repo-Assets (9-Slice-Rahmen, Texturen,
+      Cinzel) — jede Variante ist 1:1 in <code>combat.css</code> umsetzbar. Vier Zustände je Variante
+      (Normal / Hover / Pressed / Disabled) + eine Kontext-Zeile, wie der Button neben einem
+      Sekundär-Button im Kampf-Bildschirm stünde.</p>
+  </div>
+
+  <div class="reco">
+    <h2>Design-Empfehlung</h2>
+    <p><b>Primär-Kandidat: V1 „Geprägtes Gold".</b> Es löst den eigentlichen Kern der Beschwerde (Rot raus),
+      statt Rot nur zu polieren — und es ist der billigste Umbau, weil es exakt die Bronze/Gold-Tokens und
+      die Holz-/Bronze-Sprache wiederverwendet, die Panels, Rahmen und Tooltips im Spiel bereits tragen
+      (<code>--ds-gold*</code>, <code>wooden_frame_with_corners.webp</code>). Gold als Primärfarbe kollidiert
+      zudem nicht mit den bereits belegten Bedeutungen von Rot im Spiel (Gefahr/HP/unerfüllte Anforderungen).</p>
+    <p><b>Zweite Empfehlung:</b> Rot nicht komplett verbannen, sondern auf die destruktive Rolle verengen —
+      <b>V2 „Rot veredelt"</b> als <code>.flee</code>/„Verkaufen"/„Löschen"-Stil. Damit bekommt die App endlich
+      eine echte Primär/Sekundär/Destruktiv-Semantik statt eines einzigen Rot-Tons für alles.</p>
+    <p><b>Falls noch neutraler gewünscht:</b> V4 „Wachssiegel" ist die zurückhaltendste Primär-Alternative
+      (Rot bleibt als Miniatur-Detail sichtbar, ohne die Fläche zu dominieren). V5 passt gut für
+      Tertiär-/Text-Aktionen, die heute schon <code>.combat-btn.ghost</code> übernimmt. V3 „Geschmiedetes
+      Eisen" ist ein solider neutraler Confirm-Stil, sollte aber im echten UI auf Kontrast gegen dunkle
+      Panels geprüft werden, bevor er als Primär läuft.</p>
+  </div>
+
+  <!-- ═══ V0 — IST ═══ -->
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-head">
+        <span class="tag">IST-Zustand</span>
+        <h3>V0 — Aktueller roter Button</h3>
+      </div>
+      <p class="card-desc">Der heutige <code>.combat-btn</code>: gotischer Eisenrahmen mit sattem Rot-Velvet
+        (<code>sidebar_btn_normal/hover/active.webp</code>). <b>Referenzpunkt für den Vergleich</b> — dies ist
+        das, was ersetzt oder veredelt werden soll.</p>
+      <div class="state-row">
+        <div class="state-cell"><span class="state-label">Normal</span><button class="btn btn-v0">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Hover</span><button class="btn btn-v0 is-hover">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Pressed</span><button class="btn btn-v0 is-active">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Disabled</span><button class="btn btn-v0" disabled>Attack</button></div>
+      </div>
+      <p class="context-caption">Kontext: Kampf-Bildschirm heute</p>
+      <div class="context-row">
+        <button class="btn btn-v0">Attack</button>
+        <button class="btn btn-secondary">Flee</button>
+      </div>
+      <div class="card-tokens">Assets: <code>ui/buttons/sidebar_btn_normal.webp</code>,
+        <code>sidebar_btn_hover.webp</code>, <code>sidebar_btn_active.webp</code> · Quelle: <code>combat.css:3415</code></div>
+    </div>
+  </div>
+
+  <!-- ═══ V1 ═══ -->
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-head">
+        <span class="tag">Kandidat 1</span>
+        <h3>V1 — Geprägtes Gold</h3>
+      </div>
+      <p class="card-desc"><b>Charakter:</b> ruhig, wertig, wie in Metall/Holz geprägte Schrift — wirkt wie ein
+        Ausrüstungsgegenstand, nicht wie eine App-Schaltfläche. <b>Wofür sie spricht:</b> löst „Rot raus"
+        direkt und maximal günstig, weil sie 1:1 die Gold/Bronze-Sprache übernimmt, die Panels und Tooltips
+        im Spiel schon tragen — kein neuer Farbcode, keine neue Textur nötig.</p>
+      <div class="state-row">
+        <div class="state-cell"><span class="state-label">Normal</span><button class="btn btn-v1">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Hover</span><button class="btn btn-v1 is-hover">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Pressed</span><button class="btn btn-v1 is-active">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Disabled</span><button class="btn btn-v1" disabled>Attack</button></div>
+      </div>
+      <p class="context-caption">Kontext: Kampf-Bildschirm mit V1</p>
+      <div class="context-row">
+        <button class="btn btn-v1">Attack</button>
+        <button class="btn btn-secondary">Flee</button>
+      </div>
+      <div class="card-tokens">Assets/Tokens: <code>bg_tileable_wood.webp</code>, <code>--ds-gold-bright</code>,
+        <code>--ds-gold-dim</code> · kein neues Asset nötig</div>
+    </div>
+  </div>
+
+  <!-- ═══ V2 ═══ -->
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-head">
+        <span class="tag">Kandidat 2</span>
+        <h3>V2 — Rot veredelt</h3>
+      </div>
+      <p class="card-desc"><b>Charakter:</b> die Evolution des Bestands — tiefes Karmesin statt Comic-Rot,
+        echter Bevel/Innenschatten, Gold-Trim statt Eisenrahmen. <b>Wofür sie spricht:</b> für Chefs, die am
+        Rot grundsätzlich hängen, aber die „billige PNG-Banner"-Anmutung loswerden wollen — funktioniert auch
+        gut als neue <i>destruktive</i> Rolle (Flee/Verkaufen/Löschen), falls Gold den Primär-Platz übernimmt.</p>
+      <div class="state-row">
+        <div class="state-cell"><span class="state-label">Normal</span><button class="btn btn-v2">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Hover</span><button class="btn btn-v2 is-hover">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Pressed</span><button class="btn btn-v2 is-active">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Disabled</span><button class="btn btn-v2" disabled>Attack</button></div>
+      </div>
+      <p class="context-caption">Kontext: Kampf-Bildschirm mit V2</p>
+      <div class="context-row">
+        <button class="btn btn-v2">Attack</button>
+        <button class="btn btn-secondary">Flee</button>
+      </div>
+      <div class="card-tokens">Tokens: reines CSS-Gradient (kein Textur-Asset), <code>--ds-gold-dim</code>-Trim</div>
+    </div>
+  </div>
+
+  <!-- ═══ V3 ═══ -->
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-head">
+        <span class="tag">Kandidat 3</span>
+        <h3>V3 — Geschmiedetes Eisen</h3>
+      </div>
+      <p class="card-desc"><b>Charakter:</b> nüchtern, hart, „Waffenschmiede" — dunkles Metall mit vier
+        Niet-Punkten in den Ecken, im Ruhezustand komplett ohne Farbakzent. <b>Wofür sie spricht:</b> die
+        neutralste, am wenigsten „laute" Primär-Option; Gold erscheint erst bei Hover als Belohnungssignal.
+        Passt gut zu Waffen-/Schmiede-Themen, sollte aber auf Kontrast gegen dunkle Panels getestet werden.</p>
+      <div class="state-row">
+        <div class="state-cell"><span class="state-label">Normal</span><button class="btn btn-v3">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Hover</span><button class="btn btn-v3 is-hover">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Pressed</span><button class="btn btn-v3 is-active">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Disabled</span><button class="btn btn-v3" disabled>Attack</button></div>
+      </div>
+      <p class="context-caption">Kontext: Kampf-Bildschirm mit V3</p>
+      <div class="context-row">
+        <button class="btn btn-v3">Attack</button>
+        <button class="btn btn-secondary">Flee</button>
+      </div>
+      <div class="card-tokens">Tokens: reines CSS (radial-gradient Nieten + linear-gradient Metall), kein Asset</div>
+    </div>
+  </div>
+
+  <!-- ═══ V4 ═══ -->
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-head">
+        <span class="tag">Kandidat 4</span>
+        <h3>V4 — Wachssiegel-Akzent</h3>
+      </div>
+      <p class="card-desc"><b>Charakter:</b> zurückhaltender Citadel-Standard-Button, der Rot nur noch als
+        winziges Wachssiegel vor dem Text trägt statt als Vollfläche. <b>Wofür sie spricht:</b> maximale
+        Zurückhaltung bei minimalem Bruch mit dem Bestand — ein Kompromiss, falls Rot als Marke/Wiedererkennung
+        (nicht als Fläche) erhalten bleiben soll.</p>
+      <div class="state-row">
+        <div class="state-cell"><span class="state-label">Normal</span><button class="btn btn-v4">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Hover</span><button class="btn btn-v4 is-hover">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Pressed</span><button class="btn btn-v4 is-active">Attack</button></div>
+        <div class="state-cell"><span class="state-label">Disabled</span><button class="btn btn-v4" disabled>Attack</button></div>
+      </div>
+      <p class="context-caption">Kontext: Kampf-Bildschirm mit V4</p>
+      <div class="context-row">
+        <button class="btn btn-v4">Attack</button>
+        <button class="btn btn-secondary">Flee</button>
+      </div>
+      <div class="card-tokens">Assets/Tokens: <code>bg_black.webp</code>, Siegel = reines CSS radial-gradient</div>
+    </div>
+  </div>
+
+  <!-- ═══ V5 ═══ -->
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-head">
+        <span class="tag">Kandidat 5</span>
+        <h3>V5 — Ornament-Understatement</h3>
+      </div>
+      <p class="card-desc"><b>Charakter:</b> fast flächenlos — nur eine feine Gold-Unterkante und zwei
+        Zier-Rauten flankieren den Text. <b>Wofür sie spricht:</b> kein Primär-Kandidat, aber eine saubere
+        Tertiär-/Text-Aktion (z. B. „Abbrechen", „Alle Zonen", Links in Modals) — heute übernimmt das grob
+        <code>.combat-btn.ghost</code>, diese Variante wäre die elegantere, konsistente Nachfolge davon.</p>
+      <div class="state-row">
+        <div class="state-cell"><span class="state-label">Normal</span><button class="btn btn-v5">Cancel</button></div>
+        <div class="state-cell"><span class="state-label">Hover</span><button class="btn btn-v5 is-hover">Cancel</button></div>
+        <div class="state-cell"><span class="state-label">Pressed</span><button class="btn btn-v5 is-active">Cancel</button></div>
+        <div class="state-cell"><span class="state-label">Disabled</span><button class="btn btn-v5" disabled>Cancel</button></div>
+      </div>
+      <p class="context-caption">Kontext: neben V1 als Sekundär-Paar</p>
+      <div class="context-row">
+        <button class="btn btn-v1">Attack</button>
+        <button class="btn btn-v5">Cancel</button>
+      </div>
+      <div class="card-tokens">Tokens: reines CSS (Unicode-Raute ❖ + <code>--ds-gold-dim</code>-Linie), kein Asset</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

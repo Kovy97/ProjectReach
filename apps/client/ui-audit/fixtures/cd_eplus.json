@@ -1,0 +1,456 @@
+{
+ "version": 72,
+ "savedAt": 1784754077945,
+ "summary": {
+  "name": "Mira Ashfall",
+  "totalLevel": 510,
+  "elapsedMs": 0,
+  "activePlayMs": 0,
+  "savedAt": 1784754077945,
+  "portraitId": "char_1"
+ },
+ "state": {
+  "version": 72,
+  "rng": {
+   "state": 4200
+  },
+  "totalTicks": 0,
+  "elapsedMs": 0,
+  "activePlayMs": 0,
+  "accumulatorMs": 0,
+  "activeActionId": "mine_gravesteel",
+  "actionProgressMs": 1800,
+  "actionTarget": null,
+  "actionQueue": [],
+  "character": {
+   "name": "Mira Ashfall",
+   "portraitId": null,
+   "portrait": "char_1",
+   "createdAt": 1784754077923,
+   "baseAttributes": {
+    "str": 3,
+    "dex": 3,
+    "con": 3,
+    "int": 3,
+    "wis": 3,
+    "lck": 3
+   },
+   "totalLevel": 510,
+   "combatStyle": "attack",
+   "rangedStance": "precise",
+   "magicStance": "offensive",
+   "hp": 85,
+   "equipment": {
+    "helmet": "scaled_leather_helm",
+    "amulet": "sapphire_amulet",
+    "mainhand": "steel_warblade",
+    "offhand": "blacksteel_kiteshield",
+    "body": "frost_robe_body",
+    "legs": "blacksteel_platelegs",
+    "gloves": "barnacle_gauntlets",
+    "boots": "gravetread_sabatons",
+    "cape": "pelt_mantle",
+    "ring1": "necrosignet_ring",
+    "ring2": "aetherband_ring",
+    "tool1": "iron_pickaxe",
+    "tool2": "ash_fishing_rod",
+    "tool3": null
+   },
+   "food": "cake_honey",
+   "autoEatTier": 1,
+   "autoPotion": {
+    "healPotionId": null,
+    "healThreshold": 0.4,
+    "autoRebuffTonics": false
+   },
+   "gold": 5400,
+   "questTokens": 0,
+   "mana": 146,
+   "ward": 0,
+   "buffs": [
+    {
+     "itemId": "marshroot_chowder",
+     "remainingMs": 54000
+    },
+    {
+     "itemId": "duskfin_rangers_stew",
+     "remainingMs": 72000
+    }
+   ],
+   "companionPetId": null,
+   "ownedPets": {},
+   "equippedInstances": {}
+  },
+  "combat": {
+   "monsterId": null,
+   "enemyHp": 0,
+   "playerTimerMs": 0,
+   "enemyTimerMs": 0,
+   "kills": 0,
+   "eventCount": 0,
+   "enemyEffects": [],
+   "playerEffects": [],
+   "log": [],
+   "dungeonId": null,
+   "encounterIndex": 0,
+   "petAbility": {
+    "timerMs": 0,
+    "shieldHp": 0,
+    "blockNextHit": false,
+    "enemyStunMs": 0,
+    "enemyAccDownMs": 0,
+    "enemyAccDownPct": 0,
+    "enemyVulnMs": 0,
+    "enemyVulnPct": 0
+   }
+  },
+  "skills": {
+   "woodcutting": {
+    "xp": 7028
+   },
+   "mining": {
+    "xp": 7028
+   },
+   "fishing": {
+    "xp": 7028
+   },
+   "smithing": {
+    "xp": 7028
+   },
+   "cooking": {
+    "xp": 7028
+   },
+   "attack": {
+    "xp": 13363
+   },
+   "power": {
+    "xp": 13363
+   },
+   "defence": {
+    "xp": 13363
+   },
+   "ranged": {
+    "xp": 13363
+   },
+   "magic": {
+    "xp": 7028
+   },
+   "warding": {
+    "xp": 7028
+   },
+   "vitality": {
+    "xp": 13363
+   },
+   "farming": {
+    "xp": 7028
+   },
+   "foraging": {
+    "xp": 7028
+   },
+   "thieving": {
+    "xp": 7028
+   },
+   "leatherworking": {
+    "xp": 7028
+   },
+   "jewelcrafting": {
+    "xp": 7028
+   },
+   "runecrafting": {
+    "xp": 7028
+   },
+   "herblore": {
+    "xp": 7028
+   },
+   "slayer": {
+    "xp": 7028
+   }
+  },
+  "inventory": {
+   "baseCapacity": 20,
+   "bagSlots": [],
+   "slots": [
+    {
+     "itemId": "rusty_sword",
+     "qty": 1
+    },
+    {
+     "itemId": "ashroot_seed",
+     "qty": 1
+    },
+    {
+     "itemId": "duskcap",
+     "qty": 14
+    },
+    {
+     "itemId": "fungus_void",
+     "qty": 27
+    },
+    {
+     "itemId": "idolhall_key",
+     "qty": 10
+    },
+    {
+     "itemId": "raw_bear_shank",
+     "qty": 23
+    },
+    {
+     "itemId": "rough_godgem",
+     "qty": 6
+    },
+    {
+     "itemId": "rune_swift_ii",
+     "qty": 19
+    },
+    {
+     "itemId": "verdantcap_seed",
+     "qty": 2
+    },
+    {
+     "itemId": "ashen_dust",
+     "qty": 15
+    },
+    {
+     "itemId": "dim_essence",
+     "qty": 28
+    },
+    {
+     "itemId": "fungus_grave",
+     "qty": 11
+    },
+    {
+     "itemId": "idol_coin",
+     "qty": 24
+    },
+    {
+     "itemId": "cake_honey",
+     "qty": 15
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "instances": []
+  },
+  "stats": {
+   "kills": 0,
+   "deaths": 0,
+   "itemsGathered": 0,
+   "itemsCrafted": 0,
+   "craftedById": {},
+   "goldSpent": 0,
+   "dailyStreak": 0,
+   "lastDailyDay": 0
+  },
+  "achievements": [
+   "ach_total_level_25",
+   "ach_total_level_100",
+   "ach_total_level_250",
+   "ach_total_level_500"
+  ],
+  "claimedApMilestones": [],
+  "apMilestoneSeq": 0,
+  "lastApMilestone": null,
+  "apCeremonyPending": false,
+  "monsterKills": {
+   "goblin": 3,
+   "goblin_shaman": 10,
+   "goblin_rogue": 17,
+   "goblin_spearman": 24,
+   "goblin_archer": 31,
+   "goblin_crossbower": 38,
+   "goblin_butcher": 5,
+   "goblin_felmagician": 12,
+   "goblin_stormcaller": 19
+  },
+  "dungeonsCleared": {},
+  "dungeonsUnlocked": {},
+  "lastDungeonUnlock": null,
+  "legacyZoneGrants": {
+   "borderlands": true
+  },
+  "paragon": {
+   "checkpoint": 0,
+   "best": 0
+  },
+  "paragonChestSeq": 0,
+  "lastParagonChest": null,
+  "lastStop": null,
+  "stunMs": 0,
+  "thievingRisk": "careful",
+  "mastery": {
+   "crack_smugglers_lock": {
+    "xp": 1154
+   },
+   "fletch_godiron_shortbow": {
+    "xp": 3115
+   },
+   "craft_bonesteel_rod": {
+    "xp": 7028
+   },
+   "craft_scaled_legs": {
+    "xp": 14833
+   },
+   "craft_hardened_vambraces": {
+    "xp": 30408
+   }
+  },
+  "bank": {},
+  "bankSlotsPurchased": 0,
+  "seenDrops": {},
+  "seenActionDrops": {},
+  "discoveredItems": {
+   "rusty_sword": true
+  },
+  "masteryCapes": {},
+  "capeGranted": {},
+  "capeCeremonySeen": {},
+  "settings": {
+   "autoBank": true,
+   "autoParagonAscend": false
+  },
+  "quests": {
+   "completed": [],
+   "claimed": [],
+   "repeatBaseline": {},
+   "daily": {
+    "day": 0,
+    "quests": []
+   }
+  },
+  "petDropSeq": 0,
+  "lastPetDrop": null,
+  "farmPlots": [
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   },
+   {
+    "cropId": null,
+    "plantedAtMs": 0,
+    "autoReplant": true,
+    "readyYield": 0,
+    "readyItem": null
+   }
+  ],
+  "slayerTask": null,
+  "slayerPoints": 0,
+  "slayerTasksCompleted": 0,
+  "slayerStreak": 0,
+  "slayerStreakSeq": 0,
+  "lastSlayerStreakBonus": null,
+  "bankInstances": [],
+  "nextInstanceSeq": 0,
+  "buyBack": [],
+  "onboarding": {
+   "active": false,
+   "step": 0,
+   "done": true,
+   "toursSeen": {
+    "featureTourV1": true,
+    "combat": true,
+    "shop": true,
+    "bank": true
+   }
+  },
+  "mailbox": [],
+  "mailSeq": 0,
+  "eliteRng": {
+   "state": 4129986243
+  },
+  "eliteZones": {
+   "pastures": {
+    "cooldownMs": 1036564
+   },
+   "borderlands": {
+    "cooldownMs": 1516034
+   },
+   "ashfields": {
+    "cooldownMs": 2265150
+   },
+   "blackthorn": {
+    "cooldownMs": 2795925
+   },
+   "crypt": {
+    "cooldownMs": 3379848
+   },
+   "wildwood": {
+    "cooldownMs": 3688103
+   },
+   "coast": {
+    "cooldownMs": 3951579
+   },
+   "slagpit": {
+    "cooldownMs": 4800462
+   },
+   "highlands": {
+    "cooldownMs": 4983191
+   },
+   "idolhall": {
+    "cooldownMs": 5427011
+   },
+   "slayer_tower": {
+    "cooldownMs": 3736911
+   }
+  },
+  "eliteSpawnSeq": 0,
+  "lastEliteSpawn": null,
+  "firstSuffixGranted": false,
+  "eliteCodex": {}
+ }
+}

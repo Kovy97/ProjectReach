@@ -1,0 +1,109 @@
+/* ═══════════════════════════════════════════════════════════
+   Hearthforge Idle — Modular CSS entry point
+   Import order preserves cascade: base → tokens → layout →
+   pages → components → overlays
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Foundation: fonts, :root vars, reset, html/body/layout */
+@import "./base.css";
+
+/* 2. Design-system tokens + ds-* placeholder component classes */
+@import "./design-system.css";
+
+/* 2b. Interaction feel — global button hover/press, focus-visible ring, tooltip fade-in tokens
+   (Polish-Pass). Imported early/low-specificity so component-specific rules further down always
+   win on a real tie; see interaction.css header comment. */
+@import "./interaction.css";
+
+/* 3. Top navigation bar, content-header, content-body, game-stats */
+@import "./topbar.css";
+
+/* 4. Sidebar (legacy + new sb-* redesign) */
+@import "./sidebar.css";
+
+/* 5a. Main menu (Task #282 redesign — hero title screen) */
+@import "./menu.css";
+
+/* 5a-2. Studio-Intro-Sequenz (App-Start-Choreografie vor dem Hauptmenü) */
+@import "./intro.css";
+
+/* 5b. Character creation (Task #282 redesign — "forge your hero" moment) */
+@import "./creation.css";
+
+/* 5c. Old + new char-sheet, portrait picker modal (shared w/ menu + creation) */
+@import "./character.css";
+
+/* 6. Skill pages, skill cards, mastery v2, action components, skilloverview */
+@import "./skills.css";
+
+/* 7. Combat, zone/monster/battle, floaters, food picker, zonemap */
+@import "./combat.css";
+
+/* 8. Shop, bank, toast, stats/options/bestiary, dev-tools,
+      achievements v2, pets (Quests: siehe quests.css, page-scoped) */
+@import "./pages.css";
+
+/* 8b. Bestiary "Reise durch den Reach" (Konzept 4, Chef-Wahl 2026-08-03) — war hier zusätzlich
+   global importiert (Kollisionsschutz: die Design-Kollegin arbeitete evtl. parallel an der
+   Achievements-Seite in pages.css). ui-dev 2026-08-03 (QA-Kosmetik): Doppel-Import entfernt —
+   `.bjw-*` wird ausschließlich von BestiaryPage.tsx konsumiert, die die Datei bereits selbst
+   direkt importiert (`import "../styles/bestiary.css"`, gleiches Muster wie newhaven.css/
+   NewHavenPage.tsx). Die alten `.bestiary-*`-Regeln in pages.css bleiben unangetastet liegen
+   (s. bestiary.css-Kopfkommentar dort). */
+
+/* 9. Item framework, rarity vars, item-cell, tooltip, ornamental tooltip,
+      drop icons, item-chip, activity indicator, cs-detail upgrades */
+@import "./components.css";
+
+/* 10. Modal overlay, onboarding, monster-modal, death-modal
+      (offline-stage.css is imported directly by OfflinePopup.tsx, not here) */
+@import "./modals.css";
+
+/* 11. Slayer skill page */
+@import "./slayer.css";
+
+/* 11b. Variant Pouch modal + rows (Task #246 Phase C — container-cell inventory variants) */
+@import "./variant-pouch.css";
+
+/* 11c. Item-Wiki-Modal (Task #308) — Source/Used-For popup opened via the "?" button in the
+   item tooltip (the button itself is styled in components.css, .itip-wiki-btn). */
+@import "./item-wiki.css";
+
+/* 12. Onboarding guide 2.0 — spotlight overlay + forced-follow gating */
+@import "./onboarding-guide.css";
+
+/* 13. Item-Filter-Leiste (Suche/Typ-Chips, Bank + Charakter-Inventar) — NICHT hier importiert,
+      sondern direkt von components/ItemFilterBar.tsx (Kollisions-Schutz wie shop.css: andere
+      Agenten arbeiten parallel an dieser Datei). Siehe styles/inv-filter.css. */
+
+/* 14. Postfach/Mailbox (WoW-artig) — NICHT hier importiert, sondern direkt von pages/MailPage.tsx
+      (gleiches Kollisions-Schutz-Muster wie inv-filter.css oben). Siehe styles/mail.css. */
+
+/* 15. Ambient-Layer (Task #311; Chef-Rückbau 2026-07-24: three.js-Blessing-Wetter entfernt, nur
+      noch die reine CSS-Suite Vignette/Korn/Nebel/Fackellicht). NICHT hier importiert, sondern
+      direkt von components/AmbientEffects.tsx (gleiches Kollisions-Schutz-Muster wie
+      inv-filter.css/mail.css oben). Siehe styles/ambient.css. */
+
+/* codex:2026-07-30T22:56:44+02:00 — Chef-Rollback: die abgelehnte Gravewood-V3-Überschreibung bleibt bewusst deaktiviert; Komponenten nutzen wieder ihre bewährten dunklen Citadel-Flächen und Rahmen. */
+
+/* codex:2026-07-30T23:05:56+02:00 — kontrollierte V3-Rückkehr ausschließlich für Sidebar- und Topbar-Navigation. */
+@import "./gravewood-navigation.css";
+
+/* codex:2026-07-30T23:12:13+02:00 — einzeln freigegebene Cursor-, Scrollbar-, Topbar-Progress- und Character-Slot-Consumer. */
+@import "./gravewood-controls.css";
+
+/* codex:2026-07-30T23:19:21+02:00 — isolierte Lederkarten und neuer Einsammeln-Button im Offline-Bericht. */
+@import "./gravewood-offline.css";
+
+/* codex:2026-07-30T23:28:43+02:00 — isolierte Load-Game-Karten mit Character-Wald, Lederflächen und Holzrahmen. */
+@import "./gravewood-loadgame.css";
+
+/* codex:2026-07-30T23:38:38+02:00 — Equipment-Top-Inset und ausschließlich Action-Card-spezifische Material-/Typografieverbesserung. */
+@import "./gravewood-character-fixes.css";
+@import "./gravewood-actioncards.css";
+
+/* codex:2026-08-03T14:52:00+02:00 — Chef-Auswahl 10 „Frontline Candidate“ für alle NPC-Fighter-Cards. */
+@import "./gravewood-fighter-cards.css";
+
+/* codex:2026-08-03T17:02:00+02:00 — Chef-Auswahl Gear-Dock 03 „Frontline Harness“. */
+@import "./frontline-harness-dock.css";

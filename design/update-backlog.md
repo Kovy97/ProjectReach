@@ -1,0 +1,46 @@
+# Update-Backlog — vor dem nächsten Depot-Upload erledigen
+
+*Kleine beschlossene Todos, die noch ins nächste Update sollen (nicht Konzept-Ebene). Erledigtes wandert in `patchnotes.md` und wird hier gestrichen.*
+
+- [ ] **QA-Befunde aus der Ship-Abnahme 2026-07-22** (kontrolleur, kein Blocker — Details im QA-Bericht):
+  (1) *vor dem v73-Pin:* save-compat-vault.test.ts-Doku/Guard „aktive Elite-Zone unmöglich" gilt nur fürs eingefrorene v72-Fixture (logic-dev); (2) Elite-Unique-Suffix setzt `firstSuffixGranted` nicht → doppelter Früh-Suffix möglich, dokumentieren oder mitschalten (logic-dev); (3) sim.test.ts Bronze-Baseline-Doku-Pin nachziehen (5 statt 7, Mitglieder verschoben); (4) EliteMonsterCard-„Fight" ist stiller No-op bei laufendem Kampf → disabled+Tooltip (ui-dev); (5) veralteter „Phase 1 leer"-Kommentar in state.ts:117.
+
+- [ ] **Perf-Nachzügler aus der 60-Hz-Nacht 22.07.** (alle post-launch, Analysen liegen im Verlauf):
+  `assets/dungeons/*` ebenfalls Card-Varianten (8 Dateien, letzter 2172-px-Karten-Nutzer);
+  Achievements-Restkosten in `achievementProgress` (Engine, owned-items-Set je Aufruf);
+  Selector-Store-Architektur (`useGameSelector`, Chrome→Listen→CombatPage, inkl. Selector-Footgun-
+  Guard); CombatPage doppelte Commit-Quelle (20/s) pinnen; Catch-up-Chunking nach langem Minimieren
+  (Logic-Dev, Determinismus-Vorsicht); cooldown-blur-Fläche, Elite-Badge-Dauerpulse, tote
+  .ds-bar/.skillcard-bar-CSS; `out-verify/`-Ordner-Hygiene.
+- [ ] **Kopfgeld-Zeile im Kampf-Log** (logic-dev-Fund 2026-07-22): Elite-Kill vergibt die Quest-Marke
+  stumm — eigener `CombatEvent`-Kind „bounty" + eventText-Case + i18n ×7, damit die Marke im Log
+  sichtbar wird (Brett informiert bereits proaktiv, daher kein Blocker).
+- [ ] **Kapitel-Abschluss-Breadcrumb + 2 NPC-Zeilen** (ui-dev-Fund 2026-07-22): `npc.shop.chapter` und `npc.quests.chapter` aus dem Wächter-Pack sind NICHT verdrahtet — es gibt kein „Kapitel frisch abgeschlossen"-Signal im State. Kleiner Engine-Breadcrumb (Muster lastEliteSpawn) beim Chronik-Quest-Claim, dann die 2 Zeilen aktivieren. Bewusst aus dem aktuellen Update herausgehalten (Scope).
+- [ ] **28 Elite-Art-Prompts generieren** (nach Phase-2-Abschluss): ChatGPT-Prompt-Datei für die Elite-Porträts (Namen/Themen aus elite-balance-spec.md, Konvention `assets/monsters/<variantId>.png`, Chroma-Key-Klausel, kein Glow auf den 28 Unique-Icons).
+- [ ] **Test-Hygiene: combat.test.ts „…sammelt Loot"** (logic-dev-Fund 2026-07-22): fällt bei Ausführung in Datei-Isolation, besteht in der vollen Suite — riecht nach Cross-File-Mutation am geteilten `content`-Objekt zwischen Testdateien. Kein Feature-Bug, aber vor dem nächsten großen Engine-Umbau aufräumen (kontrolleur).
+- [ ] **Char-Screen: Combat-Stats-Scaling kaputt** (Chef-Screenshot 23.07. ~0:00 Uhr): Bei bestimmten Panel-Größen überlappt der Combat-Stats-Block die folgende „Set Bonus"-Sektion — der „SET BONUS"-Titel liegt als Layer HINTER den Stat-Zeilen (bei „Crit chance/Crit damage" durchscheinend sichtbar), „Crit damage 163%" drückt in die Wert-Spalte. Vermutlich die neue Container-Query-Skalierung (cqmin/cqw) der Kampfwerte: Block skaliert, aber der Container reserviert die Höhe nicht mit → Überlauf statt Umbruch. Repro: Char-Screen, schmales Panel (Screenshot ~370px Breite). (ui-dev, 0.2.2) (Chef-Fund 23.07. nachts): potion_minor_heal (L1, 3+12%) und potion_lesser_heal (L12, 6+13%) sind praktisch identisch UND brauen aus exakt denselben Mats (2× herb_marshroot + vial_of_water) — Minor ist ab L12 tot, der Tier-Sprung unspürbar. Fix als Mini-Balance-Pass: Zutaten differenzieren + die 5er-Heilleiter (12/13/15/18/21%) neu stufen, gegen Combat-Feel-v2-Tabelle-B und Auto-Trank-Schwelle gerechnet (balance-designer-Spec → content-dev). Randnotiz: gleiche Kollisions-Historie wie bei den Kräutersuden (Kommentar index.ts:575). (Perf-Messung 23.07., Zonen-Grid tickt mit, ohne dass sich etwas ändert) — gezielter Memo-/Selector-Pass (ui-dev). Zusammen mit: **Selector-Migration Battle/Fighter/Log** (eliminiert das React-18-Echo-Doppel-Commit ~1 ms/Tick vollständig; Messskript liegt bereit: `apps/client/ui-audit/perf-combat-audit.mjs`).
+- [ ] **Guard-Ausreißer aus dem Material-Paritäts-Audit** (content-dev-Fund 23.07., vorbestehend, in G2-Allowlist dokumentiert): `dragonhide_*` (Ranged, req82, Material-Gate 128) und `void_focus` (Magie-Offhand, req55, Gate 80) — Quellen umhängen oder Reqs anpassen (balance-designer-Spec, dann content-dev).
+- [ ] **Sim-KI-Heuristik: Magier rüstet zu zögerlich um** (seed7 bleibt auf Startstab trotz verfügbarer copper_wand; seed21 beweist, dass die Kette funktioniert) — RealisticPlayer-Entscheidungslogik nachschärfen, damit die G4-Baseline aussagekräftiger wird (sim/logic-dev).
+- [ ] **Kaputte Cormorant-Fonts im Client** (Panel-Agent-Nebenbefund 2026-07-23): `Cormorant-Regular.ttf` im Renderer ist ein Dummy (Newline-Bytes), `CormorantGaramond-Regular.woff2` nur ein Nicht-Latin-Subset (139 Glyphen, keine lateinischen Kleinbuchstaben). Prüfen, ob irgendein Style „Cormorant" wirklich rendert (dann Tofu!) — Font ersetzen oder Deklaration entfernen (ui-dev).
+- [ ] **Bank-NPC-Name angleichen** (lore-dev-Fund 2026-07-22): Im Spiel heißt die Bank-Figur „Die Verwalterin/The Quartermaster", die Lore-Bibel führt „Voss den Zähler". Irgendwann vereinheitlichen (kosmetisch, kein Blocker — die neuen Wächter-Pack-Zeilen funktionieren mit beiden).
+- [ ] **Dritter Tool-Slot** (Spieler-Feedback 2026-07-22): „Will there be an extra tool slot as well so we can have all tools equipped? Its weird to have 2 equipped then have 1 in the inventory :)" — Es gibt 5 Tool-Gattungen (Spitzhacke/Axt/Angel/Sichel + Dual-Use), aber nur 2 Tool-Slots; ein drittes Tool liegt immer im Inventar. Lösung: 3. Tool-Slot in Equipment-State + UI. ACHTUNG: `bestToolSpeed` scannt ohnehin Inventar UND Ausrüstung — der Slot ist QoL/Ordnung, kein Mechanik-Buff. SAVE_VERSION-Bump + Migration (Save-Compat-Gesetz), EquipmentOverview-Layout, 7 Sprachen falls neue Labels.
+
+## Nachträge 25.07. (aus 0.2.2-Endphase)
+- **.cs-layout-Schmalbreiten-Limit (<600px):** Charakter-Screen-Mittelspalte kollabiert bei ~500px (grid-template-rows:none + flex-basis:0), betraf schon den alten Doppel-Container — von BEIDEN Char-Screen-Agenten (#336/#340) unabhängig als vorbestehend verifiziert; braucht eigenen .cs-layout-Umbau, falls Schmalfenster reales Zielformat wird.
+- **Blutmond-Jackpot-Akzent (UI):** Engine setzt LastKillSummary.bloodMoonProc bereits, Kill-Karte zeigt verdoppelte Mengen korrekt — es fehlt nur die sichtbare „Blutmond!"-Feier-Markierung auf der Karte (kleiner ui-dev-Task).
+- **Bronze-Baseline (bekannt, 9 Auffälligkeiten L30–48):** von Balance-Sim weiter gemeldet (goblin_warlock, ash_tyrant …) — unabhängig von #337 bestätigt.
+
+## Geparkt 03.08.: Steam-Achievements-Spiegelung (Chef: „jetzt noch nicht")
+- [ ] **Steam-Achievements** — Vorarbeit ist KOMPLETT erhoben (Inventur-Agent 03.08.): Client-Spiegelung
+  existiert bereits verdrahtet-aber-inert (`apps/client/src/main/steam.ts` + Preload-Brücke +
+  Toasts-Sync; es fehlen nur steamworks.js-Paket, AppID 4915450 scharf, Mapping-Tabelle);
+  kuratierte 65er-Backend-Liste liegt in `design/steam-achievements-export.md` (Kopf „530" veraltet,
+  heute 537 In-Game-Achievements, alle ×7 lokalisiert); Icons: aus den 12 icon_ach_*-Kategorie-Icons
+  je 64×64 erreicht/grau generierbar. Plan bei Reaktivierung: Definitions-Paket generieren →
+  Partnerseiten-Eingabe per Browser-Automation unter Chef-Aufsicht (Fallback Paste-Paket EN-first) →
+  Publish durch Chef → Client-Build. Aufwandsgefühl: 1 Tag.
+
+## Nachträge 03.08. (Engine-Audit New Haven)
+- [x] **Schrein verstärkt den Kampf-Beute-Segen NICHT** (Audit-Befund K1) — **ENTSCHIEDEN + umgesetzt 03.08. (combat-dev, Task #336):** Chef-Entscheid vom 03.08. hebt die Ungleichbehandlung auf. Die fünf Kampf-Beute-Callsites in `combat.ts` (Kill-/Dungeon-XP mistvigil, Kill-/Clear-Gold greed, Rare-Drop-Chance rotmist ×2) laufen jetzt über den bestehenden `shrineAmplifiedMult`-Pfad (1.10→1.13 / 1.20→1.26 bei Schrein III). `wildhunt` bleibt komplett roh (Eiserne Regel 3), keine zusätzlichen RNG-Züge, kein Save-Feld. Regressions-Guard: `engine/src/shrine-combat-loot.test.ts` (8 Tests).
+- [ ] **Achievements-/Quests-Reihenfolge offline ≠ online** (AUDIT-335-2): die Auswertungs-Reihenfolge von Achievements/Quests weicht im Offline-Catch-up von der Live-Reihenfolge ab — Endstand konvergiert, nur die REIHENFOLGE der Freischaltungs-Momente (Toasts/Breadcrumbs) unterscheidet sich. Als dokumentierte Ausnahme Nr. 3 des offline==online-Gesetzes festhalten (neben den zwei bestehenden dokumentierten Ausnahmen), oder bei Gelegenheit angleichen (logic-dev).
+- [ ] **Thieving-Zeit-Kachel ohne Tempo-Modifikatoren + Engine-Export `campBuildJobTotalMs`** (ui-dev + logic-dev): die Zeit-Kachel der Diebeskunst zeigt die Basis-Aktionsdauer ohne Mastery-/Lager-Tempo (`thievingSpeed` Hehlerzelt) — Anzeige auf `effectiveActionDurationMs` umstellen. Dazu Engine-Export-Wunsch der UI: `campBuildJobTotalMs` (Gesamtdauer des laufenden Bau-Auftrags inkl. Schreibzelt-Rabatt beim Start), damit die Bau-Fortschrittsleiste nicht die Katalog-`buildMs` raten muss (logic-dev, kleiner reiner Lese-Helper in camp.ts).

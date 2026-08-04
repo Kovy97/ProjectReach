@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hearthforge — Button-Stil Vorschau</title>
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   Ashen-Iron echte CSS-Variablen (1:1 aus styles.css kopiert)
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:          #14161a;
+  --bg-deep:     #0d0f12;
+  --panel:       #1e2329;
+  --panel-hover: #262d34;
+  --slot:        #0f1216;
+  --border:      #333c44;
+  --border-bright: #4d5963;
+  --text:        #ccd5db;
+  --muted:       #79848c;
+  --accent:      #6f97b3;
+  --accent-2:    #9fc4dc;
+  --accent-dim:  #3f5a6b;
+  --danger:      #a85a52;
+  --gold:        #d8c06a;
+  --radius:      4px;
+  --glow:        0 0 16px rgba(111,151,179,0.3);
+
+  /* Fonts laden aus dem echten Renderer-Ordner (werden nur angezeigt, wenn
+     diese HTML-Datei über file:// geöffnet wird, während das Repo lokal liegt).
+     Relativer Pfad von G:\GameDev\design\ zu den Fonts: */
+  --font-head-stack: "Cinzel", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  --font-body-stack: "Marcellus SC", "Palatino Linotype", Georgia, serif;
+}
+
+@font-face {
+  font-family: "Cinzel";
+  src: url("../apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Marcellus SC";
+  src: url("../apps/client/src/renderer/fonts/MarcellusSC-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "MedievalSharp";
+  src: url("../apps/client/src/renderer/fonts/MedievalSharp-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "IM Fell English SC";
+  src: url("../apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("../apps/client/src/renderer/fonts/CormorantGaramond-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Grenze Gotisch";
+  src: url("../apps/client/src/renderer/fonts/GrenzeGotisch-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-head-stack);
+  font-size: 16px;
+  min-height: 100vh;
+  padding: 40px 32px 80px;
+}
+
+/* ── Seiten-Header ── */
+.page-title {
+  font-family: var(--font-head-stack);
+  font-size: 28px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: 0 0 18px rgba(216,192,106,0.35);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.page-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  margin-bottom: 48px;
+}
+
+/* ── Varianten-Grid ── */
+.variants {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 32px;
+}
+
+/* ── Einzelne Varianten-Karte ── */
+.variant-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.variant-header {
+  background: linear-gradient(180deg, var(--panel-hover), var(--panel));
+  border-bottom: 1px solid var(--border-bright);
+  padding: 16px 20px 12px;
+}
+
+.variant-number {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.variant-name {
+  font-family: var(--font-head-stack);
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: var(--gold);
+}
+
+.variant-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.5;
+  font-family: var(--font-body-stack);
+}
+
+.variant-body {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Button-Typ-Labels */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-group-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.btn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-state-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  min-width: 44px;
+  flex-shrink: 0;
+}
+
+/* Hover-Hinweis */
+.hover-hint {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: -8px;
+  letter-spacing: 0.5px;
+  font-family: var(--font-body-stack);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   VARIANTE 1: Geschmiedetes Metall / Geprägt
+   Schwerer Bevel-Effekt, gehämmerter Stahl-Look mit Gold-Beschlag.
+   ───────────────────────────────────────────────────────────────── */
+
+/* NAV — inaktiv */
+.v1-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  font-family: var(--font-head-stack);
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #252c34 0%, #1a2028 55%, #252c34 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.5),
+    0 2px 4px rgba(0,0,0,0.5);
+  transition: box-shadow 0.15s, filter 0.15s;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+.v1-nav:hover {
+  filter: brightness(1.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.5),
+    0 3px 8px rgba(0,0,0,0.6),
+    0 0 0 1px var(--border-bright);
+}
+.v1-nav:active {
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.6),
+    inset 0 -1px 0 rgba(255,255,255,0.03),
+    0 1px 2px rgba(0,0,0,0.4);
+  filter: brightness(0.88);
+}
+/* NAV — aktiv */
+.v1-nav.active {
+  background: linear-gradient(180deg, #3a4a28 0%, #29361c 55%, #3a4a28 100%);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow:
+    inset 0 1px 0 rgba(255,230,100,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.5),
+    0 0 12px rgba(216,192,106,0.2),
+    0 2px 6px rgba(0,0,0,0.5);
+  text-shadow: 0 0 8px rgba(216,192,106,0.4), 0 1px 2px rgba(0,0,0,0.8);
+}
+/* CTA primär */
+.v1-cta {
+  padding: 13px 32px;
+  font-family: var(--font-head-stack);
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #8aae34 0%, #5a7c18 50%, #8aae34 100%);
+  color: #0e1a04;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -2px 0 rgba(0,0,0,0.4),
+    0 3px 10px rgba(0,0,0,0.6);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+  transition: filter 0.12s, box-shadow 0.12s;
+}
+.v1-cta:hover {
+  filter: brightness(1.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    inset 0 -2px 0 rgba(0,0,0,0.4),
+    0 4px 16px rgba(0,0,0,0.7),
+    0 0 12px rgba(138,174,52,0.3);
+}
+.v1-cta:active {
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,0.5),
+    inset 0 -1px 0 rgba(255,255,255,0.05);
+  filter: brightness(0.88);
+}
+/* Generic */
+.v1-action {
+  padding: 9px 20px;
+  font-family: var(--font-head-stack);
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  border: 1px solid #6a5a30;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #4a3d1c 0%, #2e2610 55%, #4a3d1c 100%);
+  color: var(--gold);
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,80,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 2px 5px rgba(0,0,0,0.5);
+  text-shadow: 0 0 6px rgba(216,192,106,0.3);
+  transition: filter 0.12s, box-shadow 0.12s;
+}
+.v1-action:hover {
+  filter: brightness(1.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,80,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 3px 10px rgba(0,0,0,0.6),
+    0 0 8px rgba(216,192,106,0.2);
+}
+.v1-action:active {
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  filter: brightness(0.85);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   VARIANTE 2: Holz & Pergament
+   Warme Brauntöne, Leder-Textur, handgemachter Eindruck.
+   ───────────────────────────────────────────────────────────────── */
+
+.v2-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  font-family: "IM Fell English SC", var(--font-head-stack);
+  font-size: 15px;
+  color: #c8b88a;
+  cursor: pointer;
+  border: 1px solid #6b4e2a;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #3d2a14 0%, #281a0c 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(180,140,80,0.08),
+    inset 2px 0 0 rgba(180,140,80,0.06),
+    0 2px 4px rgba(0,0,0,0.5);
+  position: relative;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  overflow: hidden;
+}
+/* wood grain pseudo-texture via repeating-linear-gradient */
+.v2-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 6px,
+    rgba(255,200,100,0.02) 6px,
+    rgba(255,200,100,0.02) 7px
+  );
+  pointer-events: none;
+}
+.v2-nav:hover {
+  background: linear-gradient(180deg, #4e3318 0%, #321f0f 100%);
+  border-color: #9a7040;
+  color: #e8d4a8;
+}
+.v2-nav:active {
+  background: linear-gradient(180deg, #241508 0%, #3d2a14 100%);
+  border-color: #6b4e2a;
+}
+.v2-nav.active {
+  background: linear-gradient(180deg, #4a3018 0%, #2e1c08 100%);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow:
+    inset 0 0 0 1px rgba(216,192,106,0.15),
+    inset 3px 0 0 var(--gold),
+    0 0 10px rgba(216,192,106,0.15);
+}
+
+.v2-cta {
+  padding: 13px 32px;
+  font-family: "IM Fell English SC", var(--font-head-stack);
+  font-size: 17px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: 1px solid #8a6030;
+  border-top-color: #b08040;
+  border-bottom-color: #4a3010;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #7a5428 0%, #4a3010 40%, #6a4820 100%);
+  color: #f0dfa8;
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,120,0.15),
+    inset 0 0 0 1px rgba(180,140,60,0.06),
+    0 3px 8px rgba(0,0,0,0.6);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  transition: filter 0.12s, box-shadow 0.12s;
+}
+.v2-cta:hover {
+  filter: brightness(1.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,120,0.22),
+    0 4px 14px rgba(0,0,0,0.7),
+    0 0 12px rgba(200,150,60,0.25);
+}
+.v2-cta:active {
+  filter: brightness(0.85);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
+}
+
+.v2-action {
+  padding: 9px 20px;
+  font-family: "IM Fell English SC", var(--font-head-stack);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid #5a4020;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #3e2c12 0%, #271a08 100%);
+  color: #c4a870;
+  box-shadow:
+    inset 0 1px 0 rgba(200,160,80,0.1),
+    0 2px 4px rgba(0,0,0,0.5);
+  transition: filter 0.12s, border-color 0.12s, color 0.12s;
+}
+.v2-action:hover {
+  filter: brightness(1.2);
+  border-color: #8a6030;
+  color: #e8c890;
+}
+.v2-action:active {
+  filter: brightness(0.82);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   VARIANTE 3: Runen-Glow
+   Tiefes Blau-Schwarz, leuchtende Runengravierungen, magisches Flimmern.
+   ───────────────────────────────────────────────────────────────── */
+
+.v3-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  font-family: var(--font-head-stack);
+  font-size: 15px;
+  color: var(--accent-2);
+  cursor: pointer;
+  border: 1px solid #2a3f58;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #121d28 0%, #0d1520 100%);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.3px;
+}
+.v3-nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0px,
+    transparent 18px,
+    rgba(111,151,179,0.025) 18px,
+    rgba(111,151,179,0.025) 19px
+  );
+  pointer-events: none;
+}
+.v3-nav:hover {
+  border-color: var(--accent);
+  color: #c8e4f4;
+  box-shadow:
+    inset 0 0 14px rgba(111,151,179,0.1),
+    0 0 8px rgba(111,151,179,0.2);
+}
+.v3-nav:active {
+  box-shadow: inset 0 0 20px rgba(111,151,179,0.2);
+  filter: brightness(0.85);
+}
+.v3-nav.active {
+  border-color: var(--accent-2);
+  color: #fff;
+  background: linear-gradient(180deg, #1a2f44 0%, #0f2035 100%);
+  box-shadow:
+    inset 0 0 20px rgba(111,151,179,0.18),
+    0 0 14px rgba(111,151,179,0.3),
+    inset 0 0 0 1px rgba(159,196,220,0.15);
+  text-shadow: 0 0 12px rgba(159,196,220,0.7);
+}
+
+.v3-cta {
+  padding: 13px 32px;
+  font-family: var(--font-head-stack);
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #1e3b52 0%, #102638 50%, #1e3b52 100%);
+  color: var(--accent-2);
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 16px rgba(111,151,179,0.12),
+    0 0 14px rgba(111,151,179,0.2),
+    0 3px 8px rgba(0,0,0,0.6);
+  text-shadow: 0 0 12px rgba(159,196,220,0.6);
+  transition: box-shadow 0.15s, filter 0.15s;
+}
+.v3-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    60deg,
+    transparent 0px,
+    transparent 22px,
+    rgba(111,151,179,0.04) 22px,
+    rgba(111,151,179,0.04) 23px
+  );
+  pointer-events: none;
+}
+.v3-cta:hover {
+  box-shadow:
+    inset 0 0 24px rgba(111,151,179,0.22),
+    0 0 22px rgba(111,151,179,0.4),
+    0 4px 14px rgba(0,0,0,0.7);
+  filter: brightness(1.15);
+}
+.v3-cta:active {
+  box-shadow: inset 0 0 30px rgba(111,151,179,0.3);
+  filter: brightness(0.85);
+}
+
+.v3-action {
+  padding: 9px 20px;
+  font-family: var(--font-head-stack);
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid #2a4a6a;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #141f2e 0%, #0d1520 100%);
+  color: var(--accent);
+  box-shadow:
+    inset 0 0 8px rgba(111,151,179,0.06),
+    0 2px 4px rgba(0,0,0,0.5);
+  transition: box-shadow 0.15s, border-color 0.15s, color 0.15s;
+}
+.v3-action:hover {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+  box-shadow:
+    inset 0 0 12px rgba(111,151,179,0.14),
+    0 0 10px rgba(111,151,179,0.25);
+}
+.v3-action:active {
+  box-shadow: inset 0 0 18px rgba(111,151,179,0.2);
+  filter: brightness(0.85);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   VARIANTE 4: Graviertes Wappen / Edelstein-Emaille
+   Tief gravierter Rahmen, sattes Emaille-Innere, edle Juwelen-Akzente.
+   ───────────────────────────────────────────────────────────────── */
+
+.v4-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  font-family: "Marcellus SC", var(--font-head-stack);
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  color: #a8b8c0;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, #2a3540 0%, #1c2830 50%, #2a3540 100%);
+  box-shadow:
+    0 0 0 1px #4a5c6a,
+    0 0 0 2px #1a2430,
+    0 0 0 3px rgba(74,92,106,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 2px 4px rgba(0,0,0,0.5);
+  transition: box-shadow 0.15s, color 0.15s, background 0.15s;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+.v4-nav:hover {
+  color: var(--text);
+  background: linear-gradient(180deg, #344250 0%, #22303c 50%, #344250 100%);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 0 2px #1a2430,
+    0 0 0 3px rgba(111,151,179,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 3px 8px rgba(0,0,0,0.6),
+    0 0 10px rgba(111,151,179,0.15);
+}
+.v4-nav:active {
+  box-shadow:
+    0 0 0 1px #4a5c6a,
+    0 0 0 2px #1a2430,
+    inset 0 2px 4px rgba(0,0,0,0.5);
+  filter: brightness(0.85);
+}
+.v4-nav.active {
+  color: var(--gold);
+  background: linear-gradient(180deg, #3a3020 0%, #25200e 50%, #3a3020 100%);
+  box-shadow:
+    0 0 0 1px var(--gold),
+    0 0 0 2px #120f04,
+    0 0 0 3px rgba(216,192,106,0.35),
+    inset 0 1px 0 rgba(255,220,100,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 0 14px rgba(216,192,106,0.2);
+  text-shadow: 0 0 8px rgba(216,192,106,0.4);
+}
+
+.v4-cta {
+  padding: 13px 32px;
+  font-family: "Marcellus SC", var(--font-head-stack);
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #4a3820 0%, #2e2010 50%, #4a3820 100%);
+  color: var(--gold);
+  box-shadow:
+    0 0 0 1px var(--gold),
+    0 0 0 2px #0e0a02,
+    0 0 0 3px rgba(216,192,106,0.3),
+    inset 0 1px 0 rgba(255,220,100,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 0 16px rgba(216,192,106,0.2),
+    0 4px 12px rgba(0,0,0,0.6);
+  text-shadow: 0 0 10px rgba(216,192,106,0.5);
+  transition: box-shadow 0.15s, filter 0.15s;
+}
+.v4-cta:hover {
+  filter: brightness(1.15);
+  box-shadow:
+    0 0 0 1px var(--gold),
+    0 0 0 2px #0e0a02,
+    0 0 0 3px rgba(216,192,106,0.5),
+    inset 0 1px 0 rgba(255,220,100,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    0 0 24px rgba(216,192,106,0.35),
+    0 5px 16px rgba(0,0,0,0.7);
+}
+.v4-cta:active {
+  filter: brightness(0.85);
+  box-shadow:
+    0 0 0 1px var(--gold),
+    0 0 0 2px #0e0a02,
+    inset 0 3px 6px rgba(0,0,0,0.5);
+}
+
+.v4-action {
+  padding: 9px 20px;
+  font-family: "Marcellus SC", var(--font-head-stack);
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #2c3a46 0%, #1c2a36 50%, #2c3a46 100%);
+  color: var(--accent-2);
+  box-shadow:
+    0 0 0 1px var(--accent-dim),
+    0 0 0 2px #0d1520,
+    0 0 0 3px rgba(63,90,107,0.3),
+    inset 0 1px 0 rgba(159,196,220,0.08),
+    0 2px 4px rgba(0,0,0,0.5);
+  transition: box-shadow 0.15s, filter 0.15s, color 0.15s;
+}
+.v4-action:hover {
+  color: #c8e4f4;
+  filter: brightness(1.15);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 0 2px #0d1520,
+    0 0 0 3px rgba(111,151,179,0.3),
+    inset 0 1px 0 rgba(159,196,220,0.12),
+    0 0 10px rgba(111,151,179,0.2),
+    0 3px 8px rgba(0,0,0,0.6);
+}
+.v4-action:active {
+  filter: brightness(0.85);
+  box-shadow:
+    0 0 0 1px var(--accent-dim),
+    0 0 0 2px #0d1520,
+    inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   VARIANTE 5: Gemeißelter Stein / Reliefgravur
+   Raue Steinblock-Textur, geprägte Ornamente, Mörtel-Fugen.
+   ───────────────────────────────────────────────────────────────── */
+
+.v5-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  font-family: "MedievalSharp", var(--font-head-stack);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  color: #9aa8b0;
+  cursor: pointer;
+  border: none;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #2e3438 0%, #222628 40%, #1c2024 100%);
+  box-shadow:
+    inset 2px 2px 4px rgba(255,255,255,0.04),
+    inset -2px -2px 4px rgba(0,0,0,0.5),
+    0 2px 4px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.15s, color 0.15s, background 0.15s;
+}
+/* stone crack texture */
+.v5-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,0.04) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.03) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.03) 0%, transparent 100%);
+  pointer-events: none;
+}
+.v5-nav:hover {
+  color: var(--text);
+  background: linear-gradient(180deg, #363c40 0%, #2a2e32 40%, #22262a 100%);
+  box-shadow:
+    inset 2px 2px 4px rgba(255,255,255,0.06),
+    inset -2px -2px 4px rgba(0,0,0,0.5),
+    0 3px 8px rgba(0,0,0,0.6),
+    0 0 0 1px var(--border-bright);
+}
+.v5-nav:active {
+  box-shadow:
+    inset -2px -2px 4px rgba(255,255,255,0.04),
+    inset 2px 2px 4px rgba(0,0,0,0.5);
+  filter: brightness(0.85);
+}
+.v5-nav.active {
+  color: var(--gold);
+  background: linear-gradient(180deg, #3a3420 0%, #2a2414 40%, #3a3420 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(216,192,106,0.25),
+    inset 2px 2px 4px rgba(255,220,100,0.06),
+    inset -2px -2px 4px rgba(0,0,0,0.4),
+    0 0 10px rgba(216,192,106,0.15);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+}
+
+.v5-cta {
+  padding: 13px 32px;
+  font-family: "MedievalSharp", var(--font-head-stack);
+  font-size: 16px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: none;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #5a4830 0%, #3a2e18 45%, #4e3c24 100%);
+  color: #f0d890;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 3px 3px 6px rgba(255,220,100,0.08),
+    inset -3px -3px 6px rgba(0,0,0,0.6),
+    0 4px 12px rgba(0,0,0,0.7);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.9), 0 0 8px rgba(216,192,106,0.3);
+  transition: box-shadow 0.12s, filter 0.12s;
+}
+.v5-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.05) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.04) 0%, transparent 100%);
+  pointer-events: none;
+}
+.v5-cta:hover {
+  filter: brightness(1.15);
+  box-shadow:
+    inset 3px 3px 6px rgba(255,220,100,0.12),
+    inset -3px -3px 6px rgba(0,0,0,0.6),
+    0 5px 16px rgba(0,0,0,0.8),
+    0 0 12px rgba(216,192,106,0.2);
+}
+.v5-cta:active {
+  box-shadow:
+    inset -3px -3px 6px rgba(255,220,100,0.06),
+    inset 3px 3px 6px rgba(0,0,0,0.6);
+  filter: brightness(0.85);
+}
+
+.v5-action {
+  padding: 9px 20px;
+  font-family: "MedievalSharp", var(--font-head-stack);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: none;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #2e3840 0%, #202830 40%, #1a2028 100%);
+  color: var(--accent-2);
+  box-shadow:
+    inset 2px 2px 4px rgba(255,255,255,0.04),
+    inset -2px -2px 4px rgba(0,0,0,0.5),
+    0 2px 5px rgba(0,0,0,0.5);
+  transition: box-shadow 0.12s, filter 0.12s, color 0.12s;
+}
+.v5-action:hover {
+  color: #c8e4f4;
+  filter: brightness(1.15);
+  box-shadow:
+    inset 2px 2px 4px rgba(159,196,220,0.06),
+    inset -2px -2px 4px rgba(0,0,0,0.5),
+    0 3px 8px rgba(0,0,0,0.6),
+    0 0 8px rgba(111,151,179,0.2);
+}
+.v5-action:active {
+  box-shadow:
+    inset -2px -2px 4px rgba(255,255,255,0.03),
+    inset 2px 2px 4px rgba(0,0,0,0.5);
+  filter: brightness(0.85);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   VARIANTE 6: Banner-Schild / Wappen-Schnalle
+   Clip-Path-Bannerbänder, Schildform, heraldischer Charakter.
+   ───────────────────────────────────────────────────────────────── */
+
+.v6-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 20px 10px 14px;
+  font-family: "Cormorant Garamond", var(--font-head-stack);
+  font-size: 16px;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  color: #a8bec8;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  background: none;
+  position: relative;
+  transition: color 0.15s;
+  /* Ribbon cut on right side via clip */
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+  background: linear-gradient(90deg, #1e2c3a 0%, #192430 50%, #131c26 100%);
+}
+.v6-nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--border-bright);
+  transition: background 0.15s;
+}
+.v6-nav:hover {
+  color: var(--text);
+  background: linear-gradient(90deg, #263444 0%, #1e2c38 50%, #18222e 100%);
+}
+.v6-nav:hover::before {
+  background: var(--accent);
+}
+.v6-nav:active {
+  filter: brightness(0.85);
+}
+.v6-nav.active {
+  color: var(--gold);
+  background: linear-gradient(90deg, #2e2418 0%, #241c10 50%, #1c1408 100%);
+  text-shadow: 0 0 10px rgba(216,192,106,0.4);
+}
+.v6-nav.active::before {
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(216,192,106,0.5);
+}
+
+/* Shield/kite shape for CTA */
+.v6-cta {
+  padding: 13px 40px;
+  font-family: "Cormorant Garamond", var(--font-head-stack);
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(180deg, #c8a030 0%, #906018 45%, #c8a030 100%);
+  color: #0e0a02;
+  position: relative;
+  /* Pointed bottom ribbon */
+  clip-path: polygon(12px 0%, calc(100% - 12px) 0%, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0% 50%);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.7),
+    0 0 20px rgba(200,160,48,0.25);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.15);
+  transition: filter 0.12s, box-shadow 0.12s;
+}
+.v6-cta:hover {
+  filter: brightness(1.18) drop-shadow(0 0 10px rgba(200,160,48,0.5));
+  box-shadow:
+    0 5px 20px rgba(0,0,0,0.8),
+    0 0 28px rgba(200,160,48,0.4);
+}
+.v6-cta:active {
+  filter: brightness(0.85);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+
+.v6-action {
+  padding: 9px 24px;
+  font-family: "Cormorant Garamond", var(--font-head-stack);
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(180deg, #2e3c4c 0%, #1c2a3a 50%, #2e3c4c 100%);
+  color: var(--accent-2);
+  clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0% 50%);
+  box-shadow:
+    0 0 0 1px var(--accent-dim),
+    0 3px 8px rgba(0,0,0,0.6);
+  text-shadow: 0 0 8px rgba(159,196,220,0.4);
+  transition: filter 0.12s, box-shadow 0.12s;
+}
+.v6-action:hover {
+  filter: brightness(1.2) drop-shadow(0 0 6px rgba(111,151,179,0.4));
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 14px rgba(111,151,179,0.25),
+    0 4px 12px rgba(0,0,0,0.7);
+}
+.v6-action:active {
+  filter: brightness(0.85);
+}
+
+/* ── Nav-Icon Platzhalter ── */
+.demo-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  opacity: 0.75;
+}
+
+/* ── "Pressed"-Demo für :active (da CSS :active nur bei echtem Klick greift) ── */
+.pressed-demo { filter: brightness(0.85); }
+.v1-pressed { box-shadow: inset 0 2px 4px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.03), 0 1px 2px rgba(0,0,0,0.4); }
+.v2-pressed { box-shadow: inset 0 3px 6px rgba(0,0,0,0.5); }
+.v3-pressed { box-shadow: inset 0 0 30px rgba(111,151,179,0.3); }
+.v4-pressed { box-shadow: 0 0 0 1px var(--accent-dim), 0 0 0 2px #0d1520, inset 0 2px 4px rgba(0,0,0,0.5); }
+.v5-pressed { box-shadow: inset -2px -2px 4px rgba(255,255,255,0.03), inset 2px 2px 4px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Hearthforge — Button-Stil Vorschau</h1>
+<p class="page-sub">Hover-States sind live. Aktiv/Gedrückt-Zeile zeigt statischen Snapshot (CSS :active greift nur beim echten Klick).</p>
+
+<div class="variants">
+
+  <!-- ══════════════ VARIANTE 1 ══════════════ -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-number">Variante 01</div>
+      <div class="variant-name">Geschmiedetes Metall</div>
+      <div class="variant-desc">Schwerer Bevel-Effekt mit gehämmerter Stahl-Optik — Buttons wirken wie aus massivem Eisen gegossene Platten mit Goldrand-Beschlag.</div>
+    </div>
+    <div class="variant-body">
+
+      <div class="btn-group">
+        <div class="btn-group-label">Sidebar-Navigation</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Inaktiv</span>
+          <button class="v1-nav" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v1-nav" style="max-width:260px;filter:brightness(1.18);box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),inset 0 -1px 0 rgba(0,0,0,0.5),0 3px 8px rgba(0,0,0,0.6),0 0 0 1px var(--border-bright)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Aktiv</span>
+          <button class="v1-nav active" style="max-width:260px"><span class="demo-icon">🛡</span>Charakter</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v1-nav v1-pressed pressed-demo" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Dungeon — Primär CTA</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v1-cta">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v1-cta" style="filter:brightness(1.15);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -2px 0 rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.7),0 0 12px rgba(138,174,52,0.3)">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v1-cta v2-pressed pressed-demo">Betreten</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Generische Action-Buttons</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v1-action">Kaufen</button>
+          <button class="v1-action">Anlegen</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v1-action" style="filter:brightness(1.2);box-shadow:inset 0 1px 0 rgba(255,220,80,0.18),inset 0 -1px 0 rgba(0,0,0,0.4),0 3px 10px rgba(0,0,0,0.6),0 0 8px rgba(216,192,106,0.2)">Kaufen</button>
+        </div>
+      </div>
+      <p class="hover-hint">Bewege die Maus über die Buttons oben um den Live-Hover zu sehen.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ VARIANTE 2 ══════════════ -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-number">Variante 02</div>
+      <div class="variant-name">Holz &amp; Pergament</div>
+      <div class="variant-desc">Warme Braun-Beige-Töne mit subtiler Holzmaserung — handwerkliche Tavern-Atmosphäre, als wären die Buttons in Eichenholz geschnitzt.</div>
+    </div>
+    <div class="variant-body">
+
+      <div class="btn-group">
+        <div class="btn-group-label">Sidebar-Navigation</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Inaktiv</span>
+          <button class="v2-nav" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v2-nav" style="max-width:260px;background:linear-gradient(180deg,#4e3318 0%,#321f0f 100%);border-color:#9a7040;color:#e8d4a8"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Aktiv</span>
+          <button class="v2-nav active" style="max-width:260px"><span class="demo-icon">🛡</span>Charakter</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v2-nav pressed-demo" style="max-width:260px;background:linear-gradient(180deg,#241508 0%,#3d2a14 100%);border-color:#6b4e2a"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Dungeon — Primär CTA</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v2-cta">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v2-cta" style="filter:brightness(1.18);box-shadow:inset 0 1px 0 rgba(255,220,120,0.22),0 4px 14px rgba(0,0,0,0.7),0 0 12px rgba(200,150,60,0.25)">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v2-cta v2-pressed pressed-demo">Betreten</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Generische Action-Buttons</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v2-action">Kaufen</button>
+          <button class="v2-action">Anlegen</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v2-action" style="filter:brightness(1.2);border-color:#8a6030;color:#e8c890">Kaufen</button>
+        </div>
+      </div>
+      <p class="hover-hint">Bewege die Maus über die Buttons oben um den Live-Hover zu sehen.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ VARIANTE 3 ══════════════ -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-number">Variante 03</div>
+      <div class="variant-name">Runen-Glow</div>
+      <div class="variant-desc">Tiefes Blau-Schwarz mit pulsierendem magischem Leuchten — Buttons wirken wie in Arkanstein gravierte Runen, die im Dunkeln schimmern.</div>
+    </div>
+    <div class="variant-body">
+
+      <div class="btn-group">
+        <div class="btn-group-label">Sidebar-Navigation</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Inaktiv</span>
+          <button class="v3-nav" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v3-nav" style="max-width:260px;border-color:var(--accent);color:#c8e4f4;box-shadow:inset 0 0 14px rgba(111,151,179,0.1),0 0 8px rgba(111,151,179,0.2)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Aktiv</span>
+          <button class="v3-nav active" style="max-width:260px"><span class="demo-icon">🛡</span>Charakter</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v3-nav pressed-demo" style="max-width:260px;box-shadow:inset 0 0 20px rgba(111,151,179,0.2)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Dungeon — Primär CTA</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v3-cta">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v3-cta" style="box-shadow:inset 0 0 24px rgba(111,151,179,0.22),0 0 22px rgba(111,151,179,0.4),0 4px 14px rgba(0,0,0,0.7);filter:brightness(1.15)">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v3-cta v3-pressed pressed-demo">Betreten</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Generische Action-Buttons</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v3-action">Kaufen</button>
+          <button class="v3-action">Anlegen</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v3-action" style="border-color:var(--accent-2);color:var(--accent-2);box-shadow:inset 0 0 12px rgba(111,151,179,0.14),0 0 10px rgba(111,151,179,0.25)">Kaufen</button>
+        </div>
+      </div>
+      <p class="hover-hint">Bewege die Maus über die Buttons oben um den Live-Hover zu sehen.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ VARIANTE 4 ══════════════ -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-number">Variante 04</div>
+      <div class="variant-name">Graviertes Wappen / Emaille</div>
+      <div class="variant-desc">Mehrschichtiger Gravierrahmen wie ein Wappenschild — doppelter Box-Shadow erzeugt tief eingravierte Fassung, Emaille-Innenfeld in satten Schmiedefarben.</div>
+    </div>
+    <div class="variant-body">
+
+      <div class="btn-group">
+        <div class="btn-group-label">Sidebar-Navigation</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Inaktiv</span>
+          <button class="v4-nav" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v4-nav" style="max-width:260px;color:var(--text);background:linear-gradient(180deg,#344250 0%,#22303c 50%,#344250 100%);box-shadow:0 0 0 1px var(--accent),0 0 0 2px #1a2430,0 0 0 3px rgba(111,151,179,0.3),inset 0 1px 0 rgba(255,255,255,0.08),inset 0 -1px 0 rgba(0,0,0,0.4),0 3px 8px rgba(0,0,0,0.6),0 0 10px rgba(111,151,179,0.15)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Aktiv</span>
+          <button class="v4-nav active" style="max-width:260px"><span class="demo-icon">🛡</span>Charakter</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v4-nav pressed-demo" style="max-width:260px;box-shadow:0 0 0 1px #4a5c6a,0 0 0 2px #1a2430,inset 0 2px 4px rgba(0,0,0,0.5)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Dungeon — Primär CTA</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v4-cta">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v4-cta" style="filter:brightness(1.15);box-shadow:0 0 0 1px var(--gold),0 0 0 2px #0e0a02,0 0 0 3px rgba(216,192,106,0.5),inset 0 1px 0 rgba(255,220,100,0.2),inset 0 -1px 0 rgba(0,0,0,0.4),0 0 24px rgba(216,192,106,0.35),0 5px 16px rgba(0,0,0,0.7)">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v4-cta pressed-demo" style="box-shadow:0 0 0 1px var(--gold),0 0 0 2px #0e0a02,inset 0 3px 6px rgba(0,0,0,0.5)">Betreten</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Generische Action-Buttons</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v4-action">Kaufen</button>
+          <button class="v4-action">Anlegen</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v4-action" style="color:#c8e4f4;filter:brightness(1.15);box-shadow:0 0 0 1px var(--accent),0 0 0 2px #0d1520,0 0 0 3px rgba(111,151,179,0.3),inset 0 1px 0 rgba(159,196,220,0.12),0 0 10px rgba(111,151,179,0.2),0 3px 8px rgba(0,0,0,0.6)">Kaufen</button>
+        </div>
+      </div>
+      <p class="hover-hint">Bewege die Maus über die Buttons oben um den Live-Hover zu sehen.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ VARIANTE 5 ══════════════ -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-number">Variante 05</div>
+      <div class="variant-name">Gemeißelter Stein</div>
+      <div class="variant-desc">Raue Steinblock-Optik durch invertierte Innen-Schatten (Konkaveffekt) — wirkt wie in Burgmauern gemeißelte Nischen mit goldenen Runeninschriften.</div>
+    </div>
+    <div class="variant-body">
+
+      <div class="btn-group">
+        <div class="btn-group-label">Sidebar-Navigation</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Inaktiv</span>
+          <button class="v5-nav" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v5-nav" style="max-width:260px;color:var(--text);background:linear-gradient(180deg,#363c40 0%,#2a2e32 40%,#22262a 100%);box-shadow:inset 2px 2px 4px rgba(255,255,255,0.06),inset -2px -2px 4px rgba(0,0,0,0.5),0 3px 8px rgba(0,0,0,0.6),0 0 0 1px var(--border-bright)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Aktiv</span>
+          <button class="v5-nav active" style="max-width:260px"><span class="demo-icon">🛡</span>Charakter</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v5-nav pressed-demo" style="max-width:260px;box-shadow:inset -2px -2px 4px rgba(255,255,255,0.04),inset 2px 2px 4px rgba(0,0,0,0.5)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Dungeon — Primär CTA</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v5-cta">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v5-cta" style="filter:brightness(1.15);box-shadow:inset 3px 3px 6px rgba(255,220,100,0.12),inset -3px -3px 6px rgba(0,0,0,0.6),0 5px 16px rgba(0,0,0,0.8),0 0 12px rgba(216,192,106,0.2)">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v5-cta pressed-demo" style="box-shadow:inset -3px -3px 6px rgba(255,220,100,0.06),inset 3px 3px 6px rgba(0,0,0,0.6)">Betreten</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Generische Action-Buttons</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v5-action">Kaufen</button>
+          <button class="v5-action">Anlegen</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v5-action" style="color:#c8e4f4;filter:brightness(1.15);box-shadow:inset 2px 2px 4px rgba(159,196,220,0.06),inset -2px -2px 4px rgba(0,0,0,0.5),0 3px 8px rgba(0,0,0,0.6),0 0 8px rgba(111,151,179,0.2)">Kaufen</button>
+        </div>
+      </div>
+      <p class="hover-hint">Bewege die Maus über die Buttons oben um den Live-Hover zu sehen.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════ VARIANTE 6 ══════════════ -->
+  <div class="variant-card">
+    <div class="variant-header">
+      <div class="variant-number">Variante 06</div>
+      <div class="variant-name">Banner-Schild / Wappenschnalle</div>
+      <div class="variant-desc">Clip-Path-Bannerbänder mit diagonalen Enden — heraldische Schildform für CTA, schlanke Ribbons für Nav-Items, goldenes Wappenframing.</div>
+    </div>
+    <div class="variant-body">
+
+      <div class="btn-group">
+        <div class="btn-group-label">Sidebar-Navigation</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Inaktiv</span>
+          <button class="v6-nav" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v6-nav" style="max-width:260px;color:var(--text);background:linear-gradient(90deg,#263444 0%,#1e2c38 50%,#18222e 100%)"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Aktiv</span>
+          <button class="v6-nav active" style="max-width:260px"><span class="demo-icon">🛡</span>Charakter</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v6-nav pressed-demo" style="max-width:260px"><span class="demo-icon">⚔</span>Kampf</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Dungeon — Primär CTA</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v6-cta">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v6-cta" style="filter:brightness(1.18) drop-shadow(0 0 10px rgba(200,160,48,0.5));box-shadow:0 5px 20px rgba(0,0,0,0.8),0 0 28px rgba(200,160,48,0.4)">Betreten</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Gedrückt</span>
+          <button class="v6-cta pressed-demo" style="box-shadow:0 2px 8px rgba(0,0,0,0.7)">Betreten</button>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <div class="btn-group-label">Generische Action-Buttons</div>
+        <div class="btn-row">
+          <span class="btn-state-label">Normal</span>
+          <button class="v6-action">Kaufen</button>
+          <button class="v6-action">Anlegen</button>
+        </div>
+        <div class="btn-row">
+          <span class="btn-state-label">Hover</span>
+          <button class="v6-action" style="filter:brightness(1.2) drop-shadow(0 0 6px rgba(111,151,179,0.4));box-shadow:0 0 0 1px var(--accent),0 0 14px rgba(111,151,179,0.25),0 4px 12px rgba(0,0,0,0.7)">Kaufen</button>
+        </div>
+      </div>
+      <p class="hover-hint">Bewege die Maus über die Buttons oben um den Live-Hover zu sehen.</p>
+    </div>
+  </div>
+
+</div><!-- /variants -->
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fun-Sweep Runde 3 — Der Drei-Runden-Trend</title>
+<style>
+  :root{
+    --bg:#f5f1e8; --card:#fffdf7; --ink:#2b2620; --ink-2:#57503f; --ink-3:#8a8170;
+    --line:#ded5c2; --ember:#b4541e; --ember-soft:#fdeadb; --good:#2e7d4f; --good-soft:#e2f2e8;
+    --half:#a86a00; --half-soft:#fdf1d8; --open:#a13030; --open-soft:#fbe4e4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#191512; --card:#231e19; --ink:#ece4d4; --ink-2:#c2b7a0; --ink-3:#8a8170;
+      --line:#3a332a; --ember:#e07a3a; --ember-soft:#3a2617; --good:#5fc08c; --good-soft:#1d3527;
+      --half:#e0a83a; --half-soft:#38290e; --open:#e06a6a; --open-soft:#3a1d1d; }
+  }
+  *{box-sizing:border-box; margin:0}
+  body{background:var(--bg); color:var(--ink); font:15px/1.55 "Segoe UI",system-ui,sans-serif; padding:28px 16px}
+  .wrap{max-width:1060px; margin:0 auto}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  h1{font-size:30px; margin-bottom:4px}
+  h1 .sub{display:block; font-size:15px; color:var(--ink-3); font-weight:400; margin-top:4px}
+  .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ember); margin-bottom:8px}
+  .lead{color:var(--ink-2); max-width:76ch; margin:12px 0 4px}
+  .bignums{display:flex; gap:14px; flex-wrap:wrap; margin:18px 0 6px}
+  .bignum{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 18px; min-width:150px}
+  .bignum .v{font-size:24px; font-weight:700}
+  .bignum .v .up{color:var(--good)}
+  .bignum .l{font-size:12px; color:var(--ink-3); letter-spacing:.06em; text-transform:uppercase}
+  h2.sec{font-size:21px; margin:34px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--ember)}
+  .heat-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--card)}
+  table.heat{border-collapse:collapse; width:100%; min-width:960px; font-size:12.5px}
+  .heat th{padding:8px 7px; border-bottom:1px solid var(--line); color:var(--ink-3); font-size:10.5px;
+    letter-spacing:.05em; text-transform:uppercase; text-align:center}
+  .heat th:first-child{text-align:left}
+  .heat td{padding:7px 7px; border-bottom:1px solid var(--line); text-align:center; white-space:nowrap}
+  .heat tr:last-child td{border-bottom:none}
+  .heat td.agent{text-align:left; font-weight:600; white-space:nowrap}
+  .heat td.agent .sys{display:block; font-weight:400; font-size:11px; color:var(--ink-3)}
+  .tr3 .r1,.tr3 .r2{color:var(--ink-3)}
+  .tr3 .r3{font-weight:700}
+  .tr3 .sep{color:var(--ink-3); padding:0 1px; font-size:10px}
+  .tr3 .d{display:block; font-size:10px}
+  .d.pos{color:var(--good)} .d.zero{color:var(--ink-3)}
+  .again-yes{color:var(--good); font-weight:700; font-size:12px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin:16px 0}
+  .card h3{font-size:18px; margin-bottom:2px}
+  .card .meta{font-size:12.5px; color:var(--ink-3); margin-bottom:10px}
+  .trendchip{float:right; font-size:15px; background:var(--good-soft); color:var(--good);
+    border-radius:8px; padding:3px 12px; font-weight:700}
+  .verdict{border-left:3px solid var(--ember); background:var(--ember-soft); padding:8px 12px;
+    border-radius:0 8px 8px 0; font-style:italic; margin:10px 0}
+  .card h4{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); margin:14px 0 6px}
+  .card ul{padding-left:20px; color:var(--ink-2)}
+  .card li{margin:4px 0}
+  .b{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.05em; border-radius:5px;
+    padding:1px 7px; margin-right:6px; vertical-align:1px}
+  .b.fixed{background:var(--good-soft); color:var(--good)}
+  .b.halb{background:var(--half-soft); color:var(--half)}
+  .b.offen{background:var(--open-soft); color:var(--open)}
+  footer{margin-top:44px; padding-top:18px; border-top:1px solid var(--line); color:var(--ink-3);
+    font-size:12.5px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Fun-Sweep RUNDE 3 · 2026-07-16 · dieselben 7 Personas · dritter Besuch · Urteil nur aus dem Spiel</div>
+    <h1 class="serif">Der Drei-Runden-Trend<span class="sub">Runde 1 fand die stummen Momente. Runde 2 maß den Sprung. Runde 3 prüft, ob er hält.</span></h1>
+    <p class="lead"><strong>Er hält — und steigt weiter: Ø 5,6 → 7,6 → 7,9.</strong> Alle 21 Fixes der letzten Runde wurden von den Personas im Spiel bestätigt, drei Systeme legen erneut zu (Riko, Vesna, Aldric), vier halten ihr Niveau. Die verbleibenden Wünsche sind fast ausschließlich die bewusst zurückgestellten Balance-Themen — plus eine Handvoll frischer, präziser Funde für die Abschlussrunde.</p>
+    <div class="bignums">
+      <div class="bignum"><div class="v">5,6 → 7,6 <span class="up">→ 7,9</span></div><div class="l">Ø Gesamt-Sucht</div></div>
+      <div class="bignum"><div class="v">7/7</div><div class="l">„Komme ich morgen wieder?"</div></div>
+      <div class="bignum"><div class="v">18<span style="color:var(--ink-3)">/21</span></div><div class="l">R2-Fixes bestätigt behoben</div></div>
+      <div class="bignum"><div class="v">3 <span class="up">steigen</span> · 4 halten</div><div class="l">Systeme im Trend</div></div>
+    </div>
+  </header>
+
+  <h2 class="sec serif">Trend-Heatmap — alle Aspekte über drei Runden</h2>
+  <div class="heat-wrap"><table class="heat" id="heat"></table></div>
+
+  <h2 class="sec serif">Die Runde-3-Bögen im Einzelnen</h2>
+  <div id="cards"></div>
+
+  <footer>
+    <span>Grim Reach EA 0.1 · Fun-Sweep Runde 3 · Voll-Berichte: design/fun-review/r3-*.md</span>
+    <span>Runde 1: fun-review-bericht.html · Runde 2: retest-vergleich.html</span>
+  </footer>
+</div>
+
+<script>
+const ASPECTS = ["Spaß sofort","Spaß über Zeit","Sucht-Faktor","Belohnungs-Dichte","Ziel-Klarheit","Tiefe & Entscheidungen","Frustfreiheit","Verzahnung"];
+
+const A = [
+ {name:"Mona Feilgrund", sys:"Mastery",
+  r1:[3,6,3,2,4,5,7,6], r2:[7,7,7,8,8,5,7,7], r3:[7,7,7,8,8,5,7,7], t:[4,7,7],
+  wieder:"Ja, wegen der Mastery-Seite — aber Runde 3 war die erste Runde Stillstand.",
+  verdict:"Alles aus Runde 2 funktioniert noch (live regressionsgeprüft), aber am System selbst kam nichts Neues an. Ihr wichtigster Punkt sitzt: Der Karten-Anker wäre reine Verkabelung gewesen und blieb trotzdem liegen.",
+  fixes:[["fixed","Dezimal-XP weg, ★2-Chip auf der Mastery-Seite ehrlich (+0,5 %)"],["offen","Dieselbe Aufrundung lebt auf der SKILL-KARTE weiter (+1 % bei 0,5 %) — halber Fix"],["offen","Smithing-Wand (261 Zeilen ohne Sortierung) und dreistellige Stunden-ETAs unverändert"]],
+  funde:["Skill-Karten-Chip verspricht das Doppelte des echten Werts","Pool-Toast verliert seinen Gold-Streifen nach der Puls-Animation"],
+  r4:["Karten-Anker dritter Anlauf inklusive Rundungs-Fix (eine Datei)","Ziel-Brett ohne Balance-GO (Zähler, Badge-Tausch, Smithing-Gruppierung)","Balance-Paket als ein Beschluss (Pool, Rang-Boni, Zwischenziele)"]},
+ {name:"Fenn Flauschhand", sys:"Pets & Companions",
+  r1:[6,7,7,5,9,6,5,9], r2:[8,8,8,7,9,7,8,9], r3:[8,8,8,7,9,7,8,9], t:[7,8.5,8.5],
+  wieder:"Comeback-Quote wörtlich: 90 %.",
+  verdict:"Die Reparaturen sind stabil (3 Drops = 3 Feiern, Offline-Fund prominent), die Dash-Regel bestätigt behoben. Sein Detektiv-Fund: Die Null-Heilungs-Zeile lebt noch — die Engine heilt jetzt real 0,1, aber die Anzeige rundet auf 0 ab. Die Zeile lügt in die Gegenrichtung.",
+  fixes:[["fixed","Pet-Logzeile mit 2 Gedankenstrichen weg"],["halb","Offline-Achievements haben ein Zähler-Medaillon, aber keine Namen"],["offen","„Lifesteal heals you for 0." — neuer Grund: Anzeige rundet echte 0,1 auf 0 ab (Ein-Zeilen-Fix)"]],
+  funde:["Galerie-Karten haben jetzt direkte Equip/Unequip-Buttons (neues Plus)","Skilling-Procs mit 100 % erzwungen: Erz verdoppelt sich, Bildschirm bleibt stumm"],
+  r4:["Null-Zeile endgültig fixen","Jagd-Zähler („Lose seit letztem Fund")","Skilling-Proc-Momente + Picker-Aktivitäts-Anker"]},
+ {name:"Riko Rollwut", sys:"Verzauberung & Suffixe",
+  r1:[7,5,4,6,6,7,6,8], r2:[8,7,7,7,8,8,7,9], r3:[8,7,8,8,8,8,8,9], t:[5,7.5,8],
+  wieder:"Ja, erstmals wegen des Zockens an der eigenen Waffe.",
+  verdict:"Der Reroll am getragenen Item ist der fehlende Kick: die 98er-Wolf verzockt, Tiger-48 gezogen, und der Verlust FÜHLT sich an, weil die Stats sofort im Charakterbogen wandern. Der Kreis Craft → % → Reroll → tragen → nochmal ist geschlossen.",
+  fixes:[["fixed","Disabled-Optik, Reroll am angelegten Item, Roll-% am Erst-Fund — alle drei bestätigt"],["halb","Craft-Spam: Serien still (0 Fehl-Toasts über 20 Crafts), aber der LETZTE Craft jedes Batches feuert noch einen"],["offen","Drop-Seite weiter ohne Zahlen; Precise-Rune-Inkohärenz (seit R1)"]],
+  funde:["Batch-Ende-Toast-Leak (3× isoliert reproduziert)","Equip-Reroll nutzt native Browser-Dialoge statt Inline-Panel","Pouch-Stack ignoriert ilvl in der Signatur (theoretisch)"],
+  r4:["Attribut-Roll-Substanz (dritte Runde in Folge sein Top-1 — Balance-Block)","Batch-Ende-Kante schließen","Drop-Seite bevertragen + Dialog-Optik angleichen"]},
+ {name:"Vesna Schwurklinge", sys:"Slayer",
+  r1:[8,6,7,6,9,4,6,8], r2:[9,7,9,8,9,6,8,8], r3:[9,8,9,8,9,6,9,8], t:[7,8,8.5],
+  wieder:"Ja — und ich bleibe länger als geplant.",
+  verdict:"Ihr 25-%-Befund ist messbar tot: 200 Ziehungen, 0 % unter Etage 4, schwächster Zettel 1.920 statt 160 XP. Der Countdown steht auf dem Zettel. Der gefixte Pool hat aber eine neue Monokultur erzeugt: Etage 4 hat genau ein Monster — Bone Colossus ist jetzt 26 % aller Aufträge.",
+  fixes:[["fixed","Trivial-Etagen-Lotterie abgeschafft (0 % unter Etage 4)"],["fixed","Serien-Countdown auf dem Zettel („Streak: 12 — bonus at 15")"],["fixed","dg_skeleton_nekro hat sein Fahndungsfoto"],["offen","iron_sentinel weiter Platzhalter; „too weak"-Dissonanz milder, aber lebendig"]],
+  funde:["ECHTER BUG: Der Streak-Bonus-Toast wird vom 4er-Toast-Stapel verdrängt, wenn Task+Level-Up+Achievement gleichzeitig feuern — die Feier fällt genau in den großen Momenten aus","Bone-Colossus-Monokultur (26 % aller Endgame-Tasks)","Neu ohne Bild entdeckt: mire_wisp"],
+  r4:["Streak-Toast verdrängungsfest + lange Meilensteine (25/50/100)","Etagen-Los nach Kandidatenzahl gewichten","Zwei Zettel am Brett (Tiefe klemmt seit zwei Runden bei 6)"]},
+ {name:"Aldric Steigeisen", sys:"Paragonturm",
+  r1:[5,2,3,2,8,4,3,8], r2:[7,5,6,4,9,6,6,9], r3:[8,6,7,6,9,6,7,9], t:[3,6,7],
+  wieder:"Ja, erstmals ohne Tester-Pflichtgefühl.",
+  verdict:"Sein R2-P1 ist erfüllt: Die erste Truhe klingelt in Minute 6 legendär mit Item-Liste, in beiden Modi. Der Auto-Aufstieg trug ihn von Etage 2 bis 7 ohne einen Klick, der Rekord-Toast aktualisiert statt zu spammen. Belohnungs-Dichte 2 → 4 → 6 über drei Runden.",
+  fixes:[["fixed","Stumme Meilenstein-Truhen — Toast mit konkreten Items, live auf E5 und E10"],["fixed","Rekord-Toast-Inflation — genau ein sich aktualisierender Toast über 6 Etagen"],["offen","Nach-Sieg-Rauswurf im manuellen Modus — MIT Root-Cause: der Scroll-Anker lauscht auf einem Container, der auf der Kampfseite nie scrollt"],["offen","Enrage/Inflict fehlen weiter in der Preview; Stoff-Wand bleibt (Balance-Block, fair markiert)"]],
+  funde:["Kapitel 21 jetzt einlösbar (war 3/5)","Kampf-Log rechnet Rüstungs-Abzug und Block jetzt vor (Lichtblick fürs Lehren)"],
+  r4:["Chase-Schaufenster (Truhe-3-Tooltip mit E20-Odds)","Zweite Leiter für Stoff/Leder + Killer-Werte in der Preview","Loop-Feinschliff: echter Scroll-Container, „Wieder hinein"-Knopf, Stopp-Regeln"]},
+ {name:"Grete Beutezug", sys:"Dungeon-Farming",
+  r1:[8,6,7,8,4,6,6,8], r2:[9,7,8,8,9,7,7,9], r3:[9,7,8,9,9,7,7,9], t:[7,8,8],
+  wieder:"Ja — die Preise sind bekannt, und der Treffer wird jetzt gefeiert.",
+  verdict:"Der R2-Krater am obersten Ende ist zu: godly und superRare haben die lauteste Fanfare des Spiels (Goldrahmen, Extra-Bühnenzeit, eigenes Zeremonie-Feld) — „über die Forderung hinaus umgesetzt". Was ihr fehlt: der Zähler für 47 trockene Läufe und ein Drazhan mit Gesicht.",
+  fixes:[["fixed","Godly-Fanfare, „1 Welle"-Singular, Dezimal-Format ein System (Karte = Wiki = Bestiarium)"],["fixed","Verteidigungs-Badges mit Konter-Tooltip auf allen Auswahl-Karten"],["offen","Das Badge fehlt genau dort, wo die Ward-Wand wohnt: Dungeon-Wellen-Monster und Bestiarium"],["offen","Zeremonie-Scroll: der Betreten-Button liegt 1 Pixel unter der 1080er-Falz (Layout-Fund)"]],
+  funde:["Godly-Toast trägt noch den wortgleichen „Seltener Fund!"-Titel","Tour-Popup feuert im Endgame-Fixture","aether_wraith.png ist da und spektakulär; Drazhan/Warband/Chase-Items warten auf Art"],
+  r4:["Badge ins Bestiarium und an die Wellen-Vorschau","Dry-Streak-Zähler oder sanftes Pity (Balance-Block)","Godly eine eigene Wortstufe geben"]},
+ {name:"Pip Hakenliste", sys:"Achievements & Bestiarium",
+  r1:[7,5,6,5,7,3,7,6], r2:[8,7,8,8,8,4,8,8], r3:[8,8,8,8,9,4,9,8], t:[6,8,8],
+  wieder:"Ja — die Langstrecke ist jetzt ehrlich.",
+  verdict:"Beide R2-Frustquellen sind nachweislich tot: eine Discovery-Wahrheit überall (per echtem Verkauf und Totaltilgung monoton verifiziert, Alt-Saves bekommen rückwirkend nachgezahlt), und der Endspurt-Kompass füllt sich am exakten alten Repro-Fall. Sein neuer Fund ist der wichtigste der Runde.",
+  fixes:[["fixed","Discovery-Zähler-Widerspruch gründlich behoben (28 vs. 14 → eine Zahl, monoton)"],["fixed","Leerer Endspurt-Kompass behoben (535/537 zeigt die letzten zwei)"],["fixed","Offline-Medaille „4 Achievements" als eigener Heimkehr-Moment"],["offen","Token-Shop ohne Traumziel (Chef-Thema); ???-Karten aktionslos"]],
+  funde:["WICHTIGSTER NEUER FUND: Der Alt-Save-Nachhol-Schub ist komplett lautlos — 79 Erfolge + Tokens korrekt verbucht, aber der Feier-Breadcrumb wird beim Laden als „gesehen" verschluckt. Genau so erlebt jeder Bestandsspieler eine Fix-Welle.","Jackpot-Toasts haben keine Verdrängungs-Priorität (deckt sich mit Vesnas Fund)"],
+  r4:["Dem Lade-Schub eine Stimme geben (größter verschenkter Dopamin-Hebel)","Discovery-Galerie hinter dem x/1061-Zähler","Jackpot-Pinning + Kürzlich-Log"]}
+];
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function tr3(r1,r2,r3){
+  const d=r3-r2;
+  const dTxt=d>0?`+${d}`:d===0?"±0":`${d}`;
+  return `<td class="tr3"><span class="r1">${r1}</span><span class="sep">→</span><span class="r2">${r2}</span><span class="sep">→</span><span class="r3">${r3}</span><span class="d ${d>0?"pos":"zero"}">${dTxt}</span></td>`;
+}
+function fmt(n){return String(n).replace(".",",")}
+const heat=document.getElementById("heat");
+heat.innerHTML =
+  `<tr><th>Agent</th>${ASPECTS.map(a=>`<th>${a}</th>`).join("")}<th>Gesamt</th><th>Wieder?</th></tr>` +
+  A.map(a=>{
+    const cells=a.r1.map((v,i)=>tr3(v,a.r2[i],a.r3[i])).join("");
+    const total=tr3(fmt(a.t[0]),fmt(a.t[1]),fmt(a.t[2])).replace('class="tr3"','class="tr3" style="font-size:13px"');
+    return `<tr><td class="agent">${a.name}<span class="sys">${a.sys}</span></td>${cells}${total}<td><span class="again-yes">Ja</span></td></tr>`;
+  }).join("");
+
+const badge={fixed:'<span class="b fixed">BEHOBEN</span>',halb:'<span class="b halb">TEILWEISE</span>',offen:'<span class="b offen">OFFEN</span>'};
+document.getElementById("cards").innerHTML = A.map(a=>`
+  <div class="card">
+    <span class="trendchip">${fmt(a.t[0])} → ${fmt(a.t[1])} → ${fmt(a.t[2])}</span>
+    <h3 class="serif">${a.name}</h3>
+    <div class="meta">${a.sys} · Voll-Bericht: r3-*.md</div>
+    <div class="verdict">„${esc(a.wieder)}"</div>
+    <p style="color:var(--ink-2)">${esc(a.verdict)}</p>
+    <h4>Runde-2-Funde nachgetestet</h4>
+    <ul>${a.fixes.map(t=>`<li>${badge[t[0]]}${esc(t[1])}</li>`).join("")}</ul>
+    <h4>Neue Funde</h4>
+    <ul>${a.funde.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+    <h4>Top-3 für Runde 4</h4>
+    <ul>${a.r4.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>
+  </div>`).join("");
+</script>
+</body>
+</html>

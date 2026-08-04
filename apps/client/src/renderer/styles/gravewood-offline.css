@@ -1,0 +1,50 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/*
+ * Gravewood Offline — ausschließlich die vom Chef freigegebenen Berichtskarten
+ * und der Einsammeln-Button. Der Modal-Hintergrund und alle übrigen Seiten bleiben Citadel.
+ */
+
+:root {
+  --gw-offline-leather: url("../assets/ui/gravewood/textures/texture-leather.webp");
+  --gw-offline-button-frame: url("../assets/ui/gravewood/buttons/alternate/alternate-normal.webp");
+}
+
+/* codex:2026-07-30T23:19:21+02:00 — Abwesenheitsdauer, Wächterbericht und Fertigkeitszeilen wechseln von Holz auf dunkles Leder. */
+#root :is(.offline-stage-duration, .ofs-warden, .ofs-skill-row) {
+  background-color: #15110e !important;
+  background-image: var(--gw-offline-leather) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+
+/* codex:2026-07-30T23:19:21+02:00 — Einsammeln verwendet den neuen alternativen Rahmen mit separater Lederfläche. */
+#root .ofs-collect,
+#root .ofs-collect:hover,
+#root .ofs-collect:active {
+  width: 50% !important;
+  min-width: 280px;
+  max-width: 420px;
+  align-self: center;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: 18px !important;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 18px !important;
+  border-image-repeat: stretch !important;
+  background-color: #15110e !important;
+  background-image: url("../assets/ui/gravewood/textures/texture-gravewood.webp") !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+#root .ofs-collect:hover {
+  filter: brightness(1.1) saturate(1.03) !important;
+}
+
+#root .ofs-collect:active {
+  filter: brightness(0.9) saturate(0.94) !important;
+  transform: translateY(1px);
+}

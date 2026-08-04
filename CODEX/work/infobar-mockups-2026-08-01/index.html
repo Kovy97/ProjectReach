@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Grim Reach — Info Bar Studies</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- codex:2026-08-01T13:52:00+02:00 — Fünf umsetzbare Info-Bar-Systeme mit identischem
+       Datenvertrag. Die Steuerung wechselt Zustand und simuliert Fortschritt für alle Varianten. -->
+  <main>
+    <header class="lab-head">
+      <div>
+        <p class="eyebrow">Grim Reach · UI Control Board</p>
+        <h1>Character Info Bar — Five Systems</h1>
+        <p>Same information, same minimum height, five different hierarchies. Resize the window to test 1920 and ultrawide behavior.</p>
+      </div>
+      <div class="controls" role="group" aria-label="Preview state">
+        <button type="button" data-mode="idle" class="active">Idle</button>
+        <button type="button" data-mode="training">Training</button>
+        <button type="button" data-mode="combat">Combat</button>
+        <button type="button" id="tick">Advance</button>
+      </div>
+    </header>
+
+    <section class="concept c1">
+      <div class="concept-label"><b>01</b><span>Reliquary Band</span></div>
+      <div class="info-shell">
+        <div class="identity"><strong>Kovy</strong><span>Combat Lv 38 · Total Lv 604</span></div>
+        <div class="focus"><span class="helm">♜</span><strong data-title>Character</strong><span class="helm">♜</span></div>
+        <div class="resources"><strong data-state>Idle</strong><span>37/38 · ◉ 9,526 · Slayer 0/37</span></div>
+        <div class="tracks"><i class="task" data-task></i><i class="xp" data-xp></i><span data-task-label>No active skill</span></div>
+      </div>
+    </section>
+
+    <section class="concept c2">
+      <div class="concept-label"><b>02</b><span>Warden Ledger</span></div>
+      <div class="info-shell">
+        <div class="identity"><span class="sigil">✥</span><p><strong>Kovy</strong><span>Lv 604 Chronicle</span></p></div>
+        <div class="focus"><small>Current Order</small><strong data-title>Character</strong><span data-task-label>No active skill</span></div>
+        <div class="resources"><span><small>Inventory</small><b>37 / 38</b></span><span><small>Gold</small><b>9,526</b></span><span><small>Status</small><b data-state>Idle</b></span></div>
+        <div class="tracks"><i class="task" data-task></i><i class="xp" data-xp></i></div>
+      </div>
+    </section>
+
+    <section class="concept c3">
+      <div class="concept-label"><b>03</b><span>Ashen Command Rail</span></div>
+      <div class="info-shell">
+        <div class="identity"><small>Warden</small><strong>Kovy</strong><span>Total 604</span></div>
+        <div class="focus"><strong data-title>Character</strong><div class="order"><span data-state>Idle</span><b data-task-label>No active skill</b></div></div>
+        <div class="resources"><b>37/38</b><b>9,526 ◉</b><b>0/37 Slayer</b></div>
+        <div class="tracks"><i class="task" data-task></i><i class="xp" data-xp></i></div>
+      </div>
+    </section>
+
+    <section class="concept c4">
+      <div class="concept-label"><b>04</b><span>Hunter Chronicle</span></div>
+      <div class="info-shell">
+        <div class="identity"><strong>Kovy</strong><span>Combat 38</span><span>Total 604</span></div>
+        <div class="focus"><span class="rune">◆</span><p><strong data-title>Character</strong><small data-task-label>No active skill</small></p><span class="rune">◆</span></div>
+        <div class="resources"><span>Bag <b>37/38</b></span><span>Coin <b>9,526</b></span><span data-state>Idle</span></div>
+        <div class="tracks"><i class="task" data-task></i><i class="xp" data-xp></i></div>
+      </div>
+    </section>
+
+    <section class="concept c5">
+      <div class="concept-label"><b>05</b><span>Citadel Crucible</span></div>
+      <div class="info-shell">
+        <div class="identity"><span class="plate">K</span><p><strong>Kovy</strong><small>38 Combat · 604 Total</small></p></div>
+        <div class="focus"><strong data-title>Character</strong><span class="status" data-state>Idle</span><small data-task-label>No active skill</small></div>
+        <div class="resources"><span><b>37</b>/38</span><span><b>9,526</b> ◉</span><span><b>0</b>/37</span></div>
+        <div class="tracks"><i class="task" data-task></i><i class="xp" data-xp></i></div>
+      </div>
+    </section>
+  </main>
+  <script src="preview.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   ONBOARDING GUIDE — Spotlight-Overlay + erzwungenes Folgen
+   (Etappe 1: System + Topbar). Ersetzt das alte .onboarding-modal
+   (bleibt in modals.css für den vorgeschriebenen i18n-Bestand).
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Gating: NUR das Spotlight-Ziel + die Guide-Oberfläche selbst sind klickbar ───────────── */
+body.guide-active .layout {
+  pointer-events: none;
+}
+body.guide-active .guide-target {
+  pointer-events: auto !important;
+}
+body.guide-active .onboarding-guide-root .guide-bubble,
+body.guide-active .onboarding-guide-root .guide-bubble * {
+  pointer-events: auto;
+}
+
+/* ─── Overlay-Root ──────────────────────────────────────────────────────────────────────────── */
+.onboarding-guide-root {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  pointer-events: none; /* Dim-/Spotlight-Layer selbst sind reine Deko — Klicks fallen durch. */
+}
+
+/* Vollflächige Abdunklung für zielose Schritte (Intro/Zwischen-Abschluss). */
+.guide-dim-full {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 7, 9, 0.8);
+  pointer-events: none;
+}
+
+/* Spotlight-Aussparung: das Element selbst bleibt transparent (echtes Ziel scheint durch),
+   der riesige box-shadow-Spread dunkelt den kompletten Rest des Bildschirms ab. */
+.guide-spotlight {
+  position: fixed;
+  border: 2px solid var(--gold);
+  border-radius: 6px;
+  box-shadow:
+    0 0 0 9999px rgba(6, 7, 9, 0.8),
+    0 0 22px 3px rgba(216, 192, 106, 0.6);
+  pointer-events: none;
+  transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease;
+}
+
+/* ─── Sprechblase ───────────────────────────────────────────────────────────────────────────── */
+/* Größen-Update (Chef-Auftrag 2026-07-22, „Onboarding-Wächter soll deutlich größer werden"):
+   Box 440px→clamp(620–780)px (Faktor ~1.4–1.6× je Viewport-Breite, s. Chef-Vorgabe), Schrift/
+   Porträt eine klare Stufe hoch (Porträt-Skalierung s. npc-greeting.css .guide-bubble-speaker
+   .npc-greeting-head). Der Guide ist in dem Moment der Hauptdarsteller, kein dezentes Tooltip —
+   die vw-Kopplung skaliert bewusst mit (gleiches Muster wie topbar.css/menu.css/character.css),
+   damit die Box auf 4K nicht winzig gegenüber 1080p wirkt. JS-Pendant: SpotlightGuide.tsx misst
+   die tatsächliche gerenderte Breite/Höhe live (bubbleRef.offsetWidth/-Height) für die Viewport-
+   Klammerung — kein von Hand synchron zu haltender Breiten-Konstante mehr nötig. */
+.guide-bubble {
+  position: fixed;
+  width: clamp(620px, 34vw, 780px);
+  max-width: calc(100vw - 32px);
+  border-style: solid;
+  border-width: 18px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 18px;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.7), rgba(10, 12, 15, 0.7)),
+    url("../assets/bg_black.webp") repeat;
+  padding: clamp(22px, 2vw, 30px) clamp(26px, 2.3vw, 32px);
+  box-shadow: 0 16px 46px rgba(0, 0, 0, 0.8);
+  font-family: var(--font-head);
+  transition: top 0.18s ease, left 0.18s ease, bottom 0.18s ease;
+}
+
+.guide-bubble-title {
+  margin: 0 0 10px;
+  font-size: clamp(21px, 1.4vw, 27px);
+  color: var(--gold);
+}
+
+.guide-bubble-body {
+  margin: 0 0 16px;
+  font-size: clamp(17px, 1.15vw, 21px);
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.guide-bubble-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.guide-bubble-skip {
+  background: transparent;
+  border: none;
+  color: var(--accent-2);
+  font-family: var(--font-head);
+  font-size: clamp(13px, 0.85vw, 16px);
+  cursor: pointer;
+  opacity: 0.75;
+}
+.guide-bubble-skip:hover {
+  opacity: 1;
+  color: var(--text);
+}
+
+.guide-bubble-hint {
+  font-size: clamp(13px, 0.85vw, 16px);
+  color: var(--accent-2);
+  font-style: italic;
+}
+
+/* Optionaler dritter Footer-Button (Report-Bug-Feature, Chef-Auftrag 2026-07-18) — dezenter als
+   der primäre "Weiter"-Button, aber sichtbarer als der reine Text-Link "Überspringen". */
+.guide-bubble-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-sm, 2px);
+  color: var(--accent-2);
+  font-family: var(--font-head);
+  font-size: clamp(12px, 0.8vw, 14px);
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.guide-bubble-secondary:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Primärer "Weiter"-Button: scoped statt .combat-btn direkt anzufassen (combat.css ist gesperrt,
+   parallel belegt) — höhere Selektor-Spezifität gewinnt zuverlässig gegen beide globalen
+   .combat-btn-Regeln unabhängig von deren Quellreihenfolge. */
+.guide-bubble-footer .combat-btn {
+  font-size: clamp(16px, 1vw, 20px);
+  padding: clamp(11px, 1vw, 14px) clamp(20px, 2vw, 28px);
+  min-height: 48px;
+}

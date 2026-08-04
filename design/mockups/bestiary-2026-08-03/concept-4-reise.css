@@ -1,0 +1,150 @@
+/* ═══════════════════════════════════════════════════════════
+   KONZEPT 4 — REISE DURCH DEN REACH
+   Die Zonen als atmosphärische Kulissen-Bänder untereinander, echte Zonen-Backdrops als
+   Vollbild-Hintergrund je Band; Monster der Zone als Wegpunkt-Karten AUF dem Band, entlang
+   eines gestrichelten Pfads — das Bestiarium als Wanderung von den Weiden bis in die Tiefe.
+   ═══════════════════════════════════════════════════════════ */
+
+* { box-sizing: border-box; }
+
+:root {
+  --gold: #d8c06a;
+  --accent-2: #c9a96a;
+  --text: #eee6d2;
+  --muted: #b8ac94;
+  --armor: #d8c06a;
+  --evasion: #7fc76b;
+  --ward: #6be0e6;
+}
+
+html, body { margin: 0; background: #0b0c0e; }
+body { font-family: "Cinzel", Georgia, serif; color: var(--text); }
+
+/* ─── Kopfleiste (kein Band, ruhiger Einstieg) ─── */
+.journey-head {
+  padding: 20px 30px 16px;
+  background: linear-gradient(180deg, #14161a, #0b0c0e);
+  border-bottom: 1px solid #2a2d33;
+}
+.jh-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.journey-head h1 { margin: 0; font-size: 32px; color: var(--gold); letter-spacing: 0.05em; }
+.journey-head .subtitle { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 2px; }
+.jh-seals { display: flex; gap: 10px; }
+.jh-seal { padding: 7px 16px; background: rgba(255,255,255,0.04); border: 1px solid #383c44; text-align: center; font-size: 11px; color: var(--muted); }
+.jh-seal b { display: block; font-size: 17px; color: var(--gold); }
+
+.jh-controls { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.jh-tab { font-family: "Cinzel", serif; font-size: 12.5px; font-weight: 700; padding: 7px 16px; background: rgba(255,255,255,0.04); border: 1px solid #383c44; color: var(--muted); cursor: pointer; }
+.jh-tab.active { background: rgba(216,192,106,0.14); border-color: var(--gold); color: var(--gold); }
+.jh-filter { font-family: "Cinzel", serif; font-size: 12px; font-weight: 700; padding: 7px 14px; background: rgba(255,255,255,0.04); border: 1px solid #383c44; color: var(--muted); cursor: pointer; }
+.jh-filter.active { background: rgba(216,192,106,0.14); border-color: var(--gold); color: var(--gold); }
+.jh-legend { margin-left: auto; display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.jh-legend b { color: var(--text); }
+
+/* ─── Zonen-Band ─── */
+.zone-band {
+  position: relative;
+  min-height: 460px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-bottom: 3px solid #000;
+  overflow: hidden;
+}
+.zone-band::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(6,6,8,0.35) 0%, rgba(6,6,8,0.15) 30%, rgba(6,6,8,0.55) 68%, rgba(6,6,8,0.92) 100%);
+}
+.zone-band.locked::before { background: linear-gradient(180deg, rgba(6,6,8,0.75), rgba(6,6,8,0.6) 40%, rgba(6,6,8,0.94)); backdrop-filter: grayscale(0.6); }
+
+.band-header { position: relative; z-index: 2; padding: 26px 40px 10px; }
+.band-header h2 { margin: 0; font-size: 40px; text-shadow: 0 3px 14px rgba(0,0,0,0.85); letter-spacing: 0.04em; color: #fff; }
+.band-header .bh-meta { display: flex; align-items: center; gap: 16px; margin-top: 6px; font-size: 13px; color: var(--accent-2); text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
+.band-header .bh-bar { width: 140px; height: 5px; background: rgba(0,0,0,0.5); }
+.band-header .bh-bar > span { display: block; height: 100%; background: linear-gradient(90deg, #7a5a24, var(--gold)); }
+
+.band-locked-note {
+  position: relative; z-index: 2;
+  margin: 0 40px 14px;
+  padding: 12px 20px;
+  background: rgba(10,8,6,0.55);
+  border: 1px solid rgba(216,192,106,0.35);
+  font-size: 14px; font-style: italic; color: #e8dcc0;
+  max-width: 560px;
+}
+
+/* Pfad: horizontal scrollende Wegpunkt-Reihe */
+.band-path {
+  position: relative; z-index: 2;
+  padding: 10px 40px 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.band-path-track {
+  position: relative;
+  display: flex;
+  gap: 26px;
+  padding-top: 10px;
+  width: max-content;
+}
+.band-path-track::before {
+  content: "";
+  position: absolute;
+  left: 8px; right: 8px; top: 26px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(216,192,106,0.55) 0 10px, transparent 10px 20px);
+  z-index: 0;
+}
+
+.waypoint {
+  position: relative;
+  z-index: 1;
+  width: 172px;
+  flex-shrink: 0;
+  background: rgba(12,10,8,0.82);
+  border: 1px solid rgba(216,192,106,0.3);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+.waypoint::before {
+  content: "";
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(12,10,8,0.9), 0 0 8px rgba(216,192,106,0.7);
+}
+.waypoint.unknown::before { background: #6a6252; box-shadow: 0 0 0 3px rgba(12,10,8,0.9); }
+
+.wp-art {
+  position: relative;
+  height: 96px;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: radial-gradient(circle at 50% 25%, rgba(255,255,255,0.08), transparent 70%);
+  border-bottom: 1px solid rgba(216,192,106,0.2);
+}
+.wp-art img { max-width: 86%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.6)); }
+.wp-art .qmark { font-size: 32px; color: rgba(255,255,255,0.18); }
+.wp-art .lvl { position: absolute; top: 4px; right: 4px; font-size: 9px; background: rgba(0,0,0,0.7); padding: 2px 5px; color: var(--gold); }
+.wp-art .enrage { position: absolute; top: 4px; left: 4px; font-size: 11px; }
+
+.wp-body { padding: 8px 9px 10px; text-align: center; }
+.wp-name { font-size: 12.5px; color: #fff; min-height: 16px; margin-bottom: 2px; }
+.wp-defense { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.wp-defense.dt-armor { color: var(--armor); }
+.wp-defense.dt-evasion { color: var(--evasion); }
+.wp-defense.dt-ward { color: var(--ward); }
+.wp-kills { font-size: 10.5px; color: var(--accent-2); margin-bottom: 4px; }
+.wp-kills.dim { color: #7a7364; }
+.wp-drops { display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; margin-bottom: 6px; }
+.wp-drop { width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(216,192,106,0.25); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.wp-drop img { width: 13px; height: 13px; object-fit: contain; }
+.wp-drop.undiscovered img { filter: brightness(0) opacity(0.5); }
+.wp-hint { font-size: 9.5px; color: #a89c84; font-style: italic; line-height: 1.4; margin-bottom: 4px; }
+.wp-btn { display: block; width: 100%; padding: 5px; font-family: "Cinzel", serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: linear-gradient(180deg, #8a6a34, #5c4218); color: #f2e3b4; border: none; cursor: pointer; }
+.wp-btn[disabled] { background: rgba(255,255,255,0.06); color: #7a7364; cursor: default; }
+.wp-note { font-size: 8.5px; color: #d99a7a; font-style: italic; margin-top: 3px; }
+
+.band-scroll-hint { position: absolute; right: 0; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(6,6,8,0.55)); }

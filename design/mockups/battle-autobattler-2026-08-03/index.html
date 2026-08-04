@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Auto-Battler-Choreografie Beweis — Grim Reach 0.4.0 "Kampfgefühl"</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+  <h1>Auto-Battler-Choreografie — interaktiver Motion-Beweis</h1>
+  <p class="sub">
+    Wegwerf-Mockup für den 0.4.0-Meilenstein "Kampfgefühl" (<b>kein Produktivcode</b>, keine App-Datei
+    berührt). Zeigt mit den <b>echten Repo-Sprites</b> (Held <code>char_1.webp</code>, Monster
+    <code>chicken/goblin/bull_boss.webp</code>) und der echten Weiden-Kulisse, wie sich Bewegung statt
+    reiner Flash-Treffer anfühlt — komplett <code>transform</code>/<code>opacity</code>/<code>filter</code>,
+    per <code>Element.animate()</code> (WAAPI) ausgelöst, genau wie der echte <code>Fighter</code> in
+    <code>CombatPage.tsx</code>. <b>Modus Heute</b> ist keine Erfindung, sondern 1:1 aus den echten
+    Keyframes (<code>LUNGE_RIGHT/LEFT</code>, <code>hitPunchKeyframes</code>, <code>hit-flash-overlay</code>)
+    portiert — der ehrliche Ist-Zustand-Vergleich.
+  </p>
+
+  <div class="controls">
+    <div class="control-group mode-tabs">
+      <span class="grp-label">Modus</span>
+      <button class="mode-tab active" data-mode="A">A · Heute</button>
+      <button class="mode-tab" data-mode="B">B · Auto-Battler</button>
+      <button class="mode-tab" data-mode="C">C · Auto-Battler + Tiefe</button>
+    </div>
+    <div class="control-group">
+      <span class="grp-label">Monster</span>
+      <button class="monster-tab" data-monster="chicken">Huhn</button>
+      <button class="monster-tab" data-monster="goblin">Goblin</button>
+      <button class="monster-tab active" data-monster="bull">Bulle (Boss)</button>
+    </div>
+    <div class="control-group">
+      <span class="grp-label">Spieler-Stil</span>
+      <button class="style-tab active" data-style="melee">Nahkampf</button>
+      <button class="style-tab" data-style="ranged">Fernkampf</button>
+      <button class="style-tab" data-style="magic">Magie</button>
+    </div>
+    <div class="control-group">
+      <span class="grp-label">Speed</span>
+      <button class="speed-tab" data-speed="0.5">0.5×</button>
+      <button class="speed-tab active" data-speed="1">1×</button>
+      <button class="speed-tab" data-speed="2">2×</button>
+    </div>
+    <div class="control-group">
+      <button id="reducedToggle">Reduced-Motion</button>
+      <button id="runToggle">⏸ Auto-Battle pausieren</button>
+    </div>
+    <span class="meta-readout" id="meta"></span>
+  </div>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <div class="actor player" id="playerActor">
+        <div class="plate">
+          <div class="name" id="playerName">Held</div>
+          <div class="bar hp"><i id="playerHpFill"></i><span id="playerHpLabel"></span></div>
+          <div class="bar timer"><i id="playerTimerFill"></i></div>
+          <div class="timer-label" id="playerTimerLabel">0.0s</div>
+        </div>
+        <div class="actor-idle" id="playerIdle">
+          <div class="actor-lunge" id="playerLunge">
+            <div class="shadow" id="playerShadow"></div>
+            <div class="actor-art" id="playerArt">
+              <div class="actor-punch" id="playerPunch">
+                <div class="hit-flash" id="playerFlash"></div>
+                <img id="playerImg" alt="Spieler" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actor monster" id="monsterActor">
+        <div class="plate">
+          <div class="name" id="monsterName">Monster</div>
+          <div class="bar hp"><i id="monsterHpFill"></i><span id="monsterHpLabel"></span></div>
+          <div class="bar timer"><i id="monsterTimerFill"></i></div>
+          <div class="timer-label" id="monsterTimerLabel">0.0s</div>
+        </div>
+        <div class="actor-idle" id="monsterIdle">
+          <div class="actor-lunge" id="monsterLunge">
+            <div class="shadow" id="monsterShadow"></div>
+            <div class="actor-art" id="monsterArt">
+              <div class="actor-punch" id="monsterPunch">
+                <div class="hit-flash" id="monsterFlash"></div>
+                <img id="monsterImg" alt="Monster" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="projectile" id="projectile"></div>
+      <div class="floaters" id="floaters"></div>
+    </div>
+  </div>
+
+  <div class="freeze-row">
+    <div class="freeze-col">
+      <span class="col-label">Spieler einfrieren</span>
+      <div id="playerFreezeButtons" class="freeze-col"></div>
+    </div>
+    <div class="freeze-col">
+      <span class="col-label">Gegner einfrieren</span>
+      <div id="monsterFreezeButtons" class="freeze-col"></div>
+    </div>
+    <div class="freeze-col">
+      <span class="col-label">Kill-Sequenz</span>
+      <button id="killPlayerBtn">Spieler stirbt</button>
+      <button id="killMonsterBtn">Gegner stirbt</button>
+    </div>
+    <button id="resumeBtn">▶ Weiter (Freeze auflösen)</button>
+    <span class="freeze-state" id="freezeState"></span>
+  </div>
+
+  <div class="findings">
+    <div class="box">
+      <h2>Was trägt <span class="tag ok">bestätigt</span></h2>
+      <ul>
+        <li><b>Kausalität statt Gleichzeitigkeit ist der eigentliche Wucht-Hebel</b> — nicht nur mehr
+          Bewegung. Modus A feuert Angreifer-Lunge und Verteidiger-Reaktion zeitgleich (das Spiel kennt
+          heute keinen "Ankunfts"-Zeitpunkt); Modus B verzögert Recoil/Flash/Funken/Floater bis zum
+          simulierten Kontakt-Frame (Dash-Ende) — dieselbe Distanz liest sich dadurch spürbar härter.</li>
+        <li>Idle-Atmen (Modus B/C) macht aus zwei toten Standbildern sofort "etwas Lebendiges" — schon
+          bei den Standard-Sprites ohne jede neue Kunst, reine <code>translateY</code>/<code>rotate</code>-
+          Schleife, phasenversetzt.</li>
+        <li>Die live gemessene Kontakt-Lücke (<code>measureGapPx</code>) statt fixem Dash-Wert lässt
+          denselben Zyklus für Huhn (schmal), Goblin (mittel) und Bullen (breit) automatisch funktionieren,
+          ohne Sprite-spezifische Werte pflegen zu müssen.</li>
+        <li>Ranged/Magie als "stehenbleiben + Projektil" statt Dash liest sich klar anders als Melee —
+          gibt dem Fernkampf-Stil endlich eine eigene Silhouette (heute optisch identisch zu Melee, s. rechts).</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h2>Wo die Grenze ist <span class="tag risk">ehrlich</span></h2>
+      <ul>
+        <li><b>Huhn vs. Ritter (Chef-Frage direkt getestet):</b> derselbe Windup/Dash liest sich beim
+          Huhn eher possierlich als wuchtig — das Sprite hat keine Anatomie (keinen sichtbaren Beinabstoß),
+          die die Bewegung stützt. Der Gewichtsfaktor (Huhn ×1.6 Rückstoß, Bulle ×0.5) hilft, ersetzt aber
+          keine Pose — s. Verdikt unten.</li>
+        <li>Alles bleibt EIN starres Sprite, das gedreht/gestaucht/verschoben wird — Windup-"Ausholen" ist
+          eine Behauptung der Bewegung, keine echte Armbewegung. Trägt bei Nahkampf-Silhouetten (Bulle,
+          Goblin) überraschend gut, bricht bei sehr kleinen/runden Formen (Huhn) am ehesten.</li>
+        <li>Bottom-Alpha-Padding unterschiedlich je Sprite (Bulle 16.8%, Goblin 9.9%, Held 3.0%, real
+          gemessen) — ohne den <code>footPad</code>-Ausgleich hier würden Figuren unterschiedlich stark
+          über dem Boden schweben (dasselbe Problem wie im three.js-Arena-Assessment vom selben Tag).</li>
+        <li>Modus C bewusst OHNE gekippten Boden (kein <code>rotateX</code>) — der 2.5D-light-Beweis vom
+          selben Tag zeigte Doppelperspektive auf gemalten Kulissen ohne dediziertes Bodenbild; hier bleibt
+          es bei Schatten+Staffelung, die mit jeder vorhandenen Kulisse funktioniert, aber entsprechend
+          weniger "Bühne" wirkt als eine echte 3D-Ebene.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

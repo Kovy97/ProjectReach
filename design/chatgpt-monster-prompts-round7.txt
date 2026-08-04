@@ -1,0 +1,16 @@
+=== ChatGPT Monster-Generierungs-Prompts — Grim Reach (Runde 7) ===
+Generiert: 2026-07-10
+Anlass: Endgame-Dungeon-Re-Tiering (goblin_warband Gate 20→55) — 5 NEUE, eigenständige Kreaturen
+ohne Openworld-Basis ("Kriegstrupp-Veteranen", Stufe 50–60). Format wie Runde 6: gemalter
+Dark-Fantasy-Stil, EIN Monster pro Bild, ganze Kreatur sichtbar, schlichter dunkler Hintergrund,
+Dateiname exakt `<id>.png`.
+
+############### MONSTER (5 — Kampfbild-Format wie bestehende Monster-Art: ganze Kreatur, gemalter Stil, schlichter dunkler Hintergrund) ###############
+
+--- MONSTER Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Monster-Artworks im gemalten Dark-Fantasy-Stil, ein einzelnes Monster pro Bild, ganze Kreatur sichtbar, schlichter dunkler Hintergrund. Das heißt 5 angefragte Artworks = 5 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Goblin-Plünderer (goblin_reaver.png) — Ein sehniger, flinker Goblin-Räuber (Stufe 50) der Kriegsbande: zwei gekrümmte, angerostete Dolche in den Händen, leichte Lederriemen-Rüstung mit aufgenähten Trophäen (getrocknete Ohren, kleine Knochen), Kapuze aus Fellresten. Geduckte, sprungbereite Haltung, hinterhältiger Blick — der Vorhut-Späher der Bande.
+• Goblin-Pikenier (goblin_pikeman.png) — Ein stämmiger Goblin-Speerträger (Stufe 52) in geflickter Schrottplatten-über-Leder-Rüstung, eine lange, rostige Pike fest im Anschlag, ein runder Holz-und-Eisen-Schild am Arm. Kampfformation-Haltung wie eine lebende Speerwand, entschlossener, verbissener Ausdruck.
+• Goblin-Belagerungsbestie (goblin_siegebrute.png) — Ein massiger, muskulöser Goblin-Elitekämpfer (Stufe 55) der Kriegsbande: trägt eine improvisierte Belagerungswaffe wie einen riesigen, kettenbehangenen Rammbock-Arm oder einen überdimensionierten Kriegshammer aus Schrottmetall. Dicke, genietete Schrottplatten-Panzerung, breite kampferprobte Statur, einschüchternde Präsenz.
+• Goblin-Blutschamane (goblin_bloodshaman.png) — Ein hagerer Goblin-Blutmagier (Stufe 57): rituelle Narben und rote Kriegsbemalung über den ganzen Körper, ein blutverkrusteter Knochendolch/Totem in erhobener Hand, dunkelrote magische Energie umspielt die Finger. Behängt mit klappernden Knochen- und Zahnamuletten, unheilvoller, konzentrierter Ausdruck.
+• Goblin-Kriegshäuptling (goblin_warchief.png) — Ein großer, narbenübersäter Goblin-Kriegsherr (Stufe 60, Boss der Kriegsbande): breiter als jeder gewöhnliche Goblin, schwingt ein riesiges Spaltbeil oder einen Kriegshammer aus Schrott- und Beutemetall, trägt einen zerfledderten Trophäen-Umhang/Banner-Fetzen der Bande über der Schulter. Wuchtige, aggressive Kampfhaltung, Anführer-Ausstrahlung — der Endboss-Moment des Laufs.

@@ -1,0 +1,314 @@
+/* ═══════════════════════════════════════════════════════════
+   ITEM WIKI MODAL (Task #308, Chef-Feature) — kompaktes Citadel-Modal, geöffnet über den
+   "?"-Button im ItemTooltip-Rahmen (siehe .itip-wiki-btn in components.css). Eigener `iwk-*`-
+   Namespace, komplett unabhängig von der Tooltip-Karte (`itip-*`).
+   ═══════════════════════════════════════════════════════════ */
+
+.iwk-modal {
+  width: min(92vw, 460px);
+  max-width: 460px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* der Rahmen selbst scrollt nicht — nur .iwk-body darunter */
+}
+
+.iwk-kicker {
+  flex: 0 0 auto;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.75;
+  margin-bottom: 8px;
+  padding-right: 26px; /* Platz für den Schließen-Button oben rechts */
+}
+
+/* ─── Kopf: Bild · Name/Seltenheit · Wert/Stapelbar ─────────────────────── */
+.iwk-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.iwk-head-icon {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(10, 8, 6, 0.6), rgba(10, 8, 6, 0.6)),
+    url("../assets/bg_black.webp") repeat;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+}
+
+.iwk-head-icon img {
+  max-width: 84%;
+  max-height: 84%;
+  object-fit: contain;
+}
+
+.iwk-head-icon.rarity-poor      { border-color: var(--rar-poor); }
+.iwk-head-icon.rarity-common    { border-color: var(--rar-common); }
+.iwk-head-icon.rarity-magic     { border-color: var(--rar-magic); }
+.iwk-head-icon.rarity-rare      { border-color: var(--rar-rare); }
+.iwk-head-icon.rarity-superRare { border-color: var(--rar-superRare); }
+.iwk-head-icon.rarity-epic      { border-color: var(--rar-epic); }
+.iwk-head-icon.rarity-legendary { border-color: var(--rar-legendary); }
+.iwk-head-icon.rarity-godly     { border-color: var(--rar-godly); }
+
+.iwk-head-emoji {
+  font-size: 30px;
+}
+
+.iwk-head-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.iwk-head-name {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.iwk-head-name.rarity-poor      { color: var(--rar-poor); }
+.iwk-head-name.rarity-common    { color: var(--text); }
+.iwk-head-name.rarity-magic     { color: var(--rar-magic); }
+.iwk-head-name.rarity-rare      { color: var(--rar-rare); }
+.iwk-head-name.rarity-superRare { color: var(--rar-superRare); }
+.iwk-head-name.rarity-epic      { color: var(--rar-epic); }
+.iwk-head-name.rarity-legendary { color: var(--rar-legendary); }
+.iwk-head-name.rarity-godly     { color: var(--rar-godly); }
+
+.iwk-head-rarity {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+  margin-top: 1px;
+}
+
+.iwk-head-rarity.rarity-poor      { color: var(--rar-poor); }
+.iwk-head-rarity.rarity-common    { color: var(--muted); }
+.iwk-head-rarity.rarity-magic     { color: var(--rar-magic); }
+.iwk-head-rarity.rarity-rare      { color: var(--rar-rare); }
+.iwk-head-rarity.rarity-superRare { color: var(--rar-superRare); }
+.iwk-head-rarity.rarity-epic      { color: var(--rar-epic); }
+.iwk-head-rarity.rarity-legendary { color: var(--rar-legendary); }
+.iwk-head-rarity.rarity-godly     { color: var(--rar-godly); }
+
+.iwk-head-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.iwk-head-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* ─── Body: scrollbare Quelle-/Verwendung-Sektionen (overflow-x NIE) ────── */
+.iwk-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  /* Firefox-only scrollbar-Regeln entfernt (2026-07-09): Chromium 121+ honoriert sie und
+     überschrieb die globalen Citadel-Scrollbalken (base.css) — global gilt jetzt überall. */
+}
+
+.iwk-section {
+  margin-bottom: 14px;
+}
+
+.iwk-section:last-child {
+  margin-bottom: 0;
+}
+
+.iwk-section-title {
+  margin: 0 0 6px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9a8060;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.iwk-empty {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+  padding: 2px 0 4px;
+}
+
+.iwk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.iwk-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 3px 0;
+  font-size: 14px;
+}
+
+.iwk-row-icon-img {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.iwk-row-icon-emoji {
+  flex: 0 0 auto;
+  font-size: 18px;
+  line-height: 1;
+  width: 22px;
+  text-align: center;
+}
+
+.iwk-row-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--text);
+}
+
+.iwk-row-val {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.iwk-row-shop .iwk-row-val {
+  color: var(--gold);
+}
+
+/* ─── Wiki→Rezept-Sprung (Chef-Auftrag): Quelle-/Verwendungs-Aktion springt zur Rezeptkarte ──
+   auf der zugehörigen Skill-Seite (s. util/skillJump.ts). Geteilte Hover-Optik für die klickbare
+   SourceRow-<li> UND den inneren Icon+Name-Wrapper in UseRow (`.iwk-use-source`). */
+.iwk-row-clickable {
+  cursor: pointer;
+  padding: 3px 4px;
+  margin: 0 -4px;
+  border-radius: 4px;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.iwk-row-clickable:hover,
+.iwk-row-clickable:focus-visible {
+  background: rgba(216, 192, 106, 0.10);
+}
+
+.iwk-row-clickable:hover .iwk-row-name,
+.iwk-row-clickable:focus-visible .iwk-row-name {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.iwk-use-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ─── Story-Zonen-Gate (Task #350): Monster-Quelle einer noch gesperrten Zone — sichtbar (keine
+   Spoiler-Änderung), aber gedimmt + nicht klickbar. Spiegelt `.zone-card-story-locked`
+   (CombatPage.tsx) und den deaktivierten Bestiarium-„Kämpfen"-Button (BestiaryPage.tsx). */
+.iwk-row-locked {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.iwk-row-locked .iwk-row-name {
+  color: var(--muted);
+}
+
+.iwk-row-lock-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+.iwk-row-lock-badge img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  opacity: 0.8;
+}
+
+/* ─── Verwendung: Rezept-Zeile mit klickbarem Zielitem (Chef-Kür) ───────── */
+.iwk-use-arrow {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.iwk-use-output {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  overflow-wrap: anywhere;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--text);
+  text-align: left;
+}
+
+.iwk-use-output:hover {
+  text-decoration: underline;
+  color: var(--accent);
+}
+
+.iwk-use-output.rarity-poor      { color: var(--rar-poor); }
+.iwk-use-output.rarity-magic     { color: var(--rar-magic); }
+.iwk-use-output.rarity-rare      { color: var(--rar-rare); }
+.iwk-use-output.rarity-superRare { color: var(--rar-superRare); }
+.iwk-use-output.rarity-epic      { color: var(--rar-epic); }
+.iwk-use-output.rarity-legendary { color: var(--rar-legendary); }
+.iwk-use-output.rarity-godly     { color: var(--rar-godly); }
+
+.iwk-use-output-img {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}

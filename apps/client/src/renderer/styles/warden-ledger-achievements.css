@@ -1,0 +1,616 @@
+/* codex:2026-08-03T19:02:00+02:00 — Chef-Auswahl 02 „Warden Ledger“: produktive, vollständig
+   auf die Achievement-Seite begrenzte Layoutschicht. Engine- und Persistenzdaten bleiben unberührt. */
+
+.achv-page--warden {
+  --achv-ledger-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --achv-ledger-cloth: url("../assets/ui/gravewood/textures/texture-umber-cloth.webp");
+  --achv-ledger-stone: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  gap: clamp(8px, 0.7vw, 12px);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ui-dev 2026-08-03 (QA K2): `.achv-ledger-shell` rechnete bislang mit einer geschätzten
+   `calc(100vh - 252px)` gegen die reale, VARIABLE Kopfhöhe (TopBar ist per Chef-Feature
+   2026-07-23 stufenlos 114–256px hoch resizebar, s. uiPrefs.ts TOPBAR_HEIGHT_MIN/MAX — 252px
+   passte nur zufällig zu einer bestimmten TopBar-Höhe) → bei 1920×1080 ragte die Arbeitsfläche
+   unter die Falz. Fix: derselbe erprobte Höhen-Vertrag wie `.bank-page`/`.combat-page`
+   (topbar.css .page-transition:has, pages.css .bank-page) — echte Pixelhöhe per Flex-Kette statt
+   vh-Schätzung, reagiert automatisch korrekt auf jede TopBar-Höhe und jede Auflösung. */
+.content-body:has(.achv-page--warden) {
+  overflow-y: hidden;
+}
+
+.page-transition:has(> .achv-page--warden) {
+  height: 100%;
+  min-height: 0;
+}
+
+/* codex:2026-08-03T19:02:00+02:00 — Die globale Bilanz bleibt sichtbar, verbraucht aber nur noch
+   eine kompakte Ledger-Zeile statt des bisherigen hohen Trophy-Room-Headers. */
+.achv-page--warden .achv-hero {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: clamp(12px, 1.2vw, 22px);
+  min-height: 88px;
+  padding: 10px clamp(14px, 1.35vw, 24px);
+  border-width: 10px;
+  border-image: var(--achv-ledger-frame) 28 / 10px;
+  background:
+    radial-gradient(ellipse 72% 180% at 10% 10%, rgba(187, 120, 48, 0.12), transparent 62%),
+    linear-gradient(rgba(9, 10, 11, 0.58), rgba(7, 8, 9, 0.76)),
+    var(--achv-ledger-cloth) center / 280px 280px repeat;
+}
+
+.achv-page--warden .achv-hero-emblem {
+  width: 58px;
+  height: 58px;
+  border-width: 2px;
+  box-shadow: 0 0 16px rgba(216, 192, 106, 0.2), inset 0 0 14px rgba(0, 0, 0, 0.72);
+}
+
+.achv-page--warden .achv-hero-emblem img {
+  width: 38px;
+  height: 38px;
+}
+
+.achv-page--warden .achv-hero-title {
+  min-width: 260px;
+  gap: 2px;
+}
+
+.achv-page--warden .achv-hero-title h1 {
+  font-size: clamp(22px, 1.7vw, 30px);
+}
+
+.achv-page--warden .achv-hero-sub {
+  font-size: clamp(11px, 0.76vw, 13px);
+}
+
+.achv-page--warden .achv-hero-bar-row {
+  margin-top: 3px;
+}
+
+.achv-page--warden .achv-hero-stats {
+  gap: clamp(14px, 1.4vw, 24px);
+  padding-left: clamp(14px, 1.4vw, 24px);
+}
+
+.achv-page--warden .achv-hero-ap-val {
+  font-size: clamp(21px, 1.45vw, 27px);
+}
+
+/* codex:2026-08-03T19:02:00+02:00 — Feste dreispaltige Arbeitsfläche: Kategorienregister,
+   virtualisierungsfreundliche Liste und permanentes Detailblatt teilen dieselbe Fensterhöhe. */
+.achv-ledger-shell {
+  display: grid;
+  grid-template-columns: clamp(196px, 14vw, 244px) minmax(390px, 1fr) clamp(300px, 22vw, 382px);
+  flex: 1 1 auto;
+  /* ui-dev 2026-08-03 (QA K2): keine feste/vh-basierte Höhe mehr — der Flex-Elternvertrag oben
+     (.achv-page--warden height:100%) liefert bereits die exakte verfügbare Pixelhöhe; die drei
+     Spalten (Rail/Main/Detail) scrollen wie zuvor intern (eigenes overflow-y:auto je Spalte). */
+  min-height: 0;
+  overflow: hidden;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image: var(--achv-ledger-frame) 28 / 10px;
+  background:
+    linear-gradient(rgba(6, 7, 8, 0.82), rgba(9, 8, 7, 0.88)),
+    var(--achv-ledger-cloth) center / 280px 280px repeat;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48);
+}
+
+.achv-ledger-rail,
+.achv-ledger-main,
+.achv-ledger-detail {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* codex:2026-08-03T19:02:00+02:00 — Linkes Register: alle Kategorien bleiben ohne horizontales
+   Scrollen sichtbar; Zähler nutzen die klare Zahlenschrift des bestehenden UI-Vertrags. */
+.achv-ledger-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 10px;
+  overflow-y: auto;
+  border-right: 1px solid rgba(183, 128, 61, 0.38);
+  background:
+    linear-gradient(90deg, rgba(38, 26, 17, 0.76), rgba(9, 10, 11, 0.82)),
+    var(--achv-ledger-cloth) center / 256px 256px repeat;
+}
+
+.achv-ledger-filter-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(183, 128, 61, 0.26);
+}
+
+.achv-page--warden .achv-filter-btn {
+  min-width: 0;
+  padding: 7px 4px;
+  border: 1px solid rgba(133, 97, 53, 0.35);
+  font-size: clamp(9px, 0.6vw, 11px);
+  /* ui-dev 2026-08-03 (QA K3): lange, spacelose Labels ohne natürlichen Umbruchpunkt
+     (DE „Freigeschaltet", RU „Открытые" etc.) liefen bislang über die 1fr-Spaltenbreite hinaus
+     ins Nachbarfeld (kein `white-space:nowrap` gesetzt, aber auch kein Umbruch-Vertrag — der
+     Browser kann ein einzelnes langes Wort ohne overflow-wrap nicht brechen). Gleicher Vertrag
+     wie die Ledger-Überschrift weiter unten (`hyphens: auto`, dort schon erprobt) + break-word
+     als Sicherheitsnetz, falls die Chromium-Silbentrennung für eine Sprache mal nicht greift. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.18;
+  text-align: center;
+}
+
+.achv-ledger-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.achv-ledger-cat {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  padding: 6px 7px;
+  border: 0;
+  border-bottom: 1px solid rgba(173, 124, 64, 0.16);
+  background: transparent;
+  color: #a9b1b6;
+  font-family: var(--font-head);
+  font-size: clamp(11px, 0.72vw, 13px);
+  text-align: left;
+  cursor: pointer;
+}
+
+.achv-ledger-cat:hover {
+  color: var(--text);
+  background: linear-gradient(90deg, rgba(119, 78, 34, 0.16), transparent);
+}
+
+.achv-ledger-cat--active {
+  color: var(--gold);
+  background: linear-gradient(90deg, rgba(151, 96, 35, 0.3), rgba(35, 24, 16, 0.08));
+  box-shadow: inset 3px 0 rgba(221, 174, 76, 0.74);
+}
+
+.achv-ledger-cat-icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+}
+
+.achv-ledger-cat-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.achv-ledger-cat strong {
+  color: #87939a;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.achv-ledger-cat--active strong {
+  color: #d6bd78;
+}
+
+.achv-page--warden .achv-milestone-strip {
+  margin-top: auto;
+  padding: 10px;
+  border: 1px solid rgba(185, 132, 64, 0.36);
+  background:
+    linear-gradient(rgba(61, 38, 20, 0.48), rgba(11, 11, 11, 0.74)),
+    var(--achv-ledger-cloth) center / 220px 220px repeat;
+}
+
+/* codex:2026-08-03T19:02:00+02:00 — Mittlere Spalte: Suche, drei nächste Ziele und die einzige
+   scrollbar gehaltene Achievement-Liste. Die gesamte App-Seite bleibt dadurch ruhig. */
+.achv-ledger-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(6, 7, 8, 0.7), rgba(8, 8, 8, 0.78)),
+    var(--achv-ledger-stone) center / 300px 300px repeat;
+}
+
+.achv-ledger-search {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid rgba(178, 127, 62, 0.42);
+  background: rgba(5, 6, 7, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.achv-ledger-search img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.achv-ledger-search input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.achv-ledger-search > span {
+  color: #8f9ba2;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.achv-page--warden .achv-almost {
+  gap: 6px;
+}
+
+.achv-page--warden .achv-almost-title {
+  font-size: 11px;
+}
+
+.achv-page--warden .achv-almost-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.achv-page--warden .achv-almost-card {
+  width: auto;
+  min-width: 0;
+  padding: 7px 8px;
+  border-radius: 0;
+  background: rgba(8, 9, 10, 0.78);
+}
+
+.achv-page--warden .achv-almost-name {
+  font-size: clamp(10px, 0.68vw, 12px);
+}
+
+.achv-ledger-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* codex:2026-08-03T19:02:00+02:00 — Bestehende AchievementCard-Daten werden als dichte,
+   vollständig anklickbare Ledger-Zeilen dargestellt; memo/content-visibility bleiben erhalten. */
+.achv-page--warden .achv-card {
+  appearance: none;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+  min-height: 112px;
+  padding: 10px 12px;
+  border-width: 7px;
+  border-image: var(--achv-ledger-frame) 28 / 7px;
+  background:
+    linear-gradient(90deg, rgba(25, 22, 19, 0.88), rgba(7, 8, 9, 0.86)),
+    var(--achv-ledger-cloth) center / 240px 240px repeat;
+  color: var(--text);
+  filter: saturate(0.72) brightness(0.84);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  contain-intrinsic-size: 100% 112px;
+  transition: filter 0.12s, box-shadow 0.12s, background-color 0.12s;
+}
+
+.achv-page--warden .achv-card:hover {
+  transform: none;
+  filter: none;
+  box-shadow: inset 3px 0 rgba(203, 151, 67, 0.52);
+}
+
+.achv-page--warden .achv-card--unlocked {
+  filter: none;
+  background:
+    linear-gradient(90deg, rgba(82, 57, 25, 0.36), rgba(8, 9, 10, 0.86) 58%),
+    var(--achv-ledger-cloth) center / 240px 240px repeat;
+}
+
+.achv-page--warden .achv-card--selected {
+  filter: none;
+  box-shadow:
+    inset 4px 0 rgba(229, 183, 83, 0.9),
+    inset 0 0 0 1px rgba(225, 188, 102, 0.2),
+    0 0 14px rgba(180, 122, 47, 0.14);
+}
+
+.achv-page--warden .achv-emblem {
+  width: 46px;
+  height: 46px;
+}
+
+.achv-page--warden .achv-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+}
+
+.achv-page--warden .achv-head,
+.achv-page--warden .achv-desc,
+.achv-page--warden .achv-progress,
+.achv-page--warden .achv-status {
+  grid-column: 1 / -1;
+}
+
+.achv-page--warden .achv-head {
+  padding-right: 18px;
+}
+
+.achv-page--warden .achv-name {
+  font-size: clamp(14px, 0.92vw, 17px);
+}
+
+.achv-page--warden .achv-desc {
+  margin: 0;
+  font-size: clamp(11px, 0.7vw, 13px);
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.achv-page--warden .achv-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.achv-page--warden .achv-progress-count {
+  min-width: 86px;
+  font-family: Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.achv-page--warden .achv-card-corner {
+  top: 4px;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+}
+
+/* codex:2026-08-03T19:02:00+02:00 — Rechtes Detailblatt: ruhige Einzelprüfung ohne Modal und
+   ohne Informationsduplikat außerhalb der aktuellen Auswahl. */
+.achv-ledger-detail {
+  padding: 12px;
+  overflow-y: auto;
+  border-left: 1px solid rgba(183, 128, 61, 0.38);
+  background:
+    linear-gradient(90deg, rgba(10, 11, 12, 0.9), rgba(35, 24, 15, 0.78)),
+    var(--achv-ledger-cloth) center / 256px 256px repeat;
+}
+
+.achv-ledger-detail-plaque {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100%;
+  padding: clamp(15px, 1.2vw, 22px);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 9px;
+  border-image: var(--achv-ledger-frame) 28 / 9px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(154, 100, 39, 0.16), transparent 34%),
+    linear-gradient(rgba(7, 8, 9, 0.82), rgba(10, 9, 8, 0.9)),
+    var(--achv-ledger-stone) center / 300px 300px repeat;
+}
+
+.achv-ledger-detail-emblem {
+  display: grid;
+  place-items: center;
+  width: clamp(72px, 5vw, 92px);
+  height: clamp(72px, 5vw, 92px);
+  margin: 2px auto 14px;
+  border: 3px solid #5c666c;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.09), rgba(6, 7, 8, 0.94) 72%);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.76), 0 0 20px rgba(0, 0, 0, 0.42);
+  font-size: 34px;
+}
+
+.achv-ledger-detail-emblem img {
+  width: 54%;
+  height: 54%;
+  object-fit: contain;
+}
+
+.achv-ledger-detail-emblem.achv-rarity--uncommon { border-color: rgba(91, 143, 214, 0.72); }
+.achv-ledger-detail-emblem.achv-rarity--rare { border-color: rgba(216, 192, 106, 0.78); }
+.achv-ledger-detail-emblem.achv-rarity--epic { border-color: rgba(170, 80, 200, 0.76); }
+.achv-ledger-detail-emblem.achv-rarity--legendary { border-color: rgba(217, 138, 74, 0.82); }
+
+.achv-ledger-detail-plaque h2 {
+  margin: 0 0 9px;
+  color: var(--gold);
+  font-family: var(--font-head);
+  font-size: clamp(20px, 1.45vw, 27px);
+  line-height: 1.15;
+  text-align: center;
+  hyphens: auto;
+}
+
+.achv-ledger-detail-plaque > .achv-badge {
+  align-self: center;
+  margin-bottom: 15px;
+}
+
+.achv-ledger-detail-plaque > p {
+  margin: 0 0 18px;
+  color: #9da8ad;
+  font-size: clamp(12px, 0.8vw, 14px);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.achv-ledger-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 2px;
+  border-top: 1px solid rgba(180, 130, 65, 0.28);
+  color: #95a0a6;
+  font-family: var(--font-head);
+  font-size: 13px;
+}
+
+.achv-ledger-detail-row strong {
+  color: var(--gold);
+  font-family: Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.achv-ledger-detail-plaque > .achv-progress-bar {
+  height: 11px;
+  margin-top: 10px;
+}
+
+.achv-ledger-detail-status {
+  margin-top: 8px;
+  color: #98a3a8;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.achv-ledger-detail-status--done {
+  color: var(--gold);
+  font-family: var(--font-head);
+}
+
+/* codex:2026-08-03T19:02:00+02:00 — Responsiver Vertrag: bei mittleren Breiten schrumpft das
+   Register; erst unter 1080 px wandert das Detailblatt unter die Liste statt abgeschnitten zu werden. */
+@media (max-width: 1320px) {
+  .achv-ledger-shell {
+    grid-template-columns: 190px minmax(360px, 1fr) 290px;
+  }
+
+  .achv-ledger-cat {
+    font-size: 11px;
+  }
+
+  .achv-page--warden .achv-almost-row {
+    grid-template-columns: 1fr;
+  }
+
+  .achv-page--warden .achv-almost-card:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (max-width: 1080px) {
+  /* ui-dev 2026-08-03 (QA K2 follow-up): unter dieser Breite verlässt `.achv-ledger-shell`
+     bewusst den festen Höhen-Vertrag zugunsten normalem Seiten-Scroll (s. Regeln unten) — die
+     neue `.achv-page--warden`/`.content-body`-Höhen-/Overflow-Kette von weiter oben muss hier
+     also mitkippen, sonst würde `overflow:hidden` den jetzt wieder wachsenden Inhalt abschneiden. */
+  .achv-page--warden {
+    height: auto;
+    overflow: visible;
+  }
+
+  .content-body:has(.achv-page--warden) {
+    overflow-y: auto;
+  }
+
+  .achv-page--warden .achv-hero-sub,
+  .achv-page--warden .achv-hero-ring-label {
+    display: none;
+  }
+
+  .achv-ledger-shell {
+    grid-template-columns: 184px minmax(350px, 1fr);
+    height: auto;
+    min-height: 680px;
+    overflow: visible;
+  }
+
+  .achv-ledger-main,
+  .achv-ledger-rail {
+    min-height: 680px;
+    max-height: 780px;
+  }
+
+  .achv-ledger-detail {
+    grid-column: 1 / -1;
+    max-height: 440px;
+    border-top: 1px solid rgba(183, 128, 61, 0.38);
+    border-left: 0;
+  }
+
+  .achv-ledger-detail-plaque {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .achv-page--warden .achv-hero {
+    flex-wrap: wrap;
+  }
+
+  .achv-page--warden .achv-hero-stats {
+    width: 100%;
+  }
+
+  .achv-ledger-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .achv-ledger-rail {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid rgba(183, 128, 61, 0.38);
+  }
+
+  .achv-ledger-categories {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .achv-page--warden .achv-milestone-strip {
+    margin-top: 0;
+  }
+
+  .achv-ledger-main {
+    min-height: 620px;
+    max-height: none;
+  }
+}

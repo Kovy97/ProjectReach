@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grim Reach — Bestiarium-Layoutstudien (2026-08-03)</title>
+<link rel="stylesheet" href="shared-fonts.css" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #0d0f12; }
+  body { font-family: "Cinzel", Georgia, serif; color: #ccd5db; padding-bottom: 60px; }
+
+  .wrap { max-width: 1780px; margin: 0 auto; padding: 34px 26px 10px; }
+  h1 { font-size: 34px; color: #d8c06a; letter-spacing: 0.04em; margin: 0 0 6px; }
+  .lede { font-size: 15px; color: #9aa4ab; max-width: 900px; line-height: 1.6; margin-bottom: 4px; }
+  .lede b { color: #ccd5db; }
+  .meta-line { font-size: 12.5px; color: #6c757d; margin-bottom: 26px; }
+
+  /* ─── Konzept-Karten-Raster ─── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+    margin-bottom: 34px;
+  }
+  .card {
+    background: #171a1f;
+    border: 1px solid #2c313a;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .card:hover { border-color: #b39468; transform: translateY(-2px); }
+  .card.active { border-color: #d8c06a; box-shadow: 0 0 0 1px #d8c06a; }
+  .card-num { font-size: 11px; color: #79848c; padding: 12px 16px 0; letter-spacing: 0.1em; text-transform: uppercase; }
+  .card-title { font-size: 19px; color: #e8d8a0; padding: 4px 16px 8px; }
+  .card-pitch { font-size: 13.5px; color: #9aa4ab; padding: 0 16px 14px; line-height: 1.55; flex: 1; }
+  .card-pitch b { color: #c9b98a; }
+  .card-actions { display: flex; border-top: 1px solid #2c313a; }
+  .card-actions button, .card-actions a {
+    flex: 1; text-align: center; padding: 10px 8px; font-family: "Cinzel", serif; font-size: 12px; font-weight: 700;
+    background: transparent; border: none; color: #b39468; cursor: pointer; text-decoration: none; letter-spacing: 0.03em;
+  }
+  .card-actions button:hover, .card-actions a:hover { background: rgba(216,192,106,0.1); color: #f0dd9a; }
+  .card-actions .sep { width: 1px; background: #2c313a; }
+
+  /* ─── Live-Vorschau-Werkzeug ─── */
+  .preview-tool { background: #14161a; border: 1px solid #2c313a; padding: 18px 20px 22px; }
+  .pt-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+  .pt-head h2 { margin: 0; font-size: 18px; color: #d8c06a; }
+  .pt-open { font-size: 12px; color: #b39468; text-decoration: none; border: 1px solid #3f434b; padding: 6px 12px; }
+  .pt-open:hover { border-color: #d8c06a; color: #f0dd9a; }
+
+  .pt-controls { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 16px; }
+  .pt-group { display: flex; align-items: center; gap: 6px; }
+  .pt-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #6c757d; margin-right: 4px; }
+  .pt-btn {
+    padding: 7px 14px; background: #1f232a; border: 1px solid #3f434b; color: #b8bcc4;
+    font-family: "Cinzel", serif; font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .pt-btn.active { background: rgba(216,192,106,0.14); border-color: #d8c06a; color: #f0dd9a; }
+
+  .pt-frame-outer { overflow-x: auto; background: #0a0b0d; border: 1px solid #2c313a; padding: 16px; }
+  .pt-frame-outer iframe { display: block; height: 900px; border: 1px solid #2c313a; background: #0a0b0d; }
+
+  /* ─── Empfehlung ─── */
+  .rec-box {
+    margin-top: 34px; padding: 22px 26px; background: #171a1f; border: 1px solid #b39468;
+  }
+  .rec-box h2 { margin: 0 0 8px; font-size: 18px; color: #d8c06a; }
+  .rec-box p { font-size: 14px; line-height: 1.7; color: #c2cad0; margin: 0 0 8px; }
+  .rec-box p:last-child { margin-bottom: 0; }
+
+  footer { max-width: 1780px; margin: 30px auto 0; padding: 0 26px; font-size: 12px; color: #5c646c; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bestiarium — 5 Layoutstudien</h1>
+  <p class="lede">
+    Fünf funktionale Mockups für einen immersiveren Umbau des Bestiariums — <b>keine Fantasie-Features</b>,
+    jede Studie bildet exakt den heutigen Funktionsumfang ab (Zonen-Gruppierung, Monster-/Champion-Discovery,
+    Kill-Zähler &amp; -Leiter, Drop-Silhouetten, Sperr-/Dungeon-Hinweise, „Nur Unbesiegte"-Filter,
+    Status-Legende). Immersion kommt aus Material, Anordnung und Zustand — nicht aus erfundenen Subsystemen.
+  </p>
+  <p class="meta-line">Echte Repo-Assets · 3 echte Fortschritts-Zustände (Frühspieler / Fortgeschritten / Completionist) · responsiv 1920 &amp; 3440</p>
+
+  <div class="grid" id="card-grid">
+    <div class="card" data-concept="concept-1-journal.html">
+      <div class="card-num">Konzept 1</div>
+      <div class="card-title">Jäger-Journal</div>
+      <div class="card-pitch">Ein aufgeschlagenes Feldbuch: Doppelseiten je Zone, Monster als geklebte Studienkärtchen mit
+        Bleistift-„?" für Unentdecktes, Kills als Stempelzahl. <b>Warm, persönlich, handschriftlich.</b></div>
+      <div class="card-actions"><button data-preview>Vorschau</button><span class="sep"></span><a href="concept-1-journal.html" target="_blank">Öffnen ↗</a></div>
+    </div>
+    <div class="card" data-concept="concept-2-trophy.html">
+      <div class="card-num">Konzept 2</div>
+      <div class="card-title">Trophäenwand</div>
+      <div class="card-pitch">Dunkle Holzwand, Monster als gerahmte Medaillon-Trophäen, Drops als Anhänger an Ketten,
+        gesperrte Zonen hinter einer Samtkordel. <b>Stolz, Sammlung als Besitz.</b></div>
+      <div class="card-actions"><button data-preview>Vorschau</button><span class="sep"></span><a href="concept-2-trophy.html" target="_blank">Öffnen ↗</a></div>
+    </div>
+    <div class="card" data-concept="concept-3-kodex.html">
+      <div class="card-num">Konzept 3</div>
+      <div class="card-title">Wardens Kodex</div>
+      <div class="card-pitch">Master-Detail: schmaler Index links mit Fortschritts-Pips, rechts eine große
+        Studien-Bühne mit Kunst, Drop-Tafel und abgeleiteter Feldnotiz. <b>Ruhig, präzise, app-artig.</b></div>
+      <div class="card-actions"><button data-preview>Vorschau</button><span class="sep"></span><a href="concept-3-kodex.html" target="_blank">Öffnen ↗</a></div>
+    </div>
+    <div class="card" data-concept="concept-4-reise.html">
+      <div class="card-num">Konzept 4</div>
+      <div class="card-title">Reise durch den Reach</div>
+      <div class="card-pitch">Die Zonen als vertikale Kulissen-Bänder mit echten Kampf-Backdrops; Monster als
+        Wegpunkte auf einem gestrichelten Pfad. <b>Das Bestiarium als Wanderung, am immersivsten.</b></div>
+      <div class="card-actions"><button data-preview>Vorschau</button><span class="sep"></span><a href="concept-4-reise.html" target="_blank">Öffnen ↗</a></div>
+    </div>
+    <div class="card" data-concept="concept-5-archiv.html">
+      <div class="card-num">Konzept 5</div>
+      <div class="card-title">Archiv der Asche</div>
+      <div class="card-pitch">Ein Karteikatalog-Schrank: Zonen als Schubladen mit Wachs-Siegel-Ring (X/Y),
+        Monster als strenge Karteikarten mit Ablage-Reiter. <b>Ordentlich, vollständig, akademisch.</b></div>
+      <div class="card-actions"><button data-preview>Vorschau</button><span class="sep"></span><a href="concept-5-archiv.html" target="_blank">Öffnen ↗</a></div>
+    </div>
+  </div>
+
+  <div class="preview-tool">
+    <div class="pt-head">
+      <h2 id="pt-title">Vorschau — Konzept 1: Jäger-Journal</h2>
+      <a class="pt-open" id="pt-open" href="concept-1-journal.html" target="_blank">In neuem Tab öffnen ↗</a>
+    </div>
+    <div class="pt-controls">
+      <div class="pt-group">
+        <span class="pt-group-label">Spielstand:</span>
+        <button class="pt-btn" data-state="early">Frühspieler</button>
+        <button class="pt-btn" data-state="mid">Fortgeschritten</button>
+        <button class="pt-btn" data-state="completionist">Completionist</button>
+      </div>
+      <div class="pt-group">
+        <span class="pt-group-label">Ansicht:</span>
+        <button class="pt-btn" data-width="1920">1920px</button>
+        <button class="pt-btn" data-width="3440">3440px (ultrawide)</button>
+      </div>
+    </div>
+    <div class="pt-frame-outer">
+      <iframe id="pt-frame" src="concept-1-journal.html?state=early" width="1920"></iframe>
+    </div>
+  </div>
+
+  <div class="rec-box">
+    <h2>Designer-Empfehlung</h2>
+    <p>
+      <b>Erste Wahl: Konzept 4 „Reise durch den Reach".</b> Die echten Kampf-Backdrops als Vollbild-Kulisse
+      liefern sofort das gewünschte „immersiver"-Gefühl, ohne ein einziges neues Feature zu erfinden — die
+      fortschreitende Verdüsterung der Zonen (Weiden → Götzenhalle) erzählt die Spielreise ganz von selbst.
+      Der Pfad mit Wegpunkten macht Fortschritt räumlich spürbar statt nur numerisch.
+    </p>
+    <p>
+      <b>Zweite Wahl / Ergänzung: Konzept 3 „Wardens Kodex".</b> Für Spieler mit vielen Zonen und großem
+      Bestand ist eine reine Scroll-Seite (Konzept 1, 2, 4, 5) irgendwann unhandlich — das Master-Detail-Muster
+      skaliert am saubersten auf 100+ Monster und würde sich gut als <i>Late-Game-Modus</i> neben Konzept 4
+      eignen (z.B. ein Ansichts-Umschalter „Reise" / „Kodex" auf derselben Seite).
+    </p>
+    <p>
+      Konzept 2 (Trophäenwand) und Konzept 5 (Archiv) sind beide stimmig, treffen aber eher den heutigen
+      Grid-Charakter in neuem Gewand als einen echten Sprung nach vorn. Konzept 1 (Journal) ist am
+      charmantesten für kleine Sammlungen, wird bei 15+ Monstern pro Zone aber schnell voll.
+    </p>
+  </div>
+</div>
+
+<footer>Grim Reach — Design-Studie, kein Produktivcode. Alle Bilder referenzieren Original-Repo-Assets relativ, es wird nichts kopiert oder verändert.</footer>
+
+<script>
+(function () {
+  const cards = document.querySelectorAll(".card");
+  const frame = document.getElementById("pt-frame");
+  const title = document.getElementById("pt-title");
+  const openLink = document.getElementById("pt-open");
+  const stateBtns = document.querySelectorAll("[data-state]");
+  const widthBtns = document.querySelectorAll("[data-width]");
+
+  const titles = {
+    "concept-1-journal.html": "Konzept 1: Jäger-Journal",
+    "concept-2-trophy.html": "Konzept 2: Trophäenwand",
+    "concept-3-kodex.html": "Konzept 3: Wardens Kodex",
+    "concept-4-reise.html": "Konzept 4: Reise durch den Reach",
+    "concept-5-archiv.html": "Konzept 5: Archiv der Asche",
+  };
+
+  let current = "concept-1-journal.html";
+  let state = "early";
+  let width = 1920;
+
+  function update() {
+    frame.src = current + "?state=" + state;
+    frame.width = width;
+    title.textContent = "Vorschau — " + titles[current];
+    openLink.href = current;
+    cards.forEach((c) => c.classList.toggle("active", c.dataset.concept === current));
+    stateBtns.forEach((b) => b.classList.toggle("active", b.dataset.state === state));
+    widthBtns.forEach((b) => b.classList.toggle("active", Number(b.dataset.width) === width));
+  }
+
+  cards.forEach((card) => {
+    card.querySelector("[data-preview]").addEventListener("click", () => {
+      current = card.dataset.concept;
+      update();
+      document.querySelector(".preview-tool").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  stateBtns.forEach((b) => b.addEventListener("click", () => { state = b.dataset.state; update(); }));
+  widthBtns.forEach((b) => b.addEventListener("click", () => { width = Number(b.dataset.width); update(); }));
+
+  update();
+})();
+</script>
+</body>
+</html>

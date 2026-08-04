@@ -1,0 +1,128 @@
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+// ARENA-ZONEN-MANIFEST — VORLAGE FÜR MIRA
+// ─────────────────────────────────────────────────────────────────────────────────────────────
+// So benutzen:
+//   1. Diese Datei kopieren nach "<zoneId>.json" (z.B. "crypt.json") — GENAU der Zone-ID aus dem
+//      Content-Katalog (siehe design/battle-040-arena-produktion.md §3 für die 11 Zonen-IDs:
+//      pastures, borderlands, ashfields, blackthorn, crypt, wildwood, coast, slagpit, highlands,
+//      idolhall, slayer_tower).
+//   2. ALLE //-Kommentare entfernen (echtes JSON kennt keine Kommentare — diese Datei ist absichtlich
+//      .jsonc, damit sie NICHT von der Auto-Discovery eingelesen wird, solange sie als Vorlage im
+//      Ordner liegt; die fertige Kopie muss auf ".json" enden).
+//   3. Werte eintragen (s. Feld-Erklärungen unten), Bild-Dateien mit denselben Namen wie unten unter
+//      "ground"/"backdrop"/"props[].file" nach apps/client/src/renderer/assets/arena/ legen
+//      (Staging-Weg wie immer über CODEX/**, s. design/battle-040-arena-produktion.md §2).
+//   4. Fertig — kein Code-Eingriff nötig. Ist das Manifest gültig UND liegen Boden+Kulisse unter
+//      assets/arena/ (oder existiert ein dokumentierter Legacy-Fallback wie bei "pastures"), wird
+//      die Zone automatisch arena-fähig (Dev-Build + Chef-Flag an, s. flag.ts).
+//
+// Wenn etwas nicht stimmt (Tippfehler, falscher Typ, fehlendes Feld): die Browser-Konsole zeigt
+// beim Laden eine genaue Fehlerliste ("[arena25d] Manifest .../<zoneId>.json ungueltig: ..."),
+// und die Zone fällt automatisch auf die bestehende klassische 2D-Ansicht zurück (kein Crash).
+{
+  // Muss exakt dem Dateinamen entsprechen (ohne ".json") — sonst wird die Datei ignoriert.
+  "zoneId": "REPLACE_ME",
+
+  // Dateiname (NUR Name, kein Pfad) der Bodentextur unter assets/arena/. Namensschema:
+  // arena_<zoneId>_ground.webp — 1536×1024, wird 1:1 über die Bodenfläche GESTRECKT (nicht
+  // gekachelt), Draufsicht-nah, Mitte ruhig (dort stehen die Kämpfer). q85+, kein Text/Logo.
+  "ground": "arena_REPLACE_ME_ground.webp",
+
+  // Dateiname der Kulissentextur unter assets/arena/. Namensschema: arena_<zoneId>_backdrop.webp
+  // — ≥1717×916 quer, wird als gecurvte Wand hinter dem Boden montiert. Unterer Bildrand ≈
+  // Horizont/Bodenanschluss, oberes Drittel Himmel — gemalten Boden im Bild möglichst FLACH halten,
+  // die eigentliche 3D-Bodenfläche übernimmt den Vordergrund.
+  "backdrop": "arena_REPLACE_ME_backdrop.webp",
+
+  "lighting": {
+    // Sonnenfarbe als CSS-Hex, z.B. warmes Glutorange für Slagpit, kühles Fahlweiß für Crypt.
+    "sunColor": "#ffd9a0",
+
+    // Licht-Intensität der Sonne (DirectionalLight). Richtwert: 2.5 (gedämpft/düster) .. 4.0
+    // (grell/sonnig). Pastures nutzt 3.4.
+    "sunIntensity": 3.4,
+
+    // Elevationswinkel über dem Horizont in Grad: 0 = Streiflicht/Horizont, 90 = Zenit senkrecht
+    // von oben. Tiefe Sonne (z.B. 10-20°) für dramatisches Streiflicht (Slagpit-Glut), hoch
+    // (40-60°) für neutrales Tageslicht. Pastures nutzt 46 (Nachmittagssonne).
+    "sunAngleDeg": 46,
+
+    // Kompass-Winkel um die Y-Achse in Grad: 0 = von der Kamera-Seite (Frontlicht auf den
+    // Kämpfer-Billboards — WICHTIG, s. Arena25DStage.tsx "N·L-Herleitung": zu nah an 180° macht
+    // die Figuren zu Silhouetten), 90 = von rechts, -90/270 = von links. Empfohlener Bereich: -60..60.
+    // Pastures nutzt 26 (leicht von rechts, passend zum gemalten Sonnenstand der Kulisse).
+    "sunAzimuthDeg": 26,
+
+    // Himmels-Fülllicht-Farbe (CSS-Hex) — die "Bounce"/Ambient-Farbe, die Schatten aufhellt.
+    "ambientColor": "#9fb8dd",
+
+    // Fülllicht-Intensität. Richtwert 0.8 (kontrastreich/düster) .. 1.3 (weich/hell).
+    "ambientIntensity": 1.1,
+
+    // Nebelfarbe (CSS-Hex) — nur sichtbar, wenn fogDensity > 0.
+    "fogColor": "#e8c98a",
+
+    // Nebeldichte (THREE.FogExp2). 0 = kein Nebel (Pastures-Default). Richtwert für spürbaren,
+    // aber nicht blickdichten Dunst: 0.01-0.03. Slagpit/Crypt dürften höher liegen (dichter Nebel/
+    // Gruft-Dunkel laut design/battle-040-arena-produktion.md §2 Stimmungs-Beispiel).
+    "fogDensity": 0,
+
+    // Billiger Farb-Grade als CSS-filter auf dem Canvas (kein Post-Processing) — grobe
+    // Stimmungs-Annäherung, keine physikalische Farbkorrektur.
+    "grade": {
+      // saturate()-Faktor: 1 = neutral, 0 = graustufig, >1 = übersättigt. Muss >= 0 sein.
+      "saturation": 1,
+
+      // hue-rotate()-Richtung/Stärke, grob "-1 (kühl) .. 0 (neutral) .. 1 (warm)".
+      "temperature": 0,
+
+      // Optional, Default 0: brightness()-Offset, -1..1 (negativ = dunkler/lift raus, positiv =
+      // heller). Weglassen, wenn kein Effekt gewünscht ist.
+      "lift": 0
+    }
+  },
+
+  // Optional, Default [] (keine Props). 3-6 dekorative Freisteller je Zone (Bäume/Büsche/Felsen/
+  // Zäune/Ruinenstücke). Rein dekorativ — kein Klickziel, keine Gameplay-Wirkung.
+  "props": [
+    {
+      // Dateiname (NUR Name) unter assets/arena/, Schema arena_<zoneId>_prop_<nn>.webp (01, 02, …).
+      // Transparenter Freisteller, ECHTES Alpha (kein Schachbrett!), ~600-1200px hoch, Fußkante
+      // sauber (wird per Alpha-Baseline-Messung auf den Boden gesetzt).
+      "file": "arena_REPLACE_ME_prop_01.webp",
+
+      // Boden-X-Position in Weltkoordinaten. Die Bodenfläche ist bei Referenz-Seitenverhältnis
+      // (1920×1080) ca. 18 Einheiten breit (±9 von der Mitte) — Rand-Props (layer "back") sitzen
+      // typischerweise bei |x| ≈ 6-8, Mittelgrund-Props (layer "mid") näher an |x| ≈ 1-5.
+      "x": -7,
+
+      // Boden-Z-Position. Die Kämpfer stehen bei z ≈ 6.2; der ferne Boden-/Kulissenrand (Naht)
+      // liegt bei z ≈ 1.7-2.0 (für layer "back"-Props gedacht), der nahe/Kamera-Rand bei z ≈ 11.
+      "z": 2.0,
+
+      // Größen-Multiplikator (Basishöhe × scale). Richtwert: Bäume/große Rand-Props 1.3-2.0,
+      // Büsche/Zäune/kleine Mittelgrund-Props 0.6-1.0. Muss > 0 sein.
+      "scale": 1.6,
+
+      // Optional, Default false: horizontal spiegeln (billige Variation ohne zweites Asset).
+      "flip": false,
+
+      // "back" = an der Kulissen-Naht (kaschiert den Boden→Kulisse-Übergang, große Rand-Props).
+      // "mid" = auf der Bodenfläche außerhalb der Kampf-Mitte (kleinere Props, NICHT zwischen den
+      // beiden Kämpfern platzieren — die Duell-Mitte bleibt frei).
+      "layer": "back"
+
+      // Optional, Default 0 (Scene-Builder-Feld): Neigung des Billboards um die Blickachse in Grad
+      // ("rotDeg") — z.B. ein schräg stehender Grabstein. Bei "flat":true (s.u.) dreht derselbe Wert
+      // stattdessen um die Welt-Y-Achse (liegender Gegenstand gedreht wie ein Teppich).
+      // "rotDeg": 0,
+
+      // Optional, Default false (Scene-Builder-Feld): flach auf den Boden legen statt eines
+      // aufrechten Billboards — für Boden-Clutter (Geröll/Laub/liegende Gegenstände).
+      // "flat": false
+    }
+    // … 2-5 weitere Props nach demselben Muster. Am einfachsten: den Scene-Builder öffnen
+    // (?sceneBuilder=<zoneId>, Dev-Build), Props platzieren/justieren, "Manifest kopieren" nutzen —
+    // erspart das Freihand-Ausrechnen von x/z/scale/rotDeg hier von Hand.
+  ]
+}

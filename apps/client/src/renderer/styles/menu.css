@@ -1,0 +1,1129 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   MAIN MENU (Task #282 redesign) — hero title screen.
+   Split layout: left nav column (New/Load/Options/Quit) + right contextual panel
+   (opens only after a nav click — no default panel, overwrite-safety per Chef).
+   Shares `.lang-btn` (small toggle chip) and `.modal.portrait-gallery-modal` with
+   character.css — those stay there since OptionsPage/CharacterPage also use them.
+   ═══════════════════════════════════════════════════════════ */
+
+.menu {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: var(--bg-deep);
+  overflow: hidden;
+}
+
+/* Hero-Artwork als eigene Ebene (statt Inline-Background direkt auf .menu). Der frühere
+   Ken-Burns-Zoom (inset -3% + scale 1.03→1.09) ist raus — Chef-Feedback 2026-07-13: das
+   Welt-Panorama soll UNBESCHNITTEN stehen (Schiff links, Lager unten, Turmspitze rechts sind
+   Bildaussage, kein Riesel-Rand). Das Bild ist ≈16:9 → cover zeigt es praktisch 1:1; Leben
+   kommt von den Glutpartikeln (AmbientEmbers), nicht von Kamerafahrt. */
+.menu-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Vignette + stärkerer Verlauf unten für die Lesbarkeit der Nav über dem Artwork. Das frühere
+   warme Zentrum-Glühen (fürs alte Schild-Emblem-Hero positioniert) ist raus — das Welt-Panorama
+   (Chef-Wallpaper 2026-07-13) bringt seine eigene Lichtführung mit (Lagerfeuer unten links). */
+.menu::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, 0.36) 100%),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.26) 0%,
+      rgba(0, 0, 0, 0) 22%,
+      rgba(0, 0, 0, 0) 40%,
+      rgba(0, 0, 0, 0.46) 66%,
+      rgba(0, 0, 0, 0.74) 100%
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Freigestellter Schriftzug — prominent oben. */
+.menu-logo {
+  position: absolute;
+  top: clamp(10px, 2.6vh, 38px);
+  left: 50%;
+  transform: translateX(-50%);
+  /* Chef 25.07. (Screenshot-Abnahme neues Logo): „darf ruhig breiter und größer sein" —
+     von min(42vw, 500px)/24vh auf deutlich präsentere Bühne angehoben; contain schützt
+     weiter vor jedem Overlap mit Sprachwahl/Nav. */
+  width: min(54vw, 680px);
+  max-height: 31vh;
+  object-fit: contain;
+  z-index: 3;
+  /* Chef-Feedback „überladen" (2026-07-13): das pulsierende Atem-Glühen ist raus — statischer
+     Schlagschatten für Lesbarkeit + hauchdünner warmer Saum, sonst Ruhe. */
+  filter: drop-shadow(0 6px 26px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(216, 192, 106, 0.16));
+  pointer-events: none;
+}
+
+.menu-lang {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  /* 7-Sprachen-Fundament: 7 Sprach-Buttons + Font-Button passen nicht mehr immer in eine Zeile. */
+  max-width: min(70vw, 640px);
+  gap: 6px;
+  /* MUSS über .menu-main (z-index:3) liegen, sonst fängt dessen transparente Fläche die Klicks ab. */
+  z-index: 4;
+}
+
+/* ─── Sprach-Selektor im Citadel-Stil (Chef-Wunsch 2026-07-13) ────────────────────────────────
+   `.lang-btn` hatte KEINE Basis-Optik mehr (Ursprung in character.css entfernt, s. options.css-
+   Notiz) → im Hauptmenü rendern die 7 Sprach-Chips sonst als nackte Browser-Buttons. Hier bekommen
+   sie denselben Holz-9-Slice-Rahmen wie die Nav-Buttons (`.hf-btn`), nur kompakt für die kurzen
+   Sprach-Kürzel. BEWUSST auf `.menu-lang` gescoped — die Options-Seite nutzt eigene .lang-btn-
+   Regeln (opz-/opt-) und bleibt unberührt. */
+.menu-lang .lang-btn {
+  position: relative;
+  isolation: isolate;
+  min-width: 44px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: #cbb98e;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s, transform 0.08s;
+}
+
+/* Holz-9-Slice-Rahmen als Overlay (identische Quelle wie .hf-btn::before, dünnere Kante) */
+.menu-lang .lang-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-repeat: stretch;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.menu-lang .lang-btn:hover {
+  color: var(--gold);
+  box-shadow: 0 0 9px rgba(216, 192, 106, 0.26);
+}
+
+.menu-lang .lang-btn:active {
+  transform: scale(0.95);
+}
+
+/* Aktive Sprache: goldener Text + warmer Innenschein, wie ein „gedrückter" Citadel-Knopf. */
+.menu-lang .lang-btn.active {
+  background:
+    linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+  box-shadow:
+    0 0 12px rgba(216, 192, 106, 0.38),
+    inset 0 0 9px rgba(216, 192, 106, 0.14);
+}
+
+/* ─── Ambient-FX: driftende Glut + Nebelschwaden (rein CSS, self-contained) ──────────────── */
+.menu-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.menu-ember {
+  position: absolute;
+  bottom: -4%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 208, 140, 0.95) 0%,
+    rgba(255, 130, 45, 0.55) 45%,
+    rgba(255, 110, 30, 0) 76%
+  );
+  box-shadow: 0 0 6px 1px rgba(255, 150, 60, 0.45);
+  opacity: 0;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Perf-Welle (2026-07-22): die vorherige EINE `menu-ember-rise`-Keyframe-Animation las `var(--sway)`
+   (pro Partikel per Inline-Style gesetzt) direkt im `transform` — das zwingt Chromium, den
+   Animationswert bei JEDEM Frame neu über Style-Resolution aufzulösen statt rein auf dem
+   Compositor-Thread zu laufen (58 Style-Recalcs/s im Hauptmenü gemessen), obwohl `--sway` pro
+   Partikel konstant ist. Fix: 6 statische Sway-Buckets als eigene @keyframes (kein var() mehr im
+   transform) — MainMenu.tsx weist jedem Partikel deterministisch einen Bucket per Klasse zu
+   (`.menu-ember--sway-0` … `-5`), Varianz kommt weiterhin über Dauer/Delay/Größe/Startposition.
+   Gleiche ±35px-Sway-Bandbreite wie zuvor, jetzt auf 6 feste Werte gerastert. */
+.menu-ember--sway-0 { animation-name: menu-ember-rise-0; }
+.menu-ember--sway-1 { animation-name: menu-ember-rise-1; }
+.menu-ember--sway-2 { animation-name: menu-ember-rise-2; }
+.menu-ember--sway-3 { animation-name: menu-ember-rise-3; }
+.menu-ember--sway-4 { animation-name: menu-ember-rise-4; }
+.menu-ember--sway-5 { animation-name: menu-ember-rise-5; }
+
+@keyframes menu-ember-rise-0 {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate(-35px, -52vh) scale(1); }
+  88% { opacity: 0.2; }
+  100% { transform: translate(-56px, -102vh) scale(0.35); opacity: 0; }
+}
+@keyframes menu-ember-rise-1 {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate(-21px, -52vh) scale(1); }
+  88% { opacity: 0.2; }
+  100% { transform: translate(-33.6px, -102vh) scale(0.35); opacity: 0; }
+}
+@keyframes menu-ember-rise-2 {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate(-7px, -52vh) scale(1); }
+  88% { opacity: 0.2; }
+  100% { transform: translate(-11.2px, -102vh) scale(0.35); opacity: 0; }
+}
+@keyframes menu-ember-rise-3 {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate(7px, -52vh) scale(1); }
+  88% { opacity: 0.2; }
+  100% { transform: translate(11.2px, -102vh) scale(0.35); opacity: 0; }
+}
+@keyframes menu-ember-rise-4 {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate(21px, -52vh) scale(1); }
+  88% { opacity: 0.2; }
+  100% { transform: translate(33.6px, -102vh) scale(0.35); opacity: 0; }
+}
+@keyframes menu-ember-rise-5 {
+  0% { transform: translate(0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate(35px, -52vh) scale(1); }
+  88% { opacity: 0.2; }
+  100% { transform: translate(56px, -102vh) scale(0.35); opacity: 0; }
+}
+
+.menu-fog {
+  position: absolute;
+  width: 62vw;
+  height: 42vh;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(90, 100, 112, 0.16), rgba(90, 100, 112, 0) 72%);
+  /* codex:2026-07-31T00:32:37+02:00 — Der Radialverlauf ist bereits weich. Ein
+     animierter 62vw-Live-Blur erzeugte dafür nur eine große Offscreen-Textur pro Nebelbank. */
+  filter: none;
+  opacity: 0.55;
+}
+
+.menu-fog--1 {
+  left: -18%;
+  top: 58%;
+  animation: menu-fog-drift-a 70s ease-in-out infinite;
+}
+
+.menu-fog--2 {
+  right: -22%;
+  top: 8%;
+  animation: menu-fog-drift-b 86s ease-in-out infinite;
+}
+
+@keyframes menu-fog-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(6vw, -2vh);
+  }
+}
+
+@keyframes menu-fog-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-5vw, 3vh);
+  }
+}
+
+/* Main panel: 9-slice wooden frame + bg_black tiled interior. */
+.menu-panel {
+  width: 100%;
+  max-width: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 28px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 28px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
+    url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  padding: clamp(20px, 2.4vh, 34px) clamp(24px, 2vw, 40px);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.90);
+  animation: menu-panel-reveal 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Weicher Reveal beim Panel-Wechsel — die Komponente wird per React-`key` bei jedem
+   Panel-Wechsel neu gemountet, wodurch diese Animation jedes Mal neu abspielt. */
+@keyframes menu-panel-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Spielstand-Karten im Charakter-Auswahl-Stil (Chef 2026-07-11) ───
+   Vorher: dünne volle-Breite-Zeilen mit 44px-Porträt-Daumen („man sieht den Charakter kaum").
+   Jetzt: hochformatige Karten nebeneinander, das 3:4-Porträt füllt die Karte randlos bis zum
+   Holzrahmen, Name + Gesamtlevel liegen als Gradient-Plakette über dem Bildfuß. */
+.menu-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: clamp(14px, 1.4vw, 22px);
+  align-items: stretch;
+}
+
+.menu-slot {
+  display: flex;
+  flex-direction: column;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 14px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 14px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.34)),
+    url("../assets/bg_black.webp") repeat;
+  border-radius: 0;
+  /* KEIN Innenabstand oben/seitlich — das Porträt soll bündig am Holzrahmen anliegen. */
+  padding: 0 0 12px;
+  transition: box-shadow 0.18s, transform 0.18s, filter 0.18s;
+}
+
+.menu-slot.clickable {
+  cursor: pointer;
+}
+
+.menu-slot:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(216, 192, 106, 0.32),
+    0 0 18px rgba(216, 192, 106, 0.18),
+    0 12px 26px rgba(0, 0, 0, 0.45);
+}
+
+/* Leere Slots dezent gedämpft, damit belegte Spielstände sofort ins Auge fallen. */
+.menu-slot--empty {
+  filter: grayscale(0.25) brightness(0.88);
+}
+.menu-slot--empty:hover {
+  filter: none;
+}
+
+/* Slot-Nummer: kleine Plakette ÜBER der Porträt-Ecke. */
+.menu-slot-index {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 2;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  background: rgba(0, 0, 0, 0.62);
+  border: 1px solid rgba(216, 192, 106, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--gold);
+  font-size: 14px;
+  font-family: var(--font-head);
+}
+
+/* Das Porträt IST die Karte: volle Breite, hochformatiger Anschnitt (Kopf/Oberkörper im Fokus). */
+.menu-slot-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 28%, var(--panel-hover), var(--slot));
+}
+
+.menu-slot-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.35s ease-out, filter 0.2s;
+}
+
+.menu-slot:hover .menu-slot-portrait img {
+  transform: scale(1.045);
+  filter: brightness(1.1);
+}
+
+/* Platzhalter, falls ein Alt-Save kein Portrait trägt. */
+.menu-slot-portrait-blank {
+  width: 100%;
+  height: 100%;
+}
+
+/* „Leerer Speicherstand" darf zweizeilig umbrechen statt zu ellipsen. */
+.menu-slot--empty .menu-slot-meta {
+  white-space: normal;
+}
+
+/* Leerer Slot: dezente Siegel-Raute in der Porträt-Fläche. */
+.menu-slot-empty-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  color: rgba(216, 192, 106, 0.28);
+}
+
+/* Name + Gesamtlevel als Plakette über dem Bildfuß — liest sich wie eine Charakter-Auswahl. */
+.menu-slot-nameplate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 34px 10px 8px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 30%, rgba(0, 0, 0, 0));
+  text-align: center;
+}
+
+.menu-slot-name {
+  /* Cinzel ist breit — lange Namen („Korveth Grimhollow") brechen auf 2 Zeilen um statt zu
+     ellipsen; erst DANACH klemmt der line-clamp als Schutz gegen Extremfälle. */
+  font-size: clamp(15px, 1vw, 19px);
+  font-weight: 600;
+  font-family: var(--font-head);
+  letter-spacing: 0.4px;
+  line-height: 1.2;
+  color: var(--text);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.menu-slot-nameplate .menu-slot-meta {
+  font-size: 13px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.menu-slot-info {
+  padding: 8px 12px 2px;
+  text-align: center;
+  min-width: 0;
+}
+
+.menu-slot-meta {
+  font-size: 14px;
+  color: #cdbb8e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sekundär-Zeile: „Last played: …" — gedämpft, kleiner. */
+.menu-slot-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-slot-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px 0;
+  margin-top: auto;
+}
+
+/* ─── Split-Layout: linksbündige Nav-Spalte + rechts kontextuelles Panel ─── */
+.menu--split {
+  align-items: stretch;
+  justify-content: center;
+}
+
+.menu-main {
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: clamp(34px, 4vw, 84px);
+  width: 100%;
+  box-sizing: border-box;
+  padding: clamp(84px, 12vh, 168px) clamp(30px, 3.5vw, 80px) clamp(48px, 7vh, 96px) clamp(44px, 5vw, 116px);
+}
+
+.menu-nav {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(13px, 1.6vh, 19px);
+  flex: 0 0 auto;
+}
+
+/* Weicher „Bodenschatten" hinter der Nav-Spalte — bündelt die Buttons optisch zu einer Gruppe,
+   ohne eine harte Panel-Kante gegen das Hero-Art zu ziehen (bleibt malerisch, kein Kasten). */
+.menu-nav::before {
+  content: "";
+  position: absolute;
+  inset: -22px -34px;
+  background: radial-gradient(ellipse 68% 84% at 32% 50%, rgba(0, 0, 0, 0.38) 0%, transparent 74%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Heraldisches Trenn-Ornament vor „Beenden" — trennt die destruktive Aktion optisch von den
+   primären Menüpunkten (Citadel-Kit-Asset, Schild-Motiv passend zum Hero-Art-Emblem). */
+.menu-nav-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0;
+}
+.menu-nav-divider::before,
+.menu-nav-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(216, 192, 106, 0.32), transparent);
+}
+.menu-nav-divider img {
+  width: 26px;
+  height: auto;
+  margin: 0 10px;
+  opacity: 0.85;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+}
+
+/* Nav-Buttons: groß + selbstbewusst, aber proportioniert genug, dass der 9-slice-Holzrahmen als
+   echter geschnitzter Rahmen (mit sichtbaren Eck-Medaillons) statt als dünner Umriss liest.
+   WICHTIG: Selektor `.hf-btn.menu-nav-btn` (2 Klassen) — die generische `.hf-btn`-Regel steht in
+   character.css/`design`; bei gleicher Spezifität würde sie sonst per Quell-Reihenfolge gewinnen. */
+.hf-btn.menu-nav-btn {
+  min-width: clamp(360px, 29vw, 468px);
+  min-height: clamp(68px, 8.4vh, 94px);
+  font-size: clamp(21px, 1.95vw, 28px);
+  padding: clamp(14px, 1.6vh, 20px) clamp(28px, 2.4vw, 38px);
+  gap: 16px;
+  /* Dickerer Rahmen (18px statt 10px) — die Eck-Medaillons des Quellbilds (28px-Slices) bleiben
+     bei dieser Breite erkennbar, statt zu einer dünnen Linie zusammenzuschrumpfen. */
+  border-width: 18px;
+  border-image-width: 18px;
+  transition: transform 0.15s ease, background 0.12s, box-shadow 0.12s, color 0.12s;
+}
+.hf-btn.menu-nav-btn::before {
+  border-width: 18px;
+  border-image-width: 18px;
+}
+/* Icon + linksbündiger Text im großen Button (überschreibt .hf-btn__face justify-content:center). */
+.menu-nav-btn .hf-btn__face {
+  justify-content: flex-start;
+  width: 100%;
+  text-align: left;
+  gap: 16px;
+}
+.menu-nav-icon {
+  width: clamp(24px, 2vw, 30px);
+  height: clamp(24px, 2vw, 30px);
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
+  transition: filter 0.15s;
+}
+.menu-nav-btn:hover .menu-nav-icon {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 8px rgba(216, 192, 106, 0.5));
+}
+.menu-nav-btn:hover {
+  transform: translateX(6px);
+}
+.menu-nav-btn:hover:active {
+  transform: translateX(6px) scale(0.976);
+}
+.menu-nav-btn.active {
+  box-shadow:
+    0 0 0 1px rgba(216, 192, 106, 0.5),
+    0 0 20px rgba(216, 192, 106, 0.3);
+}
+/* Aktiver Eintrag: schmaler Gold-Akzentbalken an der Innenkante statt eines Text-Präfix-Diamanten
+   (das Icon steht jetzt an dessen Stelle) — auf einen Blick erkennbar, welches Panel offen ist. */
+.menu-nav-btn.active::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 14%;
+  bottom: 14%;
+  width: 3px;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.7);
+  z-index: 2;
+}
+
+.menu-right {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: min(58vw, 1080px);
+  max-height: 82vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Firefox-only scrollbar-Regeln entfernt (2026-07-09): Chromium 121+ honoriert sie und
+     überschrieb die globalen Citadel-Scrollbalken (base.css) — global gilt jetzt überall. */
+  /* Extra Luft zur (jetzt schlankeren) Nav-Spalte — hält das Panel etwas näher an der rechten
+     Bildschirmhälfte, damit es das Schild-Emblem der Hero-Art nicht zu stark verdeckt. */
+  margin-left: clamp(20px, 5vw, 110px);
+}
+
+.menu-panel-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-head);
+  font-size: 22px;
+  color: var(--gold);
+  letter-spacing: 0.6px;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.menu-panel-title-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
+}
+
+.menu-panel-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(216, 192, 106, 0.55), rgba(216, 192, 106, 0.05) 60%, transparent);
+}
+
+.menu-empty-note {
+  color: var(--muted);
+  font-size: 16px;
+  padding: 20px 4px;
+  text-align: center;
+}
+
+/* Wrapper der Hauptmenü-Optionen: stapelt die geteilten .opz-section-Karten (DisplayAudioPrefs
+   + Font) vertikal. Die früheren .menu-opt-row/.menu-opt-label-Regeln sind mit dem Umstieg auf
+   die geteilte OptionControls-Komponente (Chef 2026-07-13) weggefallen. */
+.menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ─── Menu-Buttons (.hf-btn) — wood-frame + dark-texture. Auch von OptionsPage entfernt
+   nicht genutzt (die nutzt .lang-btn); .hf-btn ist exklusiv Hauptmenü (Nav + Slot-Actions). ─ */
+.hf-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  min-height: 36px;
+  padding: 7px 18px;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: #e8d8b0;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s, transform 0.08s;
+}
+
+/* 9-slice wooden frame decorative overlay */
+.hf-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 10px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 10px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hf-btn:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.28);
+}
+
+.hf-btn:active {
+  background:
+    linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold);
+  box-shadow:
+    0 0 14px rgba(216, 192, 106, 0.42),
+    inset 0 0 10px rgba(216, 192, 106, 0.12);
+  /* Press-Feedback (Micro-Interaction): kurzes Einsinken bei Klick. */
+  transform: scale(0.97);
+}
+
+/* Text wrapper — sits above ::before frame, inherits button color */
+.hf-btn__face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  white-space: nowrap;
+  position: relative;
+  z-index: 2;
+}
+
+/* Primary: parchment text turning gold on hover (handled by .hf-btn hover) */
+.hf-btn--primary .hf-btn__face {
+  color: inherit;
+}
+
+/* Danger: reddish dark interior */
+.hf-btn--danger {
+  background:
+    linear-gradient(rgba(48, 8, 6, 0.76), rgba(48, 8, 6, 0.76)),
+    url("../assets/bg_black.webp") repeat;
+  color: #e8b8b0;
+}
+
+.hf-btn--danger:hover {
+  background:
+    linear-gradient(rgba(80, 16, 10, 0.68), rgba(80, 16, 10, 0.68)),
+    url("../assets/bg_black.webp") repeat;
+  color: #f0c8c0;
+  box-shadow: 0 0 10px rgba(180, 55, 45, 0.35);
+}
+
+.hf-btn--danger:active {
+  background:
+    linear-gradient(rgba(100, 22, 14, 0.72), rgba(100, 22, 14, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  color: #f0c8c0;
+  box-shadow:
+    0 0 14px rgba(180, 55, 45, 0.45),
+    inset 0 0 10px rgba(180, 55, 45, 0.12);
+  transform: scale(0.97);
+}
+
+.hf-btn--danger .hf-btn__face {
+  color: inherit;
+}
+
+/* Dezente Fußzeile im Hauptmenü — Version + Studio, kein Blickfang. */
+.menu-footer {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 3;
+  max-width: 92vw;
+  padding: 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  color: rgba(205, 187, 142, 0.42);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+/* Ambient-FX/Ken-Burns/Logo-Glow/Panel-Reveal sind rein dekorativ — bei reduzierter Bewegung
+   (OS-Einstellung „Bewegung reduzieren") komplett abschalten, kein Fallback-Wackeln. */
+@media (prefers-reduced-motion: reduce) {
+  .menu-bg {
+    animation: none;
+  }
+  .menu-fx {
+    display: none;
+  }
+  .menu-logo {
+    animation: none;
+  }
+  .menu-panel {
+    animation: none;
+  }
+  .menu-nav-btn:hover,
+  .menu-nav-btn:hover:active {
+    transform: none;
+  }
+  .hf-btn,
+  .hf-btn:active,
+  .hf-btn--danger:active {
+    transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+    transform: none;
+  }
+  .menu-slot:hover {
+    transform: none;
+  }
+}
+
+/* Schmale Bildschirme (1280×720-Referenz): Nav-Spalte + Panel würden sich sonst zu breit
+   berühren/überlappen — etwas engere Clamps, Panel darf schmaler werden. */
+@media (max-width: 1400px) {
+  .menu-right {
+    max-width: min(56vw, 900px);
+  }
+}
+
+/* codex:2026-07-31T23:42:00+02:00 — Chef-Auswahl „War Table Ledger". Die geschlossene Schale ist
+   eine bodennahe 2×2-Kommandotafel; geöffnet trägt dieselbe Materialfamilie Navigation und das
+   vollständige New-/Load-/Options-Ledger. Vorhandene Save- und Optionslogik bleibt unverändert. */
+.menu--war-table {
+  justify-content: flex-end;
+}
+
+.menu--war-table.menu--panel-open .menu-logo {
+  top: clamp(8px, 1.4vh, 18px);
+  width: min(38vw, 510px);
+  max-height: 18vh;
+}
+
+.menu--war-table .menu-main {
+  flex: 0 1 auto;
+  align-self: center;
+  display: block;
+  width: min(86vw, 1540px);
+  min-height: 0;
+  margin: 0 auto clamp(42px, 5vh, 72px);
+  padding: clamp(14px, 1.4vw, 24px);
+  box-sizing: border-box;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(188, 126, 56, 0.08), transparent 52%),
+    linear-gradient(rgba(8, 9, 10, 0.34), rgba(2, 3, 4, 0.68)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, auto, 224px 224px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: clamp(14px, 1.15vw, 22px);
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28;
+  border-image-width: clamp(14px, 1.15vw, 22px);
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.86), inset 0 0 36px rgba(0, 0, 0, 0.5);
+}
+
+.menu--war-table .menu-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(9px, 0.8vw, 14px);
+  width: 100%;
+}
+
+.menu--war-table .menu-nav::before,
+.menu--war-table .menu-nav-divider {
+  display: none;
+}
+
+.menu--war-table .hf-btn.menu-nav-btn {
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(82px, 10.5vh, 118px);
+  padding: clamp(13px, 1.4vh, 20px) clamp(24px, 2.2vw, 38px);
+  font-size: clamp(22px, 1.8vw, 31px);
+  border-width: clamp(12px, 1vw, 18px);
+  border-image-width: clamp(12px, 1vw, 18px);
+  background:
+    linear-gradient(rgba(18, 13, 9, 0.2), rgba(4, 4, 4, 0.48)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+  transform: none;
+}
+
+.menu--war-table .hf-btn.menu-nav-btn::before {
+  border-width: clamp(12px, 1vw, 18px);
+  border-image-width: clamp(12px, 1vw, 18px);
+}
+
+.menu--war-table .menu-nav-btn:hover,
+.menu--war-table .menu-nav-btn:hover:active {
+  transform: none;
+}
+
+.menu--war-table .menu-nav-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: inset 0 0 24px rgba(216, 192, 106, 0.09), 0 0 18px rgba(216, 192, 106, 0.18);
+}
+
+.menu--war-table .menu-nav-btn.active::after {
+  left: clamp(10px, 0.8vw, 15px);
+  top: auto;
+  bottom: 9px;
+  width: calc(100% - clamp(20px, 1.6vw, 30px));
+  height: 2px;
+}
+
+/* codex:2026-07-31T23:58:00+02:00 — Geöffnete Ledger sind eigenständige Fenster und ersetzen die
+   Kommandotafel vollständig. Die Startnavigation bleibt darunter nicht als Seitenleiste stehen. */
+.menu--war-table .menu-main--panel-open {
+  display: block;
+  width: min(92vw, 1660px);
+  height: min(72vh, 820px);
+  margin-top: clamp(132px, 17vh, 194px);
+  margin-bottom: clamp(24px, 3vh, 42px);
+}
+
+.menu--war-table .menu-main--panel-open .menu-nav {
+  display: none;
+}
+
+.menu--war-table .menu-main--panel-open .hf-btn.menu-nav-btn {
+  min-height: clamp(58px, 7vh, 76px);
+  padding: 10px 16px;
+  font-size: clamp(15px, 1.15vw, 20px);
+}
+
+.menu--war-table .menu-main--panel-open .menu-nav-icon {
+  width: clamp(20px, 1.5vw, 26px);
+  height: clamp(20px, 1.5vw, 26px);
+}
+
+.menu--war-table .menu-right {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  overflow: hidden;
+}
+
+.menu--war-table .menu-panel {
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  border-width: clamp(13px, 1vw, 18px);
+  border-image-width: clamp(13px, 1vw, 18px);
+  padding: clamp(16px, 1.6vw, 28px);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(151, 100, 43, 0.08), transparent 52%),
+    linear-gradient(rgba(8, 7, 6, 0.28), rgba(3, 3, 3, 0.48)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, auto, 300px 300px;
+}
+
+.menu--war-table .menu-panel-title {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  min-height: 42px;
+  margin: 0 0 18px;
+  padding: 4px 2px 12px;
+  background: linear-gradient(180deg, rgba(11, 9, 7, 0.98) 70%, rgba(11, 9, 7, 0));
+}
+
+.menu-panel-title-text {
+  min-width: 0;
+}
+
+.menu-panel-back {
+  margin-left: auto;
+  min-width: 154px;
+  min-height: 36px;
+  padding: 7px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(216, 192, 106, 0.42);
+  background: rgba(17, 11, 8, 0.9);
+  color: #ccb982;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.menu-panel-back:hover,
+.menu-panel-back:focus-visible {
+  color: #fff0bd;
+  border-color: rgba(239, 205, 104, 0.8);
+  box-shadow: 0 0 12px rgba(216, 192, 106, 0.2);
+  outline: none;
+}
+
+.menu--war-table .menu-slots {
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+}
+
+.menu--war-table .menu-options .opz-section,
+.menu--war-table .menu-options .bugreport-entry-banner {
+  background-color: rgba(13, 10, 8, 0.82);
+}
+
+/* 1280×720 und schmaler: Register nach oben, vier Befehle in einer Reihe. Das eigentliche Ledger
+   behält die verfügbare Höhe und scrollt intern; die Seite selbst bleibt immer ohne Scrollbar. */
+@media (max-width: 1050px), (max-height: 760px) {
+  .menu--war-table .menu-logo {
+    width: min(48vw, 470px);
+    max-height: 23vh;
+  }
+
+  .menu--war-table .menu-main--panel-open {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    height: min(78vh, 720px);
+    margin-top: clamp(92px, 13vh, 120px);
+  }
+
+  .menu--war-table .menu-main--panel-open .menu-nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .menu--war-table .menu-main--panel-open .hf-btn.menu-nav-btn {
+    min-height: 50px;
+    padding: 7px 9px;
+    font-size: clamp(11px, 1.5vw, 15px);
+  }
+
+  .menu--war-table .menu-main--panel-open .menu-nav-btn .hf-btn__face {
+    justify-content: center;
+    gap: 7px;
+  }
+}
+
+@media (max-width: 720px) {
+  .menu--war-table .menu-main {
+    width: 94vw;
+  }
+
+  .menu--war-table .menu-nav {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .menu--war-table .hf-btn.menu-nav-btn {
+    min-height: 58px;
+  }
+
+  .menu--war-table .menu-main--panel-open .menu-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* codex:2026-07-31T23:59:30+02:00 — Unterseiten sind inhaltsgebundene Ledger statt leerer
+   Vollbildwände. Die äußere War-Table-Schale gehört nur dem eigentlichen Hauptmenü; New/Load und
+   Options besitzen jeweils genau einen eigenen Fensterrahmen und eine passende Arbeitshöhe. */
+.menu--war-table .menu-main--panel-open {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.menu--war-table.menu--panel-new .menu-main--panel-open,
+.menu--war-table.menu--panel-load .menu-main--panel-open {
+  width: min(90vw, 1580px);
+  height: auto;
+  max-height: 76vh;
+}
+
+.menu--war-table.menu--panel-new .menu-panel,
+.menu--war-table.menu--panel-load .menu-panel {
+  height: auto;
+  max-height: 76vh;
+  min-height: 0;
+  padding: clamp(18px, 1.5vw, 26px);
+}
+
+.menu--war-table.menu--panel-new .menu-slots,
+.menu--war-table.menu--panel-load .menu-slots {
+  grid-template-columns: repeat(5, minmax(176px, 238px));
+  justify-content: center;
+  gap: clamp(14px, 1.35vw, 24px);
+}
+
+.menu--war-table.menu--panel-options .menu-main--panel-open {
+  width: min(88vw, 1480px);
+  height: min(74vh, 820px);
+}
+
+.menu--war-table.menu--panel-options .menu-panel {
+  height: 100%;
+}
+
+@media (max-width: 1280px) {
+  .menu--war-table.menu--panel-new .menu-slots,
+  .menu--war-table.menu--panel-load .menu-slots {
+    grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+  }
+}

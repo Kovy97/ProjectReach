@@ -1,0 +1,470 @@
+=== ChatGPT Icon-Generierungs-Prompts — Hearthforge Idle ===
+Generiert: 2026-06-28 03:59
+Fehlende Item-Icons: 334  |  Fehlende Monster-Bilder: 15
+Jeder Block = 10 Einträge. Format pro Eintrag: Name (dateiname.png) — Aussehens-Beschreibung.
+Durchgängiger Stil: dunkles Dark-Fantasy, KEIN Pixel-Art, EIN einzelnes Icon pro Bild, zentriert, auf transparentem oder schlichtem dunklem Hintergrund.
+
+
+############### MONSTER (Gegner-Illustrationen) (15) ###############
+
+--- MONSTER (Gegner-Illustrationen) Block 1/2 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Grubenspinne (pit_spider.png) — Eine fette, pechschwarze Grubenspinne mit acht haarigen Beinen, fahl-gelben Facettenaugen und tropfenden Giftmandibeln. Sie kauert über einem Gespinst in einer feuchten Höhle, der Hinterleib von matten roten Warnzeichen gemustert.
+• Schlackenkobold (slag_kobold.png) — Ein kleiner, drahtiger Kobold mit rußiger, rissiger Haut und glühenden Augen, der in einer Schlackengrube haust. Er trägt zusammengeschusterte Schrottrüstung und schwingt eine glühende Hacke; Funken und Asche umwehen ihn.
+• Frosthund (frost_hound.png) — Eine hagere Bestie aus Wolf und Eis, das Fell von Raureif überzogen, der Atem als blaue Kältewolke. Augen leuchten eisblau, von den Lefzen hängen Eiszapfen.
+• Eishexer (frost_hexer.png) — Ein vermummter Frost-Hexer in zerfetzter, eisverkrusteter Robe, die knochigen Hände von blauem Kältefeuer umspielt. Unter der Kapuze nur Dunkelheit und zwei eiskalte Lichtpunkte.
+• Hochland-Wyvern (highland_wyvern.png) — Ein schlanker Hochland-Wyvern mit ledrigen graubraunen Schwingen, langem Peitschenschwanz mit Giftstachel und scharfem Hornkamm. Er thront auf einem windigen Felsgrat, Flügel halb gespreizt.
+• Leerenroc (roc_void.png) — Ein gewaltiger Raubvogel, dessen Gefieder in tiefem Schwarz-Violett der Leere schimmert; die Schwingen scheinen Sternenlicht zu verschlucken. Krallen und Schnabel glühen schwach lila, die Augen sind leere Lichthöhlen.
+• Götzenwächter (idol_warden.png) — Ein steinerner Götzen-Wächter aus verwittertem, runenbedecktem Fels, halb Statue, halb Erwachtes. In den Fugen glüht goldenes Götzenlicht; massive Fäuste, das Gesicht eine ausdruckslose Tempelmaske.
+• Aetherwraith (aether_wraith.png) — Ein körperloser Äther-Wiedergänger aus wallendem türkis-weißem Nebel mit vage humanoider Gestalt. Wo das Gesicht sein sollte, leuchten arkane Glyphen; ranke Energiefäden ziehen hinter ihm her.
+• Drachenhaut-Skarn (scale_skarn.png) — Ein gedrungener, drachenhäutiger Saurier, gepanzert mit überlappenden eisernen Schuppen in Bronze- und Rosttönen. Aus den Nüstern dampft Hitze, kräftige Klauen graben sich in den Boden.
+• Der Letzte Götze (last_idol.png) — Der finale Boss: ein kolossaler, erwachter Götze, ein Turm aus schwarzem Tempelstein und Gold, von gleißend goldenen Rissen durchzogen, die unter Zorn heller pulsieren. Vielarmig, mit einer maskenhaften Gottheits-Fratze und einer Aura erdrückender heiliger Macht.
+
+--- MONSTER (Gegner-Illustrationen) Block 2/2 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Klippengeist (gravecliff_specter.png) — Ein bleicher Klippengeist aus den Hochland-Gräbern: eine zerfließende, halbtransparente Totengestalt in Fetzen eines Leichentuchs, die über dem Boden schwebt. Aus den Augenhöhlen sickert kaltes graublaues Totenlicht, Nebelschleier lösen den Unterkörper auf.
+• Leeren-Zerschmetterer (voidhusk_crusher.png) — Ein massiger Schlackegrube-Schläger, dessen verkohlte Hülle von innen mit violettem Leeren-Glühen aufgerissen ist. Übergroße Steinfäuste und ein berstender, lavaartig glühender Brustkorb; bei Raserei lodert das Lila greller.
+• Abyssale Gezeitenschlange (abyssal_tide_serpent.png) — Eine lange, glänzende Tiefsee-Schlange mit öl-schwarz-blauen Schuppen, durchscheinenden Flossensäumen und biolumineszenten Punkten entlang des Leibes. Das Maul ist ein Kranz nadelfeiner Zähne, um den Kopf wallt frostiges Wasser.
+• Verkohlter Schicksalsritter (charred_doomknight.png) — Ein verkohlter Untot-Ritter in geborstener, glühend gerissener Schwärzplatte, aus deren Spalten Feuer und Asche quellen. Er führt ein flammendes Großschwert; im Helmspalt brennen zwei orange Glutaugen.
+• Leeren-Titan (void_titan.png) — Ein himmelhoher Leeren-Titan aus zusammengewachsenem schwarzem Gestein und purer Leeren-Energie, Risse über den Körper speien violetten Sternenstaub. Aus der Brust strahlt ein Singularitäts-Kern, jeder Schritt verzerrt die Luft um ihn.
+
+
+############### ITEMS (Item-Icons) (334) ###############
+
+--- ITEMS (Item-Icons) Block 1/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Normales Holz (normal_log.png) — Ein Holzscheit/Stamm-Abschnitt; schlicht und funktional, mattes Material.
+• Eichenholz (oak_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: helles, gemasertes Eichenholz; schlicht und funktional, mattes Material.
+• Aschenrinden-Holz (ashbark_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: hellgraue, aschige Rinde; schlicht und funktional, mattes Material.
+• Schwarzholz (blackwood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: tiefschwarzes, dichtes Holz; schlicht und funktional, mattes Material.
+• Eisenrinden-Holz (ironbark_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: zähes, eisenhartes graubraunes Holz; schlicht und funktional, mattes Material.
+• Bluteichen-Holz (bloodoak_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: dunkelrote Eiche mit blutroter Maserung; schlicht und funktional, mattes Material.
+• Schattenkiefer-Holz (shadowpine_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: nachtschwarzes Nadelholz; schlicht und funktional, mattes Material.
+• Knochenholz (bonewood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: knochenbleiches, splittriges Holz; schlicht und funktional, mattes Material.
+• Götzenholz (godwood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: weiß-goldenes, fast leuchtendes Götterholz; schlicht und funktional, mattes Material.
+• Birkenholz (birchwood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: weiß-silbrige Birke mit dunklen Flecken; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 2/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Weidenbark-Holz (willowbark_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: helles, biegsames Weidenholz; schlicht und funktional, mattes Material.
+• Düsterholz (grimwood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: düsteres, fast schwarzes Hartholz; schlicht und funktional, mattes Material.
+• Pestholz (blightwood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: kränklich grün-graues, fauliges Holz; schlicht und funktional, mattes Material.
+• Aschenfilz-Holz (ashfen_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: morsch-graues Sumpfholz; schlicht und funktional, mattes Material.
+• Geisterholz (wraithwood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: geisterhaft graues, ausgebleichtes Holz; schlicht und funktional, mattes Material.
+• Leerenholz (voidwood_log.png) — Ein Holzscheit/Stamm-Abschnitt; Material: tiefschwarzes Holz mit violett pulsierenden Maserungen; schlicht und funktional, mattes Material.
+• Vogelnest (birds_nest.png) — Ein Handwerks-Material/Zutat; stumpf, abgenutzt, rissig, ohne jeden Glanz.
+• Roher Schattenkarpfen (raw_shadowcarp.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Roher Krypta-Aal (raw_crypteel.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Goblin-Ohr (goblin_ear.png) — Ein Handwerks-Material/Zutat; stumpf, abgenutzt, rissig, ohne jeden Glanz.
+
+--- ITEMS (Item-Icons) Block 3/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Angebratener Blutfang-Aal (cooked_bloodfang_eel.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Gebratener Schattenkarpfen (cooked_shadowcarp.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Gerösteter Krypta-Aal (cooked_crypteel.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Welklauch-Scharfschützen-Pastete (witherleek_sharpshooters_pie.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Welklauch-Arkan-Brühe (witherleek_arcane_broth.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Stahlschuss-Bisque (steelshot_bisque.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Zauberflackern-Tisane (spellflare_tisane.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Edelsteinring (gemstone_ring.png) — edel, mit kühlem blauem Schimmer an den Kanten.
+• Rissiger Bogen (cracked_bow.png) — Ein verzogener Stock mit zerschlissener Sehne. Er schießt — meistens. Ein kurzer Bogen (Fernkampf); schlicht und funktional, mattes Material.
+• Grobe Pfeile (crude_arrow.png) — Ein Bündel Pfeile; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 4/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Morscher Stab (cracked_staff.png) — Hält kaum zusammen. Leitet aber noch genug Magie, um etwas zu sengen. Ein langer Magierstab (Magie); schlicht und funktional, mattes Material.
+• Grauwurz-Saat (graywort_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Totenmoos (deathmoss.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Grabwächter-Siegel (grave_warden_sigil.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Herz des Götzen (idol_heart.png) — Ein Handwerks-Material/Zutat; legendär, goldene Glut und feine Runen durchziehen es.
+• Kriegsbanden-Siegel (warband_seal.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Leitwolf-Reißzahn (alpha_fang.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Sturmkern (storm_core.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Raureifpilz (rimecap.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Leerenblüte (voidbloom.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 5/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Blutrüben-Saat (bloodbeet_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Nachtschatten-Saat (nightshade_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Eisenranken-Saat (ironvine_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Glutwurz-Saat (emberroot_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Wichtkappen-Saat (wraithcap_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Götzenblüten-Saat (godbloom_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Geschliffener Edelstein (cut_gemstone.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Narbenleder (scarred_hide.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Pfeilschaft (arrow_shaft.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Kupferpfeil (copper_arrow.png) — Ein Bündel Pfeile; Material: rötlich-orangenes Kupfer; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 6/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Bronzepfeil (bronze_arrow.png) — Ein Bündel Pfeile; Material: warm-bräunliche Bronze; schlicht und funktional, mattes Material.
+• Stahlpfeil (steel_arrow.png) — Ein Bündel Pfeile; Material: polierter heller Stahl; schlicht und funktional, mattes Material.
+• Schwarzstahlpfeil (blacksteel_arrow.png) — Ein Bündel Pfeile; Material: rußschwarzer, gehärteter Stahl; schlicht und funktional, mattes Material.
+• Mithrilpfeil (mithril_arrow.png) — Ein Bündel Pfeile; Material: silbrig-blaues, leichtes Edelmetall; schlicht und funktional, mattes Material.
+• Adamantiumpfeil (adamantium_arrow.png) — Ein Bündel Pfeile; Material: grünlich-schwarzes, extrem hartes Erz; schlicht und funktional, mattes Material.
+• Runitpfeil (runite_arrow.png) — Ein Bündel Pfeile; Material: tiefblaues Runenmetall mit eingelassenen Glyphen; schlicht und funktional, mattes Material.
+• Bluteisenpfeil (bloodiron_arrow.png) — Ein Bündel Pfeile; Material: dunkelrotes Bluteisen mit rostroten Schlieren; schlicht und funktional, mattes Material.
+• Titanpfeil (titanium_arrow.png) — Ein Bündel Pfeile; Material: mattgraues, kantiges Titan mit feinem Glanz; schlicht und funktional, mattes Material.
+• Aetheriumpfeil (aetherium_arrow.png) — Ein Bündel Pfeile; Material: ätherisch schimmerndes, blass-türkises Leichtmetall; schlicht und funktional, mattes Material.
+• Götzeneisenpfeil (godiron_arrow.png) — Ein Bündel Pfeile; Material: götzeneisen — schwarzes Metall mit glühend-goldenen Götzen-Adern; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 7/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Glutessenz (ember_essence.png) — Ein magischer Runenstein / eine leuchtende Essenz, in glühendem Orange-Rot lodernd, von Funken umtanzt; schlicht und funktional, mattes Material.
+• Sturmessenz (storm_essence.png) — Ein magischer Runenstein / eine leuchtende Essenz, in gelb-violetten Blitzen knisternd; schlicht und funktional, mattes Material.
+• Leerenessenz (void_essence.png) — Ein magischer Runenstein / eine leuchtende Essenz, in tiefem Schwarz-Violett der Leere pulsierend; schlicht und funktional, mattes Material.
+• Kraftrune (force_rune.png) — Ein magischer Runenstein / eine leuchtende Essenz, in stahlblauer kinetischer Energie vibrierend; schlicht und funktional, mattes Material.
+• Feuerrune (fire_rune.png) — Ein magischer Runenstein / eine leuchtende Essenz; schlicht und funktional, mattes Material.
+• Wächterrune (ward_rune.png) — Ein magischer Runenstein / eine leuchtende Essenz, in schützendem goldenem Glyphenlicht schimmernd; schlicht und funktional, mattes Material.
+• Schockrune (shock_rune.png) — Ein magischer Runenstein / eine leuchtende Essenz, in gelb-violetten Blitzen knisternd; schlicht und funktional, mattes Material.
+• Schnellrune (swift_rune.png) — Ein magischer Runenstein / eine leuchtende Essenz, in fahlgrünem, windartigem Leuchten; schlicht und funktional, mattes Material.
+• Glyphe der Wucht (glyph_of_might.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Glyphe der Abwehr (glyph_of_warding.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 8/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Glyphe der Präzision (glyph_of_precision.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Glyphe des Eiferers (glyph_of_the_zealot.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Glyphe des Bollwerks (glyph_of_the_bulwark.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Glyphe der Behändigkeit (glyph_of_alacrity.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Glyphe des Verderbens (glyph_of_ruin.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leeren-Pilz (fungus_void.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Grabharz (gravensap.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Sumpfwurzel-Saat (marshroot_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Blutdistel-Saat (bloodthistle_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Grabmoos-Saat (gravemoss_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 9/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Nachtblüten-Saat (nightbloom_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Götteratem-Saat (godsbreath_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Umbrablatt-Saat (umberleaf_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Grünkappe-Saat (verdantcap_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Violettblüten-Saat (violetbloom_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Strahlblüten-Saat (radiantbloom_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Bleichschilf-Saat (palereed_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Eisenschilf-Saat (ironreed_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Leerenschilf-Saat (voidreed_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Grabkartoffel-Saat (gravetato_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 10/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Blutgetreide-Saat (bloodgrain_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Seelenkürbis-Saat (soulgourd_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Welklauch-Saat (witherleek_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Bernsteingetreide-Saat (ambergrain_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Alraunen-Saat (mandrake_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Galgenapfel-Saat (gallows_apple_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Leichenlilien-Saat (corpse_lily_seed.png) — Ein Beutel/Häufchen Saatgut; schlicht und funktional, mattes Material.
+• Alraunenwurzel (mandrake_root.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Leichenlilien-Zwiebel (corpse_lily_bulb.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Aschwurz-Brühe (ashroot_broth.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 11/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Grimmkorn-Brei (grimwheat_porridge.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Nachtschatten-Extrakt (nightshade_extract.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Alraunen-Tinktur (mandrake_tincture.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Galgenapfel-Konfitüre (gallows_preserve.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Glutwurz-Tonikum (emberroot_tonic.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Leichenlilien-Salbe (corpse_lily_salve.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; edel, mit kühlem blauem Schimmer an den Kanten.
+• Götzenblüten-Infusion (godbloom_infusion.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; edel, mit kühlem blauem Schimmer an den Kanten.
+• Fläschchen Wasser (vial_of_water.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Klares Öl (clear_oil.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Kleiner Heiltrank (potion_minor_heal.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 12/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Schwacher Heiltrank (potion_lesser_heal.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Heiltrank (potion_heal.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Großer Heiltrank (potion_greater_heal.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Starker Heiltrank (potion_potent_heal.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Elixier der Erneuerung (elixir_renewal.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Ochsenblut-Tonikum (tonic_oxblood.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Steinhaut-Tonikum (tonic_stoneskin.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Scharfaugen-Tonikum (tonic_keeneye.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Blutrausch-Tonikum (tonic_bloodrage.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Arkan-Surge-Tonikum (tonic_arcane_surge.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 13/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Eisenrinden-Tonikum (tonic_ironbark.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Kriegspfad-Tonikum (tonic_warpath.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Apex-Tonikum (tonic_apex.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götteratem-Elixier (godsbreath_elixir.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Antidot-Trank (potion_antidote.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Großes Antidot (potion_greater_antidote.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Schutz-Elixier (elixir_warding.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; edel, mit kühlem blauem Schimmer an den Kanten.
+• Panacea-Elixier (panacea_elixir.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Sammler-Tonikum I (tonic_forager_i.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Sammler-Tonikum II (tonic_forager_ii.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 14/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Ernte-Tonikum (tonic_harvest.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Götternte-Tonikum (tonic_godharvest.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Schriftrolle der Überlastung (scroll_of_overload.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Schriftrolle der Ägide (scroll_of_aegis.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Schriftrolle des Kataklysmus (scroll_of_cataclysm.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Metallschrott (item_scrap.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Rune der Schärfe I (rune_keen_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in scharfem silbernem Glanz; schlicht und funktional, mattes Material.
+• Rune der Flamme I (rune_flame_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in glühendem Orange-Rot lodernd, von Funken umtanzt; schlicht und funktional, mattes Material.
+• Rune des Frosts I (rune_frost_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in eiskaltem Blau leuchtend, von Raureif überzogen; schlicht und funktional, mattes Material.
+• Rune der Präzision I (rune_precise_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in klarem weißem Licht; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 15/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Rune der Schnelle I (rune_swift_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in fahlgrünem, windartigem Leuchten; schlicht und funktional, mattes Material.
+• Rune des Arkanen I (rune_arcane_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in violett-arkanem Schimmer; schlicht und funktional, mattes Material.
+• Rune der Jagd I (rune_hunter_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in waldgrünem Leuchten; schlicht und funktional, mattes Material.
+• Rune der Schärfe II (rune_keen_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in scharfem silbernem Glanz; schlicht und funktional, mattes Material.
+• Rune der Flamme II (rune_flame_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in glühendem Orange-Rot lodernd, von Funken umtanzt; schlicht und funktional, mattes Material.
+• Rune des Frosts II (rune_frost_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in eiskaltem Blau leuchtend, von Raureif überzogen; schlicht und funktional, mattes Material.
+• Rune der Präzision II (rune_precise_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in klarem weißem Licht; schlicht und funktional, mattes Material.
+• Rune der Schnelle II (rune_swift_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in fahlgrünem, windartigem Leuchten; schlicht und funktional, mattes Material.
+• Rune des Arkanen II (rune_arcane_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in violett-arkanem Schimmer; schlicht und funktional, mattes Material.
+• Rune der Jagd II (rune_hunter_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in waldgrünem Leuchten; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 16/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Rune der Schärfe III (rune_keen_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in scharfem silbernem Glanz; schlicht und funktional, mattes Material.
+• Rune der Flamme III (rune_flame_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in glühendem Orange-Rot lodernd, von Funken umtanzt; schlicht und funktional, mattes Material.
+• Rune des Frosts III (rune_frost_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in eiskaltem Blau leuchtend, von Raureif überzogen; schlicht und funktional, mattes Material.
+• Rune der Präzision III (rune_precise_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in klarem weißem Licht; schlicht und funktional, mattes Material.
+• Rune der Schnelle III (rune_swift_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in fahlgrünem, windartigem Leuchten; schlicht und funktional, mattes Material.
+• Rune des Arkanen III (rune_arcane_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in violett-arkanem Schimmer; schlicht und funktional, mattes Material.
+• Rune der Jagd III (rune_hunter_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in waldgrünem Leuchten; schlicht und funktional, mattes Material.
+• Rune des Sturms I (rune_storm_i.png) — Ein magischer Runenstein / eine leuchtende Essenz, in gelb-violetten Blitzen knisternd; schlicht und funktional, mattes Material.
+• Rune des Sturms II (rune_storm_ii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in gelb-violetten Blitzen knisternd; schlicht und funktional, mattes Material.
+• Rune des Sturms III (rune_storm_iii.png) — Ein magischer Runenstein / eine leuchtende Essenz, in gelb-violetten Blitzen knisternd; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 17/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Trübergaderz (murkvein_ore.png) — Ein roher Erzbrocken; schlicht und funktional, mattes Material.
+• Trübergadbarren (murkvein_bar.png) — Ein gegossener Metallbarren; schlicht und funktional, mattes Material.
+• Trübergad-Langschwert (murkvein_longsword.png) — Ein schweres Langschwert aus Trübergaderz geschmiedet. Sein matter Glanz verrät bemerkenswerte Zähigkeit. Ein einschneidiges Schwert; schlicht und funktional, mattes Material.
+• Grabstahlbarren (gravesteel_bar.png) — Ein gegossener Metallbarren; schlicht und funktional, mattes Material.
+• Zauberbinder-Ring (spellbinder_ring.png) — edel, mit kühlem blauem Schimmer an den Kanten.
+• Blutstein-Ring (bloodstone_ring.png) — Material: blutroter, geäderter Stein; edel, mit kühlem blauem Schimmer an den Kanten.
+• Blutstein-Amulett (bloodstone_amulet.png) — Ein Amulett; Material: blutroter, geäderter Stein; schlicht und funktional, mattes Material.
+• Leerenstein-Ring (voidstone_ring.png) — Material: pechschwarzer Stein mit violettem Innenleuchten; schlicht und funktional, mattes Material.
+• Leerenstein-Amulett (voidstone_amulet.png) — Ein Amulett; Material: pechschwarzer Stein mit violettem Innenleuchten; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Göttenstein-Ring (godgem_ring.png) — Material: regenbogen-prismatischer Götterstein; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 18/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Göttenstein-Amulett (godgem_amulet.png) — Ein Amulett; Material: regenbogen-prismatischer Götterstein; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Bronze-Kettenhemd (bronze_chainbody.png) — Ein Brustpanzer/Oberteil; Material: warm-bräunliche Bronze; edel, mit kühlem blauem Schimmer an den Kanten.
+• Bronze-Turmschild (bronze_towershield.png) — Ein Off-Hand-Schild; Material: warm-bräunliche Bronze; edel, mit kühlem blauem Schimmer an den Kanten.
+• Eisen-Kettenhemd (iron_chainbody.png) — Ein Brustpanzer/Oberteil; Material: schlichtes graues Eisen; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Eisen-Turmschild (iron_towershield.png) — Ein Off-Hand-Schild; Material: schlichtes graues Eisen; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Stahl-Kriegsklinge (steel_warblade.png) — Ein einschneidiges Schwert; Material: polierter heller Stahl; schlicht und funktional, mattes Material.
+• Normaler Kurzbogen (copper_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Birkenholz-Kurzbogen (bronze_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Eichen-Kurzbogen (iron_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Aschenrinden-Kurzbogen (steel_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 19/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Schwarzholz-Kurzbogen (blacksteel_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Pestholz-Kurzbogen (mithril_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Eisenrinden-Kurzbogen (adamantium_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Bluteichen-Kurzbogen (runite_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Schattenkiefer-Kurzbogen (bloodiron_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Geisterholz-Kurzbogen (titanium_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Knochenholz-Kurzbogen (aetherium_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götzenholz-Kurzbogen (godiron_shortbow.png) — Ein kurzer Bogen (Fernkampf); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Normaler Langbogen (copper_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Birkenholz-Langbogen (bronze_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+
+--- ITEMS (Item-Icons) Block 20/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Eichen-Langbogen (iron_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Aschenrinden-Langbogen (steel_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Schwarzholz-Langbogen (blacksteel_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Pestholz-Langbogen (mithril_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Eisenrinden-Langbogen (adamantium_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Bluteichen-Langbogen (runite_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Schattenkiefer-Langbogen (bloodiron_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Geisterholz-Langbogen (titanium_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Knochenholz-Langbogen (aetherium_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+• Götzenholz-Langbogen (godiron_longbow.png) — Ein hoher Langbogen (Fernkampf); edel, mit kühlem blauem Schimmer an den Kanten.
+
+--- ITEMS (Item-Icons) Block 21/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Eisenleder-Haube (ironhide_helm.png) — Ein Helm/Kopfschutz; edel, mit kühlem blauem Schimmer an den Kanten.
+• Eisenleder-Kürass (ironhide_body.png) — Ein Brustpanzer/Oberteil; edel, mit kühlem blauem Schimmer an den Kanten.
+• Eisenleder-Beinschienen (ironhide_legs.png) — Beinschutz; edel, mit kühlem blauem Schimmer an den Kanten.
+• Eisenleder-Armschützer (ironhide_vambraces.png) — Handschuhe; edel, mit kühlem blauem Schimmer an den Kanten.
+• Eisenleder-Stiefel (ironhide_boots.png) — Stiefel; edel, mit kühlem blauem Schimmer an den Kanten.
+• Leerenleder-Haube (voidhide_helm.png) — Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerenleder-Kürass (voidhide_body.png) — Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerenleder-Beinschienen (voidhide_legs.png) — Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerenleder-Armschützer (voidhide_vambraces.png) — Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerenleder-Stiefel (voidhide_boots.png) — Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 22/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Weidenbark-Schild (willowbark_shield.png) — Ein Off-Hand-Schild; Material: helles, biegsames Weidenholz; schlicht und funktional, mattes Material.
+• Düsterholz-Schild (grimwood_shield.png) — Ein Off-Hand-Schild; Material: düsteres, fast schwarzes Hartholz; schlicht und funktional, mattes Material.
+• Aschenfilz-Buckler (ashfen_buckler.png) — Ein Off-Hand-Schild; Material: morsch-graues Sumpfholz; edel, mit kühlem blauem Schimmer an den Kanten.
+• Leerenholz-Pavese (voidwood_pavise.png) — Ein Off-Hand-Schild; Material: tiefschwarzes Holz mit violett pulsierenden Maserungen; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leder-Kriegsumhang (leather_warcape.png) — Ein Umhang; schlicht und funktional, mattes Material.
+• Gehärteter Kriegsumhang (hardened_warcape.png) — Ein Umhang; edel, mit kühlem blauem Schimmer an den Kanten.
+• Leder-Umhang (leather_cape.png) — Ein Umhang; schlicht und funktional, mattes Material.
+• Waldläufer-Umhang (ranger_cape.png) — Ein Umhang; edel, mit kühlem blauem Schimmer an den Kanten.
+• Arkan-Umhang (arcane_cape.png) — Ein Umhang; schlicht und funktional, mattes Material.
+• Frost-Überwurf (frost_shroud.png) — Ein Umhang; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 23/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Kupfer-Stab (copper_staff.png) — Ein langer Magierstab (Magie); Material: rötlich-orangenes Kupfer; schlicht und funktional, mattes Material.
+• Bronze-Stab (bronze_staff.png) — Ein langer Magierstab (Magie); Material: warm-bräunliche Bronze; schlicht und funktional, mattes Material.
+• Eisen-Stab (iron_staff.png) — Ein langer Magierstab (Magie); Material: schlichtes graues Eisen; schlicht und funktional, mattes Material.
+• Stahl-Stab (steel_staff.png) — Ein langer Magierstab (Magie); Material: polierter heller Stahl; schlicht und funktional, mattes Material.
+• Schwarzstahl-Stab (blacksteel_staff.png) — Ein langer Magierstab (Magie); Material: rußschwarzer, gehärteter Stahl; schlicht und funktional, mattes Material.
+• Mithril-Stab (mithril_staff.png) — Ein langer Magierstab (Magie); Material: silbrig-blaues, leichtes Edelmetall; schlicht und funktional, mattes Material.
+• Adamantium-Stab (adamantium_staff.png) — Ein langer Magierstab (Magie); Material: grünlich-schwarzes, extrem hartes Erz; schlicht und funktional, mattes Material.
+• Runit-Stab (runite_staff.png) — Ein langer Magierstab (Magie); Material: tiefblaues Runenmetall mit eingelassenen Glyphen; schlicht und funktional, mattes Material.
+• Bluteisen-Stab (bloodiron_staff.png) — Ein langer Magierstab (Magie); Material: dunkelrotes Bluteisen mit rostroten Schlieren; schlicht und funktional, mattes Material.
+• Titan-Stab (titanium_staff.png) — Ein langer Magierstab (Magie); Material: mattgraues, kantiges Titan mit feinem Glanz; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 24/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Aetherium-Stab (aetherium_staff.png) — Ein langer Magierstab (Magie); Material: ätherisch schimmerndes, blass-türkises Leichtmetall; schlicht und funktional, mattes Material.
+• Götzeneisen-Stab (godiron_staff.png) — Ein langer Magierstab (Magie); Material: götzeneisen — schwarzes Metall mit glühend-goldenen Götzen-Adern; schlicht und funktional, mattes Material.
+• Kupfer-Zauberstab (copper_wand.png) — Ein kurzer Zauberstab (Magie); Material: rötlich-orangenes Kupfer; schlicht und funktional, mattes Material.
+• Bronze-Zauberstab (bronze_wand.png) — Ein kurzer Zauberstab (Magie); Material: warm-bräunliche Bronze; schlicht und funktional, mattes Material.
+• Eisen-Zauberstab (iron_wand.png) — Ein kurzer Zauberstab (Magie); Material: schlichtes graues Eisen; schlicht und funktional, mattes Material.
+• Stahl-Zauberstab (steel_wand.png) — Ein kurzer Zauberstab (Magie); Material: polierter heller Stahl; schlicht und funktional, mattes Material.
+• Schwarzstahl-Zauberstab (blacksteel_wand.png) — Ein kurzer Zauberstab (Magie); Material: rußschwarzer, gehärteter Stahl; schlicht und funktional, mattes Material.
+• Mithril-Zauberstab (mithril_wand.png) — Ein kurzer Zauberstab (Magie); Material: silbrig-blaues, leichtes Edelmetall; schlicht und funktional, mattes Material.
+• Adamantium-Zauberstab (adamantium_wand.png) — Ein kurzer Zauberstab (Magie); Material: grünlich-schwarzes, extrem hartes Erz; schlicht und funktional, mattes Material.
+• Runit-Zauberstab (runite_wand.png) — Ein kurzer Zauberstab (Magie); Material: tiefblaues Runenmetall mit eingelassenen Glyphen; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 25/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Bluteisen-Zauberstab (bloodiron_wand.png) — Ein kurzer Zauberstab (Magie); Material: dunkelrotes Bluteisen mit rostroten Schlieren; schlicht und funktional, mattes Material.
+• Titan-Zauberstab (titanium_wand.png) — Ein kurzer Zauberstab (Magie); Material: mattgraues, kantiges Titan mit feinem Glanz; schlicht und funktional, mattes Material.
+• Aetherium-Zauberstab (aetherium_wand.png) — Ein kurzer Zauberstab (Magie); Material: ätherisch schimmerndes, blass-türkises Leichtmetall; schlicht und funktional, mattes Material.
+• Götzeneisen-Zauberstab (godiron_wand.png) — Ein kurzer Zauberstab (Magie); Material: götzeneisen — schwarzes Metall mit glühend-goldenen Götzen-Adern; schlicht und funktional, mattes Material.
+• Kupfer-Fokus (copper_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: rötlich-orangenes Kupfer; edel, mit kühlem blauem Schimmer an den Kanten.
+• Bronze-Fokus (bronze_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: warm-bräunliche Bronze; edel, mit kühlem blauem Schimmer an den Kanten.
+• Eisen-Fokus (iron_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: schlichtes graues Eisen; schlicht und funktional, mattes Material.
+• Stahl-Fokus (steel_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: polierter heller Stahl; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Schwarzstahl-Fokus (blacksteel_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: rußschwarzer, gehärteter Stahl; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Mithril-Fokus (mithril_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: silbrig-blaues, leichtes Edelmetall; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 26/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Adamantium-Fokus (adamantium_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: grünlich-schwarzes, extrem hartes Erz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Runit-Fokus (runite_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: tiefblaues Runenmetall mit eingelassenen Glyphen; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Bluteisen-Fokus (bloodiron_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: dunkelrotes Bluteisen mit rostroten Schlieren; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Titan-Fokus (titanium_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: mattgraues, kantiges Titan mit feinem Glanz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Aetherium-Fokus (aetherium_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: ätherisch schimmerndes, blass-türkises Leichtmetall; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götzeneisen-Fokus (godiron_focus.png) — Ein magisches Fokus-Artefakt (Magie); Material: götzeneisen — schwarzes Metall mit glühend-goldenen Götzen-Adern; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Sturmrufer-Rute (stormcaller_rod.png) — (Magie); schlicht und funktional, mattes Material.
+• Leerenrufer-Stab (voidcaller_staff.png) — Ein langer Magierstab (Magie); schlicht und funktional, mattes Material.
+• Götzenfunken-Stab (godspark_staff.png) — Ein langer Magierstab (Magie); meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Waldhasen-Keule (raw_hare_meat.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 27/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Wyvern-Braten (raw_wyvern_haunch.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Wyvern-Steak (wyvern_steak.png) — Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Chitinpanzer (chitin_plate.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Spinnenseide (spider_silk.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Frostpelz (frost_pelt.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Götzensplitter (idol_shard.png) — Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Dornfang-Klinge (thornfang_blade.png) — Eine Klinge aus dem Dornenkranz des Dornwolfs — jede Kante zieht Blut. Ein kurzer Dolch; schlicht und funktional, mattes Material.
+• Stab der Rankenhexe (bramble_witchstaff.png) — Aus lebenden Dornen gewoben, getränkt in Hexensud. Frost kräuselt sich um die Spitze. Ein langer Magierstab (Magie); schlicht und funktional, mattes Material.
+• Moosplatten-Panzer (moss_plate_body.png) — Dicke Platten lebenden Mooses auf Eisen gefugt. Heilt sich langsam selbst. Ein Brustpanzer/Oberteil; schlicht und funktional, mattes Material.
+• Aschklinge (ashen_reaper.png) — Im Ofenbauch des Aschtyrann geschmiedet. Die Schneide raucht vor Hitze. Ein einschneidiges Schwert; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 28/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Geisterhirsch-Kapuze (spectral_coif.png) — Eine Kapuze aus Geisterleder — der Jäger wird zum Gejagten. Ein Helm/Kopfschutz; schlicht und funktional, mattes Material.
+• Brigantine des Waldvogts (warden_brigandine.png) — Getragen vom Wächter des Waldes. Bewegt sich lautlos zwischen den Bäumen. Ein Brustpanzer/Oberteil; schlicht und funktional, mattes Material.
+• Chitinschild (chitin_bulwark.png) — Ein Schild aus dem Panzer eines Pechkäfers. Dicht wie Eisen. Ein Off-Hand-Schild; edel, mit kühlem blauem Schimmer an den Kanten.
+• Morastklinge (mire_fang_dagger.png) — Ein widerhakenbesetzter Kiefer des Morastkriechers. Schnell und dreckig. Ein kurzer Dolch; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Lehrlings-Gewand (Beine) (apprentice_robe_legs.png) — Schlichte Stoffbahnen, mit Trübessenz-Faden genäht. Summt kaum merklich vor Magie. Beinschutz; schlicht und funktional, mattes Material.
+• Lehrlings-Handschuhe (apprentice_mitts.png) — Abgenutzte Stoffhandschuhe, mit Trübessenz-Faden genäht. Die Finger kribbeln vor latenter Magie. Handschuhe; schlicht und funktional, mattes Material.
+• Lehrlings-Pantöffelchen (apprentice_slippers.png) — Weiche Stoffpantoffeln mit Trübessenz-Sohlen. Flüstern leise bei jedem Schritt. Stiefel; schlicht und funktional, mattes Material.
+• Frost-Zirkel (frost_circlet.png) — Ein mit Frostrunen gravierter Zirkel. Leitet Kälte in den Willen des Zauberers. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Frost-Robe (frost_robe_body.png) — Schwere Seide mit Frostrunen verwoben. Eis knistert an den Manschetten. Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Frost-Gewand (Beine) (frost_robe_legs.png) — Runenverzierte Beinlinge, die mit jedem Zauber wehen. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 29/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Frost-Handwickel (frost_handwraps.png) — Frostrunen-genähte Handwickel, die die Luft um die Finger des Zauberers abkühlen. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Frost-Schrittschuhe (frost_treads.png) — Leichte Stiefel, mit Frostrunen verwoben. Hinterlassen schwache Eisfußabdrücke. Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Glut-Kapuze (ember_robe_hood.png) — Eine schwelende Kapuze, mit Glutrunen durchzogen. Wärme flutet den Geist des Zauberers. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Glut-Robe (ember_robe_body.png) — Roben aus schwelender Essenz gewoben. Jeder Zauber hinterlässt ein schwaches Hitzefunkeln. Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Glut-Gewand (Beine) (ember_robe_legs.png) — Bahnenpaneele aus Glut-Faden genäht. Der Saum schwelt schwach in kalter Luft. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Glut-Handwickel (ember_handwraps.png) — Mit Glutrunen genähte Wickel, die die Hände beim Zaubern wärmen. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Glut-Sandalen (ember_sandals.png) — Leichte Sandalen mit Glutrunen-Sohlen. Sanfte Wärme mit jedem Schritt. Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Aether-Kapuze (aether_hood.png) — Eine tiefe Kapuze, die Licht zu verschlucken scheint. Der Geist schärft sich darunter. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Aether-Robe (aether_robe_body.png) — Aus Aehterfäden gewoben. Zauber fließen mit übernatürlicher Leichtigkeit heraus. Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Aether-Gewand (Beine) (aether_robe_legs.png) — Nachschleifende Aehterbahnen, knisternd vor gespeicherter Energie. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 30/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Aether-Handschuhe (aether_gloves.png) — Aus Aehterfäden gewobene Handschuhe. Zauber schießen mit verblüffender Klarheit durch die Fingerspitzen. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Aether-Pantoffeln (aether_slippers.png) — Aetherwirk-Pantoffeln, die kaum den Boden berühren. Jede Bewegung fühlt sich mühelos an. Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Arkane Kapuze (arcane_cowl.png) — Eine tief sitzende Kapuze aus sturmdurchwebten Aehterfäden. Schärft das innere Auge. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Arkane Robe (arcane_robe_body.png) — Roben-Paneele mit Bindungsglyphen genäht. Die Zauber des Trägers treffen härter. Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Arkanes Gewand (Beine) (arcane_robe_legs.png) — Weitgeschnittene Beinlinge, die mit gespeicherter Arkankraft knistern. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Arkane Fäustlinge (arcane_mitts.png) — Mit Bindungsglyphen bestickte Fäustlinge. Die Zauberhand des Trägers zittert nie. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Arkane Schlupfschuhe (arcane_slippers.png) — Mit arkanen Sigilen versehene Schlupfschuhe. Die Schritte des Trägers hinterlassen kurze Nachbilder. Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Runenwirk-Kapuze (runewoven_cowl.png) — Eine Kapuze mit eingewebten Leerenrunen, die dunkles Arkan-Licht pulsieren lassen. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Runenwirk-Robe (runewoven_robe_body.png) — Kriegsleder unter Leerenrunen-Geweben verborgen. Zauber reißen durch Widerstände. Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Runenwirk-Gewand (Beine) (runewoven_robe_legs.png) — Fließende Beinwickel mit Leerenrunen-Sigilen besetzt. Mana strömt frei. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 31/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Runenwirk-Handwickel (runewoven_handwraps.png) — Leerenrunen-Handwickel, durch Kriegsleder gefädelt. Zauber reißen sich wie hungrige Schatten von den Fingern los. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Runenwirk-Schrittschuhe (runewoven_treads.png) — Schwere Kriegsleder-Stiefel, mit Leerenrunen durchwirkt. Die Schritte des Trägers fallen in Stille. Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götzenfunken-Mitra (godspark_mitre.png) — Eine aufragende Mitra, knisternd mit göttlichem Blitz. Gedanke wird Donner. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götzenfunken-Ornat (godspark_vestment.png) — Ein altes Ornat, das göttlichen Funken ausstrahlt. Der Zorn des Götzen, zu Stoff gemacht. Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götzenfunken-Gewand (Beine) (godspark_skirt.png) — Bahnen aus reinem, verdichtetem Aetherlicht. Schwebt einen Fingerbreit über dem Boden. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götzenfunken-Handwickel (godspark_handwraps.png) — Handwickel, die vor göttlichem Funken knistern. Die Luft entzündet sich um die Handflächen des Zauberers. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Götzenfunken-Sandalen (godspark_sandals.png) — Sandalen aus geflochtenen göttlichen Lichtfäden. Jeder Schritt hinterlässt einen kurzen leuchtenden Abdruck. Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerengewebe-Mitra (voidweave_mitre.png) — Eine leerenfädige Mitra, die mit vernichtender Macht summt. Gedanken werden Leeren. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerengewebe-Ornat (voidweave_vestment.png) — Ornat aus Leerenrunen-Filamenten gewoben. Magie fließt hindurch wie Wasser durch das Nichts. Ein Brustpanzer/Oberteil; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerengewebe-Gewand (Beine) (voidweave_skirt.png) — Bahnen aus gewebtem Leerenfaden. Der Boden darunter scheint dunkler zu werden. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 32/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Leerengewebe-Handwickel (voidweave_handwraps.png) — Handwickel aus Leerenrune-Seide. Die Zauber des Trägers treffen schneller und härter. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Leerengewebe-Sandalen (voidweave_sandals.png) — Sandalen aus Leerenfaden. Der Träger hinterlässt keinen Schatten. Stiefel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Seuchenmaske (plague_mask.png) — Eine versiegelte Maske aus gewachstem Leder und Sumpfwurzel-Paste. Hält den schlimmsten Verwesungsgestank fern. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Spiegelschutz (mirror_ward.png) — Ein poliertes Eisentalisman, mit Anti-Reflexions-Runen graviert. Schützt die Augen vor versteinernden Blicken. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Ohrenstopfen (ear_plugs.png) — Fest gerolltes gegerbtes Leder, mit getrocknetem Grabmoos gefüllt. Dämpft das Heulen, das Männer in den Wahnsinn treibt. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Seelenvorhang (soul_veil.png) — Ein schimmernder Schleier, gewebt aus Aetheressenz und Leerenrunen. Schützt vor Angriffen unkörperlicher Wesen. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Leerenstabilisator (void_anchor.png) — Eine dichte Kugel aus komprimiertem Seelenopal und Leerenessenz. Verankert die Existenz des Trägers gegen Leerenwesen. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Pestiges Knochenfragment (blighted_bone.png) — Ein Knochenfragment, durchdrungen von pestartigem Fäulnis. Bröckelt an den Rändern, hält aber eine seltsame Wärme. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Verfaulte Drüse (rot_gland.png) — Eine eiternde Drüse, von einem Seuchenwesen entnommen. Stinkt. Kräuterkunde-Zutat für Resistenz-Tonika. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Basilisken-Schuppe (basilisk_scale.png) — Eine schwere schillernde Schuppe eines Blick-Basilisken. Von Lederhandwerkern für ihre Anti-Versteinerungs-Eigenschaften begehrt. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+
+--- ITEMS (Item-Icons) Block 33/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Klag-Licht (shade_wisp.png) — Ein eingefangenes Fragment der Geisterenergie eines klagenden Schattens. Flackert mit trauervollem Licht. Runenkunst-Zutat. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Schmiedeglut (forge_ember.png) — Ein Splitter ewig brennender Schmiede-Kohle aus den Abgrund-Etagen. Wird nie ganz kalt. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Schlackenpanzer (slag_carapace.png) — Gehärtetes, lavaverschmolzenes Chitin einer Schlacken-Abomination. Schmiede-Qualität für Turm-Rüstungsteile. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Schreckenzahn-Splitter (dread_fang_shard.png) — Ein gezacktes Fragment des Zahns eines Schreckenzahns. Vibriert leise. Juwelierskunst-Zutat für Amulette. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Leeren-Faden (void_thread.png) — Ein Strang verfestigter Leerenenergie, von einem Leerenjäger gezogen. Schreibkunst- und Runenkunst-Zutat. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Abyssaler Kern (abyssal_core.png) — Ein pulsierender Splitter komprimierter Leere vom abyssalen Verschlinger. Äußerst seltene Zutat für den Slayer-Helm. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Seelenschinder-Reißzahn (soul_flayer_fang.png) — Ein geschwungener Reißzahn, der nach verbrannten Seelen riecht. Seltener Drop des Seelenschinders. Handwerks-Zutat für Slayer-Armschienen. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Leeren-Herold-Splitter (void_herald_shard.png) — Ein kristalliner Splitter eines Leeren-Herolds, der kalte Leerenenergie ausstrahlt. Handwerks-Zutat für das Slayer-Amulett. Ein Handwerks-Material/Zutat; schlicht und funktional, mattes Material.
+• Slayer-Helm (slayer_helm.png) — Ein Meisterwerk-Helm, geschmiedet aus dem Wesen der schlimmsten Schrecken des Slayer-Turms. Gewährt dem Träger Schutz gegen jede bekannte Turmbedrohung — keine Anforderungs-Items nötig, solange er getragen wird. Ein Helm/Kopfschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Slayer-Armschienen (slayer_vambraces.png) — Armschienen aus dem Reißzahn eines Seelenschinders und gehärtetem Turm-Leder. Ein tödliches Symbol der Turm-Beherrschung. Handschuhe; meisterhaft, von violettem Arkan-Leuchten umspielt.
+
+--- ITEMS (Item-Icons) Block 34/34 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 10 angefragte Icons = 10 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Slayer-Beinschienen (slayer_greaves.png) — Beinschienen, die mit zersplitterten Schreckenzahn-Zähnen verstärkt wurden. Leicht, aber enorm haltbar — gebaut für Slayer, die ohne Zögern handeln. Beinschutz; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Slayer-Amulett (slayer_amulet.png) — Ein kristallines Amulett mit einem Leeren-Herold-Splitter. Ausstrahlung kalter, präziser Kraft über alle Kampfstile hinweg. Ein Amulett; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Monsterjäger-Kampftrank (slayer_combat_draught.png) — Aus der Essenz des Slayer-Turms destilliert. +10 Schaden (alle Stile) und +3 % Krit für 10 Minuten. Ein Trank/Gericht in Phiole, Schale oder Tiegel; schlicht und funktional, mattes Material.
+• Monsterjäger-Jagdelixier (slayer_hunters_elixir.png) — Nur für Slayer-Veteranen. +18 Schaden (alle Stile), +5 % Krit, +15 % Krit-Schaden für 10 Minuten. Ein Trank/Gericht in Phiole, Schale oder Tiegel; meisterhaft, von violettem Arkan-Leuchten umspielt.
+• Monsterjäger-Kriegsgebräu (slayer_war_brew.png) — Das Meisterstück der Turm-Alchemisten, gebraut aus dem konzentrierten Blut erlegter Schreckensbestien und nur den ranghöchsten Slayern zugänglich. Ein einziger Schluck entfesselt rohe Schlachtwut über jeden Kampfstil: +35 Schaden, +10 % Krit, +25 % Krit-Schaden und +20 Treffsicherheit für eine volle Stunde. Ein Trank in schwerer, runenbeschlagener Phiole; das Gebräu glüht tiefrot mit pulsierendem violettem Arkan-Schimmer, kostbarstes Material.
+

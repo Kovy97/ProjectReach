@@ -1,0 +1,545 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   ASCHECHRONIK — Story-Tab (pages/QuestsPage.tsx `ChronicleStoryTab` + Kin).
+   Imported directly by QuestsPage.tsx (Kollisions-Schutz-Muster wie npc-greeting.css/quests.css).
+
+   Verlauf: ceo-run-2026-07-13 Welle E baute einen Sidebar-Kompass-Pin (components/
+   ChronicleCompass.tsx, jetzt komplett entfernt) + ein schmales "Band" über der normalen
+   Quest-Liste. Welle H (Chef-Feedback: "zu stuck in der Sidebar, zu klein") ersetzt beides durch
+   einen eigenen, prominenten Story-Tab, der die volle Content-Fläche nutzt — diese Datei enthält
+   nur noch dessen Regeln (.chronicle-tab/.chronicle-stage/.chronicle-history/.chronicle-obj).
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Tab-Kopf — schmale Kicker-Zeile über der großen Bühne ─────────────── */
+.chronicle-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chronicle-tab-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chronicle-tab-kicker {
+  font-family: var(--font-head);
+  font-size: 15px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chronicle-tab-counter {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--gold, #d8c06a);
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+/* ─── Aktives Kapitel — große Bühne, volle Breite (Chef-Vorgabe „nichts Gequetschtes") ─── */
+.chronicle-stage {
+  position: relative;
+  isolation: isolate;
+  padding: 26px 30px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 14px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 14px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(24, 16, 6, 0.82), rgba(14, 9, 4, 0.86)),
+    url("../assets/bg_black.webp") repeat;
+  box-shadow: inset 4px 0 0 var(--gold, #d8c06a), 0 8px 26px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Fertig-Zustand (Chef-Zusatz Welle H, „unübersehbar"): alle Ziele erfüllt, noch nicht claimed —
+   kräftigerer Gold-Rahmen-Glow als Signal, zusätzlich zum pulsenden Claim-Button unten. */
+.chronicle-stage--done {
+  box-shadow: inset 4px 0 0 var(--gold, #d8c06a), 0 0 30px rgba(216, 192, 106, 0.35), 0 8px 26px rgba(0, 0, 0, 0.4);
+}
+
+.chronicle-stage-headrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.chronicle-stage-chapnum {
+  flex-shrink: 0;
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold, #d8c06a);
+  padding: 4px 12px;
+  border: 1.5px solid rgba(216, 192, 106, 0.5);
+  background: rgba(216, 192, 106, 0.1);
+}
+
+.chronicle-stage-title {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-head);
+  font-size: 28px;
+  letter-spacing: 0.4px;
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.chronicle-stage-npc {
+  margin: 2px 0 0;
+}
+
+/* Größeres Medaillon als die normale Speaking-Head-Einbindung (96px) — die große Bühne verdient
+   ein etwas prominenteres Wächter-Porträt; die Sprechblase wächst auf die volle Restbreite statt
+   der sonst üblichen 620px-Kappung (npc-greeting.css `.npc-bubble`). */
+.chronicle-stage-npc .npc-greeting-head {
+  width: 120px;
+  height: 120px;
+}
+
+.chronicle-stage-npc .npc-bubble {
+  max-width: none;
+  flex: 1 1 auto;
+}
+
+/* Direktiven-Zeile (Tal-Re-Check 2026-07-14): die funktionale Quest-description mit den
+   Warnsätzen — dezent zwischen Erzähl-Blase und Zielen, kursiv wie eine Randnotiz des Wächters. */
+.chronicle-stage-directive {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  font-style: italic;
+  color: var(--gold, #d8c06a);
+  opacity: 0.85;
+  border-left: 2px solid rgba(216, 192, 106, 0.4);
+  padding-left: 10px;
+}
+
+/* Erledigt-Variante (Welle Y, Anti-Spoiler-Umbau): dieselbe Direktiven-Zeile, aber im Status
+   "completed" darunter geparkt — nicht mehr Gold/Warnung, nur ein gedämpfter Nachhall dessen, was
+   verlangt war. Der loreText in der Blase darüber trägt jetzt den eigentlichen Akzent. */
+.chronicle-stage-directive--done {
+  font-size: 13px;
+  font-style: normal;
+  color: var(--muted);
+  opacity: 0.7;
+  border-left-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Payoff-Einblenden (Welle Y): der loreText erscheint erst im Status "completed" — ein kurzes
+   Fade+Rise markiert den Übergang von der funktionalen Anweisung zum frisch geschriebenen
+   Chronik-Eintrag. QuestsPage.tsx erzwingt per `key` einen echten Remount bei jedem Statuswechsel,
+   damit diese Mount-Animation zuverlässig genau einmal spielt. */
+.chronicle-payoff {
+  animation: chronicle-payoff-in 0.6s ease-out;
+}
+
+@keyframes chronicle-payoff-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chronicle-payoff {
+    animation: none;
+  }
+}
+
+.chronicle-stage-objectives {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 720px;
+}
+
+.chronicle-stage-claim {
+  align-self: flex-start;
+  padding: 10px 30px;
+  font-size: 16px;
+  animation: chronicle-claim-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes chronicle-claim-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(216, 192, 106, 0.35); }
+  50%      { box-shadow: 0 0 22px rgba(216, 192, 106, 0.70); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chronicle-stage-claim {
+    animation: none;
+  }
+}
+
+.chronicle-stage-complete {
+  align-items: center;
+  text-align: center;
+  padding: 40px 30px;
+}
+
+/* ─── Ziel-Zeilen (Chef-Zusatz Welle H: „glasklare Ziel-Zeilen" — WAS/WO/Fortschritt) ─── */
+.chronicle-obj {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 11px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.chronicle-obj--done {
+  border-color: rgba(216, 192, 106, 0.35);
+  background: rgba(216, 192, 106, 0.06);
+}
+
+.chronicle-obj-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chronicle-obj-check {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border);
+  color: var(--gold, #d8c06a);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.chronicle-obj--done .chronicle-obj-check {
+  border-color: var(--gold, #d8c06a);
+  background: rgba(216, 192, 106, 0.18);
+}
+
+.chronicle-obj-label {
+  flex: 1;
+  min-width: 140px;
+  font-size: 16px;
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+.chronicle-obj--done .chronicle-obj-label {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.chronicle-obj-where {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  padding: 2px 9px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.chronicle-obj-count {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gold, #d8c06a);
+  white-space: nowrap;
+}
+
+.chronicle-obj-bar {
+  height: 7px;
+  border-radius: 0;
+}
+
+/* „Schaltet frei"-Chip (Chef-Zusatz Welle H) — grüner Akzent, klar getrennt von Gold/Item/Token. */
+.quest-reward-chip--unlock {
+  background: rgba(90, 170, 120, 0.12);
+  border-color: rgba(110, 190, 140, 0.5);
+  color: #8fd9ab;
+}
+
+/* Dungeon-Unlock-Variante (Welle L, „Gebiet für Gebiet, Dungeon um Dungeon"): eigener Gold/Amber-
+   Akzent statt des Zonen-Grüns — ein Dungeon-Unlock ist der seltenere Meilenstein (Gebietskapitel
+   → Dungeon-Kapitel → nächstes Gebiet), soll auf der Chip-Reihe klar herausstechen. */
+.quest-reward-chip--unlock-dungeon {
+  background: rgba(216, 152, 74, 0.14);
+  border-color: rgba(224, 160, 90, 0.55);
+  color: #e8b276;
+}
+
+.quest-reward-chip-kind {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  padding-right: 5px;
+  border-right: 1px solid rgba(224, 160, 90, 0.4);
+}
+
+/* ─── Historie — abgeschlossene Kapitel, aufklappbar (Buch-/Chronik-Optik) ─── */
+.chronicle-history {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chronicle-history-toggle {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.chronicle-history-toggle:hover {
+  color: var(--gold, #d8c06a);
+}
+
+.chronicle-history-caret {
+  font-size: 11px;
+  width: 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.chronicle-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chronicle-history-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chronicle-history-row:first-child {
+  border-top: none;
+}
+
+.chronicle-history-row-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  text-align: left;
+  padding: 7px 4px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.chronicle-history-row-head:hover {
+  background: rgba(216, 192, 106, 0.06);
+}
+
+.chronicle-history-num {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: #9a8060;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.chronicle-history-name {
+  flex: 1;
+  min-width: 0;
+  color: var(--ds-parch-ink, #e8d8b0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chronicle-history-text {
+  margin: 0 0 8px 44px;
+  font-size: 15px;
+  line-height: 1.55;
+  font-style: italic;
+  color: var(--muted);
+  padding-right: 16px;
+  max-width: 720px;
+}
+
+/* codex:2026-08-02T01:15:48+02:00 — Contract-Wall-Variante der Aschechronik und der rechten
+   Auftragsbühne. Bronze-Lipped-Iron-Kartenrahmen; Archiv und Bühne scrollen unabhängig. */
+.quests-contract-wall .chronicle-tab {
+  display: grid;
+  grid-template-columns: minmax(520px, 1.25fr) minmax(300px, 0.75fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(9px, 0.72vw, 15px);
+  overflow: hidden;
+}
+
+.quests-contract-wall .chronicle-tab-head {
+  grid-column: 1 / -1;
+  min-height: 38px;
+  padding: 4px 9px 8px;
+  border-bottom: 1px solid rgba(159, 113, 58, 0.42);
+}
+
+.quests-contract-wall .chronicle-stage {
+  min-height: 0;
+  padding: clamp(14px, 1.05vw, 24px);
+  border: clamp(10px, 0.72vw, 15px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(12, 15, 16, 0.82), rgba(6, 8, 9, 0.95)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  box-shadow: inset 3px 0 0 rgba(183, 135, 69, 0.58), 0 7px 18px rgba(0, 0, 0, 0.34);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.quests-contract-wall .chronicle-stage--done {
+  box-shadow: inset 3px 0 0 rgba(112, 178, 119, 0.72), 0 0 23px rgba(92, 153, 99, 0.2);
+}
+
+.quests-contract-wall .chronicle-stage-objectives {
+  max-width: none;
+}
+
+.quests-contract-wall .chronicle-obj {
+  min-height: 66px;
+  padding: 10px 12px;
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(9, 12, 13, 0.78), rgba(5, 7, 8, 0.9)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+
+.quests-contract-wall .chronicle-obj--done {
+  background:
+    linear-gradient(rgba(22, 49, 29, 0.54), rgba(6, 10, 8, 0.91)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+
+.quests-contract-wall .chronicle-history {
+  display: flex;
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 0;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  border: clamp(9px, 0.64vw, 14px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  background:
+    linear-gradient(rgba(21, 16, 12, 0.8), rgba(7, 9, 10, 0.94)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  overflow: hidden;
+}
+
+/* codex:2026-08-02T12:07:01+02:00 — Integrations-QA: Zieltexte und Waechterrede stehen als
+   eigenstaendige Regeln hinter dem geschlossenen History-Container. So bleiben sie ohne Hover
+   vollstaendig lesbar, statt versehentlich als browserabhaengiges CSS-Nesting zu enden. */
+.quests-contract-wall :is(.quest-obj-head, .chronicle-obj-head) {
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.quests-contract-wall :is(.quest-obj-label, .chronicle-obj-label) {
+  min-width: 0;
+  overflow: visible;
+  font-weight: 400;
+  line-height: 1.38;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.quests-contract-wall :is(.quest-obj-count, .chronicle-obj-count, .chronicle-obj-where) {
+  flex: 0 0 auto;
+}
+
+.quests-contract-wall :is(.npc-bubble-name, .npc-bubble-text) {
+  font-style: normal;
+  font-weight: 400;
+}
+
+.quests-contract-wall .chronicle-history-toggle {
+  align-self: stretch;
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(153, 108, 55, 0.42);
+}
+
+.quests-contract-wall .chronicle-history-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 4px 6px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.quests-contract-wall .chronicle-tab:not(:has(.chronicle-history)) .chronicle-stage {
+  grid-column: 1 / -1;
+}
+
+.quests-contract-wall .quest-detail-stage {
+  height: 100%;
+}
+
+@media (min-width: 2500px) {
+  .quests-contract-wall .chronicle-tab {
+    grid-template-columns: minmax(900px, 1.45fr) minmax(520px, 0.55fr);
+  }
+}
+
+@media (max-width: 1180px) {
+  .quests-contract-wall .chronicle-tab {
+    grid-template-columns: minmax(450px, 1fr) minmax(260px, 0.68fr);
+  }
+
+  .quests-contract-wall .chronicle-stage-npc .npc-greeting-head {
+    width: 88px;
+    height: 88px;
+  }
+}
+
+@media (max-width: 900px) {
+  .quests-contract-wall .chronicle-tab {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .quests-contract-wall .chronicle-stage {
+    min-height: 560px;
+  }
+
+  .quests-contract-wall .chronicle-history {
+    max-height: 360px;
+  }
+}
+
+/* Zonen-Gate-CSS (CombatPage-Zonenkarten, gesperrt via requiresQuest) lebt in combat.css,
+   direkt neben den bestehenden .zone-card/.dungeon-locked-Regeln (globaler Import via
+   styles/index.css — CombatPage bindet chronicle.css NICHT extra ein). */

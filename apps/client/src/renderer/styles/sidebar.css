@@ -1,0 +1,1567 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR — legacy nav structure + redesigned sb-* sidebar
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Legacy Sidebar shell (kept for compatibility) ─────── */
+.sidebar {
+  position: relative;
+  /* Task #283 (Chef-Spec, 1920×1080 100%): ~40% schmaler (war 400px) — Skill-Buttons/Logo
+     entsprechend verkleinert (siehe .sb-skill-btn / .sb-brand-logo weiter unten).
+     Task #291: Breite ist jetzt per Rand-Handle stufenlos ziehbar (64–420px, Default 240px,
+     s. .sb-resize-handle unten + Sidebar.tsx). `width` hier bleibt der Default/Fallback, bis
+     Sidebar.tsx den persistierten Wert per Inline-Style setzt (useLayoutEffect, vor dem ersten
+     Paint) — `min-width`/`max-width` sind eine CSS-seitige Sicherheitsbremse für denselben Range.
+     `--sb-scale` (= aktuelle Breite / 240px Referenz) treibt die proportionale Skalierung von
+     Button-Höhe/Font-/Icon-Größen/Paddings/Logo weiter unten (calc(... * var(--sb-scale-eff)));
+     Default 1 hier, Sidebar.tsx überschreibt per --sb-scale-Inline-Property. */
+  width: 240px;
+  min-width: 64px;
+  max-width: 420px;
+  --sb-scale: 1;
+  /* Fix #368-2: zweiter, rein CSS-getriebener Skalierungs-Faktor (Default 1) — NUR per
+     Höhen-Media-Query unten gesetzt, NIE von Sidebar.tsx angefasst (das schreibt ausschließlich
+     `--sb-scale`, s. applySidebarWidth). `--sb-scale-eff` verrechnet beide Faktoren an EINER
+     Stelle; alle Formeln weiter unten multiplizieren mit `--sb-scale-eff` statt direkt mit
+     `--sb-scale` — die Breiten-Ziehleiste (Task #291) bleibt dadurch unverändert funktionsfähig,
+     bekommt aber bei knapper Fensterhöhe (1920×1080, Bug #367 Fix 2: „New Haven"/„Statistik"
+     rutschen unter den Footer, kein Scroll-Hinweis sichtbar) zusätzlich einen sanften
+     Kompaktierungs-Schub, der ALLE Maße (Button-Höhe, Icon, Schrift, Footer) gemeinsam
+     proportional staucht — dieselbe Mechanik wie beim manuellen Schmaler-Ziehen, nur an der
+     Höhe statt der Breite aufgehängt. Die clamp()-Böden weiter unten verhindern, dass daraus
+     unlesbare Mini-Schrift wird. */
+  --sb-vscale: 1;
+  --sb-scale-eff: calc(var(--sb-scale) * var(--sb-vscale));
+  flex-shrink: 0;
+  /* Chef 2026-07-02: neue Sidebar-Textur (bg_sidebar, dunkler Stein mit Ornament-Linien)
+     — gekachelt, nativ (kein Stretch); leichte Abdunklung für Button-Kontrast. */
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
+    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Container-Query-Kontext für den Icon-Rail-Kollaps unter ~120px (s. @container sidebar
+     Block ganz unten) — Kinder queryen die tatsächliche (gezogene) Breite dieses Elements. */
+  container-type: inline-size;
+  container-name: sidebar;
+}
+
+/* Wooden 9-slice frame overlaid on the full sidebar — decorative, no layout effect */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ── 0. Resize-Handle (Task #291, Chef-Feature) ──────────────────────
+   Schmale Greifzone am rechten Sidebar-Rand — Ziehen ändert die Breite
+   stufenlos (64–420px), Doppelklick setzt auf den Default (240px) zurück
+   (s. Sidebar.tsx handleResizeStart/handleResizeReset). Liegt INNERHALB
+   der Sidebar-Bounds (right:0, keine negativen Offsets) — .sidebar hat
+   overflow:hidden, ein negativ positionierter Handle würde weggeclippt.
+   z-index über dem Holzrahmen-Overlay (.sidebar::before, z-index:50),
+   der ohnehin pointer-events:none trägt. */
+.sb-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 9px;
+  height: 100%;
+  cursor: ew-resize;
+  background: transparent;
+  z-index: 60;
+  transition: background 0.15s ease;
+}
+
+.sb-resize-handle:hover,
+.sb-resize-handle.dragging {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(216, 192, 106, 0.4),
+    transparent
+  );
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(44px, 4.5vw, 56px);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .sidebar-brand {
+    height: 42px;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 800px) {
+  .sidebar-brand {
+    height: 38px;
+    padding: 3px 6px;
+  }
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-logo {
+  font-size: 24px;
+  filter: drop-shadow(0 0 8px rgba(216, 192, 106, 0.45));
+}
+
+.brand-name {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--gold, #d8c06a);
+}
+
+/* ─── Hero-Karte (Name + Gesamtstufe) ───────────────────── */
+.sidebar-hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 14px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, var(--panel-hover), var(--panel));
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.hero-portrait {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gold, #d8c06a);
+  object-fit: cover;
+  object-position: top;
+  background: var(--slot);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.hero-portrait-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hero-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold, #d8c06a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.3px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.hero-stat {
+  font-size: 15px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.hero-stat-level {
+  color: var(--accent-2);
+}
+
+.hero-stat-gold {
+  color: var(--gold, #d8c06a);
+}
+
+/* ─── Navigation ────────────────────────────────────────── */
+.sidebar-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 6px 0 18px;
+}
+
+.nav-section {
+  margin-top: 6px;
+}
+
+.nav-section + .nav-section {
+  border-top: 1px solid var(--border);
+}
+
+.nav-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 18px 8px;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav-section-label:disabled {
+  cursor: default;
+  color: var(--accent-2);
+}
+
+.nav-section-chevron {
+  font-size: 15px;
+  color: var(--muted);
+  transition: transform 0.15s ease;
+}
+
+.nav-section.collapsed .nav-section-chevron {
+  transform: rotate(-90deg);
+}
+
+.nav-section-label:disabled .nav-section-chevron {
+  opacity: 0;
+}
+
+.nav-section.collapsed .nav-section-items {
+  display: none;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--text);
+  font-size: 21px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.nav-icon {
+  width: 96px;
+  font-size: 52px;
+  text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-icon-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Skill-Level-Badge in der Sidebar (zwischen Icon und Name) */
+.nav-skill-level {
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  background: var(--panel);
+  border-left-color: var(--border-bright);
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, var(--panel-hover), var(--panel));
+  border-left-color: var(--gold, #d8c06a);
+  color: var(--accent-2);
+  box-shadow: inset 0 0 18px rgba(111, 151, 179, 0.12);
+}
+
+/* ─── Combat sub-stats (under Combat nav entry) ─────────── */
+.nav-combat-sub {
+  padding: 2px 0 6px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.nav-combat-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px 3px 0;
+  color: var(--muted);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.nav-combat-sub-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.nav-combat-sub-icon-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: 0.7;
+}
+
+.nav-combat-sub-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+}
+
+.nav-combat-sub-level {
+  font-size: 14px;
+  color: var(--muted);
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* ─── Footer ────────────────────────────────────────────── */
+.sidebar-footer {
+  border-top: 1px solid var(--border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.footer-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: var(--panel-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.footer-btn-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.footer-btn:hover {
+  border-color: var(--accent);
+  background: var(--panel);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SIDEBAR REDESIGN — Ashen Iron Dark-Fantasy (sb-* prefix)
+   Alte .sidebar-Regeln und nav-item-Regeln bleiben für Nicht-Sidebar-
+   Verwendungen erhalten; hier kommen ausschließlich neue sb-Regeln.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 0b. Höhen-Kompaktierung (Fix #368-2) ────────────────────────────
+   Bug #367: bei 1920×1080 endete die sichtbare Liste bei „Verzauberung" — „New Haven" nur ein
+   Pixel-Streifen unter dem Footer, „Statistik" komplett verdeckt. `.sb-nav` scrollt technisch
+   (overflow-y:auto), ABER ohne sichtbaren Scroll-Hinweis: der Holzrahmen-Overlay (.sidebar::before,
+   z-index:50) deckt den nativen Scrollbalken am rechten Rand vollständig ab — kein Spieler hätte
+   geahnt, dass dort mehr Einträge liegen. Statt den verdeckten Scrollbalken zu befreien (riskanter
+   Eingriff in den Rahmen-Layer, der bewusst über ALLEM liegt), stauchen wir bei knapper
+   Fensterhöhe die GESAMTE Sidebar-Vertikalachse sanft — dieselbe Mechanik wie das manuelle
+   Schmaler-Ziehen (Task #291), nur an `--sb-vscale` statt `--sb-scale` aufgehängt, damit die
+   Ziehleiste unangetastet bleibt (s. `.sidebar`-Kommentar oben). 0.82 reicht rechnerisch, um bei
+   1920×1080 (Fertigkeiten + Kampf + 13 Skills + Verzauberung + New Haven + Statistik = 18 Zeilen)
+   alle Sidebar-Einträge OHNE Scrollen unter den Footer zu bringen; die clamp()-Böden der
+   einzelnen Regeln (z.B. min-height 34px, Schrift 8–9px) verhindern ein Abrutschen unter
+   Lesbarkeit, falls ein Spieler das Fenster noch kleiner zieht. */
+@media (max-height: 1100px) {
+  .sidebar {
+    --sb-vscale: 0.82;
+  }
+}
+
+/* ── 1. Blessing Panel — "Blessings of the Reach" (Chef-Feature 2026-07-21) ───────────
+   Ersetzt das frühere reine Logo-Kästchen (`.sb-brand-logo`, Task #283/Chef #215): zeigt den
+   heute aktiven Welt-Segen als Kartengrafik (3:2, unteres Drittel dunkel auslaufend) + Name +
+   Effekt-Zeile darüber (BlessingPanel.tsx). `.sb-brand` bleibt der äußere Rahmen (Stein-Grund/
+   Bottom-Border/Shadow, unverändert aus dem Logo-Layout übernommen); `.sb-blessing` ist der
+   interaktive Modifier (Cursor/Fokus-Ring/Tooltip-Anker). Task #291: skaliert weiter proportional
+   mit der gezogenen Sidebar-Breite über --sb-scale. ─────────────────────────────────────────── */
+.sb-brand {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(3px * var(--sb-scale-eff)) calc(5px * var(--sb-scale-eff)) calc(2px * var(--sb-scale-eff));
+  background:
+    linear-gradient(rgba(4, 4, 5, 0.72), rgba(4, 4, 5, 0.72)),
+    url("../assets/bg_tileable_stone.webp") top left / 300px repeat;
+  border-bottom: 2px solid #2a2318;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.sb-blessing {
+  cursor: help;
+  position: relative;
+  outline: none;
+}
+.sb-blessing:focus-visible .sb-blessing-card {
+  box-shadow: 0 0 0 2px var(--gold), inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+/* 3:2-Kartengrafik. Bild kommt per Inline-Style (dynamische Blessing-ID → import.meta.glob-URL,
+   s. blessings.ts/BlessingPanel.tsx) — CSS trägt nur Rahmen/Bemaßung, kein statisches Bild.
+   aspect-ratio hält die Höhe passend zum 3:2-Bild bei jeder gezogenen Sidebar-Breite. */
+.sb-blessing-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background-color: #0a0908;
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  overflow: hidden;
+  border-style: solid;
+  border-color: transparent;
+  border-width: calc(4px * var(--sb-scale-eff));
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: calc(4px * var(--sb-scale-eff));
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  transition: filter 0.14s;
+}
+.sb-blessing:hover .sb-blessing-card {
+  filter: brightness(1.08);
+}
+
+/* Name + Effekt-Zeile, im unteren (dunkel auslaufenden) Kartendrittel verankert. */
+.sb-blessing-textbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: calc(4px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff)) calc(6px * var(--sb-scale-eff));
+  text-align: center;
+  pointer-events: none;
+}
+.sb-blessing-name {
+  font-family: var(--font-head);
+  font-size: clamp(9px, calc(12.5px * var(--sb-scale-eff)), 19px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.65);
+}
+.sb-blessing-effect {
+  font-size: clamp(8px, calc(10px * var(--sb-scale-eff)), 14px);
+  color: #e7dcc0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* Tooltip (Citadel-Muster: .ct-tip/-title/-desc aus components.css wiederverwendet, glowlos — s.
+   components/CitadelTip.tsx + BlessingPanel.tsx) — kombinierte Selektoren, damit die Modifier
+   unabhängig von der @import-Reihenfolge (components.css lädt NACH sidebar.css) sicher gewinnen. */
+.ct-tip.blessing-tip {
+  max-width: 280px;
+}
+.ct-tip-desc.blessing-tip-effect {
+  color: var(--gold);
+  font-weight: 600;
+}
+.ct-tip-desc.blessing-tip-countdown {
+  color: #a89a7c;
+  font-style: italic;
+}
+/* codex:2026-08-03T15:00:00+02:00 (Task #334) — Schrein-Verstärkungs-Hinweis: dezenter als die
+   goldene Effekt-Zeile (die bleibt der Haupt-Wert), aber nicht so blass wie der Countdown. */
+.ct-tip-desc.blessing-tip-shrine {
+  color: var(--muted, #b9ac8f);
+  font-size: 0.9em;
+}
+
+/* ── 2. Combat Button + Toggle + Collapsible Sub-Skills ─────── */
+
+/* Outer column wrapper — holds [btn-row] + [subskills] */
+.sb-combat-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Row: combat skill-button (flex:1) + chevron toggle button */
+.sb-combat-btn-row {
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
+}
+
+/* Combat button fills available width inside the flex row */
+.sb-combat-btn-row .sb-skill-btn {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+/* Small toggle button — same Citadel ds-button look, fixed width */
+.sb-combat-toggle {
+  flex-shrink: 0;
+  /* Task #291: skaliert mit --sb-scale (wird unter der Icon-Rail-Schwelle ausgeblendet). */
+  width: clamp(20px, calc(26px * var(--sb-scale-eff)), 44px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.sb-combat-toggle-chevron {
+  font-size: clamp(10px, calc(13px * var(--sb-scale-eff)), 22px);
+  line-height: 1;
+  color: #6a5838;
+  transition: color 0.12s;
+  user-select: none;
+}
+
+.sb-combat-toggle:hover .sb-combat-toggle-chevron {
+  color: var(--gold);
+}
+
+.sb-combat-toggle.open .sb-combat-toggle-chevron {
+  color: #c0842a;
+}
+
+/* Expandable sub-skills panel — parchment texture */
+.sb-combat-subskills {
+  padding: 4px 6px;
+  background:
+    linear-gradient(rgba(8, 6, 3, 0.72), rgba(8, 6, 3, 0.72)),
+    url("../assets/ui/parchment.svg") 0 0 / 100% 100%;
+  border-radius: 2px;
+  margin: 0 1px;
+}
+
+/* Eine Skill-Zeile im Sub-Skills-Panel */
+.sb-combat-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 2px;
+  border-bottom: 1px solid rgba(55, 42, 24, 0.5);
+}
+
+.sb-combat-row:last-child {
+  border-bottom: none;
+}
+
+/* Quadratisches, gerahmtes Skill-Icon */
+.sb-combat-icon-wrap {
+  flex-shrink: 0;
+  /* Task #291: skaliert mit --sb-scale. */
+  width: clamp(18px, calc(24px * var(--sb-scale-eff)), 40px);
+  height: clamp(18px, calc(24px * var(--sb-scale-eff)), 40px);
+  border: 1px solid #3a2e1a;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sb-combat-icon-img {
+  width: clamp(15px, calc(20px * var(--sb-scale-eff)), 34px);
+  height: clamp(15px, calc(20px * var(--sb-scale-eff)), 34px);
+  object-fit: contain;
+}
+
+.sb-combat-icon-fallback {
+  font-size: 10px;
+  color: #5a4830;
+}
+
+/* Skill-Name — feste Breite, Überlauf abschneiden */
+.sb-combat-name {
+  flex-shrink: 0;
+  /* Task #291: skaliert mit --sb-scale (ausgeblendet unter der Icon-Rail-Schwelle). */
+  width: calc(78px * var(--sb-scale-eff));
+  font-family: var(--font-head);
+  font-size: clamp(8px, calc(11px * var(--sb-scale-eff)), 18px);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: #9a8860;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+/* Dünne Fortschrittsleiste */
+.sb-combat-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(50, 38, 18, 0.7);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sb-combat-bar-fill {
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #5a4820, #a08040);
+  border-radius: 2px;
+  transition: transform 0.25s linear;
+}
+
+/* Levelanzeige rechts */
+.sb-combat-level {
+  flex-shrink: 0;
+  font-family: var(--font-head);
+  /* Task #291 */
+  font-size: clamp(8px, calc(11px * var(--sb-scale-eff)), 18px);
+  color: #7a6840;
+  white-space: nowrap;
+  min-width: 24px;
+  text-align: right;
+}
+
+/* ── 3. Gathering / Crafting Skill Buttons ───────────────────── */
+.sb-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* Chef-Feinschliff (5): reserve the scrollbar's gutter on BOTH edges,
+     always — otherwise the 12px custom scrollbar (base.css) only eats
+     into the right edge once the list overflows, and the buttons visibly
+     drift off-center relative to the sidebar. Stable on both edges keeps
+     them centered whether or not a thumb is actually showing. */
+  scrollbar-gutter: stable both-edges;
+  display: flex;
+  flex-direction: column;
+  /* Horizontal padding gives each ds-button room; gap separates them.
+     Chef-Feinschliff-Runde 2 (1): 4px → 3px, engerer Stapelabstand — der
+     Rest des wahrgenommenen "Lufteinschlusses" kommt vom transparenten
+     Rand des PNG-Assets selbst und wird unten per background-size/-position
+     weggezoomt, nicht per CSS-Gap. */
+  /* Task #291: skaliert mit --sb-scale. */
+  padding: calc(4px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff));
+  gap: calc(3px * var(--sb-scale-eff));
+}
+
+/* Jeder Skill-Button — background kommt vom Chef-Experiment-Stein-Banner
+   weiter unten (normal/hover/active PNGs), nicht mehr von .ds-button.
+   Chef-Feinschliff-Runde 3: Layout von Flex auf reines absolutes
+   Positionieren umgestellt (Icon links / Name volle-Breite-zentriert /
+   Level+Chevron rechts) — Icon/Level-Breite beeinflusst die Text-
+   Zentrierung dadurch nicht mehr, und Einträge ohne Level (Enchanting,
+   Shop, Bank, Aufgaben) sitzen genauso mittig wie welche mit Level.
+   min-height bleibt hoch, damit die Buttons den vertikalen Platz der
+   Sidebar gut füllen. */
+.sb-skill-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  /* Task #291: proportional mit --sb-scale, clamp() setzt Floor/Cap für Icon-Rail bzw. Max-Breite. */
+  min-height: clamp(34px, calc(42px * var(--sb-scale-eff)), 76px); /* Task #283: war 62px fest */
+  border: none;
+  color: #ffffff; /* Chef 24.07.: Button-Schrift reinweiß statt Pergament-Gold */
+  font-family: var(--font-head);
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 5px rgba(0, 0, 0, 0.65);
+  /* codex:2026-07-30T18:22:15+02:00 — kurze, layoutfreie Navigation-Mikrointeraktion. */
+  transform-origin: center;
+  transition: color 0.12s, box-shadow 0.12s, transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Chef 2026-07-03: overflow:hidden, damit das große, halbtransparente Symbol sauber am
+     Rand abschneidet (kein Overflow) — wie bei den Attribut-Karten. Der Button-HINTERGRUND
+     (PNG) ist von overflow unberührt (Background clippt ohnehin auf die Box). */
+  overflow: hidden;
+}
+
+/* Chef-Feinschliff (2): Text in allen Zuständen WEISS — die drei PNG-
+   Assets sind die einzige Zustands-Anzeige, der Text bleibt konstant
+   lesbar (kein Gold/Gelb mehr für hover/aktiv). */
+.sb-skill-btn:hover,
+.sb-skill-btn.active {
+  color: #ffffff;
+}
+
+/* ── Chef-Experiment: Gothic-Stein-Banner-Assets als Button-Grund ──────
+   Ersetzt den Citadel-Holzrahmen (.ds-button-Frame) durch fertige dunkel-
+   rote Stein/Eisen-Banner-PNGs (normal/hover/aktiv). background-image
+   lässt sich nicht direkt zwischen zwei url()s tweenen, darum liegt der
+   Hover/Aktiv-Zustand als eigener ::after-Layer obenauf und wird per
+   Opacity weich eingeblendet.
+   Chef-Feinschliff-Runde 2 (1): die PNGs haben einen transparenten Rand
+   oberhalb/unterhalb des Rahmens (Platz für die Diamant-Zacke, die über
+   die flache Kante hinausragt) — bei background-size:100% 100% las das
+   wie viel zu große Lücken zwischen den Buttons. background-size:100%
+   125% + einer leicht asymmetrischen background-position-y (mehr Zoom
+   unten raus, da der PNG-Rand unten etwas größer ist als oben) schneidet
+   genau diesen leeren Rand weg, ohne die Diamant-Spitze nennenswert zu
+   kappen (die reicht fast bis an den Bildrand). Ergebnis: Buttons wirken
+   dicht gestapelt, der sichtbare Abstand kommt jetzt fast nur noch vom
+   .sb-nav-gap (3px).
+   Chef-Nachtrag: .sb-skill-btn:hover/.active hier MIT-aufführen (gleiche
+   Spezifität wie .ds-button:hover/.active aus design-system.css), sonst
+   gewinnt dessen helles Gradient-Overlay während :hover/.active zurück —
+   die drei PNGs sollen die EINZIGE Zustands-Anzeige sein. box-shadow und
+   filter werden hier ebenfalls hart auf "keins" gesetzt aus demselben Grund. */
+/* Chef 2026-07-24: NEUER universeller 9-Slice-Button (ButtonNew, 1714×433, Ränder 98/102/98/100)
+   statt der gestretchten roten sidebar_btn_*-Banner — keine Verzerrungs-/Skalierungs-Issues mehr,
+   der Rahmen bleibt bei jeder Button-Größe pixel-proportional. Slice-Werte = Chef-Vorgabe;
+   border-image-width auf UI-Maß skaliert (Faktor ~0.1 der Quell-Ränder). Hover-/Pressed-Assets
+   generiert der Chef nach Abnahme — bis dahin CSS-Interimszustände (brightness/translate). */
+.sb-skill-btn,
+.sb-skill-btn:hover,
+.sb-skill-btn.active {
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  /* codex:2026-07-30T18:12:04+02:00 — Quiet Leather, 1826×331; Slice 90/150/90/150. */
+  border-image: url("../assets/ui/buttons/button_new.webp") 90 150 90 150 fill / 18px 18px 18px 18px;
+  border-radius: 0;
+  box-shadow: none;
+  filter: none;
+}
+
+/* Der 9-Slice bringt sein eigenes Relief mit — Citadel-Holzrahmen-
+   Overlay abschalten, sonst stapeln sich zwei Rahmen übereinander. */
+.sb-skill-btn::before {
+  content: none;
+}
+
+.sb-skill-btn::after {
+  content: none;
+}
+
+/* Echte State-Assets (Chef-Lieferung 24.07.) — gleiche Geometrie, nur Quellen-Tausch. */
+.sb-skill-btn:hover {
+  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
+}
+
+.sb-skill-btn.active {
+  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
+}
+
+/* codex:2026-07-30T18:22:15+02:00 — Hover hebt an, Pointer-Down drückt fühlbar ein. */
+.sb-skill-btn:hover {
+  transform: translateY(-1px) scale(1.018);
+  z-index: 4;
+}
+
+.sb-skill-btn:active {
+  transform: translateY(1px) scale(0.985);
+  transition: transform 70ms ease-out;
+}
+
+/* codex:2026-07-30T18:22:15+02:00 — Barrierefreiheit: keine Navigationsbewegung bei Reduce. */
+@media (prefers-reduced-motion: reduce) {
+  .sb-skill-btn {
+    transition: color 0.12s, box-shadow 0.12s;
+  }
+
+  .sb-skill-btn:hover,
+  .sb-skill-btn:active {
+    transform: none;
+  }
+}
+
+/* codex:2026-08-01T12:18:00+02:00 — Die Drawer-Steuerung ist eine echte Tab-Lasche: Das
+   transparente Asset trägt nur den mittigen Griff, ohne seitliche Kastenflächen. */
+#root .sb-footer-drawer-tab {
+  width: min(76%, 238px);
+  min-height: clamp(27px, calc(32px * var(--sb-scale-eff)), 45px);
+  padding: calc(3px * var(--sb-scale-eff)) calc(24px * var(--sb-scale-eff));
+  border: 0;
+  border-image: none;
+  background-color: transparent;
+  background-image: url("../assets/ui/gravewood/tabs/tab-inactive.webp");
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow: none;
+}
+
+#root .sb-footer-drawer-tab:hover,
+#root .sb-footer:focus-within .sb-footer-drawer-tab,
+#root .sb-footer.is-open .sb-footer-drawer-tab {
+  background-image: url("../assets/ui/gravewood/tabs/tab-active.webp");
+}
+
+/* Icon/Name/Level über die Hintergrund-Layer heben — sonst deckt der
+   volldeckende ::after-Layer den Inhalt ab. Jedes Kind bringt sein eigenes
+   position:absolute mit (siehe unten), dieser Selector setzt nur z-index. */
+.sb-skill-btn > * {
+  z-index: 1;
+}
+
+/* Chef-Feinschliff-Runde 3: Icon fest links positioniert (unabhängig vom
+   Flex-Fluss), damit es die Zentrierung des Namens nicht mehr beeinflusst.
+   left:44px hält es von der linken Zier-Ecke des Banners fern (Punkt 3,
+   Runde 1). */
+/* Chef 2026-07-03: Symbol GROSS + leicht transparent als Hintergrund links (wie Attribut-Karten),
+   geclippt durch overflow:hidden am Button. Der Titel-Schriftzug/Text liegt darüber. */
+.sb-skill-icon-wrap {
+  position: absolute;
+  /* Chef 2026-07-03: auf das ROTE Innenfeld beschränkt (top/bottom-Inset = Rahmenhöhe) +
+     overflow:hidden → das große Symbol schneidet sauber am roten Bereich ab, kein Overflow
+     über den Rahmen (z.B. Mining-Spitzhacke oben).
+     Task #283: mit der kompakteren Button-Höhe (42px) mitskaliert (war 58px/16/8/8).
+     Task #291: weiter mit --sb-scale skaliert; unter der Icon-Rail-Schwelle (~120px) übernimmt
+     der @container-sidebar-Block unten left/right/width (Icon zentriert über die volle Breite). */
+  left: calc(8px * var(--sb-scale-eff));
+  top: calc(5px * var(--sb-scale-eff));
+  bottom: calc(5px * var(--sb-scale-eff));
+  width: clamp(26px, calc(34px * var(--sb-scale-eff)), 58px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1; /* Chef 24.07.: Icons volle Deckkraft */
+  /* Chef 2026-07-03: z-index 1 (war 0) — sonst deckt die ::after-Hover/Aktiv-Overlay-Ebene
+     (z-index 0) das Symbol ab und es „verschwindet". Über der Overlay-Ebene bleibt es sichtbar
+     und bekommt denselben Hue-Effekt wie der Schriftzug. */
+  z-index: 1;
+  transition: opacity 0.14s ease, filter 0.14s ease;
+}
+.sb-skill-btn:hover .sb-skill-icon-wrap {
+  opacity: 1;
+  filter: brightness(1.18) saturate(1.15); /* dezenter, da Grund-Deckkraft jetzt voll */
+}
+.sb-skill-btn.active .sb-skill-icon-wrap {
+  filter: brightness(0.72) saturate(1.1);
+}
+
+/* ── Spieler-Feedback 0.2.2 Punkt 1: "läuft gerade"-Indikator ────────────────────────────
+   Dezenter Glut-Punkt oben-LINKS am Button (Fence-Badge oben-rechts bleibt frei, s.u.) —
+   UNABHÄNGIG von `.active` (angesehene Seite): beide Zustände (Seite offen / Aktivität läuft)
+   müssen gleichzeitig lesbar bleiben, daher kein Eingriff in Hintergrund/Textfarbe hier, nur ein
+   zusätzliches Glimmen. `.sb-skill-btn--running` selbst hebt zusätzlich den Namen leicht golden
+   an (dezente Aufhellung, kein Ersatz für das `.active`-Banner-Bild). */
+.sb-skill-btn--running .sb-skill-name {
+  color: #ffffff; /* Chef 24.07.: weiß statt gold — der Glut-Pip allein trägt den Läuft-Hinweis */
+}
+
+.sb-running-pip {
+  position: absolute;
+  top: calc(6px * var(--sb-scale-eff));
+  left: calc(6px * var(--sb-scale-eff));
+  width: clamp(7px, calc(9px * var(--sb-scale-eff)), 12px);
+  height: clamp(7px, calc(9px * var(--sb-scale-eff)), 12px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%, #ffdca0, var(--gold, #d8c06a) 55%, #7a4a12 100%);
+  box-shadow: 0 0 4px 1px rgba(216, 184, 112, 0.85), 0 0 1px rgba(0, 0, 0, 0.6);
+  z-index: 3;
+  pointer-events: auto;
+  cursor: default;
+  animation: sb-running-pip-glow 1.6s ease-in-out infinite;
+}
+
+@keyframes sb-running-pip-glow {
+  0%, 100% { opacity: 0.65; box-shadow: 0 0 3px 1px rgba(216, 184, 112, 0.55); }
+  50% { opacity: 1; box-shadow: 0 0 8px 2px rgba(255, 214, 140, 0.95); }
+}
+
+/* Fence-discovery badge: count of stolen goods eligible for fencing.
+   Appears top-right on the Thieving skill icon. */
+.sb-fence-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  background: #14100a;
+  border: 1px solid #7a6830;
+  border-radius: 9px;
+  color: var(--gold);
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  line-height: 1.5;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.sb-skill-icon-img {
+  /* Task #283: an die 42px-Button-Höhe angepasst (war 56px).
+     Task #291: skaliert weiter mit --sb-scale; clamp() hält das Icon in der Icon-Rail (unten)
+     bzw. bei maximaler Breite lesbar. */
+  width: clamp(20px, calc(32px * var(--sb-scale-eff)), 58px);
+  height: clamp(20px, calc(32px * var(--sb-scale-eff)), 58px);
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.sb-skill-icon-fallback {
+  font-size: clamp(12px, calc(17px * var(--sb-scale-eff)), 30px);
+  line-height: 1;
+}
+
+/* Skill-Name in Serif-Caps — Chef-Feinschliff-Runde 3 (Präzisierung):
+   volle-Breite-Ebene (inset:0) mit justify-content:center, statt im
+   Flex-Rest-Raum neben dem Icon zentriert zu sein. Dadurch zentriert der
+   Name sich relativ zur GESAMTEN Button-Breite, unabhängig davon, ob ein
+   Level-Badge existiert (Enchanting/Shop/Bank/Aufgaben hatten vorher
+   keins und saßen dadurch schief) — Icon links (44px) und Level rechts
+   sind beide absolut positioniert und berühren den Textfluss nicht mehr.
+   padding:0 118px hält den zentrierten Text symmetrisch aus der
+   Icon-Zone (links, bis ~120px) UND der Level-Zone (rechts, bis ~95px)
+   heraus — derselbe Wert auf beiden Seiten, sonst verschiebt sich das
+   Zentrum wieder. Runde 2: nicht mehr fett, kleinere Schrift, damit auch
+   "JUWELIERSKUNST"/"JEWELCRAFTING" ohne Ellipsis reinpassen. */
+.sb-skill-name {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Task #283: mit der schmaleren Icon-/Level-Zone mitskaliert (war 112px).
+     Task #291: skaliert weiter mit --sb-scale (unter der Icon-Rail-Schwelle ohnehin ausgeblendet). */
+  padding: 0 calc(48px * var(--sb-scale-eff));
+  z-index: 1; /* über dem halbtransparenten Symbol */
+  font-family: var(--font-head);
+  font-size: clamp(9px, calc(11px * var(--sb-scale-eff)), 19px); /* Task #283/#291 */
+  font-weight: 700; /* Chef 2026-07-02: doch wieder fett */
+  letter-spacing: 0px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  /* 7-Sprachen-Fundament (Task #252): löst den PNG-Titel-Schriftzug (.sb-skill-title-img,
+     s. Git-History) ab — Gold statt des Buttons Off-White, damit die Optik des Bild-Schriftzugs
+     erhalten bleibt. Eigene color-Regel gewinnt gegen das :hover/.active-Off-White von
+     .sb-skill-btn (Vererbung), s. dort. */
+  color: var(--gold);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 5px rgba(0, 0, 0, 0.65);
+}
+.sb-skill-btn:hover .sb-skill-name {
+  color: #e8d488;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 0 7px rgba(216, 184, 112, 0.55);
+}
+.sb-skill-btn.active .sb-skill-name {
+  color: #b89a5a;
+}
+
+/* Level-Badge rechts — Chef-Feinschliff-Runde 3: absolut positioniert
+   statt Flex-Kind, damit es die Namens-Zentrierung nicht mehr beeinflusst.
+   Farbe: gedimmtes Weiß statt Braun/Gold, gleich in normal/hover/aktiv
+   (Asset trägt den Zustand, nicht die Textfarbe). */
+.sb-skill-level {
+  position: absolute;
+  /* Chef 2026-07-03: unten-rechts in den Button setzen (war vertikal mittig).
+     Task #283: mit dem kompakteren Button mitskaliert (war right:22/bottom:9/13px).
+     Task #291: weiter mit --sb-scale skaliert; unter der Icon-Rail-Schwelle (~120px)
+     ausgeblendet (s. @container sidebar-Block unten). */
+  right: calc(12px * var(--sb-scale-eff));
+  bottom: calc(5px * var(--sb-scale-eff));
+  top: auto;
+  transform: none;
+  z-index: 2;
+  font-size: clamp(9px, calc(11px * var(--sb-scale-eff)), 19px);
+  font-family: var(--font-head);
+  font-weight: 700; /* Chef 2026-07-02: doch wieder fett */
+  color: #cbb48c; /* Chef 2026-07-03: Leinenbraun, ähnlich Titel-Schrift */
+  white-space: nowrap;
+}
+
+/* Combat combined-level badge — slightly brighter than plain level text */
+.sb-combat-lvl-badge {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+}
+
+/* Meisterweihe-Insignie (design/master-capes-konzept.md §3, "Goldene Insignien"): dezente
+   Gold-Färbung der "99/99"-Anzeige, sobald ein Skill die Weihe erreicht hat — bewusst NUR
+   Farbe/Gewicht, KEIN Glow/Halo (Chef-Regel "kein Rarity-Glow", gilt hier analog). Gilt für
+   `.sb-skill-level` (Sammel-/Handwerks-Skills) UND `.sb-combat-level` (Kampf-Unterskills). */
+.sb-skill-level.sb-skill-mastered,
+.sb-combat-level.sb-skill-mastered {
+  color: var(--gold, #d8c06a);
+  font-weight: 800;
+}
+
+/* ── 4. Footer Buttons (Save + Main Menu + Quit) ─────────── */
+.sb-footer {
+  flex-shrink: 0;
+  border-top: 2px solid #252018;
+  /* Task #291: skaliert mit --sb-scale. */
+  padding: calc(6px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff));
+  display: flex;
+  flex-direction: column;
+  gap: calc(4px * var(--sb-scale-eff));
+  background:
+    linear-gradient(rgba(5, 4, 2, 0.6), rgba(5, 4, 2, 0.6)),
+    url("../assets/bg_black.webp") top left repeat;
+}
+
+/* Gemeinsame Basis aller Footer-Buttons — wooden frame + dark texture,
+   consistent with ds-button. Frame via ::before (no layout effect).   */
+.sb-footer-save,
+.sb-footer-menu,
+.sb-footer-mail,
+.sb-footer-options,
+.sb-footer-quit {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(6px * var(--sb-scale-eff));
+  width: 100%;
+  /* Task #291: skaliert mit --sb-scale. */
+  padding: calc(6px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff));
+  border: none;
+  border-radius: 0;
+  font-family: var(--font-head);
+  font-size: clamp(9px, calc(11px * var(--sb-scale-eff)), 18px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  transition: background 0.14s, box-shadow 0.14s, color 0.14s;
+}
+
+.sb-footer-save::before,
+.sb-footer-menu::before,
+.sb-footer-mail::before,
+.sb-footer-options::before,
+.sb-footer-quit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 6px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Save: primary action — bright parchment text */
+.sb-footer-save {
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+.sb-footer-save:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  box-shadow: 0 0 12px rgba(216, 184, 112, 0.28);
+}
+
+.sb-footer-save:active {
+  background:
+    linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+/* ── Autosave-Vertrauens-Häkchen (Chef-GO) ─────────────────────────────
+   ".just-saved" ist ~1,5s aktiv (Sidebar.tsx, an `saveTick` aus GameContext gekoppelt — sowohl
+   periodisches Autosave als auch der manuelle Klick). Label wechselt sofort auf "Gespeichert ✓"
+   (kein Toast); die Animation lässt es sanft ausblenden statt hart zu verschwinden, synchron mit
+   dem 1,5s-JS-Timer (70%→100% Opacity-Fade). Kein Layout-Sprung: nur `opacity`, keine Bewegung. */
+.sb-footer-save.just-saved .sb-footer-label {
+  color: var(--ds-gold-bright, #f0dca0);
+  animation: sb-save-confirm-fade 1.5s ease forwards;
+}
+
+@keyframes sb-save-confirm-fade {
+  0% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Kein Fade — Text bleibt einfach kurz sichtbar (per 1,5s-JS-Timer) und springt dann zurück. */
+  .sb-footer-save.just-saved .sb-footer-label {
+    animation: none;
+  }
+}
+
+/* Main Menu: secondary role — dimmer color, slightly lower opacity */
+.sb-footer-menu {
+  color: #9a8060;
+  opacity: 0.85;
+}
+
+.sb-footer-menu:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.20);
+}
+
+/* Mail: secondary role, wie Main Menu/Options — dimmer color, slightly lower opacity */
+.sb-footer-mail {
+  color: #9a8060;
+  opacity: 0.85;
+}
+
+.sb-footer-mail:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.20);
+}
+
+/* Options: secondary role, wie Main Menu — dimmer color, slightly lower opacity */
+.sb-footer-options {
+  color: #9a8060;
+  opacity: 0.85;
+}
+
+.sb-footer-options:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.20);
+}
+
+/* Quit: destructive/final action — dim by default, warns red on hover */
+.sb-footer-quit {
+  color: #9a8060;
+  opacity: 0.75;
+}
+
+.sb-footer-quit:hover {
+  background:
+    linear-gradient(rgba(45, 10, 8, 0.55), rgba(45, 10, 8, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: #e8a888;
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(196, 60, 40, 0.28);
+}
+
+/* emblem_waxseal.svg + emblem_compass.svg + emblem_skull.svg — 28x28 px, transparent */
+.sb-footer-emblem-img {
+  /* Task #291: skaliert mit --sb-scale. */
+  width: clamp(14px, calc(18px * var(--sb-scale-eff)), 30px);
+  height: clamp(14px, calc(18px * var(--sb-scale-eff)), 30px);
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Postfach-Emblem (kein SVG-Asset, s. Sidebar.tsx-Kommentar): Emoji in derselben Box wie die
+   SVG-Embleme oben, damit die vier Footer-Buttons optisch gleich schwer wirken. */
+.sb-footer-emblem-emoji {
+  width: clamp(14px, calc(18px * var(--sb-scale-eff)), 30px);
+  height: clamp(14px, calc(18px * var(--sb-scale-eff)), 30px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, calc(16px * var(--sb-scale-eff)), 26px);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Postfach-Zähler (Chef-Vorgabe „dezent, wie ungelesene Post"): kleiner Gold-Punkt oben rechts
+   am Mail-Button, nur gerendert wenn `mailCount > 0` (Sidebar.tsx). Bewusst kein Puls/Glow (das
+   bleibt Jackpot-Momenten vorbehalten) — ein ruhiger, gut lesbarer Zähler reicht hier. */
+.sb-footer-badge {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  z-index: 2;
+  min-width: 15px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: var(--gold, #d8c06a);
+  color: #241a0c;
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 15px;
+  text-align: center;
+}
+
+/* ── 5. Icon-Rail-Kollaps (Task #291, Chef-Feature) ──────────────────
+   Unterschreitet die gezogene Breite ~120px, blenden alle Text-Elemente
+   aus und nur die Icons bleiben — mit 100% Opacity (normal gedimmt via
+   .sb-skill-icon-wrap opacity:0.6, s. oben). Skill-Level-Badges werden
+   ausgeblendet (statt Mini-Overlay — hält den Rail-Modus aufgeräumt).
+   Tooltips (title=Skill-Name, bestehende t()-Strings) übernehmen die
+   Namensanzeige, s. Sidebar.tsx. Container-Query statt React-State: kein
+   Re-Render beim Draggen nötig, die Schwelle greift rein visuell/CSS. */
+@container sidebar (max-width: 120px) {
+  .sb-skill-name,
+  .sb-skill-level,
+  .sb-combat-name,
+  .sb-combat-bar,
+  .sb-combat-level,
+  .sb-combat-subskills,
+  .sb-combat-toggle,
+  .sb-footer-label,
+  .sb-blessing-textbox {
+    display: none;
+  }
+
+  /* Icon-Rail-Kollaps: nur ein kleiner Karten-Ausschnitt (quadratisch statt 3:2), kein Text —
+     Details bleiben per Hover/Fokus-Tooltip erreichbar (s. BlessingPanel.tsx). */
+  .sb-blessing-card {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Icon füllt jetzt die volle Button-Breite und wird zentriert statt links auszurichten,
+     außerdem immer volle Opazität (statt der normalen 0.6/0.75 Dimmung). */
+  .sb-skill-icon-wrap {
+    left: 0;
+    right: 0;
+    width: 100%;
+    opacity: 1;
+  }
+  .sb-skill-btn:hover .sb-skill-icon-wrap,
+  .sb-skill-btn.active .sb-skill-icon-wrap {
+    opacity: 1;
+    filter: none;
+  }
+
+  /* Combat-Button füllt die Zeile komplett, da der Chevron-Toggle keinen Platz mehr hat. */
+  .sb-combat-btn-row {
+    gap: 0;
+  }
+
+  /* Footer-Buttons: Icon-only, kein Lücken-Gap mehr nötig (Text ist weg). */
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit {
+    gap: 0;
+  }
+}
+
+/* codex:2026-08-01T13:28:00+02:00 — Systemaktionen als echter Klick-Drawer: Die Lasche liegt
+   optisch frei über der Aktionsfläche. Weder Hover noch Fokus öffnen den Drawer; nur der bereits
+   vorhandene aria-expanded-Klickzustand steuert die Bewegung. */
+.sb-footer {
+  position: relative;
+  padding: 0;
+  gap: 0;
+  border-top: 0;
+  overflow: visible;
+  background: transparent;
+}
+
+.sb-footer-drawer-tab {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  flex: 0 0 auto;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(7px * var(--sb-scale-eff));
+  width: min(68%, 220px);
+  min-height: clamp(28px, calc(34px * var(--sb-scale-eff)), 50px);
+  margin: 0;
+  padding: calc(4px * var(--sb-scale-eff)) calc(15px * var(--sb-scale-eff));
+  border-style: solid;
+  border-color: transparent;
+  border-width: calc(6px * var(--sb-scale-eff));
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill / calc(8px * var(--sb-scale-eff));
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(8, 11, 13, 0.14), rgba(2, 4, 5, 0.34)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  color: var(--gold, #d8c06a);
+  font-family: var(--font-head);
+  font-size: clamp(10px, calc(12px * var(--sb-scale-eff)), 19px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px #000;
+  cursor: pointer;
+  box-shadow: 0 -5px 14px rgba(0, 0, 0, 0.45);
+  transform: translate(-50%, -50%);
+}
+
+.sb-footer.is-open .sb-footer-drawer-tab {
+  color: #f0dca0;
+  filter: brightness(1.1);
+}
+
+.sb-footer-drawer-tab:hover {
+  color: #f0dca0;
+  filter: brightness(1.06);
+}
+
+.sb-footer-drawer-chevron {
+  font-size: 0.8em;
+  line-height: 1;
+  transition: transform 220ms cubic-bezier(0.2, 0.82, 0.2, 1);
+}
+
+.sb-footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: calc(4px * var(--sb-scale-eff));
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(calc(14px * var(--sb-scale-eff)));
+  box-sizing: border-box;
+  padding: 0 calc(8px * var(--sb-scale-eff));
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  background:
+    linear-gradient(rgba(5, 4, 2, 0.82), rgba(5, 4, 2, 0.94)),
+    url("../assets/bg_black.webp") top left repeat;
+  transition:
+    max-height 340ms cubic-bezier(0.18, 0.82, 0.22, 1),
+    margin-top 340ms cubic-bezier(0.18, 0.82, 0.22, 1),
+    opacity 170ms ease,
+    transform 300ms cubic-bezier(0.18, 0.82, 0.22, 1),
+    visibility 0s linear 340ms;
+}
+
+.sb-footer.is-open .sb-footer-actions {
+  max-height: calc(360px * var(--sb-scale-eff));
+  margin-top: 0;
+  padding-top: calc(18px * var(--sb-scale-eff));
+  padding-bottom: calc(6px * var(--sb-scale-eff));
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.sb-footer.is-open .sb-footer-drawer-chevron {
+  transform: rotate(180deg);
+}
+
+/* Der transparente Tabzustand darf beim bloßen Hover nicht als geöffnet erscheinen. */
+#root .sb-footer-drawer-tab:hover,
+#root .sb-footer:focus-within .sb-footer-drawer-tab {
+  background-image: url("../assets/ui/gravewood/tabs/tab-inactive.webp");
+}
+
+#root .sb-footer.is-open .sb-footer-drawer-tab {
+  background-image: url("../assets/ui/gravewood/tabs/tab-active.webp");
+}
+
+/* codex:2026-08-01T13:52:00+02:00 — Die Tablasche liegt auf dem oberen Eisenrand des Drawers.
+   Dadurch existiert keine eigene opake Laschenzeile; links und rechts bleibt der darunterliegende
+   Aktionsblock sichtbar. Der geschlossene Zustand reserviert nur die halbe Laschenhöhe. */
+#root .sb-footer {
+  min-height: clamp(14px, calc(17px * var(--sb-scale-eff)), 23px);
+  margin-top: clamp(14px, calc(17px * var(--sb-scale-eff)), 23px);
+  background: transparent !important;
+}
+
+#root .sb-footer-actions {
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+/* codex:2026-08-01T13:30:36+02:00 — Drawer-Geometrie V4: Die Lasche nimmt wieder echte Höhe im
+   Footer ein. Dadurch wächst der am Sidebar-Boden verankerte Flexblock beim Öffnen nach OBEN,
+   statt dass eine absolut positionierte Lasche samt Aktionen unter dem Fenster abgeschnitten wird.
+   Ein negativer Abstand legt sie weiterhin optisch über den Eisenrand; seitlich bleibt alles
+   transparent. */
+#root .sb-footer {
+  min-height: 0;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+#root .sb-footer-drawer-tab {
+  position: relative;
+  top: auto;
+  left: auto;
+  align-self: center;
+  transform: none;
+  /* codex:2026-08-01T18:06:00+02:00 — Die Lasche sitzt vollstaendig ueber dem Drawer; ihre
+     Unterkante beruehrt dessen Oberkante, statt halb im Rahmen zu stecken. */
+  margin: 0 auto;
+  z-index: 3;
+}
+
+#root .sb-footer-actions {
+  width: 100%;
+  flex: 0 0 auto;
+  transform: none;
+}
+
+#root .sb-footer.is-open .sb-footer-actions {
+  margin-top: 0;
+  padding-top: calc(18px * var(--sb-scale-eff));
+}
+
+/* codex:2026-08-01T16:06:12+02:00 — Im geschlossenen Zustand existiert nur die freistehende
+   Tablasche. Der auf 0 Höhe kollabierte Drawer darf weder seinen oberen Rahmen noch seitliche
+   Eckfragmente links/rechts der Lasche zeichnen. */
+#root .sb-footer:not(.is-open) .sb-footer-actions {
+  padding: 0;
+  border-width: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@container sidebar (max-width: 120px) {
+  .sb-footer-drawer-tab {
+    width: 100%;
+    padding-inline: 0;
+  }
+
+  .sb-footer-drawer-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-footer-actions,
+  .sb-footer-drawer-chevron {
+    transition: none;
+  }
+}
+
+/* codex:2026-08-01T17:36:00+02:00 — Der gesamte Footer ist ein bodenverankertes Overlay und
+   belegt keine Layoutzeile. Nur die mittige Lasche und – im offenen Zustand – der rechteckige
+   Action-Drawer malen Pixel. Links und rechts der Lasche bleibt der Nav-Inhalt sichtbar. */
+#root .sb-footer {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 20;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  pointer-events: none;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#root .sb-footer::before,
+#root .sb-footer::after {
+  content: none !important;
+  display: none !important;
+}
+
+#root .sb-footer-drawer-tab {
+  position: relative;
+  inset: auto;
+  z-index: 3;
+  display: flex;
+  width: min(68%, 220px);
+  /* codex:2026-08-01T18:08:00+02:00 — Finaler Overlay-Block: Lasche vollstaendig oberhalb. */
+  margin: 0 auto;
+  transform: none;
+  pointer-events: auto;
+  background-color: transparent !important;
+}
+
+#root .sb-footer-actions {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 0;
+  flex: 0 0 auto;
+}
+
+#root .sb-footer:not(.is-open) .sb-footer-actions {
+  height: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+  visibility: hidden;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}

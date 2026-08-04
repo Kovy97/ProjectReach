@@ -1,0 +1,8 @@
+{
+  "cursor-normal.png": { "size": [128, 128], "hotspot": [4, 4] },
+  "cursor-normal-64.png": { "size": [64, 64], "hotspot": [2, 2] },
+  "cursor-select.png": { "size": [128, 128], "hotspot": [4, 4] },
+  "cursor-select-64.png": { "size": [64, 64], "hotspot": [2, 2] },
+  "cursor-pressed.png": { "size": [128, 128], "hotspot": [4, 4] },
+  "cursor-pressed-64.png": { "size": [64, 64], "hotspot": [2, 2] }
+}

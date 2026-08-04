@@ -1,0 +1,42 @@
+STEAM-PATCHNOTES — Update #1 · Grim Reach 0.2.2 "Quality of Reach"
+(EN-only, BBCode-fertig — direkt in das SteamPipe-Patchnotes-Feld einfügen)
+=====================================================================
+
+[h1]Update #1 — Quality of Reach (v0.2.2)[/h1]
+
+Thank you for all the feedback since launch. This update is almost entirely built from it: smoother automation, a fairer loot game, and a big round of interface polish.
+
+[h2]✨ New[/h2]
+[list]
+[*][b]Combat Queue[/b] — Fights now queue like everything else: pick 1×, 25×, 50×, ∞ or any custom number of kills, chain them with your crafting plans, and jump urgent fights to the front with Shift-click. Dying pauses the queue until you resume.
+[*][b]Mass Sell[/b] — Tick items in the shop and sell them in one click, with a stack slider and a single gold total. No more one-by-one selling.
+[*][b]Champion Victory Ceremony[/b] — Beating an elite now ends in a proper victory moment with your loot laid out. The elite tracker is a floating mini-window you can drag and collapse.
+[*][b]Combat Log Filters & Resizing[/b] — Filter the log by category (your hits, enemy hits, healing, loot, XP and more) and freely resize the log and loadout panels.
+[*][b]Character Screen Tabs[/b] — Equipment and Stats are now full-height tabs: a bigger equipment view and a clean, grouped stats ledger with proper tooltips.
+[*][b]Readable Dungeon Cards[/b] — Every dungeon now shows its zone, a recommended combat level, and the actual creature levels inside. No more guessing.
+[*][b]Blood Moon Rework[/b] — The Saturday world blessing is now a jackpot: every kill has a 15% chance to drop its ENTIRE loot twice, legendaries included.
+[*][b]New Look[/b] — New game logo and application icon.
+[/list]
+
+[h2]⚖️ Changes[/h2]
+[list]
+[*][b]Dungeons are no longer level-locked.[/b] Only story progress gates them — the level on the card is a recommendation. The creatures inside are as deadly as ever; enter early at your own risk.
+[*][b]Loot worth fighting for[/b] — Elite unique drops now match the level of their zones (they were embarrassingly weak in places), high-level zones drop modern crafting materials, and dungeon clears can award on-level armor. Anything you already wear stays wearable.
+[*][b]Healing rebalanced[/b] — Potions now scale meaningfully tier by tier, and all 46 foods have their own identity instead of healing nearly the same.
+[*][b]Thieving is honest[/b] — Cards show your real success chance with a full breakdown, and loot odds are clearly marked "on success".
+[*][b]Bank overhaul[/b] — Whole stacks move together when dragging, free quantity input, and a clear warning when your bags are full.
+[*][b]Interface polish everywhere[/b] — New button set across the whole game, warmer wood-and-leather panels, bigger headers, unified typography, full keyboard navigation, and redesigned monster cards with grounded creatures and cleaner layouts.
+[*][b]Performance[/b] — Significantly higher FPS in combat (especially on ultrawide screens) and a much cheaper combat log.
+[/list]
+
+[h2]🔧 Fixes[/h2]
+[list]
+[*]Monster cards no longer clip their name or hide drop icons behind the quantity buttons.
+[*]Character stats no longer overlap at 1080p, and are no longer tiny on ultrawide screens.
+[*]Elite portraits are consistent between the selection card and the battle screen.
+[*]The floating champion window no longer sticks to your mouse.
+[*]Card artwork no longer zooms in awkwardly — you see the full scene, with the creature standing at the bottom edge.
+[*]Dozens of smaller consistency fixes across menus, modals, and tooltips.
+[/list]
+
+See you in the Reach. More is already in the works — and as always: your save is safe with every update.

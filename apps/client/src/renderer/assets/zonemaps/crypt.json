@@ -1,0 +1,47 @@
+{
+  "zoneId": "crypt",
+  "hotspots": [
+    {
+      "monsterId": "skeleton_warrior",
+      "x": 18.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "skeleton_archer",
+      "x": 39.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "skeleton_spearman",
+      "x": 60.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "skeleton_butcher",
+      "x": 81.5,
+      "y": 29,
+      "size": 1.75
+    },
+    {
+      "monsterId": "skeleton_icemage",
+      "x": 18.5,
+      "y": 71,
+      "size": 1.75
+    },
+    {
+      "monsterId": "skeleton_pyroclasp",
+      "x": 39.5,
+      "y": 71,
+      "size": 1.75
+    },
+    {
+      "monsterId": "skeleton_nekro",
+      "x": 60.5,
+      "y": 71,
+      "size": 1.75
+    }
+  ]
+}

@@ -1,0 +1,551 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   MODALS — overlay, base modal, onboarding, monster-modal,
+   offline modal
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Basis-Modal ────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  /* UI-Brainstorm A3 (2026-07-24, -gamefeel.md #4/#10): das Basis-Modal-Paar poppte bisher hart
+     auf — jedes andere Overlay im Spiel (Zeremonien, Tooltips) hat einen sanften Eintritt. Ein
+     kurzer, gemeinsamer Fade+Scale-in hebt alle Nutzstellen an (inkl. DeathPopup, dessen sonst
+     sorgfältig sanfter Ton bisher gegen den harten Snap brach) — die handchoreografierten
+     Zeremonien (MasteryCeremony/DungeonClearCeremony/PetCelebration/ApMilestoneCeremony) teilen
+     bewusst NICHT diese Klassen (eigene `mwc-`/`dcc-`/`pet-celebration-`/`ap-`-Backdrops), werden
+     hier also nicht doppelt animiert. */
+  animation: modal-overlay-fade-in 0.16s ease-out;
+}
+
+@keyframes modal-overlay-fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes modal-scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal {
+    animation: none;
+  }
+}
+
+.modal {
+  position: relative;
+  isolation: isolate;
+  /* Citadel: Holz-9-Slice-Rahmen + bg_black-Textur statt flachem Panel (gilt für ALLE Modals). */
+  border-style: solid;
+  border-width: 16px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 16px;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.55), rgba(10, 12, 15, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  padding: 22px 26px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.78);
+  animation: modal-scale-in 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* UI-Brainstorm A2/6.3 (2026-07-24, -designsystem.md §1.2/§6.3): war ein flacher grauer 1px-
+   Border-Kasten mit Text-"×" — fiel aus dem 9-Slice-Holzrahmen-Look des umschließenden `.modal`
+   komplett heraus, während der fertige 4-State-Citadel-Button (`.ds-close-button`, s.
+   design-system.css) nirgends verwendet wurde. `.modal-close` ist jetzt NUR noch der Positions-
+   Anker (top-right in jedem Modal) — die Optik selbst kommt von `.ds-close-button`, beide Klassen
+   zusammen auf demselben <button> (s. ItemWikiModal.tsx & Co.). */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+/* ─── Onboarding / Tutorial ──────────────────────────────── */
+.onboarding-modal {
+  position: relative;
+  max-width: 560px;
+  text-align: center;
+  font-family: var(--font-head);
+  /* New Player Guide: flex column so header+footer stay fixed, content scrolls */
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.onboarding-modal h2 {
+  margin: 6px 0 12px;
+}
+
+/* Scrollable content area (icon + title + body) */
+.onboarding-scrollable {
+  flex: 1 1 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  /* Firefox-only scrollbar-Regeln entfernt (2026-07-09): Chromium 121+ honoriert sie und
+     überschrieb die globalen Citadel-Scrollbalken (base.css) — global gilt jetzt überall. */
+}
+
+.onboarding-icon {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+/* Image icons inside the guide (skill PNGs) */
+.onboarding-icon img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.onboarding-body {
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink, #e8ddc8);
+  min-height: 80px;
+}
+
+/* Combat-skills list (one row per skill) */
+.onboarding-combat-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: left;
+}
+
+.onboarding-combat-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.onboarding-combat-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.onboarding-combat-icon img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.onboarding-skip {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.onboarding-skip:hover {
+  color: var(--ink, #e8ddc8);
+}
+
+.onboarding-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.onboarding-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line, #3a3026);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.onboarding-dot.active {
+  background: var(--accent, #c8772e);
+  transform: scale(1.25);
+}
+
+.onboarding-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.onboarding-count {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.onboarding-nav .combat-btn {
+  min-width: 120px;
+}
+
+/* ─── Skill-Guide-Modal (OSRS-Style, #205) ───────────────────
+   Titel + Level, darunter eine scrollbare, nach Level sortierte Freischalt-Liste — Skilling zeigt
+   Aktionen, Kampf-Fertigkeiten zeigen stattdessen Ausrüstungs-Freischaltungen. */
+.skillguide-modal {
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  max-height: 82vh;
+}
+
+.skillguide-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 28px;
+}
+
+.skillguide-head-icon {
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+}
+
+.skillguide-head-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.skillguide-title {
+  margin: 0 0 4px;
+  font-family: var(--font-head);
+  font-size: 24px;
+  color: var(--accent);
+}
+
+.skillguide-level-badge {
+  display: inline-block;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--gold);
+  padding: 2px 10px;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-radius: 0;
+}
+
+.skillguide-desc {
+  margin: 10px 0 14px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.skillguide-section-title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9a8060;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.skillguide-list {
+  /* NICHT flex:1 (Basis 0) verwenden: in einem auto-hohen Flex-Column-Modal (max-height statt
+     fixer height) setzt `overflow-y: auto` die automatische Min-Größe des Items auf 0 — das
+     Modal berechnet seine eigene Auto-Höhe dann OHNE die Liste, die Liste bekommt nie
+     Restplatz zugeteilt und bleibt bei 0px Höhe (klassische Flexbox-Falle). Stattdessen die
+     Liste direkt selbst deckeln — funktioniert unabhängig vom Sizing-Modus des Elternteils. */
+  flex: 0 1 auto;
+  max-height: 46vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  /* Firefox-only scrollbar-Regeln entfernt (2026-07-09): Chromium 121+ honoriert sie und
+     überschrieb die globalen Citadel-Scrollbalken (base.css) — global gilt jetzt überall. */
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.skillguide-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.skillguide-row-level {
+  flex-shrink: 0;
+  width: 44px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 14px;
+  color: #9a8060;
+  text-align: center;
+}
+
+.skillguide-row-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+}
+
+.skillguide-row-icon-ph {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+}
+
+.skillguide-row-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skillguide-row-status {
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+  font-weight: 700;
+  color: #5ec46e;
+}
+
+.skillguide-row-status .locked-icon-img {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+
+/* Kommende (noch nicht erreichte) Levels: gedimmt statt hell/abgehakt. Nur EINE Dimm-Ebene
+   (Row-Opacity) — ein zusätzlicher grayscale+brightness-Filter auf dem Icon (frühere Version)
+   multiplizierte sich mit der Opacity und machte die (oft schon dunklen) Item-Icons auf dem
+   dunklen Modal-Hintergrund praktisch unsichtbar. */
+.skillguide-row.locked {
+  opacity: 0.62;
+}
+
+.skillguide-row.locked .skillguide-row-label,
+.skillguide-row.locked .skillguide-row-level {
+  color: var(--muted);
+}
+
+.skillguide-row.locked .skillguide-row-icon {
+  filter: grayscale(0.6);
+}
+
+.skillguide-footer {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ─── Offline-Modal ──────────────────────────────────────────────────
+   Moved to its own file (Beute-Bühne-Redesign): styles/offline-stage.css,
+   imported directly by OfflinePopup.tsx (same pattern as pet-celebration.css).
+   All `.offline-*` classes below were retired in that pass — the new markup
+   uses `.offline-stage`/`.ofs-*`. Kept `.modal-overlay` (above) as the shared
+   backdrop; only the panel styling moved out. */
+
+/* ─── Death-Popup ────────────────────────────────────────── */
+.death-modal {
+  text-align: center;
+  max-width: 420px;
+}
+
+.death-modal-icon {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, rgba(196, 60, 40, 0.18) 0%, transparent 70%),
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../assets/bg_black.webp");
+  background-size: cover;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+.death-modal-icon img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+}
+
+.death-modal-title {
+  margin: 0 0 10px;
+  color: var(--danger, #c43c28);
+  font-size: 26px;
+}
+
+.death-modal-body {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--ink, #e8ddc8);
+  margin: 0 0 8px;
+}
+
+/* Todes-Chronik (Persönlichkeits-Paket „Das Reach führt Buch", §B): die Familienzeile ersetzt
+   den früheren neutralen `death.body`-Satz — Kursiv statt Fließschrift markiert sie als
+   Wächter-/Erzählerstimme statt Systemtext, dieselbe Konvention wie `.ofs-warden-line`
+   (offline-stage.css). */
+.death-modal-chronicle {
+  font-style: italic;
+}
+
+/* Eskalationszeile (mehrfach/oft gestorben) — kleiner und gedämpfter als die Chronik-Hauptzeile,
+   dieselbe Größenordnung wie `.death-modal-paragon-hint` darunter. */
+.death-modal-escalation {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+/* Beruhigende Hinweiszeile (Welle Y, Jorin-Fund): eigener grüner Akzent (statt des roten Titels
+   oder des neutralen Haupttexts) signalisiert sofort "kein Grund zur Sorge" — derselbe Ton wie
+   die positiven Drop-Toasts (--accent). */
+.death-modal-reassurance {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--accent, #6fae6f);
+  margin: 0 0 14px;
+}
+
+/* Paragonturm (§7, Welle P2) + Dungeon-Runs (Kosmetik-Sweep, T4) — ehrliche Zusatzzeile: dezent,
+   kleiner als der Haupttext, aber sichtbar genug, dass der Run-/Etagen-Reset nicht untergeht
+   (Chef-Leitplanke: KEIN stilles Zurücksetzen). Von beiden Death-Popup-Hinweiszeilen geteilt. */
+.death-modal-paragon-hint {
+  font-size: 14px;
+  color: #d8c39a;
+  margin: 0 0 18px;
+}
+
+.death-modal .combat-btn {
+  width: 100%;
+}
+
+/* ─── Patt-Popup (Sweep-Fix-Welle B, Fix 1) ─────────────────
+   Teilt fast die gesamte .death-modal-Optik (dasselbe Popup-Muster, s. StalematePopup.tsx JSDoc) —
+   nur Titelfarbe + Icon-Glow sind neutraler getönt (Gold statt Rot), damit ein Patt sich nicht wie
+   ein Fehlschlag/Tod ANFÜHLT, obwohl derselbe Rahmen wiederverwendet wird. */
+.stalemate-modal .death-modal-title {
+  color: var(--gold, #d8c06a);
+}
+
+.stalemate-modal .death-modal-icon {
+  background: radial-gradient(ellipse at 50% 40%, rgba(216, 192, 106, 0.2) 0%, transparent 70%),
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../assets/bg_black.webp");
+  background-size: cover;
+}
+
+/* ─── Quit-Confirm-Modal (Sidebar) ───────────────────────── */
+.quit-confirm-modal {
+  text-align: center;
+  max-width: 420px;
+}
+
+.quit-confirm-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, rgba(196, 60, 40, 0.18) 0%, transparent 70%),
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../assets/bg_black.webp");
+  background-size: cover;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.7);
+}
+
+.quit-confirm-icon img {
+  max-width: 70%;
+  max-height: 70%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+}
+
+.quit-confirm-title {
+  margin: 0 0 10px;
+  color: var(--danger, #c43c28);
+  font-size: 24px;
+}
+
+.quit-confirm-body {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink, #e8ddc8);
+  margin: 0 0 18px;
+}
+
+.quit-confirm-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.quit-confirm-actions .combat-btn {
+  flex: 1 1 0;
+}

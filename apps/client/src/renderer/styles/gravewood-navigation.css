@@ -1,0 +1,974 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/*
+ * Gravewood Navigation — kontrollierte, ausschließlich lokale V3-Bindung.
+ * Keine Panel-, Modal-, Slot-, Seiten- oder Welt-Hintergründe werden hier erfasst.
+ */
+
+:root {
+  --gw-nav-frame: url("../assets/ui/gravewood/v3/frames/button-frame.webp");
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+}
+
+/* codex:2026-07-30T23:05:56+02:00 — Sidebar und Topbar teilen exakt dieselbe statische Frame-/Surface-Geometrie. */
+#root :is(.sb-skill-btn, .topbar-item),
+#root :is(.sb-skill-btn, .topbar-item):hover,
+#root :is(.sb-skill-btn, .topbar-item).active {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px 14px;
+  border-image: var(--gw-nav-frame) 64 120 64 120 / 6px 14px !important;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background-color: #17120e;
+  background-image: var(--gw-nav-surface) !important;
+  background-position: center;
+  background-size: 256px 256px;
+  background-repeat: repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  filter: none;
+}
+
+/* codex:2026-07-30T23:05:56+02:00 — Zustände wechseln nur Licht und Bewegung; Textur und Rahmen bleiben ortsfest. */
+#root :is(.sb-skill-btn, .topbar-item):not(:disabled):hover {
+  border-image-source: var(--gw-nav-frame);
+  filter: brightness(1.09) saturate(1.03);
+}
+
+#root :is(.sb-skill-btn, .topbar-item).active {
+  border-image-source: var(--gw-nav-frame) !important;
+  background-image:
+    linear-gradient(rgba(91, 58, 22, 0.3), rgba(54, 31, 13, 0.34)),
+    var(--gw-nav-surface) !important;
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  filter: brightness(1.07) saturate(1.04);
+  box-shadow:
+    inset 0 0 0 1px rgba(215, 157, 76, 0.18),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#root :is(.sb-skill-btn, .topbar-item):not(:disabled):active {
+  border-image-source: var(--gw-nav-frame);
+  filter: brightness(0.9) saturate(0.94);
+}
+
+/* codex:2026-07-30T23:05:56+02:00 — Sidebar-Footer erhält denselben Button, sein alter Citadel-Pseudorahmen wird lokal deaktiviert. */
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+) {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px 12px;
+  border-image: var(--gw-nav-frame) 64 120 64 120 / 5px 12px;
+  border-image-repeat: stretch;
+  background-color: #17120e;
+  background-image: var(--gw-nav-surface);
+  background-position: center;
+  background-size: 256px 256px;
+  background-repeat: repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: none;
+}
+
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+)::before {
+  content: none;
+}
+
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):not(:disabled):hover {
+  filter: brightness(1.09) saturate(1.03);
+}
+
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):not(:disabled):active {
+  filter: brightness(0.9) saturate(0.94);
+  transform: translateY(1px) scale(0.985);
+}
+
+@media (max-width: 1024px) {
+  /* codex:2026-07-30T23:05:56+02:00 — Kompakte Topbar behält den V3-Rahmen ohne vertikales Clipping. */
+  #root .topbar-item {
+    border-width: 4px 9px;
+    border-image-width: 4px 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* codex:2026-07-30T23:05:56+02:00 — Systemwunsch reduziert Navigation auf reine Lichtzustände. */
+  #root :is(
+    .sb-skill-btn,
+    .topbar-item,
+    .sb-footer-save,
+    .sb-footer-menu,
+    .sb-footer-mail,
+    .sb-footer-options,
+    .sb-footer-quit
+  ) {
+    transform: none;
+  }
+}
+
+/* codex:2026-07-30T23:19:21+02:00 — Sidebar nutzt die ruhigere alternative Rahmenfamilie; die Topbar behält ihren V3-Rahmen. */
+#root :is(
+  .sb-skill-btn,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+) {
+  --gw-nav-frame: url("../assets/ui/gravewood/buttons/alternate/alternate-normal.webp");
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-leather.webp");
+  border-image: var(--gw-nav-frame) 64 160 64 160 / 6px 12px !important;
+  background-image: var(--gw-nav-surface) !important;
+}
+
+/* codex:2026-07-30T23:19:21+02:00 — Hover bleibt innerhalb der Sidebar; nur Licht, Icon und Text reagieren, nicht die Buttonbox. */
+#root .sb-skill-btn:hover {
+  transform: none !important;
+  z-index: auto !important;
+}
+
+#root .sb-skill-btn:active {
+  transform: translateY(1px) !important;
+}
+
+/* codex:2026-07-30T23:19:21+02:00 — Aktive Topbar-Navigation ohne rechteckige Innenauswahl. */
+#root .topbar-item.active {
+  background-image: var(--gw-nav-surface) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  box-shadow:
+    inset 0 -2px 0 rgba(213, 157, 77, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* codex:2026-07-31T20:21:01+02:00 — Sidebar nutzt den vom Chef gewählten Ironwood-Bastion-Standardrahmen mit unveränderter 28-px-Slice-Geometrie. */
+#root :is(
+  .sb-skill-btn,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+) {
+  --gw-nav-frame: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+  border-width: 7px !important;
+  border-image: var(--gw-nav-frame) 28 / 7px !important;
+  border-radius: 0 !important;
+  background-image: var(--gw-nav-surface) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+
+/* codex:2026-07-30T23:48:41+02:00 — Hover rasterisiert nicht mehr die gesamte Buttonbox; Rahmen und Schrift bleiben gestochen scharf. */
+#root .sb-skill-btn:hover {
+  filter: none !important;
+  transform: none !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(224, 169, 91, 0.22),
+    0 0 7px rgba(167, 111, 47, 0.18) !important;
+}
+
+/* codex:2026-07-30T23:48:41+02:00 — kräftigerer Rahmen bei unverändert großzügiger Buttonhöhe. */
+#root .sb-skill-btn {
+  border-width: 10px !important;
+  border-image: var(--gw-nav-frame) 28 / 10px !important;
+}
+
+#root .sb-skill-btn.active {
+  background-image: var(--gw-nav-surface) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(204, 151, 76, 0.18),
+    0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* codex:2026-07-30T23:38:38+02:00 — Mehr Grundhöhe hält Icon, Text und Level vollständig innerhalb des Holzrahmens. */
+#root .sb-skill-btn {
+  min-height: clamp(46px, calc(50px * var(--sb-scale-eff)), 78px) !important;
+}
+
+/* codex:2026-07-31T00:32:37+02:00 — Chef-Test: alte 3D-Hub-/Druckbewegung ausschließlich in der Sidebar restlos neutralisieren. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:active {
+  transform: none !important;
+  transform-origin: center !important;
+  transition:
+    color 120ms ease,
+    box-shadow 120ms ease !important;
+  z-index: auto !important;
+}
+
+#root .sb-skill-icon-wrap {
+  width: clamp(30px, calc(40px * var(--sb-scale-eff)), 62px) !important;
+  top: calc(6px * var(--sb-scale-eff)) !important;
+  bottom: calc(6px * var(--sb-scale-eff)) !important;
+}
+
+/* codex:2026-07-31T20:21:01+02:00 — Topbar übernimmt denselben Ironwood-Bastion-Rahmen in flacherer Geometrie. */
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item.active {
+  --gw-nav-frame: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+  border-width: 6px 10px !important;
+  border-image: var(--gw-nav-frame) 28 / 6px 10px !important;
+  border-radius: 0 !important;
+  background-image: var(--gw-nav-surface) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+
+/* codex:2026-07-30T23:59:10+02:00 — Auch die Topbar bleibt beim Hover geometrisch und rasterseitig stabil; nur Rahmenlicht und Inhalt reagieren. */
+#root .topbar-item:hover {
+  filter: none !important;
+  transform: none !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(224, 169, 91, 0.2),
+    0 0 7px rgba(167, 111, 47, 0.16) !important;
+}
+
+/* codex:2026-07-31T21:30:08+02:00 — finale Navigation: mittelgrober, gekachelter Basalt liegt
+   unabhängig unter dem Ironwood-Rahmen. Alle Zustände teilen exakt dieselbe Rastergeometrie. */
+#root :is(
+  .sb-skill-btn,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit,
+  .topbar-item
+),
+#root :is(.sb-skill-btn, .topbar-item):hover,
+#root :is(.sb-skill-btn, .topbar-item):active,
+#root :is(.sb-skill-btn, .topbar-item).active {
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-color: #111416 !important;
+  background-image:
+    linear-gradient(rgba(8, 10, 11, 0.32), rgba(4, 5, 6, 0.48)),
+    var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 192px 192px !important;
+  background-repeat: no-repeat, repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+/* codex:2026-07-31T21:30:08+02:00 — Sidebar-Hover verändert keine Box, keine Rasterung und keinen
+   Pseudolayer mehr. Der frühere eckige Active-Inset-Selector ist vollständig entfernt. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  filter: none !important;
+  animation: none !important;
+  z-index: auto !important;
+  outline: none !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.34) !important;
+  transition:
+    color 120ms ease,
+    text-shadow 120ms ease,
+    box-shadow 120ms ease !important;
+}
+
+#root .sb-skill-btn:hover {
+  box-shadow:
+    0 0 7px rgba(175, 126, 62, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.34) !important;
+}
+
+#root .sb-skill-btn::before,
+#root .sb-skill-btn::after {
+  content: none !important;
+  display: none !important;
+  opacity: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* codex:2026-07-31T21:30:08+02:00 — Topbar erhält dieselbe Steinfliese; Hover/Active wechseln nur
+   Licht, niemals Rahmenquelle, Texturmaß oder Innen-Selector. */
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  filter: none !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.32) !important;
+}
+
+#root .topbar-item:hover {
+  box-shadow:
+    0 0 7px rgba(175, 126, 62, 0.18),
+    0 2px 4px rgba(0, 0, 0, 0.32) !important;
+}
+
+/* codex:2026-07-31T21:52:00+02:00 — Sidebarzustände teilen wirklich dieselbe Pixelgeometrie.
+   Auch Kindfilter und Außen-Glow bleiben aus; Hover antwortet ausschließlich über die Textfarbe. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:focus-visible,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
+  border-width: 10px !important;
+  border-image: var(--gw-nav-frame) 28 / 10px !important;
+  background-color: #111416 !important;
+  background-image:
+    linear-gradient(rgba(8, 10, 11, 0.32), rgba(4, 5, 6, 0.48)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 192px 192px !important;
+  background-repeat: no-repeat, repeat !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.34) !important;
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  filter: none !important;
+  animation: none !important;
+  transition: color 100ms ease !important;
+}
+
+#root .sb-skill-btn:hover .sb-skill-icon-wrap,
+#root .sb-skill-btn:focus-visible .sb-skill-icon-wrap,
+#root .sb-skill-btn:active .sb-skill-icon-wrap,
+#root .sb-skill-btn.active .sb-skill-icon-wrap {
+  filter: none !important;
+  transform: none !important;
+}
+
+#root .sb-skill-btn:hover .sb-skill-name,
+#root .sb-skill-btn:focus-visible .sb-skill-name {
+  color: #e6cf86;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* codex:2026-07-31T21:52:00+02:00 — Systemaktionen bleiben als warme, braune Gruppe von den
+   steinernen Skill-/Topbar-Navigationen getrennt. */
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+),
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):hover,
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):active {
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+  background-color: #1b120c !important;
+  background-image:
+    linear-gradient(rgba(62, 37, 20, 0.22), rgba(25, 14, 9, 0.42)),
+    var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 256px 256px !important;
+  background-repeat: no-repeat, repeat !important;
+  filter: none !important;
+}
+
+/* codex:2026-07-31T22:08:00+02:00 — wärmere Navigationsfläche und etwas kräftigeres Ironwood-Chrome.
+   Sidebar und Topbar verwenden ruhiges dunkles Leder; alle Zustände behalten exakt dieselbe Textur. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:focus-visible,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-leather.webp");
+  border-width: 11px !important;
+  border-image: var(--gw-nav-frame) 28 / 11px !important;
+  background-color: #15100d !important;
+  background-image:
+    linear-gradient(rgba(24, 16, 11, 0.18), rgba(8, 6, 5, 0.42)),
+    var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 256px 256px !important;
+  background-repeat: no-repeat, repeat !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.34) !important;
+}
+
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-leather.webp");
+  border-width: 8px 12px !important;
+  border-image: var(--gw-nav-frame) 28 / 8px 12px !important;
+  background-color: #15100d !important;
+  background-image:
+    linear-gradient(rgba(24, 16, 11, 0.18), rgba(8, 6, 5, 0.42)),
+    var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 256px 256px !important;
+  background-repeat: no-repeat, repeat !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.32) !important;
+}
+
+/* codex:2026-07-31T22:08:00+02:00 — Footeraktionen erhalten als Gegenmaterial oxblood-getönten
+   Stein. Die rötlich-schwarze Fläche hebt sich sichtbar vom braunen Ironwood-Rahmen ab. */
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+),
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):hover,
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):active {
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-color: #170b0b !important;
+  background-image:
+    linear-gradient(rgba(58, 18, 17, 0.6), rgba(12, 6, 7, 0.72)),
+    var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 192px 192px !important;
+  background-repeat: no-repeat, repeat !important;
+  background-blend-mode: multiply, normal !important;
+}
+
+/* codex:2026-07-31T22:41:00+02:00 — Der Edge-Anchor-Runtime-Rahmen besitzt keine transparente
+   Außenlippe mehr. Flächen dürfen wieder bis unter das Chrome laufen, ohne außen sichtbar zu werden. */
+#root :is(
+  .sb-skill-btn,
+  .topbar-item,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+),
+#root :is(.sb-skill-btn, .topbar-item):hover,
+#root :is(.sb-skill-btn, .topbar-item):active,
+#root :is(.sb-skill-btn, .topbar-item).active {
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+
+/* codex:2026-07-31T23:18:00+02:00 — Ironwood-Chrome und Holzmaserung skalieren gemeinsam mit
+   Sidebar/Topbar. Die Rahmenstärke ist damit kein fixer Pixelwert mehr und die ruhige, echte
+   Holzkachel ersetzt das zu lederartige Navigationsmaterial in allen Interaktionszuständen. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:focus-visible,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
+  --gw-nav-frame-width: clamp(6px, calc(11px * var(--sb-scale-eff, 1)), 18px);
+  --gw-nav-tile-size: clamp(176px, calc(256px * var(--sb-scale-eff, 1)), 352px);
+  --gw-nav-surface: url("../assets/bg_tileable_wood.webp");
+  border-width: var(--gw-nav-frame-width) !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 28 !important;
+  border-image-width: var(--gw-nav-frame-width) !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: stretch !important;
+  background-color: #100b08 !important;
+  background-image:
+    linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)),
+    var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, repeat !important;
+}
+
+/* codex:2026-07-31T23:59:45+02:00 — finale Kaskadenposition: Die skalierende Topbar-Geometrie
+   bleibt aus dem vorherigen Block erhalten, nur ihr braunes Holzmaterial wird danach ersetzt. */
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-color: #151a1d !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(155, 117, 66, 0.09), transparent 66%),
+    linear-gradient(rgba(9, 13, 16, 0.18), rgba(3, 6, 8, 0.38)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+}
+
+/* codex:2026-07-31T23:59:30+02:00 — Braunes Holz verlässt die Hauptnavigation. Kühler Schiefer
+   gibt den warmen Ironwood-Rahmen optisch frei; die fünf Footeraktionen erhalten stattdessen eine
+   hellere rauchige Bronze-/Oxblood-Fläche und versinken nicht länger im Schwarz. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:focus-visible,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active,
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-color: #151a1d !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(155, 117, 66, 0.09), transparent 66%),
+    linear-gradient(rgba(9, 13, 16, 0.18), rgba(3, 6, 8, 0.38)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+}
+
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+),
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):hover,
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):active {
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp");
+  background-color: #3a2419 !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(220, 154, 76, 0.15), transparent 68%),
+    linear-gradient(rgba(78, 33, 25, 0.16), rgba(35, 16, 15, 0.28)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 224px 224px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-blend-mode: normal !important;
+}
+
+/* codex:2026-08-01T10:20:00+02:00 — Fell Chronicle besitzt kleinere Ziffernformen als die
+   vorherige UI-Schrift. Die sichtbaren Skillwerte erhalten deshalb exakt die doppelte
+   Grundgröße und eine reservierte rechte Spalte; Canvas/Frame/Interaktion bleiben unverändert. */
+/* codex:2026-08-01T10:34:00+02:00 — Nur die kompakten Sidebar-Level kehren zur vorherigen,
+   klareren Metamorphous-Ziffernform zurück; Fell Chronicle bleibt für Namen und die App global. */
+#root .sb-skill-btn .sb-skill-level {
+  top: 50%;
+  right: calc(13px * var(--sb-scale-eff, 1));
+  bottom: auto;
+  transform: translateY(-50%);
+  font-family: "Metamorphous", Georgia, "Times New Roman", serif !important;
+  font-size: clamp(9px, calc(11px * var(--sb-scale-eff, 1)), 19px) !important;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.95), 0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+#root .sb-skill-btn .sb-skill-name {
+  padding-right: calc(78px * var(--sb-scale-eff, 1)) !important;
+  padding-left: calc(58px * var(--sb-scale-eff, 1)) !important;
+}
+
+/* codex:2026-08-01T09:30:10+02:00 — Die Topbar ist selbst nur noch Layoutschale. Der vom Chef
+   markierte umlaufende Holzrahmen entfällt; die einzelnen Iron-Tabs tragen das gesamte Chrome. */
+#root .topbar::before {
+  content: none !important;
+  display: none !important;
+  border-image: none !important;
+}
+
+/* codex:2026-08-01T09:30:10+02:00 — `.ds-button` brachte zusätzlich zum neuen Eisenrand noch
+   seinen alten Holzrahmen als Pseudoelement mit. Beim Kampfausklapper wird dieses Doppel-Chrome
+   vollständig abgeschaltet; seine Fassung kommt ausschließlich vom Element selbst. */
+#root .sb-combat-toggle::before {
+  content: none !important;
+  display: none !important;
+  border-image: none !important;
+}
+
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-frame-v: clamp(5px, calc(8px * var(--tb-scale, 1)), 14px);
+  --gw-nav-frame-h: clamp(8px, calc(12px * var(--tb-scale, 1)), 20px);
+  --gw-nav-tile-size: clamp(176px, calc(256px * var(--tb-scale, 1)), 352px);
+  --gw-nav-surface: url("../assets/bg_tileable_wood.webp");
+  border-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 28 !important;
+  border-image-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: stretch !important;
+  background-color: #100b08 !important;
+  background-image:
+    linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)),
+    var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, repeat !important;
+}
+
+/* codex:2026-07-31T23:59:50+02:00 — Materialoverride bewusst nach dem letzten skalierenden
+   Topbar-Rahmenblock; nur so kann kein älterer Holzwert die kühle Schieferfläche zurücksetzen. */
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-color: #151a1d !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(155, 117, 66, 0.09), transparent 66%),
+    linear-gradient(rgba(9, 13, 16, 0.18), rgba(3, 6, 8, 0.38)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+}
+
+/* codex:2026-08-01T08:25:32+02:00 — Chef-Auswahl 02 „Bronze-Lipped Iron“ als echte
+   9-Slice-Navigation. Die 96-px-Ecken bleiben unverzerrt, die nahtlosen Mittelkanten
+   werden wiederholt; Footeraktionen behalten bewusst ihre warme Ironwood-Familie. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:focus-visible,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
+  --gw-nav-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --gw-nav-frame-width: clamp(9px, calc(14px * var(--sb-scale-eff, 1)), 20px);
+  border-width: var(--gw-nav-frame-width) !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-width: var(--gw-nav-frame-width) !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+}
+
+/* codex:2026-08-01T08:25:32+02:00 — Die flachere Topbar nutzt dieselbe Framefamilie
+   mit eigener skalierender Vertikal-/Horizontalstärke und identischer Slice-Geometrie. */
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --gw-nav-frame-v: clamp(7px, calc(11px * var(--tb-scale, 1)), 16px);
+  --gw-nav-frame-h: clamp(10px, calc(15px * var(--tb-scale, 1)), 22px);
+  border-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+}
+
+/* codex:2026-08-01T08:48:51+02:00 — Das neue Eisenchrome bleibt optisch kräftig, belegt im
+   Layout aber nur eine schlanke Randzone. Dadurch gewinnen Sidebartext und Skill-Art wieder
+   echte Innenhöhe, ohne dass der freigegebene 9-Slice-Rahmen kleiner gemalt wird. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:focus-visible,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
+  --gw-nav-frame-layout: clamp(5px, calc(7px * var(--sb-scale-eff, 1)), 10px);
+  --gw-nav-frame-width: clamp(10px, calc(14px * var(--sb-scale-eff, 1)), 20px);
+  min-height: clamp(56px, calc(62px * var(--sb-scale-eff, 1)), 92px) !important;
+  border-width: var(--gw-nav-frame-layout) !important;
+  border-image-width: var(--gw-nav-frame-width) !important;
+}
+
+/* codex:2026-08-01T08:48:51+02:00 — Der Icon-Owner nutzt die freigelegte Innenhöhe vollständig.
+   Die Bilder skalieren innerhalb ihrer Box und werden nicht mehr an Ober-/Unterkante gekappt. */
+#root .sb-skill-icon-wrap {
+  top: calc(6px * var(--sb-scale-eff, 1)) !important;
+  bottom: calc(6px * var(--sb-scale-eff, 1)) !important;
+  width: clamp(34px, calc(44px * var(--sb-scale-eff, 1)), 68px) !important;
+  overflow: hidden !important;
+}
+
+#root .sb-skill-icon-img {
+  width: clamp(28px, calc(38px * var(--sb-scale-eff, 1)), 62px) !important;
+  height: clamp(28px, calc(38px * var(--sb-scale-eff, 1)), 62px) !important;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+#root .sb-skill-name {
+  padding-inline: calc(56px * var(--sb-scale-eff, 1)) !important;
+  line-height: 1.15;
+}
+
+/* codex:2026-08-01T08:48:51+02:00 — Topbar-Tabs füllen die vorhandene Barhöhe, während der
+   schmalere Layout-Rand mehr Beschriftungsraum lässt. Das sichtbare Chrome behält seine Stärke. */
+#root .topbar-entry {
+  align-self: stretch;
+}
+
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-frame-layout-v: clamp(4px, calc(6px * var(--tb-scale, 1)), 9px);
+  --gw-nav-frame-layout-h: clamp(6px, calc(9px * var(--tb-scale, 1)), 13px);
+  height: 100%;
+  min-height: 0 !important;
+  padding: 0 calc(8px * var(--tb-scale, 1)) !important;
+  border-width: var(--gw-nav-frame-layout-v) var(--gw-nav-frame-layout-h) !important;
+  border-image-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  line-height: 1.18;
+}
+
+/* codex:2026-08-01T08:48:51+02:00 — Fast schwarzer, nahtloser Basalt ersetzt das helle
+   Teppichgrau. Eine schwache warme Reflexion verbindet die Fläche mit der Bronzelippe. */
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:focus-visible,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active,
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-color: #101315 !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.11), transparent 72%),
+    linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.32)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+}
+
+/* codex:2026-08-01T09:08:19+02:00 — Die ruhige, dunkel-warme Gravewood-Fläche ersetzt das
+   schwarze Rosenmuster der Sidebar-Schale. Sie bleibt bewusst hinter den kühlen Eisenbuttons. */
+#root .sidebar {
+  background-color: #100b08;
+  background-image:
+    linear-gradient(rgba(7, 7, 8, 0.22), rgba(3, 3, 4, 0.42)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+  background-position: center, 0 0;
+  background-size: auto, 320px 320px;
+  background-repeat: no-repeat, repeat;
+}
+
+/* codex:2026-08-01T12:18:00+02:00 — Die komplette Topbar-Schale nutzt nun dieselbe warme,
+   ruhige Gravewood-Fläche wie die Sidebar; das alte schwarze Rosenmuster bleibt nirgends hinter
+   den einzelnen Navigationstabs sichtbar. */
+#root .topbar {
+  background-color: #100b08 !important;
+  background-image:
+    linear-gradient(rgba(7, 7, 8, 0.22), rgba(3, 3, 4, 0.42)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 320px 320px !important;
+  background-repeat: no-repeat, repeat !important;
+}
+
+/* codex:2026-08-01T09:08:19+02:00 — Nahtbereinigtes Runtime-Derivat nur für die sichtbaren
+   Navigationsschalen: Die 28-px-Ecken schließen nun direkt an die geraden Holzleisten an. */
+#root .sidebar::before,
+#root .topbar::before {
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") !important;
+}
+
+/* codex:2026-08-01T09:08:19+02:00 — Der schmale Kampfausklapper gehört vollständig zur
+   neuen Eisenfamilie; seine kleine Fläche erhält eine kompakte, unverzerrte 9-Slice-Fassung. */
+#root .sb-combat-toggle,
+#root .sb-combat-toggle:hover,
+#root .sb-combat-toggle:focus-visible,
+#root .sb-combat-toggle:active,
+#root .sb-combat-toggle.open {
+  --gw-nav-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  width: clamp(28px, calc(34px * var(--sb-scale-eff, 1)), 50px) !important;
+  min-height: 0 !important;
+  align-self: stretch;
+  padding: 0 !important;
+  border-style: solid !important;
+  border-color: transparent !important;
+  border-width: clamp(5px, calc(7px * var(--sb-scale-eff, 1)), 10px) !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-width: clamp(9px, calc(12px * var(--sb-scale-eff, 1)), 17px) !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+  background-color: #101315 !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.11), transparent 72%),
+    linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.32)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 176px 176px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  box-shadow: inset 0 0 0 1px rgba(202, 139, 66, 0.12), 0 1px 3px rgba(0, 0, 0, 0.65) !important;
+}
+
+#root .sb-combat-toggle:hover,
+#root .sb-combat-toggle.open {
+  background-color: #181b1d !important;
+  filter: brightness(1.08);
+}
+
+#root .sb-combat-toggle-chevron {
+  color: #b99a58;
+  filter: drop-shadow(0 1px 1px #000);
+}
+
+/* codex:2026-08-01T09:08:19+02:00 — Vertikale Innenluft hält die kräftigen Topbar-Ecken
+   von Fensterkante und Statusleiste fern, ohne die gesamte Leistenhöhe aufzublähen. */
+#root .topbar {
+  box-sizing: border-box;
+  padding-top: clamp(3px, calc(4px * var(--tb-scale, 1)), 6px);
+  padding-bottom: clamp(3px, calc(4px * var(--tb-scale, 1)), 6px);
+}
+
+/* codex:2026-08-01T09:08:19+02:00 — Die fünf Systemaktionen bleiben warm, werden aber auf
+   tiefes, fast verkohltes Leder abgedunkelt, damit Text und Icons nicht im hellen Braun ertrinken. */
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+),
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):hover,
+#root :is(
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
+):active {
+  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-leather.webp");
+  background-color: #160d09 !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(151, 87, 41, 0.11), transparent 72%),
+    linear-gradient(rgba(22, 10, 7, 0.22), rgba(5, 3, 3, 0.48)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 224px 224px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-blend-mode: normal !important;
+}
+
+/* codex:2026-08-01T13:28:00+02:00 — Topbar-Zellen teilen die verfügbare Breite strikt gleich.
+   Die Beschriftung skaliert relativ zu ihrer eigenen Zelle; Textinhalt darf nie mehr die
+   Buttonbreite bestimmen. Ein skalierender Zwischenraum trennt die Eisenrahmen sauber, ohne die
+   Gleichverteilung aufzubrechen. Die Oberfläche bleibt dieselbe Basaltfamilie der Sidebar. */
+#root .topbar {
+  display: flex;
+  gap: clamp(3px, 0.32vw, 8px);
+  padding-inline: clamp(2px, 0.18vw, 5px);
+  overflow-x: hidden;
+}
+
+#root .topbar-entry {
+  flex: 1 1 0 !important;
+  width: 0;
+  min-width: 0 !important;
+  container-type: inline-size;
+}
+
+#root .topbar-divider {
+  display: none !important;
+}
+
+#root .topbar-item,
+#root .topbar-item:hover,
+#root .topbar-item:focus-visible,
+#root .topbar-item:active,
+#root .topbar-item.active {
+  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  width: 100%;
+  min-width: 0 !important;
+  max-width: none;
+  flex: 1 1 auto;
+  padding-inline: clamp(4px, 4cqw, 12px) !important;
+  background-color: #101315 !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.11), transparent 72%),
+    linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.32)),
+    var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 192px 192px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+}
+
+#root .topbar-label {
+  display: block !important;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  font-size: clamp(7px, 8.5cqw, 22px) !important;
+  line-height: 1.08;
+  white-space: nowrap;
+  text-overflow: clip;
+}

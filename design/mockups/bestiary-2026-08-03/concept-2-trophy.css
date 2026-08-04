@@ -1,0 +1,270 @@
+/* ═══════════════════════════════════════════════════════════
+   KONZEPT 2 — TROPHÄENWAND
+   Dunkle Holzwand mit aufgehängten Plaketten je Zone; besiegte Monster als gerahmte
+   Trophäen-Porträts, Kill-Meilensteine als Gravuren, Unentdecktes als leere Plakette
+   mit Silhouette. Drops hängen als kleine Fundstück-Anhänger neben der Haupttrophäe.
+   ═══════════════════════════════════════════════════════════ */
+
+* { box-sizing: border-box; }
+
+:root {
+  --wood-dark: #1c130b;
+  --brass: #b8933f;
+  --brass-bright: #e0bc6a;
+  --plaque: #3a2c1a;
+  --plaque-edge: #6b5230;
+  --velvet: #4a1418;
+  --velvet-edge: #7a2228;
+  --text-warm: #e8d9b8;
+  --text-dim: #a89670;
+  --armor: #b8933f;
+  --evasion: #5a9e5a;
+  --ward: #4be6e0;
+}
+
+html, body { margin: 0; background: var(--wood-dark); }
+body { font-family: "Cinzel", Georgia, serif; color: var(--text-warm); padding-bottom: 60px; }
+
+#app {
+  background:
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(80, 56, 20, 0.25), transparent 60%),
+    linear-gradient(rgba(6, 4, 2, 0.55), rgba(6, 4, 2, 0.7)),
+    url("../../../apps/client/src/renderer/assets/bg_tileable_wood.webp");
+  background-size: auto, auto, 380px 380px;
+  padding: 30px 26px 70px;
+}
+
+.hall-header {
+  max-width: 1780px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 18px 26px;
+  background: linear-gradient(180deg, #2c2013, #1a130b);
+  border: 3px solid var(--plaque-edge);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(184, 147, 63, 0.25);
+}
+.hall-header h1 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: 0.06em;
+  color: var(--brass-bright);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+.hall-header .subtitle { font-size: 13px; color: var(--text-dim); font-style: italic; letter-spacing: 0.03em; margin-top: 4px; }
+
+.hall-plates { display: flex; gap: 14px; }
+.hall-plate {
+  padding: 10px 18px;
+  background: linear-gradient(180deg, #6b5230, #4a3820);
+  border: 1px solid var(--brass);
+  text-align: center;
+  min-width: 90px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+}
+.hall-plate strong { display: block; font-size: 20px; color: var(--brass-bright); }
+.hall-plate span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+
+.hall-toolbar {
+  max-width: 1780px;
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.tab-hooks { display: flex; gap: 4px; }
+.tab-hook {
+  font-family: "Cinzel", serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 20px;
+  background: var(--plaque);
+  border: 1px solid var(--plaque-edge);
+  color: var(--text-dim);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+.tab-hook.active { background: linear-gradient(180deg, #6b5230, #4a3820); color: var(--brass-bright); border-color: var(--brass); }
+
+.rope-toggle {
+  margin-left: auto;
+  font-family: "Cinzel", serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 16px;
+  background: var(--plaque);
+  border: 1px solid var(--plaque-edge);
+  color: var(--text-dim);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+.rope-toggle.active { background: var(--velvet); color: var(--text-warm); border-color: var(--velvet-edge); }
+
+.legend-plate {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 10px 16px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--plaque-edge);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.legend-plate .lp-title { color: var(--brass); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.08em; }
+.legend-plate .lp-item b { color: var(--text-warm); }
+
+/* ─── Wandabschnitte je Zone ─── */
+.wall-section { max-width: 1780px; margin: 0 auto 30px; }
+.zone-plank {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 22px;
+  margin-bottom: 18px;
+  background: linear-gradient(180deg, #4a3820, #2c2013);
+  border-top: 2px solid #6b5230;
+  border-bottom: 4px solid #120c06;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+  cursor: pointer;
+}
+.zone-plank .zp-name { font-size: 21px; color: var(--brass-bright); letter-spacing: 0.04em; flex: 1; min-width: 160px; }
+.zone-plank .zp-levels { font-size: 12px; color: var(--text-dim); border: 1px solid var(--plaque-edge); padding: 2px 9px; }
+.zone-plank .zp-progress { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.zone-plank .zp-bar { width: 100px; height: 5px; background: rgba(0,0,0,0.4); }
+.zone-plank .zp-bar > span { display: block; height: 100%; background: linear-gradient(90deg, #6b5230, var(--brass-bright)); }
+.zone-plank .zp-caret { color: var(--brass); width: 14px; }
+
+.wall-section.locked .zone-plank { filter: grayscale(0.5) brightness(0.7); }
+.wall-section.locked .trophy-grid { position: relative; }
+.wall-section.locked .rope-notice {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; margin-bottom: 14px;
+  background: linear-gradient(90deg, var(--velvet), #3a1012, var(--velvet));
+  border-top: 2px dashed var(--velvet-edge);
+  border-bottom: 2px dashed var(--velvet-edge);
+  color: #e8c8c8;
+  font-size: 13px;
+  font-style: italic;
+}
+.rope-notice .lock-icon { font-size: 16px; }
+
+.trophy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 20px 16px;
+}
+
+/* ─── Einzelne Trophäe ─── */
+.trophy {
+  background: linear-gradient(180deg, #362715, #241a0e);
+  border: 1px solid var(--plaque-edge);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+  padding: 14px 12px 12px;
+  text-align: center;
+  position: relative;
+}
+.trophy .nail { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #d8c088, #6b5230); box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+
+.trophy-medallion {
+  position: relative;
+  width: 122px; height: 122px;
+  margin: 6px auto 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 38%, #caa96a 0%, #8a6a34 55%, #4a3820 100%);
+  border: 4px solid var(--brass);
+  box-shadow: 0 0 0 2px #1a1108, 0 6px 14px rgba(0,0,0,0.55), inset 0 0 14px rgba(0,0,0,0.4);
+  display: flex; align-items: flex-end; justify-content: center;
+  overflow: hidden;
+}
+.trophy-medallion img { max-width: 88%; max-height: 92%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.55)); }
+.trophy-medallion .qmark { font-family: "Cinzel", serif; font-size: 34px; color: rgba(20,14,6,0.55); }
+.trophy.unknown .trophy-medallion { background: radial-gradient(circle at 50% 38%, #5a4a30 0%, #3a2c1a 60%, #241a0e 100%); border-color: #5a4a30; }
+
+.trophy .lvl-tag {
+  position: absolute; top: 6px; right: 6px;
+  background: rgba(10,7,4,0.85); color: var(--brass-bright);
+  font-size: 10px; padding: 2px 6px; border: 1px solid var(--plaque-edge);
+}
+.trophy .enrage-tag { position: absolute; top: 6px; left: 6px; font-size: 12px; }
+
+.trophy-name {
+  font-size: 15px;
+  color: var(--text-warm);
+  margin-bottom: 3px;
+  min-height: 19px;
+}
+.trophy-defense {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 5px; cursor: help;
+}
+.trophy-defense.dt-armor { color: var(--armor); }
+.trophy-defense.dt-evasion { color: var(--evasion); }
+.trophy-defense.dt-ward { color: var(--ward); }
+
+.trophy-kills {
+  font-size: 12px;
+  color: var(--brass-bright);
+  margin-bottom: 4px;
+  letter-spacing: 0.03em;
+}
+.trophy-kills.dim { color: var(--text-dim); }
+
+.gravure-row {
+  display: flex; justify-content: center; gap: 6px; flex-wrap: wrap;
+  font-size: 9px; color: #8a7850; margin-bottom: 5px;
+}
+.gravure-row .reached { color: #cfa84a; font-weight: 700; }
+
+.stat-plate {
+  display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+  font-size: 10px; color: var(--text-dim); margin-bottom: 4px;
+}
+.stat-plate b { color: var(--text-warm); }
+
+.status-plate { display: flex; justify-content: center; gap: 5px; font-size: 11px; margin-bottom: 5px; cursor: help; }
+
+.pendant-row {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 6px;
+  margin: 8px 0;
+  padding: 8px 4px 4px;
+  border-top: 1px solid rgba(184,147,63,0.25);
+}
+.pendant {
+  position: relative;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #2c2013;
+  border: 1px solid var(--plaque-edge);
+  display: flex; align-items: center; justify-content: center;
+}
+.pendant img { width: 18px; height: 18px; object-fit: contain; }
+.pendant.undiscovered img { filter: brightness(0) opacity(0.55); }
+.pendant.undiscovered::after { content: "?"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #a89670; }
+.pendant .chain { position: absolute; top: -6px; left: 50%; width: 1px; height: 6px; background: var(--plaque-edge); }
+
+.trophy .unknown-caption {
+  font-size: 11px; color: var(--text-dim); font-style: italic; padding: 6px 2px 0;
+}
+
+.hunt-btn {
+  display: block; width: 100%; margin-top: 8px;
+  padding: 7px 4px;
+  font-family: "Cinzel", serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  background: linear-gradient(180deg, #8a6a34, #5c4218);
+  color: #f2e3b4; border: 1px solid var(--brass);
+  cursor: pointer;
+}
+.hunt-btn[disabled] { background: #2c2013; color: #6b5c40; border-color: var(--plaque-edge); cursor: default; }
+.hunt-note { font-size: 9px; color: #c98b6b; font-style: italic; margin-top: 3px; }
+
+/* ─── Ehrenwand (Champions) ─── */
+.honor-trophy .trophy-medallion { border-color: var(--brass-bright); box-shadow: 0 0 0 2px #1a1108, 0 0 16px rgba(224,188,106,0.35), 0 6px 14px rgba(0,0,0,0.55); }
+.honor-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px; font-size: 10px; margin-top: 4px; }
+.honor-stats div { display: flex; justify-content: space-between; border-bottom: 1px dotted var(--plaque-edge); }
+.honor-stats b { color: var(--brass-bright); }

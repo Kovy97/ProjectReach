@@ -1,0 +1,10 @@
+import { chromium } from "@playwright/test";
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+await page.addInitScript(() => localStorage.setItem("hearthforge:locale", "en"));
+await page.goto("http://localhost:5253", { waitUntil: "domcontentloaded" });
+await page.waitForSelector(".menu-nav", { timeout: 15000 });
+const html = await page.locator(".menu-nav").innerHTML();
+console.log(html);
+await page.screenshot({ path: "ui-audit/sweep2-t4-debug.png" });
+await browser.close();

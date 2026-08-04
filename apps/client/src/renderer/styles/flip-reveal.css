@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════════════════════════
+   FLIP-REVEAL — geteilter Silhouette→Enthüllt-3D-Flip (Welle PP, Erstfund-Flip)
+   Component-scoped file, imported directly by components/FlipReveal.tsx. Reines Transform/
+   Opacity (kein Glow auf die enthüllte Fläche selbst — Equipment-Art bleibt glow-frei, s.
+   Studio-Regel), CSS-`transition` statt Keyframe: läuft sauber aus (kein `forwards` nötig, die
+   Endstellung IST der normale Ruhezustand der `.flipped`-Klasse) und verschwindet nach Ablauf aus
+   `getAnimations()`.
+   ═══════════════════════════════════════════════════════════ */
+
+.flip-reveal {
+  position: relative;
+  perspective: 800px;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-reveal-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flip-reveal-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.flip-reveal-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-reveal-face--back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-reveal-inner {
+    transition: none;
+  }
+}

@@ -1,0 +1,2944 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════
+   CHARACTER — old char-sheet, new cs-* char-sheet, portrait picker.
+   Main menu + character creation moved to menu.css / creation.css (Task #282).
+   ═══════════════════════════════════════════════════════════ */
+
+/* Charaktererstellung + Hauptmenü: siehe menu.css / creation.css (Task #282 Redesign).
+   Portrait-Galerie-Modal (geteilt mit CharacterPage) bleibt hier — siehe unten. */
+
+.portrait-thumb {
+  width: 104px;
+  height: 140px;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: radial-gradient(circle at 50% 26%, var(--panel-hover), var(--slot));
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+
+.portrait-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.portrait-thumb:hover {
+  border-color: var(--accent-dim);
+  transform: translateY(-2px);
+}
+
+.portrait-thumb.active {
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+
+/* ─── Portrait-Galerie-Modal (Task #250: citadelifiziert) ────
+   Holzrahmen + dunkler bg_black-Grund kommen jetzt von der geteilten `.modal`-
+   Basisklasse (modals.css — 9-slice `wooden_frame_with_corners.png`), die der
+   Aufrufer zusätzlich zu `.portrait-gallery-modal` setzt (siehe PortraitPickerModal.tsx).
+   Der Compound-Selektor `.modal.portrait-gallery-modal` ist nötig, damit unsere
+   Größen-Overrides `.modal` schlagen — character.css wird VOR modals.css importiert,
+   bei gleicher Spezifität würde sonst `.modal` (spätere Cascade-Position) gewinnen. */
+.modal.portrait-gallery-modal {
+  position: relative;
+  /* Deutlich breiter als das 480px-Standard-`.modal` — mehr Portraits pro Reihe,
+     weniger Scroll-Bedarf (Chef-Feedback: "aktuell schmal/hoch mit Scroll"). */
+  max-width: min(94vw, 1080px);
+  max-height: 88vh;
+  padding: 30px 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.portrait-gallery-title {
+  margin: 0;
+  font-size: 22px;
+  font-family: var(--font-head);
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.portrait-gallery-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Auto-fill statt fester 3 Spalten — im breiteren Modal passen so 6+ Portraits pro
+   Reihe (skaliert responsiv mit der Fenstergröße statt hart 3 Spalten zu erzwingen). */
+.portrait-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+/* Portraits sind transparente, freigestellte Ganzkörper-Chars auf durchsichtigem Grund —
+   brauchen einen dunklen Slot-Hintergrund (statt der alten Pasture-Kampfszene) damit
+   die Silhouetten lesbar bleiben. Größer als der Basis-`.portrait-thumb` (war 140px). */
+.portrait-gallery-grid .portrait-thumb {
+  width: 100%;
+  height: 240px;
+  background:
+    radial-gradient(ellipse at 50% 32%, var(--panel-hover), var(--slot) 72%),
+    url("../assets/bg_black.webp") repeat;
+}
+
+/* `contain` statt `cover`: volle Figur sichtbar (nicht mehr oben beschnitten) —
+   passt zu den neuen freigestellten Ganzkörper-Portraits. */
+.portrait-gallery-grid .portrait-thumb img {
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.portrait-gallery-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Hauptmenü: siehe menu.css (Task #282 Redesign). */
+
+/* ─── Charakter-Sheet (3-Spalten-Layout) ────────────────── */
+.char-sheet {
+  display: grid;
+  /* Chef 2026-07-05 (Bild #41): Character +10% (320→352), Equipment −25% (400→300), Inventar (1fr)
+     nimmt den frei werdenden Platz → größer. */
+  grid-template-columns: 352px 300px 1fr;
+  height: 100%;
+  background: linear-gradient(180deg, var(--panel) 0%, var(--bg) 100%);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.char-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.char-col-left {
+  border-right: 1px solid var(--border);
+}
+
+.char-hero-block {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.char-portrait-big {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: 42vh;
+  flex-shrink: 0;
+  background: radial-gradient(ellipse at 50% 26%, var(--panel-hover) 0%, var(--slot) 78%);
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+.char-portrait-big img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.7));
+}
+
+.char-portrait-nameplate {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 12px 12px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+
+.hero-name {
+  font-size: 22px;
+  margin: 0;
+  text-align: center;
+  color: var(--text);
+  text-shadow: 0 1px 4px #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.hero-title {
+  color: var(--muted);
+  font-size: 15px;
+  margin-top: 2px;
+}
+
+.char-vitals-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-deep);
+}
+
+.portrait-silhouette {
+  font-size: 120px;
+  opacity: 0.35;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.char-points {
+  font-size: 17px;
+  color: var(--accent-2);
+}
+
+.char-buffs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 14px;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.buff-badge {
+  font-size: 15px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--slot);
+  border: 1px solid var(--accent-dim);
+  color: var(--accent-2);
+}
+
+.vitals {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.vital-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+.vital-bar {
+  height: 16px;
+  /* eckig + Holz-9-Slice-Rahmen wie die Combat-HP/Mana-Leisten. */
+  border-radius: 0;
+  border-style: solid;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  background: var(--slot);
+  overflow: hidden;
+}
+
+.vital-fill {
+  height: 100%;
+}
+
+.hp .vital-fill {
+  background: linear-gradient(90deg, #6e2c24, var(--danger));
+}
+
+.mp .vital-fill {
+  background: linear-gradient(90deg, #244a63, var(--accent));
+}
+
+/* Rüstungs-Trinität (Spec §8) — Stoff-Ward: arkanes Cyan/Violett, eigene Zeile im Vitals-Block
+   nur bei maxWard > 0 (siehe CharacterPage.tsx). Gleiche Farbfamilie wie die Combat-Ward-Leiste. */
+.ward .vital-fill {
+  background: linear-gradient(90deg, #3d1a68, #4be6e0);
+}
+
+.char-stats-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.csp-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.csp-heading {
+  font-size: 17px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.attr-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 10px;
+}
+
+.attr-tiles-compact {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.attr-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 10px;
+  background: linear-gradient(160deg, var(--panel-hover), var(--slot));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.12s;
+}
+
+.attr-tile:hover {
+  border-color: var(--border-bright);
+}
+
+.attr-tile-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 20px;
+}
+
+.attr-tile-abbr {
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.attr-tile-val {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-2);
+}
+
+.attr-tile-name {
+  font-size: 15px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.attr-tile-plus {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-dim);
+  background: var(--panel);
+  color: var(--accent-2);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.attr-tile-plus:hover {
+  border-color: var(--accent);
+  background: var(--panel-hover);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 17.5px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.stat-row-sm {
+  font-size: 17px;
+  padding: 6px 0;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row .val {
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+.set-row {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.set-name {
+  display: block;
+  color: var(--accent-2);
+  font-weight: 600;
+  /* Task #336 (Mess-Befund): hatte KEIN eigenes font-size — erbte die volle Body-Schrift (21px,
+     line-height 1.45 → ~30px hohe Zeile). In der knappen .cs-col-stats-Spalte (1080p) drückte
+     das den ganzen SET-BONUS-Block auf, während der Kampfwerte-Grid daneben um Restplatz kämpfte
+     (s. .cs-combat-grid) — Hauptursache für den vom Chef gemeldeten Overlap bei einem echten
+     aktiven Set. Eigene, an die anderen Panel-Texte angeglichene Größe + enge Zeilenhöhe. */
+  font-size: clamp(11px, 1.15vh, 14px);
+  line-height: 1.15;
+}
+
+.set-bonus {
+  display: block;
+  font-size: 14px;
+  line-height: 1.15;
+  margin-top: 2px;
+}
+
+.val-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attr-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-dim);
+  background: var(--panel-hover);
+  color: var(--accent-2);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.attr-mini:hover {
+  border-color: var(--accent);
+}
+
+.attr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 16px;
+}
+
+.char-col-mid {
+  border-right: 1px solid var(--border);
+  align-items: center;
+  padding: 20px 20px 16px;
+}
+
+.char-col-heading {
+  width: 100%;
+  font-size: 19px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.block-heading {
+  width: 100%;
+  font-size: 21px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  text-align: left;
+}
+
+.doll-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.doll {
+  --doll-slot: min(96px, 11vh);
+  display: grid;
+  grid-template-columns: repeat(3, var(--doll-slot));
+  grid-template-rows: repeat(6, var(--doll-slot));
+  gap: min(15px, 1.7vh);
+  justify-content: center;
+}
+
+.slot {
+  background-color: var(--slot);
+  background-image: var(--inv-slot-bg, none);
+  background-size: 130% 130%;
+  background-position: center;
+  background-origin: border-box;
+  border: none;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+  box-shadow: none;
+}
+
+.slot:not(.filled) {
+  background-color: var(--slot);
+}
+
+.slot:hover {
+  box-shadow: var(--glow);
+}
+
+.slot-icon {
+  font-size: min(44px, 5vh);
+}
+
+.slot:not(.filled) .slot-icon {
+  filter: grayscale(1) brightness(0);
+  opacity: 0.5;
+}
+
+.slot.filled {
+  background-image: var(--inv-slot-bg, none);
+  background-size: 130% 130%;
+}
+
+.slot-label {
+  position: absolute;
+  bottom: 9%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.slot-label-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px;
+  line-height: 1.2;
+}
+
+.helmet { grid-column: 2; grid-row: 1; }
+.amulet { grid-column: 2; grid-row: 2; }
+.offhand { grid-column: 1; grid-row: 3; }
+.body { grid-column: 2; grid-row: 3; }
+.mainhand { grid-column: 3; grid-row: 3; }
+.legs { grid-column: 2; grid-row: 4; }
+.gloves { grid-column: 1; grid-row: 5; }
+.boots { grid-column: 2; grid-row: 5; }
+.cape { grid-column: 3; grid-row: 5; }
+.ring1 { grid-column: 1; grid-row: 6; }
+.ring2 { grid-column: 3; grid-row: 6; }
+
+.equip-caption {
+  flex-shrink: 0;
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.char-col-right {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 16px;
+}
+
+.char-inv-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.char-bags-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.bag-label {
+  font-size: 15px;
+  color: var(--muted);
+  margin-right: 2px;
+}
+
+.bag-slot {
+  width: 52px;
+  height: 52px;
+  background-color: var(--slot);
+  background-image: var(--inv-slot-bg, none);
+  background-size: 130% 130%;
+  background-position: center;
+  background-origin: border-box;
+  border: none;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: none;
+  transition: box-shadow 0.15s;
+}
+
+.bag-slot:hover {
+  box-shadow: var(--glow);
+}
+
+.bag-slot .slot-icon {
+  font-size: 26px;
+  filter: grayscale(1) brightness(0);
+  opacity: 0.5;
+}
+
+.bag-slot.filled {
+  background-image: var(--inv-slot-bg, none);
+  background-size: 130% 130%;
+}
+
+.bag-slot.filled .slot-icon {
+  filter: none;
+  opacity: 1;
+}
+
+.inv-count {
+  font-size: 15px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 74px);
+  gap: 10px;
+  max-height: 22vh;
+  overflow-y: auto;
+}
+
+.inv-grid-right {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  align-content: start;
+}
+
+.inv-slot {
+  width: 74px;
+  height: 74px;
+  /* Universeller Slot-Rahmen (Chef): slot_universal.png (gotischer Eck-Spike-Rahmen + Stein-
+     Innenfläche, baked-in) statt Holz-9-Slice-Rahmen + flacher --slot-Farbe. background-size:
+     cover füllt den Slot randlos, ganz gleich ob leer oder befüllt. Der Rarity-Glow liegt als
+     eigener --slot-glow-Layer DARÜBER (siehe components.css .inv-slot.rarity-*.filled), statt
+     den Rahmen bei gefüllten Slots zu überschreiben. */
+  --slot-glow: none;
+  background-image: var(--slot-glow), url("../assets/ui/citadel/box-inventory/slot_universal.webp");
+  background-size: 100% 100%, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px;
+  text-align: center;
+  position: relative;
+  box-shadow: none;
+  /* Perf (#206/P2): Bank/Inventar können viele hundert Slots haben — Offscreen-Slots
+     überspringen Layout/Paint bis sie in den Viewport scrollen. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 74px;
+}
+
+.inv-slot.equip {
+  cursor: pointer;
+}
+
+.inv-slot.equip:hover {
+  box-shadow: var(--glow);
+}
+
+.inv-icon {
+  font-size: 32px;
+}
+
+.inv-name {
+  font-size: 14px;
+  line-height: 1.15;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.inv-qty {
+  position: absolute;
+  bottom: 13%;
+  right: 18%;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px #000;
+}
+
+.sheet-title {
+  font-size: 22px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 16px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-deep);
+}
+
+@media (max-width: 1100px) {
+  .char-sheet {
+    grid-template-columns: 308px 270px 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .char-sheet {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .char-col-left {
+    grid-column: 1 / -1;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: 55vh;
+    flex-direction: row;
+    overflow: hidden;
+  }
+  .char-hero-block {
+    flex: 0 0 220px;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .char-portrait-big {
+    max-height: 100%;
+    aspect-ratio: unset;
+    flex: 1;
+  }
+  .char-stats-panel {
+    flex: 1;
+    min-width: 0;
+  }
+  .char-col-mid {
+    grid-column: 1;
+    grid-row: 2;
+    border-bottom: none;
+  }
+  .char-col-right {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .char-sheet {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    overflow-y: auto;
+  }
+  .char-col-left {
+    grid-column: 1;
+    flex-direction: column;
+    max-height: none;
+    height: auto;
+    border-bottom: 1px solid var(--border);
+  }
+  .char-hero-block {
+    flex: unset;
+    border-right: none;
+  }
+  .char-portrait-big {
+    aspect-ratio: 3 / 4;
+    max-height: 50vw;
+  }
+  .char-col-mid,
+  .char-col-right {
+    grid-column: 1;
+    grid-row: unset;
+    border-right: none;
+  }
+  .char-col-mid {
+    border-bottom: 1px solid var(--border);
+  }
+  .inv-grid-right {
+    max-height: 40vh;
+  }
+}
+
+/* ─── Character Sheet v2 (Gold-Panel 3-Spalten Layout) ─── */
+
+.cs-layout {
+  /* Chef: keine hellbläuliche Schrift im Character-Screen → reines Weiß. */
+  --text: #ffffff;
+  /* Chef 2026-07-09: die eigene Steinwand-Kopie malte über den neuen Holz-Body („außerhalb des
+     Holzrahmens noch etwas Stein") → TRANSPARENT: der App-Body (base.css, jetzt Holz) scheint
+     durch — nahtlos per Konstruktion, auch bei künftigen Textur-Wechseln. */
+  background: transparent;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1.55fr;
+  height: 100%;
+  gap: 6px;
+  padding: 6px;
+  overflow: hidden;
+}
+
+/* Mittlere Spalte: EIN Tab-Panel (Task #340 — war vorher ein vertikaler Stack aus zwei Containern,
+   Equipment oben ~68% / Combat-Stats unten ~32%; s. `.cs-col-tabpanel`/`.cs-tabbar` weiter unten
+   im eigenen Tab-Block am Dateiende für die neue Struktur). Der Wrapper selbst bleibt (hält die
+   3-Spalten-Grid-Kinderzahl von `.cs-layout` stabil), hat jetzt aber nur noch ein Kind. */
+.cs-col-mid-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.cs-col-mid-stack > .cs-col {
+  min-height: 0;
+}
+/* Task #340: das einzige verbleibende Kind (`.cs-col-tabpanel`) füllt den ganzen Stack — die
+   früheren 2.1/1-Flex-Verhältnisse für die zwei alten Geschwister-Container sind hinfällig, s.
+   `.cs-tabbar`/`.cs-tabpanel-content`-Block am Dateiende. */
+.cs-col-mid-stack > .cs-col-tabpanel {
+  flex: 1 1 0;
+}
+/* Stats-Panel: dunklerer, kühl getönter Hintergrund (anders als bg_black) →
+   weiße Texte + 2×-Icons knallen besser. Holz-ds-frame-Rahmen bleibt.
+   background-size fein: 200px Tile statt nativ 1672px → edle Textur. */
+.cs-col-stats {
+  background:
+    linear-gradient(rgba(9, 11, 17, 0.88), rgba(5, 7, 12, 0.92)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: auto, 200px;
+}
+/* Stats-Panel: dunklerer, kühl getönter Hintergrund (anders als bg_black) →
+   weiße Texte + 2×-Icons knallen besser. Holz-ds-frame-Rahmen bleibt.
+   background-size fein: 200px Tile statt nativ 1672px → edle Textur. */
+.cs-col-stats {
+  background:
+    linear-gradient(rgba(9, 11, 17, 0.88), rgba(5, 7, 12, 0.92)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: auto, 200px;
+}
+
+.cs-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  /* background and border handled by ds-frame border-image */
+}
+
+/* Equipment-Spalte: feiner bg_black Kachelmuster (200px statt nativ 1672px).
+   Überschreibt background-size aus .ds-frame; character.css kommt nach design-system.css. */
+.cs-col-mid {
+  /* Chef 2026-07-02 (2. Iteration): bg_equipment ist als PANEL-Bild gedacht —
+     ausdrücklich STRETCHEN auf Containermaß (Chef-Ausnahme von der Kachel-Regel). */
+  background-image: url("../assets/bg_equipment.webp");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  /* Chef 2026-07-05 (Bild #38): Boden-Padding, damit die unterste Slot-Reihe (Ringe) frei steht
+     und nicht am Rahmen abschneidet — der Doll-Wrap (flex:1) schrumpft entsprechend mit. */
+  padding-bottom: 22px;
+}
+
+.cs-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 5px;
+  flex-shrink: 0;
+}
+
+.cs-panel-header-orn {
+  color: var(--gold);
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.cs-panel-header-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.35;
+}
+
+.cs-panel-header-title {
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-shadow: 0 0 10px rgba(216,192,106,0.4);
+}
+
+.cs-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 6px;
+  flex-shrink: 0;
+}
+
+.cs-section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(216,192,106,0.38), transparent);
+}
+
+.cs-section-title {
+  font-family: var(--font-head);
+  /* Chef-Fix 2026-07-24: fixe 13px wirkten auf 1440p+ verloren — skaliert jetzt sanft mit der
+     Fensterhöhe (bei 1080p ≈ alt, bei 1440p ~18px). */
+  font-size: clamp(13px, 1.25vh, 19px);
+  /* Task #336: geerbte Body-line-height (1.45) — geprüft, unkritisch (die Heading-Zeile ist
+     content-hoch, kein Stretch/Overlap-Risiko wie beim Stats-Grid), aber eng wie die übrigen
+     Panel-Texte macht auch hier den Abstand zu den Zeilen darüber/darunter konsistent knapp. */
+  line-height: 1.15;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.cs-portrait-wrap {
+  position: relative;
+  width: 100%;
+  /* Bild füllt den verbleibenden vertikalen Platz dynamisch: größer im Fullscreen,
+     schrumpft bei wenig Höhe — kein verschwendeter Raum, Stats sitzen unten bündig.
+     Task #283: max-height gedeckelt (war unbegrenzt) — sonst frisst der Portrait-Bereich
+     bei 1920×1080 der Attribut-Reihe darunter den Platz weg (INT/WIS/LCK wurden abgeschnitten,
+     da .cs-col-left nie scrollt). */
+  flex: 1 1 auto;
+  min-height: 120px;
+  /* Chef-Befund 2026-07-09 („warum ist der Character-Screen scrollbar"): 40vh passte nicht mehr,
+     seit Ward-Leiste (Trinität) + Buff-Zeile + Filter-Zeile dazukamen — die linke Spalte trieb
+     die Seite auf 978 px (Viewport-Budget: 923). 36vh bringt alle Spalten zurück unter die Kante. */
+  max-height: 34.5vh;
+  /* Chef 2026-07-02: Wald-Szene als Bühne hinter dem Portrait (bg_charscreen);
+     Szenen-Bild ⇒ cover erlaubt (Kachel-Regel gilt nur für Farb-TEXTUREN).
+     Vignette drüber, damit die Figur lesbar bleibt. */
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(8, 6, 4, 0.08) 0%, rgba(8, 6, 4, 0.55) 88%),
+    url("../assets/bg_charscreen.webp") center / cover no-repeat;
+  overflow: hidden;
+  /* Prominenter Holz-9-Slice-Rahmen ums Charakter-Portrait — größer für mehr Präsenz. */
+  border-style: solid;
+  border-width: 14px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 14px;
+}
+
+/* Task #283: kurze Fensterhöhen-Overrides (Chef-Testauflösung 1280×720) leben gesammelt am
+   Dateiende (s. „SHORT-VIEWPORT OVERRIDES"), NICHT hier — sonst gewinnen spätere, unbedingte
+   Basisregeln (z.B. die .cs-attr-card-Deklaration weiter unten) bei gleicher Spezifität per
+   Kaskaden-Reihenfolge gegen eine hier plazierte @media-Regel. */
+
+.cs-portrait-img {
+  width: 100%;
+  height: 100%;
+  /* Task #254 (Chef, 3. Iteration): `cover` war ZU nah (Generierungs-Unreinheiten stachen hervor).
+     Zurück auf `contain` (ganze Figur, weiter rausgezoomt — Unreinheiten treten zurück, die Wald-
+     Bühne bleibt sichtbar), aber OBEN verankert (`object-position`/`transform-origin: center top`):
+     Kopf bündig am Rahmen-Oberrand. Der dezente scale(1.1) lässt die Füße leicht in den
+     overflow:hidden-Bereich laufen, ohne zu zoomen. Zoom-Stärke = eine Stellschraube (scale). */
+  object-fit: contain;
+  object-position: center top;
+  transform: scale(1.1);
+  transform-origin: center top;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.7));
+}
+
+.cs-portrait-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+  opacity: 0.3;
+}
+
+/* Zahnrad-Button oben links am Portrait (Task #240): öffnet die Portrait-Galerie zum Ändern.
+   Gleicher Citadel-Look wie der Options-Footer-Button (.sb-footer-options in sidebar.css) —
+   Holzrahmen + bg_black-Textur + Gold-Glow-Hover — hier als kompakter reiner Icon-Button statt
+   der breiten Footer-Zeile mit Text. */
+.cs-portrait-settings-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  opacity: 0.85;
+  cursor: pointer;
+  transition: opacity 0.14s, box-shadow 0.14s;
+}
+
+.cs-portrait-settings-btn:hover {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.32);
+}
+
+.cs-portrait-settings-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Eigenes Bild hochladen (Chef 2026-07-11) — gleiche Optik wie der Zahnrad-Button, nur oben
+   RECHTS am Porträt. Das Upload-Icon ist ein Inline-SVG (currentColor → Gold). */
+.cs-portrait-upload-btn {
+  left: auto;
+  right: 8px;
+  color: var(--gold);
+}
+
+.cs-portrait-upload-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.cs-nameplate {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 10px 8px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.cs-hero-name {
+  font-family: var(--font-head);
+  font-size: 17px;
+  letter-spacing: 1px;
+  color: var(--text);
+  text-shadow: 0 1px 6px #000;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cs-hero-level {
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 2px;
+  opacity: 0.85;
+}
+
+.cs-vitals {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 7px 10px 7px;
+  /* Eigener dezent texturierter Hintergrund mit Holzrahmen — kein nackter Strip mehr.
+     Kein horizontales Inset mehr (Chef): soll exakt so breit sein wie .cs-portrait-wrap
+     darüber (das ebenfalls width:100% ohne Margin hat) → bündige Kante links/rechts. */
+  margin: 0 0 6px;
+  border-style: solid;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  background:
+    linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: auto, 200px;
+  flex-shrink: 0;
+}
+
+.vital-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vital-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.hp .vital-icon {
+  color: #c04040;
+}
+
+.mp .vital-icon {
+  color: var(--accent);
+}
+
+.ward .vital-icon {
+  color: #4be6e0;
+}
+
+/* Kosmetik-Sweep T9 (2026-07-12): Wrapper um Vitals+Buffs+Attribute (CharacterPage.tsx) —
+   `display:contents` macht ihn bei >=901px für den Layout-Baum unsichtbar (Kinder verhalten sich
+   wie direkte .cs-col-left-Kinder, bestehendes Aussehen bleibt bit-identisch). Erst die
+   @media(max-width:900px)-Regel weiter unten schaltet ihn auf einen echten flex-column-Block um,
+   der neben dem Porträt seine eigene Spalte bildet — s. dortigen Kommentar für den Bug, den das behebt. */
+.cs-col-left-info {
+  display: contents;
+}
+
+.cs-buffs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 7px 12px;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.cs-stats-scroll {
+  /* Füllt das Stats-Panel (4. Fenster) und scrollt bei Bedarf. */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 5px 14px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fester Attribut-Block (außerhalb cs-stats-scroll) — scrollt nie.
+   Subtile Hintergrundtextur gibt der Attribut-Sektion eigenes visuelles Gewicht.
+   display:flex/column, damit die SectionHeading fest bleibt und darunter das Grid (s. u.,
+   `flex:1`) den Rest der Sektionshöhe füllen kann — wirkt sich in einem auto-hohen Elternteil
+   (z.B. .equip-overview unten) NICHT aus, da dort kein freier Raum zu verteilen ist. */
+.cs-attr-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 3px 12px 8px;
+  background:
+    linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.28)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: auto, 200px;
+  border-top: 1px solid rgba(216,192,106,0.12);
+}
+
+/* Chef 2026-07-21: auf der vollen Character-Seite ließ .cs-attr-section (flex-shrink:0, kein
+   Grow) unter den Attribut-Karten viel leeren Raum im linken Panel — .cs-portrait-wrap ist der
+   einzige wachsende Nachbar, deckelt aber bei max-height:34.5vh, danach bleibt Restraum
+   unverteilt. Kontext-spezifischer Grow NUR unter .cs-col-left (die große Character-Spalte) —
+   bewusst NICHT an der Basisregel oben, denn dieselbe Sektion sitzt auch content-hoch gestapelt
+   in .equip-overview (Combat-Log „Equipment"-Tab, s. EquipmentOverview.tsx); dort soll sie NICHT
+   wachsen und Doll/Kampfwerte verdrängen. */
+.cs-col-left .cs-attr-section {
+  flex-grow: 1;
+}
+
+/* ── Attribut-Karten (Redesign v2 2026-07-03, Chef: zurück zu 6 Karten im 3×2-Raster —
+   aber weder die alten flachen Farbkacheln noch die Zwischenlösung „Zeilen-Liste" (Diablo-
+   Reihen), die der Chef ebenfalls verwarf). Jede Karte: geprägtes Gold-Medaillon (Icon) ·
+   voller Name (Cinzel, nie Ellipsis — nötigenfalls 2-zeilig) · große Zahl als Karten-Held in
+   Attribut-Farbe. Farbe nur als Rahmen-Glow + dezente Radial-Tönung — KEINE Vollfläche (Chef:
+   alte Farben „zu grell"). Maße eng geclampt: das VORHERIGE 3×2-Grid sprengte die Spalte
+   (GLÜCK fiel unten aus dem Panel, da .cs-col-left overflow:hidden hat und nie scrollt) — hier
+   dasselbe Höhenbudget wie die abgelöste Zeilen-Liste, nur in 3×2 statt 6×1 angeordnet. Der
+   Name-Slot reserviert IMMER 2 Zeilen Höhe (min-height), damit ein umbrechender Name
+   (KONSTITUTION/INTELLIGENZ) die Grid-Zeile nicht unvorhersehbar höher macht. */
+.cs-attr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: clamp(3px, 0.6vh, 6px) clamp(4px, 0.6vw, 7px);
+  /* Füllt die (ggf. gewachsene, s. .cs-col-left .cs-attr-section oben) Sektionshöhe — die zwei
+     grid-template-rows(1fr) teilen sie dann gleichmäßig auf große Karten auf. min-height:0
+     erlaubt dem Grid, unter seine content-basierte Auto-Höhe zu schrumpfen (Flex-Kind). In
+     einem auto-hohen Elternteil (.equip-overview) bleibt das folgenlos: kein freier Raum, also
+     keine Wirkung von flex-grow. */
+  flex: 1;
+  min-height: 0;
+}
+
+/* Chef 2026-07-03: Neuaufbau — KEIN Gold-Medaillon/Rand mehr. Das Attribut-Symbol liegt als
+   leicht transparentes HINTERGRUND-Bild hinter dem Inhalt; Name oben zentriert GROSS, Zahl
+   mittig GROSS. */
+.cs-attr-card {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Chef 2026-07-21: Karten füllen jetzt dynamisch die Sektionshöhe (s. .cs-attr-grid flex:1) —
+     bei großer Kartenhöhe wirkte Inhalt oben-hängend mit leerem Rest darunter; zentriert liest
+     sich Name+Zahl als ein Block, egal wie hoch die Karte tatsächlich wird. */
+  justify-content: center;
+  gap: clamp(1px, 0.35vh, 4px);
+  padding: clamp(3px, 0.6vh, 6px) 4px clamp(4px, 0.7vh, 7px);
+  text-align: center;
+  cursor: help;
+  overflow: hidden;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--attr-color, var(--gold)) 20%, transparent) 0%, transparent 68%),
+    linear-gradient(rgba(0,0,0,0.34), rgba(0,0,0,0.54)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: 100% 100%, auto, 160px;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--attr-color, var(--gold)) 50%, transparent),
+    inset 0 2px 5px rgba(0,0,0,0.55),
+    inset 0 -3px 7px rgba(0,0,0,0.4);
+  transition: box-shadow 0.15s, transform 0.12s;
+}
+
+/* Chef-Nachtrag 2026-07-21: im großen Character-Panel (.cs-col-left) sollen Symbol/Name/Zahl mit
+   der (durch den flex-grow-Fix oft viel größeren) Kartenhöhe mitskalieren, nicht nur die Zahl
+   dezent. container-type:size macht die Karte selbst zum Query-Container für cqmin — robuster
+   als ein weiterer vh-Wert, weil cqmin direkt an der TATSÄCHLICHEN Kartengröße hängt (die Karte
+   wird per Grid-Stretch definit groß, kein Content-Collapse-Risiko). Nur hier gesetzt (nicht an
+   der .cs-attr-card-Basisregel oben) — in .equip-overview (Combat-Log „Equipment"-Tab) bleibt
+   die Karte ein normales Element ohne Query-Container, die dortigen cqmin-Overrides unten greifen
+   folglich nicht (kein :where(.cs-col-left)-Match) und alles bleibt beim alten vh-Verhalten. */
+.cs-col-left .cs-attr-card {
+  container-type: size;
+}
+
+/* Chef 2026-07-03 (2. Runde): Symbol nach LINKS (dort ist Platz neben Name/Zahl), GRÖSSER und
+   weniger transparent (erkennbar) — darf am linken Rand sauber abschneiden (Karte hat overflow:hidden,
+   kein Overflow). */
+.cs-attr-card::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -6%;
+  transform: translateY(-50%);
+  width: clamp(38px, 5.6vh, 56px);
+  height: clamp(38px, 5.6vh, 56px);
+  background-image: var(--attr-symbol, none);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+  opacity: 0.42;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55));
+}
+
+/* Chef-Nachtrag 2026-07-21: deutlich größeres Symbol NUR im großen Character-Panel (cqmin der
+   jetzt-container-gewordenen Karte, s. .cs-col-left .cs-attr-card oben). `:where(.cs-col-left)`
+   hält die Spezifität bei (0,1,0) — exakt wie die Basisregel direkt darüber — statt (0,2,0) einer
+   normalen Verkettung. Grund: die SHORT-VIEWPORT-OVERRIDES (Dateiende, @media max-height:800px)
+   setzen dieselbe Eigenschaft auf derselben (0,1,0)-Spezifität und sollen bei kurzen Fensterhöhen
+   weiterhin gewinnen (dortiges dokumentiertes Funktionsprinzip: gleiche Spezifität, später
+   deklariert gewinnt) — eine höhere Spezifität hier würde das aushebeln. */
+:where(.cs-col-left) .cs-attr-card::after {
+  width: clamp(56px, 85cqmin, 112px);
+  height: clamp(56px, 85cqmin, 112px);
+}
+
+.cs-attr-card:hover {
+  box-shadow:
+    inset 0 0 0 1px var(--attr-color, var(--gold)),
+    inset 0 2px 5px rgba(0,0,0,0.5),
+    0 0 12px color-mix(in srgb, var(--attr-color, var(--gold)) 35%, transparent);
+  transform: translateY(-1px);
+}
+.cs-attr-card:hover::after { opacity: 0.3; }
+
+/* Hover/Fokus = Attribut-Erklärung (Chef 2026-07-20). Karte signalisiert Interaktivität. */
+.cs-attr-card { cursor: help; }
+.cs-attr-card:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px var(--attr-color, var(--gold)),
+    inset 0 2px 5px rgba(0,0,0,0.5),
+    0 0 12px color-mix(in srgb, var(--attr-color, var(--gold)) 35%, transparent);
+}
+
+/* Erklär-Tooltip (Attribut-Karten): seit der Tooltip-Vereinheitlichung (Chef-Auftrag 2026-07-23)
+   die geteilte `.ct-tip`/`.ct-tip-glow`-Basis aus components.css (Portal + Citadel-9-Slice-
+   Holzrahmen + Flip-Positionierung, components/CitadelTip.tsx) — NUR hier mit dem `ct-tip-glow`-
+   Modifier (innerer attributgefärbter Glow-Ring), der Rest der App bleibt bewusst glowlos, damit
+   der Glow ein eindeutiges Attribut-Signal bleibt. Siehe EquipmentOverview.tsx AttrTooltip. */
+
+/* Name oben, zentriert, GROSS (Chef). Voller Name, nie Ellipsis — bricht ggf. 2-zeilig um. */
+.cs-attr-card-name {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  font-family: var(--font-head);
+  font-size: clamp(9px, 1vh, 11px);
+  line-height: 1.08;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #f4e8ca;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.85);
+  white-space: normal;
+  overflow-wrap: break-word;
+  /* Sweep-Fund T5/T6: „KONSTITUTIO/N" brach ohne Trennzeichen — echte Silbentrennung
+     (html[lang] vom I18nProvider) macht daraus „KONSTITU-TION". */
+  hyphens: auto;
+}
+
+/* Chef-Nachtrag 2026-07-21: Name-Schrift skaliert im großen Character-Panel mit der Kartengröße
+   (cqmin, s. .cs-col-left .cs-attr-card oben). :where() wie bei ::after — gleiche Spezifität wie
+   die Basisregel, damit die SHORT-VIEWPORT-Overrides am Dateiende weiterhin gewinnen.
+   Chef-Fix Task #343 (Screenshot: "STRENGT H"/"CONSTIT UTION"/"INTELLIG ENCE" — hässlicher
+   Wortumbruch OHNE Trennzeichen, weil einsilbige/nicht sinnvoll trennbare Wörter wie "Strength"
+   für `hyphens:auto` keinen gültigen Trennpunkt haben und der Browser dann roh per
+   `overflow-wrap:break-word` mitten im Wort umbricht). Root Cause war NICHT cqmin selbst, sondern
+   der zu hohe FLOOR (11px): bei 1920×1080 ist die Karte breiter als hoch (~108×48px, s.
+   .cs-attr-grid 3×2), cqmin greift dort auf die HÖHE zu (48px) und lieferte rechnerisch nur
+   ~8.6px — der 11px-Floor hob das künstlich an, obwohl bei dieser Kartenbreite (~88px
+   Content-Breite nach Border/Padding) selbst 11px für 12-Zeichen-Wörter (Constitution/
+   Konstitution/Intelligence/Телосложение/Constituição — alle 7 Sprachen durchgemessen, s.
+   ui-audit/attr-tune-343.mjs) zu breit ist. Fix: `cqi` (reine Breiten-Achse, robuster als cqmin
+   fürs "passt in eine Zeile"-Ziel als die Höhe mit reinzumischen) + ein auf 9px abgesenkter Floor
+   (deckt sich mit dem bereits vorhandenen Präzedenzfall .cs-attr-card-name Basisregel/@800px-
+   Override weiter oben, dort ebenfalls 9px) + minimal engere Laufweite (0.3px → 0.1px, zusätzliche
+   Sicherheitsmarge). Empirisch verifiziert (Playwright, alle 7 Sprachen × 1920×1080 + 3440×1440):
+   0 Umbrüche bei jedem Attributnamen. `hyphens:auto` an der Basisregel bleibt als Sicherheitsnetz
+   für etwaige künftige längere Übersetzungen bestehen. */
+:where(.cs-col-left) .cs-attr-card-name {
+  font-size: clamp(9px, 9cqi, 22px);
+  letter-spacing: 0.1px;
+}
+
+/* Zahl mittig im Rest-Raum, GROSS, in Attribut-Farbe. */
+.cs-attr-card-val {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  /* Chef 2026-07-21: größere Karten (s. .cs-col-left .cs-attr-section flex-grow) sollen nicht
+     leer wirken — Zahl dezent hochskaliert (war clamp(16px,2.2vh,22px)). Bleibt im engen
+     .equip-overview-Kontext praktisch am unteren Rand des Clamps, da dort die Karte weiterhin
+     nur content-hoch ist. */
+  font-size: clamp(16px, 3.2vh, 30px);
+  color: var(--attr-color, var(--gold));
+  text-shadow:
+    0 1px 3px rgba(0,0,0,0.85),
+    0 0 10px color-mix(in srgb, var(--attr-color, var(--gold)) 35%, transparent);
+}
+
+/* Chef-Nachtrag 2026-07-21: Zahl darf im großen Character-Panel über das vh-Ceiling (30px) hinaus
+   wachsen — cqmin der Karte selbst (s. .cs-col-left .cs-attr-card oben) statt vh, damit die Zahl
+   tatsächlich mit der Kartengröße mitskaliert statt einem groben Viewport-Bruchteil zu folgen.
+   :where() hält die Spezifität gleich der Basisregel, damit SHORT-VIEWPORT (Dateiende) weiter
+   gewinnt. */
+:where(.cs-col-left) .cs-attr-card-val {
+  font-size: clamp(30px, 46cqmin, 60px);
+}
+
+.cs-combat-grid {
+  display: grid;
+  /* Sweep 5 Finding 2: "1fr 1fr" gibt Grid-Tracks eine implizite min-width:auto (=
+     Content-Breite der breitesten Zeile) — bei Endgame-Werten ("Verteidigung 42.6")
+     lief das über die Spaltenbreite hinaus (scrollWidth 395-401 vs. clientWidth 362).
+     minmax(0,1fr) erlaubt den Tracks, unter die Content-Breite zu schrumpfen. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  /* Chef-Auftrag 2026-07-23: die Combat-Sektion soll wie die 6 Attribut-Karten (.cs-attr-grid
+     flex:1, 21.07.) dynamisch den ganzen verfügbaren Platz füllen statt content-hoch zu bleiben.
+     Die eine implizite Grid-Zeile bekommt per explizitem 1fr-Track die volle Höhe von
+     .cs-stats-scroll zugewiesen (align-content:stretch würde das per Default zwar auch tun, 1fr
+     macht es robust/explizit). In .cs-stats-scroll flex:1 kommt diese Höhe NUR zustande, wenn
+     der Elternpfad ein definites Höhenbudget hat (.cs-col-stats auf der Character-Page) — im
+     auto-hohen .equip-overview (Combat-Log „Equipment"-Tab) bleibt das folgenlos: kein freier
+     Raum, also keine Wirkung (identisches Prinzip wie bei .cs-attr-grid, s. dortigen Kommentar). */
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0 12px;
+  margin-bottom: 4px;
+  /* Task #336: war "1 1 auto" — der auto-Anteil verlangt eine Content-Size-Query durch die
+     size-contained .cs-stat-row-Kinder (container-type:size weiter unten) hindurch, was sich im
+     Zusammenspiel mit flex-shrink unter Platzdruck (viele Zeilen + SET-BONUS-Sektion daneben)
+     als unzuverlässig erwiesen hat (Mess-Befund: das Grid bekam trotz reichlich verfügbarer Höhe
+     nur einen Bruchteil zugewiesen, während die Zeilen selbst nicht mitschrumpften). Ein fester
+     Basis-Wert 0 macht die flex-grow-Verteilung robust/deterministisch — verhält sich in
+     .equip-overview (Combat-Log „Equipment"-Tab, auto-hoher Elternteil, kein freier Raum zum
+     Verteilen) identisch wie zuvor. */
+  flex: 1 1 0;
+  min-height: 0;
+  /* Task #336 Sicherheitsnetz: sollte Inhalt (Zeilen/Icons) unter extremem Platzdruck trotz der
+     obigen Fixes je knapp die eigene Grid-Box sprengen, wird HIER hart geclippt statt sichtbar in
+     die nachfolgende SET-BONUS-Sektion zu bluten (Chef-Beschwerde „SET BONUS liegt ÜBER den
+     Zeilen"). In .equip-overview folgenlos (die Box ist dort exakt content-hoch, nichts läuft
+     über). */
+  overflow: hidden;
+}
+
+.cs-combat-col {
+  display: flex;
+  flex-direction: column;
+  /* Muss zusätzlich zum Grid-Track selbst schrumpfen dürfen (Grid-Items haben eine
+     eigene automatische Mindestbreite = Content-Breite, unabhängig vom Track). */
+  min-width: 0;
+  min-height: 0;
+}
+
+.cs-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  /* vh-basiert → skaliert mit der Panel-Höhe, wird nie zum Scroll-Container. Bleibt die
+     wirksame Regel im Combat-Log „Equipment"-Tab (.equip-overview hat keinen Query-Container,
+     s. .cs-col-stats-Override weiter unten) UND der Ausgangswert, bevor eine echte Zeilenhöhe
+     zustande kommt. */
+  padding: clamp(1px, 0.35vh, 4px) 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  /* Jede Zeile bekommt denselben Anteil der Spaltenhöhe (Zeilenzahl variiert: Block/Ward/
+     ArmorPen/Precision/WardBreak sind bedingt sichtbar, s. CombatStatsPanel) — wirkt nur, wenn
+     .cs-combat-grid oben tatsächlich freien Raum bekommt, sonst No-Op wie gehabt (s. dortigen
+     Kommentar). */
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.cs-stat-row:last-child {
+  border-bottom: none;
+}
+
+.cs-stat-label {
+  /* Sweep6-W2: VERTEIDIGUNG/GENAUIGKEIT clippten bei endgame — kleiner+enger statt „…". */
+  font-size: clamp(10px, 1.1vh, 12px);
+  /* Task #336 (Mess-Befund 1920×1080): geerbte Body-line-height (1.45, s. base.css) machte die
+     Zeilen-Box ~45% höher als die Schrift selbst — bei vielen Zeilen (Block/Ward/ArmorPen/
+     Precision/WardBreak alle bedingt sichtbar, s. CombatStatsPanel) blieb der cqmin-skalierten
+     Zeile pro Reihe kaum Luft, Text lief unten über die eigene Row-Box hinaus. Eng wie die
+     übrigen kompakten Panel-Texte in dieser Datei (line-height:1/1.08/1.15 an anderen Stellen). */
+  line-height: 1.1;
+  letter-spacing: 0.2px;
+  color: #f0f0f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.cs-stat-val {
+  font-size: clamp(11px, 1.3vh, 14px);
+  line-height: 1.1;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Kleines Icon links neben dem Stat-Label in .cs-stat-row */
+.cs-stat-icon {
+  width: clamp(12px, 1.6vh, 18px);
+  height: clamp(12px, 1.6vh, 18px);
+  object-fit: contain;
+  image-rendering: auto;
+  flex-shrink: 0;
+  opacity: 1;
+}
+
+/* Chef-Auftrag 2026-07-23: Combat-Sektion (Character-Screen, unteres Panel) skaliert dynamisch
+   mit der Bildschirmauflösung — dasselbe Container-Query-Muster wie die Attribut-Karten
+   (.cs-col-left .cs-attr-card, 21.07.). container-type:size NUR hier im .cs-col-stats-Kontext
+   gesetzt (definite Höhenkette bis .cs-stat-row via .cs-combat-grid/.cs-stat-row flex:1 oben) —
+   genau wie bei .cs-attr-card bewusst NICHT an der .cs-stat-row-Basisregel: dort würde die Zeile
+   im .equip-overview-Kontext (Combat-Log „Equipment"-Tab, dort bleibt sie content-hoch, kein
+   freier Raum zum Verteilen) auf 0 Höhe kollabieren, weil container-type:size eine von außen
+   kommende Höhe verlangt. cqmin (Minimum aus Zeilenbreite/-höhe, hier praktisch immer die viel
+   knappere Zeilenhöhe) folgt direkt der TATSÄCHLICHEN Zeilenhöhe — bei 4K füllt die Sektion satt
+   die Panel-Fläche, bei 1080p bleiben Icon/Zahlen nah an den alten vh-Werten (die Mindestmaße
+   sind bewusst identisch zu den Basisregeln oben, nur die Obergrenze wächst). */
+.cs-col-stats .cs-stat-row {
+  container-type: size;
+  gap: clamp(6px, 14cqmin, 10px);
+  padding: clamp(1px, 10cqmin, 6px) 0;
+}
+/* Chef-Fix 2026-07-24 (Screenshot 3440×1440, „Text so mini klein"): Die ursprünglichen
+   34-46%-Koeffizienten waren zu zaghaft — bei realen ~26-30px Zeilenhöhe (das Panel teilt sich
+   die Spalte mit dem Equipment darüber, auch auf 1440p) landete 34cqmin unter dem 10px-Minimum
+   und ALLES klebte am unteren Clamp-Rand. Eine einzeilige Zeile trägt problemlos Text mit
+   ~55-60% ihrer Höhe → Koeffizienten hoch, Minima unverändert (kleine Fenster wie gehabt),
+   Obergrenzen leicht angehoben für echte 4K-Höhen.
+   Task #340-Folgefund (1920×1080, Mess-Befund): der parallele Tab-Umbau gibt der Kampfwerte-
+   Sektion die VOLLE Panelhöhe statt der alten 32%-Teilung — Zeilen sind jetzt bei JEDER
+   Auflösung 68-160px hoch (vorher ~35-40px @1080p), 55cqmin/60cqmin der Zeilen-HÖHE sprengt
+   damit an beiden getesteten Auflösungen die 19px/21px-Obergrenze (cqmin nimmt zwar korrekt das
+   Minimum aus Breite/Höhe, aber selbst die Höhe allein liegt weit über der Obergrenze) — die
+   Schriftgröße "härtet" faktisch zu einem FIXEN 19px/21px aus, unabhängig von der Auflösung.
+   Die Zeilen-BREITE (Spaltenzahl unverändert: 2 Spalten im festen Mittel-Panel) skaliert aber
+   NICHT mit — bei 1920px sind das nur ~193px/Zeile (@3440px: ~429px), zu schmal für 19px-Text
+   bei längeren Labels ("Ausweichchance", "Ward-Regen /s", …) → mehrfaches Ellipsis-Abschneiden
+   (Mess-Befund, Screenshot). `min(…, Ncqw)` deckelt zusätzlich an der tatsächlichen ZEILENBREITE:
+   bei ~193px greift das (≈13-14px, passt in die schmale Spalte), bei ~429px (3440p) liegt der
+   cqw-Wert selbst weit über 19/21px → dort bleibt unverändert die alte, Chef-abgenommene feste
+   Obergrenze wirksam (3440p bleibt exakt so groß wie vorher). Erster Versuch mit 7.5/8.5cqw ließ
+   "Ausweichchance"/"Ward-Regen /s" noch abgeschnitten (Mess-Befund, Screenshot) — Koeffizienten
+   nachgezogen, PLUS das Icon (bisher nur cqmin, unverändert 28px auch bei 193px-Zeilen) bekommt
+   dieselbe cqw-Deckelung: 8px weniger Icon-Breite geben der Label-Box direkt 8px mehr Raum, ohne
+   die Zahl selbst zu verkleinern. */
+.cs-col-stats .cs-stat-label {
+  font-size: clamp(10px, min(55cqmin, 7cqw), 19px);
+}
+.cs-col-stats .cs-stat-val {
+  font-size: clamp(11px, min(60cqmin, 8cqw), 21px);
+}
+.cs-col-stats .cs-stat-icon {
+  width: clamp(12px, min(70cqmin, 10cqw), 28px);
+  height: clamp(12px, min(70cqmin, 10cqw), 28px);
+}
+
+.cs-skill-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+}
+
+.cs-skill-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cs-skill-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* .cs-col-left keeps the ds-frame bg_black texture but overlays a dark tint so it reads
+   as a deep metal window, not a light-grey pane. The gradient is laid on top of the
+   tiled bg_black.png to preserve the texture grain while ensuring sufficient darkness.
+   background-size: Texturgröße stark reduziert (200px statt nativ 1672px) → feine Körnung. */
+.cs-col-left {
+  background:
+    linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)),
+    url("../assets/bg_black.webp") repeat;
+  background-size: auto, 200px;
+}
+
+.cs-doll-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100%;
+  padding: 10px 8px;
+  overflow: hidden;
+}
+
+.cs-doll-silhouette {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 82%;
+  max-width: 38%;
+  object-fit: contain;
+  opacity: 0.13;
+  pointer-events: none;
+  filter: grayscale(1) brightness(0.55);
+  z-index: 0;
+}
+
+.cs-doll-silhouette-ph {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -52%);
+  width: 34px;
+  height: 34px;
+  background: var(--border);
+  opacity: 0.07;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.cs-doll-silhouette-ph::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 54px;
+  height: 120px;
+  background: var(--border);
+  opacity: 1;
+  border-radius: 6px 6px 10px 10px;
+  margin-top: 4px;
+}
+
+.cs-doll {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  /* Chef Bild #40: NICHT auf die volle Panel-Höhe strecken (sonst riesige Zeilen-Lücken). Der Doll
+     ist ein 3×6-Block mit quadratischen Slots → Seitenverhältnis 1:2. Er passt sich in den Wrap ein
+     (max-height/-width) und zentriert (margin auto); der 576px-Deckel (=6×96) hält die Slots ≤96px
+     auf sehr großen Screens, sonst schrumpfen sie mit der Panel-Höhe. */
+  aspect-ratio: 1 / 2;
+  max-height: min(100%, 576px);
+  max-width: 100%;
+  margin: auto;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 0;
+}
+
+.cs-slot {
+  /* Universeller Slot-Rahmen (Chef): slot_universal.png (gotischer Eck-Spike-Rahmen + Stein-
+     Innenfläche, baked-in) statt Holz-9-Slice-Rahmen. background-size: cover füllt den Slot
+     randlos — kein Versatz/Rand zwischen Rahmen und Innenfläche mehr, leer wie befüllt.
+     Der Rarity-Glow (--slot-glow) liegt als eigener Layer DARÜBER statt den Rahmen bei
+     gefüllten Slots zu überschreiben (siehe [data-rarity]-Regeln unten). */
+  --slot-glow: none;
+  background-color: transparent;
+  background-image: var(--slot-glow), url("../assets/ui/citadel/box-inventory/slot_universal.webp");
+  background-size: 100% 100%, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+  /* Responsiv (Chef 2026-07-05): war rein breiten-getrieben (vw) + aspect 1/1 → bei 1920×1080 passten
+     die 6 Reihen nicht in den Container, die unteren Ring-Slots wurden abgeschnitten. Jetzt zusätzlich
+     über die ZELLEN-HÖHE gedeckelt (`max-height: 100%` der 1fr-Grid-Zelle) → die Slots schrumpfen
+     mit, sodass immer alle 6 Reihen passen; nach oben weiter auf ~88 px begrenzt. */
+  /* Der Slot füllt seine (durch das 1:2-Doll quadratische) Grid-Zelle; die Doll-Größe selbst wird
+     content-proportional über `.cs-doll` (aspect-ratio) begrenzt — nicht mehr über die Slot-Breite. */
+  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  justify-self: center;
+  align-self: center;
+}
+
+/* Item-Icon im Equipment-Slot: ~80% der Slot-Innenfläche (Chef-Feedback — 98%/95% klebte am
+   gotischen Rahmen, jetzt atmet er sichtbar), echt zentriert über die Flex-Regeln von
+   .cs-slot .item-cell.slot-item (components.css — die eigentlich wirksame, höher-spezifische
+   Regel; dieser Wert hier nur zur Konsistenz falls je ohne .slot-item gerendert). */
+.cs-slot .item-cell-img {
+  width: 80%;
+  height: 80%;
+  max-width: clamp(40px, 5.2vw, 76px);
+  max-height: clamp(40px, 5.2vw, 76px);
+  object-fit: contain;
+  transform: none;
+}
+.cs-slot .item-cell-emoji {
+  font-size: clamp(16px, 2.2vw, 22px);
+}
+
+.cs-slot:hover {
+  box-shadow: var(--glow);
+}
+
+.cs-slot.slot-valid {
+  box-shadow: 0 0 0 2px var(--gold), var(--glow);
+}
+
+/* ── Rarity-Glow: Common = hellgrauer Schiefer, höhere Rarities entsprechend getönt.
+   Nur gesetzt wenn data-rarity vorhanden (= Slot ist besetzt). Leere Slots bleiben neutral. ── */
+/* Dezenter, kreisförmiger Rarity-Glow (zum Rand transparent), zentriert hinter dem Item,
+   liegt als --slot-glow-Layer ÜBER dem slot_universal-Rahmen (s.o.). */
+.cs-slot[data-rarity="common"]    { --slot-glow: radial-gradient(circle at 50% 45%, rgba(190, 185, 176, 0.16), transparent 70%); }
+.cs-slot[data-rarity="magic"]     { --slot-glow: radial-gradient(circle at 50% 45%, rgba(91, 143, 214, 0.30), transparent 68%); }
+.cs-slot[data-rarity="rare"]      { --slot-glow: radial-gradient(circle at 50% 45%, rgba(78, 196, 110, 0.30), transparent 68%); }
+.cs-slot[data-rarity="superRare"] { --slot-glow: radial-gradient(circle at 50% 45%, rgba(91, 143, 214, 0.30), transparent 68%); }
+.cs-slot[data-rarity="epic"]      { --slot-glow: radial-gradient(circle at 50% 45%, rgba(176, 127, 216, 0.32), transparent 68%); }
+.cs-slot[data-rarity="legendary"] { --slot-glow: radial-gradient(circle at 50% 45%, rgba(224, 144, 42, 0.32), transparent 68%); }
+.cs-slot[data-rarity="godly"]     { --slot-glow: radial-gradient(circle at 50% 45%, rgba(255, 215, 0, 0.30), transparent 68%); }
+
+.cs-slot-icon-img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  opacity: 0.45;
+  filter: grayscale(0.3);
+}
+
+.cs-slot-emoji {
+  font-size: clamp(38px, 4.5vh, 56px);
+  opacity: 0.35;
+  filter: grayscale(1) brightness(0.6);
+  line-height: 1;
+}
+
+.cs-slot-label {
+  position: absolute;
+  bottom: 6%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.65;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Leerer Equip-Slot: leicht transparentes Text-Label statt Slot-Typ-Silhouette (Chef) — zeigt
+   zentriert, was in den Slot gehört ("Helm", "Ring", …), Cinzel small-caps, dezent, kein
+   Umbruch-Chaos bei langen Wörtern (kleiner/clamp-Font + freies Wrapping statt Overflow).
+   Brightened leicht bei Hover für Feedback. */
+.cs-slot-empty-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-head);
+  font-variant: small-caps;
+  font-size: clamp(9px, 1.3vw, 12px);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.35;
+  white-space: normal;
+  word-break: break-word;
+  overflow: hidden;
+  max-width: 100%;
+  padding: 5px;
+  line-height: 1.25;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 1;
+}
+.cs-slot:hover .cs-slot-empty-label {
+  opacity: 0.75;
+}
+
+/* Equipped ItemCell sits above the (absolutely positioned) empty-slot label */
+.cs-slot .slot-item {
+  position: relative;
+  z-index: 1;
+}
+
+
+.cs-slot.helmet   { grid-column: 2; grid-row: 1; }
+/* Werkzeug-Slots: links & rechts neben dem Helm (nutzen die freien Eck-Zellen, kein Extra-Panel).
+   3. Werkzeug-Slot (Spieler-Feedback, Chef-GO 0.2.0) hängt sich direkt unter tool1 — nutzt die
+   bislang leere Zelle rechts neben dem Amulett, keine neue Reihe/Spalte, kein Resize-Risiko. */
+.cs-slot.tool2    { grid-column: 1; grid-row: 1; }
+.cs-slot.tool1    { grid-column: 3; grid-row: 1; }
+.cs-slot.tool3    { grid-column: 3; grid-row: 2; }
+.cs-slot.amulet   { grid-column: 2; grid-row: 2; }
+.cs-slot.offhand  { grid-column: 1; grid-row: 3; }
+.cs-slot.body     { grid-column: 2; grid-row: 3; }
+.cs-slot.mainhand { grid-column: 3; grid-row: 3; }
+.cs-slot.legs     { grid-column: 2; grid-row: 4; }
+.cs-slot.gloves   { grid-column: 1; grid-row: 5; }
+.cs-slot.boots    { grid-column: 2; grid-row: 5; }
+.cs-slot.cape     { grid-column: 3; grid-row: 5; }
+.cs-slot.ring1    { grid-column: 1; grid-row: 6; }
+.cs-slot.ring2    { grid-column: 3; grid-row: 6; }
+
+.cs-equip-caption {
+  flex-shrink: 0;
+  padding: 8px 14px 10px;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.5px;
+  border-top: 1px solid var(--border);
+}
+
+.cs-col-right {
+  display: flex;
+  flex-direction: column;
+  /* Chef 2026-07-02: „Bei Inventory sollte die Tasche bleiben!" — der Leder-Bag
+     ist die gewollte Inventar-Identität (der störende Holzgrund war der
+     Seiten-Backdrop, nicht dieser hier). */
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)),
+    url("../assets/bagpack_background.webp") center / cover no-repeat;
+}
+
+.cs-bags-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  background: rgba(0,0,0,0.1);
+}
+
+.cs-bag-slot {
+  width: 46px;
+  height: 46px;
+  /* Universeller Slot-Rahmen (Chef) — wie .inv-slot/.cs-slot: baked-in Rahmen + Innenfläche,
+     randlos füllend (cover), statt Holz-9-Slice-Rahmen. */
+  background-image: url("../assets/ui/citadel/box-inventory/slot_universal.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.cs-bag-slot:hover {
+  box-shadow: var(--glow);
+}
+
+.cs-bag-slot.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cs-bag-slot.slot-valid {
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.cs-bag-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  /* Nur relevant für den seltenen Emoji-Fallback (Bag-Item ohne PNG-Art) — normale
+     Bag-Art/leerer-Slot-Icon nutzen .cs-bag-icon-img/-empty unten. */
+  font-size: 20px;
+}
+
+/* Ausgerüstete Tasche: echte Item-Art (getItemImage), volle Deckkraft — wie ItemCell. */
+.cs-bag-icon-img {
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+}
+
+.cs-bag-icon-emoji {
+  opacity: 1;
+}
+
+/* Leerer Bag-Slot: icon_bag.png gedimmt/transparent statt Emoji-Platzhalter (Chef) —
+   analog zu .cs-slot-empty-label (leere Equip-Slots), inkl. Hover-Aufhellung. */
+.cs-bag-icon-empty {
+  opacity: 0.32;
+  filter: grayscale(0.6) brightness(0.7);
+  transition: opacity 0.12s ease;
+}
+
+.cs-bag-slot:hover .cs-bag-icon-empty {
+  opacity: 0.55;
+}
+
+/* Toolbar-Zeile: Kategorie-Filter-Icons LINKS + Sortierung RECHTS (Chef-Umbau Inventar-Header
+   2026-07-23: der frühere „Sell"-Quick-Sell-Slot ist ersatzlos raus — Verkaufen läuft über den
+   Shop). Die Chips ziehen dafür aus der ehemals eigenen Filter-Zeile hier hoch neben die
+   Sortierung; die Suche bekommt darunter eine eigene volle-Breite-Zeile, s. .cs-inv-searchrow. */
+.cs-inv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* container-type: inline-size macht diesen Wrapper zum Query-Container für die Chip-Icons
+   (s. Override-Block weiter unten) — sie wachsen/schrumpfen mit der tatsächlichen Panel-Breite
+   statt fix 14px zu bleiben (gleiches cqw-Muster wie .skillcard-icon in skills.css). flex:1 lässt
+   die Zeile den Raum links von der Sortierung ausfüllen, min-width:0 erlaubt Schrumpfen unter die
+   Inhaltsbreite (sonst würde die Chip-Reihe die Sortierung nach rechts aus dem Panel drücken). */
+.cs-inv-toolbar-left {
+  container-type: inline-size;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cs-inv-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+/* Kategorie-Chips (ItemFilterChips, compact = icon-only) innerhalb der Toolbar: fluide Größe
+   statt der festen 14px/26px aus inv-filter.css. cqw bezieht sich auf .cs-inv-toolbar-left selbst
+   (s. oben) — bei breiter Spalte wachsen die Icons mit, bei schmaler bleiben sie kompakt, ohne je
+   umzubrechen (.invf-chiprow--compact bleibt nowrap). Die 3-Klassen-Selektorkette schlägt die
+   2-Klassen-Regel aus inv-filter.css unabhängig von der CSS-Importreihenfolge (ItemFilterBar
+   importiert sein CSS separat vom Haupt-Bundle, s. Kommentar dort/index.css). */
+.cs-inv-toolbar-left .invf-chiprow {
+  gap: clamp(3px, 1.6cqw, 7px);
+}
+.cs-inv-toolbar-left .invf-chiprow .invf-chip {
+  min-height: clamp(24px, 9cqw, 32px);
+  padding: clamp(3px, 1.4cqw, 6px);
+}
+.cs-inv-toolbar-left .invf-chiprow .invf-chip-icon {
+  width: clamp(14px, 5.6cqw, 22px);
+  height: clamp(14px, 5.6cqw, 22px);
+}
+
+/* Citadel-Look über .ds-button/.ds-button--sm (Holzrahmen + dunkle Textur, s. design-system.css) —
+   diese Regel liefert nur noch die kompakte Größe für die kleinen Grid/List-Icon-Toggles;
+   Hintergrund/Rahmen/Hover/.active kommen aus ds-button (character.css lädt danach, gewinnt bei
+   gleicher Spezifität aber nichts Widersprüchliches mehr, da hier nur Größe/Icon-Font gesetzt wird). */
+.cs-toolbar-btn {
+  min-width: 32px;
+  padding: 4px 9px;
+  font-size: 15px;
+}
+
+.cs-sort-label {
+  font-family: var(--font-head);
+  font-variant: small-caps;
+  font-size: 13px;
+  color: var(--ds-gold-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* ── Sort-Dropdown: natives <select>, aber Citadel-Holzrahmen statt nativer Browser-Optik (Chef
+   2026-07-23) — dasselbe schmale wooden_frame_with_corners-9-Slice + bg_black-Textur wie
+   .cs-portrait-settings-btn/.invf-chip, plus eigener Gold-Pfeil per SVG-Data-URI (appearance:none
+   entfernt den nativen Browser-Pfeil). Geteilte Klasse mit BankPage (bank-sort-inline, s.
+   BankPage.tsx) — die Citadel-Optik kommt dort gleichermaßen zugute, keine separate Regel nötig. */
+.cs-sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 6px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background-color: transparent;
+  background-image:
+    linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)),
+    url("../assets/bg_black.webp"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0L10 0L5 6Z' fill='%23d8b870'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, repeat, no-repeat;
+  background-position: 0 0, 0 0, right 9px center;
+  background-size: auto, auto, 9px 6px;
+  color: var(--ds-parch-ink);
+  font-family: var(--font-head);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 5px 24px 5px 9px;
+  cursor: pointer;
+  outline: none;
+  transition: box-shadow 0.14s, filter 0.12s;
+}
+
+.cs-sort-select:hover {
+  filter: brightness(1.18);
+}
+
+.cs-sort-select:focus {
+  box-shadow: var(--ds-glow-gold);
+}
+
+.cs-slot-count {
+  padding: 4px 14px;
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.cs-slot-count-filter { color: var(--ds-gold-dim); }
+
+/* Chef-Bugfix 22.07.: übervolles Inventar (Ist > Kapazität) — dezente Rot-Einfärbung des ganzen
+   Zählers, kein Blinken (s. CharacterPage.tsx invOverCapacity). */
+.cs-slot-count-over { color: var(--danger, #c84a3a); }
+
+/* Such-Zeile — eigene Zeile UNTER der Toolbar, volle Panel-Breite (Chef-Umbau Inventar-Header
+   2026-07-23; vorher zusammen mit den Kategorie-Chips in einer gemeinsamen, schmaleren Zeile,
+   s. .cs-inv-toolbar oben für die Chips). */
+.cs-inv-searchrow {
+  padding: 7px 14px 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Suchfeld: Citadel-Holzrahmen (identisches Muster wie .cs-sort-select oben), volle Breite +
+   ~20% höher als das bisherige Kompakt-Suchfeld (das lag bei padding 4px 8px/font 12px, ca. 24px
+   Gesamthöhe inkl. Rand — hier padding 9px/font 14px, ca. 30-31px). */
+.cs-inv-search {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 6px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink);
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 9px 14px;
+  outline: none;
+  transition: box-shadow 0.14s, filter 0.12s;
+}
+
+.cs-inv-search::placeholder {
+  color: var(--ds-parch-muted);
+  font-weight: 600;
+}
+
+.cs-inv-search:hover {
+  filter: brightness(1.12);
+}
+
+.cs-inv-search:focus {
+  box-shadow: var(--ds-glow-gold);
+}
+
+.cs-inv-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  /* Chef 2026-07-05: bei 1920×1080 waren die Inventar-Slots zu groß → Cap 92→74px + kleinerer
+     vw-Faktor, damit sie schrumpfen und mehr pro Reihe passen. */
+  grid-template-columns: repeat(auto-fill, clamp(56px, 3.8vw, 100px));
+  gap: 6px;
+  padding: 10px;
+  align-content: start;
+}
+
+.cs-inv-grid .inv-slot {
+  width: 100%;
+  height: clamp(56px, 3.8vw, 100px);
+  /* Rahmen kommt aus dem slot_universal-Hintergrund (siehe .inv-slot) — skaliert automatisch
+     mit, kein fester Border-Image-Wert nötig. Gilt für Charakter-Inventar UND Shop-Sell-Grid
+     (beide nutzen .cs-inv-grid). */
+}
+
+.cs-inv-grid .item-cell-img {
+  max-width: clamp(40px, 3.2vw, 88px);
+  max-height: clamp(40px, 3.2vw, 88px);
+  object-fit: contain;
+}
+
+.cs-inv-grid .item-cell-emoji {
+  font-size: clamp(24px, 3vw, 38px);
+}
+
+.cs-inv-grid .item-cell-qty {
+  font-size: 16px;
+  bottom: 7%;
+  right: 8%;
+}
+
+.cs-inv-grid .item-cell-qty--wide {
+  font-size: 12px;
+  right: 3%;
+}
+
+.cs-inv-grid .cs-inv-slot-wrap {
+  height: clamp(56px, 3.8vw, 100px);
+}
+
+.cs-inv-grid .cs-inv-slot-wrap .inv-slot {
+  height: 100%;
+}
+
+.cs-inv-list {
+  grid-template-columns: 1fr;
+}
+
+.cs-inv-slot-wrap {
+  position: relative;
+  cursor: pointer;
+}
+
+.cs-inv-slot-wrap.cs-selected .inv-slot,
+.cs-inv-slot-wrap.cs-selected {
+  box-shadow: 0 0 0 2px var(--gold) inset;
+  border-radius: var(--radius);
+}
+
+/* Drag&Drop-Umsortieren: mögliche Drop-Ziele dezent hervorheben, solange ein Inv-Item gezogen wird. */
+.inv-drop-target {
+  outline: 2px dashed rgba(216, 192, 106, 0.55);
+  outline-offset: -3px;
+  cursor: grabbing;
+}
+.inv-drop-target:hover {
+  outline-color: var(--gold);
+  outline-style: solid;
+}
+
+.inv-slot.cs-selected {
+  box-shadow: 0 0 0 2px var(--gold) inset;
+}
+
+.cs-detail-panel {
+  flex-shrink: 0;
+  padding: 10px 12px;
+  min-height: 110px;
+  max-height: 160px;
+  position: relative;
+  border: none;
+  background:
+    linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+/* Citadel 9-slice wooden frame overlay for the detail panel */
+.cs-detail-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cs-detail-inner {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  height: 100%;
+}
+
+.cs-detail-img-wrap {
+  flex-shrink: 0;
+  width: 82px;
+  height: 82px;
+  background-color: var(--slot);
+  background-image: var(--inv-slot-bg, none);
+  background-size: 100% 100%;
+  background-position: center;
+  background-origin: padding-box;
+  /* Holz-9-Slice-Rahmen statt simplem gold-glow inset-shadow. */
+  border-style: solid;
+  border-width: 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-radius: 0;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cs-detail-qty-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px #000, 0 0 4px #000;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.cs-detail-item-cell {
+  width: 72px;
+  height: 72px;
+}
+
+.cs-detail-item-cell .item-cell-qty {
+  display: none;
+}
+
+.cs-detail-item-cell .item-cell-img {
+  max-width: 68px;
+  max-height: 68px;
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+}
+
+.cs-detail-item-cell .item-cell-emoji {
+  font-size: 46px;
+}
+
+.cs-detail-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+}
+
+.cs-detail-name {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.15;
+}
+
+.cs-detail-rarity {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.75;
+  font-variant: small-caps;
+  margin-top: 1px;
+}
+
+.cs-detail-desc {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cs-detail-meta {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 90px;
+  padding: 6px 8px;
+  position: relative;
+  isolation: isolate;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0.50)),
+    url("../assets/bg_black.webp") repeat;
+}
+
+/* Citadel 9-slice wooden frame for meta column */
+.cs-detail-meta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cs-detail-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cs-detail-meta-label {
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.8;
+}
+
+.cs-detail-meta-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-2);
+  line-height: 1;
+}
+
+.cs-gold-icon {
+  font-size: 11px;
+}
+
+/* Citadel coin_gold.png used in item value meta row */
+.cs-gold-coin-img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.cs-gold-val {
+  color: var(--gold);
+}
+
+.cs-detail-meta-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 1px 0;
+}
+
+.cs-detail-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-head);
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.cs-detail-empty-icon {
+  font-size: 22px;
+  opacity: 0.4;
+}
+
+.rarity-common-text  { color: var(--text); }
+.rarity-magic-text   { color: #8fbfdf; }
+.rarity-rare-text    { color: var(--gold); }
+.rarity-epic-text    { color: #c080e0; }
+.rarity-legendary-text { color: #e0802a; }
+
+@media (max-width: 1100px) {
+  .cs-layout {
+    grid-template-columns: 1fr 1.15fr 1.55fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .cs-layout {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    overflow-y: auto;
+  }
+  .cs-col-left {
+    grid-column: 1 / -1;
+    max-height: 52vh;
+    flex-direction: row;
+    overflow: hidden;
+  }
+  .cs-portrait-wrap {
+    flex: 0 0 180px;
+    max-height: none;
+    aspect-ratio: unset;
+  }
+  /* Kosmetik-Sweep T9: erst HIER (Zeilen-Layout der Spalte) wird der Wrapper zu einem echten
+     flex-column-Block — Vitals/Buffs/Attribute stapeln sich darin normal untereinander, statt als
+     gleichrangige Row-Geschwister neben dem Porträt um dieselbe Breite zu konkurrieren (der
+     eigentliche Bug: Buff-Namen quetschten auf ~3 Zeichen, Attribute wurden vom `overflow:hidden`
+     der Spalte teils ganz abgeschnitten). `overflow-y:auto` NUR auf diesem neuen, kleineren
+     Unter-Container (nicht auf .cs-col-left selbst — das bleibt bewusst scroll-frei, s. historischer
+     Kommentar bei .cs-attr-section) — passt der Inhalt bei sehr flachen Fenstern trotzdem nicht in
+     52vh, scrollt er hier statt unsichtbar abgeschnitten zu werden. */
+  .cs-col-left-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .cs-vitals {
+    flex-shrink: 0;
+  }
+  .cs-buffs {
+    flex-shrink: 0;
+  }
+  .cs-stats-scroll {
+    flex: 1;
+  }
+  .cs-col-mid {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .cs-col-right {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .cs-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    overflow-y: auto;
+  }
+  .cs-col-left {
+    grid-column: 1;
+    flex-direction: column;
+    max-height: none;
+    height: auto;
+  }
+  .cs-portrait-wrap {
+    flex: unset;
+    aspect-ratio: 3 / 4;
+    max-height: 48vw;
+  }
+  .cs-col-mid,
+  .cs-col-right {
+    grid-column: 1;
+    grid-row: unset;
+  }
+  .cs-inv-grid {
+    max-height: 40vh;
+  }
+  .cs-detail-panel {
+    max-height: none;
+  }
+
+  /* Chef-Bugfix 2026-07-24 (Char-Screen bei schmalem Panel ~370px, Screenshot): die
+     "Fläche-füllen"-Kette .cs-stats-scroll (flex column) → .cs-combat-grid (flex:1 1 auto,
+     grid-template-rows: minmax(0,1fr)) → .cs-combat-col → .cs-stat-row (flex:1 1 0,
+     .cs-col-stats .cs-stat-row erzwingt zusätzlich container-type:size für die cqmin-
+     Skalierung, s. dortigen Kommentar weiter oben) braucht eine DEFINITE Höhe von ganz oben.
+     Genau HIER (@media max-width:600px) verliert .cs-layout aber sein explizites
+     grid-template-rows (s.o. — overflow-y:auto übernimmt), die linke Spalte wird height:auto —
+     ohne definite Höhenkette kollabiert container-type:size unvorhersehbar (cqmin bezieht sich
+     auf eine unbestimmte Größe): die Kampfwerte-Zeilen liefen über ihre eigene (kollabierte) Box
+     nach unten hinaus, und die "SET BONUS"-Überschrift/-Zeilen darunter schienen dahinter
+     "durch" statt sauber darunter zu fließen ("Crit damage 163%" drückte in die Wertspalte).
+     Fix: in diesem schmalen Layout auf reinen Content-Fluss zurückfallen — kein Höhen-Stretch,
+     keine Container-Size-Query mehr; Schriftgrößen/Abstände fallen auf dieselben vh-basierten
+     Minimalgrößen zurück, die die Basisregeln (s. .cs-stat-row/.cs-stat-label/.cs-stat-val/
+     .cs-stat-icon weiter oben) ohnehin als unteren Rand definieren — stapelt garantiert sauber
+     statt zu überlappen, bei JEDER Breite ab hier abwärts (~340px bis 600px). */
+  .cs-col-stats .cs-stats-scroll {
+    display: block;
+  }
+  .cs-col-stats .cs-combat-grid {
+    flex: none;
+    grid-template-rows: none;
+  }
+  .cs-col-stats .cs-stat-row {
+    flex: none;
+    container-type: normal;
+    gap: 6px;
+    padding: clamp(1px, 0.35vh, 4px) 0;
+  }
+  .cs-col-stats .cs-stat-label {
+    font-size: clamp(10px, 1.1vh, 12px);
+  }
+  .cs-col-stats .cs-stat-val {
+    font-size: clamp(11px, 1.3vh, 14px);
+  }
+  .cs-col-stats .cs-stat-icon {
+    width: clamp(12px, 1.6vh, 18px);
+    height: clamp(12px, 1.6vh, 18px);
+  }
+}
+
+/* Companion-Panel auf der CharacterPage entfernt (Task #283, Chef: „stört komplett") — die
+   Begleiter-Zuweisung lebt bereits vollständig auf der Companions-Seite (PetGalleryPage: eigener
+   Slot-Picker oben + Equip/Unequip-Buttons je Karte). .cs-companion-* Regeln ersatzlos gestrichen. */
+
+/* Startstil-Auswahl (CharacterCreation): siehe creation.css (Task #282 Redesign). */
+
+/* ═══════════════════════════════════════════════════════════════════
+   SHORT-VIEWPORT OVERRIDES (Task #283, Chef-Testauflösung 1280×720)
+   .cs-col-left scrollt bewusst nie (s. Kommentar bei .cs-attr-section weiter oben — historischer
+   Bug: Attribute liefen sonst unsichtbar unten raus), darum muss die linke Spalte bei kurzen
+   Fensterhöhen aktiv schrumpfen statt zu clippen. Bewusst GESAMMELT am Dateiende: bei gleicher
+   Spezifität gewinnt in CSS die später deklarierte Regel — platziert vor den jeweiligen Basisregeln
+   (wie ein erster Versuch weiter oben) würden diese Overrides von den unbedingten Basisregeln
+   wieder überschrieben. Bei ≥1920×1080 (Chefs primäre Auflösung) bleiben die großzügigeren
+   Basiswerte unangetastet, hier greift nichts. ═══════════════════════════════════════════════ */
+@media (max-height: 800px) {
+  .cs-portrait-wrap {
+    max-height: 20vh;
+    min-height: 90px;
+    border-width: 8px;
+    border-image-width: 8px;
+  }
+  .cs-nameplate {
+    padding: 8px 8px 5px;
+  }
+  .cs-vitals {
+    gap: 3px;
+    padding: 5px 8px 5px;
+    margin: 0 0 4px;
+  }
+  .vital-bar {
+    height: 12px;
+    border-width: 4px;
+  }
+  .vital-head {
+    font-size: 10px;
+    margin-bottom: 1px;
+  }
+  .cs-buffs {
+    padding: 3px 8px;
+    gap: 3px;
+  }
+  .cs-attr-section {
+    padding: 2px 10px 4px;
+  }
+  .cs-section-heading {
+    margin: 4px 0 3px;
+  }
+  .cs-attr-grid {
+    gap: 2px 3px;
+  }
+  .cs-attr-card {
+    gap: 1px;
+    padding: 2px 3px 3px;
+  }
+  .cs-attr-card::after {
+    width: clamp(28px, 4.6vh, 40px);
+    height: clamp(28px, 4.6vh, 40px);
+  }
+  .cs-attr-card-name {
+    font-size: 9px;
+  }
+  .cs-attr-card-val {
+    font-size: 14px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════════════════
+   TASK #340 — CHARACTER-SCREEN: EQUIPMENT/STATS-TAB-UMBAU
+   Ersetzt die zwei gestapelten Container in der mittleren Spalte (Equipment oben ~68% / Combat-
+   Stats unten ~32%) durch EIN Panel mit Tab-Lasche oben + einem Container über die volle
+   Panelhöhe je Tab. Bewusst als EIGENER Block ans Dateiende angehängt (Koordinations-Vorgabe,
+   paralleler Task #336 kalibriert zeitgleich `.cs-col-stats .cs-stat-row/-label/-val/-icon`
+   weiter oben ~Z.1505-1525 sowie `.cs-section-title` ~Z.940-953) — NICHTS davon wird hier
+   angefasst; dieser Block reused nur die bestehenden Klassen als Selektoren (Nachfahren-Kombi-
+   natoren), damit jede künftige Kalibrierung dort automatisch weitergilt.
+   Tab-Optik nach visuellem Vorbild `.battle-log-tab` (combat.css, CombatPage.tsx „LOG|
+   AUSRÜSTUNG"-Tabs) — NUR als Vorlage abgeschaut, dortiger Code bleibt unverändert; eigene
+   Klassen (`.cs-tabbar`/`.cs-tab-btn`) hier, referenzieren dieselben Asset-Pfade (character.css
+   liegt im selben styles/-Ordner wie combat.css, `../assets/...` löst identisch auf).
+   ═══════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* Der (einzige) Tab-Content-Container füllt den Rest des Panels unter der Tab-Lasche. */
+.cs-tabpanel-content {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Tab-Lasche: zwei gleich breite Buttons, Cinzel-Kopfschrift, 9-slice Holzrahmen-Optik. */
+.cs-tabbar {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+  padding: 8px 8px 0;
+}
+
+.cs-tab-btn {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  min-height: 30px;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.12s, box-shadow 0.12s, color 0.12s;
+}
+
+.cs-tab-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 5px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cs-tab-btn:hover {
+  background:
+    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold, #d8b870);
+}
+
+.cs-tab-btn.active {
+  background:
+    linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.30), inset 0 0 8px rgba(216, 184, 112, 0.10);
+}
+
+.cs-tab-btn:focus-visible {
+  outline: 2px solid var(--gold, #d8b870);
+  outline-offset: -2px;
+}
+
+/* ── EQUIPMENT-TAB: EIN großer Container über die volle Panelhöhe (war ~68% eines Doppel-
+   Stacks) — die Puppe darf jetzt deutlich größer werden. `.cs-col-mid .cs-doll` ist spezifischer
+   als die Basisregel `.cs-doll` weiter oben (28*) → gewinnt unabhängig von der Deklarations-
+   reihenfolge, reine Anhebung des Höhen-Deckels (576px → 820px), aspect-ratio/Zentrierung
+   unangetastet. Item-Icons in den Slots skalieren bereits prozentual mit der Slotgröße
+   (`.cs-slot .item-cell.slot-item .item-cell-img`, components.css, 80%/80% statt fixer px) —
+   keine weitere Anpassung nötig. Die kleine Read-only-Puppe im Combat-Log „Equipment"-Tab
+   (`.equip-overview-doll .cs-doll`) bleibt unberührt — andere Klasse, andere Selektor-Kette.
+   Mess-Befund (Playwright): bei 1920×1080 zieht `min(100%, …)` ohnehin schon den 100%-Ast (Doll
+   füllt die volle Wrap-Höhe, ~704px) — der px-Deckel greift praktisch nur auf sehr großen/hohen
+   Screens (3440×1440: Wrap böte ~1090px, alter 576px-Deckel ließ dort sichtbar Luft nach unten).
+   1050px lässt dort spürbar mehr Puppe zu, ohne den Wrap zu sprengen (Nachbeobachtung: ~40px
+   Rand bleiben). */
+.cs-col-mid .cs-doll {
+  max-height: min(100%, 1050px);
+}
+
+/* ── STATS-TAB: gruppierte Sektionen (components/EquipmentOverview.tsx CombatStatsPanelGrouped)
+   Reuse von `.cs-stats-scroll`/`.cs-combat-grid`/`.cs-combat-col`/`.cs-stat-row` (Klassen +
+   Sizing-Regeln unangetastet) — nur der Sektions-Wrapper + eine 1-spaltige Grid-Variante für
+   die kurze „Tempo & Krit"-Gruppe sind neu. */
+.cs-tab-stats-scroll {
+  gap: 4px;
+}
+
+/* Eine Stat-Sektion (Offensive/Defensive/Tempo&Krit): eigener Flex-Container, damit die
+   UNVERÄNDERTE Basisregel `.cs-combat-grid { flex:1 1 0; ... }` (weiter oben) innerhalb der
+   Sektion wieder wirksam wird und die Zeilen die Sektionshöhe füllen — derselbe Mechanismus wie
+   im ursprünglichen (einzelnen) CombatStatsPanel, nur einmal je Sektion statt einmal fürs ganze
+   Panel. `flex-grow` kommt über die `.cs-tab-w<n>`-Klasse (StatGroup, EquipmentOverview.tsx,
+   NICHT als Inline-Style — s. dortigen Kommentar, sonst schlägt sie den @600px-Fallback unten),
+   proportional zur Zeilenzahl je Sektion, damit z.B. die 5-8-zeilige Offensive-Gruppe nicht
+   dieselbe Höhe wie die 3-zeilige Tempo&Krit-Gruppe bekommt (sonst unterschiedlich "gequetschte"
+   Zeilenhöhen). */
+.cs-tab-stat-group {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex-shrink: 1;
+  flex-basis: 0;
+  flex-grow: 1;
+}
+.cs-tab-w1 { flex-grow: 1; }
+.cs-tab-w2 { flex-grow: 2; }
+.cs-tab-w3 { flex-grow: 3; }
+.cs-tab-w4 { flex-grow: 4; }
+.cs-tab-w5 { flex-grow: 5; }
+.cs-tab-w6 { flex-grow: 6; }
+
+/* 1-spaltige Variante von `.cs-combat-grid` (Basisregel hat immer 2 Spalten) — für kurze
+   Gruppen (Tempo & Krit, 3 Zeilen) liest sich eine Spalte klarer als 2/1 unausgeglichen. */
+.cs-tab-stat-grid-1col {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Set-Bonus-Liste am unteren Rand: bewusst OHNE flex-grow (anders als `.cs-tab-stat-group`
+   oben) — bleibt wie im ursprünglichen CombatStatsPanel content-hoch, eine variable Liste
+   aktiver Sets soll sich nicht künstlich strecken. */
+.cs-tab-setbonus-group {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+  /* Schmales Layout (Task #340-Nachtrag, analog zum bestehenden @600px-Fallback bei
+     `.cs-col-stats .cs-stats-scroll` weiter oben): die flex-grow-Verteilung unter den drei
+     Stat-Gruppen braucht wie dort eine definite Höhenkette von oben — bei Content-Flow ohne
+     `.cs-layout`-Grid-Zeilenhöhe (s. dortigen Kommentar) fällt sie auf reinen Block-Fluss
+     zurück, statt mit kollabierter/unvorhersehbarer Höhe zu überlappen. */
+  .cs-tab-stat-group {
+    flex: none;
+  }
+  /* Bei ~500px teilt sich `.cs-tab-stat-group` die knapp 60-90px breite Mittelspalte mit
+     Charakter- UND Inventar-Spalte (s. `.cs-layout`-3-Spalten-Kompression @600px) — die
+     Basisregel `.cs-combat-grid` hat IMMER 2 Spalten, das drückt jede Zahl/jedes Label auf
+     ~25-30px runter (unlesbar). Hier wie die ohnehin schon 1-spaltige Tempo&Krit-Gruppe: eine
+     Spalte statt zwei (Label+Wert bekommen die volle Breite, dafür mehr Zeilen untereinander). */
+  .cs-tab-stat-group .cs-combat-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Mess-Befund (Task #340, Playwright @500px): `.cs-layout` wird hier einspaltig mit
+     `grid-template-rows: none` (Basisregel oben) — jede der 3 Spalten bekommt eine AUTO-Zeile,
+     deren Höhe aus dem intrinsischen Content der Spalte folgt. `.cs-col-tabpanel`/
+     `.cs-tabpanel-content` haben aber `flex-basis:0` + `min-height:0` (nötig für die Fläche-
+     füllen-Kette bei >600px, s. Basisregeln oben) — OHNE eine von außen kommende definite Höhe
+     trägt ein flex-basis:0-Kind NICHTS zur intrinsischen Höhe seines (auto-hohen) Elternteils
+     bei, die ganze Kette kollabiert auf ~0 (nur die Tab-Lasche blieb sichtbar, Puppe/Stat-
+     Zeilen 0px hoch, Stats-Tab-Button dadurch sogar unklickbar). `.cs-col-left` umgeht dasselbe
+     Problem bei dieser Breite bereits über `max-height` statt Flex-Fill (s. @media 900px oben) —
+     hier dieselbe Idee: fester Mindestraum statt Flex-Fill, Rest übernimmt der Scroll von
+     `.cs-layout` (overflow-y:auto, Basisregel @600px oben). Mess-Befund (2. Runde): `overflow:
+     hidden` auf `.cs-col-mid-stack`/`.cs-col-tabpanel` selbst (Basisregeln oben) setzt deren
+     AUTOMATISCHE Content-Mindestgröße auf 0 (CSS-Spec-Verhalten von `overflow:hidden`) — ein
+     `min-height` NUR auf dem tief verschachtelten `.cs-tabpanel-content` trägt dadurch NICHT zur
+     Grid-Zeilenhöhe bei, `.cs-layout` komprimiert die (auto-hohe) Mittelzeile zugunsten von
+     `.cs-col-left`/`.cs-col-right` fast auf 0. Der Boden muss deshalb explizit auf dem
+     GRID-ITEM selbst sitzen (`.cs-col-mid-stack`), nicht nur auf einem seiner Kinder.
+     WICHTIG (3. Runde, Mess-Befund): `.cs-layout`s Gesamthöhe ist hier FEST (kein eigenes
+     Scroll-Wachstum trotz `overflow-y:auto` — CSS-Grid komprimiert `auto`-Zeilen auf die
+     Elternhöhe, statt sie überlaufen zu lassen) — ein GROSSZÜGIGER Mindestwert (getestet: 60vh)
+     kippt die Kompression nur um UND quetscht dafür `.cs-col-left`/`.cs-col-right` fast auf 0
+     (Zero-Sum zwischen den 3 Grid-Zeilen). Ein vorbestehendes, nicht in diesem Task behobenes
+     Struktur-Limit von `.cs-layout` bei Extrem-Breiten — bewusst NUR ein MODERATER Boden (reicht
+     für Tab-Lasche + sichtbaren Rand des Inhalts, klickbar), der die Geschwisterspalten nicht
+     stärker verdrängt als vor dem Tab-Umbau. */
+  .cs-col-mid-stack {
+    min-height: 220px;
+  }
+  .cs-col-mid-stack > .cs-col-tabpanel {
+    flex: none;
+  }
+  .cs-tabpanel-content {
+    flex: none;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TASK #349 — AUSRÜSTUNGS-LOADOUTS 1/2/3 (logic-dev, 0.2.3-Headline-Feature)
+   Eigener Block ans Dateiende (die #336/#340/#343-Regionen oben bleiben unangetastet).
+   Leiste oben im Equipment-Tab (CharacterPage → EquipLoadoutBar.tsx): drei Anlegen-Knöpfe
+   im ButtonNew-9-Slice-Look (Rezept identisch zu components.css `.it-action-btn`, Task #332)
+   plus je ein kleiner Disketten-Speichern-Knopf. Leerer Slot = gedimmt (disabled).
+   ──────────────────────────────────────────────────────────────────────────── */
+.eq-loadout-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 8px 2px;
+  flex: none;
+}
+
+.eq-loadout-label {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--gold, #c9a86a);
+  text-shadow: 0 1px 3px #000;
+  margin-right: 4px;
+}
+
+.eq-loadout-slot {
+  display: flex;
+  align-items: stretch;
+  gap: 3px;
+}
+
+/* HoverTip-Wrapper (as="div") soll das Layout nicht aufbrechen. */
+.eq-loadout-tipwrap {
+  display: flex;
+}
+
+.eq-loadout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 64px;
+  height: 40px;
+  padding: 0 12px;
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image: url("../assets/ui/buttons/button_new.webp") 90 92 90 90 fill / 12px 12px 12px 12px;
+  border-radius: 0;
+  color: #ffffff;
+  text-shadow: 0 1px 3px #000;
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  transition: color 0.12s;
+}
+
+.eq-loadout-btn:hover {
+  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
+}
+
+.eq-loadout-btn:active {
+  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
+}
+
+/* Leerer Loadout-Slot: gedimmt, kein Hover-Wechsel (Muster `.it-action-btn:disabled`). */
+.eq-loadout-btn:disabled,
+.eq-loadout-btn.eq-loadout-empty {
+  filter: grayscale(75%) brightness(0.6);
+  opacity: 0.7;
+}
+
+.eq-loadout-btn:disabled:hover,
+.eq-loadout-btn:disabled:active {
+  border-image-source: url("../assets/ui/buttons/button_new.webp");
+}
+
+.eq-loadout-btn-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px #000);
+}
+
+.eq-loadout-btn-num {
+  line-height: 1;
+}
+
+.eq-loadout-save-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border-style: solid;
+  border-color: transparent;
+  border-image: url("../assets/ui/buttons/button_new.webp") 90 92 90 90 fill / 10px 10px 10px 10px;
+  border-radius: 0;
+  color: #d8cdb6;
+  cursor: pointer;
+}
+
+.eq-loadout-save-btn:hover {
+  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
+  color: #ffffff;
+}
+
+.eq-loadout-save-btn:active {
+  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
+}
+
+.eq-loadout-save-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Erfolgs-Ton der GameAlert-Einblendung (GameAlert.tsx `tone:"success"`, Task #349):
+   goldene Bestätigung statt Fehler-Rot — global gültige Klasse, lebt hier im #349-Block,
+   weil der einzige Sender (EquipLoadoutBar) zum Character-Screen gehört. */
+.game-alert-success {
+  color: var(--gold, #c9a86a);
+}

@@ -1,0 +1,198 @@
+/*
+ * Gravewood Controls — einzeln freigegebene V3-Consumer.
+ * Bewusst kein generischer Button-, Panel-, Modal- oder Seiten-Selector.
+ */
+
+:root {
+  --gw-control-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
+  --gw-slot-finished: url("../assets/ui/gravewood/slots/slot-empty.webp");
+}
+
+/* codex:2026-07-30T23:12:13+02:00 — mittelalterliche Hand mit separatem Auswahl- und Klickzustand. */
+*,
+*::before,
+*::after {
+  cursor: url("../assets/ui/gravewood/cursors/cursor-normal-64.png") 2 2, auto !important;
+}
+
+:is(button, a, [role="button"], summary, label[for], select, option):not(:disabled),
+:is(input[type="button"], input[type="submit"], input[type="reset"]):not(:disabled) {
+  cursor: url("../assets/ui/gravewood/cursors/cursor-select-64.png") 2 2, pointer !important;
+}
+
+/* codex:2026-07-30T23:16:19+02:00 — Pointer-Down gilt appweit: body ist während jedes Klicks Teil der aktiven Vorfahrenkette. */
+body:active,
+body:active *,
+body:active *::before,
+body:active *::after {
+  cursor: url("../assets/ui/gravewood/cursors/cursor-pressed-64.png") 2 2, pointer !important;
+}
+
+/* codex:2026-07-30T23:28:43+02:00 — interaktive Elemente dürfen den globalen Pointer-Down-State nicht mit dem Select-Cursor überstimmen. */
+body:active :is(button, a, [role="button"], summary, label[for], select, option):not(:disabled),
+body:active :is(input[type="button"], input[type="submit"], input[type="reset"]):not(:disabled) {
+  cursor: url("../assets/ui/gravewood/cursors/cursor-pressed-64.png") 2 2, pointer !important;
+}
+
+/* codex:2026-07-30T23:12:13+02:00 — Scrollbar nutzt echte Endkappen; die Mitte darf wachsen, ohne die Textur zu verwischen. */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track:vertical {
+  background: url("../assets/ui/gravewood/scrollbars/scrollbar-track.webp")
+    center top / 100% auto repeat-y !important;
+}
+
+::-webkit-scrollbar-track:horizontal,
+::-webkit-scrollbar-corner {
+  background: var(--gw-control-surface) center / 64px 64px repeat !important;
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 34px;
+  min-width: 34px;
+  border-style: solid;
+  border-color: transparent;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  border-width: 10px 5px;
+  border-image: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-normal.webp")
+    48 32 48 32 fill / 10px 5px !important;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  border-width: 5px 10px;
+  border-image: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-normal.webp")
+    48 32 48 32 fill / 5px 10px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  border-image-source: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-hover.webp") !important;
+}
+
+::-webkit-scrollbar-thumb:active {
+  border-image-source: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-pressed.webp") !important;
+}
+
+/* codex:2026-07-30T23:12:13+02:00 — ausschließlich die beiden Topbar-Fortschrittsleisten: höher, glatt und ohne Segmentverformung. */
+#root .content-header {
+  padding-bottom: calc(42px * var(--tb-scale));
+  min-height: calc(86px * var(--tb-scale));
+}
+
+#root .content-header-progress {
+  bottom: calc(6px * var(--tb-scale));
+  gap: calc(3px * var(--tb-scale));
+}
+
+#root .tb-bar {
+  height: calc(16px * var(--tb-scale));
+  min-height: calc(16px * var(--tb-scale));
+  border: 1px solid rgba(150, 107, 55, 0.72);
+  border-image: none;
+  border-radius: 2px;
+  background-color: #0b0c0e;
+  background-image: var(--gw-control-surface);
+  background-position: left center;
+  background-size: 256px 256px;
+  background-repeat: repeat;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.82),
+    0 1px 0 rgba(218, 166, 89, 0.12);
+}
+
+#root .tb-bar-track-bg {
+  background: transparent;
+}
+
+#root .tb-bar-fill {
+  top: 2px;
+  bottom: 2px;
+  border: 0;
+  border-image: none;
+  border-radius: 1px;
+  background: linear-gradient(90deg, #3e2c17, #9c6f2c 62%, #d5aa52);
+  /* codex:2026-07-31T00:32:37+02:00 — Transform statt permanent überlappender
+     clip-path-Paints; 80 ms beendet die Bewegung vor dem nächsten 10-Hz-Update. */
+  transform-origin: left center;
+  will-change: transform;
+  transition: transform 80ms linear;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 172, 0.2),
+    0 0 4px rgba(183, 124, 44, 0.24);
+}
+
+#root .tb-bar--action .tb-bar-fill {
+  background: linear-gradient(90deg, #554019, #b3912e 60%, #ddc15a);
+  filter: none;
+}
+
+#root .tb-bar--level .tb-bar-fill {
+  background: linear-gradient(90deg, #2d2849, #58478d 60%, #8973c4);
+}
+
+#root .tb-bar-gloss {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 48%, rgba(0, 0, 0, 0.18));
+  opacity: 0.72;
+}
+
+#root .tb-bar-frame-row {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(10% - 1px),
+    rgba(177, 129, 69, 0.38) calc(10% - 1px),
+    rgba(177, 129, 69, 0.38) 10%
+  );
+}
+
+#root .tb-bar-frame-seg {
+  border: 0;
+  border-image: none;
+  background: transparent;
+}
+
+/* codex:2026-07-30T23:12:13+02:00 — Character-Equipment und Inventar verwenden leer wie belegt dieselbe fertige Slotgrafik. */
+#root :is(.inv-slot, .cs-slot, .cs-bag-slot) {
+  border: 0 !important;
+  border-image: none !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background-image:
+    var(--slot-glow, linear-gradient(transparent, transparent)),
+    var(--gw-slot-finished) !important;
+  background-position: center, center !important;
+  background-size: 100% 100%, 100% 100% !important;
+  background-repeat: no-repeat, no-repeat !important;
+}
+
+/* codex:2026-07-31T00:32:37+02:00 — Seltenheit kommt in Character-Slots nur noch über den vorhandenen Flächenschein; keine farbige Rechteckkante. */
+#root :is(.inv-slot, .cs-slot, .cs-bag-slot) .item-cell[class*="rarity-"] {
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+@media (max-width: 1024px) {
+  /* codex:2026-07-30T23:12:13+02:00 — Progressbereich bleibt innerhalb der kompakten Headerhöhe. */
+  #root .content-header {
+    padding-bottom: calc(36px * var(--tb-scale));
+    min-height: calc(76px * var(--tb-scale));
+  }
+
+  #root .tb-bar {
+    height: calc(13px * var(--tb-scale));
+    min-height: calc(13px * var(--tb-scale));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* codex:2026-07-30T23:12:13+02:00 — ruhiger Systemmodus ohne Fortschrittsinterpolation. */
+  #root .tb-bar-fill {
+    transition: none;
+  }
+}

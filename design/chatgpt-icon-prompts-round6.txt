@@ -1,0 +1,64 @@
+=== ChatGPT Icon-Generierungs-Prompts — Grim Reach (Runde 6) ===
+Generiert: 2026-07-09
+Fehlende Item-Icons: 15  |  Fehlende Monster-Bilder: 5  |  UI-Sonderwunsch: 1
+Jeder Block = max. ~6 Einträge. Format pro Eintrag: Name (dateiname.png) — Aussehens-Beschreibung.
+Durchgängiger Stil: dunkles Dark-Fantasy, KEIN Pixel-Art, EIN einzelnes Icon pro Bild, zentriert, auf transparentem oder schlichtem dunklem Hintergrund.
+WICHTIGE REGEL: Ausrüstung (Waffen/Rüstung/Schmuck) OHNE Schimmer, Glühen oder Leuchten — nur Runen und Tränke/Speisen dürfen dezent glühen.
+Priorität: TEIL A (Starweave-Set + Wiedergänger — seit Runde 3 offen!), dann B/C/D, dann Monster + UI-Icon.
+
+
+############### TEIL A — STERNGEWEBE-SET + BOGEN (6 — höchste Priorität, Wiedergänger) ###############
+
+--- A Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 6 angefragte Icons = 6 einzelne Bilder. Wichtig: Ausrüstung ganz OHNE Glüh- oder Leuchteffekte. Hier also die nächsten Bilder die ich brauche:
+• Sterngewebe-Krone (starweave_coronet.png) — Ein filigraner Stirnreif aus mitternachtsblauem, dicht gewebtem Sternenstoff über einem schmalen Silbergestell. In den Stoff sind winzige silberne Sternchen und feine Konstellations-Linien eingestickt, wie ein Nachthimmel als Textil. Vorne ein kleines, mattes Silbermedaillon mit Sternprägung. Edle Magier-Kopfbedeckung, matte Stoffoberfläche, kein Leuchten.
+• Sterngewebe-Ornat (starweave_vestment.png) — Eine epische Magier-Robe (Brustteil) aus tiefem Mitternachtsblau mit violettem Schimmerton im Stoffverlauf. Silberne Stickerei zeichnet Sternbilder über Brust und Schultern; die Säume tragen ein feines Bordürenmuster aus winzigen Sternen. Weite, elegante Ärmelansätze, hochwertiger fallender Stoff. Matt, edel, kein Leuchten.
+• Sterngewebe-Gewand (Beine) (starweave_skirt.png) — Ein bodenlanger, leicht fallender Magier-Rock aus mitternachtsblauem Sternenstoff, seitlich geschlitzt. Eingestickte silberne Sternbilder ziehen sich wie eine Himmelskarte über den Stoff nach unten; silberner Gürtelbund mit Mondsichel-Schließe. Matte Textiloberfläche, kein Leuchten.
+• Sterngewebe-Handwickel (starweave_handwraps.png) — Handgelenk-Wickel aus schmalen Bahnen mitternachtsblauen Sternenstoffs, mehrfach um Handfläche und Unterarm gewunden. Auf dem Handrücken ein aufgesticktes silbernes Sternbild als Abschluss-Ornament; die Bahnenkanten silbern eingefasst. Stoffstruktur sichtbar, matt, kein Leuchten.
+• Sterngewebe-Sandalen (starweave_sandals.png) — Leichte Magier-Sandalen mit Sohlen aus dunklem Leder und Riemen aus mitternachtsblauem Sternenstoff, die sich bis über den Knöchel kreuzen. Kleine silberne Stern-Nieten an den Riemenkreuzungen, silberne Zierkante an der Sohle. Elegant und leicht, matt, kein Leuchten.
+• Frostkavernen-Bogen (frostcaverns_bow.png) — Ein epischer Langbogen, geborgen aus den eisigen Frostkavernen — die Bogenarme wie aus klarem Gletschereis gewachsen, mit Raureif und feinen weißen Frostadern überzogen. Die Sehne wirkt wie gefrorener Faden, an den Enden kleine Eiszapfen. Kristalline, kalte Optik — aber OHNE Glow: nur Eis, Reif und matte Kälte.
+
+
+############### TEIL B — RÜSTUNG & WAFFEN, NIEDRIGE STUFE (3) ###############
+
+--- B Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Wichtig: Ausrüstung ganz OHNE Glüh- oder Leuchteffekte. Hier also die nächsten Bilder die ich brauche:
+• Lederhose (leather_legs.png) — Eine schlichte Anfänger-Lederhose aus grob vernähtem, hellbraunem Leder — das allererste Beinkleid eines Fernkämpfers. Sichtbare Nähte, leicht abgewetzte Knie, einfacher Schnürbund. Ehrliches, simples Starter-Equipment ohne jeden Zierrat.
+• Lederstiefel (leather_boots.png) — Einfache halbhohe Stiefel aus hellbraunem, grob vernähtem Leder mit dünner Sohle und simpler Schnürung vorn. Leicht staubig und gebraucht — Starter-Ausrüstung, kein Schmuck, keine Beschläge.
+• Mark-Kappe (marrow_cap.png) — Ein grober Kopfschutz, zusammengesetzt aus bleichen, ausgehöhlten Knochenplatten und -kappen, mit Lederriemen verzurrt. Die Knochen wirken porös und markig-hohl, elfenbein- bis gelblich-bleich; ein leicht unheimliches Früh-Spiel-Trophäenstück. Matt, knochig, kein Leuchten.
+
+
+############### TEIL C — RUNEN DES AUSWEICHENS (3 — dürfen glühen, Tier-Stufung) ###############
+
+--- C Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Rune des Ausweichens I (rune_evasion_i.png) — Ein kleiner, flacher Runenstein der ersten Stufe, in dessen Oberfläche eine geschwungene Wind-/Ausweich-Rune (wehende Doppellinie) eingraviert ist. Grauer Stein, die Rune-Linien glimmen schwach blassgrün, ein einzelnes angedeutetes Blatt-Motiv. Sehr dezentes grünliches Glühen — die schwächste Stufe.
+• Rune des Ausweichens II (rune_evasion_ii.png) — Runenstein der zweiten Stufe: die Wind-Rune ist tiefer eingebrannt und leuchtet klar grün; um den Stein wehen zwei feine, angedeutete Luftschlieren mit winzigen Blättern. Mittleres grünes Leuchten, spürbar mehr Bewegung als Stufe I.
+• Rune des Ausweichens III (rune_evasion_iii.png) — Runenstein der dritten Stufe: die Rune strahlt hell smaragdgrün-weiß, der Stein ist von einem sichtbaren Wirbel aus Luftschlieren und tanzenden Blättern umgeben, als würde er der Hand ausweichen wollen. Kräftiges grünes Kernleuchten — die stärkste Stufe.
+
+
+############### TEIL D — ENDGAME-SPEISEN (3 — dezentes Glühen erlaubt) ###############
+
+--- D Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Asset Icons, dafür brauche ich bei der Generierung immer einzelne Bilder pro Icon. Dass heißt 3 angefragte Icons = 3 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Leerenrochen-Bankett (voidray_banquet.png) — Ein festlich angerichtetes Endgame-Gericht: das gebratene Flügelfilet eines Leerenrochens auf einer dunklen Steinplatte, das Fleisch außen gebräunt, innen dunkelviolett schimmernd wie der Nachthimmel. Garniert mit dunklen Kräutern und ein paar tiefvioletten Beeren; hauchzarter violetter Dampf steigt auf.
+• Abgrund-Festmahl (abyssal_feast.png) — Ein brodelnder gusseiserner Kessel voll tiefseeblauer Suppe, in der Tentakelstücke, Muscheln und ein ganzer Tiefseefisch angerichtet sind. Die Oberfläche schimmert dunkelblau-türkis wie die Tiefsee, feiner blauer Dampf; rustikale Kelle am Kesselrand.
+• Seelenfeuer-Bankett (soulfire_banquet.png) — Ein herrschaftlicher Braten auf silberner Platte, der über blassblauen Seelenfeuer-Flammen ruht — die Flammen züngeln geisterhaft kühl-blau statt orange um das Fleisch, das dadurch appetitlich glasiert wirkt. Beilagen aus dunklem Wurzelgemüse; dezent blau glühende Glut darunter.
+
+
+############### MONSTER (5 — Kampfbild-Format wie bestehende Monster-Art: ganze Kreatur, gemalter Stil, schlichter dunkler Hintergrund) ###############
+
+--- MONSTER Block 1/1 ---
+Ich brauche Hilfe bei Generierung von Spiel Monster-Artworks im gemalten Dark-Fantasy-Stil, ein einzelnes Monster pro Bild, ganze Kreatur sichtbar, schlichter dunkler Hintergrund. Dass heißt 5 angefragte Artworks = 5 einzelne Bilder. Hier also die nächsten Bilder die ich brauche:
+• Hohles Mark (hollow_marrow.png) — Eine kleine, kauernde Untoten-Kreatur der frühen Gebiete (Stufe 16): ein zusammengesetztes Wesen aus ausgehöhlten, bleichen Knochen, durch deren hohle Mark-Kanäle fahles Grau wabert. Krumme Haltung, zu lange Fingerknochen, leere Augenhöhlen. Bedrohlich, aber erkennbar schwach — ein Früh-Spiel-Gegner.
+• Sumpfirrlicht (mire_wisp.png) — Ein schwebendes Irrlicht (Stufe 30) über brackigem Sumpfboden: eine flackernde, blaugrün leuchtende Lichtkugel, umweht von Nebelfetzen und Sumpfgas-Schlieren, darin schemenhaft ein verzerrtes Gesicht. Um es herum tropfende Schlammfäden und ein fauliger Grünstich.
+• Hügelgrab-Chorist (barrow_chanter.png) — Ein untoter Kult-Sänger (Stufe 55) in zerfallener, erdverkrusteter Grabrobe mit Kapuze; der Kiefer weit aufgerissen mitten im Grabgesang, aus dem Mund wehen sichtbare Klage-Schwaden. Knochige Hände halten ein zerbrochenes Räuchergefäß; Grabbeigaben-Schmuck um den Hals.
+• Hohler Chor (hollow_choir.png) — Ein unheimliches Kollektiv-Wesen (Stufe 80): drei bis vier ausgezehrte, hohle Gestalten in fahlen Roben, die zu EINER Kreatur verwachsen sind — mehrere aufgerissene Münder singen gleichzeitig, die Körper gehen ineinander über wie geschmolzenes Wachs. Aus den hohlen Brustkörben hallt sichtbarer Schall als feine Druckwellen-Ringe.
+• Eiserner Wächter (iron_sentinel.png) — Ein massiver Konstrukt-Koloss (Stufe 90) aus vernietetem, angelaufenem Eisen: turmschildartige Panzerplatten, ein schmaler glimmender Sehschlitz im Helmblock, Fäuste wie Ambosse. Uralt und unbeirrbar, mit Scharten und Rostspuren vergangener Kämpfe.
+
+
+############### UI-SONDERWUNSCH (1) ###############
+
+--- UI Block 1/1 ---
+Ich brauche ein einzelnes UI-Icon im selben Dark-Fantasy-Stil wie meine Item-Icons (ein Bild, zentriert, transparenter oder schlicht dunkler Hintergrund):
+• Quest-Token (icon_quest_token.png) — Eine geprägte Belohnungsmünze/Marke aus dunkler Bronze mit erhabenem Pergamentrollen-Symbol (Questrolle) in der Mitte und einem gezackten, leicht abgegriffenen Rand. Wertig wie eine Gildenmarke, klar als Währungs-Icon lesbar auch in kleiner Größe (32px). Matte Bronze, dezente Gold-Akzente auf den erhabenen Kanten.

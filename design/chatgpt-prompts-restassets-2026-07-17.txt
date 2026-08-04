@@ -1,0 +1,85 @@
+════════════════════════════════════════════════════════════════════════════
+GRIM REACH — ChatGPT-Bildgenerierungs-Prompts, Rest-Assets (Stand 17.07.2026)
+30 Bilder in 4 Batches. Jeden Batch-Block KOMPLETT in ChatGPT einfügen.
+NEU: Kein "transparent" mehr — GPT kann keine echte Transparenz. Stattdessen
+bekommt jedes Freisteller-Motiv einen VOLLFARBIGEN Chroma-Hintergrund (Farbe
+steht im jeweiligen Prompt), das Freistellen übernimmt unser Chroma-Key-Tool.
+Batch 4 (Kulissen) ist die Ausnahme: Vollbild, KEIN Chroma.
+Dateinamen exakt übernehmen (werden 1:1 per Auto-Discovery gebunden).
+════════════════════════════════════════════════════════════════════════════
+
+
+── BATCH 1 — MEISTER-RINGE 1–10 (Level-99-Belohnungen) ─────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, KEINE Sammelbilder, pro Antwort genau EIN Motiv. Stil für alle zehn
+konsistent: dunkle Fantasy, gemalter Look (painterly), gedeckte erdige Palette,
+edles Meisterwerk-Finish. Jedes Motiv ist EIN massiver Ring in leichter
+Dreiviertelansicht, groß im Bild, scharfe Details, MATTE Oberflächen — KEIN
+Glühen, KEIN Schimmer, KEINE Leuchteffekte, kein Sparkle. Hintergrund: eine
+KOMPLETT EINFARBIGE, SATTE FLÄCHE in der im Prompt genannten Farbe, die sich
+nicht mit den Farben des Rings beißt (wird per Chroma-Key entfernt) — kein
+Verlauf, kein Schatten auf dem Hintergrund, kein Vignette.
+
+1. ring_master_woodcutting.png — Breiter Ring aus poliertem Eichenholz mit Kern aus dunklem Eisen; die Schiene ist als feine Baumrinde geschnitzt, obenauf eine flache Axtblatt-Plakette aus mattem Stahl mit eingekerbten Jahresringen. Hintergrund: sattes Magenta.
+2. ring_master_mining.png — Schwerer Ring aus rohem, dunkelgrauem Eisen mit meißelspuren-Textur; als Besatz ein unbehauener, MATTER schwarzer Erzbrocken mit dünnen Kupferadern, gefasst in vier klobigen Krallen. Hintergrund: sattes Grün.
+3. ring_master_fishing.png — Ring aus angelaufenem Silber, die Schiene als zwei ineinandergreifende Fischschwänze mit fein gravierten Schuppen; obenauf eine flache Perlmutt-Scheibe, matt geschliffen, von einem geflochtenen Netzmuster gerahmt. Hintergrund: sattes Magenta.
+4. ring_master_smithing.png — Massiver Ring aus geschwärztem Stahl mit sichtbaren Hammerschlag-Dellen; obenauf ein Miniatur-Amboss als Relief, flankiert von zwei Nietenreihen, die Innenseite blank poliert als Kontrast. Hintergrund: sattes Grün.
+5. ring_master_cooking.png — Ring aus warmem Kupfer mit Patina in den Rillen; die Schiene als geflochtener Brotzopf gearbeitet, obenauf eine kleine gusseiserne Kessel-Plakette mit graviertem Dampfschwaden-Ornament (graviert, NICHT leuchtend). Hintergrund: sattes Grün.
+6. ring_master_farming.png — Ring aus Bronze mit erdbraunen Einlagen; die Schiene als gebundene Weizengarbe gearbeitet, deren Halme sich zur Plakette hin öffnen: eine flache Sichel aus mattem Stahl über einem Feld gravierter Furchen. Hintergrund: sattes Magenta.
+7. ring_master_foraging.png — Ring aus dunklem Wurzelholz, umwickelt mit feinem Lederband; obenauf drei kleine geschnitzte Beeren aus mattem Karneol neben einem silbernen Blattskelett, alles stumpf poliert. Hintergrund: sattes Blau.
+8. ring_master_thieving.png — Schlanker Ring aus geschwärztem Silber, innen spiegelblank; die Schiene formt eine flache, offene Hand, die eine winzige matte Goldmünze hält, am Rand ein graviertes Dietrich-Muster. Hintergrund: sattes Grün.
+9. ring_master_leatherworking.png — Ring aus drei übereinander vernähten Lederlagen (cognac, umbra, schwarzbraun) auf Messingkern, mit sichtbarer Meisternaht und einer kleinen Ahle-Plakette aus mattem Messing. Hintergrund: sattes Grün.
+10. ring_master_jewelcrafting.png — Ring aus poliertem Weißgold mit filigraner Fassungs-Arbeit: fünf kleine, MATT geschliffene Edelsteine (Granat, Onyx, Saphir, Smaragd, Bernstein) in einer Reihe, jede Fassung anders ziseliert — die Steine stumpf, ohne Funkeln. Hintergrund: sattes Magenta.
+
+
+── BATCH 2 — MEISTER-RINGE 11–20 ───────────────────────────────────────────
+
+Erstelle nacheinander ZEHN EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, pro Antwort genau EIN Motiv. Gleicher Stil wie zuvor: dunkle Fantasy,
+painterly, MATTE Oberflächen ohne jedes Glühen/Leuchten/Funkeln, ein massiver
+Ring groß im Bild. Hintergrund: KOMPLETT EINFARBIGE SATTE FLÄCHE in der
+genannten Farbe (Chroma-Key), ohne Verlauf, ohne Schatten, ohne Vignette.
+
+11. ring_master_runecrafting.png — Ring aus grauem Flussstein, glatt geschliffen; rundum eingemeißelte Runenzeichen, mit dunkler Tinte gefüllt (KEIN Leuchten, nur eingefärbter Stein), obenauf eine flache Bruchstein-Plakette mit halb verwittertem Zeichen. Hintergrund: sattes Magenta.
+12. ring_master_herblore.png — Ring aus grünlich patinierter Bronze; die Schiene als Rankengeflecht mit winzigen geschlossenen Blüten, obenauf ein kleiner Mörser mit Stößel als Relief, in den Rillen getrocknete Kräuterreste angedeutet. Hintergrund: sattes Magenta.
+13. ring_master_enchanting.png — Ring aus dunklem Silber mit tief eingravierten, tintengefüllten Bannlinien, die sich zur Plakette hin verdichten: ein MATTER, rauchgrauer Kristall in Krallenfassung, bewusst stumpf wie erloschen. Hintergrund: sattes Grün.
+14. ring_master_slayer.png — Brutaler Ring aus geschwärztem Eisen; die Schiene als Reihe kleiner stumpfer Zähne gearbeitet, obenauf ein flacher Trophäen-Schädel eines Raubtiers aus mattem Knochen, darunter zwei gekreuzte Klingen graviert. Hintergrund: sattes Grün.
+15. ring_master_attack.png — Ring aus poliertem, aber kampfgezeichnetem Stahl mit Scharten; die Plakette ist ein flaches, quer liegendes Schwert-Relief, die Schiene mit Lederriemen-Gravur wie ein Griffwickel. Hintergrund: sattes Grün.
+16. ring_master_power.png — Wuchtiger Ring aus dunklem Eisen, fast klobig; obenauf ein Relief zweier berstender Kettenglieder, die Bruchkanten scharf, die Schiene mit tiefen Faust-Dellen. Hintergrund: sattes Grün.
+17. ring_master_defence.png — Ring aus mattem Plattenstahl, gearbeitet wie ein Miniatur-Schildrand mit genieteter Kante; obenauf ein kleines Turmschild-Relief mit einer einzelnen, ehrlich gedellten Delle. Hintergrund: sattes Magenta.
+18. ring_master_ranged.png — Schlanker Ring aus dunklem Eibenholz mit Horn-Enden wie ein gespannter Bogen; die Sehne als straffer Silberdraht rund um die Schiene, obenauf eine kleine Pfeilspitzen-Plakette aus mattem Stahl. Hintergrund: sattes Magenta.
+19. ring_master_magic.png — Ring aus tiefviolettem, MATT geschliffenem Stein mit Silberfassung; in die Schiene ist eine Sternkarte graviert, die Linien mit dunkler Tinte gefüllt, obenauf ein stumpfer, rauchiger Kristall-Cabochon ohne jedes Leuchten. Hintergrund: sattes Grün.
+20. ring_master_warding.png — Ring aus hellem, fast weißem Stahl; die Schiene als doppelte, ineinander verschränkte Schutzknoten-Flechtung, obenauf eine runde Plakette mit konzentrischen gravierten Schutzkreisen, tintendunkel gefüllt. Hintergrund: sattes Grün.
+
+
+── BATCH 3 — COMPLETION-RING + CHASE-ITEMS + MATERIAL (6 Bilder) ───────────
+
+Erstelle nacheinander SECHS EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, pro Antwort genau EIN Motiv. Stil: dunkle Fantasy, painterly, MATTE
+Oberflächen ohne Glühen/Leuchten/Funkeln, Motiv groß im Bild. Hintergrund:
+KOMPLETT EINFARBIGE SATTE FLÄCHE in der genannten Farbe (Chroma-Key), ohne
+Verlauf, ohne Schatten, ohne Vignette.
+
+21. ring_master_vitality.png — Ring aus warmem Roségold; die Schiene als zwei ineinandergreifende Herzkammern-Bögen anatomisch angedeutet, obenauf ein MATTER, tiefroter Granat-Cabochon in schlichter Fassung, stumpf wie getrocknetes Blut. Hintergrund: sattes Grün.
+22. ring_master_completion.png — Der Ring der Vollendung: breite Schiene aus einundzwanzig hauchdünnen, sichtbar verschiedenen Metall- und Materiallagen (Holz, Eisen, Silber, Kupfer, Leder, Stein …) übereinander geschmiedet, obenauf ein schlichtes, MATT-goldenes Siegel mit einer einzelnen Krone-über-Berg-Gravur. Das edelste Stück der Reihe, aber vollkommen ohne Leuchten. Hintergrund: sattes Magenta.
+23. crownless_blade.png — Zweihändiges Großschwert aus schwarzem, rissigem Basaltstein; die Risse zeigen ERLOSCHENE, matt-dunkelrote Glut-Reste (wie kalte Lava, KEIN Leuchten), die Parierstange aus sieben verschmolzenen, zerbrochenen Kronenzacken, der Griff mit verkohltem Leder umwickelt. Klinge diagonal groß im Bild. Hintergrund: sattes Grün.
+24. sevenfold_crown_chain.png — Schwere Halskette aus geschwärzten Eisengliedern, an der SIEBEN kleine, unterschiedlich zerbrochene Kronen aus angelaufenem Gold hängen — jede Krone anders beschädigt (geborsten, verbogen, halbiert, geschmolzen), Asche in den Vertiefungen. Hintergrund: sattes Grün.
+25. warchief_cleaver.png — Riesiges, grob geschmiedetes Goblin-Kriegsbeil: asymmetrisches, gezacktes Blatt aus fleckigem Eisen mit Rostnarben, der Rücken mit Kettenstücken und zwei kleinen Trophäen-Schädeln behangen, Griff aus Knochen mit Lederriemen. Hintergrund: sattes Magenta.
+26. warchief_fist.png — Ein Paar grober Goblin-Panzerhandschuhe: unregelmäßige, überlappende Eisenplatten mit Nieten auf schmutzigem Leder, Knöchel mit stumpfen Dornen, an einem Handgelenk ein geknoteter Trophäen-Riemen mit Zähnen. Hintergrund: sattes Magenta.
+(+1 unten, Material:)
+27. masters_mark.png — Die Meistermarke: eine handtellergroße, achteckige Prägemarke aus mattem Zinn mit tiefer Hammer-und-Stern-Prägung, der Rand von unzähligen Prüfkerben gezeichnet, an einer kurzen abgerissenen Lederschnur. Hintergrund: sattes Grün.
+
+
+── BATCH 4 — DUNGEON-KULISSEN (3 Bilder, VOLLBILD — KEIN Chroma!) ──────────
+
+Erstelle nacheinander DREI EINZELNE Bilder, eines pro Prompt unten — KEINE
+Collage, pro Antwort genau EIN Motiv. Diese drei sind KULISSEN: bildfüllende
+Szenen im Hochformat (Seitenverhältnis ca. 4:5, Zielgröße ~1122×1402), OHNE
+Freisteller-Hintergrund, OHNE Figuren im Vordergrund. Stil: dunkle Fantasy,
+painterly, atmosphärisch dicht, gedeckte Palette — die Szene ist ein
+Kampf-Hintergrund, die Bildmitte bleibt kompositorisch ruhig.
+
+28. behind_the_throne.png — Drazhans Thronsaal, tief unter der Asche: ein kolossaler, LEERER Thron aus schwarzem Basalt auf gestuftem Podest, flankiert von geborstenen Säulen; am Boden knietief treibende Asche, darin halb versunkene, zerbrochene Kronen; in den Rissen von Thron und Boden matte, ERLOSCHENE Restglut (dunkles Rot, kein Leuchten), Aschestaub hängt reglos in der Luft.
+29. wyvern_lair.png — Hochgelegener Wyvern-Hort im Grauland: ein windgepeitschter Felsvorsprung über einer Nebelschlucht, darauf ein riesiges Nest aus Knochen, zersplitterten Lanzen und Bannerfetzen; abgenagte Großtier-Skelette am Rand, kalter, bleigrauer Himmel mit fernen Bergsilhouetten.
+30. paragon_tower.png — Das Innere des Paragonturms, eine Prüfungsarena in großer Höhe: kreisrunde Kampfplattform aus hellem, kalt-grauem Stein mit konzentrischen, eingemeißelten Ringen; dahinter öffnet sich der Turm nach oben in endlose, sich verjüngende Etagenringe mit kaltem Tageslicht von weit oben; Banner ohne Wappen, streng, still und erhaben.

@@ -1,0 +1,210 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  GRIM REACH — FEHLENDE ASSETS · ChatGPT-Copy-Paste-Prompts (2026-07-13)         ║
+║  77 Bilder in 9 Batches. Immer EINEN Batch komplett in ChatGPT einfügen.        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+SO GEHT'S:
+• Kopiere pro Durchgang GENAU EINEN Batch (Vorspann + Liste) und füge ihn bei ChatGPT ein.
+• Der Vorspann sagt ChatGPT, dass es EINZELNE Bilder liefern soll (keine Collage) und wie sie heißen.
+• Lade die fertigen PNGs (bzw. das ZIP) danach einfach in den ASSETS-Done-Ordner — ich binde sie ein.
+• Batches 1–5 und 7–9 = transparenter Hintergrund. Batch 6 (Dungeon-Kulissen) = VOLLE Szene, KEIN transparent.
+• Bei den Umhängen (Batch 1–2): häng die passende Skill-Icon-Datei (icon_<skill>.png aus DIESEM Ordner)
+  als Referenz mit an, damit das Wappen exakt stimmt.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 1 / 9 — MEISTERUMHÄNGE (Teil 1, 10 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 10 Bilder als 10 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage,
+Raster, Kontaktbogen, Mosaik oder Sammelbild. Jedes Motiv ist ein separates Bild für sich, zentriert,
+ohne Rahmen, ohne Text/Beschriftung, ohne Hintergrund-Szene. Hintergrund: KOMPLETT TRANSPARENT
+(PNG mit Alphakanal), kein weißer/schwarzer/farbiger Kasten dahinter. Stil: gemaltes Dark-Fantasy,
+konsistent über alle Bilder. Jedes Motiv ist EIN drapierter Umhang in Rückansicht, mittig das jeweilige
+Skill-Wappen (nutze die mitgeschickte Icon-Referenz als gesticktes/geprägtes Emblem). KEIN Glühen/Leuchten
+(nur matte Materialien). Liefere alles als ZIP und benenne jede Datei EXAKT wie unten angegeben.
+
+1. cape_master_woodcutting.png — Waldgrüner Umhang mit moosgrauem Futter, Saum wie geflochtene Rinde, Astholz-Schließe.
+2. cape_master_mining.png — Schiefergrauer schwerer Stoff mit dunklen Erzadern, Kettengeflecht-Saum, roher Erzbrocken als Schließe.
+3. cape_master_fishing.png — Meerblau-schwarzer Stoff mit Schuppen-Textur, Netzgeflecht-Saum mit Knochenhaken, Perlmutt-Muschel-Schließe.
+4. cape_master_smithing.png — Rußgeschwärztes Ledertuch mit glutorangen Nähten (matt), genietete Stahlplättchen am Saum, Amboss-Schließe.
+5. cape_master_cooking.png — Bordeauxroter Umhang mit cremefarbenem Futter, Gewürzranken-Stickerei, Kupferkessel-Schließe.
+6. cape_master_farming.png — Erdbraunes grobes Tuch mit grünen Ranken, Stroh-Saum mit getrockneten Blüten, Bronzesichel-Schließe.
+7. cape_master_foraging.png — Olivfarbener Umhang mit aufgenähten Kräuterbündeln und Ledertaschen, Federbesatz, Hirschhorn-Schließe.
+8. cape_master_thieving.png — Mattes Nachtschwarz mit rauchgrauem Muster, innen Diebestaschen, asymmetrisch zerschlissener Saum, Silber-Dietrich-Schließe.
+9. cape_master_leatherworking.png — Kunstvoll vernähte Lederbahnen (cognac/umbra/schwarzbraun), Meisternähte, Lederflechtband, Messing-Ahle als Schließe.
+10. cape_master_jewelcrafting.png — Tiefvioletter Samt, Saum mit matt gefassten bunten Edelsteinen, silberne Juwelierszange als Schließe.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 2 / 9 — MEISTERUMHÄNGE (Teil 2, 11 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 11 Bilder als 11 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster/
+Mosaik. Jedes ist ein separater drapierter Umhang in Rückansicht, zentriert, ohne Rahmen/Text, mit
+KOMPLETT TRANSPARENTEM Hintergrund (PNG mit Alpha). Mittig jeweils das Skill-Wappen (Icon-Referenz mit-
+schicken). Gemaltes Dark-Fantasy, KEIN Glühen (matte Materialien). ACHTUNG letztes Bild (Vollendung):
+KEIN einzelnes Skill-Icon, sondern das beschriebene gekrönte Gold-Wappenschild. Liefere als ZIP, Datei-
+namen EXAKT wie unten.
+
+1. cape_master_runecrafting.png — Steingraues Tuch mit eingemeißelt wirkenden dunklen Runenreihen am Saum, Runenstein-Schließe.
+2. cape_master_herblore.png — Flaschengrüner Stoff mit violetten Schlieren, kleine verkorkte Phiolen und Kräuter am Saum, Stein-Mörser-Schließe.
+3. cape_master_slayer.png — Geschwärztes Leder mit blutrotem Futter, Monster-Trophäen (Zähne/Klauen/Horn) am Saum, Totenschädel-Knebel.
+4. cape_master_attack.png — Stahlgraues Tuch mit parallelen Schnittnarben-Nähten, poliertes Stahlband am Saum, zwei gekreuzte Miniatur-Klingen.
+5. cape_master_power.png — Blutrotes schweres Tuch mit schwarzem Fellkragen, leicht zerschlissen, Eisenringe am Saum, eiserne Faust-Schließe.
+6. cape_master_defence.png — Gunmetal-graues Tuch, Rückenfeld mit überlappenden Stahlplatten wie Schuppenpanzer, Turmschild-Miniatur.
+7. cape_master_ranged.png — Jägergrün-brauner Kapuzenumhang mit Falkenfedern an den Schultern, Zielring-Applikation, Bronzekralle.
+8. cape_master_magic.png — Mitternachtsblauer Samt mit matten silbernen Konstellations-Stickereien, hoher Kragen, Halbmond-Schließe.
+9. cape_master_warding.png — Elfenbein-weißer Umhang mit hellblauen Schutzsiegel-Bögen, feine Silberkettchen, rundes Schutzamulett.
+10. cape_master_vitality.png — Erdrot-brauner, mehrfach geflickter Stoff (Flicken wie Ehrenabzeichen), Lederband-Saum, eisernes Herz.
+11. cape_master_completion.png — Tiefschwarzer Samt, Rückenfeld von reicher Gold-Bordüre aus 20 kleinen Zunft-Ornamenten gerahmt, mittig gekröntes Gold-Wappenschild. KEIN Skill-Icon.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 3 / 9 — AUSRÜSTUNG + RUNEN (10 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 10 Bilder als 10 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster/
+Mosaik. Jedes ein separates Ausrüstungs-/Item-Objekt, zentriert, ohne Rahmen/Text, mit KOMPLETT
+TRANSPARENTEM Hintergrund (PNG mit Alpha). Gemaltes Dark-Fantasy. WICHTIG: Ausrüstung (Nr. 1–7) OHNE
+jedes Glühen/Leuchten (matt). Die Runen (Nr. 8–10) DÜRFEN dezent glühen (Stufen-Steigerung I→III).
+Liefere als ZIP, Dateinamen EXAKT wie unten.
+
+1. starweave_coronet.png — Endgame-Magier-Stirnreif: mitternachtsblauer Sternenstoff über Silbergestell, eingestickte Konstellationen, Silbermedaillon. Matt.
+2. starweave_vestment.png — Endgame-Magier-Robe (Brustteil): Mitternachtsblau mit violettem Ton, silberne Sternbild-Stickerei über Brust/Schultern. Matt.
+3. starweave_skirt.png — Bodenlanger Magier-Rock aus Sternenstoff, seitlich geschlitzt, silberne Himmelskarte, Mondsichel-Gürtelschließe. Matt.
+4. starweave_handwraps.png — Handgelenk-Wickel aus schmalen Sternenstoff-Bahnen, silbernes Sternbild auf dem Handrücken. Matt.
+5. starweave_sandals.png — Leichte Magier-Sandalen: dunkle Ledersohlen, kreuzende Sternenstoff-Riemen mit Silber-Nieten. Matt.
+6. frostcaverns_bow.png — Epischer Langbogen wie aus Gletschereis gewachsen, Raureif und Frostadern, gefrorene Sehne mit Eiszapfen. Matt, KEIN Glow.
+7. marrow_cap.png — Grober Frühspiel-Kopfschutz aus bleichen, hohlen Knochenplatten, mit Lederriemen verzurrt — porös, elfenbeinfarben. Matt.
+8. rune_evasion_i.png — Flacher grauer Runenstein, geschwungene Wind-Rune, SEHR DEZENTES blassgrünes Glimmen, ein Blatt-Motiv.
+9. rune_evasion_ii.png — Gleicher Stein, Rune tiefer eingebrannt, KLAR GRÜN LEUCHTEND, zwei Luftschlieren mit kleinen Blättern.
+10. rune_evasion_iii.png — Rune strahlt smaragdgrün-weiß, Stein von einem Wirbel aus Luftschlieren und tanzenden Blättern umgeben.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 4 / 9 — SPEISEN + SCHLÜSSEL + GOBLIN-KRIEGSBANDE (10 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 10 Bilder als 10 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster/
+Mosaik. Jedes ein separates Motiv, zentriert, ohne Rahmen/Text, mit KOMPLETT TRANSPARENTEM Hintergrund
+(PNG mit Alpha — AUCH bei den Kreaturen, kein Kasten dahinter!). Gemaltes Dark-Fantasy. Nr. 1–3 =
+Endgame-Speisen (Gericht auf Platte/im Kessel, dezenter Dampf/Schimmer erlaubt). Nr. 4 = Schlüssel (matt,
+kein Glow). Nr. 5–10 = ganze Kreaturen (Goblin-Kriegsbande), Ganzkörper im Boss-Format, kein Glühen.
+Liefere als ZIP, Dateinamen EXAKT wie unten.
+
+1. voidray_banquet.png — Gebratenes Rochenflügel-Filet auf dunkler Steinplatte, innen dunkelviolett schimmernd, dunkle Kräuter, feiner violetter Dampf.
+2. abyssal_feast.png — Gusseiserner Kessel mit tiefseeblauer Suppe: Tentakel, Muscheln, ganzer Tiefseefisch, feiner blauer Dampf.
+3. soulfire_banquet.png — Herrschaftlicher Braten über geisterhaft blassblauen Seelenfeuer-Flammen, dunkles Wurzelgemüse.
+4. paragon_key.png — Monumentaler Zeremonienschlüssel aus geschwärztem Sternenmetall mit Goldeinlagen; die Reide ist ein aufragender endloser Turm, der Schaft trägt Etagen-Gravuren. Matt.
+5. goblin_reaver.png — Sehniger Goblin-Räuber (L50): zwei rostige Krummdolche, Lederriemen mit Trophäen (Ohren, Knochen), Fell-Kapuze, geduckt-sprungbereit.
+6. goblin_pikeman.png — Stämmiger Goblin-Speerträger (L52): lange rostige Pike im Anschlag, Schrottplatten über Leder, runder Holz-Eisen-Schild.
+7. goblin_siegebrute.png — Massiger Goblin-Elitekämpfer (L55) mit riesigem kettenbehangenem Rammbock-Arm/Kriegshammer aus Schrott, dicke genietete Panzerung.
+8. goblin_bloodshaman.png — Hagerer Goblin-Blutmagier (L57): rote Kriegsbemalung, rituelle Narben, Knochendolch erhoben, dunkelrote Magie an den Fingern, Knochenamulette.
+9. goblin_warchief.png — Narbenübersäter Goblin-Kriegsherr (L60, Boss): breiter als jeder Goblin, riesiges Spaltbeil, zerfledderter Trophäen-Umhang, Anführer-Pose.
+10. hollow_marrow.png — Kleine kauernde Untoten-Kreatur (L16) aus hohlen bleichen Knochen, fahles Grau in den Mark-Kanälen, zu lange Fingerknochen.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 5 / 9 — MONSTER (Rest) + DRAZHAN-ENDBOSS (5 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 5 Bilder als 5 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster.
+Jedes eine ganze Kreatur, Ganzkörper im Boss-Format, zentriert, ohne Rahmen/Text, mit KOMPLETT
+TRANSPARENTEM Hintergrund (PNG mit Alpha — kein Kasten hinter dem Monster!). Gemaltes Dark-Fantasy,
+KEIN Glühen — EINZIGE AUSNAHME: Drazhan (Nr. 5) darf als übernatürliches Wesen eine DEZENTE Restglut in
+den Risslinien tragen. Liefere als ZIP, Dateinamen EXAKT wie unten.
+
+1. mire_wisp.png — Schwebendes Irrlicht (L30): flackernde blaugrüne Lichtkugel mit schemenhaftem Gesicht, Nebelfetzen und Sumpfgas.
+2. barrow_chanter.png — Untoter Kult-Sänger (L55) in erdverkrusteter Grabrobe, Kiefer im Grabgesang aufgerissen, Klage-Schwaden, zerbrochenes Räuchergefäß.
+3. hollow_choir.png — Unheimliches Kollektiv-Wesen (L80): 3–4 ausgezehrte Gestalten in fahlen Roben zu EINER Kreatur verwachsen, mehrere singende Münder.
+4. iron_sentinel.png — Konstrukt-Koloss (L90) aus vernietetem, angelaufenem Eisen: Turmschild-Panzerplatten, glimmender Sehschlitz, Amboss-Fäuste.
+5. drazhan.png — Endboss (L310), Ganzkörper, deutlich überlebensgroß. Hünenhafter Krieger in schwarzem, an den Rändern mit aschfahler rissiger Haut verschmolzenem Götzeneisen-Harnisch; wehender Aschemantel; quer über der Brust eine Kette mit sieben zerbrochenen Kronen. Riesige zweihändige Klinge aus mattem Götzeneisen mit Gussnähten, beiläufig geschultert. Breite Schrittstellung nach vorn, Kinn gesenkt, verächtlicher Blick mit einem Rest Respekt. DEZENTE Restglut in den Risslinien erlaubt.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 6 / 9 — DUNGEON-KAMPFKULISSEN (3 Bilder) · ACHTUNG: KEIN transparent! ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 3 Bilder als 3 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster.
+Dies sind VOLLE gemalte Hintergrund-Szenen (KEIN transparenter Hintergrund!) im HOCHFORMAT, Seiten-
+verhältnis ca. 1122×1402 (hochkant), wie eine Theaterbühne, VOR der später die Kämpfer stehen — also
+unten/mittig etwas Bodenfläche frei lassen, kein Vordergrund-Objekt in der Mitte. Gemaltes Dark-Fantasy,
+stimmungsvoll und tief. Liefere als ZIP, Dateinamen EXAKT wie unten.
+
+1. wyvern_lair.png — Felsiges Hochgebirgs-Nest: zerklüftete Klippen, riesige Nester aus Knochen und Baumstämmen, Wyvern-Schwingen-Silhouetten am stürmischen Himmel, verstreute Beuteknochen.
+2. paragon_tower.png — Inneres eines endlosen arkanen Turms: aufsteigende steinerne Wendel-Etagen, die sich oben im Dunkel verlieren, schwebende Runen-Ringe, kaltes Sternenlicht durch schmale Fenster.
+3. behind_the_throne.png — Kammer hinter dem geborstenen Thron des Letzten Götzen: der gesprungene Götzeneisen-Thron ragt im Hintergrund auf, umher zerschlagene Götzen-Fragmente und Bruchstücke zerbrochener Kronen, im matten Metall angedeutete Werkzeichen (Gravuren einer nicht-menschlichen Hand). Gedämpftes Aschelicht, vereinzelte treibende Glutfunken, kein offenes Feuer. Düster, erhaben, verlassen.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 7 / 9 — UI-ICONS (Teil 1, 11 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 11 Bilder als 11 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster/
+Icon-Sheet. Jedes ein kleines, auch bei 32px klar lesbares UI-Icon, zentriert, ohne Rahmen/Text, mit
+KOMPLETT TRANSPARENTEM Hintergrund (PNG mit Alpha). Einheitlicher Stil: kräftige klare Silhouette, matte
+Bronze-/Gold-Akzente, dunkle Töne, kein feiner Kleinkram, der bei 32px verschwindet. Liefere als ZIP,
+Dateinamen EXAKT wie unten.
+
+1. icon_quest_token.png — Geprägte Bronzemünze mit Pergamentrollen-Symbol, gezackter abgegriffener Rand.
+2. icon_attribute_armorpen.png — Stahlbolzen durchschlägt eine dunkle Panzerplatte, feine Risse.
+3. icon_attribute_block.png — Frontaler eiserner Turmschild, an dessen Kante ein Hieb abprallt (matter Funke).
+4. icon_attribute_precision.png — Fein graviertes Fadenkreuz mit fokussiertem Auge im Zentrum.
+5. icon_attribute_wardbreak.png — Zersplitternde kristallin-blaue Barriere mit Einschlagloch, Bruchstücke fliegen.
+6. icon_autoeat.png — Gebratene Fleischkeule, umschlossen von dünnem bronzenem Kreispfeil (Automatik).
+7. icon_mana.png — Facettierter tiefblauer Arkankristall in Tropfenform, sanftes Kernlicht.
+8. icon_xp.png — Aufsteigender goldener Stern mit kurzem Funkenschweif.
+9. icon_mastery_star.png — Geprägter fünfzackiger Gold-Stern auf dunklem Medaillon, Gravur-Bordüre.
+10. icon_regen.png — Dunkelrotes Herz, umschlossen von grünem Kreispfeil aus Blattwerk.
+11. icon_potion.png — Bauchige verkorkte Glasphiole mit rubinroter Flüssigkeit, Lederband.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 8 / 9 — UI-ICONS (Teil 2, 10 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 10 Bilder als 10 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster/
+Icon-Sheet. Jedes ein kleines, bei 32px klar lesbares UI-Icon, zentriert, ohne Rahmen/Text, mit KOMPLETT
+TRANSPARENTEM Hintergrund (PNG mit Alpha). Einheitlicher Stil wie Batch 7 (matte Bronze/Gold, dunkle
+Töne, kräftige Silhouette). Liefere als ZIP, Dateinamen EXAKT wie unten.
+
+1. icon_attribute_critchance.png — Vierzackiger klingenscharfer Stahl-Stern in dünnem Ziel-Ring.
+2. icon_attribute_critdamage.png — Berstender Einschlag-Stern, gezackte Bruchlinien in dunklem Rot-Orange (matt).
+3. icon_dice.png — Einzelner knochenweißer Würfel aus geschnitztem Bein, dunkle Augen, leicht gekippt.
+4. icon_food.png — Goldbraun gebratene Fleischkeule auf dunklem Holzbrett.
+5. icon_paw.png — Geprägter Pfotenabdruck in dunkler Bronze auf rundem Medaillon.
+6. icon_key.png — Schlichter alter Bronzeschlüssel mit runder Reide, dunkle Patina.
+7. icon_lock.png — Schweres eisernes Vorhängeschloss, genietet, geschlossen.
+8. icon_buff.png — Drei kleine aufsteigende Gold-Funken über einem nach oben weisenden Bogen.
+9. icon_tower.png — Dunkle Silhouette eines endlos hohen schlanken Turms, ein glimmendes Fenster.
+10. icon_pin.png — Elegante Nadel mit rundem dunkelrotem Wachssiegel-Kopf, schräg wie in Pergament gesteckt.
+
+
+════════════════════════════════════════════════════════════════════════════════
+=== BATCH 9 / 9 — NPC-PORTRÄTS DER GLUTFESTE (7 Bilder) ===
+════════════════════════════════════════════════════════════════════════════════
+
+Erzeuge mir die folgenden 7 Bilder als 7 EINZELNE, EIGENSTÄNDIGE Dateien — NICHT als Collage/Raster.
+Jedes ein Kopf-/Schulter-Porträt (Brustbild) einer Figur, frontal bis leicht schräg, zentriert, ohne
+Rahmen/Text, mit KOMPLETT TRANSPARENTEM Hintergrund (PNG mit Alpha — kein Kasten hinter dem Kopf!).
+Gemaltes Dark-Fantasy, gleicher Stil wie die Spieler-Porträts, ernst und würdevoll. KEIN Glühen —
+EINZIGE AUSNAHME: Drazhan (Nr. 7) darf in Rissen/Augen eine dezente kühlende Restglut tragen. Liefere als
+ZIP, Dateinamen EXAKT wie unten.
+
+1. npc_warden.png — Sehr alter Mann, hageres kantiges Gesicht mit tiefen Furchen; tief liegende hellgraue Augen, ruhiger prüfender Blick, müde aber nicht gebrochen. Langes aschgraues Haar, streng zurückgebunden; kurzer grauer Bart. Verwitterter aschfarbener Reisemantel mit tiefer, zurückgeschlagener Kapuze über dunklem Leinen. Mantelspange als eiserne Buchschließe. Farbwelt: Asche-Grau, kaltes Braun, stumpfes Eisen.
+2. npc_urga.png — Ork-Frau mittleren Alters, breites ruhiges Gesicht, graugrüne Haut, kurze untere Hauer; rußgeschwärzte Wangen, gelassener stolzer Blick. Schwarzes Haar zum hohen Knoten, Seiten rasiert. Schwere lederne Schmiedeschürze über muskulösen Schultern, alte Brandnarben an Hals/Oberarm. Anhänger mit matter, erkalteter Glutkohle in Eisenfassung (NICHT glühend, matt dunkelrot). Farbwelt: Rußschwarz, Ocker, mattes Dunkelrot.
+3. npc_voss.png — Hagerer Mann um die Sechzig, blass, eingefallene Wangen, strenger übermüdeter Blick über schmalem Zwicker. Schütteres graues Haar, akkurat gescheitelt. Hoher dunkler Kragen einer Schreiberrobe mit kleiner Kettenbörse. Schreibfeder hinterm Ohr, Tintenflecken an den Fingerknöcheln. Farbwelt: Tintenblau-Schwarz, Pergamentbeige, Messing.
+4. npc_mux.png — Goblin, klein und drahtig, moosgrüne Haut, große bewegliche Ohren (das linke mit mehreren Messingringen); listiges, überraschend freundliches Grinsen mit abgebrochenem Zahn. Geflickte Kapuze aus verschiedenfarbigem, verschossenem Stoff. Über der Schulter die Riemen eines Bauchladens mit baumelnden Kuriositäten (Würfel, Löffel, Amulett-Imitat). Farbwelt: Moosgrün, gedeckte Flickenfarben, Messing.
+5. npc_shairi.png — Rakhari-Frau (Halbtiger-Mensch): menschliche Gesichtszüge unter kurzem sandfarbenem Fell mit dunklen Tigerstreifen an Schläfen/Hals; bernsteinfarbene Augen mit senkrechten Pupillen, ruhiger geduldiger Blick; kleine gerundete Katzenohren hoch am Kopf. Dunkle Mähne in Zöpfen mit eingeflochtenen Saatperlen und getrockneten Gräsern. Grober Leinenumhang, am Schulterriemen kleine Saatgut-Beutel. Farbwelt: Sand, Umbra, gedecktes Beet-Grün.
+6. npc_eske.png — Alte, rundliche Frau, warmes tief zerfurchtes Gesicht, wacher gütiger Blick mit strenger Unterkante. Graues Haar unter einem verrußten, geknoteten Kopftuch. Wollenes Schultertuch mit Holzknebel-Verschluss über grobem Leinen. Langer, dunkel eingebrannter Holzlöffel über die Schulter gesteckt wie ein Marschallstab. Farbwelt: warmes Braun, Ofengrau, ausgeblichenes Rot.
+7. npc_drazhan.png — Hartes, kriegerisches Halbgott-Gesicht; aschfahle Haut mit feinen dunklen Risslinien wie abgekühlte Lava (matt; einzige Ausnahme: in Rissen/Augen dezente kühlende Restglut). Rasierter Schädel mit grauer Aschezeichnung, dunkle Bartstoppeln, Narbe über dem Kiefer. Kragen: schwarzer Götzeneisen-Harnisch, dessen Ränder mit der Haut verschmolzen sind; über der Schulter ein Mantel aus Asche in Bewegung. Kette mit zerbrochenen Kronen (im Porträt zwei sichtbar). Farbwelt: Schwarzeisen, Aschegrau, dunkles Glutrot.
+
+
+════════════════════════════════════════════════════════════════════════════════
+FERTIG. 9 Batches · 77 Bilder gesamt:
+  Batch 1: 10 Umhänge   Batch 2: 11 Umhänge   Batch 3: 10 Ausrüstung/Runen
+  Batch 4: 10 Speisen/Schlüssel/Goblins   Batch 5: 5 Monster+Drazhan
+  Batch 6: 3 Dungeon-Kulissen (KEIN transparent!)   Batch 7: 11 Icons   Batch 8: 10 Icons
+  Batch 9: 7 NPC-Porträts
+════════════════════════════════════════════════════════════════════════════════

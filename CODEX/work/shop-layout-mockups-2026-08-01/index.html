@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grim Reach · Shop Layout Mockups</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-concept="1" data-mode="buy" data-state="normal">
+  <!-- codex:2026-08-01T19:22:00+02:00 — Kontrollleiste für fünf Shop-Konzepte und produktive Zustände. -->
+  <header class="labbar">
+    <div class="labbar__title">
+      <span class="eyebrow">Grim Reach · UI Study</span>
+      <strong>Shop Restructure</strong>
+    </div>
+    <nav class="concept-nav" aria-label="Shop designs">
+      <button class="concept-button is-active" data-concept="1"><b>01</b><span>Mux' Counter</span></button>
+      <button class="concept-button" data-concept="2"><b>02</b><span>Quartermaster</span></button>
+      <button class="concept-button" data-concept="3"><b>03</b><span>Caravan Shelves</span></button>
+      <button class="concept-button" data-concept="4"><b>04</b><span>Ashen Exchange</span></button>
+      <button class="concept-button" data-concept="5"><b>05</b><span>War Table</span></button>
+    </nav>
+    <div class="state-controls" aria-label="Test states">
+      <button class="state-button is-active" data-state="normal">Normal</button>
+      <button class="state-button" data-state="lowgold">Low Gold</button>
+      <button class="state-button" data-state="full">Inventory Full</button>
+      <button class="state-button" data-state="recovery">Lost Ring</button>
+    </div>
+  </header>
+
+  <!-- codex:2026-08-01T19:22:00+02:00 — Gemeinsame Shop-Bühne; JS befüllt dieselbe echte Funktionsbasis je Konzept. -->
+  <main class="shop-stage">
+    <section class="shop-shell ash-frame">
+      <header class="shop-masthead">
+        <div class="merchant">
+          <img src="../../../apps/client/src/renderer/assets/portraits/npc_mux.webp" alt="Mux">
+          <div>
+            <span class="eyebrow">Mux · Licensed Scavenger</span>
+            <h1 id="conceptTitle">Mux' Counter</h1>
+            <p id="merchantLine">“Coin first. Questions cost extra.”</p>
+          </div>
+        </div>
+        <div class="wallet" aria-label="Gold balance">
+          <img src="../../../apps/client/src/renderer/assets/icons/icon_goldcoin.webp" alt="">
+          <div><span>Available Gold</span><strong id="goldValue" class="numeric">9,526</strong></div>
+        </div>
+        <div class="shop-mode" role="tablist">
+          <button class="mode-button is-active" data-mode="buy">Buy <kbd>Q</kbd></button>
+          <button class="mode-button" data-mode="sell">Sell <kbd>E</kbd></button>
+        </div>
+      </header>
+
+      <div id="shopWorkspace" class="shop-workspace"></div>
+      <footer class="shop-footer">
+        <span id="conceptNote">Browse left, decide right. The selected item never loses context.</span>
+        <span id="actionLog" role="status">Ready to trade.</span>
+      </footer>
+    </section>
+  </main>
+
+  <script src="preview.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+BUCKHIDE-SET (5 Icons) + HUNTING BOW (1 Icon) — ChatGPT-Prompt-Batch
+=====================================================================
+Ziel-Dateinamen (Auto-Discovery, exakt so):
+  buckhide_helm.png · buckhide_body.png · buckhide_legs.png ·
+  buckhide_vambraces.png · buckhide_boots.png · hunting_bow.png
+Nach Generierung: PNGs in Downloads\ASSETS\resources\done\ legen, ich binde ein.
+
+---------------------------------------------------------------------
+ANWEISUNG AN ChatGPT (mitschicken):
+
+Generate SIX separate game item icons, ONE image per item, in the order
+of the tracking table below. Painted dark-fantasy RPG style, muted
+earthy palette, soft top-left studio light, subtle drop shadow only.
+
+HARD RULES for every image:
+- REAL transparent background (true alpha PNG). NO checkerboard
+  pattern, NO white or colored background, NO floor, NO scene.
+- NO glow, NO shimmer, NO magical aura, NO sparkles — this is plain,
+  mundane equipment.
+- Single object, centered, fills ~80% of a square canvas, 1024x1024.
+- No text, no watermark, no border.
+
+TRACKING TABLE — after each image, restate this table and tick the row
+you just delivered, so no item is repeated or skipped:
+  [ ] 1/6 BUCKHIDE HOOD
+  [ ] 2/6 BUCKHIDE JERKIN
+  [ ] 3/6 BUCKHIDE LEGGINGS
+  [ ] 4/6 BUCKHIDE VAMBRACES
+  [ ] 5/6 BUCKHIDE BOOTS
+  [ ] 6/6 HUNTING BOW
+
+SET CONSISTENCY (items 1-5): all five pieces are ONE matching set —
+undyed buckskin deer hide, matte tan-brown with visible natural grain,
+coarse hand-stitched seams (NO rivets, NO metal, NO ornament), simple
+leather cord ties. Deliberately lighter and simpler than studded or
+hardened leather: this is a hunter's FIRST proper gear, one step above
+rawhide.
+
+---------------------------------------------------------------------
+1/6 — MOTIVTYP: KAPUZE (buckhide_helm.png)
+A close-fitting hood of undyed buckskin deer leather, matte tan-brown
+with natural grain, raw unfinished hem at the shoulders, one coarse
+hand-stitched seam running over the crown, thin leather cord at the
+throat. Slack, soft silhouette — clearly light hide, not armor plate.
+NOT: no metal, no rivets, no fur trim, no face, no mannequin head.
+
+2/6 — MOTIVTYP: WAMS (buckhide_body.png)
+A sleeveless hunter's jerkin of undyed buckskin over a rough
+undyed-linen underlayer, front closed by three crossed leather-cord
+lacings, coarse hand stitches along the sides, slightly worn edges.
+Slim, light silhouette — an agile skirmisher's vest, not a heavy coat.
+NOT: no rivets, no buckles of metal, no fur collar, no torso/mannequin.
+
+3/6 — MOTIVTYP: BEINLINGE (buckhide_legs.png)
+Plain-cut buckskin leggings, matte tan-brown, laced tight at the
+calves with leather cord, coarse seams down the outer sides, soft
+knees darkened from wear. Presented flat/hanging as a pair.
+NOT: no boots attached, no belt with metal, no legs/mannequin inside.
+
+4/6 — MOTIVTYP: ARMSCHIENEN (buckhide_vambraces.png)
+A pair of simple buckskin bracer cuffs, wrapped bandage-style layers
+of soft hide bound by two thin leather cords each, raw edges visible.
+Deliberately humble — wraps, not sculpted bracers.
+NOT: no metal plates, no studs, no embossing, no arms/hands inside.
+
+5/6 — MOTIVTYP: STIEFEL (buckhide_boots.png)
+Ankle-high undyed buckskin boots, soft soles, single cord lacing up
+the front, coarse stitched heel patch, lightly scuffed toes. A quiet
+hunter's boot, practical and light. Presented as a pair, one slightly
+turned.
+NOT: no metal caps, no tall shafts, no fur lining, no feet inside.
+
+6/6 — MOTIVTYP: JAGDBOGEN (hunting_bow.png)
+A simple wooden hunting bow of polished yew, gentle recurve, hemp
+string, leather-wrapped grip worn smooth, faint tool marks along the
+limbs. Sturdy commoner's weapon sold by a village shopkeeper — solid
+quality, zero ornament. Presented unstrung-tension upright, slight
+diagonal.
+NOT: no arrows, no quiver, no carvings, no glowing string, no camo.
+
+---------------------------------------------------------------------
+ZIP-KLAUSEL: Wenn alle sechs Häkchen gesetzt sind, biete alle sechs
+PNGs zusätzlich als ZIP zum Download an.

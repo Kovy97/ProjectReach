@@ -1,0 +1,58 @@
+BAUTEILE (3 Item-Icons) — ChatGPT-Prompt
+=========================================
+Neue Holzfällen-Produkte für den New-Haven-Ausbau. Diese drei Teile sind das
+Fortschritts-Gating: Stufe I braucht Balken, Stufe II Verstrebungen, Stufe III
+Verankerungen. Sie müssen als STEIGERUNG lesbar sein (roh → verstärkt → beschlagen).
+
+ZIEL-DATEINAMEN (exakt so, = Item-IDs):
+  timber_beam.png · timber_brace.png · timber_anchor.png
+Fertige PNGs → Downloads\ASSETS\resources\done\
+
+-----------------------------------------------------------------------
+ANWEISUNG AN ChatGPT (mitschicken):
+
+Generate THREE separate game item icons, ONE image per item, in the order of the
+tracking table below. Painted dark-fantasy RPG style, muted earthy palette, soft
+top-left light, subtle drop shadow only.
+
+HARD RULES for every image:
+- REAL transparent background (true alpha PNG). NO checkerboard pattern, NO white
+  or colored background, NO floor, NO scene.
+- NO glow, NO shimmer, NO magic, NO sparkles. These are plain carpentry goods.
+- Single object (or one tight bundle), centered, filling ~80% of a square canvas,
+  1024x1024. No text, no watermark, no border.
+- ONE MATERIAL FAMILY across all three: the same dark weathered timber with visible
+  grain, the same blackened iron fittings. They are three rungs of one ladder, so a
+  player recognizes at a glance which is the more advanced part.
+
+TRACKING TABLE — restate after each image and tick the delivered row:
+  [ ] 1/3 TIMBER BEAM
+  [ ] 2/3 TIMBER BRACE
+  [ ] 3/3 TIMBER ANCHOR
+
+-----------------------------------------------------------------------
+1/3 — MOTIVTYP: BALKEN (timber_beam.png)
+A single squared construction beam of dark weathered timber, rough axe-hewn faces
+with visible grain and a few old tool marks, one end cut into a simple notch joint,
+a short length of hemp cord tied near the middle. The humblest rung: pure wood, no
+metal at all. Shown at a slight diagonal.
+NOT: no metal parts, no carving, no bark, no sawdust, no hands.
+
+2/3 — MOTIVTYP: VERSTREBUNG (timber_brace.png)
+A reinforced corner brace: two dark timber pieces joined at an angle, held by a
+blackened iron strap with four heavy rivets, plus a second smaller iron band near
+the joint. Clearly sturdier than a plain beam. Shown at a slight diagonal, the
+angle open toward the viewer.
+NOT: no glow, no rust-orange highlights (keep iron near-black), no ornament, no runes.
+
+3/3 — MOTIVTYP: VERANKERUNG (timber_anchor.png)
+A heavy foundation anchor: a short thick timber post banded with two wide blackened
+iron collars, a forged iron spike running through its base, and a stone footing
+block fitted to the bottom end. The most substantial of the three, dense and
+load-bearing. Shown upright with a slight turn.
+NOT: no ship anchor shape (this is a building anchor), no glow, no engraved symbols,
+no chains.
+
+-----------------------------------------------------------------------
+ZIP-KLAUSEL: Wenn alle drei Häkchen gesetzt sind, alle drei PNGs zusätzlich als ZIP
+zum Download anbieten.

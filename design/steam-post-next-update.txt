@@ -1,0 +1,99 @@
+[h1]The Champions Update is live — our real launch moment[/h1]
+
+Hey everyone,
+
+Two weeks ago Grim Reach entered Early Access. You bought it, you played it, and you told us very clearly what was missing. We've had our heads down ever since, and today the answer ships: our biggest update yet, built almost entirely from your feedback. If the release was the opening act, this is the show.
+
+[hr][/hr]
+
+[h2]✦ Headline Feature: Champions of the Reach[/h2]
+Named elite monsters now roam the world. Every combat zone has its own hidden rhythm, and every so often a titled champion surfaces and an alert appears in the corner: [i]"A mighty foe has been sighted in the Ashfields…"[/i] You have 15 minutes before it moves on.
+
+[list]
+[*]Champions are far tougher than their kin, but built to be beatable solo with gear of their zone.
+[*]They drop a fat bounty: piles of materials and much better odds at the zone's chase items.
+[*]Each champion has a 20% chance to drop its own [b]named unique[/b]. 28 new items with their own effects, from a fang that feeds you life on every kill to a locket that turns damage into ward. Every drop is individually rolled, so even a repeat is worth taking.
+[*]New characters meet their first champion within the first 20 minutes.
+[*]Champions only appear while you're actually playing. You never miss one by being away.
+[/list]
+
+This is the first big piece of our answer to "what makes Grim Reach its own game": a world that acts on its own and hunts back. More of that is coming.
+
+[hr][/hr]
+
+[h2]✦ Blessings of the Reach[/h2]
+The Reach now has a mood, and it shifts every day. Each day of the week brings a different Blessing: a mild, world-wide bonus with its own card art at the top of your sidebar.
+
+[list]
+[*][b]Blood Moon[/b] — more loot from beasts
+[*][b]Wild Hunt[/b] — faster attacks
+[*][b]Reach's Greed[/b] — more gold
+[*][b]Ashen Storm[/b] — faster gathering
+[*][b]Mist Vigil[/b] — bonus XP
+[*][b]Deathly Silence[/b] — faster crafting
+[*][b]Rotmist[/b] — a better shot at rare drops
+[/list]
+
+The bonuses are deliberately gentle. No pressure, no FOMO, just a little rhythm to the world and something to look forward to each day. It rolls over at your local midnight.
+
+[hr][/hr]
+
+[h2]✦ The Reach found its voice[/h2]
+[list]
+[*][b]The Warden reports.[/b] The offline summary now opens with the Warden telling you what actually happened while you were gone, and every death is entered into the chronicle with a dry word: [i]"Another one. I'm not saying anything. I'm just writing it down."[/i]
+[*][b]The locals react.[/b] The quartermaster, the merchant and Brenna the slayer master comment on today's Blessing, an active champion, or your recent record.
+[*][b]Your first find has a soul.[/b] The first piece of equipment a new character loots always rolls a suffix now, so you meet our item-instance system in your first minutes.
+[/list]
+
+[hr][/hr]
+
+[h2]✦ Quality of Life (a lot of it)[/h2]
+[list]
+[*][b]Action Queue[/b] — line up actions instead of babysitting one at a time. Queue 1×, 25×, 50×, or ∞, stack them up, and right-click to eject one.
+[*][b]Mailbox[/b] — inventory full? Loot no longer vanishes. Overflow lands safely in your mailbox to collect later.
+[*][b]Search & collapsed categories[/b] — every skill page now opens tidy, with a search bar to jump straight to what you need.
+[*][b]Smarter Auto-Eat[/b] — when your chosen food runs out, it now switches to the next food automatically instead of letting you starve.
+[*][b]Faster tooltips + Shift-to-compare[/b] — item tooltips pop quicker, and holding Shift jumps straight into compare mode.
+[*][b]Dual-use tools[/b] — axes and the like can now sit in the tool slot as well as the weapon slot.
+[*][b]Reworked Enchanting page[/b] for a cleaner flow.
+[/list]
+
+[hr][/hr]
+
+[h2]✦ Heads-up: a couple of changes to how things work[/h2]
+So there are no surprises:
+[list]
+[*]Skill actions now feed the [b]Action Queue[/b] rather than firing off immediately. Give it a try, we think it's a real upgrade.
+[*]Elemental crafting "runes" are being [b]renamed to "shards"[/b] to end the mix-up with enchanting runes. Same items, clearer name.
+[*]Categories now start collapsed by default (that's what the new search and expand controls are for).
+[*][b]Combat pets are now bound to your combat style[/b]: melee, ranged and magic each have their own companions to hunt, and only your active style's pets can drop. Pets you already own are untouched.
+[/list]
+Returning players will get a short in-game "what's new" tour that points these out.
+
+[hr][/hr]
+
+[h2]✦ Bug Fixes[/h2]
+[list]
+[*]Fixed [b]missing background images[/b] for a lot of players (installs in folders with parentheses, like the default Steam path).
+[*]Fixed the second ring slot rejecting drag & drop.
+[*]Fixed item tooltips hiding under the cursor at screen edges.
+[*]Closed a staff + focus double-bonus exploit.
+[*]Fixed the queue not starting from an idle state.
+[*]Fixed Auto Potion draining heal-over-time potions nonstop at full HP when auto-rebuff was enabled.
+[*]Fixed Auto Eat not switching to your next food when the selected one ran out.
+[*]…and plenty more under the hood.
+[/list]
+
+[hr][/hr]
+
+[h2]It's live now[/h2]
+The update is live for everyone. As always, [b]your existing saves carry over[/b] — no wipes, ever.
+
+[h2]One small ask[/h2]
+If Grim Reach has hooked you, a Steam review would mean the world. This is a solo project, reviews are how small games get seen, and every single one gets read. The critical ones twice.
+
+Thank you for playing an Early Access game and helping shape it. A lot of what's above exists because you spoke up, so keep the feedback coming on the forums and in Discord.
+
+See you in the Reach.
+
+— [Studio / dev name here]

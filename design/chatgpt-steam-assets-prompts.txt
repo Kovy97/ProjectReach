@@ -1,0 +1,103 @@
+=== STEAM STORE & LIBRARY ASSETS — ChatGPT/Bild-Generierungs-Prompts ===
+Spiel: „Grim Reach" — Dark-Fantasy-Idle-RPG (Skilling, Crafting, Auto-Battle).
+Stil DURCHGEHEND einheitlich halten: düstere Dark-Fantasy-Ölgemälde-Optik, warmes
+Glut-/Gold-Leuchten gegen kühles Steingrau, gravierter Titel „GRIM REACH" in
+verwittertem Gold/Eisen, Holz-/Eisen-Rahmen-Akzente, grimme/foreboding Stimmung.
+Held-Motive (aus den Portraits): bärtiger Zwergen-Krieger mit Großaxt UND/ODER
+elfischer Dunkelmagier mit violett glühendem Stab — gern beide, vor einer düsteren
+Zitadellen-/Schmiede-Kulisse mit Funkenflug und ziehendem Nebel.
+
+WICHTIG bei der Generierung:
+- Jeweils EXAKTE Pixelmaße anfragen (Steam erwartet GENAU diese Größen / beschneidet sonst hart).
+- Format PNG oder JPG; Titel-Logo „GRIM REACH" muss in den Capsules klar lesbar sein
+  (bei Small Capsule NUR Logo + Emblem, kein Kleinkram).
+- Einheitliche Palette/Beleuchtung über ALLE Assets (gleiches Schlüsselbild in verschiedenen Crops).
+
+============================================================
+OFFIZIELLE STEAM-MASSE (Stand 2026) — kurz zur Übersicht:
+  Small Capsule ......... 231 × 87       (Pflicht)
+  Header Capsule ........ 460 × 215      (Pflicht)
+  Main Capsule .......... 616 × 353      (Pflicht)
+  Vertical Capsule ...... 374 × 448      (Pflicht)
+  Page Background ....... 1438 × 810     (optional)
+  Library Capsule ....... 600 × 900      (Pflicht f. Bibliothek)
+  Library Hero .......... 3840 × 1240    (Pflicht f. Bibliothek)
+  Library Logo .......... max 1280 × 720 (Pflicht, transparentes PNG)
+  Client Icon ........... 32 × 32        (Quelle höher anlegen, s.u.)
+  Screenshots ........... 1920 × 1080    (mind. 5)
+  Trailer ............... 1920 × 1080    (mind. 1, MP4)
+============================================================
+
+------------------------------------------------------------------
+--- STORE CAPSULES (Pflicht) ---
+
+• Small Capsule — **231 × 87 px**, quer.
+  Sehr kompakt: links das Spiel-Emblem (grimmes Sigil — z.B. eine skelettierte,
+  greifende Hand oder ein rune-graviertes Wappen mit Glut), rechts groß
+  „GRIM REACH" in Gold-/Eisen-Gravur auf dunklem Stein. Minimaler Hintergrund,
+  hoher Kontrast — muss als Mini-Thumbnail in Listen lesbar sein.
+
+• Header Capsule — **460 × 215 px**, quer.
+  Schlüsselbild: Held(en) (Zwergen-Krieger + Dunkelmagier) halbnah, rechts/mittig,
+  vor düsterer Zitadelle mit orangem Glut-Schein + Funken + Nebel. Titel-Logo
+  „GRIM REACH" prominent oben oder mittig. Warmes Gold gegen kühles Grau.
+
+• Main Capsule — **616 × 353 px**, quer.
+  Großzügigere Variante des Header-Schlüsselbilds: Helden in heroischer Pose,
+  düstere Zitadellen-Kulisse mit mehr Tiefe (Glut, hängende Ketten, Nebel),
+  Titel-Logo groß. Für Startseiten-Feature & Sales — muss „premium" wirken.
+
+• Vertical Capsule — **374 × 448 px**, Hochformat.
+  Hochkant-Poster: Held(en) ganzfigurig von unten/heroisch, Titel-Logo unten,
+  Glut von unten beleuchtend. Dramatische vertikale Komposition.
+
+• Page Background (optional) — **1438 × 810 px**, quer.
+  Atmosphärischer, abgedunkelter Hintergrund der Store-Seite (Zitadellen-Panorama
+  im Nebel, kaum Fokus-Elemente, Ränder dunkel) — Inhalt liegt später darüber.
+
+------------------------------------------------------------------
+--- STEAM-BIBLIOTHEK (Pflicht beim Release) ---
+
+• Library Capsule — **600 × 900 px**, Hochformat (Poster).
+  Das „Box-Art"-Poster: Held(en) zentral ganzfigurig, vollständige Dark-Fantasy-
+  Szene (düstere Zitadelle, Funken, violette Magie, Nebel), Titel-Logo „GRIM REACH"
+  unten. Reich detailliert — das ist das Hauptbild in der Spielebibliothek.
+
+• Library Hero — **3840 × 1240 px**, breites Banner (KEIN Logo-Text — wird separat überlagert).
+  Cinematischer Querschnitt der Welt: links der Zwergen-Krieger an glühendem Amboss,
+  rechts der Dunkelmagier mit violetter Arkanmagie, Mitte freier/abgedunkelter Raum
+  (dort legt Steam das Logo drüber). Atmosphärisch, panoramahaft, Glut + Nebel.
+
+• Library Logo — **max 1280 × 720 px**, transparentes PNG (Motiv kleiner, viel Transparenz).
+  NUR der Schriftzug „GRIM REACH" als gravierte Gold-/Eisen-Logo-Marke (optional
+  kleines grimmes Emblem), freigestellt auf Transparenz. Wird über den Library Hero
+  gelegt — daher klare Kanten, kein eigener Hintergrund.
+
+------------------------------------------------------------------
+--- ICON ---
+
+• Client Icon — **32 × 32 px** (im Steam-Client / in Verknüpfungen).
+  → Quelle aber GROSS anlegen (z.B. **256 × 256 px**, danach herunterskalieren / als
+  .ico-Set 256/128/64/48/32/16). Einzelnes, kräftiges Emblem: das grimme Sigil aus
+  der Small Capsule (greifende Hand / rune-graviertes Wappen mit Glut), warmes
+  Gold-Glühen, dunkler Rand — auf 32×32 noch klar erkennbar, kein feiner Detailkram.
+  (Dasselbe .ico-Set dient als App-/EXE-Icon des Builds.)
+
+------------------------------------------------------------------
+--- MEDIEN (echte Captures, NICHT generieren) ---
+
+• Screenshots — mind. 5, je **1920 × 1080 px** (echte In-Game-Aufnahmen):
+  1) Animierter Kampf (Held vs. Monster, HP-Balken, Stat-Karten),
+  2) Skill-Seite mit Citadel-Karten + Fortschrittsleiste,
+  3) Charakterblatt (Portrait, Equipment-Paperdoll, Attribute),
+  4) Shop (YuGiOh-Karten-Layout),
+  5) Slayer-Interface bzw. Gegner-Auswahl (Monster-Karten).
+
+• Trailer — mind. 1 Video, **1920 × 1080 px**, MP4 (H.264). 30–60 s: Logo-Stinger →
+  Kampf-Action → Skilling-Montage → Progression/Loot → Call-to-Action (Wishlist).
+
+------------------------------------------------------------------
+--- TEXT (kein Bild, aber für die Store-Seite nötig) ---
+Kurzbeschreibung (1 Satz), Langbeschreibung (Features), Tags/Genres (Idle, RPG,
+Crafting, Dark Fantasy …), Systemanforderungen, Alters-/Content-Survey, Preis,
+Early-Access-Beschreibung (Was fehlt noch / Roadmap / Dauer).

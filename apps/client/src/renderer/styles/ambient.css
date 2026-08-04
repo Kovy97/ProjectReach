@@ -1,0 +1,44 @@
+/* ═══════════════════════════════════════════════════════════
+   AMBIENT LAYER — Task #311 "Effekt-Cockpit" (Chef-GO) → Wetter-Rückbau 2026-07-24 → Chef-Korrektur
+   Task #317 (selber Tag, "wo ist das Bloom hin? Eigentlich brauchen wir nur das Vignette"):
+   Ziel-Endzustand ist NUR die Vignette (reines CSS) + eine dezente warme Bloom-Licht-Wash-Ebene
+   (three.js-Canvas, components/AmbientCanvas.tsx) — Film-Korn/Nebel-Drift/Fackel-Ecklicht aus der
+   Blessing-Wetter-Ära bleiben entfernt.
+   Alles hier ist `pointer-events: none` und sitzt unter Modals (z-index 200+)/Toasts (1200)/
+   Ceremonies (2000+), aber über der normalen Seiten-Chrome (Sidebar/TopBar, max z-index 60). Jede
+   Regel hier ist GPU-only (transform/opacity) — keine Layout-/Paint-Trigger.
+   ═══════════════════════════════════════════════════════════ */
+
+/* HOTFIX Stacking-Context-Falle (Chef-Fund: schwarzes Bild statt Hauptmenü): Ein position:fixed-
+   Wrapper bildet IMMER einen eigenen Stacking-Context und damit eine isolierte Blend-Gruppe —
+   der `mix-blend-mode: screen` des Canvas blendete dadurch gegen den leeren Wrapper statt gegen
+   die Seite und malte sein opakes Schwarz über die ganze App. `display: contents` nimmt den
+   Wrapper komplett aus dem Painting: Jede Ebene ist selbst position:fixed und blendet gegen den
+   echten Seiteninhalt. (.amb-off/display:none funktioniert weiterhin und versteckt alle Kinder.) */
+.ambient-root {
+  display: contents;
+  pointer-events: none;
+}
+
+/* Master AUS (oder OS prefers-reduced-motion beim allerersten Start): kompletter Wegfall aus dem
+   Compositing — kein Paint, keine laufenden CSS-Animationen, kein WebGL-Draw (der rAF-Loop selbst
+   wird zusätzlich in AmbientCanvas.tsx gestoppt, s. dortige Doku — `display:none` ist die zweite,
+   rein visuelle Absicherung). */
+.ambient-root.amb-off {
+  display: none;
+}
+
+/* ─── Bloom-Licht-Wash: three.js-Canvas (AmbientCanvas.tsx) — opak schwarz gerendert (WebGL gibt
+   Alpha durch den UnrealBloomPass-Stack nicht zuverlässig durch), `mix-blend-mode: screen` hebt
+   nur die hellen Wash-/Bloom-Pixel gegen die echte Seite an und macht das Schwarz unsichtbar. Kein
+   eigener fixed-Wrapper (Stacking-Context-Lektion oben) — der Canvas selbst ist fixed/z-indexed. */
+/* .amb-canvas entfernt — Chef-Endstand 24.07.: Bloom komplett raus, nur die Vignette bleibt. */
+
+/* ─── Vignette: radialer Rand-Abdunkler ─── */
+.amb-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 151;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, var(--amb-vignette-opacity, 0)) 100%);
+}

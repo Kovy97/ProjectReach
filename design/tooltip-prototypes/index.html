@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Grim Reach — Item Tooltip Redesign, Round 3 (Task #210)</title>
+<style>
+  /* ── Reset ──────────────────────────────────────────────────────────── */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #050403; color: #ccd5db; font-family: Georgia, 'Times New Roman', serif; }
+  img { display: block; }
+  button { font: inherit; }
+
+  /* Cinzel loads via system fallback (no CDN, this is a local file://) — on
+     systems without Cinzel installed this degrades gracefully to Georgia/serif. */
+  :root {
+    --font-head: 'Cinzel', Georgia, serif;
+    --font-num: 'Segoe UI', Arial, sans-serif;
+    --font-mono: 'Consolas', 'Courier New', monospace;
+    --gold: #d8c06a;
+  }
+
+  /* ── Rarity system: ONE source of truth used by all 10 designs ───────
+     --rc is a raw "r,g,b" triplet so every design can do rgba(var(--rc),a)
+     for tinted glows/bands/gems without redefining rarity anywhere else.
+     Colors match the live game (components.css --rar-rare / --rar-magic). */
+  .rare  { --rc: 78,196,110;  --rcol: #4ec46e; --rcol-dark: #2e6b3e; }
+  .magic { --rc: 91,143,214;  --rcol: #5b8fd6; --rcol-dark: #2c4f78; }
+
+  /* ── Page chrome ───────────────────────────────────────────────────── */
+  .page-head {
+    padding: 30px 36px 20px;
+    border-bottom: 1px solid rgba(216,192,106,0.18);
+    background: linear-gradient(180deg, #14100a, #0a0806 90%);
+  }
+  .page-head h1 {
+    font-family: var(--font-head);
+    color: var(--gold);
+    font-size: 25px;
+    margin: 0 0 8px;
+    letter-spacing: 0.5px;
+  }
+  .page-head p { margin: 0 0 6px; font-size: 13.5px; color: #9a9a80; max-width: 1000px; line-height: 1.55; }
+  .page-head .legend { margin-top: 10px; font-size: 12px; color: #7a7a60; }
+
+  .group-title {
+    font-family: var(--font-head);
+    color: var(--gold);
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 24px 36px 4px;
+    opacity: 0.85;
+  }
+
+  .proto-row { display: flex; flex-direction: row; align-items: flex-start; gap: 26px; overflow-x: auto; padding: 18px 36px 44px; }
+  .proto-col { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .proto-label { font-family: var(--font-head); color: #e8e4d0; font-size: 13.5px; text-align: center; line-height: 1.3; }
+  .proto-label .num {
+    display: inline-block; color: #0a0806; background: var(--gold); border-radius: 50%;
+    width: 20px; height: 20px; line-height: 20px; font-size: 11.5px; font-weight: 700; margin-right: 6px;
+  }
+  .proto-label .dna { display: block; margin-top: 1px; color: var(--gold); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.85; }
+  .proto-label .sub { display: block; margin-top: 3px; font-family: Georgia, serif; font-weight: normal; color: #8a8a72; font-size: 10.8px; max-width: 300px; line-height: 1.4; }
+
+  .demo-bg {
+    position: relative;
+    border-radius: 4px;
+    padding: 30px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 26px;
+  }
+
+  /* Per-design ambient backdrops — each mood matches its design language. */
+  .bg-d1  { background: radial-gradient(ellipse at 50% 10%, rgba(120,20,20,0.18) 0%, transparent 60%), linear-gradient(rgba(4,3,2,0.6), rgba(4,3,2,0.8)), url('assets/bg_black.png') repeat; border: 1px solid rgba(216,192,106,0.06); }
+  .bg-d2  { background: linear-gradient(rgba(2,2,2,0.88), rgba(2,2,2,0.94)), url('assets/bg_black.png') repeat; border: 1px solid rgba(216,192,106,0.05); }
+  .bg-d3  { background: linear-gradient(rgba(6,6,5,0.82), rgba(6,6,5,0.9)), url('assets/bg_grey.png') repeat; border: 1px solid rgba(216,192,106,0.05); }
+  .bg-d4  { background: linear-gradient(rgba(30,18,6,0.45), rgba(20,12,4,0.6)), url('assets/bg_tileable_wood.png') repeat; border: 1px solid rgba(216,192,106,0.08); }
+  .bg-d5  { background: radial-gradient(ellipse at 50% 8%, rgba(40,30,10,0.3) 0%, transparent 55%), linear-gradient(rgba(4,4,3,0.75), rgba(4,4,3,0.88)), url('assets/bg_black.png') repeat; border: 1px solid rgba(216,192,106,0.06); }
+  .bg-d6  { background: linear-gradient(rgba(8,10,12,0.7), rgba(8,10,12,0.85)), url('assets/bg_grey.png') repeat; border: 1px solid rgba(120,160,200,0.08); }
+  .bg-d7  { background: linear-gradient(rgba(6,5,5,0.6), rgba(6,5,5,0.78)), url('assets/bg_tileable_stone.png') repeat; border: 1px solid rgba(216,192,106,0.05); }
+  .bg-d8  { background: #030303; border: 1px solid rgba(216,192,106,0.05); }
+  .bg-d9  { background: radial-gradient(ellipse at 50% 20%, rgba(80,50,10,0.2) 0%, transparent 60%), linear-gradient(rgba(10,6,3,0.55), rgba(10,6,3,0.75)), url('assets/bg_tileable_wood.png') repeat; border: 1px solid rgba(216,192,106,0.08); }
+  .bg-d10 { background: radial-gradient(ellipse at 50% 6%, rgba(90,20,20,0.22) 0%, transparent 55%), linear-gradient(rgba(3,2,1,0.68), rgba(3,2,1,0.86)), url('assets/bg_black.png') repeat; border: 1px solid rgba(216,192,106,0.08); }
+
+  /* Shared ornamental diamond separator (used by several designs, each re-tints it). */
+  .osep { display: flex; align-items: center; gap: 8px; color: rgba(216,192,106,0.5); font-size: 9px; }
+  .osep::before, .osep::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(216,192,106,0.4), transparent); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 1 — "Diablo IV"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d1-frame { width: 360px; padding: 1px; border-radius: 8px; background: linear-gradient(160deg, #55555e, #1a1a1c 45%, #000 100%); box-shadow: 0 26px 50px -10px rgba(0,0,0,0.85), 0 2px 0 rgba(0,0,0,0.6); }
+  .d1-card { border-radius: 7px; overflow: hidden; background: linear-gradient(180deg, #1c1a1e, #100f11); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+  .d1-headerband { position: relative; padding: 20px 22px 10px; background: linear-gradient(180deg, rgba(var(--rc),0.32), rgba(var(--rc),0.06) 75%, transparent); }
+  .d1-name { text-align: center; font-family: var(--font-head); font-size: 22px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--rcol); text-shadow: 0 2px 6px rgba(0,0,0,0.9), 0 0 18px rgba(var(--rc),0.5); }
+  .d1-rarity { text-align: center; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--rcol); opacity: 0.85; margin-top: 3px; }
+  .d1-type { text-align: center; font-size: 11.5px; color: #a89a72; text-transform: uppercase; letter-spacing: 1px; margin-top: 9px; display: flex; gap: 8px; justify-content: center; align-items: center; }
+  .d1-type span { color: rgba(var(--rc),0.7); font-size: 9px; }
+  .d1-stage { position: relative; isolation: isolate; height: 210px; margin: 4px 18px 0; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: url('assets/bg_black.png') repeat; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05); }
+  .d1-stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, rgba(var(--rc),0.4), transparent 68%); z-index: 1; }
+  .d1-stage img { position: relative; z-index: 2; max-width: 74%; max-height: 78%; object-fit: contain; filter: drop-shadow(0 14px 24px rgba(0,0,0,0.8)); }
+  .d1-body { padding: 14px 22px 20px; }
+  .d1-dmg { text-align: center; font-family: var(--font-num); font-size: 19px; font-weight: 800; color: var(--gold); margin-top: 10px; }
+  .d1-tempo { text-align: center; font-size: 12.5px; color: #c8c2ae; margin-top: 2px; }
+  .d1-tempo .dps { display: block; font-style: italic; color: #8a8a78; font-size: 11px; margin-top: 1px; }
+  .d1-sep { margin: 14px 0; color: rgba(var(--rc),0.6); }
+  .d1-sep::before, .d1-sep::after { background: linear-gradient(90deg, transparent, rgba(var(--rc),0.5), transparent); }
+  .d1-row { display: flex; align-items: center; gap: 10px; padding: 4px 2px; font-size: 13px; color: #d7d2c2; }
+  .d1-row img { width: 16px; height: 16px; opacity: 0.9; filter: drop-shadow(0 0 3px rgba(0,0,0,0.6)); }
+  .d1-row .lbl { flex: 1; }
+  .d1-row .v { font-family: var(--font-num); font-weight: 700; color: var(--gold); }
+  .d1-row.boost .v, .d1-row.boost .lbl { color: #7fc76b; text-shadow: 0 0 8px rgba(127,199,107,0.5); }
+  .d1-suffixlabel { font-size: 11px; font-style: italic; color: var(--rcol); margin: 9px 0 1px; opacity: 0.9; }
+  .d1-effect { display: flex; gap: 9px; align-items: flex-start; margin: 14px 0 2px; padding: 9px 11px; background: rgba(0,0,0,0.35); border-left: 2px solid var(--rcol); border-radius: 0 4px 4px 0; font-style: italic; color: #e4d9a8; font-size: 12px; line-height: 1.5; }
+  .d1-effect img { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+  .d1-req { font-size: 11.5px; color: #8a8a78; margin-top: 4px; }
+  .d1-req b { color: #c8c2ae; font-weight: normal; }
+  .d1-footer { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 6px; font-family: var(--font-num); font-weight: 700; color: var(--gold); font-size: 15px; }
+  .d1-footer img { width: 14px; height: 16px; }
+  .d1-flavor { margin: 14px 0 0; font-style: italic; font-size: 11.5px; color: #7d7a68; text-align: center; line-height: 1.5; }
+  .d1-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .d1-btn { flex: 1; height: 40px; border: 1px solid #000; border-radius: 3px; cursor: pointer; font-family: var(--font-head); font-size: 11.5px; letter-spacing: 1px; text-transform: uppercase; color: #e8d9ad; background: linear-gradient(180deg,#3a1414,#1c0808); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -2px 4px rgba(0,0,0,0.6), 0 3px 6px rgba(0,0,0,0.5); }
+  .d1-btn.primary { background: linear-gradient(180deg,#7a1f1f,#3a0d0d); color: #ffe9b0; box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -2px 4px rgba(0,0,0,0.5), 0 0 14px rgba(180,40,40,0.5), 0 3px 6px rgba(0,0,0,0.6); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 2 — "Elden Ring"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d2-card { width: 380px; background: linear-gradient(180deg,#0c0c0c,#060606); padding: 36px 32px 30px; position: relative; box-shadow: 0 30px 60px -10px rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.03); }
+  .d2-corner { position: absolute; width: 18px; height: 18px; border: 1px solid rgba(216,192,106,0.32); }
+  .d2-corner.tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+  .d2-corner.tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+  .d2-corner.bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+  .d2-corner.br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+  .d2-name { text-align: center; font-family: var(--font-head); font-size: 24px; letter-spacing: 3px; color: #e9dfc0; text-transform: uppercase; font-weight: 600; }
+  .d2-uline { width: 54px; height: 1px; margin: 12px auto 0; background: linear-gradient(90deg, transparent, rgba(var(--rc),0.8), transparent); }
+  .d2-rarity { text-align: center; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--rcol); opacity: 0.8; margin-top: 12px; }
+  .d2-type { text-align: center; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #8f8870; margin-top: 18px; }
+  .d2-stage { height: 168px; display: flex; align-items: center; justify-content: center; margin: 26px 0; position: relative; }
+  .d2-stage::before { content: ""; position: absolute; width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, rgba(var(--rc),0.2), transparent 72%); filter: blur(3px); }
+  .d2-stage img { position: relative; max-width: 68%; max-height: 80%; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.8)) brightness(0.96); }
+  .d2-hr { height: 1px; background: linear-gradient(90deg, transparent, rgba(216,192,106,0.28), transparent); margin: 24px 0; }
+  .d2-dmg { text-align: center; font-size: 16px; color: #e9dfc0; letter-spacing: 1px; }
+  .d2-tempo { text-align: center; font-size: 11.5px; color: #8f8870; margin-top: 5px; letter-spacing: 0.5px; }
+  .d2-stats { display: flex; flex-direction: column; gap: 11px; align-items: center; margin: 24px 0; }
+  .d2-row { font-size: 13px; color: #cfc9b4; letter-spacing: 0.3px; }
+  .d2-row b { color: #e9dfc0; font-weight: 600; margin-left: 7px; }
+  .d2-row.boost b { color: #8fbf7a; }
+  .d2-row.suffix { font-style: italic; color: var(--rcol); font-size: 11.5px; }
+  .d2-effect { text-align: center; font-style: italic; color: #b9ac86; font-size: 12.5px; line-height: 1.75; margin: 24px 8px; }
+  .d2-meta { display: flex; justify-content: center; gap: 20px; font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: #7d775f; margin-top: 20px; }
+  .d2-meta b { color: #c9bd94; font-weight: normal; }
+  .d2-flavor { text-align: center; font-style: italic; font-size: 11px; color: #5f5b48; line-height: 1.6; margin-top: 20px; }
+  .d2-actions { display: flex; justify-content: center; gap: 30px; margin-top: 26px; }
+  .d2-btn { background: none; border: none; color: #c9bd94; font-family: var(--font-head); font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; padding: 6px 4px; cursor: pointer; position: relative; }
+  .d2-btn::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(216,192,106,0.35); }
+  .d2-btn.primary { color: #e9dfc0; }
+  .d2-btn.primary::after { background: rgba(216,192,106,0.9); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 3 — "Path of Exile"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d3-card { width: 300px; background: #0c0c0b; border: 1px solid #000; box-shadow: 0 20px 40px rgba(0,0,0,0.7); font-size: 12px; }
+  .d3-hb1 { background: linear-gradient(180deg, rgba(var(--rc),0.3), rgba(var(--rc),0.08)); padding: 11px 14px 4px; text-align: center; }
+  .d3-name { font-family: Georgia, serif; font-weight: 700; font-size: 16px; color: var(--rcol); }
+  .d3-hb2 { background: rgba(var(--rc),0.1); padding: 2px 14px 8px; text-align: center; border-bottom: 1px solid rgba(var(--rc),0.28); }
+  .d3-type { font-size: 11px; color: #b8b0a0; text-transform: uppercase; letter-spacing: 0.5px; }
+  .d3-stage { height: 148px; margin: 10px 16px; background: url('assets/bg_black.png') repeat; border: 1px solid #232220; display: flex; align-items: center; justify-content: center; position: relative; }
+  .d3-stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, rgba(var(--rc),0.25), transparent 70%); }
+  .d3-stage img { position: relative; max-width: 62%; max-height: 68%; object-fit: contain; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.7)); }
+  .d3-body { padding: 4px 16px 14px; }
+  .d3-group { padding: 8px 0; border-bottom: 1px solid #232220; }
+  .d3-group:last-of-type { border-bottom: none; }
+  .d3-group-title { font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; color: #6b6558; margin-bottom: 4px; }
+  .d3-row { display: flex; justify-content: space-between; padding: 1.5px 0; color: #c9c2b0; font-size: 12px; }
+  .d3-row .v { font-weight: 700; color: var(--gold); font-family: var(--font-num); }
+  .d3-row.boost .v, .d3-row.boost .l { color: #8fd67a; }
+  .d3-prose { margin-top: 4px; padding: 9px 10px; background: #131210; border: 1px solid #2a2823; font-style: italic; color: #af8a5a; font-size: 11.3px; line-height: 1.5; }
+  .d3-footer { display: flex; justify-content: space-between; padding: 9px 16px; border-top: 1px solid #232220; font-size: 11px; color: #8f8878; }
+  .d3-footer .val { color: var(--gold); font-weight: 700; display: flex; align-items: center; gap: 4px; }
+  .d3-footer .val img { width: 12px; height: 14px; }
+  .d3-flavor { padding: 9px 16px 0; font-style: italic; color: #6b6558; font-size: 10.8px; line-height: 1.5; }
+  .d3-actions { display: flex; gap: 1px; }
+  .d3-btn { flex: 1; height: 32px; background: #1c1a17; border: 1px solid #2e2b26; color: #c9b98a; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+  .d3-btn.primary { background: #2a2117; color: #e8cf8a; border-color: #4a3a20; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 4 — "Baldur's Gate 3"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d4-card { width: 380px; background: linear-gradient(175deg,#ecdfc0,#ddc99c 55%,#cbb489); color: #3a2a16; padding: 30px 26px 22px; position: relative; box-shadow: 0 26px 50px rgba(20,10,0,0.6), inset 0 0 60px rgba(120,80,30,0.15); border-radius: 2px; }
+  .d4-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 15% 20%, rgba(120,80,30,0.10), transparent 30%), radial-gradient(circle at 85% 75%, rgba(120,80,30,0.12), transparent 35%), radial-gradient(circle at 50% 95%, rgba(90,60,20,0.10), transparent 40%); }
+  .d4-seal { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+  .d4-ribbon { width: 40px; height: 5px; margin: 8px auto 0; background: linear-gradient(90deg, transparent, var(--rcol-dark), transparent); opacity: 0.8; position: relative; }
+  .d4-name { text-align: center; font-family: Georgia, serif; font-weight: 700; font-size: 21px; color: var(--rcol-dark); letter-spacing: 0.5px; position: relative; }
+  .d4-rarity { text-align: center; font-size: 10.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--rcol-dark); opacity: 0.8; margin-top: 3px; position: relative; }
+  .d4-type { text-align: center; font-size: 11.5px; color: #6b5636; font-style: italic; margin-top: 7px; position: relative; }
+  .d4-flourish { text-align: center; color: #8a6a3a; font-size: 14px; margin: 10px 0; opacity: 0.75; position: relative; }
+  .d4-stage { height: 190px; margin: 10px 8px 14px; background: radial-gradient(ellipse at 50% 40%, rgba(var(--rc),0.28), transparent 70%), url('assets/bg_tileable_wood.png') repeat; border: 2px solid #6b4e2a; box-shadow: inset 0 0 24px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; position: relative; }
+  .d4-stage img { max-width: 68%; max-height: 74%; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.6)); }
+  .d4-row { display: flex; align-items: center; gap: 8px; padding: 4.5px 4px; font-size: 12.5px; color: #4a3620; border-bottom: 1px solid rgba(107,86,54,0.2); }
+  .d4-row .v { margin-left: auto; font-weight: 700; color: #7a3f14; }
+  .d4-row.boost .v, .d4-row.boost .lbl { color: #3d7a2c; }
+  .d4-row.suffix { font-style: italic; color: var(--rcol-dark); font-size: 11.5px; border-bottom: none; padding-top: 8px; }
+  .d4-effect { margin: 12px 4px; padding: 10px 12px; background: rgba(255,250,235,0.4); border: 1px solid rgba(107,86,54,0.35); border-radius: 2px; font-style: italic; color: #5a3f1c; font-size: 12px; line-height: 1.55; }
+  .d4-footer { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(107,86,54,0.3); font-size: 11px; color: #6b5636; }
+  .d4-footer .val { color: #7a3f14; font-weight: 700; }
+  .d4-flavor { text-align: center; font-style: italic; font-size: 11px; color: #6b5636; line-height: 1.5; margin-top: 12px; }
+  .d4-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .d4-btn { flex: 1; height: 38px; border-radius: 19px; border: 1px solid #6b4e2a; background: linear-gradient(180deg,#8a6a3e,#5a4222); color: #f0e0b8; font-family: Georgia, serif; font-size: 12px; letter-spacing: 0.5px; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 3px 6px rgba(0,0,0,0.3); }
+  .d4-btn.primary { background: linear-gradient(180deg,#a4472e,#6e2916); border-color: #4a1a0e; color: #ffe4c0; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 5 — "Grimoire Page"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d5-card { width: 460px; background: linear-gradient(160deg,#1a1610,#0f0c08); color: #d8cba8; padding: 26px; position: relative; box-shadow: 0 26px 50px rgba(0,0,0,0.8); border: 1px solid #2a2210; }
+  .d5-card::before { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(216,192,106,0.15); pointer-events: none; }
+  .d5-grid { display: grid; grid-template-columns: 1fr 132px; gap: 24px; position: relative; }
+  .d5-name { font-family: Georgia, serif; font-size: 15px; letter-spacing: 1px; color: var(--rcol); text-transform: uppercase; }
+  .d5-name::first-letter { font-family: var(--font-head); font-size: 46px; float: left; line-height: 0.78; margin: 4px 7px 0 0; color: var(--gold); text-shadow: 0 0 12px rgba(var(--rc),0.6); }
+  .d5-type { font-size: 11px; font-style: italic; color: #a89a72; margin-top: 4px; }
+  .d5-prose { margin-top: 20px; font-family: Georgia, serif; font-style: italic; font-size: 16.5px; line-height: 1.75; color: #e9dfc0; clear: left; }
+  .d5-prose b { color: var(--gold); font-style: normal; }
+  .d5-margin { border-left: 1px dashed rgba(216,192,106,0.3); padding-left: 14px; transform: rotate(-0.6deg); }
+  .d5-margin-art { width: 100%; height: 108px; background: radial-gradient(circle at 50% 45%, rgba(var(--rc),0.28), transparent 70%), url('assets/bg_black.png') repeat; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border: 1px solid rgba(216,192,106,0.2); }
+  .d5-margin-art img { max-width: 78%; max-height: 78%; object-fit: contain; filter: sepia(0.3) drop-shadow(0 4px 8px rgba(0,0,0,0.6)); }
+  .d5-mrow { font-family: Georgia, serif; font-size: 11.5px; color: #c9bd94; margin-bottom: 8px; border-bottom: 1px dashed rgba(216,192,106,0.25); padding-bottom: 5px; display: flex; justify-content: space-between; }
+  .d5-mrow .v { color: var(--gold); font-weight: 700; }
+  .d5-mrow.boost { color: #8fd67a; }
+  .d5-mrow.boost .v { color: #8fd67a; }
+  .d5-msuffix { font-size: 10px; font-style: italic; color: var(--rcol); margin: -2px 0 6px; }
+  .d5-req { font-size: 10px; color: #8f8870; margin-top: 8px; }
+  .d5-val { font-size: 12px; color: var(--gold); font-weight: 700; margin-top: 3px; }
+  .d5-flavor { grid-column: 1 / -1; font-style: italic; font-size: 11px; color: #7d7660; line-height: 1.5; margin-top: 6px; }
+  .d5-actions { display: flex; gap: 30px; margin-top: 18px; border-top: 1px solid rgba(216,192,106,0.2); padding-top: 14px; justify-content: center; }
+  .d5-btn { background: none; border: none; color: #c9bd94; font-family: Georgia, serif; font-style: italic; font-size: 12.5px; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(216,192,106,0.4); text-underline-offset: 4px; }
+  .d5-btn.primary { color: var(--gold); text-decoration-color: var(--gold); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 6 — "Forge Blueprint"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d6-card { width: 380px; background: linear-gradient(160deg,#3a4048,#22262c 60%,#181b1f); border-radius: 4px; padding: 22px; position: relative; box-shadow: 0 26px 50px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -2px 6px rgba(0,0,0,0.5); border: 1px solid #10120f; }
+  .d6-rivet { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #8a929c, #2c3036 70%); box-shadow: 0 1px 2px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.3); }
+  .d6-rivet.tl { top: 14px; left: 14px; } .d6-rivet.tr { top: 14px; right: 14px; } .d6-rivet.bl { bottom: 14px; left: 14px; } .d6-rivet.br { bottom: 14px; right: 14px; }
+  .d6-eyebrow { text-align: center; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 3px; color: #8a929c; margin-bottom: 8px; }
+  .d6-name { text-align: center; font-family: var(--font-head); font-size: 19px; color: var(--rcol); text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+  .d6-rarity { text-align: center; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #8a929c; margin-top: 3px; }
+  .d6-type { text-align: center; font-size: 10.5px; color: #7a828c; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .d6-gauges { display: flex; gap: 8px; margin: 16px 0; }
+  .d6-gauge { flex: 1; background: #0d0f11; border-radius: 3px; padding: 9px 6px; text-align: center; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.03); }
+  .d6-gauge .num { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: #7fe0a8; text-shadow: 0 0 8px rgba(127,224,168,0.5); }
+  .d6-gauge .cap { font-size: 8.5px; letter-spacing: 1px; text-transform: uppercase; color: #6a727c; margin-top: 3px; }
+  .d6-stage { height: 168px; margin: 16px 0; background: repeating-linear-gradient(0deg, rgba(127,180,220,0.06) 0 1px, transparent 1px 18px), repeating-linear-gradient(90deg, rgba(127,180,220,0.06) 0 1px, transparent 1px 18px), #14181c; border: 1px solid #2a2f35; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 30px rgba(0,0,0,0.6); }
+  .d6-stage::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, rgba(var(--rc),0.2), transparent 70%); }
+  .d6-stage img { position: relative; max-width: 68%; max-height: 74%; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,0.7)) saturate(0.85); }
+  .d6-plaques { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+  .d6-plaque { background: linear-gradient(180deg,#3a4048,#20242a); border: 1px solid #10120f; border-radius: 3px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 4px rgba(0,0,0,0.4); }
+  .d6-plaque img { width: 14px; height: 14px; filter: brightness(1.3); }
+  .d6-plaque .lbl { font-size: 10px; color: #aab0b8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .d6-plaque .v { font-family: var(--font-mono); font-weight: 700; color: #e8c96a; font-size: 12px; }
+  .d6-plaque.boost .v { color: #7fe0a8; }
+  .d6-plaque.suffix { border-color: rgba(var(--rc),0.5); }
+  .d6-effect { margin: 14px 0; padding: 9px 10px; background: #14181c; border-left: 2px solid #7fe0a8; font-family: Georgia, serif; font-style: italic; font-size: 11.5px; color: #b8c0c8; line-height: 1.5; }
+  .d6-effect .tag { font-family: var(--font-mono); color: #7fe0a8; font-style: normal; font-size: 9.5px; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+  .d6-footer { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid #2a2f35; font-family: var(--font-mono); font-size: 10.5px; color: #8a929c; }
+  .d6-footer .val { color: #e8c96a; font-weight: 700; }
+  .d6-flavor { font-style: italic; font-size: 10.8px; color: #6a727c; line-height: 1.5; margin-top: 10px; font-family: Georgia, serif; }
+  .d6-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .d6-btn { flex: 1; height: 36px; background: linear-gradient(180deg,#454c54,#262a2f); border: 1px solid #101214; border-radius: 2px; color: #c8ced4; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 4px rgba(0,0,0,0.5); }
+  .d6-btn.primary { background: linear-gradient(180deg,#2a5a44,#173226); color: #c8ffe0; border-color: #0a1a12; }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 7 — "Stone Tablet"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d7-card { width: 360px; background: url('assets/bg_tileable_stone.png') repeat; padding: 28px 24px; position: relative; box-shadow: 0 26px 50px rgba(0,0,0,0.75), inset 0 0 0 3px rgba(0,0,0,0.4), inset 0 0 0 4px rgba(255,255,255,0.03); border-radius: 2px; }
+  .d7-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.48)); pointer-events: none; }
+  .d7-card > * { position: relative; z-index: 1; }
+  .d7-engrave { color: #b8ada0; text-shadow: 0 1px 0 rgba(255,255,255,0.12), 0 -1px 1px rgba(0,0,0,0.85); }
+  .d7-name { text-align: center; font-family: var(--font-head); font-size: 21px; letter-spacing: 2px; text-transform: uppercase; color: #c9beae; text-shadow: 0 1px 0 rgba(255,255,255,0.15), 0 -2px 2px rgba(0,0,0,0.9); }
+  .d7-rarity { text-align: center; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--rcol); opacity: 0.75; margin-top: 5px; text-shadow: 0 1px 0 rgba(255,255,255,0.1), 0 -1px 1px rgba(0,0,0,0.8); }
+  .d7-type { text-align: center; font-size: 10.5px; color: #8a8074; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 1px 0 rgba(255,255,255,0.1), 0 -1px 1px rgba(0,0,0,0.8); }
+  .d7-groove { height: 6px; margin: 15px 0; background: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.1) 40%, rgba(255,255,255,0.06) 55%, transparent); box-shadow: inset 0 2px 3px rgba(0,0,0,0.6); border-radius: 3px; }
+  .d7-stage { height: 190px; margin: 14px 6px; background: rgba(0,0,0,0.35); box-shadow: inset 0 4px 10px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(255,255,255,0.05); border-radius: 3px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .d7-stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, rgba(var(--rc),0.24), transparent 70%); border-radius: 3px; }
+  .d7-stage img { position: relative; max-width: 68%; max-height: 74%; object-fit: contain; filter: drop-shadow(0 10px 16px rgba(0,0,0,0.7)); }
+  .d7-row { display: flex; align-items: center; gap: 8px; padding: 6.5px 2px; font-size: 12.5px; color: #b8ad9e; text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 1px rgba(0,0,0,0.6); }
+  .d7-row + .d7-row { border-top: 1px solid rgba(0,0,0,0.4); box-shadow: 0 1px 0 rgba(255,255,255,0.04); }
+  .d7-row .v { margin-left: auto; font-weight: 700; color: #d8c68a; }
+  .d7-row.boost .v, .d7-row.boost .lbl { color: #8fbf7a; }
+  .d7-suffix { font-style: italic; color: var(--rcol); font-size: 11px; margin: 10px 2px 0; opacity: 0.9; }
+  .d7-effect { margin: 15px 4px; padding: 11px; background: rgba(0,0,0,0.25); box-shadow: inset 0 2px 6px rgba(0,0,0,0.5); border-radius: 3px; font-style: italic; color: #c9beae; text-shadow: 0 1px 0 rgba(255,255,255,0.1), 0 -1px 1px rgba(0,0,0,0.7); font-size: 12px; line-height: 1.5; }
+  .d7-footer { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: #8a8074; text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 1px rgba(0,0,0,0.6); }
+  .d7-footer .val { color: #d8c68a; font-weight: 700; }
+  .d7-flavor { margin-top: 12px; font-style: italic; font-size: 11px; color: #8a8074; text-align: center; line-height: 1.5; text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 1px rgba(0,0,0,0.6); }
+  .d7-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .d7-btn { flex: 1; height: 38px; background: rgba(0,0,0,0.3); box-shadow: inset 0 3px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.06); border-radius: 3px; border: none; color: #c9beae; font-family: var(--font-head); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 1px 0 rgba(255,255,255,0.1), 0 -1px 1px rgba(0,0,0,0.8); cursor: pointer; }
+  .d7-btn.primary { color: var(--rcol); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 8 — "Rarity Aura"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d8-card { width: 340px; background: linear-gradient(160deg, rgba(30,32,38,0.55), rgba(14,15,18,0.68)); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); padding: 28px; border-radius: 12px; border: 1px solid rgba(var(--rc),0.35); position: relative;
+    box-shadow: 0 0 0 1px rgba(var(--rc),0.15), 0 0 26px rgba(var(--rc),0.4), 0 0 60px rgba(var(--rc),0.28), 0 0 110px rgba(var(--rc),0.16), 0 30px 60px rgba(0,0,0,0.7); }
+  .d8-name { text-align: center; font-family: var(--font-head); font-size: 20px; color: #fff; text-shadow: 0 0 16px rgba(var(--rc),0.9); letter-spacing: 1px; }
+  .d8-rarity { text-align: center; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--rcol); margin-top: 5px; }
+  .d8-type { text-align: center; font-size: 10.5px; color: rgba(255,255,255,0.5); margin-top: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .d8-stage { height: 150px; display: flex; align-items: center; justify-content: center; margin: 18px 0; position: relative; }
+  .d8-stage::before { content: ""; position: absolute; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, rgba(var(--rc),0.5), transparent 70%); filter: blur(4px); }
+  .d8-stage img { position: relative; max-width: 66%; max-height: 78%; object-fit: contain; filter: drop-shadow(0 0 20px rgba(var(--rc),0.55)) drop-shadow(0 10px 16px rgba(0,0,0,0.6)); }
+  .d8-stats { display: flex; flex-direction: column; gap: 9px; margin: 16px 0; }
+  .d8-row { display: flex; justify-content: space-between; font-size: 12.5px; color: rgba(255,255,255,0.75); }
+  .d8-row .v { color: #fff; font-weight: 600; text-shadow: 0 0 8px rgba(var(--rc),0.65); }
+  .d8-row.boost .v { color: #9dffb0; text-shadow: 0 0 10px rgba(120,255,140,0.7); }
+  .d8-row.suffix { font-style: italic; color: var(--rcol); font-size: 11px; }
+  .d8-effect { text-align: center; font-style: italic; font-size: 12px; color: rgba(255,255,255,0.72); line-height: 1.6; margin: 18px 6px; }
+  .d8-footer { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 13px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: rgba(255,255,255,0.5); }
+  .d8-footer .val { color: var(--gold); font-weight: 700; }
+  .d8-flavor { text-align: center; font-style: italic; font-size: 10.8px; color: rgba(255,255,255,0.38); line-height: 1.5; margin-top: 14px; }
+  .d8-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .d8-btn { flex: 1; height: 36px; border-radius: 18px; border: 1px solid rgba(var(--rc),0.4); background: rgba(var(--rc),0.12); color: #fff; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 16px rgba(var(--rc),0.25); }
+  .d8-btn.primary { background: rgba(var(--rc),0.3); box-shadow: 0 0 26px rgba(var(--rc),0.5); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 9 — "Trading Card"
+     ═══════════════════════════════════════════════════════════════════ */
+  .d9-frame { width: 300px; padding: 6px; border-radius: 26px 26px 10px 10px; background: linear-gradient(160deg,#e8cf8a,#8a6a2a 40%,#3a2a0a 100%); box-shadow: 0 26px 50px rgba(0,0,0,0.75); }
+  .d9-card { background: linear-gradient(160deg,#241812,#140c08); border-radius: 22px 22px 7px 7px; overflow: hidden; }
+  .d9-stage { height: 200px; position: relative; overflow: hidden; background: url('assets/bg_black.png') repeat; display: flex; align-items: center; justify-content: center; }
+  .d9-stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 35%, rgba(var(--rc),0.42), transparent 70%); }
+  .d9-stage img { position: relative; z-index: 2; max-width: 70%; max-height: 78%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.8)); }
+  .d9-stage-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 42%; background: linear-gradient(rgba(20,12,8,0), rgba(20,12,8,0.96)); z-index: 3; }
+  .d9-gem { position: relative; z-index: 4; width: 34px; height: 34px; margin: -17px auto 0; background: linear-gradient(160deg, var(--rcol), rgba(var(--rc),0.35)); transform: rotate(45deg); border-radius: 6px; border: 2px solid rgba(255,255,255,0.5); box-shadow: 0 0 16px rgba(var(--rc),0.7), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.4); }
+  .d9-nameband { margin: 2px 16px 0; background: linear-gradient(180deg,#3a2a16,#1c130a); border: 1px solid #6b4e2a; border-radius: 20px; padding: 9px 14px 7px; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 3px 6px rgba(0,0,0,0.4); }
+  .d9-name { font-family: var(--font-head); font-size: 15px; color: var(--rcol); text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+  .d9-type { font-size: 9.5px; color: #a89468; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+  .d9-body { padding: 12px 18px 0; }
+  .d9-row { display: flex; justify-content: space-between; font-size: 11.5px; color: #d8cba8; padding: 3px 0; }
+  .d9-row .v { font-weight: 700; color: var(--gold); }
+  .d9-row.boost .v { color: #8fd67a; }
+  .d9-row.suffix { font-style: italic; color: var(--rcol); font-size: 10.5px; padding-top: 6px; }
+  .d9-effect { text-align: center; font-style: italic; font-size: 10.8px; color: #c9b98a; line-height: 1.5; margin: 10px 6px; }
+  .d9-strip { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 0 16px; }
+  .d9-medal { width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #3a3a3a, #0a0a0a 70%); border: 2px solid #8a8478; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.5); }
+  .d9-medal.gold { border-color: var(--gold); }
+  .d9-medal .n { font-family: var(--font-num); font-weight: 800; font-size: 12.5px; color: #e8d9ad; }
+  .d9-medal .l { font-size: 6.5px; text-transform: uppercase; letter-spacing: 0.5px; color: #8a8478; }
+  .d9-req { text-align: center; font-size: 9.5px; color: #8a8070; margin-top: 8px; }
+  .d9-flavor { text-align: center; font-style: italic; font-size: 9.8px; color: #7d7358; line-height: 1.4; margin-top: 8px; padding: 0 8px; }
+  .d9-actions { display: flex; gap: 8px; margin: 14px 16px 16px; }
+  .d9-btn { flex: 1; height: 34px; border: none; background: url('assets/sidebar_btn_normal.png') 50% 44% / 100% 130% no-repeat; color: #f0dca0; font-family: var(--font-head); font-size: 10.5px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; border-radius: 17px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.9); }
+  .d9-btn.primary { background-image: url('assets/sidebar_btn_active.png'); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     DESIGN 10 — "Royal" (premium synthesis)
+     ═══════════════════════════════════════════════════════════════════ */
+  .d10-card { width: 400px; position: relative; background: linear-gradient(180deg,#1c1712,#0f0c09); border-radius: 6px; box-shadow: 0 30px 60px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05);
+    border-style: solid; border-color: transparent; border-width: 14px; border-image: url('assets/wooden_frame_with_corners.png') 28 28 28 28 / 14px; }
+  .d10-headerband { margin: -14px -14px 0; padding: 18px 22px 10px; background: linear-gradient(180deg, rgba(var(--rc),0.34), rgba(var(--rc),0.06) 80%, transparent); position: relative; }
+  .d10-corner { position: absolute; top: 6px; font-size: 13px; color: rgba(216,192,106,0.55); opacity: 0.85; }
+  .d10-corner.l { left: 10px; } .d10-corner.r { right: 10px; transform: scaleX(-1); }
+  .d10-name { text-align: center; font-family: var(--font-head); font-size: 23px; font-weight: 700; color: var(--rcol); text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 6px rgba(0,0,0,0.9), 0 0 20px rgba(var(--rc),0.5); }
+  .d10-rarity { text-align: center; font-size: 10.5px; letter-spacing: 3px; text-transform: uppercase; color: var(--rcol); opacity: 0.85; margin-top: 4px; }
+  .d10-type { text-align: center; font-size: 11px; color: #a89468; text-transform: uppercase; letter-spacing: 1px; margin-top: 9px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .d10-type span { color: rgba(var(--rc),0.6); font-size: 9px; }
+  .d10-stage { position: relative; isolation: isolate; height: 236px; margin: 14px 18px 0; background: url('assets/bg_black.png') repeat; box-shadow: inset 0 0 50px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; }
+  .d10-stage::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, rgba(var(--rc),0.42), transparent 68%); z-index: 1; }
+  .d10-stage img { position: relative; z-index: 2; max-width: 76%; max-height: 80%; object-fit: contain; filter: drop-shadow(0 14px 26px rgba(0,0,0,0.85)); }
+  .d10-bracket { position: absolute; width: 20px; height: 20px; border: 1px solid rgba(216,192,106,0.55); z-index: 3; }
+  .d10-bracket.tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+  .d10-bracket.tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+  .d10-bracket.bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+  .d10-bracket.br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+  .d10-body { padding: 14px 22px 20px; }
+  .d10-dmg { text-align: center; font-family: var(--font-num); font-size: 19px; font-weight: 800; color: var(--gold); margin-top: 10px; }
+  .d10-tempo { text-align: center; font-size: 12.5px; color: #c8c2ae; margin-top: 2px; }
+  .d10-tempo .dps { display: block; font-style: italic; color: #8a8a78; font-size: 11px; margin-top: 1px; }
+  .d10-sep { margin: 14px 0; color: rgba(var(--rc),0.6); }
+  .d10-sep::before, .d10-sep::after { background: linear-gradient(90deg, transparent, rgba(var(--rc),0.5), transparent); }
+  .d10-row { display: flex; align-items: center; gap: 10px; padding: 5px 2px; font-size: 13px; color: #d7d2c2; border-bottom: 1px solid rgba(216,192,106,0.08); }
+  .d10-row:last-of-type { border-bottom: none; }
+  .d10-row img.icon { width: 16px; height: 16px; }
+  .d10-row .lbl { flex: 1; }
+  .d10-row .v { font-family: var(--font-num); font-weight: 700; color: var(--gold); min-width: 26px; text-align: right; }
+  .d10-row .cmp-chip { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; margin-left: 6px; flex-shrink: 0; }
+  .d10-row .cmp-chip.up { background: rgba(127,199,107,0.22); box-shadow: 0 0 8px rgba(127,199,107,0.35); }
+  .d10-row .cmp-chip.down { background: rgba(200,80,70,0.22); box-shadow: 0 0 8px rgba(200,80,70,0.3); }
+  .d10-row .cmp { width: 11px; height: auto; }
+  .d10-row.boost .v, .d10-row.boost .lbl { color: #7fc76b; }
+  .d10-suffixlabel { font-size: 11px; font-style: italic; color: var(--rcol); margin: 9px 0 1px; opacity: 0.9; }
+  .d10-hint { text-align: center; font-size: 10px; color: #6a6a58; font-style: italic; margin-top: 4px; }
+  .d10-effect { display: flex; gap: 9px; align-items: flex-start; margin: 14px 0 2px; padding: 9px 11px; background: rgba(0,0,0,0.35); border-left: 2px solid var(--rcol); border-radius: 0 4px 4px 0; font-style: italic; color: #e4d9a8; font-size: 12px; line-height: 1.5; }
+  .d10-effect img { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+  .d10-req { font-size: 11.5px; color: #8a8a78; margin-top: 4px; }
+  .d10-req b { color: #c8c2ae; font-weight: normal; }
+  .d10-footer { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 6px; font-family: var(--font-num); font-weight: 700; color: var(--gold); font-size: 15px; }
+  .d10-footer img { width: 14px; height: 16px; }
+  .d10-flavor { margin: 14px 0 0; font-style: italic; font-size: 11.5px; color: #7d7a68; text-align: center; line-height: 1.5; }
+  .d10-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .d10-btn { flex: 1; height: 42px; border: none; background: url('assets/sidebar_btn_normal.png') 50% 44% / 100% 128% no-repeat; color: #f0dca0; font-family: var(--font-head); font-weight: 700; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.9); cursor: pointer; }
+  .d10-btn.primary { background-image: url('assets/sidebar_btn_active.png'); }
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>Item Tooltip Redesign — Round 3 (Task #210)</h1>
+    <p>Ten tooltips, ten actual design languages — not ten variations on one wooden frame. Each column below borrows its construction logic from a different reference (Diablo IV, Elden Ring, Path of Exile, Baldur's Gate 3, an illuminated grimoire, a forge blueprint, a carved stone tablet, a glass rarity-aura, a trading card, and a "best of all nine" royal synthesis). Same two example items throughout — Gorehorn Cleaver (rare, two-handed cleaver, with a Luck suffix roll and a Power skill-boost) and Charred Breastplate (magic, chest armor) — so the layouts are the only variable.</p>
+    <p class="legend">Rarity is one shared system across every design: --rc "r,g,b" per rarity, reused for name color, header bands, glows and gems (rare = green #4ec46e, magic = blue #5b8fd6 — matches the live game's --rar-rare / --rar-magic). Cinzel loads via system fallback (no CDN); degrades to Georgia/serif if not installed.</p>
+  </div>
+
+  <div class="group-title">Designs 1 – 5</div>
+  <div class="proto-row" id="row1">
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">1</span>Diablo IV<span class="dna">Layered anthracite panel</span><span class="sub">Rarity color as a header band behind the name, smoky radial hero stage, ornamental ◆ dividers, heavy drop-shadow.</span></div>
+      <div class="demo-bg bg-d1">
+        <div class="d1-frame rare"><div class="d1-card">
+          <div class="d1-headerband">
+            <div class="d1-name">Gorehorn Cleaver</div>
+            <div class="d1-rarity">Rare</div>
+          </div>
+          <div class="d1-type"><span>&#9670;</span>Two-Handed Cleaver<span>&#9670;</span></div>
+          <div class="d1-stage"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+          <div class="d1-body">
+            <div class="d1-dmg">2.4 – 4.3 Damage</div>
+            <div class="d1-tempo">Speed 2.7s<span class="dps">(1.3 damage per second)</span></div>
+            <div class="osep d1-sep"><span>&#9670;</span></div>
+            <div class="d1-row"><img src="assets/icon_attribute_strength.png" alt=""><span class="lbl">Strength</span><span class="v">+2</span></div>
+            <div class="d1-suffixlabel">of the Fox</div>
+            <div class="d1-row"><img src="assets/icon_attribute_luck.png" alt=""><span class="lbl">Luck</span><span class="v">+1</span></div>
+            <div class="d1-row boost"><img src="assets/power.png" alt=""><span class="lbl">Power</span><span class="v">+1</span></div>
+            <div class="d1-effect"><img src="assets/icon_status_bleed.png" alt="">On hit, you have a 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+            <div class="osep d1-sep"><span>&#9670;</span></div>
+            <div class="d1-req"><b>Requires:</b> Attack 18</div>
+            <div class="d1-footer">620<img src="assets/icon_goldcoin.png" alt=""></div>
+            <div class="d1-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+            <div class="d1-actions"><button class="d1-btn primary">Equip</button><button class="d1-btn">Sell</button></div>
+          </div>
+        </div></div>
+        <div class="d1-frame magic"><div class="d1-card">
+          <div class="d1-headerband">
+            <div class="d1-name">Charred Breastplate</div>
+            <div class="d1-rarity">Magic</div>
+          </div>
+          <div class="d1-type"><span>&#9670;</span>Armor – Chest<span>&#9670;</span></div>
+          <div class="d1-stage" style="height:160px;"><img src="assets/iron_breastplate.png" alt="" style="max-width:64%;"></div>
+          <div class="d1-body">
+            <div class="d1-row" style="margin-top:6px;"><img src="assets/icon_attribute_defense.png" alt=""><span class="lbl">Defense</span><span class="v">+9</span></div>
+            <div class="d1-row"><img src="assets/icon_attribute_strength.png" alt=""><span class="lbl">Strength</span><span class="v">+2</span></div>
+            <div class="d1-row"><img src="assets/icon_attribute_constitution.png" alt=""><span class="lbl">Constitution</span><span class="v">+1</span></div>
+            <div class="osep d1-sep"><span>&#9670;</span></div>
+            <div class="d1-req"><b>Requires:</b> Armor 10</div>
+            <div class="d1-footer">240<img src="assets/icon_goldcoin.png" alt=""></div>
+            <div class="d1-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+            <div class="d1-actions"><button class="d1-btn primary">Equip</button><button class="d1-btn">Sell</button></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">2</span>Elden Ring<span class="dna">Quiet & vornehm</span><span class="sub">Hairline gold rules, centered serif type with generous air, corner accents only — no full frame, rarity kept understated.</span></div>
+      <div class="demo-bg bg-d2">
+        <div class="d2-card rare">
+          <span class="d2-corner tl"></span><span class="d2-corner tr"></span><span class="d2-corner bl"></span><span class="d2-corner br"></span>
+          <div class="d2-name">Gorehorn Cleaver</div>
+          <div class="d2-uline"></div>
+          <div class="d2-rarity">Rare</div>
+          <div class="d2-type">Two-Handed Cleaver</div>
+          <div class="d2-stage"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+          <div class="d2-hr"></div>
+          <div class="d2-dmg">2.4 – 4.3 Damage</div>
+          <div class="d2-tempo">Speed 2.7s &nbsp;·&nbsp; 1.3 damage per second</div>
+          <div class="d2-stats">
+            <div class="d2-row">Strength <b>+2</b></div>
+            <div class="d2-row suffix">of the Fox</div>
+            <div class="d2-row">Luck <b>+1</b></div>
+            <div class="d2-row boost">Power <b>+1</b></div>
+          </div>
+          <div class="d2-hr"></div>
+          <div class="d2-effect">On hit, you have a 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+          <div class="d2-meta"><span>Requires <b>Attack 18</b></span><span>Value <b>620</b></span></div>
+          <div class="d2-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+          <div class="d2-actions"><button class="d2-btn primary">Equip</button><button class="d2-btn">Sell</button></div>
+        </div>
+        <div class="d2-card magic">
+          <span class="d2-corner tl"></span><span class="d2-corner tr"></span><span class="d2-corner bl"></span><span class="d2-corner br"></span>
+          <div class="d2-name">Charred Breastplate</div>
+          <div class="d2-uline"></div>
+          <div class="d2-rarity">Magic</div>
+          <div class="d2-type">Armor – Chest</div>
+          <div class="d2-stage"><img src="assets/iron_breastplate.png" alt="" style="max-width:58%;"></div>
+          <div class="d2-hr"></div>
+          <div class="d2-stats">
+            <div class="d2-row">Defense <b>+9</b></div>
+            <div class="d2-row">Strength <b>+2</b></div>
+            <div class="d2-row">Constitution <b>+1</b></div>
+          </div>
+          <div class="d2-hr"></div>
+          <div class="d2-meta"><span>Requires <b>Armor 10</b></span><span>Value <b>240</b></span></div>
+          <div class="d2-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+          <div class="d2-actions"><button class="d2-btn primary">Equip</button><button class="d2-btn">Sell</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">3</span>Path of Exile<span class="dna">Information-dense</span><span class="sub">Double-line rarity header, grouped stat blocks with hairline dividers, flavor prose isolated in its own boxed block.</span></div>
+      <div class="demo-bg bg-d3">
+        <div class="d3-card rare">
+          <div class="d3-hb1"><div class="d3-name">Gorehorn Cleaver</div></div>
+          <div class="d3-hb2"><div class="d3-type">Two-Handed Cleaver · Rare</div></div>
+          <div class="d3-stage"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+          <div class="d3-body">
+            <div class="d3-group">
+              <div class="d3-group-title">Offense</div>
+              <div class="d3-row"><span class="l">Damage</span><span class="v">2.4–4.3</span></div>
+              <div class="d3-row"><span class="l">Speed</span><span class="v">2.7s</span></div>
+              <div class="d3-row"><span class="l">DPS</span><span class="v">1.3</span></div>
+            </div>
+            <div class="d3-group">
+              <div class="d3-group-title">Attributes</div>
+              <div class="d3-row"><span class="l">Strength</span><span class="v">+2</span></div>
+            </div>
+            <div class="d3-group">
+              <div class="d3-group-title">Suffix &middot; of the Fox</div>
+              <div class="d3-row"><span class="l">Luck</span><span class="v">+1</span></div>
+            </div>
+            <div class="d3-group">
+              <div class="d3-group-title">Enchantment</div>
+              <div class="d3-row boost"><span class="l">Power</span><span class="v">+1</span></div>
+            </div>
+          </div>
+          <div class="d3-prose">On hit, you have a 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+          <div class="d3-footer"><span>Requires Attack 18</span><span class="val">620<img src="assets/icon_goldcoin.png" alt=""></span></div>
+          <div class="d3-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+          <div class="d3-actions" style="margin-top:10px;"><button class="d3-btn primary">Equip</button><button class="d3-btn">Sell</button></div>
+        </div>
+        <div class="d3-card magic">
+          <div class="d3-hb1"><div class="d3-name">Charred Breastplate</div></div>
+          <div class="d3-hb2"><div class="d3-type">Armor – Chest · Magic</div></div>
+          <div class="d3-stage" style="height:120px;"><img src="assets/iron_breastplate.png" alt="" style="max-width:56%;"></div>
+          <div class="d3-body">
+            <div class="d3-group">
+              <div class="d3-group-title">Defense</div>
+              <div class="d3-row"><span class="l">Defense</span><span class="v">+9</span></div>
+            </div>
+            <div class="d3-group">
+              <div class="d3-group-title">Attributes</div>
+              <div class="d3-row"><span class="l">Strength</span><span class="v">+2</span></div>
+              <div class="d3-row"><span class="l">Constitution</span><span class="v">+1</span></div>
+            </div>
+          </div>
+          <div class="d3-footer"><span>Requires Armor 10</span><span class="val">240<img src="assets/icon_goldcoin.png" alt=""></span></div>
+          <div class="d3-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+          <div class="d3-actions" style="margin-top:10px;"><button class="d3-btn primary">Equip</button><button class="d3-btn">Sell</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">4</span>Baldur's Gate 3<span class="dna">Illustrated parchment</span><span class="sub">A journal page with a wax-seal accent (emblem_waxseal.svg, rarity-tinted), warm inks, book-like framing.</span></div>
+      <div class="demo-bg bg-d4">
+        <div class="d4-card rare">
+          <img class="d4-seal" src="assets/emblem_waxseal.svg" alt="">
+          <div class="d4-ribbon"></div>
+          <div class="d4-name" style="margin-top:10px;">Gorehorn Cleaver</div>
+          <div class="d4-rarity">Rare</div>
+          <div class="d4-type">Two-Handed Cleaver</div>
+          <div class="d4-flourish">&#10087;</div>
+          <div class="d4-stage"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+          <div class="d4-row" style="border-top:1px solid rgba(107,86,54,0.2);"><span class="lbl">Damage</span><span class="v">2.4 – 4.3</span></div>
+          <div class="d4-row"><span class="lbl">Speed</span><span class="v">2.7s (1.3 dps)</span></div>
+          <div class="d4-row"><span class="lbl">Strength</span><span class="v">+2</span></div>
+          <div class="d4-row suffix">of the Fox</div>
+          <div class="d4-row"><span class="lbl">Luck</span><span class="v">+1</span></div>
+          <div class="d4-row boost"><span class="lbl">Power</span><span class="v">+1</span></div>
+          <div class="d4-effect">On hit, you have a 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+          <div class="d4-footer"><span>Requires Attack 18</span><span class="val">Value 620</span></div>
+          <div class="d4-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+          <div class="d4-actions"><button class="d4-btn primary">Equip</button><button class="d4-btn">Sell</button></div>
+        </div>
+        <div class="d4-card magic">
+          <img class="d4-seal" src="assets/emblem_waxseal.svg" alt="">
+          <div class="d4-ribbon"></div>
+          <div class="d4-name" style="margin-top:10px;">Charred Breastplate</div>
+          <div class="d4-rarity">Magic</div>
+          <div class="d4-type">Armor – Chest</div>
+          <div class="d4-flourish">&#10087;</div>
+          <div class="d4-stage" style="height:160px;"><img src="assets/iron_breastplate.png" alt="" style="max-width:56%;"></div>
+          <div class="d4-row" style="border-top:1px solid rgba(107,86,54,0.2);"><span class="lbl">Defense</span><span class="v">+9</span></div>
+          <div class="d4-row"><span class="lbl">Strength</span><span class="v">+2</span></div>
+          <div class="d4-row"><span class="lbl">Constitution</span><span class="v">+1</span></div>
+          <div class="d4-footer"><span>Requires Armor 10</span><span class="val">Value 240</span></div>
+          <div class="d4-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+          <div class="d4-actions"><button class="d4-btn primary">Equip</button><button class="d4-btn">Sell</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">5</span>Grimoire Page<span class="dna">Illuminated manuscript</span><span class="sub">Two-column spread: a drop-cap name and the effect prose as the star on the left, stats as handwritten marginalia on the right.</span></div>
+      <div class="demo-bg bg-d5">
+        <div class="d5-card rare">
+          <div class="d5-grid">
+            <div>
+              <div class="d5-name">Gorehorn Cleaver</div>
+              <div class="d5-type">Two-Handed Cleaver &middot; Rare</div>
+              <div class="d5-prose">On hit, you have a <b>22% chance</b> to inflict Bleed, dealing additional damage over <b>4 seconds</b>.</div>
+            </div>
+            <div class="d5-margin">
+              <div class="d5-margin-art"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+              <div class="d5-mrow"><span>Damage</span><span class="v">2.4–4.3</span></div>
+              <div class="d5-mrow"><span>Speed</span><span class="v">2.7s</span></div>
+              <div class="d5-mrow"><span>Strength</span><span class="v">+2</span></div>
+              <div class="d5-msuffix">of the Fox</div>
+              <div class="d5-mrow"><span>Luck</span><span class="v">+1</span></div>
+              <div class="d5-mrow boost"><span>Power</span><span class="v">+1</span></div>
+              <div class="d5-req">Requires Attack 18</div>
+              <div class="d5-val">620 gold</div>
+            </div>
+            <div class="d5-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+          </div>
+          <div class="d5-actions"><button class="d5-btn primary">Equip</button><button class="d5-btn">Sell</button></div>
+        </div>
+        <div class="d5-card magic">
+          <div class="d5-grid">
+            <div>
+              <div class="d5-name">Charred Breastplate</div>
+              <div class="d5-type">Armor – Chest &middot; Magic</div>
+              <div class="d5-prose">"Warped by dragonfire, yet somehow <b>stronger</b> for it."</div>
+            </div>
+            <div class="d5-margin">
+              <div class="d5-margin-art"><img src="assets/iron_breastplate.png" alt="" style="max-width:60%;"></div>
+              <div class="d5-mrow"><span>Defense</span><span class="v">+9</span></div>
+              <div class="d5-mrow"><span>Strength</span><span class="v">+2</span></div>
+              <div class="d5-mrow"><span>Constitution</span><span class="v">+1</span></div>
+              <div class="d5-req">Requires Armor 10</div>
+              <div class="d5-val">240 gold</div>
+            </div>
+          </div>
+          <div class="d5-actions"><button class="d5-btn primary">Equip</button><button class="d5-btn">Sell</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="group-title">Designs 6 – 10</div>
+  <div class="proto-row" id="row2">
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">6</span>Forge Blueprint<span class="dna">Technical spec plate</span><span class="sub">Riveted steel panel, damage/speed/DPS as LCD-style readouts, attributes as stamped metal plaques.</span></div>
+      <div class="demo-bg bg-d6">
+        <div class="d6-card rare">
+          <span class="d6-rivet tl"></span><span class="d6-rivet tr"></span><span class="d6-rivet bl"></span><span class="d6-rivet br"></span>
+          <div class="d6-eyebrow">Item Specification</div>
+          <div class="d6-name">Gorehorn Cleaver</div>
+          <div class="d6-rarity">Rare</div>
+          <div class="d6-type">Two-Handed Cleaver</div>
+          <div class="d6-gauges">
+            <div class="d6-gauge"><div class="num">2.4–4.3</div><div class="cap">Damage</div></div>
+            <div class="d6-gauge"><div class="num">2.7s</div><div class="cap">Speed</div></div>
+            <div class="d6-gauge"><div class="num">1.3</div><div class="cap">DPS</div></div>
+          </div>
+          <div class="d6-stage"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+          <div class="d6-plaques">
+            <div class="d6-plaque"><img src="assets/icon_attribute_strength.png" alt=""><span class="lbl">Str</span><span class="v">+2</span></div>
+            <div class="d6-plaque suffix"><img src="assets/icon_attribute_luck.png" alt=""><span class="lbl">Luck (of the Fox)</span><span class="v">+1</span></div>
+            <div class="d6-plaque boost"><img src="assets/power.png" alt=""><span class="lbl">Power</span><span class="v">+1</span></div>
+          </div>
+          <div class="d6-effect"><span class="tag">Proc Effect</span>On hit, 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+          <div class="d6-footer"><span>Requires: Attack 18</span><span class="val">620g</span></div>
+          <div class="d6-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+          <div class="d6-actions"><button class="d6-btn primary">Equip</button><button class="d6-btn">Sell</button></div>
+        </div>
+        <div class="d6-card magic">
+          <span class="d6-rivet tl"></span><span class="d6-rivet tr"></span><span class="d6-rivet bl"></span><span class="d6-rivet br"></span>
+          <div class="d6-eyebrow">Item Specification</div>
+          <div class="d6-name">Charred Breastplate</div>
+          <div class="d6-rarity">Magic</div>
+          <div class="d6-type">Armor – Chest</div>
+          <div class="d6-gauges">
+            <div class="d6-gauge" style="flex:1;"><div class="num">+9</div><div class="cap">Armor Rating</div></div>
+          </div>
+          <div class="d6-stage" style="height:150px;"><img src="assets/iron_breastplate.png" alt="" style="max-width:58%;"></div>
+          <div class="d6-plaques">
+            <div class="d6-plaque"><img src="assets/icon_attribute_strength.png" alt=""><span class="lbl">Str</span><span class="v">+2</span></div>
+            <div class="d6-plaque"><img src="assets/icon_attribute_constitution.png" alt=""><span class="lbl">Con</span><span class="v">+1</span></div>
+          </div>
+          <div class="d6-footer"><span>Requires: Armor 10</span><span class="val">240g</span></div>
+          <div class="d6-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+          <div class="d6-actions"><button class="d6-btn primary">Equip</button><button class="d6-btn">Sell</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">7</span>Stone Tablet<span class="dna">Carved relief</span><span class="sub">Real stone texture, engraved text-shadow (light above / dark below), mortar-groove separators instead of lines.</span></div>
+      <div class="demo-bg bg-d7">
+        <div class="d7-card rare">
+          <div class="d7-name">Gorehorn Cleaver</div>
+          <div class="d7-rarity">Rare</div>
+          <div class="d7-type">Two-Handed Cleaver</div>
+          <div class="d7-groove"></div>
+          <div class="d7-stage"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+          <div class="d7-row"><span class="lbl">Damage</span><span class="v">2.4–4.3</span></div>
+          <div class="d7-row"><span class="lbl">Speed</span><span class="v">2.7s</span></div>
+          <div class="d7-row"><span class="lbl">Strength</span><span class="v">+2</span></div>
+          <div class="d7-suffix">of the Fox</div>
+          <div class="d7-row"><span class="lbl">Luck</span><span class="v">+1</span></div>
+          <div class="d7-row boost"><span class="lbl">Power</span><span class="v">+1</span></div>
+          <div class="d7-effect">On hit, you have a 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+          <div class="d7-groove"></div>
+          <div class="d7-footer"><span>Requires: Attack 18</span><span class="val">620</span></div>
+          <div class="d7-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+          <div class="d7-actions"><button class="d7-btn primary">Equip</button><button class="d7-btn">Sell</button></div>
+        </div>
+        <div class="d7-card magic">
+          <div class="d7-name">Charred Breastplate</div>
+          <div class="d7-rarity">Magic</div>
+          <div class="d7-type">Armor – Chest</div>
+          <div class="d7-groove"></div>
+          <div class="d7-stage" style="height:150px;"><img src="assets/iron_breastplate.png" alt="" style="max-width:58%;"></div>
+          <div class="d7-row"><span class="lbl">Defense</span><span class="v">+9</span></div>
+          <div class="d7-row"><span class="lbl">Strength</span><span class="v">+2</span></div>
+          <div class="d7-row"><span class="lbl">Constitution</span><span class="v">+1</span></div>
+          <div class="d7-groove"></div>
+          <div class="d7-footer"><span>Requires: Armor 10</span><span class="val">240</span></div>
+          <div class="d7-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+          <div class="d7-actions"><button class="d7-btn primary">Equip</button><button class="d7-btn">Sell</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">8</span>Rarity Aura<span class="dna">Glowing glass</span><span class="sub">Semi-transparent glass panel (real backdrop-filter blur) that glows entirely in the rarity color via stacked box-shadows; minimal content.</span></div>
+      <div class="demo-bg bg-d8">
+        <div class="d8-card rare">
+          <div class="d8-name">Gorehorn Cleaver</div>
+          <div class="d8-rarity">Rare</div>
+          <div class="d8-type">Two-Handed Cleaver</div>
+          <div class="d8-stage"><img src="assets/gorehorn_cleaver.png" alt=""></div>
+          <div class="d8-stats">
+            <div class="d8-row"><span>Damage</span><span class="v">2.4–4.3</span></div>
+            <div class="d8-row"><span>Speed</span><span class="v">2.7s (1.3 dps)</span></div>
+            <div class="d8-row"><span>Strength</span><span class="v">+2</span></div>
+            <div class="d8-row suffix"><span>of the Fox</span><span></span></div>
+            <div class="d8-row"><span>Luck</span><span class="v">+1</span></div>
+            <div class="d8-row boost"><span>Power</span><span class="v">+1</span></div>
+          </div>
+          <div class="d8-effect">On hit, you have a 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+          <div class="d8-footer"><span>Requires Attack 18</span><span class="val">620</span></div>
+          <div class="d8-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+          <div class="d8-actions"><button class="d8-btn primary">Equip</button><button class="d8-btn">Sell</button></div>
+        </div>
+        <div class="d8-card magic">
+          <div class="d8-name">Charred Breastplate</div>
+          <div class="d8-rarity">Magic</div>
+          <div class="d8-type">Armor – Chest</div>
+          <div class="d8-stage"><img src="assets/iron_breastplate.png" alt="" style="max-width:56%;"></div>
+          <div class="d8-stats">
+            <div class="d8-row"><span>Defense</span><span class="v">+9</span></div>
+            <div class="d8-row"><span>Strength</span><span class="v">+2</span></div>
+            <div class="d8-row"><span>Constitution</span><span class="v">+1</span></div>
+          </div>
+          <div class="d8-footer"><span>Requires Armor 10</span><span class="val">240</span></div>
+          <div class="d8-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+          <div class="d8-actions"><button class="d8-btn primary">Equip</button><button class="d8-btn">Sell</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">9</span>Trading Card<span class="dna">Hearthstone / Gwent</span><span class="sub">Gold-rimmed arched card, rarity gem badge, name in a curved banner, DPS/Value as bottom corner medallions.</span></div>
+      <div class="demo-bg bg-d9">
+        <div class="d9-frame rare"><div class="d9-card">
+          <div class="d9-stage"><img src="assets/gorehorn_cleaver.png" alt=""><div class="d9-stage-fade"></div></div>
+          <div class="d9-gem"></div>
+          <div class="d9-nameband">
+            <div class="d9-name">Gorehorn Cleaver</div>
+            <div class="d9-type">Two-Handed Cleaver · Rare</div>
+          </div>
+          <div class="d9-body">
+            <div class="d9-row"><span>Strength</span><span class="v">+2</span></div>
+            <div class="d9-row suffix"><span>of the Fox</span><span></span></div>
+            <div class="d9-row"><span>Luck</span><span class="v">+1</span></div>
+            <div class="d9-row boost"><span>Power</span><span class="v">+1</span></div>
+          </div>
+          <div class="d9-effect">22% chance on hit to inflict Bleed, dealing extra damage over 4s.</div>
+          <div class="d9-strip">
+            <div class="d9-medal"><span class="n">1.3</span><span class="l">DPS</span></div>
+            <div class="d9-medal gold"><span class="n">620</span><span class="l">Gold</span></div>
+          </div>
+          <div class="d9-req">Requires Attack 18</div>
+          <div class="d9-flavor">"Forged from a single horn of bone-iron."</div>
+          <div class="d9-actions"><button class="d9-btn primary">Equip</button><button class="d9-btn">Sell</button></div>
+        </div></div>
+        <div class="d9-frame magic"><div class="d9-card">
+          <div class="d9-stage" style="height:170px;"><img src="assets/iron_breastplate.png" alt="" style="max-width:58%;"><div class="d9-stage-fade"></div></div>
+          <div class="d9-gem"></div>
+          <div class="d9-nameband">
+            <div class="d9-name">Charred Breastplate</div>
+            <div class="d9-type">Armor – Chest · Magic</div>
+          </div>
+          <div class="d9-body">
+            <div class="d9-row"><span>Strength</span><span class="v">+2</span></div>
+            <div class="d9-row"><span>Constitution</span><span class="v">+1</span></div>
+          </div>
+          <div class="d9-strip">
+            <div class="d9-medal"><span class="n">+9</span><span class="l">Armor</span></div>
+            <div class="d9-medal gold"><span class="n">240</span><span class="l">Gold</span></div>
+          </div>
+          <div class="d9-req">Requires Armor 10</div>
+          <div class="d9-flavor">"Warped by dragonfire, yet stronger for it."</div>
+          <div class="d9-actions"><button class="d9-btn primary">Equip</button><button class="d9-btn">Sell</button></div>
+        </div></div>
+      </div>
+    </div>
+    <div class="proto-col">
+      <div class="proto-label"><span class="num">10</span>Royal<span class="dna">Premium synthesis</span><span class="sub">The best of the other nine: rarity header band + corner ornaments + big hero stage + real wooden frame + WoW-style compare arrows.</span></div>
+      <div class="demo-bg bg-d10">
+        <div class="d10-card rare">
+          <div class="d10-headerband">
+            <span class="d10-corner l">&#10087;</span><span class="d10-corner r">&#10087;</span>
+            <div class="d10-name">Gorehorn Cleaver</div>
+            <div class="d10-rarity">Rare</div>
+          </div>
+          <div class="d10-type"><span>&#9670;</span>Two-Handed Cleaver<span>&#9670;</span></div>
+          <div class="d10-stage">
+            <span class="d10-bracket tl"></span><span class="d10-bracket tr"></span><span class="d10-bracket bl"></span><span class="d10-bracket br"></span>
+            <img src="assets/gorehorn_cleaver.png" alt="">
+          </div>
+          <div class="d10-body">
+            <div class="d10-dmg">2.4 – 4.3 Damage</div>
+            <div class="d10-tempo">Speed 2.7s<span class="dps">(1.3 damage per second)</span></div>
+            <div class="osep d10-sep"><span>&#9670;</span></div>
+            <div class="d10-row"><img class="icon" src="assets/icon_attribute_strength.png" alt=""><span class="lbl">Strength</span><span class="v">+2</span><span class="cmp-chip up"><img class="cmp" src="assets/icon_compare_up.png" alt=""></span></div>
+            <div class="d10-suffixlabel">of the Fox</div>
+            <div class="d10-row"><img class="icon" src="assets/icon_attribute_luck.png" alt=""><span class="lbl">Luck</span><span class="v">+1</span></div>
+            <div class="d10-row boost"><img class="icon" src="assets/power.png" alt=""><span class="lbl">Power</span><span class="v">+1</span><span class="cmp-chip up"><img class="cmp" src="assets/icon_compare_up.png" alt=""></span></div>
+            <div class="d10-hint">compared to equipped item — hold Shift</div>
+            <div class="d10-effect"><img src="assets/icon_status_bleed.png" alt="">On hit, you have a 22% chance to inflict Bleed, dealing additional damage over 4 seconds.</div>
+            <div class="osep d10-sep"><span>&#9670;</span></div>
+            <div class="d10-req"><b>Requires:</b> Attack 18</div>
+            <div class="d10-footer">620<img src="assets/icon_goldcoin.png" alt=""></div>
+            <div class="d10-flavor">"Forged from a single horn of bone-iron; its edge never dulls, no matter how deep it bites."</div>
+            <div class="d10-actions"><button class="d10-btn primary">Equip</button><button class="d10-btn">Sell</button></div>
+          </div>
+        </div>
+        <div class="d10-card magic">
+          <div class="d10-headerband">
+            <span class="d10-corner l">&#10087;</span><span class="d10-corner r">&#10087;</span>
+            <div class="d10-name">Charred Breastplate</div>
+            <div class="d10-rarity">Magic</div>
+          </div>
+          <div class="d10-type"><span>&#9670;</span>Armor – Chest<span>&#9670;</span></div>
+          <div class="d10-stage" style="height:170px;">
+            <span class="d10-bracket tl"></span><span class="d10-bracket tr"></span><span class="d10-bracket bl"></span><span class="d10-bracket br"></span>
+            <img src="assets/iron_breastplate.png" alt="" style="max-width:60%;">
+          </div>
+          <div class="d10-body">
+            <div class="d10-row" style="margin-top:6px;"><img class="icon" src="assets/icon_attribute_defense.png" alt=""><span class="lbl">Defense</span><span class="v">+9</span></div>
+            <div class="d10-row"><img class="icon" src="assets/icon_attribute_strength.png" alt=""><span class="lbl">Strength</span><span class="v">+2</span></div>
+            <div class="d10-row"><img class="icon" src="assets/icon_attribute_constitution.png" alt=""><span class="lbl">Constitution</span><span class="v">+1</span><span class="cmp-chip down"><img class="cmp" src="assets/icon_compare_down.png" alt=""></span></div>
+            <div class="osep d10-sep"><span>&#9670;</span></div>
+            <div class="d10-req"><b>Requires:</b> Armor 10</div>
+            <div class="d10-footer">240<img src="assets/icon_goldcoin.png" alt=""></div>
+            <div class="d10-flavor">"Warped by dragonfire, yet somehow stronger for it."</div>
+            <div class="d10-actions"><button class="d10-btn primary">Equip</button><button class="d10-btn">Sell</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-head" style="border-top:1px solid rgba(216,192,106,0.18); border-bottom:none; margin-top:20px;">
+    <p class="legend">Grim Reach — design/tooltip-prototypes/index.html — plain HTML prototypes only, no repo code changed.</p>
+  </div>
+
+</body>
+</html>

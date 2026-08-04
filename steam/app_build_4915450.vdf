@@ -1,0 +1,15 @@
+"appbuild"
+{
+	"appid"	"4915450"
+	"desc"	"Grim Reach 0.3.0 New Haven (Update #2)"
+	"buildoutput"	"G:\GameDev\steam\output\"
+	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
+	"setlive"	""
+	"preview"	"0"
+	"local"	""
+
+	"depots"
+	{
+		"4915451"	"depot_build_4915451.vdf"
+	}
+}

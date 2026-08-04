@@ -1,0 +1,29 @@
+{
+  "zoneId": "coast",
+  "hotspots": [
+    {
+      "monsterId": "mud_crab",
+      "x": 22,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "reef_drowned",
+      "x": 50,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "tide_siren",
+      "x": 78,
+      "y": 29,
+      "size": 2.33
+    },
+    {
+      "monsterId": "deep_kraken",
+      "x": 22,
+      "y": 71,
+      "size": 2.33
+    }
+  ]
+}

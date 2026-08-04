@@ -1,0 +1,802 @@
+/* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACTION-QUEUE-PANEL — angedockte Spalte rechts (Chef-Wunsch), spiegelbildlich
+   zur Sidebar. Ersetzt das frühere PinnedTracker-Widget (localStorage-
+   Lesezeichen ohne Fortsetzung); zeigt state.actionQueue (Engine, echte
+   Fortsetzung — die Engine schaltet selbst zur nächsten Aktion, sobald die
+   aktuelle fertig ist). Eigener Namensraum "queue-panel-*"/"queue-row-*",
+   direkt importiert von components/ActionQueuePanel.tsx (Kollisions-Schutz,
+   gleiches Muster wie styles/inv-filter.css).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.queue-panel {
+  position: relative;
+  width: 300px;
+  min-width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  /* Chef 2026-07-24: gleicher Grund wie die linke Sidebar (bg_sidebar-Rezept aus sidebar.css)
+     statt des dunklen Holz-Grunds — beide Dock-Panels wirken jetzt wie ein Paar. */
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
+    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+  overflow: hidden;
+}
+
+/* Citadel-Holzrahmen-Overlay — spiegelt .sidebar::before/.topbar::before (gleiches Muster, hier
+   am rechten statt linken Docking-Rand). Rein dekorativ (inset:0, pointer-events:none, kein
+   Einfluss aufs Layout) — die eigentliche Breite/Struktur bleibt unverändert, nur der Rand
+   bekommt das Holz-9-Slice-Asset statt des schlichten 1px-Strichs. */
+.queue-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 8px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 8px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background: transparent;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.queue-panel--collapsed {
+  width: 40px;
+  min-width: 40px;
+}
+
+.queue-panel-toggle {
+  width: 100%;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--accent-2);
+  cursor: pointer;
+}
+
+.queue-panel-toggle:hover {
+  color: var(--gold);
+  background: rgba(216, 192, 106, 0.06);
+}
+
+.queue-panel-toggle-caret {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.queue-panel-toggle-count {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--bg-deep);
+  background: var(--gold);
+  border-radius: 8px;
+  padding: 1px 6px;
+}
+
+/* Task #315 — kollabierter Zustand: Rand-Tab bekommt einen roten Glow statt eigener Textzeile
+   (kein Platz bei 40px Breite) — Sichtbarkeit der Queue-Pause bleibt auch eingeklappt erhalten. */
+.queue-panel-toggle--paused {
+  box-shadow: inset 0 0 0 1px rgba(224, 92, 72, 0.5), 0 0 8px rgba(224, 92, 72, 0.35);
+}
+
+/* Task #369 — Endlos-Sperre, eingeklappt: gleicher Kanal wie `--paused`, nur in Bernstein
+   (der Warn-Ton des Projekts, s. `.queue-panel-stopped`/`.activity-stopped`) statt Rot — der
+   Zustand ist ein Hinweis, kein Fehlschlag. Kollidiert nie mit `--paused`: `queueBlockReason`
+   meldet eine Pause vorrangig, und der Sperr-Hinweis blendet sich bei "paused" bewusst aus
+   (die Pause hat ihren eigenen, deutlicheren Block mit Fortsetzen-Knopf). */
+.queue-panel-toggle--blocked {
+  box-shadow: inset 0 0 0 1px rgba(217, 168, 107, 0.5), 0 0 8px rgba(217, 168, 107, 0.35);
+}
+
+.queue-panel-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.queue-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin: 0 0 2px;
+  flex-shrink: 0;
+  /* Citadel: bg_black-Textur + Holz-9-Slice-Rahmen — wie .category-header (skills.css). */
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.50)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-radius: 0;
+}
+
+.queue-panel-header-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.queue-panel-header-emoji {
+  font-size: 18px;
+}
+
+.queue-panel-title {
+  font-family: var(--font-head);
+  font-size: 17px;
+  color: var(--accent);
+  letter-spacing: 0.3px;
+}
+
+/* Kurze Sektions-Label ("Doing:"/"Queue:") — Cinzel-Kapitälchen wie andere Sektions-Header
+   im Design-System (z.B. .cs-sort-label/.category-header), nur kompakter passend zum
+   schmalen Panel. */
+.queue-panel-section-label {
+  font-family: var(--font-head);
+  font-variant: small-caps;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.queue-panel-active {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.queue-panel-active-empty {
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* UI-Brainstorm A4 (2026-07-24, -ergonomie.md §6.1): derselbe Amber-Ton wie die TopBar-
+   `.activity-stopped`-Zeile (components.css/topbar.css) — EIN Warn-Signal, zwei Stellen. Nicht
+   kursiv/muted wie der neutrale Leerlauf-Zustand: ein echter, sichtbarer Hinweis. */
+.queue-panel-stopped {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #d9a86b;
+}
+
+/* ─── Queue-Pause-Badge (Task #315, "Tod pausiert die Queue" #312) ──────────────────────────────
+   Deutlich sichtbarer Block MIT Handlungsaufruf — härterer Zustand als der dezente Material-Stop
+   (`.queue-panel-stopped`), deshalb eigener Rahmen statt nur einer Textzeile. */
+.queue-panel-paused {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  flex-shrink: 0;
+  background:
+    linear-gradient(rgba(42, 12, 8, 0.38), rgba(42, 12, 8, 0.38)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+}
+
+.queue-panel-paused-badge {
+  font-size: 12px;
+  line-height: 1.3;
+  color: #e08a72;
+}
+
+.queue-panel-resume-btn {
+  flex-shrink: 0;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.queue-panel-resume-btn:hover {
+  color: #e6c878;
+  box-shadow: 0 0 8px rgba(216, 184, 112, 0.3);
+}
+
+/* ─── Queue-Skip-Hinweis (Task #315, `state.lastQueueSkip`) ─────────────────────────────────────
+   Dezente Einzeilerzeile (Muster `.queue-panel-stopped`) mit lokalem ×-Wegklick-Button — die
+   Engine leert das Feld bewusst nicht selbst (s. ActionQueuePanel.tsx-Kommentar). */
+.queue-panel-skip {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #d9a86b;
+  flex-shrink: 0;
+}
+
+.queue-panel-skip-dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.queue-panel-skip-dismiss:hover {
+  opacity: 1;
+}
+
+.queue-panel-list-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+
+.queue-panel-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.queue-panel-clear {
+  font-family: var(--font-head);
+  font-size: 12px;
+  color: var(--danger);
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.queue-panel-clear:hover {
+  color: #e08a72;
+  /* border-color ist bei border-image wirkungslos (s. skills.css-Konvention) — Glow-Akzent statt. */
+  box-shadow: 0 0 8px rgba(224, 92, 72, 0.3);
+}
+
+/* ─── Endlos-Sperre (Task #369) ────────────────────────────────────────────────────────────────
+   „Die Warteschlange wartet, weil die laufende Aktivität kein Ende hat." Bewusst der GROSSE
+   Block-Stil der Queue-Pause (eigener Holzrahmen + Handlungsaufruf), nicht die dezente
+   Einzeilerzeile des Skip-Hinweises: der Sweep-Befund war, dass dieser Zustand vollständig
+   stumm blieb — ein Flüstern hätte ihn nicht behoben. Bernstein statt Rot (s. `--blocked` oben). */
+.queue-panel-blocked {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 8px 10px;
+  flex-shrink: 0;
+  background:
+    linear-gradient(rgba(46, 32, 10, 0.42), rgba(46, 32, 10, 0.42)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+}
+
+.queue-panel-blocked-text {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #d9a86b;
+}
+
+.queue-panel-blocked-btn {
+  align-self: flex-start;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.queue-panel-blocked-btn:hover {
+  color: #e6c878;
+  /* border-color ist bei border-image wirkungslos (s. skills.css-Konvention) — Glow-Akzent statt. */
+  box-shadow: 0 0 8px rgba(216, 184, 112, 0.3);
+}
+
+/* Chef-Feedback (2026-07-23): der Text ist jetzt ein kurzer Einzeiler, keine Erklärung mehr
+   (der Shift+Klick-Hinweis flog raus) — die schwere gestrichelte Box wirkte dafür wie ein
+   Textblock. Gleiche dezente Behandlung wie .queue-panel-active-empty statt eigener Rahmenbox. */
+.queue-panel-empty {
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.queue-panel-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 2px;
+  min-height: 0;
+  /* Drag&Drop-Umsortierung (Spieler-Feedback 0.2.2 Punkt 2): Ankerpunkt für die absolut
+     positionierte Drop-Ziel-Linie (.queue-drop-indicator) — deren `top`/`transform` bezieht sich
+     auf `offsetTop` der Zeilen, also GENAU diesen Container. */
+  position: relative;
+}
+
+.queue-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  /* Chef 2026-07-24: Holzbrett statt Stein — die Einträge lesen sich als Planken auf dem
+     Sidebar-Grund (Kachel klein wie bei den Kategorie-Headern, dunkles Overlay für Lesbarkeit). */
+  background:
+    linear-gradient(rgba(16, 10, 5, 0.45), rgba(16, 10, 5, 0.52)),
+    url("../assets/bg_tileable_wood.webp") repeat;
+  background-size: auto, 280px 280px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-radius: 0;
+  /* Drag&Drop-Umsortierung: ganze Zeile greifbar (Chef-Wunsch, nicht nur ein Handle-Icon).
+     touch-action:none überlässt Touch-Gesten hier komplett dem Pointer-Handler (ActionQueuePanel.tsx)
+     statt dem Browser-eigenen Scroll/Zoom — Kehrseite: die Liste scrollt per Touch nur noch über
+     Auto-Scroll-am-Rand während eines Drags oder Maus/Trackpad, nicht per Finger-Wisch auf einer
+     Zeile selbst (bewusster Trade-off, s. Bericht). will-change kündigt dem Compositor die
+     bevorstehenden transform-Schreibzugriffe an (kein Layout-Reflow während des Ziehens). */
+  touch-action: none;
+  cursor: grab;
+  will-change: transform;
+}
+
+.queue-row--active {
+  /* border-color ist bei border-image wirkungslos — Glow-Akzent statt (gleiche Konvention wie
+     .skillcard.active / .category-header:hover). */
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.28);
+}
+
+/* Die "läuft"-Zeile ist NICHT Teil der Drag-Liste (lebt in .queue-panel-active, eigener Block
+   ohne Pointer-Handler) — cursor bleibt hier neutral statt fälschlich "grab" zu suggerieren. */
+.queue-panel-active .queue-row {
+  cursor: default;
+  touch-action: auto;
+}
+
+/* Gezogene Zeile: über allem, kein Übergangs-Lag (folgt dem Cursor 1:1 per direkter
+   transform-Mutation, s. ActionQueuePanel.tsx dragFrame), leichtes Anheben als Feedback. */
+.queue-row--dragging {
+  cursor: grabbing;
+  position: relative;
+  z-index: 5;
+  opacity: 0.94;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(216, 192, 106, 0.4);
+}
+
+/* Drop-Ziel-Linie — ein schmaler Gold-Streifen an der Stelle, an der die gezogene Zeile beim
+   Loslassen landen würde. Per `transform: translateY()` positioniert (s. applyRowShifts), nicht
+   `top`, damit auch sie rein compositor-seitig bewegt wird. */
+.queue-drop-indicator {
+  position: absolute;
+  left: 4px;
+  right: 6px;
+  top: 0;
+  height: 2px;
+  background: var(--gold, #d8c06a);
+  box-shadow: 0 0 6px 1px rgba(216, 192, 106, 0.75);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.queue-row-index {
+  font-family: var(--font-head);
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.queue-row-icon-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.queue-row-icon-emoji {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.queue-row-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.queue-row-target {
+  font-family: var(--font-head);
+  font-size: 12px;
+  color: var(--accent-2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.queue-row-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.queue-row-btn {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  background: url("../assets/bg_black.webp") repeat;
+  /* Dünner Holz-9-Slice-Rahmen statt schlichtem 1px-Strich — wie .tb-bar-frame-seg (topbar.css)
+     bei ähnlich winziger Box-Größe. */
+  border-style: solid;
+  border-color: transparent;
+  border-width: 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 3px;
+  border-radius: 0;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+}
+
+.queue-row-btn:hover:not(:disabled) {
+  color: var(--gold);
+  /* border-color ist bei border-image wirkungslos — Glow-Akzent statt. */
+  box-shadow: 0 0 6px rgba(216, 192, 106, 0.35);
+}
+
+.queue-row-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Mira-Set 2026-08-03 — Priorisieren-/Umsortieren-Icons (⚡/▲/▼) in der winzigen 20px-Box;
+   fixe Größe statt 1em (der Button-Text lief bisher bei 10px, für ein Icon zu klein). */
+.queue-row-btn-icon {
+  width: 13px;
+  height: 13px;
+  object-fit: contain;
+}
+
+.queue-row-remove:hover {
+  color: var(--danger);
+  /* border-color ist bei border-image wirkungslos — Glow-Akzent statt. */
+  box-shadow: 0 0 6px rgba(224, 92, 72, 0.4);
+}
+
+/* ─── "Jetzt starten"-Knopf (Task #327, Priority-UI) ─────────────────────────────────────────────
+   Eigene Gold-Färbung schon im Ruhezustand (nicht erst bei Hover wie ▲/▼/✕) — hebt den Primär-
+   Vorrang-Knopf optisch von den reinen Umsortier-/Entfernen-Knöpfen ab, ohne einen neuen Rahmen-
+   Stil zu erfinden (gleiche 9-Slice-Box wie `.queue-row-btn`). */
+.queue-row-btn--start {
+  color: var(--gold);
+}
+
+.queue-row-btn--start:hover:not(:disabled) {
+  color: #e6c878;
+  box-shadow: 0 0 7px rgba(216, 192, 106, 0.5);
+}
+
+/* ─── Eingeklappte Icon-Leiste (Chef-Vorgabe): Queue bleibt bei "collapsed" sichtbar, verdichtet
+   auf Icon + "×N"-Restzahl pro Eintrag. Schmale Spalte (Panel-Breite bei collapsed: 40px) —
+   jeder Eintrag ist ein winziger Citadel-Slot (Holz-9-Slice-Rahmen um das Action-Icon) mit einer
+   Zahl darunter statt Name/Move/Remove-Buttons (kein Platz, kein Bedarf im eingeklappten Zustand:
+   volle Kontrolle bleibt im ausgeklappten Zustand). Läuft dieselbe combinedTarget-Faltung wie die
+   ausgeklappte "läuft"-Zeile (s. ActionQueuePanel.tsx) — der erste Eintrag (aktive Aktion) bekommt
+   einen Gold-Glow, um ihn von den wartenden Einträgen abzuheben. ─── */
+.queue-rail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.queue-rail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.queue-rail-icon-box {
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 3px;
+  border-radius: 0;
+}
+
+.queue-rail-icon-box .queue-row-icon-img {
+  width: 18px;
+  height: 18px;
+}
+
+.queue-rail-icon-box .queue-row-icon-emoji {
+  font-size: 14px;
+}
+
+.queue-rail-item--active .queue-rail-icon-box {
+  /* border-color ist bei border-image wirkungslos — Glow-Akzent statt (wie .queue-row--active). */
+  box-shadow: 0 0 7px rgba(216, 192, 106, 0.5);
+}
+
+.queue-rail-badge {
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-2);
+  white-space: nowrap;
+  line-height: 1.1;
+}
+
+.queue-rail-item--active .queue-rail-badge {
+  color: var(--gold);
+}
+
+/* codex:2026-08-01T13:30:36+02:00 — Produktiver Warchain-Pass nach Abnahme von Layout 03:
+   Die Reihenfolge hängt sichtbar an einer vertikalen Befehlskette. Rahmen, Canvas, Bronze und
+   Zustandsfarben stammen jedoch aus dem aktuellen Ashen-Iron-System statt aus dem Mockup. */
+.queue-panel {
+  width: clamp(300px, 17vw, 336px);
+  min-width: clamp(300px, 17vw, 336px);
+  border-left: 0;
+  background:
+    linear-gradient(rgba(6, 8, 10, 0.36), rgba(2, 4, 5, 0.62)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+}
+
+.queue-panel::before {
+  border-width: 10px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 10px;
+}
+
+.queue-panel--collapsed {
+  width: 44px;
+  min-width: 44px;
+}
+
+.queue-panel-toggle {
+  height: 44px;
+  border-bottom: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 0 0 6px 0;
+  background:
+    linear-gradient(rgba(15, 18, 19, 0.3), rgba(4, 6, 7, 0.58)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+}
+
+.queue-panel-body {
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+
+.queue-panel-header {
+  min-height: 48px;
+  padding: 7px 10px;
+  border-width: 8px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(160, 108, 52, 0.18), transparent 70%),
+    linear-gradient(rgba(12, 15, 17, 0.38), rgba(3, 5, 6, 0.66)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.queue-panel-title {
+  color: #e7d397;
+  font-size: clamp(16px, 1vw, 20px);
+}
+
+.queue-panel-active {
+  gap: 7px;
+}
+
+.queue-panel-active .queue-row {
+  min-height: 58px;
+  border-color: transparent;
+  background:
+    linear-gradient(90deg, rgba(79, 38, 18, 0.7), rgba(20, 15, 12, 0.72)),
+    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 256px 256px repeat;
+  box-shadow: inset 4px 0 #b57a37, 0 0 14px rgba(171, 94, 33, 0.22);
+}
+
+.queue-panel-list {
+  gap: 10px;
+  padding: 4px 2px 8px 30px;
+}
+
+.queue-panel-list::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  bottom: 12px;
+  width: 3px;
+  background: linear-gradient(#b27a3c, #626866 50%, #2a2e30);
+  box-shadow: 1px 0 rgba(0, 0, 0, 0.8), -1px 0 rgba(223, 184, 111, 0.12);
+}
+
+.queue-row {
+  position: relative;
+  min-height: 58px;
+  gap: 8px;
+  padding: 7px 8px;
+  border-width: 7px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 7px;
+  background:
+    linear-gradient(rgba(10, 13, 15, 0.36), rgba(3, 5, 6, 0.64)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.queue-panel-list .queue-row-index {
+  position: absolute;
+  left: -34px;
+  top: 50%;
+  z-index: 2;
+  width: 25px;
+  height: 25px;
+  min-width: 25px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  border: 3px solid #8b6235;
+  background: #101315;
+  color: #ead79c;
+  box-shadow: 0 0 0 2px #24292a, 0 0 8px rgba(184, 123, 53, 0.25);
+  font-size: 10px;
+}
+
+.queue-row-icon-img {
+  width: 34px;
+  height: 34px;
+}
+
+.queue-row-name {
+  font-size: 14px;
+  color: #ddd2b4;
+}
+
+.queue-row-target {
+  font-size: 13px;
+  color: #e2c477;
+}
+
+.queue-row-btn,
+.queue-panel-resume-btn,
+.queue-panel-clear,
+.queue-panel-blocked-btn {
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 3px;
+  background:
+    linear-gradient(rgba(6, 8, 9, 0.34), rgba(2, 3, 4, 0.64)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+}
+
+.queue-panel-paused,
+.queue-panel-blocked {
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 6px;
+  background:
+    linear-gradient(rgba(52, 25, 13, 0.48), rgba(16, 9, 7, 0.68)),
+    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 256px 256px repeat;
+}
+
+/* codex:2026-08-03T08:24:00+02:00 — Lesbarkeit bei 1920×1080: kurze Fantasy-Überschriften
+   behalten Fell Chronicle, operative Queue-Informationen wechseln auf die klarere Cinzel-basierte
+   Sekundärschrift. Kräftigeres Gewicht, größere physische Mindestgrößen und engere Versalienabstände
+   tragen die schmale Dockbreite ohne das Panel künstlich aufzublähen. */
+.queue-panel :is(
+  .queue-panel-section-label,
+  .queue-panel-active-empty,
+  .queue-panel-stopped,
+  .queue-panel-paused-badge,
+  .queue-panel-skip,
+  .queue-panel-blocked-text,
+  .queue-panel-empty,
+  .queue-row-name,
+  .queue-row-target
+) {
+  font-family: var(--font-info);
+  font-weight: 600;
+  letter-spacing: 0.015em;
+}
+
+.queue-panel-section-label {
+  font-size: clamp(14px, 0.82vw, 17px);
+  letter-spacing: 0.045em;
+}
+
+.queue-row-name {
+  font-size: clamp(15px, 0.88vw, 17px);
+}
+
+.queue-row-target {
+  font-size: clamp(13px, 0.76vw, 15px);
+  font-weight: 700;
+}
+
+.queue-panel :is(
+  .queue-panel-active-empty,
+  .queue-panel-stopped,
+  .queue-panel-paused-badge,
+  .queue-panel-blocked-text,
+  .queue-panel-empty
+) {
+  font-size: clamp(13px, 0.74vw, 15px);
+  line-height: 1.45;
+}
+
+.queue-panel-skip {
+  font-size: clamp(12px, 0.7vw, 14px);
+}

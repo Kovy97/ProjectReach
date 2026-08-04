@@ -1,0 +1,813 @@
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  startTransition,
+  useSyncExternalStore,
+} from "react";
+import type { ReactNode } from "react";
+import type { GameState, OfflineSummary, SaveSlot } from "@hearthforge/shared";
+import { MAX_OFFLINE_MS } from "@hearthforge/shared";
+import { advance, createGame } from "@hearthforge/engine";
+import type { CharacterCreation } from "@hearthforge/engine";
+import { deserialize, parseSummary, serialize } from "@hearthforge/persistence";
+import { content } from "@hearthforge/content";
+import { readAllSlots, readSlot, readSlotBackups, removeSlot, writeSlot } from "../saves";
+import { buildOfflineTestSummary, fetchFixtureJson, getFixtureParam, getOfflineTestParam } from "./fixtureLoader";
+
+export type Screen = "menu" | "creating" | "playing";
+
+/**
+ * Renderer-lokale Erweiterung von `OfflineSummary` (Welle AA, Welcome-Back-Polish): trägt zwei
+ * UI-only Zusatzfelder, die NICHT aus der Engine kommen (kein `packages/**`-Eingriff nötig, s.
+ * Chef-Auftrag) — beide werden hier in `loadGame` selbst berechnet.
+ */
+export interface OfflineSummaryUI extends OfflineSummary {
+  /**
+   * Echte, UNGEKAPPTE Abwesenheit (ms) — aus dem geladenen Save-Zeitstempel (`savedAt`) gegen
+   * denselben `loadNow` berechnet, den `deserialize` auch für den 8h-Cap verwendet (s. `loadGame`).
+   * `undefined` = kein valider `savedAt` verfügbar (z.B. ein Save ohne lesbare Summary) — die Bühne
+   * zeigt dann einfach nur die gekappte Zeit wie bisher, ohne Cap-Hinweis.
+   */
+  realMs?: number;
+  /**
+   * True, wenn das Popup NUR wegen der "leeren Rückkehr" geöffnet wurde (> 1h weg, 0 Ertrag, kein
+   * Tod, kein laufender Kampf/Aktion) — das alte Öffnungs-Gate verlangte IMMER etwas Ertrag, eine
+   * leere lange Abwesenheit blieb bisher stumm. Steuert OfflinePopup.tsx's Mini-Karte.
+   */
+  emptyReturn?: boolean;
+}
+
+/**
+ * UI-Audit-Debug-Hook (dev-only, "petTest-Präzedenz" — s. fixtureLoader.ts JSDoc): exponiert den
+ * live GameState + Content-Katalog auf `window.__hfDebug`, damit Playwright-Screenshot-Skripte
+ * gezielte State-Patches fahren können (z.B. Dungeon-Unlocks/Mid-Run-Wellen/die Clear-Zeremonie-
+ * Transition), OHNE eigene bespoke URL-Param-Hooks pro Szenario zu brauchen.
+ *
+ * Tester-Sweep 2 (T1, 2026-07-13): existierte bisher NUR im `?fixture=`-Pfad — ein frischer
+ * Charakter (`createCharacter`) oder ein normal geladener Spielstand (`loadGame`) kamen an
+ * `window.__hfDebug` nie heran, Tests gegen den "echten" Spielstart/-Load-Pfad hatten also keinen
+ * State-Zugriff. Jetzt in ALLEN DREI State-Entstehungspfaden (Fixture/Neu/Laden) gesetzt — rein
+ * additiv, dieselbe Referenz-Semantik (der State-Objekt-Zeiger wird nur mutiert, nie ersetzt).
+ * Gestrippt aus Prod-Builds (`import.meta.env.DEV`, Vite tree-shaked den toten Zweig weg).
+ */
+function setDebugHook(state: GameState): void {
+  if (!import.meta.env.DEV) return;
+  (window as unknown as { __hfDebug?: { state: GameState; content: typeof content } }).__hfDebug = {
+    state,
+    content,
+  };
+}
+
+/**
+ * Liest NUR den Top-Level `savedAt` aus einem rohen Save-String (Task AA-1) — bewusst NICHT über
+ * `parseSummary` (liest `save.summary.savedAt`, ein separates Spiegel-Feld, das `serialize()` zwar
+ * IMMER mit demselben Wert füllt, aber `deserialize` selbst für den Offline-Cap ausschließlich das
+ * Top-Level-Feld `save.savedAt` liest, s. persistence/index.ts). Direkt an DIESEM Feld zu hängen
+ * hält unsere renderer-seitige "echte Abwesenheit" bit-genau synchron mit dem, was die Engine
+ * selbst zur Cap-Berechnung heranzieht.
+ */
+function parseSavedAt(json: string): number | null {
+  try {
+    const parsed = JSON.parse(json) as { savedAt?: unknown };
+    return typeof parsed.savedAt === "number" && Number.isFinite(parsed.savedAt) ? parsed.savedAt : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Stabiler Steuer-Context: Menü-Navigation & Speichern. Ändert sich selten. */
+interface GameControl {
+  screen: Screen;
+  slots: SaveSlot[];
+  refreshSlots: () => Promise<void>;
+  startNewGame: (slotId: number) => void;
+  cancelCreation: () => void;
+  createCharacter: (input: CharacterCreation) => Promise<void>;
+  loadGame: (slotId: number) => Promise<void>;
+  saveGame: () => Promise<void>;
+  /** Serialisiert den aktuellen Spielstand als JSON-String (für Backup/Export). */
+  exportSave: () => string | null;
+  /** Lädt einen exportierten JSON-String in den aktiven Slot (überschreibt). */
+  importSave: (json: string) => Promise<boolean>;
+  deleteSlot: (slotId: number) => Promise<void>;
+  returnToMenu: () => Promise<void>;
+  offlineSummary: OfflineSummaryUI | null;
+  dismissOffline: () => void;
+  /**
+   * Selbstheilungs-Hinweis (Task #288 D): gesetzt, wenn `loadGame` einen beschädigten Slot
+   * aus einem lokalen Backup wiederhergestellt hat. `restoredFromMs` = Speicherzeitpunkt des
+   * Backups (Epoch-ms) für den Hinweis-Toast (Toasts.tsx zeigt ihn und dismisst danach).
+   */
+  saveRecovery: { restoredFromMs: number } | null;
+  dismissSaveRecovery: () => void;
+  /**
+   * Import-Erfolgs-Hinweis (Tester-Sweep 2, T9, 2026-07-13): `importSave` remountet den kompletten
+   * Spiel-Baum SOFORT über `sessionEpoch` (s. dort) — die alte OptionsPage-Instanz stirbt, BEVOR
+   * ihr lokaler Status-Span je rendert, der Spieler sah also gar kein Feedback. Dieser Flag lebt
+   * hier in GameContext, ÜBER dem Remount-Key, und überlebt den Wechsel — die frisch gemountete
+   * Toasts.tsx zeigt daraufhin einmalig einen Import-Erfolgs-Toast und quittiert per
+   * `dismissImportSuccess` (identisches Muster zu `saveRecovery`/`dismissSaveRecovery` oben). Der
+   * Fehlerfall braucht das NICHT: ein abgelehnter Import löst gar keine State-Mutation aus (s.
+   * `importSave`), also auch keinen Remount — die bestehende Inline-Fehleranzeige in OptionsPage
+   * bleibt dabei durchgehend sichtbar.
+   */
+  importSuccess: boolean;
+  dismissImportSuccess: () => void;
+  /**
+   * Perf-Welle (2026-07-22): nicht-abonnierender Zugriff auf den aktuellen GameState — anders als
+   * `useGameState()`/`useGameStateMaybe()` (LiveContext, re-rendert bei JEDEM 10-Hz-Tick) hängt
+   * `getState` nicht am Tick-Zähler; nutzen für einmalige Mount-Zeit-Reads, die keinen laufenden
+   * Re-Render brauchen (s. App.tsx `usePortraitFallback`). `null` wenn kein Spiel aktiv ist.
+   */
+  getState: () => GameState | null;
+  /**
+   * Autosave-Vertrauens-Häkchen (Chef-GO): monoton hochgezählt bei JEDEM Durchlauf von `saveGame`
+   * (periodisches Autosave-Intervall UND manueller "Speichern"-Klick teilen sich denselben
+   * Callback) — die Sidebar diffed gegen den letzten Wert und blendet kurz "Gespeichert ✓" ein.
+   * Zählt auch ohne aktiven Save-Slot hoch (Fixture/Menü-Fensterchen), damit der manuelle Klick
+   * beim Screenshot-Test dieselbe Bestätigung zeigt wie im echten Spiel (bestehendes Verhalten:
+   * die Sidebar zeigte "gespeichert" schon vorher unabhängig vom tatsächlichen Schreib-Erfolg).
+   */
+  saveTick: number;
+  /**
+   * Sitzungs-Epoche (Tester-Sweep-Fund T8, 2026-07-11): monoton hochgezählt bei jedem
+   * erfolgreichen `importSave`. `Root` remountet den kompletten Spiel-Layout-Baum per
+   * `key={sessionEpoch}` — sonst hielten Snapshot-Refs (DeathPopup/Toasts diffen
+   * stats.deaths/Items gegen den VORHERIGEN Tick) noch den alten Charakter und feuerten nach
+   * dem Import falsche Todes-Popups/Rare-Toasts. Normales Laden remountet ohnehin
+   * (screen-Wechsel menu→playing) — nur der Import tauschte den State im laufenden Screen.
+   */
+  sessionEpoch: number;
+}
+
+/** Live-Context: ändert sich pro Frame. Nur Verbraucher hiervon re-rendern laufend. */
+interface GameLive {
+  state: GameState | null;
+  tick: number;
+}
+
+/**
+ * Perf-Welle Block A (2026-07-22, "Chrome-Welle"): Fundament für `useGameSelector` (s. dort,
+ * weiter unten). Bewusst ein EIGENER, dritter Context statt die Selektor-Verkabelung an
+ * `GameControl` zu hängen — `control`s `useMemo` bekommt bei JEDEM Autosave/Slot-Wechsel/Import
+ * eine neue Objekt-Referenz (s. `control`-useMemo-Deps unten), was JEDEN Konsumenten von
+ * `ControlContext` re-rendern würde, selbst wenn dessen Selektor-Ergebnis unverändert blieb —
+ * genau der 10-Hz-Re-Render-Sockel, den diese Welle abbauen soll. `getState`/`subscribeTick` sind
+ * beide für die Lebensdauer des Providers referenzstabil (leere `useCallback`-Deps), also ist
+ * DIESES `useMemo` (Deps: `[getState, subscribeTick]`) garantiert nur EINMAL neu — der
+ * `SelectorStoreContext`-Wert ändert sich danach nie wieder, Konsumenten werden also NIE durch
+ * einen Context-Change re-gerendert (nur `useSyncExternalStore` selbst entscheidet noch).
+ */
+interface SelectorStore {
+  /** Nicht-abonnierender Zugriff auf den aktuellen State — identisch zu `GameControl.getState`. */
+  getState: () => GameState | null;
+  /** Registriert einen Listener, der bei jedem Tick-Signal (denselben Stellen wie `setTick`
+   *  unten) synchron aufgerufen wird. Gibt eine Unsubscribe-Funktion zurück (useSyncExternalStore-
+   *  Konvention). */
+  subscribeTick: (listener: () => void) => () => void;
+}
+
+const ControlContext = createContext<GameControl | null>(null);
+const LiveContext = createContext<GameLive | null>(null);
+const SelectorStoreContext = createContext<SelectorStore | null>(null);
+
+// Tester-Sweep 2 (T10, 2026-07-13): 30s → 15s. Die reine Zeit-/Idle-Progression ist ohnehin
+// deterministisch aus `savedAt` rekonstruierbar (kein echtes Verlustrisiko dort) — aber MANUELLE
+// Aktionen zwischen zwei Autosaves (Ausrüstungswechsel, Verkäufe, Quest-Claims, …) waren bei einem
+// Hart-Kill bis zu 30s verlierbar. 15s halbiert dieses Fenster, ohne spürbaren Overhead (lokale
+// Datei, kein Netzwerk-Roundtrip).
+const AUTOSAVE_MS = 15_000;
+
+// Welle AA (Welcome-Back-Polish, Task 4): Schwelle für die "leere Rückkehr" — > 1h weg, 0 Ertrag,
+// kein Tod, nichts lief (weder Aktion noch Kampf). Kürzere leere Abwesenheiten bleiben bewusst
+// stumm (kein Popup für "war 5 Minuten AFK, nichts los") — erst ab einer Stunde lohnt der Hinweis.
+const EMPTY_RETURN_MS = 60 * 60 * 1000;
+
+export function GameProvider({ children }: { children: ReactNode }): JSX.Element {
+  const stateRef = useRef<GameState | null>(null);
+  const activeSlotRef = useRef<number | null>(null);
+  const pendingSlotRef = useRef<number | null>(null);
+  const [screen, setScreen] = useState<Screen>("menu");
+  const [slots, setSlots] = useState<SaveSlot[]>([]);
+  const [tick, setTick] = useState(0);
+  const [offlineSummary, setOfflineSummary] = useState<OfflineSummaryUI | null>(null);
+  const [saveRecovery, setSaveRecovery] = useState<{ restoredFromMs: number } | null>(null);
+  // Autosave-Vertrauens-Häkchen: s. GameControl.saveTick-Doc.
+  const [saveTick, setSaveTick] = useState(0);
+  // Sitzungs-Epoche: s. GameControl.sessionEpoch-Doc (Import-Remount).
+  const [sessionEpoch, setSessionEpoch] = useState(0);
+  // Import-Erfolgs-Hinweis: s. GameControl.importSuccess-Doc.
+  const [importSuccess, setImportSuccess] = useState(false);
+
+  const dismissSaveRecovery = useCallback(() => setSaveRecovery(null), []);
+  const dismissImportSuccess = useCallback(() => setImportSuccess(false), []);
+
+  const refreshSlots = useCallback(async () => {
+    const raw = await readAllSlots();
+    setSlots(raw.map((json, id) => ({ id, summary: json ? parseSummary(json) : null })));
+  }, []);
+
+  // Perf-Welle (2026-07-22): NICHT-abonnierender State-Zugriff — für einmalige Mount-Zeit-Reads
+  // (z.B. App.tsx usePortraitFallback), die den aktuellen State brauchen, aber keinen Grund haben,
+  // die aufrufende Komponente an jeden 10-Hz-Tick zu binden (das würde `useGameState()`/LiveContext
+  // tun, s. `live`-useMemo unten mit `tick`-Dep). `stateRef` ist dieselbe Referenz wie `state` in
+  // LiveContext — nur der Lesezugriff selbst löst hier keinen Re-Render aus. `control`
+  // (ControlContext) ist bewusst NICHT auf `tick` gemappt, bleibt also über alle Ticks hinweg
+  // referenzstabil (s. useMemo-Deps von `control` unten).
+  const getState = useCallback((): GameState | null => stateRef.current, []);
+
+  // Perf-Welle Block A: Tick-Signal für `useGameSelector` (s. SelectorStore-JSDoc oben). Ein
+  // Set statt eines einzelnen Callbacks, weil beliebig viele Selector-Hooks gleichzeitig live
+  // sein können (jede migrierte Chrome-Komponente hat ihren eigenen `useSyncExternalStore`-Slot).
+  // `notifyTick` wird IMMER unmittelbar NACH jedem `setTick(...)`-Aufruf unten aufgerufen (nie
+  // davor) — der State ist zu diesem Zeitpunkt bereits final mutiert/ersetzt (s. jeweilige
+  // Aufrufstelle), Selektoren lesen also nie einen halbfertigen Zwischenstand.
+  const tickListenersRef = useRef<Set<() => void>>(new Set());
+  const subscribeTick = useCallback((listener: () => void): (() => void) => {
+    tickListenersRef.current.add(listener);
+    return () => {
+      tickListenersRef.current.delete(listener);
+    };
+  }, []);
+  const notifyTick = useCallback(() => {
+    tickListenersRef.current.forEach((listener) => listener());
+  }, []);
+
+  const saveGame = useCallback(async () => {
+    const s = stateRef.current;
+    const slot = activeSlotRef.current;
+    if (s && slot !== null) {
+      await writeSlot(slot, serialize(s));
+    }
+    // Bump AFTER the write (or the no-op skip) — one shared signal for the periodic autosave
+    // interval below and the Sidebar's manual "Speichern" button (Sidebar.tsx calls this same
+    // callback), see GameControl.saveTick doc.
+    setSaveTick((t) => t + 1);
+  }, []);
+
+  // dismissOffline schreibt seit Sweep 2 (T10) einen Save-Checkpoint (s. loadGame-Doc weiter
+  // unten für den zweiten Checkpoint direkt nach dem Laden) — deshalb erst NACH saveGame
+  // deklariert (referenziert es). Der Game-Loop tickt weiter, während die Offline-Karte offen ist
+  // (s. Loop-Effekt unten), der Spieler kann also zusätzliche Echtzeit ansammeln, bevor er
+  // "Collect" klickt — ohne diesen zweiten Checkpoint ginge genau dieses Fenster bei einem
+  // Hart-Kill kurz nach dem Schließen der Karte verloren UND ein sehr schneller Reload vor dem
+  // nächsten Autosave zeigte dieselbe Offline-Karte (identische Zahlen) ein zweites Mal.
+  const dismissOffline = useCallback(() => {
+    setOfflineSummary(null);
+    void saveGame();
+  }, [saveGame]);
+
+  const exportSave = useCallback((): string | null => {
+    const s = stateRef.current;
+    return s ? serialize(s) : null;
+  }, []);
+
+  const importSave = useCallback(async (json: string): Promise<boolean> => {
+    const slot = activeSlotRef.current;
+    if (slot === null) return false;
+    const summary = parseSummary(json);
+    if (!summary) return false; // kein gültiger Hearthforge-Spielstand
+    try {
+      // savedAt als „now" → kein Offline-Sprung beim Import.
+      const result = deserialize(json, content, summary.savedAt);
+      if (!result) return false; // beschädigter/manipulierter Spielstand
+      stateRef.current = result.state;
+      setDebugHook(result.state);
+      await writeSlot(slot, serialize(result.state));
+      setTick((t) => t + 1);
+      notifyTick(); // Perf-Welle Block A: Selector-Hooks sofort mit dem frisch importierten State neu prüfen.
+      // Kompletten Spiel-Layout-Baum remounten (s. sessionEpoch-Doc): sonst diffen
+      // DeathPopup/Toasts den frisch importierten State gegen Snapshot-Refs des ALTEN
+      // Charakters → falsches Todes-Popup + falsche Rare-Toasts (Sweep-Fund T8).
+      setSessionEpoch((e) => e + 1);
+      // Import-Erfolgs-Hinweis (s. GameControl.importSuccess-Doc, Sweep-2-Fund T9): überlebt den
+      // Remount oben — die frisch gemountete Toasts.tsx zeigt daraufhin den einzigen Hinweis, den
+      // der Spieler je zu sehen bekommt (die alte OptionsPage stirbt VOR ihrem eigenen Status-Render).
+      setImportSuccess(true);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const startNewGame = useCallback((slotId: number) => {
+    pendingSlotRef.current = slotId;
+    setScreen("creating");
+  }, []);
+
+  const cancelCreation = useCallback(() => {
+    pendingSlotRef.current = null;
+    setScreen("menu");
+  }, []);
+
+  const createCharacter = useCallback(async (input: CharacterCreation) => {
+    const slot = pendingSlotRef.current;
+    if (slot === null) return;
+    // starterKit: neue Spieler bekommen etwas Start-Nahrung + vorbelegtes Auto-Eat (frühe Überlebbarkeit).
+    const s = createGame({ ...input, starterKit: true }, content);
+    stateRef.current = s;
+    setDebugHook(s);
+    activeSlotRef.current = slot;
+    pendingSlotRef.current = null;
+    await writeSlot(slot, serialize(s));
+    // Neuer Charakter ⇒ Spotlight-Guide zeigt sich automatisch: `createGame` setzt
+    // `state.onboarding = newGameOnboarding()` (active:true, step:0) bereits selbst — kein
+    // localStorage-Flag/Event mehr nötig (das war nur fürs alte, jetzt unbenutzte Onboarding.tsx).
+    setScreen("playing");
+    setTick((t) => t + 1);
+    notifyTick(); // Perf-Welle Block A: s. importSave-Kommentar.
+  }, []);
+
+  const loadGame = useCallback(async (slotId: number) => {
+    const json = await readSlot(slotId);
+    if (!json) return;
+    // Ein EINZIGER "jetzt"-Zeitpunkt für den kompletten Ladevorgang (Task AA-1): sowohl der interne
+    // 8h-Offline-Cap (`deserialize`s `now`-Parameter) als auch unsere renderer-seitige "echte
+    // Abwesenheit" (savedAt → loadNow, s.u.) rechnen gegen denselben Wert — sonst könnte Drift
+    // zwischen zwei knapp aufeinanderfolgenden `Date.now()`-Aufrufen die Cap-Erkennung
+    // (`realMs > offline.ms`) unnötig verrauschen.
+    const loadNow = Date.now();
+    // Defensiv (Security-Härtung r1, V1.2): ein beschädigter/manipulierter Slot darf das Laden
+    // NICHT crashen. deserialize liefert bei kaputtem Save null; zusätzlich try/catch als Gürtel
+    // & Hosenträger.
+    const tryDeserialize = (raw: string): ReturnType<typeof deserialize> => {
+      try {
+        return deserialize(raw, content, loadNow);
+      } catch {
+        return null;
+      }
+    };
+    let result = tryDeserialize(json);
+    // Echter (ungekappter) Speicherzeitpunkt fürs Offline-Popup (Task AA-1) — vom jeweils
+    // ERFOLGREICH geladenen Save (Haupt-Slot ODER Backup, s.u.). `null` = unbekannt (kein lesbarer
+    // Top-Level `savedAt`) → die Bühne zeigt dann einfach nur die gekappte Zeit wie bisher.
+    let savedAtUsed: number | null = parseSavedAt(json);
+    if (!result) {
+      // Selbstheilung (Task #288 D, Plan §4.1): Slot kaputt → lokale Backups holen (Main,
+      // neueste zuerst), nach Speicherzeitpunkt sortieren und der Reihe nach deserialize
+      // probieren. Der erste Treffer wird geladen, sofort in den Slot zurückgeschrieben
+      // (atomar; das kaputte Original wird Main-seitig bewusst NICHT in die Backup-Rotation
+      // aufgenommen) und per Toast gemeldet. Erst wenn auch KEIN Backup ladbar ist, bleibt
+      // der Spieler wie bisher im Menü.
+      console.error(`Spielstand in Slot ${slotId} ist beschädigt — versuche Backup-Wiederherstellung.`);
+      const backups = await readSlotBackups(slotId);
+      const candidates = backups
+        .map((b) => ({ ...b, savedAt: parseSummary(b.json)?.savedAt ?? 0 }))
+        .sort((a, b) => b.savedAt - a.savedAt || b.mtimeMs - a.mtimeMs);
+      for (const cand of candidates) {
+        const recovered = tryDeserialize(cand.json);
+        if (!recovered) continue;
+        result = recovered;
+        // Top-Level-Feld des Backup-JSONs (Task AA-1, s. `parseSavedAt`-Doc) — NICHT das
+        // `cand.savedAt` von oben (das ist `summary.savedAt`, nur für Sortierung/Toast gedacht).
+        savedAtUsed = parseSavedAt(cand.json);
+        await writeSlot(slotId, serialize(recovered.state));
+        setSaveRecovery({ restoredFromMs: cand.savedAt || cand.mtimeMs });
+        console.error(`Slot ${slotId} aus Backup „${cand.name}" wiederhergestellt.`);
+        break;
+      }
+      if (!result) {
+        console.error(`Spielstand in Slot ${slotId}: kein ladbares Backup gefunden — bleibe im Menü.`);
+        return;
+      }
+    }
+    const { state, offline } = result;
+    stateRef.current = state;
+    setDebugHook(state);
+    activeSlotRef.current = slotId;
+    // Popup-Öffnungs-Gate: bisher NUR "nennenswerte Abwesenheit (> 1 Min) UND tatsächlicher
+    // Ertrag" — eine lange Abwesenheit OHNE jeden Ertrag (nichts lief) blieb dadurch komplett
+    // stumm, obwohl das genau der Fall ist, den der Spieler am ehesten als Bug liest ("wo ist mein
+    // Fortschritt hin?"). Task AA-4 öffnet die Bühne zusätzlich für diesen "leere Rückkehr"-Fall
+    // (> 1h weg, 0 Ertrag, kein Tod, kein laufender Kampf, `!combatStopped` schließt den seltenen
+    // Patt-mit-0-Ertrag-Fall aus — dort LIEF etwas, nur erfolglos, andere Formulierung nötig als
+    // "es lief keine Tätigkeit") und zeigt dort statt der leeren Bühne eine Mini-Karte.
+    const hasGains = offline.xp > 0 || offline.gold > 0 || Object.keys(offline.items).length > 0;
+    const wasIdle = state.activeActionId === null && state.combat.monsterId === null;
+    const emptyReturn =
+      !hasGains &&
+      (offline.deaths ?? 0) === 0 &&
+      !offline.combatStopped &&
+      wasIdle &&
+      offline.ms > EMPTY_RETURN_MS;
+    const showOffline = (offline.ms > 60_000 && hasGains) || emptyReturn;
+    // Lager-Bau-Breadcrumb quittieren (Task #364 Fix 1, „wer meldet, quittiert"): die Bühne ZEIGT
+    // den offline fertiggestellten Bau gleich selbst (Abschnitt „Dein Lager hat gebaut", Quelle
+    // `offline.campBuilds`) — also wird `camp.lastCompletedBuild` hier auf null gesetzt, damit der
+    // Bau-fertig-Toast (Toasts.tsx) ihn nicht ein zweites Mal meldet. Bewusst NUR wenn die Bühne
+    // wirklich aufgeht: bleibt sie zu (kurze Abwesenheit ohne Ertrag), bleibt der Breadcrumb
+    // stehen und der Toast holt die Meldung beim Mount nach — kein Fall bleibt stumm, keiner
+    // meldet doppelt. Steht VOR dem Save-Checkpoint unten, damit die Quittung mit ins Save wandert
+    // (sonst meldete ein Reload direkt nach dem Popup den Bau ein zweites Mal), und synchron vor
+    // `setScreen("playing")`, also bevor MainLayout/Toasts mounten — kein Wettlauf um die Baseline.
+    if (showOffline && (offline.campBuilds?.length ?? 0) > 0 && state.camp) {
+      state.camp.lastCompletedBuild = null;
+    }
+    // Save-Checkpoint (Sweep 2, T10): sofort nach erfolgreichem Laden den (evtl. bereits
+    // offline-aufgeholten) State zurückschreiben. Ohne das zeigte ein schneller Reload VOR dem
+    // nächsten Autosave-Intervall dieselbe Offline-Karte (identische Zahlen) ein zweites Mal — es
+    // wird nichts doppelt gutgeschrieben (reine Anzeige), aber es verwirrt. Der
+    // Selbstheilungs-Zweig oben tut das für den Backup-Fall schon implizit (schreibt das
+    // wiederhergestellte Backup direkt zurück); hier gilt es zusätzlich für den normalen
+    // Lade-Erfolg. `saveGame` braucht `activeSlotRef` bereits gesetzt (s. oben), await VOR dem
+    // Screen-Wechsel — analog zu `createCharacter`, das ebenfalls vor `setScreen` schreibt.
+    await saveGame();
+    if (showOffline) {
+      // Echte Abwesenheit (Task AA-1): nur gesetzt, wenn ein valider savedAt vorlag.
+      const realMs = savedAtUsed !== null ? Math.max(0, loadNow - savedAtUsed) : undefined;
+      setOfflineSummary({ ...offline, realMs, emptyReturn });
+    }
+    setScreen("playing");
+    setTick((t) => t + 1);
+    notifyTick(); // Perf-Welle Block A: s. importSave-Kommentar.
+  }, [saveGame]);
+
+  const deleteSlot = useCallback(
+    async (slotId: number) => {
+      await removeSlot(slotId);
+      await refreshSlots();
+    },
+    [refreshSlots],
+  );
+
+  const returnToMenu = useCallback(async () => {
+    await saveGame();
+    stateRef.current = null;
+    activeSlotRef.current = null;
+    setScreen("menu");
+    setTick((t) => t + 1);
+    notifyTick(); // Perf-Welle Block A: s. importSave-Kommentar.
+    await refreshSlots();
+  }, [saveGame, refreshSlots]);
+
+  // Slots beim Start laden.
+  useEffect(() => {
+    void refreshSlots();
+  }, [refreshSlots]);
+
+  // UI-Audit-Fixture-Hook (dev-only, siehe ./fixtureLoader.ts + apps/client/ui-audit/README.md):
+  // `?fixture=<name>` lädt einen präparierten GameState direkt ins Spiel, ohne Menü/Charaktererstellung.
+  // Genau wie importSave: `now = summary.savedAt` (kein echtes now) → deterministischer Load OHNE
+  // Offline-Aufholsimulation (sonst würde jeder Tour-Lauf abhängig von der Wanduhr-Lücke seit der
+  // Fixture-Generierung unterschiedliche Skill-XP/Inventar/Achievements einsammeln). Aktiver Slot
+  // bleibt `null` → Autosave/„Speichern"/„Hauptmenü" schreiben nie in einen echten Save-Slot.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const name = getFixtureParam();
+    if (!name) return;
+    let cancelled = false;
+    void (async () => {
+      const json = await fetchFixtureJson(name);
+      if (!json || cancelled) return;
+      const summary = parseSummary(json);
+      if (!summary || cancelled) return;
+      let result: ReturnType<typeof deserialize> = null;
+      try {
+        result = deserialize(json, content, summary.savedAt);
+      } catch {
+        result = null;
+      }
+      if (!result || cancelled) return;
+      stateRef.current = result.state;
+      activeSlotRef.current = null;
+      // UI-Audit-Debug-Hook: s. `setDebugHook`-JSDoc oben. Referenz bleibt über Tick-Mutationen
+      // stabil (derselbe State-Objekt-Zeiger wird nur mutiert, nie ersetzt) — ein einmaliges
+      // Setzen hier reicht.
+      setDebugHook(result.state);
+      setScreen("playing");
+      setTick((t) => t + 1);
+      notifyTick(); // Perf-Welle Block A: s. importSave-Kommentar.
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Offline-Popup-Preview-Hook (dev-only, "Beute-Bühne"-Redesign): `?offlineTest=<variant>` opens
+  // OfflinePopup with a mocked OfflineSummary, independent of the real offline-catchup flow above —
+  // fixtures always load with `now = savedAt` (see fetchFixtureJson usage above), i.e. 0 offline
+  // time, so the popup is otherwise untriggerable from a screenshot script. Combine with
+  // `?fixture=<name>` so a real GameState is active first (OfflinePopup only mounts inside
+  // MainLayout). Fires once `screen === "playing"` (works for both the fixture hook above and a
+  // freshly created game), guarded so it never re-fires on later ticks.
+  const offlineTestFiredRef = useRef(false);
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    if (offlineTestFiredRef.current) return;
+    const variant = getOfflineTestParam();
+    if (!variant) return;
+    if (screen !== "playing" || !stateRef.current) return;
+    offlineTestFiredRef.current = true;
+    setOfflineSummary(buildOfflineTestSummary(variant));
+  }, [screen, tick]);
+
+  // Game-Loop: nur wenn ein Spielstand aktiv ist.
+  // WICHTIG (Perf): Die Simulation (`advance`) läuft pro rAF-Frame mit echtem dt für genaue
+  // Fortschritts-Akkumulation, ABER der React-Render (`setTick`) wird auf ~RENDER_HZ gedrosselt.
+  // Ohne Drosselung renderte der komplette Komponentenbaum ~60×/s neu (Hauptursache für die
+  // „sluggish" Performance). 10 Hz reichen für flüssige Anzeige; die Progress-Bars überbrücken
+  // die 100-ms-Lücke per CSS-Transition (styles/skills.css .bar-fill, combat.css clip-path).
+  useEffect(() => {
+    let raf = 0;
+    let last = performance.now();
+    let lastRender = last;
+    let simulationAccumulatorMs = 0;
+    // codex:2026-07-31T00:32:37+02:00 — Simulation unabhängig von 60/120/165-Hz-Monitoren auf
+    // maximal 30 Hz bündeln. Die gesamte verstrichene Zeit wird weiterhin an `advance` übergeben;
+    // Spieltempo/Offline-Ertrag bleiben identisch, nur redundante Engine-Aufrufe entfallen.
+    const SIMULATION_INTERVAL_MS = 1000 / 30;
+    const RENDER_INTERVAL_MS = 100; // ~10 Hz UI-Updates statt ~60 Hz (−6× Render-Last)
+    const loop = (now: number): void => {
+      // dt auf den Offline-Cap deckeln: nach OS-Sleep/Suspend liefert performance.now() einen riesigen
+      // Sprung → sonst läuft die Aufhol-Sim synchron durch (UI-Freeze) UND umginge den 8h-Offline-Cap
+      // des Reload-Pfads (Tester-Sweep2 T27#2). Konsistent mit deserialize.
+      const dt = Math.min(now - last, MAX_OFFLINE_MS);
+      last = now;
+      if (stateRef.current) {
+        simulationAccumulatorMs = Math.min(simulationAccumulatorMs + dt, MAX_OFFLINE_MS);
+        if (simulationAccumulatorMs >= SIMULATION_INTERVAL_MS) {
+          // Blessings of the Reach (engine/src/tick.ts `advance` JSDoc): der Live-Loop soll das reale
+          // Kalender-„jetzt" (Epoch-ms) übergeben, NICHT den rAF-Parameter `now` — der ist ein
+          // DOMHighResTimeStamp relativ zum Navigations-Zeitpunkt (performance.now()-Basis), kein
+          // Epoch-Wert. `blessingForTime` läuft intern über `new Date(nowMs).getDay()`; mit dem
+          // rAF-`now` durchgereicht läge das Datum nahe 1970-01-01 → falscher/fixer Wochentag statt
+          // des tatsächlichen lokalen Kalendertags.
+          const simulationDt = simulationAccumulatorMs;
+          simulationAccumulatorMs = 0;
+          advance(stateRef.current, content, simulationDt, { nowMs: Date.now() });
+        }
+        if (now - lastRender >= RENDER_INTERVAL_MS) {
+          lastRender = now;
+          // codex:2026-07-31T00:32:37+02:00 — Live-Anzeige ist Hintergrundarbeit; Eingabe,
+          // Hover und Navigation dürfen einen 10-Hz-Status-Commit jederzeit überholen.
+          startTransition(() => {
+            setTick((t) => (t + 1) % 1_000_000);
+          });
+          // Perf-Welle Block A: DAS primäre Tick-Signal für `useGameSelector` — feuert exakt im
+          // selben ~10-Hz-Takt wie der bestehende LiveContext-Re-Render, NACH `advance()` (der
+          // State ist zu diesem Zeitpunkt bereits final für diesen Frame mutiert).
+          notifyTick();
+        }
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // Periodisches Autosave.
+  useEffect(() => {
+    const id = window.setInterval(() => void saveGame(), AUTOSAVE_MS);
+    return () => window.clearInterval(id);
+  }, [saveGame]);
+
+  // Save-on-Close (#281-Bugfund): Main fängt Fenster-X/Alt+F4 ab und wartet auf uns — erst
+  // speichern, DANN wirklich beenden. Ohne aktiven Slot (Hauptmenü) ist saveGame ein No-op.
+  // Wirft das Speichern, beenden wir trotzdem (Main hat ohnehin einen 2-s-Fallback).
+  useEffect(() => {
+    return window.hearthforge?.app?.onSaveThenQuit?.(() => {
+      void (async () => {
+        try { await saveGame(); } catch { /* Quit hat Vorrang */ }
+        void window.hearthforge?.app?.quit();
+      })();
+    });
+  }, [saveGame]);
+
+  const control = useMemo<GameControl>(
+    () => ({
+      screen,
+      slots,
+      refreshSlots,
+      startNewGame,
+      cancelCreation,
+      createCharacter,
+      loadGame,
+      saveGame,
+      exportSave,
+      importSave,
+      deleteSlot,
+      returnToMenu,
+      offlineSummary,
+      dismissOffline,
+      saveRecovery,
+      dismissSaveRecovery,
+      saveTick,
+      sessionEpoch,
+      importSuccess,
+      dismissImportSuccess,
+      getState,
+    }),
+    [
+      screen,
+      slots,
+      refreshSlots,
+      startNewGame,
+      cancelCreation,
+      createCharacter,
+      loadGame,
+      saveGame,
+      exportSave,
+      importSave,
+      deleteSlot,
+      returnToMenu,
+      offlineSummary,
+      dismissOffline,
+      saveRecovery,
+      dismissSaveRecovery,
+      saveTick,
+      sessionEpoch,
+      importSuccess,
+      dismissImportSuccess,
+      getState,
+    ],
+  );
+
+  const live = useMemo<GameLive>(() => ({ state: stateRef.current, tick }), [tick]);
+
+  // Perf-Welle Block A: s. SelectorStore-JSDoc oben — Deps sind beide dauerhaft stabile
+  // Referenzen, dieses `useMemo` läuft also faktisch nur EIN einziges Mal pro Provider-Leben.
+  const selectorStore = useMemo<SelectorStore>(
+    () => ({ getState, subscribeTick }),
+    [getState, subscribeTick],
+  );
+
+  return (
+    <ControlContext.Provider value={control}>
+      <SelectorStoreContext.Provider value={selectorStore}>
+        <LiveContext.Provider value={live}>{children}</LiveContext.Provider>
+      </SelectorStoreContext.Provider>
+    </ControlContext.Provider>
+  );
+}
+
+export function useGameControl(): GameControl {
+  const ctx = useContext(ControlContext);
+  if (!ctx) throw new Error("useGameControl muss innerhalb von <GameProvider> verwendet werden");
+  return ctx;
+}
+
+/** Für Seiten, die nur bei aktivem Charakter gerendert werden. */
+export function useGameState(): GameState {
+  const ctx = useContext(LiveContext);
+  if (!ctx || !ctx.state) throw new Error("Kein aktiver Charakter");
+  return ctx.state;
+}
+
+/**
+ * Wie useGameState, aber null-tolerant — gibt null zurück wenn kein Spiel aktiv ist.
+ * Verwenden wenn Komponenten auch außerhalb eines aktiven Spiels gerendert werden können
+ * (z.B. ItemTooltipOverlay, das app-weit gemountet ist).
+ */
+export function useGameStateMaybe(): GameState | null {
+  const ctx = useContext(LiveContext);
+  return ctx?.state ?? null;
+}
+
+function useSelectorStore(): SelectorStore {
+  const ctx = useContext(SelectorStoreContext);
+  if (!ctx) throw new Error("useGameSelector muss innerhalb von <GameProvider> verwendet werden");
+  return ctx;
+}
+
+/**
+ * Nicht-abonnierender State-Getter für Render-Code (Perf-Welle Block A): gibt eine über die
+ * gesamte Provider-Lebensdauer STABILE Funktion zurück (kein Context-Change löst je einen
+ * Re-Render bei ihren Konsumenten aus, s. SelectorStore-JSDoc). Gedacht als Ergänzung zu
+ * `useGameSelector` — dessen schmales Primitiv-Tupel entscheidet WANN neu gerendert wird, dieser
+ * Getter liefert dann INNERHALB dieses (selteneren) Renders den vollen State für Berechnungen,
+ * die mehr als ein paar Primitives brauchen (z.B. `computeStats`/`computeActionRate`). Wirft NICHT
+ * bei fehlendem Spiel (anders als `useGameState`) — Aufrufer, die nur bei aktivem Charakter
+ * rendern, dürfen `getState()!` non-null assertion nutzen (Konvention in den migrierten
+ * Chrome-Komponenten, s. App.tsx/Sidebar.tsx).
+ */
+export function useGetGameState(): () => GameState | null {
+  return useSelectorStore().getState;
+}
+
+function isPrimitiveSelectorValue(v: unknown): boolean {
+  return v === null || (typeof v !== "object" && typeof v !== "function");
+}
+
+/** Elementweiser Vergleich für Tupel/Arrays aus Primitives — der einzige unbedenkliche Weg,
+ *  einen `useGameSelector` NICHT-primitiven Rückgabewert zu vergleichen (s. `useGameSelector`-
+ *  JSDoc, "DIE EINE FOOTGUN"). NICHT für Arrays aus Objekten/verschachtelten Arrays gedacht (nur
+ *  eine flache `Object.is`-Ebene) — für alles Tiefere lieber mehrere primitive Slots im Tupel. */
+export function tupleEquals(a: readonly unknown[], b: readonly unknown[]): boolean {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (!Object.is(a[i], b[i])) return false;
+  }
+  return true;
+}
+
+/** Grobe strukturelle Gleichheit (eine Ebene tief) — NUR für den Dev-Guard unten, um die
+ *  "frisches Objekt mit gleichem Inhalt"-Footgun von einer echten Wertänderung zu unterscheiden.
+ *  Bewusst NICHT als `equals`-Parameter gedacht (dafür `tupleEquals` für Arrays verwenden). */
+function shallowEqualForDevGuard(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || a === null || typeof b !== "object" || b === null) return false;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    return a.every((v, i) => Object.is(v, b[i]));
+  }
+  const ao = a as Record<string, unknown>;
+  const bo = b as Record<string, unknown>;
+  const aKeys = Object.keys(ao);
+  const bKeys = Object.keys(bo);
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every((k) => Object.is(ao[k], bo[k]));
+}
+
+/**
+ * Perf-Welle Block A ("Chrome-Welle", 2026-07-22): schmaler Selector-Hook auf
+ * `useSyncExternalStore`-Basis — Konsumenten re-rendern NUR, wenn sich der SELEKTIERTE Wert
+ * ändert, nicht bei jedem 10-Hz-Tick (anders als `useGameState()`/LiveContext). Gedacht für
+ * globales Chrome, das auf JEDER Seite mitrendert (TopBar/Sidebar/Header & Co.) — der bestehende
+ * `useGameState()`/LiveContext-Pfad bleibt für alles andere (Seiten, Listen, FX) unverändert
+ * bestehen, das ist eine additive, inkrementelle Migration.
+ *
+ * ══════════════════════════════════════════════════════════════════════════════════════════
+ * DIE EINE FOOTGUN (bitte lesen, bevor hier ein neuer Selector geschrieben wird):
+ * `state` wird von der Engine IN-PLACE mutiert (kein Immutable-Update, s. `advance()` in
+ * tick.ts) — das hat zwei Konsequenzen, die beide zu STILLEN Bugs führen:
+ *
+ *  1) NIE eine Objekt-/Array-Referenz direkt aus dem State zurückgeben (z.B. `s.quests`,
+ *     `s.combat`, `s.inventory.items`). Diese Referenz ändert sich NIE (nur ihr Inhalt wird
+ *     mutiert) → `Object.is`-Vergleich sagt IMMER "gleich" → der Konsument rendert nie wieder,
+ *     auch wenn sich der Inhalt längst geändert hat (stiller Stale-Bug).
+ *  2) NIE ein frisches Objekt/Array IM Selector bauen (z.B. `(s) => ({ hp: s.character.hp })`
+ *     oder `(s) => [a, b]` OHNE `equals`-Parameter). Jeder Aufruf liefert eine NEUE Referenz →
+ *     `Object.is` sagt IMMER "ungleich" → der Konsument rendert wieder bei JEDEM Tick (genau der
+ *     10-Hz-Sockel, den dieser Hook eigentlich abbauen soll).
+ *
+ * → Selektoren dürfen NUR Primitives (number/string/boolean/null) zurückgeben, ODER ein Tupel
+ *   aus Primitives ZUSAMMEN MIT `tupleEquals` (oder einem eigenen elementweisen `equals`) als
+ *   zweitem Parameter. Für alles, was mehr als ein paar Primitives braucht (z.B. `computeStats`-
+ *   Ergebnisse), den Selector nur als GATE nutzen (welche Primitives lösen einen Re-Render aus?)
+ *   und den vollen State bei Bedarf zusätzlich über `useGetGameState()` im Render-Body holen
+ *   (läuft dann nur noch so oft wie der jetzt gedrosselte Re-Render selbst, s. App.tsx/
+ *   Sidebar.tsx für das Muster).
+ * ══════════════════════════════════════════════════════════════════════════════════════════
+ *
+ * Dev-Guard: liefert der Selector zweimal hintereinander einen nicht-primitiven Wert, der laut
+ * `equals` als "geändert" gilt, aber strukturell (eine Ebene tief) identisch zum vorherigen Wert
+ * ist, loggt DEV genau EINMAL pro Hook-Instanz eine Warnung (Footgun #2 oben — Footgun #1, die
+ * eingefrorene Referenz, ist zur Laufzeit generell nicht zuverlässig erkennbar).
+ *
+ * @param selector Liest NUR aus `state` (kein `getState()`/Closures auf anderen State-Schnappschüssen).
+ * @param equals Default `Object.is` (korrekt für Primitives). Für Tupel `tupleEquals` übergeben.
+ */
+export function useGameSelector<T>(
+  selector: (state: GameState) => T,
+  equals: (a: T, b: T) => boolean = Object.is,
+): T {
+  const { getState, subscribeTick } = useSelectorStore();
+
+  // Frischer Selector/equals JEDEN Render synchron in Refs gespiegelt (nicht per useEffect) —
+  // sonst läse `getSnapshot` (von React ggf. mehrfach pro Commit aufgerufen) zwischenzeitlich
+  // eine veraltete Closure. Reines Lokal-Ref-Update während des Renders, kein State-Read danach
+  // — unproblematisch (Standardmuster für genau diesen Zweck, z.B. use-sync-external-store).
+  const selectorRef = useRef(selector);
+  selectorRef.current = selector;
+  const equalsRef = useRef(equals);
+  equalsRef.current = equals;
+
+  const cacheRef = useRef<{ value: T; has: boolean }>({ value: undefined as unknown as T, has: false });
+  const warnedRef = useRef(false);
+
+  const getSnapshot = useCallback((): T => {
+    const state = getState();
+    if (!state) throw new Error("useGameSelector: kein aktiver Charakter");
+    const next = selectorRef.current(state);
+    const cache = cacheRef.current;
+    if (cache.has && equalsRef.current(cache.value, next)) {
+      return cache.value; // unverändert (laut `equals`) → dieselbe Referenz zurückgeben (React bailt)
+    }
+    if (
+      import.meta.env.DEV &&
+      !warnedRef.current &&
+      cache.has &&
+      !isPrimitiveSelectorValue(next) &&
+      shallowEqualForDevGuard(cache.value, next)
+    ) {
+      warnedRef.current = true;
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[useGameSelector] Ein Selector liefert bei unverändertem Inhalt eine NEUE Objekt-/" +
+          "Array-Referenz (equals() sagt \"geändert\", strukturell aber identisch) — das erzwingt " +
+          "einen Re-Render bei JEDEM Tick. Selektoren dürfen nur Primitives oder ein Tupel MIT " +
+          "passendem `equals` (z.B. tupleEquals) liefern, s. useGameSelector-JSDoc „DIE EINE FOOTGUN\".",
+      );
+    }
+    cacheRef.current = { value: next, has: true };
+    return next;
+  }, [getState]);
+
+  return useSyncExternalStore(subscribeTick, getSnapshot);
+}

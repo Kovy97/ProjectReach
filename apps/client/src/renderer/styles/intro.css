@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════════════════════════
+   STUDIO-INTRO-SEQUENZ (Chef-Choreografie) — Vollbild-Trailer auf Schwarz → Schwarz hält kurz →
+   Menü-Ambient-Funken beginnen (noch auf Schwarz) → nach ~1s faded der Rest des Hauptmenüs sanft
+   ein. Zustandsmaschine: pages/IntroSequence.tsx. Fehlt das Video-Asset, wird diese ganze Datei
+   effektiv nie aktiv (die Sequenz startet dann direkt in "revealed", s. dort) — kein Layout-Effekt.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Trailer-/Schwarz-Phase: deckt ALLES ab (auch die 9999er Grit-Textur aus base.css), reiner
+   schwarzer Grund + optional das Video mittig, ohne zu croppen ("Vollbild-Video auf schwarzem
+   Grund" — object-fit: contain statt cover, damit Chefs Framing nie beschnitten wird). */
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+/* ─── Früher Funken-Start vor dem Rest ───────────────────────────────────────────────────────
+   `revealed=false` (IntroSequence → MainMenu-Prop) hält alles AUSSER den Ambient-Funken (.menu-fx,
+   selbst unverändert) unsichtbar und unklickbar — die Funken steigen dadurch schon auf Schwarz,
+   während Hero-Art/Logo/Sprachwahl/Nav+Panel/Fußzeile noch warten. `revealed=true` (Normalfall UND
+   nach dem ~1s-Funken-Vorlauf) blendet sie gemeinsam sanft ein. Reduced-Motion kürzt die Dauer
+   (Block unten) statt den Effekt ganz zu entfernen — die Sequenz bleibt so oder so funktional. */
+.menu-bg,
+.menu-logo,
+.menu-lang,
+.menu-main,
+.menu-footer {
+  /* Chef-Regie 2026-07-22: doppelt so langsam wie die erste Fassung (1.3s → 2.6s). */
+  transition: opacity 2.6s ease-out;
+}
+
+.menu--intro-pending .menu-bg,
+.menu--intro-pending .menu-logo,
+.menu--intro-pending .menu-lang,
+.menu--intro-pending .menu-main,
+.menu--intro-pending .menu-footer {
+  opacity: 0;
+}
+
+/* Während der Rest unsichtbar ist, darf er auch nicht klickbar/fokussierbar wirken (Nav-Buttons/
+   Sprachwahl sitzen sonst blind erreichbar im DOM). Logo/BG/Fußzeile sind ohnehin nicht interaktiv. */
+.menu--intro-pending .menu-lang,
+.menu--intro-pending .menu-main {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-bg,
+  .menu-logo,
+  .menu-lang,
+  .menu-main,
+  .menu-footer {
+    transition-duration: 0.2s;
+  }
+}

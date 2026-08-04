@@ -1,0 +1,140 @@
+NEW HAVEN — DORFKARTE + BAUZUSTÄNDE (Prompts)
+==============================================
+Ergänzung zu `lager-gebaeude-prompts.txt`. Gleicher Stil, gleiche Ansicht, damit die
+Gebäude-Assets exakt auf die Karte passen.
+
+ZIEL-DATEINAMEN:
+  camp_map_day.png · camp_map_night.png            (die Dorfkarte)
+  camp_slot_empty_day.png · camp_slot_empty_night.png   (leerer Bauplatz)
+  camp_site_day.png · camp_site_night.png          (Baustelle: Neubau läuft)
+  camp_scaffold_day.png · camp_scaffold_night.png  (Gerüst: Ausbau läuft)
+Fertige PNGs → Downloads\ASSETS\resources\done\
+
+FREIE PLATZIERUNG (Chef-Entscheid 28.07.): Es gibt KEINE vorgezeichneten Bauplätze mehr.
+Der Spieler setzt jedes Gebäude frei auf der Lichtung ab. Die Karte liefert also nur das
+GELÄNDE — welche Bereiche bebaubar sind, definieren wir anschließend im Code als Fläche
+(Verfahren wie in Chefs YGO-Journey-Hotspot-Editor). Vorteil: Der Generator muss nichts
+zählen, und wir können die bebaubare Fläche jederzeit nachjustieren, ohne neu zu generieren.
+
+GELÄNDE-ORIENTIERUNG (wofür die Zonen gedacht sind — nur als Anhalt, nicht als Zwang):
+  Mitte (Feuerstelle) → Zentralhaus als natürlicher Mittelpunkt
+  Bach/Steg           → Fischerhütte, Räucherhaus, Saatgarten
+  Felswand/Spalt      → Stollenmund, Schmelzofen
+  Hügelkuppe          → Wachturm (höchster Punkt, freie Sicht)
+  Waldrand            → Sägegrube
+  Weg/Eingang         → Händlerposten, Trophäenwand, Hehlerzelt
+  Alte Bäume          → Schrein der Stillen
+Der Spieler darf trotzdem überall bauen — das Gelände lädt ein, es schreibt nicht vor.
+
+============================================================================
+PROMPT 1 — DIE DORFKARTE (2 Bilder: Tag + Nacht)
+============================================================================
+
+Ich brauche 2 Bilder als Spielhintergrund: eine kleine Siedlungs-Lichtung als Bauplatz-Karte,
+einmal bei TAG und einmal bei NACHT. Dark-Fantasy-Aufbauspiel, karge Grenzsiedlung.
+
+ANSICHT (für beide Bilder identisch):
+- Isometrisch: Blick aus etwa 45° von oben auf die Lichtung, parallele/isometrische
+  Projektion, KEINE starke Fluchtpunkt-Perspektive, KEINE senkrechte Draufsicht.
+- Die Bodenfläche ist ein isometrisches Rechteck (Rhombus-Raster), auf dem später Gebäude
+  in derselben 45°-Isometrie stehen werden.
+- Querformat, 16:9.
+
+MOTIV — eine geschützte Lichtung in kargem Nadel- und Birkenwald, wie ein kleiner
+Rückzugshain. Ringsum dichte dunkle Bäume und Felsen als natürlicher Wall.
+
+**DAS WICHTIGSTE: Die Lichtung ist EINE große, zusammenhängende, ebene Freifläche.**
+Der Spieler setzt seine Gebäude später frei darauf ab — es gibt deshalb KEINE markierten
+Bauplätze, KEINE rautenförmigen Flecken, KEIN Raster und KEIN Schachbrettmuster. Der Boden
+ist durchgehend begehbares, offenes Gelände: festgetretene Erde, Kies, kurzes trockenes Gras,
+sanft ineinander übergehend. Diese offene Fläche nimmt den GRÖSSTEN TEIL des Bildes ein
+(gut zwei Drittel) und ist so weiträumig, dass mehr als ein Dutzend Häuser locker darauf
+Platz hätten, ohne sich zu berühren.
+
+Die Geländemerkmale liegen AM RAND dieser Freifläche und rahmen sie ein, ohne sie zu
+zerschneiden:
+  1) MITTE: eine alte steinerne Feuerstelle als einziger Blickfang auf der offenen Fläche,
+     leicht nach vorn versetzt. Sonst ist die Mitte frei.
+  2) LINKE SEITE: ein kleiner Bach mit flacher Furt, glatten Steinen und schmalem Kiesufer,
+     dazu ein schlichter Holzsteg ins Wasser. Das Ufer geht flach in die Freifläche über.
+  3) RECHTE SEITE: eine graue Felswand, die aus dem Hang tritt, mit Geröll und einem
+     angedeuteten dunklen Spalt im Stein. Davor bleibt ebener Boden.
+  4) HINTEN: ein flacher, felsiger Hügelrücken mit einem schmalen Trampelpfad hinauf und
+     einer kleinen ebenen Kuppe oben — der höchste Punkt der Lichtung.
+  5) WALDRAND (obere Ecken): dichter Nadelwald mit frischen Baumstümpfen und ein paar
+     gestapelten Rundhölzern.
+  6) VORNE: ein festgetretener Weg führt von der unteren Bildkante in die Lichtung herein
+     und läuft in der offenen Fläche aus. Rechts vorn zwei alte knorrige Bäume, unter denen
+     eine ruhige, schattige, aber ebene Ecke liegt.
+
+- Vereinzelt Findlinge, niedriges Gestrüpp, ein umgestürzter Stamm, Farn im Halbschatten —
+  aber sparsam und am Rand, damit die Fläche frei bleibt.
+- KEINE Gebäude, keine Zelte, keine Menschen, keine Tiere, keine Fahnen, keine Zäune.
+- KEINE hellen Rechtecke, Rauten oder Umrisse auf dem Boden. Der Boden ist Natur, kein Raster.
+
+TAG vs. NACHT (nur Beleuchtung ändert sich, Gelände bleibt exakt gleich):
+- TAG: weiches, leicht diesiges Tageslicht, gedeckte Erd- und Grüntöne, klare Bodenflächen.
+- NACHT: dieselbe Lichtung bei Mondlicht — kühles blaugraues Licht, tiefere Schatten unter
+  den Bäumen, der Bach spiegelt schwach das Mondlicht. Das Gelände bleibt gut lesbar, die
+  Bauflächen müssen weiterhin klar erkennbar sein. KEINE schwarze Fläche, Mitteltöne.
+- Beide Bilder zeigen dasselbe Gelände aus demselben Winkel, jeder Baum und jede Baufläche
+  an derselben Stelle. Es wird KEINE neue Lichtung entworfen.
+
+STIL: malerischer Handmal-Look, gedeckte Erdtöne, mittlerer Detailgrad, kein Prunk, keine
+Fantasy-Verzierung, kein Leuchten. Kein Text, kein Wasserzeichen, kein Rahmen.
+
+MERKTABELLE:
+  [ ] 1/2 Dorfkarte — TAG      [ ] 2/2 Dorfkarte — NACHT
+
+============================================================================
+PROMPT 2 — BAUPLATZ, BAUSTELLE, GERÜST (6 Bilder)
+============================================================================
+
+Ich brauche 6 kleine Spiel-Assets für einen Aufbau-Modus: drei Zustände eines Bauplatzes,
+jeder einmal bei TAG und einmal bei NACHT. Dark-Fantasy, karge Grenzsiedlung.
+
+ANSICHT + HINTERGRUND (für alle 6 identisch):
+- Isometrisch: 45° gedreht, Blick aus 45° von oben, parallele Projektion.
+- Hintergrund einfarbig MAGENTA (#FF00FF) als Chroma-Key-Fläche, auch nachts unverändert
+  hell. Kein Boden, kein Gras, kein geworfener Schatten, keine Landschaft.
+- Das Motiv steht auf einer rautenförmigen Grundfläche und endet dort sauber.
+- Quadratisches Bild.
+- Alle drei Motive haben ungefähr DIESELBE Grundfläche (dieselbe Rauten-Größe), damit sie
+  im Spiel gegeneinander ausgetauscht werden können.
+
+GENERISCH: Diese drei Zustände werden für ALLE Gebäudetypen verwendet. Nichts darf auf ein
+bestimmtes Gebäude hindeuten — keine Schmiede-Esse, kein Turm, kein Kirchenmotiv.
+
+STIL: verwittertes dunkles Bauholz mit sichtbarer Maserung, schwarze Eisenbeschläge,
+grauer Bruchstein, gedeckte Erdtöne, malerischer Handmal-Look. Keine Menschen, kein Text.
+
+TAG vs. NACHT: TAG = neutrales weiches Tageslicht. NACHT = dasselbe Motiv bei Mondlicht,
+kühl blaugrau, dazu warmes oranges Licht einer kleinen Laterne am Motiv. Bleibt gut lesbar,
+KEINE schwarze Silhouette, Mitteltöne. Struktur identisch zum Tagbild.
+
+MOTIV 1 — LEERER BAUPLATZ (camp_slot_empty):
+Eine vorbereitete, leere Baufläche: festgetretene Erde und Kies in Rautenform, an den vier
+Ecken je ein eingeschlagener Holzpflock mit einer daran gespannten Schnur, ein kleiner
+Vermessungs-Stein. Sonst nichts. Sehr flach, ruhig, unauffällig.
+NACHT: hier nur Mondlicht, KEINE Laterne (es wird ja noch nicht gearbeitet).
+
+MOTIV 2 — BAUSTELLE (camp_site):
+Ein Neubau im Anfang: ein ausgehobenes Fundament mit teilweise gesetzten Bruchsteinen,
+daneben ein Stapel Balken und Bretter, ein Fass, eine Schubkarre, eine Axt im Hackklotz,
+zwei schräg aufgestellte Gerüststangen. Es steht noch KEIN Gebäude, man sieht klar den Anfang.
+NACHT: zusätzlich eine warm leuchtende Laterne an einer Gerüststange.
+
+MOTIV 3 — GERÜST (camp_scaffold):
+Ein hölzernes Baugerüst als offener Rahmen: vier Eckstangen mit zwei umlaufenden
+Laufbrett-Ebenen und Diagonalstreben, eine Leiter an einer Seite, oben ein einfacher
+Kranbalken mit Seilrolle. Das Gerüst ist INNEN LEER und offen, sodass später ein Gebäude
+darin sichtbar wäre. Es steht KEIN Gebäude darin.
+NACHT: zusätzlich eine warm leuchtende Laterne am Gerüst.
+WICHTIG: Der innere Bereich bleibt frei — nur der Rahmen, keine Wände, kein Dach.
+
+MERKTABELLE:
+  [ ] 1/6 Leerer Bauplatz — TAG    [ ] 2/6 Leerer Bauplatz — NACHT
+  [ ] 3/6 Baustelle — TAG          [ ] 4/6 Baustelle — NACHT
+  [ ] 5/6 Gerüst — TAG             [ ] 6/6 Gerüst — NACHT
+
+ZIP-KLAUSEL: Sind alle Häkchen gesetzt, alle PNGs zusätzlich als ZIP anbieten.

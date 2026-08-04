@@ -1,0 +1,20 @@
+{
+  "name": "@hearthforge/engine",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hearthforge/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@hearthforge/content": "workspace:*",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}
