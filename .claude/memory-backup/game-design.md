@@ -1,0 +1,34 @@
+---
+name: game-design
+description: RPG character/stats system design decisions for Hearthforge Idle
+metadata: 
+  node_type: memory
+  type: project
+  originSessionId: 553d2095-3a73-4795-9782-0fe746a25f13
+---
+
+**Charakter- & Attributsystem** (vom User am 2026-06-22 entschieden):
+
+- **6 Attribute**: STR (Stärke), DEX (Geschick), CON (Konstitution), INT (Intelligenz), WIS (Weisheit), LCK (Glück). Definiert als `ATTRIBUTES`-Konstante in `packages/shared`.
+- **Hybrid-Progression** (kein Hintergrund/keine Klasse — alle starten gleich):
+  1. Basiswert 5 je Attribut (`BASE_ATTRIBUTE_VALUE`),
+  2. frei verteilte Punkte: 10 bei Erstellung (`STARTING_ATTRIBUTE_POINTS`) + 1 pro gewonnenem Gesamtlevel (`POINTS_PER_TOTAL_LEVEL`),
+  3. passiver Skill-Zuwachs: jede Fertigkeit hat `trains: AttributeId`, gibt +1 je `ATTRIBUTE_SKILL_DIVISOR` (=4) Skill-Level. Aktuell: Holzfällen→STR, Bergbau→CON, Angeln→DEX.
+- **Gesamtlevel** = Summe aller Fertigkeits-Level (treibt die Punktevergabe via `syncProgression` in advance).
+- **Abgeleitete Werte** (HP, Mana, Schaden, Verteidigung, Krit, Tempo) werden NIE gespeichert, sondern per reiner Funktion `computeStats(state, content)` aus Attributen + Skills + Ausrüstung berechnet. Alle Formeln sind bewusst Platzhalter, später justierbar.
+- **Ausrüstung**: 11 Slots (`EQUIP_SLOTS`: helmet/amulet/mainhand/offhand/body/legs/gloves/boots/cape/ring1/ring2 — RuneScape-Anordnung, 2 Ringe, linke=offhand/rechte=mainhand Hand). Items haben `type` (material/equipment/consumable), `stackable`, optional `slot` + `modifiers` (Attribut-Boni). Noch keine echten Ausrüstungs-Items im Content. (Modelländerung 2026-06-22 von früheren 10 Slots; `migrateState` in persistence füllt fehlende Slots.)
+- **Portrait/Charakterbilder** (umgesetzt 2026-06-22): echte Ganzkörper-PNGs (Dark-Fantasy, transparenter Hintergrund, hochformatig). Liegen unter `apps/client/src/renderer/assets/portraits/` als `<klasse>_<geschlecht>.png` (knight/archer/mage je m/f = 6 Stück). Monster-Art (goblin, goblin_shaman) getrennt unter `assets/monsters/` fürs spätere Kampfsystem. Manifest `renderer/portraits.ts` (`PORTRAITS`-Liste + `getPortraitSrc(id)`) importiert die Bilder, Vite bündelt sie (offline-tauglich). Char-Erstellung hat Portrait-Auswahl (großes Vorschaubild + Thumbnail-Galerie); `character.portraitId` speichert die Wahl (rein kosmetisch, kein Stat-Einfluss). Portrait erscheint im Charakterblatt (Ganzkörper, object-fit contain) UND im Hauptmenü-Slot (via `SaveSummary.portraitId`). Originale lagen in `C:\Users\MSchu\Downloads` mit Suffix `-Photoroom` (freigestellt); beim Kopieren umbenannt. Bei NEUEN Charakter-Bildern: in `assets/portraits/` ablegen + in `portraits.ts` eintragen.
+
+**UI-Stil** (gewählt 2026-06-22): **„Ashen Iron"** — kaltes, entsättigtes Stahlgrau-Blau, scharfe Ecken (radius 4px), gritty Dark-Fantasy. Heading-Font **Metamorphous** lokal gebündelt unter `apps/client/src/renderer/fonts/` (offline-tauglich für Steam, kein CDN). Feine SVG-Grit-Textur als `body::after`-Overlay. Palette als CSS-Variablen in `styles.css`. 8 Stil-Mockups liegen unter `design/character-mockups.html` (interaktiver Theme-Switcher) — Referenz für weitere UI.
+
+**Charakter-Sheet** (gebaut 2026-06-22, Shakes&Fidget-/RuneScape-Stil): eine Karte mit 3 Spalten — links Portrait (gerahmt) + Name + Gesamtlevel + Leben/Mana-Balken; Mitte Paperdoll (Equip-Slots anatomisch angeordnet); rechts Attribute (mit +-Buttons bei freien Punkten) + Kampfwerte. Inventar-Grid unten im SELBEN Screen (separate Inventar-Sidebar-Seite wurde entfernt). Komponente: `pages/CharacterPage.tsx`.
+
+**Inventar** (Grid, Melvor-Stil): jede Item-Art belegt 1 Slot (Stackables stapeln unbegrenzt), nicht-stapelbare je 1 Slot/Stück. `InventoryState = { baseCapacity, bagSlots: (ItemId|null)[], slots: (InventorySlot|null)[] }`. Effektive Kapazität = `baseCapacity` (10, `BASE_INVENTORY_SLOTS`) + Summe der eingesetzten **Taschen** (`BAG_SLOT_COUNT`=4 Taschen-Plätze; Tasche = Item mit `type:"bag"` + `bagCapacity`). `slots.length` wird via `syncSlots` stets auf die effektive Kapazität gehalten (beim Schrumpfen werden Items nach vorne kompaktiert). Funktionen in `packages/engine/src/inventory.ts`: addItem/removeItem/itemCount/usedSlots/isFull/effectiveCapacity/equipBag/unequipBag/expandBaseCapacity. Noch keine Bag-Items im Content (kommen mit dem Shop). Overflow wird verworfen (TODO: Aktion stoppen / Bank). Save-Migration in persistence wandelt altes `capacity`→`baseCapacity` und ergänzt `bagSlots`.
+
+**UI-Skalierung & Größe**: Der User will, dass das UI den Bildschirm gut nutzt, kräftige/größere Typo, „spielerischer" Look (kein kleines zentriertes Kärtchen). Umgesetzt 2026-06-22: **Charaktererstellung ist Vollbild zweigeteilt** — links Charakter-Showcase (Portrait groß, ~94% Höhe, Name als großer Schriftzug unten), rechts scrollbares Options-Panel (max-width 760 zentriert) mit großen Feldern (Name-Input 22px, Portrait-Thumbnails 104×140, Attribut-Werte 26px, Start-Button 22px). Globaler Typo-Schub (body 15px, nav 16px, content-header 26px, sheet-title 22px, menu-title 46px, stat-row 15px usw.). **Charakter-Sheet ebenfalls raumfüllend** (`CharacterPage.tsx`): füllt die Content-Area (`min-height:100%`, flex column), oben 3-Spalten-Grid `.char-top` (links Portrait-Showcase groß `.char-portrait-big` + Identität/Vitals, Mitte Paperdoll `.doll` 84px-Slots, rechts Werte), unten `.sheet-inventory` über volle Breite (74px-Slots). Reflowt unter 1000px auf eine Spalte. Leere Equip-/Taschen-Slots: schwarze, leicht transparente Silhouetten. Prinzip „Screen voll nutzen, groß & dynamisch" gilt für alle Hauptscreens. Offen: globaler UI-Scale-Regler in den Optionen.
+
+**Speichersystem** (fertig 2026-06-22): Hauptmenü mit 5 Save-Slots (`MAX_SAVE_SLOTS`). Disk-I/O im Electron-Main-Prozess (`apps/client/src/main/saves.ts`, Dateien unter `userData/saves/slot-N.json`) via IPC-Handler (`saves:readAll/read/write/remove`), durchgereicht über Preload-Bridge `window.hearthforge.saves`. Renderer-Wrapper `renderer/saves.ts` mit localStorage-Fallback für reinen Web-Build. Save-Format in `packages/persistence`: `SaveFile = { version, savedAt, summary, state }` — die Top-Level-`summary` (Name, Gesamtlevel, Spielzeit) erlaubt die Slot-Liste ohne vollen State. `deserialize` holt Offline-Fortschritt nach (gedeckelt 24h). Autosave alle 30s + Speichern/Hauptmenü-Buttons in der Sidebar. Slot-IDs im Main streng validiert (Path-Traversal-Schutz).
+
+**UI-Fluss/State**: `GameContext` ist in ZWEI Contexts geteilt — stabiler `useGameControl` (Screen-Navigation menu/creating/playing, Slots, Speichern) und `useGameState` (Live-State, tickt pro Frame). So re-rendert die Sidebar nicht pro Frame. Screens: Hauptmenü → (Neues Spiel → `CharacterCreation`) oder (Laden) → `MainLayout` mit Sidebar-Seite „🧙 Charakter".
+
+Siehe [[stack-and-architecture]]. Noch offen/unbesprochen: Combat-System, was genau „besser als Melvor" sein soll, Persistenz.

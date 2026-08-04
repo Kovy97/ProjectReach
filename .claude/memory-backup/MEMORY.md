@@ -1,0 +1,58 @@
+- [Git-Workflow](git-workflow.md) — seit 04.08. GitHub Kovy97/ProjectReach; Commit nach verifizierten Wellen, Feature-Branches, gh-Keyring; Mira committet nie; bewusster .gitignore-Schnitt
+- [Nacht-Pause 04.08.](pause-2026-08-04.md) — ALLES pausiert; Arena-Welle 2 MITTEN IM UMBAU gestoppt (typecheck rot in arena25d) → Wiederaufnahme: ERST Integrität, frischer Agent mit Brief+5 Chef-Punkten; 0.3.0 wartet auf Chef-Livegang
+- [Pause-Stand 03.08.](pause-2026-08-03.md) — NH-Prüfrunde grün abgeschlossen; Emoji-Ablösung lief noch → bei Wiederaufnahme erst prüfen, DANN zentraler Build (fehlt!); offen: Depot-GO + Roadmap-Tabelle
+- [Codex/Mira Falk](codex-mira-falk.md) — OpenAI-Codex als Designerin „Mira" im Studio; CODEX/-Ordner, codex:-Marker, kein Git; ihre Sandbox kann keine Tests/Builds → Claude verifiziert jede Lieferung
+- [Launch-Tag 23.07.](launch-tag-2026-07-23.md) — 0.2.0 RELEASED (Build 24353016) als „Patch #1: Champions of the Reach"; offen: Horn, Musik-Lizenz, 20 Rest-Battlescreens. SICHTBARKEITSRUNDE: EA-Regel = 2 Wochen nach Launch (20.07.) → frühestens 03.08.; PLAN: großes 0.3.0 „Das Lager" (statt 0.2.3) bis 02.08. ins Depot, Event 03.08. + Runde starten (Runde braucht Announcement <30 Tage; 5 Runden total; EA-Exit = voller Zweit-Launch, wird für echte 1.0 aufgehoben)
+- [Pause-Stand 22.07.](pause-2026-07-22.md) — Update SHIP-READY; 3 Ward-/Onboarding-Tasks mitten im Bau gestoppt → bei Wiederaufnahme ERST typecheck/Integrität, dann fertigbauen; Smoke-Test unvollständig
+- [EA-Verkaufslage Juli 2026](ea-verkaufslage-2026-07.md) — Verkäufe 88→20/Tag, Refund 25%; No-Image-Fix-Upload ab 23.07.; Early-Game-Update geschäftskritisch
+- [Polish-Sprint Juli 2026](polish-sprint-2026-07.md) — Store-Page LIVE; 2 Wochen bis Verkauf (~24.07.); Sprint-Entscheidungen: kein Salvage/Vault, kein Pouch-System, kein Monster-Gold, kein UI-Scale, Quest-Tokens, Pet-Redesign
+- [Save-Kompatibilitäts-Gesetz](save-compat-law.md) — ab Launch: Saves IMMER kompatibel; Kompat-Vault-Fixtures + Guard vor jedem Depot-Upload
+- [Token-Sparsamkeit](token-thrift.md) — Modell-Tiering (Sonnet für Mechanik, Fable für Urteil), Spawn-Schwelle hoch, Stufen bündeln, Output-Disziplin
+- [Tiering: Urteil nur Fable](tiering-urteil-nur-fable.md) — Tests/Audits/Reviews NIE auf Sonnet ohne explizites GO; bei knappem Budget verschieben statt herabstufen
+- [Keine ungenehmigten Langläufer](no-unapproved-longrunners.md) — Übernacht-Tests/App-Instanzen nur mit explizitem GO; Electron nicht per APPDATA isolierbar
+- [Stack & Architektur](stack-and-architecture.md) — Hearthforge Idle: Stack, Monorepo-Struktur, Engine/UI-Trennung, getroffene Entscheidungen
+- [Game-Design](game-design.md) — Charakter-/Attributsystem: 6 Attribute, Hybrid-Progression, computeStats, Ausrüstung, Portrait-Plan
+- [Save-Logik immer mitziehen](always-update-save-logic.md) — bei neuem State Persistenz aktualisieren, SAVE_VERSION + Migration
+- [Client nach Änderungen selbst neu bauen](always-rebuild-client-after-changes.md) — nach UI/Content-Änderungen selbst `pnpm build`, nicht Chef bauen lassen (sonst stale-build-Frust)
+- [Kampfkonzept](combat-concept.md) — 3 Stile (STR/DEX/INT), kein Dreieck, Waffe bestimmt Stil, Auto-Battle, 6 granulare Kampf-Skills
+- [Roadmap 1.0](roadmap-1.0.md) — Scope & Meilensteine M1-M5 für eine Steam-taugliche 1.0
+- [EA 0.1 Release-Push](ea-0.1-release-push.md) — Ziel Steam Early-Access 0.1 „voll poliert"; Chef macht Icons+Steam, Claude alle Dev-Todos
+- [Steam-Store nur Englisch](steam-store-english-only.md) — EA-Store-Seite vorerst EN-only; Store-Copy in Englisch liefern, Kurzbeschr. 200–300 Zeichen, Optionen inline statt Frage-Tool
+- [Spieltitel: Grim Reach](game-title-grim-reach.md) — neuer Titel „Grim Reach" (war Hearthforge Idle); In-Game-Rename noch offen
+- [Eingebundene Assets archivieren](archive-integrated-assets.md) — nach erfolgreicher PNG-Einbindung Quell-Originale nach ASSETS\archive\ verschieben
+- [Combat-Gegnerauswahl-Layout](combat-enemy-select-layout.md) — 4 Spalten; Karten-Art ENDGÜLTIG `100% auto` + `bottom center`, NIE `cover` (3× Zoom-Fehler, Chef sauer)
+- [Kreative Item-Lizenz](creative-item-license.md) — Chef erlaubt eigenständig neue thematische Items/Drops zu erfinden (Goblin-Zauberstab, Dornenschwert …)
+- [YGOJourney Map-Editor-Referenz](ygojourney-map-editor-reference.md) — Chefs YuGiOh-Projekt + sein Hotspot-Map-Editor-Devtool als Vorlage für Kampfgebiets-Map-Editor
+- Release-Readiness & M5-Packaging-Plan liegt im Repo: `G:\GameDev\design\release-readiness.md` (Status + electron-builder/steamworks-Schritte + offene Chef-Entscheidungen: App-Name/Icon/Steam-AppID/Store-Assets).
+- [Keine manuellen Attributpunkte](no-manual-attribute-points.md) — bewusst entfernt zugunsten Hybrid-Progression; vestigialen State löschen, nicht aktivieren.
+- [Turbo-Test-Cache-Falle](turbo-test-cache-gotcha.md) — `pnpm test` kann altes rotes Ergebnis replayen; Cache leeren / `--filter` direkt laufen.
+- [UI größer + echte Icons](ui-bigger-and-real-icons.md) — UI durchgängig etwas größer für Sichtbarkeit; Skill-Icons via getSidebarIcon/getSkillIcon statt Emojis.
+- [BG-Textur-Palette](bg-texture-palette.md) — Farbtexturen (bg_grey=App-BG gekachelt; blue/copper/green/… für Element-Theming); immer kacheln, nie stretchen.
+- [Combat-FX = späterer Meilenstein](combat-fx-later-milestone.md) — echte VFX/Juice später; Spell-Moment ist Platzhalter, nicht vergolden.
+- [Onboarding-Guide = finaler Meilenstein](onboarding-guide-final-milestone.md) — großer geführter Tutorial-Flow ganz zum Schluss; jetzt nur leichte In-Kontext-Hilfen.
+- [Sidebar-Stil = Design-System](sidebar-style-is-design-system.md) — Sidebar-Mockup-Look (Frames/Pergament/Cinzel/Icons/Buttons) später spielweit ausrollen.
+- [Citadel anwenden, nicht halluzinieren](citadel-apply-not-hallucinate.md) — Citadel-UI max. auf bestehende Features; keine MMO-Features (Minimap/Chat/Party/Friends) erfinden.
+- [Übernacht-CEO-Run](overnight-ceo-run.md) — aktiver autonomer Nacht-Loop (2026-06-27); Masterplan + Status in design/overnight-ceo-plan.md.
+- [Roadmap-Reihenfolge](roadmap-sequencing.md) — erst ALLE Skills fertig, dann zurück zum Combat-Modul.
+- [Item-Builder geplant](item-builder-planned.md) — künftiges Devtool: Chef definiert Items → Claude legt sie an; gute Capes etc. kommen so als Drops.
+- [Asset-Bilder: ALLE Referenzen binden](asset-bind-all-references.md) — beim Einbinden eines Bildes jede Code-Referenz (Item-Bild + Farm-Icon + Sidebar + Stat/UI-Icon + Tooltip + Monster-Art) bedienen, nie nur eine.
+- [Enchant- & Suffix-Systeme](enchant-and-suffix-systems.md) — Affixe=Verzauberungen (Arch B Item-Instanzen, tiered Runen) + Suffixe=Random Rolls (WoW-Stil); Inscription raus; gemeinsames Instanz-Fundament.
+- [Tester-Sweeps budget-OK](tester-sweep-budget-ok.md) — 180€-Abo → volle ~10-Agent-Sweeps an stabilen Checkpoints; seit 25.07. via ui-audit/bot.mjs + BOT-GUIDE.md auf Opus-Klasse steuerbar (Urteile bleiben Fable).
+- [City stillgelegt, Shop ins Menü](city-shelved-shop-relocated.md) — Stadt auf Eis; Shop/Bank/Quests als Sidebar-Einträge; Combat nur List (Maps aus, Karten halbiert); Chef liefert Icons.
+- [Combat ist fundamental](combat-is-fundamental.md) — Kampf bewusst unvermeidbar; kampf-gegatete Mats NICHT durch Shop/Forage umgehen; Undergeared-Walls = Kampfhärte, ABER seit 25.07. KEINE Dungeon-Level-Locks mehr (nur Quest-Gates, Level = Empfehlung).
+- [Rare-Drop-Philosophie](rare-drop-philosophy.md) — Chase-Items: Stats des NÄCHSTEN Tiers bei Requirements des aktuellen (+Effekt ab ~1/1000); niedrige Req an raren Drops ist intended.
+- [Rüstungs-Trinität](armor-trinity.md) — Itemization 2.5: Platte=Mitigation/Leder=Evasion/Stoff=Ward (Casting lädt), Defence raus aus Formeln, Gegner-Armor für Armor-Pen
+
+- [Passion-Projekt „Kreidestadt"](passion-project-kreidestadt.md) — Chefs 2. Spiel (Metropolismania-Neuinterpretation); GDD in G:\GameDev\passion-project\GDD.md; Stack: Unity 6 + Synty (Chef-Entscheid)
+- [Stand 26.07. Abend](stand-2026-07-25-abend.md) — PC AUS: Sweep 6/6 fertig, Fix-Wellen A+B grün gelandet (Bronze, Buckhide-Set, Patt-Popup …), Welle C (Sim-Sanierung) MITTEN DRIN gestoppt → bei Wiederaufnahme erst Integrität, dann fertigbauen; Prompts geliefert
+- [Arena25D pausiert](arena25d-pausiert.md) — 2.5D-Prototyp (Octopath, Pastures) fertig aber via ARENA25D_PAUSED stillgelegt; Fokus 0.2.2; Wiederaufnahme = ein Flag
+- [Kein Rarity-Glow auf Equipment](no-rarity-glow-on-equipment.md) — Equipment-Art ohne Schimmer/Glühen/Leuchten (nur Runen/Tränke dürfen glühen); Prompt-Regel.
+- [7 Sprachen Lokalisierung](localization-7-languages.md) — EN/DE + ZH/RU/ES/PT-BR/FR; UI in i18n/locales/, Content via Overlay content/locales/+apply.ts, Glossar; Font-Bundling Noto SC noch offen.
+- [Lore-Dev & Aschechronik](lore-dev-und-aschechronik.md) — neuer fable-Agent für design/lore/**; Hauptquest-Plan auf bestehendem Quest-System, Lore-Bibel läuft
+- [Natürliche Spieltexte](natuerliche-spieltexte.md) — keine KI-Gedankenstrich-Ketten in spielersichtbaren Texten; ≤1 Dash pro Text, Regel auch in lore-dev.md verankert
+- [ChatGPT-Prompts: Echte Transparenz](chatgpt-prompt-chroma-key.md) — ALLE Freisteller (Kreaturen+Items) = echtes Alpha verlangen (Schachbrett-Verbot!); Magenta-Key abgelöst, nur Legacy-Fallback im Intake; Prompts so detailliert, dass keine Referenz-Icons nötig
+- [Chroma-Key-Tool](chroma-key-tool.md) — wiederverwendbares Freisteller-Skript Downloads\ASSETS\chroma-key.py (Python/Pillow); Methode + Magenta-Verifikation
+- [Skill-99: Ring statt Cape](skill-99-ring-statt-cape.md) — 99er-Belohnung = legendärer thematischer Ring je Beruf; cape_master_* umbauen (Migration!), 21 Prompts neu als Ringe
+- [Spieler-Char-Ästhetik](player-char-aesthetik.md) — generische coole Fantasy-Archetypen mit Veteranen-Präsenz, keine Folklore/Armut/Comedy; Design-Abnahmen früh per 2-3 Chat-Beispielen
+- [Bildqualität vor Dateigröße](bild-qualitaet-vor-dateigroesse.md) — sichtbare Qualität NIE für Perf opfern; Portraits q92, Kulissen q85, .card.webp ≥880px; Perf über GPU/Selectors statt Asset-Matsch
+- [CSS-url() immer quoten](css-url-must-be-quoted.md) — Launch-Blocker: `url(${pfad})` bricht bei Installpfaden mit Klammern (Default-Steam `C:\Program Files (x86)`); IMMER `url("${pfad}")`
