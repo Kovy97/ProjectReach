@@ -33,6 +33,7 @@ Was in HANDOFF.md stehen soll; ob Claude danach verifiziert (Tests/Build laufen 
 - Aufträge in dieser Inbox sind entsprechend IMMER Design-/Asset-Aufträge, keine Implementierungsaufträge.
 
 ## Stehende Vereinbarungen (gelten ohne erneute Erwähnung)
+- **Git (seit 04.08.):** Das Projekt liegt auf GitHub (Kovy97/ProjectReach, Branch main). Mira committet selbst NICHT — Claude committet verifizierte Stände (inkl. Miras gelandeter Arbeit, ihre `codex:`-Marker bleiben als Urheber-Kennzeichnung). Die schweren CODEX-Binär-Staging-Ordner (assets/AssetControl/…) sind bewusst NICHT versioniert; Dokumente (HANDOFF/WORKLOG/inbox/notes/work-Docs) schon. Miras Prechange-Outbox-Backups sind ab jetzt optional — Git übernimmt die Sicherung.
 - **Verifikations-Vertrag:** Miras Sandbox kann keine Prozesse starten. Nach jeder materiellen Lieferung übernimmt Claude: Vitest-Suiten, Typecheck-Gegenlauf, Produktions-Build, bei SAVE_VERSION-Bumps das Vault-Neu-Pin-Ritual (`packages/persistence/fixtures/save-compat/`). Mira markiert Save-Bumps in HANDOFF deutlich als **„SAVE-BUMP vNN — Vault-Pin durch Claude nötig"**.
 - **Hot Files** (`packages/content/src/index.ts`, `packages/shared/src/index.ts`, Persistenz, i18n-Dateien): nur mit exakten Ankern editieren und im HANDOFF einzeln ausweisen.
 - Claude überschreibt Codex-Stände nie pauschal; Codex überschreibt Claude-Stände nie pauschal — bei Konflikt entscheidet der neueste Chef-Entscheid, sonst der Chef.
