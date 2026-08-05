@@ -34,6 +34,16 @@
   // die eigentliche 3D-Bodenfläche übernimmt den Vordergrund.
   "backdrop": "arena_REPLACE_ME_backdrop.webp",
 
+  // Optional (einfach weglassen = Standard): Kulissen-Platzierung pro Zone. Jedes Feld einzeln
+  // optional; Defaults = Code-Konstanten (z ≈ -3.5, height 12.2, widthScale 1, yOffset 0).
+  // Am einfachsten im Scene-Builder über das "Kulisse"-Panel einstellen und exportieren.
+  // "backdropLayout": {
+  //   "z": -3.5,          // Welt-Z der Kulissen-Mitte (kleiner = weiter hinten)
+  //   "height": 12.2,     // Wandhöhe in Welt-Einheiten, muss > 0 sein
+  //   "widthScale": 1,    // Breiten-Multiplikator (> 0) auf die aus der Höhe abgeleitete Breite
+  //   "yOffset": 0        // vertikal verschieben (positiv = höher, negativ = versenkt)
+  // },
+
   "lighting": {
     // Sonnenfarbe als CSS-Hex, z.B. warmes Glutorange für Slagpit, kühles Fahlweiß für Crypt.
     "sunColor": "#ffd9a0",

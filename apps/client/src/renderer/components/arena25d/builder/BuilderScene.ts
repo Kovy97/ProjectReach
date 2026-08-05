@@ -24,7 +24,6 @@ import {
   buildGradeFilter,
   BACKDROP_CURVE_RADIUS,
   BACKDROP_CURVE_SEGMENTS,
-  BACKDROP_HEIGHT,
   BACKDROP_Z,
   CAMERA_FOV,
   CAMERA_LOOKAT_Y,
@@ -45,12 +44,14 @@ import {
   PLAYER_Z,
   PROP_BASE_HEIGHT,
   REFERENCE_ASPECT,
+  resolveBackdropLayout,
   resolvePropVisual,
   SKIRT_REPEAT_X,
   SKIRT_REPEAT_Z,
   SKIRT_WORLD_DEPTH,
   SKIRT_WORLD_WIDTH,
   type PropInstance,
+  type ResolvedBackdropLayout,
   type SpriteBaseline,
 } from "../sceneEnvironment";
 import { resolveArenaAssetUrl } from "../assets";
@@ -76,21 +77,42 @@ export interface BuilderSnapshot {
   canUndo: boolean;
   canRedo: boolean;
   lighting: ZoneManifestLighting;
-  backdropZ: number;
-  backdropHeight: number;
+  backdrop: ResolvedBackdropLayout;
   showOverlay: boolean;
+  showGameFrame: boolean;
+  camDist: number;
+  camPitchDeg: number;
+  camIsGame: boolean;
   zoneId: string;
   ground: string;
   backdropFile: string;
   elementCount: number;
 }
 
-const MIN_X = -9.5;
-const MAX_X = 9.5;
-const MIN_Z = 1.2;
-const MAX_Z = 11.5;
-const MIN_SCALE = 0.15;
-const MAX_SCALE = 6;
+/* Chef-Feedback 05.08. ("keine Limitierungen, wie weit ich ein Bild wohin ziehen kann"): die
+   früheren MIN_X/MAX_X/MIN_Z/MAX_Z/MIN_SCALE/MAX_SCALE-Klemmen sind KOMPLETT entfernt — Props
+   dürfen beliebig weit außerhalb der sichtbaren Bodenfläche stehen (der Platzierungs-Raycast lief
+   ohnehin schon gegen die unendliche `groundPlane`, nur die Klemmen hielten ihn fest). Einzige
+   verbleibende Untergrenze: `scale` muss > 0 bleiben (0/negativ = degenerierte Geometrie). */
+const SCALE_FLOOR = 0.01;
+
+// ── Werkzeug-Kamera (Chef-Feedback 05.08. "im Scene Builder kommt man nicht sehr weit nach
+//    hinten"): frei fahrbare Orbit-Kamera um den Spiel-Blickpunkt (Dolly + Pitch) — reiner
+//    Builder-ZUSTAND, wird NIE exportiert. Die SPIEL-Kamera (CAMERA_*-Konstanten in
+//    sceneEnvironment.ts, ≈30°-Pitch) bleibt unangetastet; ihre Werte sind hier nur die
+//    Startposition/das Reset-Ziel ("Spiel-Kamera"-Button) und speisen den
+//    "Spiel-Ausschnitt"-Rahmen (s. `buildGameFrameGroup`).
+const TOOL_CAM_TARGET_Y = CAMERA_LOOKAT_Y;
+const TOOL_CAM_TARGET_Z = CAMERA_LOOKAT_Z;
+export const GAME_CAM_DIST = Math.hypot(CAMERA_Y - CAMERA_LOOKAT_Y, CAMERA_Z - CAMERA_LOOKAT_Z);
+export const GAME_CAM_PITCH_DEG = (Math.atan2(CAMERA_Y - CAMERA_LOOKAT_Y, CAMERA_Z - CAMERA_LOOKAT_Z) * 180) / Math.PI;
+/** Dolly-Bereich: bis ~7× weiter draußen als die Spiel-Kamera (≈17.4) — "deutlich weiter raus". */
+export const TOOL_CAM_MIN_DIST = 3;
+export const TOOL_CAM_MAX_DIST = 120;
+/** Pitch-Bereich: knapp über Horizont bis fast senkrecht von oben (89°/0° würden `lookAt` mit dem
+ *  Default-Up-Vektor bzw. den Boden-Raycast entarten lassen). */
+export const TOOL_CAM_MIN_PITCH_DEG = 3;
+export const TOOL_CAM_MAX_PITCH_DEG = 85;
 
 function clamp(v: number, lo: number, hi: number): number {
   return v < lo ? lo : v > hi ? hi : v;
@@ -133,9 +155,14 @@ export class BuilderScene {
     fogDensity: 0,
     grade: { saturation: 1, temperature: 0, lift: 0 },
   };
-  private backdropZ = BACKDROP_Z;
-  private backdropHeight = BACKDROP_HEIGHT;
+  private backdropLayout: ResolvedBackdropLayout = resolveBackdropLayout(undefined);
   private bgCroppedAspect = 1717 / (916 * 0.7);
+
+  // Werkzeug-Kamera-Zustand (s. Konstanten-Block oben) — Start = exakt die Spiel-Kamera.
+  private camDist = GAME_CAM_DIST;
+  private camPitchDeg = GAME_CAM_PITCH_DEG;
+  private gameFrameGroup: THREE.Group;
+  private showGameFrame = true;
 
   private sun: THREE.DirectionalLight;
   private fill: THREE.HemisphereLight;
@@ -167,9 +194,11 @@ export class BuilderScene {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 100);
-    this.camera.position.set(0, CAMERA_Y, CAMERA_Z);
-    this.camera.lookAt(0, CAMERA_LOOKAT_Y, CAMERA_LOOKAT_Z);
+    // Far-Plane 500 statt der 100 des Kampf-Renderers: die Werkzeug-Kamera darf bis
+    // TOOL_CAM_MAX_DIST (120) hinausfahren und muss von dort noch die (frei verschiebbare)
+    // Kulisse sehen — reine Clipping-Reserve, bei Spiel-Kameraposition optisch identisch.
+    this.camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 500);
+    this.applyToolCamera();
 
     this.sun = new THREE.DirectionalLight(0xffd9a0, 3.4);
     this.sun.target.position.set(0, 1.1, FLOOR_CENTER_Z);
@@ -208,6 +237,9 @@ export class BuilderScene {
 
     this.overlayGroup = this.buildOverlayGroup();
     this.scene.add(this.overlayGroup);
+
+    this.gameFrameGroup = this.buildGameFrameGroup();
+    this.scene.add(this.gameFrameGroup);
 
     this.resizeObserver = new ResizeObserver(this.resize);
     this.resizeObserver.observe(container);
@@ -252,8 +284,89 @@ export class BuilderScene {
     this.onChange();
   }
 
+  // ── Werkzeug-Kamera (Chef-Auftrag 05.08. Punkt 1) ──────────────────────────────────────────
+  /** Orbit um den Spiel-Blickpunkt: Position aus Distanz (Dolly) + Pitch, Yaw bewusst fest 0
+   *  (Blick immer von der Kamera-Seite wie im Kampf — der Builder soll das Spiel-Bild beurteilen,
+   *  keine Rundumsicht). Billboards yawen zur Kamera (`applyPropTransform` liest
+   *  `camera.position`) — nach jeder Fahrt einmal alle Transforms nachziehen, sonst stünden die
+   *  Props schräg zur neuen Blickrichtung. */
+  private applyToolCamera(): void {
+    const pitchRad = (this.camPitchDeg * Math.PI) / 180;
+    this.camera.position.set(0, TOOL_CAM_TARGET_Y + this.camDist * Math.sin(pitchRad), TOOL_CAM_TARGET_Z + this.camDist * Math.cos(pitchRad));
+    this.camera.lookAt(0, TOOL_CAM_TARGET_Y, TOOL_CAM_TARGET_Z);
+    for (const live of this.elements.values()) this.applyLiveTransform(live);
+  }
+
+  setToolCamera(patch: { dist?: number; pitchDeg?: number }): void {
+    if (patch.dist !== undefined && Number.isFinite(patch.dist)) this.camDist = clamp(patch.dist, TOOL_CAM_MIN_DIST, TOOL_CAM_MAX_DIST);
+    if (patch.pitchDeg !== undefined && Number.isFinite(patch.pitchDeg)) {
+      this.camPitchDeg = clamp(patch.pitchDeg, TOOL_CAM_MIN_PITCH_DEG, TOOL_CAM_MAX_PITCH_DEG);
+    }
+    this.applyToolCamera();
+    this.onChange();
+  }
+
+  /** Reset-Button "Spiel-Kamera" — zurück auf exakt die Kampf-Renderer-Perspektive. */
+  resetToolCamera(): void {
+    this.camDist = GAME_CAM_DIST;
+    this.camPitchDeg = GAME_CAM_PITCH_DEG;
+    this.applyToolCamera();
+    this.onChange();
+  }
+
+  /**
+   * "Spiel-Ausschnitt"-Rahmen (Chef-Auftrag 05.08. Punkt 1): Drahtgitter-Frustum der ECHTEN
+   * Spiel-Kamera (CAMERA_*-Konstanten, Seitenverhältnis = 1920×1080-Referenz des Kampf-Viewports,
+   * `REFERENCE_ASPECT`) — beim Herauszoomen zeigt es exakt, was im echten Kampf im Bild landet.
+   * Steht die Werkzeug-Kamera auf der Spiel-Position, projizieren die vier Kanten-Strahlen exakt
+   * auf die Viewport-Ecken und die Querschnitts-Rechtecke auf den Viewport-Rand — der Rahmen
+   * entspricht dann dem Vollbild (Auftrags-Soll). Kanten + drei Tiefen-Rechtecke (Kampffeld/
+   * Kulissen-Nähe/Endkappe) als Tiefen-Anhaltspunkte; `depthTest:false`, damit der Rahmen nie von
+   * Boden/Kulisse verdeckt wird.
+   */
+  private buildGameFrameGroup(): THREE.Group {
+    const gameCam = new THREE.PerspectiveCamera(CAMERA_FOV, REFERENCE_ASPECT, 0.1, 100);
+    gameCam.position.set(0, CAMERA_Y, CAMERA_Z);
+    gameCam.lookAt(0, CAMERA_LOOKAT_Y, CAMERA_LOOKAT_Z);
+    gameCam.updateMatrixWorld(true);
+    const origin = gameCam.position.clone();
+    const cornerDirs = [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1],
+    ].map(([nx, ny]) => new THREE.Vector3(nx!, ny!, 0.5).unproject(gameCam).sub(origin).normalize());
+    // Bis knapp hinter die Default-Kulisse (Distanz Spiel-Kamera→BACKDROP_Z entlang der Blickachse
+    // ≈ 23) — weit genug, um den kompletten sichtbaren Raum zu umreißen, ohne ins Leere zu laufen.
+    const frustumLen = 26;
+    const pts: THREE.Vector3[] = [];
+    const pushRect = (d: number): void => {
+      for (let i = 0; i < 4; i++) {
+        pts.push(origin.clone().addScaledVector(cornerDirs[i]!, d), origin.clone().addScaledVector(cornerDirs[(i + 1) % 4]!, d));
+      }
+    };
+    pushRect(frustumLen * 0.4);
+    pushRect(frustumLen * 0.7);
+    pushRect(frustumLen);
+    for (const dir of cornerDirs) pts.push(origin.clone(), origin.clone().addScaledVector(dir, frustumLen));
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({ color: 0x6fd3ff, transparent: true, opacity: 0.55, depthTest: false });
+    const lines = new THREE.LineSegments(geo, mat);
+    lines.renderOrder = 998;
+    const group = new THREE.Group();
+    group.add(lines);
+    group.visible = this.showGameFrame;
+    return group;
+  }
+
+  toggleGameFrame(visible: boolean): void {
+    this.showGameFrame = visible;
+    this.gameFrameGroup.visible = visible;
+    this.onChange();
+  }
+
   // ── Zonen-Laden (Boden/Kulisse/Licht/Props aus einem Manifest) ────────────────────────────────
-  loadZone(manifest: ZoneManifest, backdropExperimental?: { z: number; height: number } | null): void {
+  loadZone(manifest: ZoneManifest): void {
     this.cancelPlacing();
     for (const live of this.elements.values()) this.disposeLive(live);
     this.elements.clear();
@@ -265,8 +378,10 @@ export class BuilderScene {
     this.groundFile = manifest.ground;
     this.backdropFile = manifest.backdrop;
     this.lighting = { ...manifest.lighting, grade: { ...manifest.lighting.grade } };
-    this.backdropZ = backdropExperimental?.z ?? BACKDROP_Z;
-    this.backdropHeight = backdropExperimental?.height ?? BACKDROP_HEIGHT;
+    // Kulissen-Platzierung: seit 05.08. echtes Manifest-Feld (`backdropLayout`) — fehlende
+    // Felder/fehlender Block fallen auf die Code-Konstanten zurück (identisch zum Kampf-Renderer,
+    // s. `resolveBackdropLayout`). KEINE Werte-Klemmen beim Laden (Roundtrip-Pflicht).
+    this.backdropLayout = resolveBackdropLayout(manifest.backdropLayout);
 
     this.buildGround(manifest.ground);
     this.buildBackdrop(manifest.backdrop);
@@ -350,11 +465,12 @@ export class BuilderScene {
       backdropTex.wrapS = THREE.ClampToEdgeWrapping;
       backdropTex.wrapT = THREE.ClampToEdgeWrapping;
       this.bgCroppedAspect = w / cropH;
-      const bgWidth = this.backdropHeight * this.bgCroppedAspect;
-      const bgGeo = buildCurvedBackdropGeometry(bgWidth, this.backdropHeight, BACKDROP_CURVE_RADIUS, BACKDROP_CURVE_SEGMENTS);
+      const layout = this.backdropLayout;
+      const bgWidth = layout.height * this.bgCroppedAspect * layout.widthScale;
+      const bgGeo = buildCurvedBackdropGeometry(bgWidth, layout.height, BACKDROP_CURVE_RADIUS, BACKDROP_CURVE_SEGMENTS);
       const bgMat = new THREE.MeshBasicMaterial({ map: backdropTex, fog: false, side: THREE.DoubleSide });
       const bg = new THREE.Mesh(bgGeo, bgMat);
-      bg.position.set(0, this.backdropHeight / 2, this.backdropZ);
+      bg.position.set(0, layout.height / 2 + layout.yOffset, layout.z);
       this.scene.add(bg);
       this.bgMesh = bg;
       const aspectNow = (this.container.clientWidth || 1) / (this.container.clientHeight || 1);
@@ -388,19 +504,25 @@ export class BuilderScene {
     this.canvas.style.filter = buildGradeFilter(this.lighting.grade);
   }
 
-  /** Experimentelle BACKDROP_Z/HEIGHT-Regler (Chef-Auftrag Punkt 8 "Bonus") — Z ist eine reine
-   *  Positionsänderung, HEIGHT braucht eine neue gecurvte Geometrie (Breite hängt an Höhe×Aspect,
-   *  s. `buildBackdrop`), beides ohne Textur-Neuladung. */
-  setBackdropParams(z: number, height: number): void {
-    this.backdropZ = z;
-    this.backdropHeight = height;
+  /** Kulissen-Regler (seit 05.08. ein ECHTES Manifest-Feld `backdropLayout`, kein Experiment
+   *  mehr) — `z`/`yOffset` sind reine Positionsänderungen, `height`/`widthScale` brauchen eine neue
+   *  gecurvte Geometrie (der Zylinder-Bogen hängt an der Breite, s. `buildCurvedBackdropGeometry`),
+   *  alles ohne Textur-Neuladung. Untergrenze nur gegen degenerierte Geometrie (>0), keine
+   *  Gestaltungs-Klemmen. */
+  setBackdropLayout(patch: Partial<ResolvedBackdropLayout>): void {
+    const next = { ...this.backdropLayout, ...patch };
+    if (!Number.isFinite(next.z)) next.z = this.backdropLayout.z;
+    if (!Number.isFinite(next.yOffset)) next.yOffset = this.backdropLayout.yOffset;
+    next.height = Number.isFinite(next.height) ? Math.max(SCALE_FLOOR, next.height) : this.backdropLayout.height;
+    next.widthScale = Number.isFinite(next.widthScale) ? Math.max(SCALE_FLOOR, next.widthScale) : this.backdropLayout.widthScale;
+    this.backdropLayout = next;
     if (this.bgMesh) {
-      const bgWidth = height * this.bgCroppedAspect;
-      const newGeo = buildCurvedBackdropGeometry(bgWidth, height, BACKDROP_CURVE_RADIUS, BACKDROP_CURVE_SEGMENTS);
+      const bgWidth = next.height * this.bgCroppedAspect * next.widthScale;
+      const newGeo = buildCurvedBackdropGeometry(bgWidth, next.height, BACKDROP_CURVE_RADIUS, BACKDROP_CURVE_SEGMENTS);
       this.bgMesh.geometry.dispose();
       this.bgMesh.geometry = newGeo;
       const aspectNow = (this.container.clientWidth || 1) / (this.container.clientHeight || 1);
-      this.bgMesh.position.set(0, height / 2, z);
+      this.bgMesh.position.set(0, next.height / 2 + next.yOffset, next.z);
       this.bgMesh.scale.set(Math.max(1, aspectNow / REFERENCE_ASPECT), 1, 1);
     }
     this.onChange();
@@ -495,8 +617,8 @@ export class BuilderScene {
 
   private finalizePlacement(): void {
     if (!this.placing || !this.ghost) return;
-    const x = clamp(this.ghost.mesh.position.x, MIN_X, MAX_X);
-    const z = clamp(this.ghost.mesh.position.z, MIN_Z, MAX_Z);
+    const x = this.ghost.mesh.position.x;
+    const z = this.ghost.mesh.position.z;
     const kind = this.placing.kind ?? undefined;
     const file = this.placing.file ?? this.placeholderFileFor(this.placing.kind);
     this.scene.remove(this.ghost.mesh, this.ghost.shadow);
@@ -557,7 +679,7 @@ export class BuilderScene {
     if (!live) return;
     this.checkpoint();
     const id = nextElementId();
-    const def: ZoneManifestProp = { ...live.def, x: clamp(live.def.x + 0.6, MIN_X, MAX_X), z: clamp(live.def.z + 0.3, MIN_Z, MAX_Z) };
+    const def: ZoneManifestProp = { ...live.def, x: live.def.x + 0.6, z: live.def.z + 0.3 };
     this.spawnLiveElement(id, def);
     this.selectedId = id;
     this.updateSelectionRing();
@@ -573,9 +695,7 @@ export class BuilderScene {
     if (!live) return;
     this.checkpoint();
     Object.assign(live.def, patch);
-    live.def.x = clamp(live.def.x, MIN_X, MAX_X);
-    live.def.z = clamp(live.def.z, MIN_Z, MAX_Z);
-    live.def.scale = clamp(live.def.scale, MIN_SCALE, MAX_SCALE);
+    live.def.scale = Math.max(SCALE_FLOOR, live.def.scale);
     this.applyLiveTransform(live);
     this.updateSelectionRing();
     this.onChange();
@@ -596,9 +716,7 @@ export class BuilderScene {
     const live = this.elements.get(this.selectedId);
     if (!live) return;
     Object.assign(live.def, patch);
-    live.def.x = clamp(live.def.x, MIN_X, MAX_X);
-    live.def.z = clamp(live.def.z, MIN_Z, MAX_Z);
-    live.def.scale = clamp(live.def.scale, MIN_SCALE, MAX_SCALE);
+    live.def.scale = Math.max(SCALE_FLOOR, live.def.scale);
     this.applyLiveTransform(live);
     this.updateSelectionRing();
     this.onChange();
@@ -619,8 +737,8 @@ export class BuilderScene {
     const live = this.elements.get(this.selectedId);
     if (!live) return;
     this.checkpoint();
-    live.def.x = clamp(live.def.x + dx, MIN_X, MAX_X);
-    live.def.z = clamp(live.def.z + dz, MIN_Z, MAX_Z);
+    live.def.x += dx;
+    live.def.z += dz;
     this.applyLiveTransform(live);
     this.updateSelectionRing();
     this.onChange();
@@ -656,16 +774,13 @@ export class BuilderScene {
   }
 
   exportFullManifest(): string {
-    return buildFullManifestExport(this.zoneId, this.groundFile, this.backdropFile, this.lighting, this.snapshotElements(), {
-      z: this.backdropZ,
-      height: this.backdropHeight,
-    });
+    return buildFullManifestExport(this.zoneId, this.groundFile, this.backdropFile, this.lighting, this.snapshotElements(), this.backdropLayout);
   }
 
   importManifest(raw: string): boolean {
-    const { manifest, backdropExperimental } = parseManifestFile(raw);
+    const { manifest } = parseManifestFile(raw);
     if (!manifest) return false;
-    this.loadZone(manifest, backdropExperimental);
+    this.loadZone(manifest);
     return true;
   }
 
@@ -682,9 +797,12 @@ export class BuilderScene {
       canUndo: this.history.undo.length > 0,
       canRedo: this.history.redo.length > 0,
       lighting: { ...this.lighting, grade: { ...this.lighting.grade } },
-      backdropZ: this.backdropZ,
-      backdropHeight: this.backdropHeight,
+      backdrop: { ...this.backdropLayout },
       showOverlay: this.showOverlay,
+      showGameFrame: this.showGameFrame,
+      camDist: this.camDist,
+      camPitchDeg: this.camPitchDeg,
+      camIsGame: Math.abs(this.camDist - GAME_CAM_DIST) < 0.01 && Math.abs(this.camPitchDeg - GAME_CAM_PITCH_DEG) < 0.01,
       zoneId: this.zoneId,
       ground: this.groundFile,
       backdropFile: this.backdropFile,
@@ -699,10 +817,13 @@ export class BuilderScene {
     const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     const ndcY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     this.raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
+    // Raycast gegen die UNENDLICHE Bodenebene (`this.groundPlane`, THREE.Plane auf y=0) — bewusst
+    // NICHT gegen das sichtbare Boden-Mesh: Platzieren/Ziehen funktioniert auch weit jenseits der
+    // Bodenfläche (Chef-Feedback 05.08. "keine Limitierungen"). Ergebnis ungeklemmt.
     const point = new THREE.Vector3();
     const hit = this.raycaster.ray.intersectPlane(this.groundPlane, point);
     if (!hit) return null;
-    return { x: clamp(point.x, MIN_X, MAX_X), z: clamp(point.z, MIN_Z, MAX_Z) };
+    return { x: point.x, z: point.z };
   }
 
   private raycastElementIdAt(e: { clientX: number; clientY: number }): number | null {
@@ -769,7 +890,20 @@ export class BuilderScene {
     this.dragging = null;
   };
 
+  /** Mausrad-Doppelbelegung (Chef-Auftrag 05.08. Punkt 1, im Hotkey-Overlay dokumentiert):
+   *  - MIT Strg/Cmd: IMMER Kamera-Dolly (auch bei aktiver Selektion/Platzierung).
+   *  - OHNE Modifier: Kamera-Dolly nur, wenn nichts selektiert/im Platzieren ist — sonst behält
+   *    das Rad seine bisherige Bedeutung (selektiertes Element skalieren). */
   private handleWheel = (e: WheelEvent): void => {
+    const wantDolly = e.ctrlKey || e.metaKey || (!this.placing && this.selectedId == null);
+    if (wantDolly) {
+      e.preventDefault();
+      const factor = e.deltaY > 0 ? 1.1 : 1 / 1.1;
+      this.camDist = clamp(this.camDist * factor, TOOL_CAM_MIN_DIST, TOOL_CAM_MAX_DIST);
+      this.applyToolCamera();
+      this.onChange();
+      return;
+    }
     if (this.placing || this.selectedId == null) return;
     const live = this.elements.get(this.selectedId);
     if (!live) return;
@@ -778,7 +912,7 @@ export class BuilderScene {
     if (now - this.lastWheelAt > 500) this.checkpoint();
     this.lastWheelAt = now;
     const factor = e.deltaY < 0 ? 1.08 : 1 / 1.08;
-    live.def.scale = clamp(live.def.scale * factor, MIN_SCALE, MAX_SCALE);
+    live.def.scale = Math.max(SCALE_FLOOR, live.def.scale * factor);
     this.applyLiveTransform(live);
     this.updateSelectionRing();
     this.onChange();

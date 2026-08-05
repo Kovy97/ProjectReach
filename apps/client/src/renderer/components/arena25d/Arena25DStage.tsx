@@ -39,9 +39,9 @@ import {
 import {
   BACKDROP_CURVE_RADIUS,
   BACKDROP_CURVE_SEGMENTS,
-  BACKDROP_HEIGHT,
   BACKDROP_Z,
   buildGradeFilter,
+  resolveBackdropLayout,
   CAMERA_FOV,
   CAMERA_LOOKAT_Y,
   CAMERA_LOOKAT_Z,
@@ -1437,12 +1437,17 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
       backdropTex.wrapS = THREE.ClampToEdgeWrapping;
       backdropTex.wrapT = THREE.ClampToEdgeWrapping;
       const croppedAspect = w / cropH;
-      const bgWidth = BACKDROP_HEIGHT * croppedAspect;
+      // Chef-Auftrag 05.08.: optionale Kulissen-Platzierung pro Zone aus dem Manifest
+      // (`backdropLayout`-Block) — Zonen OHNE den Block bekommen über `resolveBackdropLayout`
+      // exakt die bisherigen Konstanten (BACKDROP_Z/BACKDROP_HEIGHT, widthScale 1, yOffset 0),
+      // d.h. byte-identisches Verhalten zu vorher. Einzige Lesestelle im Kampf-Renderer.
+      const bdLayout = resolveBackdropLayout(manifest.backdropLayout);
+      const bgWidth = bdLayout.height * croppedAspect * bdLayout.widthScale;
       // Task #330c Punkt 2: gebogene Kulisse statt flacher Plane (s. `buildCurvedBackdropGeometry`
       // Moduldoc) — dieselbe Textur/derselbe Crop, nur die Geometrie ist jetzt ein Zylinder-
       // Ausschnitt. `side: THREE.DoubleSide` als billige Absicherung gegen Normalen-/Winding-
       // Überraschungen (eine einzelne Kulissen-Mesh, Kosten vernachlässigbar).
-      const bgGeo = buildCurvedBackdropGeometry(bgWidth, BACKDROP_HEIGHT, BACKDROP_CURVE_RADIUS, BACKDROP_CURVE_SEGMENTS);
+      const bgGeo = buildCurvedBackdropGeometry(bgWidth, bdLayout.height, BACKDROP_CURVE_RADIUS, BACKDROP_CURVE_SEGMENTS);
       // Task #330c: UNLIT (MeshBasicMaterial) statt MeshStandardMaterial — die Kulisse ist eine
       // fertig gemalte "Himmel+Hügel"-Fläche (wie eine Skybox), kein physisches Objekt. Mit einem
       // lichtempfindlichen Material reagierte die gekrümmte Fläche (variierende Normalen über die
@@ -1462,8 +1467,8 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
       // sitzt (der Fog würde sie sonst zusätzlich zur eigenen Fade-Kante nochmal grau verwaschen —
       // der Canvas-Fade übernimmt die Tiefenwirkung hier gezielter). Die Geometrie selbst ist
       // bereits in Lokalkoordinaten um die Mitte (θ=0) zentriert (s. Builder), `position` platziert
-      // nur noch die Mitte an BACKDROP_Z, exakt wie zuvor bei der Flachwand.
-      bg.position.set(0, BACKDROP_HEIGHT / 2, BACKDROP_Z);
+      // nur noch die Mitte an der (ggf. per Manifest überschriebenen) Kulissen-Tiefe/-Höhenlage.
+      bg.position.set(0, bdLayout.height / 2 + bdLayout.yOffset, bdLayout.z);
       scene.add(bg);
       bgMesh = bg;
       // Task #330d Punkt 1: falls der erste `resize()`-Aufruf VOR dem asynchronen Textur-Load lief

@@ -4,8 +4,9 @@
  * unabhängig testbar/lesbar bleibt — dieselbe Modul-Aufteilungs-Idee wie `choreography.ts` ggü.
  * `Arena25DStage.tsx` (s. dortiges Modul-JSDoc).
  */
-import type { ZoneManifest, ZoneManifestProp } from "../manifest";
+import type { ZoneManifest, ZoneManifestBackdropLayout, ZoneManifestProp } from "../manifest";
 import { validateZoneManifest } from "../manifest";
+import { BACKDROP_HEIGHT, BACKDROP_Z, type ResolvedBackdropLayout } from "../sceneEnvironment";
 
 /** Ein platziertes Prop im Builder — `ZoneManifestProp` PLUS eine synthetische, nur im Builder
  *  gültige `id` (React-Key/Selektions-Handle, landet NIE im exportierten Manifest, s. `stripIds`). */
@@ -58,69 +59,70 @@ export function exportPropsBlockJson(elements: BuilderElement[]): string {
   return JSON.stringify(elements.map((e) => propToExportJson(e.def)), null, 2);
 }
 
-/** Das VOLLE Zonen-Manifest (inkl. evtl. live editierter Licht-Werte) — für den Download-Button.
- *  `BACKDROP_Z`/`BACKDROP_HEIGHT` sind laut Auftrag "experimentell, Export vermerkt sie als
- *  Kommentar" — echtes JSON kennt keine Kommentare, daher als zusätzliches `"_backdropExperimental"`-
- *  Feld (führender Unterstrich signalisiert "kein Schema-Feld, informell") statt eines echten
- *  Schema-Eintrags; `validateZoneManifest` ignoriert unbekannte Top-Level-Felder ohnehin nicht
- *  (strikt!) — deshalb wird dieses Feld vor dem Re-Import wieder abgetrennt, s. `parseManifestFile`. */
+/** Kulissen-Platzierung → Export-Block. Seit dem Chef-Auftrag 05.08. ein ECHTES Schema-Feld
+ *  (`backdropLayout`, s. manifest.ts — löst das frühere informelle `_backdropExperimental`-
+ *  Kommentarfeld ab). Analog zu `propToExportJson`s rotDeg/flat-Regel werden nur Felder
+ *  geschrieben, die vom Default (Code-Konstanten) abweichen — steht ALLES auf Default, entfällt
+ *  der Block komplett (die 3 Bestands-Manifeste ohne Block bleiben beim Roundtrip blockfrei,
+ *  kein Diff-Rauschen). */
+export function backdropLayoutToExportJson(layout: ResolvedBackdropLayout): ZoneManifestBackdropLayout | null {
+  const out: ZoneManifestBackdropLayout = {};
+  if (round3(layout.z) !== round3(BACKDROP_Z)) out.z = round3(layout.z);
+  if (round3(layout.height) !== round3(BACKDROP_HEIGHT)) out.height = round3(layout.height);
+  if (round3(layout.widthScale) !== 1) out.widthScale = round3(layout.widthScale);
+  if (round3(layout.yOffset) !== 0) out.yOffset = round3(layout.yOffset);
+  return Object.keys(out).length > 0 ? out : null;
+}
+
+/** Das VOLLE Zonen-Manifest (inkl. evtl. live editierter Licht-/Kulissen-Werte) — für den
+ *  Download-Button. Feldreihenfolge = Schema-Reihenfolge der Bestands-Manifeste, `backdropLayout`
+ *  direkt nach `backdrop` (Datei ↔ Platzierung nebeneinander lesbar). */
 export function buildFullManifestExport(
   zoneId: string,
   ground: string,
   backdrop: string,
   lighting: ZoneManifest["lighting"],
   elements: BuilderElement[],
-  backdropExperimental?: { z: number; height: number },
+  backdropLayout?: ResolvedBackdropLayout,
 ): string {
-  const manifest: Record<string, unknown> = {
-    zoneId,
-    ground,
-    backdrop,
-    lighting,
-    props: elements.map((e) => propToExportJson(e.def)),
-  };
-  if (backdropExperimental) {
-    manifest._backdropExperimental = {
-      note: "Scene-Builder-Live-Regler, KEIN Schema-Feld — Chef-Entscheid nötig, ob BACKDROP_Z/HEIGHT ins Manifest aufgenommen werden (s. sceneEnvironment.ts).",
-      z: round3(backdropExperimental.z),
-      height: round3(backdropExperimental.height),
-    };
-  }
+  const manifest: Record<string, unknown> = { zoneId, ground, backdrop };
+  const layoutBlock = backdropLayout ? backdropLayoutToExportJson(backdropLayout) : null;
+  if (layoutBlock) manifest.backdropLayout = layoutBlock;
+  manifest.lighting = lighting;
+  manifest.props = elements.map((e) => propToExportJson(e.def));
   return JSON.stringify(manifest, null, 2);
 }
 
-export interface ImportResult {
-  manifest: ZoneManifest | null;
-  backdropExperimental: { z: number; height: number } | null;
-}
-
-/** Re-Import-Pfad (Roundtrip-Beweis, Chef-Auftrag Punkt 7): parst rohen JSON-Text, trennt das
- *  informelle `_backdropExperimental`-Feld ab (s.o.) und validiert den Rest STRIKT gegen dasselbe
- *  `validateZoneManifest`, das auch die Auto-Discovery-Registry beim Zonen-Laden benutzt — ein
- *  Export, der hier durchfällt, würde auch als `<zoneId>.json` im echten Ordner NICHT geladen, der
- *  Builder ist also seine eigene Schema-Kontrollinstanz. Gibt bei Fehlern `manifest: null` zurück
- *  (Fehlerdetails landen wie gewohnt in der Konsole, s. `validateZoneManifest`). */
-export function parseManifestFile(raw: string): ImportResult {
+/** Re-Import-Pfad (Roundtrip-Beweis, Chef-Auftrag Punkt 7): parst rohen JSON-Text und validiert
+ *  STRIKT gegen dasselbe `validateZoneManifest`, das auch die Auto-Discovery-Registry beim
+ *  Zonen-Laden benutzt — ein Export, der hier durchfällt, würde auch als `<zoneId>.json` im echten
+ *  Ordner NICHT geladen, der Builder ist also seine eigene Schema-Kontrollinstanz. Gibt bei Fehlern
+ *  `manifest: null` zurück (Fehlerdetails in der Konsole, s. `validateZoneManifest`).
+ *
+ *  Legacy-Brücke: VOR dem Schema-Feld `backdropLayout` (05.08.) exportierte der Builder die
+ *  Kulissen-Regler als informelles `_backdropExperimental`-Feld — alte Chef-Downloads sollen
+ *  weiterhin importierbar bleiben, daher wird es hier (nur falls noch KEIN `backdropLayout`
+ *  vorhanden ist) in den echten Block übersetzt und dann abgetrennt. */
+export function parseManifestFile(raw: string): { manifest: ZoneManifest | null } {
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error("[scene-builder] Import: kein gültiges JSON.", err);
-    return { manifest: null, backdropExperimental: null };
+    return { manifest: null };
   }
-  let backdropExperimental: { z: number; height: number } | null = null;
   if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
     const obj = parsed as Record<string, unknown>;
     const be = obj._backdropExperimental;
-    if (be && typeof be === "object") {
+    if (obj.backdropLayout === undefined && be && typeof be === "object" && !Array.isArray(be)) {
       const b = be as Record<string, unknown>;
-      if (typeof b.z === "number" && typeof b.height === "number") backdropExperimental = { z: b.z, height: b.height };
+      if (typeof b.z === "number" && typeof b.height === "number") obj.backdropLayout = { z: b.z, height: b.height };
     }
     delete obj._backdropExperimental;
   }
   const manifest = validateZoneManifest(parsed, "scene-builder-import");
-  return { manifest, backdropExperimental };
+  return { manifest };
 }
 
 export function elementsFromManifest(manifest: ZoneManifest): BuilderElement[] {

@@ -289,6 +289,12 @@ Mount-Switch in `CombatPage.tsx` bekam nur eine zusätzliche `zoneId`-Prop):
   zoneId: string,               // muss exakt dem Dateinamen entsprechen
   ground: string,                // Dateiname unter assets/arena/, Schema arena_<zoneId>_ground.webp
   backdrop: string,               // Dateiname, Schema arena_<zoneId>_backdrop.webp
+  backdropLayout?: {              // optional (Chef-Auftrag 05.08.): Kulissen-Platzierung pro Zone —
+    z?: number,                   //   Welt-Z der Kulissen-Mitte (Default BACKDROP_Z ≈ -3.5)
+    height?: number,              //   Wandhöhe > 0 (Default BACKDROP_HEIGHT 12.2)
+    widthScale?: number,          //   Breiten-Multiplikator > 0 auf Höhe×Bild-Aspect (Default 1)
+    yOffset?: number,             //   vertikaler Offset auf die Standard-Höhenlage (Default 0)
+  },                              //   fehlt der Block ⇒ exakt die Code-Konstanten (sceneEnvironment.ts)
   lighting: {
     sunColor: string,            // CSS-Hex
     sunIntensity: number,

@@ -2,7 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getZoneManifest, listZoneManifestIds, type PropPlaceholderKind } from "../manifest";
 import { resolveArenaAssetUrl } from "../assets";
 import { ARENA_ASSET_PALETTE, filterPalette, PLACEHOLDER_PALETTE } from "./assetPalette";
-import { BuilderScene, type BuilderSnapshot } from "./BuilderScene";
+import {
+  BuilderScene,
+  TOOL_CAM_MAX_DIST,
+  TOOL_CAM_MAX_PITCH_DEG,
+  TOOL_CAM_MIN_DIST,
+  TOOL_CAM_MIN_PITCH_DEG,
+  type BuilderSnapshot,
+} from "./BuilderScene";
 import { injectSceneBuilderStyles } from "./styles";
 
 injectSceneBuilderStyles();
@@ -186,6 +193,10 @@ export function SceneBuilderApp({ initialZoneId }: { initialZoneId: string }): J
           <input type="checkbox" checked={snap?.showOverlay ?? true} onChange={(e) => scene?.toggleOverlay(e.target.checked)} />
           Referenz-Overlay
         </label>
+        <label className="sb-toggle" title="Rahmen der echten Spiel-Kamera (1920×1080-Referenz) — zeigt beim Herauszoomen, was im Kampf im Bild landet.">
+          <input type="checkbox" checked={snap?.showGameFrame ?? true} onChange={(e) => scene?.toggleGameFrame(e.target.checked)} />
+          Spiel-Ausschnitt
+        </label>
         <div className="sb-toolbar-spacer" />
         <button className="sb-btn" onClick={handleCopyProps}>
           📋 Manifest kopieren (props)
@@ -244,8 +255,9 @@ export function SceneBuilderApp({ initialZoneId }: { initialZoneId: string }): J
               </>
             ) : (
               <>
-                Klick = auswählen/ziehen · Mausrad = skalieren · <b>Q/E</b> = rotieren · <b>F</b> = flach · <b>M</b> = spiegeln ·{" "}
-                <b>Pfeiltasten</b> = verschieben (+Shift größer) · <b>Entf</b> = löschen · <b>Strg+D</b> = duplizieren · <b>Strg+Z/Y</b> = Undo/Redo
+                Klick = auswählen/ziehen · Mausrad = skalieren (Auswahl) / Kamera-Dolly (ohne Auswahl) · <b>Strg+Mausrad</b> = immer Kamera-Dolly ·{" "}
+                <b>Q/E</b> = rotieren · <b>F</b> = flach · <b>M</b> = spiegeln · <b>Pfeiltasten</b> = verschieben (+Shift größer) · <b>Entf</b> = löschen ·{" "}
+                <b>Strg+D</b> = duplizieren · <b>Strg+Z/Y</b> = Undo/Redo
               </>
             )}
           </div>
@@ -291,6 +303,7 @@ export function SceneBuilderApp({ initialZoneId }: { initialZoneId: string }): J
             </div>
           </div>
 
+          {snap && <CameraPanel snap={snap} scene={scene} />}
           {snap && <LightingPanel snap={snap} scene={scene} />}
           {snap && <BackdropPanel snap={snap} scene={scene} />}
 
@@ -309,9 +322,12 @@ function SelectedElementPanel({ def, scene }: { def: import("../manifest").ZoneM
         {def.file}
         {!resolvedUrl && <div style={{ color: "var(--danger)" }}>⚠ Datei noch nicht unter assets/arena/ — Platzhalter aktiv.</div>}
       </div>
-      <NumberRow label="X" value={def.x} min={-9.5} max={9.5} step={0.05} onEdit={(v) => scene?.patchSelectedLive({ x: v })} onBegin={() => scene?.beginElementEdit()} />
-      <NumberRow label="Z" value={def.z} min={1.2} max={11.5} step={0.05} onEdit={(v) => scene?.patchSelectedLive({ z: v })} onBegin={() => scene?.beginElementEdit()} />
-      <NumberRow label="Skalierung" value={def.scale} min={0.15} max={6} step={0.05} onEdit={(v) => scene?.patchSelectedLive({ scale: v })} onBegin={() => scene?.beginElementEdit()} />
+      {/* Chef-Feedback 05.08. "keine Limitierungen": min/max sind hier NUR noch der Fahrbereich des
+          Sliders (Komfort) — das Zahlenfeld daneben ist unbegrenzt (s. NumberRow, kein min/max am
+          number-Input) und die Engine klemmt nichts mehr (einzig scale > 0, s. BuilderScene). */}
+      <NumberRow label="X" value={def.x} min={-40} max={40} step={0.05} onEdit={(v) => scene?.patchSelectedLive({ x: v })} onBegin={() => scene?.beginElementEdit()} />
+      <NumberRow label="Z" value={def.z} min={-40} max={40} step={0.05} onEdit={(v) => scene?.patchSelectedLive({ z: v })} onBegin={() => scene?.beginElementEdit()} />
+      <NumberRow label="Skalierung" value={def.scale} min={0.01} max={20} step={0.05} onEdit={(v) => scene?.patchSelectedLive({ scale: v })} onBegin={() => scene?.beginElementEdit()} />
       <NumberRow
         label="Neigung °"
         value={def.rotDeg ?? 0}
@@ -435,29 +451,50 @@ function LightingPanel({ snap, scene }: { snap: BuilderSnapshot; scene: BuilderS
   );
 }
 
-function BackdropPanel({ snap, scene }: { snap: BuilderSnapshot; scene: BuilderScene | null }): JSX.Element {
+function CameraPanel({ snap, scene }: { snap: BuilderSnapshot; scene: BuilderScene | null }): JSX.Element {
   return (
     <div className="sb-panel">
-      <h2>Kulisse (experimentell)</h2>
+      <h2>Kamera (Werkzeug)</h2>
       <div className="sb-empty" style={{ marginBottom: 6 }}>
-        BACKDROP_Z/HEIGHT sind heute Code-Konstanten (sceneEnvironment.ts), kein Manifest-Feld — Export vermerkt Anpassungen nur als Kommentarfeld, Aufnahme ins Schema entscheidet der Chef.
+        Nur Builder-Ansicht, wird nie exportiert — der "Spiel-Ausschnitt"-Rahmen zeigt das echte Kampf-Bild.
       </div>
       <SliderRow
-        label="Abstand (Z)"
-        value={snap.backdropZ}
-        min={-8}
-        max={4}
-        step={0.1}
-        onChange={(v) => scene?.setBackdropParams(v, snap.backdropHeight)}
+        label="Distanz (Dolly)"
+        value={snap.camDist}
+        min={TOOL_CAM_MIN_DIST}
+        max={TOOL_CAM_MAX_DIST}
+        step={0.5}
+        onChange={(v) => scene?.setToolCamera({ dist: v })}
       />
       <SliderRow
-        label="Höhe"
-        value={snap.backdropHeight}
-        min={4}
-        max={24}
-        step={0.1}
-        onChange={(v) => scene?.setBackdropParams(snap.backdropZ, v)}
+        label="Höhe/Pitch °"
+        value={snap.camPitchDeg}
+        min={TOOL_CAM_MIN_PITCH_DEG}
+        max={TOOL_CAM_MAX_PITCH_DEG}
+        step={1}
+        onChange={(v) => scene?.setToolCamera({ pitchDeg: v })}
       />
+      <div className="sb-row-btns">
+        <button className="sb-btn" disabled={snap.camIsGame} onClick={() => scene?.resetToolCamera()} title="Zurück auf die exakte Kampf-Perspektive (30°)">
+          ⟲ Spiel-Kamera
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function BackdropPanel({ snap, scene }: { snap: BuilderSnapshot; scene: BuilderScene | null }): JSX.Element {
+  const b = snap.backdrop;
+  return (
+    <div className="sb-panel">
+      <h2>Kulisse</h2>
+      <div className="sb-empty" style={{ marginBottom: 6 }}>
+        Manifest-Feld "backdropLayout" — wandert in Export/Import; ohne Abweichung vom Standard wird kein Block geschrieben.
+      </div>
+      <SliderRow label="Abstand (Z)" value={b.z} min={-40} max={8} step={0.1} onChange={(v) => scene?.setBackdropLayout({ z: v })} />
+      <SliderRow label="Höhe" value={b.height} min={1} max={40} step={0.1} onChange={(v) => scene?.setBackdropLayout({ height: v })} />
+      <SliderRow label="Breite ×" value={b.widthScale} min={0.2} max={4} step={0.05} onChange={(v) => scene?.setBackdropLayout({ widthScale: v })} />
+      <SliderRow label="Höhen-Offset" value={b.yOffset} min={-10} max={10} step={0.1} onChange={(v) => scene?.setBackdropLayout({ yOffset: v })} />
     </div>
   );
 }

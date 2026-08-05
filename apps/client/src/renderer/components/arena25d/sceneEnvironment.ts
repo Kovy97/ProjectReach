@@ -16,7 +16,7 @@
  * ihrer Standplätze, s. `PLAYER_X`/`MONSTER_X`/`PLAYER_Z`/`MONSTER_Z` unten).
  */
 import * as THREE from "three";
-import type { PropPlaceholderKind, ZoneManifestLighting, ZoneManifestProp } from "./manifest";
+import type { PropPlaceholderKind, ZoneManifestBackdropLayout, ZoneManifestLighting, ZoneManifestProp } from "./manifest";
 import { makePlaceholderPropTexture, resolveArenaAssetUrl } from "./assets";
 
 // ── Renderer/Kamera (Task #330c Punkt 1, #330d Punkt 1) ─────────────────────────────────────────
@@ -47,6 +47,32 @@ export const BACKDROP_HEIGHT = 12.2;
 export const BACKDROP_Z = FLOOR_CENTER_Z - GROUND_WORLD_DEPTH - 0.4;
 export const BACKDROP_CURVE_RADIUS = 28;
 export const BACKDROP_CURVE_SEGMENTS = 28;
+
+/** Vollständig aufgelöste Kulissen-Platzierung — jedes Feld garantiert gesetzt (anders als das
+ *  optionale Manifest-Gegenstück `ZoneManifestBackdropLayout`, s. manifest.ts). */
+export interface ResolvedBackdropLayout {
+  z: number;
+  height: number;
+  widthScale: number;
+  yOffset: number;
+}
+
+/**
+ * Chef-Auftrag 05.08. ("mehr Kontrolle über den Backdrop"): löst den optionalen `backdropLayout`-
+ * Manifest-Block gegen die bisherigen Code-Konstanten auf — EINE gemeinsame Stelle für Kampf-
+ * Renderer (`Arena25DStage.tsx`) UND Scene-Builder (`builder/BuilderScene.ts`), damit beide bei
+ * fehlendem/teilweisem Block garantiert auf IDENTISCHE Defaults fallen (kein Drift). Ein Manifest
+ * ohne Block ⇒ exakt die Werte von vor diesem Feature (Pastures-Experiment-Stand 04.08. ist der
+ * Konstanten-Stand und bleibt der Default).
+ */
+export function resolveBackdropLayout(layout: ZoneManifestBackdropLayout | undefined): ResolvedBackdropLayout {
+  return {
+    z: layout?.z ?? BACKDROP_Z,
+    height: layout?.height ?? BACKDROP_HEIGHT,
+    widthScale: layout?.widthScale ?? 1,
+    yOffset: layout?.yOffset ?? 0,
+  };
+}
 
 // ── Kämpfer-Referenzpositionen (Arena25DStage.tsx PLAYER_X/MONSTER_X/PLAYER_Z/MONSTER_Z) — der
 //    Builder zeigt diese nur als optionales Referenz-Overlay (Dummies), rührt sie nie an. ─────────

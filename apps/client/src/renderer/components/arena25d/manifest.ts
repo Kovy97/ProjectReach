@@ -88,6 +88,32 @@ export interface ZoneManifestProp {
   flat?: boolean;
 }
 
+/**
+ * Optionale Kulissen-Platzierung pro Zone (Chef-Auftrag 05.08. "mehr Kontrolle über den Backdrop —
+ * skalieren und verschieben, nach vorne und hinten"). JEDES Feld ist optional — fehlende Felder
+ * fallen auf die bisherigen Code-Konstanten in `sceneEnvironment.ts` zurück (`BACKDROP_Z`/
+ * `BACKDROP_HEIGHT` + Breite aus Höhe×Bild-Aspect, s. `resolveBackdropLayout` dort). Ein Manifest
+ * OHNE diesen Block verhält sich exakt wie vor diesem Feld (die 3 Bestands-Manifeste bleiben
+ * unangetastet). Heißt bewusst `backdropLayout`, NICHT `backdrop` — der Name `backdrop` trägt im
+ * Schema bereits den Kulissen-DATEINAMEN (s. `ZoneManifest.backdrop`).
+ */
+export interface ZoneManifestBackdropLayout {
+  /** Welt-Z der Kulissen-Mitte (kleiner = weiter hinten). Default: `BACKDROP_Z` (≈ -3.5,
+   *  Pastures-Experiment-Stand 04.08., s. sceneEnvironment.ts). */
+  z?: number;
+  /** Höhe der Kulissenwand in Welt-Einheiten, muss > 0 sein. Die Breite folgt automatisch
+   *  (Höhe × gecropptes Bild-Seitenverhältnis, s. `buildCurvedBackdropGeometry`-Aufrufer).
+   *  Default: `BACKDROP_HEIGHT` (12.2). */
+  height?: number;
+  /** Multiplikator auf die aus der Höhe abgeleitete Breite (1 = neutral, >1 = breiter), muss > 0
+   *  sein. Wirkt VOR dem Krümmungs-Aufbau — der Zylinder-Bogen (`buildCurvedBackdropGeometry`)
+   *  passt sich der neuen Breite an, kein nachträgliches Mesh-Stretching. Default: 1. */
+  widthScale?: number;
+  /** Vertikaler Offset in Welt-Einheiten auf die Standard-Höhenlage (Unterkante auf y=0):
+   *  positiv = Kulisse höher, negativ = tiefer/versenkt. Default: 0. */
+  yOffset?: number;
+}
+
 export interface ZoneManifest {
   /** Muss exakt dem Dateinamen (ohne `.json`) entsprechen — Konsistenz-Check in der Registry unten. */
   zoneId: string;
@@ -95,6 +121,8 @@ export interface ZoneManifest {
   ground: string;
   /** Ziel-Dateiname der Kulissentextur unter `assets/arena/` (Mira-Schema `arena_<zoneId>_backdrop.webp`). */
   backdrop: string;
+  /** Optional — s. `ZoneManifestBackdropLayout`. Fehlt der Block, gelten die Code-Konstanten. */
+  backdropLayout?: ZoneManifestBackdropLayout;
   lighting: ZoneManifestLighting;
   props: ZoneManifestProp[];
 }
@@ -125,6 +153,37 @@ export function validateZoneManifest(raw: unknown, context: string): ZoneManifes
   if (!isNonEmptyString(m.zoneId)) problems.push("zoneId fehlt oder ist kein nicht-leerer String");
   if (!isNonEmptyString(m.ground)) problems.push("ground fehlt oder ist kein nicht-leerer String");
   if (!isNonEmptyString(m.backdrop)) problems.push("backdrop fehlt oder ist kein nicht-leerer String");
+
+  // Kulissen-Platzierung (optional, Chef-Auftrag 05.08.) — WICHTIG: Werte werden 1:1 durchgereicht,
+  // NIE geklemmt (Roundtrip-Pflicht: Export→Import muss wertgleich bleiben; Historie-Warnung: der
+  // Validator hat rotDeg/flat schon einmal still verschluckt — deshalb hier von Anfang an sowohl
+  // Typprüfung ALS AUCH vollständige Objekt-Konstruktion, s. Zuweisung im Rückgabeblock unten).
+  let backdropLayout: ZoneManifestBackdropLayout | undefined;
+  if (m.backdropLayout !== undefined) {
+    if (typeof m.backdropLayout !== "object" || m.backdropLayout === null || Array.isArray(m.backdropLayout)) {
+      problems.push("backdropLayout (falls gesetzt, muss es ein Objekt sein)");
+    } else {
+      const b = m.backdropLayout as Record<string, unknown>;
+      const bp: string[] = [];
+      if (b.z !== undefined && !isFiniteNumber(b.z)) bp.push("backdropLayout.z (falls gesetzt, muss es eine Zahl sein)");
+      if (b.height !== undefined && (!isFiniteNumber(b.height) || (b.height as number) <= 0)) {
+        bp.push("backdropLayout.height (falls gesetzt, muss es eine Zahl > 0 sein)");
+      }
+      if (b.widthScale !== undefined && (!isFiniteNumber(b.widthScale) || (b.widthScale as number) <= 0)) {
+        bp.push("backdropLayout.widthScale (falls gesetzt, muss es eine Zahl > 0 sein)");
+      }
+      if (b.yOffset !== undefined && !isFiniteNumber(b.yOffset)) bp.push("backdropLayout.yOffset (falls gesetzt, muss es eine Zahl sein)");
+      problems.push(...bp);
+      if (bp.length === 0) {
+        backdropLayout = {
+          z: b.z as number | undefined,
+          height: b.height as number | undefined,
+          widthScale: b.widthScale as number | undefined,
+          yOffset: b.yOffset as number | undefined,
+        };
+      }
+    }
+  }
 
   let lighting: ZoneManifestLighting | null = null;
   if (typeof m.lighting !== "object" || m.lighting === null || Array.isArray(m.lighting)) {
@@ -230,6 +289,7 @@ export function validateZoneManifest(raw: unknown, context: string): ZoneManifes
     zoneId: m.zoneId as string,
     ground: m.ground as string,
     backdrop: m.backdrop as string,
+    backdropLayout,
     lighting: lighting!,
     props,
   };
