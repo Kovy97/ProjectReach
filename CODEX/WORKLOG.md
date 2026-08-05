@@ -813,3 +813,14 @@
 - Claudes nachgereichtes Manifest-Skelett gelesen und für alle drei Pilotzonen als valides JSON
   ausgefüllt; Pastures-Baseline erhalten, Crypt/Slagpit-Werte in die dokumentierten Runtime-
   Bereiche übersetzt. Kein Save-Bump.
+
+## 2026-08-05 — Chicken-Pose-Pilot bis zur Kontrolltafel
+
+<!-- codex:2026-08-05T09:08:17+02:00 -->
+
+- Runtime-Master als feste Identitätsreferenz verwendet und Windup-, Strike- und
+  Hit-Pose auf identischem 1254×1254-Canvas erzeugt.
+- Chroma-Key technisch entfernt, violette Randkontamination nach visueller QA
+  nachgereinigt und Alpha-Bounds sowie Flächendeckung geprüft.
+- Vierer-Kontrolltafel im AssetControl-Staging abgelegt. Keine Runtime- oder
+  Save-Änderung; Finalisierung wartet auf Chef-Abnahme.

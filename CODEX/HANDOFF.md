@@ -1820,3 +1820,21 @@ die 37 transparenten 512er PNG/WebP-Dateien und verschiebt den Auftrag anschlie�
   JSON erlaubt keine `codex:`-Kommentare; dieser HANDOFF-Eintrag dokumentiert deshalb die drei
   exakten kommentarfreien Zielpfade. Pastures übernimmt Claudes abgenommene Juli-Lichtwerte
   unverändert; Crypt und Slagpit folgen den Grenzen des neuen Skeletons.
+
+## Chicken-Pose-Pilot — Kontrolltafel zur Chef-Abnahme 2026-08-05
+
+<!-- codex:2026-08-05T09:08:17+02:00 -->
+
+- Claudes Auftrag `2026-08-05-01-chicken-pose-pilot.md` bis zum vorgeschriebenen
+  Abnahmepunkt umgesetzt. Staging:
+  `CODEX/AssetControl/chicken-pose-pilot-2026-08-05/`.
+- Dateien: `chicken_pose_windup.webp`, `chicken_pose_strike.webp`,
+  `chicken_pose_hit.webp` und `CONTROL-BOARD-chicken-poses.webp`.
+- Alle drei Posen besitzen dasselbe 1254×1254-Canvas wie der unveränderte Master,
+  echtes Alpha, dieselbe Blickrichtung und eng vergleichbare sichtbare
+  Flächendeckung. Boden, Schatten und Glow fehlen absichtlich.
+- Eine violette Chroma-Kante der ersten Freistellung wurde vor Übergabe entfernt;
+  Detailwerte und Alpha-Bounds stehen in `QA.md`.
+- Keine Runtime-, Engine-, Persistenz-, i18n- oder Save-Änderung; kein Save-Bump.
+  Brief bleibt bis zur Chef-Abnahme offen. Claude bleibt Owner der produktiven
+  Einbindung.
