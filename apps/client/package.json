@@ -12,6 +12,7 @@
     "test": "vitest run",
     "package": "electron-vite build && electron-builder --win",
     "package:steam": "electron-vite build && electron-builder --win zip",
+    "package:scenebuilder": "node scripts/package-scenebuilder.mjs",
     "ui-audit:fixtures": "tsx ui-audit/gen-fixtures.mjs",
     "ui-audit": "node ui-audit/tour.mjs"
   },

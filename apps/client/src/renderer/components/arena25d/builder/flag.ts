@@ -22,10 +22,18 @@
  * Scene-Builder ist bereits über den expliziten URL-Parameter selbst "opt-in genug", ein Kampf
  * kann nie versehentlich hineinrutschen (anders als der In-Kampf-Hotkey-Toggle für die
  * Kampf-Arena-Vorschau).
+ *
+ * DRITTES GATE (Chef-Auftrag 2026-08-05, Standalone-EXE — s. README.md "Standalone-EXE"):
+ * `__SCENE_BUILDER_BUILD__` ist eine Vite-`define`-Konstante (electron.vite.config.ts), `true` NUR
+ * im dedizierten `SCENE_BUILDER_BUILD=1`-Build (Skript `package:scenebuilder`, Ausgabe-Root
+ * `out-scenebuilder/`, NIE `out/`). Im normalen Spieler-Build ist sie literal `false` —
+ * `false || false` wird von esbuild/Rollup exakt wie bisher konstant gefaltet, der
+ * Tree-Shaking-Vertrag (Builder = 0 Byte im Spieler-Bundle) bleibt unverändert bestehen
+ * (empirisch per Bundle-Grep verifiziert, s. README.md).
  */
 
-/** True NUR in Dev-Builds — s. Modul-JSDoc. */
-export const SCENE_BUILDER_SUPPORTED: boolean = import.meta.env.DEV;
+/** True in Dev-Builds ODER im dedizierten Scene-Builder-Standalone-Build — s. Modul-JSDoc. */
+export const SCENE_BUILDER_SUPPORTED: boolean = import.meta.env.DEV || __SCENE_BUILDER_BUILD__;
 
 /**
  * Liest `?sceneBuilder=<zoneId>` aus der URL (leerer Wert ⇒ `"pastures"`-Fallback), OHNE selbst

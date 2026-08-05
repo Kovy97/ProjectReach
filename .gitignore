@@ -13,6 +13,11 @@ apps/client/dist/
 apps/client/release/
 apps/client/src/renderer/out-verify/
 
+# Scene-Builder-Standalone-EXE (separates Build-Ziel, s. apps/client/scripts/package-scenebuilder.mjs)
+apps/client/out-scenebuilder/
+apps/client/release-scenebuilder/
+/SceneBuilder.exe
+
 # Testlauf-Ausgaben (Screenshots/Videos/Rohdaten der Bot-Sweeps — werden immer frisch erzeugt)
 apps/client/ui-audit/bot-runs/
 apps/client/ui-audit/_shots-*/

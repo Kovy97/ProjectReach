@@ -3,6 +3,12 @@
 /** Injected by Vite define at build time from apps/client/package.json → version. */
 declare const __APP_VERSION__: string;
 
+/** Scene-Builder-Standalone-Build (drittes Gate, s. renderer/components/arena25d/builder/flag.ts):
+ *  per Vite-`define` in electron.vite.config.ts injiziert — `true` NUR, wenn der Build mit
+ *  `SCENE_BUILDER_BUILD=1` läuft (Skript `package:scenebuilder`), sonst literal `false` (wird im
+ *  Spieler-Build konstant gefaltet, Tree-Shaking-Vertrag bleibt intakt). Gilt für Main UND Renderer. */
+declare const __SCENE_BUILDER_BUILD__: boolean;
+
 /** electron-vite: `import x from "./y.png?asset"` liefert den aufgelösten Datei-Pfad als String. */
 declare module "*?asset" {
   const src: string;

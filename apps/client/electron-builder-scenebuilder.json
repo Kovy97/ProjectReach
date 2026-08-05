@@ -1,0 +1,29 @@
+{
+  "appId": "com.hearthforge.scenebuilder",
+  "productName": "Grim Reach Scene Builder",
+  "copyright": "Copyright © 2026 Heartforge Studio",
+  "directories": {
+    "buildResources": "resources",
+    "output": "release-scenebuilder"
+  },
+  "files": [
+    "out-scenebuilder/**",
+    "!out-scenebuilder/**/*.map",
+    "package.json"
+  ],
+  "asar": true,
+  "extraMetadata": {
+    "name": "grimreach-scene-builder",
+    "main": "out-scenebuilder/main/index.js"
+  },
+  "win": {
+    "icon": "resources/icon.ico",
+    "artifactName": "GrimReach-SceneBuilder.exe",
+    "target": [
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ]
+  }
+}

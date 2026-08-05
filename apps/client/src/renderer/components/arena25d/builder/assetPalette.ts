@@ -34,8 +34,11 @@ const ASSET_URLS = import.meta.glob<string>("../../../assets/arena/*.{webp,png}"
 // ob `SceneBuilderApp` je gerendert wird (ES-Module führen Top-Level-Code beim ersten Import aus).
 // Mit dem Gate faltet Vite `import.meta.env.DEV` in Produktions-Builds zur literalen Konstante
 // `false` — der komplette Block wird dadurch nachweislich toter Code (s. Abschlussbericht
-// "Bundle-Grep").
-const KNOWN_ZONE_IDS: Set<string> = import.meta.env.DEV ? new Set(listZoneManifestIds()) : new Set();
+// "Bundle-Grep"). `|| __SCENE_BUILDER_BUILD__` (Standalone-EXE, 2026-08-05): im dedizierten
+// Scene-Builder-Build (DEV=false!) muss die Palette gefüllt sein; im Spieler-Build faltet
+// `false || false` exakt wie bisher (s. ../README.md "Standalone-EXE").
+const KNOWN_ZONE_IDS: Set<string> =
+  import.meta.env.DEV || __SCENE_BUILDER_BUILD__ ? new Set(listZoneManifestIds()) : new Set();
 
 function deriveZoneHint(file: string): string | null {
   // Schema "arena_<zoneId>_..." — probiert absteigend längere Präfixe, weil einige Zone-IDs selbst
@@ -58,8 +61,9 @@ function toLabel(file: string): string {
 /** Sortiert, EINMAL beim Modul-Import gebaut (das Glob-Ergebnis ist ohnehin statisch/build-zeitlich
  *  fest, s. `eager:true`) — die Palette-UI liest diese Liste read-only. Gegated wie `KNOWN_ZONE_IDS`
  *  oben (s. dortiger Kommentar) — leeres Array außerhalb von Dev-Builds. */
-export const ARENA_ASSET_PALETTE: PaletteEntry[] = import.meta.env.DEV
-  ? Object.entries(ASSET_URLS)
+export const ARENA_ASSET_PALETTE: PaletteEntry[] =
+  import.meta.env.DEV || __SCENE_BUILDER_BUILD__
+    ? Object.entries(ASSET_URLS)
       .map(([path, url]) => {
         const file = path.split("/").pop() ?? path;
         return { file, url, label: toLabel(file), zoneHint: deriveZoneHint(file) };
@@ -84,6 +88,7 @@ export function filterPalette(entries: PaletteEntry[], search: string, zoneFilte
  *  — bleiben IMMER in der Palette verfügbar, auch wenn/bevor eine Zone eigene Mira-Dateien hat, damit
  *  der Chef nie vor einer leeren Palette steht (0-Treffer ist der Normalfall am Tag 1 einer neuen Zone).
  *  Gegated wie `KNOWN_ZONE_IDS`/`ARENA_ASSET_PALETTE` oben. */
-export const PLACEHOLDER_PALETTE: { kind: PropPlaceholderKind; label: string }[] = import.meta.env.DEV
-  ? PLACEHOLDER_KINDS.map((kind) => ({ kind, label: `Platzhalter: ${kind === "tree" ? "Baum" : kind === "bush" ? "Busch" : "Fels"}` }))
-  : [];
+export const PLACEHOLDER_PALETTE: { kind: PropPlaceholderKind; label: string }[] =
+  import.meta.env.DEV || __SCENE_BUILDER_BUILD__
+    ? PLACEHOLDER_KINDS.map((kind) => ({ kind, label: `Platzhalter: ${kind === "tree" ? "Baum" : kind === "bush" ? "Busch" : "Fels"}` }))
+    : [];

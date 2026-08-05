@@ -258,7 +258,11 @@ const REGISTRY: Record<string, ZoneManifest> = {};
 // flag.ts, direkt statt über einen Re-Export gelesen, um KEINEN Zyklus zu diesem von flag.ts
 // importierten Modul zu erzeugen) — der komplette Block samt der geglobbten JSON-Importe wird
 // dadurch nachweislich toter Code (s. Abschlussbericht "Bundle-Grep" für die Verifikation).
-if (import.meta.env.DEV) {
+// `|| __SCENE_BUILDER_BUILD__` (Standalone-EXE, Chef-Auftrag 2026-08-05): im dedizierten
+// Scene-Builder-Build (Produktions-Build, DEV=false!) muss die Registry ebenfalls gefüllt sein,
+// sonst stünde der Builder vor einem leeren Zonen-Dropdown. Im Spieler-Build ist die Konstante
+// literal `false` — `false || false` faltet exakt wie bisher (s. README.md "Standalone-EXE").
+if (import.meta.env.DEV || __SCENE_BUILDER_BUILD__) {
   for (const [path, data] of Object.entries(RAW_MANIFESTS)) {
     const fileId = path.split("/").pop()?.replace(/\.json$/, "");
     if (!fileId) continue;
@@ -283,7 +287,7 @@ export function getZoneManifest(zoneId: string | null | undefined): ZoneManifest
 /** Scene-Builder-Bedarf (Chef-Auftrag "Arena-Scene-Builder"): alle aktuell registrierten, GÜLTIGEN
  *  Zonen-IDs für das Zonen-Dropdown des Builders — derselbe `REGISTRY`-Lesezugriff wie
  *  `getZoneManifest`, keine zweite Datenquelle/kein doppeltes Einlesen der JSONs. Leer außerhalb von
- *  Dev-Builds (Registry bleibt dann ungefüllt, s. `if (import.meta.env.DEV)`-Gate oben). */
+ *  Dev-/Scene-Builder-Builds (Registry bleibt dann ungefüllt, s. Gate oben). */
 export function listZoneManifestIds(): string[] {
   return Object.keys(REGISTRY).sort();
 }

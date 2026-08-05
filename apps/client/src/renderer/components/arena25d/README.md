@@ -209,6 +209,55 @@ lässt — bewusst NICHT die volle Feature-Parität zur bestehenden 2D-Kampf-FX-
   "pastures" (das einzige bisher gelieferte Manifest), aber keine Code-Änderung mehr nötig, um eine
   weitere Zone freizuschalten — nur eine neue JSON-Datei + Mira-Texturen.
 
+## Standalone-EXE — Scene-Builder als doppelklickbares Chef-Werkzeug (2026-08-05)
+
+Der Arena-Scene-Builder (`builder/`) ist als SEPARATES Build-Ziel des Clients auch außerhalb des
+Dev-Servers baubar — eine portable Windows-EXE, die direkt in den Builder startet
+(`?sceneBuilder=pastures` wird vom Main-Prozess mitgegeben, Zone danach im Dropdown wechselbar).
+
+**Bauen:**
+
+```
+pnpm --filter @hearthforge/client package:scenebuilder
+```
+
+(= `scripts/package-scenebuilder.mjs`: setzt `SCENE_BUILDER_BUILD=1`, baut per `electron-vite build`
+in den separaten Root `out-scenebuilder/` und packt per
+`electron-builder --config electron-builder-scenebuilder.json`.)
+
+**Ausgabepfade:**
+
+- `apps/client/out-scenebuilder/` — Vite-Build (main/preload/renderer) der Builder-Fassung.
+  Bewusst ein EIGENER Root: `out/` enthält NIE eine Builder-aktivierte Fassung, das
+  Spieler-Packaging (`electron-builder.json` liest `out/**`) kann sie nicht einsacken.
+- `apps/client/release-scenebuilder/GrimReach-SceneBuilder.exe` — die portable EXE
+  (+ `win-unpacked/` für Tests).
+- `G:\GameDev\SceneBuilder.exe` — Kopie der EXE im Repo-Root (Chef-Startpunkt per Doppelklick,
+  in `.gitignore`), wird vom Skript nach jedem erfolgreichen Packaging aktualisiert.
+
+**Eigene App-Identität:** appId `com.hearthforge.scenebuilder`, App-Name "Grim Reach Scene
+Builder" ⇒ eigener userData-Pfad, keinerlei Berührung mit den Spiel-Saves unter
+`%APPDATA%\Grim Reach\`. Fenster: immer windowed 1920×1080, kein Save-on-Close-Handshake
+(Fenster-X beendet sofort). F11/F12 funktionieren wie im Spiel.
+
+**Assets sind eingebacken:** Die Palette entsteht zur BUILD-Zeit aus `assets/arena/*.webp`
+(`import.meta.glob`). Neue Arena-Assets (Mira-Lieferungen) tauchen in der EXE erst nach einem
+erneuten `package:scenebuilder`-Lauf auf — für tagesaktuelle Asset-Arbeit bleibt der Dev-Server
+(`?sceneBuilder=<zoneId>`) der schnellere Weg.
+
+**Drittes Gate im Tree-Shaking-Vertrag:** `builder/flag.ts` exportiert seit diesem Auftrag
+`SCENE_BUILDER_SUPPORTED = import.meta.env.DEV || __SCENE_BUILDER_BUILD__`.
+`__SCENE_BUILDER_BUILD__` ist eine Vite-`define`-Konstante (electron.vite.config.ts, Typ in
+`src/vite-env.d.ts`), nur im `SCENE_BUILDER_BUILD=1`-Build `true`. Im normalen Spieler-Build
+(`pnpm build` ohne Env-Var) steht dort literal `false || false` — wird exakt wie bisher konstant
+gefaltet, der komplette Builder-Ordner bleibt nachweislich 0 Byte im Spieler-Bundle (Bundle-Grep
+gegen `out/renderer/assets/*.js` UND `out/main/index.js` nach jedem einschlägigen Umbau
+wiederholen!). Dieselbe `|| __SCENE_BUILDER_BUILD__`-Erweiterung tragen auch die drei weiteren
+DEV-Gates, die der Builder zur Laufzeit braucht: der Registry-Aufbau in `manifest.ts` sowie
+`KNOWN_ZONE_IDS`/`ARENA_ASSET_PALETTE`/`PLACEHOLDER_PALETTE` in `builder/assetPalette.ts` (ohne
+sie stünde die EXE vor leerem Zonen-Dropdown und leerer Palette — im Spieler-Build falten sie
+identisch zu `false`).
+
 ## 0.4.0-Arena, Logik-Welle 1 (Chef-Entscheid 2026-08-03) — Zonen-Manifest-System
 
 Ersetzt die Task-#330-Hartcodierung ("nur Pastures, feste Sonne/Fill-Werte, zwei fest importierte

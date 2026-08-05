@@ -14,7 +14,12 @@ import { registerBugReportHandlers } from "./bugReport";
 // es zu spät → userData landete unter dem package.json-Namen (`@hearthforge/client` → Ordner „client").
 // Auf Modul-Ebene (vor whenReady) ausgeführt bekommt der Speicherordner den sauberen Namen „Grim Reach"
 // (…\AppData\Roaming\Grim Reach\saves\) — der auch mit der Steam-Cloud-Auto-Cloud-Config übereinstimmt.
-app.setName("Grim Reach");
+// Scene-Builder-Standalone-EXE (Chef-Auftrag 2026-08-05, s. renderer/components/arena25d/README.md
+// "Standalone-EXE"): eigener App-Name ⇒ eigener userData-Pfad — die Builder-EXE berührt NIE die
+// Spiel-Saves unter …\Grim Reach\. `__SCENE_BUILDER_BUILD__` ist eine Vite-define-Konstante
+// (electron.vite.config.ts): im Spieler-Build literal `false`, jeder Builder-Zweig hier wird dort
+// zu totem Code gefaltet (per Bundle-Grep gegen out/main/index.js verifiziert).
+app.setName(__SCENE_BUILDER_BUILD__ ? "Grim Reach Scene Builder" : "Grim Reach");
 
 function createWindow(): void {
   // Im Dev liefert electron-vite die URL des Vite-Dev-Servers, im Build die Datei.
@@ -24,7 +29,9 @@ function createWindow(): void {
   // Chef-Auftrag 2026-07-23 (Vollbild-Start als Default): der Fenstermodus MUSS vor der
   // Fenster-Erstellung feststehen — `frame` ist danach nicht mehr änderbar. Default ohne
   // gespeicherte Wahl: "fullscreen" (Prod) bzw. "windowed" im Dev (s. window.ts-Doku).
-  const windowMode: WindowMode = readWindowModeSync(isDev);
+  // Scene-Builder-EXE: IMMER klassisch windowed 1920×1080 (Werkzeug-Fenster, keine gespeicherte
+  // Fullscreen-Präferenz lesen/anwenden).
+  const windowMode: WindowMode = __SCENE_BUILDER_BUILD__ ? "windowed" : readWindowModeSync(isDev);
 
   // Basis-Optionen gelten für ALLE Modi — inkl. der 1920×1080-Renderfläche als Fallback-Größe:
   // in "fullscreen" sind das die Bounds, zu denen man beim Verlassen von Vollbild zurückkehrt
@@ -34,7 +41,7 @@ function createWindow(): void {
     width: 1920,
     height: 1080,
     useContentSize: true,
-    title: "Grim Reach",
+    title: __SCENE_BUILDER_BUILD__ ? "Grim Reach — Scene Builder" : "Grim Reach",
     icon: appIcon, // Fenster-/Taskleisten-Icon (dev + Build) = unser Grim-Reach-Icon
     backgroundColor: "#1a1410",
     autoHideMenuBar: true, // Keine Debug-/Standardmenüleiste oben für den Spieler.
@@ -63,6 +70,16 @@ function createWindow(): void {
     // Dev: DevTools abgedockt offen → per Device-Toolbar lassen sich Auflösungen
     // (z.B. 1920×1080) emulieren. Das 1920×1080-Fenster selbst ist bereits exakt.
     win.webContents.openDevTools({ mode: "detach" });
+  } else if (__SCENE_BUILDER_BUILD__) {
+    // Scene-Builder-EXE: der Mount-Switch in renderer/main.tsx liest `?sceneBuilder=<zoneId>` —
+    // im file://-Build kommt der Parameter über die loadFile-`query`-Option an. Start-Zone
+    // "pastures" ist nur der Einstieg, danach wechselt man im Zonen-Dropdown des Builders.
+    win.loadFile(join(__dirname, "../renderer/index.html"), { query: { sceneBuilder: "pastures" } });
+    // index.html trägt <title>Grim Reach</title> — im Builder den Fenstertitel von oben behalten.
+    // WICHTIG: das preventDefault-fähige Event hängt am BrowserWindow, NICHT an webContents
+    // (per Playwright gegen die echte EXE verifiziert — die webContents-Variante ließ den Titel
+    // trotzdem auf "Grim Reach" umspringen).
+    win.on("page-title-updated", (e) => e.preventDefault());
   } else {
     win.loadFile(join(__dirname, "../renderer/index.html"));
   }
@@ -116,6 +133,13 @@ function createWindow(): void {
   // Fallback-Timer erzwingt das Schließen, falls der Renderer hängt oder nicht antwortet.
   let saveOnCloseRequested = false;
   win.on("close", (e) => {
+    // Scene-Builder-EXE: Abfangen ÜBERSPRINGEN — der Builder-Renderer (SceneBuilderApp, kein
+    // GameContext) beantwortet app:save-then-quit nie, das Abfangen würde jedes Schließen um die
+    // vollen 2 s Fallback-Timeout verzögern. Fenster-X beendet den Builder sofort (Export ist
+    // explizit). Als Guard IM Handler statt als `if (!…)` um die Registrierung: `if (false) return`
+    // faltet Rollup im Spieler-Build restlos weg (byte-identisches out/main/index.js), ein
+    // Block-Wrapper hinterließe eine inerte `{}`-Hülle.
+    if (__SCENE_BUILDER_BUILD__) return;
     if (saveOnCloseRequested) return; // zweiter Durchlauf nach dem Speichern → wirklich schließen
     saveOnCloseRequested = true;
     e.preventDefault();
