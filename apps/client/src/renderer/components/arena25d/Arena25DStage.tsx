@@ -14,6 +14,9 @@ import { injectArena25dStyles } from "./styles";
 // prozedurale Prop-Platzhalter).
 import { getZoneManifest, type ZoneManifest, type ZoneManifestLighting, type ZoneManifestProp } from "./manifest";
 import { resolveArenaAssetUrl, makePlaceholderPropTexture } from "./assets";
+// 0.4.0-Arena, Posen-Pilot (Chef-GO 2026-08-05, design/battle-040-pose-pilot.md): Auto-Discovery der
+// Posen-Sprites (windup/strike/hit) — s. poses.ts Moduldoc für die volle Gating-/Lookup-Begründung.
+import { getPoseSet, type PoseName, type PoseSet } from "./poses";
 // 0.4.0-Arena, Logik-Welle 2 (Chef-Klarstellung 2026-08-03/04, design/battle-040-arena-produktion.md
 // §5 Punkt 2): reine Zeit-/Gewichtsklassen-Tabellen für die Bewegungs-Choreografie im Raum — s.
 // choreography.ts Moduldoc für die volle Begründung der Trennung.
@@ -252,6 +255,14 @@ const MELEE_MIN_SPRINT = 0.4;
  *  Buffs (Haste), die `attackIntervalMs` unter die Gewichtsklassen-Summe drücken könnten.
  */
 const PREDICT_WINDOW_CAP_MS = 650;
+
+// ── Posen-Pilot (design/battle-040-pose-pilot.md "Technik"): feste WALL-CLOCK-Fenster ab dem
+// Kontakt-Event, NICHT an `AttackCycle.phase`/`holdMs`/`returnMs` gekoppelt (die variieren je
+// Gewichtsklasse/Crit) — "ab Kontakt-Event strike für ~200ms (Angreifer) bzw. hit für ~250ms
+// (Verteidiger)" gilt laut Auftrag wörtlich für JEDE Gewichtsklasse gleich. s. `resolveAttackContact`
+// (setzt die Deadlines) + `computeActivePoseKey` (liest sie).
+const POSE_STRIKE_MS = 200;
+const POSE_HIT_MS = 250;
 
 const BAR_ANCHOR_Y_FACTOR = 1.08; // etwas über dem Kopf der Figur
 /**
@@ -512,6 +523,20 @@ function measureSpriteBaseline(img: HTMLImageElement, url: string): SpriteBaseli
   }
 }
 
+// ── 0.4.0-Arena, Posen-Pilot — vorgeladene Posen-Textur ─────────────────────────────────────────────
+/** Eine EINZELNE vorgeladene Posen- (oder Idle-)Textur samt ihrer EIGENEN Baseline/Aspect (Auftrag
+ *  Punkt 3: "pro Pose eigene Alpha-Baseline ... Schatten/Bodenkontakt folgen der aktiven Pose") —
+ *  strukturelles Geschwister dessen, was `applyTexture` bislang inline nur für die Idle-Textur hielt. */
+interface PoseTextureEntry {
+  texture: THREE.Texture;
+  baseline: SpriteBaseline;
+  /** Bildbreite/-höhe — JEDE Pose kann ihr eigenes Seitenverhältnis haben (unterschiedliche Silhouette),
+   *  `baseScaleX` wird bei jedem Posenwechsel frisch aus diesem Wert × `figureHeight` abgeleitet. */
+  aspect: number;
+}
+type PoseKey = "idle" | PoseName;
+const POSE_NAMES: PoseName[] = ["windup", "strike", "hit"];
+
 // ── 0.4.0-Arena, Logik-Welle 2 — Choreografie-Zustandstypen ───────────────────────────────────────
 // Ein Angriffs-Zyklus durchläuft strikt windup → sprint → (Event löst Clash-FX aus, s.
 // `resolveAttackCycle`) → hold → return, ODER windup → stagger → return bei Schock (Auftrag Punkt 7).
@@ -658,6 +683,34 @@ interface Billboard {
   wanderTarget: { x: number; z: number };
   wanderStart: number;
   wanderDuration: number;
+  // ── Posen-Pilot (design/battle-040-pose-pilot.md) — s. `applyTexture`/`preloadPoseSet`/
+  //    `computeActivePoseKey`/`applyActivePose` für die volle Ablauf-Begründung. ─────────────────
+  /** Posen-Set für die AKTUELL geladene Idle-Textur dieses Boards (s. `poses.ts` `getPoseSet`) —
+   *  `null`, solange kein einziges Posen-Bild für diese Identität existiert (Fallback-Gesetz: Board
+   *  bleibt dann exakt beim heutigen Einzel-Sprite-Verhalten, nie ein Teil-Swap). */
+  poseSet: PoseSet | null;
+  /** Vorgeladene Textur+Baseline+Aspect je Pose — wird ERST befüllt, wenn ALLE DREI (windup/strike/
+   *  hit) fertig geladen sind (s. `posesReady`), nie ein Teilzustand. */
+  poseTextures: Partial<Record<PoseName, PoseTextureEntry>>;
+  /** true erst, wenn `poseSet` vollständig UND alle drei Posen-Texturen+Baselines geladen sind —
+   *  bis dahin bleibt das Board strikt bei der Idle-Textur (dasselbe "nie eine ungeladene Textur auf
+   *  ein sichtbares Billboard"-Prinzip wie `textureReady`, nur fürs Posen-Set). */
+  posesReady: boolean;
+  /** Idle-Textur + eigene Baseline/Aspect als EIGENER Slot (nicht nur `material.map`) — erlaubt einen
+   *  harten Rück-Swap zu "idle" jederzeit, ohne die Textur erneut zu laden. */
+  idlePose: PoseTextureEntry | null;
+  /** Zuletzt tatsächlich AUFGETRAGENE Pose (nicht nur berechnete) — `applyActivePose` swapped nur bei
+   *  einer echten Änderung, s. dort. Auch das QA-Anker-Attribut `a25Pose{Player,Monster}` spiegelt
+   *  diesen Wert. */
+  activePoseKey: PoseKey;
+  /** performance.now()-Deadline (0 = inaktiv): bis wann die "strike"-Pose gilt — gesetzt bei JEDEM
+   *  Kontakt-Event für den ANGREIFER (unabhängig von Hit/Miss, "der Angreifer schwingt trotzdem"),
+   *  s. `resolveAttackContact`. Feste Wall-Clock-Dauer (`POSE_STRIKE_MS`), NICHT an die variable
+   *  hold/return-Phasendauer gekoppelt. */
+  strikePoseUntil: number;
+  /** Dieselbe Deadline-Mechanik für die "hit"-Pose des VERTEIDIGERS — NUR beim Ausgang "hit" gesetzt
+   *  (kausal am tatsächlichen Kontakt, exakt wie `knockback`, s. `resolveAttackContact`). */
+  hitPoseUntil: number;
 }
 
 function makeBillboard(baseX: number, baseZ: number, figureHeight: number, isPlayer: boolean): Billboard {
@@ -725,7 +778,98 @@ function makeBillboard(baseX: number, baseZ: number, figureHeight: number, isPla
     wanderTarget: { x: 0, z: 0 },
     wanderStart: 0,
     wanderDuration: 1,
+    poseSet: null,
+    poseTextures: {},
+    posesReady: false,
+    idlePose: null,
+    activePoseKey: "idle",
+    strikePoseUntil: 0,
+    hitPoseUntil: 0,
   };
+}
+
+// ── 0.4.0-Arena, Posen-Pilot — Vorladen + Auswahl + harter Swap ─────────────────────────────────
+/** Lädt alle vorhandenen Posen EINER Identität VOR (Auftrag Punkt 3: "Alle Posen-Texturen beim
+ *  Kampfstart vorladen") — committet `board.poseTextures`/`board.posesReady` ERST, wenn ALLE DREI
+ *  (windup/strike/hit) fertig UND erfolgreich geladen sind (Fallback-Gesetz: "Fehlt eine Pose oder
+ *  das ganze Set ⇒ Fallback auf den Einzel-Sprite" — ein Teilzustand wird NIE aktiv genutzt, s.
+ *  `computeActivePoseKey`s `posesReady`-Gate). Baut das Ergebnis in einer LOKALEN Tabelle und
+ *  committet erst am Ende, UND nur, falls `board.poseSet` inzwischen nicht durch einen weiteren
+ *  Texturwechsel ersetzt wurde (derselbe Race-Schutz-Gedanke wie an jeder anderen
+ *  `TextureLoader`-Callback-Stelle dieses Moduls — hier explizit geprüft, weil ein verspäteter
+ *  Callback sonst `poseTextures` eines inzwischen längst anderen Monsters überschreiben könnte). */
+function preloadPoseSet(board: Billboard, poseSet: PoseSet): void {
+  const entries: Partial<Record<PoseName, PoseTextureEntry>> = {};
+  let pending = POSE_NAMES.length;
+  let failed = false;
+  const settle = (): void => {
+    pending -= 1;
+    if (pending > 0) return;
+    if (failed || board.poseSet !== poseSet) return; // unvollständig oder stale — Board bleibt idle-only.
+    board.poseTextures = entries;
+    board.posesReady = POSE_NAMES.every((name) => !!entries[name]);
+  };
+  for (const name of POSE_NAMES) {
+    const url = poseSet[name];
+    if (!url) {
+      failed = true;
+      settle();
+      continue;
+    }
+    new THREE.TextureLoader().load(
+      url,
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        const img = tex.image as HTMLImageElement | undefined;
+        if (img?.width && img.height) {
+          entries[name] = { texture: tex, baseline: measureSpriteBaseline(img, url), aspect: img.width / img.height };
+        } else {
+          failed = true;
+        }
+        settle();
+      },
+      undefined,
+      () => {
+        failed = true;
+        settle();
+      },
+    );
+  }
+}
+
+/** Welche Pose JETZT gelten soll — reine Berechnung (keine Mutation). Präzedenz "hit" > "strike" >
+ *  "windup" > "idle" (ein Board kann rein theoretisch gleichzeitig treffen UND selbst einen neuen
+ *  Angriff anwinden, s. `Billboard.strikePoseUntil`/`hitPoseUntil`-JSDoc) — "getroffen werden" liest
+ *  sich als das dringlichere visuelle Signal. Liefert IMMER "idle", solange `posesReady` nicht steht
+ *  (Fallback-Gesetz) — Aufrufer müssen dieses Gate nicht separat prüfen. */
+function computeActivePoseKey(board: Billboard, now: number): PoseKey {
+  if (!board.posesReady) return "idle";
+  if (board.hitPoseUntil > now) return "hit";
+  if (board.strikePoseUntil > now) return "strike";
+  if (board.attack && !board.attack.resolved) return "windup";
+  return "idle";
+}
+
+/** Harter Textur-Swap — KEIN Crossfade (Auftrag, bindend: "Posenwechsel exakt am Choreographie-
+ *  Event ... kein zweites Plane-Material, kein Opacity-Blending", dieselbe alphaTest-Cutout-Falle
+ *  wie beim unsichtbaren-Chicken-Bug). Läuft nur bei einer ECHTEN Schlüssel-Änderung (kein
+ *  redundantes Neu-Setzen pro Frame). Skalierung/Fuß-Offset/Schatten-Ellipse werden bei jedem
+ *  Wechsel aus der `PoseTextureEntry` der neuen Pose neu abgeleitet — dieselbe Formel wie
+ *  `applyTexture` für die Idle-Textur (Faktor 0.92/0.38 dort wörtlich gespiegelt, s. Kommentar
+ *  dort für die Chef-Feedback-Herleitung dieser beiden Werte). */
+function applyActivePose(board: Billboard, poseKey: PoseKey): void {
+  if (poseKey === board.activePoseKey) return;
+  const entry = poseKey === "idle" ? board.idlePose : (board.poseTextures[poseKey] ?? null);
+  if (!entry) return; // sollte dank posesReady-Gate nie eintreten — defensiv trotzdem kein Absturz.
+  board.activePoseKey = poseKey;
+  board.material.map = entry.texture;
+  board.material.needsUpdate = true;
+  board.baseScaleX = board.figureHeight * entry.aspect;
+  board.baseScaleY = board.figureHeight;
+  board.feetOffset = -entry.baseline.insetFrac * board.figureHeight;
+  board.footCenterOffsetX = (entry.baseline.footCenterFrac - 0.5) * board.baseScaleX;
+  const shadowWidth = board.baseScaleX * entry.baseline.footSpanFrac * 0.92;
+  board.shadow.scale.set(shadowWidth, 1, shadowWidth * 0.38);
 }
 
 // ── 0.4.0-Arena Welle 1, Auftrag Punkt 2 ("Prop-Billboard-Layer") ──────────────────────────────
@@ -1368,6 +1512,13 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
       board.knockback = null;
       board.dodge = null;
       board.attack = null;
+      // Posen-Pilot: eine frische Identität (Kampfstart/Monsterwechsel) UND ein Respawn DESSELBEN
+      // Monsters (der zweite Aufrufer, s.u. `frame()`s Dimmed-Übergang) starten IMMER auf "idle" —
+      // ohne diesen Reset würde ein Gegner, der im letzten Moment vor dem Tod gerade "hit" zeigte,
+      // mit genau dieser (falsch skalierten) Pose in seinen nächsten Einlauf laufen.
+      board.strikePoseUntil = 0;
+      board.hitPoseUntil = 0;
+      if (board.idlePose) applyActivePose(board, "idle");
       const fromX = board.isPlayer ? board.baseX - PLAYER_ENTRANCE_OFFSET_X : MONSTER_ENTRANCE_FROM_X;
       board.entrance = {
         start: now,
@@ -1396,6 +1547,17 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
       // darf nicht einfach weiter stehen bleiben, während die neue lädt). `updateBoardVisual`
       // liest dieses Flag JEDEN Frame und blendet das Mesh entsprechend.
       board.textureReady = false;
+      // Posen-Pilot: JEDER `applyTexture`-Aufruf beginnt eine frische Identität — das alte Posen-Set
+      // (falls vorhanden) gehört zum VORHERIGEN Sprite und darf nie auf dem neuen weiterleben (s.
+      // `preloadPoseSet`s Race-Schutz, der genau auf `board.poseSet !== poseSet` prüft, um einen
+      // verspäteten alten Callback zu erkennen).
+      board.poseSet = null;
+      board.poseTextures = {};
+      board.posesReady = false;
+      board.idlePose = null;
+      board.activePoseKey = "idle";
+      board.strikePoseUntil = 0;
+      board.hitPoseUntil = 0;
       if (!url) {
         board.material.map = null;
         board.material.color.set(0x4a4038);
@@ -1439,6 +1601,16 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
           const shadowWidth = board.mesh.scale.x * baseline.footSpanFrac * 0.92;
           board.shadow.scale.set(shadowWidth, 1, shadowWidth * 0.38);
           board.shadow.position.set(board.baseX + board.footCenterOffsetX, 0.01, board.baseZ);
+
+          // Posen-Pilot (design/battle-040-pose-pilot.md): Idle-Textur als EIGENER Slot halten (nicht
+          // nur `material.map`) — erlaubt `applyActivePose` einen harten Rück-Swap zu "idle" jederzeit
+          // ohne erneutes Laden. `getPoseSet` matcht auf DERSELBEN Vite-URL, die diese Idle-Textur
+          // gerade geladen hat (s. poses.ts Moduldoc) — 0 Treffer (heutiger Normalfall, Mira liefert
+          // noch keine Posen) lässt das Board exakt beim bisherigen Einzel-Sprite-Verhalten.
+          board.idlePose = { texture: tex, baseline, aspect };
+          const poseSet = getPoseSet(url);
+          board.poseSet = poseSet;
+          if (poseSet) preloadPoseSet(board, poseSet);
 
           // Neue Identität (Kampfstart oder Monsterwechsel) räumt jeden laufenden Choreografie-
           // Zustand ab (s. `resetChoreographyForFreshEntrance`-JSDoc) — ein frischer Gegner startet
@@ -1929,11 +2101,18 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
         cycle.phaseStart = now;
       }
       if (style !== "melee") forceArriveProjectile(); // Auftrag Punkt 6: nie nachhinken lassen
+      // Posen-Pilot (design/battle-040-pose-pilot.md): "ab Kontakt-Event strike für ~200ms
+      // (Angreifer)" — DAS hier ist der Kontakt-Event-Moment, unabhängig vom Ausgang (der Angreifer
+      // schwingt/schießt/castet auch bei einem Fehlschlag, s. `computeActivePoseKey`-Präzedenz).
+      attackerBoard.strikePoseUntil = now + POSE_STRIKE_MS;
       if (outcome === "hit") {
         triggerHit(defenderBoard, crit, fx);
         const knockAmp = (crit ? motion.knockCritAmp : motion.knockAmp) * dir;
         const knockMs = crit ? motion.knockCritMs : motion.knockMs;
         defenderBoard.knockback = { start: now, duration: knockMs, amp: knockAmp };
+        // "hit für ~250ms (Verteidiger, kausal am Kontakt)" — bewusst NUR bei echtem Treffer gesetzt,
+        // exakt derselbe Gate wie `knockback` direkt darüber (kein Kontakt = kein Reaktions-Feedback).
+        defenderBoard.hitPoseUntil = now + POSE_HIT_MS;
       }
       // "whiff"/"shockSkip": kein Kontakt-FX am Verteidiger — der Schlag geht ins Leere.
     }
@@ -2009,6 +2188,14 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
         if (p >= 1) board.entrance = null;
         return;
       }
+
+      // Posen-Pilot (design/battle-040-pose-pilot.md): harter Textur-Swap NACH den Sterben-/Einlauf-
+      // Sonderpfaden (die oben früh zurückkehren — "Sterben bleibt unverändert" ist dadurch
+      // AUTOMATISCH erfüllt: `applyActivePose` wird für ein sterbendes/einlaufendes Board nie
+      // erreicht) und VOR der finalen `mesh.scale.set`-Zeile unten, damit derselbe Frame schon die
+      // NEUE Baseline/Aspect zeigt. Unter `fx==="off"` bleibt die Pose hart auf "idle" (spiegelt den
+      // bestehenden "komplett aus"-Vertrag der fxLevel-Stufen, s. `CombatFxLevel`-JSDoc).
+      applyActivePose(board, fx !== "off" ? computeActivePoseKey(board, now) : "idle");
 
       let dx = REST_POSE.dx;
       let dz = REST_POSE.dz;
@@ -2158,6 +2345,11 @@ export function Arena25DStage(props: Arena25DStageProps): JSX.Element {
         playerBoard.attack?.phase ?? (playerBoard.dying ? "dying" : playerBoard.victory ? "victory" : playerBoard.entrance ? "entrance" : "idle");
       container!.dataset.a25PhaseMonster =
         monsterBoard.attack?.phase ?? (monsterBoard.dying ? "dying" : monsterBoard.victory ? "victory" : monsterBoard.entrance ? "entrance" : "idle");
+      // Posen-Pilot: dasselbe QA-Anker-Prinzip für die AUFGETRAGENE Posen-Textur (nicht nur die
+      // Choreographie-Phase) — erlaubt Playwright, `idle`→`windup`→`strike`/`hit`→`idle` exakt
+      // abzuwarten statt eine feste Wartezeit zu raten (s. `Billboard.activePoseKey`-JSDoc).
+      container!.dataset.a25PosePlayer = playerBoard.activePoseKey;
+      container!.dataset.a25PoseMonster = monsterBoard.activePoseKey;
 
       // PointLight-Flacker klingt exponentiell ab.
       if (flicker.intensity > 0.01) flicker.intensity *= 0.88;
