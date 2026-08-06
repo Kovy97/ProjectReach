@@ -1,3 +1,4 @@
+- [Kurs 1.0-Vollrelease](kurs-1.0-vollrelease.md) — seit 06.08. bindend: GR → 1.0/EA-Exit als zweiter Launch-Schuss (Ziel ~Nov 2026); Stufenplan + Scope-Grenzen in design/plan-1.0-vollrelease.md; Runden aufheben, Wishlist-Aufbau parallel
 - [Git-Workflow](git-workflow.md) — seit 04.08. GitHub Kovy97/ProjectReach; Commit nach verifizierten Wellen, Feature-Branches, gh-Keyring; Mira committet nie; bewusster .gitignore-Schnitt
 - [Nacht-Pause 04.08.](pause-2026-08-04.md) — ALLES pausiert; Arena-Welle 2 MITTEN IM UMBAU gestoppt (typecheck rot in arena25d) → Wiederaufnahme: ERST Integrität, frischer Agent mit Brief+5 Chef-Punkten; 0.3.0 wartet auf Chef-Livegang
 - [Pause-Stand 03.08.](pause-2026-08-03.md) — NH-Prüfrunde grün abgeschlossen; Emoji-Ablösung lief noch → bei Wiederaufnahme erst prüfen, DANN zentraler Build (fehlt!); offen: Depot-GO + Roadmap-Tabelle
