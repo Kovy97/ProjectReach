@@ -12,28 +12,22 @@ Schuss nach 3 Monaten Wishlist-Aufbau trägt. Deshalb hat dieser Plan ZWEI Strä
 jedes Update-Event + Festival zählt). Benötigte Steamworks-Zahlen vom Chef als Basis-Messung:
 aktuelle Wishlists, Review-Anzahl/-Score, verbleibende Sichtbarkeitsrunden.
 
-## Strang A — Was „1.0 fertig" konkret heißt
-Reihenfolge = Abhängigkeiten; jede Stufe endet mit verifiziertem, gepushtem Stand.
+## Strang A — Was „1.0 fertig" konkret heißt (REVIDIERT 16.08.: 1.0 = das NÄCHSTE Update)
+**Chef-Entscheid 16.08.:** Kein Stufenplan mehr (0.4/0.5/0.6 gestrichen). Das Spiel ist komplett
+spielbar; bei 1–4 Verkäufen/Tag rechtfertigt weiterer EA-Ausbau den Aufwand nicht. **Die Arena
+(0.4.0 „Kampfgefühl") ist GESTRICHEN** — bleibt DEV-only/tot im Spieler-Bundle, kein Post-Launch-
+Versprechen. Das nächste Update ist der 1.0-Vollrelease, danach Wartungsmodus.
 
-1. **0.4.0 „Kampfgefühl" abschließen (August)** — das Trailer-Material.
-   - Arena produktiv in allen Zonen (Welle 3: Paritäts-Wächtertest, Clutter-System, Rest-Verifikation).
-   - Posen-Rollout Zone für Zone (Pilot Chicken ist live; nach Chef-Optik-GO: Pastures komplett,
-     dann pro Zone gebündelt mit Miras Szenen-Runde-2). Spieler-Charakter-Posen dazu.
-   - Leichter Juice-Pass im Rahmen des Arena-Systems (Treffer-Impact, Zahlen); große VFX bleiben raus.
-2. **0.5.0 „Die Aschechronik" — das Spiel bekommt ein Ende (September).**
-   - Hauptquest-Kette auf dem bestehenden Quest-System (lore-dev-Material), Bogen bis zum Endboss
-     (last_idol) + echter Abschluss-Moment (Ende erreicht = 1.0-Versprechen eingelöst).
-   - Steam-Achievements SCHARF (steamworks.js aktivieren; kuratierte Liste
-     design/steam-achievements-export.md existiert — Achievements gehören zu einem „fertigen" Spiel
-     und stehen auf der Store-Page).
-3. **0.6.0 „Willkommen im Reach" — Onboarding-Guide (Oktober).**
-   - Der große geführte Tutorial-Flow (bewusst als finaler Meilenstein aufgehoben — jetzt ist er
-     dran). Ziel: Refund-Treiber Frühspiel-Verwirrung töten.
-   - Erste-Stunde-Politur nach frischem Tester-Sweep (10-Agent-Sweep auf die ersten 60 Minuten).
-4. **1.0-Härtung (Oktober/November).**
-   - Musik-Entscheid einlösen (Lizenz/Paket — Chef), 20 Rest-Battlescreens, Restlücken Monster-Art.
-   - Lokalisierungs-Vollpass ×7 inkl. Noto-SC-Font-Bundling; Save-Compat-Vault-Ritual;
-     Balance-/Sim-Endpass; Performance-/Minify-Entscheid; voller Release-Checkpoint-Sweep.
+Fokussiertes 1.0-Paket (~4 Wochen bis Release-Kandidat):
+1. **Inhalt einfrieren:** 0.3.1-Hotfix-Kandidat (Tooltip-Floor, Material-Chips, E+-Log) geht mit
+   rein; keine neuen Systeme. Balance-Kleinigkeiten aus dem Community-Heft (z.B. Saltgrave Cutlass).
+2. **Härtung:** 10-Agent-Release-Sweep (erste Stunde + Endgame), Loca-Vollpass ×7 inkl. Font-
+   Bundling-Entscheid, Save-Compat-Vault-Ritual, Perf-/Minify-Entscheid, Rest-Battlescreens.
+3. **Chef-Entscheide:** Musik (Lizenz oder prozeduraler Ambient bleibt), Achievements scharf
+   (optional — Handarbeit im Steam-Backend), Launch-Rabatt, Termin.
+4. **Release-Paket:** Store-Page „Full Release" (Text ×7, Screenshots 1920×1080, Trailer-Neuschnitt
+   ohne Arena), Announcement ≥2 Wochen vor Termin, Launch-Post, Post-Launch-Woche.
+Zeitlogik: Kandidat Mitte September → Termin-Announcement → Release Anfang Oktober (vor Autumn Sale).
 
 ## Strang B — Sichtbarkeit bis zum 1.0-Tag
 - **Jede 0.x-Stufe = Steam-Event mit Announcement** (hält zugleich die <30-Tage-Regel für
