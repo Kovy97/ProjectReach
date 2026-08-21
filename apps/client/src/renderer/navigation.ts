@@ -69,6 +69,14 @@ export const navigation: NavSection[] = [
       // flachen getSidebarPages()-Liste ganz oben landet, ÜBER Combat.
       { id: "skills-overview", label: "nav.skillsOverview", icon: "📚", view: "skills-overview" },
       { id: "combat", label: "nav.combat", icon: "⚔️", view: "combat" },
+      // New Haven (0.3.0 „Das Lager", Task #361): die eigene Siedlung am Furt-Übergang. Bewusst
+      // ein SIDEBAR-Eintrag (kein Top-Bar-Button) — die Top-Bar-Reihe ist voll, und das Lager ist
+      // ein Ort zum Verweilen, kein Zwischendurch-Sprung. Der Name bleibt in allen sieben
+      // Sprachen unübersetzt (Chef-Entscheid), s. i18n-Key `nav.newhaven`.
+      // 1.0-Fix (18.08.): stand vorher am Ende der city-Sektion und lag damit bei 1920x1080 unter
+      // der sichtbaren Kante der Navigationsliste (im gepackten Build gemessen: 275 px Ueberlauf,
+      // Eintrag bei y=1204). Als Kernfeature des Lagers gehoert es nach oben, nicht hinter 14 Skills.
+      { id: "newhaven", label: "nav.newhaven", icon: "⛺", view: "newhaven" },
       { id: "bestiary", label: "nav.bestiary", icon: "📖", view: "bestiary", placement: "topbar" },
     ],
   },
@@ -104,11 +112,6 @@ export const navigation: NavSection[] = [
       { id: "shop",   label: "nav.shop",   icon: "🪙", view: "shop",   placement: "topbar" },
       { id: "bank",   label: "nav.bank",   icon: "🏦", view: "bank",   placement: "topbar" },
       { id: "quests", label: "nav.quests", icon: "📜", view: "quests", placement: "topbar" },
-      // New Haven (0.3.0 „Das Lager", Task #361): die eigene Siedlung am Furt-Übergang. Bewusst
-      // ein SIDEBAR-Eintrag (kein Top-Bar-Button) — die Top-Bar-Reihe ist voll, und das Lager ist
-      // ein Ort zum Verweilen, kein Zwischendurch-Sprung. Der Name bleibt in allen sieben
-      // Sprachen unübersetzt (Chef-Entscheid), s. i18n-Key `nav.newhaven`.
-      { id: "newhaven", label: "nav.newhaven", icon: "⛺", view: "newhaven" },
     ],
   },
   {
