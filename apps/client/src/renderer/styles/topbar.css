@@ -713,13 +713,20 @@
 }
 
 /* Zeile 2: Kampf-Lv + Ges.-Lv nebeneinander, unter dem Namen. */
+/* 1.0-Fixrunde FIX 6 (Chef-Sweep): unterhalb 1920px reichte die Zeilenbreite nicht mehr für
+   "Kampf Lv X" + "Ges./Total Lv Y" nebeneinander — beide Kinder haben `flex-shrink: 0`
+   (bewusst, keine gequetschte Schrift), also schnitt `overflow: hidden` den zweiten Wert
+   einfach hart am Rand ab ("Total Lv" → "To"). Chef-Regel „Mindestgröße + Umbruch, nie
+   clippen": `flex-wrap: wrap` lässt Ges.-Lv bei Platzmangel in eine eigene dritte Zeile
+   umbrechen statt abgeschnitten zu werden — `.header-charinfo` ist eine Flex-Spalte ohne feste
+   Höhe, wächst also einfach mit statt etwas zu überlappen. */
 .header-charinfo-stats {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: calc(10px * var(--tb-scale));
+  gap: calc(3px * var(--tb-scale)) calc(10px * var(--tb-scale));
   min-width: 0;
   max-width: 100%;
-  overflow: hidden;
 }
 
 .header-charinfo-stat {

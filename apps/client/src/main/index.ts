@@ -40,6 +40,13 @@ function createWindow(): void {
   const windowOptions: ConstructorParameters<typeof BrowserWindow>[0] = {
     width: 1920,
     height: 1080,
+    // 1.0-Fixrunde FIX 4 (Chef-Sweep): kein Mindestfenster gesetzt — bei 1280×800 lag der
+    // Gold-Zähler außerhalb des Bildes, „Kampf beenden" war zu 38 % beschnitten und der
+    // Speichern-Knopf von Ausrüstungsvorlage 3 nachweislich nicht klickbar. Untergrenze knapp
+    // über dem kleinsten in den UI-Fixes getesteten Layout (1366×768), damit windowed/borderless
+    // nicht mehr unter die UI-Mindestgröße gezogen werden kann.
+    minWidth: 1360,
+    minHeight: 720,
     useContentSize: true,
     title: __SCENE_BUILDER_BUILD__ ? "Grim Reach — Scene Builder" : "Grim Reach",
     icon: appIcon, // Fenster-/Taskleisten-Icon (dev + Build) = unser Grim-Reach-Icon

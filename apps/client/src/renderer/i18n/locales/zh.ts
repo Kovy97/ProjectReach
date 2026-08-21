@@ -1356,7 +1356,7 @@ export const zh: Record<string, string> = {
     // About / Info
     "about.title": "关于",
     "about.version": "Grim Reach —— v{version}",
-    "about.buildNote": "EA-0.1——此版本为早期预览。预计会有粗糙之处。",
+    "about.buildNote": "感谢游玩。欢迎随时反馈问题和想法。",
     "about.credits": "Heartforge Studio 出品。",
     // codex:2026-08-01T13:02:00+02:00 — Feedbackkanal umfasst Bugs und Feature-Ideen.
     "about.bugReport": "报告问题 / 建议功能",

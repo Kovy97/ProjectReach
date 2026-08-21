@@ -414,7 +414,7 @@
    Verwendungen erhalten; hier kommen ausschließlich neue sb-Regeln.
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ── 0b. Höhen-Kompaktierung (Fix #368-2) ────────────────────────────
+/* ── 0b. Höhen-Kompaktierung (Fix #368-2, nachgeschärft 1.0-Fixrunde FIX 1) ─────────────────
    Bug #367: bei 1920×1080 endete die sichtbare Liste bei „Verzauberung" — „New Haven" nur ein
    Pixel-Streifen unter dem Footer, „Statistik" komplett verdeckt. `.sb-nav` scrollt technisch
    (overflow-y:auto), ABER ohne sichtbaren Scroll-Hinweis: der Holzrahmen-Overlay (.sidebar::before,
@@ -423,14 +423,20 @@
    Eingriff in den Rahmen-Layer, der bewusst über ALLEM liegt), stauchen wir bei knapper
    Fensterhöhe die GESAMTE Sidebar-Vertikalachse sanft — dieselbe Mechanik wie das manuelle
    Schmaler-Ziehen (Task #291), nur an `--sb-vscale` statt `--sb-scale` aufgehängt, damit die
-   Ziehleiste unangetastet bleibt (s. `.sidebar`-Kommentar oben). 0.82 reicht rechnerisch, um bei
-   1920×1080 (Fertigkeiten + Kampf + 13 Skills + Verzauberung + New Haven + Statistik = 18 Zeilen)
-   alle Sidebar-Einträge OHNE Scrollen unter den Footer zu bringen; die clamp()-Böden der
-   einzelnen Regeln (z.B. min-height 34px, Schrift 8–9px) verhindern ein Abrutschen unter
+   Ziehleiste unangetastet bleibt (s. `.sidebar`-Kommentar oben).
+   1.0-Fixrunde FIX 1 (Release-Sweep): 0.82 reichte rechnerisch NICHT — gravewood-navigation.css
+   hatte einen eigenen, per !important gewinnenden min-height-Floor von 56px auf `.sb-skill-btn`
+   (später importiert, gleiche Spezifität → gewinnt gegen den 34px-Floor hier), der bei 0.82 IMMER
+   auf 56px clampte und die Kompaktierung faktisch wirkungslos machte (62px * 0.82 ≈ 50.8 < 56).
+   Floor dort auf 40px gesenkt (s. gravewood-navigation.css) UND 0.82 → 0.72 nachgeschärft, damit
+   bei 1920×1080 (Fertigkeiten + Kampf + 13 Skills + Verzauberung + New Haven + Statistik = 18
+   Zeilen) wirklich alle Einträge OHNE Scrollen sichtbar sind — mit Sicherheitsspanne verifiziert
+   (ui-audit/fix1-sidebar-measure.mjs), nicht nur rechnerisch exakt an der Kante. Die clamp()-Böden
+   der einzelnen Regeln (z.B. min-height jetzt 40px, Schrift 9px) verhindern ein Abrutschen unter
    Lesbarkeit, falls ein Spieler das Fenster noch kleiner zieht. */
 @media (max-height: 1100px) {
   .sidebar {
-    --sb-vscale: 0.82;
+    --sb-vscale: 0.72;
   }
 }
 
@@ -706,6 +712,18 @@
   /* Task #291: skaliert mit --sb-scale. */
   padding: calc(4px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff));
   gap: calc(3px * var(--sb-scale-eff));
+}
+
+/* 1.0-Fixrunde FIX 3 (Chef-Sweep): der eingeklappte "MENÜ"-Drawer-Tab ist bewusst ein
+   bodenverankertes Overlay OHNE eigene Layoutzeile (s. `#root .sb-footer { position: absolute;
+   bottom: 0; ... }` weiter unten) — dadurch füllt `.sb-nav` (flex:1) den kompletten Platz BIS zum
+   Sidebar-Boden, und der letzte Listen-Eintrag (Statistik) rutschte optisch unter die Lasche.
+   Statt den bewussten Overlay-Ansatz umzubauen, reserviert die Nav-Liste unten exakt so viel
+   Platz wie die geschlossene Lasche hoch ist (dieselbe clamp()-Formel wie
+   `#root .sb-footer-drawer-tab { min-height: ... }`) — der letzte Button rutscht sauber darüber,
+   kein Überlappen mehr. */
+.sb-nav {
+  padding-bottom: clamp(27px, calc(32px * var(--sb-scale-eff)), 45px);
 }
 
 /* Jeder Skill-Button — background kommt vom Chef-Experiment-Stein-Banner
@@ -989,9 +1007,22 @@
   font-weight: 700; /* Chef 2026-07-02: doch wieder fett */
   letter-spacing: 0px;
   text-transform: uppercase;
-  white-space: nowrap;
+  /* 1.0-Fixrunde FIX 6 (Chef-Sweep): bei UNKOMPRIMIERTER Sidebar-Höhe (--sb-vscale:1, z.B.
+     2560×1440 — die Höhen-Kompaktierung weiter oben greift nur bei knapper Fensterhöhe) reichte
+     die reservierte Textbreite für lange einwortige EN-Labels ("Jewelcrafting", "Runecrafting",
+     "Enchanting", "Skills Overview") nicht mehr. `text-overflow: ellipsis` funktioniert bei
+     `text-align: center` NICHT zuverlässig (Browser ellipsieren nur einseitiges Overflow) — der
+     Text lief beidseitig aus seiner Padding-Zone und legte sich über das Icon links, statt sauber
+     abgeschnitten zu werden. Chef-Regel „Umbruch statt Abschneiden": `white-space: normal` +
+     `overflow-wrap` erlaubt jetzt eine zweite Zeile (Button-Höhe hat bei --sb-scale-eff:1 genug
+     Reserve) statt eines unsichtbaren Clippings — kurze Labels bleiben unverändert einzeilig.
+     `text-wrap: balance` (zusätzlich zur getrimmten Padding-Reserve, s. gravewood-navigation.css
+     `.sb-skill-btn .sb-skill-name`) verteilt eine erzwungene zweite Zeile gleichmäßig, statt fast
+     das ganze Wort in Zeile 1 zu pressen und nur einen Buchstaben in Zeile 2 abzureißen. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
   overflow: hidden;
-  text-overflow: ellipsis;
   text-align: center;
   /* 7-Sprachen-Fundament (Task #252): löst den PNG-Titel-Schriftzug (.sb-skill-title-img,
      s. Git-History) ab — Gold statt des Buttons Off-White, damit die Optik des Bild-Schriftzugs

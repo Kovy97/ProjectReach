@@ -1323,7 +1323,7 @@ export const es: Record<string, string> = {
 
     "about.title": "Acerca de",
     "about.version": "Grim Reach — v{version}",
-    "about.buildNote": "EA-0.1 — esta versión es una vista previa temprana. Se esperan asperezas.",
+    "about.buildNote": "Gracias por jugar. Los informes de errores y las ideas siempre son bienvenidos.",
     "about.credits": "Un juego de Heartforge Studio.",
     // codex:2026-08-01T13:02:00+02:00 — Feedbackkanal umfasst Bugs und Feature-Ideen.
     "about.bugReport": "Reportar error / sugerir función",

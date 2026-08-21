@@ -19,7 +19,11 @@ let enabled = localStorage.getItem(ENABLED_KEY) !== "0";
 let volume = readVolume();
 
 function readVolume(): number {
-  const raw = Number(localStorage.getItem(VOL_KEY));
+  // 1.0-Fix: Ohne gespeicherten Wert liefert getItem null, und Number(null) ist 0 —
+  // der 0.5-Default war damit unerreichbar und jede frische Installation lief stumm.
+  const stored = localStorage.getItem(VOL_KEY);
+  if (stored === null) return 0.5;
+  const raw = Number(stored);
   return Number.isFinite(raw) && raw >= 0 && raw <= 1 ? raw : 0.5;
 }
 

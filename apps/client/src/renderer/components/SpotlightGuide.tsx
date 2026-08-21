@@ -126,25 +126,42 @@ export function SpotlightGuide({
   // Misst zugleich die ECHTE Höhe der Sprechblase (bubbleRef) — s. FALLBACK_BUBBLE_HEIGHT-Doc.
   useLayoutEffect(() => {
     let currentEl: HTMLElement | null = null;
-    const recompute = (): void => {
+    // 1.0-Fixrunde FIX 1: das Ziel kann in einem EIGENEN Scroll-Container sitzen (z.B. die
+    // Sidebar-Nav, .sb-nav overflow-y:auto) und dort außerhalb des sichtbaren Bereichs liegen —
+    // `.guide-target` macht es per CSS zwar klickbar (pointer-events:auto !important, s.
+    // onboarding-guide.css), bleibt aber UNSICHTBAR (New-Haven-Bug: FEATURE_TOUR_STEPS_V2
+    // spotlightet einen Sidebar-Eintrag, der bei 1920×1080 unterm Footer verschwindet, kein
+    // sichtbarer Scroll-Hinweis). `scrollIntoView` holt das Ziel zuverlässig in den sichtbaren
+    // Bereich — bei jedem Zielwechsel UND erneut bei Fenstergrößenänderung (`scrollTarget`),
+    // NIE bei einem simplen Scroll-Event (sonst kämpft das gegen manuelles Scrollen des
+    // Spielers). Kein "smooth" — die Rect-Messung direkt danach braucht die Endposition SOFORT,
+    // nicht erst nach der Scroll-Animation.
+    const recompute = (scrollTarget: boolean): void => {
       const found = findSpotlightTarget(guideId);
-      if (found.el !== currentEl) {
+      const targetChanged = found.el !== currentEl;
+      if (targetChanged) {
         currentEl?.classList.remove("guide-target");
         currentEl = found.el;
         currentEl?.classList.add("guide-target");
       }
-      setRect(found.rect);
+      if (currentEl && (targetChanged || scrollTarget)) {
+        currentEl.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
+      }
+      // Nach einem evtl. scrollIntoView neu messen — die vorher gefundene rect ist sonst stale.
+      setRect(findSpotlightTarget(guideId).rect);
       if (bubbleRef.current) {
         setBubbleHeight(bubbleRef.current.offsetHeight);
         setBubbleWidth(bubbleRef.current.offsetWidth);
       }
     };
-    recompute();
-    window.addEventListener("resize", recompute);
-    window.addEventListener("scroll", recompute, true);
+    recompute(true);
+    const onResize = (): void => recompute(true);
+    const onScroll = (): void => recompute(false);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, true);
     return () => {
-      window.removeEventListener("resize", recompute);
-      window.removeEventListener("scroll", recompute, true);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll, true);
       currentEl?.classList.remove("guide-target");
     };
   }, [guideId]);

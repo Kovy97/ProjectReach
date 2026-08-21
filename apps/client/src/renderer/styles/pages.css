@@ -5188,13 +5188,17 @@ body.bank-dragging-noselect {
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 256px 256px repeat;
 }
 
+/* 1.0-Fixrunde FIX 2 (Chef-Sweep): der Einleitungssatz wurde bei schmalerer Fensterbreite hart
+   per Ellipsis abgeschnitten (EN wie DE), obwohl `.bank-head` als Flex-Spalte (s.o.) problemlos
+   Platz für eine zweite Zeile hat — Chef-Regel „Mindestgröße + Umbruch/Verschieben, nie clippen".
+   Umbruch statt Abschneiden: `white-space: normal` statt `nowrap`, kein `text-overflow`/`overflow`
+   mehr nötig. */
 .bank-page .bank-head > .muted {
   display: block;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
   font-size: clamp(11px, 0.72vw, 14px);
+  line-height: 1.35;
 }
 
 .bank-page .bank-count {

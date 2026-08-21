@@ -2336,18 +2336,27 @@
 
 /* ─── Treffer-Flash (Task #296 P0 §1.1/§1.2) ─────────────────
    Reiner Opacity-Overlay, KEIN Transform — läuft kollisionsfrei parallel zu Lunge (.fighter-figure)
-   und Recoil (.fighter-figure-art). Grundfarbe warmes Weiß/Rot; `.crit` schaltet auf Gold um. */
+   und Recoil (.fighter-figure-art). Grundfarbe warmes Weiß/Rot; `.crit` schaltet auf Gold um.
+   1.0-Fixrunde FIX 5 (Chef-Sweep): `.hit-flash-overlay` liegt `inset:0` über der GANZEN
+   `.fighter-figure` (eine komplette Kampf-Bildschirmhälfte, meist hochformatig) — ohne
+   Größen-Keyword sizt `radial-gradient(circle, …)` den Kreis standardmäßig auf den
+   ENTFERNTESTEN Eckpunkt („farthest-corner"). Bei einer hochformatigen Box erreicht der Kreis
+   die linke/rechte Kante schon lange BEVOR er bei „transparent 78%" ankommt — sichtbares
+   Ergebnis: ein hartkantiges, halbtransparentes Rechteck über der ganzen Kampfhälfte statt
+   eines weichen Aufblitzens. `closest-side` sizt den Kreis stattdessen auf die NÄCHSTE Kante —
+   der Verlauf ist dadurch garantiert komplett ausgeblendet, bevor er irgendeinen Rand der Box
+   erreicht (weiches Auslaufen, zugleich enger auf den Trefferbereich begrenzt). */
 .hit-flash-overlay {
   position: absolute;
   inset: 0;
   opacity: 0;
   pointer-events: none;
   mix-blend-mode: screen;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 70, 50, 0.55) 55%, transparent 78%);
+  background: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.95) 0%, rgba(255, 70, 50, 0.55) 55%, transparent 78%);
 }
 
 .hit-flash-overlay.crit {
-  background: radial-gradient(circle, rgba(255, 244, 200, 0.98) 0%, rgba(216, 192, 106, 0.8) 55%, transparent 78%);
+  background: radial-gradient(circle closest-side, rgba(255, 244, 200, 0.98) 0%, rgba(216, 192, 106, 0.8) 55%, transparent 78%);
 }
 
 /* ─── Kill-Flourish (Task #296 P0 §1.3, Kampf-Juice §5: Dissolve-Ausbau) ───────────────────────

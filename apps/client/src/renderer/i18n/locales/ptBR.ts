@@ -1321,7 +1321,7 @@ export const ptBR: Record<string, string> = {
 
     "about.title": "Sobre",
     "about.version": "Grim Reach — v{version}",
-    "about.buildNote": "EA-0.1 — esta versão é uma prévia inicial. Arestas ásperas são esperadas.",
+    "about.buildNote": "Obrigado por jogar. Relatos de erros e ideias são sempre bem-vindos.",
     "about.credits": "Um jogo da Heartforge Studio.",
     // codex:2026-08-01T13:02:00+02:00 — Feedbackkanal umfasst Bugs und Feature-Ideen.
     "about.bugReport": "Relatar bug / sugerir recurso",

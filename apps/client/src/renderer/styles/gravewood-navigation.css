@@ -620,8 +620,14 @@
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.95), 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
+/* 1.0-Fixrunde FIX 6 (Chef-Sweep): 78px rechte Reserve war deutlich mehr, als die
+   Levelanzeige ("right: 13px" oben, Inhalt z.B. "24/99") tatsächlich braucht — bei
+   --sb-scale-eff:1 (unkomprimierte Höhe, z.B. 2560×1440) blieb dadurch kaum Platz für lange
+   EN-Labels ("Jewelcrafting", "Runecrafting" …), s. sidebar.css `.sb-skill-name`-Kommentar für
+   den vollen Befund. Auf 64px getrimmt (weiterhin sauberer Abstand zur Levelanzeige) — die
+   linke Icon-Reserve (58px) bleibt unangetastet, da sie das Icon exakt streift. */
 #root .sb-skill-btn .sb-skill-name {
-  padding-right: calc(78px * var(--sb-scale-eff, 1)) !important;
+  padding-right: calc(58px * var(--sb-scale-eff, 1)) !important;
   padding-left: calc(58px * var(--sb-scale-eff, 1)) !important;
 }
 
@@ -730,7 +736,14 @@
 #root .sb-skill-btn.active {
   --gw-nav-frame-layout: clamp(5px, calc(7px * var(--sb-scale-eff, 1)), 10px);
   --gw-nav-frame-width: clamp(10px, calc(14px * var(--sb-scale-eff, 1)), 20px);
-  min-height: clamp(56px, calc(62px * var(--sb-scale-eff, 1)), 92px) !important;
+  /* 1.0-Fixrunde FIX 1 (Chef-Sweep, New-Haven-unter-der-Falz): der alte 56px-Floor gewann per
+     !important IMMER gegen sidebar.css' Höhen-Kompaktierung (--sb-vscale, „Fix #368-2") — bei
+     knapper Fensterhöhe (1920×1080) blieb der eff. Multiplikator (62 * 0.82 ≈ 50.8) UNTER dem
+     Floor und clampte hart auf 56px, die Kompaktierung griff also faktisch nie. Floor auf 40px
+     gesenkt (Lesbarkeits-Untergrenze, konsistent mit den übrigen Floors dieser Datei — Icon-Wrap
+     34px/Icon-Bild 28px weiter unten) — bei normaler Fensterhöhe (--sb-scale-eff nahe 1) bleibt
+     die Optik unverändert (62px-Wunschwert liegt weiterhin über dem neuen Floor). */
+  min-height: clamp(40px, calc(62px * var(--sb-scale-eff, 1)), 92px) !important;
   border-width: var(--gw-nav-frame-layout) !important;
   border-image-width: var(--gw-nav-frame-width) !important;
 }
