@@ -278,6 +278,40 @@ describe("achievements", () => {
     expect(all!.condition.count).toBe(distinct.size);
   });
 
+  it("Guard: kein Achievement fordert mehr, als der Content hergibt (1.0-Blocker-Fix 21.08.)", () => {
+    // Dauer-Guard gegen rechnerisch unerreichbare Erfolge (Fund: ach_total_level_2000/_2079
+    // verlangten 2000/2079 bei nur 20×99=1980 möglichem Gesamtlevel — Erfolgs-IDs bleiben aus
+    // Save-Kompatibilitätsgründen unverändert, nur count/Text wurden korrigiert). Deckt alle
+    // condition.types ab, deren Obergrenze direkt aus einer endlichen Content-Menge folgt;
+    // rein kumulative Zähler (Kills, gesammelte/craftete Items, Gold, Streaks, Dungeon-Clears)
+    // haben KEIN inhärentes Content-Maximum (immer weiter grindbar) und bleiben hier absichtlich
+    // aussen vor.
+    const skillLevelCap = 99; // MASTER_CAPE_LEVEL — Level-Deckel, den jede Fertigkeit teilt.
+    const maxTotalLevel = Object.keys(content.skills).length * skillLevelCap;
+    const maxPets = Object.keys(content.pets).length;
+    const maxDistinctSets = new Set(content.sets.map((s) => [...s.pieces].sort().join("|"))).size;
+    const maxItems = Object.keys(content.items).length;
+    const maxQuests = content.quests.length;
+
+    const ceilings: Partial<Record<AchievementConditionType, number>> = {
+      total_level: maxTotalLevel,
+      skill_level: skillLevelCap,
+      pets_owned: maxPets,
+      sets_completed: maxDistinctSets,
+      items_discovered: maxItems,
+      quests_completed: maxQuests,
+    };
+
+    for (const a of content.achievements) {
+      const max = ceilings[a.condition.type];
+      if (max === undefined) continue;
+      expect(
+        a.condition.count,
+        `${a.id}: verlangt ${a.condition.count} (${a.condition.type}), aber der Content bietet nur ${max}`,
+      ).toBeLessThanOrEqual(max);
+    }
+  });
+
   it("Guard: jeder im Content genutzte Condition-Typ wird vom Checker behandelt", () => {
     // Verhindert das „definiert-aber-nie-geprüft"-Muster: ein neuer Condition-Typ ohne
     // Switch-Zweig würde Achievements stumm nie freischalten.

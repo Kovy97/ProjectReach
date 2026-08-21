@@ -20,6 +20,17 @@ import { deserialize, serialize } from "./index";
  * PROZESS bei jedem Release: (1) ein echtes Save der auszuliefernden Version einfrieren und hier
  * ins Vault legen, (2) diese Suite grün, (3) erst dann Depot-Upload. Fixtures werden NIE
  * aktualisiert oder gelöscht — sie repräsentieren, was auf Kunden-Platten liegt.
+ *
+ * SCHRITT (1) HÄNGT AN SAVE_VERSION, NICHT AN DER APP-VERSION (Präzedenz: v79 bekam bewusst kein
+ * eigenes Pin, weil v79 nie ausgeliefert wurde; CODEX/inbox/README.md: „bei SAVE_VERSION-Bumps das
+ * Vault-Neu-Pin-Ritual"). RELEASE 1.0.0 „Vollrelease" (2026-08-18, EA-Exit) liefert SAVE_VERSION 80
+ * ein ZWEITES Mal aus: seit dem 0.3.0-Live-Stand ist `packages/**` unverändert (kein Bump, keine
+ * Migration, keine Content-ID-Änderung), der ausgelieferte Save-Stand ist also byte-genau der
+ * bereits gepinnte. Ein `v80-release-1.0.0.json` wäre eine exakte Kopie von
+ * `v80-release-0.3.0.json` — null zusätzliche Abdeckung, doppelte Laufzeit und zwei konkurrierende
+ * „v80-Release-Pins". Deshalb BEWUSST KEIN neues Fixture; die v80-Pins (`v80-release-0.3.0.json`
+ * als sanitize-Fixpunkt + `v80-filled-0.3.0.json` als befülltes Lager) decken 1.0.0 mit ab. Beim
+ * NÄCHSTEN SAVE_VERSION-Bump (v81) gilt das Ritual wieder regulär.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 

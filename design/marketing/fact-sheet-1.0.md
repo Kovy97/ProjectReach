@@ -9,9 +9,9 @@
 **Developer / Publisher:** {Studioname} (solo developer)
 **Genre:** Dark fantasy idle RPG / incremental
 **Platform:** Windows (PC), standalone client
-**Store:** Steam, AppID 4915450 — https://store.steampowered.com/app/4915450/
-**Price:** {9.99 EUR / 9.99 USD — final price to confirm}
-**Launch discount:** {20% for the first week — to confirm}
+**Store:** Steam, AppID 4915450 (https://store.steampowered.com/app/4915450/)
+**Price:** {9.99 EUR / 9.99 USD, final price to confirm}
+**Launch discount:** {20% for the first week, to confirm}
 **Full release date:** {DD Month 2026} (leaves Early Access after {X} months and {Y} content updates)
 **Languages:** English, German, French, Spanish, Portuguese (BR), Russian, Simplified Chinese
 **Monetisation:** One purchase. No microtransactions, no ads, no energy bars, no season passes.
@@ -72,7 +72,7 @@ that changes how the whole Reach behaves.
 
 ## Contact and assets
 
-- **Press contact:** {name} — {press@domain.tld}
+- **Press contact:** {name}, {press@domain.tld}
 - **Key requests:** {Link zum Key-Formular oder „reply to this mail" / Keymailer-Link}
 - **Press kit (screenshots, logo, capsules, trailer):** {Link zum Presskit-Ordner}
 - **Trailer:** {YouTube-Link}

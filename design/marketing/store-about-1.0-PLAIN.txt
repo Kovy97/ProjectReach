@@ -28,7 +28,7 @@ The Reach has an answer of its own: New Haven, your settlement. Raise 15 buildin
 
 >>> BILD: panel_newhaven.png <<<
 
-Ten zones, eight dungeons and the endless Paragon Spire sit on top of all that, gated by story rather than by grind: 21 chapters of the Ashen Chronicle carry you from the pastures outside Emberhold down into the Idol Hall, and 88 side quests wait along the way.
+Ten zones, eight dungeons and the endless Paragon Spire sit on top of all that, gated by story rather than by grind: 21 chapters of the Ashen Chronicle carry you from the Pastures outside Emberhold down into the Idol Hall, and 88 side quests wait along the way.
 
 • Ten zones, eight dungeons and the endless Paragon Spire, with over 100 creatures to hunt
 • 28 named Elite Champions with 28 unique drops, your first within about 20 minutes

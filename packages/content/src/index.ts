@@ -13214,9 +13214,13 @@ export const content: ContentDB = {
     { id: "ach_total_level_1000", name: { en: "Ascendant",         de: "Aszendent"          }, description: { en: "Reach a total level of 1000.", de: "Erreiche Gesamtlevel 1000." }, icon: "📚", category: "skilling",  rarity: "epic",      condition: { type: "total_level", count: 1000  } },
     { id: "ach_total_level_1500", name: { en: "Eternal Scholar",   de: "Ewiger Gelehrter"   }, description: { en: "Reach a total level of 1500.", de: "Erreiche Gesamtlevel 1500." }, icon: "🏛", category: "skilling",  rarity: "legendary", condition: { type: "total_level", count: 1500  } },
     { id: "ach_total_level_1750", name: { en: "Transcendent",       de: "Transzendent"       }, description: { en: "Reach a total level of 1750.", de: "Erreiche Gesamtlevel 1750." }, icon: "🌟", category: "skilling",  rarity: "legendary", condition: { type: "total_level", count: 1750  } },
-    // run6-fix: 2000 umbenannt; True Completionist gehört auf 2079 (21×99-Ceiling)
-    { id: "ach_total_level_2000", name: { en: "Nigh Complete",      de: "Beinahe Vollständig" }, description: { en: "Reach a total level of 2000. The pinnacle lies just ahead.", de: "Erreiche Gesamtlevel 2000. Der Gipfel liegt direkt vor dir." }, icon: "💫", category: "skilling",  rarity: "legendary", condition: { type: "total_level", count: 2000  } },
-    { id: "ach_total_level_2079", name: { en: "True Completionist", de: "Vollender"            }, description: { en: "Reach the absolute maximum total level of 2079. All 21 skills at level 99.", de: "Erreiche das absolute Maximum von 2079 Gesamtlevel. Alle 21 Fertigkeiten auf Stufe 99." }, icon: "🏆", category: "skilling",  rarity: "legendary", condition: { type: "total_level", count: 2079  } },
+    // 1.0-Blocker-Fix (21.08.): das Spiel hat 20 Fertigkeiten → Maximum = 20×99 = 1980, nicht
+    // 21×99 = 2079 (der alte Kommentar zählte eine Fertigkeit zu viel). ach_total_level_2000
+    // und ach_total_level_2079 verlangten damit ein rechnerisch unerreichbares Gesamtlevel.
+    // IDs bewusst NICHT umbenannt (Save-Kompatibilität — Erfolgs-IDs sind persistiert); nur
+    // count/Texte korrigiert: 2000 → 1900 (erreichbare Zwischenstufe), 2079 → 1980 (echtes Max).
+    { id: "ach_total_level_2000", name: { en: "Nigh Complete",      de: "Beinahe Vollständig" }, description: { en: "Reach a total level of 1900. The pinnacle lies just ahead.", de: "Erreiche Gesamtlevel 1900. Der Gipfel liegt direkt vor dir." }, icon: "💫", category: "skilling",  rarity: "legendary", condition: { type: "total_level", count: 1900  } },
+    { id: "ach_total_level_2079", name: { en: "True Completionist", de: "Vollender"            }, description: { en: "Reach the absolute maximum total level of 1980. All 20 skills at level 99.", de: "Erreiche das absolute Maximum von 1980 Gesamtlevel. Alle 20 Fertigkeiten auf Stufe 99." }, icon: "🏆", category: "skilling",  rarity: "legendary", condition: { type: "total_level", count: 1980  } },
     // Welle HH (Fun-Sweep pets-fenn F3): der ERSTE Pet-Drop hatte kein Achievement — ausgerechnet
     // der emotionalste Moment der Sammlung. Rarity unter ach_pets_5 gestaffelt (common statt
     // uncommon), damit die AP-Kurve 5→10→25→100 sauber aufsteigend bleibt.

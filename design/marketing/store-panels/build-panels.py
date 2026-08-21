@@ -400,7 +400,7 @@ def panel_promise():
 
     rows = ["Free content updates",
             "Your saves stay compatible \u2014 forever",
-            "Built with our community in Early Access"]
+            "Built with our community, update after update"]
     size = 17.5
     max_w = max(p.text_w(t, size, 0.4) for t in rows)
     block_x = W / 2 - (max_w + 34) / 2
