@@ -17,15 +17,14 @@
     "ui-audit": "node ui-audit/tour.mjs"
   },
   "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
     "@hearthforge/content": "workspace:*",
     "@hearthforge/engine": "workspace:*",
     "@hearthforge/persistence": "workspace:*",
     "@hearthforge/shared": "workspace:*",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "three": "^0.185.1"
-  },
-  "devDependencies": {
     "@playwright/test": "^1.61.1",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
@@ -35,6 +34,7 @@
     "electron": "^32.2.7",
     "electron-builder": "^25.1.8",
     "electron-vite": "^2.3.0",
+    "three": "^0.185.1",
     "tsx": "^4.22.4",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",

@@ -10,6 +10,9 @@
     "out/**",
     "!out/**/*.map",
     "!out/renderer/ui-audit-fixtures/**",
+    "!out/renderer/assets/arena_*.webp",
+    "!node_modules/**",
+    "node_modules/steamworks.js/**",
     "package.json"
   ],
   "asar": true,

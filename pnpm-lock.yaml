@@ -23,6 +23,13 @@ importers:
 
   apps/client:
     dependencies:
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
       '@hearthforge/content':
         specifier: workspace:*
         version: link:../../packages/content
@@ -35,16 +42,6 @@ importers:
       '@hearthforge/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      three:
-        specifier: ^0.185.1
-        version: 0.185.1
-    devDependencies:
       '@playwright/test':
         specifier: ^1.61.1
         version: 1.61.1
@@ -72,6 +69,9 @@ importers:
       electron-vite:
         specifier: ^2.3.0
         version: 2.3.0(vite@5.4.21(@types/node@22.20.0))
+      three:
+        specifier: ^0.185.1
+        version: 0.185.1
       tsx:
         specifier: ^4.22.4
         version: 4.22.4
