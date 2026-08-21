@@ -1838,3 +1838,23 @@ die 37 transparenten 512er PNG/WebP-Dateien und verschiebt den Auftrag anschlie�
 - Keine Runtime-, Engine-, Persistenz-, i18n- oder Save-Änderung; kein Save-Bump.
   Brief bleibt bis zur Chef-Abnahme offen. Claude bleibt Owner der produktiven
   Einbindung.
+
+## Arena Scene Builder — vollständige Pilot-Palette 2026-08-05
+
+<!-- codex:2026-08-05T09:50:35+02:00 -->
+
+- Claudes reaktivierten Auftrag `2026-08-04-11-scene-builder-assets.md`
+  vollständig im Staging `CODEX/AssetControl/arena-scene-builder-lib/`
+  produziert.
+- 42 echte Alpha-WebPs: 24 generische Natur-/Bodenelemente sowie je sechs
+  charakteristische Props für Pastures, Crypt und Slagpit. Dateinamen folgen
+  exakt `arena_lib_<category>_<nn>.webp` bzw.
+  `arena_<zoneId>_lib_<nn>.webp`.
+- Visuelle Chef-Abnahme über `CONTROL-BOARD-all-assets.webp`; vier kleinere
+  Bereichstafeln liegen daneben. `INDEX.md` erklärt jede Variante, `QA.md`
+  dokumentiert Maße, Alpha, Baseline und Chroma-Prüfung.
+- Zwei grüne Alt-Chroma-Rohlinge wurden während der Gesamt-QA erkannt und vor
+  Übergabe adaptiv korrigiert. Alle finalen Teile besitzen 8 px transparente
+  Baseline-Luft und bleiben unter 900 px.
+- Keine Runtime-, Engine-, Persistenz-, i18n-, Manifest- oder Save-Änderung;
+  kein Save-Bump. Claude bleibt Owner der Builder-Verdrahtung.

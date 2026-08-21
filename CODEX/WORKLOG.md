@@ -824,3 +824,16 @@
   nachgereinigt und Alpha-Bounds sowie Flächendeckung geprüft.
 - Vierer-Kontrolltafel im AssetControl-Staging abgelegt. Keine Runtime- oder
   Save-Änderung; Finalisierung wartet auf Chef-Abnahme.
+
+## 2026-08-05 — Scene-Builder-Palette vollständig
+
+<!-- codex:2026-08-05T09:50:35+02:00 -->
+
+- 42 freigestellte Builder-Props erstellt: 24 generische Natur-/Bodenteile und
+  je sechs Varianten für Pastures, Crypt und Slagpit.
+- Alle Elemente auf Builder-Größen normalisiert, mit 8-px-Baseline-Puffer
+  versehen und als Alpha-WebP abgelegt.
+- Vier Bereichstafeln und eine Gesamtprüftafel gebaut. Zwei grüne
+  Alt-Chroma-Flächen in der Felsserie gefunden und vor Übergabe korrigiert.
+- INDEX, Alpha-/Baseline-/Chroma-QA und Handoff ergänzt. Keine Runtime- oder
+  Save-Änderung; Claude übernimmt die Verdrahtung.
