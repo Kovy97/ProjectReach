@@ -6,6 +6,62 @@
 
 ---
 
+## ⟳ 1.0-VOLLRELEASE (18.08.2026) — Release-Kandidat steht
+
+> **Neuester Stand. Alles darunter ist Historie.** Der Chef-Kurs seit 06.08. ist der EA-Exit
+> (`design/plan-1.0-vollrelease.md`); Revision 16.08.: das nächste Update IST der 1.0-Vollrelease,
+> die Arena (0.4.0 „Kampfgefühl") ist gestrichen und bleibt DEV-only.
+
+**Was in dieser Welle gemacht wurde (Repo-seitig fertig):**
+- **Versionsstand 1.0.0:** `apps/client/package.json` `0.3.0` → `1.0.0`. Das ist die EINZIGE
+  Versionsquelle im Repo (alle anderen `package.json` stehen bewusst auf `0.0.0`);
+  `electron.vite.config.ts` faltet sie als `__APP_VERSION__` in den Renderer, sichtbar in
+  Hauptmenü, Optionen („Über") und im Bug-Report-Betreff. `electron-builder.json` trägt keine
+  eigene Version und zieht sie aus der `package.json`.
+- **Depot-Beschreibung:** `steam/app_build_4915450.vdf` `desc` → `Grim Reach 1.0 (Full Release)`.
+  AppID 4915450 / Depot 4915451 unverändert, `setlive` weiterhin leer (bewusst: der Chef schaltet
+  den Build im Steamworks-Backend selbst live).
+- **Patchnotes zusammengeführt:** `design/patchnotes.md` hat eine neue Sektion
+  `## 1.0.0 „Vollrelease" — 2026-08-18`. Sie enthält den nie ausgelieferten
+  0.3.1-Hotfix-Kandidaten (Item-Tooltip-Boden, Material-Chips, E+-Kampflog) plus eine Kopfzeile,
+  was 1.0 bedeutet. Die 0.4.0-Sektion steht als Historie weiter im Dokument, ist aber klar als
+  „NICHT VERÖFFENTLICHT / GESTRICHEN" markiert und trägt den Hinweis, sie NICHT ins Steam-Post zu
+  übernehmen.
+- **Save-Kompat-Ritual (Chef-Gesetz) erfüllt:** `SAVE_VERSION` bleibt **80**, kein Bump, keine
+  Migration; `packages/**` ist gegenüber dem 0.3.0-Live-Stand unverändert. Die Persistenz-Suite
+  läuft direkt (`cd packages/persistence && npx vitest run`, NIE `pnpm test` wegen Turbo-Cache)
+  mit **354 Tests grün**, alle **15 Vault-Fixtures** laden und sind round-trip-stabil.
+  **Kein neues `v80-release-1.0.0.json`:** das Pin-Ritual hängt an SAVE_VERSION, nicht an der
+  App-Version (Präzedenz v79). Ein 1.0-Pin wäre eine byte-genaue Kopie von
+  `v80-release-0.3.0.json`. Die Begründung steht dauerhaft in der Moduldoku von
+  `packages/persistence/src/save-compat-vault.test.ts`.
+
+**Was der Chef in Steamworks tun muss:** siehe die separate Schritt-für-Schritt-Checkliste
+`design/marketing/EA-EXIT-CHECKLISTE.md` sowie `design/steam-deploy-guide.md` und
+`steam/LIESMICH-steampipe.md` für den SteamPipe-Upload. Kurzform: Build hochladen, EA-Exit
+auslösen (Store-Seite auf „Full Release" umstellen), Announcement + Launch-Post, Launch-Rabatt und
+Termin setzen. Der Upload selbst bleibt Chef-Hand, dieses Repo schaltet nichts live.
+
+**Stand der offenen Punkte (unverändert offen, KEIN 1.0-Blocker):**
+- **Achievements bleiben inert.** `apps/client/src/main/steam.ts` ist verdrahtet, aber ohne
+  installiertes `steamworks.js` und ohne im Backend angelegte Achievements ein No-op. In-Game
+  funktionieren die Erfolge vollständig; nur die Steam-Spiegelung fehlt. Scharfschalten ist
+  Handarbeit im Steam-Backend (3 Schritte im STAND-UPDATE 2026-07-01 oben) und kann jederzeit
+  nachgezogen werden.
+- **Musik-Entscheid offen.** Prozeduraler Ambient/SFX über Web Audio bleibt der Auslieferungsstand,
+  bis der Chef eine Lizenz entscheidet. Kein Blocker, aber der sichtbarste Qualitätshebel für den
+  Trailer.
+- **Trailer-Neuschnitt offen.** Muss ohne Arena-Material auskommen (Entscheid 16.08.). Ebenso
+  offen: Screenshots 1920×1080 und der „Full Release"-Refresh der Store-Texte.
+- **Rest-Battlescreens / fehlende Monster-Art** (s. `design/asset-gaps-monsters.md`) laufen als
+  Mira-Wellen weiter und sind kosmetisch, kein Release-Blocker.
+
+**Verifikation dieser Welle:** Client-Typecheck grün, Persistenz-Suite 354 grün, Engine-Suite
+grün, Produktions-Build (`pnpm --filter @hearthforge/client build`) läuft durch. Details im
+Wellen-Bericht.
+
+---
+
 ## ⟳ STAND-UPDATE 2026-06-26 (seit der ursprünglichen Fassung dazugekommen)
 Die Tabelle unten (§1) ist teils veraltet. Wesentliche Erweiterungen:
 - **Voll ausgebautes Smithing:** 12-Metall-Tier-Leiter (copper→godiron), 240 schmiedbare Items, einklappbare Tier-Kategorien.

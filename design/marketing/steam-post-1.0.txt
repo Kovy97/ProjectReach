@@ -1,0 +1,147 @@
+HINWEIS FÜR DEN CHEF (nicht mitposten):
+Reiner Text, kein BBCode, wie beim 0.3.0-Post. Im Steam-Event-Editor die englische Fassung als
+Haupttext, die deutsche als zweite Sprachfassung im selben Event.
+An einer Stelle steht ein Platzhalter: die Zeile [FIX-LISTE] im Abschnitt „WHAT CHANGED IN THIS
+UPDATE" bzw. „WAS SICH IN DIESEM UPDATE ÄNDERT". Dort die verifizierte Fix-Liste des
+Release-Sweeps aus design/patchnotes.md einsetzen, sobald sie steht. Die drei bereits
+festgeschriebenen Hotfix-Punkte (0.3.1-Kandidat) stehen schon drin.
+Die Kurzfassung für den Event-Teaser steht ganz unten.
+
+
+===== ENGLISH (Haupttext) =====
+
+Grim Reach 1.0 is here. Early Access is over.
+
+
+GRIM REACH LEAVES EARLY ACCESS
+
+Grim Reach is 1.0 today. That is not a number I picked because it sounds good. It means the game
+is finished: everything I set out to build is in it, and there is no roadmap left with things you
+are still waiting for.
+
+
+WHAT THAT MEANS FOR YOU
+
+If you already own the game, this is just another update. It costs you nothing, your save loads
+exactly as it did yesterday, and you keep everything you have.
+
+If you were waiting for the 1.0 tag before buying, here is what is in the box:
+
+- 20 skills, every one of them with a full ladder to level 99
+- Ten zones, eight dungeons and the endless Paragon Spire, with over 100 creatures
+- 28 named Elite Champions that hunt on their own timers, each one guarding its own unique
+- Seven weekday Blessings that change how the whole Reach behaves
+- New Haven, your own settlement: 15 buildings, three ranks each, every one a permanent bonus
+- 109 quests, among them the 21 chapters of the Ashen Chronicle
+- Loot that rolls its own suffixes, plus 12 rune enchantments on top
+- Offline progress up to 11 hours, an action queue, three gear loadouts, five save slots
+- Seven languages
+- No microtransactions, no ads, no energy bars. One purchase, that is it.
+
+
+WHAT CHANGED IN THIS UPDATE
+
+- Item tooltips for gear with only one stat group (certain wands and staves) could show stat
+  labels with blank values. Fixed.
+- Large material stockpiles on skill action cards could get cut off at the edge of the chip.
+  They now use the same compact format as the values next to them.
+- The combat log tells the full story now: bleed and poison ticks are logged, shock stuns and
+  dodges are called out instead of a generic miss, and melee lifesteal shows its healing.
+[FIX-LISTE]
+- A full pass over the first hour and the endgame, in all seven languages.
+
+Your existing saves are fully compatible, as always.
+
+
+THANK YOU
+
+Grim Reach went into Early Access in July with one promise: your save survives every update.
+It did. Not one wipe, not one broken save, from 0.1 all the way to 1.0.
+
+A lot of what is in the game exists because somebody posted about it. The fight button on the
+monster cards, the equipment loadouts, the Slayer tasks that used to point at monsters you could
+never reach: all player reports. One of you had 93 hours in and kept sending me lists. You know
+who you are.
+
+I am not disappearing. I will keep reading the forum and fixing what gets reported. But the game
+is done, and it is time to stop calling it Early Access.
+
+Thanks for playing Grim Reach.
+
+
+===== DEUTSCH =====
+
+Grim Reach 1.0 ist da. Der Early Access ist vorbei.
+
+
+GRIM REACH VERLÄSST DEN EARLY ACCESS
+
+Grim Reach ist ab heute 1.0. Das ist keine Zahl, die ich gewählt habe, weil sie gut klingt. Sie
+heißt, dass das Spiel fertig ist: Alles, was ich mir vorgenommen habe, ist drin, und es gibt keine
+Roadmap mehr mit Dingen, auf die ihr noch wartet.
+
+
+WAS DAS FÜR EUCH HEISST
+
+Wer das Spiel schon hat, bekommt einfach das nächste Update. Es kostet nichts, euer Spielstand
+lädt genau wie gestern, und ihr behaltet alles.
+
+Wer auf das 1.0-Etikett gewartet hat, bevor er kauft: Das steckt in der Schachtel.
+
+- 20 Fertigkeiten, jede mit ihrer vollen Leiter bis Stufe 99
+- Zehn Gebiete, acht Dungeons und der endlose Paragonturm, mit über 100 Kreaturen
+- 28 benannte Elite-Champions, die nach eigenen Timern jagen, jeder mit seinem eigenen Unique
+- Sieben Wochentags-Segen, die das Verhalten des ganzen Reachs verändern
+- New Haven, deine eigene Siedlung: 15 Gebäude, je drei Ausbaustufen, jedes ein dauerhafter Bonus
+- 109 Aufgaben, darunter die 21 Kapitel der Aschechronik
+- Beute, die eigene Suffixe würfelt, dazu 12 Runen-Verzauberungen
+- Offline-Fortschritt bis zu 11 Stunden, Aktions-Warteschlange, drei Loadouts, fünf Speicherplätze
+- Sieben Sprachen
+- Keine Mikrotransaktionen, keine Werbung, keine Energie-Balken. Ein Kauf, fertig.
+
+
+WAS SICH IN DIESEM UPDATE ÄNDERT
+
+- Item-Tooltips für Ausrüstung mit nur einer Stat-Gruppe (bestimmte Zauberstäbe und Stäbe)
+  konnten Stat-Bezeichnungen mit leeren Werten anzeigen. Behoben.
+- Große Materialbestände auf Skill-Aktionskarten wurden am Rand des Chips abgeschnitten. Sie
+  nutzen jetzt dasselbe Kompaktformat wie die Werte daneben.
+- Das Kampflog erzählt jetzt alles: Blutungs- und Gift-Ticks werden geloggt, Schock-Lähmungen und
+  Ausweichen sind vom echten Verfehlen unterscheidbar, und der Nahkampf-Lebensraub zeigt seine
+  Heilung.
+[FIX-LISTE]
+- Ein kompletter Durchgang über die erste Stunde und das Endgame, in allen sieben Sprachen.
+
+Eure Spielstände sind vollständig kompatibel, wie immer.
+
+
+DANKE
+
+Grim Reach ist im Juli mit einem Versprechen in den Early Access gegangen: Euer Spielstand
+übersteht jedes Update. Er hat es. Kein einziger Wipe, kein einziger kaputter Spielstand, von
+0.1 bis 1.0.
+
+Vieles von dem, was heute im Spiel ist, gibt es, weil jemand darüber geschrieben hat. Der
+Kämpfen-Knopf auf den Monsterkarten, die Ausrüstungs-Loadouts, die Slayer-Aufträge, die früher auf
+Monster zeigten, die man nie erreichen konnte: alles Spieler-Reports. Einer von euch hatte 93
+Stunden drin und hat mir weiter Listen geschickt. Du weißt, wer du bist.
+
+Ich verschwinde nicht. Ich lese weiter das Forum und repariere, was gemeldet wird. Aber das Spiel
+ist fertig, und es ist Zeit, es nicht mehr Early Access zu nennen.
+
+Danke, dass ihr Grim Reach spielt.
+
+
+===== KURZFASSUNG FÜR DEN EVENT-TEASER =====
+
+--- EN (2 bis 3 Sätze) ---
+
+Grim Reach leaves Early Access today. Version 1.0 is the finished game: 20 skills, ten zones,
+eight dungeons, 28 Elite Champions and your own settlement, in seven languages, with no
+microtransactions. Your save loads exactly as it did yesterday.
+
+--- DE (2 bis 3 Sätze) ---
+
+Grim Reach verlässt heute den Early Access. Version 1.0 ist das fertige Spiel: 20 Fertigkeiten,
+zehn Gebiete, acht Dungeons, 28 Elite-Champions und deine eigene Siedlung, in sieben Sprachen,
+ohne Mikrotransaktionen. Dein Spielstand lädt genau wie gestern.

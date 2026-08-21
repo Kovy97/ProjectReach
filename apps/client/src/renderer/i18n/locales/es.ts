@@ -1322,7 +1322,7 @@ export const es: Record<string, string> = {
     "bank.withdrawInstance": "Retirar",
 
     "about.title": "Acerca de",
-    "about.version": "Grim Reach — v{version} (Acceso anticipado)",
+    "about.version": "Grim Reach — v{version}",
     "about.buildNote": "EA-0.1 — esta versión es una vista previa temprana. Se esperan asperezas.",
     "about.credits": "Un juego de Heartforge Studio.",
     // codex:2026-08-01T13:02:00+02:00 — Feedbackkanal umfasst Bugs und Feature-Ideen.

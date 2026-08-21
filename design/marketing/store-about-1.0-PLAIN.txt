@@ -1,0 +1,309 @@
+ANLEITUNG (neuer Steamworks-Editor, OHNE BB-Code): Sprache im Dropdown wählen, den About-Text der Sprache als reinen Text einfügen. An jeder Zeile „>>> BILD: …" das genannte Panel über die Editor-Werkzeugleiste (Bild einfügen) an genau dieser Stelle einsetzen und die Markierungszeile danach LÖSCHEN. Die Aufzählung entweder als •-Zeilen lassen (funktioniert überall) oder über das Listen-Werkzeug des Editors formatieren. Kurzbeschreibung wie gehabt in ihr eigenes Feld (Limit 300 Zeichen).
+
+Die 5 Panels liegen in CODEX/AssetControl/store-elements-0.3.0/description-panels/: panel_numbers.png, panel_worldfightsback.png, panel_skills.png, panel_newhaven.png, panel_promise.png.
+
+!!! ACHTUNG VOR DEM HOCHLADEN — panel_promise.png MUSS NEU GEBAUT WERDEN !!!
+Auf panel_promise.png steht als dritte Zeile „Built with our community in Early Access". Das ist die einzige Early-Access-Aussage, die nach dem EA-Exit noch auf der Store-Seite stehen würde, und sie steht IM BILD, nicht im Text. Quelle: design/marketing/store-panels/build-panels.py, Zeile ~401–403 (Liste `rows`). Vorschlag für die neue Zeile: „Built with our community, update after update". Das Panel danach neu rendern und die Datei ersetzen. Falls das nicht mehr rechtzeitig geht: panel_promise.png beim 1.0-Upload einfach WEGLASSEN (die Zeile „>>> BILD: panel_promise.png <<<" löschen), der Text steht auch ohne das Bild.
+
+Die Zahlen in dieser Fassung sind gegen den Content-Stand geprüft (packages/content): 20 Fertigkeiten, 1056 Gegenstände, 773 Aktionen, 10 Kampfgebiete + 8 Dungeons + Paragonturm (= 19, wie auf panel_numbers.png), 110 Kreaturen-Einträge (= „über 100", wie auf dem Panel), 28 Elite-Champions, 21 Gefährten, 12 Runen-Verzauberungen, 36 Sets, 537 Erfolge, 109 Aufgaben davon 21 Kapitel Aschechronik, 15 Lager-Gebäude à 3 Stufen, Offline-Fenster 8 h + bis zu 3 h Wachturm = 11 h, 5 Speicherplätze, 7 Sprachen.
+
+
+===== ENGLISH =====
+
+--- ABOUT THE GAME ---
+
+Grim Reach is a dark fantasy idle RPG where the world does not wait for you. It fights back: 28 named Elite Champions stalk the zones on their own schedule, and every real-world weekday carries a Blessing that changes how the whole Reach behaves.
+
+>>> BILD: panel_numbers.png <<<
+
+When a Champion surfaces you get the call, a countdown starts, and fifteen minutes later it is gone. Each of the 28 guards a named unique with its own effect, tracked in your codex and on Brenna's bounty board, and the locals comment on all of it. The seven Blessings of the Reach give the real week a rhythm, from richer beast loot under the Blood Moon to faster blades during the Wild Hunt: deliberately mild, no FOMO, and Champions only appear while you play.
+
+>>> BILD: panel_worldfightsback.png <<<
+
+Underneath runs a complete idle RPG. Twenty skills, from Woodcutting and Mining to Runecrafting, Herblore and Slayer, each with its full ladder to level 99, over a thousand items and more than 700 actions to work through. The action queue keeps your plans running while you are away, up to eleven hours at a stretch. Battles fight themselves but are worth watching: three combat styles, three armor families, pets at your side, dungeons with named waves and bosses. And every rare drop is its own instance with a fresh suffix roll, so two identical swords are never identical.
+
+>>> BILD: panel_skills.png <<<
+
+The Reach has an answer of its own: New Haven, your settlement. Raise 15 buildings through three ranks on a hand-painted map, place them wherever you like, and every single one pays you back with a permanent bonus, from longer offline progression to more bank space and faster skills. The smelter and the smokehouse even keep working while you are away, and at nightfall the whole camp lights its fires.
+
+>>> BILD: panel_newhaven.png <<<
+
+Ten zones, eight dungeons and the endless Paragon Spire sit on top of all that, gated by story rather than by grind: 21 chapters of the Ashen Chronicle carry you from the pastures outside Emberhold down into the Idol Hall, and 88 side quests wait along the way.
+
+• Ten zones, eight dungeons and the endless Paragon Spire, with over 100 creatures to hunt
+• 28 named Elite Champions with 28 unique drops, your first within about 20 minutes
+• 7 weekday Blessings: the world changes with the real day
+• 20 skills to gather, craft, steal and fight, every one of them up to level 99
+• New Haven: your own 15-building settlement with permanent bonuses, by day and by night
+• 109 quests, among them the 21-chapter Ashen Chronicle that runs through the whole Reach
+• Watchable auto-battles: 3 combat styles, 3 armor families, 21 pets, dungeon bosses
+• Loot with a soul: suffix rolls on rare drops, 12 rune enchantments on top
+• Over 1,000 items, 36 equipment sets, 537 achievements
+• Offline progress up to 11 hours, an action queue, 3 gear loadouts and a mailbox
+• 5 save slots, 7 languages, no microtransactions, no wipes
+
+>>> BILD: panel_promise.png <<<
+
+Grim Reach 1.0 is the finished game. One purchase, no ads, no energy bars, no store. Everything above is in the box, in all seven languages, and your save stays compatible with every update that follows. That promise held from the first build and it holds now.
+
+--- SHORT DESCRIPTION ---
+
+A dark fantasy idle RPG where the world fights back. 28 named Elite Champions stalk the zones on their own timers, weekday Blessings reshape the Reach, and every rare drop rolls its own stats. Train 20 skills, build your settlement, progress offline. One purchase, no microtransactions.
+
+
+===== DEUTSCH =====
+
+--- INFOS ZUM SPIEL ---
+
+Grim Reach ist ein düsteres Fantasy-Idle-RPG, in dem die Welt nicht auf dich wartet. Sie schlägt zurück: 28 benannte Elite-Champions streifen nach eigenem Rhythmus durch die Gebiete, und jeder echte Wochentag bringt einen Segen, der das Verhalten des ganzen Reachs verändert.
+
+>>> BILD: panel_numbers.png <<<
+
+Taucht ein Champion auf, kommt die Meldung, ein Countdown startet, und nach fünfzehn Minuten ist er wieder verschwunden. Jeder der 28 bewacht ein benanntes Unique mit eigenem Effekt, festgehalten in deinem Kodex und auf Brennas Kopfgeld-Brett, und die Bewohner reden über all das. Die sieben Segen des Reachs geben der echten Woche einen Rhythmus, von fetterer Bestien-Beute am Blutmond bis zu schnelleren Klingen zur Wilden Jagd: bewusst sanft, kein FOMO, und Champions erscheinen nur, solange du spielst.
+
+>>> BILD: panel_worldfightsback.png <<<
+
+Darunter läuft ein komplettes Idle-RPG. Zwanzig Fertigkeiten, von Holzfällen und Bergbau über Runenkunst und Kräuterkunde bis zum Monsterjäger, jede mit ihrer vollen Leiter bis Stufe 99, dazu über tausend Gegenstände und mehr als 700 Aktionen. Die Aktions-Warteschlange arbeitet deine Pläne auch offline ab, bis zu elf Stunden am Stück. Kämpfe laufen von selbst und sind trotzdem sehenswert: drei Kampfstile, drei Rüstungswege, Begleiter an deiner Seite, Dungeons mit benannten Wellen und Bossen. Und jeder seltene Fund ist ein eigenes Exemplar mit frischem Suffix-Wurf, zwei gleiche Schwerter sind nie wirklich gleich.
+
+>>> BILD: panel_skills.png <<<
+
+Der Reach hat eine eigene Antwort: New Haven, deine Siedlung. Errichte 15 Gebäude über drei Ausbaustufen auf einer handgemalten Karte, platziere sie völlig frei, und jedes einzelne zahlt es dir mit einem dauerhaften Bonus zurück: längerer Offline-Fortschritt, mehr Bankplätze, schnellere Fertigkeiten. Schmelzofen und Räucherhaus arbeiten sogar weiter, während du fort bist, und bei Einbruch der Nacht entzündet das ganze Lager seine Feuer.
+
+>>> BILD: panel_newhaven.png <<<
+
+Darüber liegen zehn Gebiete, acht Dungeons und der endlose Paragonturm, geöffnet von der Geschichte statt vom Grind: Die 21 Kapitel der Aschechronik führen dich von den Weiden vor der Glutfeste bis hinab in die Götzenhalle, und 88 Nebenaufgaben liegen am Weg.
+
+• Zehn Gebiete, acht Dungeons und der endlose Paragonturm, mit über 100 Kreaturen
+• 28 benannte Elite-Champions mit 28 Unique-Drops, der erste schon in den ersten 20 Minuten
+• 7 Wochentags-Segen: Die Welt ändert sich mit dem echten Tag
+• 20 Fertigkeiten zum Sammeln, Craften, Stehlen und Kämpfen, jede bis Stufe 99
+• New Haven: deine eigene Siedlung mit 15 Gebäuden und dauerhaften Boni, bei Tag und bei Nacht
+• 109 Aufgaben, darunter die 21 Kapitel der Aschechronik quer durch den ganzen Reach
+• Sehenswerte Auto-Kämpfe: 3 Kampfstile, 3 Rüstungswege, 21 Begleiter, Dungeon-Bosse
+• Beute mit Seele: Suffix-Wurf auf jedem seltenen Fund, 12 Runen-Verzauberungen obendrauf
+• Über 1.000 Gegenstände, 36 Ausrüstungs-Sets, 537 Erfolge
+• Offline-Fortschritt bis zu 11 Stunden, Aktions-Warteschlange, 3 Loadouts und ein Postfach
+• 5 Speicherplätze, 7 Sprachen, keine Mikrotransaktionen, keine Wipes
+
+>>> BILD: panel_promise.png <<<
+
+Grim Reach 1.0 ist das fertige Spiel. Ein Kauf, keine Werbung, keine Energie-Balken, kein Shop. Alles hier oben steckt in der Schachtel, in allen sieben Sprachen, und dein Spielstand bleibt mit jedem folgenden Update kompatibel. Dieses Versprechen galt vom ersten Build an und es gilt weiter.
+
+--- KURZBESCHREIBUNG ---
+
+Ein düsteres Fantasy-Idle-RPG, in dem die Welt zurückschlägt. 28 Elite-Champions streifen nach eigenen Timern durch die Gebiete, Wochentags-Segen verändern das Reach, jeder seltene Fund würfelt eigene Werte. 20 Fertigkeiten, eigene Siedlung, Offline-Fortschritt. Ohne Mikrotransaktionen.
+
+
+===== FRANÇAIS =====
+
+--- À PROPOS DU JEU ---
+
+Grim Reach est un idle RPG dark fantasy où le monde ne vous attend pas : il riposte. 28 Champions d'élite nommés rôdent dans les zones selon leur propre rythme, et chaque jour réel de la semaine apporte une Bénédiction qui change le comportement de tout le Domaine.
+
+>>> BILD: panel_numbers.png <<<
+
+Quand un Champion apparaît, l'alerte tombe, un compte à rebours démarre, et quinze minutes plus tard il a disparu. Chacun des 28 garde un butin unique nommé avec son propre effet, consigné dans votre codex et sur le tableau de primes de Brenna, et les habitants commentent tout cela. Les sept Bénédictions du Domaine donnent un rythme à la semaine réelle, du butin plus riche sous la Lune de Sang aux lames plus rapides pendant la Chasse Sauvage : des bonus volontairement doux, sans FOMO, et les Champions n'apparaissent que pendant que vous jouez.
+
+>>> BILD: panel_worldfightsback.png <<<
+
+En dessous tourne un idle RPG complet. Vingt compétences, du Bûcheronnage et du Minage à la Runécriture, l'Herboristerie et le Chasseur, chacune avec son échelle complète jusqu'au niveau 99, plus de mille objets et plus de 700 actions à dérouler. La file d'attente d'actions poursuit vos plans hors ligne, jusqu'à onze heures d'affilée. Les combats se jouent tout seuls mais valent le coup d'œil : trois styles de combat, trois familles d'armures, des compagnons à vos côtés, des donjons avec vagues nommées et boss. Et chaque objet rare est un exemplaire à part avec son propre tirage de suffixe, deux épées identiques ne le sont jamais vraiment.
+
+>>> BILD: panel_skills.png <<<
+
+Le Domaine a sa propre réponse : New Haven, votre campement. Érigez 15 bâtiments sur trois rangs sur une carte peinte à la main, placez-les où bon vous semble, et chacun vous le rend par un bonus permanent : progression hors ligne prolongée, banque agrandie, compétences accélérées. La fonderie et le fumoir continuent même de travailler en votre absence, et à la tombée de la nuit, tout le camp allume ses feux.
+
+>>> BILD: panel_newhaven.png <<<
+
+Par-dessus s'étendent dix zones, huit donjons et la Tour du Paragon sans fin, ouverts par l'histoire et non par le grind : les 21 chapitres de la Chronique des Cendres vous mènent des Pâturages devant le Bastion des Braises jusqu'à la Halle de l'Idole, et 88 quêtes annexes jalonnent la route.
+
+• Dix zones, huit donjons et la Tour du Paragon sans fin, avec plus de 100 créatures
+• 28 Champions d'élite nommés, 28 butins uniques, le premier dès vos 20 premières minutes
+• 7 Bénédictions hebdomadaires : le monde change avec le jour réel
+• 20 compétences pour récolter, fabriquer, voler et combattre, toutes jusqu'au niveau 99
+• New Haven : votre campement de 15 bâtiments aux bonus permanents, de jour comme de nuit
+• 109 quêtes, dont les 21 chapitres de la Chronique des Cendres à travers tout le Domaine
+• Des combats automatiques à regarder : 3 styles, 3 familles d'armures, 21 compagnons, boss de donjon
+• Du butin avec une âme : suffixes aléatoires sur les objets rares, 12 enchantements de runes en plus
+• Plus de 1 000 objets, 36 panoplies, 537 succès
+• Progression hors ligne jusqu'à 11 heures, file d'actions, 3 équipements enregistrés, boîte aux lettres
+• 5 emplacements de sauvegarde, 7 langues, zéro microtransaction, zéro wipe
+
+>>> BILD: panel_promise.png <<<
+
+Grim Reach 1.0 est le jeu terminé. Un seul achat, pas de publicité, pas de barre d'énergie, pas de boutique. Tout ce qui précède est dans la boîte, dans les sept langues, et votre sauvegarde reste compatible avec chaque mise à jour qui suivra. Cette promesse tenait dès la première version et elle tient toujours.
+
+--- DESCRIPTION COURTE ---
+
+Un idle RPG dark fantasy où le monde riposte. 28 Champions d'élite nommés rôdent dans les zones selon leurs timers, les Bénédictions transforment le Domaine au fil des jours réels, chaque objet rare tire ses propres stats. Montez 20 compétences, bâtissez votre camp. Zéro microtransaction.
+
+
+===== ESPAÑOL (ES) =====
+
+--- ACERCA DEL JUEGO ---
+
+Grim Reach es un idle RPG de fantasía oscura donde el mundo no espera por ti: contraataca. 28 Campeones de élite con nombre propio recorren las zonas a su propio ritmo, y cada día real de la semana trae una Bendición que cambia el comportamiento de toda la Reach.
+
+>>> BILD: panel_numbers.png <<<
+
+Cuando aparece un Campeón llega el aviso, arranca una cuenta atrás y quince minutos después ya no está. Cada uno de los 28 guarda un botín único con nombre y efecto propio, registrado en tu códice y en el tablón de recompensas de Brenna, y los habitantes comentan todo lo que pasa. Las siete Bendiciones de la Reach marcan el ritmo de la semana real, del botín más rico bajo la Luna de Sangre a los golpes más rápidos durante la Cacería Salvaje: bonus suaves a propósito, sin FOMO, y los Campeones solo aparecen mientras juegas.
+
+>>> BILD: panel_worldfightsback.png <<<
+
+Debajo corre un idle RPG completo. Veinte habilidades, de la Tala y la Minería a la Creación de runas, la Herboristería y el Cazador, cada una con su escalera completa hasta el nivel 99, más de mil objetos y más de 700 acciones por recorrer. La cola de acciones sigue ejecutando tus planes sin conexión, hasta once horas seguidas. Los combates se libran solos pero dan gusto verlos: tres estilos de combate, tres familias de armadura, compañeros a tu lado, mazmorras con oleadas con nombre y jefes. Y cada objeto raro es un ejemplar propio con su tirada de sufijo, dos espadas idénticas nunca lo son de verdad.
+
+>>> BILD: panel_skills.png <<<
+
+La Reach tiene su propia respuesta: New Haven, tu asentamiento. Levanta 15 edificios con tres niveles de mejora sobre un mapa pintado a mano, colócalos donde quieras, y cada uno te lo devuelve con un bonus permanente: más progreso sin conexión, más espacio en el banco, habilidades más rápidas. La fundición y el ahumadero siguen trabajando incluso mientras no estás, y al caer la noche todo el campamento enciende sus fuegos.
+
+>>> BILD: panel_newhaven.png <<<
+
+Encima de todo eso hay diez zonas, ocho mazmorras y la Torre del Paragón infinita, abiertas por la historia y no por el grind: los 21 capítulos de la Crónica de las Cenizas te llevan de Los Pastos frente al Baluarte de las Brasas hasta el Salón del Ídolo, y 88 misiones secundarias esperan por el camino.
+
+• Diez zonas, ocho mazmorras y la Torre del Paragón infinita, con más de 100 criaturas
+• 28 Campeones de élite con nombre, 28 botines únicos, el primero en tus primeros 20 minutos
+• 7 Bendiciones semanales: el mundo cambia con el día real
+• 20 habilidades para recolectar, fabricar, robar y luchar, todas hasta el nivel 99
+• New Haven: tu asentamiento de 15 edificios con bonus permanentes, de día y de noche
+• 109 misiones, entre ellas los 21 capítulos de la Crónica de las Cenizas por toda la Reach
+• Combates automáticos que dan gusto ver: 3 estilos, 3 familias de armadura, 21 compañeros, jefes de mazmorra
+• Botín con alma: sufijos aleatorios en los objetos raros y 12 encantamientos de runas encima
+• Más de 1.000 objetos, 36 conjuntos de equipo, 537 logros
+• Progreso sin conexión de hasta 11 horas, cola de acciones, 3 equipamientos guardados y un buzón
+• 5 ranuras de guardado, 7 idiomas, sin microtransacciones y sin wipes
+
+>>> BILD: panel_promise.png <<<
+
+Grim Reach 1.0 es el juego terminado. Una sola compra, sin anuncios, sin barras de energía, sin tienda. Todo lo de arriba viene en la caja, en los siete idiomas, y tu partida guardada sigue siendo compatible con cada actualización que venga. Esa promesa valía desde la primera versión y sigue valiendo.
+
+--- DESCRIPCIÓN CORTA ---
+
+Un idle RPG de fantasía oscura donde el mundo contraataca. 28 Campeones de élite recorren las zonas con sus propios timers, las Bendiciones cambian la Reach con cada día real y cada objeto raro tira sus propias stats. Sube 20 habilidades, levanta tu asentamiento. Sin microtransacciones.
+
+
+===== PORTUGUÊS (BR) =====
+
+--- SOBRE O JOGO ---
+
+Grim Reach é um idle RPG de fantasia sombria em que o mundo não espera por você: ele revida. 28 Campeões de elite com nome próprio vagam pelas zonas no ritmo deles, e cada dia real da semana traz uma Bênção que muda o comportamento de todo o Confim.
+
+>>> BILD: panel_numbers.png <<<
+
+Quando um Campeão aparece, o aviso chega, a contagem começa e quinze minutos depois ele se foi. Cada um dos 28 guarda um item único com nome e efeito próprios, registrado no seu códice e no quadro de recompensas da Brenna, e os moradores comentam tudo o que acontece. As sete Bênçãos do Confim dão ritmo à semana real, do butim mais rico sob a Lua de Sangue aos golpes mais rápidos na Caçada Selvagem: bônus suaves de propósito, sem FOMO, e Campeões só aparecem enquanto você joga.
+
+>>> BILD: panel_worldfightsback.png <<<
+
+Por baixo roda um idle RPG completo. Vinte habilidades, do Corte de Lenha e da Mineração à Criação de Runas, Herbologia e Caçador, cada uma com a escada completa até o nível 99, mais de mil itens e mais de 700 ações para percorrer. A fila de ações continua executando seus planos offline, por até onze horas seguidas. As lutas acontecem sozinhas, mas valem a pena assistir: três estilos de combate, três famílias de armadura, companheiros ao seu lado, masmorras com ondas nomeadas e chefes. E todo item raro é um exemplar próprio com rolagem de sufixo, duas espadas idênticas nunca são idênticas de verdade.
+
+>>> BILD: panel_skills.png <<<
+
+O Confim tem uma resposta própria: New Haven, o seu assentamento. Erga 15 construções com três níveis de melhoria em um mapa pintado à mão, posicione tudo onde quiser, e cada uma retribui com um bônus permanente: mais progresso offline, mais espaço no banco, habilidades mais rápidas. A fundição e o defumadouro continuam trabalhando até enquanto você está fora, e ao cair da noite o acampamento inteiro acende suas fogueiras.
+
+>>> BILD: panel_newhaven.png <<<
+
+Acima de tudo isso ficam dez zonas, oito masmorras e a Torre do Paragon infinita, abertas pela história e não pelo grind: os 21 capítulos da Crônica das Cinzas levam você dos Pastos diante do Bastião das Brasas até o Salão do Ídolo, e 88 missões secundárias esperam no caminho.
+
+• Dez zonas, oito masmorras e a Torre do Paragon infinita, com mais de 100 criaturas
+• 28 Campeões de elite com nome, 28 itens únicos, o primeiro nos seus primeiros 20 minutos
+• 7 Bênçãos semanais: o mundo muda com o dia real
+• 20 habilidades para coletar, criar, roubar e lutar, todas até o nível 99
+• New Haven: seu assentamento com 15 construções e bônus permanentes, de dia e de noite
+• 109 missões, entre elas os 21 capítulos da Crônica das Cinzas por todo o Confim
+• Lutas automáticas que valem a pena assistir: 3 estilos, 3 famílias de armadura, 21 companheiros, chefes de masmorra
+• Loot com alma: sufixos aleatórios nos itens raros e 12 encantamentos de runas por cima
+• Mais de 1.000 itens, 36 conjuntos de equipamento, 537 conquistas
+• Progresso offline de até 11 horas, fila de ações, 3 equipamentos salvos e uma caixa de correio
+• 5 espaços de save, 7 idiomas, sem microtransações e sem wipes
+
+>>> BILD: panel_promise.png <<<
+
+Grim Reach 1.0 é o jogo terminado. Uma compra só, sem anúncios, sem barra de energia, sem loja. Tudo o que está acima vem na caixa, nos sete idiomas, e o seu save continua compatível com cada atualização que vier. Essa promessa valia desde a primeira versão e continua valendo.
+
+--- DESCRIÇÃO CURTA ---
+
+Um idle RPG de fantasia sombria em que o mundo revida. 28 Campeões de elite com nome próprio vagam pelas zonas com timers próprios, Bênçãos mudam o Confim a cada dia real e todo item raro rola os próprios stats. Suba 20 habilidades, erga seu assentamento. Sem microtransações.
+
+
+===== РУССКИЙ =====
+
+--- ОБ ИГРЕ ---
+
+Grim Reach — мрачная фэнтезийная idle-RPG, где мир не ждёт вас, а отвечает ударом. 28 именных элитных Чемпионов бродят по зонам по собственному расписанию, а каждый реальный день недели приносит Благословение, меняющее поведение всего Предела.
+
+>>> BILD: panel_numbers.png <<<
+
+Когда появляется Чемпион, приходит оповещение, запускается отсчёт, и через пятнадцать минут он исчезает. Каждый из 28 охраняет именной трофей с собственным эффектом, ваши охоты попадают в кодекс и на доску наград Бренны, а жители комментируют происходящее. Семь Благословений Предела задают ритм реальной неделе, от богатой добычи под Кровавой Луной до быстрых клинков во время Дикой Охоты: бонусы намеренно мягкие, без FOMO, а Чемпионы появляются только пока вы играете.
+
+>>> BILD: panel_worldfightsback.png <<<
+
+Под всем этим работает полноценная idle-RPG. Двадцать навыков, от Древорубства и Горного дела до Рунотворчества, Травничества и Истребления, каждый со своей полной лестницей до 99 уровня, больше тысячи предметов и свыше 700 действий. Очередь действий продолжает выполнять ваши планы офлайн, до одиннадцати часов подряд. Бои идут сами, но за ними интересно наблюдать: три боевых стиля, три типа брони, спутники рядом с вами, подземелья с именованными волнами и боссами. И каждый редкий предмет остаётся отдельным экземпляром со своим суффиксом: два одинаковых меча никогда не одинаковы по-настоящему.
+
+>>> BILD: panel_skills.png <<<
+
+У Предела есть и собственный ответ: New Haven, ваше поселение. Возведите 15 построек с тремя уровнями развития на нарисованной вручную карте, расставьте их как угодно, и каждая отплатит постоянным бонусом: дольше офлайн-прогресс, больше места в банке, быстрее навыки. Плавильня и коптильня продолжают работать даже пока вас нет, а с наступлением ночи весь лагерь зажигает свои огни.
+
+>>> BILD: panel_newhaven.png <<<
+
+Поверх всего этого лежат десять зон, восемь подземелий и бесконечная Башня Парагона, открытые сюжетом, а не гриндом: 21 глава Пепельной хроники ведёт вас от Пастбищ у Тлеющего Оплота вниз, в Зал Идола, и по дороге ждут 88 побочных заданий.
+
+• Десять зон, восемь подземелий и бесконечная Башня Парагона, более 100 существ
+• 28 именных элитных Чемпионов и 28 уникальных трофеев, первый уже в первые 20 минут
+• 7 Благословений по дням недели: мир меняется вместе с реальным днём
+• 20 навыков: собирайте, создавайте, воруйте, сражайтесь, каждый до 99 уровня
+• New Haven: своё поселение из 15 зданий с постоянными бонусами, днём и ночью
+• 109 заданий, среди них 21 глава Пепельной хроники через весь Предел
+• Автобои, за которыми интересно наблюдать: 3 стиля, 3 типа брони, 21 спутник, боссы подземелий
+• Добыча с душой: случайные суффиксы на редких предметах и 12 рунных зачарований сверху
+• Более 1000 предметов, 36 комплектов экипировки, 537 достижений
+• Офлайн-прогресс до 11 часов, очередь действий, 3 сохранённых комплекта снаряжения и почтовый ящик
+• 5 слотов сохранения, 7 языков, без микротранзакций и без вайпов
+
+>>> BILD: panel_promise.png <<<
+
+Grim Reach 1.0 — это законченная игра. Одна покупка, без рекламы, без шкал энергии, без магазина. Всё, что описано выше, уже в коробке, на всех семи языках, а ваше сохранение остаётся совместимым с каждым следующим обновлением. Это обещание действовало с самой первой сборки и действует сейчас.
+
+--- КОРОТКОЕ ОПИСАНИЕ ---
+
+Мрачная фэнтезийная idle-RPG, где мир даёт сдачи. 28 именных элитных Чемпионов бродят по зонам по своим таймерам, Благословения меняют Предел с каждым реальным днём, а каждый редкий предмет получает свои характеристики. Качайте 20 навыков, стройте поселение. Без микротранзакций.
+
+
+===== 简体中文 =====
+
+--- 关于这款游戏 ---
+
+《Grim Reach》是一款黑暗奇幻放置RPG，这里的世界不会静静等你，它会反击。28名有名有姓的精英按自己的节奏在各区域游荡，现实中的每个星期几都会带来一种边域祝福，改变整个世界的运作方式。
+
+>>> BILD: panel_numbers.png <<<
+
+精英现身时你会立刻收到提示，倒计时开始，十五分钟后它便再度消失。28名精英每个都守着一件效果独特的专属掉落，你的战绩会记入图鉴和布伦娜的悬赏板，居民们也会议论这一切。七种边域祝福让现实的一周有了节奏，从血月之下更肥的野兽掉落，到狂猎期间更快的出手：加成刻意温和、没有FOMO，而且精英只在你游玩时出现。
+
+>>> BILD: panel_worldfightsback.png <<<
+
+底层是一款完整的放置RPG。20项技能，从伐木、采矿到符文制作、草药学和猎魔，每一项都有直达99级的完整阶梯，超过一千件物品和七百多种可执行的动作。行动队列会在你离线时继续执行计划，一次最长十一小时。战斗自动进行却值得一看：三种战斗流派、三系护甲、并肩作战的伙伴、有具名波次和首领的地下城。每件稀有装备都是独立个体，自带随机词缀，两把相同的剑永远不会真正相同。
+
+>>> BILD: panel_skills.png <<<
+
+边域也有属于你的答案：New Haven，你的营地。在一张手绘地图上建造15种建筑，每种可升三级，想放哪就放哪，而每一座建筑都会以永久加成回报你：更长的离线进度、更多的银行空间、更快的技能。熔炉和熏制房甚至会在你离开时继续劳作，夜幕降临时，整个营地都会点起火光。
+
+>>> BILD: panel_newhaven.png <<<
+
+在这一切之上，是十个区域、八座地下城和无尽的帕拉贡之塔，由剧情而非苦刷来解锁：《灰烬编年史》的21个章节带你从余烬堡城外的牧野一路深入神像大厅，途中还有88个支线任务等着你。
+
+• 十个区域、八座地下城和无尽的帕拉贡之塔，超过100种生物
+• 28名精英、28件专属掉落，你的第一场遭遇就在开局20分钟内
+• 7种星期祝福：世界随现实日期变化
+• 20项技能：采集、制造、偷窃、战斗，每一项都能练到99级
+• New Haven：你的专属营地，15种建筑、永久加成、昼夜交替
+• 109个任务，其中包含贯穿整个边域的21章《灰烬编年史》
+• 可观赏的自动战斗：3种流派、3系护甲、21种伙伴、地下城首领
+• 有灵魂的战利品：稀有装备随机词缀，外加12种附魔符文
+• 超过1000件物品、36套装备套装、537项成就
+• 最长11小时的离线进度、行动队列、3套装备预设和邮箱
+• 5个存档位、7种语言，零内购、零清档
+
+>>> BILD: panel_promise.png <<<
+
+《Grim Reach》1.0 就是完成品。一次购买，没有广告，没有体力条，没有商城。上面写到的一切都已在盒子里，七种语言全部到位，而你的存档会与之后的每一次更新保持兼容。这个承诺从第一个版本起就成立，现在依然成立。
+
+--- 简介 / SHORT DESCRIPTION ---
+
+《Grim Reach》是一款会反击的黑暗奇幻放置RPG。28名有名有姓的精英按各自的隐藏计时在区域间现身又消失，每个都守着一件效果独特的专属掉落；七种边域祝福随现实中的星期几改变整个世界的规则；每件稀有装备都会随机生成自己的词缀，没有两件完全相同。修炼从伐木、采矿到符文制作、猎魔的20项技能，建起自己的营地，排好行动队列，离线也在稳步成长。零内购、零清档，存档永远兼容。来吧，让整个边域记住你的名字。

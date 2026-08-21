@@ -1355,7 +1355,7 @@ export const ru: Record<string, string> = {
 
     // About / Info
     "about.title": "Об игре",
-    "about.version": "Grim Reach — v{version} (Ранний доступ)",
+    "about.version": "Grim Reach — v{version}",
     "about.buildNote": "EA-0.1 — эта сборка является ранней версией. Возможны шероховатости.",
     "about.credits": "Игра от Heartforge Studio.",
     // codex:2026-08-01T13:02:00+02:00 — Feedbackkanal umfasst Bugs und Feature-Ideen.

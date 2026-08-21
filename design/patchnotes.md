@@ -10,24 +10,58 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
-## 0.3.1 — Silent-Hotfix-KANDIDAT (Unveröffentlicht — aus Spieler-Bug-Report 04.08.)
+## 1.0.0 „Vollrelease" — 2026-08-18
 
-- **Item-Tooltip-Fix:** DE: Item-Tooltips für Ausrüstung mit nur einer Stat-Gruppe (bestimmte
-  Zauberstäbe/Stäbe) konnten Stat-Bezeichnungen mit leeren Werten anzeigen — die Werte wurden vom
-  herunterskalierenden Rahmen in einen unsichtbaren Bereich gedrückt; jetzt gilt: Mindestgröße +
-  Umbruch statt Abschneiden. / EN: Item tooltips for gear with only one stat group (certain wands/
-  staves) could show stat labels with blank values — fixed with a size floor and wrapping instead
-  of clipping.
-- **Material-Chip-Fix:** DE: Große Materialbestände auf Skill-Aktionskarten (z.B. „978") wurden am
-  Chip-Rand abgeschnitten — jetzt Kompakt-Format wie die Nachbarwerte plus stapelndes Layout bei
-  engen Karten. / EN: Large material stockpiles on skill action cards could get cut off at the
-  chip edge — now compact-formatted like neighboring values, with a stacking layout on narrow cards.
-- **Kampflog erzählt alles (E+, fährt im Hotfix mit):** DE: Blutungs- und Gift-Ticks werden
-  geloggt, Schock-Lähmungen und Ausweichen sind vom Verfehlen unterscheidbar, Nahkampf-Lebensraub
-  zeigt seine Heilung. / EN: Bleed and poison ticks are logged, shock stuns and dodges are called
-  out instead of a generic "miss", and melee lifesteal shows its healing.
+**Grim Reach verlässt Early Access.** DE: Mit 1.0 ist das Spiel inhaltlich fertig. Enthalten sind
+20 Fertigkeiten (13 zum Sammeln und Verarbeiten, 7 im Kampf), 10 Kampfzonen plus Slayer-Turm,
+8 Dungeons einschließlich Paragonturm, 110 Monster, 28 namentliche Champions, die Aschechronik
+als durchgehende Questreihe, New Haven als eigene ausbaubare Siedlung sowie die vollständige
+Oberfläche in 7 Sprachen. Bestehende Spielstände laufen unverändert weiter, es geht kein
+Fortschritt verloren. / EN: Grim Reach leaves Early Access. Version 1.0 is the content-complete
+game: 20 skills (13 gathering and crafting, 7 combat), 10 combat zones plus the Slayer Tower,
+8 dungeons including the Paragon Tower, 110 monsters, 28 named champions, the Ash Chronicle as a
+continuous questline, New Haven as your own upgradable settlement, and the full interface in
+7 languages. Existing saves carry over untouched, so no progress is lost.
 
-## 0.4.0 „Kampfgefühl" — (Unveröffentlicht, in Arbeit)
+*Dev-Notiz: 1.0 friert den Inhalt ein und übernimmt den nie ausgelieferten 0.3.1-Hotfix-Kandidaten
+(Tooltip-Boden, Material-Chips, E+-Kampflog) vollständig. `apps/client/package.json` 0.3.0 → 1.0.0
+(speist `__APP_VERSION__` in Hauptmenü, Optionen und Bug-Report); Depot-Beschreibung in
+`steam/app_build_4915450.vdf` auf „Grim Reach 1.0 (Full Release)". SAVE_VERSION bleibt 80, kein
+Bump und keine Migration, `packages/**` ist gegenüber dem 0.3.0-Live-Stand unverändert. Das
+Vault-Ritual greift damit ohne neuen Pin: die bestehenden v80-Fixtures (`v80-release-0.3.0.json`
++ `v80-filled-0.3.0.json`) sind exakt der Save-Stand, der mit 1.0 ausgeliefert wird; Guard grün
+(354 Persistenz-Tests, 15 Vault-Fixtures).*
+
+**Item-Tooltips zeigen wieder alle Werte:** DE: Item-Tooltips für Ausrüstung mit nur einer
+Stat-Gruppe (bestimmte Zauberstäbe und Stäbe) konnten Bezeichnungen ohne Werte anzeigen, weil der
+schrumpfende Rahmen die Zahlen aus dem sichtbaren Bereich drückte. Jetzt greifen Mindestgröße und
+Umbruch statt Abschneiden. / EN: Item tooltips for gear with only one stat group (certain wands
+and staves) could show stat labels with blank values, because the shrinking frame pushed the
+numbers out of view. There is now a size floor and wrapping instead of clipping.
+
+**Materialbestände auf Aktionskarten bleiben lesbar:** DE: Große Materialbestände auf den
+Skill-Aktionskarten (etwa „978") wurden am Chip-Rand abgeschnitten. Sie erscheinen jetzt im selben
+Kompaktformat wie die Nachbarwerte, und enge Karten stapeln ihr Layout, statt den Wert zu kappen.
+/ EN: Large material stockpiles on skill action cards (for example "978") could get cut off at the
+chip edge. They now use the same compact format as neighbouring values, and narrow cards stack
+their layout instead of clipping the number.
+
+**Das Kampfprotokoll erzählt den ganzen Kampf:** DE: Blutungs- und Gift-Ticks werden jetzt
+geloggt (vorher tickte nur Brennen hörbar), Schock-Lähmungen und Ausweichen sind im Protokoll vom
+echten Verfehlen unterscheidbar, und der Nahkampf-Lebensraub zeigt seine Heilung. / EN: The combat
+log now tells the full story: bleed and poison ticks are logged, shock stuns and dodges are called
+out instead of a generic "miss", and melee lifesteal shows its healing.
+*Dev-Notiz: rein additive Events/Felder (missReason, source meleeLifesteal), kein SAVE-Bump,
+Sanitize verbatim-sicher verifiziert; Grundlagen-Docs battle-040-\*.md.*
+
+## 0.4.0 „Kampfgefühl" — NICHT VERÖFFENTLICHT / GESTRICHEN (Chef-Entscheid 16.08.2026)
+
+> **Historie, kein Patch-Inhalt. NICHT ins Steam-Post übernehmen.** Diese Stufe wurde nie
+> ausgeliefert und wird es nicht mehr: Die 2,5D-Arena samt Scene Builder bleibt DEV-only (Flag
+> `ARENA25D_PAUSED` bzw. das separate Scene-Builder-Build-Ziel) und ist im Spieler-Bundle tot,
+> ohne Post-Launch-Versprechen (s. `design/plan-1.0-vollrelease.md`, Strang A, Revision 16.08.).
+> Der einzige spielersichtbare Teil dieser Stufe, das E+-Kampflog-Paket, ist oben nach 1.0.0
+> gewandert und steht hier nur noch als Protokoll.
 
 **Kampflog erzählt alles (E+-Paket, 03.08. abends):** DE: Blutungs- und Gift-Ticks werden jetzt
 geloggt (vorher tickte nur Brennen hörbar), Schock-Lähmungen und Ausweichen sind im Log vom

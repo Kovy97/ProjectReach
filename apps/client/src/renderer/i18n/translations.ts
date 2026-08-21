@@ -1602,7 +1602,7 @@ const en = {
 
     // ── About / Info ─────────────────────────────────────────────────────────
     "about.title": "About",
-    "about.version": "Grim Reach — v{version} (Early Access)",
+    "about.version": "Grim Reach — v{version}",
     "about.buildNote": "EA-0.1 — this build is an early preview. Rough edges are expected.",
     "about.credits": "A game by Heartforge Studio.",
     // codex:2026-08-01T13:02:00+02:00 — Feedbackkanal umfasst Bugs und Feature-Ideen.
@@ -3566,7 +3566,7 @@ const de: Record<keyof typeof en, string> = {
 
     // ── Über das Spiel / Info ────────────────────────────────────────────────
     "about.title": "Über das Spiel",
-    "about.version": "Grim Reach — v{version} (Early Access)",
+    "about.version": "Grim Reach — v{version}",
     "about.buildNote": "EA-0.1 — dieses Build ist eine frühe Vorschau. Kleinere Fehler sind zu erwarten.",
     "about.credits": "Ein Spiel von Heartforge Studio.",
     // codex:2026-08-01T13:02:00+02:00 — Feedbackkanal umfasst Bugs und Feature-Ideen.
