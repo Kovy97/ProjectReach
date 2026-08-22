@@ -23,6 +23,14 @@ game: 20 skills (13 gathering and crafting, 7 combat), 10 combat zones plus the 
 continuous questline, New Haven as your own upgradable settlement, and the full interface in
 7 languages. Existing saves carry over untouched, so no progress is lost.
 
+**Warum jetzt 1.0:** DE: Der Early Access hatte ein klares Ziel, und dieses Ziel ist erreicht.
+Alles, was zum vollen Spiel gehören sollte, ist eingebaut und spielbar. Wie es weitergeht: Die
+nächsten Patches drehen sich um Politur, also Feinschliff an Oberfläche, Lesbarkeit und Komfort.
+Danach nehmen wir die großen Content-Updates in Angriff. / EN: Early Access had a clear goal, and
+that goal is met. Everything meant to be in the full game is in and playable. What comes next: the
+upcoming patches focus on polish, meaning refinements to the interface, readability and comfort.
+After that we turn to the big content updates.
+
 *Dev-Notiz: 1.0 friert den Inhalt ein und übernimmt den nie ausgelieferten 0.3.1-Hotfix-Kandidaten
 (Tooltip-Boden, Material-Chips, E+-Kampflog) vollständig. `apps/client/package.json` 0.3.0 → 1.0.0
 (speist `__APP_VERSION__` in Hauptmenü, Optionen und Bug-Report); Depot-Beschreibung in
