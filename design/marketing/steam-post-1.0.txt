@@ -1,10 +1,8 @@
 HINWEIS FÜR DEN CHEF (nicht mitposten):
 Reiner Text, kein BBCode, wie beim 0.3.0-Post. Im Steam-Event-Editor die englische Fassung als
 Haupttext, die deutsche als zweite Sprachfassung im selben Event.
-An einer Stelle steht ein Platzhalter: die Zeile [FIX-LISTE] im Abschnitt „WHAT CHANGED IN THIS
-UPDATE" bzw. „WAS SICH IN DIESEM UPDATE ÄNDERT". Dort die verifizierte Fix-Liste des
-Release-Sweeps aus design/patchnotes.md einsetzen, sobald sie steht. Die drei bereits
-festgeschriebenen Hotfix-Punkte (0.3.1-Kandidat) stehen schon drin.
+Die Fix-Liste ist gefuellt (Stand 22.08.): die drei Hotfix-Punkte des 0.3.1-Kandidaten plus die
+verifizierten Korrekturen des Release-Durchgangs vom 18.08.
 Die Kurzfassung für den Event-Teaser steht ganz unten.
 
 
@@ -47,7 +45,12 @@ WHAT CHANGED IN THIS UPDATE
   They now use the same compact format as the values next to them.
 - The combat log tells the full story now: bleed and poison ticks are logged, shock stuns and
   dodges are called out instead of a generic miss, and melee lifesteal shows its healing.
-[FIX-LISTE]
+- Two achievements asked for a total level that could never be reached. They now sit at levels
+  that are actually possible, so full completion is on the table again.
+- Music no longer starts silent on a fresh install.
+- New Haven is reachable in the sidebar without scrolling, and the feature tour points at it
+  correctly instead of leaving you on a dimmed screen.
+- The window now has a minimum size, so the top bar and the loadout buttons stay usable.
 - A full pass over the first hour and the endgame, in all seven languages.
 
 Your existing saves are fully compatible, as always.
@@ -109,7 +112,13 @@ WAS SICH IN DIESEM UPDATE ÄNDERT
 - Das Kampflog erzählt jetzt alles: Blutungs- und Gift-Ticks werden geloggt, Schock-Lähmungen und
   Ausweichen sind vom echten Verfehlen unterscheidbar, und der Nahkampf-Lebensraub zeigt seine
   Heilung.
-[FIX-LISTE]
+- Zwei Erfolge verlangten ein Gesamtlevel, das nie erreichbar war. Sie liegen jetzt auf Werten,
+  die tatsächlich möglich sind, damit die volle Sammlung wieder offensteht.
+- Die Musik startet bei einer frischen Installation nicht mehr stumm.
+- New Haven ist in der Seitenleiste ohne Scrollen erreichbar, und die Feature-Tour zeigt richtig
+  darauf, statt euch auf einem abgedunkelten Bildschirm stehen zu lassen.
+- Das Fenster hat jetzt eine Mindestgröße, damit Kopfzeile und Ausrüstungsvorlagen bedienbar
+  bleiben.
 - Ein kompletter Durchgang über die erste Stunde und das Endgame, in allen sieben Sprachen.
 
 Eure Spielstände sind vollständig kompatibel, wie immer.
