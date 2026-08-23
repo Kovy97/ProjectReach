@@ -14,10 +14,14 @@ ASSETS/neuguss-2026-08-23/
 
 ## Worum es geht
 
-17 Kreaturen tragen Magenta-Reste im Bild. Sie wurden seinerzeit **nicht** mit echtem Alpha
-geliefert, sondern nachträglich per Magenta-Chroma-Key freigestellt. Die Keyfarbe steckt bis
-heute im Motiv: als magentafarbene Streifen auf Fell, Federn, Stoffkanten, Geweih und
-Flügelhäuten, bei `mire_wisp` sogar mitten in der Fläche.
+17 Kreaturen tragen Magenta-Reste im Bild. Sie stammen aus einer Zeit vor der heutigen
+Werkzeugkette: im Web-Chat erzeugt und danach von Hand mit einem Magenta-Key freigestellt.
+Die Champions tragen aber selbst Violett — Roben, Geisterlicht, Flossen —, deshalb konnte die
+Keyfarbe nie sauber verschwinden. Sie steckt bis heute im Motiv: als magentafarbene Streifen
+auf Fell, Federn, Stoffkanten, Geweih und Flügelhäuten, bei `mire_wisp` mitten in der Fläche.
+
+Das ist **kein Vorwurf an die Bilderzeugung von heute**. Derselbe Ablauf mit einem grünen Key
+hat bei ProjectTower 605 Dateien ohne einen einzigen Rest geliefert.
 
 Nicht betroffen und ausdrücklich **nicht** neu zu erzeugen: die Motive 1 bis 10 des
 Elite-Champions-Batches. Die kamen mit echtem Alpha und sind sauber.

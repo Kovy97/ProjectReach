@@ -104,7 +104,19 @@ Nacharbeit an 55 Dateien kostet mehr als eine saubere Lieferung.
 
 ## 6. Bekannte Altlasten
 
-Der Elite-Champions-Batch (Motive 11 bis 28) wurde per Magenta-Key freigestellt. 14 Monster
-zeigen dadurch sichtbare Magenta-Streifen, am deutlichsten `elite_wild_wolf`,
-`elite_crypt_icemage`, `elite_slag_hexer` und `mire_wisp`. Diese Dateien werden entweder per
-Despill nachbehandelt oder neu erzeugt. Neue Lieferungen dürfen diesen Weg nicht mehr gehen.
+Der Elite-Champions-Batch (Motive 11 bis 28) stammt aus einer Zeit **vor** der heutigen
+Werkzeugkette: Die Bilder wurden im Web-Chat erzeugt und anschließend von Hand mit einem
+Magenta-Key freigestellt. Das ist die Quelle der Altlast — **nicht** die Codex-Pipeline, die
+diese Dateien nie angefasst hat.
+
+Warum ausgerechnet dort: Die Champions tragen violette Roben, violettes Geisterlicht und
+violette Flossen. Die Keyfarbe war Teil des Motivs und konnte deshalb gar nicht sauber
+verschwinden. Zum Vergleich: Bei ProjectTower lief derselbe Ablauf mit einem **grünen** Key
+über 605 transparente Dateien, gemessen ohne einen einzigen Rest — dort war Grün nie Teil des
+Motivs.
+
+14 Monster zeigen sichtbare Magenta-Streifen, am deutlichsten `elite_wild_wolf`,
+`elite_crypt_icemage`, `elite_slag_hexer` und `mire_wisp`. Sie werden neu erzeugt.
+
+**Die Lehre ist nicht „kein Key", sondern: die Keyfarbe darf im Motiv nicht vorkommen.**
+Wer keyt, prüft vorher, welche Farbe im Bild fehlt.
