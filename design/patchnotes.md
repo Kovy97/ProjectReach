@@ -64,6 +64,10 @@ Ausrüstungsleiste bricht um, statt zu kappen. / EN: At 1600×900 and 1366×768 
 and sometimes even the numbers were swallowed by their own card, and "Loadouts" shrank to "UTS".
 The cards now have a real minimum height, and the loadout bar wraps instead of clipping.
 
+**Essen und Tränke halten sich jetzt überall an ihre Abklingzeit:** DE: Über das Charakterblatt liessen sich mitten im Kampf beliebig viele Tränke und Speisen hintereinander verbrauchen, weil die Abklingzeit dort nicht galt. Sie gilt jetzt an jeder Stelle, und der Klick sagt dir, dass du kurz warten musst. / EN: Through the character sheet you could down any number of potions and meals back to back mid-fight, because the cooldown did not apply there. It now applies everywhere, and the click tells you that you have to wait a moment.
+
+*Dev-Notiz: Die Abklingzeit lag ausschliesslich in den Auto-Pfaden des Kampf-Ticks; `useConsumable` — der einzige manuelle Weg — kannte die Felder gar nicht. Hand und Automatik teilen sich jetzt einen Takt je Kategorie (`consume-gate.ts`), Essen und Trank bleiben getrennt, reine Buff-Tonika bleiben frei. Kein Save-Feld, kein SAVE_VERSION-Bump. CHEF-ENTSCHEID OFFEN: die Kill-Verschnaufpause sperrt jetzt auch das Essen von Hand — konsequent zur Engine-Regel „kein Gratis-Refill zwischen den Mobs“, aber falls du das anders willst, ist es eine Zeile.*
+
 **Ein Champion wird nicht mehr dort angekündigt, wo niemand hinkommt:** DE: In der Götzenhalle
 wurde ein Champion gemeldet, obwohl die Halle über den normalen Kampfweg gar nicht betretbar ist.
 Die Meldung erscheint dort nicht mehr. / EN: A champion was announced in the Idol Hall even though
