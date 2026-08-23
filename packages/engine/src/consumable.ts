@@ -3,6 +3,29 @@ import { consumableHeal } from "@hearthforge/shared";
 import { computeStats } from "./character";
 import { itemCount, removeItem } from "./inventory";
 import { masterBuffDurationMult } from "./capes";
+import { consumeBlocked, noteConsumeCooldown } from "./consume-gate";
+
+export { consumeBlocked, consumeCooldownKind, noteConsumeCooldown } from "./consume-gate";
+export type { ConsumeCooldownKind } from "./consume-gate";
+
+/**
+ * Wer stößt den Verzehr an? Steuert AUSSCHLIESSLICH, ob die Konsum-Abklingzeit greift
+ * (consume-gate.ts) — der Effekt selbst ist in jedem Fall identisch.
+ *
+ * - "player" (DEFAULT): jeder spieler-ausgelöste Verzehr — Charakterblatt/Inventar ebenso wie der
+ *   Auto-Trank des Kampf-Ticks. Voll gegatet. Der Default ist bewusst der STRENGE Fall: ein neuer
+ *   Aufrufer, der den Parameter vergisst, bekommt automatisch die Regel (fail-safe).
+ * - "rebuff": EINZIGE Ausnahme — der automatische Nachschlag eines ABGELAUFENEN Dauer-Tonikums
+ *   (`tickBuffs` unten). Er feuert höchstens einmal pro Buff-Dauer (90-300 s), ist also kein
+ *   Chugging-Vektor; würde er am Heil-Takt scheitern, ginge der Tonikum-Buff eines Combo-Foods
+ *   (heilt UND bufft) mitten im Kampf ersatzlos verloren, weil der abgelaufene Eintrag bereits aus
+ *   `character.buffs` entfernt ist und niemand es erneut versucht. Er setzt konsequenterweise auch
+ *   KEINEN Takt (Verhalten wie vor dem Gate, bit-identisch).
+ *
+ * Guard: consume-cooldown.test.ts scannt alle Aufrufstellen im Repo — nur consumable.ts selbst
+ * darf diesen Parameter überhaupt übergeben.
+ */
+export type ConsumeSource = "player" | "rebuff";
 
 /**
  * Registriert bzw. erneuert den Buff eines Consumables (Glyphe/Trank/Combo-Food). Idempotent:
@@ -47,8 +70,20 @@ export function applyConsumableBuff(state: GameState, content: ContentDB, itemId
  * heilt also sofort UND registriert seinen (über die Dauer wirkenden, ggf. `hpRegenPerSec`-tragenden)
  * Buff in EINEM Verzehr. Reine Heil- bzw. reine Buff-Items verhalten sich unverändert. Gibt zurück,
  * ob etwas passiert ist.
+ *
+ * KONSUM-ABKLINGZEIT (Exploit-Fix 1.0.1): dies ist der EINZIGE Verzehr-Einstieg der Engine, also
+ * sitzt die Regel hier — nicht in einer Ansicht. Im laufenden Kampf prüft `consumeBlocked`
+ * (consume-gate.ts) den Takt der jeweiligen Kategorie und `noteConsumeCooldown` startet ihn nach
+ * Erfolg; damit teilen sich Charakterblatt, Auto-Trank und jeder künftige Pfad denselben Cooldown.
+ * Außerhalb des Kampfes ist das Gate ein No-op. Fehlschlag ⇒ `false` UND unangetastetes Inventar
+ * (die UI meldet es dem Spieler). Zieht kein RNG.
  */
-export function useConsumable(state: GameState, content: ContentDB, itemId: ItemId): boolean {
+export function useConsumable(
+  state: GameState,
+  content: ContentDB,
+  itemId: ItemId,
+  source: ConsumeSource = "player",
+): boolean {
   const item = content.items[itemId];
   if (!item || item.type !== "consumable") return false;
   if (itemCount(state.inventory, itemId) < 1) return false;
@@ -58,6 +93,9 @@ export function useConsumable(state: GameState, content: ContentDB, itemId: Item
   const cures = !!item.curesPoison;
   const buffs = !!item.buff;
   if (!heals && !cures && !buffs) return false;
+
+  // Abklingzeit VOR dem Verbrauch prüfen: ein geblockter Versuch darf weder Item noch HP anfassen.
+  if (source !== "rebuff" && consumeBlocked(state, content, itemId)) return false;
 
   removeItem(state.inventory, itemId, 1);
 
@@ -73,6 +111,9 @@ export function useConsumable(state: GameState, content: ContentDB, itemId: Item
   if (buffs) {
     applyConsumableBuff(state, content, itemId);
   }
+  // Takt starten (nur im Kampf, nur für heilende Items) — dieselben Felder/Werte, die
+  // tryAutoEat/tryAutoPotion setzen. Der Rebuff bleibt bewusst taktfrei (s. ConsumeSource).
+  if (source !== "rebuff") noteConsumeCooldown(state, content, itemId);
   return true;
 }
 
@@ -149,6 +190,11 @@ export function tickBuffs(state: GameState, content: ContentDB, deltaMs: number)
     ) {
       continue;
     }
-    useConsumable(state, content, b.itemId);
+    // "rebuff": EINZIGE Ausnahme von der Konsum-Abklingzeit (s. ConsumeSource). Feuert nur beim
+    // ABLAUF eines Dauer-Tonikums (höchstens 1× pro Buff-Dauer, 90-300 s) — kein Chugging-Vektor.
+    // Ohne die Ausnahme verlöre ein Combo-Food (heilt UND bufft) seinen Buff mitten im Kampf
+    // ersatzlos, sobald zufällig der Ess-Takt lief: der abgelaufene Eintrag ist bereits aus
+    // `character.buffs` entfernt, ein zweiter Versuch findet nie statt.
+    useConsumable(state, content, b.itemId, "rebuff");
   }
 }

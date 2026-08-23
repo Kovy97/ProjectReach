@@ -1202,6 +1202,7 @@ const en = {
     // fehlgeschlagenen Aktionen (aktuell: Equip bei vollem Inventar).
     "alert.noBagSpace": "No free space in your bags.",
     "alert.actionFailed": "That doesn't work right now.",
+    "alert.consumeCooldown": "You need a moment before your next bite or draught.",
     "header.stopCombat": "End Fight",
     "header.slayerTask": "Slayer: {done}/{total} {monster}",
     "topbar.bar.inCombat": "In Combat",
@@ -3192,6 +3193,7 @@ const de: Record<keyof typeof en, string> = {
     "inv.overCapacity.hint": "Überfüllt: Neue Beute geht in Bank/Post, Platz schaffen zum Ausrüsten.",
     "alert.noBagSpace": "Kein Platz in deinen Taschen.",
     "alert.actionFailed": "Das geht gerade nicht.",
+    "alert.consumeCooldown": "Du brauchst einen Moment bis zum nächsten Bissen oder Schluck.",
     "header.stopCombat": "Kampf abbrechen",
     "header.slayerTask": "Slayer: {done}/{total} {monster}",
     "topbar.bar.inCombat": "Im Kampf",

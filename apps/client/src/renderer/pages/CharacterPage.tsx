@@ -31,6 +31,7 @@ import type { ItemInstance } from "@hearthforge/shared";
 import { instanceDisplayName } from "@hearthforge/shared";
 import { getPortrait, listPortraits } from "../portraits";
 import { playSfx } from "../util/audio";
+import { gameAlert } from "../components/GameAlert";
 import { equipSucceeded, reportEquipFailure } from "../util/equipFeedback";
 import citadelSlotFrameImg from "../assets/ui/citadel/box-character-sheet/slots/slot_frame.webp";
 import coinGoldImg from "../assets/ui/citadel/box-inventory/coin_gold.webp";
@@ -188,7 +189,18 @@ export function CharacterPage(): JSX.Element {
       });
     }
     if (it?.type === "consumable") {
-      acts.push({ key: "use", label: t("item.use"), onClick: () => useConsumable(state, content, itemId) });
+      // Konsum-Abklingzeit (Engine, consume-gate.ts): `useConsumable` liefert im Kampf `false`,
+      // solange der Ess-/Trank-Takt läuft (oder während der Kill-Verschnaufpause). Ohne
+      // Rückmeldung wäre das ein stiller Klick ins Leere. Eigene Meldung statt des generischen
+      // „Das geht gerade nicht": der Spieler soll den Grund sehen (es liegt an der Zeit, nicht
+      // am Item) — sonst klickt er weiter und hält das Spiel für kaputt.
+      acts.push({
+        key: "use",
+        label: t("item.use"),
+        onClick: () => {
+          if (!useConsumable(state, content, itemId)) gameAlert("alert.consumeCooldown");
+        },
+      });
     }
     acts.push({ key: "sell", label: t("item.sell"), onClick: () => sellItem(state, content, itemId, 1) });
     return acts;

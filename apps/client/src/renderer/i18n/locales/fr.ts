@@ -980,6 +980,7 @@ export const fr: Record<string, string> = {
     "inv.overCapacity.hint": "Surchargé : le nouveau butin part à la banque/au courrier — libérez de la place pour équiper.",
     "alert.noBagSpace": "Plus de place libre dans vos sacs.",
     "alert.actionFailed": "Ça ne fonctionne pas pour l'instant.",
+    "alert.consumeCooldown": "Il te faut un instant avant la prochaine bouchée ou gorgée.",
     "header.stopCombat": "Terminer le combat",
     "header.slayerTask": "Chasseur : {done}/{total} {monster}",
     "topbar.bar.inCombat": "En combat",

@@ -978,6 +978,7 @@ export const ru: Record<string, string> = {
     "inv.overCapacity.hint": "Переполнено: новая добыча уходит в банк/почту — освободите место для экипировки.",
     "alert.noBagSpace": "В сумках нет свободного места.",
     "alert.actionFailed": "Сейчас это невозможно.",
+    "alert.consumeCooldown": "Нужно мгновение до следующего куска или глотка.",
     "header.stopCombat": "Закончить бой",
     "header.slayerTask": "Истребление: {done}/{total} {monster}",
     "topbar.bar.inCombat": "В бою",

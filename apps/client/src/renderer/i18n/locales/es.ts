@@ -964,6 +964,7 @@ export const es: Record<string, string> = {
     "inv.overCapacity.hint": "Desbordado: el nuevo botín va al banco/correo — libera espacio para equipar.",
     "alert.noBagSpace": "No hay espacio libre en tus bolsas.",
     "alert.actionFailed": "Eso no funciona ahora mismo.",
+    "alert.consumeCooldown": "Necesitas un momento antes del siguiente bocado o trago.",
     "header.stopCombat": "Terminar combate",
     "header.slayerTask": "Cazador: {done}/{total} {monster}",
     "topbar.bar.inCombat": "En combate",

@@ -962,6 +962,7 @@ export const ptBR: Record<string, string> = {
     "inv.overCapacity.hint": "Superlotado: o novo saque vai para o banco/correio — abra espaço para equipar.",
     "alert.noBagSpace": "Não há espaço livre nas suas mochilas.",
     "alert.actionFailed": "Isso não funciona agora.",
+    "alert.consumeCooldown": "Você precisa de um instante antes do próximo bocado ou gole.",
     "header.stopCombat": "Encerrar Luta",
     "header.slayerTask": "Caçador: {done}/{total} {monster}",
     "topbar.bar.inCombat": "Em Combate",

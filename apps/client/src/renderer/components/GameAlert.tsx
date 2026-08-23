@@ -53,8 +53,16 @@ export function gameAlert(
   params?: Record<string, string | number>,
   tone: "error" | "success" = "error",
 ): void {
+  // 1.0.1: identische Meldungen stapeln sich nicht mehr. Vorher konnte hektisches Klicken (etwa
+  // fünfmal „Benutzen" während der Konsum-Abklingzeit) fünf gleiche rote Zeilen übereinander
+  // legen — funktional richtig, sah aber nach Fehler aus. Eine schon laufende, gleichlautende
+  // Meldung wird stattdessen ERSETZT, damit ihre Animation von vorn beginnt: der Spieler sieht,
+  // dass sein Klick angekommen ist, ohne dass der Bildschirm zuwuchert. Der Timer der alten
+  // Meldung läuft ins Leere (filtert eine id, die nicht mehr im Stapel steht).
+  const sameText = JSON.stringify([textKey, params ?? null, tone]);
+  const stack = alerts.filter((a) => JSON.stringify([a.textKey, a.params ?? null, a.tone]) !== sameText);
   const id = nextId++;
-  alerts = [...alerts, { id, textKey, params, tone }];
+  alerts = [...stack, { id, textKey, params, tone }];
   emit();
   window.setTimeout(() => {
     alerts = alerts.filter((a) => a.id !== id);

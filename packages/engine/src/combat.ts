@@ -88,6 +88,7 @@ import { combatLevel } from "./dungeon";
 import { itemCount, removeItem } from "./inventory";
 import { grantLoot } from "./mail";
 import { applyConsumableBuff, useConsumable } from "./consumable";
+import { isHealPotion } from "./consume-gate";
 import { markDropSeen } from "./drops";
 import {
   type ActivePetAbility,
@@ -429,32 +430,11 @@ export function selectFood(state: GameState, content: ContentDB, itemId: ItemId 
 
 // ── Auto-Trank: Engine-API für die UI (Settings + Trank-Erkennung) ──────────
 
-/**
- * Ist `itemId` ein HEILTRANK (Auto-Trank-fähig)? Trank-Erkennung ohne eigenes Katalog-Feld:
- * Consumable mit `healAmount` > 0, das (a) von einer HERBLORE-Aktion gebraut wird (alle Tränke/
- * Tinkturen/Salben/Elixiere entstehen dort — Cooking-Produkte = Food = Auto-Eat-Domäne) ODER
- * (b) dessen ID „potion" trägt (Fallback für Shop-/Drop-only-Tränke ohne Braurezept).
- * Sobald Content-Dev ein echtes Katalog-Feld liefert (z.B. `potionKind`), ersetzt es diese
- * Ableitung. Ergebnis je ContentDB gecacht (WeakMap) — rein lesend, deterministisch.
- */
-const herbloreProductCache = new WeakMap<ContentDB, Set<ItemId>>();
-function herbloreProducts(content: ContentDB): Set<ItemId> {
-  let set = herbloreProductCache.get(content);
-  if (set) return set;
-  set = new Set<ItemId>();
-  for (const action of Object.values(content.actions)) {
-    if (action.skill !== "herblore") continue;
-    for (const roll of action.loot) set.add(roll.itemId);
-  }
-  herbloreProductCache.set(content, set);
-  return set;
-}
-export function isHealPotion(content: ContentDB, itemId: ItemId): boolean {
-  const item = content.items[itemId];
-  // Combat-Feel v2 #0a: ein reines-`healPct`-Item (ohne flachen `healAmount`) zählt ebenfalls als Heiltrank.
-  if (item?.type !== "consumable" || ((item.healAmount ?? 0) <= 0 && (item.healPct ?? 0) <= 0)) return false;
-  return herbloreProducts(content).has(itemId) || itemId.includes("potion");
-}
+// Heiltrank-Erkennung (`isHealPotion`) + Konsum-Abklingzeit wohnen seit dem Exploit-Fix 1.0.1 in
+// consume-gate.ts — gemeinsame Quelle für die Auto-Pfade HIER und den manuellen Verzehr in
+// consumable.ts (ohne Import-Zyklus combat.ts ↔ consumable.ts). Re-Export: die öffentliche
+// Engine-API (`isHealPotion` aus @hearthforge/engine) bleibt unverändert.
+export { isHealPotion } from "./consume-gate";
 
 /**
  * Alle Heiltränke im Inventar (Kandidaten für den UI-Trank-Picker), dedupliziert in

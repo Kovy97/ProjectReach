@@ -978,6 +978,7 @@ export const zh: Record<string, string> = {
     "inv.overCapacity.hint": "已超载：新战利品将存入银行/邮箱——腾出空间才能装备。",
     "alert.noBagSpace": "背包没有空位了。",
     "alert.actionFailed": "现在无法执行该操作。",
+    "alert.consumeCooldown": "你需要缓一缓才能再吃或再喝。",
     "header.stopCombat": "结束战斗",
     "header.slayerTask": "猎魔：{done}/{total} {monster}",
     "topbar.bar.inCombat": "战斗中",
