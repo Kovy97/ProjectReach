@@ -470,14 +470,19 @@
   text-overflow: ellipsis;
 }
 
-/* Sekundär-Zeile: „Last played: …" — gedämpft, kleiner. */
+/* Sekundär-Zeile: „Last played: …" — gedämpft, kleiner.
+   1.0.1-Fix (Clip-Audit, 2026-08-23): war `nowrap + ellipsis` — schnitt bei JEDER gemessenen
+   Sprache und Auflösung die Uhrzeit ganz ab (EN sogar noch bei 1920×1080: "...11:01 P" ohne "M";
+   RU verlor bei 1920×1080 gleich die komplette Uhrzeit "22.07.2026" ohne ", 23:01"). `.menu-slot`
+   ist eine Flex-Spalte ohne Höhenlimit und `.menu-slots` stretcht die ganze Kartenreihe ohnehin
+   auf die höchste Karte — eine zweite Zeile hier kostet nichts, kappt aber auch keine Zeitangabe
+   mehr (Chef-Regel „nie abschneiden"). */
 .menu-slot-sub {
   font-size: 12.5px;
   color: var(--muted);
   margin-top: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .menu-slot-actions {

@@ -2617,6 +2617,24 @@
   .cs-nameplate {
     padding: 8px 8px 5px;
   }
+  /* 1.0.1-Fix (Chef-Hinweis, 2026-08-23, Clip-Audit-Nachpruefung): bei 90px Portraet-Hoehe (der
+     Floor direkt drueber) lag der Zahnrad-/Upload-Button (unveraendert 36px, top:8px) DIREKT
+     UEBER dem Namensanfang der zentrierten Nameplate — kein Clipping, also von der automatischen
+     Messung nicht erfassbar (Text bleibt vollstaendig im DOM, wird nur von einem lichtundurch-
+     laessigen Geschwister-Button verdeckt), aber im Screenshot klar sichtbar ("Korveth" ->
+     "veth"). Beide Buttons hier verkleinert, damit ihre Unterkante ueber der Nameplate endet. */
+  .cs-portrait-settings-btn,
+  .cs-portrait-upload-btn {
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    border-width: 4px;
+  }
+  .cs-portrait-settings-icon,
+  .cs-portrait-upload-icon {
+    width: 11px;
+    height: 11px;
+  }
   .cs-vitals {
     gap: 3px;
     padding: 5px 8px 5px;

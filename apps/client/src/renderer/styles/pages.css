@@ -3461,9 +3461,14 @@ body.bank-dragging-noselect {
   text-transform: uppercase;
 }
 
+/* 1.0.1-Fix (Clip-Audit, 2026-08-23): die beiden festen Spalten-Minima (340+390=730px) liessen
+   am 1360px-Mindestfenster keine 2-4px Luft mehr — `.pet-field-description` (ES/PT-BR, laengste
+   Fliesstexte) ragte dadurch 0,6-0,7% ueber den Fensterrand. Rechtes Minimum um 14px gesenkt
+   (deutlich mehr Marge als die gemessenen 2,5px); bei jeder breiteren Ansicht bestimmt weiter das
+   1.1fr-Verhaeltnis die tatsaechliche Breite, hier aendert sich sichtbar nichts. */
 .pet-field-detail {
   display: grid;
-  grid-template-columns: minmax(340px, 0.9fr) minmax(390px, 1.1fr);
+  grid-template-columns: minmax(340px, 0.9fr) minmax(376px, 1.1fr);
   gap: clamp(12px, 1.05vw, 22px);
   min-width: 0;
   min-height: 0;

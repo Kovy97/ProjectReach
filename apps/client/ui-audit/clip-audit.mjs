@@ -47,6 +47,10 @@
  *                            bei `overflow: hidden|clip` oder `text-overflow: ellipsis`.
  *   B "line-clamp"           `-webkit-line-clamp` greift und der Text ist höher als die Box.
  *   C "container-overflow"   Das Element ragt aus seinem NÄCHSTEN clippenden Vorfahren heraus.
+ *   F "ueberdeckt"           Der Text verlässt seine eigene Box (overflow: visible) und ein
+ *                            FREMDES Element liegt darüber (per elementFromPoint belegt) — für
+ *                            den Spieler dasselbe wie abgeschnitten. Ohne F meldete der Lauf
+ *                            0 Funde, wo der Screenshot fehlenden Text zeigte (New Haven, 1.0.1).
  *   D "viewport-overflow"    Das Element ragt aus dem Fenster heraus.
  *   E "js-truncated"         Text endet auf "…"/"...", aber `title`/`aria-label` ist länger →
  *                            im JS vorab gekürzt (CSS-Messung greift hier gar nicht).
@@ -648,6 +652,28 @@ function inPageScan(cfg) {
       if (outVh > yTolVp && !hasScrollableAncestor(el, "y")) hits.push({ criterion: "viewport-overflow", axis: "y", overflowPx: outVh, clip: vpBox });
     }
 
+    // ── F: der Text verlässt seine EIGENE Box und wird vom nächsten Element ÜBERDECKT ──
+    // Nachgetragen 1.0.1, weil genau dieser Fall durchgerutscht ist: an den New-Haven-Karten
+    // wurde ein `line-clamp` entfernt, ohne der Zeile mehr Platz zu geben. Damit klippte nichts
+    // mehr (A/B greifen nicht, `overflow` ist `visible`) und die Textbox lag innerhalb ihres
+    // clippenden Vorfahren (C greift auch nicht) — der Lauf meldete 0 Funde, während der
+    // Screenshot einen mitten im Satz verschwindenden Text zeigte. Für den Spieler ist
+    // "vom Nachbarn überdeckt" dasselbe wie "abgeschnitten"; die Messung muss es genauso sehen.
+    // Beleg statt Vermutung: `elementFromPoint` auf der überstehenden Zeile — liegt dort ein
+    // fremdes Element oben (kein Vorfahre, kein Nachfahre), ist der Text wirklich verdeckt.
+    if (tr && !clipY && !lineClamp) {
+      const out = tr.bottom - selfBox.bottom;
+      const yTolCover = Math.max(MIN_PX, (parseFloat(cs.fontSize) || 16) * 0.2);
+      if (out > yTolCover) {
+        const px = Math.round(Math.min(Math.max(tr.left + Math.min(24, tr.width / 2), 1), vw - 1));
+        const py = Math.round(Math.min(Math.max(tr.bottom - 2, 1), vh - 1));
+        const top = document.elementFromPoint(px, py);
+        if (top && top !== el && !el.contains(top) && !top.contains(el)) {
+          hits.push({ criterion: "ueberdeckt", axis: "y", overflowPx: out, container: componentClass(top), clip: selfBox });
+        }
+      }
+    }
+
     // ── E: im JS vorab gekürzt ──
     if (own && /(…|\.\.\.)$/.test(text)) {
       const full = el.getAttribute("title") || el.getAttribute("aria-label") || "";
@@ -667,7 +693,7 @@ function inPageScan(cfg) {
         : visibleCut(el, tr || { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height }, hit.clip, hit.axis);
       const fullText = hit.fullAttr || text;
       let hidden;
-      if (hit.criterion === "container-overflow" || hit.criterion === "viewport-overflow") {
+      if (hit.criterion === "container-overflow" || hit.criterion === "viewport-overflow" || hit.criterion === "ueberdeckt") {
         const span = hit.axis === "x" ? (tr ? tr.width : rect.width) : (tr ? tr.height : rect.height);
         hidden = span > 0 ? Math.min(1, Math.max(0, hit.overflowPx / span)) : 0;
       } else {
@@ -1058,6 +1084,10 @@ function scoreFinding(f) {
   score += Math.min(55, f.overflowPx * 1.1);
   score += f.hiddenRatio * 55;
   if (f.criterion === "viewport-overflow") score += 32;
+  // "ueberdeckt" wiegt schwerer als ein blosser Container-Ueberlauf: hier ist BELEGT, dass ein
+  // anderes Element ueber dem Text liegt (elementFromPoint), der Spieler sieht ihn also sicher
+  // nicht — waehrend ein Container-Ueberlauf auch nur die em-Box streifen kann.
+  else if (f.criterion === "ueberdeckt") score += 24;
   else if (f.criterion === "container-overflow") score += 16;
   else if (f.criterion === "js-truncated") score += 10;
   // Eine abgeschnittene ZAHL ist immer schlimmer als ein abgeschnittener Fließtext:

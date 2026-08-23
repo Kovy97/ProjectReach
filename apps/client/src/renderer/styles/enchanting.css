@@ -584,7 +584,13 @@
 .ench-rune-card-head { display: flex; align-items: baseline; gap: 6px; }
 .ench-rune-card-name { font-size: 13px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ench-rune-card-tier { font-size: 10.5px; flex-shrink: 0; }
-.ench-rune-card-effect { font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 1.0.1-Fix (Clip-Audit, 2026-08-23): war `overflow:hidden; ellipsis; nowrap` — bei DE/EN schon
+   9-12% des Textes weg, bei RU 48% ("+16 Показатель уклонения" → "+16 Показатель укло…"), bei
+   FR/RU teils über die Haelfte. Chef-Regel „nie abschneiden": die Karte ist ohnehin nur in einer
+   scrollbaren Spalte (kein Höhenlimit auf `.ench-rune-card`/`-body`), also frei umbrechen statt
+   kappen — wie `.ench-rune-card-name` es eigentlich auch verdient haette, hier aber bewusst nur
+   die Effekt-Zeile (kritischer Fund) angefasst. */
+.ench-rune-card-effect { font-size: 11px; white-space: normal; overflow-wrap: break-word; }
 .ench-rune-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 1px; }
 
 .ench-rune-badge {

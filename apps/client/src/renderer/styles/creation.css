@@ -127,7 +127,12 @@
   z-index: 2;
 }
 
-/* Hero name — gold Cinzel, uppercase, at the arch base */
+/* Hero name — gold Cinzel, uppercase, at the arch base.
+   1.0.1-Fix (Clip-Audit, 2026-08-23): der RU-Platzhaltername "БЕЗЫМЯННЫЙ" (namenlos, ein
+   einzelnes 10-Zeichen-Wort ohne Leerstelle) ragte am schmalen 1366px-Fenster 49px/11% ueber den
+   Porträtrahmen hinaus — `white-space` war zwar schon `normal`, aber ohne Umbruchpunkt (kein
+   Leerzeichen im Wort) half das nichts. Gleiches Muster wie `.cs-attr-card-name`: echte
+   Silbentrennung + Not-Umbruch mitten im Wort als Fallback, statt am Rahmen abzuschneiden. */
 .showcase-name {
   position: absolute;
   bottom: 0;
@@ -142,6 +147,8 @@
   background: linear-gradient(0deg, rgba(0,0,0,0.84) 0%, transparent 100%);
   pointer-events: none;
   z-index: 3;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* Top ornament diamonds */

@@ -771,14 +771,17 @@
   color: var(--muted);
 }
 
+/* 1.0.1-Fix (Clip-Audit, 2026-08-23): war `nowrap + ellipsis` — RU-Strang-Namen wie
+   "Кузнец-подмастерье" verloren 17% ("...подмасте…"). `.quest-strand-head` ist eine Flex-Zeile
+   ohne Hoehenlimit, eine zweite Zeile hier drueckt nur Caret/Fortschritt sanft mit (kein
+   Clipping-Vorfahre betroffen) — Chef-Regel „nie abschneiden". */
 .quest-strand-name {
   flex: 1;
   min-width: 0;
   font-size: 15px;
   letter-spacing: 0.3px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .quest-strand-progress {

@@ -2966,6 +2966,13 @@
 
 /* Wert-Text zentriert IM Balken (HP/Mana/Timer-Countdown) — löst die vorherigen separaten
    .fighter-vital/.mana-line-Zeilen darüber ab (Chef-Wunsch 2026-07-02). */
+/* 1.0.1-Fix (Clip-Audit, 2026-08-23): der geerbte line-height (~1.45, aus einem globalen Body-
+   Wert) liess die Em-Box um ~4-5px hoeher wachsen als der 10px hohe Balken — bei den meisten
+   Sprachen (2.7px Ueberhang) blieb das folgenlos (reine Zeilenbox-Luft, kein Buchstabe betroffen,
+   s. clip-audit `verticalShave`-Heuristik), aber ZH-Schriftmetriken drueckten auf 3.7px und
+   schnitten dort echt Text weg ("2.0s" -> "2.0", "3 / 3" -> "3 /"). `line-height: 1` killt die
+   Ursache direkt statt nur den Einzelfall zu kaschieren — der Text bleibt vertikal zentriert
+   (s. `align-items: center` oben), nur die leere Em-Box-Reserve fällt weg. */
 .cbar-label {
   position: absolute;
   inset: 0;
@@ -2977,6 +2984,7 @@
   font-family: var(--font-head);
   font-size: 13px;
   font-weight: 700;
+  line-height: 1;
   color: #f5ecd6;
   text-shadow: 0 1px 2px #000, 0 0 5px rgba(0, 0, 0, 0.9);
   white-space: nowrap;

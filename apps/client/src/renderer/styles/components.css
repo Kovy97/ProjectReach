@@ -1922,13 +1922,16 @@ body .item-cell.rarity-godly {
 }
 .active-buff-name {
   color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /* Lange Item-Namen dürfen den Chip nicht aus seinem (teils schmalen, z.B. .fighter-buffs im
-     Kampf-Panel) Container drücken — sauber abgeschnitten statt hart geclippt/überlaufend; der
-     volle Name steht ohnehin im Hover-Tooltip. */
-  max-width: 130px;
+  /* 1.0.1-Fix (Clip-Audit, 2026-08-23): das vorherige `nowrap + ellipsis @130px` war KEINE
+     schonende Kürzung, sondern kappte reale Item-Namen massiv — RU 27-38%, FR ~22% weg
+     ("Похлёбка из болотного корня" → "…из боло…"), und zwar bei JEDER Fensterbreite inkl.
+     1920×1080 (der Cap ist fix in px, skaliert nicht mit). Chef-Regel „nie abschneiden": der
+     Chip sitzt in einer flex-wrap-Leiste (`.active-buffs-bar`/`.cs-buffs`/`.cl-section-buffs`),
+     die zusätzliche Zeilen klaglos aufnimmt — also umbrechen statt kürzen. Voller Name bleibt
+     ohnehin zusätzlich im Hover-Tooltip erreichbar. */
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 150px;
 }
 .active-buff-timer {
   color: var(--accent-2);
