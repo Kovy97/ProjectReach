@@ -1,0 +1,2 @@
+Hier die fertigen PNGs ablegen. Namen exakt wie die Id, keine Zusaetze.
+Nach der Abnahme wandern sie nach apps/client/src/renderer/assets/monsters/.

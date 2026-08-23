@@ -1,0 +1,416 @@
+================================================================================
+NEUGUSS 2026-08-23 — DATEI 1 VON 2: DIE 14 SICHTBAR BETROFFENEN MOTIVE
+================================================================================
+
+Es gelten die Regeln aus ..\LIESMICH.md: echtes, bei der Erzeugung angelegtes
+Alpha, kein Chroma-Key, PNG, lange Seite mindestens 1024 px, Ganzkörper und
+zentriert, Blick nach LINKS, kein Rahmen, kein Text, kein Boden, kein
+Schlagschatten, Dateiname exakt die Id, Ablage in ..\fertig\, ein Motiv = eine
+Datei. Das steht dort und wird hier nicht wiederholt.
+
+Diese Datei liefert das, was dort nicht steht: je Motiv die Stil-Referenz mit
+vollem Pfad, was konkret von ihr zu übernehmen ist, und wo im alten Bild der
+Magenta-Rest saß.
+
+--------------------------------------------------------------------------------
+SO LIEST DU EINEN BLOCK
+--------------------------------------------------------------------------------
+REFERENZ    Diese Datei VOR dem Erzeugen öffnen und ansehen. Sie ist im Spiel,
+            sie ist sauber und sie bleibt. Sie bestimmt Palette, Material,
+            Licht, Detailgrad und Pinselführung. Nur ansehen — nicht verändern,
+            nicht überschreiben, nicht nach ..\fertig\ kopieren.
+MOTIV       Was zu sehen ist.
+ELITE       Was diese Kreatur von ihrer Basis unterscheidet: größer, älter,
+            vernarbter, gefährlicher. Nie eine andere Kreatur.
+BINDUNG     Was zwingend von der Referenz übernommen wird. Daran wird
+            abgenommen: Motiv neben Referenz legen, dieselbe Kreatur erkennbar?
+ABWEICHUNG  Wo die aktuelle, fehlerhafte Datei von ihrer Basis abgedriftet ist.
+            Der Neuguss folgt der BASIS, nicht der alten Elite-Datei.
+ALPHA       Die dünnen Stellen genau dieses Motivs. Dort saß der Magenta-Rest,
+            dort muss echte weiche Teiltransparenz hin.
+ALT         Die aktuelle, fehlerhafte Datei. Nur Gegenprobe für Identität
+            (Waffe, Haltung, Name) und um den Defekt zu sehen. NIE Stilvorlage.
+
+Der angegebene Magenta-Anteil ist gemessen (Anteil der sichtbaren Figurfläche
+mit gesättigten Magenta-Pixeln). Diese Datei ist danach sortiert, absteigend.
+
+--------------------------------------------------------------------------------
+1. mire_wisp.png — Sumpfirrlicht (Stufe 30)   [Magenta 0,99 % — schlimmster Fall]
+--------------------------------------------------------------------------------
+REFERENZ (eigenständig, keine Basis-Kreatur — die aktuelle Datei ist die Vorlage
+          für Silhouette, Haltung und Farbklang):
+  G:\GameDev\apps\client\src\renderer\assets\monsters\mire_wisp.webp
+ZWEITE REFERENZ, nur dafür, WIE Geisterfeuer in diesem Spiel gemalt wird
+(Kernlicht innen hell, Ränder zerfasernd, kein Neon-Glühen):
+  G:\GameDev\apps\client\src\renderer\assets\monsters\gravecliff_specter.webp
+
+MOTIV       Eine schwebende Kugel aus Geisterfeuer, in der ein schädelhaftes
+            Gesicht brennt: zwei hohle, weißlich-türkis glühende Augen, darunter
+            ein zackig nach unten aufgefächertes Maul aus Licht. Um den Kern ein
+            Kranz aus eingerollten, hakenförmigen Flammenzungen; nach unten läuft
+            die Erscheinung in triefende Schlickfäden und einen langen, spitz
+            auslaufenden Tropfenschweif aus.
+BINDUNG     Palette exakt wie in der Referenz: heller Türkis-Weiß-Kern, nach
+            außen Blaugrün, in den äußersten Zungen olivgrün ins Schlammbraune.
+            Das Licht kommt aus dem Irrlicht selbst — der Kern ist die hellste
+            Stelle, die Ränder werden dunkler und dünner.
+DEFEKT      In der aktuellen Datei liegen über der gesamten oberen Hälfte grelle
+            pink-magenta Sprenkel. Das sind Reste der alten Keyfarbe, KEINE
+            Glutpunkte und kein Designelement. Im Neuguss darf kein einziger
+            pinker, magenta oder violetter Punkt vorkommen. Palette streng
+            türkis / blaugrün / olivgrün.
+HALTUNG     Die aktuelle Datei blickt den Betrachter an. Der Neuguss dreht das
+            Gesicht nach LINKS, die Flammenzungen und der Tropfenschweif wehen
+            nach rechts hinten, als zöge die Kreatur auf einen Gegner links zu.
+ALPHA       Das Motiv besteht fast nur aus dünnem Rand: jede Flammenzunge, jeder
+            Schlickfaden, der ganze Schweif brauchen echte, weich abfallende
+            Teiltransparenz. Eine harte Ein-Bit-Kante zerstört dieses Motiv.
+
+--------------------------------------------------------------------------------
+2. elite_crypt_icemage.png — Raugram der Lichtlose            [Magenta 0,40 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\skeleton_icemage.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_crypt_icemage.webp
+
+MOTIV       Eine vermummte Skelettgestalt, aufrecht und leicht vorgebeugt, im
+            Ausfallschritt. Kapuze über dem Schädel, eine Augenhöhle mit einem
+            eisig blauweißen Punktlicht, die freie Hand beschwört Frostnebel.
+BINDUNG     Von der Referenz kommen: die Knochenfarbe — warmes Bronze-Elfenbein
+            mit dunkler Patina in den Vertiefungen, NICHT kreideweiß und nicht
+            blau; die Robe als lange, ausgefranste Streifen in Schiefer- und
+            Gunmetal-Blau mit hellblauen Runenplättchen, Nieten und
+            Kettengliedern; der Raureifbelag, der auf Knochen und Stoffkanten
+            wie Puderzucker aufsitzt; das Kristallmaterial des Stabkopfs:
+            durchscheinendes, hellblau gebrochenes Eis mit weißen Kanten. Licht
+            neutral und flächig, dazu ein kalter blauer Rückwurf vom Eis.
+ELITE       Größer, hagerer, mehr Kristallwuchs: Eisplatten wie Schulterstücke,
+            Frostzacken an Unterarmen und Schienbeinen, mehr Robenlagen, mehr
+            Reif. Waffe darf die Eisklinge der alten Datei bleiben — dann aber
+            aus exakt demselben Kristallmaterial wie der Stabkopf der Referenz.
+ABWEICHUNG  Die alte Datei ist ins gesättigte Marineblau-Violett gekippt. Zurück
+            zum stumpfen Schiefer-/Gunmetal-Blau der Basis. Kein Violett.
+ALPHA       Fingerknochen der freien Hand, Robenfransen am Saum, Eiszacken. Dort
+            saßen die Magenta-Reste (Schwerpunkt rechte Bildhälfte, Höhe Hüfte).
+
+--------------------------------------------------------------------------------
+3. elite_high_wyvern.png — Vessk der Grattyrann                [Magenta 0,39 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\highland_wyvern.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_high_wyvern.webp
+
+MOTIV       Eine gewaltige uralte Wyvern im Profil nach links, auf vier Gliedern
+            geduckt, Flügel halb aufgestellt, Rachen im Brüllen offen, dampfender
+            Atem.
+BINDUNG     Von der Referenz kommen: verwitterte steingraue Schuppen mit
+            olivgrünem Moosanflug auf den Kanten, knochenbeiger Bauchpanzer,
+            hornbraune Krallen und Hörner, zurückgeschwungene geriffelte Hörner,
+            der gezackte Rückenkamm, die ledrigen Flügelhäute in Graubraun mit
+            hell durchscheinenden Adern und ausgerissenen Rändern, das
+            bernsteinorange Auge, blassrosa Rachenfleisch, elfenbeinfarbene
+            Zähne. Matt und staubig, kein Glanzlack, gedeckte Erd- und
+            Steinpalette, sehr feine Schuppenzeichnung, natürliches Oberlicht.
+ELITE       Größer, älter, schwerer: abgebrochene Hornspitzen, Narbengewebe über
+            Schnauze und Schulter, mehr Risse in den Flügelhäuten, dickere
+            Kammzacken.
+ABWEICHUNG  Die alte Datei trägt goldbronzene Zierkanten an Hörnern, Kamm und
+            Krallen und wirkt dadurch wie ein anderer Drache. Kein Gold, keine
+            Ziermetall-Kanten. Stein, Moos, Knochen — sonst nichts.
+ALPHA       Die Flügelhäute und ihre eingerissenen Ränder (dort saß der größte
+            Teil des Magentas, Schwerpunkt Bildmitte), dazu die Kammzacken und
+            die Schwanzfahne.
+
+--------------------------------------------------------------------------------
+4. elite_slag_hexer.png — Skalva die Frostgebundene            [Magenta 0,30 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\frost_hexer.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_slag_hexer.webp
+
+MOTIV       Eine hochgewachsene Frostzauberin, dieselbe Schule und dieselbe
+            Regalie wie der Frosthexer der Referenz, nur weiblich: eine Hand
+            hebt eine schwebende Kugel aus weißblauem Frostlicht, die andere
+            hält den Stab.
+BINDUNG     Von der Referenz kommen: die schwere, vielschichtige Robe in fast
+            schwarzem Indigo, ausgefranst in lange Zipfel; der eiskrustige
+            Schultermantel aus gezackten Eisplatten und grauem Pelz; silberblaue
+            Runenborten; Ketten mit hängenden Eiszapfen-Anhängern; eine Krone aus
+            gebogenen dunklen Stahlhörnern; blassblaugraue Haut mit vereistem
+            Haar; weißblau glühende Augen; der Stab aus geschwärztem Stahl mit
+            leuchtendem blauem Runenkern. Der Bildaufbau lebt vom Kontrast:
+            dunkle, fast schwarze Gewandmasse gegen wenige sehr helle
+            Magielichter.
+ELITE       Sie ist die gefährlichere, ältere Ausprägung: mehr Eiswuchs, mehr
+            Kettenschmuck, längere Schleppe, kristalline Frostwucherungen bis
+            über die Handrücken.
+ABWEICHUNG  Die alte Datei ist eine helle, saubere, fast weiße Eisrobe — sie hat
+            mit der Basis nichts mehr gemein. Der Neuguss geht zurück auf die
+            dunkle Indigo-Robe mit Eisplatten und Pelz.
+ALPHA       Kristallspitzen an den Händen, Robenfransen, Eiszapfen, Pelzkanten.
+            Palette streng eisblau/weiß auf Indigo-Schwarz — kein Magenta in den
+            Kristallspitzen (dort saß es, Schwerpunkt oben links).
+
+--------------------------------------------------------------------------------
+5. elite_slag_revenant.png — Morvane der Neugeschmiedete       [Magenta 0,24 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\iron_revenant.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_slag_revenant.webp
+
+MOTIV       Eine aufragende gepanzerte Gestalt, verschmolzen mit ihrer eigenen
+            Rüstung, im schweren Schritt nach links, Waffe gesenkt und bereit.
+BINDUNG     Von der Referenz kommen: geschwärztes Eisen, gehämmert und
+            narbig, mit warmen Kupferlichtern nur auf den Kanten; der
+            Zackenkronen-Helm mit schmalem Visier und zwei glutorangen
+            Augenlichtern; der Kragen mit schwarzem Tuchwickel; Ketten, die um
+            die Hüfte gelegt sind; der schwere, in flammenartige Streifen
+            zerfetzte schwarze Umhang; die Brustlücke, hinter der ein Gitter aus
+            glutorangem Schmiedelicht sitzt; Zackenschultern und Kniekacheln.
+            Alles matt und dunkel; das einzige Leuchten kommt aus den Nähten.
+ELITE       Zusammengeflickt aus fremden Platten, mehr Rostschlieren, hellere
+            Schmiedenähte. Waffe wahlweise die gezackte Klinge der Referenz oder
+            der Vorschlaghammer der alten Datei — dann aber aus demselben
+            geschwärzten Eisen mit Glutnähten.
+ABWEICHUNG  Der alten Datei fehlen Helm und Umhang, die Rüstung ist ins helle
+            Rostbraun gerutscht. Kronenhelm und zerfetzter Umhang gehören
+            zurück, das Eisen wieder ins Schwarze.
+ALPHA       Umhangfransen, die Schürzenstreifen an der Hüfte, Kettenglieder.
+            Schmiedelicht strikt orange bis bernstein, kein Pinkstich; der Rost
+            darf rotbraun sein, aber nicht ins Violette kippen (dort saß es,
+            Schwerpunkt Bildmitte und linke Hälfte).
+
+--------------------------------------------------------------------------------
+6. elite_wild_wolf.png — Grauzahn der Ausgehungerte            [Magenta 0,20 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\gray_wolf.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_wild_wolf.webp
+
+MOTIV       Ein grauer Wolf im Profil nach links, tief geduckt im Anschleichen,
+            Kopf unter der Schulterlinie, Nackenhaare gesträubt, Lefzen hoch.
+BINDUNG     Von der Referenz kommen: das Fell — dunkle anthrazitfarbene Decke
+            über dem Rücken, silbergraue Flanken, cremeweiße Schnauze, Kehle und
+            Unterseite, cremefarbene Pfotenoberseiten, dunkler Rutenansatz mit
+            schwarzer Spitze; das gelbbernsteinfarbene Auge mit schmaler dunkler
+            Pupille; schwarze Nase, elfenbeinfarbene Fänge; die gesträubte
+            Nackenmähne als Zackenkamm; und vor allem die Machart: gemalt mit
+            feiner dunkler Konturlinie, das Fell in kurzen, geschichteten
+            Strichen mit hellen Spitzen, flächiges weiches Licht ohne Rand- oder
+            Zauberleuchten.
+ELITE       Größer und ausgehungert: sehnige Muskulatur, sichtbare Rippen,
+            verheilte helle Narbenstriche über Flanke und Schnauze, struppigere,
+            ungleichmäßige Mähne, graue Schnauzenhaare, fiebrig heller Blick.
+ABWEICHUNG  Die alte Datei ist weicher und glatter gemalt als die Basis — die
+            Konturschärfe und der Fellstrich der Referenz gehören zurück.
+KEINE       Keine Rüstung, kein Geschirr, keine glühenden Augen über das
+            natürliche Bernsteingelb hinaus, keine Runen.
+ALPHA       Nackenmähne, Rutenspitze, Ohrspitzen, Barthaare. Dort saß der
+            Magenta-Saum (Schwerpunkt Rückenlinie und Rute).
+
+--------------------------------------------------------------------------------
+7. elite_high_roc.png — Himmelsvater Sturmkrone                [Magenta 0,19 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\roc_hunter.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_high_roc.webp
+
+MOTIV       Ein riesiger Greifvogel am Boden, Flügel im Drohen aufgestellt, Kopf
+            nach links gesenkt, Schnabel geöffnet.
+BINDUNG     Von der Referenz kommen: das Gefieder — cremeweiß bis knochenfarben
+            mit dunkelbrauner bis schwarzer Sprenkelung auf den Deckfedern,
+            fast schwarze Schwingen und Stoßfedern; der struppige Kamm aus
+            schmalen, spitzen Federn über Kopf und Nacken; das helle,
+            knochenweiße Gesicht mit dem dunklen Hakenschnabel und hornfarbener
+            Spitze; der rostrote nackte Halsfleck; die schweren, ockergelb
+            geschuppten Ständer mit großen schwarzen Krallen. Matt, trocken,
+            sehr feine Federzeichnung, gedeckte Palette aus Knochen, Kohle,
+            Ocker und Rost.
+ELITE       Größer, älter, breiterer Kamm, mehr gebrochene Federn; das
+            Sturmlicht bleibt ein schwaches blauweißes Knistern AN DEN
+            FLÜGELSPITZEN — kein Leuchten über dem ganzen Körper.
+ABWEICHUNG  Die alte Datei ist tiefblau-schwarz gefiedert und damit ein anderer
+            Vogel. Der Neuguss ist eindeutig derselbe creme-kohlefarbene Vogel
+            wie die Referenz.
+ALPHA       Die einzelnen Federspitzen an Flügeln, Kamm und Stoß, dazu die
+            feinen Daunen am Schenkel. Dort saß der Magenta-Rest (entlang der
+            Flügel- und Schwanzkanten).
+
+--------------------------------------------------------------------------------
+8. elite_high_specter.png — Bleichgram der Klippenwächter      [Magenta 0,19 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\gravecliff_specter.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_high_specter.webp
+
+MOTIV       Eine hohe, schwebende Geistergestalt ohne Beine: der Unterkörper
+            löst sich in einen wirbelnden Schweif aus zerfetztem Leichentuch und
+            Geisterfeuer auf. Eine Klauenhand greift nach links vor.
+BINDUNG     Von der Referenz kommen: das Leichentuch in Kohleschwarz und
+            Schiefergrau, gemalt als flammenförmig zerrissene Zipfel; die
+            gezackten dunklen Stahlteile — Hörnerkapuze, geschichtete
+            Schulterstücke, sternförmige Brustspange, Gürtelplatte; herabhängende
+            Ketten mit spitzen Anhängern; das Gesicht als Leere, in der ein
+            türkis-weißes Geisterfeuer brennt; türkiser Schein in den
+            Rüstungsspalten und an den Handgelenken; lange knöcherne Klauen.
+            Die einzige Lichtquelle im Bild ist dieses türkise Feuer.
+ELITE       Größer, mehr Rüstungsteile, längerer und zerfetzterer Schweif, mehr
+            Geisterfeuer.
+ABWEICHUNG  Die alte Datei ist eine helle, knochenweiße Kutte mit Stiefeln und
+            hat weder Geisterfeuer noch Stahl. Der Neuguss geht zurück auf
+            Kohleschwarz plus Türkisfeuer, ohne Füße.
+ALPHA       Der ganze zerfließende Tuchrand, die Feuerzungen und der Schweif
+            brauchen echte weiche Teiltransparenz, nach außen bis auf null.
+
+--------------------------------------------------------------------------------
+9. elite_black_witch.png — Mutter Dorn                         [Magenta 0,17 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\bramble_witch.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_black_witch.webp
+
+MOTIV       Eine hagere Vettel, in dunkle zerschlissene Lagenroben gehüllt, den
+            ganzen Körper von dornigen Brombeerranken umwachsen; eine Klauenhand
+            nach links vorgestreckt, in der anderen der Dornenstab.
+BINDUNG     Von der Referenz kommen: die Robe als lange, zerfetzte Streifen in
+            Kohlegrün bis Schwarz; die verholzten braunen Ranken mit scharfen
+            Dornen und kleinen oliven Blättern, die sich um Arme, Beine und
+            Schleppe winden; die Dornenkrone; das lange strähnige graue Haar;
+            graugrüne, verwitterte Haut mit eingefallenen Wangen; ein blass
+            gelbgrün glühendes Auge; angehängte Schädelamulette, Knöchelchen und
+            Holzglöckchen an Schnüren; nackte knotige Füße mit dunklen Krallen;
+            der Stab aus geflochtenen Dornzweigen mit einer grünen Hexenlichtkugel
+            in der Schlaufe. Das grüne Hexenlicht ist die einzige Lichtquelle.
+ELITE       Größer und stärker überwachsen: dunkle Brombeeren in den Ranken
+            (gute Idee aus der alten Datei — behalten), mehr totes Laub, dickere
+            Dornen.
+ABWEICHUNG  In der alten Datei ist die Robe verschwunden, übrig blieb ein
+            Ranken-Golem. Die Vettel in der Robe gehört zurück; die Ranken
+            umwachsen sie, sie ersetzen sie nicht.
+ALPHA       Dünne Rankenenden, Blattränder, Robenfransen, Haarsträhnen. Dort saß
+            der Magenta-Rest. Das Hexenlicht bleibt blassgrün, ohne Pinkstich.
+
+--------------------------------------------------------------------------------
+10. elite_crypt_pyroclasp.png — Ossuar der Glutgebundene       [Magenta 0,17 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\skeleton_pyroclasp.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_crypt_pyroclasp.webp
+
+MOTIV       Eine vermummte Skelettgestalt im Ausfallschritt nach links; in den
+            Augenhöhlen glimmt Kohleglut, über der freien Handfläche steht eine
+            echte Flamme.
+BINDUNG     Von der Referenz kommen: die Knochenfarbe Bronze-Elfenbein mit
+            dunkler Patina (dieselbe wie beim Eismagier derselben Krypta-Familie);
+            die versengte Robe in Dunkelbraunschwarz mit rostrotem Untertuch; die
+            Messingbeschläge — Radsymbol an der Gürtelschnalle, Schädelanhänger,
+            Ringe, Kettchen; die genieteten Bronzemanschetten an Fuß- und
+            Handgelenken; das Flammenmaterial: orange-gelbe Flamme mit weichem,
+            durchscheinendem Rand, die auf Knochen und Stoff einen warmen
+            Lichtsaum wirft.
+ELITE       Größer, brandnarbiger: glühende Risse laufen durch die Knochen
+            selbst, die Robe ist stärker verkohlt, die Flamme höher. Die
+            glutgeäderte Klinge der alten Datei darf bleiben — geschwärztes
+            Eisen mit orangeglühenden Rissen, dieselbe Glut wie in der Hand.
+ABWEICHUNG  Die alte Datei ist fast neutral schwarz. Zurück zum verkohlten
+            Braunschwarz mit Rostrot und Messing der Basis.
+ALPHA       Robenfransen am Saum (dort der Schwerpunkt des Magentas), Flammen-
+            und Rauchränder. Glut strikt orange/rot/bernstein — kein Pinkstich,
+            keine violetten Funken.
+
+--------------------------------------------------------------------------------
+11. elite_coast_drowned.png — Salzgrab der Wiedergekehrte      [Magenta 0,13 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\reef_drowned.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_coast_drowned.webp
+
+MOTIV       Ein ertrunkener Seemann, wiedergekehrt: ein massiver, fester Körper
+            im tiefen Ausfallschritt nach links, eine Klauenhand vorgestreckt.
+            ACHTUNG: kein durchscheinender Geist — das ist eine Leiche aus
+            Fleisch, Salz und Bewuchs.
+BINDUNG     Von der Referenz kommen: seegrün-grauspanige, fleckige Haut,
+            aufgequollen und aufgerissen, sodass Rippen sichtbar werden;
+            pupillenlose weiß glühende Augen; das dunkelblaugraue Kopftuch;
+            cremebeige Seepockenringe auf Schulter, Brust und Unterarmen; ein
+            Büschel rotbrauner Korallen und Röhrenwürmer auf der Schulter;
+            olivbraune Tangsträhnen, die von Armen, Gürtel und Beinen hängen;
+            zerfetztes blaugraues und braunes Seemannstuch; ein breiter brauner
+            Ledergurt mit großer Stahlschnalle; ein rostroter Seestern; braune
+            Krallennägel. Palette: Seegrün, Oliv, Schieferblau, Lederbraun,
+            Seepocken-Creme; kühles flächiges Licht.
+ELITE       Größer, älter, stärker bewachsen: mehr Korallen, mehr Seepocken,
+            mehr Risse; dazu das rostige Entermesser aus der alten Datei.
+ALPHA       Tangsträhnen und Stofffransen (dort der Schwerpunkt: die hängenden
+            Tangbärte an den Beinen), dazu die Korallenzweige. Rostrot und
+            Korallenbraun dürfen nicht ins Pinke kippen.
+
+--------------------------------------------------------------------------------
+12. elite_black_golem.png — Altwuchs der Entwurzelte           [Magenta 0,09 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\moss_golem.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_black_golem.webp
+
+MOTIV       Ein aufragender, leicht gebeugter Steinkoloss, im schweren Schritt
+            nach links, eine Blockfaust vorgeschoben.
+BINDUNG     Von der Referenz kommen: der Körper aus kantigen Granitblöcken in
+            kühlem Grau mit blaugrünem Stich; dicke Mooskissen auf Schultern und
+            Rücken, mit kleinen Farnen und Grasbüscheln; braune Holzwurzeln, die
+            sich um die Glieder winden und in Fransen herabhängen; der stumpfe,
+            grob gehauene Kopf mit schwerer Braue und EINEM runden, bernsteinfarben
+            glühenden Auge; kein Hals; Blockfäuste. Matt, feucht, hoher
+            Detailgrad; Bernstein ist das einzige Leuchten.
+ELITE       Größer und älter: abgerissene Wurzelstränge hängen frei, zwischen den
+            Steinblöcken glühen warme bernsteinfarbene Risse.
+ABWEICHUNG  In der alten Datei sind die Risse fast zitronengelb und ziehen die
+            ganze Figur ins Goldene. Bernstein-Orange, dezenter — der Stein
+            bleibt graugrün.
+ALPHA       Hängende Wurzelfasern, Moosfransen, Grashalme. Dort saßen die
+            Magenta-Streifen (Schwerpunkt obere Bildkante, also Schultern und
+            Wurzelvorhang).
+
+--------------------------------------------------------------------------------
+13. elite_wild_stag.png — Schwarzgeweih der Zornige            [Magenta 0,08 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\wild_stag.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_wild_stag.webp
+
+MOTIV       Ein gewaltiger Hirsch im Profil nach links, breitbeinig aufgestellt,
+            Kopf gesenkt und leicht angewinkelt, röhrend, Nüstern weit.
+BINDUNG     Von der Referenz kommen: die Anatomie eines Rothirschs — dieselben
+            Kopf- und Beinproportionen, dieselbe dichte, zottige Kehlmähne,
+            derselbe kurze Wedel mit hellem Spiegel, dieselben schlanken Läufe
+            mit gespaltenen Schalen; und der Geweihbau: vielendig, mit
+            geperltem Ansatz, kräftigen Augsprossen und hellen, blank gefegten
+            Spitzen. Gemalt mit feiner dunkler Kontur und kurzen, geschichteten
+            Fellstrichen, flächiges Tageslicht.
+ELITE       Dieselbe Art, nur die schwarze Ausprägung: fast schwarzes Fell, in
+            dem im Streiflicht noch der warme braune Unterton der Basis
+            durchkommt — vor allem in der Kehlmähne; das Geweih schwerer,
+            verdrehter, ins Kohlebraune verdunkelt, die Spitzen bleiben hell
+            gefegt; dicke, wulstig verheilte Narben über Nacken und Flanke;
+            zorniges bernsteinrotes Auge.
+WICHTIG     Erkennbar dasselbe Tier wie die Referenz. Die Mähne bleibt eine
+            Hirschmähne, kein Löwenkragen. Keine Knochenauswüchse, kein Feuer.
+ALPHA       Die dünnen Geweihenden, Ohrspitzen, Mähnen- und Wedelspitzen. Dort
+            saß der violette Saum (Schwerpunkt Geweih, oben links). Das Schwarz
+            wird mit neutral-kühlen Grauhöhen aufgehellt, niemals mit Violett.
+
+--------------------------------------------------------------------------------
+14. elite_coast_crab.png — Schalenvater der Ungebrochene       [Magenta 0,06 %]
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\mud_crab.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_coast_crab.webp
+
+MOTIV       Eine massige Krabbe in Dreiviertelansicht, die große Schere nach
+            links vorgestreckt und geöffnet, der Körper leicht abgesenkt.
+BINDUNG     Von der Referenz kommen: der glatte, gewölbte Panzer mit den
+            Zackenspitzen am Schalenrand; der nasse Glanz auf der Wölbung; die
+            algengrünen Schleimflecken, die vom Schalenrand und den Scheren
+            heruntertropfen; die kleinen dunklen Perlaugen auf kurzen Stielen in
+            der eingekerbten Augenhöhle; die schweren Scheren mit hell
+            knochenbeigen, gezähnten Innenkanten; die gebänderten Laufbeine mit
+            dunklen Spitzen; die Grundfarbe Oliv-Bronzebraun. Gemalt mit klarer
+            dunkler Kontur und kräftigen Glanzlichtern.
+ELITE       Dieselbe Art, uralt geworden: der Panzer ins tiefe Rostrotbraun
+            nachgedunkelt, in den Gelenken bleibt der olive Unterton der Basis
+            sichtbar; cremefarbene Seepockenringe verkrusten Schale und Scheren;
+            eine Schere ist zur überdimensionalen Hauptwaffe ausgewachsen;
+            Kerben und alte Bruchstellen am Schalenrand.
+ALPHA       Die feinen Borsten an den Beingelenken, die Algentropfen und die
+            Seepockenränder. Dort saß der Magenta-Rest (Schwerpunkt an der
+            großen Schere links).
+
+================================================================================
+ENDE DATEI 1 — die restlichen 3 Motive stehen in 02-nachzug-3-motive.txt
+================================================================================

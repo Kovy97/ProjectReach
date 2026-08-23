@@ -16235,7 +16235,7 @@ export const content: ContentDB = {
       name: { en: "Cragmaw", de: "Felsschlund" },
       description: {
         en: "A blind, stone-jawed burrower that cracks ore in pairs — veins split at the seam. Its layered hide drinks blows in combat with the indifference of mountain granite.",
-        de: "Ein blinder Gesteinsschlund, der Erz im Doppelpack zerbricht — Adern spalten sich an der Naht. Sein geschichtetes Fell schluckt Schläge mit der Gleichgültigkeit von Berggranit.",
+        de: "Ein blinder Gesteinsschlund, der Erz im Doppelpack zerbricht — Adern spalten sich an der Naht. Seine geschichtete Panzerhaut schluckt Schläge mit der Gleichgültigkeit von Berggranit.",
       },
       skillEffect: { kind: "doubleDrop", skill: "mining", value: 0.05 },
       // #276 §3: Boulder Toss → schleudert Felsbrocken, Burst-Bonusschaden.
@@ -16415,7 +16415,7 @@ export const content: ContentDB = {
       name: { en: "Flayling", de: "Schindling" },
       description: {
         en: "It wears its own hide inside out and does not seem to mind. At the tanning rack it coaxes more leather from every hide — and in combat it finds the gap in every armour and peels it back.",
-        de: "Es trägt seine eigene Haut von innen heraus und scheint das nicht zu stören. Am Gerbrahmen lockt es mehr Leder aus jeder Haut — und im Kampf findet es die Lücke in jeder Rüstung und reißt sie auf.",
+        de: "Es trägt seine eigene Haut nach außen gekehrt und scheint das nicht zu stören. Am Gerbrahmen lockt es mehr Leder aus jeder Haut — und im Kampf findet es die Lücke in jeder Rüstung und reißt sie auf.",
       },
       skillEffect: { kind: "gatherYield", skill: "leatherworking", value: 0.04 },
       combatAbility: {
@@ -16456,7 +16456,7 @@ export const content: ContentDB = {
       name: { en: "Glyphmaw", de: "Glyphenschlund" },
       description: {
         en: "It swallows runes whole and regurgitates more than it consumed. The throat-glow never fades. In combat it feeds on each blow like a leech with a hunger for mana rather than blood.",
-        de: "Es schluckt Runen ganz und speit mehr aus, als es verschluckt hat. Das Schluchtleuchten erlischt nie. Im Kampf nährt es sich von jedem Schlag wie ein Blutegel mit Hunger nach Mana statt Blut.",
+        de: "Es schluckt Runen ganz und speit mehr aus, als es verschluckt hat. Das Schlundleuchten erlischt nie. Im Kampf nährt es sich von jedem Schlag wie ein Blutegel mit Hunger nach Mana statt Blut.",
       },
       skillEffect: { kind: "bonusRunes", skill: "runecrafting", value: 0.045 },
       combatAbility: {
@@ -16476,7 +16476,7 @@ export const content: ContentDB = {
       name: { en: "Hemlock", de: "Schierling" },
       description: {
         en: "A root-bound familiar pickled in its own secretions. It lingers at your side and breathes a faint numbing mist — sparing potions and making every toxin you deal seep deeper and linger longer.",
-        de: "Ein wurzelgebundener Vertrauter, eingelegt in seinen eigenen Sekreten. Er verweilt an deiner Seite und atmet einen schwachen betäubenden Nebel — schont Tränke und lässt jeden Giftstoff, den du austeilest, tiefer eindringen und länger anhalten.",
+        de: "Ein wurzelgebundener Vertrauter, eingelegt in seinen eigenen Sekreten. Er verweilt an deiner Seite und atmet einen schwachen betäubenden Nebel — schont Tränke und lässt jeden Giftstoff, den du austeilst, tiefer eindringen und länger anhalten.",
       },
       skillEffect: { kind: "potionPreserve", skill: "herblore", value: 0.05 },
       // #276 §3+§5.1: Venom Phial, value ist jetzt Bruch enemy.maxHp/s (war 0.8 flat/s).

@@ -1,0 +1,123 @@
+================================================================================
+NEUGUSS 2026-08-23 — DATEI 2 VON 2: NACHZUG, 3 MOTIVE MIT SCHWACHEM BEFUND
+================================================================================
+
+Es gelten die Regeln aus ..\LIESMICH.md (echtes Alpha, PNG, lange Seite
+mindestens 1024 px, Ganzkörper zentriert, Blick nach LINKS, kein Rahmen, kein
+Boden, kein Schlagschatten, Dateiname exakt die Id, Ablage in ..\fertig\). Wird
+hier nicht wiederholt.
+
+Die Blocklogik ist dieselbe wie in 01-dringend-14-motive.txt: REFERENZ zuerst
+ansehen, sie bestimmt Palette, Material, Licht und Detailgrad; MOTIV sagt, was
+zu sehen ist; ALT ist nur Gegenprobe, nie Stilvorlage.
+
+Diese drei tragen weniger Magenta als die 14 aus Datei 1 — bei zweien liegt der
+Fehler nicht in bunten Sprenkeln, sondern flächig oder gar nicht. Der Befund
+steht je Block dabei, damit klar ist, worauf zu achten ist.
+
+--------------------------------------------------------------------------------
+15. iron_sentinel.png — Eisenwächter, Konstrukt-Koloss (Stufe 90)
+    BEFUND: kaum harte Magenta-Punkte (0,03 %), dafür ein flächiger violetter
+    Farbstich über rund 2 % der Figur — vor allem auf dem rechten Schulterturm
+    und dem rechten Oberarm. Genau dieser Stich ist der Defekt.
+--------------------------------------------------------------------------------
+REFERENZ (eigenständig, keine Basis-Kreatur — die aktuelle Datei ist die Vorlage
+          für Silhouette, Architektur und Aufbau):
+  G:\GameDev\apps\client\src\renderer\assets\monsters\iron_sentinel.webp
+ZWEITE REFERENZ, dafür WIE Eisen in diesem Spiel gemalt wird — gehämmerte,
+narbige Platten, warme Kupferlichter nur auf den Kanten, matte dunkle Flächen,
+Rost in den Fugen:
+  G:\GameDev\apps\client\src\renderer\assets\monsters\iron_revenant.webp
+
+MOTIV       Ein massiver Konstrukt-Koloss aus vernietetem, angelaufenem Eisen,
+            gebaut wie eine wandelnde Festung: Schultern als Türme mit Zinnenkranz,
+            der Rumpf ein Bergfried mit schmalen Schießscharten und einer
+            genieteten Schildplatte mit eingraviertem Schwertsymbol, ein kuppel-
+            förmiger Helmblock mit Dornspitze und schmalem Sehschlitz, Arme in
+            schweren Bandagen aus Eisenringen, Fäuste wie Ambossblöcke. Uralt und
+            unbeirrbar: Scharten, Dellen und Rostspuren vergangener Kämpfe.
+ÜBERNEHMEN  Von der aktuellen Datei: die Festungsarchitektur (Zinnentürme,
+            Schießscharten, Schwert-Schildplatte, Kreuzschlitze auf den
+            Beinplatten), die Nietreihen, die Proportionen mit den überlangen,
+            schweren Armen und den schmalen Beinen.
+KORRIGIEREN 1. Der violette Schimmer auf den Panzerkanten ist Keyfarbe, nicht
+               Design. Das Eisen ist neutral graubraun, in den Fugen rostorange,
+               die Höhen kühles Silbergrau. Kein Violett, kein Magenta.
+            2. Die aktuelle Datei steht frontal und symmetrisch. Der Neuguss
+               dreht sich nach LINKS in kampfbereite Haltung: ein Fuß vor, eine
+               Ambossfaust angehoben, Sehschlitz nach links gerichtet.
+            3. Die aktuelle Datei wirkt wie ein glattes 3D-Rendering. Der
+               Neuguss wird gemalt wie iron_revenant.webp: sichtbare
+               Materialtextur, gehämmerte Flächen, weiche Kantenlichter.
+ERLAUBT     Ein dezentes, warmes Glimmen im Sehschlitz — schmal, glutbernstein,
+            nicht grell und nicht blau/violett.
+ALPHA       Zinnenkränze, Nietköpfe, abstehende Blechlaschen und die
+            Rostabplatzungen an den Kanten: dort braucht die Silhouette saubere,
+            leicht weiche Kanten, damit sie im Spiel nicht ausfranst.
+
+--------------------------------------------------------------------------------
+16. elite_crypt_butcher.png — Markspalter der Darbende
+    BEFUND: nur noch Spuren (0,02 %) an Robensaum und Fußwickeln — trotzdem
+    sichtbar, wenn das Bild auf hellem Grund liegt.
+--------------------------------------------------------------------------------
+REFERENZ    G:\GameDev\apps\client\src\renderer\assets\monsters\skeleton_butcher.webp
+ALT         G:\GameDev\apps\client\src\renderer\assets\monsters\elite_crypt_butcher.webp
+
+MOTIV       Ein hagerer Skelettkrieger, weit vorgebeugt im Ausfall nach links,
+            die große gezackte Eisenaxt schlagbereit zurückgenommen.
+BINDUNG     Von der Referenz kommen: die Knochen in warmem Bronze-Elfenbein mit
+            dunklem Schmutz in den Vertiefungen (dieselbe Knochenfarbe wie bei
+            den übrigen Krypta-Skeletten); die staubgraue Kapuze und die
+            zerschlissenen Tuchwickel; genietete rostbraune Eisenplatten auf
+            Schulter und Gürtel; ein blutbrauner Tuchstreifen als Schurz; Unter-
+            arme und Schienbeine mit Lederriemen und Eisenbändern umwickelt; ein
+            einzelner glutoranger Punkt in einer Augenhöhle; die Axt aus
+            rostnarbigem Eisen mit schlichtem Holzstiel. Palette Knochencreme,
+            Rostbraun, Staubgrau — keine gesättigten Farben.
+ELITE       Größer und ausgezehrter: gebrochene Rippen, angeschlagener Schädel,
+            eine schwerere, stärker gezackte Axt, mehr Rost, mehr Fransen.
+ABWEICHUNG  Die alte Datei ist fast ins Schwarzgraue gerutscht und hat ein rotes
+            Auge. Zurück zur warmen Knochen-Rost-Staub-Palette der Basis, das
+            Augenlicht glutorange statt rot.
+ALPHA       Robenfransen, Riemenenden, Fußwickel. Genau dort sitzen die letzten
+            Magenta-Spuren — im Neuguss weiche Alphakanten, kein Farbsaum.
+
+--------------------------------------------------------------------------------
+17. barrow_chanter.png — Hügelgrab-Sänger
+    BEFUND: nachgemessen praktisch magentafrei (1 Pixel im ganzen Bild). Hier
+    geht es nicht um Farbreste, sondern um zwei andere Mängel: die Figur blickt
+    den Betrachter an statt nach links, und ihr sind Bodenschatten unter den
+    Füßen mitgemalt. Beides ist im Neuguss zu beheben.
+--------------------------------------------------------------------------------
+REFERENZ (eigenständig, keine Basis-Kreatur — die aktuelle Datei ist die Vorlage
+          für Silhouette, Haltung und Farbklang):
+  G:\GameDev\apps\client\src\renderer\assets\monsters\barrow_chanter.webp
+ZWEITE REFERENZ, dafür WIE Geisterlicht und zerfetzte Leichentücher in diesem
+Spiel gemalt werden:
+  G:\GameDev\apps\client\src\renderer\assets\monsters\gravecliff_specter.webp
+
+MOTIV       Ein klagender Leichenpriester in schweren, vielschichtigen
+            Grabtüchern aus erdbraunem und graubeigem Leinen, in lange Streifen
+            zerfasert; auf dem Kopf ein Reif aus Dornen und Knochen; das
+            ausgemergelte Gesicht in den Nacken geworfen, der Mund weit offen im
+            Klagegesang. Eine Klauenhand ist erhoben, die andere hält ein
+            zerbrochenes Weihrauchgefäß aus Messing an Ketten. Aus Ärmeln und
+            Gefäß strömen blassblau-türkise Geisterbänder.
+ÜBERNEHMEN  Von der aktuellen Datei: die erdbraun-graue Leinenpalette mit den
+            trockenen, staubigen Stofflagen; der Schmuck aus Schädelamuletten,
+            kleinen Messingglocken und Knochenröhrchen an Schnüren; das
+            Weihrauchgefäß mit den Ketten; und ausdrücklich die blassblauen
+            Geisterbänder — die gehören zum Design und bleiben.
+KORRIGIEREN 1. Der Kopf und der Körper drehen sich nach LINKS, als stünde der
+               Gegner dort; die Geisterbänder wehen nach rechts hinten.
+            2. Kein Bodenschatten, keine Schattenlache unter dem Saum, kein
+               angedeuteter Untergrund. Die Figur steht frei.
+            3. Kein Pink, kein Magenta, kein Violett irgendwo — auch nicht als
+               Verlauf in den Geisterbändern. Die bleiben blassblau bis türkis.
+ALPHA       Die Geisterbänder, die zerfaserten Tuchstreifen an Ärmeln und Saum
+            und der Rauch aus dem Gefäß brauchen echte weiche Teiltransparenz,
+            nach außen bis auf null. Der Stoff selbst bleibt deckend.
+
+================================================================================
+ENDE DATEI 2
+================================================================================

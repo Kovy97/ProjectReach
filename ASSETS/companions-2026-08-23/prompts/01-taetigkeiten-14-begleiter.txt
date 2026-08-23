@@ -1,0 +1,706 @@
+================================================================================
+BEGLEITER-NEUGUSS 2026-08-23 — DATEI 1 VON 2
+DIE 14 BEGLEITER, DIE BEI EINER TAETIGKEIT ANFALLEN
+================================================================================
+
+Es gelten die Regeln aus ..\LIESMICH.md: echtes, bei der Erzeugung angelegtes
+Alpha (kein Chroma-Key, kein Freistellen), 1024 x 1024 PNG, Ganzkoerper mit rund
+9 % Rand, laengste Koerperachse 76-80 % der Leinwand, ruhige Begleiter-Pose ohne
+Angriff, Blick nach links-vorn, warmes Licht oben links und kaltes Fuelllicht
+rechts, schmaler bernsteinfarbener Rand, transparenter Hintergrund ohne Boden,
+Sockel, Schatten, Rahmen und Text, Dateiname exakt die Id, Ablage in ..\fertig\,
+ein Motiv = eine Datei. Das steht dort und wird hier nicht wiederholt.
+
+Diese Datei liefert das, was dort nicht steht: je Begleiter das konkrete Wesen —
+Anatomie, Groesse, Material, Haltung, die eine Akzentfarbe und ihre genaue
+Stelle, und die Abgrenzung gegen den Begleiter, mit dem er sonst verwechselt
+wuerde.
+
+--------------------------------------------------------------------------------
+SO LIEST DU EINEN BLOCK
+--------------------------------------------------------------------------------
+BASIS       Die anatomische Grundlage aus der echten Welt und die Groesse des
+            Tieres. Sie ist verbindlich. Sie ist der Grund, warum am Ende ein
+            Wesen dasteht und kein Klumpen.
+MOTIV       Koerperbau, Haltung, Kopf, Blick. So konkret, dass die Pose ohne
+            weitere Entscheidungen zu malen ist.
+MATERIAL    Oberflaeche, Textur und die gedeckte Grundpalette. Hier entsteht der
+            Bezug zur Quelle: das Wesen ist aus dem Stoff seines Fundorts.
+AKZENT      Die EINE magische Akzentfarbe und die exakte Stelle, an der sie
+            sitzt. Nirgends sonst. Kein zweiter Farbklang.
+ABGRENZUNG  Gegen welchen anderen Begleiter dieses Motiv sich abheben muss und
+            durch welches Merkmal. Das ist der Verwechslungstest der Abnahme,
+            vorweggenommen.
+VERBOTEN    Was hier nicht vorkommen darf. Das bricht das alte Monster-Vokabular
+            (Zaehne, Hoerner, Faeulnis, Glut bei allen 21).
+SILHOUETTE  Was bei 160-220 px uebrig bleibt, und was dafuer freistehen muss.
+ALT         Was die aktuelle Datei falsch macht. Nur Gegenprobe fuer den Fehler,
+            NIE Stilvorlage.
+
+--------------------------------------------------------------------------------
+WOHER DIE AKZENTFARBE KOMMT
+--------------------------------------------------------------------------------
+Die Regel aus LIESMICH.md lautet: eine Akzentfarbe, aus dem Effekt. Bei acht der
+21 Begleiter ist der Passiveffekt farblos (skillBoost, damageReduction,
+sellBonus, doubleLoot, thievingSuccess, flawlessGem, refundMaterial,
+instantAction). Dort ist die Farbe stattdessen aus der Kampffaehigkeit oder aus
+dem Material der Quelle abgeleitet. Welche Farbe woher kommt, steht in jedem
+Block unter AKZENT.
+
+--------------------------------------------------------------------------------
+UEBERSICHT ALLER 21 — GEGEN DEN VERWECHSLUNGSTEST
+--------------------------------------------------------------------------------
+Diese Tabelle gilt fuer beide Dateien. Vor dem Erzeugen jedes Motivs pruefen:
+Gibt es in der Spalte KOERPERBAU eine zweite Zeile mit demselben Eintrag? Nein.
+Genau so muss es bleiben.
+
+  Id            Koerperbau                          Akzentfarbe          Wert
+  ------------  ----------------------------------  -------------------  -----
+  rotbark       niedriger Nager, Ruderschwanz       Splintholz-Gruen     dunkel
+  cragmaw       langer flacher Grabkeil, blind      Haematit-Rostrot     mittel
+  gillrot       flache Amphibie, Ruderschwanz       Anglerlicht-Blau     mittel
+  witherling    aufrecht sitzender Hase             Aehrengold           mittel
+  sporewretch   knoechelgehender Langarm-Hocker     Schwefelgelb         mittel
+  gloomrat      aufgerichteter Nager, langer Schw.  Gruenspan-Gruen      dunkel
+  slagfiend     gedrungener Affen-Zweibeiner        Weissglut-Orange     dunkel
+  ashgut        sitzende schwere Dogge              Kohle-Glutrot        mittel
+  quillshrike   kleiner aufrechter Vogel            Stahlblau            kontrast
+  flayling      langer waagerechter Marder          Gerberlohe-Rostrot   mittel
+  gemwraith     duennbeiniger Weberknecht           Diamantweiss         kontrast
+  glyphmaw      beinlose Steinschlange, S-Windung   Indigoblau           mittel
+  vellumoth     flach ausgebreitete Motte           Zinnober-Rubrikrot   HELL
+  hemlock       breite hohe Kroete                  Absinthgruen         dunkel
+  ironmaw       kurzer hochschultriger Rammbock     Bernsteingelb        dunkel
+  carapace      flache gebaenderte Rollassel        altes Jadegruen      mittel
+  gorehound     hoher magerer Hetzhund              Arterienrot          mittel
+  carrionwing   grosser gebeugter Geier             Mondsilber-Weiss     dunkel
+  pyreling      tief geduckte Raubkatze             Zinnober-Flamme      dunkel
+  hoarspite     eingehuellte hockende Fledermaus    Frostblau-Weiss      HELL
+  charnel       hohe gebeugte Zweibeiner-Gestalt    Totenlicht-Violett   HELL
+
+WERT: Der Kontaktbogen der alten Reihe ist ein einziger dunkler Fleck. Das darf
+nicht wieder passieren. vellumoth, hoarspite und charnel stehen hell und duerfen
+NICHT ins Dunkle gezogen werden; quillshrike und gemwraith leben vom harten
+Hell-Dunkel-Kontrast in sich selbst.
+
+================================================================================
+DIE 14 MOTIVE
+================================================================================
+
+--------------------------------------------------------------------------------
+1. rotbark — Faulrinde   |  Quelle: Holzfaellen
+--------------------------------------------------------------------------------
+BASIS       Ein Nager von der Masse eines Dachses, kniehoch, gedrungen und tief
+            liegend. Anatomische Vorlage: Biber, Koerperbau eines Vielfrasses.
+            Kurze, sehr kraeftige Beine, breites Becken, ein flacher, breiter
+            Ruderschwanz.
+MOTIV       Steht ruhig im Vierfuesserstand, das Gewicht hinten, den Kopf leicht
+            angehoben und nach links-vorn gedreht. Der Schaedel ist kurz und
+            massig, die Kiefermuskulatur woelbt die Wangen sichtbar aus. Die
+            Oberlippe gibt zwei ueberlange Nagezaehne frei — keine Faenge,
+            sondern Meissel: flach, breit, schraeg abgeschliffen, dunkel wie
+            Kernholz. Kleine, tief sitzende, matte Augen unter einem schweren
+            Brauenwulst, kurze runde Ohren. Der Schwanz liegt breit und schwer
+            hinter dem Tier und traegt Querrisse wie gespaltenes Holz.
+MATERIAL    Der Ruecken ist kein Fell, sondern gewachsene Rinde: dicke,
+            ueberlappende Platten aus grauschwarzer Eichenrinde, in den Fugen
+            feucht und dunkel. Flanken und Bauch sind glattes helles Splintholz
+            mit sichtbarer Maserung, an den Kanten abgestossen. Auf der Schulter
+            ein einzelner halbmondfoermiger Zunderschwamm, matt braungrau, kein
+            bunter Pilz. In den Plattenfugen dunkelgruenes Moos und feine
+            Flechten. Palette: Rindengrau, Kernholz-Braunschwarz, Splintholz-
+            Creme, Moosoliv.
+AKZENT      Blasses, kaltgruenes Splintholz-Leuchten (aus der Quelle: der frische
+            Schnitt im Holz). Es sitzt AUSSCHLIESSLICH in den Nagekerben, die
+            ueber Ruecken und Flanken laufen — in deren Tiefe schimmert das Holz
+            von innen. Dazu ein sehr schmaler Saum desselben Gruens an den
+            Zahnspitzen. Sonst nirgends.
+ABGRENZUNG  Gegen cragmaw, den zweiten niedrigen Vierbeiner: rotbark ist kurz
+            gebaut, hoch im Becken, hat den breiten Ruderschwanz und Meisselzaehne;
+            cragmaw ist lang gestreckt, vorderlastig, hat einen Schnauzenkeil und
+            riesige Grabklauen. Materialtrennung: Holz gegen Stein.
+VERBOTEN    Keine Hoerner, keine Fangzaehne, keine Ranken oder Zweige, die aus
+            dem Koerper wachsen, kein Laub, keine Rankenfransen, kein gluehender
+            Rachen. Das Tier traegt kein Geaest spazieren — es ist selbst Holz.
+SILHOUETTE  Ein niedriges kompaktes Vierbeiner-Rechteck mit schwerem Kopf und
+            einem breiten flachen Schwanz. Der Schwanz ist das Erkennungszeichen
+            und muss frei stehen, er darf nicht mit dem Hinterlauf verschmelzen.
+ALT         Die aktuelle Datei ist ein Buendel Treibholz auf vier Stelzen, aus
+            dem Ranken und Fruchtstaende wachsen. Kein Gesicht, keine Masse, kein
+            Beruf. Der Neuguss ist ein Tier, dem man das Faellen zutraut.
+
+--------------------------------------------------------------------------------
+2. cragmaw — Felsschlund   |  Quelle: Bergbau
+--------------------------------------------------------------------------------
+BASIS       Ein blindes Grabtier von der Masse eines Vielfrasses, lang gestreckt
+            und stark vorderlastig. Anatomische Vorlage: Maulwurf und
+            Schuppentier. Die Lore sagt ausdruecklich „blind" — das ist das
+            Hauptmerkmal und wurde bisher ignoriert.
+MOTIV       Steht tief, die Vorderhand deutlich hoeher und schwerer als die
+            Hinterhand, den Kopf gesenkt und nach links-vorn gedreht. Der
+            Schaedel laeuft in einen flachen, keilfoermigen Schild aus, mit dem
+            das Tier Gestein aufbricht; die Nasenloecher sitzen als zwei schmale
+            Schlitze am unteren Rand des Keils. Wo Augen sein sollten, ist die
+            Haut geschlossen ueber flachen Mulden. Statt Augen ein Kranz kurzer,
+            steifer Tastborsten um die Schnauze. Das Maul ist breit und
+            geschlossen; am Mundwinkel sind flache Mahlplatten zu ahnen, keine
+            Zaehne. Die Vorderlaeufe enden in je drei ungleich langen,
+            abgenutzten Grabklauen, die mittlere die laengste, die Spitzen
+            stumpf gearbeitet. Der Schwanz kurz, dick, sich verjuengend, als
+            Gegengewicht.
+MATERIAL    Der Ruecken ist von ueberlappenden Schieferplatten gedeckt, kuehl
+            grau mit blaugrauem Stich, die Kanten abgesplittert und hell.
+            Zwischen den Platten liegt eine feine helle Schicht Gesteinsstaub wie
+            in einem Stollen. Bauch und Kehle sind unbeschuppt: nackte, faltige
+            Haut in stumpfem Steingrau. In den Platten stecken kleine, matte,
+            unbeleuchtete Quarzeinschluesse. Palette: Schiefergrau, Blaugrau,
+            Kalkstaubweiss.
+AKZENT      Stumpfes Haematit-Rostrot (aus der Quelle: frisch angeschlagenes
+            Eisenerz). Es sitzt ausschliesslich in den Erzadern, die den
+            Schieferplatten folgen — duenne, unregelmaessige Linien, die im
+            Streiflicht metallisch matt aufglimmen. Kein Licht aus dem
+            Koerperinneren, kein gluehender Rachen.
+ABGRENZUNG  Gegen rotbark siehe dort. Gegen ironmaw (Datei 2), den anderen
+            gepanzerten Vierbeiner: ironmaw ist kurz gekoppelt, hochschultrig,
+            sehend und hat Hufe; cragmaw ist lang, flach, blind und hat
+            Grabklauen.
+VERBOTEN    Keine Augen und erst recht keine leuchtenden Augen. Kein aufgerissenes
+            Maul, keine Zahnreihen, keine Kristallzacken aus dem Ruecken, keine
+            Glutrisse. Es ist kein Golem: es hat Haut, Falten und Staub.
+SILHOUETTE  Ein langer flacher Keil, vorne schwer, hinten duenn auslaufend. Bei
+            200 px muessen der Schnauzenkeil und die uebergrossen Vorderklauen
+            lesbar bleiben; die Klauen muessen sich frei gegen den Koerper
+            abheben.
+ALT         Die aktuelle Datei ist ein Felsbrocken-Gorilla mit Glutrissen und
+            Augen. Blindheit, Grabhand und Schieferdeckung fehlen voellig, und
+            die Glut gehoert slagfiend, nicht hierher.
+
+--------------------------------------------------------------------------------
+3. gillrot — Kiemenfaeule   |  Quelle: Angeln
+--------------------------------------------------------------------------------
+BASIS       Ein Riesensalamander (Hellbender) von Unterarm- bis Armlaenge, dazu
+            der Stirnkoeder eines Anglerfischs. Ein reines Wasserwesen, an Land
+            aufgestuetzt.
+MOTIV       Liegt tief auf allen vieren, die Gliedmassen seitlich abgespreizt,
+            die Ellbogen hoeher als der Ruecken, den Bauch fast abgelegt. Der
+            Kopf ist sehr breit und flach, das Maul eine lange gerade
+            geschlossene Linie von einer Kopfseite zur anderen; die winzigen
+            Augen sitzen weit oben und weit auseinander, milchig und
+            pupillenlos. Am Hals stehen drei Paar aeussere Kiemenbueschel ab,
+            fedrig und geaedert wie nasse Fransen. Von der Stirn haengt ein
+            einzelner duenner Fortsatz nach links-vorn ueber das Maul: eine
+            Angelrute mit einem kleinen glasigen Koederknoten an der Spitze. Der
+            Schwanz ist seitlich abgeflacht, hoch und ruderfoermig, an den
+            Raendern eingerissen.
+MATERIAL    Nasse, schleimige, faltige Haut in Schlickgrau und stumpfem
+            Flussgruen, dunkel gefleckt wie ein Grundfisch; entlang der Flanken
+            laeuft eine wulstige Hautfalte. Der Bauch ist bleich, fast weiss und
+            geaedert. Auf Ruecken und Schwanz kleben einzelne dunkle Schuppen,
+            Algenfaeden und ein aufgeplatzter Suesswassermuschelrest an der
+            Schulter. Alles glaenzt nass. Palette: Schlickgrau, Flussgruen,
+            Bauchweiss, Algenoliv.
+AKZENT      Kaltes Anglerlicht-Blaugruen (aus der Quelle: der Koeder im dunklen
+            Wasser). Es sitzt im Koederknoten an der Stirnrute — dort am hellsten
+            — und schwaecher in den Spalten zwischen den Kiemenbuescheln, so als
+            atme das Licht mit. Die Augen bleiben milchig und dunkel.
+ABGRENZUNG  Gegen hemlock, die zweite Amphibie: hemlock ist kurz, breit, hoch
+            aufgestuetzt, trocken und warzig; gillrot ist lang, flach, nass, mit
+            Ruderschwanz und Kiemenbuescheln. Gegen carapace: kein Panzer, keine
+            Segmente.
+VERBOTEN    Kein aufgerissenes Maul mit Nadelzaehnen, keine Stachelreihen, kein
+            Flossenkamm ueber den ganzen Ruecken. Der Koeder ist EIN Fortsatz,
+            kein Geweih aus Tentakeln.
+SILHOUETTE  Ein flaches breites Oval mit vier abgespreizten Gliedmassen und einem
+            hohen Ruderschwanz. Erkennungszeichen ist der ueber das Maul
+            haengende Koeder; er muss weit genug vorstehen, um bei 200 px als
+            Haken ueber der Schnauze zu lesen.
+ALT         Die aktuelle Datei ist ein aufgerichtetes Fischechsen-Ding mit
+            Zahnreihen und Flossenfransen. Es sieht aus wie ein Gegner aus dem
+            Sumpf, nicht wie das Tier, das dir den Fang verdoppelt.
+
+--------------------------------------------------------------------------------
+4. witherling — Welkling   |  Quelle: Anbau        [AUSSAGE MUSS SICH UMDREHEN]
+--------------------------------------------------------------------------------
+BASIS       Ein Feldhase, sitzend auf den Hinterlaeufen, aber schwer und
+            gedrungen — ein Tier, das satt ist. Groesse: grosser Hase, im Sitzen
+            kniehoch.
+MOTIV       Sitzt aufrecht auf den Hinterlaeufen, das Gewicht ruhig nach hinten
+            verlagert, die Vorderpfoten locker vor der Brust abgelegt. Der Koerper
+            ist voll und schwer, Brust und Bauch prall, die Schultern rund. Der
+            Kopf ist breit und stumpf, die Nase weich, die Augen gross, dunkel
+            und feucht, der Blick ruhig nach links-vorn. Die Loeffel sind lang,
+            aufgestellt, an den Raendern gekerbt und duenn genug, dass Licht
+            durchscheint. Kein Raubtiergebiss, kein offenes Maul.
+MATERIAL    Kein Fell — das Tier ist mit frisch gepfluegter Ackererde gedeckt:
+            dunkelbraune, feucht glaenzende Krume, in sauberen parallelen Furchen
+            ueber Ruecken und Schenkel gezogen, so wie ein Feld gepfluegt
+            daliegt. In diesen Furchen stehen kurze, dichte Getreidehalme mit
+            schweren vollen Aehren; sie liegen an, sie stehen nicht wirr ab.
+            Brust und Kehle sind heller: gebleichtes Stroh, weich und dicht. Die
+            Pfoten sind erdverkrustet. Palette: Krumenbraun, Strohblond, sattes
+            Halmgruen nur in Spuren.
+AKZENT      Warmes Aehrengold (aus dem Effekt: gatherYield, der Ertragsbonus).
+            Es sitzt in den Koernern selbst: jede Aehre ist von innen erfuellt,
+            jedes Korn schwer und warm leuchtend, am dichtesten dort, wo die
+            Aehren am tiefsten haengen. Ein Licht der Fuelle, nicht der Faeulnis.
+ABGRENZUNG  Der Haertetest dieses Motivs ist die AUSSAGE, nicht ein anderes Pet.
+            Alles muss satt, schwer und gedeihend wirken: pralle Masse, feuchte
+            glaenzende Erde, volle Aehren, ruhiger Blick. Zusaetzlich gegen
+            gloomrat, der ebenfalls aufgerichtet steht: witherling sitzt breit
+            und schwer ohne sichtbaren Schwanz und mit langen Loeffeln; gloomrat
+            steht schmal und beweglich mit langem nacktem Schwanz.
+VERBOTEN    Nichts Welkes. Keine haengenden vertrockneten Blaetter, keine kahlen
+            Zweige, kein Strohmann, keine Vogelscheuche, keine leeren
+            Samenkapseln, keine Risse, kein Staub, keine sichtbaren Rippen. Kein
+            Gruen, das ins Giftige kippt — das gehoert hemlock.
+SILHOUETTE  Ein aufrechter schwerer Tropfen, unten breit, mit zwei langen Ohren
+            obenauf. Die Ohren sind das Erkennungszeichen und muessen klar
+            getrennt stehen; die Aehren duerfen die Kopfform nicht auffransen.
+ALT         Die aktuelle Datei ist eine verdorrte Strohpuppe mit haengenden toten
+            Blueten. Sie sagt das genaue Gegenteil dessen, wofuer der Begleiter
+            im Spiel steht.
+
+--------------------------------------------------------------------------------
+5. sporewretch — Sporenwicht   |  Quelle: Sammeln
+--------------------------------------------------------------------------------
+BASIS       Ein langarmiger, langsamer Kletterer nach Art eines Faultiers, der am
+            Boden auf den Knoecheln laeuft. Groesse: grosse Katze bis kleiner
+            Hund.
+MOTIV       Steht gebeugt auf den Knoecheln der ueberlangen Vorderarme, die
+            Schultern deutlich hoeher als das Becken, der Ruecken zu einem hohen
+            Bogen gekruemmt. Die Hinterbeine sind kurz und stark gewinkelt. Der
+            Kopf haengt tief zwischen den Schultern und ist nach links-vorn
+            gedreht: ein schmaler langer Schaedel mit kurzer weicher Schnauze,
+            kleinen halb geschlossenen Augen (es lebt im Halbdunkel des
+            Unterholzes) und einer Reihe feiner Tasthaare. Die Finger sind lang
+            und schmal, mit gebogenen stumpfen Kletterkrallen — Werkzeuge zum
+            Umdrehen von Laub, keine Waffen.
+MATERIAL    Das Fell ist lang, straehnig und feucht, mattgrau-oliv, und in ihm
+            waechst wie in Faultierfell ein ganzer Bewuchs: dichte Polster kurzen
+            Mooses auf Schultern und Nacken, feine graugruene Bartflechte an den
+            Unterarmen. Entlang der Wirbelsaeule sitzen sieben bis neun flache
+            Baumschwaemme in einer Reihe — halbmondfoermig, hart, oben braun
+            gebaendert, unten mit feinen Lamellen. Unter dem Kiefer haengt ein
+            schlaffer Hautsack. Palette: Moosgruen, Rindenbraun, Flechtengrau,
+            Erdschwarz.
+AKZENT      Schwefelgelb (aus der Kampffaehigkeit: Sporenwolke). Es sitzt
+            ausschliesslich auf den Lamellen an der Unterseite der Baumschwaemme,
+            wo sie im Schatten liegen, und als feiner trockener Staub in der Luft
+            unmittelbar darunter — wenige Millimeter, kein Nebel, keine Wolke
+            ueber dem Bild.
+ABGRENZUNG  Gegen rotbark, der ebenfalls waldig ist: rotbark ist kompakt,
+            gedeckt und hat Rindenplatten; sporewretch ist langarmig, zottig und
+            hoch im Ruecken. Gegen witherling: kein Feld, keine Erde, keine
+            Aehren, kein Gold.
+VERBOTEN    Kein Klumpen, keine Grimasse, kein Pilzhut als Kopf, keine bunten
+            Fliegenpilze, keine Sporenwolke ueber der ganzen Figur, kein
+            aufgerissenes Maul. Der Pilz waechst AUF dem Tier, er ist nicht das
+            Tier.
+SILHOUETTE  Ein hoher Rueckenbogen mit tief haengendem Kopf und langen
+            Vorderarmen, also eine deutliche Diagonale von der Kruppe nach
+            unten-vorn. Die gereihten Baumschwaemme lesen bei 200 px als
+            gezackter Rueckenkamm.
+ALT         Die aktuelle Datei ist ein Pilzhaufen mit Gesicht und Krallen. Kein
+            Tier, und albern.
+
+--------------------------------------------------------------------------------
+6. gloomrat — Duesterratte   |  Quelle: Diebeskunst
+--------------------------------------------------------------------------------
+BASIS       Eine Ratte, aber gross und langgliedrig: Unterarmlaenge plus ebenso
+            langer Schwanz, sehnig statt plump.
+MOTIV       Steht auf den Hinterlaeufen in halber Hoehe, den Ruecken lang
+            gestreckt und leicht gedreht, die eine Vorderpfote noch am Boden
+            abgestuetzt, die andere hoch an der Brust: darin, zwischen zwei
+            ungewoehnlich langen fingerartigen Zehen, eine einzelne Muenze, halb
+            verdeckt. Der Kopf ist nach links-vorn gerichtet, die Schnauze schmal
+            und spitz, die Nase in Bewegung, die Barthaare lang und fein. Ein Ohr
+            ist gross und rund aufgestellt, das andere zur Haelfte weggerissen
+            und vernarbt. Die Augen sind klein, glatt und schwarz, ohne Leuchten.
+            Der Schwanz liegt in einer langen ruhigen S-Kurve nach hinten aus,
+            nackt und geringelt.
+MATERIAL    Kurzes, fettiges Fell, das in nassen Straehnen anliegt: Russschwarz
+            mit kaltgrauem Rueckenstich, an Kehle und Bauch schmutzig hell. Ueber
+            den Ruecken zieht eine kahle vernarbte Scheuerstelle — dieses Tier
+            zwaengt sich durch Spalten. Pfotensohlen und Schwanz sind nackt und
+            ledrig. Palette: Russschwarz, Kaltgrau, Schmutzcreme.
+AKZENT      Gruenspan-Gruen (aus der Kampffaehigkeit: Diebesgriff, das gestohlene
+            Stueck). Es sitzt auf der geklauten Muenze — ein alter korrodierter
+            Kupferspan mit schwachem kaltem Glimmen in den Vertiefungen der
+            Praegung — und als winziger feuchter Reflex desselben Gruens auf der
+            Nasenspitze und in einem einzigen Auge. Mehr nicht.
+ABGRENZUNG  Gegen witherling siehe dort. Gegen flayling, der ebenfalls lang und
+            geschmeidig ist: gloomrat richtet sich auf, hat Haende und einen
+            nackten geringelten Schwanz; flayling bleibt tief und waagerecht, hat
+            Pfoten und kein Greifwerkzeug.
+VERBOTEN    Keine Kapuze, kein Mantel, kein Beutel, kein Guertel, kein Dolch —
+            kein einziges Kleidungs- oder Ausruestungsstueck. Keine uebergrossen
+            Nagezaehne, kein aufgerissenes Maul, keine Ruestungsplatten, keine
+            Stacheln.
+SILHOUETTE  Ein schmaler aufgerichteter Bogen mit spitzem Kopf, grossen Ohren und
+            einer langen freistehenden Schwanz-S-Kurve. Der Schwanz darf den
+            Koerper nirgends beruehren.
+ALT         Die aktuelle Datei ist eine geharnischte Kampfratte mit Stacheln und
+            Riemenwerk. Vom Diebstahl ist nichts zu sehen; die Ruestung sagt
+            Kampf statt Geschick.
+
+--------------------------------------------------------------------------------
+7. slagfiend — Schlackenscheusal   |  Quelle: Schmieden
+--------------------------------------------------------------------------------
+BASIS       Ein gedrungener, sehr dichter Zweibeiner nach Art eines schweren
+            Menschenaffen: kniehoch, aber mit dem Gewicht eines Ambosses. Kurze
+            Beine, ueberlange massige Arme.
+MOTIV       Steht ruhig, das Gewicht auf den Knoecheln der weit heruntergreifenden
+            Arme, der Rumpf kurz und tonnenfoermig, die Schultern hoch und rund.
+            Der Kopf sitzt ohne Hals direkt zwischen den Schultern: ein niedriger,
+            breiter, hornloser Schaedel mit schwerer Braue und ohne erkennbare
+            Augen — an ihrer Stelle zwei waagerechte Schlitze. Der Kiefer ist
+            massig und geschlossen. Die Haende sind breite plumpe Schaufeln mit
+            dicken verhornten Knoecheln, wie von jahrelanger Arbeit an heissem
+            Metall; die Finger kurz und stumpf. Der Kopf ist ruhig nach
+            links-vorn gewandt.
+MATERIAL    Die Haut ist erkaltete Schlacke: mattschwarzes, glasig gebrochenes
+            Gestein mit unregelmaessigen Blasenloechern, wie sie beim Abkuehlen
+            entstehen. Ueber Schultern, Ruecken und Handruecken liegt eine
+            grauweisse Ascheschicht. Von Kinn und Unterarmen haengen erstarrte
+            Tropfnasen abgelaufener Schlacke, kurz und stumpf. An mehreren
+            Stellen ist die Kruste abgeplatzt und gibt darunter dichtes
+            dunkelgraues gehaemmertes Metall frei. Palette: Schlackenschwarz,
+            Aschgrau, stumpfes Eisengrau.
+AKZENT      Weissglut-Orangegelb (aus der Kampffaehigkeit: Schmiedebrand) — die
+            Farbe von Metall auf Schweisshitze, im Kern fast weiss, nach aussen
+            orange. Es sitzt AUSSCHLIESSLICH in den Rissen der Schlackenkruste,
+            als fluessiges Metall, das darin steht: schmale, scharf begrenzte
+            Adernetze an Brust, Schultern und Handruecken. Es ist Fluessigkeit,
+            keine Flamme — es lodert nicht, es steht.
+ABGRENZUNG  DIE FEUER-REGEL. Drei Begleiter der Reihe tragen Feuer, und jeder
+            traegt einen anderen Zustand davon. Sie ist fuer alle drei bindend:
+              slagfiend  fluessiges Metall IN Rissen, hart begrenzt, weissgluehend,
+                         an einem schwarzen, dichten, glasigen Koerper.
+              ashgut     ruhende Kohle HINTER einer Bauchwand, dumpf rot, weich,
+                         an einem grauen, weichen, fleischigen Koerper.
+              pyreling   offene FLAMME auf dem Koerper, zuengelnd, an einem
+                         verkohlten, hohlen, leichten Koerper.
+            Kein Motiv darf den Feuerzustand eines anderen borgen.
+VERBOTEN    Keine Hoerner, keine Zacken, keine Stacheln, keine Zaehne, kein
+            gluehender Rachen, kein Ruestungsteil, kein Hammer, keine Kette. Es
+            traegt kein Werkzeug — es ist selbst der Rest des Schmiedens.
+SILHOUETTE  Ein breiter tiefer Block mit hohen runden Schultern, ohne Hals, mit
+            zwei Armen, die bis auf Bodenhoehe reichen. Kompakt und geschlossen,
+            keine Fransen, kein Fortsatz.
+ALT         Die aktuelle Datei ist ein gehoernter Glutdaemon auf vier Beinen mit
+            brennendem Maul. Sie ist genau das Klischee, das dieser Auftrag
+            abschaffen soll, und sie doppelt pyreling.
+
+--------------------------------------------------------------------------------
+8. ashgut — Aschbauch   |  Quelle: Kochen
+--------------------------------------------------------------------------------
+BASIS       Ein schwerer sitzender Wachhund nach Art einer alten Dogge, sitzend
+            etwa huefthoch. Ein Tier, das sein Leben am Herd verbracht hat.
+MOTIV       Sitzt aufrecht auf der Hinterhand, die Vorderlaeufe gerade und breit
+            gestellt, die Brust vorgewoelbt, ruhig und schwer atmend. Der Kopf ist
+            gross, breit und stumpf, mit tiefen Hautfalten ueber Stirn und Nase
+            und schweren Lefzen; das Maul bleibt geschlossen. Die Augen sind
+            klein, dunkel und halb zugekniffen, wie bei einem Tier, das jahrelang
+            in den Rauch geblinzelt hat; Wimpern und Barthaare sind versengt und
+            gekraeuselt. Die Ohren klein, dicht anliegend, an den Raendern
+            angesengt. Der Bauch haengt schwer zwischen den Vorderlaeufen durch.
+MATERIAL    Nackte, faltige, aschgraue Haut ohne Fell, in den Falten dunkler und
+            russig eingelagert, an den Reibestellen glatt und speckig glaenzend
+            wie ein oft beruehrter Herdstein. Ueber Ruecken und Schultern eine
+            feine staubige Ascheschicht. Am Bauch ist die Haut duenn und straff
+            gespannt wie eine Trommel. Palette: Aschgrau, Russschwarz, warmes
+            Hautgrau.
+AKZENT      Tiefes Glutrot ruhender Kohle (aus dem Effekt: perfectCook, die
+            gebaendigte Flamme). Es sitzt einzig hinter der gespannten Bauchhaut
+            und scheint gedaempft durch — kein scharfes Licht, sondern ein warmes
+            dunkles Durchgluehen, das an den Raendern in die Falten auslaeuft und
+            dort verschwindet. Dazu ein sehr schwacher Widerschein desselben Rots
+            in den Nasenloechern.
+ABGRENZUNG  Feuer-Regel siehe slagfiend. Gegen gorehound (Datei 2), den anderen
+            hundeartigen Begleiter: ashgut sitzt schwer, nackt, faltig und
+            stumpf; gorehound steht hoch, mager, kurzhaarig und langbeinig. Die
+            beiden duerfen sich in keiner Linie aehneln.
+VERBOTEN    Keine Flamme, kein offenes Feuer, kein Rauch, der aus dem Koerper
+            steigt, kein Kessel, kein Topf, kein Loeffel, kein Knochen im Maul.
+            Keine Zaehne, kein Sabber, keine Grimasse, kein gluehender
+            Rippenkaefig.
+SILHOUETTE  Ein sitzendes schweres Dreieck: breite Basis, hohe Brust, grosser
+            runder Schaedel. Geschlossen und ruhig, ohne einen einzigen Fortsatz.
+ALT         Die aktuelle Datei ist ein aufgeblaehter Feuerdaemon mit gluehendem
+            Rippenkaefig und Krallen. Vom Kochen ist nichts zu sehen, von Ruhe
+            nichts zu spueren.
+
+--------------------------------------------------------------------------------
+9. quillshrike — Federwuerger   |  Quelle: Lederverarbeitung   [HAERTETEST 1/2]
+--------------------------------------------------------------------------------
+BASIS       Ein kleiner kompakter Sitzvogel mit Hakenschnabel nach Art eines
+            Raubwuergers (Neuntoeter): kraehengross oder kleiner, aufrecht, sehr
+            straff. Name und Lore sagen ausdruecklich Vogel — daran wird nicht
+            geruettelt; die Bindung an die Gerberei kommt ueber das MATERIAL.
+MOTIV       Sitzt aufrecht und hoch aufgerichtet auf zwei langen nackten
+            Staendern, den Koerper steil, den Schwanz lang und gerade nach unten.
+            Der Kopf ist im Verhaeltnis gross, der Hals kurz eingezogen; der
+            Schnabel kurz, kraeftig, mit deutlichem Haken und einem Zahn an der
+            Schneide. Ueber dem Auge liegt eine breite dunkle Binde, wie ein
+            Wuerger sie traegt. Das Auge ist rund, hart und wach, nach links-vorn
+            gerichtet. Die Fluegel sind eng angelegt, kurz und gerundet.
+MATERIAL    Statt Federn traegt es steife glaenzende Kiele: schmale spitze
+            Borsten, an der Basis dunkel, zur Spitze hin heller, dicht gelegt wie
+            ein Gefieder, aber hart wie Stachelschweinstacheln. Ueber Schultern
+            und Ruecken liegt eine anliegende Decke aus gegerbtem Leder — kein
+            Kleidungsstueck, sondern gewachsen: glatt, warm rotbraun, an den
+            Raendern gestempelt und mit erkennbaren Naehten, wie ein
+            zugeschnittenes Werkstueck. Die Staender sind trocken, schuppig,
+            hornbeige; die Zehen enden in schmalen sauber gebogenen Krallen.
+            Palette: Kohlegrau, Knochencreme an der Brust, Gerberrotbraun im
+            Mantel.
+AKZENT      Kaltes Stahlblau (aus der Kampffaehigkeit: Kielsalve). Nur an den
+            Spitzen der Kiele — ein schmaler harter Lichtsaum auf den obersten
+            drei bis vier Fingerbreit jeder Borste, so wie Licht auf einer frisch
+            abgezogenen Klinge liegt. Am dichtesten an den Schulterkielen. Sonst
+            nirgends.
+ABGRENZUNG  HAERTETEST: quillshrike und flayling fallen an derselben Stelle an.
+            Die Trennung ist total und es gibt kein gemeinsames Merkmal:
+              quillshrike  Vogel, aufrecht, kompakt, hart, hell abgesetzte Brust,
+                           arbeitet mit SPITZEN, kaltes Stahlblau.
+              flayling     Saeuger, waagerecht, lang, weich, matt durchgehend,
+                           arbeitet mit SCHNITTEN, warmes Rostrot.
+            Zweite Abgrenzung gegen carrionwing (Datei 2), den anderen Vogel:
+            quillshrike ist klein, straff, senkrecht und scharf gezeichnet;
+            carrionwing ist gross, gebeugt, breit und schaebig.
+VERBOTEN    Keine Klingen, keine Messer, keine Metallteile am Koerper, keine
+            ausgebreiteten Schwingen, keine Federfransen, die die Silhouette
+            auffasern, keine Trophaeen, keine aufgespiesste Beute.
+SILHOUETTE  Ein schmales aufrechtes Ausrufezeichen: grosser Kopf oben, gerader
+            Rumpf, langer gerader Schwanz, zwei duenne Staender. Bei 200 px muss
+            der Hakenschnabel als Knick lesbar bleiben.
+ALT         Die aktuelle Datei ist ein schwarzer Klingenvogel mit ausgefahrenen
+            Metallfedern und rotem Kamm. Sie fasert am Rand aus und hat mit einer
+            Gerberei nichts zu tun.
+
+--------------------------------------------------------------------------------
+10. flayling — Schindling   |  Quelle: Lederverarbeitung      [HAERTETEST 2/2]
+--------------------------------------------------------------------------------
+BASIS       Ein langer geschmeidiger Marder (Iltis, Baummarder), Unterarmlaenge
+            plus Schwanz, dicht am Boden. Das laengste und niedrigste Wesen der
+            Reihe.
+MOTIV       Steht waagerecht auf allen vieren, der Ruecken in einem flachen
+            Bogen, das Gewicht auf der Vorderhand, ein Vorderlauf leicht
+            angehoben; der lange Koerper zieht sich nach hinten, der Schwanz
+            liegt gerade aus. Der Kopf ist schmal und keilfoermig, flach ueber
+            dem Boden, nach links-vorn gestreckt; die Ohren klein und rund, die
+            Augen klein, dunkel und dicht beieinander, die Nase feucht und
+            schwarz. Das Maul bleibt geschlossen. An jedem Vorderlauf ist die
+            innerste Kralle zu einem einzelnen langen gleichmaessig gebogenen
+            Haken ausgewachsen — ein Schabeisen, kein Fangzahn; die uebrigen
+            Krallen sind kurz und stumpf.
+MATERIAL    Kein Fell. Die Haut ist fertiges Leder: mattes geoeltes Rotbraun,
+            glatt ueber den Muskeln, an Gelenken und Flanken in feine Falten
+            gelegt. Ueber den Ruecken laeuft vom Nacken bis zur Schwanzwurzel
+            eine einzige saubere Naht mit gleichmaessigen dunklen Stichen; an
+            Schulter und Huefte sitzen kleine aufgesetzte Lederflicken mit
+            denselben Stichen. Die Raender an Ohren und Lippen sind wie
+            zugeschnittenes Leder gestanzt, nicht gerissen. Palette:
+            Gerberrotbraun, dunkles Nussbraun in den Falten, hornbeige an Krallen
+            und Nase.
+AKZENT      Gerberlohe-Rostrot, nass (aus der Quelle: der Lohgerber-Bottich). Es
+            sitzt in den Nahtrinnen des Rueckens und in den tiefsten Hautfalten,
+            als dunkel schimmernde Feuchte, die im Licht roetlich aufglimmt. Kein
+            Leuchten im Inneren, kein Licht in den Augen.
+ABGRENZUNG  HAERTETEST gegen quillshrike, siehe dort. Zusaetzlich gegen gloomrat:
+            gloomrat richtet sich auf, hat Haende und einen nackten geringelten
+            Schwanz; flayling bleibt tief und waagerecht, hat Pfoten und einen
+            glatten gleichmaessig starken Schwanz ohne Ringelung.
+VERBOTEN    Keine offen liegenden Muskeln, kein rohes Fleisch, keine sichtbaren
+            Rippen, keine Wunden. „Haut nach aussen gekehrt" heisst hier: fertiges
+            gegerbtes Leder mit Naehten, nicht gehaeutet. Keine Werkzeuge, keine
+            Riemen, keine Stacheln, keine Maske, kein Beulenkopf.
+SILHOUETTE  Ein langes flaches waagerechtes Band mit kleinem Keilkopf vorn. Bei
+            200 px traegt allein die Laenge das Motiv; nichts darf nach oben
+            abstehen.
+ALT         Die aktuelle Datei ist eine schlaksige Puppe mit Beulenkopf, Riemen
+            und Haken. Sie ist der klarste Fall fuer den Wuerdetest: sie sieht
+            aus wie ein Spielzeug, das schiefgegangen ist.
+
+--------------------------------------------------------------------------------
+11. gemwraith — Edelsteinwicht   |  Quelle: Juwelierskunst     [HAERTETEST 1/2]
+--------------------------------------------------------------------------------
+BASIS       Ein langbeiniger Weberknecht in Handspannen-Groesse: winziger Koerper,
+            acht sehr lange duenne fein gegliederte Beine. Das Praeziseste der
+            ganzen Reihe — die Beine sind die Werkzeuge eines Juweliers.
+MOTIV       Steht hoch auf den gespreizten Beinen, der Koerper klein und tief
+            zwischen ihnen aufgehaengt, zwei Vorderbeine leicht angehoben und nach
+            links-vorn gerichtet wie tastende Werkzeuge. Die Beine sind nicht
+            gleich lang: das zweite Paar ist deutlich laenger als die uebrigen,
+            wie beim echten Weberknecht. Jedes Gelenk ist sauber gearbeitet und
+            leicht verdickt. Der Koerper ist ein glatter gewoelbter Rumpf ohne
+            Gesicht; an seinem Vorderende sitzt eine kleine geneigte Fassung, in
+            der ein einzelner geschliffener Stein steckt — das ist alles, was es
+            an Kopf gibt.
+MATERIAL    Der Koerper ist eine hohle Metallfassung: dunkles bruenierte Silber,
+            fast bleigrau, matt poliert, mit den feinen Werkzeugspuren einer
+            Punze. Rings um den Rumpf halten kleine gebogene Krappen je einen
+            Stein — ein Dutzend, unterschiedlich gross, unterschiedlich
+            geschliffen, nicht symmetrisch angeordnet. Die Beine sind aus
+            demselben dunklen Metall gezogen, an den Gelenken mit winzigen
+            Nieten. Palette: Bleigrau, bruenierte Silbertoene, tiefes
+            Anthrazit — sehr dunkel und sehr ruhig, damit die Steine tragen.
+AKZENT      Farbloses Diamantweiss (aus der Kampffaehigkeit: Prismenlanze). KEIN
+            Violett, kein Lila, kein Regenbogen. Die gefassten Steine sind
+            wasserklar und werfen ein hartes weisses gerichtetes Funkeln —
+            wenige scharfe Lichtnadeln aus den Facetten, kein allgemeines
+            Leuchten. Am hellsten der Stein in der Kopffassung.
+ABGRENZUNG  HAERTETEST: gemwraith und glyphmaw sind heute beide violette
+            Kristallwesen und praktisch nicht zu unterscheiden. Die Trennung ist
+            total:
+              gemwraith  gefasstes Metall und geschliffene FARBLOSE Steine,
+                         duenn, hoch, filigran, kein Maul, weisses Funkeln.
+              glyphmaw   roher grauer Stein, dick, gedrungen, kriechend, rundes
+                         Maul, indigoblaues Licht aus dem Inneren.
+            Kein Violett bei gemwraith, keine Facetten bei glyphmaw. Zweite
+            Abgrenzung gegen carapace (Datei 2), den anderen Gliederfuessler:
+            gemwraith ist duennbeinig und hoch, carapace flach und geschlossen.
+VERBOTEN    Keine Kristallzacken, die aus dem Koerper wachsen, kein Kristallgeist,
+            keine wehenden Fetzen, kein Nebel, kein Gesicht, keine Zaehne, kein
+            violetter Schein.
+SILHOUETTE  Ein winziger Koerperpunkt in einem weiten Netz duenner geknickter
+            Beine. Damit das bei 200 px kein Gewirr wird: hoechstens acht Beine,
+            klar getrennt, deutlich unterschiedliche Winkel, keine
+            Ueberschneidungen im unteren Bilddrittel, und die Beine kraeftig
+            genug gezeichnet, dass sie beim Verkleinern nicht verschwinden.
+ALT         Die aktuelle Datei ist ein violetter Kristallgeist mit Fetzenumhang —
+            dasselbe Motiv wie glyphmaw, in derselben Farbe.
+
+--------------------------------------------------------------------------------
+12. glyphmaw — Glyphenschlund   |  Quelle: Runenkunst          [HAERTETEST 2/2]
+--------------------------------------------------------------------------------
+BASIS       Eine beinlose Schlange aus Stein, armdick, in einer einzigen lockeren
+            Windung liegend. Die einzige gliedmassenlose Gestalt der Reihe.
+MOTIV       Liegt in einer einzigen lockeren S-Windung, der Vorderleib
+            aufgerichtet, der Kopf ruhig nach links-vorn gehalten, etwa auf
+            halber Koerperhoehe. Es hat keinen Kiefer: das Maul ist ein rundes
+            randloses Loch am vorderen Ende, wie bei einem Neunauge, innen mit
+            konzentrischen Ringen aus kleinen flachen in den Stein geschnittenen
+            Zeichen statt Zaehnen. Augen fehlen; ueber der Mundoeffnung sitzen
+            zwei flache geschlossene Gruben. Der Leib verjuengt sich nach hinten
+            in eine kurze stumpfe Spitze.
+MATERIAL    Grauer verwitterter Werkstein wie eine alte Stele: matt, koernig, an
+            den Kanten abgerundet, mit Flechtenflecken und Staub in den
+            Vertiefungen. Der ganze Leib ist in Ringen mit eingemeisselten
+            Runenkanaelen ueberzogen — schmale, tief geschnittene Rinnen,
+            gleichmaessig, handwerklich sauber, an manchen Stellen abgeplatzt und
+            unlesbar geworden. Am Bauch laufen die Kanaele quer wie Bauchschilde.
+            Palette: Steingrau, Kalkweiss im Staub, Flechtenoliv.
+AKZENT      Tiefes Indigoblau (aus der Kampffaehigkeit: Runenfrass, das
+            Mana-Licht). Es steht IN den Runenkanaelen, nicht auf dem Stein —
+            tief unten in den Rinnen, sodass die Oberflaeche grau bleibt und das
+            Licht nur aus der Tiefe kommt. Am staerksten im Schlund hinter der
+            Mundoeffnung, von dort nach hinten abnehmend. Kein Violett.
+ABGRENZUNG  HAERTETEST gegen gemwraith, siehe dort. Zusaetzlich gegen vellumoth,
+            der dieselbe Quelle hat: glyphmaw ist Stein, schwer, kriechend, blind
+            und an der Oberflaeche lichtlos; vellumoth ist Pergament, leicht,
+            gefluegelt, hell und beschriftet. Runenkunst zeigt sich hier als
+            Meisselarbeit, dort als Schreibarbeit.
+VERBOTEN    Keine Beine, keine Fluegel, keine Kristalle, keine Facetten, kein
+            Violett, keine Zaehne, keine schwebenden Runenkreise um den Koerper.
+            Die Zeichen sind IN den Stein geschnitten, sie schweben nicht daneben.
+SILHOUETTE  Eine geschlossene kraeftige S-Kurve mit aufgerichtetem Vorderleib.
+            Die Windung muss so weit offen bleiben, dass bei 200 px zwei getrennte
+            Boegen zu sehen sind und kein Knaeuel.
+ALT         Die aktuelle Datei ist ein violetter Kristallvierbeiner mit Fransen —
+            nicht von gemwraith zu unterscheiden und ohne jeden Bezug zur
+            Steinmetzarbeit.
+
+--------------------------------------------------------------------------------
+13. vellumoth — Pergamotte   |  Quelle: Runenkunst
+--------------------------------------------------------------------------------
+BASIS       Ein grosser Nachtfalter mit einer Fluegelspanne von zwei Handspannen,
+            in Ruhehaltung: Fluegel flach ausgebreitet und leicht ueberlappend,
+            wie Motten rasten — nicht senkrecht zusammengeklappt wie Tagfalter.
+MOTIV       Sitzt ruhig, die Fluegel flach und breit ausgebreitet, die
+            Vorderfluegel ueber den Hinterfluegeln, sodass eine geschlossene
+            Dreiecksflaeche entsteht. Der Thorax ist kraeftig und dicht behaart,
+            der Hinterleib kurz und geringelt. Zwei grosse gefiederte Fuehler
+            stehen weit auseinander nach links-vorn. Die Augen sind gross, dunkel
+            und matt, ohne Leuchten. Die sechs Beine sind kurz, fein behaart und
+            stehen deutlich unter dem Koerper hervor.
+MATERIAL    Die Fluegel sind nicht beschuppt, sondern geschabtes Pergament:
+            cremeweiss bis alt-elfenbein, im Gegenlicht durchscheinend, mit
+            sichtbarem Faserverlauf und den Haarwurzelpunkten der Tierhaut. Ueber
+            die Flaeche zieht sich blasse verwischte Schrift — Zeilen einer alten
+            Handschrift, die von der Rueckseite durchschlaegt und stellenweise
+            ausradiert wurde (Palimpsest). Die Raender sind wie beschnittenes
+            Pergament: teils sauber gekantet, teils eingerissen und mit feinen
+            Faeden geflickt. Der Koerperpelz hat die Farbe von altem Knochenleim,
+            warm graubeige. Palette: Pergamentcreme, Elfenbein, Tintengrau,
+            Leimbeige.
+AKZENT      Zinnoberrot der Rubrik (aus der Kampffaehigkeit: Siegelschirm) — das
+            Rot, mit dem in alten Handschriften Initialen und Ueberschriften
+            gesetzt werden. Es sitzt in wenigen klar gezeichneten Siegelzeichen:
+            je ein groesseres Zeichen auf jedem Vorderfluegel, dazu zwei bis drei
+            kleinere Randmarken. Deckendes Pigment, kein Gluehen. Es ist der
+            einzige Farbfleck im ganzen Motiv.
+ABGRENZUNG  Gegen glyphmaw (gleiche Quelle) siehe dort. Gegen carrionwing
+            (Datei 2): vellumoth ist ein Insekt, hell, symmetrisch und flach
+            ausgebreitet; carrionwing ein Vogel, dunkel, asymmetrisch und
+            gebeugt. Gegen hoarspite (Datei 2), das andere helle Fluegelwesen:
+            vellumoth breitet die Fluegel aus und hat Fuehler; hoarspite schlaegt
+            die Fluegel um sich und hat Ohren.
+VERBOTEN    Kein Totenkopfzeichen auf dem Thorax, keine Augenflecken, die wie
+            Augen starren, keine leuchtenden Runen, keine Schriftrolle, kein Buch,
+            keine schwebenden Buchstaben.
+WERT        Einer von nur drei hellen Begleitern der Reihe. Er soll deutlich
+            heller stehen als alles andere und darf nicht ins Dunkle gezogen
+            werden.
+SILHOUETTE  Ein breites flaches Dreieck mit zwei gefiederten Fuehlern. Sehr
+            einfach und sehr wiedererkennbar — die Randrisse duerfen nur so tief
+            gehen, dass die Dreiecksform bei 200 px erhalten bleibt.
+ALT         Die aktuelle Datei ist die brauchbarste der 21 und wird trotzdem neu
+            gemacht: heute sind es beschuppte Falterfluegel mit grossen
+            Augenflecken, die den Blick nach vorn ziehen. Gefragt ist echtes
+            Pergament mit Schrift und Rubrik.
+
+--------------------------------------------------------------------------------
+14. hemlock — Schierling   |  Quelle: Kraeuterkunde
+--------------------------------------------------------------------------------
+BASIS       Eine schwere breite Kroete, mit zwei Haenden zu fassen, hoch auf den
+            Vorderbeinen aufgestuetzt. Die Kroete traegt das Gift in sich — das
+            ist die Verbindung zur Kraeuterkunde, und sie ist ein WESEN, kein
+            Sammelgut.
+MOTIV       Sitzt breit und tief, die Vorderbeine gerade durchgedrueckt, sodass
+            Kopf und Brust hoch stehen, die Hinterbeine seitlich angezogen. Der
+            Kopf ist sehr breit, das Maul eine lange geschlossene leicht abwaerts
+            gebogene Linie; die Augen sind waagerecht geschlitzt, dunkel,
+            unbewegt. Hinter den Augen liegen zwei stark geschwollene Ohrdruesen
+            (Parotiden), gross und leicht durchscheinend. Die Kehle ist zu einem
+            prallen halbkugeligen Sack gedehnt, der zwischen den Vorderbeinen
+            aufsitzt.
+MATERIAL    Trockene warzige Haut in stumpfem Olivschwarz mit helleren
+            unregelmaessigen Marmorflecken; die Warzen an Ruecken und Schenkeln
+            gross, matt und einzeln lesbar. In die Haut ueber Schultern und
+            Nacken sind feine verholzte Wurzelfasern eingewachsen — sie kommen
+            aus dem Tier heraus und liegen wie ein kurzer Kragen an, keine
+            haengenden Ranken. An den Zehen dunkle hornige Kuppen. Palette:
+            Olivschwarz, Lehmbraun, blasses Bauchgelb.
+AKZENT      Fahles Absinthgruen (aus dem Effekt und der Kampffaehigkeit: Trank
+            und Gift). Es sitzt in der prallen Kehlblase, die duennhaeutig genug
+            ist, dass die Fluessigkeit darin durchscheint — eine schwere langsam
+            schwappende Tinktur, am tiefsten Punkt am dunkelsten. Ein zweiter
+            sehr schwacher Schimmer desselben Gruens liegt auf den geschwollenen
+            Ohrdruesen, wo das Sekret austritt.
+ABGRENZUNG  Gegen gillrot, die zweite Amphibie: hemlock ist kurz, breit, hoch
+            aufgestuetzt, trocken und warzig; gillrot ist lang, flach, nass, mit
+            Ruderschwanz und Kiemenbuescheln. Gegen witherling und sporewretch:
+            kein Getreide, kein Moos, keine Pilze.
+VERBOTEN    Keine Pflanze als Koerper. Keine Blaetter, keine Blueten, keine
+            Samenstaende, keine haengenden Ranken, kein Flaeschchen, kein Beutel,
+            kein Moerser. Die Wurzelfasern sind ein Rest im Ruecken, kein Gewaechs.
+SILHOUETTE  Ein breites niedriges Dreieck mit hoher Vorderpartie und einem
+            deutlich abgesetzten runden Kehlsack darunter. Die Kehlblase ist das
+            Erkennungszeichen und muss die Grundlinie durchbrechen.
+ALT         Die aktuelle Datei ist ein Bueschel Kraeuter mit Wurzeln. Es ist gar
+            kein Wesen, sondern das Sammelgut selbst.
+
+================================================================================
+ENDE DATEI 1 — die 7 Kampf-Begleiter stehen in 02-kampf-7-begleiter.txt
+================================================================================

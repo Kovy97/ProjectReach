@@ -46,3 +46,9 @@ CODEX/outbox/
 .backup-armor-iter2/
 .codex/
 .claude/settings.local.json
+
+# Neuguss-Zwischenablage: die fertigen Bilder sind eine Zwischenstation,
+# ihr Zuhause ist apps/client/src/renderer/assets/. Anleitung und Prompts bleiben versioniert.
+ASSETS/neuguss-*/fertig/*.png
+ASSETS/neuguss-*/fertig/*.webp
+ASSETS/neuguss-*/fertig/*.zip

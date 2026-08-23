@@ -1,0 +1,383 @@
+================================================================================
+BEGLEITER-NEUGUSS 2026-08-23 — DATEI 2 VON 2
+DIE 7 BEGLEITER, DIE IM KAMPF ANFALLEN
+================================================================================
+
+Es gelten die Regeln aus ..\LIESMICH.md: echtes, bei der Erzeugung angelegtes
+Alpha (kein Chroma-Key, kein Freistellen), 1024 x 1024 PNG, Ganzkoerper mit rund
+9 % Rand, laengste Koerperachse 76-80 % der Leinwand, ruhige Begleiter-Pose ohne
+Angriff, Blick nach links-vorn, warmes Licht oben links und kaltes Fuelllicht
+rechts, schmaler bernsteinfarbener Rand, transparenter Hintergrund ohne Boden,
+Sockel, Schatten, Rahmen und Text, Dateiname exakt die Id, Ablage in ..\fertig\,
+ein Motiv = eine Datei. Das steht dort und wird hier nicht wiederholt.
+
+Die Erklaerung der Blockfelder (BASIS / MOTIV / MATERIAL / AKZENT / ABGRENZUNG /
+VERBOTEN / SILHOUETTE / ALT), die Herleitung der Akzentfarben und die
+UEBERSICHT ALLER 21 fuer den Verwechslungstest stehen im Kopf von
+01-taetigkeiten-14-begleiter.txt. Vor dem Erzeugen dort nachschlagen.
+
+--------------------------------------------------------------------------------
+DIE FALLE DIESER SIEBEN
+--------------------------------------------------------------------------------
+Alle sieben fallen im Kampf an, und deshalb sind sie heute die generischsten
+Bilder der Reihe: ein Hoellenhund, ein Zahnvieh, ein Flammendaemon, eine
+gepanzerte Schildkroete. Sie sehen aus wie Gegner, nicht wie Begleiter.
+
+Der Anker ist auch hier die Quelle, und die Quelle ist der KAMPFSTIL, nicht „der
+Kampf":
+  ironmaw / carapace       Nahkampf  — Wucht gegen Standhaftigkeit
+  gorehound / carrionwing  Fernkampf — Faehrte am Boden gegen Beobachtung aus der
+                                       Hoehe
+  pyreling / hoarspite /   Magie     — Feuer gegen Frost gegen Zehrung
+  charnel
+Jedes Paar bzw. Trio teilt eine Quelle und muss sich trotzdem in KOERPERBAU,
+MATERIAL und AKZENT vollstaendig unterscheiden. Das Magie-Trio ist der Haertetest
+dieser Datei.
+
+Zur schnellen Gegenprobe die sieben Zeilen aus der Gesamtuebersicht:
+
+  Id            Koerperbau                          Akzentfarbe          Wert
+  ------------  ----------------------------------  -------------------  -----
+  ironmaw       kurzer hochschultriger Rammbock     Bernsteingelb        dunkel
+  carapace      flache gebaenderte Rollassel        altes Jadegruen      mittel
+  gorehound     hoher magerer Hetzhund              Arterienrot          mittel
+  carrionwing   grosser gebeugter Geier             Mondsilber-Weiss     dunkel
+  pyreling      tief geduckte Raubkatze             Zinnober-Flamme      dunkel
+  hoarspite     eingehuellte hockende Fledermaus    Frostblau-Weiss      HELL
+  charnel       hohe gebeugte Zweibeiner-Gestalt    Totenlicht-Violett   HELL
+
+Die Kampfgruppe darf nicht als dunkler Block enden. hoarspite steht hell,
+charnel mittelhell — beide duerfen NICHT nachgedunkelt werden.
+
+================================================================================
+DIE 7 MOTIVE
+================================================================================
+
+--------------------------------------------------------------------------------
+1. ironmaw — Eisenschlund   |  Quelle: Nahkampf (Eisen, Panzerung, Wucht)
+--------------------------------------------------------------------------------
+BASIS       Ein sehr schwerer, kurz gekoppelter Vierbeiner nach Art eines
+            Waldbisons oder Keilers: hoch in der Schulter, tief im Kopf,
+            brusthoch. Eine Ramme auf vier Beinen. Die Kampffaehigkeit heisst
+            Rammstoss — der Koerperbau ist die Faehigkeit.
+MOTIV       Steht breitbeinig und ruhig, das Gewicht deutlich auf der Vorderhand,
+            der Widerrist zu einem massigen Muskelbuckel aufgewoelbt, der Kopf
+            tief unter der Schulterlinie und nach links-vorn gedreht. Der Hals
+            ist kurz und so dick wie der Schaedel. Der Unterkiefer ist uebergross
+            und breit, die Kiefermuskeln fuellen die ganze Wange; die Zaehne
+            bleiben verdeckt, das Maul ist geschlossen — die Kraft liegt im Bau,
+            nicht im Fletschen. Die Augen sind klein, tief liegend und ruhig. Die
+            Beine kurz und saeulenartig, die Klauen breit und abgestumpft.
+MATERIAL    Dicke unbehaarte dunkelgraue Haut mit grober Narbenzeichnung, wie
+            altes Elefantenleder. In Stirn, Nasenruecken und Kiefer sind Platten
+            aus geschwaerztem gehaemmertem Eisen eingewachsen — nicht
+            angeschnallt, sondern von der Haut ueberwachsen, mit wulstigem
+            Narbenrand ringsum. Dieselbe Verwachsung an den Schulterspitzen. Das
+            Eisen ist matt, verbeult, an den Schlagkanten blank gescheuert.
+            Palette: Eisenschwarz, kaltes Hautgrau, blankes Stahlgrau an den
+            Kanten.
+AKZENT      Stumpfes Bernsteingelb (der Passiv ist farblos — die Farbe kommt aus
+            dem Material der Quelle: Eisen, das in Fleisch waechst). Es sitzt in
+            den Narbenwuelsten dort, wo Eisen in Haut uebergeht, als schmale
+            warme Linie am Rand jeder Platte, und im Auge als einziger tiefer
+            ruhiger Lichtpunkt. Kein Gluehen im Maul, keine Funken.
+ABGRENZUNG  Gegen cragmaw (Datei 1), den anderen gepanzerten Vierbeiner: cragmaw
+            ist lang, flach, blind und hat Grabklauen; ironmaw ist kurz, hoch,
+            sehend und hat Klauen zum Stemmen. Gegen carapace, den zweiten
+            Nahkampf-Begleiter: ironmaw ist Fleisch und Eisen und traegt sein
+            Gewicht hoch auf Beinen; carapace ist Chitin und liegt flach am
+            Boden. Wucht gegen Standhaftigkeit.
+VERBOTEN    Keine Hoerner, keine Stacheln, keine Stosszaehne, kein aufgerissenes
+            Maul, keine Zahnreihen — das Zahn-Vokabular ist bei ironmaw heute am
+            schlimmsten und faellt ersatzlos weg. Keine Ruestung mit Riemen,
+            Nieten oder Schnallen: das Eisen ist Teil des Tieres.
+SILHOUETTE  Ein schwerer Keil, hoch an der Schulter, steil zum Kopf abfallend,
+            kurze Beine. Fast keine Fortsaetze; die Masse allein traegt das
+            Motiv.
+ALT         Die aktuelle Datei ist ein schwarzes Zottenwesen, dessen ganzer Kopf
+            ein Maul aus Zaehnen ist. Vom Eisen ist nichts zu sehen, und es ist
+            das dritte Bild der Reihe mit demselben Zahn-Vokabular.
+
+--------------------------------------------------------------------------------
+2. carapace — Chitinpanzer   |  Quelle: Nahkampf (Schild, Chitin, Standhaftigkeit)
+--------------------------------------------------------------------------------
+BASIS       Eine riesige Rollassel oder ein Trilobit von Schildgroesse, flach am
+            Boden, mit gebaendertem Segmentpanzer. Ein Tier, das jede Klinge
+            ueberdauert hat, indem es sich nie bewegt hat.
+MOTIV       Liegt breit und niedrig, die Segmente sauber uebereinandergeschoben,
+            der Kopfschild leicht angehoben und nach links-vorn gerichtet. Der
+            Panzer besteht aus etwa zwoelf Querbaendern, vorne breiter, nach
+            hinten kleiner werdend, mit einem abgerundeten Schwanzschild als
+            Abschluss. Unter dem Panzerrand schauen kurze kraeftige Laufbeine
+            hervor, gleichmaessig gereiht, nur die Spitzen sichtbar. Am Kopfschild
+            sitzen zwei kleine tief eingesenkte dunkle Augen und zwei kurze dicke
+            gegliederte Fuehler, die ruhig nach vorn liegen. Es hat keinen
+            Rachen, keine Zange, keine Waffe — das ist der Punkt.
+MATERIAL    Alter dicker Chitinpanzer: tief nachgedunkelt, glatt gewoelbt auf den
+            Baendern, an den Raendern ausgesplittert, mit alten verheilten Kerben
+            und ein bis zwei sauber ausgebrochenen Stuecken, in die neues
+            helleres Chitin nachgewachsen ist. Auf den Bandkanten liegt ein
+            feiner matter Schimmer wie auf Horn. Unterseite und Beine sind
+            heller, hornbeige. Palette: dunkles Chitinbraun, Hornbeige, kuehles
+            Grauschwarz in den Fugen.
+AKZENT      Altes Jadegruen (der Passiv ist farblos — die Farbe kommt aus dem
+            Material der Quelle: sehr alter, tief nachgedunkelter Panzer). Es
+            liegt als tiefer matter Schimmer nur auf den Woelbungen der obersten
+            drei Panzerbaender. Kein Leuchten, sondern ein Glanz wie auf
+            poliertem Jadegestein: er wandert mit dem Licht, er strahlt nicht.
+ABGRENZUNG  Gegen ironmaw siehe dort. Gegen gemwraith (Datei 1), den anderen
+            Gliederfuessler: carapace ist flach, geschlossen und breit, seine
+            Beine sind verdeckt; gemwraith ist hoch, offen und duenn und besteht
+            fast nur aus Beinen.
+VERBOTEN    Keine Zangen, keine Kiefer, keine Stacheln auf dem Panzer, keine
+            Dornen, keine Metallbeschlaege, keine gluehenden Fugen. Der Panzer
+            ist gewachsen, nicht geschmiedet — heute sieht er aus wie
+            zusammengeschraubte Ruestungsplatten.
+SILHOUETTE  Ein breites flaches gebaendertes Oval, die niedrigste geschlossene
+            Form der Reihe. Die Baender muessen bei 200 px als Streifen lesbar
+            bleiben; sie tragen das Motiv allein.
+ALT         Die aktuelle Datei ist eine gepanzerte Schildkroete aus Metallplatten
+            mit Stacheln, kaum von einem Ruestungsgegner zu unterscheiden.
+
+--------------------------------------------------------------------------------
+3. gorehound — Blutbracke   |  Quelle: Fernkampf (Faehrte, Jagd, Hetze)
+--------------------------------------------------------------------------------
+BASIS       Ein hoher magerer Hetzhund: Koerper eines Windhundes, Kopf eines
+            Schweisshundes. Brusthoch, sehr langbeinig, tief in der Brust, hoch
+            aufgezogen im Bauch. Die Quelle ist Fernkampf, und das heisst hier
+            nicht Bogen, sondern DISTANZ: das Tier arbeitet die Spur, bevor
+            irgendetwas passiert.
+MOTIV       Steht ruhig auf der Faehrte: den Kopf tief, fast in Kniehoehe, die
+            Nase nach links-vorn gesenkt, ein Vorderlauf gerade vorgesetzt, die
+            Rute lang und waagerecht ausgestreckt — die Haltung eines Hundes, der
+            eine Spur aufgenommen hat und gleich anziehen wird. Der Schaedel ist
+            lang und schmal, der Nasenschwamm auffallend gross, feucht und offen;
+            die Behaenge sind lang, duenn und tief angesetzt, einer davon
+            eingerissen. Die Augen liegen tief und sind matt — dieser Hund
+            arbeitet mit der Nase. Der Fang ist geschlossen, ueber den Lefzen
+            liegen tiefe Falten.
+MATERIAL    Sehr kurzes duennes Haar ueber sichtbarem Bau: Rippenboegen,
+            Hufthoecker und die langen Sehnen an den Laeufen zeichnen sich ab.
+            Farbe dunkles Leberbraun mit grauen Sprenkeln, an Kehle und
+            Innenschenkeln heller. Ueber Flanke und Nasenruecken liegen alte
+            helle Narbenstriche. Die Laeufe sind unten von Schlamm dunkel
+            gefaerbt. Palette: Leberbraun, Aschgrau, blasses Narbenbeige.
+AKZENT      Dunkles Arterienrot (aus dem Effekt: Blutzehnt und Zerfleischen). Es
+            sitzt allein an Fang und Brust: in den Lefzenfalten und im
+            Brustbehang ist altes dunkel eingetrocknetes Blut, das an einer
+            einzigen Stelle noch feucht und tief rot glaenzt. Keine gluehenden
+            Augen, kein Feuer, kein Leuchten.
+ABGRENZUNG  Gegen ashgut (Datei 1), den anderen hundeartigen Begleiter: ashgut
+            sitzt schwer, nackt und faltig; gorehound steht hoch, duerr und
+            kurzhaarig. Gegen pyreling, das andere schlanke vierbeinige Tier:
+            gorehound steht aufrecht auf langen Laeufen mit gesenktem Kopf;
+            pyreling duckt sich tief mit langem ausgelegtem Schwanz und ist
+            verkohlt statt behaart.
+VERBOTEN    Kein Hoellenhund. Keine gluehenden Augen, keine Flammen, keine
+            Hoerner, keine Stacheln am Ruecken, kein aufgerissenes Maul mit
+            sichtbaren Faengen, kein Geschirr, kein Halsband, keine Kette.
+SILHOUETTE  Eine lange tiefe Diagonale: hohe Hinterhand, tief getragener Kopf,
+            vier auffallend lange duenne Laeufe, waagerechte Rute. Die Beine
+            muessen klar getrennt stehen, damit bei 200 px vier Laeufe zu zaehlen
+            sind.
+ALT         Die aktuelle Datei ist ein rot gluehender Hoellenhund im Fletschen.
+            Mit Faehrte und Distanz hat das nichts zu tun, und es ist das
+            abgegriffenste Motiv der ganzen Reihe.
+
+--------------------------------------------------------------------------------
+4. carrionwing — Aasschwinge   |  Quelle: Fernkampf (Fluegel, Hoehe, Beobachtung)
+--------------------------------------------------------------------------------
+BASIS       Ein grosser Aasgeier mit nacktem Hals, kniehoch am Boden stehend, mit
+            sehr breiter Schwinge. Die Lore sagt: „Es kreist jeden Kampf aus,
+            bevor es landet." Das Bild zeigt den Moment danach.
+MOTIV       Steht am Boden, das Rumpfgefieder gebauscht, die Schultern
+            hochgezogen, der Kopf nach links-vorn gedreht und dabei tief zwischen
+            die Schultern gesenkt. EINE Schwinge ist halb gehoben und leicht nach
+            vorn gelegt — die Haltung, mit der ein Geier eine Beute abschirmt;
+            keine Drohgebaerde, kein Fluegelschlag, kein Flug. Die andere Schwinge
+            bleibt angelegt. Der Hals ist lang, nackt, faltig und leicht
+            S-foermig eingezogen; um seine Basis liegt ein Kragen aus feinen
+            hellen Daunen. Der Schnabel ist schwer und hakig mit deutlich
+            sichtbarer Wachshaut. Die Staender sind kraeftig, schuppig und stumpf
+            bekrallt — Standbeine, keine Fangwaffen.
+MATERIAL    Mattes staubiges Gefieder in Russbraun bis Schwarz, die Deckfedern
+            abgerieben und an den Raendern ausgefranst, einzelne Schwungfedern
+            fehlen ganz. Der nackte Hals ist graeulich fleischfarben mit dunklen
+            Runzeln. Der Daunenkragen ist schmutzig hell. Der Schnabel hornschwarz
+            mit heller Spitze. Palette: Russbraun, Kohlegrau, blasses Halsgrau,
+            Daunencreme.
+AKZENT      Fahles Mondsilber-Weiss (der Passiv ist farblos — die Farbe kommt aus
+            der Quelle: Hoehe, Nachthimmel, das alte beobachtende Auge). Es liegt
+            als kalter schmaler Lichtsaum auf den Kanten der obersten
+            Handschwingen der gehobenen Schwinge — nur dort, nur als Kante — und
+            als milchiger Film ueber dem Auge, das dadurch alt und blind wirkt,
+            aber nicht leuchtet.
+ABGRENZUNG  Gegen quillshrike (Datei 1), den anderen Vogel: carrionwing ist gross,
+            gebeugt, breit und schaebig, mit nacktem Hals und halb gehobener
+            Schwinge; quillshrike ist klein, aufrecht, straff, mit Borsten statt
+            Federn und eng angelegten Fluegeln. Gegen gorehound, den anderen
+            Fernkampf-Begleiter: Hoehe und Beobachtung gegen Boden und Nase — der
+            eine hebt den Fluegel, der andere senkt die Nase.
+VERBOTEN    Kein Schaedel als Kopf, keine Knochen im Gefieder, keine gluehenden
+            Augen, keine Ruestung, keine Trophaeen, kein Kadaver im Bild, keine
+            ausgebreiteten Schwingen im Flug.
+SILHOUETTE  Eine breite gebeugte Masse mit einem asymmetrisch hochgezogenen
+            Fluegelbogen und einem duennen eingezogenen Hals davor. Bei 200 px
+            traegt der Gegensatz zwischen breiter Fluegelflaeche und duennem Hals.
+ALT         Die aktuelle Datei ist eine fliegende schwarze Kraehe mit
+            ausgebreiteten Schwingen. Sie fasert an den Federspitzen aus und wird
+            im Kleinen zu einem Fleck.
+
+--------------------------------------------------------------------------------
+5. pyreling — Scheiterling   |  Quelle: Magie (Feuer, Glut)     [HAERTETEST 1/3]
+--------------------------------------------------------------------------------
+BASIS       Eine tief geduckte langschwaenzige Raubkatze in Luchsgroesse,
+            vollstaendig verkohlt. Die Lore sagt: „Etwas wurde lebendig verbrannt
+            und weigerte sich zu zerstieben." Der Koerper ist der Rest, nicht das
+            Feuer.
+MOTIV       Kauert tief, alle vier Laeufe untergezogen, die Brust fast am Boden,
+            der lange Schwanz in einer ruhigen Kurve seitlich ausgelegt; der Kopf
+            ist nach links-vorn erhoben und leicht geneigt. Die Katzenanatomie
+            bleibt vollstaendig erkennbar — Schulterblaetter, Rueckenlinie,
+            Sprunggelenke, die runde Pfotenform. Die Ohren sind zu Stummeln
+            verbrannt. Die Augenhoehlen sind leer und offen, das Gesicht ist
+            ruhig, das Maul geschlossen. Vom Nacken bis zur Schwanzwurzel steht
+            ein weicher feiner Flaum aus grauer Asche, wo einmal Fell war; er
+            hebt sich am Rand weich vom Koerper ab.
+MATERIAL    Verkohltes Holzkohleschwarz mit der typischen quadratischen
+            Rissstruktur durchgebrannten Holzes — matt, samtig, lichtschluckend.
+            An Schultern und Huefte ist die Kruste stellenweise abgesprungen und
+            gibt helle weisse Kalkasche frei. Der Koerper wirkt leicht und hohl,
+            nicht massiv. Palette: Kohleschwarz, Ascheweiss, kaltes Grau.
+AKZENT      Offene Flamme in Scheiterhaufen-Zinnoberorange (aus der
+            Kampffaehigkeit: Flammennova). Sie sitzt als kleine ruhig zuengelnde
+            Flammen entlang der Wirbelsaeule und in den leeren Augenhoehlen —
+            echte Flammenzungen mit weichem durchscheinendem Rand, NICHT als Glut
+            in Rissen. Sie brennt niedrig und ruhig, wie ein Feuer, das schon
+            lange brennt.
+ABGRENZUNG  Zwei Ebenen.
+            (a) FEUER-REGEL, wortgleich mit Datei 1, Block slagfiend:
+                slagfiend  fluessiges Metall IN Rissen, weissgluehend, an einem
+                           schwarzen glasigen Koerper.
+                ashgut     ruhende Kohle HINTER einer Bauchwand, dumpf rot, an
+                           einem grauen fleischigen Koerper.
+                pyreling   offene FLAMME auf dem Koerper, zuengelnd, an einem
+                           verkohlten hohlen leichten Koerper.
+                pyreling ist der einzige der drei mit offener Flamme.
+            (b) HAERTETEST MAGIE-TRIO: pyreling, hoarspite und charnel fallen an
+                derselben Stelle an. Drei Koerperbauplaene ohne eine gemeinsame
+                Linie:
+                pyreling   vierbeiniges Tier, tief geduckt, langer Schwanz.
+                hoarspite  gefluegeltes Buendel, aufrecht gehockt, kein Schwanz.
+                charnel    hohe aufrechte zweibeinige Gestalt, lange Arme.
+            Zusaetzlich gegen gorehound: siehe dort.
+VERBOTEN    Kein Flammengesicht, keine Feuermaehne, keine Glutrisse ueber den
+            ganzen Koerper, keine Hoerner, keine Zaehne, kein Rauchwirbel um die
+            Figur, keine gluehenden Krallen.
+SILHOUETTE  Eine lange niedrige Katzenform mit erhobenem Kopf und weit
+            ausgelegtem Schwanz. Die Flammen duerfen die Silhouette nur an
+            wenigen Punkten ueberragen, sonst wird das Motiv bei 200 px zu einem
+            Feuerfleck.
+ALT         Die aktuelle Datei ist ein Flammendaemon mit Fratze und Glutklauen —
+            kein Tier, keine Ruhe, und sie doppelt slagfiend.
+
+--------------------------------------------------------------------------------
+6. hoarspite — Frostgroll   |  Quelle: Magie (Frost, Kaelte)    [HAERTETEST 2/3]
+--------------------------------------------------------------------------------
+BASIS       Eine grosse Fledermaus in Katzengroesse, aufgehockt und vollstaendig
+            in die eigenen Flughaeute gehuellt. hoarspite war bisher gar kein
+            Wesen, sondern eine Eisscherbe — das ist der Kernfehler dieses
+            Motivs, und die Anatomie ist die Antwort darauf.
+MOTIV       Hockt aufrecht auf den kurzen Hinterbeinen, den Ruecken rund, und hat
+            die Flughaeute wie einen Mantel eng um sich geschlagen, sodass nur
+            der Kopf und die vordersten Daumenkrallen herausschauen. Der Kopf ist
+            schmal und fuchsartig, mit stark gerunzelter hochgezogener Nase
+            (Nasenblatt) und langen aufgestellten spitz zulaufenden Ohren, die
+            die Silhouette nach oben abschliessen. Die Augen sind winzig, schwarz
+            und hart. Das Maul ist geschlossen, die Lefzen leicht hochgezogen —
+            nicht knurrend, sondern verkniffen. Der Blick geht nach links-vorn
+            und ist unversoehnlich. Das ist die ganze Figur: ein Tier, das sich
+            nicht waermen laesst.
+MATERIAL    Kurzes dichtes Fell in Blaugrau bis Bleichweiss, an den Spitzen von
+            Reif ueberzogen, sodass es stumpf und pudrig wirkt. Die
+            eingeschlagenen Flughaeute sind duenn, ledrig und graublau, mit klar
+            sichtbarem dunklem Adernetz; an den Raendern sind sie versteift und
+            milchig wie duennes Eis am Ufer. Ohren und Nasenblatt sind nackt,
+            grau und ebenfalls bereift. Palette: Bleichweiss, Blaugrau,
+            Adernschwarz.
+AKZENT      Frostblau-Weiss (aus der Kampffaehigkeit: Grabfrost). Es sitzt im
+            Reif selbst: an den versteiften Raendern der Flughaeute, auf den
+            Fellspitzen an Schultern und Ohren und als feine kurze Eisnadeln an
+            den Daumenkrallen. Es leuchtet nicht aus dem Koerper heraus, es liegt
+            auf ihm.
+ABGRENZUNG  HAERTETEST MAGIE-TRIO, siehe pyreling. Zusaetzlich gegen vellumoth
+            (Datei 1), das andere helle Fluegelwesen: vellumoth breitet die
+            Fluegel flach aus und ist ein Insekt mit Fuehlern; hoarspite schlaegt
+            die Fluegel um sich und ist ein Saeuger mit Ohren. Die beiden duerfen
+            im Kontaktbogen nicht nebeneinander verwechselbar sein.
+VERBOTEN    Kein Eiskristall, kein Splitter, kein Zackenklumpen. Keine aus dem
+            Ruecken wachsenden Eiszacken, kein Frostnebel um die Figur, keine
+            leuchtenden Augen, kein aufgerissenes Maul mit Nadelzaehnen, keine
+            ausgebreiteten Fluegel.
+WERT        Der hellste Begleiter der ganzen Reihe. Er darf fast weiss stehen und
+            darf auf keinen Fall nachgedunkelt werden.
+SILHOUETTE  Ein geschlossener hoher Kegel oder Tropfen mit zwei spitzen Ohren
+            obenauf und einem kleinen scharfen Gesicht vorn. Sehr einfach und
+            sehr gut im Kleinen — genau deshalb ist der Mantel eingeschlagen und
+            nicht ausgebreitet.
+ALT         Die aktuelle Datei ist eine Eisscherbe. Kein Kopf, kein Koerper, kein
+            Blick, kein Wesen.
+
+--------------------------------------------------------------------------------
+7. charnel — Beinhaus   |  Quelle: Magie (Tod, Zehrung)         [HAERTETEST 3/3]
+--------------------------------------------------------------------------------
+BASIS       Eine hohe hagere aufrechte Gestalt auf digitigraden Laeufen — die
+            einzige zweibeinige, aufrecht stehende Figur der Reihe. Aufgerichtet
+            groesser als ein Mensch, gebeugt etwa auf Brusthoehe. Ein Wesen, das
+            die Toten ausgraebt: die Haende sind das Werkzeug, nicht der Mund.
+MOTIV       Steht still und tief gebeugt: die Schultern hochgezogen, der Ruecken
+            zu einem langen Bogen gekruemmt, der Kopf am tiefsten Punkt nach
+            links-vorn gehalten. Die Arme haengen lang und entspannt herab, die
+            Haende offen — breite flache Grabhaende mit langen abgeplatteten
+            Fingern und stumpfen abgearbeiteten Naegeln. Die Beine sind wie bei
+            einem Hund gewinkelt, mit langem Mittelfuss, und tragen das Gewicht
+            auf den Zehen. Der Schaedel hat kein Gesicht: ein glatter augenloser
+            Keil, dessen Haut ueber den Hoehlen geschlossen ist; das Maul beginnt
+            tief unten am Hals und laeuft als lange lippenlose geschlossene Naht
+            nach oben. Die Haltung ist ruhig und beinahe trauernd, nicht drohend.
+MATERIAL    Nackte feuchte Haut, bleich wie nasser Ton, grauweiss mit dunklen
+            Druckstellen an Ellbogen und Knien, straff ueber einem sichtbaren,
+            aber nicht ausgemergelten Bau: Schluesselbeine, Rippenboegen und
+            Wirbelkette zeichnen sich ab, ohne dass es wie ein Skelett aussieht.
+            Ueber Schultern und Unterarmen liegt eingetrockneter Grabstaub, hell
+            und stumpf. Keine Haare, keine Kleidung, keine Knochen an der
+            Aussenseite. Palette: Tonweiss, kaltes Grau, Erdstaubbeige.
+AKZENT      Fahles Totenlicht-Violett (der Passiv ist farblos — die Farbe kommt
+            aus der Quelle: das Licht, mit dem es zehrt). Es steht ausschliesslich
+            in der Mundnaht: dort, wo die Naht sich am Hals leicht oeffnet, kommt
+            ein kaltes blasses Violett von innen heraus und laeuft die Kehle
+            hinunter aus. Kein Gruen, kein Blau, kein Licht an Augen oder Haenden
+            — das Wesen hat keine Augen.
+ABGRENZUNG  HAERTETEST MAGIE-TRIO, siehe pyreling. Zusaetzlich zwei Grenzen, die
+            dieses Motiv leicht reisst: charnel darf weder wie ein Untoter mit
+            Kutte, Ruestung oder Waffe aussehen noch wie ein Mensch. Die
+            digitigraden Laeufe, der gesichtslose Kopf und die ueberlangen Arme
+            muessen die Gestalt eindeutig als Tierhaftes lesen lassen.
+VERBOTEN    Kein Schaedel, keine Knochenhaufen, keine Rippenkaefige als
+            Aussenpanzer, keine gruen gluehenden Augen, keine Kutte, keine
+            Kapuze, keine Sense, kein Grabstein. Der Name „Beinhaus" beschreibt,
+            WOHER es kommt, nicht wie es aussieht — genau das ist der Fehler der
+            alten Datei.
+WERT        Einer der drei hellen Begleiter. charnel steht mittelhell und bringt
+            Helligkeit in die sonst dunkle Kampfgruppe.
+SILHOUETTE  Eine hohe gebeugte schmale Gestalt mit hohen Schultern, tief
+            getragenem Kopf und zwei lang frei haengenden Armen. Die einzige
+            senkrechte Figur der Reihe — sie muss bei 200 px allein an ihrer
+            Kontur erkennbar sein.
+ALT         Die aktuelle Datei ist ein Schaedelklumpen mit gruen gluehenden Augen.
+            Sie ist kein Wesen, sie ist ein Fundstueck.
+
+================================================================================
+ENDE DATEI 2 — die 14 Taetigkeits-Begleiter stehen in
+01-taetigkeiten-14-begleiter.txt
+================================================================================
