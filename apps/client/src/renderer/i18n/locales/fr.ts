@@ -284,6 +284,13 @@ export const fr: Record<string, string> = {
     // Raben-Post § E (waechter-stimme-pack.md, v1): Signaturzeile via \n (pre-wrap in mail.css).
     "mail.letter.brenna.firstChampion": "Alors, le champion est tombé. Je l'admets, rien qu'une fois : du beau travail. Il y a une petite chose avec cette lettre, pour la route. Et ne va pas dire que je ne t'offre jamais rien. Le prochain traîne déjà quelque part dehors, et je veux sa tête aussi.\nBrenna",
     "mail.letter.warden.firstUnique": "Tu as trouvé là-bas quelque chose qui ne se voit pas souvent. J'en ai vu quelques pièces comme ça au fil des années, pas beaucoup. Aucune n'est jamais sortie pareille à une autre, donc la tienne est unique en son genre. Je l'ai notée dans le livre. Garde-la précieusement.\nLe Gardien",
+    "mail.letter.warden.twoHandedRanged": "Un arc demande les deux mains, et il en a toujours été ainsi. Sur certaines pièces anciennes, c'était mal consigné, et l'erreur venait de nous, pas de toi. J'ai corrigé le registre. Ta main de bouclier est libre, ce que tu y portais est de retour dans ton sac.\nLe Gardien",
+    "updateNotice.title": "Mis à jour en {version}",
+    "updateNotice.intro": "Ce correctif change quelques points. Voici ce qu'il faut savoir.",
+    "updateNotice.point1": "Les arcs occupent désormais les deux mains, comme toute arme à deux mains. Un bouclier ne tient plus à côté.",
+    "updateNotice.point2": "New Haven se trouve en troisième position dans la barre latérale, juste sous Combat. Il y a été déplacé dès la 1.0 sans qu'on le dise.",
+    "updateNotice.shield": "À cause du changement sur les arcs, le bouclier que tu portais est parti dans ton sac. Rien n'est perdu, et une lettre dans ta boîte l'explique.",
+    "updateNotice.close": "Compris",
     "nav.achievements": "Succès",
     "nav.mail": "Courrier",
     "nav.options": "Options",

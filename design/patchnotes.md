@@ -10,6 +10,46 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
+## 1.0.2 — unveröffentlicht
+
+**Bögen brauchen beide Hände:** DE: Ein Spieler hat gefragt, ob Bogen und Kiteschild gleichzeitig
+so gemeint sind. Waren sie nicht. Von 47 Fernkampfwaffen trugen 12 die Zweihand-Regel und 35
+nicht, je nachdem ob sie gefunden oder geschmiedet wurden. Ab jetzt gilt für alle dasselbe: eine
+Fernkampfwaffe belegt beide Hände. / EN: A player asked whether using a bow and a kite shield at
+once was intended. It was not. Of 47 ranged weapons, 12 carried the two handed rule and 35 did
+not, depending on whether they were found or crafted. The same rule now applies to all of them: a
+ranged weapon takes both hands.
+
+**Wenn dich das betrifft:** DE: Trugst du Bogen und Schild zusammen, wandert das Schild beim
+nächsten Laden zurück in dein Gepäck. Verloren geht nichts, und im Postfach liegt ein Brief, der
+es erklärt. Beim Start erscheint einmalig ein Hinweis. / EN: If you were carrying a bow and a
+shield together, the shield goes back into your pack on your next load. Nothing is lost, and
+there is a letter in your mailbox explaining it. A one time notice appears at startup.
+
+*Dev-Notiz: `twoHanded: true` für alle 47 Fernkampfwaffen (auch die Knechts-Schleuder — sie ist
+mechanisch ein `weaponType: "shortbow"` und wäre als einzige Ausnahme genau die Inkonsistenz, die
+wir gerade abstellen; CHEF-ENTSCHEID falls anders gewollt). Die Load-Invariante war bereits da und
+verlustfrei (Instanz mit Verzauberung reist mit, Inventar → Bank → Postfach), sie hat nur nie
+ausgelöst, weil die Daten falsch waren. Der Detektor in `balance-envelope.test.ts` §6 hatte die
+Inkonsistenz seit 2026-07-09 als OFFENE Content-Frage festgehalten — der Spieler hat sie
+beantwortet, bevor wir es getan haben. Balance-Folge neu gemessen: ranged verliert die Offhand,
+Spieler-TTK vs. idol_warden 91,59 → 95,57 s (+4,3 %), vs. last_idol 302,85 → 316,15 s (+4,4 %);
+melee und magic unverändert. Kein SAVE_VERSION-Bump.*
+
+**Neu: ein kurzer Hinweis nach jedem Update:** DE: Wenn ein Patch etwas an deinem Spielstand
+ändert, sagt das Spiel es dir beim Start, einmal je Version. / EN: When a patch changes something
+about your save, the game now tells you at startup, once per version.
+
+*Dev-Notiz: `components/UpdateNotice.tsx`, gemerkt in `localStorage` je `__APP_VERSION__`, kein
+Save-Feld und keine Migration. Die Punkte kommen aus nummerierten i18n-Schlüsseln
+(`updateNotice.point1..n`) — ein künftiger Patch braucht nur neue Texte, keinen Code. Der
+Schild-Absatz erscheint NUR, wenn der Spielstand wirklich betroffen war (erkennbar am Brief im
+Postfach), damit der Text niemandem etwas erzählt, das ihn nicht betrifft. Anlass waren zwei
+Berichte an einem Tag, die beide keine Defekte waren, sondern stille Änderungen: der
+New-Haven-Umzug und der Zweihand-Fix.*
+
+---
+
 ## 1.0.1 — unveröffentlicht
 
 *Erste Polier-Runde nach dem 1.0-Release, gebaut aus den Spielerberichten der ersten Tage.*

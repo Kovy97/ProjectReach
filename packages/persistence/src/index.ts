@@ -69,7 +69,7 @@ import {
   makeFightQueueEntry,
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot } from "@hearthforge/shared";
-import { MAX_STACK, addItemOrBank, advance, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, stopCombat, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, addItemOrBank, advance, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -406,6 +406,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   //   Instanz-/Mailbox-Pässe validieren die Rückgabe mit. RNG-frei (Grant zieht kein RNG) und
   //   idempotent: kein Mainhand / 1H-Waffe / leere Offhand ⇒ No-op → serialize↔deserialize-stabil.
   {
+    let entwaffnet = false;
     const mainId = c.equipment.mainhand;
     if (mainId && content.items[mainId]?.twoHanded === true) {
       const offInst = c.equippedInstances.offhand;
@@ -414,11 +415,22 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         grantLootInstance(state, content, offInst);
         delete c.equippedInstances.offhand;
         c.equipment.offhand = null;
+        entwaffnet = true;
       } else if (offId) {
         grantLoot(state, content, offId, 1);
         c.equipment.offhand = null;
+        entwaffnet = true;
       }
     }
+    // 1.0.2: SAGEN, dass es passiert ist. Bis 1.0.1 trugen 35 der 47 Fernkampfwaffen faelschlich
+    // kein `twoHanded` (Spieler-Report „Bogen + Schild gleichzeitig?"); mit der Korrektur greift
+    // die Regel oben rueckwirkend und raeumt gewachsene Spielstaende auf. Ohne Erklaerung waere
+    // das fuer den Spieler ein Schild, das ueber Nacht aus dem Slot verschwindet — genau die
+    // Sorte stiller Aenderung, die als Fehler gemeldet wird (vgl. der New-Haven-Umzug, der ohne
+    // Patchnote fuer Verwirrung gesorgt hat). Ein Brief kostet nichts, geht nie verloren und
+    // steht auch dann noch da, wenn der Spieler beim Laden nicht hinschaut. Feuert von selbst
+    // nur einmal: danach ist die Offhand leer und die Bedingung nie wieder wahr.
+    if (entwaffnet) sendLetter(state, "warden", "mail.letter.warden.twoHandedRanged");
   }
 
   // — Food: nur ein bekanntes Item —

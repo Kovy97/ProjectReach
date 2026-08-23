@@ -280,6 +280,13 @@ export const es: Record<string, string> = {
     // Raben-Post § E (waechter-stimme-pack.md, v1): Signaturzeile via \n (pre-wrap in mail.css).
     "mail.letter.brenna.firstChampion": "Así que el campeón cayó. Lo admito, solo esta vez: buen trabajo. Te mando algo pequeño con esta carta, para el camino. Y no digas que nunca te he dado nada. El siguiente ya anda por ahí, en alguna parte, y también quiero su cabeza.\nBrenna",
     "mail.letter.warden.firstUnique": "Encontraste ahí fuera algo que no aparece a menudo. He visto algunas piezas así a lo largo de los años, no muchas. Nunca salieron dos iguales, así que la tuya es única. La anoté en el libro. Guárdala bien.\nEl Guardián",
+    "mail.letter.warden.twoHandedRanged": "Un arco necesita las dos manos, y siempre fue así. En algunas piezas antiguas estaba mal anotado, y el error fue nuestro, no tuyo. Ya lo he corregido. Tu mano del escudo está libre ahora, así que lo que llevabas ahí ha vuelto a tu morral.\nEl Guardián",
+    "updateNotice.title": "Actualizado a {version}",
+    "updateNotice.intro": "Este parche cambia algunas cosas. Esto es lo que conviene saber.",
+    "updateNotice.point1": "Los arcos ocupan ahora las dos manos, como cualquier otra arma a dos manos. Ya no puedes llevar un escudo junto a uno.",
+    "updateNotice.point2": "New Haven está en tercer lugar de la barra lateral, justo debajo de Combate. Se movió allí en la 1.0 y nunca lo dijimos.",
+    "updateNotice.shield": "Por el cambio en los arcos, el escudo que llevabas ha pasado a tu morral. No se ha perdido nada, y tienes una carta en el buzón que lo explica.",
+    "updateNotice.close": "Entendido",
     "nav.achievements": "Logros",
     "nav.mail": "Correo",
     "nav.options": "Opciones",

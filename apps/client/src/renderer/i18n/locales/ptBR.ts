@@ -278,6 +278,13 @@ export const ptBR: Record<string, string> = {
     // Raben-Post § E (waechter-stimme-pack.md, v1): Signaturzeile via \n (pre-wrap in mail.css).
     "mail.letter.brenna.firstChampion": "Então o campeão caiu. Admito, só dessa vez: trabalho limpo. Vai uma coisinha junto com essa carta, pra estrada. E não vai dizendo que eu nunca te dei nada. O próximo já anda por aí em algum lugar, e a cabeça dele eu também quero.\nBrenna",
     "mail.letter.warden.firstUnique": "Você achou aí fora uma coisa que não aparece com frequência. Já vi algumas peças assim ao longo dos anos, não muitas. Nenhuma delas saiu igual à outra, então a sua é única. Anotei no livro. Guarda ela com cuidado.\nO Guardião",
+    "mail.letter.warden.twoHandedRanged": "Um arco exige as duas mãos, e sempre exigiu. Em algumas peças antigas isso estava anotado errado, e a falha foi nossa, não sua. Já corrigi o registro. Sua mão de escudo está livre agora, então o que você carregava ali voltou para a sua mochila.\nO Guardião",
+    "updateNotice.title": "Atualizado para {version}",
+    "updateNotice.intro": "Este patch mudou algumas coisas. Vale saber o seguinte.",
+    "updateNotice.point1": "Arcos agora ocupam as duas mãos, como qualquer arma de duas mãos. Não dá mais para usar escudo junto.",
+    "updateNotice.point2": "New Haven fica em terceiro na barra lateral, logo abaixo de Combate. Ele foi para lá já na 1.0 e nunca avisamos.",
+    "updateNotice.shield": "Por causa da mudança nos arcos, o escudo que você usava foi para a mochila. Nada se perdeu, e há uma carta na caixa postal explicando.",
+    "updateNotice.close": "Entendi",
     "nav.achievements": "Conquistas",
     "nav.mail": "Correio",
     "nav.options": "Opções",

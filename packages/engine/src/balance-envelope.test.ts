@@ -448,11 +448,16 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // modifiers int4/wis3→int6/wis6/lck3) bleibt BiS-Cape auf JEDEM Ziel/Level, liefert dem CL-90-
     // Magic-"damage"-Build jetzt mehr int → minimal höherer Output ⇒ Spieler-TTK vs. idol_warden
     // sinkt leicht (78.3s→78.05s); alle anderen Stil/Ziel-Paare unverändert.
+    // Re-Messung 2026-08-23 (Chef-Entscheid „alle Fernkampfwaffen sind zweihaendig", ausgeloest
+    // durch einen Spieler-Report zu Bogen+Kiteschild): der CL-90-ranged-BiS-Build verliert damit
+    // seine Offhand. Nur die RANGED-Zeilen verschieben sich — Spieler-TTK vs. idol_warden
+    // 91.59→95.57 s (+4.3 %), vs. last_idol 302.85→316.15 s (+4.4 %), Boss→Spieler vs. idol_warden
+    // 14.1→14.02 s. Melee/Magic unveraendert (deren Offhand ist Schild bzw. Fokus und bleibt).
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 59.67, 18.9],
       ["melee", "last_idol", 195.51, 13.4],
-      ["ranged", "idol_warden", 91.59, 14.1],
-      ["ranged", "last_idol", 302.85, 12.2],
+      ["ranged", "idol_warden", 95.57, 14.02],
+      ["ranged", "last_idol", 316.15, 12.2],
       ["magic", "idol_warden", 78.05, 23.7],
       ["magic", "last_idol", 262.73, 25.6],
     ];
@@ -509,14 +514,17 @@ describe("Balance-Envelope §6: Duplikat-Verzauberungen sind blockiert (#303 L4-
     }
   });
 
-  it("Bogen-Inkonsequenz: die GECRAFTETE Bogen-Leiter ist 1H (Schild+Block legal), Drop-Bögen sind 2H", () => {
-    // Realität 2026-07-09: thematische Drop-Bögen tragen `twoHanded: true` (abyssal_tide_bow,
-    // antler_warbow, …), die komplette gefletchte Tier-Leiter (copper→godiron short-/longbow)
-    // NICHT — ein Fernkämpfer mit Craft-Bogen darf also Kiteschild+Block stacken (fließt in die
-    // §4-Tank-Pins ein). Content-Frage an CEO/content-dev; ändert sich das, reißt dieser Detektor
-    // und die Tank-/Block-Pins müssen neu gemessen werden.
-    expect(content.items.adamantium_longbow?.twoHanded ?? false).toBe(false);
-    expect(content.items.godiron_longbow?.twoHanded ?? false).toBe(false);
+  it("Bogen-Regel: JEDE Fernkampfwaffe ist zweihändig (Chef-Entscheid 23.08.2026)", () => {
+    // Vorgeschichte: Bis 1.0.1 trugen nur die thematischen Drop-Bögen `twoHanded: true`, die
+    // gefletchte Tier-Leiter (copper→godiron short-/longbow) nicht — ein Fernkämpfer mit
+    // Craft-Bogen durfte Kiteschild+Block stacken. Der Detektor an dieser Stelle hat das seit
+    // 2026-07-09 als OFFENE Content-Frage festgehalten; ein Spieler hat sie am 23.08. von selbst
+    // gestellt („bow + kite shield … feels more sensible to not be able to"). Chef-Entscheid:
+    // alle Fernkampfwaffen belegen beide Hände. Die Regel selbst hängt in `weapon-hands.test.ts`;
+    // hier bleibt nur der BALANCE-Bezug stehen, weil die §4-Tank-/Block-Pins und die TTK-Matrix
+    // von dieser Frage abhängen (die ranged-Zeile der Matrix wurde dadurch neu gemessen).
+    expect(content.items.adamantium_longbow?.twoHanded).toBe(true);
+    expect(content.items.godiron_longbow?.twoHanded).toBe(true);
     expect(content.items.abyssal_tide_bow?.twoHanded).toBe(true);
   });
 });

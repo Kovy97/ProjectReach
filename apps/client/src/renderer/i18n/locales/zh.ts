@@ -284,6 +284,13 @@ export const zh: Record<string, string> = {
     // Raben-Post § E (waechter-stimme-pack.md, v1): Signaturzeile via \n (pre-wrap in mail.css).
     "mail.letter.brenna.firstChampion": "冠军解决了。这次我承认：干净利落。这封信里我给你捎了点小东西，路上用。别说我从没给过你什么东西。下一个也已经在外面某处游荡了，它的头我也要。\n布蕾娜",
     "mail.letter.warden.firstUnique": "你在外面找到了一件不常见的东西。这些年我见过几件这样的东西，但不多。没有两件是一模一样的，所以你这件独一无二。我已经记进书里了。好好收着。\n守望者",
+    "mail.letter.warden.twoHandedRanged": "弓向来需要双手，从来如此。早年流传的一些弓被错记成单手，那是我们的疏忽，不是你的。我已经改正。你的盾手现在空了，原本拿在那里的东西已送回你的行囊。\n守望者",
+    "updateNotice.title": "已更新至 {version}",
+    "updateNotice.intro": "本次更新改动了几处，以下值得一看。",
+    "updateNotice.point1": "弓现在占用双手，与其他双手武器一致，旁边再也无法携带盾牌。",
+    "updateNotice.point2": "New Haven 位于侧栏第三位，就在战斗下方。它在 1.0 就已移到那里，我们一直没说。",
+    "updateNotice.shield": "因为弓的改动，你原本装备的盾牌已放回行囊。东西没有丢失，信箱里有一封信说明缘由。",
+    "updateNotice.close": "知道了",
     "nav.achievements": "成就",
     "nav.mail": "邮箱",
     "nav.options": "选项",

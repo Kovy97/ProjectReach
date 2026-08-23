@@ -413,7 +413,7 @@ export const content: ContentDB = {
       stackable: false,
       icon: "🏹",
       slot: "mainhand",
-      weaponStyle: "ranged",
+      weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 0.2, damageMax: 0.2, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       rarity: "common",
@@ -432,7 +432,7 @@ export const content: ContentDB = {
       stackable: false,
       icon: "🏹",
       slot: "mainhand",
-      weaponStyle: "ranged",
+      weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 0.4, damageMax: 0.6, attackIntervalMs: 2650,
       requirements: { ranged: 1 },
@@ -2922,28 +2922,28 @@ export const content: ContentDB = {
     // SHORTBOW: 0.52·D, −150 aIMs, +critChance, +evasion.
     copper_shortbow: {
       id: "copper_shortbow", name: { en: "Normal Shortbow", de: "Normaler Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 0.6, damageMax: 0.8, attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.2 copper_arrow ammoDamage eingebacken (war 0.4/0.6)
       requirements: { ranged: 1 }, value: 38, // balance-pass3: value 24→38 (1.25x sword-peer cap)
     },
     bronze_shortbow: {
       id: "bronze_shortbow", name: { en: "Birchwood Shortbow", de: "Birkenholz-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 1.1, damageMax: 1.4, attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.25 bronze_arrow ammoDamage eingebacken (war 0.8/1.1)
       requirements: { ranged: 5 }, value: 75, // balance-pass3: value 55→75
     },
     iron_shortbow: {
       id: "iron_shortbow", name: { en: "Oak Shortbow", de: "Eichen-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 1.6, damageMax: 2.2, attackIntervalMs: 2650, precision: 0.15, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst); ammo-removal-Vorlauf 2026-07 (#287): +0.3 iron_arrow ammoDamage eingebacken (war 1.3/1.9)
       requirements: { ranged: 10 }, value: 100, rarity: "rare",
     },
     steel_shortbow: {
       id: "steel_shortbow", name: { en: "Ashbark Shortbow", de: "Aschenrinden-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 2.1, damageMax: 2.9, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + steel_arrow ammoDamage(0.5) eingebacken (Ammo-Removal-Vorlauf; war 2/3)
       modifiers: { lck: 1 },
@@ -2951,7 +2951,7 @@ export const content: ContentDB = {
     },
     blacksteel_shortbow: {
       id: "blacksteel_shortbow", name: { en: "Blackwood Shortbow", de: "Schwarzholz-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 2.6, damageMax: 3.6, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + blacksteel_arrow ammoDamage(0.6) eingebacken (war 2.4/3.6)
       modifiers: { lck: 1 },
@@ -2959,7 +2959,7 @@ export const content: ContentDB = {
     },
     mithril_shortbow: {
       id: "mithril_shortbow", name: { en: "Blightwood Shortbow", de: "Pestholz-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 3.2, damageMax: 4.4, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + mithril_arrow ammoDamage(0.7) eingebacken (war 3/4.4)
       modifiers: { lck: 1 },
@@ -2967,7 +2967,7 @@ export const content: ContentDB = {
     },
     adamantium_shortbow: {
       id: "adamantium_shortbow", name: { en: "Ironbark Shortbow", de: "Eisenrinden-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 4.0, damageMax: 5.6, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + adamantium_arrow ammoDamage(0.9) eingebacken (war 3.6/5.4)
       modifiers: { lck: 1 },
@@ -2975,7 +2975,7 @@ export const content: ContentDB = {
     },
     runite_shortbow: {
       id: "runite_shortbow", name: { en: "Bloodoak Shortbow", de: "Bluteichen-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 5.0, damageMax: 6.9, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + runite_arrow ammoDamage(1.1) eingebacken (war 4.5/6.7)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
@@ -2984,7 +2984,7 @@ export const content: ContentDB = {
     },
     bloodiron_shortbow: {
       id: "bloodiron_shortbow", name: { en: "Shadowpine Shortbow", de: "Schattenkiefer-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 6.3, damageMax: 8.8, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + bloodiron_arrow ammoDamage(1.4) eingebacken (war 5.2/7.8)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
@@ -2993,7 +2993,7 @@ export const content: ContentDB = {
     },
     titanium_shortbow: {
       id: "titanium_shortbow", name: { en: "Wraithwood Shortbow", de: "Geisterholz-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 7.8, damageMax: 10.8, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + titanium_arrow ammoDamage(1.7) eingebacken (war 6/9)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
@@ -3002,7 +3002,7 @@ export const content: ContentDB = {
     },
     aetherium_shortbow: {
       id: "aetherium_shortbow", name: { en: "Bonewood Shortbow", de: "Knochenholz-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 9.7, damageMax: 13.5, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + aetherium_arrow ammoDamage(2.0) eingebacken (war 6.5/9.7)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
@@ -3011,7 +3011,7 @@ export const content: ContentDB = {
     },
     godiron_shortbow: {
       id: "godiron_shortbow", name: { en: "Godwood Shortbow", de: "Götzenholz-Kurzbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + godiron_arrow ammoDamage(3.2) eingebacken (war 6.7/10.1; korrigiert kaputte Kurve)
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, // Combat-Feel v2 #5: Shortbow-Identität ab Mid-Tier (Sustain/Tanky-Ziele)
@@ -3021,7 +3021,7 @@ export const content: ContentDB = {
     // LONGBOW: 0.62·D, 0 aIMs (Standard-Tempo), +critDamage.
     copper_longbow: {
       id: "copper_longbow", name: { en: "Normal Longbow", de: "Normaler Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 0.6, damageMax: 0.9, attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.2 copper_arrow ammoDamage eingebacken (war 0.4/0.7)
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
@@ -3029,7 +3029,7 @@ export const content: ContentDB = {
     },
     bronze_longbow: {
       id: "bronze_longbow", name: { en: "Birchwood Longbow", de: "Birkenholz-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 1.0, damageMax: 1.5, attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.25 bronze_arrow ammoDamage eingebacken (war 0.7/1.2)
       modifiers: { lck: 1 },
@@ -3038,7 +3038,7 @@ export const content: ContentDB = {
     },
     iron_longbow: {
       id: "iron_longbow", name: { en: "Oak Longbow", de: "Eichen-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 1.6, damageMax: 2.4, attackIntervalMs: 3000, precision: 0.25, // ammo-removal-Vorlauf 2026-07 (#287): +0.3 iron_arrow ammoDamage eingebacken (war 1.3/2.1)
       modifiers: { lck: 1 },
@@ -3047,7 +3047,7 @@ export const content: ContentDB = {
     },
     steel_longbow: {
       id: "steel_longbow", name: { en: "Ashbark Longbow", de: "Aschenrinden-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 2.1, damageMax: 3.1, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + steel_arrow ammoDamage(0.5) eingebacken (war 1.9/3.1)
       modifiers: { lck: 1 },
@@ -3056,7 +3056,7 @@ export const content: ContentDB = {
     },
     blacksteel_longbow: {
       id: "blacksteel_longbow", name: { en: "Blackwood Longbow", de: "Schwarzholz-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 2.6, damageMax: 4.0, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + blacksteel_arrow ammoDamage(0.6) eingebacken (war 2.5/4.2)
       modifiers: { lck: 1 },
@@ -3065,7 +3065,7 @@ export const content: ContentDB = {
     },
     mithril_longbow: {
       id: "mithril_longbow", name: { en: "Blightwood Longbow", de: "Pestholz-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 3.2, damageMax: 4.8, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + mithril_arrow ammoDamage(0.7) eingebacken (war 3.1/5.1)
       modifiers: { lck: 1 },
@@ -3074,7 +3074,7 @@ export const content: ContentDB = {
     },
     adamantium_longbow: {
       id: "adamantium_longbow", name: { en: "Ironbark Longbow", de: "Eisenrinden-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 4.0, damageMax: 6.2, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + adamantium_arrow ammoDamage(0.9) eingebacken (war 3.6/6.1)
       modifiers: { lck: 2 },
@@ -3083,7 +3083,7 @@ export const content: ContentDB = {
     },
     runite_longbow: {
       id: "runite_longbow", name: { en: "Bloodoak Longbow", de: "Bluteichen-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 5.0, damageMax: 7.6, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + runite_arrow ammoDamage(1.1) eingebacken (war 4.7/7.8)
       modifiers: { lck: 2 },
@@ -3092,7 +3092,7 @@ export const content: ContentDB = {
     },
     bloodiron_longbow: {
       id: "bloodiron_longbow", name: { en: "Shadowpine Longbow", de: "Schattenkiefer-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 6.3, damageMax: 9.6, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + bloodiron_arrow ammoDamage(1.4) eingebacken (war 5.4/9)
       modifiers: { lck: 2 },
@@ -3101,7 +3101,7 @@ export const content: ContentDB = {
     },
     titanium_longbow: {
       id: "titanium_longbow", name: { en: "Wraithwood Longbow", de: "Geisterholz-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 7.8, damageMax: 11.8, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + titanium_arrow ammoDamage(1.7) eingebacken (war 6.2/10.3)
       modifiers: { dex: 1, lck: 1 },
@@ -3110,7 +3110,7 @@ export const content: ContentDB = {
     },
     aetherium_longbow: {
       id: "aetherium_longbow", name: { en: "Bonewood Longbow", de: "Knochenholz-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 9.6, damageMax: 14.7, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + aetherium_arrow ammoDamage(2.0) eingebacken (war 6.9/11.5)
       modifiers: { dex: 1, lck: 1 },
@@ -3119,7 +3119,7 @@ export const content: ContentDB = {
     },
     godiron_longbow: {
       id: "godiron_longbow", name: { en: "Godwood Longbow", de: "Götzenholz-Langbogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 12.7, damageMax: 19.0, attackIntervalMs: 3000, precision: 0.25, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3) + godiron_arrow ammoDamage(3.2) eingebacken (war 7.5/12.5)
       modifiers: { dex: 1, lck: 3 },
@@ -4881,7 +4881,7 @@ export const content: ContentDB = {
     },
     farmhand_sling: {
       id: "farmhand_sling", name: { en: "Farmhand Sling", de: "Knechts-Schleuder" },
-      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "shortbow",
+      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
       damageMin: 0.7, damageMax: 1.1, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
@@ -4981,7 +4981,7 @@ export const content: ContentDB = {
     },
     stolen_shortbow: {
       id: "stolen_shortbow", name: { en: "Stolen Shortbow", de: "Gestohlener Kurzbogen" },
-      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "shortbow",
+      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
       damageMin: 1.2, damageMax: 1.8, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
@@ -5169,7 +5169,7 @@ export const content: ContentDB = {
     },
     ashfall_recurve: {
       id: "ashfall_recurve", name: { en: "Ashfall Recurve", de: "Aschfall-Recurvebogen" },
-      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "shortbow",
+      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
       damageMin: 2, damageMax: 3, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       weaponEffect: { type: "burn", chance: 0.25, magnitude: 2, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.5→2 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 3 },
@@ -5411,7 +5411,7 @@ export const content: ContentDB = {
     },
     driftwood_bow: {
       id: "driftwood_bow", name: { en: "Driftwood Bow", de: "Treibholz-Bogen" },
-      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "shortbow",
+      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
       damageMin: 1.2, damageMax: 1.8, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       // Task #286 Stage B: ammoSaver war seit Ammo-Removal ein No-op — ersetzt durch bleed in
@@ -5701,7 +5701,7 @@ export const content: ContentDB = {
     },
     skytalon_recurve: {
       id: "skytalon_recurve", name: { en: "Skytalon Recurve", de: "Himmelsklaue-Recurvebogen" },
-      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "shortbow",
+      type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
       damageMin: 4.0, damageMax: 6.1, attackIntervalMs: 2650, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. adamantium_arrow-ammoDamage(0.9) dominierte Runite-Craft-Tier um 9%; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Runite-Next-Tier-Niveau liegt (war 5.2/7.8)
       weaponEffect: { type: "shock", chance: 0.20, magnitude: 0.20, durationMs: 3500 },
       modifiers: { dex: 1, lck: 1 },
@@ -6507,7 +6507,7 @@ export const content: ContentDB = {
     },
     skyfather_recurve: {
       id: "skyfather_recurve", name: { en: "Skyfather Recurve", de: "Himmelsvater-Recurvebogen" },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow", precision: 0.15,
       damageMin: 13.5, damageMax: 18.5, attackIntervalMs: 2650,
       weaponEffect: { type: "shock", chance: 0.3, magnitude: 0.3, durationMs: 4000 },
@@ -6713,7 +6713,7 @@ export const content: ContentDB = {
         en: "A longbow strung with void-touched sinew, drawn from the herald's own reliquary.",
         de: "Ein Langbogen mit leerenberührter Sehne bespannt, aus dem eigenen Reliquiar des Herolds entnommen.",
       },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 5.7, damageMax: 8.4, attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
@@ -6726,7 +6726,7 @@ export const content: ContentDB = {
         en: "A short, wicked recurve carved from flayed-soul horn — its draw is nearly silent.",
         de: "Ein kurzer, bösartiger Recurve aus geschundenem Seelenhorn geschnitzt — sein Zug ist fast lautlos.",
       },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
       damageMin: 8.4, damageMax: 11.5, attackIntervalMs: 2650, precision: 0.15,
       modifiers: { lck: 1 },
@@ -6739,7 +6739,7 @@ export const content: ContentDB = {
         en: "A heavy longbow plated in voidhusk shell, built for one killing shot at a time.",
         de: "Ein schwerer Langbogen mit Leerenhülsen-Panzerung, gebaut für jeweils einen tödlichen Schuss.",
       },
-      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged",
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
       damageMin: 10.8, damageMax: 15.9, attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },

@@ -549,3 +549,59 @@
 .quit-confirm-actions .combat-btn {
   flex: 1 1 0;
 }
+
+/* ─── „Was ist neu"-Hinweis nach einem Update (components/UpdateNotice.tsx) ───
+   Bewusst dieselbe Grundoptik wie das Bestätigungs-Modal (Siegel oben, Titel, Fließtext,
+   eine Aktion unten), nur breiter, weil hier eine Liste steht. Erscheint einmal je
+   Programmversion; der Abschnitt zum Schild nur für tatsächlich betroffene Spielstände. */
+.update-notice-modal {
+  max-width: min(620px, 88vw);
+  text-align: center;
+  padding: 22px 26px 18px;
+}
+
+.update-notice-icon img {
+  width: 46px;
+  height: 46px;
+  opacity: 0.9;
+}
+
+.update-notice-title {
+  font-family: var(--font-head);
+  font-size: clamp(19px, 1.5vw, 25px);
+  color: var(--gold);
+  margin: 6px 0 2px;
+}
+
+.update-notice-intro {
+  color: var(--muted);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.update-notice-list {
+  margin: 0 0 12px;
+  padding: 0 0 0 20px;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.update-notice-list li + li {
+  margin-top: 7px;
+}
+
+/* Der Schild-Absatz betrifft den Spielstand des Spielers direkt — er bekommt einen eigenen,
+   abgesetzten Kasten, damit er nicht als weiterer Aufzählungspunkt untergeht. */
+.update-notice-shield {
+  text-align: left;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  line-height: 1.45;
+  border-left: 3px solid var(--gold);
+  background: rgba(216, 184, 112, 0.08);
+}
+
+.update-notice-actions {
+  display: flex;
+  justify-content: center;
+}
