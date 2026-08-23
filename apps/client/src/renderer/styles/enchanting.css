@@ -127,12 +127,18 @@
   min-width: 0;
   gap: 1px;
 }
+/* Clip-Audit G007 (1.0.1): die linke Item-Spalte ist bei 1366×768 nur ~130px schmal (58px-Icon +
+   Gap + clamp-Spaltenbreite) — nowrap+ellipsis kappte lange Item-Namen ("Grattyrann-Beinschienen"
+   verlor 20% des Namens). `.ench-item-row` hat keine feste Höhe (nur align-items:center) und die
+   Liste scrollt ohnehin (`.ench-select-list{overflow-y:auto}`), darum jetzt Umbruch auf 2 Zeilen
+   statt Kappung — macht nur die eine lange Zeile etwas höher, kein Layout-Bruch. */
 .ench-item-name {
   font-size: 13px;
   color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.25;
 }
 .ench-item-sub {
   font-size: 11px;

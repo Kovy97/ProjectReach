@@ -427,7 +427,12 @@
   gap: 8px;
 }
 
-.shopv2-hint { font-size: 14px; flex-shrink: 0; }
+/* Clip-Audit G008 (1.0.1): `<p class="shopv2-hint muted">` — beide Klassen setzen font-size mit
+   gleicher Spezifität (0,0,1,0); .muted (components.css, 19px) lud nach dieser Regel und gewann
+   dadurch die Kaskade, obwohl 14px hier klar die Absicht ist. Die 19px-Zeile war ~13px höher als
+   die schmale Rückkauf-Box im Verkaufen-Tab vorsah und ragte unten heraus. Tag-Selektor erzwingt
+   jetzt deterministisch 14px, unabhängig von Import-Reihenfolge — .muted bleibt für die Farbe. */
+p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 .shopv2-empty { padding: 20px 4px; }
 
 .shopv2-sell-grid {

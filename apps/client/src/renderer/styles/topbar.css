@@ -213,9 +213,14 @@
      (align-items: center, kein stretch), darum sizt .topbar-label ohne
      explizite width nach fit-content/min-content — bei langen Labels
      (z. B. "JUWELIERSKUNST") wächst die Box über den Button hinaus, bevor
-     max-width:100% + Ellipsis überhaupt greifen. width:100% + min-width:0
-     erzwingt die tatsächliche Button-Breite als Basis, danach schneidet
-     text-overflow:ellipsis sauber ab statt zu überlaufen. */
+     max-width:100% überhaupt greift. width:100% + min-width:0 erzwingt
+     die tatsächliche Button-Breite als Basis.
+     Clip-Audit G006 (1.0.1): ehemals text-overflow:ellipsis; white-space:nowrap hier — wurde von
+     #root .topbar-label (gravewood-navigation.css, lädt danach + `#root`-Präfix) IMMER
+     überschrieben, und zwar auf white-space:nowrap + text-overflow:CLIP (kein Ellipsis, harter
+     Schnitt — "MEISTERSCHAFT" verlor bei 1366×768 ein "T"). Beide Regeln jetzt bewusst
+     gleichlautend auf Umbruch statt Kappung getrimmt, damit hier keine tote/irreführende
+     Gegen-Regel mehr steht. */
   width: 100%;
   min-width: 0;
   max-width: 100%;
@@ -223,9 +228,9 @@
   /* Sidebar-Typografie: Großschrift + Cinzel-Letter-Spacing */
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  overflow-wrap: break-word;
+  white-space: normal;
   z-index: 2;
   /* 7-Sprachen-Fundament (Task #252): löst den PNG-Titel-Schriftzug (title_<id>.png, ehem.
      .topbar-title-img) ab — Gold statt des Buttons Off-White, damit die Optik des

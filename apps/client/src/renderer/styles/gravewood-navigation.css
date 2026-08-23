@@ -979,9 +979,26 @@
   display: block !important;
   width: 100%;
   min-width: 0;
-  overflow: hidden;
+  /* Clip-Audit G006 (1.0.1): bei knappen Tab-Breiten (1366×768, 8 gleich breite Tabs) reichte die
+     Breite für lange Labels wie "MEISTERSCHAFT" nicht — vorher white-space:nowrap +
+     text-overflow:clip schnitt hart ab (kein Ellipsis, buchstäblich fehlende Buchstaben). Der
+     Button hat auf der Höhen-Achse reichlich Luft (Icon ist ausgeblendet, .topbar ist
+     50–64px×--tb-scale hoch, s. topbar.css), darum jetzt: Umbruch auf 2 Zeilen statt Kappung.
+     Kurze Labels bleiben einzeilig (sie brechen nicht, weil sie in die Breite passen). */
+  overflow: visible;
   font-size: clamp(7px, 8.5cqw, 22px) !important;
   line-height: 1.08;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
   text-overflow: clip;
+}
+
+/* Politur zu G006: bei 1366×768 (8 gleich breite Tabs) ist "MEISTERSCHAFT" ohne Letter-Spacing
+   mit ~99px knapp UNTER den ~100px verfügbarer Breite — nur das übliche 0.4px Letter-Spacing
+   (topbar.css .topbar-label, Sidebar-Cinzel-Optik) drückte es über die Kante in den 2-Zeilen-
+   Umbruch oben. Schwellwert NUR für sehr schmale Tab-Container: bei allen breiteren
+   Auflösungen bleibt das Letter-Spacing unangetastet bei 0.4px — betrifft real nur die kleinste
+   unterstützte Fensterbreite und lässt dort wieder alle Tab-Labels einzeilig wie zuvor. */
+@container (max-width: 160px) {
+  #root .topbar-label { letter-spacing: 0; }
 }
