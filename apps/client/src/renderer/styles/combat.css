@@ -371,17 +371,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  background: rgba(10, 8, 6, 0.78);
-  border: 1px solid rgba(216, 192, 106, 0.4);
+  /* 1.0.2 (Politur-Sichtung): Das Schloss war praktisch unsichtbar. `icon_locked.webp` ist
+     dunkles Eisen mit einer feinen Gold-Kontur — bei 14 px auf einer fast schwarzen Scheibe
+     verschwimmt die Textur zu einem konturlosen Fleck, und die Karte sah aus, als fehle das
+     Icon. Der Gegenzustand (goldenes Häkchen auf freigeschalteten Zonen) ist dagegen sofort
+     lesbar; beide Zustände müssen gleich gut erkennbar sein, sonst liest der Spieler „gesperrt"
+     gar nicht erst. Scheibe leicht größer und minimal aufgehellt, Icon von 14 auf 19 px, dazu
+     ein dunkler Schlagschatten, damit die Gold-Kontur auch auf hellen Kartenbildern trägt. */
+  width: 30px;
+  height: 30px;
+  background: rgba(26, 21, 15, 0.86);
+  border: 1px solid rgba(216, 192, 106, 0.55);
   border-radius: 50%;
 }
 
 .zone-card-story-lock-badge img {
-  width: 14px;
-  height: 14px;
+  width: 19px;
+  height: 19px;
   object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.9));
 }
 
 /* Nachfix 2026-08-03 (Chef-Befund "Requires Chronicle Chapter: …" wird an der Kartenkante

@@ -104,7 +104,7 @@ export function ItemFilterChips({ category, onCategoryChange, counts, compact, c
         >
           <span className="invf-chip-icon"><ChipIcon itemId={CATEGORY_ICON_ITEM[cat]} /></span>
           <span className="invf-chip-label">{LABELS[cat]}</span>
-          {counts?.[cat] !== undefined && <span className="invf-chip-count">{counts[cat]}</span>}
+          {counts && <span className="invf-chip-count">{counts[cat] ?? 0}</span>}
         </button>
       ))}
     </div>

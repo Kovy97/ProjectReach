@@ -30,6 +30,12 @@ function speicherSchluessel(): string {
 
 function schonGesehen(): boolean {
   try {
+    // `…suppress` ist ausschließlich für den Mess-Harness (ui-audit/sim-harness.mjs) da: der
+    // Hinweis legt sich sonst über JEDE aufgenommene Szene und schluckt den ersten Klick, der
+    // die Szene ansteuern soll — der Lauf vermisst dann das Popup statt der Seite. Wegklicken
+    // reicht nicht, weil der Klick schon verloren ist; er darf dort gar nicht erst erscheinen.
+    // Im ausgelieferten Spiel setzt diesen Schlüssel niemand.
+    if (localStorage.getItem("gr.updateNotice.suppress") === "1") return true;
     return localStorage.getItem(speicherSchluessel()) === "1";
   } catch {
     // Privater Modus/gesperrter Speicher: dann lieber einmal zu viel zeigen als abstürzen.

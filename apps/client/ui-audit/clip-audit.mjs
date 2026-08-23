@@ -1036,7 +1036,10 @@ async function dismissGuides(page) {
 /** Overlays, die eine Szene verdecken könnten (Offline-Report, Todes-Popup, Zeremonien). */
 async function dismissOverlays(page) {
   await page.evaluate(() => {
-    for (const sel of [".offline-stage-close", ".offline-popup .combat-btn", ".death-popup button", ".stalemate-popup button"]) {
+    // `.update-notice-modal` (1.0.2): der einmalige "Was ist neu"-Hinweis erscheint beim ersten
+    // Start je Programmversion und legt sich sonst ueber JEDE Szene — der Lauf wuerde dann das
+    // Popup vermessen statt der Seite (genau einmal passiert, 0 Funde je Szene gemeldet).
+    for (const sel of [".update-notice-actions button", ".offline-stage-close", ".offline-popup .combat-btn", ".death-popup button", ".stalemate-popup button"]) {
       const el = document.querySelector(sel);
       if (el) el.click();
     }

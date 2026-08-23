@@ -312,6 +312,18 @@ export async function startHarness(opts = {}) {
       if (m.type() === "error") errors.push(`console: ${m.text()}`);
     });
 
+    // Der einmalige "Was ist neu"-Hinweis (components/UpdateNotice.tsx) darf in Messlaeufen nie
+    // erscheinen: er legt sich sonst ueber jede Szene UND schluckt den ersten Klick, mit dem die
+    // Szene angesteuert wird — der Lauf vermisst dann das Popup statt der Seite. Vor dem ersten
+    // Paint gesetzt, damit er gar nicht erst aufgeht.
+    await page.addInitScript(() => {
+      try {
+        localStorage.setItem("gr.updateNotice.suppress", "1");
+      } catch {
+        /* noop */
+      }
+    });
+
     if (locale) {
       await page.addInitScript((loc) => {
         try {
