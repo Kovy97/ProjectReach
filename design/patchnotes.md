@@ -76,6 +76,10 @@ The cards now have a real minimum height, and the loadout bar wraps instead of c
 
 **Fertigkeitsbeschreibungen in der Übersicht reden aus:** DE: Auf großen Bildschirmen brach der Text nach drei Zeilen ab. / EN: On large displays the text was cut off after three lines.
 
+**Abgeschnittene Texte in den anderen Sprachen:** DE: Buff-Namen, Runen-Beschreibungen, Queststränge, die Zeitangabe im Hauptmenü, der Heldenname in der Charaktererstellung und die Werte in den Kampfleisten wurden je nach Sprache gekürzt, teils um die Hälfte. Alle sechs stehen jetzt vollständig. / EN: Buff names, rune descriptions, quest strands, the timestamp in the main menu, the hero name in character creation and the numbers on the combat bars were truncated depending on language, in places by half. All six are now shown in full.
+
+*Dev-Notiz: Die erste Messrunde lief nur auf Deutsch — und Deutsch ist NICHT der schlimmste Fall. Die Gegenprüfung über en/de/fr/ru hat Stellen gefunden, die auf Deutsch gar nicht auffallen (Runen-Effekt ru 48 % weg, Buff-Namen ru 27-38 %). Künftige Sweeps mindestens mit ru + de fahren. Zweite Lehre: Die Messung kannte den Fall „Text verlässt seine Box und der Nachbar legt sich drüber“ nicht — dabei klippt nichts, also meldete sie 0 Funde, während der Screenshot fehlenden Text zeigte. Neues Kriterium „ueberdeckt“ in `clip-audit.mjs` (elementFromPoint als Beleg). Ausgangslage 333 Funde mit 85 kritischen, Endstand über alle 49 Szenen: 0 kritisch, 0 deutlich.*
+
 **Ein Champion wird nicht mehr dort angekündigt, wo niemand hinkommt:** DE: In der Götzenhalle
 wurde ein Champion gemeldet, obwohl die Halle über den normalen Kampfweg gar nicht betretbar ist.
 Die Meldung erscheint dort nicht mehr. / EN: A champion was announced in the Idol Hall even though
