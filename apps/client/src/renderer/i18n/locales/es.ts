@@ -1641,9 +1641,12 @@ export const es: Record<string, string> = {
 
     // ── Report Bug (Chef-Auftrag 2026-07-18) ─────────────────────────────────
     "bugReport.entryHint": "¿Encontraste un error o tienes una idea? Cuéntanosla.",
+    "bugReport.entryCta": "Informar",
     "bugReport.title": "Reportar error / sugerir función",
     "bugReport.subtitle": "Una nota breve nos ayuda a localizarlo — cuanto más concreta, mejor.",
     "bugReport.descLabel": "¿Qué pasó?",
+    "bugReport.contactLabel": "Nombre de Discord (opcional)",
+    "bugReport.contactPlaceholder": "Si quieres una respuesta o novedades sobre tu problema, pon aquí tu nombre de Discord",
     "bugReport.descPlaceholder": "¿Qué estabas haciendo? ¿Qué esperabas que pasara? ¿Qué pasó en su lugar?",
     "bugReport.autoAttached": "Adjuntado automáticamente",
     "bugReport.autoAttached.version": "Versión de la app",

@@ -1,0 +1,16 @@
+name = "grimreach-support"
+main = "src/index.ts"
+compatibility_date = "2025-07-01"
+
+# KV: haelt Tickets und Nachrichten. Die id traegt der Chef nach `wrangler kv namespace create` ein.
+[[kv_namespaces]]
+binding = "TICKETS"
+id = "HIER_DIE_KV_ID_EINTRAGEN"
+
+[vars]
+# Kanal, in dem die Reports landen. Keine Geheimhaltung noetig, deshalb hier statt als Secret.
+DISCORD_CHANNEL_ID = "HIER_DIE_KANAL_ID_EINTRAGEN"
+
+# DISCORD_BOT_TOKEN und DISCORD_PUBLIC_KEY sind Geheimnisse und gehoeren NICHT in diese Datei:
+#   npx wrangler secret put DISCORD_BOT_TOKEN
+#   npx wrangler secret put DISCORD_PUBLIC_KEY

@@ -27,6 +27,16 @@
 
 .bugreport-entry-banner:hover {
   background: linear-gradient(rgba(216, 192, 106, 0.2), rgba(10, 12, 15, 0.5)), url("../assets/bg_black.webp") repeat;
+  box-shadow: inset 0 0 22px rgba(216, 192, 106, 0.16);
+}
+
+.bugreport-entry-banner:active {
+  transform: translateY(1px);
+}
+
+.bugreport-entry-banner:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .bugreport-entry-icon {
@@ -51,6 +61,32 @@
 .bugreport-entry-hint {
   font-size: 13px;
   color: var(--muted);
+}
+
+/* Chef-Befund 23.08.2026: „Diese Zeile sieht nicht aus wie ein Button." Stimmt — das Ding war
+   zwar immer ein <button>, las sich aber wie eine Abschnitts-Ueberschrift: linksbuendiger Text
+   in voller Breite, nichts am rechten Rand, und der einzige Hinweis auf Klickbarkeit war ein
+   kaum sichtbarer Farbwechsel beim Darueberfahren. Die staerkste Abhilfe ist kein staerkerer
+   Rahmen, sondern eine sichtbare HANDLUNG am Ende der Zeile: ein Knopf-Chip, den man ansteuert.
+   Dazu Abstand zwischen Text und Chip, ein spuerbares Gedrueckt-Feedback und ein Fokusrahmen
+   fuer die Tastatur. */
+.bugreport-entry-cta {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 7px 16px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #12100c;
+  background: linear-gradient(rgba(240, 214, 138, 1), rgba(196, 164, 92, 1));
+  border: 1px solid rgba(255, 236, 176, 0.75);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
+.bugreport-entry-banner:hover .bugreport-entry-cta {
+  background: linear-gradient(rgba(255, 232, 160, 1), rgba(216, 184, 112, 1));
 }
 
 /* ─── Dialog ─────────────────────────────────────────────── */
@@ -435,4 +471,34 @@
   #root .bugreport-modal {
     overflow-y: auto;
   }
+}
+
+/* Kontaktfeld über dem Beschreibungsfeld (Chef-Entscheid 23.08.2026). Bewusst dieselbe Optik wie
+   `.opz-textarea` direkt darunter, damit beide als EIN Formular gelesen werden — nur einzeilig.
+   `.opz-input` gibt es sonst nirgends, deshalb steht das Rezept hier und nicht in options.css. */
+.bugreport-contact-input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 9px 12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  line-height: 1.4;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.bugreport-contact-input::placeholder {
+  color: var(--muted);
+}
+
+.bugreport-contact-input:focus {
+  outline: none;
+  border-color: rgba(216, 192, 106, 0.6);
+}
+
+/* Etwas Luft zwischen Kontaktfeld und der naechsten Beschriftung — sonst klebt „Was ist
+   passiert?" direkt am Eingabefeld darueber und die beiden Bloecke verschwimmen zu einem. */
+.bugreport-contact-input + .bugreport-desc-label {
+  margin-top: 14px;
 }

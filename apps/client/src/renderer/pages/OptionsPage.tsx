@@ -102,6 +102,7 @@ export function OptionsPage(): JSX.Element {
           <span className="bugreport-entry-title">{t("about.bugReport")}</span>
           <span className="bugreport-entry-hint">{t("bugReport.entryHint")}</span>
         </span>
+        <span className="bugreport-entry-cta" aria-hidden="true">{t("bugReport.entryCta")}</span>
       </button>
 
       <div className="opz-grid">

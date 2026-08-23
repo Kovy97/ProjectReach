@@ -1683,9 +1683,12 @@ export const zh: Record<string, string> = {
 
     // ── Report Bug (Chef-Auftrag 2026-07-18) ─────────────────────────────────
     "bugReport.entryHint": "发现问题或有新想法？请告诉我们。",
+    "bugReport.entryCta": "反馈",
     "bugReport.title": "报告问题 / 建议功能",
     "bugReport.subtitle": "简短的说明能帮我们更快找到问题——描述得越具体越好。",
     "bugReport.descLabel": "发生了什么？",
+    "bugReport.contactLabel": "Discord 名称（选填）",
+    "bugReport.contactPlaceholder": "如果你希望得到回复或进展通知，请在此填写你的 Discord 名称",
     "bugReport.descPlaceholder": "你当时在做什么？你原本期望发生什么？实际发生了什么？",
     "bugReport.autoAttached": "自动附加信息",
     "bugReport.autoAttached.version": "应用版本",

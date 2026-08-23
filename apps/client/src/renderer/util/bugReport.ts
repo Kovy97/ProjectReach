@@ -81,9 +81,14 @@ export function buildDiscordPayload(
   description: string,
   autoBlockText: string,
   t: (key: string) => string,
+  contact = "",
 ): DiscordPayload {
+  // Der Kontakt steht bewusst GANZ OBEN im Post, nicht unten im Auto-Block: er ist die
+  // einzige Angabe, nach der der Chef ueberhaupt handeln kann (antworten oder nicht).
+  // Leer = der Spieler will keine Antwort, dann steht dort auch nichts.
+  const kontakt = contact.trim().slice(0, 80);
   const content = `🐞 Grim Reach — Bug Report (v${__APP_VERSION__})`;
-  let body = `**${t("bugReport.descLabel")}**\n${description}\n\n**${t("bugReport.autoAttached")}**\n\`\`\`\n${autoBlockText}\n\`\`\``;
+  let body = `${kontakt ? `**${t("bugReport.contactLabel")}** ${kontakt}\n\n` : ""}**${t("bugReport.descLabel")}**\n${description}\n\n**${t("bugReport.autoAttached")}**\n\`\`\`\n${autoBlockText}\n\`\`\``;
   if (body.length > DISCORD_EMBED_LIMIT) {
     body = `${body.slice(0, DISCORD_EMBED_LIMIT)}\n…[${t("bugReport.truncatedNote")}]`;
   }

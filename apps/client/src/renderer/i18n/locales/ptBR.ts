@@ -1639,9 +1639,12 @@ export const ptBR: Record<string, string> = {
 
     // ── Report Bug (Chef-Auftrag 2026-07-18) ─────────────────────────────────
     "bugReport.entryHint": "Encontrou um problema ou teve uma ideia? Conte pra gente.",
+    "bugReport.entryCta": "Relatar",
     "bugReport.title": "Relatar bug / sugerir recurso",
     "bugReport.subtitle": "Uma nota rápida nos ajuda a encontrar o problema — quanto mais específica, melhor.",
     "bugReport.descLabel": "O que aconteceu?",
+    "bugReport.contactLabel": "Nome no Discord (opcional)",
+    "bugReport.contactPlaceholder": "Se quiser uma resposta ou novidades sobre o seu problema, coloque aqui o seu nome do Discord",
     "bugReport.descPlaceholder": "O que você estava fazendo? O que esperava que acontecesse? O que aconteceu no lugar disso?",
     "bugReport.autoAttached": "Anexado automaticamente",
     "bugReport.autoAttached.version": "Versão do app",

@@ -1925,9 +1925,12 @@ const en = {
 
     // ── Report Bug (Chef-Auftrag 2026-07-18) ─────────────────────────────────
     "bugReport.entryHint": "Found a problem or have an idea? Tell us about it.",
+    "bugReport.entryCta": "Report",
     "bugReport.title": "Report Bug / Suggest Feature",
     "bugReport.subtitle": "A quick note helps us track it down — the more specific, the better.",
     "bugReport.descLabel": "What happened?",
+    "bugReport.contactLabel": "Discord name (optional)",
+    "bugReport.contactPlaceholder": "If you want an answer or an update to your issue, put your discord name here",
     "bugReport.descPlaceholder": "What were you doing? What did you expect to happen? What happened instead?",
     "bugReport.autoAttached": "Automatically attached",
     "bugReport.autoAttached.version": "App version",
@@ -3887,9 +3890,12 @@ const de: Record<keyof typeof en, string> = {
 
     // ── Report Bug (Chef-Auftrag 2026-07-18) ─────────────────────────────────
     "bugReport.entryHint": "Fehler gefunden oder eine Idee? Erzähl uns davon.",
+    "bugReport.entryCta": "Melden",
     "bugReport.title": "Bug melden / Feature vorschlagen",
     "bugReport.subtitle": "Eine kurze Notiz hilft uns beim Nachstellen — je genauer, desto besser.",
     "bugReport.descLabel": "Was ist passiert?",
+    "bugReport.contactLabel": "Discord-Name (optional)",
+    "bugReport.contactPlaceholder": "Wenn du eine Antwort oder eine Rückmeldung zu deinem Anliegen willst, trag hier deinen Discord-Namen ein",
     "bugReport.descPlaceholder": "Was hast du getan? Was hast du erwartet? Was ist stattdessen passiert?",
     "bugReport.autoAttached": "Automatisch angehängt",
     "bugReport.autoAttached.version": "App-Version",

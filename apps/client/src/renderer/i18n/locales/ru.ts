@@ -1683,9 +1683,12 @@ export const ru: Record<string, string> = {
 
     // ── Report Bug (Chef-Auftrag 2026-07-18) ─────────────────────────────────
     "bugReport.entryHint": "Нашли проблему или есть идея? Расскажите нам.",
+    "bugReport.entryCta": "Сообщить",
     "bugReport.title": "Сообщить об ошибке / предложить функцию",
     "bugReport.subtitle": "Короткая заметка поможет нам найти причину — чем точнее, тем лучше.",
     "bugReport.descLabel": "Что произошло?",
+    "bugReport.contactLabel": "Имя в Discord (необязательно)",
+    "bugReport.contactPlaceholder": "Если хочешь ответ или новости по своему вопросу, укажи здесь своё имя в Discord",
     "bugReport.descPlaceholder": "Что ты делал? Что ты ожидал увидеть? Что произошло вместо этого?",
     "bugReport.autoAttached": "Прикреплено автоматически",
     "bugReport.autoAttached.version": "Версия приложения",

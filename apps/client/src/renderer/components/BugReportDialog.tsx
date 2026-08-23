@@ -38,6 +38,10 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
   const state = useGameStateMaybe();
 
   const [description, setDescription] = useState("");
+  // Chef-Entscheid 23.08.2026: Der einfachste Rueckkanal ist der, den der Spieler selbst
+  // aufmacht. Freiwillig, leer lassen ist voellig in Ordnung - nur wer eine Antwort will,
+  // traegt hier etwas ein.
+  const [contact, setContact] = useState("");
   const [images, setImages] = useState<BugReportImage[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [clipboardEmptyNote, setClipboardEmptyNote] = useState(false);
@@ -115,7 +119,7 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
     setSendState("sending");
     setSendNote(null);
     const { text } = rowsAndText();
-    const payload = buildDiscordPayload(description, text, t);
+    const payload = buildDiscordPayload(description, text, t, contact);
     const result = await sendBugReportWebhook(webhookUrl, payload, images);
     if (result.ok) {
       setSendState("success");
@@ -158,6 +162,19 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
 
         <h2 className="bugreport-title">{t("bugReport.title")}</h2>
         <p className="bugreport-subtitle">{t("bugReport.subtitle")}</p>
+
+        <label className="bugreport-desc-label" htmlFor="bugreport-contact">
+          {t("bugReport.contactLabel")}
+        </label>
+        <input
+          id="bugreport-contact"
+          type="text"
+          className="opz-input bugreport-contact-input"
+          placeholder={t("bugReport.contactPlaceholder")}
+          maxLength={80}
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+        />
 
         <label className="bugreport-desc-label" htmlFor="bugreport-desc">
           {t("bugReport.descLabel")}

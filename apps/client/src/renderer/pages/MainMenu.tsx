@@ -429,6 +429,7 @@ function MenuOptionsPanel({ onOpenFonts }: { onOpenFonts: () => void }): JSX.Ele
           <span className="bugreport-entry-title">{t("about.bugReport")}</span>
           <span className="bugreport-entry-hint">{t("bugReport.entryHint")}</span>
         </span>
+        <span className="bugreport-entry-cta" aria-hidden="true">{t("bugReport.entryCta")}</span>
       </button>
       {showBugReport && (
         <BugReportDialog onClose={() => setShowBugReport(false)} screenLabel={t("bugReport.screen.mainMenu")} />

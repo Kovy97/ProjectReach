@@ -1,0 +1,4 @@
+.dev.vars
+.dev-signing-key.json
+node_modules/
+.wrangler/
