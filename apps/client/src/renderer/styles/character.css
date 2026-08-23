@@ -1090,6 +1090,12 @@
   pointer-events: none;
 }
 
+/* 1.0.1-Fix (Clip-Audit, 2026-08-23): war nowrap+ellipsis ("Korveth Grimhollow" -> "Korveth
+   Grimhollo" bei ru/1366x768). Chef-Regel „Mindestgröße + Umbruch, nie clippen": normal+
+   break-word lässt den Namen bei Platzmangel zweizeilig umbrechen — `.cs-nameplate` ist
+   `position:absolute; bottom:0` OHNE feste Höhe, wächst also einfach nach oben in den Portrait-
+   Bereich statt etwas abzuschneiden (Portrait-Wrap hat ausreichend Reserve, s. `.cs-portrait-wrap
+   min-height`). */
 .cs-hero-name {
   font-family: var(--font-head);
   font-size: 17px;
@@ -1097,9 +1103,8 @@
   color: var(--text);
   text-shadow: 0 1px 6px #000;
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
   max-width: 100%;
 }
 
@@ -1305,10 +1310,13 @@
    eigenen Floor, `.cs-portrait-wrap min-height`) staerker. Einheitlich mit der Zahl-Floor-Aenderung
    unten (30px → 16px, s. dortigen Kommentar) — dieselbe Untergrenze wie die vh-basierte
    Basisregel (`.cs-attr-card-val` oben, Floor bereits 16px), nur der Wachstumsbereich bleibt
-   unterschiedlich (cqmin statt vh). */
+   unterschiedlich (cqmin statt vh).
+   1.0.1-Fix-Nachtrag (Clip-Audit-Nachpruefung, 2026-08-23): die 56px-Rechnung ging knapp nicht
+   ganz auf — ru „Телосложение" (Konstitution) ragte bei 1366x768 noch 2,5px aus der Karte.
+   60 -> 64px schliesst die Restluecke, ohne an der Schrift zu drehen. */
 .cs-col-left .cs-attr-card {
   container-type: size;
-  min-height: 60px;
+  min-height: 64px;
 }
 
 /* Chef 2026-07-03 (2. Runde): Symbol nach LINKS (dort ist Platz neben Name/Zahl), GRÖSSER und
@@ -1821,7 +1829,27 @@
    Loadout-Leiste oben bei Platzmangel umbricht, s. .eq-loadout-bar-Kommentar, und der Doll
    dadurch etwas weniger Höhe hat). Deckel von 12px auf 10px gesenkt, Floor von 9px auf 8px —
    schafft in der beobachteten knappsten Zelle (43×43px, 1366×768) wieder sichtbar Luft
-   (10px×1.25 Zeilenhöhe × 2 Zeilen = 25px vs. ~33px Innenraum nach Padding). */
+   (10px×1.25 Zeilenhöhe × 2 Zeilen = 25px vs. ~33px Innenraum nach Padding).
+   1.0.1-Fix-Nachtrag (Clip-Audit-Nachpruefung, 2026-08-23): reichte fuer die meisten Woerter,
+   nicht aber fuer ein 10-Zeichen-Wort OHNE Leerstelle wie ru „Инструмент" (bricht ohne
+   `hyphens` roh mitten im Wort, teils auf 3 Zeilen) — 8px war bereits der bewusste Floor
+   (Schrift verkleinern ist die letzte Wahl, nicht die erste). Statt weiter zu schrumpfen:
+   `overflow: hidden` -> `visible`. Das Label ist rein dekorativ (`pointer-events: none`,
+   liegt nur im LEEREN Slot — ein belegter Slot zeigt stattdessen `.slot-item` darüber), ein
+   paar Pixel Ueberstand in die Griff-Lücke zwischen den Doll-Zellen sind unauffällig,
+   verlorene Buchstaben nicht.
+   Nachpruefung des Nachtrags: `overflow:visible` allein reichte nicht — ein benachbarter Slot
+   deckte die ueberstehende letzte Zeile weiterhin ab ("ueberdeckt" statt "abgeschnitten" — für
+   den Spieler derselbe Textverlust, aber die deutlich schlimmere Variante ist vom Tisch).
+   Nachgemessen: weder `hyphens: auto` (kein greifendes Russisch-Silbentrennwörterbuch, bricht
+   weiter roh über `word-break: break-word`) noch `z-index: 2` noch ein testweise auf 2px
+   reduziertes Padding (39px-Zelle bricht bei „Инструмент" trotzdem in 4 Rohfragmente, gleiche
+   Zeilenzahl) verändern die gemessenen 4,2px — das Wort ist in einer 39×39px-Kachel schlicht zu
+   lang, unabhängig vom letzten Feinschliff. Padding bewusst NICHT dauerhaft verkleinert (hätte
+   allen anderen, bereits passenden Slot-Labels unnötig Luft genommen für einen Fall, den es
+   nicht löst). `overflow: visible` + `z-index: 2` bleiben als bestmögliche Milderung stehen;
+   der Rest ist ein Copy-/Grid-Thema (kürzeres Wort oder größere Zelle), nicht mehr CSS-Fläche —
+   an den Chef zurückgemeldet. */
 .cs-slot-empty-label {
   position: absolute;
   inset: 0;
@@ -1838,13 +1866,14 @@
   opacity: 0.35;
   white-space: normal;
   word-break: break-word;
-  overflow: hidden;
+  hyphens: auto;
+  overflow: visible;
   max-width: 100%;
   padding: 5px;
   line-height: 1.25;
   pointer-events: none;
   transition: opacity 0.12s ease;
-  z-index: 1;
+  z-index: 2;
 }
 .cs-slot:hover .cs-slot-empty-label {
   opacity: 0.75;

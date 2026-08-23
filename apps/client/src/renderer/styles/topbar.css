@@ -704,15 +704,21 @@
   overflow: hidden;
 }
 
+/* 1.0.1-Fix (Clip-Audit, 2026-08-23): war nowrap+ellipsis — an der schmalsten Spalte (Quiet-
+   Citadel-Grid, `minmax(170px * --tb-scale, 0.72fr)`, s. `.content-header--quiet-citadel
+   .content-header-row`) reicht die Spaltenbreite bei langen Namen (v.a. ru) nicht für eine
+   Zeile ("Korveth Grimhollow" -> "Korveth Grimhollo"). Chef-Regel „Mindestgröße + Umbruch, nie
+   clippen": normal+break-word lässt den Namen bei Platzmangel zweizeilig umbrechen statt
+   abzuschneiden — `.header-charinfo` ist eine Flex-Spalte ohne feste Höhe (s. Kommentar bei
+   `.header-charinfo-stats`), wächst also einfach mit. */
 .header-charinfo-name {
   font-family: var(--font-head);
   font-size: calc(14px * var(--tb-scale));
   font-weight: 700;
   letter-spacing: 0.5px;
   color: var(--gold);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
   min-width: 0;
   max-width: 100%;
 }
@@ -1112,21 +1118,28 @@
 }
 
 /* ─── Aktivitäts-Indikator (Kopfzeile) ──────────────────── */
+/* 1.0.1-Fix (Clip-Audit, 2026-08-23): flex-wrap ergänzt — alle Geschwister von .activity-name
+   (Balken/HP-Mini-Leisten/„Doing:"-Label) sind bereits `flex-shrink: 0` (feste Breite gewollt),
+   d.h. der gesamte Platzmangel landete früher allein auf dem Namen (ellipsiert). Jetzt weicht bei
+   Platzmangel der NAME NICHT mehr aus (auch er flex-shrink:0, volle Wortbreite) — stattdessen
+   rutscht der überzählige Rest der Zeile (Balken/HP-Leisten) in eine zweite Zeile, s.
+   .header-charinfo-stats für dasselbe Muster. */
 .activity {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: calc(6px * var(--tb-scale));
   font-size: calc(13px * var(--tb-scale));
   min-width: 0;
   max-width: 100%;
 }
 
-/* Der eigentliche Aktions-/Monster-Name — ellipsiert statt den (jetzt breitenbegrenzten)
-   .game-stats-Block zu sprengen (Chef #233: keine Overflows). */
+/* Der eigentliche Aktions-/Monster-Name — nie ellipsiert (Chef-Regel „Mindestgröße + Umbruch,
+   nie clippen"); bricht bei Platzmangel als GANZES ITEM in eine zweite Zeile um (s. .activity
+   oben), statt einzelne Buchstaben zu verlieren. */
 .activity-name {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-shrink: 0;
   white-space: nowrap;
 }
 

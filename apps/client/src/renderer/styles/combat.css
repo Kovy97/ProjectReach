@@ -4034,14 +4034,21 @@
    Specificity 0,2,0; placed AFTER .battle-main .cbar { height: 9px } (also 0,2,0)
    so cascade order wins for the base rule.
    The triple-class selectors below (0,3,0) guarantee the height override even
-   inside .battle-main without relying on cascade order alone. */
+   inside .battle-main without relying on cascade order alone.
+   1.0.1-Fix (Clip-Audit, 2026-08-23, Nachpruefung nach dem line-height:1-Fix): border-box +
+   6px Holzrahmen oben/unten frassen von den (Task #283-)22px ganze 12px weg — nur 10px Innenraum
+   blieben fuer ein 12px-Label (line-height:1 macht die Zeilenbox exakt 12px, plus ein wenig
+   Schriftmetrik-Rand). `.cbar-label` (position:absolute; inset:0) + `overflow:hidden` auf DIESER
+   Box schnitten dadurch IMMER 2-3px oben/unten weg, unabhaengig vom Zeilenabstand-Fix — sichtbar
+   auf jeder Vorschau-Kampfkarte (Zonen-Liste + laufender Kampf), in JEDER Sprache. Nicht die
+   Schrift verkleinert (letzte Wahl), sondern der Rahmen bekommt seinen Innenraum zurueck: 22px
+   auf 27px (Innenraum 10px -> 15px, deckt den 12px-Text plus Puffer). */
 .cbar.cbar-hp,
 .cbar.cbar-enemy-hp,
 .cbar.cbar-mana,
 .cbar.cbar-ward,
 .cbar.cbar-timer {
-  /* Task #283: kompakter (war 30px). */
-  height: 22px;
+  height: 27px;
   /* .fighter ist eine Flex-Spalte — ohne dies dürfen diese Leisten (und via height:100% ihr
      .cbar-fill/.cbar-label) bei sehr niedrigen Fensterhöhen auf 0 zusammengequetscht werden
      (Flex-Shrink-Falle). fighter-figure-wrap hat seit dem Bild-Container-Fix (2026-07-05) eine
@@ -4060,13 +4067,14 @@
   overflow: hidden;
 }
 
-/* Specificity 0,3,0 — beats .battle-main .cbar { height: 9px } (0,2,0) */
+/* Specificity 0,3,0 — beats .battle-main .cbar { height: 9px } (0,2,0). 1.0.1-Fix: mit der
+   Basisregel synchron auf 27px (s. Kommentar dort). */
 .battle-main .cbar.cbar-hp,
 .battle-main .cbar.cbar-enemy-hp,
 .battle-main .cbar.cbar-mana,
 .battle-main .cbar.cbar-ward,
 .battle-main .cbar.cbar-timer {
-  height: 22px;
+  height: 27px;
 }
 
 /* Keep the fill square inside the wooden-border bars */
