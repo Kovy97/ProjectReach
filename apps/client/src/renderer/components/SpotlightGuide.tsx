@@ -180,10 +180,16 @@ export function SpotlightGuide({
     return () => document.removeEventListener("click", onDocClick, true);
   }, [requireAction, guideId, onRequireActionClick]);
 
-  // Blasen-Position: unter dem Ziel, außer darunter ist zu wenig Platz für die ECHTE (gemessene)
-  // Blasenhöhe → dann darüber. Das Ergebnis wird zusätzlich hart auf den Viewport geklammert
-  // (VIEWPORT_MARGIN), damit die Blase (inkl. "Weiter klicken"-Hinweis am unteren Rand) niemals
-  // abgeschnitten wird, egal wie lang der Text oder wie tief/hoch das Ziel sitzt.
+  // Blasen-Position: prüft alle VIER Seiten des Ziels (unten/oben/rechts/links) und wählt die
+  // erste, die die Blase WIRKLICH vollständig aufnimmt — nicht nur "unten, außer zu wenig Platz"
+  // wie zuvor. 1.0.1-Fix (Spieler-Bugreport „Farming-Button im Tutorial fast komplett verdeckt"):
+  // ein schmales Ziel weit unten im Bildschirm (z.B. ein Sidebar-Eintrag) hatte oft weder oben
+  // noch unten genug Platz für die volle Blasenhöhe — die alte Logik wich trotzdem nur vertikal
+  // aus und die anschließende Viewport-Klammerung zog die Blase dann zurück ÜBER das Ziel selbst.
+  // Jetzt weicht ein schmales Randziel stattdessen zur freien Seite (rechts/links) aus, wo meist
+  // reichlich Platz ist. Passt KEINE Seite vollständig (extrem seltener Fall, z.B. ein riesiges
+  // Ziel auf einem sehr kleinen Fenster), fällt es best-effort auf die Seite mit dem meisten Platz
+  // zurück — echte Überschneidung ist dann geometrisch nicht mehr zu vermeiden.
   let bubbleStyle: CSSProperties;
   if (!rect) {
     bubbleStyle = { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
@@ -191,19 +197,40 @@ export function SpotlightGuide({
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const bubbleH = bubbleHeight ?? FALLBACK_BUBBLE_HEIGHT;
-    const bubbleHalfW = (bubbleWidth ?? FALLBACK_BUBBLE_WIDTH) / 2;
-    const spaceBelow = vh - (rect.top + rect.height);
-    const spaceAbove = rect.top;
-    const below = spaceBelow >= bubbleH + SPOTLIGHT_PAD + 14 || spaceBelow >= spaceAbove;
-    let top = below
-      ? rect.top + rect.height + SPOTLIGHT_PAD + 14
-      : rect.top - SPOTLIGHT_PAD - 14 - bubbleH;
-    top = Math.min(Math.max(top, VIEWPORT_MARGIN), vh - bubbleH - VIEWPORT_MARGIN);
-    const left = Math.min(
-      Math.max(rect.left + rect.width / 2, bubbleHalfW + VIEWPORT_MARGIN),
-      vw - bubbleHalfW - VIEWPORT_MARGIN,
-    );
-    bubbleStyle = { top, left, transform: "translateX(-50%)" };
+    const bubbleW = bubbleWidth ?? FALLBACK_BUBBLE_WIDTH;
+    const gap = SPOTLIGHT_PAD + 14; // Abstand Spotlight-Ring ↔ Blase
+
+    const space = {
+      below: vh - (rect.top + rect.height) - gap,
+      above: rect.top - gap,
+      right: vw - (rect.left + rect.width) - gap,
+      left: rect.left - gap,
+    };
+    const need = { below: bubbleH, above: bubbleH, right: bubbleW, left: bubbleW };
+    const order: Array<keyof typeof space> = ["below", "above", "right", "left"];
+    const side = order.find((s) => space[s] >= need[s]) ?? order.reduce((a, b) => (space[b] > space[a] ? b : a));
+
+    let top: number;
+    let left: number;
+    let transform: string;
+    if (side === "below" || side === "above") {
+      top = side === "below" ? rect.top + rect.height + gap : rect.top - gap - bubbleH;
+      top = Math.min(Math.max(top, VIEWPORT_MARGIN), vh - bubbleH - VIEWPORT_MARGIN);
+      left = Math.min(
+        Math.max(rect.left + rect.width / 2, bubbleW / 2 + VIEWPORT_MARGIN),
+        vw - bubbleW / 2 - VIEWPORT_MARGIN,
+      );
+      transform = "translateX(-50%)";
+    } else {
+      left = side === "right" ? rect.left + rect.width + gap : rect.left - gap - bubbleW;
+      left = Math.min(Math.max(left, VIEWPORT_MARGIN), vw - bubbleW - VIEWPORT_MARGIN);
+      top = Math.min(
+        Math.max(rect.top + rect.height / 2, bubbleH / 2 + VIEWPORT_MARGIN),
+        vh - bubbleH / 2 - VIEWPORT_MARGIN,
+      );
+      transform = "translateY(-50%)";
+    }
+    bubbleStyle = { top, left, transform };
   }
 
   return (

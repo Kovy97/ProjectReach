@@ -170,6 +170,55 @@ describe("Elite-/World-Spawns-Persistenz (SAVE 72)", () => {
     expect(loaded2.eliteSpawnSeq, "Zähler NIE unter dem Breadcrumb-seq").toBe(5);
   });
 
+  /**
+   * Elite-Zugangs-Load-Invariante (Spieler-Report 1.0.0 „The Ninth Warden … located in The Idol
+   * Hall — i do not see how to gain access", Fix 1.0.1). BEWUSST OHNE SAVE_VERSION-Bump: kein neues
+   * Feld, nur eine versions-ungegatete, idempotente, RNG-freie Invariante auf bestehenden Daten
+   * (Muster Kampf-Gate-Load-Invariante, combat-gate-load.test.ts). Alt-Spielstände können einen
+   * AKTIVEN Elite in `idolhall` tragen — einer Zone, die ausschließlich aus dungeonOnly-Monstern
+   * besteht und deshalb gar keine Zonen-Karte hat: der Champion war dort nie erreichbar.
+   */
+  it("Load-Invariante 1.0.1: aktiver Elite in einer UNERREICHBAREN Zone → Ruhe (cooldownMs 0) + Breadcrumb fällt", () => {
+    const s = createGame({ name: "AltSave" }, content, 42);
+    for (const z of content.zones) s.legacyZoneGrants[z.id] = true; // Zone gilt als freigeschaltet
+    s.eliteZones.idolhall = { variantId: "elite_idol_warden", remainingMs: 400_000 };
+    s.eliteSpawnSeq = 7;
+    s.lastEliteSpawn = { zoneId: "idolhall", variantId: "elite_idol_warden", seq: 7 };
+
+    const loaded = roundTrip(s);
+    expect(loaded.eliteZones.idolhall).toEqual({ cooldownMs: 0 });
+    expect(loaded.lastEliteSpawn, "kein irreführender Toast beim Laden").toBeNull();
+    expect(loaded.eliteSpawnSeq, "Seq-Monotonie: NIE gesenkt").toBe(7);
+
+    const again = roundTrip(loaded); // idempotent
+    expect(again.eliteZones.idolhall).toEqual({ cooldownMs: 0 });
+    expect(again.lastEliteSpawn).toBeNull();
+    expect(again.eliteSpawnSeq).toBe(7);
+  });
+
+  it("Load-Invariante 1.0.1: aktiver Elite in einer GESPERRTEN Zone fällt ebenfalls (Save-Edit/Alt-Save)", () => {
+    const s = createGame({ name: "Gesperrt" }, content, 42); // keine Quest, kein Grant ⇒ borderlands zu
+    s.eliteZones.borderlands = { variantId: "elite_border_rogue", remainingMs: 400_000 };
+    s.lastEliteSpawn = { zoneId: "borderlands", variantId: "elite_border_rogue", seq: 4 };
+    s.eliteSpawnSeq = 4;
+
+    const loaded = roundTrip(s);
+    expect(loaded.eliteZones.borderlands).toEqual({ cooldownMs: 0 });
+    expect(loaded.lastEliteSpawn).toBeNull();
+    expect(loaded.eliteSpawnSeq).toBe(4);
+  });
+
+  it("Load-Invariante 1.0.1: ein LEGITIMER aktiver Elite bleibt verlustfrei erhalten (kein Kollateralschaden)", () => {
+    const s = createGame({ name: "Legit" }, content, 42); // pastures ist ungegatet + jagdbar
+    s.eliteZones.pastures = { variantId: "elite_pastures_boar", remainingMs: 400_000 };
+    s.lastEliteSpawn = { zoneId: "pastures", variantId: "elite_pastures_boar", seq: 2 };
+    s.eliteSpawnSeq = 2;
+
+    const loaded = roundTrip(s);
+    expect(loaded.eliteZones.pastures).toEqual({ variantId: "elite_pastures_boar", remainingMs: 400_000 });
+    expect(loaded.lastEliteSpawn).toEqual({ zoneId: "pastures", variantId: "elite_pastures_boar", seq: 2 });
+  });
+
   it("frischer Save (createGame): eliteZones sofort über den FRÜH-HAKEN befüllt (Pastures ~15–25 Min), Zähler/Breadcrumb leer", () => {
     const s = createGame({ name: "Neu" }, content, 42);
     expect(Object.keys(s.eliteZones).sort()).toEqual(content.zones.map((z) => z.id).sort());

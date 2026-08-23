@@ -29,7 +29,9 @@
 .mshop-bar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  /* 1.0.1: der globale "Alle auswählen"-Link sitzt links, die Aktionen bleiben rechts (vorher
+     ausschließlich flex-end — jetzt zwei Gruppen). */
+  justify-content: space-between;
   gap: 14px;
   flex-shrink: 0;
   flex-wrap: wrap;

@@ -19,6 +19,8 @@ import emblCompass from "../assets/ui/emblem_compass.svg";
 import emblWaxseal from "../assets/ui/emblem_waxseal.svg";
 import emblGear from "../assets/ui/emblem_gear.svg";
 import emblSkull from "../assets/ui/emblem_skull.svg";
+import { ConfirmModal } from "../components/ConfirmModal";
+import type { ConfirmRequest } from "../components/ConfirmModal";
 
 type Panel = "new" | "load" | "options";
 
@@ -59,12 +61,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
   // Modal ersetzt, s. Sidebar.tsx quit-confirm-modal). Gleiches Rezept hier: ein eigenes,
   // themenkonsistentes Bestätigungs-Modal (reuses `.quit-confirm-modal`-Optik) statt des nativen
   // Dialogs — funktioniert garantiert innerhalb des Spielfensters, unabhängig von Fenstermodus/OS.
-  const [pendingConfirm, setPendingConfirm] = useState<{
-    title: string;
-    body: string;
-    confirmLabel: string;
-    onConfirm: () => void;
-  } | null>(null);
+  const [pendingConfirm, setPendingConfirm] = useState<ConfirmRequest | null>(null);
 
   const askDelete = (slot: SaveSlot): void => {
     setPendingConfirm({
@@ -232,43 +229,11 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
         {t("about.version").replace("{version}", __APP_VERSION__)} · {t("about.copyright")}
       </div>
 
-      {/* Bugfix 1.0.1 ("Unable to overwrite character with new one"): In-Page-Bestätigung statt
-          `window.confirm()` — s. Doku am `pendingConfirm`-State oben. Reuses die schon vorhandene
-          `.quit-confirm-modal`-Optik (Sidebar.tsx) 1:1, rein generisch benannt/aufgebaut, keine neue
-          CSS nötig. Als direktes Kind von `.menu` (nicht innerhalb `.menu-panel`) platziert — sitzt
-          damit außerhalb jedes lokal isolierten Stacking-Contexts (`.hf-btn`/`.lang-btn` tragen
-          `isolation: isolate`, `.menu` selbst nicht). */}
-      {pendingConfirm && (
-        <div
-          className="modal-overlay"
-          onClick={() => setPendingConfirm(null)}
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="modal quit-confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="quit-confirm-icon">
-              <img loading="lazy" decoding="async" src={emblSkull} alt="" className="pixelart" />
-            </div>
-            <h2 className="quit-confirm-title">{pendingConfirm.title}</h2>
-            <p className="quit-confirm-body">{pendingConfirm.body}</p>
-            <div className="quit-confirm-actions">
-              <button className="combat-btn ghost" onClick={() => setPendingConfirm(null)}>
-                {t("sidebar.quitCancel")}
-              </button>
-              <button
-                className="combat-btn flee"
-                onClick={() => {
-                  const run = pendingConfirm.onConfirm;
-                  setPendingConfirm(null);
-                  run();
-                }}
-              >
-                {pendingConfirm.confirmLabel}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Bugfix 1.0.1 ("Unable to overwrite character with new one"): In-Page-Bestaetigung statt
+          `window.confirm()` — s. Doku am `pendingConfirm`-State oben. Seit der Shop-Runde teilen
+          sich alle Spiel-Bestaetigungen dieselbe Komponente (`ConfirmModal`), die sich per Portal
+          an den Body haengt und damit von keinem Panel mehr geschluckt werden kann. */}
+      <ConfirmModal request={pendingConfirm} onClose={() => setPendingConfirm(null)} />
     </div>
   );
 }

@@ -25,6 +25,8 @@ import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { AreaTourGuide } from "../components/AreaTourGuide";
 import { ItemCell } from "../components/ItemCell";
+import { ConfirmModal } from "../components/ConfirmModal";
+import type { ConfirmRequest } from "../components/ConfirmModal";
 import { HoverTip } from "../components/CitadelTip";
 import {
   ContainerModePopup,
@@ -283,10 +285,13 @@ function BuyCounter({ entry }: { entry: ShopEntry | undefined }): JSX.Element {
 // `masterRingShopEntries` liefert NUR Ringe zurück, deren Weihe schon verliehen wurde, die der
 // Spieler aber gerade NIRGENDS mehr besitzt (verkauft, anderweitig verloren) — leer im Normalfall,
 // die Sektion blendet sich dann komplett aus (s. `MasterRingSection` return null). Preis ist der
-// volle Item-`value` (viel Gold!), daher der native `window.confirm` vor dem Kauf.
+// volle Item-`value` (viel Gold!), daher eine Rückfrage vor dem Kauf — seit 1.0.1 über
+// `ConfirmModal` statt `window.confirm()`: der native Dialog erscheint im Vollbild nicht
+// zuverlässig (Spieler-Report „Unable to overwrite character", s. ConfirmModal.tsx).
 function MasterRingRow({ entry }: { entry: ShopEntry }): JSX.Element | null {
   const state = useGameState();
   const { t, tr } = useI18n();
+  const [pendingConfirm, setPendingConfirm] = useState<ConfirmRequest | null>(null);
   const item = content.items[entry.itemId];
   if (!item) return null;
   const gold = state.character.gold;
@@ -303,15 +308,20 @@ function MasterRingRow({ entry }: { entry: ShopEntry }): JSX.Element | null {
       <button
         className="ds-button ds-button--sm"
         disabled={gold < entry.cost}
-        onClick={() => {
-          const msg = t("shop.masterRings.confirmBody")
-            .replace("{name}", name)
-            .replace("{cost}", formatNum(entry.cost));
-          if (window.confirm(msg)) buyMasterRing(state, content, entry.itemId);
-        }}
+        onClick={() =>
+          setPendingConfirm({
+            title: t("shop.masterRings.title"),
+            body: t("shop.masterRings.confirmBody")
+              .replace("{name}", name)
+              .replace("{cost}", formatNum(entry.cost)),
+            confirmLabel: t("shop.buy"),
+            onConfirm: () => buyMasterRing(state, content, entry.itemId),
+          })
+        }
       >
         {t("shop.buy")}
       </button>
+      <ConfirmModal request={pendingConfirm} onClose={() => setPendingConfirm(null)} />
     </div>
   );
 }
@@ -507,6 +517,17 @@ type MassSellPopupState =
       initialInstanceIds: Set<string>;
     };
 
+// ─── 1.0.1-Spielerfeedback (Aldric, 54h54m): „Selling enchanted items is a real pain right now.
+// needs to be a way to select all or something." — Task #323 löst das schon FAST vollständig
+// (Ganzer-Stapel-Popup pro Basis-Item), aber wer verzauberte Varianten über VIELE verschiedene
+// Basis-Items verteilt hat, braucht weiter einen Popup-Klickzyklus je Item-Art. Ergänzung: die
+// „volle" Default-Auswahl eines Eintrags (Stack = ganze Menge, Container = ganzer Stapel — exakt
+// das, was ein Klick auf "Ganzer Stapel" heute manuell erzeugt), wiederverwendet von "Alle
+// auswählen" UND vom Shift-Klick-Bereich unten.
+function defaultSelectionFor(entry: SellEntry): MassSellSelection {
+  return entry.kind === "stack" ? { kind: "stack", qty: entry.qty } : { kind: "container", mode: "stack" };
+}
+
 /** EINE Zelle im Mass-Sell-Auswahlmodus — reuses ItemCell (Checkbox-Overlay + Auswahl-Glow über die
  *  additiven `onCellClick`/`selected`/`overlay`-Props, s. ItemCell.tsx), Klick-Verhalten bewusst
  *  komplett anders als im normalen Sell-Grid (Auswahl statt Tooltip-Pin/Pouch-Öffnen). */
@@ -517,7 +538,9 @@ function MassSellCell({
 }: {
   entry: SellEntry;
   selection: MassSellSelection | undefined;
-  onClick: () => void;
+  // 1.0.1: nimmt jetzt das MouseEvent entgegen (statt es zu verschlucken) — SellTab braucht
+  // `e.shiftKey` fürs Bereichs-Markieren (s. onMassSellCellClick).
+  onClick: (e: React.MouseEvent) => void;
 }): JSX.Element {
   const { t } = useI18n();
   const selected = !!selection;
@@ -589,13 +612,19 @@ function SellTab(): JSX.Element {
   // ── Task #323: Mass-Sell-Auswahlmodus ──────────────────────────────────────
   const [massSellMode, setMassSellMode] = useState(false);
   const [massSelection, setMassSelection] = useState<Map<string, MassSellSelection>>(new Map());
+  // Rückfrage vor dem Massenverkauf (1.0.1) — s. `askMassSell` weiter unten.
+  const [pendingMassSell, setPendingMassSell] = useState<ConfirmRequest | null>(null);
   const [massPopup, setMassPopup] = useState<MassSellPopupState | null>(null);
   const [massResult, setMassResult] = useState<{ count: number; gold: number } | null>(null);
+  // 1.0.1: letzte angeklickte Grid-Position — Basis für den Shift-Klick-Bereich unten
+  // (Datei-Explorer-Konvention: Shift+Klick markiert von hier bis zur neuen Position).
+  const [lastClickedIndex, setLastClickedIndex] = useState<number | null>(null);
 
   const exitMassSellMode = (): void => {
     setMassSellMode(false);
     setMassSelection(new Map());
     setMassPopup(null);
+    setLastClickedIndex(null);
   };
 
   // Esc verlässt den Modus (Chef-Vorgabe, Auswahl verwerfen) — nur solange kein Popup offen ist:
@@ -636,7 +665,44 @@ function SellTab(): JSX.Element {
     return { count, gold };
   })();
 
-  const onMassSellCellClick = (entry: SellEntry): void => {
+  // 1.0.1: "Alle auswählen"-Schalter bezieht sich auf die aktuell GEFILTERTE Ansicht — der Sell-
+  // Tab kennt (Stand heute) keinen eigenen Kategorie-/Textfilter, `sellEntries` IST also bereits
+  // die vollständige aktuell sichtbare Liste. Jeder Eintrag bekommt seine "volle" Default-Auswahl
+  // (dieselbe, die "Ganzer Stapel" manuell erzeugen würde) — kein Datenverlust möglich: angelegte
+  // Ausrüstung taucht strukturell nie in `sellEntries` auf (equipInstance/equipItem ziehen die
+  // Instanz/den Stack aus `inventory` heraus, s. equipment.ts), ein Favoriten-/Sperrsystem gibt es
+  // im Spiel nicht (keins erfunden — Chef-Vorgabe). Bestätigungs-Dialog vor dem echten Verkauf
+  // (s. executeMassSell) bleibt das Sicherheitsnetz gegen einen Fehlklick.
+  const allEntriesSelected = sellEntries.length > 0 && sellEntries.every((e) => massSelection.has(e.key));
+  const toggleSelectAll = (): void => {
+    setMassSelection(() => {
+      if (allEntriesSelected) return new Map();
+      const next = new Map<string, MassSellSelection>();
+      for (const e of sellEntries) next.set(e.key, defaultSelectionFor(e));
+      return next;
+    });
+  };
+
+  const onMassSellCellClick = (entry: SellEntry, index: number, mouseEvent: React.MouseEvent): void => {
+    // Umschalt+Klick markiert einen ZUSAMMENHÄNGENDEN Bereich (Datei-Explorer-Konvention) statt
+    // eines einzelnen Eintrags — jeder Eintrag im Bereich bekommt seine volle Default-Auswahl
+    // (kein Popup, dieselbe Logik wie "Alle auswählen"). Kein offener Anker (allererster Klick im
+    // Modus) → Shift wird wie ein normaler Klick behandelt.
+    if (mouseEvent.shiftKey && lastClickedIndex !== null) {
+      const from = Math.min(lastClickedIndex, index);
+      const to = Math.max(lastClickedIndex, index);
+      setMassSelection((prev) => {
+        const next = new Map(prev);
+        for (let i = from; i <= to; i++) {
+          const rangeEntry = sellEntries[i];
+          if (rangeEntry) next.set(rangeEntry.key, defaultSelectionFor(rangeEntry));
+        }
+        return next;
+      });
+      setLastClickedIndex(index);
+      return;
+    }
+    setLastClickedIndex(index);
     const current = massSelection.get(entry.key);
     if (entry.kind === "stack") {
       if (entry.qty <= 1) {
@@ -685,7 +751,7 @@ function SellTab(): JSX.Element {
     }
   };
 
-  const executeMassSell = (): void => {
+  const performMassSell = (): void => {
     let totalGold = 0;
     let soldPositions = 0;
     for (const entry of sellEntries) {
@@ -722,6 +788,24 @@ function SellTab(): JSX.Element {
     window.setTimeout(() => setMassResult(null), 4000);
   };
 
+  // 1.0.1-Sicherheitsnetz gegen Fehlverkäufe: bevor der Massenverkauf wirklich bucht, eine kurze
+  // Rückfrage mit Anzahl + Gesamterlös. BEWUSST über `ConfirmModal` und NICHT `window.confirm()` —
+  // im Vollbild kommt der native Dialog nicht zuverlässig durch (s. ConfirmModal.tsx), der
+  // Verkaufen-Knopf sähe für den Spieler dann schlicht tot aus. Angelegte Ausrüstung kann
+  // strukturell nie in `massSelection` landen (s. Kommentar bei `allEntriesSelected`), ein
+  // Favoriten-/Sperrsystem existiert nicht. Bricht der Spieler ab, bleibt die Auswahl stehen.
+  const askMassSell = (): void => {
+    if (massSellSummary.count === 0) return;
+    setPendingMassSell({
+      title: t("shop.massSell.toggle"),
+      body: t("shop.massSell.confirmBody")
+        .replace("{n}", String(massSellSummary.count))
+        .replace("{gold}", formatNum(massSellSummary.gold)),
+      confirmLabel: t("shop.massSell.confirm"),
+      onConfirm: performMassSell,
+    });
+  };
+
   return (
     <>
     <div className="shopv2-sell-layout">
@@ -741,7 +825,9 @@ function SellTab(): JSX.Element {
           <MassSellBar
             count={massSellSummary.count}
             gold={massSellSummary.gold}
-            onSell={executeMassSell}
+            allSelected={allEntriesSelected}
+            onToggleSelectAll={toggleSelectAll}
+            onSell={askMassSell}
             onCancel={exitMassSellMode}
           />
         )}
@@ -750,8 +836,13 @@ function SellTab(): JSX.Element {
           <p className="muted shopv2-empty">{t("shop.nothingToSell")}</p>
         ) : massSellMode ? (
           <div className="shopv2-sell-grid cs-inv-grid">
-            {sellEntries.map((e) => (
-              <MassSellCell key={e.key} entry={e} selection={massSelection.get(e.key)} onClick={() => onMassSellCellClick(e)} />
+            {sellEntries.map((e, i) => (
+              <MassSellCell
+                key={e.key}
+                entry={e}
+                selection={massSelection.get(e.key)}
+                onClick={(ev) => onMassSellCellClick(e, i, ev)}
+              />
             ))}
           </div>
         ) : (
@@ -997,6 +1088,7 @@ function SellTab(): JSX.Element {
     )}
 
     {massResult && <MassSellResultBanner count={massResult.count} gold={massResult.gold} />}
+    <ConfirmModal request={pendingMassSell} onClose={() => setPendingMassSell(null)} />
     </>
   );
 }

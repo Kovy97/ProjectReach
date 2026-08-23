@@ -157,6 +157,43 @@
   letter-spacing: 0.6px;
 }
 
+/* ─── Warteschlangen-Timer (1.0.1, Steam-Forum-Wunsch: Rose Noel Thorne + Lobster Jason) ────────
+   Gesamtdauer + Endzeit direkt unterm Titel — "gut sichtbar" (Aufgaben-Vorgabe), ohne den engen
+   Panel-Rand zu sprengen: eigene schmale Leiste statt einer neuen langen Fließtextzeile, Werte
+   dürfen umbrechen statt abzuschneiden (Chef-Regel Mindestgröße/Umbruch statt Kürzung). */
+.queue-panel-total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+  row-gap: 2px;
+  padding: 2px 2px 4px;
+  flex-shrink: 0;
+}
+
+.queue-panel-total-label {
+  font-size: 12px;
+}
+
+.queue-panel-total-value {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+/* ∞-Fall: derselbe Bernstein-Ton wie die Endlos-Sperre unten (.queue-panel-blocked-text) — es ist
+   ein Hinweis, kein Fehler, aber sichtbar anders als eine normale (endliche) Gesamtdauer. */
+.queue-panel-total-value--infinite {
+  color: #d9a86b;
+}
+
+.queue-panel-total-eta {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: normal;
+}
+
 .queue-panel-active {
   display: flex;
   flex-direction: column;
@@ -451,13 +488,36 @@
   flex-shrink: 0;
 }
 
-.queue-row-name {
+/* Warteschlangen-Timer (1.0.1): Name (1. Zeile, wie bisher gekürzt) + Restdauer (2. Zeile) —
+   eigener Spalten-Wrapper, damit die Dauer UMBRICHT statt den Namen zusätzlich zu verdrängen
+   (Chef-Regel Mindestgröße/Umbruch statt Kürzung). `.queue-row` bleibt `align-items:center`,
+   zentriert diese (ggf. zweizeilige) Spalte also weiterhin vertikal neben Icon/Ziel/Buttons. */
+.queue-row-text {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.queue-row-name {
   font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.queue-row-duration {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.3;
+  /* Bewusst KEIN nowrap/ellipsis — der Material-Hinweis ("Reicht für 120 von 500 · …") darf auf
+     eine zweite Zeile umbrechen statt abgeschnitten zu werden (Chef-Regel). */
+  overflow-wrap: break-word;
+}
+
+.queue-row-duration--warn {
+  color: #d9a86b;
 }
 
 .queue-row-target {
@@ -765,7 +825,11 @@
   .queue-panel-blocked-text,
   .queue-panel-empty,
   .queue-row-name,
-  .queue-row-target
+  .queue-row-target,
+  .queue-row-duration,
+  .queue-panel-total-label,
+  .queue-panel-total-value,
+  .queue-panel-total-eta
 ) {
   font-family: var(--font-info);
   font-weight: 600;
@@ -799,4 +863,19 @@
 
 .queue-panel-skip {
   font-size: clamp(12px, 0.7vw, 14px);
+}
+
+/* Warteschlangen-Timer (1.0.1) — dieselbe clamp-Mindestgröße-Konvention wie der Rest dieses
+   Reworks (Chef-Regel: Mindestgröße statt Abschneiden). */
+.queue-panel-total-label,
+.queue-panel-total-eta {
+  font-size: clamp(12px, 0.68vw, 14px);
+}
+
+.queue-panel-total-value {
+  font-size: clamp(15px, 0.86vw, 18px);
+}
+
+.queue-row-duration {
+  font-size: clamp(12px, 0.68vw, 14px);
 }

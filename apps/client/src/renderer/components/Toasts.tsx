@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
-import { computeStats, levelFromXp, masteryPoolCapacity, queueBlockReason } from "@hearthforge/engine";
+import { computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason } from "@hearthforge/engine";
 import type { AchievementDef, SkillId } from "@hearthforge/shared";
 import { achievementPoints, MASTERY_POOL_CHECKPOINTS } from "@hearthforge/shared";
 import { useGameControl, useGameState } from "../game/GameContext";
@@ -487,6 +487,15 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     if (!variant) return; // Content-Drift — kein Toast, s. JSDoc oben
     const zone = content.zones.find((z) => z.id === spawn.zoneId);
     const zoneName = zone ? tr(zone.name) : spawn.zoneId;
+    // Zweite Verteidigungslinie (Spieler-Report 1.0.0 „The Ninth Warden … i do not see how to gain
+    // access", Fix 1.0.1): der Zyklus kündigt seit 1.0.1 nur noch erreichbare Champions an
+    // (engine/elites.ts `isEliteZoneHuntable`) und die Persistenz räumt Alt-Breadcrumbs beim Laden
+    // ab — falls doch je einer durchrutscht (hand-editierter Save, künftige Content-Drift), sagt
+    // die Meldung es EHRLICH, statt in eine Zone zu schicken, die es für den Spieler nicht gibt.
+    // Der Sprung-Klick entfällt dann ebenfalls (er liefe ins Leere: `jumpToMonster` findet für ein
+    // dungeonOnly-/gesperrtes Ziel keine Zonen-Karte).
+    const reachable = isEliteZoneHuntable(state, content, spawn.zoneId);
+    const detail = t("toast.elite.detail").replace("{zone}", zoneName);
     push(
       {
         kind: "elite",
@@ -494,8 +503,8 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         icon: "⚔",
         iconUrl: getEliteMonsterSrc(spawn.variantId, variant.baseMonsterId),
         title: t("toast.elite.title"),
-        detail: t("toast.elite.detail").replace("{zone}", zoneName),
-        onClick: () => jumpToMonster(variant.baseMonsterId),
+        detail: reachable ? detail : `${detail} ${t("toast.elite.sealed")}`,
+        onClick: reachable ? () => jumpToMonster(variant.baseMonsterId) : undefined,
       },
       9000,
     );

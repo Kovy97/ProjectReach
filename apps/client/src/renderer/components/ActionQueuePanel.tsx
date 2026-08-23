@@ -15,6 +15,8 @@ import { getItemImage } from "../items";
 import { getMonsterSrc } from "../monsters";
 import { getUiIcon } from "../uiIcons";
 import { getQueuePanelCollapsed, setQueuePanelCollapsed } from "../util/uiPrefs";
+import { formatClockTime, formatPlaytime } from "../util/format";
+import { computeQueueTiming, type QueueTimingEntry } from "../util/queueTiming";
 import { HoverTip } from "./CitadelTip";
 
 // Mira-Set 2026-08-03 (Gap-Sweep Priorität A) — geschlossenes Action-Queue-Micro-Icon-Set löst
@@ -64,6 +66,62 @@ function fightMonsterName(monsterId: string, tr: (loc: LocalizedString) => strin
 }
 
 /**
+ * Warteschlangen-Timer (1.0.1, Steam-Forum-Wunsch — s. util/queueTiming.ts): baut aus EINER
+ * `QueueTimingEntry` den Anzeige-Text für eine Zeile. `warn` steuert nur die Farbe (Muster
+ * `.queue-panel-blocked-text`/Amber) — kein neuer Zustand, rein kosmetisch.
+ */
+function formatEntryDuration(entry: QueueTimingEntry, t: (key: string) => string): { text: string; warn: boolean } {
+  if (entry.infinite) return { text: t("queue.duration.infinite"), warn: false };
+  if (entry.unknown) return { text: t("queue.duration.unknown"), warn: false };
+  const time = formatPlaytime(entry.remainingMs ?? 0);
+  // Kampf-Einträge sind eine grobe DPS-Schätzung, keine Simulation (s. estimateFightKillMs) —
+  // die Tilde macht das auf den ersten Blick sichtbar, ohne einen eigenen i18n-Text zu brauchen.
+  const timeText = entry.isEstimate ? `~${time}` : time;
+  if (entry.materialLimited) {
+    const short = t("queue.duration.materialShort")
+      .replace("{have}", String(entry.reachableCount ?? 0))
+      .replace("{want}", String(entry.requestedTarget ?? 0));
+    return { text: `${short} · ${timeText}`, warn: true };
+  }
+  return { text: timeText, warn: false };
+}
+
+/**
+ * Fasst mehrere Timing-Zeilen DERSELBEN Aktion zu EINER zusammen — Pendant zur bestehenden
+ * `combinedTarget`-Mengen-Faltung unten (die "läuft ×250"-Zeile fasst 5×50 optisch zu einem
+ * Eintrag zusammen; die Dauer muss dieselbe Summe zeigen, sonst widerspricht sich die Anzeige
+ * selbst). NUR für gleichartige Einträge sinnvoll (`reachableCount`/`requestedTarget` werden
+ * aufaddiert) — die aufrufende Faltung deckt das bereits ab (dieselbe actionId, angrenzend).
+ */
+function combineQueueTimingEntries(entries: QueueTimingEntry[]): QueueTimingEntry {
+  let infinite = false;
+  let unknown = false;
+  let isEstimate = false;
+  let materialLimited = false;
+  let remainingMs = 0;
+  let reachableCount = 0;
+  let requestedTarget = 0;
+  for (const e of entries) {
+    if (e.infinite) infinite = true;
+    if (e.unknown) unknown = true;
+    if (e.isEstimate) isEstimate = true;
+    remainingMs += e.remainingMs ?? 0;
+    requestedTarget += e.requestedTarget ?? 0;
+    reachableCount += e.materialLimited ? (e.reachableCount ?? 0) : (e.requestedTarget ?? 0);
+    if (e.materialLimited) materialLimited = true;
+  }
+  return {
+    infinite,
+    unknown,
+    isEstimate,
+    materialLimited,
+    reachableCount: materialLimited ? reachableCount : null,
+    requestedTarget,
+    remainingMs: infinite || unknown ? undefined : remainingMs,
+  };
+}
+
+/**
  * Action-Queue-Panel (Phase 2, "Zur Queue hinzufügen"): fest angedockte Spalte am rechten
  * Bildschirmrand (Chef-Wunsch: "rechts"), spiegelbildlich zur Sidebar links — anders als das
  * frühere `PinnedTracker`-Widget (localStorage-Lesezeichen ohne Fortsetzung, jetzt entfernt) ist
@@ -90,6 +148,14 @@ export function ActionQueuePanel(): JSX.Element {
 
   const activeAction = state.activeActionId ? content.actions[state.activeActionId] : undefined;
   const queue = state.actionQueue ?? [];
+
+  // ── Warteschlangen-Timer (1.0.1, Steam-Forum-Wunsch Rose Noel Thorne + Lobster Jason) ─────────
+  // `Date.now()` (statt kein `nowMs`): dieselben Segens-Boni (Blessings of the Reach), die der
+  // laufende Game-Loop GERADE anwendet, fließen auch in die Anzeige ein (s. queueTiming.ts-JSDoc
+  // „ein Segenswert für die GESAMTE Schätzung"). Reine Berechnung, kein State — läuft bei jedem
+  // Render (Panel rendert ohnehin ~10×/s mit dem Game-Loop mit, s. Klassen-JSDoc oben).
+  const now = Date.now();
+  const timing = computeQueueTiming(state, content, now);
 
   // ── Task #315 (Kampf-Queue-UI) — Kill-Fortschritt des AKTIVEN Queue-Kampfs ("12/25") ─────────
   // `state.queueFight.remaining` ist ein reiner Countdown, kein Gesamt-Ziel (s. QueueFightRuntime-
@@ -146,6 +212,16 @@ export function ActionQueuePanel(): JSX.Element {
     }
   }
   const visibleQueue = queue.slice(foldedCount);
+
+  // Dauer der "läuft"-Zeile: dieselbe Faltung wie `combinedTarget` oben — die Mengen-Anzeige
+  // "×250" und die Dauer-Anzeige müssen dieselbe Summe meinen, sonst widerspricht sich das Panel
+  // selbst (s. `combineQueueTimingEntries`-JSDoc).
+  const activeRowTiming = timing.active
+    ? foldedCount > 0
+      ? combineQueueTimingEntries([timing.active, ...timing.queue.slice(0, foldedCount)])
+      : timing.active
+    : null;
+  const activeRowDuration = activeRowTiming ? formatEntryDuration(activeRowTiming, t) : null;
 
   // ── Task #369 — die stille Endlos-Sperre sichtbar machen ────────────────────────────────────
   // Bot-Sweep-Befund 0.3.0: lief eine Aktivität mit dem ∞-Preset, rückte die Warteschlange NIE
@@ -392,7 +468,8 @@ export function ActionQueuePanel(): JSX.Element {
               className="queue-rail-item queue-rail-item--active"
               content={
                 <span className="ct-tip-desc">
-                  {fightMonsterName(queueFight.monsterId, tr)} {fightProgressLabel} · {t("queue.rightClickEject")}
+                  {fightMonsterName(queueFight.monsterId, tr)} {fightProgressLabel}
+                  {activeRowDuration ? ` · ${activeRowDuration.text}` : ""} · {t("queue.rightClickEject")}
                 </span>
               }
               onContextMenu={(e) => { e.preventDefault(); stopCombat(state); }}
@@ -409,7 +486,8 @@ export function ActionQueuePanel(): JSX.Element {
               className="queue-rail-item queue-rail-item--active"
               content={
                 <span className="ct-tip-desc">
-                  {tr(activeAction.name)} {combinedTarget === null ? t("skill.qty.all") : `×${combinedTarget}`} · {t("queue.rightClickEject")}
+                  {tr(activeAction.name)} {combinedTarget === null ? t("skill.qty.all") : `×${combinedTarget}`}
+                  {activeRowDuration ? ` · ${activeRowDuration.text}` : ""} · {t("queue.rightClickEject")}
                 </span>
               }
               onContextMenu={(e) => { e.preventDefault(); setActiveAction(state, content, null); }}
@@ -432,6 +510,7 @@ export function ActionQueuePanel(): JSX.Element {
             const qtyLabel = fightEntry
               ? entry.target === null ? "∞" : `×${entry.target}`
               : entry.target === null ? t("skill.qty.all") : `×${entry.target}`;
+            const rowTiming = timing.queue[i];
             return (
               <HoverTip
                 as="div"
@@ -439,7 +518,8 @@ export function ActionQueuePanel(): JSX.Element {
                 className="queue-rail-item"
                 content={
                   <span className="ct-tip-desc">
-                    {label} {qtyLabel} · {t("queue.rightClickEject")}
+                    {label} {qtyLabel}
+                    {rowTiming ? ` · ${formatEntryDuration(rowTiming, t).text}` : ""} · {t("queue.rightClickEject")}
                   </span>
                 }
                 onContextMenu={(e) => { e.preventDefault(); dequeueAction(state, i); }}
@@ -464,6 +544,30 @@ export function ActionQueuePanel(): JSX.Element {
             )}
             <span className="queue-panel-title">{t("queue.title")}</span>
           </div>
+
+          {/* Warteschlangen-Timer (1.0.1, Steam-Forum-Wunsch): die GESAMTDAUER gleich unter dem
+              Titel — "gut sichtbar", noch vor Pause-/Sperr-Bannern (Aufgaben-Vorgabe). Läuft ein
+              ∞-Eintrag irgendwo drin, gibt es real KEINE Gesamtdauer mehr (s. queueTiming.ts) —
+              dann zeigt die Zeile stattdessen "läuft weiter" (+ die endliche Summe DAVOR, falls
+              welche vorausgeht) statt einer erfundenen Zahl. Nur sichtbar, wenn überhaupt etwas
+              läuft/wartet — ein leeres Panel bekommt keine "Gesamt: 0m"-Zeile. */}
+          {(activeRowTiming || visibleQueue.length > 0) && (
+            <div className="queue-panel-total">
+              <span className="queue-panel-total-label muted">{t("queue.duration.totalLabel")}</span>
+              <span className={`queue-panel-total-value${timing.hasInfinite ? " queue-panel-total-value--infinite" : ""}`}>
+                {timing.hasInfinite
+                  ? timing.finiteMs > 0
+                    ? t("queue.duration.thenInfinite").replace("{time}", formatPlaytime(timing.finiteMs))
+                    : t("queue.duration.infinite")
+                  : formatPlaytime(timing.totalMs ?? 0)}
+              </span>
+              {!timing.hasInfinite && (timing.totalMs ?? 0) > 0 && (
+                <span className="queue-panel-total-eta">
+                  {t("queue.duration.eta").replace("{time}", formatClockTime(now + (timing.totalMs ?? 0)))}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Task #315 — Queue-Pause-Badge: "Tod pausiert die Queue" (Chef-GO #312) ist ein
               härterer Zustand als der dezente Material-Stop unten (NICHTS läuft mehr automatisch
@@ -514,7 +618,14 @@ export function ActionQueuePanel(): JSX.Element {
                 onContextMenu={(e) => { e.preventDefault(); stopCombat(state); }}
               >
                 <FightQueueIcon monsterId={queueFight.monsterId} />
-                <span className="queue-row-name">{fightMonsterName(queueFight.monsterId, tr)}</span>
+                <div className="queue-row-text">
+                  <span className="queue-row-name">{fightMonsterName(queueFight.monsterId, tr)}</span>
+                  {activeRowTiming && (
+                    <span className={`queue-row-duration${activeRowDuration!.warn ? " queue-row-duration--warn" : ""}`}>
+                      {activeRowDuration!.text}
+                    </span>
+                  )}
+                </div>
                 <span className="queue-row-target">{fightProgressLabel}</span>
               </HoverTip>
             ) : activeAction ? (
@@ -525,7 +636,14 @@ export function ActionQueuePanel(): JSX.Element {
                 onContextMenu={(e) => { e.preventDefault(); setActiveAction(state, content, null); }}
               >
                 <QueueIcon action={activeAction} />
-                <span className="queue-row-name">{tr(activeAction.name)}</span>
+                <div className="queue-row-text">
+                  <span className="queue-row-name">{tr(activeAction.name)}</span>
+                  {activeRowTiming && (
+                    <span className={`queue-row-duration${activeRowDuration!.warn ? " queue-row-duration--warn" : ""}`}>
+                      {activeRowDuration!.text}
+                    </span>
+                  )}
+                </div>
                 <span className="queue-row-target">
                   {combinedTarget === null ? t("skill.qty.all") : `×${combinedTarget}`}
                 </span>
@@ -610,6 +728,11 @@ export function ActionQueuePanel(): JSX.Element {
                   // Task #327 (Priority-UI): ⚡-Knopf ausgrauen, wenn `prioritizeQueueEntry` ein
                   // No-op wäre — s. `startNowDisabled` oben (seit #369 geteilt mit dem Sperr-Hinweis).
                   const rowStartDisabled = startNowDisabled(entry);
+                  // Warteschlangen-Timer (1.0.1): `timing.queue` ist 1:1 zum ROHEN `state.actionQueue`
+                  // ausgerichtet (auch Content-Drift-Zeilen bekommen dort eine Zeile, s.
+                  // queueTiming.ts) — derselbe Index `i` trifft also immer den richtigen Eintrag.
+                  const rowTiming = timing.queue[i];
+                  const rowDuration = rowTiming ? formatEntryDuration(rowTiming, t) : null;
                   return (
                     <HoverTip
                       as="div"
@@ -619,6 +742,8 @@ export function ActionQueuePanel(): JSX.Element {
                       content={
                         <span className="ct-tip-desc">
                           {t("queue.dragHandle")} · {t("queue.rightClickEject")}
+                          {rowTiming?.isEstimate ? ` · ${t("queue.duration.estimateHint")}` : ""}
+                          {rowTiming?.unknown ? ` · ${t("queue.duration.unknownHint")}` : ""}
                         </span>
                       }
                       onContextMenu={(e) => { e.preventDefault(); dequeueAction(state, i); }}
@@ -629,9 +754,16 @@ export function ActionQueuePanel(): JSX.Element {
                     >
                       <span className="queue-row-index">{vi + 1}</span>
                       {fightEntry ? <FightQueueIcon monsterId={fightEntry.monsterId} /> : <QueueIcon action={action!} />}
-                      <span className="queue-row-name">
-                        {fightEntry ? fightMonsterName(fightEntry.monsterId, tr) : tr(action!.name)}
-                      </span>
+                      <div className="queue-row-text">
+                        <span className="queue-row-name">
+                          {fightEntry ? fightMonsterName(fightEntry.monsterId, tr) : tr(action!.name)}
+                        </span>
+                        {rowDuration && (
+                          <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>
+                            {rowDuration.text}
+                          </span>
+                        )}
+                      </div>
                       <span className="queue-row-target">
                         {fightEntry
                           ? entry.target === null ? "∞" : `×${entry.target}`

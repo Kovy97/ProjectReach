@@ -1681,16 +1681,40 @@ export function ItemTooltipOverlay(): JSX.Element | null {
     const w = el.offsetWidth;
     const h = el.offsetHeight;
     const margin = 12;
-    const offset = 18; // Abstand Cursor ↔ Tooltip
-    // Bevorzugt unten-rechts vom Cursor. Passt das an einer Achse nicht (rechter/unterer Rand),
-    // auf die ANDERE Seite des Cursors kippen statt drunter zu klemmen — sonst verdeckt der
-    // Mauszeiger das Tooltip (v.a. bei den rechts liegenden Inventar-/Ausrüstungs-Panels).
+    const offset = 18; // Abstand Cursor-Spitze ↔ Tooltip (Standardfall: oberhalb)
+    // 1.0.1-Fix (Spieler-Bugreport „Tooltips unter dem Handcursor, erste Zeile unlesbar"): der
+    // custom Cursor (base.css `cursor: url(cusor_default.webp) 0 0`) ist 39×38px groß mit dem
+    // Hotspot OBEN-LINKS — die Grafik selbst ragt vom eigentlichen Mauszeiger-Punkt nach UNTEN-
+    // RECHTS heraus. Ein knapper Versatz von 18px unter/rechts des Punkts (der bisherige Default)
+    // landet damit MITTEN im Cursor-Bild und verdeckt die erste Tooltip-Zeile. Neuer Standard:
+    // OBERHALB der Cursor-Spitze (dort kann die Cursor-Grafik nie hineinragen, ganz gleich wie
+    // groß sie ist). Passt das mangels Platz nicht, weicht das Tooltip nach UNTEN aus — dort
+    // braucht es einen deutlich größeren Versatz (über die 38px Cursor-Höhe hinaus), damit die
+    // Cursor-Grafik den Tooltip-Kopf auch dann nicht überdeckt.
+    const offsetBelowFallback = 46;
     let left = payload.x + offset;
     if (left + w > window.innerWidth - margin) left = payload.x - offset - w;
     left = Math.max(margin, Math.min(left, window.innerWidth - w - margin));
-    let top = payload.y + offset;
-    if (top + h > window.innerHeight - margin) top = payload.y - offset - h;
+    let top = payload.y - offset - h;
+    if (top < margin) top = payload.y + offsetBelowFallback;
     top = Math.max(margin, Math.min(top, window.innerHeight - h - margin));
+
+    // Letzte Sicherheit: bei sehr hohem Karteninhalt (Item-Karten hier gehen bis 97vh, s.
+    // components.css .item-tooltip.itip-panel) auf kleinerem Viewport kann die Viewport-
+    // Klammerung oben das Tooltip trotzdem zurück in den Cursor-Fußabdruck (39×38px, s. base.css
+    // `cusor_default.webp` Hotspot oben-links) drücken. Echter Rechteck-Test statt Annahme —
+    // greift nur in diesem Rand-Fall, verschiebt dann minimal (bevorzugt nach unten weg, sonst
+    // zur Seite) bis der Cursor wieder frei liegt.
+    const cursorW = 39;
+    const cursorH = 38;
+    const overlapsCursor =
+      left < payload.x + cursorW && left + w > payload.x && top < payload.y + cursorH && top + h > payload.y;
+    if (overlapsCursor) {
+      const pushedDown = payload.y + cursorH + 4;
+      if (pushedDown + h <= window.innerHeight - margin) top = pushedDown;
+      else left = Math.min(window.innerWidth - w - margin, payload.x + cursorW + 4);
+    }
+
     setPos({ left, top });
   }, [payload, shift]);
 

@@ -313,6 +313,57 @@ describe("shop buy-back (Task #245)", () => {
     }
     expect(s.buyBack).toHaveLength(BUYBACK_MAX_ENTRIES);
   });
+
+  // ── 1.0.1-Spielerfeedback (Aldric, 54h54m Spielzeit): „Selling enchanted items is a real pain
+  // right now. needs to be a way to select all or something." — der neue "Alle auswählen"-Schalter
+  // im Shop (ShopPage.tsx SellTab) führt eine große Auswahl über GENAU diese Schleife bestehender
+  // Verben aus (sellItem/sellInstance/sellBaseWithVariants), keine neue Engine-API. Dieser Test
+  // sichert die Eigenschaft ab, auf die sich die UI verlässt: viele Instanzen über MEHRERE
+  // verschiedene Basis-Items in einem synchronen Rutsch verkaufen bucht exakt dieselbe Gold-Summe
+  // wie dieselben Verkäufe einzeln nacheinander (Atomarität aus Spielersicht — kein Zwischenzustand
+  // sichtbar, keine Rundungs-Drift durch die Bündelung).
+  it("1.0.1: Massenverkauf vieler Instanzen über mehrere Basis-Items — Gold-Summe = Summe der Einzelverkäufe, Instanzen restlos entfernt", () => {
+    const s = newGame();
+    s.character.gold = 0;
+    // Zwei verschiedene Basis-Items (wie im Spielerfall: verzauberte Ausrüstung unterschiedlicher
+    // Sorten, nicht nur EIN Item-Typ) — je mehr Instanzen als eine einzelne Buy-Back-Ladung fasst,
+    // damit der Cap-Effekt (s.u.) mitgeprüft wird.
+    const idsA = Array.from({ length: 4 }, (_, i) => `ms101_sword_${i}`);
+    const idsB = Array.from({ length: 4 }, (_, i) => `ms101_bar_${i}`);
+    for (const id of idsA) {
+      addInstance(s.inventory, { instanceId: id, baseItemId: "bronze_sword", affixes: [{ affixId: "affix_x", tier: 1 }] });
+    }
+    for (const id of idsB) {
+      addInstance(s.inventory, { instanceId: id, baseItemId: "bronze_bar", suffix: { suffixId: "of_test", ilvl: 5, roll: 0.5 }, affixes: [] });
+    }
+    const allIds = [...idsA, ...idsB];
+    expect(s.inventory.instances).toHaveLength(8);
+
+    // Referenz: dieselben 8 Instanzen einzeln verkaufen (Kontrollgruppe auf einem Zweit-State).
+    const control = newGame();
+    control.character.gold = 0;
+    for (const id of idsA) addInstance(control.inventory, { instanceId: id, baseItemId: "bronze_sword", affixes: [{ affixId: "affix_x", tier: 1 }] });
+    for (const id of idsB) addInstance(control.inventory, { instanceId: id, baseItemId: "bronze_bar", suffix: { suffixId: "of_test", ilvl: 5, roll: 0.5 }, affixes: [] });
+    let controlGold = 0;
+    for (const id of allIds) controlGold += sellInstance(control, content, id);
+
+    // Test: exakt die Schleife, die executeMassSell (ShopPage.tsx) für einen "Einzeln wählen"-
+    // Container mit lauter angehakten Instanzen fährt — EIN Funktionsaufruf je Instanz, synchron
+    // in einem Rutsch, Ergebnis aufsummiert.
+    let massGold = 0;
+    for (const id of allIds) massGold += sellInstance(s, content, id);
+
+    expect(massGold).toBe(controlGold); // identische Gold-Summe wie Einzelverkauf — keine Drift durch Bündelung
+    expect(massGold).toBe(4 * sellPrice(content, "bronze_sword") + 4 * sellPrice(content, "bronze_bar"));
+    expect(s.character.gold).toBe(massGold);
+    expect(s.inventory.instances).toHaveLength(0); // restlos entfernt, keine Karteileichen
+
+    // Buy-Back bleibt bewusst der bestehende FIFO-Cap (BUYBACK_MAX_ENTRIES=12): 8 Verkäufe passen
+    // hier noch vollständig rein — kein Regressions-Risiko durch die neue Mass-Sell-UI, dieselbe
+    // Kappung wie beim bereits bestehenden `sellBaseWithVariants` (Shift-Klick-Schnellverkauf).
+    expect(s.buyBack).toHaveLength(8);
+    expect(new Set(s.buyBack.map((e) => e.instance?.instanceId))).toEqual(new Set(allIds));
+  });
 });
 
 // ── Das Lager: Händlerposten (Task #359, encampment-balance.md §6) ──────────────────────────────

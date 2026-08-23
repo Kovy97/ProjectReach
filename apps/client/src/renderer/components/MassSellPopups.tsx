@@ -350,20 +350,31 @@ export function MassSellResultBanner({ count, gold }: { count: number; gold: num
 
 // ─── Feste Aktions-Leiste ─────────────────────────────────────────────────────
 
+// 1.0.1 (Spielerfeedback „needs to be a way to select all"): `allSelected`/`onToggleSelectAll`
+// bedienen den globalen Schalter — bezieht sich auf die aktuell sichtbaren `sellEntries` (der
+// Sell-Tab hat keinen eigenen Filter, s. ShopPage.tsx `allEntriesSelected`-Kommentar). Derselbe
+// Link-Button-Look wie `.mshop-select-all-btn` in der Varianten-Häkchenliste (VariantListPopup).
 export function MassSellBar({
   count,
   gold,
+  allSelected,
+  onToggleSelectAll,
   onSell,
   onCancel,
 }: {
   count: number;
   gold: number;
+  allSelected: boolean;
+  onToggleSelectAll: () => void;
   onSell: () => void;
   onCancel: () => void;
 }): JSX.Element {
   const { t } = useI18n();
   return (
     <div className="mshop-bar">
+      <button className="mshop-select-all-btn" onClick={onToggleSelectAll}>
+        {t(allSelected ? "shop.massSell.selectNone" : "shop.massSell.selectAll")}
+      </button>
       <span className="mshop-bar-actions">
         <button className="ds-button ds-button--sm" disabled={count === 0} onClick={onSell}>
           {t("shop.massSell.sellBtn").replace("{n}", String(count)).replace("{gold}", formatNum(gold))}

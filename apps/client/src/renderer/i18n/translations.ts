@@ -24,6 +24,7 @@ const en = {
     // UI): Toast unten rechts, episch/dunkelrot, bewusst OHNE Sound. Klick springt zur Zone.
     "toast.elite.title": "Champion Sighted!",
     "toast.elite.detail": "A powerful enemy has been spotted in {zone}.",
+    "toast.elite.sealed": "That place is still sealed to you.",
     // UI-Brainstorm A4 (2026-07-24, -gamefeel.md #17): Auto-Stopp online (voll/Material leer) war
     // bisher nur eine passive TopBar-Zeile — jetzt zusätzlich ein leiser Toast, wenn der Spieler
     // NICHT auf der betroffenen Skill-Seite steht (Toasts.tsx). Detail reused dieselben
@@ -1110,6 +1111,8 @@ const en = {
     "shop.massSell.toggle": "Mass Sell",
     "shop.massSell.cancel": "Cancel",
     "shop.massSell.sellBtn": "Sell ({n} items · ~{gold} Gold)",
+    // 1.0.1: confirmation before a mass sell actually books (safety net against a stray click).
+    "shop.massSell.confirmBody": "Sell {n} items for ~{gold} Gold?",
     "shop.massSell.allBadge": "All ×{n}",
     "shop.massSell.qtyTitle": "How many {name} to sell?",
     "shop.massSell.confirm": "Confirm",
@@ -1749,6 +1752,17 @@ const en = {
     "queue.blocked.endless_fight": "Your current fight has no kill target. The queue only starts once you stop it.",
     "queue.blocked.startFirst": "Start next entry",
     "queue.blocked.hint": "Starts the next waiting entry right away. The endless one goes back to the front of the queue.",
+    // Warteschlangen-Timer (1.0.1, Steam-Forum-Wunsch: Rose Noel Thorne asked for an overnight
+    // ETA, Lobster Jason described napkin-mathing the duration by hand). Pure display — s.
+    // util/queueTiming.ts for how each number is computed and which figures stay honest estimates.
+    "queue.duration.totalLabel": "Total queue time",
+    "queue.duration.eta": "Done around {time}",
+    "queue.duration.infinite": "Runs on",
+    "queue.duration.thenInfinite": "{time}, then runs on",
+    "queue.duration.materialShort": "Enough for {have} of {want}",
+    "queue.duration.unknown": "?",
+    "queue.duration.estimateHint": "Rough estimate from your current combat stats, not a simulation.",
+    "queue.duration.unknownHint": "Can't be estimated right now.",
     "toast.queueBlocked.title": "Queue is waiting",
 
     // ─── NPC-Begrüßungen („Speaking Head", Chef-GO 2026-07-13): Kopf + Sprechblase oben auf
@@ -2090,6 +2104,7 @@ const de: Record<keyof typeof en, string> = {
     "toast.achievement": "Meilenstein erreicht!",
     "toast.elite.title": "Champion gesichtet!",
     "toast.elite.detail": "Ein mächtiger Gegner wurde in {zone} gesichtet.",
+    "toast.elite.sealed": "Dieser Ort ist dir noch verschlossen.",
     "toast.actionStopped.title": "Aktion gestoppt",
     "death.title": "Du bist gefallen",
     "death.body": "Oh nein, du bist gestorben gegen: {monster}",
@@ -3103,6 +3118,7 @@ const de: Record<keyof typeof en, string> = {
     "shop.massSell.toggle": "Massenverkauf",
     "shop.massSell.cancel": "Abbrechen",
     "shop.massSell.sellBtn": "Verkaufen ({n} Positionen · ~{gold} Gold)",
+    "shop.massSell.confirmBody": "{n} Positionen für ~{gold} Gold verkaufen?",
     "shop.massSell.allBadge": "Alle ×{n}",
     "shop.massSell.qtyTitle": "Wie viele {name} verkaufen?",
     "shop.massSell.confirm": "Bestätigen",
@@ -3710,6 +3726,18 @@ const de: Record<keyof typeof en, string> = {
     "queue.blocked.endless_fight": "Dein laufender Kampf hat kein Ziel. Die Warteschlange startet erst, wenn du ihn stoppst.",
     "queue.blocked.startFirst": "Nächsten Eintrag starten",
     "queue.blocked.hint": "Startet den nächsten wartenden Eintrag sofort. Der endlose wandert zurück an die Spitze der Warteschlange.",
+    // Warteschlangen-Timer (1.0.1, Steam-Forum-Wunsch: Rose Noel Thorne fragte nach einer
+    // Übernacht-Endzeit, Lobster Jason beschrieb, wie Spieler die Dauer bisher von Hand
+    // ausrechnen). Reine Anzeige — s. util/queueTiming.ts, wie jede Zahl berechnet wird und wo
+    // bewusst eine Schätzung statt einer erfundenen Präzision steht.
+    "queue.duration.totalLabel": "Gesamtdauer",
+    "queue.duration.eta": "Fertig gegen {time}",
+    "queue.duration.infinite": "Läuft weiter",
+    "queue.duration.thenInfinite": "{time}, danach läuft es weiter",
+    "queue.duration.materialShort": "Reicht für {have} von {want}",
+    "queue.duration.unknown": "?",
+    "queue.duration.estimateHint": "Grobe Schätzung aus deinen aktuellen Kampfwerten, keine Simulation.",
+    "queue.duration.unknownHint": "Lässt sich gerade nicht schätzen.",
     "toast.queueBlocked.title": "Warteschlange wartet",
 
     // ─── NPC-Begrüßungen („Speaking Head", Chef-GO 2026-07-13) ───

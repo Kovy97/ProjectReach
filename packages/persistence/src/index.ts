@@ -69,7 +69,7 @@ import {
   makeFightQueueEntry,
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot } from "@hearthforge/shared";
-import { MAX_STACK, addItemOrBank, advance, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, stopCombat, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, addItemOrBank, advance, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, stopCombat, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -1480,6 +1480,35 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       gateOpen = !zone || isZoneUnlocked(state, content, zone);
     }
     if (!gateOpen) stopCombat(state);
+  }
+
+  // — Elite-Zugangs-Load-Invariante (Spieler-Report 1.0.0: „The Ninth Warden … located in The Idol
+  //   Hall — i do not see how to gain access", Fix 1.0.1). BEWUSST OHNE SAVE_VERSION-Bump: eine
+  //   versions-ungegatete, idempotente, RNG-FREIE Load-Regel im Muster der Kampf-Gate-Load-
+  //   Invariante direkt darüber — kein neues Feld, keine neue Semantik, nur eine Invariante auf
+  //   bestehenden Daten.
+  //   INVARIANTE: ein AKTIVER `eliteZones`-Eintrag darf nur in einer Zone stehen, die der Spieler
+  //   betreten UND deren Champion er bekämpfen kann (`isEliteZoneHuntable`, engine/elites.ts =
+  //   Zone freigeschaltet + Variante auf einer nicht-`dungeonOnly`-Basis). Alt-Spielstände tragen
+  //   genau das im Save: der Zyklus vor 1.0.1 durfte in `idolhall` spawnen, sobald Kapitel 18
+  //   erfüllt war — die Zone hat aber ausschließlich dungeonOnly-Monster, also gar keine
+  //   Zonen-Karte; der Champion war unerreichbar und seine Ankündigung eine Falschmeldung.
+  //   AUFRÄUMEN wie beim Content-Drift-Fall oben: Aktiv → Ruhe mit `cooldownMs: 0` (sofort wieder
+  //   fällig; `tickEliteSpawns` entscheidet danach ganz normal neu und würfelt für eine
+  //   nicht-jagdbare Zone weiterhin KEINEN eliteRng-Zug). Zusätzlich fällt der Toast-Breadcrumb
+  //   `lastEliteSpawn`, wenn er auf so eine Zone zeigt — sonst feuert beim Laden noch einmal exakt
+  //   die Meldung, die den Spieler in die Irre geführt hat. `eliteSpawnSeq` bleibt UNANGETASTET
+  //   (Monotonie-Gesetz, Muster petDropSeq). Ruhe-Cooldowns nicht-jagdbarer Zonen bleiben stehen
+  //   (inert, s. tickEliteSpawns). Läuft NACH der legacyZoneGrants-Härtung oben (isZoneUnlocked
+  //   liest sie). Idempotent → Round-Trip-stabil. —
+  {
+    for (const [zoneId, entry] of Object.entries(state.eliteZones)) {
+      if (!("variantId" in entry)) continue;
+      if (isEliteZoneHuntable(state, content, zoneId)) continue;
+      state.eliteZones[zoneId] = { cooldownMs: 0 };
+    }
+    const crumb = state.lastEliteSpawn;
+    if (crumb && !isEliteZoneHuntable(state, content, crumb.zoneId)) state.lastEliteSpawn = null;
   }
 
   // — Kampf-Queue-Laufzeit + Pause + Skip-Breadcrumb (SAVE_VERSION 73, Task #312) — bewusst NACH

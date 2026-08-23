@@ -49,7 +49,7 @@ import { campShrineBonus } from "./camp";
  * `eliteRng`.
  *
  * Zyklus je Zone (Muster paragon.ts-Doku-Stil): Ruhe (`{cooldownMs}`) → bei Fälligkeit + Zone
- * freigeschaltet + ≥1 Variante im Content → Aktiv (`{variantId, remainingMs}`) → bei Ablauf ODER
+ * freigeschaltet + ≥1 JAGDBARE Variante im Content (`isEliteZoneHuntable`) → Aktiv (`{variantId, remainingMs}`) → bei Ablauf ODER
  * Kill → zurück zu Ruhe mit frischem, randomisiertem Cooldown (PER-ZONE-Band, s.
  * `eliteZoneCooldownBand`/`ELITE_ZONE_COOLDOWN_BANDS`, shared — Werte aus
  * design/elite-balance-spec.md §3). Jede Zone rotiert unabhängig. Das Verfügbarkeitsfenster selbst
@@ -207,6 +207,49 @@ export function eliteVariantsForZone(content: ContentDB, zoneId: string): EliteV
 }
 
 /**
+ * Ist diese Elite-Variante für den Spieler ÜBERHAUPT bekämpfbar? (Spieler-Report 1.0.0 „The Ninth
+ * Warden in The Idol Hall — i do not see how to gain access": ein angekündigter Champion, den
+ * niemand erreichen kann.)
+ *
+ * Hintergrund: `EliteVariantDef.baseMonsterId` darf laut Konzept-Entscheid §6 P1 („Idol Hall:
+ * Ausnahme zugelassen — dungeon-only-Basen als reine STAT-VORLAGEN") auch auf ein `dungeonOnly`-
+ * Monster zeigen. Für die STAT-Synthese (`eliteScaledMonster`) ist das harmlos — für den ZUGANG
+ * nicht: `dungeonOnly`-Monster existieren nur als Dungeon-Wellen. `canFightMonster` (combat.ts)
+ * lehnt sie hart ab, die Zonen-Auswahl blendet sie aus (CombatPage `MONSTER_SELECT_MONSTERS`), und
+ * eine Zone, deren Monster ALLE dungeonOnly sind (genau `idolhall`), bekommt deshalb gar keine
+ * Zonen-Karte — der Spieler kann sie nicht einmal anklicken, egal wie weit die Story steht. Ein
+ * dort gespawnter Champion ist also unerreichbar, und seine Ankündigung ist eine Falschmeldung.
+ * `dg_`-Klone sind aus demselben Grund ausgeschlossen (dieselbe UI-/Zugangs-Regel).
+ *
+ * Rein & deterministisch, KEIN RNG, kein State-Zugriff (nur Content).
+ */
+export function isEliteVariantHuntable(content: ContentDB, variant: EliteVariantDef): boolean {
+  const base = content.monsters[variant.baseMonsterId];
+  return !!base && base.dungeonOnly !== true && !base.id.startsWith("dg_");
+}
+
+/**
+ * Wie `eliteVariantsForZone`, aber NUR die Varianten, die der Spieler auch wirklich jagen kann
+ * (`isEliteVariantHuntable`). Das ist die Liste, aus der der Spawn-Zyklus zieht — `eliteVariantsForZone`
+ * bleibt bewusst die VOLLE Liste (Content-Integritäts-Guards/Wiki/Bestiarium wollen alle Varianten).
+ */
+export function huntableEliteVariantsForZone(content: ContentDB, zoneId: string): EliteVariantDef[] {
+  return eliteVariantsForZone(content, zoneId).filter((v) => isEliteVariantHuntable(content, v));
+}
+
+/**
+ * Darf in dieser Zone ein Champion ANGEKÜNDIGT werden? = Zone freigeschaltet (`isZoneUnlocked` —
+ * Quest ODER Bestandsschutz-Grant) UND mindestens eine jagdbare Variante vorhanden. Die EINZIGE
+ * Wahrheit für „Elite sichtbar/ankündbar"; Spawn-Zyklus (`tickEliteSpawns`), Kampfstart
+ * (`startEliteCombat`), die Load-Invariante der Persistenz und die UI-Anzeigen (Toast,
+ * Mini-Fenster) lesen alle DIESE Funktion, damit kein Pfad mehr eine Zone bewirbt, in die der
+ * Spieler nicht kommt. Rein & deterministisch, KEIN RNG.
+ */
+export function isEliteZoneHuntable(state: GameState, content: ContentDB, zoneId: string): boolean {
+  return isZoneUnlocked(state, content, zoneId) && huntableEliteVariantsForZone(content, zoneId).length > 0;
+}
+
+/**
  * Synthetische, formel-skalierte Monster-Instanz einer Elite-Variante (Muster `paragonScaledMonster`,
  * engine/paragon.ts): `{ ...base, maxHp/damage/accuracy?/defense?/evasion?/wardCapacity?/xp/gold ×
  * statMults/xpMult/goldMult }`, plus die optionalen Achsen `regenMult`/`inflictOverride`/
@@ -314,7 +357,7 @@ function spawnElite(state: GameState, zoneId: string, variants: EliteVariantDef[
  * wieder normal (kein Doppel-Reroll: der Kill-Pfad despawnt die Zone selbst, DANACH ist ihr Eintrag
  * nicht mehr „Aktiv" und der Zweig hier läuft für sie gar nicht mehr an).
  *
- * Gesperrte/varianten-lose Zonen (Fälligkeit ohne Spawn-Möglichkeit): der Cooldown bleibt EINFACH auf
+ * Gesperrte/varianten-lose/nicht-jagdbare Zonen (Fälligkeit ohne Spawn-Möglichkeit): der Cooldown bleibt EINFACH auf
  * 0 stehen (kein Reroll, kein RNG-Zug) — das ist die „einfachste saubere Lösung" für „kein Busy-Loop":
  * jeder Tick prüft höchstens 1× (inhärent, da genau ein Durchlauf je Zone je Tick), und sobald Zone/
  * Content bereitstehen, spawnt SOFORT (kein künstliches Nachwarten mehr nötig).
@@ -351,7 +394,15 @@ export function tickEliteSpawns(state: GameState, content: ContentDB, nowMs?: nu
     }
     entry.cooldownMs -= cooldownTick;
     if (entry.cooldownMs > 0) continue;
-    const variants = eliteVariantsForZone(content, zone.id);
+    // NUR jagdbare Varianten (Fix 1.0.1, s. `isEliteVariantHuntable`): ein Champion auf einer
+    // dungeonOnly-Stat-Vorlage (idolhall) ist unerreichbar und darf nicht angekündigt werden.
+    // RNG-DISZIPLIN: die Filterung passiert VOR dem `length === 0`-Zweig, der schon immer OHNE
+    // jeden eliteRng-Zug abbricht (Cooldown bleibt einfach fällig stehen) — eine nicht-jagdbare
+    // Zone verhält sich damit exakt wie eine gesperrte: kein Wurf, keine Sequenz-Verschiebung.
+    // Für alle übrigen Zonen ist der Filter die Identität (kein anderes Basis-Monster ist
+    // dungeonOnly, s. elite-content-integrity.test.ts) ⇒ der Varianten-Wurf `nextInt(…, 0, n-1)`
+    // zieht bit-identisch dieselbe Zahl wie vorher.
+    const variants = huntableEliteVariantsForZone(content, zone.id);
     if (variants.length === 0 || !isZoneUnlocked(state, content, zone.id)) {
       entry.cooldownMs = 0; // fällig, aber (noch) nicht spawnbar — bleibt fällig stehen, s. Doku oben
       continue;
@@ -379,6 +430,13 @@ export function startEliteCombat(state: GameState, content: ContentDB, zoneId: s
   const entry = state.eliteZones?.[zoneId];
   if (!entry || !("variantId" in entry)) return false;
   if (!isZoneUnlocked(state, content, zoneId)) return false;
+  // Zugangs-Kohärenz (Fix 1.0.1, s. `isEliteVariantHuntable`): eine Variante auf einer
+  // dungeonOnly-Stat-Vorlage ist über den normalen Kampf-Weg nicht erreichbar (`canFightMonster`
+  // lehnt das Basis-Monster ab) — der Elite-Pfad darf sie nicht als Hintertür öffnen. Greift real
+  // nur bei Alt-Spielständen, die einen solchen Eintrag noch tragen (der Zyklus spawnt ihn nicht
+  // mehr, die Persistenz räumt ihn beim Laden ab). KEIN RNG-Zug.
+  const variantDef = content.elites?.[entry.variantId];
+  if (!variantDef || !isEliteVariantHuntable(content, variantDef)) return false;
   if (state.combat.monsterId !== null) return false;
   const monster = eliteScaledMonster(content, entry.variantId);
   if (!monster) return false;

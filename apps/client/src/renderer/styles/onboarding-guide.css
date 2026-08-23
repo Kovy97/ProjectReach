@@ -54,10 +54,16 @@ body.guide-active .onboarding-guide-root .guide-bubble * {
    die vw-Kopplung skaliert bewusst mit (gleiches Muster wie topbar.css/menu.css/character.css),
    damit die Box auf 4K nicht winzig gegenüber 1080p wirkt. JS-Pendant: SpotlightGuide.tsx misst
    die tatsächliche gerenderte Breite/Höhe live (bubbleRef.offsetWidth/-Height) für die Viewport-
-   Klammerung — kein von Hand synchron zu haltender Breiten-Konstante mehr nötig. */
+   Klammerung — kein von Hand synchron zu haltender Breiten-Konstante mehr nötig.
+   1.0.1-Fix (Spieler-Wunsch, Bugreport „Farming-Button verdeckt"): 620–780px→700–900px. Breiter
+   statt höher — bei viel Fließtext wrapt die schmale Text-Spalte neben dem Porträt (s.
+   npc-greeting.css .guide-bubble-speaker) sonst über viele Zeilen und macht die Box unnötig hoch
+   (genau das hat auf 1920×1080/1366×768 zum Verdecken des Klick-Ziels geführt, s. SpotlightGuide.tsx-
+   Kommentar bei der Positionierung). Bleibt weit unter dem 1360px-Mindestfensterbreite-Fenster
+   (main/index.ts minWidth) minus der max-width-Klammerung unten. */
 .guide-bubble {
   position: fixed;
-  width: clamp(620px, 34vw, 780px);
+  width: clamp(700px, 40vw, 900px);
   max-width: calc(100vw - 32px);
   border-style: solid;
   border-width: 18px;

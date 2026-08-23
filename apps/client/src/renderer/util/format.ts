@@ -117,6 +117,15 @@ export function formatMmSs(ms: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+/**
+ * Reine Uhrzeit ohne Datum, z.B. "06:40" — für die Warteschlangen-Endzeit-Prognose ("fertig gegen
+ * 06:40", Steam-Forum-Wunsch 1.0.1, s. queueTiming.ts). Folgt wie `formatDate` der Spielsprache
+ * (`formatLocale`), NICHT der OS-Locale.
+ */
+export function formatClockTime(epochMs: number): string {
+  return new Date(epochMs).toLocaleTimeString(formatLocale ?? "de-DE", { hour: "2-digit", minute: "2-digit" });
+}
+
 /** Letztes Speicherdatum in lokaler Schreibweise. */
 export function formatDate(epochMs: number): string {
   return new Date(epochMs).toLocaleString(formatLocale ?? "de-DE", {

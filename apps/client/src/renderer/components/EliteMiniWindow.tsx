@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { content } from "@hearthforge/content";
-import { eliteVariantsForZone, isZoneUnlocked } from "@hearthforge/engine";
+import { isEliteZoneHuntable } from "@hearthforge/engine";
 import type { GameState } from "@hearthforge/shared";
 import { useGameSelector, tupleEquals } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -42,8 +42,11 @@ function activeEliteSelector(s: GameState): readonly [string, string, number] {
     const entry = s.eliteZones?.[zone.id];
     if (!entry || !("variantId" in entry)) continue;
     if (!content.elites?.[entry.variantId]) continue; // Content-Drift-Schutz (Muster eliteBoardStatusForZone)
-    if (eliteVariantsForZone(content, zone.id).length === 0) continue;
-    if (!isZoneUnlocked(s, content, zone.id)) continue;
+    // Zugangs-Gate (Fix 1.0.1): freigeschaltet UND jagdbar — `isEliteZoneHuntable` fasst den
+    // früheren Doppel-Check (Varianten vorhanden + `isZoneUnlocked`) zusammen und schließt
+    // zusätzlich Zonen aus, deren Champions auf dungeonOnly-Basen sitzen (idolhall): dort gibt es
+    // keine Zonen-Karte, der „Zum Monster"-Sprung dieses Fensters liefe ins Leere.
+    if (!isEliteZoneHuntable(s, content, zone.id)) continue;
     if (best[0] === "" || entry.remainingMs < best[2]) {
       best = [zone.id, entry.variantId, entry.remainingMs];
     }
