@@ -13,10 +13,16 @@ Diese Datei ist die Quelle. Wenn etwas hier nicht steht, ist es nicht vereinbart
 
 - **Kein Schachbrettmuster.** Ein gemaltes Karo ist keine Transparenz, sondern ein Bild von
   Transparenz. Es sieht im Spiel aus wie ein Bild von Transparenz.
-- **Keine Chroma-Keys.** Kein magentafarbener, grüner oder blauer Hintergrund zum
-  Nachher-Ausschneiden. Das war früher der Notweg und hat uns eingeholt: 55 Dateien tragen heute
-  Magenta-Reste im Fell, in Federn und an Stoffkanten, weil Batch 2 und 3 der Elite-Champions
-  ohne Alpha kamen und nachträglich gekeyt wurden.
+- **Gemessen wird das Ergebnis, nicht der Weg.** Natives Alpha direkt aus der Erzeugung ist der
+  sicherste Weg und immer erlaubt. Ein sauber entfernter Chroma-Key ist ebenfalls in Ordnung,
+  **wenn am Ende kein Saum übrig ist** — das prüfen wir nach, nicht nach Zusage.
+- **Magenta als Keyfarbe ist verboten.** Genau daran sind 55 Dateien gescheitert: Die Motive
+  tragen selbst Violett, das Despill-Skript hat Magenta ausdrücklich übersprungen, und die
+  Keyfarbe steckt bis heute im Fell. Wer keyen muss, nimmt Grün und lässt ein Despill mit
+  Kantenkorrektur laufen.
+- **Bei Fell, Federn, Nebel, Glut und Geisterlicht** ist Keying erfahrungsgemäß nicht sauber zu
+  bekommen. Dort führt praktisch kein Weg an nativem Alpha vorbei. Kommt so ein Motiv trotzdem
+  mit Saum zurück, geht es zurück — das ist kein Vorwurf, sondern der Grund, warum wir messen.
 - **Weiche Kanten sind erwünscht.** Fell, Rauch, Nebel und Glut dürfen halbtransparent
   auslaufen. Eine harte Ein-Bit-Kante sieht im Spiel ausgefranst aus.
 - **Prüfen lässt sich das in einer Minute:** Bild auf eine grellrosa Fläche legen. Sieht man

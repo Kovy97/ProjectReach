@@ -50,9 +50,13 @@ Design.** Es darf nicht mitübernommen werden.
 
 Verbindlich ist `design/asset-anforderungen.md`. Das Wesentliche:
 
-- **Echtes, bei der Erzeugung angelegtes Alpha.** Kein Chroma-Key, kein gemaltes Schachbrett,
-  kein Ausschneiden hinterher. Genau dieser Weg hat den Schaden angerichtet, den wir gerade
-  reparieren.
+- **Am Ende muss echtes Alpha da sein und kein Saum.** Wie es entsteht, ist zweitrangig:
+  natives Alpha aus der Erzeugung ist der sichere Weg, ein sauber entfernter GRÜNER Key mit
+  Despill ist auch in Ordnung. **Magenta ist verboten** — daran sind diese 17 Dateien
+  gescheitert. Kein gemaltes Schachbrett.
+- Bei Fell, Federn, Nebel und Geisterlicht wird ein Key selten sauber. `mire_wisp` leuchtet
+  blaugrün, dort ist auch ein grüner Key aussichtslos. Wo es nicht sauber wird, sag es lieber
+  vorher, als es zu liefern.
 - **Weiche Teiltransparenz** für Fell- und Federränder, Nebel, Rauch, Glut und Geisterlicht.
   Eine harte Ein-Bit-Kante sieht im Spiel ausgefranst aus.
 - **Kein Pixel** darf einen magenta, pinken oder violetten Saum tragen, der nicht ausdrücklich

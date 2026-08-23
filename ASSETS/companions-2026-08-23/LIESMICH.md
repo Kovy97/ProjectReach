@@ -114,8 +114,9 @@ Die Bildparameter aus `CODEX/AssetControl/CompanionPets-2026-08-01/SERIES-CONTRA
 (Abschnitt „Unveränderliche Bildparameter") gelten unverändert weiter. Sie waren nie das
 Problem. Kurzfassung:
 
-- 1024 × 1024 px, PNG mit **echtem, bei der Erzeugung angelegtem Alpha**. Kein Chroma-Key,
-  kein gemaltes Schachbrett, kein nachträgliches Freistellen. Siehe
+- 1024 × 1024 px, PNG mit **echtem Alpha am Ende**. Natives Alpha aus der Erzeugung ist der
+  sichere Weg; ein sauber entfernter GRÜNER Key mit Despill geht auch. **Magenta ist
+  verboten**, kein gemaltes Schachbrett. Gemessen wird das Ergebnis, siehe
   `design/asset-anforderungen.md`.
 - Ganzkörper, nichts angeschnitten, rund 9 % Rand. Längste Körperachse belegt 76–80 % der
   Leinwand.
