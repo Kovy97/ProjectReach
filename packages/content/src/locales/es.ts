@@ -3416,7 +3416,7 @@ export const es: Record<string, string> = {
   "pets:pyreling:description": "Algo fue quemado vivo y se negó a dispersarse. Te orbita en un lento borrón de calor y vierte tibieza en tu maná sin que se lo pidas; luego se cuela por cada golpe que asestas para dejar tras de sí una brasa.",
   "pets:pyreling:name": "Piralín",
   "pets:quillshrike:combatAbility.name": "Andanada de púas",
-  "pets:quillshrike:description": "Un depredador de huesos huecos que empala sus presas en sus propias púas. En el banco de trabajo le saca material extra a cada lote — y su ojo para los puntos débiles vuelve más certeros tus críticos a distancia.",
+  "pets:quillshrike:description": "Un depredador de huesos huecos que empala sus presas en sus propias púas. En el bastidor de curtido le saca material extra a cada piel, y en combate suelta una andanada de púas que golpea de nuevo antes de que la primera se asiente.",
   "pets:quillshrike:name": "Alcaudón Púa",
   "pets:rotbark:combatAbility.name": "Enredo de raíces",
   "pets:rotbark:description": "Una cosa de corteza podrida que se encorva entre la raíz y la putrefacción. Derriba la madera de un solo mordisco roedor, y en la pelea vuelve lentísimos los miembros del enemigo.",

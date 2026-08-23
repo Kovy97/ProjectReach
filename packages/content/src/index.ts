@@ -16295,7 +16295,7 @@ export const content: ContentDB = {
       // (~1500 harvests over a full 1-99 grind vs ~100k+ actions for active gather skills), so it
       // needs a far steeper rate to reach a comparable P(≥1 by 99) (~1.5% → ~10%).
       dropChance: 1 / 15000,
-      icon: "🥀",
+      icon: "🌾",
       art: "pets/witherling.png",
     },
     sporewretch: {
@@ -16390,8 +16390,8 @@ export const content: ContentDB = {
       id: "quillshrike",
       name: { en: "Quillshrike", de: "Federwürger" },
       description: {
-        en: "A hollow-boned predator that impales its kills on its own quills. At the crafting bench it coaxes extra materials from every batch — and its eye for weak points makes your ranged crits land truer.",
-        de: "Ein hohlknochiger Räuber, der seine Beute auf seinen eigenen Kielen aufspießt. An der Werkbank entlockt es jeder Charge zusätzliches Material — und sein Auge für Schwachstellen lässt deine Fernkampf-Krits genauer landen.",
+        en: "A hollow-boned predator that impales its kills on its own quills. At the tanning rack it coaxes extra material from every hide — and in combat it looses a volley of them, striking again before the first has settled.",
+        de: "Ein hohlknochiger Räuber, der seine Beute auf seinen eigenen Kielen aufspießt. Am Gerbrahmen entlockt es jeder Haut zusätzliches Material — und im Kampf schickt es eine Salve davon los, die erneut trifft, bevor der erste Kiel liegt.",
       },
       // Task #286 Stage B: bonusAmmo (fletching-scoped) war seit Ammo-Removal ein No-op — ersetzt
       // durch doubleDrop auf sein neues Herkunfts-Gebiet leatherworking (fletching ist dort
@@ -16651,7 +16651,7 @@ export const content: ContentDB = {
     },
     charnel: {
       id: "charnel",
-      name: { en: "Charnel", de: "Beinhaus" },
+      name: { en: "Charnel", de: "Beinzehrer" },
       description: {
         // balance-fix 2026-07 (#276 §4.2): Passiv skillXp (verboten) → killHeal 3 %/Kill; Text
         // trennt jetzt klar den Passiv-Trigger (Kill) vom Aktiv-Burst (Mitte des Kampfs).

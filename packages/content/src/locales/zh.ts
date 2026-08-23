@@ -3417,7 +3417,7 @@ export const zh: Record<string, string> = {
   "pets:pyreling:description": "有什么被活活烧死，却拒绝消散。它以缓慢的热浪拖影环绕你，不请自来地将暖意渗入你的魔力——再穿过你落下的每一次打击，留下一块余烬。",
   "pets:pyreling:name": "焚魂",
   "pets:quillshrike:combatAbility.name": "尖刺齐射",
-  "pets:quillshrike:description": "一头骨骼中空的掠食者，用自己的尖刺将猎物钉穿。在工作台旁，它总能从每批材料中多榨出一些——它对弱点的洞察也让你的远程暴击落得更准。",
+  "pets:quillshrike:description": "一头骨骼中空的掠食者，用自己的尖刺将猎物钉穿。在黛皮架旁，它总能从每张皮子中多榨出一些；战斗中它齐射一波尖刺，在第一根落定前再次命中。",
   "pets:quillshrike:name": "刺羽伯劳",
   "pets:rotbark:combatAbility.name": "根须缠绕",
   "pets:rotbark:description": "一头树皮腐朽之物，蜷伏于根与腐之间。它一口噬咬便能放倒木材——战斗中还能把敌人的四肢拖得步履维艰。",

@@ -3418,7 +3418,7 @@ export const ptBR: Record<string, string> = {
   "pets:pyreling:description": "Algo foi queimado vivo e se recusou a se dispersar. Ele orbita você numa lenta mancha de calor e sangra calor em sua mana sem que peçam — e depois atravessa cada golpe que você desfere para deixar uma brasa para trás.",
   "pets:pyreling:name": "Pyreling",
   "pets:quillshrike:combatAbility.name": "Salva de espinhos",
-  "pets:quillshrike:description": "Um predador de ossos ocos que empala suas presas nos próprios espinhos. Na bancada de trabalho, ele extrai material extra de cada lote — e seu olho para pontos fracos faz seus críticos à distância acertarem mais certeiros.",
+  "pets:quillshrike:description": "Um predador de ossos ocos que empala suas presas nos próprios espinhos. Na moldura de curtimento ele extrai material extra de cada couro, e em combate solta uma rajada de espinhos que golpeia de novo antes que o primeiro pouse.",
   "pets:quillshrike:name": "Quillshrike",
   "pets:rotbark:combatAbility.name": "Laço de raízes",
   "pets:rotbark:description": "Uma coisa de casca apodrecida que se curva entre raiz e podridão. Ela derruba madeira com uma única mordida roedora — e, numa luta, arrasta os membros do inimigo até quase parar.",

@@ -3415,7 +3415,7 @@ export const fr: Record<string, string> = {
   "pets:pyreling:description": "Quelque chose a été brûlé vif et a refusé de se disperser. Il gravite autour de vous en une lente traînée de chaleur et déverse sa tiédeur dans votre mana sans qu'on le lui demande — puis se glisse à travers chacune de vos frappes pour y laisser une braise.",
   "pets:pyreling:name": "Pyrelin",
   "pets:quillshrike:combatAbility.name": "Salve de piquants",
-  "pets:quillshrike:description": "Un prédateur aux os creux qui empale ses proies sur ses propres piquants. À l'établi, il tire du matériau supplémentaire de chaque lot — et son œil pour les points faibles rend vos critiques à distance plus précis.",
+  "pets:quillshrike:description": "Un prédateur aux os creux qui empale ses proies sur ses propres piquants. Au cadre de tannage, il tire du matériau supplémentaire de chaque peau, et au combat il lâche une volée de piquants qui frappe encore avant que le premier ne se pose.",
   "pets:quillshrike:name": "Piquegrièche",
   "pets:rotbark:combatAbility.name": "Piège de racines",
   "pets:rotbark:description": "Une chose à l'écorce pourrie qui se voûte entre racine et putréfaction. Elle abat un arbre d'une seule morsure rongeuse — et en combat, réduit les membres de l'ennemi à un lent traînement.",
