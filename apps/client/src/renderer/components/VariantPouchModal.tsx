@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { content } from "@hearthforge/content";
 import type { ItemInstance, LocalizedString } from "@hearthforge/shared";
 import { EQUIP_SLOTS, instanceDisplayName, isStatusEffectType } from "@hearthforge/shared";
@@ -302,7 +303,17 @@ export function VariantPouchModal({
   // escStack-Anmeldung) — Tastatur-Trap + inkonsistent zu Wiki/Galerie/Zeremonie.
   useEffect(() => registerEscCloser("modal", onClose), [onClose]);
 
-  return (
+  // Spieler-Report 1.0.0 ("Popup liegt hinter der Bank-Box"): dieses Modal saß bisher als
+  // gewöhnliches DOM-Kind INNERHALB der Inventar-Spalte. Sowohl Bank- als auch Shop-Spalten
+  // rufen `.shop-panel` (pages.css) auf, das `isolation: isolate` trägt — jede Spalte bekommt
+  // dadurch ihren EIGENEN Stacking-Context. `position:fixed; z-index:200` auf `.modal-overlay`
+  // wirkt dann nur INNERHALB dieses Contexts, nicht global: die spätere (rechte) Bank-/Nachbar-
+  // spalte malt beim Rendern komplett ÜBER der gesamten Inventar-Spalte inkl. dieses Modals, egal
+  // wie hoch dessen lokaler z-index ist. Portal an document.body (gleiches Muster wie
+  // CitadelTip.tsx und der Quit-Dialog in Sidebar.tsx) löst das Modal aus JEDEM Panel-Stacking-
+  // Context heraus — betrifft alle drei Aufrufer (Bank/Shop/Charakter), da sie sich diese
+  // Komponente teilen.
+  return createPortal(
     <div className="modal-overlay pouch-overlay" onClick={onClose}>
       <div className="modal pouch-modal" onClick={(e) => e.stopPropagation()} onMouseLeave={onClose}>
         <button className="modal-close ds-close-button" onClick={onClose} aria-label={t("pouch.close")} />
@@ -369,6 +380,7 @@ export function VariantPouchModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { getSidebarPages } from "../navigation";
 import { getSidebarIcon } from "../sidebarIcons";
 import { getSkillIcon } from "../skillIcons";
@@ -435,7 +436,17 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
       </button>
       </div>
 
-      {quitConfirmOpen && (
+      {/* Bugfix (Spieler-Report 1.0.0, "quit game not working, popup unklickbar"): der Dialog lag
+          bisher als DOM-Kind von `.sb-footer` — dieser Container trägt (seit dem Klick-Drawer-Umbau,
+          codex 2026-08-01) `pointer-events: none` und gibt es nur an einzelne Kind-Selektoren
+          (Lasche/offener Drawer) frei; `.modal-overlay`/`.modal` bekamen KEIN eigenes
+          `pointer-events: auto` und erbten also `none` — der Dialog war sichtbar (eigener
+          Stacking-Context via `isolation: isolate` malt ihn optisch oben), aber jeder Klick fiel
+          durch auf den darunterliegenden Content (Playwright bestätigte das: "<img> from
+          <main class=\"content\"> subtree intercepts pointer events"). Portal an document.body
+          (gleiches Muster wie CitadelTip.tsx — "entkommt jedem overflow:hidden/pointer-events
+          seines Panels") löst den Dialog komplett aus dem Footer-Baum heraus. */}
+      {quitConfirmOpen && createPortal(
         <div
           className="modal-overlay"
           onClick={() => setQuitConfirmOpen(false)}
@@ -471,7 +482,8 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

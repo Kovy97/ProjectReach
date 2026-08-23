@@ -50,6 +50,40 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
   // (Vorher öffnete default „Neues Spiel" → Gefahr, beim Laden versehentlich Overwrite zu drücken.)
   const [panel, setPanel] = useState<Panel | null>(null);
 
+  // Spieler-Report 1.0.0 ("Unable to overwrite character with new one"): Überschreiben/Löschen
+  // hingen bisher an `window.confirm()` — einem NATIVEN OS-Dialog außerhalb des Spielfensters.
+  // Das Spiel startet standardmäßig im echten Vollbild (main/index.ts, "Vollbild-Start als
+  // Default"); ein natives JS-Dialog-Fenster über einem exklusiv-fullscreen Electron-Fenster ist
+  // ein bekanntes Electron-Stolperfeld (Fokus-/Reihenfolge-Probleme, Bugfund #281 hatte bereits
+  // einen strukturell verwandten Fall bei „Spiel verlassen" — dort ebenfalls durch ein In-Page-
+  // Modal ersetzt, s. Sidebar.tsx quit-confirm-modal). Gleiches Rezept hier: ein eigenes,
+  // themenkonsistentes Bestätigungs-Modal (reuses `.quit-confirm-modal`-Optik) statt des nativen
+  // Dialogs — funktioniert garantiert innerhalb des Spielfensters, unabhängig von Fenstermodus/OS.
+  const [pendingConfirm, setPendingConfirm] = useState<{
+    title: string;
+    body: string;
+    confirmLabel: string;
+    onConfirm: () => void;
+  } | null>(null);
+
+  const askDelete = (slot: SaveSlot): void => {
+    setPendingConfirm({
+      title: t("menu.delete"),
+      body: t("menu.deleteConfirm").replace("{name}", slot.summary?.name ?? ""),
+      confirmLabel: t("menu.delete"),
+      onConfirm: () => void deleteSlot(slot.id),
+    });
+  };
+
+  const askOverwrite = (slot: SaveSlot): void => {
+    setPendingConfirm({
+      title: t("menu.overwrite"),
+      body: t("menu.overwriteConfirm").replace("{name}", slot.summary?.name ?? ""),
+      confirmLabel: t("menu.overwrite"),
+      onConfirm: () => startNewGame(slot.id),
+    });
+  };
+
   // codex:2026-07-31T23:42:00+02:00 — War-Table-Navigation: Ein aktiver Ledger-Eintrag lässt
   // sich erneut anklicken und klappt dadurch genauso kontrolliert zu wie über das Schließen-X.
   const togglePanel = (next: Panel): void => {
@@ -58,14 +92,21 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
 
   // codex:2026-07-31T23:58:00+02:00 — Unterseiten sind echte Menüfenster. Escape entspricht
   // ihrem sichtbaren Zurück-Knopf und führt immer auf die eigenständige War-Table-Startansicht.
+  // Bugfix 1.0.1: liegt zusätzlich das neue Bestätigungs-Modal offen, schließt EIN Escape-Druck
+  // erst DAS (oberste Ebene zuerst) — genau ein Overlay pro Druck, wie überall sonst im Spiel.
   useEffect(() => {
-    if (panel === null) return undefined;
-    const returnToMenu = (event: KeyboardEvent): void => {
-      if (event.key === "Escape") setPanel(null);
+    if (panel === null && pendingConfirm === null) return undefined;
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key !== "Escape") return;
+      if (pendingConfirm !== null) {
+        setPendingConfirm(null);
+        return;
+      }
+      setPanel(null);
     };
-    window.addEventListener("keydown", returnToMenu);
-    return () => window.removeEventListener("keydown", returnToMenu);
-  }, [panel]);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [panel, pendingConfirm]);
 
   if (showFonts) return <FontPreview onClose={() => setShowFonts(false)} />;
 
@@ -142,10 +183,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
                         mode="load"
                         onNew={() => startNewGame(slot.id)}
                         onLoad={() => void loadGame(slot.id)}
-                        onDelete={() => {
-                          const msg = t("menu.deleteConfirm").replace("{name}", slot.summary?.name ?? "");
-                          if (window.confirm(msg)) void deleteSlot(slot.id);
-                        }}
+                        onDelete={() => askDelete(slot)}
                         onOverwrite={() => startNewGame(slot.id)}
                       />
                     ))}
@@ -167,14 +205,8 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
                       mode="new"
                       onNew={() => startNewGame(slot.id)}
                       onLoad={() => void loadGame(slot.id)}
-                      onDelete={() => {
-                        const msg = t("menu.deleteConfirm").replace("{name}", slot.summary?.name ?? "");
-                        if (window.confirm(msg)) void deleteSlot(slot.id);
-                      }}
-                      onOverwrite={() => {
-                        const msg = t("menu.overwriteConfirm").replace("{name}", slot.summary?.name ?? "");
-                        if (window.confirm(msg)) startNewGame(slot.id);
-                      }}
+                      onDelete={() => askDelete(slot)}
+                      onOverwrite={() => askOverwrite(slot)}
                     />
                   ))}
                 </div>
@@ -199,6 +231,44 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
       <div className="menu-footer">
         {t("about.version").replace("{version}", __APP_VERSION__)} · {t("about.copyright")}
       </div>
+
+      {/* Bugfix 1.0.1 ("Unable to overwrite character with new one"): In-Page-Bestätigung statt
+          `window.confirm()` — s. Doku am `pendingConfirm`-State oben. Reuses die schon vorhandene
+          `.quit-confirm-modal`-Optik (Sidebar.tsx) 1:1, rein generisch benannt/aufgebaut, keine neue
+          CSS nötig. Als direktes Kind von `.menu` (nicht innerhalb `.menu-panel`) platziert — sitzt
+          damit außerhalb jedes lokal isolierten Stacking-Contexts (`.hf-btn`/`.lang-btn` tragen
+          `isolation: isolate`, `.menu` selbst nicht). */}
+      {pendingConfirm && (
+        <div
+          className="modal-overlay"
+          onClick={() => setPendingConfirm(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="modal quit-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="quit-confirm-icon">
+              <img loading="lazy" decoding="async" src={emblSkull} alt="" className="pixelart" />
+            </div>
+            <h2 className="quit-confirm-title">{pendingConfirm.title}</h2>
+            <p className="quit-confirm-body">{pendingConfirm.body}</p>
+            <div className="quit-confirm-actions">
+              <button className="combat-btn ghost" onClick={() => setPendingConfirm(null)}>
+                {t("sidebar.quitCancel")}
+              </button>
+              <button
+                className="combat-btn flee"
+                onClick={() => {
+                  const run = pendingConfirm.onConfirm;
+                  setPendingConfirm(null);
+                  run();
+                }}
+              >
+                {pendingConfirm.confirmLabel}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
