@@ -500,11 +500,15 @@
   gap: 1px;
 }
 
+/* 1.0.1: Der Aktionsname wurde gekappt („Normaler Baum" → „Norm…"), sobald die neue Dauer-Zeile
+   die Reihe schmaler machte. Chef-Regel „umbrechen statt abschneiden" — die Reihe hat keine feste
+   Höhe (`.queue-row` ist eine Flex-Zeile mit `align-items: center`), eine zweite Zeile kostet
+   also nichts. Trennung nach Silben, damit ein langes Einzelwort nicht mitten durchbricht. */
 .queue-row-name {
   font-size: 13px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .queue-row-duration {

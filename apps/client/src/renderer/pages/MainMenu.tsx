@@ -361,8 +361,12 @@ function SlotRow({ slot, mode, onNew, onLoad, onDelete, onOverwrite }: SlotRowPr
           <div className="menu-slot-meta">
             {formatPlaytime(slot.summary.activePlayMs ?? slot.summary.elapsedMs)} {t("menu.played")}
           </div>
+          {/* 1.0.1: Die Zeile darf umbrechen (vorher schnitt sie die Uhrzeit ab, auf Englisch
+              sogar das „M" von „PM"), aber Datum und Uhrzeit sollen als Einheit zusammenbleiben —
+              sonst steht das „PM" allein in der zweiten Zeile. Geschütztes Leerzeichen statt
+              eines starren `nowrap`, das wieder abschneiden würde. */}
           <div className="menu-slot-sub">
-            {t("menu.last")} {formatDate(slot.summary.savedAt)}
+            {t("menu.last")} {formatDate(slot.summary.savedAt).replace(/[\s\u00a0\u202f]+(AM|PM)$/i, "\u00a0$1")}
           </div>
         </div>
         <div className="menu-slot-actions" onClick={(e) => e.stopPropagation()}>
