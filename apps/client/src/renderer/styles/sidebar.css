@@ -1019,8 +1019,16 @@
      `text-wrap: balance` (zusätzlich zur getrimmten Padding-Reserve, s. gravewood-navigation.css
      `.sb-skill-btn .sb-skill-name`) verteilt eine erzwungene zweite Zeile gleichmäßig, statt fast
      das ganze Wort in Zeile 1 zu pressen und nur einen Buchstaben in Zeile 2 abzureißen. */
+  /* 1.0.1: der Umbruch oben war richtig, die Bruchstelle nicht — `overflow-wrap: anywhere` trennt
+     mitten im Wort („HOLZFÄLL/EN", „KAM/PF"), und weil bei --sb-scale-eff:1 (ab ~1440 px
+     Fensterhöhe) fast jedes deutsche Label zweizeilig wird, stand das auf JEDEM Bildschirm.
+     `hyphens: auto` trennt jetzt nach Silben („HOLZ-FÄLLEN") — `<html lang>` trägt die Spielsprache
+     (gemessen: `de-DE`), Chromium kann damit für alle 7 Sprachen sauber trennen. `break-word`
+     statt `anywhere` bleibt als Notbremse für Wörter, die selbst getrennt nicht passen: es bricht
+     nur, wenn sonst nichts geht — abgeschnitten wird weiterhin nie. */
   white-space: normal;
   overflow-wrap: anywhere;
+  hyphens: auto;
   text-wrap: balance;
   overflow: hidden;
   text-align: center;

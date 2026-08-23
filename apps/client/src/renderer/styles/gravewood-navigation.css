@@ -631,6 +631,15 @@
   padding-left: calc(58px * var(--sb-scale-eff, 1)) !important;
 }
 
+/* 1.0.1: Die Kampf-Zeile teilt sich ihre Breite mit dem Aufklapp-Pfeil (`.sb-combat-toggle`),
+   ihr Knopf ist also schmaler als alle anderen — mit derselben 58px-Reserve rechts blieb für
+   „KAMPF" kein Platz und das Wort wurde mitten durchgebrochen („KAM/PF"). Die Reserve rechts darf
+   hier kleiner sein: dort steht nur das Kampflevel („96", `.sb-combat-lvl-badge`), nicht die
+   Fortschrittsangabe der Fertigkeiten („97/99"). Links bleibt die Icon-Reserve unangetastet. */
+#root .sb-combat-btn-row .sb-skill-btn .sb-skill-name {
+  padding-right: calc(34px * var(--sb-scale-eff, 1)) !important;
+}
+
 /* codex:2026-08-01T09:30:10+02:00 — Die Topbar ist selbst nur noch Layoutschale. Der vom Chef
    markierte umlaufende Holzrahmen entfällt; die einzelnen Iron-Tabs tragen das gesamte Chrome. */
 #root .topbar::before {

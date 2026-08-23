@@ -68,6 +68,14 @@ The cards now have a real minimum height, and the loadout bar wraps instead of c
 
 *Dev-Notiz: Die Abklingzeit lag ausschliesslich in den Auto-Pfaden des Kampf-Ticks; `useConsumable` — der einzige manuelle Weg — kannte die Felder gar nicht. Hand und Automatik teilen sich jetzt einen Takt je Kategorie (`consume-gate.ts`), Essen und Trank bleiben getrennt, reine Buff-Tonika bleiben frei. Kein Save-Feld, kein SAVE_VERSION-Bump. CHEF-ENTSCHEID OFFEN: die Kill-Verschnaufpause sperrt jetzt auch das Essen von Hand — konsequent zur Engine-Regel „kein Gratis-Refill zwischen den Mobs“, aber falls du das anders willst, ist es eine Zeile.*
 
+**Beschriftungen brechen um, statt abgeschnitten zu werden:** DE: Der Menüreiter zeigte „Meisterschaf“ statt „Meisterschaft“, Item-Namen in der Verzauberung endeten mitten im Wort, und der Hinweis im Rückkauf-Feld ragte aus seinem Rahmen. Alle drei brechen jetzt sauber um. / EN: The menu tab showed "Master" instead of "Mastery", item names in enchanting ended mid-word, and the buyback hint spilled out of its frame. All three now wrap properly.
+
+**Die Seitenleiste trennt nach Silben statt mitten im Wort:** DE: Ab etwa 1440 Bildpunkten Höhe wurde fast jeder Eintrag zweizeilig und mitten im Wort umgebrochen — „HOLZFÄLL / EN“, „KAM / PF“. Jetzt trennt das Spiel nach Silben, in allen sieben Sprachen. / EN: Above roughly 1440 pixels of height nearly every entry wrapped to two lines and broke mid-word. The game now hyphenates at syllable boundaries, in all seven languages.
+
+**Gebäudetexte in New Haven sind wieder vollständig:** DE: Die Beschreibungen auf den Gebäudekarten waren auf zwei Zeilen festgenagelt; längere Texte brachen mitten im Satz ab. Sie stehen jetzt vollständig, die Karten bleiben gleich hoch. / EN: Building descriptions on the cards were pinned to two lines and longer ones cut off mid-sentence. They are now shown in full, and the cards keep their height.
+
+**Fertigkeitsbeschreibungen in der Übersicht reden aus:** DE: Auf großen Bildschirmen brach der Text nach drei Zeilen ab. / EN: On large displays the text was cut off after three lines.
+
 **Ein Champion wird nicht mehr dort angekündigt, wo niemand hinkommt:** DE: In der Götzenhalle
 wurde ein Champion gemeldet, obwohl die Halle über den normalen Kampfweg gar nicht betretbar ist.
 Die Meldung erscheint dort nicht mehr. / EN: A champion was announced in the Idol Hall even though

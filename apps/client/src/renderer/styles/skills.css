@@ -1888,17 +1888,17 @@ button.skilloverview-card {
   text-transform: uppercase;
 }
 
+/* Clip-Audit-Fix G005 (1.0.1): der 2026-07-09-Clamp (3 Zeilen) reichte bei grossen Aufloesungen
+   nicht mehr — `auto-fill` packt ab ~5 Spalten (2560px+) immer mehr, aber genauso schmale Karten
+   statt vorhandene Breite zu nutzen (Kartenbreite bleibt ~400px, egal ob 2560 oder 3840px breit),
+   dadurch braucht derselbe Text dort 4-5 Zeilen statt 3 und wurde mitten im Satz abgeschnitten.
+   Kein Clamp mehr: der Text waechst, `.skilloverview-grid` hat kein `align-items` gesetzt (Default
+   `stretch`) und zieht dadurch automatisch alle Karten EINER Reihe auf dieselbe Hoehe hoch — kein
+   Pixel-Wert noetig. */
 .skilloverview-guide {
   font-size: 16px;
   color: var(--muted);
   line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  /* Selbst-Audit 2026-07-09: Beschreibungen brachen mitten im Satz ab, obwohl die Seite
-     vertikal viel Luft hat — 3 Zeilen lassen fast alle Guides komplett ausreden. */
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
 }
 
 .stats-page .row {

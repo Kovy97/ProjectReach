@@ -20,6 +20,7 @@ apps/client/release-scenebuilder/
 
 # Testlauf-Ausgaben (Screenshots/Videos/Rohdaten der Bot-Sweeps — werden immer frisch erzeugt)
 apps/client/ui-audit/bot-runs/
+apps/client/ui-audit/clip-audit-runs/
 apps/client/ui-audit/_shots-*/
 apps/client/ui-audit/*.png
 apps/client/ui-audit/*.webm

@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.0 (Full Release)"
+	"desc"	"Grim Reach 1.0.1 (Politur & Fixes)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""
