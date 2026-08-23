@@ -10,6 +10,76 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
+## 1.0.1 — unveröffentlicht
+
+*Erste Polier-Runde nach dem 1.0-Release, gebaut aus den Spielerberichten der ersten Tage.*
+
+**Massenverkauf: alles auf einen Klick:** DE: Im Verkaufen-Reiter gibt es jetzt „Alle auswählen",
+und mit gedrückter Umschalttaste lässt sich ein ganzer Bereich auf einmal markieren. Wer nach einem
+langen Zug 30 verzauberte Fundstücke über sechs Grundtypen loswerden wollte, brauchte dafür bisher
+dreizehn Klicks, jetzt einen. Vor der Buchung fragt das Spiel mit Anzahl und Gesamterlös nach. /
+EN: The Sell tab now has a "select all" control, and holding Shift selects a whole range at once.
+Clearing out 30 enchanted finds spread over six base types used to take thirteen clicks; now it
+takes one. The game asks for confirmation with the item count and total gold before selling.
+
+**Die Warteschlange sagt, wie lange sie braucht:** DE: Über der Liste stehen jetzt Gesamtdauer und
+die voraussichtliche Uhrzeit, und jeder Eintrag zeigt seine eigene Restdauer. Kampfeinträge sind
+als Schätzung gekennzeichnet, unendliche Einträge werden nicht hochgerechnet, und wo das Material
+nicht bis zum Ziel reicht, steht das ausdrücklich dabei. / EN: The queue now shows its total
+duration and the expected finish time above the list, and every entry shows its own remaining time.
+Combat entries are marked as estimates, endless entries are not extrapolated, and where materials
+run out before the target, the queue says so instead of inventing a number.
+
+**Die Tutorial-Blase verdeckt nicht mehr den Knopf, den sie erklärt:** DE: Bei Zielen weit unten am
+Bildschirmrand legte sich die Erklärblase über genau die Schaltfläche, auf die sie zeigte. Sie
+weicht jetzt nach allen vier Seiten aus und ist breiter statt höher. / EN: For targets low on the
+screen, the tutorial bubble could cover the very button it was pointing at. It now dodges to all
+four sides and is wider rather than taller.
+
+**Item-Tooltips liegen nicht mehr unter dem Mauszeiger:** DE: Die Infokarte erschien so dicht am
+Zeiger, dass die Zeigergrafik ihre obere Ecke verdeckte. Sie steht jetzt über der Zeigerspitze. /
+EN: Item tooltips appeared so close to the cursor that the cursor graphic covered their top corner.
+They now sit above the pointer tip.
+
+**Spiel verlassen, Charakter überschreiben, Varianten-Beutel:** DE: Drei Schaltflächen wirkten wie
+kaputt: „Spiel verlassen" nahm keinen Klick an, das Überschreiben eines Spielstands tat scheinbar
+nichts, und das Varianten-Popup verschwand hinter dem Bankfenster. Alle drei sind behoben. / EN:
+Three buttons looked broken: "Quit Game" would not accept a click, overwriting a save appeared to do
+nothing, and the variant popup vanished behind the bank window. All three are fixed.
+
+*Dev-Notiz: Eine gemeinsame Ursache — Dialoge, die im DOM ihres Panels hingen und dessen
+`pointer-events: none` bzw. `isolation: isolate` erbten, plus `window.confirm()`, das über einem
+exklusiv-fullscreen Electron-Fenster nicht durchkommt. Alle Spiel-Bestätigungen laufen jetzt über
+ein gemeinsames `ConfirmModal` per Portal am Body; `native-dialogs.test.ts` hält den Rückfall auf.*
+
+**Sechs Ausrüstungsteile lassen sich wieder für ihren Wert verkaufen:** DE: Lederhelm, Lederwams,
+rostiges Schwert, Holzschild, knorriger Stab und Jagdbogen hatten keinen hinterlegten Wert und
+brachten deshalb nur 1 Gold. / EN: Leather helm, leather body, rusty sword, wooden shield, gnarled
+staff and hunting bow had no sell value on record and therefore fetched only 1 gold.
+
+**Attributwerte und Beschriftungen im Charakterblatt bleiben lesbar:** DE: Auf 1600×900 und
+1366×768 wurden die Attributnamen und teils sogar die Zahlen von ihrer eigenen Karte verschluckt,
+und „Loadouts" schrumpfte auf „UTS". Die Karten haben jetzt eine echte Mindesthöhe, und die
+Ausrüstungsleiste bricht um, statt zu kappen. / EN: At 1600×900 and 1366×768 the attribute names
+and sometimes even the numbers were swallowed by their own card, and "Loadouts" shrank to "UTS".
+The cards now have a real minimum height, and the loadout bar wraps instead of clipping.
+
+**Ein Champion wird nicht mehr dort angekündigt, wo niemand hinkommt:** DE: In der Götzenhalle
+wurde ein Champion gemeldet, obwohl die Halle über den normalen Kampfweg gar nicht betretbar ist.
+Die Meldung erscheint dort nicht mehr. / EN: A champion was announced in the Idol Hall even though
+the hall cannot be entered through normal combat. That announcement is gone.
+
+*Dev-Notiz: Alle fünf Monster der Zone sind `dungeonOnly`, die Zone bekommt darum keine Zonenkarte
+— der Champion war seit jeher unerreichbar. Spawn-Zyklus, Kampfstart, Toast und Mini-Fenster lesen
+jetzt `isEliteZoneHuntable`; die Persistenz räumt Alt-Einträge beim Laden ab. Kein
+SAVE_VERSION-Bump (Invariante auf bestehenden Daten, kein neues Feld), `eliteRng`-Strom
+nachweislich unverändert. Damit liegen 2 der 28 Varianten still — sie waren faktisch nie
+erreichbar. OFFEN FÜR DEN CHEF: entweder beide Varianten auf offene Hochland-Basen umhängen oder
+der Götzenhalle ein Weltmonster geben; außerdem erfüllt ein Paragonturm-Kill von `roc_void`
+stillschweigend Kapitel 18, ohne dass der Spieler die Quest je gesehen hat.*
+
+---
+
 ## 1.0.0 „Vollrelease" — 2026-08-18
 
 **Grim Reach verlässt Early Access.** DE: Mit 1.0 ist das Spiel inhaltlich fertig. Enthalten sind

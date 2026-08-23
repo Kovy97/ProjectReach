@@ -1227,12 +1227,20 @@
   grid-template-rows: repeat(2, 1fr);
   gap: clamp(3px, 0.6vh, 6px) clamp(4px, 0.6vw, 7px);
   /* Füllt die (ggf. gewachsene, s. .cs-col-left .cs-attr-section oben) Sektionshöhe — die zwei
-     grid-template-rows(1fr) teilen sie dann gleichmäßig auf große Karten auf. min-height:0
-     erlaubt dem Grid, unter seine content-basierte Auto-Höhe zu schrumpfen (Flex-Kind). In
-     einem auto-hohen Elternteil (.equip-overview) bleibt das folgenlos: kein freier Raum, also
-     keine Wirkung von flex-grow. */
+     grid-template-rows(1fr) teilen sie dann gleichmäßig auf große Karten auf.
+     1.0.1-Fix (Clip-Audit G002/G003, 2026-08-23): war `min-height: 0` — erlaubte dem Grid, unter
+     seine content-basierte Auto-Höhe (= Summe der beiden Row-Mindesthöhen, die jetzt über
+     `.cs-col-left .cs-attr-card`s echte `min-height` real etwas hergeben, s. dortigen Kommentar)
+     zu schrumpfen, wenn `.cs-attr-section`s flex-grow bei kurzen Fensterhöhen weniger Platz
+     zuteilte, als die Karten brauchten — genau der Mechanismus, der Name/Zahl unsichtbar
+     abschnitt. `min-height: auto` (= Default, hier nur wieder hergestellt) lässt das Grid seine
+     echte Mindesthöhe an `.cs-attr-section` weiterreichen, die wiederum (kein eigenes
+     `min-height:0`) an `.cs-col-left` weiterreicht — dort schrumpft bei Platzmangel das Portrait
+     stärker (hat bereits einen eigenen Floor), nicht mehr die Attribut-Karten unsichtbar. Im
+     auto-hohen Elternteil (.equip-overview, kein flex-grow auf `.cs-attr-section` dort) bleibt
+     das wie zuvor folgenlos: kein freier Raum, den `min-height` begrenzen müsste. */
   flex: 1;
-  min-height: 0;
+  min-height: auto;
 }
 
 /* Chef 2026-07-03: Neuaufbau — KEIN Gold-Medaillon/Rand mehr. Das Attribut-Symbol liegt als
@@ -1277,9 +1285,30 @@
    wird per Grid-Stretch definit groß, kein Content-Collapse-Risiko). Nur hier gesetzt (nicht an
    der .cs-attr-card-Basisregel oben) — in .equip-overview (Combat-Log „Equipment"-Tab) bleibt
    die Karte ein normales Element ohne Query-Container, die dortigen cqmin-Overrides unten greifen
-   folglich nicht (kein :where(.cs-col-left)-Match) und alles bleibt beim alten vh-Verhalten. */
+   folglich nicht (kein :where(.cs-col-left)-Match) und alles bleibt beim alten vh-Verhalten.
+
+   1.0.1-Fix (Clip-Audit G002/G003, 2026-08-23): container-type:size heisst auch, dass die Karte
+   NIE von ihrem eigenen Inhalt zurueckwaechst — ihre Hoehe kommt rein von oben (Grid-Row-Anteil
+   der per flex-grow verteilten .cs-attr-section-Hoehe). Die Basisregel `min-height: 0` (oben)
+   erlaubte dieser zugeteilten Hoehe, bei kurzen Fensterhoehen unter das zu fallen, was Name (2
+   Zeilen) + Zahl bei ihrer eigenen Floor-Schriftgroesse brauchen — Name/Zahl wurden dann von
+   `overflow:hidden` der Karte verschluckt (bei 1600x900 sogar 100%: „Konstitution" komplett
+   unsichtbar; „88" zeigte nur „8"). Der bisherige `@media (max-height: 800px)`-Nothalt setzte
+   zwar kleinere Floor-Schriften, aber NIE eine passende Boxhoehe dazu — und 1600x900 (Hoehe 900)
+   lag ohnehin ueber der 800px-Schwelle, bekam also nicht mal die kleineren Floors. Statt einer
+   weiteren Sonderregel: ECHTE Mindesthoehe, die fuer JEDE Fensterhoehe gilt (kein @media). Rechnung
+   bei den jetzigen Floor-Werten (Name clamp(9px,9cqi,22px) 2-zeilig × line-height 1.08 + Gap-Floor
+   1px + Zahl clamp(16px,46cqmin,60px) 1-zeilig × line-height 1 + Padding-Floor 3+4px + Border
+   6+6px ≈ 56px) plus Sicherheitsspanne fuer Font-Metrik-Rundung. Das zwingt `.cs-attr-grid`/
+   `.cs-attr-section` (beide ohne eigenes `min-height:0`, s. dortige Kommentare) automatisch mit,
+   diese Hoehe nie zu unterschreiten — schrumpft stattdessen das Portrait (das hat bereits einen
+   eigenen Floor, `.cs-portrait-wrap min-height`) staerker. Einheitlich mit der Zahl-Floor-Aenderung
+   unten (30px → 16px, s. dortigen Kommentar) — dieselbe Untergrenze wie die vh-basierte
+   Basisregel (`.cs-attr-card-val` oben, Floor bereits 16px), nur der Wachstumsbereich bleibt
+   unterschiedlich (cqmin statt vh). */
 .cs-col-left .cs-attr-card {
   container-type: size;
+  min-height: 60px;
 }
 
 /* Chef 2026-07-03 (2. Runde): Symbol nach LINKS (dort ist Platz neben Name/Zahl), GRÖSSER und
@@ -1410,9 +1439,17 @@
    wachsen — cqmin der Karte selbst (s. .cs-col-left .cs-attr-card oben) statt vh, damit die Zahl
    tatsächlich mit der Kartengröße mitskaliert statt einem groben Viewport-Bruchteil zu folgen.
    :where() hält die Spezifität gleich der Basisregel, damit SHORT-VIEWPORT (Dateiende) weiter
-   gewinnt. */
+   gewinnt.
+   1.0.1-Fix (Clip-Audit G003, 2026-08-23): Floor von 30px auf 16px gesenkt — 30px war ein FIXER
+   Mindestwert, unabhaengig davon, wie klein cqmin bei kurzen Fensterhoehen tatsaechlich wurde
+   (Sweep-Befund: bei 1600x900 blieb die Karte trotz genau dieses Floors zu klein, „88" zeigte
+   nur „8", 62% verdeckt). 16px deckt sich mit dem Floor der vh-Basisregel oben (eine Untergrenze
+   fuer BEIDE Kontexte, nur der Wachstumsbereich bleibt cqmin- statt vh-basiert) und ist die
+   Zahl, auf die `.cs-col-left .cs-attr-card`s neue echte `min-height` (s. dortigen Kommentar)
+   ausgelegt ist — die Box ist ab jetzt IMMER gross genug fuer diesen Floor, das war beim
+   30px-Floor nie sichergestellt. */
 :where(.cs-col-left) .cs-attr-card-val {
-  font-size: clamp(30px, 46cqmin, 60px);
+  font-size: clamp(16px, 46cqmin, 60px);
 }
 
 .cs-combat-grid {
@@ -1773,7 +1810,18 @@
 /* Leerer Equip-Slot: leicht transparentes Text-Label statt Slot-Typ-Silhouette (Chef) — zeigt
    zentriert, was in den Slot gehört ("Helm", "Ring", …), Cinzel small-caps, dezent, kein
    Umbruch-Chaos bei langen Wörtern (kleiner/clamp-Font + freies Wrapping statt Overflow).
-   Brightened leicht bei Hover für Feedback. */
+   Brightened leicht bei Hover für Feedback.
+   1.0.1-Fix (Clip-Audit, 2026-08-23): war `clamp(9px, 1.3vw, 12px)` — 1.3vw liegt bei JEDER
+   Fensterbreite ≥924px über dem 12px-Deckel, der Font war also faktisch immer starr 12px,
+   VÖLLIG unabhängig von der tatsächlichen (durch die Doll-Grid-Zelle bestimmten) Slotgröße
+   (Versuch, den Slot per `container-type:inline-size` zum Query-Container zu machen und mit
+   `cqw` zu skalieren, verworfen: kollidierte mit dem `aspect-ratio:1/1`-Grid-Sizing der Zelle,
+   der Slot kollabierte dabei auf ~10px). Bei knappem Platz blieb der Slot kleiner, als 12px für
+   ein 2-zeiliges Wort wie „Werkzeug" brauchen — abgeschnitten (u.a. sichtbar geworden, seit die
+   Loadout-Leiste oben bei Platzmangel umbricht, s. .eq-loadout-bar-Kommentar, und der Doll
+   dadurch etwas weniger Höhe hat). Deckel von 12px auf 10px gesenkt, Floor von 9px auf 8px —
+   schafft in der beobachteten knappsten Zelle (43×43px, 1366×768) wieder sichtbar Luft
+   (10px×1.25 Zeilenhöhe × 2 Zeilen = 25px vs. ~33px Innenraum nach Padding). */
 .cs-slot-empty-label {
   position: absolute;
   inset: 0;
@@ -1783,7 +1831,7 @@
   text-align: center;
   font-family: var(--font-head);
   font-variant: small-caps;
-  font-size: clamp(9px, 1.3vw, 12px);
+  font-size: clamp(8px, 1.3vw, 10px);
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--muted);
@@ -2603,12 +2651,17 @@
     width: clamp(28px, 4.6vh, 40px);
     height: clamp(28px, 4.6vh, 40px);
   }
-  .cs-attr-card-name {
-    font-size: 9px;
-  }
-  .cs-attr-card-val {
-    font-size: 14px;
-  }
+  /* 1.0.1-Fix (Clip-Audit G002/G003, 2026-08-23): die frueheren `.cs-attr-card-name{font-size:9px}`/
+     `.cs-attr-card-val{font-size:14px}`-Nothalte hier ENTFERNT — genau diese Sonderregel-Idee
+     ("unter 800px Fensterhoehe eine kleinere Fix-Schrift") war Teil des Problems: 1600x900 (Hoehe
+     900) liegt UEBER dieser Schwelle und bekam die kleineren Floors nie, obwohl dort am meisten
+     kritische Funde auftraten — UND selbst innerhalb der Schwelle (1366x768) fehlte diesen fixen
+     Werten die passende Boxhoehe, sie wurden trotzdem abgeschnitten. Die Basisregeln
+     (`.cs-attr-card-name`/`.cs-attr-card-val` weiter oben, inkl. der `:where(.cs-col-left)`-
+     Overrides) haben inzwischen dieselben Floors (9px/16px) UNBEDINGT — bei jeder Fensterhoehe,
+     nicht nur unterhalb einer Schwelle — kombiniert mit einer echten `min-height` auf
+     `.cs-col-left .cs-attr-card` (s. dortigen Kommentar), die die Box nie kleiner werden laesst,
+     als diese Floors brauchen. Eine Größenlogik für alle Höhen statt einer weiteren Sonderregel. */
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════════════════
@@ -2828,6 +2881,15 @@
   gap: 10px;
   padding: 6px 8px 2px;
   flex: none;
+  /* 1.0.1-Fix (Clip-Audit G004, 2026-08-23): Label + 3× (Anlegen-Knopf min-width:64px +
+     Speichern-Knopf 30px) brauchen in der Summe ~410px — bei 1366×768/1600×900 ist die
+     Ausrüstungs-Spalte selbst nur ~290-355px breit (`.cs-layout`s 1:1.15:1.55-Aufteilung). Die
+     Zeile lief seitlich über den Panelrand hinaus und wurde dort abgeschnitten ("Loa" statt
+     "Loadouts"). `flex-wrap` statt einer schmaleren/abgeschnittenen Schrift (Chef-Vorgabe:
+     Mindestgröße + Umbruch statt Abschneiden) — bricht bei zu wenig Breite auf eine 2. Zeile um,
+     bei ausreichend Breite (alles ab ~1700px Fensterbreite) bleibt eine Zeile wie bisher. */
+  flex-wrap: wrap;
+  row-gap: 4px;
 }
 
 .eq-loadout-label {
@@ -2839,12 +2901,19 @@
   color: var(--gold, #c9a86a);
   text-shadow: 0 1px 3px #000;
   margin-right: 4px;
+  /* s. Kommentar bei .eq-loadout-bar: darf nicht schrumpfen (sonst Wortumbruch mitten im Label);
+     zusammen mit flex-wrap oben bricht bei Platzmangel die GANZE Zeile um, nie einzelne Wörter. */
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .eq-loadout-slot {
   display: flex;
   align-items: stretch;
   gap: 3px;
+  /* s. Kommentar bei .eq-loadout-bar (G004-Fix): nie schrumpfen, damit Anlegen-/Speichern-Knopf
+     nie gequetscht werden — bei Platzmangel wandert der ganze Slot per flex-wrap in die 2. Zeile. */
+  flex-shrink: 0;
 }
 
 /* HoverTip-Wrapper (as="div") soll das Layout nicht aufbrechen. */
