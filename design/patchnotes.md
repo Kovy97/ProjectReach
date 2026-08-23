@@ -14,6 +14,10 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 *Erste Polier-Runde nach dem 1.0-Release, gebaut aus den Spielerberichten der ersten Tage.*
 
+**Klarstellung – New Haven ist umgezogen, nicht verschwunden:** DE: Seit 1.0 steht New Haven in der Seitenleiste an dritter Stelle, direkt unter Kampf. Vorher stand es ganz unten hinter allen 14 Fertigkeiten und lag auf den meisten Auflösungen unterhalb der sichtbaren Kante — wer nicht scrollte, kam gar nicht hin. Der Umzug hätte in den 1.0-Notizen stehen müssen; das holen wir hiermit nach. / EN: Since 1.0, New Haven sits third in the sidebar, right below Combat. It used to be at the very bottom behind all 14 skills, below the visible edge on most resolutions unless you scrolled. That move should have been in the 1.0 notes; this is us catching up.
+
+*Dev-Notiz: Spieler-Report 23.08. „The New Haven disappeared in the lower left“ — kein Defekt, der Eintrag war im Screenshot des Spielers sichtbar. Lehre: ein verschobener Menüeintrag braucht IMMER eine Patchnote-Zeile, auch wenn die Verschiebung eine Reparatur ist.*
+
 **Massenverkauf: alles auf einen Klick:** DE: Im Verkaufen-Reiter gibt es jetzt „Alle auswählen",
 und mit gedrückter Umschalttaste lässt sich ein ganzer Bereich auf einmal markieren. Wer nach einem
 langen Zug 30 verzauberte Fundstücke über sechs Grundtypen loswerden wollte, brauchte dafür bisher
