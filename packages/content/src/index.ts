@@ -308,6 +308,11 @@ export const content: ContentDB = {
       weaponType: "sword",
       damageMin: 0.2, damageMax: 0.4, attackIntervalMs: 3000,
       rarity: "common",
+      // Content-Fix (Live-Bug 2026-08-23, 1.0.0 Marina-Report): value fehlte → 1-Gold-Fallback
+      // beim Verkauf. Herleitung: die einzigen anderen T0-Shop-Waffen mit BEIDEN Feldern
+      // (cracked_bow/cracked_staff, je cost 18 / value 8) legen ratio value = cost × 8/18 ≈
+      // 0.444 fest; rusty_sword kostet im Shop 20 (s. content.shop) ⇒ 20×8/18 = 8.9 → 9.
+      value: 9,
       description: {
         en: "A pitted, blunt blade. Better than bare fists — barely.",
         de: "Eine schartige, stumpfe Klinge. Besser als bloße Fäuste — kaum.",
@@ -321,6 +326,9 @@ export const content: ContentDB = {
       icon: "🛡️",
       slot: "offhand",
       modifiers: { con: 1 },
+      // Content-Fix (Live-Bug 2026-08-23): value fehlte (s. rusty_sword-Kommentar, gleiche
+      // Herleitung). Shop-cost 90 × 8/18 ≈ 40.
+      value: 40,
     },
     leather_helm: {
       id: "leather_helm",
@@ -333,6 +341,12 @@ export const content: ContentDB = {
       // armor-iter2 §8: gelootetes Leder war 0 evasionRating (effektiv ungepanzert auf der
       // Avoidance-Achse). On-tier-Wert unterhalb des ungegateten R5-Starter-Tiers (cured_leather_cap).
       evasionRating: 4.29,
+      // Content-Fix (Live-Bug 2026-08-23, 1.0.0 Marina-Report): value fehlte komplett →
+      // sellPrice fiel auf den 1-Gold-Fallback zurück ("no listed value"). Herleitung wie
+      // leather_legs/leather_boots (Task #286 Stage B, s. Kommentar dort): dieselbe leather_raw-
+      // Kategorie folgt intern value = 2 × Rezept-xp (craft_rawhide_legs: xp6→value12,
+      // craft_rawhide_boots: xp4→value8, beide exakt ×2) — craft_rawhide_helm hat xp5 ⇒ value 10.
+      value: 10,
     },
     leather_body: {
       id: "leather_body",
@@ -343,6 +357,9 @@ export const content: ContentDB = {
       slot: "body",
       modifiers: { con: 1 },
       evasionRating: 6.43,
+      // Content-Fix (Live-Bug 2026-08-23): value fehlte (s. leather_helm-Kommentar, identische
+      // Ursache + Herleitung). craft_rawhide_body hat xp7 ⇒ value 2×7 = 14.
+      value: 14,
     },
     // Task #286 Stage B (CEO-Fix, Content-Lücke): Ranged-Starterset hatte nur Brust+Helm, keine
     // req-freien Leder-Beine/-Schuhe (unterstes gegatetes Set cured_leather verlangt ranged 5).
@@ -382,6 +399,10 @@ export const content: ContentDB = {
       damageMin: 0.4, damageMax: 0.6, attackIntervalMs: 3000,
       requirements: { magic: 1 },
       weaponEffect: { type: "burn", chance: 0.5, magnitude: 1, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.3→1 (rounded to "0 damage/s" in tooltip)
+      // Content-Fix (Live-Bug 2026-08-23): value fehlte (s. rusty_sword-Kommentar, gleiche
+      // Herleitung). Shop-cost 120 × 8/18 ≈ 53.3 → 53 — trifft zufällig exakt hunting_bow (s.
+      // dort), was zur dort dokumentierten "Ranged-Parität zu gnarled_staff" passt.
+      value: 53,
     },
 
     // ── Starter-Stil-Waffen (Fernkampf & Magie, analog zu rusty_sword) ──
@@ -415,6 +436,10 @@ export const content: ContentDB = {
       weaponType: "shortbow",
       damageMin: 0.4, damageMax: 0.6, attackIntervalMs: 2650,
       requirements: { ranged: 1 },
+      // Content-Fix (Live-Bug 2026-08-23): value fehlte (s. rusty_sword-Kommentar, gleiche
+      // Herleitung). Shop-cost 120 × 8/18 ≈ 53.3 → 53, identisch zu gnarled_staff (dieselbe
+      // Parität, die der Kommentar oben schon für den Shop-Kaufpreis dokumentiert).
+      value: 53,
       description: {
         en: "A proper hunting bow with a taut cord. A real step up from a fraying stick.",
         de: "Ein richtiger Jagdbogen mit gespannter Sehne. Eine echte Verbesserung gegenüber einem zerschlissenen Stock.",

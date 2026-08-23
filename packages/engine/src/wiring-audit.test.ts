@@ -85,4 +85,22 @@ describe("Item-Verdrahtung", () => {
       .map((it) => it.id);
     expect(deadMaterials, `tote Material-Items (kein Sink, kein Verkaufswert): ${deadMaterials.join(", ")}`).toEqual([]);
   });
+
+  // Live-Bug 2026-08-23 (1.0.0, Marina-Report): leather_helm/leather_body hatten gar kein
+  // `value`-Feld, rusty_sword/wooden_shield/gnarled_staff/hunting_bow ebenso — sellPrice()
+  // (engine/shop.ts) fällt bei fehlendem/0-Wert auf Math.max(1, ...) zurück, ein selbst
+  // hergestelltes Set verkauft sich dann lautlos für 1 Gold statt seines echten Werts. Jedes
+  // erhältliche Item MUSS daher einen echten Verkaufswert tragen (Ausnahme: benannte
+  // Alt-Save-Kompat-Leichen wie die deprecated Dungeon-Schlüssel oben, die absichtlich keinen
+  // Erhältlichkeits-Pfad mehr haben — s. deren Kommentar in obtainableSet).
+  it("jedes erhältliche Item hat einen echten Verkaufswert (kein 1-Gold-Fallback)", () => {
+    const produced = obtainableSet();
+    const noSellValue = Object.keys(content.items)
+      .filter((id) => produced.has(id))
+      .filter((id) => (content.items[id]!.value ?? 0) <= 0);
+    expect(
+      noSellValue,
+      `erhältliche Items ohne value (verkaufen sich lautlos für 1 Gold): ${noSellValue.join(", ")}`,
+    ).toEqual([]);
+  });
 });
