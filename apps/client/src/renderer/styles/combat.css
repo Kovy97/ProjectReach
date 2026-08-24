@@ -6111,7 +6111,12 @@
   padding: 7px 13px;
   border-bottom: 1px solid rgba(193, 147, 75, 0.62);
   background: linear-gradient(90deg, rgba(8, 8, 8, 0.94), rgba(30, 22, 13, 0.82), rgba(8, 8, 8, 0.94));
-  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.42);
+  /* 1.1.0-Schattenpolitur (Befund B2): Der staerkste gemessene Aussenschatten des Spiels,
+     und der einzige groessere, der auf ein HELLES gemaltes Bild faellt statt auf dunkles UI —
+     unter der Leiste lag ein breiter Schleier quer ueber dem Abendhimmel, der wie Schmutz auf
+     dem Artwork aussah. Die Leiste braucht ihn nicht: die Trennlinie darueber (border-bottom)
+     leistet dieselbe Abgrenzung, ohne ins Bild zu bluten. */
+  box-shadow: var(--sh-0);
   font-family: var(--font-info);
 }
 

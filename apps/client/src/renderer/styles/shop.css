@@ -774,7 +774,11 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 
 #root .shopv2-card.selected {
   filter: brightness(1.08);
-  box-shadow: inset 0 0 0 2px #cda85d, inset 0 0 18px rgba(205, 151, 72, 0.15), 0 4px 16px rgba(0, 0, 0, 0.58);
+  /* 1.1.0-Schattenpolitur (Befund B3): Von aussen nach innen lagen hier Kartenrahmen,
+     goldene 2px-Linie und schwarze 1px-Linie ums Bildfeld — drei Umrandungen auf 25 Pixeln.
+     Der goldene Ring BLEIBT: er ist die einzige Rueckmeldung "diese Karte ist gewaehlt".
+     Der Innenglow daneben sagt denselben Zustand ein zweites Mal und faellt weg. */
+  box-shadow: var(--rg-2) #cda85d, var(--sh-3);
 }
 
 #root .shopv2-card.unavailable:not(.selected) {

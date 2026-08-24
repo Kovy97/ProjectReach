@@ -1276,10 +1276,13 @@
     linear-gradient(rgba(0,0,0,0.34), rgba(0,0,0,0.54)),
     url("../assets/bg_black.webp") repeat;
   background-size: 100% 100%, auto, 160px;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--attr-color, var(--gold)) 50%, transparent),
-    inset 0 2px 5px rgba(0,0,0,0.55),
-    inset 0 -3px 7px rgba(0,0,0,0.4);
+  /* 1.1.0-Schattenpolitur (Befund B1): Hier lagen drei Schattenlagen auf sechs Pixeln,
+     unter einem border-image, das die Kante bereits zeichnet. Der Farbring bleibt — er ist
+     der Attribut-Farbcode und die einzige Lage, die etwas AUSSAGT. Die beiden Innen-Vignetten
+     sind weg: sie haben die Kachel verwaschen, ohne eine Information zu tragen.
+     Die verbleibende Lage ist bewusst kein Token: --rg-1 ist der Radius, die Farbe kommt
+     je Attribut aus --attr-color. */
+  box-shadow: var(--rg-1) color-mix(in srgb, var(--attr-color, var(--gold)) 50%, transparent);
   transition: box-shadow 0.15s, transform 0.12s;
 }
 

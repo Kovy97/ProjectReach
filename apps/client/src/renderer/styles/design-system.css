@@ -95,6 +95,61 @@
   --ds-fs-lg:   28px;
   --ds-fs-xl:   35px;
   --ds-fs-2xl:  45px;
+
+  /* ─── Schatten-Skala (1.1.0, Chef-Auftrag 24.08.2026) ────────────────────
+     Ausgangslage, selbst nachgemessen (ASSETS-fremdes Skript, s. Bericht
+     design/ui-1.1.0/01-schatten.md): 444 echte `box-shadow`-Deklarationen in 55 Dateien,
+     624 Einzel-Lagen, 418 VERSCHIEDENE Werte, davon 338 genau einmal benutzt — und bis heute
+     kein einziges Token dafuer. Jeder Schatten im Spiel wurde einzeln von Hand hingeschrieben.
+     Daher die Beschwerde des Chefs ueber doppelte und dreifache Schatten: nicht ein Fehler an
+     einer Stelle, sondern das Fehlen eines Systems.
+
+     Die Skala ist bewusst VIERTEILIG, nicht eine Reihe. Die Lagen erfuellen vier verschiedene
+     Aufgaben, und presst man sie in eine gemeinsame Reihe, gehen die Zustandsanzeigen kaputt:
+     von 624 Lagen sind nur rund ein Fuenftel echte Fallschatten, der Rest sind Glows
+     (Auswahl/Gefahr/Elite), als Schatten gezeichnete Rahmen und Innen-Vignetten. Deshalb ist
+     die Antwort auf die Chef-Frage "Schatten komplett raus?" auch NEIN: ein Testbild ohne
+     jeden Schatten verliert sieben Zustandsanzeigen (Shop-Auswahl, Startstil-Auswahl,
+     Attribut-Farbcode, aktive Seite, Gefahrstufe der Monsterkarten, Fortschrittsbalken,
+     Abhol-Punkt). Das waere Funktionsverlust, nicht Schoenheitsverlust.
+
+     REGEL, wichtiger als die Tokens selbst: Ein Element hat ENTWEDER ein `border-image`
+     ODER einen Ring-Schatten — nie beides. Genau diese Kombination am SELBEN Element ist die
+     Ursache der sichtbaren Doppelraender (gemessen: Eltern/Kind stapeln sich NICHT).
+
+     Migration laeuft schrittweise, Gruppe fuer Gruppe mit Bildvergleich — die Werte hier sind
+     gerundete Stufen, kein Bestandswert trifft sie zufaellig exakt. Wer eine Datei anfasst,
+     stellt ihre Schatten mit um; neue Schatten NUR noch aus dieser Skala. */
+
+  /* Tiefe: echte Fallschatten. Licht immer von oben, darum kein x-Versatz. */
+  --sh-0: none;
+  --sh-1: 0 1px 2px rgba(0, 0, 0, 0.45);   /* Kante, Pip, Abzeichen auf UI */
+  --sh-2: 0 2px 4px rgba(0, 0, 0, 0.35);   /* Knoepfe, Navigation, Chips */
+  --sh-3: 0 4px 10px rgba(0, 0, 0, 0.45);  /* Karten, Abzeichen auf Artwork */
+  --sh-4: 0 8px 20px rgba(0, 0, 0, 0.5);   /* Panels, Plaketten */
+  --sh-5: 0 14px 32px rgba(0, 0, 0, 0.55); /* schwebende Karten, Popover */
+  --sh-6: 0 24px 60px rgba(0, 0, 0, 0.7);  /* Modale, Tooltips, Menue-Panel */
+
+  /* Zustands-Glow: gleicher Radius, unterschiedliche Farbe. `--gl-color` je Zustand setzen
+     (Gold = Auswahl, Rot = Gefahr, Orange = Elite), damit sich Zustaende nur in der FARBE
+     unterscheiden und nicht zusaetzlich in der Ausdehnung. */
+  --gl-color: rgba(216, 184, 112, 0.45);
+  --gl-1: 0 0 8px var(--gl-color);
+  --gl-2: 0 0 16px var(--gl-color);
+  --gl-3: 0 0 24px var(--gl-color);
+
+  /* Ring und Kante: Rahmen, die als Schatten gezeichnet werden. Ring nur, wo das Element
+     KEIN `border-image` traegt (s. Regel oben). Kante = Akzentlinie an einer Seite. */
+  --rg-1: inset 0 0 0 1px;
+  --rg-2: inset 0 0 0 2px;
+  --edge-l: inset 3px 0 0;
+  --edge-b: inset 0 -2px 0;
+
+  /* Innen-Vignette. Nur zulaessig, solange die Unschaerfe unter einem Viertel der kurzen
+     Elementkante bleibt — darueber wird daraus ein grauer Schleier statt einer Tiefenkante. */
+  --vg-1: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  --vg-2: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  --vg-3: inset 0 0 34px rgba(0, 0, 0, 0.5);
 }
 
 /* codex:2026-07-31T20:21:01+02:00 — Ironwood Bastion ersetzt zentral den bisherigen Citadel-Standardrahmen.

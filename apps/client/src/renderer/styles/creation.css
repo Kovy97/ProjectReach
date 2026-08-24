@@ -466,7 +466,13 @@
 .creation-style-card.active {
   background: linear-gradient(rgba(60, 42, 12, 0.62), rgba(60, 42, 12, 0.62)),
     url("../assets/bg_black.webp") repeat;
-  box-shadow: 0 0 16px rgba(216, 192, 106, 0.4), inset 0 0 12px rgba(216, 192, 106, 0.12);
+  /* 1.1.0-Schattenpolitur (Befund B4): Auf der aktiven Karte lagen vier Goldquellen
+     uebereinander — Aussenglow, Innenglow, Gold-Drop-Shadow am Symbol und Textglanz an der
+     Beschriftung. Zusammen ergab das kein Hervorheben, sondern ein olivgruenes Matschen.
+     Es bleiben zwei, die verschiedene Dinge sagen: der Aussenglow (die Karte ist gewaehlt)
+     und der Schein am goldenen Haekchen (die ausdrueckliche Marke). Weg sind der Innenglow,
+     der Goldschein am Symbol und der Textglanz an der Beschriftung. */
+  box-shadow: var(--gl-2);
 }
 
 /* Gold Häkchen oben rechts auf der gewählten Karte — sofort erkennbar welcher Stil aktiv ist. */
@@ -500,7 +506,8 @@
 
 .creation-style-card.active .creation-style-icon-img,
 .creation-style-card:hover .creation-style-icon-img {
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 14px rgba(216, 192, 106, 0.35));
+  /* 1.1.0 (B4): schwarzer Schlagschatten bleibt fuer die Lesbarkeit, der GOLD-Schein daneben ist weg — er war die zweite von vier Goldquellen auf derselben Karte. */
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
 }
 
 .creation-style-name {
@@ -514,7 +521,9 @@
 }
 
 .creation-style-card.active .creation-style-name {
-  text-shadow: 0 0 10px rgba(216, 192, 106, 0.45);
+  /* 1.1.0 (B4): dritte Goldquelle auf derselben Karte, ersatzlos weg. Die Auswahl zeigen
+     der Aussenglow und das goldene Haekchen — der Name muss sie nicht ein drittes Mal sagen. */
+  text-shadow: none;
 }
 
 .creation-style-desc {
