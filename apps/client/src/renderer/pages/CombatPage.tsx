@@ -3662,9 +3662,14 @@ function EliteMonsterCard({
           </div>
         )}
 
+        {/* 1.1.0 (Chef-Fund): Dieser Knopf hiess "mc-fight-btn" — eine Klasse, fuer die es
+            NIRGENDS eine Regel gibt. Er fiel damit auf den nackten Grundknopf zurueck und sah
+            neben der normalen Monsterkarte veraltet aus, deren Kampf-Knopf "mc-fight-now-btn"
+            heisst und von gravewood-fighter-cards.css gestaltet wird. Ein Buchstabendreher im
+            Klassennamen, zwei Jahre unbemerkt. Jetzt dieselbe Klasse, dieselbe Optik. */}
         <div className="monster-card-actions">
           <button
-            className="combat-btn mc-fight-btn"
+            className="combat-btn mc-fight-now-btn"
             disabled={busy}
             title={busy ? t("combat.elite.fightBusy") : undefined}
             onClick={onFight}

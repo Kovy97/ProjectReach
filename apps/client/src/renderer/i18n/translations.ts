@@ -1601,7 +1601,9 @@ const en = {
     "pouch.variantsHeading": "Enchanted variants",
     "pouch.variantCount": "{n} variant(s) owned",
     // Welle VV (2026-07-19 redesign): Roll-Quality meter, equipped marker, search/sort bar.
-    "pouch.rollQuality": "Roll Quality",
+    "pouch.rollQuality": "Suffix Quality",
+    "pouch.legendEnchant": "Enchanted",
+    "pouch.legendSuffix": "Random Roll",
     "pouch.rollQualityHint": "How strong this suffix rolled compared to the best possible roll.",
     "pouch.sortLabel": "Sort",
     "pouch.sortBest": "Best first",
@@ -3593,7 +3595,9 @@ const de: Record<keyof typeof en, string> = {
     "pouch.variantsHeading": "Verzauberte Varianten",
     "pouch.variantCount": "{n} Variante(n) im Besitz",
     // Welle VV (Redesign 2026-07-19): Wurfgüte-Meter, Ausgerüstet-Markierung, Such-/Sortier-Leiste.
-    "pouch.rollQuality": "Wurfgüte",
+    "pouch.rollQuality": "Suffix-Güte",
+    "pouch.legendEnchant": "Verzaubert",
+    "pouch.legendSuffix": "Zufallswurf",
     "pouch.rollQualityHint": "Wie stark dieser Suffix im Vergleich zum bestmöglichen Wurf ausgefallen ist.",
     "pouch.sortLabel": "Sortieren",
     "pouch.sortBest": "Beste zuerst",

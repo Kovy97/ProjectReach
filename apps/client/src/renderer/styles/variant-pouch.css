@@ -191,6 +191,16 @@
   line-height: 1.25;
 }
 
+/* 1.1.0: Der Basisname wiederholt sich in jeder Zeile und steht schon in der Kopfzeile.
+   Gedaempft und etwas kleiner, damit die unterscheidenden Woerter (Verzauberung, Suffix) die
+   Zeile tragen. `inherit` waere falsch — der Name traegt die Seltenheitsfarbe, und genau die
+   soll hier NICHT mitlaufen. */
+.pouch-row-name-basis {
+  color: var(--muted, #8a7c62);
+  font-weight: 500;
+  font-size: 0.88em;
+}
+
 .pouch-row-name.rarity-poor      { color: var(--rar-poor); }
 .pouch-row-name.rarity-common    { color: var(--text); }
 .pouch-row-name.rarity-magic     { color: var(--rar-magic); }
@@ -222,6 +232,30 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px 6px;
+}
+
+/* 1.1.0: Legende zu den Chip-Farben, einmal oben statt in jeder Zeile. */
+.pouch-legend {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin: 0 0 10px;
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--muted, #8a7c62);
+}
+
+.pouch-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pouch-legend-dot {
+  width: 22px;
+  height: 12px;
+  padding: 0;
+  border-radius: 6px;
 }
 
 .pouch-chip {

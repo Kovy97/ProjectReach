@@ -4,6 +4,7 @@ import { content } from "@hearthforge/content";
 import type { ItemInstance, LocalizedString } from "@hearthforge/shared";
 import { EQUIP_SLOTS, instanceDisplayName, isStatusEffectType } from "@hearthforge/shared";
 import { useGameStateMaybe } from "../game/GameContext";
+import type { ReactNode } from "react";
 import { useI18n } from "../i18n";
 import { registerEscCloser } from "../util/escStack";
 import { getItemImage, rarityClass } from "../items";
@@ -142,6 +143,28 @@ function PouchRow({
   const img = getItemImage(itemId);
   const isVariant = !!instance && (instance.affixes.length > 0 || !!instance.suffix);
   const name = isVariant && instance ? instanceDisplayName(instance, content, locale) : item ? tr(item.name) : itemId;
+  // 1.1.0 (Chef: "schlecht lesbar und verstaendlich"): Der Basisname steht in JEDER Zeile —
+  // "Flammend Rostiges Schwert", "Eisig Rostiges Schwert", "Sturm Rostiges Schwert des Wolfes".
+  // Er steht aber schon in der Kopfzeile des Modals, und in der Liste ist er die einzige
+  // Information, die alle Zeilen TEILEN. Das Auge muss ihn also in jeder Zeile ueberspringen, um
+  // den Unterschied zu finden — genau umgekehrt zu dem, wofuer die Liste da ist.
+  // Darum wird er gedaempft und die unterscheidenden Woerter tragen die Farbe. Faellt die
+  // Aufteilung aus (Sprache, in der der Basisname nicht woertlich im Variantennamen steckt),
+  // steht einfach der volle Name da — nie weniger Information als vorher.
+  const basisName = item ? tr(item.name) : itemId;
+  const nameTeile: ReactNode = (() => {
+    if (!isVariant || !name.includes(basisName) || name === basisName) return name;
+    const [vorne, ...rest] = name.split(basisName);
+    const hinten = rest.join(basisName);
+    return (
+      <>
+        {vorne}
+        <span className="pouch-row-name-basis">{basisName}</span>
+        {hinten}
+      </>
+    );
+  })();
+
   // Welle VV (Chef-Kernwunsch: "welche Stats betroffen sind ... direkt in der Zeile"): kompakte
   // Chips statt des vollen Tooltips, s. buildStatChips-JSDoc.
   const chips = isVariant && instance ? buildStatChips(instance, t, tr) : [];
@@ -182,7 +205,7 @@ function PouchRow({
             </span>
           )}
         </span>
-        <span className={`pouch-row-name ${rarityClass(item?.rarity)}`}>{name}</span>
+        <span className={`pouch-row-name ${rarityClass(item?.rarity)}`}>{nameTeile}</span>
         {equipped && <span className="itip-equipped-badge pouch-row-equipped-badge">{t("itip.equipped")}</span>}
         {qty > 1 && <span className="pouch-row-qty">×{qty}</span>}
       </div>
@@ -333,6 +356,25 @@ export function VariantPouchModal({
             </div>
           </div>
         </div>
+
+        {/* 1.1.0 (Chef: "schlecht lesbar und verstaendlich"): Die Chips in den Zeilen tragen
+            schon zwei Bedeutungen — gruen kommt aus einer Verzauberung, gold aus dem
+            Zufallswurf des Suffix. Nur sagte das nichts, also las man beide als dasselbe.
+            Die Legende steht bewusst EINMAL oben statt als Beschriftung in jeder Zeile.
+            Sie erscheint nur, wenn ueberhaupt Varianten da sind — bei einer reinen
+            Grundversion gaebe es nichts zu erklaeren. */}
+        {stacks.length > 0 && (
+          <div className="pouch-legend">
+            <span className="pouch-legend-item">
+              <span className="pouch-chip pouch-chip-enchant pouch-legend-dot" aria-hidden="true" />
+              {t("pouch.legendEnchant")}
+            </span>
+            <span className="pouch-legend-item">
+              <span className="pouch-chip pouch-chip-suffix pouch-legend-dot" aria-hidden="true" />
+              {t("pouch.legendSuffix")}
+            </span>
+          </div>
+        )}
 
         {showToolbar && (
           <div className="pouch-toolbar">
