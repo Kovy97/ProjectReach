@@ -136,8 +136,36 @@ export function SpotlightGuide({
     // NIE bei einem simplen Scroll-Event (sonst kämpft das gegen manuelles Scrollen des
     // Spielers). Kein "smooth" — die Rect-Messung direkt danach braucht die Endposition SOFORT,
     // nicht erst nach der Scroll-Animation.
+    // 1.0.2 (Tester-Befund „Der Gründliche"): Scrollen hilft nur bei Zielen, die AUSSERHALB des
+    // sichtbaren Bereichs liegen — nicht bei Zielen in einem ZUGEKLAPPTEN Behälter. Der
+    // Optionen-Schritt zeigt auf einen Knopf in der Fußleisten-Schublade der Seitenleiste, die
+    // im Normalzustand geschlossen ist: Die Blase sagte „klicke auf die hervorgehobene Stelle",
+    // und es war keine zu sehen. Der Rundgang war an dieser Stelle für jeden neuen Spieler
+    // nicht abschliessbar, ausser er erriet die Schublade. Bewusst allgemein gehalten: jedes
+    // Ziel ohne Ausdehnung, das in der Fußleiste steckt, klappt sie selbst auf.
+    // Geprüft wird SICHTBARKEIT, nicht Größe: die geschlossene Schublade lässt ihre Knöpfe
+    // vollständig ausgemessen (239x37), schiebt sie aber unter den Fensterrand. Eine
+    // Null-Größen-Prüfung greift deshalb nicht.
+    const revealIfCollapsed = (el: HTMLElement | null): boolean => {
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      const imBild = r.width > 1 && r.height > 1 && r.bottom <= window.innerHeight && r.top >= 0;
+      if (imBild) return false;
+      const footer = el.closest(".sb-footer");
+      if (!footer || footer.classList.contains("is-open")) return false;
+      footer.querySelector<HTMLElement>(".sb-footer-drawer-tab")?.click();
+      return true;
+    };
+
     const recompute = (scrollTarget: boolean): void => {
       const found = findSpotlightTarget(guideId);
+      if (revealIfCollapsed(found.el)) {
+        // Das Aufklappen ist eine React-Zustandsänderung: Direkt nach dem Klick steht das alte
+        // Layout noch. Deshalb NICHT sofort nachmessen, sondern im nächsten Frame neu rechnen,
+        // wenn die Schublade wirklich offen ist.
+        requestAnimationFrame(() => recompute(true));
+        return;
+      }
       const targetChanged = found.el !== currentEl;
       if (targetChanged) {
         currentEl?.classList.remove("guide-target");
