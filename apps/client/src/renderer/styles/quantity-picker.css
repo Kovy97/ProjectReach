@@ -56,9 +56,16 @@
   width: 100%;
   min-width: 0;
   flex: 1;
+  /* 1.1.0 (Bericht 02, Befund C): Das Feld stand mit abgerundeten Ecken direkt neben eckigen
+     Rahmenbild-Knoepfen und war deutlich niedriger als sie — vier Rand-Sprachen auf einer
+     Hoehe. Es BLEIBT ein flaches Formularfeld (der Kanon verbietet Holzrahmen in
+     Formularkontrollen), aber eckig und auf Knopfhoehe, damit die Reihe als ein Bauteil liest. */
+  appearance: textfield;
+  -moz-appearance: textfield;
+  min-height: 46px;
   background: rgba(10, 8, 6, 0.55);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   color: var(--text);
   padding: 6px 10px;
   font-size: 14px;
@@ -69,10 +76,15 @@
   border-color: var(--gold);
 }
 
-/* Chrome/Firefox Spin-Buttons dezent lassen statt der lauten OS-Default-Pfeile. */
+/* 1.1.0 (Bericht 02, Befund C): Die Spin-Pfeile waren nur gedimmt (opacity 0.6), nicht weg —
+   ein nativer Betriebssystem-Pfeil mitten zwischen Holzrahmen-Knoepfen. Sie sind ausserdem
+   ueberfluessig: darueber stehen vier Mengen-Knoepfe und daneben ein Bestaetigen-Knopf.
+   Firefox braucht zusaetzlich appearance:textfield, sonst zeichnet er sie trotzdem. */
 .qty-picker-input::-webkit-inner-spin-button,
 .qty-picker-input::-webkit-outer-spin-button {
-  opacity: 0.6;
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .qty-picker-confirm {

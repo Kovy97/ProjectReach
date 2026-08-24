@@ -234,6 +234,26 @@
   display: flex;
   flex-direction: column;
   gap: 26px;
+  /* 1.1.0 (Bericht 05, Befund 2.2): Das Formular war das EINZIGE Panel im Spiel ganz ohne
+     Rahmen — eine flache, halb schwarz uebermalte Holzflaeche randlos bis zum Bildschirmrand.
+     Selbst die schlichten Hauptmenue-Panels tragen den Citadel-Rahmen; die Charaktererstellung
+     fiel damit hinter das eigene Hauptmenue zurueck und wirkte wie ein Platzhalter, obwohl sie
+     der erste grosse Spielmoment ist. Der Rahmen sitzt auf dem INNEREN Kasten (max-width 600),
+     nicht auf .creation-panel: der scrollt und reicht randlos ueber die volle Hoehe, ein
+     Rahmen dort waere ein Rahmen um den Bildschirm. */
+  padding: clamp(20px, 2vw, 34px) clamp(18px, 1.8vw, 30px);
+  border-style: solid;
+  border-color: transparent;
+  border-width: var(--frame-w);
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(10, 8, 6, 0.55), rgba(10, 8, 6, 0.55)),
+    url("../assets/bg_black.webp") repeat;
 }
 
 /* Gold Cinzel title — uppercase */
@@ -570,16 +590,22 @@
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
+  /* 1.1.0 (Bericht 05, Befund 2.1): "Das Abenteuer beginnen" ist die wichtigste Schaltflaeche
+     im ganzen Spiel — der letzte Klick vor der ersten Spielminute — und sah aus wie jeder
+     andere Knopf: derselbe dunkle Grund, dasselbe Gold, ein leiser Schein. Jetzt traegt sie
+     einen deutlich helleren Grund und einen kraeftigeren Rand-Schein. Bewusst NICHT ueber die
+     `hf-btn`-Familie geloest: dieser Knopf hat eine eigene Groesse und volle Breite, er soll
+     nicht wie ein Menue-Eintrag aussehen, sondern wie ein Tor. */
   background:
-    linear-gradient(rgba(35,24,10,0.62), rgba(35,24,10,0.62)),
+    linear-gradient(rgba(92, 66, 20, 0.78), rgba(66, 46, 12, 0.82)),
     url("../assets/bg_black.webp") repeat;
-  color: var(--gold);
-  box-shadow: 0 0 14px rgba(216,192,106,0.22);
+  color: var(--ds-gold-bright, #f0dca0);
+  box-shadow: var(--rg-1) rgba(240, 220, 160, 0.5), 0 0 20px rgba(216, 192, 106, 0.34);
   transition: box-shadow 0.15s, filter 0.15s;
 }
 
 .creation-start:hover:not(:disabled) {
-  box-shadow: 0 0 22px rgba(216,192,106,0.44);
+  box-shadow: var(--rg-1) rgba(240, 220, 160, 0.8), 0 0 30px rgba(216, 192, 106, 0.55);
   filter: brightness(1.10);
 }
 

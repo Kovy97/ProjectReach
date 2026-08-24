@@ -139,7 +139,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
       <div className={`menu-main${panel !== null ? " menu-main--panel-open" : ""}`}>
         {/* Linke Nav-Spalte */}
         <nav className="menu-nav">
-          <MenuNavButton icon={emblCompass} active={panel === "new"} onClick={() => togglePanel("new")}>
+          <MenuNavButton icon={emblCompass} variant="primary" active={panel === "new"} onClick={() => togglePanel("new")}>
             {t("menu.new")}
           </MenuNavButton>
           <MenuNavButton icon={emblWaxseal} active={panel === "load"} onClick={() => togglePanel("load")}>
@@ -460,10 +460,14 @@ interface MenuNavButtonProps {
   children: React.ReactNode;
 }
 
-function MenuNavButton({ icon, active, variant = "primary", onClick, children }: MenuNavButtonProps): JSX.Element {
+/* 1.1.0 (Bericht 05, Befund 1.2): Der Default war `primary` — also trugen "Neues Spiel",
+   "Spiel laden" UND "Optionen" dieselbe Betonung, und seit `hf-btn--primary` Gold traegt
+   waren alle drei gleich laut. Eine Betonung, die jeder hat, ist keine. Jetzt ist der
+   Default ruhig, und der Aufrufer setzt `primary` genau dort, wo die Hauptaktion ist. */
+function MenuNavButton({ icon, active, variant, onClick, children }: MenuNavButtonProps): JSX.Element {
   return (
     <button
-      className={`hf-btn hf-btn--${variant} menu-nav-btn${active ? " active" : ""}`}
+      className={`hf-btn${variant ? ` hf-btn--${variant}` : ""} menu-nav-btn${active ? " active" : ""}`}
       onClick={onClick}
     >
       <span className="hf-btn__face">

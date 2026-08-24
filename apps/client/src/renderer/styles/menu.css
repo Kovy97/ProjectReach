@@ -937,6 +937,23 @@
   border-image-width: clamp(12px, 1vw, 18px);
 }
 
+/* 1.1.0 (Bericht 05, Befund 1.2): Die Hauptaktion muss sich abheben. Die Regel darueber setzt
+   den Lederhintergrund fuer ALLE Nav-Knoepfe mit drei Klassen Spezifitaet — eine Betonung in
+   hf-btn--primary allein kam dagegen nicht durch (gemessen: Klasse gesetzt, Hintergrund
+   trotzdem identisch, nur Textfarbe und ein duenner Ring kamen an, was man nicht sieht).
+   Deshalb steht sie hier, mit derselben Spezifitaet plus der Variante. */
+.menu--war-table .hf-btn.menu-nav-btn.hf-btn--primary {
+  background:
+    linear-gradient(rgba(96, 70, 24, 0.42), rgba(44, 30, 8, 0.55)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+  box-shadow: var(--rg-1) rgba(216, 184, 112, 0.55), var(--gl-1);
+}
+
+.menu--war-table .hf-btn.menu-nav-btn.hf-btn--primary:hover {
+  box-shadow: var(--rg-1) rgba(240, 220, 160, 0.85), var(--gl-2);
+}
+
 .menu--war-table .menu-nav-btn:hover,
 .menu--war-table .menu-nav-btn:hover:active {
   transform: none;
