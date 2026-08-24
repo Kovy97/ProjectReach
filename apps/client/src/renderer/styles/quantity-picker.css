@@ -32,8 +32,8 @@
 }
 
 .qty-picker-btn::before {
-  border-width: 6px;
-  border-image-width: 6px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
 }
 
 .qty-picker-btn--max {

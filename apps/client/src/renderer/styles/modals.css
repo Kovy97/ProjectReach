@@ -409,10 +409,10 @@
   background-size: cover;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7);
@@ -512,10 +512,10 @@
   background-size: cover;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.7);

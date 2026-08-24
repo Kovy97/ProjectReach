@@ -166,10 +166,10 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 7px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   /* border-radius must be 0 — border-image and border-radius are incompatible */
@@ -389,10 +389,10 @@
   /* Holz-9-Slice-Rahmen, slice 28, ~5 px, eckig */
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28;
-  border-image-width: 5px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -1393,10 +1393,10 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 7px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -1520,10 +1520,10 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 7px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -1996,10 +1996,10 @@ button.skilloverview-card {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 5px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -2031,10 +2031,10 @@ button.skilloverview-card {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 7px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -2412,10 +2412,10 @@ button.skilloverview-card {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 7px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;

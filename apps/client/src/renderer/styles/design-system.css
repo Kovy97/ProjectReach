@@ -36,6 +36,19 @@
   --ds-glow-accent:   0 0 14px rgba(90, 130, 160, 0.35);
 
   /* Radius */
+  /* ─── Rahmenbreite (1.1.0) ────────────────────────────────────────
+     Ein einziges Rahmenbild (wooden_frame_with_corners_seamless) lebt an 206 Stellen in 34
+     Dateien — und wurde dort in 14 verschiedenen Breiten gezeichnet. 123 davon lagen zwischen
+     5 und 11 Pixeln: kein Gestaltungsunterschied, sondern Zufall aus zwanzig Wellen. Deshalb
+     sah derselbe Rahmen je nach Bildschirm mal duenn und mal fett aus.
+     Wer einen Rahmen setzt, nimmt --frame-w. Nur wenn ein Bauteil BEWUSST anders sein soll
+     (grosse Zierrahmen ab 12px, s. Menue und Chronik), steht dort weiter eine eigene Zahl.
+     WICHTIG: border-width und border-image-width immer gemeinsam setzen — das eine reserviert
+     den Platz, das andere zeichnet darin. Laufen sie auseinander, zeichnet der Rahmen neben
+     seinem eigenen Platz. */
+  --frame-w: 8px;
+  --frame-w-compact: 4px;
+
   --ds-radius-sm: 2px;
   --ds-radius:    4px;
   --ds-radius-lg: 6px;
@@ -235,10 +248,10 @@
   inset: 0;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 10px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: transparent;
@@ -340,10 +353,10 @@
 .ds-tooltip {
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/tooltip/tt_texture.webp");
   border-image-slice: 10 10 10 10 fill;
-  border-image-width: 10px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   color: var(--ds-parch-ink);

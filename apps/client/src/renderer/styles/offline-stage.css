@@ -875,8 +875,8 @@
 
 #root .offline-stage-duration {
   padding: 9px 22px;
-  border-width: 10px;
-  border-image-width: 10px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
   font-size: clamp(19px, 1.35vw, 24px);
   background-origin: border-box;
   background-clip: border-box;
@@ -884,8 +884,8 @@
 
 #root .ofs-warden {
   padding: 18px 22px;
-  border-width: 10px;
-  border-image-width: 10px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
   background-origin: border-box;
   background-clip: border-box;
 }

@@ -1036,10 +1036,10 @@
   justify-content: center;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -2086,10 +2086,10 @@
   -webkit-appearance: none;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 6px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -2153,10 +2153,10 @@
   box-sizing: border-box;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 6px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -2643,8 +2643,8 @@
   .cs-portrait-wrap {
     max-height: 20vh;
     min-height: 90px;
-    border-width: 8px;
-    border-image-width: 8px;
+    border-width: var(--frame-w);
+    border-image-width: var(--frame-w);
   }
   .cs-nameplate {
     padding: 8px 8px 5px;
@@ -2769,10 +2769,10 @@
   inset: 0;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 5px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: transparent;

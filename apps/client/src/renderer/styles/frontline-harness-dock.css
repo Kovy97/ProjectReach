@@ -10,10 +10,10 @@
   padding: 8px;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
   border-image-slice: 96;
-  border-image-width: 10px;
+  border-image-width: var(--frame-w);
   border-image-repeat: stretch;
   /* codex:2026-08-03T17:36:00+02:00 — Chef-Nachfix: Außenhülle exakt wie der rechte
      `.combat-select`-Zonencontainer (Bronze-Lipped-Iron 10px + Umber Cloth), während die
@@ -44,8 +44,8 @@
 .combat-frontline-dock .cl-dock-tab {
   min-height: clamp(42px, 4.2vh, 50px);
   padding: 6px 3px;
-  border-width: 6px;
-  border-image-width: 6px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
   background:
     linear-gradient(rgba(26, 30, 31, 0.72), rgba(9, 11, 12, 0.9)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
@@ -348,10 +348,10 @@
 
 .combat-frontline-dock .cl-autoeat-upgrade {
   min-height: 38px;
-  border-width: 6px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
   border-image-slice: 96;
-  border-image-width: 6px;
+  border-image-width: var(--frame-w);
   border-radius: 0;
   background:
     linear-gradient(rgba(18, 20, 21, 0.78), rgba(5, 7, 8, 0.9)),
@@ -366,8 +366,8 @@
   width: 44px;
   padding: 0;
   overflow: hidden;
-  border-width: 6px;
-  border-image-width: 6px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
   background:
     linear-gradient(90deg, rgba(4, 5, 6, 0.96), rgba(27, 29, 29, 0.94) 50%, rgba(4, 5, 6, 0.96)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;

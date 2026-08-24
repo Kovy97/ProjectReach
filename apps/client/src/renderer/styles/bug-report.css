@@ -428,16 +428,16 @@
 #root .bugreport-textarea {
   min-height: 190px;
   padding: 16px 18px;
-  border-width: 10px;
-  border-image-width: 10px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
   font-size: clamp(16px, 1vw, 19px);
 }
 
 #root .bugreport-dropzone {
   min-height: 150px;
   padding: 20px;
-  border-width: 10px;
-  border-image-width: 10px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
 }
 
 #root .bugreport-dropzone .combat-btn,
@@ -462,8 +462,8 @@
 }
 
 #root .bugreport-auto-block {
-  border-width: 9px;
-  border-image-width: 9px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
   font-size: clamp(14px, 0.9vw, 17px);
 }
 

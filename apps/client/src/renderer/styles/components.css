@@ -1454,8 +1454,8 @@ body .item-cell.rarity-godly {
     radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--rarity-col, var(--gold)) 14%, transparent), transparent 68%),
     linear-gradient(rgba(12, 14, 15, 0.56), rgba(7, 8, 9, 0.78)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 192px 192px repeat;
-  border-width: 7px;
-  border-image-width: 7px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
 }
 
 .itip-warbanner-main .itip-stage::before {
@@ -1493,8 +1493,8 @@ body .item-cell.rarity-godly {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
   gap: 0 16px;
-  border-width: 7px;
-  border-image-width: 7px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
 }
 
 .itip-warbanner-record .itip-group {

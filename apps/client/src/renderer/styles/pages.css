@@ -355,10 +355,10 @@ body.bank-dragging-noselect {
   padding: 22px 28px;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 10px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   border-radius: 0;
@@ -3819,10 +3819,10 @@ body.bank-dragging-noselect {
   padding: 14px 16px 16px;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 10px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
@@ -3902,10 +3902,10 @@ body.bank-dragging-noselect {
   padding: 14px 16px 16px;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 10px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
@@ -4466,10 +4466,10 @@ body.bank-dragging-noselect {
   padding: 8px 20px 8px 14px;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   /* Chef 25.07.: Shop von Stein auf Holz — exakt das Options-Rezept (280px = „feiner"-Standard). */
@@ -4508,10 +4508,10 @@ body.bank-dragging-noselect {
   padding: 14px 16px 16px;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 10px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   /* Chef 25.07.: Shop von Stein auf Holz — exakt das Options-Rezept (280px = „feiner"-Standard). */
@@ -4621,10 +4621,10 @@ body.bank-dragging-noselect {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 6px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   text-align: center;
@@ -4666,10 +4666,10 @@ body.bank-dragging-noselect {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 5px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   margin: 6px 6px 0;
@@ -5036,10 +5036,10 @@ body.bank-dragging-noselect {
   inset: 0;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: transparent;
@@ -5147,8 +5147,8 @@ body.bank-dragging-noselect {
 .bank-ledger-intro .npc-greeting-head {
   width: clamp(58px, 4vw, 72px);
   height: clamp(58px, 4vw, 72px);
-  border-width: 8px;
-  border-image-width: 8px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
 }
 
 .bank-ledger-intro .npc-bubble {

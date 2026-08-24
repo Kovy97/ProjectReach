@@ -107,10 +107,10 @@
      bg_black-Kachel; die 8px sind Asset-Geometrie und bleiben daher literal. */
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-repeat: stretch;
   border-radius: 0;
   background: linear-gradient(rgba(6, 5, 4, 0.7), rgba(6, 5, 4, 0.7)),
@@ -651,10 +651,10 @@
   inset: 0;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 5px;
+  border-image-width: var(--frame-w);
   border-image-repeat: stretch;
   pointer-events: none;
 }
@@ -705,10 +705,10 @@
   overflow: hidden;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-repeat: stretch;
   cursor: default;
 }
@@ -1189,10 +1189,10 @@
   padding: var(--ds-gap);
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
-  border-image-width: 8px;
+  border-image-width: var(--frame-w);
   border-image-repeat: stretch;
   background: linear-gradient(rgba(6, 5, 4, 0.7), rgba(6, 5, 4, 0.7)), url("../assets/bg_black.webp") repeat;
 }
@@ -1678,8 +1678,8 @@
 /* codex:2026-07-31T19:00:03+02:00 — Listenkarten folgen der normalen Action-Card-Hierarchie. */
 .nh-card {
   container-type: inline-size;
-  border-width: 7px;
-  border-image-width: 7px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
   background:
     linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.78)),
     var(--gw-action-leather) center / 256px 256px repeat;
@@ -1845,8 +1845,8 @@
   box-sizing: border-box;
   min-width: 0;
   min-height: 92px;
-  border-width: 6px;
-  border-image-width: 6px;
+  border-width: var(--frame-w);
+  border-image-width: var(--frame-w);
 }
 
 .nh-card-action-slot {
@@ -2808,7 +2808,7 @@
   .nh-view-controls {
     padding: 4px;
     border-width: 5px;
-    border-image-width: 7px;
+    border-image-width: var(--frame-w);
   }
 
   .nh-view-controls .nh-view-tab {

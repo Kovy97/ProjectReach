@@ -197,7 +197,7 @@
   min-height: 38px;
   /* Task #332: kompaktere Buttons brauchen einen schmaleren Ornament-Rand als die 12px-Basis
      (combat.css `.combat-btn`), sonst fressen die Ecken bei 38px Höhe den Textraum. */
-  border-image-width: 9px;
+  border-image-width: var(--frame-w);
 }
 
 /* „Ausgewählt"-Zustand eines Segment-/Sprach-Toggles: dieselbe Bildsprache wie der Citadel-
