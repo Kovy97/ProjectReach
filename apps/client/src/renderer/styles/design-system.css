@@ -46,8 +46,10 @@
      WICHTIG: border-width und border-image-width immer gemeinsam setzen — das eine reserviert
      den Platz, das andere zeichnet darin. Laufen sie auseinander, zeichnet der Rahmen neben
      seinem eigenen Platz. */
-  --frame-w: 8px;
-  --frame-w-compact: 4px;
+  /* Chef 24.08.: 25 % duenner (war 8/4). Moeglich wurde das erst, nachdem der Zuschnitt
+     stimmt — vorher musste jede Breite die halb leere Rahmenzone ausgleichen. */
+  --frame-w: 6px;
+  --frame-w-compact: 3px;
 
   --ds-radius-sm: 2px;
   --ds-radius:    4px;
@@ -178,8 +180,8 @@
   border-color: transparent;
   border-width: 28px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 13 15 13 15;
-  border-image-width: 28px;
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: url("../assets/bg_black.webp") repeat;
@@ -250,8 +252,8 @@
   border-color: transparent;
   border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 13 15 13 15;
-  border-image-width: var(--frame-w);
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: transparent;

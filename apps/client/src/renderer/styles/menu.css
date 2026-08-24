@@ -121,8 +121,8 @@
   border-color: transparent;
   border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 13 15 13 15;
-  border-image-width: var(--frame-w);
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
   border-image-repeat: stretch;
   pointer-events: none;
   z-index: 1;
@@ -283,8 +283,8 @@
   border-color: transparent;
   border-width: 28px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 13 15 13 15;
-  border-image-width: 28px;
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
   border-image-repeat: stretch;
   background:
@@ -327,8 +327,8 @@
   border-color: transparent;
   border-width: 14px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 13 15 13 15;
-  border-image-width: 14px;
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
   border-image-repeat: stretch;
   background:
@@ -713,8 +713,8 @@
   border-color: transparent;
   border-width: var(--frame-w);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 13 15 13 15;
-  border-image-width: var(--frame-w);
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
   border-image-repeat: stretch;
   background: transparent;
@@ -899,7 +899,7 @@
   border-width: clamp(14px, 1.15vw, 22px);
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28;
-  border-image-width: clamp(14px, 1.15vw, 22px);
+  border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
   border-image-repeat: stretch;
   box-shadow: 0 18px 70px rgba(0, 0, 0, 0.86), inset 0 0 36px rgba(0, 0, 0, 0.5);
