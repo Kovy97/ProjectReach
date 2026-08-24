@@ -476,6 +476,24 @@
   grid-template-rows: 122px 52px 175px 34px 44px minmax(34px, 1fr);
 }
 
+/* 1.0.2 (Spieler-Report Aldric): "Please resize the loot drop box in Thieving ... it seems goofy
+   that we need to scroll to see the individual items. Especially with the 4 big empty boxes
+   below it."
+   Er hat beides richtig gesehen. Gemessen war die Beute-Box 330x52 px bei 110 px Inhalt — fuer
+   ZWEI Chips ein Scrollbalken — waehrend direkt darunter das 2x2-Materialrack seine 175 px
+   behielt, obwohl Stehlen NIE Zutaten braucht und alle vier Kaesten leer blieben.
+   Bei Aktionen ohne jede Zutat entfaellt das Rack (SkillPage.tsx) und seine Zeile geht
+   an die Beute: 160 px statt 52. Das reicht fuer drei bis vier Beute-Chips ohne Scrollbalken
+   (gemessen brauchten zwei Chips 110 px). Volle 227 waren zu grosszuegig — beim Bergbau steht
+   nur EIN Ertrag drin, und der schwamm dann in einem leeren Kasten. Die Karte wird dadurch
+   etwas kuerzer als eine mit Zutaten; das faellt nicht auf, weil Aktionen ohne Zutaten
+   (Stehlen, Sammeln, Bergbau) ihre Karten unter sich haben.
+   Steht bewusst HINTER der Regel darueber — ein erster Anlauf weiter oben in dieser Datei
+   wurde von ihr ueberschrieben (Klasse gesetzt, Rack weg, Zeilen trotzdem unveraendert). */
+#root .skillcard-body--no-inputs {
+  grid-template-rows: 122px 160px 0 34px 44px minmax(34px, 1fr);
+}
+
 #root .skillcard-output-zone :is(.skillcard-loot, .skillcard-produces) {
   padding: 3px 7px !important;
 }

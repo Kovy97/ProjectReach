@@ -982,7 +982,11 @@ const ActionCard = memo(function ActionCard({
         <div className="skillcard-title">{tr(action.name)}</div>
       </div>
 
-      <div className="skillcard-body">
+      {/* 1.0.2 (Spieler-Report): Braucht eine Aktion GAR KEINE Zutaten (Stehlen, Sammeln,
+          Holzfaellen), stand hier trotzdem ein 2x2-Rack aus vier leeren Reservekaesten —
+          112 px, waehrend die Beute-Box darueber auf 52 px scrollte. Die Klasse gibt der
+          Beute diesen Platz. Karten MIT Zutaten bleiben unveraendert. */}
+      <div className={`skillcard-body${resourceInputs.length === 0 ? " skillcard-body--no-inputs" : ""}`}>
         <div className="skillcard-grid">
           {tiles.map((tile) =>
             tile.tooltip ? (
@@ -1073,6 +1077,7 @@ const ActionCard = memo(function ActionCard({
 
         {/* codex:2026-07-31T19:32:00+02:00 — Vier feste Resource-Slots für 0–4 Inputs.
             Gathering und kurze Rezepte behalten neutrale Reserven statt ihre Geometrie zu ändern. */}
+        {resourceInputs.length > 0 && (
         <div className="skillcard-resource-rack">
           {Array.from({ length: 4 }, (_, slotIndex) => {
             const inp = resourceInputs[slotIndex];
@@ -1121,6 +1126,7 @@ const ActionCard = memo(function ActionCard({
                 );
           })}
         </div>
+        )}
 
         {/* codex:2026-07-31T19:32:00+02:00 — STOP, Craftable, Locked und neutraler Zustand
             ersetzen dieselbe reservierte Platte; kein Zustand fügt eine neue Zeile hinzu. */}
