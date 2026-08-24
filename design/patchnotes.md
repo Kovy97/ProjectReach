@@ -18,15 +18,15 @@ das Lager noch die Warteschlange je erklärt. Der Pflichtklick klappt die Wartes
 auf. / EN: Both were only explained in the update tours, which fire once for existing saves. New
 players were never shown either. The tour now covers both, and opens the queue panel for you.
 
-*Dev-Notiz: Zwei Schritte in  (23 → 25). New Haven an seiner echten
+*Dev-Notiz: Zwei Schritte in `onboarding-steps.ts` (23 → 25). New Haven an seiner echten
 Sidebar-Position nach der Fertigkeitsübersicht, die Warteschlange nach dem Skill-Block, wo der
-Spieler die zwölf Quellen gerade gesehen hat. Ziel ist der Rand-Tab von 
-(, unbedingt gerendert); das Panel startet eingeklappt
-( liefert ohne gespeicherten Wert ), der Klick klappt es auf UND
+Spieler die zwölf Quellen gerade gesehen hat. Ziel ist der Rand-Tab von `ActionQueuePanel.tsx`
+(`feature.queueExpand`, unbedingt gerendert); das Panel startet eingeklappt
+(`getQueuePanelCollapsed` liefert ohne gespeicherten Wert `true`), der Klick klappt es auf UND
 persistiert das. Dabei aufgefallen: das Update-Popup erschien auch für brandneue Charaktere und
-legte sein  über den Rundgang, dessen erster Pflichtklick ging ins Leere — jetzt
-unterdrückt, solange  false ist, ausser der Spielstand war wirklich betroffen
-(Schild-Brief im Postfach). Verifiziert mit : vorher Abbruch bei
+legte sein `modal-overlay` über den Rundgang, dessen erster Pflichtklick ging ins Leere — jetzt
+unterdrückt, solange `onboarding.done` false ist, ausser der Spielstand war wirklich betroffen
+(Schild-Brief im Postfach). Verifiziert mit `ui-audit/onboarding-tour-285.mjs`: vorher Abbruch bei
 Schritt 1, jetzt laufen alle 25 durch.*
 
 **Die Klinge des Kronenlosen fällt öfter:** DE: Von 0,15 % auf 0,25 %. Ein Spieler hat 300 Kills
@@ -35,9 +35,9 @@ Warteschlange legen und starten nicht von selbst neu, jeder Versuch ist Handarbe
 0.15% to 0.25%. A player reported 300 kills without it and made the better argument: dungeons
 cannot be queued and do not restart on their own.
 
-*Dev-Notiz:  §10. Der Wert lag dort seit dem 13.07. als offene
+*Dev-Notiz: `design/balance-drazhan-audit.md` §10. Der Wert lag dort seit dem 13.07. als offene
 Chef-Frage („bei ~5-6 Kills/h = 1 pro ~120 h; falls ~60 h Chase-Ziel gewollt: 0,003“). Gewählt
-ist die Zahl des Spielers, ~72 h.  @0,001 bewusst NICHT mitgeändert.
+ist die Zahl des Spielers, ~72 h. `sevenfold_crown_chain` @0,001 bewusst NICHT mitgeändert.
 KOPPLUNG: sobald Dungeons queue-fähig sind (Chef-Ansage 24.08.), fällt die Begründung weg und
 der Wert gehört neu verhandelt.*
 
