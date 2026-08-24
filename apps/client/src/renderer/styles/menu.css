@@ -1110,9 +1110,21 @@
   padding: clamp(18px, 1.5vw, 26px);
 }
 
-.menu--war-table.menu--panel-new .menu-slots,
-.menu--war-table.menu--panel-load .menu-slots {
+.menu--war-table.menu--panel-new .menu-slots {
   grid-template-columns: repeat(5, minmax(176px, 238px));
+  justify-content: center;
+  gap: clamp(14px, 1.35vw, 24px);
+}
+
+/* 1.1.0: "Spiel laden" hatte dasselbe FESTE Fuenf-Spalten-Raster wie "Neues Spiel" — aber
+   waehrend "Neues Spiel" alle Slots rendert und es damit fuellt, rendert "Spiel laden" nur die
+   BELEGTEN. Mit einem Spielstand blieben vier Spalten als Leerraum stehen, die Karte klebte
+   oben links in einem grossen dunklen Kasten, und das sah nach Fehler aus statt nach Absicht —
+   auf dem zweiten Bildschirm, den ein Kaeufer ueberhaupt sieht.
+   `auto-fit` laesst leere Spuren zusammenfallen: bei einem Spielstand steht eine Karte mittig,
+   bei fuenf sieht es aus wie vorher. */
+.menu--war-table.menu--panel-load .menu-slots {
+  grid-template-columns: repeat(auto-fit, minmax(176px, 238px));
   justify-content: center;
   gap: clamp(14px, 1.35vw, 24px);
 }

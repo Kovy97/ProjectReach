@@ -65,6 +65,7 @@ import { formatEta } from "../util/actionRate";
 import { registerEscCloser } from "../util/escStack";
 import {
   getCampImage,
+  getCampCardFit,
   getCampMapDefaultCalibrationPercent,
   getCampMapVisualScale,
 } from "../campArt";
@@ -281,7 +282,23 @@ function BuildingArt({
   if (src) {
     return (
       <div className="nh-art">
-        <img loading="lazy" decoding="async" src={src} alt="" className="nh-art-img" />
+        {/* Massstab und Bezugspunkt kommen aus der GEMESSENEN Tabelle in campArt.ts, nicht
+            aus einer pauschalen CSS-Zahl: die transparente Sicherheitsflaeche der Sprites
+            faellt je Gebaeude voellig unterschiedlich aus (Motiv 21-57 % der Bildbreite),
+            eine feste Zahl laesst darum fast alle Gebaeude zu klein erscheinen. */}
+        <img
+          loading="lazy"
+          decoding="async"
+          src={src}
+          alt=""
+          className="nh-art-img"
+          style={
+            {
+              "--nh-art-scale": String(getCampCardFit(def.id, Math.max(1, level)).scale),
+              "--nh-art-origin": `${getCampCardFit(def.id, Math.max(1, level)).originY}%`,
+            } as CSSProperties
+          }
+        />
         <span className="nh-art-level" aria-hidden="true">{level > 0 ? roman(level) : ""}</span>
       </div>
     );
@@ -1038,7 +1055,21 @@ function BuildMenu({
               >
                 <span className="nh-buildmenu-art" aria-hidden="true">
                   {art ? (
-                    <img loading="lazy" decoding="async" src={art} alt="" />
+                    /* Ohne Massstab war hier von einem 1536er Sprite, dessen Motiv nur 21-57 %
+                       der Flaeche belegt, in einem 34-px-Feld ein 7-19 px grosser Fleck uebrig —
+                       praktisch unsichtbar. Dieselbe gemessene Tabelle wie bei den Karten. */
+                    <img
+                      loading="lazy"
+                      decoding="async"
+                      src={art}
+                      alt=""
+                      style={
+                        {
+                          "--nh-art-scale": String(getCampCardFit(def.id, 1).scale),
+                          "--nh-art-origin": `${getCampCardFit(def.id, 1).originY}%`,
+                        } as CSSProperties
+                      }
+                    />
                   ) : (
                     <span className="nh-buildmenu-silhouette" />
                   )}

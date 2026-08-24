@@ -63,6 +63,53 @@ export function getCampImage(
  * kleiner und wachsen mit ihrer Architektur; die gemeinsame Kollisionsbühne bleibt konservativ
  * auf Town-Hall-Größe, sodass unterschiedliche Silhouetten niemals ineinanderragen können.
  */
+/**
+ * Wie stark das Kartenbild vergroessert werden muss, damit das Gebaeude die Karte fuellt —
+ * je Gebaeude und Stufe `[Massstab, vertikaler Bezugspunkt in %]`.
+ *
+ * Warum eine Tabelle und keine Zahl: Die Encampment-Sprites haben eine grosszuegige
+ * transparente Sicherheitsflaeche, und die faellt VOELLIG unterschiedlich aus. Gemessen
+ * ueber den undurchsichtigen Bildausschnitt jeder Datei belegt das Gebaeude zwischen 21 %
+ * und 57 % der Bildbreite. Der noetige Massstab reicht darum von 1,50x bis 3,26x, waehrend
+ * in der CSS pauschal 1,65x stand — dadurch waren fast alle Gebaeude in ihrer Karte zu
+ * klein, Stufe-1-Bauten am staerksten. Das war der Chef-Fund "Bilder nicht zentriert und
+ * viel zu klein" (24.08.2026).
+ *
+ * Der Bezugspunkt ist die Mitte des tatsaechlichen Motivs (durchweg 60-77 % der Bildhoehe,
+ * weil die Sprites unten sitzen). Er sorgt dafuer, dass das Vergroessern das Gebaeude
+ * mittig haelt, statt es aus dem Rahmen zu schieben.
+ *
+ * Erzeugt aus den Bilddateien, nicht geschaetzt. Neue oder ersetzte Sprites brauchen eine
+ * neue Messung — sonst stimmt die Zahl hier still nicht mehr.
+ */
+const CAMP_CARD_FIT: Readonly<Record<string, readonly (readonly [number, number])[]>> = {
+  camp_fence_tent: [[3.26, 77], [3.03, 75], [2.46, 74]],
+  camp_fishing_hut: [[3.13, 76], [2.67, 74], [2.36, 74]],
+  camp_mine_adit: [[2.65, 75], [2.12, 73], [2.26, 71]],
+  camp_sawpit: [[2.62, 77], [2.48, 75], [2.28, 73]],
+  camp_scrivener_tent: [[2.45, 75], [2.06, 73], [2.02, 71]],
+  camp_seed_garden: [[2.41, 77], [2.59, 75], [2.01, 73]],
+  camp_smelter: [[2.54, 72], [2.71, 78], [2.08, 70]],
+  camp_smokehouse: [[2.59, 72], [2.13, 72], [1.88, 69]],
+  camp_storehouse: [[2.64, 72], [2.3, 69], [1.89, 67]],
+  camp_townhall: [[1.87, 69], [1.6, 66], [1.61, 63]],
+  camp_trade_post: [[2.34, 74], [1.92, 72], [1.69, 70]],
+  camp_trophy_wall: [[3.15, 74], [2.43, 72], [1.71, 70]],
+  camp_warden_shrine: [[2.64, 72], [2.3, 69], [2.3, 69]],
+  camp_watchtower: [[1.74, 63], [1.68, 63], [1.55, 60]],
+  camp_workyard: [[1.98, 72], [1.67, 69], [1.5, 67]],
+};
+
+/** Massstab und Bezugspunkt fuer die Listen-/Detailkarte eines Gebaeudes. */
+export function getCampCardFit(buildingId: string, level: number): { scale: number; originY: number } {
+  const stufen = CAMP_CARD_FIT[buildingId];
+  if (!stufen || stufen.length === 0) return { scale: 1.65, originY: 72 };
+  const i = Math.max(0, Math.min(stufen.length - 1, Math.floor(level) - 1));
+  const eintrag = stufen[i] ?? stufen[0];
+  if (!eintrag) return { scale: 1.65, originY: 72 };
+  return { scale: eintrag[0], originY: eintrag[1] };
+}
+
 const CAMP_MAP_VISUAL_SCALE: Readonly<Record<string, readonly [number, number, number]>> = {
   camp_townhall: [1, 1, 1],
   camp_fishing_hut: [0.64, 0.76, 0.86],

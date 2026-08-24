@@ -1244,19 +1244,28 @@
 
 .nh-buildmenu-art {
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
+  /* 1.1.0 (Chef-Fund "Bilder viel zu klein"): war 34x34 px. Darin steckte ein 1536er Sprite,
+     dessen Gebaeude nur 21-57 % der Bildflaeche belegt — sichtbar blieb ein Fleck von 7 bis
+     19 px, in dem nichts zu erkennen war. Das Feld ist jetzt so gross, wie die Zeilenhoehe
+     des Eintrags es hergibt, und das Motiv wird darin gefuellt (s. img-Regel). */
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
 }
 
 .nh-buildmenu-art img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  /* Gemessener Massstab je Gebaeude (campArt.ts getCampCardFit), gesetzt von der Komponente.
+     Der Rueckfall entspricht dem bisherigen Verhalten. */
+  transform: scale(var(--nh-art-scale, 1));
+  transform-origin: center var(--nh-art-origin, 50%);
 }
 
 .nh-buildmenu-silhouette {
@@ -2342,8 +2351,12 @@
 .nh-card .nh-art-img {
   width: 100%;
   height: 100%;
-  transform: scale(1.65);
-  transform-origin: center 72%;
+  /* 1.1.0: war pauschal `scale(1.65)` fuer alle Gebaeude. Gemessen belegt das Motiv je nach
+     Sprite 21-57 % der Bildbreite, noetig waeren 1,50x bis 3,26x — mit einer festen Zahl
+     sind fast alle Gebaeude in ihrer Karte zu klein. Die Werte kommen jetzt je Gebaeude und
+     Stufe aus `getCampCardFit` (campArt.ts). Die Rueckfallwerte hier sind die alten. */
+  transform: scale(var(--nh-art-scale, 1.65));
+  transform-origin: center var(--nh-art-origin, 72%);
 }
 
 .nh-move-banner {

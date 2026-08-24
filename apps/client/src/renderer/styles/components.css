@@ -110,6 +110,12 @@
 .item-cell {
   position: relative;
   cursor: pointer;
+  /* 1.1.0: Das Bild ist 88 % gross, die Zelle hat es aber nie zentriert — es sass oben links.
+     In den fast quadratischen Inventar- und Bankfeldern faellt der Rest kaum auf, im deutlich
+     groesseren Shop-Bildfeld klebte das Symbol sichtbar in der Ecke. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
 }
 
