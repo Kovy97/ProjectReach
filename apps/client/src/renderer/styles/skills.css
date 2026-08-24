@@ -102,7 +102,7 @@
     url("../assets/bg_tileable_leather.webp") repeat;
   background-size: auto, 320px 320px;
   border-style: solid;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   color: var(--accent);
@@ -311,7 +311,7 @@
   padding: 4px 11px;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
@@ -338,7 +338,7 @@
   padding: 4px 11px;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
@@ -434,7 +434,7 @@
   background: linear-gradient(rgba(10, 8, 6, 0.5), rgba(10, 8, 6, 0.55)), url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   /* Chef 2026-07-21: einheitliche Mindesthöhe, damit die Loot-Box bei 1–3 Drops gleich hoch bleibt
@@ -503,7 +503,7 @@
   pointer-events: auto;
   /* Eckiger Holz-9-Slice-Rahmen + leicht grünlich getönte Textur = vorhanden. */
   border-style: solid;
-  border-width: clamp(3px, 1.43cqw, 5px);
+  border-width: clamp(3px, 1.43cqw, 3px);
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:
@@ -557,7 +557,7 @@
   color: #8fbf8f;
   /* Eckiger Holz-9-Slice-Rahmen + leicht grünlich getönte Textur = craftbar. */
   border-style: solid;
-  border-width: clamp(3px, 1.43cqw, 5px);
+  border-width: clamp(3px, 1.43cqw, 3px);
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:
@@ -612,7 +612,7 @@
   /* Holz-9-Slice-Frame + Textur — wie die Citadel-Buttons. */
   border-radius: 0;
   border-style: solid;
-  border-width: clamp(5px, 2.14cqw, 8px);
+  border-width: clamp(3px, 2.14cqw, 5px);
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(8, 6, 4, 0.5), rgba(8, 6, 4, 0.5)),
@@ -897,7 +897,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 14px;
@@ -974,7 +974,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   color: var(--muted);
@@ -1012,7 +1012,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   overflow: hidden;
@@ -1084,7 +1084,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   font-size: 13px;
@@ -1143,7 +1143,7 @@
   height: 10px;
   background: url("../assets/ui/citadel/action-bar/xp_bar_empty.webp") repeat-x left center / auto 100%;
   border-style: solid;
-  border-width: 4px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   overflow: visible; /* allow cp markers to extend above/below */
@@ -1424,7 +1424,7 @@
   padding: 5px 15px;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)),
@@ -1648,7 +1648,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
@@ -1712,7 +1712,7 @@
     url("../assets/bg_tileable_wood.webp") center / 260px repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.4);
@@ -1747,7 +1747,7 @@ button.skilloverview-card {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   overflow: hidden;
@@ -1819,7 +1819,7 @@ button.skilloverview-card {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 4px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
@@ -1829,7 +1829,7 @@ button.skilloverview-card {
   height: 8px;
   background: url("../assets/ui/citadel/action-bar/xp_bar_empty.webp") repeat-x left center / auto 100%;
   border-style: solid;
-  border-width: 4px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   overflow: hidden;
@@ -1928,7 +1928,7 @@ button.skilloverview-card {
 .mastery-bar {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.72));
   border-style: solid;
-  border-width: 4px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   overflow: hidden;
@@ -2303,7 +2303,7 @@ button.skilloverview-card {
     url("../assets/bg_tileable_wood.webp") center / 260px repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   cursor: pointer;

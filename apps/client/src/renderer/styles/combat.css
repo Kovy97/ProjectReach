@@ -42,7 +42,7 @@
     linear-gradient(rgba(40, 30, 12, 0.55), rgba(20, 14, 6, 0.7)),
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 3px 10px;
@@ -173,7 +173,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: 6px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   overflow: hidden;
@@ -762,7 +762,7 @@
   padding: 8px 16px;
   border-style: solid;
   border-color: transparent;
-  border-width: 16px;
+  border-width: 10px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28 fill;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -1623,7 +1623,7 @@
     linear-gradient(rgba(8, 6, 4, 0.5), rgba(8, 6, 4, 0.5)),
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
-  border-width: 9px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 10px;
@@ -1894,7 +1894,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: 6px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
@@ -2179,7 +2179,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
@@ -2238,7 +2238,7 @@
       url("../assets/bg_black.webp") repeat;
     border-style: solid;
     border-color: transparent;
-    border-width: 8px;
+    border-width: 5px;
     border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
     border-radius: 0;
   }
@@ -3682,7 +3682,7 @@
 .battle-controls {
   border-style: solid;
   border-color: transparent;
-  border-width: 28px;
+  border-width: 17px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28 fill;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -3699,7 +3699,7 @@
 .battle-log-panel {
   border-style: solid;
   border-color: transparent;
-  border-width: 16px;
+  border-width: 10px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -3740,7 +3740,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow:
@@ -4148,7 +4148,7 @@
 .monster-card {
   border-style: solid;
   border-color: transparent;
-  border-width: 12px;
+  border-width: 7px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -4658,7 +4658,7 @@
      unten-Breite 0 → nur der obere Mittel-Streifen rendert), statt einer separaten Gold-Linie. */
   border-style: solid;
   border-color: transparent;
-  border-width: 10px 0 0 0;
+  border-width: 6px 0 0 0;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -5303,7 +5303,7 @@
   padding: clamp(14px, 2.4vmin, 24px) clamp(16px, 2.6vmin, 28px) clamp(12px, 1.8vmin, 18px);
   cursor: pointer;
   border-style: solid;
-  border-width: 12px;
+  border-width: 7px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:
@@ -5720,7 +5720,7 @@
   background-size: auto, 200px;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6);

@@ -48,7 +48,7 @@
      seinem eigenen Platz. */
   /* Chef 24.08.: 25 % duenner (war 8/4). Moeglich wurde das erst, nachdem der Zuschnitt
      stimmt — vorher musste jede Breite die halb leere Rahmenzone ausgleichen. */
-  --frame-w: 6px;
+  --frame-w: 4px;
   --frame-w-compact: 3px;
 
   --ds-radius-sm: 2px;
@@ -178,7 +178,7 @@
 .ds-frame {
   border-style: solid;
   border-color: transparent;
-  border-width: 28px;
+  border-width: 17px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;

@@ -347,7 +347,7 @@
   /* Chef 2026-07-10 (Screenshot): „nicht Citadel-würdig, da fehlt der Rand" → echter
      Holz-9-Slice-Rahmen statt 1px-Linie; Rarity wandert auf einen Innen-Ring (s.u.). */
   border-style: solid;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/bg_black.webp") repeat;
@@ -751,7 +751,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   cursor: pointer;
   border-style: solid;
   border-color: transparent;
-  border-width: 10px;
+  border-width: 6px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background-color: #17110c;
   background-image:

@@ -331,7 +331,7 @@ body .item-cell.rarity-godly {
   background: linear-gradient(180deg, #1a1f25, #12161a);
   border-style: solid;
   border-color: transparent;
-  border-width: 9px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
@@ -365,7 +365,7 @@ body .item-cell.rarity-godly {
   background-size: auto, 200px;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: 0 8px 22px rgba(0,0,0,0.6);
@@ -743,7 +743,7 @@ body .item-cell.rarity-godly {
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 16px;
+  border-width: 10px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   outline: none;
   border-radius: 0;
@@ -933,7 +933,7 @@ body .item-cell.rarity-godly {
   background: url("../assets/bg_equipment.webp") center / 100% 100% no-repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   display: flex;
   align-items: center;
@@ -1022,7 +1022,7 @@ body .item-cell.rarity-godly {
   flex-direction: column;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
 }
 .itip-body::before {
@@ -1861,7 +1861,7 @@ body .item-cell.rarity-godly {
   padding: 2px 8px;
   border-style: solid;
   border-color: transparent;
-  border-width: 4px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:
@@ -1900,7 +1900,7 @@ body .item-cell.rarity-godly {
   padding: 3px 9px 3px 4px;
   border-style: solid;
   border-color: transparent;
-  border-width: 4px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:

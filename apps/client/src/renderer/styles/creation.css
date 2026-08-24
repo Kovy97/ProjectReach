@@ -59,7 +59,7 @@
   border-color: transparent;
   /* Dickerer Rahmen (18px statt 12px) — bei der Größe dieses Rahmens bleiben die Eck-Medaillons
      der 9-slice-Textur damit klar erkennbar statt zu einer dünnen Linie zu verschwimmen. */
-  border-width: 18px;
+  border-width: 11px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -177,7 +177,7 @@
   padding: 9px 20px;
   border-style: solid;
   border-color: transparent;
-  border-width: 12px;
+  border-width: 7px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -317,7 +317,7 @@
     url("../assets/bg_black.webp") repeat;
   border-style: solid;
   border-color: transparent;
-  border-width: 12px;
+  border-width: 7px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
@@ -557,7 +557,7 @@
   padding: 20px 24px;
   border-style: solid;
   border-color: transparent;
-  border-width: 18px;
+  border-width: 11px;
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;

@@ -249,7 +249,7 @@
   /* eckig + Holz-9-Slice-Rahmen wie die Combat-HP/Mana-Leisten. */
   border-radius: 0;
   border-style: solid;
-  border-width: 5px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background: var(--slot);
   overflow: hidden;
@@ -986,7 +986,7 @@
   overflow: hidden;
   /* Prominenter Holz-9-Slice-Rahmen ums Charakter-Portrait — größer für mehr Präsenz. */
   border-style: solid;
-  border-width: 14px;
+  border-width: 8px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
 }
 
@@ -1127,7 +1127,7 @@
      darüber (das ebenfalls width:100% ohne Margin hat) → bündige Kante links/rechts. */
   margin: 0 0 6px;
   border-style: solid;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)),
@@ -1269,7 +1269,7 @@
   overflow: hidden;
   border-style: solid;
   border-color: transparent;
-  border-width: 6px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background:
     radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--attr-color, var(--gold)) 20%, transparent) 0%, transparent 68%),
@@ -2285,7 +2285,7 @@
   inset: 0;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background: transparent;
   pointer-events: none;
@@ -2310,7 +2310,7 @@
   background-origin: padding-box;
   /* Holz-9-Slice-Rahmen statt simplem gold-glow inset-shadow. */
   border-style: solid;
-  border-width: 7px;
+  border-width: 4px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: inset 0 0 10px rgba(0,0,0,0.55);
@@ -2416,7 +2416,7 @@
   inset: 0;
   border-style: solid;
   border-color: transparent;
-  border-width: 5px;
+  border-width: 3px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background: transparent;
   pointer-events: none;

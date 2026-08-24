@@ -35,7 +35,7 @@
   background-size: auto, auto, 280px 280px; /* Chef 24.07.: Textur feiner (Kachel klein) */
   border-style: solid;
   border-color: transparent;
-  border-width: 9px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
@@ -90,7 +90,7 @@
   background-size: auto, 280px 280px; /* Chef 24.07.: Textur feiner */
   border-style: solid;
   border-color: transparent;
-  border-width: 9px;
+  border-width: 5px;
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   /* Task #316 (B3): auf die --ds-gap-Skala umgestellt (war 18px 20px, s. design-system.css

@@ -483,7 +483,7 @@
   overflow: hidden;
   border-style: solid;
   border-color: transparent;
-  border-width: calc(4px * var(--sb-scale-eff));
+  border-width: calc(3px * var(--sb-scale-eff));
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;

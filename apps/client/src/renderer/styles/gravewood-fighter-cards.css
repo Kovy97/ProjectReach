@@ -24,7 +24,7 @@
   container-type: inline-size;
   /* 1.1.0: 25 % duenner auf Chef-Wunsch (war 12px). Die Breite steht HIER, nicht in
      combat.css — diese Regel gewinnt mit #root-Spezifitaet gegen alles dort. */
-  border: 9px solid transparent;
+  border: 5px solid transparent;
   border-image: var(--fc-frame) 28 / 2.15 1.87 2.15 1.87 / 0 stretch;
   border-radius: 0;
   background-color: #0c0f10;

@@ -951,7 +951,7 @@
   position: relative;
   border-style: solid;
   border-color: transparent;
-  border-width: clamp(12px, 0.78vw, 18px);
+  border-width: clamp(7px, 0.78vw, 11px);
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 fill stretch;
   background:
     linear-gradient(rgba(8, 11, 12, 0.86), rgba(5, 7, 8, 0.94)),
