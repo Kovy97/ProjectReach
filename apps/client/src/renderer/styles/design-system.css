@@ -161,7 +161,11 @@
   --edge-b: inset 0 -2px 0;
 
   /* Innen-Vignette. Nur zulaessig, solange die Unschaerfe unter einem Viertel der kurzen
-     Elementkante bleibt — darueber wird daraus ein grauer Schleier statt einer Tiefenkante. */
+     Elementkante bleibt — darueber wird daraus ein grauer Schleier statt einer Tiefenkante.
+     1.1.0: Das ist keine Theorie. Fuenf Elemente lagen bei 51 bis 65 Prozent (Kampf-Dock-
+     Reiter, Protokoll-Reiter, Shop-Chip, Charakter-Reiter, Kopfleisten-Zeile); dort war der
+     ganze Knopf gleichmaessig dunkler und die Beschriftung verlor Kontrast — der Schatten
+     war zum Hintergrund geworden. Alle fuenf sind korrigiert, s. Bericht 01 Befund B11. */
   --vg-1: inset 0 0 10px rgba(0, 0, 0, 0.5);
   --vg-2: inset 0 0 20px rgba(0, 0, 0, 0.5);
   --vg-3: inset 0 0 34px rgba(0, 0, 0, 0.5);

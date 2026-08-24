@@ -1186,7 +1186,7 @@
     calc(34px * var(--tb-scale));
   min-height: calc(82px * var(--tb-scale));
   border: calc(8px * var(--tb-scale)) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / calc(8px * var(--tb-scale));
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / calc(8px * var(--tb-scale));
   background:
     linear-gradient(90deg, rgba(5, 7, 9, 0.92), rgba(27, 20, 15, 0.88) 48%, rgba(5, 7, 9, 0.94)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;

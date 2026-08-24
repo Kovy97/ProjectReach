@@ -2799,7 +2799,7 @@
     linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)),
     url("../assets/bg_black.webp") repeat;
   color: var(--ds-gold-bright, #f0dca0);
-  box-shadow: 0 0 10px rgba(216, 184, 112, 0.30), inset 0 0 8px rgba(216, 184, 112, 0.10);
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.30), inset 0 0 6px rgba(216, 184, 112, 0.10);
 }
 
 .cs-tab-btn:focus-visible {

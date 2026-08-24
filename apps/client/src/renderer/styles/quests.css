@@ -993,7 +993,7 @@
 
 .quests-contract-wall .npc-greeting-head {
   border: clamp(8px, 0.58vw, 12px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(12, 15, 16, 0.76), rgba(5, 7, 8, 0.92)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -1001,7 +1001,7 @@
 
 .quests-contract-wall .npc-bubble {
   border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   border-radius: 0;
   background:
     linear-gradient(rgba(20, 16, 12, 0.78), rgba(7, 9, 10, 0.92)),
@@ -1023,7 +1023,7 @@
 .quests-contract-wall .quest-token-badge {
   min-width: clamp(150px, 11vw, 210px);
   border: clamp(8px, 0.56vw, 12px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(12, 15, 16, 0.8), rgba(6, 8, 9, 0.93)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -1047,7 +1047,7 @@
   min-height: 100%;
   padding: 5px clamp(7px, 0.72vw, 16px);
   border: clamp(8px, 0.58vw, 12px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(14, 17, 18, 0.86), rgba(7, 9, 10, 0.94)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -1080,7 +1080,7 @@
   align-self: stretch;
   margin-left: 0;
   border: clamp(8px, 0.58vw, 12px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(26, 19, 11, 0.76), rgba(8, 10, 10, 0.93)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
@@ -1112,7 +1112,7 @@
 .quests-contract-wall .quest-detail {
   min-height: 0;
   border: clamp(9px, 0.64vw, 14px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(11, 14, 15, 0.82), rgba(6, 8, 9, 0.94)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -1147,7 +1147,7 @@
 .quests-contract-wall .quest-strand {
   align-self: start;
   border: clamp(7px, 0.5vw, 11px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(21, 16, 12, 0.78), rgba(8, 10, 10, 0.94)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
@@ -1202,7 +1202,7 @@
   min-height: clamp(245px, 23vh, 360px);
   padding: clamp(11px, 0.82vw, 17px);
   border: clamp(9px, 0.64vw, 14px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(18, 15, 12, 0.78), rgba(7, 9, 10, 0.94)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
@@ -1220,7 +1220,7 @@
 .quests-contract-wall .quest-shop-panel {
   padding: clamp(12px, 0.95vw, 20px);
   border: clamp(9px, 0.64vw, 14px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(12, 15, 16, 0.84), rgba(6, 8, 9, 0.95)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -1239,7 +1239,7 @@
 .quests-contract-wall .quest-shop-offer {
   min-height: 250px;
   border: clamp(8px, 0.58vw, 12px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(21, 16, 12, 0.76), rgba(7, 9, 10, 0.94)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
@@ -1253,7 +1253,7 @@
 .quests-contract-wall .quest-claim-btn {
   min-height: 48px;
   border: clamp(9px, 0.64vw, 14px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(57, 42, 23, 0.72), rgba(12, 13, 12, 0.93)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;

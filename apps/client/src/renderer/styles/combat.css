@@ -3118,7 +3118,7 @@
     linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)),
     url("../assets/bg_black.webp") repeat;
   color: var(--ds-gold-bright, #f0dca0);
-  box-shadow: 0 0 10px rgba(216, 184, 112, 0.30), inset 0 0 8px rgba(216, 184, 112, 0.10);
+  box-shadow: 0 0 10px rgba(216, 184, 112, 0.30), inset 0 0 6px rgba(216, 184, 112, 0.10);
 }
 
 /* ─── Kampf-Log (Log-Tab-Inhalt) ─────────────────────────── */
@@ -5933,7 +5933,7 @@
   min-height: 42px;
   padding: 7px 5px;
   border: 5px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 5px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 5px stretch;
   background: rgba(19, 22, 23, 0.94);
   color: var(--muted);
   font-family: var(--font-head);
@@ -5982,7 +5982,7 @@
 .cl-dock-pane-gear .cs-stats-scroll {
   padding: 8px;
   border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 7px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 7px stretch;
   background: rgba(7, 8, 9, 0.82);
 }
 
@@ -6231,7 +6231,7 @@
   margin: 0 4px 8px 0;
   padding: 7px 18px;
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 8px stretch;
   background:
     linear-gradient(rgba(57, 13, 10, 0.34), rgba(10, 8, 7, 0.86)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;

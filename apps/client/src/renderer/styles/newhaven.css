@@ -906,7 +906,7 @@
   width: clamp(220px, 18vw, 292px);
   padding: 7px 8px;
   border: 4px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 5px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 5px;
   background:
     linear-gradient(rgba(13, 16, 17, 0.35), rgba(4, 6, 7, 0.72)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
@@ -2181,7 +2181,7 @@
   min-height: clamp(46px, 13cqw, 56px);
   padding: 6px clamp(12px, 4cqw, 20px);
   border: clamp(6px, 2cqw, 9px) solid transparent !important;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / clamp(8px, 2.6cqw, 12px) !important;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / clamp(8px, 2.6cqw, 12px) !important;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(177, 113, 49, 0.13), transparent 68%),
     linear-gradient(rgba(9, 12, 14, 0.12), rgba(3, 5, 6, 0.4)),
@@ -2234,7 +2234,7 @@
   height: clamp(36px, 7cqw, 46px);
   padding: 0;
   border: clamp(6px, 1.6cqw, 9px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / clamp(7px, 2cqw, 10px);
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / clamp(7px, 2cqw, 10px);
   background:
     linear-gradient(rgba(45, 16, 13, 0.3), rgba(10, 7, 7, 0.5)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 128px 128px repeat;
@@ -2490,7 +2490,7 @@
   min-height: clamp(42px, 3.2vw, 54px);
   padding: 5px 7px;
   border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 9px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 9px;
   background:
     linear-gradient(rgba(8, 9, 10, 0.62), rgba(3, 4, 5, 0.78)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
@@ -2507,7 +2507,7 @@
   min-height: 100%;
   padding: 6px clamp(10px, 1vw, 18px);
   border: 5px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 7px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 7px;
   background:
     linear-gradient(rgba(12, 13, 14, 0.35), rgba(3, 4, 5, 0.62)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 220px 220px repeat;
@@ -2557,7 +2557,7 @@
   min-width: 0;
   padding: clamp(5px, 0.45vw, 9px);
   border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 9px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 9px;
   background:
     linear-gradient(rgba(5, 6, 7, 0.54), rgba(2, 3, 4, 0.74)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
@@ -2578,7 +2578,7 @@
   box-sizing: content-box;
   --nh-map-border: clamp(5px, 0.5vw, 9px);
   border-width: var(--nh-map-border);
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / clamp(7px, 0.65vw, 11px);
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / clamp(7px, 0.65vw, 11px);
   background: #050607;
 }
 
@@ -2593,7 +2593,7 @@
   container-type: inline-size;
   padding: clamp(8px, 0.7vw, 13px);
   border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 9px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 9px;
   background:
     linear-gradient(rgba(9, 10, 11, 0.48), rgba(3, 4, 5, 0.72)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
@@ -2621,7 +2621,7 @@
   min-height: clamp(86px, 27cqw, 106px);
   padding: clamp(5px, 1.6cqw, 8px);
   border: 6px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 8px;
   background:
     linear-gradient(rgba(25, 18, 11, 0.32), rgba(5, 6, 7, 0.62)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
@@ -2741,7 +2741,7 @@
 .nh-move-banner {
   padding: clamp(8px, 2.4cqw, 12px);
   border: 6px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 8px;
   background:
     linear-gradient(rgba(26, 17, 9, 0.42), rgba(4, 5, 6, 0.68)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;

@@ -89,7 +89,7 @@
 .combat-frontline-dock .cl-dock-pane-gear .cs-stats-scroll {
   min-width: 0;
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 8px stretch;
   border-radius: 0;
   background:
     linear-gradient(rgba(5, 7, 8, 0.86), rgba(2, 3, 4, 0.92)),
@@ -294,7 +294,7 @@
   width: 44px;
   height: 44px;
   border: 5px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 5px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 5px stretch;
   border-radius: 0;
   background:
     radial-gradient(circle at 50% 45%, rgba(96, 104, 103, 0.3), rgba(6, 8, 9, 0.94) 72%),

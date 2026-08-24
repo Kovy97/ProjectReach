@@ -3271,7 +3271,7 @@ body.bank-dragging-noselect {
   max-width: min(42vw, 660px);
   padding: 8px 12px;
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(12, 14, 15, 0.76), rgba(7, 9, 10, 0.9)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -3370,7 +3370,7 @@ body.bank-dragging-noselect {
   min-height: clamp(72px, 5vw, 88px);
   padding: 5px 8px;
   border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(13, 16, 17, 0.85), rgba(8, 10, 11, 0.92)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
@@ -3484,7 +3484,7 @@ body.bank-dragging-noselect {
   min-height: 0;
   overflow: hidden;
   border: clamp(10px, 0.72vw, 15px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     radial-gradient(ellipse at 50% 44%, rgba(55, 68, 69, 0.8), rgba(9, 11, 12, 0.96) 68%),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -3606,7 +3606,7 @@ body.bank-dragging-noselect {
   gap: 0;
   min-height: clamp(64px, 4.8vw, 82px);
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(10, 13, 14, 0.74), rgba(7, 9, 10, 0.88)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -3643,7 +3643,7 @@ body.bank-dragging-noselect {
   min-height: clamp(50px, 3.6vw, 64px);
   padding: 9px 16px;
   border: clamp(9px, 0.68vw, 14px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill stretch;
   background:
     linear-gradient(rgba(20, 23, 23, 0.72), rgba(9, 11, 12, 0.9)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;

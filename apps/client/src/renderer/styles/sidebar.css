@@ -1429,7 +1429,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: calc(6px * var(--sb-scale-eff));
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 fill / calc(8px * var(--sb-scale-eff));
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill / calc(8px * var(--sb-scale-eff));
   border-radius: 0;
   background:
     linear-gradient(rgba(8, 11, 13, 0.14), rgba(2, 4, 5, 0.34)),
@@ -1476,7 +1476,7 @@
   box-sizing: border-box;
   padding: 0 calc(8px * var(--sb-scale-eff));
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 8px;
   background:
     linear-gradient(rgba(5, 4, 2, 0.82), rgba(5, 4, 2, 0.94)),
     url("../assets/bg_black.webp") top left repeat;

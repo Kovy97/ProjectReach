@@ -701,7 +701,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   background-image:
     linear-gradient(rgba(117, 75, 25, 0.28), rgba(22, 22, 20, 0.4)),
     var(--gw-texture-cold-slate, url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp"));
-  box-shadow: inset 3px 0 0 #c8a15a, inset 0 0 14px rgba(188, 135, 62, 0.14);
+  box-shadow: inset 3px 0 0 #c8a15a, inset 0 0 10px rgba(188, 135, 62, 0.14);
 }
 
 #root .shopv2-chip-label {

@@ -379,7 +379,7 @@
   margin: 0 0 16px;
   padding: 6px;
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 8px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 8px;
   background:
     linear-gradient(rgba(6, 9, 11, 0.34), rgba(2, 4, 5, 0.58)),
     var(--gw-action-canvas) center / 192px 192px repeat;
@@ -391,7 +391,7 @@
   min-height: 44px;
   padding: 8px 14px;
   border: 6px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 6px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 6px;
   background:
     linear-gradient(rgba(4, 5, 6, 0.72), rgba(9, 10, 11, 0.82)),
     var(--gw-action-canvas) center / 192px 192px repeat;
