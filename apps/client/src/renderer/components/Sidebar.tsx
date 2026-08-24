@@ -89,12 +89,55 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
   const handleRef = useRef<HTMLDivElement>(null);
   const widthRef = useRef(getSidebarWidth());
 
+  // Chef-Entscheid 24.08.: Beschriftungen bleiben EINZEILIG. Statt zu trennen oder umzubrechen
+  // schrumpft die Schrift, bis das Wort in eine Zeile passt (Boden 9px, s. sidebar.css).
+  // Anlass war ein Chef-Fund: bei schmal gezogener Sidebar stand da "WOODCUTTI" / "NG", und die
+  // Level-Anzeige legte sich zusaetzlich ueber die zweite Zeile.
+  //
+  // Warum in JS und nicht in CSS: die noetige Groesse haengt an der TEXTLAENGE. CSS kann Text
+  // nicht nach seinem eigenen Inhalt skalieren, also wird je Beschriftung gemessen.
+  //
+  // Zwei Feinheiten, die beide schon einmal falsch waren:
+  //  - Erst ALLE Faktoren zuruecksetzen, dann messen. Sonst misst man gegen die letzte
+  //    Verkleinerung und der Faktor summiert sich bei jedem Ziehen weiter herunter.
+  //  - Gemessen wird per Range, nicht ueber scrollWidth: `.sb-skill-name` ist ein zentrierter
+  //    Flex-Container, dessen Inhalt bei Ueberlauf auf BEIDEN Seiten heraussteht — scrollWidth
+  //    erfasst davon nur eine Seite und meldet zu wenig.
+  const fitFrame = useRef(0);
+  const fitNames = (): void => {
+    const el = asideRef.current;
+    if (!el) return;
+    cancelAnimationFrame(fitFrame.current);
+    fitFrame.current = requestAnimationFrame(() => {
+      const namen = Array.from(el.querySelectorAll<HTMLElement>(".sb-skill-name"));
+      for (const n of namen) n.style.removeProperty("--sb-name-fit");
+      const bereich = document.createRange();
+      for (const n of namen) {
+        const stil = getComputedStyle(n);
+        const platz =
+          n.clientWidth - parseFloat(stil.paddingLeft || "0") - parseFloat(stil.paddingRight || "0");
+        bereich.selectNodeContents(n);
+        const noetig = bereich.getBoundingClientRect().width;
+        if (platz > 0 && noetig > platz) {
+          n.style.setProperty("--sb-name-fit", String(platz / noetig));
+        }
+      }
+      bereich.detach();
+    });
+  };
+
   const applySidebarWidth = (px: number): void => {
     const el = asideRef.current;
     if (!el) return;
     el.style.width = `${px}px`;
     el.style.setProperty("--sb-scale", String(px / SIDEBAR_WIDTH_DEFAULT));
+    fitNames();
   };
+
+  // Nach JEDEM Render nachmessen: das deckt den Sprachwechsel ab (andere Woerter, andere Laenge)
+  // und das Ein-/Ausklappen der Kampf-Unterliste, ohne dafuer je einen eigenen Beobachter zu
+  // brauchen. Die rAF-Buendelung oben macht daraus hoechstens eine Messung je Bild.
+  useLayoutEffect(fitNames);
 
   // Persistierte Breite VOR dem ersten Paint anwenden (useLayoutEffect statt useEffect) —
   // sonst blitzt die Sidebar kurz in der 240px-CSS-Default-Breite auf.

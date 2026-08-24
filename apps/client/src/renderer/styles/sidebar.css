@@ -42,7 +42,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* Container-Query-Kontext für den Icon-Rail-Kollaps unter ~120px (s. @container sidebar
+  /* Container-Query-Kontext für den Icon-Rail-Kollaps unter ~150px (s. @container sidebar
      Block ganz unten) — Kinder queryen die tatsächliche (gezogene) Breite dieses Elements. */
   container-type: inline-size;
   container-name: sidebar;
@@ -885,7 +885,7 @@
      overflow:hidden → das große Symbol schneidet sauber am roten Bereich ab, kein Overflow
      über den Rahmen (z.B. Mining-Spitzhacke oben).
      Task #283: mit der kompakteren Button-Höhe (42px) mitskaliert (war 58px/16/8/8).
-     Task #291: weiter mit --sb-scale skaliert; unter der Icon-Rail-Schwelle (~120px) übernimmt
+     Task #291: weiter mit --sb-scale skaliert; unter der Icon-Rail-Schwelle (~150px) übernimmt
      der @container-sidebar-Block unten left/right/width (Icon zentriert über die volle Breite). */
   left: calc(8px * var(--sb-scale-eff));
   top: calc(5px * var(--sb-scale-eff));
@@ -1003,7 +1003,11 @@
   padding: 0 calc(48px * var(--sb-scale-eff));
   z-index: 1; /* über dem halbtransparenten Symbol */
   font-family: var(--font-head);
-  font-size: clamp(9px, calc(11px * var(--sb-scale-eff)), 19px); /* Task #283/#291 */
+  /* Chef 24.08.: Der Boden bleibt 9px, aber die Groesse wird je Beschriftung noch mit
+     `--sb-name-fit` verrechnet (Sidebar.tsx setzt ihn), damit lange Woerter einzeilig
+     bleiben. `max(9px, ...)` haelt den Boden auch dann, wenn der Faktor klein wird. */
+  --sb-name-size: clamp(9px, calc(11px * var(--sb-scale-eff)), 19px); /* Task #283/#291 */
+  font-size: max(9px, calc(var(--sb-name-size) * var(--sb-name-fit, 1)));
   font-weight: 700; /* Chef 2026-07-02: doch wieder fett */
   letter-spacing: 0px;
   text-transform: uppercase;
@@ -1026,10 +1030,17 @@
      (gemessen: `de-DE`), Chromium kann damit für alle 7 Sprachen sauber trennen. `break-word`
      statt `anywhere` bleibt als Notbremse für Wörter, die selbst getrennt nicht passen: es bricht
      nur, wenn sonst nichts geht — abgeschnitten wird weiterhin nie. */
-  white-space: normal;
-  overflow-wrap: anywhere;
-  hyphens: auto;
-  text-wrap: balance;
+  /* 1.1.0, Chef-Entscheid 24.08.: KEIN Umbruch und KEINE Silbentrennung mehr. Die Kette darueber
+     (Ellipsis -> Umbruch -> `anywhere` -> `hyphens: auto`) ist damit beendet. Der Chef will das
+     Wort in EINER Zeile, notfalls kleiner: "sollte dynamisch genug skalieren, dass diese
+     Schriften dann kleiner werden". Der Rest steht in Sidebar.tsx (`--sb-name-fit`).
+     Warum das nicht rein in CSS geht: die noetige Groesse haengt an der TEXTLAENGE, nicht nur an
+     der Breite — "MINING" passt, wo "WOODCUTTING" bricht. Eine gemeinsame Groesse macht darum
+     entweder das kurze Label unnoetig klein oder das lange zu gross.
+     `overflow: hidden` bleibt nur als letzte Notbremse stehen und greift praktisch nie: der
+     Anpassungsfaktor haelt das laengste Label bis hinunter zur Icon-Rail-Schwelle (120px) ueber
+     dem 9px-Boden, darunter ist die Beschriftung ohnehin ausgeblendet. */
+  white-space: nowrap;
   overflow: hidden;
   text-align: center;
   /* 7-Sprachen-Fundament (Task #252): löst den PNG-Titel-Schriftzug (.sb-skill-title-img,
@@ -1055,7 +1066,7 @@
   position: absolute;
   /* Chef 2026-07-03: unten-rechts in den Button setzen (war vertikal mittig).
      Task #283: mit dem kompakteren Button mitskaliert (war right:22/bottom:9/13px).
-     Task #291: weiter mit --sb-scale skaliert; unter der Icon-Rail-Schwelle (~120px)
+     Task #291: weiter mit --sb-scale skaliert; unter der Icon-Rail-Schwelle (~150px)
      ausgeblendet (s. @container sidebar-Block unten). */
   right: calc(12px * var(--sb-scale-eff));
   bottom: calc(5px * var(--sb-scale-eff));
@@ -1302,7 +1313,35 @@
    Tooltips (title=Skill-Name, bestehende t()-Strings) übernehmen die
    Namensanzeige, s. Sidebar.tsx. Container-Query statt React-State: kein
    Re-Render beim Draggen nötig, die Schwelle greift rein visuell/CSS. */
-@container sidebar (max-width: 120px) {
+/* 1.1.0, Chef-Entscheid 24.08. — der NAME hat Vorrang vor dem Level.
+   Der Chef will die Beschriftung einzeilig, notfalls kleiner (s. .sb-skill-name). Unterhalb
+   von ~200px Leistenbreite geht das rechnerisch nicht mehr auf: bei 170px bleiben nach Symbol
+   (~26px, durch `clamp(26px, ...)` nach unten begrenzt) und Level-Abzeichen (~28px) noch etwa
+   108px, "WOODCUTTING" braucht am 9px-Schriftboden aber rund 115px. Gemessen mit
+   ui-audit/sidebar-einzeilig-verify.mjs.
+   Es MUSS also etwas weichen, und das ist die Nebeninformation: das Level steht weiterhin in
+   der Fertigkeitsuebersicht und im Tooltip, waehrend der Name das ist, wonach man in der Leiste
+   sucht. Ohne das Abzeichen passt der laengste Name wieder — und zwar ueber dem Boden, nicht
+   an ihm. Abgeschnitten wird weiterhin nie (Chef-Regel), unter 150px uebernimmt die Icon-Rail. */
+@container sidebar (max-width: 200px) {
+  .sb-skill-level {
+    display: none;
+  }
+  /* Das Symbol hat eine Mindestbreite von 26px, die bei schmaler Leiste GEGEN den Namen
+     arbeitet: bei 170px waere es rechnerisch 24px breit, belegt aber 26. In der schmalen
+     Stufe darf es kleiner werden — gemessen war das der letzte fehlende Rest, an dem das
+     russische „Ювелирное дело“ noch um 3,6px ueberlief, waehrend EN und DE schon passten. */
+  .sb-skill-icon-wrap {
+    width: clamp(20px, calc(34px * var(--sb-scale-eff)), 58px);
+  }
+  /* Ohne Abzeichen wird rechts nur noch der Innenrahmen freigehalten, nicht mehr die volle
+     Abzeichen-Zone. Links bleiben die 48px: dort sitzt das Symbol. */
+  .sb-skill-name {
+    padding-right: calc(10px * var(--sb-scale-eff));
+  }
+}
+
+@container sidebar (max-width: 150px) {
   .sb-skill-name,
   .sb-skill-level,
   .sb-combat-name,
@@ -1525,7 +1564,7 @@
   box-shadow: none;
 }
 
-@container sidebar (max-width: 120px) {
+@container sidebar (max-width: 150px) {
   .sb-footer-drawer-tab {
     width: 100%;
     padding-inline: 0;

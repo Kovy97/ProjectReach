@@ -1,0 +1,1402 @@
+{
+  "url": "http://localhost:5342/?fixture=midgame",
+  "viewport": {
+    "w": 1920,
+    "h": 1080
+  },
+  "groups": [
+    {
+      "key": "aside.sidebar",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 1080
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 11, 8)"
+    },
+    {
+      "key": "div.sb-brand.sb-blessing",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.sb-blessing-card",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 4,
+        "y": 2,
+        "w": 232,
+        "h": 155
+      },
+      "border": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(10, 9, 8)"
+    },
+    {
+      "key": "button.sb-skill-btn.ds-button",
+      "count": 17,
+      "id": null,
+      "rect": {
+        "x": 20,
+        "y": 163,
+        "w": 200,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.sb-skill-btn.ds-button.active.sb-skill-btn--running",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 20,
+        "y": 210,
+        "w": 169,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.sb-combat-toggle.ds-button",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 191,
+        "y": 210,
+        "w": 28,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "nav.topbar",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 240,
+        "y": 0,
+        "w": 1636,
+        "h": 76
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 11, 8)"
+    },
+    {
+      "key": "button.topbar-item",
+      "count": 8,
+      "id": null,
+      "rect": {
+        "x": 243,
+        "y": 5,
+        "w": 198,
+        "h": 65
+      },
+      "border": {
+        "top": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "right": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "bottom": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "left": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "header.content-header.content-header--quiet-citadel",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 240,
+        "y": 76,
+        "w": 1636,
+        "h": 140
+      },
+      "border": {
+        "uniform": {
+          "width": "9px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.header-charinfo",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 268,
+        "y": 93,
+        "w": 282,
+        "h": 55
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 108, 58, 0.52)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.gamestats-row.gamestats-row--activity",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 561,
+        "y": 93,
+        "w": 608,
+        "h": 55
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(151, 106, 55, 0.68)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.gamestats-row.gamestats-row--meta",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1179,
+        "y": 93,
+        "w": 669,
+        "h": 55
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 108, 58, 0.52)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.gamestats-stop-btn",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1739,
+        "y": 107,
+        "w": 97,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(168, 90, 82)"
+        }
+      },
+      "radius": "4px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.tb-bar.tb-bar--action.tb-bar--empty",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 270,
+        "y": 157,
+        "w": 1575,
+        "h": 19
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 107, 55, 0.72)"
+        }
+      },
+      "radius": "2px",
+      "outline": null,
+      "bg": "rgb(11, 12, 14)"
+    },
+    {
+      "key": "div.tb-bar.tb-bar--level",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 270,
+        "y": 179,
+        "w": 1575,
+        "h": 19
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 107, 55, 0.72)"
+        }
+      },
+      "radius": "2px",
+      "outline": null,
+      "bg": "rgb(11, 12, 14)"
+    },
+    {
+      "key": "div.battle",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 264,
+        "y": 239,
+        "w": 1566,
+        "h": 817
+      },
+      "border": {
+        "uniform": {
+          "width": "12px",
+          "style": "solid",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.combat-btn.flee.combat-stop-btn",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1516,
+        "y": 261,
+        "w": 288,
+        "h": 49
+      },
+      "border": {
+        "uniform": {
+          "width": "8px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.combat-loadout.combat-frontline-dock",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 286,
+        "y": 328,
+        "w": 360,
+        "h": 706
+      },
+      "border": {
+        "uniform": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.cl-dock-toggle.cl-dock-toggle--left",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 304,
+        "y": 346,
+        "w": 324,
+        "h": 28
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(121, 132, 140)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(121, 132, 140)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(184, 132, 62, 0.52)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(121, 132, 140)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.cl-dock-tabs",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 304,
+        "y": 384,
+        "w": 324,
+        "h": 61
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(184, 132, 62, 0.52)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(3, 4, 5, 0.86)"
+    },
+    {
+      "key": "button.cl-dock-tab.active",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 312,
+        "y": 391,
+        "w": 72,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.cl-dock-tab",
+      "count": 3,
+      "id": null,
+      "rect": {
+        "x": 391,
+        "y": 391,
+        "w": 72,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.cl-gear-doll",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 314,
+        "y": 465,
+        "w": 291,
+        "h": 540
+      },
+      "border": {
+        "uniform": {
+          "width": "8px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.cs-doll-silhouette-ph",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 431,
+        "y": 687,
+        "w": 57,
+        "h": 91
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(194, 145, 72, 0.36)"
+        }
+      },
+      "radius": "50%/50%/38%/38%",
+      "outline": null,
+      "bg": "rgba(155, 111, 54, 0.18)"
+    },
+    {
+      "key": "div.cs-stats-scroll.cs-tab-stats-scroll",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 314,
+        "y": 1016,
+        "w": 291,
+        "h": 554
+      },
+      "border": {
+        "uniform": {
+          "width": "8px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.cs-stat-row",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 333,
+        "y": 1063,
+        "w": 253,
+        "h": 31
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(151, 113, 61, 0.2)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.battle-arena.has-backdrop.fx-full",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 659,
+        "y": 328,
+        "w": 835,
+        "h": 706
+      },
+      "border": {
+        "uniform": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "header.battle-fortress-context",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 669,
+        "y": 338,
+        "w": 815,
+        "h": 42
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(193, 147, 75, 0.62)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "span.fighter-buff-chip",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 687,
+        "y": 752,
+        "w": 59,
+        "h": 24
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(216, 184, 112, 0.3)"
+        }
+      },
+      "radius": "9px",
+      "outline": null,
+      "bg": "rgba(8, 6, 4, 0.72)"
+    },
+    {
+      "key": "div.fighter-nameplate",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 687,
+        "y": 777,
+        "w": 361,
+        "h": 237
+      },
+      "border": {
+        "uniform": {
+          "width": "8px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "span.fighter-level-badge",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 812,
+        "y": 791,
+        "w": 54,
+        "h": 39
+      },
+      "border": {
+        "uniform": {
+          "width": "9px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.cbar.cbar-hp",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 705,
+        "y": 857,
+        "w": 325,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(15, 18, 22)"
+    },
+    {
+      "key": "div.cbar.cbar-mana",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 705,
+        "y": 886,
+        "w": 325,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(15, 18, 22)"
+    },
+    {
+      "key": "div.cbar.cbar-ward",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 705,
+        "y": 915,
+        "w": 325,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(15, 18, 22)"
+    },
+    {
+      "key": "div.cbar.cbar-timer",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 705,
+        "y": 944,
+        "w": 325,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(15, 18, 22)"
+    },
+    {
+      "key": "button.fighter-details-toggle",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 938,
+        "y": 977,
+        "w": 92,
+        "h": 21
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(216, 192, 106, 0.25)"
+        }
+      },
+      "radius": "3px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "span.fighter-sub-drops",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1343,
+        "y": 849,
+        "w": 106,
+        "h": 47
+      },
+      "border": {
+        "uniform": {
+          "width": "8px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.cbar.cbar-enemy-hp",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1124,
+        "y": 915,
+        "w": 325,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(15, 18, 22)"
+    },
+    {
+      "key": "div.battle-log-panel",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1508,
+        "y": 328,
+        "w": 300,
+        "h": 706
+      },
+      "border": {
+        "uniform": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.cl-dock-toggle.cl-dock-toggle--right",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1528,
+        "y": 347,
+        "w": 260,
+        "h": 32
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(121, 132, 140)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(121, 132, 140)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(190, 139, 67, 0.55)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(121, 132, 140)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(5, 6, 7, 0.78)"
+    },
+    {
+      "key": "div.battle-record-title",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1528,
+        "y": 379,
+        "w": 260,
+        "h": 38
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 192, 106)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 192, 106)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(193, 147, 75, 0.52)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 192, 106)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.battle-log",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1528,
+        "y": 462,
+        "w": 260,
+        "h": 478
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(151, 113, 61, 0.38)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(2, 3, 3, 0.62)"
+    },
+    {
+      "key": "div.battle-record-session",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1528,
+        "y": 947,
+        "w": 260,
+        "h": 68
+      },
+      "border": {
+        "top": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(151, 113, 61, 0.38)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.queue-panel-toggle.queue-panel-toggle--blocked",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1876,
+        "y": 0,
+        "w": 44,
+        "h": 44
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        },
+        "bottom": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.queue-rail-icon-box",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 1884,
+        "y": 54,
+        "w": 28,
+        "h": 28
+      },
+      "border": {
+        "uniform": {
+          "width": "3px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.toast.toast-drop",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1472,
+        "y": 880,
+        "w": 430,
+        "h": 182
+      },
+      "border": {
+        "uniform": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  ],
+  "doubleBorderFindings": [
+    {
+      "childKey": "div.sb-brand.sb-blessing",
+      "childId": null,
+      "parentKey": "aside.sidebar",
+      "childBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "parentBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      },
+      "gaps": {
+        "gapTop": 0,
+        "gapLeft": 0,
+        "gapRight": 1,
+        "gapBottom": 919.875
+      }
+    },
+    {
+      "childKey": "div.sb-blessing-card",
+      "childId": null,
+      "parentKey": "div.sb-brand.sb-blessing",
+      "childBorder": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "rect": {
+        "x": 4,
+        "y": 2,
+        "w": 232,
+        "h": 155
+      },
+      "gaps": {
+        "gapTop": 2.15625,
+        "gapLeft": 3.59375,
+        "gapRight": 3.59375,
+        "gapBottom": 3.4375
+      }
+    }
+  ],
+  "outlineBorderFindings": [],
+  "seamFindingsSample": [
+    {
+      "key": "div.sb-brand.sb-blessing",
+      "id": null,
+      "ownBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "parentBg": "rgb(16, 11, 8)",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      }
+    },
+    {
+      "key": "button.cl-dock-tab.active",
+      "id": null,
+      "ownBorder": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBg": "rgba(3, 4, 5, 0.86)",
+      "rect": {
+        "x": 312,
+        "y": 391,
+        "w": 72,
+        "h": 45
+      }
+    },
+    {
+      "key": "button.cl-dock-tab",
+      "id": null,
+      "ownBorder": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBg": "rgba(3, 4, 5, 0.86)",
+      "rect": {
+        "x": 391,
+        "y": 391,
+        "w": 72,
+        "h": 45
+      }
+    },
+    {
+      "key": "button.cl-dock-tab",
+      "id": null,
+      "ownBorder": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBg": "rgba(3, 4, 5, 0.86)",
+      "rect": {
+        "x": 469,
+        "y": 391,
+        "w": 72,
+        "h": 45
+      }
+    },
+    {
+      "key": "button.cl-dock-tab",
+      "id": null,
+      "ownBorder": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBg": "rgba(3, 4, 5, 0.86)",
+      "rect": {
+        "x": 548,
+        "y": 391,
+        "w": 72,
+        "h": 45
+      }
+    }
+  ]
+}

@@ -1,0 +1,1027 @@
+{
+  "url": "http://localhost:5342/?fixture=midgame",
+  "viewport": {
+    "w": 1920,
+    "h": 1080
+  },
+  "groups": [
+    {
+      "key": "aside.sidebar",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 1080
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 11, 8)"
+    },
+    {
+      "key": "div.sb-brand.sb-blessing",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.sb-blessing-card",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 4,
+        "y": 2,
+        "w": 232,
+        "h": 155
+      },
+      "border": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(10, 9, 8)"
+    },
+    {
+      "key": "button.sb-skill-btn.ds-button",
+      "count": 16,
+      "id": null,
+      "rect": {
+        "x": 20,
+        "y": 163,
+        "w": 200,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.sb-skill-btn.ds-button.sb-skill-btn--running",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 20,
+        "y": 210,
+        "w": 169,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.sb-combat-toggle.ds-button",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 191,
+        "y": 210,
+        "w": 28,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.sb-skill-btn.ds-button.active",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 20,
+        "y": 257,
+        "w": 200,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "nav.topbar",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 240,
+        "y": 0,
+        "w": 1636,
+        "h": 76
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 11, 8)"
+    },
+    {
+      "key": "button.topbar-item",
+      "count": 8,
+      "id": null,
+      "rect": {
+        "x": 243,
+        "y": 5,
+        "w": 198,
+        "h": 65
+      },
+      "border": {
+        "top": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "right": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "bottom": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "left": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "header.content-header.content-header--quiet-citadel",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 240,
+        "y": 76,
+        "w": 1636,
+        "h": 140
+      },
+      "border": {
+        "uniform": {
+          "width": "9px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.header-charinfo",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 268,
+        "y": 93,
+        "w": 282,
+        "h": 55
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 108, 58, 0.52)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.gamestats-row.gamestats-row--activity",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 561,
+        "y": 93,
+        "w": 608,
+        "h": 55
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(151, 106, 55, 0.68)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.gamestats-row.gamestats-row--meta",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1179,
+        "y": 93,
+        "w": 669,
+        "h": 55
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 108, 58, 0.52)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.gamestats-stop-btn",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1739,
+        "y": 107,
+        "w": 97,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(168, 90, 82)"
+        }
+      },
+      "radius": "4px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.tb-bar.tb-bar--action.tb-bar--empty",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 270,
+        "y": 157,
+        "w": 1575,
+        "h": 19
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 107, 55, 0.72)"
+        }
+      },
+      "radius": "2px",
+      "outline": null,
+      "bg": "rgb(11, 12, 14)"
+    },
+    {
+      "key": "div.tb-bar.tb-bar--level",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 270,
+        "y": 179,
+        "w": 1575,
+        "h": 19
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 107, 55, 0.72)"
+        }
+      },
+      "radius": "2px",
+      "outline": null,
+      "bg": "rgb(11, 12, 14)"
+    },
+    {
+      "key": "div.nh-view-controls",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 264,
+        "y": 239,
+        "w": 1566,
+        "h": 63
+      },
+      "border": {
+        "uniform": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.nh-view-tab.active",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 278,
+        "y": 251,
+        "w": 92,
+        "h": 39
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.nh-view-tab",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 375,
+        "y": 251,
+        "w": 92,
+        "h": 39
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.nh-view-tab.nh-move-toggle",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 476,
+        "y": 251,
+        "w": 97,
+        "h": 39
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.nh-view-tab.nh-debug-toggle",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 581,
+        "y": 251,
+        "w": 162,
+        "h": 39
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.nh-view-tab.nh-debug-complete",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 751,
+        "y": 251,
+        "w": 213,
+        "h": 39
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.nh-view-tab.nh-debug-light",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 973,
+        "y": 251,
+        "w": 81,
+        "h": 39
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.nh-map-stage",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 264,
+        "y": 316,
+        "w": 1173,
+        "h": 740
+      },
+      "border": {
+        "uniform": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.nh-map",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 280,
+        "y": 361,
+        "w": 1141,
+        "h": 650
+      },
+      "border": {
+        "uniform": {
+          "width": "9px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(5, 6, 7)"
+    },
+    {
+      "key": "p.nh-map-empty-hint",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 651,
+        "y": 666,
+        "w": 399,
+        "h": 40
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "dashed",
+          "color": "rgba(216, 184, 112, 0.3)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0.5)"
+    },
+    {
+      "key": "div.nh-buildmenu",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1450,
+        "y": 316,
+        "w": 380,
+        "h": 740
+      },
+      "border": {
+        "uniform": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "h3.nh-buildmenu-title",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1470,
+        "y": 336,
+        "w": 340,
+        "h": 32
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 184, 112)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 184, 112)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(183, 130, 61, 0.52)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 184, 112)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.nh-buildmenu-item",
+      "count": 7,
+      "id": null,
+      "rect": {
+        "x": 1471,
+        "y": 377,
+        "w": 320,
+        "h": 108
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "span.nh-buildmenu-art",
+      "count": 6,
+      "id": null,
+      "rect": {
+        "x": 1482,
+        "y": 389,
+        "w": 85,
+        "h": 85
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(156, 109, 53, 0.55)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(3, 4, 5, 0.7)"
+    },
+    {
+      "key": "span.nh-buildmenu-cost",
+      "count": 6,
+      "id": null,
+      "rect": {
+        "x": 1575,
+        "y": 430,
+        "w": 100,
+        "h": 23
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(112, 91, 62, 0.38)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(2, 3, 4, 0.48)"
+    },
+    {
+      "key": "span.nh-buildmenu-cost.lacking",
+      "count": 16,
+      "id": null,
+      "rect": {
+        "x": 1679,
+        "y": 430,
+        "w": 100,
+        "h": 23
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(112, 91, 62, 0.38)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(2, 3, 4, 0.48)"
+    },
+    {
+      "key": "button.queue-panel-toggle.queue-panel-toggle--blocked",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1876,
+        "y": 0,
+        "w": 44,
+        "h": 44
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        },
+        "bottom": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.queue-rail-icon-box",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 1884,
+        "y": 54,
+        "w": 28,
+        "h": 28
+      },
+      "border": {
+        "uniform": {
+          "width": "3px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.toast.toast-drop",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1000,
+        "y": 880,
+        "w": 430,
+        "h": 182
+      },
+      "border": {
+        "uniform": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  ],
+  "doubleBorderFindings": [
+    {
+      "childKey": "div.sb-brand.sb-blessing",
+      "childId": null,
+      "parentKey": "aside.sidebar",
+      "childBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "parentBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      },
+      "gaps": {
+        "gapTop": 0,
+        "gapLeft": 0,
+        "gapRight": 1,
+        "gapBottom": 919.875
+      }
+    },
+    {
+      "childKey": "div.sb-blessing-card",
+      "childId": null,
+      "parentKey": "div.sb-brand.sb-blessing",
+      "childBorder": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "rect": {
+        "x": 4,
+        "y": 2,
+        "w": 232,
+        "h": 155
+      },
+      "gaps": {
+        "gapTop": 2.15625,
+        "gapLeft": 3.59375,
+        "gapRight": 3.59375,
+        "gapBottom": 3.4375
+      }
+    }
+  ],
+  "outlineBorderFindings": [],
+  "seamFindingsSample": [
+    {
+      "key": "div.sb-brand.sb-blessing",
+      "id": null,
+      "ownBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "parentBg": "rgb(16, 11, 8)",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      }
+    },
+    {
+      "key": "p.nh-map-empty-hint",
+      "id": null,
+      "ownBorder": {
+        "uniform": {
+          "width": "1px",
+          "style": "dashed",
+          "color": "rgba(216, 184, 112, 0.3)"
+        }
+      },
+      "parentBg": "rgb(5, 6, 7)",
+      "rect": {
+        "x": 651,
+        "y": 666,
+        "w": 399,
+        "h": 40
+      }
+    }
+  ]
+}

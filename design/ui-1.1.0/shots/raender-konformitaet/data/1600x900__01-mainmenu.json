@@ -1,0 +1,52 @@
+{
+  "url": "http://localhost:5342/",
+  "viewport": {
+    "w": 1600,
+    "h": 900
+  },
+  "groups": [
+    {
+      "key": "div.menu-main",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 112,
+        "y": 572,
+        "w": 1376,
+        "h": 283
+      },
+      "border": {
+        "uniform": {
+          "width": "18px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  ],
+  "doubleBorderFindings": [],
+  "outlineBorderFindings": [],
+  "seamFindingsSample": [
+    {
+      "key": "div.menu-main",
+      "id": null,
+      "ownBorder": {
+        "uniform": {
+          "width": "18px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBg": "rgb(13, 15, 18)",
+      "rect": {
+        "x": 112,
+        "y": 572,
+        "w": 1376,
+        "h": 283
+      }
+    }
+  ]
+}

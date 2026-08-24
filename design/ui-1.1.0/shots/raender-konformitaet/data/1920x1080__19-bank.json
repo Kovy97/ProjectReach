@@ -1,0 +1,919 @@
+{
+  "url": "http://localhost:5342/?fixture=midgame",
+  "viewport": {
+    "w": 1920,
+    "h": 1080
+  },
+  "groups": [
+    {
+      "key": "aside.sidebar",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 240,
+        "h": 1080
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 11, 8)"
+    },
+    {
+      "key": "div.sb-brand.sb-blessing",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.sb-blessing-card",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 4,
+        "y": 2,
+        "w": 232,
+        "h": 155
+      },
+      "border": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(10, 9, 8)"
+    },
+    {
+      "key": "button.sb-skill-btn.ds-button",
+      "count": 17,
+      "id": null,
+      "rect": {
+        "x": 20,
+        "y": 163,
+        "w": 200,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.sb-skill-btn.ds-button.sb-skill-btn--running",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 20,
+        "y": 210,
+        "w": 169,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.sb-combat-toggle.ds-button",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 191,
+        "y": 210,
+        "w": 28,
+        "h": 45
+      },
+      "border": {
+        "uniform": {
+          "width": "5px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "nav.topbar",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 240,
+        "y": 0,
+        "w": 1636,
+        "h": 76
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 11, 8)"
+    },
+    {
+      "key": "button.topbar-item",
+      "count": 7,
+      "id": null,
+      "rect": {
+        "x": 243,
+        "y": 5,
+        "w": 198,
+        "h": 65
+      },
+      "border": {
+        "top": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "right": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "bottom": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "left": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "button.topbar-item.active",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1470,
+        "y": 5,
+        "w": 198,
+        "h": 65
+      },
+      "border": {
+        "top": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "right": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "bottom": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "left": {
+          "width": "10px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgb(16, 19, 21)"
+    },
+    {
+      "key": "header.content-header.content-header--quiet-citadel",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 240,
+        "y": 76,
+        "w": 1636,
+        "h": 140
+      },
+      "border": {
+        "uniform": {
+          "width": "9px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.header-charinfo",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 268,
+        "y": 93,
+        "w": 282,
+        "h": 55
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 108, 58, 0.52)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.gamestats-row.gamestats-row--activity",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 561,
+        "y": 93,
+        "w": 608,
+        "h": 55
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(151, 106, 55, 0.68)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.gamestats-row.gamestats-row--meta",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1179,
+        "y": 93,
+        "w": 669,
+        "h": 55
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 108, 58, 0.52)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.gamestats-stop-btn",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1739,
+        "y": 107,
+        "w": 97,
+        "h": 27
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(168, 90, 82)"
+        }
+      },
+      "radius": "4px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.tb-bar.tb-bar--action.tb-bar--empty",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 270,
+        "y": 157,
+        "w": 1575,
+        "h": 19
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 107, 55, 0.72)"
+        }
+      },
+      "radius": "2px",
+      "outline": null,
+      "bg": "rgb(11, 12, 14)"
+    },
+    {
+      "key": "div.tb-bar.tb-bar--level",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 270,
+        "y": 179,
+        "w": 1575,
+        "h": 19
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(150, 107, 55, 0.72)"
+        }
+      },
+      "radius": "2px",
+      "outline": null,
+      "bg": "rgb(11, 12, 14)"
+    },
+    {
+      "key": "div.npc-greeting-head",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 264,
+        "y": 239,
+        "w": 72,
+        "h": 72
+      },
+      "border": {
+        "uniform": {
+          "width": "8px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.npc-bubble.npc-bubble--tail-left",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 352,
+        "y": 239,
+        "w": 1005,
+        "h": 111
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(133, 105, 67, 0.64)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.bank-head",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1371,
+        "y": 239,
+        "w": 459,
+        "h": 111
+      },
+      "border": {
+        "uniform": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.bank-filter-row",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 264,
+        "y": 364,
+        "w": 1093,
+        "h": 84
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(124, 91, 52, 0.56)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "input.invf-search",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 273,
+        "y": 371,
+        "w": 260,
+        "h": 32
+      },
+      "border": {
+        "uniform": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(216, 184, 112, 0.5)"
+        }
+      },
+      "radius": "4px",
+      "outline": null,
+      "bg": "rgb(30, 22, 16)"
+    },
+    {
+      "key": "select.cs-sort-select",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1247,
+        "y": 387,
+        "w": 101,
+        "h": 38
+      },
+      "border": {
+        "uniform": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.shop-upgrade-card",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1371,
+        "y": 364,
+        "w": 459,
+        "h": 84
+      },
+      "border": {
+        "uniform": {
+          "width": "7px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "span.shop-upgrade-icon-medal",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1386,
+        "y": 392,
+        "w": 28,
+        "h": 28
+      },
+      "border": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(216, 192, 106, 0.42)"
+        }
+      },
+      "radius": "50%",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "section.shop-panel.bank-ledger-panel.bank-ledger-panel--inventory",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 264,
+        "y": 486,
+        "w": 775,
+        "h": 570
+      },
+      "border": {
+        "uniform": {
+          "width": "11px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.bank-col-head",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 287,
+        "y": 507,
+        "w": 729,
+        "h": 40
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 208, 191)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 208, 191)"
+        },
+        "bottom": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgba(216, 192, 106, 0.2)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(216, 208, 191)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "span.bank-col-icon",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 287,
+        "y": 507,
+        "w": 32,
+        "h": 32
+      },
+      "border": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(216, 192, 106, 0.42)"
+        }
+      },
+      "radius": "50%",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "section.shop-panel.bank-ledger-panel.bank-ledger-panel--storage",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1055,
+        "y": 486,
+        "w": 775,
+        "h": 570
+      },
+      "border": {
+        "uniform": {
+          "width": "11px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "button.queue-panel-toggle.queue-panel-toggle--blocked",
+      "count": 1,
+      "id": null,
+      "rect": {
+        "x": 1876,
+        "y": 0,
+        "w": 44,
+        "h": 44
+      },
+      "border": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        },
+        "bottom": {
+          "width": "6px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(179, 148, 104)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    },
+    {
+      "key": "div.queue-rail-icon-box",
+      "count": 2,
+      "id": null,
+      "rect": {
+        "x": 1884,
+        "y": 54,
+        "w": 28,
+        "h": 28
+      },
+      "border": {
+        "uniform": {
+          "width": "3px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "radius": "0px",
+      "outline": null,
+      "bg": "rgba(0, 0, 0, 0)"
+    }
+  ],
+  "doubleBorderFindings": [
+    {
+      "childKey": "div.sb-brand.sb-blessing",
+      "childId": null,
+      "parentKey": "aside.sidebar",
+      "childBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "parentBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "1px",
+          "style": "solid",
+          "color": "rgb(51, 60, 68)"
+        },
+        "bottom": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      },
+      "gaps": {
+        "gapTop": 0,
+        "gapLeft": 0,
+        "gapRight": 1,
+        "gapBottom": 919.875
+      }
+    },
+    {
+      "childKey": "div.sb-blessing-card",
+      "childId": null,
+      "parentKey": "div.sb-brand.sb-blessing",
+      "childBorder": {
+        "uniform": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "parentBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "rect": {
+        "x": 4,
+        "y": 2,
+        "w": 232,
+        "h": 155
+      },
+      "gaps": {
+        "gapTop": 2.15625,
+        "gapLeft": 3.59375,
+        "gapRight": 3.59375,
+        "gapBottom": 3.4375
+      }
+    }
+  ],
+  "outlineBorderFindings": [],
+  "seamFindingsSample": [
+    {
+      "key": "div.sb-brand.sb-blessing",
+      "id": null,
+      "ownBorder": {
+        "top": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "right": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        },
+        "bottom": {
+          "width": "2px",
+          "style": "solid",
+          "color": "rgb(42, 35, 24)"
+        },
+        "left": {
+          "width": "0px",
+          "style": "none",
+          "color": "rgb(204, 213, 219)"
+        }
+      },
+      "parentBg": "rgb(16, 11, 8)",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 239,
+        "h": 160
+      }
+    }
+  ]
+}

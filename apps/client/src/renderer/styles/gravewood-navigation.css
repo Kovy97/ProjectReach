@@ -631,6 +631,30 @@
   padding-left: calc(58px * var(--sb-scale-eff, 1)) !important;
 }
 
+/* 1.1.0, Chef-Entscheid 24.08. — schmale Leiste: der NAME hat Vorrang.
+   Die Beschriftung bleibt einzeilig und schrumpft (sidebar.css `.sb-skill-name`), aber unter
+   ~200px Leistenbreite reicht auch der 9px-Boden nicht mehr gegen die beidseitige Reservierung
+   von je 58px. Darum weicht hier die Nebeninformation: das Level-Abzeichen ist ausgeblendet
+   (sidebar.css, gleicher Container-Block), also braucht es rechts keine Abzeichen-Zone mehr,
+   und links genuegt die Breite, die das Symbol wirklich belegt (`clamp(26px, 34px*scale, 58px)`
+   plus 8px Versatz) statt der vollen 58px-Reserve.
+   Diese Stufe steht bewusst HIER und nicht in sidebar.css: die Regel darueber gewinnt mit
+   !important und `#root`-Spezifitaet gegen alles, was sidebar.css spaeter setzt. Gemessen mit
+   ui-audit/sidebar-einzeilig-verify.mjs. */
+@container sidebar (max-width: 200px) {
+  #root .sb-skill-btn .sb-skill-name {
+    padding-right: calc(10px * var(--sb-scale-eff, 1)) !important;
+    padding-left: calc(38px * var(--sb-scale-eff, 1)) !important;
+  }
+  /* Der Kampf-Knopf traegt weiter oben eine eigene !important-Regel mit hoeherer Spezifitaet
+     (#root .sb-combat-btn-row ...). Ohne diese Zeile behielte ausgerechnet er seine
+     Abzeichen-Reserve, obwohl das Abzeichen hier ausgeblendet ist — gemessen: "Combat" lief
+     als einziges kurzes Label ueber. */
+  #root .sb-combat-btn-row .sb-skill-btn .sb-skill-name {
+    padding-right: calc(10px * var(--sb-scale-eff, 1)) !important;
+  }
+}
+
 /* 1.0.1: Die Kampf-Zeile teilt sich ihre Breite mit dem Aufklapp-Pfeil (`.sb-combat-toggle`),
    ihr Knopf ist also schmaler als alle anderen — mit derselben 58px-Reserve rechts blieb für
    „KAMPF" kein Platz und das Wort wurde mitten durchgebrochen („KAM/PF"). Die Reserve rechts darf
