@@ -5,7 +5,14 @@
 
 /* codex:2026-08-03T14:52:00+02:00 — Kartenraster und gemeinsamer Ironwood-/Basalt-Rahmenvertrag. */
 #root .monster-grid {
-  grid-template-columns: repeat(auto-fill, minmax(max(270px, calc((100% - 60px) / 4)), 1fr));
+  /* 1.1.0: Die Mindestbreite stand auf 270px und verfehlte damit bei 1600x900 die dritte
+     Spalte um Haaresbreite — 3x270 plus zwei Abstaende sind 847px, verfuegbar sind 818.
+     Folge: nur zwei Karten, und die dann 400px breit, also BREITER als die 341px bei
+     1920x1080. Auf dem kleineren Bildschirm wurden die Karten groesser und man sah weniger.
+     255px passen mit Luft (3x255 + 2x18 = 801) und ergeben ~260px breite Karten, naeher an
+     den 341px der grossen Aufloesung. Bei 1366x768 bleibt es unveraendert bei zwei Spalten,
+     dort reicht die Breite fuer drei ohnehin nicht. */
+  grid-template-columns: repeat(auto-fill, minmax(max(255px, calc((100% - 60px) / 4)), 1fr));
   gap: clamp(14px, 1.15vw, 20px);
   align-items: start;
 }
