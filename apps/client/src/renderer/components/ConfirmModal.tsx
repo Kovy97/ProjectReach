@@ -27,6 +27,11 @@ export interface ConfirmRequest {
   body: string;
   confirmLabel: string;
   onConfirm: () => void;
+  /**
+   * Zerstoerend? Dann traegt der Bestaetigen-Knopf Rot statt Gold. Ohne diese Trennung sah
+   * "30 Gegenstaende verkaufen" genauso alarmierend aus wie "Spielstand loeschen".
+   */
+  danger?: boolean;
 }
 
 export function ConfirmModal({
@@ -46,12 +51,18 @@ export function ConfirmModal({
         </div>
         <h2 className="quit-confirm-title">{request.title}</h2>
         <p className="quit-confirm-body">{request.body}</p>
+        {/* 1.1.0 (Chef-Fund 24.08.): Hier standen zwei Knoepfe nebeneinander, die voellig
+            verschieden gebaut waren — "Abbrechen" als `combat-btn ghost` mit Hintergrundbild
+            und ohne Rand, "Bestaetigen" als `combat-btn flee` mit transparentem Hintergrund und
+            Rahmenbild. Zwei Bausprachen in einem Dialog, und beide aus dem KAMPF geliehen,
+            obwohl der Dialog ueber dem Hauptmenue liegt. Jetzt beide aus der Menue-Familie
+            (`hf-btn`), unterschieden nur noch durch die Betonung. */}
         <div className="quit-confirm-actions">
-          <button className="combat-btn ghost" onClick={onClose}>
+          <button className="hf-btn" onClick={onClose}>
             {t("sidebar.quitCancel")}
           </button>
           <button
-            className="combat-btn flee"
+            className={`hf-btn ${request.danger ? "hf-btn--danger" : "hf-btn--primary"}`}
             onClick={() => {
               const run = request.onConfirm;
               onClose();

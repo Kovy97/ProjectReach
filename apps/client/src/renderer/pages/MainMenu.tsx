@@ -68,6 +68,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
       title: t("menu.delete"),
       body: t("menu.deleteConfirm").replace("{name}", slot.summary?.name ?? ""),
       confirmLabel: t("menu.delete"),
+      danger: true,
       onConfirm: () => void deleteSlot(slot.id),
     });
   };
@@ -77,6 +78,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
       title: t("menu.overwrite"),
       body: t("menu.overwriteConfirm").replace("{name}", slot.summary?.name ?? ""),
       confirmLabel: t("menu.overwrite"),
+      danger: true,
       onConfirm: () => startNewGame(slot.id),
     });
   };

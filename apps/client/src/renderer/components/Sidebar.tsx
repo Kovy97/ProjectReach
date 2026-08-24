@@ -89,8 +89,16 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
   const handleRef = useRef<HTMLDivElement>(null);
   const widthRef = useRef(getSidebarWidth());
 
-  // Chef-Entscheid 24.08.: Beschriftungen bleiben EINZEILIG. Statt zu trennen oder umzubrechen
-  // schrumpft die Schrift, bis das Wort in eine Zeile passt (Boden 9px, s. sidebar.css).
+  // Chef-Entscheid 24.08.: Beschriftungen bleiben EINZEILIG und fuellen die verfuegbare
+  // Breite aus — die Schrift schrumpft, wenn das Wort sonst nicht passt, und WAECHST, wenn
+  // Platz frei ist (Boden 9px, Decke 19px bzw. 44 % der Knopfhoehe, s. sidebar.css).
+  //
+  // Das Wachsen kam als zweiter Chef-Fund dazu: "wir haben noch sehr viel Platz nach links und
+  // rechts, aber trotzdem ist die Schrift unnoetig klein skaliert". Gemessen stimmte das —
+  // JEDE Beschriftung stand am 9px-Boden, obwohl der Text nur 36-85 von 106 verfuegbaren
+  // Pixeln brauchte. Ursache: die CSS-Groesse haengt an `--sb-vscale`, also an der HOEHEN-
+  // Stauchung der Leiste (bei 1080p 0,72), nicht an der freien Breite. Eine Anpassung, die
+  // nur schrumpfen kann, konnte das nie ausgleichen.
   // Anlass war ein Chef-Fund: bei schmal gezogener Sidebar stand da "WOODCUTTI" / "NG", und die
   // Level-Anzeige legte sich zusaetzlich ueber die zweite Zeile.
   //
@@ -112,14 +120,51 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
       const namen = Array.from(el.querySelectorAll<HTMLElement>(".sb-skill-name"));
       for (const n of namen) n.style.removeProperty("--sb-name-fit");
       const bereich = document.createRange();
+
+      // Erst messen, dann EINE gemeinsame Groesse bestimmen. Ein erster Anlauf hat je
+      // Beschriftung einzeln skaliert — dabei stand "MINING" doppelt so gross da wie
+      // "JEWELCRAFTING", und die Liste sah ungepflegt aus. In einer Navigationsleiste zaehlt
+      // Einheitlichkeit mehr als der letzte Punkt Schriftgroesse.
+      let faktor = Infinity;
+      let obergrenze = 19;
+      const gemessen: { n: HTMLElement; basis: number }[] = [];
+
       for (const n of namen) {
+        const knopf = n.parentElement;
         const stil = getComputedStyle(n);
-        const platz =
-          n.clientWidth - parseFloat(stil.paddingLeft || "0") - parseFloat(stil.paddingRight || "0");
+        const basis = parseFloat(stil.fontSize) || 9;
         bereich.selectNodeContents(n);
         const noetig = bereich.getBoundingClientRect().width;
-        if (platz > 0 && noetig > platz) {
-          n.style.setProperty("--sb-name-fit", String(platz / noetig));
+        if (noetig <= 0 || !knopf) continue;
+
+        // Der freie Platz wird aus der ECHTEN Geometrie bestimmt, nicht aus dem CSS-Innenabstand:
+        // Eintraege ohne Level-Anzeige (Fertigkeits-Uebersicht, New Haven, Verzauberung,
+        // Statistik) reservierten sonst weiter eine Abzeichen-Zone, die es gar nicht gibt —
+        // gemessen 39 px verschenkte Breite je Eintrag, ausgerechnet bei den laengsten Namen.
+        const kb = knopf.getBoundingClientRect();
+        const symbol = knopf.querySelector<HTMLElement>(".sb-skill-icon-wrap");
+        const level = knopf.querySelector<HTMLElement>(".sb-skill-level");
+        const links = symbol ? symbol.getBoundingClientRect().right - kb.left : 0;
+        const rechts =
+          level && getComputedStyle(level).display !== "none"
+            ? kb.right - level.getBoundingClientRect().left
+            : 0;
+        const luft = 6; // Mindestabstand zu Symbol und Abzeichen
+        const platz = kb.width - links - rechts - 2 * luft;
+        if (platz <= 0) continue;
+
+        faktor = Math.min(faktor, platz / noetig);
+        // Nach oben begrenzt die Zeilenhoehe, nicht die Breite: die Schrift darf den Knopf
+        // nicht sprengen. 44 % der Knopfhoehe laesst ueber und unter der Versalhoehe Luft.
+        obergrenze = Math.min(obergrenze, kb.height * 0.44);
+        gemessen.push({ n, basis });
+      }
+
+      if (gemessen.length > 0 && Number.isFinite(faktor)) {
+        for (const { n, basis } of gemessen) {
+          const gewuenscht = Math.max(9, Math.min(obergrenze, basis * faktor));
+          const f = gewuenscht / basis;
+          if (Math.abs(f - 1) > 0.01) n.style.setProperty("--sb-name-fit", String(f));
         }
       }
       bereich.detach();
