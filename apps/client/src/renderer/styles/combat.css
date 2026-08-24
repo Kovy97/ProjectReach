@@ -3591,7 +3591,15 @@
      Rechnung: 20 px Zeichenbreite bei Schnitt 35 ergibt 20*16/35 = 9,1 px sichtbaren
      Goldrand, und 20+20 = 40 px bleiben unter der Mindesthoehe von 44 px — sonst wuerde der
      Browser beide Baender proportional stauchen und alles waere wieder verzerrt. */
-  border-image: url("../assets/ui/buttons/button_new.webp") 35 95 35 95 fill / 20px 30px 20px 30px;
+  /* 1.1.0 (Chef-Fund): Hier lag `button_new.webp`, das alte genietete Lederschild. Im Repo
+     liegt eine neuere Knopf-Familie (gravewood/buttons/), deren `primary`-Motiv exakt
+     dieselben Bildmasse hat — 1826x331 — und offensichtlich als Nachfolger gebaut wurde:
+     dunkles Leder, feiner Goldrand, abgeschraegte Ecken statt vier Nieten. Sie war nie
+     eingebunden; `primary` und `square` standen ungenutzt im Ordner.
+     Schnitt 40/48 statt 90/95: die Zier dieses Bildes misst 36-46 px (gemessen), waehrend
+     der Vorgaenger seine Nieten weiter innen hatte und darum die groessere Eckzone
+     brauchte. Zeichenbreite 14/22, damit der Rahmen bei 46 px Knopfhoehe Luft laesst. */
+  border-image: url("../assets/ui/gravewood/buttons/primary/primary-normal.webp") 40 48 40 48 fill / 14px 22px 14px 22px;
   border-radius: 0;
   min-height: 44px;
   color: #ffffff;
@@ -3601,24 +3609,24 @@
 }
 .combat-btn:hover {
   filter: none;
-  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
+  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-hover.webp");
   color: #fff;
   box-shadow: none;
 }
 .combat-btn:active {
-  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
+  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-pressed.webp");
   color: #fff;
   box-shadow: none;
 }
 .combat-btn[disabled] {
   cursor: default;
-  border-image-source: url("../assets/ui/buttons/button_new.webp");
+  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-normal.webp");
   filter: grayscale(0.6) brightness(0.7);
   opacity: 0.7;
 }
 .combat-btn[disabled]:hover,
 .combat-btn[disabled]:active {
-  border-image-source: url("../assets/ui/buttons/button_new.webp");
+  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-normal.webp");
 }
 
 /* ghost → same frame, compact size */
