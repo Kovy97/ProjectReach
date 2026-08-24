@@ -8,6 +8,10 @@
  * das Ende hinaus (z.B. alter Spielstand, dessen Fortschritt vor einer Registry-Kürzung lag),
  * beendet `OnboardingGuide.tsx` den Guide defensiv über `finishGuide`.
  *
+ * Chef-Auftrag 24.08.: Warteschlange und New Haven sind seither Teil DIESES Rundgangs. Sie
+ * standen nur in den Feature-Touren (areaTourSteps.ts), die laut App.tsx einmalig fuer
+ * Alt-Saves feuern — wer neu kauft, bekam beide nie erklaert.
+ *
  * Aktueller Stand: Intro + jeder verbliebene Topbar-Unterpunkt einzeln + Skills-Overview
  * (Sidebar-Anfang) + ALLE 12 Sammel-/Handwerks-Skills (woodcutting, mining, fishing, smithing,
  * cooking, farming, foraging, thieving, leatherworking, jewelcrafting, runecrafting,
@@ -67,6 +71,12 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   // ── Sidebar: Skills-Overview (Task #274 — von der Top Bar hierher verschoben, jetzt ganz oben
   // über Combat) + alle 13 Sammel-/Handwerks-Skills (Reihenfolge wie navigation.ts) ────────────
   { id: "sidebar.skills-overview", guideId: "sidebar.skills-overview", textKey: "onboarding.guide.topbar.skillsOverview", requireAction: true },
+
+  // New Haven, an seiner echten Sidebar-Position (navigation.ts: skills-overview, combat,
+  // newhaven, dann die 12 Skills) — combat ueberspringt der Rundgang bewusst, s. Kopf.
+  // Stand 24.08.: Das Lager war zuvor NUR Schritt der Feature-Tour v2, und die laeuft laut
+  // App.tsx einmalig fuer Alt-Saves. Neue Spieler bekamen das Kernfeature also nie erklaert.
+  { id: "sidebar.newhaven", guideId: "sidebar.newhaven", textKey: "onboarding.guide.sidebar.newhaven", requireAction: true },
   { id: "sidebar.woodcutting", guideId: "sidebar.woodcutting", textKey: "onboarding.guide.sidebarSkill.woodcutting", requireAction: true },
   { id: "sidebar.mining", guideId: "sidebar.mining", textKey: "onboarding.guide.sidebarSkill.mining", requireAction: true },
   { id: "sidebar.fishing", guideId: "sidebar.fishing", textKey: "onboarding.guide.sidebarSkill.fishing", requireAction: true },
@@ -79,6 +89,14 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   { id: "sidebar.jewelcrafting", guideId: "sidebar.jewelcrafting", textKey: "onboarding.guide.sidebarSkill.jewelcrafting", requireAction: true },
   { id: "sidebar.runecrafting", guideId: "sidebar.runecrafting", textKey: "onboarding.guide.sidebarSkill.runecrafting", requireAction: true },
   { id: "sidebar.herblore", guideId: "sidebar.herblore", textKey: "onboarding.guide.sidebarSkill.herblore", requireAction: true },
+
+  // Warteschlange — bewusst NACH dem Skill-Block: hier hat der Spieler gerade die zwoelf
+  // Quellen gesehen, die sie fuellen. Ziel ist der Rand-Tab von ActionQueuePanel.tsx
+  // (data-guide-id="feature.queueExpand", unbedingt gerendert). Der Pflichtklick ist hier
+  // kein Selbstzweck: das Panel startet eingeklappt (uiPrefs.getQueuePanelCollapsed liefert
+  // ohne gespeicherten Wert true), der Klick klappt es auf UND persistiert das. Wie bei
+  // New Haven war auch das bisher nur Feature-Tour-Stoff (v1) und damit Alt-Save-only.
+  { id: "queue", guideId: "feature.queueExpand", textKey: "onboarding.guide.queue", requireAction: true },
 
   // ── Sidebar: Statistics + Options (Task #224 — von der Top Bar hierher verschoben) ─────────
   { id: "sidebar.stats", guideId: "sidebar.stats", textKey: "onboarding.guide.topbar.stats", requireAction: true },

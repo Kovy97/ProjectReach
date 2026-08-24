@@ -61,7 +61,26 @@ export function UpdateNotice(): JSX.Element | null {
   );
 
   useEffect(() => {
-    if (!schonGesehen()) setOffen(true);
+    if (schonGesehen()) return;
+    // Ein Patch-Hinweis richtet sich an jemanden, der die Vorversion gespielt hat. Wer den
+    // Rundgang noch vor sich hat (`onboarding.done === false`; Alt-Saves migrieren auf `true`),
+    // hat kein „vorher": Der Text erzaehlte ihm von einem Schild, das er nie getragen hat, und
+    // von einem New-Haven-Umzug, den er nie erlebt hat. Schlimmer noch, das Overlay legte sich
+    // ueber den Rundgang und schluckte dessen ersten Pflichtklick — dieselbe Wirkung, die weiter
+    // oben schon fuer den Mess-Harness abgefangen ist, nur eben beim echten Spieler.
+    // Gemessen mit ui-audit/onboarding-tour-285.mjs (Abbruch bei Schritt 1, „modal-overlay
+    // intercepts pointer events"). Gleich als gesehen merken, sonst holt der Hinweis den
+    // Neuling beim naechsten Start ein.
+    // Ausnahme: Wem der Zweihand-Fix wirklich das Schild abgenommen hat (Brief im Postfach),
+    // der bekommt die Erklaerung IMMER — auch mitten im Rundgang.
+    if (!state.onboarding.done && !schildBetroffen) {
+      merken();
+      return;
+    }
+    setOffen(true);
+    // Absichtlich einmalig beim Mounten: der Hinweis soll nicht spaeter im Spiel aufpoppen,
+    // wenn sich `onboarding.done` oder das Postfach aendert.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!offen) return null;
