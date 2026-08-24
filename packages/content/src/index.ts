@@ -2831,8 +2831,12 @@ export const content: ContentDB = {
     // Kreative Item-Lizenz + Rare-Drop-Philosophie (design/lore/weltlore-grim-reach.md §1.4):
     // Stats liegen spürbar ÜBER last_idol's eigenem Godly-Loot (requirements bleiben am
     // Endgame-Cap 99 — "Stats des nächsten Tiers bei Requirements des aktuellen"), Drop-Chance
-    // ~0,1-0,15% (deutlich seltener als last_idol's eigene Godly-Waffen @0,8-1,0%, aber häufiger
+    // ~0,1-0,25% (deutlich seltener als last_idol's eigene Godly-Waffen @0,8-1,0%, aber häufiger
     // als die ultra-seltenen Suffix-Chases @~0,008%) — beide droppen NUR vom Boss `drazhan`.
+    // Spieler-Report 24.08.2026 (300 Kills ohne Klinge): `crownless_blade` 0,0015 → 0,0025.
+    // Begründung s. design/balance-drazhan-audit.md §10 — der Wert war dort seit dem 13.07. als
+    // offene Chef-Frage vermerkt, weil Dungeons NICHT queue-fähig sind (shared: "not_queueable",
+    // dungeonOnly) und auch nicht neu starten: jeder Versuch ist ein Handklick, kein Idle-Farm.
     crownless_blade: {
       id: "crownless_blade",
       name: { en: "The Crownless Blade", de: "Klinge des Kronenlosen" },
@@ -12671,7 +12675,7 @@ export const content: ContentDB = {
         { itemId: "onyx", chance: 0.6, min: 1, max: 2 },
         { itemId: "void_essence", chance: 0.35, min: 1, max: 3 },
         { itemId: "soulopal", chance: 0.4, min: 1, max: 2 },
-        { itemId: "crownless_blade", chance: 0.0015, min: 1, max: 1 },
+        { itemId: "crownless_blade", chance: 0.0025, min: 1, max: 1 },
       ],
     },
 

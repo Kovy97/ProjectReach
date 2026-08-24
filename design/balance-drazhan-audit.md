@@ -118,7 +118,7 @@ Stil-Querschnitt @VA (N = 250): **Melee (craft) 90,0 % Sieg / 10,0 % Tod · Mele
 | 3 | `drazhan.enrage` | `{0.25, 1.9}` | **`{ belowHpPct: 0.20, damageMult: 1.3 }`** | Enrage-Zufluss ~67 % der Heil-Decke (Erwartung) mit hoher Block-RNG-Varianz: gefährlichste Phase (weiterhin fallen dort praktisch alle Tode), aber überlebbar mit Trank-Disziplin. Kombiniert mit #1 verifiziert: Voll-Loadout ~88–91 % Sieg, Mindest-Gear ~25 %, T90-ohne-Runen/T80 0 % |
 | 4 | `behind_the_throne.gold` | 20000 | **8000** | bei machbarem Boss ~5–6 Clears/h ⇒ 20 k wären ~110 k Gold/h (Endgame-Band lt. Threat-Spec: 15–30 k/h). 8 k ≈ 45 k/h Premium über idol_sanctum (12 k je 4-Wellen-Run); Erst-Clear zahlt weiter doppelt (16 k-Moment) |
 
-**Bewusst NICHT ändern:** `maxHp` 8700 (23 % über Kurve = gewollter „Endboss des Bandes"-Überhang; trägt Marathon-Härte: TTK ø~7–9 min = ~1,7–2× last_idol, Food ~85–105 Banquets + 12–19 Tränke pro Sieg), `attackIntervalMs` 3500, `defense` 175, `evasion` 9, `regen` 1,4, `resist [frost, bleed]` (Schock-Fenster = Counter-Play), `inflict` burn (Flavor, harmlos), `xp` 92 000 (XP/HP kohärent zu last_idol), `crownless_blade` 0,0015 & Dungeon-Loot (Chase-Charakteristik; bei ~5–6 Kills/h ≈ 1 pro ~120 h — falls der Chef ~60 h Chase-Ziel will: 0,003).
+**Bewusst NICHT ändern:** `maxHp` 8700 (23 % über Kurve = gewollter „Endboss des Bandes"-Überhang; trägt Marathon-Härte: TTK ø~7–9 min = ~1,7–2× last_idol, Food ~85–105 Banquets + 12–19 Tränke pro Sieg), `attackIntervalMs` 3500, `defense` 175, `evasion` 9, `regen` 1,4, `resist [frost, bleed]` (Schock-Fenster = Counter-Play), `inflict` burn (Flavor, harmlos), `xp` 92 000 (XP/HP kohärent zu last_idol), Dungeon-Loot (Chase-Charakteristik). **`crownless_blade` 0,0015 → 0,0025 am 24.08.2026, s. §10**.
 
 ### Erwartetes Ergebnis nach Apply (verifiziert @VA, N = 250)
 
@@ -151,3 +151,39 @@ Content trägt die Apply-Liste 1:1 (drazhan 262/29/`{0.20, 1.3}`, Dungeon-Gold 8
 3. last_idol selbst liegt für realistische (Nicht-BiS-)Builds bei 23–41 % Tod pro isoliertem Versuch — im 4-Wellen-Kontext härter. Das ist die geerbte Kapitel-19-Referenzhärte; falls der Chef dort auch „machbarer" will, wäre das ein eigener Auftrag (NICHT Teil dieser Apply-Liste).
 4. Boss-Art `drazhan.png` fehlt weiterhin (design/fehlende-assets.md).
 5. Falls „alle Stile schon am Floor einstellig" gewünscht: `damageMult` 1,25 statt 1,3 in Apply-Zeile #3 (geschätzt +3–6 pp; die übrigen Zeilen unverändert).
+
+---
+
+## 10) Nachtrag 24.08.2026 — `crownless_blade` 0,0015 → 0,0025 (Spieler-Report)
+
+§9 hatte den Wert bewusst offen gelassen: *„bei ~5–6 Kills/h ≈ 1 pro ~120 h — falls der Chef
+~60 h Chase-Ziel will: 0,003“*. Diese Frage lag seit dem 13.07. unbeantwortet. Ein Spieler hat
+sie am 24.08. praktisch beantwortet — **300 Kills ohne Drop** — und selbst 0,25 % vorgeschlagen.
+
+**Was an seiner Rechnung stimmt, geprüft:**
+
+| Behauptung | Befund |
+|---|---|
+| 0,15 % = 1 zu 667 | richtig |
+| 0,25 % = 1 zu 400 | richtig |
+| „Dungeons sind nicht automatisiert wie andere Kämpfe“ | richtig, und schwerer als er denkt: `shared/index.ts` schließt `dungeonOnly`-Monster per `"not_queueable"` aus der Warteschlange aus, und `combat.ts` beendet den Dungeon *„KEIN Auto-Neustart“*. Jeder einzelne Versuch ist ein Handklick |
+
+**Warum das den Wert wirklich ändert und nicht nur die Stimmung:** Die Rare-Drop-Philosophie
+(„Effekt-Chases ab ~1/1000“) wurde für Ziele gedacht, die der Spieler *idle* farmt. Drazhan ist
+der einzige Chase im Spiel, den man nur von Hand wiederholen kann, bei 7–10 min TTK und
+82–108 Banquets je Sieg. 1/667 kostet dort ~120 h reine Boss-Zeit. Nicht die Zahl war der
+Ausreißer, sondern der Lieferweg.
+
+**Gewählt: 0,0025 (~72 h)** statt der in §9 skizzierten 0,003 (~60 h) — die Zahl des Spielers,
+und der kleinere Eingriff. Der Chase bleibt ein Chase.
+
+**Offene Kopplung:** Der Chef hat am selben Tag entschieden, **Dungeons queue-fähig zu machen**.
+Damit fällt genau die Begründung weg, die diese Erhöhung trägt — aus ~72 h Handklicken werden
+~72 h Idle-Zeit, und das ist ein völlig anderer Preis. 0,0025 geht so mit 1.0.2 raus, weil das
+Spiel HEUTE manuell ist. Sobald die Warteschlange Dungeons annimmt, gehört der Wert neu
+verhandelt (Richtung 0,0015–0,002); dieser Absatz ist die Erinnerung daran.
+
+**Bewusst NICHT mitgeändert:** `sevenfold_crown_chain` @0,001 (Dungeon-Tabelle
+`behind_the_throne`, feuert beim selben Kill). Derselbe Handklick-Einwand träfe die Kette mit
+~200 h sogar doppelt — der Report sprach aber nur von der Klinge, und zwei Chases desselben
+Bosses gleichzeitig zu lockern ist eine Chef-Entscheidung, keine Wartung.
