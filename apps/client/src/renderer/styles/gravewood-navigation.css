@@ -515,7 +515,12 @@
   border-width: var(--gw-nav-frame-width) !important;
   border-image-source: var(--gw-nav-frame) !important;
   border-image-slice: 28 !important;
-  border-image-width: var(--gw-nav-frame-width) !important;
+  /* 1.1.0: Zeichenbreite als Vielfaches, nicht als feste Zahl. Das Holz im Rahmenbild ist
+     nur 13 px (oben/unten) bzw. 15 px (links/rechts) stark, der Zuschnitt aber 28 — eine
+     feste Breite zeigt darum ueber die Haelfte Nichts. Das war die Wurzel von Befund B:
+     Sidebar und Topbar wirkten wie zwei Bauteile, weil beide halb leere Rahmen zeichneten,
+     nur unterschiedlich breit. border-width behaelt die Variable, sie traegt das Layout. */
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
   border-image-outset: 0 !important;
   border-image-repeat: stretch !important;
   background-color: #100b08 !important;
@@ -696,7 +701,7 @@
   border-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
   border-image-source: var(--gw-nav-frame) !important;
   border-image-slice: 28 !important;
-  border-image-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
   border-image-outset: 0 !important;
   border-image-repeat: stretch !important;
   background-color: #100b08 !important;
@@ -739,7 +744,7 @@
   border-width: var(--gw-nav-frame-width) !important;
   border-image-source: var(--gw-nav-frame) !important;
   border-image-slice: 96 !important;
-  border-image-width: var(--gw-nav-frame-width) !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
   border-image-outset: 0 !important;
   border-image-repeat: repeat !important;
 }
@@ -757,7 +762,7 @@
   border-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
   border-image-source: var(--gw-nav-frame) !important;
   border-image-slice: 96 !important;
-  border-image-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
   border-image-outset: 0 !important;
   border-image-repeat: repeat !important;
 }
@@ -781,7 +786,7 @@
      die Optik unverändert (62px-Wunschwert liegt weiterhin über dem neuen Floor). */
   min-height: clamp(40px, calc(62px * var(--sb-scale-eff, 1)), 92px) !important;
   border-width: var(--gw-nav-frame-layout) !important;
-  border-image-width: var(--gw-nav-frame-width) !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
 }
 
 /* codex:2026-08-01T08:48:51+02:00 — Der Icon-Owner nutzt die freigelegte Innenhöhe vollständig.
@@ -823,7 +828,7 @@
   min-height: 0 !important;
   padding: 0 calc(8px * var(--tb-scale, 1)) !important;
   border-width: var(--gw-nav-frame-layout-v) var(--gw-nav-frame-layout-h) !important;
-  border-image-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
   line-height: 1.18;
 }
 

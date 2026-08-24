@@ -1394,14 +1394,20 @@ body .item-cell.rarity-godly {
   max-height: none;
   overflow: visible;
   padding-bottom: 16px;
+  /* 1.1.0 (Bericht 01, Befund B8): Hier lagen ein 65-px-Fallschatten UND eine 54-px-Innen-
+     vignette mit 72 Prozent Deckkraft auf demselben Element. Die Holztextur soff an den
+     Raendern so weit ab, dass die Eckbeschlaege des Rahmens im Dunkeln verschwanden.
+     Die Vignette ist jetzt --vg-3, die staerkste Stufe der Skala, mit halber Deckkraft.
+     Ausserdem war die Zeichenbreite fest (12px) und hebelte damit den korrigierten Zuschnitt
+     wieder aus — jetzt das Vielfache, border-width traegt weiter das Layout. */
   border-width: 12px;
-  border-image-width: 12px;
+  border-image-width: 2.15 1.87 2.15 1.87;
   background:
     linear-gradient(90deg, rgba(7, 7, 7, 0.94), rgba(27, 19, 12, 0.9) 48%, rgba(8, 8, 8, 0.95)),
     url("../assets/bg_tileable_wood.webp") 0 0 / 320px 320px repeat;
   box-shadow:
-    0 28px 65px rgba(0, 0, 0, 0.9),
-    inset 0 0 54px rgba(0, 0, 0, 0.72);
+    var(--sh-6),
+    var(--vg-3);
 }
 
 .itip-warbanner-main {
