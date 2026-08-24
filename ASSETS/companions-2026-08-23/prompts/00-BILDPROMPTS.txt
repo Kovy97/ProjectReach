@@ -1,0 +1,242 @@
+================================================================================
+BEGLEITER — DIE 21 BILDPROMPTS (Fassung 2, 24.08.2026)
+================================================================================
+
+Diese Datei ersetzt NICHT die Dateien 01 und 02. Sie kommt davor.
+
+  00 (diese Datei)  Der Prompt, der ins Bildmodell geht. Kurz, vorn geladen,
+                    englisch. Das Tier steht in den ersten vier Woertern.
+  01 / 02           Das ausfuehrliche Briefing. Ab jetzt die ABNAHME-Grundlage:
+                    daran wird das fertige Bild geprueft, nicht daraus erzeugt.
+
+--------------------------------------------------------------------------------
+WARUM DIE UMSTELLUNG
+--------------------------------------------------------------------------------
+Der erste Durchgang ist gescheitert, obwohl das Briefing gut war. Beispiel
+rotbark: dort stand woertlich "Anatomische Vorlage: Biber, Koerperbau eines
+Vielfrasses" und unter VERBOTEN "keine Ranken oder Zweige, die aus dem Koerper
+wachsen". Geliefert wurde ein Buendel Treibholz auf Stelzen, aus dem Ranken
+wachsen. Die Vorgabe war da und ist untergegangen.
+
+Ein 200-Woerter-Block mit fuenf Nebenbedingungen wird von einem Bildmodell
+gemittelt. Was ueberlebt, ist die Stimmung, nicht die Anatomie. Deshalb steht
+das Tier jetzt am Anfang, in einem kurzen Satz, und der Rest folgt.
+
+Zwei Fehler lagen aber bei UNS und nicht beim Modell: gemwraith war als
+Weberknecht angelegt und carapace als Rollassel. Beides Gliederfuesser. Genau
+die zwei sind am fremdartigsten geraten — das Briefing hat das Ergebnis
+bestellt. Beide sind hier ersetzt:
+
+  gemwraith   Weberknecht  ->  Reh, Geweih aus rohem Kristall
+  carapace    Rollassel    ->  Schildkroete
+
+--------------------------------------------------------------------------------
+DAS ANATOMIE-GESETZ (gilt fuer alle 21, ohne Ausnahme ausser vellumoth)
+--------------------------------------------------------------------------------
+Jeder Begleiter ist ein WIRBELTIER. Ein Betrachter muss in einer Sekunde sagen
+koennen, welches Tier da steht: "das ist ein Hase", "das ist ein Geier".
+
+  JA    Fell, Federn, Haut, Schuppen, Panzer.
+        Ein Kopf mit sichtbaren Augen.
+        Vier Gliedmassen, oder zwei Beine und zwei Fluegel.
+        Die Verwandlung liegt AUF dem Tier: Asche, Rost, Rinde, Frost, Erz.
+
+  NEIN  Kein Chitin, kein Exoskelett, keine gegliederten Insekten- oder
+        Spinnenbeine, keine Facettenaugen, keine Mandibeln, keine Fuehler.
+        Nie mehr als vier Gliedmassen. Keine duennen Stelzenbeine.
+        Kein glatter, augenloser, langgezogener Schaedel (Xenomorph).
+        Keine Maschinenteile, keine Rohre, keine leuchtenden Schaltkreise.
+        Kein Wesen, das nur aus seinem Material besteht: rotbark ist ein
+        Tier aus Holz, kein Haufen Holz mit Beinen.
+
+Die einzige Ausnahme ist vellumoth. Eine Motte ist ein Insekt, und der Name
+verlangt sie. Dann aber eine ECHTE Motte, wie ein Atlasspinner: dicker
+pelziger Koerper, weiche breite Fluegel, gefiederte Fuehler, grosse dunkle
+Augen. Weich und warm, nicht panzerhart. Wenn das nicht gelingt, lieber
+melden als ein Alien liefern.
+
+--------------------------------------------------------------------------------
+DIE STILREFERENZ — BITTE VORHER ANSEHEN
+--------------------------------------------------------------------------------
+Das ist keine Beschreibung, das sind Dateien im Repo. Sieh sie dir an, bevor du
+das erste Bild erzeugst. Sie sind die Welt, in die diese 21 gehoeren:
+
+  apps/client/src/renderer/assets/monsters/ash_rat.webp
+  apps/client/src/renderer/assets/monsters/ashfield_jackal.webp
+  apps/client/src/renderer/assets/monsters/abyssal_devourer.webp
+  apps/client/src/renderer/assets/monsters/ash_tyrant.webp
+
+Woran du dich haeltst: gemalter Realismus, matt, kein Hochglanz. Echte
+Tieranatomie, auch beim Drachen. Fell und Haut mit Struktur. Augen, die
+leuchten, in einem Gesicht, das man liest. Gedeckte Erdtoene, eine kalte
+Akzentfarbe. Warmes Streiflicht auf der Oberkante.
+
+ash_rat ist der wichtigste: eine Ratte, die einfach eine Ratte ist. Genau so
+weit geht die Stilisierung in diesem Spiel — und keinen Schritt weiter.
+
+--------------------------------------------------------------------------------
+DER STILBLOCK
+--------------------------------------------------------------------------------
+Haenge diesen Block WOERTLICH an jeden der 21 Prompts an. Er wird unten nicht
+wiederholt.
+
+  Painted dark fantasy realism, matte finish, believable animal anatomy and
+  weight. Muted earth palette. Calm companion pose, standing or sitting at
+  rest, not attacking. Three-quarter view, head turned toward the lower left.
+  Full body, nothing cropped, roughly 9% margin, longest body axis fills
+  76-80% of the canvas. Soft warm key light from the upper left, cool fill
+  from the right, narrow amber rim light along the top edge. Fully
+  transparent background: no ground, no pedestal, no cast shadow, no frame,
+  no text, no border. Silhouette must stay readable at 180 px.
+  1024x1024 PNG with real alpha baked in at generation. No magenta. No
+  painted checkerboard.
+
+--------------------------------------------------------------------------------
+DIE 21 PROMPTS
+--------------------------------------------------------------------------------
+Dateiname ist jeweils exakt die Id. Ablage in ..\fertig\card\ bzw. ..\fertig\fight\.
+
+
+ 1. rotbark      (Holzfaellen)
+A beaver the size of a badger, low and heavy, with a broad flat rudder tail.
+Its back is grown-over oak bark in thick overlapping plates; flanks and belly
+are pale grained sapwood. Two long chisel teeth, dark as heartwood. A single
+matte tinder-fungus on the shoulder, moss in the seams. Accent: pale cold
+green glowing only from inside the gnaw-grooves along its back.
+
+ 2. cragmaw      (Bergbau)
+A blind mole-badger built for digging, long and flat, front-heavy, with huge
+spade claws. Its hide is grey stone crusted with ore. Wedge snout, tiny sealed
+eyes under a heavy brow. Accent: hematite rust-red glowing only in the fresh
+furrows its claws have torn.
+
+ 3. gillrot      (Angeln)
+A giant salamander, flat-bodied with a broad rudder tail, hunched at the water's
+edge. Slick dark amphibian skin, drowned-pale belly, frayed external gills at
+the neck. Accent: cold anglerfish blue, only in the gill fringe and a single
+lure barbel above the eyes.
+
+ 4. witherling   (Anbau)
+A hare sitting upright on strong hind legs, tall ears, alert and calm. Lean but
+healthy, not withered. Ripe wheat grows through its coat along back and
+shoulders, and a few dry husks cling to the ears. Accent: warm ear-gold in the
+grain heads only.
+
+ 5. sporewretch  (Sammeln)
+A knuckle-walking long-armed forest ape, squat, resting on its fists. Coarse
+damp fur matted with leaf litter. A ridge of pale bracket mushrooms along the
+spine. Broad quiet face, deep-set dark eyes. Accent: sulphur yellow, only in
+the gills under the mushroom caps.
+
+ 6. gloomrat     (Diebeskunst)
+A large rat reared up on its hind legs, long bare tail curled behind it, one
+forepaw raised and holding a single coin. Sleek grease-dark fur, torn ear,
+bright attentive eyes. Anatomy exactly like a real rat. Accent: verdigris green
+in the eyes and along the coin's edge.
+
+ 7. slagfiend    (Schmieden)
+A squat ape-like biped of cooled forge slag, heavy shoulders, short legs,
+standing at rest with long arms hanging. Its body is dark crusted slag and
+hammered iron scale, cracked like cooling metal. Blunt heavy head, small deep
+eyes. Accent: white-hot orange deep inside the cracks only.
+
+ 8. ashgut       (Kochen)
+A heavy mastiff sitting on its haunches, broad chest, jowled muzzle, calm and
+patient. Short coat the colour of wood ash, singed at the edges, a scarred
+nose. Accent: coal ember red glowing faintly through the skin of its belly and
+throat, as if it swallowed the hearth.
+
+ 9. quillshrike  (Lederverarbeitung)
+A small upright bird of prey like a shrike, perched and still, hooked beak,
+sharp black eye stripe. Its nape and back carry long stiff steel quills instead
+of feathers. Sharp, tidy, dangerous. Accent: cold steel blue on the quill tips
+only.
+
+10. flayling     (Lederverarbeitung)
+A marten, long and horizontal, low to the ground, stretched forward in a calm
+prowl. Its pelt is split and peeling in clean tanner's strips along the flanks,
+showing supple cured leather beneath, not raw flesh. Narrow clever face, small
+bright eyes. Accent: tanbark rust-red along the peeled edges.
+
+11. gemwraith    (Juwelierskunst)
+A roe deer, slender and half-translucent like a ghost, standing calm and alert.
+Its antlers are raw uncut crystal instead of bone, and a single faceted gem sits
+where its heart would be, visible through the pale body. Fine dark hooves,
+large dark eyes. Accent: hard diamond white refracting from the antler tips and
+the heart gem.
+
+12. glyphmaw     (Runenkunst)
+A legless stone serpent coiled in a resting S-curve, head raised. Its scales are
+flat carved slabs covered in worn engraved runes. Blunt heavy skull, lidless
+eyes. Accent: indigo blue light rising out of the carved lines, brightest in
+the seams of the closed jaw.
+
+13. vellumoth    (Runenkunst)
+A large real moth like an atlas moth, wings spread flat and still. Thick soft
+furred body, feathered antennae, big dark eyes. Its broad pale wings are aged
+vellum, covered in faint handwritten script and ruled lines. Warm and soft, not
+armoured. Accent: vermilion rubric red in the initials written on the wings.
+
+14. hemlock      (Kraeuterkunde)
+A broad tall toad sitting upright, wide heavy body, calm and swollen with
+patience. Warty damp skin in bruised green and grey, pale throat. Small dried
+root-stems curl back from above its eyes like modest horns. Accent: absinthe
+green glowing in the glands along its back.
+
+15. ironmaw      (Nahkampf)
+A short high-shouldered ram, massive in the chest, standing braced and calm.
+Thick curled horns plated in riveted iron, a broad blunt skull built to ram.
+Dense dark fleece matted with grit. Accent: amber yellow in the eyes and along
+the rivet seams.
+
+16. carapace     (Nahkampf)
+A tortoise, low and immovable, standing squarely on thick columnar legs. Its
+shell is a layered plate of ancient scarred armour, scutes like a battered
+shield boss. Wrinkled leathery neck, old patient eyes. Accent: old jade green
+in the deep seams between the scutes.
+
+17. gorehound    (Fernkampf)
+A tall lean coursing hound, deep chest, tucked waist, long legs, standing alert
+with head lowered on the scent. Short coat scarred and dust-grey, ribs showing.
+Muzzle darkly wet. Accent: arterial red along the muzzle and in the eyes.
+
+18. carrionwing  (Fernkampf)
+A large vulture hunched with wings folded, bald wrinkled head sunk between high
+shoulders, heavy hooked beak. Ragged dark plumage, bare pink-grey neck. Patient
+and unbothered. Accent: moon-silver white on the primary feather edges.
+
+19. pyreling     (Magie)
+A big cat crouched low, shoulder blades high, tail lashed flat, calm before the
+spring. Short dark coat cracked like cooling lava, glowing seams between the
+plates of muscle. Broad feline skull, slit eyes. Accent: vermilion flame deep
+in the skin cracks and in the eyes.
+
+20. hoarspite    (Magie)
+A bat crouched on the ground with its wings wrapped around itself like a cloak,
+only the face showing. Pale frost-white fur, delicate ribbed wing membranes
+rimed with ice crystals. Large dark eyes, small upturned nose. Overall a light,
+bright figure. Accent: frost blue-white at the ice on the wing edges.
+
+21. charnel      (Magie)
+A tall stooped bipedal beast, gaunt and long-limbed, standing quietly with its
+head lowered. Draped in grey grave-linen worn thin over dry hide. A long narrow
+animal skull for a head with deep sockets and visible eyes inside them. Two
+arms, two legs, nothing more. Accent: deathlight violet burning far back in
+the eye sockets.
+
+--------------------------------------------------------------------------------
+ABNAHME
+--------------------------------------------------------------------------------
+Nach jedem Bild drei Fragen, ehrlich beantwortet:
+
+  1. Welches Tier ist das? Wenn die Antwort laenger als drei Woerter ist, noch
+     einmal.
+  2. Hat es ein Gesicht mit Augen, das man findet?
+  3. Zaehle die Beine. Mehr als vier heisst neu.
+
+Dann `python ASSETS/pruefen.py <ordner>` fuer Alpha, Saum und Silhouette. Das
+Skript prueft die Technik, nicht das Motiv — die drei Fragen oben nimmt es dir
+nicht ab.
+
+Bei Zweifel lieber ein Bild vorlegen und fragen, als 21 zu erzeugen. Der erste
+Durchgang hat 21 Bilder gekostet, weil niemand nach dem ersten gefragt hat.

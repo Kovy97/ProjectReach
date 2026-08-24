@@ -39,7 +39,7 @@ Zur schnellen Gegenprobe die sieben Zeilen aus der Gesamtuebersicht:
   Id            Koerperbau                          Akzentfarbe          Wert
   ------------  ----------------------------------  -------------------  -----
   ironmaw       kurzer hochschultriger Rammbock     Bernsteingelb        dunkel
-  carapace      flache gebaenderte Rollassel        altes Jadegruen      mittel
+  carapace      breite niedrige Schildkroete        altes Jadegruen      mittel
   gorehound     hoher magerer Hetzhund              Arterienrot          mittel
   carrionwing   grosser gebeugter Geier             Mondsilber-Weiss     dunkel
   pyreling      tief geduckte Raubkatze             Zinnober-Flamme      dunkel
@@ -99,45 +99,46 @@ ALT         Die aktuelle Datei ist ein schwarzes Zottenwesen, dessen ganzer Kopf
             das dritte Bild der Reihe mit demselben Zahn-Vokabular.
 
 --------------------------------------------------------------------------------
-2. carapace — Chitinpanzer   |  Quelle: Nahkampf (Schild, Chitin, Standhaftigkeit)
+2. carapace — Panzerling   |  Quelle: Nahkampf
 --------------------------------------------------------------------------------
-BASIS       Eine riesige Rollassel oder ein Trilobit von Schildgroesse, flach am
-            Boden, mit gebaendertem Segmentpanzer. Ein Tier, das jede Klinge
-            ueberdauert hat, indem es sich nie bewegt hat.
-MOTIV       Liegt breit und niedrig, die Segmente sauber uebereinandergeschoben,
-            der Kopfschild leicht angehoben und nach links-vorn gerichtet. Der
-            Panzer besteht aus etwa zwoelf Querbaendern, vorne breiter, nach
-            hinten kleiner werdend, mit einem abgerundeten Schwanzschild als
-            Abschluss. Unter dem Panzerrand schauen kurze kraeftige Laufbeine
-            hervor, gleichmaessig gereiht, nur die Spitzen sichtbar. Am Kopfschild
-            sitzen zwei kleine tief eingesenkte dunkle Augen und zwei kurze dicke
-            gegliederte Fuehler, die ruhig nach vorn liegen. Es hat keinen
-            Rachen, keine Zange, keine Waffe — das ist der Punkt.
-MATERIAL    Alter dicker Chitinpanzer: tief nachgedunkelt, glatt gewoelbt auf den
-            Baendern, an den Raendern ausgesplittert, mit alten verheilten Kerben
-            und ein bis zwei sauber ausgebrochenen Stuecken, in die neues
-            helleres Chitin nachgewachsen ist. Auf den Bandkanten liegt ein
-            feiner matter Schimmer wie auf Horn. Unterseite und Beine sind
-            heller, hornbeige. Palette: dunkles Chitinbraun, Hornbeige, kuehles
-            Grauschwarz in den Fugen.
-AKZENT      Altes Jadegruen (der Passiv ist farblos — die Farbe kommt aus dem
-            Material der Quelle: sehr alter, tief nachgedunkelter Panzer). Es
-            liegt als tiefer matter Schimmer nur auf den Woelbungen der obersten
-            drei Panzerbaender. Kein Leuchten, sondern ein Glanz wie auf
-            poliertem Jadegestein: er wandert mit dem Licht, er strahlt nicht.
-ABGRENZUNG  Gegen ironmaw siehe dort. Gegen gemwraith (Datei 1), den anderen
-            Gliederfuessler: carapace ist flach, geschlossen und breit, seine
-            Beine sind verdeckt; gemwraith ist hoch, offen und duenn und besteht
-            fast nur aus Beinen.
-VERBOTEN    Keine Zangen, keine Kiefer, keine Stacheln auf dem Panzer, keine
-            Dornen, keine Metallbeschlaege, keine gluehenden Fugen. Der Panzer
-            ist gewachsen, nicht geschmiedet — heute sieht er aus wie
-            zusammengeschraubte Ruestungsplatten.
-SILHOUETTE  Ein breites flaches gebaendertes Oval, die niedrigste geschlossene
-            Form der Reihe. Die Baender muessen bei 200 px als Streifen lesbar
-            bleiben; sie tragen das Motiv allein.
-ALT         Die aktuelle Datei ist eine gepanzerte Schildkroete aus Metallplatten
-            mit Stacheln, kaum von einem Ruestungsgegner zu unterscheiden.
+GEAENDERT 24.08.  Die Basis war eine Rollassel. Das hat das Insekt der ersten
+            Runde bestellt. Neue Basis: eine Schildkroete. Akzentfarbe und
+            Haertetest bleiben unveraendert.
+BASIS       Eine Landschildkroete von der Masse eines grossen Hundes, niedrig,
+            breit und unverrueckbar. Echte Schildkroetenanatomie: vier kurze
+            saeulenfoermige Beine, ein schwerer Panzer, ein faltiger lederner
+            Hals.
+MOTIV       Steht fest und ruhig auf allen vieren, der Koerper tief, der Hals
+            halb ausgestreckt und der Kopf nach links-vorn gewandt. Ein alter,
+            geduldiger Blick aus kleinen dunklen Augen unter schweren Lidern.
+            Nichts an der Haltung ist Abwehr — das Tier steht einfach da, und
+            das ist der Punkt. Es weicht nicht.
+MATERIAL    Der Panzer ist kein Chitin, sondern gewachsene Panzerplatte: dicke
+            Hornschilde, an den Raendern abgestossen, ueber und ueber mit alten
+            Kerben, Schrammen und verheilten Bruchlinien — die Chronik jedes
+            Schlags, den er abgefangen hat. Die einzelnen Schilde sitzen wie die
+            Buckel eines zerschlagenen Schildes. Haut an Hals und Beinen ist
+            grobes, tief gefaltetes Leder, staubgrau. Palette: Schiefergrau,
+            altes Horn, staubiges Braun.
+AKZENT      Altes Jadegruen (aus dem Effekt: Schadensminderung). Es sitzt
+            AUSSCHLIESSLICH tief in den Fugen zwischen den Hornschilden, wie
+            Licht, das aus einem Riss dringt. Nie auf der Oberflaeche, nie am
+            Kopf.
+ABGRENZUNG  Gegen ironmaw, den zweiten Nahkampf-Begleiter: ironmaw ist hoch in
+            der Schulter, vorderlastig, gehoernt und auf Wucht gebaut — er
+            teilt aus. carapace ist niedrig, breit, ungehoernt und auf Bleiben
+            gebaut — er steckt ein. Bewegung gegen Stillstand.
+VERBOTEN    Kein Chitin, keine Segmente, die sich einrollen, keine
+            Insektenbeine, keine Fuehler, keine Facettenaugen, keine Stacheln
+            auf dem Panzer. Kein Metall — der Panzer ist gewachsen, nicht
+            geschmiedet. Nicht eingezogen: Kopf und Beine bleiben draussen.
+SILHOUETTE  Eine breite niedrige Kuppel auf vier kurzen Saeulen, mit einem
+            vorgestreckten Hals. Die Kuppel und der Hals sind das
+            Erkennungszeichen; der Hals muss klar aus der Kuppel heraustreten
+            und darf nicht mit ihr verschmelzen.
+ALT         Die aktuelle Datei ist ein gepanzertes Insekt mit gegliederten
+            Beinen und gruen leuchtendem Leib. Der Neuguss ist ein altes Tier,
+            das schon alles ausgehalten hat.
 
 --------------------------------------------------------------------------------
 3. gorehound — Blutbracke   |  Quelle: Fernkampf (Faehrte, Jagd, Hetze)

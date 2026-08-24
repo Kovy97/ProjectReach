@@ -3,6 +3,18 @@
 Chef-Auftrag: „Die Qualität jener gefällt mir nicht. Für jedes Pet ein neues Bild. Zwar Dark
 Fantasy, aber sollte zum Skill passen und nicht lächerlich wirken."
 
+> **Runde 2, 24.08.2026.** Runde 1 ist abgelehnt und liegt in `abgelehnt-2026-08-24/`
+> (samt Kontaktbogen `_kontaktbogen.png`). Chef-Urteil: erst echte Tiere wie ein Faultier,
+> dann Alien- und Insektenwesen. Beides trifft nicht die eigene Dark-Fantasy-Welt.
+>
+> **Lies zuerst `prompts/00-BILDPROMPTS.txt`.** Dort steht der Prompt, der ins Bildmodell
+> geht, das Anatomie-Gesetz und die Stilreferenz. Die Dateien 01 und 02 sind ab jetzt die
+> ABNAHME-Grundlage: daran wird geprueft, nicht daraus erzeugt.
+>
+> Zwei Motive waren im Briefing selbst falsch angelegt und sind ersetzt: `gemwraith` war ein
+> Weberknecht (jetzt ein Reh mit Kristallgeweih), `carapace` eine Rollassel (jetzt eine
+> Schildkroete). Beide Blocktexte sind bereits nachgezogen.
+
 Alles zu diesem Auftrag liegt in diesem Ordner. Es muss nichts aus `Downloads` geholt werden.
 
 ```

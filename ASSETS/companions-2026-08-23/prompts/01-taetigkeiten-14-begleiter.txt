@@ -66,12 +66,12 @@ Genau so muss es bleiben.
   ashgut        sitzende schwere Dogge              Kohle-Glutrot        mittel
   quillshrike   kleiner aufrechter Vogel            Stahlblau            kontrast
   flayling      langer waagerechter Marder          Gerberlohe-Rostrot   mittel
-  gemwraith     duennbeiniger Weberknecht           Diamantweiss         kontrast
+  gemwraith     schlankes Reh, Kristallgeweih       Diamantweiss         kontrast
   glyphmaw      beinlose Steinschlange, S-Windung   Indigoblau           mittel
   vellumoth     flach ausgebreitete Motte           Zinnober-Rubrikrot   HELL
   hemlock       breite hohe Kroete                  Absinthgruen         dunkel
   ironmaw       kurzer hochschultriger Rammbock     Bernsteingelb        dunkel
-  carapace      flache gebaenderte Rollassel        altes Jadegruen      mittel
+  carapace      breite niedrige Schildkroete        altes Jadegruen      mittel
   gorehound     hoher magerer Hetzhund              Arterienrot          mittel
   carrionwing   grosser gebeugter Geier             Mondsilber-Weiss     dunkel
   pyreling      tief geduckte Raubkatze             Zinnober-Flamme      dunkel
@@ -525,51 +525,48 @@ ALT         Die aktuelle Datei ist eine schlaksige Puppe mit Beulenkopf, Riemen
 --------------------------------------------------------------------------------
 11. gemwraith — Edelsteinwicht   |  Quelle: Juwelierskunst     [HAERTETEST 1/2]
 --------------------------------------------------------------------------------
-BASIS       Ein langbeiniger Weberknecht in Handspannen-Groesse: winziger Koerper,
-            acht sehr lange duenne fein gegliederte Beine. Das Praeziseste der
-            ganzen Reihe — die Beine sind die Werkzeuge eines Juweliers.
-MOTIV       Steht hoch auf den gespreizten Beinen, der Koerper klein und tief
-            zwischen ihnen aufgehaengt, zwei Vorderbeine leicht angehoben und nach
-            links-vorn gerichtet wie tastende Werkzeuge. Die Beine sind nicht
-            gleich lang: das zweite Paar ist deutlich laenger als die uebrigen,
-            wie beim echten Weberknecht. Jedes Gelenk ist sauber gearbeitet und
-            leicht verdickt. Der Koerper ist ein glatter gewoelbter Rumpf ohne
-            Gesicht; an seinem Vorderende sitzt eine kleine geneigte Fassung, in
-            der ein einzelner geschliffener Stein steckt — das ist alles, was es
-            an Kopf gibt.
-MATERIAL    Der Koerper ist eine hohle Metallfassung: dunkles bruenierte Silber,
-            fast bleigrau, matt poliert, mit den feinen Werkzeugspuren einer
-            Punze. Rings um den Rumpf halten kleine gebogene Krappen je einen
-            Stein — ein Dutzend, unterschiedlich gross, unterschiedlich
-            geschliffen, nicht symmetrisch angeordnet. Die Beine sind aus
-            demselben dunklen Metall gezogen, an den Gelenken mit winzigen
-            Nieten. Palette: Bleigrau, bruenierte Silbertoene, tiefes
-            Anthrazit — sehr dunkel und sehr ruhig, damit die Steine tragen.
+GEAENDERT 24.08.  Die Basis war ein achtbeiniger Weberknecht ohne Gesicht. Das
+            hat den Spinnen-Kronleuchter der ersten Runde bestellt. Neue Basis:
+            ein Reh. Akzentfarbe und Haertetest bleiben unveraendert.
+BASIS       Ein Reh in Kitz-Groesse, schlank und hochbeinig, halb durchscheinend
+            wie ein Geist. Echte Rehanatomie: feine Laeufe, schmaler Kopf,
+            grosse dunkle Augen, wache Ohren.
+MOTIV       Steht ruhig und aufmerksam, das Gewicht auf allen vier Laeufen, den
+            Kopf leicht gehoben und nach links-vorn gedreht — der Moment, in dem
+            ein Reh aufsieht. Statt Geweih aus Knochen traegt es ein Geweih aus
+            rohem, ungeschliffenem Kristall: klar, kantig, in Stufen gewachsen
+            wie Bergkristall in einer Kluft. Dort, wo das Herz saesse, sitzt ein
+            einzelner geschliffener Stein, durch den blassen Koerper sichtbar.
+            Das ist der ganze Schmuck. Keine Fassungen am Rumpf, keine Krappen,
+            keine aufgesetzten Steine.
+MATERIAL    Der Koerper ist blass und halb durchscheinend, wie milchiges Glas mit
+            Fell darin — man ahnt die Form dahinter, ohne hindurchzusehen. Feines
+            kurzes Haar in Rauchgrau und gebrochenem Weiss, an Laeufen und
+            Ruecken dichter. Die Hufe sind dunkel und fest, das einzig voellig
+            Undurchsichtige neben dem Herzstein. Palette: Rauchgrau, gebrochenes
+            Weiss, blasses Aschgrau. Sehr ruhig, damit der Kristall traegt.
 AKZENT      Farbloses Diamantweiss (aus der Kampffaehigkeit: Prismenlanze). KEIN
-            Violett, kein Lila, kein Regenbogen. Die gefassten Steine sind
-            wasserklar und werfen ein hartes weisses gerichtetes Funkeln —
-            wenige scharfe Lichtnadeln aus den Facetten, kein allgemeines
-            Leuchten. Am hellsten der Stein in der Kopffassung.
-ABGRENZUNG  HAERTETEST: gemwraith und glyphmaw sind heute beide violette
-            Kristallwesen und praktisch nicht zu unterscheiden. Die Trennung ist
-            total:
-              gemwraith  gefasstes Metall und geschliffene FARBLOSE Steine,
-                         duenn, hoch, filigran, kein Maul, weisses Funkeln.
-              glyphmaw   roher grauer Stein, dick, gedrungen, kriechend, rundes
-                         Maul, indigoblaues Licht aus dem Inneren.
-            Kein Violett bei gemwraith, keine Facetten bei glyphmaw. Zweite
-            Abgrenzung gegen carapace (Datei 2), den anderen Gliederfuessler:
-            gemwraith ist duennbeinig und hoch, carapace flach und geschlossen.
-VERBOTEN    Keine Kristallzacken, die aus dem Koerper wachsen, kein Kristallgeist,
-            keine wehenden Fetzen, kein Nebel, kein Gesicht, keine Zaehne, kein
-            violetter Schein.
-SILHOUETTE  Ein winziger Koerperpunkt in einem weiten Netz duenner geknickter
-            Beine. Damit das bei 200 px kein Gewirr wird: hoechstens acht Beine,
-            klar getrennt, deutlich unterschiedliche Winkel, keine
-            Ueberschneidungen im unteren Bilddrittel, und die Beine kraeftig
-            genug gezeichnet, dass sie beim Verkleinern nicht verschwinden.
-ALT         Die aktuelle Datei ist ein violetter Kristallgeist mit Fetzenumhang —
-            dasselbe Motiv wie glyphmaw, in derselben Farbe.
+            Violett, kein Lila, kein Regenbogen. Harte gerichtete Lichtnadeln
+            aus den Geweihspitzen und aus dem Herzstein — wenige scharfe
+            Reflexe, kein allgemeines Leuchten.
+ABGRENZUNG  HAERTETEST: gemwraith und glyphmaw waren beide violette
+            Kristallwesen und nicht zu unterscheiden. Die Trennung ist jetzt
+            eindeutig und liegt schon in der Anatomie: gemwraith ist ein
+            hochbeiniges Reh mit Geweih, hell und durchscheinend, Licht
+            farblos-weiss. glyphmaw ist eine beinlose Steinschlange am Boden,
+            dunkel und massiv, Licht indigoblau aus eingeritzten Zeichen.
+            Vierbeiner gegen Kriechtier, Kristall gegen Stein, Weiss gegen Blau.
+VERBOTEN    Kein Geweih aus Metall, keine gefassten Steine am Koerper, keine
+            Krappen, keine Kette, kein Schmuckstueck. Es traegt keinen Schmuck,
+            es IST der Stein. Kein Regenbogenschimmer, kein Glitzerstaub.
+            Nicht vollstaendig durchsichtig — ein Geist, kein Glas.
+SILHOUETTE  Ein schlanker Vierbeiner mit hohen duennen Laeufen und einer
+            kantigen, unregelmaessigen Krone. Das Kristallgeweih ist das
+            Erkennungszeichen und muss frei stehen, kein Lauf darf es kreuzen.
+ALT         Die aktuelle Datei ist ein achtbeiniger Metallkronleuchter mit einem
+            Stein statt eines Kopfes. Kein Tier, kein Gesicht, keine Beine, die
+            ein Wirbeltier haette. Der Neuguss ist ein Reh, dem ein Juwelier
+            begegnet ist.
 
 --------------------------------------------------------------------------------
 12. glyphmaw — Glyphenschlund   |  Quelle: Runenkunst          [HAERTETEST 2/2]
