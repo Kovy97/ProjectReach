@@ -617,7 +617,10 @@
   line-height: 1;
   letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.95), 0 0 5px rgba(0, 0, 0, 0.7);
+  /* 1.1.0 (Bericht 01, Befund B6): Die zweite, weiche Lage (0 0 5-10px) schmierte die
+     Serifen der goldenen Versalien zu. Auf dem fast schwarzen Knopf bringt sie null
+     Kontrast — die scharfe erste Lage traegt die Ablesbarkeit allein. */
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.95);
 }
 
 /* 1.0-Fixrunde FIX 6 (Chef-Sweep): 78px rechte Reserve war deutlich mehr, als die

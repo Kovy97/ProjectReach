@@ -1768,8 +1768,15 @@
   font-size: clamp(16px, 2.2vw, 22px);
 }
 
+/* 1.1.0 (Bericht 01, Befund B5): Hier stand nur ein AUSSEN liegender Glow — auf der braunen
+   Textur des Charakterblatts praktisch unsichtbar, gemessen und am Bild bestaetigt: der Slot
+   sah mit Mauszeiger exakt aus wie ohne, nur der Tooltip erschien. Ein Aussenschein taugt
+   hier grundsaetzlich nicht: die Slots sitzen dicht im Raster auf warmem Grund.
+   Deshalb reagiert der Slot jetzt nach INNEN — ein goldener Innenring und eine leichte
+   Aufhellung der Flaeche. Das ist unabhaengig vom Untergrund sichtbar und stoert die
+   Nachbarn nicht. Der Aussenschein bleibt zusaetzlich, er traegt die Waerme. */
 .cs-slot:hover {
-  box-shadow: var(--glow);
+  box-shadow: var(--rg-1) rgba(240, 220, 160, 0.7), inset 0 0 18px rgba(216, 184, 112, 0.16), var(--glow);
 }
 
 .cs-slot.slot-valid {

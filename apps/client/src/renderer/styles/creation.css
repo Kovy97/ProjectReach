@@ -384,8 +384,15 @@
 
 .creation-portrait-chip {
   flex-shrink: 0;
-  width: 56px;
-  height: 74px;
+  /* 1.1.0 (Bericht 05, Befund 2.3): Die Vorschauen waren 56x74 px. Bei der Groesse ist nicht
+     zu erkennen, welchen Look ein Portraet hat — Ruestungstyp, Waffe und Statur verschwimmen.
+     Der klar erkennbare Modus (grosses Raster) liegt hinter dem Knopf „Alle anzeigen“, also
+     ist der ERSTE Eindruck der schwache. Fuer den Moment, der Vorfreude erzeugen soll, war das
+     zu klein dimensioniert. Rund 45 Prozent groesser; der Streifen scrollt ohnehin waagerecht,
+     es geht also keine Auswahl verloren — ein paar Portraets rutschen nach rechts, und der
+     Rand-Fade signalisiert genau das. */
+  width: 82px;
+  height: 108px;
   padding: 0;
   border: 2px solid rgba(216, 192, 106, 0.16);
   border-radius: 3px;

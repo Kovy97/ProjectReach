@@ -77,7 +77,14 @@
      Pfeile (Chef-Feature: grün = besser, rot/--danger = schlechter). */
   --boost: #7fc76b;
   --radius: 4px;
-  --glow: 0 0 12px rgba(150, 160, 170, 0.10);
+  /* 1.1.0 (Bericht 01, Befund B5): Der Wert war rgba(150,160,170,0.10) — zehn Prozent Grau
+     auf fast schwarzem Grund, also unter der Wahrnehmungsschwelle. Gemessen: ein
+     Ausruestungs-Slot sah mit Mauszeiger exakt aus wie ohne, nur der Tooltip erschien. In der
+     Portraet-Galerie dient derselbe Wert als usgewaehlt\-Anzeige; dass man die Auswahl dort
+     trotzdem erkennt, liegt allein am zusaetzlichen Goldrand.
+     Jetzt in derselben Sprache wie die neuen --gl-Tokens: warmes Gold, sichtbar aber ruhig.
+     Wird an 14 Stellen als Hover UND als Auswahl benutzt, der Wert muss beides tragen. */
+  --glow: 0 0 12px rgba(216, 184, 112, 0.32);
   /* codex:2026-08-01T10:04:43+02:00 — Finale Chef-Auswahl „Fell Chronicle“ als globale
      Hausschrift. Der Body und sämtliche Controls erben `--font-head`, daher gilt sie appweit. */
   --font-head: "Grim Reach Numerals", "IM Fell English SC", Georgia, "Times New Roman", serif;
