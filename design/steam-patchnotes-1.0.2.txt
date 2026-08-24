@@ -1,0 +1,40 @@
+STEAM-PATCHNOTES — Hotfix · Grim Reach 1.0.1 + 1.0.2
+(EN-only, BBCode-Fassung — nur für Felder, die BBCode rendern.
+ Für den Event-Editor die -plain.txt nehmen!)
+=====================================================================
+
+[h1]Hotfix — 1.0.1 & 1.0.2[/h1]
+
+Two rounds of polish since the 1.0 release, and almost all of it came straight from your reports. Thank you for writing them, and for being precise about it. A few of these were things we had been arguing about internally for weeks, and a player settled it in one sentence.
+
+[h2]✨ New[/h2]
+[list]
+[*][b]Report a Bug, from inside the game[/b] — The report entry now looks like the button it always was, and you can leave your Discord name with it if you want a reply. It is optional and stays empty if you would rather not.
+[*][b]The guided tour finally covers the Action Queue[/b] — New players were never shown the queue or New Haven, because both were only explained in the update tours that fire for existing saves. The tour now walks you through both, and it opens the queue panel for you instead of leaving it as a thin strip at the edge of the screen.
+[*][b]A short notice after an update[/b] — When a patch changes something about your save, the game tells you at startup, once per version. No more wondering why something moved.
+[*][b]The queue tells you how long it will take[/b] — Total duration and expected finish time above the list, and a remaining time on every entry. Combat entries are marked as estimates, and where materials run out before your target, the queue says so instead of inventing a number.
+[*][b]Mass sell in one click[/b] — The Sell tab has a "select all" control, and Shift selects a whole range. Clearing 30 enchanted finds used to take thirteen clicks.
+[/list]
+
+[h2]⚖️ Changes[/h2]
+[list]
+[*][b]Bows need both hands[/b] — A player asked whether using a bow and a kite shield at once was intended. It was not. Of 47 ranged weapons, 12 carried the two handed rule and 35 did not, depending on whether they were found or crafted. The same rule now applies to all of them. If you were carrying a bow and a shield together, the shield goes back into your pack on your next load, nothing is lost, and there is a letter in your mailbox explaining it.
+[*][b]The Crownless Blade drops more often[/b] — Raised from 0.15% to 0.25%. A player reported 300 kills without it and made the better argument: dungeons cannot be queued and do not restart on their own, so every attempt is a manual run. That is a different kind of grind, and the number should reflect it.
+[*][b]Food and potions respect their cooldown everywhere[/b] — Through the character sheet you could drink any number of potions back to back mid fight, because the cooldown did not apply there. It does now, everywhere.
+[*][b]New Haven moved, it did not disappear[/b] — Since 1.0 it sits third in the sidebar, right below Combat. It used to be at the very bottom behind all 14 skills, below the visible edge on most resolutions unless you scrolled. That move should have been in the 1.0 notes, so here it is.
+[/list]
+
+[h2]🔧 Fixes[/h2]
+[list]
+[*]Three buttons that looked broken now work: Quit Game would not accept a click, overwriting a save appeared to do nothing, and the variant popup vanished behind the bank window.
+[*]Leather helm, leather body, rusty sword, wooden shield, gnarled staff and hunting bow had no sell value on record and fetched only 1 gold. They are worth what they should be worth again.
+[*]Cut off text across all seven languages: buff names, rune descriptions, quest strands, the main menu timestamp, the hero name in character creation and the numbers on the combat bars were being truncated, in places by half.
+[*]The sidebar hyphenates at syllable boundaries instead of breaking mid word.
+[*]Building descriptions in New Haven and skill descriptions in the overview are shown in full again instead of being cut off mid sentence.
+[*]Attribute names and values on the character sheet stay readable at 1600x900 and 1366x768.
+[*]The tutorial bubble no longer covers the very button it is pointing at.
+[*]Item tooltips no longer sit underneath the mouse cursor.
+[*]A champion is no longer announced in the Idol Hall, which cannot be entered through normal combat in the first place.
+[*]The locked zone badge is visible again, and the bank counter shows your full total.
+[*]Several companion descriptions promised effects they did not have. They now describe what the companion actually does.
+[/list]

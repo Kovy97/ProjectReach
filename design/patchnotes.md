@@ -12,6 +12,45 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## 1.0.2 — unveröffentlicht
 
+**Der Rundgang erklärt jetzt auch Warteschlange und New Haven:** DE: Beide standen bisher nur in
+den Feature-Touren, und die feuern laut Code einmalig für Alt-Saves. Wer neu kauft, bekam weder
+das Lager noch die Warteschlange je erklärt. Der Pflichtklick klappt die Warteschlange zugleich
+auf. / EN: Both were only explained in the update tours, which fire once for existing saves. New
+players were never shown either. The tour now covers both, and opens the queue panel for you.
+
+*Dev-Notiz: Zwei Schritte in  (23 → 25). New Haven an seiner echten
+Sidebar-Position nach der Fertigkeitsübersicht, die Warteschlange nach dem Skill-Block, wo der
+Spieler die zwölf Quellen gerade gesehen hat. Ziel ist der Rand-Tab von 
+(, unbedingt gerendert); das Panel startet eingeklappt
+( liefert ohne gespeicherten Wert ), der Klick klappt es auf UND
+persistiert das. Dabei aufgefallen: das Update-Popup erschien auch für brandneue Charaktere und
+legte sein  über den Rundgang, dessen erster Pflichtklick ging ins Leere — jetzt
+unterdrückt, solange  false ist, ausser der Spielstand war wirklich betroffen
+(Schild-Brief im Postfach). Verifiziert mit : vorher Abbruch bei
+Schritt 1, jetzt laufen alle 25 durch.*
+
+**Die Klinge des Kronenlosen fällt öfter:** DE: Von 0,15 % auf 0,25 %. Ein Spieler hat 300 Kills
+ohne Drop gemeldet und das bessere Argument gebracht: Dungeons lassen sich nicht in die
+Warteschlange legen und starten nicht von selbst neu, jeder Versuch ist Handarbeit. / EN: From
+0.15% to 0.25%. A player reported 300 kills without it and made the better argument: dungeons
+cannot be queued and do not restart on their own.
+
+*Dev-Notiz:  §10. Der Wert lag dort seit dem 13.07. als offene
+Chef-Frage („bei ~5-6 Kills/h = 1 pro ~120 h; falls ~60 h Chase-Ziel gewollt: 0,003“). Gewählt
+ist die Zahl des Spielers, ~72 h.  @0,001 bewusst NICHT mitgeändert.
+KOPPLUNG: sobald Dungeons queue-fähig sind (Chef-Ansage 24.08.), fällt die Begründung weg und
+der Wert gehört neu verhandelt.*
+
+**Melde-Weg sichtbar, mit freiwilligem Discord-Namen:** DE: Die Melde-Zeile sah nicht aus wie ein
+Knopf und wurde übersehen. Dazu ein optionales Feld für den Discord-Namen, damit auf einen
+Bericht geantwortet werden kann. / EN: The report entry did not look like a button. There is now
+also an optional field for your Discord name, so a report can be answered.
+
+**Politur:** DE: Das Schloss-Abzeichen an gesperrten Zonen ist wieder sichtbar, der Bank-Zähler
+zeigt die vollständige Summe, und mehrere Begleiter-Beschreibungen versprachen Effekte, die es
+nicht gab. / EN: The locked zone badge is visible again, the bank counter shows the full total,
+and several companion descriptions promised effects that did not exist.
+
 **Bögen brauchen beide Hände:** DE: Ein Spieler hat gefragt, ob Bogen und Kiteschild gleichzeitig
 so gemeint sind. Waren sie nicht. Von 47 Fernkampfwaffen trugen 12 die Zweihand-Regel und 35
 nicht, je nachdem ob sie gefunden oder geschmiedet wurden. Ab jetzt gilt für alle dasselbe: eine
