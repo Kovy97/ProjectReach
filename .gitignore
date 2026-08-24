@@ -52,3 +52,7 @@ CODEX/outbox/
 ASSETS/neuguss-*/fertig/*.png
 ASSETS/neuguss-*/fertig/*.webp
 ASSETS/neuguss-*/fertig/*.zip
+
+# UI-Vergleichslaeufe (1.1.0): Rohaufnahmen, gehoeren nicht ins Repo
+apps/client/ui-audit/_stilvergleich/
+apps/client/ui-audit/_shadow-1.1.0/
