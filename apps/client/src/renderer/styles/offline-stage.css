@@ -37,7 +37,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 18px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 18px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   /* Chef 2026-07-25 (Screenshot-Korrektur): HAUPT-Container zurück auf Stein — nur die kleinen
      Karten darin behalten Holz. Großer Steinsockel + Holz-Inseln = das gewollte Kontrast-Gefüge
@@ -98,7 +98,7 @@
   padding: 6px 18px;
   border-style: solid;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   /* Chef 2026-07-23: Holz-Grund statt Stein (gekachelt, nie gestretcht — BG-Textur-Regel). */
   background:
@@ -144,7 +144,7 @@
   background-size: auto, 280px 280px; /* Chef 2026-07-24: Kachel klein */
   border-style: solid;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -184,7 +184,7 @@
   border-style: solid;
   border-width: 5px;
   border-color: var(--danger, #c43c28);
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: 0 0 16px rgba(196, 60, 40, 0.25) inset;
 }
@@ -246,7 +246,7 @@
   background-size: auto, 280px 280px; /* Chef 2026-07-24: Kachel klein */
   border-style: solid;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -353,7 +353,7 @@
   background-size: auto, 280px 280px;
   border-style: solid;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -443,7 +443,7 @@
   border-style: solid;
   /* 4px las sich als dünner Strich (Chef-Feedback) — 6px zeigt das Holz wirklich. */
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   /* Chef 2026-07-24 (Screenshot „Defence/Vitality"): Holz statt Stein, Kachel klein. */
   background:
@@ -620,7 +620,7 @@
   background: linear-gradient(rgba(10, 12, 15, 0.4), rgba(10, 12, 15, 0.4)), url("../assets/bg_tileable_stone.webp") repeat;
   border-style: solid;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -646,8 +646,13 @@
    app uses for primary CTAs, just twice the height for a satisfying
    "close out the reward" click target. ─────────────────────────────── */
 .ofs-collect {
-  width: 100%;
-  margin-top: 4px;
+  /* 1.1.0 (Chef-Fund 'utopisch der Rand'): stand auf width:100%. Das Knopf-Bild
+     (button_new.webp) ist 1826x331 gross, also selbst ein Knopf-Format — ueber die volle
+     Breite der Buehne gezogen zerfasert sein Rahmen zu einem duennen, weit
+     auseinandergezogenen Gestell mit Eckmarken statt zu einem Knopf. Jetzt auf eine
+     knopfartige Breite begrenzt und mittig gesetzt. */
+  width: min(100%, 420px);
+  margin: 4px auto 0;
   min-height: 84px;
   font-size: 22px;
 }

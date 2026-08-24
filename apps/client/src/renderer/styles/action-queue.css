@@ -125,7 +125,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -231,7 +231,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -251,7 +251,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 4px 10px;
   cursor: pointer;
@@ -316,7 +316,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 3px 8px;
   cursor: pointer;
@@ -346,7 +346,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -366,7 +366,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 4px 10px;
   cursor: pointer;
@@ -415,7 +415,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   /* Drag&Drop-Umsortierung: ganze Zeile greifbar (Chef-Wunsch, nicht nur ein Handle-Icon).
      touch-action:none überlässt Touch-Gesten hier komplett dem Pointer-Handler (ActionQueuePanel.tsx)
@@ -552,7 +552,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 3px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   color: var(--muted);
   cursor: pointer;
@@ -636,7 +636,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 3px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 3px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 

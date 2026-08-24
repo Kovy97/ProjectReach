@@ -117,7 +117,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -687,7 +687,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -711,7 +711,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -788,7 +788,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -834,7 +834,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   color: var(--accent);
   cursor: pointer;
@@ -925,7 +925,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 10px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 10px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background: var(--slot);
   /* Perf (#206/P2): Offscreen-Karten überspringen Layout/Paint bis sie in den Viewport scrollen. */
@@ -997,7 +997,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   font-family: var(--font-head);
   font-weight: 700;
@@ -1134,7 +1134,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 .bestiary-drops-label {
@@ -1406,7 +1406,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 16px 18px;
 }
@@ -2398,7 +2398,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   position: relative;
   overflow: hidden;
@@ -2464,7 +2464,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: none;
 }
@@ -2528,7 +2528,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -2630,7 +2630,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   /* Kein opacity mehr — machte die ganze Karte inkl. Text durchscheinend/unleserlich.
      Gesperrt vs. freigeschaltet unterscheidet sich über den Hue (rötlich vs. grünlich). */
@@ -2806,7 +2806,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -2863,7 +2863,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background: transparent;
   pointer-events: none;
   z-index: 1;
@@ -2892,7 +2892,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 8px;
   display: flex;
@@ -2990,7 +2990,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 14px;
   display: flex;
@@ -3046,7 +3046,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 7px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: inset 0 3px 12px rgba(0,0,0,0.85);
   display: flex;
@@ -3127,7 +3127,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -3168,7 +3168,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background: transparent;
   pointer-events: none;
   z-index: 1;
@@ -3864,7 +3864,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   cursor: pointer;
   transition: background 0.1s, box-shadow 0.1s;
@@ -3931,7 +3931,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -3989,7 +3989,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -4568,7 +4568,7 @@ body.bank-dragging-noselect {
   border-style: solid;
   border-color: transparent;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 

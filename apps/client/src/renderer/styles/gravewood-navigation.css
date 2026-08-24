@@ -178,7 +178,7 @@
   --gw-nav-frame: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
   border-width: 7px !important;
-  border-image: var(--gw-nav-frame) 28 / 7px !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
   border-radius: 0 !important;
   background-image: var(--gw-nav-surface) !important;
   background-size: 256px 256px !important;
@@ -198,7 +198,7 @@
 /* codex:2026-07-30T23:48:41+02:00 — kräftigerer Rahmen bei unverändert großzügiger Buttonhöhe. */
 #root .sb-skill-btn {
   border-width: 10px !important;
-  border-image: var(--gw-nav-frame) 28 / 10px !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
 }
 
 #root .sb-skill-btn.active {
@@ -238,7 +238,7 @@
   --gw-nav-frame: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
   border-width: 6px 10px !important;
-  border-image: var(--gw-nav-frame) 28 / 6px 10px !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
   border-radius: 0 !important;
   background-image: var(--gw-nav-surface) !important;
   background-size: 256px 256px !important;
@@ -346,7 +346,7 @@
 #root .sb-skill-btn:active,
 #root .sb-skill-btn.active {
   border-width: 10px !important;
-  border-image: var(--gw-nav-frame) 28 / 10px !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
   background-color: #111416 !important;
   background-image:
     linear-gradient(rgba(8, 10, 11, 0.32), rgba(4, 5, 6, 0.48)),
@@ -420,7 +420,7 @@
 #root .sb-skill-btn.active {
   --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-leather.webp");
   border-width: 11px !important;
-  border-image: var(--gw-nav-frame) 28 / 11px !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
   background-color: #15100d !important;
   background-image:
     linear-gradient(rgba(24, 16, 11, 0.18), rgba(8, 6, 5, 0.42)),
@@ -438,7 +438,7 @@
 #root .topbar-item.active {
   --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-leather.webp");
   border-width: 8px 12px !important;
-  border-image: var(--gw-nav-frame) 28 / 8px 12px !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
   background-color: #15100d !important;
   background-image:
     linear-gradient(rgba(24, 16, 11, 0.18), rgba(8, 6, 5, 0.42)),

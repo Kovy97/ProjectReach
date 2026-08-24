@@ -332,7 +332,7 @@ body .item-cell.rarity-godly {
   border-style: solid;
   border-color: transparent;
   border-width: 9px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 9px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   padding: 14px;
@@ -366,7 +366,7 @@ body .item-cell.rarity-godly {
   border-style: solid;
   border-color: transparent;
   border-width: 6px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 6px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   box-shadow: 0 8px 22px rgba(0,0,0,0.6);
   animation: ui-fade-in 90ms ease-out;
@@ -744,7 +744,7 @@ body .item-cell.rarity-godly {
   border-style: solid;
   border-color: transparent;
   border-width: 16px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 16px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   outline: none;
   border-radius: 0;
   box-shadow: 0 28px 60px rgba(0, 0, 0, 0.85);
@@ -934,7 +934,7 @@ body .item-cell.rarity-godly {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1023,7 +1023,7 @@ body .item-cell.rarity-godly {
   border-style: solid;
   border-color: transparent;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
 }
 .itip-body::before {
   content: "";
@@ -1862,7 +1862,7 @@ body .item-cell.rarity-godly {
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:
     linear-gradient(rgba(216,192,106,0.08), rgba(216,192,106,0.08)),
@@ -1901,7 +1901,7 @@ body .item-cell.rarity-godly {
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:
     linear-gradient(rgba(216, 192, 106, 0.08), rgba(216, 192, 106, 0.08)),

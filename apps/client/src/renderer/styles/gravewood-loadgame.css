@@ -16,7 +16,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 16px;
-  border-image: var(--gw-load-frame) 28 / 16px;
+  border-image: var(--gw-load-frame) 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background-color: #14110e;
   background-image: var(--gw-load-surface);
@@ -65,7 +65,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: var(--gw-load-frame) 28 / 7px;
+  border-image: var(--gw-load-frame) 28 / 2.15 1.87 2.15 1.87 ;
   background-color: #17120e;
   background-image: var(--gw-load-button-surface);
   background-position: center;
@@ -131,7 +131,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 7px;
-  border-image: var(--gw-load-frame) 28 / 7px;
+  border-image: var(--gw-load-frame) 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(22, 16, 11, 0.18), rgba(8, 6, 5, 0.34)),
     var(--gw-load-button-surface) center / 256px 256px repeat;

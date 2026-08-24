@@ -44,7 +44,7 @@
   /* Citadel: Holz-9-Slice-Rahmen + bg_black-Textur statt flachem Panel (gilt für ALLE Modals). */
   border-style: solid;
   border-width: 16px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 16px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background:
     linear-gradient(rgba(10, 12, 15, 0.55), rgba(10, 12, 15, 0.55)),
@@ -234,7 +234,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 
@@ -263,7 +263,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 4px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
 }
 

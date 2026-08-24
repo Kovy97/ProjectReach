@@ -348,7 +348,7 @@
      Holz-9-Slice-Rahmen statt 1px-Linie; Rarity wandert auf einen Innen-Ring (s.u.). */
   border-style: solid;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 8px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/bg_black.webp") repeat;
   transition: box-shadow 0.15s, filter 0.15s;
@@ -752,7 +752,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   border-style: solid;
   border-color: transparent;
   border-width: 10px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 13 15 13 15 / 10px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background-color: #17110c;
   background-image:
     linear-gradient(180deg, rgba(6, 7, 7, 0.18), rgba(10, 6, 3, 0.58)),
