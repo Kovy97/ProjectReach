@@ -77,8 +77,22 @@ function categoryIcon(cat: string): JSX.Element {
   return <>{CATEGORY_ICONS[cat] ?? "🏆"}</>;
 }
 
-/** Icon eines einzelnen Achievements: eigenes `def.icon` (Emoji) wenn gesetzt, sonst Kategorie-Icon. */
+/**
+ * Icon eines einzelnen Achievements: das gestaltete Kategorie-PNG, sonst das eigene Emoji.
+ *
+ * 1.1.0: Die Reihenfolge war verdreht — `def.icon` (Emoji) gewann, und das Kategorie-Icon kam
+ * nur zum Zug, wenn keins gesetzt war. Da alle 59 Erfolge ein Emoji tragen, hat man die zehn
+ * monochromen PNGs oben nie zu Gesicht bekommen; in der Liste standen stattdessen flache bunte
+ * Rechtecke (Buch-Emoji in Orange, Pink, Blau) neben einem goldenen Ring.
+ * Der Kommentar ueber CATEGORY_UI beschreibt die Absicht anders herum: die PNGs sollten das
+ * uneinheitliche Emoji-Set abloesen, das Emoji nur das Sicherheitsnetz sein. Genau so ist es
+ * jetzt — und wo es kein Kategorie-PNG gibt, faellt `categoryIcon` selbst wieder auf ein
+ * Emoji zurueck, es geht also nie ein Symbol verloren.
+ */
 function achievementIcon(def: AchievementDef): JSX.Element {
+  const kategorieName = CATEGORY_UI[def.category];
+  const kategorieBild = kategorieName ? getUiIcon(kategorieName) : undefined;
+  if (kategorieBild) return <img loading="lazy" decoding="async" src={kategorieBild} alt="" />;
   if (def.icon) return <>{def.icon}</>;
   return categoryIcon(def.category);
 }

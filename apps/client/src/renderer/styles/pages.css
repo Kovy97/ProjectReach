@@ -3633,19 +3633,6 @@ body.bank-dragging-noselect {
   line-height: 1.35;
 }
 
-.pet-field-source-seal {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: clamp(14px, 1.1vw, 24px);
-  padding: 11px 13px;
-  border-top: 1px solid rgba(166, 123, 68, 0.4);
-  border-bottom: 1px solid rgba(166, 123, 68, 0.4);
-  color: #87969d;
-  font-family: var(--font-info);
-  font-size: clamp(11px, 0.7vw, 14px);
-}
 
 .pet-field-actions {
   margin-top: auto;

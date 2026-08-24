@@ -135,7 +135,10 @@ export function PetGalleryPage(): JSX.Element {
       <section className="pet-field-header">
         <header className="pet-gallery-head">
           <div>
-            <span className="pet-field-kicker">{t("companions.select.title")}</span>
+            {/* 1.1.0: Hier stand ein Kicker "Begleiter waehlen" ueber der Ueberschrift
+                "Begleiter" — zwei Zeilen, die dasselbe sagen. Die Liste links traegt
+                dieselbe Beschriftung und braucht sie dort auch, weil sie eine Spalte
+                benennt. Oben trug sie nichts bei. */}
             <h2>{t("companions.title")}</h2>
           </div>
           <div className="pet-field-head-meta">
@@ -254,14 +257,6 @@ export function PetGalleryPage(): JSX.Element {
                 <PetEffectRows pet={selectedPet} t={tFn} tr={tr} />
               </div>
             )}
-
-            <div className="pet-field-source-seal">
-              <span>{sourceLabel(selectedPet)}</span>
-              <span>{t("companions.dropChance").replace(
-                "{pct}",
-                `1 / ${formatNum(Math.round(1 / selectedPet.dropChance))}`,
-              )}</span>
-            </div>
 
             {selectedOwned && (
               <div className="pet-field-actions">
