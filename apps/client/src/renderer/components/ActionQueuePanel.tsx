@@ -758,17 +758,23 @@ export function ActionQueuePanel(): JSX.Element {
                         <span className="queue-row-name">
                           {fightEntry ? fightMonsterName(fightEntry.monsterId, tr) : tr(action!.name)}
                         </span>
-                        {rowDuration && (
-                          <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>
-                            {rowDuration.text}
+                        {/* 1.0.2 (Spieler-Report): Menge und Dauer teilen sich eine Zeile UNTER
+                            dem Namen. Vorher war die Menge eine eigene Spalte rechts und nahm
+                            dem Namen Breite — gemessen blieben ihm 31 px, und er brach
+                            buchstabenweise um. */}
+                        <span className="queue-row-meta">
+                          <span className="queue-row-target">
+                            {fightEntry
+                              ? entry.target === null ? "∞" : `×${entry.target}`
+                              : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
                           </span>
-                        )}
+                          {rowDuration && (
+                            <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>
+                              {rowDuration.text}
+                            </span>
+                          )}
+                        </span>
                       </div>
-                      <span className="queue-row-target">
-                        {fightEntry
-                          ? entry.target === null ? "∞" : `×${entry.target}`
-                          : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
-                      </span>
                       <div className="queue-row-actions">
                         <button
                           type="button"

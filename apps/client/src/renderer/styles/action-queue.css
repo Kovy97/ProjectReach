@@ -493,8 +493,15 @@
    (Chef-Regel Mindestgröße/Umbruch statt Kürzung). `.queue-row` bleibt `align-items:center`,
    zentriert diese (ggf. zweizeilige) Spalte also weiterhin vertikal neben Icon/Ziel/Buttons. */
 .queue-row-text {
-  flex: 1;
-  min-width: 0;
+  /* Spieler-Report 1.0.2 (Aldric, 67 h): "the text wrapping and font in the queue ... in some
+     resolutions it is unreadable". Gemessen brach der Name auf bis zu 21 Zeilen mit einem
+     einzigen Buchstaben je Zeile: `min-width: 0` liess ihn beliebig weit zusammendruecken,
+     waehrend Symbol, Mengen-Label und vier Sortierknoepfe dieselbe Zeile belegten und nichts
+     abgaben — fuer den Namen blieben 31 px.
+     Das Mengen-Label ist deshalb in diese Spalte gewandert (ActionQueuePanel.tsx), und 100 px
+     sind die harte Untergrenze fuer den Rest. */
+  flex: 1 1 100px;
+  min-width: 100px;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -530,6 +537,20 @@
   color: var(--accent-2);
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* 1.0.2-Fix: In den WARTESCHLANGEN-Zeilen sitzt die Menge in der Textspalte (neben der Dauer)
+   statt als eigene Spalte — sonst nimmt sie dem Namen Breite, die er dringender braucht.
+   Die aktive Aktion oben behaelt ihre eigene Spalte, dort ist Platz. */
+.queue-row-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.queue-row-meta .queue-row-target {
+  font-size: 11px;
 }
 
 .queue-row-actions {
@@ -752,6 +773,11 @@
 
 .queue-row {
   position: relative;
+  /* 1.0.2-Fix: Die Liste ist ein Flex-Container in Spaltenrichtung, und Kinder schrumpfen
+     dort standardmaessig. Sobald ein Name mehrzeilig wurde, wurde die Zeile gestaucht statt
+     mitzuwachsen — der Text lief unten aus dem Kasten heraus und ueberlappte den naechsten
+     Eintrag. Gemessen: Zeile 87 px hoch, Text brauchte rund 120. */
+  flex-shrink: 0;
   min-height: 58px;
   gap: 8px;
   padding: 7px 8px;
