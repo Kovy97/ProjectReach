@@ -656,6 +656,7 @@ export const zh: Record<string, string> = {
     "itemwiki.noUsedFor": "未用于任何配方。",
     "itemwiki.jumpToRecipe": "跳转到此配方",
     "itemwiki.jumpToMonster": "在战斗区域中显示",
+    "itemwiki.sourceLockedLegend": "灰色 = 区域尚未解锁。将鼠标悬停在卡片上查看详情。",
     "itemwiki.stackable": "可堆叠",
     "itemwiki.yes": "是",
     "itemwiki.no": "否",

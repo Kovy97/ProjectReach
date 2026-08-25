@@ -643,6 +643,7 @@ export const ptBR: Record<string, string> = {
     "itemwiki.noUsedFor": "Não é usado em nenhuma receita.",
     "itemwiki.jumpToRecipe": "Ir para esta receita",
     "itemwiki.jumpToMonster": "Mostrar na área de combate",
+    "itemwiki.sourceLockedLegend": "Acinzentado = zona ainda não desbloqueada. Passe o mouse sobre um card para mais detalhes.",
     "itemwiki.stackable": "Empilhável",
     "itemwiki.yes": "Sim",
     "itemwiki.no": "Não",

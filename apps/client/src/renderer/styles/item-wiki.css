@@ -296,6 +296,46 @@
   min-width: 0;
 }
 
+/* ─── Monster-Quelle mit mehreren Fundorten (Chef-Befund 2026-08-25 „Skelettkrieger 90% zweimal"):
+   `groupMonsterSources` (ItemWikiModal.tsx) führt dieselbe Kreatur aus Zone/Dungeon-Welle/Turm-Etage
+   zu EINER Karte zusammen. `.iwk-row-main` bündelt Icon+Name+Prozent wie eine normale Zeile;
+   `.iwk-row-stacked` schaltet NUR ein, wenn die Chance je Fundort tatsächlich unterschiedlich ist —
+   dieselbe Zwei-Zeilen-Idee wie `.iwk-row-use` weiter unten. */
+.iwk-row-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  width: 100%;
+}
+
+.iwk-row-stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.iwk-row-sublocations {
+  padding-left: 38px; /* rückt unter den Namen ein: Icon-Spalte (28px) + Row-Gap (10px) */
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--muted);
+  overflow-wrap: anywhere; /* nie abschneiden — ein langer Dungeon-/Zonen-Name darf umbrechen */
+}
+
+/* ─── Legende über dem Quelle-Raster (Chef-Befund: die Grau/Weiß-Abstufung war ohne Erklärung
+   „unklar" — sie IST das Story-Zonen-Gate unten, s. `.iwk-row-locked`). Nur eingeblendet, wenn die
+   Liste tatsächlich eine gesperrte Quelle enthält (SourceList in ItemWikiModal.tsx). */
+.iwk-source-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+}
+
 /* ─── Story-Zonen-Gate (Task #350): Monster-Quelle einer noch gesperrten Zone — sichtbar (keine
    Spoiler-Änderung), aber gedimmt + nicht klickbar. Spiegelt `.zone-card-story-locked`
    (CombatPage.tsx) und den deaktivierten Bestiarium-„Kämpfen"-Button (BestiaryPage.tsx). */

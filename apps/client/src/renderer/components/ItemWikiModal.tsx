@@ -3,6 +3,7 @@ import { content } from "@hearthforge/content";
 import { isZoneUnlocked } from "@hearthforge/engine";
 import type { GameState, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
 import { EQUIP_SLOT_LABELS, getItemRarity, instanceDisplayName, RARITY_LABEL } from "@hearthforge/shared";
+import { CitadelTip, useCitadelTip } from "./CitadelTip";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
@@ -65,6 +66,126 @@ function wikiTypeLine(item: ItemDef, t: (k: string) => string, tr: (v: Localized
 }
 
 /**
+ * Fundort einer Monster-Quelle, roh (Content-Ableitung, kein `t()`/`tr()` nötig) — wird erst beim
+ * Rendern über `locationLabel` in einen Anzeigetext aufgelöst (Sprachwechsel-sicher, dieselbe Regel
+ * wie die `LocalizedString`-Namen in itemWiki.ts). Drei Fundort-Arten: reine Zonen-Begegnung,
+ * Dungeon-Welle (`MonsterDef.dungeonOnly`, gefunden über `DungeonDef.encounters`) und Slayer-Turm-
+ * Etage (`MonsterDef.slayerFloor`).
+ */
+type MonsterLocation =
+  | { type: "zone"; zoneId: string }
+  | { type: "dungeon"; dungeonId: string }
+  | { type: "tower"; floor: number }
+  | { type: "unknown" };
+
+function resolveMonsterLocation(monsterId: string): MonsterLocation {
+  const monster = content.monsters[monsterId];
+  if (!monster) return { type: "unknown" };
+  if (monster.slayerFloor !== undefined) return { type: "tower", floor: monster.slayerFloor };
+  if (monster.dungeonOnly) {
+    const dungeon = content.dungeons.find((d) => d.encounters.includes(monsterId));
+    if (dungeon) return { type: "dungeon", dungeonId: dungeon.id };
+  }
+  if (monster.zone) return { type: "zone", zoneId: monster.zone };
+  return { type: "unknown" };
+}
+
+/** Sortier-Rang für die Fundort-Aufschlüsselung EINER Karte: Zone vor Dungeon vor Turm (die
+ *  "ursprünglichste" Fundstelle zuerst) statt der zufälligen Content-Deklarationsreihenfolge. */
+const LOCATION_RANK: Record<MonsterLocation["type"], number> = { zone: 0, dungeon: 1, tower: 2, unknown: 3 };
+
+/** Löst einen `MonsterLocation` in seinen Anzeigetext auf — Turm-Etage exakt im Muster von
+ *  SlayerPage.tsx' `towerFloorLabel` (`slayer.location.tower` + `{n}`-Platzhalter), Zone/Dungeon
+ *  über die jeweilige Content-Definition + `tr()`. Nie hartkodiert. */
+function locationLabel(loc: MonsterLocation, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
+  switch (loc.type) {
+    case "zone": {
+      const zone = content.zones.find((z) => z.id === loc.zoneId);
+      return zone ? tr(zone.name) : t("app.unknown");
+    }
+    case "dungeon": {
+      const dungeon = content.dungeons.find((d) => d.id === loc.dungeonId);
+      return dungeon ? tr(dungeon.name) : t("app.unknown");
+    }
+    case "tower":
+      return t("slayer.location.tower").replace("{n}", String(loc.floor));
+    default:
+      return t("app.unknown");
+  }
+}
+
+interface MonsterLocationEntry {
+  monsterId: string;
+  chance: number;
+  location: MonsterLocation;
+}
+
+/**
+ * Eine (ggf. über mehrere Fundorte) zusammengeführte Monster-Quelle-Karte — s. `groupMonsterSources`
+ * für den WARUM. Ersetzt `ItemWikiSource`'s `kind: "monster"` auf der Anzeige-Seite vollständig
+ * (jede rohe "monster"-Quelle landet in genau einer Gruppe, auch wenn sie nur einen Fundort hat).
+ */
+interface MonsterGroupSource {
+  kind: "monsterGroup";
+  name: LocalizedString;
+  /** Klick-/Zonen-Gate-Ziel: die reine Zonen-Variante, falls vorhanden (nach `LOCATION_RANK`-Sortierung
+   *  steht sie an erster Stelle) — sonst best-effort die erste bekannte Fundstelle (`jumpToMonster`
+   *  selbst bleibt für Dungeon-/Turm-Ids ein reiner Seitenwechsel ohne Karten-Highlight, s. dortiges
+   *  JSDoc + CombatPage.tsx — kein Absturz, nur kein Highlight). */
+  primaryMonsterId: string;
+  locations: MonsterLocationEntry[];
+  /** true, wenn jede Fundstelle dieselbe Chance trägt — dann genügt EIN Prozentwert auf der Karte
+   *  statt der Fundort-Aufschlüsselung (Chef-Vorgabe 2026-08-25). Bei nur einem Fundort immer true. */
+  sameChance: boolean;
+}
+
+type DisplaySource = ItemWikiSource | MonsterGroupSource;
+
+/**
+ * Führt "monster"-Quellen mit identischem Anzeige-Namen zu EINER Karte zusammen (Chef-Befund
+ * 2026-08-25: „Skelettkrieger 90% erscheint zweimal in QUELLE", ebenso Skelett-Bogenschütze/
+ * -Schlächter/-Eismagier/Nekromantenfürst). Ursache: dieselbe Kreatur lebt im Content oft als
+ * mehrere unabhängige `MonsterDef`-Einträge mit GLEICHEM `name`, aber eigener MonsterId — z.B.
+ * `skeleton_warrior` (Zone Krypta) + `dg_skeleton_warrior` (Dungeon-Welle crypt_depths,
+ * `dungeonOnly: true`) + `tower_skeleton_warrior` (Slayer-Turm Etage 2, `slayerFloor: 2`), s.
+ * packages/content/src/index.ts. `buildIndices()` (util/itemWiki.ts) indiziert strikt über die
+ * MonsterId — für sie sind das drei unabhängige Quellen. Die Zusammenführung passiert bewusst NUR
+ * hier auf der Anzeige-Seite (util/itemWiki.ts bleibt unverändert — dortiger Index wird auch von
+ * evtl. anderen Aufrufern konsumiert). Gruppierschlüssel ist `name.en`, die einzige garantiert
+ * vorhandene, sprachunabhängige Identität einer `LocalizedString` — ein Sprachwechsel darf den
+ * Schlüssel nicht auseinanderreißen. Alle anderen Quellen-Arten (shop/action/dungeon/crop/…) laufen
+ * unverändert durch.
+ */
+function groupMonsterSources(sources: ItemWikiSource[]): DisplaySource[] {
+  const result: DisplaySource[] = [];
+  const groups = new Map<string, MonsterGroupSource>();
+  for (const s of sources) {
+    if (s.kind !== "monster") {
+      result.push(s);
+      continue;
+    }
+    const key = typeof s.name === "string" ? s.name : s.name.en;
+    let group = groups.get(key);
+    if (!group) {
+      group = { kind: "monsterGroup", name: s.name, primaryMonsterId: s.monsterId, locations: [], sameChance: true };
+      groups.set(key, group);
+      result.push(group);
+    }
+    group.locations.push({ monsterId: s.monsterId, chance: s.chance, location: resolveMonsterLocation(s.monsterId) });
+  }
+  for (const group of groups.values()) {
+    group.locations.sort((a, b) => LOCATION_RANK[a.location.type] - LOCATION_RANK[b.location.type]);
+    // `!`: jede Gruppe wurde nur beim ersten Push angelegt (s.o.) — `locations` hat also immer
+    // mindestens einen Eintrag (`noUncheckedIndexedAccess` kennt das logisch garantierte Minimum
+    // nicht, deshalb die Assertion statt eines toten `if`-Zweigs).
+    group.primaryMonsterId = group.locations[0]!.monsterId;
+    const first = group.locations[0]!.chance;
+    group.sameChance = group.locations.every((l) => l.chance === first);
+  }
+  return result;
+}
+
+/**
  * Trägt die einzige `useGameState()`-Abhängigkeit der Quelle-Liste (Task #350 Zonen-Gate-Check
  * je Monster-Zeile, s. `SourceRow`). Bewusst ALS EIGENE KOMPONENTE statt `useGameState()` direkt
  * in `ItemWikiModalOverlay` (die app-weit gemountet ist, s. App.tsx) — `useGameState()`/
@@ -75,18 +196,134 @@ function wikiTypeLine(item: ItemDef, t: (k: string) => string, tr: (v: Localized
  * das Wiki tatsächlich ansieht, exakt wie die Perf-Welle-Konvention andernorts (s. z.B.
  * EliteMiniWindow's `activeEliteSelector`).
  */
-function SourceList({ sources }: { sources: ItemWikiSource[] }): JSX.Element {
+function SourceList({ sources }: { sources: DisplaySource[] }): JSX.Element {
   const state = useGameState();
+  const { t } = useI18n();
+  // Legende NUR einblenden, wenn dieses Item tatsächlich eine noch gesperrte Monster-Quelle hat
+  // (Chef-Befund 2026-08-25: Grau/Weiß-Abstufung ohne Erklärung war „unklar" — die Abstufung IST
+  // das Story-Zonen-Gate, Task #350, s. `MonsterGroupRow`; bei den meisten Items gibt es aber gar
+  // keine gesperrte Quelle, dort bliebe eine dauerhafte Legende reine Platzverschwendung).
+  const hasLockedMonster = sources.some((s) => {
+    if (s.kind !== "monsterGroup") return false;
+    const monster = content.monsters[s.primaryMonsterId];
+    return !!monster?.zone && !isZoneUnlocked(state, content, monster.zone);
+  });
   return (
-    <ul className="iwk-list">
-      {sources.map((s, i) => (
-        <SourceRow key={i} entry={s} state={state} />
-      ))}
-    </ul>
+    <>
+      {hasLockedMonster && (
+        <div className="iwk-source-legend">
+          <span className="iwk-row-lock-badge" aria-hidden="true">
+            {LOCK_ICON_URL
+              ? <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />
+              : "🔒"}
+          </span>
+          {t("itemwiki.sourceLockedLegend")}
+        </div>
+      )}
+      <ul className="iwk-list">
+        {sources.map((s, i) => (
+          <SourceRow key={i} entry={s} state={state} />
+        ))}
+      </ul>
+    </>
   );
 }
 
-function SourceRow({ entry, state }: { entry: ItemWikiSource; state: GameState }): JSX.Element {
+/**
+ * Eine zusammengeführte Monster-Quelle-Karte (`kind: "monsterGroup"`, s. `groupMonsterSources`).
+ * Eigene Komponente statt eines weiteren `SourceRow`-Zweigs, weil der Zonen-Gate-Tooltip jetzt
+ * `useCitadelTip` braucht (Chef-Auftrag „HoverTip/CitadelTip statt natives `title`" — `<li>` liegt
+ * außerhalb von `HoverTip`s Tag-Liste (nur span/div), also der direkte Weg wie CombatPage.tsx'
+ * `DiffNameLabel` ihn schon vormacht) — ein Hook darf nicht bedingt in `SourceRow`s großem If/Else
+ * hängen, deshalb hier unbedingt an der Komponentenwurzel.
+ */
+function MonsterGroupRow({ entry, state }: { entry: MonsterGroupSource; state: GameState }): JSX.Element {
+  const { t, tr } = useI18n();
+  const { tip, open, close } = useCitadelTip<true>();
+  const monster = content.monsters[entry.primaryMonsterId];
+  const zoneLocked = !!monster?.zone && !isZoneUnlocked(state, content, monster.zone);
+  // Aufschlüsselung je Fundort NUR, wenn die Chance tatsächlich variiert (Chef-Vorgabe) — bei
+  // gleicher Chance an jedem Fundort (der Regelfall im bestehenden Content) bleibt die Karte eine
+  // einzeilige Standard-Zeile mit einem Prozentwert.
+  const breakdown = !entry.sameChance;
+
+  const body = (
+    <>
+      <div className="iwk-row-main">
+        <span className="iwk-row-icon-emoji" aria-hidden="true">⚔️</span>
+        <span className="iwk-row-name">{tr(entry.name)}</span>
+        {zoneLocked && (
+          <span className="iwk-row-lock-badge" aria-hidden="true">
+            {LOCK_ICON_URL
+              ? <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />
+              : "🔒"}
+          </span>
+        )}
+        {!breakdown && <span className="iwk-row-val">{pct(entry.locations[0]!.chance)}</span>}
+      </div>
+      {breakdown && (
+        <div className="iwk-row-sublocations">
+          {entry.locations.map((loc, i) => (
+            <span key={loc.monsterId}>
+              {i > 0 && " · "}
+              {locationLabel(loc.location, t, tr)} {pct(loc.chance)}
+            </span>
+          ))}
+        </div>
+      )}
+    </>
+  );
+
+  if (zoneLocked) {
+    // Story-Zonen-Gate (Task #350, Chef-Fund "Über Wiki-Links können wir in Gebiete rein, wo wir
+    // noch nicht rein sollten"): der Eintrag bleibt SICHTBAR (keine Spoiler-Politik-Änderung —
+    // Bestiarium/Wiki zeigen weiter alle Quellen), aber für eine gesperrte Zone ist die Karte nicht
+    // klickbar: gedimmt + Schloss-Icon + Tooltip, exakt das Muster der Zonen-/Dungeon-Karten
+    // (`zone-card-story-locked`, s. CombatPage.tsx) und des Bestiarium-„Kämpfen"-Buttons
+    // (BestiaryPage.tsx `zoneLocked`). Tooltip jetzt als `CitadelTip` (Chef-Auftrag, s. Komponenten-
+    // JSDoc oben) statt eines nativen `title` — konsistent mit dem Rest des Repos UND lesbar, statt
+    // nur bei zufälligem Hover als Browser-Standard-Tooltip aufzupoppen.
+    const zoneDef = content.zones.find((z) => z.id === monster!.zone);
+    const gateQuest = zoneDef?.requiresQuest
+      ? content.quests.find((q) => q.id === zoneDef.requiresQuest)
+      : undefined;
+    const gateHint = t("combat.zoneGate.requires").replace("{name}", gateQuest ? tr(gateQuest.name) : t("app.unknown"));
+    return (
+      <li
+        className={`iwk-row iwk-row-locked${breakdown ? " iwk-row-stacked" : ""}`}
+        tabIndex={0}
+        onMouseEnter={(e) => open(true, e.currentTarget)}
+        onMouseLeave={close}
+        onFocus={(e) => open(true, e.currentTarget)}
+        onBlur={close}
+      >
+        {body}
+        {tip && <CitadelTip rect={tip.rect}>{gateHint}</CitadelTip>}
+      </li>
+    );
+  }
+  return (
+    <li
+      className={`iwk-row iwk-row-clickable${breakdown ? " iwk-row-stacked" : ""}`}
+      role="button"
+      tabIndex={0}
+      title={t("itemwiki.jumpToMonster")}
+      onClick={() => {
+        closeItemWikiModal();
+        jumpToMonster(entry.primaryMonsterId);
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        closeItemWikiModal();
+        jumpToMonster(entry.primaryMonsterId);
+      }}
+    >
+      {body}
+    </li>
+  );
+}
+
+function SourceRow({ entry, state }: { entry: DisplaySource; state: GameState }): JSX.Element {
   const { t, tr } = useI18n();
   if (entry.kind === "shop") {
     return (
@@ -156,62 +393,12 @@ function SourceRow({ entry, state }: { entry: ItemWikiSource; state: GameState }
       </li>
     );
   }
-  if (entry.kind === "monster") {
-    // Wiki→Kampfgebiet-Sprung (Chef-Auftrag, spiegelt den Rezept-Sprung oben): die Monster-Quelle
-    // ist klickbar — schließt das Modal, springt zur Kampf-Seite, öffnet die Zone, in der das
-    // Monster vorkommt, und hebt seine Monster-Karte kurz hervor (s. util/monsterJump.ts +
-    // CombatPage.tsx). Dungeon-Quellen bleiben bewusst reiner Text (Chef-Scope) — s. Zweig unten.
-    //
-    // Story-Zonen-Gate (Task #350, Chef-Fund "Über Wiki-Links können wir in Gebiete rein, wo wir
-    // noch nicht rein sollten"): der Sprung landete bisher UNGEACHTET des Zonen-Gates direkt in
-    // der Zonen-Monster-Ansicht (`jumpToMonster` → CombatPage setzt `zoneId` ohne die
-    // `isZoneUnlocked`-Prüfung der normalen Zonen-Karte). Der Eintrag bleibt SICHTBAR (keine
-    // Spoiler-Politik-Änderung — Bestiarium/Wiki zeigen weiter alle Quellen), aber für eine
-    // gesperrte Zone ist die Zeile nicht mehr klickbar: gedimmt + Schloss-Icon + Tooltip, exakt
-    // das Muster der Zonen-/Dungeon-Karten (`zone-card-story-locked`, s. CombatPage.tsx) und des
-    // Bestiarium-„Kämpfen"-Buttons (BestiaryPage.tsx `zoneLocked`).
-    const monster = content.monsters[entry.monsterId];
-    const zoneLocked = !!monster?.zone && !isZoneUnlocked(state, content, monster.zone);
-    if (zoneLocked) {
-      const zoneDef = content.zones.find((z) => z.id === monster!.zone);
-      const gateQuest = zoneDef?.requiresQuest
-        ? content.quests.find((q) => q.id === zoneDef.requiresQuest)
-        : undefined;
-      const gateHint = t("combat.zoneGate.requires").replace("{name}", gateQuest ? tr(gateQuest.name) : t("app.unknown"));
-      return (
-        <li className="iwk-row iwk-row-locked" title={gateHint}>
-          <span className="iwk-row-icon-emoji" aria-hidden="true">⚔️</span>
-          <span className="iwk-row-name">{tr(entry.name)}</span>
-          <span className="iwk-row-lock-badge" aria-hidden="true">
-            {LOCK_ICON_URL
-              ? <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />
-              : "🔒"}
-          </span>
-          <span className="iwk-row-val">{pct(entry.chance)}</span>
-        </li>
-      );
-    }
-    return (
-      <li
-        className="iwk-row iwk-row-clickable"
-        role="button"
-        tabIndex={0}
-        title={t("itemwiki.jumpToMonster")}
-        onClick={() => {
-          closeItemWikiModal();
-          jumpToMonster(entry.monsterId);
-        }}
-        onKeyDown={(e) => {
-          if (e.key !== "Enter" && e.key !== " ") return;
-          closeItemWikiModal();
-          jumpToMonster(entry.monsterId);
-        }}
-      >
-        <span className="iwk-row-icon-emoji" aria-hidden="true">⚔️</span>
-        <span className="iwk-row-name">{tr(entry.name)}</span>
-        <span className="iwk-row-val">{pct(entry.chance)}</span>
-      </li>
-    );
+  if (entry.kind === "monsterGroup") {
+    // Wiki→Kampfgebiet-Sprung + Story-Zonen-Gate: ausgelagert nach `MonsterGroupRow` (s. dortiges
+    // JSDoc) — die Karte kann jetzt mehrere Fundorte EINER Kreatur zusammenfassen (Chef-Befund
+    // 2026-08-25 "Skelettkrieger doppelt", s. `groupMonsterSources`) und braucht dafür einen Hook
+    // (`useCitadelTip`) an fester Komponentenwurzel statt in diesem If/Else.
+    return <MonsterGroupRow entry={entry} state={state} />;
   }
   // dungeon — dieselbe Zeilenform, nicht klickbar (Chef-Scope, s. Kommentar oben).
   return (
@@ -339,7 +526,9 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
       ? instanceDisplayName(payload.instance, content, locale)
       : tr(item.name);
 
-  const sources = ITEM_SOURCE_INDEX.get(item.id) ?? [];
+  // Rohe Quellen erst zu Anzeige-Karten gruppieren (dieselbe Kreatur taucht im Content oft mehrfach
+  // mit eigener MonsterId auf — Zone/Dungeon-Welle/Turm-Etage, s. `groupMonsterSources`-JSDoc).
+  const sources = groupMonsterSources(ITEM_SOURCE_INDEX.get(item.id) ?? []);
   const uses = ITEM_USED_FOR_INDEX.get(item.id) ?? [];
 
   return (

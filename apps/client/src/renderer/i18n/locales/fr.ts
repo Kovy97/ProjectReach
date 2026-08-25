@@ -657,6 +657,7 @@ export const fr: Record<string, string> = {
     "itemwiki.jumpToRecipe": "Aller à cette recette",
     "itemwiki.jumpToMonster": "Afficher dans la zone de combat",
     "itemwiki.stackable": "Empilable",
+    "itemwiki.sourceLockedLegend": "Grisé = zone pas encore débloquée. Survolez une carte pour plus de détails.",
     "itemwiki.yes": "Oui",
     "itemwiki.no": "Non",
 

@@ -655,6 +655,7 @@ export const ru: Record<string, string> = {
     "itemwiki.noUsedFor": "Не используется ни в одном рецепте.",
     "itemwiki.jumpToRecipe": "Перейти к этому рецепту",
     "itemwiki.jumpToMonster": "Показать в зоне боя",
+    "itemwiki.sourceLockedLegend": "Затемнено = зона ещё не открыта. Наведите курсор на карточку для подробностей.",
     "itemwiki.stackable": "Складируется",
     "itemwiki.yes": "Да",
     "itemwiki.no": "Нет",
