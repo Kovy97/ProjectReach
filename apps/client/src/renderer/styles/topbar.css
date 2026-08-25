@@ -1402,6 +1402,15 @@
   font-family: var(--font-info);
   font-size: calc(var(--quiet-font-body) * var(--tb-scale));
   text-align: center;
+  /* Chef-Test 25.08.2026 (Slayer-Agent-Fund): "Slayer: 5/12 Seuchenkrat…" wurde bei 1366×768
+     ellipsiert, russisch noch frueher. Regel: nie clippen. Die Karte hat Hoehe fuer zwei Zeilen,
+     also umbrechen an Woertern (keine Silbentrennung, s. Warteschlangen-Fix). */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: normal;
+  hyphens: manual;
+  line-height: 1.2;
 }
 
 #root .content-header--quiet-citadel .slots-display,

@@ -262,6 +262,16 @@ Kampfstilen und in der Skill-Übersicht steht jetzt das echte Level, dahinter in
 das geboostete („40/99 (43)"). Vorher stand der Trankwert vorn und sah aus wie das eigene Level. /
 EN: Boosted skill levels now show your real level first, with the boosted value in green brackets.
 
+**Slayer-Seite: echte Knöpfe, Shop nach Stufe (Chef-Test 25.08.):** DE: „Sofort kämpfen" und
+„Einreihen" liefen ohne jedes Styling (die Klasse gab es im CSS nicht) und zogen sich über die
+ganze Breite. Jetzt dieselben Leder-Knöpfe wie im Zonen-Fenster, mittig, natürliche Breite. Der
+Slayer-Shop ist nach Stufe sortiert, jede Karte nennt ihre Stufe. / EN: Slayer buttons now use the
+proper button family, and the Slayer shop is sorted by level with the level shown on every card.
+
+**Kopfzeile: Slayer-Ziel bricht um statt abzuschneiden (Chef-Test 25.08.):** DE: „Slayer: 5/12
+Seuchenkrat…" endete mit Punkten; jetzt bricht der Text in der Karte auf zwei Zeilen um. / EN: The
+Slayer target in the header wraps instead of being cut off.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

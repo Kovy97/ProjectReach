@@ -152,6 +152,16 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
   // ── Tower floors (für Task-Standort-Label) ────────────────────────
   const allFloors = content.slayerTower ?? [];
 
+  // Chef-Nachtrag 25.08. (Shop-Präsentation): Angebote aufsteigend nach Stufen-Anforderung
+  // sortiert, statt in roher Katalog-Reihenfolge — der Spieler soll seinen Fortschritt lesen
+  // können ("was wird als Nächstes frei"), nicht raten. Reine Anzeige-Reihenfolge, keine
+  // Content-Änderung (derselbe Katalog wie zuvor, nur kopiert+sortiert).
+  const slayerShopSorted = content.slayerShop
+    ? [...content.slayerShop].sort(
+        (a, b) => (a.slayerLevelRequired ?? 1) - (b.slayerLevelRequired ?? 1),
+      )
+    : [];
+
   // ── Speech bubble text ────────────────────────────────────────────
   const playerName = state.character.name;
   let speechText: string;
@@ -367,8 +377,14 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                   und die Restzahl selbst abzaehlen. */}
               {taskRest > 0 && (
                 <div className="slayer-task-fight-row">
+                  {/* Chef-Fund 25.08. (1.1.0 live): "sehen aus wie Windows-Buttons" — `.btn` war
+                      nirgends in der CSS definiert, lief also auf dem nackten Browser-Default.
+                      Jetzt dieselbe Gravewood-Knopf-Familie wie das Fight/Close-Paar im
+                      Zonenkarten-Modal (CombatPage) bzw. das Bestaetigungs-Paar in New Haven:
+                      Primaer (Sofort kaempfen) = `.combat-btn`, Sekundaer (Einreihen) =
+                      `.combat-btn.ghost`. */}
                   <button
-                    className="btn slayer-task-fight-btn"
+                    className="combat-btn slayer-task-fight-btn"
                     onClick={handleTaskFightNow}
                     disabled={!taskKaempfbar}
                     title={taskKaempfbar ? undefined : t("slayer.task.fightBlocked")}
@@ -376,7 +392,7 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                     {t("slayer.task.fightNow").replace("{n}", formatNum(taskRest))}
                   </button>
                   <button
-                    className="btn slayer-task-queue-btn"
+                    className="combat-btn ghost slayer-task-queue-btn"
                     onClick={handleTaskEnqueue}
                     disabled={!taskKaempfbar}
                     title={taskKaempfbar ? undefined : t("slayer.task.fightBlocked")}
@@ -549,7 +565,7 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
           <p className="muted slayer-rewards-empty">{t("slayer.shop.empty")}</p>
         ) : (
           <div className="shop-items-grid slayer-shop-grid">
-            {content.slayerShop.map((entry) => {
+            {slayerShopSorted.map((entry) => {
               const item = content.items[entry.itemId];
               if (!item) return null;
               const levelRequired = entry.slayerLevelRequired ?? 1;
@@ -592,6 +608,15 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                       </span>
                     )}
                     <span className="shop-item-name">{tr(item.name)}</span>
+                    {/* Chef-Nachtrag 25.08.: Stufe/Requirement soll auf JEDER Karte sichtbar sein,
+                        nicht nur bei gesperrten (dort steht der Lock-Grund bereits oben, redundant
+                        mit dieser Zeile). Reuse von `skill.levelShort` (dieselbe Kurzform wie
+                        Farm-/Skill-Katalog) statt eines neuen i18n-Keys. */}
+                    {levelOk && (
+                      <span className="slayer-shop-level muted">
+                        {t("skill.levelShort").replace("{n}", String(levelRequired))}
+                      </span>
+                    )}
                     <span className="shop-item-price">
                       <button
                         className="shop-citadel-btn shop-citadel-btn--sm"

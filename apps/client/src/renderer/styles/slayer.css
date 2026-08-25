@@ -350,18 +350,22 @@
 /* ─── Kopfgeld-Chips (Fun-Sweep FF, Vesna V1-Anzeige) — kompakte Belohnungs-Chips auf dem
    Auftragszettel, Stil der Quest-Reward-Chips (quests.css `.quest-reward-chip`), hier lokal
    gespiegelt statt importiert (quests.css ist page-scoped/kollisionsgeschützt für QuestsPage). */
-/* Spieler-Report 1.0.2: die beiden Kampf-Wege direkt auf dem Auftragszettel. Zwei gleich breite
-   Knoepfe — keiner der beiden ist der offensichtlich richtige, das haengt daran, ob gerade etwas
-   anderes laeuft. Bei schmalem Zettel brechen sie untereinander statt zu schrumpfen. */
+/* Spieler-Report 1.0.2: die beiden Kampf-Wege direkt auf dem Auftragszettel. Chef-Fund 25.08.
+   (1.1.0 live): die Buttons liefen auf der nackten `.btn`-Klasse, die es in der CSS gar nicht
+   gibt — reiner Browser-Default ("Windows-Buttons"), zusätzlich über die volle Zettelbreite
+   gestreckt. Jetzt dieselbe Gravewood-Knopf-Familie wie das Bestätigungs-Paar in New Haven
+   (newhaven.css `.nh-confirm-actions .combat-btn`): natürliche Breite mit Mindestbreite,
+   mittig nebeneinander, bricht bei schmalem Zettel um statt zu schrumpfen oder abzuschneiden. */
 .slayer-task-fight-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin: 10px 0 2px;
+  justify-content: center;
 }
-.slayer-task-fight-row .btn {
-  flex: 1 1 150px;
-  min-width: 0;
+.slayer-task-fight-row .combat-btn {
+  min-width: 160px;
+  flex: 0 1 auto;
 }
 
 .slayer-task-reward-row {
@@ -508,6 +512,16 @@
 .slayer-rewards-empty {
   padding: 12px 0;
   text-align: center;
+}
+
+/* Stufen-Label auf freigeschalteten Shop-Karten (Chef-Nachtrag 25.08.) — dezent unter dem
+   Namen, damit die nach Stufe sortierten Karten ihre Reihenfolge auch optisch erklären. */
+.slayer-shop-level {
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-top: -4px;
 }
 
 /* Lock badge inside shop-item-info (above item name on locked cards) */
