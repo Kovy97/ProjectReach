@@ -819,6 +819,7 @@ export const ru: Record<string, string> = {
     "combat.session.killsShort": "Убийства",
     "combat.session.raresShort": "Редкие находки",
     "combat.drops": "Добыча:",
+    "combat.bossDrops": "Добыча с босса:",
     "combat.immune": "Иммунитет:",
     "combat.immuneHint": "Этот враг игнорирует данные эффекты состояний.",
     "combat.inflicts": "Накладывает:",

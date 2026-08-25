@@ -483,6 +483,20 @@
   gap: 6px;
 }
 
+/* Chef-Entscheidung E3 (25.08.2026): Item-Typ am Beute-Eintrag ("Hals", "Schwert"), damit die
+   Kette der Sieben Kronen nicht mehr fuer die Crownless Blade gehalten wird. Dazu eine zweite
+   Zeile "Boss-Beute" fuer die Drops der Boss-Begegnungen des Dungeons, die bisher nur im
+   Bestiarium standen (der Spieler suchte das Schwert auf der Dungeon-Karte). */
+.dungeon-loot-type {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+.dungeon-loot-preview-label--boss {
+  margin-top: 4px;
+}
+
 .dungeon-loot-chip {
   display: inline-flex;
   align-items: center;
@@ -6149,8 +6163,11 @@
   font-size: 14px;
   color: var(--gold, #d6a04a);
 }
-.combat-return-bar .btn {
+/* Chef-Test 25.08.2026: der Knopf lief auf `.btn`, das im CSS nicht existiert (Browser-Default,
+   "Windows-Knopf"). Jetzt die Gravewood-Knopf-Familie wie im Zonen-Fenster. */
+.combat-return-bar .combat-btn {
   flex: 0 0 auto;
+  min-width: 160px;
 }
 
 .battle-fortress-context {

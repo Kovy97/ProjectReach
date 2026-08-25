@@ -384,7 +384,7 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                       Primaer (Sofort kaempfen) = `.combat-btn`, Sekundaer (Einreihen) =
                       `.combat-btn.ghost`. */}
                   <button
-                    className="combat-btn slayer-task-fight-btn"
+                    className="shop-citadel-btn slayer-task-fight-btn"
                     onClick={handleTaskFightNow}
                     disabled={!taskKaempfbar}
                     title={taskKaempfbar ? undefined : t("slayer.task.fightBlocked")}
@@ -392,7 +392,7 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                     {t("slayer.task.fightNow").replace("{n}", formatNum(taskRest))}
                   </button>
                   <button
-                    className="combat-btn ghost slayer-task-queue-btn"
+                    className="shop-citadel-btn slayer-task-queue-btn"
                     onClick={handleTaskEnqueue}
                     disabled={!taskKaempfbar}
                     title={taskKaempfbar ? undefined : t("slayer.task.fightBlocked")}

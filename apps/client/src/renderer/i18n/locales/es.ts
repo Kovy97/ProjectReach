@@ -807,6 +807,7 @@ export const es: Record<string, string> = {
     "combat.session.killsShort": "Muertes",
     "combat.session.raresShort": "Objetos raros",
     "combat.drops": "Botín:",
+    "combat.bossDrops": "Botín del jefe:",
     "combat.immune": "Inmune:",
     "combat.immuneHint": "Este enemigo ignora estos efectos de estado.",
     "combat.inflicts": "Inflige:",

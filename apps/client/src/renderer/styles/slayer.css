@@ -363,8 +363,10 @@
   margin: 10px 0 2px;
   justify-content: center;
 }
-.slayer-task-fight-row .combat-btn {
-  min-width: 160px;
+/* Chef-Korrektur 25.08. (2. Runde): NICHT die Kampfseiten-Familie (combat-btn / ghost), sondern die
+   Knopf-Familie DIESER Seite: shop-citadel-btn, wie "Neuen Auftrag holen" und die Shop-Kaufknoepfe. */
+.slayer-task-fight-row .shop-citadel-btn {
+  min-width: 170px;
   flex: 0 1 auto;
 }
 

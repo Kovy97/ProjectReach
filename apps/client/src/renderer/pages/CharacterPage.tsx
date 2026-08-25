@@ -270,6 +270,17 @@ export function CharacterPage(): JSX.Element {
 
   // ── sorted inventory slots ─────────────────────────────────────────────────
   const sortedSlots = [...inv.slots].map((slot, originalIdx) => ({ slot, originalIdx }));
+  // Chef-Test 25.08.2026: "Wenn ich 49/48 Inv-Plätze habe, warum werden mir dann 3 leere Slots
+  // angezeigt?" Die Kopfzeile zählt Kapazitäts-EINHEITEN (physische Slots + Instanz-Zellen der
+  // Tasche, s. usedCapacityUnits), das Raster zeigte aber jeden physischen Null-Slot. Eine
+  // verzauberte Variante ohne Grundversion belegt eine Einheit, aber keinen Null-Slot, also
+  // blieben Zellen leer, in die die Engine trotzdem nichts Neues legt (hasCapacityForNewCell).
+  // Sichtbar sind jetzt nur so viele leere Zellen, wie Einheiten wirklich frei sind (übervoll = 0).
+  const freieEinheiten = Math.max(0, invCapacity - invUsedUnits);
+  const leereSichtbar = new Set<number>();
+  for (const { slot, originalIdx } of sortedSlots) {
+    if (!slot && leereSichtbar.size < freieEinheiten) leereSichtbar.add(originalIdx);
+  }
   sortedSlots.sort((a, b) => {
     if (sortMode === "newest") return a.originalIdx - b.originalIdx;
     if (!a.slot) return 1;
@@ -601,7 +612,7 @@ export function CharacterPage(): JSX.Element {
           ))}
           {/* Leere Slots ZULETZT (nach befüllten Items + Orphans) → oben ein zusammenhängender Item-Block. */}
           {sortedSlots.map(({ slot, originalIdx }, displayIdx) =>
-            !slot ? (
+            !slot ? (!leereSichtbar.has(originalIdx) ? null : (
               <div
                 key={originalIdx}
                 className={`inv-slot${sortMode === "newest" && dragInvIdx !== null ? " inv-drop-target" : ""}`}
@@ -612,7 +623,7 @@ export function CharacterPage(): JSX.Element {
                     : undefined
                 }
               />
-            ) : null,
+            )) : null,
           )}
         </div>
 

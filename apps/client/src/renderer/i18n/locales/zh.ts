@@ -820,6 +820,7 @@ export const zh: Record<string, string> = {
     "combat.session.killsShort": "击杀",
     "combat.session.raresShort": "稀有掉落",
     "combat.drops": "掉落：",
+    "combat.bossDrops": "首领掉落：",
     "combat.immune": "免疫：",
     "combat.immuneHint": "此敌人无视这些状态效果。",
     "combat.inflicts": "施加：",

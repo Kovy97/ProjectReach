@@ -264,9 +264,14 @@ EN: Boosted skill levels now show your real level first, with the boosted value 
 
 **Slayer-Seite: echte Knöpfe, Shop nach Stufe (Chef-Test 25.08.):** DE: „Sofort kämpfen" und
 „Einreihen" liefen ohne jedes Styling (die Klasse gab es im CSS nicht) und zogen sich über die
-ganze Breite. Jetzt dieselben Leder-Knöpfe wie im Zonen-Fenster, mittig, natürliche Breite. Der
-Slayer-Shop ist nach Stufe sortiert, jede Karte nennt ihre Stufe. / EN: Slayer buttons now use the
-proper button family, and the Slayer shop is sorted by level with the level shown on every card.
+ganze Breite. Jetzt dieselben Citadel-Knöpfe wie „Neuen Auftrag holen" und der Slayer-Shop auf
+derselben Seite, mittig, natürliche Breite. Der Slayer-Shop ist nach Stufe sortiert, jede Karte
+nennt ihre Stufe. / EN: Slayer buttons now use the page's own button family, and the Slayer shop is
+sorted by level with the level shown on every card.
+
+*Dev-Notiz: Erste Runde nahm `combat-btn`/`ghost` (Kampfseite), Chef: falsch; jetzt
+`shop-citadel-btn` wie die übrigen Knöpfe der Seite. Der Zonen-Rückkehr-Knopf läuft als voller
+`combat-btn` wie „Betreten" auf der Dungeon-Karte.*
 
 **Kopfzeile: Slayer-Ziel bricht um statt abzuschneiden (Chef-Test 25.08.):** DE: „Slayer: 5/12
 Seuchenkrat…" endete mit Punkten; jetzt bricht der Text in der Karte auf zwei Zeilen um. / EN: The
@@ -314,6 +319,22 @@ offers are gone and the draught unlocks at Slayer 20.
 Guard `slayer-shop.test.ts`, Pins suffix-class-fit 178/85, content-integrity Allowlists, TTK-Pin
 ranged/idol_warden 14,52 → 17,83 (Armschienen-Ausweichen). Locale-Overlays der drei Texte für
 ES/RU/ZH/FR/PT-BR folgen. Offen (§7.2): Armschienen-Rezept verlangt Etage-5-Material bei SL 50.*
+
+**Inventar: leere Zellen nur, wenn wirklich Platz ist (Chef-Test 25.08.):** DE: Bei „49/48" zeigte
+das Raster trotzdem drei leere Zellen. Verzauberte Varianten ohne Grundversion belegen einen Platz,
+aber keine Rasterzelle, und in die leeren Zellen ließ die Engine nichts Neues. Jetzt erscheinen genau
+so viele leere Zellen, wie Plätze frei sind; übervoll heißt keine. / EN: The inventory grid shows
+exactly as many empty cells as you have free capacity.
+
+**Zonenansicht: „Zurück zum Kampf" in der Knopf-Familie (Chef-Test 25.08.):** DE: Der Knopf oben
+rechts lief ohne Styling. / EN: The back-to-fight button now uses the proper button family.
+
+**Dungeon-Karte: Boss-Beute und Item-Typ (Chef-Entscheidung E3, 25.08.):** DE: Die Karte „Hinter
+dem Thron" zeigte nur die Truhen-Beute (Kette der Sieben Kronen, 0,10 %); die Crownless Blade fällt
+von Drazhan selbst und stand nur im Bestiarium, ein Spieler hielt die Kette für das Schwert. Jetzt
+listet jede Dungeon-Karte zusätzlich „Boss-Beute" (Ausrüstung der Boss-Begegnungen), und jeder
+entdeckte Eintrag nennt seinen Typ („Hals", „Schwert"). / EN: Dungeon cards now list boss drops and
+show the item type on every discovered entry.
 
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).

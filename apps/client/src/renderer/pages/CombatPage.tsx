@@ -50,8 +50,8 @@ import {
   xpForLevel,
 } from "@hearthforge/engine";
 import type { ParagonFloorPreview, ParagonStatus } from "@hearthforge/engine";
-import type { ActiveBuff, CombatEvent, CombatStyle, RangedStance, DerivedStats, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
-import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, PRE_BOSS_BREATHER_MS } from "@hearthforge/shared";
+import type { ActiveBuff, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
+import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, PRE_BOSS_BREATHER_MS } from "@hearthforge/shared";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { AreaTourGuide } from "../components/AreaTourGuide";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
@@ -3989,71 +3989,113 @@ function ParagonTowerSection(): JSX.Element | null {
  * was sie jagen kann und wie wahrscheinlich"; die sevenfold_crown_chain existierte für sie
  * nirgends). Klick auf ein entdecktes Item öffnet das Item-Wiki (Muster BestiaryPage).
  */
-function DungeonLootPreview({ loot }: { loot: LootRoll[] }): JSX.Element {
+/**
+ * Chef-Entscheidung E3 (25.08.2026): Boss-Beute des Dungeons (Ausrüstung aus den Loot-Tabellen der
+ * Boss-Begegnungen). Ein Spieler suchte die Crownless Blade auf der Karte von „Hinter dem Thron",
+ * sah dort aber nur die Truhen-Beute (Kette der Sieben Kronen, 0,10 %) und hielt die Kette für das
+ * Schwert. Das Schwert fällt von Drazhan selbst und stand bisher nur im Bestiarium. Reine
+ * Content-Ableitung, deshalb ohne State; dedupliziert nach Item.
+ */
+function bossLootFor(d: DungeonDef): LootRoll[] {
+  const out: LootRoll[] = [];
+  const seen = new Set<string>();
+  d.encounters.forEach((monsterId, idx) => {
+    if (d.waveMeta?.[idx]?.kind !== "boss") return;
+    const m = content.monsters[monsterId];
+    if (!m) return;
+    for (const roll of m.loot ?? []) {
+      if (content.items[roll.itemId]?.type !== "equipment") continue;
+      if (seen.has(roll.itemId)) continue;
+      seen.add(roll.itemId);
+      out.push(roll);
+    }
+  });
+  return out;
+}
+
+/** Item-Typ als Kurztext am Beute-Eintrag (E3): Waffenart, sonst Ausrüstungs-Slot. */
+function dropTypeLabel(item: ItemDef | undefined, t: (k: string) => string, tr: (s: LocalizedString) => string): string {
+  if (!item || item.type !== "equipment") return "";
+  if (item.weaponType) return t(`item.weaponType.${item.weaponType}`);
+  if (item.slot && EQUIP_SLOT_LABELS[item.slot]) return tr(EQUIP_SLOT_LABELS[item.slot]);
+  return "";
+}
+
+function DungeonLootPreview({ loot, bossLoot = [] }: { loot: LootRoll[]; bossLoot?: LootRoll[] }): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
+  const chip = (roll: LootRoll): JSX.Element => {
+    const discovered = isItemDiscovered(state, roll.itemId);
+    const item = content.items[roll.itemId];
+    const img = getItemImage(roll.itemId);
+    const pct = formatDropPct(roll.chance);
+    const typ = discovered ? dropTypeLabel(item, t, tr) : "";
+    return (
+      <span
+        key={roll.itemId}
+        className={`dungeon-loot-chip${discovered ? "" : " undiscovered"}`}
+        title={discovered ? (item ? tr(item.name) : roll.itemId) : t("dungeon.lootPreview.undiscovered")}
+        role={discovered ? "button" : undefined}
+        tabIndex={discovered ? 0 : undefined}
+        onClick={
+          discovered
+            ? (e) => {
+                e.stopPropagation();
+                openItemWikiModal(roll.itemId);
+              }
+            : undefined
+        }
+        onKeyDown={
+          discovered
+            ? (e) => {
+                if (e.key !== "Enter" && e.key !== " ") return;
+                e.preventDefault();
+                e.stopPropagation();
+                openItemWikiModal(roll.itemId);
+              }
+            : undefined
+        }
+      >
+        <span className={`drop-icon${discovered ? " clickable" : " undiscovered"}`}>
+          {img ? (
+            <img
+              loading="lazy"
+              decoding="async"
+              src={img}
+              alt=""
+              className={`drop-icon-img pixelart${discovered ? "" : " drop-icon-silhouette"}`}
+            />
+          ) : discovered ? (
+            item?.icon ?? "▪"
+          ) : (
+            "?"
+          )}
+          {discovered && (
+            <span className="dungeon-loot-check" aria-hidden="true">✓</span>
+          )}
+        </span>
+        <span className="dungeon-loot-pct">{pct}</span>
+        {typ && <span className="dungeon-loot-type muted">{typ}</span>}
+      </span>
+    );
+  };
   return (
     <div className="dungeon-loot-preview">
-      <span className="dungeon-loot-preview-label muted">{t("combat.drops")}</span>
-      <div className="dungeon-loot-preview-grid">
-        {loot.map((roll) => {
-          const discovered = isItemDiscovered(state, roll.itemId);
-          const item = content.items[roll.itemId];
-          const img = getItemImage(roll.itemId);
-          const pct = formatDropPct(roll.chance);
-          return (
-            <span
-              key={roll.itemId}
-              className={`dungeon-loot-chip${discovered ? "" : " undiscovered"}`}
-              title={discovered ? (item ? tr(item.name) : roll.itemId) : t("dungeon.lootPreview.undiscovered")}
-              role={discovered ? "button" : undefined}
-              tabIndex={discovered ? 0 : undefined}
-              onClick={
-                discovered
-                  ? (e) => {
-                      e.stopPropagation();
-                      openItemWikiModal(roll.itemId);
-                    }
-                  : undefined
-              }
-              onKeyDown={
-                discovered
-                  ? (e) => {
-                      if (e.key !== "Enter" && e.key !== " ") return;
-                      e.preventDefault();
-                      e.stopPropagation();
-                      openItemWikiModal(roll.itemId);
-                    }
-                  : undefined
-              }
-            >
-              <span className={`drop-icon${discovered ? " clickable" : " undiscovered"}`}>
-                {img ? (
-                  <img
-                    loading="lazy"
-                    decoding="async"
-                    src={img}
-                    alt=""
-                    className={`drop-icon-img pixelart${discovered ? "" : " drop-icon-silhouette"}`}
-                  />
-                ) : discovered ? (
-                  item?.icon ?? "▪"
-                ) : (
-                  "?"
-                )}
-                {discovered && (
-                  <span className="dungeon-loot-check" aria-hidden="true">✓</span>
-                )}
-              </span>
-              <span className="dungeon-loot-pct">{pct}</span>
-            </span>
-          );
-        })}
-      </div>
+      {loot.length > 0 && (
+        <>
+          <span className="dungeon-loot-preview-label muted">{t("combat.drops")}</span>
+          <div className="dungeon-loot-preview-grid">{loot.map(chip)}</div>
+        </>
+      )}
+      {bossLoot.length > 0 && (
+        <>
+          <span className="dungeon-loot-preview-label dungeon-loot-preview-label--boss muted">{t("combat.bossDrops")}</span>
+          <div className="dungeon-loot-preview-grid">{bossLoot.map(chip)}</div>
+        </>
+      )}
     </div>
   );
 }
-
 // Task #318 §2 (MonsterSelect-Leerlauf-Kosten, ~2,8ms/Commit, Perf-Backlog): `monsters`/
 // `regularDungeons`/die Zonen-Gruppierung hingen NIE von `state` ab (reine Ableitung aus dem
 // statischen `content`-Katalog), wurden aber trotzdem bei JEDEM 10-Hz-Tick innerhalb von
@@ -4564,7 +4606,7 @@ function MonsterSelectImpl(): JSX.Element {
                         Karten (kein Spoiler-Risiko — die Chase-Existenz selbst zu verschweigen war
                         genau Gretes Kernbefund; "sevenfold_crown_chain existiert für die Spielerin
                         schlicht nicht"). */}
-                    {d.loot.length > 0 && <DungeonLootPreview loot={d.loot} />}
+                    {(d.loot.length > 0 || bossLootFor(d).length > 0) && <DungeonLootPreview loot={d.loot} bossLoot={bossLootFor(d)} />}
                     {unlocked ? (
                       <>
                         {/* Task #345 (war Chef-Fund 25.07. „Enter ausgegraut — warum?"): aus der
@@ -5540,7 +5582,7 @@ export function CombatPage(): JSX.Element {
           <span className="combat-return-note">
             {t("combat.stillFighting").replace("{name}", tr(monster.name))}
           </span>
-          <button type="button" className="btn combat-return-btn" onClick={() => setEnemyListInCombat(false)}>
+          <button type="button" className="combat-btn combat-return-btn" onClick={() => setEnemyListInCombat(false)}>
             {t("combat.backToFight")}
           </button>
         </div>

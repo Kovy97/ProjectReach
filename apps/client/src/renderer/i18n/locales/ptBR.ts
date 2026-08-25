@@ -805,6 +805,7 @@ export const ptBR: Record<string, string> = {
     "combat.session.killsShort": "Abates",
     "combat.session.raresShort": "Itens raros",
     "combat.drops": "Saque:",
+    "combat.bossDrops": "Saque do chefe:",
     "combat.immune": "Imune:",
     "combat.immuneHint": "Este inimigo ignora estes efeitos de status.",
     "combat.inflicts": "Inflige:",

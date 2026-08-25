@@ -1,0 +1,15 @@
+Mira, kleiner neuer Auftrag: ein einzelnes Item-Bild, der Jägerumhang (Hunter's Cape) für den Slayer-Shop. Das Item ist entschieden und fertig geschrieben, es fehlt nur dein Bild.
+
+Alles liegt in `CODEX/work/2026-08-25-slayer-jaegerumhang/`: `BRIEF.md` ist der vollständige Auftrag (Teil A ausgefüllt, Teil B bis D gehören dir), `PROMPTS.md` hat den fertigen englischen Prompt.
+
+Die Regeln, die nicht verhandelbar sind:
+1. Echtes Alpha aus der Erzeugung. Kein gemaltes Schachbrett, kein Magenta-Key, kein nachträgliches Keying.
+2. Kein Glühen, keine Partikel, keine Aura. Ausrüstung leuchtet bei uns nicht, die Seltenheit zeigt der Rahmen im Spiel.
+3. Gleiche Perspektive und Lichtrichtung wie die Bestands-Umhänge (field_cape, ranger_cape, hardened_warcape im Item-Ordner). Er darf nicht edler wirken als der Seefahrer-Umhang (mariner_cloak), der bleibt der Chase-Umhang des Bandes.
+4. Dateiname exakt `slayer_hunters_cape.png`, 1024 × 1024 PNG.
+
+Bildidee in einem Satz: verwittertes dunkelbraunes Leder mit stumpfem Jägergrün-Futter, ein einzelnes Reißzahn-Abzeichen aus angelaufenem Eisen am Kragen, am Saum eine kleine Strichliste aus Kerben. Verwittert, aber gepflegt.
+
+Lieferung nach `CODEX/assets/slayer-jaegerumhang-2026-08-25/fertig/` (plus `raw/` und `qa/`), danach HANDOFF und WORKLOG. Nichts in den Renderer kopieren, den Einbau macht Claude.
+
+Zwei Varianten zur Auswahl wären schön, aber eine reicht.
