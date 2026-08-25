@@ -160,7 +160,7 @@ letter per line.
 Zutaten-Rack weg, die Beute bekommt den Platz und scrollt nicht mehr. / EN: The thieving loot box
 no longer scrolls next to four empty crates.
 
-**Schmieden: Dauer hängt an den Barren (in Arbeit):** DE: Ein Plattenpanzer aus fünf Barren gab
+**Schmieden: Dauer hängt an den Barren:** DE: Ein Plattenpanzer aus fünf Barren gab
 99 XP, ein Streitkolben aus drei 120. Jetzt dauert jedes Stück Barren × Tier-Sekunden, XP pro Barren
 sind gleich, XP pro Stunde bleiben auf Kurve. Nur Schmieden. / EN: Smithing time now scales with
 bars used, so XP per bar is consistent. Smithing only.
@@ -203,7 +203,7 @@ zeigt bei 1600×900 alle Einträge, und wo sie doch scrollt, verrät ein weicher
 weitergeht. / EN: In windowed mode the bank shows six full rows instead of three, and the sidebar
 fits or signals that it scrolls.
 
-**Warteschlange: eigene Tooltips statt Browser-Titel (in Arbeit):** DE: Die Hinweise verschwanden
+**Warteschlange: eigene Tooltips statt Browser-Titel:** DE: Die Hinweise verschwanden
 unter dem Cursor; jetzt dieselben Tooltips wie bei den Charakter-Werten. / EN: Queue tooltips no
 longer vanish under the cursor.
 
