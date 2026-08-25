@@ -338,9 +338,9 @@ h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px
 </section>
 <section class="karte" id="f46">
 <h2><span class="nr">46</span> Update-Hinweis und Dungeon-Karten im Eisenrahmen (Chef-Test 25.08.)</h2>
-<p>„Verstanden" im Update-Hinweis und „Betreten" auf den Dungeon-Karten (auch Paragon) trugen das Gravewood-Motiv der Kampfknöpfe; jetzt der Eisenrahmen, der ab sofort der Standard-Knopf ist.</p>
+<p>„Verstanden" im Update-Hinweis und „Betreten" auf den Dungeon-Karten (auch Paragon) trugen das Gravewood-Motiv der Kampfknöpfe, ebenso „Sofort kämpfen" auf den Monster- und Champion-Karten; jetzt der Eisenrahmen, der ab sofort der Standard-Knopf ist.</p>
 <p class="dev">Chef-Entscheid 25.08.: der Eisenrahmen ist ab jetzt der Standard-Knopf. Zentrale Klasse `.btn-iron` (+ `--sm`, disabled) in design-system.css; neue Knöpfe nehmen sie. Bestand: combat-btn (Gravewood, 49 Stellen), shop-citadel-btn (13), it-action-btn (2); Sidebar/Topbar tragen den Eisenrahmen bereits. Umstellung des Bestands auf Chef-GO.</p>
-<ul class="pruef"><li><label><input type="checkbox"> Beim ersten Start des Builds: „Verstanden“ im Eisenrahmen (wie Optionen-Knöpfe), kein Gold-Sechseck</label></li><li><label><input type="checkbox"> Dungeon-Karten (auch Paragon): „Betreten“ im Eisenrahmen, volle Kartenbreite</label></li></ul>
+<ul class="pruef"><li><label><input type="checkbox"> Beim ersten Start des Builds: „Verstanden“ im Eisenrahmen (wie Optionen-Knöpfe), kein Gold-Sechseck</label></li><li><label><input type="checkbox"> Dungeon-Karten (auch Paragon): „Betreten“ im Eisenrahmen, volle Kartenbreite</label></li><li><label><input type="checkbox"> Monster-/Champion-Karten: „Sofort kämpfen“ im Eisenrahmen, vier Spalten bei 1366×768 ohne Abschneiden</label></li></ul>
 <div class="urteil"><label><input type="radio" name="u46"> OK</label> <label><input type="radio" name="u46"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
 </section>
 <section class="karte" id="f47">
@@ -393,7 +393,7 @@ h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px
 <p class="dev">Prüfen: Dailies mit hohem Gesamtlevel zeigen keine Anfänger-Aufgaben; Rindfleisch kochen: 7 XP.</p>
 <div class="urteil"><label><input type="radio" name="e7"> Ja</label> <label><input type="radio" name="e7"> Nein</label> <label><input type="radio" name="e7"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
-<h2 style="margin-top:36px">Commits des Tages (48)</h2>
+<h2 style="margin-top:36px">Commits des Tages (50)</h2>
 <div class="commits">022c6d6 Spieler-Report: Beute-Box beim Stehlen scrollte vor vier leeren Kaesten
 64b818b Spieler-Report 1.0.2: Runen stapeln, Slots im Tooltip, Plaene fuer New Haven
 5c17959 Chef-Runde 25.08.: Proc-Runen einmalig, Stahlrahmen-Schnitt, Zonen-Knopf, Samen-Auswahl, Skip-Meldung
@@ -441,5 +441,7 @@ af3b430 Slayer-Shop: Jaegerumhang ab Slayer 30 (Chef-Entscheidung E6), Bild von 
 721d9f2 Testbericht 1.1.0: Karte Jaegerumhang
 2c196da Wiki-Fenster und Varianten-Tasche: Ledertextur statt Pergament-Verlauf (Chef 25.08., Runde 4)
 856f9f9 Testbericht 1.1.0: Modale auf Leder
-02029a6 Dungeon-Karten: Betreten-Knopf im Stahlrahmen-Standard (.btn-iron), auch Paragon</div>
+02029a6 Dungeon-Karten: Betreten-Knopf im Stahlrahmen-Standard (.btn-iron), auch Paragon
+d08fc80 Testbericht 1.1.0: Betreten im Stahlrahmen
+407d1a8 Monster- und Champion-Karten: Sofort-kaempfen-Knopf im Stahlrahmen-Standard (.btn-iron)</div>
 </div></body></html>
