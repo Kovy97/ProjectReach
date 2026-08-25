@@ -331,8 +331,11 @@
   padding-top: clamp(4px, 1.4cqw, 7px);
 }
 
+/* Chef 25.08. (Runde 4): Kampf-Knopf der Monsterkarten im Stahlrahmen-Standard (.btn-iron); die
+   Karte gibt nur Groesse und Schrift vor, min-width 0 damit vier Spalten bei 1366 px passen. */
 #root .monster-card-actions .mc-fight-now-btn {
   width: 100%;
+  min-width: 0;
   min-height: clamp(46px, 13cqw, 58px);
   margin: 0;
   padding: clamp(8px, 2.5cqw, 12px) 16px;

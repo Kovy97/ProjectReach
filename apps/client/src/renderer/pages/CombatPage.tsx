@@ -3519,7 +3519,7 @@ function MonsterCard({
               Mengen-Knöpfe + Shift-Klick-Priorität bleiben unverändert fürs Vorausplanen. */}
           <button
             type="button"
-            className="combat-btn mc-fight-now-btn"
+            className="btn-iron mc-fight-now-btn"
             disabled={!reqMet}
             title={t("combat.fightNowHint")}
             onClick={() => onQueue(null, true)}
@@ -3683,7 +3683,7 @@ function EliteMonsterCard({
             Klassennamen, zwei Jahre unbemerkt. Jetzt dieselbe Klasse, dieselbe Optik. */}
         <div className="monster-card-actions">
           <button
-            className="combat-btn mc-fight-now-btn"
+            className="btn-iron mc-fight-now-btn"
             disabled={busy}
             title={busy ? t("combat.elite.fightBusy") : undefined}
             onClick={onFight}

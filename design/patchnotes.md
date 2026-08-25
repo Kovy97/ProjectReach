@@ -368,8 +368,9 @@ Gift-Ticks +35 % statt +50 %, bis der Zeit-bis-Tod-Pin steht. / EN: Rune of Wast
 
 **Update-Hinweis und Dungeon-Karten im Eisenrahmen (Chef-Test 25.08.):** DE: „Verstanden" im
 Update-Hinweis und „Betreten" auf den Dungeon-Karten (auch Paragon) trugen das Gravewood-Motiv der
-Kampfknöpfe; jetzt der Eisenrahmen, der ab sofort der Standard-Knopf ist. / EN: The update notice
-button and the dungeon Enter buttons now use the iron frame, the new standard button.
+Kampfknöpfe, ebenso „Sofort kämpfen" auf den Monster- und Champion-Karten; jetzt der Eisenrahmen,
+der ab sofort der Standard-Knopf ist. / EN: The update notice button, the dungeon Enter buttons and
+the fight buttons on monster cards now use the iron frame, the new standard button.
 
 *Dev-Notiz: Chef-Entscheid 25.08.: der Eisenrahmen ist ab jetzt der Standard-Knopf. Zentrale Klasse
 `.btn-iron` (+ `--sm`, disabled) in design-system.css; neue Knöpfe nehmen sie. Bestand: combat-btn
