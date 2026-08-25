@@ -340,8 +340,13 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // Pick trägt mehr AR, etwas weniger Block als der alte). CL 60 unverändert (kein geänderter Drop
     // im dortigen Requirement-Fenster). CL 90 steigt weiter (550.53→552.07): Mitigation/Block waren
     // schon vor #8 am Deckel (0.80/0.47) und bleiben dort (Clamp, kein Assert nötig).
+    // Re-Messung 2026-08-25 (Chef-Entscheid E1, toter skillBoost.defence -> Trinity-Klassenwert):
+    // mehrere CL-30-Fenster-Platteile (u.a. cowhide_jerkin/warband_hauberk/goblin_warkilt/
+    // chitin_helm/sootscale_greaves, armorRating je +0.42..+0.54) tragen jetzt echten armorRating
+    // statt totem skillBoost.defence — der BiS-Tank-Pick bei CL30 gewinnt armorRating 366.65→367.07.
+    // Mitigation/Block bleiben innerhalb der bestehenden Pin-Toleranz (0.7458→0.7460, 0.332 exakt).
     const t30 = computeStats(bis("melee", 30, "tank").state, content);
-    expect(t30.armorRating).toBeCloseTo(366.65, 2);
+    expect(t30.armorRating).toBeCloseTo(367.07, 2);
     expect(mitigation(t30.defense)).toBeCloseTo(0.7458, 3);
     expect(t30.blockChance).toBeCloseTo(0.332, 3);
     // Re-Messung 2026-08-25 (Rezension #8, Chef-GO 25.08.2026, #p8, Nachzug außerhalb der #8-
@@ -349,14 +354,29 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // 0.382 unverändert) schlagen jetzt bei CL 60 die bisherige BiS-Platte/-Schild — armorRating
     // 391.79→432.17, Mitigation zieht mit, Block sinkt leicht (0.388→0.382, revenant_greatshield
     // trägt weniger Block als der alte Pick).
+    // Re-Messung 2026-08-25 (Chef-Entscheid E1, toter skillBoost.defence -> blockChance): der
+    // BiS-Schild bei CL60 ist revenant_greatshield, dessen skillBoost.defence 1 jetzt echte
+    // blockChance speist (0.382 -> 0.393, n=1 * 3% + EXEMPT von der Craft-Leiter) — armorRating/
+    // Mitigation unveraendert (nur blockChance auf diesem Schild betroffen).
     const t60 = computeStats(bis("melee", 60, "tank").state, content);
     expect(t60.armorRating).toBeCloseTo(432.17, 2);
     expect(mitigation(t60.defense)).toBeCloseTo(0.7757, 3);
-    expect(t60.blockChance).toBeCloseTo(0.382, 3);
+    expect(t60.blockChance).toBeCloseTo(0.393, 3);
     // Re-Messung 2026-07-26 (#354 Paket 3.2 Nachschärfung): shellfather_aegis AR 19.6→21.5, Block
     // 45%→47% (Marge über titanium_kiteshield) — schlägt bei CL 90 jetzt klar als BiS-Offhand.
+    // Re-Messung 2026-08-25 (Chef-Entscheid E1, toter skillBoost.defence -> armorRating): padfoot_boots
+    // (armorRating 17.08→17.59, con unveraendert 2) überholt in der argmax-Score-Heuristik
+    // (armorRating·100 + con·2) jetzt aetherium_sabatons (AR 17.08, con 4, Score 1712→1708+8=1716 vs.
+    // padfoot 1712→1763) und wird BiS-Boots bei CL90-Tank. Der Score ist NUR ein Rang-Näherungswert
+    // auf dem Basis-Item (s. Datei-Kopf); er kennt keine Enchant-Slot-Kapazität — aetherium_sabatons
+    // ist "epic" (mehr Rarity-Slots für die Iron-Answer-armorRating-Rune) und trug in der ECHTEN
+    // computeStats-Rechnung dadurch deutlich mehr Ziel-Stat als das jetzt gewählte "rare" padfoot_boots.
+    // Das ist eine bekannte Heuristik-Ungenauigkeit des deterministischen argmax-Builders (kein
+    // Content-Bug, keine echte Tank-Schwächung — ein echter Spieler würde weiter aetherium_sabatons
+    // tragen), aber die Suite pinnt bewusst, was der Builder tatsächlich liefert: armorRating
+    // 552.07 → 533.41 bei CL90. Block/Mitigation an dieser Stufe unveraendert (0.47 exakt).
     const t90 = computeStats(bis("melee", 90, "tank").state, content);
-    expect(t90.armorRating).toBeCloseTo(552.07, 2); // Rezension #8 (s.o.): 550.53 → 552.07
+    expect(t90.armorRating).toBeCloseTo(533.41, 2);
     // Pet-Schadensreduktion obendrauf (multiplikativ NACH Armor/Ward/Block): heute max. 3 %.
     expect(t90.damageReduction).toBeCloseTo(0.03, 5);
   });
@@ -604,10 +624,18 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // last_idols war es bereits (13.23 unverändert — der Boden absorbiert den Zusatz-Dodge dort
     // vollständig). Alle Spieler→Gegner-Zeilen und alle anderen Stile bleiben exakt gleich (kein
     // Melee/Magic-Slot nutzt ein Slayer-Teil auf dem "damage"-Ziel).
+    // Re-Messung 2026-08-25 (Chef-Entscheid E1, toter skillBoost.defence -> Trinity-Klassenwert):
+    // der CL-90-BiS-"damage"-Build traegt jetzt mehr armorRating (Melee: Platte-Endgame-Teile
+    // idol_crown/idolstep_sabatons/voidtouched_gauntlets/aetherweave_leggings) bzw. evasionRating
+    // (Ranged: Leder-Teile krakenhide_cuirass/direhide_jerkin/bearhide_cuirass) — Spieler haelt dem
+    // Boss laenger stand, NUR die Boss→Spieler-Zeilen (enemy) steigen: melee/idol_warden 19.79→20.20,
+    // melee/last_idol 14.1→14.40, ranged/idol_warden 17.83→18.19. ranged/last_idol (13.23) und alle
+    // magic-Zeilen (kein wardCapacity-Item unter den 51 skillBoost.defence-Traegern) bleiben exakt.
+    // Spieler→Gegner-Zeilen (player) bleiben unveraendert (kein DPS-Gear betroffen).
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 56.87, 19.79],
-      ["melee", "last_idol", 186.56, 14.1],
-      ["ranged", "idol_warden", 87.24, 17.83],
+      ["melee", "idol_warden", 56.87, 20.2],
+      ["melee", "last_idol", 186.56, 14.4],
+      ["ranged", "idol_warden", 87.24, 18.19],
       ["ranged", "last_idol", 289.16, 13.23],
       ["magic", "idol_warden", 73.98, 25.34],
       ["magic", "last_idol", 248.98, 27.39],

@@ -797,3 +797,92 @@ describe("Token-Shop (buyTokenShopOffer)", () => {
     }
   });
 });
+
+// ── Obere Gesamtlevel-Schranke der Daily-Vergabe (Chef-Entscheidung E7, 25.08.2026) ──────────
+// Rezension #13: leichte Anfänger-Karten („5 Hühner") liefen für Hochstufige ewig weiter. Content
+// trägt je leichter Daily ein `maxTotalLevel`; `isDailyEligible` filtert ÜBER dem Wert. Der Filter
+// läuft nach der seeded Mischung → kein neuer RNG-Zug, Saves ohne Schranke würfeln identisch.
+
+describe("Daily-Obergrenze maxTotalLevel (Chef-Entscheidung E7)", () => {
+  /** dailyContent() mit Deckel 100 auf allen very_easy-Karten (easy/medium/hard/master ohne). */
+  function cappedContent(): ContentDB {
+    const c = dailyContent();
+    return {
+      ...c,
+      quests: c.quests.map((q) =>
+        q.difficulty === "very_easy" ? { ...q, maxTotalLevel: 100 } : q,
+      ),
+    };
+  }
+  function stateAt(c: ContentDB, total: number): GameState {
+    const s = createGame({ name: "Cap" }, c, 1);
+    s.character.totalLevel = total;
+    return s;
+  }
+
+  it("isDailyEligible: genau am Deckel noch eligible, eins darüber nicht; ohne Feld nie gedeckelt", () => {
+    const c = cappedContent();
+    const ve = c.quests.find((q) => q.id === "pool_very_easy_0")!;
+    const master = c.quests.find((q) => q.id === "pool_master_0")!;
+    expect(isDailyEligible(stateAt(c, 100), c, ve)).toBe(true);
+    expect(isDailyEligible(stateAt(c, 101), c, ve)).toBe(false);
+    expect(isDailyEligible(stateAt(c, 9999), c, ve)).toBe(false);
+    // Kein maxTotalLevel → nur das untere Schwierigkeits-Gate zählt (master ab 300).
+    expect(isDailyEligible(stateAt(c, 9999), c, master)).toBe(true);
+    expect(isDailyEligible(stateAt(c, 299), c, master)).toBe(false);
+  });
+
+  it("über dem Deckel: keine gedeckelte Karte in der Tagesauswahl, trotzdem volle 6", () => {
+    const c = cappedContent();
+    for (const day of [20260825, 20260826, 20260827, 20260828, 20260829]) {
+      const s = stateAt(c, 500);
+      expect(refreshDailyQuests(s, c, day)).toBe(true);
+      const ids = s.quests.daily.quests.map((d) => d.questId);
+      expect(ids.length).toBe(DAILY_QUEST_COUNT);
+      expect(ids.some((id) => id.startsWith("pool_very_easy_")), `Tag ${day}: very_easy trotz Deckel`).toBe(false);
+    }
+  });
+
+  it("Determinismus: unter dem Deckel würfelt gedeckelter Content IDENTISCH zum ungedeckelten (kein neuer RNG-Zug)", () => {
+    const plain = dailyContent();
+    const capped = cappedContent();
+    for (const day of [20260825, 20260826, 20260827, 20260828, 20260829, 20260830, 20260831]) {
+      const a = pickDailyQuests(plain, day, 0, stateAt(plain, 50)).map((q) => q.id);
+      const b = pickDailyQuests(capped, day, 0, stateAt(capped, 50)).map((q) => q.id);
+      expect(b, `Tag ${day}: Auswahl weicht ab`).toEqual(a);
+    }
+  });
+
+  it("echter Content: Hochstufige (alle Gates offen) ziehen keine very_easy/easy-Karte mehr", () => {
+    for (const day of [20260825, 20260826, 20260827, 20260828, 20260829, 20260830, 20260831]) {
+      const s = createGame({ name: "Hoch" }, content, 1);
+      for (const z of content.zones) if (z.requiresQuest) s.quests.claimed.push(z.requiresQuest);
+      for (const d of content.dungeons) if (d.requiresQuest) s.quests.claimed.push(d.requiresQuest);
+      for (const id of Object.keys(content.skills)) s.skills[id] = { xp: xpForLevel(40) };
+      s.character.totalLevel = totalLevel(s, content); // 20 Skills × 40 = 800
+      expect(refreshDailyQuests(s, content, day)).toBe(true);
+      const picks = s.quests.daily.quests.map((d) => content.quests.find((q) => q.id === d.questId)!);
+      expect(picks.length).toBe(DAILY_QUEST_COUNT);
+      for (const q of picks) {
+        expect(
+          q.difficulty === "very_easy" || q.difficulty === "easy",
+          `Tag ${day}: leichte Daily ${q.id} bei Gesamtlevel ${s.character.totalLevel}`,
+        ).toBe(false);
+        expect(isDailyEligible(s, content, q), `Tag ${day}: ${q.id} nicht eligible`).toBe(true);
+      }
+    }
+  });
+
+  it("echter Content: Tag-1-Stand zieht weiterhin leichte Karten (Deckel greift erst darüber)", () => {
+    let seenLight = false;
+    for (const day of [20260825, 20260826, 20260827, 20260828, 20260829]) {
+      const s = createGame({ name: "Neu" }, content, 1);
+      refreshDailyQuests(s, content, day);
+      for (const d of s.quests.daily.quests) {
+        const q = content.quests.find((x) => x.id === d.questId)!;
+        if (q.difficulty === "very_easy" || q.difficulty === "easy") seenLight = true;
+      }
+    }
+    expect(seenLight).toBe(true);
+  });
+});

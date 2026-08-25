@@ -336,6 +336,35 @@ listet jede Dungeon-Karte zusätzlich „Boss-Beute" (Ausrüstung der Boss-Begeg
 entdeckte Eintrag nennt seinen Typ („Hals", „Schwert"). / EN: Dungeon cards now list boss drops and
 show the item type on every discovered entry.
 
+**Tägliche Aufgaben: keine Anfänger-Aufgaben für Veteranen (Chef-Entscheidung E7, 25.08.):** DE:
+Die zwanzig leichten Dailies („10 Kupfer abbauen", „5 Hühner") tauchten auch bei Gesamtlevel 900
+noch auf. Jede leichte Daily hat jetzt eine obere Gesamtlevel-Schranke (150 bis 300, je nach Ära);
+darüber kommen nur noch mittlere, schwere und Meister-Aufgaben. Zu jedem Gesamtlevel bleiben
+mindestens drei Aufgaben je Stufe im Topf. / EN: Easy dailies now stop appearing above a total
+level of 150 to 300, so veterans only get tasks of their tier.
+
+*Dev-Notiz: `QuestDef.maxTotalLevel`, Filter in `isDailyEligible` nach der seeded Mischung (kein
+RNG-Zug, Saves würfeln bit-identisch), kein SAVE-Bump. Pool-Guard in quest-integrity.test.ts über
+Gesamtlevel 0..1980. medium bewusst ohne Deckel (Endgame-Mix 2/2/2).*
+
+**Toter Verteidigungs-Boost auf 51 Items ersetzt (Chef-Entscheidung E1, 25.08.):** DE: „+n
+Verteidigung" auf Amuletten, Ringen, Umhängen, Rüstungen und Schilden wirkte seit der
+Rüstungs-Trinität nirgends mehr. Schmuck und Umhänge geben jetzt stattdessen +Konstitution (Granat-
+bis Göttenstein-Amulett +1 bis +5, Kette der Sieben Kronen +5, Siegel des Neunten Wächters +4),
+Rüstung und Schilde einen höheren Wert ihrer eigenen Klasse (Götzenschleier Schutz 37,5 → 42,
+Krone des Götzen 25 → 28, Aegis des Letzten Götzen Block 49,7 → 50 %). / EN: The dead defence skill
+boost on 51 items is replaced by constitution (jewelry, capes) or a higher class value (armor,
+shields).
+
+*Dev-Notiz: Regel n × 3 % des Klassenwerts, min n × 0,4; Rauchgewebe-Umhang con 3 statt 2 (Drop-
+schlägt-Craft-Guard). Guard „kein Item trägt skillBoost.defence" in dead-effects.test.ts. Pins:
+jewelcrafting (maxHp-Delta), Hülle §4 Tank CL30/60/90 (CL90 AR 552 → 533: Score-Heuristik wählt
+Pfotenschritt-Stiefel statt Aetherium-Sabatons, dokumentierte Ungenauigkeit), §5 Boss→Spieler-TTK
+melee 19,79 → 20,2 / 14,1 → 14,4, ranged 17,83 → 18,19.*
+
+**Rune der Auszehrung auf +35 % (Chef-Entscheidung E5, 25.08.):** DE: Brand-, Blutungs- und
+Gift-Ticks +35 % statt +50 %, bis der Zeit-bis-Tod-Pin steht. / EN: Rune of Wasting now +35 %.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

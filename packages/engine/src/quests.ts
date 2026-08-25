@@ -363,15 +363,21 @@ function objectiveAttainable(state: GameState, content: ContentDB, obj: QuestObj
 }
 
 /**
- * Darf diese Pool-Quest HEUTE vergeben werden? Zwei Stufen:
- * 1. Schwierigkeits-Gate: `DAILY_DIFFICULTY_MIN_TOTAL_LEVEL` (hält „Meister"-Karten von
+ * Darf diese Pool-Quest HEUTE vergeben werden? Drei Stufen:
+ * 1. Schwierigkeits-Gate (unten): `DAILY_DIFFICULTY_MIN_TOTAL_LEVEL` (hält „Meister"-Karten von
  *    Tag-1-Brettern fern, deren Ziele selbst kein Zonen-/Rezept-Gate tragen).
- * 2. Alle Objectives sind mit dem aktuellen Stand erfüllbar (objectiveAttainable).
- * Rein & deterministisch (kein RNG, kein Schreibzugriff).
+ * 2. Gesamtlevel-Schranke (oben, Chef-Entscheidung E7 25.08.2026): trägt die Quest ein
+ *    `maxTotalLevel`, fällt sie aus dem Pool, sobald das Gesamtlevel DARÜBER liegt — leichte
+ *    Anfänger-Karten („5 Hühner") laufen für Hochstufige nicht ewig weiter. Genau am Wert noch
+ *    eligible; ohne Feld keine Obergrenze.
+ * 3. Alle Objectives sind mit dem aktuellen Stand erfüllbar (objectiveAttainable).
+ * Rein & deterministisch (kein RNG, kein Schreibzugriff). Der Filter läuft NACH der seeded
+ * Mischung in pickDailyQuests — er verbraucht keinen RNG-Zug, Saves ohne Schranke würfeln identisch.
  */
 export function isDailyEligible(state: GameState, content: ContentDB, quest: QuestDef): boolean {
   const minTotal = DAILY_DIFFICULTY_MIN_TOTAL_LEVEL[quest.difficulty ?? "medium"] ?? 0;
   if (state.character.totalLevel < minTotal) return false;
+  if (quest.maxTotalLevel != null && state.character.totalLevel > quest.maxTotalLevel) return false;
   return quest.objectives.every((o) => objectiveAttainable(state, content, o));
 }
 

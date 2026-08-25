@@ -4,6 +4,8 @@ import {
   QUEST_OBJECTIVE_TYPES,
   QUEST_DIFFICULTIES,
   DAILY_QUEST_COUNT,
+  DAILY_MAX_PER_DIFFICULTY,
+  DAILY_DIFFICULTY_MIN_TOTAL_LEVEL,
   PARAGON_DUNGEON_ID,
 } from "@hearthforge/shared";
 import { claimQuest, pickDailyQuests } from "./quests";
@@ -219,6 +221,53 @@ describe("quest integrity: gesamter content.quests-Katalog ist konsistent", () =
       picked.length,
       `Daily-Pool zieht nur ${picked.length}/${DAILY_QUEST_COUNT} — Pool zu klein oder Schwierigkeiten zu wenig verteilt`,
     ).toBe(Math.min(DAILY_QUEST_COUNT, pool.length));
+  });
+
+  // ── Obere Gesamtlevel-Schranke (Chef-Entscheidung E7 25.08.2026, Rezension #13) ────────────
+  it("maxTotalLevel: nur an Daily-Pool-Quests, positive Ganzzahl, nie unter dem Schwierigkeits-Minimum", () => {
+    for (const q of quests) {
+      if (q.maxTotalLevel === undefined) continue;
+      expect(q.daily, `Quest ${q.id}: maxTotalLevel ist nur für Daily-Pool-Quests gedacht`).toBe(true);
+      expect(
+        Number.isInteger(q.maxTotalLevel) && q.maxTotalLevel > 0,
+        `Daily ${q.id}: maxTotalLevel ${q.maxTotalLevel} muss positive Ganzzahl sein`,
+      ).toBe(true);
+      const min = DAILY_DIFFICULTY_MIN_TOTAL_LEVEL[q.difficulty ?? "medium"] ?? 0;
+      expect(
+        q.maxTotalLevel,
+        `Daily ${q.id}: maxTotalLevel ${q.maxTotalLevel} liegt unter dem Schwierigkeits-Minimum ${min} (nie ziehbar)`,
+      ).toBeGreaterThanOrEqual(min);
+    }
+  });
+
+  it("E7: jede very_easy-/easy-Daily trägt eine Obergrenze (leichte Karten laufen nicht ewig)", () => {
+    for (const q of quests) {
+      if (!q.daily) continue;
+      if (q.difficulty !== "very_easy" && q.difficulty !== "easy") continue;
+      expect(q.maxTotalLevel, `Daily ${q.id} (${q.difficulty}): maxTotalLevel fehlt`).toBeDefined();
+    }
+  });
+
+  it("E7-Guard: zu JEDEM Gesamtlevel bleiben ≥ 3 Dailies im Level-Band UND der 2×-Constraint füllt volle 6", () => {
+    const pool = quests.filter((q) => q.daily);
+    if (pool.length === 0) return;
+    const maxTotal = Object.keys(skills).length * 99; // alle Fertigkeiten am Deckel
+    // Explizite Stützstellen aus dem Auftrag + der komplette Bereich 0..maxTotal (billig: 60 Karten).
+    const levels = new Set<number>([30, 100, 300, 600, 900, 1287, maxTotal]);
+    for (let lv = 0; lv <= maxTotal; lv++) levels.add(lv);
+    for (const lv of levels) {
+      const inBand = pool.filter((q) => {
+        const min = DAILY_DIFFICULTY_MIN_TOTAL_LEVEL[q.difficulty ?? "medium"] ?? 0;
+        return lv >= min && (q.maxTotalLevel === undefined || lv <= q.maxTotalLevel);
+      });
+      expect(inBand.length, `Gesamtlevel ${lv}: nur ${inBand.length} Dailies im Level-Band`).toBeGreaterThanOrEqual(3);
+      // Kapazität unter dem 2×-je-Schwierigkeit-Constraint: Σ min(2, Karten je Stufe) ≥ 6, sonst
+      // müsste die Auffüll-Regel (Phase 3) gedeckelte Karten zurückholen.
+      const perDiff: Record<string, number> = {};
+      for (const q of inBand) perDiff[q.difficulty!] = (perDiff[q.difficulty!] ?? 0) + 1;
+      const capacity = Object.values(perDiff).reduce((a, n) => a + Math.min(DAILY_MAX_PER_DIFFICULTY, n), 0);
+      expect(capacity, `Gesamtlevel ${lv}: Level-Band füllt nur ${capacity}/${DAILY_QUEST_COUNT} Slots`).toBeGreaterThanOrEqual(DAILY_QUEST_COUNT);
+    }
   });
 
   /**

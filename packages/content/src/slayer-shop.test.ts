@@ -31,7 +31,7 @@ describe("Slayer-Shop-Rüstung (§4.1/§4.3)", () => {
     // "normaler Kill" = content.monsters[*].loot (NICHT die gleichnamigen Crafting-Rezept-
     // Ausgaben in content.actions, die tragen chance:1 per Definition und sind kein Kill-Drop).
     const offenders: string[] = [];
-    for (const offer of content.slayerShop) {
+    for (const offer of content.slayerShop ?? []) {
       let maxChance = 0;
       for (const monster of Object.values(content.monsters)) {
         for (const roll of monster.loot ?? []) {

@@ -48,20 +48,21 @@ describe("jewelcrafting chain", () => {
   }
 
   it("Amulett-Bonus wirkt auf die Werte", () => {
-    // garnet_amulet trägt Defence +1 (Boost-Kernmechanik §4.4) + modifiers con 1. Rüstungs-Trinität /
-    // Itemization 2.5 (armor-trinity-spec §1.1/§1.3/§3): der Defence-Skill-Boost speist WEDER defense
-    // (nur noch armorRating) NOCH evasion (nur DEX-Kern) — beide bleiben unverändert. Der Boost wird
-    // weiterhin in skillBoosts aggregiert (UI). CON zahlt jetzt nur noch auf maxHp (con 1 → +2 maxHp).
+    // Chef-Entscheidung E1 25.08.2026: garnet_amulet trug bis 25.08. Defence +1 (skillBoost) + con 1
+    // (modifiers) — der Defence-Boost war seit der Rüstungs-Trinität tot (speiste weder defense/
+    // armorRating noch evasion, computeStats ruft lvlEff nur für attack/power/ranged/magic/warding).
+    // Ersetzt durch reinen con-Zuwachs (Schmuck-Regel: +n con statt totem skillBoost.defence) — das
+    // Amulett trägt jetzt con 2, kein skillBoost mehr.
     const s = createGame({ name: "X" }, content, 1);
     s.skills.jewelcrafting = { xp: xpForLevel(60) };
     const before = computeStats(s, content);
     addItem(s.inventory, content, "garnet_amulet", 1);
     expect(equipItem(s, content, "garnet_amulet").ok).toBe(true);
     const after = computeStats(s, content);
-    expect(after.skillBoosts.defence).toBe(1);
-    expect(after.defense).toBeCloseTo(before.defense, 6); // Defence-Boost speist keine Mitigation mehr
-    expect(after.evasion).toBeCloseTo(before.evasion, 6); // … und keinen Accuracy-Contest-Evasion mehr
-    expect(after.maxHp).toBeCloseTo(before.maxHp + 1 * 2, 6); // con 1 → +2 maxHp (CON nur noch HP)
+    expect(after.skillBoosts.defence).toBeUndefined(); // kein Item speist defence mehr — Feld bleibt leer
+    expect(after.defense).toBeCloseTo(before.defense, 6); // unveraendert (nie von defence-Boost gespeist)
+    expect(after.evasion).toBeCloseTo(before.evasion, 6); // … und auch nie von Accuracy-Contest-Evasion
+    expect(after.maxHp).toBeCloseTo(before.maxHp + 2 * 2, 6); // con 2 → +4 maxHp (CON nur noch HP)
   });
 
   it("Raubzahn-Kette: Wildwald-Reißzahn wird zu einem tragbaren Amulett verarbeitet", () => {

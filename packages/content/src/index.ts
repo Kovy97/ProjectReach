@@ -1045,8 +1045,8 @@ export const content: ContentDB = {
     },
     garnet_amulet: {
       id: "garnet_amulet", name: { en: "Garnet Amulet", de: "Granatamulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", skillBoost: { defence: 1 },
-      modifiers: { con: 1 },
+      icon: "📿", slot: "amulet",
+      modifiers: { con: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con (HP).
       requirements: { jewelcrafting: 3 }, value: 200,
     },
     // Raubzahn-Schmuck (Jewelcrafting ohne Edelstein — verwertet Wildwald-Reißzähne, offensiv).
@@ -1082,7 +1082,7 @@ export const content: ContentDB = {
     },
     diamond_amulet: {
       id: "diamond_amulet", name: { en: "Diamond Amulet", de: "Diamantamulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 4, lck: 3 }, skillBoost: { defence: 2 },
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 6, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
       requirements: { jewelcrafting: 60 }, value: 1500, rarity: "superRare",
     },
     onyx_ring: {
@@ -1092,7 +1092,7 @@ export const content: ContentDB = {
     },
     onyx_amulet: {
       id: "onyx_amulet", name: { en: "Onyx Amulet", de: "Onyxamulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 4, lck: 5 }, skillBoost: { defence: 3 },
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 7, lck: 5 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
       requirements: { jewelcrafting: 75 }, value: 3200, rarity: "superRare",
     },
     // ── Neue Schmuck-Tiers (ERFUNDEN): Lücke L38–55 + Endgame L85–100 ──
@@ -1109,7 +1109,7 @@ export const content: ContentDB = {
     },
     bloodstone_amulet: {
       id: "bloodstone_amulet", name: { en: "Bloodstone Amulet", de: "Blutstein-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { str: 3, con: 2, lck: 3 }, skillBoost: { defence: 2 },
+      icon: "📿", slot: "amulet", modifiers: { str: 3, con: 4, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
       requirements: { jewelcrafting: 48 }, value: 1200, rarity: "superRare",
     },
     voidstone_ring: {
@@ -1119,7 +1119,7 @@ export const content: ContentDB = {
     },
     voidstone_amulet: {
       id: "voidstone_amulet", name: { en: "Voidstone Amulet", de: "Leerenstein-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 5, lck: 5 }, skillBoost: { defence: 3 },
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 8, lck: 5 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
       requirements: { jewelcrafting: 88 }, value: 5500, rarity: "epic",
     },
     godgem_ring: {
@@ -1129,7 +1129,7 @@ export const content: ContentDB = {
     },
     godgem_amulet: {
       id: "godgem_amulet", name: { en: "Godgem Amulet", de: "Göttenstein-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 4, lck: 7 }, skillBoost: { defence: 5 },
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 9, lck: 7 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
       requirements: { jewelcrafting: 99 }, value: 9800, rarity: "epic",
     },
     soul_amulet: {
@@ -1140,7 +1140,7 @@ export const content: ContentDB = {
     // ── Dungeon-Reward-Schmuck (ERSTVORSCHLAG — Thema/Werte vom Chef überarbeitbar) ──
     grave_warden_band: {
       id: "grave_warden_band", name: { en: "Grave Warden Band", de: "Grabwächter-Reif" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { con: 2 }, skillBoost: { defence: 2 },
+      icon: "💍", slot: "ring1", modifiers: { con: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
       requirements: { jewelcrafting: 55 }, value: 2200, rarity: "rare",
     },
     stormcaller_amulet: {
@@ -1150,7 +1150,7 @@ export const content: ContentDB = {
     },
     heartforged_pendant: {
       id: "heartforged_pendant", name: { en: "Heartforged Pendant", de: "Herzgeschmiedetes Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { str: 3, dex: 1, con: 2, int: 2, lck: 2 }, skillBoost: { defence: 3 },
+      icon: "📿", slot: "amulet", modifiers: { str: 3, dex: 1, con: 5, int: 2, lck: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
       requirements: { jewelcrafting: 82 }, value: 5000, rarity: "epic",
     },
     warband_signet: {
@@ -2844,13 +2844,13 @@ export const content: ContentDB = {
       id: "idol_shroud",
       name: { en: "Idol Shroud", de: "Götzenschleier" },
       type: "equipment", stackable: false, icon: "🛡️", slot: "body",
-      modifiers: { con: 21, lck: 2 }, skillBoost: { defence: 4 },
+      modifiers: { con: 21, lck: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte) statt totem skillBoost.
       requirements: { defence: 99 },
       value: 30000, rarity: "legendary",
       description: {
         en: "Hardened void-crystal plates bound with ancient idol-essence. Grants heavy defense, endurance, evasion, and sharpened instincts.",
         de: "Gehärtete Leerenkristallplatten, gebunden mit uralter Götzenessenz. Gewährt starke Verteidigung, Ausdauer, Ausweichen und geschärfte Instinkte.",
-      }, armorRating: 37.5,
+      }, armorRating: 42.0, // Chef-Entscheidung E1 25.08.2026: 37.5 -> 42.0 (n=4, toter defence-Boost -> armorRating).
     },
 
     // ── Godly: Melee weapon (drops from last_idol ONLY) ──────────────
@@ -2918,7 +2918,7 @@ export const content: ContentDB = {
       // statt weaponEffect (itemization-guards.test.ts §5.4 erlaubt bonus-Signaturen auf legendary/
       // godly-Rarity).
       bonus: { hpRegenPerSec: 0.3 },
-      modifiers: { str: 4, dex: 2, con: 5, int: 4, lck: 8 }, skillBoost: { defence: 5 },
+      modifiers: { str: 4, dex: 2, con: 10, int: 4, lck: 8 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
       value: 80000, rarity: "godly",
       description: {
         en: "A gemstone torn from the Last Idol's own chest. Pulses with all-seeing void-light.",
@@ -2956,7 +2956,7 @@ export const content: ContentDB = {
       id: "sevenfold_crown_chain",
       name: { en: "Chain of the Seven Broken Crowns", de: "Kette der Sieben Zerbrochenen Kronen" },
       type: "equipment", stackable: false, icon: "📿", slot: "amulet",
-      bonus: { hpRegenPerSec: 0.3 }, modifiers: { str: 5, dex: 3, con: 6, int: 5, wis: 3, lck: 10 }, skillBoost: { defence: 5 },
+      bonus: { hpRegenPerSec: 0.3 }, modifiers: { str: 5, dex: 3, con: 11, int: 5, wis: 3, lck: 10 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
       requirements: { defence: 99 }, value: 95000, rarity: "godly",
       description: {
         en: "Seven crowns hung broken from one chain — one for each of the Silent. Worn across the chest of the Crownless himself, until he chose to travel lighter.",
@@ -3623,24 +3623,24 @@ export const content: ContentDB = {
     leather_warcape: {
       id: "leather_warcape", name: { en: "Leather Warcape", de: "Leder-Kriegsumhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { con: 1 }, skillBoost: { defence: 1 }, value: 90, rarity: "common",
+      modifiers: { con: 2 }, value: 90, rarity: "common", // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
     },
     hardened_warcape: {
       id: "hardened_warcape", name: { en: "Hardened Warcape", de: "Gehärteter Kriegsumhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { con: 2 }, skillBoost: { defence: 1 }, value: 420, rarity: "rare",
+      modifiers: { con: 3 }, value: 420, rarity: "rare", // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
     },
     // -- Range (evasion + rangedDamage, aus Leder)
     leather_cape: {
       id: "leather_cape", name: { en: "Leather Cape", de: "Leder-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      skillBoost: { defence: 1 }, modifiers: { con: 1 },
+      modifiers: { con: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
       value: 80, rarity: "common",
     },
     ranger_cape: {
       id: "ranger_cape", name: { en: "Ranger's Cape", de: "Waldläufer-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 1, con: 1 }, skillBoost: { defence: 1 }, value: 380, rarity: "rare",
+      modifiers: { dex: 1, con: 2 }, value: 380, rarity: "rare", // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
     },
     // -- Mage (magicDamage + manaRegen/int, aus Leder + Essenzen)
     arcane_cape: {
@@ -5056,9 +5056,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "cowhide_jerkin", name: { en: "Cowhide Jerkin", de: "Rinderleder-Wams" },
       type: "equipment", stackable: false, slot: "body",
-      modifiers: { con: 3 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 5 }, value: 140, rarity: "rare", armorRating: 15.02,
+      modifiers: { con: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 5 }, value: 140, rarity: "rare", armorRating: 15.47,
     },
     hide_leggings: {
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5087,7 +5086,7 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.1, durationMs: 0 } /* Chef-Test 25.08.: luckyStrike (+Gold von Kills) ist tot, Monster droppen kein Gold; Beutechance ist der lebendige Nachbar */,
-      modifiers: { con: 2 }, skillBoost: { defence: 1 },
+      modifiers: { con: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
       value: 50, rarity: "common",
     },
     boartusk_ring: {
@@ -5113,7 +5112,7 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 },
-      modifiers: { con: 2 }, skillBoost: { defence: 2 }, value: 120, rarity: "rare",
+      modifiers: { con: 4 }, value: 120, rarity: "rare", // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
     },
     bulls_heart_pendant: {
       id: "bulls_heart_pendant", name: { en: "Bull's Heart Pendant", de: "Stierherz-Anhänger" },
@@ -5121,7 +5120,7 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 3, durationMs: 0 },
-      modifiers: { str: 3, con: 4 }, skillBoost: { defence: 2 }, value: 320, rarity: "superRare",
+      modifiers: { str: 3, con: 6 }, value: 320, rarity: "superRare", // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
     },
 
     // ─── Zone 2: The Borderlands / Die Grenzlande ────────────────────────────
@@ -5167,17 +5166,15 @@ export const content: ContentDB = {
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "warband_hauberk", name: { en: "Warband Hauberk", de: "Kriegsbanden-Panzer" },
       type: "equipment", stackable: false, slot: "body",
-      modifiers: { con: 3 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 20 }, value: 180, rarity: "rare", armorRating: 18.06,
+      modifiers: { con: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 20 }, value: 180, rarity: "rare", armorRating: 18.6,
     },
     goblin_warkilt: {
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "goblin_warkilt", name: { en: "Goblin Warkilt", de: "Goblin-Kriegskilt" },
       type: "equipment", stackable: false, slot: "legs",
-      modifiers: { con: 3 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 20 }, value: 130, rarity: "rare", armorRating: 14.04,
+      modifiers: { con: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 20 }, value: 130, rarity: "rare", armorRating: 14.46,
     },
     rivetfist_gloves: {
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5199,7 +5196,7 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
-      modifiers: { con: 2 }, skillBoost: { defence: 1 },
+      modifiers: { con: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
       value: 200, rarity: "rare",
     },
     cutpurse_ring: {
@@ -5310,9 +5307,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "chitin_helm", name: { en: "Chitin Helm", de: "Chitin-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
-      modifiers: { con: 2 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 40 }, value: 150, rarity: "rare", armorRating: 15.98, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 12→30, AR 10.27→12.8 — Blacksteel-Anker, macht die 2.5%-Elite-extraRow der Aschfelder (elite_ash_beetle) fühlbar; s. Chef-Fall cinderhusk_bulwark.
+      modifiers: { con: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 40 }, value: 150, rarity: "rare", armorRating: 16.46, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 12→30, AR 10.27→12.8 — Blacksteel-Anker, macht die 2.5%-Elite-extraRow der Aschfelder (elite_ash_beetle) fühlbar; s. Chef-Fall cinderhusk_bulwark.
     },
     ashplate_cuirass: {
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5325,9 +5321,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "sootscale_greaves", name: { en: "Sootscale Greaves", de: "Rußschuppen-Beinschienen" },
       type: "equipment", stackable: false, slot: "legs",
-      modifiers: { con: 3 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 40 }, value: 230, rarity: "rare", armorRating: 17.58, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 16→30, AR 11.88→14.0 — Blacksteel-Anker, s. chitin_helm-Kommentar.
+      modifiers: { con: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 40 }, value: 230, rarity: "rare", armorRating: 18.11, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 16→30, AR 11.88→14.0 — Blacksteel-Anker, s. chitin_helm-Kommentar.
     },
     ashen_gauntlets: {
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5347,7 +5342,11 @@ export const content: ContentDB = {
       weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "smokeweave_cape", name: { en: "Smokeweave Cape", de: "Rauchgewebe-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: {}, skillBoost: { defence: 2 },
+      // Chef-Entscheidung E1 25.08.2026: toter defence-Boost (n=2) -> con. Reine n=2-Uebersetzung
+      // waere con:2 (coreValue 2) und risse drop-gear-beats-craft (Kernwert < silk_mantle-Craft-
+      // Gegenstueck 3.000, das dank seines LEBENDIGEN skillBoost.attack den alten defence-Boost-
+      // Bonus mit doppelter Gewichtung schlug) — auf con:3 angehoben, damit die Craft-Leiter haelt.
+      modifiers: { con: 3 },
       value: 220, rarity: "rare",
     },
     cinderloop_ring: {
@@ -5455,7 +5454,7 @@ export const content: ContentDB = {
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "warden_greatcloak", name: { en: "Warden's Greatcloak", de: "Großumhang des Vogts" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 4, int: 7 }, skillBoost: { defence: 4 },
+      modifiers: { dex: 4, int: 7, con: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +4 con.
       value: 1600, rarity: "epic",
     },
 
@@ -5530,7 +5529,7 @@ export const content: ContentDB = {
       weaponEffect: { type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "shroud_of_the_dead", name: { en: "Shroud of the Dead", de: "Leichentuch" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { con: 4, int: 6, wis: 8 }, skillBoost: { defence: 2 },
+      modifiers: { con: 6, int: 6, wis: 8 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
       requirements: { magic: 30 }, value: 600, rarity: "superRare",
     },
     bonecharm_amulet: {
@@ -5544,9 +5543,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "gravewarden_greatshield", name: { en: "Gravewarden Greatshield", de: "Grabwächter-Großschild" },
       type: "equipment", stackable: false, slot: "offhand",
-      modifiers: { con: 4 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 70 }, value: 600, rarity: "superRare", armorRating: 19.1, blockChance: 0.444,
+      modifiers: { con: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> blockChance (Schild traegt schon eine).
+      requirements: { defence: 70 }, value: 600, rarity: "superRare", armorRating: 19.1, blockChance: 0.457,
     },
     frostbone_scepter: {
       id: "frostbone_scepter", name: { en: "Frostbone Scepter", de: "Frostknochen-Zepter" },
@@ -5657,9 +5655,8 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "legs",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int war klassenfremd auf Platte
       // (Mitigations-Schiene = str/con) → Attribut-Tausch bei gleicher Summe (9), Boost magic→defence.
-      modifiers: { con: 7, str: 2 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 80 }, value: 900, rarity: "superRare", armorRating: 26.85,
+      modifiers: { con: 7, str: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 80 }, value: 900, rarity: "superRare", armorRating: 27.66,
     },
     barnacle_gauntlets: {
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5690,16 +5687,15 @@ export const content: ContentDB = {
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "mariner_cloak", name: { en: "Mariner's Cloak", de: "Seefahrer-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 10, con: 10 }, skillBoost: { defence: 1 },
+      modifiers: { dex: 10, con: 11 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
       requirements: { ranged: 30 }, value: 360, rarity: "rare",
     },
     krakenhide_cuirass: {
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "krakenhide_cuirass", name: { en: "Krakenhide Cuirass", de: "Krakenhaut-Kürass" },
       type: "equipment", stackable: false, slot: "body",
-      modifiers: { con: 12 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 82, ranged: 55 }, value: 2400, rarity: "epic", evasionRating: 34.8, // armor-iter2 §8: leatherworking→ranged
+      modifiers: { con: 12 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> evasionRating (Leder).
+      requirements: { defence: 82, ranged: 55 }, value: 2400, rarity: "epic", evasionRating: 35.84, // armor-iter2 §8: leatherworking→ranged
     },
     abyssal_signet: {
       weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5712,9 +5708,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "crabshell_bulwark", name: { en: "Crabshell Bulwark", de: "Krabbenpanzer-Schild" },
       type: "equipment", stackable: false, slot: "offhand",
-      modifiers: { con: 3 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 80 }, value: 180, rarity: "rare", armorRating: 20.76, blockChance: 0.466,
+      modifiers: { con: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> blockChance (Schild traegt schon eine).
+      requirements: { defence: 80 }, value: 180, rarity: "rare", armorRating: 20.76, blockChance: 0.48,
     },
     siren_shockstaff: {
       id: "siren_shockstaff", name: { en: "Siren's Shockstaff", de: "Sirenen-Schockstab" },
@@ -5749,7 +5744,7 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
-      modifiers: { con: 7, int: 5, wis: 9 }, skillBoost: { defence: 4 },
+      modifiers: { con: 11, int: 5, wis: 9 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +4 con.
       value: 4000, rarity: "epic",
     },
 
@@ -5810,15 +5805,14 @@ export const content: ContentDB = {
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "padfoot_boots", name: { en: "Padfoot Boots", de: "Pfotenschritt-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
-      modifiers: { con: 2 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 80 }, value: 260, rarity: "rare", armorRating: 17.08,
+      modifiers: { con: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 80 }, value: 260, rarity: "rare", armorRating: 17.59,
     },
     pelt_mantle: {
       weaponEffect: { type: "packLeader", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "pelt_mantle", name: { en: "Pelt Mantle", de: "Fell-Mantel" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { con: 20 }, skillBoost: { defence: 1 },
+      modifiers: { con: 21 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
       value: 280, rarity: "rare",
     },
     fang_pendant: {
@@ -5832,9 +5826,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "direhide_jerkin", name: { en: "Direhide Jerkin", de: "Schreckenfell-Wams" },
       type: "equipment", stackable: false, slot: "body",
-      modifiers: { con: 7 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 70, ranged: 30 }, value: 780, rarity: "superRare", evasionRating: 32.24, // armor-iter2 §8: leatherworking→ranged
+      modifiers: { con: 7 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> evasionRating (Leder).
+      requirements: { defence: 70, ranged: 30 }, value: 780, rarity: "superRare", evasionRating: 33.21, // armor-iter2 §8: leatherworking→ranged
     },
     stagstride_longbow: {
       id: "stagstride_longbow", name: { en: "Stagstride Longbow", de: "Hirschlauf-Langbogen" },
@@ -5859,8 +5852,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "bearhide_cuirass", name: { en: "Bearhide Cuirass", de: "Bärenfell-Kürass" },
       type: "equipment", stackable: false, slot: "body",
-      modifiers: { con: 12 }, skillBoost: { defence: 1 },
-      requirements: { defence: 82, ranged: 38 }, value: 1500, rarity: "epic", evasionRating: 34.8, // armor-iter2 §8: leatherworking→ranged
+      modifiers: { con: 12 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> evasionRating (Leder).
+      requirements: { defence: 82, ranged: 38 }, value: 1500, rarity: "epic", evasionRating: 35.84, // armor-iter2 §8: leatherworking→ranged
     },
     alphas_heart_ring: {
       weaponEffect: { type: "packLeader", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5920,7 +5913,7 @@ export const content: ContentDB = {
       weaponEffect: { type: "catalyst", chance: 1, magnitude: 0, durationMs: 2000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "storm_mantle", name: { en: "Storm Mantle", de: "Sturm-Mantel" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 4, con: 4, int: 4, wis: 4 }, skillBoost: { defence: 3 },
+      modifiers: { dex: 4, con: 7, int: 4, wis: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
       requirements: { ranged: 50 }, value: 1400, rarity: "superRare",
     },
     aetherscale_cuirass: {
@@ -6011,7 +6004,7 @@ export const content: ContentDB = {
     void_titan_mantle: {
       id: "void_titan_mantle", name: { en: "Void Titan's Mantle", de: "Mantel des Leerentitanen" },
       type: "equipment", stackable: false, slot: "cape",
-      bonus: { hpRegenPerSec: 0.12 }, modifiers: { str: 4, dex: 1, con: 1, int: 5, wis: 5, lck: 3 }, skillBoost: { defence: 3 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 1→0.12 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff (BiS-gear regen must stay clearly under boss DPS-in); real tooltip decimal fix is ui-dev's job
+      bonus: { hpRegenPerSec: 0.12 }, modifiers: { str: 4, dex: 1, con: 4, int: 5, wis: 5, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con. red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 1→0.12 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff (BiS-gear regen must stay clearly under boss DPS-in); real tooltip decimal fix is ui-dev's job
       value: 28000, rarity: "legendary",
     },
 
@@ -6049,9 +6042,8 @@ export const content: ContentDB = {
       // runite_kiteshield R60) — mitbehoben, gleiche Palette/Konvention. Requirement bleibt (das
       // aktuelle Craft-Tier ashfen_buckler liegt bei R58, exakt hier).
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
-      modifiers: { con: 12 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 58 }, value: 2400, rarity: "epic", armorRating: 16.0, blockChance: 0.382,
+      modifiers: { con: 12 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> blockChance (Schild traegt schon eine).
+      requirements: { defence: 58 }, value: 2400, rarity: "epic", armorRating: 16.0, blockChance: 0.393,
     },
     emberforge_helm: {
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -6065,9 +6057,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "frostplate_greaves", name: { en: "Frostplate Greaves", de: "Frostplatten-Beinschienen" },
       type: "equipment", stackable: false, slot: "legs",
-      modifiers: { con: 10 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 90 }, value: 2600, rarity: "epic", armorRating: 27.5,
+      modifiers: { con: 10 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 90 }, value: 2600, rarity: "epic", armorRating: 28.33,
     },
     moltengrip_gauntlets: {
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -6081,15 +6072,14 @@ export const content: ContentDB = {
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "frostward_treads", name: { en: "Frostward Treads", de: "Frostschutz-Schuhe" },
       type: "equipment", stackable: false, slot: "boots",
-      modifiers: { con: 5 },
-      skillBoost: { defence: 1 },
-      requirements: { defence: 62 }, value: 2600, rarity: "epic", armorRating: 13.86,
+      modifiers: { con: 5 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 62 }, value: 2600, rarity: "epic", armorRating: 14.28,
     },
     slagweave_cape: {
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "slagweave_cape", name: { en: "Slagweave Cape", de: "Schlackengewebe-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { str: 14 }, skillBoost: { defence: 4 },
+      modifiers: { str: 14, con: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +4 con.
       value: 2200, rarity: "epic",
     },
     emberheart_amulet: {
@@ -6155,8 +6145,8 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "helmet",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): dex/int waren klassenfremd auf
       // Platte → Umverteilung bei gleicher Summe (19): dex+int weg, str/con/lck angehoben.
-      modifiers: { str: 5, con: 10, lck: 4 }, skillBoost: { defence: 4 },
-      requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 25,
+      modifiers: { str: 5, con: 10, lck: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 28,
     },
     aetherweave_leggings: {
       bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -6164,8 +6154,8 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "legs",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int war klassenfremd auf Platte
       // → Attribut-Tausch bei gleicher Summe (19), con/lck unverändert.
-      modifiers: { str: 4, con: 12, lck: 3 }, skillBoost: { defence: 4 },
-      requirements: { defence: 99 }, value: 26000, rarity: "legendary", armorRating: 27.5,
+      modifiers: { str: 4, con: 12, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 99 }, value: 26000, rarity: "legendary", armorRating: 30.8,
     },
     voidtouched_gauntlets: {
       bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -6173,15 +6163,15 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "gloves",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): dex/int waren klassenfremd auf
       // Platte → Umverteilung bei gleicher Summe (18): dex+int weg, str/con angehoben.
-      modifiers: { str: 5, con: 7, lck: 6 }, skillBoost: { defence: 4 },
-      requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 17.5,
+      modifiers: { str: 5, con: 7, lck: 6 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 19.6,
     },
     idolstep_sabatons: {
       bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "idolstep_sabatons", name: { en: "Idolstep Sabatons", de: "Götzenschritt-Schuhe" },
       type: "equipment", stackable: false, slot: "boots",
-      modifiers: { con: 7, lck: 3 }, skillBoost: { defence: 4 },
-      requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 17.5,
+      modifiers: { con: 7, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> armorRating (Platte).
+      requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 19.6,
     },
     idolbound_signet: {
       bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -6195,13 +6185,13 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "offhand",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int/wis waren klassenfremd auf
       // Schild → Umverteilung bei gleicher Summe (33): int+wis weg, str/con/lck angehoben.
-      bonus: { hpRegenPerSec: 0.2 }, modifiers: { str: 8, con: 19, lck: 6 }, skillBoost: { defence: 4 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.2 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
-      requirements: { defence: 99 }, value: 65000, rarity: "godly", armorRating: 21.74, blockChance: 0.497,
+      bonus: { hpRegenPerSec: 0.2 }, modifiers: { str: 8, con: 19, lck: 6 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> blockChance, an BLOCK_CAP 0.5 gekappt (0.497 lag nur 0.003 drunter). red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.2 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
+      requirements: { defence: 99 }, value: 65000, rarity: "godly", armorRating: 21.74, blockChance: 0.5,
     },
     last_idol_mantle: {
       id: "last_idol_mantle", name: { en: "Mantle of the Last Idol", de: "Mantel des Letzten Götzen" },
       type: "equipment", stackable: false, slot: "cape",
-      bonus: { hpRegenPerSec: 0.2 }, modifiers: { str: 5, dex: 2, con: 1, int: 5, wis: 5, lck: 7 }, skillBoost: { defence: 5 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.2 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
+      bonus: { hpRegenPerSec: 0.2 }, modifiers: { str: 5, dex: 2, con: 6, int: 5, wis: 5, lck: 7 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con. red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.2 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
       requirements: { defence: 99 }, value: 66000, rarity: "godly",
     },
 
@@ -6296,7 +6286,7 @@ export const content: ContentDB = {
       weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "voidstalker_cloak", name: { en: "Voidstalker Cloak", de: "Leerenpirscher-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 6, int: 8 }, skillBoost: { defence: 4 },
+      modifiers: { dex: 6, int: 8, con: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +4 con.
       requirements: { ranged: 65 }, value: 2200, rarity: "epic",
     },
     sorrow_staff: {
@@ -6857,7 +6847,7 @@ export const content: ContentDB = {
     ninth_wardens_signet: {
       id: "ninth_wardens_signet", name: { en: "Signet of the Ninth Warden", de: "Siegel des Neunten Wächters" },
       type: "equipment", stackable: false, icon: "💍", slot: "ring1",
-      modifiers: { str: 5, con: 5, int: 4, lck: 7 }, skillBoost: { defence: 4 },
+      modifiers: { str: 5, con: 9, int: 4, lck: 7 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +4 con.
       bonus: { hpRegenPerSec: 0.12 },
       weaponEffect: { type: "bane", chance: 1, magnitude: 0.25, durationMs: 0, targetFamily: "construct" },
       value: 30000, rarity: "legendary",
@@ -16017,6 +16007,13 @@ export const content: ContentDB = {
     // ── DAILY-POOL (content-dev, 2026-06-25): 50 Quests über alle 5 Schwierigkeiten ──
     // `daily: true` = Kandidat für die tägliche 6er-Auswahl (pickDailyQuests).
     // `difficulty` Pflicht. Je ~10 pro Stufe für breite Varianz.
+    // Obere Gesamtlevel-Schranke `maxTotalLevel` (Chef-Entscheidung E7 25.08.2026, Rezension #13):
+    // leichte very_easy/easy-Karten fallen ÜBER diesem Gesamtlevel aus der Tagesvergabe (Filter
+    // engine/quests.ts isDailyEligible), damit Hochstufige keine „5 Hühner" mehr ziehen. Deckel nach
+    // Ära der Karte: Tag-1/Weide 150 (easy 200), Skill-L10-Rezepte + Grenzlande 200 (easy 250),
+    // Aschfelder-Kills 300 (nahtlose Übergabe an die Meisterkarten, die ab 300 einsetzen).
+    // medium/hard/master ohne Deckel — das Endgame zieht 2 medium + 2 hard + 2 master. Guard gegen
+    // Löcher im Pool über alle Gesamtlevel: engine/quest-integrity.test.ts.
 
     // ════ VERY_EASY (10) ════════════════════════════════════════════════════════
     {
@@ -16031,6 +16028,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_kill_chickens",
@@ -16044,6 +16042,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_gather_logs",
@@ -16057,6 +16056,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_cook_shrimp",
@@ -16070,6 +16070,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_kill_goblins_5",
@@ -16083,6 +16084,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 200, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_craft_bronze_bar",
@@ -16096,6 +16098,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_kill_cows",
@@ -16109,6 +16112,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       // Task #286 Stage B: war "Fletch 20 arrow shafts" — Munition ist komplett aus dem Spiel
@@ -16124,6 +16128,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_gather_any_10",
@@ -16137,6 +16142,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_ve_kill_boar_5",
@@ -16150,6 +16156,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "very_easy",
+      maxTotalLevel: 150, // Chef-Entscheidung E7 25.08.2026
     },
 
     // ════ EASY (10) ═════════════════════════════════════════════════════════════
@@ -16165,6 +16172,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 200, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_kill_goblins_15",
@@ -16178,6 +16186,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 250, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_smelt_iron",
@@ -16191,6 +16200,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 250, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_kill_ash_rat",
@@ -16204,6 +16214,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 300, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_gather_40",
@@ -16217,6 +16228,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 200, // Chef-Entscheidung E7 25.08.2026
     },
     {
       // Task #286 Stage B: war "Fletch 15 copper arrows" — Munition entfernt, ID unverändert.
@@ -16231,6 +16243,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 200, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_kill_dust_vulture",
@@ -16244,6 +16257,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 300, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_cook_trout_10",
@@ -16257,6 +16271,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 250, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_kill_boar_10",
@@ -16270,6 +16285,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 200, // Chef-Entscheidung E7 25.08.2026
     },
     {
       id: "daily_e_smelt_bronze_8",
@@ -16283,6 +16299,7 @@ export const content: ContentDB = {
       tokenReward: 1,
       daily: true,
       difficulty: "easy",
+      maxTotalLevel: 200, // Chef-Entscheidung E7 25.08.2026
     },
 
     // ════ MEDIUM (10) ═══════════════════════════════════════════════════════════
@@ -18103,10 +18120,12 @@ export const content: ContentDB = {
       id: "affix_wasting",
       prefix: { en: "Wasting", de: "Auszehrend" },
       bonusByTier: [{}, {}, {}, {}],
-      // gutter: +50 % auf eigene Brand-/Blutungs-/Gift-Ticks (Waffen-Topwert-Parität, §9 Frage 6
+      // gutter: +35 % auf eigene Brand-/Blutungs-/Gift-Ticks (Waffen-Topwert-Parität, §9 Frage 6
       // Option A). Wirkt nur in Kombination mit einer Status-Quelle (z.B. Flamme III) — die
       // eigentliche Ketten-Proc-Rune (§7.3, Kombinations-Sim bleibt kontrolleur/combat-dev vorbehalten).
-      weaponEffectByTier: [undefined, undefined, undefined, { type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 }],
+      // Chef-Entscheidung E5 25.08.2026: Magnitude 0,5 → 0,35 (design/runen-tier-iv.html §7.3 Frage 6
+      // Rückfall-Option, "reißt das TTK-Band, zuerst Auszehrung auf 0,35").
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "gutter", chance: 1, magnitude: 0.35, durationMs: 0 }],
       appliesTo: ["any_weapon"],
     },
     affix_judgement: {

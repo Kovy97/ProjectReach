@@ -4510,6 +4510,16 @@ export interface QuestDef {
   daily?: boolean;
   /** Schwierigkeitsgrad (Pflicht für Daily-Pool-Quests; bei Story-Quests optional). */
   difficulty?: QuestDifficulty;
+  /**
+   * Obere Gesamtlevel-Schranke der Daily-Vergabe (Chef-Entscheidung E7 25.08.2026, Rezension
+   * #13): liegt `character.totalLevel` ÜBER diesem Wert, wird die Pool-Quest nicht mehr gezogen —
+   * Gegenstück zum unteren Schwierigkeits-Gate `DAILY_DIFFICULTY_MIN_TOTAL_LEVEL`, damit „5 Hühner"
+   * keine Slots eines Hochstufigen belegen und jeder Spieler Dailies seines Niveaus bekommt.
+   * Nur für `daily: true` ausgewertet (engine/quests.ts `isDailyEligible`, greift ausschließlich
+   * bei der NEUEN Tagesvergabe — bereits im Save liegende Karten bleiben). Fehlend = keine
+   * Obergrenze (schwere/Endgame-Dailies). Reines Content-Shape, nie persistiert: kein SAVE-Belang.
+   */
+  maxTotalLevel?: number;
 }
 
 /**

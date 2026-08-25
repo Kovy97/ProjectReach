@@ -26,4 +26,18 @@ describe("tote Effekte", () => {
       .map((a) => a.id);
     expect(traeger).toEqual([]);
   });
+
+  /**
+   * Chef-Entscheidung E1 25.08.2026: skillBoost.defence wirkte seit der Rüstungs-Trinität nirgends
+   * mehr (computeStats ruft lvlEff nur für attack/power/ranged/magic/warding; combat.ts nutzt defence
+   * nur fürs XP-Routing; meetsRequirements liest levelFromXp ohne Boost). Alle 51 Träger wurden auf
+   * Trinity-Klassenwert (Rüstung/Schild) bzw. +con (Schmuck/Umhang) umgestellt — kein Item darf den
+   * toten Boost mehr tragen.
+   */
+  it("kein Item traegt skillBoost.defence (Chef-Entscheidung E1 25.08.2026)", () => {
+    const traeger = Object.values(content.items)
+      .filter((i) => (i.skillBoost as { defence?: number } | undefined)?.defence != null)
+      .map((i) => i.id);
+    expect(traeger).toEqual([]);
+  });
 });
