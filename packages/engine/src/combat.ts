@@ -357,7 +357,26 @@ export function startCombat(state: GameState, content: ContentDB, monsterId: Mon
   // unberührt. Fehlend/false ⇒ heutiges Verhalten (Alt-Content unverändert). Slayer-Welt-Task-Pool-
   // und UI-Filter liegen bei logic-dev/ui-dev (§6 Welle 1/4).
   if (monster.dungeonOnly) return false;
+  // Eine laufende Aktion mit ENDLICHEM Mengen-Ziel wandert mit ihrem Rest an die Queue-Front,
+  // statt still zu verschwinden (Chef-Report 25.08.2026: "hat mir einen ganzen Auftrag aus der
+  // Queue geloescht" — Direktstart aus dem Bestiarium, vorbei an `insertQueueEntryAtFront`, das
+  // genau diese Rueckstellung macht). Hier an der Wurzel, damit JEDER Aufrufer sicher ist.
+  // Bewusst nur endliche Ziele: eine endlose Aktion beim manuellen Kampfstart abzulegen ist ein
+  // Aktivitaetswechsel, kein Verlust — und die Sims starten Kaempfe direkt ohne Queue-Kenntnis,
+  // ihre Queue wuerde sonst bei jedem Tod um einen Eintrag wachsen.
+  if (
+    state.activeActionId !== null &&
+    typeof state.actionTarget === "number" &&
+    state.actionTarget > 0 &&
+    content.actions[state.activeActionId]
+  ) {
+    if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+    state.actionQueue.unshift({ kind: "action", actionId: state.activeActionId, target: state.actionTarget });
+  }
   state.activeActionId = null;
+  // Invariante `activeActionId === null => actionTarget === null`: bisher blieb das Ziel der
+  // geraeumten Aktion hier haengen.
+  state.actionTarget = null;
   state.actionProgressMs = 0;
   state.lastStop = null;
   state.stunMs = 0;
