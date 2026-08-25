@@ -1,0 +1,255 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Testbericht 1.1.0</title>
+<style>
+:root{--bg:#0e0b08;--panel:#171209;--line:#3a2a14;--gold:#d6a04a;--copper:#b5772f;--text:#e7d7b6;--muted:#a8946f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 Georgia,serif}
+.wrap{max-width:1300px;margin:0 auto;padding:36px 40px 80px}
+h1{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:34px;letter-spacing:.06em;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 26px}
+.karte{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--copper);padding:8px 24px 18px;margin:16px 0}
+h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px 0 8px}
+.nr{display:inline-block;min-width:34px;color:var(--copper);font-size:15px;letter-spacing:.1em}
+.dev{color:var(--muted);font-size:14px;border-left:2px solid var(--line);padding-left:12px}
+.pruef{margin:10px 0 8px;padding-left:0;list-style:none}.pruef li{margin:4px 0}.pruef input{margin-right:8px;transform:scale(1.15)}
+.urteil{display:flex;gap:16px;align-items:center;margin-top:10px;font-size:14px;color:var(--muted)}
+.notiz{flex:1;background:#0f0c08;border:1px solid var(--line);color:var(--text);padding:6px 10px;font:inherit;font-size:14px}
+.toc{columns:2;column-gap:24px;margin:0 0 8px;font-size:14.5px}.toc a{color:var(--text);text-decoration:none;display:block;padding:2px 0}.toc a:hover{color:var(--gold)}
+.commits{font:13px/1.5 Consolas,monospace;color:var(--muted);background:#0f0c08;border:1px solid var(--line);padding:10px 14px;max-height:260px;overflow:auto;white-space:pre}
+.hinweis{border:1px solid var(--gold);background:#1f170a;padding:10px 16px;margin:0 0 22px}
+</style></head><body><div class="wrap">
+<h1>Testbericht 1.1.0</h1>
+<p class="sub">Stand 25.08.2026 · 29 Features/Fixes seit dem 1.0.2-Upload · Quelle: design/patchnotes.md, Sektion „Unveröffentlicht“</p>
+<div class="hinweis">Zum Durchtesten: Build aus <code>out/</code> starten („starte“). Jede Karte hat Prüfschritte und ein Urteil; Notizen kannst du mir 1:1 durchgeben. Die Haken werden nicht gespeichert, das ist eine Leseliste.</div>
+<div class="toc"><a href="#f1">01 Runen lassen sich stapeln</a><a href="#f2">02 Monster-Ausrüstung ist jetzt immer besser als das Handwerk (Rezension #8)</a><a href="#f3">03 Belohnungs-Shop in sechs Regalen (Rezension #13)</a><a href="#f4">04 Kochen: Portionen statt Bissen (Rezension #11)</a><a href="#f5">05 Anbau: Folgesorte je Beet (Rezension #12)</a><a href="#f6">06 Suffixe und Attribute passen zur Rüstungsklasse (Rezension #14)</a><a href="#f7">07 Kohleflöze ab 50, 75 und 90 (Rezension #15)</a><a href="#f8">08 Erfolge: gemalte Kategorie-Embleme</a><a href="#f9">09 14 neue Runen für das Endgame (Tier IV und Schmuck)</a><a href="#f10">10 Der Tooltip zeigt die Verzauberungs-Plätze</a><a href="#f11">11 Runen aus dem Lager</a><a href="#f12">12 Varianten-Tasche: die Suche schließt die Box nicht mehr</a><a href="#f13">13 Slayer: kämpfen direkt vom Auftragszettel</a><a href="#f14">14 Kampf: Zonen-Knopf während des Kampfes</a><a href="#f15">15 New Haven: Bauwarteschlange</a><a href="#f16">16 Stahlrahmen: die Eckbeschläge sind jetzt ganz zu sehen</a><a href="#f17">17 Anbau: Samen-Auswahl überholt, „Alle bepflanzen" rechnet vor</a><a href="#f18">18 „Voraussetzung nicht erfüllt" kam bei jedem Start zurück</a><a href="#f19">19 Ein erzwungener Kampf verschluckte den laufenden Auftrag</a><a href="#f20">20 Warteschlange lesbar (Spieler-Report Aldric, 67 h)</a><a href="#f21">21 Stehlen: Beute-Box ohne die vier leeren Kästen</a><a href="#f22">22 Schmieden: Dauer hängt an den Barren</a><a href="#f23">23 Kopfleiste: Fortschritts- und XP-Balken im „Doing"-Kasten</a><a href="#f24">24 Warteschlange: Level-Projektion je Eintrag</a><a href="#f25">25 Warteschlange: keine Trennstriche mehr im Namen</a><a href="#f26">26 Item-Wiki neu gebaut</a><a href="#f27">27 Schmieden: Items als Leiter ab Barren-Level</a><a href="#f28">28 Bank und Sidebar im Fenstermodus (Steam-Rezension)</a><a href="#f29">29 Warteschlange: eigene Tooltips statt Browser-Titel</a></div>
+<section class="karte" id="f1">
+<h2><span class="nr">01</span> Runen lassen sich stapeln</h2>
+<p>Drei Plätze, drei gleiche Runen, dreifacher Bonus. Ein Spieler hatte es als Fehler gemeldet („armor have 3 slots, but you can only put in 1 enchantment rune") und recht: eine Sperre aus dem Juli ließ dieselbe Rune nur einmal zu. Aktiv-Effekt-Runen (Flamme, Frost, Schock) bleiben einmalig pro Item: ihr Effekt stapelt nicht, eine zweite brächte nichts. / EN: Three slots, three identical runes, triple the bonus. Effect runes (Flame, Frost, Shock) stay one per item since their proc does not stack.</p>
+<p class="dev">`duplicate_affix` entfernt, neuer Code `duplicate_effect` nur für Affixe mit `weaponEffectByTier` (`affixHasActiveEffect`). Balance-Hülle neu gepinnt: der theoretische BiS-Build erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90 (beides Clamps); Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests, Hülle 31 grün.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Epic-Item (3 Plätze) mit derselben Stat-Rune dreimal verzaubern</label></li><li><label><input type="checkbox"> Flammenrune ein zweites Mal: Karte abgeblendet, Hover nennt „Wirkung stapelt nicht“</label></li><li><label><input type="checkbox"> Tooltip des Items zeigt 3/3 und drei Zeilen</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u1"> OK</label> <label><input type="radio" name="u1"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f2">
+<h2><span class="nr">02</span> Monster-Ausrüstung ist jetzt immer besser als das Handwerk (Rezension #8)</h2>
+<p>Von 215 Kampf-Uniques waren 108 schlechter als das, was man in derselben Zone schmieden konnte, 103 hatten keinen Effekt. Jetzt gilt: ein Drop trägt mindestens die Werte des nächsten Handwerks-Tiers, ein Requirement des aktuellen, und einen Effekt. Dafür fallen die Drops seltener (Erwartungswert bleibt), Chase-Items bleiben unter 0,1 %. 33 Drops, die nur Kopien von Craft-Teilen waren, geben stattdessen Material.</p>
+<p class="dev">149 Drop-Uniques + 11 Elite-Uniques + 20 vom Wächter gefundene; 258 Loot-Zeilen. Effekte aus der bestehenden Palette (vengeance, cooldownOnKill, desperation, healOnKill, giantSlayer, antiRegen, firstBlood, eagleEye, momentum), Legendäres mit hpRegenPerSec. Hülle: harte Deckel halten, Mess-Pins neu (Krit CL30 ranged am Deckel, Tank CL60 +40 AR, TTK ranged −10 %). Wächter drop-gear-beats-craft.test.ts. Kein Save-Bump; Alt-Saves ziehen die Werte über den Base-Item-Lookup.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Drop einer Zone mit dem Craft-Teil derselben Zone vergleichen: Drop mindestens nächstes Tier plus Effekt; Dropchancen im Wiki gesunken</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u2"> OK</label> <label><input type="radio" name="u2"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f3">
+<h2><span class="nr">03</span> Belohnungs-Shop in sechs Regalen (Rezension #13)</h2>
+<p>Der Token-Shop hatte neun Angebote, die später nichts mehr wert waren. Jetzt sechs Regale, die mit der Chronik aufgehen (offen, dann Kapitel 4, 9, 14, 18, 20), 47 Angebote aus Speisen, Tränken, Tonika und Saat, gesperrte Regale bleiben sichtbar mit „Erfordert Chronik-Kapitel“. Keine Runen (die gibt es nur über Runenkunst), keine Ausrüstung, nichts aus dem Endgame. Dazu zehn Tagesaufgaben für Hochland, Götzenhalle und Endgame-Handwerk.</p>
+<p class="dev">Kapitel-Gate in `buyTokenShopOffer` (Reason `shelf_locked`), kein Save-Bump. Chef- Entscheide: Variante A für 1.1.0, Quest-Hub und mehr Dailies kommen mit 1.2.0 „Alive“. Offen: obere Gesamtlevel-Schranke für very_easy/easy-Dailies (logic-dev).</p>
+<ul class="pruef"><li><label><input type="checkbox"> Feature aufrufen und gegen den Text prüfen</label></li><li><label><input type="checkbox"> Bei 1920×1080 und 1600×900 ansehen</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u3"> OK</label> <label><input type="radio" name="u3"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f4">
+<h2><span class="nr">04</span> Kochen: Portionen statt Bissen (Rezension #11)</h2>
+<p>Viele Gerichte brauchten 10 bis 24 Sekunden und bis zu sechs Zutaten für einen Bissen, der kaum mehr heilte als ein einfacher Fisch. Sechzehn Gerichte liefern jetzt 2 bis 4 Portionen je Kochvorgang, zehn Grundspeisen heilen einen Punkt mehr, und je Kampfstil gibt es Gerichte mit spürbarer Zutat: Rüstung für Nahkampf, Ausweichen für Fernkampf, Schild für Magie, Lebensregeneration für Tanks.</p>
+<p class="dev">Dauer und XP je Rezept unverändert (Sim-XP identisch), Wert je Portion geteilt. Balance-Hülle: harte Deckel halten, sechs Mess-Pins neu (Tank +12 armorRating, Ward +30). Wächter food-portions.test.ts (94). Offen: zwei Gerichte für die Fernkampf/Magie-Lücke L20 bis L47, cook_beef-XP-Kuriosität (7 statt 6).</p>
+<ul class="pruef"><li><label><input type="checkbox"> Blutgetreide-Eintopf kochen: 4 Portionen; Endgame-Bankette geben je Stil Rüstung/Ausweichen/Schild; Buff-Dauer ≥ 3 min</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u4"> OK</label> <label><input type="radio" name="u4"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f5">
+<h2><span class="nr">05</span> Anbau: Folgesorte je Beet (Rezension #12)</h2>
+<p>Auf einem wachsenden Beet lässt sich wählen, was danach gesät wird („Danach säen …“, Chip „→ Grimmkorn“). Der Plan gilt einmal, danach läuft das Beet mit der neuen Sorte weiter. Fehlt die Saat, bleibt das Beet leer und der Plan wartet mit Warnung; „Jetzt wechseln“ rodet und sät sofort; „Für alle Beete danach säen“ rechnet vor.</p>
+<p class="dev">`FarmPlot.nextCropId`, SAVE_VERSION 81 → 82 (Migration null, Sanitize strippt unbekannte Sorten), Reife-Schleife in farming.ts auf „solange elapsed ≥ growMs(aktuelle Sorte)“ umgebaut, offline == online per Test. Chef-Entscheid: kein Rückfall auf die alte Sorte.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Wachsendes Beet: „Danach säen“, Chip „→ Sorte“, bei fehlender Saat Warnung; nach Reife wird die Folgesorte gesät, Plan verschwindet</label></li><li><label><input type="checkbox"> Ohne Saat: Beet bleibt leer, Plan bleibt</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u5"> OK</label> <label><input type="radio" name="u5"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f6">
+<h2><span class="nr">06</span> Suffixe und Attribute passen zur Rüstungsklasse (Rezension #14)</h2>
+<p>„Nahkampf-Teil mit +2 Intelligenz?“ Ursache war das gemeinsame Pool-Tag aller Rüstung: Platte rollte zu 55 % Eule, Weiser, Orakel. Jetzt eigene Pools je Klasse (Platte stärke/konstitution, Leder geschick/glück, Stoff intelligenz/weisheit, Schmuck frei), zehn Items mit festen klassenfremden Werten getauscht, vier „wendige“ Plattenteile sind jetzt Leder. Bereits gerollte Suffixe bleiben gültig.</p>
+<p class="dev">Tags armor_plate/leather/cloth in `itemTypeTags` zusätzlich zu `armor` (Runen-Gate unberührt), neun Pools umgehängt, Adler ohne Magiewaffen. Balance-Hülle neu gepinnt (Krit-Cap CL 30 nicht mehr gebunden, ranged TTK +5 %). Kein Save-Bump.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Platte craften und Suffix rollen: nie Eule/Weiser/Orakel; Stoff nie Bär; Idol-Krone ohne Intelligenz</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u6"> OK</label> <label><input type="radio" name="u6"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f7">
+<h2><span class="nr">07</span> Kohleflöze ab 50, 75 und 90 (Rezension #15)</h2>
+<p>Ein Spieler: „Schmieden braucht im Lategame überall zwei Kohle, Kohle gibt kaum XP.“ Jetzt gibt es das Tiefe Kohleflöz ab 50 (2 Kohle je Abbau), das Reiche ab 75 (3) und das Uralte ab 90 (4), im selben Tempo wie das alte Flöz, mit XP auf der Bergbau-Kurve.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Bergbau 50/75/90: drei neue Flöze mit Kohle-Bild, gleiche Dauer, 2/3/4 Kohle je Abbau</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u7"> OK</label> <label><input type="radio" name="u7"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f8">
+<h2><span class="nr">08</span> Erfolge: gemalte Kategorie-Embleme</h2>
+<p>Die zehn Kategorie-Symbole im Rarity-Ring waren Strichzeichnungen; jetzt gemalte Embleme (Pokal, Amboss, Klingen, Ähre, Zahnrad, Siegelrolle, Münzsack, Truhe, Kompass, Stern) plus Meilenstein.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Erfolge-Seite: gemalte Embleme im Ring, alle Kategorien unterscheidbar, auch gesperrt</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u8"> OK</label> <label><input type="radio" name="u8"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f9">
+<h2><span class="nr">09</span> 14 neue Runen für das Endgame (Tier IV und Schmuck)</h2>
+<p>Ab Runenkunst 85 bis 95 gibt es neun Waffen- und Rüstungsrunen der Stufe IV und erstmals fünf Schmuckrunen für Ringe, Amulett und Umhang: Kriegspfad, Zweiter Pfeil, Dünner Schleier, Auszehrung, Gericht, Eiserne Antwort, Hinterhalt, Schleiertrinker, Ungebrochene Mauer, Kopfgeld, Zähler, Rastlose, Chronik, Nachlese. Alle mit eigener Wirkung statt mehr Zahl, jede einmal pro Item.</p>
+<p class="dev">design/runen-tier-iv.html. Drei neue Effekt-Arten (blockRestore, combatXp, lootChance), `requiresTrinity`-Gate, kein Save-Bump. Bilder von Mira, 640 px WebP. Offen: TTK-Sim- Pin für Zweitschlag + Auszehrung vor einer Entscheidung über den Rückfall auf 0,35.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Runenkunst 85+: Rezepte sichtbar, Leerenschilf als Zutat</label></li><li><label><input type="checkbox"> Ring mit Schmuck-Rune (z. B. Kopfgeld) verzaubern: Karte „Schmuck“, Affix Tier IV</label></li><li><label><input type="checkbox"> Bilder der 14 Runen im Inventar (Gold/Eisblau/Violett)</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u9"> OK</label> <label><input type="radio" name="u9"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f10">
+<h2><span class="nr">10</span> Der Tooltip zeigt die Verzauberungs-Plätze</h2>
+<p>Jedes Ausrüstungsteil zeigt „Verzauberung 1/3", belegte Plätze mit Effekt, freie als leere Steine und einen Satz, wofür sie da sind. Runen nennen ihr Ziel („Passt auf: Plattenrüstung") und den Grund, wenn sie nicht passen.</p>
+<p class="dev">`runeTargets.ts` liefert das ECHTE Ziel inkl. Trinity-Klasse (Platte/Leder/Stoff statt pauschal „Rüstung"). Der Verzauberungstisch blendet Runen jetzt nach derselben Kette ab wie `applyEnchant` (Tag + Trinity-Gate), Grund im Hover statt Banner nach dem Fehlversuch.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Beliebiges Ausrüstungsteil hovern: „Verzauberung 0/2“ mit leeren Steinen und Satz</label></li><li><label><input type="checkbox"> Runen-Tooltip: „Passt auf: …“, bei Schutzrune der Hinweis zur Platte</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u10"> OK</label> <label><input type="radio" name="u10"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f11">
+<h2><span class="nr">11</span> Runen aus dem Lager</h2>
+<p>Der Verzauberungstisch nimmt Runen aus Inventar und Lager, das Grimoire zeigt beide Bestände.</p>
+<p class="dev">an der Wurzel in `applyEnchant` (Inventar zuerst, dann Lager), nicht per UI-Umweg, der bei vollem Rucksack scheitern würde.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Rune ins Lager legen, am Tisch: Karte zeigt „n im Lager“, Verzaubern zieht aus dem Lager</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u11"> OK</label> <label><input type="radio" name="u11"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f12">
+<h2><span class="nr">12</span> Varianten-Tasche: die Suche schließt die Box nicht mehr</h2>
+<p>Beim Tippen schrumpfte die Liste, der Mauszeiger lag plötzlich außerhalb, das Fenster ging zu. Jetzt bleibt es offen, solange die Suche benutzt wird.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Stapel mit >5 Versionen öffnen, nach Unsinn suchen: Box bleibt offen, Meldung „keine Treffer“</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u12"> OK</label> <label><input type="radio" name="u12"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f13">
+<h2><span class="nr">13</span> Slayer: kämpfen direkt vom Auftragszettel</h2>
+<p>„Sofort kämpfen (48)" und „Einreihen (48)" mit der Restmenge als Ziel.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Auftrag holen: „Sofort kämpfen (n)“ startet den Kampf mit Rest-Ziel, „Einreihen (n)“ legt ihn hinten an</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u13"> OK</label> <label><input type="radio" name="u13"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f14">
+<h2><span class="nr">14</span> Kampf: Zonen-Knopf während des Kampfes</h2>
+<p>Oben links „Zonen", gleicher Knopf wie „Kampf beenden": zeigt die Gegnerliste zum Nachlegen, der Kampf läuft weiter.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Im Kampf oben links „Zonen“: Liste erscheint, Balken „Kämpft weiter gegen“, Kampf läuft im Hintergrund</label></li><li><label><input type="checkbox"> „Zurück zum Kampf“ führt zurück</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u14"> OK</label> <label><input type="radio" name="u14"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f15">
+<h2><span class="nr">15</span> New Haven: Bauwarteschlange</h2>
+<p>Was nach dem laufenden Bau drankommt, lässt sich planen: Reihenfolge, Verschieben, Entfernen. Bezahlt wird beim Start, nicht beim Einreihen; reicht das Material dann nicht, wartet der Eintrag und sagt warum.</p>
+<p class="dev">SAVE_VERSION 80 → 81, `camp.buildQueue` (Deckel 8). Migration: leere Liste. Kette läuft offline bit-identisch (Determinismus-Test). Vault-Pin v80 ist damit ein Migrations-Pin; das v81-Fixture kommt beim Release ins Vault.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Während ein Bau läuft: „Einreihen“ auf einer Karte, Streifen „Geplant“ oben, ↑↓×</label></li><li><label><input type="checkbox"> Bau fertig werden lassen (Debug: Fertig): nächster startet von selbst; ohne Material wartet er mit Grund</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u15"> OK</label> <label><input type="radio" name="u15"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f16">
+<h2><span class="nr">16</span> Stahlrahmen: die Eckbeschläge sind jetzt ganz zu sehen</h2>
+<p>Der Eisenrahmen (Quest-Menü, Warteschlange, New Haven, Kopfleiste und mehr) wurde mitten durch die Eckklammer geschnitten und die halbe Klammer als Kante gestreckt.</p>
+<p class="dev">`nav-bronze-lipped-iron-9slice.webp`: Band 39 px, Eckklammer 80 px, Schnitt war 40. Jetzt 85, Breite × 2.125, damit die sichtbare Banddicke exakt gleich bleibt (Lehre aus dem Holzrahmen-Fix). 50 Stellen, 14 Dateien.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Quest-Menü, Warteschlange, New Haven: Eckbeschläge der Eisenrahmen ganz, keine gestreckte Klammer an den Kanten</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u16"> OK</label> <label><input type="radio" name="u16"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f17">
+<h2><span class="nr">17</span> Anbau: Samen-Auswahl überholt, „Alle bepflanzen" rechnet vor</h2>
+<p>Das Fenster war 480 statt 880 px breit (eine spätere CSS-Regel schlug die eigene), die Karten quetschten sich auf vier Zeilen. Jetzt breit, drei Spalten, Name und Stufe in der Kopfzeile, Fakten einzeilig. „Alle bepflanzen" zeigt freie Beete und „Besät 3 von 9 Beeten", warnend, wenn die Saat nicht reicht. / EN: The seed picker is wide and readable, and Plant All shows how many plots it will sow before you click.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> „Alle bepflanzen“: breites Fenster, drei Spalten, „9 Beete frei“, Karte sagt „Besät 3 von 9“ in Orange, wenn Saat fehlt</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u17"> OK</label> <label><input type="radio" name="u17"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f18">
+<h2><span class="nr">18</span> „Voraussetzung nicht erfüllt" kam bei jedem Start zurück</h2>
+<p>Ein aus der Warteschlange entfernter Kampf wurde per × nur im Fenster weggeklickt, nicht im Spielstand; beim nächsten Start stand die Meldung wieder da, auch wenn die Voraussetzung längst erfüllt war.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Gesperrten Kampf einreihen, Meldung mit × schließen, Spiel neu laden: Meldung bleibt weg</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u18"> OK</label> <label><input type="radio" name="u18"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f19">
+<h2><span class="nr">19</span> Ein erzwungener Kampf verschluckte den laufenden Auftrag</h2>
+<p>Wer aus dem Bestiarium einen Kampf startete, während eine Aktion mit Mengen-Ziel lief, verlor diese Aktion. Sie wandert jetzt an die Queue-Front.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Aktion mit Ziel (×25) laufen lassen, im Bestiarium einen Kampf starten: die ×25 stehen vorn in der Warteschlange</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u19"> OK</label> <label><input type="radio" name="u19"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f20">
+<h2><span class="nr">20</span> Warteschlange lesbar (Spieler-Report Aldric, 67 h)</h2>
+<p>Der Aktionsname brach buchstabenweise um; die Menge steht jetzt unter dem Namen neben der Dauer.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Bei 1366×768: Namen in der Warteschlange brechen an Wörtern, nie buchstabenweise</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u20"> OK</label> <label><input type="radio" name="u20"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f21">
+<h2><span class="nr">21</span> Stehlen: Beute-Box ohne die vier leeren Kästen</h2>
+<p>Bei Aktionen ohne Zutaten fällt das leere Zutaten-Rack weg, die Beute bekommt den Platz und scrollt nicht mehr.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Stehlen: Beute-Box scrollt nicht mehr, kein leeres Zutaten-Rack darunter</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u21"> OK</label> <label><input type="radio" name="u21"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f22">
+<h2><span class="nr">22</span> Schmieden: Dauer hängt an den Barren</h2>
+<p>Ein Plattenpanzer aus fünf Barren gab 99 XP, ein Streitkolben aus drei 120. Jetzt dauert jedes Stück Barren × Tier-Sekunden, XP pro Barren sind gleich, XP pro Stunde bleiben auf Kurve. Nur Schmieden.</p>
+<p class="dev">Option B aus `design/smithing-xp-barren.md`. content-dev wendet Anhang A3 an, Wächter `smithing-xp-per-bar.test.ts`.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Blacksteel: Streithammer und Plattenpanzer geben je Barren fast gleiche XP (Tooltip/Karte)</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u22"> OK</label> <label><input type="radio" name="u22"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f23">
+<h2><span class="nr">23</span> Kopfleiste: Fortschritts- und XP-Balken im „Doing"-Kasten</h2>
+<p>Der Kasten ist breiter und zentriert, beide Balken sitzen jetzt darin; der doppelte Mini-Balken ist weg. Bei 1600 und 1366 px Breite nutzt er den freien Platz (402 → 661 px bei 1366).</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Kopfleiste: Aktions- und XP-Balken im mittleren Kasten, auch bei 1366×768 breit</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u23"> OK</label> <label><input type="radio" name="u23"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f24">
+<h2><span class="nr">24</span> Warteschlange: Level-Projektion je Eintrag</h2>
+<p>Unter der Menge steht, welches Level der Skill nach diesem Eintrag hat (⛏ 24 → 34), kumulativ durch die Warteschlange. Nur bei endlichem Ziel und nur, wenn sich das Level ändert.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Aktion ×600 einreihen: unter der Menge „⛏ 24 → 34“; zweiter Eintrag desselben Skills startet auf 34</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u24"> OK</label> <label><input type="radio" name="u24"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f25">
+<h2><span class="nr">25</span> Warteschlange: keine Trennstriche mehr im Namen</h2>
+<p>„Kupfera-der" war gestern. Passt ein Wort nicht neben die Knöpfe, rutschen die Knöpfe darunter.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Kupferader in der Warteschlange: Wort ganz, Knöpfe rutschen darunter</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u25"> OK</label> <label><input type="radio" name="u25"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f26">
+<h2><span class="nr">26</span> Item-Wiki neu gebaut</h2>
+<p>Das Fenster hinter dem „?" im Tooltip war 460 px schmal. Jetzt groß (bis 1280 px), großes Bild, Kernwerte als Chips, „Quelle" und „Verwendet für" als zwei Kartenraster mit Monsterbild und Chance bzw. Rezept und Ergebnis.</p>
+<p class="dev">Monster, die aus Zone, Dungeon-Welle und Turm droppen, standen doppelt; jetzt eine Karte je Kreatur, plus Legende für das Zonen-Gate (ausgegraut = Zone noch gesperrt).</p>
+<ul class="pruef"><li><label><input type="checkbox"> „?“ im Tooltip: großes Fenster, Quelle/Verwendung als Karten, Monster nur einmal, Legende bei gesperrten Zonen</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u26"> OK</label> <label><input type="radio" name="u26"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f27">
+<h2><span class="nr">27</span> Schmieden: Items als Leiter ab Barren-Level</h2>
+<p>Mithril-Barren ab 35, aber der erste Mithril-Dolch erst ab 40, und so in sechs Tiers. Jetzt liegt der Dolch auf dem Barren-Level, danach Schwert und so weiter bis zum Plattenpanzer am Ende des Tiers.</p>
+<p class="dev">Chef-Entscheid „Erstmal nur Smithing". Lederverarbeitung hat dieselbe Lücke zweimal (Drachenhaut 78 → erstes Item 82, Schattenhaut 90 → 95) und bleibt bewusst unangetastet.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Mithril-Barren ab 35, Mithril-Dolch ab 35, Plattenpanzer ab 44; Eisen-Plattenpanzer jetzt ab 19</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u27"> OK</label> <label><input type="radio" name="u27"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f28">
+<h2><span class="nr">28</span> Bank und Sidebar im Fenstermodus (Steam-Rezension)</h2>
+<p>Bei 1600×900 zeigte das Lager drei volle Zeilen, jetzt sechs; Sprechblase und Filterleiste werden unter 1040 px Höhe kompakt. Die Sidebar zeigt bei 1600×900 alle Einträge, und wo sie doch scrollt, verrät ein weicher Verlauf, dass es weitergeht.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Fenstermodus 1600×900: Lager zeigt sechs Zeilen mit Scrollbalken, Sidebar bis „Optionen“ sichtbar; bei 1366×768 Verlauf am Sidebar-Ende</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u28"> OK</label> <label><input type="radio" name="u28"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f29">
+<h2><span class="nr">29</span> Warteschlange: eigene Tooltips statt Browser-Titel</h2>
+<p>Die Hinweise verschwanden unter dem Cursor; jetzt dieselben Tooltips wie bei den Charakter-Werten.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Warteschlangen-Knöpfe hovern: Tooltip über dem Knopf, nie unter dem Cursor, auch bei deaktiviertem Pfeil</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u29"> OK</label> <label><input type="radio" name="u29"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<h2 style="margin-top:36px">Commits des Tages (28)</h2>
+<div class="commits">022c6d6 Spieler-Report: Beute-Box beim Stehlen scrollte vor vier leeren Kaesten
+64b818b Spieler-Report 1.0.2: Runen stapeln, Slots im Tooltip, Plaene fuer New Haven
+5c17959 Chef-Runde 25.08.: Proc-Runen einmalig, Stahlrahmen-Schnitt, Zonen-Knopf, Samen-Auswahl, Skip-Meldung
+dfb00a8 Erzwungener Kampf verschluckte den laufenden Auftrag
+cfa52dd Warteschlange: eigene Tooltips statt Browser-Titel; Patchnotes-Sammelsektion; zwei Design-Dokumente
+6ee71f5 Mira-Auftrag: 14 Tier-IV-Runen (Brief, 14 Prompts, Nachricht an Mira)
+3778c14 Schmieden: Dauer haengt an den Barren, XP pro Barren gleich (Chef-GO 25.08.)
+6539ea0 Kopfleiste: Balken im Doing-Kasten; Item-Wiki gross und lesbar; Stahlrahmen in topbar.css
+264b961 Warteschlange: Level-Projektion je Eintrag (Skill-Icon, Von -> Bis)
+ab2d533 Warteschlange: Umbruch statt Trennstrich im Aktionsnamen
+98d1f3f Patchnotes-Sammelnotizen: Doing-Kasten, Level-Projektion, Umbruch, Item-Wiki, Smithing-Leiter, Bank/Sidebar
+dc7c5a6 Schmieden: Items als Leiter ab Barren-Level ueber den ganzen Tier-Bereich
+2f3a9ed Item-Wiki: doppelte Monster zusammengefuehrt, Zonen-Gate erklaert
+456089b Tier-IV-Runen: Engine-Fundament (drei Effekt-Arten, requiresTrinity-Gate)
+e87351d Tier-IV-Runen: Effekt-Texte in 7 Sprachen, Tooltip-Ziel liest requiresTrinity
+3f2aa1c Bank und Sidebar im Fenstermodus (Steam-Rezension 25.08.)
+89b22b0 Tier-IV-Runen: 14 Runen als Content, Rezepte, 7 Sprachen, Bilder von Mira
+41d0b9f Patchnotes: Runen Tier IV, Bank/Sidebar, Smithing-Leiter, Wiki-Dubletten; Schmuck-Runen-Probe
+1103dd9 Mira-Auftrag: Achievement-Kategorie-Icons (Brief, 13 Prompts, Nachricht)
+de551c8 Rezensions-Patch: Loesungsdesign fuer #8, #11, #12, #13, #14, #15 (#9 bewusst nicht)
+5132bb9 Achievement-Kategorie-Icons: gemalte Embleme von Mira statt Strichzeichnungen
+72d60a8 1.1.0: Kohlefloeze ab 50, 75 und 90 mit 2, 3 und 4 Kohle je Abbau
+3522855 Patchnotes: Kohlefloeze, Achievement-Embleme
+21955c8 1.1.0: Anbau-Folgesorte (SAVE 82) und Suffix-Pools nach Ruestungsklasse
+d588032 1.1.0: Kochen als Portionen, Trinity-Gerichte je Stil (Rezension #11)
+ce19730 Patchnotes: zwei erledigte 'in Arbeit'-Marker geloest
+4faf652 1.1.0: Belohnungs-Shop in sechs Kapitel-Regalen, zehn Spaetzonen-Dailies
+ea193af 1.1.0: Monster-Ausruestung schlaegt das Handwerk, dafuer seltener (Rezension #8)</div>
+</div></body></html>
