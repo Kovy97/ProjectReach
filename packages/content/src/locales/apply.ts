@@ -99,7 +99,10 @@ function forEachLocalizableField(
       visit(cb, "description", "campBuildings", cb.id);
     }
   }
-  // NICHT lokalisiert (kein name/description-Feld im Shape): shop, slayerShop.
+  // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen, gleiches Muster wie zones/categories.
+  if (db.tokenShopShelves) for (const sh of db.tokenShopShelves) visit(sh, "name", "tokenShopShelves", sh.id);
+  // NICHT lokalisiert (kein name/description-Feld im Shape): shop, slayerShop, tokenShop (Angebote
+  // zeigen nur das gekaufte Item — dessen Name ist bereits lokalisiert).
 }
 
 /**

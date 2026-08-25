@@ -148,7 +148,7 @@ describe("Item-Entdeckung (discoveredItems / isItemDiscovered)", () => {
     const s = createGame({ name: "X" }, content, 1);
     addQuestTokens(s, offer!.tokenCost);
     delete s.discoveredItems[offer!.itemId]; // falls Starterbesitz kollidiert
-    expect(buyTokenShopOffer(s, content, offer!.id)).toBe(true);
+    expect(buyTokenShopOffer(s, content, offer!.id).ok).toBe(true);
     expect(isItemDiscovered(s, offer!.itemId)).toBe(true);
   });
 

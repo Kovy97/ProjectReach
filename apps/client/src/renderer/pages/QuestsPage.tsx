@@ -5,13 +5,14 @@ import {
   canClaimQuest,
   claimQuest,
   isDailyClaimed,
+  isShelfOpen,
   objectiveProgress,
   questStatus,
   questTokenBalance,
   refreshDailyQuests,
 } from "@hearthforge/engine";
 import type { QuestStatus } from "@hearthforge/engine";
-import type { GameState, ItemDef, LocalizedString, QuestDef, QuestObjective, TokenShopOffer } from "@hearthforge/shared";
+import type { GameState, ItemDef, LocalizedString, QuestDef, QuestObjective, TokenShopOffer, TokenShopShelf } from "@hearthforge/shared";
 import { QUEST_DIFFICULTIES } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -323,12 +324,15 @@ function QuestTokenBadge({
 function TokenShopOfferCard({
   offer,
   balance,
+  shelfLocked,
   onBuy,
   t,
   tr,
 }: {
   offer: TokenShopOffer;
   balance: number;
+  /** Regal-Gate (#p13) noch nicht erfüllt — Kauf-Button bleibt disabled, egal wie viele Tokens da sind. */
+  shelfLocked: boolean;
   onBuy: () => void;
   t: (k: string) => string;
   tr: (v: LocalizedString) => string;
@@ -336,7 +340,7 @@ function TokenShopOfferCard({
   const item: ItemDef | undefined = content.items[offer.itemId];
   const img = getItemImage(offer.itemId);
   const tokenSrc = TICKET_ICON_URL;
-  const affordable = balance >= offer.tokenCost;
+  const affordable = balance >= offer.tokenCost && !shelfLocked;
   // Chef (2026-07-08): Items im Token-Shop anklickbar — Klick auf Bild/Name pinnt das große
   // Item-Tooltip zur Inspektion (gleiches Muster wie ItemChip/PouchRow; Kauf bleibt beim Button).
   const tooltip = useItemTooltip();
@@ -388,11 +392,13 @@ function TokenShopOfferCard({
         className="quest-claim-btn quest-shop-buy-btn"
         disabled={!affordable}
         onClick={onBuy}
-        title={affordable ? undefined : t("quests.shop.notEnough")}
+        title={shelfLocked ? t("quests.shop.shelfLocked") : affordable ? undefined : t("quests.shop.notEnough")}
       >
         {t("quests.shop.buy")}
       </button>
-      {!affordable && (
+      {/* Regal-Gate hat schon einen eigenen Hinweis im Shelf-Kopf (#p13) — hier nur der
+          Tokens-Hinweis, sonst doppelt sich die Aussage auf jeder einzelnen Karte. */}
+      {!affordable && !shelfLocked && (
         <span className="quest-shop-offer-hint muted">{t("quests.shop.notEnough")}</span>
       )}
     </div>
@@ -400,12 +406,85 @@ function TokenShopOfferCard({
 }
 
 /**
- * Belohnungs-Shop-Tab (Task #284): Citadel-Panel mit Token-Bestand + Offer-Grid aus
- * `content.tokenShop` (sortiert nach sortOrder, Array-Reihenfolge als Tiebreak — stable sort).
- * Kauf läuft über die Engine (`buyTokenShopOffer`: validiert Tokens, liefert Bündel via
- * addItemOrBank, kein Teil-Verlust). Schlägt ein Kauf TROTZ ausreichender Tokens fehl, ist das
- * ein Platz-Problem (Inventar voll + Auto-Bank aus/Bank voll) → Inline-Hinweis statt Toast
- * (es gibt kein Toast-System). Der „Bald verfügbar"-Platzhalter bleibt nur bei leerer Liste.
+ * Ein Regal-Abschnitt im Belohnungs-Shop (#p13): Kopfzeile mit Regal-Name + Angebots-Zahl,
+ * gesperrte Regale zusätzlich mit Schloss-Icon + Gate-Hinweis (dieselbe Formulierung wie am
+ * Zonen-Gate, `combat.zoneGate.requires`). Offene Regale sind einklappbar (Muster
+ * `quest-strand-head`/-caret weiter oben in dieser Datei); ein gesperrtes Regal bleibt IMMER
+ * mit allen Angebots-Karten sichtbar (nie verstecken) — nur eingefärbt/disabled, kein Toggle.
+ */
+function TokenShopShelfSection({
+  shelf,
+  offers,
+  balance,
+  open,
+  expanded,
+  onToggle,
+  onBuy,
+  t,
+  tr,
+}: {
+  shelf: TokenShopShelf;
+  offers: TokenShopOffer[];
+  balance: number;
+  open: boolean;
+  expanded: boolean;
+  onToggle: () => void;
+  onBuy: (offerId: string) => void;
+  t: (k: string) => string;
+  tr: (v: LocalizedString) => string;
+}): JSX.Element {
+  const gateQuest = shelf.requiresQuest ? content.quests.find((q) => q.id === shelf.requiresQuest) : undefined;
+  const gateHint = t("combat.zoneGate.requires").replace("{name}", gateQuest ? tr(gateQuest.name) : t("app.unknown"));
+  // Gesperrte Regale sind nie einklappbar (Angebots-Karten bleiben immer sichtbar) — nur offene
+  // Regale bekommen den Klapp-Header; der Show-State ist dafür schlicht `open ? expanded : true`.
+  const showOffers = open ? expanded : true;
+  return (
+    <div className={`quest-shelf${open ? "" : " quest-shelf--locked"}`}>
+      {open ? (
+        <button type="button" className="quest-shelf-head" onClick={onToggle} aria-expanded={expanded}>
+          <span className="quest-shelf-caret" aria-hidden="true">{expanded ? "▾" : "▸"}</span>
+          <span className="quest-shelf-name">{tr(shelf.name)}</span>
+          <span className="quest-shelf-count muted">{offers.length}</span>
+        </button>
+      ) : (
+        <div className="quest-shelf-head quest-shelf-head--static">
+          <span className="quest-shelf-lock" aria-hidden="true">🔒</span>
+          <span className="quest-shelf-name">{tr(shelf.name)}</span>
+          <span className="quest-shelf-count muted">{offers.length}</span>
+        </div>
+      )}
+      {!open && <p className="quest-shelf-gate-hint muted">{gateHint}</p>}
+      {showOffers && (
+        <div className="quest-shop-grid">
+          {offers.map((offer) => (
+            <TokenShopOfferCard
+              key={offer.id}
+              offer={offer}
+              balance={balance}
+              shelfLocked={!open}
+              onBuy={() => onBuy(offer.id)}
+              t={t}
+              tr={tr}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Belohnungs-Shop-Tab (Task #284, Regale seit #p13): Citadel-Panel mit Token-Bestand + Angeboten
+ * aus `content.tokenShop`, gruppiert nach `content.tokenShopShelves` (sortiert nach sortOrder;
+ * Angebote ohne Treffer landen defensiv im ersten offenen Regal — Content-Vertrag „Angebote ohne
+ * shelfId fallen ins offene Regal"). Kauf läuft über die Engine (`buyTokenShopOffer`: prüft zuerst
+ * das Regal-Gate über `isShelfOpen`, dann Tokens, liefert das Bündel via addItemOrBank, kein
+ * Teil-Verlust). Schlägt ein Kauf trotz offenem Regal + genug Tokens fehl, ist das ein
+ * Platz-Problem (Inventar voll + Auto-Bank aus/Bank voll) → Inline-Hinweis statt Toast (es gibt
+ * kein Toast-System). Regale: gesperrte bleiben sichtbar mit Gate-Hinweis (nie verstecken),
+ * offene sind einklappbar — das zuletzt erreichte (höchste sortOrder unter den offenen) startet
+ * aufgeklappt, ältere starten eingeklappt (bleiben aber jederzeit erreichbar). Der „Bald
+ * verfügbar"-Platzhalter bleibt nur bei komplett leerem Content.
  */
 function RewardsShopPanel({
   t,
@@ -418,16 +497,41 @@ function RewardsShopPanel({
   const [, setBump] = useState(0);
   const [spaceNotice, setSpaceNotice] = useState(false);
   const balance = questTokenBalance(state);
-  const offers = [...(content.tokenShop ?? [])].sort(
-    (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
-  );
+
+  const shelves = [...(content.tokenShopShelves ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
+  const allOffers = [...(content.tokenShop ?? [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  const fallbackShelfId = shelves.find((s) => !s.requiresQuest)?.id ?? shelves[0]?.id;
+  const offersByShelf = new Map<string, TokenShopOffer[]>();
+  for (const offer of allOffers) {
+    const key = (offer.shelfId && shelves.some((s) => s.id === offer.shelfId)) ? offer.shelfId : fallbackShelfId;
+    if (!key) continue;
+    (offersByShelf.get(key) ?? offersByShelf.set(key, []).get(key)!).push(offer);
+  }
+
+  const openShelfIds = shelves.filter((s) => isShelfOpen(state, content, s.id)).map((s) => s.id);
+  // Höchste sortOrder unter den offenen Regalen = "aktuelles" Regal (shelves ist bereits aufsteigend
+  // sortiert, also einfach das letzte offene Element in dieser Reihenfolge).
+  const currentShelfId = openShelfIds[openShelfIds.length - 1];
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(currentShelfId ? [currentShelfId] : []));
+  const toggleShelf = (id: string): void => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const buy = (offerId: string): void => {
-    const ok = buyTokenShopOffer(state, content, offerId);
-    // Nur klickbar bei genug Tokens → false heißt hier praktisch immer „kein Platz".
-    setSpaceNotice(!ok);
+    const res = buyTokenShopOffer(state, content, offerId);
+    // Regal-Gate/zu-wenig-Tokens blockieren den Button schon vorher (disabled) — schlägt der Kauf
+    // trotzdem fehl, ist es praktisch immer „kein Platz" (no_space); andere Reasons zeigen defensiv
+    // keinen Hinweis (State bleibt ohnehin unverändert, s. buyTokenShopOffer-Doku).
+    setSpaceNotice(res.reason === "no_space");
     setBump((b) => b + 1);
   };
+
+  const hasOffers = allOffers.length > 0;
 
   return (
     <div className="quest-shop-panel">
@@ -439,7 +543,7 @@ function RewardsShopPanel({
       {spaceNotice && (
         <p className="quest-shop-notice" role="alert">{t("quests.shop.noSpace")}</p>
       )}
-      {offers.length === 0 ? (
+      {!hasOffers ? (
         <div className="quest-shop-grid quest-shop-grid--empty">
           <div className="placeholder quest-shop-empty">
             <div className="placeholder-icon">
@@ -449,17 +553,25 @@ function RewardsShopPanel({
           </div>
         </div>
       ) : (
-        <div className="quest-shop-grid">
-          {offers.map((offer) => (
-            <TokenShopOfferCard
-              key={offer.id}
-              offer={offer}
-              balance={balance}
-              onBuy={() => buy(offer.id)}
-              t={t}
-              tr={tr}
-            />
-          ))}
+        <div className="quest-shelf-list">
+          {shelves.map((shelf) => {
+            const offers = offersByShelf.get(shelf.id) ?? [];
+            if (offers.length === 0) return null;
+            return (
+              <TokenShopShelfSection
+                key={shelf.id}
+                shelf={shelf}
+                offers={offers}
+                balance={balance}
+                open={openShelfIds.includes(shelf.id)}
+                expanded={expanded.has(shelf.id)}
+                onToggle={() => toggleShelf(shelf.id)}
+                onBuy={buy}
+                t={t}
+                tr={tr}
+              />
+            );
+          })}
         </div>
       )}
     </div>

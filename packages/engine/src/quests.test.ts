@@ -22,6 +22,7 @@ import {
   evaluateQuests,
   isCombatQuest,
   isDailyEligible,
+  isShelfOpen,
   objectiveProgress,
   questObjectivesMet,
   questStatus,
@@ -685,6 +686,17 @@ function tokenShopContent(): ContentDB {
     tokenShop: [
       { id: "ts_test_logs", itemId: "normal_log", qty: 25, tokenCost: 5 },
       { id: "ts_test_broken", itemId: "__does_not_exist__", qty: 10, tokenCost: 1 },
+      // #p13-Regal-Gate-Fixture: ein Angebot hinter einem synthetischen Kapitel-Regal.
+      { id: "ts_test_gated", itemId: "normal_log", qty: 5, tokenCost: 3, shelfId: "shelf_test_locked" },
+    ],
+    tokenShopShelves: [
+      { id: "shelf_test_open", name: { en: "Open Shelf", de: "Offenes Regal" }, sortOrder: 0 },
+      {
+        id: "shelf_test_locked",
+        name: { en: "Locked Shelf", de: "Gesperrtes Regal" },
+        requiresQuest: "q_first_steps", // reale, im Katalog existierende Quest-ID (Guard-sicher)
+        sortOrder: 1,
+      },
     ],
   };
 }
@@ -694,34 +706,61 @@ describe("Token-Shop (buyTokenShopOffer)", () => {
     const c = tokenShopContent();
     const s = createGame({ name: "Shopper" }, c, 1);
     s.character.questTokens = 12;
-    expect(buyTokenShopOffer(s, c, "ts_test_logs")).toBe(true);
+    expect(buyTokenShopOffer(s, c, "ts_test_logs").ok).toBe(true);
     expect(s.character.questTokens).toBe(7); // 12 − 5
     expect(itemCount(s.inventory, "normal_log")).toBe(25);
     // Zweiter Kauf stapelt (unbegrenzt oft kaufbar).
-    expect(buyTokenShopOffer(s, c, "ts_test_logs")).toBe(true);
+    expect(buyTokenShopOffer(s, c, "ts_test_logs").ok).toBe(true);
     expect(s.character.questTokens).toBe(2);
     expect(itemCount(s.inventory, "normal_log")).toBe(50);
   });
 
-  it("zu wenig Tokens: kein Kauf, State unverändert (kein Teil-Abzug, keine Items)", () => {
+  it("zu wenig Tokens: kein Kauf, Reason not_enough_tokens, State unverändert", () => {
     const c = tokenShopContent();
     const s = createGame({ name: "Broke" }, c, 1);
     s.character.questTokens = 4; // Angebot kostet 5
-    expect(buyTokenShopOffer(s, c, "ts_test_logs")).toBe(false);
+    const res = buyTokenShopOffer(s, c, "ts_test_logs");
+    expect(res).toEqual({ ok: false, reason: "not_enough_tokens" });
     expect(s.character.questTokens).toBe(4);
     expect(itemCount(s.inventory, "normal_log")).toBe(0);
   });
 
-  it("unbekannte Offer-ID / kaputte ItemId / fehlender tokenShop: false ohne Nebeneffekt", () => {
+  it("unbekannte Offer-ID / kaputte ItemId / fehlender tokenShop: Reason not_found, kein Nebeneffekt", () => {
     const c = tokenShopContent();
     const s = createGame({ name: "Test" }, c, 1);
     s.character.questTokens = 100;
-    expect(buyTokenShopOffer(s, c, "ts_nope")).toBe(false); // unbekannte Offer
-    expect(buyTokenShopOffer(s, c, "ts_test_broken")).toBe(false); // ItemId nicht im Katalog
+    expect(buyTokenShopOffer(s, c, "ts_nope")).toEqual({ ok: false, reason: "not_found" }); // unbekannte Offer
+    expect(buyTokenShopOffer(s, c, "ts_test_broken")).toEqual({ ok: false, reason: "not_found" }); // ItemId nicht im Katalog
     const noShop: ContentDB = { ...content, tokenShop: undefined };
-    expect(buyTokenShopOffer(s, noShop, "ts_test_logs")).toBe(false); // Shop fehlt komplett
+    expect(buyTokenShopOffer(s, noShop, "ts_test_logs")).toEqual({ ok: false, reason: "not_found" }); // Shop fehlt komplett
     expect(s.character.questTokens).toBe(100); // nie abgebucht
     expect(itemCount(s.inventory, "normal_log")).toBe(0);
+  });
+
+  it("Regal-Gate (#p13): Kauf vor Kapitel-Abschluss scheitert mit Reason shelf_locked, danach gelingt er", () => {
+    const c = tokenShopContent();
+    const s = createGame({ name: "Pilger" }, c, 1);
+    s.character.questTokens = 100;
+    // Gate-Quest noch nicht abgeschlossen → gesperrt, KEINE Abbuchung.
+    expect(isShelfOpen(s, c, "shelf_test_locked")).toBe(false);
+    expect(buyTokenShopOffer(s, c, "ts_test_gated")).toEqual({ ok: false, reason: "shelf_locked" });
+    expect(s.character.questTokens).toBe(100); // unangetastet
+    expect(itemCount(s.inventory, "normal_log")).toBe(0);
+    // Kapitel abgeschlossen (claimed ODER completed genügt, Muster isZoneUnlocked) → offen, Kauf gelingt.
+    s.quests.claimed.push("q_first_steps");
+    expect(isShelfOpen(s, c, "shelf_test_locked")).toBe(true);
+    expect(buyTokenShopOffer(s, c, "ts_test_gated")).toEqual({ ok: true });
+    expect(s.character.questTokens).toBe(97); // 100 − 3
+    expect(itemCount(s.inventory, "normal_log")).toBe(5);
+  });
+
+  it("Regal-Gate: Angebot ohne shelfId und unbekanntes Regal gelten defensiv als offen", () => {
+    const c = tokenShopContent();
+    const s = createGame({ name: "Free" }, c, 1);
+    expect(isShelfOpen(s, c, undefined)).toBe(true); // kein shelfId → offenes Start-Regal
+    expect(isShelfOpen(s, c, "shelf_does_not_exist")).toBe(true); // unbekanntes Regal → defensiv offen
+    const noShelves: ContentDB = { ...c, tokenShopShelves: undefined };
+    expect(isShelfOpen(s, noShelves, "shelf_test_locked")).toBe(true); // Content ohne Regale → alles offen
   });
 
   it("volles Inventar ohne Auto-Bank: kein Teil-Verlust — Rollback + Token-Erstattung", () => {
@@ -733,12 +772,12 @@ describe("Token-Shop (buyTokenShopOffer)", () => {
     for (let i = 0; i < s.inventory.slots.length; i++) {
       if (!s.inventory.slots[i]) s.inventory.slots[i] = { itemId: "copper_ore", qty: 1 };
     }
-    expect(buyTokenShopOffer(s, c, "ts_test_logs")).toBe(false);
+    expect(buyTokenShopOffer(s, c, "ts_test_logs")).toEqual({ ok: false, reason: "no_space" });
     expect(s.character.questTokens).toBe(10); // erstattet
     expect(itemCount(s.inventory, "normal_log")).toBe(0); // kein Teil-Add übrig
     // Platz schaffen → Kauf gelingt regulär.
     s.inventory.slots[0] = null;
-    expect(buyTokenShopOffer(s, c, "ts_test_logs")).toBe(true);
+    expect(buyTokenShopOffer(s, c, "ts_test_logs").ok).toBe(true);
     expect(s.character.questTokens).toBe(5);
     expect(itemCount(s.inventory, "normal_log")).toBe(25);
   });

@@ -3925,4 +3925,11 @@ export const fr: Record<string, string> = {
   "affixes:affix_restless:prefix": "Infatigable",
   "affixes:affix_chronicle:prefix": "de la Chronique",
   "affixes:affix_gleaning:prefix": "du Glanage",
+  // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen — Zonen-/Kapitel-Terminologie wiederverwendet.
+  "tokenShopShelves:shelf_open:name": "Premières Pages",
+  "tokenShopShelves:shelf_ashfields:name": "Les Champs de Cendre",
+  "tokenShopShelves:shelf_crypt:name": "La Crypte",
+  "tokenShopShelves:shelf_slagpit:name": "La Côte et la Fosse de Scories",
+  "tokenShopShelves:shelf_idolhall:name": "La Halle de l'Idole",
+  "tokenShopShelves:shelf_second_volume:name": "Le Second Tome",
 };

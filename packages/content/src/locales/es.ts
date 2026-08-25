@@ -3926,4 +3926,11 @@ export const es: Record<string, string> = {
   "affixes:affix_restless:prefix": "Incansable",
   "affixes:affix_chronicle:prefix": "de la Crónica",
   "affixes:affix_gleaning:prefix": "del Rebusco",
+  // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen — Zonen-/Kapitel-Terminologie wiederverwendet.
+  "tokenShopShelves:shelf_open:name": "Primeras Páginas",
+  "tokenShopShelves:shelf_ashfields:name": "Los Campos de Ceniza",
+  "tokenShopShelves:shelf_crypt:name": "La Cripta",
+  "tokenShopShelves:shelf_slagpit:name": "La Costa y el Foso de Escoria",
+  "tokenShopShelves:shelf_idolhall:name": "El Salón del Ídolo",
+  "tokenShopShelves:shelf_second_volume:name": "El Segundo Tomo",
 };

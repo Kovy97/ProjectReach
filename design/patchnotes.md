@@ -29,6 +29,18 @@ erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90
 Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests,
 Hülle 31 grün.*
 
+**Belohnungs-Shop in sechs Regalen (Rezension #13):** DE: Der Token-Shop hatte neun Angebote,
+die später nichts mehr wert waren. Jetzt sechs Regale, die mit der Chronik aufgehen (offen, dann
+Kapitel 4, 9, 14, 18, 20), 47 Angebote aus Speisen, Tränken, Tonika und Saat, gesperrte Regale
+bleiben sichtbar mit „Erfordert Chronik-Kapitel“. Keine Runen (die gibt es nur über Runenkunst),
+keine Ausrüstung, nichts aus dem Endgame. Dazu zehn Tagesaufgaben für Hochland, Götzenhalle und
+Endgame-Handwerk. / EN: The token shop now has six chapter-gated shelves with 47 offers, plus ten
+late-zone daily tasks.
+
+*Dev-Notiz: Kapitel-Gate in `buyTokenShopOffer` (Reason `shelf_locked`), kein Save-Bump. Chef-
+Entscheide: Variante A für 1.1.0, Quest-Hub und mehr Dailies kommen mit 1.2.0 „Alive“. Offen: obere
+Gesamtlevel-Schranke für very_easy/easy-Dailies (logic-dev).*
+
 **Kochen: Portionen statt Bissen (Rezension #11):** DE: Viele Gerichte brauchten 10 bis 24 Sekunden
 und bis zu sechs Zutaten für einen Bissen, der kaum mehr heilte als ein einfacher Fisch. Sechzehn
 Gerichte liefern jetzt 2 bis 4 Portionen je Kochvorgang, zehn Grundspeisen heilen einen Punkt mehr,

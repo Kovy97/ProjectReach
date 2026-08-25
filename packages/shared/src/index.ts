@@ -4643,6 +4643,38 @@ export interface TokenShopOffer {
   tokenCost: number;
   /** Optionale Anzeige-Sortierung (aufsteigend; fehlend = 0, Array-Reihenfolge als Tiebreak). */
   sortOrder?: number;
+  /**
+   * Regal-Zugehörigkeit (Chef-GO 25.08.2026 (1.1.0), design/rezension-patch-2026-08-25.html #p13):
+   * verweist auf `TokenShopShelf.id`. FEHLT das Feld, gilt das Angebot als im offenen Regal
+   * (abwärtskompatibel — die ursprünglichen 9 #284-Angebote tragen es trotzdem explizit, s.
+   * content-dev). Kauf-Gate: `buyTokenShopOffer` (engine/quests.ts) prüft das Regal über
+   * `TokenShopShelf.requiresQuest`, exakt dieselbe Quelle wie `ZoneDef.requiresQuest`
+   * (isZoneUnlocked-Muster: `quests.claimed` ODER `quests.completed`).
+   */
+  shelfId?: string;
+}
+
+/**
+ * Ein Regal im Quest-Token-Belohnungs-Shop (Chef-GO 25.08.2026 (1.1.0),
+ * design/rezension-patch-2026-08-25.html #p13, Chef-Entscheidung 1: 6 Regale an Kapitel-Gates).
+ * Gruppiert `TokenShopOffer`s (via `TokenShopOffer.shelfId`) unter einer Kapitel-Überschrift —
+ * exakt dasselbe Gate-Muster wie `ZoneDef.requiresQuest`/`isZoneUnlocked` (zones.ts), nur für den
+ * Shop statt eine Kampfzone. Reine Content-Daten, kein persistierter State (kein SAVE-Bump nötig
+ * — welches Regal offen ist, folgt vollständig aus `state.quests`, das schon existiert).
+ */
+export interface TokenShopShelf {
+  /** Eindeutige Regal-ID (Referenzziel von `TokenShopOffer.shelfId`). */
+  id: string;
+  /** Anzeigename der Regal-Überschrift (z.B. „Aschfelder"). */
+  name: LocalizedString;
+  /**
+   * Freischalt-Quest (Chronik-Kapitel-ID, z.B. `"chronicle_04"`). FEHLT das Feld, ist das Regal
+   * immer offen (das Start-Regal). Gate-Logik identisch zu `isZoneUnlocked`: erfüllt, wenn
+   * `state.quests.claimed` ODER `state.quests.completed` die Quest enthält.
+   */
+  requiresQuest?: string;
+  /** Anzeige-Sortierung der Regale (aufsteigend; Kapitel-Reihenfolge). */
+  sortOrder: number;
 }
 
 export interface ContentDB {
@@ -4673,6 +4705,11 @@ export interface ContentDB {
    * Fehlen = leerer Shop (Engine/UI defensiv); reine Content-Daten, kein persistierter State.
    */
   tokenShop?: TokenShopOffer[];
+  /**
+   * Regale des Quest-Token-Belohnungs-Shops (#p13). OPTIONAL → Fehlen = alle Angebote gelten als
+   * offenes Regal (Engine/UI defensiv, Muster `tokenShop`); reine Content-Daten, kein Save-Bump.
+   */
+  tokenShopShelves?: TokenShopShelf[];
   /**
    * Begleiter-Pets (Pet-/Companion-System). Ziel: 21 Pets, eins pro Skill —
    * content-dev füllt das Roster. Key = PetId. Jedes Pet hat skillEffect + combatAbility (gedeckelt).

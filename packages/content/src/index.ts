@@ -16468,29 +16468,242 @@ export const content: ContentDB = {
       daily: true,
       difficulty: "master",
     },
+
+    // ════ MASTER — Spätzonen-Karten (#p13, Chef-GO 25.08.2026 (1.1.0), Chef-Entscheidung 4
+    // „Variante A"): 10 weitere Meister-Karten mit Zielen aus Hochland/Götzenhalle statt
+    // Schlackengrube, tokenReward 8 (reiner Content, kein neues Schwierigkeits-Badge). Das
+    // Zonen-/Dungeon-Gate kommt GRATIS über `objectiveAttainable` (quests.ts): Kill-Ziele in
+    // gesperrten Zonen/Dungeons und Craft-Ziele über Skill-Level+Headroom werden automatisch
+    // gefiltert — hier ist nichts Zusätzliches zu verdrahten. idol_warden/aether_wraith/
+    // scale_skarn sind `dungeonOnly` (idol_sanctum) → Gate über isDungeonUnlocked statt Zone,
+    // ebenfalls automatisch. ════════════════════════════════════════════════
+    {
+      id: "daily_ma_kill_roc_20",
+      name: { en: "Sky Hunt", de: "Himmelsjagd" },
+      description: {
+        en: "Bring down 20 rocs terrorizing the Highland skies.",
+        de: "Erlege 20 Rocs, die den Hochland-Himmel terrorisieren.",
+      },
+      objectives: [{ type: "kill_monster", target: "roc", targets: ["roc", "roc_hunter"], count: 20 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_kill_gravecliff_specter_8",
+      name: { en: "Cliffside Haunting", de: "Klippenspuk" },
+      description: {
+        en: "Banish 8 gravecliff specters haunting the Highland bridges.",
+        de: "Verbanne 8 Klippengeister, die die Hochland-Brücken heimsuchen.",
+      },
+      objectives: [{ type: "kill_monster", target: "gravecliff_specter", count: 8 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_kill_highland_wyvern_6",
+      name: { en: "Wyvern Watch", de: "Wyvern-Wacht" },
+      description: {
+        en: "Slay 6 highland wyverns before they take to the air.",
+        de: "Erlege 6 Hochland-Wyvern, bevor sie aufsteigen.",
+      },
+      objectives: [{ type: "kill_monster", target: "highland_wyvern", count: 6 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_kill_idol_warden_15",
+      name: { en: "Warden Breach", de: "Wächterbresche" },
+      description: {
+        en: "Break the line of 15 idol wardens guarding the Idol Sanctum.",
+        de: "Durchbrich die Reihen von 15 Götzenwächtern im Götzenschrein.",
+      },
+      objectives: [{ type: "kill_monster", target: "idol_warden", count: 15 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_kill_aether_wraith_10",
+      name: { en: "Aether Purge", de: "Ätherreinigung" },
+      description: {
+        en: "Unmake 10 aether wraiths bound within the Idol Sanctum.",
+        de: "Löse 10 Aetherwraiths im Götzenschrein auf.",
+      },
+      objectives: [{ type: "kill_monster", target: "aether_wraith", count: 10 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_kill_scale_skarn_8",
+      name: { en: "Dragonhide Hunt", de: "Drachenhaut-Jagd" },
+      description: {
+        en: "Bring down 8 dragonhide skarns lairing in the Idol Sanctum.",
+        de: "Erlege 8 Drachenhaut-Skarns im Götzenschrein.",
+      },
+      objectives: [{ type: "kill_monster", target: "scale_skarn", count: 8 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_smelt_godiron_3",
+      name: { en: "Godiron Crucible", de: "Götzeneisen-Schmelztiegel" },
+      description: {
+        en: "Smelt 3 godiron bars — the final rung of the metal ladder.",
+        de: "Schmelze 3 Götzeneisenbarren — die letzte Sprosse der Metall-Leiter.",
+      },
+      objectives: [{ type: "craft_items", target: "godiron_bar", count: 3 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_cook_witherleek_broth_20",
+      name: { en: "Arcane Broth Kitchen", de: "Arkan-Brühe-Küche" },
+      description: {
+        en: "Prepare 20 servings of witherleek arcane broth for the road ahead.",
+        de: "Bereite 20 Portionen Welklauch-Arkan-Brühe für den weiteren Weg zu.",
+      },
+      objectives: [{ type: "craft_items", target: "witherleek_arcane_broth", count: 20 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_gather_400",
+      name: { en: "Second Volume's Bounty", de: "Füllhorn des zweiten Bandes" },
+      description: {
+        en: "Gather 400 items in a single day — the realm still has plenty to give.",
+        de: "Sammle 400 Items an einem einzigen Tag — das Reich hat noch viel zu geben.",
+      },
+      objectives: [{ type: "gather_items", count: 400 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
+    {
+      id: "daily_ma_kill_total_80",
+      name: { en: "Reckoning of the Reach", de: "Abrechnung des Reachs" },
+      description: {
+        en: "Defeat 80 monsters in a single day — a reckoning fit for the late chapters.",
+        de: "Besiege 80 Monster an einem einzigen Tag — eine Abrechnung für die späten Kapitel.",
+      },
+      objectives: [{ type: "kill_total", count: 80 }],
+      rewards: {},
+      tokenReward: 8,
+      daily: true,
+      difficulty: "master",
+    },
   ],
 
-  // ── Quest-Token-Belohnungs-Shop (Task #284) ────────────────────────────────
-  // Chef-Vorgabe: erstmal Consumables — gekochte Speisen quer durch die Tiers + schwache/mittlere
-  // Tränke, nichts Overpowered, aber günstig genug für GROSSE Mengen (Idle-Food-Verbrauch).
-  // Preisleitplanken: ein Tages-Daily-Ertrag (~15 Tokens) kauft einen spürbaren Vorrat
-  // (z.B. 50× Mittel-Food für 10); kein Angebot über 25 Tokens. Gold-Gegenwert liegt bei
-  // ~40-200 Gold/Token (≈ 2-3k Gold/Tag bei Voll-Dailys) — ein Bonus-Strom, der Gold-Käufe
-  // im Laden NICHT obsolet macht. Nur stackable Consumables/Materials (Bündel = ein Stack).
+  // ── Quest-Token-Belohnungs-Shop — Regale (Chef-GO 25.08.2026 (1.1.0),
+  // design/rezension-patch-2026-08-25.html #p13, Chef-Entscheidung 1) ────────────────────────
+  // 6 Regale an dieselbe Kapitel-Kette gekoppelt, die auch die Kampfzonen öffnet (ZoneDef.
+  // requiresQuest, s. zones-Array oben) — jede Zonen-Öffnung fühlt sich jetzt auch im Shop an.
+  // Gesperrte Regale bleiben SICHTBAR (nie verstecken, UI zeigt „Erfordert Chronik-Kapitel: X"),
+  // offene ältere Regale bleiben kaufbar (nichts „verschwindet"). Kauf-Gate: `buyTokenShopOffer`
+  // (engine/quests.ts) über `isShelfOpen` — exakt dasselbe claimed/completed-Muster wie
+  // `isZoneUnlocked` (zones.ts). Kein SAVE-Bump: welches Regal offen ist, folgt vollständig aus
+  // `state.quests`, das schon existiert.
+  tokenShopShelves: [
+    { id: "shelf_open", name: { en: "First Pages", de: "Erste Seiten" }, sortOrder: 0 },
+    { id: "shelf_ashfields", name: { en: "The Ashfields", de: "Aschfelder" }, requiresQuest: "chronicle_04", sortOrder: 1 },
+    { id: "shelf_crypt", name: { en: "The Crypt", de: "Krypta" }, requiresQuest: "chronicle_09", sortOrder: 2 },
+    { id: "shelf_slagpit", name: { en: "Coast & Slag Pit", de: "Küste und Schlackengrube" }, requiresQuest: "chronicle_14", sortOrder: 3 },
+    { id: "shelf_idolhall", name: { en: "The Idol Hall", de: "Götzenhalle" }, requiresQuest: "chronicle_18", sortOrder: 4 },
+    { id: "shelf_second_volume", name: { en: "The Second Volume", de: "Der zweite Band" }, requiresQuest: "chronicle_20", sortOrder: 5 },
+  ],
+
+  // ── Quest-Token-Belohnungs-Shop — Angebote (Task #284, Regale seit #p13) ───────────────────
+  // Chef-Vorgabe: Consumables — gekochte Speisen quer durch die Tiers + schwache/mittlere Tränke,
+  // nichts Overpowered, aber günstig genug für GROSSE Mengen (Idle-Food-Verbrauch). Preisleitplanke
+  // #p13: Deckel 20 Tokens/Angebot (enger als der alte 25er-Sanity-Deckel im Engine-Guard-Test,
+  // s. token-shop-shelves.test.ts), teuerstes Angebot eines
+  // Regals ≈ ein Tages-Daily-Ertrag der jeweiligen Ära. Nur stackable Consumables/Materials
+  // (Bündel = ein Stack). #p13 Chef-Entscheidung 3: KEINE Runen (nur über den Skill selbst).
+  // #p13 Chef-Entscheidung 2 „Kein Endgame-Zeug": alle Angebote bleiben unter der Cooking-/
+  // Herblore-Stufe der drei echten Endgame-Gerichte (voidray_banquet/abyssal_feast/
+  // soulfire_banquet, L86-98) bzw. des Top-Crop-Heiltranks (godbloom_infusion, Herb L95) — das
+  // oberste Regal (5) bleibt deshalb bewusst schmal (nur Tonika + eine Saat, keine neue Speise).
   tokenShop: [
+    // ═══ Regal 0 „Erste Seiten" (offen, L1-55) — unverändert seit Task #284 ═══════════════════
     // Gekochte Speisen — 4 Stufen quer durch die Tiers (Fisch-Track, L10→L55).
-    { id: "ts_cooked_trout_50",   itemId: "cooked_trout",           qty: 50,  tokenCost: 4,  sortOrder: 10 }, // Early-Food (heal 3): 600g-Gegenwert, Einsteiger-Vorrat für die ersten Story-Tokens
-    { id: "ts_cooked_cod_50",     itemId: "cooked_cod",             qty: 50,  tokenCost: 7,  sortOrder: 20 }, // Low-Mid (heal 4): 1100g
-    { id: "ts_cooked_salmon_50",  itemId: "cooked_salmon",          qty: 50,  tokenCost: 10, sortOrder: 30 }, // Mittel-Food (heal 3+5%): Leitplanken-Anker — 50× für 10 Tokens ≈ ⅔ Tages-Daily
-    { id: "ts_cooked_lobster_40", itemId: "cooked_lobster",         qty: 40,  tokenCost: 16, sortOrder: 40 }, // Upper-Mid (heal 6+6%): teuerstes Angebot ≈ ein Tages-Daily-Ertrag; bewusst KEIN Endgame-Food (nicht OP)
+    { id: "ts_cooked_trout_50",   itemId: "cooked_trout",           qty: 50,  tokenCost: 4,  sortOrder: 10, shelfId: "shelf_open" }, // Early-Food (heal 3): 600g-Gegenwert, Einsteiger-Vorrat für die ersten Story-Tokens
+    { id: "ts_cooked_cod_50",     itemId: "cooked_cod",             qty: 50,  tokenCost: 7,  sortOrder: 20, shelfId: "shelf_open" }, // Low-Mid (heal 4): 1100g
+    { id: "ts_cooked_salmon_50",  itemId: "cooked_salmon",          qty: 50,  tokenCost: 10, sortOrder: 30, shelfId: "shelf_open" }, // Mittel-Food (heal 3+5%): Leitplanken-Anker — 50× für 10 Tokens ≈ ⅔ Tages-Daily
+    { id: "ts_cooked_lobster_40", itemId: "cooked_lobster",         qty: 40,  tokenCost: 16, sortOrder: 40, shelfId: "shelf_open" }, // Upper-Mid (heal 6+6%): teuerstes Angebot ≈ ein Tages-Daily-Ertrag; bewusst KEIN Endgame-Food (nicht OP)
     // Schwache/mittlere Tränke — Draught-Heillinie (Herblore) als Bündel.
-    { id: "ts_herbal_draught_20", itemId: "minor_healing_potion",   qty: 20,  tokenCost: 5,  sortOrder: 50 }, // schwacher Heiltrank (1+HoT 6)
-    { id: "ts_conc_draught_15",   itemId: "greater_healing_potion", qty: 15,  tokenCost: 9,  sortOrder: 60 }, // mittlerer Heiltrank (2+HoT 12)
+    { id: "ts_herbal_draught_20", itemId: "minor_healing_potion",   qty: 20,  tokenCost: 5,  sortOrder: 50, shelfId: "shelf_open" }, // schwacher Heiltrank (1+HoT 6)
+    { id: "ts_conc_draught_15",   itemId: "greater_healing_potion", qty: 15,  tokenCost: 9,  sortOrder: 60, shelfId: "shelf_open" }, // mittlerer Heiltrank (2+HoT 12)
     // Schwache Buff-Tonika — je eins für Kampf und Sammeln (kleinste Stufe, nicht OP).
-    { id: "ts_tonic_oxblood_10",  itemId: "tonic_oxblood",          qty: 10,  tokenCost: 6,  sortOrder: 70 }, // 90s Angriffstempo-Buff (kleinstes Kampf-Tonikum)
-    { id: "ts_tonic_forager_10",  itemId: "tonic_forager_i",        qty: 10,  tokenCost: 8,  sortOrder: 80 }, // 5min +10% Sammel-XP (Tonika-Stufe I)
+    { id: "ts_tonic_oxblood_10",  itemId: "tonic_oxblood",          qty: 10,  tokenCost: 6,  sortOrder: 70, shelfId: "shelf_open" }, // 90s Angriffstempo-Buff (kleinstes Kampf-Tonikum)
+    { id: "ts_tonic_forager_10",  itemId: "tonic_forager_i",        qty: 10,  tokenCost: 8,  sortOrder: 80, shelfId: "shelf_open" }, // 5min +10% Sammel-XP (Tonika-Stufe I)
     // Utility — Runecrafting-Reagenz (kampf-freie Trainings-Grundlage, wird in Massen gebraucht).
-    { id: "ts_magic_binder_100",  itemId: "magic_binder",           qty: 100, tokenCost: 5,  sortOrder: 90 }, // 400g-Gegenwert; Bonus-Strom neben dem Gold-Shop-Kauf
+    { id: "ts_magic_binder_100",  itemId: "magic_binder",           qty: 100, tokenCost: 5,  sortOrder: 90, shelfId: "shelf_open" }, // 400g-Gegenwert; Bonus-Strom neben dem Gold-Shop-Kauf
+
+    // ═══ Regal 1 „Aschfelder" (chronicle_04, ~L20-40, Herblore/Cooking/Farming-Bänder) ════════
+    { id: "ts_ghostfin_pike_50",  itemId: "cooked_ghostfin_pike",   qty: 50, tokenCost: 8,  sortOrder: 110, shelfId: "shelf_ashfields" }, // Fishing L20, heal 6+6.5%
+    { id: "ts_marshroot_chowder_50", itemId: "marshroot_chowder",   qty: 50, tokenCost: 3,  sortOrder: 120, shelfId: "shelf_ashfields" }, // Cooking L18, 4-Portionen-Stack, heal 6+7%
+    { id: "ts_lesser_heal_15",    itemId: "potion_lesser_heal",     qty: 15, tokenCost: 7,  sortOrder: 130, shelfId: "shelf_ashfields" }, // Herblore L12, heal 6+15%
+    { id: "ts_stoneskin_10",      itemId: "tonic_stoneskin",        qty: 10, tokenCost: 5,  sortOrder: 140, shelfId: "shelf_ashfields" }, // Herblore L16, +35 Rüstung 150s
+    { id: "ts_keeneye_8",         itemId: "tonic_keeneye",          qty: 8,  tokenCost: 10, sortOrder: 150, shelfId: "shelf_ashfields" }, // Herblore L26, +20 Ausweichen 150s
+    { id: "ts_bloodgrain_seed_30", itemId: "bloodgrain_seed",       qty: 30, tokenCost: 2,  sortOrder: 160, shelfId: "shelf_ashfields" }, // Farming L22 (Vorgriff auf Regal 2s Blutgetreide-Eintopf)
+    { id: "ts_bloodthistle_seed_20", itemId: "bloodthistle_seed",   qty: 20, tokenCost: 4,  sortOrder: 170, shelfId: "shelf_ashfields" }, // Farming L26 (dito)
+
+    // ═══ Regal 2 „Krypta" (chronicle_09, ~L40-60) ═════════════════════════════════════════════
+    { id: "ts_bloodgrain_stew_50", itemId: "bloodgrain_stew",       qty: 50, tokenCost: 8,  sortOrder: 210, shelfId: "shelf_crypt" }, // Cooking L38, 4-Portionen, heal 11+8.5%
+    { id: "ts_duskfin_stew_25",   itemId: "duskfin_rangers_stew",   qty: 25, tokenCost: 9,  sortOrder: 220, shelfId: "shelf_crypt" }, // Cooking L48, 2-Portionen, heal 14+9.5%
+    { id: "ts_spellwarden_bisque_25", itemId: "spellwarden_bisque", qty: 25, tokenCost: 11, sortOrder: 230, shelfId: "shelf_crypt" }, // Cooking L52, 2-Portionen, heal 15+10%
+    { id: "ts_greater_heal_12",   itemId: "potion_greater_heal",    qty: 12, tokenCost: 13, sortOrder: 240, shelfId: "shelf_crypt" }, // Herblore L41, heal 15+20%
+    { id: "ts_bloodrage_6",       itemId: "tonic_bloodrage",        qty: 6,  tokenCost: 11, sortOrder: 250, shelfId: "shelf_crypt" }, // Herblore L38, +6 STR 90s
+    { id: "ts_bulwark_5",         itemId: "tonic_bulwark",          qty: 5,  tokenCost: 13, sortOrder: 260, shelfId: "shelf_crypt" }, // Herblore L40, +10% Block 150s
+    { id: "ts_arcane_surge_5",    itemId: "tonic_arcane_surge",     qty: 5,  tokenCost: 13, sortOrder: 270, shelfId: "shelf_crypt" }, // Herblore L52, +6 INT +Mana 90s
+    { id: "ts_soulgourd_seed_30", itemId: "soulgourd_seed",         qty: 30, tokenCost: 4,  sortOrder: 280, shelfId: "shelf_crypt" }, // Farming L42 (Vorgriff auf Regal 3)
+    { id: "ts_gravemoss_seed_15", itemId: "gravemoss_seed",         qty: 15, tokenCost: 6,  sortOrder: 290, shelfId: "shelf_crypt" }, // Farming L46 (dito)
+
+    // ═══ Regal 3 „Küste und Schlackengrube" (chronicle_14, ~L60-78, Meister-Dailies offen) ════
+    { id: "ts_crypteel_35",       itemId: "cooked_crypteel",        qty: 35, tokenCost: 17, sortOrder: 310, shelfId: "shelf_slagpit" }, // Fishing L60, heal 16+10%, curesPoison
+    { id: "ts_bloodfang_eel_30",  itemId: "cooked_bloodfang_eel",   qty: 30, tokenCost: 16, sortOrder: 320, shelfId: "shelf_slagpit" }, // Fishing L63, heal 17+10.5%
+    { id: "ts_soulgourd_brisket_30", itemId: "soulgourd_brisket",   qty: 30, tokenCost: 12, sortOrder: 330, shelfId: "shelf_slagpit" }, // Cooking L58, 3-Portionen, heal 16+10.5%
+    { id: "ts_steelshot_bisque_15", itemId: "steelshot_bisque",     qty: 15, tokenCost: 10, sortOrder: 340, shelfId: "shelf_slagpit" }, // Cooking ~L58-63, 2-Portionen, heal 18+11%
+    { id: "ts_spellflare_tisane_15", itemId: "spellflare_tisane",   qty: 15, tokenCost: 11, sortOrder: 350, shelfId: "shelf_slagpit" }, // Cooking ~L58-63, 2-Portionen, heal 19+11.5%
+    { id: "ts_potent_heal_8",     itemId: "potion_potent_heal",     qty: 8,  tokenCost: 15, sortOrder: 360, shelfId: "shelf_slagpit" }, // Herblore L61, heal 24+22%
+    { id: "ts_harvest_tonic_8",   itemId: "tonic_harvest",          qty: 8,  tokenCost: 15, sortOrder: 370, shelfId: "shelf_slagpit" }, // Herblore L58, +20% Sammel-XP 5min
+    { id: "ts_ironbark_6",        itemId: "tonic_ironbark",         qty: 6,  tokenCost: 17, sortOrder: 380, shelfId: "shelf_slagpit" }, // Herblore L66, +40 maxHp +Regen 90s
+    { id: "ts_witherleek_seed_10", itemId: "witherleek_seed",       qty: 10, tokenCost: 9,  sortOrder: 390, shelfId: "shelf_slagpit" }, // Farming L62 (Vorgriff auf Regal 4)
+    { id: "ts_nightbloom_seed_20", itemId: "nightbloom_seed",       qty: 20, tokenCost: 6,  sortOrder: 400, shelfId: "shelf_slagpit" }, // Farming L66 (dito)
+
+    // ═══ Regal 4 „Götzenhalle" (chronicle_18, ~L78-90 — bleibt unter den 3 Endgame-Gerichten) ═
+    { id: "ts_wraithscale_20",    itemId: "cooked_wraithscale",     qty: 24, tokenCost: 20, sortOrder: 410, shelfId: "shelf_idolhall" }, // Fishing L78, heal 24+12.5% — teuerstes Angebot des Shops (Deckel)
+    { id: "ts_bouillabaisse_12",  itemId: "witherleek_bouillabaisse", qty: 12, tokenCost: 15, sortOrder: 420, shelfId: "shelf_idolhall" }, // Cooking L75, 2-Portionen, heal 22+12.5%
+    { id: "ts_sharpshooters_pie_12", itemId: "witherleek_sharpshooters_pie", qty: 12, tokenCost: 14, sortOrder: 430, shelfId: "shelf_idolhall" }, // Cooking L76, 2-Portionen, heal 23+12.5%
+    { id: "ts_arcane_broth_12",   itemId: "witherleek_arcane_broth", qty: 12, tokenCost: 14, sortOrder: 440, shelfId: "shelf_idolhall" }, // Cooking L77, 2-Portionen, heal 24+13%
+    { id: "ts_elixir_renewal_5",  itemId: "elixir_renewal",         qty: 5,  tokenCost: 16, sortOrder: 450, shelfId: "shelf_idolhall" }, // Herblore L81, heal 36+24%
+    { id: "ts_warpath_4",         itemId: "tonic_warpath",          qty: 4,  tokenCost: 16, sortOrder: 460, shelfId: "shelf_idolhall" }, // Herblore L78, Tempo+Crit 75s
+    { id: "ts_godharvest_4",      itemId: "tonic_godharvest",       qty: 4,  tokenCost: 14, sortOrder: 470, shelfId: "shelf_idolhall" }, // Herblore L86, +25% Sammel-XP 5min
+    { id: "ts_ambergrain_seed_10", itemId: "ambergrain_seed",       qty: 10, tokenCost: 7,  sortOrder: 480, shelfId: "shelf_idolhall" }, // Farming L84 (Vorgriff auf Regal 5)
+    { id: "ts_godsbreath_seed_11", itemId: "godsbreath_seed",       qty: 11, tokenCost: 7,  sortOrder: 490, shelfId: "shelf_idolhall" }, // Farming L86 (dito)
+
+    // ═══ Regal 5 „Der zweite Band" (chronicle_20) — #p13 Chef-Entscheidung 2 „Kein Endgame-
+    // Zeug": KEINE neue Speise (die einzigen realen L86-98-Gerichte sind die 3 ausdrücklich
+    // ausgeschlossenen Endgame-Bankette). Bewusst schmal: nur Tonika ohne Instant-Heilwert
+    // (kein „Essen/Gericht") + eine Saat — der Wert liegt in gesparter Zeit/Saat, nicht in Macht.
+    { id: "ts_apex_3",            itemId: "tonic_apex",             qty: 3,  tokenCost: 15, sortOrder: 510, shelfId: "shelf_second_volume" }, // Herblore L90, Tempo+Crit 90s (kein Instant-Heal)
+    { id: "ts_panacea_3",         itemId: "panacea_elixir",         qty: 3,  tokenCost: 17, sortOrder: 520, shelfId: "shelf_second_volume" }, // Herblore L94, curesPoison + Regen (kein Instant-Heal)
+    { id: "ts_godbloom_seed_8",   itemId: "godbloom_seed",          qty: 8,  tokenCost: 8,  sortOrder: 530, shelfId: "shelf_second_volume" }, // Farming L95, letzte Saat-Stufe
   ],
 
   // ── Begleiter-Pets (Pet-/Companion-System, ZWEI-EFFEKT-MODELL) ─────────────

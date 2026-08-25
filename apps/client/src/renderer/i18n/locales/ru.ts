@@ -124,6 +124,7 @@ export const ru: Record<string, string> = {
     "quests.shop.buy": "Купить",
     "quests.shop.notEnough": "Недостаточно жетонов",
     "quests.shop.noSpace": "Недостаточно места в инвентаре — освободите место и попробуйте снова.",
+    "quests.shop.shelfLocked": "Эта полка заперта — заверши предыдущую главу, чтобы открыть её.",
     "quests.contracts.lines": "Цепочки контрактов",
     "quests.contracts.allClaimed": "Каждый контракт выполнен. Доска пуста — пока что.",
     "nav.totalLevel": "Общий уровень",

@@ -3928,4 +3928,11 @@ export const ptBR: Record<string, string> = {
   "affixes:affix_restless:prefix": "Incansável",
   "affixes:affix_chronicle:prefix": "da Crônica",
   "affixes:affix_gleaning:prefix": "do Respigo",
+  // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen — Zonen-/Kapitel-Terminologie wiederverwendet.
+  "tokenShopShelves:shelf_open:name": "Primeiras Páginas",
+  "tokenShopShelves:shelf_ashfields:name": "Os Campos de Cinza",
+  "tokenShopShelves:shelf_crypt:name": "A Cripta",
+  "tokenShopShelves:shelf_slagpit:name": "A Costa e o Poço de Escória",
+  "tokenShopShelves:shelf_idolhall:name": "O Salão do Ídolo",
+  "tokenShopShelves:shelf_second_volume:name": "O Segundo Volume",
 };

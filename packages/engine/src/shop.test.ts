@@ -8,8 +8,7 @@ import {
   SELL_BONUS_TOTAL_CAP,
   SLOT_UPGRADE_AMOUNT,
   autoEatHealMult,
-  autoEatThreshold,
-} from "@hearthforge/shared";
+  autoEatThreshold, BUYBACK_BANNED_ITEM_IDS } from "@hearthforge/shared";
 import type { ItemInstance } from "@hearthforge/shared";
 import { createGame } from "./state";
 import {
@@ -383,9 +382,12 @@ describe("Händlerposten — Verkaufsbonus", () => {
     return s;
   }
 
-  /** Ein Item mit hohem Wert, damit die Prozente die Rundung überleben. */
+  /** Ein Item mit hohem Wert, damit die Prozente die Rundung überleben. Bewusst OHNE die
+   *  Buy-Back-Sperrliste: seit 1.1.0 (Content-Umbauten 25.08.) ist das erste Item ueber 2000 in
+   *  Objekt-Reihenfolge der paragon_key, den pushBuyBack per Design nie ins Regal legt. Der
+   *  Symmetrie-Test unten braucht ein Item, das im Regal landet. */
   const PRICEY = Object.entries(content.items)
-    .filter(([, i]) => (i.value ?? 0) >= 2000)
+    .filter(([id, i]) => (i.value ?? 0) >= 2000 && !BUYBACK_BANNED_ITEM_IDS.has(id))
     .map(([id]) => id)[0]!;
 
   it("ohne Lager exakt der Alt-Preis (sellPrice-Basis)", () => {

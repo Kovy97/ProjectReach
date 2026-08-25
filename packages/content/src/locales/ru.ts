@@ -3925,4 +3925,11 @@ export const ru: Record<string, string> = {
   "affixes:affix_restless:prefix": "Неутомимый",
   "affixes:affix_chronicle:prefix": "Хроники",
   "affixes:affix_gleaning:prefix": "Последнего сбора",
+  // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen — Zonen-/Kapitel-Terminologie wiederverwendet.
+  "tokenShopShelves:shelf_open:name": "Первые страницы",
+  "tokenShopShelves:shelf_ashfields:name": "Пепельные поля",
+  "tokenShopShelves:shelf_crypt:name": "Склеп",
+  "tokenShopShelves:shelf_slagpit:name": "Побережье и Шлаковая яма",
+  "tokenShopShelves:shelf_idolhall:name": "Зал Идола",
+  "tokenShopShelves:shelf_second_volume:name": "Второй том",
 };

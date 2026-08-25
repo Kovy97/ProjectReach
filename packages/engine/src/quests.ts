@@ -554,20 +554,65 @@ export function spendQuestTokens(state: GameState, amount: number): boolean {
 }
 
 /**
- * Kauft ein Angebot aus dem Quest-Token-Belohnungs-Shop (`content.tokenShop`, Task #284):
- * bucht `tokenCost` Tokens ab (via `spendQuestTokens` — validiert Bestand/Ganzzahl) und liefert
- * das Item-BÜNDEL (`qty` Stück) ins Inventar; Überlauf wandert per `addItemOrBank` ins Lager
- * (Auto-Bank-Muster wie Combat-Loot). KEIN Teil-Verlust: passt das Bündel nicht VOLLSTÄNDIG
- * (Inventar voll + Auto-Bank aus/Bank voll), wird alles zurückgerollt und die Tokens erstattet
- * (Muster `buyBack`, shop.ts). `false` = kein Kauf, State unverändert. Rein & deterministisch.
+ * Stabile Fehlschlag-Codes für den Quest-Token-Belohnungs-Shop (Chef-GO 25.08.2026 (1.1.0),
+ * design/rezension-patch-2026-08-25.html #p13 — Regale nach Kapitel; Muster `SlayerShopReason`,
+ * slayer.ts): sprachneutral & deterministisch testbar; die UI rendert `t("quests.shop.reason." + code)`.
+ *  - `not_found`           Keine `tokenShop`-Angebots-ID (oder Item/Bündelgröße defekt) — Content-Fehler.
+ *  - `shelf_locked`        Das Regal des Angebots (`TokenShopOffer.shelfId`) verlangt eine Chronik-
+ *                          Kapitel-Quest, die noch nicht abgeschlossen ist (s. `isShelfOpen`).
+ *  - `not_enough_tokens`   Quest-Tokens reichen nicht (`spendQuestTokens` scheitert).
+ *  - `no_space`            Bündel passt weder ins Inventar noch (Auto-Bank) ins Lager — Tokens
+ *                          wurden zurückerstattet (No-Loss-Rollback, unverändert seit Task #284).
  */
-export function buyTokenShopOffer(state: GameState, content: ContentDB, offerId: string): boolean {
+export type TokenShopReason = "not_found" | "shelf_locked" | "not_enough_tokens" | "no_space";
+
+export interface TokenShopResult {
+  ok: boolean;
+  reason?: TokenShopReason;
+}
+
+/**
+ * Ist das Regal `shelfId` HEUTE offen? Exakt dasselbe Gate-Muster wie `isZoneUnlocked` (zones.ts),
+ * nur auf `content.tokenShopShelves` statt `content.zones` gelesen — dieselbe Kapitel-Kette
+ * (`ZoneDef.requiresQuest`/`TokenShopShelf.requiresQuest` tragen oft dieselbe Quest-ID). true, wenn
+ *  (a) `shelfId` fehlt (Angebot ohne Regal-Zuordnung → gilt als offenes Start-Regal), ODER
+ *  (b) `content.tokenShopShelves` fehlt/leer ist (defensiv offen — Alt-Content/Tests ohne Regale
+ *      bleiben unverändert kaufbar), ODER
+ *  (c) das Regal unbekannt ist (defensiv offen — dieselbe Content-Lücken-Haltung wie isZoneUnlocked,
+ *      der Wiring-Guard sichert echte Referenzen), ODER
+ *  (d) das Regal kein `requiresQuest` trägt (das offene Start-Regal), ODER
+ *  (e) die Gate-Quest abgeschlossen ist: `quests.claimed` ODER `quests.completed` — der Story-Beat
+ *      zählt, nicht der Klick auf „Einlösen" (bewusst großzügiger als die requires-Kette der Quests).
+ * Rein & deterministisch, kein RNG, kein State-Schreibzugriff. Lesehelfer für Kauf-Gate + UI-Anzeige.
+ */
+export function isShelfOpen(state: GameState, content: ContentDB, shelfId: string | undefined): boolean {
+  if (!shelfId) return true;
+  const shelves = content.tokenShopShelves;
+  if (!shelves || shelves.length === 0) return true;
+  const shelf = shelves.find((s) => s.id === shelfId);
+  const req = shelf?.requiresQuest;
+  if (!req) return true;
+  return state.quests.claimed.includes(req) || state.quests.completed.includes(req);
+}
+
+/**
+ * Kauft ein Angebot aus dem Quest-Token-Belohnungs-Shop (`content.tokenShop`, Task #284; Regal-Gate
+ * #p13): prüft zuerst das Regal-Gate (`isShelfOpen`), bucht dann `tokenCost` Tokens ab (via
+ * `spendQuestTokens` — validiert Bestand/Ganzzahl) und liefert das Item-BÜNDEL (`qty` Stück) ins
+ * Inventar; Überlauf wandert per `addItemOrBank` ins Lager (Auto-Bank-Muster wie Combat-Loot).
+ * KEIN Teil-Verlust: passt das Bündel nicht VOLLSTÄNDIG (Inventar voll + Auto-Bank aus/Bank voll),
+ * wird alles zurückgerollt und die Tokens erstattet (Muster `buyBack`, shop.ts). Rein & deterministisch.
+ * Rückgabe wie `buySlayerShopItem` (slayer.ts): `{ ok, reason? }` statt nacktem `boolean`, damit
+ * die UI zwischen „Regal gesperrt" und „kein Platz" unterscheiden kann.
+ */
+export function buyTokenShopOffer(state: GameState, content: ContentDB, offerId: string): TokenShopResult {
   const offer = content.tokenShop?.find((o) => o.id === offerId);
-  if (!offer) return false;
+  if (!offer) return { ok: false, reason: "not_found" };
   // Defensiv gegen fehlerhafte Content-Daten: Item muss existieren, qty positive Ganzzahl.
-  if (!content.items[offer.itemId]) return false;
-  if (!Number.isInteger(offer.qty) || offer.qty <= 0) return false;
-  if (!spendQuestTokens(state, offer.tokenCost)) return false;
+  if (!content.items[offer.itemId]) return { ok: false, reason: "not_found" };
+  if (!Number.isInteger(offer.qty) || offer.qty <= 0) return { ok: false, reason: "not_found" };
+  if (!isShelfOpen(state, content, offer.shelfId)) return { ok: false, reason: "shelf_locked" };
+  if (!spendQuestTokens(state, offer.tokenCost)) return { ok: false, reason: "not_enough_tokens" };
   const { toInventory, toBank } = addItemOrBank(state, content, offer.itemId, offer.qty);
   const delivered = toInventory + toBank;
   if (delivered < offer.qty) {
@@ -579,9 +624,9 @@ export function buyTokenShopOffer(state: GameState, content: ContentDB, offerId:
       else delete state.bank[offer.itemId];
     }
     state.character.questTokens += offer.tokenCost;
-    return false;
+    return { ok: false, reason: "no_space" };
   }
-  return true;
+  return { ok: true };
 }
 
 /**

@@ -121,6 +121,7 @@ export const ptBR: Record<string, string> = {
     "quests.shop.buy": "Comprar",
     "quests.shop.notEnough": "Fichas insuficientes",
     "quests.shop.noSpace": "Sem espaço suficiente no inventário — libere espaço e tente novamente.",
+    "quests.shop.shelfLocked": "Esta prateleira está bloqueada — conclua o capítulo anterior para desbloqueá-la.",
     "quests.contracts.lines": "Linhas de contratos",
     "quests.contracts.allClaimed": "Todo contrato foi cumprido. O quadro está vazio — por enquanto.",
     "nav.totalLevel": "Nível Total",

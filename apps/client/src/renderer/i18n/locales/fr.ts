@@ -125,6 +125,7 @@ export const fr: Record<string, string> = {
     "quests.shop.buy": "Acheter",
     "quests.shop.notEnough": "Pas assez de jetons",
     "quests.shop.noSpace": "Pas assez de place dans l'inventaire — faites de la place et réessayez.",
+    "quests.shop.shelfLocked": "Cette étagère est verrouillée — terminez le chapitre précédent pour la débloquer.",
     "quests.contracts.lines": "Fils de contrats",
     "quests.contracts.allClaimed": "Chaque contrat a été rempli. Le tableau est vide — pour l'instant.",
     "nav.totalLevel": "Niveau total",

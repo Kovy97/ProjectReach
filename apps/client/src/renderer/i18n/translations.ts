@@ -151,6 +151,7 @@ const en = {
     "quests.shop.buy": "Buy",
     "quests.shop.notEnough": "Not enough tokens",
     "quests.shop.noSpace": "Not enough room in your inventory — make some space and try again.",
+    "quests.shop.shelfLocked": "This shelf is locked — finish the chapter above to unlock it.",
     // Contracts tab master-detail (Chef-Auftrag Welle X, 2026-07-16). Strand headers themselves
     // reuse an existing quest name (tr(strand.rootName)) — no bespoke i18n key per strand.
     "quests.contracts.lines": "Quest Lines",
@@ -2307,6 +2308,7 @@ const de: Record<keyof typeof en, string> = {
     "quests.shop.buy": "Kaufen",
     "quests.shop.notEnough": "Nicht genug Marken",
     "quests.shop.noSpace": "Nicht genug Platz im Inventar — schaffe Platz und versuche es erneut.",
+    "quests.shop.shelfLocked": "Dieses Regal ist gesperrt — schließe das Kapitel darüber ab, um es freizuschalten.",
     "quests.contracts.lines": "Auftragsstränge",
     "quests.contracts.allClaimed": "Jeder Auftrag ist erfüllt. Die Tafel ist leer — vorerst.",
     "nav.totalLevel": "Gesamtstufe",

@@ -3927,4 +3927,11 @@ export const zh: Record<string, string> = {
   "affixes:affix_restless:prefix": "不倦",
   "affixes:affix_chronicle:prefix": "编年",
   "affixes:affix_gleaning:prefix": "拾穗",
+  // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen — Zonen-/Kapitel-Terminologie wiederverwendet.
+  "tokenShopShelves:shelf_open:name": "最初之页",
+  "tokenShopShelves:shelf_ashfields:name": "灰烬原",
+  "tokenShopShelves:shelf_crypt:name": "墓穴",
+  "tokenShopShelves:shelf_slagpit:name": "海岸与熔渣坑",
+  "tokenShopShelves:shelf_idolhall:name": "神像大厅",
+  "tokenShopShelves:shelf_second_volume:name": "第二卷",
 };
