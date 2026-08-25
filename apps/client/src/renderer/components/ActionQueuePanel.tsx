@@ -13,9 +13,12 @@ import { useI18n } from "../i18n";
 import { getActionSrc } from "../actionIcons";
 import { getItemImage } from "../items";
 import { getMonsterSrc } from "../monsters";
+import { getSidebarIcon } from "../sidebarIcons";
+import { getSkillIcon, SKILL_EMOJI_FALLBACK } from "../skillIcons";
 import { getUiIcon } from "../uiIcons";
 import { getQueuePanelCollapsed, setQueuePanelCollapsed } from "../util/uiPrefs";
 import { formatClockTime, formatPlaytime } from "../util/format";
+import { computeQueueLevels, projectActionLevel, type QueueLevelEntry } from "../util/queueLevels";
 import { computeQueueTiming, type QueueTimingEntry } from "../util/queueTiming";
 import { HoverTip } from "./CitadelTip";
 
@@ -63,6 +66,41 @@ function FightQueueIcon({ monsterId }: { monsterId: string }): JSX.Element {
 function fightMonsterName(monsterId: string, tr: (loc: LocalizedString) => string): string {
   const monster = content.monsters[monsterId];
   return monster ? tr(monster.name) : monsterId;
+}
+
+/** Skill-Icon-Auflösung für die Level-Zeile (s. `QueueLevelRow` unten): erst das Kampf-Skill-Set
+ *  (`getSkillIcon`, assets/skills/), dann die Sidebar-Nav-Icons der Sammel-/Handwerks-Skills
+ *  (`getSidebarIcon` — Warteschlangen-Aktionen sind IMMER Sammel-/Handwerk, nie Kampf, s.
+ *  queueLevels.ts „Kampf-Einträge bleiben außen vor", trifft praktisch also fast immer hier zu).
+ *  Dasselbe zweistufige Muster wie ItemWikiModal.tsx/MasteryCeremony.tsx/Toasts.tsx im ganzen
+ *  Projekt — Emoji (SKILL_EMOJI_FALLBACK) NUR, wenn wirklich kein Bild existiert. */
+function queueSkillIconSrc(skillId: string): string | null {
+  return getSkillIcon(skillId) ?? getSidebarIcon(skillId);
+}
+
+/**
+ * Level-Zeile unter Menge/Dauer (Chef 25.08.2026, Auftrag „×256 → welches Level am Ende"):
+ * "[Skill-Icon] 30 → 33" — auf welchem Skill-Level diese Warteschlangen-Zeile endet. Nur gerendert,
+ * wenn `util/queueLevels.ts` überhaupt einen Eintrag liefert (kein Rauschen bei unverändertem
+ * Level, s. dortiges JSDoc). Typo bewusst wie `.queue-row-meta` (Menge/Dauer) — eine weitere kleine
+ * Metazeile, kein neues optisches Gewicht; Endlevel golden hervorgehoben (Chef-Vorgabe), Umbruch
+ * statt Abschneiden bei schmalem Panel (action-queue.css `.queue-row-level`).
+ */
+function QueueLevelRow({ entry }: { entry: QueueLevelEntry }): JSX.Element {
+  const img = queueSkillIconSrc(entry.skillId);
+  return (
+    <span className="queue-row-level">
+      {img ? (
+        <img loading="lazy" decoding="async" src={img} alt="" className="queue-row-level-icon" />
+      ) : (
+        <span className="queue-row-level-icon-emoji">{SKILL_EMOJI_FALLBACK[entry.skillId] ?? "•"}</span>
+      )}
+      <span className="queue-row-level-from">{entry.fromLevel}</span>
+      {/* Echtes Pfeilzeichen (kein Gedankenstrich) — Chef-Vorgabe. */}
+      <span className="queue-row-level-arrow" aria-hidden="true">→</span>
+      <span className="queue-row-level-to">{entry.toLevel}</span>
+    </span>
+  );
 }
 
 /**
@@ -157,6 +195,14 @@ export function ActionQueuePanel(): JSX.Element {
   const now = Date.now();
   const timing = computeQueueTiming(state, content, now);
 
+  // ── Warteschlangen-Level-Projektion (Chef 25.08.2026) ───────────────────────────────────────
+  // Gleiches `now` wie oben — dieselben Segens-Boni fließen in die XP-Rechnung ein (s.
+  // util/queueLevels.ts-JSDoc). PERF: dieses Panel hat KEIN eigenes Selector-Gate (nutzt
+  // `useGameState()` direkt, rendert bereits ~10×/s mit dem Game-Loop mit, s. Klassen-JSDoc oben)
+  // — reine Berechnung ohne neuen State fügt also keine zusätzliche Re-Render-Quelle hinzu, nur
+  // Rechenarbeit in einem Render, der ohnehin schon passiert (gleiches Bild wie `computeQueueTiming`).
+  const levels = computeQueueLevels(state, content, now);
+
   // ── Task #315 (Kampf-Queue-UI) — Kill-Fortschritt des AKTIVEN Queue-Kampfs ("12/25") ─────────
   // `state.queueFight.remaining` ist ein reiner Countdown, kein Gesamt-Ziel (s. QueueFightRuntime-
   // JSDoc in shared/index.ts) — die Engine hält das ursprüngliche Ziel nirgends fest. Die Objekt-
@@ -225,6 +271,16 @@ export function ActionQueuePanel(): JSX.Element {
       : timing.active
     : null;
   const activeRowDuration = activeRowTiming ? formatEntryDuration(activeRowTiming, t) : null;
+
+  // Level-Zeile der "läuft"-Zeile: dieselbe combinedTarget-Faltung wie oben bei der Dauer — die
+  // Mengen-Anzeige ("×250") und die Level-Zeile müssen dieselbe Gesamt-Ausführungszahl meinen,
+  // sonst widerspricht sich das Panel selbst (s. `projectActionLevel`-JSDoc in queueLevels.ts).
+  // Ungefaltet (foldedCount === 0) ist `levels.active` bereits exakt dasselbe Ergebnis.
+  const activeLevelEntry: QueueLevelEntry | null = activeAction
+    ? foldedCount > 0
+      ? projectActionLevel(state, content, activeAction.id, combinedTarget, now)
+      : levels.active
+    : null;
 
   // ── Task #369 — die stille Endlos-Sperre sichtbar machen ────────────────────────────────────
   // Bot-Sweep-Befund 0.3.0: lief eine Aktivität mit dem ∞-Preset, rückte die Warteschlange NIE
@@ -664,6 +720,9 @@ export function ActionQueuePanel(): JSX.Element {
                       {activeRowDuration!.text}
                     </span>
                   )}
+                  {/* Chef 25.08.2026: Level-Zeile der aktiven Aktion — nur bei endlichem Rest-Ziel
+                      (Level jetzt → Level nach dem Rest), s. QueueLevelRow-JSDoc. */}
+                  {activeLevelEntry && <QueueLevelRow entry={activeLevelEntry} />}
                 </div>
                 <span className="queue-row-target">
                   {combinedTarget === null ? t("skill.qty.all") : `×${combinedTarget}`}
@@ -771,6 +830,11 @@ export function ActionQueuePanel(): JSX.Element {
                   // queueTiming.ts) — derselbe Index `i` trifft also immer den richtigen Eintrag.
                   const rowTiming = timing.queue[i];
                   const rowDuration = rowTiming ? formatEntryDuration(rowTiming, t) : null;
+                  // Warteschlangen-Level-Projektion (Chef 25.08.2026): `levels.queue` ist genau wie
+                  // `timing.queue` 1:1 zum ROHEN `state.actionQueue` ausgerichtet — derselbe Index
+                  // `i` trifft den richtigen Eintrag. Kampf-Einträge liefern dort ohnehin `null`
+                  // (queueLevels.ts), der explizite Guard hier spart nur den Array-Zugriff.
+                  const rowLevel = fightEntry ? null : levels.queue[i];
                   return (
                     // Chef 25.08.2026: die Zeile selbst ist ab jetzt ein PLAIN div (kein HoverTip
                     // mehr über die GANZE Zeile) — Drag-Handler unverändert, aber der Zeilen-
@@ -824,6 +888,9 @@ export function ActionQueuePanel(): JSX.Element {
                               </span>
                             )}
                           </span>
+                          {/* Chef 25.08.2026: Level-Zeile UNTER Menge/Dauer — nur bei endlichem Ziel
+                              und wenn sich das Skill-Level dadurch tatsächlich ändert (s. QueueLevelRow). */}
+                          {rowLevel && <QueueLevelRow entry={rowLevel} />}
                         </div>
                       </HoverTip>
                       <div className="queue-row-actions">

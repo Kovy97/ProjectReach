@@ -546,6 +546,43 @@
   color: #d9a86b;
 }
 
+/* ─── Level-Projektion (Chef 25.08.2026, "×256 → welches Level am Ende") ────────────────────────
+   Eigene Zeile UNTER Menge/Dauer (`.queue-row-meta`/aktive Dauer), dieselbe kleine Metazeilen-
+   Typo (s. Größen-Regel unten). `flex-wrap: wrap` statt `nowrap` — bei schmalem Panel bricht die
+   Zeile um (Icon+Von zuerst, Pfeil+Bis in die nächste Zeile), NIE Abschneiden (Chef-Regel). */
+.queue-row-level {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.queue-row-level-icon {
+  width: 13px;
+  height: 13px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.queue-row-level-icon-emoji {
+  font-size: 11px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.queue-row-level-arrow {
+  opacity: 0.7;
+}
+
+/* Endlevel golden hervorgehoben (Chef-Vorgabe) — dasselbe Gold wie `.queue-row-target` (aktive
+   Zeile), damit die Level-Zeile sich als "noch eine Wert-Anzeige" ins bestehende Farbschema fügt. */
+.queue-row-level-to {
+  color: var(--gold);
+  font-weight: 700;
+}
+
 .queue-row-target {
   font-family: var(--font-head);
   font-size: 12px;
@@ -891,6 +928,7 @@
   .queue-row-name,
   .queue-row-target,
   .queue-row-duration,
+  .queue-row-level,
   .queue-panel-total-label,
   .queue-panel-total-value,
   .queue-panel-total-eta
@@ -941,5 +979,12 @@
 }
 
 .queue-row-duration {
+  font-size: clamp(12px, 0.68vw, 14px);
+}
+
+/* Level-Projektion (Chef 25.08.2026) — dieselbe Mindestgröße wie `.queue-row-duration` direkt
+   darüber; Von/Pfeil/Bis erben die Größe (nur `.queue-row-level-to` legt oben zusätzlich Gold +
+   Fettung drauf). */
+.queue-row-level {
   font-size: clamp(12px, 0.68vw, 14px);
 }
