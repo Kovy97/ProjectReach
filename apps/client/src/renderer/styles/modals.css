@@ -605,3 +605,38 @@
   display: flex;
   justify-content: center;
 }
+
+/* Chef-Test 25.08.2026 (Runde 3): "Der Verstanden-Button nutzt den falschen Button, sollte auch den
+   Iron Frame nutzen." Der Hinweis lief auf dem Gravewood-Primärmotiv (combat-btn). Jetzt derselbe
+   Eisenrahmen wie die Knöpfe der Optionen-Seite (options.css `#root .opz-page .combat-btn`, Schnitt 85
+   / Zeichenbreite 8 × 2,125, s. Stahlrahmen-Fix). Ohne #root-Präfix, damit die Regel auch greift,
+   falls der Hinweis je per Portal außerhalb von #root landet. */
+.modal.update-notice-modal .update-notice-actions .combat-btn {
+  min-height: 46px;
+  height: auto;
+  min-width: 180px;
+  padding: 7px 18px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
+  border-radius: 0;
+  background-color: #111315;
+  background-image:
+    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  color: #ead8a0;
+  font-family: var(--font-head);
+  font-size: clamp(14px, 0.95vw, 18px);
+  line-height: 1.15;
+  text-shadow: 0 1px 2px #000;
+}
+.modal.update-notice-modal .update-notice-actions .combat-btn:hover {
+  border-image-source: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  filter: brightness(1.12);
+  color: #fff1bd;
+}
+.modal.update-notice-modal .update-notice-actions .combat-btn:active {
+  border-image-source: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  filter: brightness(0.95);
+}

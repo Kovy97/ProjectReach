@@ -365,6 +365,10 @@ melee 19,79 → 20,2 / 14,1 → 14,4, ranged 17,83 → 18,19.*
 **Rune der Auszehrung auf +35 % (Chef-Entscheidung E5, 25.08.):** DE: Brand-, Blutungs- und
 Gift-Ticks +35 % statt +50 %, bis der Zeit-bis-Tod-Pin steht. / EN: Rune of Wasting now +35 %.
 
+**Update-Hinweis: „Verstanden" im Eisenrahmen (Chef-Test 25.08.):** DE: Der Knopf trug das
+Gravewood-Motiv der Kampfknöpfe; jetzt derselbe Eisenrahmen wie die Optionen-Knöpfe. / EN: The
+update notice button now uses the iron frame.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*
