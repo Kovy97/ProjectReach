@@ -567,3 +567,23 @@
   padding: 4px 12px;
   font-size: clamp(13px, 0.85vw, 16px);
 }
+
+/* ── Aktiv-/Ausgewählt-Zustand (Options-Vereinheitlichung 25.08.2026) ──────────────────────────
+   Segment-Reihen (Vollbild/Randlos/Fenster …), An/Aus-Umschalter und die Sprachwahl sind alles
+   `.btn-iron.is-active` statt eines eigenen Pressed-Assets: hellere Fläche + Goldschrift für die
+   getroffene Wahl, die unmarkierten Geschwister bleiben in der gedämpften `.btn-iron`-Grundfarbe. */
+.btn-iron.is-active {
+  background-color: #1c1810;
+  background-image:
+    linear-gradient(rgba(216, 192, 106, 0.2), rgba(3, 5, 6, 0.42)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  color: var(--gold);
+  text-shadow: 0 1px 2px #000, 0 0 10px rgba(216, 192, 106, 0.25);
+}
+.btn-iron.is-active:hover,
+.btn-iron.is-active:focus-visible {
+  filter: brightness(1.15);
+  color: #fff1bd;
+}

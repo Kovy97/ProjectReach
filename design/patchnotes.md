@@ -383,6 +383,19 @@ erste kaufbare Stück: verwittertes Leder mit Jägergrün, +15 % Schaden gegen e
 dazu Stärke, Geschick, Konstitution und Intelligenz. Bild von Mira. / EN: The Hunter's Cape (Slayer
 30, 150 points) fills the gap in the Slayer shop: +15 % damage against an unwounded target.
 
+**Optionen in Hauptmenü und Spiel vereinheitlicht (Chef 25.08.):** DE: Im Hauptmenü sahen die
+Optionen anders aus als im Spiel: Segmente mit dünnem Goldrand, ein nacktes Häkchen, ein goldener
+„Melden"-Knopf, ein dünner „Zurück"-Rahmen, andere Sprach-Knöpfe. Jetzt tragen beide Flächen dieselbe
+Knopf-Familie im Stahlrahmen: Segmente, An/Aus-Umschalter (statt Häkchen), „Melden", „Zurück zum
+Menü", Sprach-Chips und der Schrift-Knopf (mit Icon statt Emoji); gewählte Zustände in Goldschrift.
+/ EN: The options screen now looks the same in the main menu and in game: one iron-frame button
+family, toggles instead of checkboxes, language chips and the back button included.
+
+*Dev-Notiz: Ursache war die Scope-Regel `#root .opz-page .combat-btn` (griff nur im Spiel). Jetzt
+`optBtnCls(active, size)` in OptionControls.tsx → `.btn-iron .btn-iron--sm[.is-active]`
+(Modifier in design-system.css). Bewusst nicht umgestellt: der rote „Übernehmen"-Knopf beim
+Speicherstand-Import (destruktiv, `.combat-btn.flee`) und die Knöpfe im Bug-Report-Dialog.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

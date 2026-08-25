@@ -5,7 +5,7 @@ import { useGameControl } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getPortraitSrc } from "../portraits";
 import { formatDate, formatPlaytime } from "../util/format";
-import { AmbientEffectsPrefs, DisplayAudioPrefs, OptRow, OptSection } from "../components/OptionControls";
+import { AmbientEffectsPrefs, DisplayAudioPrefs, OptRow, OptSection, optBtnCls } from "../components/OptionControls";
 import { BugReportDialog } from "../components/BugReportDialog";
 // codex:2026-08-01T13:30:36+02:00 — Hauptmenü-Optionsglyphen teilen dieselben transparenten
 // Systemassets wie die In-Game-Optionsseite.
@@ -126,7 +126,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
         {LOCALES.map((l) => (
           <button
             key={l}
-            className={l === locale ? "lang-btn active" : "lang-btn"}
+            className={optBtnCls(l === locale)}
             onClick={() => setLocale(l)}
           >
             {l.toUpperCase()}
@@ -254,7 +254,7 @@ function MenuPanelTitle({ icon, onClose, children }: MenuPanelTitleProps): JSX.E
     <div className="menu-panel-title">
       <img className="menu-panel-title-icon" src={icon} alt="" />
       <span className="menu-panel-title-text">{children}</span>
-      <button type="button" className="menu-panel-back" onClick={onClose} aria-label={t("creation.back")}>
+      <button type="button" className={`${optBtnCls(false)} menu-panel-back`} onClick={onClose} aria-label={t("creation.back")}>
         {t("creation.back")}
       </button>
     </div>
@@ -431,7 +431,9 @@ function MenuOptionsPanel({ onOpenFonts }: { onOpenFonts: () => void }): JSX.Ele
           <span className="bugreport-entry-title">{t("about.bugReport")}</span>
           <span className="bugreport-entry-hint">{t("bugReport.entryHint")}</span>
         </span>
-        <span className="bugreport-entry-cta" aria-hidden="true">{t("bugReport.entryCta")}</span>
+        {/* Chef-Befund 25.08.2026: kein goldener Pergament-Chip mehr — derselbe Eisenrahmen wie
+            jeder andere Standard-Knopf (design-system.css `.btn-iron`). */}
+        <span className="btn-iron bugreport-entry-cta" aria-hidden="true">{t("bugReport.entryCta")}</span>
       </button>
       {showBugReport && (
         <BugReportDialog onClose={() => setShowBugReport(false)} screenLabel={t("bugReport.screen.mainMenu")} />
@@ -443,8 +445,8 @@ function MenuOptionsPanel({ onOpenFonts }: { onOpenFonts: () => void }): JSX.Ele
       {/* Schrift-Vorschau: Hauptmenü-exklusiv (die In-Game-Seite hat keinen Font-Umschalter). */}
       <OptSection icon={<img src={iconFont} alt="" className="opz-system-icon" />} title={t("menu.fontBtn")}>
         <OptRow label={t("menu.fontBtn")}>
-          <button className="lang-btn" onClick={onOpenFonts}>
-            {"\u{1F524}"} {t("menu.fontBtn")}
+          <button className={optBtnCls(false)} onClick={onOpenFonts}>
+            <img src={iconFont} alt="" className="opz-inline-icon" /> {t("menu.fontBtn")}
           </button>
         </OptRow>
       </OptSection>

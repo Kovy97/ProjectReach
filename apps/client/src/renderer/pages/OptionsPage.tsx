@@ -4,7 +4,7 @@ import { restartGuide } from "@hearthforge/engine";
 import { useI18n } from "../i18n";
 import { useGameControl, useGameState } from "../game/GameContext";
 import { openBackupsFolder } from "../saves";
-import { AmbientEffectsPrefs, DisplayAudioPrefs, OptRow, OptSection } from "../components/OptionControls";
+import { AmbientEffectsPrefs, DisplayAudioPrefs, OptRow, OptSection, optBtnCls } from "../components/OptionControls";
 import { BugReportDialog } from "../components/BugReportDialog";
 // codex:2026-08-01T13:30:36+02:00 — Options-Kategorien verwenden die skalierbare Ashen-Iron-
 // Iconfamilie; keine plattformabhängigen Emoji-Platzhalter mehr in dieser Seite.
@@ -102,7 +102,9 @@ export function OptionsPage(): JSX.Element {
           <span className="bugreport-entry-title">{t("about.bugReport")}</span>
           <span className="bugreport-entry-hint">{t("bugReport.entryHint")}</span>
         </span>
-        <span className="bugreport-entry-cta" aria-hidden="true">{t("bugReport.entryCta")}</span>
+        {/* Chef-Befund 25.08.2026: kein goldener Pergament-Chip mehr — derselbe Eisenrahmen wie
+            jeder andere Standard-Knopf (design-system.css `.btn-iron`). */}
+        <span className="btn-iron bugreport-entry-cta" aria-hidden="true">{t("bugReport.entryCta")}</span>
       </button>
 
       <div className="opz-grid">
@@ -113,7 +115,7 @@ export function OptionsPage(): JSX.Element {
         <OptSection icon={<img src={iconGameplay} alt="" className="opz-system-icon" />} title={t("options.gameplay")}>
           <OptRow label={t("options.autoBank")} hint={t("options.autoBankHint")}>
             <button
-              className={state.settings.autoBank ? "combat-btn active" : "combat-btn"}
+              className={optBtnCls(state.settings.autoBank)}
               onClick={() => { state.settings.autoBank = !state.settings.autoBank; }}
             >
               <img
@@ -128,7 +130,7 @@ export function OptionsPage(): JSX.Element {
             {/* Startet den Spotlight-Guide (OnboardingGuide.tsx) komplett neu von Schritt 0 —
                 löst den alten, event-basierten reopenOnboarding()-Aufruf ab (das 21-Schritt-Modal
                 wird nicht mehr gerendert, siehe App.tsx). */}
-            <button className="combat-btn" onClick={() => restartGuide(state)}>
+            <button className={optBtnCls(false)} onClick={() => restartGuide(state)}>
               {t("options.showTutorial")}
             </button>
           </OptRow>
@@ -140,7 +142,7 @@ export function OptionsPage(): JSX.Element {
             {LOCALES.map((l) => (
               <button
                 key={l}
-                className={l === locale ? "combat-btn active" : "combat-btn"}
+                className={optBtnCls(l === locale)}
                 onClick={() => setLocale(l)}
               >
                 {LOCALE_NAMES[l] ?? l.toUpperCase()}
@@ -186,13 +188,13 @@ export function OptionsPage(): JSX.Element {
         <OptSection icon={<img src={iconSave} alt="" className="opz-system-icon" />} title={t("options.saveData")} wide>
           <p className="opz-hint">{t("options.saveHint")}</p>
           <div className="opz-segment" style={{ justifyContent: "flex-start" }}>
-            <button className="combat-btn" onClick={download}>
+            <button className={optBtnCls(false)} onClick={download}>
               {t("options.exportDownload")}
             </button>
-            <button className="combat-btn" onClick={copy}>
+            <button className={optBtnCls(false)} onClick={copy}>
               {t("options.exportCopy")}
             </button>
-            <button className="combat-btn" onClick={() => fileRef.current?.click()}>
+            <button className={optBtnCls(false)} onClick={() => fileRef.current?.click()}>
               {t("options.importFile")}
             </button>
             <input
@@ -226,7 +228,7 @@ export function OptionsPage(): JSX.Element {
               Nur im Electron-Build sichtbar (Web-Build hat keine Backups, Plan §3.5). */}
           {!!window.hearthforge?.saves && (
             <OptRow label={t("options.openBackups")} hint={t("options.openBackupsHint")}>
-              <button className="combat-btn" onClick={() => void openBackupsFolder()}>
+              <button className={optBtnCls(false)} onClick={() => void openBackupsFolder()}>
                 <img src={iconFolder} alt="" className="ui-icon" /> {t("options.openBackups")}
               </button>
             </OptRow>
@@ -241,12 +243,12 @@ export function OptionsPage(): JSX.Element {
           <div className="opz-about-actions">
             {/* Report-Bug-Feature (Chef-Auftrag 2026-07-18): war ein deaktivierter Platzhalter,
                 öffnet jetzt denselben Dialog wie der prominente Banner oben. */}
-            <button className="combat-btn" onClick={() => setShowBugReport(true)}>
+            <button className={optBtnCls(false)} onClick={() => setShowBugReport(true)}>
               {t("about.bugReport")}
             </button>
-            {/* TODO(urls): replace with real Discord URL before release. `.combat-btn[disabled]`
+            {/* TODO(urls): replace with real Discord URL before release. `.btn-iron[disabled]`
                 dimmt bereits automatisch (kein zusätzlicher Inline-Opacity-Hack mehr nötig). */}
-            <button className="combat-btn" disabled title={t("about.comingSoon")}>
+            <button className={optBtnCls(false)} disabled title={t("about.comingSoon")}>
               {t("about.discord")}
             </button>
           </div>

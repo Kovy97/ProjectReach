@@ -39,6 +39,17 @@ import {
 } from "../util/display";
 import "../styles/options.css";
 
+/** Eisenrahmen-Knopf einer Segment-/Umschalter-/Auswahl-Reihe (Chef-Entscheid 25.08.2026:
+ *  Standard-Knopf = `.btn-iron`) — `active` malt die getroffene Wahl heller mit Goldschrift, s.
+ *  design-system.css `.btn-iron.is-active`. Kleine Größe (`--sm`), da diese Reihen kompakt neben
+ *  dem Zeilenlabel sitzen. Exportiert, damit OptionsPage (Sprachraster, Speicherdaten, Über) und
+ *  MainMenu (Sprach-Chips, Zurück-Knopf) exakt dieselbe Klasse ziehen — EINE Knopf-Familie über
+ *  beide Options-Flächen. */
+export function optBtnCls(active: boolean, size: "sm" | "md" = "sm"): string {
+  const base = size === "sm" ? "btn-iron btn-iron--sm" : "btn-iron";
+  return active ? `${base} is-active` : base;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Geteilte Options-Bausteine + die „fundamentalen" Anzeige-/Audio-Einstellungen.
 // Bewusst herausgezogen, damit die In-Game-Options (OptionsPage) UND das Hauptmenü-Panel
@@ -195,41 +206,43 @@ export function DisplayAudioPrefs(): JSX.Element {
             Live-Vollbild-Toggle direkt darunter — bestimmt das Fenster beim NÄCHSTEN Start. */}
         <OptRow label={t("options.windowMode")} hint={t("options.windowModeHint")}>
           <div className="opz-segment">
-            <button className={windowMode === "fullscreen" ? "combat-btn active" : "combat-btn"} onClick={() => void changeWindowMode("fullscreen")}>
+            <button className={optBtnCls(windowMode === "fullscreen")} onClick={() => void changeWindowMode("fullscreen")}>
               {t("options.fullscreen")}
             </button>
-            <button className={windowMode === "borderless" ? "combat-btn active" : "combat-btn"} onClick={() => void changeWindowMode("borderless")}>
+            <button className={optBtnCls(windowMode === "borderless")} onClick={() => void changeWindowMode("borderless")}>
               {t("options.windowModeBorderless")}
             </button>
-            <button className={windowMode === "windowed" ? "combat-btn active" : "combat-btn"} onClick={() => void changeWindowMode("windowed")}>
+            <button className={optBtnCls(windowMode === "windowed")} onClick={() => void changeWindowMode("windowed")}>
               {t("options.windowed")}
             </button>
           </div>
         </OptRow>
         <OptRow label={t("options.fullscreen")} hint={t("options.fullscreenHint")}>
           <div className="opz-segment">
-            <button className={!fullscreen ? "combat-btn active" : "combat-btn"} onClick={() => void changeFullscreen(false)}>
+            <button className={optBtnCls(!fullscreen)} onClick={() => void changeFullscreen(false)}>
               {t("options.windowed")}
             </button>
-            <button className={fullscreen ? "combat-btn active" : "combat-btn"} onClick={() => void changeFullscreen(true)}>
+            <button className={optBtnCls(fullscreen)} onClick={() => void changeFullscreen(true)}>
               {t("options.fullscreen")}
             </button>
           </div>
         </OptRow>
         <OptRow label={t("options.tooltipImagePopup")} hint={t("options.tooltipImagePopupHint")}>
-          <button className={tooltipPopup ? "combat-btn active" : "combat-btn"} onClick={toggleTooltipPopup}>
-            {tooltipPopup ? "☑" : "☐"} {tooltipPopup ? t("options.on") : t("options.off")}
+          {/* Chef-Befund 25.08.2026: keine nackte Checkbox mehr — derselbe An/Aus-Eisenknopf wie
+              die übrigen Umschalter dieser Seite. */}
+          <button className={optBtnCls(tooltipPopup)} onClick={toggleTooltipPopup}>
+            {tooltipPopup ? t("options.on") : t("options.off")}
           </button>
         </OptRow>
         <OptRow label={t("options.combatFx")} hint={t("options.combatFxHint")}>
           <div className="opz-segment">
-            <button className={combatFx === "full" ? "combat-btn active" : "combat-btn"} onClick={() => changeCombatFx("full")}>
+            <button className={optBtnCls(combatFx === "full")} onClick={() => changeCombatFx("full")}>
               {t("options.combatFxFull")}
             </button>
-            <button className={combatFx === "reduced" ? "combat-btn active" : "combat-btn"} onClick={() => changeCombatFx("reduced")}>
+            <button className={optBtnCls(combatFx === "reduced")} onClick={() => changeCombatFx("reduced")}>
               {t("options.combatFxReduced")}
             </button>
-            <button className={combatFx === "off" ? "combat-btn active" : "combat-btn"} onClick={() => changeCombatFx("off")}>
+            <button className={optBtnCls(combatFx === "off")} onClick={() => changeCombatFx("off")}>
               {t("options.combatFxOff")}
             </button>
           </div>
@@ -239,7 +252,7 @@ export function DisplayAudioPrefs(): JSX.Element {
       {/* ─── Audio ─── */}
       <OptSection icon={<img src={iconAudio} alt="" className="opz-system-icon" />} title={t("options.audio")}>
         <OptRow label={t("options.soundOn")}>
-          <button className={muted ? "combat-btn active" : "combat-btn"} onClick={toggleMute}>
+          <button className={optBtnCls(!muted)} onClick={toggleMute}>
             <img src={iconAudio} alt="" className={`opz-inline-icon${muted ? " is-muted" : ""}`} />
             {muted ? t("options.muted") : t("options.soundOn")}
           </button>
@@ -248,7 +261,7 @@ export function DisplayAudioPrefs(): JSX.Element {
           <VolumeSlider value={muted ? 0 : volume} onChange={changeVolume} />
         </OptRow>
         <OptRow label={t("options.music")}>
-          <button className={music ? "combat-btn active" : "combat-btn"} onClick={toggleMusic}>
+          <button className={optBtnCls(music)} onClick={toggleMusic}>
             <img src={iconMusic} alt="" className={`opz-inline-icon${music ? "" : " is-muted"}`} />
             {music ? t("options.musicOn") : t("options.musicOff")}
           </button>
@@ -290,8 +303,8 @@ export function AmbientEffectsPrefs(): JSX.Element {
         label={t("options.ambient.master")}
         hint={isReducedMotionPreferred() ? t("options.ambient.reducedMotionHint") : t("options.ambient.masterHint")}
       >
-        <button className={enabled ? "combat-btn active" : "combat-btn"} onClick={toggleEnabled}>
-          {enabled ? "☑" : "☐"} {enabled ? t("options.on") : t("options.off")}
+        <button className={optBtnCls(enabled)} onClick={toggleEnabled}>
+          {enabled ? t("options.on") : t("options.off")}
         </button>
       </OptRow>
       <OptRow label={t("options.ambient.vignette")} hint={t("options.ambient.vignetteHint")}>

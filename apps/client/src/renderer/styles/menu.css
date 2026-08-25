@@ -3,8 +3,10 @@
    MAIN MENU (Task #282 redesign) — hero title screen.
    Split layout: left nav column (New/Load/Options/Quit) + right contextual panel
    (opens only after a nav click — no default panel, overwrite-safety per Chef).
-   Shares `.lang-btn` (small toggle chip) and `.modal.portrait-gallery-modal` with
-   character.css — those stay there since OptionsPage/CharacterPage also use them.
+   Shares `.modal.portrait-gallery-modal` with character.css — stays there since CharacterPage
+   also uses it. Sprach-/Zurück-Knöpfe (`.menu-lang`, `.menu-panel-back`) sind seit der Options-
+   Vereinheitlichung (Chef-Auftrag 25.08.2026) `.btn-iron`/`.btn-iron--sm` (design-system.css) —
+   keine eigene `.lang-btn`-Optik mehr hier.
    ═══════════════════════════════════════════════════════════ */
 
 .menu {
@@ -87,65 +89,13 @@
   z-index: 4;
 }
 
-/* ─── Sprach-Selektor im Citadel-Stil (Chef-Wunsch 2026-07-13) ────────────────────────────────
-   `.lang-btn` hatte KEINE Basis-Optik mehr (Ursprung in character.css entfernt, s. options.css-
-   Notiz) → im Hauptmenü rendern die 7 Sprach-Chips sonst als nackte Browser-Buttons. Hier bekommen
-   sie denselben Holz-9-Slice-Rahmen wie die Nav-Buttons (`.hf-btn`), nur kompakt für die kurzen
-   Sprach-Kürzel. BEWUSST auf `.menu-lang` gescoped — die Options-Seite nutzt eigene .lang-btn-
-   Regeln (opz-/opt-) und bleibt unberührt. */
-.menu-lang .lang-btn {
-  position: relative;
-  isolation: isolate;
+/* Sprach-Chips: `.btn-iron btn-iron--sm` (MainMenu.tsx) — die Kompaktgröße macht die 44px-
+   Mindestbreite von `.btn-iron--sm` etwas eng für 7 Kürzel + Font-Button in einer Zeile, darum
+   hier nur ein enger werdender Feinschliff (kein eigenes Farb-/Rahmen-Rezept mehr, s. Header-
+   Notiz oben). */
+.menu-lang .btn-iron--sm {
   min-width: 44px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 0;
-  cursor: pointer;
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  background:
-    linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)),
-    url("../assets/bg_black.webp") repeat;
-  color: #cbb98e;
-  transition: background 0.12s, box-shadow 0.12s, color 0.12s, transform 0.08s;
-}
-
-/* Holz-9-Slice-Rahmen als Overlay (identische Quelle wie .hf-btn::before, dünnere Kante) */
-.menu-lang .lang-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-style: solid;
-  border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-repeat: stretch;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.menu-lang .lang-btn:hover {
-  color: var(--gold);
-  box-shadow: 0 0 9px rgba(216, 192, 106, 0.26);
-}
-
-.menu-lang .lang-btn:active {
-  transform: scale(0.95);
-}
-
-/* Aktive Sprache: goldener Text + warmer Innenschein, wie ein „gedrückter" Citadel-Knopf. */
-.menu-lang .lang-btn.active {
-  background:
-    linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)),
-    url("../assets/bg_black.webp") repeat;
-  color: var(--gold);
-  box-shadow:
-    0 0 12px rgba(216, 192, 106, 0.38),
-    inset 0 0 9px rgba(216, 192, 106, 0.14);
+  padding: 5px 10px;
 }
 
 /* ─── Ambient-FX: driftende Glut + Nebelschwaden (rein CSS, self-contained) ──────────────── */
@@ -1036,32 +986,11 @@
   min-width: 0;
 }
 
+/* Optik kommt komplett von `.btn-iron btn-iron--sm` (design-system.css, s. MainMenu.tsx
+   MenuPanelTitle) — hier nur die Positionierung rechtsbündig in der Panel-Kopfzeile. */
 .menu-panel-back {
   margin-left: auto;
-  min-width: 154px;
-  min-height: 36px;
-  padding: 7px 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(216, 192, 106, 0.42);
-  background: rgba(17, 11, 8, 0.9);
-  color: #ccb982;
-  font-family: var(--font-head);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  line-height: 1.2;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.menu-panel-back:hover,
-.menu-panel-back:focus-visible {
-  color: #fff0bd;
-  border-color: rgba(239, 205, 104, 0.8);
-  box-shadow: 0 0 12px rgba(216, 192, 106, 0.2);
-  outline: none;
+  flex-shrink: 0;
 }
 
 .menu--war-table .menu-slots {

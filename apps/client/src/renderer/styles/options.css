@@ -6,11 +6,17 @@
    legacy `.options-page`/`.opt-*` rules still living in
    pages.css (dead weight, left for the CEO to prune later —
    see task handoff notes).
-   Button unification (Chef-Auftrag 2026-07-23): every button on this page (and the shared
-   Hauptmenü-Options-Panel, `DisplayAudioPrefs`) now uses the app's two REAL established Citadel
-   button styles from combat.css — `.combat-btn` (wood-frame default) and `.combat-btn.flee` (red,
-   for the one destructive action). `.lang-btn` had no real styling of its own (see Task #296 note
-   further down) and is no longer used here.
+   Button unification 2 (Chef-Entscheid 25.08.2026, "Auch die Optionen im Hauptmenü komplett
+   überarbeiten, alles uneinheitlich hier!"): jeder Knopf auf dieser Seite UND im geteilten
+   Hauptmenü-Options-Panel (MainMenu.tsx `MenuOptionsPanel`) ist jetzt `.btn-iron`/`.btn-iron--sm`
+   (design-system.css, der Standard-Knopf) mit `.is-active` für den gewählten Zustand — die
+   frühere Zwischenlösung `.combat-btn`/`.combat-btn.active`, scoped auf `#root .opz-page`, griff
+   im Hauptmenü nicht (anderer Container, `.menu-options` statt `.opz-page`) und blieb dort beim
+   alten Holzrahmen/nackten `.lang-btn` stehen. Einzige Ausnahme: die destruktive "Übernehmen"-
+   Aktion beim Speicherstand-Import bleibt `.combat-btn.flee` (roter Warn-Tint aus combat.css,
+   dasselbe Muster wie die Quit-Bestätigung) — kein Eisenrahmen-Sonderfall, sondern eine eigene
+   Bedeutung. `.opz-section`/`.opz-row`/`.opz-header` waren schon vorher `#root`-weit (nicht
+   `.opz-page`-gescoped) und damit bereits in beiden Flächen identisch.
    ═══════════════════════════════════════════════════════════ */
 
 .opz-page {
@@ -179,39 +185,18 @@
   justify-content: flex-end;
 }
 
-/* ─── Button-Vereinheitlichung (Chef-Auftrag 2026-07-23) ────────────────────────────────────
-   Task #296 hatte entdeckt: `.lang-btn` hat AUSSERHALB dieser Datei keine Basis-/Active-Styles
-   (der referenzierte `character.css`-Ursprung existiert nicht mehr) — jeder Options-Button lief
-   entweder unsichtbar unstyled (Standalone-Aktionen) oder nur halbwegs gepatcht (Segment-Toggles
-   hier). Fix: alle Options-Buttons wurden auf die ZWEI im Rest des Spiels etablierten Stile
-   umgestellt (Sidebar-Quit-Bestätigung, Onboarding, Death-/Portrait-/Bug-Report-Dialoge, …):
-     · `.combat-btn`        — ButtonNew-9-Slice-Rahmen (Task #332), die neutrale Standard-Aktion
-     · `.combat-btn.flee`   — dieselbe „primäre/destruktive Aktion" wie die Quit-Bestätigung
-       (rötlicher Tint-Layer statt eigenem Banner-Asset, s. combat.css)
-   Beide Klassen kommen global aus combat.css (via index.css) — hier nur Größen-/Auswahl-Zusätze
-   für die kompakten Segment-/Sprach-Raster dieser Seite. */
-.opz-segment .combat-btn,
-.opz-lang-grid .combat-btn {
+/* `.opz-segment .combat-btn` lebt weiter NUR für BugReportDialog.tsx (Datei-wählen/Zwischenablage/
+   E-Mail-Fallback-Knöpfe) — dieser Dialog ist kein Options-Besitz (TABU) und bleibt bewusst bei
+   `.combat-btn`. Alle echten Options-Segmente (`.opz-lang-grid` eingeschlossen) sind seit der
+   Button-Vereinheitlichung 25.08.2026 `.btn-iron`/`.btn-iron--sm` (OptionControls.tsx/
+   OptionsPage.tsx) und brauchen diese Größenregel nicht mehr. */
+.opz-segment .combat-btn {
   padding: 9px 18px;
   font-size: 15px;
   min-height: 38px;
   /* Task #332: kompaktere Buttons brauchen einen schmaleren Ornament-Rand als die 12px-Basis
      (combat.css `.combat-btn`), sonst fressen die Ecken bei 38px Höhe den Textraum. */
   border-image-width: var(--frame-w);
-}
-
-/* „Ausgewählt"-Zustand eines Segment-/Sprach-Toggles: dieselbe Bildsprache wie der Citadel-
-   Sidebar-Nav (sb-skill-btn.active in sidebar.css) — das gedrückt wirkende ButtonNew-Pressed-
-   Asset (Task #332, ersetzt das alte rote `sidebar_btn_active`) trägt den Auswahl-Zustand;
-   Schrift bleibt reinweiß wie überall sonst im neuen Button-Set (Chef 24.07., „weiß statt gold").
-   Doppelt gescoped (`.opz-page` UND `.menu-options`): `DisplayAudioPrefs` (Vollbild/Fenstermodus/
-   Kampf-Effekte-Toggles) ist eine geteilte Komponente, die sowohl in der In-Game-OptionsPage als
-   auch im Hauptmenü-Options-Panel (MainMenu.tsx) mountet — beide Stellen müssen denselben
-   Auswahl-Zustand zeigen. */
-.opz-page .combat-btn.active,
-.menu-options .combat-btn.active {
-  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
-  color: #ffffff;
 }
 
 .opz-lang-grid {
@@ -483,7 +468,12 @@
   background-clip: border-box;
 }
 
-#root .opz-page .combat-btn {
+/* Button-Vereinheitlichung 25.08.2026: alle neutralen Options-Knöpfe sind `.btn-iron` (unscoped,
+   design-system.css) — diese Regel bleibt nur noch für die EINE Ausnahme, die destruktive
+   "Übernehmen"-Aktion beim Speicherstand-Import (`.combat-btn.flee`, OptionsPage.tsx), deren
+   roter Warn-Tint (combat.css `.combat-btn.flee::after`) eine eigene Bedeutung trägt und kein
+   `.btn-iron`-Fall ist. Behält denselben Eisen-Look wie zuvor, nur auf `.flee` verengt. */
+#root .opz-page .combat-btn.flee {
   min-height: 46px;
   height: auto;
   padding: 7px 15px;
@@ -503,18 +493,9 @@
   text-wrap: balance;
 }
 
-#root .opz-page .combat-btn:is(:hover, .active) {
+#root .opz-page .combat-btn.flee:hover {
   filter: brightness(1.12);
   color: #fff1bd;
-}
-
-/* codex:2026-08-01T13:52:00+02:00 — Das Bug/Feature-Entrypanel ist ein vollwertiger
-   Optionscontainer und teilt deshalb exakt den 22-px-Panelrahmen des Headers und aller Sektionen. */
-#root .opz-page .bugreport-entry-banner {
-  border-width: 22px;
-  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 22px;
-  background-origin: border-box;
-  background-clip: border-box;
 }
 
 /* codex:2026-08-01T13:30:36+02:00 — Einheitliche, transparente Ashen-Iron-Systemglyphen statt
@@ -548,9 +529,4 @@
 #root .opz-inline-icon.is-muted {
   filter: grayscale(1) brightness(0.7);
   opacity: 0.7;
-}
-
-#root .opz-row-control .combat-btn {
-  align-items: center;
-  justify-content: center;
 }

@@ -68,25 +68,13 @@
    in voller Breite, nichts am rechten Rand, und der einzige Hinweis auf Klickbarkeit war ein
    kaum sichtbarer Farbwechsel beim Darueberfahren. Die staerkste Abhilfe ist kein staerkerer
    Rahmen, sondern eine sichtbare HANDLUNG am Ende der Zeile: ein Knopf-Chip, den man ansteuert.
-   Dazu Abstand zwischen Text und Chip, ein spuerbares Gedrueckt-Feedback und ein Fokusrahmen
-   fuer die Tastatur. */
+   Chef-Befund 25.08.2026: dieser Chip war ein eigener goldener Pergament-Pill — jetzt trägt er
+   `.btn-iron` (design-system.css, s. OptionsPage.tsx/MainMenu.tsx) wie jeder andere Standard-
+   Knopf; hier bleibt nur die Positionierung ans rechte Zeilenende übrig. */
 .bugreport-entry-cta {
   margin-left: auto;
   flex-shrink: 0;
-  padding: 7px 16px;
-  font-family: var(--font-head);
-  font-size: 14px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: #12100c;
-  background: linear-gradient(rgba(240, 214, 138, 1), rgba(196, 164, 92, 1));
-  border: 1px solid rgba(255, 236, 176, 0.75);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   white-space: nowrap;
-}
-
-.bugreport-entry-banner:hover .bugreport-entry-cta {
-  background: linear-gradient(rgba(255, 232, 160, 1), rgba(216, 184, 112, 1));
 }
 
 /* ─── Dialog ─────────────────────────────────────────────── */
