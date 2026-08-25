@@ -121,7 +121,7 @@ export function UpdateNotice(): JSX.Element | null {
           <p className="update-notice-shield">{t("updateNotice.shield")}</p>
         )}
         <div className="update-notice-actions">
-          <button className="combat-btn" onClick={schliessen}>
+          <button className="btn-iron" onClick={schliessen}>
             {t("updateNotice.close")}
           </button>
         </div>

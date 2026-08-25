@@ -369,6 +369,11 @@ Gift-Ticks +35 % statt +50 %, bis der Zeit-bis-Tod-Pin steht. / EN: Rune of Wast
 Gravewood-Motiv der Kampfknöpfe; jetzt derselbe Eisenrahmen wie die Optionen-Knöpfe. / EN: The
 update notice button now uses the iron frame.
 
+*Dev-Notiz: Chef-Entscheid 25.08.: der Eisenrahmen ist ab jetzt der Standard-Knopf. Zentrale Klasse
+`.btn-iron` (+ `--sm`, disabled) in design-system.css; neue Knöpfe nehmen sie. Bestand: combat-btn
+(Gravewood, 49 Stellen), shop-citadel-btn (13), it-action-btn (2); Sidebar/Topbar tragen den
+Eisenrahmen bereits. Umstellung des Bestands auf Chef-GO.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

@@ -511,3 +511,59 @@
   color: var(--ds-parch-ink);
   padding: var(--ds-gap);
 }
+
+/* ── Standard-Knopf (Chef-Entscheid 25.08.2026): der Eisenrahmen ──────────────────────────────
+   "Diese Iron Frame Buttons sind nun unsere neue Standard-Buttons." Kanonische Klasse; identisch mit
+   der Regel der Optionen-Seite (options.css `#root .opz-page .combat-btn`). Neue Knöpfe nehmen
+   `.btn-iron`, keine Kontext-Kopien mehr. Ohne #root-Präfix, damit sie auch in Portalen greift
+   (Modale an document.body). 9-Slice: Schnitt 85, Zeichenbreite = Rahmen × 2,125. */
+.btn-iron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  height: auto;
+  min-width: 160px;
+  padding: 7px 18px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
+  border-radius: 0;
+  background-color: #111315;
+  background-image:
+    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  color: #ead8a0;
+  font-family: var(--font-head);
+  font-size: clamp(14px, 0.95vw, 18px);
+  line-height: 1.15;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px #000;
+  white-space: normal;
+  text-wrap: balance;
+  cursor: pointer;
+  transition: filter 0.12s, color 0.12s;
+}
+.btn-iron:hover,
+.btn-iron:focus-visible {
+  filter: brightness(1.12);
+  color: #fff1bd;
+  outline: none;
+}
+.btn-iron:active {
+  filter: brightness(0.95);
+}
+.btn-iron[disabled],
+.btn-iron.is-disabled {
+  filter: grayscale(0.4) brightness(0.75);
+  color: #9a8c6a;
+  cursor: not-allowed;
+}
+.btn-iron--sm {
+  min-height: 38px;
+  min-width: 120px;
+  padding: 4px 12px;
+  font-size: clamp(13px, 0.85vw, 16px);
+}
