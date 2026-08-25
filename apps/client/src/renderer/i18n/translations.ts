@@ -923,9 +923,8 @@ const en = {
     "combat.level": "Level {n}",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
-    "combat.queueMore": "Queue more",
-    "combat.queueMore.hint": "Show the enemy list without ending this fight.",
     "combat.stillFighting": "Still fighting: {name}",
+    "combat.zones": "Zones",
     "combat.backToFight": "Back to the fight",
     "combat.fight": "Fight",
     // Task #348 (Fight-Button-Rückkehr): Tooltip auf dem neuen Sofort-Kampf-Knopf über dem
@@ -1588,6 +1587,11 @@ const en = {
     "enchant.reason.not_enough_gold": "Not enough gold.",
     "enchant.reason.affix_mismatch": "This rune doesn't fit this item.",
     "enchant.reason.class_mismatch": "Doesn't fit this armor class.",
+    // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, Stat-Runen stapeln
+    // (Chef-Nachentscheid 25.08.2026). Der Text nennt den GRUND — "sitzt schon drauf"
+    // allein liesse den Spieler raten, ob er etwas falsch macht.
+    "enchant.reason.duplicate_effect": "This effect does not stack — the rune is already on this item.",
+    "enchant.preview.blocked.duplicate_effect": "This effect does not stack — the rune is already on this item.",
     "enchant.reason.no_affix_slots": "No enchant slots free.",
     "enchant.reason.no_affix": "No rune selected.",
     "enchant.reason.not_enchantable": "This item can't be enchanted.",
@@ -1659,6 +1663,11 @@ const en = {
     "toast.enchanted.title": "Enchanted item!",
     "farm.plantAll": "Plant All",
     "farm.plantAllTitle": "Plant All Empty Plots",
+    // Chef 25.08.2026: Der Knopf soll vorrechnen, was er tut — wie viele Beete frei sind
+    // und wie viel Saat das kostet, BEVOR geklickt wird.
+    "farm.plantAll.free": "{n} plots are empty and ready to sow.",
+    "farm.plantAll.none": "No empty plots — everything is already growing or waiting to be picked.",
+    "farm.plantAll.plan": "Sows {n} of {total} plots",
     "farm.hint.plots": "Crops grow passively — online and offline. Auto-replant keeps plots seeded when seeds are available.",
     "enchant.suffixHint": "Crafted and dropped equipment can carry a random Suffix — a stat bonus like '+8 Defense of the Bear'. Suffixes appear automatically and are shown on the item tooltip.",
     "about.comingSoon": "Coming soon",
@@ -3003,9 +3012,8 @@ const de: Record<keyof typeof en, string> = {
     "combat.level": "Stufe {n}",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
-    "combat.queueMore": "Nachlegen",
-    "combat.queueMore.hint": "Gegnerliste zeigen, ohne diesen Kampf zu beenden.",
     "combat.stillFighting": "Kämpft weiter gegen: {name}",
+    "combat.zones": "Zonen",
     "combat.backToFight": "Zurück zum Kampf",
     "combat.fight": "Kämpfen",
     "combat.fightNowHint": "Startet sofort — Laufendes kehrt danach in die Warteschlange zurück.",
@@ -3620,6 +3628,11 @@ const de: Record<keyof typeof en, string> = {
     "enchant.reason.not_enough_gold": "Nicht genug Gold.",
     "enchant.reason.affix_mismatch": "Diese Rune passt nicht zu diesem Item.",
     "enchant.reason.class_mismatch": "Passt nicht zu dieser Rüstungsklasse.",
+    // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, Stat-Runen stapeln
+    // (Chef-Nachentscheid 25.08.2026). Der Text nennt den GRUND — "sitzt schon drauf"
+    // allein liesse den Spieler raten, ob er etwas falsch macht.
+    "enchant.reason.duplicate_effect": "Diese Wirkung stapelt nicht — die Rune sitzt bereits auf dem Item.",
+    "enchant.preview.blocked.duplicate_effect": "Diese Wirkung stapelt nicht — die Rune sitzt bereits auf dem Item.",
     "enchant.reason.no_affix_slots": "Keine Enchant-Slots frei.",
     "enchant.reason.no_affix": "Keine Rune ausgewählt.",
     "enchant.reason.not_enchantable": "Dieses Item ist nicht verzauberbar.",
@@ -3691,6 +3704,11 @@ const de: Record<keyof typeof en, string> = {
     "toast.enchanted.title": "Verzaubertes Item!",
     "farm.plantAll": "Alle bepflanzen",
     "farm.plantAllTitle": "Alle leeren Beete bepflanzen",
+    // Chef 25.08.2026: Der Knopf soll vorrechnen, was er tut — wie viele Beete frei sind
+    // und wie viel Saat das kostet, BEVOR geklickt wird.
+    "farm.plantAll.free": "{n} Beete sind frei und können besät werden.",
+    "farm.plantAll.none": "Kein Beet frei — alles wächst schon oder wartet auf die Ernte.",
+    "farm.plantAll.plan": "Besät {n} von {total} Beeten",
     "farm.hint.plots": "Saat wächst passiv – online wie offline. Auto-Nachpflanzen hält Beete bestellt, solange Saat vorhanden.",
     "enchant.suffixHint": "Gecraftete und gedroppte Ausrüstung kann einen zufälligen Suffix tragen — z.B. '+8 Verteidigung des Bären'. Suffixe entstehen automatisch und sind im Item-Tooltip sichtbar.",
     "about.comingSoon": "Demnächst",

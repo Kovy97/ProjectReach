@@ -2791,11 +2791,22 @@ function Battle({
         </div>
       )}
 
-      {/* codex:2026-08-02T17:30:00+02:00 — eigener aktueller Ashen-Iron-Vertrag statt des
+      {/* Kopfzeile des Kampfes: links zurueck zu den Zonen, rechts der Abbruch (Chef 25.08.2026,
+          "oben rechts wo End Fight ist, sollte oben links Zones stehen als gleicher Button").
+          Der Zonen-Knopf beendet NICHTS — er blendet nur die Auswahl ein, der Kampf laeuft
+          weiter (Spieler-Report 1.0.2: "Would like to be able to queue up more battles if I'm
+          currently in combat"). Deshalb steht er hier als Gegenpol zum Abbruch und nicht als
+          leise Nebenschaltflaeche.
+          codex:2026-08-02T17:30:00+02:00 — eigener aktueller Ashen-Iron-Vertrag statt des
           veralteten universellen ButtonNew/Flee-Layers. */}
-      <button className="combat-btn flee combat-stop-btn" onClick={() => stopCombat(state)}>
-        {t("combat.flee")}
-      </button>
+      <div className="battle-topbar">
+        <button className="combat-btn flee combat-stop-btn combat-zones-btn" onClick={onShowEnemyList}>
+          {t("combat.zones")}
+        </button>
+        <button className="combat-btn flee combat-stop-btn" onClick={() => stopCombat(state)}>
+          {t("combat.flee")}
+        </button>
+      </div>
 
       {/* (Kampfstil-Wahl steht jetzt dauerhaft in der linken Combat-Loadout-Sidebar — Melee Focus —
           daher hier keine redundante Leiste über den Portraits mehr.) */}
@@ -2840,17 +2851,6 @@ function Battle({
             <span className="battle-fortress-target">
               {monsterName} · {t("combat.level").replace("{n}", String(monster.level))}
             </span>
-            {/* Spieler-Report 1.0.2: "Would like to be able to queue up more battles if I'm
-                currently in combat." Blendet nur die ANSICHT um — der Kampf laeuft im Spielstand
-                weiter, hier wird nichts angehalten. */}
-            <button
-              type="button"
-              className="battle-queue-more-btn"
-              onClick={onShowEnemyList}
-              title={t("combat.queueMore.hint")}
-            >
-              {t("combat.queueMore")}
-            </button>
           </header>
           {/* ── ARENA25D MOUNT SWITCH (Task #330) — der EINE Umschaltpunkt außerhalb von
               components/arena25d/. `arena25dActive` false (Flag aus/anderer Zone/Dungeon/Prod-

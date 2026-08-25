@@ -141,11 +141,13 @@ describe("Kampf-Queue-Sanitize (Härtung beim Laden)", () => {
   it("queuePaused wird strikt boolesch und ohne Queue/Laufzeit hygienisch gelöscht; lastQueueSkip-Whitelist", () => {
     const s = createGame({ name: "Pause" }, content, 1);
     (s as unknown as Record<string, unknown>).queuePaused = "ja"; // Nicht-Boolean → false
-    (s as unknown as Record<string, unknown>).lastQueueSkip = { monsterId: "entferntes_monster", reason: "gate_locked" };
+    (s as unknown as Record<string, unknown>).lastQueueSkip = { monsterId: "entferntes_monster", reason: "unknown_monster" };
     const loaded = roundTrip(s);
     expect(loaded.queuePaused).toBe(false);
     // Skip-Breadcrumb bleibt AUCH für unbekannte Monster erhalten (Content-Drift ist gerade der Grund).
-    expect(loaded.lastQueueSkip).toEqual({ monsterId: "entferntes_monster", reason: "gate_locked" });
+    // Seit Spieler-Report 1.0.2 nur mit dem Grund, der HEUTE noch zutrifft (s. queue-skip-load.test.ts):
+    // für ein unbekanntes Monster ist das "unknown_monster", ein "gate_locked" wäre dort veraltet.
+    expect(loaded.lastQueueSkip).toEqual({ monsterId: "entferntes_monster", reason: "unknown_monster" });
 
     // true + leere Queue + keine Laufzeit → nichts zu pausieren → false (Hygiene).
     const empty = createGame({ name: "Leer" }, content, 1);

@@ -752,9 +752,8 @@ export const es: Record<string, string> = {
     "combat.level": "Nivel {n}",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
-    "combat.queueMore": "Añadir más",
-    "combat.queueMore.hint": "Muestra la lista de enemigos sin terminar este combate.",
     "combat.stillFighting": "Sigues luchando contra: {name}",
+    "combat.zones": "Zonas",
     "combat.backToFight": "Volver al combate",
     "combat.fight": "Luchar",
     "combat.fightNowHint": "Empieza a luchar de inmediato — la actividad en curso vuelve al frente de la cola después.",
@@ -1317,6 +1316,11 @@ export const es: Record<string, string> = {
     "enchant.reason.not_enough_gold": "Oro insuficiente.",
     "enchant.reason.affix_mismatch": "Esta runa no encaja en este objeto.",
     "enchant.reason.class_mismatch": "No encaja en esta clase de armadura.",
+    // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, Stat-Runen stapeln
+    // (Chef-Nachentscheid 25.08.2026). Der Text nennt den GRUND — "sitzt schon drauf"
+    // allein liesse den Spieler raten, ob er etwas falsch macht.
+    "enchant.reason.duplicate_effect": "Este efecto no se acumula: la runa ya está en este objeto.",
+    "enchant.preview.blocked.duplicate_effect": "Este efecto no se acumula: la runa ya está en este objeto.",
     "enchant.reason.no_affix_slots": "No hay ranuras de encantamiento libres.",
     "enchant.reason.no_affix": "Ninguna runa seleccionada.",
     "enchant.reason.not_enchantable": "Este objeto no se puede encantar.",
@@ -1377,6 +1381,11 @@ export const es: Record<string, string> = {
     "toast.enchanted.title": "¡Objeto encantado!",
     "farm.plantAll": "Plantar todo",
     "farm.plantAllTitle": "Plantar en todas las parcelas vacías",
+    // Chef 25.08.2026: Der Knopf soll vorrechnen, was er tut — wie viele Beete frei sind
+    // und wie viel Saat das kostet, BEVOR geklickt wird.
+    "farm.plantAll.free": "{n} parcelas están libres y listas para sembrar.",
+    "farm.plantAll.none": "Ninguna parcela libre: todo crece o espera cosecha.",
+    "farm.plantAll.plan": "Siembra {n} de {total} parcelas",
     "farm.hint.plots": "Las cosechas crecen de forma pasiva — con y sin conexión. El replantado automático mantiene las parcelas sembradas cuando hay semillas disponibles.",
     "enchant.suffixHint": "El equipo fabricado y obtenido puede llevar un Sufijo aleatorio — una bonificación de estadística como '+8 de Defensa del Oso'. Los sufijos aparecen automáticamente y se muestran en la información del objeto.",
     "about.comingSoon": "Próximamente",

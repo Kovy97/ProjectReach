@@ -180,12 +180,15 @@ export function ActionQueuePanel(): JSX.Element {
     : null;
 
   // Skip-Hinweis (`state.lastQueueSkip`): die Engine leert das Feld bewusst NICHT selbst (JSDoc
-  // "die UI-Welle entscheidet über die Anzeige-Dauer") — lokal per ×-Button wegklickbar, per
-  // Objekt-IDENTITÄT (derselbe Trick wie oben: ein neuer Skip ist immer ein frisches Literal,
-  // s. engine/actions.ts advanceActionQueue) überschreibt ein neuerer Skip eine alte Weg-Klickung.
-  const [dismissedSkip, setDismissedSkip] = useState<GameState["lastQueueSkip"]>(null);
+  // "die UI-Welle entscheidet über die Anzeige-Dauer") — dieses Panel ist der Melder und quittiert
+  // deshalb per ×-Button mit `null` im STATE (Regel „wer meldet, quittiert", Vorbild Toasts.tsx ↔
+  // `camp.lastCompletedBuild`; Re-Render kommt wie beim Fortsetzen-Button mit dem nächsten Tick).
+  // Spieler-Report 1.0.2: vorher merkte sich das Panel die Weg-Klickung nur in lokalem React-
+  // State, das persistierte Feld blieb gefüllt — und bei jedem Spielstart stand „Voraussetzung
+  // nicht erfüllt" wieder da, längst nachdem der Spieler die Voraussetzung erfüllt hatte. Die
+  // Persistenz prüft den Grund beim Laden zusätzlich neu und verwirft einen Breadcrumb, dessen
+  // Gate heute nicht mehr greift (packages/persistence sanitize, Kampf-Queue-Block).
   const skip = state.lastQueueSkip;
-  const showSkip = skip !== null && skip !== dismissedSkip;
 
   // 4er-Queue-Grid-Rework (Chef): jeder Grid-Klick reiht jetzt IMMER über enqueueAction ein
   // (auch während dieselbe Aktion schon läuft) — Engine-seitig stapelt dabei nur der jeweils
@@ -588,9 +591,9 @@ export function ActionQueuePanel(): JSX.Element {
             </div>
           )}
 
-          {/* Skip-Hinweis (`state.lastQueueSkip`) — dezente Einzeilerzeile, per ×-Button lokal
-              wegklickbar (s. `dismissedSkip`-Kommentar oben). */}
-          {showSkip && skip && (
+          {/* Skip-Hinweis (`state.lastQueueSkip`) — dezente Einzeilerzeile, der ×-Button quittiert
+              den Breadcrumb im State (s. Kommentar bei `skip` oben, Spieler-Report 1.0.2). */}
+          {skip && (
             <div className="queue-panel-skip">
               <span>
                 {WARNING_ICON_URL ? <img loading="lazy" decoding="async" src={WARNING_ICON_URL} alt="" className="ui-icon" /> : "⚠"}{" "}
@@ -599,7 +602,7 @@ export function ActionQueuePanel(): JSX.Element {
               <button
                 type="button"
                 className="queue-panel-skip-dismiss"
-                onClick={() => setDismissedSkip(skip)}
+                onClick={() => { state.lastQueueSkip = null; }}
                 aria-label={t("common.close")}
                 title={t("common.close")}
               >

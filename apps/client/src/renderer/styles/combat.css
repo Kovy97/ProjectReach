@@ -5941,7 +5941,7 @@
   min-height: 42px;
   padding: 7px 5px;
   border: 5px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 5px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(5px * 2.125) stretch;
   background: rgba(19, 22, 23, 0.94);
   color: var(--muted);
   font-family: var(--font-head);
@@ -5990,7 +5990,7 @@
 .cl-dock-pane-gear .cs-stats-scroll {
   padding: 8px;
   border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 7px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125) stretch;
   background: rgba(7, 8, 9, 0.82);
 }
 
@@ -6131,26 +6131,6 @@
     url("../assets/ui/gravewood/textures/texture-gravewood.webp") repeat;
 }
 
-/* Spieler-Report 1.0.2: Gegnerliste waehrend des Kampfes. Der Knopf sitzt rechts in der
-   Kampf-Kopfzeile, bewusst leise — er ist ein Nebenweg, nicht die Hauptaktion. Der Rueckweg-
-   Balken ueber der Liste ist dagegen laut: wer die Liste bei laufendem Kampf sieht, soll es merken. */
-.battle-queue-more-btn {
-  margin-left: auto;
-  padding: 3px 10px;
-  font-family: var(--font-head);
-  font-size: 12.5px;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(179, 92, 34, 0.42);
-  border-radius: 3px;
-  cursor: pointer;
-}
-.battle-queue-more-btn:hover {
-  color: var(--gold);
-  border-color: rgba(214, 160, 74, 0.7);
-}
-
 .combat-return-bar {
   display: flex;
   flex-wrap: wrap;
@@ -6274,14 +6254,24 @@
 /* codex:2026-08-02T17:30:00+02:00 — aktueller Kampf-beenden-CTA: Bronze-Lipped-Iron-Rahmen,
    Gravewood-Füllung und nur ein dezenter Gefahrenakzent. Späte Regel schlägt die alte
    `.combat-btn.flee`-ButtonNew-Familie gezielt, ohne Monsterkarten-Buttons zu verändern. */
-.battle > .combat-stop-btn {
-  align-self: flex-end;
+/* Kopfzeile des Kampfes (Chef 25.08.2026): links Zonen, rechts Abbruch — gleicher Knopf, gleiche
+   Zeile, entgegengesetzte Seiten. Bei sehr schmalem Fenster brechen sie um, statt zu schrumpfen:
+   ein halbierter Knopf mit abgeschnittener Schrift waere schlechter als zwei Zeilen. */
+.battle > .battle-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.battle .combat-stop-btn {
   width: clamp(190px, 15vw, 300px);
   min-height: 46px;
   margin: 0 4px 8px 0;
   padding: 7px 18px;
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / 8px stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125) stretch;
   background:
     linear-gradient(rgba(57, 13, 10, 0.34), rgba(10, 8, 7, 0.86)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
@@ -6292,10 +6282,10 @@
   text-transform: uppercase;
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5);
 }
-.battle > .combat-stop-btn::after {
+.battle .combat-stop-btn::after {
   display: none;
 }
-.battle > .combat-stop-btn:hover {
+.battle .combat-stop-btn:hover {
   border-image-source: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
   background:
     linear-gradient(rgba(96, 24, 17, 0.48), rgba(19, 11, 8, 0.9)),
@@ -6303,7 +6293,7 @@
   color: #ffd2be;
   box-shadow: inset 0 0 14px rgba(104, 25, 16, 0.34), 0 0 10px rgba(122, 37, 24, 0.26);
 }
-.battle > .combat-stop-btn:active {
+.battle .combat-stop-btn:active {
   transform: translateY(1px);
   color: #f0a38c;
 }

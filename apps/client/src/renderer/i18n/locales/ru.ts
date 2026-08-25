@@ -764,9 +764,8 @@ export const ru: Record<string, string> = {
     "combat.level": "Уровень {n}",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
-    "combat.queueMore": "Добавить бой",
-    "combat.queueMore.hint": "Показать список врагов, не завершая этот бой.",
     "combat.stillFighting": "Бой продолжается: {name}",
+    "combat.zones": "Зоны",
     "combat.backToFight": "Вернуться в бой",
     "combat.fight": "В бой",
     "combat.fightNowHint": "Начинает бой немедленно — текущая активность возвращается в начало очереди после этого.",
@@ -1347,6 +1346,11 @@ export const ru: Record<string, string> = {
     "enchant.reason.not_enough_gold": "Недостаточно золота.",
     "enchant.reason.affix_mismatch": "Эта руна не подходит этому предмету.",
     "enchant.reason.class_mismatch": "Не подходит этому классу брони.",
+    // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, Stat-Runen stapeln
+    // (Chef-Nachentscheid 25.08.2026). Der Text nennt den GRUND — "sitzt schon drauf"
+    // allein liesse den Spieler raten, ob er etwas falsch macht.
+    "enchant.reason.duplicate_effect": "Этот эффект не складывается: руна уже нанесена на этот предмет.",
+    "enchant.preview.blocked.duplicate_effect": "Этот эффект не складывается: руна уже нанесена на этот предмет.",
     "enchant.reason.no_affix_slots": "Нет свободных ячеек зачарования.",
     "enchant.reason.no_affix": "Руна не выбрана.",
     "enchant.reason.not_enchantable": "Этот предмет нельзя зачаровать.",
@@ -1411,6 +1415,11 @@ export const ru: Record<string, string> = {
     "toast.enchanted.title": "Зачарованный предмет!",
     "farm.plantAll": "Посадить всё",
     "farm.plantAllTitle": "Засеять все пустые грядки",
+    // Chef 25.08.2026: Der Knopf soll vorrechnen, was er tut — wie viele Beete frei sind
+    // und wie viel Saat das kostet, BEVOR geklickt wird.
+    "farm.plantAll.free": "Свободных грядок: {n}.",
+    "farm.plantAll.none": "Свободных грядок нет — всё растёт или ждёт сбора.",
+    "farm.plantAll.plan": "Засеет {n} из {total} грядок",
     "farm.hint.plots": "Культуры растут пассивно — онлайн и офлайн. Авто-пересадка засеивает грядки, пока есть семена.",
     "enchant.suffixHint": "Изготовленное и выпавшее снаряжение может нести случайный Суффикс — бонус к характеристике, например «+8 к защите Медведя». Суффиксы появляются автоматически и показываются в подсказке предмета.",
     "about.comingSoon": "Скоро",

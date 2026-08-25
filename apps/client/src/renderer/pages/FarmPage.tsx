@@ -276,6 +276,20 @@ function CropPicker({
     .filter((c) => c.levelRequired <= farmingLevel)
     .sort((a, b) => a.levelRequired - b.levelRequired);
 
+  // Wie viele Beete wuerde "alle bepflanzen" tatsaechlich treffen? Dieselbe Bedingung wie
+  // `plantCrop` in der Engine: freigeschaltet, leer, keine abholbare Ernte darauf. Ohne diese
+  // Zahl bleibt "Alle bepflanzen" ein Knopf, dessen Wirkung man erst hinterher sieht.
+  const freieBeete = (() => {
+    if (plotIndex !== null) return 1;
+    const frei = Math.min(plotsUnlocked(farmingLevel), MAX_FARM_PLOTS);
+    let n = 0;
+    for (let i = 0; i < frei; i++) {
+      const p = state.farmPlots[i];
+      if (p && p.cropId === null && p.readyYield === 0) n++;
+    }
+    return n;
+  })();
+
   function handlePick(cropId: string): void {
     if (plotIndex === null) {
       // Alle leeren freigeschalteten Plots bepflanzen
@@ -301,6 +315,15 @@ function CropPicker({
         <h3 className="farm-picker-title">
           {plotIndex === null ? t("farm.plantAllTitle") : t("farm.cropPicker.title")}
         </h3>
+        {plotIndex === null && (
+          /* Die Ausgangslage EINMAL oben statt auf jeder Karte — die Karten sagen dann nur noch,
+             was diese Saat daraus macht. */
+          <p className="farm-picker-lead">
+            {freieBeete > 0
+              ? t("farm.plantAll.free").replace("{n}", String(freieBeete))
+              : t("farm.plantAll.none")}
+          </p>
+        )}
         {eligible.length === 0 ? (
           <p className="muted">{t("farm.cropPicker.empty")}</p>
         ) : (
@@ -312,11 +335,15 @@ function CropPicker({
               const iconUrl =
                 getCropIconUrl(c.id) ?? getItemImage(c.yieldItem) ?? getItemImage(c.seedItem);
               const hasSeeds = seeds > 0;
+              // Was dieser Klick WIRKLICH tut: so viele Beete, wie frei sind — begrenzt durch die
+              // Saat im Beutel und Lager. Genau die Zahl steht auf dem Knopf.
+              const wirdGepflanzt = Math.min(freieBeete, seeds);
+              const reichtNicht = plotIndex === null && seeds > 0 && seeds < freieBeete;
               return (
                 <button
                   key={c.id}
                   className={`farm-picker-card${!hasSeeds ? " no-seed" : ""}`}
-                  disabled={!hasSeeds}
+                  disabled={!hasSeeds || wirdGepflanzt === 0}
                   onClick={() => handlePick(c.id)}
                 >
                   <div className="farm-picker-icon">
@@ -329,25 +356,43 @@ function CropPicker({
                     )}
                   </div>
                   <div className="farm-picker-info">
-                    <span className="farm-picker-name">{tr(c.name)}</span>
+                    {/* Kopfzeile: Name links, Stufe rechts. Der Badge stand vorher als eigenes
+                        Flex-Kind NEBEN der Infospalte und nahm ihr die Breite, die Fakten brachen
+                        auf vier Zeilen (Chef 25.08.2026: "macht die Anzeige kaputt"). */}
+                    <span className="farm-picker-head">
+                      <span className="farm-picker-name">{tr(c.name)}</span>
+                      <span className="farm-picker-lv muted">
+                        {t("skill.levelShort").replace("{n}", String(c.levelRequired))}
+                      </span>
+                    </span>
+                    {/* Drei kurze Fakten als Chips statt eines Satzes mit Doppelpunkten. */}
                     <span className="farm-picker-meta muted">
-                      {t("farm.grow").replace("{time}", formatMs(c.growMs))}
-                      {" · "}
-                      {t("farm.yield")
-                        .replace("{min}", String(c.yieldMin))
-                        .replace("{max}", String(c.yieldMax))}
-                      {" · "}
-                      {t("farm.xpGain").replace("{n}", String(c.xp))}
+                      <span className="farm-picker-fact" title={t("farm.grow").replace("{time}", formatMs(c.growMs))}>
+                        ⏱ {formatMs(c.growMs)}
+                      </span>
+                      <span className="farm-picker-fact" title={t("farm.yield").replace("{min}", String(c.yieldMin)).replace("{max}", String(c.yieldMax))}>
+                        ×{c.yieldMin}–{c.yieldMax}
+                      </span>
+                      <span className="farm-picker-fact">
+                        {t("farm.xpGain").replace("{n}", String(c.xp))}
+                      </span>
                     </span>
                     <span className={`farm-picker-seeds${!hasSeeds ? " none" : ""}`}>
                       {hasSeeds
                         ? t("farm.seedCount").replace("{n}", String(seeds))
                         : t("farm.noSeed")}
                     </span>
+                    {plotIndex === null && hasSeeds && (
+                      /* Die Rechnung offen hinschreiben: X von Y Beeten, Z Saat wird verbraucht.
+                         Reicht die Saat nicht fuer alle Beete, sagt die Zeile das — statt still
+                         nur einen Teil zu bepflanzen. */
+                      <span className={`farm-picker-plan${reichtNicht ? " short" : ""}`}>
+                        {t("farm.plantAll.plan")
+                          .replace("{n}", String(wirdGepflanzt))
+                          .replace("{total}", String(freieBeete))}
+                      </span>
+                    )}
                   </div>
-                  <span className="farm-picker-lv muted">
-                    {t("skill.levelShort").replace("{n}", String(c.levelRequired))}
-                  </span>
                 </button>
               );
             })}
@@ -413,9 +458,11 @@ export function FarmPage(): JSX.Element {
                     .replace("{total}", String(MAX_FARM_PLOTS))}
                 </span>
                 <span className="muted">{t("farm.offlineHint")}</span>
+                {/* Chef 25.08.2026: "Einen Knopf oben haben fuer Plant on all Plots". Er war
+                    schon da, aber als 13-px-Anhaengsel am Ende der Infozeile — leicht zu
+                    uebersehen. Jetzt ein regulaerer Knopf mit eigener Groesse. */}
                 <button
-                  className="skillcard-cta"
-                  style={{ marginLeft: "auto", padding: "2px 10px", fontSize: 13 }}
+                  className="skillcard-cta farm-plant-all-btn"
                   onClick={() => setPlantAllOpen(true)}
                 >
                   {t("farm.plantAll")}

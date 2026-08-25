@@ -72,6 +72,9 @@ const ENCHANT_REASON_CODES = new Set([
   // schon länger liefern, das Feedback-Banner fiel dann durch LEGACY_REASON_MAP durch und leakte
   // den rohen Code "class_mismatch" (kein Legacy-Prosa-Match). Gefixt im Zuge von #219.
   "class_mismatch",
+  // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, waehrend Stat-Runen stapeln
+  // duerfen (Chef-Nachentscheid 25.08.2026) — s. `affixHasActiveEffect` in engine/enchant.ts.
+  "duplicate_effect",
   "no_affix_slots",
   "no_affix",
   "not_enchantable",

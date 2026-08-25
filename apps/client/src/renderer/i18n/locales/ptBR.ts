@@ -750,9 +750,8 @@ export const ptBR: Record<string, string> = {
     "combat.level": "Nível {n}",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
-    "combat.queueMore": "Enfileirar mais",
-    "combat.queueMore.hint": "Mostra a lista de inimigos sem encerrar esta luta.",
     "combat.stillFighting": "Ainda lutando contra: {name}",
+    "combat.zones": "Zonas",
     "combat.backToFight": "Voltar à luta",
     "combat.fight": "Lutar",
     "combat.fightNowHint": "Começa a lutar imediatamente — a atividade em andamento volta para o início da fila depois.",
@@ -1315,6 +1314,11 @@ export const ptBR: Record<string, string> = {
     "enchant.reason.not_enough_gold": "Ouro insuficiente.",
     "enchant.reason.affix_mismatch": "Esta runa não serve para este item.",
     "enchant.reason.class_mismatch": "Não serve para esta classe de armadura.",
+    // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, Stat-Runen stapeln
+    // (Chef-Nachentscheid 25.08.2026). Der Text nennt den GRUND — "sitzt schon drauf"
+    // allein liesse den Spieler raten, ob er etwas falsch macht.
+    "enchant.reason.duplicate_effect": "Este efeito não acumula: a runa já está neste item.",
+    "enchant.preview.blocked.duplicate_effect": "Este efeito não acumula: a runa já está neste item.",
     "enchant.reason.no_affix_slots": "Nenhum espaço de encantamento livre.",
     "enchant.reason.no_affix": "Nenhuma runa selecionada.",
     "enchant.reason.not_enchantable": "Este item não pode ser encantado.",
@@ -1375,6 +1379,11 @@ export const ptBR: Record<string, string> = {
     "toast.enchanted.title": "Item encantado!",
     "farm.plantAll": "Plantar Tudo",
     "farm.plantAllTitle": "Plantar em Todos os Canteiros Vazios",
+    // Chef 25.08.2026: Der Knopf soll vorrechnen, was er tut — wie viele Beete frei sind
+    // und wie viel Saat das kostet, BEVOR geklickt wird.
+    "farm.plantAll.free": "{n} canteiros estão livres e prontos para semear.",
+    "farm.plantAll.none": "Nenhum canteiro livre: tudo cresce ou aguarda colheita.",
+    "farm.plantAll.plan": "Semeia {n} de {total} canteiros",
     "farm.hint.plots": "Cultivos crescem passivamente — online e offline. O replantio automático mantém os canteiros semeados quando há sementes disponíveis.",
     "enchant.suffixHint": "Equipamentos fabricados e obtidos podem carregar um Sufixo aleatório — um bônus de atributo como '+8 de Defesa do Urso'. Sufixos aparecem automaticamente e são mostrados no tooltip do item.",
     "about.comingSoon": "Em breve",

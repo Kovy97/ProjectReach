@@ -2257,9 +2257,17 @@ button.skilloverview-card {
 
 /* ─── Crop Picker Modal ──────────────────────────────────── */
 
-.farm-picker-modal {
-  max-width: 880px;
-  max-height: 80vh;
+/* ZWEI Klassen (`.modal.farm-picker-modal`), nicht eine. Grund, live gemessen: `modals.css` laedt
+   NACH dieser Datei (index.css Zeile 60 gegen 37) und setzt generisch `.modal { max-width: 480px }`.
+   Bei gleicher Spezifitaet gewinnt die spaetere Regel — die 880 px hier waren also wirkungslos,
+   der Browser rechnete 480. Folge: Karten auf 198 px gequetscht, 410 px hoch, die Meta-Zeile mit
+   clientWidth 0 komplett verschwunden. Genau der "zu schmal, macht die Anzeige kaputt"-Befund.
+   Bewusst ueber die Spezifitaet geloest statt mit `!important`: das haette den naechsten, der hier
+   etwas anpassen will, ausgesperrt. */
+.modal.farm-picker-modal {
+  width: min(1120px, 94vw);
+  max-width: min(1120px, 94vw);
+  max-height: 86vh;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -2274,19 +2282,16 @@ button.skilloverview-card {
 
 /* 2 columns by default (bigger cards need room to breathe); collapses to a
    single column once the modal/window gets too narrow for a comfortable pair. */
+/* Spaltenzahl aus der Breite statt fest zwei: bei 30 Saatsorten sind zwei Spalten eine sehr lange
+   Liste. `auto-fill` mit einer Mindestbreite von 320 px legt selbst fest, wie viele hineinpassen —
+   und `minmax(0, 1fr)` als Obergrenze verhindert, dass eine Karte die Spalte breiter macht als das
+   Modal (das war der alte Grund fuer den waagerechten Scrollbalken; er gilt weiter). Die frueheren
+   Media-Query-Stufen entfallen dadurch: auto-fill macht das von selbst und richtig. */
 .farm-picker-list {
   display: grid;
-  /* minmax(0, 1fr) statt 1fr: 1fr = minmax(auto, 1fr) respektiert die Mindestbreite der Karten,
-     wodurch zwei große Karten breiter werden als das Modal und rechts überlaufen (horizontaler
-     Scrollbalken). minmax(0, …) erlaubt den Spalten, in die halbe Modalbreite zu schrumpfen. */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: 12px;
-}
-
-@media (max-width: 680px) {
-  .farm-picker-list {
-    grid-template-columns: 1fr;
-  }
+  align-items: start;
 }
 
 /* Karten (Chef-Feedback): Holztextur statt dunklem Stein (bg_black), gekachelt
@@ -2296,7 +2301,7 @@ button.skilloverview-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 18px;
+  padding: 14px 16px;
   text-align: left;
   background:
     linear-gradient(rgba(28, 17, 9, 0.58), rgba(18, 11, 6, 0.7)),
@@ -2324,16 +2329,16 @@ button.skilloverview-card {
 
 .farm-picker-icon {
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .farm-picker-icon img {
-  max-width: 58px;
-  max-height: 58px;
+  max-width: 74px;
+  max-height: 74px;
   object-fit: contain;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.6));
 }
@@ -2357,9 +2362,35 @@ button.skilloverview-card {
   color: #9a8060;
 }
 
+/* Kopfzeile der Karte: Name links, Stufe rechts — der Badge ist hier zu Hause, nicht als
+   Nachbar der Infospalte (dort nahm er ihr 80 px und brach die Fakten auf vier Zeilen). */
+.farm-picker-head {
+  display: flex;
+  flex-wrap: wrap; /* wird es eng, rutscht der Badge UNTER den Namen — statt das Wort zu zerreissen */
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 8px;
+  min-width: 0;
+}
+.farm-picker-head .farm-picker-name {
+  min-width: 0;
+  overflow-wrap: normal; /* "Blutgetreide" bleibt ein Wort; gemessen brach es mit anywhere als "Blutgetreid/e" */
+}
+.farm-picker-head .farm-picker-lv {
+  align-self: baseline;
+}
+
+/* Drei Fakten in einer Zeile: Zeit · Ertrag · XP. Chips statt Satz, damit die Zeile bei 340 px
+   sicher passt; wird es doch einmal eng, brechen ganze Chips um, nie ein Wort mittendrin. */
 .farm-picker-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
   font-size: 14px;
   line-height: 1.4;
+}
+.farm-picker-fact {
+  white-space: nowrap;
 }
 
 .farm-picker-seeds {
@@ -2370,6 +2401,32 @@ button.skilloverview-card {
 
 .farm-picker-seeds.none {
   color: var(--danger);
+}
+
+/* "Alle bepflanzen" sitzt rechts in der Infozeile und soll dort als Knopf lesbar sein, nicht als
+   Kleingedrucktes (Chef 25.08.2026). */
+.farm-plant-all-btn {
+  margin-left: auto;
+  flex: 0 0 auto;
+  padding: 5px 16px;
+  font-size: 14px;
+}
+
+/* Ausgangslage ueber der Liste: wie viele Beete ueberhaupt frei sind. */
+.farm-picker-lead {
+  margin: -6px 0 14px;
+  font-size: 14.5px;
+  color: var(--gold, #d6a04a);
+}
+
+/* Die Rechnung auf der Karte: "bepflanzt 4 von 9 Beeten". Reicht die Saat nicht fuer alle,
+   faerbt sich die Zeile warnend — der Klick pflanzt dann bewusst nur einen Teil. */
+.farm-picker-plan {
+  font-size: 13.5px;
+  color: #9fbf8a;
+}
+.farm-picker-plan.short {
+  color: #d8a24a;
 }
 
 .farm-picker-lv {

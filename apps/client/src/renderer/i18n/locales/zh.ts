@@ -765,9 +765,8 @@ export const zh: Record<string, string> = {
     "combat.level": "等级 {n}",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
-    "combat.queueMore": "继续排队",
-    "combat.queueMore.hint": "显示敌人列表，不会结束当前战斗。",
     "combat.stillFighting": "战斗仍在进行：{name}",
+    "combat.zones": "区域",
     "combat.backToFight": "返回战斗",
     "combat.fight": "战斗",
     "combat.fightNowHint": "立即开始战斗——之后进行中的活动将返回队列最前面。",
@@ -1347,6 +1346,11 @@ export const zh: Record<string, string> = {
     "enchant.reason.not_enough_gold": "金币不足。",
     "enchant.reason.affix_mismatch": "此符文不适用于此物品。",
     "enchant.reason.class_mismatch": "不适用于此护甲类别。",
+    // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, Stat-Runen stapeln
+    // (Chef-Nachentscheid 25.08.2026). Der Text nennt den GRUND — "sitzt schon drauf"
+    // allein liesse den Spieler raten, ob er etwas falsch macht.
+    "enchant.reason.duplicate_effect": "此效果不叠加：该符文已在此物品上。",
+    "enchant.preview.blocked.duplicate_effect": "此效果不叠加：该符文已在此物品上。",
     "enchant.reason.no_affix_slots": "没有空闲的附魔槽。",
     "enchant.reason.no_affix": "未选择符文。",
     "enchant.reason.not_enchantable": "此物品无法附魔。",
@@ -1411,6 +1415,11 @@ export const zh: Record<string, string> = {
     "toast.enchanted.title": "附魔物品！",
     "farm.plantAll": "全部种植",
     "farm.plantAllTitle": "在所有空田地种植",
+    // Chef 25.08.2026: Der Knopf soll vorrechnen, was er tut — wie viele Beete frei sind
+    // und wie viel Saat das kostet, BEVOR geklickt wird.
+    "farm.plantAll.free": "有 {n} 块空地可以播种。",
+    "farm.plantAll.none": "没有空地 — 全部在生长或等待收获。",
+    "farm.plantAll.plan": "播种 {total} 块中的 {n} 块",
     "farm.hint.plots": "作物被动生长——无论在线或离线。有种子时，自动补种会持续为田地播种。",
     "enchant.suffixHint": "制作和掉落的装备可能带有随机后缀——例如“+8 防御 · 熊之”这样的属性加成。后缀会自动出现，并显示在物品提示中。",
     "about.comingSoon": "即将推出",

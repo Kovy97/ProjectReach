@@ -70,7 +70,7 @@ import {
   makeFightQueueEntry,
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot } from "@hearthforge/shared";
-import { MAX_STACK, addItemOrBank, advance, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, addItemOrBank, advance, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -1583,17 +1583,34 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       state.queuePaused === true && (state.actionQueue.length > 0 || state.queueFight !== null);
     // Skip-Breadcrumb: Shape + Grund-Whitelist härten. Das Monster darf UNBEKANNT sein —
     // "unknown_monster" ist gerade der Grund für entfernte Monster (Content-Drift).
+    // Spieler-Report 1.0.2 („each time you load your game it repeats that error message even
+    // though you are strong enough to fight them now"): der Grund wird beim Laden NEU geprüft.
+    // Ein Breadcrumb überlebt nur, wenn sein Grund HEUTE noch zutrifft (Monster weiterhin
+    // unbekannt / weiterhin dungeonOnly / Gate weiterhin gesperrt, canFightMonster). Hat der
+    // Spieler die Voraussetzung inzwischen erfüllt, wäre „Voraussetzung nicht erfüllt" beim Start
+    // eine veraltete Fehlermeldung, die er nicht mehr wegbekommt. Bewusst NACH der Kampf-Gate-
+    // Load-Invariante (gleiche Gate-Quelle, endgültiger Zustand); zieht kein RNG, idempotent.
+    // Die Quittung im laufenden Spiel (×-Klick nullt das Feld) übernimmt der Melder selbst,
+    // das Queue-Panel (client ActionQueuePanel.tsx, Regel „wer meldet, quittiert").
     const rawSkip = state.lastQueueSkip as unknown;
     state.lastQueueSkip = null;
     if (rawSkip && typeof rawSkip === "object") {
       const monsterId = (rawSkip as { monsterId?: unknown }).monsterId;
       const reason = (rawSkip as { reason?: unknown }).reason;
-      if (
-        typeof monsterId === "string" &&
-        monsterId.length > 0 &&
-        (reason === "unknown_monster" || reason === "not_queueable" || reason === "gate_locked")
-      ) {
-        state.lastQueueSkip = { monsterId, reason };
+      if (typeof monsterId === "string" && monsterId.length > 0) {
+        const monster = content.monsters[monsterId];
+        if (reason === "unknown_monster" && !monster) {
+          state.lastQueueSkip = { monsterId, reason };
+        } else if (reason === "not_queueable" && monster && monster.dungeonOnly) {
+          state.lastQueueSkip = { monsterId, reason };
+        } else if (
+          reason === "gate_locked" &&
+          monster &&
+          !monster.dungeonOnly &&
+          !canFightMonster(state, content, monsterId)
+        ) {
+          state.lastQueueSkip = { monsterId, reason };
+        }
       }
     }
   }

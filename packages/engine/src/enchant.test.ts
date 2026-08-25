@@ -362,61 +362,74 @@ describe("enchant / item instances", () => {
   // Identitaet ein zweites Mal. Ein Spieler meldete das als Fehler: "armor have 3 slots, but you
   // can only put in 1 enchantment rune". Er hatte recht — wer drei gleiche Runen besass, konnte
   // nur eine anbringen. Die Sperre ist gefallen; diese Tests bewachen jetzt das Gegenteil.
-  it("stapelt dieselbe Rune mehrfach — pro Anwendung eine Rune und einmal Gold", () => {
+  it("stapelt dieselbe STAT-Rune mehrfach — pro Anwendung eine Rune und einmal Gold", () => {
     const c = affixContent();
     const s = richGame(c);
     addItem(s.inventory, c, "test_rare_blade", 1); // rare = 2 Slots
-    addItem(s.inventory, c, "rune_flame_i", 2);
+    addItem(s.inventory, c, "rune_force_i", 2); // reine Stat-Rune (+3 Nahkampfschaden)
     const goldStart = s.character.gold;
+
+    expect(applyEnchant(s, c, { kind: "inventory", index: 0 }, "rune_force_i").ok).toBe(true);
+    const id = s.inventory.instances[0]!.instanceId;
+    const goldNachErster = s.character.gold;
+
+    const zweite = applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_force_i");
+    expect(zweite.ok).toBe(true);
+    expect(s.inventory.instances[0]!.affixes).toEqual([
+      { affixId: "affix_force", tier: 1 },
+      { affixId: "affix_force", tier: 1 },
+    ]);
+    // Kein Gratis-Stapeln: beide Runen verbraucht, beide Male derselbe Goldpreis.
+    expect(itemCount(s.inventory, "rune_force_i")).toBe(0);
+    expect(goldStart - goldNachErster).toBe(goldNachErster - s.character.gold);
+
+    // Die Boni summieren sich — das ist der Sinn der Sache: ein Build-Entscheid ("alles auf
+    // Wucht") gegen zwei verschiedene kleinere Boni.
+    expect(instanceBonusDelta(s.inventory.instances[0]!, c).bonus.meleeDamage).toBe(6); // 2 × +3
+
+    // Das Slot-Limit der Rarity bleibt die Mengenschranke.
+    addItem(s.inventory, c, "rune_force_i", 1);
+    const dritte = applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_force_i");
+    expect(dritte.ok).toBe(false);
+    expect(dritte.reason).toBe("no_affix_slots");
+    expect(itemCount(s.inventory, "rune_force_i")).toBe(1); // Fehlversuch kostet nichts
+  });
+
+  // ── Aktiv-Effekt-Runen bleiben einmalig (Chef-Nachentscheid 25.08.2026) ──────────
+  // Beim Oeffnen der Duplikat-Sperre gingen ZU VIELE Runen durch: "jetzt gehen so Effekt Runen
+  // wie Flaming zweimal, AKTIV Effekt Runen sollten trotzdem nur einmal applizierbar sein".
+  // Im Katalog tragen genau drei Affixe einen Proc (flame/frost/shock) — und genau die tragen
+  // KEINEN Stat-Bonus. Eine zweite gaebe also nichts, bei vollem Rune- und Goldpreis.
+  it("verweigert eine zweite Aktiv-Effekt-Rune — OHNE Rune-/Gold-Kosten", () => {
+    const c = affixContent();
+    const s = richGame(c);
+    addItem(s.inventory, c, "test_rare_blade", 1); // rare = 2 Slots, das Limit greift NICHT zuerst
+    addItem(s.inventory, c, "rune_flame_i", 2);
 
     expect(applyEnchant(s, c, { kind: "inventory", index: 0 }, "rune_flame_i").ok).toBe(true);
     const id = s.inventory.instances[0]!.instanceId;
     const goldNachErster = s.character.gold;
+    const spentNachErster = s.stats.goldSpent;
 
     const zweite = applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_flame_i");
-    expect(zweite.ok).toBe(true);
-    expect(s.inventory.instances[0]!.affixes).toEqual([
-      { affixId: "affix_flame", tier: 1 },
-      { affixId: "affix_flame", tier: 1 },
-    ]);
-    // Kein Gratis-Stapeln: beide Runen verbraucht, beide Male derselbe Goldpreis.
-    expect(itemCount(s.inventory, "rune_flame_i")).toBe(0);
-    expect(goldStart - goldNachErster).toBe(goldNachErster - s.character.gold);
+    expect(zweite.ok).toBe(false);
+    expect(zweite.reason).toBe("duplicate_effect");
+    // Kein Verlust: Rune bleibt im Inventar, kein Gold gebucht, Instanz unveraendert.
+    expect(itemCount(s.inventory, "rune_flame_i")).toBe(1);
+    expect(s.character.gold).toBe(goldNachErster);
+    expect(s.stats.goldSpent).toBe(spentNachErster);
+    expect(s.inventory.instances[0]!.affixes).toEqual([{ affixId: "affix_flame", tier: 1 }]);
 
-    // Die Boni summieren sich — das ist der Sinn der Sache: ein Build-Entscheid ("alles auf
-    // Feuer") gegen zwei verschiedene kleinere Boni.
-    const delta = instanceBonusDelta(s.inventory.instances[0]!, c);
-    expect(delta.bonus.meleeDamage).toBe(10); // 2 × +5
-    expect(delta.modifiers.str).toBe(1); // 2 × +0.5
-
-    // Das Slot-Limit der Rarity bleibt die einzige Mengenschranke.
-    addItem(s.inventory, c, "rune_flame_i", 1);
-    const dritte = applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_flame_i");
-    expect(dritte.ok).toBe(false);
-    expect(dritte.reason).toBe("no_affix_slots");
-    expect(itemCount(s.inventory, "rune_flame_i")).toBe(1); // Fehlversuch kostet nichts
+    // Der zweite Slot nimmt eine STAT-Rune weiterhin normal auf.
+    addItem(s.inventory, c, "rune_force_i", 1);
+    expect(applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_force_i").ok).toBe(true);
+    expect(s.inventory.instances[0]!.affixes.map((a) => a.affixId)).toEqual(["affix_flame", "affix_force"]);
   });
 
-  // Die einzige wirklich gefaehrliche Seite des Stapelns: Waffen-Procs duerfen sich NICHT
-  // vervielfachen. `effectiveInstanceWeaponEffects` entdoppelt ueber Typ|Chance|Staerke|Dauer —
-  // genau das macht das Oeffnen der Sperre vertretbar, also wird es hier festgenagelt.
-  it("stapelt Waffen-Procs NICHT: zwei gleiche Runen geben einen Proc", () => {
-    const c = affixContent();
-    const s = richGame(c);
-    addItem(s.inventory, c, "test_rare_blade", 1);
-    addItem(s.inventory, c, "rune_flame_i", 2);
-
-    expect(applyEnchant(s, c, { kind: "inventory", index: 0 }, "rune_flame_i").ok).toBe(true);
-    const id = s.inventory.instances[0]!.instanceId;
-    expect(applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_flame_i").ok).toBe(true);
-
-    const inst = s.inventory.instances[0]!;
-    expect(inst.affixes).toHaveLength(2); // zweimal derselbe Affix sitzt drauf ...
-    const procs = effectiveInstanceWeaponEffects(inst, c.items[inst.baseItemId], c);
-    expect(procs.filter((e) => e.type === "burn")).toHaveLength(1); // ... wirkt aber einmal
-  });
-
-  it("stapelt auch über Tiers hinweg: Flame III neben Flame I, beide wirken", () => {
+  // Der Schleichweg: verschiedene TIERS derselben Proc-Rune haetten unterschiedliche
+  // Chance/Staerke, wuerden die Proc-Entdopplung also passieren und BEIDE feuern. Deshalb greift
+  // die Regel ueber die Affix-Identitaet, nicht ueber das Tier.
+  it("die Einmaligkeit gilt TIER-uebergreifend: Flamme III neben Flamme I wird verweigert", () => {
     const c = affixContent();
     (c.items as Record<string, ItemDef>).rune_flame_iii = {
       id: "rune_flame_iii",
@@ -432,60 +445,112 @@ describe("enchant / item instances", () => {
 
     expect(applyEnchant(s, c, { kind: "inventory", index: 0 }, "rune_flame_i").ok).toBe(true);
     const id = s.inventory.instances[0]!.instanceId;
-    expect(applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_flame_iii").ok).toBe(true);
-    expect(s.inventory.instances[0]!.affixes).toEqual([
-      { affixId: "affix_flame", tier: 1 },
-      { affixId: "affix_flame", tier: 3 },
-    ]);
+    const upgrade = applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_flame_iii");
+    expect(upgrade.ok).toBe(false);
+    expect(upgrade.reason).toBe("duplicate_effect");
+    expect(itemCount(s.inventory, "rune_flame_iii")).toBe(1);
 
-    // Ein Tier-Upgrade bleibt trotzdem moeglich, statt einen Slot zu verschwenden: den alten
-    // Affix disenchanten, dann sitzt nur noch das hoehere Tier drauf.
+    // Der dokumentierte Upgrade-Pfad bleibt: disenchanten, dann Tier III frisch anbringen.
     expect(disenchant(s, c, { kind: "inventory_instance", instanceId: id }, 0).ok).toBe(true);
+    const slotIdx = s.inventory.slots.findIndex((sl) => sl?.itemId === "test_rare_blade");
+    expect(slotIdx).toBeGreaterThanOrEqual(0);
+    expect(applyEnchant(s, c, { kind: "inventory", index: slotIdx }, "rune_flame_iii").ok).toBe(true);
     expect(s.inventory.instances[0]!.affixes).toEqual([{ affixId: "affix_flame", tier: 3 }]);
   });
 
-  it("enchantPreview spiegelt das Stapeln: dieselbe Rune ist anwendbar, das Slot-Limit nicht", () => {
+  // Gegenprobe zur Regel: WAERE eine Proc-Rune doppelt drauf (Alt-Save von vor dem
+  // Nachentscheid), wirkt sie trotzdem nur einmal — die Entdopplung in shared bleibt die zweite
+  // Verteidigungslinie und wird hier festgenagelt.
+  it("doppelte Proc-Affixe aus einem Alt-Save geben trotzdem nur EINEN Proc", () => {
     const c = affixContent();
     const inst = {
-      instanceId: "t-prev-dup",
-      baseItemId: "test_rare_blade", // rare = 2 Slots, einer belegt
-      affixes: [{ affixId: "affix_flame", tier: 1 }],
-    };
-    expect(enchantPreview(c, inst, "rune_flame_i").canApply).toBe(true);
-    expect(enchantPreview(c, inst, "rune_force_i").canApply).toBe(true);
-    expect(enchantPreview(c, inst, "rune_flame_i", 0).canApply).toBe(true); // Slot-Override
-
-    // Voll ist voll: beide Slots belegt ⇒ nur noch der Override geht durch.
-    const voll = { ...inst, affixes: [...inst.affixes, { affixId: "affix_flame", tier: 1 }] };
-    const blockiert = enchantPreview(c, voll, "rune_flame_i");
-    expect(blockiert.canApply).toBe(false);
-    expect(blockiert.blockedReason).toBe("slot_full");
-    expect(enchantPreview(c, voll, "rune_flame_i", 0).canApply).toBe(true);
-  });
-
-  it("Alt-Save-Instanz mit doppeltem Affix: laedt, wirkt doppelt, ist jetzt der Normalfall", () => {
-    const c = affixContent();
-    const s = richGame(c);
-    // Solche Instanzen entstanden vor #303 und wurden waehrend der Sperre nur GEDULDET. Seit dem
-    // Chef-Entscheid sind sie regulaer erzeugbar — der Ladepfad muss sie trotzdem unangetastet
-    // lassen (keine nachtraegliche Saeuberung, Save-Kompatibilitaet in beide Richtungen).
-    const dup = {
-      instanceId: mintInstanceId(s),
+      instanceId: "t-altsave-proc",
       baseItemId: "test_rare_blade",
       affixes: [
         { affixId: "affix_flame", tier: 1 },
         { affixId: "affix_flame", tier: 1 },
       ],
     };
+    const procs = effectiveInstanceWeaponEffects(inst, c.items[inst.baseItemId], c);
+    expect(procs.filter((e) => e.type === "burn")).toHaveLength(1);
+  });
+
+  it("stapelt Stat-Runen auch über Tiers hinweg: Wucht III neben Wucht I, beide wirken", () => {
+    const c = affixContent();
+    (c.items as Record<string, ItemDef>).rune_force_iii = {
+      id: "rune_force_iii",
+      name: { en: "Force Rune III", de: "Wuchtrune III" },
+      type: "material",
+      stackable: true,
+      rune: { affixId: "affix_force", tier: 3 },
+    };
+    const s = richGame(c);
+    addItem(s.inventory, c, "test_rare_blade", 1);
+    addItem(s.inventory, c, "rune_force_i", 1);
+    addItem(s.inventory, c, "rune_force_iii", 1);
+
+    expect(applyEnchant(s, c, { kind: "inventory", index: 0 }, "rune_force_i").ok).toBe(true);
+    const id = s.inventory.instances[0]!.instanceId;
+    expect(applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_force_iii").ok).toBe(true);
+    expect(s.inventory.instances[0]!.affixes).toEqual([
+      { affixId: "affix_force", tier: 1 },
+      { affixId: "affix_force", tier: 3 },
+    ]);
+    // 3 + 9 — beide Tiers wirken nebeneinander.
+    expect(instanceBonusDelta(s.inventory.instances[0]!, c).bonus.meleeDamage).toBe(12);
+  });
+
+  it("enchantPreview spiegelt beide Regeln: Stat-Rune stapelt, Proc-Rune nicht", () => {
+    const c = affixContent();
+    const mitProc = {
+      instanceId: "t-prev-proc",
+      baseItemId: "test_rare_blade", // rare = 2 Slots, einer belegt
+      affixes: [{ affixId: "affix_flame", tier: 1 }],
+    };
+    // Dieselbe Proc-Rune ein zweites Mal: blockiert, mit dem sprechenden Grund.
+    const blockiert = enchantPreview(c, mitProc, "rune_flame_i");
+    expect(blockiert.canApply).toBe(false);
+    expect(blockiert.blockedReason).toBe("duplicate_effect");
+    // Slot-Override auf DENSELBEN Slot ist kein zweites Vorkommen (after == before).
+    expect(enchantPreview(c, mitProc, "rune_flame_i", 0).canApply).toBe(true);
+    // Eine Stat-Rune belegt den freien Slot normal.
+    expect(enchantPreview(c, mitProc, "rune_force_i").canApply).toBe(true);
+
+    // Stat-Rune auf Stat-Rune: erlaubt, bis das Slot-Limit greift.
+    const mitStat = {
+      instanceId: "t-prev-stat",
+      baseItemId: "test_rare_blade",
+      affixes: [{ affixId: "affix_force", tier: 1 }],
+    };
+    expect(enchantPreview(c, mitStat, "rune_force_i").canApply).toBe(true);
+    const voll = { ...mitStat, affixes: [...mitStat.affixes, { affixId: "affix_force", tier: 1 }] };
+    const zu = enchantPreview(c, voll, "rune_force_i");
+    expect(zu.canApply).toBe(false);
+    expect(zu.blockedReason).toBe("slot_full");
+    expect(enchantPreview(c, voll, "rune_force_i", 0).canApply).toBe(true);
+  });
+
+  it("Alt-Save-Instanz mit doppelter Stat-Rune: laedt, wirkt doppelt, ist jetzt der Normalfall", () => {
+    const c = affixContent();
+    const s = richGame(c);
+    // Solche Instanzen entstanden vor #303 und wurden waehrend der Sperre nur GEDULDET. Seit dem
+    // Chef-Entscheid sind sie fuer Stat-Runen regulaer erzeugbar — der Ladepfad muss sie
+    // unangetastet lassen (keine nachtraegliche Saeuberung, Save-Kompat in beide Richtungen).
+    const dup = {
+      instanceId: mintInstanceId(s),
+      baseItemId: "test_rare_blade",
+      affixes: [
+        { affixId: "affix_force", tier: 1 },
+        { affixId: "affix_force", tier: 1 },
+      ],
+    };
     s.inventory.instances.push(dup);
     expect(equipInstance(s, c, dup.instanceId).ok).toBe(true);
-    const delta = instanceBonusDelta(dup, c);
-    expect(delta.bonus.meleeDamage).toBe(10);
-    expect(delta.modifiers.str).toBe(1);
+    expect(instanceBonusDelta(dup, c).bonus.meleeDamage).toBe(6);
 
-    // Ein drittes Flame scheitert am Slot-Limit der Rarity, nicht mehr am Duplikat.
-    addItem(s.inventory, c, "rune_flame_i", 1);
-    const r = applyEnchant(s, c, { kind: "equipment", slot: "mainhand" }, "rune_flame_i");
+    // Eine dritte scheitert am Slot-Limit der Rarity.
+    addItem(s.inventory, c, "rune_force_i", 1);
+    const r = applyEnchant(s, c, { kind: "equipment", slot: "mainhand" }, "rune_force_i");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe("no_affix_slots");
   });
@@ -496,29 +561,29 @@ describe("enchant / item instances", () => {
     const c = affixContent();
     const s = richGame(c);
     addItem(s.inventory, c, "rusty_sword", 1);
-    s.bank.rune_flame_i = 2; // nur im Lager, nichts im Inventar
+    s.bank.rune_force_i = 2; // nur im Lager, nichts im Inventar (Stat-Rune: darf stapeln)
 
-    expect(applyEnchant(s, c, { kind: "inventory", index: 0 }, "rune_flame_i").ok).toBe(true);
-    expect(s.bank.rune_flame_i).toBe(1);
-    expect(s.inventory.instances[0]!.affixes).toEqual([{ affixId: "affix_flame", tier: 1 }]);
+    expect(applyEnchant(s, c, { kind: "inventory", index: 0 }, "rune_force_i").ok).toBe(true);
+    expect(s.bank.rune_force_i).toBe(1);
+    expect(s.inventory.instances[0]!.affixes).toEqual([{ affixId: "affix_force", tier: 1 }]);
 
     // Liegt eine Rune im Inventar, wird DIE verbraucht und das Lager bleibt unangetastet.
     addItem(s.inventory, c, "test_rare_blade", 1);
-    addItem(s.inventory, c, "rune_flame_i", 1);
+    addItem(s.inventory, c, "rune_force_i", 1);
     const idx = s.inventory.slots.findIndex((sl) => sl?.itemId === "test_rare_blade");
-    expect(applyEnchant(s, c, { kind: "inventory", index: idx }, "rune_flame_i").ok).toBe(true);
-    expect(itemCount(s.inventory, "rune_flame_i")).toBe(0);
-    expect(s.bank.rune_flame_i).toBe(1); // unangetastet
+    expect(applyEnchant(s, c, { kind: "inventory", index: idx }, "rune_force_i").ok).toBe(true);
+    expect(itemCount(s.inventory, "rune_force_i")).toBe(0);
+    expect(s.bank.rune_force_i).toBe(1); // unangetastet
 
     // Die letzte Lager-Rune raeumt ihren Schluessel ab — ein 0-qty-Geist wuerde einen Lager-Slot
     // belegen (dieselbe Regel wie withdrawItem in bank.ts).
     const id = s.inventory.instances[1]!.instanceId;
-    expect(applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_flame_i").ok).toBe(true);
-    expect(s.bank.rune_flame_i).toBeUndefined();
+    expect(applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_force_i").ok).toBe(true);
+    expect(s.bank.rune_force_i).toBeUndefined();
 
     // Nichts mehr da: sauberer Fehlschlag, kein Gold weg.
     const gold = s.character.gold;
-    const leer = applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_flame_i");
+    const leer = applyEnchant(s, c, { kind: "inventory_instance", instanceId: id }, "rune_force_i");
     expect(leer.ok).toBe(false);
     expect(leer.reason).toBe("not_found");
     expect(s.character.gold).toBe(gold);

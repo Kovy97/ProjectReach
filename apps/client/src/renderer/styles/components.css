@@ -2202,7 +2202,7 @@ body .item-cell.rarity-godly {
   height: auto;
   padding: 7px 16px;
   border: 16px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill / 16px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(16px * 2.125);
   background-color: #101315;
   background-image:
     radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.13), transparent 72%),

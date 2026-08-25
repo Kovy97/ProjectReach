@@ -44,6 +44,9 @@ import {
  *  - `class_mismatch`   Trinity-Rune auf einem Teil ohne den passenden Trinity-Stat (§6.2-Klassen-Gate):
  *                       Schutz nur auf Platte (armorRating>0), Ausweich nur auf Leder (evasionRating>0),
  *                       Ward nur auf Stoff (wardCapacity>0), Block nur auf Schild (blockChance>0).
+ *  - `duplicate_effect` Diese AKTIV-EFFEKT-Rune (Flamme/Frost/Schock — `weaponEffectByTier`)
+ *                       sitzt bereits auf der Instanz. Ihr Proc wird entdoppelt, eine zweite
+ *                       braechte also nichts; Stat-Runen bleiben dagegen frei stapelbar.
  *  - `no_affix_slots`   Das Item hat für seine Rarity keinen freien Affix-Slot mehr.
  *  - `no_affix`         Die Rune trägt keinen Affix bzw. der Ziel-Affix-Index existiert nicht.
  *  - `not_enchantable`  Kein verzauberbares Equipment (oder kein Platz, um es zur Instanz zu promoten).
@@ -54,6 +57,7 @@ export type EnchantReason =
   | "not_enough_gold"
   | "affix_mismatch"
   | "class_mismatch"
+  | "duplicate_effect"
   | "no_affix_slots"
   | "no_affix"
   | "not_enchantable"
@@ -208,25 +212,27 @@ export function applyEnchant(
     return rollback(state, content, ref, instance, "class_mismatch");
   }
 
-  // Duplikat-Sperre ENTFERNT (Chef-Entscheid 25.08.2026, aus Spieler-Feedback): dieselbe Rune
-  // darf jetzt mehrfach auf eine Instanz — drei Slots, drei gleiche Runen, dreifacher Bonus.
-  // Sie kam 2026-07-09 als red-team-Vorsichtsmassnahme (L4, Task #303), ohne dass der Kommentar
-  // einen konkreten Exploit nannte. Der Spieler hat sie als Fehler gemeldet ("armor have 3
-  // slots, but you can only put in 1 enchantment rune") — er hatte recht.
-  //
-  // Vor dem Oeffnen beide Wirkketten geprueft:
-  //  - Stat-Boni summiert `instanceBonusDelta` ueber alle Affixe. Dreifach ist gewollt: das ist
-  //    ein Build-Entscheid ("alles auf Staerke") gegen drei verschiedene kleinere Boni.
-  //  - Waffeneffekte entdoppelt `effectiveInstanceWeaponEffects` (shared) bereits ueber ein
-  //    `seen`-Set (Typ|Chance|Staerke|Dauer|Schwelle|Stapel). Drei gleiche Runen geben EINEN
-  //    Proc, nicht drei — die gefaehrliche Seite war nie offen. Verschiedene TIERS derselben
-  //    Rune ergeben zwar zwei Procs, aber `applyEnemyStatus` nimmt pro Status-Typ das Maximum
-  //    von Staerke und Dauer: gestapelt wird dann nur die Trefferchance, nicht der Schaden.
-  // Das Slot-Limit nach Rarity bleibt die einzige Mengenschranke.
-
   // Slot-Limit nach Rarity.
   if (instance.affixes.length >= enchantSlotsFor(rarity)) {
     return rollback(state, content, ref, instance, "no_affix_slots");
+  }
+
+  // STAPELN: Seit dem Chef-Entscheid 25.08.2026 darf dieselbe STAT-Rune mehrfach auf eine
+  // Instanz — drei Slots, drei gleiche Runen, dreifacher Bonus. Bis dahin sperrte eine
+  // red-team-Vorsichtsmassnahme (L4, Task #303) jedes Duplikat; ein Spieler meldete das als
+  // Fehler ("armor have 3 slots, but you can only put in 1 enchantment rune") und hatte recht.
+  // `instanceBonusDelta` summiert ueber alle Affixe, drei Wuchtrunen wirken also wirklich
+  // dreifach. Das Slot-Limit der Rarity ist die Mengenschranke.
+  //
+  // AUSNAHME (Chef-Nachentscheid, selber Tag): Aktiv-Effekt-Runen bleiben einmalig. Ihr Proc
+  // wird entdoppelt, und sie tragen keinen Stat-Bonus — eine zweite braechte also nichts und
+  // waere reine Verschwendung von Rune und Gold. S. `affixHasActiveEffect`.
+  // Steht bewusst NACH dem Slot-Limit: ist ueberhaupt kein Platz mehr frei, ist DAS die
+  // bindende Auskunft — "diese Wirkung stapelt nicht" beantwortet dann eine Frage, die der
+  // Spieler gar nicht gestellt hat.
+  if (def && affixHasActiveEffect(def) && instance.affixes.some((a) => a.affixId === ra.affixId)) {
+    // VOR den Kosten: der Fehlversuch kostet weder Rune noch Gold.
+    return rollback(state, content, ref, instance, "duplicate_effect");
   }
 
   // Kosten: Rune + Gold.
@@ -374,6 +380,27 @@ const TRINITY_KEYS: readonly (keyof TrinityStats)[] = [
 ];
 
 /**
+ * Traegt dieser Affix einen AKTIV-EFFEKT (Proc)? Heute genau drei: Flamme (burn), Frost (frost),
+ * Schock (shock).
+ *
+ * Sie sind der Grund, warum die Runen-Stapelung eine Ausnahme braucht (Chef-Nachentscheid
+ * 25.08.2026). Zwei Gruende, und der zweite ist der harte:
+ *  1. `effectiveInstanceWeaponEffects` (shared) entdoppelt Procs ueber Typ/Chance/Staerke/Dauer —
+ *     zwei gleiche Runen ergeben EINEN Proc, nie zwei.
+ *  2. Diese drei Affixe tragen KEINEN Stat-Bonus (bonusByTier leer, modifiersByTier fehlt). Ihr
+ *     ganzer Wert ist der Proc. Eine zweite gaebe also buchstaeblich nichts — fuer eine Rune und
+ *     den vollen Goldpreis.
+ *
+ * Geprueft ueber ALLE Tiers, nicht nur das angebrachte: Flamme I und Flamme III haetten
+ * unterschiedliche Chance/Staerke, wuerden die Entdopplung also passieren und beide feuern. Das
+ * waere ein Schleichweg um dieselbe Regel. Fuer ein Tier-Upgrade gibt es den dokumentierten Pfad
+ * (disenchanten, dann neu anbringen).
+ */
+export function affixHasActiveEffect(def: AffixDef): boolean {
+  return (def.weaponEffectByTier ?? []).some((e) => e != null);
+}
+
+/**
  * Trinity-Klassen-Gate (§6.2): true, wenn `def` an `base` angebracht werden darf. Trägt der Affix bei
  * `tier` einen Trinity-Stat > 0, muss das Basis-Item denselben Stat bereits > 0 tragen — Schutz→Platte
  * (armorRating>0), Ausweich→Leder (evasionRating>0), Ward→Stoff (wardCapacity>0), Block→Schild
@@ -419,7 +446,7 @@ export interface EnchantPreview {
    *  Anzeige-Prosa lokalisiert ui-dev über `affixEffectParts` (§8.4/§8.6); dies ist die neutrale Quelle. */
   effectParts: string[];
   canApply: boolean;
-  blockedReason?: "slot_full" | "class_mismatch" | "wrong_item_type";
+  blockedReason?: "slot_full" | "class_mismatch" | "wrong_item_type" | "duplicate_effect";
 }
 
 const emptyTrinity = (): TrinityStats => ({
@@ -575,6 +602,16 @@ export function enchantPreview(
   } else if (!isOverride && existingAffixes.length >= enchantSlotsFor(getItemRarity(base))) {
     canApply = false;
     blockedReason = "slot_full";
+  } else if (
+    def &&
+    affixHasActiveEffect(def) &&
+    existingAffixes.some((a, i) => a.affixId === ra.affixId && !(isOverride && i === overrideSlotIndex))
+  ) {
+    // Spiegel von applyEnchant, gleiche Reihenfolge: erst Platz, dann Einmaligkeit. Beim
+    // Slot-Override zaehlt der UEBERSCHRIEBENE Slot nicht mit — dieselbe Rune in denselben Slot
+    // zu legen ist kein zweites Vorkommen (after == before, aber legal darstellbar).
+    canApply = false;
+    blockedReason = "duplicate_effect";
   }
 
   return { before, after, changedKeys, addedProcs, effectParts, canApply, blockedReason };

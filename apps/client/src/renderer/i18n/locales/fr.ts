@@ -766,9 +766,8 @@ export const fr: Record<string, string> = {
     "combat.level": "Niveau {n}",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
-    "combat.queueMore": "Ajouter",
-    "combat.queueMore.hint": "Affiche la liste des ennemis sans mettre fin à ce combat.",
     "combat.stillFighting": "Combat en cours : {name}",
+    "combat.zones": "Zones",
     "combat.backToFight": "Retour au combat",
     "combat.fight": "Combattre",
     "combat.fightNowHint": "Combat immédiat — l'activité en cours revient en tête de file ensuite.",
@@ -1349,6 +1348,11 @@ export const fr: Record<string, string> = {
     "enchant.reason.not_enough_gold": "Or insuffisant.",
     "enchant.reason.affix_mismatch": "Cette rune ne convient pas à cet objet.",
     "enchant.reason.class_mismatch": "Ne convient pas à cette classe d'armure.",
+    // Aktiv-Effekt-Runen (Flamme/Frost/Schock) bleiben einmalig, Stat-Runen stapeln
+    // (Chef-Nachentscheid 25.08.2026). Der Text nennt den GRUND — "sitzt schon drauf"
+    // allein liesse den Spieler raten, ob er etwas falsch macht.
+    "enchant.reason.duplicate_effect": "Cet effet ne se cumule pas : la rune est déjà sur cet objet.",
+    "enchant.preview.blocked.duplicate_effect": "Cet effet ne se cumule pas : la rune est déjà sur cet objet.",
     "enchant.reason.no_affix_slots": "Aucun emplacement d'enchantement libre.",
     "enchant.reason.no_affix": "Aucune rune sélectionnée.",
     "enchant.reason.not_enchantable": "Cet objet ne peut pas être enchanté.",
@@ -1413,6 +1417,11 @@ export const fr: Record<string, string> = {
     "toast.enchanted.title": "Objet enchanté !",
     "farm.plantAll": "Tout planter",
     "farm.plantAllTitle": "Planter toutes les parcelles vides",
+    // Chef 25.08.2026: Der Knopf soll vorrechnen, was er tut — wie viele Beete frei sind
+    // und wie viel Saat das kostet, BEVOR geklickt wird.
+    "farm.plantAll.free": "{n} parcelles sont libres et prêtes à semer.",
+    "farm.plantAll.none": "Aucune parcelle libre : tout pousse ou attend la récolte.",
+    "farm.plantAll.plan": "Sème {n} parcelles sur {total}",
     "farm.hint.plots": "Les cultures poussent passivement — en ligne comme hors ligne. La replantation auto. garde les parcelles ensemencées tant que des graines sont disponibles.",
     "enchant.suffixHint": "L'équipement fabriqué et trouvé peut porter un Suffixe aléatoire — un bonus de stat comme « +8 Défense de l'ours ». Les suffixes apparaissent automatiquement et sont affichés dans l'infobulle de l'objet.",
     "about.comingSoon": "Bientôt disponible",

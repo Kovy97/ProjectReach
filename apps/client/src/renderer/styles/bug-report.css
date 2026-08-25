@@ -447,7 +447,7 @@
   height: auto;
   padding: 7px 16px;
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 fill / 8px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
   background-color: #111315;
   background-image:
     linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
