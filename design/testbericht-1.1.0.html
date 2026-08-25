@@ -18,9 +18,9 @@ h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px
 .hinweis{border:1px solid var(--gold);background:#1f170a;padding:10px 16px;margin:0 0 22px}
 </style></head><body><div class="wrap">
 <h1>Testbericht 1.1.0</h1>
-<p class="sub">Stand 25.08.2026 · 39 Features/Fixes seit dem 1.0.2-Upload · Quelle: design/patchnotes.md, Sektion „Unveröffentlicht“</p>
+<p class="sub">Stand 25.08.2026 · 45 Features/Fixes seit dem 1.0.2-Upload · Quelle: design/patchnotes.md, Sektion „Unveröffentlicht“</p>
 <div class="hinweis">Zum Durchtesten: Build aus <code>out/</code> starten („starte“). Jede Karte hat Prüfschritte und ein Urteil; Notizen kannst du mir 1:1 durchgeben. Die Haken werden nicht gespeichert, das ist eine Leseliste.</div>
-<div class="toc"><a href="#f1">01 Runen lassen sich stapeln</a><a href="#f2">02 Monster-Ausrüstung ist jetzt immer besser als das Handwerk (Rezension #8)</a><a href="#f3">03 Belohnungs-Shop in sechs Regalen (Rezension #13)</a><a href="#f4">04 Kochen: Portionen statt Bissen (Rezension #11)</a><a href="#f5">05 Anbau: Folgesorte je Beet (Rezension #12)</a><a href="#f6">06 Suffixe und Attribute passen zur Rüstungsklasse (Rezension #14)</a><a href="#f7">07 Kohleflöze ab 50, 75 und 90 (Rezension #15)</a><a href="#f8">08 Erfolge: gemalte Kategorie-Embleme</a><a href="#f9">09 14 neue Runen für das Endgame (Tier IV und Schmuck)</a><a href="#f10">10 Der Tooltip zeigt die Verzauberungs-Plätze</a><a href="#f11">11 Runen aus dem Lager</a><a href="#f12">12 Varianten-Tasche: die Suche schließt die Box nicht mehr</a><a href="#f13">13 Slayer: kämpfen direkt vom Auftragszettel</a><a href="#f14">14 Kampf: Zonen-Knopf während des Kampfes</a><a href="#f15">15 New Haven: Bauwarteschlange</a><a href="#f16">16 Stahlrahmen: die Eckbeschläge sind jetzt ganz zu sehen</a><a href="#f17">17 Anbau: Samen-Auswahl überholt, „Alle bepflanzen" rechnet vor</a><a href="#f18">18 „Voraussetzung nicht erfüllt" kam bei jedem Start zurück</a><a href="#f19">19 Ein erzwungener Kampf verschluckte den laufenden Auftrag</a><a href="#f20">20 Warteschlange lesbar (Spieler-Report Aldric, 67 h)</a><a href="#f21">21 Stehlen: Beute-Box ohne die vier leeren Kästen</a><a href="#f22">22 Schmieden: Dauer hängt an den Barren</a><a href="#f23">23 Kopfleiste: Fortschritts- und XP-Balken im „Doing"-Kasten</a><a href="#f24">24 Warteschlange: Level-Projektion je Eintrag</a><a href="#f25">25 Warteschlange: keine Trennstriche mehr im Namen</a><a href="#f26">26 Item-Wiki neu gebaut</a><a href="#f27">27 Schmieden: Items als Leiter ab Barren-Level</a><a href="#f28">28 Bank und Sidebar im Fenstermodus (Steam-Rezension)</a><a href="#f29">29 Warteschlange: eigene Tooltips statt Browser-Titel</a><a href="#f30">30 Belohnungsladen scrollt, gesperrte Regale bleiben unsichtbar (Chef-Test 25.08.)</a><a href="#f31">31 Sidebar-Schatten klebt am unteren Rand (Chef-Test 25.08.)</a><a href="#f32">32 Verbotssymbol an Ausrüstung ohne erfüllte Anforderung (Chef-Test 25.08.)</a><a href="#f33">33 Toter Effekt „Gold von besiegten Gegnern" ersetzt (Chef-Test 25.08.)</a><a href="#f34">34 Geboostete Skill-Level: echtes Level zuerst (Chef-Test 25.08.)</a><a href="#f35">35 Slayer-Seite: echte Knöpfe, Shop nach Stufe (Chef-Test 25.08.)</a><a href="#f36">36 Kopfzeile: Slayer-Ziel bricht um statt abzuschneiden (Chef-Test 25.08.)</a><a href="#f37">37 Slayer-Aufträge: keine Trivial-Ziele mehr (Chef-Test 25.08.)</a><a href="#f38">38 Wiki-Fenster und Varianten-Tasche ohne Steintextur (Chef-Test 25.08.)</a><a href="#f39">39 Slayer-Shop: Rüstungen, die sich lohnen (Chef-Test 25.08.)</a></div>
+<div class="toc"><a href="#f1">01 Runen lassen sich stapeln</a><a href="#f2">02 Monster-Ausrüstung ist jetzt immer besser als das Handwerk (Rezension #8)</a><a href="#f3">03 Belohnungs-Shop in sechs Regalen (Rezension #13)</a><a href="#f4">04 Kochen: Portionen statt Bissen (Rezension #11)</a><a href="#f5">05 Anbau: Folgesorte je Beet (Rezension #12)</a><a href="#f6">06 Suffixe und Attribute passen zur Rüstungsklasse (Rezension #14)</a><a href="#f7">07 Kohleflöze ab 50, 75 und 90 (Rezension #15)</a><a href="#f8">08 Erfolge: gemalte Kategorie-Embleme</a><a href="#f9">09 14 neue Runen für das Endgame (Tier IV und Schmuck)</a><a href="#f10">10 Der Tooltip zeigt die Verzauberungs-Plätze</a><a href="#f11">11 Runen aus dem Lager</a><a href="#f12">12 Varianten-Tasche: die Suche schließt die Box nicht mehr</a><a href="#f13">13 Slayer: kämpfen direkt vom Auftragszettel</a><a href="#f14">14 Kampf: Zonen-Knopf während des Kampfes</a><a href="#f15">15 New Haven: Bauwarteschlange</a><a href="#f16">16 Stahlrahmen: die Eckbeschläge sind jetzt ganz zu sehen</a><a href="#f17">17 Anbau: Samen-Auswahl überholt, „Alle bepflanzen" rechnet vor</a><a href="#f18">18 „Voraussetzung nicht erfüllt" kam bei jedem Start zurück</a><a href="#f19">19 Ein erzwungener Kampf verschluckte den laufenden Auftrag</a><a href="#f20">20 Warteschlange lesbar (Spieler-Report Aldric, 67 h)</a><a href="#f21">21 Stehlen: Beute-Box ohne die vier leeren Kästen</a><a href="#f22">22 Schmieden: Dauer hängt an den Barren</a><a href="#f23">23 Kopfleiste: Fortschritts- und XP-Balken im „Doing"-Kasten</a><a href="#f24">24 Warteschlange: Level-Projektion je Eintrag</a><a href="#f25">25 Warteschlange: keine Trennstriche mehr im Namen</a><a href="#f26">26 Item-Wiki neu gebaut</a><a href="#f27">27 Schmieden: Items als Leiter ab Barren-Level</a><a href="#f28">28 Bank und Sidebar im Fenstermodus (Steam-Rezension)</a><a href="#f29">29 Warteschlange: eigene Tooltips statt Browser-Titel</a><a href="#f30">30 Belohnungsladen scrollt, gesperrte Regale bleiben unsichtbar (Chef-Test 25.08.)</a><a href="#f31">31 Sidebar-Schatten klebt am unteren Rand (Chef-Test 25.08.)</a><a href="#f32">32 Verbotssymbol an Ausrüstung ohne erfüllte Anforderung (Chef-Test 25.08.)</a><a href="#f33">33 Toter Effekt „Gold von besiegten Gegnern" ersetzt (Chef-Test 25.08.)</a><a href="#f34">34 Geboostete Skill-Level: echtes Level zuerst (Chef-Test 25.08.)</a><a href="#f35">35 Slayer-Seite: echte Knöpfe, Shop nach Stufe (Chef-Test 25.08.)</a><a href="#f36">36 Kopfzeile: Slayer-Ziel bricht um statt abzuschneiden (Chef-Test 25.08.)</a><a href="#f37">37 Slayer-Aufträge: keine Trivial-Ziele mehr (Chef-Test 25.08.)</a><a href="#f38">38 Wiki-Fenster und Varianten-Tasche ohne Steintextur (Chef-Test 25.08.)</a><a href="#f39">39 Slayer-Shop: Rüstungen, die sich lohnen (Chef-Test 25.08.)</a><a href="#f40">40 Inventar: leere Zellen nur, wenn wirklich Platz ist (Chef-Test 25.08.)</a><a href="#f41">41 Zonenansicht: „Zurück zum Kampf" in der Knopf-Familie (Chef-Test 25.08.)</a><a href="#f42">42 Dungeon-Karte: Boss-Beute und Item-Typ (Chef-Entscheidung E3, 25.08.)</a><a href="#f43">43 Tägliche Aufgaben: keine Anfänger-Aufgaben für Veteranen (Chef-Entscheidung E7, 25.08.)</a><a href="#f44">44 Toter Verteidigungs-Boost auf 51 Items ersetzt (Chef-Entscheidung E1, 25.08.)</a><a href="#f45">45 Rune der Auszehrung auf +35 % (Chef-Entscheidung E5, 25.08.)</a></div>
 <section class="karte" id="f1">
 <h2><span class="nr">01</span> Runen lassen sich stapeln</h2>
 <p>Drei Plätze, drei gleiche Runen, dreifacher Bonus. Ein Spieler hatte es als Fehler gemeldet („armor have 3 slots, but you can only put in 1 enchantment rune") und recht: eine Sperre aus dem Juli ließ dieselbe Rune nur einmal zu. Aktiv-Effekt-Runen (Flamme, Frost, Schock) bleiben einmalig pro Item: ihr Effekt stapelt nicht, eine zweite brächte nichts. / EN: Three slots, three identical runes, triple the bonus. Effect runes (Flame, Frost, Shock) stay one per item since their proc does not stack.</p>
@@ -261,8 +261,8 @@ h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px
 </section>
 <section class="karte" id="f35">
 <h2><span class="nr">35</span> Slayer-Seite: echte Knöpfe, Shop nach Stufe (Chef-Test 25.08.)</h2>
-<p>„Sofort kämpfen" und „Einreihen" liefen ohne jedes Styling (die Klasse gab es im CSS nicht) und zogen sich über die ganze Breite. Jetzt dieselben Leder-Knöpfe wie im Zonen-Fenster, mittig, natürliche Breite. Der Slayer-Shop ist nach Stufe sortiert, jede Karte nennt ihre Stufe.</p>
-
+<p>„Sofort kämpfen" und „Einreihen" liefen ohne jedes Styling (die Klasse gab es im CSS nicht) und zogen sich über die ganze Breite. Jetzt dieselben Citadel-Knöpfe wie „Neuen Auftrag holen" und der Slayer-Shop auf derselben Seite, mittig, natürliche Breite. Der Slayer-Shop ist nach Stufe sortiert, jede Karte nennt ihre Stufe.</p>
+<p class="dev">Erste Runde nahm `combat-btn`/`ghost` (Kampfseite), Chef: falsch; jetzt `shop-citadel-btn` wie die übrigen Knöpfe der Seite. Der Zonen-Rückkehr-Knopf läuft als voller `combat-btn` wie „Betreten" auf der Dungeon-Karte.</p>
 <ul class="pruef"><li><label><input type="checkbox"> Auftrag holen: „Sofort kämpfen (n)“ startet den Kampf mit Rest-Ziel, „Einreihen (n)“ legt ihn hinten an</label></li></ul>
 <div class="urteil"><label><input type="radio" name="u35"> OK</label> <label><input type="radio" name="u35"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
 </section>
@@ -290,54 +290,96 @@ h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px
 <section class="karte" id="f39">
 <h2><span class="nr">39</span> Slayer-Shop: Rüstungen, die sich lohnen (Chef-Test 25.08.)</h2>
 <p>Slayer-Helm, -Beinschienen und -Armschienen trugen keinen Schutz-, Ausweich- oder Wardwert, ein geschmiedeter Titan-Vollhelm schlug den 19-Stunden-Helm. Jetzt: Helm Schutz 24,4 und +20 % Schaden gegen das aktuelle Auftragsziel; Beinschienen Schutz 21,8 und +20 % gegen Monster über deiner Kampfstufe; Armschienen Ausweichen 11,8 und +4 LP je Kill, Preis 320 → 260. Das Vierer-Set gibt 0,15 LP/s Regeneration statt eines toten Verteidigungs-Boosts. Pestiges Knochenfragment und Schmiedeglut sind aus dem Laden (fallen ohnehin zu 25 bis 40 % je Kill), der Jagdelixier-Kauf beginnt bei Slayer 20.</p>
-<p class="dev">`design/slayer-shop-1.1.0.md` §4.6; int→con umgeschichtet (Klassenregel Platte/Leder), Guard `slayer-shop.test.ts`, Pins suffix-class-fit 178/85, content-integrity Allowlists, TTK-Pin ranged/idol_warden 14,52 → 17,83 (Armschienen-Ausweichen). Locale-Overlays der drei Texte für ES/RU/ZH/FR/PT-BR folgen. Offen (§7.2): Armschienen-Rezept verlangt Etage-5-Material bei SL 50.* *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110). Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.</p>
+<p class="dev">`design/slayer-shop-1.1.0.md` §4.6; int→con umgeschichtet (Klassenregel Platte/Leder), Guard `slayer-shop.test.ts`, Pins suffix-class-fit 178/85, content-integrity Allowlists, TTK-Pin ranged/idol_warden 14,52 → 17,83 (Armschienen-Ausweichen). Locale-Overlays der drei Texte für ES/RU/ZH/FR/PT-BR folgen. Offen (§7.2): Armschienen-Rezept verlangt Etage-5-Material bei SL 50.</p>
 <ul class="pruef"><li><label><input type="checkbox"> Auftrag holen: „Sofort kämpfen (n)“ startet den Kampf mit Rest-Ziel, „Einreihen (n)“ legt ihn hinten an</label></li></ul>
 <div class="urteil"><label><input type="radio" name="u39"> OK</label> <label><input type="radio" name="u39"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
 </section>
-<h2 style="margin-top:36px">Offene Chef-Entscheidungen (7)</h2>
+<section class="karte" id="f40">
+<h2><span class="nr">40</span> Inventar: leere Zellen nur, wenn wirklich Platz ist (Chef-Test 25.08.)</h2>
+<p>Bei „49/48" zeigte das Raster trotzdem drei leere Zellen. Verzauberte Varianten ohne Grundversion belegen einen Platz, aber keine Rasterzelle, und in die leeren Zellen ließ die Engine nichts Neues. Jetzt erscheinen genau so viele leere Zellen, wie Plätze frei sind; übervoll heißt keine.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Inventar auf 49/48 bringen (verzauberte Variante ohne Grundversion dazu): keine leere Zelle sichtbar; ein Item verkaufen: genau eine erscheint</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u40"> OK</label> <label><input type="radio" name="u40"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f41">
+<h2><span class="nr">41</span> Zonenansicht: „Zurück zum Kampf" in der Knopf-Familie (Chef-Test 25.08.)</h2>
+<p>Der Knopf oben rechts lief ohne Styling.</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Feature aufrufen und gegen den Text prüfen</label></li><li><label><input type="checkbox"> Bei 1920×1080 und 1600×900 ansehen</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u41"> OK</label> <label><input type="radio" name="u41"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f42">
+<h2><span class="nr">42</span> Dungeon-Karte: Boss-Beute und Item-Typ (Chef-Entscheidung E3, 25.08.)</h2>
+<p>Die Karte „Hinter dem Thron" zeigte nur die Truhen-Beute (Kette der Sieben Kronen, 0,10 %); die Crownless Blade fällt von Drazhan selbst und stand nur im Bestiarium, ein Spieler hielt die Kette für das Schwert. Jetzt listet jede Dungeon-Karte zusätzlich „Boss-Beute" (Ausrüstung der Boss-Begegnungen), und jeder entdeckte Eintrag nennt seinen Typ („Hals", „Schwert").</p>
+
+<ul class="pruef"><li><label><input type="checkbox"> Karte „Hinter dem Thron“: Zeile „Boss-Beute“ mit Crownless Blade 0,25 %, Kette mit Typ „Hals“, Schwert mit Typ „Schwert“ (nur bei entdeckten Items)</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u42"> OK</label> <label><input type="radio" name="u42"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f43">
+<h2><span class="nr">43</span> Tägliche Aufgaben: keine Anfänger-Aufgaben für Veteranen (Chef-Entscheidung E7, 25.08.)</h2>
+<p>Die zwanzig leichten Dailies („10 Kupfer abbauen", „5 Hühner") tauchten auch bei Gesamtlevel 900 noch auf. Jede leichte Daily hat jetzt eine obere Gesamtlevel-Schranke (150 bis 300, je nach Ära); darüber kommen nur noch mittlere, schwere und Meister-Aufgaben. Zu jedem Gesamtlevel bleiben mindestens drei Aufgaben je Stufe im Topf.</p>
+<p class="dev">`QuestDef.maxTotalLevel`, Filter in `isDailyEligible` nach der seeded Mischung (kein RNG-Zug, Saves würfeln bit-identisch), kein SAVE-Bump. Pool-Guard in quest-integrity.test.ts über Gesamtlevel 0..1980. medium bewusst ohne Deckel (Endgame-Mix 2/2/2).</p>
+<ul class="pruef"><li><label><input type="checkbox"> Save mit Gesamtlevel > 300: Dailies neu würfeln lassen (Tageswechsel): keine „10 Kupfer“/„5 Hühner“ mehr, nur mittlere/schwere/Meister</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u43"> OK</label> <label><input type="radio" name="u43"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f44">
+<h2><span class="nr">44</span> Toter Verteidigungs-Boost auf 51 Items ersetzt (Chef-Entscheidung E1, 25.08.)</h2>
+<p>„+n Verteidigung" auf Amuletten, Ringen, Umhängen, Rüstungen und Schilden wirkte seit der Rüstungs-Trinität nirgends mehr. Schmuck und Umhänge geben jetzt stattdessen +Konstitution (Granat- bis Göttenstein-Amulett +1 bis +5, Kette der Sieben Kronen +5, Siegel des Neunten Wächters +4), Rüstung und Schilde einen höheren Wert ihrer eigenen Klasse (Götzenschleier Schutz 37,5 → 42, Krone des Götzen 25 → 28, Aegis des Letzten Götzen Block 49,7 → 50 %).</p>
+<p class="dev">Regel n × 3 % des Klassenwerts, min n × 0,4; Rauchgewebe-Umhang con 3 statt 2 (Drop- schlägt-Craft-Guard). Guard „kein Item trägt skillBoost.defence" in dead-effects.test.ts. Pins: jewelcrafting (maxHp-Delta), Hülle §4 Tank CL30/60/90 (CL90 AR 552 → 533: Score-Heuristik wählt Pfotenschritt-Stiefel statt Aetherium-Sabatons, dokumentierte Ungenauigkeit), §5 Boss→Spieler-TTK melee 19,79 → 20,2 / 14,1 → 14,4, ranged 17,83 → 18,19.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Granatamulett / Leder-Umhang im Tooltip: kein „+1 Verteidigung“, dafür +Konstitution; Götzenschleier: Schutz 42; Aegis: Block 50 %</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u44"> OK</label> <label><input type="radio" name="u44"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<section class="karte" id="f45">
+<h2><span class="nr">45</span> Rune der Auszehrung auf +35 % (Chef-Entscheidung E5, 25.08.)</h2>
+<p>Brand-, Blutungs- und Gift-Ticks +35 % statt +50 %, bis der Zeit-bis-Tod-Pin steht.</p>
+<p class="dev">`luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110). Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.</p>
+<ul class="pruef"><li><label><input type="checkbox"> Runenkunst-Rezept/Tooltip der Rune der Auszehrung: +35 %</label></li></ul>
+<div class="urteil"><label><input type="radio" name="u45"> OK</label> <label><input type="radio" name="u45"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
+</section>
+<h2 style="margin-top:36px">Chef-Entscheidungen vom 25.08. (7, entschieden)</h2>
 <section class="karte entscheid" id="e1">
-<h2><span class="nr">E1</span> Toter Verteidigungs-Boost auf 53 Items</h2>
-<p>„+n Verteidigung“ (skillBoost.defence) wirkt seit der Rüstungs-Trinität nirgends: computeStats liest defence nicht, der Kampf nutzt es nur fürs XP-Routing. Betroffen: die ganze Amulett-Leiter (Granat bis Göttenstein), 16 Umhänge, das Idol-Set, Chase-Drops wie die Kette der Sieben Kronen und das Siegel des Neunten Wächters. Die drei Slayer-Teile sind bereinigt, die anderen 50 nicht.</p>
-<p class="dev">Empfehlung: Rüstung/Schild → kleiner Trinity-Wert der eigenen Klasse (n × Tier-Faktor), Schmuck/Umhang → +HP (con). Content-Agent, Balance-Hülle neu messen, noch in 1.1.0.</p>
+<h2><span class="nr">E1</span> E1 Toter Verteidigungs-Boost auf 53 Items</h2>
+<p>Entschieden 25.08. (wie empfohlen): Rüstung/Schild bekommen einen Trinity-Wert der eigenen Klasse, Schmuck/Umhänge +HP (con). Umgesetzt in diesem Build, siehe Karte „Toter Verteidigungs-Boost“.</p>
+<p class="dev">Prüfen: Granatamulett/Leder-Umhang im Tooltip: kein „+Verteidigung“ mehr, dafür +Konstitution bzw. höherer Schutz-/Ausweichwert.</p>
 <div class="urteil"><label><input type="radio" name="e1"> Ja</label> <label><input type="radio" name="e1"> Nein</label> <label><input type="radio" name="e1"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
 <section class="karte entscheid" id="e2">
-<h2><span class="nr">E2</span> Brennas Stufen: Jagd / Kopfgeld / Blutjagd</h2>
-<p>Vorschlag aus design/slayer-auftraege-1.1.0.md: drei wählbare Auftragsstufen mit eigenen Level-Fenstern (Jagd CL−3..+6, Kopfgeld ab SL 15 CL+3..+12 mit 7 Pkt, Blutjagd ab SL 40 CL+8..+18 mit 10 Pkt und 1,5× XP). Braucht SAVE 83 (Task-Feld tier), Engine, UI, sieben Sprachen. Der Sofort-Fix (Turmfenster CL−3, Turm nur auf Niveau) ist drin und beseitigt die Ein-Treffer-Ziele.</p>
-<p class="dev">Empfehlung: 1.2.0 „Alive“ (passt zu NPCs/Quest-Hub); 1.1.0 nur mit dem Sofort-Fix.</p>
+<h2><span class="nr">E2</span> E2 Brennas Stufen: Jagd / Kopfgeld / Blutjagd</h2>
+<p>Entschieden 25.08.: später, für 1.2.0 „Alive“. In 1.1.0 nur der Sofort-Fix (Turmfenster CL−3, Turm nur auf Niveau).</p>
+<p class="dev">Kein Prüfschritt in diesem Build.</p>
 <div class="urteil"><label><input type="radio" name="e2"> Ja</label> <label><input type="radio" name="e2"> Nein</label> <label><input type="radio" name="e2"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
 <section class="karte entscheid" id="e3">
-<h2><span class="nr">E3</span> Droptabelle: Item-Typ am Eintrag</h2>
-<p>Der Crownless-Report entstand, weil die Kette der Sieben Zerbrochenen Kronen (0,10 %) neben der Crownless Blade (0,25 %) steht. Ein kleiner Typ-Text am Eintrag („Amulett“, „Schwert“) macht das eindeutig.</p>
-<p class="dev">Empfehlung: ja, ein kurzer UI-Auftrag, 1.1.0.</p>
+<h2><span class="nr">E3</span> E3 Droptabelle: Item-Typ am Eintrag</h2>
+<p>Entschieden 25.08.: ja. Dazu der Fund: die Crownless Blade war auf der Karte gar nicht zu sehen, sie fällt von Drazhan selbst. Jetzt Zeile „Boss-Beute“ und Typ-Text je Eintrag.</p>
+<p class="dev">Prüfen: Karte „Hinter dem Thron“.</p>
 <div class="urteil"><label><input type="radio" name="e3"> Ja</label> <label><input type="radio" name="e3"> Nein</label> <label><input type="radio" name="e3"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
 <section class="karte entscheid" id="e4">
-<h2><span class="nr">E4</span> Eisen/Stahl-Schmiedeleiter</h2>
-<p>Die Leiter ab Barren-Level hebt 113 Items; Eisen- und Stahl-Plattenpanzer liegen jetzt 7 Level über ihrem alten Wert.</p>
-<p class="dev">Empfehlung: so lassen (saubere Leiter), betrifft nur die Frühphase.</p>
+<h2><span class="nr">E4</span> E4 Eisen/Stahl-Schmiedeleiter</h2>
+<p>Entschieden 25.08.: so lassen.</p>
+<p class="dev">Kein Prüfschritt.</p>
 <div class="urteil"><label><input type="radio" name="e4"> Ja</label> <label><input type="radio" name="e4"> Nein</label> <label><input type="radio" name="e4"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
 <section class="karte entscheid" id="e5">
-<h2><span class="nr">E5</span> Rune der Auszehrung: 0,5 oder 0,35</h2>
-<p>Tier-IV-Rune, Wert aus design/runen-tier-iv.html §7.3; ein TTK-Sim-Pin fehlt noch.</p>
-<p class="dev">Empfehlung: 0,35, bis der Pin steht.</p>
+<h2><span class="nr">E5</span> E5 Rune der Auszehrung: 0,35</h2>
+<p>Entschieden 25.08.: 0,35 bis der TTK-Pin steht.</p>
+<p class="dev">Prüfen: Rune der Auszehrung im Tooltip: +35 %.</p>
 <div class="urteil"><label><input type="radio" name="e5"> Ja</label> <label><input type="radio" name="e5"> Nein</label> <label><input type="radio" name="e5"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
 <section class="karte entscheid" id="e6">
-<h2><span class="nr">E6</span> Slayer-Shop Phase 2: Jägerumhang</h2>
-<p>Lücke Slayer 30–50 im Sortiment; braucht ein Asset von Mira (Umhang, SL 30, 150 Pkt, firstBlood 0,15). Nebenbefund §7.2: das Armschienen-Rezept verlangt Etage-5-Material bei Slayer 50.</p>
-<p class="dev">Empfehlung: Mira-Auftrag jetzt, Einbau wenn das Bild da ist; Rezept auf Etage-3-Material senken.</p>
+<h2><span class="nr">E6</span> E6 Slayer-Shop Phase 2: Jägerumhang</h2>
+<p>Entschieden 25.08.: Mira-Auftrag vorbereitet (CODEX/work/2026-08-25-slayer-jaegerumhang, NACHRICHT-AN-MIRA.txt). Einbau, wenn das Bild da ist.</p>
+<p class="dev">Kein Prüfschritt, bis Mira liefert.</p>
 <div class="urteil"><label><input type="radio" name="e6"> Ja</label> <label><input type="radio" name="e6"> Nein</label> <label><input type="radio" name="e6"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
 <section class="karte entscheid" id="e7">
-<h2><span class="nr">E7</span> Kleinkram</h2>
-<p>Obere Gesamtlevel-Schranke für leichte Dailies; cook_beef 7 statt 6 XP.</p>
-<p class="dev">Empfehlung: beides ja, 1.1.0.</p>
+<h2><span class="nr">E7</span> E7 Kleinkram</h2>
+<p>Entschieden 25.08.: beides ja. Dailies bekommen eine obere Gesamtlevel-Schranke, cook_beef gibt 7 XP.</p>
+<p class="dev">Prüfen: Dailies mit hohem Gesamtlevel zeigen keine Anfänger-Aufgaben; Rindfleisch kochen: 7 XP.</p>
 <div class="urteil"><label><input type="radio" name="e7"> Ja</label> <label><input type="radio" name="e7"> Nein</label> <label><input type="radio" name="e7"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
-<h2 style="margin-top:36px">Commits des Tages (35)</h2>
+<h2 style="margin-top:36px">Commits des Tages (39)</h2>
 <div class="commits">022c6d6 Spieler-Report: Beute-Box beim Stehlen scrollte vor vier leeren Kaesten
 64b818b Spieler-Report 1.0.2: Runen stapeln, Slots im Tooltip, Plaene fuer New Haven
 5c17959 Chef-Runde 25.08.: Proc-Runen einmalig, Stahlrahmen-Schnitt, Zonen-Knopf, Samen-Auswahl, Skip-Meldung
@@ -372,5 +414,9 @@ f9cf2fd Testbericht 1.1.0: 29 Karten mit Pruefschritten aus der Patchnotes-Samme
 cd108a2 Chef-Test 1.1.0: Slayer-Knoepfe in der Knopf-Familie, Shop nach Stufe, Kopfzeilen-Ziel bricht um
 f786075 Chef-Test 1.1.0: Slayer-Turmfenster hoechstens 3 Stufen unter dem Spieler, Streckung erst nach oben
 f9d734b Slayer-Vergabe: Turm-Auftraege nur, wenn der Turm einen Kandidaten auf Niveau hat
-285ab50 Chef-Test 1.1.0: Slayer-Ruestungen mit Trinity-Wert und Effekt, Wiki und Varianten-Tasche auf Pergament</div>
+285ab50 Chef-Test 1.1.0: Slayer-Ruestungen mit Trinity-Wert und Effekt, Wiki und Varianten-Tasche auf Pergament
+199543b Slayer-Ruestungen: Beschreibungen in ES/FR/PT-BR/RU/ZH nachgezogen
+c80dbe8 Testbericht 1.1.0: 39 Karten plus 7 offene Chef-Entscheidungen (Stand 25.08. Nacht)
+2f5b9e6 Chef-Runde 2: Slayer-Knoepfe in der Citadel-Familie, Inventar zeigt nur freie Einheiten, Dungeon-Karte mit Boss-Beute und Item-Typ (E3), Mira-Auftrag Jaegerumhang (E6)
+23f881d Chef-Entscheidungen E1/E5/E7: toter Verteidigungs-Boost auf 51 Items ersetzt, Auszehrung 0,35, Dailies-Obergrenze</div>
 </div></body></html>
