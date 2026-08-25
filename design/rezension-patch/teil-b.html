@@ -1,0 +1,305 @@
+<section id="p11">
+<h2>#11 Essen: schwache Gerichte, lange Herstellzeit</h2>
+
+<p><strong>Kernaussage:</strong> Die Kochen-XP liegt bei allen 47 Rezepten exakt auf der Zielkurve (C = 600, Abweichung maximal 1 XP), das Problem ist nicht die XP, sondern die <span class="gold">Portion</span>: ein Gericht braucht 10 bis 24 Sekunden und 3 bis 6 Zutaten für <em>einen</em> Bissen, der nur 1 bis 3 Lebenspunkte mehr heilt als der Einfach-Fisch derselben Stufe. 13 der 47 Rezepte liefern unter 60 % der Heilung je Koch-Sekunde ihrer Einfach-Referenz. Der Spieler hat Recht.</p>
+
+<h3>Wie Essen im Kampf wirkt (Ist, Engine)</h3>
+<ul>
+<li><strong>Auto-Eat</strong> (<code>combat.ts tryAutoEat</code>): isst, sobald HP unter der Schwelle liegen (Stufe 0 bis 3: 45 / 55 / 62 / 70 % maxHp, auf der Maxstufe frei einstellbar 5 bis 95 %), dann <span class="gold">4,5 s Cooldown</span> je Bissen (<code>AUTO_EAT_COOLDOWN_MS</code>). Mehr als ein Bissen je 4,5 s gibt es nie, egal wie gut das Essen ist.</li>
+<li><strong>Heilbetrag</strong> (<code>consumableHeal</code>, shared): <code>max(healAmount, round(maxHp · healPct))</code>. Bei nackter maxHp gewinnt überall der flache Wert; der Prozentwert greift erst mit Ausrüstungs-HP (Beispiel Seelenfeuer-Bankett 40 flach gegen 15,5 %: erst ab 258 maxHp zählt der Prozentwert).</li>
+<li><strong>Buff</strong> (<code>applyConsumableBuff</code>): wird bei jedem Bissen angewendet, auch im Auto-Eat. Kategorie <code>food</code> ist ein Exklusiv-Slot (ein Gericht-Buff zur Zeit, ein neuer Bissen frischt die Dauer auf). Herblore-Tonika liegen in eigenen Kategorien (offense, defense, attribute, regeneration, utility) und stapeln mit dem Gericht.</li>
+<li><strong>Auto-Trank</strong> läuft getrennt (Schwelle 40 %, 8 s Cooldown). Essen ist die Grundversorgung, der Trank der Notschluck.</li>
+<li>Folge für die Balance: <strong>Heilung je Bissen</strong> bestimmt das Kampf-Sustain (Bissen / 4,5 s). <strong>Sekunden und Zutaten je Bissen</strong> bestimmen, ob sich das Kochen lohnt. Der Spieler-Befund liegt komplett im zweiten Punkt.</li>
+</ul>
+
+<h3>Befund 1: Einfach-Speisen sind in Ordnung, mit einer Delle bei L28 bis L48</h3>
+<p>Heilung je Bissen der Einfach-Speisen in Prozent der nackten maxHp beim Freischalten (maxHp-Formel <code>5 + con·2 + (vit−1)·0,3</code>, Werte aus der Retune-Spec #241): Shrimp L1 18 %, Forelle L10 16 %, Kabeljau L15 15 %, Geisterflosser L20 15 %, Schattenkarpfen L25 15 %, <span class="gold">Hirsch L28 13 %, Eisenschuppen-Barsch L30 14 %, Lachs L35 14 %, Roc-Keule L40 14 %, Dämmerflossen L45 14 %, Altbär L48 14 %</span>, Hummer L55 16 %, Blutfang-Aal L63 16 %, Anglerfisch L70 17 %, Geisterschupper L78 18 %, Leerenrochen L85 21 %, Abgrund-Kriecher L92 23 %, Seelenfisch L97 24 %. Zielwert der Balance-Kette Schritt 4 war ~18 % je Bissen. Die Leiter ist monoton und die Delle klein (ein bis zwei Prozentpunkte), Regel 1 unten hebt sie mit +1 Heilung je Speise.</p>
+
+<h3>Befund 2: Die 16 Gerichte kosten zu viel Zeit und Zutaten je Bissen</h3>
+<p>Referenz = die Einfach-Speise (Fisch oder Fleisch) mit dem nächstliegenden Level auf oder unter dem Gericht. Heilung = flacher Wert (<code>healAmount</code>), die im Ist nackt überall gewinnt.</p>
+<table class="tab">
+<thead><tr><th>Gericht</th><th>L</th><th>Dauer</th><th>Zutaten</th><th>Heilung</th><th>HP je Koch-s</th><th>HP je Zutat</th><th>Referenz (HP je Koch-s)</th><th>Anteil</th><th>Buff (Dauer)</th></tr></thead>
+<tbody>
+<tr><td>marshroot_chowder</td><td>18</td><td>14 s</td><td>5</td><td>6</td><td>0,43</td><td>1,2</td><td>Kabeljau L15 (1,43)</td><td class="gold">30 %</td><td>con +2 (90 s)</td></tr>
+<tr><td>bloodgrain_stew</td><td>38</td><td>16 s</td><td>6</td><td>10</td><td>0,63</td><td>1,7</td><td>Lachs L35 (2,00)</td><td class="gold">31 %</td><td>str +3 (120 s)</td></tr>
+<tr><td>duskfin_rangers_stew</td><td>48</td><td>10 s</td><td>4</td><td>13</td><td>1,30</td><td>3,3</td><td>Altbär L48 (2,00)</td><td>65 %</td><td>dex +3 (120 s)</td></tr>
+<tr><td>gallows_preserve</td><td>50</td><td>13 s</td><td>3</td><td>13</td><td>1,00</td><td>4,3</td><td>Altbär L48 (2,00)</td><td class="gold">50 %</td><td>keiner</td></tr>
+<tr><td>spellwarden_bisque</td><td>52</td><td>10 s</td><td>5</td><td>14</td><td>1,40</td><td>2,8</td><td>Altbär L48 (2,00)</td><td>70 %</td><td>int +3 (120 s)</td></tr>
+<tr><td>soulgourd_brisket</td><td>58</td><td>18 s</td><td>5</td><td>16</td><td>0,89</td><td>3,2</td><td>Hummer L55 (2,50)</td><td class="gold">36 %</td><td>str +4, con +2 (180 s)</td></tr>
+<tr><td>steelshot_bisque</td><td>63</td><td>14 s</td><td>4</td><td>18</td><td>1,29</td><td>4,5</td><td>Blutfang-Aal L63 (2,43)</td><td class="gold">53 %</td><td>dex +4 (180 s)</td></tr>
+<tr><td>spellflare_tisane</td><td>65</td><td>14 s</td><td>4</td><td>19</td><td>1,36</td><td>4,8</td><td>Blutfang-Aal L63 (2,43)</td><td class="gold">56 %</td><td>int +4, wis +2 (180 s)</td></tr>
+<tr><td>witherleek_bouillabaisse</td><td>75</td><td>20 s</td><td>5</td><td>22</td><td>1,10</td><td>4,4</td><td>Wyvern L72 (2,47)</td><td class="gold">45 %</td><td>str +5, con +2 (240 s)</td></tr>
+<tr><td>witherleek_sharpshooters_pie</td><td>76</td><td>20 s</td><td>5</td><td>23</td><td>1,15</td><td>4,6</td><td>Wyvern L72 (2,47)</td><td class="gold">47 %</td><td>dex +5, con +2 (240 s)</td></tr>
+<tr><td>witherleek_arcane_broth</td><td>77</td><td>20 s</td><td>5</td><td>24</td><td>1,20</td><td>4,8</td><td>Wyvern L72 (2,47)</td><td class="gold">49 %</td><td>int +5, wis +3 (240 s)</td></tr>
+<tr><td>voidray_banquet</td><td>86</td><td>20 s</td><td>5</td><td>31</td><td>1,55</td><td>6,2</td><td>Leerenrochen L85 (3,16)</td><td class="gold">49 %</td><td>con +5, str/dex/int +3 (240 s)</td></tr>
+<tr><td>ambergrain_feast</td><td>90</td><td>22 s</td><td>5</td><td>34</td><td>1,55</td><td>6,8</td><td>Leerenrochen L85 (3,16)</td><td class="gold">49 %</td><td>con +6, str/dex/int +4 (300 s)</td></tr>
+<tr><td>risotto_starcap</td><td>90</td><td>15 s</td><td>3</td><td>34</td><td>2,27</td><td>11,3</td><td>Leerenrochen L85 (3,16)</td><td>72 %</td><td>con +8 (240 s)</td></tr>
+<tr><td>abyssal_feast</td><td>93</td><td>22 s</td><td>5</td><td>36</td><td>1,64</td><td>7,2</td><td>Abgrund-Kriecher L92 (3,33)</td><td class="gold">49 %</td><td>con +6, dex +4, lck +2 (300 s)</td></tr>
+<tr><td>soulfire_banquet</td><td>98</td><td>24 s</td><td>5</td><td>40</td><td>1,67</td><td>8,0</td><td>Seelenfisch L97 (3,39)</td><td class="gold">49 %</td><td>con +8, str/dex/int +5, wis/lck +3 (360 s)</td></tr>
+</tbody></table>
+<p>Die 13 Zeilen mit Gold-Markierung liegen unter 60 % und sind die <span class="gold">schwachen Gerichte</span>; Jäger-Eintopf, Zauberwächter-Bisque und Risotto liegen knapp darüber und bekommen die Portionsregel aus Konsistenzgründen trotzdem. Rechenbeispiel aus Spielersicht: ein Kampf verbraucht bei Dauer-Schwelle bis zu 800 Bissen je Stunde (ein Bissen je 4,5 s). Mit Lachs sind das 60 Minuten Kochen je Kampfstunde, mit Blutgetreide-Eintopf 213 Minuten und 4 800 Zutaten. Kein Gericht kann seinen eigenen Verbrauch decken, deshalb kocht jeder Fisch und lässt die Gerichte liegen.</p>
+
+<h3>Befund 3: Buffs ohne klaren Bezug, zu kurz, und im Endgame ohne Stil</h3>
+<ul>
+<li><strong>Stil-Deckung je Band:</strong> L18 bis L37 nur ein Gericht (con +2, generisch), L38 bis L47 nur Nahkampf (str +3), Fernkampf und Magie bekommen ihr erstes Gericht erst bei L48 / L52. Ab L48 ist die Deckung vollständig (Trio L48/52/58, L63/65, L75/76/77).</li>
+<li><strong>Endgame ohne Stil:</strong> voidray_banquet, ambergrain_feast, abyssal_feast und soulfire_banquet geben allen drei Angriffs-Attributen gleichzeitig +3 bis +5. Für jeden einzelnen Stil ist das weniger als das Witherleek-Trio zwanzig Level früher (+5 im eigenen Attribut). Die Endgame-Gerichte lesen sich als „ein bisschen von allem" statt „mein Gericht".</li>
+<li><strong>Lesbarkeit:</strong> Attribut-Boni sind die am schlechtesten sichtbare Währung: +3 STR sind +0,9 im Attribut-Term des Nahkampfschadens (<code>0,1 + str·0,3 + power·0,08 + eq</code>), auf dem Charakterbogen als Zahl da, im Kampf nicht spürbar. Trinity-Werte (Rüstung, Ausweichen, Schild) und ganzzahlige LP-Regeneration stehen dagegen direkt am Balken.</li>
+<li><strong>Vergleich Kräuterkunde (Doppelnutzen):</strong> Blutrausch-Tonikum L38 gibt str +6 für 90 s (8 s, 4 Zutaten), der Blutgetreide-Eintopf L38 str +3 (16 s, 6 Zutaten). Das Arkan-Surge-Tonikum L52 gibt int +6 plus 60 Mana und 4 Mana-Regen, die Zauberwächter-Bisque int +3. Weil die Kategorien verschieden sind, stapeln beide, das Gericht ist also ein Zusatz und kein Ersatz. Auffällig: <span class="gold">Kräuterkunde hat kein DEX-Tonikum</span>, das Gericht ist die einzige Fernkampf-Attribut-Quelle. Für Fernkämpfer ist das Gericht darum wichtiger als für die anderen beiden Stile.</li>
+<li><strong>Dauer:</strong> 90 s (L18) und 120 s (L38 bis L52) verfallen in der Kampf-Warteschlange zwischen zwei Kämpfen, weil der Buff nur beim Bissen aufgefrischt wird und ohne Schaden nicht gegessen wird.</li>
+<li><strong>Trinity fehlt komplett:</strong> keine Speise trägt <code>buff.trinity</code>; die einzigen Trinity-Buffs sind die vier Defensiv-Tonika der Kräuterkunde (Steinhaut-Tonikum Rüstung 35, Scharfaugen-Tonikum Ausweichen 20, Bollwerk-Tonikum Block 0,10, Schutz-Elixier Schild 80).</li>
+</ul>
+
+<h3>Lösungsvorschlag: drei Regeln</h3>
+<p><strong>Regel 1, Heilung ∝ Level-Kurve.</strong> Ziel ~16 bis 18 % der nackten maxHp je Bissen. Die Delle L28 bis L48 bekommt +1 flach, die Gerichte des Bandes ziehen mit (Gericht = Einfach-Speise des Levels + 1 bis 3). Prozentwerte bleiben unverändert. Klein, optional, aber sauber.</p>
+<table class="tab">
+<thead><tr><th>Item</th><th>L</th><th>healAmount alt</th><th>neu</th><th>% maxHp nackt neu</th></tr></thead>
+<tbody>
+<tr><td>venison_roast</td><td>28</td><td>7</td><td>8</td><td>15 %</td></tr>
+<tr><td>cooked_ironscale_bass</td><td>30</td><td>8</td><td>9</td><td>16 %</td></tr>
+<tr><td>cooked_salmon</td><td>35</td><td>9</td><td>10</td><td>16 %</td></tr>
+<tr><td>roc_drumstick_grilled</td><td>40</td><td>10</td><td>11</td><td>15 %</td></tr>
+<tr><td>cooked_duskfin_carp</td><td>45</td><td>11</td><td>12</td><td>15 %</td></tr>
+<tr><td>bear_haunch</td><td>48</td><td>12</td><td>13</td><td>15 %</td></tr>
+<tr><td>bloodgrain_stew</td><td>38</td><td>10</td><td>11</td><td>16 %</td></tr>
+<tr><td>duskfin_rangers_stew</td><td>48</td><td>13</td><td>14</td><td>16 %</td></tr>
+<tr><td>gallows_preserve</td><td>50</td><td>13</td><td>14</td><td>16 %</td></tr>
+<tr><td>spellwarden_bisque</td><td>52</td><td>14</td><td>15</td><td>16 %</td></tr>
+</tbody></table>
+
+<p><strong>Regel 2, Herstellzeit auf die Kurve: ein Topf ergibt mehrere Portionen.</strong> Dauer und XP der Rezepte bleiben exakt wie heute (beides liegt auf der C-600-Kurve, Kochen-XP/h ändert sich nicht). Stattdessen liefert das Rezept <code>loot.min = loot.max = Portionen</code>, mit <code>Portionen = round(Gericht-Dauer / Dauer der Referenz-Einfach-Speise)</code>, mindestens 2. Damit landet jedes Gericht bei 89 bis 143 % der Heilung je Koch-Sekunde seiner Referenz (meist nahe 100 %, Ausreißer nach oben ist das Risotto mit nur drei Zutaten), mit Buff obendrauf und höchstens einem halben seltenen Fisch je Portion. Der Verkaufswert wird durch die Portionen geteilt, damit Gold je Koch-Stunde gleich bleibt (Verkauf = 0,5 × value, <code>SELL_FRACTION</code>).</p>
+
+<p><strong>Regel 3, je Band ein Gericht mit klarem Kampfnutzen, passend zum Stil.</strong> Attribut-Boni bleiben (Hybrid-Progression, Guard 1 bis 8), dazu kommt je Stil eine sichtbare Trinity-Zutat aus der Rüstungs-Trinität: Nahkampf = Rüstung (armorRating), Fernkampf = Ausweichen (evasionRating), Magie = Schild (wardCapacity). Werte deutlich unter den Kräuterkunde-Defensiv-Tonika (Guards: Rüstung ≤ 35, Ausweichen ≤ 20, Schild ≤ 80), damit das Gericht das Tonikum ergänzt und nicht ersetzt. Endgame-Quartett wird stil-spezifisch, das Seelenfeuer-Bankett bleibt das universelle Kronen-Gericht. Mindestdauer 180 s, ab T3 240 s, ab T4 300 s.</p>
+
+<table class="tab">
+<thead><tr><th>Gericht</th><th>L</th><th>Portionen</th><th>s je Portion (Referenz)</th><th>Zutaten je Portion</th><th>value alt → neu</th><th>Buff alt → neu</th><th>Dauer alt → neu</th></tr></thead>
+<tbody>
+<tr><td>marshroot_chowder</td><td>18</td><td>1 → <span class="gold">4</span></td><td>3,5 (Kabeljau 3,5)</td><td>1,25</td><td>40 → 10</td><td>con +2 → con +2 (unverändert, Tank-Einstieg)</td><td>90 → 180 s</td></tr>
+<tr><td>bloodgrain_stew</td><td>38</td><td>1 → <span class="gold">4</span></td><td>4,0 (Lachs 4,5)</td><td>1,5</td><td>100 → 25</td><td>str +3 → str +3, Rüstung +6</td><td>120 → 180 s</td></tr>
+<tr><td>duskfin_rangers_stew</td><td>48</td><td>1 → <span class="gold">2</span></td><td>5,0 (Altbär 6,0)</td><td>2</td><td>120 → 60</td><td>dex +3 → dex +3, Ausweichen +4</td><td>120 → 180 s</td></tr>
+<tr><td>gallows_preserve</td><td>50</td><td>1 → <span class="gold">2</span></td><td>6,5 (Altbär 6,0)</td><td>1,5</td><td>75 → 38</td><td>keiner → keiner (reine Anbau-Senke)</td><td>–</td></tr>
+<tr><td>spellwarden_bisque</td><td>52</td><td>1 → <span class="gold">2</span></td><td>5,0 (Altbär 6,0)</td><td>2,5</td><td>140 → 70</td><td>int +3 → int +3, Schild +15</td><td>120 → 180 s</td></tr>
+<tr><td>soulgourd_brisket</td><td>58</td><td>1 → <span class="gold">3</span></td><td>6,0 (Hummer 6,0)</td><td>1,67</td><td>220 → 73</td><td>str +4, con +2 → str +4, con +2, Rüstung +8</td><td>180 → 240 s</td></tr>
+<tr><td>steelshot_bisque</td><td>63</td><td>1 → <span class="gold">2</span></td><td>7,0 (Blutfang-Aal 7,0)</td><td>2</td><td>240 → 120</td><td>dex +4 → dex +4, Ausweichen +5</td><td>180 → 240 s</td></tr>
+<tr><td>spellflare_tisane</td><td>65</td><td>1 → <span class="gold">2</span></td><td>7,0 (Blutfang-Aal 7,0)</td><td>2</td><td>260 → 130</td><td>int +4, wis +2 → int +4, wis +2, Schild +20</td><td>180 → 240 s</td></tr>
+<tr><td>witherleek_bouillabaisse</td><td>75</td><td>1 → <span class="gold">2</span></td><td>10,0 (Wyvern 8,5)</td><td>2,5</td><td>500 → 250</td><td>str +5, con +2 → str +5, con +2, Rüstung +10</td><td>240 → 300 s</td></tr>
+<tr><td>witherleek_sharpshooters_pie</td><td>76</td><td>1 → <span class="gold">2</span></td><td>10,0 (Wyvern 8,5)</td><td>2,5</td><td>480 → 240</td><td>dex +5, con +2 → dex +5, con +2, Ausweichen +6</td><td>240 → 300 s</td></tr>
+<tr><td>witherleek_arcane_broth</td><td>77</td><td>1 → <span class="gold">2</span></td><td>10,0 (Wyvern 8,5)</td><td>2,5</td><td>480 → 240</td><td>int +5, wis +3 → int +5, wis +3, Schild +25</td><td>240 → 300 s</td></tr>
+<tr><td>voidray_banquet</td><td>86</td><td>1 → <span class="gold">2</span></td><td>10,0 (Leerenrochen 9,5)</td><td>2,5</td><td>900 → 450</td><td>con +5, str/dex/int +3 → <span class="gold">Nahkampf:</span> str +6, con +3, Rüstung +12</td><td>240 → 300 s</td></tr>
+<tr><td>ambergrain_feast</td><td>90</td><td>1 → <span class="gold">2</span></td><td>11,0 (Leerenrochen 9,5)</td><td>2,5</td><td>1200 → 600</td><td>con +6, str/dex/int +4 → <span class="gold">Magie:</span> int +6, wis +3, con +2, Schild +30</td><td>300 s</td></tr>
+<tr><td>risotto_starcap</td><td>90</td><td>1 → <span class="gold">2</span></td><td>7,5 (Leerenrochen 9,5)</td><td>1,5</td><td>780 → 390</td><td>con +8 → <span class="gold">Tank:</span> con +8, LP-Regeneration +1/s</td><td>240 → 300 s</td></tr>
+<tr><td>abyssal_feast</td><td>93</td><td>1 → <span class="gold">2</span></td><td>11,0 (Abgrund-Kriecher 10,5)</td><td>2,5</td><td>1300 → 650</td><td>con +6, dex +4, lck +2 → <span class="gold">Fernkampf:</span> dex +6, lck +3, con +2, Ausweichen +8</td><td>300 s</td></tr>
+<tr><td>soulfire_banquet</td><td>98</td><td>1 → <span class="gold">2</span></td><td>12,0 (Seelenfisch 11,5)</td><td>2,5</td><td>2000 → 1000</td><td>unverändert (universelles Kronen-Gericht)</td><td>360 s</td></tr>
+</tbody></table>
+
+<p>Die Anbau-Schalen der ersten Stufen (Aschwurz-Brühe 71 %, Grimmkorn-Brei 63 %, Honigkuchen 80 %) liegen über der 60-%-Schwelle und bleiben unverändert; sie sind Senken für passiv geerntete Feldfrucht, nicht der Kern des Befunds.</p>
+
+<h3>Prüfung gegen die Hausregeln</h3>
+<ul>
+<li><strong>Sustain-Fenster (Rüstung bleibt Pflicht):</strong> Heilung je Bissen ändert sich nur um +1 in der Delle, das Sustain je 4,5 s bleibt unter dem nackten On-Level-Zufluss. Die Trinity-Zutaten heilen nicht. Die Regeneration liegt nur auf dem Risotto (L90, +1/s = 0,7 % der nackten maxHp je Sekunde).</li>
+<li><strong>Caps:</strong> Rüstung 12 + Steinhaut 35 liegt beim Tank-Vollstack bereits am Mitigations-Deckel (balance-envelope §3 bestätigt, dass der Deckel dort ohnehin bindet); Ausweichen 8 + Scharfauge 20 unter dem 0,40-Dodge-Cap ab CL 60 ebenfalls schon gebunden. Kein neuer Exploit, nur Klemme.</li>
+<li><strong>Kampf ist fundamental:</strong> Fleisch bleibt Kampf-Drop, Gerichte ändern daran nichts.</li>
+<li><strong>Save-Kompatibilität:</strong> heal/buff/loot/value leben nur in der ContentDB, kein SAVE_VERSION-Bump, keine Migration. Alte Gerichte im Inventar bekommen die neuen Werte beim Laden.</li>
+</ul>
+
+<h3>Betroffene Guards und Sim-Reports</h3>
+<table class="tab">
+<thead><tr><th>Guard / Report</th><th>Wirkung</th><th>Was zu tun ist</th></tr></thead>
+<tbody>
+<tr><td>content-integrity §4.3 (Buff-Bereiche)</td><td>Trinity-Werte 6 bis 30 liegen in den Grenzen (Rüstung ≤ 35, Ausweichen ≤ 20, Schild ≤ 80), Modifikatoren bleiben 1 bis 8</td><td>grün ohne Änderung</td></tr>
+<tr><td>content-integrity §4.4 (<code>tagged = 44</code>)</td><td>keine neuen Buff-Items, Kategorie food bleibt</td><td>grün ohne Änderung</td></tr>
+<tr><td>balance-envelope §2/§3</td><td>BiS-Stack nutzt soulfire_banquet (unverändert)</td><td>grün; bei späterem Umbau auf voidray_banquet neu pinnen</td></tr>
+<tr><td>sim.ts / sim-report (Sim-Food cooked_trout, cooked_voidray)</td><td>Einfach-Speisen unverändert, Kochen-XP/h unverändert</td><td>Sim-Block unverändert</td></tr>
+<tr><td>sim-realistic (Personas kochen selbst)</td><td>Portionen erhöhen den Food-Bestand der Personas</td><td>Findings-Texte gegenlesen, keine harten Pins bekannt</td></tr>
+<tr><td>Tests mit gepinnten Heilwerten (autoeat-dot, kill-cooldown, coast, consume-cooldown, combatlog-source, auto-potion)</td><td>nur bei Regel 1 betroffen (salmon, bass, duskfin, venison, roc, bear +1)</td><td>bei Rot den Pin auf den neuen Wert ziehen</td></tr>
+<tr><td>Quest-Ziele <code>craft_items</code> (Dailies daily_ve_cook_shrimp, daily_e_cook_trout_10)</td><td>zählen Einfach-Speisen, unverändert</td><td>keine</td></tr>
+<tr><td>Token-Shop (Forelle, Kabeljau, Lachs, Hummer)</td><td>Lachs heilt 10 statt 9</td><td>keine</td></tr>
+<tr><td>crafting-margin-Audit (design/crafting-margin-audit.md)</td><td>value je Portion = alt / Portionen</td><td>Verkauf je Koch-Stunde bleibt gleich, kurz gegenrechnen</td></tr>
+</tbody></table>
+
+<h3>Apply-Reihenfolge (content-dev)</h3>
+<ol>
+<li>16 Rezepte: <code>loot.min/max</code> auf die Portionen der Tabelle, <code>value</code> der 16 Gericht-Items auf den neuen Wert.</li>
+<li>15 Gericht-Items: <code>buff.trinity</code> / <code>modifiers</code> / <code>durationMs</code> nach Tabelle (Seelenfeuer-Bankett unverändert).</li>
+<li>Optional Regel 1: 10 <code>healAmount</code>-Werte +1.</li>
+<li><code>pnpm test</code>, Sim-Block lesen: Kochen-XP/h identisch, kein neues kills = 0.</li>
+</ol>
+
+<h3>Aufwand</h3>
+<p>Content <strong>klein bis mittel</strong> (rund 50 Feldänderungen an 16 Rezepten und 16 Items, keine neuen Items, keine Kunst, keine i18n). Engine <strong>keiner</strong> (Mehrfach-Loot und Trinity-Buffs laufen heute schon). UI <strong>keiner</strong> (Tooltip zeigt Trinity-Buffs bereits für Tonika). Tests <strong>klein</strong>.</p>
+
+<div class="entscheid">
+<strong>Chef-Entscheidungen #11</strong>
+<ol>
+<li>Portionen (Regel 2) statt kürzerer Dauer? Alternative B wäre Dauer halbieren und XP mitziehen; sie löst aber nur die Zeit, nicht die fünf Zutaten je Bissen. Empfehlung: Portionen.</li>
+<li>Endgame-Quartett stil-spezifisch umtypen (Leerenrochen = Nahkampf, Abgrund = Fernkampf, Bernstein = Magie, Risotto = Tank), Seelenfeuer bleibt universell? Empfehlung: ja.</li>
+<li>Regel 1 (+1 Heilung L28 bis L48) mitnehmen oder auslassen? Klein, hebt die Delle auf 15 bis 16 %.</li>
+<li>Lücke L20 bis L47 für Fernkampf und Magie: zwei neue Gerichte (Blutgetreide-Jägerpastete dex +3, Blutgetreide-Zaubersud int +3, gleiche Zutaten wie der Eintopf) wären Content plus Kunst plus 7 Sprachen. Empfehlung: nicht in diesem Patch, als Folge-Task notieren.</li>
+</ol>
+</div>
+</section>
+
+<section id="p12">
+<h2>#12 Anbau: Folgesorte je Beet</h2>
+
+<p><strong>Kernaussage:</strong> Ein optionales Feld <code>nextCropId</code> je Beet löst den Befund vollständig: bei der nächsten Reife wird die Folgesorte gesät statt der aktuellen, danach läuft das Beet mit Auto-Nachpflanzen der neuen Sorte weiter. Das braucht einen <span class="gold">SAVE_VERSION-Bump 81 → 82</span> mit Migration und Sanitize-Härtung nach dem Muster der Bauwarteschlange.</p>
+
+<h3>Ist-Stand</h3>
+<ul>
+<li><code>FarmPlot { cropId, plantedAtMs, autoReplant, readyYield, readyItem }</code> (shared, 9 Beete fester Länge, Freischaltung 3 bis 9 nach Farming-Level).</li>
+<li><code>tickFarmPlots</code> (engine/farming.ts) läuft einmal je <code>advance</code>, rechnet <code>cycles = floor(elapsed / growMs)</code>, erntet je Zyklus (ein <code>nextInt</code> je Ernte) und sät bei <code>autoReplant</code> dieselbe Sorte nach, solange Saat in Inventar oder Lager liegt. Offline werden mehrere Zyklen rein arithmetisch verrechnet; die Restzeit wird verlustfrei übertragen (<code>plantedAtMs += cycles · growMs</code>). Das setzt voraus, dass alle Zyklen dieselbe <code>growMs</code> haben.</li>
+<li><code>plantCrop</code> nur auf leeres Beet (prüft Level, Saat, zieht die Saat sofort ab), <code>uprootPlot</code> rodet (Saat verfällt), <code>setAutoReplant</code>, <code>collectPlot</code>.</li>
+<li>UI (FarmPage.tsx): Beet-Karte in drei Zuständen (leer / wächst / reif), <code>CropPicker</code> als Modal mit Saat-Zählung und Vorrechnung, „Alle bepflanzen" über <code>plotIndex = null</code>.</li>
+<li>Der Spieler-Weg heute: Beet roden (Saat verfällt), dann neu setzen. 31 Sorten mit Wachszeiten 10 min (T1) bis 160 min (T5).</li>
+</ul>
+
+<h3>Entwurf: Datenmodell</h3>
+<pre><code>export interface FarmPlot {
+  cropId: ItemId | null;
+  plantedAtMs: number;
+  autoReplant: boolean;
+  readyYield: number;
+  readyItem: ItemId | null;
+  /** Folgesorte (SAVE_VERSION 82): wird bei der naechsten Reife statt cropId gesaet,
+   *  danach null. null = keine Folgesorte geplant. */
+  nextCropId: ItemId | null;
+}</code></pre>
+<p><code>emptyFarmPlot()</code> liefert <code>nextCropId: null</code>. Semantik <strong>einmalig</strong>: nach dem Wechsel nullt sich das Feld, das Beet läuft mit <code>autoReplant</code> der neuen Sorte weiter. Das deckt „dauerhaft" mit ab, ohne eine Rotationsliste zu brauchen; wer erneut wechseln will, setzt wieder eine Folgesorte.</p>
+
+<h3>Entwurf: Engine-Regeln</h3>
+<table class="tab">
+<thead><tr><th>Situation bei Reife</th><th>Verhalten</th></tr></thead>
+<tbody>
+<tr><td>Folgesorte gesetzt, Saat der Folgesorte in Inventar oder Lager</td><td>Ernte der aktuellen Sorte gutschreiben, <span class="gold">eine Saat der Folgesorte abziehen</span>, <code>cropId = nextCropId</code>, <code>nextCropId = null</code>, <code>plantedAtMs</code> = Reifezeitpunkt. Weitere Zyklen laufen mit der <code>growMs</code> der neuen Sorte.</td></tr>
+<tr><td>Folgesorte gesetzt, Saat fehlt</td><td>Rückfall auf das heutige Verhalten: bei <code>autoReplant</code> die aktuelle Sorte nachsäen (wenn Saat da), sonst Beet leeren. Die Folgesorte <strong>bleibt gesetzt</strong> und wird bei der nächsten Reife erneut versucht; die UI warnt sichtbar „keine Saat". Grund: der Plan des Spielers soll nicht still verfallen.</td></tr>
+<tr><td>Folgesorte gesetzt, Beet leer geworden (kein autoReplant, keine Saat)</td><td>Beet leer, <code>nextCropId</code> wird genullt (ein leeres Beet hat keine „nächste" Reife; der Spieler pflanzt normal).</td></tr>
+<tr><td>Roden (<code>uprootPlot</code>)</td><td>leert auch <code>nextCropId</code>. Optionaler Komfort-Knopf „Jetzt wechseln" = roden + Folgesorte sofort pflanzen (nur wenn Saat da).</td></tr>
+<tr><td>Level der Folgesorte höher als Farming-Level</td><td>wird beim Setzen abgelehnt (<code>setNextCrop</code> prüft wie <code>plantCrop</code>: Sorte existiert, Level erreicht, Beet freigeschaltet und bepflanzt). Zur Reife kann das Level nur gestiegen sein, keine zweite Prüfung nötig.</td></tr>
+<tr><td>Folgesorte = aktuelle Sorte</td><td>abgelehnt (nutzlos, gleiche Wirkung wie autoReplant).</td></tr>
+<tr><td>Sorte aus dem Content entfernt</td><td>Sanitize nullt das Feld beim Laden (wie heute bei <code>cropId</code>).</td></tr>
+</tbody></table>
+<p><strong>Determinismus, offline = online:</strong> Die Zyklus-Schleife wird von „<code>cycles</code> vorab rechnen" auf „solange <code>elapsed − t ≥ growMs(aktuelle Sorte)</code>" umgestellt, weil sich <code>growMs</code> mitten in der Offline-Zeit ändern kann. Beispiel: Sorte A (10 min) gepflanzt, Folgesorte B (20 min), 55 min offline: Ernte A bei 10, Wechsel auf B, Ernte B bei 30, Auto-Nachsaat B, Ernte B bei 50, danach B mit 5 min Fortschritt. Für Beete ohne Folgesorte ist die neue Schleife bit-identisch zur alten (gleiche Anzahl Ernten, gleiche Anzahl <code>nextInt</code>-Züge, gleicher Restübertrag); das ist die Bedingung, unter der die Determinismus-Fixtures unberührt bleiben. Die Saat wird zur Reife abgezogen (wie autoReplant), nicht beim Planen; das hält die Regel „eine Quelle für Saatverbrauch" und erspart eine Rückerstattung beim Abbrechen.</p>
+<p><strong>Neue API</strong> (engine/farming.ts): <code>setNextCrop(state, content, plotIndex, cropId | null): boolean</code>. Lesen für die UI über <code>plot.nextCropId</code> plus <code>seedAvailable</code> (heute privat, für die Warnung exportieren oder in <code>plotProgress</code> ein Feld <code>nextSeedMissing</code> ergänzen).</p>
+
+<h3>Entwurf: UI-Fluss</h3>
+<ul>
+<li><strong>Wachsendes Beet:</strong> unter der Restzeit eine Zeile „Danach säen: …". Ohne Plan ein kleiner Knopf, der den bestehenden <code>CropPicker</code> im Modus <code>next</code> öffnet (gleiche Karten, gleiche Saat-Zählung, aktuelle Sorte ausgegraut). Mit Plan ein Chip „→ Grimmkorn" mit Sorten-Icon und einem X zum Löschen; fehlt die Saat, färbt sich der Chip rot mit „keine Saat".</li>
+<li><strong>Reifes Beet mit wartender Ernte</strong> (<code>readyYield &gt; 0</code>): keine Folgesorten-Zeile, hier ist nichts mehr zu planen.</li>
+<li><strong>Leeres Beet:</strong> unverändert.</li>
+<li><strong>„Alle bepflanzen":</strong> bekommt ein Gegenstück „Für alle Beete danach säen: …" (Picker-Modus <code>next</code> mit <code>plotIndex = null</code>, trifft alle wachsenden Beete; die Vorrechnung zeigt „n von m Beeten, k Saat nötig").</li>
+<li>i18n: etwa fünf neue Schlüssel (<code>farm.next.title</code>, <code>farm.next.chip</code>, <code>farm.next.noSeed</code>, <code>farm.next.clear</code>, <code>farm.nextAll</code>) in 7 Sprachen.</li>
+</ul>
+
+<h3>Save-Kompatibilität</h3>
+<ul>
+<li><code>SAVE_VERSION</code> 81 → 82 (shared).</li>
+<li><strong>Migration</strong> (persistence, Muster Bauwarteschlange 80 → 81): für jedes Beet <code>if (plot.nextCropId === undefined) plot.nextCropId = null</code>. Explizit <code>null</code> statt „fehlend", damit die Save-Form fest ist und der Vault-Guard („es ändert sich NUR das neue Feld", save-compat-vault.test.ts) byte-genau vergleichen kann.</li>
+<li><strong>Sanitize</strong> (persistence, im bestehenden Beet-Block): <code>nextCropId</code> nur behalten, wenn String, in <code>content.crops</code> vorhanden, ungleich <code>cropId</code> und das Beet bepflanzt ist; sonst <code>null</code>.</li>
+<li>Alt-Saves verhalten sich exakt wie heute (kein Beet hat eine Folgesorte). Der v80-Vault-Test wird um das Feld erweitert: erwartet <code>buildQueue: []</code> und auf allen 9 Beeten <code>nextCropId: null</code>, sonst byte-gleich.</li>
+</ul>
+
+<h3>Tests</h3>
+<ol>
+<li>farming.test.ts: <code>setNextCrop</code> lehnt leeres Beet, unbekannte Sorte, zu hohes Level und gleiche Sorte ab.</li>
+<li>Reife mit Folgesorte: Saat der Folgesorte abgezogen, <code>cropId</code> gewechselt, <code>nextCropId</code> null, Restfortschritt korrekt.</li>
+<li>Offline-Mehrfachzyklus mit Sortenwechsel (Beispiel A 10 min → B 20 min, 55 min): genau 3 Ernten, 3 <code>nextInt</code>-Züge, Beet B mit 5 min Fortschritt.</li>
+<li>Saat fehlt: Rückfall auf autoReplant der aktuellen Sorte, Plan bleibt; ohne autoReplant Beet leer und Plan genullt.</li>
+<li>Roden nullt den Plan.</li>
+<li>Bit-Identität ohne Folgesorte: die bestehenden 13 Farming-Tests und die Determinismus-Fixtures bleiben unverändert grün.</li>
+<li>persistence: Sanitize-Fälle (unbekannte Sorte, gleiche Sorte, Plan auf leerem Beet) und der erweiterte v80-Vault-Test.</li>
+</ol>
+
+<h3>Aufwand</h3>
+<p>Shared <strong>klein</strong> (ein Feld, Default, Bump). Engine <strong>mittel</strong> (Schleifen-Umbau in <code>tickFarmPlots</code> mit Bit-Identitäts-Pflicht, <code>setNextCrop</code>, Roden-Anpassung). Persistence <strong>klein</strong> (Migration + Sanitize + Vault-Test). UI <strong>mittel</strong> (Beet-Karte, Picker-Modus, „alle danach", 7 Sprachen). Tests <strong>mittel</strong>. Gesamt <strong>mittel</strong>, in einem logic-dev- und einem ui-dev-Durchgang machbar; beide Seiten treffen sich nur an <code>setNextCrop</code> und <code>plot.nextCropId</code>.</p>
+
+<div class="entscheid">
+<strong>Chef-Entscheidungen #12</strong>
+<ol>
+<li>Einmalig (Folgesorte nullt sich nach dem Wechsel, Beet läuft mit Auto-Nachpflanzen der neuen Sorte) statt Rotationsliste? Empfehlung: einmalig, das ist genau der Spieler-Wunsch und hält Save und UI klein.</li>
+<li>Saat fehlt zur Reife: Plan behalten und warnen (Empfehlung) oder Plan verwerfen?</li>
+<li>Komfort-Knopf „Jetzt wechseln" (roden + Folgesorte sofort setzen) mitnehmen? Klein, aber ein Knopf mehr auf der Karte.</li>
+<li>„Für alle Beete danach säen" gleich mitliefern (Empfehlung: ja, die 9-Beete-Spieler sind genau die, die den Befund melden).</li>
+</ol>
+</div>
+</section>
+
+<section id="p13">
+<h2>#13 Token-Shop nach Fortschritt</h2>
+
+<p><strong>Kernaussage:</strong> Der Shop hat heute 9 Angebote für 4 bis 16 Tokens, alle aus dem Band L10 bis L55; ab der Krypta kauft ein voller Tagesertrag (bis 20 Tokens) Essen, das der Spieler nicht mehr isst. Vorschlag: <span class="gold">6 Regale, an Chronik-Kapitel gekoppelt</span> (offen, Kapitel 4, 9, 14, 18, 20), rein über Content plus ein kleines Engine-Gate, ohne Save-Bump; dazu 10 Spätzonen-Dailies mit höherem Token-Ertrag.</p>
+
+<h3>Ist-Stand: Token-Quellen und -Senken</h3>
+<table class="tab">
+<thead><tr><th>Quelle</th><th>Tokens</th><th>Anmerkung</th></tr></thead>
+<tbody>
+<tr><td>Dailies (6 je Tag, max. 2 je Schwierigkeit)</td><td>very_easy 1, easy 1, medium 2, hard 3, master 5</td><td>Tag-1-Spieler ~6 bis 10/Tag; Master erst ab Gesamtlevel 300; theoretisches Maximum 20/Tag (2 Master + 2 Hard + 2 Medium). Pool: 50 Karten (10 je Stufe), alle Ziele aus den Zonen bis Schlackengrube.</td></tr>
+<tr><td>Chronik (21 Kapitel)</td><td>1 / 1 / 1, dann 2 (Kap. 4 bis 10), 3 (Kap. 11 bis 19), 5 (Kap. 20, 21)</td><td>54 Tokens einmalig über die ganze Geschichte</td></tr>
+<tr><td>Auftrags-Quests (38 mit tokenReward)</td><td>1 bis 13</td><td>~177 Tokens einmalig</td></tr>
+<tr><td>Elite-Kopfgeld</td><td>1 je Kill (<code>ELITE_BOUNTY_TOKENS</code>)</td><td>~1 Champion je Stunde und Zone</td></tr>
+</tbody></table>
+<table class="tab">
+<thead><tr><th>Angebot heute</th><th>Bündel</th><th>Tokens</th><th>Gold-Gegenwert (value × Menge)</th><th>Gold je Token</th></tr></thead>
+<tbody>
+<tr><td>ts_cooked_trout_50</td><td>50 Forelle (L10, heilt 4)</td><td>4</td><td>600</td><td>150</td></tr>
+<tr><td>ts_cooked_cod_50</td><td>50 Kabeljau (L15, heilt 5)</td><td>7</td><td>1 100</td><td>157</td></tr>
+<tr><td>ts_cooked_salmon_50</td><td>50 Lachs (L35, heilt 9)</td><td>10</td><td>2 000</td><td>200</td></tr>
+<tr><td>ts_cooked_lobster_40</td><td>40 Hummer (L55, heilt 15)</td><td>16</td><td>2 800</td><td>175</td></tr>
+<tr><td>ts_herbal_draught_20</td><td>20 Heilkräutersud (1 + 3/s über 2 s)</td><td>5</td><td>360</td><td>72</td></tr>
+<tr><td>ts_conc_draught_15</td><td>15 Konzentrierter Kräutersud (2 + 4/s über 3 s)</td><td>9</td><td>675</td><td>75</td></tr>
+<tr><td>ts_tonic_oxblood_10</td><td>10 Ochsenblut (−300 ms Tempo, 90 s)</td><td>6</td><td>250</td><td>42</td></tr>
+<tr><td>ts_tonic_forager_10</td><td>10 Sammler-Tonikum I (+10 % Sammel-XP, 5 min)</td><td>8</td><td>300</td><td>38</td></tr>
+<tr><td>ts_magic_binder_100</td><td>100 Magiebinder</td><td>5</td><td>400</td><td>80</td></tr>
+</tbody></table>
+<p>Einordnung: Kampf-Gold liegt laut Audit bei 13 k (L1) bis 66 k Gold je Stunde (L120). Das teuerste Angebot (2 800 Gold-Gegenwert) entspricht im Endgame <span class="gold">unter drei Minuten Kampf</span>, und Hummer heilt 15, während der Spieler bei L85 Leerenrochen mit 30 isst. Genau das meint „später Müll". Die Dailies verschärfen es: die 5-Token-Meisterkarten zielen auf Schlackengrube-Monster (L60-Band), sind für einen L100-Charakter trivial und bleiben trotzdem die höchste Stufe.</p>
+
+<h3>Leitplanken (Hausregeln)</h3>
+<ul>
+<li><strong>Kampf ist fundamental:</strong> keine kampf-gegateten Materialien im Shop. Geprüft: Saat (35 Loot-Referenzen, alle in Sammel-Aktionen, keine im Monsterblock), Essenzen (82 Referenzen, alle in Aktionen) und Runen I bis III (Runecrafting aus Essenz + Pigment + Schilf) sind nicht kampf-gegatet. Fleisch-Rohware, Häute, dim_essence, idol_shard, godiron_bar und alle Ausrüstung bleiben draußen.</li>
+<li><strong>Rare-Drop-Philosophie:</strong> keine Chase-Items, keine Pets, keine Runen IV, keine Seltenheits-Drops. Der Shop verkauft nur, was der Spieler im selben Band selbst herstellen könnte.</li>
+<li><strong>Kein Power-Creep über die Craft-Kurve:</strong> Regal-Items liegen auf oder unter dem Craft-Level, das zum Kapitel gehört; das Kronen-Gericht (Seelenfeuer-Bankett, Kochen 98) bleibt reine Koch-Ware. Bündel sind so klein, dass der Shop 20 bis 30 % des Verbrauchs deckt, nie 100 %.</li>
+<li><strong>Save-Kompatibilität:</strong> Angebote und Regale sind reine Content-Daten (kein State referenziert eine Angebots-ID), gekaufte Items sind normale Items im Inventar. Item-IDs dürfen nie verschwinden, Angebots-IDs dürfen sich ändern. Kein Bump.</li>
+</ul>
+
+<h3>Regale × Kapitel (Vorschlag)</h3>
+<p>Gate über die bestehende Kapitel-Kette (dieselben Kapitel öffnen die Zonen): Regal 1 mit Aschfelder (Kap. 4), Regal 2 mit Krypta (Kap. 9), Regal 3 mit Schlackengrube (Kap. 14), Regal 4 mit Götzenhalle (Kap. 18), Regal 5 nach Drazhan (Kap. 20). Preise: das teuerste Bündel eines Regals kostet etwa einen Tagesertrag der jeweiligen Ära, mittlere Bündel die Hälfte; Deckel 20 Tokens. Gerichte sind nach #11 Mehr-Portionen-Ware, die Bündelgröße zählt Portionen.</p>
+<table class="tab">
+<thead><tr><th>Regal</th><th>Gate</th><th>Ära</th><th>Essen</th><th>Tränke</th><th>Tonika</th><th>Saat und Reagenz</th><th>Runen</th></tr></thead>
+<tbody>
+<tr><td><strong>0 Erste Seiten</strong></td><td>offen</td><td>L1 bis 35, ~6 bis 10 Tokens/Tag</td><td>Forelle 50 (4), Kabeljau 50 (7), Lachs 50 (10)</td><td>Heilkräutersud 20 (5), Konzentrierter Kräutersud 15 (9)</td><td>Ochsenblut 10 (6), Sammler I 10 (8)</td><td>Magiebinder 100 (5)</td><td>–</td></tr>
+<tr><td><strong>1 Aschfelder</strong></td><td>chronicle_04</td><td>L20 bis 40, ~8 bis 12/Tag</td><td>Geisterflosser 50 (8), Sumpfwurzel-Eintopf 20 (5)</td><td>Schwacher Heiltrank (potion_lesser_heal) 15 (6)</td><td>Steinhaut-Tonikum 10 (6), Scharfaugen-Tonikum 8 (7)</td><td>Blutgetreide-Saat 20 (6), Blutdistel-Saat 20 (6)</td><td>Rune der Schärfe I 3 (6), Rune der Ägide I 3 (6)</td></tr>
+<tr><td><strong>2 Krypta</strong></td><td>chronicle_09</td><td>L40 bis 60, ~10 bis 14/Tag</td><td>Hummer 40 (12, hierher verschoben), Blutgetreide-Eintopf 20 (8), Dämmerflossen-Jäger-Eintopf 20 (8), Zauberwächter-Bisque 20 (8)</td><td>Großer Heiltrank (potion_greater_heal) 15 (10)</td><td>Blutrausch-Tonikum 8 (8), Arkan-Surge-Tonikum 8 (9), Bollwerk-Tonikum 8 (8)</td><td>Seelenkürbis-Saat 15 (8), Grabmoos-Saat 15 (8)</td><td>Rune der Schärfe II 2 (8), Rune der Ägide II 2 (8)</td></tr>
+<tr><td><strong>3 Küste und Schlackengrube</strong></td><td>chronicle_14</td><td>L60 bis 78, ~14 bis 20/Tag (Master offen)</td><td>Blutfang-Aal 40 (14), Seelenkürbis-Braten 15 (10), Stahlschuss-Bisque 15 (10), Zauberflackern-Tisane 15 (10)</td><td>Starker Heiltrank (potion_potent_heal) 12 (12)</td><td>Irrlicht-Tonikum 8 (9), Ernte-Tonikum 6 (8)</td><td>Welklauch-Saat 12 (10), Nachtblüten-Saat 12 (10)</td><td>Rune der Schärfe III 1 (10), Rune der Ägide III 1 (10)</td></tr>
+<tr><td><strong>4 Götzenhalle</strong></td><td>chronicle_18</td><td>L80 bis 95, ~16 bis 24/Tag</td><td>Leerenrochen 40 (18), Welklauch-Trio je 12 (12)</td><td>Elixier der Erneuerung 10 (14)</td><td>Kriegspfad-Tonikum 6 (12), Götterernte-Tonikum 5 (10)</td><td>Bernsteingetreide-Saat 10 (12), Götteratem-Saat 10 (12)</td><td>–</td></tr>
+<tr><td><strong>5 Der zweite Band</strong></td><td>chronicle_20</td><td>L95+, ~20 bis 26/Tag</td><td>Abgrund-Kriecher 30 (20), Leerenrochen-Bankett 10 (15), Abgrund-Festmahl 10 (18), Bernsteingetreide-Festmahl 10 (18), Sternkappen-Risotto 10 (15)</td><td>Götzenblüten-Infusion 6 (18)</td><td>Apex-Tonikum 5 (15), Panacea-Elixier 5 (14)</td><td>Götzenblüten-Saat 8 (15)</td><td>–</td></tr>
+</tbody></table>
+<p>Gold-Gegenwert je Token steigt mit dem Regal (Regal 0 ~150, Regal 3 ~270 für den Aal, Regal 4 ~440 für den Rochen, Regal 5 ~450 für den Kriecher), bleibt aber weit unter dem Kampf-Gold der Ära; der Wert der späten Regale liegt in der gesparten Zeit (ein Bündel Welklauch-Gerichte spart 2 Minuten Kochen plus die vier Sammel-Skills dahinter) und in Saat, die sonst nur aus dem Sammeln kommt. Alte Regale bleiben sichtbar und kaufbar (einklappbar, das aktuelle Regal aufgeklappt), damit nichts „verschwindet" und die Kapitel-Bindung als Fortschritt lesbar ist.</p>
+
+<h3>Umsetzung Shop</h3>
+<ul>
+<li><strong>Shared/Content:</strong> <code>TokenShopShelf { id, name: LocalizedString, requiresQuest?: string, sortOrder }</code> als <code>content.tokenShopShelves</code>, <code>TokenShopOffer.shelfId</code>. Angebote ohne <code>shelfId</code> fallen in Regal 0 (abwärtskompatibel).</li>
+<li><strong>Engine:</strong> <code>buyTokenShopOffer</code> prüft das Regal-Gate wie <code>isQuestUnlocked</code> (<code>state.quests.claimed.includes(requiresQuest)</code>), sonst <code>false</code> ohne Abbuchung. Lesehelfer <code>isShelfOpen(state, content, shelfId)</code> für die UI.</li>
+<li><strong>UI</strong> (QuestsPage <code>RewardsShopPanel</code>): Angebote nach Regal gruppieren, Regal-Kopf mit Name; gesperrtes Regal grau mit Schloss und „Erfordert Chronik-Kapitel X: Name" (gleiche Formulierung wie am Zonen-Gate); Angebots-Karten unverändert.</li>
+<li><strong>Guards:</strong> content-refs prüft <code>requiresQuest</code> auf existierende Quest-IDs und <code>shelfId</code> auf existierende Regale; quests.test bekommt „Kauf vor Kapitel scheitert ohne Abbuchung, nach Kapitel gelingt".</li>
+</ul>
+
+<h3>Dailies mit dem Fortschritt skalieren</h3>
+<ul>
+<li><strong>Spätzonen-Karten:</strong> 10 neue Pool-Karten (Schwierigkeit master, <span class="gold">tokenReward 8</span>) mit Zielen aus Hochland, Götzenhalle und Paragonturm: z. B. 20 Roc, 8 Klippengeister, 15 Götzenhallen-Kämpfer, 3 Götzeneisen-Barren, 400 Sammeln, 20 Gerichte kochen, 3 Champions, Paragon-Etage +3, 80 Kills gesamt, 10 Runen III. Das Zonen-Gate kommt gratis: <code>objectiveAttainable</code> filtert Kill-Ziele in gesperrten Zonen und Craft-Ziele über Level + 10 (<code>DAILY_LEVEL_HEADROOM</code>). Ertrag im Endgame damit bis 26 Tokens am Tag, plus Kopfgeld.</li>
+<li><strong>Obere Schranke:</strong> Gegenstück zu <code>DAILY_DIFFICULTY_MIN_TOTAL_LEVEL</code>: <code>DAILY_DIFFICULTY_MAX_TOTAL_LEVEL</code> (very_easy bis Gesamtlevel 400, easy bis 700), damit „5 Hühner" nicht zwei von sechs Slots eines L100-Charakters belegen. Kleine Engine-Änderung in <code>isDailyEligible</code>; die Auffüll-Regel (Phase 3) hält die Karten-Zahl bei 6.</li>
+<li><strong>Zielmengen:</strong> bleiben je Karte fest; die Skalierung liegt in der Auswahl (Ära-Karten), nicht in einer Formel. Das hält Determinismus und Save-Form (nur Quest-IDs im State).</li>
+</ul>
+
+<h3>Aufwand</h3>
+<p>Content <strong>mittel</strong> (~34 neue Angebote, 6 Regal-Namen, 10 Daily-Karten, jeweils 7 Sprachen; keine neuen Items, keine Kunst). Engine <strong>klein</strong> (Regal-Typ, Gate im Kauf, obere Daily-Schranke). UI <strong>klein bis mittel</strong> (Gruppierung, Schloss-Kopf, Einklappen). Tests <strong>klein</strong>. Kein Save-Bump.</p>
+
+<div class="entscheid">
+<strong>Chef-Entscheidungen #13</strong>
+<ol>
+<li>Regal-Gates an Kapitel 4 / 9 / 14 / 18 / 20 (6 Regale) oder gröber (3 Regale: offen, Krypta, Götzenhalle)? Empfehlung: 6, jede Zone-Öffnung fühlt sich dann auch im Shop an.</li>
+<li>Endgame-Essen und -Gerichte im Shop hebt die Leitplanke aus #284 („bewusst KEIN Endgame-Food") auf. Genau das ist der Spieler-Befund; die Bündel sind klein. Ja oder nein?</li>
+<li>Runen I bis III im Shop (Runecrafting-Ware, nicht kampf-gegatet)? Ja mit Mini-Bündeln (3 / 2 / 1) oder ganz raus?</li>
+<li>Dailies: Variante A (Master-Karten mit 8 Tokens, reiner Content) oder Variante B (neue Stufe „Legende" mit eigenem Badge, 7 Sprachen, zwei weitere Slots am Tag)? Empfehlung: A für diesen Patch.</li>
+<li>Kosmetik-Regal (Portrait-Rahmen, Titel): es gibt heute kein Kosmetik-System (Portrait wird nur bei der Erstellung gewählt). Wäre ein neues System, nicht dieser Patch.</li>
+<li>Story-Belohnungen erweitern: der Chef-Satz „immer neue Items je nach Progress" lässt sich zusätzlich über die Kapitel-Rewards selbst umsetzen (heute geben nur Kap. 2, 5, 13, 19, 20 Items). Ein Regal je Kapitel deckt das ab, ohne Item-Rewards an die Kette zu hängen; wenn gewünscht, gesondert beauftragen.</li>
+</ol>
+</div>
+</section>
