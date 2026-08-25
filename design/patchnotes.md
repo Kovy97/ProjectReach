@@ -29,6 +29,17 @@ erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90
 Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests,
 Hülle 31 grün.*
 
+**14 neue Runen für das Endgame (Tier IV und Schmuck):** DE: Ab Runenkunst 85 bis 95 gibt es
+neun Waffen- und Rüstungsrunen der Stufe IV und erstmals fünf Schmuckrunen für Ringe, Amulett und
+Umhang: Kriegspfad, Zweiter Pfeil, Dünner Schleier, Auszehrung, Gericht, Eiserne Antwort,
+Hinterhalt, Schleiertrinker, Ungebrochene Mauer, Kopfgeld, Zähler, Rastlose, Chronik, Nachlese. Alle
+mit eigener Wirkung statt mehr Zahl, jede einmal pro Item. / EN: Fourteen new runes from
+Runecrafting 85 to 95, including the first jewellery runes.
+
+*Dev-Notiz: design/runen-tier-iv.html. Drei neue Effekt-Arten (blockRestore, combatXp,
+lootChance), `requiresTrinity`-Gate, kein Save-Bump. Bilder von Mira, 640 px WebP. Offen: TTK-Sim-
+Pin für Zweitschlag + Auszehrung vor einer Entscheidung über den Rückfall auf 0,35.*
+
 **Der Tooltip zeigt die Verzauberungs-Plätze:** DE: Jedes Ausrüstungsteil zeigt „Verzauberung 1/3",
 belegte Plätze mit Effekt, freie als leere Steine und einen Satz, wofür sie da sind. Runen nennen
 ihr Ziel („Passt auf: Plattenrüstung") und den Grund, wenn sie nicht passen. / EN: Every piece of
@@ -132,10 +143,10 @@ nicht neben die Knöpfe, rutschen die Knöpfe darunter. / EN: Queue names no lon
 mit Monsterbild und Chance bzw. Rezept und Ergebnis. / EN: The item wiki is large and readable, with
 Source and Used-for as card grids.
 
-*Dev-Notiz: Monster, die aus Zone UND Turm droppen, standen doppelt; wird zusammengefasst (in
-Arbeit).*
+*Dev-Notiz: Monster, die aus Zone, Dungeon-Welle und Turm droppen, standen doppelt; jetzt eine
+Karte je Kreatur, plus Legende für das Zonen-Gate (ausgegraut = Zone noch gesperrt).*
 
-**Schmieden: Items als Leiter ab Barren-Level (in Arbeit):** DE: Mithril-Barren ab 35, aber der
+**Schmieden: Items als Leiter ab Barren-Level:** DE: Mithril-Barren ab 35, aber der
 erste Mithril-Dolch erst ab 40, und so in sechs Tiers. Jetzt liegt der Dolch auf dem Barren-Level,
 danach Schwert und so weiter bis zum Plattenpanzer am Ende des Tiers. / EN: The first item of each
 smithing tier now unlocks with its bar; items spread across the tier.
@@ -143,9 +154,11 @@ smithing tier now unlocks with its bar; items spread across the tier.
 *Dev-Notiz: Chef-Entscheid „Erstmal nur Smithing". Lederverarbeitung hat dieselbe Lücke zweimal
 (Drachenhaut 78 → erstes Item 82, Schattenhaut 90 → 95) und bleibt bewusst unangetastet.*
 
-**Bank und Sidebar im Fenstermodus (in Arbeit, Steam-Rezension):** DE: Bei 1600×900 zeigte das
-Lager nur vier Zeilen plus eine angeschnittene, und fünf Sidebar-Einträge lagen ohne Hinweis unter
-der Fensterkante. / EN: Bank rows and sidebar entries are reachable in windowed mode.
+**Bank und Sidebar im Fenstermodus (Steam-Rezension):** DE: Bei 1600×900 zeigte das Lager drei volle
+Zeilen, jetzt sechs; Sprechblase und Filterleiste werden unter 1040 px Höhe kompakt. Die Sidebar
+zeigt bei 1600×900 alle Einträge, und wo sie doch scrollt, verrät ein weicher Verlauf, dass es
+weitergeht. / EN: In windowed mode the bank shows six full rows instead of three, and the sidebar
+fits or signals that it scrolls.
 
 **Warteschlange: eigene Tooltips statt Browser-Titel (in Arbeit):** DE: Die Hinweise verschwanden
 unter dem Cursor; jetzt dieselben Tooltips wie bei den Charakter-Werten. / EN: Queue tooltips no
