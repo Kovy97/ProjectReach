@@ -29,6 +29,16 @@ erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90
 Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests,
 Hülle 31 grün.*
 
+**Kohleflöze ab 50, 75 und 90 (Rezension #15):** DE: Ein Spieler: „Schmieden braucht im Lategame
+überall zwei Kohle, Kohle gibt kaum XP.“ Jetzt gibt es das Tiefe Kohleflöz ab 50 (2 Kohle je
+Abbau), das Reiche ab 75 (3) und das Uralte ab 90 (4), im selben Tempo wie das alte Flöz, mit XP
+auf der Bergbau-Kurve. / EN: Three new coal seams at 50, 75 and 90 yield 2, 3 and 4 coal per swing.
+
+**Erfolge: gemalte Kategorie-Embleme:** DE: Die zehn Kategorie-Symbole im Rarity-Ring waren
+Strichzeichnungen; jetzt gemalte Embleme (Pokal, Amboss, Klingen, Ähre, Zahnrad, Siegelrolle,
+Münzsack, Truhe, Kompass, Stern) plus Meilenstein. / EN: Achievement category emblems are now
+painted icons.
+
 **14 neue Runen für das Endgame (Tier IV und Schmuck):** DE: Ab Runenkunst 85 bis 95 gibt es
 neun Waffen- und Rüstungsrunen der Stufe IV und erstmals fünf Schmuckrunen für Ringe, Amulett und
 Umhang: Kriegspfad, Zweiter Pfeil, Dünner Schleier, Auszehrung, Gericht, Eiserne Antwort,
