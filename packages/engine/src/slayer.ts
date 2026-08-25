@@ -347,7 +347,13 @@ export function assignTask(
     const usable = floors
       .map((f) => f.monsters.filter(taskable))
       .filter((mons) => mons.length > 0);
-    if (usable.length === 0) {
+    // Chef-Test 25.08.2026 (Sim mit offenen Zonen, design/slayer-auftraege-1.1.0.md): liegen die
+    // offenen Etagen hinter dem Kampf-Level zurück (Slayer-Level läuft dem CL hinterher: CL 60 /
+    // SL 45 ⇒ Etage 3, max L56), hat der Turm KEINEN Kandidaten auf Niveau (≥ CL − 3). Dann gibt es
+    // statt eines unterlevelten Turm-Auftrags einen Welt-Auftrag — sofern die Welt welche hat. Nur
+    // wenn auch die Welt leer ist, greift die Streckung nach unten (Pool-Sicherheit, kein Soft-Lock).
+    const turmAufNiveau = candidateLevels.some((l) => l >= baseLo);
+    if (usable.length === 0 || (!turmAufNiveau && worldPossible)) {
       // Kein bekämpfbares Tower-Monster → auf Welt-Task ausweichen (oder gar kein Task).
       if (!worldPossible) return null;
       isTower = false;

@@ -353,10 +353,20 @@ describe("slayer — Turm-Unterkante (Welle LL, Fun-RETEST slayer-vesna)", () =>
   it("Pool-Sicherheit: CL 96 mit NUR Etage 1 frei — die Streckung senkt die Unterkante wieder, ein Task kommt", () => {
     const s = createGame({ name: "X" }, rc, 13);
     setCombatLevel(s, 96); // Slayer 1: Fenster [76..104] ist leer → stretchLevelWindow geht runter
+    // Chef-Test 25.08.2026: hat der Turm keinen Kandidaten auf Niveau (≥ CL−3), kommt ein
+    // WELT-Auftrag, solange die Welt welche hat — kein unterlevelter Etage-1-Auftrag mehr.
     const t = assignTask(s, rc, "ll_tower_master")!;
     expect(t).not.toBeNull();
-    expect(t.isTower).toBe(true);
-    expect(rc.monsters[t.monsterId]!.slayerFloor, "Pool-Mindestgröße geht vor Härte").toBe(1);
+    expect(t.isTower, "Turm unter Niveau → Welt-Auftrag").toBe(false);
+    // Ist auch die Welt leer (alle Zonen quest-gesperrt), greift die Streckung: Etage-1-Auftrag
+    // statt gar keinem (Pool-Mindestgröße geht vor Härte, kein Soft-Lock).
+    const rcGesperrt: ContentDB = { ...rc, zones: rc.zones.map((z) => ({ ...z, requiresQuest: "quest_niemals" })) };
+    const s2 = createGame({ name: "X" }, rcGesperrt, 13);
+    setCombatLevel(s2, 96);
+    const t2 = assignTask(s2, rcGesperrt, "ll_tower_master")!;
+    expect(t2).not.toBeNull();
+    expect(t2.isTower).toBe(true);
+    expect(rcGesperrt.monsters[t2.monsterId]!.slayerFloor, "Pool-Mindestgröße geht vor Härte").toBe(1);
   });
 });
 
