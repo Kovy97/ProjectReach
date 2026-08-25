@@ -87,7 +87,26 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
   // proportionale Skalierung von Button-Höhe/Font-/Icon-Größen/Paddings/Logo in sidebar.css.
   const asideRef = useRef<HTMLElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const widthRef = useRef(getSidebarWidth());
+
+  // Steam-Rezension 25.08.2026 (Befund B): bei knapper Fensterhöhe (1366×768) muss `.sb-nav`
+  // weiterscrollen (s. sidebar.css-Kommentar an `--sb-vscale`/`.sb-nav--scrollable`) — der
+  // Holzrahmen-Overlay verdeckt aber den nativen Scrollbalken, also braucht es einen eigenen,
+  // sichtbaren Hinweis (Verlaufskante am unteren Rand). `--sb-nav--scrollable` wird NUR gesetzt,
+  // wenn tatsächlich mehr Inhalt folgt (scrollHeight > clientHeight) — bei 1920×1080/1017 bleibt
+  // die Liste unverändert, weil dort nichts überläuft.
+  const [navScrollable, setNavScrollable] = useState(false);
+  const checkNavScrollable = (): void => {
+    const el = navRef.current;
+    if (!el) return;
+    setNavScrollable(el.scrollHeight > el.clientHeight + 1);
+  };
+  useLayoutEffect(checkNavScrollable);
+  useEffect(() => {
+    window.addEventListener("resize", checkNavScrollable);
+    return () => window.removeEventListener("resize", checkNavScrollable);
+  }, []);
 
   // Chef-Entscheid 24.08.: Beschriftungen bleiben EINZEILIG und fuellen die verfuegbare
   // Breite aus — die Schrift schrumpft, wenn das Wort sonst nicht passt, und WAECHST, wenn
@@ -243,7 +262,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
          (title_<id>.png, s. titleImages.ts) — nicht übersetzbar. Jetzt
          lokalisierbarer Text (.sb-skill-name), per CSS auf dieselbe Optik
          getrimmt (Cinzel, uppercase, Gold). */}
-      <nav className="sb-nav">
+      <nav className={`sb-nav${navScrollable ? " sb-nav--scrollable" : ""}`} ref={navRef}>
         {pages.map((page, pageIdx) => {
           const iconSrc = getSidebarIcon(page.id);
           const isActive = page.id === activePageId;

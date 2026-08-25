@@ -5365,6 +5365,141 @@ body.bank-dragging-noselect {
   }
 }
 
+/* Steam-Rezension 25.08.2026 ("you can only view part of a row to see what you are doing"):
+   die einzige Kompaktstufe griff erst ab 820px Fensterhöhe — bei 1600×900 (ganz normales
+   Fenstermodus-Format) UND 1920×1017 (1080p-Bildschirm im Fenstermodus, Titel-/Taskleiste
+   fressen ~63px) blieb das Lager-Raster ungekürzt und bekam dadurch von den Kopfblöcken
+   darüber (Verwalterin-Sprechblase, Filter-/Sortierleiste, "Lager erweitern") kaum Resthöhe.
+   Gemessene Ursache (ui-audit/_bank-kette-v3.mjs): NICHT die Sprechblase war der Höhentreiber,
+   sondern (a) `.bank-head`s Einleitungssatz brach zweizeilig um, und (b) die Filter-Chipreihe
+   (ItemFilterBar, geteilte Komponente) brach bei der schmaleren Command-Spalte auf 3-4 Zeilen
+   um (volle Label+Zähler-Chips brauchen mehr Breite, als die Spalte bei diesen Fensterformaten
+   hat) — beides zusammen kostete ~150px, die dem Raster fehlten. Diese neue Stufe zieht die
+   Kopfblöcke eng (Einzeiler wo der Platz reicht, sonst kleinere Schrift statt Umbruch) UND
+   verkleinert das Chip-Layout auf die bereits bestehende Icon-only-„compact"-Optik (identisches
+   Muster zu CharacterPage, s. inv-filter.css `.invf-chiprow--compact` — hier lokal auf
+   `.bank-page` beschränkt nachgebaut, damit inv-filter.css selbst unangetastet bleibt und andere
+   Seiten nicht mitbetroffen sind). Kategorie-Name bleibt per `title`-Tooltip erreichbar (bestehendes
+   Attribut in ItemFilterBar.tsx), nichts wird SILENT entfernt. Schrift-Untergrenzen halten die
+   Lesbarkeit (Chef-Regel „Größe runter + Umbruch, nie abschneiden" — hier zusätzlich zur
+   kleineren Schrift der Umbruch selbst vermieden, wo eine Zeile bei der neuen Breite wieder passt). */
+@media (max-height: 1040px) {
+  .bank-page {
+    gap: 6px;
+  }
+
+  .bank-ledger-intro .npc-greeting-head {
+    width: 56px;
+    height: 56px;
+  }
+
+  .bank-ledger-intro .npc-bubble {
+    padding: 6px 12px;
+  }
+
+  .bank-page .bank-head {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  /* Einleitungssatz: kleinere Untergrenze reicht bei den meisten Fensterbreiten für EINE Zeile
+     (gemessen DE/EN) — bricht er trotzdem um (schmale Fenster, russische Länge), bleibt der
+     Umbruch erlaubt (kein `white-space:nowrap`), kostet dann eben eine zweite Zeile statt der
+     bisherigen zwei-Zeilen-Baseline. */
+  .bank-page .bank-head > .muted {
+    font-size: clamp(10px, 0.6vw, 12px);
+    line-height: 1.25;
+  }
+
+  .bank-page .bank-count {
+    font-size: clamp(12px, 0.8vw, 15px);
+  }
+
+  .bank-ledger-command {
+    gap: 4px clamp(6px, 0.6vw, 12px);
+  }
+
+  .bank-page .bank-filter-row {
+    padding: 4px 6px;
+  }
+
+  /* ItemFilterBar (geteilte Komponente, inv-filter.css) lokal auf Icon-only-Chips gestaucht —
+     dieselbe Optik wie die bestehende `--compact`-Variante (CharacterPage), hier per Nachfahren-
+     Selektor auf die Bank beschränkt statt die geteilte Datei anzufassen. */
+  .bank-page .invf-bar {
+    gap: 4px 6px;
+  }
+
+  .bank-page .invf-search {
+    min-width: 130px;
+    flex: 0 1 150px;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .bank-page .invf-chiprow {
+    gap: 4px;
+  }
+
+  .bank-page .invf-chip {
+    min-height: 25px;
+    padding: 3px 6px;
+  }
+
+  .bank-page .invf-chip-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .bank-page .invf-chip-label,
+  .bank-page .invf-chip-count {
+    display: none;
+  }
+
+  .bank-page .shop-upgrade-card {
+    padding: 4px 6px;
+  }
+
+  .bank-page .shop-upgrade-text {
+    font-size: clamp(11px, 0.68vw, 14px);
+  }
+
+  .bank-page .shop-upgrade-card .shop-citadel-btn {
+    min-height: 30px;
+    padding: 5px 10px;
+    font-size: clamp(11px, 0.7vw, 14px);
+  }
+
+  .bank-page .bank-full-note,
+  .bank-page .bank-hint {
+    padding: 1px 8px;
+    font-size: clamp(10px, 0.6vw, 12px);
+  }
+
+  .bank-page .bank-col-head {
+    min-height: 30px;
+    padding-bottom: 4px;
+  }
+
+  .bank-page .bank-col-title {
+    font-size: clamp(13px, 0.86vw, 17px);
+  }
+
+  .bank-page .bank-col-icon {
+    width: clamp(20px, 1.3vw, 26px);
+    height: clamp(20px, 1.3vw, 26px);
+  }
+
+  /* Kleinere Zellen = mehr sichtbare Zeilen im Lager-Raster, ohne dass eine einzelne Zeile
+     dafür beschnitten würde — reine Flächenreduktion, Inhalt (Bild+Menge) skaliert mit. */
+  .bank-page .bank-grid.bank-ledger-list {
+    grid-template-columns: repeat(auto-fill, clamp(50px, 3.6vw, 72px));
+    grid-auto-rows: clamp(50px, 3.6vw, 72px);
+    gap: clamp(3px, 0.3vw, 6px);
+    padding: clamp(5px, 0.45vw, 8px);
+  }
+}
+
 @media (max-height: 820px) {
   .bank-page {
     gap: 6px;
