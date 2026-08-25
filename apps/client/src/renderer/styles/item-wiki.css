@@ -24,7 +24,12 @@
      durch eine ruhige, flache Parchment-Fläche im Design-System — dieselbe Formel wie die dort
      schon vorhandene, bisher ungenutzte `.ds-parchment-panel` (design-system.css). Der Holz-9-Slice-
      Rahmen bleibt (geerbt von `.modal`, unverändert) — nur die Lesefläche dahinter wechselt. */
-  background: linear-gradient(160deg, var(--ds-parch-mid), var(--ds-parch-dark));
+  /* Chef 25.08. (Runde 4): Ledertextur statt Pergament-Verlauf, dieselbe Flaeche wie Menue und Navigation
+     (texture-leather 280 px gekachelt, nie gestreckt). */
+  background:
+    linear-gradient(rgba(18, 13, 9, 0.22), rgba(4, 4, 4, 0.5)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
 }
 
 .iwk-kicker {
@@ -234,7 +239,10 @@
   min-width: 0;
   padding: 10px 12px;
   font-size: 15px;
-  background: linear-gradient(160deg, var(--ds-parch-light), var(--ds-parch-mid));
+  background:
+    linear-gradient(rgba(92, 68, 44, 0.30), rgba(34, 24, 16, 0.42)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
   border: 1px solid var(--border);
   border-radius: 3px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.32);

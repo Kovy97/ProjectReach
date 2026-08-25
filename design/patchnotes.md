@@ -294,11 +294,12 @@ Das große Stufensystem „Brennas Stufen" (Jagd/Kopfgeld/Blutjagd, SAVE 83) lie
 Vorschlag in `design/slayer-auftraege-1.1.0.md`, Chef-Entscheidung offen.*
 
 **Wiki-Fenster und Varianten-Tasche ohne Steintextur (Chef-Test 25.08.):** DE: Beide Fenster
-liegen jetzt auf einer ruhigen dunklen Pergamentfläche, auf der man lesen kann. Die Tasche für
+liegen jetzt auf der dunklen Ledertextur des Menüs, auf der man lesen kann (Chef-Nachtrag: erst
+Pergament, dann Leder, damit es zum Rest des Spiels passt). Die Tasche für
 gestapelte Varianten ist so breit wie das Wiki, zeigt jede verzauberte Version mit großem Bild,
 Name, Seltenheit, „Verzauberung n/m", einer Zeile je Rune mit Wirkung, dem Zufallswurf, den
 Anforderungen und den Knöpfen direkt in der Karte. / EN: The item wiki and the variant pouch sit on
-a calm parchment surface; the pouch is as wide as the wiki and lists every enchanted version with
+the game's dark leather surface; the pouch is as wide as the wiki and lists every enchanted version with
 a large image, one line per rune, the roll, the requirements and its actions.
 
 *Dev-Notiz: Die Tasche rendert per `createPortal` außerhalb von `#root`; das komplette bisherige
