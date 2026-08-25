@@ -54,7 +54,11 @@ describe("Suffix-Klassen-Trennung (#p14): Pool-Tags", () => {
         if (tags.has(tag)) counts[tag]++;
       }
     }
-    expect(counts).toEqual({ armor_plate: 176, armor_leather: 84, armor_cloth: 57 });
+    // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1): slayer_helm/slayer_greaves bekommen
+    // erstmals armorRating (+2 armor_plate), slayer_vambraces evasionRating (+1 armor_leather) —
+    // vorher trugen alle drei KEINEN Trinity-Wert (der Chef-Befund "die Rüstungen sind zu
+    // schlecht" war exakt das: 0 Mitigation/Ausweichen). 176→178, 84→85.
+    expect(counts).toEqual({ armor_plate: 178, armor_leather: 85, armor_cloth: 57 });
   });
 
   it("jedes Rüstungsteil mit Klassen-Tag behält zusätzlich das allgemeine armor-Tag (Runen-Gate)", () => {

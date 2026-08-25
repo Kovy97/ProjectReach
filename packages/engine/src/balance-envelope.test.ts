@@ -594,10 +594,20 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // 186.56/14.10, ranged/idol_warden 97.21/13.8 → 87.24/14.52, ranged/last_idol 321.66/13.1 →
     // 289.16/13.23, magic/idol_warden 72.55/25.3 → 73.98/25.34, magic/last_idol 244.57/27.4 →
     // 248.98/27.39.
+    // Re-Messung 2026-08-25 (Chef-Test, Slayer-Shop-Rüstung, design/slayer-shop-1.1.0.md §4.1):
+    // slayer_vambraces bekommt erstmals evasionRating (11.76) und ist bereits vorher die BiS-
+    // Handschuh-Wahl des CL-90-Ranged-"damage"-Builds gewesen (dex/lck-Score unverändert, nur str/
+    // int wurden — Trinity-Klassenregel #p14 — nach con umgeschichtet, s. Item-Kommentar in
+    // packages/content/src/index.ts). Der Build erbt die neue evasionRating passiv, dadurch steigt
+    // st.dodgeChance und mit ihr NUR die ranged/idol_warden-Enemy-Zeile spürbar (14.52→17.83,
+    // +23 %): idol_wardens hitChance-Gegenrechnung war noch nicht am combinedFloorDodge-Boden,
+    // last_idols war es bereits (13.23 unverändert — der Boden absorbiert den Zusatz-Dodge dort
+    // vollständig). Alle Spieler→Gegner-Zeilen und alle anderen Stile bleiben exakt gleich (kein
+    // Melee/Magic-Slot nutzt ein Slayer-Teil auf dem "damage"-Ziel).
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 56.87, 19.79],
       ["melee", "last_idol", 186.56, 14.1],
-      ["ranged", "idol_warden", 87.24, 14.52],
+      ["ranged", "idol_warden", 87.24, 17.83],
       ["ranged", "last_idol", 289.16, 13.23],
       ["magic", "idol_warden", 73.98, 25.34],
       ["magic", "last_idol", 248.98, 27.39],

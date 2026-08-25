@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { content } from "@hearthforge/content";
-import type { ItemInstance, LocalizedString } from "@hearthforge/shared";
-import { EQUIP_SLOTS, instanceDisplayName, isStatusEffectType } from "@hearthforge/shared";
+import { meetsRequirements } from "@hearthforge/engine";
+import type { GameState, ItemDef, ItemInstance } from "@hearthforge/shared";
+import { EQUIP_SLOTS, enchantSlotsFor, getItemRarity, instanceDisplayName, RARITY_LABEL } from "@hearthforge/shared";
 import { useGameStateMaybe } from "../game/GameContext";
 import type { ReactNode } from "react";
 import { useI18n } from "../i18n";
@@ -54,55 +55,6 @@ export function groupBySig(instances: ItemInstance[]): VariantStack[] {
   return [...map.values()];
 }
 
-/** Ein Stat-Chip in der Pouch-Zeile — `kind` steuert nur die Farbgebung (Chef: „Suffix-Anteil und
- *  Enchant-Anteil visuell unterscheidbar"), der Text kommt 1:1 aus `affixEffectParts`/
- *  `suffixEffectParts` (dieselbe Quelle wie der volle Tooltip — keine zweite Formel). */
-export interface StatChip {
-  text: string;
-  kind: "enchant" | "suffix";
-}
-
-/**
- * Welle VV (Chef: „direkt findet wonach man sucht", „welche Stats betroffen sind"): kompakte
- * Stat-Chips einer Instanz — je EIN Chip pro betroffenem Wert (z.B. „+14 Nahkampf", „+5 Stärke"),
- * damit man die Wirkung einer Variante SIEHT statt sie hinter einem Klick zu erraten. Reine
- * Textzeilen aus `affixEffectParts`/`suffixEffectParts` (identische Quelle wie das volle
- * ItemTooltip, s. dort) — der Filter behält nur numerische Zeilen (`+`/`-`-Präfix via `fmtBonus`)
- * und wirft die Waffeneffekt-Proc-Prosa („[Flammend] …") raus, die für einen kurzen Chip zu lang ist
- * (bleibt im vollen Tooltip weiter sichtbar, nur hier ausgeblendet).
- */
-function buildStatChips(
-  inst: ItemInstance,
-  t: (k: string) => string,
-  tr: (v: LocalizedString) => string,
-): StatChip[] {
-  const chips: StatChip[] = [];
-  for (const a of inst.affixes) {
-    const def = content.affixes?.[a.affixId];
-    if (!def) continue;
-    for (const part of affixEffectParts(def, a.tier, t, tr)) {
-      if (/^[+-]/.test(part)) chips.push({ text: part, kind: "enchant" });
-    }
-    // Reine Waffeneffekt-Procs (z.B. "Flammend"/"Frosty" — bonusByTier bleibt für sie leer, s.
-    // Content-Katalog) hätten ohne diesen Zweig GAR KEINEN Chip gezeigt (Kernwunsch verfehlt: "man
-    // sieht, WAS die Version ausmacht"). Kompakte Kurzform ("15% Brand") statt der vollen
-    // Prosa-Zeile aus `affixEffectParts` (die bleibt dem vollen Tooltip vorbehalten, für einen Chip
-    // zu lang).
-    const eff = def.weaponEffectByTier?.[a.tier - 1];
-    if (eff) {
-      const pct = Math.round(eff.chance * 100);
-      const label = isStatusEffectType(eff.type) ? t(`status.${eff.type}`) : tr(def.prefix);
-      chips.push({ text: `${pct}% ${label}`, kind: "enchant" });
-    }
-  }
-  if (inst.suffix) {
-    for (const part of suffixEffectParts(inst, content, t, tr)) {
-      if (/^[+-]/.test(part)) chips.push({ text: part, kind: "suffix" });
-    }
-  }
-  return chips;
-}
-
 /**
  * Grobe „wie gut ist diese Version"-Rangfolge NUR für die Standard-Sortierung im Pouch (Chef:
  * „Sortierung — beste zuerst — nach Gesamt-Stat-Wert oder Wurfgüte"): Affix-Tiers zählen dominant
@@ -117,6 +69,100 @@ function stackPower(inst: ItemInstance): number {
   return tierSum * 1000 + rollPct * 100;
 }
 
+/**
+ * 1.1.0 Redesign (Chef-Fund „Modal für die verzauberten Items liest sich zu beschissen"): statt
+ * loser Stat-Chips zeigt jede Varianten-Zeile jetzt klar zurechenbare Zeilen je Verzauberung
+ * (Rune-Symbol + Name + Tier + Effekt), die Slot-Belegung „n/m" (`enchantSlotsFor` — dieselbe
+ * Quelle wie der Verzauberungstisch/ItemTooltip.tsx' `EnchantGroup`) und die Anforderungen
+ * (`meetsRequirements`, dieselbe Quelle wie ItemTooltip.tsx' `RequirementsSection`). Layout: links
+ * Bild+Name+Rarity (`.pouch-row-left`), rechts diese Detailspalte (`.pouch-row-right`), darunter die
+ * Aktionsknöpfe (`.it-actions`/`.it-action-btn` — dieselbe app-weite 9-Slice-Knopf-Familie wie das
+ * gepinnte ItemTooltip, Task #332).
+ */
+function PouchRowDetail({
+  item,
+  instance,
+  state,
+}: {
+  item: ItemDef | undefined;
+  instance?: ItemInstance;
+  state: GameState | null;
+}): JSX.Element | null {
+  const { t, tr } = useI18n();
+  const isVariant = !!instance && (instance.affixes.length > 0 || !!instance.suffix);
+  const enchantSlots = item ? enchantSlotsFor(getItemRarity(item)) : 0;
+  const affixCount = instance?.affixes.length ?? 0;
+  const totalSlots = Math.max(enchantSlots, affixCount);
+  const showEnchant = isVariant && instance && totalSlots > 0;
+  const rollPct = instance?.suffix ? Math.round(instance.suffix.roll * 100) : null;
+  const suffixDef = instance?.suffix ? content.suffixes?.[instance.suffix.suffixId] : undefined;
+  const suffixParts = instance ? suffixEffectParts(instance, content, t, tr) : [];
+  const reqEntries = item?.requirements ? Object.entries(item.requirements) : [];
+  const reqOk = state && item ? meetsRequirements(state, item) : null;
+
+  if (!showEnchant && reqEntries.length === 0) return null;
+
+  return (
+    <div className="pouch-row-right">
+      {showEnchant && instance && (
+        <>
+          <div className="pouch-enchant-header">
+            {t("itip.group.enchantment")} <span className="pouch-enchant-count">{affixCount}/{totalSlots}</span>
+          </div>
+          <div className="pouch-enchant-lines">
+            {instance.affixes.map((a, i) => {
+              const def = content.affixes?.[a.affixId];
+              const prefixName = def ? tr(def.prefix) : a.affixId;
+              const parts = def ? affixEffectParts(def, a.tier, t, tr) : [];
+              return (
+                <div key={i} className="pouch-enchant-line">
+                  <span className="pouch-enchant-gem" aria-hidden="true">✦</span>
+                  <span className="pouch-enchant-name">{prefixName}</span>
+                  <span className="pouch-enchant-tier muted">T{a.tier}</span>
+                  {parts.length > 0 && <span className="pouch-enchant-effect">{parts.join(" · ")}</span>}
+                </div>
+              );
+            })}
+            {instance.suffix && (
+              <div className="pouch-enchant-line pouch-enchant-line-suffix">
+                <span className="pouch-enchant-gem pouch-enchant-gem-suffix" aria-hidden="true">✦</span>
+                <span className="pouch-enchant-name">
+                  {suffixDef ? tr(suffixDef.suffix) : instance.suffix.suffixId}
+                </span>
+                {suffixParts.length > 0 && <span className="pouch-enchant-effect">{suffixParts.join(" · ")}</span>}
+              </div>
+            )}
+          </div>
+          {rollPct !== null && (
+            <div className="pouch-roll" title={t("pouch.rollQualityHint")}>
+              <span className="pouch-roll-label">{t("pouch.rollQuality")}</span>
+              <span className="pouch-roll-track">
+                <span className="pouch-roll-fill" style={{ width: `${rollPct}%` }} />
+              </span>
+              <span className="pouch-roll-pct">{rollPct}%</span>
+            </div>
+          )}
+        </>
+      )}
+      {reqEntries.length > 0 && (
+        <div className="pouch-req-lines">
+          {reqEntries.map(([skillId, lvl]) => {
+            const skill = content.skills[skillId];
+            const skillName = skill ? tr(skill.name) : skillId;
+            const unmet = reqOk === false;
+            return (
+              <div key={skillId} className={`pouch-req-line${unmet ? " pouch-req-unmet" : ""}`}>
+                {t("itip.requires")} <span className="pouch-req-skill">{skillName}</span>: {lvl}
+                {unmet && <span className="pouch-req-x"> ✗</span>}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Ein klickbarer Eintrag (Grundversion ODER ein Varianten-Stack) — pinnt beim Klick das ItemTooltip
  *  (wie `ItemChip`), mit den vom Aufrufer übergebenen kontextabhängigen Aktionen. */
 function PouchRow({
@@ -126,6 +172,7 @@ function PouchRow({
   actions,
   className,
   equipped,
+  state,
 }: {
   itemId: string;
   /** Fehlt bei der Grundversion (schlichtes Item, keine Affixe/Suffix). */
@@ -136,6 +183,9 @@ function PouchRow({
   /** Welle VV (Chef: „ausgerüstete Version klar markiert und immer zuoberst"): true, wenn genau
    *  diese Version (Grundversion ODER Varianten-Signatur) gerade in einem Ausrüstungs-Slot steckt. */
   equipped?: boolean;
+  /** Für die Anforderungs-Zeilen (`meetsRequirements`) — von `VariantPouchModal` einmal geholt und
+   *  durchgereicht, statt in jeder Zeile erneut `useGameStateMaybe()` zu abonnieren. */
+  state: GameState | null;
 }): JSX.Element {
   const { t, tr, locale } = useI18n();
   const tooltip = useItemTooltip();
@@ -165,16 +215,8 @@ function PouchRow({
     );
   })();
 
-  // Welle VV (Chef-Kernwunsch: "welche Stats betroffen sind ... direkt in der Zeile"): kompakte
-  // Chips statt des vollen Tooltips, s. buildStatChips-JSDoc.
-  const chips = isVariant && instance ? buildStatChips(instance, t, tr) : [];
-  // Welle VV (Chef: die rohe "87%"-Zahl war unverständlich): selbsterklärendes Mini-Meter mit
-  // Label + Tooltip-Satz statt der nackten Zahl, s. pouch.rollQuality/-Hint.
-  const rollPct = instance?.suffix ? Math.round(instance.suffix.roll * 100) : null;
+  const rarityLabel = tr(RARITY_LABEL[item?.rarity ?? "common"]);
 
-  // codex:2026-08-01T12:18:00+02:00 — Basis und verzauberte Versionen erhalten explizite
-  // Layoutklassen: Die breite Desktopliste kann Identität und echte Bonuswerte nebeneinander
-  // führen, während kleine Fenster kontrolliert auf eine Spalte zurückfallen.
   return (
     <div
       className={`pouch-row ${isVariant ? "pouch-row--variant" : "pouch-row--base"} ${rarityClass(item?.rarity)}${equipped ? " pouch-row-equipped" : ""}${className ? ` ${className}` : ""}`}
@@ -192,39 +234,46 @@ function PouchRow({
         tooltip.pin(itemId, rect.left + rect.width / 2, rect.top + rect.height / 2, actions, instance);
       }}
     >
-      <div className="pouch-row-main">
-        <span className="pouch-row-icon">
-          {img ? (
-            <img src={img} alt="" className="pouch-row-img pixelart" loading="lazy" decoding="async" />
-          ) : item?.icon ? (
-            <span className="pouch-row-emoji">{item.icon}</span>
-          ) : null}
-          {isVariant && (
-            <span className="pouch-row-star" aria-hidden="true">
-              {STAR_ICON_URL ? <img src={STAR_ICON_URL} alt="" className="pouch-row-star-img" /> : "✦"}
-            </span>
-          )}
-        </span>
-        <span className={`pouch-row-name ${rarityClass(item?.rarity)}`}>{nameTeile}</span>
-        {equipped && <span className="itip-equipped-badge pouch-row-equipped-badge">{t("itip.equipped")}</span>}
-        {qty > 1 && <span className="pouch-row-qty">×{qty}</span>}
-      </div>
-      {chips.length > 0 && (
-        <div className="pouch-row-chips">
-          {chips.map((c, i) => (
-            <span key={i} className={`pouch-chip pouch-chip-${c.kind}`}>
-              {c.text}
-            </span>
-          ))}
-        </div>
-      )}
-      {rollPct !== null && (
-        <div className="pouch-roll" title={t("pouch.rollQualityHint")}>
-          <span className="pouch-roll-label">{t("pouch.rollQuality")}</span>
-          <span className="pouch-roll-track">
-            <span className="pouch-roll-fill" style={{ width: `${rollPct}%` }} />
+      <div className="pouch-row-top">
+        <div className="pouch-row-left">
+          <span className="pouch-row-icon">
+            {img ? (
+              <img src={img} alt="" className="pouch-row-img pixelart" loading="lazy" decoding="async" />
+            ) : item?.icon ? (
+              <span className="pouch-row-emoji">{item.icon}</span>
+            ) : null}
+            {isVariant && (
+              <span className="pouch-row-star" aria-hidden="true">
+                {STAR_ICON_URL ? <img src={STAR_ICON_URL} alt="" className="pouch-row-star-img" /> : "✦"}
+              </span>
+            )}
           </span>
-          <span className="pouch-roll-pct">{rollPct}%</span>
+          <div className="pouch-row-identity">
+            <span className={`pouch-row-name ${rarityClass(item?.rarity)}`}>{nameTeile}</span>
+            <span className={`pouch-row-rarity-label ${rarityClass(item?.rarity)}`}>{rarityLabel}</span>
+            <div className="pouch-row-badges">
+              {equipped && <span className="itip-equipped-badge pouch-row-equipped-badge">{t("itip.equipped")}</span>}
+              {qty > 1 && <span className="pouch-row-qty">×{qty}</span>}
+            </div>
+          </div>
+        </div>
+        <PouchRowDetail item={item} instance={instance} state={state} />
+      </div>
+      {actions.length > 0 && (
+        <div className="pouch-row-actions it-actions">
+          {actions.map((a) => (
+            <button
+              key={a.key}
+              type="button"
+              className="it-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                a.onClick();
+              }}
+            >
+              {a.label}
+            </button>
+          ))}
         </div>
       )}
     </div>
@@ -261,10 +310,17 @@ type SortMode = "best" | "roll" | "name";
  * kontextabhängigen Aktionen des Aufrufers (Inventar/Shop/Bank unterscheiden sich nur in den
  * übergebenen `plainActions`/`variantActionsFor`, das Modal selbst bleibt kontextfrei).
  *
- * Welle VV (Chef-Redesign 2026-07-19): Namen brechen jetzt um statt abzuschneiden, jede Zeile
- * zeigt ihre konkreten Stat-Chips (Suffix/Enchant farblich unterschieden), die Roll-%-Zahl ist ein
- * beschriftetes Mini-Meter statt einer nackten Zahl, die Liste sortiert „beste zuerst" mit der
- * ausgerüsteten Version immer oben, und ab >5 Versionen erscheint eine schlanke Such-/Sortier-Leiste.
+ * Welle VV (Chef-Redesign 2026-07-19): Namen brechen jetzt um statt abzuschneiden, die Roll-%-Zahl
+ * ist ein beschriftetes Mini-Meter statt einer nackten Zahl, die Liste sortiert „beste zuerst" mit
+ * der ausgerüsteten Version immer oben, und ab >5 Versionen erscheint eine schlanke Such-/Sortier-
+ * Leiste. (Die Stat-Chips dieser Welle sind seit dem 1.1.0-Redesign unten den klaren Verzauberungs-
+ * Zeilen gewichen, s. `PouchRowDetail`.)
+ *
+ * 1.1.0 Redesign (Chef-Fund „liest sich zu beschissen"): deutlich breiteres Modal (wie das Item-
+ * Wiki-Modal), größere Bilder/Schrift, und jede Zeile zeigt jetzt klar zurechenbare Verzauberungs-
+ * Zeilen + Slots „n/m" + Anforderungen statt der alten losen Chip-Wolke (s. `PouchRowDetail`).
+ * Der Hintergrund ist jetzt dieselbe ruhige Parchment-Fläche wie das Wiki-Modal statt der bisherigen
+ * Stein-Textur (Chef: „nicht gut, um darauf zu lesen") — s. variant-pouch.css.
  */
 export function VariantPouchModal({
   itemId,
@@ -367,11 +423,11 @@ export function VariantPouchModal({
           </div>
         </div>
 
-        {/* 1.1.0 (Chef: "schlecht lesbar und verstaendlich"): Die Chips in den Zeilen tragen
-            schon zwei Bedeutungen — gruen kommt aus einer Verzauberung, gold aus dem
-            Zufallswurf des Suffix. Nur sagte das nichts, also las man beide als dasselbe.
-            Die Legende steht bewusst EINMAL oben statt als Beschriftung in jeder Zeile.
-            Sie erscheint nur, wenn ueberhaupt Varianten da sind — bei einer reinen
+        {/* 1.1.0 (Chef: "schlecht lesbar und verstaendlich"): grün kommt aus einer Verzauberung,
+            gold aus dem Zufallswurf des Suffix — dieselbe Farbsprache trägt jetzt das
+            Runen-Symbol vor jeder Verzauberungs-/Suffix-Zeile (s. `PouchRowDetail`) statt der
+            früheren losen Chips. Die Legende steht bewusst EINMAL oben statt als Beschriftung in
+            jeder Zeile. Sie erscheint nur, wenn ueberhaupt Varianten da sind — bei einer reinen
             Grundversion gaebe es nichts zu erklaeren. */}
         {stacks.length > 0 && (
           <div className="pouch-legend">
@@ -414,7 +470,7 @@ export function VariantPouchModal({
           {plainQty > 0 && (
             <>
               <div className="pouch-section-title">{t("pouch.baseVersion")}</div>
-              <PouchRow itemId={itemId} qty={plainQty} actions={plainActions} equipped={plainEquipped} />
+              <PouchRow itemId={itemId} qty={plainQty} actions={plainActions} equipped={plainEquipped} state={state} />
             </>
           )}
           <div className="pouch-section-title">{t("pouch.variantsHeading")}</div>
@@ -429,6 +485,7 @@ export function VariantPouchModal({
                 qty={s.count}
                 actions={variantActionsFor(s.representative)}
                 equipped={equippedSigs.has(s.key)}
+                state={state}
               />
             ))
           )}

@@ -19,6 +19,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden; /* der Rahmen selbst scrollt nicht — nur .iwk-body darunter */
+  /* Chef-Fund 2026-08-25 ("dieser Stein Background ist einfach nicht gut um darauf zu lesen"):
+     ersetzt die geerbte Stein-/Fels-Textur der Basis-`.modal`-Regel (bg_black.webp, modals.css)
+     durch eine ruhige, flache Parchment-Fläche im Design-System — dieselbe Formel wie die dort
+     schon vorhandene, bisher ungenutzte `.ds-parchment-panel` (design-system.css). Der Holz-9-Slice-
+     Rahmen bleibt (geerbt von `.modal`, unverändert) — nur die Lesefläche dahinter wechselt. */
+  background: linear-gradient(160deg, var(--ds-parch-mid), var(--ds-parch-dark));
 }
 
 .iwk-kicker {
@@ -216,8 +222,11 @@
 }
 
 /* Jede Zeile ist jetzt eine eigenständige Karte — Holz-Textur-Rahmen wäre bei dieser Kleinteiligkeit
-   zu unruhig (viele Karten gleichzeitig), deshalb dieselbe ruhige bg_black-Textur wie der Kopf-
-   Bildrahmen + dünner Goldrand statt eines vollen 9-Slice-Rahmens. */
+   zu unruhig (viele Karten gleichzeitig), deshalb ein dünner Goldrand statt eines vollen 9-Slice-
+   Rahmens. Chef-Fund 2026-08-25 ("Stein Background ... nicht gut um darauf zu lesen"): die Karte
+   war die frühere bg_black-Steinfototextur — jetzt derselbe flache Parchment-Ton wie das Modal
+   selbst, nur eine Stufe heller (`--ds-parch-light`→`--ds-parch-mid`), damit sich die Karte vom
+   Modal-Grund abhebt statt darin zu verschwinden. */
 .iwk-row {
   display: flex;
   align-items: center;
@@ -225,9 +234,7 @@
   min-width: 0;
   padding: 10px 12px;
   font-size: 15px;
-  background:
-    linear-gradient(rgba(24, 16, 9, 0.5), rgba(14, 10, 6, 0.62)),
-    url("../assets/bg_black.webp") repeat;
+  background: linear-gradient(160deg, var(--ds-parch-light), var(--ds-parch-mid));
   border: 1px solid var(--border);
   border-radius: 3px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.32);

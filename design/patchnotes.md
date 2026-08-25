@@ -288,6 +288,33 @@ CL 90/SL 70 vorher 50 % Aufträge unter CL−3, jetzt 0 %; CL 40/SL 28 26,7 % au
 Das große Stufensystem „Brennas Stufen" (Jagd/Kopfgeld/Blutjagd, SAVE 83) liegt als
 Vorschlag in `design/slayer-auftraege-1.1.0.md`, Chef-Entscheidung offen.*
 
+**Wiki-Fenster und Varianten-Tasche ohne Steintextur (Chef-Test 25.08.):** DE: Beide Fenster
+liegen jetzt auf einer ruhigen dunklen Pergamentfläche, auf der man lesen kann. Die Tasche für
+gestapelte Varianten ist so breit wie das Wiki, zeigt jede verzauberte Version mit großem Bild,
+Name, Seltenheit, „Verzauberung n/m", einer Zeile je Rune mit Wirkung, dem Zufallswurf, den
+Anforderungen und den Knöpfen direkt in der Karte. / EN: The item wiki and the variant pouch sit on
+a calm parchment surface; the pouch is as wide as the wiki and lists every enchanted version with
+a large image, one line per rune, the roll, the requirements and its actions.
+
+*Dev-Notiz: Die Tasche rendert per `createPortal` außerhalb von `#root`; das komplette bisherige
+`#root .pouch-*`-Redesign hatte deshalb nie gegriffen (toter Code, Stapel lief auf der Basis-Optik).
+Neue Regeln als `.modal.pouch-modal`. Bugfix nebenbei: `.pouch-head-name` ellipsierte.*
+
+**Slayer-Shop: Rüstungen, die sich lohnen (Chef-Test 25.08.):** DE: Slayer-Helm, -Beinschienen und
+-Armschienen trugen keinen Schutz-, Ausweich- oder Wardwert, ein geschmiedeter Titan-Vollhelm schlug
+den 19-Stunden-Helm. Jetzt: Helm Schutz 24,4 und +20 % Schaden gegen das aktuelle Auftragsziel;
+Beinschienen Schutz 21,8 und +20 % gegen Monster über deiner Kampfstufe; Armschienen Ausweichen 11,8
+und +4 LP je Kill, Preis 320 → 260. Das Vierer-Set gibt 0,15 LP/s Regeneration statt eines toten
+Verteidigungs-Boosts. Pestiges Knochenfragment und Schmiedeglut sind aus dem Laden (fallen ohnehin zu
+25 bis 40 % je Kill), der Jagdelixier-Kauf beginnt bei Slayer 20. / EN: Slayer armor now carries
+real armor or evasion values plus a slayer effect (bounty, giant slayer, heal on kill); two dead
+offers are gone and the draught unlocks at Slayer 20.
+
+*Dev-Notiz: `design/slayer-shop-1.1.0.md` §4.6; int→con umgeschichtet (Klassenregel Platte/Leder),
+Guard `slayer-shop.test.ts`, Pins suffix-class-fit 178/85, content-integrity Allowlists, TTK-Pin
+ranged/idol_warden 14,52 → 17,83 (Armschienen-Ausweichen). Locale-Overlays der drei Texte für
+ES/RU/ZH/FR/PT-BR folgen. Offen (§7.2): Armschienen-Rezept verlangt Etage-5-Material bei SL 50.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

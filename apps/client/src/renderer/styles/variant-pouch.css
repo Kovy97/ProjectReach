@@ -69,9 +69,11 @@
   font-family: var(--font-head);
   font-size: 18px;
   color: var(--accent);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* 1.1.0 (Chef „Nichts abschneiden"-Regel, wie im Wiki-Modal): der Titel darf umbrechen statt
+     abgeschnitten zu werden — das breitere Modal (s. #root .pouch-modal unten) macht dafür ohnehin
+     fast nie mehr Platz nötig, aber ein sehr langer Itemname (7-Sprachen-Content) bleibt vollständig
+     lesbar statt in "…" zu enden. */
+  overflow-wrap: anywhere;
 }
 
 .pouch-head-count {
@@ -129,13 +131,6 @@
 
 .pouch-row:hover {
   background: rgba(255, 255, 255, 0.04);
-}
-
-.pouch-row-main {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
 }
 
 .pouch-row-icon {
@@ -224,17 +219,10 @@
   flex-shrink: 0;
 }
 
-/* ─── Stat-Chips (Welle VV, Chef-Kernwunsch: "welche Stats betroffen sind direkt in der Zeile") ───
-   Je betroffenem Wert EIN Chip, Text 1:1 aus affixEffectParts/suffixEffectParts (identisch zum
-   vollen Tooltip). Zwei Farbfamilien für "sofort sehen WAS die Version ausmacht": Gold = Suffix-
-   Roll (dieselbe Farbsprache wie das Roll-Meter darunter), Grün = Enchant-Affix (Runen-Tisch). */
-.pouch-row-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 6px;
-}
-
-/* 1.1.0: Legende zu den Chip-Farben, einmal oben statt in jeder Zeile. */
+/* 1.1.0: `.pouch-chip`/`.pouch-chip-enchant`/`.pouch-chip-suffix` lebten früher auch als Stat-Chips
+   IN jeder Zeile (Welle VV) — seit dem Verzauberte-Items-Redesign tragen die Runen-Symbole vor jeder
+   Verzauberungs-/Suffix-Zeile dieselbe Farbsprache (s. .pouch-enchant-gem unten), die Klassen hier
+   leben nur noch für die Legende (`.pouch-legend-dot`) weiter. */
 .pouch-legend {
   display: flex;
   gap: 18px;
@@ -365,31 +353,51 @@
   border-color: var(--accent-2);
 }
 
-/* codex:2026-08-01T12:18:00+02:00 — Warbanner-Vergleichsliste: links die Item-Identität,
-   rechts die tatsächlichen Suffix-/Enchant-Werte samt sekundärer Rollgüte. Jede Variante bleibt
-   eine klar abgegrenzte Karte und fällt unter 700 px kontrolliert auf eine Spalte zurück. */
-#root .pouch-modal {
-  width: min(94vw, 980px);
-  max-width: 980px;
-  max-height: 86vh;
-  padding: 18px 20px 20px;
-  background:
-    linear-gradient(rgba(9, 9, 9, 0.36), rgba(4, 4, 4, 0.58)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 256px 256px repeat;
+/* ═══════════════════════════════════════════════════════════
+   1.1.0 REDESIGN (Chef-Fund „Modal für die verzauberten Items liest sich zu beschissen — nutze wie
+   beim Wiki-Modal mehr Platz, größere Texte und Bilder, bessere Ansicht"):
+   - Breite jetzt auf Augenhöhe mit dem Item-Wiki-Modal (item-wiki.css `.modal.iwk-modal`).
+   - Die Lesefläche (Modal-Grund + jede Zeilen-Karte) ist jetzt dieselbe ruhige, dunkle Parchment-
+     Fläche wie das Wiki-Modal (`--ds-parch-*`-Tokens aus design-system.css, dieselbe Formel wie
+     die dort schon vorhandene, bis dahin ungenutzte `.ds-parchment-panel`) statt der bisherigen
+     Stein-Fototextur (texture-cold-slate.webp/texture-basalt.webp — Chef: „nicht gut, um darauf
+     zu lesen"). Der Gravewood-Rahmen (Bronze-verstärktes Eisen) bleibt — nur die FLÄCHE dahinter
+     wechselt, wie vom Chef verlangt ("Rahmen darf bleiben").
+   - Jede Zeile ist jetzt eine echte Detailkarte: links Bild (≥96px)+Name+Rarity, rechts die
+     Verzauberungs-/Anforderungs-Details in bis zu zwei Spalten, darunter die Aktionsknöpfe direkt
+     in der Zeile (kein Extra-Klick auf den vollen Tooltip mehr nötig) — s. `.pouch-row-*` unten und
+     `PouchRowDetail` in VariantPouchModal.tsx.
+   ═══════════════════════════════════════════════════════════ */
+/* WICHTIG — kein `#root`-Präfix hier (anders als bei anderen Gravewood-Dateien): `VariantPouchModal`
+   rendert über `createPortal(..., document.body)` (s. JSDoc in VariantPouchModal.tsx — löst das
+   Modal absichtlich aus dem Bank-/Shop-Panel-Stacking-Context) und landet damit als GESCHWISTER
+   von `#root`, nicht als Nachfahre — jedes `#root .pouch-…`-Selektor hätte hier NIE gegriffen (toter
+   Selektor, live nachgemessen: Name+Rarity-Label liefen ohne Zeilenumbruch ineinander, weil
+   `.pouch-row-identity` faktisch `display:block` blieb). Der Modal-Rahmen selbst trägt zwei Klassen
+   (`class="modal pouch-modal"`) — `.modal.pouch-modal` ist dort robust unabhängig von der
+   Lade-Reihenfolge (dieselbe Absicherung wie `.modal.iwk-modal`, item-wiki.css). Alle Zeilen-Klassen
+   darunter sind neu und kollisionsfrei — ein einfacher Klassen-Selektor SPÄTER in derselben Datei
+   gewinnt per Kaskaden-Reihenfolge gegen die früheren Basis-Regeln oben, ganz ohne Spezifitäts-Tricks. */
+.modal.pouch-modal {
+  width: min(1150px, 94vw);
+  max-width: min(1150px, 94vw);
+  max-height: 88vh;
+  padding: 24px 28px 26px;
+  background: linear-gradient(160deg, var(--ds-parch-mid), var(--ds-parch-dark));
   border-width: 11px;
 }
 
-#root .pouch-modal > .modal-close {
+.modal.pouch-modal > .modal-close {
   top: 10px;
   right: 10px;
   width: 28px;
   height: 28px;
 }
 
-#root .pouch-head {
-  gap: 14px;
-  margin: 0 34px 12px 0;
-  padding: 10px 14px;
+.pouch-head {
+  gap: 16px;
+  margin: 0 34px 14px 0;
+  padding: 12px 16px;
   background:
     linear-gradient(90deg, rgba(27, 18, 12, 0.86), rgba(10, 10, 10, 0.72)),
     url("../assets/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 256px 256px repeat;
@@ -397,124 +405,313 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125);
 }
 
-#root .pouch-head-icon {
-  flex-basis: 64px;
-  width: 64px;
-  height: 64px;
+.pouch-head-icon {
+  flex-basis: 72px;
+  width: 72px;
+  height: 72px;
   border-radius: 0;
 }
 
-#root .pouch-head-name {
+.pouch-head-name {
   font-family: var(--font-head);
-  font-size: clamp(18px, 1.45vw, 24px);
+  font-size: clamp(20px, 1.7vw, 28px);
   color: #ead7ae;
 }
 
-#root .pouch-list {
-  gap: 8px;
-  max-height: 62vh;
-  padding: 0 6px 2px 0;
+.pouch-head-count {
+  font-size: 14px;
 }
 
-#root .pouch-section-title {
-  margin: 8px 0 0;
-  padding: 6px 10px;
+.pouch-list {
+  gap: 12px;
+  max-height: 66vh;
+  padding: 2px 6px 2px 0;
+}
+
+.pouch-section-title {
+  flex-shrink: 0;
+  margin: 10px 0 0;
+  padding: 7px 12px;
   border: 0;
   border-left: 3px solid #9b6a36;
   background: linear-gradient(90deg, rgba(77, 48, 24, 0.38), transparent 82%);
   font-family: var(--font-head);
-  font-size: clamp(12px, 1vw, 15px);
+  font-size: clamp(13px, 1vw, 16px);
   color: #d7bd7e;
 }
 
-#root .pouch-row {
-  display: grid;
-  grid-template-columns: minmax(260px, 0.95fr) minmax(300px, 1.05fr);
-  grid-template-areas: "identity values" "identity quality";
-  gap: 7px 18px;
-  min-height: 78px;
-  padding: 10px 12px;
+/* ─── Zeilen-Karte: links Bild+Name+Rarity, rechts Verzauberungs-/Anforderungs-Details,
+   darunter die Aktionen (Chef-Layout-Vorgabe wörtlich) ────────────────────────────── */
+.pouch-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* NIE shrinken: `.pouch-list` (Flex-Spalte, `overflow-y:auto`) darf bei zu vielen Zeilen scrollen,
+     aber eine einzelne Karte darf dabei nicht unter ihre Inhaltshöhe gequetscht werden — sonst
+     rutscht der Inhalt (Text/Aktionsknöpfe) unten aus dem sichtbar kleineren Kartenrahmen heraus
+     (genau das war der Befund: Knöpfe/Text lagen über der nächsten Karte). Default `flex-shrink:1`
+     + `min-height:auto` sollte das eigentlich schon verhindern (automatische Mindestgröße), aber
+     `flex-shrink:0` macht es unabhängig von Browser-Rundungsfehlern hart garantiert. */
+  flex-shrink: 0;
+  padding: 16px 18px;
+  cursor: pointer;
   border: 5px solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(6px * 2.125);
-  background:
-    linear-gradient(90deg, rgba(23, 17, 13, 0.92), rgba(8, 10, 11, 0.91)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
-  box-shadow: inset 0 0 0 1px rgba(164, 111, 55, 0.1);
+  background: linear-gradient(160deg, var(--ds-parch-light), var(--ds-parch-mid));
+  box-shadow: inset 0 0 0 1px rgba(164, 111, 55, 0.14);
 }
 
-#root .pouch-row--base {
-  grid-template-columns: 1fr;
-  grid-template-areas: "identity";
-  min-height: 66px;
-}
-
-#root .pouch-row:hover,
-#root .pouch-row:focus-visible {
+.pouch-row:hover,
+.pouch-row:focus-visible {
   filter: brightness(1.1);
   outline: none;
-  box-shadow: inset 0 0 0 1px rgba(214, 164, 83, 0.26), 0 2px 8px rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(214, 164, 83, 0.3), 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-#root .pouch-row-main {
-  grid-area: identity;
-  align-self: center;
-  gap: 12px;
+/* Welle VV (Chef: „ausgerüstete Version klar markiert"): der Gold-Tint auf `.pouch-row-equipped`
+   (Basisregel oben) wird von diesem Hintergrund sonst überschrieben (gleiche Spezifität, aber
+   `.pouch-row.pouch-row-equipped` hat zwei Klassen und gewinnt damit sicher) — hier neu gesetzt,
+   statt die Markierung zu verlieren. */
+.pouch-row.pouch-row-equipped {
+  background: linear-gradient(160deg, rgba(216, 192, 106, 0.2), var(--ds-parch-mid));
 }
 
-#root .pouch-row-icon {
-  flex-basis: 52px;
-  width: 52px;
-  height: 52px;
+.pouch-row-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.pouch-row-left {
+  flex: 0 0 236px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.pouch-row-icon {
+  position: relative;
+  flex: 0 0 104px;
+  width: 104px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(183, 133, 73, 0.36);
   background: rgba(4, 5, 6, 0.52);
 }
 
-#root .pouch-row-name {
-  font-family: var(--font-head);
-  font-size: clamp(15px, 1.15vw, 19px);
+.pouch-row--base .pouch-row-icon {
+  flex-basis: 84px;
+  width: 84px;
+  height: 84px;
 }
 
-#root .pouch-row-chips {
-  grid-area: values;
-  align-self: end;
-  gap: 6px 8px;
+.pouch-row-star {
+  top: -6px;
+  left: -6px;
 }
 
-#root .pouch-chip {
-  min-height: 25px;
-  padding: 4px 9px;
-  border-radius: 0;
-  font-family: var(--font-head);
-  font-size: clamp(12px, 0.9vw, 15px);
-}
-
-#root .pouch-chip-suffix {
-  color: #88d788;
-  background: rgba(25, 62, 30, 0.33);
-  border-color: rgba(94, 170, 98, 0.52);
-}
-
-#root .pouch-roll {
-  grid-area: quality;
-  align-self: start;
+.pouch-row-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
   padding-top: 2px;
 }
 
-#root .pouch-roll-track {
+.pouch-row-name {
+  font-family: var(--font-head);
+  font-size: clamp(16px, 1.2vw, 21px);
+  line-height: 1.25;
+}
+
+.pouch-row-rarity-label {
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.9;
+}
+
+.pouch-row-rarity-label.rarity-poor      { color: var(--rar-poor); }
+.pouch-row-rarity-label.rarity-common    { color: var(--muted); }
+.pouch-row-rarity-label.rarity-magic     { color: var(--rar-magic); }
+.pouch-row-rarity-label.rarity-rare      { color: var(--rar-rare); }
+.pouch-row-rarity-label.rarity-superRare { color: var(--rar-superRare); }
+.pouch-row-rarity-label.rarity-epic      { color: var(--rar-epic); }
+.pouch-row-rarity-label.rarity-legendary { color: var(--rar-legendary); }
+.pouch-row-rarity-label.rarity-godly     { color: var(--rar-godly); }
+
+.pouch-row-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+/* ─── Rechte Spalte: Verzauberungen (bis zu 2 Spalten) + Anforderungen ──────────────── */
+.pouch-row-right {
   flex: 1 1 auto;
-  width: auto;
-  max-width: 180px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 22px;
+  border-left: 1px solid rgba(154, 128, 96, 0.3);
+}
+
+.pouch-enchant-header {
+  font-family: var(--font-head);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--boost, #7fc76b);
+}
+
+.pouch-enchant-count {
+  color: var(--ds-parch-ink);
+  opacity: 0.82;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.pouch-enchant-lines {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px 22px;
+}
+
+.pouch-enchant-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* „Runen-Stein"-Symbol vor jeder Verzauberungszeile — dasselbe ✦-Zeichen wie ItemTooltip.tsx'
+   `.itip-inst-affix-gem`, hier als kleiner Edelstein-Kreis statt eines nackten Glyphs, damit es
+   auf der breiten Zeile trotzdem als Marker auffällt. Grün = Verzauberung, Gold = Suffix — dieselbe
+   Farbsprache wie die frühere Chip-Legende oben (`.pouch-legend`). */
+.pouch-enchant-gem {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, rgba(160, 226, 140, 0.95), rgba(28, 58, 28, 0.65) 72%);
+  box-shadow: 0 0 6px rgba(127, 199, 107, 0.55);
+  color: #eaffe0;
+  font-size: 10px;
+}
+
+.pouch-enchant-gem-suffix {
+  background: radial-gradient(circle at 34% 30%, rgba(242, 212, 132, 0.95), rgba(92, 62, 16, 0.65) 72%);
+  box-shadow: 0 0 6px rgba(216, 192, 106, 0.55);
+}
+
+.pouch-enchant-name {
+  font-weight: 700;
+  color: var(--ds-parch-ink);
+}
+
+.pouch-enchant-line-suffix .pouch-enchant-name {
+  color: var(--gold);
+}
+
+.pouch-enchant-tier {
+  font-size: 12px;
+}
+
+.pouch-enchant-effect {
+  flex-basis: 100%;
+  padding-left: 25px;
+  color: #cdbf9c;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.pouch-req-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pouch-req-line {
+  font-size: 14.5px;
+  color: #cdbf9c;
+  overflow-wrap: anywhere;
+}
+
+.pouch-req-skill {
+  color: var(--ds-parch-ink);
+  font-weight: 600;
+}
+
+.pouch-req-unmet {
+  color: #d98a6a;
+}
+
+.pouch-req-x {
+  color: var(--danger, #c43c28);
+  font-weight: 700;
+}
+
+.pouch-roll {
+  padding-top: 2px;
+}
+
+.pouch-roll-track {
+  flex: 0 0 auto;
+  width: 130px;
+}
+
+/* ─── Aktionen direkt in der Zeile (Chef: "darunter Aktionen") — dieselbe app-weite
+   9-Slice-Knopf-Familie wie das gepinnte ItemTooltip (.it-actions/.it-action-btn, components.css,
+   Task #332), nur kompakter und ohne Seitenränder, weil sie hier in der Karte statt im Tooltip-
+   Footer sitzt. */
+.pouch-row-actions {
+  margin: 0;
+  padding-top: 10px;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(154, 128, 96, 0.26);
+}
+
+.pouch-row-actions .it-action-btn {
+  flex: 0 1 200px;
+  height: 38px;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .pouch-row-top {
+    flex-direction: column;
+  }
+
+  .pouch-row-left {
+    flex-basis: auto;
+  }
+
+  .pouch-row-right {
+    padding-left: 0;
+    padding-top: 10px;
+    border-left: 0;
+    border-top: 1px solid rgba(154, 128, 96, 0.26);
+  }
+
+  .pouch-enchant-lines {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 700px) {
-  #root .pouch-modal {
+  .modal.pouch-modal {
     width: min(96vw, 620px);
-    padding-inline: 12px;
-  }
-
-  #root .pouch-row,
-  #root .pouch-row--base {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "identity" "values" "quality";
+    padding-inline: 14px;
   }
 }

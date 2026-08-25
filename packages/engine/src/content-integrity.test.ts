@@ -100,6 +100,13 @@ describe("content integrity: alle Item-Referenzen existieren", () => {
     // Rezension #8 Nachzug: über die neue drop-gear-beats-craft-Wächterprüfung zusätzlich gefunden
     // (vorbestehende Drops außerhalb der #8-Tabellen, gleiches Muster mitbehoben).
     "slagcarapace_plate", "warchief_fist", "revenant_greatshield",
+    // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1): Slayer-Helm/-Beinschienen/
+    // -Armschienen bekommen erstmals einen Trinity-Wert (Rare-Drop-Philosophie: Wert der NÄCHSTEN
+    // Craft-Stufe bei unverändertem — hier slayer, nicht defence/ranged — Requirement, exakt
+    // dasselbe Muster wie die Elite-/#8-Uniques oben). Ihr `requirements.defence`/`.ranged` ist 0
+    // (sie gaten über `slayer`, eine eigene Fortschritts-Achse), die strikte Leiter dieser Funktion
+    // vergleicht aber nur defence/ranged — dieselbe Klasse Falsch-Positiv wie bei den Elite-Uniques.
+    "slayer_helm", "slayer_greaves", "slayer_vambraces",
   ]);
 
   function expectStrictLadder(field: "armorRating" | "evasionRating" | "wardCapacity" | "blockChance", reqField: "defence" | "ranged" | "magic", slots: readonly string[]) {
@@ -415,16 +422,26 @@ describe("Material-Parität der drei Stile (Magier-Material-Paritäts-Audit §5)
     // Material-Gate-Ausreißer, jetzt behoben (dragonhide_*: neues Alternativ-Gerbrezept
     // tan_dragonhide_scales über basilisk_scale/warhide, Gate 32; void_focus: requirements.magic
     // 55→65, Gate 80 ≤ limit 84,5) — beide rechnen jetzt grün ohne Allowlist.
+    // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§7.2): slayer_helm/slayer_greaves/
+    // slayer_vambraces bekommen erstmals armorRating/evasionRating und fallen dadurch zum ersten
+    // Mal in isInScope (vorher explizit draußen, s. Kommentar unten). Ihre Craft-Rezepte verlangen
+    // Etage-5-Material (Seelenschinder-Reißzahn/Turmschmiedeschmelze, effektives Gate 80–128) bei
+    // niedrigerem Wear-Requirement (50/65/80) — ein VORBESTEHENDER Mismatch, im Dokument als eigener
+    // Nebenbefund §7.2 vermerkt ("Craft-Pfad der Armschienen ist 30 Level zu spät") und bewusst NICHT
+    // Teil dieses Auftrags (Chef-Entscheidung offen, Chef-Auftrag war nur Item-/Set-/Shop-Werte).
+    // Die drei Shop-Käufe bleiben ohnehin die praktische Bezugsquelle (Punkte statt Craft), das
+    // Craft-Rezept ist ein Alternativpfad — Allowlist bis der Nebenbefund als eigenes Ticket behoben ist.
     const isAllowlisted = (id: string): boolean =>
       id.startsWith("voidweave_") || id.startsWith("voidhide_") || id.startsWith("shadowhide_") ||
-      id === "chitin_coif" || id === "frost_pelt_hood";
+      id === "chitin_coif" || id === "frost_pelt_hood" ||
+      id === "slayer_helm" || id === "slayer_greaves" || id === "slayer_vambraces";
 
     // Scope = exakt das, was der Audit vergleicht (§1.1 Waffen-Kernlinien, §1.2 Rüstungs-Trinität):
     // Haupt-/Nebenhand-Waffen (alle 3 Stile, inkl. Schilde/Foki) UND die 5 Trinity-Slots NUR, wenn
     // das Teil tatsächlich eine Trinity-Verteidigungsschicht trägt (armorRating/evasionRating/
-    // wardCapacity > 0) — schließt Schmuck (Hals/Ring), Umhänge UND reine Stat-Regalia ohne
-    // Verteidigungsschicht (z.B. Slayer's Regalia — slayer-Requirement, eigene Fortschritts-Achse,
-    // kein Teil der 3-Stile-Materialkette) explizit aus. Diese Kategorien vergleicht der Audit nie.
+    // wardCapacity > 0) — schließt Schmuck (Hals/Ring) und Umhänge explizit aus (Slayer's Regalia
+    // trägt seit 25.08.2026 Trinity auf drei Teilen, s. Allowlist oben statt hier). Diese Kategorien
+    // vergleicht der Audit nie.
     const TRINITY_SLOTS = new Set(["helmet", "body", "legs", "gloves", "boots"]);
     const isInScope = (it: (typeof items)[string]): boolean => {
       if (it.slot === "mainhand" || it.slot === "offhand") return true;

@@ -4771,40 +4771,71 @@ export const content: ContentDB = {
       description: { en: "A crystalline shard from a void herald, radiating cold void energy. Crafting component for the Slayer Amulet.", de: "Ein kristalliner Splitter eines Leeren-Herolds, der kalte Leerenenergie ausstrahlt. Handwerks-Zutat für das Slayer-Amulett." },
     },
     // ══ Slayer Phase 2 — Ausrüstungs-Items (content-dev, 2026-06-28) ═══════
+    // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #1): "die Rüstungen scheinen mir
+    // zu schlecht" — Trinity-Wert der NÄCHSTEN Platten-Stufe (Aetherium-Vollhelm, Vert. 90, AR
+    // 24.41) + bounty-Effekt (+20% Schaden gegen das aktive Slayer-Auftragsziel, die einzige
+    // auftragsbezogene Signatur der Engine). Toter skillBoost.defence entfernt (Trinität liest
+    // keinen Defence-Term mehr). Abweichung von der Spec: das Dokument hielt die Attribute (inkl.
+    // int:4) für "unverändert" — sobald ein Item armorRating trägt, greift aber die Rüstungs-
+    // Trinität-Klassenregel (Chef-GO 25.08.2026 #p14, suffix-class-fit.test.ts): Platte verbietet
+    // int/wis. int:4 ist deshalb nach con umgeschichtet (7→11) statt gestrichen — identischer
+    // Attribut-Gesamtwert, kein verbotenes Attribut. Bewegt keinen BiS-Pin: con zählt nur im
+    // Tank-Score (a("con")*2), dort dominiert armorRating*100 die Gleichstandsprüfung gegen
+    // aetherium_fullhelm ohnehin (beide AR 24.41 — welcher Helm gewinnt ist irrelevant, der
+    // Pin misst nur die Summe).
     slayer_helm: {
       id: "slayer_helm",
       name: { en: "Slayer Helm", de: "Slayer-Helm" },
       type: "equipment", stackable: false,
       slot: "helmet", rarity: "epic", slayerHelm: true,
-      modifiers: { str: 4, dex: 2, con: 7, int: 4 }, skillBoost: { defence: 3 },
+      armorRating: 24.41,
+      modifiers: { str: 4, dex: 2, con: 11 },
+      weaponEffect: { type: "bounty", chance: 1, magnitude: 0.20, durationMs: 0 },
       requirements: { slayer: 80 }, value: 8000,
       description: {
-        en: "A masterwork helm forged from the essence of the Slayer Tower's worst horrors. Grants the bearer protection against every known tower threat — no requirement items needed while worn.",
-        de: "Ein Meisterwerk-Helm, geschmiedet aus dem Wesen der schlimmsten Schrecken des Slayer-Turms. Gewährt dem Träger Schutz gegen jede bekannte Turmbedrohung — keine Anforderungs-Items nötig, solange er getragen wird.",
+        en: "A masterwork helm forged from the essence of the Slayer Tower's worst horrors. It marks its bearer's contract: +20% damage against the current slayer target, and no ward items are needed against any tower threat while worn.",
+        de: "Ein Meisterwerk-Helm, geschmiedet aus dem Wesen der schlimmsten Schrecken des Slayer-Turms. Er zeichnet den Auftrag seines Trägers: +20 % Schaden gegen das aktuelle Auftragsziel, und im Turm sind keine Schutzgegenstände mehr nötig, solange er getragen wird.",
       },
     },
+    // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #3): Trinity-Wert der NÄCHSTEN
+    // Leder-Stufe (Eisenleder-Armschützer, Fernkampf 60, EV 11.76) + healOnKill-Effekt (+4 LP je
+    // Kill, Kettenjagd-Sustain). skillBoost.attack:3 bleibt (lebender Wert, s. Doku §4.1). str:2 +
+    // int:2 nach con umgeschichtet (3→7) aus demselben Trinity-Klassen-Grund wie beim Helm (Leder
+    // verbietet str/int, s. suffix-class-fit.test.ts #p14). dex bleibt bei 1 (unverändert), damit
+    // die Dodge-Pins CL60/90 stehen bleiben (Himmelsgriff-Stulpen dex:2 bleibt BiS-Handschuh).
     slayer_vambraces: {
       id: "slayer_vambraces",
       name: { en: "Slayer Vambraces", de: "Slayer-Armschienen" },
       type: "equipment", stackable: false,
       slot: "gloves", rarity: "epic",
-      modifiers: { str: 2, dex: 1, con: 3, int: 2, lck: 3 }, skillBoost: { attack: 3 },
+      evasionRating: 11.76,
+      modifiers: { dex: 1, con: 7, lck: 3 }, skillBoost: { attack: 3 },
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
       requirements: { slayer: 50 }, value: 3200,
       description: {
-        en: "Vambraces fashioned from the fang of a soul flayer and hardened tower leather. A deadly token of tower mastery.",
-        de: "Armschienen aus dem Reißzahn eines Seelenschinders und gehärtetem Turm-Leder. Ein tödliches Symbol der Turm-Beherrschung.",
+        en: "Vambraces fashioned from the fang of a soul flayer and hardened tower leather. Every kill on the hunt knits the hunter's wounds: +4 HP per kill.",
+        de: "Armschienen aus dem Reißzahn eines Seelenschinders und gehärtetem Turm-Leder. Jeder Abschuss auf der Jagd schließt die Wunden des Jägers: +4 LP je Kill.",
       },
     },
+    // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #2): Trinity-Wert der NÄCHSTEN
+    // Platten-Stufe (Bluteisen-Plattenbeinlinge, Vert. 70, AR 21.78) + giantSlayer-Effekt (Welt-
+    // Aufträge liegen immer über dem eigenen Level, Turm-Aufträge zur Hälfte). Toter
+    // skillBoost.defence entfernt. int:3 nach con umgeschichtet (4→7), gleicher Trinity-Klassen-
+    // Grund wie beim Helm. Bleibt unter Grabplatten-Beinschienen (Chase, AR 24.19) und unter
+    // Frostplatten-Beinschienen (AR 27.5, hält bereits heute den Tank-Pin CL90) — kein Pin bewegt
+    // sich.
     slayer_greaves: {
       id: "slayer_greaves",
       name: { en: "Slayer Greaves", de: "Slayer-Beinschienen" },
       type: "equipment", stackable: false,
       slot: "legs", rarity: "epic",
-      modifiers: { str: 3, dex: 1, con: 4, int: 3 }, skillBoost: { defence: 3 },
+      armorRating: 21.78,
+      modifiers: { str: 3, dex: 1, con: 7 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.20, durationMs: 0 },
       requirements: { slayer: 65 }, value: 4500,
       description: {
-        en: "Greaves reinforced with the fractured shards of dreadfang teeth. Light yet immensely durable — built for slayers who move without hesitation.",
-        de: "Beinschienen, die mit zersplitterten Schreckenzahn-Zähnen verstärkt wurden. Leicht, aber enorm haltbar — gebaut für Slayer, die ohne Zögern handeln.",
+        en: "Greaves reinforced with the fractured shards of dreadfang teeth. Built for prey above your station: +20% damage against monsters of higher level than you.",
+        de: "Beinschienen, mit zersplitterten Schreckenzahn-Zähnen verstärkt. Gebaut für Beute über deinem Stand: +20 % Schaden gegen Monster, die über deinem Kampflevel liegen.",
       },
     },
     slayer_amulet: {
@@ -15041,7 +15072,10 @@ export const content: ContentDB = {
     },
     // ── F) Slayer-Regalia-Set (Phase 2, run7-fix P3: 2. Breakpoint bei 4 Teilen) ─────────────
     // Beide Einträge werden von activeSets() unabhängig ausgewertet → 4pc bekommt BEIDE Boni.
-    // 2pc: frühe Belohnung (Helm + ein weiteres Teil), 4pc: voller Abschluss = stärkster Set-Bonus.
+    // 2pc: +11 Attribute, +Angriff 2 · 4pc zusätzlich: +13 Attribute, 0,15 LP/s Regeneration.
+    // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.2/§4.6 #4): alter Kommentar ("defense
+    // +45, maxHp +140, dmg +18, crit +6%, evasion +12") stammte aus der Vor-Trinity-Ära und stimmte
+    // nicht mehr (skillBoost.defence war tot).
     {
       id: "slayer_set",
       name: { en: "Slayer's Regalia (2pc)", de: "Slayers Ornat (2-teilig)" },
@@ -15054,8 +15088,9 @@ export const content: ContentDB = {
       name: { en: "Slayer's Regalia (4pc)", de: "Slayers Ornat (4-teilig)" },
       pieces: ["slayer_helm", "slayer_vambraces", "slayer_greaves", "slayer_amulet"],
       minPieces: 4,
-      // Zusatz-Bonus (stackt mit 2pc): kombiniert 2pc+4pc = defense +45, maxHp +140, dmg +18, crit +6%, evasion +12
-      bonus: {}, modifiers: { str: 3, dex: 1, con: 4, int: 3, lck: 2 }, skillBoost: { defence: 3 },
+      // Toter skillBoost.defence entfernt; dafür 0,15 LP/s Regeneration (Kettenjagd-Sustain, unter
+      // jeder Chase-Set-Regen 0,2–0,3).
+      bonus: { hpRegenPerSec: 0.15 }, modifiers: { str: 3, dex: 1, con: 4, int: 3, lck: 2 },
     },
   ],
   // ══════════════════════════════════════════════════════════════════════
@@ -17784,25 +17819,35 @@ export const content: ContentDB = {
   // 35 Pkt/h aus dem Report): helm 650 Pkt ≈ 18,6h, Katalog gesamt 2368 Pkt ≈ 67,7h. Reihenfolge
   // bewusst beibehalten/verschärft: Gate-Items (progressions-kritisch, Turm-Zugang) ganz unten,
   // Slayer-Gear in der Mitte, Helm-Fallback + Consumables oben (Luxus/Alternative zum Craften).
+  //
+  // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.3/§4.6 #5): "kontrolliere auch noch mal
+  // die Belohnungen, vor allem die Rüstungen scheinen mir zu schlecht" — Punkte-Ökonomie: 5 Pkt/Task
+  // (Ø), Streak +10 %, Meisterring +10 %, Trophäenwand bis +30 %; Planungsrate 30–40 Pkt/h; Helm ≈
+  // 19 h, Ornat ≈ 55 h. Slayer-Gear = nächste Craft-Stufe + Slayer-Effekt (s. Item-Kommentare oben).
+  // Änderungen ggü. vorher: blighted_bone/forge_ember GESTRICHEN (tote Angebote — ein einziger
+  // Etage-1/3-Auftrag liefert 9–13 Stück gratis aus Kampf-Drops, der Shop verlangte dafür 70–260
+  // Pkt; beide bleiben regulärer Monster-Loot, nur der Punkte-Kauf entfällt). Armschienen 320→260
+  // Pkt (erster Ausrüstungskauf jetzt ~9 h statt ~11 h). Kampftrank-Gate 1→20 (war eine Anfänger-
+  // Falle: 12 Pkt = 1–6 h Slaying früh für einen 10-min-Buff, stand als erstes Angebot ganz oben).
   slayerShop: [
-    // ── Phase 1: Anforderungs-Items (Gate-Items für den Turm) ─────────────
+    // ── Schlüssel (Turm-Gates) ─────────────────────────────────────────────
     { itemId: "plague_mask",  cost: 12,  slayerLevelRequired: 1  },
     { itemId: "ear_plugs",    cost: 18,  slayerLevelRequired: 15 },
     { itemId: "mirror_ward",  cost: 25,  slayerLevelRequired: 15 },
     { itemId: "soul_veil",    cost: 55,  slayerLevelRequired: 40 },
     { itemId: "void_anchor",  cost: 100, slayerLevelRequired: 60 },
-    // ── Phase 2: Slayer-Gear (Alternative zu Crafting) ───────────────────
-    // Farming the tower and spending points = OSRS-Stil Fallback ohne Crafting-Skills.
-    { itemId: "slayer_vambraces", cost: 320, slayerLevelRequired: 50 },
+    // ── Ausrüstung (Slayers Ornat) ─────────────────────────────────────────
+    { itemId: "slayer_vambraces", cost: 260, slayerLevelRequired: 50 },   // war 320 (~11h → ~9h)
     { itemId: "slayer_greaves",   cost: 420, slayerLevelRequired: 65 },
     { itemId: "slayer_amulet",    cost: 520, slayerLevelRequired: 70 },
-    // Combat-drop Helm-Komponenten (sim benötigt Shop-Quelle um craft_slayer_helm zu simulieren) —
-    // reale Spieler farmen diese primär aus Kampf-Drops, der Punkte-Kauf ist nur Lücken-Füller.
-    { itemId: "blighted_bone",    cost: 8,   slayerLevelRequired: 30 },
-    { itemId: "forge_ember",      cost: 20,  slayerLevelRequired: 50 },
-    { itemId: "abyssal_core",     cost: 70,  slayerLevelRequired: 80 },
     { itemId: "slayer_helm",      cost: 650, slayerLevelRequired: 80 },
-    // ── Wiederkehrender Punkte-Sink: Consumables (run6-fix P1 + run7-fix P2 + sweep6-batchE P2-1) ──
+    // ── Notfall-Material (Helm-Rezept) ──────────────────────────────────────
+    // abyssal_core bleibt: Sicherheitsnetz für den 5. Kern (Farmen ist 25–40× günstiger, bewusst
+    // ein Notnagel). blighted_bone/forge_ember GESTRICHEN (s. Kommentar oben) — beide bleiben
+    // erreichbar über Monster-Loot (Etage 1/3), die Helm-Rezeptkette (forge_tower_compound) bleibt
+    // damit produzierbar.
+    { itemId: "abyssal_core",     cost: 70,  slayerLevelRequired: 80 },
+    // ── Tränke (wiederkehrende Senke) ────────────────────────────────────────
     // Keine maxPurchases → unbegrenzt kaufbar. Stufenleiter 12→28→110 Pkt (war 50→120→500, ÷~4,3),
     // klar differenziert (echte Buff-Werte, s. Item-Defs — P3-3 Text-Fix):
     //   Draught  12 Pkt: 10 min Burst-Buff        (Effizienz: 1×10 / 12 = 0,83 dmg-min/pt)
@@ -17810,7 +17855,7 @@ export const content: ContentDB = {
     //   War Brew 110 Pkt: 60 min Prestige-Buff    (Effizienz: 3,5×60 / 110 = 1,91 dmg-min/pt + viel Krit/Genauigkeit)
     // → kein Trap-Tier, aspirationaler Horizont (22 Brenna-Tasks à 5 Pkt = 1 War Brew, war
     // fälschlich "25 Slayer-Meister-Tasks" — Slayer-Meister existiert seit der Master-Konsolidierung nicht mehr)
-    { itemId: "slayer_combat_draught",  cost: 12,  slayerLevelRequired: 1  },
+    { itemId: "slayer_combat_draught",  cost: 12,  slayerLevelRequired: 20 },  // war 1 (Anfänger-Falle)
     { itemId: "slayer_hunters_elixir",  cost: 28,  slayerLevelRequired: 40 },
     { itemId: "slayer_war_brew",        cost: 110, slayerLevelRequired: 70 },
   ],
