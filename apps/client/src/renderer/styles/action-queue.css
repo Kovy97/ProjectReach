@@ -404,6 +404,14 @@
 .queue-row {
   display: flex;
   align-items: center;
+  /* Chef 25.08.2026 (Screenshot "Kupfera-der"): kein Trennstrich im Namen. Die Zeile darf
+     stattdessen UMBRECHEN: passt das laengste Wort des Namens nicht mehr neben Symbol und die
+     vier Knoepfe, rutschen die Knoepfe unter den Text. Das greift nur dann, weil Body und Name
+     ihre Mindestbreite (laengstes Wort, min-width: auto) behalten und die Zeile sonst nichts
+     mehr abgeben kann. Kurze Namen bleiben einzeilig. Ohne feste Zeilenhoehe, sonst ragt die
+     zweite Zeile heraus (so scheiterte der erste Anlauf im August). */
+  flex-wrap: wrap;
+  align-content: flex-start;
   gap: 6px;
   padding: 6px 8px;
   /* Chef 2026-07-24: Holzbrett statt Stein — die Einträge lesen sich als Planken auf dem
@@ -488,7 +496,9 @@
   align-items: center;
   gap: 6px;
   flex: 1 1 100px;
-  min-width: 100px;
+  /* min-width: auto statt 100px: das Minimum ist das laengste Wort des Namens. Nur so bricht
+     die Zeile um (s. .queue-row), statt den Namen mit Trennstrich zu zerlegen. */
+  min-width: auto;
 }
 
 .queue-row-icon-img {
@@ -516,7 +526,7 @@
      Das Mengen-Label ist deshalb in diese Spalte gewandert (ActionQueuePanel.tsx), und 100 px
      sind die harte Untergrenze fuer den Rest. */
   flex: 1 1 100px;
-  min-width: 100px;
+  min-width: auto; /* laengstes Wort, s. .queue-row-body */
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -529,8 +539,10 @@
 .queue-row-name {
   font-size: 13px;
   white-space: normal;
-  overflow-wrap: break-word;
-  hyphens: auto;
+  /* Chef 25.08.2026: kein "Kupfera-der". Umbruch nur an Leerzeichen und echten Bindestrichen;
+     wird ein Wort zu lang, rutschen die Knoepfe der Zeile darunter (.queue-row flex-wrap). */
+  overflow-wrap: normal;
+  hyphens: manual;
 }
 
 .queue-row-duration {
@@ -610,6 +622,7 @@
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
+  margin-left: auto; /* rechts, auch in der zweiten Zeile nach dem Umbruch */
 }
 
 /* Chef 25.08.2026: gemeinsamer Wrapper für ALLE Custom-Tooltips um vormals `title=`-Knöpfe (Panel-
