@@ -818,6 +818,15 @@ export const MONSTER_FAMILIES: MonsterFamily[] = [
  * | thorns         | FLAT Schaden an Angreifer (Rüstungs-Chase §5) | —                              |
  * | doubleStrike   | — (Palette-Hook, Content später)       | chance: Zweitschlag-Chance            |
  * | bane           | +Anteil vs. Monster der targetFamily (0.25) | targetFamily: MonsterFamily (Pflicht) |
+ * | blockRestore   | +Anteil maxHp Heilung je ERFOLGREICHEM Block (0.02); Klemme BLOCK_RESTORE_CAP_PCT und BLOCK_RESTORE_CAP_ABS | — |
+ * | combatXp       | +Anteil auf JEDE Kampf-XP des Kampfmoduls (0.10); Klemme COMBAT_XP_BONUS_CAP | — |
+ * | lootChance     | +Anteil auf die Chance regulaerer Kill-Loot-Tabellen (0.10); Klemme LOOT_CHANCE_BONUS_CAP | — |
+ *
+ * Die drei letzten Kinds sind die Runen-Tier-IV-Hooks (Chef-Entscheid 25.08.2026,
+ * design/runen-tier-iv.html §3/§4): Ungebrochene Mauer (blockRestore, Schild), Chronik (combatXp,
+ * Schmuck), Nachlese (lootChance, Schmuck). Sie sind bewusst KINDS und keine EquipBonus-Schluessel
+ * (§9 Frage 5): ein Kind ist pro Item einmalig (`affixHasActiveEffect`) und stapelt ueber Quellen
+ * nur per MAX, ein Bonus-Schluessel wuerde ueber 16 Schmuck-Slots additiv laufen.
  */
 export type SpecialEffectType =
   | "execute"
@@ -848,7 +857,10 @@ export type SpecialEffectType =
   | "packLeader"
   | "thorns"
   | "doubleStrike"
-  | "bane";
+  | "bane"
+  | "blockRestore"
+  | "combatXp"
+  | "lootChance";
 
 /** Alle implementierten Spezial-Kinds (Guard-Quelle: status-coverage prüft Content dagegen). */
 export const SPECIAL_EFFECT_TYPES: SpecialEffectType[] = [
@@ -881,6 +893,9 @@ export const SPECIAL_EFFECT_TYPES: SpecialEffectType[] = [
   "thorns",
   "doubleStrike",
   "bane",
+  "blockRestore",
+  "combatXp",
+  "lootChance",
 ];
 
 /** Jeder Waffeneffekt-Typ: klassischer Status (burn/…) ODER Spezial-Kind (Waffen 2.0 §2.1). */
@@ -963,6 +978,36 @@ export const MELEE_LIFESTEAL_CAP_PCT = 0.05;
  * Boss-Netto-Schaden zu negieren. (Stat-Squish ÷10: 12 → 1.2 — relativer Bindungspunkt bleibt.)
  */
 export const MELEE_LIFESTEAL_CAP_ABS = 1.2;
+
+// ── Runen-Tier-IV-Deckel (Chef-Entscheid 25.08.2026, design/runen-tier-iv.html §7.2 / §9) ──
+// Drei neue Spezial-Kinds bekommen je eine Klemme in shared, damit Fehl-Content (eine Rune mit
+// magnitude 5) nie ausbrechen kann. Muster: MELEE_LIFESTEAL_CAP_* / PET_ABILITY_CAP.
+/**
+ * blockRestore: Anteil der max. HP, den EIN erfolgreicher Block hoechstens heilt. Die Rune der
+ * Ungebrochenen Mauer traegt genau diesen Wert (0.02); mehr gibt es ueber Content nicht (§9 Frage 11,
+ * Option A). Sustain-Groessenordnung: bei 47 % Block und 3-s-Gegnerintervall ~0,3 % maxHp/s.
+ */
+export const BLOCK_RESTORE_CAP_PCT = 0.02;
+/**
+ * blockRestore: absolute Klemme je Block (HP). Bewusst an die Lifesteal-Schiene gebunden
+ * (2 × MELEE_LIFESTEAL_CAP_ABS): die Block-Heilung soll dieselbe Groessenordnung haben wie der
+ * gedeckelte Melee-Lebensraub, nur seltener feuern. Effektive Heilung = min(maxHp·pct, ABS).
+ */
+export const BLOCK_RESTORE_CAP_ABS = MELEE_LIFESTEAL_CAP_ABS * 2;
+/**
+ * combatXp: Obergrenze des Kampf-XP-Bonus-Anteils (Rune der Chronik: 0.10). Die XP-Zielkurve
+ * toleriert ±10 % je Sprosse (§4.3); 0.20 laesst Raum fuer eine spaetere Stufe, ohne die Leiter zu
+ * knicken. Greift in `addXp` (combat.ts) auf JEDE XP des Kampfmoduls, nicht auf Slayer-XP
+ * (eigener Vergabe-Pfad mit eigener Klemme SLAYER_POINTS_TOTAL_BONUS_CAP).
+ */
+export const COMBAT_XP_BONUS_CAP = 0.20;
+/**
+ * lootChance: Obergrenze des Beutechance-Bonus-Anteils (Rune der Nachlese: 0.10). Wirkt NUR auf die
+ * Chance regulaerer Kill-Loot-Tabellen (`monster.loot` in onEnemyDefeated, auf 1 geklemmt), NICHT
+ * auf Elite-Uniques (eigener `eliteRng`-Strom), NICHT auf Dungeon-Truhen/-Abschluss (§9 Frage 4,
+ * Option A: 1/1000 bleibt sinngemaess 1/1000, die Rare-Drop-Philosophie bleibt intakt).
+ */
+export const LOOT_CHANCE_BONUS_CAP = 0.20;
 // HP_REGEN_PER_TICK: ENTFERNT (Chef-Entscheid 2026-07-02, SAVE_VERSION 49). Die natürliche
 // Basis-HP-Regeneration (früher 0.04 HP/Tick außerhalb des Kampfes) existiert nicht mehr —
 // Heilung kommt AUSSCHLIESSLICH aus Items/Effekten: Auto-Eat-Food, Tränken (Auto-Trank-System),
@@ -2933,8 +2978,14 @@ export interface AffixDef {
   bonusByTier: EquipBonus[];
   /** Attribut-Mods pro Tier (optional, Index 0 = T1). */
   modifiersByTier?: Array<Partial<Record<AttributeId, number>>>;
-  /** Optionaler Waffeneffekt pro Tier (z.B. burn) — von combat-dev über effectiveInstanceWeaponEffects gelesen. */
-  weaponEffectByTier?: WeaponEffect[];
+  /**
+   * Optionaler Waffeneffekt pro Tier (z.B. burn) — von combat-dev über effectiveInstanceWeaponEffects gelesen.
+   * `undefined`-Eintraege sind erlaubt (Runen Tier IV, Chef-Entscheid 25.08.2026, design/runen-tier-iv.html
+   * §2 Prinzip 4): eine T4-Familie belegt NUR Index 3 (`[undefined, undefined, undefined, effekt]`), die
+   * Indizes 0..2 bleiben leer, damit kein Tier I bis III dieser Familie existiert. Alle Leser indizieren
+   * ohnehin mit `?.[tier - 1]` (noUncheckedIndexedAccess) und pruefen auf Vorhandensein.
+   */
+  weaponEffectByTier?: Array<WeaponEffect | undefined>;
   /**
    * Trinity-Defensiv-Boni pro Tier (Index 0 = T1), analog `buff.trinity`. Für die Rüstungs-/Schild-Runen
    * (Rune der Ägide=armorRating / des Ausweichens=evasionRating / der Abwehr=wardCapacity / des
@@ -2946,6 +2997,17 @@ export interface AffixDef {
    * Ausweich→Leder, Ward→Stoff, Block→Schild).
    */
   trinityByTier?: Array<Partial<TrinityStats>>;
+  /**
+   * Klassen-Gate OHNE Trinity-Wert (Runen Tier IV, Chef-Entscheid 25.08.2026, design/runen-tier-iv.html
+   * §4.2): das Zielteil muss diesen Trinity-Stat bereits > 0 tragen, auch wenn der Affix selbst keinen
+   * Trinity-Bonus bringt. Noetig, weil Schmuck (Ringe/Amulett/Umhang) ZUSAETZLICH das `armor`-Tag traegt
+   * (`itemTypeTags`): eine Dornen-Rune mit `appliesTo: ["armor"]` und nur einem Aktiv-Effekt wuerde
+   * sonst auf einem Meister-Ring haften. armorRating→Platte, evasionRating→Leder, wardCapacity→Stoff,
+   * blockChance→Schild. Ausgewertet in `trinityGatePasses` (engine/enchant.ts), also in applyEnchant,
+   * enchantPreview und dem BiS-Builder der Envelope-Suite gleichermassen. Optional: Alt-Content
+   * unveraendert, `trinityByTier` gated weiterhin von selbst.
+   */
+  requiresTrinity?: keyof TrinityStats;
   /** Auf welche Item-Typen/Stile anwendbar. Fehlt = überall. */
   appliesTo?: ItemTypeTag[];
 }

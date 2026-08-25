@@ -21,7 +21,8 @@ describe("action level gating", () => {
 
   it("erlaubt die Aktion ab dem benötigten Level", () => {
     const s = createGame({ name: "Sim" }, content, 1);
-    s.skills.smithing = { xp: xpForLevel(21) };
+    // Stahl-Kampfaxt verlangt seit der Schmiede-Leiter (Commit dc7c5a6, 25.08.2026) Level 25, nicht mehr 21.
+    s.skills.smithing = { xp: xpForLevel(25) };
     expect(actionLevelMet(s, content, "forge_steel_battleaxe")).toBe(true);
     setActiveAction(s, content, "forge_steel_battleaxe");
     expect(s.activeActionId).toBe("forge_steel_battleaxe");

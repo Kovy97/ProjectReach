@@ -44,9 +44,12 @@ import {
  *  - `class_mismatch`   Trinity-Rune auf einem Teil ohne den passenden Trinity-Stat (§6.2-Klassen-Gate):
  *                       Schutz nur auf Platte (armorRating>0), Ausweich nur auf Leder (evasionRating>0),
  *                       Ward nur auf Stoff (wardCapacity>0), Block nur auf Schild (blockChance>0).
- *  - `duplicate_effect` Diese AKTIV-EFFEKT-Rune (Flamme/Frost/Schock — `weaponEffectByTier`)
- *                       sitzt bereits auf der Instanz. Ihr Proc wird entdoppelt, eine zweite
- *                       braechte also nichts; Stat-Runen bleiben dagegen frei stapelbar.
+ *                       Seit Runen Tier IV auch fuer Affixe OHNE Trinity-Wert, die per
+ *                       `AffixDef.requiresTrinity` eine Klasse verlangen (Dornen-Rune nur auf Platte).
+ *  - `duplicate_effect` Diese AKTIV-EFFEKT-Rune (Flamme/Frost/Schock, alle Tier-IV-Runen —
+ *                       `weaponEffectByTier`) sitzt bereits auf der Instanz. Ihr Proc wird
+ *                       entdoppelt, eine zweite braechte also nichts; Stat-Runen bleiben dagegen
+ *                       frei stapelbar.
  *  - `no_affix_slots`   Das Item hat für seine Rarity keinen freien Affix-Slot mehr.
  *  - `no_affix`         Die Rune trägt keinen Affix bzw. der Ziel-Affix-Index existiert nicht.
  *  - `not_enchantable`  Kein verzauberbares Equipment (oder kein Platz, um es zur Instanz zu promoten).
@@ -380,34 +383,44 @@ const TRINITY_KEYS: readonly (keyof TrinityStats)[] = [
 ];
 
 /**
- * Traegt dieser Affix einen AKTIV-EFFEKT (Proc)? Heute genau drei: Flamme (burn), Frost (frost),
- * Schock (shock).
+ * Traegt dieser Affix einen AKTIV-EFFEKT (Proc)? Bis 25.08.2026 genau drei: Flamme (burn), Frost
+ * (frost), Schock (shock). Seit Runen Tier IV (design/runen-tier-iv.html §2 Prinzip 2) dazu alle 14
+ * T4-Runen: sie tragen ausschliesslich ein Spezial-Kind in `weaponEffectByTier` (nur Index 3 belegt,
+ * Indizes 0..2 `undefined`), und genau das macht sie automatisch einmalig pro Item.
  *
  * Sie sind der Grund, warum die Runen-Stapelung eine Ausnahme braucht (Chef-Nachentscheid
  * 25.08.2026). Zwei Gruende, und der zweite ist der harte:
  *  1. `effectiveInstanceWeaponEffects` (shared) entdoppelt Procs ueber Typ/Chance/Staerke/Dauer —
- *     zwei gleiche Runen ergeben EINEN Proc, nie zwei.
- *  2. Diese drei Affixe tragen KEINEN Stat-Bonus (bonusByTier leer, modifiersByTier fehlt). Ihr
+ *     zwei gleiche Runen ergeben EINEN Proc, nie zwei. Spezial-Kinds stapeln ueber Quellen
+ *     ausserdem nur per MAX (collectSpecialEffects in combat.ts).
+ *  2. Diese Affixe tragen KEINEN Stat-Bonus (bonusByTier leer, modifiersByTier fehlt). Ihr
  *     ganzer Wert ist der Proc. Eine zweite gaebe also buchstaeblich nichts — fuer eine Rune und
  *     den vollen Goldpreis.
  *
  * Geprueft ueber ALLE Tiers, nicht nur das angebrachte: Flamme I und Flamme III haetten
  * unterschiedliche Chance/Staerke, wuerden die Entdopplung also passieren und beide feuern. Das
  * waere ein Schleichweg um dieselbe Regel. Fuer ein Tier-Upgrade gibt es den dokumentierten Pfad
- * (disenchanten, dann neu anbringen).
+ * (disenchanten, dann neu anbringen). `undefined`-Luecken (T4-Arrays) zaehlen nicht als Effekt.
  */
 export function affixHasActiveEffect(def: AffixDef): boolean {
   return (def.weaponEffectByTier ?? []).some((e) => e != null);
 }
 
 /**
- * Trinity-Klassen-Gate (§6.2): true, wenn `def` an `base` angebracht werden darf. Trägt der Affix bei
- * `tier` einen Trinity-Stat > 0, muss das Basis-Item denselben Stat bereits > 0 tragen — Schutz→Platte
- * (armorRating>0), Ausweich→Leder (evasionRating>0), Ward→Stoff (wardCapacity>0), Block→Schild
- * (blockChance>0). Ohne `trinityByTier` (Waffen-/Attribut-Runen) immer true. Rein lesend & deterministisch,
- * KEIN neues Tag — geprüft direkt am ItemDef-Feld. Von `applyEnchant` UND `enchantPreview` genutzt.
+ * Trinity-Klassen-Gate (§6.2): true, wenn `def` an `base` angebracht werden darf. Zwei Pruefungen,
+ * beide am ItemDef-Feld des Zielteils (KEIN neues Tag), rein lesend und deterministisch:
+ *  1. Trägt der Affix bei `tier` einen Trinity-Stat > 0 (`trinityByTier`), muss das Basis-Item
+ *     denselben Stat bereits > 0 tragen — Schutz→Platte (armorRating>0), Ausweich→Leder
+ *     (evasionRating>0), Ward→Stoff (wardCapacity>0), Block→Schild (blockChance>0).
+ *  2. Verlangt der Affix per `requiresTrinity` eine Klasse (Runen Tier IV, Chef-Entscheid 25.08.2026,
+ *     design/runen-tier-iv.html §4.2), muss das Basis-Item DIESEN Stat > 0 tragen, auch wenn der Affix
+ *     selbst keinen Trinity-Wert bringt. Ohne dieses Feld haftete die Eiserne Antwort (thorns,
+ *     `appliesTo: ["armor"]`) auf einem Meister-Ring, weil Schmuck zusaetzlich das armor-Tag traegt.
+ * Ohne beides (Waffen-/Attribut-/Schmuck-Runen) immer true. Von `applyEnchant`, `enchantPreview`
+ * und dem BiS-Builder der Envelope-Suite genutzt; die UI (EnchantingPage) ruft dieselbe Funktion.
  */
 export function trinityGatePasses(def: AffixDef, tier: number, base: ItemDef): boolean {
+  if (def.requiresTrinity && (base[def.requiresTrinity] ?? 0) <= 0) return false;
   const tri = def.trinityByTier?.[tier - 1];
   if (!tri) return true;
   for (const key of TRINITY_KEYS) {

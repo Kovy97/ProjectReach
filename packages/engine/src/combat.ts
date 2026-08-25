@@ -64,6 +64,10 @@ import {
   MELEE_LIFESTEAL,
   MELEE_LIFESTEAL_CAP_PCT,
   MELEE_LIFESTEAL_CAP_ABS,
+  BLOCK_RESTORE_CAP_PCT,
+  BLOCK_RESTORE_CAP_ABS,
+  COMBAT_XP_BONUS_CAP,
+  LOOT_CHANCE_BONUS_CAP,
   MELEE_XP_PER_DAMAGE,
   combatXpLevelMult,
   TICK_MS,
@@ -273,12 +277,19 @@ function tryAutoPotion(state: GameState, content: ContentDB, maxHp: number): voi
 // die TATSÄCHLICH vergebene XP (nach earlyXpMult/Segen/Schrein) — damit Log-Zeilen den effektiven
 // Betrag ausweisen können, ohne die Formel zu duplizieren. Bestehende Aufrufer dürfen den
 // Rückgabewert weiterhin ignorieren (vorher `void`).
+// `fx` (Runen Tier IV, Chef-Entscheid 25.08.2026, design/runen-tier-iv.html §4.3 Rune der Chronik):
+// traegt die Ausruestung das Kind `combatXp`, wird JEDE hier vergebene XP um dessen Anteil
+// angehoben (Klemme COMBAT_XP_BONUS_CAP). Genau deshalb sitzt der Faktor hier und nicht nur im
+// Kill-Pfad: „alle Kampf-Skills" heisst Stil-, Vitality-, Warding- und Dungeon-XP, und das ist
+// exakt die Menge, die durch addXp laeuft. Slayer-XP hat einen eigenen Pfad und bleibt aussen vor.
+// Optional, damit Aufrufer ohne fx (heute keiner) bit-identisch bleiben. Kein RNG.
 function addXp(
   state: GameState,
   content: ContentDB,
   skillId: string,
   amount: number,
   nowMs?: number,
+  fx?: SpecialEffects,
 ): number {
   const skill = (state.skills[skillId] ??= { xp: 0 });
   // #276: XP-Pets sind ABGESCHAFFT (Chef-Verbot, Spec §4.2) — der frühere petSkillXpMult-Faktor
@@ -290,7 +301,8 @@ function addXp(
   const granted =
     amount
     * earlyXpMult(levelFromXp(skill.xp))
-    * shrineAmplifiedMult(blessingMult(nowMs, "xp"), campShrineBonus(state, content));
+    * shrineAmplifiedMult(blessingMult(nowMs, "xp"), campShrineBonus(state, content))
+    * combatXpEffectMult(fx);
   skill.xp += granted;
   // Encounter-XP-Akkumulator für die Kill-Summary (`lastKill.xpBySkill`): sammelt die TATSÄCHLICH
   // vergebene XP (nach allen Multiplikatoren) je Skill seit dem Spawn des aktuellen Gegners. Wird
@@ -580,6 +592,31 @@ function hasSpecialEffects(fx: SpecialEffects): boolean {
   return false;
 }
 
+/**
+ * combatXp (Rune der Chronik, Runen Tier IV §4.3): Multiplikator auf jede Kampf-XP, 1 ohne das
+ * Kind. Magnitude ist der Bonus-ANTEIL (0.10 = +10 %), auf COMBAT_XP_BONUS_CAP geklemmt und nie
+ * negativ. Ueber Quellen hinweg gilt wie bei allen Kinds MAX (collectSpecialEffects), vier Ringe
+ * mit der Rune zaehlen also einmal.
+ */
+function combatXpEffectMult(fx: SpecialEffects | undefined): number {
+  const e = fx?.combatXp;
+  if (!e) return 1;
+  return 1 + Math.min(COMBAT_XP_BONUS_CAP, Math.max(0, e.magnitude));
+}
+
+/**
+ * lootChance (Rune der Nachlese, Runen Tier IV §4.3): Multiplikator auf die Chance JEDES Eintrags
+ * einer regulaeren Kill-Loot-Tabelle, 1 ohne das Kind. Klemme LOOT_CHANCE_BONUS_CAP. Wirkt nur auf
+ * den Vergleichswert des bestehenden nextFloat-Wurfs (Muster rareDropMult), nie auf die Zahl der
+ * Wuerfe. Elite-Uniques (eigener eliteRng-Strom) und Dungeon-Truhen/-Abschluss bleiben unberuehrt
+ * (§9 Frage 4, Option A).
+ */
+function lootChanceEffectMult(fx: SpecialEffects | undefined): number {
+  const e = fx?.lootChance;
+  if (!e) return 1;
+  return 1 + Math.min(LOOT_CHANCE_BONUS_CAP, Math.max(0, e.magnitude));
+}
+
 /** Transiente Spezial-Effekt-Zähler des laufenden Kampfs (lazy angelegt; NIE persistiert). */
 function effectCounters(cs: CombatState): EffectCounters {
   return (cs.effectCounters ??= createEffectCounters());
@@ -774,6 +811,7 @@ function grantOffenseXp(
   monster: MonsterDef,
   damage: number,
   nowMs?: number,
+  fx?: SpecialEffects,
 ): void {
   const xpMult = offenseXpMult(state, style, monster);
   const skillId = activeOffenseSkill(state, style);
@@ -785,14 +823,14 @@ function grantOffenseXp(
   // Summe bleibt identisch (Stil-Parität-Guard unberührt); andere Stances (power/defence/ranged/magic)
   // routen weiterhin 100 % an ihren einen Skill.
   if (style === "melee" && state.character.combatStyle === "attack") {
-    addXp(state, content, "attack", offenseXp * ATTACK_STANCE_ATTACK_SHARE, nowMs);
-    addXp(state, content, "power", offenseXp * (1 - ATTACK_STANCE_ATTACK_SHARE), nowMs);
+    addXp(state, content, "attack", offenseXp * ATTACK_STANCE_ATTACK_SHARE, nowMs, fx);
+    addXp(state, content, "power", offenseXp * (1 - ATTACK_STANCE_ATTACK_SHARE), nowMs, fx);
   } else {
-    addXp(state, content, skillId, offenseXp, nowMs);
+    addXp(state, content, skillId, offenseXp, nowMs, fx);
   }
   const vitalityLevel = levelFromXp(state.skills.vitality?.xp ?? 0);
   const vitalityMult = combatXpLevelMult(vitalityLevel, monster.level);
-  addXp(state, content, "vitality", damage * VITALITY_XP_PER_DAMAGE * vitalityMult, nowMs);
+  addXp(state, content, "vitality", damage * VITALITY_XP_PER_DAMAGE * vitalityMult, nowMs, fx);
 }
 
 /**
@@ -887,7 +925,7 @@ function onEnemyDefeated(
   // (ranged/magic_off bzw. attack/power/defence je combatStyle) — eine einzige Quelle der Wahrheit.
   const xpMult = offenseXpMult(state, style, monster);
   const xpSkill = activeOffenseSkill(state, style);
-  if (monster.xp > 0) addXp(state, content, xpSkill, monster.xp * xpMult, nowMs); // bisher nur in der UI angezeigt, aber nie vergeben
+  if (monster.xp > 0) addXp(state, content, xpSkill, monster.xp * xpMult, nowMs, fx); // bisher nur in der UI angezeigt, aber nie vergeben
 
   pushLog(cs, { by: "player", kind: "kill", amount: 0 });
 
@@ -936,9 +974,14 @@ function onEnemyDefeated(
   // Schrein der Stillen (Chef-Entscheid 2026-08-03): Bonus-Anteil verstärkt (1.10 → 1.13 bei
   // Stufe III) — nur die Schwelle des BESTEHENDEN Wurfs ändert sich, nie die Zahl der Würfe.
   const rareDropMult = shrineAmplifiedMult(blessingMult(nowMs, "rareDrop"), campShrineBonus(state, content));
+  // lootChance (Rune der Nachlese, Runen Tier IV §4.3, Chef-Entscheid 25.08.2026): zweiter Faktor auf
+  // demselben Vergleichswert, dieselbe Disziplin wie rareDropMult (kein zusaetzlicher Draw, auf 1
+  // geklemmt). NUR hier, in der regulaeren Kill-Tabelle: rollDungeonLootTable und der Elite-Unique-
+  // Wurf (elites.ts, eliteRng) lesen den Faktor bewusst nicht (§9 Frage 4, Option A).
+  const lootChanceMult = lootChanceEffectMult(fx);
   const rollLootTable = (): void => {
     for (const roll of monster.loot) {
-      if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult)) {
+      if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult * lootChanceMult)) {
         let qty = nextInt(state.rng, roll.min, roll.max);
         // Drop-Suffix-Roll (Phase 2, #128 Abschluss — analog zum Craft-Pfad in tick.ts): jeder
         // gedroppte Equipment-Gegenstand kann einen WoW-Stil Random-Roll-Suffix bekommen. Chance:
@@ -1154,7 +1197,7 @@ function onEnemyDefeated(
     // Letzte Welle besiegt (oder defekter Dungeon) → Abschluss-Belohnung, Run beenden.
     // Bewusst OHNE Kill-Cooldown/lastKill (Chef: „Dungeon-Abschluss unverändert"; außerdem würde
     // lastKill ohne laufenden combatStep nie ablaufen). endDungeon leert den Encounter-Akkumulator.
-    if (dungeon) grantDungeonRewards(state, content, dungeon, nowMs);
+    if (dungeon) grantDungeonRewards(state, content, dungeon, nowMs, fx);
     endDungeon(state);
     return;
   }
@@ -1287,8 +1330,15 @@ function rollDungeonLootTable(
   }
 }
 
-/** Vergibt die Abschluss-Belohnungen eines geschafften Dungeons (Loot + XP + Gold). */
-function grantDungeonRewards(state: GameState, content: ContentDB, dungeon: DungeonDef, nowMs?: number): void {
+/** Vergibt die Abschluss-Belohnungen eines geschafften Dungeons (Loot + XP + Gold). `fx` nur für den
+ *  combatXp-Faktor der Abschluss-XP (addXp); der Clear-Loot bleibt vom lootChance-Kind unberührt. */
+function grantDungeonRewards(
+  state: GameState,
+  content: ContentDB,
+  dungeon: DungeonDef,
+  nowMs?: number,
+  fx?: SpecialEffects,
+): void {
   const cs = state.combat;
   // Lebenslanger Dungeon-Clear-Zähler (Quelle für `dungeons_cleared`-Achievements). Nur hier,
   // beim tatsächlichen Abschluss der letzten Welle — nicht pro Welle.
@@ -1319,7 +1369,7 @@ function grantDungeonRewards(state: GameState, content: ContentDB, dungeon: Dung
     // (addXp-Rückgabe: inkl. earlyXpMult/Segen/Schrein, gerundet — Muster Kill-XP-Zeile und
     // Gold-Pfad direkt darüber), nicht mehr den Katalog-Rohwert. Reiner Log-Inhalt, kein RNG —
     // offline==online bleibt byte-gleich (beide Pfade laufen durch exakt diese Zeile).
-    const granted = addXp(state, content, "vitality", dungeon.xp, nowMs);
+    const granted = addXp(state, content, "vitality", dungeon.xp, nowMs, fx);
     pushLog(cs, { by: "player", kind: "xp", amount: Math.round(granted), skill: "vitality" });
   }
   // Clear-Loot über den gemeinsamen Dungeon-Loot-Pfad (identische RNG-Draw-Reihenfolge wie der
@@ -1515,6 +1565,7 @@ function tickPlayerEffects(
   state: GameState,
   content: ContentDB,
   nowMs?: number,
+  fx?: SpecialEffects,
 ): { frost: boolean; shock: number } {
   const cs = state.combat;
   let frost = false;
@@ -1529,7 +1580,7 @@ function tickPlayerEffects(
       const dotVitMult = dotMonster
         ? combatXpLevelMult(levelFromXp(state.skills.vitality?.xp ?? 0), dotMonster.level)
         : 1;
-      addXp(state, content, "vitality", dmg * VITALITY_XP_PER_DAMAGE * dotVitMult, nowMs);
+      addXp(state, content, "vitality", dmg * VITALITY_XP_PER_DAMAGE * dotVitMult, nowMs, fx);
       // OSRS-Fix (Task #197): erlittener DoT-Schaden gibt KEINE Defence-/magic_def-XP mehr —
       // Verteidigung trainiert nur durchs Kämpfen in der Defensiv-Stance (ausgeteilter Schaden),
       // nicht durchs Einstecken.
@@ -1750,7 +1801,7 @@ function strikeEnemy(
   }
 
   cs.enemyHp -= damage;
-  grantOffenseXp(state, content, stats.style, monster, damage, nowMs);
+  grantOffenseXp(state, content, stats.style, monster, damage, nowMs, fx);
   if (stats.style === "melee") {
     // Lebensraub: Anteil des Schadens, je Treffer doppelt gedeckelt — prozentual (kein Burst-
     // Vollheal im Frühgame) UND absolut (skaliert nicht mit der riesigen Endgame-HP mit, sonst
@@ -2055,7 +2106,7 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   if (killCooldownActive(cs)) {
     tickCombatRegen(state, stats); // HP-/Mana-Regen + sichtbares HoT-Log (FIX B), auch in der Pause
     tickWardRegen(state, stats); // Warding-Regen läuft auch in der Kill-Cooldown-Verschnaufpause weiter
-    tickPlayerEffects(state, content, nowMs);
+    tickPlayerEffects(state, content, nowMs, fx);
     // KEIN tryAutoEat/tryAutoPotion hier (s.o.) — der Gratis-Refill zwischen den Mobs ist gegatet.
     // Der Tod-durch-DoT-Check bleibt: ein im Cooldown weitertickender Gift-DoT kann jetzt töten.
     if (state.character.hp <= 0) {
@@ -2113,7 +2164,7 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
 
   // Statuseffekte auf den Spieler (DoT durch Gift/Brennen/Blutung; Frost/Schock stören den Angriff).
-  const pStatus = tickPlayerEffects(state, content, nowMs);
+  const pStatus = tickPlayerEffects(state, content, nowMs, fx);
   tryAutoEat(state, content, stats.maxHp); // auch DoT-Schaden soll Heilung auslösen (nicht nur Gegner-Schläge)
   tryAutoPotion(state, content, stats.maxHp); // unabhängig von Auto-Eat (eigene Schwelle/Cooldown)
   if (state.character.hp <= 0) {
@@ -2224,6 +2275,7 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           if (stats.dodgeChance > 0) dmg *= 1 - LEATHER_HIT_FLOOR;
           // STEP 5 — Schild-Block (§1.2): ein geblockter Treffer verliert BLOCK_DAMAGE_REDUCTION
           // (−85 %). RNG nur bei blockChance > 0 (Melee-1H-Schild) → Alt-Content sequenz-identisch.
+          let blockedThisHit = false;
           if (stats.blockChance > 0 && nextFloat(state.rng) < stats.blockChance) {
             // Chef-BUG: Block war STUMM (kein pushLog wie der Ward-Absorb darunter). Der geblockte
             // Betrag wird VOR der Reduktion gemessen und als eigenes kind:"block"-Event geloggt, damit
@@ -2232,6 +2284,7 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
             const blocked = dmg * BLOCK_DAMAGE_REDUCTION;
             dmg *= 1 - BLOCK_DAMAGE_REDUCTION;
             if (blocked >= 1) pushLog(cs, { by: "player", kind: "block", amount: Math.round(blocked) });
+            blockedThisHit = true; // blockRestore-Hook (unten, nach dem Restschaden)
           }
           // STEP 6 — One-Shot-Cap (§1.6): kein Einzeltreffer entfernt mehr als ONE_SHOT_CAP der max. HP.
           dmg = Math.min(dmg, ONE_SHOT_CAP * stats.maxHp);
@@ -2263,6 +2316,18 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           // trainiert nur durchs Kämpfen in der Defensiv-Stance — der ausgeteilte Schaden routet dort
           // via grantOffenseXp/activeStanceMods auf `defence` (Melee/Fernkampf) bzw. `magic_def` (Magie).
           pushLog(cs, { by: "enemy", kind: "hit", amount: hpDamage });
+          // blockRestore (Rune der Ungebrochenen Mauer, Runen Tier IV §4.2, Chef-Entscheid 25.08.2026):
+          // jeder ERFOLGREICHE Block heilt einen Anteil der max. HP. Bewusst NACH dem Restschaden,
+          // nicht im Block-Zweig selbst: healPlayer heilt nur unter maxHp, und ein Block bei voller
+          // Leiste haette die Heilung sonst verschenkt, bevor der Rest des Treffers ueberhaupt landete.
+          // Nur solange der Spieler lebt (ein Block rettet nicht aus dem Tod zurueck). Doppelte Klemme
+          // (§9 Frage 11, Option A): min(maxHp·min(magnitude, CAP_PCT), CAP_ABS), dieselbe
+          // Groessenordnung wie der gedeckelte Melee-Lebensraub. Kein RNG, source "effect" wie andere
+          // Heil-Effekte (die UI kennt diese Quelle bereits).
+          if (blockedThisHit && fx.blockRestore && state.character.hp > 0) {
+            const pct = Math.min(BLOCK_RESTORE_CAP_PCT, Math.max(0, fx.blockRestore.magnitude));
+            healPlayer(state, stats.maxHp, Math.min(stats.maxHp * pct, BLOCK_RESTORE_CAP_ABS), "effect");
+          }
           applyMonsterInflict(state, monster); // z.B. Gift bei Treffer
           // vengeance (Rache, §2.1): ein ERLITTENER Treffer lädt den nächsten eigenen Schlag auf.
           if (fx.vengeance) effectCounters(cs).vengeancePrimed = true;
