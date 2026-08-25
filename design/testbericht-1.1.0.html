@@ -282,7 +282,7 @@ h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px
 </section>
 <section class="karte" id="f38">
 <h2><span class="nr">38</span> Wiki-Fenster und Varianten-Tasche ohne Steintextur (Chef-Test 25.08.)</h2>
-<p>Beide Fenster liegen jetzt auf einer ruhigen dunklen Pergamentfläche, auf der man lesen kann. Die Tasche für gestapelte Varianten ist so breit wie das Wiki, zeigt jede verzauberte Version mit großem Bild, Name, Seltenheit, „Verzauberung n/m", einer Zeile je Rune mit Wirkung, dem Zufallswurf, den Anforderungen und den Knöpfen direkt in der Karte.</p>
+<p>Beide Fenster liegen jetzt auf der dunklen Ledertextur des Menüs, auf der man lesen kann (Chef-Nachtrag: erst Pergament, dann Leder, damit es zum Rest des Spiels passt). Die Tasche für gestapelte Varianten ist so breit wie das Wiki, zeigt jede verzauberte Version mit großem Bild, Name, Seltenheit, „Verzauberung n/m", einer Zeile je Rune mit Wirkung, dem Zufallswurf, den Anforderungen und den Knöpfen direkt in der Karte.</p>
 <p class="dev">Die Tasche rendert per `createPortal` außerhalb von `#root`; das komplette bisherige `#root .pouch-*`-Redesign hatte deshalb nie gegriffen (toter Code, Stapel lief auf der Basis-Optik). Neue Regeln als `.modal.pouch-modal`. Bugfix nebenbei: `.pouch-head-name` ellipsierte.</p>
 <ul class="pruef"><li><label><input type="checkbox"> Stapel mit >5 Versionen öffnen, nach Unsinn suchen: Box bleibt offen, Meldung „keine Treffer“</label></li></ul>
 <div class="urteil"><label><input type="radio" name="u38"> OK</label> <label><input type="radio" name="u38"> Nacharbeit</label> <input class="notiz" placeholder="Notiz für Claude"></div>
@@ -393,7 +393,7 @@ h2{font-family:Cinzel,Georgia,serif;color:var(--gold);font-size:20px;margin:10px
 <p class="dev">Prüfen: Dailies mit hohem Gesamtlevel zeigen keine Anfänger-Aufgaben; Rindfleisch kochen: 7 XP.</p>
 <div class="urteil"><label><input type="radio" name="e7"> Ja</label> <label><input type="radio" name="e7"> Nein</label> <label><input type="radio" name="e7"> Später</label> <input class="notiz" placeholder="Deine Entscheidung / Notiz"></div>
 </section>
-<h2 style="margin-top:36px">Commits des Tages (44)</h2>
+<h2 style="margin-top:36px">Commits des Tages (46)</h2>
 <div class="commits">022c6d6 Spieler-Report: Beute-Box beim Stehlen scrollte vor vier leeren Kaesten
 64b818b Spieler-Report 1.0.2: Runen stapeln, Slots im Tooltip, Plaene fuer New Haven
 5c17959 Chef-Runde 25.08.: Proc-Runen einmalig, Stahlrahmen-Schnitt, Zonen-Knopf, Samen-Auswahl, Skip-Meldung
@@ -437,5 +437,7 @@ bef78b8 Testbericht 1.1.0: 45 Karten, Entscheidungen E1-E7 als entschieden
 631db1c Update-Hinweis: Verstanden-Knopf im Eisenrahmen statt Gravewood-Motiv (Chef-Test 25.08., Runde 3)
 ab271fa Testbericht 1.1.0: Karte Update-Hinweis
 4660bed Standard-Knopf: zentrale Klasse .btn-iron (Eisenrahmen), Update-Hinweis nutzt sie
-af3b430 Slayer-Shop: Jaegerumhang ab Slayer 30 (Chef-Entscheidung E6), Bild von Mira</div>
+af3b430 Slayer-Shop: Jaegerumhang ab Slayer 30 (Chef-Entscheidung E6), Bild von Mira
+721d9f2 Testbericht 1.1.0: Karte Jaegerumhang
+2c196da Wiki-Fenster und Varianten-Tasche: Ledertextur statt Pergament-Verlauf (Chef 25.08., Runde 4)</div>
 </div></body></html>
