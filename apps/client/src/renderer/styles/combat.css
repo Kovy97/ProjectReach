@@ -308,9 +308,12 @@
   opacity: 0.75;
 }
 
+/* Chef 25.08. (Runde 4): "Betreten" auf den Stahlrahmen-Standard (.btn-iron, design-system.css)
+   statt des Gravewood-Motivs; volle Kartenbreite bleibt. */
 .dungeon-enter {
   margin-top: 8px;
   width: 100%;
+  min-width: 0;
 }
 
 .dungeon-locked-hint {

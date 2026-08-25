@@ -3846,7 +3846,7 @@ function ParagonPanel({ status }: { status: ParagonStatus }): JSX.Element {
         <div className="paragon-actions">
           <button
             type="button"
-            className={`combat-btn dungeon-enter paragon-start-btn${isContinuing ? " paragon-continue-cta" : ""}`}
+            className={`btn-iron dungeon-enter paragon-start-btn${isContinuing ? " paragon-continue-cta" : ""}`}
             disabled={busy || !preview}
             title={disabledReason || undefined}
             onClick={() => startParagonFloor(state, content)}
@@ -4619,7 +4619,7 @@ function MonsterSelectImpl(): JSX.Element {
                           </div>
                         )}
                         <button
-                          className="combat-btn dungeon-enter"
+                          className="btn-iron dungeon-enter"
                           disabled={!canEnter}
                           title={reason || undefined}
                           onClick={() => startDungeon(state, content, d.id)}
