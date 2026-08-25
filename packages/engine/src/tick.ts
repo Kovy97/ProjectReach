@@ -627,7 +627,10 @@ export function advance(
     // dem Step-Loop. Vor syncProgression/Quests/Achievements, damit frische Farming-XP + Ernten in
     // DERSELBEN advance-Runde ins Gesamtlevel und in die Zähler einfließen. Zieht RNG nur, wenn
     // tatsächlich geerntet wird → ohne Crop-Katalog/ohne reife Plots bit-identisch zu vorher.
-    tickFarmPlots(state, content);
+    // Fensterlänge mitgeben (#p12, SAVE_VERSION 82): ein leeres Beet mit geplanter Folgesorte
+    // wird zum FENSTERBEGINN eingesät, sobald Saat da ist — der einzige Zeitpunkt, den Live-Loop
+    // und Offline-Catch-up gleich sehen (offline == online). Ohne Plan wirkungslos.
+    tickFarmPlots(state, content, steps * TICK_MS);
 
     // Offline-Veredelung: tickt seit Task #335 PRO TICK in der Schleife oben (nach step()) —
     // nicht mehr einmal pro advance. Ihr Output fließt weiterhin VOR syncProgression/Quests/

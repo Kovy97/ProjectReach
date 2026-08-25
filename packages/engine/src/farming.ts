@@ -14,9 +14,16 @@ import { campBoost } from "./camp";
 //
 // Plots reifen gegen die deterministische Sim-Uhr `state.elapsedMs` (Anti-Abuse: strikt monoton,
 // bewegt sich nur über `advance`). `tickFarmPlots` läuft EINMAL pro `advance` (nicht pro 100-ms-Tick)
-// im `steps>0`-Block von tick.ts — rein arithmetisch (`floor(elapsed/growMs)`), O(MAX_FARM_PLOTS).
+// im `steps>0`-Block von tick.ts — rein arithmetisch, O(MAX_FARM_PLOTS × Zyklen).
 // Es zieht RNG (nextInt für den Ertrag) NUR, wenn tatsächlich geerntet wird → ohne Crop-Katalog /
 // ohne reife Plots bleibt die bestehende RNG-Sequenz bit-identisch (Determinismus-Fixtures unberührt).
+//
+// Folgesorte (`FarmPlot.nextCropId`, SAVE_VERSION 82 — Chef-GO 25.08.2026 (1.1.0),
+// design/rezension-patch-2026-08-25.html #p12): die Reife-Schleife läuft seitdem als
+// „solange elapsed − t ≥ growMs(AKTUELLE Sorte)" statt `cycles = floor(elapsed/growMs)` vorab,
+// weil sich growMs mitten im Offline-Fenster ändern kann (A 10 min → B 20 min). Für Beete ohne
+// Plan ist die Schleife bit-identisch zur alten Rechnung: gleiche Anzahl Ernten, gleiche Anzahl
+// nextInt-Züge, gleicher Restübertrag (ganzzahlige Addition == Multiplikation).
 // ───────────────────────────────────────────────────────────────────────────
 
 /** Aktuelles Farming-Level aus der gesammelten XP. */
@@ -56,10 +63,23 @@ function consumeSeed(state: GameState, seedItem: ItemId): boolean {
   return false;
 }
 
-/** Setzt einen Plot auf „leer" zurück (behält die Auto-Replant-Einstellung + wartende Ernte). */
+/**
+ * Setzt einen Plot auf „leer" zurück (behält die Auto-Replant-Einstellung, die wartende Ernte UND
+ * die Folgesorte — Chef-Entscheid #12.2: der Plan verfällt nie still, nur `uprootPlot`/die UI
+ * löschen ihn).
+ */
 function clearPlot(plot: FarmPlot): void {
   plot.cropId = null;
   plot.plantedAtMs = 0;
+}
+
+/**
+ * Darf diese Sorte JETZT gesät werden? Level erreicht UND mindestens eine Saat in Inventar/Lager.
+ * Gemeinsame Bedingung für den Folgesorten-Wechsel zur Reife, das Einsäen eines leeren Beets mit
+ * Plan und „Jetzt wechseln" — eine Quelle, damit Tick und Verben nicht auseinanderlaufen.
+ */
+function canSow(state: GameState, c: CropDef): boolean {
+  return farmingLevel(state) >= c.levelRequired && seedAvailable(state, c.seedItem) > 0;
 }
 
 /**
@@ -146,12 +166,35 @@ export function effectiveGrowMs(state: GameState, content: ContentDB, c: CropDef
  * Ein Plot-Tick pro `advance`. Reift alle freigeschalteten, bepflanzten Plots gegen `elapsedMs`,
  * erntet automatisch, sät bei aktivem Auto-Replant (seed-begrenzt) neu und übernimmt den
  * Rest-Fortschritt verlustfrei. Offline werden mehrere Zyklen rein arithmetisch verrechnet.
+ *
+ * Folgesorte (#p12, Chef-Entscheide #12.1/#12.2) — die vier Regeln:
+ *  1. Reife mit Plan und Saat der Folgesorte: Ernte gutschreiben, EINE Saat der Folgesorte
+ *     abziehen, `cropId = nextCropId`, `nextCropId = null`, `plantedAtMs` = Reifezeitpunkt; weitere
+ *     Zyklen laufen mit der growMs der NEUEN Sorte (auch bei Auto-Nachpflanzen AUS — der Plan ist
+ *     ein ausdrücklicher Säe-Auftrag des Spielers).
+ *  2. Reife mit Plan, aber ohne Saat: KEIN Rückfall auf die alte Sorte — das Beet wird leer, der
+ *     Plan bleibt stehen (die UI warnt „Saat fehlt").
+ *  3. Leeres Beet mit Plan: sobald Saat da ist, sät der Tick die Folgesorte ein — zum BEGINN des
+ *     Tick-Fensters (`windowMs`, von tick.ts = steps × TICK_MS). Grund: Saat kommt zwischen zwei
+ *     advance-Aufrufen (Kauf, Lager, Ernte) oder mitten im Fenster (Sammel-Drop); der Fensterbeginn
+ *     ist der einzige Zeitpunkt, den der Live-Loop (viele kleine Fenster) und der Offline-Catch-up
+ *     (ein großes Fenster) GLEICH sehen → offline == online, wenn die Saat am Fensterbeginn da war.
+ *     Kommt sie erst im Fenster, ist der Catch-up so großzügig wie das Auto-Nachpflanzen heute
+ *     (das rechnet ebenfalls gegen den Bestand am Fensterende). Danach läuft dasselbe Fenster
+ *     sofort in die Reife-Schleife (offline kann das Beet im selben Fenster schon reifen).
+ *  4. Plan zeigt auf eine aus dem Content entfernte Sorte: Plan verwerfen (Sanitize nullt ihn
+ *     ohnehin beim Laden); Level unter der Anforderung (nur per Save-Edit möglich, `setNextCrop`
+ *     prüft es): Plan bleibt, wird nicht gesät.
+ *
+ * @param windowMs Länge des gerade verrechneten Tick-Fensters in ms (tick.ts: steps × TICK_MS).
+ *   Default 0 = „jetzt" (Direktaufrufe in Tests).
  */
-export function tickFarmPlots(state: GameState, content: ContentDB): void {
+export function tickFarmPlots(state: GameState, content: ContentDB, windowMs = 0): void {
   const plots = state.farmPlots;
   if (!Array.isArray(plots) || plots.length === 0) return;
 
   const unlocked = plotsUnlocked(farmingLevel(state));
+  const windowStartMs = Math.max(0, state.elapsedMs - Math.max(0, windowMs));
 
   for (let i = 0; i < plots.length; i++) {
     const plot = plots[i];
@@ -161,9 +204,24 @@ export function tickFarmPlots(state: GameState, content: ContentDB): void {
     flushReadyYield(state, content, plot);
 
     if (i >= unlocked) continue; // gesperrt (Tick überspringt, reift NICHT)
-    if (plot.cropId === null) continue; // leer
 
-    const c = crop(content, plot.cropId);
+    if (plot.cropId === null) {
+      // Leer. Ohne Plan bleibt alles wie bisher (kein RNG, keine Änderung).
+      if (plot.nextCropId === null) continue;
+      const next = crop(content, plot.nextCropId);
+      if (!next) {
+        plot.nextCropId = null; // Regel 4: Sorte aus dem Content entfernt
+        continue;
+      }
+      if (!canSow(state, next)) continue; // Regel 3: Plan wartet auf Saat (oder Level)
+      consumeSeed(state, next.seedItem);
+      plot.cropId = next.id;
+      plot.nextCropId = null;
+      plot.plantedAtMs = windowStartMs;
+      // kein continue: dasselbe Fenster kann das frisch gesäte Beet schon reifen lassen (offline)
+    }
+
+    let c = crop(content, plot.cropId);
     if (!c) {
       // Crop aus dem Content entfernt → defensiv leeren (kein Crash, kein RNG-Zug).
       clearPlot(plot);
@@ -171,17 +229,35 @@ export function tickFarmPlots(state: GameState, content: ContentDB): void {
     }
 
     // Reifezeit inkl. cropSpeed-Perk (Meisterweihe) — gemeinsame Quelle mit plotProgress.
-    const growMs = effectiveGrowMs(state, content, c);
-    const elapsed = state.elapsedMs - plot.plantedAtMs;
-    if (elapsed < growMs) continue; // wächst noch
-
-    const cycles = Math.floor(elapsed / growMs); // >= 1; offline evtl. mehrere
-    let harvested = 0;
+    let growMs = effectiveGrowMs(state, content, c);
+    // `t` = Pflanzzeitpunkt des AKTUELL wachsenden Zyklus; wandert je Ernte um die growMs der
+    // Sorte weiter, die in diesem Zyklus gewachsen ist. Verlustfreier Restübertrag am Ende.
+    let t = plot.plantedAtMs;
     let stillPlanted = true;
 
-    for (let cyc = 0; cyc < cycles; cyc++) {
+    while (state.elapsedMs - t >= growMs) {
       grantHarvest(state, content, c, plot);
-      harvested++;
+      t += growMs;
+
+      if (plot.nextCropId !== null) {
+        const next = crop(content, plot.nextCropId);
+        if (!next) {
+          plot.nextCropId = null; // Regel 4 — dann normal weiter (Auto-Nachpflanzen unten)
+        } else if (canSow(state, next)) {
+          // Regel 1: Sortenwechsel zur Reife. Ab hier zählt die growMs der neuen Sorte.
+          consumeSeed(state, next.seedItem);
+          plot.cropId = next.id;
+          plot.nextCropId = null;
+          c = next;
+          growMs = effectiveGrowMs(state, content, c);
+          continue;
+        } else {
+          // Regel 2: Saat der Folgesorte fehlt → Beet leer, Plan bleibt.
+          stillPlanted = false;
+          break;
+        }
+      }
+
       // Nächste Runde nur, wenn Auto-Replant AN UND Saat (Inventar/Lager) vorhanden.
       if (plot.autoReplant && seedAvailable(state, c.seedItem) > 0) {
         consumeSeed(state, c.seedItem);
@@ -191,11 +267,11 @@ export function tickFarmPlots(state: GameState, content: ContentDB): void {
       }
     }
 
-    if (stillPlanted && harvested === cycles) {
-      // Alle Zyklen verrechnet, neu ausgesät → Rest-Fortschritt verlustfrei übernehmen.
-      plot.plantedAtMs += cycles * growMs;
+    if (stillPlanted) {
+      // Alle reifen Zyklen verrechnet (oder noch keiner reif) → Rest-Fortschritt verlustfrei.
+      plot.plantedAtMs = t;
     } else {
-      // Auto-Replant aus oder Saat erschöpft → Plot ist jetzt leer (manuell neu bepflanzen).
+      // Auto-Replant aus, Saat erschöpft oder Folgesorten-Saat fehlt → Plot ist jetzt leer.
       clearPlot(plot);
     }
   }
@@ -235,17 +311,75 @@ export function plantCrop(
   if (!consumeSeed(state, c.seedItem)) return false;
   plot.cropId = cropId;
   plot.plantedAtMs = state.elapsedMs;
+  // Pflanzt der Spieler auf ein leeres Beet genau die Sorte, die dort als Folgesorte wartete
+  // (Plan blieb nach fehlender Saat stehen, #12.2), ist der Plan erfüllt — Plan == Sorte ist
+  // sonst ein nutzloser Zustand (Sanitize strippt ihn ebenfalls).
+  if (plot.nextCropId === cropId) plot.nextCropId = null;
   return true;
 }
 
 /**
- * Rodet einen Plot (entfernt die wachsende Crop — die Saat verfällt). Eine bereits abholbare
- * Ernte (`readyYield`) bleibt erhalten. Gibt true, wenn etwas gerodet wurde.
+ * Rodet einen Plot (entfernt die wachsende Crop — die Saat verfällt) UND verwirft die geplante
+ * Folgesorte (#p12: Roden ist die ausdrückliche „alles weg"-Geste; der ×-Knopf der UI löscht den
+ * Plan einzeln über `setNextCrop(…, null)`). Eine bereits abholbare Ernte (`readyYield`) bleibt
+ * erhalten. Gibt true, wenn etwas gerodet wurde.
  */
 export function uprootPlot(state: GameState, plotIndex: number): boolean {
   const plot = plotAt(state, plotIndex);
   if (!plot || plot.cropId === null) return false;
   clearPlot(plot);
+  plot.nextCropId = null;
+  return true;
+}
+
+/**
+ * Plant die Folgesorte eines bepflanzten, freigeschalteten Beets (#p12, SAVE_VERSION 82) oder
+ * löscht den Plan (`cropId = null`). Prüft wie `plantCrop`: Sorte existiert, Farming-Level
+ * erreicht (zur Reife kann das Level nur gestiegen sein — keine zweite Prüfung nötig), Beet
+ * bepflanzt. Folgesorte == aktuelle Sorte wird abgelehnt (gleiche Wirkung wie Auto-Nachpflanzen).
+ * Zieht KEINE Saat ab — die wird zur Reife verbraucht (eine Quelle für Saatverbrauch, kein
+ * Rückerstatten beim Abbrechen); fehlt sie dann, gilt #12.2 (Beet leer, Plan bleibt, UI warnt).
+ * Ein Plan darf deshalb auch OHNE Saat im Besitz gesetzt werden. Gibt true bei Erfolg.
+ */
+export function setNextCrop(
+  state: GameState,
+  content: ContentDB,
+  plotIndex: number,
+  cropId: ItemId | null,
+): boolean {
+  const plot = plotAt(state, plotIndex);
+  if (!plot) return false;
+  if (cropId === null) {
+    plot.nextCropId = null;
+    return true;
+  }
+  if (plotIndex >= plotsUnlocked(farmingLevel(state))) return false; // gesperrt
+  if (plot.cropId === null) return false; // leeres Beet: dort pflanzt man direkt
+  if (plot.cropId === cropId) return false; // nutzlos (== Auto-Nachpflanzen)
+  const c = crop(content, cropId);
+  if (!c) return false;
+  if (farmingLevel(state) < c.levelRequired) return false;
+  plot.nextCropId = cropId;
+  return true;
+}
+
+/**
+ * „Jetzt wechseln" (Chef-Entscheid #12.3): rodet die wachsende Sorte (ihre Saat verfällt, wie
+ * `uprootPlot`) und sät die geplante Folgesorte SOFORT — nur, wenn deren Saat da ist (Level wird
+ * mitgeprüft). Der Plan ist damit erfüllt (`nextCropId = null`), das Beet läuft mit
+ * Auto-Nachpflanzen der neuen Sorte weiter. Gibt true bei Erfolg; bei fehlender Saat passiert
+ * NICHTS (das wachsende Beet bleibt unangetastet).
+ */
+export function switchToNextCrop(state: GameState, content: ContentDB, plotIndex: number): boolean {
+  const plot = plotAt(state, plotIndex);
+  if (!plot || plot.cropId === null || plot.nextCropId === null) return false;
+  if (plotIndex >= plotsUnlocked(farmingLevel(state))) return false;
+  const next = crop(content, plot.nextCropId);
+  if (!next || !canSow(state, next)) return false;
+  if (!consumeSeed(state, next.seedItem)) return false;
+  plot.cropId = next.id;
+  plot.nextCropId = null;
+  plot.plantedAtMs = state.elapsedMs;
   return true;
 }
 
@@ -279,6 +413,17 @@ export interface PlotProgress {
   remainingMs: number;
   /** Reif/abholbar (reif geworden ODER `readyYield > 0` wartet)? */
   ready: boolean;
+  /**
+   * Folgesorte geplant, aber KEINE Saat dafür in Inventar/Lager (#p12, Chef-Entscheid #12.2: die
+   * UI warnt sichtbar „Saat fehlt"). false ohne Plan oder mit Saat.
+   */
+  nextSeedMissing: boolean;
+}
+
+/** Folgesorte geplant, aber ihre Saat fehlt in Inventar UND Lager? (Anzeige-Warnung, #12.2) */
+function nextSeedMissing(state: GameState, content: ContentDB, plot: FarmPlot): boolean {
+  const next = crop(content, plot.nextCropId);
+  return !!next && seedAvailable(state, next.seedItem) <= 0;
 }
 
 /** Berechnet die Anzeige-Werte eines Plots (rein, kein State-Mutieren). */
@@ -286,11 +431,12 @@ export function plotProgress(state: GameState, content: ContentDB, plotIndex: nu
   const plot = plotAt(state, plotIndex);
   const locked = plotIndex >= plotsUnlocked(farmingLevel(state));
   if (!plot) {
-    return { locked, growing: false, pct: 0, remainingMs: 0, ready: false };
+    return { locked, growing: false, pct: 0, remainingMs: 0, ready: false, nextSeedMissing: false };
   }
+  const seedMissing = nextSeedMissing(state, content, plot);
   const c = crop(content, plot.cropId);
   if (plot.cropId === null || !c) {
-    return { locked, growing: false, pct: 0, remainingMs: 0, ready: plot.readyYield > 0 };
+    return { locked, growing: false, pct: 0, remainingMs: 0, ready: plot.readyYield > 0, nextSeedMissing: seedMissing };
   }
   // Reifezeit inkl. cropSpeed-Perk (Meisterweihe) — dieselbe Quelle wie tickFarmPlots, damit
   // Balken/Restzeit exakt mit der Engine-Ernte zusammenfallen.
@@ -305,5 +451,6 @@ export function plotProgress(state: GameState, content: ContentDB, plotIndex: nu
     pct,
     remainingMs,
     ready: ripe || plot.readyYield > 0,
+    nextSeedMissing: seedMissing,
   };
 }

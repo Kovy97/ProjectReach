@@ -9,9 +9,11 @@ import {
   plantCrop,
   plotProgress,
   setAutoReplant,
+  setNextCrop,
+  switchToNextCrop,
   uprootPlot,
 } from "@hearthforge/engine";
-import type { GameState } from "@hearthforge/shared";
+import type { FarmPlot, GameState } from "@hearthforge/shared";
 import { MAX_FARM_PLOTS, PLOT_UNLOCK, plotsUnlocked } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -258,43 +260,75 @@ function CropOverview(): JSX.Element {
 
 // ─── Crop Picker Modal ────────────────────────────────────────────────────────
 
+type PickerMode = "plant" | "next";
+
 function CropPicker({
   plotIndex,
   farmingLevel,
+  mode = "plant",
   onClose,
 }: {
   /** Plot-Index zum Bepflanzen, oder null = alle leeren freigeschalteten Plots. */
   plotIndex: number | null;
   farmingLevel: number;
+  /**
+   * "plant" = sofort pflanzen (leeres Beet / alle leeren Beete). "next" = Folgesorte planen
+   * (Chef-GO 25.08.2026 (1.1.0), design/rezension-patch-2026-08-25.html #p12): dieselben Karten,
+   * dieselbe Saat-Zaehlung — aber die Saat wird erst zur REIFE abgezogen, deshalb sind die Karten
+   * auch OHNE Saat waehlbar (die Beet-Karte warnt dann „Saat fehlt", Chef-Entscheid #12.2).
+   * plotIndex null = alle wachsenden Beete (#12.4).
+   */
+  mode?: PickerMode;
   onClose: () => void;
 }): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
+  const next = mode === "next";
 
   const crops = content.crops ?? {};
   const eligible = Object.values(crops)
     .filter((c) => c.levelRequired <= farmingLevel)
     .sort((a, b) => a.levelRequired - b.levelRequired);
 
+  const unlockedCount = Math.min(plotsUnlocked(farmingLevel), MAX_FARM_PLOTS);
   // Wie viele Beete wuerde "alle bepflanzen" tatsaechlich treffen? Dieselbe Bedingung wie
   // `plantCrop` in der Engine: freigeschaltet, leer, keine abholbare Ernte darauf. Ohne diese
   // Zahl bleibt "Alle bepflanzen" ein Knopf, dessen Wirkung man erst hinterher sieht.
+  // Modus "next": alle freigeschalteten BEPFLANZTEN Beete (die Bedingung von `setNextCrop`).
   const freieBeete = (() => {
     if (plotIndex !== null) return 1;
-    const frei = Math.min(plotsUnlocked(farmingLevel), MAX_FARM_PLOTS);
     let n = 0;
-    for (let i = 0; i < frei; i++) {
+    for (let i = 0; i < unlockedCount; i++) {
       const p = state.farmPlots[i];
-      if (p && p.cropId === null && p.readyYield === 0) n++;
+      if (!p) continue;
+      if (next ? p.cropId !== null : p.cropId === null && p.readyYield === 0) n++;
     }
     return n;
   })();
+  /** Modus "next", Einzel-Beet: die gerade wachsende Sorte (ausgegraut — waere nur Auto-Nachpflanzen). */
+  const currentCropId = next && plotIndex !== null ? (state.farmPlots[plotIndex]?.cropId ?? null) : null;
+  /** Modus "next": wie viele Beete wuerden DIESE Sorte als Plan annehmen (nicht schon dieselbe)? */
+  function planbarFuer(cropId: string): number {
+    if (plotIndex !== null) return cropId === currentCropId ? 0 : 1;
+    let n = 0;
+    for (let i = 0; i < unlockedCount; i++) {
+      const p = state.farmPlots[i];
+      if (p && p.cropId !== null && p.cropId !== cropId) n++;
+    }
+    return n;
+  }
 
   function handlePick(cropId: string): void {
-    if (plotIndex === null) {
+    if (next) {
+      if (plotIndex === null) {
+        // Alle wachsenden Beete: die Engine lehnt leere Beete und Plan == Sorte selbst ab.
+        for (let i = 0; i < unlockedCount; i++) setNextCrop(state, content, i, cropId);
+      } else {
+        setNextCrop(state, content, plotIndex, cropId);
+      }
+    } else if (plotIndex === null) {
       // Alle leeren freigeschalteten Plots bepflanzen
-      const unlocked = plotsUnlocked(farmingLevel);
-      for (let i = 0; i < unlocked && i < MAX_FARM_PLOTS; i++) {
+      for (let i = 0; i < unlockedCount; i++) {
         plantCrop(state, content, i, cropId); // intern: Noop wenn Slot belegt/pending
       }
     } else {
@@ -313,15 +347,20 @@ function CropPicker({
       <div className="modal farm-picker-modal">
         <button className="modal-close ds-close-button" onClick={onClose} aria-label={t("common.close")} />
         <h3 className="farm-picker-title">
-          {plotIndex === null ? t("farm.plantAllTitle") : t("farm.cropPicker.title")}
+          {next
+            ? plotIndex === null ? t("farm.nextAllTitle") : t("farm.next.title")
+            : plotIndex === null ? t("farm.plantAllTitle") : t("farm.cropPicker.title")}
         </h3>
-        {plotIndex === null && (
+        {(plotIndex === null || next) && (
           /* Die Ausgangslage EINMAL oben statt auf jeder Karte — die Karten sagen dann nur noch,
-             was diese Saat daraus macht. */
+             was diese Saat daraus macht. Modus "next" am Einzel-Beet: die Regel in einem Satz
+             (einmalig, Saat erst zur Reife). */
           <p className="farm-picker-lead">
-            {freieBeete > 0
-              ? t("farm.plantAll.free").replace("{n}", String(freieBeete))
-              : t("farm.plantAll.none")}
+            {next && plotIndex !== null
+              ? t("farm.next.lead")
+              : freieBeete > 0
+                ? t(next ? "farm.nextAll.free" : "farm.plantAll.free").replace("{n}", String(freieBeete))
+                : t(next ? "farm.nextAll.none" : "farm.plantAll.none")}
           </p>
         )}
         {eligible.length === 0 ? (
@@ -335,15 +374,24 @@ function CropPicker({
               const iconUrl =
                 getCropIconUrl(c.id) ?? getItemImage(c.yieldItem) ?? getItemImage(c.seedItem);
               const hasSeeds = seeds > 0;
+              const isCurrent = c.id === currentCropId;
               // Was dieser Klick WIRKLICH tut: so viele Beete, wie frei sind — begrenzt durch die
               // Saat im Beutel und Lager. Genau die Zahl steht auf dem Knopf.
-              const wirdGepflanzt = Math.min(freieBeete, seeds);
-              const reichtNicht = plotIndex === null && seeds > 0 && seeds < freieBeete;
+              // Modus "next": geplant wird OHNE Saat-Grenze (die Saat wird erst zur Reife
+              // abgezogen); die Zeile nennt, wie viel Saat dann noetig ist, und warnt, wenn sie
+              // heute fehlt (#12.2: Management-Sache des Spielers, kein stilles Verfallen).
+              const planbar = next ? planbarFuer(c.id) : 0;
+              const wirdGepflanzt = next ? planbar : Math.min(freieBeete, seeds);
+              const reichtNicht =
+                plotIndex === null && (next ? seeds < planbar : seeds > 0 && seeds < freieBeete);
+              const disabled = next ? wirdGepflanzt === 0 : !hasSeeds || wirdGepflanzt === 0;
               return (
                 <button
                   key={c.id}
-                  className={`farm-picker-card${!hasSeeds ? " no-seed" : ""}`}
-                  disabled={!hasSeeds || wirdGepflanzt === 0}
+                  // Modus "next" ohne Saat: waehlbar (Saat wird erst zur Reife gebraucht), deshalb
+                  // nur leicht gedimmt statt „not-allowed".
+                  className={`farm-picker-card${!hasSeeds ? (next ? " no-seed-plan" : " no-seed") : ""}${isCurrent ? " current" : ""}`}
+                  disabled={disabled}
                   onClick={() => handlePick(c.id)}
                 >
                   <div className="farm-picker-icon">
@@ -382,14 +430,23 @@ function CropPicker({
                         ? t("farm.seedCount").replace("{n}", String(seeds))
                         : t("farm.noSeed")}
                     </span>
-                    {plotIndex === null && hasSeeds && (
+                    {isCurrent && (
+                      <span className="farm-picker-current">{t("farm.next.current")}</span>
+                    )}
+                    {plotIndex === null && (next ? planbar > 0 : hasSeeds) && (
                       /* Die Rechnung offen hinschreiben: X von Y Beeten, Z Saat wird verbraucht.
                          Reicht die Saat nicht fuer alle Beete, sagt die Zeile das — statt still
-                         nur einen Teil zu bepflanzen. */
+                         nur einen Teil zu bepflanzen. Modus "next": „n von m Beeten, k Saat
+                         noetig" (#12.4), warnend, wenn die Saat heute nicht reicht. */
                       <span className={`farm-picker-plan${reichtNicht ? " short" : ""}`}>
-                        {t("farm.plantAll.plan")
-                          .replace("{n}", String(wirdGepflanzt))
-                          .replace("{total}", String(freieBeete))}
+                        {next
+                          ? t("farm.nextAll.plan")
+                              .replace("{n}", String(planbar))
+                              .replace("{total}", String(freieBeete))
+                              .replace("{k}", String(planbar))
+                          : t("farm.plantAll.plan")
+                              .replace("{n}", String(wirdGepflanzt))
+                              .replace("{total}", String(freieBeete))}
                       </span>
                     )}
                   </div>
@@ -403,6 +460,88 @@ function CropPicker({
   );
 }
 
+// ─── Folgesorte je Beet (#p12) ────────────────────────────────────────────────
+
+/**
+ * Die Folgesorten-Zeile einer Beet-Karte (Chef-GO 25.08.2026 (1.1.0),
+ * design/rezension-patch-2026-08-25.html #p12). Drei Zustaende:
+ *  - Plan gesetzt: Chip „→ Sorte" mit Icon und × (Plan entfernen). Fehlt die Saat, faerbt sich
+ *    der Chip warnend und darunter steht „Saat fehlt: Sorte" (Chef-Entscheid #12.2: der Plan
+ *    bleibt stehen, der Tick saet ein, sobald Saat da ist). Waechst noch etwas UND die Saat ist
+ *    da: „Jetzt wechseln" (#12.3 = roden + sofort saeen).
+ *  - Kein Plan, Beet waechst (`allowPick`): kleiner Knopf „Danach saeen …" → CropPicker "next".
+ *  - Kein Plan, Beet leer/reif: nichts (dort pflanzt man direkt bzw. erntet erst).
+ * Texte brechen um (min-width 0 + overflow-wrap), nie abgeschnitten — auch bei „Grabkartoffel".
+ */
+function PlotNextRow({
+  plotIndex,
+  plot,
+  nextSeedMissing,
+  allowPick,
+  onPick,
+}: {
+  plotIndex: number;
+  plot: FarmPlot;
+  nextSeedMissing: boolean;
+  /** Darf hier ein NEUER Plan gesetzt werden (nur auf einem wachsenden Beet)? */
+  allowPick: boolean;
+  onPick: () => void;
+}): JSX.Element | null {
+  const state = useGameState();
+  const { t, tr } = useI18n();
+  const nextId = plot.nextCropId;
+  if (nextId === null) {
+    if (!allowPick) return null;
+    return (
+      <div className="plot-next-row">
+        <button className="plot-next-btn" onClick={onPick}>
+          {t("farm.next.button")}
+        </button>
+      </div>
+    );
+  }
+  const def = (content.crops ?? {})[nextId];
+  const name = def ? tr(def.name) : nextId;
+  const iconUrl =
+    getCropIconUrl(nextId) ?? (def ? (getItemImage(def.yieldItem) ?? getItemImage(def.seedItem)) : null);
+  const canSwitch = plot.cropId !== null && !nextSeedMissing;
+  return (
+    <div className="plot-next-row">
+      <div
+        className={`plot-next-chip${nextSeedMissing ? " missing" : ""}`}
+        title={t("farm.next.chipTip").replace("{crop}", name)}
+      >
+        {iconUrl ? (
+          <img loading="lazy" decoding="async" src={iconUrl} alt="" className="plot-next-icon pixelart" />
+        ) : (
+          <span className="plot-next-icon" aria-hidden="true">🌱</span>
+        )}
+        <span className="plot-next-text">{t("farm.next.chip").replace("{crop}", name)}</span>
+        <button
+          className="plot-next-clear"
+          aria-label={t("farm.next.clear")}
+          title={t("farm.next.clear")}
+          onClick={() => setNextCrop(state, content, plotIndex, null)}
+        >
+          ×
+        </button>
+      </div>
+      {nextSeedMissing && (
+        <span className="plot-next-warn">{t("farm.next.noSeed").replace("{crop}", name)}</span>
+      )}
+      {canSwitch && (
+        <button
+          className="skillcard-cta plot-next-switch"
+          title={t("farm.next.switchNowTip").replace("{crop}", name)}
+          onClick={() => switchToNextCrop(state, content, plotIndex)}
+        >
+          {t("farm.next.switchNow")}
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ─── FarmPage ─────────────────────────────────────────────────────────────────
 
 export function FarmPage(): JSX.Element {
@@ -410,6 +549,9 @@ export function FarmPage(): JSX.Element {
   const { t, tr } = useI18n();
   const [pickerIdx, setPickerIdx] = useState<number | null>(null);
   const [plantAllOpen, setPlantAllOpen] = useState(false);
+  // Folgesorte (#p12): Picker im Modus "next" fuer EIN wachsendes Beet bzw. fuer alle (#12.4).
+  const [nextIdx, setNextIdx] = useState<number | null>(null);
+  const [nextAllOpen, setNextAllOpen] = useState(false);
   const [uprootIdx, setUprootIdx] = useState<number | null>(null);
   const [plotsOpen, setPlotsOpen] = useState(true);
   const [overviewOpen, setOverviewOpen] = useState(true);
@@ -461,12 +603,22 @@ export function FarmPage(): JSX.Element {
                 {/* Chef 25.08.2026: "Einen Knopf oben haben fuer Plant on all Plots". Er war
                     schon da, aber als 13-px-Anhaengsel am Ende der Infozeile — leicht zu
                     uebersehen. Jetzt ein regulaerer Knopf mit eigener Groesse. */}
-                <button
-                  className="skillcard-cta farm-plant-all-btn"
-                  onClick={() => setPlantAllOpen(true)}
-                >
-                  {t("farm.plantAll")}
-                </button>
+                <div className="farm-info-actions">
+                  <button
+                    className="skillcard-cta farm-plant-all-btn"
+                    onClick={() => setPlantAllOpen(true)}
+                  >
+                    {t("farm.plantAll")}
+                  </button>
+                  {/* Gegenstueck fuer die 9-Beete-Spieler (#12.4): Folgesorte fuer alle
+                      wachsenden Beete in einem Rutsch, mit Vorrechnung im Picker. */}
+                  <button
+                    className="skillcard-cta farm-plant-all-btn farm-next-all-btn"
+                    onClick={() => setNextAllOpen(true)}
+                  >
+                    {t("farm.nextAll")}
+                  </button>
+                </div>
               </div>
               {/* Light onboarding hint for new farmers */}
               <p className="muted" style={{ fontSize: 12, margin: "2px 0 6px" }}>
@@ -587,6 +739,17 @@ export function FarmPage(): JSX.Element {
                                 <span>{t("farm.autoReplant")}</span>
                               </label>
                             )}
+                            {/* Reif/abholbar: nichts NEU planen (#p12), aber ein bestehender Plan
+                                bleibt sichtbar und loeschbar — nie still verstecken. */}
+                            {plot && (
+                              <PlotNextRow
+                                plotIndex={i}
+                                plot={plot}
+                                nextSeedMissing={prog.nextSeedMissing}
+                                allowPick={false}
+                                onPick={() => undefined}
+                              />
+                            )}
                           </div>
                         ) : prog.growing && cropDef ? (
                           /* GROWING */
@@ -675,6 +838,19 @@ export function FarmPage(): JSX.Element {
                                 <span>{t("farm.autoReplant")}</span>
                               </label>
                             )}
+                            {/* Folgesorte (#p12): „Danach saeen …" bzw. Chip „→ Sorte" + Warnung */}
+                            {plot && (
+                              <PlotNextRow
+                                plotIndex={i}
+                                plot={plot}
+                                nextSeedMissing={prog.nextSeedMissing}
+                                allowPick
+                                onPick={() => {
+                                  setUprootIdx(null);
+                                  setNextIdx(i);
+                                }}
+                              />
+                            )}
                             {/* Uproot — requires confirmation */}
                             {confirming ? (
                               <div className="plot-uproot-confirm">
@@ -728,6 +904,18 @@ export function FarmPage(): JSX.Element {
                             >
                               {t("farm.plant")}
                             </button>
+                            {/* Leer MIT Plan (Saat fehlte zur Reife, Chef-Entscheid #12.2): der Plan
+                                steht sichtbar mit Warnung; sobald Saat da ist, saet der Tick von
+                                selbst. Loeschbar per ×. Ohne Plan: unveraendert. */}
+                            {plot && plot.nextCropId !== null && (
+                              <PlotNextRow
+                                plotIndex={i}
+                                plot={plot}
+                                nextSeedMissing={prog.nextSeedMissing}
+                                allowPick={false}
+                                onPick={() => undefined}
+                              />
+                            )}
                           </div>
                         )}
                       </div>
@@ -771,6 +959,24 @@ export function FarmPage(): JSX.Element {
           plotIndex={null}
           farmingLevel={level}
           onClose={() => setPlantAllOpen(false)}
+        />
+      )}
+
+      {/* ── Folgesorte (#p12): ein Beet / alle wachsenden Beete ── */}
+      {nextIdx !== null && (
+        <CropPicker
+          plotIndex={nextIdx}
+          farmingLevel={level}
+          mode="next"
+          onClose={() => setNextIdx(null)}
+        />
+      )}
+      {nextAllOpen && (
+        <CropPicker
+          plotIndex={null}
+          farmingLevel={level}
+          mode="next"
+          onClose={() => setNextAllOpen(false)}
         />
       )}
     </div>

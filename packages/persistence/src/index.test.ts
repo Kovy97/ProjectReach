@@ -1938,6 +1938,7 @@ function withoutMasterCapes(): ContentDB {
       autoReplant: true,
       readyYield: 0,
       readyItem: null,
+      nextCropId: null,
     }));
     const json = serialize(s, 1000);
 
@@ -1956,6 +1957,7 @@ function withoutMasterCapes(): ContentDB {
       autoReplant: true,
       readyYield: 0,
       readyItem: null,
+      nextCropId: null,
     };
     // Plot 1: unbekannte Crop → leeren, plantedAtMs auf 0.
     s.farmPlots[1] = {
@@ -1964,6 +1966,7 @@ function withoutMasterCapes(): ContentDB {
       autoReplant: false,
       readyYield: 5,
       readyItem: "copper_ore",
+      nextCropId: null,
     };
     const json = serialize(s, 1000);
 
@@ -1996,12 +1999,97 @@ function withoutMasterCapes(): ContentDB {
       autoReplant: true,
       readyYield: 12,
       readyItem: "voll_erfunden",
+      nextCropId: null,
     };
     const json = serialize(s, 1000);
 
     const { state: loaded } = loadOk(json, content, 1000);
     expect(loaded.farmPlots[0]!.readyItem).toBeNull();
     expect(loaded.farmPlots[0]!.readyYield).toBe(0);
+  });
+
+  // ── Folgesorte je Beet (SAVE_VERSION 81→82, Chef-GO 25.08.2026 (1.1.0),
+  //    design/rezension-patch-2026-08-25.html #p12) ─────────────────────────────────────────
+  /** Crop-Katalog mit ZWEI Sorten (copper_ore/copper_bar sind bekannte Items → Saat-Vertrag hält). */
+  function contentWithTwoCrops(): ContentDB {
+    const base = contentWithCrops();
+    const second: CropDef = {
+      ...base.crops!.test_crop!,
+      id: "second_crop",
+      name: "Second Crop",
+      seedItem: "copper_bar",
+      yieldItem: "copper_bar",
+      growMs: 1_200_000,
+    };
+    return { ...base, crops: { ...base.crops, second_crop: second } };
+  }
+
+  it("v81-Alt-Save ohne nextCropId: Migration setzt auf allen Beeten explizit null (Alt-Verhalten unverändert)", () => {
+    const c = contentWithTwoCrops();
+    const s = createGame({ name: "X" }, c, 1);
+    s.elapsedMs = 100_000;
+    s.farmPlots[0] = { cropId: "test_crop", plantedAtMs: 50_000, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: null };
+    const raw = JSON.parse(serialize(s, 1000)) as { version: number; state: { version: number; farmPlots: Array<Record<string, unknown>> } };
+    raw.version = 81;
+    raw.state.version = 81;
+    for (const p of raw.state.farmPlots) delete p.nextCropId; // so sieht ein v81-Save aus
+    const json = JSON.stringify(raw);
+    expect(json).not.toContain("nextCropId");
+
+    const { state: loaded } = loadOk(json, c, 1000);
+    expect(loaded.version).toBe(SAVE_VERSION);
+    expect(loaded.farmPlots).toHaveLength(MAX_FARM_PLOTS);
+    for (const p of loaded.farmPlots) {
+      expect("nextCropId" in p).toBe(true); // explizit vorhanden, nicht nur „undefined"
+      expect(p.nextCropId).toBeNull();
+    }
+    // Das wachsende Beet ist sonst unberührt.
+    expect(loaded.farmPlots[0]!.cropId).toBe("test_crop");
+    expect(loaded.farmPlots[0]!.plantedAtMs).toBe(50_000);
+    // Idempotent: zweiter Load ändert nichts.
+    const again = loadOk(serialize(loaded, 1000), c, 1000).state;
+    expect(again.farmPlots).toEqual(loaded.farmPlots);
+  });
+
+  it("sanitize: Folgesorte bleibt (auch auf LEEREM Beet, #12.2), unbekannte Sorte und Plan == Sorte werden genullt", () => {
+    const c = contentWithTwoCrops();
+    const s = createGame({ name: "X" }, c, 1);
+    s.elapsedMs = 100_000;
+    // Beet 0: gültiger Plan auf wachsendem Beet → bleibt.
+    s.farmPlots[0] = { cropId: "test_crop", plantedAtMs: 10_000, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: "second_crop" };
+    // Beet 1: Plan auf LEEREM Beet (Saat fehlte zur Reife, Plan blieb stehen) → bleibt.
+    s.farmPlots[1] = { cropId: null, plantedAtMs: 0, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: "second_crop" };
+    // Beet 2: unbekannte Folgesorte → null.
+    s.farmPlots[2] = { cropId: "test_crop", plantedAtMs: 10_000, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: "ghost_crop" as never };
+    // Beet 3: Plan == wachsende Sorte → null (nutzlos, setNextCrop lehnt es ebenfalls ab).
+    s.farmPlots[3] = { cropId: "test_crop", plantedAtMs: 10_000, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: "test_crop" };
+    // Beet 4: Nicht-String (manipuliert) → null.
+    s.farmPlots[4] = { cropId: "test_crop", plantedAtMs: 10_000, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: 42 as never };
+    const json = serialize(s, 1000);
+
+    const { state: loaded } = loadOk(json, c, 1000);
+    expect(loaded.farmPlots[0]!.nextCropId).toBe("second_crop");
+    expect(loaded.farmPlots[1]!.cropId).toBeNull();
+    expect(loaded.farmPlots[1]!.nextCropId).toBe("second_crop");
+    expect(loaded.farmPlots[2]!.nextCropId).toBeNull();
+    expect(loaded.farmPlots[2]!.cropId).toBe("test_crop"); // die wachsende Sorte bleibt
+    expect(loaded.farmPlots[3]!.nextCropId).toBeNull();
+    expect(loaded.farmPlots[4]!.nextCropId).toBeNull();
+    // Round-Trip stabil.
+    const again = loadOk(serialize(loaded, 1000), c, 1000).state;
+    expect(again.farmPlots).toEqual(loaded.farmPlots);
+  });
+
+  it("sanitize: Folgesorte wird beim Content-Wechsel genullt, wenn ihre Sorte verschwindet (Muster cropId)", () => {
+    const c2 = contentWithTwoCrops();
+    const s = createGame({ name: "X" }, c2, 1);
+    s.elapsedMs = 100_000;
+    s.farmPlots[0] = { cropId: "test_crop", plantedAtMs: 10_000, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: "second_crop" };
+    const json = serialize(s, 1000);
+    // Laden gegen einen Katalog, der die Folgesorte nicht mehr kennt.
+    const { state: loaded } = loadOk(json, contentWithCrops(), 1000);
+    expect(loaded.farmPlots[0]!.cropId).toBe("test_crop");
+    expect(loaded.farmPlots[0]!.nextCropId).toBeNull();
   });
 
   it("nullt eine activeActionId, die im aktuellen Content nicht (mehr) existiert", () => {

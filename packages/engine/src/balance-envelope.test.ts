@@ -138,7 +138,13 @@ describe("Balance-Envelope §1: Existenz-Guards", () => {
         expect(b.kit[slot], `Slot ${slot} bei CL ${lvl}`).toBeTruthy();
       }
       // Der Voll-Stack trägt wirklich Suffixe + Buffs (sonst misst die Suite einen leeren Build).
-      expect(Object.keys(b.suffixBySlot).length).toBeGreaterThan(5);
+      // Re-Messung 2026-08-25 (Chef-GO 1.1.0, #p14 Rüstungsklassen-Trennung): bei CL 30 sinkt die
+      // Zahl auf genau 5 (Waffe/Amulett/Cape/beide Ringe) — Platte (body/legs/gloves/boots) hat in
+      // diesem niedrigen Ilvl-Band keinen crit-relevanten Suffix mehr im Pool (Phantom/Lynx sind
+      // jetzt armor_leather) und kein Leder-Ersatzteil schlägt dort Platte auf den Rohwerten; ab
+      // CL 60 (ilvl ≥ minIlvl 50 von Phantom) weicht der Builder für diese Slots auf Leder-Rüstung
+      // aus und bleibt bei 9. Weiterhin ≥5 (nie ein leerer Voll-Stack).
+      expect(Object.keys(b.suffixBySlot).length).toBeGreaterThanOrEqual(5);
       // #303 L3: „alle Buffs" = bester Buff JE Kategorie — für crit sind das heute genau
       // offense (slayer_war_brew) + food (soulfire_banquet); andere Kategorien scoren crit nicht.
       expect(b.buffIds.length).toBeGreaterThanOrEqual(2);
@@ -193,10 +199,27 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     // Re-Messung 2026-07-09 nach L3-Exklusivität: der Buff-Anteil fällt von Σ +1.04 auf +0.20
     // (bestes offense-Tonikum), die Caps binden TROTZDEM ab CL 30 — der Krit-Träger ist die
     // Gear-/Suffix-/Attribut-Schiene, nicht das Tonika-Stacking. Bewusst gepinnt als Detektor.
+    // Re-Messung 2026-08-25 (Chef-GO 1.1.0, design/rezension-patch-2026-08-25.html #p14, Rüstungs-
+    // klassen-Trennung): suffix_phantom/suffix_lynx/suffix_tiger tragen dex nur noch auf Leder statt
+    // auf jeder Rüstung — bei CL 30 reicht das dem Builder nicht mehr, um für melee/ranged/magic den
+    // 0.5-Deckel zu erreichen (der Pin bricht §3 exakt wie im Design-Dokument vorhergesagt). Ab CL 60
+    // (ilvl ≥ minIlvl 50 von Phantom) tauscht der Builder die Rüstungsslots gegen Leder-Teile und
+    // erreicht den Deckel wieder — GEMESSEN, nicht der grobe Vorab-Schätzwert aus dem Design-Dokument
+    // (0,438/0,461/0,485 dort war eine Pool-Emulation ohne die echte Item-/Builder-Logik). Der Krit-
+    // Schaden bleibt am Cap 2,50 auf jeder Stufe/jedem Stil (unverändert).
+    const CL30_CRIT_CHANCE: Record<WeaponStyle, number> = {
+      melee: 0.4367,
+      ranged: 0.4955,
+      magic: 0.4355,
+    };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
         const st = computeStats(bis(style, lvl, "crit").state, content);
-        expect(st.critChance, `critChance CL${lvl}/${style}`).toBe(CRIT_CHANCE_CAP);
+        if (lvl === 30) {
+          expect(st.critChance, `critChance CL${lvl}/${style}`).toBeCloseTo(CL30_CRIT_CHANCE[style], 4);
+        } else {
+          expect(st.critChance, `critChance CL${lvl}/${style}`).toBe(CRIT_CHANCE_CAP);
+        }
         expect(st.critDamage, `critDamage CL${lvl}/${style}`).toBe(CRIT_DAMAGE_CAP);
       }
     }
@@ -363,8 +386,12 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // den CL-90-Build auf den 0.40-Deckel (vorher 0.3934). `evasion` — der flache DEX-Kontest-Stat
     // hinter dem Dodge — steigt dabei nur von 15.919 auf 16.234, weil er aus Modifiers kommt und
     // nicht aus evasionRating. Der Cap CLAMPT: der Dodge kann nicht darüber.
+    // Re-Messung 2026-08-25 (Chef-GO 1.1.0, #p14 Rüstungsklassen-Trennung, Vorschlag B): die vier
+    // umgetypten Küsten-/Hochland-Plattenteile (jetzt Leder + evasionRating + dex) verdrängen für
+    // diesen Build ein bisheriges Leder-BiS-Teil mit etwas mehr dex ⇒ evasion sinkt leicht
+    // (16.234 → 16.027). Der Dodge-Deckel bleibt trotzdem gebunden (Clamp).
     expect(st.dodgeChance).toBe(DODGE_CAP);
-    expect(st.evasion).toBeCloseTo(16.234, 3);
+    expect(st.evasion).toBeCloseTo(16.027, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -381,12 +408,15 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // lässt den Gegner etwas seltener landen (0.2479 → 0.2423 / 0.4727 → 0.4655) — marginal.
     // Wichtiger: der Dodge sitzt jetzt auf dem 0.40-Deckel, die kombinierte Land-Chance bleibt
     // trotzdem deutlich über dem 10-%-Boden. Das Chef-Leck („Gegner verfehlt IMMER") bleibt zu.
+    // Re-Messung 2026-08-25 (Chef-GO 1.1.0, #p14): `evasion` sinkt leicht (16.234 → 16.027, s.o.)
+    // ⇒ der Gegner landet minimal HÄUFIGER (0.2423 → 0.2442 / 0.4655 → 0.4669) — marginal, der
+    // Cap-Befund oben bleibt unverändert.
     const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
-    expect(hcOn).toBeCloseTo(0.4039, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2423, 3);
+    expect(hcOn).toBeCloseTo(0.4070, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2442, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7759, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4655, 3);
+    expect(hc150).toBeCloseTo(0.7781, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4669, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -474,11 +504,17 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // 4–9 % (melee→idol_warden 59.67→56.45 s, magic→last_idol 262.73→240.73 s). Die Boss-Seite
     // bleibt praktisch unverändert — der "damage"-Build stapelt keine Defensiv-Runen. Die Aussage
     // des Pins hält: die Idol-Halle ist auch so keine 8–21-s-Farm-Node.
+    // Re-Messung 2026-08-25 (Chef-GO 1.1.0, #p14 Rüstungsklassen-Trennung, Vorschlag B): die vier
+    // umgetypten Küsten-/Hochland-Plattenteile (jetzt Leder + evasionRating + dex, Req ranged) sind
+    // jetzt gültige Kandidaten für den CL-90-Ranged-"damage"-Build und verdrängen an 1-2 Slots das
+    // bisherige BiS-Teil — nur die RANGED-Zeilen verschieben sich (idol_warden 92.44→97.77 s,
+    // last_idol 305.65→323.54 s, jeweils +5-6 %); melee/magic nutzen keines der vier Teile (deren
+    // Requirement war/ist defence bzw. jetzt ranged) und bleiben unverändert.
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 56.45, 18.9],
       ["melee", "last_idol", 184.96, 13.4],
-      ["ranged", "idol_warden", 92.44, 14.08],
-      ["ranged", "last_idol", 305.65, 12.2],
+      ["ranged", "idol_warden", 97.77, 14.14],
+      ["ranged", "last_idol", 323.54, 12.9],
       ["magic", "idol_warden", 71.52, 23.7],
       ["magic", "last_idol", 240.73, 25.6],
     ];

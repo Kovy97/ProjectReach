@@ -604,7 +604,22 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 // codex:2026-08-03T12:45:00+02:00 — v80 persistiert die freie visuelle New-Haven-Anpassung:
 //     individuelle Gebäudeskalierung (1..300 %) und horizontale Spiegelung. Alt-Saves erhalten
 //     keine Overrides und verwenden dadurch weiterhin die rangabhängigen Renderer-Defaults.
-export const SAVE_VERSION = 81;
+// v81 (New-Haven-Bauwarteschlange, Spieler-Report 1.0.2): neues Teilfeld `camp.buildQueue`
+//     (Gebäude-IDs, Länge ≤ CAMP_BUILD_QUEUE_MAX). Migration: leere Liste. Keine Item-ID-Renames.
+// v82 (Anbau: Folgesorte je Beet — Chef-GO 25.08.2026 (1.1.0), design/rezension-patch-2026-08-25.html
+//     #p12): EIN neues Feld `farmPlots[*].nextCropId: ItemId | null`. Bei der nächsten Reife wird
+//     die Folgesorte statt der aktuellen gesät (eine Saat der Folgesorte wird ZUR REIFE abgezogen,
+//     nicht beim Planen — eine Quelle für Saatverbrauch, keine Rückerstattung beim Abbrechen),
+//     danach nullt sich das Feld und das Beet läuft mit Auto-Nachpflanzen der neuen Sorte
+//     (einmalig, Chef-Entscheid #12.1). Fehlt die Saat zur Reife: Beet leer, Plan bleibt, der Tick
+//     sät ein, sobald Saat da ist (Chef-Entscheid #12.2). `tickFarmPlots` rechnet die Reife-Zyklen
+//     seitdem als „solange elapsed ≥ growMs(aktuelle Sorte)"-Schleife statt `floor(elapsed/growMs)`
+//     vorab — für Beete OHNE Plan bit-identisch (gleiche Ernten, gleiche nextInt-Züge, gleicher
+//     Restübertrag). Migration (< 82): `nextCropId = null` auf allen 9 Beeten (explizit null statt
+//     fehlend, damit der Vault-Guard byte-genau vergleichen kann). sanitizeState: nur behalten, wenn
+//     String, in content.crops vorhanden und ungleich cropId — ein Plan auf einem LEEREN Beet ist
+//     gültig (s. FarmPlot.nextCropId). Keine Item-ID-Renames.
+export const SAVE_VERSION = 82;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -2951,6 +2966,14 @@ export type ItemTypeTag =
   | "weapon_ranged"
   | "weapon_magic"
   | "armor"
+  // Rüstungsklassen-Tags (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p14):
+  // ZUSÄTZLICH zu "armor" (das bleibt für die Runen-Affixe/`requiresTrinity`-Gate erhalten), damit
+  // Suffix-Pools klassenrein filtern können (Platte bekam vorher denselben `armor`-Pool wie Stoff —
+  // Grund für „Plattenhelm des Weisen" mit Weisheit). Abgeleitet aus dem Trinity-Stat des Items,
+  // kein neues Datenfeld nötig.
+  | "armor_plate"
+  | "armor_leather"
+  | "armor_cloth"
   | "shield"
   | "jewelry"
   | "any_weapon"
@@ -3124,6 +3147,14 @@ export function itemTypeTags(item: ItemDef): ItemTypeTag[] {
       tags.push("jewelry");
     }
     tags.push("armor");
+    // Rüstungsklassen-Tag (Chef-GO 25.08.2026, 1.1.0, #p14): zusätzlich zu "armor", je nachdem,
+    // welchen Trinity-Stat das Teil trägt (Rüstungs-Trinität legt die Klasse fest — Platte
+    // mitigiert/armorRating, Leder weicht aus/evasionRating, Stoff wardet/wardCapacity). Schmuck
+    // (Ringe/Amulett/Umhang) trägt i.d.R. keinen Trinity-Stat und bleibt damit klassenfrei (nur
+    // "armor" + "jewelry"), rollt also weiterhin alle Attribut-Suffixe.
+    if (item.armorRating) tags.push("armor_plate");
+    else if (item.evasionRating) tags.push("armor_leather");
+    else if (item.wardCapacity) tags.push("armor_cloth");
   }
   return tags;
 }
@@ -4135,6 +4166,19 @@ export interface FarmPlot {
   readyYield: number;
   /** Item-ID der wartenden Ernte (für `readyYield > 0`), sonst null. */
   readyItem: ItemId | null;
+  /**
+   * Folgesorte (SAVE_VERSION 82, Chef-GO 25.08.2026 (1.1.0), design/rezension-patch-2026-08-25.html
+   * #p12): wird bei der NÄCHSTEN Reife statt `cropId` gesät und nullt sich danach — das Beet läuft
+   * dann mit Auto-Nachpflanzen der neuen Sorte weiter. EINMALIG statt Rotationsliste (Chef-Entscheid
+   * #12.1): wer erneut wechseln will, setzt wieder eine Folgesorte. null = nichts geplant.
+   *
+   * Fehlt die Saat der Folgesorte zur Reife, fällt das Beet NICHT auf die alte Sorte zurück
+   * (Chef-Entscheid #12.2: „keine Samen = einfach kein Pflanzen, Management-Fehler vom Spieler"):
+   * es wird leer, der Plan BLEIBT stehen, die UI warnt — und sobald Saat da ist, sät der Tick das
+   * leere Beet mit der Folgesorte ein. Deshalb ist ein Plan auf einem LEEREN Beet ein gültiger
+   * Save-Zustand (Sanitize strippt nur unbekannte Sorten und Plan == aktuelle Sorte).
+   */
+  nextCropId: ItemId | null;
 }
 
 /** Harte Obergrenze der Plot-Anzahl (UI-Grid + Sanitize-Cap + fixe Array-Länge im Save). */
@@ -4166,7 +4210,7 @@ export function plotsUnlocked(farmingLevel: number): number {
 
 /** Ein leerer Plot (Default für `createGame` + Save-Migration). Auto-Replant per CEO-Default AN. */
 export function emptyFarmPlot(): FarmPlot {
-  return { cropId: null, plantedAtMs: 0, autoReplant: true, readyYield: 0, readyItem: null };
+  return { cropId: null, plantedAtMs: 0, autoReplant: true, readyYield: 0, readyItem: null, nextCropId: null };
 }
 
 /** Frisches Plot-Array fester Länge `MAX_FARM_PLOTS` (leere Beete). */

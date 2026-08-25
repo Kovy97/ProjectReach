@@ -36,6 +36,13 @@ import { deserialize, serialize } from "./index";
  * und sich dabei GENAU EIN Feld ändert (`camp.buildQueue`, leer). Ein eigenes `v81-*.json` kommt
  * beim RELEASE dieser Version ins Vault: das Ritual verlangt ein echtes AUSGELIEFERTES Save, und
  * v81 ist noch keins (Präzedenz v79, s.o.).
+ *
+ * SAVE_VERSION 82 (Anbau: Folgesorte je Beet — Chef-GO 25.08.2026 (1.1.0),
+ * design/rezension-patch-2026-08-25.html #p12): zweiter Bump im selben Release-Fenster, v81 wurde
+ * ebenfalls nie ausgeliefert (Präzedenz v79/v80). Der v80-Pin belegt jetzt die Kette v80 → v82 und
+ * dass sich dabei GENAU ZWEI Flächen ändern: `camp.buildQueue: []` (v81) und
+ * `farmPlots[*].nextCropId: null` auf allen neun Beeten (v82). Ein `v82-*.json` kommt beim Release
+ * von 1.1.0 ins Vault.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -190,7 +197,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(SAVE_VERSION).toBeGreaterThanOrEqual(80);
   });
 
-  it("migriert v80 → v81 und ändert dabei GENAU das neue Feld — sonst byte-genau derselbe Save", () => {
+  it("migriert v80 → v82 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
     // now === savedAt ⇒ offlineMs 0 ⇒ KEIN Catch-up-Tick: gemessen wird allein, was
     // Migration+Sanitize am gespeicherten Save tun. Das ist die schärfere Form des früheren
     // Identitäts-Guards: nicht nur „nichts geht kaputt", sondern „ES ÄNDERT SICH NUR, WAS SICH
@@ -205,14 +212,20 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
 
     // Das neue v81-Feld: leere Bauwarteschlange (nichts geplant — gab es vorher gar nicht).
     expect(result!.state.camp.buildQueue).toEqual([]);
+    // Das neue v82-Feld (#p12): auf allen neun Beeten explizit `nextCropId: null` — keine
+    // Folgesorte geplant (gab es vorher gar nicht); explizit null statt fehlend, damit die
+    // Save-Form fest ist und die Byte-Gegenprobe unten greifen kann.
+    expect(result!.state.farmPlots).toHaveLength(9);
+    for (const plot of result!.state.farmPlots) expect(plot.nextCropId).toBeNull();
 
-    // Gegenprobe: das Original um genau diese zwei erwarteten Änderungen ergänzt, muss die
-    // frisch serialisierten Bytes exakt treffen. Reißt DAS, hat die Migration mehr angefasst als
-    // angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
+    // Gegenprobe: das Original um genau diese erwarteten Änderungen ergänzt (Version, buildQueue,
+    // nextCropId je Beet), muss die frisch serialisierten Bytes exakt treffen. Reißt DAS, hat die
+    // Migration mehr angefasst als angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
     const erwartet = JSON.parse(json) as { version: number; state: GameState };
     erwartet.version = SAVE_VERSION;
     erwartet.state.version = SAVE_VERSION;
     erwartet.state.camp.buildQueue = [];
+    for (const plot of erwartet.state.farmPlots) plot.nextCropId = null;
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 
@@ -375,6 +388,13 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
 
     // (13) v77 TAGES-GRATIS-SKIP (Trophäenwand III): Migrations-Default 0 = „noch nie verbraucht".
     expect(s.slayerFreeSkipDay).toBe(0);
+
+    // (18) v82 FOLGESORTE JE BEET (#p12, Chef-GO 25.08.2026): migrierte Alt-Saves tragen auf
+    //      allen neun Beeten `nextCropId: null` — vor v82 gab es das Feld nicht, es kann also
+    //      nichts geplant gewesen sein. Das Feld MUSS im Fixture präsent sein (Byte-Gegenprobe
+    //      oben erzwingt den Key je Beet); befüllte Pläne + Sanitize sichert index.test.ts.
+    expect(s.farmPlots).toHaveLength(9);
+    for (const plot of s.farmPlots) expect(plot.nextCropId).toBeNull();
 
     // (16) v79 AUTO-REBUFF-EINMALKAUF (Codex 2026-08-02): migrierte Alt-Saves ohne bereits aktiven
     //      Auto-Rebuff starten GESPERRT (der 50.000-Gold-Kauf darf nicht geschenkt werden). Das

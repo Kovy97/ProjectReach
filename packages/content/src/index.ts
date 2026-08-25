@@ -5465,8 +5465,10 @@ export const content: ContentDB = {
     tidewoven_leggings: {
       id: "tidewoven_leggings", name: { en: "Tidewoven Leggings", de: "Gezeitengewebe-Beinlinge" },
       type: "equipment", stackable: false, slot: "legs",
-      modifiers: { con: 7, int: 2 },
-      skillBoost: { magic: 1 },
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int war klassenfremd auf Platte
+      // (Mitigations-Schiene = str/con) → Attribut-Tausch bei gleicher Summe (9), Boost magic→defence.
+      modifiers: { con: 7, str: 2 },
+      skillBoost: { defence: 1 },
       requirements: { defence: 50 }, value: 900, rarity: "superRare", armorRating: 17.58,
     },
     barnacle_gauntlets: {
@@ -5478,9 +5480,13 @@ export const content: ContentDB = {
     tidewalker_boots: {
       id: "tidewalker_boots", name: { en: "Tidewalker Boots", de: "Gezeitengänger-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
+      // war klassenfremd auf Platte — statt Attribut-Tausch wird das Teil zu Leder umgetypt (dex
+      // bleibt, passt jetzt zur Evasions-Schiene): armorRating→evasionRating (wie studded_leather_boots),
+      // Requirement defence→ranged.
       modifiers: { dex: 2, con: 4 },
       skillBoost: { ranged: 1 },
-      requirements: { defence: 50 }, value: 780, rarity: "superRare", armorRating: 11.19,
+      requirements: { ranged: 50 }, value: 780, rarity: "superRare", evasionRating: 10.22,
     },
     mariner_cloak: {
       id: "mariner_cloak", name: { en: "Mariner's Cloak", de: "Seefahrer-Umhang" },
@@ -5671,16 +5677,22 @@ export const content: ContentDB = {
     stormhide_helm: {
       id: "stormhide_helm", name: { en: "Stormhide Helm", de: "Sturmhaut-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
+      // war klassenfremd auf Platte — Umtypung zu Leder (dex bleibt), armorRating→evasionRating,
+      // Requirement defence→ranged.
       modifiers: { dex: 2, con: 5 },
       skillBoost: { ranged: 1 },
-      requirements: { defence: 50 }, value: 900, rarity: "superRare", armorRating: 15.98,
+      requirements: { ranged: 50 }, value: 900, rarity: "superRare", evasionRating: 14.6,
     },
     skygrip_gauntlets: {
       id: "skygrip_gauntlets", name: { en: "Skygrip Gauntlets", de: "Himmelsgriff-Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
+      // war klassenfremd auf Platte — Umtypung zu Leder (dex bleibt), armorRating→evasionRating,
+      // Requirement defence→ranged.
       modifiers: { dex: 2, con: 4, lck: 3 },
       skillBoost: { ranged: 1 },
-      requirements: { defence: 55 }, value: 900, rarity: "superRare", armorRating: 11.81,
+      requirements: { ranged: 50 }, value: 900, rarity: "superRare", evasionRating: 10.22,
     },
     storm_mantle: {
       id: "storm_mantle", name: { en: "Storm Mantle", de: "Sturm-Mantel" },
@@ -5692,8 +5704,10 @@ export const content: ContentDB = {
       id: "aetherscale_cuirass", name: { en: "Aetherscale Cuirass", de: "Aetherschuppen-Kürass" },
       icon: "🛡",
       type: "equipment", stackable: false, slot: "body",
-      modifiers: { con: 18, int: 3 },
-      skillBoost: { magic: 1 },
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int war klassenfremd auf Platte
+      // → Attribut-Tausch bei gleicher Summe (21), Boost magic→power.
+      modifiers: { con: 18, str: 3 },
+      skillBoost: { power: 1 },
       requirements: { defence: 75 }, value: 6000, rarity: "epic", armorRating: 31.31,
     },
     wyvernscale_greaves: {
@@ -5706,9 +5720,12 @@ export const content: ContentDB = {
     cloudwalker_boots: {
       id: "cloudwalker_boots", name: { en: "Cloudwalker Boots", de: "Wolkengänger-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
+      // war klassenfremd auf Platte — Umtypung zu Leder (dex bleibt), armorRating→evasionRating
+      // (wie dragonhide_boots), Requirement defence→ranged.
       modifiers: { dex: 2, con: 5 },
       skillBoost: { ranged: 1 },
-      requirements: { defence: 80 }, value: 3000, rarity: "epic", armorRating: 15.39,
+      requirements: { ranged: 82 }, value: 3000, rarity: "epic", evasionRating: 15.05,
     },
     stormcore_pendant: {
       id: "stormcore_pendant", name: { en: "Stormcore Pendant", de: "Sturmkern-Anhänger" },
@@ -5881,19 +5898,25 @@ export const content: ContentDB = {
     idol_crown: {
       id: "idol_crown", name: { en: "Crown of the Idol", de: "Krone des Götzen" },
       type: "equipment", stackable: false, slot: "helmet",
-      modifiers: { str: 3, dex: 1, con: 9, int: 3, lck: 3 }, skillBoost: { defence: 4 },
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): dex/int waren klassenfremd auf
+      // Platte → Umverteilung bei gleicher Summe (19): dex+int weg, str/con/lck angehoben.
+      modifiers: { str: 5, con: 10, lck: 4 }, skillBoost: { defence: 4 },
       requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 25,
     },
     aetherweave_leggings: {
       id: "aetherweave_leggings", name: { en: "Aetherweave Leggings", de: "Aethergewebe-Beinlinge" },
       type: "equipment", stackable: false, slot: "legs",
-      modifiers: { con: 12, int: 4, lck: 3 }, skillBoost: { defence: 4 },
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int war klassenfremd auf Platte
+      // → Attribut-Tausch bei gleicher Summe (19), con/lck unverändert.
+      modifiers: { str: 4, con: 12, lck: 3 }, skillBoost: { defence: 4 },
       requirements: { defence: 99 }, value: 26000, rarity: "legendary", armorRating: 27.5,
     },
     voidtouched_gauntlets: {
       id: "voidtouched_gauntlets", name: { en: "Voidtouched Gauntlets", de: "Leerenberührte Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
-      modifiers: { str: 3, dex: 1, con: 6, int: 2, lck: 6 }, skillBoost: { defence: 4 },
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): dex/int waren klassenfremd auf
+      // Platte → Umverteilung bei gleicher Summe (18): dex+int weg, str/con angehoben.
+      modifiers: { str: 5, con: 7, lck: 6 }, skillBoost: { defence: 4 },
       requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 17.5,
     },
     idolstep_sabatons: {
@@ -5911,7 +5934,9 @@ export const content: ContentDB = {
     idol_aegis: {
       id: "idol_aegis", name: { en: "Aegis of the Last Idol", de: "Aegis des Letzten Götzen" },
       type: "equipment", stackable: false, slot: "offhand",
-      bonus: { hpRegenPerSec: 0.2 }, modifiers: { con: 17, int: 6, wis: 7, lck: 3 }, skillBoost: { defence: 4 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.2 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
+      // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int/wis waren klassenfremd auf
+      // Schild → Umverteilung bei gleicher Summe (33): int+wis weg, str/con/lck angehoben.
+      bonus: { hpRegenPerSec: 0.2 }, modifiers: { str: 8, con: 19, lck: 6 }, skillBoost: { defence: 4 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.2 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
       requirements: { defence: 99 }, value: 65000, rarity: "godly", armorRating: 21.74, blockChance: 0.497,
     },
     last_idol_mantle: {
@@ -17708,7 +17733,9 @@ export const content: ContentDB = {
       id: "suffix_bear",
       suffix: { en: "of the Bear", de: "des Bären" },
       // Itemization 2.0 §7: unverändert + jewelry-Pool aufgenommen (Schmuck-Attribut-Rolls).
-      appliesTo: ["weapon_melee", "armor", "shield", "jewelry"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): armor→armor_plate (str ist Platte-Attribut,
+      // "shield" bleibt zusätzlich explizit gelistet, auch wenn Platten-Schilde selbst schon armor_plate tragen).
+      appliesTo: ["weapon_melee", "armor_plate", "shield", "jewelry"],
       attrPerIlvl: { str: 0.25, con: 0.25 },
       weight: 100,
       minIlvl: 1,
@@ -17759,7 +17786,8 @@ export const content: ContentDB = {
       id: "suffix_tiger",
       suffix: { en: "of the Tiger", de: "des Tigers" },
       // Itemization 2.0 §7: unverändert + jewelry-Pool aufgenommen.
-      appliesTo: ["weapon_ranged", "weapon_melee", "armor", "jewelry"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): armor→armor_leather (dex ist Leder-Attribut).
+      appliesTo: ["weapon_ranged", "weapon_melee", "armor_leather", "jewelry"],
       attrPerIlvl: { dex: 0.25, con: 0.25 },
       weight: 100,
       minIlvl: 1,
@@ -17790,7 +17818,8 @@ export const content: ContentDB = {
     suffix_lynx: {
       id: "suffix_lynx",
       suffix: { en: "of the Lynx", de: "des Luchses" },
-      appliesTo: ["weapon_ranged", "armor"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): armor→armor_leather (dex ist Leder-Attribut).
+      appliesTo: ["weapon_ranged", "armor_leather"],
       // Itemization 2.0 §7: eva-Zeile entfällt (Rüstung trägt keine bonus-Flats mehr) → dex 0.225→0.3.
       attrPerIlvl: { dex: 0.3 },
       weight: 60,
@@ -17799,7 +17828,8 @@ export const content: ContentDB = {
     suffix_phantom: {
       id: "suffix_phantom",
       suffix: { en: "of the Phantom", de: "des Phantoms" },
-      appliesTo: ["weapon_ranged", "armor"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): armor→armor_leather (dex ist Leder-Attribut).
+      appliesTo: ["weapon_ranged", "armor_leather"],
       // Itemization 2.0 §7: eva-Zeile → dex 0.25 (softStats critChance bleibt).
       attrPerIlvl: { dex: 0.25 },
       softStats: ["critChance"],
@@ -17821,7 +17851,8 @@ export const content: ContentDB = {
       suffix: { en: "of the Owl", de: "der Eule" },
       // Itemization 2.0 §7: maxMana/manaRegen-Zeile → wis 0.3 (Rüstung trägt keine bonus-Flats mehr);
       // + jewelry-Pool aufgenommen.
-      appliesTo: ["weapon_magic", "armor", "jewelry"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): armor→armor_cloth (wis ist Stoff-Attribut).
+      appliesTo: ["weapon_magic", "armor_cloth", "jewelry"],
       attrPerIlvl: { wis: 0.3 },
       weight: 100,
       minIlvl: 1,
@@ -17830,7 +17861,8 @@ export const content: ContentDB = {
       id: "suffix_sage",
       suffix: { en: "of the Sage", de: "des Weisen" },
       // Itemization 2.0 §7: unverändert + jewelry-Pool aufgenommen.
-      appliesTo: ["weapon_magic", "armor", "jewelry"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): armor→armor_cloth (int/wis sind Stoff-Attribute).
+      appliesTo: ["weapon_magic", "armor_cloth", "jewelry"],
       attrPerIlvl: { int: 0.2, wis: 0.2 },
       weight: 60,
       minIlvl: 10,
@@ -17839,7 +17871,8 @@ export const content: ContentDB = {
       id: "suffix_oracle",
       suffix: { en: "of the Oracle", de: "des Orakels" },
       // Itemization 2.0 §7: manaRegen-Zeile entfällt → wis 0.225→0.3; + jewelry-Pool aufgenommen.
-      appliesTo: ["weapon_magic", "armor", "jewelry"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): armor→armor_cloth (wis ist Stoff-Attribut).
+      appliesTo: ["weapon_magic", "armor_cloth", "jewelry"],
       attrPerIlvl: { wis: 0.3 },
       weight: 60,
       minIlvl: 10,
@@ -17876,7 +17909,9 @@ export const content: ContentDB = {
     suffix_sentinel: {
       id: "suffix_sentinel",
       suffix: { en: "of the Sentinel", de: "des Wächters" },
-      appliesTo: ["armor", "shield"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): trägt dex → nur noch armor_leather
+      // (Schild/Platte raus, con/dex passte dort nicht zur Mitigations-Schiene).
+      appliesTo: ["armor_leather"],
       // Itemization 2.0 §7: defense/evasion-Zeile → con 0.08 · dex 0.1.
       attrPerIlvl: { con: 0.08, dex: 0.1 },
       weight: 25,
@@ -17904,7 +17939,9 @@ export const content: ContentDB = {
     suffix_eagle: {
       id: "suffix_eagle",
       suffix: { en: "of the Eagle", de: "des Adlers" },
-      appliesTo: ["any_weapon"],
+      // Klassen-Schnitt (Chef-GO 25.08.2026, 1.1.0, #p14): dex-Suffix raus aus dem Magie-Pool
+      // (any_weapon → weapon_melee/weapon_ranged; dex auf Nahkampfwaffen bleibt geduldet, s. Doc).
+      appliesTo: ["weapon_melee", "weapon_ranged"],
       // accuracy-Flat (0.2) → dex. Die Buch-Rate (a÷4=0.05) rundet über den GESAMTEN Ilvl-Bereich nie
       // über +1 dex (max 0.05·20·1=1.0 < 1.5-Schwelle) — toter Roll trotz Konversion. Auf 0.15
       // angehoben: skaliert 1→3 über den Ilvl-Bereich, Größenordnung wie Schwester-Suffix suffix_fox

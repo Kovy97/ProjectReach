@@ -909,12 +909,22 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     // readyItem nur, wenn bekanntes Item; sonst wartende Ernte verwerfen.
     const readyItem = typeof raw.readyItem === "string" && known(raw.readyItem) ? raw.readyItem : null;
     const readyYield = readyItem ? clampFinite(raw.readyYield, 0, QTY_HARD_CAP, 0) : 0;
+    // Folgesorte (SAVE_VERSION 82, #p12): nur behalten, wenn String, im aktuellen Content vorhanden
+    // und ungleich der wachsenden Sorte (Plan == Sorte ist nutzlos, setNextCrop lehnt es ab).
+    // BEWUSST auch auf einem LEEREN Beet gültig (Chef-Entscheid #12.2: fehlt die Saat zur Reife,
+    // bleibt der Plan stehen und der Tick sät ein, sobald Saat da ist). Level wird hier nicht
+    // geprüft — der Tick sät dann schlicht nicht (Muster buildQueue: keine Baubarkeits-Prüfung
+    // in der Ladehärtung).
+    const rawNext = (raw as { nextCropId?: unknown }).nextCropId;
+    const nextCropId =
+      typeof rawNext === "string" && crops[rawNext] && rawNext !== cropId ? rawNext : null;
     sanitizedPlots.push({
       cropId,
       plantedAtMs,
       autoReplant: typeof raw.autoReplant === "boolean" ? raw.autoReplant : base.autoReplant,
       readyYield,
       readyItem: readyYield > 0 ? readyItem : null,
+      nextCropId,
     });
   }
   state.farmPlots = sanitizedPlots;
@@ -2332,6 +2342,18 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (!Array.isArray(state.farmPlots)) state.farmPlots = [];
   while (state.farmPlots.length < MAX_FARM_PLOTS) state.farmPlots.push(emptyFarmPlot());
   state.farmPlots.length = MAX_FARM_PLOTS; // auf fixe Länge trimmen
+
+  // Folgesorte je Beet (SAVE_VERSION 81→82, Chef-GO 25.08.2026 (1.1.0),
+  // design/rezension-patch-2026-08-25.html #p12): neues Feld `farmPlots[*].nextCropId`. Alt-Saves
+  // bekommen auf jedem Beet explizit `null` (nichts geplant — gab es vorher gar nicht) statt
+  // „fehlend", damit die Save-Form fest ist und der Vault-Guard („es ändert sich NUR das neue
+  // Feld") byte-genau vergleichen kann (Muster camp.buildQueue, 80→81). Idempotent; die
+  // Wert-Härtung (unbekannte Sorte, Plan == Sorte) macht sanitizeState.
+  for (const plot of state.farmPlots) {
+    if (plot && typeof plot === "object" && (plot as { nextCropId?: unknown }).nextCropId === undefined) {
+      plot.nextCropId = null;
+    }
+  }
 
   // Thieving-Risiko-Modus (SAVE_VERSION 34→35): neues Feld `thievingRisk`. Alt-Saves (< 35) haben
   // es nicht → auf den Default „careful" setzen (bestehendes, sicheres Spielverhalten). Idempotent;

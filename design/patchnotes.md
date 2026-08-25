@@ -29,6 +29,27 @@ erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90
 Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests,
 Hülle 31 grün.*
 
+**Anbau: Folgesorte je Beet (Rezension #12):** DE: Auf einem wachsenden Beet lässt sich wählen,
+was danach gesät wird („Danach säen …“, Chip „→ Grimmkorn“). Der Plan gilt einmal, danach läuft das
+Beet mit der neuen Sorte weiter. Fehlt die Saat, bleibt das Beet leer und der Plan wartet mit
+Warnung; „Jetzt wechseln“ rodet und sät sofort; „Für alle Beete danach säen“ rechnet vor. / EN: Pick
+what a plot sows next; the plan waits with a warning if you lack the seed.
+
+*Dev-Notiz: `FarmPlot.nextCropId`, SAVE_VERSION 81 → 82 (Migration null, Sanitize strippt
+unbekannte Sorten), Reife-Schleife in farming.ts auf „solange elapsed ≥ growMs(aktuelle Sorte)“
+umgebaut, offline == online per Test. Chef-Entscheid: kein Rückfall auf die alte Sorte.*
+
+**Suffixe und Attribute passen zur Rüstungsklasse (Rezension #14):** DE: „Nahkampf-Teil mit +2
+Intelligenz?“ Ursache war das gemeinsame Pool-Tag aller Rüstung: Platte rollte zu 55 % Eule, Weiser,
+Orakel. Jetzt eigene Pools je Klasse (Platte stärke/konstitution, Leder geschick/glück, Stoff
+intelligenz/weisheit, Schmuck frei), zehn Items mit festen klassenfremden Werten getauscht, vier
+„wendige“ Plattenteile sind jetzt Leder. Bereits gerollte Suffixe bleiben gültig. / EN: Suffixes and
+fixed attributes now match the armour class.
+
+*Dev-Notiz: Tags armor_plate/leather/cloth in `itemTypeTags` zusätzlich zu `armor` (Runen-Gate
+unberührt), neun Pools umgehängt, Adler ohne Magiewaffen. Balance-Hülle neu gepinnt (Krit-Cap
+CL 30 nicht mehr gebunden, ranged TTK +5 %). Kein Save-Bump.*
+
 **Kohleflöze ab 50, 75 und 90 (Rezension #15):** DE: Ein Spieler: „Schmieden braucht im Lategame
 überall zwei Kohle, Kohle gibt kaum XP.“ Jetzt gibt es das Tiefe Kohleflöz ab 50 (2 Kohle je
 Abbau), das Reiche ab 75 (3) und das Uralte ab 90 (4), im selben Tempo wie das alte Flöz, mit XP

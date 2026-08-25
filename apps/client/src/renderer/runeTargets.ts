@@ -47,6 +47,12 @@ const TAG_KEY: Record<ItemTypeTag, string> = {
   weapon_ranged: "rune.target.weaponRanged",
   weapon_magic: "rune.target.weaponMagic",
   armor: "rune.target.armor",
+  // Klassen-Tags seit 1.1.0 (#14, Suffix-Pools nach Ruestungsklasse): kein Runen-Affix nutzt sie
+  // heute in appliesTo, aber der Record muss vollstaendig sein. Dieselben Labels wie das
+  // Trinity-Gate liefert, damit "Plattenruestung" an beiden Stellen gleich heisst.
+  armor_plate: "rune.target.plate",
+  armor_leather: "rune.target.leather",
+  armor_cloth: "rune.target.cloth",
   shield: "rune.target.shield",
   jewelry: "rune.target.jewelry",
 };

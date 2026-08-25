@@ -129,6 +129,23 @@ const LADDER_BASELINE = new Set([
   // dasselbe Muster wie die bereits gepinnten Elite-Paare oben. Der alte Nachbar-Fingerprint
   // "cured_leather_boots->quietstep_boots" feuert nicht mehr (buckhide_boots ist jetzt dazwischen).
   "buckhide_boots->quietstep_boots",
+  // Chef-GO 1.1.0 (25.08.2026, design/rezension-patch-2026-08-25.html #p14, Rüstungsklassen-
+  // Trennung, Vorschlag B): stormhide_helm/skygrip_gauntlets/tidewalker_boots wechseln von Platte
+  // (requirements.defence) zu Leder (requirements.ranged) — reqSkill() gruppiert Leitern-Familien
+  // GENAU nach diesem Requirement-Skill, die drei Teile verlassen also ihre bisherige Platte-Familie
+  // und ziehen in die jeweilige Leder-Familie um (cloudwalker_boots bricht nichts Neues, s.u.).
+  // In der verlassenen Platte-Familie rückt für jeden Slot ein neuer, bisher nicht direkt
+  // benachbarter Nachbar nach — und coreStatScore ignoriert die Trinity-Felder (armorRating/
+  // evasionRating/wardCapacity) komplett, zählt nur `modifiers`/`skillBoost`: die neuen Nachbarn
+  // haben zufällig weniger davon als das jetzt tiefer sitzende, niedriger-stufige Teil. Dasselbe
+  // strukturelle "coreStatScore ignoriert Trinity"-Artefakt wie bei reefscale_helm->chitin_helm
+  // oben (kein echter Balance-Fehler — die eigentlichen Trinity-Werte steigen korrekt mit dem
+  // Level: stormhide_helm EV 14.6 < ironhide_helm EV 16.8, tidewalker_boots EV 10.22 < ironhide_
+  // boots EV 11.76). Die alten Fingerprints "skygrip_gauntlets->runite_gauntlets" (Zeile oben)
+  // feuern nicht mehr (skygrip ist raus aus der Platte-Familie) — neue Nachbarn:
+  "moltengrip_gauntlets->runite_gauntlets",
+  "stormhide_helm->ironhide_helm",
+  "tidewalker_boots->ironhide_boots",
 ]);
 
 /** Akzeptierte Drop-Level-Gaps ("monster:item") — Zonen-Uniques bewusst unter Beute-Klasse. */

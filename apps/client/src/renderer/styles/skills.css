@@ -2429,6 +2429,131 @@ button.skilloverview-card {
   color: #d8a24a;
 }
 
+/* ─── Folgesorte je Beet (Chef-GO 25.08.2026 (1.1.0), design/rezension-patch-2026-08-25.html #p12) ──
+   Die Infozeile traegt jetzt ZWEI Knoepfe („Alle bepflanzen" + „Fuer alle Beete danach saeen");
+   damit sie bei 1366 px nicht aus dem Rahmen laufen, darf die Zeile umbrechen — Knoepfe sitzen
+   in einem eigenen Flex-Block rechts. Groessen-Untergrenze, nie abschneiden. */
+.farm-info-bar {
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.farm-info-actions {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.farm-info-actions .farm-plant-all-btn {
+  margin-left: 0;
+  width: auto; /* .skillcard-cta setzt 100 % — hier sollen beide Knoepfe NEBENEINANDER stehen */
+  white-space: normal;
+  text-align: center;
+}
+
+/* Die Folgesorten-Zeile auf der Beet-Karte. */
+.plot-next-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+/* „Danach saeen …" — bewusst leiser als die Holz-CTAs (Ernte/Roden), ein Plan-Knopf, kein Befehl. */
+.plot-next-btn {
+  align-self: flex-start;
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  padding: 5px 10px;
+  min-height: 30px;
+  color: #c8b08a;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(154, 128, 96, 0.4);
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: normal;
+  text-align: left;
+}
+.plot-next-btn:hover {
+  color: #e6c878;
+  border-color: rgba(216, 184, 112, 0.7);
+}
+/* Chip „→ Grimmkorn": Icon + Text + ×. Der Text darf umbrechen (min-width 0 + overflow-wrap),
+   das × bleibt rechts stehen. Fehlt die Saat, wechselt der Chip in die Warnfarbe. */
+.plot-next-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.3;
+  color: #9fbf8a;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(154, 128, 96, 0.32);
+  border-radius: 3px;
+  padding: 4px 6px 4px 8px;
+}
+.plot-next-chip.missing {
+  color: #d8a24a;
+  border-color: rgba(216, 162, 74, 0.6);
+}
+.plot-next-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+}
+.plot-next-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.plot-next-clear {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  line-height: 1;
+  font-size: 15px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid rgba(154, 128, 96, 0.4);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.plot-next-clear:hover {
+  color: #fff;
+  border-color: #c8b08a;
+}
+.plot-next-warn {
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: #d8a24a;
+  overflow-wrap: anywhere;
+}
+.plot-next-switch {
+  margin-top: 0;
+  font-size: 14px;
+  padding: 6px 8px;
+}
+/* Picker im Modus "next": die gerade wachsende Sorte des Beets ist ausgegraut; eine Sorte OHNE
+   Saat bleibt waehlbar (Saat wird erst zur Reife gebraucht) und ist nur leicht gedimmt. */
+.farm-picker-card.current {
+  opacity: 0.55;
+}
+.farm-picker-card.no-seed-plan {
+  opacity: 0.8;
+}
+.farm-picker-current {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
 .farm-picker-lv {
   flex-shrink: 0;
   font-size: 15px;
