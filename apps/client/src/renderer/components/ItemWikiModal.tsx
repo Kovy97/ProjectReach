@@ -1,8 +1,8 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
 import { isZoneUnlocked } from "@hearthforge/engine";
-import type { GameState, ItemInstance } from "@hearthforge/shared";
-import { getItemRarity, instanceDisplayName, RARITY_LABEL } from "@hearthforge/shared";
+import type { GameState, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
+import { EQUIP_SLOT_LABELS, getItemRarity, instanceDisplayName, RARITY_LABEL } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
@@ -10,7 +10,7 @@ import { getSidebarIcon } from "../sidebarIcons";
 import { getSkillIcon, SKILL_EMOJI_FALLBACK } from "../skillIcons";
 import { getUiIcon } from "../uiIcons";
 import { registerEscCloser } from "../util/escStack";
-import { formatDropPct, formatNum } from "../util/format";
+import { formatDamage, formatDropPct, formatNum, formatSeconds1, formatStat } from "../util/format";
 import { ITEM_SOURCE_INDEX, ITEM_USED_FOR_INDEX, type ItemWikiSource, type ItemWikiUse } from "../util/itemWiki";
 import { jumpToAction } from "../util/skillJump";
 import { jumpToMonster } from "../util/monsterJump";
@@ -43,6 +43,25 @@ function WikiSkillIcon({ skillId }: { skillId: string }): JSX.Element {
 function pct(chance: number): string {
   if (chance <= 0) return "—"; // echte 0 wäre ein Content-Bug; ehrlich als „—" statt „0%"
   return formatDropPct(chance);
+}
+
+/**
+ * Typ-Zeile im Wiki-Kopf ("Zweihand-Schwert" / "Kopf" / "Verzehrbar" …), Redesign Chef-Auftrag
+ * (großer Kopfblock statt kompaktem "?"-Tooltip-Ableger). Bewusst eine eigene schlanke Kopie von
+ * ItemTooltip.tsx' `buildItemTypeLine` statt eines Re-Imports von dort: ItemTooltip.tsx importiert
+ * bereits `openItemWikiModal` VON HIER (Wiki-„?"-Button) — ein Re-Import in die Gegenrichtung würde
+ * einen Zirkelbezug zwischen den beiden Modulen öffnen. Die Funktion ist klein/stabil genug, um sie
+ * hier eigenständig zu halten statt dieses Risiko einzugehen.
+ */
+function wikiTypeLine(item: ItemDef, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
+  if (item.weaponType) return t(`item.weaponType.${item.weaponType}`);
+  if (item.weaponStyle) {
+    const hand = item.twoHanded ? t("itip.twoHandedPrefix") : t("itip.oneHandedPrefix");
+    const style = t(`itip.weaponStyle.${item.weaponStyle}`);
+    return `${hand} ${style}`;
+  }
+  if (item.slot) return tr(EQUIP_SLOT_LABELS[item.slot]);
+  return t(`item.type.${item.type}`);
 }
 
 /**
@@ -343,15 +362,54 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
           </div>
           <div className="iwk-head-text">
             <div className={`iwk-head-name ${rarityClass(item.rarity)}`}>{displayName}</div>
-            <div className={`iwk-head-rarity ${rarityClass(item.rarity)}`}>{tr(RARITY_LABEL[rarity])}</div>
-            <div className="iwk-head-meta">
+            <div className={`iwk-head-typeline ${rarityClass(item.rarity)}`}>
+              {wikiTypeLine(item, t, tr)} · {tr(RARITY_LABEL[rarity])}
+            </div>
+            {item.description && <div className="iwk-head-flavor">{tr(item.description)}</div>}
+
+            {/* Kernwerte-Zeile (Chef-Redesign): rohe Item-Felder als Chips — bewusst KEINE
+                Neuberechnung der effektiven Kampfwerte (computeStats/Delta-Vergleich bleibt
+                ItemTooltip.tsx vorbehalten, dort inkl. Ausrüstungs-/Instanz-Kontext). Das Wiki
+                ist eine Nachschlage-Ansicht, keine Ersatz-Statuskarte. */}
+            <div className="iwk-head-facts">
+              {item.requirements &&
+                Object.entries(item.requirements).map(([skillId, lvl]) => {
+                  const skill = content.skills[skillId];
+                  return (
+                    <span className="iwk-head-fact" key={`req-${skillId}`}>
+                      {t("itip.requires")} {skill ? tr(skill.name) : skillId}: {lvl}
+                    </span>
+                  );
+                })}
+              {item.damageMin !== undefined && item.damageMax !== undefined && (
+                <span className="iwk-head-fact">
+                  {t("itip.weaponDamage")}: {formatDamage(item.damageMin)}–{formatDamage(item.damageMax)}
+                </span>
+              )}
+              {item.damageMin !== undefined && item.attackIntervalMs !== undefined && (
+                <span className="iwk-head-fact">
+                  {t("itip.tempo")}: {formatSeconds1(item.attackIntervalMs / 1000)}s
+                </span>
+              )}
+              {!!item.armorRating && (
+                <span className="iwk-head-fact">{t("stat.armorRating")}: {formatStat(item.armorRating)}</span>
+              )}
+              {!!item.evasionRating && (
+                <span className="iwk-head-fact">{t("stat.evasionRating")}: {formatStat(item.evasionRating)}</span>
+              )}
+              {!!item.wardCapacity && (
+                <span className="iwk-head-fact">{t("stat.wardCapacity")}: +{formatStat(item.wardCapacity)}</span>
+              )}
+              {!!item.blockChance && (
+                <span className="iwk-head-fact">{t("stat.blockChance")}: {Math.round(item.blockChance * 100)}%</span>
+              )}
               {item.value !== undefined && (
-                <span className="iwk-head-meta-item">
+                <span className="iwk-head-fact">
                   {t("char.itemValue")}: {formatNum(item.value)}
                   {GOLD_ICON_URL && <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />}
                 </span>
               )}
-              <span className="iwk-head-meta-item">
+              <span className="iwk-head-fact">
                 {t("itemwiki.stackable")}: {item.stackable ? t("itemwiki.yes") : t("itemwiki.no")}
               </span>
             </div>
@@ -359,27 +417,31 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
         </div>
 
         <div className="iwk-body">
-          <section className="iwk-section">
-            <h3 className="iwk-section-title">{t("itip.source")}</h3>
-            {sources.length === 0 ? (
-              <div className="iwk-empty">{t("itemwiki.noSource")}</div>
-            ) : (
-              <SourceList sources={sources} />
-            )}
-          </section>
+          {/* Zwei klar getrennte Blöcke Herkunft/Verwendung (Chef-Redesign) als eigenes Grid,
+              das bei knapper Fensterbreite (1366×768) auf eine Spalte fällt — s. item-wiki.css. */}
+          <div className="iwk-columns">
+            <section className="iwk-section">
+              <h3 className="iwk-section-title">{t("itip.source")}</h3>
+              {sources.length === 0 ? (
+                <div className="iwk-empty">{t("itemwiki.noSource")}</div>
+              ) : (
+                <SourceList sources={sources} />
+              )}
+            </section>
 
-          <section className="iwk-section">
-            <h3 className="iwk-section-title">{t("itip.usedFor")}</h3>
-            {uses.length === 0 ? (
-              <div className="iwk-empty">{t("itemwiki.noUsedFor")}</div>
-            ) : (
-              <ul className="iwk-list">
-                {uses.map((u, i) => (
-                  <UseRow key={i} entry={u} onOpenOutput={(id) => openItemWikiModal(id)} />
-                ))}
-              </ul>
-            )}
-          </section>
+            <section className="iwk-section">
+              <h3 className="iwk-section-title">{t("itip.usedFor")}</h3>
+              {uses.length === 0 ? (
+                <div className="iwk-empty">{t("itemwiki.noUsedFor")}</div>
+              ) : (
+                <ul className="iwk-list">
+                  {uses.map((u, i) => (
+                    <UseRow key={i} entry={u} onOpenOutput={(id) => openItemWikiModal(id)} />
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
         </div>
       </div>
     </div>

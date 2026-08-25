@@ -692,24 +692,9 @@ body .item-cell.rarity-godly {
   cursor: help;
 }
 
-.activity-bar {
-  display: inline-block;
-  width: 80px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--slot);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.activity-bar > span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform-origin: left center;
-  background: var(--accent);
-  transition: transform 0.08s linear;
-}
+/* Chef-Auftrag 25.08.2026: `.activity-bar` (Mini-Fortschrittsbalken neben "Doing: X") entfernt —
+   redundant, seit die echte Aktions-Fortschrittsleiste direkt im Doing-Kasten sitzt (App.tsx
+   GameStats, topbar.css .gamestats-activity-bars). */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    ITEM TOOLTIP — "Path of Exile" redesign  (.itip-*)

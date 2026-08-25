@@ -1,13 +1,21 @@
 /* ═══════════════════════════════════════════════════════════
-   ITEM WIKI MODAL (Task #308, Chef-Feature) — kompaktes Citadel-Modal, geöffnet über den
-   "?"-Button im ItemTooltip-Rahmen (siehe .itip-wiki-btn in components.css). Eigener `iwk-*`-
-   Namespace, komplett unabhängig von der Tooltip-Karte (`itip-*`).
+   ITEM WIKI MODAL (Task #308, Chef-Feature; Redesign-Auftrag 2026-08-25: "viel zu klein — mehr
+   Platz des Screens nutzen, Source/Used-for besser präsentieren, alles größer für die Lesbarkeit")
+   — geöffnet über den "?"-Button im ItemTooltip-Rahmen (siehe .itip-wiki-btn in components.css).
+   Eigener `iwk-*`-Namespace, komplett unabhängig von der Tooltip-Karte (`itip-*`).
    ═══════════════════════════════════════════════════════════ */
 
-.iwk-modal {
-  width: min(92vw, 460px);
-  max-width: 460px;
-  max-height: 82vh;
+/* `.modal.iwk-modal` (ZWEI Klassen), nicht nur `.iwk-modal` — dieselbe Absicherung wie
+   `.modal.farm-picker-modal` (skills.css): `modals.css` setzt generisch `.modal { max-width: 480px }`
+   und lädt VOR dieser Datei (index.css), item-wiki.css würde die Kaskade bei gleicher Spezifität
+   also ohnehin gewinnen — die zusätzliche Klasse macht das aber unabhängig von der Lade-Reihenfolge
+   robust, statt sich darauf zu verlassen (genau dieser Kaskaden-Fehler wurde heute an anderer
+   Stelle — dem Saatgut-Modal — scharf gefunden). Live mit getComputedStyle verifiziert. */
+.modal.iwk-modal {
+  width: min(1280px, 92vw);
+  max-width: min(1280px, 92vw);
+  max-height: 88vh;
+  padding: 30px 38px;
   display: flex;
   flex-direction: column;
   overflow: hidden; /* der Rahmen selbst scrollt nicht — nur .iwk-body darunter */
@@ -17,42 +25,44 @@
   flex: 0 0 auto;
   text-align: center;
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
   opacity: 0.75;
-  margin-bottom: 8px;
-  padding-right: 26px; /* Platz für den Schließen-Button oben rechts */
+  margin-bottom: 14px;
+  padding-right: 30px; /* Platz für den Schließen-Button oben rechts */
 }
 
-/* ─── Kopf: Bild · Name/Seltenheit · Wert/Stapelbar ─────────────────────── */
+/* ─── Kopf: großes Bild · Name/Typ/Rarity · Flavor · Kernwerte-Chips ────── */
 .iwk-head {
   flex: 0 0 auto;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
 }
 
 .iwk-head-icon {
-  flex: 0 0 64px;
-  width: 64px;
-  height: 64px;
+  flex: 0 0 176px;
+  width: 176px;
+  height: 176px;
   display: flex;
   align-items: center;
   justify-content: center;
   background:
     linear-gradient(rgba(10, 8, 6, 0.6), rgba(10, 8, 6, 0.6)),
     url("../assets/bg_black.webp") repeat;
-  border: 2px solid var(--border);
+  border: 3px solid var(--border);
   border-radius: 4px;
 }
 
 .iwk-head-icon img {
-  max-width: 84%;
-  max-height: 84%;
+  max-width: 86%;
+  max-height: 86%;
   object-fit: contain;
 }
 
@@ -66,17 +76,18 @@
 .iwk-head-icon.rarity-godly     { border-color: var(--rar-godly); }
 
 .iwk-head-emoji {
-  font-size: 30px;
+  font-size: 74px;
 }
 
 .iwk-head-text {
   flex: 1;
   min-width: 0;
+  padding-top: 2px;
 }
 
 .iwk-head-name {
   font-family: var(--font-head);
-  font-size: 18px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.2;
   overflow-wrap: anywhere;
@@ -91,105 +102,149 @@
 .iwk-head-name.rarity-legendary { color: var(--rar-legendary); }
 .iwk-head-name.rarity-godly     { color: var(--rar-godly); }
 
-.iwk-head-rarity {
-  font-size: 12px;
+.iwk-head-typeline {
+  font-size: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.8;
-  margin-top: 1px;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+  margin-top: 4px;
 }
 
-.iwk-head-rarity.rarity-poor      { color: var(--rar-poor); }
-.iwk-head-rarity.rarity-common    { color: var(--muted); }
-.iwk-head-rarity.rarity-magic     { color: var(--rar-magic); }
-.iwk-head-rarity.rarity-rare      { color: var(--rar-rare); }
-.iwk-head-rarity.rarity-superRare { color: var(--rar-superRare); }
-.iwk-head-rarity.rarity-epic      { color: var(--rar-epic); }
-.iwk-head-rarity.rarity-legendary { color: var(--rar-legendary); }
-.iwk-head-rarity.rarity-godly     { color: var(--rar-godly); }
+.iwk-head-typeline.rarity-poor      { color: var(--rar-poor); }
+.iwk-head-typeline.rarity-common    { color: var(--muted); }
+.iwk-head-typeline.rarity-magic     { color: var(--rar-magic); }
+.iwk-head-typeline.rarity-rare      { color: var(--rar-rare); }
+.iwk-head-typeline.rarity-superRare { color: var(--rar-superRare); }
+.iwk-head-typeline.rarity-epic      { color: var(--rar-epic); }
+.iwk-head-typeline.rarity-legendary { color: var(--rar-legendary); }
+.iwk-head-typeline.rarity-godly     { color: var(--rar-godly); }
 
-.iwk-head-meta {
+.iwk-head-flavor {
+  margin-top: 10px;
+  max-width: 62ch;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.iwk-head-facts {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 6px;
-  font-size: 13px;
-  color: var(--muted);
+  gap: 8px 10px;
+  margin-top: 14px;
 }
 
-.iwk-head-meta-item {
+.iwk-head-fact {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
+  padding: 4px 11px;
+  font-size: 14.5px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(154, 128, 96, 0.32);
+  border-radius: 3px;
+  white-space: nowrap;
 }
 
-/* ─── Body: scrollbare Quelle-/Verwendung-Sektionen (overflow-x NIE) ────── */
+/* ─── Body: scrollbare Herkunft-/Verwendung-Sektionen (overflow-x NIE) ──── */
 .iwk-body {
   flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 4px;
+  padding-right: 6px;
   /* Firefox-only scrollbar-Regeln entfernt (2026-07-09): Chromium 121+ honoriert sie und
      überschrieb die globalen Citadel-Scrollbalken (base.css) — global gilt jetzt überall. */
 }
 
-.iwk-section {
-  margin-bottom: 14px;
+/* Zwei klar getrennte Blöcke nebeneinander (Chef-Redesign) — EIN gemeinsamer Scroll-Container
+   (.iwk-body) statt je einer eigenen Scrollleiste pro Spalte. Fällt bei knapper Fensterbreite
+   (1366×768 — dort sitzt der Schmerz, s. Chef-Vorgabe) auf eine Spalte, in der Herkunft komplett
+   vor Verwendung steht; 1600×900+ behält die Seite-an-Seite-Ansicht (dieselbe 1400-1500px-
+   Bruchgrößen-Konvention wie shop.css/components.css). */
+.iwk-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
 }
 
-.iwk-section:last-child {
-  margin-bottom: 0;
+@media (max-width: 1500px) {
+  .iwk-columns {
+    grid-template-columns: 1fr;
+  }
 }
 
 .iwk-section-title {
-  margin: 0 0 6px;
+  margin: 0 0 12px;
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #9a8060;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(154, 128, 96, 0.35);
+  padding-bottom: 8px;
 }
 
 .iwk-empty {
-  font-size: 13px;
+  font-size: 15px;
   font-style: italic;
   color: var(--muted);
-  padding: 2px 0 4px;
+  padding: 4px 0 6px;
 }
 
+/* Karten-Raster statt endloser Liste (Chef-Vorgabe für Items mit vielen Quellen, z.B. 20 Monster) —
+   `auto-fill` bestimmt selbst, wie viele Karten je Zeile passen; `minmax(0, 1fr)` als Obergrenze
+   verhindert, dass eine Karte die Spalte breiter macht als der Block (dasselbe Muster wie
+   `.farm-picker-list`, skills.css). */
 .iwk-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  display: grid;
+  /* 260px (nicht 220px) Mindestbreite je Karte: gemessen (1366×768, 5 statt 4 Spalten) brach ein
+     langes deutsches Kompositum ohne Bindestrich ("Skelettkrieger", "Nekromantenfürst") sonst
+     mangels Platz neben Icon+Prozent-Badge mitten im Wort — ein einzelner Buchstabe rutschte
+     dabei allein in die nächste Zeile. Bei 260px bleibt daneben genug Raum für Icon+Name+Badge
+     auf einer Zeile (dieselbe Lehre wie `.farm-picker-head .farm-picker-name`, skills.css). */
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: 10px;
+  align-items: start;
 }
 
+/* Jede Zeile ist jetzt eine eigenständige Karte — Holz-Textur-Rahmen wäre bei dieser Kleinteiligkeit
+   zu unruhig (viele Karten gleichzeitig), deshalb dieselbe ruhige bg_black-Textur wie der Kopf-
+   Bildrahmen + dünner Goldrand statt eines vollen 9-Slice-Rahmens. */
 .iwk-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
-  padding: 3px 0;
-  font-size: 14px;
+  padding: 10px 12px;
+  font-size: 15px;
+  background:
+    linear-gradient(rgba(24, 16, 9, 0.5), rgba(14, 10, 6, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.32);
 }
 
 .iwk-row-icon-img {
   flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
 }
 
 .iwk-row-icon-emoji {
   flex: 0 0 auto;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1;
-  width: 22px;
+  width: 28px;
   text-align: center;
 }
 
@@ -215,19 +270,17 @@
 }
 
 /* ─── Wiki→Rezept-Sprung (Chef-Auftrag): Quelle-/Verwendungs-Aktion springt zur Rezeptkarte ──
-   auf der zugehörigen Skill-Seite (s. util/skillJump.ts). Geteilte Hover-Optik für die klickbare
-   SourceRow-<li> UND den inneren Icon+Name-Wrapper in UseRow (`.iwk-use-source`). */
+   auf der zugehörigen Skill-Seite (s. util/skillJump.ts). Die ganze Karte ist jetzt die Hover-
+   Zielfläche (vorher nur ein negativ ausgeglichener Innenstreifen einer schmalen Zeile). */
 .iwk-row-clickable {
   cursor: pointer;
-  padding: 3px 4px;
-  margin: 0 -4px;
-  border-radius: 4px;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .iwk-row-clickable:hover,
 .iwk-row-clickable:focus-visible {
-  background: rgba(216, 192, 106, 0.10);
+  border-color: var(--gold);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.32), 0 0 10px rgba(216, 192, 106, 0.2);
 }
 
 .iwk-row-clickable:hover .iwk-row-name,
@@ -240,7 +293,6 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -263,39 +315,52 @@
 }
 
 .iwk-row-lock-badge img {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
   opacity: 0.8;
 }
 
-/* ─── Verwendung: Rezept-Zeile mit klickbarem Zielitem (Chef-Kür) ───────── */
+/* ─── Verwendung: Rezept → Ziel-Item als klar getrennte Mini-Karte-in-der-Karte (Chef: "Used-for
+   besser präsentieren") ─ statt einer engen Inline-Zeile jetzt zwei gestapelte Zeilen: oben die
+   erzeugende Aktion, darunter (Pfeil zeigt nach unten) das klickbare Ziel-Item groß und deutlich. */
+.iwk-row-use {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
 .iwk-use-arrow {
-  flex: 0 0 auto;
+  align-self: center;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
+  transform: rotate(90deg);
 }
 
 .iwk-use-output {
-  flex: 1 1 auto;
-  min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  width: 100%;
   overflow-wrap: anywhere;
-  background: none;
-  border: none;
-  padding: 0;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(154, 128, 96, 0.28);
+  border-radius: 3px;
+  padding: 7px 10px;
   margin: 0;
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
   color: var(--text);
   text-align: left;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .iwk-use-output:hover {
   text-decoration: underline;
   color: var(--accent);
+  border-color: var(--gold);
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.18);
 }
 
 .iwk-use-output.rarity-poor      { color: var(--rar-poor); }
@@ -308,7 +373,7 @@
 
 .iwk-use-output-img {
   flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
 }

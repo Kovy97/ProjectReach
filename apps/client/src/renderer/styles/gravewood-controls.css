@@ -80,14 +80,15 @@ body:active :is(input[type="button"], input[type="submit"], input[type="reset"])
 }
 
 /* codex:2026-07-30T23:12:13+02:00 — ausschließlich die beiden Topbar-Fortschrittsleisten: höher, glatt und ohne Segmentverformung. */
+/* Chef-Auftrag 25.08.2026: war Platz-Reserve für die zwei Segment-Leisten UNTER der Row
+   (`#root .content-header-progress`, jetzt entfernt) — die Leisten stecken jetzt IM breiteren
+   Doing-Kasten (topbar.css .gamestats-row--activity), padding-bottom braucht daher nur noch
+   normalen Rand. Diese Deklaration gewinnt gegen topbar.css' eigene .content-header-Regel (exakt
+   gleiche Spezifität `#root .content-header...`, hier aber SPÄTER importiert) — beide synchron
+   halten, s. Kommentar dort. */
 #root .content-header {
-  padding-bottom: calc(42px * var(--tb-scale));
-  min-height: calc(86px * var(--tb-scale));
-}
-
-#root .content-header-progress {
-  bottom: calc(6px * var(--tb-scale));
-  gap: calc(3px * var(--tb-scale));
+  padding-bottom: calc(9px * var(--tb-scale));
+  min-height: calc(60px * var(--tb-scale));
 }
 
 #root .tb-bar {
@@ -178,10 +179,10 @@ body:active :is(input[type="button"], input[type="submit"], input[type="reset"])
 }
 
 @media (max-width: 1024px) {
-  /* codex:2026-07-30T23:12:13+02:00 — Progressbereich bleibt innerhalb der kompakten Headerhöhe. */
+  /* Chef-Auftrag 25.08.2026: kein Progressbereich mehr unter der Row zu reservieren (s.o.). */
   #root .content-header {
-    padding-bottom: calc(36px * var(--tb-scale));
-    min-height: calc(76px * var(--tb-scale));
+    padding-bottom: calc(8px * var(--tb-scale));
+    min-height: calc(52px * var(--tb-scale));
   }
 
   #root .tb-bar {

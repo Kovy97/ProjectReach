@@ -446,15 +446,16 @@
                              in 10 Fächer, OHNE sie selbst zu unterbrechen. Die Rahmen berühren
                              sich (kein Flex-Gap): die zwei aneinanderstoßenden Ränder ergeben die
                              opake Trennlinie zwischen den Fächern.
-   Die Labels (zentriert + optional rechts) liegen als fünfte, rein textuelle Schicht ganz oben. */
-.content-header-progress {
-  position: absolute;
-  left: calc(16px * var(--tb-scale));
-  right: calc(16px * var(--tb-scale));
-  bottom: calc(5px * var(--tb-scale));
+   Die Labels (zentriert + optional rechts) liegen als fünfte, rein textuelle Schicht ganz oben.
+   Chef-Auftrag 25.08.2026: die zwei Leisten sitzen nicht mehr in einem eigenen, ÜBER DIE GANZE
+   Kopfzeile absolut positionierten Block darunter (das war `.content-header-progress`) — sie
+   leben jetzt als eigene Zeile IM Doing-Kasten (`.gamestats-row--activity`, s.u.), ganz normal im
+   Textfluss statt absolut positioniert; die Klasse heißt daher passend `.gamestats-activity-bars`. */
+.gamestats-activity-bars {
   display: flex;
   flex-direction: column;
   gap: calc(3px * var(--tb-scale));
+  width: 100%;
 }
 
 .tb-bar {
@@ -558,6 +559,24 @@
   text-transform: uppercase;
 }
 
+/* Fund beim Screenshot-Beleg (Chef-Auftrag 25.08.2026): reine Mittelpunkt-Zentrierung + max-width
+   wächst symmetrisch vom Bar-Zentrum aus — die Hälfte der oben reservierten Lücke landet LINKS
+   (wo nichts kollidiert), nur die andere Hälfte rechts (wo das rechte Label sitzt). Auf den früher
+   fast-volle-Kopfzeile-breiten Leisten hatte das Zentrums-Label immer genug Luft, der Fehler blieb
+   unsichtbar. Jetzt IM (schmaleren) Doing-Kasten reicht die Reserve nicht mehr: das Zentrums-Label
+   lief bei langen Aktionsnamen ins rechte Label ("…GRABSTAHLADER10 XP/H…", 1366px-Beleg). Mit
+   rechtem Label zentriert dieser Fix stattdessen NUR im verbleibenden LINKEN Bereich (0 bis
+   100%-Reserve) — garantiert kollisionsfrei, unabhängig von der Textlänge. Ohne rechtes Label
+   (Idle/Kampf-Leiste ohne ETA) bleibt die echte Mittelpunkt-Zentrierung von oben unangetastet. */
+.tb-bar:has(.tb-bar-label-right) .tb-bar-label-center {
+  left: 0;
+  right: calc(140px * var(--tb-scale));
+  transform: translateY(-50%);
+  max-width: none;
+  text-align: center; /* optisch weiter zentriert, nur die Box selbst darf nicht mehr über den
+                          Bar-Mittelpunkt hinaus wachsen (s. Kommentar oben) */
+}
+
 .tb-bar-label-right {
   position: absolute;
   right: calc(8px * var(--tb-scale));
@@ -628,9 +647,6 @@
     padding-bottom: calc(30px * var(--tb-scale));
     min-height: calc(74px * var(--tb-scale));
   }
-  .content-header-progress {
-    gap: calc(3px * var(--tb-scale));
-  }
   .tb-bar {
     height: calc(12px * var(--tb-scale));
   }
@@ -639,6 +655,12 @@
   }
   .tb-bar-label-center {
     max-width: calc(100% - 120px * var(--tb-scale));
+  }
+  /* Gleicher Kollisions-Fix wie oben (Chef-Auftrag 25.08.2026), an diesen Breakpoint angepasste
+     Reserve. */
+  .tb-bar:has(.tb-bar-label-right) .tb-bar-label-center {
+    right: calc(120px * var(--tb-scale));
+    max-width: none;
   }
 }
 
@@ -649,11 +671,6 @@
     padding-bottom: calc(26px * var(--tb-scale));
     min-height: calc(66px * var(--tb-scale));
   }
-  .content-header-progress {
-    left: calc(10px * var(--tb-scale));
-    right: calc(10px * var(--tb-scale));
-    gap: calc(2px * var(--tb-scale));
-  }
   .tb-bar {
     height: calc(11px * var(--tb-scale));
   }
@@ -662,6 +679,12 @@
   }
   .tb-bar-label-center {
     max-width: calc(100% - 100px * var(--tb-scale));
+  }
+  /* Gleicher Kollisions-Fix wie oben (Chef-Auftrag 25.08.2026), an diesen Breakpoint angepasste
+     Reserve. */
+  .tb-bar:has(.tb-bar-label-right) .tb-bar-label-center {
+    right: calc(100px * var(--tb-scale));
+    max-width: none;
   }
   .tb-bar-label-right {
     right: calc(6px * var(--tb-scale));
@@ -679,9 +702,6 @@
        Task #TB-1: weiter mit --tb-scale skaliert. */
     padding-bottom: calc(10px * var(--tb-scale));
     min-height: calc(50px * var(--tb-scale));
-  }
-  .content-header-progress {
-    display: none;
   }
 }
 
@@ -1148,24 +1168,9 @@
   cursor: help;
 }
 
-.activity-bar {
-  display: inline-block;
-  width: calc(80px * var(--tb-scale));
-  height: calc(6px * var(--tb-scale));
-  border-radius: 3px;
-  background: var(--slot);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.activity-bar > span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform-origin: left center;
-  background: var(--accent);
-  transition: transform 0.08s linear;
-}
+/* Chef-Auftrag 25.08.2026: der Mini-Fortschrittsbalken (`.activity-bar`), der hier früher neben
+   "Doing: X" saß, ist raus — redundant, seit die echte Aktions-Fortschrittsleiste direkt darunter
+   im selben (jetzt breiteren) Doing-Kasten sitzt (s. .gamestats-activity-bars). */
 
 /* codex:2026-08-01T16:06:12+02:00 — Quiet Citadel 05: Die freigegebene Info-Bar priorisiert
    Identität, laufende Aktivität und Ökonomie in drei ruhigen Clustern. Der redundante Seitenname
@@ -1180,13 +1185,19 @@
   --quiet-font-small: clamp(10px, min(0.36vw, 0.9vh), 13px);
   --quiet-font-bar: clamp(9px, min(0.33vw, 0.82vh), 12px);
   box-sizing: border-box;
+  /* Chef-Auftrag 25.08.2026: padding-bottom war die Platz-Reserve für die zwei Segment-Leisten,
+     die früher UNTER dieser Row lagen (`.content-header-progress`, absolut positioniert). Die
+     Leisten stecken jetzt IM Doing-Kasten selbst (s. .gamestats-row--activity), die Row wächst
+     dafür einfach in der Höhe mit — hier reicht wieder ein normaler, symmetrischer Rand.
+     ACHTUNG Kaskade: `#root .content-header` in gravewood-controls.css setzt padding-bottom/
+     min-height NOCHMAL (gleiche Spezifität, später importiert -> gewinnt) — beide synchron halten. */
   padding:
     calc(7px * var(--tb-scale))
     calc(16px * var(--tb-scale))
-    calc(34px * var(--tb-scale));
-  min-height: calc(82px * var(--tb-scale));
+    calc(9px * var(--tb-scale));
+  min-height: calc(60px * var(--tb-scale));
   border: calc(8px * var(--tb-scale)) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 40 / calc(8px * var(--tb-scale));
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * var(--tb-scale) * 2.125);
   background:
     linear-gradient(90deg, rgba(5, 7, 9, 0.92), rgba(27, 20, 15, 0.88) 48%, rgba(5, 7, 9, 0.94)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
@@ -1197,17 +1208,57 @@
     0 calc(4px * var(--tb-scale)) calc(14px * var(--tb-scale)) rgba(0, 0, 0, 0.46);
 }
 
+/* Chef-Auftrag 25.08.2026: Spalte 2 (Doing-Kasten) deutlich breiter + zentriert — sie muss jetzt
+   die beiden Segment-Leisten samt ihren Labels fassen, nicht mehr nur den Aktionsnamen. Name (1)
+   und Wirtschaft (4) bleiben außerhalb, geben dafür etwas fr-Anteil ab (Mindestbreiten kaum
+   angetastet, s. minmax — Name/Meta zeigen ohnehin nur kurze Texte, die bereits per Umbruch statt
+   Abschneiden abgesichert sind). */
 #root .content-header--quiet-citadel .content-header-row {
   display: grid;
   grid-template-columns:
-    minmax(calc(170px * var(--tb-scale)), 0.72fr)
-    minmax(calc(300px * var(--tb-scale)), 1.55fr)
-    minmax(calc(210px * var(--tb-scale)), 0.9fr)
-    minmax(calc(190px * var(--tb-scale)), 0.78fr);
+    minmax(calc(160px * var(--tb-scale)), 0.6fr)
+    minmax(calc(340px * var(--tb-scale)), 2.1fr)
+    minmax(calc(190px * var(--tb-scale)), 0.8fr)
+    minmax(calc(170px * var(--tb-scale)), 0.68fr);
   align-items: stretch;
   gap: calc(9px * var(--tb-scale));
   min-height: calc(40px * var(--tb-scale));
   padding-bottom: calc(7px * var(--tb-scale));
+}
+
+/* Chef-Auftrag 25.08.2026 (Nachtrag, gemessene Bremse): unter <=1600px sitzen alle vier Spalten
+   an ihrem Minimum (kein "freier" fr-Anteil übrig), darum kam der Doing-Kasten bei 1366px nie
+   über ~400px hinaus — obwohl rechts vom Oekonomie-Cluster (Taschen+Gold, per
+   justify-content:flex-end nur rechtsbündig einsortiert) bis zu ~300px sichtbar leer blieben.
+   Ursache: Spalte 3+4 waren fix auf 190px/170px verdrahtet — kalibriert für den Slayer-Fall, wo
+   Spalte 3 den Vertrags-Chip GANZ ALLEIN tragen muss und Spalte 4 die Oekonomie GANZ ALLEIN.
+   Ohne aktiven Slayer teilen sich beide stattdessen denselben Cluster (grid-column 3/5, s.u.) —
+   der braucht real nur ~150-330px (Taschen+Gold, im Kampf +Stop-Knopf, je nach Sprache), aber
+   die Grid-Spec haelt Spalten-MINIMA immer ein, unabhängig vom tatsächlichen Inhalt der Zeile.
+   Fix NUR in diesem schmalen Bereich (>1600px war laut Chef bereits gut, bewusst unangetastet):
+   Spalte 3+4 bekommen ein `min-content`-Minimum (die Grid-Engine misst den tatsächlich
+   gerenderten Inhalt selbst — sprachunabhängig, inkl. Stop-Knopf im Kampf — statt eines
+   geratenen Pixelwerts) plus ein kleines fr, damit sie nicht komplett ausgehungert wirken. Der
+   so frei werdende fr-Anteil fließt automatisch in Spalte 2 (Doing), da deren fr-Gewicht (2.1)
+   gegenüber dem jetzt kleinen Rest (0.22+0.18) dominiert. MIT aktivem Slayer bleiben die alten,
+   bewährten 190px/170px unangetastet (:has()-Override unten) — dort braucht Spalte 3 wirklich
+   ihre eigene Mindestbreite für den Vertrags-Chip, unabhängig vom Oekonomie-Cluster in Spalte 4. */
+@media (max-width: 1600px) {
+  #root .content-header--quiet-citadel .content-header-row {
+    grid-template-columns:
+      minmax(calc(160px * var(--tb-scale)), 0.6fr)
+      minmax(calc(340px * var(--tb-scale)), 2.1fr)
+      minmax(min-content, 0.22fr)
+      minmax(min-content, 0.18fr);
+  }
+
+  #root .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) {
+    grid-template-columns:
+      minmax(calc(160px * var(--tb-scale)), 0.6fr)
+      minmax(calc(340px * var(--tb-scale)), 2.1fr)
+      minmax(calc(190px * var(--tb-scale)), 0.8fr)
+      minmax(calc(170px * var(--tb-scale)), 0.68fr);
+  }
 }
 
 /* codex:2026-08-01T17:42:00+02:00 — Kleine Statusinformationen nutzen die klare Sekundaerschrift;
@@ -1216,7 +1267,7 @@
   .header-charinfo,
   .gamestats-row--activity,
   .gamestats-row--meta,
-  .content-header-progress
+  .gamestats-activity-bars
 ) {
   font-family: var(--font-info);
   font-variant-numeric: lining-nums tabular-nums;
@@ -1233,7 +1284,7 @@
   font-family: var(--font-info);
 }
 
-#root .content-header--quiet-citadel .content-header-progress :is(.tb-bar-labels, span) {
+#root .content-header--quiet-citadel .gamestats-activity-bars :is(.tb-bar-labels, span) {
   font-family: var(--font-info);
   letter-spacing: 0.025em;
 }
@@ -1270,9 +1321,19 @@
   display: contents;
 }
 
+/* Chef-Auftrag 25.08.2026: der Kasten stapelt jetzt zwei Zeilen (Kopf-Text `.activity` + die
+   Balken in `.gamestats-activity-bars`) statt nur die eine Text-Zeile zu zentrieren — daher
+   flex-direction:column. `overflow:hidden` ist raus: der Level-Up-Burst (LevelUpBurst, App.tsx)
+   braucht etwas vertikalen Bleed-Raum ÜBER/UNTER der Level-XP-Leiste, um sichtbar zu sprenkeln
+   (s. topbar.css .levelup-burst) — vorher lag der Burst außerhalb dieses Kastens, jetzt sitzt er
+   darin. Textinhalte laufen nicht über (alles bricht per flex-wrap um, s. .activity), Clipping
+   war hier also ohnehin nur ein Sicherheitsnetz für die Textur-Ecken, keine funktionale Notwendigkeit. */
 #root .content-header--quiet-citadel .gamestats-row--activity {
   grid-column: 2;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: center;
+  gap: calc(4px * var(--tb-scale));
   align-self: stretch;
   max-width: none;
   padding: calc(4px * var(--tb-scale)) calc(14px * var(--tb-scale));
@@ -1281,7 +1342,6 @@
     linear-gradient(rgba(58, 31, 19, 0.42), rgba(9, 12, 14, 0.74)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
   box-shadow: inset 0 0 calc(12px * var(--tb-scale)) rgba(0, 0, 0, 0.55);
-  overflow: hidden;
 }
 
 #root .content-header--quiet-citadel .gamestats-row--activity > .activity {
@@ -1302,11 +1362,6 @@
   color: #a8b1b5;
   font-size: calc(var(--quiet-font-small) * var(--tb-scale));
   letter-spacing: 0.12em;
-}
-
-#root .content-header--quiet-citadel .gamestats-row--activity .activity-bar {
-  width: calc(72px * var(--tb-scale));
-  flex: 0 0 auto;
 }
 
 #root .content-header--quiet-citadel .gamestats-row--meta {
@@ -1363,20 +1418,27 @@
   font-size: calc(var(--quiet-font-bar) * var(--tb-scale));
 }
 
-#root .content-header--quiet-citadel .content-header-progress {
-  left: calc(18px * var(--tb-scale));
-  right: calc(18px * var(--tb-scale));
-  bottom: calc(7px * var(--tb-scale));
-}
-
 @media (max-width: 1024px) {
   #root .content-header--quiet-citadel .content-header-row {
+    /* Chef-Auftrag 25.08.2026: gleiche Verschiebung wie oben (Desktop-Breite), nur proportional
+       auf die schmaleren Mindestbreiten dieses Breakpoints angewandt. */
     grid-template-columns:
-      minmax(calc(130px * var(--tb-scale)), 0.72fr)
-      minmax(calc(210px * var(--tb-scale)), 1.35fr)
-      minmax(calc(150px * var(--tb-scale)), 0.82fr)
-      minmax(calc(140px * var(--tb-scale)), 0.72fr);
+      minmax(calc(120px * var(--tb-scale)), 0.55fr)
+      minmax(calc(260px * var(--tb-scale)), 1.9fr)
+      minmax(min-content, 0.2fr)
+      minmax(min-content, 0.16fr);
     gap: calc(6px * var(--tb-scale));
+  }
+
+  /* dieselbe gemessene Bremse wie oben (Desktop-Breite) — ohne Slayer teilen sich Spalte 3+4
+     den Oekonomie-Cluster, ihr Inhalt bestimmt die Breite selbst statt eines geratenen
+     Pixelwerts; mit Slayer bleibt die alte, für den einsamen Vertrags-Chip kalibrierte Breite. */
+  #root .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) {
+    grid-template-columns:
+      minmax(calc(120px * var(--tb-scale)), 0.55fr)
+      minmax(calc(260px * var(--tb-scale)), 1.9fr)
+      minmax(calc(140px * var(--tb-scale)), 0.75fr)
+      minmax(calc(130px * var(--tb-scale)), 0.62fr);
   }
 
   #root .content-header--quiet-citadel .header-charinfo {

@@ -481,14 +481,26 @@ function HeaderCharacterInfo(): JSX.Element {
  * Globale Kopfzeile — eigener Verbraucher, damit nur sie pro Tick re-rendert.
  * Perf-Welle Block A (2026-07-22): das Gate deckt alles ab, was den sichtbaren Zustand bestimmt
  * (Primitives, inkl. der bereits-primitiven Rückgabewerte von `usedCapacityUnits`/`effectiveCapacity`) —
- * im Kampf/während einer Aktion bleibt es weiterhin so lebendig wie zuvor (HP/Fortschritt sind
- * Teil des Tupels), aber auf Seiten ohne laufende Aktivität (der Audit-Fall "Mail-Seite idle")
- * rendert diese Kopfzeile nicht mehr blind bei jedem 10-Hz-Tick.
+ * im Kampf bleibt es weiterhin so lebendig wie zuvor (HP ist Teil des Tupels), aber auf Seiten ohne
+ * laufende Aktivität (der Audit-Fall "Mail-Seite idle") rendert diese Kopfzeile nicht mehr blind bei
+ * jedem 10-Hz-Tick.
+ * Chef-Auftrag 25.08.2026: der Doing-Kasten nimmt jetzt zusätzlich die beiden Segment-Leisten
+ * (Aktion + Skill-Level-XP) auf — `progressBars` reicht MainLayout die dort schon instanziierten,
+ * EIGENSTÄNDIG perf-gegateten `<ActionProgressBar/>`/`<LevelXpBar/>` durch, statt sie hier neu zu
+ * bauen. `actionProgressMs` fliegt daher aus DIESEM Selector-Tupel — der einzige bisherige
+ * Verbraucher war der jetzt entfernte Mini-Balken neben "Doing: X" (die echte Leiste hat ihr
+ * eigenes Gate, s. ActionProgressBar oben).
  */
-function GameStats({ onNavigate }: { onNavigate?: (id: string) => void }): JSX.Element {
+function GameStats({
+  onNavigate,
+  progressBars,
+}: {
+  onNavigate?: (id: string) => void;
+  progressBars?: React.ReactNode;
+}): JSX.Element {
   const getState = useGetGameState();
   const [
-    monsterId, playerHp, enemyHp, activeActionId, actionProgressMs,
+    monsterId, playerHp, enemyHp, activeActionId,
     lastStopActionId, lastStopReason, gold, used, cap,
     slayerMonsterId, slayerProgress, slayerRequired,
   ] = useGameSelector(
@@ -497,7 +509,6 @@ function GameStats({ onNavigate }: { onNavigate?: (id: string) => void }): JSX.E
       s.combat.monsterId != null ? s.character.hp : 0,
       s.combat.monsterId != null ? s.combat.enemyHp : 0,
       s.activeActionId,
-      s.activeActionId ? s.actionProgressMs : 0,
       s.lastStop?.actionId ?? null,
       s.lastStop?.reason ?? null,
       s.character.gold,
@@ -584,16 +595,13 @@ function GameStats({ onNavigate }: { onNavigate?: (id: string) => void }): JSX.E
     );
   } else if (activeActionId) {
     const a = content.actions[activeActionId];
-    // Effektive Dauer statt Basis-`durationMs` (s. ActionProgressBar oben) — sonst resettet auch
-    // dieser Mini-Fortschrittsbalken abrupt vor 100%, sobald Mastery/Werkzeuge die Aktion beschleunigen.
-    const prog = a ? actionProgressMs / effectiveActionDurationMs(state, content, a) : 0;
+    // Chef-Auftrag 25.08.2026: der Mini-Fortschrittsbalken hier ist weg — die echte, große
+    // Aktions-Fortschrittsleiste (ActionProgressBar) sitzt jetzt direkt unter diesem Text im
+    // selben (jetzt breiteren) Doing-Kasten, s. `progressBars` in GameStats' Rückgabe unten.
     activity = (
       <span className="activity">
         <span className="muted">{t("header.doing")}</span>{" "}
         <span className="activity-name">{a ? tr(a.name) : ""}</span>
-        <span className="activity-bar">
-          <span style={{ transform: `scaleX(${Math.min(100, prog * 100) / 100})` }} />
-        </span>
       </span>
     );
   } else if (lastStopActionId) {
@@ -627,9 +635,14 @@ function GameStats({ onNavigate }: { onNavigate?: (id: string) => void }): JSX.E
 
   return (
     <div className={`game-stats${inCombat ? " game-stats--combat" : ""}${slayerMonsterId != null ? " game-stats--has-slayer" : ""}`}>
-      {/* Chef #233: Zeile 1 — nur die Aktivität (Kampf/Aktion/Gestoppt + Fortschritt). */}
+      {/* Chef #233: Zeile 1 — die Aktivität (Kampf/Aktion/Gestoppt).
+          Chef-Auftrag 25.08.2026: darunter jetzt zusätzlich die beiden Segment-Leisten
+          (Aktion + Skill-Level-XP) — der Kasten wurde dafür breiter+zentriert (s. topbar.css
+          .content-header-row-Grid) und nimmt sie als eigene Zeile auf, statt sie wie vorher als
+          separaten, über die GANZE Kopfzeile absolut positionierten Block darunter zu zeigen. */}
       <div className="gamestats-row gamestats-row--activity">
         {activity}
+        <div className="gamestats-activity-bars">{progressBars}</div>
       </div>
       {/* codex:2026-08-01T18:06:00+02:00 — Quiet Citadel fuehrt den aktiven Slayer-Vertrag als
           eigenen Cluster zwischen Aktivitaet und Oekonomie. So konkurriert der lange Zieltext
@@ -927,9 +940,13 @@ function MainLayout(): JSX.Element {
             {/* Chef #233: eigener Row-Wrapper — der Skill-Titel wird absolut auf DIESE Box
                 zentriert (dead-center über die ganze Bar, unabhängig von links/rechts-Breite),
                 statt nur innerhalb einer Grid-Spalte.
-                Chef 2026-07-04 (2. Korrektur): die Segment-Leisten leben unten IN dieser Title-Bar
-                (siehe .content-header-progress weiter unten) — NICHT als eigene Zwischen-Zeile
-                zwischen Topbar-Nav und Title-Bar (das war der 1. Anlauf). */}
+                Chef-Auftrag 25.08.2026: die zwei Segment-Leisten (Aktion + Skill-Level-XP) leben
+                jetzt NICHT mehr als eigener, über die GANZE Kopfzeile absolut positionierter Block
+                unter dieser Row (das war der vorherige Stand, „2. Korrektur"), sondern werden als
+                `progressBars` in den (jetzt breiteren, zentrierten) Doing-Kasten von GameStats
+                durchgereicht — beide Komponenten wandern dabei als GANZES samt ihrer eigenen
+                Perf-Gates (s. ActionProgressBar/LevelXpBar-JSDoc oben), nur ihr Render-ORT ändert
+                sich. */}
             <div className="content-header-row">
               <HeaderCharacterInfo />
               <h1>
@@ -962,14 +979,15 @@ function MainLayout(): JSX.Element {
                   t("app.title")
                 )}
               </h1>
-              <GameStats onNavigate={setActivePageId} />
-            </div>
-            {/* Chef 2026-07-04 (2. Korrektur): Segment-Leisten unten in der Title-Bar verankert
-                (Aktions-Fortschritt gelb, Skill-Level-XP original) statt als eigene Zeile zwischen
-                Topbar-Nav und Title-Bar. */}
-            <div className="content-header-progress">
-              <ActionProgressBar />
-              <LevelXpBar viewedSkillId={viewedSkillId} />
+              <GameStats
+                onNavigate={setActivePageId}
+                progressBars={
+                  <>
+                    <ActionProgressBar />
+                    <LevelXpBar viewedSkillId={viewedSkillId} />
+                  </>
+                }
+              />
             </div>
           </header>
           {/* Chef-Feature 2026-07-23: Drag-Handle an der Unterkante der TopBar — Ziehen ändert die
