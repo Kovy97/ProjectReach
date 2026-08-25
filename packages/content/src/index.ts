@@ -883,6 +883,25 @@ export const content: ContentDB = {
     rune_warding_iii:  { id: "rune_warding_iii",  name: { en: "Rune of Warding III",      de: "Rune der Abwehr III"       }, type: "material", stackable: true, icon: "🌀", value: 420, rarity: "common", rune: { affixId: "affix_warding",  tier: 3 } },
     rune_bulwark_iii:  { id: "rune_bulwark_iii",  name: { en: "Rune of the Bulwark III",  de: "Rune des Bollwerks III"    }, type: "material", stackable: true, icon: "🏰", value: 350, rarity: "common", rune: { affixId: "affix_bulwark",  tier: 3 } },
 
+    // ── Runen Tier IV (Chef-Entscheid 25.08.2026, design/runen-tier-iv.html) — s. affixes-Katalog
+    // weiter unten für den ausführlichen Kommentar. Kein Tier I/II dieser Familien (nur `tier: 4`),
+    // Rezepte s. `craft_rune_*` unten. IDs/Dateinamen sind mit CODEX/work/2026-08-25-runen-tier-iv/
+    // PROMPTS.md abgestimmt (Mira bindet später per Auto-Discovery gegen exakt diese Content-IDs).
+    rune_warpath_iv:      { id: "rune_warpath_iv",      name: { en: "Rune of the Warpath",       de: "Rune des Kriegspfads"       }, type: "material", stackable: true, icon: "⚔️",  value: 1000, rarity: "common", rune: { affixId: "affix_warpath",      tier: 4 } },
+    rune_second_arrow_iv: { id: "rune_second_arrow_iv", name: { en: "Rune of the Second Arrow",  de: "Rune des Zweiten Pfeils"    }, type: "material", stackable: true, icon: "🏹",  value: 1000, rarity: "common", rune: { affixId: "affix_second_arrow", tier: 4 } },
+    rune_thin_veil_iv:    { id: "rune_thin_veil_iv",    name: { en: "Rune of the Thin Veil",     de: "Rune des Dünnen Schleiers"  }, type: "material", stackable: true, icon: "🌫️",  value: 1000, rarity: "common", rune: { affixId: "affix_thin_veil",     tier: 4 } },
+    rune_wasting_iv:      { id: "rune_wasting_iv",      name: { en: "Rune of Wasting",           de: "Rune der Auszehrung"        }, type: "material", stackable: true, icon: "🕯️",  value: 1100, rarity: "common", rune: { affixId: "affix_wasting",      tier: 4 } },
+    rune_judgement_iv:    { id: "rune_judgement_iv",    name: { en: "Rune of the Judgement",     de: "Rune des Gerichts"          }, type: "material", stackable: true, icon: "⚖️",  value: 1400, rarity: "common", rune: { affixId: "affix_judgement",    tier: 4 } },
+    rune_iron_answer_iv:  { id: "rune_iron_answer_iv",  name: { en: "Rune of the Iron Answer",   de: "Rune der Eisernen Antwort"  }, type: "material", stackable: true, icon: "🛡️",  value: 1150, rarity: "common", rune: { affixId: "affix_iron_answer",  tier: 4 } },
+    rune_ambush_iv:       { id: "rune_ambush_iv",       name: { en: "Rune of the Ambush",        de: "Rune des Hinterhalts"       }, type: "material", stackable: true, icon: "🗡️",  value: 1000, rarity: "common", rune: { affixId: "affix_ambush",       tier: 4 } },
+    rune_veil_drinker_iv: { id: "rune_veil_drinker_iv", name: { en: "Rune of the Veil-Drinker",  de: "Rune des Schleiertrinkers"  }, type: "material", stackable: true, icon: "💧",  value: 950,  rarity: "common", rune: { affixId: "affix_veil_drinker", tier: 4 } },
+    rune_unbroken_wall_iv:{ id: "rune_unbroken_wall_iv",name: { en: "Rune of the Unbroken Wall", de: "Rune der Ungebrochenen Mauer" }, type: "material", stackable: true, icon: "🏰",  value: 1300, rarity: "common", rune: { affixId: "affix_unbroken_wall", tier: 4 } },
+    rune_bounty:          { id: "rune_bounty",          name: { en: "Rune of the Bounty",        de: "Rune des Kopfgelds"         }, type: "material", stackable: true, icon: "🎯",  value: 950,  rarity: "common", rune: { affixId: "affix_bounty",       tier: 4 } },
+    rune_tallyman:        { id: "rune_tallyman",        name: { en: "Rune of the Tallyman",      de: "Rune des Zählers"           }, type: "material", stackable: true, icon: "💰",  value: 950,  rarity: "common", rune: { affixId: "affix_tallyman",     tier: 4 } },
+    rune_restless:        { id: "rune_restless",        name: { en: "Rune of the Restless",      de: "Rune der Rastlosen"         }, type: "material", stackable: true, icon: "⏳",  value: 1100, rarity: "common", rune: { affixId: "affix_restless",     tier: 4 } },
+    rune_chronicle:       { id: "rune_chronicle",       name: { en: "Rune of the Chronicle",     de: "Rune der Chronik"           }, type: "material", stackable: true, icon: "📖",  value: 1150, rarity: "common", rune: { affixId: "affix_chronicle",    tier: 4 } },
+    rune_gleaning:        { id: "rune_gleaning",        name: { en: "Rune of the Gleaning",      de: "Rune der Nachlese"          }, type: "material", stackable: true, icon: "🌾",  value: 1500, rarity: "common", rune: { affixId: "affix_gleaning",     tier: 4 } },
+
     // ── Ore & Bar Tiers (Mining/Smithing-Erweiterung) ────────────────
     // ── Metall-Leiter: Erze & Barren (12 Tiers; Werte = Platzhalter) ──
     copper_bar: { id: "copper_bar", name: { en: "Copper Bar", de: "Kupferbarren" }, type: "material", stackable: true, icon: "🟧", value: 8 },
@@ -10386,6 +10405,100 @@ export const content: ContentDB = {
       loot: [{ itemId: "rune_bulwark_iii", chance: 1, min: 1, max: 1 }],
     },
 
+    // ── Runen Tier IV (Chef-Entscheid 25.08.2026, design/runen-tier-iv.html §5) ──────────────
+    // XP-Konvention: identisch zu den 36 Runen-Rezepten oben, target_xph(L)=90·sqrt(xpForLevel(L+1)
+    // −xpForLevel(L)); xp=round(xph·ms/3_600_000). Geprüft (nicht nur behauptet): die bestehenden
+    // Tier-III-Rezepte liegen real bei ×6,63 bis ×6,69 der Kurve (z.B. Bollwerk III ×6,668,
+    // Schärfe III ×6,627) — die Design-Vorlage nennt ×6,67 und trifft diese Bandbreite exakt.
+    // Rezepte hier folgen derselben Prämie, XP-Werte 1:1 aus dem Design übernommen (auf 5/10
+    // gerundet). Schilf (`reed_void`) bewusst in den Waffen-/Rüstungs-Rezepten (Chef-Vorgabe:
+    // Farming bleibt im Endgame relevant) — die Schmuck-Linie nutzt stattdessen Götteratem, da
+    // ihre Rezepte kein Platte-/Schild-Barren-Gegenstück brauchen (Zutaten-Landkarte §6).
+    craft_rune_warpath_iv: {
+      id: "craft_rune_warpath_iv", name: { en: "Craft Warpath Rune IV", de: "Kriegspfad-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 24000, xp: 2330, levelRequired: 85,
+      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 1 }],
+      loot: [{ itemId: "rune_warpath_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_second_arrow_iv: {
+      id: "craft_rune_second_arrow_iv", name: { en: "Craft Second Arrow Rune IV", de: "Zweitpfeil-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 24000, xp: 2330, levelRequired: 85,
+      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 1 }],
+      loot: [{ itemId: "rune_second_arrow_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_thin_veil_iv: {
+      id: "craft_rune_thin_veil_iv", name: { en: "Craft Thin Veil Rune IV", de: "Dünner-Schleier-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 24000, xp: 2330, levelRequired: 85,
+      inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "aether_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      loot: [{ itemId: "rune_thin_veil_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_iron_answer_iv: {
+      id: "craft_rune_iron_answer_iv", name: { en: "Craft Iron Answer Rune IV", de: "Eiserne-Antwort-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 25000, xp: 2680, levelRequired: 87,
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 3 }, { itemId: "godiron_bar", qty: 1 }],
+      loot: [{ itemId: "rune_iron_answer_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_ambush_iv: {
+      id: "craft_rune_ambush_iv", name: { en: "Craft Ambush Rune IV", de: "Hinterhalt-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 25000, xp: 2680, levelRequired: 87,
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      loot: [{ itemId: "rune_ambush_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_veil_drinker_iv: {
+      id: "craft_rune_veil_drinker_iv", name: { en: "Craft Veil-Drinker Rune IV", de: "Schleiertrinker-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 25000, xp: 2680, levelRequired: 87,
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "aether_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      loot: [{ itemId: "rune_veil_drinker_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_bounty: {
+      id: "craft_rune_bounty", name: { en: "Craft Bounty Rune", de: "Kopfgeld-Rune herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 26000, xp: 2930, levelRequired: 88,
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }],
+      loot: [{ itemId: "rune_bounty", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_tallyman: {
+      id: "craft_rune_tallyman", name: { en: "Craft Tallyman Rune", de: "Zähler-Rune herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 26000, xp: 2930, levelRequired: 88,
+      inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }],
+      loot: [{ itemId: "rune_tallyman", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_wasting_iv: {
+      id: "craft_rune_wasting_iv", name: { en: "Craft Wasting Rune IV", de: "Auszehrungs-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 26000, xp: 3075, levelRequired: 89,
+      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "ember_essence", qty: 3 }, { itemId: "herb_godsbreath", qty: 1 }],
+      loot: [{ itemId: "rune_wasting_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_restless: {
+      id: "craft_rune_restless", name: { en: "Craft Restless Rune", de: "Rastlose-Rune herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 27000, xp: 3360, levelRequired: 90,
+      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "herb_godsbreath", qty: 2 }],
+      loot: [{ itemId: "rune_restless", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_unbroken_wall_iv: {
+      id: "craft_rune_unbroken_wall_iv", name: { en: "Craft Unbroken Wall Rune IV", de: "Ungebrochene-Mauer-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 27000, xp: 3530, levelRequired: 91,
+      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 3 }, { itemId: "godiron_bar", qty: 2 }],
+      loot: [{ itemId: "rune_unbroken_wall_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_judgement_iv: {
+      id: "craft_rune_judgement_iv", name: { en: "Craft Judgement Rune IV", de: "Gerichts-Rune IV herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 28000, xp: 3850, levelRequired: 92,
+      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 4 }, { itemId: "reed_void", qty: 2 }, { itemId: "idol_shard", qty: 1 }],
+      loot: [{ itemId: "rune_judgement_iv", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_chronicle: {
+      id: "craft_rune_chronicle", name: { en: "Craft Chronicle Rune", de: "Chronik-Rune herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 28000, xp: 4040, levelRequired: 93,
+      inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }, { itemId: "godbloom", qty: 1 }],
+      loot: [{ itemId: "rune_chronicle", chance: 1, min: 1, max: 1 }],
+    },
+    craft_rune_gleaning: {
+      id: "craft_rune_gleaning", name: { en: "Craft Gleaning Rune", de: "Nachlese-Rune herstellen" },
+      skill: "runecrafting", category: "rune_affixes", durationMs: 30000, xp: 4780, levelRequired: 95,
+      inputs: [{ itemId: "essence_divine", qty: 3 }, { itemId: "pigment_radiant", qty: 4 }, { itemId: "reed_void", qty: 3 }, { itemId: "godbloom", qty: 2 }],
+      loot: [{ itemId: "rune_gleaning", chance: 1, min: 1, max: 1 }],
+    },
+
     // ── B) INT-Rüstungs-Crafting (Runecrafting → Mage Robes) ─────────
     craft_apprentice_hat: {
       id: "craft_apprentice_hat", name: { en: "Stitch Apprentice Hat", de: "Lehrlings-Zauberhut nähen" },
@@ -17363,6 +17476,165 @@ export const content: ContentDB = {
         { blockChance: 0.08 },
       ],
       appliesTo: ["shield"],
+    },
+
+    // ── Runen Tier IV (Chef-Entscheid 25.08.2026, design/runen-tier-iv.html) ──────────────────
+    // Auftrag: "Ab Level 80 gibt es keine neuen Runen mehr, im 90er-Bereich sollten die stärksten
+    // Runen mit den einzigartigsten Effekten möglich sein." §2 Prinzip 4: JEDE T4-Familie ist ein
+    // EIGENER Affix mit `bonusByTier`/`weaponEffectByTier` der Länge 4 — NUR Index 3 belegt
+    // (Indizes 0..2 bleiben leer), damit keine Tier I..III dieser Familie existiert und der
+    // BiS-Builder der Envelope-Suite weiterhin bei den alten 12 Familien (Tier III) bleibt. Alle
+    // 14 sind bewusst REINE Aktiv-Effekte (kein bonusByTier/modifiersByTier-Inhalt): §9 Frage 1
+    // Option A (Empfehlung) — ein Tier-IV mit mehr Rohstat (z.B. Schärfe IV) würde durch das
+    // Stapel-Muster dreifach zählen und nur an die schon erreichten Dodge-/Mitigations-Deckel
+    // klopfen (§1.3). Ein Aktiv-Effekt ist dagegen automatisch einmalig pro Item
+    // (`affixHasActiveEffect`) und gibt Build-Identität statt Zahl. Waffen-Linie (5): Kriegspfad,
+    // Zweiter Pfeil, Dünner Schleier, Auszehrung, Gericht (Chase, Götzensplitter-Gate — §9 Frage 3
+    // Option A). Rüstungs-Linie (4, klassen-gebunden über `requiresTrinity`, §9 nicht betroffen):
+    // Eiserne Antwort (Platte), Hinterhalt (Leder), Schleiertrinker (Stoff), Ungebrochene Mauer
+    // (Schild). Schmuck-Linie (5, `appliesTo: ["jewelry"]`, KEINE Ziffer im Namen): Kopfgeld,
+    // Zähler, Rastlose, Chronik (§9 Frage 5 Option A: Spezial-Kind statt EquipBonus-Schlüssel,
+    // sonst stapelbar über 16 Schmuck-Slots), Nachlese (Chase, höchste Rune des Spiels, RC 95, §9
+    // Frage 4 Option A: wirkt nur auf reguläre Loot-Tabellen, NICHT auf Elite-Uniques/Dungeon-
+    // Abschluss). Rezepte s. `craft_rune_*_iv` / `craft_rune_bounty` etc. unten (rune_affixes).
+    affix_warpath: {
+      id: "affix_warpath",
+      prefix: { en: "Warpath", de: "Kriegspfad-" },
+      bonusByTier: [{}, {}, {}, {}],
+      // momentum: +2 % je Treffer, bis 12 Stapel (+24 %), Zähler lebt nur im laufenden Kampf
+      // (CombatState.effectCounters, nicht persistiert). §7.3: Farm-Ziel ~+3 %, Boss ~+23 %.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 12 }],
+      appliesTo: ["weapon_melee"],
+    },
+    affix_second_arrow: {
+      id: "affix_second_arrow",
+      prefix: { en: "Second-Arrow", de: "Zweitpfeil-" },
+      bonusByTier: [{}, {}, {}, {}],
+      // doubleStrike: 12 % Chance auf sofortigen Zweitschlag, keine Kaskade. Bewusst UNTER dem
+      // TEMPO_REDUCTION_CAP-Haste-Wert (§7.2): ein zweiter Angriffswurf, kein kürzeres Intervall.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "doubleStrike", chance: 0.12, magnitude: 0, durationMs: 0 }],
+      appliesTo: ["weapon_ranged"],
+    },
+    affix_thin_veil: {
+      id: "affix_thin_veil",
+      prefix: { en: "Veiled", de: "Verschleiert" },
+      bonusByTier: [{}, {}, {}, {}],
+      // surplus: +20 % Zauberschaden, solange Mana über 80 % liegt (Uptime-Frage, §7.3 realistisch
+      // +8 bis +14 %). Vier Stäbe tragen den Effekt bereits nativ mit denselben Werten.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "surplus", chance: 1, magnitude: 0.20, durationMs: 0, threshold: 0.8 }],
+      appliesTo: ["weapon_magic"],
+    },
+    affix_wasting: {
+      id: "affix_wasting",
+      prefix: { en: "Wasting", de: "Auszehrend" },
+      bonusByTier: [{}, {}, {}, {}],
+      // gutter: +50 % auf eigene Brand-/Blutungs-/Gift-Ticks (Waffen-Topwert-Parität, §9 Frage 6
+      // Option A). Wirkt nur in Kombination mit einer Status-Quelle (z.B. Flamme III) — die
+      // eigentliche Ketten-Proc-Rune (§7.3, Kombinations-Sim bleibt kontrolleur/combat-dev vorbehalten).
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 }],
+      appliesTo: ["any_weapon"],
+    },
+    affix_judgement: {
+      id: "affix_judgement",
+      prefix: { en: "Judging", de: "Richtend" },
+      bonusByTier: [{}, {}, {}, {}],
+      // execute: +30 % Schaden gegen Ziele unter 25 % Leben (der Finisher). Chase-Rezept mit
+      // Götzensplitter-Gate (§9 Frage 3 Option A) — die einzige T4-Waffenrune mit Kampf-Gate.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "execute", chance: 1, magnitude: 0.30, durationMs: 0, threshold: 0.25 }],
+      appliesTo: ["any_weapon"],
+    },
+    // ── Rüstungs-Linie: `requiresTrinity` (Klassen-Gate OHNE Trinity-Bonus, s. AffixDef-Doku in
+    // shared) verhindert, dass diese Runen auf Schmuck haften — Ringe/Amulett/Umhang tragen das
+    // `armor`-Tag zusätzlich zu `jewelry`, aber KEINEN Trinity-Stat > 0.
+    affix_iron_answer: {
+      id: "affix_iron_answer",
+      prefix: { en: "Answering", de: "Antwortend" },
+      bonusByTier: [{}, {}, {}, {}],
+      // thorns: 2,5 flacher Rückschlag je gelandetem Treffer (Dornenpanzer-Handschuhe tragen 1,5
+      // nativ, die Rune ist die nächste Stufe, MAX über Quellen).
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "thorns", chance: 1, magnitude: 2.5, durationMs: 0 }],
+      appliesTo: ["armor"],
+      requiresTrinity: "armorRating",
+    },
+    affix_ambush: {
+      id: "affix_ambush",
+      prefix: { en: "Ambushing", de: "Lauernd" },
+      bonusByTier: [{}, {}, {}, {}],
+      // firstStrike: der erste Treffer jedes Kampfes verursacht doppelten Schaden (magnitude 1 = ×2).
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 }],
+      appliesTo: ["armor"],
+      requiresTrinity: "evasionRating",
+    },
+    affix_veil_drinker: {
+      id: "affix_veil_drinker",
+      prefix: { en: "Veil-Drinking", de: "Schleiertrinkend" },
+      bonusByTier: [{}, {}, {}, {}],
+      // wardSiphon: 10 % des verursachten Schadens füllen den eigenen Ward-Pool (Hohlschleier-
+      // Medaillon trägt 0,08 nativ, MAX über Quellen bleibt bei 0,10).
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "wardSiphon", chance: 1, magnitude: 0.10, durationMs: 0 }],
+      appliesTo: ["armor"],
+      requiresTrinity: "wardCapacity",
+    },
+    affix_unbroken_wall: {
+      id: "affix_unbroken_wall",
+      prefix: { en: "Unbroken", de: "Ungebrochen" },
+      bonusByTier: [{}, {}, {}, {}],
+      // blockRestore: jeder erfolgreiche Block heilt min(2 % maxHp, BLOCK_RESTORE_CAP_ABS) — Klemme
+      // in shared (§9 Frage 11 Option A, an die Melee-Lifesteal-Schiene gebunden).
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "blockRestore", chance: 1, magnitude: 0.02, durationMs: 0 }],
+      appliesTo: ["shield"],
+      requiresTrinity: "blockChance",
+    },
+    // ── Schmuck-Linie: `appliesTo: ["jewelry"]`, stilneutral, bewusst OHNE Stat-Rune (§9 Frage 2
+    // Option A) — 16 stapelbare Schmuck-Slots (2 legendäre Meister-Ringe à 4) mit z.B. +lck wären
+    // ein Krit-/Beute-Deckel-Bruch. Aktiv-Effekte wirken dagegen pro Art einmalig (MAX über
+    // Quellen), egal wie viele Schmuckteile sie tragen. Keine Tier-Ziffer im Namen (kein I..III),
+    // intern bleibt `tier: 4` für die Gold-Formel (`enchantGoldCost`).
+    affix_bounty: {
+      id: "affix_bounty",
+      prefix: { en: "Bounty-Marked", de: "Kopfgeld-" },
+      bonusByTier: [{}, {}, {}, {}],
+      // bounty: +20 % Schaden gegen das aktive Slayer-Ziel (zwei Waffen tragen 0,20 nativ, MAX).
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "bounty", chance: 1, magnitude: 0.20, durationMs: 0 }],
+      appliesTo: ["jewelry"],
+    },
+    affix_tallyman: {
+      id: "affix_tallyman",
+      prefix: { en: "Tallied", de: "Gezählt" },
+      bonusByTier: [{}, {}, {}, {}],
+      // luckyStrike: +15 % Gold aus Tötungen (Parität zur Glücksklinge). Benannt nach Voss dem
+      // Zähler, dem Gewölbe-Verwalter der Glutfeste.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 }],
+      appliesTo: ["jewelry"],
+    },
+    affix_restless: {
+      id: "affix_restless",
+      prefix: { en: "Restless", de: "Rastlos" },
+      bonusByTier: [{}, {}, {}, {}],
+      // cooldownOnKill: Tötungen verkürzen die Erholungspause um 1 s (KILL_COOLDOWN_MS = 2000,
+      // drei Waffen tragen 2000 ms nativ — die Rune ist bewusst die halbe Stufe, MAX über Quellen).
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1000 }],
+      appliesTo: ["jewelry"],
+    },
+    affix_chronicle: {
+      id: "affix_chronicle",
+      prefix: { en: "Chronicled", de: "Verzeichnet" },
+      bonusByTier: [{}, {}, {}, {}],
+      // combatXp: +10 % Kampf-XP (alle Kampf-Skills inkl. Vitality/Kill-XP, NICHT Slayer-XP, s.
+      // COMBAT_XP_BONUS_CAP in shared). §9 Frage 5 Option A: Spezial-Kind statt EquipBonus-
+      // Schlüssel, damit sie über mehrere Schmuck-Slots NICHT additiv stapelt.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "combatXp", chance: 1, magnitude: 0.10, durationMs: 0 }],
+      appliesTo: ["jewelry"],
+    },
+    affix_gleaning: {
+      id: "affix_gleaning",
+      prefix: { en: "Gleaning", de: "Nachlesend" },
+      bonusByTier: [{}, {}, {}, {}],
+      // lootChance: ×1,10 auf die Chance JEDES Eintrags regulärer Kill-Loot-Tabellen (auf 1
+      // geklemmt), NICHT auf Elite-Uniques/Dungeon-Abschluss (§9 Frage 4 Option A, LOOT_CHANCE_
+      // BONUS_CAP in shared) — die Rare-Drop-Philosophie (~1/1000) bleibt sinngemäß intakt.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "lootChance", chance: 1, magnitude: 0.10, durationMs: 0 }],
+      appliesTo: ["jewelry"],
     },
   },
 
