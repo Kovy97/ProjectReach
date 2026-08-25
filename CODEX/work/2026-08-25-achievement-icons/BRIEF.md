@@ -256,61 +256,61 @@ Danach `CODEX/HANDOFF.md` und `CODEX/WORKLOG.md` aktualisieren. Keine Datei nach
 ## B1. Verständnis des Auftrags
 
 **Designziel in einem Satz:**
-`[Mira]`
+Zehn kompakte, handgemalte Ashen-Iron-Embleme ersetzen die flachen Kategoriezeichen und bleiben im 28-px-Einsatz sofort als Trophäe, Amboss, Klingen, Ähre, Zahnrad, Schriftrolle, Münzsack, Truhe, Kompass und Stern lesbar.
 
 **Wichtigste visuelle Aussage:**
-`[Mira]`
+Jedes Motiv wirkt wie ein echtes, abgenutztes Objekt aus derselben ernsten Materialwelt wie die Tier-IV-Runen, ohne selbst Abzeichen, Rahmen oder Seltenheit darzustellen.
 
 **Annahmen von Mira:**
-`[Mira]`
+Die unveränderte Generatorausgabe darf technisch nur durch transparentes Zuschneiden, proportionale Skalierung und Zentrierung auf 512 × 512 px aufbereitet werden. Das native Alpha und alle motivinternen Farbpixel bleiben unangetastet. Die drei Pflichtanker sind Trophäe, Kampf und Schriftrolle. Die zwei bereits gemalten P2-Nachbarn werden erst nach dem fertigen Zehnerbogen entschieden.
 
 **Gefundene Widersprüche oder fehlende Pflichtangaben:**
-`[Mira]`
+Keine produktionsblockierenden Widersprüche. Die alte Kopf-Trophäe und die Freigeschaltet-Plakette enthalten einen Totenschädel beziehungsweise eine leuchtende blaue Innenfläche und stehen damit sichtbar außerhalb der neuen, rahmenlosen Bildsprache. Ob sie ersetzt werden, entscheidet der Vergleich nach dem Pflichtbatch. Der Meilenstein ist eindeutig ein flacher Platzhalter.
 
 ## B2. Art Direction
 
 | Bereich | Mira-Entscheidung |
 |---|---|
-| Stil | |
-| Komposition | |
-| Kamera / Perspektive | |
-| Silhouette | |
-| Materialwelt | |
-| Palette | |
-| Licht | |
-| Atmosphäre | |
-| Detailgrad | |
-| Batch-Klammer | |
+| Stil | Handgemaltes Dark-Fantasy-UI-Emblem im Ashen-Iron-Stil, mit sichtbarer Materialtiefe und kontrollierter Abnutzung. Keine Vektor-, Badge- oder Render-Optik. |
+| Komposition | Je Datei ein einzelnes Motiv, optisch zentriert und ohne szenischen Zusatz. Gruppen aus mehreren Bestandteilen bleiben als eine geschlossene Hauptform lesbar. |
+| Kamera / Perspektive | Frontal, leicht von oben, über den gesamten Satz unverändert. |
+| Silhouette | Kompakt und annähernd rund. Das Motiv belegt 80 bis 90 Prozent der Höhe und nutzt den 28-px-Innenraum ohne dünne, verlorene Ausläufer. |
+| Materialwelt | Dunkles Eisen, gealterte Bronze, Stahl, Leder, Pergament, Holz, Stein und Pflanzenteile mit gemalten Kanten, Kerben und Patina. |
+| Palette | Gedeckte aschige Grundpalette. Genau ein Akzentton je Kategorie gemäß A3, der die Silhouette unterstützt, aber nicht allein trägt. |
+| Licht | Weiches Hauptlicht von oben links, klarer heller Grat und verständliche Schattenseite. Kein Motivlicht, kein Glühen und kein Lichtsaum. |
+| Atmosphäre | Ernst, gebraucht und glaubwürdig mittelalterlich. Keine Comedy, kein Neon und keine mobile Hochglanzpolitur. |
+| Detailgrad | Auf Runen-Niveau in der großen Datei, mit wenigen breiten, kontrastreichen Formen für 24 bis 28 px. Feindetails dürfen die Kontur nicht zerfasern. |
+| Batch-Klammer | Gleiche Kamera, Lichtrichtung, Grundwerte, Malgrad, optisches Gewicht und native Alpha-Kante. Unterschiede entstehen nur durch Motiv und festgelegten Akzent. |
 
 ## B3. Technische Produktionsspezifikation
 
 | Feld | Finale Produktionsentscheidung |
 |---|---|
-| Arbeitsauflösung | |
+| Arbeitsauflösung | Native Generatorauflösung, in der Regel 1024 × 1024 px; unveränderte Ausgabe in `raw/`. |
 | Zielauflösung | 512 × 512 px |
 | Zielformat | PNG, sRGB, vier Kanäle |
-| Hintergrund / Alpha | |
+| Hintergrund / Alpha | Direkt erzeugtes RGBA mit echtem Alpha. Keine Matte, kein Keying, kein nachträgliches Freistellen. |
 | Bindende Content-ID / finaler Dateiname | die Namen aus A3, exakt und ohne Zusatz |
-| Native-Alpha-Produktionsweg bestätigt | |
-| Beschnitt / Safe Area | |
-| Namensschema | |
+| Native-Alpha-Produktionsweg bestätigt | Ja, eingebautes ImageGen-Werkzeug im Standardmodus. Jede Rohdatei wird vor weiterer Verarbeitung auf vier Kanäle und benutztes Alpha geprüft. |
+| Beschnitt / Safe Area | Nur transparente Generator-Leerfläche zuschneiden. Motiv proportional auf 80 bis 90 Prozent Zielhöhe skalieren, optisch zentrieren und außen mindestens 16 px Alpha 0 halten. |
+| Namensschema | Finale Datei `<Content-ID>.png`; Rohdatei `<Content-ID>-raw.png`; keine Zusätze wie `final` oder `v2`. |
 | Staging-Pfad | `CODEX/assets/achievement-icons-2026-08-25/` |
 | Produktionspfad nach Freigabe | `apps/client/src/renderer/assets/icons/<name>.webp`, Integration ausschließlich durch Claude |
-| Varianten- und Quellablage | |
+| Varianten- und Quellablage | Unveränderte Generatorausgaben nach `raw/`, finale 512er nach `fertig/`, Messwerte und Kontaktbögen nach `qa/`. |
 
 ## B4. Generierungsplan
 
 **Methode:**
-`[Mira]`
+Jedes Motiv wird als eigener nativer Alpha-Freisteller mit dem fertigen Promptblock aus `PROMPTS.md` erzeugt. Zuerst laufen die drei Anker. Nach technischer Alpha-Prüfung werden sie ohne Keying auf 512 px normalisiert und im exakten 28-in-46-Ring betrachtet. Erst nach bestandenem Größencheck folgt derselbe Ablauf für den Rest.
 
 **Konsistenzstrategie:**
-`[Mira]`
+Der Serienkern in `PROMPTS.md` bleibt wortgleich. Komposition, Licht, Grundpalette und Malgrad werden nicht pro Motiv neu interpretiert. Die abgenommenen Runen dienen ausschließlich der visuellen Qualitätskontrolle und werden nicht als Bildreferenz in die Erzeugung gegeben, damit keine Steinform, Aura oder gemalte Transparenz in die Embleme übergeht.
 
 **Produktionsreihenfolge:**
-1. `[Anker: Trophäe, Kampf, Schriftrolle]`
-2. `[Prüfung im 46-px-Ring]`
-3. `[Restbatch]`
-4. `[technische Aufbereitung und QA]`
+1. Anker `icon_ach_trophy`, `icon_ach_combat` und `icon_ach_scroll` erzeugen und Alpha prüfen.
+2. Anker auf 512 px normalisieren und in allen fünf Rarity-Ringen sowie gesperrt bei exakt 28 px prüfen.
+3. Die übrigen sieben Pflichtembleme mit unverändertem Serienkern erzeugen.
+4. Zehnerbatch technisch aufbereiten, Kontaktbögen erzeugen und die drei P2-Symbole im Vergleich entscheiden.
 
 **Master-Prompt beziehungsweise unveränderlicher Prompt-Kern:**
 ```text
@@ -331,21 +331,21 @@ Keep the complete subject inside the canvas with safe padding and an uncropped s
 
 **Negativvorgaben:**
 ```text
-[Mira]
+No ring, frame, badge border, shield, banner, ribbon, background plate, floor, cast shadow, scene, text, letters, numbers, watermark, glow, aura, rim light, sparkle, lens flare, neon saturation, checkerboard, solid-color background, chroma key, flat vector line art, comic styling, plastic 3D rendering, mobile-game gloss, or extra object beyond the motif defined for this category.
 ```
 
 ## B5. Prüfplan vor Produktion
 
-- [ ] CEO-Pflichtfelder ausreichend
-- [ ] `design/asset-anforderungen.md` vollständig gelesen
-- [ ] relevante Design-/Lore-Dokumente gelesen
-- [ ] Ziel-Loader und Namensschema geprüft
-- [ ] exakte Content-ID und finaler Dateiname vor Generierung bestätigt
-- [ ] bei Freistellern ein echter nativer Alpha-Produktionsweg bestätigt; kein Keying eingeplant
-- [ ] bestehende Assets in echter Zielgröße betrachtet (28 px im Ring)
-- [ ] Rechte-/Lizenzlage der Referenzen klar
-- [ ] Konflikte mit Claudes Revier oder laufender Arbeit ausgeschlossen
-- [ ] Freigabe-Gate aus A9 erfüllt
+- [x] CEO-Pflichtfelder ausreichend
+- [x] `design/asset-anforderungen.md` vollständig gelesen
+- [x] relevante Design-/Lore-Dokumente gelesen
+- [x] Ziel-Loader und Namensschema geprüft
+- [x] exakte Content-ID und finaler Dateiname vor Generierung bestätigt
+- [x] bei Freistellern ein echter nativer Alpha-Produktionsweg bestätigt; kein Keying eingeplant
+- [x] bestehende Assets in echter Zielgröße betrachtet (28 px im Ring)
+- [x] Rechte-/Lizenzlage der Referenzen klar
+- [x] Konflikte mit Claudes Revier oder laufender Arbeit ausgeschlossen
+- [x] Freigabe-Gate aus A9 erfüllt
 
 ---
 
@@ -357,51 +357,70 @@ Keep the complete subject inside the canvas with safe padding and an uncropped s
 
 | # | Datei | Asset-ID | Maße / Format | Status | Produktionspfad |
 |---:|---|---|---|---|---|
-| 1 |  |  |  | `[Final / Variante / verworfen]` |  |
+| 1 | `icon_ach_trophy.png` | `icon_ach_trophy` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_trophy.webp` nach Freigabe |
+| 2 | `icon_ach_forge.png` | `icon_ach_forge` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_forge.webp` nach Freigabe |
+| 3 | `icon_ach_combat.png` | `icon_ach_combat` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_combat.webp` nach Freigabe |
+| 4 | `icon_ach_nature.png` | `icon_ach_nature` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_nature.webp` nach Freigabe |
+| 5 | `icon_ach_craft.png` | `icon_ach_craft` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_craft.webp` nach Freigabe |
+| 6 | `icon_ach_scroll.png` | `icon_ach_scroll` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_scroll.webp` nach Freigabe |
+| 7 | `icon_ach_gold.png` | `icon_ach_gold` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_gold.webp` nach Freigabe |
+| 8 | `icon_ach_gift.png` | `icon_ach_gift` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_gift.webp` nach Freigabe |
+| 9 | `icon_ach_compass.png` | `icon_ach_compass` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_compass.webp` nach Freigabe |
+| 10 | `icon_ach_star.png` | `icon_ach_star` | 512 × 512 PNG RGBA | Final | `apps/client/src/renderer/assets/icons/icon_ach_star.webp` nach Freigabe |
+| 11 | `icon_ach_milestone.png` | `icon_ach_milestone` | 512 × 512 PNG RGBA | Final, P2 | `apps/client/src/renderer/assets/icons/icon_ach_milestone.webp` nach Freigabe |
 
 ## C2. Visuelle QA
 
-- [ ] Motiv und Funktion bei 28 px im Ring sofort erkennbar
-- [ ] Batch wirkt wie aus einem Guss
-- [ ] Silhouette und Hauptkontrast funktionieren, auch entsättigt
-- [ ] Keine unerwünschten Texte, Logos oder Wasserzeichen
-- [ ] Keine typischen Generierungsfehler an Geometrie, Kanten oder Wiederholungen
-- [ ] Keine abgeschnittenen wichtigen Formen
-- [ ] Alphakanal vorhanden und tatsächlich benutzt; kein Karo und kein Vollflächen-Hintergrund
-- [ ] Silhouette auf grellrosa Prüffläche ohne Farbsaum kontrolliert
-- [ ] Auflösungsuntergrenze aus `design/asset-anforderungen.md` erreicht
-- [ ] Dateiname entspricht exakt dem bestehenden Icon-Namen
-- [ ] Kein Schimmern, Glühen oder Leuchten; kein eigener Ring
-- [ ] Blickrichtung: nicht anwendbar
-- [ ] Farb- und Helligkeitswerte passen zum dunklen Medaillon
-- [ ] Ein Akzentton je Kategorie, gedeckte Grundpalette
-- [ ] Ring-Kontaktbogen 28/46 und Vergleich neben den Runen geprüft
+- [x] Motiv und Funktion bei 28 px im Ring sofort erkennbar
+- [x] Batch wirkt wie aus einem Guss
+- [x] Silhouette und Hauptkontrast funktionieren, auch entsättigt
+- [x] Keine unerwünschten Texte, Logos oder Wasserzeichen
+- [x] Keine typischen Generierungsfehler an Geometrie, Kanten oder Wiederholungen
+- [x] Keine abgeschnittenen wichtigen Formen
+- [x] Alphakanal vorhanden und tatsächlich benutzt; kein Karo und kein Vollflächen-Hintergrund
+- [x] Silhouette auf grellrosa Prüffläche ohne Farbsaum kontrolliert
+- [x] Auflösungsuntergrenze aus `design/asset-anforderungen.md` erreicht
+- [x] Dateiname entspricht exakt dem bestehenden Icon-Namen
+- [x] Kein Schimmern, Glühen oder Leuchten; kein eigener Ring
+- [x] Blickrichtung: nicht anwendbar
+- [x] Farb- und Helligkeitswerte passen zum dunklen Medaillon
+- [x] Ein Akzentton je Kategorie, gedeckte Grundpalette
+- [x] Ring-Kontaktbogen 28/46 und Vergleich neben den Runen geprüft
 
 ## C3. Technische QA
 
-- [ ] Dateinamen entsprechen exakt den Namen aus A3; keine `final`-/`v2`-/Variantenanhänge
-- [ ] Maße, Format und Farbraum korrekt
-- [ ] Freisteller sind PNG mit echtem Alpha; kein JPG und keine nachträgliche Key-Matte
-- [ ] Äußere 16 px vollständig transparent
-- [ ] Keine versehentliche automatische Bindung aus dem Staging
-- [ ] Zielpfad und Loader-Regel verifiziert
-- [ ] Vorhandene Dateien nicht unbeabsichtigt überschrieben
-- [ ] Quellen, Prompts und Rechte dokumentiert
-- [ ] Relevanter headless Check erfolgreich
+- [x] Dateinamen entsprechen exakt den Namen aus A3; keine `final`-/`v2`-/Variantenanhänge
+- [x] Maße, Format und Farbraum korrekt
+- [x] Freisteller sind PNG mit echtem Alpha; kein JPG und keine nachträgliche Key-Matte
+- [x] Äußere 16 px vollständig transparent
+- [x] Keine versehentliche automatische Bindung aus dem Staging
+- [x] Zielpfad und Loader-Regel verifiziert
+- [x] Vorhandene Dateien nicht unbeabsichtigt überschrieben
+- [x] Quellen, Prompts und Rechte dokumentiert
+- [x] Relevanter headless Check erfolgreich
 
 ## C4. Nachweis
 
 **Preview-/Proof-Pfade:**
-`[Kontaktbögen, Ring-Bogen, Runen-Vergleich, qa.json]`
+`CODEX/assets/achievement-icons-2026-08-25/qa/contact-sheet-{black,gray,magenta}.png`,
+`contact-sheet-ring-28-46.png`, `contact-sheet-ui-small-sizes.png`,
+`contact-sheet-neben-runen-iv.png` und `qa.json`.
 
 **Ausgeführte Checks:**
-`[Befehl oder visuelle Prüfung + Ergebnis]`
+`prepare-and-qa.mjs` headless über Node ausgeführt. Ergebnis: 10 von 10 Pflicht-IDs plus genau
+`icon_ach_milestone`, alle 512 × 512 sRGB-RGBA, benutztes Alpha, äußerer 16-px-Rand vollständig
+Alpha 0, Motivhöhe 434 bis 435 px, keine fehlenden oder unerwarteten IDs. Schwarz-, Grau- und
+Grellrosa-Bögen sowie 28-in-46-Ringe, gesperrte Reihe, 24-/50-px-Ansichten und 12-/20-px-
+Nebenverbraucher visuell kontrolliert.
 
 **Bekannte Grenzen:**
-`[keine / Liste]`
+`icon_achievments` und `icon_achievement_unlocked` wurden nicht neu erzeugt. Beide Bestandsassets
+sind bereits voll gemalt und behalten ihre bewusst reichere Kopf- beziehungsweise Statusrolle.
+`icon_ach_nature` verliert bei 12 px erwartungsgemäß Materialdetail, bleibt aber als goldene Ähre
+mit grünen Blättern lesbar.
 
 **Mira-Empfehlung:**
-`[freigeben / Variante X wählen / gezielte Korrektur]`
+Die zehn Kategorie-Embleme und den neuen Meilenstein freigeben. Keine weitere Bildvariante nötig.
 
 **Empfohlener Claude-Owner für Gegenprüfung:**
 `asset-integrator`, danach `ui-dev` für den Blick auf die laufende Seite.
@@ -413,19 +432,20 @@ Keep the complete subject inside the canvas with safe padding and an uncropped s
 **Wird vom Chef oder von Claude im Rahmen seiner übertragenen Entscheidungsbefugnis ausgefüllt.**
 
 **Entscheidung:**
-`[GO / GO mit kleinen Korrekturen / neue Variante / abgelehnt]`
+Mira-Produktions-QA: GO zur Gegenprüfung. Verbindliche Chef-/Claude-Abnahme ausstehend.
 
 **Gewählte Variante:**
-`[Datei oder Variante]`
+Zehn Pflichtembleme plus `icon_ach_milestone.png`. Die zwei bereits gemalten P2-Bestandsassets
+bleiben unverändert.
 
 **Verbindliche Korrekturen:**
-1. `[konkrete Änderung]`
+1. Keine aus der Produktions-QA.
 
 **Darf danach integriert werden?**
-`[ja / nein / nur nach erneutem Gegencheck]`
+Nur nach erneutem Gegencheck durch Claude beziehungsweise `asset-integrator`.
 
 **Zielversion / Changelog-Zuordnung:**
-`[Version / Task / Patchnote]`
+Grim Reach 1.0-Kurs, Erfolge-Seite, Warden-Ledger-Layout.
 
 **Abnahme durch / Datum:**
-`[Claude / Chef, YYYY-MM-DD]`
+Mira-Produktions-QA am 2026-08-25; finale Abnahme durch Claude oder Chef ausstehend.
