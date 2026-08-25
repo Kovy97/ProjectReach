@@ -10,7 +10,121 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
-## 1.0.2 — unveröffentlicht
+## Unveröffentlicht — Sammelnotizen für den nächsten Patch (Stand 25.08.2026)
+
+_Chef-Regel vom 25.08.: alles, was seit dem 1.0.2-Upload geändert wurde, landet hier, auch
+Halbfertiges (mit „in Arbeit" markiert). Beim nächsten Upload: Versions-Nummer festlegen, die
+„in Arbeit"-Marker auflösen, Steam-Post daraus schneiden._
+
+**Runen lassen sich stapeln:** DE: Drei Plätze, drei gleiche Runen, dreifacher Bonus. Ein Spieler
+hatte es als Fehler gemeldet („armor have 3 slots, but you can only put in 1 enchantment rune") und
+recht: eine Sperre aus dem Juli ließ dieselbe Rune nur einmal zu. Aktiv-Effekt-Runen (Flamme,
+Frost, Schock) bleiben einmalig pro Item: ihr Effekt stapelt nicht, eine zweite brächte nichts. /
+EN: Three slots, three identical runes, triple the bonus. Effect runes (Flame, Frost, Shock) stay
+one per item since their proc does not stack.
+
+*Dev-Notiz: `duplicate_affix` entfernt, neuer Code `duplicate_effect` nur für Affixe mit
+`weaponEffectByTier` (`affixHasActiveEffect`). Balance-Hülle neu gepinnt: der theoretische BiS-Build
+erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90 (beides Clamps);
+Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests,
+Hülle 31 grün.*
+
+**Der Tooltip zeigt die Verzauberungs-Plätze:** DE: Jedes Ausrüstungsteil zeigt „Verzauberung 1/3",
+belegte Plätze mit Effekt, freie als leere Steine und einen Satz, wofür sie da sind. Runen nennen
+ihr Ziel („Passt auf: Plattenrüstung") und den Grund, wenn sie nicht passen. / EN: Every piece of
+gear shows its enchantment slots, filled and empty, and runes say what they fit.
+
+*Dev-Notiz: `runeTargets.ts` liefert das ECHTE Ziel inkl. Trinity-Klasse (Platte/Leder/Stoff statt
+pauschal „Rüstung"). Der Verzauberungstisch blendet Runen jetzt nach derselben Kette ab wie
+`applyEnchant` (Tag + Trinity-Gate), Grund im Hover statt Banner nach dem Fehlversuch.*
+
+**Runen aus dem Lager:** DE: Der Verzauberungstisch nimmt Runen aus Inventar und Lager, das Grimoire
+zeigt beide Bestände. / EN: The enchanting table draws runes from storage as well.
+
+*Dev-Notiz: an der Wurzel in `applyEnchant` (Inventar zuerst, dann Lager), nicht per UI-Umweg, der
+bei vollem Rucksack scheitern würde.*
+
+**Varianten-Tasche: die Suche schließt die Box nicht mehr:** DE: Beim Tippen schrumpfte die Liste,
+der Mauszeiger lag plötzlich außerhalb, das Fenster ging zu. Jetzt bleibt es offen, solange die
+Suche benutzt wird. / EN: Searching in a gear stack no longer closes the box.
+
+**Slayer: kämpfen direkt vom Auftragszettel:** DE: „Sofort kämpfen (48)" und „Einreihen (48)" mit der
+Restmenge als Ziel. / EN: Fight now or queue up straight from the slayer task, with the remaining
+count preset.
+
+**Kampf: Zonen-Knopf während des Kampfes:** DE: Oben links „Zonen", gleicher Knopf wie „Kampf
+beenden": zeigt die Gegnerliste zum Nachlegen, der Kampf läuft weiter. / EN: A Zones button during
+combat opens the enemy list without ending the fight, so more battles can be queued.
+
+**New Haven: Bauwarteschlange:** DE: Was nach dem laufenden Bau drankommt, lässt sich planen:
+Reihenfolge, Verschieben, Entfernen. Bezahlt wird beim Start, nicht beim Einreihen; reicht das
+Material dann nicht, wartet der Eintrag und sagt warum. / EN: Queue up what builds next in New
+Haven. Costs are paid when a build starts, not when it is planned.
+
+*Dev-Notiz: SAVE_VERSION 80 → 81, `camp.buildQueue` (Deckel 8). Migration: leere Liste. Kette läuft
+offline bit-identisch (Determinismus-Test). Vault-Pin v80 ist damit ein Migrations-Pin; das
+v81-Fixture kommt beim Release ins Vault.*
+
+**Stahlrahmen: die Eckbeschläge sind jetzt ganz zu sehen:** DE: Der Eisenrahmen (Quest-Menü,
+Warteschlange, New Haven, Kopfleiste und mehr) wurde mitten durch die Eckklammer geschnitten und
+die halbe Klammer als Kante gestreckt. / EN: The iron frames no longer stretch half a corner
+bracket along the edge.
+
+*Dev-Notiz: `nav-bronze-lipped-iron-9slice.webp`: Band 39 px, Eckklammer 80 px, Schnitt war 40.
+Jetzt 85, Breite × 2.125, damit die sichtbare Banddicke exakt gleich bleibt (Lehre aus dem
+Holzrahmen-Fix). 50 Stellen, 14 Dateien.*
+
+**Anbau: Samen-Auswahl überholt, „Alle bepflanzen" rechnet vor:** DE: Das Fenster war 480 statt
+880 px breit (eine spätere CSS-Regel schlug die eigene), die Karten quetschten sich auf vier
+Zeilen. Jetzt breit, drei Spalten, Name und Stufe in der Kopfzeile, Fakten einzeilig. „Alle
+bepflanzen" zeigt freie Beete und „Besät 3 von 9 Beeten", warnend, wenn die Saat nicht reicht. /
+EN: The seed picker is wide and readable, and Plant All shows how many plots it will sow before
+you click.
+
+**„Voraussetzung nicht erfüllt" kam bei jedem Start zurück:** DE: Ein aus der Warteschlange
+entfernter Kampf wurde per × nur im Fenster weggeklickt, nicht im Spielstand; beim nächsten Start
+stand die Meldung wieder da, auch wenn die Voraussetzung längst erfüllt war. / EN: The removed
+from queue notice no longer returns on every load.
+
+*Dev-Notiz (Spieler-Report 1.0.2): `lastQueueSkip` wird vom Panel im State quittiert; die
+Persistenz prüft den Grund beim Laden gegen das echte Gate neu (`canFightMonster`). Neuer Test
+`queue-skip-load.test.ts`.*
+
+**Ein erzwungener Kampf verschluckte den laufenden Auftrag:** DE: Wer aus dem Bestiarium einen
+Kampf startete, während eine Aktion mit Mengen-Ziel lief, verlor diese Aktion. Sie wandert jetzt
+an die Queue-Front. / EN: Starting a fight from the bestiary no longer drops the running order.
+
+*Dev-Notiz (Chef-Report): `startCombat` stellt endliche Aufträge selbst zurück, damit jeder
+Aufrufer sicher ist. Nur endliche Ziele (Sims starten Kämpfe direkt, ihre Queue würde sonst
+wachsen). `queue-forced-fight.test.ts`.*
+
+**Warteschlange lesbar (Spieler-Report Aldric, 67 h):** DE: Der Aktionsname brach buchstabenweise
+um; die Menge steht jetzt unter dem Namen neben der Dauer. / EN: Queue names no longer wrap one
+letter per line.
+
+**Stehlen: Beute-Box ohne die vier leeren Kästen:** DE: Bei Aktionen ohne Zutaten fällt das leere
+Zutaten-Rack weg, die Beute bekommt den Platz und scrollt nicht mehr. / EN: The thieving loot box
+no longer scrolls next to four empty crates.
+
+**Schmieden: Dauer hängt an den Barren (in Arbeit):** DE: Ein Plattenpanzer aus fünf Barren gab
+99 XP, ein Streitkolben aus drei 120. Jetzt dauert jedes Stück Barren × Tier-Sekunden, XP pro Barren
+sind gleich, XP pro Stunde bleiben auf Kurve. Nur Schmieden. / EN: Smithing time now scales with
+bars used, so XP per bar is consistent. Smithing only.
+
+*Dev-Notiz: Option B aus `design/smithing-xp-barren.md`. content-dev wendet Anhang A3 an, Wächter
+`smithing-xp-per-bar.test.ts`.*
+
+**Kopfleiste: Fortschritts- und XP-Balken im „Doing"-Kasten (in Arbeit):** DE: Der Kasten wird
+breiter und zentriert, beide Balken ziehen hinein. / EN: The activity panel now holds both progress
+bars.
+
+**Warteschlange: eigene Tooltips statt Browser-Titel (in Arbeit):** DE: Die Hinweise verschwanden
+unter dem Cursor; jetzt dieselben Tooltips wie bei den Charakter-Werten. / EN: Queue tooltips no
+longer vanish under the cursor.
+
+---
+
+## 1.0.2 — RELEASED (Build 24906831, 2026-08-25, `setlive` leer)
 
 **Der Rundgang erklärt jetzt auch Warteschlange und New Haven:** DE: Beide standen bisher nur in
 den Feature-Touren, und die feuern laut Code einmalig für Alt-Saves. Wer neu kauft, bekam weder

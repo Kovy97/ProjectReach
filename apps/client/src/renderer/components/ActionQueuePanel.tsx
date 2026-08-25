@@ -424,40 +424,51 @@ export function ActionQueuePanel(): JSX.Element {
 
   return (
     <aside className={`queue-panel${collapsed ? " queue-panel--collapsed" : ""}`}>
-      <button
-        type="button"
-        /* Task #369: eingeklappt bleibt nur der 40px-Rand-Tab übrig — die Endlos-Sperre bekommt
-           dort denselben Glow-Kanal wie die Tod-Pause (Bernstein statt Rot), sonst wäre der
-           Zustand für jeden Spieler mit eingeklapptem Panel wieder unsichtbar. */
-        className={`queue-panel-toggle${state.queuePaused ? " queue-panel-toggle--paused" : ""}${
-          showBlocked ? " queue-panel-toggle--blocked" : ""
-        }`}
-        onClick={toggleCollapsed}
-        title={t(collapsed ? "queue.expand" : "queue.collapse")}
-        aria-label={t(collapsed ? "queue.expand" : "queue.collapse")}
-        aria-expanded={!collapsed}
-        /* Versions-Tour-Ziel (Chef-Auftrag 2026-07-21, FeatureTourGuide.tsx): eigener
-           "feature." Namespace, kollidiert nicht mit dem Haupt-Guide (topbar./sidebar.). */
-        data-guide-id="feature.queueExpand"
+      {/* Chef 25.08.2026: natives `title=` löste den Cursor-Bug (Tooltip verschwand/klebte am
+          Zeiger, konnte vom Panel überdeckt werden) — Custom-Tooltip wie bei den Charakter-Stats
+          (HoverTip/CitadelTip, s. EquipmentOverview.tsx StatLine „Task #343"-Vorbild): Portal an
+          document.body, Flip-Positionierung, nie unter dem Cursor. `focusable={false}`, weil der
+          Button selbst schon der Tab-Stopp ist (kein doppelter). */}
+      <HoverTip
+        as="div"
+        focusable={false}
+        className="queue-btn-tip"
+        content={<span className="ct-tip-desc">{t(collapsed ? "queue.expand" : "queue.collapse")}</span>}
       >
-        {/* Task #369: eingeklappt sind das die einzigen 40 px, die der Spieler sieht — der Glow
-            allein (Muster `--paused`) ist gegen die ornamentierte Textur zu leise. Im Sperr-Fall
-            ERSETZT die Sanduhr den Pfeil (kein drittes Element in einen 40-px-Tab quetschen): aus
-            „da warten 2" wird „da warten 2, und von allein geht nichts weiter". Der Tab bleibt als
-            Ganzes der Aufklapp-Knopf, samt Titel/aria-label — die Affordanz geht nicht verloren. */}
-        <span className="queue-panel-toggle-caret">
-          {collapsed ? (
-            showBlocked ? (
-              BLOCKED_ICON_URL ? <img loading="lazy" decoding="async" src={BLOCKED_ICON_URL} alt="" className="ui-icon" /> : "⏳"
+        <button
+          type="button"
+          /* Task #369: eingeklappt bleibt nur der 40px-Rand-Tab übrig — die Endlos-Sperre bekommt
+             dort denselben Glow-Kanal wie die Tod-Pause (Bernstein statt Rot), sonst wäre der
+             Zustand für jeden Spieler mit eingeklapptem Panel wieder unsichtbar. */
+          className={`queue-panel-toggle${state.queuePaused ? " queue-panel-toggle--paused" : ""}${
+            showBlocked ? " queue-panel-toggle--blocked" : ""
+          }`}
+          onClick={toggleCollapsed}
+          aria-label={t(collapsed ? "queue.expand" : "queue.collapse")}
+          aria-expanded={!collapsed}
+          /* Versions-Tour-Ziel (Chef-Auftrag 2026-07-21, FeatureTourGuide.tsx): eigener
+             "feature." Namespace, kollidiert nicht mit dem Haupt-Guide (topbar./sidebar.). */
+          data-guide-id="feature.queueExpand"
+        >
+          {/* Task #369: eingeklappt sind das die einzigen 40 px, die der Spieler sieht — der Glow
+              allein (Muster `--paused`) ist gegen die ornamentierte Textur zu leise. Im Sperr-Fall
+              ERSETZT die Sanduhr den Pfeil (kein drittes Element in einen 40-px-Tab quetschen): aus
+              „da warten 2" wird „da warten 2, und von allein geht nichts weiter". Der Tab bleibt als
+              Ganzes der Aufklapp-Knopf, samt Tooltip/aria-label — die Affordanz geht nicht verloren. */}
+          <span className="queue-panel-toggle-caret">
+            {collapsed ? (
+              showBlocked ? (
+                BLOCKED_ICON_URL ? <img loading="lazy" decoding="async" src={BLOCKED_ICON_URL} alt="" className="ui-icon" /> : "⏳"
+              ) : (
+                "◂"
+              )
             ) : (
-              "◂"
-            )
-          ) : (
-            "▸"
-          )}
-        </span>
-        {collapsed && queue.length > 0 && <span className="queue-panel-toggle-count">{queue.length}</span>}
-      </button>
+              "▸"
+            )}
+          </span>
+          {collapsed && queue.length > 0 && <span className="queue-panel-toggle-count">{queue.length}</span>}
+        </button>
+      </HoverTip>
 
       {/* Eingeklappter Zustand (Chef-Vorgabe): die Queue bleibt sichtbar, nur auf Icon + Restzahl
           verdichtet — pro Eintrag EIN kleiner Slot (Icon + "×N"-Badge) statt Name/Buttons/Index.
@@ -599,15 +610,22 @@ export function ActionQueuePanel(): JSX.Element {
                 {WARNING_ICON_URL ? <img loading="lazy" decoding="async" src={WARNING_ICON_URL} alt="" className="ui-icon" /> : "⚠"}{" "}
                 {t(`queue.skip.${skip.reason}`).replace("{monster}", fightMonsterName(skip.monsterId, tr))}
               </span>
-              <button
-                type="button"
-                className="queue-panel-skip-dismiss"
-                onClick={() => { state.lastQueueSkip = null; }}
-                aria-label={t("common.close")}
-                title={t("common.close")}
+              {/* Chef 25.08.2026: Custom-Tooltip statt native `title=` (Vorbild Charakter-Stats). */}
+              <HoverTip
+                as="div"
+                focusable={false}
+                className="queue-btn-tip"
+                content={<span className="ct-tip-desc">{t("common.close")}</span>}
               >
-                ✕
-              </button>
+                <button
+                  type="button"
+                  className="queue-panel-skip-dismiss"
+                  onClick={() => { state.lastQueueSkip = null; }}
+                  aria-label={t("common.close")}
+                >
+                  ✕
+                </button>
+              </HoverTip>
             </div>
           )}
 
@@ -675,14 +693,23 @@ export function ActionQueuePanel(): JSX.Element {
             <div className="queue-panel-list-head">
               <span className="queue-panel-section-label muted">{t("queue.queueLabel")}</span>
               {queue.length > 0 && (
-                <button
-                  type="button"
-                  className="queue-panel-clear"
-                  onClick={() => clearActionQueue(state)}
-                  title={t("queue.clearAll")}
+                // Chef 25.08.2026: Custom-Tooltip statt native `title=` (Vorbild Charakter-Stats).
+                // Der Knopftext zeigt denselben Schlüssel schon sichtbar — der Tooltip bleibt hier
+                // trotzdem konsequent mit den übrigen Umbauten, s. Bericht.
+                <HoverTip
+                  as="div"
+                  focusable={false}
+                  className="queue-btn-tip"
+                  content={<span className="ct-tip-desc">{t("queue.clearAll")}</span>}
                 >
-                  {t("queue.clearAll")}
-                </button>
+                  <button
+                    type="button"
+                    className="queue-panel-clear"
+                    onClick={() => clearActionQueue(state)}
+                  >
+                    {t("queue.clearAll")}
+                  </button>
+                </HoverTip>
               )}
             </div>
 
@@ -697,15 +724,23 @@ export function ActionQueuePanel(): JSX.Element {
                   {t(`queue.blocked.${blockReason}`)}
                 </span>
                 {unblockVi >= 0 && (
-                  <button
-                    type="button"
-                    className="queue-panel-blocked-btn"
-                    onClick={() => prioritizeQueueEntry(state, content, unblockVi + foldedCount)}
-                    title={t("queue.blocked.hint")}
+                  // Chef 25.08.2026: Custom-Tooltip statt native `title=` — der Hint-Text ("wieso
+                  // jetzt starten?") ist eine ANDERE Info als das Knopf-Label, bleibt also erhalten.
+                  <HoverTip
+                    as="div"
+                    focusable={false}
+                    className="queue-btn-tip queue-blocked-btn-tip"
+                    content={<span className="ct-tip-desc">{t("queue.blocked.hint")}</span>}
                   >
-                    {PRIORITY_ICON_URL ? <img loading="lazy" decoding="async" src={PRIORITY_ICON_URL} alt="" className="ui-icon" /> : "⚡"}{" "}
-                    {t("queue.blocked.startFirst")}
-                  </button>
+                    <button
+                      type="button"
+                      className="queue-panel-blocked-btn"
+                      onClick={() => prioritizeQueueEntry(state, content, unblockVi + foldedCount)}
+                    >
+                      {PRIORITY_ICON_URL ? <img loading="lazy" decoding="async" src={PRIORITY_ICON_URL} alt="" className="ui-icon" /> : "⚡"}{" "}
+                      {t("queue.blocked.startFirst")}
+                    </button>
+                  </HoverTip>
                 )}
               </div>
             )}
@@ -737,18 +772,19 @@ export function ActionQueuePanel(): JSX.Element {
                   const rowTiming = timing.queue[i];
                   const rowDuration = rowTiming ? formatEntryDuration(rowTiming, t) : null;
                   return (
-                    <HoverTip
-                      as="div"
+                    // Chef 25.08.2026: die Zeile selbst ist ab jetzt ein PLAIN div (kein HoverTip
+                    // mehr über die GANZE Zeile) — Drag-Handler unverändert, aber der Zeilen-
+                    // Tooltip ("Ziehen zum Umsortieren …") sitzt jetzt NUR noch auf dem linken
+                    // Namensblock (.queue-row-body). Grund: die vier 20px-Knöpfe brauchen JEDER
+                    // seinen EIGENEN Tooltip-Text (Jetzt starten/Hoch/Runter/Entfernen) — wäre die
+                    // ganze Zeile weiter EIN HoverTip, würde ein Hover über einem Knopf den
+                    // (irreführenden) Zeilen-Hint UND den Knopf-Tooltip gleichzeitig zeigen, weil
+                    // `mouseenter` auf dem äußeren div nie schließt, solange der Zeiger irgendwo in
+                    // der Zeile bleibt. Aufgeteilt vermeiden beide Tooltips sich sauber.
+                    <div
                       key={`${fightEntry ? fightEntry.monsterId : entry.actionId}-${i}`}
                       className="queue-row"
-                      elementRef={setRowRef(vi)}
-                      content={
-                        <span className="ct-tip-desc">
-                          {t("queue.dragHandle")} · {t("queue.rightClickEject")}
-                          {rowTiming?.isEstimate ? ` · ${t("queue.duration.estimateHint")}` : ""}
-                          {rowTiming?.unknown ? ` · ${t("queue.duration.unknownHint")}` : ""}
-                        </span>
-                      }
+                      ref={setRowRef(vi)}
                       onContextMenu={(e) => { e.preventDefault(); dequeueAction(state, i); }}
                       onPointerDown={(e) => beginDrag(vi, e)}
                       onPointerMove={(e) => onRowPointerMove(vi, e)}
@@ -756,70 +792,109 @@ export function ActionQueuePanel(): JSX.Element {
                       onPointerCancel={() => endDrag(vi, false)}
                     >
                       <span className="queue-row-index">{vi + 1}</span>
-                      {fightEntry ? <FightQueueIcon monsterId={fightEntry.monsterId} /> : <QueueIcon action={action!} />}
-                      <div className="queue-row-text">
-                        <span className="queue-row-name">
-                          {fightEntry ? fightMonsterName(fightEntry.monsterId, tr) : tr(action!.name)}
-                        </span>
-                        {/* 1.0.2 (Spieler-Report): Menge und Dauer teilen sich eine Zeile UNTER
-                            dem Namen. Vorher war die Menge eine eigene Spalte rechts und nahm
-                            dem Namen Breite — gemessen blieben ihm 31 px, und er brach
-                            buchstabenweise um. */}
-                        <span className="queue-row-meta">
-                          <span className="queue-row-target">
-                            {fightEntry
-                              ? entry.target === null ? "∞" : `×${entry.target}`
-                              : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
+                      <HoverTip
+                        as="div"
+                        className="queue-row-body"
+                        content={
+                          <span className="ct-tip-desc">
+                            {t("queue.dragHandle")} · {t("queue.rightClickEject")}
+                            {rowTiming?.isEstimate ? ` · ${t("queue.duration.estimateHint")}` : ""}
+                            {rowTiming?.unknown ? ` · ${t("queue.duration.unknownHint")}` : ""}
                           </span>
-                          {rowDuration && (
-                            <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>
-                              {rowDuration.text}
+                        }
+                      >
+                        {fightEntry ? <FightQueueIcon monsterId={fightEntry.monsterId} /> : <QueueIcon action={action!} />}
+                        <div className="queue-row-text">
+                          <span className="queue-row-name">
+                            {fightEntry ? fightMonsterName(fightEntry.monsterId, tr) : tr(action!.name)}
+                          </span>
+                          {/* 1.0.2 (Spieler-Report): Menge und Dauer teilen sich eine Zeile UNTER
+                              dem Namen. Vorher war die Menge eine eigene Spalte rechts und nahm
+                              dem Namen Breite — gemessen blieben ihm 31 px, und er brach
+                              buchstabenweise um. */}
+                          <span className="queue-row-meta">
+                            <span className="queue-row-target">
+                              {fightEntry
+                                ? entry.target === null ? "∞" : `×${entry.target}`
+                                : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
                             </span>
-                          )}
-                        </span>
-                      </div>
+                            {rowDuration && (
+                              <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>
+                                {rowDuration.text}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </HoverTip>
                       <div className="queue-row-actions">
-                        <button
-                          type="button"
-                          className="queue-row-btn queue-row-btn--start"
-                          disabled={rowStartDisabled}
-                          onClick={() => prioritizeQueueEntry(state, content, i)}
-                          title={t("queue.startNow")}
-                          aria-label={t("queue.startNow")}
+                        {/* Chef 25.08.2026: je Knopf ein eigener Custom-Tooltip statt native
+                            `title=` (Vorbild Charakter-Stats, s. Kommentar am Panel-Toggle oben).
+                            `focusable={false}` — der `<button>` selbst bleibt der Tab-Stopp. */}
+                        <HoverTip
+                          as="div"
+                          focusable={false}
+                          className="queue-btn-tip"
+                          content={<span className="ct-tip-desc">{t("queue.startNow")}</span>}
                         >
-                          {PRIORITY_ICON_URL ? <img loading="lazy" decoding="async" src={PRIORITY_ICON_URL} alt="" className="queue-row-btn-icon" /> : "⚡"}
-                        </button>
-                        <button
-                          type="button"
-                          className="queue-row-btn"
-                          disabled={i <= foldedCount}
-                          onClick={() => moveQueueItem(state, i, i - 1)}
-                          title={t("queue.moveUp")}
-                          aria-label={t("queue.moveUp")}
+                          <button
+                            type="button"
+                            className="queue-row-btn queue-row-btn--start"
+                            disabled={rowStartDisabled}
+                            onClick={() => prioritizeQueueEntry(state, content, i)}
+                            aria-label={t("queue.startNow")}
+                          >
+                            {PRIORITY_ICON_URL ? <img loading="lazy" decoding="async" src={PRIORITY_ICON_URL} alt="" className="queue-row-btn-icon" /> : "⚡"}
+                          </button>
+                        </HoverTip>
+                        <HoverTip
+                          as="div"
+                          focusable={false}
+                          className="queue-btn-tip"
+                          content={<span className="ct-tip-desc">{t("queue.moveUp")}</span>}
                         >
-                          {ARROW_UP_ICON_URL ? <img loading="lazy" decoding="async" src={ARROW_UP_ICON_URL} alt="" className="queue-row-btn-icon" /> : "▲"}
-                        </button>
-                        <button
-                          type="button"
-                          className="queue-row-btn"
-                          disabled={i === queue.length - 1}
-                          onClick={() => moveQueueItem(state, i, i + 1)}
-                          title={t("queue.moveDown")}
-                          aria-label={t("queue.moveDown")}
+                          <button
+                            type="button"
+                            className="queue-row-btn"
+                            disabled={i <= foldedCount}
+                            onClick={() => moveQueueItem(state, i, i - 1)}
+                            aria-label={t("queue.moveUp")}
+                          >
+                            {ARROW_UP_ICON_URL ? <img loading="lazy" decoding="async" src={ARROW_UP_ICON_URL} alt="" className="queue-row-btn-icon" /> : "▲"}
+                          </button>
+                        </HoverTip>
+                        <HoverTip
+                          as="div"
+                          focusable={false}
+                          className="queue-btn-tip"
+                          content={<span className="ct-tip-desc">{t("queue.moveDown")}</span>}
                         >
-                          {ARROW_DOWN_ICON_URL ? <img loading="lazy" decoding="async" src={ARROW_DOWN_ICON_URL} alt="" className="queue-row-btn-icon" /> : "▼"}
-                        </button>
-                        <button
-                          type="button"
-                          className="queue-row-btn queue-row-remove"
-                          onClick={() => dequeueAction(state, i)}
-                          title={t("queue.remove")}
-                          aria-label={t("queue.remove")}
+                          <button
+                            type="button"
+                            className="queue-row-btn"
+                            disabled={i === queue.length - 1}
+                            onClick={() => moveQueueItem(state, i, i + 1)}
+                            aria-label={t("queue.moveDown")}
+                          >
+                            {ARROW_DOWN_ICON_URL ? <img loading="lazy" decoding="async" src={ARROW_DOWN_ICON_URL} alt="" className="queue-row-btn-icon" /> : "▼"}
+                          </button>
+                        </HoverTip>
+                        <HoverTip
+                          as="div"
+                          focusable={false}
+                          className="queue-btn-tip"
+                          content={<span className="ct-tip-desc">{t("queue.remove")}</span>}
                         >
-                          ✕
-                        </button>
+                          <button
+                            type="button"
+                            className="queue-row-btn queue-row-remove"
+                            onClick={() => dequeueAction(state, i)}
+                            aria-label={t("queue.remove")}
+                          >
+                            ✕
+                          </button>
+                        </HoverTip>
                       </div>
-                    </HoverTip>
+                    </div>
                   );
                 })}
               </div>

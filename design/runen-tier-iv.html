@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Runen Tier IV: Balance-Design (Grim Reach)</title>
+<style>
+  :root{
+    --bg:#120e0a; --bg2:#1a140e; --panel:#211a12; --panel2:#2a2118; --line:#4a3a26;
+    --ink:#e9dcc3; --ink2:#bfae8e; --muted:#8f8068;
+    --gold:#d1a83a; --gold2:#f0c75e; --copper:#b8713a; --copper2:#d98a4a;
+    --ok:#6fae5a; --warn:#d9a441; --bad:#c9563f; --violet:#9a7bd1; --ice:#7fb2d6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Segoe UI",Tahoma,Arial,sans-serif}
+  body{background-image:radial-gradient(ellipse at top,#241a10 0%,var(--bg) 55%)}
+  .wrap{max-width:1520px;margin:0 auto;padding:32px 40px 80px}
+  h1,h2,h3,h4{font-family:Georgia,"Palatino Linotype","Book Antiqua",serif;color:var(--gold2);letter-spacing:.02em;margin:0 0 .4em}
+  h1{font-size:34px;line-height:1.15;text-shadow:0 0 18px rgba(209,168,58,.25)}
+  h2{font-size:24px;margin-top:48px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:18px;color:var(--copper2);margin-top:28px}
+  h4{font-size:15px;color:var(--gold);margin-top:16px}
+  p{margin:.5em 0 .9em}
+  .sub{color:var(--ink2);font-size:14px}
+  .meta{display:flex;flex-wrap:wrap;gap:18px;color:var(--muted);font-size:13px;margin-bottom:22px}
+  .meta b{color:var(--ink2);font-weight:600}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin:14px 0}
+  .box.gold{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(209,168,58,.25)}
+  .box.warn{border-color:var(--warn)}
+  .box.bad{border-color:var(--bad)}
+  .tldr li{margin:.35em 0}
+  table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:13.5px}
+  th{background:#2f2417;color:var(--gold2);text-align:left;padding:8px 10px;border-bottom:2px solid var(--copper);font-family:Georgia,serif;font-weight:600;white-space:nowrap}
+  td{padding:7px 10px;border-bottom:1px solid #30271b;vertical-align:top}
+  tbody tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+  tbody tr:hover td{background:rgba(209,168,58,.06)}
+  .tscroll{overflow-x:auto}
+  code,.id{font-family:Consolas,"Courier New",monospace;font-size:12.5px;color:var(--ice);background:rgba(127,178,214,.08);padding:1px 5px;border-radius:3px}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border:1px solid transparent;white-space:nowrap}
+  .tag.a{color:#c6efb5;background:rgba(111,174,90,.15);border-color:rgba(111,174,90,.5)}
+  .tag.b1{color:#f5dfa5;background:rgba(217,164,65,.15);border-color:rgba(217,164,65,.5)}
+  .tag.b2{color:#f7c2b3;background:rgba(201,86,63,.15);border-color:rgba(201,86,63,.5)}
+  .tag.w{color:#f0c9a8;background:rgba(184,113,58,.18);border-color:rgba(184,113,58,.6)}
+  .tag.r{color:#cfe3f0;background:rgba(127,178,214,.15);border-color:rgba(127,178,214,.5)}
+  .tag.j{color:#dccff3;background:rgba(154,123,209,.18);border-color:rgba(154,123,209,.55)}
+  .tag.no{color:#f7c2b3;border-color:rgba(201,86,63,.5)}
+  .tag.yes{color:#c6efb5;border-color:rgba(111,174,90,.5)}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  @media (max-width:1100px){.grid{grid-template-columns:1fr}}
+  .card{position:relative;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:10px;padding:18px 20px 16px;box-shadow:0 6px 22px rgba(0,0,0,.35)}
+  .card.w{border-top:3px solid var(--copper)}
+  .card.r{border-top:3px solid var(--ice)}
+  .card.j{border-top:3px solid var(--violet)}
+  .card .badge{position:absolute;top:-1px;right:16px;background:#3a2a12;color:var(--gold2);border:1px solid var(--gold);border-top:none;border-radius:0 0 6px 6px;padding:3px 10px;font-family:Georgia,serif;font-size:12px;letter-spacing:.08em}
+  .card h3{margin:2px 0 0;font-size:19px;color:var(--gold2)}
+  .card .en{color:var(--ink2);font-style:italic;font-size:13.5px;margin-bottom:10px}
+  .card dl{display:grid;grid-template-columns:150px 1fr;gap:4px 12px;margin:8px 0 0;font-size:13.5px}
+  .card dt{color:var(--muted)}
+  .card dd{margin:0}
+  .card .why{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--ink)}
+  .card .why b{color:var(--copper2)}
+  .glow{color:var(--gold2);text-shadow:0 0 10px rgba(240,199,94,.5)}
+  ul{margin:.3em 0 .8em 1.3em}
+  li{margin:.2em 0}
+  .kv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:10px 0}
+  @media (max-width:1100px){.kv{grid-template-columns:repeat(2,1fr)}}
+  .kv .cell{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+  .kv .cell .k{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+  .kv .cell .v{font-family:Georgia,serif;font-size:20px;color:var(--gold2)}
+  .small{font-size:12.5px;color:var(--muted)}
+  .toc{columns:2;column-gap:40px;font-size:14px}
+  .toc a{color:var(--ink2);text-decoration:none}
+  .toc a:hover{color:var(--gold2)}
+  ol.apply li{margin:.35em 0}
+  hr{border:0;border-top:1px solid var(--line);margin:30px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Verzauberungs-Runen Tier IV<br><span class="sub" style="font-size:20px;color:var(--copper2)">Die stärksten und einzigartigsten Runen für die 90er, plus eine Schmuck-Linie</span></h1>
+<div class="meta">
+  <span><b>Studio:</b> Grim Reach, Balance-Designer</span>
+  <span><b>Datum:</b> 25.08.2026</span>
+  <span><b>Status:</b> Design-Vorschlag, keine Zahl ist angewendet</span>
+  <span><b>Auftrag:</b> „Ab Level 80 gibt es keine neuen Runen mehr, im 90er-Bereich sollten die stärksten Runen mit den einzigartigsten Effekten möglich sein."</span>
+</div>
+
+<div class="box gold tldr">
+  <h3 style="margin-top:0">Das Wichtigste in fünf Sätzen</h3>
+  <ul>
+    <li><b>Verifiziert:</b> Die letzte neue Rune ist heute die Bollwerk-Rune III bei Runecrafting 79. Danach kommen nur noch Fokus-Verzauberungen (85 bis 99), aber keine einzige neue Verzauberungs-Rune. Zwischen 80 und 99 liegt für Runen eine leere Etage.</li>
+    <li><b>Kernentscheidung:</b> Tier IV darf keine „größere Zahl" sein. Seit dem Stapel-Entscheid von heute erreicht der theoretische BiS-Build den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90. Jede zusätzliche Stat-Rune würde dreifach zählen und nur an Deckel klopfen.</li>
+    <li><b>Der Vorschlag:</b> 14 neue Runen (5 Waffe, 4 Rüstung, 5 Schmuck), alle als <b>Aktiv-Effekte</b>. Sie sind damit automatisch einmalig pro Item, stapeln nicht über Quellen (die Engine nimmt je Effekt-Art nur die stärkste Magnitude) und geben Build-Identität statt Rohstat.</li>
+    <li><b>Aufwand:</b> 11 der 14 Runen laufen mit der heutigen Engine sofort (die Effekt-Arten existieren bereits in <code>combat.ts</code>). 3 brauchen kleine bis mittlere Engine-Arbeit (Block-Heilung, Kampf-XP, Beutechance). Die Schmuck-Linie braucht nur ein <code>appliesTo: ["jewelry"]</code>, der Tag existiert schon.</li>
+    <li><b>Balance-Hülle:</b> Kein einziger gepinnter Messwert der Envelope-Suite bewegt sich, weil der BiS-Builder Aktiv-Effekte mit Score 0 bewertet. Der eigentliche Balance-Punkt ist die multiplikative Kombination der Waffen-Runen auf einem Item, dafür schlage ich eine eigene Sim-Messung vor.</li>
+  </ul>
+</div>
+
+<div class="toc">
+  <a href="#ist">1. Ist-Stand (verifiziert)</a><br>
+  <a href="#prinzip">2. Design-Prinzipien für Tier IV</a><br>
+  <a href="#ueberblick">3. Übersicht der 14 Runen</a><br>
+  <a href="#karten">4. Karten je Rune</a><br>
+  <a href="#rezepte">5. Rezepte, Level, XP, Gold</a><br>
+  <a href="#zutaten">6. Zutaten-Landkarte</a><br>
+  <a href="#huelle">7. Was das für die Balance-Hülle heißt</a><br>
+  <a href="#apply">8. Umsetzungs-Reihenfolge</a><br>
+  <a href="#offen">9. Offene Chef-Entscheidungen</a><br>
+  <a href="#quellen">10. Quellen</a>
+</div>
+
+<!-- ───────────────────────── 1 IST ───────────────────────── -->
+<h2 id="ist">1. Ist-Stand (verifiziert am Content und an der Engine)</h2>
+
+<div class="kv">
+  <div class="cell"><div class="k">Affix-Familien</div><div class="v">12</div><div class="small">8 Waffe, 4 Rüstungs-Trinität</div></div>
+  <div class="cell"><div class="k">Runen im Katalog</div><div class="v">36</div><div class="small">12 Familien × Tier I bis III</div></div>
+  <div class="cell"><div class="k">Höchstes Runen-Rezept</div><div class="v">RC 79</div><div class="small">Bollwerk-Rune III</div></div>
+  <div class="cell"><div class="k">Schmuck-Runen</div><div class="v">0</div><div class="small">kein Affix trägt „jewelry"</div></div>
+</div>
+
+<h3>1.1 Der Affix-Katalog heute (<code>packages/content/src/index.ts</code>, ab Zeile 17132)</h3>
+<div class="tscroll">
+<table>
+  <thead><tr><th>Affix</th><th>Rune (DE)</th><th>Ziel</th><th>Art</th><th>Tier I</th><th>Tier II</th><th>Tier III</th><th class="num">Rezept-Level I / II / III</th></tr></thead>
+  <tbody>
+    <tr><td><code>affix_keen</code></td><td>Rune der Schärfe</td><td>weapon_melee</td><td>Stat</td><td>str +3</td><td>str +6</td><td>str +10</td><td class="num">15 / 38 / 62</td></tr>
+    <tr><td><code>affix_arcane</code></td><td>Rune des Arkanen</td><td>weapon_magic</td><td>Stat</td><td>int +3</td><td>int +6</td><td>int +10</td><td class="num">30 / 42 / 75</td></tr>
+    <tr><td><code>affix_precise</code></td><td>Rune der Präzision</td><td>any_weapon</td><td>Stat</td><td>lck +2</td><td>lck +4</td><td>lck +6</td><td class="num">22 / 45 / 70</td></tr>
+    <tr><td><code>affix_swift</code></td><td>Rune der Schnelle</td><td>any_weapon</td><td>Stat</td><td>dex +1</td><td>dex +2</td><td>dex +3</td><td class="num">25 / 48 / 72</td></tr>
+    <tr><td><code>affix_hunter</code></td><td>Rune der Jagd</td><td>weapon_ranged</td><td>Stat</td><td>lck +2</td><td>dex +1, lck +3</td><td>lck +4</td><td class="num">28 / 40 / 74</td></tr>
+    <tr><td><code>affix_flame</code></td><td>Rune der Flamme</td><td>any_weapon</td><td>Aktiv (burn)</td><td>15 %, 3/s, 3 s</td><td>22 %, 6/s, 4 s</td><td>30 %, 10/s, 5 s</td><td class="num">18 / 40 / 65</td></tr>
+    <tr><td><code>affix_frost</code></td><td>Rune des Frosts</td><td>any_weapon</td><td>Aktiv (frost)</td><td>15 %, 2,5 s</td><td>22 %, 3,5 s</td><td>30 %, 5 s</td><td class="num">20 / 42 / 68</td></tr>
+    <tr><td><code>affix_shock</code></td><td>Rune des Sturms</td><td>any_weapon</td><td>Aktiv (shock)</td><td>15 %, 0,15, 3 s</td><td>20 %, 0,22, 4 s</td><td>28 %, 0,30, 5 s</td><td class="num">20 / 42 / 68</td></tr>
+    <tr><td><code>affix_aegis</code></td><td>Rune der Ägide</td><td>armor, nur Platte</td><td>Trinity</td><td>armorRating +6</td><td>+12</td><td>+20</td><td class="num">16 / 39 / 63</td></tr>
+    <tr><td><code>affix_evasion</code></td><td>Rune des Ausweichens</td><td>armor, nur Leder</td><td>Trinity</td><td>evasionRating +5</td><td>+10</td><td>+16</td><td class="num">19 / 44 / 67</td></tr>
+    <tr><td><code>affix_warding</code></td><td>Rune der Abwehr</td><td>armor, nur Stoff</td><td>Trinity</td><td>wardCapacity +12</td><td>+25</td><td>+40</td><td class="num">23 / 49 / 73</td></tr>
+    <tr><td><code>affix_bulwark</code></td><td>Rune des Bollwerks</td><td>shield</td><td>Trinity</td><td>blockChance 0,03 (MAX)</td><td>0,05</td><td>0,08</td><td class="num">27 / 53 / <b class="glow">79</b></td></tr>
+  </tbody>
+</table>
+</div>
+<p class="small">Tier-III-Rezepte verbrauchen heute je Rune 2 bis 3 Hohle Essenz (<code>essence_void</code>, Foraging 73) oder 1 bis 2 Göttliche Essenz (<code>essence_divine</code>, Foraging 93), 2 bis 3 Strahlendes Pigment (Farming 84) und 1 bis 2 Leerenschilf (Farming 84) oder 3 Element-Essenzen. Runecrafting selbst läuft weiter bis 99 (Aetherium-Fokus 90, Götzeneisen-Fokus 99), aber ohne eine einzige neue Verzauberungs-Rune.</p>
+
+<h3>1.2 Regeln seit dem 25.08.2026 (Chef-Entscheid)</h3>
+<ul>
+  <li><b>Stat-Runen stapeln.</b> Drei Slots, dreimal dieselbe Rune, dreifacher Bonus (<code>applyEnchant</code> in <code>packages/engine/src/enchant.ts</code>).</li>
+  <li><b>Aktiv-Effekt-Runen sind pro Item einmalig.</b> <code>affixHasActiveEffect</code> prüft, ob der Affix irgendein <code>weaponEffectByTier</code> trägt. Ein zweites Exemplar wird als <code>duplicate_effect</code> abgewiesen, ohne Rune oder Gold zu verbrauchen.</li>
+  <li><b>Slots nach Rarity</b> (<code>enchantSlotsFor</code>, shared): poor/common 1, magic/rare/superRare 2, epic 3, <b class="glow">legendary/godly 4</b>. Der letzte Punkt ist für Schmuck wichtig: die 21 Meister-Ringe sind legendär und tragen vier Slots.</li>
+  <li><b>Trinity-Gate:</b> Rüstungsrunen haften nur auf einem Teil, das den jeweiligen Trinity-Stat schon über 0 trägt (<code>trinityGatePasses</code>). Schmuck trägt keinen Trinity-Stat, also blockt das Gate heute jede Rüstungsrune auf Ringen. Genau deshalb ist Schmuck heute faktisch unverzauberbar, obwohl seine Tags <code>["any","jewelry","armor"]</code> lauten.</li>
+</ul>
+
+<h3>1.3 Harte Deckel (<code>packages/shared/src/index.ts</code>)</h3>
+<div class="tscroll">
+<table>
+  <thead><tr><th>Deckel</th><th class="num">Wert</th><th>Stand im BiS-Voll-Stack (Envelope-Suite, 25.08.)</th></tr></thead>
+  <tbody>
+    <tr><td><code>DODGE_CAP</code></td><td class="num">0,40</td><td><b>Erreicht ab CL 60</b> (drei Ausweich-Runen III auf jedem Leder-Teil).</td></tr>
+    <tr><td><code>DEFENSE_MITIGATION_MAX</code></td><td class="num">0,80</td><td><b>Erreicht bei CL 90</b> (armorRating 298,5 → 538,5 durch Stapeln).</td></tr>
+    <tr><td><code>BLOCK_CAP</code></td><td class="num">0,50</td><td>0,47 bei CL 90, Bollwerk-Rune wirkt als MAX, nicht additiv.</td></tr>
+    <tr><td><code>CRIT_CHANCE_CAP</code> / <code>CRIT_DAMAGE_CAP</code></td><td class="num">0,50 / 2,5</td><td>Beide bei CL 90 erreicht (Suffixe + Tonika), wie vor dem Stapel-Entscheid.</td></tr>
+    <tr><td><code>TEMPO_REDUCTION_CAP</code></td><td class="num">0,20</td><td>Haste-Build hart bei 80 % des Waffen-Intervalls.</td></tr>
+    <tr><td><code>ARMOR_PEN_CAP</code> / <code>PRECISION_CAP</code> / <code>WARD_BREAK_CAP</code></td><td class="num">0,6 / 0,6 / 0,75</td><td>Nur aus Waffen-Signatur, keine Rune speist sie heute.</td></tr>
+    <tr><td><code>MELEE_LIFESTEAL_CAP_PCT</code> / <code>_ABS</code></td><td class="num">5 % / 1,2 HP je Treffer</td><td>Lifesteal-Pin 0,095 (Melee CL 60/90).</td></tr>
+    <tr><td><code>WARDING_REGEN_CAP</code></td><td class="num">2,0 Ward/s</td><td>Ward-Pool des Stoff-Builds bei CL 90: <b>1179,5</b> (Beobachtungspunkt, offen beim Chef).</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>1.4 Was die Engine heute kann (und woher eine Rune gelesen wird)</h3>
+<div class="box">
+  <p><b>Zwei Effekt-Familien auf demselben Datenfeld</b> (<code>WeaponEffect</code> in shared, Waffen 2.0 §7.2):</p>
+  <ul>
+    <li><b>Status-Procs</b> (burn, bleed, poison, frost, shock): werden <u>nur von der Mainhand</u> gelesen (<code>mainhandStatusEffects</code> in <code>combat.ts</code>). Eine Brand-Rune auf einem Ring würde heute stumm nichts tun.</li>
+    <li><b>Spezial-Kinds</b> (29 Stück, <code>SPECIAL_EFFECT_TYPES</code>): werden <u>aus allen Ausrüstungs-Slots</u> gesammelt, instanz-bewusst, also inklusive Runen (<code>collectSpecialEffects</code>). Gleiche Kinds aus mehreren Quellen stapeln nicht, die stärkste Magnitude gewinnt; verschiedene Kinds multiplizieren auf den Einzelschlag.</li>
+  </ul>
+  <p>Das ist die Tür für diesen Vorschlag: <b>ein Affix mit einem Spezial-Kind in <code>weaponEffectByTier</code> wirkt heute schon auf Waffe, Rüstung und Schmuck</b>, ohne Engine-Änderung. Vorhanden und im Content bereits genutzt: execute, giantSlayer, desperation, bounty, firstBlood, momentum, firstStrike, eagleEye, everyNth, critBurst, vengeance, cooldownOnKill, manaOnKill, healOnKill, overkillCarry, antiRegen, manaDrain, wardSiphon, plaguebearer, gutter, frostbite, catalyst, surplus, luckyStrike, packLeader, thorns, bane. Der Hook <code>doubleStrike</code> ist in <code>combat.ts</code> fertig implementiert (Zweitschlag ohne Kaskade und ohne Manakosten), aber noch von keinem Item genutzt.</p>
+  <p class="small">Nicht vorhanden und deshalb Engine-Arbeit: Heilung bei Block, Kampf-XP-Bonus, Beutechance-Bonus, Offline-Bonus, Set-Synergien zwischen Runen.</p>
+</div>
+
+<h3>1.5 Ausgangslage der Balance-Hülle (Suitenkopf <code>balance-envelope.test.ts</code>)</h3>
+<p>„Voll-Stack" heißt seit heute: der beste Affix auf allen Rarity-Slots. Folge laut Suite: Dodge-Cap ab CL 60 und Mitigations-Cap bei CL 90 werden erreicht, beides Clamps, nichts läuft über, aber die Kopffreiheit ist weg. Der Ward-Pool des BiS-Stoff-Builds springt bei CL 90 von 779,5 auf 1179,5. Die Suite nennt als kleinste Bremse, Trinity-Runen vom Stapeln auszunehmen. Dieses Dokument ändert daran nichts, es baut nur nichts darauf, was diese Deckel weiter belastet.</p>
+
+<!-- ───────────────────────── 2 PRINZIPIEN ───────────────────────── -->
+<h2 id="prinzip">2. Design-Prinzipien für Tier IV</h2>
+<div class="grid">
+  <div class="box"><h4>1. Einzigartigkeit statt Rohstat</h4><p>Kein Tier IV einer bestehenden Stat-Familie (keine Schärfe IV mit str +14). Jeder Stat-Punkt würde durch das Stapeln dreifach, auf legendären Teilen vierfach zählen, und die Ausweich-, Mitigations- und Krit-Deckel sind schon erreicht. Stärke kommt aus Bedingung und Timing: Finisher, Ramp, Zweitschlag, Rückschlag.</p></div>
+  <div class="box"><h4>2. Aktiv-Effekt heißt einmalig, und das ist gewollt</h4><p>Alle 14 Runen tragen ein <code>weaponEffectByTier</code>. Damit greifen zwei bestehende Regeln ohne neue Sonderfälle: einmalig pro Item (<code>affixHasActiveEffect</code>) und „stärkste Magnitude gewinnt" über Quellen hinweg. Eine Waffe mit nativem Henker-Effekt (0,25) und der Rune des Gerichts (0,30) hat 0,30, nicht 0,55.</p></div>
+  <div class="box"><h4>3. Drei Stile, drei Identitäten</h4><p>Melee = Rohkraft und Ausdauer (Kriegspfad, Eiserne Antwort). Ranged = Tempo und Öffnung (Zweiter Pfeil, Hinterhalt). Magie = Mana-Disziplin und Status-Synergie (Dünner Schleier, Schleiertrinker, Auszehrung). Die Schmuck-Linie ist stilneutral und trägt das Idle-Herz: Slayer, Gold, Takt, Chronik, Beute.</p></div>
+  <div class="box"><h4>4. Neue Affix-Ids, keine vierte Zeile in alten Arrays</h4><p>Jede T4-Rune ist eine eigene Affix-Familie mit einem einzigen belegten Tier (Rune trägt <code>tier: 4</code>, Arrays bis Index 3 aufgefüllt). So bleibt „Max-Rune-Tier" der alten 12 Familien bei III, der BiS-Builder der Envelope-Suite wählt weiter Tier III, und die Gold-Formel <code>100 · tier · (1 + Rarity-Index)</code> liefert für Tier IV automatisch den höheren Preis.</p></div>
+  <div class="box"><h4>5. Die 90er kosten 90er-Zutaten</h4><p>Göttliche Essenz (Foraging 93), Strahlendes Pigment und Leerenschilf (Farming 84), Götteratem (Farming 86), Götzenblüte (Farming 95). Die zwei Spitzen-Runen fordern zusätzlich einen Götzensplitter (Boss-Drop aus Götzenhalle, Schuppenwand, Turm), passend zu „Combat ist fundamental".</p></div>
+  <div class="box"><h4>6. Runen dürfen glühen</h4><p>Die Equipment-Regel „kein Schimmer" gilt für Rüstung und Waffen, nicht für Runen. Vorschlag für den Art-Brief: Waffen-T4 mit Glut-Gold, Rüstungs-T4 mit Eis-Blau, Schmuck-Linie mit violettem Leerenglühen. Namen kommen aus der Weltlore-Bibel und der Aschechronik (Gericht, Chronik, Zähler, Ernte), keine Comedy.</p></div>
+</div>
+
+<!-- ───────────────────────── 3 ÜBERSICHT ───────────────────────── -->
+<h2 id="ueberblick">3. Übersicht der 14 Runen</h2>
+<p class="small">Engine-Aufwand: <span class="tag a">A sofort</span> = Effekt-Art existiert und wird aus dem Ziel-Slot gelesen. <span class="tag b1">B klein</span> = neuer Kind mit 1 Bedingung + 1 Wirkung an bestehendem Hook. <span class="tag b2">B mittel</span> = neuer Pfad (Loot-Roll) inklusive Guard.</p>
+<div class="tscroll">
+<table>
+  <thead><tr><th>#</th><th>Rune (DE)</th><th>Rune (EN)</th><th>Linie</th><th>Ziel</th><th>Effekt (Zahlen)</th><th>Engine-Kind</th><th>Stapelbar</th><th class="num">RC-Level</th><th>Aufwand</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Rune des Kriegspfads</td><td>Rune of the Warpath</td><td><span class="tag w">Waffe</span></td><td>weapon_melee</td><td>+2 % Schaden je Treffer, bis 12 Stapel (+24 %), endet mit dem Kampf</td><td><code>momentum</code> 0,02 × 12</td><td><span class="tag no">nein</span></td><td class="num">85</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>2</td><td>Rune des Zweiten Pfeils</td><td>Rune of the Second Arrow</td><td><span class="tag w">Waffe</span></td><td>weapon_ranged</td><td>12 % Chance auf einen sofortigen Zweitschlag mit voller Auflösung, ohne Kosten, keine Kaskade</td><td><code>doubleStrike</code> chance 0,12</td><td><span class="tag no">nein</span></td><td class="num">85</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>3</td><td>Rune des Dünnen Schleiers</td><td>Rune of the Thin Veil</td><td><span class="tag w">Waffe</span></td><td>weapon_magic</td><td>+20 % Zauberschaden, solange das Mana über 80 % liegt</td><td><code>surplus</code> 0,20 / 0,8</td><td><span class="tag no">nein</span></td><td class="num">85</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>4</td><td>Rune der Eisernen Antwort</td><td>Rune of the Iron Answer</td><td><span class="tag r">Rüstung</span></td><td>armor, nur Platte</td><td>Angreifer erleiden 2,5 Schaden je gelandetem Treffer</td><td><code>thorns</code> 2,5</td><td><span class="tag no">nein</span></td><td class="num">87</td><td><span class="tag a">A</span> + Gate <span class="tag b1">B</span></td></tr>
+    <tr><td>5</td><td>Rune des Hinterhalts</td><td>Rune of the Ambush</td><td><span class="tag r">Rüstung</span></td><td>armor, nur Leder</td><td>Der erste Treffer jedes Kampfes verursacht doppelten Schaden</td><td><code>firstStrike</code> 1,0</td><td><span class="tag no">nein</span></td><td class="num">87</td><td><span class="tag a">A</span> + Gate <span class="tag b1">B</span></td></tr>
+    <tr><td>6</td><td>Rune des Schleiertrinkers</td><td>Rune of the Veil-Drinker</td><td><span class="tag r">Rüstung</span></td><td>armor, nur Stoff</td><td>10 % des verursachten Schadens füllen den eigenen Ward-Pool</td><td><code>wardSiphon</code> 0,10</td><td><span class="tag no">nein</span></td><td class="num">87</td><td><span class="tag a">A</span> + Gate <span class="tag b1">B</span></td></tr>
+    <tr><td>7</td><td>Rune des Kopfgelds</td><td>Rune of the Bounty</td><td><span class="tag j">Schmuck</span></td><td>jewelry</td><td>+20 % Schaden gegen das aktive Slayer-Ziel</td><td><code>bounty</code> 0,20</td><td><span class="tag no">nein</span></td><td class="num">88</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>8</td><td>Rune des Zählers</td><td>Rune of the Tallyman</td><td><span class="tag j">Schmuck</span></td><td>jewelry</td><td>+15 % Gold aus Tötungen</td><td><code>luckyStrike</code> 0,15</td><td><span class="tag no">nein</span></td><td class="num">88</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>9</td><td>Rune der Auszehrung</td><td>Rune of Wasting</td><td><span class="tag w">Waffe</span></td><td>any_weapon</td><td>Eigene Brand-, Blutungs- und Gift-Ticks richten 50 % mehr Schaden an</td><td><code>gutter</code> 0,5</td><td><span class="tag no">nein</span></td><td class="num">89</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>10</td><td>Rune der Rastlosen</td><td>Rune of the Restless</td><td><span class="tag j">Schmuck</span></td><td>jewelry</td><td>Tötungen verkürzen die Erholungspause um 1 s (von 2 s)</td><td><code>cooldownOnKill</code> 1000 ms</td><td><span class="tag no">nein</span></td><td class="num">90</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>11</td><td>Rune der Ungebrochenen Mauer</td><td>Rune of the Unbroken Wall</td><td><span class="tag r">Rüstung</span></td><td>shield</td><td>Jeder erfolgreiche Block heilt 2 % der max. HP</td><td><code>blockRestore</code> 0,02 (neu)</td><td><span class="tag no">nein</span></td><td class="num">91</td><td><span class="tag b1">B klein</span></td></tr>
+    <tr><td>12</td><td>Rune des Gerichts</td><td>Rune of the Judgement</td><td><span class="tag w">Waffe</span></td><td>any_weapon</td><td>+30 % Schaden gegen Ziele unter 25 % Leben</td><td><code>execute</code> 0,30 / 0,25</td><td><span class="tag no">nein</span></td><td class="num">92</td><td><span class="tag a">A</span></td></tr>
+    <tr><td>13</td><td>Rune der Chronik</td><td>Rune of the Chronicle</td><td><span class="tag j">Schmuck</span></td><td>jewelry</td><td>+10 % Kampf-Erfahrung (alle sechs Kampf-Skills)</td><td><code>combatXp</code> 0,10 (neu)</td><td><span class="tag no">nein</span></td><td class="num">93</td><td><span class="tag b1">B klein</span></td></tr>
+    <tr><td>14</td><td>Rune der Nachlese</td><td>Rune of the Gleaning</td><td><span class="tag j">Schmuck</span></td><td>jewelry</td><td>+10 % Beutechance auf reguläre Loot-Tabellen (nicht Elite-Uniques)</td><td><code>lootChance</code> 0,10 (neu)</td><td><span class="tag no">nein</span></td><td class="num">95</td><td><span class="tag b2">B mittel</span></td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ───────────────────────── 4 KARTEN ───────────────────────── -->
+<h2 id="karten">4. Karten je Rune</h2>
+
+<h3>4.1 Waffen-Linie (5 Runen)</h3>
+<div class="grid">
+
+<div class="card w"><div class="badge">TIER IV · WAFFE</div>
+  <h3>Rune des Kriegspfads</h3><div class="en">Rune of the Warpath · Präfix „Kriegspfad-" / „Warpath"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_warpath</code> · <code>rune_warpath_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["weapon_melee"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 12 }</code>: +2 % je Treffer, maximal +24 %, Zähler lebt nur im laufenden Kampf.</dd>
+    <dt>Stapelbar</dt><dd>Nein (Aktiv-Effekt). Waffen-native Blutrausch-Effekte tragen heute 5 bis 8 Stapel, die Rune ist die nächste Stufe und gewinnt per MAX.</dd>
+    <dt>Rezept</dt><dd>3 Hohle Essenz, 3 Strahlendes Pigment, 2 Leerenschilf, 1 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 85 · 24 s · 2330 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Melee ist der Stil der langen Kämpfe. Gegen ein Farm-Ziel mit drei Treffern bringt die Rune etwa +3 %, gegen den Nekromantenfürsten oder einen Idol-Boss läuft sie auf +24 % hoch. Sie belohnt genau das, was Melee ohnehin tut: dranbleiben. Kein Deckel wird berührt, weil der Bonus multiplikativ auf den Einzelschlag wirkt und nicht über Attribute läuft.</div>
+</div>
+
+<div class="card w"><div class="badge">TIER IV · WAFFE</div>
+  <h3>Rune des Zweiten Pfeils</h3><div class="en">Rune of the Second Arrow · Präfix „Zweitpfeil-" / „Second-Arrow"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_second_arrow</code> · <code>rune_second_arrow_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["weapon_ranged"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "doubleStrike", chance: 0.12, magnitude: 0, durationMs: 0 }</code>: 12 % Chance je Angriff auf einen sofortigen Zweitschlag mit Treffer-, Krit- und Effekt-Auflösung, keine Kaskade.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Erstes Content-Item überhaupt für diesen Hook, combat-dev macht eine Sichtprüfung des Pfads.</dd>
+    <dt>Rezept</dt><dd>3 Hohle Essenz, 3 Strahlendes Pigment, 2 Leerenschilf, 1 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 85 · 24 s · 2330 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Ranged lebt von Tempo, und Tempo ist bei 80 % des Waffen-Intervalls hart gedeckelt. Der Zweitschlag ist die einzige Tempo-Quelle, die am Intervall vorbeigeht, und deshalb bewusst bei 12 % und nicht bei 20 %: Haste-Cap (×1,25) mal Zweitschlag (×1,12) ergibt ×1,40 Angriffe, das ist der Punkt, an dem ich die Kombination in der Sim sehen will (Abschnitt 7).</div>
+</div>
+
+<div class="card w"><div class="badge">TIER IV · WAFFE</div>
+  <h3>Rune des Dünnen Schleiers</h3><div class="en">Rune of the Thin Veil · Präfix „Verschleiert" / „Veiled"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_thin_veil</code> · <code>rune_thin_veil_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["weapon_magic"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "surplus", chance: 1, magnitude: 0.20, durationMs: 0, threshold: 0.8 }</code>: +20 % Zauberschaden, solange das Mana über 80 % liegt.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Vier Stäbe tragen den Effekt heute nativ mit denselben Werten, die Rune bringt ihn auf jede andere Magiewaffe.</dd>
+    <dt>Rezept</dt><dd>3 Hohle Essenz, 3 Strahlendes Pigment, 3 Aetheressenz, 1 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 85 · 24 s · 2330 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Magie ist der Stil der Ressource. Die Rune belohnt Mana-Disziplin (Manaregeneration, Mana bei Tötung, sparsame Zauber) mit einer echten Uptime-Frage: realistisch +8 bis +14 %, bei einem Mana-Build nahe +20 %. Der Name nimmt die Essenz-Leiter der Lore auf: der Schleier zwischen Welt und Nichts wird dünn, wenn der Brunnen voll ist.</div>
+</div>
+
+<div class="card w"><div class="badge">TIER IV · WAFFE</div>
+  <h3>Rune der Auszehrung</h3><div class="en">Rune of Wasting · Präfix „Auszehrend" / „Wasting"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_wasting</code> · <code>rune_wasting_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["any_weapon"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 }</code>: eigene Brand-, Blutungs- und Gift-Ticks richten 50 % mehr Schaden an.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Parität zum Waffen-Topwert (drei Waffen tragen 0,5).</dd>
+    <dt>Rezept</dt><dd>2 Göttliche Essenz, 3 Strahlendes Pigment, 3 Glutessenz, 1 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 89 · 26 s · 3075 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Das ist die Ketten-Proc-Rune, die der Chef gemeint hat. Sie tut allein nichts. Mit Flammen-Rune III (10 Schaden/s, 5 s, 30 % Chance) wird der Brand zu 15/s. Der Spieler gibt zwei von drei Slots für die Kombination her und bekommt dafür bei hoher Brand-Uptime den größten Einzelposten des Sets, grob +20 bis +25 % Gesamt-DPS. <b>Das ist der Wert, den ich vor dem Apply in der Sim sehen will</b> (Abschnitt 7.3); Rückfall-Option 0,35.</div>
+</div>
+
+<div class="card w"><div class="badge">TIER IV · WAFFE · CHASE</div>
+  <h3>Rune des Gerichts</h3><div class="en">Rune of the Judgement · Präfix „Richtend" / „Judging"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_judgement</code> · <code>rune_judgement_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["any_weapon"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "execute", chance: 1, magnitude: 0.30, durationMs: 0, threshold: 0.25 }</code>: +30 % Schaden gegen Ziele unter 25 % Leben.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Fünf Waffen tragen Henker 0,25 / 0,20 nativ, die Rune ist die nächste Stufe und gewinnt per MAX, addiert sich also nie mit der Klinge des Letzten Götzen.</dd>
+    <dt>Rezept</dt><dd>2 Göttliche Essenz, 4 Strahlendes Pigment, 2 Leerenschilf, <b class="glow">1 Götzensplitter</b></dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 92 · 28 s · 3850 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Der Finisher. Über einen Kampf gemittelt etwa +7,5 %, gefühlt aber die letzte Viertel-Leiste, die plötzlich fällt. Der Götzensplitter macht sie zur ersten Rune, die man sich in der Götzenhalle oder an der Schuppenwand verdienen muss (Kapitel 19 der Aschechronik heißt „Das Gericht"). Bewusst kein Name der drei Klingen des Letzten Götzen, damit „Letztes Urteil" der Waffe vorbehalten bleibt.</div>
+</div>
+
+</div>
+
+<h3>4.2 Rüstungs-Linie (4 Runen, klassen-gebunden)</h3>
+<div class="box warn"><b>Ein Gate fehlt heute:</b> Das Trinity-Gate prüft nur <code>trinityByTier</code>. Eine Rüstungsrune ohne Trinity-Feld würde überall haften, wo der Tag „armor" steht, und der steht auch auf Ringen, Amulett und Umhang. Die vier Rüstungsrunen brauchen deshalb ein neues optionales Feld <code>requiresTrinity: "armorRating" | "evasionRating" | "wardCapacity" | "blockChance"</code> an <code>AffixDef</code>, das <code>trinityGatePasses</code> genauso auswertet (logic-dev, klein, eine Zeile Prüfung plus Test). Ohne dieses Feld landet die Eiserne Antwort auf einem Meister-Ring.</div>
+<div class="grid">
+
+<div class="card r"><div class="badge">TIER IV · PLATTE</div>
+  <h3>Rune der Eisernen Antwort</h3><div class="en">Rune of the Iron Answer · Präfix „Antwortend" / „Answering"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_iron_answer</code> · <code>rune_iron_answer_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["armor"]</code>, <code>requiresTrinity: "armorRating"</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "thorns", chance: 1, magnitude: 2.5, durationMs: 0 }</code>: 2,5 flacher Schaden an den Angreifer je gelandetem Treffer.</dd>
+    <dt>Stapelbar</dt><dd>Nein, und über fünf Platten-Teile hinweg wirkt nur die stärkste Quelle. Die Dornenpanzer-Handschuhe tragen 1,5, die Rune ist die nächste Stufe.</dd>
+    <dt>Rezept</dt><dd>1 Göttliche Essenz, 3 Strahlendes Pigment, 3 Leerenschilf, 1 Götzeneisenbarren</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 87 · 25 s · 2680 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span> + <span class="tag b1">Gate B klein</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Platte ist am Mitigations-Deckel angekommen, mehr armorRating wäre Verschwendung. Der Rückschlag dreht die Identität um: wer den Tank trifft, zahlt. Bei einem L90-Gegner (Angriff alle 3 s, 40 bis 75 % Landechance) sind das etwa 0,4 bis 0,6 Schaden/s, also +5 bis +10 % des Spieler-DPS, skaliert mit der Zahl der Angreifer-Treffer und ist damit gegen Bosse am stärksten.</div>
+</div>
+
+<div class="card r"><div class="badge">TIER IV · LEDER</div>
+  <h3>Rune des Hinterhalts</h3><div class="en">Rune of the Ambush · Präfix „Lauernd" / „Ambushing"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_ambush</code> · <code>rune_ambush_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["armor"]</code>, <code>requiresTrinity: "evasionRating"</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 }</code>: der erste Treffer jedes Kampfes verursacht doppelten Schaden.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Vier Dolche tragen den Effekt nativ (×2), die Rune bringt ihn auf jeden Leder-Build, egal welche Waffe.</dd>
+    <dt>Rezept</dt><dd>1 Göttliche Essenz, 3 Strahlendes Pigment, 3 Leerenschilf, 1 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 87 · 25 s · 2680 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span> + <span class="tag b1">Gate B klein</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Leder steht am Ausweich-Deckel, mehr evasionRating hilft nicht mehr. Der Hinterhalt ist das Spiegelbild des Kriegspfads: +33 % gegen ein Drei-Treffer-Farmziel (Waldhase, 36 HP), etwa +4 % gegen den Nekromanten, praktisch 0 gegen Bosse. Leder farmt schnell, Platte hält lang, das ist die Absicht.</div>
+</div>
+
+<div class="card r"><div class="badge">TIER IV · STOFF</div>
+  <h3>Rune des Schleiertrinkers</h3><div class="en">Rune of the Veil-Drinker · Präfix „Schleiertrinkend" / „Veil-Drinking"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_veil_drinker</code> · <code>rune_veil_drinker_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["armor"]</code>, <code>requiresTrinity: "wardCapacity"</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "wardSiphon", chance: 1, magnitude: 0.10, durationMs: 0 }</code>: 10 % des verursachten Schadens füllen den eigenen Ward-Pool.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Das Hohlschleier-Medaillon trägt 0,08, die Rune gewinnt per MAX, beide zusammen bleiben 0,10.</dd>
+    <dt>Rezept</dt><dd>1 Göttliche Essenz, 3 Strahlendes Pigment, 3 Aetheressenz, 1 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 87 · 25 s · 2680 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span> + <span class="tag b1">Gate B klein</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Die Ward-Regeneration bei Treffer aus der Aufgabenliste des Chefs. Sie vergrößert den Pool nicht (der 1179,5-Beobachtungspunkt bleibt exakt, was er ist), sie füllt ihn: bei 5 Schaden/s etwa 0,5 Ward/s, deutlich unter dem Warding-Deckel von 2,0/s. Die Idole trinken das Land, der Magier trinkt den Schleier zurück.</div>
+</div>
+
+<div class="card r"><div class="badge">TIER IV · SCHILD</div>
+  <h3>Rune der Ungebrochenen Mauer</h3><div class="en">Rune of the Unbroken Wall · Präfix „Ungebrochen" / „Unbroken"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_unbroken_wall</code> · <code>rune_unbroken_wall_iv</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["shield"]</code>, <code>requiresTrinity: "blockChance"</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "blockRestore", chance: 1, magnitude: 0.02, durationMs: 0 }</code> (neu): jeder erfolgreiche Block heilt 2 % der maximalen HP.</dd>
+    <dt>Stapelbar</dt><dd>Nein.</dd>
+    <dt>Rezept</dt><dd>2 Göttliche Essenz, 3 Strahlendes Pigment, 3 Leerenschilf, 2 Götzeneisenbarren</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 91 · 27 s · 3530 XP</dd>
+    <dt>Engine</dt><dd><span class="tag b1">B klein</span>: neuer Kind in <code>SPECIAL_EFFECT_TYPES</code>, ein Aufruf von <code>healPlayer</code> im Block-Zweig von <code>resolveAttack</code>, Eintrag in <code>status-coverage</code>.</dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Block ist per MAX gedeckelt (0,47 von 0,50), eine Bollwerk IV hätte keinen Platz. Die Mauer macht aus Block eine Sustain-Quelle: bei 47 % Block und 3-s-Gegnerintervall etwa 0,3 % maxHp/s, bei 150 HP rund 0,5 HP/s. Das entspricht dem gedeckelten Melee-Lifesteal (1,2 HP je Treffer) und bleibt weit unter dem, was Auto-Eat übernimmt. Schild-Builds bekommen damit erstmals eine eigene Antwort auf „Melee heilt sich, ich nicht".</div>
+</div>
+
+</div>
+
+<h3>4.3 Schmuck-Linie (5 Runen, neu)</h3>
+<div class="box"><p><b>Antwort auf die Spielerfrage „What enchantment runes go into jewelry?":</b> heute keine. Vorschlag: eine eigene Linie mit <code>appliesTo: ["jewelry"]</code> (Tag existiert in <code>itemTypeTags</code> seit Itemization 2.0 §7). Alle fünf sind Aktiv-Effekte und stilneutral. Da Meister-Ringe legendär sind (4 Slots) und es zwei Ringe plus Amulett plus Umhang gibt, ist die Linie bewusst <u>ohne Stat-Runen</u> gebaut: 16 stapelbare Schmuck-Slots mit lck +2 wären +32 Glück, das sprengt den Krit-Deckel und die Beute-Formel. Aktiv-Effekte dagegen wirken pro Art genau einmal, egal wie viele Ringe sie tragen. Die Schmuck-Linie trägt keine Tier-Ziffer im Namen (es gibt keine I bis III), intern bleibt <code>tier: 4</code> für die Gold-Formel.</p></div>
+<div class="grid">
+
+<div class="card j"><div class="badge">SCHMUCK · SLAYER</div>
+  <h3>Rune des Kopfgelds</h3><div class="en">Rune of the Bounty · Präfix „Kopfgeld-" / „Bounty-Marked"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_bounty</code> · <code>rune_bounty</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["jewelry"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "bounty", chance: 1, magnitude: 0.20, durationMs: 0 }</code>: +20 % Schaden gegen das aktive Slayer-Ziel.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Zwei Waffen tragen 0,20 nativ, MAX.</dd>
+    <dt>Rezept</dt><dd>1 Göttliche Essenz, 2 Strahlendes Pigment, 2 Leerenschilf, 2 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 88 · 26 s · 2930 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Der Slayer-Bonus aus der Aufgabenliste, auf Schmuck statt Waffe, damit er nicht die Waffenwahl diktiert. Wer Slayer spielt, trägt ihn immer; wer nicht, verliert nichts. Ein sauberer Build-Marker ohne Deckel-Berührung.</div>
+</div>
+
+<div class="card j"><div class="badge">SCHMUCK · GOLD</div>
+  <h3>Rune des Zählers</h3><div class="en">Rune of the Tallyman · Präfix „Gezählt" / „Tallied"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_tallyman</code> · <code>rune_tallyman</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["jewelry"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 }</code>: +15 % Gold aus Tötungen.</dd>
+    <dt>Stapelbar</dt><dd>Nein. Parität zur Glücksklinge.</dd>
+    <dt>Rezept</dt><dd>1 Göttliche Essenz, 2 Strahlendes Pigment, 2 Leerenschilf, 2 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 88 · 26 s · 2930 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Benannt nach Voss dem Zähler, dem Gewölbe-Verwalter der Glutfeste. Reiner Ökonomie-Rider fürs Idle-Herz, ohne Kampfkraft. Tier-IV-Verzauberungen kosten bis 3200 Gold pro Anwendung, die Rune zahlt sich selbst zurück.</div>
+</div>
+
+<div class="card j"><div class="badge">SCHMUCK · TAKT</div>
+  <h3>Rune der Rastlosen</h3><div class="en">Rune of the Restless · Präfix „Rastlos" / „Restless"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_restless</code> · <code>rune_restless</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["jewelry"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1000 }</code>: Tötungen verkürzen die Erholungspause um 1 s (<code>KILL_COOLDOWN_MS</code> = 2000).</dd>
+    <dt>Stapelbar</dt><dd>Nein. Drei Waffen tragen 2000 ms (Pause ganz weg), die Rune ist bewusst die halbe Stufe, MAX.</dd>
+    <dt>Rezept</dt><dd>2 Göttliche Essenz, 3 Strahlendes Pigment, 2 Leerenschilf, 2 Götteratem</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 90 · 27 s · 3360 XP</dd>
+    <dt>Engine</dt><dd><span class="tag a">A sofort</span></dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Der Cooldown-lose Angriff aus der Aufgabenliste, in idle-verträglicher Dosis: +9 % Tötungen pro Stunde bei 10 s Kampfdauer, +20 % bei 4 s. Das ist ein Farm-Multiplikator, kein Kampfkraft-Multiplikator, deshalb gehört er auf Schmuck.</div>
+</div>
+
+<div class="card j"><div class="badge">SCHMUCK · XP</div>
+  <h3>Rune der Chronik</h3><div class="en">Rune of the Chronicle · Präfix „Verzeichnet" / „Chronicled"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_chronicle</code> · <code>rune_chronicle</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["jewelry"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "combatXp", chance: 1, magnitude: 0.10, durationMs: 0 }</code> (neu): +10 % Erfahrung aus Kämpfen, alle sechs Kampf-Skills.</dd>
+    <dt>Stapelbar</dt><dd>Nein.</dd>
+    <dt>Rezept</dt><dd>2 Göttliche Essenz, 3 Strahlendes Pigment, 2 Leerenschilf, 1 Götzenblüte</dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 93 · 28 s · 4040 XP</dd>
+    <dt>Engine</dt><dd><span class="tag b1">B klein</span>: neuer Kind, ein Multiplikator im Kill-XP-Pfad von <code>onEnemyDefeated</code>. Alternative: EquipBonus-Schlüssel <code>combatXpMult</code> analog <code>gatherXpMult</code>, dann wäre die Rune eine Stat-Rune und würde stapeln, deshalb lieber als Kind.</dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Der Wächter führt die Chronik, jede Tat geht ein. +10 % liegen innerhalb der Toleranz der XP-Zielkurve (±10 % pro Sprosse) und ändern keine Reihenfolge der Leiter. Für Spieler, die Kampf-Skills auf 99 tragen wollen, ist das die begehrteste Schmuck-Rune, ohne Kampfkraft.</div>
+</div>
+
+<div class="card j"><div class="badge">SCHMUCK · BEUTE · CHASE</div>
+  <h3>Rune der Nachlese</h3><div class="en">Rune of the Gleaning · Präfix „Nachlesend" / „Gleaning"</div>
+  <dl>
+    <dt>Id</dt><dd><code>affix_gleaning</code> · <code>rune_gleaning</code></dd>
+    <dt>Ziel</dt><dd><code>appliesTo: ["jewelry"]</code></dd>
+    <dt>Effekt</dt><dd><code>{ type: "lootChance", chance: 1, magnitude: 0.10, durationMs: 0 }</code> (neu): jede Chance in regulären Loot-Tabellen wird mit 1,10 multipliziert (auf 1 geklemmt). Elite-<code>uniqueDropChance</code> und Dungeon-Abschluss-Belohnungen bleiben unberührt.</dd>
+    <dt>Stapelbar</dt><dd>Nein.</dd>
+    <dt>Rezept</dt><dd>3 Göttliche Essenz, 4 Strahlendes Pigment, 3 Leerenschilf, <b class="glow">2 Götzenblüte</b></dd>
+    <dt>Level / Dauer / XP</dt><dd>RC 95 · 30 s · 4780 XP</dd>
+    <dt>Engine</dt><dd><span class="tag b2">B mittel</span>: Multiplikator im Loot-Roll (<code>rollLoot</code>), Guard, dass die Elite-RNG-Sequenz unberührt bleibt (der Elite-Wurf feuert immer, sein Chance-Wert darf sich nicht ändern), Sim-Snapshot der Gold-pro-Stunde.</dd>
+  </dl>
+  <div class="why"><b>Warum einzigartig:</b> Die Drop-Chance aus der Aufgabenliste, benannt nach der Nachlese auf den abgeernteten Feldern (die Götzenblüte wächst erst bei Farming 95). +10 % auf einen 1/1000-Chase macht 1/909, die Rare-Drop-Philosophie („Effekt ab etwa 1/1000") bleibt intakt, weil die Elite-Uniques ausgenommen sind. Die höchste Rune des Spiels ist damit keine Kampf-Rune, sondern die Rune des geduldigen Sammlers.</div>
+</div>
+
+</div>
+
+<!-- ───────────────────────── 5 REZEPTE ───────────────────────── -->
+<h2 id="rezepte">5. Rezepte, Level, XP, Gold</h2>
+<p>XP-Konvention: Die 36 bestehenden Runen-Rezepte liegen alle bei <b>×6,5 bis ×6,7 der Ziel-Kurve</b> <code>target_xph(L) · durationMs / 3 600 000</code> (Schärfe I ×7,0, Schärfe III ×6,63, Bollwerk III ×6,67, Götzenfunken-Stab 88 ×6,67). Das ist die Runecrafting-Prämie für teure Inputs, kein Ausreißer. Tier IV folgt derselben Konvention mit ×6,67, gerundet auf 5 oder 10.</p>
+<div class="tscroll">
+<table>
+  <thead><tr><th>#</th><th>Action-Id</th><th class="num">RC-Level</th><th class="num">Dauer</th><th class="num">XP Kurve</th><th class="num">XP ×6,67 (Vorschlag)</th><th>Inputs</th><th>Output</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><code>craft_rune_warpath_iv</code></td><td class="num">85</td><td class="num">24 s</td><td class="num">349</td><td class="num">2330</td><td>essence_void 3, pigment_radiant 3, reed_void 2, herb_godsbreath 1</td><td><code>rune_warpath_iv</code></td></tr>
+    <tr><td>2</td><td><code>craft_rune_second_arrow_iv</code></td><td class="num">85</td><td class="num">24 s</td><td class="num">349</td><td class="num">2330</td><td>essence_void 3, pigment_radiant 3, reed_void 2, herb_godsbreath 1</td><td><code>rune_second_arrow_iv</code></td></tr>
+    <tr><td>3</td><td><code>craft_rune_thin_veil_iv</code></td><td class="num">85</td><td class="num">24 s</td><td class="num">349</td><td class="num">2330</td><td>essence_void 3, pigment_radiant 3, aether_essence 3, herb_godsbreath 1</td><td><code>rune_thin_veil_iv</code></td></tr>
+    <tr><td>4</td><td><code>craft_rune_iron_answer_iv</code></td><td class="num">87</td><td class="num">25 s</td><td class="num">402</td><td class="num">2680</td><td>essence_divine 1, pigment_radiant 3, reed_void 3, godiron_bar 1</td><td><code>rune_iron_answer_iv</code></td></tr>
+    <tr><td>5</td><td><code>craft_rune_ambush_iv</code></td><td class="num">87</td><td class="num">25 s</td><td class="num">402</td><td class="num">2680</td><td>essence_divine 1, pigment_radiant 3, reed_void 3, herb_godsbreath 1</td><td><code>rune_ambush_iv</code></td></tr>
+    <tr><td>6</td><td><code>craft_rune_veil_drinker_iv</code></td><td class="num">87</td><td class="num">25 s</td><td class="num">402</td><td class="num">2680</td><td>essence_divine 1, pigment_radiant 3, aether_essence 3, herb_godsbreath 1</td><td><code>rune_veil_drinker_iv</code></td></tr>
+    <tr><td>7</td><td><code>craft_rune_bounty</code></td><td class="num">88</td><td class="num">26 s</td><td class="num">439</td><td class="num">2930</td><td>essence_divine 1, pigment_radiant 2, reed_void 2, herb_godsbreath 2</td><td><code>rune_bounty</code></td></tr>
+    <tr><td>8</td><td><code>craft_rune_tallyman</code></td><td class="num">88</td><td class="num">26 s</td><td class="num">439</td><td class="num">2930</td><td>essence_divine 1, pigment_radiant 2, reed_void 2, herb_godsbreath 2</td><td><code>rune_tallyman</code></td></tr>
+    <tr><td>9</td><td><code>craft_rune_wasting_iv</code></td><td class="num">89</td><td class="num">26 s</td><td class="num">461</td><td class="num">3075</td><td>essence_divine 2, pigment_radiant 3, ember_essence 3, herb_godsbreath 1</td><td><code>rune_wasting_iv</code></td></tr>
+    <tr><td>10</td><td><code>craft_rune_restless</code></td><td class="num">90</td><td class="num">27 s</td><td class="num">504</td><td class="num">3360</td><td>essence_divine 2, pigment_radiant 3, reed_void 2, herb_godsbreath 2</td><td><code>rune_restless</code></td></tr>
+    <tr><td>11</td><td><code>craft_rune_unbroken_wall_iv</code></td><td class="num">91</td><td class="num">27 s</td><td class="num">529</td><td class="num">3530</td><td>essence_divine 2, pigment_radiant 3, reed_void 3, godiron_bar 2</td><td><code>rune_unbroken_wall_iv</code></td></tr>
+    <tr><td>12</td><td><code>craft_rune_judgement_iv</code></td><td class="num">92</td><td class="num">28 s</td><td class="num">577</td><td class="num">3850</td><td>essence_divine 2, pigment_radiant 4, reed_void 2, idol_shard 1</td><td><code>rune_judgement_iv</code></td></tr>
+    <tr><td>13</td><td><code>craft_rune_chronicle</code></td><td class="num">93</td><td class="num">28 s</td><td class="num">606</td><td class="num">4040</td><td>essence_divine 2, pigment_radiant 3, reed_void 2, godbloom 1</td><td><code>rune_chronicle</code></td></tr>
+    <tr><td>14</td><td><code>craft_rune_gleaning</code></td><td class="num">95</td><td class="num">30 s</td><td class="num">717</td><td class="num">4780</td><td>essence_divine 3, pigment_radiant 4, reed_void 3, godbloom 2</td><td><code>rune_gleaning</code></td></tr>
+  </tbody>
+</table>
+</div>
+<p><b>Rune-Items:</b> <code>type: "material", stackable: true, rarity: "common"</code> wie Tier III, <code>rune: { affixId, tier: 4 }</code>, Verkaufswert 900 bis 1500 (Tier III liegt bei 280 bis 420, die Inputs sind gut dreimal so teuer). Kategorie bleibt <code>rune_affixes</code>.</p>
+<p><b>Gold am Verzauberungstisch</b> (<code>enchantGoldCost(4, rarity)</code> = 400 · (1 + Rarity-Index), unverändert): common 800, magic 1200, rare 1600, superRare 2000, epic 2400, legendary 2800, godly 3200. Disenchant die Hälfte. Keine neue Formel nötig.</p>
+
+<!-- ───────────────────────── 6 ZUTATEN ───────────────────────── -->
+<h2 id="zutaten">6. Zutaten-Landkarte (alles existiert, nichts Neues nötig)</h2>
+<div class="tscroll">
+<table>
+  <thead><tr><th>Zutat</th><th>Id</th><th>Quelle</th><th class="num">Level</th><th>Hinweis</th></tr></thead>
+  <tbody>
+    <tr><td>Hohle Essenz</td><td><code>essence_void</code></td><td>Foraging (forage_void_essence 56 %, voidfungus 15 %, violet_petals 14 %)</td><td class="num">73 / 67 / 78</td><td>Tier-III-Standard, bleibt für die 85er</td></tr>
+    <tr><td>Göttliche Essenz</td><td><code>essence_divine</code></td><td>Foraging (forage_divine_essence 52 %, godfungus 14 %, radiant_blooms 12 %)</td><td class="num">93 / 87 / 97</td><td>Präzedenz: Arkane III und Jagd III nutzen sie schon bei RC 74/75</td></tr>
+    <tr><td>Strahlendes Pigment</td><td><code>pigment_radiant</code></td><td>Farming (Strahlblüte, 12 bis 18 je Ernte, 160 min)</td><td class="num">84</td><td>Tier-III-Standard</td></tr>
+    <tr><td>Leerenschilf</td><td><code>reed_void</code></td><td>Farming (12 bis 18 je Ernte, 160 min)</td><td class="num">84</td><td>Tier-III-Standard</td></tr>
+    <tr><td>Götteratem</td><td><code>herb_godsbreath</code></td><td>Farming (12 bis 18 je Ernte, 160 min)</td><td class="num">86</td><td><b>neu für Runen</b>, heute nur Herblore-Kraut</td></tr>
+    <tr><td>Götzenblüte</td><td><code>godbloom</code></td><td>Farming (12 bis 18 je Ernte, 160 min)</td><td class="num">95</td><td><b>neu für Runen</b>, heute Götzenblüten-Infusion (Herblore 95)</td></tr>
+    <tr><td>Aetheressenz / Glutessenz</td><td><code>aether_essence</code> / <code>ember_essence</code></td><td>Kampf-Drops (Element-Essenz-Leiter)</td><td class="num">Mid</td><td>wie in Arkane III / Flamme III</td></tr>
+    <tr><td>Götzeneisenbarren</td><td><code>godiron_bar</code></td><td>Smithing</td><td class="num">Top-Tier</td><td>Platte- und Schild-Rune, Handwerks-Verbund</td></tr>
+    <tr><td>Götzensplitter</td><td><code>idol_shard</code></td><td>Drop: Götzenwächter L245 (40 %), Schuppenwand (30 %), Letzter Götze L295 (80 %), Sanktum-Belohnung, Turm-Roc</td><td class="num">CL 245+</td><td><b>Kampf-Gate</b> nur für die Rune des Gerichts</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="small">Bewusst nicht verwendet: Herz des Götzen (legendär, Einzelstück, gehört dem Herzschmiede-Anhänger) und neue Farming-Pflanzen (die 160-Minuten-Reihe ist mit fünf Kulturen voll).</p>
+
+<!-- ───────────────────────── 7 HÜLLE ───────────────────────── -->
+<h2 id="huelle">7. Was das für die Balance-Hülle heißt</h2>
+
+<h3>7.1 Gepinnte Messwerte: keiner bewegt sich</h3>
+<div class="box">
+  <p>Der BiS-Builder (<code>balance-envelope-helpers.ts</code>, <code>affixContribution</code>) bewertet einen Affix ausschließlich über <code>bonusByTier</code>, <code>modifiersByTier</code> und <code>trinityByTier</code>. Alle 14 Vorschläge tragen davon nichts, ihr Score ist 0, und ein Affix mit Score 0 wird nie gewählt. Damit bleiben unverändert:</p>
+  <ul>
+    <li>§3 Cap-Bindung: Dodge-Cap ab CL 60, Mitigations-Cap bei CL 90 (armorRating 538,53), Block 0,47, Krit 0,50 / 2,5.</li>
+    <li>§4 Worst-Case-Tabelle: armorRating 352,23 / 379,79 / 538,53, Mitigation 0,7381 / 0,7524 / 0,80, Lifesteal 0,045 / 0,095 / 0,095, maxWard 583 / 777 / 1179,5.</li>
+    <li>§5 Evasion/Tempo/TTK-Matrix: Landechance 24,2 % on-level, 46,6 % bei +150 Level, Haste hart bei 80 % (Ranged-Stance 61 %).</li>
+    <li>§6 Runen-Stapelung: <code>affix_swift</code> Tier III dex 3, „eine Affix-Sorte je Instanz" im Voll-Stack.</li>
+  </ul>
+  <p>Wichtig für die Lesart: <b>„kein Pin reißt" heißt nicht „keine Wirkung"</b>. Die Suite misst Stats, nicht Kampfausgänge. Die Wirkung dieses Sets liegt komplett im Kampfpfad, deshalb 7.3.</p>
+</div>
+
+<h3>7.2 Deckel: keiner wird direkt berührt, zwei werden umgangen und bewusst klein gehalten</h3>
+<div class="tscroll">
+<table>
+  <thead><tr><th>Deckel</th><th>Betroffen durch</th><th>Bewertung</th></tr></thead>
+  <tbody>
+    <tr><td>DODGE_CAP, DEFENSE_MITIGATION_MAX, BLOCK_CAP</td><td>nichts</td><td>Keine Rune trägt Trinity-Werte. Die Rüstungs-Linie ist gerade deshalb als Effekt-Linie gebaut.</td></tr>
+    <tr><td>CRIT_CHANCE_CAP, CRIT_DAMAGE_CAP</td><td>nichts</td><td>Kein lck, kein dex, kein critChance-Bonus. Die Schmuck-Linie enthält absichtlich keine Stat-Rune.</td></tr>
+    <tr><td>TEMPO_REDUCTION_CAP (0,20)</td><td>Zweiter Pfeil (doubleStrike 0,12)</td><td><b>Umgehung im Geist:</b> der Zweitschlag ist ein zweiter Angriffswurf, kein kürzeres Intervall. Deshalb 12 % (×1,40 Angriffe zusammen mit dem Haste-Cap) und ein Sim-Pin auf den Ranged-TTK.</td></tr>
+    <tr><td>MELEE_LIFESTEAL_CAP</td><td>Ungebrochene Mauer (blockRestore)</td><td>Eigener Pfad, nicht Lifesteal. Vorschlag: Heilung je Block auf <code>min(2 % maxHp, MELEE_LIFESTEAL_CAP_ABS × 2)</code> klemmen, dann bleibt die Größenordnung an der bestehenden Rail.</td></tr>
+    <tr><td>WARDING_REGEN_CAP (2,0/s)</td><td>Schleiertrinker (wardSiphon 0,10)</td><td>Siphon läuft heute am Warding-Deckel vorbei (Medaillon-Präzedenz). Bei 5 DPS sind es 0,5 Ward/s, weit darunter. Empfehlung: Siphon in denselben Deckel einrechnen, wenn combat-dev ohnehin im Pfad ist (klein).</td></tr>
+    <tr><td>Ward-Pool 1179,5 (Beobachtungspunkt)</td><td>nichts</td><td>Der Pool wird nicht größer. Die separate Chef-Frage aus dem Suitenkopf (Trinity-Runen vom Stapeln ausnehmen) bleibt unabhängig davon offen.</td></tr>
+    <tr><td>Kein Deckel vorhanden</td><td>Auszehrung (gutter 0,5), Kriegspfad, Gericht</td><td>Bedingte Multiplikatoren verschiedener Kinds stapeln multiplikativ. Das ist heute schon so für Waffen-Effekte, neu ist nur, dass die Rune sie auf jede Waffe bringt. Siehe 7.3.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>7.3 Die eigentliche Balance-Frage: die Kombination auf einer Waffe</h3>
+<div class="box warn">
+  <p>Ein epischer Mainhand hat drei Slots, ein legendärer vier. Das stärkste Paket für Melee wäre: Flamme III + Auszehrung + Kriegspfad + Gericht. Rechnung gegen einen Boss in der letzten Viertel-Leiste nach 12 Treffern: Kriegspfad ×1,24 mal Gericht ×1,30 = <b>×1,61 auf den Direktschaden</b>, dazu der Brand mit 15 statt 10 pro Sekunde. Gegen ein Farm-Ziel sind es dagegen nur der Brand-Bonus und ein wenig Gericht. Das ist gewollt (die 90er sollen Boss-Runen bekommen), aber es muss gemessen werden, nicht geschätzt.</p>
+  <p><b>Vorschlag für die Suite (kontrolleur/combat-dev, vor dem Content-Apply):</b></p>
+  <ul>
+    <li>Ein neues Target <code>"procs"</code> im BiS-Builder, das Aktiv-Affixe nach ihrem erwarteten DPS-Äquivalent bewertet (Uptime × Magnitude, Tabelle unten), damit der Voll-Stack sie überhaupt anlegt.</li>
+    <li>Ein TTK-Pin je Stil gegen <code>skeleton_nekro</code> (L90, 281 HP) und <code>idol_warden</code> (L245): mit und ohne T4-Paket. Zielband: das Paket darf den Boss-TTK um höchstens 35 % senken und den Farm-TTK um höchstens 20 %. Reißt das Band, zuerst Auszehrung auf 0,35, dann Kriegspfad auf 10 Stapel.</li>
+    <li>Gold-pro-Stunde-Snapshot mit Zähler + Nachlese, damit die Gold-Ökonomie (gold-economy.md) ihre Referenz behält.</li>
+  </ul>
+</div>
+<div class="tscroll">
+<table>
+  <thead><tr><th>Rune</th><th>Erwartetes DPS- oder Sustain-Äquivalent (grob)</th><th>Farm-Ziel (3 Treffer)</th><th>L90-Elite (25 Treffer)</th><th>Boss (100+ Treffer)</th></tr></thead>
+  <tbody>
+    <tr><td>Kriegspfad</td><td>Ramp bis +24 %</td><td class="num">+3 %</td><td class="num">+17 %</td><td class="num">+23 %</td></tr>
+    <tr><td>Zweiter Pfeil</td><td>+12 % Angriffe</td><td class="num">+12 %</td><td class="num">+12 %</td><td class="num">+12 %</td></tr>
+    <tr><td>Dünner Schleier</td><td>+20 % × Mana-Uptime</td><td class="num">+18 %</td><td class="num">+12 %</td><td class="num">+8 %</td></tr>
+    <tr><td>Auszehrung (mit Flamme III)</td><td>+50 % auf Brand-Ticks</td><td class="num">+5 %</td><td class="num">+20 %</td><td class="num">+25 %</td></tr>
+    <tr><td>Gericht</td><td>+30 % unter 25 % HP</td><td class="num">+10 %</td><td class="num">+7 %</td><td class="num">+7 %</td></tr>
+    <tr><td>Hinterhalt</td><td>+1 Treffer je Kampf</td><td class="num">+33 %</td><td class="num">+4 %</td><td class="num">~0 %</td></tr>
+    <tr><td>Eiserne Antwort</td><td>0,4 bis 0,6 Rückschlag/s</td><td class="num">+3 %</td><td class="num">+8 %</td><td class="num">+10 %</td></tr>
+    <tr><td>Schleiertrinker</td><td>0,5 Ward/s bei 5 DPS</td><td colspan="3">Sustain, kein DPS; unter dem Warding-Deckel</td></tr>
+    <tr><td>Ungebrochene Mauer</td><td>~0,3 % maxHp/s bei 47 % Block</td><td colspan="3">Sustain, vergleichbar mit gedeckeltem Lifesteal</td></tr>
+    <tr><td>Rastlose</td><td>Kills/h</td><td class="num">+20 %</td><td class="num">+9 %</td><td class="num">+1 %</td></tr>
+    <tr><td>Kopfgeld / Zähler / Chronik / Nachlese</td><td colspan="4">Slayer-, Gold-, XP-, Beute-Rider ohne Kampfkraft</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>7.4 Guards, die beim Apply anschlagen werden (erwartet, kein Fehler)</h3>
+<ul>
+  <li><code>status-coverage.test.ts</code>: die drei neuen Kinds (<code>blockRestore</code>, <code>combatXp</code>, <code>lootChance</code>) müssen in <code>SPECIAL_EFFECT_TYPES</code> und im Handler-Set stehen, sonst rot. Reihenfolge: erst logic-dev/combat-dev, dann content-dev.</li>
+  <li><code>content-integrity</code>: Rune-Item ↔ Affix ↔ Rezept-Kette, Lokalisierung EN/DE plus Overlay für ZH/RU/ES/PT-BR/FR (<code>content/src/locales/*.ts</code>), 14 Items, 14 Actions, 14 Präfixe.</li>
+  <li><code>enchant.test.ts</code>: die neuen Runen laufen durch <code>duplicate_effect</code>, das ist gewollt. Ein neuer Test für <code>requiresTrinity</code> (Eiserne Antwort auf Ring = <code>class_mismatch</code>).</li>
+  <li>Vorschlag für einen neuen Guard: <b>Status-Kinds (burn/frost/shock/bleed/poison) nur auf Affixen mit Waffen-Tags</b>, damit nie jemand eine Brand-Rune auf Schmuck anlegt, die stumm nichts tut.</li>
+</ul>
+
+<!-- ───────────────────────── 8 APPLY ───────────────────────── -->
+<h2 id="apply">8. Umsetzungs-Reihenfolge (Single-Writer je Datei)</h2>
+<ol class="apply">
+  <li><b>logic-dev (shared + engine/enchant.ts):</b> <code>AffixDef.requiresTrinity</code> + Auswertung in <code>trinityGatePasses</code>; drei neue Kinds in <code>SpecialEffectType</code>, <code>SPECIAL_EFFECT_TYPES</code> und der Feld-Tabelle; <code>affixEffectParts</code>-Templates für Spezial-Kinds (heute nur Status-Prosa). Kein SAVE_VERSION-Bump (additiv).</li>
+  <li><b>combat-dev (combat.ts):</b> <code>blockRestore</code> im Block-Zweig, <code>combatXp</code> im Kill-XP-Pfad, <code>lootChance</code> im Loot-Roll mit Elite-RNG-Disziplin; Sichtprüfung <code>doubleStrike</code> (erstes Content-Item); optional Siphon in den Warding-Deckel.</li>
+  <li><b>kontrolleur:</b> Sim-Pins aus 7.3 aufsetzen, bevor Content kommt (Baseline ohne T4 messen).</li>
+  <li><b>content-dev:</b> 14 Affixe (Arrays bis Index 3 gefüllt, Präfixe EN/DE), 14 Rune-Items, 14 Rezepte laut Abschnitt 5, Locale-Overlays, Icons (Runen dürfen glühen).</li>
+  <li><b>ui-dev:</b> Verzauberungstisch nimmt Schmuck als Ziel an (prüfen, ob die Slot-Liste heute Waffe/Rüstung filtert); Preview-Prosa für Spezial-Kinds; Tooltip-Zeile „einmalig pro Item".</li>
+  <li><b>kontrolleur:</b> Re-Gate: Suite grün, TTK-Band aus 7.3 eingehalten, Gold-Snapshot, 7-Sprachen-Guard.</li>
+</ol>
+
+<!-- ───────────────────────── 9 OFFEN ───────────────────────── -->
+<h2 id="offen">9. Offene Chef-Entscheidungen</h2>
+<div class="tscroll">
+<table>
+  <thead><tr><th>#</th><th>Frage</th><th>Option A (Empfehlung)</th><th>Option B</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><b>Tier IV als Effekt-Linie oder als Zahlen-Stufe?</b></td><td>Nur Aktiv-Effekte (dieses Dokument). Kein Deckel, keine Pins, Identität.</td><td>Zusätzlich Schärfe/Arkan/Präzision/Schnelle/Jagd IV (z. B. str +14) mit einem neuen Flag <code>stackable: false</code> am Affix. Klein in der Engine, aber jede Zahl schiebt die Damage-Pins und hebt die Stil-Parität neu an.</td></tr>
+    <tr><td>2</td><td><b>Schmuck ohne Stat-Runen?</b></td><td>Ja. 16 stapelbare Schmuck-Slots (2 legendäre Ringe à 4, Amulett, Umhang) vertragen keine +lck-Rune.</td><td>Kleine Stat-Rune (lck +1) erlauben und die Schmuck-Slots auf 1 je Item klemmen (neue Regel in <code>enchantSlotsFor</code>, Save-neutral).</td></tr>
+    <tr><td>3</td><td><b>Götzensplitter als Gate für die Rune des Gerichts?</b></td><td>Ja, eine Rune mit Kampf-Gate (CL 245+), passend zu „Combat ist fundamental".</td><td>Ohne Splitter, dafür 3 Götzenblüten. Dann ist die Linie rein Skilling-erreichbar.</td></tr>
+    <tr><td>4</td><td><b>Nachlese: worauf wirkt +10 %?</b></td><td>Reguläre Loot-Tabellen, nicht Elite-Uniques, nicht Dungeon-Abschluss. 1/1000 bleibt sinngemäß 1/1000.</td><td>Auf alles inklusive Elite-Uniques (Chase wird ~10 % schneller, RNG-Sequenz bleibt stabil, weil nur der Chance-Wert wächst).</td></tr>
+    <tr><td>5</td><td><b>Chronik: Kind oder EquipBonus?</b></td><td>Spezial-Kind (einmalig, MAX über Quellen).</td><td>EquipBonus-Schlüssel <code>combatXpMult</code>: einfacher, aber dann stapelbar (3 Runen = +30 %).</td></tr>
+    <tr><td>6</td><td><b>Auszehrung bei 0,5 oder 0,35?</b></td><td>0,5 (Waffen-Parität), Rückfall 0,35 nach Sim.</td><td>0,35 von Anfang an, dafür ohne Sim-Abhängigkeit.</td></tr>
+    <tr><td>7</td><td><b>XP-Konvention ×6,67 fortführen?</b></td><td>Ja, wie alle 36 Runen-Rezepte heute.</td><td>Reine Kurve (349 bis 717 XP): dann wäre Tier IV pro Stunde schlechter als Tier III, das würde die Leiter knicken.</td></tr>
+    <tr><td>8</td><td><b>Vier verschiedene Schmuck-Runen auf einem legendären Ring?</b></td><td>Erlaubt. Die Wirkung ist dieselbe wie vier Runen auf vier Schmuckteilen (MAX je Art), nur bequemer.</td><td>Schmuck auf 2 Slots klemmen, damit der Spieler wählen muss.</td></tr>
+    <tr><td>9</td><td><b>Offline-Bonus-Rune?</b></td><td>Nicht bauen. Offline-Zeit (8 h + 3 h Lager) ist ein Lager-Hebel, kein Schmuck-Hebel.</td><td>Als 15. Rune mit +1 h, Engine klein, aber Retention-Effekt unklar.</td></tr>
+    <tr><td>10</td><td><b>Runen-Set-Synergien?</b></td><td>Nicht jetzt. Braucht eine neue Aggregation über Instanzen hinweg (Engine groß) und eine UI. Notiz für 1.1.</td><td>Ein einziges Set als Pilot: drei Waffen-T4 auf einem Item = +5 % Krit-Schaden.</td></tr>
+    <tr><td>11</td><td><b>Heilung bei Block ohne Bremse?</b></td><td>Klemme <code>min(2 % maxHp, 2 × MELEE_LIFESTEAL_CAP_ABS)</code> je Block.</td><td>Ungeklemmt; bei 150 HP sind es 3 HP je Block, das wäre noch harmlos.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ───────────────────────── 10 QUELLEN ───────────────────────── -->
+<h2 id="quellen">10. Quellen (gelesen, nicht verändert)</h2>
+<ul class="small">
+  <li><code>G:\GameDev\packages\content\src\index.ts</code>: Affix-Katalog (Z. 17132 ff.), Rune-Items (Z. 840 ff.), Runen-Rezepte (Z. 10093 bis 10340), Farming-Reihe T5 (Z. 16974 ff.), Foraging-Essenzen (Z. 8599 ff.), Götzensplitter-Drops, Schmuck-Items (96 Stück, 21 Meister-Ringe legendär).</li>
+  <li><code>G:\GameDev\packages\engine\src\enchant.ts</code>: <code>applyEnchant</code>, <code>affixHasActiveEffect</code>, <code>trinityGatePasses</code>, <code>enchantPreview</code>.</li>
+  <li><code>G:\GameDev\packages\engine\src\combat.ts</code>: <code>collectSpecialEffects</code> (alle Slots), <code>mainhandStatusEffects</code> (nur Mainhand), <code>doubleStrike</code>-Pfad, <code>wardSiphon</code>, <code>luckyStrike</code>, <code>healOnKill</code>.</li>
+  <li><code>G:\GameDev\packages\shared\src\index.ts</code>: <code>SpecialEffectType</code>-Tabelle, <code>WeaponEffect</code>, <code>AffixDef</code>, <code>enchantSlotsFor</code>, <code>itemTypeTags</code>, <code>enchantGoldCost</code>, alle Deckel-Konstanten, <code>KILL_COOLDOWN_MS</code>, <code>MAX_OFFLINE_MS</code>.</li>
+  <li><code>G:\GameDev\packages\engine\src\balance-envelope.test.ts</code> und <code>balance-envelope-helpers.ts</code>: Suitenkopf vom 25.08.2026, Pins, <code>affixContribution</code>.</li>
+  <li><code>G:\GameDev\packages\engine\src\leveling.ts</code>: <code>xpForLevel</code> für die Zielkurve.</li>
+  <li><code>G:\GameDev\design\consumables-enchantments-spec.md</code> (§5 Power-Budget, §6 Trinity-Runen, §7 Übersicht), <code>enchantment-system-rework-spec.md</code>, <code>item-instance-affix-suffix-spec.md</code>, <code>rune-system-plan.md</code>, <code>weapon-effects-palette.md</code> (Palette A bis J), <code>armor-trinity-spec.md</code>, <code>evasion-tempo-taming-spec.md</code>, <code>crit-taming-spec.md</code>.</li>
+  <li><code>G:\GameDev\design\lore\weltlore-grim-reach.md</code> (§1.5 Die Götzen, §2 Der Wächter, §8 Materialkunde, §9 Glossar) und <code>lore\aschechronik-spec.md</code> (Kapitel 19 „Das Gericht", Kapitel 21 „Der zweite Band") für die Namensgebung.</li>
+  <li>Memory-Regeln: Rare-Drop-Philosophie, Combat ist fundamental, kein Rarity-Glow auf Equipment (Runen ausgenommen), natürliche Spieltexte.</li>
+</ul>
+
+<hr>
+<p class="small">Balance-Designer, Grim Reach. Dieses Dokument enthält Zahlen, keine Anwendungen. content-dev wendet nach Chef-GO an, logic-dev und combat-dev gehen voraus (Abschnitt 8).</p>
+
+</div>
+</body>
+</html>

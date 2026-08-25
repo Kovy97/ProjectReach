@@ -476,6 +476,21 @@
   flex-shrink: 0;
 }
 
+/* Chef 25.08.2026 (Custom-Tooltips statt native `title=`): Icon + Namensspalte stecken jetzt in
+   einem eigenen HoverTip-Wrapper (ActionQueuePanel.tsx `.queue-row-body`) — VORHER trug direkt
+   `.queue-row-text` das `flex: 1 1 100px`/`min-width: 100px` als Flex-Kind von `.queue-row`.
+   Der Wrapper übernimmt exakt dieselben Werte (er ist jetzt das Flex-Kind), damit sich am
+   Spalten-Verhältnis nichts ändert — `.queue-row-text` behält seine eigenen Werte unverändert und
+   regelt weiter Icon-vs-Name INNERHALB dieses Wrappers. Muster `.eq-loadout-tipwrap`
+   (character.css): „HoverTip-Wrapper soll das Layout nicht aufbrechen". */
+.queue-row-body {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 100px;
+  min-width: 100px;
+}
+
 .queue-row-icon-img {
   width: 26px;
   height: 26px;
@@ -555,8 +570,27 @@
 
 .queue-row-actions {
   display: flex;
+  align-items: center;
   gap: 2px;
   flex-shrink: 0;
+}
+
+/* Chef 25.08.2026: gemeinsamer Wrapper für ALLE Custom-Tooltips um vormals `title=`-Knöpfe (Panel-
+   Toggle, Skip-Wegklicken, Warteschlange-leeren, Sperr-Hinweis, die vier 20px-Sortier-/Aktions-
+   knöpfe) — `display: flex` hält den Wrapper eng am Inhalt (Muster `.eq-loadout-tipwrap`,
+   character.css), sonst würde HoverTips zusätzliches div/span je nach Eltern-`align-items` das
+   Layout verschieben oder eine unsichtbare (aber trotzdem Tooltip-auslösende) Hover-Fläche
+   aufreissen. */
+.queue-btn-tip {
+  display: flex;
+}
+
+/* `.queue-panel-blocked-btn` saß bisher selbst mit `align-self: flex-start` im Spalten-Flex von
+   `.queue-panel-blocked` — jetzt ist der Tooltip-Wrapper das direkte Flex-Kind und muss dieselbe
+   Ausrichtung tragen, sonst zöge sich seine (unsichtbare) Hover-Fläche über die volle Panel-Breite
+   und der Tooltip würde schon beim Hover über die freie Fläche rechts vom Knopf aufploppen. */
+.queue-blocked-btn-tip {
+  align-self: flex-start;
 }
 
 .queue-row-btn {
