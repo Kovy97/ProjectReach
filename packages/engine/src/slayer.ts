@@ -153,14 +153,26 @@ export const WORLD_TASK_LEVEL_MAX_OVER = 8;
  * Unterkante 0 (bit-identisches Alt-Verhalten). Fällt der Pool unter SLAYER_MIN_TASK_POOL, streckt
  * `stretchLevelWindow` die Unterkante notfalls wieder runter (Pool-Mindestgröße geht vor Härte).
  */
-export const TOWER_TASK_LEVEL_MAX_UNDER = 20;
+/*
+ * Chef-Test 25.08.2026 (design/slayer-auftraege-1.1.0.md §2, Alternative 1 als Sofort-Fix): "bin nun
+ * Combat Level 40, Slayer 28 und kriege Tasks für Level-19-Goblins, die ich 1-hitte." Gemessen: auf
+ * dem Weg CL 35–39 waren 10–17 % aller Aufträge L15/L19-Turm-Goblins, bei CL 40 lagen 76 % der
+ * Aufträge unter dem Kampf-Level. Ursache war genau diese Unterkante von 20 Leveln. Jetzt 3: der
+ * Turm liefert nur noch Monster ab CL − 3, und die Streckung (unten) geht ERST nach oben. Das
+ * größere Stufensystem ("Brennas Stufen", SAVE 83) ist eine offene Chef-Entscheidung.
+ */
+export const TOWER_TASK_LEVEL_MAX_UNDER = 3;
+/** Streckung nach oben zuerst, aber höchstens so viele Level über der Ausgangs-Oberkante (CL + 8 + 8). */
+export const STRETCH_UP_MAX = 8;
 
 /**
  * Endgame-Pool-Streckung (Welle GG/slayer-vesna V3): streckt ein Level-Fenster [lo..hi], bis
  * mindestens `minPool` der gegebenen Kandidaten-Level hineinfallen oder das Fenster den gesamten
- * Kandidaten-Bereich abdeckt (Pool erschöpft). Streck-Reihenfolge: ERST die untere Kante runter
- * (leichtere Monster zuerst — kein Schwierigkeits-Sprung), DANN die obere hoch. Rein &
- * deterministisch (kein RNG, kein State) → exakt testbar. Leere Kandidatenliste = No-op.
+ * Kandidaten-Bereich abdeckt (Pool erschöpft). Streck-Reihenfolge seit dem Chef-Test 25.08.2026:
+ * ERST die obere Kante hoch (schwerere Monster zuerst — Slayer soll fordern, s. TOWER_TASK_LEVEL_
+ * MAX_UNDER), DANN die untere runter, wenn oben nichts mehr ist. Vorher andersherum, was bei CL 35–39
+ * die Level-19-Turm-Goblins in den Pool holte. Rein & deterministisch (kein RNG, kein State) →
+ * exakt testbar. Leere Kandidatenliste = No-op.
  */
 export function stretchLevelWindow(
   levels: readonly number[],
@@ -180,8 +192,13 @@ export function stretchLevelWindow(
     for (const l of levels) if (l >= a && l <= b) n++;
     return n;
   };
+  // Nach oben nur bis STRETCH_UP_MAX über der Ausgangskante: Herausforderung ja, aber kein
+  // Auftrag 30 Level über dem Spieler, nur weil die nächsten Zonen noch quest-gesperrt sind.
+  // Danach nach unten, und erst wenn auch unten nichts mehr ist, weiter nach oben (Pool-Mindestgröße).
+  const hiCap = hi + STRETCH_UP_MAX;
   while (countIn(lo, hi) < minPool && (lo > min || hi < max)) {
-    if (lo > min) lo--;
+    if (hi < max && hi < hiCap) hi++;
+    else if (lo > min) lo--;
     else hi++;
   }
   return { lo, hi };

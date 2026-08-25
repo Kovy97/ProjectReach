@@ -6,6 +6,7 @@ import { createGame } from "./state";
 import { xpForLevel } from "./leveling";
 import {
   TOWER_TASK_LEVEL_MAX_UNDER,
+  STRETCH_UP_MAX,
   WORLD_TASK_LEVEL_MAX_OVER,
   assignTask,
   buySlayerShopItem,
@@ -254,9 +255,15 @@ describe("slayer — Endgame-Pool-Streckung (Welle GG V3, stretchLevelWindow)", 
     expect(stretchLevelWindow([6, 8, 10, 13], 6, 13, 4)).toEqual({ lo: 6, hi: 13 });
   });
 
-  it("streckt ERST die untere Kante runter, dann die obere hoch", () => {
-    // [2,8,10,13,40], Fenster [6..13] (3 drin) → lo runter bis 2 holt w2 als Vierten; hi bleibt.
-    expect(stretchLevelWindow([2, 8, 10, 13, 40], 6, 13, 4)).toEqual({ lo: 2, hi: 13 });
+  it("streckt ERST die obere Kante hoch (bis STRETCH_UP_MAX), dann die untere runter (Chef-Test 25.08.2026)", () => {
+    // [2,8,10,13,40], Fenster [6..13] (3 drin) → hi hoch bis zur Kappe 13+8=21 findet nichts (w40 liegt
+    // darüber), dann lo runter bis 2 holt w2 als Vierten. Vorher andersherum (lo zuerst), was bei
+    // CL 35–39 die L19-Turm-Goblins in den Pool holte (design/slayer-auftraege-1.1.0.md §2).
+    expect(stretchLevelWindow([2, 8, 10, 13, 40], 6, 13, 4)).toEqual({ lo: 2, hi: 13 + STRETCH_UP_MAX });
+    // Kappe greift: liegt ein Kandidat knapp über der Kappe, wird erst unten gesucht.
+    expect(stretchLevelWindow([2, 8, 10, 13, 22], 6, 13, 4)).toEqual({ lo: 2, hi: 21 });
+    // Innerhalb der Kappe wird nach oben gefunden, bevor es nach unten geht.
+    expect(stretchLevelWindow([2, 8, 10, 13, 18], 6, 13, 4)).toEqual({ lo: 6, hi: 18 });
     // Untere Kante erschöpft (lo schon am Minimum) → obere Kante wächst.
     expect(stretchLevelWindow([10, 50], 1, 20, 2)).toEqual({ lo: 1, hi: 50 });
   });
@@ -322,8 +329,11 @@ describe("slayer — Turm-Unterkante (Welle LL, Fun-RETEST slayer-vesna)", () =>
       expect(t.isTower).toBe(true);
       const lvl = rc.monsters[t.monsterId]!.level;
       levels.add(lvl);
-      expect(lvl, `Trivial-Ziel ${t.monsterId} (L${lvl})`).toBeGreaterThanOrEqual(96 - TOWER_TASK_LEVEL_MAX_UNDER);
-      expect(lvl).toBeLessThanOrEqual(96 + WORLD_TASK_LEVEL_MAX_OVER);
+      // Chef-Test 25.08.2026: Unterkante jetzt CL−3 (=93); die Streckung nach unten darf sie für die
+      // Pool-Mindestgröße wieder senken (real: soul_flayer L86), aber nie in Trivial-Etagen (<76,
+      // die alte Unterkante). Nach oben höchstens CL+8+STRETCH_UP_MAX.
+      expect(lvl, `Trivial-Ziel ${t.monsterId} (L${lvl})`).toBeGreaterThanOrEqual(96 - 20);
+      expect(lvl).toBeLessThanOrEqual(96 + WORLD_TASK_LEVEL_MAX_OVER + STRETCH_UP_MAX);
       s.slayerTask = null;
     }
     expect(levels.size, "echte Verteilung über die Spitzen-Etagen, kein 1er-Pool").toBeGreaterThanOrEqual(2);
@@ -381,14 +391,15 @@ describe("slayer — Etagen-Los nach Kandidatenzahl gewichtet (Welle NN, Fun-Swe
 
   it("ECHTER Content, CL 96, Turm-only: der 1-Kandidaten-Etage-4-Kopf fällt von ~50 % auf ~1/Pool der Turm-Ziehungen", () => {
     const s = endgameState(rc, 17);
-    // Erwarteter Turm-Kandidaten-Pool im Fenster [CL−20 .. CL+8] (unabhängig vom RNG berechnet).
-    const lo = 96 - TOWER_TASK_LEVEL_MAX_UNDER;
-    const hi = 96 + WORLD_TASK_LEVEL_MAX_OVER;
-    const towerPool = (rc.slayerTower ?? [])
-      .flatMap((f) => f.monsters)
-      .filter((m) => rc.monsters[m]!.level >= lo && rc.monsters[m]!.level <= hi);
-    expect(towerPool).toContain("bone_colossus");
-    expect(towerPool.length).toBeGreaterThanOrEqual(5); // reale Endgame-Spitze: Etage 4 (1) + Etage 5
+    // Erwarteter Turm-Kandidaten-Pool: Fenster [CL−3 .. CL+8], gestreckt wie in der Engine
+    // (unabhängig vom RNG berechnet). Chef-Test 25.08.2026: bone_colossus (L76) liegt seit der
+    // Unterkante CL−3 NICHT mehr im Pool — die Streckung endet bei soul_flayer (L86), sobald ≥ 4
+    // Kandidaten drin sind. Der Sinn des Tests (Etagen-Los ∝ Kandidatenzahl) bleibt.
+    const alleTurm = (rc.slayerTower ?? []).flatMap((f) => f.monsters);
+    const win = stretchLevelWindow(alleTurm.map((m) => rc.monsters[m]!.level), 96 - TOWER_TASK_LEVEL_MAX_UNDER, 96 + WORLD_TASK_LEVEL_MAX_OVER, 4);
+    const towerPool = alleTurm.filter((m) => rc.monsters[m]!.level >= win.lo && rc.monsters[m]!.level <= win.hi);
+    expect(towerPool).not.toContain("bone_colossus");
+    expect(towerPool.length).toBeGreaterThanOrEqual(4); // reale Endgame-Spitze: Etage 5 (+ Etage-4-Spitze)
 
     const N = 300;
     const counts = new Map<string, number>();
@@ -404,20 +415,19 @@ describe("slayer — Etagen-Los nach Kandidatenzahl gewichtet (Welle NN, Fun-Swe
     for (const m of towerPool) {
       expect(counts.get(m) ?? 0, `Kandidat ${m} nie gezogen`).toBeGreaterThan(0);
     }
-    // … und der Ex-Monokultur-Kopf liegt bei ~1/|Pool| statt ~50 % (Altstand: Etagen-Los 50/50).
-    const boneShare = (counts.get("bone_colossus") ?? 0) / N;
-    expect(boneShare, "bone_colossus dominiert weiterhin").toBeLessThan(0.3);
-    expect(boneShare).toBeGreaterThan(0.05);
+    // … und kein Kopf dominiert: jeder liegt bei ~1/|Pool| statt ~50 % (Altstand: Etagen-Los 50/50).
+    for (const [m, n] of counts) {
+      expect(n / N, `${m} dominiert die Turm-Ziehungen`).toBeLessThan(0.3);
+      expect(n / N).toBeGreaterThan(0.05);
+    }
   });
 
   it("ECHTER Content, CL 96, echter Master (Brenna): kein Monster > 15 % der Ziehungen (Pool ≥ 8)", () => {
     const s = endgameState(content, 23);
     // Vereinigter Kandidaten-Pool (Turm-Fenster + dynamischer Welt-Pool), unabhängig berechnet.
-    const lo = 96 - TOWER_TASK_LEVEL_MAX_UNDER;
-    const hi = 96 + WORLD_TASK_LEVEL_MAX_OVER;
-    const towerPool = (content.slayerTower ?? [])
-      .flatMap((f) => f.monsters)
-      .filter((m) => content.monsters[m]!.level >= lo && content.monsters[m]!.level <= hi);
+    const alleTurm = (content.slayerTower ?? []).flatMap((f) => f.monsters);
+    const win = stretchLevelWindow(alleTurm.map((m) => content.monsters[m]!.level), 96 - TOWER_TASK_LEVEL_MAX_UNDER, 96 + WORLD_TASK_LEVEL_MAX_OVER, 4);
+    const towerPool = alleTurm.filter((m) => content.monsters[m]!.level >= win.lo && content.monsters[m]!.level <= win.hi);
     const pool = new Set([...towerPool, ...worldTaskMonsters(s, content)]);
     expect(pool.size, "Verteilungs-Schwelle gilt nur ab 8 Kandidaten").toBeGreaterThanOrEqual(8);
 
@@ -437,7 +447,8 @@ describe("slayer — Etagen-Los nach Kandidatenzahl gewichtet (Welle NN, Fun-Swe
     for (const [m, n] of counts) {
       expect(n / N, `${m} stellt ${((n / N) * 100).toFixed(1)} % aller Ziehungen`).toBeLessThanOrEqual(0.15);
     }
-    expect(counts.get("bone_colossus") ?? 0, "bone_colossus bleibt legitimer Kandidat").toBeGreaterThan(0);
+    // Chef-Test 25.08.2026: bone_colossus (L76) liegt bei CL 96 nicht mehr im Turm-Fenster (Unterkante CL−3).
+    expect(counts.get("bone_colossus") ?? 0, "bone_colossus (L76) ist bei CL 96 kein Ziel mehr").toBe(0);
   });
 
   it("Gewichtungs-Mathematik: 1-Kandidaten-Etage vs 3-Kandidaten-Etage → jedes Monster ~1/4 (nicht 50 % für den Solisten)", () => {

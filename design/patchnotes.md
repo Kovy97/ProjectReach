@@ -272,6 +272,18 @@ proper button family, and the Slayer shop is sorted by level with the level show
 Seuchenkrat…" endete mit Punkten; jetzt bricht der Text in der Karte auf zwei Zeilen um. / EN: The
 Slayer target in the header wraps instead of being cut off.
 
+**Slayer-Aufträge: keine Trivial-Ziele mehr (Chef-Test 25.08.):** DE: Mit Kampfstufe 40 kamen
+Aufträge für Stufe-19-Goblins, die ein Treffer erledigt. Turm-Aufträge griffen bis 20 Stufen unter
+den Spieler; jetzt höchstens 3, und wenn das Fenster zu klein ist, sucht die Vergabe zuerst nach
+oben (bis 16 Stufen über dir), erst dann nach unten. / EN: Slayer tasks no longer hand out
+trivial targets: the tower window now reaches at most 3 levels below you, and a thin pool stretches
+upward first.
+
+*Dev-Notiz: `TOWER_TASK_LEVEL_MAX_UNDER` 20 → 3, `stretchLevelWindow` erst hi (Kappe
+`STRETCH_UP_MAX` 8), dann lo; 4 Pins in slayer.test.ts neu (bone_colossus L76 ist bei CL 96 kein
+Ziel mehr). Das große Stufensystem „Brennas Stufen" (Jagd/Kopfgeld/Blutjagd, SAVE 83) liegt als
+Vorschlag in `design/slayer-auftraege-1.1.0.md`, Chef-Entscheidung offen.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*
