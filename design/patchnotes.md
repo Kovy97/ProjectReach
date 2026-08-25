@@ -114,9 +114,38 @@ bars used, so XP per bar is consistent. Smithing only.
 *Dev-Notiz: Option B aus `design/smithing-xp-barren.md`. content-dev wendet Anhang A3 an, Wächter
 `smithing-xp-per-bar.test.ts`.*
 
-**Kopfleiste: Fortschritts- und XP-Balken im „Doing"-Kasten (in Arbeit):** DE: Der Kasten wird
-breiter und zentriert, beide Balken ziehen hinein. / EN: The activity panel now holds both progress
-bars.
+**Kopfleiste: Fortschritts- und XP-Balken im „Doing"-Kasten:** DE: Der Kasten ist breiter und
+zentriert, beide Balken sitzen jetzt darin; der doppelte Mini-Balken ist weg. Bei 1600 und 1366 px
+Breite nutzt er den freien Platz (402 → 661 px bei 1366). / EN: The activity panel now holds both
+progress bars and uses the free space at smaller widths.
+
+**Warteschlange: Level-Projektion je Eintrag:** DE: Unter der Menge steht, welches Level der Skill
+nach diesem Eintrag hat (⛏ 24 → 34), kumulativ durch die Warteschlange. Nur bei endlichem Ziel
+und nur, wenn sich das Level ändert. / EN: Each queued action shows the skill level you will have
+when it finishes.
+
+**Warteschlange: keine Trennstriche mehr im Namen:** DE: „Kupfera-der" war gestern. Passt ein Wort
+nicht neben die Knöpfe, rutschen die Knöpfe darunter. / EN: Queue names no longer hyphenate.
+
+**Item-Wiki neu gebaut:** DE: Das Fenster hinter dem „?" im Tooltip war 460 px schmal. Jetzt groß
+(bis 1280 px), großes Bild, Kernwerte als Chips, „Quelle" und „Verwendet für" als zwei Kartenraster
+mit Monsterbild und Chance bzw. Rezept und Ergebnis. / EN: The item wiki is large and readable, with
+Source and Used-for as card grids.
+
+*Dev-Notiz: Monster, die aus Zone UND Turm droppen, standen doppelt; wird zusammengefasst (in
+Arbeit).*
+
+**Schmieden: Items als Leiter ab Barren-Level (in Arbeit):** DE: Mithril-Barren ab 35, aber der
+erste Mithril-Dolch erst ab 40, und so in sechs Tiers. Jetzt liegt der Dolch auf dem Barren-Level,
+danach Schwert und so weiter bis zum Plattenpanzer am Ende des Tiers. / EN: The first item of each
+smithing tier now unlocks with its bar; items spread across the tier.
+
+*Dev-Notiz: Chef-Entscheid „Erstmal nur Smithing". Lederverarbeitung hat dieselbe Lücke zweimal
+(Drachenhaut 78 → erstes Item 82, Schattenhaut 90 → 95) und bleibt bewusst unangetastet.*
+
+**Bank und Sidebar im Fenstermodus (in Arbeit, Steam-Rezension):** DE: Bei 1600×900 zeigte das
+Lager nur vier Zeilen plus eine angeschnittene, und fünf Sidebar-Einträge lagen ohne Hinweis unter
+der Fensterkante. / EN: Bank rows and sidebar entries are reachable in windowed mode.
 
 **Warteschlange: eigene Tooltips statt Browser-Titel (in Arbeit):** DE: Die Hinweise verschwanden
 unter dem Cursor; jetzt dieselben Tooltips wie bei den Charakter-Werten. / EN: Queue tooltips no
