@@ -197,6 +197,11 @@ export const zh: Record<string, string> = {
     "weaponEffect.doubleStrike": "有 {chance}% 几率进行第二次攻击。",
     "weaponEffect.fallback": "赋予武器一种特殊的战斗效果。",
     "weaponEffect.bane": "对{family}造成 {magnitude}% 增加的伤害。",
+    // IV 阶符文（老板 2026-08-25 决定，design/runen-tier-iv.html §3/§4）:不破之墙
+    // (blockRestore, 盾牌)、编年史 (combatXp, 首饰)、拾遗 (lootChance, 首饰)。
+    "weaponEffect.blockRestore": "每次成功格挡恢复最大生命值的 {magnitude}%。",
+    "weaponEffect.combatXp": "所有来源的战斗经验 +{magnitude}%。",
+    "weaponEffect.lootChance": "从被击败的敌人处获得战利品的几率 +{magnitude}%。",
     "monsterFamily.undead": "亡灵",
     "monsterFamily.beast": "野兽",
     "monsterFamily.demon": "恶魔",

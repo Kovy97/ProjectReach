@@ -196,6 +196,11 @@ export const ru: Record<string, string> = {
     "weaponEffect.doubleStrike": "{chance}% шанс нанести второй удар.",
     "weaponEffect.fallback": "Наделяет оружие особым боевым эффектом.",
     "weaponEffect.bane": "Наносит на {magnitude}% больше урона (цель: {family}).",
+    // Руны IV уровня (решение шефа от 25.08.2026, design/runen-tier-iv.html §3/§4): Несокрушимая
+    // Стена (blockRestore, щит), Хроника (combatXp, украшение), Дожинки (lootChance, украшение).
+    "weaponEffect.blockRestore": "Каждый успешный блок восстанавливает {magnitude}% от максимального здоровья.",
+    "weaponEffect.combatXp": "+{magnitude}% боевого опыта из всех источников.",
+    "weaponEffect.lootChance": "+{magnitude}% к шансу добычи с побеждённых врагов.",
     "monsterFamily.undead": "нежить",
     "monsterFamily.beast": "звери",
     "monsterFamily.demon": "демоны",

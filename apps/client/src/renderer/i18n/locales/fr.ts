@@ -197,6 +197,11 @@ export const fr: Record<string, string> = {
     "weaponEffect.doubleStrike": "{chance} % de chances de frapper une seconde fois.",
     "weaponEffect.fallback": "Confère à l'arme un effet de combat spécial.",
     "weaponEffect.bane": "Inflige {magnitude} % de dégâts accrus contre {family}.",
+    // Runes de palier IV (décision du chef 25/08/2026, design/runen-tier-iv.html §3/§4) : Rempart
+    // Inébranlable (blockRestore, bouclier), Chronique (combatXp, bijou), Glanage (lootChance, bijou).
+    "weaponEffect.blockRestore": "Chaque blocage réussi vous soigne de {magnitude} % de vos points de vie maximum.",
+    "weaponEffect.combatXp": "+{magnitude} % d'XP de combat, toutes sources confondues.",
+    "weaponEffect.lootChance": "+{magnitude} % de chances de butin sur les ennemis vaincus.",
     "monsterFamily.undead": "les morts-vivants",
     "monsterFamily.beast": "les bêtes",
     "monsterFamily.demon": "les démons",

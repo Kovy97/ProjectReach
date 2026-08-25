@@ -193,6 +193,11 @@ export const es: Record<string, string> = {
     "weaponEffect.doubleStrike": "{chance}% de probabilidad de golpear una segunda vez.",
     "weaponEffect.fallback": "Otorga al arma un efecto de combate especial.",
     "weaponEffect.bane": "Causa un {magnitude}% más de daño contra {family}.",
+    // Runas de Nivel IV (decisión del jefe 25/08/2026, design/runen-tier-iv.html §3/§4): Muralla
+    // Inquebrantable (blockRestore, escudo), Crónica (combatXp, joyería), Rebusca (lootChance, joyería).
+    "weaponEffect.blockRestore": "Cada bloqueo exitoso te cura un {magnitude}% de tu salud máxima.",
+    "weaponEffect.combatXp": "+{magnitude}% de XP de combate de todas las fuentes.",
+    "weaponEffect.lootChance": "+{magnitude}% de probabilidad de botín de los enemigos derrotados.",
     "monsterFamily.undead": "los no-muertos",
     "monsterFamily.beast": "bestias",
     "monsterFamily.demon": "demonios",

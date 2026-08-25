@@ -53,12 +53,20 @@ const TAG_KEY: Record<ItemTypeTag, string> = {
 
 /**
  * Die Trinity-Achse, die eine Rune bei `tier` verlangt (oder null für Waffen-/Attribut-Runen).
- * Spiegel von `trinityGatePasses`: geprüft wird jede Achse mit Wert > 0.
+ * Spiegel von `trinityGatePasses` (engine/enchant.ts), das zwei Quellen kennt, und genauso auch
+ * hier geprüft werden müssen:
+ *  1. `def.requiresTrinity` — Runen Tier IV (Chef-Entscheid 25.08.2026, design/runen-tier-iv.html
+ *     §4.2): tragen selbst KEINEN Trinity-Wert (kein `trinityByTier`), verlangen die Klasse aber
+ *     trotzdem. Ohne diesen Zweig zeigte z.B. die Schild-Rune „Ungebrochene Mauer" (blockRestore)
+ *     am Tooltip nur das grobe `appliesTo`-Tag „Rüstung" statt „Schilde" — Ziel-Label und
+ *     Verzauberungstisch-Gate wären auseinandergelaufen (das Gate lehnt sie auf Nicht-Schilden ab).
+ *  2. `trinityByTier` — die klassischen Rüstungsklassen-Runen (Ägide/Ausweichen/…, Tier-unabhängig
+ *     vom neuen Feld). Vorrang vor `requiresTrinity`, falls beide vorkämen (heute exklusiv).
  */
 function trinityAxis(def: AffixDef, tier: number): keyof TrinityStats | null {
   const tri = def.trinityByTier?.[tier - 1];
-  if (!tri) return null;
-  return TRINITY_KEYS.find((k) => (tri[k] ?? 0) > 0) ?? null;
+  const fromTrinity = tri ? TRINITY_KEYS.find((k) => (tri[k] ?? 0) > 0) : undefined;
+  return fromTrinity ?? def.requiresTrinity ?? null;
 }
 
 /**

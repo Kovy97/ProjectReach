@@ -232,6 +232,11 @@ const en = {
     "weaponEffect.doubleStrike": "{chance}% chance to strike a second time.",
     "weaponEffect.fallback": "Grants the weapon a special combat effect.",
     "weaponEffect.bane": "Deals {magnitude}% increased damage against {family}.",
+    // Rune Tier IV hooks (Chef decision 2026-08-25, design/runen-tier-iv.html §3/§4): Unbroken
+    // Wall (blockRestore, shield), Chronicle (combatXp, jewelry), Gleaning (lootChance, jewelry).
+    "weaponEffect.blockRestore": "Each successful block heals you for {magnitude}% of your max health.",
+    "weaponEffect.combatXp": "+{magnitude}% combat XP from all sources.",
+    "weaponEffect.lootChance": "+{magnitude}% loot chance from defeated enemies.",
     "monsterFamily.undead": "the undead",
     "monsterFamily.beast": "beasts",
     "monsterFamily.demon": "demons",
@@ -2361,6 +2366,11 @@ const de: Record<keyof typeof en, string> = {
     "weaponEffect.doubleStrike": "{chance} % Chance auf einen Zweitschlag.",
     "weaponEffect.fallback": "Verleiht der Waffe eine besondere Kampfwirkung.",
     "weaponEffect.bane": "Verursacht {magnitude} % erhöhten Schaden gegen {family}.",
+    // Runen-Tier-IV-Hooks (Chef-Entscheid 25.08.2026, design/runen-tier-iv.html §3/§4): Ungebrochene
+    // Mauer (blockRestore, Schild), Chronik (combatXp, Schmuck), Nachlese (lootChance, Schmuck).
+    "weaponEffect.blockRestore": "Jeder erfolgreiche Block heilt dich um {magnitude} % deiner maximalen Leben.",
+    "weaponEffect.combatXp": "+{magnitude} % Kampf-XP aus jeder Quelle.",
+    "weaponEffect.lootChance": "+{magnitude} % Beutechance von besiegten Gegnern.",
     "monsterFamily.undead": "Untote",
     "monsterFamily.beast": "Bestien",
     "monsterFamily.demon": "Dämonen",

@@ -191,6 +191,11 @@ export const ptBR: Record<string, string> = {
     "weaponEffect.doubleStrike": "{chance}% de chance de golpear uma segunda vez.",
     "weaponEffect.fallback": "Concede à arma um efeito de combate especial.",
     "weaponEffect.bane": "Causa {magnitude}% de dano aumentado contra {family}.",
+    // Runas de Nível IV (decisão do chefe 25/08/2026, design/runen-tier-iv.html §3/§4): Muralha
+    // Inquebrável (blockRestore, escudo), Crônica (combatXp, joia), Respigo (lootChance, joia).
+    "weaponEffect.blockRestore": "Cada bloqueio bem-sucedido cura {magnitude}% da sua vida máxima.",
+    "weaponEffect.combatXp": "+{magnitude}% de XP de combate de todas as fontes.",
+    "weaponEffect.lootChance": "+{magnitude}% de chance de saque de inimigos derrotados.",
     "monsterFamily.undead": "mortos-vivos",
     "monsterFamily.beast": "feras",
     "monsterFamily.demon": "demônios",
