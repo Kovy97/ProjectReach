@@ -7795,6 +7795,52 @@ export const content: ContentDB = {
         { itemId: "rough_garnet", chance: 0.01, min: 1, max: 1 },
       ],
     },
+    // ── Kohleflöze L50/75/90 (Chef-GO 25.08.2026 (1.1.0), design/rezension-patch-2026-08-25.html
+    // #p15): ab Adamant braucht jeder Barren 3-5 Kohle, das L15-Flöz lag bei nur 11 143 XP/h
+    // gegen 212 968 Ziel bei L75 und war langsamer je Barren als das Erz selbst. Chef-Korrektur
+    // zum Design: Kohle ist "Bei-Komponente zum echten Erz" und bleibt exakt so schnell wie das
+    // bestehende Flöz (durationMs 4200, identisch zu mine_coal) — nur der Ertrag (2/3/4 Kohle)
+    // und damit die XP steigen. XP je Formel target_xph(L)=600·sqrt(xpForLevel(L+1)-xpForLevel(L)),
+    // xp=round(target_xph·4200/3_600_000): L50→72 (61 714 XP/h ggü. Ziel 61 809), L75→248
+    // (212 571 ggü. 212 997), L90→522 (447 429 ggü. 447 593) — alle < 0,2 % vom Ziel. Kein
+    // eigenes Aktionsbild: coal bleibt loot[0], die Karte fällt automatisch auf coal.webp
+    // zurück (actionIcons.ts, kein Eintrag für mine_coal selbst → gleiches Verhalten).
+    mine_coal_deep: {
+      id: "mine_coal_deep",
+      name: { en: "Deep Coal Seam", de: "Tiefes Kohleflöz" },
+      skill: "mining",
+      durationMs: 4200,
+      xp: 72,
+      levelRequired: 50,
+      loot: [
+        { itemId: "coal", chance: 1, min: 2, max: 2 },
+        { itemId: "rough_ruby", chance: 0.012, min: 1, max: 1 },
+      ],
+    },
+    mine_coal_rich: {
+      id: "mine_coal_rich",
+      name: { en: "Rich Coal Seam", de: "Reiches Kohleflöz" },
+      skill: "mining",
+      durationMs: 4200,
+      xp: 248,
+      levelRequired: 75,
+      loot: [
+        { itemId: "coal", chance: 1, min: 3, max: 3 },
+        { itemId: "rough_diamond", chance: 0.012, min: 1, max: 1 },
+      ],
+    },
+    mine_coal_ancient: {
+      id: "mine_coal_ancient",
+      name: { en: "Ancient Coal Seam", de: "Uraltes Kohleflöz" },
+      skill: "mining",
+      durationMs: 4200,
+      xp: 522,
+      levelRequired: 90,
+      loot: [
+        { itemId: "coal", chance: 1, min: 4, max: 4 },
+        { itemId: "rough_diamond", chance: 0.02, min: 1, max: 1 },
+      ],
+    },
     // ── Gravesteel (ERFUNDEN: L22-Lückenfüller Coal→Mithril) ─────────────
     mine_gravesteel: {
       id: "mine_gravesteel",
