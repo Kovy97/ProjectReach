@@ -769,6 +769,8 @@ const en = {
     "itemwiki.noSource": "No known source.",
     "itemwiki.noUsedFor": "Not used in any recipe.",
     "itemwiki.jumpToRecipe": "Jump to this recipe",
+    "itemwiki.openRecipe": "Open recipe",
+    "itemwiki.back": "← Back",
     "itemwiki.jumpToMonster": "Show in combat area",
     // Story-Zonen-Gate-Legende (Chef-Befund 2026-08-25): erklärt die gedimmten Quelle-Karten, statt
     // die Spieler:in auf zufälliges Hovern zu verlassen — s. `SourceList` in ItemWikiModal.tsx.
@@ -2908,6 +2910,8 @@ const de: Record<keyof typeof en, string> = {
     "itemwiki.noSource": "Keine bekannte Quelle.",
     "itemwiki.noUsedFor": "Wird in keinem Rezept verwendet.",
     "itemwiki.jumpToRecipe": "Zu diesem Rezept springen",
+    "itemwiki.openRecipe": "Rezept öffnen",
+    "itemwiki.back": "← Zurück",
     "itemwiki.jumpToMonster": "Im Kampfgebiet zeigen",
     "itemwiki.sourceLockedLegend": "Ausgegraut = Zone noch nicht freigeschaltet. Für Details mit der Maus über eine Karte fahren.",
     "itemwiki.stackable": "Stapelbar",

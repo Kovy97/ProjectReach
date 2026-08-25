@@ -390,6 +390,21 @@ function SourceRow({ entry, state }: { entry: DisplaySource; state: GameState })
         <WikiSkillIcon skillId={entry.skillId} />
         <span className="iwk-row-name">{tr(entry.name)}</span>
         <span className="iwk-row-val">{pct(entry.chance)}</span>
+        {/* Chef 25.08.2026: der Sprung war nur als Hover-Titel sichtbar; jetzt ein Knopf in der Zeile,
+            auf eigener Zeile (Umbruch-Element), damit der Aktionsname in der schmalen Karte nicht
+            buchstabenweise bricht. */}
+        <span className="iwk-row-break" aria-hidden="true" />
+        <button
+          type="button"
+          className="btn-iron btn-iron--sm iwk-open-recipe"
+          onClick={(e) => {
+            e.stopPropagation();
+            closeItemWikiModal();
+            jumpToAction(entry.actionId);
+          }}
+        >
+          {t("itemwiki.openRecipe")}
+        </button>
       </li>
     );
   }
@@ -486,12 +501,28 @@ const store = {
 /** Öffnet das Item-Wiki-Modal (aus dem "?"-Button im Tooltip ODER dem Klick auf einen Verwendungs-
  *  Zielitem in einem bereits offenen Wiki-Modal — s. `UseRow`). Ersetzt einen evtl. bereits offenen
  *  Wiki-Eintrag direkt (kein Stack), spiegelbildlich zu `useItemTooltip().pin`. */
+/**
+ * Verlauf (Chef 25.08.2026, aus dem Spieler-Vorschlag "Wiki wie ein Browser"): wer sich von Item zu
+ * Item klickt (Verwendungs-Ziel, Zutat), bekommt oben links "Zurück". Der Stapel lebt nur, solange
+ * das Modal offen ist; Schließen leert ihn. Kein State im Save, kein Portal-Problem.
+ */
+let history: Array<{ itemId: string; instance?: ItemInstance }> = [];
+
 export function openItemWikiModal(itemId: string, instance?: ItemInstance): void {
+  if (current && current.itemId !== itemId) history.push(current);
   current = { itemId, instance };
   emit();
 }
 
+export function backItemWikiModal(): void {
+  const prev = history.pop();
+  if (!prev) return;
+  current = prev;
+  emit();
+}
+
 export function closeItemWikiModal(): void {
+  history = [];
   if (current) {
     current = null;
     emit();
@@ -535,7 +566,11 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
     <div className="modal-overlay iwk-overlay" onClick={closeItemWikiModal}>
       <div className="modal iwk-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close ds-close-button" onClick={closeItemWikiModal} aria-label={t("common.close")} />
-
+        {history.length > 0 && (
+          <button type="button" className="btn-iron btn-iron--sm iwk-back" onClick={backItemWikiModal}>
+            {t("itemwiki.back")}
+          </button>
+        )}
 
         <div className="iwk-kicker">{t("itemwiki.kicker")}</div>
 

@@ -651,6 +651,8 @@ export const es: Record<string, string> = {
     "itemwiki.noSource": "Sin fuente conocida.",
     "itemwiki.noUsedFor": "No se usa en ninguna receta.",
     "itemwiki.jumpToRecipe": "Ir a esta receta",
+    "itemwiki.openRecipe": "Abrir receta",
+    "itemwiki.back": "← Atrás",
     "itemwiki.jumpToMonster": "Mostrar en la zona de combate",
     "itemwiki.sourceLockedLegend": "Atenuado = zona aún no desbloqueada. Pasa el cursor sobre una tarjeta para más detalles.",
     "itemwiki.stackable": "Apilable",

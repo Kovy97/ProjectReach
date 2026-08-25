@@ -661,6 +661,8 @@ export const ru: Record<string, string> = {
     "itemwiki.noSource": "Источник неизвестен.",
     "itemwiki.noUsedFor": "Не используется ни в одном рецепте.",
     "itemwiki.jumpToRecipe": "Перейти к этому рецепту",
+    "itemwiki.openRecipe": "Открыть рецепт",
+    "itemwiki.back": "← Назад",
     "itemwiki.jumpToMonster": "Показать в зоне боя",
     "itemwiki.sourceLockedLegend": "Затемнено = зона ещё не открыта. Наведите курсор на карточку для подробностей.",
     "itemwiki.stackable": "Складируется",

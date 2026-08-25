@@ -396,6 +396,16 @@ family, toggles instead of checkboxes, language chips and the back button includ
 (Modifier in design-system.css). Bewusst nicht umgestellt: der rote „Übernehmen"-Knopf beim
 Speicherstand-Import (destruktiv, `.combat-btn.flee`) und die Knöpfe im Bug-Report-Dialog.*
 
+**Item-Wiki: „Rezept öffnen" und „Zurück" (Spieler-Vorschlag, Chef 25.08.):** DE: Rezept-Zeilen
+in der Quelle tragen jetzt einen sichtbaren Knopf „Rezept öffnen" (der Sprung war vorher nur als
+Hover-Text zu finden). Wer sich im Wiki von Item zu Item klickt, kommt mit „← Zurück" oben links
+wieder zurück. / EN: Recipe sources now show an "Open recipe" button, and the wiki remembers where
+you came from with a Back button.
+
+*Dev-Notiz: Verlaufs-Stapel modul-lokal in ItemWikiModal (leert sich beim Schließen), Knöpfe
+`.btn-iron--sm`. Der volle Spieler-Vorschlag (Handwerkskette, Skill-Seiten, Browser-Wiki) liegt als
+Prototyp in design/wiki-prototyp-2026-08-25.html, Chef: nur diese zwei Teile.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

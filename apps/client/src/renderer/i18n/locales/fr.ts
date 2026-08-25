@@ -662,6 +662,8 @@ export const fr: Record<string, string> = {
     "itemwiki.noSource": "Aucune source connue.",
     "itemwiki.noUsedFor": "Non utilisé dans une recette.",
     "itemwiki.jumpToRecipe": "Aller à cette recette",
+    "itemwiki.openRecipe": "Ouvrir la recette",
+    "itemwiki.back": "← Retour",
     "itemwiki.jumpToMonster": "Afficher dans la zone de combat",
     "itemwiki.stackable": "Empilable",
     "itemwiki.sourceLockedLegend": "Grisé = zone pas encore débloquée. Survolez une carte pour plus de détails.",

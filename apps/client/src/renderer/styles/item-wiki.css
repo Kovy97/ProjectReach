@@ -432,3 +432,41 @@
   height: 26px;
   object-fit: contain;
 }
+
+/* Chef 25.08.2026 ("nur die zwei"): sichtbarer Rezept-Knopf in der Quellen-Zeile und "Zurueck" oben
+   links, wenn man sich von Item zu Item geklickt hat. Beides im Stahlrahmen-Standard (.btn-iron). */
+.iwk-row:has(.iwk-open-recipe) {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+.iwk-row:has(.iwk-open-recipe) .iwk-row-name {
+  overflow-wrap: normal;
+  hyphens: manual;
+  white-space: normal;
+}
+.iwk-row-break {
+  flex: 1 0 100%;
+  height: 0;
+}
+.iwk-row .iwk-open-recipe {
+  flex: 0 0 auto;
+  margin-left: auto;
+  min-height: 32px;
+  min-width: 0;
+  padding: 2px 10px;
+  font-size: 12px;
+  border-width: 6px;
+  border-image-width: calc(6px * 2.125);
+}
+.modal.iwk-modal .iwk-back {
+  position: absolute;
+  top: 22px;
+  left: 30px;
+  min-height: 34px;
+  min-width: 0;
+  padding: 2px 12px;
+  font-size: 12px;
+  border-width: 6px;
+  border-image-width: calc(6px * 2.125);
+  z-index: 2;
+}
