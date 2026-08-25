@@ -31,11 +31,14 @@ export function SkillLevelText({
 }): JSX.Element {
   const baseText = max !== undefined ? `${base}/${max}` : `${base}`;
   if (boost <= 0) return <>{baseText}</>;
-  const boostedText = max !== undefined ? `${base + boost}/${max}` : `${base + boost}`;
+  // Chef-Test 25.08.2026: "in der Sidebar sowie bei Style sollte beim Level der Skills das Original-
+  // Level stehen und dann in grünen Klammern das geboostete Level." Vorher stand das geboostete
+  // Level vorn und "(+3)" dahinter; wer nur kurz hinsah, hielt den Trank-Bonus für sein echtes Level.
+  // Jetzt: echtes Level zuerst, der geboostete Wert in Grün dahinter, z.B. "40/99 (43)".
   return (
     <span className="skill-boost-value">
-      {boostedText}
-      <span className="skill-boost-tag">{` (+${boost})`}</span>
+      {baseText}
+      <span className="skill-boost-tag">{` (${base + boost})`}</span>
     </span>
   );
 }

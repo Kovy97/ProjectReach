@@ -257,6 +257,11 @@ Beutechance. Die Rune des Zählers (Tier IV, Schmuck) hatte denselben Effekt und
 jeder fünfte trägt +50 % Schaden. / EN: Four items and the Tallyman rune promised gold from
 kills, which no longer exists; they now grant loot chance (items) or every fifth hit +50 % (rune).
 
+**Geboostete Skill-Level: echtes Level zuerst (Chef-Test 25.08.):** DE: In der Sidebar, bei den
+Kampfstilen und in der Skill-Übersicht steht jetzt das echte Level, dahinter in grünen Klammern
+das geboostete („40/99 (43)"). Vorher stand der Trankwert vorn und sah aus wie das eigene Level. /
+EN: Boosted skill levels now show your real level first, with the boosted value in green brackets.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

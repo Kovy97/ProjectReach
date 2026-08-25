@@ -67,13 +67,16 @@
    Zahl in Buff-Grün, der "(+2)"-Zusatz dezent kleiner daneben. Erbt font-size/-weight vom
    umgebenden Kontext (Sidebar/Skills-Übersicht/Combat-Loadout haben je eigene Level-Typografie);
    nur die Farbe wird hier fest auf --boost gesetzt. */
+/* Chef-Test 25.08.2026: echtes Level in Normalfarbe, der geboostete Wert dahinter in gruenen
+   Klammern (SkillLevel.tsx). Vorher war der ganze Ausdruck gruen und das geboostete Level vorn. */
 .skill-boost-value {
-  color: var(--boost);
+  color: inherit;
 }
 .skill-boost-tag {
-  font-size: 0.8em;
-  font-weight: 600;
-  opacity: 0.85;
+  color: var(--boost);
+  font-size: 0.9em;
+  font-weight: 700;
+  opacity: 1;
 }
 
 /* ─── Item-Framework: Zellen, Seltenheit, Tooltip ───────── */
