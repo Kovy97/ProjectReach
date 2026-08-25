@@ -29,6 +29,21 @@ erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90
 Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests,
 Hülle 31 grün.*
 
+**Monster-Ausrüstung ist jetzt immer besser als das Handwerk (Rezension #8):** DE: Von 215
+Kampf-Uniques waren 108 schlechter als das, was man in derselben Zone schmieden konnte, 103 hatten
+keinen Effekt. Jetzt gilt: ein Drop trägt mindestens die Werte des nächsten Handwerks-Tiers, ein
+Requirement des aktuellen, und einen Effekt. Dafür fallen die Drops seltener (Erwartungswert
+bleibt), Chase-Items bleiben unter 0,1 %. 33 Drops, die nur Kopien von Craft-Teilen waren, geben
+stattdessen Material. / EN: Dropped gear now always beats crafted gear of its tier and carries an
+effect; drop rates are lower to compensate.
+
+*Dev-Notiz: 149 Drop-Uniques + 11 Elite-Uniques + 20 vom Wächter gefundene; 258 Loot-Zeilen.
+Effekte aus der bestehenden Palette (vengeance, cooldownOnKill, desperation, healOnKill,
+giantSlayer, antiRegen, firstBlood, eagleEye, momentum), Legendäres mit hpRegenPerSec. Hülle:
+harte Deckel halten, Mess-Pins neu (Krit CL30 ranged am Deckel, Tank CL60 +40 AR, TTK ranged
+−10 %). Wächter drop-gear-beats-craft.test.ts. Kein Save-Bump; Alt-Saves ziehen die Werte über
+den Base-Item-Lookup.*
+
 **Belohnungs-Shop in sechs Regalen (Rezension #13):** DE: Der Token-Shop hatte neun Angebote,
 die später nichts mehr wert waren. Jetzt sechs Regale, die mit der Chronik aufgehen (offen, dann
 Kapitel 4, 9, 14, 18, 20), 47 Angebote aus Speisen, Tränken, Tonika und Saat, gesperrte Regale

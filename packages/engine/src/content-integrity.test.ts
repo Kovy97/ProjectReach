@@ -65,18 +65,48 @@ describe("content integrity: alle Item-Referenzen existieren", () => {
    * @~20 % Drop-Chance, kein Farm-Loop), daher bewusst von `expectStrictLadder` ausgenommen statt
    * die Requirements künstlich hochzuziehen (was die Spec-Vorgabe unterlaufen würde). Analog zum
    * `KNOWN_FIVE_PIECE_FAMILIES`-Allowlist-Muster weiter unten in dieser Datei.
+   *
+   * Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): dieselbe
+   * Standing Rule gilt jetzt für ALLE 65 Platte-/Schild-/Leder-Ausrüstungs-Uniques aus Kampfquellen
+   * (Monster/Elite-Extra/Dungeon-Truhe/Paragon) — „Drop ≥ nächstes Craft-Tier + Effekt" bei
+   * Requirement des AKTUELLEN Craft-Tiers ist exakt derselbe Tier-Leiter-Bruch wie bei den
+   * Elite-Uniques oben, nur diesmal an regulären (nicht-Elite) Drop-Zeilen. Liste = alle Platte-/
+   * Schild-/Leder-IDs aus den #8-Tabellen (Nahkampf/Fernkampf/Magie tragen keine dieser vier Felder,
+   * Schmuck auch nicht — daher hier nicht gelistet).
    */
-  const ELITE_UNIQUE_LADDER_EXEMPT = new Set([
+  const LADDER_EXEMPT_DROP_UNIQUES = new Set([
+    // Elite-Uniques (elite-balance-spec.md §4, vor #8 schon exempt).
     "quietstep_boots", "cinderhusk_bulwark", "oldgrowth_plate", "thorncrown", "pyrebound_vestment",
     "shellfather_aegis", "tideterror_grip", "morvane_warplate", "rimebound_leggings",
     "ridgetyrant_greaves",
+    // Rezension #8: Platte (48).
+    "cowhide_jerkin", "warband_hauberk", "ashplate_cuirass", "slagheart_cuirass", "moss_plate_body",
+    "gravesteel_cuirass", "aetherscale_cuirass", "idol_shroud", "muckboots", "scavenger_boots",
+    "dustwalker_boots", "wildwood_treads", "frostward_treads", "gravetread_sabatons", "padfoot_boots",
+    "tidewalker_boots", "cloudwalker_boots", "idolstep_sabatons", "worn_workgloves", "rivetfist_gloves",
+    "boneknuckle_gauntlets", "ashen_gauntlets", "moltengrip_gauntlets", "thornmail_gauntlets",
+    "clawguard_gloves", "barnacle_gauntlets", "skygrip_gauntlets", "voidtouched_gauntlets",
+    "bonepatch_helm", "marrow_cap", "cryptguard_helm", "shadestalker_hood", "ash_tyrant_crown",
+    "chitin_helm", "emberforge_helm", "wolfpelt_hood", "reefscale_helm", "stormhide_helm", "idol_crown",
+    "goblin_warkilt", "sootscale_greaves", "forgeplate_greaves", "mossweave_leggings",
+    "tombplate_greaves", "stagleather_chaps", "tidewoven_leggings", "frostplate_greaves",
+    "aetherweave_leggings",
+    // Rezension #8: Schild (8).
+    "wattle_shield", "plaguebone_buckler", "goblin_buckler", "basilisk_scale_shield", "chitin_bulwark",
+    "bark_bulwark", "gravewarden_greatshield", "crabshell_bulwark",
+    // Rezension #8: Leder (9).
+    "warden_brigandine", "direhide_jerkin", "bearhide_cuirass", "krakenhide_cuirass",
+    "wyvernscale_aegis", "cowhide_cap", "spectral_coif", "hide_leggings", "wyvernscale_greaves",
+    // Rezension #8 Nachzug: über die neue drop-gear-beats-craft-Wächterprüfung zusätzlich gefunden
+    // (vorbestehende Drops außerhalb der #8-Tabellen, gleiches Muster mitbehoben).
+    "slagcarapace_plate", "warchief_fist", "revenant_greatshield",
   ]);
 
   function expectStrictLadder(field: "armorRating" | "evasionRating" | "wardCapacity" | "blockChance", reqField: "defence" | "ranged" | "magic", slots: readonly string[]) {
     const offenders: string[] = [];
     for (const slot of slots) {
       const list = Object.values(items).filter(
-        (it) => it.slot === slot && (it[field] ?? 0) > 0 && !ELITE_UNIQUE_LADDER_EXEMPT.has(it.id),
+        (it) => it.slot === slot && (it[field] ?? 0) > 0 && !LADDER_EXEMPT_DROP_UNIQUES.has(it.id),
       );
       for (const a of list) {
         for (const b of list) {

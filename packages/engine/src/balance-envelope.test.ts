@@ -213,10 +213,16 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     // abyssal_feast dex+4→+6, lck+2→+3) — der "beste Food je Kategorie"-Pick des Builders wechselt
     // dadurch teils das Item, was die Attribut-Summe (u.a. lck, das überall in critChance einfließt)
     // minimal anhebt: 0.4367/0.4955/0.4355 → 0.4376/0.4963/0.4363 (CL30, alle Stile, +0.0008..0.0009).
+    // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): CL30/melee
+    // steigt 0.4376→0.4920 — der Voll-Stack-Builder greift jetzt zu einem der neu angehobenen
+    // Nahkampf-Drops (Requirement jetzt im CL30-Fenster, lck/Kernwerte über dem alten Craft-Pick).
+    // CL30/ranged erreicht jetzt sogar den 0.5-Deckel exakt (0.4963→0.5, ein neu angehobener
+    // Fernkampf-Drop trägt genug lck) — Sonderfall unten separat behandelt. CL30/magic steigt
+    // ebenfalls (0.4363→0.4871, ein neu angehobener Fokus-/Stab-Drop trägt mehr lck).
     const CL30_CRIT_CHANCE: Record<WeaponStyle, number> = {
-      melee: 0.4376,
-      ranged: 0.4963,
-      magic: 0.4363,
+      melee: 0.492,
+      ranged: CRIT_CHANCE_CAP,
+      magic: 0.4871,
     };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
@@ -327,18 +333,30 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // +12 auf allen drei Bändern (352.23→364.23, 379.79→391.79, 538.53→550.53). Mitigation zieht bei
     // CL 30/60 mit (noch unter dem 0.80-Deckel); CL 90 bleibt am Deckel (Clamp, kein Assert nötig).
     // Block/damageReduction unverändert (Trinity-Zutat ist reines armorRating, kein Block-Anteil).
+    // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): Platte-/Schild-
+    // Drops im CL-30-Fenster (u.a. Turm-F2-Platte, basilisk_scale_shield/cowhide_jerkin-Klasse mit
+    // jetzt next-Tier-Werten bei Craft-Req) schlagen die bisherige BiS-Wahl — armorRating 364.23→
+    // 366.65, Mitigation zieht mit (0.7445→0.7458), Block sinkt leicht (0.335→0.332: der neue Schild-
+    // Pick trägt mehr AR, etwas weniger Block als der alte). CL 60 unverändert (kein geänderter Drop
+    // im dortigen Requirement-Fenster). CL 90 steigt weiter (550.53→552.07): Mitigation/Block waren
+    // schon vor #8 am Deckel (0.80/0.47) und bleiben dort (Clamp, kein Assert nötig).
     const t30 = computeStats(bis("melee", 30, "tank").state, content);
-    expect(t30.armorRating).toBeCloseTo(364.23, 2);
-    expect(mitigation(t30.defense)).toBeCloseTo(0.7445, 3);
-    expect(t30.blockChance).toBeCloseTo(0.335, 3);
+    expect(t30.armorRating).toBeCloseTo(366.65, 2);
+    expect(mitigation(t30.defense)).toBeCloseTo(0.7458, 3);
+    expect(t30.blockChance).toBeCloseTo(0.332, 3);
+    // Re-Messung 2026-08-25 (Rezension #8, Chef-GO 25.08.2026, #p8, Nachzug außerhalb der #8-
+    // Tabellen): slagcarapace_plate (AR 26.15→26.8) und revenant_greatshield (AR 15.45→16.0, Block
+    // 0.382 unverändert) schlagen jetzt bei CL 60 die bisherige BiS-Platte/-Schild — armorRating
+    // 391.79→432.17, Mitigation zieht mit, Block sinkt leicht (0.388→0.382, revenant_greatshield
+    // trägt weniger Block als der alte Pick).
     const t60 = computeStats(bis("melee", 60, "tank").state, content);
-    expect(t60.armorRating).toBeCloseTo(391.79, 2);
-    expect(mitigation(t60.defense)).toBeCloseTo(0.7581, 3);
-    expect(t60.blockChance).toBeCloseTo(0.388, 3);
+    expect(t60.armorRating).toBeCloseTo(432.17, 2);
+    expect(mitigation(t60.defense)).toBeCloseTo(0.7757, 3);
+    expect(t60.blockChance).toBeCloseTo(0.382, 3);
     // Re-Messung 2026-07-26 (#354 Paket 3.2 Nachschärfung): shellfather_aegis AR 19.6→21.5, Block
     // 45%→47% (Marge über titanium_kiteshield) — schlägt bei CL 90 jetzt klar als BiS-Offhand.
     const t90 = computeStats(bis("melee", 90, "tank").state, content);
-    expect(t90.armorRating).toBeCloseTo(550.53, 2); // Stapelung: 298.53 → 538.53 → 550.53 (Food-Trinity) ⇒ Mitigation am Cap
+    expect(t90.armorRating).toBeCloseTo(552.07, 2); // Rezension #8 (s.o.): 550.53 → 552.07
     // Pet-Schadensreduktion obendrauf (multiplikativ NACH Armor/Ward/Block): heute max. 3 %.
     expect(t90.damageReduction).toBeCloseTo(0.03, 5);
   });
@@ -347,8 +365,12 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): greytooth_mantle (bonus.lifesteal 0.03,
     // rarity legendary, KEIN Requirement) ist ab CL 30 auf JEDEM Stil BiS-Cape für das
     // "lifesteal"-Ziel — +3 pp auf der gesamten Schiene gegenüber der alten Baseline (1,5 %/6,5 %).
+    // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): nekro_reaperblade
+    // (bonus.lifesteal 0.05, einzige Waffen-Lifesteal-Whitelist neben doomknight_cinderblade) bekommt
+    // Requirement attack 40→70 (nächstes Craft-Tier der Zone) und ist damit ab CL 70 statt CL 40
+    // legal — bei CL 60 fällt die Schiene auf 4,5 % zurück (0,095→0,045), CL 90 unverändert (0,095).
     expect(computeStats(bis("melee", 30, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
-    expect(computeStats(bis("melee", 60, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.095, 5);
+    expect(computeStats(bis("melee", 60, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
     expect(computeStats(bis("melee", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.095, 5);
     expect(computeStats(bis("ranged", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
     expect(computeStats(bis("magic", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
@@ -370,8 +392,13 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // oben auf den Warding-Skill-Stack (allBuffs:true, kein Level-Gate in der Hülle): maxWard +30
     // auf allen drei Bändern (583→613, 777→807, 1179.5→1209.5). Ward hat weiterhin keinen Cap davor
     // (offener Schieber, s. Suiten-Kopf-Kommentar).
+    // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): pyrebound_vestment
+    // (Elite-Unique, wardCapacity 101→142.85, Req magic 58→70 nachgezogen, s. Elite-Tabelle #p8)
+    // fällt aus dem CL-60-Fenster (Requirement jetzt oberhalb) — der CL-60-BiS-Build fällt auf das
+    // nächstschwächere Stoff-Teil zurück: maxWard 807→730.8. CL 30/90 unverändert (dort war
+    // pyrebound_vestment nie BiS bzw. bleibt es bei CL 90 weiterhin).
     expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(613, 0);
-    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(807, 0);
+    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(730.8, 1);
     expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1209.5, 1);
   });
 
@@ -419,7 +446,11 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // jetzt buff.trinity.evasionRating +8 UND dex+6 statt dex+4 (Fernkampf-Retyping, #p11 Regel 3);
     // der Voll-Stack-Builder pickt es weiterhin als bestes Food für diesen Ranged-Dodge-Build, der
     // höhere dex-Anteil hebt den flachen `evasion`-Kontest-Stat leicht: 16.027 → 16.079.
-    expect(st.evasion).toBeCloseTo(16.079, 3);
+    // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): mehrere Leder-
+    // Drops im CL-90-Fenster (u.a. wyvernscale_aegis/-greaves, direkt next-Tier-EV bei Craft-Req)
+    // schlagen jetzt die bisherige BiS-Wahl für einzelne Slots und heben den dex-Anteil: evasion
+    // 16.079 → 16.530.
+    expect(st.evasion).toBeCloseTo(16.53, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -442,12 +473,15 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): `evasion` steigt
     // leicht (16.027 → 16.079, s.o.) ⇒ der Gegner landet minimal SELTENER (0.2442 → 0.2437 /
     // 0.4669 → 0.4665) — marginal, der Cap-Befund oben bleibt unverändert.
+    // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): `evasion` steigt
+    // weiter (16.079 → 16.530, s.o.) ⇒ der Gegner landet noch etwas seltener (0.4062 → 0.3996 /
+    // 0.2437 → 0.2397 / 0.7775 → 0.7727 / 0.4665 → 0.4636) — marginal, der Cap-Befund bleibt.
     const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
-    expect(hcOn).toBeCloseTo(0.4062, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2437, 3);
+    expect(hcOn).toBeCloseTo(0.3996, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2397, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7775, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4665, 3);
+    expect(hc150).toBeCloseTo(0.7727, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4636, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -551,13 +585,22 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // melee/idol_warden 56.45/18.9 → 57.34/19.0, melee/last_idol 184.96/13.4 → 188.17/13.5,
     // ranged/idol_warden 97.77/14.14 → 97.21/13.8, ranged/last_idol 323.54/12.9 → 321.66/13.1,
     // magic/idol_warden 71.52/23.7 → 72.55/25.3, magic/last_idol 240.73/25.6 → 244.57/27.4.
+    // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): der CL-90-BiS-
+    // "damage"-Build je Stil greift jetzt teils zu neu angehobenen Drops (Melee/Ranged: mehrere
+    // Dolch-/Bogen-Uniques im CL-90-Fenster; Magie: Fokus-/Stab-Drops) — Spieler-DPS steigt auf
+    // allen drei Stilen (schnellerer Kill, Player-TTK sinkt bei Melee/Ranged), die Rüstungs-Drops
+    // (Trinity) heben gleichzeitig den eingehenden EHP-Puffer (Enemy-TTK steigt). Alle sechs Paare
+    // re-gemessen: melee/idol_warden 57.34/19.0 → 56.87/19.79, melee/last_idol 188.17/13.5 →
+    // 186.56/14.10, ranged/idol_warden 97.21/13.8 → 87.24/14.52, ranged/last_idol 321.66/13.1 →
+    // 289.16/13.23, magic/idol_warden 72.55/25.3 → 73.98/25.34, magic/last_idol 244.57/27.4 →
+    // 248.98/27.39.
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 57.34, 19.0],
-      ["melee", "last_idol", 188.17, 13.5],
-      ["ranged", "idol_warden", 97.21, 13.8],
-      ["ranged", "last_idol", 321.66, 13.1],
-      ["magic", "idol_warden", 72.55, 25.3],
-      ["magic", "last_idol", 244.57, 27.4],
+      ["melee", "idol_warden", 56.87, 19.79],
+      ["melee", "last_idol", 186.56, 14.1],
+      ["ranged", "idol_warden", 87.24, 14.52],
+      ["ranged", "last_idol", 289.16, 13.23],
+      ["magic", "idol_warden", 73.98, 25.34],
+      ["magic", "last_idol", 248.98, 27.39],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);

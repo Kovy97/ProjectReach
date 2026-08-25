@@ -146,6 +146,53 @@ const LADDER_BASELINE = new Set([
   "moltengrip_gauntlets->runite_gauntlets",
   "stormhide_helm->ironhide_helm",
   "tidewalker_boots->ironhide_boots",
+  // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): „Drop ≥
+  // nächstes Craft-Tier + Effekt" bei Requirement des AKTUELLEN Tiers angewandt auf 149 reguläre
+  // (nicht-Elite) Ausrüstungs-Uniques aus Kampfquellen — strukturell dasselbe „Drop lohnt sich
+  // trotzdem"-Muster wie die Elite-Phase-2-Paare oben, nur diesmal am großen Batch. 37 neue
+  // Nachbar-Fingerprints (Score- und value-Brüche, verifiziert nach dem #8-Apply-Testlauf).
+  "voidcaller_staff->pyre_staff",
+  "sorrow_staff->titanium_staff",
+  "stormcrest_staff->godiron_staff",
+  "rotfang_dagger->steel_dagger",
+  "blacksteel_dagger->mire_fang_dagger",
+  "titanium_dagger->talon_dagger",
+  "titanium_sword->slagforged_sword",
+  "boar_tusk_mace->iron_mace",
+  "pitchfork_spear->iron_spear",
+  "runite_spear->bonewrought_spear",
+  "bloodiron_spear->wolffang_spear",
+  "boneknuckle_gauntlets->ashen_gauntlets",
+  "mithril_gauntlets->thornmail_gauntlets",
+  "bloodiron_gauntlets->barnacle_gauntlets",
+  "runite_sabatons->gravetread_sabatons",
+  "skybreaker_greatsword->godiron_greatsword",
+  "blacksteel_longbow->ashwood_longbow",
+  "bloodiron_longbow->stagstride_longbow",
+  "iron_shortbow->stolen_shortbow",
+  "plaguebone_buckler->goblin_buckler",
+  "wailing_wand->mithril_wand",
+  "frosthex_wand->godiron_wand",
+  "steel_focus->frost_focus",
+  "bloodiron_focus->tidecaller_focus",
+  "cinderhusk_bulwark->bark_bulwark",
+  "bark_bulwark->crabshell_bulwark",
+  "frost_pelt_hood->wolfpelt_hood",
+  "cryptguard_helm->chitin_helm",
+  "emberforge_helm->reefscale_helm",
+  "slagheart_cuirass->gravesteel_cuirass",
+  "aetherscale_cuirass->bearhide_cuirass",
+  "forgeplate_greaves->tombplate_greaves",
+  "tombplate_greaves->ridgetyrant_greaves",
+  "ridgetyrant_greaves->frostplate_greaves",
+  "revenant_greatshield->gravewarden_greatshield",
+  "mariner_cloak->voidstalker_cloak",
+  "cinderwretch_maul->direfang_maul",
+  // Rezension #8 Nachzug: über die neue drop-gear-beats-craft-Wächterprüfung zusätzlich gefunden
+  // (vorbestehende Drops außerhalb der #8-Tabellen, gleiches Muster mitbehoben) — antler_warbow
+  // (Zonen-Drop, jetzt DPS 4.05..4.07 statt 4.03) überholt knapp das Elite-Unique blackantler_warbow
+  // (dessen eigener Wert unverändert blieb, coreStatScore ignoriert dessen Precision-Feld).
+  "antler_warbow->blackantler_warbow",
 ]);
 
 /** Akzeptierte Drop-Level-Gaps ("monster:item") — Zonen-Uniques bewusst unter Beute-Klasse. */

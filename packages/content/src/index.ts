@@ -36,7 +36,19 @@ export const content: ContentDB = {
     // ── Slayer-Fertigkeit ─────────────────────────────────────────────
     slayer: { id: "slayer", name: { en: "Slayer", de: "Monsterjäger" }, trains: "con" },
   },
-  items: {
+// Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8)
+  // Regel: Drops aus Kampfquellen (Monster/Elite/Dungeon-Truhe/Paragon) tragen jetzt die
+  // Kernwerte der NÄCHSTEN Craft-Stufe ihrer Zone (Waffen-DPS auf eigenem Tempo, Rüstung exakt
+  // der Trinity-Wert der nächsten Craft-Stufe im selben Slot) bei Requirement der AKTUELLEN
+  // Craft-Stufe, plus einen Effekt. Dropchance über Erwartungswert (Leistung × Chance konstant,
+  // ×0,25..×1,0 geklemmt, Boden 0,05 %); Chase-Zeilen (≤0,1 %) und Elite-Uniques (fix 20 %,
+  // engine/elites.ts) bleiben in der Chance unverändert. Fehlende Effekte: legendäre/godly Drops
+  // (Signaturen, itemization-guards.test.ts §5.4) bekommen bonus.hpRegenPerSec; alle übrigen
+  // (keine bonus-/skillBoost-Berechtigung ohne Signatur) einen SPECIAL_EFFECT_TYPES-Kind über
+  // weaponEffect (wirkt von jedem Slot, s. combat.ts collectSpecialEffects) — Kind/Werte je
+  // Slot-Familie, Details im Content-Bericht. Save-kompatibel: nur Zahlenfelder + neue Effekt-
+  // Felder auf bestehenden Item-IDs, kein Rename, kein SAVE_VERSION-Bump.
+    items: {
     normal_log: { id: "normal_log", name: { en: "Normal Log", de: "Normales Holz" }, type: "material", stackable: true, value: 2, description: { en: "Green timber fresh off the axe, still faintly sappy. The first fuel and building stock any settler cuts.", de: "Frisches Holz direkt von der Axt, noch leicht harzig. Der erste Brennstoff und Baustoff, den jeder Siedler schlägt." } },
     oak_log: { id: "oak_log", name: { en: "Oak Log", de: "Eichenholz" }, type: "material", stackable: true, value: 8, description: { en: "Tougher and slower to season than common timber. New Haven's carpenters reach for it whenever a beam has to bear real weight.", de: "Zäher und langsamer abgelagert als gewöhnliches Holz. New Havens Zimmerleute greifen danach, wenn ein Balken wirklich tragen muss." } },
     ashbark_log: { id: "ashbark_log", name: { en: "Ashbark Log", de: "Aschenrinden-Holz" }, type: "material", stackable: true, value: 18 },
@@ -381,6 +393,9 @@ export const content: ContentDB = {
       stackable: false,
       icon: "🛡️",
       slot: "offhand",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { con: 1 },
       // Content-Fix (Live-Bug 2026-08-23): value fehlte (s. rusty_sword-Kommentar, gleiche
       // Herleitung). Shop-cost 90 × 8/18 ≈ 40.
@@ -2792,7 +2807,7 @@ export const content: ContentDB = {
       name: { en: "Spectral Longbow", de: "Geisterlangbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand",
       weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 7.7, damageMax: 12.9, attackIntervalMs: 3000, // P1-fix: rDmg 80→88, critDmg 0.30→0.33 (clear epic→legendary step); balance-pass3: 88→108 (must stay > godiron_longbow 102)
+      damageMin: 11.8, damageMax: 19.8, attackIntervalMs: 3000, // P1-fix: rDmg 80→88, critDmg 0.30→0.33 (clear epic→legendary step); balance-pass3: 88→108 (must stay > godiron_longbow 102)
       weaponEffect: { type: "bleed", chance: 0.35, magnitude: 8, durationMs: 7000 }, // balance-pass3 2026-07-01: ranged-endgame DoT (Armor+Regen-bypass), weaker than last_judgement/last_condemnation [balance-fix 2026-07-05: 2.2→8, Ganzzahl-Retune]
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
@@ -2810,7 +2825,7 @@ export const content: ContentDB = {
       name: { en: "Skarn Idol Staff", de: "Skarn-Götzen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
-      damageMin: 8, damageMax: 12, attackIntervalMs: 3000,
+      damageMin: 11.3, damageMax: 17, attackIntervalMs: 3000,
       manaCost: 10,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 8, durationMs: 6500 }, // balance-fix 2026-07-05: magnitude 3.6→8 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 4 },
@@ -2825,6 +2840,7 @@ export const content: ContentDB = {
 
     // ── Legendary: Body armor (drops from idol_warden) ───────────────
     idol_shroud: {
+      bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "idol_shroud",
       name: { en: "Idol Shroud", de: "Götzenschleier" },
       type: "equipment", stackable: false, icon: "🛡️", slot: "body",
@@ -2861,7 +2877,7 @@ export const content: ContentDB = {
       name: { en: "Last Vengeance", de: "Die Letzte Vergeltung" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand",
       weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 9, damageMax: 15, attackIntervalMs: 3000, // P1-fix: rDmg 90→130 (+44%), critDmg 0.38→0.46 — clear godly leap over spectral_longbow (rDmg 88, now 108)
+      damageMin: 11.9, damageMax: 19.8, attackIntervalMs: 3000, // P1-fix: rDmg 90→130 (+44%), critDmg 0.38→0.46 — clear godly leap over spectral_longbow (rDmg 88, now 108)
       weaponEffect: { type: "bleed", chance: 0.40, magnitude: 10, durationMs: 7000 }, // balance-pass3 2026-07-01: ranged-endgame DoT (Armor+Regen-bypass) [balance-fix 2026-07-05: 3→10, Ganzzahl-Retune]
       modifiers: { lck: 5 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 } ],
@@ -2879,7 +2895,7 @@ export const content: ContentDB = {
       name: { en: "Last Condemnation", de: "Die Letzte Verdammnis" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
-      damageMin: 8.5, damageMax: 12.7, attackIntervalMs: 3000,
+      damageMin: 11.3, damageMax: 16.9, attackIntervalMs: 3000,
       manaCost: 10,
       weaponEffect: { type: "burn", chance: 0.60, magnitude: 10, durationMs: 7000 }, // balance-fix 2026-07-05: magnitude 4.8→10 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { wis: 7, lck: 5 },
@@ -2897,6 +2913,11 @@ export const content: ContentDB = {
       id: "eye_of_the_idol",
       name: { en: "Eye of the Idol", de: "Auge des Götzen" },
       type: "equipment", stackable: false, icon: "📿", slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — godly-Signatur, daher bonus.hpRegenPerSec
+      // statt weaponEffect (itemization-guards.test.ts §5.4 erlaubt bonus-Signaturen auf legendary/
+      // godly-Rarity).
+      bonus: { hpRegenPerSec: 0.3 },
       modifiers: { str: 4, dex: 2, con: 5, int: 4, lck: 8 }, skillBoost: { defence: 5 },
       value: 80000, rarity: "godly",
       description: {
@@ -4082,11 +4103,11 @@ export const content: ContentDB = {
       name: { en: "Thornfang Blade", de: "Dornfang-Klinge" },
       type: "equipment", stackable: false, icon: "🗡️", slot: "mainhand", weaponStyle: "melee",
       weaponType: "dagger",
-      damageMin: 4.2, damageMax: 6.4, attackIntervalMs: 3000, // item-drop-audit P2 (2026-07-25): dmg 2.7-3.5→4.2-6.4 — lag unter Steel-DPS bei Adamant-Req (att46); jetzt ≈Adamant-1H mit lck2+bleed, on-band.
+      damageMin: 5.2, damageMax: 8, attackIntervalMs: 3000, // item-drop-audit P2 (2026-07-25): dmg 2.7-3.5→4.2-6.4 — lag unter Steel-DPS bei Adamant-Req (att46); jetzt ≈Adamant-1H mit lck2+bleed, on-band.
       weaponEffect: { type: "bleed", chance: 0.28, magnitude: 4, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.7→4 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 2 },
       weaponEffects: [ { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 } ],
-      requirements: { attack: 46 }, value: 280, rarity: "rare", // fix 2026-07-01: req 18→46 (drops from thorn_wolf L54, was ~36 Level unter Mob)
+      requirements: { attack: 50 }, value: 280, rarity: "rare", // fix 2026-07-01: req 18→46 (drops from thorn_wolf L54, was ~36 Level unter Mob)
       description: { en: "A blade carved from the Wolf of Thorns' fang-crown — every edge draws blood.", de: "Eine Klinge aus dem Dornenkranz des Dornwolfs — jede Kante zieht Blut." },
     },
     // bramble_witch → Hexenstab der Rankenhexe (Magie, Frost+Burn)
@@ -4096,7 +4117,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "staff",
       twoHanded: true,
-      damageMin: 3.4, damageMax: 5.0, attackIntervalMs: 3000, // item-drop-audit P2 (2026-07-25): dmg 1.7-2.5→3.4-5.0 — exakt Steel-Stab-Schaden bei mag-52-Req; jetzt ≈Adamant-Stab + poison, on-band.
+      damageMin: 4.4, damageMax: 6.5, attackIntervalMs: 3000, // item-drop-audit P2 (2026-07-25): dmg 1.7-2.5→3.4-5.0 — exakt Steel-Stab-Schaden bei mag-52-Req; jetzt ≈Adamant-Stab + poison, on-band.
       // sweep6-batchC T2-F2: frost→poison — frost ist kein DoT, die antiRegen-Zeile war dadurch
       // unerfüllbar (gleiches Muster wie gravesteel_blade). Poison passt zum Ranken-/Hexensud-Thema
       // und macht antiRegen selbsttragend (kein externes DoT-Pet mehr nötig).
@@ -4108,12 +4129,13 @@ export const content: ContentDB = {
     },
     // moss_golem → Moosplatten-Schulterpanzer (Körper, defensiv, leichter Set-Hauch)
     moss_plate_body: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "moss_plate_body",
       name: { en: "Mossplate Hauberk", de: "Moosplatten-Panzer" },
       type: "equipment", stackable: false, icon: "🛡️", slot: "body",
       modifiers: { con: 5 },
-      requirements: { defence: 48 }, value: 380, rarity: "rare", // fix 2026-07-01: req 22→48 (drops from moss_golem L56, war ~34 Level unter Mob)
-      description: { en: "Thick plates of living moss fused to iron. Repairs itself slowly.", de: "Dicke Platten lebenden Mooses auf Eisen gefugt. Heilt sich langsam selbst." }, armorRating: 23.46,
+      requirements: { defence: 50 }, value: 380, rarity: "rare", // fix 2026-07-01: req 22→48 (drops from moss_golem L56, war ~34 Level unter Mob)
+      description: { en: "Thick plates of living moss fused to iron. Repairs itself slowly.", de: "Dicke Platten lebenden Mooses auf Eisen gefugt. Heilt sich langsam selbst." }, armorRating: 26.71,
     },
     // ash_tyrant → Aschklinge (Nahkampf, Burn, Tier Blacksteel)
     ashen_reaper: {
@@ -4121,39 +4143,42 @@ export const content: ContentDB = {
       name: { en: "Ashen Reaper", de: "Aschklinge" },
       type: "equipment", stackable: false, icon: "⚔️", slot: "mainhand", weaponStyle: "melee",
       weaponType: "sword",
-      damageMin: 4.1, damageMax: 6.2, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 12%; auf Next-Tier(Mithril)-Deckel korrigiert (war 4.6/7)
+      damageMin: 5.2, damageMax: 7.9, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 12%; auf Next-Tier(Mithril)-Deckel korrigiert (war 4.6/7)
       weaponEffect: { type: "burn", chance: 0.3, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.8→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 2 },
       weaponEffects: [ { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 } ],
-      requirements: { attack: 38 }, value: 540, rarity: "rare", // fix 2026-07-01: req 18→38 (drops from ash_tyrant L45, war ~27 Level unter Mob)
+      requirements: { attack: 40 }, value: 540, rarity: "rare", // fix 2026-07-01: req 18→38 (drops from ash_tyrant L45, war ~27 Level unter Mob)
       description: { en: "Forged in the Ash Tyrant's furnace-belly. The edge smokes with heat.", de: "Im Ofenbauch des Aschtyrann geschmiedet. Die Schneide raucht vor Hitze." },
     },
     // spectral_stag → Geisterhirsch-Kapuze (Helm, Ranged/Crit-Fokus)
     spectral_coif: {
+      weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "spectral_coif",
       name: { en: "Spectral Stag Coif", de: "Geisterhirsch-Kapuze" },
       type: "equipment", stackable: false, icon: "🪖", slot: "helmet",
       modifiers: { dex: 1, con: 1, lck: 3 },
       requirements: { ranged: 50 }, value: 420, rarity: "rare", // fix 2026-07-01: req 25→50 (drops from spectral_stag L58, war ~33 Level unter Mob)
-      description: { en: "A hood stitched from spectral hide — the hunter becomes the hunted.", de: "Eine Kapuze aus Geisterleder — der Jäger wird zum Gejagten." }, evasionRating: 15.0, // item-drop-audit P2 (2026-07-25): EVR 0→15.0 — Trinity-Datenfehler (Leder-Helm ohne evasionRating); studded_leather_helm-Anker (ran50: EVR 14.6) + lck-Bonus obendrauf.
+      description: { en: "A hood stitched from spectral hide — the hunter becomes the hunted.", de: "Eine Kapuze aus Geisterleder — der Jäger wird zum Gejagten." }, evasionRating: 16.8, // item-drop-audit P2 (2026-07-25): EVR 0→15.0 — Trinity-Datenfehler (Leder-Helm ohne evasionRating); studded_leather_helm-Anker (ran50: EVR 14.6) + lck-Bonus obendrauf.
     },
     // forest_warden → Waldvogt-Rüstung (Body, leicht + Evasion, Wildwald-Thema)
     warden_brigandine: {
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "warden_brigandine",
       name: { en: "Warden's Brigandine", de: "Brigantine des Waldvogts" },
       type: "equipment", stackable: false, icon: "🦺", slot: "body",
       modifiers: { dex: 1, con: 4 },
       requirements: { ranged: 56 }, value: 720, rarity: "superRare", // fix 2026-07-01: ranged-req 36→56 (drops from forest_warden L65, war ~29 Level unter Mob); armor-iter2 §8: leatherworking-Gate entfernt, evasionRating auf R56 neu geeicht
-      description: { en: "Worn by the forest's guardian. Moves silently between the trees.", de: "Getragen vom Wächter des Waldes. Bewegt sich lautlos zwischen den Bäumen." }, evasionRating: 23.88,
+      description: { en: "Worn by the forest's guardian. Moves silently between the trees.", de: "Getragen vom Wächter des Waldes. Bewegt sich lautlos zwischen den Bäumen." }, evasionRating: 25.84,
     },
     // pitch_beetle → Chitinschild (Offhand, defensiv, mid-Tier)
     chitin_bulwark: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "chitin_bulwark",
       name: { en: "Chitin Bulwark", de: "Chitinschild" },
       type: "equipment", stackable: false, icon: "🛡️", slot: "offhand",
       modifiers: { con: 2 },
-      requirements: { defence: 34 }, value: 200, rarity: "rare", // fix 2026-07-01: req 12→34 (drops from pitch_beetle L42, war ~30 Level unter Mob)
-      description: { en: "A shield fashioned from a Pitch Beetle's carapace. Dense as iron.", de: "Ein Schild aus dem Panzer eines Pechkäfers. Dicht wie Eisen." }, armorRating: 12.55, blockChance: 0.315,
+      requirements: { defence: 40 }, value: 200, rarity: "rare", // fix 2026-07-01: req 12→34 (drops from pitch_beetle L42, war ~30 Level unter Mob)
+      description: { en: "A shield fashioned from a Pitch Beetle's carapace. Dense as iron.", de: "Ein Schild aus dem Panzer eines Pechkäfers. Dicht wie Eisen." }, armorRating: 14.38, blockChance: 0.36,
     },
     // mire_crawler → Morastklingen-Dolch (Nahkampf, schnell, leichtes Gift-DoT via Bleed-proxy)
     mire_fang_dagger: {
@@ -4161,10 +4186,10 @@ export const content: ContentDB = {
       name: { en: "Mire Fang Dagger", de: "Morastklinge" },
       type: "equipment", stackable: false, icon: "🗡️", slot: "mainhand", weaponStyle: "melee",
       weaponType: "dagger",
-      damageMin: 2.2, damageMax: 3.3, attackIntervalMs: 2600, // item-drop-audit P2 (2026-07-25): dmg 1.4-1.8→2.2-3.3 — lag unter Iron-Dolch-DPS bei att30-Req; jetzt ≈Blacksteel-Dolch (tempobereinigt), on-band.
+      damageMin: 3.6, damageMax: 5.4, attackIntervalMs: 2600, // item-drop-audit P2 (2026-07-25): dmg 1.4-1.8→2.2-3.3 — lag unter Iron-Dolch-DPS bei att30-Req; jetzt ≈Blacksteel-Dolch (tempobereinigt), on-band.
       weaponEffect: { type: "bleed", chance: 0.22, magnitude: 3, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.4→1 (rounded to "0 damage/s" in tooltip)
       modifiers: { dex: 1, lck: 1 },
-      requirements: { attack: 30 }, value: 110, rarity: "rare", // fix 2026-07-01: req 6→30 (drops from mire_crawler L38, war ~32 Level unter Mob — Chef-Report)
+      requirements: { attack: 40 }, value: 110, rarity: "rare", // fix 2026-07-01: req 6→30 (drops from mire_crawler L38, war ~32 Level unter Mob — Chef-Report)
       description: { en: "A barbed crawler-fang set in bog-iron. Quick and dirty.", de: "Ein widerhakenbesetzter Kiefer des Morastkriechers. Schnell und dreckig." },
     },
     // boar → Eberzahn-Amulett (bereits bestehend als fang_necklace-Pendant für Nahkampf/Stärke)
@@ -4174,10 +4199,10 @@ export const content: ContentDB = {
       name: { en: "Boar Tusk Mace", de: "Eberhauer-Streitkolben" },
       type: "equipment", stackable: false, icon: "🔨", slot: "mainhand", weaponStyle: "melee",
       weaponType: "mace",
-      damageMin: 0.9, damageMax: 1.3, attackIntervalMs: 3000,
+      damageMin: 2.2, damageMax: 3.2, attackIntervalMs: 3000,
       modifiers: { con: 1 },
       weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
-      requirements: { attack: 4 }, value: 70,
+      requirements: { attack: 5 }, value: 70,
       description: { en: "A crude mace tipped with boar tusks. Tough as the beast that bore them.", de: "Ein grober Streitkolben mit Eberhauern. Zäh wie das Tier, das sie trug." },
     },
 
@@ -4956,9 +4981,9 @@ export const content: ContentDB = {
     pitchfork_spear: {
       id: "pitchfork_spear", name: { en: "Pitchfork Spear", de: "Mistgabel" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "spear",
-      damageMin: 1.5, damageMax: 2.5, attackIntervalMs: 3000,
+      damageMin: 2.7, damageMax: 4.6, attackIntervalMs: 3000,
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
-      requirements: { attack: 3 }, value: 60, rarity: "common",
+      requirements: { attack: 5 }, value: 60, rarity: "common",
     },
     sickle_shiv: {
       id: "sickle_shiv", name: { en: "Sickle Shiv", de: "Sichel-Schiv" },
@@ -4970,64 +4995,76 @@ export const content: ContentDB = {
     farmhand_sling: {
       id: "farmhand_sling", name: { en: "Farmhand Sling", de: "Knechts-Schleuder" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 0.7, damageMax: 1.1, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 1.5, damageMax: 2.4, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
-      requirements: { ranged: 3 }, value: 45, rarity: "common", // fix 2026-07 sweep2: was iron_arrow (Lv1 chicken drops copper_arrow, not iron) — level-passendes, nutzbares Bogen/Pfeil-Paar
+      requirements: { ranged: 5 }, value: 45, rarity: "common", // fix 2026-07 sweep2: was iron_arrow (Lv1 chicken drops copper_arrow, not iron) — level-passendes, nutzbares Bogen/Pfeil-Paar
     },
     hedgewitch_twig: {
       id: "hedgewitch_twig", name: { en: "Hedge-Witch Twig", de: "Heckenhexen-Zweig" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 0.6, damageMax: 0.8, attackIntervalMs: 2700,
+      damageMin: 1, damageMax: 1.5, attackIntervalMs: 2700,
       manaCost: 6, weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 3, durationMs: 0 },
-      requirements: { magic: 3 }, value: 50, rarity: "common",
+      requirements: { magic: 5 }, value: 50, rarity: "common",
     },
     wattle_shield: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "wattle_shield", name: { en: "Wattle Shield", de: "Flecht-Schild" },
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 2 },
-      requirements: { defence: 2 }, value: 35, rarity: "common", armorRating: 9.79, blockChance: 0.226,
+      requirements: { defence: 5 }, value: 35, rarity: "common", armorRating: 10.39, blockChance: 0.248,
     },
     cowhide_cap: {
+      weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "cowhide_cap", name: { en: "Cowhide Cap", de: "Rinderleder-Kappe" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 2 },
-      requirements: { ranged: 5 }, value: 40, rarity: "common", evasionRating: 5.28,
+      requirements: { ranged: 5 }, value: 40, rarity: "common", evasionRating: 7.3,
     },
     cowhide_jerkin: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "cowhide_jerkin", name: { en: "Cowhide Jerkin", de: "Rinderleder-Wams" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { con: 3 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 4 }, value: 140, rarity: "rare", armorRating: 13.9,
+      requirements: { defence: 5 }, value: 140, rarity: "rare", armorRating: 15.02,
     },
     hide_leggings: {
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "hide_leggings", name: { en: "Hide Leggings", de: "Fell-Beinlinge" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { con: 2 },
-      requirements: { ranged: 5 }, value: 60, rarity: "common", evasionRating: 5.81,
+      requirements: { ranged: 5 }, value: 60, rarity: "common", evasionRating: 8.1,
     },
     worn_workgloves: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "worn_workgloves", name: { en: "Worn Workgloves", de: "Abgenutzte Arbeitshandschuhe" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { con: 2 },
-      requirements: { defence: 1 }, value: 25, rarity: "common", armorRating: 6.23,
+      requirements: { defence: 5 }, value: 25, rarity: "common", armorRating: 7.01,
     },
     muckboots: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "muckboots", name: { en: "Muckboots", de: "Miststiefel" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 2 },
-      requirements: { defence: 1 }, value: 25, rarity: "common", armorRating: 6.23,
+      requirements: { defence: 5 }, value: 25, rarity: "common", armorRating: 7.01,
     },
     field_cape: {
       id: "field_cape", name: { en: "Tattered Field Cape", de: "Zerschlissener Feldumhang" },
       type: "equipment", stackable: false, slot: "cape",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
       modifiers: { con: 2 }, skillBoost: { defence: 1 },
       value: 50, rarity: "common",
     },
     boartusk_ring: {
       id: "boartusk_ring", name: { en: "Boar-Tusk Ring", de: "Eberhauer-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
       modifiers: { str: 2, con: 2 }, skillBoost: { power: 1 },
       value: 120, rarity: "rare",
     },
@@ -5042,11 +5079,17 @@ export const content: ContentDB = {
     drovers_charm: {
       id: "drovers_charm", name: { en: "Drover's Charm", de: "Hirten-Talisman" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 },
       modifiers: { con: 2 }, skillBoost: { defence: 2 }, value: 120, rarity: "rare",
     },
     bulls_heart_pendant: {
       id: "bulls_heart_pendant", name: { en: "Bull's Heart Pendant", de: "Stierherz-Anhänger" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 3, durationMs: 0 },
       modifiers: { str: 3, con: 4 }, skillBoost: { defence: 2 }, value: 320, rarity: "superRare",
     },
 
@@ -5054,102 +5097,118 @@ export const content: ContentDB = {
     goblin_shank: {
       id: "goblin_shank", name: { en: "Goblin Shank", de: "Goblin-Stecher" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "dagger",
-      damageMin: 1.8, damageMax: 2.4, attackIntervalMs: 2750,
+      damageMin: 2.1, damageMax: 2.8, attackIntervalMs: 2750,
       modifiers: { lck: 2 },
       weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
-      requirements: { attack: 2 }, value: 50, rarity: "common",
+      requirements: { attack: 10 }, value: 50, rarity: "common",
     },
     crude_waraxe: {
       id: "crude_waraxe", name: { en: "Crude Waraxe", de: "Grobe Streitaxt" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "axe",
-      damageMin: 3, damageMax: 4.4, attackIntervalMs: 3000,
+      damageMin: 3.3, damageMax: 4.9, attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 },
-      requirements: { attack: 5 }, value: 70, rarity: "common",
+      requirements: { attack: 20 }, value: 70, rarity: "common",
     },
     stolen_shortbow: {
       id: "stolen_shortbow", name: { en: "Stolen Shortbow", de: "Gestohlener Kurzbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 1.2, damageMax: 1.8, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 2.5, damageMax: 3.8, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
-      requirements: { ranged: 7 }, value: 90, rarity: "common",
+      requirements: { ranged: 20 }, value: 90, rarity: "common",
     },
     goblin_buckler: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "goblin_buckler", name: { en: "Goblin Buckler", de: "Goblin-Buckler" },
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 2 },
-      requirements: { defence: 4 }, value: 40, rarity: "common", armorRating: 9.94, blockChance: 0.231,
+      requirements: { defence: 22 }, value: 40, rarity: "common", armorRating: 11.76, blockChance: 0.293,
     },
     bonepatch_helm: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 1, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "bonepatch_helm", name: { en: "Bonepatch Helm", de: "Knochenflicken-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 2 },
-      requirements: { defence: 3 }, value: 45, rarity: "common", armorRating: 9.14,
+      requirements: { defence: 10 }, value: 45, rarity: "common", armorRating: 10.53,
     },
     warband_hauberk: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "warband_hauberk", name: { en: "Warband Hauberk", de: "Kriegsbanden-Panzer" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { con: 3 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 9 }, value: 180, rarity: "rare", armorRating: 14.83,
+      requirements: { defence: 20 }, value: 180, rarity: "rare", armorRating: 18.06,
     },
     goblin_warkilt: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "goblin_warkilt", name: { en: "Goblin Warkilt", de: "Goblin-Kriegskilt" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { con: 3 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 8 }, value: 130, rarity: "rare", armorRating: 10.74,
+      requirements: { defence: 20 }, value: 130, rarity: "rare", armorRating: 14.04,
     },
     rivetfist_gloves: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "rivetfist_gloves", name: { en: "Rivetfist Gloves", de: "Niethand-Handschuhe" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { str: 2, con: 2 },
-      requirements: { defence: 5 }, value: 45, rarity: "common", armorRating: 6.57,
+      requirements: { defence: 20 }, value: 45, rarity: "common", armorRating: 8.94,
     },
     scavenger_boots: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "scavenger_boots", name: { en: "Scavenger Boots", de: "Aasfresser-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 2 },
-      requirements: { defence: 3 }, value: 45, rarity: "common", armorRating: 6.4,
+      requirements: { defence: 10 }, value: 45, rarity: "common", armorRating: 7.94,
     },
     warbanner_cape: {
       id: "warbanner_cape", name: { en: "Tattered Warbanner Cape", de: "Zerfetzter Kriegsbanner-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
       modifiers: { con: 2 }, skillBoost: { defence: 1 },
       value: 200, rarity: "rare",
     },
     cutpurse_ring: {
+      weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "cutpurse_ring", name: { en: "Cutpurse Ring", de: "Beutelschneider-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
       skillBoost: { attack: 1 },
-      modifiers: { lck: 2 },
+      modifiers: { lck: 3 },
       value: 90, rarity: "common",
     },
     goblin_cleaver: {
       id: "goblin_cleaver", name: { en: "Goblin Cleaver", de: "Goblin-Schlachtbeil" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "sword",
-      damageMin: 2, damageMax: 3, attackIntervalMs: 2800, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Iron-Craft-Tier um 43%; auf Next-Tier(Iron)-Deckel korrigiert (war 2.9/4.3)
+      damageMin: 3.2, damageMax: 4.9, attackIntervalMs: 2800, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Iron-Craft-Tier um 43%; auf Next-Tier(Iron)-Deckel korrigiert (war 2.9/4.3)
       weaponEffect: { type: "bleed", chance: 0.20, magnitude: 1, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.4→1 (rounded to "0 damage/s" in tooltip)
       modifiers: { lck: 2 },
-      requirements: { attack: 9 }, value: 180, rarity: "rare",
+      requirements: { attack: 20 }, value: 180, rarity: "rare",
     },
     stormcaller_totem: {
       id: "stormcaller_totem", name: { en: "Stormcaller Totem", de: "Sturmrufer-Totem" },
       type: "equipment", stackable: false, slot: "offhand", weaponType: "focus",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 },
       modifiers: { int: 1, wis: 3 }, requirements: { magic: 10 }, value: 220, rarity: "rare",
     },
     warlock_felstaff: {
       id: "warlock_felstaff", name: { en: "Warlock's Felstaff", de: "Felstab des Hexenmeisters" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 1.7, damageMax: 2.6, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
+      damageMin: 2.1, damageMax: 3.2, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
       weaponEffect: { type: "burn", chance: 0.30, magnitude: 1, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.6→1 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 8, weaponEffects: [ { type: "manaDrain", chance: 1, magnitude: 2, durationMs: 0 } ],
-      requirements: { magic: 12 }, value: 300, rarity: "rare",
+      requirements: { magic: 20 }, value: 300, rarity: "rare",
     },
     felmagician_eye: {
       id: "felmagician_eye", name: { en: "Felmagician's Eye", de: "Auge des Felmagiers" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 3, durationMs: 0 },
       modifiers: { int: 4, wis: 5 }, skillBoost: { attack: 2 }, value: 360, rarity: "superRare",
     },
     // Welle T (Story-Review, Davorin Band 2): Loot-Inversion behoben — der Dungeon-Endboss
@@ -5172,8 +5231,13 @@ export const content: ContentDB = {
     warchief_fist: {
       id: "warchief_fist", name: { en: "Warchief's Fist", de: "Faust des Kriegshäuptlings" },
       type: "equipment", stackable: false, icon: "🧤", slot: "gloves",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt, AR unter dem nächsten Craft-Tier
+      // runite_gauntlets R60/12.47) — mitbehoben, gleiche Palette/Konvention. Requirement bleibt (das
+      // aktuelle Craft-Tier adamantium_gauntlets liegt bei R50, exakt hier).
+      weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
       modifiers: { str: 5, con: 3 },
-      requirements: { defence: 50 }, value: 340, rarity: "rare", armorRating: 11.6,
+      requirements: { defence: 50 }, value: 340, rarity: "rare", armorRating: 12.5,
       description: {
         en: "Knuckle-plates hammered from captured steel, still dented from the muster he never finished.",
         de: "Knöchelplatten aus erbeutetem Stahl, noch verbeult von der Heerschau, die er nie vollendete.",
@@ -5184,165 +5248,183 @@ export const content: ContentDB = {
     dustblade: {
       id: "dustblade", name: { en: "Dustblade", de: "Staubklinge" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "sword",
-      damageMin: 2.7, damageMax: 4.1, attackIntervalMs: 3000,
+      damageMin: 5.2, damageMax: 7.9, attackIntervalMs: 3000,
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 },
-      requirements: { attack: 6 }, value: 70, rarity: "common",
+      requirements: { attack: 40 }, value: 70, rarity: "common",
     },
     cinder_spike: {
       id: "cinder_spike", name: { en: "Cinder Spike", de: "Glut-Spieß" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "spear",
-      damageMin: 3.5, damageMax: 5.9, attackIntervalMs: 3000,
+      damageMin: 7.1, damageMax: 12, attackIntervalMs: 3000,
       weaponEffect: { type: "burn", chance: 0.20, magnitude: 1, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.4→1 (rounded to "0 damage/s" in tooltip)
-      requirements: { attack: 14 }, value: 260, rarity: "rare",
+      requirements: { attack: 40 }, value: 260, rarity: "rare",
     },
     ashwood_longbow: {
       id: "ashwood_longbow", name: { en: "Ashwood Longbow", de: "Aschholz-Langbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 1.9, damageMax: 3.1, attackIntervalMs: 3000,
+      damageMin: 3.9, damageMax: 6.4, attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
-      requirements: { ranged: 14 }, value: 280, rarity: "rare",
+      requirements: { ranged: 40 }, value: 280, rarity: "rare",
     },
     mire_hexstaff: {
       id: "mire_hexstaff", name: { en: "Mire Hexstaff", de: "Morast-Hexenstab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 1.7, damageMax: 2.6, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
+      damageMin: 3.2, damageMax: 5.1, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
       weaponEffect: { type: "poison", chance: 0.30, magnitude: 1, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.5→1 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 8, weaponEffects: [ { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 } ],
-      requirements: { magic: 14 }, value: 320, rarity: "rare",
+      requirements: { magic: 40 }, value: 320, rarity: "rare",
     },
     chitin_helm: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "chitin_helm", name: { en: "Chitin Helm", de: "Chitin-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 2 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 30 }, value: 150, rarity: "rare", armorRating: 12.8, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 12→30, AR 10.27→12.8 — Blacksteel-Anker, macht die 2.5%-Elite-extraRow der Aschfelder (elite_ash_beetle) fühlbar; s. Chef-Fall cinderhusk_bulwark.
+      requirements: { defence: 40 }, value: 150, rarity: "rare", armorRating: 15.98, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 12→30, AR 10.27→12.8 — Blacksteel-Anker, macht die 2.5%-Elite-extraRow der Aschfelder (elite_ash_beetle) fühlbar; s. Chef-Fall cinderhusk_bulwark.
     },
     ashplate_cuirass: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "ashplate_cuirass", name: { en: "Ashplate Cuirass", de: "Aschplatten-Kürass" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { str: 2, con: 4 },
-      requirements: { defence: 18 }, value: 380, rarity: "rare", armorRating: 16.6,
+      requirements: { defence: 40 }, value: 380, rarity: "rare", armorRating: 23.98,
     },
     sootscale_greaves: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "sootscale_greaves", name: { en: "Sootscale Greaves", de: "Rußschuppen-Beinschienen" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { con: 3 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 30 }, value: 230, rarity: "rare", armorRating: 14.0, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 16→30, AR 11.88→14.0 — Blacksteel-Anker, s. chitin_helm-Kommentar.
+      requirements: { defence: 40 }, value: 230, rarity: "rare", armorRating: 17.58, // item-drop-audit P2 Nachzug (Task #344, 2026-07-25): req def 16→30, AR 11.88→14.0 — Blacksteel-Anker, s. chitin_helm-Kommentar.
     },
     ashen_gauntlets: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "ashen_gauntlets", name: { en: "Ashen Gauntlets", de: "Aschene Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { str: 2, con: 2 },
-      requirements: { defence: 10 }, value: 80, rarity: "common", armorRating: 7.01,
+      requirements: { defence: 40 }, value: 80, rarity: "common", armorRating: 11.19,
     },
     dustwalker_boots: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "dustwalker_boots", name: { en: "Dustwalker Boots", de: "Staubgänger-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 2 },
-      requirements: { defence: 8 }, value: 80, rarity: "common", armorRating: 6.83,
+      requirements: { defence: 40 }, value: 80, rarity: "common", armorRating: 11.19,
     },
     smokeweave_cape: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "smokeweave_cape", name: { en: "Smokeweave Cape", de: "Rauchgewebe-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { con: 2, int: 2 }, skillBoost: { defence: 2 },
+      modifiers: {}, skillBoost: { defence: 2 },
       value: 220, rarity: "rare",
     },
     cinderloop_ring: {
       id: "cinderloop_ring", name: { en: "Cinderloop Ring", de: "Glutschlaufe-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "bounty", chance: 1, magnitude: 0.2, durationMs: 0 },
       modifiers: { str: 2, con: 2, lck: 4 }, skillBoost: { power: 1 },
       value: 220, rarity: "rare",
     },
     ashfall_recurve: {
       id: "ashfall_recurve", name: { en: "Ashfall Recurve", de: "Aschfall-Recurvebogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 2, damageMax: 3, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 3.8, damageMax: 5.9, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       weaponEffect: { type: "burn", chance: 0.25, magnitude: 2, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.5→2 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 3 },
-      requirements: { ranged: 18 }, value: 420, rarity: "superRare",
+      requirements: { ranged: 40 }, value: 420, rarity: "superRare",
     },
     ash_tyrant_crown: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "ash_tyrant_crown", name: { en: "Ash Tyrant's Crown", de: "Krone des Aschtyrann" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { str: 4, con: 4, lck: 7 }, skillBoost: { power: 1 },
-      requirements: { defence: 20 }, value: 900, rarity: "epic", armorRating: 11.34,
+      requirements: { defence: 40 }, value: 900, rarity: "epic", armorRating: 15.98,
     },
 
     // ─── Zone 4: The Blackthorn Wood / Der Schwarzdornwald ───────────────────
     rootling_club: {
       id: "rootling_club", name: { en: "Rootling Club", de: "Wurzelkeule" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "mace",
-      damageMin: 2.7, damageMax: 4.1, attackIntervalMs: 3000,
+      damageMin: 6.6, damageMax: 10, attackIntervalMs: 3000,
       modifiers: { con: 1 },
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 5 },
-      requirements: { attack: 8 }, value: 90, rarity: "common",
+      requirements: { attack: 50 }, value: 90, rarity: "common",
     },
     thornvine_whip: {
       id: "thornvine_whip", name: { en: "Thornvine Whip", de: "Dornenranken-Peitsche" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "sword",
-      damageMin: 3.3, damageMax: 5.0, attackIntervalMs: 2900, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier um 16%; auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.8/5.8)
+      damageMin: 6.4, damageMax: 9.7, attackIntervalMs: 2900, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier um 16%; auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.8/5.8)
       weaponEffect: { type: "bleed", chance: 0.25, magnitude: 2, durationMs: 4500 }, // balance-fix 2026-07-05: magnitude 0.6→2 (Ganzzahl, tier-gestuft nach Level/Rarity)
       weaponEffects: [ { type: "catalyst", chance: 1, magnitude: 0, durationMs: 3000 } ],
-      requirements: { attack: 20 }, value: 420, rarity: "rare",
+      requirements: { attack: 50 }, value: 420, rarity: "rare",
     },
     spectral_hunter_bow: {
       id: "spectral_hunter_bow", name: { en: "Spectral Hunter's Bow", de: "Geisterjäger-Bogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 2.1, damageMax: 3.5, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
+      damageMin: 4.7, damageMax: 8, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
       modifiers: { dex: 1, lck: 1 },
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.2, durationMs: 0 },
-      requirements: { ranged: 28 }, value: 640, rarity: "superRare", // balance-pass3 2026-07-01: mithril_arrow(req40) was unfireable at req28 — fixed to steel_arrow(req20)
+      requirements: { ranged: 50 }, value: 640, rarity: "superRare", // balance-pass3 2026-07-01: mithril_arrow(req40) was unfireable at req28 — fixed to steel_arrow(req20)
     },
     witchroot_wand: {
       id: "witchroot_wand", name: { en: "Witchroot Wand", de: "Hexenwurz-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 1.5, damageMax: 2.0, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.3/4.3). Leicht unter wailing_wand(req28) gehalten, da niedrigeres Requirement (req26) — Tier-Leiter-Monotonie
+      damageMin: 3.2, damageMax: 4.3, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.3/4.3). Leicht unter wailing_wand(req28) gehalten, da niedrigeres Requirement (req26) — Tier-Leiter-Monotonie
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 3500 },
       manaCost: 8, weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
-      requirements: { magic: 26 }, value: 480, rarity: "rare",
+      requirements: { magic: 50 }, value: 480, rarity: "rare",
     },
     bark_bulwark: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "bark_bulwark", name: { en: "Bark Bulwark", de: "Borken-Bollwerk" },
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 4 },
-      requirements: { defence: 24 }, value: 420, rarity: "rare", armorRating: 11.57, blockChance: 0.287,
+      requirements: { defence: 50 }, value: 420, rarity: "rare", armorRating: 15.45, blockChance: 0.382,
     },
     mossweave_leggings: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "mossweave_leggings", name: { en: "Mossweave Leggings", de: "Moosgewebe-Beinlinge" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { con: 4 },
-      requirements: { defence: 24 }, value: 360, rarity: "rare", armorRating: 13.08,
+      requirements: { defence: 50 }, value: 360, rarity: "rare", armorRating: 19.59,
     },
     thornmail_gauntlets: {
       id: "thornmail_gauntlets", name: { en: "Thornmail Gauntlets", de: "Dornenpanzer-Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { str: 2, con: 2 },
       weaponEffect: { type: "thorns", chance: 1, magnitude: 1.5, durationMs: 0 },
-      requirements: { defence: 28 }, value: 280, rarity: "rare", armorRating: 8.73,
+      requirements: { defence: 50 }, value: 280, rarity: "rare", armorRating: 12.47,
     },
     wildwood_treads: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "wildwood_treads", name: { en: "Wildwood Treads", de: "Wildwald-Schuhe" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 2 },
-      requirements: { defence: 26 }, value: 300, rarity: "rare", armorRating: 8.53,
+      requirements: { defence: 50 }, value: 300, rarity: "rare", armorRating: 12.47,
     },
     soulopal_band: {
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "soulopal_band", name: { en: "Soulopal Band", de: "Seelenopal-Reif" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 2, dex: 2, int: 2, lck: 3 }, skillBoost: { power: 1 },
+      modifiers: { str: 3, dex: 3, int: 3, lck: 3 }, skillBoost: { power: 1 },
       value: 300, rarity: "rare",
     },
     soulthorn_pendant: {
       id: "soulthorn_pendant", name: { en: "Soulthorn Pendant", de: "Seelendorn-Anhänger" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { str: 2, dex: 2, con: 2, int: 2, lck: 2 }, skillBoost: { power: 2 }, value: 800, rarity: "superRare",
     },
     warden_greatcloak: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "warden_greatcloak", name: { en: "Warden's Greatcloak", de: "Großumhang des Vogts" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 2, int: 3 }, skillBoost: { defence: 4 },
+      modifiers: { dex: 4, int: 7 }, skillBoost: { defence: 4 },
       value: 1600, rarity: "epic",
     },
 
@@ -5350,105 +5432,114 @@ export const content: ContentDB = {
     boneblade: {
       id: "boneblade", name: { en: "Boneblade", de: "Knochenklinge" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "sword",
-      damageMin: 2.7, damageMax: 4.1, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 43%; auf Next-Tier(Steel)-Deckel korrigiert (war 3.8/5.8)
+      damageMin: 4.1, damageMax: 6.3, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 43%; auf Next-Tier(Steel)-Deckel korrigiert (war 3.8/5.8)
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
-      requirements: { attack: 16 }, value: 160, rarity: "common",
+      requirements: { attack: 30 }, value: 160, rarity: "common",
     },
     bonewrought_spear: {
       id: "bonewrought_spear", name: { en: "Bonewrought Spear", de: "Knochengeschmiedeter Speer" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "spear",
-      damageMin: 4.7, damageMax: 7.9, attackIntervalMs: 3000,
+      damageMin: 11.3, damageMax: 19.2, attackIntervalMs: 3000,
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 },
-      requirements: { attack: 20 }, value: 260, rarity: "rare",
+      requirements: { attack: 70 }, value: 260, rarity: "rare",
     },
     skeletal_longbow: {
       id: "skeletal_longbow", name: { en: "Skeletal Longbow", de: "Skelett-Langbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 1.9, damageMax: 3.1, attackIntervalMs: 3000,
+      damageMin: 3, damageMax: 5.1, attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
-      requirements: { ranged: 18 }, value: 300, rarity: "rare",
+      requirements: { ranged: 30 }, value: 300, rarity: "rare",
     },
     pyre_staff: {
       id: "pyre_staff", name: { en: "Pyre Staff", de: "Scheiterhaufen-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 2.7, damageMax: 4.1, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 76% (Staff-Mid-Kurve wurde gesenkt); auf Next-Tier(Mithril)-Deckel korrigiert (war 4.8/7.2)
+      damageMin: 7, damageMax: 10.6, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 76% (Staff-Mid-Kurve wurde gesenkt); auf Next-Tier(Mithril)-Deckel korrigiert (war 4.8/7.2)
       weaponEffect: { type: "burn", chance: 0.35, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.9→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 9, weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 4, durationMs: 0 } ],
-      requirements: { magic: 36 }, value: 750, rarity: "superRare",
+      requirements: { magic: 70 }, value: 750, rarity: "superRare",
     },
     cryptguard_helm: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "cryptguard_helm", name: { en: "Cryptguard Helm", de: "Kryptawächter-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 3 },
-      requirements: { defence: 16 }, value: 170, rarity: "rare", armorRating: 10.8,
+      requirements: { defence: 30 }, value: 170, rarity: "rare", armorRating: 14.31,
     },
     gravesteel_cuirass: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "gravesteel_cuirass", name: { en: "Gravesteel Cuirass", de: "Grabstahl-Kürass" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { str: 2, con: 7 },
       skillBoost: { power: 1 },
-      requirements: { defence: 30 }, value: 700, rarity: "superRare", armorRating: 19.15,
+      requirements: { defence: 70 }, value: 700, rarity: "superRare", armorRating: 32.99,
     },
     tombplate_greaves: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "tombplate_greaves", name: { en: "Tombplate Greaves", de: "Grabplatten-Beinschienen" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { con: 4 },
-      requirements: { defence: 24 }, value: 360, rarity: "rare", armorRating: 13.08,
+      requirements: { defence: 70 }, value: 360, rarity: "rare", armorRating: 24.19,
     },
     boneknuckle_gauntlets: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "boneknuckle_gauntlets", name: { en: "Boneknuckle Gauntlets", de: "Knochenknöchel-Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { str: 2, con: 2 },
-      requirements: { defence: 20 }, value: 200, rarity: "rare", armorRating: 7.94,
+      requirements: { defence: 30 }, value: 200, rarity: "rare", armorRating: 10.02,
     },
     gravetread_sabatons: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "gravetread_sabatons", name: { en: "Gravetread Sabatons", de: "Grabschreiter-Schuhe" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 2 },
-      requirements: { defence: 22 }, value: 220, rarity: "rare", armorRating: 8.13,
+      requirements: { defence: 70 }, value: 220, rarity: "rare", armorRating: 15.39,
     },
     shroud_of_the_dead: {
+      weaponEffect: { type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "shroud_of_the_dead", name: { en: "Shroud of the Dead", de: "Leichentuch" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { con: 2, int: 3, wis: 4 }, skillBoost: { defence: 2 },
+      modifiers: { con: 4, int: 6, wis: 8 }, skillBoost: { defence: 2 },
       requirements: { magic: 30 }, value: 600, rarity: "superRare",
     },
     bonecharm_amulet: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 6, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "bonecharm_amulet", name: { en: "Bonecharm Amulet", de: "Knochentalisman" },
       type: "equipment", stackable: false, slot: "amulet",
-      modifiers: { str: 2, con: 2 }, skillBoost: { power: 1 },
+      modifiers: { str: 7, con: 8 }, skillBoost: { power: 1 },
       value: 300, rarity: "rare",
     },
     gravewarden_greatshield: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "gravewarden_greatshield", name: { en: "Gravewarden Greatshield", de: "Grabwächter-Großschild" },
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 4 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 20 }, value: 600, rarity: "superRare", armorRating: 11.22, blockChance: 0.276,
+      requirements: { defence: 70 }, value: 600, rarity: "superRare", armorRating: 19.1, blockChance: 0.444,
     },
     frostbone_scepter: {
       id: "frostbone_scepter", name: { en: "Frostbone Scepter", de: "Frostknochen-Zepter" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "scepter",
-      damageMin: 2.1, damageMax: 3.2, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — Scepter-Linie auf Stab-Kurve eingeordnet; req28 (Steel-Bracket) auf Next-Tier-Niveau (Blacksteel) gedeckelt, war 2.7/4.1 (= Mithril-Niveau, 2 Tiers über eigenem Bracket → Verstoß gegen Max-Nächstes-Tier-Regel)
+      damageMin: 5.2, damageMax: 7.9, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — Scepter-Linie auf Stab-Kurve eingeordnet; req28 (Steel-Bracket) auf Next-Tier-Niveau (Blacksteel) gedeckelt, war 2.7/4.1 (= Mithril-Niveau, 2 Tiers über eigenem Bracket → Verstoß gegen Max-Nächstes-Tier-Regel)
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 3500 },
       manaCost: 9, modifiers: { lck: 1 },
       weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
-      requirements: { magic: 28 }, value: 700, rarity: "superRare",
+      requirements: { magic: 70 }, value: 700, rarity: "superRare",
     },
     necrosignet_ring: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "necrosignet_ring", name: { en: "Necrosignet Ring", de: "Nekrosiegel-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 3, con: 2, int: 3, lck: 4 }, skillBoost: { power: 1 },
+      modifiers: { str: 4, con: 3, int: 4, lck: 4 }, skillBoost: { power: 1 },
       value: 900, rarity: "superRare",
     },
     nekro_reaperblade: {
       id: "nekro_reaperblade", name: { en: "Necromancer's Reaperblade", de: "Sensenklinge des Nekromanten" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "greatsword", twoHanded: true,
-      damageMin: 10.7, damageMax: 20.8, attackIntervalMs: 3300, bonus: { lifesteal: 0.05 },
+      damageMin: 17, damageMax: 33.1, attackIntervalMs: 3300, bonus: { lifesteal: 0.05 },
       weaponEffect: { type: "poison", chance: 0.30, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.9→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 2 },
-      requirements: { attack: 40 }, value: 1400, rarity: "epic",
+      requirements: { attack: 70 }, value: 1400, rarity: "epic",
     },
 
     // ── Gravesteel-Craft-Gear (Task #213, Bane-System): Seiten-Nische zwischen Steel(20)/
@@ -5493,105 +5584,120 @@ export const content: ContentDB = {
     coral_shiv: {
       id: "coral_shiv", name: { en: "Coral Shiv", de: "Korallen-Schiv" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "dagger",
-      damageMin: 1.8, damageMax: 2.4, attackIntervalMs: 2750,
+      damageMin: 9.9, damageMax: 13.3, attackIntervalMs: 2750,
       weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
-      requirements: { attack: 8 }, value: 60, rarity: "common",
+      requirements: { attack: 80 }, value: 60, rarity: "common",
     },
     driftwood_bow: {
       id: "driftwood_bow", name: { en: "Driftwood Bow", de: "Treibholz-Bogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 1.2, damageMax: 1.8, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
+      damageMin: 9.3, damageMax: 14, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
       // Task #286 Stage B: ammoSaver war seit Ammo-Removal ein No-op — ersetzt durch bleed in
       // tier-üblicher Stärke (Referenz goblin_cleaver R9: chance 0.20, magnitude 1, 4000ms;
       // Treibholz-Splitter reißen Wunden auf).
       weaponEffect: { type: "bleed", chance: 0.20, magnitude: 1, durationMs: 4000 },
-      requirements: { ranged: 10 }, value: 100, rarity: "common",
+      requirements: { ranged: 80 }, value: 100, rarity: "common",
     },
     drowned_cutlass: {
       id: "drowned_cutlass", name: { en: "Drowned Sailor's Cutlass", de: "Entermesser des Ertrunkenen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "sword",
-      damageMin: 3.5, damageMax: 5.1, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier um 33%; auf Next-Tier(Blacksteel)-Deckel korrigiert (war 4.6/6.8)
+      damageMin: 13, damageMax: 19, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier um 33%; auf Next-Tier(Blacksteel)-Deckel korrigiert (war 4.6/6.8)
       weaponEffect: { type: "bleed", chance: 0.20, magnitude: 2, durationMs: 4500 }, // balance-fix 2026-07-05: magnitude 0.6→2 (Ganzzahl, tier-gestuft nach Level/Rarity)
-      requirements: { attack: 20 }, value: 420, rarity: "rare",
+      requirements: { attack: 80 }, value: 420, rarity: "rare",
     },
     tidecaller_focus: {
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 6, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "tidecaller_focus", name: { en: "Tidecaller Focus", de: "Gezeitenruf-Fokus" },
       type: "equipment", stackable: false, slot: "offhand", weaponType: "focus",
       modifiers: { int: 1, wis: 3 },
-      requirements: { magic: 20 }, value: 340, rarity: "rare",
+      requirements: { magic: 80 }, value: 340, rarity: "rare",
     },
     reefscale_helm: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 6, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "reefscale_helm", name: { en: "Reefscale Helm", de: "Riffschuppen-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 3 },
-      requirements: { defence: 20 }, value: 260, rarity: "rare", armorRating: 11.34,
+      requirements: { defence: 80 }, value: 260, rarity: "rare", armorRating: 24.41,
     },
     tidewoven_leggings: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "tidewoven_leggings", name: { en: "Tidewoven Leggings", de: "Gezeitengewebe-Beinlinge" },
       type: "equipment", stackable: false, slot: "legs",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int war klassenfremd auf Platte
       // (Mitigations-Schiene = str/con) → Attribut-Tausch bei gleicher Summe (9), Boost magic→defence.
       modifiers: { con: 7, str: 2 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 50 }, value: 900, rarity: "superRare", armorRating: 17.58,
+      requirements: { defence: 80 }, value: 900, rarity: "superRare", armorRating: 26.85,
     },
     barnacle_gauntlets: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "barnacle_gauntlets", name: { en: "Barnacle Gauntlets", de: "Seepocken-Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { con: 2 },
-      requirements: { defence: 24 }, value: 220, rarity: "rare", armorRating: 8.33,
+      requirements: { defence: 80 }, value: 220, rarity: "rare", armorRating: 17.08,
     },
     tidewalker_boots: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "tidewalker_boots", name: { en: "Tidewalker Boots", de: "Gezeitengänger-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
       // war klassenfremd auf Platte — statt Attribut-Tausch wird das Teil zu Leder umgetypt (dex
       // bleibt, passt jetzt zur Evasions-Schiene): armorRating→evasionRating (wie studded_leather_boots),
       // Requirement defence→ranged.
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) NACHZUG: die #8-Tabelle war noch auf dem
+      // Platte-Datenstand vor der #p14-Umtypung gebaut (Konflikt entdeckt beim Content-Sweep) — Regel
+      // hier auf den JETZT gültigen Leder-Anker neu angewandt: craft jetzt = studded_leather_boots
+      // (ranged 50): EV 10.22 (Wert traf bereits exakt zu), craft nächstes = ironhide_boots (ranged
+      // 60): EV 11.76. Requirement bleibt beim AKTUELLEN Tier (ranged 50, unverändert) — der von
+      // dieser Zeile fälschlich nachgezogene `defence`-Requirement entfällt wieder.
       modifiers: { dex: 2, con: 4 },
       skillBoost: { ranged: 1 },
-      requirements: { ranged: 50 }, value: 780, rarity: "superRare", evasionRating: 10.22,
+      requirements: { ranged: 50 }, value: 780, rarity: "superRare", evasionRating: 11.76,
     },
     mariner_cloak: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "mariner_cloak", name: { en: "Mariner's Cloak", de: "Seefahrer-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 2, con: 2 }, skillBoost: { defence: 1 },
+      modifiers: { dex: 10, con: 10 }, skillBoost: { defence: 1 },
       requirements: { ranged: 30 }, value: 360, rarity: "rare",
     },
     krakenhide_cuirass: {
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "krakenhide_cuirass", name: { en: "Krakenhide Cuirass", de: "Krakenhaut-Kürass" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { con: 12 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 60, ranged: 55 }, value: 2400, rarity: "epic", evasionRating: 23.55, // armor-iter2 §8: leatherworking→ranged
+      requirements: { defence: 82, ranged: 55 }, value: 2400, rarity: "epic", evasionRating: 34.8, // armor-iter2 §8: leatherworking→ranged
     },
     abyssal_signet: {
+      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "abyssal_signet", name: { en: "Abyssal Signet", de: "Abyssaler Siegelring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { dex: 2, con: 3, int: 3, lck: 4 }, skillBoost: { magic: 4 },
+      modifiers: { dex: 3, con: 4, int: 4, lck: 6 }, skillBoost: { magic: 4 },
       value: 3500, rarity: "epic",
     },
     crabshell_bulwark: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "crabshell_bulwark", name: { en: "Crabshell Bulwark", de: "Krabbenpanzer-Schild" },
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 3 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 8 }, value: 180, rarity: "rare", armorRating: 10.24, blockChance: 0.242,
+      requirements: { defence: 80 }, value: 180, rarity: "rare", armorRating: 20.76, blockChance: 0.466,
     },
     siren_shockstaff: {
       id: "siren_shockstaff", name: { en: "Siren's Shockstaff", de: "Sirenen-Schockstab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 2.7, damageMax: 4.1, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 12%; auf Next-Tier(Mithril)-Deckel korrigiert (war 3/4.6)
+      damageMin: 4.8, damageMax: 7.3, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 12%; auf Next-Tier(Mithril)-Deckel korrigiert (war 3/4.6)
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 4000 },
       manaCost: 10, modifiers: { wis: 2 },
       weaponEffects: [ { type: "manaOnKill", chance: 1, magnitude: 4, durationMs: 0 } ],
-      requirements: { magic: 36 }, value: 850, rarity: "superRare",
+      requirements: { magic: 80 }, value: 850, rarity: "superRare",
     },
     abyssal_tide_bow: {
       id: "abyssal_tide_bow", name: { en: "Abyssal Tide Bow", de: "Abyssaler Gezeitenbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 7.4, damageMax: 12.4, attackIntervalMs: 3000, // balance-pass3 2026-07-01: 64→96 (was < aetherium_longbow 94; must be ≥)
+      damageMin: 9.1, damageMax: 15.2, attackIntervalMs: 3000, // balance-pass3 2026-07-01: 64→96 (was < aetherium_longbow 94; must be ≥)
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 4000 },
       modifiers: { dex: 1, lck: 2 },
       weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
@@ -5600,15 +5706,18 @@ export const content: ContentDB = {
     kraken_maw: {
       id: "kraken_maw", name: { en: "Kraken's Maw", de: "Schlund des Kraken" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "greatsword", twoHanded: true,
-      damageMin: 11.4, damageMax: 22.1, attackIntervalMs: 3100,
+      damageMin: 19.2, damageMax: 37.2, attackIntervalMs: 3100,
       weaponEffect: { type: "bleed", chance: 0.30, magnitude: 5, durationMs: 6000 }, // balance-fix 2026-07-05: magnitude 1.4→5 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 2 },
       weaponEffects: [ { type: "overkillCarry", chance: 1, magnitude: 0, durationMs: 0 } ],
-      requirements: { attack: 60 }, value: 2400, rarity: "epic",
+      requirements: { attack: 80 }, value: 2400, rarity: "epic",
     },
     pearl_of_the_deep: {
       id: "pearl_of_the_deep", name: { en: "Pearl of the Deep", de: "Perle der Tiefe" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
       modifiers: { con: 7, int: 5, wis: 9 }, skillBoost: { defence: 4 },
       value: 4000, rarity: "epic",
     },
@@ -5617,107 +5726,116 @@ export const content: ContentDB = {
     hunting_knife: {
       id: "hunting_knife", name: { en: "Hunting Knife", de: "Jagdmesser" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "dagger",
-      damageMin: 1.8, damageMax: 2.4, attackIntervalMs: 2800,
+      damageMin: 10.1, damageMax: 13.5, attackIntervalMs: 2800,
       modifiers: { lck: 2 },
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.2, durationMs: 0 },
-      requirements: { attack: 12 }, value: 90, rarity: "common",
+      requirements: { attack: 80 }, value: 90, rarity: "common",
     },
     wolffang_spear: {
       id: "wolffang_spear", name: { en: "Wolf-Fang Spear", de: "Wolfszahn-Speer" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "spear",
-      damageMin: 3.4, damageMax: 5.6, attackIntervalMs: 3000,
+      damageMin: 11.8, damageMax: 19.4, attackIntervalMs: 3000,
       weaponEffect: { type: "bleed", chance: 0.25, magnitude: 2, durationMs: 4500 }, // balance-fix 2026-07-05: magnitude 0.6→2 (Ganzzahl, tier-gestuft nach Level/Rarity)
       weaponEffects: [ { type: "packLeader", chance: 1, magnitude: 0.25, durationMs: 0 } ],
-      requirements: { attack: 18 }, value: 360, rarity: "rare",
+      requirements: { attack: 80 }, value: 360, rarity: "rare",
     },
     antler_warbow: {
       id: "antler_warbow", name: { en: "Antler Warbow", de: "Geweih-Kriegsbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 1.9, damageMax: 3.1, attackIntervalMs: 3000,
+      damageMin: 9.2, damageMax: 15.2, attackIntervalMs: 3000,
       modifiers: { lck: 1 },
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
-      requirements: { ranged: 18 }, value: 300, rarity: "rare",
+      requirements: { ranged: 80 }, value: 300, rarity: "rare",
     },
     beastcaller_totem: {
       id: "beastcaller_totem", name: { en: "Beastcaller Totem", de: "Bestienruf-Totem" },
       type: "equipment", stackable: false, slot: "offhand", weaponType: "focus",
       modifiers: { int: 1, wis: 2, lck: 1 },
       weaponEffect: { type: "packLeader", chance: 1, magnitude: 0.25, durationMs: 0 },
-      requirements: { magic: 20 }, value: 300, rarity: "rare",
+      requirements: { magic: 80 }, value: 300, rarity: "rare",
     },
     wolfpelt_hood: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 6, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "wolfpelt_hood", name: { en: "Wolfpelt Hood", de: "Wolfsfell-Kapuze" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 3 },
-      requirements: { defence: 18 }, value: 240, rarity: "rare", armorRating: 11.06,
+      requirements: { defence: 80 }, value: 240, rarity: "rare", armorRating: 24.41,
     },
     stagleather_chaps: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "stagleather_chaps", name: { en: "Stagleather Chaps", de: "Hirschleder-Beinlinge" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { con: 4 },
-      requirements: { defence: 26 }, value: 340, rarity: "rare", armorRating: 13.4,
+      requirements: { defence: 80 }, value: 340, rarity: "rare", armorRating: 26.85,
     },
     clawguard_gloves: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "clawguard_gloves", name: { en: "Clawguard Gloves", de: "Klauenwächter-Handschuhe" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { str: 2, con: 2 },
-      requirements: { defence: 24 }, value: 240, rarity: "rare", armorRating: 8.33,
+      requirements: { defence: 80 }, value: 240, rarity: "rare", armorRating: 17.08,
     },
     padfoot_boots: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "padfoot_boots", name: { en: "Padfoot Boots", de: "Pfotenschritt-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 2 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 22 }, value: 260, rarity: "rare", armorRating: 8.13,
+      requirements: { defence: 80 }, value: 260, rarity: "rare", armorRating: 17.08,
     },
     pelt_mantle: {
+      weaponEffect: { type: "packLeader", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "pelt_mantle", name: { en: "Pelt Mantle", de: "Fell-Mantel" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { con: 2 }, skillBoost: { defence: 1 },
+      modifiers: { con: 20 }, skillBoost: { defence: 1 },
       value: 280, rarity: "rare",
     },
     fang_pendant: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 5, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "fang_pendant", name: { en: "Fang Pendant", de: "Reißzahn-Anhänger" },
       type: "equipment", stackable: false, slot: "amulet",
-      modifiers: { str: 2, con: 2, lck: 4 }, skillBoost: { power: 1 },
+      modifiers: { str: 4, con: 4, lck: 6 }, skillBoost: { power: 1 },
       value: 300, rarity: "rare",
     },
     direhide_jerkin: {
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "direhide_jerkin", name: { en: "Direhide Jerkin", de: "Schreckenfell-Wams" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { con: 7 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 34, ranged: 30 }, value: 780, rarity: "superRare", evasionRating: 16.05, // armor-iter2 §8: leatherworking→ranged
+      requirements: { defence: 70, ranged: 30 }, value: 780, rarity: "superRare", evasionRating: 32.24, // armor-iter2 §8: leatherworking→ranged
     },
     stagstride_longbow: {
       id: "stagstride_longbow", name: { en: "Stagstride Longbow", de: "Hirschlauf-Langbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 2.0, damageMax: 3.4, attackIntervalMs: 2900, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
+      damageMin: 8.7, damageMax: 14.8, attackIntervalMs: 2900, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier deutlich; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.6/6)
       modifiers: { lck: 1 },
       weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 },
-      requirements: { ranged: 24 }, value: 600, rarity: "superRare", // #354 Paket 4.3: toten ammoType-Kommentar entfernt (Mechanik seit Task #286 Stage B komplett aus dem Spiel)
+      requirements: { ranged: 80 }, value: 600, rarity: "superRare", // #354 Paket 4.3: toten ammoType-Kommentar entfernt (Mechanik seit Task #286 Stage B komplett aus dem Spiel)
     },
     direfang_maul: {
       id: "direfang_maul", name: { en: "Direfang Maul", de: "Schreckenzahn-Keule" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "mace", twoHanded: true,
       // Chef-Call #293 (2026-07-08): bleibt ZWEIHÄNDIG → auf 2H-Maul-Kurve gehoben (Rare-Drop-Regel:
       // Next-Tier-DPS [maul req40 ≈ 4.11] beim eigenen schnelleren 3000er-Tempo; Extras = Drop-Premium).
-      damageMin: 8.5, damageMax: 16.0, attackIntervalMs: 3000,
+      damageMin: 11.1, damageMax: 21.1, attackIntervalMs: 3000,
       weaponEffect: { type: "bleed", chance: 0.35, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 1→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 2 },
       weaponEffects: [ { type: "everyNth", chance: 1, magnitude: 1, durationMs: 0, stacks: 5 } ],
-      requirements: { attack: 34 }, value: 1000, rarity: "superRare",
+      requirements: { attack: 80 }, value: 1000, rarity: "superRare",
     },
     bearhide_cuirass: {
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "bearhide_cuirass", name: { en: "Bearhide Cuirass", de: "Bärenfell-Kürass" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { con: 12 }, skillBoost: { defence: 1 },
-      requirements: { defence: 44, ranged: 38 }, value: 1500, rarity: "epic", evasionRating: 18.09, // armor-iter2 §8: leatherworking→ranged
+      requirements: { defence: 82, ranged: 38 }, value: 1500, rarity: "epic", evasionRating: 34.8, // armor-iter2 §8: leatherworking→ranged
     },
     alphas_heart_ring: {
+      weaponEffect: { type: "packLeader", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "alphas_heart_ring", name: { en: "Alpha's Heart Ring", de: "Leitwolf-Herzring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 4, con: 4, lck: 4 }, skillBoost: { power: 4 },
+      modifiers: { str: 5, con: 6, lck: 6 }, skillBoost: { power: 4 },
       value: 3000, rarity: "epic",
     },
 
@@ -5725,47 +5843,57 @@ export const content: ContentDB = {
     talon_dagger: {
       id: "talon_dagger", name: { en: "Talon Dagger", de: "Klauen-Dolch" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "dagger",
-      damageMin: 3.3, damageMax: 4.1, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 62%; auf Next-Tier(Mithril)-Deckel korrigiert (war 5.3/6.7)
+      damageMin: 12.7, damageMax: 15.9, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 62%; auf Next-Tier(Mithril)-Deckel korrigiert (war 5.3/6.7)
       weaponEffect: { type: "bleed", chance: 0.25, magnitude: 3, durationMs: 4500 }, // balance-fix 2026-07-05: magnitude 0.9→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 2 },
-      requirements: { attack: 35 }, value: 600, rarity: "rare",
+      requirements: { attack: 90 }, value: 600, rarity: "rare",
     },
     skybreaker_greatsword: {
       id: "skybreaker_greatsword", name: { en: "Skybreaker Greatsword", de: "Himmelsbrecher-Großschwert" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "greatsword", twoHanded: true,
-      damageMin: 17.0, damageMax: 32.9, attackIntervalMs: 3200,
+      damageMin: 23.4, damageMax: 45.4, attackIntervalMs: 3200,
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 4000 },
       modifiers: { lck: 1 },
       weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 8, durationMs: 0 } ],
-      requirements: { attack: 65 }, value: 3000, rarity: "epic",
+      requirements: { attack: 90 }, value: 3000, rarity: "epic",
     },
     stormhide_helm: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 6, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "stormhide_helm", name: { en: "Stormhide Helm", de: "Sturmhaut-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
       // war klassenfremd auf Platte — Umtypung zu Leder (dex bleibt), armorRating→evasionRating,
       // Requirement defence→ranged.
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) NACHZUG (s. tidewalker_boots-Kommentar):
+      // craft jetzt = studded_leather_helm (ranged 50): EV 14.6 (traf bereits exakt zu), craft
+      // nächstes = ironhide_helm (ranged 60): EV 16.8. Requirement bleibt ranged 50.
       modifiers: { dex: 2, con: 5 },
       skillBoost: { ranged: 1 },
-      requirements: { ranged: 50 }, value: 900, rarity: "superRare", evasionRating: 14.6,
+      requirements: { ranged: 50 }, value: 900, rarity: "superRare", evasionRating: 16.8,
     },
     skygrip_gauntlets: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "skygrip_gauntlets", name: { en: "Skygrip Gauntlets", de: "Himmelsgriff-Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
       // war klassenfremd auf Platte — Umtypung zu Leder (dex bleibt), armorRating→evasionRating,
       // Requirement defence→ranged.
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) NACHZUG (s. tidewalker_boots-Kommentar):
+      // craft jetzt = studded_leather_vambraces (ranged 50): EV 10.22 (traf bereits exakt zu), craft
+      // nächstes = ironhide_vambraces (ranged 60): EV 11.76. Requirement bleibt ranged 50.
       modifiers: { dex: 2, con: 4, lck: 3 },
       skillBoost: { ranged: 1 },
-      requirements: { ranged: 50 }, value: 900, rarity: "superRare", evasionRating: 10.22,
+      requirements: { ranged: 50 }, value: 900, rarity: "superRare", evasionRating: 11.76,
     },
     storm_mantle: {
+      weaponEffect: { type: "catalyst", chance: 1, magnitude: 0, durationMs: 2000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "storm_mantle", name: { en: "Storm Mantle", de: "Sturm-Mantel" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 2, con: 2, int: 3, wis: 2 }, skillBoost: { defence: 3 },
+      modifiers: { dex: 4, con: 4, int: 4, wis: 4 }, skillBoost: { defence: 3 },
       requirements: { ranged: 50 }, value: 1400, rarity: "superRare",
     },
     aetherscale_cuirass: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "aetherscale_cuirass", name: { en: "Aetherscale Cuirass", de: "Aetherschuppen-Kürass" },
       icon: "🛡",
       type: "equipment", stackable: false, slot: "body",
@@ -5773,65 +5901,77 @@ export const content: ContentDB = {
       // → Attribut-Tausch bei gleicher Summe (21), Boost magic→power.
       modifiers: { con: 18, str: 3 },
       skillBoost: { power: 1 },
-      requirements: { defence: 75 }, value: 6000, rarity: "epic", armorRating: 31.31,
+      requirements: { defence: 80 }, value: 6000, rarity: "epic", armorRating: 36.61,
     },
     wyvernscale_greaves: {
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "wyvernscale_greaves", name: { en: "Wyvernscale Greaves", de: "Wyvernschuppen-Beinschienen" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { dex: 2, con: 12 },
       skillBoost: { ranged: 1 },
-      requirements: { defence: 79, ranged: 70 }, value: 4000, rarity: "epic", evasionRating: 20.83, // armor-iter2 §8: leatherworking→ranged
+      requirements: { defence: 90, ranged: 70 }, value: 4000, rarity: "epic", evasionRating: 27.84, // armor-iter2 §8: leatherworking→ranged
     },
     cloudwalker_boots: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "cloudwalker_boots", name: { en: "Cloudwalker Boots", de: "Wolkengänger-Stiefel" },
       type: "equipment", stackable: false, slot: "boots",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag B, "einverstanden"): dex+ranged-Boost
       // war klassenfremd auf Platte — Umtypung zu Leder (dex bleibt), armorRating→evasionRating
       // (wie dragonhide_boots), Requirement defence→ranged.
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) NACHZUG (s. tidewalker_boots-Kommentar):
+      // craft jetzt = dragonhide_boots (ranged 82): EV 15.05 (traf bereits exakt zu), craft
+      // nächstes = wraithhide_boots (ranged 90): EV 16.24. Requirement bleibt ranged 82.
       modifiers: { dex: 2, con: 5 },
       skillBoost: { ranged: 1 },
-      requirements: { ranged: 82 }, value: 3000, rarity: "epic", evasionRating: 15.05,
+      requirements: { ranged: 82 }, value: 3000, rarity: "epic", evasionRating: 16.24,
     },
     stormcore_pendant: {
       id: "stormcore_pendant", name: { en: "Stormcore Pendant", de: "Sturmkern-Anhänger" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 },
       modifiers: { dex: 2, con: 4, int: 3, wis: 5, lck: 4 }, skillBoost: { magic: 4 },
       value: 4500, rarity: "epic",
     },
     aetherband_ring: {
       id: "aetherband_ring", name: { en: "Aetherband Ring", de: "Aetherreif-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 },
       modifiers: { str: 4, dex: 2, con: 3, int: 4, lck: 4 }, skillBoost: { power: 4 },
       value: 4500, rarity: "epic",
     },
     skytalon_recurve: {
       id: "skytalon_recurve", name: { en: "Skytalon Recurve", de: "Himmelsklaue-Recurvebogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
-      damageMin: 4.0, damageMax: 6.1, attackIntervalMs: 2650, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. adamantium_arrow-ammoDamage(0.9) dominierte Runite-Craft-Tier um 9%; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Runite-Next-Tier-Niveau liegt (war 5.2/7.8)
+      damageMin: 12, damageMax: 18.3, attackIntervalMs: 2650, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. adamantium_arrow-ammoDamage(0.9) dominierte Runite-Craft-Tier um 9%; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Runite-Next-Tier-Niveau liegt (war 5.2/7.8)
       weaponEffect: { type: "shock", chance: 0.20, magnitude: 0.20, durationMs: 3500 },
       modifiers: { dex: 1, lck: 1 },
-      requirements: { ranged: 50 }, value: 1400, rarity: "superRare", // balance-pass3 2026-07-01: runite_arrow(req60) was unfireable at req50 — fixed to adamantium_arrow(req50)
+      requirements: { ranged: 90 }, value: 1400, rarity: "superRare", // balance-pass3 2026-07-01: runite_arrow(req60) was unfireable at req50 — fixed to adamantium_arrow(req50)
     },
     stormcrest_staff: {
       id: "stormcrest_staff", name: { en: "Stormcrest Staff", de: "Sturmkamm-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 6.4, damageMax: 9.6, attackIntervalMs: 3000,
+      damageMin: 11.3, damageMax: 17, attackIntervalMs: 3000,
       weaponEffect: { type: "shock", chance: 0.30, magnitude: 0.30, durationMs: 4000 },
       manaCost: 10, modifiers: { wis: 3, lck: 2 },
       weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 } ],
-      requirements: { magic: 75 }, value: 6000, rarity: "epic",
+      requirements: { magic: 90 }, value: 6000, rarity: "epic",
     },
     wyvernscale_aegis: {
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "wyvernscale_aegis", name: { en: "Wyvernscale Aegis", de: "Wyvernschuppen-Aegis" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { dex: 2, con: 20, lck: 3 },
       skillBoost: { ranged: 1 },
-      requirements: { defence: 79, ranged: 70 }, value: 6500, rarity: "epic", evasionRating: 28.4, // armor-iter2 §8: leatherworking→ranged
+      requirements: { defence: 90, ranged: 70 }, value: 6500, rarity: "epic", evasionRating: 37.97, // armor-iter2 §8: leatherworking→ranged
     },
     voidwing_greatbow: {
       id: "voidwing_greatbow", name: { en: "Voidwing Greatbow", de: "Leerenschwingen-Großbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 8, damageMax: 13.3, attackIntervalMs: 3000, // balance-pass3: 92→112 (must stay > spectral_longbow 108)
+      damageMin: 11.9, damageMax: 19.8, attackIntervalMs: 3000, // balance-pass3: 92→112 (must stay > spectral_longbow 108)
       weaponEffect: { type: "burn", chance: 0.40, magnitude: 8, durationMs: 6500 }, // balance-fix 2026-07-05: magnitude 3→8 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
@@ -5848,9 +5988,9 @@ export const content: ContentDB = {
     slagforged_sword: {
       id: "slagforged_sword", name: { en: "Slagforged Sword", de: "Schlackenschwert" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "sword",
-      damageMin: 5.2, damageMax: 7.8, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Adamantium-Craft-Tier um 24%; auf Next-Tier(Adamantium)-Deckel korrigiert (war 6.5/9.7)
+      damageMin: 16.1, damageMax: 24.2, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Adamantium-Craft-Tier um 24%; auf Next-Tier(Adamantium)-Deckel korrigiert (war 6.5/9.7)
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 },
-      requirements: { attack: 45 }, value: 1000, rarity: "rare",
+      requirements: { attack: 90 }, value: 1000, rarity: "rare",
     },
     cinderfang_dagger: {
       id: "cinderfang_dagger", name: { en: "Cinderfang Dagger", de: "Glutzahn-Dolch" },
@@ -5873,47 +6013,60 @@ export const content: ContentDB = {
     revenant_greatshield: {
       id: "revenant_greatshield", name: { en: "Revenant's Greatshield", de: "Revenant-Großschild" },
       type: "equipment", stackable: false, slot: "offhand",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt, AR knapp unter dem nächsten Craft-Tier
+      // runite_kiteshield R60) — mitbehoben, gleiche Palette/Konvention. Requirement bleibt (das
+      // aktuelle Craft-Tier ashfen_buckler liegt bei R58, exakt hier).
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       modifiers: { con: 12 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 58 }, value: 2400, rarity: "epic", armorRating: 15.45, blockChance: 0.382,
+      requirements: { defence: 58 }, value: 2400, rarity: "epic", armorRating: 16.0, blockChance: 0.382,
     },
     emberforge_helm: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "emberforge_helm", name: { en: "Emberforge Helm", de: "Glutschmiede-Helm" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { str: 2, con: 7 },
       skillBoost: { power: 1 },
-      requirements: { defence: 50 }, value: 1000, rarity: "superRare", armorRating: 15.98,
+      requirements: { defence: 50 }, value: 1000, rarity: "superRare", armorRating: 16.88,
     },
     frostplate_greaves: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "frostplate_greaves", name: { en: "Frostplate Greaves", de: "Frostplatten-Beinschienen" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { con: 10 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 62 }, value: 2600, rarity: "epic", armorRating: 20.01,
+      requirements: { defence: 90 }, value: 2600, rarity: "epic", armorRating: 27.5,
     },
     moltengrip_gauntlets: {
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "moltengrip_gauntlets", name: { en: "Moltengrip Gauntlets", de: "Schmelzgriff-Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
       modifiers: { str: 2, con: 3, lck: 3 },
       skillBoost: { power: 1 },
-      requirements: { defence: 55 }, value: 900, rarity: "superRare", armorRating: 11.81,
+      requirements: { defence: 55 }, value: 900, rarity: "superRare", armorRating: 12.47,
     },
     frostward_treads: {
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "frostward_treads", name: { en: "Frostward Treads", de: "Frostschutz-Schuhe" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 5 },
       skillBoost: { defence: 1 },
-      requirements: { defence: 62 }, value: 2600, rarity: "epic", armorRating: 12.73,
+      requirements: { defence: 62 }, value: 2600, rarity: "epic", armorRating: 13.86,
     },
     slagweave_cape: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "slagweave_cape", name: { en: "Slagweave Cape", de: "Schlackengewebe-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { str: 3 }, skillBoost: { defence: 4 },
+      modifiers: { str: 14 }, skillBoost: { defence: 4 },
       value: 2200, rarity: "epic",
     },
     emberheart_amulet: {
       id: "emberheart_amulet", name: { en: "Emberheart Amulet", de: "Glutherz-Amulett" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "bounty", chance: 1, magnitude: 0.2, durationMs: 0 },
       modifiers: { str: 4, con: 4, lck: 8 }, skillBoost: { power: 4 },
       value: 3000, rarity: "epic",
     },
@@ -5930,18 +6083,23 @@ export const content: ContentDB = {
     frosthex_wand: {
       id: "frosthex_wand", name: { en: "Frosthex Wand", de: "Frosthex-Zauberstab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 4.1, damageMax: 5.3, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Bloodiron-Craft-Tier um 42% (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Bloodiron)-Deckel korrigiert (war 5.9/7.5)
+      damageMin: 8.1, damageMax: 10.6, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Bloodiron-Craft-Tier um 42% (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Bloodiron)-Deckel korrigiert (war 5.9/7.5)
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 4000 },
       manaCost: 8, modifiers: { wis: 3 },
       weaponEffects: [ { type: "catalyst", chance: 1, magnitude: 0, durationMs: 3000 } ],
-      requirements: { magic: 68 }, value: 4500, rarity: "epic",
+      requirements: { magic: 90 }, value: 4500, rarity: "epic",
     },
     slagcarapace_plate: {
       id: "slagcarapace_plate", name: { en: "Slagcarapace Plate", de: "Schlackenpanzer-Rüstung" },
       type: "equipment", stackable: false, slot: "body",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt, AR knapp unter dem nächsten Craft-Tier
+      // runite_platebody R60) — mitbehoben, gleiche Palette/Konvention. Requirement bleibt (das
+      // aktuelle Craft-Tier liegt bei R58, exakt hier).
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
       modifiers: { str: 3, con: 16 },
       skillBoost: { power: 1 },
-      requirements: { defence: 58 }, value: 2600, rarity: "epic", armorRating: 26.15,
+      requirements: { defence: 58 }, value: 2600, rarity: "epic", armorRating: 26.8,
     },
     doomknight_cinderblade: {
       id: "doomknight_cinderblade", name: { en: "Doomknight's Cinderblade", de: "Aschklinge des Doom-Ritters" },
@@ -5955,12 +6113,13 @@ export const content: ContentDB = {
     doomforged_band: {
       id: "doomforged_band", name: { en: "Doomforged Band", de: "Doom-Schmiede-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
-      bonus: { hpRegenPerSec: 0.1 }, modifiers: { str: 4, con: 3, int: 4, lck: 7 }, skillBoost: { power: 3 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 1→0.1 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
+      bonus: { hpRegenPerSec: 0.1 }, modifiers: { str: 4, con: 3, int: 4, lck: 8 }, skillBoost: { power: 3 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 1→0.1 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
       value: 26000, rarity: "legendary",
     },
 
     // ─── Zone 10: The Idol Hall / Die Götzenhalle ─────────────────────────────
     idol_crown: {
+      bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "idol_crown", name: { en: "Crown of the Idol", de: "Krone des Götzen" },
       type: "equipment", stackable: false, slot: "helmet",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): dex/int waren klassenfremd auf
@@ -5969,6 +6128,7 @@ export const content: ContentDB = {
       requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 25,
     },
     aetherweave_leggings: {
+      bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "aetherweave_leggings", name: { en: "Aetherweave Leggings", de: "Aethergewebe-Beinlinge" },
       type: "equipment", stackable: false, slot: "legs",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): int war klassenfremd auf Platte
@@ -5977,6 +6137,7 @@ export const content: ContentDB = {
       requirements: { defence: 99 }, value: 26000, rarity: "legendary", armorRating: 27.5,
     },
     voidtouched_gauntlets: {
+      bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "voidtouched_gauntlets", name: { en: "Voidtouched Gauntlets", de: "Leerenberührte Stulpen" },
       type: "equipment", stackable: false, slot: "gloves",
       // Klassen-Fix (Chef-GO 25.08.2026, 1.1.0, #p14 Vorschlag A): dex/int waren klassenfremd auf
@@ -5985,15 +6146,17 @@ export const content: ContentDB = {
       requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 17.5,
     },
     idolstep_sabatons: {
+      bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "idolstep_sabatons", name: { en: "Idolstep Sabatons", de: "Götzenschritt-Schuhe" },
       type: "equipment", stackable: false, slot: "boots",
       modifiers: { con: 7, lck: 3 }, skillBoost: { defence: 4 },
       requirements: { defence: 99 }, value: 24000, rarity: "legendary", armorRating: 17.5,
     },
     idolbound_signet: {
+      bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "idolbound_signet", name: { en: "Idolbound Signet", de: "Götzengebundener Siegelring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 3, dex: 1, con: 3, int: 2, lck: 3 }, skillBoost: { attack: 3 },
+      modifiers: { str: 5, dex: 2, con: 6, int: 4, lck: 6 }, skillBoost: { attack: 3 },
       value: 28000, rarity: "legendary",
     },
     idol_aegis: {
@@ -6015,56 +6178,61 @@ export const content: ContentDB = {
     rotfang_dagger: {
       id: "rotfang_dagger", name: { en: "Rotfang Dagger", de: "Faulzahn-Dolch" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "dagger",
-      damageMin: 1.8, damageMax: 2.4, attackIntervalMs: 3000,
+      damageMin: 2.3, damageMax: 3.1, attackIntervalMs: 3000,
       weaponEffect: { type: "poison", chance: 0.20, magnitude: 1, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.3→1 (rounded to "0 damage/s" in tooltip)
       weaponEffects: [ { type: "plaguebearer", chance: 1, magnitude: 0, durationMs: 0 } ],
-      requirements: { attack: 5 }, value: 70, rarity: "common",
+      requirements: { attack: 10 }, value: 70, rarity: "common",
     },
     plaguebone_buckler: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "plaguebone_buckler", name: { en: "Plaguebone Buckler", de: "Pestknochen-Buckler" },
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 2 },
-      requirements: { defence: 8 }, value: 60, rarity: "common", armorRating: 10.24, blockChance: 0.242,
+      requirements: { defence: 10 }, value: 60, rarity: "common", armorRating: 10.55, blockChance: 0.254,
     },
     marrow_cap: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 1, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "marrow_cap", name: { en: "Marrow Cap", de: "Mark-Kappe" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 2 },
-      requirements: { defence: 10 }, value: 60, rarity: "common", armorRating: 10.01,
+      requirements: { defence: 10 }, value: 60, rarity: "common", armorRating: 10.53,
     },
     basilisk_scale_shield: {
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "basilisk_scale_shield", name: { en: "Basilisk Scale Shield", de: "Basilisken-Schuppenschild" },
       type: "equipment", stackable: false, slot: "offhand",
       modifiers: { con: 3 },
-      requirements: { defence: 24 }, value: 420, rarity: "rare", armorRating: 11.57, blockChance: 0.287,
+      requirements: { defence: 30 }, value: 420, rarity: "rare", armorRating: 13.19, blockChance: 0.332,
     },
     mirrorglass_bow: {
       id: "mirrorglass_bow", name: { en: "Mirrorglass Bow", de: "Spiegelglas-Bogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 2.1, damageMax: 3.5, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.2/5.4)
+      damageMin: 3, damageMax: 5, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — inkl. steel_arrow-ammoDamage(0.5) dominierte Blacksteel-Craft-Tier; bow-only-Wert so gesenkt, dass Bow+Ammo-Gesamt exakt auf Blacksteel-Next-Tier-Niveau liegt (war 3.2/5.4)
       weaponEffect: { type: "frost", chance: 0.20, magnitude: 1, durationMs: 3500 },
       modifiers: { lck: 1 },
-      requirements: { ranged: 28 }, value: 520, rarity: "rare",
+      requirements: { ranged: 30 }, value: 520, rarity: "rare",
     },
     shadestalker_hood: {
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "shadestalker_hood", name: { en: "Shade-Stalker Hood", de: "Schattenpirscher-Kapuze" },
       type: "equipment", stackable: false, slot: "helmet",
       modifiers: { con: 3 },
-      requirements: { defence: 28 }, value: 360, rarity: "rare", armorRating: 12.47,
+      requirements: { defence: 30 }, value: 360, rarity: "rare", armorRating: 14.31,
     },
     wailing_wand: {
       id: "wailing_wand", name: { en: "Wailing Wand", de: "Wehklage-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 1.6, damageMax: 2.1, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.5/4.5)
+      damageMin: 2, damageMax: 2.6, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.5/4.5)
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 3500 },
-      manaCost: 8, requirements: { magic: 28 }, value: 560, rarity: "rare",
+      manaCost: 8, requirements: { magic: 30 }, value: 560, rarity: "rare",
     },
     slagheart_cuirass: {
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "slagheart_cuirass", name: { en: "Slagheart Cuirass", de: "Schlackenherz-Kürass" },
       type: "equipment", stackable: false, slot: "body",
       modifiers: { str: 2, con: 8 },
       skillBoost: { power: 1 },
-      requirements: { defence: 44 }, value: 1000, rarity: "superRare", armorRating: 22.44,
+      requirements: { defence: 50 }, value: 1000, rarity: "superRare", armorRating: 26.71,
     },
     cinderwretch_maul: {
       id: "cinderwretch_maul", name: { en: "Cinderwretch Maul", de: "Glutwicht-Keule" },
@@ -6077,31 +6245,37 @@ export const content: ContentDB = {
       requirements: { attack: 50 }, value: 1300, rarity: "superRare",
     },
     forgeplate_greaves: {
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.2, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "forgeplate_greaves", name: { en: "Forgeplate Greaves", de: "Schmiedeplatten-Beinschienen" },
       type: "equipment", stackable: false, slot: "legs",
       modifiers: { str: 2, con: 5 },
       skillBoost: { power: 1 },
-      requirements: { defence: 50 }, value: 900, rarity: "superRare", armorRating: 17.58,
+      requirements: { defence: 50 }, value: 900, rarity: "superRare", armorRating: 19.59,
     },
     dreadfang_glaive: {
       id: "dreadfang_glaive", name: { en: "Dreadfang Glaive", de: "Schreckenzahn-Glefe" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "spear", twoHanded: true,
-      damageMin: 8.9, damageMax: 14.9, attackIntervalMs: 3000,
+      damageMin: 9.5, damageMax: 15.9, attackIntervalMs: 3000,
       weaponEffect: { type: "bleed", chance: 0.35, magnitude: 5, durationMs: 6000 }, // balance-fix 2026-07-05: magnitude 1.6→5 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 2 },
       weaponEffects: [ { type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 } ],
       requirements: { attack: 70 }, value: 3000, rarity: "epic",
     },
     voidstalker_cloak: {
+      weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "voidstalker_cloak", name: { en: "Voidstalker Cloak", de: "Leerenpirscher-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
-      modifiers: { dex: 2, int: 3 }, skillBoost: { defence: 4 },
+      modifiers: { dex: 6, int: 8 }, skillBoost: { defence: 4 },
       requirements: { ranged: 65 }, value: 2200, rarity: "epic",
     },
     sorrow_staff: {
       id: "sorrow_staff", name: { en: "Sorrow Staff", de: "Kummer-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 5.5, damageMax: 8.3, attackIntervalMs: 3000,
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (DPS unter dem nächsten Craft-Tier titanium_staff R80,
+      // 2.93 DPS) — mitbehoben, Tempo unverändert (3 s), Requirement bleibt (aktuelles Craft-Tier
+      // bloodiron_staff liegt bei R70, unter den vorhandenen R72).
+      damageMin: 7.2, damageMax: 10.4, attackIntervalMs: 3000,
       weaponEffect: { type: "burn", chance: 0.35, magnitude: 5, durationMs: 5500 }, // balance-fix 2026-07-05: magnitude 1.8→5 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 10, modifiers: { wis: 3 },
       weaponEffects: [ { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 } ],
@@ -6110,13 +6284,16 @@ export const content: ContentDB = {
     soulflayer_amulet: {
       id: "soulflayer_amulet", name: { en: "Soulflayer's Amulet", de: "Seelenschinder-Amulett" },
       type: "equipment", stackable: false, slot: "amulet",
+      // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
+      // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 },
       modifiers: { str: 4, con: 5, int: 5, lck: 9 }, skillBoost: { power: 4 },
       value: 5000, rarity: "epic",
     },
     abyssal_devourer_fang: {
       id: "abyssal_devourer_fang", name: { en: "Abyssal Devourer's Fang", de: "Reißzahn des Abyssalen Verschlingers" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "melee", weaponType: "dagger",
-      damageMin: 9.2, damageMax: 11.8, attackIntervalMs: 2600,
+      damageMin: 9.6, damageMax: 12.3, attackIntervalMs: 2600,
       weaponEffect: { type: "poison", chance: 0.35, magnitude: 7, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 2.5→7 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { dex: 1, lck: 2 },
       weaponEffects: [ { type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 } ],
@@ -6470,41 +6647,41 @@ export const content: ContentDB = {
       id: "mireclutch_fang", name: { en: "Mireclutch Fang", de: "Moorgriff-Fangzahn" },
       type: "equipment", stackable: false, icon: "🐍", slot: "mainhand", weaponStyle: "melee",
       weaponType: "dagger", precision: 0.30,
-      damageMin: 2.6, damageMax: 4.0, attackIntervalMs: 2400,
+      damageMin: 3.2, damageMax: 5.1, attackIntervalMs: 2400,
       weaponEffect: { type: "plaguebearer", chance: 1, magnitude: 2, durationMs: 5000 },
-      requirements: { attack: 26 }, value: 1400, rarity: "superRare",
+      requirements: { attack: 40 }, value: 1400, rarity: "superRare",
     },
     cinderhusk_bulwark: {
       id: "cinderhusk_bulwark", name: { en: "Cinderhusk Bulwark", de: "Glutpanzer-Bollwerk" },
       type: "equipment", stackable: false, icon: "🛡️", slot: "offhand",
-      armorRating: 13.4, blockChance: 0.335, // item-drop-audit P1 (2026-07-25, Chef-Fall): AR 11.5→13.4, Block 28%→33.5% — Mithril-Anker; das 20%-Elite-Unique muss den 2.5%-Normal-Drop chitin_bulwark (def34/AR12.55/31.5%) schlagen können, nicht drunter liegen.
+      armorRating: 14.38, blockChance: 0.36, // item-drop-audit P1 (2026-07-25, Chef-Fall): AR 11.5→13.4, Block 28%→33.5% — Mithril-Anker; das 20%-Elite-Unique muss den 2.5%-Normal-Drop chitin_bulwark (def34/AR12.55/31.5%) schlagen können, nicht drunter liegen.
       // Balance-Spec §4 #9 wollte "thorns" — itemization-guards.test.ts (§5.1c) erlaubt `thorns` auf
       // Rüstung NUR auf der namentlich gepinnten Ausnahme thornmail_gauntlets (bewusste Power-
       // Kontrolle, nicht casual erweiterbar). Ersetzt durch "desperation" (bestehende Familie,
       // funktional auf jedem Slot) — bleibt in der "hält stand"-Bollwerk-Identität. Abweichung im
       // Content-Bericht dokumentiert.
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
-      requirements: { defence: 30 }, value: 1600, rarity: "superRare", // item-drop-audit P1 (2026-07-25, Chef-Fall): req def 16→30 (Variante A, Bestandsschutz greift — bereits angelegte Exemplare bleiben tragbar bis zum nächsten Unequip).
+      requirements: { defence: 40 }, value: 1600, rarity: "superRare", // item-drop-audit P1 (2026-07-25, Chef-Fall): req def 16→30 (Variante A, Bestandsschutz greift — bereits angelegte Exemplare bleiben tragbar bis zum nächsten Unequip).
     },
     briarfang_blade: {
       id: "briarfang_blade", name: { en: "Briarfang", de: "Dornfang" },
       type: "equipment", stackable: false, icon: "⚔️", slot: "mainhand", weaponStyle: "melee",
       weaponType: "sword",
-      damageMin: 4.4, damageMax: 8.2, attackIntervalMs: 2900,
+      damageMin: 5.6, damageMax: 10.4, attackIntervalMs: 2900,
       weaponEffect: { type: "bleed", chance: 0.3, magnitude: 4, durationMs: 5000 },
-      requirements: { attack: 42 }, value: 2600, rarity: "superRare",
+      requirements: { attack: 50 }, value: 2600, rarity: "superRare",
     },
     oldgrowth_plate: {
       id: "oldgrowth_plate", name: { en: "Oldgrowth Plate", de: "Altwuchs-Panzer" },
       type: "equipment", stackable: false, icon: "🛡️", slot: "body",
-      armorRating: 24.8,
+      armorRating: 26.71,
       // Balance-Spec §4 #11 wollte `bonus.hpRegenPerSec` — itemization-guards.test.ts (§5.4) erlaubt
       // hpRegenPerSec auf Rüstung NUR auf Signaturen (rarity legendary/godly oder idol_/slayer_-
       // Präfix); #11 ist bewusst "nur" superRare. Ersetzt durch "healOnKill" (bestehende Familie,
       // bleibt "selbstheilendes Moos"-thematisch — heilt beim Erlegen statt pro Sekunde). Abweichung
       // im Content-Bericht dokumentiert.
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 6, durationMs: 0 },
-      requirements: { defence: 40 }, value: 2800, rarity: "superRare",
+      requirements: { defence: 50 }, value: 2800, rarity: "superRare",
     },
     thorncrown: {
       id: "thorncrown", name: { en: "Thorncrown", de: "Dornenkrone" },
@@ -6520,24 +6697,24 @@ export const content: ContentDB = {
       id: "marrowcleaver", name: { en: "Marrowcleaver", de: "Markspalter" },
       type: "equipment", stackable: false, icon: "🪓", slot: "mainhand", weaponStyle: "melee", twoHanded: true,
       weaponType: "greataxe",
-      damageMin: 20, damageMax: 37, attackIntervalMs: 3450,
+      damageMin: 21.6, damageMax: 40, attackIntervalMs: 3450,
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
-      requirements: { attack: 62 }, value: 4200, rarity: "epic",
+      requirements: { attack: 70 }, value: 4200, rarity: "epic",
     },
     hoargrim_scepter: {
       id: "hoargrim_scepter", name: { en: "Hoargrim Scepter", de: "Raugram-Szepter" },
       type: "equipment", stackable: false, icon: "❄️", slot: "mainhand", weaponStyle: "magic",
       weaponType: "scepter",
-      damageMin: 4.0, damageMax: 5.2, attackIntervalMs: 2640,
+      damageMin: 5, damageMax: 6.5, attackIntervalMs: 2640,
       weaponEffect: { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 },
-      requirements: { magic: 58 }, value: 4000, rarity: "superRare",
+      requirements: { magic: 70 }, value: 4000, rarity: "superRare",
     },
     pyrebound_vestment: {
       id: "pyrebound_vestment", name: { en: "Pyrebound Vestment", de: "Glutgebundene Robe" },
       type: "equipment", stackable: false, icon: "🔥", slot: "body",
-      wardCapacity: 101,
+      wardCapacity: 142.85,
       weaponEffect: { type: "gutter", chance: 1, magnitude: 0.5, durationMs: 0 },
-      requirements: { magic: 58 }, value: 4200, rarity: "epic",
+      requirements: { magic: 70 }, value: 4200, rarity: "epic",
     },
     greytooth_mantle: {
       id: "greytooth_mantle", name: { en: "Greytooth Mantle", de: "Grauzahn-Mantel" },
@@ -6594,16 +6771,16 @@ export const content: ContentDB = {
       // weaponStyle-Trägern (s. ashtongue_fetish-Kommentar, itemization-parity-fix §1.1). Ersetzt
       // durch `modifiers` (etabliertes Fokus-Muster, hier auf Aetherium/Godiron-Fokus-Niveau).
       // Abweichung im Content-Bericht dokumentiert.
-      modifiers: { int: 5, wis: 7, lck: 2 },
+      modifiers: { int: 6, wis: 8, lck: 2 },
       weaponEffect: { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 },
       requirements: { magic: 90 }, value: 11000, rarity: "epic",
     },
     morvane_warplate: {
       id: "morvane_warplate", name: { en: "Morvane's Warplate", de: "Morvanes Kriegsplatte" },
       type: "equipment", stackable: false, icon: "🛡️", slot: "body",
-      armorRating: 34.5, // item-drop-audit P1 (2026-07-25): AR 27.5→34.5 — Slagpit-Geschwister furnaceheart(90)/rimebound(92) sitzen im Fenster, morvane saß 3 Tiers drunter.
+      armorRating: 37.5, // item-drop-audit P1 (2026-07-25): AR 27.5→34.5 — Slagpit-Geschwister furnaceheart(90)/rimebound(92) sitzen im Fenster, morvane saß 3 Tiers drunter.
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.4, durationMs: 0 },
-      requirements: { defence: 80 }, value: 12000, rarity: "epic", // req def 62→80 (Variante A) — Bestandsschutz greift.
+      requirements: { defence: 90 }, value: 12000, rarity: "epic", // req def 62→80 (Variante A) — Bestandsschutz greift.
     },
     rimebound_leggings: {
       id: "rimebound_leggings", name: { en: "Rimebound Leggings", de: "Frostgebundene Beinlinge" },
@@ -6635,7 +6812,7 @@ export const content: ContentDB = {
       // Item erlaubt. Ersetzt durch `modifiers` (Attribut-Boni, unbegrenzt erlaubt) — bleibt der
       // "arkaner Support"-Identität treu; der namensgebende Effekt (antiRegen) bleibt unverändert.
       // Abweichung im Content-Bericht dokumentiert.
-      modifiers: { int: 6, wis: 6, lck: 3 }, // item-drop-audit P1 (2026-07-25): int4/wis3→int6/wis6/lck3 — Legendär vom L237-Elite darf nicht unter dem L65-Craft-Cape void_shroud (dex1/con1/int4/wis7) liegen.
+      modifiers: { int: 9, wis: 9, lck: 4 }, // item-drop-audit P1 (2026-07-25): int4/wis3→int6/wis6/lck3 — Legendär vom L237-Elite darf nicht unter dem L65-Craft-Cape void_shroud (dex1/con1/int4/wis7) liegen.
       weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 },
       value: 15000, rarity: "legendary",
     },
@@ -6649,7 +6826,7 @@ export const content: ContentDB = {
     ninth_wardens_signet: {
       id: "ninth_wardens_signet", name: { en: "Signet of the Ninth Warden", de: "Siegel des Neunten Wächters" },
       type: "equipment", stackable: false, icon: "💍", slot: "ring1",
-      modifiers: { str: 4, con: 4, int: 3, lck: 5 }, skillBoost: { defence: 4 },
+      modifiers: { str: 5, con: 5, int: 4, lck: 7 }, skillBoost: { defence: 4 },
       bonus: { hpRegenPerSec: 0.12 },
       weaponEffect: { type: "bane", chance: 1, magnitude: 0.25, durationMs: 0, targetFamily: "construct" },
       value: 30000, rarity: "legendary",
@@ -6689,12 +6866,13 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🗡️", slot: "mainhand", weaponStyle: "melee",
       weaponType: "dagger",
-      damageMin: 2.1, damageMax: 3.0, attackIntervalMs: 2400, precision: 0.30,
+      damageMin: 3.4, damageMax: 4.9, attackIntervalMs: 2400, precision: 0.30,
       weaponEffect: { type: "bleed", chance: 0.25, magnitude: 2, durationMs: 4000 },
       modifiers: { dex: 1 },
-      requirements: { attack: 22 }, value: 140, rarity: "rare",
+      requirements: { attack: 40 }, value: 140, rarity: "rare",
     },
     ribcage_hewer: {
+      weaponEffect: { type: "critBurst", chance: 1, magnitude: 8, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "ribcage_hewer", name: { en: "Ribcage Hewer", de: "Rippenkäfig-Hauer" },
       description: {
         en: "A treant-bark battleaxe, its edge hardened in Blackthorn sap until it bites like iron.",
@@ -6702,11 +6880,12 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪓", slot: "mainhand", weaponStyle: "melee",
       weaponType: "battleaxe",
-      damageMin: 6.9, damageMax: 12.2, attackIntervalMs: 3250,
+      damageMin: 8.6, damageMax: 15.2, attackIntervalMs: 3250,
       modifiers: { str: 1, lck: 1 },
-      requirements: { attack: 54 }, value: 920, rarity: "superRare",
+      requirements: { attack: 60 }, value: 920, rarity: "superRare",
     },
     mossheart_crusher: {
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 5 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "mossheart_crusher", name: { en: "Mossheart Crusher", de: "Moosherz-Zermalmer" },
       description: {
         en: "A golem-core maul of packed stone and root — every swing lands like a falling wall.",
@@ -6714,9 +6893,9 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🔨", slot: "mainhand", weaponStyle: "melee", twoHanded: true,
       weaponType: "maul",
-      damageMin: 11.6, damageMax: 26.5, attackIntervalMs: 3700, armorPen: 0.40,
+      damageMin: 13.9, damageMax: 31.8, attackIntervalMs: 3700, armorPen: 0.40,
       modifiers: { str: 1, con: 1 },
-      requirements: { attack: 48 }, value: 970, rarity: "superRare",
+      requirements: { attack: 50 }, value: 970, rarity: "superRare",
     },
     chorus_impaler: {
       id: "chorus_impaler", name: { en: "Chorus Impaler", de: "Chorspieß" },
@@ -6726,10 +6905,10 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🔱", slot: "mainhand", weaponStyle: "melee", twoHanded: true,
       weaponType: "spear",
-      damageMin: 9.7, damageMax: 16.2, attackIntervalMs: 2900, precision: 0.20,
+      damageMin: 11, damageMax: 18.4, attackIntervalMs: 2900, precision: 0.20,
       weaponEffect: { type: "bleed", chance: 0.22, magnitude: 4, durationMs: 4500 },
       modifiers: { dex: 1 },
-      requirements: { attack: 63 }, value: 1080, rarity: "superRare",
+      requirements: { attack: 70 }, value: 1080, rarity: "superRare",
     },
     // Chase (Rare-Drop-Philosophie): Next-Tier-Stats bei aktuellem Requirement + kleiner Bleed-Bonus.
     sentinel_coreblade: {
@@ -6767,9 +6946,9 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 2.1, damageMax: 3.0, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
+      damageMin: 3.4, damageMax: 4.9, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 2, durationMs: 4200 },
-      requirements: { magic: 22 }, value: 250, rarity: "rare",
+      requirements: { magic: 40 }, value: 250, rarity: "rare",
     },
     chitinshell_sparker: {
       id: "chitinshell_sparker", name: { en: "Chitinshell Sparker", de: "Chitinschale-Funker" },
@@ -6779,9 +6958,9 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 2.1, damageMax: 2.6, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
+      damageMin: 2.6, damageMax: 3.4, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
       weaponEffect: { type: "shock", chance: 0.22, magnitude: 0.24, durationMs: 3600 },
-      requirements: { magic: 34 }, value: 360, rarity: "rare",
+      requirements: { magic: 40 }, value: 360, rarity: "rare",
     },
     barrowsong_crook: {
       id: "barrowsong_crook", name: { en: "Barrowsong Scepter", de: "Hügelgrab-Zepter" },
@@ -6797,6 +6976,7 @@ export const content: ContentDB = {
     },
     // Fokus/Off-Hand-Katalysator (Chef-Nachtrag-Terminus): kein Damage-Träger, reiner Attribut-Katalysator.
     briarbound_conduit: {
+      weaponEffect: { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "briarbound_conduit", name: { en: "Briarbound Catalyst", de: "Dornengebundener Katalysator" },
       description: {
         en: "A catalyst orb bound in living bramble, humming with the witch's leftover craft.",
@@ -6828,12 +7008,13 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 5.7, damageMax: 8.4, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 9.8, damageMax: 14.6, attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { lck: 1 },
-      requirements: { ranged: 60 }, value: 950, rarity: "superRare",
+      requirements: { ranged: 80 }, value: 950, rarity: "superRare",
     },
     soulflayer_snapbow: {
+      weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "soulflayer_snapbow", name: { en: "Soulflayer Snapbow", de: "Seelenschinder-Schnappbogen" },
       description: {
         en: "A short, wicked recurve carved from flayed-soul horn — its draw is nearly silent.",
@@ -6841,9 +7022,9 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "shortbow",
-      damageMin: 8.4, damageMax: 11.5, attackIntervalMs: 2650, precision: 0.15,
+      damageMin: 9.8, damageMax: 13.4, attackIntervalMs: 2650, precision: 0.15,
       modifiers: { lck: 1 },
-      requirements: { ranged: 78 }, value: 1450, rarity: "epic",
+      requirements: { ranged: 80 }, value: 1450, rarity: "epic",
     },
     // Chase (kein Zusatzeffekt — reiner Next-Tier-Statstick).
     voidhusk_deadeye: {
@@ -6854,10 +7035,10 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
       weaponType: "longbow",
-      damageMin: 10.8, damageMax: 15.9, attackIntervalMs: 3000, precision: 0.25,
+      damageMin: 12.8, damageMax: 19, attackIntervalMs: 3000, precision: 0.25,
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { lck: 1 },
-      requirements: { ranged: 80 }, value: 2600, rarity: "epic",
+      requirements: { ranged: 90 }, value: 2600, rarity: "epic",
     },
   },
   actions: {
@@ -11558,9 +11739,9 @@ export const content: ContentDB = {
         { itemId: "goblin_ear", chance: 0.5, min: 1, max: 1 },
         { itemId: "crude_bone", chance: 0.25, min: 1, max: 1 },
         { itemId: "feather", chance: 0.4, min: 1, max: 2 },
-        { itemId: "leather_helm", chance: 0.04, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "goblin_shank", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bonepatch_helm", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "raw_hide", chance: 0.04, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "leather_helm", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "goblin_shank", chance: 0.0017, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bonepatch_helm", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
         // Endgame-Re-Tiering (Chef-GO 2026-07-10): warband_key raus aus L20-Trash (zog nach
         // Blackthorn, s.u.) — Zeile bleibt @0 statt gelöscht (RNG-Zugzahl-Parität, Muster
         // Sim-Impact-Schranke §6: nur Chance-WERTE ändern, keine Zeile ziehen; pinnt
@@ -11584,8 +11765,8 @@ export const content: ContentDB = {
         { itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 },
         { itemId: "shaman_totem", chance: 0.1, min: 1, max: 1 },
         { itemId: "wooden_shield", chance: 0.08, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bronze_sword", chance: 0.05, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "leather_body", chance: 0.05, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bronze_bar", chance: 0.05, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bronze_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "raw_hide", chance: 0.05, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "leather_body", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
       ],
     },
     // — Goblin-Warband (Grenzlande) —
@@ -11594,8 +11775,8 @@ export const content: ContentDB = {
       level: 19, maxHp: 18, damage: 8, accuracy: 8, evasion: 6, defense: 10, defenseType: "evasion", attackIntervalMs: 2600,
       xp: 38, gold: 0,
       loot: [{ itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 }, { itemId: "stolen_coinpurse", chance: 0.15, min: 1, max: 1 },
-        { itemId: "cutpurse_ring", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "scavenger_boots", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cutpurse_ring", chance: 0.0022, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "scavenger_boots", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     goblin_spearman: {
@@ -11603,9 +11784,9 @@ export const content: ContentDB = {
       level: 20, maxHp: 26, damage: 9, accuracy: 9, evasion: 2, defense: 10, defenseType: "armor", attackIntervalMs: 3200,
       xp: 40, gold: 0,
       loot: [{ itemId: "goblin_ear", chance: 0.6, min: 1, max: 1 }, { itemId: "crude_bone", chance: 0.3, min: 1, max: 1 },
-        { itemId: "crude_waraxe", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "goblin_buckler", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "rivetfist_gloves", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "crude_waraxe", chance: 0.0025, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goblin_buckler", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "rivetfist_gloves", chance: 0.0021, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     goblin_archer: {
@@ -11613,7 +11794,7 @@ export const content: ContentDB = {
       level: 22, maxHp: 22, damage: 10, accuracy: 9, evasion: 7, defense: 11, defenseType: "evasion", attackIntervalMs: 2800,
       xp: 44, gold: 0,
       loot: [{ itemId: "feather", chance: 0.5, min: 1, max: 3 }, { itemId: "goblin_ear", chance: 0.5, min: 1, max: 1 },
-        { itemId: "stolen_shortbow", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "stolen_shortbow", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     goblin_crossbower: {
@@ -11621,7 +11802,7 @@ export const content: ContentDB = {
       level: 24, maxHp: 29, damage: 11, accuracy: 10, evasion: 7, defense: 12, defenseType: "evasion", attackIntervalMs: 3400,
       xp: 50, gold: 0,
       loot: [{ itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 }, { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 },
-        { itemId: "warband_hauberk", chance: 0.00081, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warband_hauberk", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     goblin_butcher: {
@@ -11629,8 +11810,8 @@ export const content: ContentDB = {
       level: 26, maxHp: 39, damage: 11, accuracy: 9, evasion: 1, defense: 20, defenseType: "armor", attackIntervalMs: 3600,
       xp: 56, gold: 0,
       loot: [{ itemId: "raw_beef", chance: 0.5, min: 1, max: 2 }, { itemId: "crude_bone", chance: 0.4, min: 1, max: 2 },
-        { itemId: "goblin_warkilt", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "goblin_cleaver", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goblin_warkilt", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goblin_cleaver", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     goblin_felmagician: {
@@ -11767,9 +11948,9 @@ export const content: ContentDB = {
       loot: [
         { itemId: "feather", chance: 0.85, min: 1, max: 3 },
         { itemId: "raw_chicken", chance: 0.6, min: 1, max: 1 },
-        { itemId: "farmhand_sling", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "cowhide_cap", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "worn_workgloves", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "farmhand_sling", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cowhide_cap", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "worn_workgloves", chance: 0.0017, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     cow: {
@@ -11788,10 +11969,10 @@ export const content: ContentDB = {
       loot: [
         { itemId: "raw_hide", chance: 0.7, min: 1, max: 1 },
         { itemId: "raw_beef", chance: 0.7, min: 1, max: 2 },
-        { itemId: "pitchfork_spear", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "pitchfork_spear", chance: 0.0013, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "sickle_shiv", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wattle_shield", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "muckboots", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wattle_shield", chance: 0.0021, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "muckboots", chance: 0.002, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     boar: {
@@ -11810,10 +11991,10 @@ export const content: ContentDB = {
       loot: [
         { itemId: "raw_hide", chance: 0.6, min: 1, max: 2 },
         { itemId: "raw_boar_loin", chance: 0.5, min: 1, max: 1 },
-        { itemId: "boar_tusk_mace", chance: 0.03, min: 1, max: 1 },
-        { itemId: "hedgewitch_twig", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "cowhide_jerkin", chance: 0.00069, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "hide_leggings", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "boar_tusk_mace", chance: 0.0122, min: 1, max: 1 },
+        { itemId: "hedgewitch_twig", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cowhide_jerkin", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "hide_leggings", chance: 0.002, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "field_cape", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "drovers_charm", chance: 0.00069, min: 1, max: 1, suffixChance: 0.30 },
       ],
@@ -11835,8 +12016,8 @@ export const content: ContentDB = {
       gold: 0,
       loot: [
         { itemId: "raw_hide", chance: 0.65, min: 1, max: 2 },
-        { itemId: "hide_leggings", chance: 0.0025, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "cowhide_cap", chance: 0.0025, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "hide_leggings", chance: 0.0018, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cowhide_cap", chance: 0.0018, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     bull_boss: {
@@ -11898,8 +12079,8 @@ export const content: ContentDB = {
         { itemId: "raw_hide", chance: 0.5, min: 1, max: 1 },
         { itemId: "crude_bone", chance: 0.3, min: 1, max: 1 },
         { itemId: "ember_essence", chance: 0.12, min: 1, max: 1 }, // fix 2026-07: 2nd source, was goblin_warlock-only
-        { itemId: "dustblade", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "ashen_gauntlets", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "dustblade", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ashen_gauntlets", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     // armor-iter2 §9 Content-Gap-Fix: L31–33 hatte GAR keinen Mob (ash_rat L30 → dust_vulture L34).
@@ -11940,10 +12121,10 @@ export const content: ContentDB = {
         { itemId: "feather", chance: 0.6, min: 1, max: 3 },
         { itemId: "raw_hide", chance: 0.3, min: 1, max: 1 },
         { itemId: "raw_bog_fowl", chance: 0.4, min: 1, max: 1 },
-        { itemId: "steel_shortbow", chance: 0.015, min: 1, max: 1 },
-        { itemId: "ashwood_longbow", chance: 0.00069, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "dustwalker_boots", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "duskfang_ripper", chance: 0.018, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ashbark_log", chance: 0.015, min: 4, max: 4 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "steel_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "ashwood_longbow", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "dustwalker_boots", chance: 0.0017, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "duskfang_ripper", chance: 0.0112, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     mire_crawler: {
@@ -11963,9 +12144,9 @@ export const content: ContentDB = {
       loot: [
         { itemId: "graywort", chance: 0.5, min: 1, max: 2 },
         { itemId: "ashen_dust", chance: 0.4, min: 1, max: 2 },
-        { itemId: "mire_fang_dagger", chance: 0.025, min: 1, max: 1 },
-        { itemId: "mire_hexstaff", chance: 0.00081, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "smokeweave_cape", chance: 0.00081, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mire_fang_dagger", chance: 0.0155, min: 1, max: 1 },
+        { itemId: "mire_hexstaff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "smokeweave_cape", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     // Combat-Feel v2 #8: erster freier (Nicht-Slayer) Ward-Mob für Magier — L18-85-Ward-Lücke.
@@ -11980,7 +12161,7 @@ export const content: ContentDB = {
         { itemId: "ashen_dust", chance: 0.5, min: 1, max: 2 },
         { itemId: "dim_essence", chance: 0.3, min: 1, max: 1 },
         { itemId: "ember_essence", chance: 0.10, min: 1, max: 1 },
-        { itemId: "wisp_kindled_bough", chance: 0.020, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wisp_kindled_bough", chance: 0.0124, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     pitch_beetle: {
@@ -11999,11 +12180,11 @@ export const content: ContentDB = {
       loot: [
         { itemId: "chitin_plate", chance: 0.5, min: 1, max: 2 },
         { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 },
-        { itemId: "chitin_bulwark", chance: 0.025, min: 1, max: 1 },
-        { itemId: "cinder_spike", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "chitin_helm", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "sootscale_greaves", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "chitinshell_sparker", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chitin_bulwark", chance: 0.0218, min: 1, max: 1 },
+        { itemId: "cinder_spike", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chitin_helm", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "sootscale_greaves", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chitinshell_sparker", chance: 0.0119, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     ash_tyrant: {
@@ -12031,14 +12212,14 @@ export const content: ContentDB = {
       loot: [
         { itemId: "iron_bar", chance: 0.4, min: 1, max: 3 },
         { itemId: "cutpurse_trinket", chance: 0.1, min: 1, max: 1 },
-        { itemId: "iron_sword", chance: 0.05, min: 1, max: 1 },
+        { itemId: "iron_bar", chance: 0.05, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "ember_essence", chance: 0.18, min: 1, max: 2 }, // fix 2026-07: 3rd source, was goblin_warlock-only
         { itemId: "aether_essence", chance: 0.15, min: 1, max: 1 }, // balance-pass2 2026-07-01: 8a — frühere Quelle (L45), on-level für L40-50-Rezepte
-        { itemId: "ashen_reaper", chance: 0.02, min: 1, max: 1 },
-        { itemId: "ashplate_cuirass", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ashen_reaper", chance: 0.0158, min: 1, max: 1 },
+        { itemId: "ashplate_cuirass", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "cinderloop_ring", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "ashfall_recurve", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "ash_tyrant_crown", chance: 0.00032, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ashfall_recurve", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ash_tyrant_crown", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -12051,7 +12232,7 @@ export const content: ContentDB = {
       level: 45, maxHp: 47, damage: 26, accuracy: 10, evasion: 1, defense: 23, defenseType: "armor", attackIntervalMs: 3400, // Combat-Feel-v2 #0: 17→26 (naked Zufluss 3.29%→5.03%/s)
       resist: ["bleed", "poison"], xp: 116, gold: 0,
       loot: [{ itemId: "normal_log", chance: 0.7, min: 1, max: 2 }, { itemId: "graywort", chance: 0.2, min: 1, max: 1 },
-        { itemId: "rootling_club", chance: 0.0032, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "rootling_club", chance: 0.0013, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     rootling_gimp: {
@@ -12077,7 +12258,7 @@ export const content: ContentDB = {
       resist: ["bleed", "poison"], regen: 0.4, enrage: { belowHpPct: 0.3, damageMult: 1.5 },
       xp: 410, gold: 0,
       loot: [{ itemId: "oak_log", chance: 1, min: 3, max: 6 }, { itemId: "deathmoss", chance: 0.4, min: 1, max: 2 }, { itemId: "soulopal", chance: 0.05, min: 1, max: 1 },
-        { itemId: "thornmail_gauntlets", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "thornmail_gauntlets", chance: 0.0011, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -12098,8 +12279,8 @@ export const content: ContentDB = {
         { itemId: "scarred_hide", chance: 0.5, min: 1, max: 2 },
         { itemId: "fang", chance: 0.4, min: 1, max: 1 },
         { itemId: "raw_wolf_haunch", chance: 0.30, min: 1, max: 1 },
-        { itemId: "thornfang_blade", chance: 0.02, min: 1, max: 1 },
-        { itemId: "thornvine_whip", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "thornfang_blade", chance: 0.0162, min: 1, max: 1 },
+        { itemId: "thornvine_whip", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     // Combat-Feel v2 #8: Mid-Band freier Ward-Mob (L18-85-Ward-Lücke) — Grabhügel-Geist am Waldrand.
@@ -12134,10 +12315,10 @@ export const content: ContentDB = {
       loot: [
         { itemId: "deathmoss", chance: 0.5, min: 1, max: 2 },
         { itemId: "frostvine", chance: 0.3, min: 1, max: 1 },
-        { itemId: "moss_plate_body", chance: 0.025, min: 1, max: 1 },
-        { itemId: "bark_bulwark", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "mossweave_leggings", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "mossheart_crusher", chance: 0.010, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "moss_plate_body", chance: 0.022, min: 1, max: 1 },
+        { itemId: "bark_bulwark", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mossweave_leggings", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mossheart_crusher", chance: 0.0084, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     // Task #213 (Bane-Familien-Tagging): bewusst OHNE family. Blackthorn ist die "lebende Wald"-
@@ -12162,9 +12343,9 @@ export const content: ContentDB = {
         { itemId: "scarred_hide", chance: 0.45, min: 1, max: 2 },
         { itemId: "bowstring", chance: 0.3, min: 1, max: 1 },
         { itemId: "dim_essence", chance: 0.25, min: 1, max: 2 },
-        { itemId: "spectral_coif", chance: 0.02, min: 1, max: 1 },
-        { itemId: "spectral_hunter_bow", chance: 0.00056, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wildwood_treads", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "spectral_coif", chance: 0.0179, min: 1, max: 1 },
+        { itemId: "spectral_hunter_bow", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wildwood_treads", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     bramble_witch: {
@@ -12185,9 +12366,9 @@ export const content: ContentDB = {
         { itemId: "frostvine", chance: 0.5, min: 1, max: 2 },
         { itemId: "dim_essence", chance: 0.4, min: 1, max: 2 },
         { itemId: "frost_essence", chance: 0.12, min: 1, max: 1 },
-        { itemId: "bramble_witchstaff", chance: 0.02, min: 1, max: 1 },
-        { itemId: "witchroot_wand", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "briarbound_conduit", chance: 0.009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bramble_witchstaff", chance: 0.0155, min: 1, max: 1 },
+        { itemId: "witchroot_wand", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "briarbound_conduit", chance: 0.0067, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     forest_warden: {
@@ -12207,12 +12388,12 @@ export const content: ContentDB = {
       gold: 0,
       loot: [
         { itemId: "scaled_leather", chance: 0.4, min: 1, max: 2 },
-        { itemId: "mithril_longbow", chance: 0.04, min: 1, max: 1 },
+        { itemId: "blightwood_log", chance: 0.04, min: 5, max: 5 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "mithril_longbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "soulopal", chance: 0.08, min: 1, max: 1 },
-        { itemId: "warden_brigandine", chance: 0.02, min: 1, max: 1 },
-        { itemId: "soulopal_band", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warden_brigandine", chance: 0.0185, min: 1, max: 1 },
+        { itemId: "soulopal_band", chance: 0.0022, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "soulthorn_pendant", chance: 0.0011, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "warden_greatcloak", chance: 0.00039, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warden_greatcloak", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -12254,7 +12435,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "mithril_ore", chance: 0.45, min: 1, max: 2 },
         { itemId: "stolen_coinpurse", chance: 0.3, min: 1, max: 2 },
-        { itemId: "slagforged_sword", chance: 0.0021, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "slagforged_sword", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     ember_elemental: {
@@ -12275,14 +12456,14 @@ export const content: ContentDB = {
         { itemId: "frost_essence", chance: 0.4, min: 1, max: 2 },
         { itemId: "ashen_dust", chance: 0.5, min: 1, max: 3 },
         { itemId: "cinderfang_dagger", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "emberforge_helm", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "moltengrip_gauntlets", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "emberforge_helm", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "moltengrip_gauntlets", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "emberforge_hammer", chance: 0.00032, min: 1, max: 1, suffixChance: 0.30 },
         // item-drop-audit P3 Nachzug (Task #344, Chef-GO 25.07.2026): Slagpit = Aetherium-Fenster (CL 88-92).
         // War zuvor durch tower-monsters.test.ts (1:1-Loot-Parität zu tower_ember_elemental) blockiert —
         // gezielte, dokumentierte Loot-Ausnahme (s. LOOT_PARITY_EXCEPTIONS in tower-monsters.test.ts).
         // NUR die Zonen-Version bekommt die Row; tower_ember_elemental bleibt beim Turm-Tuning unverändert.
-        { itemId: "aetherium_gauntlets", chance: 0.0025, min: 1, max: 1 },
+        { itemId: "aetherium_bar", chance: 0.0025, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_gauntlets", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
       ],
     },
     iron_revenant: {
@@ -12307,7 +12488,7 @@ export const content: ContentDB = {
         { itemId: "slagcarapace_plate", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
         // item-drop-audit P3 Nachzug (Task #344, Chef-GO 25.07.2026): s. ember_elemental-Kommentar oben —
         // gezielte Loot-Ausnahme, tower_iron_revenant bleibt unverändert.
-        { itemId: "aetherium_platelegs", chance: 0.002, min: 1, max: 1 },
+        { itemId: "aetherium_bar", chance: 0.002, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
       ],
     },
     frost_hound: {
@@ -12329,10 +12510,10 @@ export const content: ContentDB = {
         { itemId: "frost_pelt", chance: 0.5, min: 1, max: 2 },
         { itemId: "scarred_hide", chance: 0.4, min: 1, max: 2 },
         { itemId: "frostcaverns_bow", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "frostward_treads", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frostward_treads", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
         // item-drop-audit P3 Nachzug (Task #344, Chef-GO 25.07.2026): s. ember_elemental-Kommentar oben —
         // gezielte Loot-Ausnahme, tower_frost_hound bleibt unverändert.
-        { itemId: "aetherium_sabatons", chance: 0.0025, min: 1, max: 1 },
+        { itemId: "aetherium_bar", chance: 0.0025, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_sabatons", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
       ],
     },
     frost_hexer: {
@@ -12354,9 +12535,9 @@ export const content: ContentDB = {
         { itemId: "frost_essence", chance: 0.5, min: 1, max: 3 },
         { itemId: "aether_essence", chance: 0.2, min: 1, max: 1 },
         { itemId: "soulopal", chance: 0.1, min: 1, max: 1 },
-        { itemId: "frostplate_greaves", chance: 0.00039, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "frosthex_wand", chance: 0.00039, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_wand", chance: 0.003, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Slagpit = Aetherium-Fenster (Caster-Thema); frost_hexer hat keinen Turm-Twin.
+        { itemId: "frostplate_greaves", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frosthex_wand", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "void_rune", chance: 0.003, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Slagpit = Aetherium-Fenster (Caster-Thema); frost_hexer hat keinen Turm-Twin.
       ],
     },
 
@@ -12368,39 +12549,39 @@ export const content: ContentDB = {
       level: 65, maxHp: 89, damage: 34, accuracy: 12, evasion: 2, defense: 58, defenseType: "armor", attackIntervalMs: 3200, // Combat-Feel v2 #4: def 33→58 (armorPen-Crossover-Sichtbarkeit); #0: dmg 23→34 (naked Zufluss 3.40%→5.03%/s)
       resist: ["poison"], xp: 230, gold: 0,
       // run6-fix P2: Krypta-Equipment-Drops → Suffix-Feature früh sichtbar
-      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 3 }, { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 }, { itemId: "iron_sword", chance: 0.025, min: 1, max: 1 },
-        { itemId: "boneblade", chance: 0.0046, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "cryptguard_helm", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "boneknuckle_gauntlets", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 3 }, { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 }, { itemId: "iron_bar", chance: 0.025, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "boneblade", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cryptguard_helm", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "boneknuckle_gauntlets", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
         // item-drop-audit P3 Nachzug (Task #344, Chef-GO 25.07.2026): war zuvor durch tower-monsters.test.ts
         // (1:1-Loot-Parität zu tower_skeleton_warrior, design/tower-monster-refactor.md) blockiert — der
         // Guard wurde gezielt für dieses Paar um eine dokumentierte Loot-Ausnahme erweitert (s.
         // LOOT_PARITY_EXCEPTIONS in tower-monsters.test.ts + Nachtrag in tower-monster-refactor.md).
         // tower_skeleton_warrior bleibt UNVERÄNDERT beim Turm-Tuning; nur die Zonen-Version bekommt die
         // on-band-Row (spiegelt dg_skeleton_warrior oben).
-        { itemId: "runite_sword", chance: 0.01, min: 1, max: 1 },
+        { itemId: "runite_bar", chance: 0.01, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
       ],
     },
     skeleton_archer: {
       id: "skeleton_archer", family: "undead", zone: "crypt", name: { en: "Skeleton Archer", de: "Skelett-Bogenschütze" },
       level: 68, maxHp: 78, damage: 31, accuracy: 12, evasion: 17, defense: 34, defenseType: "evasion", attackIntervalMs: 2800, // Combat-Feel-v2 #0: 27→31 (naked Zufluss 4.32%→4.96%/s)
       resist: ["poison"], xp: 250, gold: 0,
-      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.3, min: 1, max: 2 }, { itemId: "iron_shortbow", chance: 0.03, min: 1, max: 1 },
-        { itemId: "skeletal_longbow", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.3, min: 1, max: 2 }, { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "skeletal_longbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
         // item-drop-audit P3 Nachzug (Task #344, Chef-GO 25.07.2026): s. skeleton_warrior-Kommentar oben —
         // gezielte Loot-Ausnahme im tower-monsters.test.ts-Guard, tower_skeleton_archer bleibt unverändert.
-        { itemId: "runite_shortbow", chance: 0.01, min: 1, max: 1 },
+        { itemId: "bloodoak_log", chance: 0.01, min: 5, max: 5 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
       ],
     },
     skeleton_spearman: {
       id: "skeleton_spearman", family: "undead", zone: "crypt", name: { en: "Skeleton Spearman", de: "Skelett-Speerträger" },
       level: 71, maxHp: 98, damage: 37, accuracy: 12, evasion: 2, defense: 40, defenseType: "armor", attackIntervalMs: 3200, // Combat-Feel-v2 #0: 25→37 (naked Zufluss 3.37%→4.99%/s)
       resist: ["poison"], xp: 280, gold: 0,
-      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 3 }, { itemId: "mithril_ore", chance: 0.1, min: 1, max: 1 }, { itemId: "iron_spear", chance: 0.025, min: 1, max: 1 },
-        { itemId: "bonewrought_spear", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "gravetread_sabatons", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "gravewarden_greatshield", chance: 0.00046, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "runite_spear", chance: 0.008, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): dito (Krypta on-band)
+      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 3 }, { itemId: "mithril_ore", chance: 0.1, min: 1, max: 1 }, { itemId: "iron_bar", chance: 0.025, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_spear", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "bonewrought_spear", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "gravetread_sabatons", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "gravewarden_greatshield", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "runite_bar", chance: 0.008, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_spear", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dito (Krypta on-band)
       ],
     },
     skeleton_butcher: {
@@ -12409,9 +12590,9 @@ export const content: ContentDB = {
       resist: ["poison"], inflict: { type: "bleed", chance: 0.25, magnitude: 1, durationMs: 5000 },
       xp: 364, gold: 0,
       loot: [{ itemId: "crude_bone", chance: 1, min: 2, max: 4 }, { itemId: "scarred_hide", chance: 0.2, min: 1, max: 1 },
-        { itemId: "tombplate_greaves", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bonecharm_amulet", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "runite_platelegs", chance: 0.006, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): schließt Loch C1 (Platte def 55-75 aus Welt-Zonen)
+        { itemId: "tombplate_greaves", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bonecharm_amulet", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "runite_bar", chance: 0.006, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): schließt Loch C1 (Platte def 55-75 aus Welt-Zonen)
       ],
     },
     skeleton_icemage: {
@@ -12420,9 +12601,9 @@ export const content: ContentDB = {
       resist: ["poison", "frost"], inflict: { type: "frost", chance: 0.3, magnitude: 1, durationMs: 4000 },
       xp: 500, gold: 0,
       loot: [{ itemId: "crude_bone", chance: 1, min: 2, max: 3 }, { itemId: "frost_essence", chance: 0.2, min: 1, max: 1 },
-        { itemId: "shroud_of_the_dead", chance: 0.00065, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "frostbone_scepter", chance: 0.00065, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "runite_wand", chance: 0.007, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): dito (Krypta on-band)
+        { itemId: "shroud_of_the_dead", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frostbone_scepter", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "shock_rune", chance: 0.007, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dito (Krypta on-band)
       ],
     },
     skeleton_pyroclasp: {
@@ -12431,9 +12612,9 @@ export const content: ContentDB = {
       resist: ["poison", "burn"], inflict: { type: "burn", chance: 0.3, magnitude: 1, durationMs: 5000 },
       xp: 676, gold: 0,
       loot: [{ itemId: "crude_bone", chance: 1, min: 2, max: 4 }, { itemId: "ashen_dust", chance: 0.4, min: 1, max: 2 },
-        { itemId: "pyre_staff", chance: 0.00074, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "gravesteel_cuirass", chance: 0.00074, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bloodiron_medhelm", chance: 0.005, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Zonen-Top → Bloodiron-Einstieg
+        { itemId: "pyre_staff", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "gravesteel_cuirass", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bloodiron_bar", chance: 0.005, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bloodiron_medhelm", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Zonen-Top → Bloodiron-Einstieg
       ],
     },
     skeleton_nekro: {
@@ -12457,8 +12638,8 @@ export const content: ContentDB = {
       loot: [{ itemId: "crude_bone", chance: 1, min: 3, max: 6 }, { itemId: "soulopal", chance: 0.1, min: 1, max: 1 }, { itemId: "aether_essence", chance: 0.15, min: 1, max: 1 },
         { itemId: "void_essence", chance: 0.10, min: 1, max: 1 },
         { itemId: "necrosignet_ring", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "nekro_reaperblade", chance: 0.00022, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bloodiron_wand", chance: 0.006, min: 1, max: 1 }, // #354 Paket 3.3: Krypta-Zonen-Top on-band (Muster item-drop-audit P3)
+        { itemId: "nekro_reaperblade", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aether_rune", chance: 0.006, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bloodiron_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Krypta-Zonen-Top on-band (Muster item-drop-audit P3)
       ],
     },
 
@@ -12473,11 +12654,11 @@ export const content: ContentDB = {
 
       level: 65, maxHp: 89, damage: 34, accuracy: 12, evasion: 2, defense: 58, defenseType: "armor", attackIntervalMs: 3200,
       resist: ["poison"], xp: 230, gold: 0,
-      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 3 }, { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 }, { itemId: "iron_sword", chance: 0.025, min: 1, max: 1 },
-        { itemId: "boneblade", chance: 0.0046, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "cryptguard_helm", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "boneknuckle_gauntlets", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "runite_sword", chance: 0.01, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version (Krypta on-band)
+      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 3 }, { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 }, { itemId: "iron_bar", chance: 0.025, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "boneblade", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cryptguard_helm", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "boneknuckle_gauntlets", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "runite_bar", chance: 0.01, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version (Krypta on-band)
       ],
     },
     dg_skeleton_archer: {
@@ -12486,9 +12667,9 @@ export const content: ContentDB = {
 
       level: 68, maxHp: 78, damage: 31, accuracy: 12, evasion: 17, defense: 34, defenseType: "evasion", attackIntervalMs: 2800,
       resist: ["poison"], xp: 250, gold: 0,
-      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.3, min: 1, max: 2 }, { itemId: "iron_shortbow", chance: 0.03, min: 1, max: 1 },
-        { itemId: "skeletal_longbow", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "runite_shortbow", chance: 0.01, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version
+      loot: [{ itemId: "crude_bone", chance: 0.9, min: 1, max: 2 }, { itemId: "feather", chance: 0.3, min: 1, max: 2 }, { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "skeletal_longbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bloodoak_log", chance: 0.01, min: 5, max: 5 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version
       ],
     },
     dg_skeleton_butcher: {
@@ -12499,9 +12680,9 @@ export const content: ContentDB = {
       resist: ["poison"], inflict: { type: "bleed", chance: 0.25, magnitude: 1, durationMs: 5000 },
       xp: 546, gold: 0,
       loot: [{ itemId: "crude_bone", chance: 1, min: 2, max: 4 }, { itemId: "scarred_hide", chance: 0.2, min: 1, max: 1 },
-        { itemId: "tombplate_greaves", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bonecharm_amulet", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "runite_platelegs", chance: 0.006, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version
+        { itemId: "tombplate_greaves", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bonecharm_amulet", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "runite_bar", chance: 0.006, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version
       ],
     },
     dg_skeleton_icemage: {
@@ -12512,9 +12693,9 @@ export const content: ContentDB = {
       resist: ["poison", "frost"], inflict: { type: "frost", chance: 0.3, magnitude: 1, durationMs: 4000 },
       xp: 750, gold: 0,
       loot: [{ itemId: "crude_bone", chance: 1, min: 2, max: 3 }, { itemId: "frost_essence", chance: 0.2, min: 1, max: 1 },
-        { itemId: "shroud_of_the_dead", chance: 0.00065, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "frostbone_scepter", chance: 0.00065, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "runite_wand", chance: 0.007, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version
+        { itemId: "shroud_of_the_dead", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frostbone_scepter", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "shock_rune", chance: 0.007, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dg_-Twin spiegelt die Zonen-Version
       ],
     },
     dg_skeleton_nekro: {
@@ -12527,8 +12708,8 @@ export const content: ContentDB = {
       xp: 1620, gold: 0,
       loot: [{ itemId: "crude_bone", chance: 1, min: 3, max: 6 }, { itemId: "soulopal", chance: 0.1, min: 1, max: 1 }, { itemId: "aether_essence", chance: 0.15, min: 1, max: 1 },
         { itemId: "necrosignet_ring", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "nekro_reaperblade", chance: 0.00022, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bloodiron_wand", chance: 0.006, min: 1, max: 1 }, // #354 Paket 3.3: dg_-Twin spiegelt die Zonen-Version (Muster item-drop-audit P3)
+        { itemId: "nekro_reaperblade", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aether_rune", chance: 0.006, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bloodiron_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: dg_-Twin spiegelt die Zonen-Version (Muster item-drop-audit P3)
       ],
     },
 
@@ -12547,7 +12728,7 @@ export const content: ContentDB = {
         // Magier-Material-Paritäts-Audit F7 (2026-07-23): Welt-Quelle für void_essence (Crypt) —
         // runewoven/bloodiron/titanium-Ketten ohne Slayer-60-Pflicht (Tower F4/F5 bleibt effizienter).
         { itemId: "void_essence", chance: 0.08, min: 1, max: 1 },
-        { itemId: "chorus_impaler", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chorus_impaler", chance: 0.0106, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "choirbound_relic", chance: 0.0011, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
@@ -12574,8 +12755,8 @@ export const content: ContentDB = {
       level: 200, maxHp: 1040, damage: 110, accuracy: 21, evasion: 78, defense: 100, defenseType: "evasion", attackIntervalMs: 2800, // Combat-Feel v2 #3: eva 46→78 (precision-Showcase); red-team #302 L2 (monster-threat-spec §6): dmg 22→110, hp 112→1040, acc 15→21
       regen: 0.4, xp: 2050, gold: 0,
       loot: [{ itemId: "feather", chance: 1, min: 3, max: 8 }, { itemId: "raw_roc_drumstick", chance: 0.45, min: 1, max: 2 }, { itemId: "storm_essence", chance: 0.08, min: 1, max: 1 },
-        { itemId: "talon_dagger", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_medhelm", chance: 0.002, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Highlands-Frühmonster zahlt endlich ins 92+-Fenster (niedrigste Prio)
+        { itemId: "talon_dagger", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aetherium_bar", chance: 0.002, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_medhelm", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Highlands-Frühmonster zahlt endlich ins 92+-Fenster (niedrigste Prio)
       ],
     },
     roc_hunter: {
@@ -12583,10 +12764,10 @@ export const content: ContentDB = {
       level: 208, maxHp: 1163, damage: 117, accuracy: 21, evasion: 80, defense: 104, defenseType: "evasion", attackIntervalMs: 2600, // Combat-Feel v2 #3: eva 48→80 (precision-Showcase); red-team #302 L2 (monster-threat-spec §6): dmg 23→117, hp 138→1163, acc 16→21
       regen: 0.4, xp: 2580, gold: 0,
       loot: [{ itemId: "feather", chance: 1, min: 5, max: 12 }, { itemId: "raw_roc_drumstick", chance: 0.35, min: 1, max: 2 }, { itemId: "scarred_hide", chance: 0.3, min: 1, max: 1 }, { itemId: "storm_essence", chance: 0.12, min: 1, max: 1 },
-        { itemId: "stormhide_helm", chance: 0.00083, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "skygrip_gauntlets", chance: 0.00083, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "skytalon_recurve", chance: 0.00083, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_shortbow", chance: 0.0025, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): dito
+        { itemId: "stormhide_helm", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "skygrip_gauntlets", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "skytalon_recurve", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bowstring", chance: 0.0025, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dito
       ],
     },
     roc_elder: {
@@ -12594,8 +12775,8 @@ export const content: ContentDB = {
       level: 215, maxHp: 1282, damage: 123, accuracy: 22, evasion: 82, defense: 110, defenseType: "evasion", attackIntervalMs: 2800, // Combat-Feel v2 #3: eva 49→82 (precision-Showcase); red-team #302 L2 (monster-threat-spec §6): dmg 24→123, hp 164→1282, acc 16→22
       regen: 0.4, xp: 3280, gold: 0,
       loot: [{ itemId: "feather", chance: 1, min: 8, max: 16 }, { itemId: "storm_essence", chance: 0.18, min: 1, max: 2 }, { itemId: "aether_essence", chance: 0.08, min: 1, max: 1 }, { itemId: "soulopal", chance: 0.08, min: 1, max: 1 },
-        { itemId: "skybreaker_greatsword", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_platelegs", chance: 0.003, min: 1, max: 1 }, // #354 Paket 3.3: Highlands-Spätzone on-band (Muster item-drop-audit P3)
+        { itemId: "skybreaker_greatsword", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aetherium_bar", chance: 0.003, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Highlands-Spätzone on-band (Muster item-drop-audit P3)
       ],
     },
     roc_storm: {
@@ -12615,10 +12796,10 @@ export const content: ContentDB = {
       // Dungeon-Rework §5.5: highland_key 0,009→0,035 (Schlüssel-Ökonomie); storm_mantle/
       // stormcore_pendant/stormcrest_staff halbiert — Quelle Nr. 1 ist jetzt highland_aerie-Clear-Loot.
       loot: [{ itemId: "feather", chance: 1, min: 12, max: 24 }, { itemId: "storm_essence", chance: 0.20, min: 1, max: 2 }, { itemId: "aether_essence", chance: 0.12, min: 1, max: 2 }, 
-        { itemId: "storm_mantle", chance: 0.00055, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "storm_mantle", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "stormcore_pendant", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "stormcrest_staff", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_sabatons", chance: 0.003, min: 1, max: 1 }, // #354 Paket 3.3: Highlands-Spätzone on-band (Muster item-drop-audit P3)
+        { itemId: "aetherium_bar", chance: 0.003, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_sabatons", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Highlands-Spätzone on-band (Muster item-drop-audit P3)
       ],
     },
     // ── Brücken-Monster Lv 79 & 84 (schließen die XP-Lücke L75→L92) ─
@@ -12635,9 +12816,9 @@ export const content: ContentDB = {
         { itemId: "aether_essence", chance: 0.15, min: 1, max: 2 },
         { itemId: "wyvern_scale", chance: 0.20, min: 1, max: 2 },
         { itemId: "raw_dragonhide", chance: 0.10, min: 1, max: 1 },
-        { itemId: "wyvernscale_greaves", chance: 0.00021, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wyvernscale_aegis", chance: 0.00021, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_towershield", chance: 0.003, min: 1, max: 1 }, // #354 Paket 3.3: Highlands-Spätzone on-band (Muster item-drop-audit P3)
+        { itemId: "wyvernscale_greaves", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wyvernscale_aegis", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aetherium_bar", chance: 0.003, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_towershield", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Highlands-Spätzone on-band (Muster item-drop-audit P3)
       ],
     },
     roc_void: {
@@ -12663,12 +12844,12 @@ export const content: ContentDB = {
         { itemId: "soulopal", chance: 0.10, min: 1, max: 1 },
         { itemId: "void_rune", chance: 0.12, min: 1, max: 2 },
         { itemId: "raw_dragonhide", chance: 0.12, min: 1, max: 1 },
-        { itemId: "aetherscale_cuirass", chance: 0.00021, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aetherscale_cuirass", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "aetherband_ring", chance: 0.00021, min: 1, max: 1, suffixChance: 0.30 },
         // #354 Paket 3.3: roc_void hat einen Turm-Zwilling (tower_roc_void) — Loot-Parität-Guard
         // (tower-monsters.test.ts LOOT_PARITY_EXCEPTIONS) um roc_void erweitert, Muster item-drop-
         // audit P3 (skeleton_warrior & Co.): Zonen-Version bekommt die on-band-Row, Turm-Zwilling bleibt unverändert.
-        { itemId: "aetherium_chainbody", chance: 0.003, min: 1, max: 1 },
+        { itemId: "aetherium_bar", chance: 0.003, min: 4, max: 4 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_chainbody", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
       ],
     },
 
@@ -12681,10 +12862,10 @@ export const content: ContentDB = {
       level: 120, maxHp: 228, damage: 53, accuracy: 15, evasion: 28, defense: 60, defenseType: "evasion", attackIntervalMs: 3200, // red-team #302 L2 (monster-threat-spec §6): dmg 13→53, hp 52→228, acc 11→15
       xp: 268, gold: 0,
       loot: [{ itemId: "raw_shrimp", chance: 0.7, min: 1, max: 3 }, { itemId: "scaled_leather", chance: 0.12, min: 1, max: 1 },
-        { itemId: "coral_shiv", chance: 0.0032, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "driftwood_bow", chance: 0.0032, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "crabshell_bulwark", chance: 0.00081, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "titanium_towershield", chance: 0.003, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster
+        { itemId: "coral_shiv", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "driftwood_bow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "crabshell_bulwark", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "titanium_bar", chance: 0.003, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_towershield", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster
       ],
     },
     reef_drowned: {
@@ -12692,11 +12873,11 @@ export const content: ContentDB = {
       level: 128, maxHp: 255, damage: 56, accuracy: 16, evasion: 4, defense: 64, defenseType: "armor", attackIntervalMs: 3000, // red-team #302 L2 (monster-threat-spec §6): dmg 14→56, hp 69→255, acc 12→16
       xp: 390, gold: 0,
       loot: [{ itemId: "raw_cod", chance: 0.8, min: 1, max: 2 }, { itemId: "cured_leather", chance: 0.2, min: 1, max: 1 },
-        { itemId: "drowned_cutlass", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "tidecaller_focus", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "reefscale_helm", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "barnacle_gauntlets", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "titanium_kiteshield", chance: 0.004, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster
+        { itemId: "drowned_cutlass", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "tidecaller_focus", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "reefscale_helm", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "barnacle_gauntlets", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "titanium_bar", chance: 0.004, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_kiteshield", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster
       ],
     },
     tide_siren: {
@@ -12705,11 +12886,11 @@ export const content: ContentDB = {
       inflict: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 4000 },
       regen: 0.3, xp: 580, gold: 0,
       loot: [{ itemId: "raw_salmon", chance: 0.8, min: 1, max: 2 }, { itemId: "scarred_hide", chance: 0.25, min: 1, max: 1 }, { itemId: "storm_essence", chance: 0.12, min: 1, max: 1 },
-        { itemId: "tidewoven_leggings", chance: 0.00083, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "tidewalker_boots", chance: 0.00083, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "mariner_cloak", chance: 0.0021, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "siren_shockstaff", chance: 0.00083, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "titanium_wand", chance: 0.004, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster (Caster-Thema)
+        { itemId: "tidewoven_leggings", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "tidewalker_boots", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mariner_cloak", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "siren_shockstaff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "void_rune", chance: 0.004, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster (Caster-Thema)
       ],
     },
     deep_kraken: {
@@ -12723,10 +12904,10 @@ export const content: ContentDB = {
         { itemId: "frost_essence", chance: 0.15, min: 1, max: 1 },
         { itemId: "aether_essence", chance: 0.08, min: 1, max: 1 },
         { itemId: "soulopal", chance: 0.06, min: 1, max: 1 },
-        { itemId: "krakenhide_cuirass", chance: 0.00071, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "kraken_maw", chance: 0.00071, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "krakenhide_cuirass", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "kraken_maw", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "pearl_of_the_deep", chance: 0.00071, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "titanium_platelegs", chance: 0.004, min: 1, max: 1 }, // #354 Paket 3.3: Coast-Spätzone on-band (Muster item-drop-audit P3)
+        { itemId: "titanium_bar", chance: 0.004, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Coast-Spätzone on-band (Muster item-drop-audit P3)
       ],
     },
 
@@ -12740,9 +12921,9 @@ export const content: ContentDB = {
       level: 90, maxHp: 36, damage: 38, accuracy: 11, evasion: 22, defense: 50, defenseType: "evasion", attackIntervalMs: 2400, // Combat-Feel-v2 #0: 31→38 (naked Zufluss 4.05%→4.96%/s)
       xp: 192, gold: 0,
       loot: [{ itemId: "raw_hide", chance: 0.7, min: 1, max: 1 }, { itemId: "raw_hare_meat", chance: 0.65, min: 1, max: 1 },
-        { itemId: "hunting_knife", chance: 0.0037, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "padfoot_boots", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "warhide_boots", chance: 0.005, min: 1, max: 1 }, // #354 Paket 3.3: Jäger-Zone-Einstieg on-band (Muster item-drop-audit P3, schließt Loch C2 weiter)
+        { itemId: "hunting_knife", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "padfoot_boots", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warhide", chance: 0.005, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "warhide_boots", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Jäger-Zone-Einstieg on-band (Muster item-drop-audit P3, schließt Loch C2 weiter)
       ],
     },
     gray_wolf: {
@@ -12751,10 +12932,10 @@ export const content: ContentDB = {
       inflict: { type: "bleed", chance: 0.25, magnitude: 1, durationMs: 4000 },
       xp: 302, gold: 0,
       loot: [{ itemId: "raw_hide", chance: 0.8, min: 1, max: 2 }, { itemId: "fang", chance: 0.35, min: 1, max: 1 }, { itemId: "raw_wolf_haunch", chance: 0.35, min: 1, max: 1 },
-        { itemId: "wolffang_spear", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "beastcaller_totem", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wolfpelt_hood", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "warhide_vambraces", chance: 0.005, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Jäger-Zone droppt endlich Leder ihrer Ära (schließt Loch C2)
+        { itemId: "wolffang_spear", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "beastcaller_totem", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wolfpelt_hood", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warhide", chance: 0.005, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "warhide_vambraces", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Jäger-Zone droppt endlich Leder ihrer Ära (schließt Loch C2)
       ],
     },
     wild_stag: {
@@ -12762,12 +12943,12 @@ export const content: ContentDB = {
       level: 104, maxHp: 273, damage: 54, accuracy: 14, evasion: 25, defense: 52, defenseType: "evasion", attackIntervalMs: 2800, // red-team #302 L2 (monster-threat-spec §6): dmg 11→54, hp 77→273, acc 12→14
       xp: 420, gold: 0,
       loot: [{ itemId: "scarred_hide", chance: 0.6, min: 1, max: 2 }, { itemId: "raw_venison", chance: 0.7, min: 1, max: 2 },
-        { itemId: "antler_warbow", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "stagleather_chaps", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "pelt_mantle", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "stagstride_longbow", chance: 0.00056, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bloodiron_longbow", chance: 0.005, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Jäger-Zone droppt endlich on-band-Ware (Loch C2)
-        { itemId: "warhide_legs", chance: 0.003, min: 1, max: 1 }, // dito
+        { itemId: "antler_warbow", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "stagleather_chaps", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "pelt_mantle", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "stagstride_longbow", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "shadowpine_log", chance: 0.005, min: 5, max: 5 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bloodiron_longbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Jäger-Zone droppt endlich on-band-Ware (Loch C2)
+        { itemId: "warhide", chance: 0.003, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "warhide_legs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // dito
       ],
     },
     dire_wolf: {
@@ -12778,11 +12959,11 @@ export const content: ContentDB = {
       regen: 0.3, xp: 700, gold: 0,
       // Dungeon-Rework §5.5: direfang_maul halbiert — Quelle Nr. 1 ist jetzt wildwood_hunt-Clear-Loot.
       loot: [{ itemId: "scarred_hide", chance: 0.7, min: 1, max: 2 }, { itemId: "fang", chance: 0.5, min: 1, max: 2 },
-        { itemId: "clawguard_gloves", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "fang_pendant", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "direhide_jerkin", chance: 0.00074, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "direfang_maul", chance: 0.00037, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "warhide_body", chance: 0.0025, min: 1, max: 1 }, // item-drop-audit P3 (2026-07-25): Jäger-Zone droppt endlich on-band-Leder (Loch C2)
+        { itemId: "clawguard_gloves", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "fang_pendant", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "direhide_jerkin", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "direfang_maul", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warhide", chance: 0.0025, min: 4, max: 4 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "warhide_body", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Jäger-Zone droppt endlich on-band-Leder (Loch C2)
       ],
     },
     forest_bear: {
@@ -12802,9 +12983,9 @@ export const content: ContentDB = {
         { itemId: "raw_bear_shank", chance: 0.8, min: 2, max: 3 },
         { itemId: "aether_essence", chance: 0.10, min: 1, max: 1 },
         { itemId: "soulopal", chance: 0.05, min: 1, max: 1 },
-        { itemId: "bearhide_cuirass", chance: 0.00022, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "alphas_heart_ring", chance: 0.00022, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "titanium_gauntlets", chance: 0.004, min: 1, max: 1 }, // #354 Paket 3.3: Wildwood-Zonen-Top on-band (Muster item-drop-audit P3)
+        { itemId: "bearhide_cuirass", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "alphas_heart_ring", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "titanium_bar", chance: 0.004, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_gauntlets", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Wildwood-Zonen-Top on-band (Muster item-drop-audit P3)
       ],
     },
 
@@ -12836,7 +13017,7 @@ export const content: ContentDB = {
         { itemId: "raw_shadowhide", chance: 0.10, min: 1, max: 1 },
         { itemId: "voidwarden_blade", chance: 0.015, min: 1, max: 1 },
         { itemId: "idol_shroud", chance: 0.012, min: 1, max: 1 },
-        { itemId: "idol_crown", chance: 0.000074, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idol_crown", chance: 0.0001, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     aether_wraith: {
@@ -12860,9 +13041,9 @@ export const content: ContentDB = {
         { itemId: "void_essence", chance: 0.12, min: 1, max: 1 },
         { itemId: "soulopal", chance: 0.15, min: 1, max: 1 },
         { itemId: "raw_shadowhide", chance: 0.15, min: 1, max: 1 },
-        { itemId: "spectral_longbow", chance: 0.015, min: 1, max: 1 },
-        { itemId: "voidtouched_gauntlets", chance: 0.000079, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "idolbound_signet", chance: 0.000079, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "spectral_longbow", chance: 0.0097, min: 1, max: 1 },
+        { itemId: "voidtouched_gauntlets", chance: 0.0001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idolbound_signet", chance: 0.0001, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     scale_skarn: {
@@ -12887,9 +13068,9 @@ export const content: ContentDB = {
         { itemId: "idol_shard", chance: 0.3, min: 1, max: 2 },
         { itemId: "void_essence", chance: 0.10, min: 1, max: 1 },
         { itemId: "raw_dragonhide", chance: 0.20, min: 1, max: 2 },
-        { itemId: "skarn_idol_staff", chance: 0.015, min: 1, max: 1 },
-        { itemId: "aetherweave_leggings", chance: 0.000083, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "idolstep_sabatons", chance: 0.000083, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "skarn_idol_staff", chance: 0.0106, min: 1, max: 1 },
+        { itemId: "aetherweave_leggings", chance: 0.0001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idolstep_sabatons", chance: 0.0001, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     last_idol: {
@@ -12915,11 +13096,11 @@ export const content: ContentDB = {
         { itemId: "idol_shard", chance: 0.8, min: 2, max: 5 },
         { itemId: "aether_essence", chance: 0.6, min: 2, max: 4 },
         { itemId: "void_essence", chance: 0.25, min: 1, max: 2 },
-        { itemId: "aether_runestaff", chance: 0.05, min: 1, max: 1 },
+        { itemId: "aether_rune", chance: 0.05, min: 4, max: 4 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aether_runestaff", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "soulopal", chance: 0.3, min: 1, max: 2 },
         { itemId: "last_judgement", chance: 0.008, min: 1, max: 1 },
-        { itemId: "last_vengeance", chance: 0.009, min: 1, max: 1 },
-        { itemId: "last_condemnation", chance: 0.009, min: 1, max: 1 },
+        { itemId: "last_vengeance", chance: 0.0068, min: 1, max: 1 },
+        { itemId: "last_condemnation", chance: 0.0068, min: 1, max: 1 },
         { itemId: "eye_of_the_idol", chance: 0.010, min: 1, max: 1 },
         { itemId: "idol_aegis", chance: 0.000031, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "last_idol_mantle", chance: 0.000031, min: 1, max: 1, suffixChance: 0.30 },
@@ -12995,8 +13176,8 @@ export const content: ContentDB = {
         { itemId: "aether_essence", chance: 0.20, min: 1,  max: 1  },
         { itemId: "void_essence",   chance: 0.08, min: 1,  max: 1  },
         { itemId: "soulopal",       chance: 0.05, min: 1,  max: 1  },
-        { itemId: "cloudwalker_boots", chance: 0.00045, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "godiron_medhelm", chance: 0.002, min: 1, max: 1 }, // #354 Paket 3.3: Highlands-Zonen-Top → Godiron-Einstieg (Muster item-drop-audit P3)
+        { itemId: "cloudwalker_boots", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "godiron_bar", chance: 0.002, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "godiron_medhelm", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.3: Highlands-Zonen-Top → Godiron-Einstieg (Muster item-drop-audit P3)
       ],
     },
     voidhusk_crusher: {
@@ -13014,9 +13195,9 @@ export const content: ContentDB = {
         { itemId: "slag_carapace",  chance: 0.25, min: 1,  max: 1  },
         { itemId: "godiron_ore",    chance: 0.15, min: 1,  max: 1  },
         { itemId: "void_essence",   chance: 0.10, min: 1,  max: 1  },
-        { itemId: "slagweave_cape", chance: 0.00052, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "slagweave_cape", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "emberheart_amulet", chance: 0.00052, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "voidhusk_deadeye", chance: 0.0013, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "voidhusk_deadeye", chance: 0.0011, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     abyssal_tide_serpent: {
@@ -13033,8 +13214,8 @@ export const content: ContentDB = {
         { itemId: "scaled_leather", chance: 0.35, min: 1,  max: 2  },
         { itemId: "aether_essence", chance: 0.20, min: 1,  max: 1  },
         { itemId: "void_essence",   chance: 0.12, min: 1,  max: 1  },
-        { itemId: "abyssal_signet", chance: 0.00052, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "abyssal_tide_bow", chance: 0.00052, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "abyssal_signet", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "abyssal_tide_bow", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     // sweep6-batchC T6-P4-3: family "undead" — ein verkohlter, noch kämpfender Ritter liest sich
@@ -13055,7 +13236,7 @@ export const content: ContentDB = {
         { itemId: "forge_ember",    chance: 0.40, min: 1,  max: 2  },
         { itemId: "void_essence",   chance: 0.15, min: 1,  max: 1  },
         { itemId: "doomknight_cinderblade", chance: 0.00014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "doomforged_band", chance: 0.00014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "doomforged_band", chance: 0.0001, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     void_titan: {
@@ -13074,7 +13255,7 @@ export const content: ContentDB = {
         { itemId: "void_essence",   chance: 0.40, min: 1,  max: 2  },
         { itemId: "aether_essence", chance: 0.30, min: 1,  max: 2  },
         { itemId: "godiron_ore",    chance: 0.20, min: 1,  max: 2  },
-        { itemId: "voidwing_greatbow", chance: 0.00016, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "voidwing_greatbow", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "void_titan_mantle", chance: 0.00016, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
@@ -13094,7 +13275,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "blighted_bone", chance: 0.30, min: 1, max: 1 },
         { itemId: "crude_bone", chance: 0.5, min: 1, max: 1 },
-        { itemId: "rotfang_dagger", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "rotfang_dagger", chance: 0.0018, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     plague_grub: {
@@ -13119,7 +13300,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "blighted_bone", chance: 0.35, min: 1, max: 2 },
         { itemId: "crude_bone", chance: 0.7, min: 1, max: 2 },
-        { itemId: "plaguebone_buckler", chance: 0.0037, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "plaguebone_buckler", chance: 0.0036, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     hollow_marrow: {
@@ -13132,7 +13313,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "blighted_bone", chance: 0.40, min: 1, max: 2 },
         { itemId: "crude_bone", chance: 0.8, min: 1, max: 3 },
-        { itemId: "marrow_cap", chance: 0.0046, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "marrow_cap", chance: 0.0044, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -13147,8 +13328,8 @@ export const content: ContentDB = {
       loot: [
         { itemId: "basilisk_scale", chance: 0.40, min: 1, max: 1 },
         { itemId: "blighted_bone", chance: 0.20, min: 1, max: 1 },
-        { itemId: "basilisk_scale_shield", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "mirrorglass_bow", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "basilisk_scale_shield", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mirrorglass_bow", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     wailing_shade: {
@@ -13164,8 +13345,8 @@ export const content: ContentDB = {
         // Magier-Material-Paritäts-Audit F2 (2026-07-23): zweite Band-gerechte frost_essence-Quelle
         // (Tower F2, Slayer 20 — deutlich unter dem alten Slayer-40-Bottleneck).
         { itemId: "frost_essence", chance: 0.25, min: 1, max: 1 },
-        { itemId: "shadestalker_hood", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wailing_wand", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "shadestalker_hood", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wailing_wand", chance: 0.0013, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     bone_stalker: {
@@ -13208,7 +13389,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "slag_carapace", chance: 0.35, min: 1, max: 1 },
         { itemId: "forge_ember", chance: 0.25, min: 1, max: 1 },
-        { itemId: "slagheart_cuirass", chance: 0.00083, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "slagheart_cuirass", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     cinder_wretch: {
@@ -13236,7 +13417,7 @@ export const content: ContentDB = {
         { itemId: "forge_ember", chance: 0.30, min: 1, max: 2 },
         { itemId: "slag_carapace", chance: 0.25, min: 1, max: 1 },
         { itemId: "cinderwretch_maul", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "forgeplate_greaves", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "forgeplate_greaves", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -13251,7 +13432,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "dread_fang_shard", chance: 0.35, min: 1, max: 1 },
         { itemId: "scarred_hide", chance: 0.40, min: 1, max: 2 },
-        { itemId: "dreadfang_glaive", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "dreadfang_glaive", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     void_stalker: {
@@ -13265,7 +13446,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "void_thread", chance: 0.20, min: 1, max: 1 },
         { itemId: "void_essence", chance: 0.25, min: 1, max: 1 },
-        { itemId: "voidstalker_cloak", chance: 0.00039, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "voidstalker_cloak", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     sorrow_wraith: {
@@ -13293,7 +13474,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "crude_bone", chance: 1, min: 3, max: 6 },
         { itemId: "dread_fang_shard", chance: 0.20, min: 1, max: 1 },
-        { itemId: "ribcage_hewer", chance: 0.011, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ribcage_hewer", chance: 0.0089, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "colossus_marrowaxe", chance: 0.0015, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
@@ -13325,7 +13506,7 @@ export const content: ContentDB = {
         { itemId: "soul_flayer_fang", chance: 0.12, min: 1, max: 1 },
         { itemId: "abyssal_core", chance: 0.04, min: 1, max: 1 },
         { itemId: "soulflayer_amulet", chance: 0.00049, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "soulflayer_snapbow", chance: 0.009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "soulflayer_snapbow", chance: 0.0077, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     void_herald: {
@@ -13340,7 +13521,7 @@ export const content: ContentDB = {
         { itemId: "void_herald_shard", chance: 0.10, min: 1, max: 1 },
         { itemId: "abyssal_core", chance: 0.04, min: 1, max: 1 },
         { itemId: "void_essence", chance: 0.30, min: 1, max: 2 },
-        { itemId: "voidherald_flightbow", chance: 0.011, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "voidherald_flightbow", chance: 0.0064, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     abyssal_devourer: {
@@ -13356,7 +13537,7 @@ export const content: ContentDB = {
         { itemId: "abyssal_core", chance: 0.08, min: 1, max: 1 },
         { itemId: "void_herald_shard", chance: 0.05, min: 1, max: 1 },
         { itemId: "void_essence", chance: 0.40, min: 1, max: 2 },
-        { itemId: "abyssal_devourer_fang", chance: 0.00058, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "abyssal_devourer_fang", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -13372,9 +13553,9 @@ export const content: ContentDB = {
         { itemId: "goblin_ear", chance: 0.5, min: 1, max: 1 },
         { itemId: "crude_bone", chance: 0.25, min: 1, max: 1 },
         { itemId: "feather", chance: 0.4, min: 1, max: 2 },
-        { itemId: "leather_helm", chance: 0.04, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "goblin_shank", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bonepatch_helm", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "raw_hide", chance: 0.04, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "leather_helm", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "goblin_shank", chance: 0.0017, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bonepatch_helm", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
         // tower-monsters.test.ts verlangt 1:1-Loot-Parität mit der Basis "goblin" — beide
         // Listen sind seit dem Key-Purge (Welle K, 2026-07-13) ohne Schlüssel-Zeile, Parität hält.
       ],
@@ -13388,8 +13569,8 @@ export const content: ContentDB = {
       loot: [
         { itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 },
         { itemId: "stolen_coinpurse", chance: 0.15, min: 1, max: 1 },
-        { itemId: "cutpurse_ring", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "scavenger_boots", chance: 0.0028, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cutpurse_ring", chance: 0.0022, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "scavenger_boots", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     tower_skeleton_warrior: {
@@ -13401,10 +13582,10 @@ export const content: ContentDB = {
       loot: [
         { itemId: "crude_bone", chance: 0.9, min: 1, max: 3 },
         { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 },
-        { itemId: "iron_sword", chance: 0.025, min: 1, max: 1 },
-        { itemId: "boneblade", chance: 0.0046, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "cryptguard_helm", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "boneknuckle_gauntlets", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "iron_bar", chance: 0.025, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "boneblade", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cryptguard_helm", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "boneknuckle_gauntlets", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     tower_skeleton_archer: {
@@ -13416,8 +13597,8 @@ export const content: ContentDB = {
       loot: [
         { itemId: "crude_bone", chance: 0.9, min: 1, max: 2 },
         { itemId: "feather", chance: 0.3, min: 1, max: 2 },
-        { itemId: "iron_shortbow", chance: 0.03, min: 1, max: 1 },
-        { itemId: "skeletal_longbow", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "oak_log", chance: 0.03, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "iron_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "skeletal_longbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     tower_ember_elemental: {
@@ -13431,8 +13612,8 @@ export const content: ContentDB = {
         { itemId: "frost_essence", chance: 0.4, min: 1, max: 2 },
         { itemId: "ashen_dust", chance: 0.5, min: 1, max: 3 },
         { itemId: "cinderfang_dagger", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "emberforge_helm", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "moltengrip_gauntlets", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "emberforge_helm", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "moltengrip_gauntlets", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "emberforge_hammer", chance: 0.00032, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
@@ -13461,7 +13642,7 @@ export const content: ContentDB = {
         { itemId: "frost_pelt", chance: 0.5, min: 1, max: 2 },
         { itemId: "scarred_hide", chance: 0.4, min: 1, max: 2 },
         { itemId: "frostcaverns_bow", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "frostward_treads", chance: 0.00036, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frostward_treads", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     tower_roc_void: {
@@ -13484,7 +13665,7 @@ export const content: ContentDB = {
         { itemId: "soulopal", chance: 0.10, min: 1, max: 1 },
         { itemId: "void_rune", chance: 0.12, min: 1, max: 2 },
         { itemId: "raw_dragonhide", chance: 0.12, min: 1, max: 1 },
-        { itemId: "aetherscale_cuirass", chance: 0.00021, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aetherscale_cuirass", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "aetherband_ring", chance: 0.00021, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
@@ -14192,9 +14373,9 @@ export const content: ContentDB = {
         { itemId: "grave_warden_sigil", chance: 1.0, min: 1, max: 1 },
         { itemId: "ruby", chance: 0.4, min: 1, max: 2 },
         { itemId: "runite_bar", chance: 0.5, min: 1, max: 3 },
-        { itemId: "necrosignet_ring", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "nekro_reaperblade", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bloodiron_platelegs", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 }, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate; #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows nachgezogen
+        { itemId: "necrosignet_ring", chance: 0.0247, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "nekro_reaperblade", chance: 0.0063, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bloodiron_bar", chance: 0.012, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bloodiron_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate; #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows nachgezogen
       ],
       xp: 700,
       gold: 1200,
@@ -14234,7 +14415,7 @@ export const content: ContentDB = {
         { itemId: "godiron_bar", chance: 0.5, min: 2, max: 4 },
         { itemId: "idol_crown", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "voidtouched_gauntlets", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "idolbound_signet", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idolbound_signet", chance: 0.0129, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "aetherweave_leggings", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "idolstep_sabatons", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "idol_aegis", chance: 0.002, min: 1, max: 1, suffixChance: 0.30 },
@@ -14319,8 +14500,8 @@ export const content: ContentDB = {
         { itemId: "dim_essence", chance: 0.5, min: 1, max: 2 },
         { itemId: "shaman_totem", chance: 0.4, min: 1, max: 1 },
         { itemId: "warbanner_cape", chance: 0.008, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "warlock_felstaff", chance: 0.008, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "mithril_platebody", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 }, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate (Boss-Drops waren schon ok); #354 Paket 3.1: suffixChance-Parität nachgezogen
+        { itemId: "warlock_felstaff", chance: 0.0065, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mithril_bar", chance: 0.015, min: 5, max: 5 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "mithril_platebody", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate (Boss-Drops waren schon ok); #354 Paket 3.1: suffixChance-Parität nachgezogen
       ],
       xp: 350,
       gold: 600,
@@ -14353,10 +14534,10 @@ export const content: ContentDB = {
         { itemId: "alpha_fang", chance: 1.0, min: 1, max: 1 },
         { itemId: "scarred_hide", chance: 0.6, min: 2, max: 4 },
         { itemId: "fang", chance: 0.5, min: 2, max: 4 },
-        { itemId: "direfang_maul", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bearhide_cuirass", chance: 0.008, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "alphas_heart_ring", chance: 0.008, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "warhide_body", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 }, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate, Leder-Thema; #354 Paket 3.1: suffixChance-Parität nachgezogen
+        { itemId: "direfang_maul", chance: 0.0076, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bearhide_cuirass", chance: 0.0042, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "alphas_heart_ring", chance: 0.0064, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warhide", chance: 0.01, min: 4, max: 4 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "warhide_body", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate, Leder-Thema; #354 Paket 3.1: suffixChance-Parität nachgezogen
       ],
       xp: 950,
       gold: 1300, // dungeon-level-ladder-analyse (#338, Chef-GO 2026-07-25): 1100→1300 — Gold-Leiter monoton: 600 < 1200 < 1300 < 3600 < 5000 (XP-Leiter war schon monoton).
@@ -14388,10 +14569,10 @@ export const content: ContentDB = {
         { itemId: "storm_core", chance: 1.0, min: 1, max: 1 },
         { itemId: "aether_essence", chance: 0.5, min: 2, max: 4 },
         { itemId: "feather", chance: 1, min: 10, max: 20 },
-        { itemId: "storm_mantle", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "storm_mantle", chance: 0.0141, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "stormcore_pendant", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "stormcrest_staff", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_fullhelm", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 }, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate; #354 Paket 3.1: suffixChance-Parität nachgezogen
+        { itemId: "stormcrest_staff", chance: 0.0057, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aetherium_bar", chance: 0.01, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_fullhelm", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate; #354 Paket 3.1: suffixChance-Parität nachgezogen
       ],
       xp: 3200,
       gold: 3600,
@@ -14424,11 +14605,11 @@ export const content: ContentDB = {
         { itemId: "raw_dragonhide", chance: 0.8, min: 2, max: 3 },
         { itemId: "aether_essence", chance: 0.6, min: 2, max: 4 },
         { itemId: "void_essence", chance: 0.6, min: 1, max: 2 },
-        { itemId: "wyvernscale_greaves", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wyvernscale_aegis", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherscale_cuirass", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wyvernscale_greaves", chance: 0.009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wyvernscale_aegis", chance: 0.009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "aetherscale_cuirass", chance: 0.0086, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "aetherband_ring", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "aetherium_platebody", chance: 0.008, min: 1, max: 1, suffixChance: 0.30 }, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate; #354 Paket 3.1: suffixChance-Parität nachgezogen
+        { itemId: "aetherium_bar", chance: 0.008, min: 5, max: 5 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_platebody", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate; #354 Paket 3.1: suffixChance-Parität nachgezogen
       ],
       xp: 4500,
       gold: 5000,
@@ -14483,7 +14664,7 @@ export const content: ContentDB = {
         loot: [
           { itemId: "idol_crown", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
           { itemId: "voidtouched_gauntlets", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
-          { itemId: "idolbound_signet", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "idolbound_signet", chance: 0.0096, min: 1, max: 1, suffixChance: 0.30 },
           { itemId: "aetherweave_leggings", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
           { itemId: "idolstep_sabatons", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
         ],
@@ -18321,10 +18502,10 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "raw_hide", chance: 0.6, min: 4, max: 8 },
         { itemId: "raw_boar_loin", chance: 0.5, min: 4, max: 4 },
-        { itemId: "boar_tusk_mace", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "hedgewitch_twig", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "cowhide_jerkin", chance: 0.01725, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "hide_leggings", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "boar_tusk_mace", chance: 0.0122, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
+        { itemId: "hedgewitch_twig", chance: 0.0175, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cowhide_jerkin", chance: 0.016, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "hide_leggings", chance: 0.0215, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "field_cape", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "drovers_charm", chance: 0.01725, min: 1, max: 1, suffixChance: 0.30 },
       ],
@@ -18369,8 +18550,8 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "goblin_ear", chance: 0.6, min: 4, max: 8 },
         { itemId: "stolen_coinpurse", chance: 0.15, min: 4, max: 4 },
-        { itemId: "cutpurse_ring", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "scavenger_boots", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cutpurse_ring", chance: 0.024, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "scavenger_boots", chance: 0.0242, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_border_butcher: {
@@ -18381,8 +18562,8 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "raw_beef", chance: 0.5, min: 4, max: 8 },
         { itemId: "crude_bone", chance: 0.4, min: 4, max: 8 },
-        { itemId: "goblin_warkilt", chance: 0.02325, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "goblin_cleaver", chance: 0.02325, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goblin_warkilt", chance: 0.0178, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goblin_cleaver", chance: 0.0145, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_border_warlock: {
@@ -18398,7 +18579,7 @@ export const content: ContentDB = {
         { itemId: "dim_essence", chance: 0.3, min: 4, max: 8 },
         { itemId: "ember_essence", chance: 0.15, min: 4, max: 4 },
         { itemId: "warbanner_cape", chance: 0.025, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "warlock_felstaff", chance: 0.025, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warlock_felstaff", chance: 0.0203, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18414,9 +18595,9 @@ export const content: ContentDB = {
         { itemId: "feather", chance: 0.6, min: 4, max: 12 },
         { itemId: "raw_hide", chance: 0.3, min: 4, max: 4 },
         { itemId: "raw_bog_fowl", chance: 0.4, min: 4, max: 4 },
-        { itemId: "steel_shortbow", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "ashwood_longbow", chance: 0.01725, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "dustwalker_boots", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ashbark_log", chance: 0.03, min: 4, max: 4 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "steel_shortbow", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
+        { itemId: "ashwood_longbow", chance: 0.0085, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "dustwalker_boots", chance: 0.0183, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_ash_crawler: {
@@ -18430,9 +18611,9 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "graywort", chance: 0.5, min: 4, max: 8 },
         { itemId: "ashen_dust", chance: 0.4, min: 4, max: 8 },
-        { itemId: "mire_fang_dagger", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "mire_hexstaff", chance: 0.02025, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "smokeweave_cape", chance: 0.02025, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mire_fang_dagger", chance: 0.0186, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
+        { itemId: "mire_hexstaff", chance: 0.0106, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "smokeweave_cape", chance: 0.0202, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_ash_beetle: {
@@ -18443,10 +18624,10 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "chitin_plate", chance: 0.5, min: 4, max: 8 },
         { itemId: "iron_ore", chance: 0.2, min: 4, max: 4 },
-        { itemId: "chitin_bulwark", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows (Chef-Fall elite_ash_beetle)
-        { itemId: "cinder_spike", chance: 0.025, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "chitin_helm", chance: 0.025, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "sootscale_greaves", chance: 0.025, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chitin_bulwark", chance: 0.0262, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows (Chef-Fall elite_ash_beetle)
+        { itemId: "cinder_spike", chance: 0.0123, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chitin_helm", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "sootscale_greaves", chance: 0.0199, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18462,8 +18643,8 @@ export const content: ContentDB = {
         { itemId: "scarred_hide", chance: 0.5, min: 4, max: 8 },
         { itemId: "fang", chance: 0.4, min: 4, max: 4 },
         { itemId: "raw_wolf_haunch", chance: 0.30, min: 4, max: 4 },
-        { itemId: "thornfang_blade", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "thornvine_whip", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "thornfang_blade", chance: 0.0242, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
+        { itemId: "thornvine_whip", chance: 0.0156, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_black_golem: {
@@ -18475,9 +18656,9 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "deathmoss", chance: 0.5, min: 4, max: 8 },
         { itemId: "frostvine", chance: 0.3, min: 4, max: 4 },
-        { itemId: "moss_plate_body", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "bark_bulwark", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "mossweave_leggings", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "moss_plate_body", chance: 0.0263, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
+        { itemId: "bark_bulwark", chance: 0.0225, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mossweave_leggings", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_black_witch: {
@@ -18492,8 +18673,8 @@ export const content: ContentDB = {
         { itemId: "frostvine", chance: 0.5, min: 4, max: 8 },
         { itemId: "dim_essence", chance: 0.4, min: 4, max: 8 },
         { itemId: "frost_essence", chance: 0.12, min: 4, max: 4 },
-        { itemId: "bramble_witchstaff", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "witchroot_wand", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bramble_witchstaff", chance: 0.0233, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
+        { itemId: "witchroot_wand", chance: 0.0142, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18509,8 +18690,8 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "crude_bone", chance: 1, min: 8, max: 16 },
         { itemId: "scarred_hide", chance: 0.2, min: 4, max: 4 },
-        { itemId: "tombplate_greaves", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "bonecharm_amulet", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "tombplate_greaves", chance: 0.0162, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bonecharm_amulet", chance: 0.0106, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_crypt_icemage: {
@@ -18522,8 +18703,8 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "crude_bone", chance: 1, min: 8, max: 12 },
         { itemId: "frost_essence", chance: 0.2, min: 4, max: 4 },
-        { itemId: "shroud_of_the_dead", chance: 0.01625, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "frostbone_scepter", chance: 0.01625, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "shroud_of_the_dead", chance: 0.0099, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frostbone_scepter", chance: 0.0066, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_crypt_pyroclasp: {
@@ -18537,8 +18718,8 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "crude_bone", chance: 1, min: 8, max: 16 },
         { itemId: "ashen_dust", chance: 0.4, min: 4, max: 8 },
-        { itemId: "pyre_staff", chance: 0.0185, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "gravesteel_cuirass", chance: 0.0185, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "pyre_staff", chance: 0.0072, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "gravesteel_cuirass", chance: 0.0107, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18555,9 +18736,9 @@ export const content: ContentDB = {
         { itemId: "raw_hide", chance: 0.8, min: 4, max: 8 },
         { itemId: "fang", chance: 0.35, min: 4, max: 4 },
         { itemId: "raw_wolf_haunch", chance: 0.35, min: 4, max: 4 },
-        { itemId: "wolffang_spear", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "beastcaller_totem", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wolfpelt_hood", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wolffang_spear", chance: 0.0087, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "beastcaller_totem", chance: 0.0086, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wolfpelt_hood", chance: 0.0136, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_wild_stag: {
@@ -18568,10 +18749,10 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "scarred_hide", chance: 0.6, min: 4, max: 8 },
         { itemId: "raw_venison", chance: 0.7, min: 4, max: 8 },
-        { itemId: "antler_warbow", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "stagleather_chaps", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "pelt_mantle", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "stagstride_longbow", chance: 0.014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "antler_warbow", chance: 0.0075, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "stagleather_chaps", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "pelt_mantle", chance: 0.0075, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "stagstride_longbow", chance: 0.0035, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18584,9 +18765,9 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "raw_shrimp", chance: 0.7, min: 4, max: 12 },
         { itemId: "scaled_leather", chance: 0.12, min: 4, max: 4 },
-        { itemId: "coral_shiv", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "driftwood_bow", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "crabshell_bulwark", chance: 0.02025, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "coral_shiv", chance: 0.0075, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "driftwood_bow", chance: 0.0075, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "crabshell_bulwark", chance: 0.0102, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_coast_drowned: {
@@ -18597,10 +18778,10 @@ export const content: ContentDB = {
       extraLoot: [
         { itemId: "raw_cod", chance: 0.8, min: 4, max: 8 },
         { itemId: "cured_leather", chance: 0.2, min: 4, max: 4 },
-        { itemId: "drowned_cutlass", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "tidecaller_focus", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "reefscale_helm", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "barnacle_gauntlets", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "drowned_cutlass", chance: 0.0081, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "tidecaller_focus", chance: 0.0086, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "reefscale_helm", chance: 0.0139, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "barnacle_gauntlets", chance: 0.0146, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_coast_siren: {
@@ -18614,10 +18795,10 @@ export const content: ContentDB = {
         { itemId: "raw_salmon", chance: 0.8, min: 4, max: 8 },
         { itemId: "scarred_hide", chance: 0.25, min: 4, max: 4 },
         { itemId: "storm_essence", chance: 0.12, min: 4, max: 4 },
-        { itemId: "tidewoven_leggings", chance: 0.02075, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "tidewalker_boots", chance: 0.02075, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "mariner_cloak", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "siren_shockstaff", chance: 0.02075, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "tidewoven_leggings", chance: 0.0136, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "tidewalker_boots", chance: 0.0136, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mariner_cloak", chance: 0.0085, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "siren_shockstaff", chance: 0.0118, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18632,8 +18813,8 @@ export const content: ContentDB = {
         { itemId: "frost_essence", chance: 0.4, min: 4, max: 8 },
         { itemId: "ashen_dust", chance: 0.5, min: 4, max: 12 },
         { itemId: "cinderfang_dagger", chance: 0.02325, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "emberforge_helm", chance: 0.02325, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "moltengrip_gauntlets", chance: 0.02325, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "emberforge_helm", chance: 0.022, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "moltengrip_gauntlets", chance: 0.022, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "emberforge_hammer", chance: 0.008, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
@@ -18660,8 +18841,8 @@ export const content: ContentDB = {
         { itemId: "frost_essence", chance: 0.5, min: 4, max: 12 },
         { itemId: "aether_essence", chance: 0.2, min: 4, max: 4 },
         { itemId: "soulopal", chance: 0.1, min: 4, max: 4 },
-        { itemId: "frostplate_greaves", chance: 0.00975, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "frosthex_wand", chance: 0.00975, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frostplate_greaves", chance: 0.0071, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "frosthex_wand", chance: 0.0049, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18676,9 +18857,9 @@ export const content: ContentDB = {
         { itemId: "raw_roc_drumstick", chance: 0.35, min: 4, max: 8 },
         { itemId: "scarred_hide", chance: 0.3, min: 4, max: 4 },
         { itemId: "storm_essence", chance: 0.12, min: 4, max: 4 },
-        { itemId: "stormhide_helm", chance: 0.02075, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "skygrip_gauntlets", chance: 0.02075, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "skytalon_recurve", chance: 0.02075, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "stormhide_helm", chance: 0.0133, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "skygrip_gauntlets", chance: 0.014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "skytalon_recurve", chance: 0.0069, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_high_specter: {
@@ -18693,7 +18874,7 @@ export const content: ContentDB = {
         { itemId: "aether_essence", chance: 0.20, min: 4, max: 4 },
         { itemId: "void_essence", chance: 0.08, min: 4, max: 4 },
         { itemId: "soulopal", chance: 0.05, min: 4, max: 4 },
-        { itemId: "cloudwalker_boots", chance: 0.01125, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "cloudwalker_boots", chance: 0.0099, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_high_wyvern: {
@@ -18708,8 +18889,8 @@ export const content: ContentDB = {
         { itemId: "aether_essence", chance: 0.15, min: 4, max: 8 },
         { itemId: "wyvern_scale", chance: 0.20, min: 4, max: 8 },
         { itemId: "raw_dragonhide", chance: 0.10, min: 4, max: 4 },
-        { itemId: "wyvernscale_greaves", chance: 0.00525, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "wyvernscale_aegis", chance: 0.00525, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wyvernscale_greaves", chance: 0.0039, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wyvernscale_aegis", chance: 0.0039, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 
@@ -18727,7 +18908,7 @@ export const content: ContentDB = {
         { itemId: "raw_shadowhide", chance: 0.10, min: 4, max: 4 },
         { itemId: "voidwarden_blade", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
         { itemId: "idol_shroud", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "idol_crown", chance: 0.00185, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idol_crown", chance: 0.0018, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     elite_idol_wraith: {
@@ -18742,9 +18923,9 @@ export const content: ContentDB = {
         { itemId: "void_essence", chance: 0.12, min: 4, max: 4 },
         { itemId: "soulopal", chance: 0.15, min: 4, max: 4 },
         { itemId: "raw_shadowhide", chance: 0.15, min: 4, max: 4 },
-        { itemId: "spectral_longbow", chance: 0.03, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
-        { itemId: "voidtouched_gauntlets", chance: 0.001975, min: 1, max: 1, suffixChance: 0.30 },
-        { itemId: "idolbound_signet", chance: 0.001975, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "spectral_longbow", chance: 0.0195, min: 1, max: 1, suffixChance: 0.30 }, // #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows
+        { itemId: "voidtouched_gauntlets", chance: 0.002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idolbound_signet", chance: 0.0013, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
   },
