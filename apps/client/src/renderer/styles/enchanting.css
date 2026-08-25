@@ -606,6 +606,15 @@
 .ench-rune-badge--armor  { color: #8fb8d8; border-color: rgba(110, 150, 190, 0.35); }
 .ench-rune-badge--other  { color: var(--gold); border-color: rgba(216, 192, 106, 0.30); }
 
+/* Lager-Vermerk hinter der Menge (Spieler-Report 1.0.2: Runen aus dem Lager sind anwendbar).
+   Bewusst leiser als die Menge selbst — eine Zusatzauskunft, kein zweiter Zahlenwert. */
+.ench-rune-card-stored {
+  margin-left: 5px;
+  font-size: 0.86em;
+  opacity: 0.78;
+  white-space: nowrap;
+}
+
 .ench-rune-card-qty { font-size: 11px; flex-shrink: 0; }
 
 /* ─── Reduced motion: alle Ambient-Animationen aus ───────────────────────── */

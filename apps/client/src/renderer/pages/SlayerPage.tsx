@@ -7,6 +7,8 @@ import {
   campFreeSkipAvailable,
   campKindAtMaxLevel,
   effectiveSkipCost,
+  enqueueFight,
+  enqueueFightAtFront,
   getActiveTask,
   getAvailableMasters,
   levelFromXp,
@@ -187,6 +189,25 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
     setConfirmCancel(false);
   }
 
+  // Spieler-Report 1.0.2: Restmenge des Auftrags als vorbelegtes Kampfziel. `required - progress`
+  // ist genau die Zahl, die der Spieler sonst selbst abgezaehlt und auf der Kampfseite eingetippt
+  // haette. Der Gegner muss dafuer regulaer bekaempfbar sein — dieselben zwei Gruende, aus denen
+  // `enqueueFight` sonst still `false` liefert (fehlende Slayer-Anforderung, Dungeon-Gegner).
+  const taskRest = task ? Math.max(0, task.required - task.progress) : 0;
+  const taskKaempfbar =
+    task !== null && taskRest > 0 && reqMet && !content.monsters[task.monsterId]?.dungeonOnly;
+
+  function handleTaskFightNow(): void {
+    if (!task || !taskKaempfbar) return;
+    enqueueFightAtFront(state, content, task.monsterId, taskRest);
+    onNavigate?.("combat");
+  }
+
+  function handleTaskEnqueue(): void {
+    if (!task || !taskKaempfbar) return;
+    enqueueFight(state, content, task.monsterId, taskRest);
+  }
+
   function towerFloorLabel(monsterId: string): string {
     const floor = allFloors.find((f) => f.monsters.includes(monsterId));
     if (floor) return t("slayer.location.tower").replace("{n}", String(floor.floor));
@@ -340,6 +361,30 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                   )}
                 </div>
               </div>
+
+              {/* Spieler-Report 1.0.2: beide Wege direkt vom Zettel, mit der Restmenge als Ziel.
+                  Vorher blieb nur der Sprung auf die Kampfseite — dort das Monster wiederfinden
+                  und die Restzahl selbst abzaehlen. */}
+              {taskRest > 0 && (
+                <div className="slayer-task-fight-row">
+                  <button
+                    className="btn slayer-task-fight-btn"
+                    onClick={handleTaskFightNow}
+                    disabled={!taskKaempfbar}
+                    title={taskKaempfbar ? undefined : t("slayer.task.fightBlocked")}
+                  >
+                    {t("slayer.task.fightNow").replace("{n}", formatNum(taskRest))}
+                  </button>
+                  <button
+                    className="btn slayer-task-queue-btn"
+                    onClick={handleTaskEnqueue}
+                    disabled={!taskKaempfbar}
+                    title={taskKaempfbar ? undefined : t("slayer.task.fightBlocked")}
+                  >
+                    {t("slayer.task.addToQueue").replace("{n}", formatNum(taskRest))}
+                  </button>
+                </div>
+              )}
 
               {/* Kopfgeld auf dem Zettel (Fun-Sweep FF, Vesna V1-Anzeige — slayer-vesna.md
                   Befund 2: "Auf dem Auftragszettel selbst steht KEINE Belohnung"). xpReward/

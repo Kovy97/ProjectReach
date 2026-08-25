@@ -350,6 +350,20 @@
 /* ─── Kopfgeld-Chips (Fun-Sweep FF, Vesna V1-Anzeige) — kompakte Belohnungs-Chips auf dem
    Auftragszettel, Stil der Quest-Reward-Chips (quests.css `.quest-reward-chip`), hier lokal
    gespiegelt statt importiert (quests.css ist page-scoped/kollisionsgeschützt für QuestsPage). */
+/* Spieler-Report 1.0.2: die beiden Kampf-Wege direkt auf dem Auftragszettel. Zwei gleich breite
+   Knoepfe — keiner der beiden ist der offensichtlich richtige, das haengt daran, ob gerade etwas
+   anderes laeuft. Bei schmalem Zettel brechen sie untereinander statt zu schrumpfen. */
+.slayer-task-fight-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 2px;
+}
+.slayer-task-fight-row .btn {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
 .slayer-task-reward-row {
   display: flex;
   align-items: center;

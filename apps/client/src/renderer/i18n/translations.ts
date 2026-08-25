@@ -715,6 +715,28 @@ const en = {
     "itip.group.enchantment": "Enchantment",
     // Rune-Item-Tooltip (#219): welcher Effekt am Verzauberungstisch angebracht wird.
     "itip.group.runeEffect": "Rune Effect",
+    // Verzauberungs-Plaetze + Runen-Ziel (Chef 25.08.2026 + Spieler-Report 1.0.2): der Tooltip
+    // erklaert die Slots und nennt, wofuer eine Rune taugt. Feines Ziel statt grobem Tag —
+    // "Plattenruestung" statt "Ruestung", s. runeTargets.ts (Trinity-Gate).
+    "itip.enchantSlots.hint": "Free slots hold enchantment runes (enchanting table).",
+    "rune.target.label": "Fits:",
+    // Ein Teil des Bestands liegt im Lager — verzaubern geht trotzdem (Spieler-Report 1.0.2).
+    "enchant.rune.stored": "{n} in storage",
+    "rune.target.any": "Any item",
+    "rune.target.anyWeapon": "All weapons",
+    "rune.target.weaponMelee": "Melee weapons",
+    "rune.target.weaponRanged": "Ranged weapons",
+    "rune.target.weaponMagic": "Magic weapons",
+    "rune.target.armor": "Armour",
+    "rune.target.shield": "Shields",
+    "rune.target.jewelry": "Jewellery",
+    "rune.target.plate": "Plate armour",
+    "rune.target.leather": "Leather armour",
+    "rune.target.cloth": "Cloth armour",
+    "rune.target.hint.armorRating": "Only on pieces that already carry an armour rating.",
+    "rune.target.hint.evasionRating": "Only on pieces that already carry evasion.",
+    "rune.target.hint.wardCapacity": "Only on pieces that already carry ward.",
+    "rune.target.hint.blockChance": "Only on shields with a block chance.",
     // Meisterweihe-Perk (Chef-Bugreport „Voidangler's Cape: die Double-Fish-Chance sollte oben
     // stehen wie ein Waffen-Effekt"): eine goldene Effekt-Zeile je MasterPerkKind (masterPerkProse.ts),
     // shared zwischen ItemTooltip's EffectBlock UND MasteryCeremony's Perk-Zeile.
@@ -899,6 +921,12 @@ const en = {
     "zone.progress.drops": "Drops {pct}%",
     "zone.progress.completeTitle": "Zone complete — every enemy defeated and every drop discovered.",
     "combat.level": "Level {n}",
+    // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
+    // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
+    "combat.queueMore": "Queue more",
+    "combat.queueMore.hint": "Show the enemy list without ending this fight.",
+    "combat.stillFighting": "Still fighting: {name}",
+    "combat.backToFight": "Back to the fight",
     "combat.fight": "Fight",
     // Task #348 (Fight-Button-Rückkehr): Tooltip auf dem neuen Sofort-Kampf-Knopf über dem
     // Mengen-Grid — erklärt enqueueFightAtFront (Task #327): läuft sofort los, verdrängt die
@@ -1496,6 +1524,11 @@ const en = {
     "slayer.streak.chip": "Streak: {n} — bonus at {next}",
     "slayer.task.streakSkipWarning": "A paid skip will break your streak.",
     "slayer.task.goToMonster": "Go to Combat",
+    // Spieler-Report 1.0.2: beide Kampf-Wege direkt vom Auftragszettel, mit der Restmenge
+    // als Ziel — statt Sprung auf die Kampfseite und dort selbst suchen und abzaehlen.
+    "slayer.task.fightNow": "Fight now ({n})",
+    "slayer.task.addToQueue": "Add to queue ({n})",
+    "slayer.task.fightBlocked": "You cannot take this target on yet.",
     "slayer.req.missing": "Required: {item} — not in inventory!",
     "slayer.points": "Slayer Points",
     "slayer.master.locked": "Requires Slayer Level {n}",
@@ -1555,7 +1588,6 @@ const en = {
     "enchant.reason.not_enough_gold": "Not enough gold.",
     "enchant.reason.affix_mismatch": "This rune doesn't fit this item.",
     "enchant.reason.class_mismatch": "Doesn't fit this armor class.",
-    "enchant.reason.duplicate_affix": "This rune is already on this item.",
     "enchant.reason.no_affix_slots": "No enchant slots free.",
     "enchant.reason.no_affix": "No rune selected.",
     "enchant.reason.not_enchantable": "This item can't be enchanted.",
@@ -1572,7 +1604,6 @@ const en = {
     "enchant.preview.blocked.slot_full": "No enchant slots free.",
     "enchant.preview.blocked.class_mismatch": "Doesn't fit this armor class.",
     "enchant.preview.blocked.wrong_item_type": "This rune doesn't fit this item.",
-    "enchant.preview.blocked.duplicate_affix": "This rune is already on this item.",
     // Runen-Tisch-Redesign: Grimoire-Sektionen (Waffen/Rüstung/Sonstige) + Kompatibilitäts-Hinweise.
     "enchant.weaponRunes": "Weapon Runes",
     "enchant.armorRunes": "Armor Runes",
@@ -1988,6 +2019,13 @@ const en = {
     "newhaven.cost.title": "Cost",
     "newhaven.cost.time": "Build time: {time}",
     "newhaven.build.new": "Build",
+    // Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2): was nach dem laufenden
+    // Projekt drankommt — Reihenfolge planbar, Einreihen kostet nichts.
+    "newhaven.queue.title": "Planned",
+    "newhaven.queue.add": "Add to plan",
+    "newhaven.queue.moveUp": "Move up",
+    "newhaven.queue.moveDown": "Move down",
+    "newhaven.queue.remove": "Remove from plan",
     "newhaven.build.upgrade": "Raise to {n}",
     "newhaven.build.inProgress": "Building level {n}",
     "newhaven.build.cancel": "Cancel construction",
@@ -2781,6 +2819,28 @@ const de: Record<keyof typeof en, string> = {
     "itip.group.enchantment": "Verzauberung",
     // Rune-Item-Tooltip (#219): welcher Effekt am Verzauberungstisch angebracht wird.
     "itip.group.runeEffect": "Runen-Effekt",
+    // Verzauberungs-Plaetze + Runen-Ziel (Chef 25.08.2026 + Spieler-Report 1.0.2): der Tooltip
+    // erklaert die Slots und nennt, wofuer eine Rune taugt. Feines Ziel statt grobem Tag —
+    // "Plattenruestung" statt "Ruestung", s. runeTargets.ts (Trinity-Gate).
+    "itip.enchantSlots.hint": "Freie Plätze nehmen Verzauberungsrunen auf (Verzauberungstisch).",
+    "rune.target.label": "Passt auf:",
+    // Ein Teil des Bestands liegt im Lager — verzaubern geht trotzdem (Spieler-Report 1.0.2).
+    "enchant.rune.stored": "{n} im Lager",
+    "rune.target.any": "Alles",
+    "rune.target.anyWeapon": "Alle Waffen",
+    "rune.target.weaponMelee": "Nahkampfwaffen",
+    "rune.target.weaponRanged": "Fernkampfwaffen",
+    "rune.target.weaponMagic": "Magiewaffen",
+    "rune.target.armor": "Rüstung",
+    "rune.target.shield": "Schilde",
+    "rune.target.jewelry": "Schmuck",
+    "rune.target.plate": "Plattenrüstung",
+    "rune.target.leather": "Lederrüstung",
+    "rune.target.cloth": "Stoffrüstung",
+    "rune.target.hint.armorRating": "Nur auf Teilen, die selbst Schutzwert tragen.",
+    "rune.target.hint.evasionRating": "Nur auf Teilen, die selbst Ausweichwert tragen.",
+    "rune.target.hint.wardCapacity": "Nur auf Teilen, die selbst Ward tragen.",
+    "rune.target.hint.blockChance": "Nur auf Schilden mit Blockchance.",
     "itip.masterPerk.doubleYield": "+{n} % Chance auf doppelten Ertrag ({skill})",
     "itip.masterPerk.inputSaver": "+{n} % Chance, Materialien zu sparen ({skill})",
     "itip.masterPerk.cropSpeed": "Beete reifen {n} % schneller ({skill})",
@@ -2941,6 +3001,12 @@ const de: Record<keyof typeof en, string> = {
     "zone.progress.drops": "Drops {pct}%",
     "zone.progress.completeTitle": "Zone abgeschlossen — alle Gegner bezwungen, alle Drops entdeckt.",
     "combat.level": "Stufe {n}",
+    // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
+    // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
+    "combat.queueMore": "Nachlegen",
+    "combat.queueMore.hint": "Gegnerliste zeigen, ohne diesen Kampf zu beenden.",
+    "combat.stillFighting": "Kämpft weiter gegen: {name}",
+    "combat.backToFight": "Zurück zum Kampf",
     "combat.fight": "Kämpfen",
     "combat.fightNowHint": "Startet sofort — Laufendes kehrt danach in die Warteschlange zurück.",
     "combat.close": "Schließen",
@@ -3494,6 +3560,11 @@ const de: Record<keyof typeof en, string> = {
     "slayer.streak.chip": "Serie: {n} — Bonus beim {next}.",
     "slayer.task.streakSkipWarning": "Ein bezahltes Überspringen beendet deine Serie.",
     "slayer.task.goToMonster": "Zum Kampf",
+    // Spieler-Report 1.0.2: beide Kampf-Wege direkt vom Auftragszettel, mit der Restmenge
+    // als Ziel — statt Sprung auf die Kampfseite und dort selbst suchen und abzaehlen.
+    "slayer.task.fightNow": "Sofort kämpfen ({n})",
+    "slayer.task.addToQueue": "Einreihen ({n})",
+    "slayer.task.fightBlocked": "Dieses Ziel kannst du noch nicht angehen.",
     "slayer.req.missing": "Benötigt: {item} — nicht im Inventar!",
     "slayer.points": "Slayer-Punkte",
     "slayer.master.locked": "Benötigt Slayer-Level {n}",
@@ -3549,7 +3620,6 @@ const de: Record<keyof typeof en, string> = {
     "enchant.reason.not_enough_gold": "Nicht genug Gold.",
     "enchant.reason.affix_mismatch": "Diese Rune passt nicht zu diesem Item.",
     "enchant.reason.class_mismatch": "Passt nicht zu dieser Rüstungsklasse.",
-    "enchant.reason.duplicate_affix": "Diese Rune sitzt bereits auf diesem Item.",
     "enchant.reason.no_affix_slots": "Keine Enchant-Slots frei.",
     "enchant.reason.no_affix": "Keine Rune ausgewählt.",
     "enchant.reason.not_enchantable": "Dieses Item ist nicht verzauberbar.",
@@ -3566,7 +3636,6 @@ const de: Record<keyof typeof en, string> = {
     "enchant.preview.blocked.slot_full": "Keine Enchant-Slots frei.",
     "enchant.preview.blocked.class_mismatch": "Passt nicht zu dieser Rüstungsklasse.",
     "enchant.preview.blocked.wrong_item_type": "Diese Rune passt nicht zu diesem Item.",
-    "enchant.preview.blocked.duplicate_affix": "Diese Rune sitzt bereits auf diesem Item.",
     // Runen-Tisch-Redesign: Grimoire-Sektionen (Waffen/Rüstung/Sonstige) + Kompatibilitäts-Hinweise.
     "enchant.weaponRunes": "Waffen-Runen",
     "enchant.armorRunes": "Rüstungs-Runen",
@@ -3955,6 +4024,13 @@ const de: Record<keyof typeof en, string> = {
     "newhaven.cost.title": "Kosten",
     "newhaven.cost.time": "Bauzeit: {time}",
     "newhaven.build.new": "Bauen",
+    // Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2): was nach dem laufenden
+    // Projekt drankommt — Reihenfolge planbar, Einreihen kostet nichts.
+    "newhaven.queue.title": "Geplant",
+    "newhaven.queue.add": "Einreihen",
+    "newhaven.queue.moveUp": "Nach vorn",
+    "newhaven.queue.moveDown": "Nach hinten",
+    "newhaven.queue.remove": "Aus dem Plan nehmen",
     "newhaven.build.upgrade": "Auf {n} ausbauen",
     "newhaven.build.inProgress": "Stufe {n} im Bau",
     "newhaven.build.cancel": "Bau abbrechen",

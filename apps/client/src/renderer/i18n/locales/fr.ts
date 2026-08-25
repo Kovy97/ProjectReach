@@ -615,6 +615,28 @@ export const fr: Record<string, string> = {
     "itip.group.suffix": "Suffixe",
     "itip.group.enchantment": "Enchantement",
     "itip.group.runeEffect": "Effet de rune",
+    // Verzauberungs-Plaetze + Runen-Ziel (Chef 25.08.2026 + Spieler-Report 1.0.2): der Tooltip
+    // erklaert die Slots und nennt, wofuer eine Rune taugt. Feines Ziel statt grobem Tag —
+    // "Plattenruestung" statt "Ruestung", s. runeTargets.ts (Trinity-Gate).
+    "itip.enchantSlots.hint": "Les emplacements libres accueillent des runes d'enchantement (table d'enchantement).",
+    "rune.target.label": "Compatible :",
+    // Ein Teil des Bestands liegt im Lager — verzaubern geht trotzdem (Spieler-Report 1.0.2).
+    "enchant.rune.stored": "{n} en réserve",
+    "rune.target.any": "Tout objet",
+    "rune.target.anyWeapon": "Toutes les armes",
+    "rune.target.weaponMelee": "Armes de mêlée",
+    "rune.target.weaponRanged": "Armes à distance",
+    "rune.target.weaponMagic": "Armes magiques",
+    "rune.target.armor": "Armure",
+    "rune.target.shield": "Boucliers",
+    "rune.target.jewelry": "Bijoux",
+    "rune.target.plate": "Armure de plaques",
+    "rune.target.leather": "Armure de cuir",
+    "rune.target.cloth": "Armure de tissu",
+    "rune.target.hint.armorRating": "Uniquement sur les pièces possédant déjà une valeur d'armure.",
+    "rune.target.hint.evasionRating": "Uniquement sur les pièces possédant déjà de l'esquive.",
+    "rune.target.hint.wardCapacity": "Uniquement sur les pièces possédant déjà une égide.",
+    "rune.target.hint.blockChance": "Uniquement sur les boucliers avec une chance de blocage.",
     "itip.masterPerk.doubleYield": "+{n}% de chance de récolte double ({skill})",
     "itip.masterPerk.inputSaver": "+{n}% de chance d'économiser des matériaux ({skill})",
     "itip.masterPerk.cropSpeed": "Les parcelles poussent {n}% plus vite ({skill})",
@@ -742,6 +764,12 @@ export const fr: Record<string, string> = {
     "combat.zone.freshTracks.badge": "Traces",
     "combat.zone.freshTracks.tooltip": "Traces fraîches. Quelque chose de gros va bientôt rôder par ici.",
     "combat.level": "Niveau {n}",
+    // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
+    // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
+    "combat.queueMore": "Ajouter",
+    "combat.queueMore.hint": "Affiche la liste des ennemis sans mettre fin à ce combat.",
+    "combat.stillFighting": "Combat en cours : {name}",
+    "combat.backToFight": "Retour au combat",
     "combat.fight": "Combattre",
     "combat.fightNowHint": "Combat immédiat — l'activité en cours revient en tête de file ensuite.",
     "combat.close": "Fermer",
@@ -1263,6 +1291,11 @@ export const fr: Record<string, string> = {
     "slayer.streak.chip": "Série : {n} — bonus à {next}",
     "slayer.task.streakSkipWarning": "Un saut payant rompt ta série.",
     "slayer.task.goToMonster": "Aller au combat",
+    // Spieler-Report 1.0.2: beide Kampf-Wege direkt vom Auftragszettel, mit der Restmenge
+    // als Ziel — statt Sprung auf die Kampfseite und dort selbst suchen und abzaehlen.
+    "slayer.task.fightNow": "Combattre ({n})",
+    "slayer.task.addToQueue": "Mettre en file ({n})",
+    "slayer.task.fightBlocked": "Vous ne pouvez pas encore affronter cette cible.",
     "slayer.req.missing": "Requis : {item} — absent de l'inventaire !",
     "slayer.points": "Points de chasseur",
     "slayer.master.locked": "Nécessite le niveau {n} de Chasseur",
@@ -1316,7 +1349,6 @@ export const fr: Record<string, string> = {
     "enchant.reason.not_enough_gold": "Or insuffisant.",
     "enchant.reason.affix_mismatch": "Cette rune ne convient pas à cet objet.",
     "enchant.reason.class_mismatch": "Ne convient pas à cette classe d'armure.",
-    "enchant.reason.duplicate_affix": "Cette rune est déjà appliquée à cet objet.",
     "enchant.reason.no_affix_slots": "Aucun emplacement d'enchantement libre.",
     "enchant.reason.no_affix": "Aucune rune sélectionnée.",
     "enchant.reason.not_enchantable": "Cet objet ne peut pas être enchanté.",
@@ -1329,7 +1361,6 @@ export const fr: Record<string, string> = {
     "enchant.preview.blocked.slot_full": "Aucun emplacement d'enchantement libre.",
     "enchant.preview.blocked.class_mismatch": "Ne convient pas à cette classe d'armure.",
     "enchant.preview.blocked.wrong_item_type": "Cette rune ne convient pas à cet objet.",
-    "enchant.preview.blocked.duplicate_affix": "Cette rune est déjà appliquée à cet objet.",
     "enchant.weaponRunes": "Runes d'arme",
     "enchant.armorRunes": "Runes d'armure",
     "enchant.otherRunes": "Bijoux & Général",
@@ -1771,6 +1802,13 @@ export const fr: Record<string, string> = {
     "newhaven.cost.title": "Coût",
     "newhaven.cost.time": "Durée des travaux : {time}",
     "newhaven.build.new": "Construire",
+    // Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2): was nach dem laufenden
+    // Projekt drankommt — Reihenfolge planbar, Einreihen kostet nichts.
+    "newhaven.queue.title": "Prévu",
+    "newhaven.queue.add": "Ajouter au plan",
+    "newhaven.queue.moveUp": "Monter",
+    "newhaven.queue.moveDown": "Descendre",
+    "newhaven.queue.remove": "Retirer du plan",
     "newhaven.build.upgrade": "Monter au niveau {n}",
     "newhaven.build.inProgress": "Construction du niveau {n}",
     "newhaven.build.cancel": "Annuler les travaux",

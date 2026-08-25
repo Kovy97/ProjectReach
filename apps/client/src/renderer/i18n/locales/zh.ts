@@ -615,6 +615,28 @@ export const zh: Record<string, string> = {
     "itip.group.suffix": "后缀",
     "itip.group.enchantment": "附魔",
     "itip.group.runeEffect": "符文效果",
+    // Verzauberungs-Plaetze + Runen-Ziel (Chef 25.08.2026 + Spieler-Report 1.0.2): der Tooltip
+    // erklaert die Slots und nennt, wofuer eine Rune taugt. Feines Ziel statt grobem Tag —
+    // "Plattenruestung" statt "Ruestung", s. runeTargets.ts (Trinity-Gate).
+    "itip.enchantSlots.hint": "空位可以嵌入附魔符文（附魔台）。",
+    "rune.target.label": "适用于：",
+    // Ein Teil des Bestands liegt im Lager — verzaubern geht trotzdem (Spieler-Report 1.0.2).
+    "enchant.rune.stored": "仓库中 {n} 个",
+    "rune.target.any": "任何物品",
+    "rune.target.anyWeapon": "所有武器",
+    "rune.target.weaponMelee": "近战武器",
+    "rune.target.weaponRanged": "远程武器",
+    "rune.target.weaponMagic": "法术武器",
+    "rune.target.armor": "护甲",
+    "rune.target.shield": "盾牌",
+    "rune.target.jewelry": "饰品",
+    "rune.target.plate": "板甲",
+    "rune.target.leather": "皮甲",
+    "rune.target.cloth": "布甲",
+    "rune.target.hint.armorRating": "仅限本身已具护甲值的部位。",
+    "rune.target.hint.evasionRating": "仅限本身已具闪避值的部位。",
+    "rune.target.hint.wardCapacity": "仅限本身已具守护值的部位。",
+    "rune.target.hint.blockChance": "仅限具有格挡几率的盾牌。",
     "itip.masterPerk.doubleYield": "+{n}% 双倍产出几率（{skill}）",
     "itip.masterPerk.inputSaver": "+{n}% 节省材料几率（{skill}）",
     "itip.masterPerk.cropSpeed": "地块成熟速度加快 {n}%（{skill}）",
@@ -741,6 +763,12 @@ export const zh: Record<string, string> = {
     "combat.zone.freshTracks.badge": "踪迹",
     "combat.zone.freshTracks.tooltip": "发现新鲜踪迹。用不了多久，这里就会有大家伙出没。",
     "combat.level": "等级 {n}",
+    // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
+    // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
+    "combat.queueMore": "继续排队",
+    "combat.queueMore.hint": "显示敌人列表，不会结束当前战斗。",
+    "combat.stillFighting": "战斗仍在进行：{name}",
+    "combat.backToFight": "返回战斗",
     "combat.fight": "战斗",
     "combat.fightNowHint": "立即开始战斗——之后进行中的活动将返回队列最前面。",
     "combat.close": "关闭",
@@ -1261,6 +1289,11 @@ export const zh: Record<string, string> = {
     "slayer.streak.chip": "连击：{n} — 奖励于{next}",
     "slayer.task.streakSkipWarning": "付费跳过会中断你的连击。",
     "slayer.task.goToMonster": "前往战斗",
+    // Spieler-Report 1.0.2: beide Kampf-Wege direkt vom Auftragszettel, mit der Restmenge
+    // als Ziel — statt Sprung auf die Kampfseite und dort selbst suchen und abzaehlen.
+    "slayer.task.fightNow": "立即战斗（{n}）",
+    "slayer.task.addToQueue": "加入队列（{n}）",
+    "slayer.task.fightBlocked": "你还无法挑战这个目标。",
     "slayer.req.missing": "需要：{item}——不在背包中！",
     "slayer.points": "猎魔点数",
     "slayer.master.locked": "需要猎魔等级 {n}",
@@ -1314,7 +1347,6 @@ export const zh: Record<string, string> = {
     "enchant.reason.not_enough_gold": "金币不足。",
     "enchant.reason.affix_mismatch": "此符文不适用于此物品。",
     "enchant.reason.class_mismatch": "不适用于此护甲类别。",
-    "enchant.reason.duplicate_affix": "此符文已附在此物品上。",
     "enchant.reason.no_affix_slots": "没有空闲的附魔槽。",
     "enchant.reason.no_affix": "未选择符文。",
     "enchant.reason.not_enchantable": "此物品无法附魔。",
@@ -1327,7 +1359,6 @@ export const zh: Record<string, string> = {
     "enchant.preview.blocked.slot_full": "没有空闲的附魔槽。",
     "enchant.preview.blocked.class_mismatch": "不适用于此护甲类别。",
     "enchant.preview.blocked.wrong_item_type": "此符文不适用于此物品。",
-    "enchant.preview.blocked.duplicate_affix": "此符文已附在此物品上。",
     "enchant.weaponRunes": "武器符文",
     "enchant.armorRunes": "护甲符文",
     "enchant.otherRunes": "饰品与通用",
@@ -1769,6 +1800,13 @@ export const zh: Record<string, string> = {
     "newhaven.cost.title": "花费",
     "newhaven.cost.time": "工期：{time}",
     "newhaven.build.new": "建造",
+    // Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2): was nach dem laufenden
+    // Projekt drankommt — Reihenfolge planbar, Einreihen kostet nichts.
+    "newhaven.queue.title": "已规划",
+    "newhaven.queue.add": "加入计划",
+    "newhaven.queue.moveUp": "上移",
+    "newhaven.queue.moveDown": "下移",
+    "newhaven.queue.remove": "从计划中移除",
     "newhaven.build.upgrade": "升至 {n} 级",
     "newhaven.build.inProgress": "正在建造 {n} 级",
     "newhaven.build.cancel": "取消施工",

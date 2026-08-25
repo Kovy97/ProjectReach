@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { content } from "@hearthforge/content";
-import { applyEnchant, disenchant, enchantPreview } from "@hearthforge/engine";
+import { applyEnchant, disenchant, enchantPreview, trinityGatePasses } from "@hearthforge/engine";
 import type { EnchantPreview, ItemStatView } from "@hearthforge/engine";
 import type {
   AffixDef,
@@ -30,6 +30,7 @@ import { useI18n } from "../i18n";
 import { ItemCell } from "../components/ItemCell";
 import { affixEffectParts, fmtBonus } from "../components/ItemTooltip";
 import { rarityClass } from "../items";
+import { runeFitsHint, runeTargetLabel } from "../runeTargets";
 import { formatSeconds1 } from "../util/format";
 import { weaponEffectProse } from "../util/weaponEffectProse";
 import "../styles/enchanting.css";
@@ -71,8 +72,6 @@ const ENCHANT_REASON_CODES = new Set([
   // schon länger liefern, das Feedback-Banner fiel dann durch LEGACY_REASON_MAP durch und leakte
   // den rohen Code "class_mismatch" (kein Legacy-Prosa-Match). Gefixt im Zuge von #219.
   "class_mismatch",
-  // Duplikat-Sperre (red-team #303 L4): dieselbe Rune darf nicht mehrfach auf eine Instanz.
-  "duplicate_affix",
   "no_affix_slots",
   "no_affix",
   "not_enchantable",
@@ -226,14 +225,34 @@ function runeCategory(def: AffixDef): RuneCategory {
   return "other";
 }
 
-/** i18n-Key fürs kleine Applicability-Label auf jeder Rune-Karte im Grimoire. */
-function runeBadgeKey(category: RuneCategory): string {
-  return `enchant.runeBadge.${category}`;
+/**
+ * Passt diese Rune auf das gewählte Ziel? Spiegelt die Prüfkette von `applyEnchant` — erst der
+ * Tag-Filter (`appliesTo`), dann das Trinity-Klassen-Gate (§6.2).
+ *
+ * Spieler-Report 1.0.2: bis hierher prüfte die Karte NUR den Tag. Eine Ward-Rune auf einer
+ * Platte sah damit anwendbar aus und scheiterte erst beim Klick mit "class_mismatch" — der
+ * Spieler bekam den Grund also erst NACH dem Fehlversuch, und auch nur als Bannertext.
+ */
+function runePasst(def: AffixDef, tier: number, ziel: ItemDef): boolean {
+  return affixAppliesToItem(def.appliesTo, ziel) && trinityGatePasses(def, tier, ziel);
 }
 
-/** Hinweistext (Tooltip + evtl. sichtbarer Zeile), wenn eine Rune NICHT zum gewählten Ziel passt —
- *  dieselbe grobe Kategorie, die auch die Grimoire-Sektion bestimmt hat. */
-function runeMismatchHint(category: RuneCategory, t: (k: string) => string): string {
+/**
+ * Warum passt sie nicht? Der Satz landet im Hover-Text der abgeblendeten Karte. Scheitert es am
+ * Trinity-Gate, ist die Rüstungsklasse der eigentliche Grund und gehört genannt — "nur für
+ * Rüstung" wäre dort schlicht falsch, das Teil IST ja Rüstung.
+ */
+function runeMismatchHint(
+  def: AffixDef | null,
+  tier: number | null,
+  ziel: ItemDef | null,
+  category: RuneCategory,
+  t: (k: string) => string,
+): string {
+  if (def && tier !== null && ziel && affixAppliesToItem(def.appliesTo, ziel)) {
+    const hint = runeFitsHint(def, tier, t);
+    if (hint) return hint; // Trinity-Gate: die Klasse ist der Grund, nicht der Item-Typ
+  }
   if (category === "weapon") return t("enchant.onlyWeapons");
   if (category === "armor") return t("enchant.onlyArmor");
   return t("enchant.reason.affix_mismatch");
@@ -299,12 +318,15 @@ interface RuneCardProps {
   compatible: boolean | null;
   mismatchHint: string;
   badgeLabel: string;
+  /** Wie viele der `qty` im Lager liegen (Spieler-Report 1.0.2: Runen aus dem Lager anwendbar). */
+  storedQty?: number;
   onClick: () => void;
 }
 
 function RuneCard({
-  itemId, qty, name, tier, effectLine, category, selected, compatible, mismatchHint, badgeLabel, onClick,
+  itemId, qty, storedQty = 0, name, tier, effectLine, category, selected, compatible, mismatchHint, badgeLabel, onClick,
 }: RuneCardProps): JSX.Element {
+  const { t } = useI18n();
   const incompatible = compatible === false;
   return (
     <div
@@ -324,7 +346,14 @@ function RuneCard({
         {effectLine && <div className="ench-rune-card-effect muted">{effectLine}</div>}
         <div className="ench-rune-card-foot">
           <span className={`ench-rune-badge ench-rune-badge--${category}`}>{badgeLabel}</span>
-          <span className="ench-rune-card-qty muted">×{qty}</span>
+          <span className="ench-rune-card-qty muted">
+            ×{qty}
+            {storedQty > 0 && (
+              <span className="ench-rune-card-stored">
+                {t("enchant.rune.stored").replace("{n}", String(storedQty))}
+              </span>
+            )}
+          </span>
         </div>
       </div>
     </div>
@@ -345,9 +374,23 @@ export function EnchantingPage(): JSX.Element {
 
   // ── Derived ───────────────────────────────────────────────────────────────
 
-  const runeSlots = state.inventory.slots
-    .map((slot, idx) => ({ slot, idx }))
-    .filter(({ slot }) => slot != null && content.items[slot.itemId]?.rune != null);
+  // Runenbestand über die ITEM-ID statt über Inventar-Slots (Spieler-Report 1.0.2: "Allow
+  // Enchantment Runes to be applied from Storage"). `applyEnchant` nimmt die Rune inzwischen aus
+  // Inventar ODER Lager — das Grimoire zeigte aber weiter nur die Tasche, eine eingelagerte Rune
+  // war also anwendbar, aber unsichtbar. Jede Sorte erscheint jetzt EINMAL mit der Gesamtmenge.
+  const runeSlots: Array<{ itemId: string; qty: number; imLager: number }> = (() => {
+    const summe = new Map<string, { itemId: string; qty: number; imLager: number }>();
+    const zaehle = (itemId: string, qty: number, ausLager: boolean): void => {
+      if (qty <= 0 || content.items[itemId]?.rune == null) return;
+      const e = summe.get(itemId) ?? { itemId, qty: 0, imLager: 0 };
+      e.qty += qty;
+      if (ausLager) e.imLager += qty;
+      summe.set(itemId, e);
+    };
+    for (const slot of state.inventory.slots) if (slot) zaehle(slot.itemId, slot.qty, false);
+    for (const [itemId, qty] of Object.entries(state.bank)) zaehle(itemId, qty ?? 0, true);
+    return [...summe.values()];
+  })();
 
   // Plain, stapelbare Equipment-Items im Slot-Gitter → per applyEnchant zur Instanz promotbar.
   const invEquipSlots = state.inventory.slots
@@ -386,7 +429,7 @@ export function EnchantingPage(): JSX.Element {
   const selectedItemBadge = selectedItemDef ? itemTypeBadge(selectedItemDef) : null;
 
   const previewEntry = selectedRuneListIdx !== null ? (runeSlots[selectedRuneListIdx] ?? null) : null;
-  const previewRuneId = previewEntry?.slot?.itemId ?? null;
+  const previewRuneId = previewEntry?.itemId ?? null;
   const previewRA = previewRuneId ? runeAffix(content, previewRuneId) : null;
   const previewAffixDef: AffixDef | null =
     previewRA && content.affixes ? (content.affixes[previewRA.affixId] ?? null) : null;
@@ -461,25 +504,25 @@ export function EnchantingPage(): JSX.Element {
     li: number;
     itemId: string;
     qty: number;
+    /** Wie viele davon im Lager liegen — für den kleinen Vermerk auf der Karte. */
+    imLager: number;
     affixDef: AffixDef | null;
     tier: number | null;
     category: RuneCategory;
   }
-  const runeRows: RuneRow[] = runeSlots
-    .map(({ slot }, li) => {
-      if (!slot) return null;
-      const ra = runeAffix(content, slot.itemId);
-      const affixDef = ra && content.affixes ? (content.affixes[ra.affixId] ?? null) : null;
-      return {
-        li,
-        itemId: slot.itemId,
-        qty: slot.qty,
-        affixDef,
-        tier: ra?.tier ?? null,
-        category: affixDef ? runeCategory(affixDef) : "other",
-      } satisfies RuneRow;
-    })
-    .filter((row): row is RuneRow => row != null);
+  const runeRows: RuneRow[] = runeSlots.map(({ itemId, qty, imLager }, li) => {
+    const ra = runeAffix(content, itemId);
+    const affixDef = ra && content.affixes ? (content.affixes[ra.affixId] ?? null) : null;
+    return {
+      li,
+      itemId,
+      qty,
+      imLager,
+      affixDef,
+      tier: ra?.tier ?? null,
+      category: affixDef ? runeCategory(affixDef) : "other",
+    } satisfies RuneRow;
+  });
   const weaponRuneRows = runeRows.filter((r) => r.category === "weapon");
   const armorRuneRows = runeRows.filter((r) => r.category === "armor");
   const otherRuneRows = runeRows.filter((r) => r.category === "other");
@@ -499,21 +542,28 @@ export function EnchantingPage(): JSX.Element {
             const name = row.affixDef ? tr(row.affixDef.prefix) : itemDef ? tr(itemDef.name) : row.itemId;
             const effectLine = row.affixDef && row.tier !== null
               ? affixLines(row.affixDef, row.tier, t, tr).join(", ") : "";
-            const compatible = selectedItemDef && row.affixDef
-              ? affixAppliesToItem(row.affixDef.appliesTo, selectedItemDef) : null;
+            // Kompatibilität nach DERSELBEN Kette wie applyEnchant (Tag + Trinity-Gate), damit
+            // keine Rune anklickbar aussieht, die beim Klick abgewiesen würde.
+            const compatible = selectedItemDef && row.affixDef && row.tier !== null
+              ? runePasst(row.affixDef, row.tier, selectedItemDef) : null;
             return (
               <RuneCard
                 key={row.li}
                 itemId={row.itemId}
                 qty={row.qty}
+                storedQty={row.imLager}
                 name={name}
                 tier={row.tier}
                 effectLine={effectLine}
                 category={row.category}
                 selected={selectedRuneListIdx === row.li}
                 compatible={compatible}
-                mismatchHint={runeMismatchHint(row.category, t)}
-                badgeLabel={t(runeBadgeKey(row.category))}
+                mismatchHint={runeMismatchHint(row.affixDef, row.tier, selectedItemDef ?? null, row.category, t)}
+                // Das echte Ziel statt der groben Kategorie: "Stoffrüstung" sagt mehr als
+                // "Rüstung", wenn die Rune nur auf Stoff haftet (Spieler-Report 1.0.2).
+                badgeLabel={row.affixDef && row.tier !== null
+                  ? runeTargetLabel(row.affixDef, row.tier, t)
+                  : t(`enchant.runeBadge.${row.category}`)}
                 onClick={() => selectRune(row.li)}
               />
             );

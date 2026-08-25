@@ -38,6 +38,9 @@ function builtCamp(): CampState {
   return {
     buildings: { camp_townhall: 2, camp_fishing_hut: 1, camp_sawpit: 1 },
     buildJob: { buildingId: "camp_watchtower", targetLevel: 1, remainingMs: 1_234_500 },
+    // Bauwarteschlange (SAVE 81): ein geplanter Folgebau, damit der Round-Trip auch das neue
+    // Feld traegt statt es nur leer durchzureichen.
+    buildQueue: ["camp_fishing_hut"],
     buildSeq: 4,
     lastCompletedBuild: { buildingId: "camp_sawpit", level: 1, seq: 4 },
     refine: {},

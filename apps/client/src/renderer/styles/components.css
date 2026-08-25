@@ -1729,6 +1729,56 @@ body .item-cell.rarity-godly {
   line-height: 1.42;
 }
 
+/* Freie Verzauberungs-Plaetze (Chef 25.08.2026, "visual learning"): eine Reihe leerer Steine
+   plus ein Satz, wofuer sie da sind. Die Steine sind bewusst matt — sie sollen den belegten
+   Plaetzen darueber nicht die Aufmerksamkeit nehmen, aber sichtbar SEIN. */
+#root .itip-warbanner-record .itip-enchant-slots {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 7px;
+  margin-top: 7px;
+}
+#root .itip-warbanner-record .itip-enchant-slot-empty {
+  color: rgba(224, 138, 69, 0.45);
+  font-size: 15px;
+  line-height: 1;
+}
+#root .itip-warbanner-record .itip-enchant-slot-hint {
+  flex: 1 1 190px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Runen-Ziel (Spieler-Report 1.0.2): wofuer die Rune taugt, direkt unter ihrem Effekt. */
+#root .itip-warbanner-record .itip-rune-target {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+  margin-left: 19px;
+  font-size: 14px;
+}
+#root .itip-warbanner-record .itip-rune-target-label {
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+#root .itip-warbanner-record .itip-rune-target-value {
+  color: #e7a257;
+}
+#root .itip-warbanner-record .itip-rune-target-hint {
+  margin-top: 3px;
+  margin-left: 19px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--muted);
+  font-style: italic;
+}
+
 #root .itip-warbanner-record .itip-onhit-special .itip-effect-line,
 #root .itip-warbanner-record .itip-onhit-special .itip-effect-icon {
   color: #e7a257;

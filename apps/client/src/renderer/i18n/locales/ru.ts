@@ -614,6 +614,28 @@ export const ru: Record<string, string> = {
     "itip.group.suffix": "Суффикс",
     "itip.group.enchantment": "Зачарование",
     "itip.group.runeEffect": "Эффект руны",
+    // Verzauberungs-Plaetze + Runen-Ziel (Chef 25.08.2026 + Spieler-Report 1.0.2): der Tooltip
+    // erklaert die Slots und nennt, wofuer eine Rune taugt. Feines Ziel statt grobem Tag —
+    // "Plattenruestung" statt "Ruestung", s. runeTargets.ts (Trinity-Gate).
+    "itip.enchantSlots.hint": "Свободные ячейки принимают руны зачарования (стол зачарования).",
+    "rune.target.label": "Подходит:",
+    // Ein Teil des Bestands liegt im Lager — verzaubern geht trotzdem (Spieler-Report 1.0.2).
+    "enchant.rune.stored": "{n} на складе",
+    "rune.target.any": "Любой предмет",
+    "rune.target.anyWeapon": "Любое оружие",
+    "rune.target.weaponMelee": "Оружие ближнего боя",
+    "rune.target.weaponRanged": "Дальнобойное оружие",
+    "rune.target.weaponMagic": "Магическое оружие",
+    "rune.target.armor": "Броня",
+    "rune.target.shield": "Щиты",
+    "rune.target.jewelry": "Украшения",
+    "rune.target.plate": "Латная броня",
+    "rune.target.leather": "Кожаная броня",
+    "rune.target.cloth": "Тканевая броня",
+    "rune.target.hint.armorRating": "Только на части, у которых уже есть броня.",
+    "rune.target.hint.evasionRating": "Только на части, у которых уже есть уклонение.",
+    "rune.target.hint.wardCapacity": "Только на части, у которых уже есть барьер.",
+    "rune.target.hint.blockChance": "Только на щитах с шансом блока.",
     "itip.masterPerk.doubleYield": "+{n}% шанс двойного результата ({skill})",
     "itip.masterPerk.inputSaver": "+{n}% шанс сэкономить материалы ({skill})",
     "itip.masterPerk.cropSpeed": "Грядки созревают на {n}% быстрее ({skill})",
@@ -740,6 +762,12 @@ export const ru: Record<string, string> = {
     "combat.zone.freshTracks.badge": "Следы",
     "combat.zone.freshTracks.tooltip": "Свежие следы. Скоро здесь будет рыскать что-то крупное.",
     "combat.level": "Уровень {n}",
+    // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
+    // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
+    "combat.queueMore": "Добавить бой",
+    "combat.queueMore.hint": "Показать список врагов, не завершая этот бой.",
+    "combat.stillFighting": "Бой продолжается: {name}",
+    "combat.backToFight": "Вернуться в бой",
     "combat.fight": "В бой",
     "combat.fightNowHint": "Начинает бой немедленно — текущая активность возвращается в начало очереди после этого.",
     "combat.close": "Закрыть",
@@ -1261,6 +1289,11 @@ export const ru: Record<string, string> = {
     "slayer.streak.chip": "Серия: {n} — бонус на {next}",
     "slayer.task.streakSkipWarning": "Платный пропуск прервёт вашу серию.",
     "slayer.task.goToMonster": "К бою",
+    // Spieler-Report 1.0.2: beide Kampf-Wege direkt vom Auftragszettel, mit der Restmenge
+    // als Ziel — statt Sprung auf die Kampfseite und dort selbst suchen und abzaehlen.
+    "slayer.task.fightNow": "В бой ({n})",
+    "slayer.task.addToQueue": "В очередь ({n})",
+    "slayer.task.fightBlocked": "Эта цель пока недоступна.",
     "slayer.req.missing": "Требуется: {item} — нет в инвентаре!",
     "slayer.points": "Очки истребления",
     "slayer.master.locked": "Требуется уровень Истребления {n}",
@@ -1314,7 +1347,6 @@ export const ru: Record<string, string> = {
     "enchant.reason.not_enough_gold": "Недостаточно золота.",
     "enchant.reason.affix_mismatch": "Эта руна не подходит этому предмету.",
     "enchant.reason.class_mismatch": "Не подходит этому классу брони.",
-    "enchant.reason.duplicate_affix": "Эта руна уже нанесена на этот предмет.",
     "enchant.reason.no_affix_slots": "Нет свободных ячеек зачарования.",
     "enchant.reason.no_affix": "Руна не выбрана.",
     "enchant.reason.not_enchantable": "Этот предмет нельзя зачаровать.",
@@ -1327,7 +1359,6 @@ export const ru: Record<string, string> = {
     "enchant.preview.blocked.slot_full": "Нет свободных ячеек зачарования.",
     "enchant.preview.blocked.class_mismatch": "Не подходит этому классу брони.",
     "enchant.preview.blocked.wrong_item_type": "Эта руна не подходит этому предмету.",
-    "enchant.preview.blocked.duplicate_affix": "Эта руна уже нанесена на этот предмет.",
     "enchant.weaponRunes": "Руны оружия",
     "enchant.armorRunes": "Руны брони",
     "enchant.otherRunes": "Украшения и прочее",
@@ -1769,6 +1800,13 @@ export const ru: Record<string, string> = {
     "newhaven.cost.title": "Стоимость",
     "newhaven.cost.time": "Время постройки: {time}",
     "newhaven.build.new": "Построить",
+    // Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2): was nach dem laufenden
+    // Projekt drankommt — Reihenfolge planbar, Einreihen kostet nichts.
+    "newhaven.queue.title": "Запланировано",
+    "newhaven.queue.add": "В план",
+    "newhaven.queue.moveUp": "Выше",
+    "newhaven.queue.moveDown": "Ниже",
+    "newhaven.queue.remove": "Убрать из плана",
     "newhaven.build.upgrade": "Поднять до {n}",
     "newhaven.build.inProgress": "Строится уровень {n}",
     "newhaven.build.cancel": "Отменить стройку",

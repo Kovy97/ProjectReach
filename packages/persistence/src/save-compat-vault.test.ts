@@ -29,8 +29,13 @@ import { deserialize, serialize } from "./index";
  * bereits gepinnte. Ein `v80-release-1.0.0.json` wäre eine exakte Kopie von
  * `v80-release-0.3.0.json` — null zusätzliche Abdeckung, doppelte Laufzeit und zwei konkurrierende
  * „v80-Release-Pins". Deshalb BEWUSST KEIN neues Fixture; die v80-Pins (`v80-release-0.3.0.json`
- * als sanitize-Fixpunkt + `v80-filled-0.3.0.json` als befülltes Lager) decken 1.0.0 mit ab. Beim
- * NÄCHSTEN SAVE_VERSION-Bump (v81) gilt das Ritual wieder regulär.
+ * als sanitize-Fixpunkt + `v80-filled-0.3.0.json` als befülltes Lager) decken 1.0.0 mit ab.
+ *
+ * SAVE_VERSION 81 (New-Haven-Bauwarteschlange, Spieler-Report 1.0.2): der v80-Pin unten ist damit
+ * vom IDENTITÄTS- zum MIGRATIONS-Pin geworden — er belegt jetzt, dass ein v80-Save auf v81 hebt
+ * und sich dabei GENAU EIN Feld ändert (`camp.buildQueue`, leer). Ein eigenes `v81-*.json` kommt
+ * beim RELEASE dieser Version ins Vault: das Ritual verlangt ein echtes AUSGELIEFERTES Save, und
+ * v81 ist noch keins (Präzedenz v79, s.o.).
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -171,28 +176,44 @@ describe("Save-Kompat-Vault: jede jemals ausgelieferte Save-Version lädt verlus
  * Veredelung) UND die neue v78-Karten-Fläche MÜSSEN im Fixture präsent bleiben, damit ein späteres
  * Neu-Pinnen die Abdeckung nicht still verliert.
  */
-describe("v80-Release-Pin: Identitäts- & Abdeckungs-Guard des aktuellen Vault-Fixtures", () => {
+describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtures", () => {
   const FILE = "v80-release-0.3.0.json";
   const json = readFileSync(join(VAULT_DIR, FILE), "utf-8");
   const raw = JSON.parse(json) as { version: number; savedAt: number; state: GameState };
 
-  it("ist BEREITS die aktuelle Version — der Save-Header UND der State tragen v" + SAVE_VERSION, () => {
-    expect(raw.version).toBe(SAVE_VERSION);
-    expect(raw.state.version).toBe(SAVE_VERSION);
+  it("ist der ausgelieferte 1.0.x-Stand: Save-Header UND State tragen v80", () => {
+    // Bis SAVE_VERSION 80 war dies das AKTUELLE Fixture; seit dem v81-Bump (New-Haven-Bau-
+    // warteschlange) ist es der jüngste AUSGELIEFERTE Stand — also genau das, was auf
+    // Kunden-Platten liegt und beim nächsten Update migriert werden muss.
+    expect(raw.version).toBe(80);
+    expect(raw.state.version).toBe(80);
+    expect(SAVE_VERSION).toBeGreaterThanOrEqual(80);
   });
 
-  it("migriert NICHT: Laden mit now = savedAt hat 0 Offline-Zeit und reproduziert den State byte-genau", () => {
-    // now === savedAt ⇒ offlineMs 0 ⇒ KEIN Catch-up-Tick: gemessen wird allein, dass
-    // Migration+Sanitize auf einem bereits aktuellen, bereits gesanitizeten Save ein reiner
-    // No-op sind (nichts „wandert"). serialize(loaded) muss die Original-Bytes exakt treffen —
-    // die stärkste Identitäts-Aussage (JSON kann die von migrate rekonstruierten
-    // undefined-combat-Felder nicht darstellen, ein deepEqual gegen raw.state wäre also ein
-    // falsch-negativer JSON-Artefakt; die Byte-Gleichheit ist artefaktfrei).
+  it("migriert v80 → v81 und ändert dabei GENAU das neue Feld — sonst byte-genau derselbe Save", () => {
+    // now === savedAt ⇒ offlineMs 0 ⇒ KEIN Catch-up-Tick: gemessen wird allein, was
+    // Migration+Sanitize am gespeicherten Save tun. Das ist die schärfere Form des früheren
+    // Identitäts-Guards: nicht nur „nichts geht kaputt", sondern „ES ÄNDERT SICH NUR, WAS SICH
+    // ändern soll". Geprüft über die BYTES (JSON kann die von migrate rekonstruierten
+    // undefined-combat-Felder nicht darstellen — ein deepEqual wäre ein falsch-negatives
+    // JSON-Artefakt, die Byte-Gleichheit ist artefaktfrei).
     const result = deserialize(json, content, raw.savedAt);
     expect(result).not.toBeNull();
     expect(result!.offlineMs).toBe(0);
     expect(result!.offlineTicks).toBe(0);
-    expect(serialize(result!.state, raw.savedAt)).toBe(json);
+    expect(result!.state.version).toBe(SAVE_VERSION);
+
+    // Das neue v81-Feld: leere Bauwarteschlange (nichts geplant — gab es vorher gar nicht).
+    expect(result!.state.camp.buildQueue).toEqual([]);
+
+    // Gegenprobe: das Original um genau diese zwei erwarteten Änderungen ergänzt, muss die
+    // frisch serialisierten Bytes exakt treffen. Reißt DAS, hat die Migration mehr angefasst als
+    // angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
+    const erwartet = JSON.parse(json) as { version: number; state: GameState };
+    erwartet.version = SAVE_VERSION;
+    erwartet.state.version = SAVE_VERSION;
+    erwartet.state.camp.buildQueue = [];
+    expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 
   it("deckt die v69+v70+v71-Neuflächen ab (Abdeckung darf bei Neu-Pin nicht still verloren gehen)", () => {
@@ -339,9 +360,12 @@ describe("v80-Release-Pin: Identitäts- & Abdeckungs-Guard des aktuellen Vault-F
     //      + (15) v80 KARTEN-VISUALS (Codex 2026-08-03): `camp.mapVisuals` (individuelle
     //      Gebäudeskalierung/Spiegelung) startet für migrierte Alt-Saves leer — ohne Gebäude gibt
     //      es nichts visuell anzupassen; Renderer-Defaults greifen.
+    //      + (17) v81 BAUWARTESCHLANGE (Spieler-Report 1.0.2): migrierte Alt-Saves starten mit
+    //      leerem Plan — vor v81 gab es das Feld nicht, es kann also nichts geplant gewesen sein.
     expect(s.camp).toEqual({
       buildings: {},
       buildJob: null,
+      buildQueue: [],
       buildSeq: 0,
       lastCompletedBuild: null,
       refine: {},

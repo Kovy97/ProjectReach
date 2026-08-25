@@ -47,14 +47,23 @@ import type { BisBuild, BisTarget } from "./balance-envelope-helpers";
  *  §5 Messmatrix Evasion/Tempo/TTK — seit #301 (evasion-tempo-taming-spec, CHEF-GO) GEZÄHMT und
  *     NEU GEPINNT: aus den Mess-Pins des kaputten Zustands wurden harte Cap-Asserts
  *     (Dodge ≤ 0.40, Intervall ≥ base·0.8, Boss-Land-Chance real) plus frische Messwerte.
- *  §6 Duplikat-Verzauberung — seit #303 (red-team L4) BLOCKIERT (`duplicate_affix`); Alt-Save-
- *     Instanzen mit Bestands-Duplikaten bleiben geduldet (instanceBonusDelta summiert weiter).
+ *  §6 Runen-Stapelung — seit dem Chef-Entscheid 25.08.2026 ERLAUBT (die `duplicate_affix`-Sperre
+ *     aus #303 L4 ist gefallen): drei Slots nehmen drei gleiche Runen, die Stat-Boni summieren
+ *     sich. Nur Waffen-Procs entdoppelt `effectiveInstanceWeaponEffects` weiterhin.
  *  §7 Ökonomie-Schnellcheck — kein profitabler Kauf→Verkauf-Loop im Shop (inkl. Pet-Verkaufsbonus).
  *
- * NEU VERMESSEN 2026-07-09 (#303, red-team L3+L4): „Voll-Stack" heißt seit der Buff-Kategorie-
- * Exklusivität „bester Buff JE Kategorie" (nicht mehr 24 parallel) und Verzauberung „Top-N
- * VERSCHIEDENE Affixe" (nicht mehr der beste dupliziert). Folge (GEWOLLT): Dodge- und Mitigations-
- * Cap binden nicht mehr — nur Krit (Gear+Suffix-Träger) und Block (CL 90) erreichen ihre Deckel.
+ * NEU VERMESSEN 2026-08-25 (Chef-Entscheid Runen-Stapelung): „Voll-Stack" heißt weiterhin „bester
+ * Buff JE Kategorie" (#303 L3, unverändert), bei der Verzauberung aber wieder „der beste Affix
+ * auf ALLEN Rarity-Slots" statt der Top-N-Bestenliste verschiedener Affixe. Folge: Dodge-Cap
+ * (ab CL 60) und Mitigations-Cap (CL 90) werden vom theoretischen BiS-Build wieder ERREICHT —
+ * beides sind Clamps, es läuft nichts über, aber die Kopffreiheit ist weg. Krit und Block (CL 90)
+ * erreichen ihre Deckel wie bisher.
+ *
+ * OFFEN FÜR DEN CHEF (nicht stillschweigend weggepinnt): der Ward-Pool des BiS-Stoff-Builds
+ * springt bei CL 90 von 779,5 auf 1179,5 (≈ 1,6× maxHp, dieselbe Größenordnung, die #303 seinerzeit
+ * senken sollte). Wenn das zu weit geht, wäre die kleinste Bremse, TRINITY-Runen (armorRating/
+ * evasionRating/wardCapacity/blockChance) vom Stapeln auszunehmen — die reinen Stat-Runen sind an
+ * keinem der Deckel beteiligt.
  *
  * Alle Builds sind deterministisch (kein RNG-Draw) und rein content-gescannt (kein Id-Hardcoding
  * im Builder; Pins nennen Ids nur als DETEKTOR — reißt ein Pin, bewusst neu messen & pinnen).
@@ -216,38 +225,37 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     }
   });
 
-  it("Dodge-Voll-Stack: der 0.40-Cap ist seit #303 (L4 distinct-Runen) NICHT mehr erreichbar — alle Tiers bleiben darunter", () => {
-    // Re-Messung 2026-07-09 nach L4: ohne duplizierte Evasion-III-Runen (je Teil nur noch 1×) fällt
-    // Σevr unter die Cap-Schwelle 240 (Kurve 0.5·Σevr/(Σevr+60)) — der Deckel bindet auf KEINEM
-    // Tier mehr (CL 30 0.3584 / CL 60 0.3751 / CL 90 0.3913). Das ist die GEWOLLTE Wirkung der
-    // Duplikat-Sperre. Erreicht ein künftiger Content-Stack den Cap wieder, reißt es hier sichtbar.
-    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2, design/elite-balance-spec.md §4):
-    // quietstep_boots (evasionRating 8.7, req ranged 12) und ridgetyrant_greaves (evasionRating 31,
-    // req defence 80 + ranged 72) schlagen die vorherigen BiS-Leder-Teile bei CL 30/90 — CL 60
-    // bleibt unverändert (Requirements dort noch nicht erreichbar). Cap bindet weiterhin auf KEINEM
-    // Tier (alle drei klar unter 0.40).
-    // Re-Messung 2026-07-26 (#354 Paket 2 Chef-Erweiterung): neues buckhide-Set (req ranged 10,
-    // EVR-Zwischentier cured→hardened) schlägt bei CL 30 in mindestens einem Slot die vorherige
-    // BiS-Wahl — CL 60/90 unverändert (buckhide req10 dort längst dominiert von höheren Tiers).
-    const expected: Record<number, number> = { 30: 0.3583, 60: 0.3751, 90: 0.3934 };
+  it("Dodge-Voll-Stack: seit der Runen-Stapelung bindet der 0.40-Cap ab CL 60 wieder", () => {
+    // Re-Messung 2026-08-25 (Chef-Entscheid Runen-Stapelung): mit wieder duplizierten Evasion-III-
+    // Runen steigt Σevr über die Cap-Schwelle 240 (Kurve 0.5·Σevr/(Σevr+60)) — ab CL 60 sitzt der
+    // Voll-Stack exakt auf dem 0.40-Deckel, CL 30 bleibt mit 0.3912 knapp darunter.
+    // Vorher (#303-L4-Stand, distinct-Runen): 0.3583 / 0.3751 / 0.3934 — der Deckel band auf
+    // keinem Tier. Der Cap CLAMPT, es läuft also nichts über; was fehlt, ist die Kopffreiheit.
+    // Ein Content-Stack, der den Cap frisch erreicht, fällt hier weiterhin auf: dann steht in
+    // einer Zeile plötzlich 0.4 statt des gepinnten Werts.
+    const expected: Record<number, number> = { 30: 0.3912, 60: DODGE_CAP, 90: DODGE_CAP };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
         const d = computeStats(bis(style, lvl, "dodge").state, content).dodgeChance;
-        expect(d, `CL${lvl}/${style}`).toBeLessThan(DODGE_CAP);
+        expect(d, `CL${lvl}/${style}`).toBeLessThanOrEqual(DODGE_CAP); // der Deckel hält
         expect(d, `CL${lvl}/${style}`).toBeCloseTo(expected[lvl]!, 4);
       }
     }
   });
 
-  it("Tank-Voll-Stack CL 90 bindet nur noch den Block-Cap — Mitigation bleibt seit #303 unter dem Deckel", () => {
-    // Re-Messung 2026-07-09 nach L3+L4: ohne duplizierte Aegis-III-Runen und mit max. 1 Defensiv-
-    // Tonikum bindet der Mitigations-Cap nicht mehr (CL 90: 0.7047 < Cap) — GEWOLLT. Der Block-Cap
-    // bindet weiter exakt ab CL 90: blockChance war nie ein additives Stacking-Opfer (MAX-Faltung
-    // je Quelle + Suffix), die Duplikat-/Buff-Sperre ändert an seiner Spitze nichts.
+  it("Tank-Voll-Stack CL 90: der Mitigations-Deckel bindet jetzt, der Block-Deckel nicht mehr", () => {
+    // Re-Messung 2026-08-25 (Chef-Entscheid Runen-Stapelung): mit wieder duplizierten Aegis-III-
+    // Runen erreicht der CL-90-Voll-Stack den Mitigations-Deckel exakt (0.7047 → 0.80 = Cap).
+    // Das ist ein CLAMP: mehr armorRating wird ab hier wertlos, es läuft nichts über. Der Block-
+    // Cap bindet dagegen NICHT mehr (0.50 → 0.47) — und das ist kein Nerf, sondern eine Folge
+    // der Bauweise dieser Hülle: sie belegt jeden Slot mit dem bestbewerteten Affix, und beim
+    // Ziel "tank" schlägt die Aegis-Rune (armorRating·100) die Block-Rune. Früher bekam Block
+    // den zweiten Slot als Zweitplatzierter. Wer im Spiel bewusst Block-Runen stapelt, erreicht
+    // den Deckel weiterhin; die Hülle misst nur den score-maximalen Build, nicht jeden denkbaren.
     const st90 = computeStats(bis("melee", 90, "tank").state, content);
-    expect(mitigation(st90.defense)).toBeLessThan(DEFENSE_MITIGATION_MAX);
-    expect(mitigation(st90.defense)).toBeCloseTo(0.7047, 3);
-    expect(st90.blockChance).toBe(BLOCK_CAP);
+    expect(mitigation(st90.defense)).toBe(DEFENSE_MITIGATION_MAX);
+    expect(st90.blockChance).toBeLessThanOrEqual(BLOCK_CAP); // der Deckel hält in jedem Fall
+    expect(st90.blockChance).toBeCloseTo(0.47, 3);
     const st60 = computeStats(bis("melee", 60, "tank").state, content);
     expect(mitigation(st60.defense)).toBeLessThan(DEFENSE_MITIGATION_MAX);
     expect(st60.blockChance).toBeLessThan(BLOCK_CAP);
@@ -273,18 +281,23 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // CL-60-Build-Reichweite (waren vorher BiS-Body/BiS-Offhand dort) → t60 fällt auf die nächst-
     // schwächere Platte/Schild zurück (armor/mitigation/block sinken leicht). CL 90 unverändert
     // (dort war keines der drei je BiS).
+    // Re-Messung 2026-08-25 (Chef-Entscheid Runen-Stapelung): alle Rarity-Slots tragen wieder den
+    // BESTEN Affix statt der Top-N-Bestenliste ⇒ armorRating +120 auf jeder Stufe, Mitigation
+    // entsprechend. Der Block SINKT dabei bei CL 30/60 (0.415→0.335, 0.468→0.388): der zweitbeste
+    // Affix, der dort Block beisteuerte, hat seinen Slot an eine weitere Aegis-Rune verloren. Für
+    // die Hülle ist das korrekt — sie misst die Spitze des ZIEL-Stats, nicht die Summe aller.
     const t30 = computeStats(bis("melee", 30, "tank").state, content);
-    expect(t30.armorRating).toBeCloseTo(232.23, 2);
-    expect(mitigation(t30.defense)).toBeCloseTo(0.6501, 3);
-    expect(t30.blockChance).toBeCloseTo(0.415, 3);
+    expect(t30.armorRating).toBeCloseTo(352.23, 2);
+    expect(mitigation(t30.defense)).toBeCloseTo(0.7381, 3);
+    expect(t30.blockChance).toBeCloseTo(0.335, 3);
     const t60 = computeStats(bis("melee", 60, "tank").state, content);
-    expect(t60.armorRating).toBeCloseTo(259.79, 2);
-    expect(mitigation(t60.defense)).toBeCloseTo(0.6751, 3);
-    expect(t60.blockChance).toBeCloseTo(0.468, 3);
+    expect(t60.armorRating).toBeCloseTo(379.79, 2);
+    expect(mitigation(t60.defense)).toBeCloseTo(0.7524, 3);
+    expect(t60.blockChance).toBeCloseTo(0.388, 3);
     // Re-Messung 2026-07-26 (#354 Paket 3.2 Nachschärfung): shellfather_aegis AR 19.6→21.5, Block
     // 45%→47% (Marge über titanium_kiteshield) — schlägt bei CL 90 jetzt klar als BiS-Offhand.
     const t90 = computeStats(bis("melee", 90, "tank").state, content);
-    expect(t90.armorRating).toBeCloseTo(298.53, 2);
+    expect(t90.armorRating).toBeCloseTo(538.53, 2); // Stapelung: 298.53 → 538.53 ⇒ Mitigation am Cap
     // Pet-Schadensreduktion obendrauf (multiplikativ NACH Armor/Ward/Block): heute max. 3 %.
     expect(t90.damageReduction).toBeCloseTo(0.03, 5);
   });
@@ -300,16 +313,19 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     expect(computeStats(bis("magic", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
   });
 
-  it("Ward-Schiene: BiS-Pool 383 / 537 / 779,5 (CL 30/60/90) — Stoff-EHP bleibt beobachtenswert, aber gezähmt", () => {
-    // Re-Messung 2026-07-09 nach #303: Warding-III nur noch 1× je Teil (L4) — der CL-90-Pool fällt
-    // von 1156 auf 756 (≈ BiS-maxHp-Größenordnung statt ×1,6 drüber). Ward regeneriert nur im Kampf
-    // (Cast/Warding-Skill), absorbiert 1:1 — weiter als Beobachtungs-Pin geführt.
+  it("Ward-Schiene: BiS-Pool 583 / 777 / 1179,5 (CL 30/60/90) — der Beobachtungs-Pin des Stoff-EHP", () => {
+    // Re-Messung 2026-08-25 (Chef-Entscheid Runen-Stapelung): Warding-III sitzt wieder mehrfach je
+    // Teil ⇒ der CL-90-Pool steigt von 779,5 auf 1179,5 (≈ ×1,6 der BiS-maxHp-Größenordnung, also
+    // zurück auf den Stand, den #303 seinerzeit senken sollte). Ward regeneriert nur im Kampf
+    // (Cast/Warding-Skill) und absorbiert 1:1 — kein Cap davor, deshalb der SCHIEBER, den der Chef
+    // im Blick behalten sollte. Kleinste Bremse wäre, Trinity-Runen vom Stapeln auszunehmen
+    // (s. Suiten-Kopf); die reinen Stat-Runen sind an keinem Deckel beteiligt.
     // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): thorncrown (wc 48, req magic 45) und
     // pyrebound_vestment (wc 101, req magic 58) schlagen ab CL 60 ihre bisherigen BiS-Stoff-Teile;
     // tideterror_grip (wc 90, req magic 88) zusätzlich ab CL 90. CL 30 unverändert.
-    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(383, 0);
-    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(537, 0);
-    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(779.5, 1);
+    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(583, 0);
+    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(777, 0);
+    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1179.5, 1);
   });
 
   it("Buff-Exklusivitäts-Inventur (#303 L3): alle Tempo-/Krit-Tonika sind 'offense' ⇒ aktiv max. −750 ms / +0.20 crit", () => {
@@ -343,14 +359,12 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
   it("Gegner-Trefferchance gegen den BiS-Evasion-Build (CL 90): on-level ~24 %, +150 Level ~47 % Land-Chance", () => {
     const b = bis("ranged", 90, "dodge");
     const st = computeStats(b.state, content);
-    // #303 L4: ohne duplizierte Evasion-Runen bleibt der Dodge UNTER dem Cap.
-    // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): ridgetyrant_greaves (evasionRating 31,
-    // req defence 80 + ranged 72) schlägt die vorherige BiS-Leder-Hose (0.3913 → 0.3934) — leicht
-    // WENIGER `evasion` (der flache DEX-Kontest-Stat, 16.34 → 15.92), da die Beinschienen ein
-    // anderes Modifiers-Profil tragen. Beide bleiben klar unter dem 0.40-Cap.
-    expect(st.dodgeChance).toBeLessThan(DODGE_CAP);
-    expect(st.dodgeChance).toBeCloseTo(0.3934, 4);
-    expect(st.evasion).toBeCloseTo(15.919, 3);
+    // Re-Messung 2026-08-25 (Chef-Entscheid Runen-Stapelung): mehrfache Evasion-III-Runen drücken
+    // den CL-90-Build auf den 0.40-Deckel (vorher 0.3934). `evasion` — der flache DEX-Kontest-Stat
+    // hinter dem Dodge — steigt dabei nur von 15.919 auf 16.234, weil er aus Modifiers kommt und
+    // nicht aus evasionRating. Der Cap CLAMPT: der Dodge kann nicht darüber.
+    expect(st.dodgeChance).toBe(DODGE_CAP);
+    expect(st.evasion).toBeCloseTo(16.234, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -363,14 +377,16 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // #301-Gegenrechnung, re-gemessen nach #303 (weniger Buff-Evasion/-Dodge ⇒ Gegner landen etwas
     // MEHR): on-level 0.2308 → 0.2449, +150 Level 0.4570 → 0.4716 — die Zähmung wirkt in die
     // richtige Richtung, das Chef-Leck („Gegner verfehlt IMMER") bleibt geschlossen.
-    // Re-Messung 2026-07-22: die etwas niedrigere `evasion` oben (s. Kommentar) lässt den Gegner
-    // etwas häufiger landen (0.2449 → 0.2479 / 0.4716 → 0.4727) — marginal, kein neuer Wall.
+    // Re-Messung 2026-08-25 (Runen-Stapelung): die leicht höhere `evasion` (15.919 → 16.234)
+    // lässt den Gegner etwas seltener landen (0.2479 → 0.2423 / 0.4727 → 0.4655) — marginal.
+    // Wichtiger: der Dodge sitzt jetzt auf dem 0.40-Deckel, die kombinierte Land-Chance bleibt
+    // trotzdem deutlich über dem 10-%-Boden. Das Chef-Leck („Gegner verfehlt IMMER") bleibt zu.
     const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
-    expect(hcOn).toBeCloseTo(0.4086, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2479, 3);
+    expect(hcOn).toBeCloseTo(0.4039, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2423, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7793, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4727, 3);
+    expect(hc150).toBeCloseTo(0.7759, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4655, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -453,13 +469,18 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // seine Offhand. Nur die RANGED-Zeilen verschieben sich — Spieler-TTK vs. idol_warden
     // 91.59→95.57 s (+4.3 %), vs. last_idol 302.85→316.15 s (+4.4 %), Boss→Spieler vs. idol_warden
     // 14.1→14.02 s. Melee/Magic unveraendert (deren Offhand ist Schild bzw. Fokus und bleibt).
+    // Re-Messung 2026-08-25 (Chef-Entscheid Runen-Stapelung): der BiS-Damage-Build trägt wieder den
+    // besten Schadens-Affix auf allen Slots statt der Top-N-Bestenliste ⇒ Spieler-TTK sinkt um
+    // 4–9 % (melee→idol_warden 59.67→56.45 s, magic→last_idol 262.73→240.73 s). Die Boss-Seite
+    // bleibt praktisch unverändert — der "damage"-Build stapelt keine Defensiv-Runen. Die Aussage
+    // des Pins hält: die Idol-Halle ist auch so keine 8–21-s-Farm-Node.
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 59.67, 18.9],
-      ["melee", "last_idol", 195.51, 13.4],
-      ["ranged", "idol_warden", 95.57, 14.02],
-      ["ranged", "last_idol", 316.15, 12.2],
-      ["magic", "idol_warden", 78.05, 23.7],
-      ["magic", "last_idol", 262.73, 25.6],
+      ["melee", "idol_warden", 56.45, 18.9],
+      ["melee", "last_idol", 184.96, 13.4],
+      ["ranged", "idol_warden", 92.44, 14.08],
+      ["ranged", "last_idol", 305.65, 12.2],
+      ["magic", "idol_warden", 71.52, 23.7],
+      ["magic", "last_idol", 240.73, 25.6],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);
@@ -480,13 +501,13 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
 });
 
 // ───────────────────────────────────────────────────────────────────────────
-// §6 Duplikat-Verzauberung: seit #303 (red-team L4) BLOCKIERT — Guard statt Pin
+// §6 Runen-Stapelung: seit dem Chef-Entscheid 25.08.2026 ERLAUBT — Pin statt Guard
 // ───────────────────────────────────────────────────────────────────────────
-describe("Balance-Envelope §6: Duplikat-Verzauberungen sind blockiert (#303 L4-Guard)", () => {
-  it("Alt-Save-Duldung: eine BESTEHENDE Duplikat-Instanz summiert weiter voll (2× Swift III ⇒ +6 dex)", () => {
-    // Save-Kompat-Gesetz: Alt-Saves mit vor-#303 duplizierten Runen laden und WIRKEN unverändert —
-    // instanceBonusDelta kennt bewusst keinen Dedup (nur NEUE Anwendungen blockiert applyEnchant,
-    // s. duplicate_affix-Guards in enchant.test.ts). Reißt dieser Pin, wurde die Duldung gebrochen.
+describe("Balance-Envelope §6: Runen-Stapelung (Chef-Entscheid 25.08.2026)", () => {
+  it("gestapelte Runen summieren voll (2× Swift III ⇒ +6 dex)", () => {
+    // Das war vor #303 legal, war während der Sperre nur noch als Alt-Save GEDULDET und ist seit
+    // dem Chef-Entscheid wieder der Normalfall: instanceBonusDelta kennt bewusst keinen Dedup.
+    // Reißt dieser Pin, summiert das Stapeln nicht mehr — und der ganze Sinn wäre weg.
     expect(content.affixes?.affix_swift?.modifiersByTier?.[2]?.dex).toBe(3);
     const inst: ItemInstance = {
       instanceId: "t-dup",
@@ -499,19 +520,24 @@ describe("Balance-Envelope §6: Duplikat-Verzauberungen sind blockiert (#303 L4-
     expect(instanceBonusDelta(inst, content).modifiers.dex).toBe(6);
   });
 
-  it("Worst-Case-Builds tragen keine Duplikat-Affixe mehr (Helper spiegelt die L4-Rechtslage)", () => {
-    // Detektor: baut der Envelope-Helper je wieder Duplikate (oder erlaubt applyEnchant sie erneut),
-    // misst die ganze Suite einen ILLEGALEN Stack — hier reißt es zuerst.
+  it("Worst-Case-Builds belegen ALLE Rarity-Slots mit dem besten Affix (Hüllen-Bauer spiegelt die Rechtslage)", () => {
+    // Detektor in die andere Richtung als früher: baut der Hüllen-Bauer wieder eine Bestenliste
+    // VERSCHIEDENER Affixe, misst die ganze Suite einen zu SCHWACHEN Worst Case — sie wäre dann
+    // keine obere Schranke mehr. Mindestens ein Build muss deshalb echt stapeln.
+    let gestapelt = 0;
     for (const lvl of TIERS) {
       for (const target of TARGETS) {
         const b = bis("melee", lvl, target);
         for (const inst of Object.values(b.state.character.equippedInstances)) {
-          if (!inst) continue;
+          if (!inst || inst.affixes.length === 0) continue;
           const ids = inst.affixes.map((a) => a.affixId);
-          expect(new Set(ids).size, `distinct Affixe auf ${inst.baseItemId} (${target}@CL${lvl})`).toBe(ids.length);
+          // Alle Affixe einer Instanz sind derselbe (der bestbewertete) — nie eine Mischung.
+          expect(new Set(ids).size, `Affix-Sorten auf ${inst.baseItemId} (${target}@CL${lvl})`).toBe(1);
+          if (ids.length > 1) gestapelt++;
         }
       }
     }
+    expect(gestapelt, "kein einziger Build stapelt — der Worst Case wäre zu schwach").toBeGreaterThan(0);
   });
 
   it("Bogen-Regel: JEDE Fernkampfwaffe ist zweihändig (Chef-Entscheid 23.08.2026)", () => {

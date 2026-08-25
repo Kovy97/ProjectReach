@@ -604,7 +604,7 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 // codex:2026-08-03T12:45:00+02:00 — v80 persistiert die freie visuelle New-Haven-Anpassung:
 //     individuelle Gebäudeskalierung (1..300 %) und horizontale Spiegelung. Alt-Saves erhalten
 //     keine Overrides und verwenden dadurch weiterhin die rangabhängigen Renderer-Defaults.
-export const SAVE_VERSION = 80;
+export const SAVE_VERSION = 81;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -5997,6 +5997,13 @@ export type CampBoostKind =
   | "blessing"
   | "sellBonus";
 
+/**
+ * Laengen-Deckel der New-Haven-Bauwarteschlange (SAVE_VERSION 81). Bei EINEM Bautrupp und drei
+ * Stufen je Gebaeude ist alles darueber nicht mehr ueberschaubar — und ein unbegrenztes Feld im
+ * Save waere eine Einladung fuer korrupte Alt-Staende.
+ */
+export const CAMP_BUILD_QUEUE_MAX = 8;
+
 /** Höchste Ausbaustufe jedes Lager-Gebäudes (I..III). */
 export const CAMP_MAX_BUILDING_LEVEL = 3;
 
@@ -6101,6 +6108,21 @@ export interface CampState {
   /** Aktiver Bau-Auftrag oder null (Bautrupp frei). */
   buildJob: CampBuildJob | null;
   /**
+   * Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2: "ability to queue up what would
+   * start next after the current project ends"). Reihenfolge = Startreihenfolge; der EINE
+   * Bautrupp arbeitet sie von vorn ab, sobald er frei wird (`advanceCampQueue`, engine/camp.ts).
+   *
+   * Nur Gebaeude-IDs, KEINE Zielstufe: die ergibt sich beim Anlauf aus dem dann aktuellen Stand
+   * (aktuelle Stufe + 1). Zweimal dasselbe Gebaeude einreihen baut also Stufe II und danach III.
+   *
+   * KOSTEN werden beim START abgebucht, nicht beim Einreihen — eine Warteschlange, die
+   * stundenlang steht, soll kein Material binden, das der Spieler bis dahin noch braucht.
+   * Folge: reicht es beim Anlauf nicht, bleibt der Eintrag stehen (die UI nennt den Grund).
+   *
+   * Laenge geklemmt auf CAMP_BUILD_QUEUE_MAX — mehr waere ohnehin nicht ueberschaubar.
+   */
+  buildQueue: CampBuildingId[];
+  /**
    * Monotoner Lebenszeit-Zähler fertiggestellter Bauten (Muster petDropSeq) und die EINZIGE
    * Quelle der `lastCompletedBuild.seq`-Werte. Wird NIE genullt oder gesenkt; sanitize erzwingt
    * buildSeq ≥ lastCompletedBuild.seq.
@@ -6149,6 +6171,7 @@ export function defaultCampState(): CampState {
   return {
     buildings: {},
     buildJob: null,
+    buildQueue: [],
     buildSeq: 0,
     lastCompletedBuild: null,
     refine: {},

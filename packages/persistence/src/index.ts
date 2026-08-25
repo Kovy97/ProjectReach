@@ -56,6 +56,7 @@ import {
   SELL_FRACTION,
   THIEVING_RISKS,
   TICK_MS,
+  CAMP_BUILD_QUEUE_MAX,
   campRepairPositions,
   createPetAbilityRuntime,
   defaultAutoPotion,
@@ -527,6 +528,20 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
             targetLevel: j.targetLevel as number,
             remainingMs: clampFinite(j.remainingMs, 0, levelDef.buildMs, levelDef.buildMs),
           };
+        }
+      }
+      // — Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2): Liste von Gebaeude-IDs.
+      // Strikt gehaertet wie `buildings`: nur im Katalog bekannte IDs, Laenge auf
+      // CAMP_BUILD_QUEUE_MAX geklemmt. Bewusst OHNE weitere Pruefungen — ob ein Eintrag beim
+      // Anlauf wirklich baubar ist (Stufe schon max, Zentralhaus fehlt, Material fehlt), gehoert
+      // nicht in die Ladehaertung: das kann sich bis dahin jederzeit aendern, und
+      // `advanceCampQueue` prueft es ohnehin im Moment des Starts.
+      const rawQueue = (rawCamp as { buildQueue?: unknown }).buildQueue;
+      if (Array.isArray(rawQueue)) {
+        for (const id of rawQueue) {
+          if (cleanCamp.buildQueue.length >= CAMP_BUILD_QUEUE_MAX) break;
+          if (typeof id !== "string" || !campCatalog.has(id)) continue;
+          cleanCamp.buildQueue.push(id);
         }
       }
       cleanCamp.buildSeq = Math.floor(finiteNonNeg((rawCamp as { buildSeq?: unknown }).buildSeq, 0));
@@ -1762,6 +1777,14 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     Array.isArray(state.camp.mapVisuals)
   ) {
     state.camp.mapVisuals = {};
+  }
+
+  // Bauwarteschlange (SAVE_VERSION 80→81, Spieler-Report 1.0.2 "New Haven, ability to queue up
+  // what would start next after the current project ends"): neues Teilfeld `camp.buildQueue`.
+  // Alt-Saves bekommen eine leere Liste — nichts wartet, exakt das bisherige Verhalten. Die
+  // Shape-Haertung (nur bekannte IDs, Laengen-Deckel) macht sanitizeState.
+  if (!Array.isArray(state.camp.buildQueue)) {
+    state.camp.buildQueue = [];
   }
 
   // Tages-Gratis-Skip der Trophäenwand III (SAVE_VERSION 76→77, Task #359): neues Feld

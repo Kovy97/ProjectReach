@@ -602,6 +602,28 @@ export const ptBR: Record<string, string> = {
     "itip.group.suffix": "Sufixo",
     "itip.group.enchantment": "Encantamento",
     "itip.group.runeEffect": "Efeito de Runa",
+    // Verzauberungs-Plaetze + Runen-Ziel (Chef 25.08.2026 + Spieler-Report 1.0.2): der Tooltip
+    // erklaert die Slots und nennt, wofuer eine Rune taugt. Feines Ziel statt grobem Tag —
+    // "Plattenruestung" statt "Ruestung", s. runeTargets.ts (Trinity-Gate).
+    "itip.enchantSlots.hint": "Espaços livres recebem runas de encantamento (mesa de encantamento).",
+    "rune.target.label": "Serve em:",
+    // Ein Teil des Bestands liegt im Lager — verzaubern geht trotzdem (Spieler-Report 1.0.2).
+    "enchant.rune.stored": "{n} no depósito",
+    "rune.target.any": "Qualquer item",
+    "rune.target.anyWeapon": "Todas as armas",
+    "rune.target.weaponMelee": "Armas corpo a corpo",
+    "rune.target.weaponRanged": "Armas à distância",
+    "rune.target.weaponMagic": "Armas mágicas",
+    "rune.target.armor": "Armadura",
+    "rune.target.shield": "Escudos",
+    "rune.target.jewelry": "Joias",
+    "rune.target.plate": "Armadura de placas",
+    "rune.target.leather": "Armadura de couro",
+    "rune.target.cloth": "Armadura de tecido",
+    "rune.target.hint.armorRating": "Apenas em peças que já tenham valor de armadura.",
+    "rune.target.hint.evasionRating": "Apenas em peças que já tenham evasão.",
+    "rune.target.hint.wardCapacity": "Apenas em peças que já tenham proteção arcana.",
+    "rune.target.hint.blockChance": "Apenas em escudos com chance de bloqueio.",
     "itip.masterPerk.doubleYield": "+{n}% de chance de rendimento duplo ({skill})",
     "itip.masterPerk.inputSaver": "+{n}% de chance de economizar materiais ({skill})",
     "itip.masterPerk.cropSpeed": "Os canteiros crescem {n}% mais rápido ({skill})",
@@ -726,6 +748,12 @@ export const ptBR: Record<string, string> = {
     "combat.zone.freshTracks.badge": "Rastros",
     "combat.zone.freshTracks.tooltip": "Rastros frescos. Algo grande vai rondar por aqui em breve.",
     "combat.level": "Nível {n}",
+    // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
+    // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
+    "combat.queueMore": "Enfileirar mais",
+    "combat.queueMore.hint": "Mostra a lista de inimigos sem encerrar esta luta.",
+    "combat.stillFighting": "Ainda lutando contra: {name}",
+    "combat.backToFight": "Voltar à luta",
     "combat.fight": "Lutar",
     "combat.fightNowHint": "Começa a lutar imediatamente — a atividade em andamento volta para o início da fila depois.",
     "combat.close": "Fechar",
@@ -1230,6 +1258,11 @@ export const ptBR: Record<string, string> = {
     "slayer.streak.chip": "Sequência: {n} — bônus em {next}",
     "slayer.task.streakSkipWarning": "Um pulo pago encerra sua sequência.",
     "slayer.task.goToMonster": "Ir ao Combate",
+    // Spieler-Report 1.0.2: beide Kampf-Wege direkt vom Auftragszettel, mit der Restmenge
+    // als Ziel — statt Sprung auf die Kampfseite und dort selbst suchen und abzaehlen.
+    "slayer.task.fightNow": "Lutar agora ({n})",
+    "slayer.task.addToQueue": "Adicionar à fila ({n})",
+    "slayer.task.fightBlocked": "Você ainda não pode enfrentar este alvo.",
     "slayer.req.missing": "Necessário: {item} — não está no inventário!",
     "slayer.points": "Pontos de Caçador",
     "slayer.master.locked": "Requer Nível de Caçador {n}",
@@ -1282,7 +1315,6 @@ export const ptBR: Record<string, string> = {
     "enchant.reason.not_enough_gold": "Ouro insuficiente.",
     "enchant.reason.affix_mismatch": "Esta runa não serve para este item.",
     "enchant.reason.class_mismatch": "Não serve para esta classe de armadura.",
-    "enchant.reason.duplicate_affix": "Esta runa já está aplicada a este item.",
     "enchant.reason.no_affix_slots": "Nenhum espaço de encantamento livre.",
     "enchant.reason.no_affix": "Nenhuma runa selecionada.",
     "enchant.reason.not_enchantable": "Este item não pode ser encantado.",
@@ -1295,7 +1327,6 @@ export const ptBR: Record<string, string> = {
     "enchant.preview.blocked.slot_full": "Nenhum espaço de encantamento livre.",
     "enchant.preview.blocked.class_mismatch": "Não serve para esta classe de armadura.",
     "enchant.preview.blocked.wrong_item_type": "Esta runa não serve para este item.",
-    "enchant.preview.blocked.duplicate_affix": "Esta runa já está aplicada a este item.",
     "enchant.weaponRunes": "Runas de Arma",
     "enchant.armorRunes": "Runas de Armadura",
     "enchant.otherRunes": "Joias e Geral",
@@ -1725,6 +1756,13 @@ export const ptBR: Record<string, string> = {
     "newhaven.cost.title": "Custo",
     "newhaven.cost.time": "Tempo de obra: {time}",
     "newhaven.build.new": "Construir",
+    // Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2): was nach dem laufenden
+    // Projekt drankommt — Reihenfolge planbar, Einreihen kostet nichts.
+    "newhaven.queue.title": "Planejado",
+    "newhaven.queue.add": "Adicionar ao plano",
+    "newhaven.queue.moveUp": "Subir",
+    "newhaven.queue.moveDown": "Descer",
+    "newhaven.queue.remove": "Remover do plano",
     "newhaven.build.upgrade": "Elevar ao nível {n}",
     "newhaven.build.inProgress": "Construindo o nível {n}",
     "newhaven.build.cancel": "Cancelar a obra",

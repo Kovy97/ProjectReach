@@ -3,7 +3,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, meetsRequirements } from "@hearthforge/engine";
 import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
-import { ATTRIBUTES, EQUIP_SLOT_LABELS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, MANA_PER_CAST, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
+import { ATTRIBUTES, EQUIP_SLOT_LABELS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, MANA_PER_CAST, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
+import { isEnchantable, runeFitsHint, runeTargetLabel } from "../runeTargets";
 import { useGameStateMaybe } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
@@ -1178,13 +1179,29 @@ function SuffixGroup({
   return <StatGroupWrapper title={`… ${tr(sdef.suffix)}`} className="itip-suffix-group">{rows}</StatGroupWrapper>;
 }
 
-/** ENCHANTMENT: Instanz-Affixe (Runen-Verzauberungen, Arch B) — je Affix Name+Tier + Effekt-Zeilen. */
-function EnchantGroup({ inst }: { inst: ItemInstance }): JSX.Element | null {
+/**
+ * ENCHANTMENT: die Verzauberungs-Plaetze eines Ausruestungsteils — belegte mit Name/Tier/Effekt,
+ * freie als leere Steine, dazu ein Satz, wozu sie da sind.
+ *
+ * Steht bewusst auf JEDEM Ausruestungsteil, auch auf einem unverzauberten (Chef 25.08.2026,
+ * "visual learning"): vorher verschwand die Gruppe ohne Affixe komplett, und ein Spieler konnte
+ * nirgends sehen, dass sein Item ueberhaupt Plaetze hat. Die Anzahl haengt allein an der Rarity
+ * (`enchantSlotsFor`) — dieselbe Quelle, die auch der Verzauberungstisch liest.
+ */
+function EnchantGroup({ item, inst }: { item: ItemDef; inst?: ItemInstance | null }): JSX.Element | null {
   const { t, tr } = useI18n();
-  if (inst.affixes.length === 0) return null;
+  const affixes = inst?.affixes ?? [];
+  const slots = enchantSlotsFor(getItemRarity(item));
+  // Alt-Saves koennen mehr Affixe tragen, als die heutige Rarity-Regel erlaubt (die Slot-Zahlen
+  // wurden schon einmal angepasst) — der Zaehler zeigt dann die echte Belegung, nicht "4/3".
+  const gesamt = Math.max(slots, affixes.length);
+  if (gesamt === 0) return null;
   return (
-    <StatGroupWrapper title={t("itip.group.enchantment")} className="itip-special-effect itip-enchant-group">
-      {inst.affixes.map((a, i) => {
+    <StatGroupWrapper
+      title={`${t("itip.group.enchantment")} ${affixes.length}/${gesamt}`}
+      className="itip-special-effect itip-enchant-group"
+    >
+      {affixes.map((a, i) => {
         const def = content.affixes?.[a.affixId];
         const prefixName = def ? tr(def.prefix) : a.affixId;
         // Eine Zeile je Teil (Flat-Boni/Attribut-Mods/Proc-Prosa) statt einer gejointen
@@ -1204,6 +1221,16 @@ function EnchantGroup({ inst }: { inst: ItemInstance }): JSX.Element | null {
           </div>
         );
       })}
+      {gesamt > affixes.length && (
+        <div className="itip-enchant-slots">
+          {Array.from({ length: gesamt - affixes.length }, (_, i) => (
+            <span key={i} className="itip-enchant-slot-empty" aria-hidden>
+              ◇
+            </span>
+          ))}
+          <span className="itip-enchant-slot-hint">{t("itip.enchantSlots.hint")}</span>
+        </div>
+      )}
     </StatGroupWrapper>
   );
 }
@@ -1221,6 +1248,7 @@ function RuneEffectGroup({ item }: { item: ItemDef }): JSX.Element | null {
   const def = content.affixes?.[item.rune.affixId];
   if (!def) return null;
   const parts = affixEffectParts(def, item.rune.tier, t, tr);
+  const hint = runeFitsHint(def, item.rune.tier, t);
   return (
     // codex:2026-08-01T13:36:00+02:00 — Runeffekte spannen ihren festen unteren Datenplatz.
     <StatGroupWrapper title={t("itip.group.runeEffect")} className="itip-rune-group">
@@ -1233,6 +1261,15 @@ function RuneEffectGroup({ item }: { item: ItemDef }): JSX.Element | null {
         {parts.map((line, li) => (
           <div key={li} className="itip-inst-affix-val">{line}</div>
         ))}
+        {/* Spieler-Report 1.0.2: "why does the crafting not display what the enchantment rune is
+            for: Weapon, Armor, Jewelry, etc." Berechtigt — wofuer eine Rune taugt, stand bisher
+            nur in den Daten. Das Label nennt das ECHTE Ziel inkl. Ruestungsklasse, der Hinweis
+            darunter das unsichtbare Trinity-Gate (s. runeTargets.ts). */}
+        <div className="itip-rune-target">
+          <span className="itip-rune-target-label">{t("rune.target.label")}</span>
+          <span className="itip-rune-target-value">{runeTargetLabel(def, item.rune.tier, t)}</span>
+        </div>
+        {hint && <div className="itip-rune-target-hint">{hint}</div>}
       </div>
     </StatGroupWrapper>
   );
@@ -1615,7 +1652,7 @@ function ItemTooltipCard({
           {/* codex:2026-08-01T12:47:00+02:00 — Verzauberung und On-Hit sind besondere
               Kampfmerkmale, keine normalen Tabellenwerte. Beide stehen als orange Effektplatten
               unter dem Faktenraster; reine Affix-Items erzeugen dadurch keinen leeren Statblock. */}
-          {inst && inst.affixes.length > 0 && <EnchantGroup inst={inst} />}
+          {isEnchantable(item) && <EnchantGroup item={item} inst={inst} />}
           <EffectBlock item={item} />
           <SetBonusSection item={item} />
 

@@ -11,7 +11,9 @@ import {
   bankCount,
   campBoost,
   campBuildSlots,
+  advanceCampQueue,
   campBuildStartReason,
+  campEnqueueReason,
   campBuildingLevel,
   campDemolishReason,
   campDemolishRefund,
@@ -21,6 +23,9 @@ import {
   campRefineProgress,
   campUsedBuildSlots,
   cancelCampBuild,
+  dequeueCampBuild,
+  enqueueCampBuild,
+  moveCampQueueItem,
   debugCompleteCampBuild,
   demolishCampBuilding,
   itemCount,
@@ -35,6 +40,7 @@ import {
 } from "@hearthforge/engine";
 import type {
   CampBuildStartReason,
+  CampQueueReason,
   CampDemolishRefund,
   CampPlacementReason,
 } from "@hearthforge/engine";
@@ -524,6 +530,12 @@ interface CardProps {
   /** Basis-Bauzeit des laufenden Auftrags (für den Fortschrittsbalken; sonst 0). */
   jobTotalMs: number;
   reason: CampBuildStartReason;
+  /**
+   * Darf dieses Gebaeude in die Bauwarteschlange (Spieler-Report 1.0.2)? Eigenes Praedikat, weil
+   * es ANDERE Fragen stellt als `reason`: Material und Bautrupp sind beim Planen egal, die
+   * erreichbare Stufe und der Laengen-Deckel nicht.
+   */
+  queueReason: CampQueueReason;
   /** Bestand je Material der NÄCHSTEN Stufe, in der Reihenfolge von `levelDef.items`. */
   have: readonly number[];
   /**
@@ -544,7 +556,7 @@ interface CardProps {
 
 /** Das nicht-statische Kernstück von `CardProps` — alles außer `def`/`gold`/`hallName`/`busyName`/
  *  `state`/`onDirty`/`onRequestCancel`, die der jeweilige Aufrufer ohnehin schon hat. */
-type CampCardCore = Pick<CardProps, "level" | "jobRemainingMs" | "jobTargetLevel" | "jobTotalMs" | "reason" | "have" | "refineSig">;
+type CampCardCore = Pick<CardProps, "level" | "jobRemainingMs" | "jobTargetLevel" | "jobTotalMs" | "reason" | "queueReason" | "have" | "refineSig">;
 
 /**
  * Berechnet `CampCardCore` für EIN Gebäude — extrahiert aus der Grid-Schleife (Task #371), damit
@@ -576,6 +588,7 @@ function campCardCore(
     jobTotalMs: onThis && levelDef ? buildJobTotalMs(state, levelDef.buildMs) : 0,
     // codex:2026-07-31T19:00:03+02:00 — List/Popup fragen dasselbe Engine-Prädikat wie die Karte.
     reason: campBuildStartReason(state, content, def.id, { waiveCosts: debugFreeBuild }),
+    queueReason: campEnqueueReason(state, content, def.id),
     have,
     refineSig,
   };
@@ -588,6 +601,7 @@ function BuildingCardImpl({
   jobTargetLevel,
   jobTotalMs,
   reason,
+  queueReason,
   have,
   gold,
   hallName,
@@ -740,6 +754,22 @@ function BuildingCardImpl({
               : t("newhaven.build.upgrade").replace("{n}", roman(targetLevel))}
           </button>
 
+          {/* Spieler-Report 1.0.2: "New Haven, ability to queue up what would start next after the
+              current project ends." Der Knopf steht genau dann da, wenn Einreihen etwas bringt —
+              vor allem waehrend der Bautrupp arbeitet und der Bau-Knopf deshalb gesperrt ist.
+              Einreihen kostet nichts; bezahlt wird beim Anlauf (engine/camp.ts). */}
+          {queueReason === "ok" && reason !== "ok" && (
+            <button
+              type="button"
+              className="combat-btn nh-queue-btn"
+              onClick={() => {
+                if (enqueueCampBuild(state, content, def.id) === "ok") onDirty();
+              }}
+            >
+              {t("newhaven.queue.add")}
+            </button>
+          )}
+
           {reason !== "ok" && (
             <p className="nh-blocked">
               {reasonText(state, reason, targetLevel, hallName, busyName, questName, t)}
@@ -776,6 +806,7 @@ const BuildingCard = memo(BuildingCardImpl, (a, b) =>
   a.jobTargetLevel === b.jobTargetLevel &&
   a.jobTotalMs === b.jobTotalMs &&
   a.reason === b.reason &&
+  a.queueReason === b.queueReason &&
   a.refineSig === b.refineSig &&
   a.gold === b.gold &&
   a.hallName === b.hallName &&
@@ -1695,6 +1726,89 @@ function newHavenGate(s: GameState): string {
   return sig;
 }
 
+/**
+ * Der Planungs-Streifen (Spieler-Report 1.0.2: "New Haven, ability to queue up what would start
+ * next after the current project ends"). Zeigt, was nach dem laufenden Bau drankommt.
+ *
+ * Der erste Eintrag traegt eine Zusatz-Zeile, wenn er gerade NICHT anlaufen koennte — fast immer,
+ * weil Material fehlt. Das ist die einzige Information, die der Spieler zum Handeln braucht; bei
+ * den hinteren Eintraegen waere sie nur Rauschen, weil sich bis dahin ohnehin alles aendert.
+ */
+function BuildQueueStrip({
+  state,
+  onDirty,
+}: {
+  state: GameState;
+  onDirty: () => void;
+}): JSX.Element | null {
+  const { t, tr } = useI18n();
+  const queue = state.camp?.buildQueue ?? [];
+  if (queue.length === 0) return null;
+
+  const crewBusy = state.camp?.buildJob != null;
+  // Grund des NAECHSTEN Anlaufs — nur interessant, solange der Bautrupp frei ist und trotzdem
+  // nichts passiert. Arbeitet er, ist "crew_busy" die banale Antwort und braucht keine Zeile.
+  const ersterGrund = !crewBusy && queue[0]
+    ? campBuildStartReason(state, content, queue[0])
+    : "ok";
+
+  return (
+    <div className="nh-queue-strip">
+      <span className="nh-queue-strip-title">{t("newhaven.queue.title")}</span>
+      <ol className="nh-queue-list">
+        {queue.map((id, i) => {
+          const def = BUILDINGS.find((b) => b.id === id) ?? null;
+          // Zielstufe dieses Eintrags: aktueller Stand + laufender Auftrag + alles, was DAVOR in
+          // der Warteschlange steht. Genau die Stufe, die dieser Eintrag bauen wird.
+          const stufe =
+            campBuildingLevel(state, id) +
+            (state.camp?.buildJob?.buildingId === id ? 1 : 0) +
+            queue.slice(0, i + 1).filter((q) => q === id).length;
+          return (
+            <li key={`${id}-${i}`} className="nh-queue-item">
+              <span className="nh-queue-pos" aria-hidden>{i + 1}.</span>
+              <span className="nh-queue-name">
+                {def ? tr(def.name) : id} {roman(stufe)}
+              </span>
+              <span className="nh-queue-actions">
+                <button
+                  type="button"
+                  className="nh-queue-mini"
+                  disabled={i === 0}
+                  title={t("newhaven.queue.moveUp")}
+                  onClick={() => { moveCampQueueItem(state, i, i - 1); onDirty(); }}
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className="nh-queue-mini"
+                  disabled={i === queue.length - 1}
+                  title={t("newhaven.queue.moveDown")}
+                  onClick={() => { moveCampQueueItem(state, i, i + 1); onDirty(); }}
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  className="nh-queue-mini nh-queue-remove"
+                  title={t("newhaven.queue.remove")}
+                  onClick={() => { dequeueCampBuild(state, i); onDirty(); }}
+                >
+                  ×
+                </button>
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      {ersterGrund !== "ok" && (
+        <p className="nh-queue-waiting">{t(`newhaven.reason.${ersterGrund}`)}</p>
+      )}
+    </div>
+  );
+}
+
 function NewHavenPageImpl(): JSX.Element {
   useGameSelector(newHavenGate);
   const getState = useGetGameState();
@@ -1726,6 +1840,17 @@ function NewHavenPageImpl(): JSX.Element {
   const onRequestCancel = useCallback((): void => setConfirmCancel(true), []);
 
   const job = state.camp?.buildJob ?? null;
+
+  // Spieler-Report 1.0.2: Ein wartender Eintrag laeuft normalerweise beim Bau-Abschluss an
+  // (engine `tickCampCrew`). Blieb er damals stehen — weil Material fehlte —, braucht er einen
+  // zweiten Anstoss, sobald sich die Lage geaendert hat. Der Tick prueft das bewusst NICHT jeden
+  // Schlag (offline waeren das zehntausende Laeufe umsonst), also tut es die Seite: wer hier
+  // hinschaut, will genau das wissen.
+  useEffect(() => {
+    if (!job && (state.camp?.buildQueue?.length ?? 0) > 0) {
+      if (advanceCampQueue(state, content) === "ok") onDirty();
+    }
+  });
 
   const hallDef = BUILDINGS.find((b) => b.id === CAMP_TOWNHALL_ID) ?? null;
   const hallName = hallDef ? tr(hallDef.name) : "";
@@ -1846,6 +1971,8 @@ function NewHavenPageImpl(): JSX.Element {
           </span>
         )}
       </div>
+
+      <BuildQueueStrip state={state} onDirty={onDirty} />
 
       {view === "map" ? (
         <CampMapView

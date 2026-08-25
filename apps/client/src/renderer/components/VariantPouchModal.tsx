@@ -256,6 +256,7 @@ type SortMode = "best" | "roll" | "name";
  * (falls im Besitz), danach alle verzauberten Varianten, identische Varianten zu einem Stack
  * zusammengefasst (`groupBySig`). Schließt bei `onMouseLeave` (Chef-Vorgabe: Hover-Popover-Verhalten,
  * kein klassischer Klick-außerhalb-Dialog) — der Overlay-Klick bleibt zusätzlich als Fallback.
+ * AUSNAHME seit 1.0.2: während die Suche benutzt wird, gilt nur noch Klick/Escape (s. `suchFokus`).
  * Ein Linksklick auf eine Zeile pinnt das große `ItemTooltip` (wie `ItemChip`) mit den
  * kontextabhängigen Aktionen des Aufrufers (Inventar/Shop/Bank unterscheiden sich nur in den
  * übergebenen `plainActions`/`variantActionsFor`, das Modal selbst bleibt kontextfrei).
@@ -280,6 +281,11 @@ export function VariantPouchModal({
   const stacks = groupBySig(instances);
   const [sortMode, setSortMode] = useState<SortMode>("best");
   const [search, setSearch] = useState("");
+  // Spieler-Report 1.0.2: Sobald die Suche benutzt wird, darf das Modal NICHT mehr bei
+  // `mouseleave` schliessen. Beim Tippen schrumpft die Liste, der Kasten wird kuerzer, und der
+  // Zeiger liegt schlagartig ausserhalb — das Modal verschwand mitten im Suchen ("it just closes
+  // the box and makes you start over"). Wer nur schaut, behaelt das Hover-Popover-Verhalten.
+  const [suchFokus, setSuchFokus] = useState(false);
 
   // Welle VV (Chef: „ausgerüstete Version klar markiert und immer zuoberst"): über ALLE Slots
   // prüfen, ob dieses Basis-Item gerade getragen wird — `equipment[slot]` bleibt bei einer Variante
@@ -338,7 +344,11 @@ export function VariantPouchModal({
   // Komponente teilen.
   return createPortal(
     <div className="modal-overlay pouch-overlay" onClick={onClose}>
-      <div className="modal pouch-modal" onClick={(e) => e.stopPropagation()} onMouseLeave={onClose}>
+      <div
+        className="modal pouch-modal"
+        onClick={(e) => e.stopPropagation()}
+        onMouseLeave={suchFokus || search.length > 0 ? undefined : onClose}
+      >
         <button className="modal-close ds-close-button" onClick={onClose} aria-label={t("pouch.close")} />
 
         <div className="pouch-head">
@@ -384,6 +394,8 @@ export function VariantPouchModal({
               placeholder={t("pouch.searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onFocus={() => setSuchFokus(true)}
+              onBlur={() => setSuchFokus(false)}
             />
             <select
               className="pouch-sort-select"

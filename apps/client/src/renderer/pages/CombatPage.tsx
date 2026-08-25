@@ -1596,12 +1596,15 @@ function Battle({
   onToggleDock,
   recordCollapsed,
   onToggleRecord,
+  onShowEnemyList,
 }: {
   monster: MonsterDef;
   dockCollapsed: boolean;
   onToggleDock: () => void;
   recordCollapsed: boolean;
   onToggleRecord: () => void;
+  /** Spieler-Report 1.0.2: blendet die Gegnerliste ein, OHNE den Kampf zu beenden. */
+  onShowEnemyList: () => void;
 }): JSX.Element {
   // Task #318 §3 (Selector-Migration, Backlog-Punkt aus ui-audit/perf-combat-audit.mjs JSDoc "die
   // vollständige Auflösung ... bleibt bewusst ein eigener, größerer Task"): Battle konsumierte
@@ -2837,6 +2840,17 @@ function Battle({
             <span className="battle-fortress-target">
               {monsterName} · {t("combat.level").replace("{n}", String(monster.level))}
             </span>
+            {/* Spieler-Report 1.0.2: "Would like to be able to queue up more battles if I'm
+                currently in combat." Blendet nur die ANSICHT um — der Kampf laeuft im Spielstand
+                weiter, hier wird nichts angehalten. */}
+            <button
+              type="button"
+              className="battle-queue-more-btn"
+              onClick={onShowEnemyList}
+              title={t("combat.queueMore.hint")}
+            >
+              {t("combat.queueMore")}
+            </button>
           </header>
           {/* ── ARENA25D MOUNT SWITCH (Task #330) — der EINE Umschaltpunkt außerhalb von
               components/arena25d/. `arena25dActive` false (Flag aus/anderer Zone/Dungeon/Prod-
@@ -5378,6 +5392,7 @@ export function CombatPage(): JSX.Element {
   useGameSelector((s) => s.totalTicks);
   const getState = useGetGameState();
   const state = getState()!;
+  const { t, tr } = useI18n();
   // Chef-Auftrag 2026-08-03: Kollaps-Zustand der beiden Kampf-Seitenpanels lebt HIER (dem
   // gemeinsamen Elternteil beider Zweige — Zonen-Übersicht unten UND <Battle> weiter unten teilen
   // sich denselben CombatPage()-Aufruf, kein Remount dazwischen), damit ein Klick in der
@@ -5439,6 +5454,13 @@ export function CombatPage(): JSX.Element {
   // bedient auch die Dungeon-Weihe-Zeremonie (DungeonClearCeremony ist ein App-Level-Overlay über
   // dieser bereits umgeschalteten <MonsterSelect> — der Restore hier läuft VOR ihrem Dismiss).
   const inCombat = !!monster;
+  // Spieler-Report 1.0.2: Gegnerliste TROTZ laufendem Kampf. Reiner Ansichts-Merker — er darf
+  // nicht ueber das Kampfende hinaus stehen bleiben, sonst zeigt die Seite nach dem naechsten
+  // Start weiter die Liste statt der Arena.
+  const [enemyListInCombat, setEnemyListInCombat] = useState(false);
+  useEffect(() => {
+    if (!inCombat) setEnemyListInCombat(false);
+  }, [inCombat]);
   const wasInCombatRef = useRef(false);
   const savedScrollRef = useRef(0);
   const pageRef = useRef<HTMLDivElement | null>(null);
@@ -5486,7 +5508,10 @@ export function CombatPage(): JSX.Element {
   // Aktive Kampf-Ansicht: das Loadout (Equipment/Skills/Focus/Food) ist jetzt Teil des großen
   // Kampf-Containers selbst (siehe Battle → .battle-main → .battle-loadout-col), keine separate
   // Sidebar mehr außerhalb davon. Die Gegner-Auswahl (unten) behält ihre eigene Sidebar.
-  if (monster) {
+  // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes die Gegnerliste zeigen duerfen, um
+  // nachzulegen. Rein lokal — sobald der Kampf endet, faellt die Seite ohnehin auf die Liste
+  // zurueck, und der Merker wird zurueckgesetzt (s. Effekt unten).
+  if (monster && !enemyListInCombat) {
     return (
       <div className="combat-page" ref={pageRef}>
         {/* Bereichs-Erst-Tour (Chef-Auftrag Welle B, 2026-07-13): läuft nur beim allerersten
@@ -5499,6 +5524,7 @@ export function CombatPage(): JSX.Element {
           onToggleDock={toggleDockCollapsed}
           recordCollapsed={recordCollapsed}
           onToggleRecord={toggleRecordCollapsed}
+          onShowEnemyList={() => setEnemyListInCombat(true)}
         />
       </div>
     );
@@ -5507,6 +5533,18 @@ export function CombatPage(): JSX.Element {
   return (
     <div className="combat-page" ref={pageRef}>
       <AreaTourGuide tourKey="combat" steps={COMBAT_TOUR_STEPS} />
+      {/* Der Rueckweg, wenn die Liste WAEHREND eines laufenden Kampfes offen ist (Spieler-Report
+          1.0.2). Steht ueber der Liste, damit niemand glaubt, der Kampf sei vorbei. */}
+      {monster && (
+        <div className="combat-return-bar">
+          <span className="combat-return-note">
+            {t("combat.stillFighting").replace("{name}", tr(monster.name))}
+          </span>
+          <button type="button" className="btn combat-return-btn" onClick={() => setEnemyListInCombat(false)}>
+            {t("combat.backToFight")}
+          </button>
+        </div>
+      )}
       {/* Chef-Auftrag 2026-08-03: eingeklapptes Dock gibt seine Spaltenbreite an .combat-main-area
           ab (s. combat.css .combat-layout.dock-collapsed) — derselbe Zustand wie im Kampf. */}
       <div className={`combat-layout${dockCollapsed ? " dock-collapsed" : ""}`}>

@@ -13,6 +13,7 @@ import type {
 import {
   CAMP_BLESSING_BOOST_CAP,
   CAMP_TOWNHALL_ID,
+  CAMP_BUILD_QUEUE_MAX,
   CAMP_MAX_BUILDING_LEVEL,
   CAMP_MAP_VISUAL_SCALE_MAX_PERCENT,
   CAMP_MAP_VISUAL_SCALE_MIN_PERCENT,
@@ -369,6 +370,126 @@ export function cancelCampBuild(state: GameState, content: ContentDB): boolean {
   return true;
 }
 
+// ──────────────────────────────────────────────────────────────────────
+// Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2)
+//
+// New Haven hat EINEN Bautrupp (encampment-konzept.md Regel 4). Bis hierher hiess das: wer den
+// naechsten Bau nicht verpassen wollte, musste zum richtigen Moment wieder reinschauen. Die
+// Warteschlange nimmt vor, was danach drankommt.
+//
+// KOSTEN werden beim START abgebucht, nicht beim Einreihen — eine Warteschlange, die stundenlang
+// steht, soll kein Material binden, das der Spieler bis dahin noch braucht. Deshalb kostet auch
+// das Entfernen eines Eintrags nichts und erstattet nichts.
+// ──────────────────────────────────────────────────────────────────────
+
+/** Ablehnungsgruende beim Einreihen — stabile Codes, die UI rendert `newhaven.queue.reason.*`. */
+export type CampQueueReason = "ok" | "unknown_building" | "queue_full" | "max_level_planned";
+
+/**
+ * Wie hoch stuende dieses Gebaeude, wenn der laufende Auftrag UND alles bereits Eingereihte fertig
+ * waeren? Genau diese Zahl entscheidet, ob ein weiterer Eintrag ueberhaupt Sinn ergibt — dreimal
+ * dieselbe Huette einzureihen, wenn sie nur drei Stufen hat, ist eine Sackgasse, keine Planung.
+ */
+export function campPlannedLevel(state: GameState, buildingId: string): number {
+  const camp = state.camp;
+  let level = campBuildingLevel(state, buildingId);
+  if (camp?.buildJob?.buildingId === buildingId) level = Math.max(level, camp.buildJob.targetLevel);
+  for (const id of camp?.buildQueue ?? []) if (id === buildingId) level += 1;
+  return level;
+}
+
+/**
+ * Darf `buildingId` eingereiht werden? Bewusst NUR die Pruefungen, die sich bis zum Anlauf nicht
+ * mehr aendern koennen (Katalog-Treffer, Deckel, erreichbare Stufe). Material, Gold, Bauplatz und
+ * Zentralhaus-Kopplung werden NICHT vorab geprueft: Planung heisst, dass man das Fehlende bis
+ * dahin noch beschafft. Der Anlauf prueft es (`campBuildStartReason`), und die UI zeigt beim
+ * wartenden Eintrag an, was ihm heute fehlen wuerde.
+ */
+export function campEnqueueReason(
+  state: GameState,
+  content: ContentDB,
+  buildingId: string,
+): CampQueueReason {
+  const def = campBuildingDef(content, buildingId);
+  if (!def) return "unknown_building";
+  const camp = campOf(state);
+  if (camp.buildQueue.length >= CAMP_BUILD_QUEUE_MAX) return "queue_full";
+  const geplant = campPlannedLevel(state, buildingId);
+  if (geplant >= Math.min(CAMP_MAX_BUILDING_LEVEL, def.levels.length)) return "max_level_planned";
+  return "ok";
+}
+
+/** Haengt ein Gebaeude hinten an die Bauwarteschlange. Kostet nichts (s. Abschnitts-Kopf). */
+export function enqueueCampBuild(
+  state: GameState,
+  content: ContentDB,
+  buildingId: string,
+): CampQueueReason {
+  const reason = campEnqueueReason(state, content, buildingId);
+  if (reason !== "ok") return reason;
+  campOf(state).buildQueue.push(buildingId);
+  return "ok";
+}
+
+/** Nimmt den Eintrag an `index` aus der Warteschlange. false = kein solcher Eintrag. */
+export function dequeueCampBuild(state: GameState, index: number): boolean {
+  const camp = state.camp;
+  if (!camp || !Array.isArray(camp.buildQueue)) return false;
+  if (!Number.isInteger(index) || index < 0 || index >= camp.buildQueue.length) return false;
+  camp.buildQueue.splice(index, 1);
+  return true;
+}
+
+/**
+ * Verschiebt einen Eintrag innerhalb der Warteschlange (Muster `moveQueueItem`, actions.ts).
+ * Beide Indizes werden an die Grenzen geklemmt; gleiche Position ist ein No-op.
+ */
+export function moveCampQueueItem(state: GameState, from: number, to: number): void {
+  const camp = state.camp;
+  if (!camp || !Array.isArray(camp.buildQueue)) return;
+  const n = camp.buildQueue.length;
+  if (n < 2 || !Number.isInteger(from) || !Number.isInteger(to)) return;
+  const a = Math.max(0, Math.min(n - 1, from));
+  const b = Math.max(0, Math.min(n - 1, to));
+  if (a === b) return;
+  const [eintrag] = camp.buildQueue.splice(a, 1);
+  if (eintrag === undefined) return;
+  camp.buildQueue.splice(b, 0, eintrag);
+}
+
+/**
+ * Laesst den naechsten Warteschlangen-Eintrag anlaufen, sobald der Bautrupp frei ist. Liefert den
+ * Grund des Startversuchs zurueck, oder null, wenn es nichts zu tun gab (Bautrupp belegt oder
+ * Warteschlange leer).
+ *
+ * Ein FEHLGESCHLAGENER Start konsumiert den Eintrag NICHT — er bleibt vorn stehen und wartet.
+ * Das ist die bewusste Gegenentscheidung zur Aktions-Warteschlange, die gesperrte Kampf-Eintraege
+ * mit Grund verwirft: dort folgt sofort der naechste Eintrag, hier waere der Bau schlicht weg,
+ * obwohl der Spieler ihn geplant hat. Ist der Eintrag dagegen UNMOEGLICH geworden (Gebaeude aus
+ * dem Katalog verschwunden, Stufe inzwischen anderweitig erreicht), faellt er raus — sonst
+ * blockierte er die Warteschlange fuer immer.
+ *
+ * Aufgerufen nach jedem Bau-Abschluss (`tickCampBuild`) und aus der New-Haven-Seite, wenn der
+ * Bautrupp leer steht. BEWUSST nicht jeden Tick: solange kein Bau fertig wird und der Spieler
+ * nichts tut, aendert sich am Ergebnis nichts, und beim Offline-Aufholen waeren es zehntausende
+ * Laeufe umsonst.
+ */
+export function advanceCampQueue(state: GameState, content: ContentDB): CampBuildStartReason | null {
+  const camp = state.camp;
+  if (!camp || camp.buildJob || !Array.isArray(camp.buildQueue) || camp.buildQueue.length === 0) {
+    return null;
+  }
+  const buildingId = camp.buildQueue[0]!;
+  const reason = startCampBuild(state, content, buildingId);
+  if (reason === "ok") {
+    camp.buildQueue.shift();
+    return "ok";
+  }
+  // Dauerhaft unmoeglich ⇒ raus, sonst steht die Warteschlange fuer immer.
+  if (reason === "unknown_building" || reason === "max_level") camp.buildQueue.shift();
+  return reason;
+}
+
 /**
  * Tick-Integration (aufgerufen aus tick.ts `step()` — VOR dem Kampf-Zweig, damit der Bautrupp
  * auch während Kampf/Betäubung/Offline-Catch-up weiterarbeitet): zählt `remainingMs` um TICK_MS
@@ -391,6 +512,22 @@ export function tickCampBuild(state: GameState): void {
     level: job.targetLevel,
     seq: camp.buildSeq,
   };
+}
+
+/**
+ * Bautrupp-Schritt inklusive Warteschlange (SAVE_VERSION 81): schliesst den laufenden Auftrag ab
+ * (`tickCampBuild`) und laesst danach den naechsten geplanten Bau anlaufen. Genau so haengt die
+ * Kette auch beim Offline-Aufholen durch — jeder Abschluss startet den folgenden Bau.
+ *
+ * Getrennt von `tickCampBuild` gehalten, weil DIESE Funktion den Content braucht (Kosten,
+ * Bauzeit, Katalog) und `tickCampBuild` bewusst rein arithmetisch bleibt.
+ */
+export function tickCampCrew(state: GameState, content: ContentDB): void {
+  const lief = state.camp?.buildJob != null;
+  tickCampBuild(state);
+  // Nur wenn gerade wirklich etwas fertig geworden ist — sonst prueft der Tick bei leerer
+  // Baustelle jedes Mal die Warteschlange durch (offline zehntausende Male umsonst).
+  if (lief && state.camp?.buildJob == null) advanceCampQueue(state, content);
 }
 
 /**

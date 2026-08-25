@@ -13,8 +13,14 @@ import {
   campBuildingDef,
   campBuildingLevel,
   campUsedBuildSlots,
+  advanceCampQueue,
+  campEnqueueReason,
+  campPlannedLevel,
   cancelCampBuild,
   debugCompleteCampBuild,
+  dequeueCampBuild,
+  enqueueCampBuild,
+  moveCampQueueItem,
   startCampBuild,
 } from "./camp";
 
@@ -538,5 +544,129 @@ describe("Determinismus: Offline-Aufholung baut fertig und ist bit-identisch zum
     expect(offline.elapsedMs).toBe(online.elapsedMs);
     expect(offline.character.gold).toBe(online.character.gold);
     expect(offline.bank).toEqual(online.bank);
+  });
+});
+
+// ──────────────────────────────────────────────────────────────────────
+// Bauwarteschlange (SAVE_VERSION 81, Spieler-Report 1.0.2: "New Haven, ability to queue up what
+// would start next after the current project ends")
+// ──────────────────────────────────────────────────────────────────────
+describe("Bauwarteschlange: der Bautrupp arbeitet Geplantes selbständig ab", () => {
+  it("Einreihen kostet nichts — bezahlt wird erst beim Anlauf", () => {
+    const s = unlockedGame();
+    fund(s, CAMP_TOWNHALL_ID, 1);
+    const goldVorher = s.character.gold;
+
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(s.camp.buildQueue).toEqual([CAMP_TOWNHALL_ID]);
+    expect(s.character.gold).toBe(goldVorher); // nichts abgebucht
+    expect(s.camp.buildJob).toBeNull(); // und noch nichts gestartet
+
+    // Erst der Anlauf bucht.
+    expect(advanceCampQueue(s, content)).toBe("ok");
+    expect(s.camp.buildQueue).toEqual([]);
+    expect(s.camp.buildJob?.buildingId).toBe(CAMP_TOWNHALL_ID);
+    expect(s.character.gold).toBeLessThan(goldVorher);
+  });
+
+  it("plant über Stufen hinweg: zweimal einreihen ergibt Stufe I und danach II", () => {
+    const s = unlockedGame();
+    expect(campPlannedLevel(s, CAMP_TOWNHALL_ID)).toBe(0);
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(campPlannedLevel(s, CAMP_TOWNHALL_ID)).toBe(1);
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(campPlannedLevel(s, CAMP_TOWNHALL_ID)).toBe(2);
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(campPlannedLevel(s, CAMP_TOWNHALL_ID)).toBe(CAMP_MAX_BUILDING_LEVEL);
+    // Die vierte Stufe gibt es nicht — einreihen wäre eine Sackgasse, kein Plan.
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("max_level_planned");
+    expect(s.camp.buildQueue).toHaveLength(CAMP_MAX_BUILDING_LEVEL);
+  });
+
+  it("zählt den LAUFENDEN Auftrag in die Planung mit", () => {
+    const s = unlockedGame();
+    fund(s, CAMP_TOWNHALL_ID, 1);
+    expect(startCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(campPlannedLevel(s, CAMP_TOWNHALL_ID)).toBe(1); // der laufende Neubau zählt
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(campPlannedLevel(s, CAMP_TOWNHALL_ID)).toBe(2);
+  });
+
+  it("umsortieren und entfernen", () => {
+    const s = unlockedGame();
+    enqueueCampBuild(s, content, CAMP_TOWNHALL_ID);
+    enqueueCampBuild(s, content, "camp_fishing_hut");
+    enqueueCampBuild(s, content, "camp_sawpit");
+    moveCampQueueItem(s, 2, 0);
+    expect(s.camp.buildQueue).toEqual(["camp_sawpit", CAMP_TOWNHALL_ID, "camp_fishing_hut"]);
+    expect(dequeueCampBuild(s, 1)).toBe(true);
+    expect(s.camp.buildQueue).toEqual(["camp_sawpit", "camp_fishing_hut"]);
+    expect(dequeueCampBuild(s, 9)).toBe(false); // außerhalb → nichts passiert
+    expect(s.camp.buildQueue).toEqual(["camp_sawpit", "camp_fishing_hut"]);
+  });
+
+  it("die Kette läuft über den Tick durch: Bau I fertig ⇒ Bau II startet von selbst", () => {
+    const s = unlockedGame();
+    fund(s, CAMP_TOWNHALL_ID, 1);
+    fund(s, CAMP_TOWNHALL_ID, 2);
+    expect(startCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+
+    const dauer = s.camp.buildJob!.remainingMs;
+    advance(s, content, dauer + TICK_MS);
+
+    expect(campBuildingLevel(s, CAMP_TOWNHALL_ID)).toBe(1); // Stufe I steht
+    expect(s.camp.buildQueue).toEqual([]); // der Plan ist abgerufen
+    expect(s.camp.buildJob?.buildingId).toBe(CAMP_TOWNHALL_ID);
+    expect(s.camp.buildJob?.targetLevel).toBe(2); // und Stufe II läuft schon
+  });
+
+  it("ein nicht bezahlbarer Eintrag WARTET, statt still zu verfallen", () => {
+    const s = unlockedGame();
+    fund(s, CAMP_TOWNHALL_ID, 1);
+    expect(startCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok");
+    expect(enqueueCampBuild(s, content, CAMP_TOWNHALL_ID)).toBe("ok"); // Stufe II, aber nichts bezahlt
+    s.character.gold = 0;
+
+    advance(s, content, s.camp.buildJob!.remainingMs + TICK_MS);
+
+    expect(campBuildingLevel(s, CAMP_TOWNHALL_ID)).toBe(1);
+    expect(s.camp.buildJob).toBeNull(); // Bautrupp frei ...
+    expect(s.camp.buildQueue).toEqual([CAMP_TOWNHALL_ID]); // ... aber der Plan steht noch
+
+    // Sobald bezahlt werden kann, läuft er an.
+    fund(s, CAMP_TOWNHALL_ID, 2);
+    expect(advanceCampQueue(s, content)).toBe("ok");
+    expect(s.camp.buildJob?.targetLevel).toBe(2);
+  });
+
+  it("Determinismus: die Kette läuft offline bit-identisch zu online", () => {
+    const make = (): GameState => {
+      const g = unlockedGame(3);
+      fund(g, CAMP_TOWNHALL_ID, 1);
+      fund(g, CAMP_TOWNHALL_ID, 2);
+      startCampBuild(g, content, CAMP_TOWNHALL_ID);
+      enqueueCampBuild(g, content, CAMP_TOWNHALL_ID);
+      return g;
+    };
+    const offline = make();
+    const online = make();
+
+    const FENSTER = offline.camp.buildJob!.remainingMs + 60_000;
+    advance(offline, content, FENSTER, { offline: true });
+    for (let t = 0; t < FENSTER; t += 1_000) advance(online, content, 1_000);
+
+    expect(offline.camp).toEqual(online.camp);
+    expect(offline.camp.buildJob?.targetLevel).toBe(2); // in beiden Welten läuft der Folgebau
+    expect(offline.character.gold).toBe(online.character.gold);
+    expect(offline.rng.state).toBe(online.rng.state); // der Bautrupp würfelt nie
+    expect(offline.bank).toEqual(online.bank);
+  });
+
+  it("unbekanntes Gebäude wird gar nicht erst eingereiht", () => {
+    const s = unlockedGame();
+    expect(campEnqueueReason(s, content, "camp_gibt_es_nicht")).toBe("unknown_building");
+    expect(enqueueCampBuild(s, content, "camp_gibt_es_nicht")).toBe("unknown_building");
+    expect(s.camp.buildQueue).toEqual([]);
   });
 });

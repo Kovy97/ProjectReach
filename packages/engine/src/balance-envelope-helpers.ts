@@ -45,8 +45,9 @@ import { grantPet, equipPet } from "./pets";
  *  - Suffixe: Pool-Filter wie `suffixPool` (appliesTo ∩ itemTypeTags, ilvl ≥ minIlvl).
  *  - Verzauberungen: appliesTo + Trinity-Klassen-Gate (`trinityGatePasses`) + es MUSS eine
  *    Tier-III-Rune im Item-Katalog existieren (`item.rune`) — sonst ist der Affix nicht anbringbar.
- *    Seit red-team #303 L4 blockiert applyEnchant DUPLIKATE (`duplicate_affix`) ⇒ der Worst Case
- *    belegt die Rarity-Slots mit den TOP-N VERSCHIEDENEN Affixen (Score > 0), je auf Max-Rune-Tier.
+ *    Seit dem Chef-Entscheid vom 25.08.2026 duerfen Runen GESTAPELT werden ⇒ der Worst Case
+ *    belegt ALLE Rarity-Slots mit dem BESTEN legalen Affix (Score > 0) auf Max-Rune-Tier. Das ist
+ *    strikt staerker als die fruehere distinct-Bestenliste und damit die richtige obere Schranke.
  *  - Buffs: seit red-team #303 L3 verdrängt `applyConsumableBuff` pro `buff.category` (max. 1 aktiv
  *    je Kategorie) ⇒ `allBuffs: true` aktiviert den BESTEN Ziel-Stat-Buff JE KATEGORIE plus alle
  *    kategorielosen Buff-Items (die stapeln weiter frei — heute nur die 2–4-s-HoT-Heiltränke);
@@ -438,9 +439,12 @@ export function buildBisCharacter(
       bestSuffix &&
       scoreContribution(target, suffixContribution(content, bestSuffix.id, ilvl), style) > 0;
 
-    // Verzauberung: TOP-N VERSCHIEDENE legale Affixe (Score > 0) auf Max-Rune-Tier, N = Rarity-
-    // Slots. Duplikate sind seit red-team #303 L4 blockiert (`duplicate_affix` in applyEnchant) —
-    // der legale Worst Case ist die distinct-Bestenliste, nicht mehr der duplizierte Top-Affix.
+    // Verzauberung: der BESTE legale Affix (Score > 0) auf Max-Rune-Tier, N-mal wiederholt,
+    // N = Rarity-Slots. Seit dem Chef-Entscheid vom 25.08.2026 duerfen Runen gestapelt werden
+    // (die duplicate_affix-Sperre aus red-team #303 L4 ist gefallen), also ist der duplizierte
+    // Top-Affix der legale Worst Case — strikt staerker als die frueher genutzte distinct-Liste.
+    // Stat-Boni summiert `instanceBonusDelta` dabei wirklich N-mal; nur Waffen-Procs entdoppelt
+    // `effectiveInstanceWeaponEffects` (fuer die Cap-Envelopes irrelevant, die messen Stats).
     const legalAffixes = affixDefs.filter((d) => {
       const tier = runeTierByAffix.get(d.id) ?? 0;
       return tier > 0 && affixAppliesToItem(d.appliesTo, base) && trinityGatePasses(d, tier, base);
@@ -453,7 +457,8 @@ export function buildBisCharacter(
       }))
       .filter((x) => x.score > 0)
       .sort((x, y) => (y.score !== x.score ? y.score - x.score : x.d.id < y.d.id ? -1 : 1))
-      .slice(0, enchantSlotsFor(getItemRarity(base)));
+      .slice(0, 1)
+      .flatMap((x) => Array.from({ length: enchantSlotsFor(getItemRarity(base)) }, () => x));
     const affixOk = rankedAffixes.length > 0;
 
     if (!suffixOk && !affixOk) continue;

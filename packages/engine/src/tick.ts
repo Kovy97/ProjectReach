@@ -10,7 +10,7 @@ import { masteryPoolBonus } from "./mastery";
 import { combatStep, killCreditMonsterId, stopCombat, tickPlayerRegen } from "./combat";
 import { tickEliteSpawns } from "./elites";
 import { buffGatherXpMult, buffGatherYieldBonus, tickBuffs } from "./consumable";
-import { campBoostCached, campShrineBonus, tickCampBuild } from "./camp";
+import { campBoostCached, campShrineBonus, tickCampCrew } from "./camp";
 import { tickCampRefine } from "./refine";
 import { checkAchievements } from "./achievements";
 import { itemCount, removeItem } from "./inventory";
@@ -361,7 +361,10 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
   // kämpft, betäubt ist oder offline war (Offline-Catch-up läuft über denselben Pfad ⇒
   // offline==online bit-identisch). Rein arithmetisch, KEIN RNG — alle bestehenden
   // Determinismus-Fixtures bleiben bit-identisch (ohne Bau-Auftrag ein No-op).
-  tickCampBuild(state);
+  // Seit SAVE_VERSION 81 laeuft nach einem Abschluss der naechste GEPLANTE Bau an
+  // (Bauwarteschlange, Spieler-Report 1.0.2) — deshalb tickCampCrew statt tickCampBuild.
+  // Ebenfalls rein deterministisch: der Start bucht Kosten und setzt remainingMs, kein RNG.
+  tickCampCrew(state, content);
 
   // Schrein der Stillen — CHANCE-Segen (Task #359): der einzige `blessingChance`-Konsument ist der
   // Kill-Pfad in combat.ts (Sperrzone dieses Tasks). Statt dessen Signatur anzufassen, setzt der

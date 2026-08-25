@@ -44,21 +44,16 @@ import {
  *  - `class_mismatch`   Trinity-Rune auf einem Teil ohne den passenden Trinity-Stat (§6.2-Klassen-Gate):
  *                       Schutz nur auf Platte (armorRating>0), Ausweich nur auf Leder (evasionRating>0),
  *                       Ward nur auf Stoff (wardCapacity>0), Block nur auf Schild (blockChance>0).
- *  - `duplicate_affix`  Dieselbe Affix-Identität (affixId, tier-unabhängig) sitzt bereits auf der
- *                       Instanz (red-team 2026-07-09 L4: kein Duplikat-Runen-Stacking mehr; für ein
- *                       Tier-Upgrade erst den alten Affix disenchanten). Bestehende Duplikat-
- *                       Instanzen aus Alt-Saves bleiben GEDULDET (laden + wirken via
- *                       instanceBonusDelta weiter) — nur NEUE Anwendungen sind blockiert.
  *  - `no_affix_slots`   Das Item hat für seine Rarity keinen freien Affix-Slot mehr.
  *  - `no_affix`         Die Rune trägt keinen Affix bzw. der Ziel-Affix-Index existiert nicht.
  *  - `not_enchantable`  Kein verzauberbares Equipment (oder kein Platz, um es zur Instanz zu promoten).
- *  - `not_found`        Rune/Item/Instanz am referenzierten Ort nicht vorhanden.
+ *  - `not_found`        Rune/Item/Instanz am referenzierten Ort nicht vorhanden. Die Rune wird
+ *                       in Inventar UND Lager gesucht (Spieler-Report 1.0.2).
  */
 export type EnchantReason =
   | "not_enough_gold"
   | "affix_mismatch"
   | "class_mismatch"
-  | "duplicate_affix"
   | "no_affix_slots"
   | "no_affix"
   | "not_enchantable"
@@ -189,7 +184,12 @@ export function applyEnchant(
 ): EnchantResult {
   const ra = runeAffix(content, runeId);
   if (!ra) return { ok: false, reason: "no_affix" };
-  if (itemCount(state.inventory, runeId) < 1) return { ok: false, reason: "not_found" };
+  // Runen zaehlen aus Inventar UND Lager (Spieler-Report 1.0.2: "Allow Enchantment Runes to be
+  // applied from Storage and not limited to only inventory"). Runen sind Sammelware — wer viele
+  // Sorten besitzt, lagert sie ein, und musste sie bisher fuer jede Verzauberung erst herausholen.
+  const imInventar = itemCount(state.inventory, runeId) >= 1;
+  const imLager = (state.bank[runeId] ?? 0) >= 1;
+  if (!imInventar && !imLager) return { ok: false, reason: "not_found" };
 
   const resolved = resolveOrPromote(state, content, ref);
   if ("error" in resolved) return { ok: false, reason: resolved.error };
@@ -208,13 +208,21 @@ export function applyEnchant(
     return rollback(state, content, ref, instance, "class_mismatch");
   }
 
-  // Duplikat-Sperre (red-team L4): dieselbe Affix-Identität (affixId, TIER-unabhängig — ein
-  // Tier-Upgrade läuft über disenchant + neu anbringen) darf nicht mehrfach auf einer Instanz
-  // sitzen. VOR den Kosten geprüft: der Fehlversuch kostet weder Rune noch Gold. Alt-Save-
-  // Instanzen mit bestehenden Duplikaten bleiben geduldet (nur NEUE Anwendungen blockiert).
-  if (instance.affixes.some((a) => a.affixId === ra.affixId)) {
-    return rollback(state, content, ref, instance, "duplicate_affix");
-  }
+  // Duplikat-Sperre ENTFERNT (Chef-Entscheid 25.08.2026, aus Spieler-Feedback): dieselbe Rune
+  // darf jetzt mehrfach auf eine Instanz — drei Slots, drei gleiche Runen, dreifacher Bonus.
+  // Sie kam 2026-07-09 als red-team-Vorsichtsmassnahme (L4, Task #303), ohne dass der Kommentar
+  // einen konkreten Exploit nannte. Der Spieler hat sie als Fehler gemeldet ("armor have 3
+  // slots, but you can only put in 1 enchantment rune") — er hatte recht.
+  //
+  // Vor dem Oeffnen beide Wirkketten geprueft:
+  //  - Stat-Boni summiert `instanceBonusDelta` ueber alle Affixe. Dreifach ist gewollt: das ist
+  //    ein Build-Entscheid ("alles auf Staerke") gegen drei verschiedene kleinere Boni.
+  //  - Waffeneffekte entdoppelt `effectiveInstanceWeaponEffects` (shared) bereits ueber ein
+  //    `seen`-Set (Typ|Chance|Staerke|Dauer|Schwelle|Stapel). Drei gleiche Runen geben EINEN
+  //    Proc, nicht drei — die gefaehrliche Seite war nie offen. Verschiedene TIERS derselben
+  //    Rune ergeben zwar zwei Procs, aber `applyEnemyStatus` nimmt pro Status-Typ das Maximum
+  //    von Staerke und Dauer: gestapelt wird dann nur die Trefferchance, nicht der Schaden.
+  // Das Slot-Limit nach Rarity bleibt die einzige Mengenschranke.
 
   // Slot-Limit nach Rarity.
   if (instance.affixes.length >= enchantSlotsFor(rarity)) {
@@ -227,7 +235,14 @@ export function applyEnchant(
     return rollback(state, content, ref, instance, "not_enough_gold");
   }
 
-  removeItem(state.inventory, runeId, 1);
+  // Inventar zuerst: wer die Rune dabei hat, verbraucht die, und der Lagerbestand bleibt liegen.
+  if (imInventar) {
+    removeItem(state.inventory, runeId, 1);
+  } else {
+    const rest = (state.bank[runeId] ?? 0) - 1;
+    if (rest > 0) state.bank[runeId] = rest;
+    else delete state.bank[runeId]; // kein 0-qty-Geist — der wuerde einen Lager-Slot belegen
+  }
   state.character.gold -= cost;
   // Gold-Ausgabe buchen (Sweep6 T10 #3): wie shop.ts/bank.ts — sonst unterzählen
   // `gold_spent`-Achievements/Statistik, sobald Enchanting Gold frisst.
@@ -404,7 +419,7 @@ export interface EnchantPreview {
    *  Anzeige-Prosa lokalisiert ui-dev über `affixEffectParts` (§8.4/§8.6); dies ist die neutrale Quelle. */
   effectParts: string[];
   canApply: boolean;
-  blockedReason?: "slot_full" | "class_mismatch" | "wrong_item_type" | "duplicate_affix";
+  blockedReason?: "slot_full" | "class_mismatch" | "wrong_item_type";
 }
 
 const emptyTrinity = (): TrinityStats => ({
@@ -557,12 +572,6 @@ export function enchantPreview(
   } else if (def && !trinityGatePasses(def, ra.tier, base)) {
     canApply = false;
     blockedReason = "class_mismatch";
-  } else if (existingAffixes.some((a, i) => a.affixId === ra.affixId && !(isOverride && i === overrideSlotIndex))) {
-    // Duplikat-Sperre (red-team L4, Spiegel von applyEnchant): dieselbe Affix-Identität sitzt schon
-    // auf der Instanz. Beim Slot-Override zählt der ÜBERSCHRIEBENE Slot nicht mit (dieselbe Rune in
-    // denselben Slot erneut zu legen ist kein Duplikat — after == before, aber legal darstellbar).
-    canApply = false;
-    blockedReason = "duplicate_affix";
   } else if (!isOverride && existingAffixes.length >= enchantSlotsFor(getItemRarity(base))) {
     canApply = false;
     blockedReason = "slot_full";

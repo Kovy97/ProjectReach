@@ -91,6 +91,109 @@
    dort ein handtellergroßes Loch zwischen Wirkung und Kosten. Die Bodenkante franst jetzt leicht
    aus, dafür steht überall Inhalt statt Leere — mit dem 2-Zeilen-Klammer auf dem Flavor-Text
    (s. .nh-card-flavor) bleibt der Versatz zwischen normalen Karten klein. */
+/* ── Bauwarteschlange (Spieler-Report 1.0.2) ─────────────────────────────────
+   Der Streifen steht ueber BEIDEN Ansichten (Karte und Liste), weil der Plan zu beiden gehoert.
+   Bewusst flach und schmal — er ist eine Merkliste, kein zweites Bedienfeld: die Eintraege
+   fließen nebeneinander und brechen um, statt eine hohe Spalte zu bilden. */
+.nh-queue-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-bottom: 10px;
+  padding: 8px 14px;
+  border: 1px solid rgba(179, 92, 34, 0.45);
+  border-left: 3px solid var(--gold, #d6a04a);
+  background: rgba(30, 18, 10, 0.55);
+}
+
+.nh-queue-strip-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--gold, #d6a04a);
+}
+
+.nh-queue-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nh-queue-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid rgba(179, 92, 34, 0.34);
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 13.5px;
+}
+
+.nh-queue-pos {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Der Name darf umbrechen statt abzuschneiden — "Kraeuterkundliche Trockenkammer II" passt in
+   keine feste Breite, und ein abgeschnittener Plan ist kein Plan. */
+.nh-queue-name {
+  min-width: 0;
+  color: var(--text);
+}
+
+.nh-queue-actions {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.nh-queue-mini {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  line-height: 1;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(179, 92, 34, 0.34);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.nh-queue-mini:hover:not(:disabled) {
+  color: var(--gold);
+  border-color: rgba(214, 160, 74, 0.7);
+}
+
+.nh-queue-mini:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.nh-queue-remove:hover:not(:disabled) {
+  color: #e07a5a;
+  border-color: rgba(224, 122, 90, 0.7);
+}
+
+/* Warum der erste Eintrag noch nicht laeuft — fast immer fehlendes Material. */
+.nh-queue-waiting {
+  flex: 1 1 100%;
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* Der Einreih-Knopf auf der Gebaeudekarte: leiser als der Bau-Knopf, denn er ist der zweite Weg. */
+.nh-queue-btn {
+  margin-top: 6px;
+  filter: saturate(0.72);
+}
+
 .nh-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
