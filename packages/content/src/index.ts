@@ -4997,7 +4997,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
       damageMin: 1.5, damageMax: 2.4, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
-      weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
+      weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.1, durationMs: 0 } /* Chef-Test 25.08.: luckyStrike (+Gold von Kills) ist tot, Monster droppen kein Gold; Beutechance ist der lebendige Nachbar */,
       requirements: { ranged: 5 }, value: 45, rarity: "common", // fix 2026-07 sweep2: was iron_arrow (Lv1 chicken drops copper_arrow, not iron) — level-passendes, nutzbares Bogen/Pfeil-Paar
     },
     hedgewitch_twig: {
@@ -5055,7 +5055,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "cape",
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
-      weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
+      weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.1, durationMs: 0 } /* Chef-Test 25.08.: luckyStrike (+Gold von Kills) ist tot, Monster droppen kein Gold; Beutechance ist der lebendige Nachbar */,
       modifiers: { con: 2 }, skillBoost: { defence: 1 },
       value: 50, rarity: "common",
     },
@@ -5115,7 +5115,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
       damageMin: 2.5, damageMax: 3.8, attackIntervalMs: 2650, // Combat-Feel v2 #5: Shortbow-Tempo 2850→2650 (Sustain/Tempo-Identität vs. Longbow-Burst)
       modifiers: { lck: 2 },
-      weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 },
+      weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.1, durationMs: 0 } /* Chef-Test 25.08.: luckyStrike (+Gold von Kills) ist tot, Monster droppen kein Gold; Beutechance ist der lebendige Nachbar */,
       requirements: { ranged: 20 }, value: 90, rarity: "common",
     },
     goblin_buckler: {
@@ -5172,7 +5172,7 @@ export const content: ContentDB = {
       value: 200, rarity: "rare",
     },
     cutpurse_ring: {
-      weaponEffect: { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
+      weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.1, durationMs: 0 } /* Chef-Test 25.08.: luckyStrike (+Gold von Kills) ist tot, Monster droppen kein Gold; Beutechance ist der lebendige Nachbar */, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "cutpurse_ring", name: { en: "Cutpurse Ring", de: "Beutelschneider-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
       skillBoost: { attack: 1 },
@@ -18132,9 +18132,10 @@ export const content: ContentDB = {
       id: "affix_tallyman",
       prefix: { en: "Tallied", de: "Gezählt" },
       bonusByTier: [{}, {}, {}, {}],
-      // luckyStrike: +15 % Gold aus Tötungen (Parität zur Glücksklinge). Benannt nach Voss dem
-      // Zähler, dem Gewölbe-Verwalter der Glutfeste.
-      weaponEffectByTier: [undefined, undefined, undefined, { type: "luckyStrike", chance: 1, magnitude: 0.15, durationMs: 0 }],
+      // everyNth 5/0,5: jeder 5. Treffer +50 % (≈ +10 % DPS). Urspruenglich luckyStrike (+15 % Gold aus
+      // Toetungen) — tot, seit Monster kein Gold mehr droppen (Chef-Test 25.08.). Benannt nach Voss dem
+      // Zähler, dem Gewölbe-Verwalter der Glutfeste: der Zaehler zaehlt jetzt Treffer.
+      weaponEffectByTier: [undefined, undefined, undefined, { type: "everyNth", chance: 1, magnitude: 0.5, durationMs: 0, stacks: 5 } /* Chef-Test 25.08.: luckyStrike ist tot (kein Monster-Gold). Der Zaehler zaehlt jetzt Treffer: jeder 5. traegt +50 % */],
       appliesTo: ["jewelry"],
     },
     affix_restless: {

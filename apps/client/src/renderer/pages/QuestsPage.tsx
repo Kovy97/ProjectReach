@@ -554,9 +554,13 @@ function RewardsShopPanel({
         </div>
       ) : (
         <div className="quest-shelf-list">
+          {/* Chef 25.08.2026 (Test 1.1.0): gesperrte Regale sind GAR NICHT einsehbar. Der erste
+              Entwurf zeigte sie ausgegraut mit "Erfordert Kapitel" — der Chef will die Ware erst
+              sehen, wenn sie erreichbar ist. Ein Satz unten sagt nur, DASS mehr kommt. */}
           {shelves.map((shelf) => {
             const offers = offersByShelf.get(shelf.id) ?? [];
             if (offers.length === 0) return null;
+            if (!openShelfIds.includes(shelf.id)) return null;
             return (
               <TokenShopShelfSection
                 key={shelf.id}
@@ -572,6 +576,9 @@ function RewardsShopPanel({
               />
             );
           })}
+          {shelves.some((sh) => !openShelfIds.includes(sh.id) && (offersByShelf.get(sh.id)?.length ?? 0) > 0) && (
+            <p className="quest-shelf-more muted">{t("quests.shop.moreShelves")}</p>
+          )}
         </div>
       )}
     </div>

@@ -1821,6 +1821,33 @@ body .item-cell.rarity-godly {
   pointer-events: none;
 }
 /* Glut-Stern-Icon als Suffix-/Instanz-Marker — MUSS klein bleiben (Quelle ist 128px). */
+/* Verbotssymbol (Chef-Test 25.08.2026): Ausrüstung, deren Skill-Anforderung der Spieler noch nicht
+   erfüllt, trägt unten LINKS einen roten Kreis mit Schrägstrich — reines CSS, kein Asset, damit es
+   bei 14 px scharf bleibt. Kollisionsfrei: Stern oben links, NEU oben rechts, Menge unten rechts. */
+.item-cell-req-badge {
+  position: absolute;
+  bottom: 8%;
+  left: 8%;
+  width: 15px;
+  height: 15px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2.5px solid #e04a35;
+  background: rgba(24, 10, 8, 0.88);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 0 5px rgba(224, 74, 53, 0.55);
+  pointer-events: none;
+  z-index: 3;
+}
+.item-cell-req-badge::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.5px;
+  height: 9px;
+  background: #e04a35;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
 .item-cell-inst-badge-img {
   width: 15px;
   height: 15px;

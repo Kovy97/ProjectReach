@@ -781,10 +781,14 @@
 
 .sb-nav::after {
   content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
+  /* Chef 25.08.2026 (Test 1.1.0): "ein Schatten, der nicht verschwindet, wenn ich runterscrolle;
+     er bleibt zwischen Thieving und Crafting haengen." position:absolute sitzt im scrollenden
+     Inhalt und faehrt mit. sticky am unteren Rand des Scroll-Containers bleibt sichtbar am Rand;
+     der negative margin nimmt ihm die eigene Hoehe, damit die Liste nicht laenger wird. */
+  position: sticky;
+  display: block;
   bottom: 0;
+  margin-top: -26px;
   height: 26px;
   pointer-events: none;
   opacity: 0;

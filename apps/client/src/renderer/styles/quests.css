@@ -1331,6 +1331,22 @@
   scrollbar-gutter: stable;
 }
 
+/* Chef 25.08.2026 (Test 1.1.0): "Der Reward-Shop ist nicht scrollbar." Die Regal-Liste kam mit
+   den sechs Regalen neu dazu, aber nur das alte .quest-shop-grid hatte den Scroll-Vertrag der
+   Contract-Wall (Elternteil clippt mit overflow hidden, das Kind muss selbst scrollen). */
+.quests-contract-wall .quest-shelf-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-right: 4px;
+}
+.quests-contract-wall .quest-shelf-more {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-style: italic;
+}
+
 .quests-contract-wall .quest-shop-offer {
   min-height: 250px;
   border: clamp(8px, 0.58vw, 12px) solid transparent;

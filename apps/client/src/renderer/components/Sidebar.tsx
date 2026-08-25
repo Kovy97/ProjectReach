@@ -100,12 +100,20 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
   const checkNavScrollable = (): void => {
     const el = navRef.current;
     if (!el) return;
-    setNavScrollable(el.scrollHeight > el.clientHeight + 1);
+    // Nur solange unten wirklich noch etwas folgt: am Ende der Liste verschwindet der Verlauf
+    // (Chef 25.08.2026: er blieb sonst dauerhaft stehen).
+    const rest = el.scrollHeight - el.clientHeight - el.scrollTop;
+    setNavScrollable(rest > 2);
   };
   useLayoutEffect(checkNavScrollable);
   useEffect(() => {
+    const el = navRef.current;
     window.addEventListener("resize", checkNavScrollable);
-    return () => window.removeEventListener("resize", checkNavScrollable);
+    el?.addEventListener("scroll", checkNavScrollable, { passive: true });
+    return () => {
+      window.removeEventListener("resize", checkNavScrollable);
+      el?.removeEventListener("scroll", checkNavScrollable);
+    };
   }, []);
 
   // Chef-Entscheid 24.08.: Beschriftungen bleiben EINZEILIG und fuellen die verfuegbare

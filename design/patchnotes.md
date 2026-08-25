@@ -234,6 +234,33 @@ fits or signals that it scrolls.
 unter dem Cursor; jetzt dieselben Tooltips wie bei den Charakter-Werten. / EN: Queue tooltips no
 longer vanish under the cursor.
 
+**Belohnungsladen scrollt, gesperrte Regale bleiben unsichtbar (Chef-Test 25.08.):** DE: Die
+Regalliste ließ sich nicht scrollen, und Regale späterer Kapitel waren schon zu sehen. Jetzt
+scrollt die Liste, und gesperrte Regale erscheinen erst mit ihrem Kapitel; eine Zeile verrät nur,
+dass weitere folgen. / EN: The reward shop scrolls again, and shelves you have not unlocked stay
+hidden until their chapter.
+
+**Sidebar-Schatten klebt am unteren Rand (Chef-Test 25.08.):** DE: Der Verlauf, der „hier geht es
+weiter" sagt, scrollte mit und blieb zwischen Diebstahl und Handwerk hängen. Jetzt sitzt er am
+unteren Rand und verschwindet, sobald das Ende erreicht ist. / EN: The sidebar scroll hint now
+stays at the bottom edge and fades once you reach the end.
+
+**Verbotssymbol an Ausrüstung ohne erfüllte Anforderung (Chef-Test 25.08.):** DE: Im Inventar und
+im Lager trägt Ausrüstung, deren Stufe noch fehlt, unten links einen roten Kreis mit Schrägstrich.
+Bisher stand das nur im Tooltip. / EN: Gear you cannot equip yet shows a small red prohibition
+mark in the bottom left of its cell.
+
+**Toter Effekt „Gold von besiegten Gegnern" ersetzt (Chef-Test 25.08.):** DE: Der Zerschlissene
+Feldumhang, die Bauernschleuder, der Gestohlene Kurzbogen und der Kriegsbanner-Umhang versprachen
+mehr Gold von Gegnern, aber Gegner lassen seit Juli kein Gold fallen. Sie geben jetzt +10 %
+Beutechance. Die Rune des Zählers (Tier IV, Schmuck) hatte denselben Effekt und zählt jetzt Treffer:
+jeder fünfte trägt +50 % Schaden. / EN: Four items and the Tallyman rune promised gold from
+kills, which no longer exists; they now grant loot chance (items) or every fifth hit +50 % (rune).
+
+*Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
+(`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
+Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*
+
 ---
 
 ## 1.0.2 — RELEASED (Build 24906831, 2026-08-25, `setlive` leer)

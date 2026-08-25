@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { content } from "@hearthforge/content";
+import { meetsRequirements } from "@hearthforge/engine";
 import type { ItemInstance } from "@hearthforge/shared";
+import { useGameStateMaybe } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
 import { getUiIcon } from "../uiIcons";
@@ -87,6 +89,7 @@ export function ItemCell({
 }: ItemCellProps): JSX.Element | null {
   const { t, tr } = useI18n();
   const tooltip = useItemTooltip();
+  const state = useGameStateMaybe();
   const timerRef = useRef<number | null>(null);
   const posRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   // Einmaliges kurzes Funkeln beim ersten Erscheinen dieser Zelle in „NEU"-Zustand (danach nur
@@ -97,6 +100,12 @@ export function ItemCell({
   const item = content.items[itemId];
   if (!item) return null;
   const img = getItemImage(itemId);
+  // Chef-Test 25.08.2026: "Wenn Requirements fehlen für ein Item im Inventar oder Bank, sollte
+  // unten links ein Verbotssymbol sein." Bisher stand die Anforderung nur rot im Tooltip; wer im
+  // Lager nach tragbarer Ausrüstung suchte, musste jedes Teil einzeln anfassen. Unten LINKS ist die
+  // freie Ecke (Stern oben links, NEU-Punkt oben rechts, Menge unten rechts). Nur Ausrüstung mit
+  // Anforderungen, und nur mit Spielstand im Kontext (Zeremonien/Vorschauen ohne State: kein Badge).
+  const gesperrt = state !== null && item.type === "equipment" && !!item.requirements && !meetsRequirements(state, item);
 
   const clearTimer = (): void => {
     if (timerRef.current !== null) {
@@ -205,6 +214,7 @@ export function ItemCell({
             : "✦"}
         </span>
       )}
+      {gesperrt && <span className="item-cell-req-badge" aria-hidden="true" />}
       {newBadge && (
         <span className="item-cell-new-badge" title={t("inv.newBadge.title")}>
           {sparkle && <span className="item-cell-new-sparkle" aria-hidden="true" />}

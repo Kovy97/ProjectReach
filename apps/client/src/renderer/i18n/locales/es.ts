@@ -124,6 +124,7 @@ export const es: Record<string, string> = {
     "quests.shop.notEnough": "Fichas insuficientes",
     "quests.shop.noSpace": "No hay espacio suficiente en el inventario: haz sitio e inténtalo de nuevo.",
     "quests.shop.shelfLocked": "Este estante está bloqueado: completa el capítulo anterior para desbloquearlo.",
+    "quests.shop.moreShelves": "Más estantes se abren con la crónica.",
     "quests.contracts.lines": "Líneas de encargos",
     "quests.contracts.allClaimed": "Todo encargo ha sido cumplido. El tablón está vacío — por ahora.",
     "nav.totalLevel": "Nivel total",

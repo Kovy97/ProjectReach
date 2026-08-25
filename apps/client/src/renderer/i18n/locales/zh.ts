@@ -126,6 +126,7 @@ export const zh: Record<string, string> = {
     "quests.shop.notEnough": "代币不足",
     "quests.shop.noSpace": "背包空间不足——请腾出空间后再试。",
     "quests.shop.shelfLocked": "此货架已锁定——完成上一章节以解锁。",
+    "quests.shop.moreShelves": "随着编年史推进会开放更多货架。",
     "quests.contracts.lines": "任务线",
     "quests.contracts.allClaimed": "所有契约均已完成。任务板暂时空空如也。",
     "nav.totalLevel": "总等级",
