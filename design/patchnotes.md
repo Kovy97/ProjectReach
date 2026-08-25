@@ -29,6 +29,18 @@ erreicht jetzt den Ausweich-Deckel ab CL 60 und den Mitigations-Deckel bei CL 90
 Ward-Pool CL 90 steigt 780 → 1180, als Beobachtungspunkt im Suitenkopf notiert. Enchant 30 Tests,
 Hülle 31 grün.*
 
+**Kochen: Portionen statt Bissen (Rezension #11):** DE: Viele Gerichte brauchten 10 bis 24 Sekunden
+und bis zu sechs Zutaten für einen Bissen, der kaum mehr heilte als ein einfacher Fisch. Sechzehn
+Gerichte liefern jetzt 2 bis 4 Portionen je Kochvorgang, zehn Grundspeisen heilen einen Punkt mehr,
+und je Kampfstil gibt es Gerichte mit spürbarer Zutat: Rüstung für Nahkampf, Ausweichen für
+Fernkampf, Schild für Magie, Lebensregeneration für Tanks. / EN: Sixteen dishes now yield two to
+four portions per cook, and each combat style has dishes with a matching bonus.
+
+*Dev-Notiz: Dauer und XP je Rezept unverändert (Sim-XP identisch), Wert je Portion geteilt.
+Balance-Hülle: harte Deckel halten, sechs Mess-Pins neu (Tank +12 armorRating, Ward +30). Wächter
+food-portions.test.ts (94). Offen: zwei Gerichte für die Fernkampf/Magie-Lücke L20 bis L47,
+cook_beef-XP-Kuriosität (7 statt 6).*
+
 **Anbau: Folgesorte je Beet (Rezension #12):** DE: Auf einem wachsenden Beet lässt sich wählen,
 was danach gesät wird („Danach säen …“, Chip „→ Grimmkorn“). Der Plan gilt einmal, danach läuft das
 Beet mit der neuen Sorte weiter. Fehlt die Saat, bleibt das Beet leer und der Plan wartet mit

@@ -117,7 +117,8 @@ export const content: ContentDB = {
     cooked_salmon: {
       id: "cooked_salmon", name: { en: "Grilled Salmon", de: "Gegrillter Lachs" },
       // speisen-heilwerte-spec Teil 3: healPct 0.11→0.08
-      type: "consumable", stackable: true, icon: "🐠", healAmount: 9, healPct: 0.08, value: 40,
+      // #p11 Regel 1 (Delle L28-L48, +1 flach; Chef-GO 25.08.2026 #p11): healAmount 9→10.
+      type: "consumable", stackable: true, icon: "🐠", healAmount: 10, healPct: 0.08, value: 40,
     },
     cooked_lobster: {
       id: "cooked_lobster", name: { en: "Boiled Lobster", de: "Gekochter Hummer" },
@@ -136,8 +137,10 @@ export const content: ContentDB = {
     },
     cooked_murk_perch: { id: "cooked_murk_perch", name: { en: "Fried Murk Perch", de: "Gebratener Sumpfbarsch" }, type: "consumable", stackable: true, healAmount: 3, healPct: 0.045, value: 7 }, // speisen-heilwerte-spec Teil 3: healPct 0.12→0.045
     cooked_ghostfin_pike: { id: "cooked_ghostfin_pike", name: { en: "Roasted Ghostfin Pike", de: "Gerösteter Geisterflosser-Hecht" }, type: "consumable", stackable: true, healAmount: 6, healPct: 0.065, value: 25 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.065
-    cooked_ironscale_bass: { id: "cooked_ironscale_bass", name: { en: "Grilled Ironscale Bass", de: "Gegrillter Eisenschuppen-Barsch" }, type: "consumable", stackable: true, healAmount: 8, healPct: 0.075, rarity: "common", value: 33 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.075
-    cooked_duskfin_carp: { id: "cooked_duskfin_carp", name: { en: "Steamed Duskfin Carp", de: "Gedämpfter Dämmerflossen-Karpfen" }, type: "consumable", stackable: true, healAmount: 11, healPct: 0.085, rarity: "rare", value: 52 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.085
+    // #p11 Regel 1 (Delle L28-L48, +1 flach; Chef-GO 25.08.2026 #p11): healAmount 8→9.
+    cooked_ironscale_bass: { id: "cooked_ironscale_bass", name: { en: "Grilled Ironscale Bass", de: "Gegrillter Eisenschuppen-Barsch" }, type: "consumable", stackable: true, healAmount: 9, healPct: 0.075, rarity: "common", value: 33 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.075
+    // #p11 Regel 1 (Delle L28-L48, +1 flach; Chef-GO 25.08.2026 #p11): healAmount 11→12.
+    cooked_duskfin_carp: { id: "cooked_duskfin_carp", name: { en: "Steamed Duskfin Carp", de: "Gedämpfter Dämmerflossen-Karpfen" }, type: "consumable", stackable: true, healAmount: 12, healPct: 0.085, rarity: "rare", value: 52 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.085
     cooked_bloodfang_eel: { id: "cooked_bloodfang_eel", name: { en: "Seared Bloodfang Eel", de: "Angebratener Blutfang-Aal" }, type: "consumable", stackable: true, healAmount: 17, healPct: 0.105, rarity: "common", value: 95 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.105
     cooked_wraithscale: { id: "cooked_wraithscale", name: { en: "Smoked Wraithscale", de: "Geräucherter Geisterschupper" }, type: "consumable", stackable: true, healAmount: 24, healPct: 0.125, rarity: "common", value: 165 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.125
     cooked_abyssal_crawler: { id: "cooked_abyssal_crawler", name: { en: "Braised Abyssal Crawler", de: "Geschmorter Abgrund-Kriecher" }, type: "consumable", stackable: true, healAmount: 35, healPct: 0.14, rarity: "common", value: 300 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.14
@@ -152,92 +155,126 @@ export const content: ContentDB = {
     marshroot_chowder: {
       id: "marshroot_chowder",
       name: { en: "Marshroot Chowder", de: "Sumpfwurzel-Eintopf" },
-      type: "consumable", stackable: true, icon: "🍲", rarity: "rare", value: 40,
+      type: "consumable", stackable: true, icon: "🍲", rarity: "rare",
+      // Chef-GO 25.08.2026 (1.1.0), design/rezension-patch-2026-08-25.html #p11 Regel 2: das Rezept
+      // liefert jetzt 4 Portionen (loot.min/max, cook_marshroot_chowder), value durch Portionen geteilt
+      // (40→10) — Gold/Koch-Stunde bleibt gleich, healAmount/healPct bleiben pro Portion unverändert.
+      value: 10,
       // speisen-heilwerte-spec Teil 3: healPct 0.11→0.07
       healAmount: 6, healPct: 0.07,
-      buff: { category: "food", durationMs: 90_000, bonus: {}, modifiers: { con: 2 } },
+      // #p11 Regel 2 (Mindestdauer 180s, T1/T2): Buff-Dauer 90s→180s, Attribut-Buff unverändert
+      // (Tank-Einstieg, laut #p11-Tabelle bewusst kein Trinity-Zusatz).
+      buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { con: 2 } },
     },
     // ── Range-/Magie-Combo-Gerichte (ERFUNDEN: Lücke L38→L58, Stil-Parität) ─────
     // T2b (Kochen L48): Ranger-Eintopf aus Dämmerflossen-Karpfen + Hirschfleisch + Seelenkürbis + Grabmoos
     duskfin_rangers_stew: {
       id: "duskfin_rangers_stew",
       name: { en: "Duskfin Ranger's Stew", de: "Dämmerflossen-Jäger-Eintopf" },
-      type: "consumable", stackable: true, icon: "🍲", rarity: "superRare", value: 120,
-      healAmount: 13, // speisen-heilwerte-spec Teil 3 (P4 Feast-Krone): flach 12→13 (schlägt bear_haunch @L48)
+      type: "consumable", stackable: true, icon: "🍲", rarity: "superRare",
+      // #p11 Regel 2: 2 Portionen (cook_duskfin_rangers_stew), value 120→60 (÷2, Gold/Koch-h gleich).
+      value: 60,
+      // #p11 Regel 1 (Delle L28-L48, +1 flach): 13→14 (schlägt bear_haunch @L48 weiterhin).
+      healAmount: 14,
       healPct: 0.095, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.095
-      // Regen+Tempo+Krit raus → Attribut-Buff dex+3 (Fernkampf).
-      buff: { category: "food", durationMs: 120_000, bonus: {}, modifiers: { dex: 3 } },
+      // #p11 Regel 2/3: Buff-Dauer 120s→180s, Attribut-Buff unverändert + Trinity-Zutat Fernkampf
+      // (Ausweichen +4, deutlich unter Scharfaugen-Tonikum Guard evasionRating ≤20).
+      buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { dex: 3 }, trinity: { evasionRating: 4 } },
     },
     // T2c (Kochen L52): Magier-Bisque aus Dämmerflossen-Karpfen + Hirschfleisch + Blutgetreide + Blutdistel
     spellwarden_bisque: {
       id: "spellwarden_bisque",
       name: { en: "Spellwarden Bisque", de: "Zauberwächter-Bisque" },
-      type: "consumable", stackable: true, icon: "🍵", rarity: "superRare", value: 140,
-      healAmount: 14,
+      type: "consumable", stackable: true, icon: "🍵", rarity: "superRare",
+      // #p11 Regel 2: 2 Portionen (cook_spellwarden_bisque), value 140→70 (÷2).
+      value: 70,
+      // #p11 Regel 1 (Delle L28-L48, +1 flach): 14→15.
+      healAmount: 15,
       healPct: 0.10, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.10
-      // Regen+Tempo+Krit raus → Attribut-Buff int+3 (Magie).
-      buff: { category: "food", durationMs: 120_000, bonus: {}, modifiers: { int: 3 } },
+      // #p11 Regel 2/3: Buff-Dauer 120s→180s, Attribut-Buff unverändert + Trinity-Zutat Magie
+      // (Schild +15, deutlich unter Schutz-Elixier Guard wardCapacity ≤80).
+      buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { int: 3 }, trinity: { wardCapacity: 15 } },
     },
     // T2 (Kochen L38): Herzhafter Eintopf aus Geisterflosser-Hecht + Rindfleisch + Blutgetreide + Blutdistel
     bloodgrain_stew: {
       id: "bloodgrain_stew",
       name: { en: "Bloodgrain Stew", de: "Blutgetreide-Eintopf" },
-      type: "consumable", stackable: true, icon: "🍲", rarity: "superRare", value: 100,
-      healAmount: 10,
+      type: "consumable", stackable: true, icon: "🍲", rarity: "superRare",
+      // #p11 Regel 2: 4 Portionen (cook_bloodgrain_stew), value 100→25 (÷4).
+      value: 25,
+      // #p11 Regel 1 (Delle L28-L48, +1 flach): 10→11.
+      healAmount: 11,
       healPct: 0.085, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.085
-      // Regen+Tempo+maxHp raus → Attribut-Buff str+3 (Nahkampf).
-      buff: { category: "food", durationMs: 120_000, bonus: {}, modifiers: { str: 3 } },
+      // #p11 Regel 2/3: Buff-Dauer 120s→180s, Attribut-Buff unverändert + Trinity-Zutat Nahkampf
+      // (Rüstung +6, deutlich unter Steinhaut-Tonikum Guard armorRating ≤35).
+      buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { str: 3 }, trinity: { armorRating: 6 } },
     },
     // T3 (Kochen L58): Premium-Braten aus Blutfang-Aal + Rindfleisch + Seelenkürbis + Grabmoos
     soulgourd_brisket: {
       id: "soulgourd_brisket",
       name: { en: "Soulgourd Brisket", de: "Seelenkürbis-Braten" },
-      type: "consumable", stackable: true, icon: "🍖", rarity: "superRare", value: 220,
+      type: "consumable", stackable: true, icon: "🍖", rarity: "superRare",
+      // #p11 Regel 2: 3 Portionen (cook_soulgourd_brisket), value 220→73 (220/3=73,3→73).
+      value: 73,
       healAmount: 16,
       healPct: 0.105, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.105
-      // Regen+Krit+maxHp raus → Attribut-Buff str+4, con+2 (Nahkampf herzhaft).
-      buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { str: 4, con: 2 } },
+      // #p11 Regel 2/3: Buff-Dauer 180s→240s (T3), Attribut-Buff unverändert + Trinity-Zutat Nahkampf
+      // (Rüstung +8, unter Steinhaut-Tonikum Guard armorRating ≤35).
+      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { str: 4, con: 2 }, trinity: { armorRating: 8 } },
     },
     // T4 (Kochen L75): Haute-Cuisine aus Geisterschupper + Rindfleisch + Welklauch + Nachtblüte
     witherleek_bouillabaisse: {
       id: "witherleek_bouillabaisse",
       name: { en: "Witherleek Bouillabaisse", de: "Welklauch-Bouillabaisse" },
-      type: "consumable", stackable: true, icon: "🫕", rarity: "epic", value: 500,
+      type: "consumable", stackable: true, icon: "🫕", rarity: "epic",
+      // #p11 Regel 2: 2 Portionen (cook_witherleek_bouillabaisse), value 500→250 (÷2).
+      value: 250,
       healAmount: 22,
       healPct: 0.125, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.125
-      // Regen+Tempo+Krit+maxHp raus → Attribut-Buff str+5, con+2 (Nahkampf, Witherleek-Trio).
-      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { str: 5, con: 2 } },
+      // #p11 Regel 2/3: Buff-Dauer 240s→300s (T4), Attribut-Buff unverändert + Trinity-Zutat Nahkampf
+      // (Rüstung +10, unter Steinhaut-Tonikum Guard armorRating ≤35).
+      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { str: 5, con: 2 }, trinity: { armorRating: 10 } },
     },
     // ── Witherleek-Trio L75 (run6-fix: Ranged + Magic Pendant) ─────────────
     // T4b (Kochen L76): Schützen-Pastete aus Geisterschupper + Hirschfleisch + Welklauch + Nachtblüte
     witherleek_sharpshooters_pie: {
       id: "witherleek_sharpshooters_pie",
       name: { en: "Witherleek Sharpshooter's Pie", de: "Welklauch-Scharfschützen-Pastete" },
-      type: "consumable", stackable: true, icon: "🥧", rarity: "epic", value: 480,
+      type: "consumable", stackable: true, icon: "🥧", rarity: "epic",
+      // #p11 Regel 2: 2 Portionen (cook_witherleek_sharpshooters_pie), value 480→240 (÷2).
+      value: 240,
       healAmount: 23,
       healPct: 0.125, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.125
-      // Regen+Tempo+Krit+maxHp raus → Attribut-Buff dex+5, con+2 (Fernkampf, Witherleek-Trio).
-      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { dex: 5, con: 2 } },
+      // #p11 Regel 2/3: Buff-Dauer 240s→300s (T4), Attribut-Buff unverändert + Trinity-Zutat Fernkampf
+      // (Ausweichen +6, unter Scharfaugen-Tonikum Guard evasionRating ≤20).
+      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { dex: 5, con: 2 }, trinity: { evasionRating: 6 } },
     },
     // T4c (Kochen L77): Zauberer-Brühe aus Geisterschupper + Rindfleisch + Welklauch + Nachtblüte
     witherleek_arcane_broth: {
       id: "witherleek_arcane_broth",
       name: { en: "Witherleek Arcane Broth", de: "Welklauch-Arkan-Brühe" },
-      type: "consumable", stackable: true, icon: "🍵", rarity: "epic", value: 480,
+      type: "consumable", stackable: true, icon: "🍵", rarity: "epic",
+      // #p11 Regel 2: 2 Portionen (cook_witherleek_arcane_broth), value 480→240 (÷2).
+      value: 240,
       healAmount: 24,
       healPct: 0.13, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.13
-      // Regen+Tempo+Krit+maxHp raus → Attribut-Buff int+5, wis+3 (Magie, Witherleek-Trio).
-      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { int: 5, wis: 3 } },
+      // #p11 Regel 2/3: Buff-Dauer 240s→300s (T4), Attribut-Buff unverändert + Trinity-Zutat Magie
+      // (Schild +25, unter Schutz-Elixier Guard wardCapacity ≤80).
+      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { int: 5, wis: 3 }, trinity: { wardCapacity: 25 } },
     },
     // T5 (Kochen L90): Göttliches Festmahl aus Seelenfisch + Rindfleisch + Bernsteingetreide + Götteratem
     ambergrain_feast: {
       id: "ambergrain_feast",
       name: { en: "Ambergrain Feast", de: "Bernsteingetreide-Festmahl" },
-      type: "consumable", stackable: true, icon: "🍽️", rarity: "epic", value: 1200,
+      type: "consumable", stackable: true, icon: "🍽️", rarity: "epic",
+      // #p11 Regel 2: 2 Portionen (cook_ambergrain_feast), value 1200→600 (÷2).
+      value: 600,
       healAmount: 34,
       healPct: 0.145, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.145
-      // Regen+Tempo+Krit+maxHp raus → grosses Festmahl-Attribut-Buff (alle vier Kampf-Attribute).
-      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { con: 6, str: 4, dex: 4, int: 4 } },
+      // #p11 Regel 3 (Endgame-Quartett stilspezifisch, Chef-Entscheid #11.2): "ein bisschen von allem"
+      // (con+6, str/dex/int+4) → Magie-Identität int+6, wis+3, con+2 + Trinity Schild +25→30
+      // (unter Schutz-Elixier Guard wardCapacity ≤80). Buff-Dauer bleibt 300s (bereits T5-Minimum).
+      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { int: 6, wis: 3, con: 2 }, trinity: { wardCapacity: 30 } },
     },
 
     // ── Cooking-Food-Retune #241 Tab.D: 3 neue Endgame-Gerichte (L86/93/98) ──
@@ -245,22 +282,35 @@ export const content: ContentDB = {
     voidray_banquet: {
       id: "voidray_banquet",
       name: { en: "Voidray Banquet", de: "Leerenrochen-Bankett" },
-      type: "consumable", stackable: true, icon: "🍽️", rarity: "epic", value: 900,
+      type: "consumable", stackable: true, icon: "🍽️", rarity: "epic",
+      // #p11 Regel 2: 2 Portionen (cook_voidray_banquet), value 900→450 (÷2).
+      value: 450,
       healAmount: 31, healPct: 0.14, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.14 (schlägt cooked_voidray weiterhin)
-      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { con: 5, str: 3, dex: 3, int: 3 } },
+      // #p11 Regel 3 (Endgame-Quartett stilspezifisch, Chef-Entscheid #11.2): con+5, str/dex/int+3
+      // → Nahkampf-Identität str+6, con+3 + Trinity Rüstung +12 (unter Steinhaut-Tonikum Guard
+      // armorRating ≤35). Buff-Dauer 240s→300s (T5-Minimum).
+      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { str: 6, con: 3 }, trinity: { armorRating: 12 } },
     },
     abyssal_feast: {
       id: "abyssal_feast",
       name: { en: "Abyssal Feast", de: "Abgrund-Festmahl" },
-      type: "consumable", stackable: true, icon: "🫕", rarity: "epic", value: 1300,
+      type: "consumable", stackable: true, icon: "🫕", rarity: "epic",
+      // #p11 Regel 2: 2 Portionen (cook_abyssal_feast), value 1300→650 (÷2).
+      value: 650,
       healAmount: 36, healPct: 0.15, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.15 (schlägt cooked_abyssal_crawler weiterhin)
-      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { con: 6, dex: 4, lck: 2 } },
+      // #p11 Regel 3 (Endgame-Quartett stilspezifisch, Chef-Entscheid #11.2): con+6, dex+4, lck+2
+      // → Fernkampf-Identität dex+6, lck+3, con+2 + Trinity Ausweichen +8 (unter Scharfaugen-Tonikum
+      // Guard evasionRating ≤20). Buff-Dauer bleibt 300s (bereits T5-Minimum).
+      buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { dex: 6, lck: 3, con: 2 }, trinity: { evasionRating: 8 } },
     },
     soulfire_banquet: {
       id: "soulfire_banquet",
       name: { en: "Soulfire Banquet", de: "Seelenfeuer-Bankett" },
       // Bester Bissen im Spiel — schlägt cooked_soulfish klar. Food-Werte-Pass #5: flach 19→40.
-      type: "consumable", stackable: true, icon: "🍽️", rarity: "legendary", value: 2000,
+      type: "consumable", stackable: true, icon: "🍽️", rarity: "legendary",
+      // #p11 Regel 2: 2 Portionen (cook_soulfire_banquet), value 2000→1000 (÷2). Buff bleibt UNVERÄNDERT
+      // (Chef-Entscheid #11.2: bleibt das universelle Kronen-Gericht, kein Stil-Retyping).
+      value: 1000,
       healAmount: 40, healPct: 0.155, // speisen-heilwerte-spec Teil 3: healPct 0.12→0.155 (Speisen-Krone)
       buff: { category: "food", durationMs: 360_000, bonus: {}, modifiers: { con: 8, str: 5, dex: 5, int: 5, wis: 3, lck: 3 } },
     },
@@ -269,20 +319,26 @@ export const content: ContentDB = {
     steelshot_bisque: {
       id: "steelshot_bisque",
       name: { en: "Steelshot Bisque", de: "Stahlschuss-Bisque" },
-      type: "consumable", stackable: true, icon: "🍲", rarity: "superRare", value: 240,
+      type: "consumable", stackable: true, icon: "🍲", rarity: "superRare",
+      // #p11 Regel 2: 2 Portionen (cook_steelshot_bisque), value 240→120 (÷2).
+      value: 120,
       healAmount: 18, // speisen-heilwerte-spec Teil 3 (P4 Feast-Krone): flach 17→18 (schlägt cooked_bloodfang_eel @L63)
       healPct: 0.11, // speisen-heilwerte-spec Teil 3: healPct bleibt 0.11 (Fisch-Band L63 + Feast-Aufschlag, Rundung)
-      // Regen+Tempo+Krit raus → Attribut-Buff dex+4 (Fernkampf).
-      buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { dex: 4 } },
+      // #p11 Regel 2/3: Buff-Dauer 180s→240s (T3), Attribut-Buff unverändert + Trinity-Zutat Fernkampf
+      // (Ausweichen +5, unter Scharfaugen-Tonikum Guard evasionRating ≤20).
+      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { dex: 4 }, trinity: { evasionRating: 5 } },
     },
     spellflare_tisane: {
       id: "spellflare_tisane",
       name: { en: "Spellflare Tisane", de: "Zauberflackern-Tisane" },
-      type: "consumable", stackable: true, icon: "🍵", rarity: "superRare", value: 260,
+      type: "consumable", stackable: true, icon: "🍵", rarity: "superRare",
+      // #p11 Regel 2: 2 Portionen (cook_spellflare_tisane), value 260→130 (÷2).
+      value: 130,
       healAmount: 19, // speisen-heilwerte-spec Teil 3 (P4 Feast-Krone): flach 18→19 (rückt mit)
       healPct: 0.115, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.115
-      // Regen+Tempo+Krit raus → Attribut-Buff int+4, wis+2 (Magie).
-      buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { int: 4, wis: 2 } },
+      // #p11 Regel 2/3: Buff-Dauer 180s→240s (T3), Attribut-Buff unverändert + Trinity-Zutat Magie
+      // (Schild +20, unter Schutz-Elixier Guard wardCapacity ≤80).
+      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { int: 4, wis: 2 }, trinity: { wardCapacity: 20 } },
     },
     // ── Edelstein-Schmuck (cut_gemstone-Senke) ────────────────────────
     gemstone_ring: {
@@ -730,7 +786,10 @@ export const content: ContentDB = {
     nightshade_extract:  { id: "nightshade_extract",  name: { en: "Nightshade Extract",  de: "Nachtschatten-Extrakt"     }, type: "consumable", stackable: true, icon: "🧪", value: 80,  rarity: "common", buff: { category: "regeneration", durationMs: 90_000, bonus: { maxHp: 12 } } },
     mandrake_tincture:   { id: "mandrake_tincture",   name: { en: "Mandrake Tincture",   de: "Alraunen-Tinktur"          }, type: "consumable", stackable: true, icon: "⚗️",  healAmount: 13, healPct: 0.19, value: 140, rarity: "common" }, // Combat-Feel v2 Tabelle B (Herblore ~L30); heiltrank-leiter-und-ausreisser-spec §1.3: healPct 0.17→0.19
     // consumables-enchantments-spec §2.4: heal 19→20 (heal_std@Cook50).
-    gallows_preserve:    { id: "gallows_preserve",    name: { en: "Gallows Preserve",    de: "Galgenapfel-Konfitüre"     }, type: "consumable", stackable: true, icon: "🍯", healAmount: 13, healPct: 0.09, value: 75, rarity: "common" }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.09
+    // #p11 Regel 1 (Delle L28-L48, +1 flach): healAmount 13→14. Regel 2: 2 Portionen (cook_gallows_preserve),
+    // value 75→38 (75/2=37,5→38); reine Anbau-Senke ohne Buff, bekommt die Portionsregel aus
+    // Konsistenzgründen trotzdem (Chef-GO 25.08.2026, design/rezension-patch-2026-08-25.html #p11).
+    gallows_preserve:    { id: "gallows_preserve",    name: { en: "Gallows Preserve",    de: "Galgenapfel-Konfitüre"     }, type: "consumable", stackable: true, icon: "🍯", healAmount: 14, healPct: 0.09, value: 38, rarity: "common" }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.09
     // balance-fix 2026-07 (Sweep4 P3): duskcap (Farming L56 Füller-Crop) war ohne Rezept-Sink → Herblore-Trank ergänzt
     // consumables-enchantments-spec §2.4: heal 24→23 (heal_std@Herb56, leichte Korrektur).
     duskcap_tonic:       { id: "duskcap_tonic",       name: { en: "Duskcap Tonic",       de: "Dämmerkappen-Tonikum"      }, type: "consumable", stackable: true, icon: "🌘", healAmount: 23, healPct: 0.21, value: 245, rarity: "common" }, // Combat-Feel v2 Tabelle B (Herblore ~L56); heiltrank-leiter-und-ausreisser-spec §1.3: healPct 0.20→0.21
@@ -4003,9 +4062,11 @@ export const content: ContentDB = {
     grilled_boar_loin: { id: "grilled_boar_loin", name: { en: "Grilled Boar Loin",  de: "Gebratene Klingenrücken-Lende" }, type: "consumable", stackable: true, icon: "🍖", value: 14, healAmount: 4, healPct: 0.06 }, // speisen-heilwerte-spec Teil 3: healPct 0.12→0.06
     roasted_hare:      { id: "roasted_hare",      name: { en: "Roasted Hare",       de: "Gebratener Waldhase"   }, type: "consumable", stackable: true, icon: "🍖", value: 22, healAmount: 5, healPct: 0.065 }, // speisen-heilwerte-spec Teil 3: healPct 0.12→0.065
     wolf_steak:        { id: "wolf_steak",        name: { en: "Wolf Steak",         de: "Wolfssteak"            }, type: "consumable", stackable: true, icon: "🍖", value: 30, healAmount: 6, healPct: 0.07 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.07
-    venison_roast:     { id: "venison_roast",     name: { en: "Venison Roast",      de: "Hirschbraten"          }, type: "consumable", stackable: true, icon: "🍖", rarity: "common", value: 42, healAmount: 7, healPct: 0.075 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.075
-    roc_drumstick_grilled: { id: "roc_drumstick_grilled", name: { en: "Grilled Roc Drumstick", de: "Gebratene Roc-Keule" }, type: "consumable", stackable: true, icon: "🍗", rarity: "common", value: 60, healAmount: 10, healPct: 0.085 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.085
-    bear_haunch:       { id: "bear_haunch",       name: { en: "Bear Haunch",        de: "Altbär-Haxe geschmort" }, type: "consumable", stackable: true, icon: "🍖", rarity: "common", value: 80, healAmount: 12, healPct: 0.09 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.09
+    // #p11 Regel 1 (Delle L28-L48, +1 flach; Chef-GO 25.08.2026, design/rezension-patch-2026-08-25.html
+    // #p11): venison_roast/roc_drumstick_grilled/bear_haunch je healAmount +1 (7→8, 10→11, 12→13).
+    venison_roast:     { id: "venison_roast",     name: { en: "Venison Roast",      de: "Hirschbraten"          }, type: "consumable", stackable: true, icon: "🍖", rarity: "common", value: 42, healAmount: 8, healPct: 0.075 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.075
+    roc_drumstick_grilled: { id: "roc_drumstick_grilled", name: { en: "Grilled Roc Drumstick", de: "Gebratene Roc-Keule" }, type: "consumable", stackable: true, icon: "🍗", rarity: "common", value: 60, healAmount: 11, healPct: 0.085 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.085
+    bear_haunch:       { id: "bear_haunch",       name: { en: "Bear Haunch",        de: "Altbär-Haxe geschmort" }, type: "consumable", stackable: true, icon: "🍖", rarity: "common", value: 80, healAmount: 13, healPct: 0.09 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.09
     wyvern_steak:      { id: "wyvern_steak",      name: { en: "Wyvern Steak",       de: "Wyvern-Steak"          }, type: "consumable", stackable: true, icon: "🍖", rarity: "common", value: 130, healAmount: 21, healPct: 0.115 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.115
     chitin_plate: { id: "chitin_plate", name: { en: "Chitin Plate", de: "Chitinpanzer" }, type: "material", stackable: true, icon: "🐞", value: 11 },
     fang: { id: "fang", name: { en: "Jagged Fang", de: "Reißzahn" }, type: "material", stackable: true, icon: "🦷", value: 9, description: { en: "Pulled whole from a beast's jaw, still sharp enough to draw blood by accident.", de: "Unversehrt aus dem Kiefer eines Tieres gezogen, noch scharf genug, um aus Versehen Blut zu ziehen." } },
@@ -4820,8 +4881,12 @@ export const content: ContentDB = {
     risotto_starcap: {
       id: "risotto_starcap", name: { en: "Starcap Risotto", de: "Sternkappen-Risotto" },
       // speisen-heilwerte-spec Teil 3: healPct 0.11→0.135
-      type: "consumable", stackable: true, rarity: "rare", value: 780, healAmount: 34, healPct: 0.135,
-      buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { con: 8 } },
+      // #p11 Regel 2: 2 Portionen (cook_starcap_risotto), value 780→390 (÷2).
+      type: "consumable", stackable: true, rarity: "rare", value: 390, healAmount: 34, healPct: 0.135,
+      // #p11 Regel 3 (Chef-Entscheid #11.2): Tank-Identität — con+8 bleibt, dazu LP-Regeneration
+      // +1/s (hpRegenPerSec, buff.bonus — kein Trinity-Feld, kein FORBIDDEN_FLAT §4.3). Buff-Dauer
+      // 240s→300s (T5-Minimum).
+      buff: { category: "food", durationMs: 300_000, bonus: { hpRegenPerSec: 1 }, modifiers: { con: 8 } },
     },
 
     // — Combat-Drop → Leatherworking/Herblore/Runecrafting Outputs —
@@ -7628,7 +7693,7 @@ export const content: ContentDB = {
         { itemId: "gravetato", qty: 1 },
         { itemId: "herb_marshroot", qty: 1 },
       ],
-      loot: [{ itemId: "marshroot_chowder", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "marshroot_chowder", chance: 1, min: 4, max: 4 }],
     },
     cook_bloodgrain_stew: {
       id: "cook_bloodgrain_stew",
@@ -7640,7 +7705,7 @@ export const content: ContentDB = {
         { itemId: "bloodgrain", qty: 2 },
         { itemId: "herb_bloodthistle", qty: 1 },
       ],
-      loot: [{ itemId: "bloodgrain_stew", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "bloodgrain_stew", chance: 1, min: 4, max: 4 }],
     },
     cook_duskfin_rangers_stew: {
       id: "cook_duskfin_rangers_stew",
@@ -7652,7 +7717,7 @@ export const content: ContentDB = {
         { itemId: "soulgourd", qty: 1 },
         { itemId: "herb_gravemoss", qty: 1 },
       ],
-      loot: [{ itemId: "duskfin_rangers_stew", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "duskfin_rangers_stew", chance: 1, min: 2, max: 2 }],
     },
     cook_spellwarden_bisque: {
       id: "cook_spellwarden_bisque",
@@ -7664,7 +7729,7 @@ export const content: ContentDB = {
         { itemId: "bloodgrain", qty: 2 },
         { itemId: "herb_bloodthistle", qty: 1 },
       ],
-      loot: [{ itemId: "spellwarden_bisque", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "spellwarden_bisque", chance: 1, min: 2, max: 2 }],
     },
     cook_soulgourd_brisket: {
       id: "cook_soulgourd_brisket",
@@ -7676,7 +7741,7 @@ export const content: ContentDB = {
         { itemId: "soulgourd", qty: 1 },
         { itemId: "herb_gravemoss", qty: 1 },
       ],
-      loot: [{ itemId: "soulgourd_brisket", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "soulgourd_brisket", chance: 1, min: 3, max: 3 }],
     },
     cook_witherleek_bouillabaisse: {
       id: "cook_witherleek_bouillabaisse",
@@ -7688,7 +7753,7 @@ export const content: ContentDB = {
         { itemId: "wither_leek", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
-      loot: [{ itemId: "witherleek_bouillabaisse", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "witherleek_bouillabaisse", chance: 1, min: 2, max: 2 }],
     },
     // run6-fix: Witherleek L75 Stil-Trio — Ranged + Magic Pendant
     cook_witherleek_sharpshooters_pie: {
@@ -7701,7 +7766,7 @@ export const content: ContentDB = {
         { itemId: "wither_leek", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
-      loot: [{ itemId: "witherleek_sharpshooters_pie", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "witherleek_sharpshooters_pie", chance: 1, min: 2, max: 2 }],
     },
     cook_witherleek_arcane_broth: {
       id: "cook_witherleek_arcane_broth",
@@ -7713,7 +7778,7 @@ export const content: ContentDB = {
         { itemId: "wither_leek", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
-      loot: [{ itemId: "witherleek_arcane_broth", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "witherleek_arcane_broth", chance: 1, min: 2, max: 2 }],
     },
     cook_ambergrain_feast: {
       id: "cook_ambergrain_feast",
@@ -7725,7 +7790,7 @@ export const content: ContentDB = {
         { itemId: "ambergrain", qty: 1 },
         { itemId: "herb_godsbreath", qty: 1 },
       ],
-      loot: [{ itemId: "ambergrain_feast", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "ambergrain_feast", chance: 1, min: 2, max: 2 }],
     },
     // ── Cooking-Food-Retune #241 Tab.D: 3 neue Endgame-Gerichte (L86/93/98) ──
     // XP on-curve via target_xph(L)=600·sqrt(step(L)) (Task #232-Formel, im Content bereits etabliert).
@@ -7739,7 +7804,7 @@ export const content: ContentDB = {
         { itemId: "ambergrain", qty: 1 },
         { itemId: "herb_godsbreath", qty: 1 },
       ],
-      loot: [{ itemId: "voidray_banquet", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "voidray_banquet", chance: 1, min: 2, max: 2 }],
     },
     cook_abyssal_feast: {
       id: "cook_abyssal_feast",
@@ -7751,7 +7816,7 @@ export const content: ContentDB = {
         { itemId: "starcap_truffle", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
-      loot: [{ itemId: "abyssal_feast", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "abyssal_feast", chance: 1, min: 2, max: 2 }],
     },
     cook_soulfire_banquet: {
       id: "cook_soulfire_banquet",
@@ -7763,7 +7828,7 @@ export const content: ContentDB = {
         { itemId: "ambergrain", qty: 1 },
         { itemId: "herb_godsbreath", qty: 1 },
       ],
-      loot: [{ itemId: "soulfire_banquet", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "soulfire_banquet", chance: 1, min: 2, max: 2 }],
     },
     // ── Kombi-Food Stil-Parität R/M (Block B) ─────────────────────────
     cook_steelshot_bisque: {
@@ -7776,7 +7841,7 @@ export const content: ContentDB = {
         { itemId: "soulgourd", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
-      loot: [{ itemId: "steelshot_bisque", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "steelshot_bisque", chance: 1, min: 2, max: 2 }],
     },
     cook_spellflare_tisane: {
       id: "cook_spellflare_tisane",
@@ -7788,7 +7853,7 @@ export const content: ContentDB = {
         { itemId: "herb_nightbloom", qty: 1 },
         { itemId: "herb_bloodthistle", qty: 1 },
       ],
-      loot: [{ itemId: "spellflare_tisane", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "spellflare_tisane", chance: 1, min: 2, max: 2 }],
     },
 
     // ═══════════════════════════════════════════════════════════════════
@@ -11211,7 +11276,7 @@ export const content: ContentDB = {
       // balance-fix 2026-07: xp 16→34 (worst-tuned action in the skill, 0.48x target); now on-curve
       skill: "cooking", category: "cook_crops", durationMs: 13000, xp: 223, levelRequired: 50,
       inputs: [{ itemId: "gallows_apple", qty: 2 }, { itemId: "vial_of_water", qty: 1 }],
-      loot: [{ itemId: "gallows_preserve", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "gallows_preserve", chance: 1, min: 2, max: 2 }],
     },
     // ── Herblore: Crop-Verarbeitungsrezepte (QA-Run3 Fix D) ─────────────
     // nightshade (T2 L35) → Extrakt, mandrake_root (T2 L30) → Tinktur,
@@ -11393,7 +11458,7 @@ export const content: ContentDB = {
       id: "cook_starcap_risotto", name: { en: "Cook Starcap Risotto", de: "Sternkappen-Risotto kochen" },
       skill: "cooking", category: "cook_crops", durationMs: 15000, xp: 1865, levelRequired: 90,
       inputs: [{ itemId: "starcap_truffle", qty: 1 }, { itemId: "ambergrain", qty: 1 }, { itemId: "vial_of_water", qty: 1 }],
-      loot: [{ itemId: "risotto_starcap", chance: 1, min: 1, max: 1 }],
+      loot: [{ itemId: "risotto_starcap", chance: 1, min: 2, max: 2 }],
     },
 
     // — Foraging → Herblore —

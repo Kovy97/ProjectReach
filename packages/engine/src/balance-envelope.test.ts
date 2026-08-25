@@ -207,10 +207,16 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     // erreicht den Deckel wieder — GEMESSEN, nicht der grobe Vorab-Schätzwert aus dem Design-Dokument
     // (0,438/0,461/0,485 dort war eine Pool-Emulation ohne die echte Item-/Builder-Logik). Der Krit-
     // Schaden bleibt am Cap 2,50 auf jeder Stufe/jedem Stil (unverändert).
+    // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): die vier
+    // umgetypten Endgame-Gerichte (voidray_banquet/ambergrain_feast/abyssal_feast/risotto_starcap,
+    // s. #p11 Regel 3) tragen jetzt Trinity-Werte UND leicht andere Attribut-Splits (z.B.
+    // abyssal_feast dex+4→+6, lck+2→+3) — der "beste Food je Kategorie"-Pick des Builders wechselt
+    // dadurch teils das Item, was die Attribut-Summe (u.a. lck, das überall in critChance einfließt)
+    // minimal anhebt: 0.4367/0.4955/0.4355 → 0.4376/0.4963/0.4363 (CL30, alle Stile, +0.0008..0.0009).
     const CL30_CRIT_CHANCE: Record<WeaponStyle, number> = {
-      melee: 0.4367,
-      ranged: 0.4955,
-      magic: 0.4355,
+      melee: 0.4376,
+      ranged: 0.4963,
+      magic: 0.4363,
     };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
@@ -256,7 +262,12 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     // keinem Tier. Der Cap CLAMPT, es läuft also nichts über; was fehlt, ist die Kopffreiheit.
     // Ein Content-Stack, der den Cap frisch erreicht, fällt hier weiterhin auf: dann steht in
     // einer Zeile plötzlich 0.4 statt des gepinnten Werts.
-    const expected: Record<number, number> = { 30: 0.3912, 60: DODGE_CAP, 90: DODGE_CAP };
+    // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): duskfin_rangers_stew/
+    // steelshot_bisque/witherleek_sharpshooters_pie/abyssal_feast tragen jetzt buff.trinity.evasionRating
+    // (Fernkampf-Trinity-Zutat, #p11 Regel 3) — der Voll-Stack-Builder sammelt das mit ein (allBuffs:
+    // true, kein Level-Gate in der Hülle) und hebt CL 30 leicht an: 0.3912 → 0.3943. CL 60/90 bleiben
+    // am 0.40-Deckel (Clamp, unverändert).
+    const expected: Record<number, number> = { 30: 0.3943, 60: DODGE_CAP, 90: DODGE_CAP };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
         const d = computeStats(bis(style, lvl, "dodge").state, content).dodgeChance;
@@ -309,18 +320,25 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // entsprechend. Der Block SINKT dabei bei CL 30/60 (0.415→0.335, 0.468→0.388): der zweitbeste
     // Affix, der dort Block beisteuerte, hat seinen Slot an eine weitere Aegis-Rune verloren. Für
     // die Hülle ist das korrekt — sie misst die Spitze des ZIEL-Stats, nicht die Summe aller.
+    // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): voidray_banquet
+    // trägt jetzt buff.trinity.armorRating +12 (Nahkampf-Trinity-Zutat, #p11 Regel 3) und ist damit
+    // global das armorRating-stärkste Food — der Voll-Stack-Builder addiert das auf JEDER Stufe
+    // oben auf den Steinhaut-Tonikum-Wert (allBuffs:true, kein Level-Gate in der Hülle): armorRating
+    // +12 auf allen drei Bändern (352.23→364.23, 379.79→391.79, 538.53→550.53). Mitigation zieht bei
+    // CL 30/60 mit (noch unter dem 0.80-Deckel); CL 90 bleibt am Deckel (Clamp, kein Assert nötig).
+    // Block/damageReduction unverändert (Trinity-Zutat ist reines armorRating, kein Block-Anteil).
     const t30 = computeStats(bis("melee", 30, "tank").state, content);
-    expect(t30.armorRating).toBeCloseTo(352.23, 2);
-    expect(mitigation(t30.defense)).toBeCloseTo(0.7381, 3);
+    expect(t30.armorRating).toBeCloseTo(364.23, 2);
+    expect(mitigation(t30.defense)).toBeCloseTo(0.7445, 3);
     expect(t30.blockChance).toBeCloseTo(0.335, 3);
     const t60 = computeStats(bis("melee", 60, "tank").state, content);
-    expect(t60.armorRating).toBeCloseTo(379.79, 2);
-    expect(mitigation(t60.defense)).toBeCloseTo(0.7524, 3);
+    expect(t60.armorRating).toBeCloseTo(391.79, 2);
+    expect(mitigation(t60.defense)).toBeCloseTo(0.7581, 3);
     expect(t60.blockChance).toBeCloseTo(0.388, 3);
     // Re-Messung 2026-07-26 (#354 Paket 3.2 Nachschärfung): shellfather_aegis AR 19.6→21.5, Block
     // 45%→47% (Marge über titanium_kiteshield) — schlägt bei CL 90 jetzt klar als BiS-Offhand.
     const t90 = computeStats(bis("melee", 90, "tank").state, content);
-    expect(t90.armorRating).toBeCloseTo(538.53, 2); // Stapelung: 298.53 → 538.53 ⇒ Mitigation am Cap
+    expect(t90.armorRating).toBeCloseTo(550.53, 2); // Stapelung: 298.53 → 538.53 → 550.53 (Food-Trinity) ⇒ Mitigation am Cap
     // Pet-Schadensreduktion obendrauf (multiplikativ NACH Armor/Ward/Block): heute max. 3 %.
     expect(t90.damageReduction).toBeCloseTo(0.03, 5);
   });
@@ -346,9 +364,15 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // Re-Messung 2026-07-22 (Elite-/World-Spawns Phase 2): thorncrown (wc 48, req magic 45) und
     // pyrebound_vestment (wc 101, req magic 58) schlagen ab CL 60 ihre bisherigen BiS-Stoff-Teile;
     // tideterror_grip (wc 90, req magic 88) zusätzlich ab CL 90. CL 30 unverändert.
-    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(583, 0);
-    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(777, 0);
-    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1179.5, 1);
+    // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): ambergrain_feast
+    // trägt jetzt buff.trinity.wardCapacity +30 (Magie-Trinity-Zutat, #p11 Regel 3) und ist damit
+    // global das wardCapacity-stärkste Food — der Voll-Stack-Builder addiert das auf JEDER Stufe
+    // oben auf den Warding-Skill-Stack (allBuffs:true, kein Level-Gate in der Hülle): maxWard +30
+    // auf allen drei Bändern (583→613, 777→807, 1179.5→1209.5). Ward hat weiterhin keinen Cap davor
+    // (offener Schieber, s. Suiten-Kopf-Kommentar).
+    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(613, 0);
+    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(807, 0);
+    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1209.5, 1);
   });
 
   it("Buff-Exklusivitäts-Inventur (#303 L3): alle Tempo-/Krit-Tonika sind 'offense' ⇒ aktiv max. −750 ms / +0.20 crit", () => {
@@ -391,7 +415,11 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // diesen Build ein bisheriges Leder-BiS-Teil mit etwas mehr dex ⇒ evasion sinkt leicht
     // (16.234 → 16.027). Der Dodge-Deckel bleibt trotzdem gebunden (Clamp).
     expect(st.dodgeChance).toBe(DODGE_CAP);
-    expect(st.evasion).toBeCloseTo(16.027, 3);
+    // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): abyssal_feast trägt
+    // jetzt buff.trinity.evasionRating +8 UND dex+6 statt dex+4 (Fernkampf-Retyping, #p11 Regel 3);
+    // der Voll-Stack-Builder pickt es weiterhin als bestes Food für diesen Ranged-Dodge-Build, der
+    // höhere dex-Anteil hebt den flachen `evasion`-Kontest-Stat leicht: 16.027 → 16.079.
+    expect(st.evasion).toBeCloseTo(16.079, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -411,12 +439,15 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Re-Messung 2026-08-25 (Chef-GO 1.1.0, #p14): `evasion` sinkt leicht (16.234 → 16.027, s.o.)
     // ⇒ der Gegner landet minimal HÄUFIGER (0.2423 → 0.2442 / 0.4655 → 0.4669) — marginal, der
     // Cap-Befund oben bleibt unverändert.
+    // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): `evasion` steigt
+    // leicht (16.027 → 16.079, s.o.) ⇒ der Gegner landet minimal SELTENER (0.2442 → 0.2437 /
+    // 0.4669 → 0.4665) — marginal, der Cap-Befund oben bleibt unverändert.
     const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
-    expect(hcOn).toBeCloseTo(0.4070, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2442, 3);
+    expect(hcOn).toBeCloseTo(0.4062, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2437, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7781, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4669, 3);
+    expect(hc150).toBeCloseTo(0.7775, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4665, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -510,13 +541,23 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // bisherige BiS-Teil — nur die RANGED-Zeilen verschieben sich (idol_warden 92.44→97.77 s,
     // last_idol 305.65→323.54 s, jeweils +5-6 %); melee/magic nutzen keines der vier Teile (deren
     // Requirement war/ist defence bzw. jetzt ranged) und bleiben unverändert.
+    // Re-Messung 2026-08-25 (Rezension #11, Trinity-Gerichte, Chef-GO 25.08.): das Endgame-Quartett
+    // ist jetzt stilspezifisch (#p11 Regel 3: voidray_banquet=Nahkampf str+6, abyssal_feast=Fernkampf
+    // dex+6/lck+3, ambergrain_feast=Magie int+6/wis+3, je +Trinity) statt vorher "ein bisschen von
+    // allem" (con+/str+/dex+/int+3..4 gleichzeitig) — der Voll-Stack-Builder pickt für jeden Stil
+    // jetzt gezielter das eigene Food, das hebt den Spieler-Output leicht an (Player-TTK sinkt,
+    // schneller kill) UND die Trinity-Rüstung/-Ausweichen/-Schild reduziert eingehenden Schaden
+    // (Enemy-TTK steigt, Spieler hält länger durch). Alle sechs Paare re-gemessen:
+    // melee/idol_warden 56.45/18.9 → 57.34/19.0, melee/last_idol 184.96/13.4 → 188.17/13.5,
+    // ranged/idol_warden 97.77/14.14 → 97.21/13.8, ranged/last_idol 323.54/12.9 → 321.66/13.1,
+    // magic/idol_warden 71.52/23.7 → 72.55/25.3, magic/last_idol 240.73/25.6 → 244.57/27.4.
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 56.45, 18.9],
-      ["melee", "last_idol", 184.96, 13.4],
-      ["ranged", "idol_warden", 97.77, 14.14],
-      ["ranged", "last_idol", 323.54, 12.9],
-      ["magic", "idol_warden", 71.52, 23.7],
-      ["magic", "last_idol", 240.73, 25.6],
+      ["melee", "idol_warden", 57.34, 19.0],
+      ["melee", "last_idol", 188.17, 13.5],
+      ["ranged", "idol_warden", 97.21, 13.8],
+      ["ranged", "last_idol", 321.66, 13.1],
+      ["magic", "idol_warden", 72.55, 25.3],
+      ["magic", "last_idol", 244.57, 27.4],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);
