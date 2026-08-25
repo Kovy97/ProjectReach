@@ -4817,6 +4817,20 @@ export const content: ContentDB = {
         de: "Armschienen aus dem Reißzahn eines Seelenschinders und gehärtetem Turm-Leder. Jeder Abschuss auf der Jagd schließt die Wunden des Jägers: +4 LP je Kill.",
       },
     },
+    // Chef-Entscheidung E6 (25.08.2026), design/slayer-shop-1.1.0.md §4.4: Lücke Slayer 30–50 im
+    // Shop. Erstes kaufbares Ausrüstungsstück (150 Pkt ≈ 27 Aufträge). Bild von Mira (Variante A).
+    slayer_hunters_cape: {
+      id: "slayer_hunters_cape",
+      name: { en: "Hunter's Cape", de: "Jägerumhang" },
+      type: "equipment", stackable: false, slot: "cape", rarity: "superRare",
+      modifiers: { str: 2, dex: 2, con: 3, int: 2 },
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { slayer: 30 }, value: 1200,
+      description: {
+        en: "A weathered cape issued by Brenna to hunters who have earned their first thirty contracts. The opening strike of every hunt bites deeper: +15% damage against an unwounded target.",
+        de: "Ein verwitterter Umhang, den Brenna an Jäger ausgibt, die sich ihre ersten dreißig Aufträge verdient haben. Der erste Schlag jeder Jagd beißt tiefer: +15 % Schaden gegen ein unverletztes Ziel.",
+      },
+    },
     // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #2): Trinity-Wert der NÄCHSTEN
     // Platten-Stufe (Bluteisen-Plattenbeinlinge, Vert. 70, AR 21.78) + giantSlayer-Effekt (Welt-
     // Aufträge liegen immer über dem eigenen Level, Turm-Aufträge zur Hälfte). Toter
@@ -17851,6 +17865,8 @@ export const content: ContentDB = {
     { itemId: "plague_mask",  cost: 12,  slayerLevelRequired: 1  },
     { itemId: "ear_plugs",    cost: 18,  slayerLevelRequired: 15 },
     { itemId: "mirror_ward",  cost: 25,  slayerLevelRequired: 15 },
+    // ── Ausrüstung, Stufe 30 (Chef-Entscheidung E6, §4.4: schließt die Lücke 30–50) ──
+    { itemId: "slayer_hunters_cape", cost: 150, slayerLevelRequired: 30 },
     { itemId: "soul_veil",    cost: 55,  slayerLevelRequired: 40 },
     { itemId: "void_anchor",  cost: 100, slayerLevelRequired: 60 },
     // ── Ausrüstung (Slayers Ornat) ─────────────────────────────────────────

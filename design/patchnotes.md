@@ -374,6 +374,12 @@ update notice button now uses the iron frame.
 (Gravewood, 49 Stellen), shop-citadel-btn (13), it-action-btn (2); Sidebar/Topbar tragen den
 Eisenrahmen bereits. Umstellung des Bestands auf Chef-GO.*
 
+**Slayer-Shop: Jägerumhang ab Slayer 30 (Chef-Entscheidung E6, 25.08.):** DE: Zwischen Slayer 30
+und 50 gab es im Laden keine Ausrüstung. Der Jägerumhang (150 Punkte, etwa 27 Aufträge) ist das
+erste kaufbare Stück: verwittertes Leder mit Jägergrün, +15 % Schaden gegen ein unverletztes Ziel,
+dazu Stärke, Geschick, Konstitution und Intelligenz. Bild von Mira. / EN: The Hunter's Cape (Slayer
+30, 150 points) fills the gap in the Slayer shop: +15 % damage against an unwounded target.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

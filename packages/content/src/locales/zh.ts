@@ -3020,6 +3020,8 @@ export const zh: Record<string, string> = {
   "items:slayer_greaves:name": "猎魔胫甲",
   "items:slayer_helm:description": "以猎魔塔最凶恶恐怖之物的精华锻成的杰作头盔，标记着佩戴者的委托：对当前任务目标造成 +20% 伤害，佩戴时无需任何结界物品即可抵御塔层的一切威胁。",
   "items:slayer_helm:name": "猎魔头盔",
+  "items:slayer_hunters_cape:description": "一件磨损的披风，由布伦娜颁发给已完成首三十份契约的猎人。每场狩猎的开场一击咬得更深：对未受伤的目标造成 +15% 伤害。",
+  "items:slayer_hunters_cape:name": "猎人披风",
   "items:slayer_hunters_elixir:description": "专供资深猎魔者。加快你的攻击（间隔 -600ms），暴击 +12%，暴击伤害 +20%，持续 30 分钟。相较战斗药剂拥有更优的持续续航。",
   "items:slayer_hunters_elixir:name": "猎魔者猎人灵药",
   "items:slayer_vambraces:description": "以噬魂者的獠牙与硬化塔层皮革制成的臂甲。狩猎中的每次击杀都能愈合猎人的伤口：每次击杀 +4 点生命。",
