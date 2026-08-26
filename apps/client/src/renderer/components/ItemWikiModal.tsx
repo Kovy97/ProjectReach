@@ -8,7 +8,7 @@ import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
 import { getSidebarIcon } from "../sidebarIcons";
-import { getSkillIcon, SKILL_EMOJI_FALLBACK } from "../skillIcons";
+import { getSkillIcon } from "../skillIcons";
 import { getUiIcon } from "../uiIcons";
 import { registerEscCloser } from "../util/escStack";
 import { formatDamage, formatDropPct, formatNum, formatSeconds1, formatStat } from "../util/format";
@@ -17,19 +17,34 @@ import { jumpToAction } from "../util/skillJump";
 import { jumpToMonster } from "../util/monsterJump";
 
 const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
-const SHOP_ICON_URL = getSidebarIcon("shop");
+// Chef-Redesign 26.08.2026 ("Emojis durch unsere neuen Achievement-Icons ersetzen"): die kleinen
+// Kennzeichnungs-Icons je Quelle-/Verwendungs-Zeilenart (Laden/Slayer-Turm/Belohnungsladen/Monster/
+// Dungeon) wechseln von rohen Emoji-Zeichen (teils ganz ohne Fallback-Kette) auf dieselbe gemalte
+// Embleme-Familie wie AchievementsPage.tsx' Kategorie-Icons (assets/icons/icon_ach_*.webp),
+// dieselbe Zuordnung: Laden/Wert = Münzsack, Kampf/Slayer = Klingen, Belohnungsladen = Siegelrolle,
+// Kiste/Dungeon = Truhe. Wo bereits ein echtes Skill-Icon existiert (`WikiSkillIcon` unten), bleibt
+// das unangetastet — nur dessen allerletzter Notfall-Fallback (kein Skill-/Sidebar-Icon gefunden)
+// zeigt jetzt ebenfalls ein gemaltes Emblem statt eines Text-Emoji.
+const SHOP_ICON_URL = getUiIcon("icon_ach_gold");
+const COMBAT_ICON_URL = getUiIcon("icon_ach_combat");
+const SCROLL_ICON_URL = getUiIcon("icon_ach_scroll");
+const CHEST_ICON_URL = getUiIcon("icon_ach_gift");
+const GENERIC_ICON_URL = getUiIcon("icon_ach_star");
 // Story-Zonen-Gate (Task #350, Chef-Fund "Wiki-Links führen in gesperrte Zonen"): dasselbe
 // Schloss-Icon wie die Zonen-/Dungeon-Karten in CombatPage.tsx (`LOCK_ICON_URL`-Muster dort).
 const LOCK_ICON_URL = getUiIcon("icon_locked");
 
-/** Skill-Icon für eine Quelle-/Verwendungs-Zeile: Kampf-PNG → Sidebar-PNG → Emoji (dieselbe
- *  3-stufige Kette wie SkillsOverviewPage's `SkillIconImg`). */
+/** Skill-Icon für eine Quelle-/Verwendungs-Zeile: Kampf-PNG → Sidebar-PNG → generisches Emblem
+ *  (dieselbe 3-stufige Kette wie SkillsOverviewPage's `SkillIconImg`; letzte Stufe seit dem
+ *  Chef-Redesign 26.08.2026 ein gemaltes Icon statt eines Text-Emoji — reine Sicherheitsnetz-Stufe,
+ *  jede aktuell im Wiki vorkommende Skill-ID hat bereits ein echtes Bild über eine der ersten
+ *  beiden Stufen). */
 function WikiSkillIcon({ skillId }: { skillId: string }): JSX.Element {
-  const url = getSkillIcon(skillId) ?? getSidebarIcon(skillId);
+  const url = getSkillIcon(skillId) ?? getSidebarIcon(skillId) ?? GENERIC_ICON_URL;
   return url ? (
     <img loading="lazy" decoding="async" src={url} alt="" className="iwk-row-icon-img" />
   ) : (
-    <span className="iwk-row-icon-emoji">{SKILL_EMOJI_FALLBACK[skillId] ?? "✦"}</span>
+    <span className="iwk-row-icon-emoji" aria-hidden="true" />
   );
 }
 
@@ -213,9 +228,7 @@ function SourceList({ sources }: { sources: DisplaySource[] }): JSX.Element {
       {hasLockedMonster && (
         <div className="iwk-source-legend">
           <span className="iwk-row-lock-badge" aria-hidden="true">
-            {LOCK_ICON_URL
-              ? <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />
-              : "🔒"}
+            {LOCK_ICON_URL && <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />}
           </span>
           {t("itemwiki.sourceLockedLegend")}
         </div>
@@ -250,13 +263,13 @@ function MonsterGroupRow({ entry, state }: { entry: MonsterGroupSource; state: G
   const body = (
     <>
       <div className="iwk-row-main">
-        <span className="iwk-row-icon-emoji" aria-hidden="true">⚔️</span>
+        {COMBAT_ICON_URL
+          ? <img loading="lazy" decoding="async" src={COMBAT_ICON_URL} alt="" className="iwk-row-icon-img" />
+          : <span className="iwk-row-icon-emoji" aria-hidden="true" />}
         <span className="iwk-row-name">{tr(entry.name)}</span>
         {zoneLocked && (
           <span className="iwk-row-lock-badge" aria-hidden="true">
-            {LOCK_ICON_URL
-              ? <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />
-              : "🔒"}
+            {LOCK_ICON_URL && <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />}
           </span>
         )}
         {!breakdown && <span className="iwk-row-val">{pct(entry.locations[0]!.chance)}</span>}
@@ -328,9 +341,7 @@ function SourceRow({ entry, state }: { entry: DisplaySource; state: GameState })
   if (entry.kind === "shop") {
     return (
       <li className="iwk-row iwk-row-shop">
-        {SHOP_ICON_URL
-          ? <img loading="lazy" decoding="async" src={SHOP_ICON_URL} alt="" className="iwk-row-icon-img" />
-          : <span className="iwk-row-icon-emoji" aria-hidden="true">🛒</span>}
+        {SHOP_ICON_URL && <img loading="lazy" decoding="async" src={SHOP_ICON_URL} alt="" className="iwk-row-icon-img" />}
         <span className="iwk-row-name">{t("itip.sourceShop")}</span>
         <span className="iwk-row-val">
           {formatNum(entry.cost)}
@@ -342,7 +353,7 @@ function SourceRow({ entry, state }: { entry: DisplaySource; state: GameState })
   if (entry.kind === "slayerShop") {
     return (
       <li className="iwk-row iwk-row-shop">
-        <span className="iwk-row-icon-emoji" aria-hidden="true">💀</span>
+        {COMBAT_ICON_URL && <img loading="lazy" decoding="async" src={COMBAT_ICON_URL} alt="" className="iwk-row-icon-img" />}
         <span className="iwk-row-name">{t("nav.slayer")}</span>
         <span className="iwk-row-val">{formatNum(entry.cost)} {t("slayer.points")}</span>
       </li>
@@ -351,9 +362,12 @@ function SourceRow({ entry, state }: { entry: DisplaySource; state: GameState })
   if (entry.kind === "tokenShop") {
     return (
       <li className="iwk-row iwk-row-shop">
-        <span className="iwk-row-icon-emoji" aria-hidden="true">🎟️</span>
+        {SCROLL_ICON_URL && <img loading="lazy" decoding="async" src={SCROLL_ICON_URL} alt="" className="iwk-row-icon-img" />}
         <span className="iwk-row-name">{t("quests.shop.title")}</span>
-        <span className="iwk-row-val">{formatNum(entry.tokenCost)} 🎟️</span>
+        <span className="iwk-row-val">
+          {formatNum(entry.tokenCost)}
+          {SCROLL_ICON_URL && <img loading="lazy" decoding="async" src={SCROLL_ICON_URL} alt="" className="ui-icon" />}
+        </span>
       </li>
     );
   }
@@ -418,7 +432,7 @@ function SourceRow({ entry, state }: { entry: DisplaySource; state: GameState })
   // dungeon — dieselbe Zeilenform, nicht klickbar (Chef-Scope, s. Kommentar oben).
   return (
     <li className="iwk-row">
-      <span className="iwk-row-icon-emoji" aria-hidden="true">🏰</span>
+      {CHEST_ICON_URL && <img loading="lazy" decoding="async" src={CHEST_ICON_URL} alt="" className="iwk-row-icon-img" />}
       <span className="iwk-row-name">{tr(entry.name)}</span>
       <span className="iwk-row-val">{pct(entry.chance)}</span>
     </li>

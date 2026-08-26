@@ -76,8 +76,9 @@ function stackPower(inst: ItemInstance): number {
  * Quelle wie der Verzauberungstisch/ItemTooltip.tsx' `EnchantGroup`) und die Anforderungen
  * (`meetsRequirements`, dieselbe Quelle wie ItemTooltip.tsx' `RequirementsSection`). Layout: links
  * Bild+Name+Rarity (`.pouch-row-left`), rechts diese Detailspalte (`.pouch-row-right`), darunter die
- * Aktionsknöpfe (`.it-actions`/`.it-action-btn` — dieselbe app-weite 9-Slice-Knopf-Familie wie das
- * gepinnte ItemTooltip, Task #332).
+ * Aktionsknöpfe — seit dem Chef-Redesign 26.08.2026 der Standard-Eisenrahmen-Knopf (`.btn-iron
+ * .btn-iron--sm`, design-system.css) statt der abgelösten `.it-actions`/`.it-action-btn`-Familie
+ * (Task #332, gilt seit 25.08. nicht mehr als Standard).
  */
 function PouchRowDetail({
   item,
@@ -260,12 +261,12 @@ function PouchRow({
         <PouchRowDetail item={item} instance={instance} state={state} />
       </div>
       {actions.length > 0 && (
-        <div className="pouch-row-actions it-actions">
+        <div className="pouch-row-actions">
           {actions.map((a) => (
             <button
               key={a.key}
               type="button"
-              className="it-action-btn"
+              className="btn-iron btn-iron--sm"
               onClick={(e) => {
                 e.stopPropagation();
                 a.onClick();

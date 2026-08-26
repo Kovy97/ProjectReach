@@ -228,10 +228,13 @@
 
 /* Jede Zeile ist jetzt eine eigenständige Karte — Holz-Textur-Rahmen wäre bei dieser Kleinteiligkeit
    zu unruhig (viele Karten gleichzeitig), deshalb ein dünner Goldrand statt eines vollen 9-Slice-
-   Rahmens. Chef-Fund 2026-08-25 ("Stein Background ... nicht gut um darauf zu lesen"): die Karte
-   war die frühere bg_black-Steinfototextur — jetzt derselbe flache Parchment-Ton wie das Modal
-   selbst, nur eine Stufe heller (`--ds-parch-light`→`--ds-parch-mid`), damit sich die Karte vom
-   Modal-Grund abhebt statt darin zu verschwinden. */
+   Rahmens. Chef-Fund 2026-08-25 ("Stein Background ... nicht gut um darauf zu lesen") UND
+   Chef-Fund 26.08.2026 ("Hintergründe fast zu gleich, der Zeilen-Hintergrund hat dieselbe Farbe wie
+   der Modal-Hintergrund"): die Karte lief zwischenzeitlich mit exakt derselben Leder-Textur wie
+   `.modal.iwk-modal` oben — jetzt Basalt (dieselbe ruhige, dunkle Fläche wie `.btn-iron`,
+   design-system.css) statt Leder: deutlich andere Maserung/Ton, genauso dunkel (eher dunkler durch
+   den stärkeren Verlauf), damit der helle Fließtext seinen Kontrast behält, aber klar vom
+   Leder-Modal-Grund getrennt zu erkennen ist. */
 .iwk-row {
   display: flex;
   align-items: center;
@@ -240,8 +243,8 @@
   padding: 10px 12px;
   font-size: 15px;
   background:
-    linear-gradient(rgba(92, 68, 44, 0.30), rgba(34, 24, 16, 0.42)),
-    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+    linear-gradient(rgba(70, 66, 60, 0.30), rgba(10, 9, 8, 0.55)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
   background-size: auto, 280px 280px;
   border: 1px solid var(--border);
   border-radius: 3px;

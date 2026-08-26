@@ -295,7 +295,11 @@ Vorschlag in `design/slayer-auftraege-1.1.0.md`, Chef-Entscheidung offen.*
 
 **Wiki-Fenster und Varianten-Tasche ohne Steintextur (Chef-Test 25.08.):** DE: Beide Fenster
 liegen jetzt auf der dunklen Ledertextur des Menüs, auf der man lesen kann (Chef-Nachtrag: erst
-Pergament, dann Leder, damit es zum Rest des Spiels passt). Die Tasche für
+Pergament, dann Leder, damit es zum Rest des Spiels passt). Die Zeilen-Karten liegen auf Basalt, damit sie sich vom
+Ledergrund trennen; ihr Stahlrahmen ist an allen vier Kanten gleich (vorher unten gestreckt), und
+Einlagern/Anlegen/Verkaufen tragen den Stahlrahmen-Knopf. Im Wiki ersetzen die gemalten Achievement-
+Embleme die Emojis (Münzsack = Laden, Klingen = Monster und Slayer, Siegelrolle = Belohnungsladen,
+Truhe = Dungeon). Die Tasche für
 gestapelte Varianten ist so breit wie das Wiki, zeigt jede verzauberte Version mit großem Bild,
 Name, Seltenheit, „Verzauberung n/m", einer Zeile je Rune mit Wirkung, dem Zufallswurf, den
 Anforderungen und den Knöpfen direkt in der Karte. / EN: The item wiki and the variant pouch sit on
@@ -304,7 +308,9 @@ a large image, one line per rune, the roll, the requirements and its actions.
 
 *Dev-Notiz: Die Tasche rendert per `createPortal` außerhalb von `#root`; das komplette bisherige
 `#root .pouch-*`-Redesign hatte deshalb nie gegriffen (toter Code, Stapel lief auf der Basis-Optik).
-Neue Regeln als `.modal.pouch-modal`. Bugfix nebenbei: `.pouch-head-name` ellipsierte.*
+Neue Regeln als `.modal.pouch-modal`. Bugfix nebenbei: `.pouch-head-name` ellipsierte. Rand-Fix
+(Chef-Test 26.08.): `border-width` 5 px gegen `border-image-width` 12,75 px und fehlendes
+`border-image-repeat` (stretch) → jetzt Multiplikator 2,125 an die Rahmenbreite gekoppelt, `round`.*
 
 **Slayer-Shop: Rüstungen, die sich lohnen (Chef-Test 25.08.):** DE: Slayer-Helm, -Beinschienen und
 -Armschienen trugen keinen Schutz-, Ausweich- oder Wardwert, ein geschmiedeter Titan-Vollhelm schlug
@@ -441,6 +447,22 @@ gemacht. / EN: Five mid-tier kill dailies stop at total level 600.
 *Dev-Notiz: Guards token-shop-shelves/quests (Ausrüstung im Token-Shop per Chef-GO erlaubt),
 wiring-audit kennt `content.tokenShop` als Quelle; G2-Allowlist `slayer_vambraces` entfernt;
 `cinderwretch_hide` neu (cinder_wretch, 12 %), `soul_flayer_fang` bleibt für die Trophäenwand.*
+
+**Dungeons lassen sich einreihen (Chef 26.08.):** DE: Dungeon-Karten haben jetzt dieselben
+Mengen-Knöpfe wie Monster: 1×, 25×, 50× oder ∞ Läufe. Ein Lauf zählt, wenn der Endboss fällt,
+danach beginnt der Dungeon sofort wieder bei Welle 1, bis das Ziel erreicht ist. Truhe, Erstsieg-
+Bonus, Beute und Slayer-Zählung je Lauf wie bisher; bei Tod oder Patt wandert der Rest an den Anfang
+der Warteschlange, Flucht beendet den Auftrag. Auch offline läuft das weiter. Nebenbei behoben: wer
+einen Dungeon betrat, verlor eine laufende Aktion mit Mengenziel; sie wartet jetzt vorn in der
+Warteschlange. / EN: Dungeons can be queued like monsters (1×, 25×, 50×, ∞ runs); a run counts
+when the final boss falls and the dungeon restarts at wave 1 until the target is met, online and
+offline.
+
+*Dev-Notiz: `QueuedAction.kind = "dungeon"` + `GameState.queueDungeon` (SAVE_VERSION 83, Migration
+`queueDungeon = null`, Sanitize gegen unbekannte Dungeons/inkonsistente Laufzeit), API
+`enqueueDungeonRuns(AtFront)`, `dungeonRunProgress`, `combat.lastDungeonClear` für die Clear-Zeremonie
+(erkennt den Auto-Neustart über `clearNo`). Vault-Pin v80 → v83. Zwischen zwei Läufen keine
+Atempause (wie manuell).*
 
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
