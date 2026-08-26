@@ -72,6 +72,7 @@ INVENTORY, BANK, WINDOWS AND UI
 - Recipe sources now show an "Open recipe" button, and the wiki remembers where you came from with a Back button.
 - Bestiary cards are uniform, stats larger, loot sorted by chance and grouped, buttons in the game's button family.
 - The item wiki is now a three panel workbench: sources, the item, and its uses, with a summary band and a recipe button.
+- New Game, Load Game and character creation are full screens with fade transitions, a Back to Menu button and the game's steel frames.
 
 OTHER FIXES
 
@@ -82,4 +83,4 @@ OTHER FIXES
 
 Saves stay compatible as always. Thank you for every report, review and screenshot; keep them coming.
 
-(60 entries, generated 2026-08-26 from design/patchnotes.md; title is a proposal)
+(61 entries, generated 2026-08-26 from design/patchnotes.md; title is a proposal)
