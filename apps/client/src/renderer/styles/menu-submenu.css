@@ -549,3 +549,11 @@
   .load-dossier-portrait { height: 220px; }
   .slot-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Chef 26.08.2026 (Continue-Dossier im Hauptmenü): Porträts vor dem grünen Wald der Charakterseite
+   (bg_charscreen.webp) — gleiche Kulisse auch im Lade-Dossier und in den Slot-Miniaturen, damit der
+   Spielstand überall gleich aussieht. */
+.load-dossier-portrait,
+.slot-thumb-portrait {
+  background: url("../assets/bg_charscreen.webp") center / cover no-repeat, #111;
+}

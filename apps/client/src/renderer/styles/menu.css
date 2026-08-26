@@ -856,3 +856,10 @@
   .continue-card strong { font-size: 20px; }
 }
 
+
+/* Chef 26.08.2026: „Beim Charakterbild sollte beim Continue-Teil der grüne Wald sein wie im Charakter-
+   Screen." → dieselbe Kulisse wie die Charakterseite (bg_charscreen.webp) hinter dem Porträt statt
+   des grauen Radialverlaufs. Am Dateiende, damit die Regel die Grundregel oben überschreibt. */
+.save-portrait {
+  background: url("../assets/bg_charscreen.webp") center / cover no-repeat, #111;
+}
