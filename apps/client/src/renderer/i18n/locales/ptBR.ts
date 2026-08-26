@@ -1008,6 +1008,8 @@ export const ptBR: Record<string, string> = {
     "alert.noBagSpace": "Não há espaço livre nas suas mochilas.",
     "alert.actionFailed": "Isso não funciona agora.",
     "alert.consumeCooldown": "Você precisa de um instante antes do próximo bocado ou gole.",
+    "alert.consumeNoSlayerTask": "Você não tem nenhuma tarefa de Caçador ativa para sortear de novo.",
+    "item.consumable.slayerReroll": "Sorteia de novo sua tarefa de Caçador atual de graça. Sem gastar pontos, sua sequência continua.",
     "header.stopCombat": "Encerrar Luta",
     "header.slayerTask": "Caçador: {done}/{total} {monster}",
     "topbar.bar.inCombat": "Em Combate",

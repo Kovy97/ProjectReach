@@ -427,14 +427,17 @@ describe("Material-Parität der drei Stile (Magier-Material-Paritäts-Audit §5)
     // Mal in isInScope (vorher explizit draußen, s. Kommentar unten). Ihre Craft-Rezepte verlangen
     // Etage-5-Material (Seelenschinder-Reißzahn/Turmschmiedeschmelze, effektives Gate 80–128) bei
     // niedrigerem Wear-Requirement (50/65/80) — ein VORBESTEHENDER Mismatch, im Dokument als eigener
-    // Nebenbefund §7.2 vermerkt ("Craft-Pfad der Armschienen ist 30 Level zu spät") und bewusst NICHT
-    // Teil dieses Auftrags (Chef-Entscheidung offen, Chef-Auftrag war nur Item-/Set-/Shop-Werte).
-    // Die drei Shop-Käufe bleiben ohnehin die praktische Bezugsquelle (Punkte statt Craft), das
-    // Craft-Rezept ist ein Alternativpfad — Allowlist bis der Nebenbefund als eigenes Ticket behoben ist.
+    // Nebenbefund §7.2 vermerkt ("Craft-Pfad der Armschienen ist 30 Level zu spät").
+    // Chef-GO 03 26.08.2026: slayer_vambraces AUS der Allowlist entfernt — craft_slayer_vambraces
+    // nutzt jetzt cinderwretch_hide (Etage 3, Slayer 40 statt Etage 5, Slayer 80; s. Kommentar dort).
+    // Neues Gate = max(m.level, 40·1.6) = 64 über basilisk_scale (24)/cured_leather (0), Limit bei
+    // req 50 ist max(60, 65) = 65 → 64 ≤ 65 rechnet grün ohne Allowlist. slayer_helm/slayer_greaves
+    // bleiben (eigenes Ticket, nicht Teil dieses Auftrags — Chef-Auftrag war nur die Armschienen).
+    // Die Shop-Käufe bleiben ohnehin die praktische Bezugsquelle (Punkte statt Craft) für beide.
     const isAllowlisted = (id: string): boolean =>
       id.startsWith("voidweave_") || id.startsWith("voidhide_") || id.startsWith("shadowhide_") ||
       id === "chitin_coif" || id === "frost_pelt_hood" ||
-      id === "slayer_helm" || id === "slayer_greaves" || id === "slayer_vambraces";
+      id === "slayer_helm" || id === "slayer_greaves";
 
     // Scope = exakt das, was der Audit vergleicht (§1.1 Waffen-Kernlinien, §1.2 Rüstungs-Trinität):
     // Haupt-/Nebenhand-Waffen (alle 3 Stile, inkl. Schilde/Foki) UND die 5 Trinity-Slots NUR, wenn

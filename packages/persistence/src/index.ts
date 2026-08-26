@@ -67,10 +67,11 @@ import {
   defaultSettings,
   emptyFarmPlot,
   legacyOnboarding,
+  makeDungeonQueueEntry,
   makeFightQueueEntry,
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot } from "@hearthforge/shared";
-import { MAX_STACK, addItemOrBank, advance, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -859,6 +860,17 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         cleanQueue.push(makeFightQueueEntry(monsterId, target));
         continue;
       }
+      if ((raw as { kind?: unknown }).kind === "dungeon") {
+        // kind "dungeon" (SAVE_VERSION 83): `dungeonId` muss ein bekannter Dungeon MIT Wellen sein
+        // (Content-Drift / Paragonturm ohne encounters → Eintrag raus, analog dungeonOnly-Kampf);
+        // `actionId` wird auf den Übergangs-Platzhalter normiert (makeDungeonQueueEntry).
+        const dungeonId = (raw as { dungeonId?: unknown }).dungeonId;
+        if (typeof dungeonId !== "string") continue;
+        const dungeon = content.dungeons.find((d) => d.id === dungeonId);
+        if (!dungeon || dungeon.encounters.length === 0) continue;
+        cleanQueue.push(makeDungeonQueueEntry(dungeonId, target));
+        continue;
+      }
       const actionId = (raw as { actionId?: unknown }).actionId;
       if (typeof actionId !== "string" || !content.actions[actionId]) continue;
       cleanQueue.push({ kind: "action", actionId, target });
@@ -1586,11 +1598,55 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       cleanFight = null;
     }
     state.queueFight = cleanFight;
+
+    // — Dungeon-Queue-Laufzeit (SAVE_VERSION 83, Chef-Auftrag 26.08.2026 „Dungeons queuebar"),
+    //   Spiegel der queueFight-Härtung: bekannter Dungeon MIT Wellen; `remaining` null (∞) oder
+    //   endliche positive Ganzzahl (Cap QTY_HARD_CAP); `completed` endlich ≥ 0 ganzzahlig (sonst 0).
+    //   INVARIANTE danach: queueDungeon existiert nur zusammen mit GENAU diesem laufenden Dungeon
+    //   (`combat.dungeonId === dungeonId` UND ein Gegner steht, `combat.monsterId !== null`, UND
+    //   keine Turm-Etage) — passt der Kampf nicht (Save-Edit/gate-gestoppter Kampf/Geister-Run),
+    //   wandert der Rest als "dungeon"-Eintrag an die QUEUE-FRONT (nichts geht still verloren; die
+    //   `completed`-Zählung des Eintrags beginnt dann bei 0 — der Lauf selbst zählt ohnehin nicht).
+    //   Front-Eintrag ist sanitize-stabil → idempotent. —
+    {
+      const rawRun = state.queueDungeon as unknown;
+      let cleanRun: GameState["queueDungeon"] = null;
+      if (rawRun && typeof rawRun === "object") {
+        const dungeonId = (rawRun as { dungeonId?: unknown }).dungeonId;
+        const rem = (rawRun as { remaining?: unknown }).remaining;
+        const done = (rawRun as { completed?: unknown }).completed;
+        const remaining =
+          rem === null
+            ? null
+            : typeof rem === "number" && Number.isFinite(rem) && rem > 0
+              ? Math.floor(Math.min(rem, QTY_HARD_CAP))
+              : undefined;
+        const completed =
+          typeof done === "number" && Number.isFinite(done) && done > 0
+            ? Math.floor(Math.min(done, QTY_HARD_CAP))
+            : 0;
+        const dungeon = typeof dungeonId === "string" ? content.dungeons.find((d) => d.id === dungeonId) : undefined;
+        if (typeof dungeonId === "string" && dungeon && dungeon.encounters.length > 0 && remaining !== undefined) {
+          cleanRun = { dungeonId, remaining, completed };
+        }
+      }
+      if (
+        cleanRun !== null &&
+        (state.combat.dungeonId !== cleanRun.dungeonId ||
+          state.combat.monsterId === null ||
+          state.combat.paragonFloor !== undefined)
+      ) {
+        state.actionQueue.unshift(makeDungeonQueueEntry(cleanRun.dungeonId, cleanRun.remaining));
+        cleanRun = null;
+      }
+      state.queueDungeon = cleanRun;
+    }
     // Pause strikt boolesch (alles andere = false). Hygiene: ohne Queue UND ohne Laufzeit gibt es
     // nichts zu pausieren → Flag löschen (eine hängengebliebene Pause würde sonst künftige
     // Einreihungen still blockieren, ohne dass die UI je einen Grund anzeigen könnte). Idempotent.
     state.queuePaused =
-      state.queuePaused === true && (state.actionQueue.length > 0 || state.queueFight !== null);
+      state.queuePaused === true &&
+      (state.actionQueue.length > 0 || state.queueFight !== null || state.queueDungeon !== null);
     // Skip-Breadcrumb: Shape + Grund-Whitelist härten. Das Monster darf UNBEKANNT sein —
     // "unknown_monster" ist gerade der Grund für entfernte Monster (Content-Drift).
     // Spieler-Report 1.0.2 („each time you load your game it repeats that error message even
@@ -1607,7 +1663,19 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     if (rawSkip && typeof rawSkip === "object") {
       const monsterId = (rawSkip as { monsterId?: unknown }).monsterId;
       const reason = (rawSkip as { reason?: unknown }).reason;
-      if (typeof monsterId === "string" && monsterId.length > 0) {
+      const skipDungeonId = (rawSkip as { dungeonId?: unknown }).dungeonId;
+      if (typeof skipDungeonId === "string" && skipDungeonId.length > 0) {
+        // Dungeon-Skip (SAVE 83): dieselbe „gilt der Grund HEUTE noch?"-Regel wie beim Monster —
+        // unknown_dungeon nur, solange der Dungeon fehlt/keine Wellen hat; dungeon_locked nur,
+        // solange das Gate (canEnterDungeon) weiterhin zu ist. `monsterId` = Platzhalter "".
+        const dungeon = content.dungeons.find((d) => d.id === skipDungeonId);
+        const known = !!dungeon && dungeon.encounters.length > 0;
+        if (reason === "unknown_dungeon" && !known) {
+          state.lastQueueSkip = { monsterId: "", dungeonId: skipDungeonId, reason };
+        } else if (reason === "dungeon_locked" && known && !canEnterDungeon(state, content, skipDungeonId)) {
+          state.lastQueueSkip = { monsterId: "", dungeonId: skipDungeonId, reason };
+        }
+      } else if (typeof monsterId === "string" && monsterId.length > 0) {
         const monster = content.monsters[monsterId];
         if (reason === "unknown_monster" && !monster) {
           state.lastQueueSkip = { monsterId, reason };
@@ -2553,6 +2621,14 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (state.queueFight === undefined) state.queueFight = null;
   if (typeof state.queuePaused !== "boolean") state.queuePaused = false;
   if (state.lastQueueSkip === undefined) state.lastQueueSkip = null;
+
+  // Dungeon-Queue (SAVE_VERSION 82→83, Chef-Auftrag 26.08.2026 „Dungeons queuebar"): EIN neues
+  // Feld `queueDungeon` (Laufzeit des aktiven Queue-Dungeon-Laufs) → null (kein Lauf — gab es
+  // vorher gar nicht; explizit null statt fehlend, damit der Vault-Guard byte-genau vergleichen
+  // kann, Muster queueFight/v73). Alt-Einträge der Queue bleiben unverändert (die neue Sorte
+  // "dungeon" kann in Alt-Saves nicht vorkommen). Idempotent; Struktur-/Invarianten-Härtung
+  // (bekannter Dungeon, queueDungeon⇔combat) macht sanitizeState.
+  if (state.queueDungeon === undefined) state.queueDungeon = null;
 
   // Postfach/Mailbox (SAVE_VERSION 70→71): neue Felder `mailbox` (Überlauf-Puffer) + `mailSeq`
   // (deterministischer Mail-ID-Zähler). Alt-Saves (< 71) haben sie nicht → auf [] bzw. 0 defaulten

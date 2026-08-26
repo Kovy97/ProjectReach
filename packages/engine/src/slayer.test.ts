@@ -16,6 +16,7 @@ import {
   getAvailableMasters,
   getSlayerLevel,
   recordKillForSlayer,
+  rerollTask,
   scaledTaskPoints,
   skipTask,
   slayerRequirementMet,
@@ -968,5 +969,95 @@ describe("Trophäenwand III — 1 Gratis-Skip pro Kalendertag", () => {
     assignTask(s, tc, "warden");
     expect(skipTask(s, tc, TODAY)).toBe(true);
     expect(s.slayerFreeSkipDay).toBe(0); // Tagesration unangetastet
+  });
+});
+
+describe("slayer — rerollTask (Auftragsmarke, Chef-GO 26.08.2026)", () => {
+  /** Spieler ÜBER der Gnaden-Schwelle mit 0 Punkten: ein Skip würde scheitern/kosten, der Reroll nicht. */
+  function rerollGame(seed: number) {
+    const s = createGame({ name: "X" }, content, seed);
+    setCombatLevel(s, 5);
+    setSlayerLevel(s, 15);
+    s.slayerPoints = 0;
+    s.slayerStreak = 3;
+    s.slayerFreeSkipDay = 20260801;
+    return s;
+  }
+
+  it("mit Auftrag: neuer Auftrag beim selben Meister; Punkte, Serie und Tages-Skip bit-identisch", () => {
+    const s = rerollGame(4);
+    const old = assignTask(s, tc, "warden")!;
+    expect(old).not.toBeNull();
+    const master = tc.slayerMasters!.find((m) => m.id === "warden")!;
+    expect(effectiveSkipCost(s, tc, master)).toBe(master.skipCost); // Skip wäre NICHT gratis …
+    expect(skipTask(s, tc)).toBe(false); // … und mit 0 Punkten unbezahlbar
+
+    expect(rerollTask(s, tc)).toBe(true);
+    const next = s.slayerTask!;
+    expect(next).not.toBeNull();
+    expect(next).not.toBe(old); // echtes neues Task-Objekt (frisch gewürfelt)
+    expect(next.masterId).toBe("warden");
+    expect(next.progress).toBe(0);
+    expect(next.isTower).toBe(false); // warden: towerTaskChance 0 → Welt-Task wie beim Assign
+    expect(s.slayerPoints).toBe(0);
+    expect(s.slayerStreak).toBe(3);
+    expect(s.slayerFreeSkipDay).toBe(20260801);
+  });
+
+  it("Fortschritt des alten Auftrags verfällt (frischer Auftrag), Serie überlebt auch mit Fortschritt", () => {
+    const s = rerollGame(4);
+    assignTask(s, tc, "warden");
+    s.slayerTask!.progress = 2;
+    expect(rerollTask(s, tc)).toBe(true);
+    expect(s.slayerTask!.progress).toBe(0);
+    expect(s.slayerStreak).toBe(3);
+  });
+
+  it("ohne aktiven Auftrag: false, State und RNG unberührt", () => {
+    const s = rerollGame(4);
+    const rngBefore = s.rng.state;
+    expect(rerollTask(s, tc)).toBe(false);
+    expect(s.slayerTask).toBeNull();
+    expect(s.rng.state).toBe(rngBefore);
+    expect(s.slayerPoints).toBe(0);
+    expect(s.slayerStreak).toBe(3);
+  });
+
+  it("kein neuer Auftrag vergebbar (leerer Pool): false, ALTER Auftrag bleibt unverändert stehen", () => {
+    const s = rerollGame(4);
+    const old = assignTask(s, tc, "warden")!;
+    old.progress = 1;
+    const leer: ContentDB = { ...tc, monsters: {}, slayerTower: [] };
+    expect(rerollTask(s, leer)).toBe(false);
+    expect(s.slayerTask).toBe(old); // dasselbe Objekt, nichts verloren
+    expect(s.slayerTask!.progress).toBe(1);
+    expect(s.slayerStreak).toBe(3);
+  });
+
+  it("Meister nicht (mehr) im Content: false, Auftrag bleibt", () => {
+    const s = rerollGame(4);
+    const old = assignTask(s, tc, "warden")!;
+    const ohneMeister: ContentDB = { ...tc, slayerMasters: [] };
+    expect(rerollTask(s, ohneMeister)).toBe(false);
+    expect(s.slayerTask).toBe(old);
+  });
+
+  it("DETERMINISMUS: gleiche Seed ⇒ identischer neuer Auftrag; Reroll nutzt nur state.rng", () => {
+    const a = rerollGame(21);
+    const b = rerollGame(21);
+    assignTask(a, tc, "warden");
+    assignTask(b, tc, "warden");
+    expect(rerollTask(a, tc)).toBe(true);
+    expect(rerollTask(b, tc)).toBe(true);
+    expect(a.slayerTask).toEqual(b.slayerTask);
+    expect(a.rng.state).toBe(b.rng.state);
+    // Der Reroll ist exakt „Skip + Neuvergabe" auf dem Würfel: ein drittes Spiel, das den Auftrag
+    // von Hand verwirft und neu zieht, landet auf demselben Ergebnis.
+    const c = rerollGame(21);
+    assignTask(c, tc, "warden");
+    c.slayerTask = null;
+    assignTask(c, tc, "warden");
+    expect(c.slayerTask).toEqual(a.slayerTask);
+    expect(c.rng.state).toBe(a.rng.state);
   });
 });

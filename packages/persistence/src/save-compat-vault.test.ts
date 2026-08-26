@@ -43,6 +43,14 @@ import { deserialize, serialize } from "./index";
  * dass sich dabei GENAU ZWEI Flächen ändern: `camp.buildQueue: []` (v81) und
  * `farmPlots[*].nextCropId: null` auf allen neun Beeten (v82). Ein `v82-*.json` kommt beim Release
  * von 1.1.0 ins Vault.
+ *
+ * SAVE_VERSION 83 (Dungeons queuebar — Chef-Auftrag 26.08.2026: 1×/25×/50×/∞-Läufe wie bei
+ * Kämpfen): dritter Bump im selben Release-Fenster, v82 wurde ebenfalls nie ausgeliefert. Der
+ * v80-Pin belegt jetzt die Kette v80 → v83 mit GENAU DREI Flächen: `camp.buildQueue: []` (v81),
+ * `farmPlots[*].nextCropId: null` (v82) und `queueDungeon: null` (v83 — Laufzeit des aktiven
+ * Queue-Dungeon-Laufs; Alt-Queue-Einträge bleiben byte-gleich). Ein `v83-*.json` kommt beim
+ * Release von 1.1.0 ins Vault (Ritual: echtes ausgeliefertes Save, kein synthetisches Fixture —
+ * die Ladepfade der neuen Felder deckt dungeon-queue-persistence.test.ts ab).
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -197,7 +205,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(SAVE_VERSION).toBeGreaterThanOrEqual(80);
   });
 
-  it("migriert v80 → v82 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
+  it("migriert v80 → v83 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
     // now === savedAt ⇒ offlineMs 0 ⇒ KEIN Catch-up-Tick: gemessen wird allein, was
     // Migration+Sanitize am gespeicherten Save tun. Das ist die schärfere Form des früheren
     // Identitäts-Guards: nicht nur „nichts geht kaputt", sondern „ES ÄNDERT SICH NUR, WAS SICH
@@ -217,15 +225,22 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // Save-Form fest ist und die Byte-Gegenprobe unten greifen kann.
     expect(result!.state.farmPlots).toHaveLength(9);
     for (const plot of result!.state.farmPlots) expect(plot.nextCropId).toBeNull();
+    // Das neue v83-Feld (Dungeons queuebar, Chef-Auftrag 26.08.2026): kein laufender Queue-
+    // Dungeon-Lauf — explizit `queueDungeon: null` (Muster queueFight/v73), die Queue-Einträge
+    // des Alt-Saves bleiben unverändert (die neue Sorte "dungeon" kann dort nicht vorkommen).
+    expect(result!.state.queueDungeon).toBeNull();
+    expect(result!.state.actionQueue).toEqual(raw.state.actionQueue);
 
     // Gegenprobe: das Original um genau diese erwarteten Änderungen ergänzt (Version, buildQueue,
-    // nextCropId je Beet), muss die frisch serialisierten Bytes exakt treffen. Reißt DAS, hat die
-    // Migration mehr angefasst als angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
+    // nextCropId je Beet, queueDungeon), muss die frisch serialisierten Bytes exakt treffen. Reißt
+    // DAS, hat die Migration mehr angefasst als angekündigt — und genau davor schützt das
+    // Save-Kompat-Gesetz.
     const erwartet = JSON.parse(json) as { version: number; state: GameState };
     erwartet.version = SAVE_VERSION;
     erwartet.state.version = SAVE_VERSION;
     erwartet.state.camp.buildQueue = [];
     for (const plot of erwartet.state.farmPlots) plot.nextCropId = null;
+    erwartet.state.queueDungeon = null;
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 

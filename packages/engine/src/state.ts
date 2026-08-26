@@ -40,6 +40,8 @@ export function createGame(
     // Kampf-Queue (SAVE_VERSION 73, Task #312): kein laufender Queue-Kampf, nichts pausiert,
     // kein Skip-Breadcrumb.
     queueFight: null,
+    // Dungeon-Queue (SAVE_VERSION 83): kein laufender Queue-Dungeon-Lauf.
+    queueDungeon: null,
     queuePaused: false,
     lastQueueSkip: null,
     character: createCharacter(creation),

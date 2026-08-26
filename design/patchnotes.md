@@ -419,6 +419,29 @@ The Contract Token rerolls your current Slayer task for free.
 SAVE-Bump; Tooltip-Wirkungszeile und eigene Meldung `alert.consumeNoSlayerTask`. Der 2,5D-Arena-
 Debugzugang (Hotkey + `gr.arena25d`) ist per `ARENA25D_PAUSED = true` gekappt (Chef 26.08.).*
 
+**Belohnungsladen: sieben Kapitel-Belohnungen (Chef-GO 02, 26.08.):** DE: Der Laden hatte nur
+Speisen, Tränke und Saat. Jetzt gibt es je Regal ein Andenken des Kapitels: Wanderersiegel (Ring,
++3 % Beutechance), Aschenmarke (Amulett, +5 % Kampf-XP), Gruftlaterne (Umhang, +5 % Beutechance),
+Gezeitenkette (Amulett, Tötungen verkürzen die Pause), Götzenauge-Ring (+10 % gegen das
+Slayer-Ziel), Chronisten-Signet (Ring, +8 % Kampf-XP, Konstitution und Glück) und die Auftragsmarke
+(siehe unten). Alle bewusst unter den Tier-IV-Runen, keine Kampf-Power. Bilder folgen von Mira, bis
+dahin Platzhalter-Symbol. / EN: The reward shop now sells one keepsake per chapter shelf, six idle
+riders and a consumable, all below rune power.
+
+**Slayer-Armschienen: Rezept ohne Etage-5-Material (Chef-GO 03, 26.08.):** DE: Das Rezept
+(Lederverarbeitung 75) verlangte drei Seelenschinder-Reißzähne aus Turm-Etage 5 (Slayer 80), obwohl
+die Armschienen nur Slayer 50 brauchen. Jetzt 3× Zunderwicht-Haut aus Etage 3 (gleiche Chance). /
+EN: The Slayer vambraces recipe now uses a floor-3 material instead of a floor-5 one.
+
+**Tägliche Aufgaben: mittlere Kill-Aufgaben gedeckelt (Chef-GO 04, 26.08.):** DE: Goblin-Hatz,
+Schamanen, Dornenwölfe, Sumpfkriecher und Pechkäfer erscheinen ab Gesamtlevel 600 nicht mehr; die
+fünf Handwerks-Dailies der mittleren Stufe bleiben. Das Daily-System selbst wird in 1.2.0 neu
+gemacht. / EN: Five mid-tier kill dailies stop at total level 600.
+
+*Dev-Notiz: Guards token-shop-shelves/quests (Ausrüstung im Token-Shop per Chef-GO erlaubt),
+wiring-audit kennt `content.tokenShop` als Quelle; G2-Allowlist `slayer_vambraces` entfernt;
+`cinderwretch_hide` neu (cinder_wretch, 12 %), `soul_flayer_fang` bleibt für die Trophäenwand.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

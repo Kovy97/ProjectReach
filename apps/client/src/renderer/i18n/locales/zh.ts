@@ -1024,6 +1024,8 @@ export const zh: Record<string, string> = {
     "alert.noBagSpace": "背包没有空位了。",
     "alert.actionFailed": "现在无法执行该操作。",
     "alert.consumeCooldown": "你需要缓一缓才能再吃或再喝。",
+    "alert.consumeNoSlayerTask": "你没有可以重掷的当前猎魔任务。",
+    "item.consumable.slayerReroll": "免费重掷你当前的猎魔任务。不消耗点数，连胜保留。",
     "header.stopCombat": "结束战斗",
     "header.slayerTask": "猎魔：{done}/{total} {monster}",
     "topbar.bar.inCombat": "战斗中",

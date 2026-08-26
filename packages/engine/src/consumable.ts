@@ -4,6 +4,7 @@ import { computeStats } from "./character";
 import { itemCount, removeItem } from "./inventory";
 import { masterBuffDurationMult } from "./capes";
 import { consumeBlocked, noteConsumeCooldown } from "./consume-gate";
+import { rerollTask } from "./slayer";
 
 export { consumeBlocked, consumeCooldownKind, noteConsumeCooldown } from "./consume-gate";
 export type { ConsumeCooldownKind } from "./consume-gate";
@@ -76,7 +77,15 @@ export function applyConsumableBuff(state: GameState, content: ContentDB, itemId
  * (consume-gate.ts) den Takt der jeweiligen Kategorie und `noteConsumeCooldown` startet ihn nach
  * Erfolg; damit teilen sich Charakterblatt, Auto-Trank und jeder künftige Pfad denselben Cooldown.
  * Außerhalb des Kampfes ist das Gate ein No-op. Fehlschlag ⇒ `false` UND unangetastetes Inventar
- * (die UI meldet es dem Spieler). Zieht kein RNG.
+ * (die UI meldet es dem Spieler). Zieht kein RNG — AUSSER über eine Sonder-Wirkung:
+ *
+ * SONDER-WIRKUNG (`item.consumable`, shared `ConsumableEffect`; Chef-GO 26.08.2026 Auftragsmarke
+ * `chronicle_task_token` = `{ kind: "slayerReroll" }`): wird VOR dem Verbrauch ausgeführt und
+ * verbraucht das Item nur bei Erfolg (`slayerReroll` ⇒ slayer.ts `rerollTask`: gratis neuer
+ * Auftrag beim selben Meister, Punkte/Streak/Tages-Gratis-Skip unberührt; ohne aktiven Auftrag
+ * false ohne Verbrauch — Grund für die UI via `consumeFailReason`). Sonder-Wirkungen zählen als
+ * Wirkung (ein Item NUR damit ist benutzbar), takten nicht (consume-gate: kind "none", sofern das
+ * Item nicht zusätzlich heilt) und feuern NIE über den Auto-Rebuff.
  */
 export function useConsumable(
   state: GameState,
@@ -92,10 +101,22 @@ export function useConsumable(
   const heals = (item.healAmount ?? 0) > 0 || (item.healPct ?? 0) > 0;
   const cures = !!item.curesPoison;
   const buffs = !!item.buff;
-  if (!heals && !cures && !buffs) return false;
+  // Sonder-Wirkung (shared `ConsumableEffect`, z.B. Auftragsmarke `slayerReroll`): NUR beim
+  // spieler-ausgelösten Verzehr. Der Auto-Rebuff (source "rebuff") fasst Items mit Sonder-Wirkung
+  // GAR NICHT an (kein Verbrauch, kein Effekt) — sonst würfelte ein Combo-Item (Buff + Sonder-
+  // Wirkung) beim Ablauf seines Buffs still den Slayer-Auftrag neu bzw. verbrennte Marken für einen
+  // bloßen Buff-Refresh ohne Spielerentscheidung. Solche Items sind bewusste Einzel-Entscheidungen.
+  const special = item.consumable;
+  if (special && source === "rebuff") return false;
+  if (!heals && !cures && !buffs && !special) return false;
 
   // Abklingzeit VOR dem Verbrauch prüfen: ein geblockter Versuch darf weder Item noch HP anfassen.
   if (source !== "rebuff" && consumeBlocked(state, content, itemId)) return false;
+
+  // Sonder-Wirkung VOR dem Verbrauch ausführen: schlägt sie fehl (slayerReroll: kein aktiver
+  // Auftrag bzw. kein neuer Auftrag vergebbar — rerollTask lässt den State dann unverändert),
+  // bleibt das Item im Inventar und die UI meldet den Grund (`consumeFailReason`).
+  if (special?.kind === "slayerReroll" && !rerollTask(state, content)) return false;
 
   removeItem(state.inventory, itemId, 1);
 
@@ -115,6 +136,33 @@ export function useConsumable(
   // tryAutoEat/tryAutoPotion setzen. Der Rebuff bleibt bewusst taktfrei (s. ConsumeSource).
   if (source !== "rebuff") noteConsumeCooldown(state, content, itemId);
   return true;
+}
+
+/**
+ * Stabile Fehlschlag-Codes für die UI (Muster SlayerShopReason, slayer.ts): sprachneutral,
+ * deterministisch testbar; die UI rendert daraus ihre Meldung statt eines pauschalen „Cooldown".
+ *  - `cooldown`         Konsum-Abklingzeit/Kill-Verschnaufpause im Kampf (`consumeBlocked`).
+ *  - `no_slayer_task`   Sonder-Wirkung `slayerReroll`, aber kein aktiver Slayer-Auftrag.
+ */
+export type ConsumeFailReason = "cooldown" | "no_slayer_task";
+
+/**
+ * Warum würde `useConsumable` (spieler-ausgelöst) für `itemId` JETZT scheitern? `null` = benutzbar
+ * (bzw. kein Consumable/kein Bestand — dafür zeigt die UI ohnehin keinen Knopf). Rein lesend, kein
+ * RNG, keine Mutation. Prüfreihenfolge = die von `useConsumable` (Takt vor Sonder-Wirkung), damit
+ * Meldung und Verhalten nie auseinanderlaufen. NICHT geprüft: ob `rerollTask` trotz aktivem Auftrag
+ * keinen neuen vergeben könnte (leerer Pool — praktisch unerreichbar, dann bleibt der alte Auftrag).
+ */
+export function consumeFailReason(
+  state: GameState,
+  content: ContentDB,
+  itemId: ItemId,
+): ConsumeFailReason | null {
+  const item = content.items[itemId];
+  if (!item || item.type !== "consumable") return null;
+  if (consumeBlocked(state, content, itemId)) return "cooldown";
+  if (item.consumable?.kind === "slayerReroll" && !state.slayerTask) return "no_slayer_task";
+  return null;
 }
 
 /**

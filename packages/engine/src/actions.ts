@@ -1,7 +1,14 @@
 import type { ActionId, ContentDB, GameState, MonsterId, QueuedAction, ThievingRisk } from "@hearthforge/shared";
-import { isFightQueueEntry, makeFightQueueEntry } from "@hearthforge/shared";
+import {
+  FIGHT_QUEUE_ACTION_ID,
+  isDungeonQueueEntry,
+  isFightQueueEntry,
+  makeDungeonQueueEntry,
+  makeFightQueueEntry,
+} from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { startCombat } from "./combat";
+import { canEnterDungeon, startDungeon } from "./dungeon";
 import { canFightMonster } from "./slayer";
 
 /** Prüft, ob das Skill-Level für eine Aktion ausreicht. */
@@ -33,6 +40,9 @@ export function setActiveAction(
     // dessen Eintrag mit Rest-Ziel zurück an die Queue-Front (nichts wird still übersprungen) —
     // er läuft nach der manuellen Aktivität regulär weiter (Muster „Queue setzt später fort").
     requeueFightFront(state);
+    // Dungeon-Queue (SAVE 83): dito für einen LAUFENDEN Queue-Dungeon-Lauf — der aktuelle Lauf
+    // bricht ab (kein Clear, zählt nicht), der Rest wandert an die Queue-Front.
+    requeueDungeonFront(state);
     // Manueller Start = Wiederaufnahme: eine Tod-/Patt-Pause der Queue endet hier (Chef-GO #312
     // „Wiederaufnahme manuell"). Ohne Pause ein No-op.
     state.queuePaused = false;
@@ -160,6 +170,48 @@ export function enqueueFight(
 }
 
 /**
+ * Hängt einen DUNGEON-LAUF-Eintrag an die Action-Queue (SAVE_VERSION 83, Chef-Auftrag 26.08.2026
+ * „Dungeons queuebar — wie Kämpfe mit 1×/25×/50×/∞"): `dungeonId` + Lauf-Ziel `target` (Anzahl
+ * kompletter Läufe bis einschließlich Endboss; `null` = ∞ — läuft bis Tod/manuellem Stopp).
+ * Kettenfähig mit Aktionen und Kampf-Einträgen; offline wie online identisch (derselbe Tick-Pfad).
+ *
+ * ABGELEHNT (return false): unbekannte Dungeons und Dungeons ohne Wellen (`encounters` leer — der
+ * Paragonturm, der über startParagonFloor läuft und kein Dungeon-Lauf im Sinne dieser Queue ist).
+ * Das GATE (`canEnterDungeon`: Quest + Trägerzone) wird hier BEWUSST NICHT geprüft (Vorplanen
+ * erlaubt, Muster enqueueFight) — der Gate-Check läuft beim START des Eintrags (advanceActionQueue;
+ * scheitert er, wird der Eintrag mit Grund `dungeon_locked` übersprungen, s. `lastQueueSkip`).
+ *
+ * STAPEL-REGEL (Spiegel von enqueueFight): ist der unmittelbar letzte Eintrag ein Lauf DESSELBEN
+ * Dungeons und sind beide Ziele endlich → addieren (gegen QUEUE_TARGET_CAP geklemmt).
+ * Manuelles Einreihen = Wiederaufnahme-Signal (löscht eine Tod-/Patt-Pause, s. enqueueAction).
+ */
+export function enqueueDungeonRuns(
+  state: GameState,
+  content: ContentDB,
+  dungeonId: string,
+  target: number | null = null,
+): boolean {
+  const dungeon = content.dungeons.find((d) => d.id === dungeonId);
+  if (!dungeon || dungeon.encounters.length === 0) return false;
+  if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+  state.queuePaused = false;
+  const normalized = normalizeTarget(target);
+  const last = state.actionQueue[state.actionQueue.length - 1];
+  if (
+    last !== undefined &&
+    isDungeonQueueEntry(last) &&
+    last.dungeonId === dungeonId &&
+    last.target !== null &&
+    normalized !== null
+  ) {
+    last.target = Math.min(last.target + normalized, QUEUE_TARGET_CAP);
+    return true;
+  }
+  state.actionQueue.push(makeDungeonQueueEntry(dungeonId, normalized));
+  return true;
+}
+
+/**
  * Stellt den LAUFENDEN Queue-Kampf (`state.queueFight`) mit seinem Rest-Ziel als regulären
  * "fight"-Eintrag zurück an die QUEUE-FRONT und leert die Laufzeit — die eine gemeinsame
  * „nichts wird still übersprungen"-Stelle für alle Unterbrechungen (Tod/Patt in tick.ts,
@@ -174,6 +226,82 @@ export function requeueFightFront(state: GameState): void {
   if (qf.remaining !== null && qf.remaining <= 0) return; // Ziel bereits erfüllt → Eintrag ist fertig
   if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
   state.actionQueue.unshift(makeFightQueueEntry(qf.monsterId, qf.remaining));
+}
+
+/**
+ * Dungeon-Pendant zu `requeueFightFront` (SAVE 83): stellt den LAUFENDEN Queue-Dungeon-Lauf
+ * (`state.queueDungeon`) mit seinen verbleibenden Läufen als "dungeon"-Eintrag zurück an die
+ * QUEUE-FRONT und leert die Laufzeit — der gerade laufende (unvollendete) Lauf zählt nicht, er ist
+ * im Rest enthalten (`remaining` zählt ihn mit). Aufrufer: Tod/Patt/Fremd-Kampf im Tick, manueller
+ * Aktivitäts-Start (setActiveAction/insertQueueEntryAtFront), sanitizeState-Invariante beim Laden.
+ * No-op ohne laufenden Lauf; ein erfülltes Rest-Ziel (≤ 0, defensiv) wird nicht erneut eingereiht.
+ * Zieht KEIN RNG.
+ */
+export function requeueDungeonFront(state: GameState): void {
+  const run = state.queueDungeon;
+  if (!run) return;
+  state.queueDungeon = null;
+  if (run.remaining !== null && run.remaining <= 0) return;
+  if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+  state.actionQueue.unshift(makeDungeonQueueEntry(run.dungeonId, run.remaining));
+}
+
+/**
+ * Zählt `clears` geschaffte Clears auf den LAUFENDEN Queue-Dungeon-Lauf und entscheidet, wie es
+ * weitergeht (SAVE 83; Aufrufer: engine/tick.ts nach combatStep, sobald `dungeonsCleared[id]`
+ * gestiegen ist — der Endboss ist gefallen, `endDungeon` hat den Kampf bereits geräumt):
+ *  • Ziel erreicht (`remaining` ≤ 0) → Laufzeit leeren; der Eintrag ist fertig, die Queue schaltet
+ *    im Tick regulär weiter (Kampf/Aktion/Dungeon — nahtlos wie beim Kill-Ziel eines Kampf-Eintrags).
+ *  • sonst (Rest > 0 oder ∞) → SOFORT von vorn (Welle 1) über `startDungeon` — im selben Tick,
+ *    der Lauf-Zähler `completed` bleibt erhalten („Lauf n von Ziel"). Beute/XP je Lauf wie bisher
+ *    (jeder Lauf ist ein regulärer startDungeon-Lauf: Truhe vor dem Boss, Clear-Belohnung, Erst-
+ *    Clear-Bonus nur beim ersten Clear). Scheitert der Neustart (Content-Drift/Gate — im laufenden
+ *    Spiel praktisch unmöglich), wandert der Rest an die Queue-Front; der nächste Queue-Start
+ *    meldet dann den Grund (`lastQueueSkip`).
+ * Deterministisch, kein RNG (startDungeon zieht keinen) → offline == online bit-identisch.
+ */
+export function onQueuedDungeonCleared(state: GameState, content: ContentDB, clears: number): void {
+  const run = state.queueDungeon;
+  if (!run || clears <= 0) return;
+  run.completed += clears;
+  if (run.remaining !== null) {
+    run.remaining -= clears;
+    if (run.remaining <= 0) {
+      state.queueDungeon = null; // Ziel erreicht → Eintrag fertig (Kampf ist bereits beendet)
+      return;
+    }
+  }
+  if (!startDungeon(state, content, run.dungeonId)) requeueDungeonFront(state);
+}
+
+/** Lesbarer Fortschritt des laufenden Queue-Dungeon-Laufs (s. `dungeonRunProgress`). */
+export interface DungeonRunProgress {
+  dungeonId: string;
+  /** Nummer des AKTUELLEN Laufs (1-basiert: `completed + 1`). */
+  run: number;
+  /** Gesamt-Ziel dieses Eintrags (`completed + remaining`); `null` = ∞. */
+  target: number | null;
+  /** In diesem Eintrag bereits geschaffte Clears. */
+  completed: number;
+  /** Verbleibende Läufe inklusive des aktuellen; `null` = ∞. */
+  remaining: number | null;
+}
+
+/**
+ * Fortschritt des laufenden Queue-Dungeon-Laufs für Kopfleiste und Warteschlange (SAVE 83) —
+ * „Lauf {run} von {target}" bzw. „Lauf {run} von ∞". REINE ABLEITUNG aus `state.queueDungeon`
+ * (liest nur, kein RNG); `null` = kein Queue-Dungeon-Lauf (auch bei manuell betretenen Dungeons).
+ */
+export function dungeonRunProgress(state: GameState): DungeonRunProgress | null {
+  const run = state.queueDungeon;
+  if (!run) return null;
+  return {
+    dungeonId: run.dungeonId,
+    run: run.completed + 1,
+    target: run.remaining === null ? null : run.completed + run.remaining,
+    completed: run.completed,
+    remaining: run.remaining,
+  };
 }
 
 /**
@@ -212,8 +340,10 @@ export function insertQueueEntryAtFront(
 ): boolean {
   if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
   state.queuePaused = false;
-  // (1) laufender Queue-Kampf → mit Rest-Kill-Ziel zurück an die Front (∞ bleibt ∞).
+  // (1) laufender Queue-Kampf → mit Rest-Kill-Ziel zurück an die Front (∞ bleibt ∞). Dito ein
+  //     laufender Queue-Dungeon-Lauf (SAVE 83): der angefangene Lauf bricht ab, der Rest kehrt zurück.
   requeueFightFront(state);
+  requeueDungeonFront(state);
   // (2) laufende Aktion → mit Rest-Mengen-Ziel zurück an die Front. Defensiv-Guards gespiegelt
   // von requeueFightFront: eine unbekannt gewordene Aktion oder ein bereits erfülltes Ziel
   // (target ≤ 0) wird nicht erneut eingereiht — die Laufzeit wird trotzdem geräumt.
@@ -268,6 +398,11 @@ export function prioritizeQueueEntry(state: GameState, content: ContentDB, index
   if (entry === undefined) return false; // durch die Klemmung unerreichbar (noUncheckedIndexedAccess)
   if (isFightQueueEntry(entry)) {
     if (state.queueFight !== null && state.queueFight.monsterId === entry.monsterId) return false;
+  } else if (isDungeonQueueEntry(entry)) {
+    // Dungeon-Eintrag (SAVE 83): läuft derselbe Dungeon bereits als Queue-Lauf → No-op (Neustart
+    // würde nur den angefangenen Lauf verwerfen); sonst wie Kampf-Einträge bewusst in den
+    // Start-Gate-Check (gesperrt ⇒ `lastQueueSkip`, der Rest läuft weiter).
+    if (state.queueDungeon !== null && state.queueDungeon.dungeonId === entry.dungeonId) return false;
   } else {
     if (state.activeActionId === entry.actionId) return false;
     if (!content.actions[entry.actionId] || !actionLevelMet(state, content, entry.actionId)) {
@@ -323,6 +458,30 @@ export function enqueueFightAtFront(
     state,
     content,
     makeFightQueueEntry(monsterId, normalizeTarget(target)),
+  );
+}
+
+/**
+ * Sofort-Start-Variante von `enqueueDungeonRuns` (SAVE 83, gleiche Signatur — das „Betreten" der
+ * Dungeon-Karte mit 1×/25×/50×/∞): der Dungeon läuft SOFORT an (Welle 1), die laufende Aktivität
+ * wandert mit Rest-Ziel an die Queue-Front (`insertQueueEntryAtFront`, s. dort — ein laufender
+ * Queue-Kampf/-Dungeon kehrt mit Rest zurück). Abgelehnt wie bei `enqueueDungeonRuns`: unbekannte
+ * Dungeons und Dungeons ohne Wellen (false, nichts wird angefasst). Das Gate wird beim Sofort-Start
+ * von `advanceActionQueue` geprüft (gesperrt ⇒ `lastQueueSkip` mit `dungeon_locked`, der
+ * zurückgestellte Rest läuft direkt weiter). KEIN Stapeln (der neue Eintrag läuft zuerst).
+ */
+export function enqueueDungeonRunsAtFront(
+  state: GameState,
+  content: ContentDB,
+  dungeonId: string,
+  target: number | null = null,
+): boolean {
+  const dungeon = content.dungeons.find((d) => d.id === dungeonId);
+  if (!dungeon || dungeon.encounters.length === 0) return false;
+  return insertQueueEntryAtFront(
+    state,
+    content,
+    makeDungeonQueueEntry(dungeonId, normalizeTarget(target)),
   );
 }
 
@@ -430,6 +589,25 @@ export function advanceActionQueue(state: GameState, content: ContentDB): boolea
       state.queueFight = { monsterId, remaining: next.target ?? null };
       return true;
     }
+    if (isDungeonQueueEntry(next)) {
+      // kind "dungeon" (SAVE 83): GATE-CHECK BEIM START (Spiegel des Kampf-Eintrags) — Dungeon
+      // unbekannt/ohne Wellen bzw. Gate (Quest/Trägerzone) gesperrt → mit Grund überspringen,
+      // Queue läuft weiter. Sonst Start via `startDungeon` (bestehende Dungeon-API; übernimmt einen
+      // laufenden Kill-Cooldown) und `state.queueDungeon` = Laufzeit mit Rest-Lauf-Ziel.
+      const dungeonId = next.dungeonId;
+      const dungeon = content.dungeons.find((d) => d.id === dungeonId);
+      if (!dungeon || dungeon.encounters.length === 0) {
+        state.lastQueueSkip = { monsterId: FIGHT_QUEUE_ACTION_ID, dungeonId, reason: "unknown_dungeon" };
+        continue;
+      }
+      if (!canEnterDungeon(state, content, dungeonId) || !startDungeon(state, content, dungeonId)) {
+        state.lastQueueSkip = { monsterId: FIGHT_QUEUE_ACTION_ID, dungeonId, reason: "dungeon_locked" };
+        continue;
+      }
+      state.actionTarget = null; // Invariante wie beim Kampf-Eintrag (startDungeon räumt sie ebenfalls)
+      state.queueDungeon = { dungeonId, remaining: next.target ?? null, completed: 0 };
+      return true;
+    }
     if (!content.actions[next.actionId]) continue; // unbekannte Aktion → überspringen
     if (!actionLevelMet(state, content, next.actionId)) continue; // Level/gesperrt → überspringen
     setActiveAction(state, content, next.actionId, next.target ?? null);
@@ -483,7 +661,11 @@ export function queueBlockReason(state: GameState, content: ContentDB): QueueBlo
   if (!Array.isArray(state.actionQueue) || state.actionQueue.length === 0) return null;
   if (state.queuePaused) return "paused";
   if (state.combat.monsterId !== null) {
-    if (state.combat.dungeonId !== null) return null; // endliche Exkursion, s. JSDoc
+    if (state.combat.dungeonId !== null) {
+      // Manueller Dungeon-Lauf = endliche Exkursion (s. JSDoc). Ein QUEUE-Dungeon-Lauf mit ∞-Ziel
+      // (SAVE 83) läuft dagegen bis Tod/Stopp — dieselbe stille Sperre wie ein ∞-Kampf.
+      return state.queueDungeon !== null && state.queueDungeon.remaining === null ? "endless_fight" : null;
+    }
     // Queue-Kampf mit Rest-Kill-Ziel endet von selbst; ∞ (remaining null) und ein manueller
     // Kampf (queueFight null) laufen bis zum Stopp.
     return state.queueFight?.remaining == null ? "endless_fight" : null;

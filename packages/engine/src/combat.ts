@@ -3,6 +3,7 @@ import type {
   CombatState,
   ContentDB,
   DerivedStats,
+  DungeonClearSummary,
   DungeonDef,
   EffectCounters,
   GameState,
@@ -415,6 +416,9 @@ export function startCombat(state: GameState, content: ContentDB, monsterId: Mon
     // beide Felder undefined → Verhalten wie bisher (sofortiger Kampfbeginn).
     cooldownRemainingMs: state.combat.cooldownRemainingMs,
     lastKill: state.combat.lastKill,
+    // Clear-Zeremonie-Vertrag (SAVE 83, s. CombatState.lastDungeonClear): eine Queue-Kette
+    // Dungeon-Clear → Kampf-Eintrag startet im selben Tick — die Summary wandert mit.
+    lastDungeonClear: state.combat.lastDungeonClear,
   };
   // Ward-Init (Rüstungs-Trinität §1.4): der Stoff-Held startet jeden Kampf mit vollem Ward-Pool
   // (analog hp/mana). computeStats ist rein/deterministisch — der frische Wert deckt auch einen
@@ -1343,6 +1347,9 @@ function grantDungeonRewards(
   // Lebenslanger Dungeon-Clear-Zähler (Quelle für `dungeons_cleared`-Achievements). Nur hier,
   // beim tatsächlichen Abschluss der letzten Welle — nicht pro Welle.
   state.dungeonsCleared[dungeon.id] = (state.dungeonsCleared[dungeon.id] ?? 0) + 1;
+  // Clear-Zeremonie-Vertrag (SAVE 83): alles, was NACH diesem Marker geloggt wird, ist die
+  // Abschluss-Belohnung — daraus entsteht unten `lastDungeonClear` (reine Log-Lektüre, kein RNG).
+  const markerSeq = cs.eventCount;
   pushLog(cs, { by: "player", kind: "kill", amount: 0 });
   if (dungeon.gold > 0) {
     // Blessings of the Reach ("greed", §gold): +% auf JEDE Gold-Vergabe — EINMAL berechnet, damit
@@ -1375,6 +1382,31 @@ function grantDungeonRewards(
   // Clear-Loot über den gemeinsamen Dungeon-Loot-Pfad (identische RNG-Draw-Reihenfolge wie der
   // frühere Inline-Loop, solange keine Row eine explizite suffixChance trägt — Bit-Identität).
   rollDungeonLootTable(state, content, dungeon.loot, dungeonLootIlvl(content, dungeon), nowMs);
+
+  // `lastDungeonClear` (SAVE 83 „Dungeons queuebar", s. CombatState-JSDoc): die Summary aus den
+  // soeben geloggten Belohnungs-Einträgen (seq > Marker) — exakt die Rekonstruktion, die die
+  // Clear-Zeremonie der UI bisher selbst aus dem Log machte, jetzt engine-seitig und damit robust
+  // gegen den Queue-Neustart im selben Tick (der das Log leert). Transient, kein RNG, kein Save-Bump.
+  const clearNo = state.dungeonsCleared[dungeon.id] ?? 1;
+  const summary: DungeonClearSummary = {
+    dungeonId: dungeon.id,
+    clearNo,
+    firstClear: clearNo === 1,
+    gold: 0,
+    xp: 0,
+    loot: [],
+  };
+  for (const e of cs.log) {
+    if (e.seq <= markerSeq) continue;
+    if (e.kind === "gold") summary.gold += e.amount;
+    else if (e.kind === "xp") summary.xp += e.amount;
+    else if (e.kind === "loot" && e.itemId) {
+      const existing = summary.loot.find((l) => l.itemId === e.itemId);
+      if (existing) existing.qty += e.amount;
+      else summary.loot.push({ itemId: e.itemId, qty: e.amount });
+    }
+  }
+  cs.lastDungeonClear = summary;
 }
 
 /**

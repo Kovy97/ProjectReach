@@ -2,7 +2,7 @@ import type { ActionId, ContentDB, GameState, ItemId } from "@hearthforge/shared
 import { CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, thievingRiskMods } from "@hearthforge/shared";
 import type { ActionDef } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
-import { advanceActionQueue, requeueFightFront } from "./actions";
+import { advanceActionQueue, onQueuedDungeonCleared, requeueDungeonFront, requeueFightFront } from "./actions";
 import { nextFloat, nextInt } from "./rng";
 import { blessingMult, setShrineChanceBonus, shrineAmplifiedMult } from "./blessing";
 import { computeStats, syncProgression } from "./character";
@@ -395,6 +395,12 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
     if (state.queueFight !== null && state.combat.monsterId !== state.queueFight.monsterId) {
       requeueFightFront(state);
     }
+    // Dungeon-Queue (SAVE 83) — dieselbe Fremd-Erkennung: läuft ein Queue-Dungeon-Lauf, aber der
+    // Spieler kämpft inzwischen etwas ANDERES (manueller startCombat/anderer Dungeon/Elite/Turm)
+    // → Rest-Läufe zurück an die Queue-Front, der angefangene Lauf zählt nicht. Kein RNG.
+    if (state.queueDungeon !== null && state.combat.dungeonId !== state.queueDungeon.dungeonId) {
+      requeueDungeonFront(state);
+    }
     // Kill-Zählung des Queue-Kampfs über den KILL-CREDIT-Zähler (Chef-GO #312: nur Kills des
     // Ziel-Monsters; `monsterKills` wird für dg_-Dungeon-Varianten auf die BASIS-Id geschrieben —
     // killCreditMonsterId ist die EINE Quelle dieser Semantik): Delta vor/nach combatStep = Kills
@@ -402,6 +408,11 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
     const fight = state.queueFight;
     const creditId = fight !== null ? killCreditMonsterId(content, fight.monsterId) : null;
     const killsBefore = creditId !== null ? (state.monsterKills[creditId] ?? 0) : 0;
+    // Lauf-Zählung des Queue-Dungeon-Laufs (SAVE 83) über den CLEAR-Zähler: `dungeonsCleared[id]`
+    // steigt genau beim Endboss-Kill (grantDungeonRewards) — Delta vor/nach combatStep = Clears
+    // dieses Ticks (0 oder 1). Tod/Patt/Flucht erhöhen den Zähler nie → zählen nie.
+    const run = state.queueDungeon;
+    const clearsBefore = run !== null ? (state.dungeonsCleared[run.dungeonId] ?? 0) : 0;
     combatStep(state, content, nowMs);
     if (fight !== null && state.queueFight === fight && creditId !== null) {
       const delta = (state.monsterKills[creditId] ?? 0) - killsBefore;
@@ -416,6 +427,14 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
         }
       }
     }
+    if (run !== null && state.queueDungeon === run) {
+      const clears = (state.dungeonsCleared[run.dungeonId] ?? 0) - clearsBefore;
+      // Endboss gefallen (endDungeon hat den Kampf bereits geräumt): Lauf zählen und — solange das
+      // Ziel nicht erreicht ist — im SELBEN Tick von vorn (Welle 1) starten; Ziel erreicht ⇒
+      // Laufzeit leer, die Queue schaltet unten regulär weiter. Chef-Auftrag 26.08.2026: „nach dem
+      // Endboss wieder von neu anfangen". Kein RNG (actions.ts onQueuedDungeonCleared).
+      if (clears > 0) onQueuedDungeonCleared(state, content, clears);
+    }
     // Endete der Kampf in DIESEM Tick (monsterId jetzt null)?
     if (state.combat.monsterId === null) {
       const reason = state.combat.stopReason;
@@ -428,6 +447,13 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
         // Monsters endet nach dem Kill ohne Respawn) lassen die Queue weiterlaufen — der Eintrag
         // startet im nächsten Leerlauf-Tick regulär erneut.
         requeueFightFront(state);
+        if (failed) state.queuePaused = true;
+      } else if (state.queueDungeon !== null) {
+        // Dungeon-Lauf endete OHNE Clear (SAVE 83: Tod/Patt — ein Clear hätte oben sofort neu
+        // gestartet oder die Laufzeit geleert): Rest-Läufe zurück an die Front; Tod/Patt pausiert
+        // die Queue exakt wie beim Kampf-Eintrag (Wiederaufnahme manuell). Der abgebrochene Lauf
+        // zählt nicht — Verhalten des Laufs selbst wie bisher (harter Abbruch, kein Verlust).
+        requeueDungeonFront(state);
         if (failed) state.queuePaused = true;
       } else if (failed && Array.isArray(state.actionQueue) && state.actionQueue.length > 0) {
         // Tod/Patt pausiert auch eine WARTENDE Queue (Verhaltens-Änderung mit Chef-GO #312:
@@ -520,6 +546,10 @@ function skillingStep(state: GameState, content: ContentDB, nowMs?: number): voi
     // endliches Rest-Ziel verfällt bewusst mit (expliziter Spieler-Stopp ist kein stilles
     // Überspringen). Die Queue läuft ohne Pause mit dem nächsten Eintrag weiter.
     if (state.queueFight !== null) state.queueFight = null;
+    // Dungeon-Queue (SAVE 83) — dieselbe Flucht-Semantik: manueller stopCombat mitten im Queue-
+    // Dungeon-Lauf ⇒ der Eintrag gilt als beendet (∞ endet genau so, ein endlicher Rest verfällt
+    // bewusst — expliziter Spieler-Stopp), die Queue läuft ohne Pause mit dem nächsten Eintrag.
+    if (state.queueDungeon !== null) state.queueDungeon = null;
     // Leerlauf: den nächsten Queue-Eintrag anlaufen lassen (sofern nicht Tod/Patt-pausiert, #312).
     // Seit die UI-Aktions-Karten nur noch enqueuen (4er-Grid [1×][25×][50×][∞], kein direktes
     // setActiveAction mehr), ist das der EINZIGE Weg, wie der erste eingereihte Eintrag aus dem

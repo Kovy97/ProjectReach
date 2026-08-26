@@ -783,6 +783,17 @@ describe("Token-Shop (buyTokenShopOffer)", () => {
   });
 
   it("Katalog-Guard: echte content.tokenShop-Offers sind konsistent (IDs eindeutig, Items existieren & stackable, Preise 1..25)", () => {
+    // Chef-GO 02 (26.08.2026): 6 Kapitel-Meilenstein-Ausrüstungsstücke sind bewusst
+    // stackable:false, qty:1 (Ausrüstung wie überall im Spiel) — dieselbe #13-Ausnahme wie in
+    // packages/content/src/token-shop-shelves.test.ts, dort mit vollem Kontext dokumentiert.
+    const equipmentExceptions = new Set([
+      "chronicle_wanderers_seal",
+      "chronicle_ash_mark",
+      "chronicle_crypt_lantern",
+      "chronicle_tide_chain",
+      "chronicle_idol_eye_ring",
+      "chronicle_chronicler_signet",
+    ]);
     const offers = content.tokenShop ?? [];
     expect(offers.length).toBeGreaterThanOrEqual(8); // Task #284: 8-12 Erst-Angebote
     const ids = new Set(offers.map((o) => o.id));
@@ -790,7 +801,11 @@ describe("Token-Shop (buyTokenShopOffer)", () => {
     for (const o of offers) {
       const item = content.items[o.itemId];
       expect(item, `tokenShop ${o.id}: itemId ${o.itemId} fehlt im Katalog`).toBeDefined();
-      expect(item?.stackable, `tokenShop ${o.id}: ${o.itemId} muss stackable sein (Bündel = Stack)`).toBe(true);
+      if (equipmentExceptions.has(o.itemId)) {
+        expect(item?.stackable, `tokenShop ${o.id}: Ausrüstung ${o.itemId} muss stackable:false sein`).toBe(false);
+      } else {
+        expect(item?.stackable, `tokenShop ${o.id}: ${o.itemId} muss stackable sein (Bündel = Stack)`).toBe(true);
+      }
       expect(Number.isInteger(o.qty) && o.qty > 0, `tokenShop ${o.id}: qty muss positive Ganzzahl sein`).toBe(true);
       // Preisleitplanke (Chef-Vorgabe): günstig für große Mengen, nichts über 25 Tokens.
       expect(Number.isInteger(o.tokenCost) && o.tokenCost >= 1 && o.tokenCost <= 25, `tokenShop ${o.id}: tokenCost außerhalb 1..25`).toBe(true);

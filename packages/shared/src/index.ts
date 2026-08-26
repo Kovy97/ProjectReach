@@ -619,7 +619,17 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     fehlend, damit der Vault-Guard byte-genau vergleichen kann). sanitizeState: nur behalten, wenn
 //     String, in content.crops vorhanden und ungleich cropId — ein Plan auf einem LEEREN Beet ist
 //     gültig (s. FarmPlot.nextCropId). Keine Item-ID-Renames.
-export const SAVE_VERSION = 82;
+// v83 (Dungeons queuebar — Chef-Auftrag 26.08.2026: „wie Kämpfe mit 1×/25×/50×/∞-Knöpfen; nach dem
+//     Endboss wieder von neu anfangen"): (a) `QueuedAction.kind` kennt die dritte Sorte "dungeon"
+//     mit neuem optionalem Feld `dungeonId` (Übergangs-Shape wie "fight", `actionId`-Platzhalter "");
+//     (b) EIN neues GameState-Feld `queueDungeon: QueueDungeonRuntime | null` (Laufzeit des aktiven
+//     Queue-Dungeon-Laufs: dungeonId, remaining, completed); (c) `lastQueueSkip` kann Dungeon-Skips
+//     tragen (`dungeonId` + Gründe unknown_dungeon/dungeon_locked). Ein Lauf zählt beim Endboss-Kill
+//     (`dungeonsCleared`-Delta), danach startet der Dungeon im selben Tick von vorn. Migration (< 83):
+//     `queueDungeon = null`; Alt-Einträge unverändert. sanitizeState: "dungeon"-Einträge nur mit
+//     bekanntem Dungeon (≥ 1 Welle), queueDungeon nur zusammen mit genau diesem laufenden Dungeon
+//     (sonst Rest an die Queue-Front). Keine Item-ID-Renames, keine Kampfwerte-Änderung.
+export const SAVE_VERSION = 83;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -729,6 +739,24 @@ export type BuffCategory =
   | "attribute"
   | "food"
   | "utility";
+
+/**
+ * Sonder-Wirkung eines Verbrauchsguts JENSEITS von Heilung/Gift-Heilung/Buff (Chef-GO 26.08.2026,
+ * Belohnungsladen-Item „Auftragsmarke" `chronicle_task_token`). Diskriminierte Union über `kind`,
+ * heute genau EIN Kind:
+ *  - "slayerReroll"  Der aktive Slayer-Auftrag wird OHNE Punkteabzug, OHNE Streak-Bruch und OHNE
+ *                    Verbrauch des Tages-Gratis-Skips (Trophäenwand III) verworfen und beim SELBEN
+ *                    Meister sofort neu vergeben (engine/slayer.ts `rerollTask`, ausgelöst über
+ *                    `useConsumable`). Ohne aktiven Auftrag ist das Item nicht benutzbar — kein
+ *                    Verbrauch (engine/consumable.ts `consumeFailReason` liefert der UI den Grund).
+ * Content-Shape am Item: `consumable: { kind: "slayerReroll" }`. Lebt NUR in der ContentDB (kein
+ * Save-State) ⇒ KEIN SAVE_VERSION-Bump. Sonder-Wirkungen feuern AUSSCHLIESSLICH beim spieler-
+ * ausgelösten Verzehr — nie über Auto-Eat/Auto-Trank/Auto-Rebuff.
+ */
+export type ConsumableEffectKind = "slayerReroll";
+export interface ConsumableEffect {
+  kind: ConsumableEffectKind;
+}
 
 // ───────────────────────────────────────────────────────────────────────────
 // Magie: Mana & Statuseffekte
@@ -2797,6 +2825,14 @@ export interface ItemDef {
   healPct?: number;
   /** Nur für type === "consumable": entfernt aktive Gift-Effekte vom Spieler. */
   curesPoison?: boolean;
+  /**
+   * Nur für type === "consumable": Sonder-Wirkung (s. `ConsumableEffect`, z.B. Auftragsmarke
+   * `{ kind: "slayerReroll" }`). Kombinierbar mit Heilung/Gift-Heilung/Buff (alle Wirkungen greifen
+   * in EINEM Verzehr); ein Item mit NUR dieser Wirkung ist ein reines Utility-Verbrauchsgut ohne
+   * Heil-Takt (consume-gate: kind "none"). Schlägt die Sonder-Wirkung fehl (z.B. kein aktiver
+   * Slayer-Auftrag), wird das Item NICHT verbraucht. Nur ContentDB ⇒ kein SAVE_VERSION-Bump.
+   */
+  consumable?: ConsumableEffect;
   /** RPG-Beschreibung/Flavor (im großen Tooltip). */
   description?: LocalizedString;
   /** Seltenheitsstufe (Diablo-Stil, färbt Name/Rahmen). Default „common". */
@@ -5144,6 +5180,17 @@ export interface CombatState {
    */
   lastKill?: LastKillSummary;
   /**
+   * Abschluss-Summary des JÜNGSTEN Dungeon-Clears (transient, fürs UI — Clear-Zeremonie, SAVE 83
+   * „Dungeons queuebar"): seit Queue-Dungeon-Läufe nach dem Endboss im SELBEN Tick von vorn
+   * beginnen, sieht die UI den Übergang „dungeonId gesetzt → null" NICHT mehr und `combat.log`
+   * wird vom Neustart geleert — dieses Feld ist der stabile Vertrag: `grantDungeonRewards` setzt
+   * es beim Clear (aus den soeben geloggten Belohnungs-Einträgen, kein RNG), startDungeon/
+   * startCombat tragen es über den Neustart mit (wie `lastKill`); die UI erkennt einen neuen Clear
+   * an `clearNo` (== `dungeonsCleared[dungeonId]` nach dem Clear, monoton). NICHT persistiert
+   * (Load-Whitelist, kein Save-Bump-Anteil) — nach einem Reload gibt es keine Zeremonie nachzuholen.
+   */
+  lastDungeonClear?: DungeonClearSummary;
+  /**
    * Transienter XP-Akkumulator der LAUFENDEN Begegnung (Quelle für `lastKill.xpBySkill`): tatsächlich
    * vergebene Kampf-XP je Skill seit dem Spawn dieses Gegners (inkl. earlyXpMult/Pet-Multiplikatoren).
    * Wird beim Kill in `lastKill` übernommen und für den nächsten Gegner geleert. Nicht persistiert.
@@ -5209,6 +5256,26 @@ export interface LastKillSummary {
    * (Jackpot-Moment feierbar); wie die ganze Summary transient/NICHT persistiert — kein Save-Bump.
    */
   bloodMoonProc?: boolean;
+}
+
+/**
+ * Abschluss-Summary eines Dungeon-Clears (`CombatState.lastDungeonClear`, transient, SAVE 83
+ * „Dungeons queuebar"): die Abschluss-Belohnung (Clear-Gold inkl. Erst-Clear-Bonus, Lebenskraft-XP,
+ * Clear-Loot) exakt so, wie `grantDungeonRewards` sie geloggt hat — NICHT die Wellen-Kills und
+ * NICHT die Vor-Boss-Truhe (die fließen wie bisher über `lastKill`/`combat.log`).
+ */
+export interface DungeonClearSummary {
+  dungeonId: string;
+  /** Wievielter Clear dieses Dungeons (== `dungeonsCleared[dungeonId]` nach dem Clear) — monoton, eindeutig je Clear. */
+  clearNo: number;
+  /** true ⇔ dies war der ERSTE Clear dieses Dungeons (Erst-Clear-Bonus: Clear-Gold doppelt, §5.1.3). */
+  firstClear: boolean;
+  /** Tatsächlich gutgeschriebenes Clear-Gold (inkl. Segen/Schrein, inkl. Erst-Clear-Verdopplung). */
+  gold: number;
+  /** Tatsächlich vergebene Abschluss-XP (Lebenskraft, gerundet wie die Log-Zeile). */
+  xp: number;
+  /** Clear-Loot (qty = tatsächlich vergebene Menge inkl. Suffix-Instanz), gleiche itemIds gemergt. */
+  loot: Array<{ itemId: ItemId; qty: number }>;
 }
 
 /**
@@ -5401,18 +5468,30 @@ export interface PlayerStats {
  *   das Zonen-Gate (`canFightMonster`) wird beim START geprüft — ein nicht (mehr) kämpfbares
  *   Monster wird mit Grund übersprungen (`lastQueueSkip`), die Queue läuft weiter.
  *
+ * kind "dungeon" (Dungeon-Läufe, SAVE_VERSION 83, Chef-Auftrag 26.08.2026 „Dungeons queuebar"):
+ *   `dungeonId` = der Dungeon (bekannte `DungeonDef` mit ≥ 1 Welle — der Paragonturm mit leeren
+ *   `encounters` ist strukturell ausgeschlossen, er läuft über startParagonFloor), `target` = Anzahl
+ *   LÄUFE (1/25/50/…; `null` = ∞, bis Tod oder manueller Stopp). Ein Lauf ZÄHLT, wenn der Endboss
+ *   fällt (`dungeonsCleared[dungeonId]`-Delta pro Tick, engine/tick.ts); danach beginnt der Dungeon
+ *   im SELBEN Tick automatisch von vorn (Welle 1), bis das Ziel erreicht ist. Beim Anlaufen poppt
+ *   der Eintrag in `GameState.queueDungeon` (Laufzeit-Zähler, s. QueueDungeonRuntime). Das Gate
+ *   (`canEnterDungeon`: Quest + Trägerzone) wird beim START geprüft — ein gesperrter/unbekannter
+ *   Dungeon wird mit Grund übersprungen (`lastQueueSkip.dungeonId`), die Queue läuft weiter.
+ *
  * ÜBERGANGS-SHAPE (bewusst EIN Interface statt Discriminated Union): `actionId` bleibt auf ALLEN
  * Einträgen typ-präsent, weil die bestehende Queue-UI (ActionQueuePanel) `entry.actionId`
- * unkonditioniert liest (`content.actions[entry.actionId]`) — für "fight"-Einträge trägt es den
- * Platzhalter `FIGHT_QUEUE_ACTION_ID` (""), den der `if (!action)`-Guard der UI ausblendet, bis
- * die UI-Welle auf `kind` umstellt (isFightQueueEntry unten). Die Engine liest `actionId` für
- * "fight"-Einträge NIE.
+ * unkonditioniert liest (`content.actions[entry.actionId]`) — für "fight"-/"dungeon"-Einträge
+ * trägt es den Platzhalter `FIGHT_QUEUE_ACTION_ID` (""), den der `if (!action)`-Guard der UI
+ * ausblendet, bis die UI-Welle auf `kind` umstellt (isFightQueueEntry/isDungeonQueueEntry unten).
+ * Die Engine liest `actionId` für "fight"-/"dungeon"-Einträge NIE.
  */
 export interface QueuedAction {
-  kind: "action" | "fight";
+  kind: "action" | "fight" | "dungeon";
   actionId: ActionId;
-  /** NUR kind "fight": das Ziel-Monster. Für "action"-Einträge nie gesetzt. */
+  /** NUR kind "fight": das Ziel-Monster. Für andere Einträge nie gesetzt. */
   monsterId?: MonsterId;
+  /** NUR kind "dungeon" (SAVE_VERSION 83): der Dungeon. Für andere Einträge nie gesetzt. */
+  dungeonId?: string;
   target: number | null;
 }
 
@@ -5433,6 +5512,38 @@ export function isFightQueueEntry(
 /** Baut einen "fight"-Queue-Eintrag (EINZIGE Konstruktions-Stelle des Übergangs-Shapes). */
 export function makeFightQueueEntry(monsterId: MonsterId, target: number | null): QueuedAction {
   return { kind: "fight", actionId: FIGHT_QUEUE_ACTION_ID, monsterId, target };
+}
+
+/** Type-Guard: ist dieser Queue-Eintrag ein Dungeon-Lauf-Eintrag (mit gesetztem Dungeon)? */
+export function isDungeonQueueEntry(
+  entry: QueuedAction,
+): entry is QueuedAction & { kind: "dungeon"; dungeonId: string } {
+  return entry.kind === "dungeon" && typeof entry.dungeonId === "string";
+}
+
+/**
+ * Baut einen "dungeon"-Queue-Eintrag (SAVE_VERSION 83; EINZIGE Konstruktions-Stelle — Muster
+ * makeFightQueueEntry, gleicher `actionId`-Platzhalter). `target` = Anzahl Läufe, `null` = ∞.
+ */
+export function makeDungeonQueueEntry(dungeonId: string, target: number | null): QueuedAction {
+  return { kind: "dungeon", actionId: FIGHT_QUEUE_ACTION_ID, dungeonId, target };
+}
+
+/**
+ * Laufzeit des AKTIVEN Queue-Dungeon-Laufs (`GameState.queueDungeon`, SAVE_VERSION 83) — das
+ * "dungeon"-Pendant zu `queueFight`: der Eintrag wurde aus der Queue gepoppt (advanceActionQueue →
+ * startDungeon) und zählt hier seine Läufe. `remaining` = verbleibende Läufe INKLUSIVE des gerade
+ * laufenden (`null` = ∞), `completed` = in diesem Eintrag bereits geschaffte Clears (Anzeige „Lauf
+ * completed+1 von completed+remaining", s. dungeonRunProgress in engine/actions.ts). Gezählt wird
+ * über das `dungeonsCleared[dungeonId]`-Delta pro Tick (engine/tick.ts) — nur der Endboss-Kill
+ * zählt, Tod/Patt/Flucht zählen nie. Invariante nach jedem Tick/Load: gesetzt ⇒
+ * `combat.dungeonId === dungeonId && combat.monsterId !== null` (sanitizeState stellt sonst den
+ * Rest als "dungeon"-Eintrag zurück an die Queue-Front). Nie gleichzeitig mit `queueFight` gesetzt.
+ */
+export interface QueueDungeonRuntime {
+  dungeonId: string;
+  remaining: number | null;
+  completed: number;
 }
 
 /**
@@ -5456,12 +5567,25 @@ export interface QueueFightRuntime {
  *   • "gate_locked": Zonen-/Slayer-/Turm-Gate nicht erfüllt (canFightMonster false — z.B.
  *     Story-Zone noch nicht freigespielt, etwa nach einem Save-Wechsel).
  */
-export type QueueSkipReason = "unknown_monster" | "not_queueable" | "gate_locked";
+export type QueueSkipReason =
+  | "unknown_monster"
+  | "not_queueable"
+  | "gate_locked"
+  /** "dungeon"-Eintrag (SAVE 83): Dungeon existiert nicht (mehr) im Content oder hat keine Wellen. */
+  | "unknown_dungeon"
+  /** "dungeon"-Eintrag (SAVE 83): Gate nicht erfüllt (canEnterDungeon false — Quest/Trägerzone). */
+  | "dungeon_locked";
 
-/** Breadcrumb des letzten übersprungenen Kampf-Queue-Eintrags (Muster `lastStop`). */
+/**
+ * Breadcrumb des letzten übersprungenen Kampf-/Dungeon-Queue-Eintrags (Muster `lastStop`).
+ * Dungeon-Skips (SAVE 83) tragen `dungeonId` und die Gründe `unknown_dungeon`/`dungeon_locked`;
+ * `monsterId` ist dann der Platzhalter "" (Übergangs-Shape wie `FIGHT_QUEUE_ACTION_ID` — die
+ * bestehende UI liest `monsterId` unkonditioniert). Die UI-Welle verzweigt auf `dungeonId`.
+ */
 export interface QueueSkip {
   monsterId: MonsterId;
   reason: QueueSkipReason;
+  dungeonId?: string;
 }
 
 export interface GameState {
@@ -5506,6 +5630,17 @@ export interface GameState {
    * an die Queue-Front (engine/tick.ts + actions.ts requeueFightFront). Persistiert.
    */
   queueFight: QueueFightRuntime | null;
+  /**
+   * Laufzeit des AKTIVEN Queue-Dungeon-Laufs (SAVE_VERSION 83, Chef-Auftrag 26.08.2026): der
+   * zuletzt aus der Queue gestartete "dungeon"-Eintrag mit Rest-Lauf-Ziel (s. QueueDungeonRuntime).
+   * `null` = kein Queue-Dungeon (auch bei manuell per `startDungeon` betretenen Dungeons — die
+   * zählen NIE auf ein Queue-Ziel). Endet der Lauf ohne Clear (Tod/Patt/Fremd-Unterbrechung),
+   * wandert der Rest als "dungeon"-Eintrag zurück an die Queue-Front (engine/tick.ts +
+   * actions.ts requeueDungeonFront); Tod/Patt pausieren die Queue wie beim Kampf-Eintrag. Flucht
+   * (manueller stopCombat) beendet den Eintrag wie beim Kampf-Eintrag (Rest verfällt, Queue läuft
+   * ohne Pause weiter). Persistiert; Migration (< 83): null.
+   */
+  queueDungeon: QueueDungeonRuntime | null;
   /**
    * Queue-Pause (SAVE_VERSION 73): true nach Tod/Patt („Tod pausiert die Queue", Chef-GO #312) —
    * kein Queue-Eintrag läuft automatisch an, bis der Spieler manuell wieder aufnimmt

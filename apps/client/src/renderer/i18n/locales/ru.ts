@@ -1024,6 +1024,8 @@ export const ru: Record<string, string> = {
     "alert.noBagSpace": "В сумках нет свободного места.",
     "alert.actionFailed": "Сейчас это невозможно.",
     "alert.consumeCooldown": "Нужно мгновение до следующего куска или глотка.",
+    "alert.consumeNoSlayerTask": "У тебя нет активного задания Истребителя, чтобы перебросить его.",
+    "item.consumable.slayerReroll": "Бесплатно перебрасывает твоё текущее задание Истребителя. Очки не тратятся, серия сохраняется.",
     "header.stopCombat": "Закончить бой",
     "header.slayerTask": "Истребление: {done}/{total} {monster}",
     "topbar.bar.inCombat": "В бою",

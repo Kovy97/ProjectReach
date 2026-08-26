@@ -576,6 +576,38 @@ export function skipTask(state: GameState, content: ContentDB, dayStamp?: number
 }
 
 /**
+ * Würfelt den aktiven Slayer-Auftrag GRATIS neu (Belohnungsladen-Item „Auftragsmarke"
+ * `chronicle_task_token`, Chef-GO 26.08.2026 — Consumable-Kind `slayerReroll`, ausgelöst über
+ * `useConsumable`, consumable.ts). Der laufende Auftrag wird verworfen und beim SELBEN Meister
+ * sofort ein neuer vergeben (`assignTask`, derselbe Würfel-Pfad wie nach einem Skip).
+ *
+ * BEWUSST NICHT über `skipTask`: der Skip zieht Punkte ab, bricht bei Kosten > 0 die Serie und
+ * verbraucht ggf. den Tages-Gratis-Skip der Trophäenwand III (`slayerFreeSkipDay`) — die Marke
+ * darf NICHTS davon anfassen: `slayerPoints`, `slayerStreak` und `slayerFreeSkipDay` bleiben
+ * bit-identisch, es gibt weder Kosten- noch Guthaben-Prüfung.
+ *
+ * Fehlschlag (false, State unverändert): kein aktiver Auftrag, Meister nicht (mehr) im Content,
+ * oder `assignTask` kann keinen neuen Auftrag vergeben (leerer Pool — dann wird der ALTE Auftrag
+ * unverändert zurückgelegt, der Spieler verliert nichts). Der Aufrufer verbraucht das Item nur
+ * bei true. Ein Reroll kann — wie ein Skip mit anschließender Neuvergabe — dasselbe Monster erneut
+ * treffen; das ist gewollt derselbe Würfel, keine „garantiert anderes Monster"-Regel.
+ *
+ * RNG: ausschließlich über `assignTask` (state.rng), spieler-getriggert wie Thieving/Loot;
+ * kein eigener Wurf hier. Kein neues State-Feld ⇒ kein SAVE_VERSION-Bump.
+ */
+export function rerollTask(state: GameState, content: ContentDB): boolean {
+  const task = state.slayerTask;
+  if (!task) return false;
+  if (!(content.slayerMasters ?? []).some((m) => m.id === task.masterId)) return false;
+  state.slayerTask = null;
+  if (!assignTask(state, content, task.masterId)) {
+    state.slayerTask = task; // kein neuer Auftrag möglich → alten Auftrag behalten, nichts verloren
+    return false;
+  }
+  return true;
+}
+
+/**
  * Generische Slayer-Punkte-Senke (Punkte-Shop Phase 2). Zieht `amount` ab, wenn genug Guthaben da
  * ist; sonst false ohne Effekt. `amount` muss > 0 sein.
  */

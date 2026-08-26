@@ -176,6 +176,12 @@ export function canEnterDungeon(state: GameState, content: ContentDB, dungeonId:
  * Schlüssel-Logik mehr (Welle J, 2026-07-13: kein keyItem-Check, kein Verbrauch) und KEIN
  * Kampfstufen-Gate mehr (Task #345, Chef-Entscheid 2026-07-25, s. canEnterDungeon-JSDoc).
  * Die Wellen-Progression + Abschluss-Belohnung passiert in combat.ts (onEnemyDefeated).
+ *
+ * Queue-Dungeon-Läufe (SAVE 83): der Neustart nach einem gezählten Clear läuft über GENAU diese
+ * Funktion (actions.ts onQueuedDungeonCleared) — kein zweiter Start-Pfad. `queueDungeon` wird hier
+ * bewusst NICHT angefasst: ein manueller Start desselben Dungeons während eines Queue-Laufs zählt
+ * weiter (Lauf beginnt nur von vorn), ein anderer Dungeon/Kampf löst im Tick die Fremd-Erkennung
+ * aus (Rest zurück an die Queue-Front, tick.ts).
  */
 export function startDungeon(state: GameState, content: ContentDB, dungeonId: string): boolean {
   const d = content.dungeons.find((x) => x.id === dungeonId);
@@ -184,7 +190,20 @@ export function startDungeon(state: GameState, content: ContentDB, dungeonId: st
   const first = firstId ? content.monsters[firstId] : undefined;
   if (!first) return false;
 
+  // Laufende Aktion mit ENDLICHEM Mengen-Ziel → mit Rest an die Queue-Front statt still weg
+  // (Spiegel der Wurzel-Regel in startCombat, Chef-Report 25.08.2026 „hat mir einen ganzen Auftrag
+  // aus der Queue gelöscht"). Endlose Aktionen sind ein Aktivitätswechsel, kein Verlust.
+  if (
+    state.activeActionId !== null &&
+    typeof state.actionTarget === "number" &&
+    state.actionTarget > 0 &&
+    content.actions[state.activeActionId]
+  ) {
+    if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+    state.actionQueue.unshift({ kind: "action", actionId: state.activeActionId, target: state.actionTarget });
+  }
   state.activeActionId = null;
+  state.actionTarget = null; // Invariante `activeActionId === null ⇒ actionTarget === null`
   state.actionProgressMs = 0;
   state.lastStop = null;
   state.stunMs = 0;
@@ -208,6 +227,9 @@ export function startDungeon(state: GameState, content: ContentDB, dungeonId: st
     // sind beide Felder undefined → Verhalten wie bisher (sofortiger Kampfbeginn).
     cooldownRemainingMs: state.combat.cooldownRemainingMs,
     lastKill: state.combat.lastKill,
+    // Clear-Zeremonie-Vertrag (SAVE 83): die Summary des soeben geschafften Clears überlebt den
+    // Queue-Neustart im selben Tick (die UI erkennt den Clear an `clearNo`, nicht mehr am Log).
+    lastDungeonClear: state.combat.lastDungeonClear,
   };
   return true;
 }

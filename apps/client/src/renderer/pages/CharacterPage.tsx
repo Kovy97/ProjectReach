@@ -13,6 +13,7 @@ import {
   sellItem,
   useConsumable,
   usedCapacityUnits,
+  consumeFailReason,
 } from "@hearthforge/engine";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
 import { HoverTip } from "../components/CitadelTip";
@@ -198,7 +199,10 @@ export function CharacterPage(): JSX.Element {
         key: "use",
         label: t("item.use"),
         onClick: () => {
-          if (!useConsumable(state, content, itemId)) gameAlert("alert.consumeCooldown");
+          if (!useConsumable(state, content, itemId)) {
+            // Auftragsmarke ohne aktiven Slayer-Auftrag hat einen eigenen Grund (consumeFailReason, engine).
+            gameAlert(consumeFailReason(state, content, itemId) === "no_slayer_task" ? "alert.consumeNoSlayerTask" : "alert.consumeCooldown");
+          }
         },
       });
     }

@@ -1021,6 +1021,10 @@ function MiscRows({
   if (item.curesPoison) {
     rows.push(<div key="cure" className="itip-tag">{t("item.curesPoison")}</div>);
   }
+  // Auftragsmarke (Chef-GO 02, 26.08.2026): Sonder-Verbrauchsgüter ohne Heilung tragen ihre Wirkung als Satz.
+  if (item.consumable) {
+    rows.push(<div key="consumable" className="itip-tag">{t(`item.consumable.${item.consumable.kind}`)}</div>);
+  }
 
   // Timed buff (consumable/rune)
   if (item.buff) {
@@ -1498,6 +1502,7 @@ function ItemTooltipCard({
     item.healAmount ||
     item.healPct != null ||
     item.curesPoison ||
+    !!item.consumable ||
     item.weaponEffect ||
     item.weaponEffects?.length ||
     item.manaCost !== undefined ||
@@ -1541,7 +1546,7 @@ function ItemTooltipCard({
   // starre Ausrüstungsraster mit leeren Offense-/Defense-Plätzen gezwungen.
   const isConsumableCard =
     item.type === "consumable" &&
-    (item.healPct != null || !!item.healAmount || !!item.curesPoison || !!item.buff);
+    (item.healPct != null || !!item.healAmount || !!item.curesPoison || !!item.buff || !!item.consumable);
 
   // Chef-GO ▲/▼-Deltas: EINMAL pro Karte aggregieren (buildCompareMap ist derselbe Helper wie das
   // bestehende Shift-Compare, inkl. effektiver Instanz-Boni via instanceBonusDelta — kein

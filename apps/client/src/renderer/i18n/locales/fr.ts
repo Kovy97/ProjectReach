@@ -1026,6 +1026,8 @@ export const fr: Record<string, string> = {
     "alert.noBagSpace": "Plus de place libre dans vos sacs.",
     "alert.actionFailed": "Ça ne fonctionne pas pour l'instant.",
     "alert.consumeCooldown": "Il te faut un instant avant la prochaine bouchée ou gorgée.",
+    "alert.consumeNoSlayerTask": "Tu n'as aucune tâche de Chasseur active à relancer.",
+    "item.consumable.slayerReroll": "Relance gratuitement ta tâche de Chasseur actuelle. Aucun point dépensé, ta série continue.",
     "header.stopCombat": "Terminer le combat",
     "header.slayerTask": "Chasseur : {done}/{total} {monster}",
     "topbar.bar.inCombat": "En combat",

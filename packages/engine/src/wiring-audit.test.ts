@@ -16,6 +16,11 @@ function obtainableSet(): Set<string> {
   }
   for (const s of content.shop ?? []) produced.add(s.itemId);
   for (const s of content.slayerShop ?? []) produced.add(s.itemId); // Slayer-Punkte-Shop
+  // Chef-GO 02 (26.08.2026): 7 neue Kapitel-Meilenstein-Items sind ABSICHTLICH token-shop-exklusiv
+  // (kein Loot-/Craft-/Gold-Shop-Pfad, s. token-shop-shelves.test.ts) — bisher war JEDES
+  // content.tokenShop-Item redundant zu einer anderen Quelle (Aktion/Gold-Shop), deshalb fehlte
+  // der Token-Shop hier bis jetzt komplett.
+  for (const o of content.tokenShop ?? []) produced.add(o.itemId);
   for (const d of content.dungeons ?? []) {
     for (const l of d.loot ?? []) produced.add(l.itemId); // Dungeon-Clear-Belohnungen
   }

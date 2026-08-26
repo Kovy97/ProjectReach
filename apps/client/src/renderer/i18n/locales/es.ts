@@ -1010,6 +1010,8 @@ export const es: Record<string, string> = {
     "alert.noBagSpace": "No hay espacio libre en tus bolsas.",
     "alert.actionFailed": "Eso no funciona ahora mismo.",
     "alert.consumeCooldown": "Necesitas un momento antes del siguiente bocado o trago.",
+    "alert.consumeNoSlayerTask": "No tienes ningún encargo de Cazador activo que volver a sortear.",
+    "item.consumable.slayerReroll": "Vuelve a sortear gratis tu encargo de Cazador actual. Sin gastar puntos, tu racha se mantiene.",
     "header.stopCombat": "Terminar combate",
     "header.slayerTask": "Cazador: {done}/{total} {monster}",
     "topbar.bar.inCombat": "En combate",

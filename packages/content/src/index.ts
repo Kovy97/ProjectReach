@@ -4762,7 +4762,21 @@ export const content: ContentDB = {
       name: { en: "Soul Flayer Fang", de: "Seelenschinder-Reißzahn" },
       icon: "🦷",
       type: "material", stackable: true, value: 300, rarity: "superRare",
-      description: { en: "A curved fang reeking of burned souls. Rare drop from the soul flayer. Crafting component for Slayer Vambraces.", de: "Ein geschwungener Reißzahn, der nach verbrannten Seelen riecht. Seltener Drop des Seelenschinders. Handwerks-Zutat für Slayer-Armschienen." },
+      // Chef-GO 03 26.08.2026: nicht mehr Zutat der Slayer-Armschienen (Etage-5-Material bei
+      // einem Etage-3-Ausrüstungsstück war ein Gate-Mismatch, s. craft_slayer_vambraces-Kommentar).
+      // Bleibt erhältlich/verdrahtet über den einzigen verbleibenden Sink: camp_trophy_wall Stufe 3.
+      description: { en: "A curved fang reeking of burned souls. Rare drop from the soul flayer, prized as a trophy for the camp's Trophy Wall.", de: "Ein geschwungener Reißzahn, der nach verbrannten Seelen riecht. Seltener Drop des Seelenschinders, begehrt als Trophäe für die Trophäenwand des Lagers." },
+    },
+    // Chef-GO 03 26.08.2026: Ersatz-Zutat für die Slayer-Armschienen (s. craft_slayer_vambraces).
+    // Etage 3 (Die Schmiedeabgründe, Slayer 40) statt Etage 5 (Slayer 80) — passt zum eigenen
+    // Ausrüstungs-Requirement (slayer: 50) der Armschienen. Gleiche Seltenheitsklasse/Preisband wie
+    // der ersetzte Reißzahn (superRare-Signatur-Material einer Turm-Etage), Drop-Chance 0.12 wie zuvor.
+    cinderwretch_hide: {
+      id: "cinderwretch_hide",
+      name: { en: "Cinderwretch Hide", de: "Aschenelend-Haut" },
+      icon: "🩹",
+      type: "material", stackable: true, value: 60, rarity: "superRare",
+      description: { en: "A tough hide scorched black by an eternal ember-heart, stripped from a cinder wretch deep in the tower. Crafting component for Slayer Vambraces.", de: "Eine zähe Haut, von einem ewigen Glutherz kohlschwarz versengt, einem Aschenelend tief im Turm entrissen. Handwerks-Zutat für Slayer-Armschienen." },
     },
     void_herald_shard: {
       id: "void_herald_shard",
@@ -4813,8 +4827,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
       requirements: { slayer: 50 }, value: 3200,
       description: {
-        en: "Vambraces fashioned from the fang of a soul flayer and hardened tower leather. Every kill on the hunt knits the hunter's wounds: +4 HP per kill.",
-        de: "Armschienen aus dem Reißzahn eines Seelenschinders und gehärtetem Turm-Leder. Jeder Abschuss auf der Jagd schließt die Wunden des Jägers: +4 LP je Kill.",
+        en: "Vambraces fashioned from a scorched cinderwretch hide and hardened tower leather. Every kill on the hunt knits the hunter's wounds: +4 HP per kill.",
+        de: "Armschienen aus versengter Aschenelend-Haut und gehärtetem Turm-Leder. Jeder Abschuss auf der Jagd schließt die Wunden des Jägers: +4 LP je Kill.",
       },
     },
     // Chef-Entscheidung E6 (25.08.2026), design/slayer-shop-1.1.0.md §4.4: Lücke Slayer 30–50 im
@@ -7074,6 +7088,112 @@ export const content: ContentDB = {
       weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
       modifiers: { lck: 1 },
       requirements: { ranged: 90 }, value: 2600, rarity: "epic",
+    },
+
+    // ══ Belohnungsladen-Meilenstein-Items (Chef-GO 02 26.08.2026, sieben neue Kapitel-Regal-
+    // Items) ═══════════════════════════════════════════════════════════════════════════════════
+    // Reine Kapitel-Meilenstein-Zeichen, idle Rider ohne Kampf-Power: rarity rare, kein Requirement
+    // außer dem jeweiligen Token-Shop-Regal, Werte bewusst UNTER den Tier-IV-Schmuckrunen
+    // (design/runen-tier-iv.html: Kopfgeld bounty 0.20, Chronik combatXp 0.10, Nachlese lootChance
+    // 0.10, Rastlosen cooldownOnKill 1000ms). Icons sind Platzhalter-Emoji, Mira liefert Pixelart
+    // nach (Auto-Discovery bindet <id>.webp ohne Code-Änderung). stackable:false wie normale
+    // Ausrüstung (Ausnahme chronicle_task_token unten, ein Verbrauchsgut).
+    //
+    // chronicle_wanderers_seal: Sammel-Tempo-Recherche (Auftrag): grep nach gatherSpeed/actionSpeed/
+    // speed in shared+engine ergab NUR `ItemDef.tool.speedMult` (nur type==="tool", genau EIN Skill,
+    // kein generisches Ring-Feld für "alle Sammel-Skills") und `StyleModifiers.speedMult`
+    // (Kampf-Angriffstempo, nicht Skilling) — kein passendes generisches Sammel-Tempo-Bonusfeld auf
+    // EquipBonus. Fallback Stufe 2 laut Auftrag (`gatherXpMult`) GEPRÜFT UND VERWORFEN: Itemization
+    // 2.0 §8.3 Guard 1 (itemization-guards.test.ts) verbietet JEDES `bonus.*`-Feld auf Rüstung/
+    // Schmuck außer der engen Signatur-Whitelist {hpRegenPerSec, lifesteal, critDamage} auf
+    // idol_*/slayer_*/legendary/godly-Items — ein rare-Ring wie dieser darf GAR KEIN bonus-Feld
+    // tragen, `gatherXpMult` eingeschlossen (Guard unterscheidet nicht nach Kampf-/Skilling-Wert).
+    // Fallback Stufe 3 laut Auftrag: `lootChance` 0.03 (Rune-Tier-IV-Kind, wirkt über `weaponEffect`
+    // statt `bonus` und ist von diesem Guard nicht erfasst). Im Bericht vermerkt.
+    chronicle_wanderers_seal: {
+      id: "chronicle_wanderers_seal",
+      name: { en: "Wanderer's Seal", de: "Wanderersiegel" },
+      icon: "🧭",
+      type: "equipment", stackable: false, slot: "ring1", rarity: "rare", value: 650,
+      weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.03, durationMs: 0 },
+      description: {
+        en: "Carried by pilgrims marking the road from the border camp to the first shrine of ash. A keener eye for the road grants +3% loot chance from regular kills while worn.",
+        de: "Getragen von Pilgern, die den Weg vom Grenzlager zum ersten Aschen-Schrein markierten. Ein geschärfter Blick für den Weg gewährt +3 % Beutechance auf reguläre Kills, solange es getragen wird.",
+      },
+    },
+    chronicle_ash_mark: {
+      id: "chronicle_ash_mark",
+      name: { en: "Ash Mark", de: "Aschenmarke" },
+      icon: "🔥",
+      type: "equipment", stackable: false, slot: "amulet", rarity: "rare", value: 800,
+      weaponEffect: { type: "combatXp", chance: 1, magnitude: 0.05, durationMs: 0 },
+      description: {
+        en: "Branded into hunters who survived the Ashfields' burning collapse. Grants +5% combat experience while worn.",
+        de: "Gebrannt in Jäger, die den brennenden Einsturz der Aschfelder überlebten. Gewährt +5 % Kampf-Erfahrung, solange es getragen wird.",
+      },
+    },
+    chronicle_crypt_lantern: {
+      id: "chronicle_crypt_lantern",
+      name: { en: "Crypt Lantern", de: "Gruftlaterne" },
+      icon: "🏮",
+      type: "equipment", stackable: false, slot: "cape", rarity: "rare", value: 850,
+      weaponEffect: { type: "lootChance", chance: 1, magnitude: 0.05, durationMs: 0 },
+      description: {
+        en: "Once lit the passages of the Crypt for the diggers who first broke its seals. Grants +5% loot chance from regular kills while worn.",
+        de: "Erhellte einst die Gänge der Krypta für die Ausgräber, die ihre Siegel als Erste brachen. Gewährt +5 % Beutechance auf reguläre Kills, solange es getragen wird.",
+      },
+    },
+    // cooldownOnKill 500ms = die Hälfte der Rune der Rastlosen (1000ms, design/runen-tier-iv.html
+    // §Rune 10), wie vom Auftrag verlangt.
+    chronicle_tide_chain: {
+      id: "chronicle_tide_chain",
+      name: { en: "Tide Chain", de: "Gezeitenkette" },
+      icon: "🌊",
+      type: "equipment", stackable: false, slot: "amulet", rarity: "rare", value: 1100,
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 500 },
+      description: {
+        en: "Forged from links dredged out of the Slag Pit's flooded coast. Kills shave half a second off your recovery pause.",
+        de: "Geschmiedet aus Gliedern, die aus der überfluteten Küste der Schlackengrube gebaggert wurden. Tötungen verkürzen deine Erholungspause um eine halbe Sekunde.",
+      },
+    },
+    chronicle_idol_eye_ring: {
+      id: "chronicle_idol_eye_ring",
+      name: { en: "Idol's Eye Ring", de: "Götzenauge-Ring" },
+      icon: "👁️",
+      type: "equipment", stackable: false, slot: "ring1", rarity: "rare", value: 1250,
+      weaponEffect: { type: "bounty", chance: 1, magnitude: 0.10, durationMs: 0 },
+      description: {
+        en: "Set with a shard pried from the Idol Hall's watching statue. Grants +10% damage against your active slayer target.",
+        de: "Besetzt mit einem Splitter aus der wachenden Statue der Götzenhalle. Gewährt +10 % Schaden gegen dein aktives Slayer-Ziel.",
+      },
+    },
+    // Chase des Ladens (höchstes Regal): combatXp 0.08 bleibt unter der Chronik-Rune (0.10, s.o.),
+    // zusätzlich modifiers con:3/lck:3 laut Auftrag.
+    chronicle_chronicler_signet: {
+      id: "chronicle_chronicler_signet",
+      name: { en: "Chronicler's Signet", de: "Chronisten-Signet" },
+      icon: "📜",
+      type: "equipment", stackable: false, slot: "ring1", rarity: "rare", value: 1500,
+      modifiers: { con: 3, lck: 3 },
+      weaponEffect: { type: "combatXp", chance: 1, magnitude: 0.08, durationMs: 0 },
+      description: {
+        en: "Pressed into the wax of every chapter sealed in the camp's growing chronicle. Grants +8% combat experience while worn.",
+        de: "In das Wachs jedes Kapitels gedrückt, das in der wachsenden Chronik des Lagers versiegelt wurde. Gewährt +8 % Kampf-Erfahrung, solange es getragen wird.",
+      },
+    },
+    // Engine-Kind `slayerReroll` liefert logic-dev parallel (shared ConsumableEffectKind,
+    // engine/consumable.ts, engine/slayer.ts rerollTask) — s. packages/engine/src/
+    // consumable-slayer-reroll.test.ts (bereits gegen den echten Katalog vorbereitet).
+    chronicle_task_token: {
+      id: "chronicle_task_token",
+      name: { en: "Contract Token", de: "Auftragsmarke" },
+      icon: "📋",
+      type: "consumable", stackable: true, rarity: "rare", value: 15,
+      consumable: { kind: "slayerReroll" },
+      description: {
+        en: "A stamped token traded among slayers for a fresh contract. Rerolls your active slayer task for free without breaking your streak.",
+        de: "Eine gestempelte Marke, die Monsterjäger gegen einen frischen Auftrag eintauschen. Würfelt deinen aktiven Slayer-Auftrag gratis neu, ohne deine Serie zu brechen.",
+      },
     },
   },
   actions: {
@@ -11626,10 +11746,15 @@ export const content: ContentDB = {
       id: "craft_slayer_vambraces",
       name: { en: "Craft Slayer Vambraces", de: "Slayer-Armschienen anfertigen" },
       skill: "leatherworking", category: "slayer_requirements", durationMs: 15000, xp: 887, levelRequired: 75,
+      // Chef-GO 03 26.08.2026: soul_flayer_fang (Etage 5, Slayer 80) → cinderwretch_hide (Etage 3,
+      // Slayer 40) ersetzt. Der alte Reißzahn hing das Craft-Rezept eines Slayer-50-Ausrüstungsteils
+      // an ein Etage-5-Monster (effektives Material-Gate ~128 laut content-integrity.test.ts G2) —
+      // 30+ Level über dem eigenen Requirement. Etage 3 liefert ein Gate von 64 (Etage-Schwelle
+      // 40·1.6), das jetzt UNTER dem G2-Limit von 65 (= max(req+10, req·1.3) bei req=50) liegt.
       inputs: [
-        { itemId: "soul_flayer_fang", qty: 3 },
-        { itemId: "cured_leather",    qty: 8 },
-        { itemId: "basilisk_scale",   qty: 5 },
+        { itemId: "cinderwretch_hide", qty: 3 },
+        { itemId: "cured_leather",     qty: 8 },
+        { itemId: "basilisk_scale",    qty: 5 },
       ],
       loot: [{ itemId: "slayer_vambraces", chance: 1, min: 1, max: 1 }],
     },
@@ -13438,6 +13563,9 @@ export const content: ContentDB = {
       loot: [
         { itemId: "forge_ember", chance: 0.30, min: 1, max: 1 },
         { itemId: "ashen_dust", chance: 0.50, min: 1, max: 2 },
+        // Chef-GO 03 26.08.2026: Signatur-Material für craft_slayer_vambraces (s. dort) — Etage-3-
+        // Ersatz für den alten Etage-5-Reißzahn, gleiche Drop-Chance wie zuvor (0.12).
+        { itemId: "cinderwretch_hide", chance: 0.12, min: 1, max: 1 },
       ],
     },
     forge_demon: {
@@ -16329,6 +16457,7 @@ export const content: ContentDB = {
       tokenReward: 2,
       daily: true,
       difficulty: "medium",
+      maxTotalLevel: 600, // Chef-GO 04 26.08.2026; Daily-System wird in 1.2.0 Alive neu gemacht
     },
     {
       id: "daily_m_smelt_steel_6",
@@ -16355,6 +16484,7 @@ export const content: ContentDB = {
       tokenReward: 2,
       daily: true,
       difficulty: "medium",
+      maxTotalLevel: 600, // Chef-GO 04 26.08.2026; Daily-System wird in 1.2.0 Alive neu gemacht
     },
     {
       id: "daily_m_gather_80",
@@ -16381,6 +16511,7 @@ export const content: ContentDB = {
       tokenReward: 2,
       daily: true,
       difficulty: "medium",
+      maxTotalLevel: 600, // Chef-GO 04 26.08.2026; Daily-System wird in 1.2.0 Alive neu gemacht
     },
     {
       // Task #286 Stage B: war "Fletch 20 iron arrows" — Munition entfernt, ID unverändert.
@@ -16408,6 +16539,7 @@ export const content: ContentDB = {
       tokenReward: 2,
       daily: true,
       difficulty: "medium",
+      maxTotalLevel: 600, // Chef-GO 04 26.08.2026; Daily-System wird in 1.2.0 Alive neu gemacht
     },
     {
       id: "daily_m_craft_leather_gear",
@@ -16434,6 +16566,7 @@ export const content: ContentDB = {
       tokenReward: 2,
       daily: true,
       difficulty: "medium",
+      maxTotalLevel: 600, // Chef-GO 04 26.08.2026; Daily-System wird in 1.2.0 Alive neu gemacht
     },
     {
       id: "daily_m_smelt_blacksteel_4",
@@ -16900,6 +17033,9 @@ export const content: ContentDB = {
     { id: "ts_tonic_forager_10",  itemId: "tonic_forager_i",        qty: 10,  tokenCost: 8,  sortOrder: 80, shelfId: "shelf_open" }, // 5min +10% Sammel-XP (Tonika-Stufe I)
     // Utility — Runecrafting-Reagenz (kampf-freie Trainings-Grundlage, wird in Massen gebraucht).
     { id: "ts_magic_binder_100",  itemId: "magic_binder",           qty: 100, tokenCost: 5,  sortOrder: 90, shelfId: "shelf_open" }, // 400g-Gegenwert; Bonus-Strom neben dem Gold-Shop-Kauf
+    // Kapitel-Meilenstein (Chef-GO 02 26.08.2026): Ausrüstung im Token-Shop — die #13-Regel „kein
+    // Equipment" ist für die 7 neuen chronicle_*-Items bewusst aufgehoben (s. token-shop-shelves.test.ts).
+    { id: "ts_wanderers_seal_1",  itemId: "chronicle_wanderers_seal", qty: 1, tokenCost: 16, sortOrder: 95, shelfId: "shelf_open" }, // Kapitel-Meilenstein, idle Rider (lootChance 0.03), kein Kampfwert
 
     // ═══ Regal 1 „Aschfelder" (chronicle_04, ~L20-40, Herblore/Cooking/Farming-Bänder) ════════
     { id: "ts_ghostfin_pike_50",  itemId: "cooked_ghostfin_pike",   qty: 50, tokenCost: 8,  sortOrder: 110, shelfId: "shelf_ashfields" }, // Fishing L20, heal 6+6.5%
@@ -16909,6 +17045,8 @@ export const content: ContentDB = {
     { id: "ts_keeneye_8",         itemId: "tonic_keeneye",          qty: 8,  tokenCost: 10, sortOrder: 150, shelfId: "shelf_ashfields" }, // Herblore L26, +20 Ausweichen 150s
     { id: "ts_bloodgrain_seed_30", itemId: "bloodgrain_seed",       qty: 30, tokenCost: 2,  sortOrder: 160, shelfId: "shelf_ashfields" }, // Farming L22 (Vorgriff auf Regal 2s Blutgetreide-Eintopf)
     { id: "ts_bloodthistle_seed_20", itemId: "bloodthistle_seed",   qty: 20, tokenCost: 4,  sortOrder: 170, shelfId: "shelf_ashfields" }, // Farming L26 (dito)
+    // Kapitel-Meilenstein (Chef-GO 02 26.08.2026).
+    { id: "ts_ash_mark_1",        itemId: "chronicle_ash_mark",     qty: 1,  tokenCost: 12, sortOrder: 175, shelfId: "shelf_ashfields" }, // Kapitel-Meilenstein, idle Rider (+5% Kampf-XP), kein Kampfwert
 
     // ═══ Regal 2 „Krypta" (chronicle_09, ~L40-60) ═════════════════════════════════════════════
     { id: "ts_bloodgrain_stew_50", itemId: "bloodgrain_stew",       qty: 50, tokenCost: 8,  sortOrder: 210, shelfId: "shelf_crypt" }, // Cooking L38, 4-Portionen, heal 11+8.5%
@@ -16920,6 +17058,8 @@ export const content: ContentDB = {
     { id: "ts_arcane_surge_5",    itemId: "tonic_arcane_surge",     qty: 5,  tokenCost: 13, sortOrder: 270, shelfId: "shelf_crypt" }, // Herblore L52, +6 INT +Mana 90s
     { id: "ts_soulgourd_seed_30", itemId: "soulgourd_seed",         qty: 30, tokenCost: 4,  sortOrder: 280, shelfId: "shelf_crypt" }, // Farming L42 (Vorgriff auf Regal 3)
     { id: "ts_gravemoss_seed_15", itemId: "gravemoss_seed",         qty: 15, tokenCost: 6,  sortOrder: 290, shelfId: "shelf_crypt" }, // Farming L46 (dito)
+    // Kapitel-Meilenstein (Chef-GO 02 26.08.2026).
+    { id: "ts_crypt_lantern_1",   itemId: "chronicle_crypt_lantern", qty: 1, tokenCost: 13, sortOrder: 295, shelfId: "shelf_crypt" }, // Kapitel-Meilenstein, idle Rider (+5% Beutechance), kein Kampfwert
 
     // ═══ Regal 3 „Küste und Schlackengrube" (chronicle_14, ~L60-78, Meister-Dailies offen) ════
     { id: "ts_crypteel_35",       itemId: "cooked_crypteel",        qty: 35, tokenCost: 17, sortOrder: 310, shelfId: "shelf_slagpit" }, // Fishing L60, heal 16+10%, curesPoison
@@ -16932,6 +17072,8 @@ export const content: ContentDB = {
     { id: "ts_ironbark_6",        itemId: "tonic_ironbark",         qty: 6,  tokenCost: 17, sortOrder: 380, shelfId: "shelf_slagpit" }, // Herblore L66, +40 maxHp +Regen 90s
     { id: "ts_witherleek_seed_10", itemId: "witherleek_seed",       qty: 10, tokenCost: 9,  sortOrder: 390, shelfId: "shelf_slagpit" }, // Farming L62 (Vorgriff auf Regal 4)
     { id: "ts_nightbloom_seed_20", itemId: "nightbloom_seed",       qty: 20, tokenCost: 6,  sortOrder: 400, shelfId: "shelf_slagpit" }, // Farming L66 (dito)
+    // Kapitel-Meilenstein (Chef-GO 02 26.08.2026).
+    { id: "ts_tide_chain_1",      itemId: "chronicle_tide_chain",   qty: 1,  tokenCost: 17, sortOrder: 405, shelfId: "shelf_slagpit" }, // Kapitel-Meilenstein, idle Rider (cooldownOnKill 500ms), kein Kampfwert
 
     // ═══ Regal 4 „Götzenhalle" (chronicle_18, ~L78-90 — bleibt unter den 3 Endgame-Gerichten) ═
     { id: "ts_wraithscale_20",    itemId: "cooked_wraithscale",     qty: 24, tokenCost: 20, sortOrder: 410, shelfId: "shelf_idolhall" }, // Fishing L78, heal 24+12.5% — teuerstes Angebot des Shops (Deckel)
@@ -16943,6 +17085,8 @@ export const content: ContentDB = {
     { id: "ts_godharvest_4",      itemId: "tonic_godharvest",       qty: 4,  tokenCost: 14, sortOrder: 470, shelfId: "shelf_idolhall" }, // Herblore L86, +25% Sammel-XP 5min
     { id: "ts_ambergrain_seed_10", itemId: "ambergrain_seed",       qty: 10, tokenCost: 7,  sortOrder: 480, shelfId: "shelf_idolhall" }, // Farming L84 (Vorgriff auf Regal 5)
     { id: "ts_godsbreath_seed_11", itemId: "godsbreath_seed",       qty: 11, tokenCost: 7,  sortOrder: 490, shelfId: "shelf_idolhall" }, // Farming L86 (dito)
+    // Kapitel-Meilenstein (Chef-GO 02 26.08.2026).
+    { id: "ts_idol_eye_ring_1",   itemId: "chronicle_idol_eye_ring", qty: 1, tokenCost: 19, sortOrder: 495, shelfId: "shelf_idolhall" }, // Kapitel-Meilenstein, idle Rider (bounty 0.10), kein Kampfwert
 
     // ═══ Regal 5 „Der zweite Band" (chronicle_20) — #p13 Chef-Entscheidung 2 „Kein Endgame-
     // Zeug": KEINE neue Speise (die einzigen realen L86-98-Gerichte sind die 3 ausdrücklich
@@ -16951,6 +17095,10 @@ export const content: ContentDB = {
     { id: "ts_apex_3",            itemId: "tonic_apex",             qty: 3,  tokenCost: 15, sortOrder: 510, shelfId: "shelf_second_volume" }, // Herblore L90, Tempo+Crit 90s (kein Instant-Heal)
     { id: "ts_panacea_3",         itemId: "panacea_elixir",         qty: 3,  tokenCost: 17, sortOrder: 520, shelfId: "shelf_second_volume" }, // Herblore L94, curesPoison + Regen (kein Instant-Heal)
     { id: "ts_godbloom_seed_8",   itemId: "godbloom_seed",          qty: 8,  tokenCost: 8,  sortOrder: 530, shelfId: "shelf_second_volume" }, // Farming L95, letzte Saat-Stufe
+    // Kapitel-Meilensteine (Chef-GO 02 26.08.2026): Chase-Ring des Ladens + mehrfach kaufbare
+    // Verbrauchsmarke (Slayer-Auftrags-Reroll, Engine-Kind `slayerReroll` von logic-dev parallel).
+    { id: "ts_chronicler_signet_1", itemId: "chronicle_chronicler_signet", qty: 1, tokenCost: 20, sortOrder: 535, shelfId: "shelf_second_volume" }, // Chase des Ladens, idle Rider (+8% Kampf-XP, con3/lck3), kein Kampf-Skill-Boost
+    { id: "ts_task_token_1",      itemId: "chronicle_task_token",   qty: 1,  tokenCost: 3,  sortOrder: 540, shelfId: "shelf_second_volume" }, // niedrig, mehrfach kaufbar — Slayer-Auftrags-Reroll ohne Punkteabzug/Serienbruch
   ],
 
   // ── Begleiter-Pets (Pet-/Companion-System, ZWEI-EFFEKT-MODELL) ─────────────
