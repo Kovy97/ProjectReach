@@ -3019,7 +3019,7 @@ export const es: Record<string, string> = {
   "items:slayer_greaves:name": "Grebas de cazador",
   "items:slayer_helm:description": "Un yelmo magistral forjado con la esencia de los peores horrores de la Torre del Cazador. Marca la misión de su portador: +20 % de daño contra el objetivo actual de la tarea, y no se necesitan objetos de guarda contra ninguna amenaza de la torre mientras se lleva puesto.",
   "items:slayer_helm:name": "Yelmo de cazador",
-  "items:slayer_hunters_cape:description": "Una capa desgastada que Brenna entrega a los cazadores que se han ganado sus primeros treinta contratos. El primer golpe de cada caza muerde más profundo: +15 % de daño contra un objetivo ileso.",
+  "items:slayer_hunters_cape:description": "Una capa desgastada que Brenna entrega a los cazadores que se han ganado sus primeros treinta contratos. El primer impacto de cada caza es el más contundente: +15 % de daño contra un objetivo ileso.",
   "items:slayer_hunters_cape:name": "Capa de cazador",
   "items:slayer_hunters_elixir:description": "Reservado para cazadores veteranos. Acelera tus ataques (-600ms de intervalo), +12% de crítico, +20% de daño crítico durante 30 minutos. Mejor duración sostenida que el Brebaje de combate.",
   "items:slayer_hunters_elixir:name": "Elixir de caza del cazador",

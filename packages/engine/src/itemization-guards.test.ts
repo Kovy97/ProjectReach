@@ -178,7 +178,13 @@ describe("Itemization 2.0 — Verbotene Werte (§8.3 Guard 1)", () => {
       if (!JEWELRY_SLOTS.has(item.slot) && !isSignature(item) && !isChase(item)) {
         offenders.push(`${item.id}: Boost nur auf Schmuck/Capes/Amuletten, Signaturen oder Chase-Items (§4.4/§5.1c)`);
       }
-      if (keys.length !== 1) offenders.push(`${item.id}: genau 1 Boost je Stück (§4.4), hat ${keys.length}`);
+      // Chef-Entscheid 26.08.2026 (Slayer omnifunktional): das Slayer-Set darf EINEN Omni-Boost tragen,
+      // d. h. attack = ranged = magic mit demselben Wert. Effektiv ist das weiterhin genau ein Boost,
+      // weil ein Kampf nur einen Stil nutzt; die Stapelgrenze 1–5 gilt je Key unverändert.
+      const omniBoost = item.id.startsWith("slayer_")
+        && keys.length === 3 && ["attack", "ranged", "magic"].every((k) => keys.includes(k))
+        && new Set(Object.values(item.skillBoost)).size === 1;
+      if (keys.length !== 1 && !omniBoost) offenders.push(`${item.id}: genau 1 Boost je Stück (§4.4), hat ${keys.length}`);
       for (const key of keys) {
         if (!(BOOSTABLE_COMBAT_SKILL_IDS as string[]).includes(key)) {
           offenders.push(`${item.id}: unbekannter Boost-Skill ${key}`);

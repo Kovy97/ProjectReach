@@ -26,6 +26,15 @@ const FORBIDDEN_BY_CLASS: Record<"armor_plate" | "armor_leather" | "armor_cloth"
   armor_cloth: ["str"], // Ward-Schiene (int/wis/con); dex bleibt hier zusätzlich fern (Test unten).
 };
 
+/**
+ * Chef-Entscheid 26.08.2026 („Slayer-Helm sollte Stats für alle 3 Kampfrichtungen haben, ist ja ein
+ * omnifunktionaler Gegenstand, genau so wie die restlichen Slayer-Items"): Die Slayer-Ausrüstung aus
+ * dem Laden des Slayer-Meisters ist das EINZIGE Set mit str = dex = int auf Platte/Leder, weil der
+ * Turm jeden Kampfstil sieht. Nur die festen modifiers sind ausgenommen; Suffix-Rollen (Test oben)
+ * folgen weiter der Klassenregel, damit ein verzauberter Slayer-Helm keine Stoff-Suffixe rollt.
+ */
+const SLAYER_OMNI_SET = new Set(["slayer_helm", "slayer_greaves", "slayer_vambraces"]);
+
 const CLASS_TAGS = ["armor_plate", "armor_leather", "armor_cloth"] as const;
 
 /** Schmuck-Slots sind klassenfrei (design §p14: "Schmuck (Ringe, Amulett, Umhang) — alle"). */
@@ -105,6 +114,7 @@ describe("Suffix-Klassen-Trennung (#p14): feste Modifikatoren", () => {
     const violations: string[] = [];
     for (const item of equipmentItems()) {
       if (item.slot && JEWELRY_SLOTS.has(item.slot)) continue; // Schmuck ist klassenfrei (§p14)
+      if (SLAYER_OMNI_SET.has(item.id)) continue; // Slayer-Set omnifunktional (Chef-Entscheid 26.08.2026, s.o.)
       const cls = trinityClass(item);
       if (!cls) continue;
       const forbidden = FORBIDDEN_BY_CLASS[cls];

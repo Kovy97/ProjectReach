@@ -524,6 +524,22 @@ Slayer-Meisters zeigen die Seltenheit jetzt wie Inventar und Item-Karten als far
 Bild statt als dünnen farbigen Rand. / EN: The slayer shop shows rarity as the familiar coloured
 glow behind the item instead of a thin coloured border.
 
+**Spätspiel-Festmahle ohne Kuhfleisch (Chef-Test 26.08.):** DE: Acht Kochrezepte ab Stufe 58
+verlangten noch Rindfleisch von der Weide. Jetzt braucht der Seelenkürbis-Braten, der Feuerflacker-
+Aufguss und die beiden Welklauch-Gerichte Hirschfleisch (Wildhirsch im Wildwald), die vier Festmahle
+ab Stufe 86 Wyvern-Keule (Hochland-Wyvern). Der Blutkorn-Eintopf (38) bleibt bei Rind. / EN: Late
+game feasts now call for venison or wyvern haunch instead of beef.
+
+**Slayer-Ausrüstung omnifunktional (Chef-Test 26.08.):** DE: Helm, Beinschienen, Armschienen und
+Amulett des Slayer-Meisters tragen jetzt Stärke, Geschick und Intelligenz zu gleichen Teilen, der
+Skill-Bonus der Armschienen und des Amuletts wirkt auf Angriff, Fernkampf und Magie. Der Jägerumhang
+war schon ausgeglichen; sein Text spricht jetzt von Treffern statt Schlägen. / EN: Slayer gear
+now serves all three combat styles equally.
+
+*Dev-Notiz: Slayer-Set ist die benannte Ausnahme der Trinity-Klassenregel #p14 (suffix-class-fit
+SLAYER_OMNI_SET, nur feste modifiers) und des 1-Boost-Guards (itemization-guards, Omni-Boost
+attack = ranged = magic); Hüllen-Pins §5 neu gemessen mit Begründung.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

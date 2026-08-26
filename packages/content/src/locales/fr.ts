@@ -3018,7 +3018,7 @@ export const fr: Record<string, string> = {
   "items:slayer_greaves:name": "Grèves du Chasseur",
   "items:slayer_helm:description": "Un heaume magistral forgé à partir de l'essence des pires horreurs de la Tour du Chasseur. Il marque la mission de son porteur : +20 % de dégâts contre la cible actuelle de la tâche, et aucun objet de barrière n'est nécessaire contre les menaces de la tour tant qu'il est porté.",
   "items:slayer_helm:name": "Heaume du Chasseur",
-  "items:slayer_hunters_cape:description": "Une cape usée que Brenna remet aux chasseurs ayant gagné leurs trente premiers contrats. Le premier coup de chaque chasse mord plus profond : +15 % de dégâts contre une cible indemne.",
+  "items:slayer_hunters_cape:description": "Une cape usée que Brenna remet aux chasseurs ayant gagné leurs trente premiers contrats. Le premier coup de chaque chasse porte le plus fort : +15 % de dégâts contre une cible indemne.",
   "items:slayer_hunters_cape:name": "Cape du Chasseur",
   "items:slayer_hunters_elixir:description": "Réservé aux Chasseurs vétérans. Accélère vos attaques (-600ms d'intervalle), +12% de critique, +20% de dégâts critiques pendant 30 minutes. Durée soutenue supérieure à la Décoction de combat.",
   "items:slayer_hunters_elixir:name": "Élixir de traque du Chasseur",

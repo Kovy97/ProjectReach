@@ -3021,7 +3021,7 @@ export const ptBR: Record<string, string> = {
   "items:slayer_greaves:name": "Grevas do Caçador",
   "items:slayer_helm:description": "Um elmo magistral forjado da essência dos piores horrores da Torre do Caçador. Marca o encargo de seu portador: +20% de dano contra o alvo atual da tarefa, e nenhum item de guarda é necessário contra qualquer ameaça da torre enquanto estiver equipado.",
   "items:slayer_helm:name": "Elmo do Caçador",
-  "items:slayer_hunters_cape:description": "Uma capa desgastada que Brenna entrega a caçadores que conquistaram seus primeiros trinta contratos. O primeiro golpe de cada caçada morde mais fundo: +15% de dano contra um alvo ileso.",
+  "items:slayer_hunters_cape:description": "Uma capa desgastada que Brenna entrega a caçadores que conquistaram seus primeiros trinta contratos. O primeiro golpe de cada caçada acerta com mais força: +15% de dano contra um alvo ileso.",
   "items:slayer_hunters_cape:name": "Capa do Caçador",
   "items:slayer_hunters_elixir:description": "Reservado a Caçadores veteranos. Apressa seus ataques (-600ms de intervalo), +12% de crítico, +20% de dano crítico por 30 minutos. Uptime sustentado superior à Beberagem de Combate.",
   "items:slayer_hunters_elixir:name": "Elixir de Caça do Caçador",

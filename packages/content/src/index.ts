@@ -221,7 +221,7 @@ export const content: ContentDB = {
       // (Rüstung +6, deutlich unter Steinhaut-Tonikum Guard armorRating ≤35).
       buff: { category: "food", durationMs: 180_000, bonus: {}, modifiers: { str: 3 }, trinity: { armorRating: 6 } },
     },
-    // T3 (Kochen L58): Premium-Braten aus Blutfang-Aal + Rindfleisch + Seelenkürbis + Grabmoos
+    // T3 (Kochen L58): Premium-Braten aus Blutfang-Aal + Hirschfleisch + Seelenkürbis + Grabmoos
     soulgourd_brisket: {
       id: "soulgourd_brisket",
       name: { en: "Soulgourd Brisket", de: "Seelenkürbis-Braten" },
@@ -234,7 +234,7 @@ export const content: ContentDB = {
       // (Rüstung +8, unter Steinhaut-Tonikum Guard armorRating ≤35).
       buff: { category: "food", durationMs: 240_000, bonus: {}, modifiers: { str: 4, con: 2 }, trinity: { armorRating: 8 } },
     },
-    // T4 (Kochen L75): Haute-Cuisine aus Geisterschupper + Rindfleisch + Welklauch + Nachtblüte
+    // T4 (Kochen L75): Haute-Cuisine aus Geisterschupper + Hirschfleisch + Welklauch + Nachtblüte
     witherleek_bouillabaisse: {
       id: "witherleek_bouillabaisse",
       name: { en: "Witherleek Bouillabaisse", de: "Welklauch-Bouillabaisse" },
@@ -261,7 +261,7 @@ export const content: ContentDB = {
       // (Ausweichen +6, unter Scharfaugen-Tonikum Guard evasionRating ≤20).
       buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { dex: 5, con: 2 }, trinity: { evasionRating: 6 } },
     },
-    // T4c (Kochen L77): Zauberer-Brühe aus Geisterschupper + Rindfleisch + Welklauch + Nachtblüte
+    // T4c (Kochen L77): Zauberer-Brühe aus Geisterschupper + Hirschfleisch + Welklauch + Nachtblüte
     witherleek_arcane_broth: {
       id: "witherleek_arcane_broth",
       name: { en: "Witherleek Arcane Broth", de: "Welklauch-Arkan-Brühe" },
@@ -274,7 +274,7 @@ export const content: ContentDB = {
       // (Schild +25, unter Schutz-Elixier Guard wardCapacity ≤80).
       buff: { category: "food", durationMs: 300_000, bonus: {}, modifiers: { int: 5, wis: 3 }, trinity: { wardCapacity: 25 } },
     },
-    // T5 (Kochen L90): Göttliches Festmahl aus Seelenfisch + Rindfleisch + Bernsteingetreide + Götteratem
+    // T5 (Kochen L90): Göttliches Festmahl aus Seelenfisch + Wyvern-Braten + Bernsteingetreide + Götteratem
     ambergrain_feast: {
       id: "ambergrain_feast",
       name: { en: "Ambergrain Feast", de: "Bernsteingetreide-Festmahl" },
@@ -4797,13 +4797,18 @@ export const content: ContentDB = {
     // Tank-Score (a("con")*2), dort dominiert armorRating*100 die Gleichstandsprüfung gegen
     // aetherium_fullhelm ohnehin (beide AR 24.41 — welcher Helm gewinnt ist irrelevant, der
     // Pin misst nur die Summe).
+    // Chef-Entscheid 26.08.2026 (Slayer omnifunktional): Slayer-Ausrüstung ist das EINZIGE Set, das
+    // bewusst alle drei Kampfrichtungen gleich bedient (str = dex = int), weil der Turm jeden Stil
+    // sieht. Benannte Ausnahme von der Trinity-Klassenregel #p14 (suffix-class-fit.test.ts
+    // SLAYER_OMNI_SET) und vom 1-Boost-Guard (itemization-guards.test.ts §8.3, Omni-Boost).
+    // Helm: str 4 / dex 2 / con 11 → str 4 / dex 4 / int 4 / con 7 (Budget 17 → 19, epic, Slayer 80).
     slayer_helm: {
       id: "slayer_helm",
       name: { en: "Slayer Helm", de: "Slayer-Helm" },
       type: "equipment", stackable: false,
       slot: "helmet", rarity: "epic", slayerHelm: true,
       armorRating: 24.41,
-      modifiers: { str: 4, dex: 2, con: 11 },
+      modifiers: { str: 4, dex: 4, int: 4, con: 7 },
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.20, durationMs: 0 },
       requirements: { slayer: 80 }, value: 8000,
       description: {
@@ -4817,13 +4822,18 @@ export const content: ContentDB = {
     // int:2 nach con umgeschichtet (3→7) aus demselben Trinity-Klassen-Grund wie beim Helm (Leder
     // verbietet str/int, s. suffix-class-fit.test.ts #p14). dex bleibt bei 1 (unverändert), damit
     // die Dodge-Pins CL60/90 stehen bleiben (Himmelsgriff-Stulpen dex:2 bleibt BiS-Handschuh).
+    // Chef-Entscheid 26.08.2026 (Slayer omnifunktional): Slayer-Ausrüstung ist das EINZIGE Set, das
+    // bewusst alle drei Kampfrichtungen gleich bedient (str = dex = int), weil der Turm jeden Stil
+    // sieht. Benannte Ausnahme von der Trinity-Klassenregel #p14 (suffix-class-fit.test.ts
+    // SLAYER_OMNI_SET) und vom 1-Boost-Guard (itemization-guards.test.ts §8.3, Omni-Boost).
+    // Armschienen: dex 1 / con 7 / lck 3 → str 2 / dex 2 / int 2 / con 7 / lck 3; Boost attack 3 → attack/ranged/magic 3.
     slayer_vambraces: {
       id: "slayer_vambraces",
       name: { en: "Slayer Vambraces", de: "Slayer-Armschienen" },
       type: "equipment", stackable: false,
       slot: "gloves", rarity: "epic",
       evasionRating: 11.76,
-      modifiers: { dex: 1, con: 7, lck: 3 }, skillBoost: { attack: 3 },
+      modifiers: { str: 2, dex: 2, int: 2, con: 7, lck: 3 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
       requirements: { slayer: 50 }, value: 3200,
       description: {
@@ -4833,6 +4843,10 @@ export const content: ContentDB = {
     },
     // Chef-Entscheidung E6 (25.08.2026), design/slayer-shop-1.1.0.md §4.4: Lücke Slayer 30–50 im
     // Shop. Erstes kaufbares Ausrüstungsstück (150 Pkt ≈ 27 Aufträge). Bild von Mira (Variante A).
+    // Chef-Auftrag 26.08.2026 ("Slayer omnifunktional"): geprüft — str/dex/int stehen bereits
+    // gleichauf (2/2/2, Schmuck-Slot "cape" ist klassenfrei, s. suffix-class-fit.test.ts
+    // JEWELRY_SLOTS), keine Stat-Änderung nötig. Beschreibung neutralisiert: "strike ... bites
+    // deeper" (Nahkampf-Bild) → stilneutrales "hit ... lands hardest" (gilt für Klinge, Pfeil, Zauber).
     slayer_hunters_cape: {
       id: "slayer_hunters_cape",
       name: { en: "Hunter's Cape", de: "Jägerumhang" },
@@ -4841,8 +4855,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.15, durationMs: 0 },
       requirements: { slayer: 30 }, value: 1200,
       description: {
-        en: "A weathered cape issued by Brenna to hunters who have earned their first thirty contracts. The opening strike of every hunt bites deeper: +15% damage against an unwounded target.",
-        de: "Ein verwitterter Umhang, den Brenna an Jäger ausgibt, die sich ihre ersten dreißig Aufträge verdient haben. Der erste Schlag jeder Jagd beißt tiefer: +15 % Schaden gegen ein unverletztes Ziel.",
+        en: "A weathered cape issued by Brenna to hunters who have earned their first thirty contracts. The first hit of every hunt lands hardest: +15% damage against an unwounded target.",
+        de: "Ein verwitterter Umhang, den Brenna an Jäger ausgibt, die sich ihre ersten dreißig Aufträge verdient haben. Der erste Treffer jeder Jagd sitzt am tiefsten: +15 % Schaden gegen ein unverletztes Ziel.",
       },
     },
     // Chef-Test 25.08.2026 (design/slayer-shop-1.1.0.md §4.1/§4.6 #2): Trinity-Wert der NÄCHSTEN
@@ -4852,13 +4866,18 @@ export const content: ContentDB = {
     // Grund wie beim Helm. Bleibt unter Grabplatten-Beinschienen (Chase, AR 24.19) und unter
     // Frostplatten-Beinschienen (AR 27.5, hält bereits heute den Tank-Pin CL90) — kein Pin bewegt
     // sich.
+    // Chef-Entscheid 26.08.2026 (Slayer omnifunktional): Slayer-Ausrüstung ist das EINZIGE Set, das
+    // bewusst alle drei Kampfrichtungen gleich bedient (str = dex = int), weil der Turm jeden Stil
+    // sieht. Benannte Ausnahme von der Trinity-Klassenregel #p14 (suffix-class-fit.test.ts
+    // SLAYER_OMNI_SET) und vom 1-Boost-Guard (itemization-guards.test.ts §8.3, Omni-Boost).
+    // Beinschienen: str 3 / dex 1 / con 7 → str 3 / dex 3 / int 3 / con 7.
     slayer_greaves: {
       id: "slayer_greaves",
       name: { en: "Slayer Greaves", de: "Slayer-Beinschienen" },
       type: "equipment", stackable: false,
       slot: "legs", rarity: "epic",
       armorRating: 21.78,
-      modifiers: { str: 3, dex: 1, con: 7 },
+      modifiers: { str: 3, dex: 3, int: 3, con: 7 },
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.20, durationMs: 0 },
       requirements: { slayer: 65 }, value: 4500,
       description: {
@@ -4866,12 +4885,17 @@ export const content: ContentDB = {
         de: "Beinschienen, mit zersplitterten Schreckenzahn-Zähnen verstärkt. Gebaut für Beute über deinem Stand: +20 % Schaden gegen Monster, die über deinem Kampflevel liegen.",
       },
     },
+    // Chef-Entscheid 26.08.2026 (Slayer omnifunktional): Slayer-Ausrüstung ist das EINZIGE Set, das
+    // bewusst alle drei Kampfrichtungen gleich bedient (str = dex = int), weil der Turm jeden Stil
+    // sieht. Benannte Ausnahme von der Trinity-Klassenregel #p14 (suffix-class-fit.test.ts
+    // SLAYER_OMNI_SET) und vom 1-Boost-Guard (itemization-guards.test.ts §8.3, Omni-Boost).
+    // Amulett: dex 1 → 3 (str/dex/int je 3); Boost attack 3 → attack/ranged/magic 3.
     slayer_amulet: {
       id: "slayer_amulet",
       name: { en: "Slayer Amulet", de: "Slayer-Amulett" },
       type: "equipment", stackable: false,
       slot: "amulet", rarity: "epic",
-      modifiers: { str: 3, dex: 1, con: 4, int: 3, lck: 5 }, skillBoost: { attack: 3 },
+      modifiers: { str: 3, dex: 3, con: 4, int: 3, lck: 5 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
       requirements: { slayer: 70 }, value: 5500,
       description: {
         en: "A crystalline amulet set with a void herald shard. Emanates cold, precise power across all combat styles.",
@@ -8637,7 +8661,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 18_000, xp: 459, levelRequired: 58,  // balance-fix 2026-07: was 70 (just under cook_lobster L55's 15000 xph)
       inputs: [
         { itemId: "raw_bloodfang_eel", qty: 1 },
-        { itemId: "raw_beef", qty: 2 },
+        { itemId: "raw_venison", qty: 2 },
         { itemId: "soulgourd", qty: 1 },
         { itemId: "herb_gravemoss", qty: 1 },
       ],
@@ -8649,7 +8673,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 20_000, xp: 1183, levelRequired: 75,
       inputs: [
         { itemId: "raw_wraithscale", qty: 1 },
-        { itemId: "raw_beef", qty: 2 },
+        { itemId: "raw_venison", qty: 2 },
         { itemId: "wither_leek", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
@@ -8674,7 +8698,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 20_000, xp: 1306, levelRequired: 77,
       inputs: [
         { itemId: "raw_wraithscale", qty: 1 },
-        { itemId: "raw_beef", qty: 2 },
+        { itemId: "raw_venison", qty: 2 },
         { itemId: "wither_leek", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
@@ -8686,7 +8710,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 22_000, xp: 2735, levelRequired: 90,
       inputs: [
         { itemId: "raw_soulfish", qty: 1 },
-        { itemId: "raw_beef", qty: 2 },
+        { itemId: "raw_wyvern_haunch", qty: 2 },
         { itemId: "ambergrain", qty: 1 },
         { itemId: "herb_godsbreath", qty: 1 },
       ],
@@ -8700,7 +8724,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 20_000, xp: 2040, levelRequired: 86,
       inputs: [
         { itemId: "raw_voidray", qty: 1 },
-        { itemId: "raw_beef", qty: 2 },
+        { itemId: "raw_wyvern_haunch", qty: 2 },
         { itemId: "ambergrain", qty: 1 },
         { itemId: "herb_godsbreath", qty: 1 },
       ],
@@ -8712,7 +8736,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 22_000, xp: 3174, levelRequired: 93,
       inputs: [
         { itemId: "raw_abyssal_crawler", qty: 1 },
-        { itemId: "raw_beef", qty: 2 },
+        { itemId: "raw_wyvern_haunch", qty: 2 },
         { itemId: "starcap_truffle", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
       ],
@@ -8724,7 +8748,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 24_000, xp: 4434, levelRequired: 98,
       inputs: [
         { itemId: "raw_soulfish", qty: 1 },
-        { itemId: "raw_beef", qty: 2 },
+        { itemId: "raw_wyvern_haunch", qty: 2 },
         { itemId: "ambergrain", qty: 1 },
         { itemId: "herb_godsbreath", qty: 1 },
       ],
@@ -8749,7 +8773,7 @@ export const content: ContentDB = {
       skill: "cooking", category: "cook_feasts", durationMs: 14_000, xp: 505, levelRequired: 65,
       inputs: [
         { itemId: "raw_bloodfang_eel", qty: 1 },
-        { itemId: "raw_beef", qty: 1 },
+        { itemId: "raw_venison", qty: 1 },
         { itemId: "herb_nightbloom", qty: 1 },
         { itemId: "herb_bloodthistle", qty: 1 },
       ],

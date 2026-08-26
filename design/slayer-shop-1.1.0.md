@@ -291,4 +291,27 @@ Die Stufensortierung ist in `SlayerPage.tsx` bereits gelandet (`slayerShopSorted
 7.1 **`skillBoost: { defence: N }` ist im ganzen Katalog tot.** Betroffen mindestens: die Amulett-Leiter (Blutstein 2, Diamant 2, Onyx 3, Herzgeschmiedet 3, Leerenstein 3, Göttenstein 5), Umhänge (Rauchgewebe 2, Sturm-Mantel 3, Leerenpirscher 4, Schlackengewebe 4, Mantel des Letzten Götzen 5), Stiefel/Handschuhe/Beine mit +Vert. 1–4 (Frostschutz, Pfotenschritt, Rußschuppen, Chitin, Gezeitengewebe, Frostplatten, Leerenberührte Stulpen, Krone des Götzen, Aethergewebe, Götzenschritt). Alle zeigen „(+N)" auf einen Skill, der keinen Kampfterm mehr speist. Entweder computeStats bekommt einen Defence-Term zurück (Konzeptfrage Trinity) oder die Boosts werden auf lebende Skills/Attribute umgeschlüsselt. Eigener Auftrag.
 7.2 **Craft-Pfad der Armschienen ist 30 Level zu spät:** Item-Requirement Slayer 50, Rezept braucht Seelenschinder-Reißzahn (Etage 5, Slayer 80). Vorschlag für später: Input `soul_flayer_fang ×3` → `basilisk_scale ×8 + dread_fang_shard ×3` (Etage 2/4).
 7.3 **„Über alle Kampfstile" stimmt nur halb:** +Angriff auf Armschienen/Amulett/2pc-Set wirkt nur im Nahkampf. Mehrfach-Boost (attack/ranged/magic) ist für Sets per Guard verboten und für Items ungeprüft; belassen, aber Beschreibungen sollten nicht „alle Stile" versprechen.
+
+---
+
+## 8. Update 26.08.2026 (Chef-Entscheid „Slayer omnifunktional", löst 7.3)
+
+Chef-Befund: Helm/Beinschienen/Armschienen hatten kein int, Armschienen/Amulett-`skillBoost` boostete nur
+`attack`. Chef-Entscheid: „Slayer-Helm sollte Stats haben für alle 3 Kampfrichtungen, ist ja ein
+omnifunktionaler Gegenstand, genau so wie die restlichen Slayer-Items." Das Slayer-Set ist damit die
+EINZIGE benannte Ausnahme der Trinity-Klassenregel #p14 (`suffix-class-fit.test.ts` `SLAYER_OMNI_SET`, nur
+feste `modifiers`; Suffix-Rollen folgen weiter der Klasse) und des 1-Boost-Guards
+(`itemization-guards.test.ts` §8.3: Omni-Boost attack = ranged = magic zählt als ein Boost, weil ein
+Kampf nur einen Stil nutzt). Alle Tabellen oben (§3–4) sind Zustand **vor** diesem Update.
+
+| Item (Slot, Klasse) | Vorher | Nachher |
+|---|---|---|
+| Slayer Helm (Helm, Platte) | str 4, dex 2, con 11 | str 4, dex 4, int 4, con 7 (Budget 17 → 19) |
+| Slayer Beinschienen (Beine, Platte) | str 3, dex 1, con 7 | str 3, dex 3, int 3, con 7 |
+| Slayer Armschienen (Handschuhe, Leder) | dex 1, con 7, lck 3 · skillBoost `{attack:3}` | str 2, dex 2, int 2, con 7, lck 3 · skillBoost `{attack:3, ranged:3, magic:3}` |
+| Slayer Amulett (Schmuck) | str 3, dex 1, con 4, int 3, lck 5 · skillBoost `{attack:3}` | str 3, dex 3, con 4, int 3, lck 5 · skillBoost `{attack:3, ranged:3, magic:3}` |
+| Jägerumhang (Cape, Schmuck) | str 2, dex 2, con 3, int 2 | unverändert (schon ausgeglichen); Beschreibung neutral („Treffer" statt „Schlag") |
+
+Hüllen-Pins (`balance-envelope.test.ts` §5) neu gemessen, Begründung im Testkopf; §2-Kappen unberührt.
+
 7.4 **Turm-Rework-Spec vom 17.07.** (7 Etagen, Wächter, Shop-Chase-Etage) ist offen; der heutige Endgame-Pool-Kollaps (Bone Colossus) besteht weiter. Dieser Shop-Vorschlag ist damit kompatibel und ersetzt ihn nicht.

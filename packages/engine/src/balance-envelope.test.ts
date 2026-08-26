@@ -500,7 +500,11 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // dex 2/con 6/EV 25.4) schlägt an der Helm-Zeile die bisherige BiS-Wahl, weitere A3-Leder-Teile
     // (u.a. cryptstalker_vambraces) verdrängen kleinere Slots — evasion 16.530 → 16.809 (Fernkampf-
     // eigene Verbesserung, wie in §6 des Dokuments für die TTK-Matrix vorhergesagt).
-    expect(st.evasion).toBeCloseTo(16.8088, 3);
+    // Re-Messung 2026-08-26 (Chef-Auftrag "Slayer omnifunktional"): slayer_vambraces dex 1→2 UND
+    // slayer_helm dex 2→4 (beide Plattenteile/Leder-Teil bleiben trotzdem hinter der jeweils
+    // besten Craft-/Drop-Wahl zurueck, s.u. TTK-Matrix fuer die tatsaechlichen Slot-Verschiebungen)
+    // heben den flachen dex-Kontest-Stat leicht an: 16.8088 → 16.8537.
+    expect(st.evasion).toBeCloseTo(16.8537, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -530,11 +534,13 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // (16.530 → 16.809, s.o.) ⇒ der Gegner landet noch etwas seltener (0.3996 → 0.3956 /
     // 0.2397 → 0.2373 / 0.7727 → 0.7698 / 0.4636 → 0.4619) — marginal, der Cap-Befund bleibt.
     const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
-    expect(hcOn).toBeCloseTo(0.3956, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2373, 3);
+    // Re-Messung 2026-08-26 (Slayer omnifunktional, s.o.): evasion 16.8088→16.8537 laesst den
+    // Gegner marginal seltener landen: 0.3956 → 0.3949 / 0.7698 → 0.7693.
+    expect(hcOn).toBeCloseTo(0.3949, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2370, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7698, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4619, 3);
+    expect(hc150).toBeCloseTo(0.7693, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4616, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -682,11 +688,21 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Trinity-Verteilung je Slot, kein hartes Muster über alle vier Paare) — ranged/idol_warden
     // 18.19→15.45, ranged/last_idol 13.23→13.86, magic/idol_warden 25.34→27.32, magic/last_idol
     // 27.39→29.53. Alle Werte per buildCache-Neumessung, kein Melee-Kit betroffen.
+    // Re-Messung 2026-08-26 (Chef-Entscheid "Slayer omnifunktional"): das Slayer-Set (Helm, Beinschienen,
+    // Armschienen, Amulett) traegt jetzt str = dex = int und die Armschienen/das Amulett einen Omni-Boost
+    // attack = ranged = magic = 3 (benannte Ausnahmen in suffix-class-fit SLAYER_OMNI_SET und
+    // itemization-guards §8.3). Der dex-Score macht die Slayer-Teile fuer den CL-90-Ranged-"damage"-
+    // Build konkurrenzfaehig und verdraengt an mehreren Slots die bisherige Drop-/Craft-Wahl; der
+    // Ranged-Boost +3 verkuerzt den Kill leicht. NUR die ranged-Zeilen bewegen sich: melee scort auf
+    // str (unveraendert auf den betroffenen Slots), magic auf int — die neuen int-Werte der Slayer-
+    // Platten-/Lederteile schlagen die bestehenden Stoff-Picks des Magic-Builds nicht (72.29/27.32 und
+    // 243.30/29.53 exakt wie zuvor): ranged/idol_warden 81.02/15.45 → 82.20/19.64,
+    // ranged/last_idol 268.31/13.86 → 272.31/13.60.
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 56.87, 20.2],
       ["melee", "last_idol", 186.56, 14.4],
-      ["ranged", "idol_warden", 81.02, 15.45],
-      ["ranged", "last_idol", 268.31, 13.86],
+      ["ranged", "idol_warden", 82.2, 19.64],
+      ["ranged", "last_idol", 272.31, 13.6],
       ["magic", "idol_warden", 72.29, 27.32],
       ["magic", "last_idol", 243.3, 29.53],
     ];
