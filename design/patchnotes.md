@@ -430,8 +430,7 @@ Speisen, Tränke und Saat. Jetzt gibt es je Regal ein Andenken des Kapitels: Wan
 +3 % Beutechance), Aschenmarke (Amulett, +5 % Kampf-XP), Gruftlaterne (Umhang, +5 % Beutechance),
 Gezeitenkette (Amulett, Tötungen verkürzen die Pause), Götzenauge-Ring (+10 % gegen das
 Slayer-Ziel), Chronisten-Signet (Ring, +8 % Kampf-XP, Konstitution und Glück) und die Auftragsmarke
-(siehe unten). Alle bewusst unter den Tier-IV-Runen, keine Kampf-Power. Bilder folgen von Mira, bis
-dahin Platzhalter-Symbol. / EN: The reward shop now sells one keepsake per chapter shelf, six idle
+(siehe unten). Alle bewusst unter den Tier-IV-Runen, keine Kampf-Power. Bilder von Mira. / EN: The reward shop now sells one keepsake per chapter shelf, six idle
 riders and a consumable, all below rune power.
 
 **Slayer-Armschienen: Rezept ohne Etage-5-Material (Chef-GO 03, 26.08.):** DE: Das Rezept
