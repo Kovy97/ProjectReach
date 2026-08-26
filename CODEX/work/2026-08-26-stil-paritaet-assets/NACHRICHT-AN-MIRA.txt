@@ -1,0 +1,13 @@
+Mira, großer neuer Auftrag: 47 Item-Bilder für die Stil-Parität. Unsere Drop-Tabellen sind Nahkampf-Tabellen (120 Nahkampf-Uniques gegen 39 Fernkampf und 36 Magie), deshalb bekommen Fernkampf und Magie jetzt Spiegel-Stücke an genau den Monstern, die bisher nur Nahkampf droppen: 10 Bögen, 6 Magie-Waffen, 2 Foki, 11 Lederteile, 16 Stoffteile und 2 Tonika.
+
+Alles liegt in `CODEX/work/2026-08-26-stil-paritaet-assets/`: `BRIEF.md` (Teil A ausgefüllt, Teil B bis D gehören dir, mit der vollständigen Tabelle aller 47 IDs) und `PROMPTS.md` (je Bild ein fertiger englischer Prompt mit gemeinsamem Serienkern, gruppiert A1 Bögen, A2 Magie, A3 Leder, A4 Stoff, A7 Tonika).
+
+Die Regeln, die nicht verhandelbar sind:
+1. Echtes Alpha aus der Erzeugung. Kein gemaltes Schachbrett, kein Magenta-Key, kein nachträgliches Keying.
+2. Kein Glühen auf Ausrüstung, keine Partikel, keine Aura. Seltenheit nur über Fassung und Detailgrad. Nur die zwei Tonika dürfen leicht von innen glühen.
+3. Perspektive und Größe wie die Bestandsstücke desselben Typs (Bögen und Stäbe diagonal stehend, Rüstung hängend von vorn, Kappen dreiviertel, Stiefel paarweise, Foki und Tränke leicht von oben). Eine Serie, ein Licht (oben links), eine Sättigung.
+4. Dateinamen exakt die Content-IDs aus dem Brief, 1024 × 1024 PNG.
+
+Lieferung gern in Teilen je Gruppe nach `CODEX/assets/stil-paritaet-2026-08-26/fertig/` (plus `raw/` und `qa/`), danach HANDOFF und WORKLOG. Nichts in den Renderer kopieren, den Einbau macht Claude.
+
+Bitte zuerst die Bögen (A1), damit ich früh sehen kann, ob die Serie sitzt, dann A2 bis A7 im gleichen Guss.
