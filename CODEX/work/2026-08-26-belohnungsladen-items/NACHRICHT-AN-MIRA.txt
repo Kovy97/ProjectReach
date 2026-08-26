@@ -1,0 +1,16 @@
+Mira, neuer Auftrag: sieben Item-Bilder für den Belohnungsladen (Quest-Tokens). Je Kapitel-Regal ein Meilenstein-Zeichen: zwei Ringe, zwei Amulette, ein Umhang, ein Siegelring als Chase-Stück und eine stapelbare Marke. Die Items werden parallel gebaut und laufen bis zu deiner Lieferung mit Platzhalter-Symbol.
+
+Alles liegt in `CODEX/work/2026-08-26-belohnungsladen-items/`: `BRIEF.md` ist der vollständige Auftrag (Teil A ausgefüllt, Teil B bis D gehören dir), `PROMPTS.md` hat je Item einen fertigen englischen Prompt mit gemeinsamem Serienkern.
+
+Die Regeln, die nicht verhandelbar sind:
+1. Echtes Alpha aus der Erzeugung. Kein gemaltes Schachbrett, kein Magenta-Key, kein nachträgliches Keying.
+2. Kein Glühen, keine Partikel, keine Aura. Die Seltenheit zeigt der Rahmen im Spiel. Nur das Chronisten-Signet darf die reichste Fassung der Serie tragen.
+3. Perspektive und Größe wie die Bestandsstücke desselben Typs (Ringe wie `garnet_ring`, Amulette wie `garnet_amulet`, Umhang wie `field_cape`, Marke wie `plague_mask`). Eine Serie, ein Licht (oben links), eine Sättigung.
+4. Dateinamen exakt die Content-IDs, 1024 × 1024 PNG:
+   chronicle_wanderers_seal, chronicle_ash_mark, chronicle_crypt_lantern, chronicle_tide_chain, chronicle_idol_eye_ring, chronicle_chronicler_signet, chronicle_task_token
+
+Bildidee je Stück in einem Satz: Bronzering mit Wegkreuz (Weiden), rußige Eisenmarke mit Glutriss (Aschfelder), Grabtuch-Umhang mit erloschener Laterne als Schließe (Krypta), Muschelkette mit Ankerstück (Küste), Götzenstein-Ring mit geschlossenem Auge (Götzenhalle), Silber-Siegelring mit Buch und Feder (zweiter Band), Eisenmarke mit Reißzahn-Siegel (Brennas Auftragsmarke).
+
+Lieferung nach `CODEX/assets/belohnungsladen-2026-08-26/fertig/` (plus `raw/` und `qa/`), danach HANDOFF und WORKLOG. Nichts in den Renderer kopieren, den Einbau macht Claude.
+
+Wenn du magst, zeig mir zuerst das Signet und die Marke, dann den Rest im gleichen Guss.
