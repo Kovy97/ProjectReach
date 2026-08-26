@@ -12,7 +12,18 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 26.08.2026)
 
-_(leer, hier sammeln sich die Änderungen nach 1.1.0)_
+**Charaktererstellung: 30 Archetypen für Menschen (Mira, 26.08.):** DE: Die Rasse Mensch bietet jetzt
+15 Kampfklassen (Krieger bis Runenritter) und 15 Berufe (Bergarbeiter bis Baumeister), jeweils als
+Mann und Frau mit eigenem Gesicht und Körper, gleicher Waffe oder gleichem Werkzeug. In der
+Charaktererstellung wählst du Rasse, Gruppe, Archetyp und Variante; der Porträt-Picker auf der
+Charakterseite kennt dieselben Filter und einen Reiter „Bestand" für die bisherigen Bilder. Eigene
+Uploads bleiben möglich. / EN: Humans now come as 30 archetypes (15 combat classes, 15 professions),
+each with a male and a female variant, selectable in character creation and the portrait picker.
+
+*Dev-Notiz: Portrait-ID `human_<archetyp>_<m|f>` bleibt das einzige gespeicherte Feld (`character.portrait`),
+Rasse/Archetyp/Variante werden abgeleitet → kein SAVE-Bump; Bilder 1086×1448 WebP q92 aus
+CODEX/assets/human-character-roster-2026-08-26, Originale in Downloads/ASSETS/archive/human-roster-2026-08-26.*
+
 
 ## 1.1.0 „Patch #2: The Slayer's Ledger" — HOCHGELADEN (Build 24956428, 2026-08-26 21:31, `setlive` leer, Chef schaltet live)
 

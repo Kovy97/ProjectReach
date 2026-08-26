@@ -84,6 +84,8 @@
 .portrait-gallery-grid .portrait-thumb {
   width: 100%;
   height: 240px;
+  display: flex;
+  flex-direction: column;
   background:
     radial-gradient(ellipse at 50% 32%, var(--panel-hover), var(--slot) 72%),
     url("../assets/bg_black.webp") repeat;
@@ -94,6 +96,36 @@
 .portrait-gallery-grid .portrait-thumb img {
   object-fit: contain;
   object-position: center bottom;
+}
+
+/* ─── Human-Roster-Rework 26.08.2026: Archetyp-Karten im Reiter "Human" tragen zusätzlich einen
+   Namen — `.portrait-thumb-img` nimmt den restlichen Platz (das bestehende `img`-Regelwerk oben
+   greift unverändert per Nachfahren-Selektor), `.portrait-thumb-name` ist eine feste Fußzeile.
+   Der Reiter "Bestand" rendert weiterhin ein blankes `<img>` ohne diese Wrapper — unverändert. ── */
+.portrait-thumb-img {
+  display: block;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.portrait-thumb-name {
+  flex: none;
+  padding: 5px 4px;
+  font-family: "Cinzel", var(--font-head);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.portrait-thumb.active .portrait-thumb-name {
+  color: var(--accent);
 }
 
 .portrait-gallery-actions {

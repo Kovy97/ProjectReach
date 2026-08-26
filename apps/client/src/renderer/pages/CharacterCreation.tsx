@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { DEFAULT_PORTRAIT } from "@hearthforge/shared";
 import type { WeaponStyle } from "@hearthforge/shared";
 import { listPortraits, getPortrait } from "../portraits";
+import { HUMAN_ARCHETYPES, parsePortraitId, portraitIdFor } from "../humanRoster";
+import type { ArchetypeGroup, Sex } from "../humanRoster";
 import { processPortraitFile } from "../util/portraitUpload";
 import { PortraitPickerModal } from "../components/PortraitPickerModal";
 import { useGameControl } from "../game/GameContext";
@@ -63,48 +65,51 @@ function StylePicker({ value, onChange }: StylePickerProps): JSX.Element {
   );
 }
 
-// ─── PortraitGrid ─────────────────────────────────────────────────────────────
-// Frontline-Registry-Rework: ersetzt den horizontalen Filmstreifen durch ein umbrechendes Raster
-// (Vorlage Mira) — alle Portraits bleiben per internem Scroll erreichbar, "Alle anzeigen" öffnet
-// weiterhin die große Modal-Galerie (PortraitPickerModal, geteilt mit CharacterPage).
+// ─── Human-Archetypen-Raster ──────────────────────────────────────────────────
+// Chef+Mira-Auftrag 26.08.2026: 30 Human-Archetypen (15 Kampfklassen + 15 Berufe, je m/w) ersetzen
+// die frühere freie Porträt-Liste als primäre Schritt-2-Auswahl. "Alle anzeigen" öffnet weiterhin
+// die große Modal-Galerie (PortraitPickerModal, geteilt mit CharacterPage) — dort liegt zusätzlich
+// der Bestand der alten Nicht-Human-Porträts (Reiter "Bestand").
 
-interface PortraitGridProps {
+interface HumanArchetypeGridProps {
+  group: ArchetypeGroup;
+  sex: Sex;
   value: string;
-  onChange: (id: string) => void;
-  onShowAll: () => void;
+  onSelect: (archetypeId: string) => void;
 }
 
-function PortraitGrid({ value, onChange, onShowAll }: PortraitGridProps): JSX.Element {
+function HumanArchetypeGrid({ group, sex, value, onSelect }: HumanArchetypeGridProps): JSX.Element {
   const { t } = useI18n();
   const activeRef = useRef<HTMLButtonElement | null>(null);
+  const activeArchetype = parsePortraitId(value)?.archetype;
+  const items = HUMAN_ARCHETYPES.filter((a) => a.group === group);
 
   useEffect(() => {
     activeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [value]);
+  }, [group, activeArchetype]);
 
   return (
-    <>
-      <div className="creation-portrait-grid">
-        {PORTRAITS.map((p) => {
-          const isActive = p.id === value;
-          return (
-            <button
-              key={p.id}
-              type="button"
-              ref={isActive ? activeRef : undefined}
-              className={`creation-portrait-cell${isActive ? " active" : ""}`}
-              aria-pressed={isActive}
-              onClick={() => onChange(p.id)}
-            >
-              {p.url && <img loading="lazy" decoding="async" src={p.url} alt="" />}
-            </button>
-          );
-        })}
-      </div>
-      <button type="button" className="btn-iron btn-iron--sm creation-portrait-more-btn" onClick={onShowAll}>
-        {t("creation.portrait.showAll")}
-      </button>
-    </>
+    <div className="creation-portrait-grid">
+      {items.map((a) => {
+        const isActive = a.id === activeArchetype;
+        const url = getPortrait(portraitIdFor(a.id, sex));
+        return (
+          <button
+            key={a.id}
+            type="button"
+            ref={isActive ? activeRef : undefined}
+            className={`creation-portrait-cell${isActive ? " active" : ""}`}
+            aria-pressed={isActive}
+            onClick={() => onSelect(a.id)}
+          >
+            <span className="creation-portrait-cell-img">
+              {url && <img loading="lazy" decoding="async" src={url} alt="" />}
+            </span>
+            <span className="creation-portrait-cell-name">{t(a.nameKey)}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -122,13 +127,22 @@ const STEPS: Array<{ id: "name" | "portrait" | "style"; labelKey: string }> = [
   { id: "style", labelKey: "creation.style.label" },
 ];
 
+// Standardwahl (Chef-Auftrag 26.08.2026): Krieger, männlich — fällt nur zurück, falls das Asset
+// ausnahmsweise fehlen sollte (Integritätsnetz s. humanRoster.ts).
+const DEFAULT_ARCHETYPE_PORTRAIT = portraitIdFor("warrior", "m");
+
 export function CharacterCreation(): JSX.Element {
   const { createCharacter, cancelCreation } = useGameControl();
   const { t } = useI18n();
   const [name, setName] = useState("");
   const [portraitId, setPortraitId] = useState<string>(
-    PORTRAITS.find((p) => p.id === DEFAULT_PORTRAIT)?.id ?? PORTRAITS[0]?.id ?? DEFAULT_PORTRAIT,
+    PORTRAITS.find((p) => p.id === DEFAULT_ARCHETYPE_PORTRAIT)?.id
+      ?? PORTRAITS.find((p) => p.id === DEFAULT_PORTRAIT)?.id
+      ?? PORTRAITS[0]?.id
+      ?? DEFAULT_PORTRAIT,
   );
+  const [group, setGroup] = useState<ArchetypeGroup>("combat");
+  const [sex, setSex] = useState<Sex>("m");
   const [startingStyle, setStartingStyle] = useState<WeaponStyle>("melee");
   const [showGallery, setShowGallery] = useState(false);
   const [activeStep, setActiveStep] = useState<"name" | "portrait" | "style">("name");
@@ -142,6 +156,26 @@ export function CharacterCreation(): JSX.Element {
   // Fließtext der Begin-Adventure-Unterzeile bleibt normale Groß-/Kleinschreibung.
   const displayName = heroName.toUpperCase();
   const styleLabel = t(STYLE_CARDS.find((s) => s.id === startingStyle)?.nameKey ?? "style.melee");
+  // Held-Pane-Caption zweite Zeile: Archetyp (falls Human-Porträt) + Stil, z.B. "Krieger · Nahkampf".
+  // Bestands-/Custom-Porträts (kein Human-Match) zeigen weiterhin nur den Stil (altes Verhalten).
+  const selectedArchetypeId = parsePortraitId(portraitId)?.archetype;
+  const selectedArchetype = selectedArchetypeId
+    ? HUMAN_ARCHETYPES.find((a) => a.id === selectedArchetypeId)
+    : undefined;
+  const archetypeCaption = selectedArchetype ? `${t(selectedArchetype.nameKey)} · ${styleLabel}` : styleLabel;
+
+  const selectArchetype = (archetypeId: string): void => {
+    setPortraitId(portraitIdFor(archetypeId, sex));
+  };
+
+  const changeSex = (nextSex: Sex): void => {
+    setSex(nextSex);
+    // Aktuell gewählter Human-Archetyp wechselt mit (Chef-Auftrag: "Der Umschalter wechselt die
+    // Bilder aller Karten" — inkl. der bereits getroffenen Auswahl). Bestands-/Custom-Porträts
+    // bleiben unangetastet, da sie keinem Archetyp zugeordnet sind.
+    const parsed = parsePortraitId(portraitId);
+    if (parsed) setPortraitId(portraitIdFor(parsed.archetype, nextSex));
+  };
 
   const jumpToStep = (id: "name" | "portrait" | "style"): void => {
     setActiveStep(id);
@@ -193,7 +227,7 @@ export function CharacterCreation(): JSX.Element {
         )}
         <div className="creation-hero-caption">
           <strong>{displayName}</strong>
-          <small>{styleLabel}</small>
+          <small>{archetypeCaption}</small>
         </div>
       </div>
 
@@ -247,7 +281,51 @@ export function CharacterCreation(): JSX.Element {
             <label className="creation-step-label">
               <span>2</span> {t("creation.portrait.label")}
             </label>
-            <PortraitGrid value={portraitId} onChange={setPortraitId} onShowAll={() => setShowGallery(true)} />
+
+            <div className="creation-filter-row">
+              <span className="creation-filter-label">{t("creation.race")}</span>
+              {/* Einzige Rasse zum Release — bewusst kein Platzhalter für weitere Rassen. */}
+              <span className="btn-iron btn-iron--sm is-active">{t("creation.race.human")}</span>
+            </div>
+
+            <div className="creation-filter-row">
+              <button
+                type="button"
+                className={`btn-iron btn-iron--sm${group === "combat" ? " is-active" : ""}`}
+                onClick={() => setGroup("combat")}
+              >
+                {t("creation.group.combat")}
+              </button>
+              <button
+                type="button"
+                className={`btn-iron btn-iron--sm${group === "profession" ? " is-active" : ""}`}
+                onClick={() => setGroup("profession")}
+              >
+                {t("creation.group.profession")}
+              </button>
+            </div>
+
+            <div className="creation-filter-row">
+              <button
+                type="button"
+                className={`btn-iron btn-iron--sm${sex === "m" ? " is-active" : ""}`}
+                onClick={() => changeSex("m")}
+              >
+                {t("creation.sex.m")}
+              </button>
+              <button
+                type="button"
+                className={`btn-iron btn-iron--sm${sex === "f" ? " is-active" : ""}`}
+                onClick={() => changeSex("f")}
+              >
+                {t("creation.sex.f")}
+              </button>
+            </div>
+
+            <HumanArchetypeGrid group={group} sex={sex} value={portraitId} onSelect={selectArchetype} />
+            <button type="button" className="btn-iron btn-iron--sm creation-portrait-more-btn" onClick={() => setShowGallery(true)}>
+              {t("creation.portrait.showAll")}
+            </button>
           </section>
 
           <section
@@ -282,6 +360,14 @@ export function CharacterCreation(): JSX.Element {
           title={t("creation.portrait.showAll")}
           onConfirm={(id) => {
             setPortraitId(id);
+            // Filter der Karten-Ansicht (Gruppe/Variante) an die aus der Galerie gewählte Human-
+            // Figur angleichen, damit das Raster darunter danach wieder zur Auswahl passt.
+            const parsed = parsePortraitId(id);
+            if (parsed) {
+              setSex(parsed.sex);
+              const archetype = HUMAN_ARCHETYPES.find((a) => a.id === parsed.archetype);
+              if (archetype) setGroup(archetype.group);
+            }
             setShowGallery(false);
           }}
           onCancel={() => setShowGallery(false)}
