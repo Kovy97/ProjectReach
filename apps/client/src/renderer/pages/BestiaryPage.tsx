@@ -2,19 +2,18 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { content } from "@hearthforge/content";
 import { isDungeonUnlocked, isItemDiscovered, isZoneUnlocked, monsterKills, slayerRequirementMet, startCombat } from "@hearthforge/engine";
-import type { DungeonDef, EliteVariantDef, GameState, ItemDef, LocalizedString, MonsterDef, QuestDef } from "@hearthforge/shared";
+import { EQUIP_SLOT_LABELS } from "@hearthforge/shared";
+import type { DungeonDef, EliteVariantDef, GameState, ItemDef, LocalizedString, LootRoll, MonsterDef, QuestDef } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
-import { getItemImage } from "../items";
-import { getBattleScreen } from "../battleScreens";
-import { getZoneBackground } from "../zoneBackgrounds";
+import { getItemImage, rarityClass } from "../items";
 import { useI18n } from "../i18n";
 import { inflictHintFor } from "../util/inflictHint";
 import { monsterHomeDungeon } from "../util/chronicle";
 import { openItemWikiModal } from "../components/ItemWikiModal";
 import { DefenseTypeBadge } from "../components/DefenseTypeBadge";
 import { FlipReveal } from "../components/FlipReveal";
-import { StatLine, StatLineImmune, type StatLineEntry } from "../components/StatLine";
+import { StatLineImmune } from "../components/StatLine";
 import { renderEffectIcon, statIcon } from "../statIcons";
 import { getUiIcon } from "../uiIcons";
 import { effectiveFxLevel } from "../util/fxLevel";
@@ -90,6 +89,45 @@ const BESTIARY_LOOT_ITEM_IDS: Set<string> = (() => {
   }
   return ids;
 })();
+
+/**
+ * Beute-Gruppierung (Chef-Glowup 26.08.2026, "Loot zu ungeordnet"): jede Monster-Loot-Tabelle
+ * einmal beim Modul-Laden in "Ausrüstung/Uniques" (item.type === "equipment", trägt den Typ-Text +
+ * Rarity-Rahmen, s. LootRow unten) / "Materialien" (item.type === "material", oder ein unbekannter
+ * Katalog-Eintrag als sicherer Default) / "Sonstiges" (Rest: consumable/tool) sortiert, INNERHALB
+ * jeder Gruppe absteigend nach Drop-Chance — Muster KILL_LADDER_INDEX oben (statischer Katalog,
+ * ändert sich nie zur Laufzeit, also einmalig statt pro Render/Tick berechnet).
+ */
+const MONSTER_LOOT_GROUPS_INDEX: Record<string, { equipment: LootRoll[]; material: LootRoll[]; other: LootRoll[] }> = (() => {
+  const idx: Record<string, { equipment: LootRoll[]; material: LootRoll[]; other: LootRoll[] }> = {};
+  const byChanceDesc = (a: LootRoll, b: LootRoll) => b.chance - a.chance;
+  for (const m of Object.values(content.monsters) as MonsterDef[]) {
+    const equipment: LootRoll[] = [];
+    const material: LootRoll[] = [];
+    const other: LootRoll[] = [];
+    for (const roll of m.loot) {
+      const item = content.items[roll.itemId];
+      if (item?.type === "equipment") equipment.push(roll);
+      else if (!item || item.type === "material") material.push(roll);
+      else other.push(roll);
+    }
+    equipment.sort(byChanceDesc);
+    material.sort(byChanceDesc);
+    other.sort(byChanceDesc);
+    idx[m.id] = { equipment, material, other };
+  }
+  return idx;
+})();
+
+/** Item-Typ als Kurztext am Beute-Eintrag — dasselbe Format wie die Dungeon-Karte
+ *  (CombatPage.tsx `dropTypeLabel`, hier eine eigene, gleich kurze Kopie statt eines Imports aus
+ *  einer fremden Seite): Waffenart, sonst Ausrüstungs-Slot. */
+function dropTypeLabel(item: ItemDef | undefined, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
+  if (!item || item.type !== "equipment") return "";
+  if (item.weaponType) return t(`item.weaponType.${item.weaponType}`);
+  if (item.slot && EQUIP_SLOT_LABELS[item.slot]) return tr(EQUIP_SLOT_LABELS[item.slot]);
+  return "";
+}
 
 export function BestiaryPage({ onNavigate }: { onNavigate?: (id: string) => void }): JSX.Element {
   const state = useGameState();
@@ -220,28 +258,33 @@ export function BestiaryPage({ onNavigate }: { onNavigate?: (id: string) => void
           </div>
         </div>
 
-        {/* Bestiarium / Champion-Kodex (Jagd-Paket Task 3, Chef-GO) — Tab-Leiste im MasteryPage-
-            Stil (`.ms2-tab*`, global via skills.css, hier nur zweitverwendet). */}
+        {/* Bestiarium / Champion-Kodex (Jagd-Paket Task 3, Chef-GO) — Tab-Leiste + Filter jetzt in
+            der einen verbindlichen Knopf-Familie (Chef-Entscheid 25./26.08.2026): Sekundär-Knopf
+            `.shop-citadel-btn` + `.is-active` fürs Gedrückt-Zeigen, im Stil der Slayer-Meister-
+            Reiter (slayer.css `.slayer-master-tab.active`) statt der alten `.ms2-tab`/
+            `.bestiary-filter-chip`-Familien. */}
         <div className="bjw-controls">
-          <button
-            type="button"
-            className={`ms2-tab${view === "monsters" ? " ms2-tab--active" : ""}`}
-            onClick={() => setView("monsters")}
-          >
-            {t("bestiary.tab.monsters")}
-          </button>
-          <button
-            type="button"
-            className={`ms2-tab${view === "champions" ? " ms2-tab--active" : ""}`}
-            onClick={() => setView("champions")}
-          >
-            {t("bestiary.tab.champions")}
-          </button>
+          <div className="bjw-view-tabs">
+            <button
+              type="button"
+              className={`shop-citadel-btn${view === "monsters" ? " is-active" : ""}`}
+              onClick={() => setView("monsters")}
+            >
+              {t("bestiary.tab.monsters")}
+            </button>
+            <button
+              type="button"
+              className={`shop-citadel-btn${view === "champions" ? " is-active" : ""}`}
+              onClick={() => setView("champions")}
+            >
+              {t("bestiary.tab.champions")}
+            </button>
+          </div>
 
           {view === "monsters" && (
             <button
               type="button"
-              className={`bestiary-filter-chip${onlyUndefeated ? " active" : ""}`}
+              className={`shop-citadel-btn bjw-filter-btn${onlyUndefeated ? " is-active" : ""}`}
               aria-pressed={onlyUndefeated}
               onClick={() => setOnlyUndefeated((v) => !v)}
             >
@@ -266,9 +309,8 @@ export function BestiaryPage({ onNavigate }: { onNavigate?: (id: string) => void
 
       {view === "champions" && <ChampionCodex />}
 
-      {view === "monsters" && byZone.map((group, zoneIndex) => {
+      {view === "monsters" && byZone.map((group) => {
         const zoneId = group.zone.id;
-        const zoneBg = getBattleScreen(zoneId) ?? getZoneBackground(zoneId);
         // Story-Zonen-Gate (Aschechronik, ceo-run-2026-07-13 Welle E): die Bestiary bietet keinen
         // Direkt-Kampfstart für Monster gesperrter Zonen an — canFightMonster/startCombat blocken
         // das engine-seitig ohnehin (kein Throw, no-op), aber der "Kämpfen"-Button soll das gar
@@ -287,14 +329,6 @@ export function BestiaryPage({ onNavigate }: { onNavigate?: (id: string) => void
         return (
           <ZoneBandShell
             key={zoneId}
-            bg={zoneBg}
-            // Erstes Band ist beim Seitenaufruf IMMER sofort sichtbar (kein Scroll nötig) — `eager`
-            // umgeht dafür das `loading="lazy"`-Standardverhalten (s. ZoneBandShell), sonst kann der
-            // native Lazy-Load-Scheduler den allerersten Screenshot/Frame noch mit unentschiedenem
-            // Bild erwischen (Ladewettlauf, im Bot-Screenshot-Review aufgefallen). Alle FOLGENDEN
-            // Bänder bleiben lazy — das ist der eigentliche Fill-Rate-Spargewinn (9 von 10 Bändern
-            // sind beim Laden typischerweise off-screen).
-            eager={zoneIndex === 0}
             locked={zoneLocked}
             lockedNote={
               zoneLocked
@@ -377,14 +411,15 @@ export function BestiaryPage({ onNavigate }: { onNavigate?: (id: string) => void
 }
 
 /**
- * Ein Zonen-Band der Reise (Konzept 4): Vollbild-Backdrop (echtes `<img loading="lazy">`, dieselbe
- * Asset-Quelle wie der Kampf-Zonen-Hintergrund) + Verlaufs-Scrim + Kopfzeile (Name/Level-Spanne/
- * Fortschritt) + optionaler Sperr-Hinweis + horizontal scrollende Wegpunkt-Reihe. Geteilt zwischen
- * Bestiarium- und Champion-Kodex-Ansicht (nur die Kinder unterscheiden sich).
+ * Eine Zonen-Sektion des Bestiariums (Chef-Glowup 26.08.2026, "Karten komisch formatiert" — löst
+ * das vorherige Vollbild-Kulissen-Band mit horizontal scrollender Wegpunkt-Reihe ab): Panel-Frame +
+ * Basalt-Fläche wie Optionen/Slayer (`opz-section`/`slayer-shop-panel`, kein Holz mehr) + Kopfzeile
+ * (Name/Level-Spanne/Fortschritt) + optionaler Sperr-Hinweis + ein umbrechendes Karten-Grid fester
+ * Geometrie (`.bjw-grid`, `repeat(auto-fill, minmax(clamp(260px, 22vw, 340px), 1fr))` — alle Karten
+ * derselben Zeile werden per Grid-Stretch automatisch gleich hoch). Geteilt zwischen Bestiarium- und
+ * Champion-Kodex-Ansicht (nur die Kinder unterscheiden sich).
  */
 function ZoneBandShell({
-  bg,
-  eager = false,
   locked,
   lockedNote,
   zoneName,
@@ -395,10 +430,6 @@ function ZoneBandShell({
   t,
   children,
 }: {
-  bg: string | null;
-  /** True nur fürs allererste Band (immer sofort sichtbar, kein Scroll nötig) — umgeht dort
-   *  `loading="lazy"`, s. Aufrufer-Kommentar. */
-  eager?: boolean;
   locked: boolean;
   lockedNote: string | null;
   zoneName: string;
@@ -411,46 +442,28 @@ function ZoneBandShell({
 }): JSX.Element {
   const pct = total > 0 ? (discovered / total) * 100 : 0;
   return (
-    <section className={`bjw-band${locked ? " locked" : ""}`}>
-      {bg && (
-        <img
-          className="bjw-band-bg"
-          src={bg}
-          alt=""
-          loading={eager ? "eager" : "lazy"}
-          decoding="async"
-          // React 18.3 kennt nur das kleingeschriebene DOM-Attribut (fetchPriority camelCase warnt
-          // und landet nie im DOM); die 18er-Typen kennen es gar nicht → als Spread durchreichen.
-          {...(eager ? { fetchpriority: "high" } : {})}
-        />
-      )}
-      <div className="bjw-band-scrim" aria-hidden="true" />
-      <div className="bjw-band-content">
-        <div className="bjw-band-header">
-          <h2>{zoneName}</h2>
-          <div className="bjw-band-meta">
-            <span>{t("combat.zoneLevels").replace("{min}", String(lvlMin)).replace("{max}", String(lvlMax))}</span>
-            <span>{t("bestiary.zoneDiscovered").replace("{n}", String(discovered)).replace("{total}", String(total))}</span>
-            <span className="bar bjw-band-bar">
-              <span className="bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
-            </span>
-          </div>
-        </div>
-
-        {locked && lockedNote && (
-          <div className="bjw-band-locked-note">
-            <span aria-hidden="true">
-              {LOCK_ICON_URL ? <img src={LOCK_ICON_URL} alt="" className="ui-icon" loading="lazy" decoding="async" /> : "🔒"}
-            </span>
-            {lockedNote}
-          </div>
-        )}
-
-        <div className="bjw-track-wrap">
-          <div className="bjw-track">{children}</div>
-          <div className="bjw-scroll-hint" aria-hidden="true" />
+    <section className={`bjw-zone${locked ? " locked" : ""}`}>
+      <div className="bjw-zone-head">
+        <h2>{zoneName}</h2>
+        <div className="bjw-zone-meta">
+          <span>{t("combat.zoneLevels").replace("{min}", String(lvlMin)).replace("{max}", String(lvlMax))}</span>
+          <span>{t("bestiary.zoneDiscovered").replace("{n}", String(discovered)).replace("{total}", String(total))}</span>
+          <span className="bar bjw-zone-bar">
+            <span className="bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
+          </span>
         </div>
       </div>
+
+      {locked && lockedNote && (
+        <div className="bjw-zone-locked-note">
+          <span aria-hidden="true">
+            {LOCK_ICON_URL ? <img src={LOCK_ICON_URL} alt="" className="ui-icon" loading="lazy" decoding="async" /> : "🔒"}
+          </span>
+          {lockedNote}
+        </div>
+      )}
+
+      <div className="bjw-grid">{children}</div>
     </section>
   );
 }
@@ -483,12 +496,137 @@ interface BestiaryMonsterCardProps {
 }
 
 /**
- * Eine Monster-Wegpunkt-Karte des Bestiariums (Perf-Welle 2026-07-22, weiterhin gültig nach dem
- * Reise-Umbau). `memo()` + primitive Props (kills/known/reqMet/zoneLocked/dungeonUnlocked/
+ * Eine Beute-Gruppe ("Ausrüstung", "Materialien", "Sonstiges") auf der Monsterkarte (Chef-Glowup
+ * 26.08.2026, "Loot zu ungeordnet") — rendert nichts, wenn die Gruppe leer ist (Muster
+ * `DungeonLootPreview` in CombatPage.tsx, dort die "Boss-Beute"-Zeile).
+ */
+function LootGroup({
+  titleKey,
+  rolls,
+  state,
+  t,
+  tr,
+  flippingItems,
+}: {
+  titleKey: string;
+  rolls: LootRoll[];
+  state: GameState;
+  t: (key: string) => string;
+  tr: (value: LocalizedString) => string;
+  flippingItems: Set<string>;
+}): JSX.Element | null {
+  if (rolls.length === 0) return null;
+  return (
+    <div className="bjw-loot-group">
+      <div className="bjw-loot-group-title muted">{t(titleKey)}</div>
+      <div className="bjw-loot-list">
+        {/* Index mit im Key (statt nur `roll.itemId`): manche Monster droppen dieselbe Item-ID über
+            zwei getrennte Loot-Rollen (z.B. Basis- + Bonus-Rate) — dieselbe Konstellation gab es
+            schon in der vorherigen Fassung (React-Warnung bei doppeltem Key), hier robust behoben. */}
+        {rolls.map((roll, idx) => (
+          <LootRow key={`${roll.itemId}-${idx}`} roll={roll} state={state} t={t} tr={tr} flipping={flippingItems.has(roll.itemId)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Eine Beute-Zeile: Bild (28-32px) · Name (2-Zeilen-Umbruch, nie Clip) · Prozent rechts — Vorbild
+ * ist der Dungeon-Karten-Beute-Chip (CombatPage.tsx `DungeonLootPreview`, Typ-Text wie "Hals"/
+ * "Großschwert"), hier zusätzlich mit Rarity-Zellenrahmen (`rarityClass`, wie `ItemCell`). Unentdeckt
+ * bleibt die bekannte Silhouette+„?"-Maskierung; Klick auf eine entdeckte Zeile öffnet das
+ * Item-Wiki-Modal (`openItemWikiModal`).
+ */
+function LootRow({
+  roll,
+  state,
+  t,
+  tr,
+  flipping,
+}: {
+  roll: LootRoll;
+  state: GameState;
+  t: (key: string) => string;
+  tr: (value: LocalizedString) => string;
+  flipping: boolean;
+}): JSX.Element {
+  const discovered = isItemDiscovered(state, roll.itemId);
+  const item = content.items[roll.itemId];
+  const img = getItemImage(roll.itemId);
+  const pct = formatDropPct(roll.chance);
+
+  const mysteryFace = img ? (
+    <span className="bjw-loot-icon bjw-loot-mystery-wrap">
+      <img loading="lazy" decoding="async" src={img} alt="" className="item-chip-img bjw-loot-silhouette pixelart" />
+      <span className="bjw-loot-mystery-mark" aria-hidden="true">?</span>
+    </span>
+  ) : (
+    <span className="bjw-loot-icon bjw-loot-mystery" aria-hidden="true">?</span>
+  );
+
+  if (!discovered) {
+    return (
+      <div className="bjw-loot-row undiscovered" title={t("combat.undiscovered")}>
+        {mysteryFace}
+        <span className="bjw-loot-text">
+          <span className="bjw-loot-name muted">???</span>
+        </span>
+        <span className="bjw-loot-pct muted">{pct}</span>
+      </div>
+    );
+  }
+
+  const typ = dropTypeLabel(item, t, tr);
+  const revealedFace = (
+    <span className="bjw-loot-icon">
+      {img ? (
+        <img loading="lazy" decoding="async" src={img} alt="" className="item-chip-img pixelart" />
+      ) : item?.icon ? (
+        <span className="item-chip-emoji">{item.icon}</span>
+      ) : GENERIC_DROP_ICON_URL ? (
+        <img loading="lazy" decoding="async" src={GENERIC_DROP_ICON_URL} alt="" className="item-chip-img" />
+      ) : (
+        <span className="item-chip-emoji">▪</span>
+      )}
+      <span className="bjw-loot-check" aria-hidden="true">✓</span>
+    </span>
+  );
+
+  return (
+    <div
+      className={`bjw-loot-row ${rarityClass(item?.rarity)}`}
+      title={item ? tr(item.name) : roll.itemId}
+      role="button"
+      tabIndex={0}
+      onClick={() => openItemWikiModal(roll.itemId)}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        openItemWikiModal(roll.itemId);
+      }}
+    >
+      {flipping ? (
+        <FlipReveal className="bjw-loot-icon-flip" flipping frontContent={mysteryFace} backContent={revealedFace} />
+      ) : (
+        revealedFace
+      )}
+      <span className="bjw-loot-text">
+        <span className="bjw-loot-name">{item ? tr(item.name) : roll.itemId}</span>
+        {typ && <span className="bjw-loot-type muted">{typ}</span>}
+      </span>
+      <span className="bjw-loot-pct">{pct}</span>
+    </div>
+  );
+}
+
+/**
+ * Eine Monster-Karte des Bestiariums (Perf-Welle 2026-07-22, weiterhin gültig nach dem Glowup
+ * 26.08.2026). `memo()` + primitive Props (kills/known/reqMet/zoneLocked/dungeonUnlocked/
  * lootDiscoveredCount/…) lassen memo()s flachen Props-Vergleich echte Änderungen erkennen (state
  * selbst ist eine über die Sitzung stabile, intern mutierte Objekt-Referenz und daher ALLEIN kein
  * tauglicher Vergleichswert, s. ActionCardProps-Kommentar in SkillPage.tsx für dasselbe Muster) —
- * nur Zeilen mit echter Änderung rendern/diffen neu, auch bei bis zu ~15 Karten je Band.
+ * nur Zeilen mit echter Änderung rendern/diffen neu, auch bei vielen Karten je Zone.
  */
 const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
   m,
@@ -510,6 +648,7 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
   showFightButton,
 }: BestiaryMonsterCardProps): JSX.Element {
   const art = known ? getMonsterSrc(m.id) : null;
+  const lootGroups = MONSTER_LOOT_GROUPS_INDEX[m.id] ?? { equipment: [], material: [], other: [] };
   return (
     <div className={`bjw-card${known ? "" : " unknown"}`}>
       <div className="bjw-art">
@@ -544,14 +683,16 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
       </div>
 
       <div className="bjw-body">
-        <div className="bjw-name" title={known ? tr(m.name) : undefined}>
-          {known ? tr(m.name) : "???"}
-        </div>
+        <div className="bjw-name-row">
+          <div className="bjw-name" title={known ? tr(m.name) : undefined}>
+            {known ? tr(m.name) : "???"}
+          </div>
 
-        {/* Verteidigungs-Trinität-Badge — dasselbe Badge wie die Zonen-Auswahlkarte (MonsterCard),
-            hier sogar VOR jedem Kill sichtbar (Defense-Typ ist Kampfmechanik, kein Spoiler wie
-            Name/Art/Drops). */}
-        <DefenseTypeBadge type={m.defenseType} />
+          {/* Verteidigungs-Trinität-Badge — dasselbe Badge wie die Zonen-Auswahlkarte (MonsterCard),
+              hier sogar VOR jedem Kill sichtbar (Defense-Typ ist Kampfmechanik, kein Spoiler wie
+              Name/Art/Drops). */}
+          <DefenseTypeBadge type={m.defenseType} />
+        </div>
 
         {/* Kill-Zähler: dezent, IMMER sichtbar (auch bei unbekannten Monstern) —
             monsterKills()-Selektor statt Roh-Feld (SAVE 58). 0 Kills zeigt gedimmt
@@ -589,19 +730,53 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
 
         {known ? (
           <>
-            {/* Dieselbe geteilte StatLine/StatLineImmune-Komponente wie Fight-Screen + Monster-
-                Auswahlkarte (statt eigenem Markup) — volle Konsistenz. */}
-            <StatLine
-              className="bjw-stats"
-              entries={[
-                { key: "hp", icon: statIcon("hp"), label: t("combat.hp"), value: formatNum(m.maxHp) },
-                { key: "atk", icon: statIcon("atk"), label: t("combat.dmg"), value: formatNum(m.damage) },
-                { key: "def", icon: statIcon("def"), label: t("stat.defense"), value: formatNum(m.defense) },
-                ...(m.regen
-                  ? [{ key: "regen", icon: "♻", label: t("combat.regenHint"), value: `${formatNum(m.regen)}/s` } as StatLineEntry]
-                  : []),
-              ]}
-            />
+            {/* Chef-Glowup 26.08.2026 ("Info zu klein"): echte zweispaltige Tabelle (Label-Spalte +
+                Wert-Spalte, EIN Stat je Zeile — volle Kartenbreite verfügbar statt zweier
+                Stat-Zellen nebeneinander, s. bestiary.css `.bjw-stat-row`/Kommentar dort zum
+                Grid-Overflow, den die frühere Zwei-Zellen-pro-Zeile-Variante bei langen Labels wie
+                "Genauigkeit" hatte) statt der kompakten Icon-Zeile (`StatLine`). Tempo zeigt die
+                Angriffs-Kadenz in Sekunden (attackIntervalMs), XP reused das vorhandene
+                Stern-Emblem (GENERIC_DROP_ICON_URL) statt eines neuen Icon-Keys. */}
+            <div className="bjw-stat-table">
+              <div className="bjw-stat-row">
+                <span className="bjw-stat-label">{statIcon("hp")} {t("combat.hp")}</span>
+                <span className="bjw-stat-val">{formatNum(m.maxHp)}</span>
+              </div>
+              <div className="bjw-stat-row">
+                <span className="bjw-stat-label">{statIcon("atk")} {t("combat.dmg")}</span>
+                <span className="bjw-stat-val">{formatNum(m.damage)}</span>
+              </div>
+              <div className="bjw-stat-row">
+                <span className="bjw-stat-label">{statIcon("def")} {t("stat.defense")}</span>
+                <span className="bjw-stat-val">{formatNum(m.defense)}</span>
+              </div>
+              <div className="bjw-stat-row">
+                <span className="bjw-stat-label">{statIcon("acc")} {t("stat.accuracy")}</span>
+                <span className="bjw-stat-val">{formatNum(m.accuracy)}</span>
+              </div>
+              <div className="bjw-stat-row">
+                <span className="bjw-stat-label">{statIcon("eva")} {t("stat.evasion")}</span>
+                <span className="bjw-stat-val">{formatNum(m.evasion)}</span>
+              </div>
+              <div className="bjw-stat-row">
+                <span className="bjw-stat-label">{statIcon("spd")} {t("stat.speed")}</span>
+                <span className="bjw-stat-val">{(m.attackIntervalMs / 1000).toFixed(1)}s</span>
+              </div>
+              <div className="bjw-stat-row">
+                <span className="bjw-stat-label">
+                  {GENERIC_DROP_ICON_URL
+                    ? <img src={GENERIC_DROP_ICON_URL} alt="" className="ui-icon" loading="lazy" decoding="async" />
+                    : "⭐"} {t("skill.t.xp")}
+                </span>
+                <span className="bjw-stat-val">{formatNum(m.xp)}</span>
+              </div>
+            </div>
+
+            {m.regen ? (
+              <div className="bjw-regen-note" title={t("combat.regenHint")}>
+                <span aria-hidden="true">♻</span> {formatNum(m.regen)}/s
+              </div>
+            ) : null}
 
             {m.resist && m.resist.length > 0 && (
               <StatLineImmune label={t("combat.immune")} title={t("combat.immuneHint")} className="bjw-resist">
@@ -623,124 +798,21 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
               </div>
             )}
 
-            {m.loot.length > 0 && (
-              <div className="bjw-drops">
-                {m.loot.map((roll) => {
-                  // Item-Wiki-Sweep (SAVE 58): die Drop-Maskierung folgt jetzt dem
-                  // GLOBALEN Item-Entdeckungsstatus (isItemDiscovered) statt dem
-                  // pro-Monster-Collection-Log (hasDropSeen) — ein Item gilt hier als
-                  // bekannt, sobald der Spieler es JEMALS besessen hat (egal welche
-                  // Quelle: Drop, Craft, Shop, Quest, …), dieselbe Quelle wie das
-                  // Item-Wiki-Modal.
-                  const discovered = isItemDiscovered(state, roll.itemId);
-                  if (!discovered) {
-                    // Task #248: schwarze Silhouette des echten Items statt „???"-Text
-                    // (gleiche Bild-Slot-Größe wie ItemChip, brightness(0) verbirgt
-                    // Details) + „?"-Overlay obendrauf. KEIN Name im Tooltip — nur
-                    // „Unentdeckt" (kein Info-Leak über unentdeckte Items).
-                    const mysteryImg = getItemImage(roll.itemId);
-                    return (
-                      <div
-                        key={roll.itemId}
-                        className="bjw-drop undiscovered"
-                        title={t("combat.undiscovered")}
-                      >
-                        {mysteryImg ? (
-                          <span className="bjw-drop-chip bjw-drop-mystery-wrap">
-                            <img
-                              loading="lazy"
-                              decoding="async"
-                              src={mysteryImg}
-                              alt=""
-                              className="item-chip-img bjw-drop-silhouette pixelart"
-                            />
-                            <span className="bjw-drop-mystery-mark" aria-hidden="true">?</span>
-                          </span>
-                        ) : (
-                          <span className="bjw-drop-mystery">???</span>
-                        )}
-                      </div>
-                    );
-                  }
-                  // Fun-Sweep FF (Grete G1): gestaffelte %-Rundung jetzt aus util/format
-                  // (formatDropPct) — dieselbe Quelle wie die Dungeon-Beute-Vorschau
-                  // (CombatPage.tsx), statt einer zweiten Kopie der Formel.
-                  const pct = formatDropPct(roll.chance);
-                  // Entdeckte Drops öffnen direkt das Item-Wiki-Modal (statt nur den
-                  // Tooltip zu pinnen wie der generische ItemChip) — überall nutzbar,
-                  // s. openItemWikiModal-JSDoc (ItemWikiModal.tsx).
-                  const dropItem = content.items[roll.itemId];
-                  const dropImg = getItemImage(roll.itemId);
-                  // Welle PP (Erstfund-Flip): war dieses Item bis eben unentdeckt und
-                  // ist GERADE (während diese Seite offen ist) entdeckt worden, flippt
-                  // der Chip einmalig von Silhouette auf enthüllt — s. `flippingItems`.
-                  const dropFlipping = flippingItems.has(roll.itemId);
-                  const revealedFace = (
-                    <span className="bjw-drop-chip">
-                      {dropImg ? (
-                        <img loading="lazy" decoding="async" src={dropImg} alt="" className="item-chip-img pixelart" />
-                      ) : dropItem?.icon ? (
-                        <span className="item-chip-emoji">{dropItem.icon}</span>
-                      ) : GENERIC_DROP_ICON_URL ? (
-                        <img loading="lazy" decoding="async" src={GENERIC_DROP_ICON_URL} alt="" className="item-chip-img" />
-                      ) : (
-                        <span className="item-chip-emoji">▪</span>
-                      )}
-                      {/* Item-Checkliste (Fun-Sweep FF, Pip P3c): explizites ✓ auf
-                          gefundenen Drops — bislang unterschied sich "gefunden" nur
-                          implizit durchs volle Icon vs. die Silhouette oben. */}
-                      <span className="bjw-drop-check" aria-hidden="true">✓</span>
-                    </span>
-                  );
-                  return (
-                    <div
-                      key={roll.itemId}
-                      className="bjw-drop"
-                      title={dropItem ? tr(dropItem.name) : roll.itemId}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => openItemWikiModal(roll.itemId)}
-                      onKeyDown={(e) => {
-                        if (e.key !== "Enter" && e.key !== " ") return;
-                        e.preventDefault();
-                        openItemWikiModal(roll.itemId);
-                      }}
-                    >
-                      {dropFlipping ? (
-                        <FlipReveal
-                          className="bjw-drop-flip"
-                          flipping
-                          frontContent={
-                            dropImg ? (
-                              <span className="bjw-drop-chip bjw-drop-mystery-wrap">
-                                <img
-                                  loading="lazy"
-                                  decoding="async"
-                                  src={dropImg}
-                                  alt=""
-                                  className="item-chip-img bjw-drop-silhouette pixelart"
-                                />
-                                <span className="bjw-drop-mystery-mark" aria-hidden="true">?</span>
-                              </span>
-                            ) : (
-                              <span className="bjw-drop-mystery">???</span>
-                            )
-                          }
-                          backContent={revealedFace}
-                        />
-                      ) : (
-                        revealedFace
-                      )}
-                      <span className="bjw-drop-pct muted">{pct}</span>
-                    </div>
-                  );
-                })}
+            {/* Chef-Glowup 26.08.2026 ("Loot zu ungeordnet"): eine sortierte Liste je Gruppe
+                (Ausrüstung/Uniques → Materialien → Sonstiges, s. MONSTER_LOOT_GROUPS_INDEX oben)
+                statt eines ungeordneten Icon-Rasters — Vorbild ist die Dungeon-Karte
+                (CombatPage.tsx `DungeonLootPreview`). */}
+            {(lootGroups.equipment.length > 0 || lootGroups.material.length > 0 || lootGroups.other.length > 0) && (
+              <div className="bjw-loot">
+                <LootGroup titleKey="item.type.equipment" rolls={lootGroups.equipment} state={state} t={t} tr={tr} flippingItems={flippingItems} />
+                <LootGroup titleKey="shop.cat.materials" rolls={lootGroups.material} state={state} t={t} tr={tr} flippingItems={flippingItems} />
+                <LootGroup titleKey="nav.section.other" rolls={lootGroups.other} state={state} t={t} tr={tr} flippingItems={flippingItems} />
               </div>
             )}
 
             {showFightButton && (
               <button
-                className="bestiary-fight-btn bjw-fight-btn"
+                className="btn-iron bjw-fight-btn"
                 disabled={!reqMet || zoneLocked || !!m.dungeonOnly}
                 title={
                   zoneLocked
@@ -798,8 +870,7 @@ function ChampionCodex(): JSX.Element {
 
   return (
     <>
-      {byZone.map((group, zoneIndex) => {
-        const zoneBg = getBattleScreen(group.zone.id) ?? getZoneBackground(group.zone.id);
+      {byZone.map((group) => {
         const baseLevels = group.champions
           .map((v) => content.monsters[v.baseMonsterId]?.level)
           .filter((lvl): lvl is number => typeof lvl === "number");
@@ -810,8 +881,6 @@ function ChampionCodex(): JSX.Element {
         return (
           <ZoneBandShell
             key={group.zone.id}
-            bg={zoneBg}
-            eager={zoneIndex === 0}
             locked={false}
             lockedNote={null}
             zoneName={tr(group.zone.name)}
