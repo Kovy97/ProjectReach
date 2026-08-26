@@ -367,9 +367,11 @@
    Human-Roster-Rework 26.08.2026: Karten zeigen jetzt zusätzlich den Archetyp-Namen darunter. ── */
 .creation-portrait-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(88px, 7vw, 120px), 1fr));
-  gap: 8px;
-  max-height: 236px;
+  /* Chef 26.08.2026: „Die Bilder sind in der Preview zu klein, skalieren nicht mit der Auflösung."
+     → Kartenbreite und Rasterhöhe wachsen mit dem Viewport (vw/vh) statt bei 120 px zu enden. */
+  grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 9.5vw, 220px), 1fr));
+  gap: clamp(8px, 0.7vw, 14px);
+  max-height: clamp(240px, 40vh, 560px);
   overflow-y: auto;
   padding: 3px 3px 10px;
 }
@@ -398,7 +400,7 @@
 .creation-portrait-cell-name {
   padding: 4px 3px 6px;
   font-family: "Cinzel", var(--font-head);
-  font-size: 10px;
+  font-size: clamp(10px, 0.8vw, 14px);
   line-height: 1.2;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -550,7 +552,7 @@
      Bild und schnitt die Namenszeile der ersten Reihe komplett weg (Bugfund Screenshot-Check
      1366×768/1600×900). 192px zeigt eine volle Reihe (Bild + zweizeiliger Name) unbeschnitten;
      der Rest der 15 Karten bleibt wie vorgesehen per internem Scroll erreichbar. */
-  .creation-portrait-grid { max-height: 192px; }
+  .creation-portrait-grid { max-height: clamp(200px, 32vh, 300px); }
   .creation-style-card { padding: 9px; gap: 8px; }
   /* Bugfund (Chef-Prüfrunde 26.08.): die Beschreibung war hier komplett ausgeblendet — Karten
      zeigten nur Bild+Name. Sie bleibt jetzt sichtbar (etwas kompakter), die Karte wächst mit statt
@@ -590,3 +592,72 @@
   .creation-form { padding: 16px 20px 28px; }
   .creation-style-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── Chef 26.08.2026: „Name, Portrait und Starting Style in der linken Leiste sollten auf der
+   richtigen Höhe sein. Nicht klickbar, nur Indikator." → Die separate Schrittleiste entfällt; jede
+   Sektion trägt ihre Marke selbst in einer Randspalte, die Linie läuft durch alle Sektionen. Die
+   Marke ist ein <div aria-hidden>, kein Knopf. Am Dateiende, damit die Regeln die alten Rail-
+   Regeln und Media-Queries oben überschreiben. ────────────────────────────────────────────── */
+.creation-form-pane { grid-template-columns: 1fr; }
+.creation-form { grid-column: 1; }
+.creation-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(84px, 6.6vw, 112px) minmax(0, 1fr);
+  column-gap: clamp(10px, 1vw, 20px);
+  align-items: start;
+}
+.creation-step > * { grid-column: 2; min-width: 0; }
+.creation-step::before {
+  content: "";
+  position: absolute;
+  left: calc(clamp(84px, 6.6vw, 112px) / 2);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(rgba(216, 192, 106, 0.55), rgba(61, 53, 40, 0.35));
+  pointer-events: none;
+}
+.creation-step:first-of-type::before { top: clamp(14px, 1.8vh, 20px); }
+.creation-step:last-of-type::before { bottom: auto; height: clamp(24px, 3vh, 34px); }
+.creation-step-marker {
+  grid-column: 1;
+  grid-row: 1 / span 20;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #c7b38a;
+  text-align: center;
+  padding-top: 0;
+}
+.creation-step-marker b {
+  width: clamp(36px, 3.2vw, 48px);
+  height: clamp(36px, 3.2vw, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #c49b4f;
+  border-radius: 50%;
+  background: #111;
+  color: var(--gold);
+  font-family: "Metamorphous", var(--font-head), Georgia, serif;
+  font-size: clamp(16px, 1.4vw, 21px);
+  box-shadow: 0 0 0 4px #15130f, 0 0 0 5px rgba(90, 71, 45, 0.8);
+}
+.creation-step-marker span {
+  font-family: "Cinzel", var(--font-head);
+  font-size: clamp(9px, 0.7vw, 11px);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  max-width: 100px;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: manual;
+}
+
+/* Der „Alle anzeigen"-Knopf soll in der Raster-Spalte nicht auf Vollbreite gestreckt werden. */
+.creation-step .creation-portrait-more-btn { justify-self: start; }

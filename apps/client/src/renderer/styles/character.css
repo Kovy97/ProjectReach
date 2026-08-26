@@ -74,7 +74,7 @@
    Reihe (skaliert responsiv mit der Fenstergröße statt hart 3 Spalten zu erzwingen). */
 .portrait-gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 11vw, 240px), 1fr));
   gap: 16px;
 }
 

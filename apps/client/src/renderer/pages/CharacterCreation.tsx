@@ -121,11 +121,6 @@ function HumanArchetypeGrid({ group, sex, value, onSelect }: HumanArchetypeGridP
 // s. styles/creation.css für die Rezeptur. Alle Funktionen (Name, Porträt-Raster + Galerie-Modal,
 // Upload, Stil, createCharacter) sind 1:1 aus der vorherigen Fassung übernommen.
 
-const STEPS: Array<{ id: "name" | "portrait" | "style"; labelKey: string }> = [
-  { id: "name", labelKey: "creation.name" },
-  { id: "portrait", labelKey: "creation.portrait.label" },
-  { id: "style", labelKey: "creation.style.label" },
-];
 
 // Standardwahl (Chef-Auftrag 26.08.2026): Krieger, männlich — fällt nur zurück, falls das Asset
 // ausnahmsweise fehlen sollte (Integritätsnetz s. humanRoster.ts).
@@ -145,7 +140,6 @@ export function CharacterCreation(): JSX.Element {
   const [sex, setSex] = useState<Sex>("m");
   const [startingStyle, setStartingStyle] = useState<WeaponStyle>("melee");
   const [showGallery, setShowGallery] = useState(false);
-  const [activeStep, setActiveStep] = useState<"name" | "portrait" | "style">("name");
   const uploadInputRef = useRef<HTMLInputElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -177,10 +171,6 @@ export function CharacterCreation(): JSX.Element {
     if (parsed) setPortraitId(portraitIdFor(parsed.archetype, nextSex));
   };
 
-  const jumpToStep = (id: "name" | "portrait" | "style"): void => {
-    setActiveStep(id);
-    sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
 
   return (
     <div className="creation">
@@ -238,28 +228,18 @@ export function CharacterCreation(): JSX.Element {
           <span>{t("creation.subtitle")}</span>
         </header>
 
-        <nav className="creation-step-rail" aria-label={t("creation.title")}>
-          {STEPS.map((step, i) => (
-            <button
-              key={step.id}
-              type="button"
-              className={activeStep === step.id ? "active" : ""}
-              onClick={() => jumpToStep(step.id)}
-            >
-              <b>{i + 1}</b>
-              <span>{t(step.labelKey)}</span>
-            </button>
-          ))}
-        </nav>
 
         <div className="creation-form">
           <section
             className="creation-step"
             ref={(el) => { sectionRefs.current.name = el; }}
           >
-            <label className="creation-step-label">
-              <span>1</span> {t("creation.name")}
-            </label>
+            {/* Chef 26.08.2026: Schrittmarke auf Höhe des Abschnitts, reiner Indikator (nicht klickbar). */}
+            <div className="creation-step-marker" aria-hidden="true">
+              <b>1</b>
+              <span>{t("creation.name")}</span>
+            </div>
+            <label className="creation-step-label">{t("creation.name")}</label>
             <div className="creation-name-field">
               <input
                 className="creation-input"
@@ -267,7 +247,6 @@ export function CharacterCreation(): JSX.Element {
                 maxLength={NAME_MAX_LENGTH}
                 placeholder={t("creation.namePlaceholder")}
                 onChange={(e) => setName(e.target.value)}
-                onFocus={() => setActiveStep("name")}
                 autoFocus
               />
               <small>{name.length}/{NAME_MAX_LENGTH}</small>
@@ -278,9 +257,12 @@ export function CharacterCreation(): JSX.Element {
             className="creation-step"
             ref={(el) => { sectionRefs.current.portrait = el; }}
           >
-            <label className="creation-step-label">
-              <span>2</span> {t("creation.portrait.label")}
-            </label>
+            {/* Chef 26.08.2026: Schrittmarke auf Höhe des Abschnitts, reiner Indikator (nicht klickbar). */}
+            <div className="creation-step-marker" aria-hidden="true">
+              <b>2</b>
+              <span>{t("creation.portrait.label")}</span>
+            </div>
+            <label className="creation-step-label">{t("creation.portrait.label")}</label>
 
             <div className="creation-filter-row">
               <span className="creation-filter-label">{t("creation.race")}</span>
@@ -332,9 +314,12 @@ export function CharacterCreation(): JSX.Element {
             className="creation-step"
             ref={(el) => { sectionRefs.current.style = el; }}
           >
-            <label className="creation-step-label">
-              <span>3</span> {t("creation.style.label")}
-            </label>
+            {/* Chef 26.08.2026: Schrittmarke auf Höhe des Abschnitts, reiner Indikator (nicht klickbar). */}
+            <div className="creation-step-marker" aria-hidden="true">
+              <b>3</b>
+              <span>{t("creation.style.label")}</span>
+            </div>
+            <label className="creation-step-label">{t("creation.style.label")}</label>
             <StylePicker value={startingStyle} onChange={setStartingStyle} />
             <p className="creation-style-hint">{t("creation.style.hint")}</p>
           </section>
