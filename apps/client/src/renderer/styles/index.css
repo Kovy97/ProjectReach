@@ -24,6 +24,10 @@
 /* 5a. Main menu (Task #282 redesign — hero title screen) */
 @import "./menu.css";
 
+/* 5a-1. Bildschirm-Überblendung (Chef-Kurswechsel 26.08.2026) — app-weites Overlay, s.
+   components/ScreenFade.tsx. */
+@import "./screen-fade.css";
+
 /* 5a-2. Studio-Intro-Sequenz (App-Start-Choreografie vor dem Hauptmenü) */
 @import "./intro.css";
 

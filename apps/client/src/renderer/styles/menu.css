@@ -64,8 +64,9 @@
   top: clamp(8px, 2vh, 22px);
   left: 50%;
   transform: translateX(-50%);
-  /* Chef-Vorgabe (Vorlage Mira "Main Menu 02 War Table"): exakt diese Formel. */
-  width: min(610px, 44vw);
+  /* Chef-Auftrag 26.08.2026 Runde 2: dynamische Skalierung statt fester Formel — wächst mit dem
+     Viewport zwischen einem Floor (kleine Auflösungen) und einer Decke (Ultrawide/1440p). */
+  width: clamp(520px, 42vw, 980px);
   max-height: 32vh;
   object-fit: contain;
   z-index: 3;
@@ -94,11 +95,11 @@
    hier nur ein enger werdender Feinschliff (kein eigenes Farb-/Rahmen-Rezept mehr, s. Header-
    Notiz oben). */
 .menu-lang .btn-iron--sm {
-  min-width: 44px;
-  padding: 5px 10px;
-  /* Chef-Vorgabe (Vorlage Mira): Sprachchips in Cinzel 11px. */
+  min-width: clamp(40px, 3vw, 54px);
+  padding: clamp(5px, 0.45vw, 8px) clamp(8px, 0.8vw, 14px);
+  /* Chef-Vorgabe (Vorlage Mira): Sprachchips in Cinzel, Runde 2 (26.08.): wächst mit (clamp). */
   font-family: "Cinzel", var(--font-head);
-  font-size: 11px;
+  font-size: clamp(11px, 0.85vw, 15px);
 }
 
 /* ─── Ambient-FX: driftende Glut + Nebelschwaden (rein CSS, self-contained) ──────────────── */
@@ -649,7 +650,7 @@
   max-width: 92vw;
   padding: 0 12px;
   font-family: "Cinzel", var(--font-head);
-  font-size: 10px;
+  font-size: clamp(10px, 0.75vw, 14px);
   letter-spacing: 0.4px;
   color: rgba(205, 187, 142, 0.42);
   text-align: center;
@@ -673,21 +674,24 @@
   justify-content: flex-end;
 }
 
-/* `.menu-main` bekommt hier explizit die volle Bühnenhöhe (statt sich per `justify-content:
-   flex-end` vom Flex-Elternteil `.menu` positionieren zu lassen) — dieselbe Rechnung wie Miras
-   Vorlage (`min-height:100vh` + prozentuales Padding), damit `padding-top`/`padding-bottom` in
-   `vh` exakt an IHREN validierten 1366×768/1600×900/1920×1080-Screenshots gemessen sind. */
+/* Chef-Kurswechsel 26.08.2026 (Runde 2, NACH dem ersten Linksbündig-Auftrag): New/Load werden
+   künftig eigene Screens mit Fade (Mira-Mockups folgen) — bis dahin bleibt die Komposition
+   ZENTRIERT, aber dynamisch: `.menu-main` ist die Befehlsspalte+Dossier-GRUPPE als Ganzes, per
+   `width: clamp(...)` + `margin:auto` mittig, innerhalb der Gruppe teilen sich Spalte (schmal) und
+   Dossier (breit) den Platz im festen Verhältnis ~1:1,8 via `flex-grow` (kein separates vw-Maß pro
+   Spalte nötig — die Gruppenbreite allein bestimmt beide). `align-items:flex-end` (Flexbox, nicht
+   Grid!) verankert beide Spalten unten am Bildschirmrand über die volle `min-height:100vh`. */
 .menu-main {
   position: relative;
   z-index: 3;
   min-height: 100vh;
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: minmax(258px, 340px) minmax(500px, 700px);
-  align-items: end;
-  justify-content: space-between;
-  gap: clamp(28px, 6vw, 84px);
-  padding: 42vh 5vw 8vh;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(28px, 3vw, 64px);
+  width: clamp(1100px, 78vw, 1900px);
+  margin: 0 auto;
+  padding-bottom: 8vh;
 }
 
 .menu-nav {
@@ -695,107 +699,49 @@
   z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: clamp(4px, 0.7vh, 7px);
-  width: 100%;
+  gap: clamp(8px, 1.2vh, 14px);
+  /* Verhältnis-Teil 1 von 1:1,8 (s. Kommentar oben) — `flex-basis:0%` heißt: die gesamte
+     verfügbare Breite (Gruppenbreite minus Gap) wird ausschließlich über `flex-grow` verteilt. */
+  flex: 1 1 0%;
+  min-width: 300px;
 }
 
-/* ─── Die fünf Befehlsknöpfe — Miras `.menu-action`-Rezept (Gravewood-„alternate"-Knopftextur +
-   Panel-Frame als 9-Slice-Rahmen). Bewusst NICHT `.btn-iron`: eine eigene, vom Chef abgenommene
-   Optik exklusiv für diese fünf Knöpfe. ─────────────────────────────────────────────────────── */
-.menu-action {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: clamp(10px, 1.1vw, 15px);
-  min-height: clamp(50px, 6.2vh, 62px);
-  padding: clamp(8px, 1vh, 11px) clamp(16px, 1.8vw, 24px);
-  border-style: solid;
-  border-color: transparent;
-  border-width: clamp(7px, 0.65vw, 9px);
-  border-image-source: url("../assets/ui/gravewood/frames/frame-panel.webp");
-  border-image-slice: 28 fill;
-  border-image-width: clamp(7px, 0.65vw, 9px);
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  background-image:
-    linear-gradient(90deg, rgba(63, 40, 27, 0.72), rgba(24, 21, 18, 0.78)),
-    url("../assets/ui/gravewood/buttons/alternate/alternate-normal.webp");
-  background-position: center;
-  background-size: 100% 100%;
-  color: var(--text);
-  font-family: "Metamorphous", "Cinzel", Georgia, serif;
-  font-size: clamp(14px, 1.3vw, 19px);
-  letter-spacing: 0.02em;
-  line-height: 1.15;
+/* ─── Die fünf Befehlsknöpfe — Chef-Entscheid 26.08.2026 Runde 2: "unseren Standard-Button-Frame,
+   den Eisen-Frame, hernehmen" + "Mach die Buttons größer". Ersetzt Miras eigenständiges
+   `.menu-action`-Gravewood-Rezept vollständig durch den spielweiten `.btn-iron` (design-system.css)
+   — `.menu-nav-btn` liefert nur noch die Größen-/Layout-Overrides (größer, linksbündig Icon+Text,
+   volle Spaltenbreite), keine eigene Rahmen-/Texturoptik mehr. Danger/Active kommen ebenfalls aus
+   der geteilten Familie (`.btn-iron--danger`, `.btn-iron.is-active`, s. MainMenu.tsx). ──────────── */
+.menu-nav-btn {
+  width: 100%;
+  min-height: clamp(68px, 7vh, 100px);
+  justify-content: flex-start;
+  gap: clamp(14px, 1.3vw, 20px);
+  padding: clamp(10px, 1.2vh, 18px) clamp(20px, 2vw, 30px);
+  font-size: clamp(22px, 1.7vw, 32px);
   text-align: left;
   text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
-  transition: transform 0.15s ease, filter 0.15s, box-shadow 0.15s, color 0.12s;
 }
 
-.menu-action:hover {
-  transform: translateX(5px);
-  filter: brightness(1.18);
-  color: #fff0bd;
-  background-image:
-    linear-gradient(90deg, rgba(63, 40, 27, 0.58), rgba(24, 21, 18, 0.68)),
-    url("../assets/ui/gravewood/buttons/alternate/alternate-hover.webp");
-}
-
-.menu-action:active {
-  transform: translateX(5px) scale(0.978);
-}
-
-.menu-action-icon {
-  width: clamp(19px, 1.6vw, 24px);
-  height: clamp(19px, 1.6vw, 24px);
+.menu-nav-btn .menu-action-icon,
+.menu-nav-btn .menu-action-glyph {
+  width: clamp(28px, 2.1vw, 42px);
+  height: clamp(28px, 2.1vw, 42px);
   flex-shrink: 0;
   object-fit: contain;
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
-  transition: filter 0.15s;
+  font-size: clamp(22px, 1.7vw, 32px);
 }
-.menu-action:hover .menu-action-icon {
-  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 8px rgba(216, 192, 106, 0.5));
-}
-
-.menu-action-glyph {
+.menu-nav-btn .menu-action-glyph {
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--gold);
-  font-size: clamp(15px, 1.3vw, 19px);
 }
 
-.menu-action-label {
+.menu-nav-btn .menu-action-label {
   flex: 1;
   min-width: 0;
-}
-
-/* Aktiver Eintrag: schmaler Gold-Akzentbalken an der Innenkante — auf einen Blick erkennbar,
-   welches Panel gerade den Rahmen rechts belegt (Dossier = kein Knopf aktiv). */
-.menu-action.is-active {
-  box-shadow:
-    0 0 0 1px rgba(216, 192, 106, 0.5),
-    0 0 20px rgba(216, 192, 106, 0.3),
-    0 8px 20px rgba(0, 0, 0, 0.45);
-}
-.menu-action.is-active::after {
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: 14%;
-  bottom: 14%;
-  width: 3px;
-  background: var(--gold);
-  box-shadow: 0 0 8px rgba(216, 192, 106, 0.7);
-}
-
-.menu-action--danger {
-  color: #ddb7ac;
-}
-.menu-action--danger:hover {
-  color: #f0c8c0;
+  text-align: left;
 }
 
 /* ─── Der rechte Rahmen: FESTE Größe/Position für Dossier UND jedes Panel (Chef-Vorgabe: "im
@@ -803,8 +749,15 @@
 .menu-stage {
   position: relative;
   z-index: 3;
-  width: 100%;
-  height: min(395px, 43vh);
+  /* Verhältnis-Teil 1,8 von 1:1,8 (s. `.menu-main`-Kommentar) — Dossier/Panel-Rahmen ist die
+     breitere der beiden Spalten. */
+  flex: 1.8 1 0%;
+  min-width: 560px;
+  /* Chef-Auftrag Runde 2: Porträt-Höhe wächst mit `vh` (Porträt füllt den Rahmen randlos, s.
+     `.save-portrait`) — dieselbe Formel deckt beide Vorgaben in einem Wert ab. */
+  /* Floor 340 px statt 300 px: bei 1366×768 (40vh = 307 px) lief die FORTSETZEN-Karte sonst in den
+     unteren Rahmen (Chef-Regel: nie clip) — vertikal ist zwischen Logo und Gruppe Platz dafür. */
+  height: clamp(340px, 44vh, 560px);
 }
 
 /* ─── Spielstand-Dossier (Default-Inhalt des Rahmens) — Miras `.save-dossier`-Rezept. ────────── */
@@ -865,7 +818,7 @@
   margin: 0;
   color: var(--gold);
   font-family: "Cinzel", var(--font-head);
-  font-size: 10px;
+  font-size: clamp(10px, 0.8vw, 14px);
   letter-spacing: 0.19em;
   text-transform: uppercase;
 }
@@ -873,7 +826,7 @@
 .save-copy h1 {
   margin: 4px 0 8px;
   font-family: "Metamorphous", "Cinzel", Georgia, serif;
-  font-size: clamp(22px, 2.1vw, 34px);
+  font-size: clamp(30px, 2.4vw, 46px);
   font-weight: 400;
   line-height: 1.15;
   color: var(--text);
@@ -895,7 +848,7 @@
   margin: 0;
   color: var(--muted);
   font-family: "Cinzel", var(--font-head);
-  font-size: 10px;
+  font-size: clamp(10px, 0.8vw, 14px);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -903,7 +856,7 @@
   margin: 2px 0 0;
   color: var(--text);
   font-family: "Metamorphous", "Cinzel", Georgia, serif;
-  font-size: clamp(15px, 1.3vw, 20px);
+  font-size: clamp(18px, 1.4vw, 26px);
   overflow-wrap: anywhere;
 }
 
@@ -916,45 +869,36 @@
 
 .save-copy .continue-card {
   margin-top: auto;
+  /* Bugfix Runde 2: Standard-`flex-shrink:1` ließ die Karte bei knappem `.save-copy`-Budget
+     (fixe Höhe, `overflow-y:auto`) unter ihre eigene Inhaltshöhe zusammenquetschen — Titel+Meta-
+     Zeile liefen dabei sichtbar in den unteren Eisenrahmen hinein. `min-height` (unten) ist ein
+     Wunschmaß, keine Schrumpf-Erlaubnis: die Karte behält immer ihre natürliche Inhaltshöhe;
+     reicht der Platz nicht, scrollt `.save-copy` intern statt die Karte zu verformen. */
+  flex-shrink: 0;
 }
 
-/* ─── CONTINUE-Karte — Miras `.continue-card`-Rezept; wird zur NEW-GAME-Karte, wenn kein
+/* ─── CONTINUE-Karte — Chef-Entscheid 26.08.2026 Runde 2: "darf den Stahlrahmen (.btn-iron, groß)
+   tragen, damit die Knopf-Familie einheitlich ist." Ersetzt Miras eigenes Gravewood-„primary"-
+   Rezept; `.continue-card` liefert nur noch Layout (Block statt inline-flex, linksbündig, zwei
+   Zeilen: Titel + Meta-Zeile) — Rahmen/Textur/Hover kommen komplett von `.btn-iron` (s.
+   MainMenu.tsx: `className="btn-iron continue-card"`). Wird zur NEW-GAME-Karte, wenn kein
    Spielstand existiert (SaveDossier in MainMenu.tsx entscheidet Label/Ziel). ─────────────────── */
 .continue-card {
   display: block;
   width: 100%;
-  padding: clamp(10px, 1.3vh, 18px) clamp(14px, 1.6vw, 28px);
-  border-style: solid;
-  border-color: transparent;
-  border-width: clamp(9px, 0.9vw, 13px);
-  border-image-source: url("../assets/ui/gravewood/frames/frame-panel.webp");
-  border-image-slice: 28 fill;
-  border-image-width: clamp(9px, 0.9vw, 13px);
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  background-image:
-    linear-gradient(180deg, rgba(54, 38, 28, 0.78), rgba(22, 20, 18, 0.86)),
-    url("../assets/ui/gravewood/buttons/primary/primary-normal.webp");
-  background-position: center;
-  background-size: 100% 100%;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
-  cursor: pointer;
-  color: var(--text);
+  min-height: clamp(78px, 8vh, 112px);
+  padding: clamp(12px, 1.4vh, 20px) clamp(18px, 1.8vw, 28px);
   text-align: left;
-  transition: filter 0.16s, transform 0.16s;
+  transition: filter 0.16s, transform 0.16s, color 0.12s;
 }
 .continue-card:hover {
-  filter: brightness(1.17);
   transform: translateY(-2px);
-  background-image:
-    linear-gradient(180deg, rgba(54, 38, 28, 0.68), rgba(22, 20, 18, 0.78)),
-    url("../assets/ui/gravewood/buttons/primary/primary-hover.webp");
 }
 .continue-card strong {
   display: block;
   font-family: "Metamorphous", "Cinzel", Georgia, serif;
   font-weight: 400;
-  font-size: clamp(18px, 1.8vw, 26px);
+  font-size: clamp(20px, 1.8vw, 30px);
   letter-spacing: 0.05em;
   color: var(--gold);
   text-transform: uppercase;
@@ -967,7 +911,7 @@
   padding-top: 7px;
   border-top: 1px solid rgba(190, 156, 91, 0.32);
   color: #c9b889;
-  font-size: clamp(11px, 0.95vw, 13px);
+  font-size: clamp(12px, 1vw, 15px);
 }
 .continue-card i {
   min-width: 0;
@@ -1021,10 +965,6 @@
   .menu-panel {
     animation: none;
   }
-  .menu-action:hover,
-  .menu-action:active {
-    transform: none;
-  }
   .continue-card:hover {
     transform: none;
   }
@@ -1076,22 +1016,42 @@
 /* Sicherheitsnetz unterhalb der offiziellen Ziel-Auflösungen (1366×768 ist die kleinste): sehr
    knappe Fensterhöhen bekommen etwas mehr Bühne, statt zu clippen. */
 @media (max-height: 700px) {
-  .menu-main {
-    padding-top: 34vh;
-  }
   .menu-logo {
     max-height: 22vh;
+  }
+  .menu-main {
+    padding-bottom: 5vh;
   }
 }
 
 @media (max-width: 900px) {
   .menu-main {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    justify-content: stretch;
-    padding: 24vh 4vw 6vh;
+    flex-direction: column;
+    align-items: stretch;
+    width: 92vw;
+    padding-bottom: 5vh;
+  }
+  .menu-nav,
+  .menu-stage {
+    flex: none;
+    width: 100%;
+    min-width: 0;
   }
   .menu-stage {
     height: min(340px, 40vh);
   }
 }
+
+/* Am Dateiende, damit diese Kompakt-Regeln die Grundregeln oben überschreiben.
+   Kleine Fensterhöhen (1366×768, 1600×900 knapp): Dossier-Typografie und Abstände kompakter, damit
+   Eyebrow + Name + zwei Wertezeilen + FORTSETZEN-Karte ohne internes Scrollen in den Rahmen passen. */
+@media (max-height: 820px) {
+  .save-copy { padding: 10px clamp(14px, 1.6vw, 20px) 10px; }
+  .save-copy h1 { margin: 2px 0 4px; font-size: 28px; }
+  .save-copy dl { gap: 4px 12px; margin-bottom: 8px; }
+  .save-copy dl > div { padding-bottom: 3px; }
+  .save-copy dd { font-size: 17px; }
+  .continue-card { min-height: 68px; padding: 8px 16px; }
+  .continue-card strong { font-size: 20px; }
+}
+

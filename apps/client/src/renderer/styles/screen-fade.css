@@ -1,0 +1,18 @@
+/* Bildschirm-Überblendung (Chef-Kurswechsel 26.08.2026, s. util/screenFade.ts + components/
+   ScreenFade.tsx) — schwarzes Vollbild-Overlay, ~350ms rein/raus. App-weit EIN Overlay
+   (App.tsx), aktuell genutzt beim Fortsetzen/Laden eines Spielstands im Hauptmenü; später hängen
+   sich die geplanten New/Load-Screens an dieselbe Komponente. */
+.screen-fade {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen-fade {
+    transition: none;
+  }
+}

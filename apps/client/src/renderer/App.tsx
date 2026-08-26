@@ -16,6 +16,7 @@ import {
 } from "./util/uiPrefs";
 import { useAnimatedNumber } from "./util/useAnimatedNumber";
 import { AmbientEffects } from "./components/AmbientEffects";
+import { ScreenFade } from "./components/ScreenFade";
 import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { closeItemTooltip, ItemTooltipOverlay } from "./components/ItemTooltip";
@@ -1153,6 +1154,10 @@ export function App(): JSX.Element {
         <ItemTooltipOverlay />
         <ItemWikiModalOverlay />
       </GameProvider>
+      {/* Chef-Kurswechsel 26.08.2026: MUSS außerhalb von <Root/>s Screen-Switch liegen, damit die
+          Überblendung einen Screen-Wechsel (Menü → Spiel) übersteht statt selbst mit zu
+          remounten — s. components/ScreenFade.tsx-JSDoc. */}
+      <ScreenFade />
     </I18nProvider>
   );
 }

@@ -22,6 +22,9 @@ import emblGear from "../assets/ui/emblem_gear.svg";
 import emblSkull from "../assets/ui/emblem_skull.svg";
 import { ConfirmModal } from "../components/ConfirmModal";
 import type { ConfirmRequest } from "../components/ConfirmModal";
+// Chef-Kurswechsel 26.08.2026: FORTSETZEN/Laden geht jetzt durch die neue App-weite
+// Schwarzblende (s. util/screenFade.ts-JSDoc) statt direkt `loadGame` aufzurufen.
+import { runWithScreenFade } from "../util/screenFade";
 
 type Panel = "new" | "load" | "options" | "credits";
 
@@ -179,7 +182,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
           {panel === null ? (
             <SaveDossier
               slot={selectedSave}
-              onContinue={() => selectedSave && void loadGame(selectedSave.id)}
+              onContinue={() => selectedSave && void runWithScreenFade(() => loadGame(selectedSave.id))}
               onStartNew={() => togglePanel("new")}
             />
           ) : (
@@ -201,7 +204,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
                           slot={slot}
                           mode="load"
                           onNew={() => startNewGame(slot.id)}
-                          onLoad={() => void loadGame(slot.id)}
+                          onLoad={() => void runWithScreenFade(() => loadGame(slot.id))}
                           onDelete={() => askDelete(slot)}
                           onOverwrite={() => startNewGame(slot.id)}
                         />
@@ -223,7 +226,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
                         slot={slot}
                         mode="new"
                         onNew={() => startNewGame(slot.id)}
-                        onLoad={() => void loadGame(slot.id)}
+                        onLoad={() => void runWithScreenFade(() => loadGame(slot.id))}
                         onDelete={() => askDelete(slot)}
                         onOverwrite={() => askOverwrite(slot)}
                       />
@@ -313,7 +316,7 @@ function SaveDossier({ slot, onContinue, onStartNew }: SaveDossierProps): JSX.El
         <div className="save-copy">
           <p className="eyebrow">{t("menu.selectedSave")}</p>
           <p className="save-empty-note">{t("menu.noSaveYet")}</p>
-          <button type="button" className="continue-card" onClick={onStartNew}>
+          <button type="button" className="btn-iron continue-card" onClick={onStartNew}>
             <strong>{t("menu.new")}</strong>
             <span>
               <i>{t("menu.noSaveYetHint")}</i>
@@ -349,7 +352,7 @@ function SaveDossier({ slot, onContinue, onStartNew }: SaveDossierProps): JSX.El
             <dd>{formatPlaytime(summary.activePlayMs ?? summary.elapsedMs)}</dd>
           </div>
         </dl>
-        <button type="button" className="continue-card" onClick={onContinue}>
+        <button type="button" className="btn-iron continue-card" onClick={onContinue}>
           <strong>{t("menu.continue")}</strong>
           <span>
             {/* Aktuelle Zone/Aktion ist (noch) kein Summary-Feld (nur der leichtgewichtige
@@ -613,15 +616,19 @@ interface MenuActionButtonProps {
 }
 
 /**
- * Einer der fünf festen Befehlsknöpfe links — exakt Miras `.menu-action`-Rezept (Gravewood-
- * „alternate"-Knopftextur + Panel-Frame als 9-Slice, Hover schiebt nach rechts/hellt auf). Das ist
- * NICHT `.btn-iron` (Chef-Vorgabe: diese fünf Knöpfe sind eine eigene, abgenommene Optik).
+ * Einer der fünf festen Befehlsknöpfe links — Chef-Entscheid 26.08.2026 Runde 2: "Frame bitte
+ * unseren Standard-Button-Frame, den Eisen-Frame, hernehmen." Trägt jetzt `.btn-iron` (dieselbe
+ * Klasse wie jeder andere Standard-Knopf im Spiel); `.menu-nav-btn` liefert nur noch die
+ * größenbezogenen Overrides (größer, linksbündig, volle Spaltenbreite — s. menu.css). Danger
+ * (QUIT) und der aktive Zustand (offenes Panel) nutzen dieselben geteilten Modifier wie überall
+ * sonst (`.btn-iron--danger`, `.btn-iron.is-active`) — ersetzt Miras eigenständiges
+ * Gravewood-„menu-action"-Rezept vollständig.
  */
 function MenuActionButton({ icon, glyph, active, variant, onClick, children }: MenuActionButtonProps): JSX.Element {
   return (
     <button
       type="button"
-      className={`menu-action${variant ? ` menu-action--${variant}` : ""}${active ? " is-active" : ""}`}
+      className={`btn-iron menu-nav-btn${variant ? ` btn-iron--${variant}` : ""}${active ? " is-active" : ""}`}
       onClick={onClick}
     >
       {icon ? (
