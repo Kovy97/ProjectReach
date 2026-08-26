@@ -12,9 +12,10 @@ import { BugReportDialog } from "../components/BugReportDialog";
 import iconBug from "../assets/ui/system-icons/bug.svg";
 import iconFont from "../assets/ui/system-icons/font.svg";
 import { FontPreview } from "./FontPreview";
-import mainMenuBg from "../assets/ui/mainmenu_hero.webp";
+// War-Table-Rework (Chef-Auftrag 26.08.2026, Vorlage Mira "Main Menu 02 War Table"): die volle
+// Kulisse ersetzt das frühere Hero-Panorama — Welt + physischer Kartentisch in einer Komposition.
+import warTableBg from "../assets/ui/mainmenu_war_table.webp";
 import menuLogo from "../assets/ui/mainmenu_logo.webp";
-import navDivider from "../assets/ui/citadel/box-main-menu/bottom_ornament.webp";
 import emblCompass from "../assets/ui/emblem_compass.svg";
 import emblWaxseal from "../assets/ui/emblem_waxseal.svg";
 import emblGear from "../assets/ui/emblem_gear.svg";
@@ -22,21 +23,30 @@ import emblSkull from "../assets/ui/emblem_skull.svg";
 import { ConfirmModal } from "../components/ConfirmModal";
 import type { ConfirmRequest } from "../components/ConfirmModal";
 
-type Panel = "new" | "load" | "options";
+type Panel = "new" | "load" | "options" | "credits";
 
 /** Gleiche Embleme wie Sidebar/CharacterPage/DeathPopup — konsistente Bildsprache statt neuer
  *  Icons: Kompass = Aufbruch (Neues Spiel), Wachssiegel = archivierter Spielstand (Laden),
- *  Zahnrad = Optionen, Totenschädel = destruktiv (Beenden, wie schon bei .hf-btn--danger). */
-const PANEL_ICON: Record<Panel, string> = {
+ *  Zahnrad = Optionen, Totenschädel = destruktiv (Beenden, wie schon bei .hf-btn--danger).
+ *  „Credits" hat kein eigenes Emblem-Asset — MenuPanelTitle/MenuActionButton fallen dafür auf
+ *  dieselbe dekorative Raute (▣) zurück, die Miras Mockup an derselben Stelle zeigt. */
+const PANEL_ICON: Record<Panel, string | null> = {
   new: emblCompass,
   load: emblWaxseal,
   options: emblGear,
+  credits: null,
 };
 
 /**
- * Hauptmenü (Chef-Umbau): links eine feste Nav-Spalte (Neues Spiel / Spiel laden / Optionen /
- * Beenden), rechts öffnet sich je nach Auswahl das passende Panel — die Spielstand-Liste (Laden bzw.
- * Neu-Slot-Wahl) oder die Optionen. Default-Panel: „Laden", wenn es Spielstände gibt, sonst „Neu".
+ * Hauptmenü — War-Table-Rework (Chef-Auftrag 26.08.2026, Vorlage: Miras HTML-Mockup „Main Menu 02
+ * War Table"). Feste linke Befehlsspalte (fünf Knöpfe, IMMER sichtbar) + rechts EIN Rahmen fester
+ * Größe/Position: standardmäßig das Spielstand-Dossier des zuletzt gespielten Slots samt CONTINUE-
+ * Karte, per Klick auf einen Nav-Eintrag tauscht darin das jeweilige Panel (New/Load/Options/
+ * Credits) — der Rahmen selbst bleibt stehen (kein Sprung), Inhalt scrollt intern.
+ *
+ * Chef-Nachtrag 26.08.2026: Mira liefert für Laden/Neues-Spiel/Charaktererstellung noch eigene
+ * Mockups. Die INHALTE dieser beiden Panels (Slot-Karten, Löschen/Überschreiben — `SlotRow`) sind
+ * daher bewusst UNVERÄNDERT übernommen, nur in den neuen Rahmen gehängt.
  *
  * `revealed` (Studio-Intro-Sequenz, pages/IntroSequence.tsx): steuert NUR die Sichtbarkeit von
  * Hero-Art/Logo/Sprachwahl/Nav+Panel/Fußzeile (CSS `.menu--intro-pending`, styles/intro.css) — die
@@ -48,8 +58,8 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
   const { slots, startNewGame, loadGame, deleteSlot } = useGameControl();
   const { t, locale, setLocale } = useI18n();
   const [showFonts, setShowFonts] = useState(false);
-  // Chef (Polish-Sprint): default ist rechts NICHTS offen — Panel erst nach explizitem Klick.
-  // (Vorher öffnete default „Neues Spiel" → Gefahr, beim Laden versehentlich Overwrite zu drücken.)
+  // Kein Panel offen = das Spielstand-Dossier steht rechts (Chef-Vorgabe 26.08.: das ist jetzt der
+  // STANDARD-Zustand, nicht mehr "nichts offen"). Ein Nav-Klick tauscht das Dossier gegen das Panel.
   const [panel, setPanel] = useState<Panel | null>(null);
 
   // Spieler-Report 1.0.0 ("Unable to overwrite character with new one"): Überschreiben/Löschen
@@ -84,13 +94,14 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
   };
 
   // codex:2026-07-31T23:42:00+02:00 — War-Table-Navigation: Ein aktiver Ledger-Eintrag lässt
-  // sich erneut anklicken und klappt dadurch genauso kontrolliert zu wie über das Schließen-X.
+  // sich erneut anklicken und klappt dadurch genauso kontrolliert zu wie über das Schließen-X
+  // (zurück zum Dossier).
   const togglePanel = (next: Panel): void => {
     setPanel((current) => (current === next ? null : next));
   };
 
   // codex:2026-07-31T23:58:00+02:00 — Unterseiten sind echte Menüfenster. Escape entspricht
-  // ihrem sichtbaren Zurück-Knopf und führt immer auf die eigenständige War-Table-Startansicht.
+  // ihrem sichtbaren Zurück-Knopf und führt immer auf das Dossier zurück.
   // Bugfix 1.0.1: liegt zusätzlich das neue Bestätigungs-Modal offen, schließt EIN Escape-Druck
   // erst DAS (oberste Ebene zuerst) — genau ein Overlay pro Druck, wie überall sonst im Spiel.
   useEffect(() => {
@@ -110,15 +121,23 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
   if (showFonts) return <FontPreview onClose={() => setShowFonts(false)} />;
 
   const filled = slots.filter((s) => s.summary);
+  // Chef-Vorgabe 26.08.: das Dossier zeigt den ZULETZT gespielten Spielstand (nicht zwingend
+  // Slot 0) — "savedAt" ist dafür der verlässliche Zeitstempel jedes Speicherns.
+  const selectedSave =
+    filled.length > 0
+      ? filled.reduce((newest, s) => ((s.summary?.savedAt ?? 0) > (newest.summary?.savedAt ?? 0) ? s : newest))
+      : null;
 
   return (
-    <div className={`menu menu--split menu--war-table${panel !== null ? ` menu--panel-open menu--panel-${panel}` : ""}${revealed ? "" : " menu--intro-pending"}`}>
+    <div className={`menu menu--war-table${panel !== null ? ` menu--panel-${panel}` : ""}${revealed ? "" : " menu--intro-pending"}`}>
       {/* Hero-Artwork als eigene Ebene (statt Inline-Background direkt auf .menu) — so kann sie
-          unabhängig von Vignette/FX/Content per Ken-Burns-Zoom sanft „atmen". */}
-      <div className="menu-bg" style={{ backgroundImage: `url("${mainMenuBg}")` }} />
+          unabhängig von Vignette/FX/Content unabhängig behandelt werden. */}
+      <div className="menu-bg" style={{ backgroundImage: `url("${warTableBg}")` }} />
       <AmbientEmbers />
 
-      {/* Spiel-Logo — oben mittig über der Szene */}
+      {/* Spiel-Logo — oben mittig, GLEICHE Position/Größe in jedem Zustand (Dossier oder Panel
+          offen): das war der Kern des alten Sprung-Problems (Logo schrumpfte + wanderte beim
+          Öffnen eines Panels). Jetzt konstant. */}
       <img className="menu-logo" src={menuLogo} alt="Grim Reach" />
 
       {/* Sprach-Buttons — dezent oben rechts (Schnellzugriff; volle Optionen im Options-Panel) */}
@@ -134,95 +153,105 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
         ))}
       </div>
 
-      {/* codex:2026-07-31T23:42:00+02:00 — Dieselbe War-Table-Schale trägt entweder die kompakte
-          2×2-Kommandotafel oder, nach Auswahl, Navigation plus vollständiges Ledger-Fenster. */}
-      <div className={`menu-main${panel !== null ? " menu-main--panel-open" : ""}`}>
-        {/* Linke Nav-Spalte */}
-        <nav className="menu-nav">
-          <MenuNavButton icon={emblCompass} variant="primary" active={panel === "new"} onClick={() => togglePanel("new")}>
+      {/* War-Table-Layout: links die feste Befehlsspalte, rechts EIN Rahmen fester Größe/Position
+          (`.menu-stage`), der entweder das Dossier oder das gewählte Panel trägt — nie beides,
+          nie eine andere Größe. */}
+      <div className="menu-main">
+        <nav className="menu-nav" aria-label={t("common.topNav")}>
+          <MenuActionButton icon={emblCompass} active={panel === "new"} onClick={() => togglePanel("new")}>
             {t("menu.new")}
-          </MenuNavButton>
-          <MenuNavButton icon={emblWaxseal} active={panel === "load"} onClick={() => togglePanel("load")}>
+          </MenuActionButton>
+          <MenuActionButton icon={emblWaxseal} active={panel === "load"} onClick={() => togglePanel("load")}>
             {t("menu.loadGame")}
-          </MenuNavButton>
-          <MenuNavButton icon={emblGear} active={panel === "options"} onClick={() => togglePanel("options")}>
+          </MenuActionButton>
+          <MenuActionButton icon={emblGear} active={panel === "options"} onClick={() => togglePanel("options")}>
             {t("options.title")}
-          </MenuNavButton>
-
-          {/* Heraldisches Trenn-Ornament — trennt die destruktive „Beenden"-Aktion optisch von
-              den primären Menüpunkten (Citadel-Kit-Asset, Schild-Motiv passend zum Hero-Art). */}
-          <div className="menu-nav-divider" aria-hidden="true">
-            <img src={navDivider} alt="" />
-          </div>
-
-          <MenuNavButton icon={emblSkull} variant="danger" onClick={() => void window.hearthforge?.app?.quit()}>
+          </MenuActionButton>
+          <MenuActionButton glyph="▣" active={panel === "credits"} onClick={() => togglePanel("credits")}>
+            {t("menu.credits")}
+          </MenuActionButton>
+          <MenuActionButton icon={emblSkull} variant="danger" onClick={() => void window.hearthforge?.app?.quit()}>
             {t("sidebar.quitGame")}
-          </MenuNavButton>
+          </MenuActionButton>
         </nav>
 
-        {/* Rechtes kontextuelles Panel — erscheint ERST nach Klick auf einen Nav-Eintrag (Chef:
-            default nichts offen). `key={panel}` erzwingt bei jedem Panel-Wechsel ein Remount,
-            wodurch die CSS-Reveal-Animation (menu-panel-reveal) jedes Mal neu abspielt. */}
-        {panel !== null && (
-        <div className="menu-right">
-          <div className="menu-panel" key={panel}>
-            {panel === "load" && (
-              <>
-                <MenuPanelTitle icon={PANEL_ICON.load} onClose={() => setPanel(null)}>
-                  {t("menu.loadGame")}
-                </MenuPanelTitle>
-                {filled.length === 0 ? (
-                  <div className="menu-empty-note">{t("menu.noSaves")}</div>
-                ) : (
+        <div className="menu-stage">
+          {panel === null ? (
+            <SaveDossier
+              slot={selectedSave}
+              onContinue={() => selectedSave && void loadGame(selectedSave.id)}
+              onStartNew={() => togglePanel("new")}
+            />
+          ) : (
+            // `key={panel}` erzwingt bei jedem Panel-Wechsel ein Remount, wodurch die CSS-Reveal-
+            // Animation (menu-panel-reveal) jedes Mal neu abspielt.
+            <div className="menu-panel" key={panel}>
+              {panel === "load" && (
+                <>
+                  <MenuPanelTitle icon={PANEL_ICON.load} onClose={() => setPanel(null)}>
+                    {t("menu.loadGame")}
+                  </MenuPanelTitle>
+                  {filled.length === 0 ? (
+                    <div className="menu-empty-note">{t("menu.noSaves")}</div>
+                  ) : (
+                    <div className="menu-slots">
+                      {filled.map((slot) => (
+                        <SlotRow
+                          key={slot.id}
+                          slot={slot}
+                          mode="load"
+                          onNew={() => startNewGame(slot.id)}
+                          onLoad={() => void loadGame(slot.id)}
+                          onDelete={() => askDelete(slot)}
+                          onOverwrite={() => startNewGame(slot.id)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {panel === "new" && (
+                <>
+                  <MenuPanelTitle icon={PANEL_ICON.new} onClose={() => setPanel(null)}>
+                    {t("menu.new")}
+                  </MenuPanelTitle>
                   <div className="menu-slots">
-                    {filled.map((slot) => (
+                    {slots.map((slot) => (
                       <SlotRow
                         key={slot.id}
                         slot={slot}
-                        mode="load"
+                        mode="new"
                         onNew={() => startNewGame(slot.id)}
                         onLoad={() => void loadGame(slot.id)}
                         onDelete={() => askDelete(slot)}
-                        onOverwrite={() => startNewGame(slot.id)}
+                        onOverwrite={() => askOverwrite(slot)}
                       />
                     ))}
                   </div>
-                )}
-              </>
-            )}
+                </>
+              )}
 
-            {panel === "new" && (
-              <>
-                <MenuPanelTitle icon={PANEL_ICON.new} onClose={() => setPanel(null)}>
-                  {t("menu.new")}
-                </MenuPanelTitle>
-                <div className="menu-slots">
-                  {slots.map((slot) => (
-                    <SlotRow
-                      key={slot.id}
-                      slot={slot}
-                      mode="new"
-                      onNew={() => startNewGame(slot.id)}
-                      onLoad={() => void loadGame(slot.id)}
-                      onDelete={() => askDelete(slot)}
-                      onOverwrite={() => askOverwrite(slot)}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
+              {panel === "options" && (
+                <>
+                  <MenuPanelTitle icon={PANEL_ICON.options} onClose={() => setPanel(null)}>
+                    {t("options.title")}
+                  </MenuPanelTitle>
+                  <MenuOptionsPanel onOpenFonts={() => setShowFonts(true)} />
+                </>
+              )}
 
-            {panel === "options" && (
-              <>
-                <MenuPanelTitle icon={PANEL_ICON.options} onClose={() => setPanel(null)}>
-                  {t("options.title")}
-                </MenuPanelTitle>
-                <MenuOptionsPanel onOpenFonts={() => setShowFonts(true)} />
-              </>
-            )}
-          </div>
+              {panel === "credits" && (
+                <>
+                  <MenuPanelTitle icon={PANEL_ICON.credits} onClose={() => setPanel(null)}>
+                    {t("menu.credits")}
+                  </MenuPanelTitle>
+                  <MenuCreditsPanel />
+                </>
+              )}
+            </div>
+          )}
         </div>
-        )}
       </div>
 
       {/* Dezente Fußzeile — Version + Studio, kein Blickfang. Nutzt die bereits vorhandenen
@@ -240,19 +269,135 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
   );
 }
 
+/**
+ * Relative Zuletzt-gespielt-Angabe fürs Dossier ("Today"/"Yesterday"/"N days ago"), fällt für
+ * älteres auf das volle Datum zurück (`formatDate`, folgt bereits der Spielsprache). Kalendertag-
+ * Vergleich statt reiner 24h-Differenz, damit "Gestern" auch kurz nach Mitternacht stimmt; ein
+ * (theoretisch) in der Zukunft liegender Zeitstempel fällt defensiv auf "Today" statt auf eine
+ * negative Tageszahl.
+ */
+function formatLastPlayed(savedAt: number, t: (key: string) => string): string {
+  const startOfDay = (ms: number): number => {
+    const d = new Date(ms);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  };
+  const dayDiff = Math.round((startOfDay(Date.now()) - startOfDay(savedAt)) / 86_400_000);
+  if (dayDiff <= 0) return t("menu.today");
+  if (dayDiff === 1) return t("menu.yesterday");
+  if (dayDiff < 7) return t("menu.daysAgo").replace("{n}", String(dayDiff));
+  return formatDate(savedAt);
+}
+
+interface SaveDossierProps {
+  slot: SaveSlot | null;
+  onContinue: () => void;
+  onStartNew: () => void;
+}
+
+/**
+ * Rechter Standard-Inhalt des Rahmens: das Dossier des zuletzt gespielten Spielstands (Porträt,
+ * Name, Gesamtlevel/Zuletzt gespielt/Spielzeit, CONTINUE-Karte) — 1:1 Miras `.save-dossier`-
+ * Rezept, jetzt mit echten Daten statt Platzhaltertext. Ohne Spielstand zeigt es ein leeres
+ * Porträt-Feld und einen Hinweis; die CONTINUE-Karte wird dann zur NEW-GAME-Karte.
+ */
+function SaveDossier({ slot, onContinue, onStartNew }: SaveDossierProps): JSX.Element {
+  const { t } = useI18n();
+
+  if (!slot?.summary) {
+    return (
+      <section className="save-dossier save-dossier--empty">
+        <div className="save-portrait save-portrait--empty">
+          <div className="menu-slot-empty-mark" aria-hidden="true">✦</div>
+        </div>
+        <div className="save-copy">
+          <p className="eyebrow">{t("menu.selectedSave")}</p>
+          <p className="save-empty-note">{t("menu.noSaveYet")}</p>
+          <button type="button" className="continue-card" onClick={onStartNew}>
+            <strong>{t("menu.new")}</strong>
+            <span>
+              <i>{t("menu.noSaveYetHint")}</i>
+            </span>
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  const { summary } = slot;
+  const portraitSrc = getPortraitSrc(summary.portraitId ?? null);
+
+  return (
+    <section className="save-dossier">
+      <div className="save-portrait">
+        {portraitSrc ? <img src={portraitSrc} alt="" /> : <div className="menu-slot-portrait-blank" />}
+      </div>
+      <div className="save-copy">
+        <p className="eyebrow">{t("menu.selectedSave")}</p>
+        <h1>{summary.name}</h1>
+        <dl>
+          <div>
+            <dt>{t("menu.totalLevel")}</dt>
+            <dd>{summary.totalLevel}</dd>
+          </div>
+          <div>
+            <dt>{t("menu.lastPlayed")}</dt>
+            <dd>{formatLastPlayed(summary.savedAt, t)}</dd>
+          </div>
+          <div>
+            <dt>{t("menu.playtime")}</dt>
+            <dd>{formatPlaytime(summary.activePlayMs ?? summary.elapsedMs)}</dd>
+          </div>
+        </dl>
+        <button type="button" className="continue-card" onClick={onContinue}>
+          <strong>{t("menu.continue")}</strong>
+          <span>
+            {/* Aktuelle Zone/Aktion ist (noch) kein Summary-Feld (nur der leichtgewichtige
+                SaveSummary steht dem Menü ohne vollen State zur Verfügung) — statt sie zu
+                erfinden, ein ehrlicher Flavor-Satz + die echte Slot-Nummer. */}
+            <i>{t("menu.continueHint")}</i>
+            <i>{t("menu.slotN").replace("{n}", String(slot.id + 1))}</i>
+          </span>
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/** Minimaler Credits-Bildschirm — reused bewusst dieselben about.*-Texte wie die In-Game-
+ *  Optionsseite (kein Duplikat-Content), ohne deren interaktive Discord-/Bug-Report-Knöpfe (Bug-
+ *  Report bleibt im Options-Panel erreichbar). */
+function MenuCreditsPanel(): JSX.Element {
+  const { t } = useI18n();
+  return (
+    <div className="menu-credits">
+      <p className="menu-credits-version">{t("about.version").replace("{version}", __APP_VERSION__)}</p>
+      <p>{t("about.credits")}</p>
+      <p>{t("about.buildNote")}</p>
+      <p className="menu-credits-copyright">{t("about.copyright")}</p>
+    </div>
+  );
+}
+
 interface MenuPanelTitleProps {
-  icon: string;
+  icon: string | null;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-// codex:2026-07-31T23:42:00+02:00 — Gemeinsamer Ledger-Kopf für New Game, Load Game und Options;
-// alle drei Fenster besitzen dadurch dieselbe Hierarchie und dieselbe eindeutige Rücknavigation.
+// codex:2026-07-31T23:42:00+02:00 — Gemeinsamer Ledger-Kopf für New Game, Load Game, Options und
+// Credits; alle vier Fenster besitzen dadurch dieselbe Hierarchie und dieselbe eindeutige
+// Rücknavigation. `icon: null` (Credits, kein eigenes Emblem-Asset) fällt auf dieselbe Raute
+// zurück, die der Credits-Nav-Knopf zeigt.
 function MenuPanelTitle({ icon, onClose, children }: MenuPanelTitleProps): JSX.Element {
   const { t } = useI18n();
   return (
     <div className="menu-panel-title">
-      <img className="menu-panel-title-icon" src={icon} alt="" />
+      {icon ? (
+        <img className="menu-panel-title-icon" src={icon} alt="" />
+      ) : (
+        <span className="menu-panel-title-icon menu-panel-title-glyph" aria-hidden="true">▣</span>
+      )}
       <span className="menu-panel-title-text">{children}</span>
       <button type="button" className={`${optBtnCls(false)} menu-panel-back`} onClick={onClose} aria-label={t("creation.back")}>
         {t("creation.back")}
@@ -334,6 +479,9 @@ interface SlotRowProps {
  * hochformatige Karte, das Porträt füllt sie randlos bis zum Holzrahmen, der Name liegt als
  * Gradient-Plakette ÜBER dem Bild — der Charakter ist der Held der Karte, nicht ein 44px-Daumen.
  * Laden per Klick auf die ganze Karte (Buttons bleiben für Löschen/Überschreiben explizit).
+ *
+ * Chef-Nachtrag 26.08.2026 (War-Table-Rework): UNVERÄNDERT — Mira liefert für Laden/Neues-Spiel
+ * noch ein eigenes Mockup; diese Karte hängt bis dahin nur in einem neuen Rahmen.
  */
 function SlotRow({ slot, mode, onNew, onLoad, onDelete, onOverwrite }: SlotRowProps): JSX.Element {
   const { t } = useI18n();
@@ -368,7 +516,7 @@ function SlotRow({ slot, mode, onNew, onLoad, onDelete, onOverwrite }: SlotRowPr
               sonst steht das „PM" allein in der zweiten Zeile. Geschütztes Leerzeichen statt
               eines starren `nowrap`, das wieder abschneiden würde. */}
           <div className="menu-slot-sub">
-            {t("menu.last")} {formatDate(slot.summary.savedAt).replace(/[\s\u00a0\u202f]+(AM|PM)$/i, "\u00a0$1")}
+            {t("menu.last")} {formatDate(slot.summary.savedAt).replace(/[\s  ]+(AM|PM)$/i, " $1")}
           </div>
         </div>
         <div className="menu-slot-actions" onClick={(e) => e.stopPropagation()}>
@@ -454,28 +602,34 @@ function MenuOptionsPanel({ onOpenFonts }: { onOpenFonts: () => void }): JSX.Ele
   );
 }
 
-interface MenuNavButtonProps {
-  icon: string;
+interface MenuActionButtonProps {
+  /** Emblem-SVG-Pfad — fehlt es (Credits), zeigt der Knopf stattdessen `glyph`. */
+  icon?: string | null;
+  glyph?: string;
   active?: boolean;
-  variant?: "primary" | "danger";
+  variant?: "danger";
   onClick: () => void;
   children: React.ReactNode;
 }
 
-/* 1.1.0 (Bericht 05, Befund 1.2): Der Default war `primary` — also trugen "Neues Spiel",
-   "Spiel laden" UND "Optionen" dieselbe Betonung, und seit `hf-btn--primary` Gold traegt
-   waren alle drei gleich laut. Eine Betonung, die jeder hat, ist keine. Jetzt ist der
-   Default ruhig, und der Aufrufer setzt `primary` genau dort, wo die Hauptaktion ist. */
-function MenuNavButton({ icon, active, variant, onClick, children }: MenuNavButtonProps): JSX.Element {
+/**
+ * Einer der fünf festen Befehlsknöpfe links — exakt Miras `.menu-action`-Rezept (Gravewood-
+ * „alternate"-Knopftextur + Panel-Frame als 9-Slice, Hover schiebt nach rechts/hellt auf). Das ist
+ * NICHT `.btn-iron` (Chef-Vorgabe: diese fünf Knöpfe sind eine eigene, abgenommene Optik).
+ */
+function MenuActionButton({ icon, glyph, active, variant, onClick, children }: MenuActionButtonProps): JSX.Element {
   return (
     <button
-      className={`hf-btn${variant ? ` hf-btn--${variant}` : ""} menu-nav-btn${active ? " active" : ""}`}
+      type="button"
+      className={`menu-action${variant ? ` menu-action--${variant}` : ""}${active ? " is-active" : ""}`}
       onClick={onClick}
     >
-      <span className="hf-btn__face">
-        <img className="menu-nav-icon" src={icon} alt="" />
-        {children}
-      </span>
+      {icon ? (
+        <img className="menu-action-icon" src={icon} alt="" />
+      ) : (
+        <span className="menu-action-icon menu-action-glyph" aria-hidden="true">{glyph}</span>
+      )}
+      <span className="menu-action-label">{children}</span>
     </button>
   );
 }

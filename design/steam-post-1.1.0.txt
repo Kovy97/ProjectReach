@@ -25,6 +25,9 @@ COMBAT, SLAYER AND DUNGEONS
 - The Hunter's Cape (Slayer 30, 150 points) fills the gap in the Slayer shop: +15 % damage against an unwounded target.
 - The Contract Token rerolls your current Slayer task for free.
 - Dungeons can be queued like monsters (1×, 25×, 50×, ∞ runs); a run counts when the final boss falls and the dungeon restarts at wave 1 until the target is met, online and offline.
+- Taking gear off with a full inventory is blocked with a message instead of overflowing.
+- The slayer shop shows rarity as the familiar coloured glow behind the item instead of a thin coloured border.
+- Slayer gear now serves all three combat styles equally.
 
 RUNES AND ENCHANTING
 
@@ -67,12 +70,16 @@ INVENTORY, BANK, WINDOWS AND UI
 - The inventory grid shows exactly as many empty cells as you have free capacity.
 - The options screen now looks the same in the main menu and in game: one iron-frame button family, toggles instead of checkboxes, language chips and the back button included.
 - Recipe sources now show an "Open recipe" button, and the wiki remembers where you came from with a Back button.
+- Bestiary cards are uniform, stats larger, loot sorted by chance and grouped, buttons in the game's button family.
+- The item wiki is now a three panel workbench: sources, the item, and its uses, with a summary band and a recipe button.
 
 OTHER FIXES
 
 - The thieving loot box no longer scrolls next to four empty crates.
 - The activity panel now holds both progress bars and uses the free space at smaller widths.
+- Late game feasts now call for venison or wyvern haunch instead of beef.
+- The main menu is now a war table: painted backdrop, command list on the left, the last save as a dossier with a big Continue on the right.
 
 Saves stay compatible as always. Thank you for every report, review and screenshot; keep them coming.
 
-(53 entries, generated 2026-08-26 from design/patchnotes.md; title is a proposal)
+(60 entries, generated 2026-08-26 from design/patchnotes.md; title is a proposal)
