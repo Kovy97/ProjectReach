@@ -69,6 +69,13 @@ function findNonFinite(value: unknown, path: string, out: string[]): void {
   }
 }
 
+/*
+ * SAVE_VERSION 83 (Dungeons queuebar, 26.08.2026) — `v83-synthetic-1.1.0.json` ist SYNTHETISCH: der Chef
+ * hat am 26.08. ausdruecklich keinen echten Spielstand als Fixture freigegeben („05: Nein"). Das Fixture
+ * wurde aus `createGame` + Zustandsaufbau (Skills, Inventar/Bank, Ausruestung, Slayer-Auftrag, aktive Aktion,
+ * Kampf-Queue-Eintrag) ueber `serialize` erzeugt und deckt damit die ausgelieferte v83-Form ab, nicht einen
+ * Kunden-Save. Sobald ein echter 1.1.0-Save vorliegt, kommt er ZUSAETZLICH ins Vault (dieses Fixture bleibt).
+ */
 describe("Save-Kompat-Vault: jede jemals ausgelieferte Save-Version lädt verlustfrei", () => {
   const fixtures = readdirSync(VAULT_DIR).filter((f) => f.endsWith(".json"));
 

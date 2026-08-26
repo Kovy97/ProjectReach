@@ -475,6 +475,32 @@ secondary ones, red text for dangerous ones; quantity buttons included.
 ~120 Zeilen tote CSS gelöscht (combat.css, quantity-picker.css, options.css, bug-report.css),
 `.btn-iron--danger` neu, Mengenpicker `.qty-btn`. Screenshots ui-audit/shots-buttons (32).*
 
+**Fernkampf und Magie holen auf: 45 Spiegel-Uniques, Runen, Tonika (Stil-Parität, 26.08.):** DE:
+Die Drop-Tabellen waren Nahkampf-Tabellen (120 Nahkampf-Uniques gegen 39 Fernkampf und 36 Magie,
+kein einziges Stoffteil von normalen Monstern). Jetzt droppen 46 bisher reine Nahkampf-Monster auch
+Fernkampf- und Magie-Stücke: zehn Bögen (Treiber-Kurzbogen bis Hakenbogen des Fleischhauers), sechs
+Magie-Waffen und zwei Foki (Impfeuer-Zauberstab bis Wächterkern-Zauberstab, Felglas-Kugel,
+Schreckenszahn-Fetisch), elf Lederteile und sechzehn Stoffteile (Schamanen-Kapuze bis Glutherz-Robe),
+alle nach der Rare-Drop-Regel mit Effekt. Die Jäger-Rune gibt jetzt Geschick und Glück statt nur
+Glück, alle Stat-Runen kommen auf denselben Runenkunst-Stufen (15/38/62), die Bewahrende Rune
+schützt Stoff wie Ägide Platte. Zwei neue Tonika (Windschritt: Geschick, Schleierhaut: Ward), der tote
+Schmuck-Suffix „des Bollwerks" gibt Konstitution, neuer Magie-Suffix „des Zephyrs" (Tempo). Arkan-
+Surge, Dämmerflossen-Jäger-Eintopf und Zauberwächter-Bisque kommen früher. Bilder folgen von Mira. /
+EN: 45 mirror uniques for ranged and magic (bows, wands, staves, foci, leather and cloth) drop from
+monsters that only dropped melee gear, the Hunter rune and rune levels are aligned, two new tonics
+and a magic speed suffix arrive.
+
+*Dev-Notiz: design/stil-paritaet-2026-08-26.md §4a komplett; LADDER_EXEMPT_DROP_UNIQUES erweitert,
+drop-gear-beats-craft/suffix-class-fit-Pins, Balance-Hülle Ward-Schiene und Fern-/Magie-TTK neu
+gepinnt (Begründung im Testkopf). Overlays ES/FR/PT-BR/RU/ZH. Mira-Auftrag 47 Bilder
+`CODEX/work/2026-08-26-stil-paritaet-assets/`. Langzeitplan 4b/4c (1.2.0) und Chef-Entscheidungen E1–E5
+in design/stil-paritaet-2026-08-26.html.*
+
+**New Haven: größere Karten und Infokarten (Chef-Test 26.08.):** DE: Die Bau-Leiste zeigt größere
+Karten, die mit der Fensterbreite wachsen; die Gebäude-Infokarte ist breiter, mit größerem Bild und
+besser lesbaren Texten und Kostenzeilen. / EN: New Haven build cards and building info cards are
+larger with more readable text.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*
