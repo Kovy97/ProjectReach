@@ -461,7 +461,8 @@ offline.
 `queueDungeon = null`, Sanitize gegen unbekannte Dungeons/inkonsistente Laufzeit), API
 `enqueueDungeonRuns(AtFront)`, `dungeonRunProgress`, `combat.lastDungeonClear` für die Clear-Zeremonie
 (erkennt den Auto-Neustart über `clearNo`). Vault-Pin v80 → v83. Zwischen zwei Läufen keine
-Atempause (wie manuell).*
+Atempause (wie manuell). Warteschlange schätzt die Dauer je Lauf (Summe der Begegnungen plus
+Atempause vor dem Boss, queueTiming), z. B. „×25 ~1h 2m“ statt „?“.*
 
 **Eine Knopf-Familie im ganzen Spiel (Chef-Entscheid 26.08.):** DE: Hauptknöpfe tragen jetzt
 überall den Stahlrahmen, Zweitknöpfe (Abbrechen, Einreihen, Zurück) den kleineren Citadel-Rahmen,

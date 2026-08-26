@@ -7,7 +7,7 @@
 // packages/engine: ui-dev fasst packages/** nicht an (Rollen-Grenze), und alles Nötige ist bereits
 // öffentlich exportiert — kein neuer Engine-Selektor nötig.
 import type { ActionDef, ContentDB, GameState, ItemId, MonsterId } from "@hearthforge/shared";
-import { isFightQueueEntry, KILL_COOLDOWN_MS } from "@hearthforge/shared";
+import { isFightQueueEntry, KILL_COOLDOWN_MS, isDungeonQueueEntry, PRE_BOSS_BREATHER_MS } from "@hearthforge/shared";
 import { bankCount, computeStats, contestHitChance, effectiveActionDurationMs, itemCount } from "@hearthforge/engine";
 
 /** Eine Zeile der Warteschlangen-Zeitschätzung. */
@@ -108,6 +108,30 @@ function fightEntryTiming(
 /** Timing-Zeile für einen Warteschlangen-Eintrag, dessen Content (Aktion/Monster) nicht mehr
  *  existiert (Save-/Content-Drift) — läuft real keine Zeit (die Engine überspringt/beendet ihn
  *  beim Anlaufen), aber die Zeile bleibt für die Index-Parität zu `state.actionQueue` bestehen. */
+/**
+ * Dungeon-Laeufe (SAVE 83, Chef 26.08.2026): ein Lauf = Summe der Kill-Schaetzungen aller Begegnungen
+ * (jede inkl. Kill-Cooldown wie beim Kampf) plus die Atempause vor dem Endboss. Ziel null = unendlich.
+ * Unbekannter Dungeon oder eine Begegnung ohne Schaetzung → unknown (das fruehere "?").
+ */
+function dungeonEntryTiming(
+  state: GameState,
+  content: ContentDB,
+  dungeonId: string,
+  target: number | null,
+): QueueTimingEntry {
+  const base = { isEstimate: true, materialLimited: false, reachableCount: null, requestedTarget: target };
+  if (target === null) return { ...base, infinite: true, unknown: false };
+  const dungeon = content.dungeons.find((d) => d.id === dungeonId);
+  if (!dungeon || dungeon.encounters.length === 0) return { ...base, infinite: false, unknown: true };
+  let perRunMs = PRE_BOSS_BREATHER_MS;
+  for (const monsterId of dungeon.encounters) {
+    const ms = estimateFightKillMs(state, content, monsterId);
+    if (ms === null) return { ...base, infinite: false, unknown: true };
+    perRunMs += ms;
+  }
+  return { ...base, infinite: false, unknown: false, remainingMs: Math.round(target * perRunMs) };
+}
+
 function unknownEntryTiming(target: number | null): QueueTimingEntry {
   return { infinite: false, unknown: true, isEstimate: false, materialLimited: false, reachableCount: null, requestedTarget: target };
 }
@@ -206,7 +230,9 @@ export function computeQueueTiming(state: GameState, content: ContentDB, nowMs?:
   // 1) Aktuell laufende Aktivität — Kampf und Aktion schließen sich gegenseitig aus (GameState-
   // Invariante, s. tick.ts), nie beide gleichzeitig.
   let active: QueueTimingEntry | null = null;
-  if (state.queueFight !== null) {
+  if (state.queueDungeon) {
+    active = dungeonEntryTiming(state, content, state.queueDungeon.dungeonId, state.queueDungeon.remaining);
+  } else if (state.queueFight !== null) {
     active = fightEntryTiming(state, content, state.queueFight.monsterId, state.queueFight.remaining);
   } else if (state.activeActionId !== null) {
     const action = content.actions[state.activeActionId];
@@ -219,6 +245,7 @@ export function computeQueueTiming(state: GameState, content: ContentDB, nowMs?:
   // ActionQueuePanel.tsx ist reine ANZEIGE-Zusammenfassung, hier bleibt jeder Rohe-Index erhalten.
   const queue: QueueTimingEntry[] = state.actionQueue.map((raw) => {
     if (isFightQueueEntry(raw)) return fightEntryTiming(state, content, raw.monsterId, raw.target);
+    if (isDungeonQueueEntry(raw)) return dungeonEntryTiming(state, content, raw.dungeonId ?? "", raw.target);
     const action = content.actions[raw.actionId];
     if (!action) return unknownEntryTiming(raw.target);
     return actionEntryTiming(state, content, action, raw.target, 0, nowMs, poolQty, deduct);
