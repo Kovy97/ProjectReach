@@ -270,108 +270,10 @@
   }
 }
 
-/* ─── Spielstand-Karten im Charakter-Auswahl-Stil (Chef 2026-07-11) ───
-   Vorher: dünne volle-Breite-Zeilen mit 44px-Porträt-Daumen („man sieht den Charakter kaum").
-   Jetzt: hochformatige Karten nebeneinander, das 3:4-Porträt füllt die Karte randlos bis zum
-   Holzrahmen, Name + Gesamtlevel liegen als Gradient-Plakette über dem Bildfuß. */
-.menu-slots {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: clamp(14px, 1.4vw, 22px);
-  align-items: stretch;
-}
-
-.menu-slot {
-  display: flex;
-  flex-direction: column;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 8px;
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.34)),
-    url("../assets/bg_black.webp") repeat;
-  border-radius: 0;
-  /* KEIN Innenabstand oben/seitlich — das Porträt soll bündig am Holzrahmen anliegen. */
-  padding: 0 0 12px;
-  transition: box-shadow 0.18s, transform 0.18s, filter 0.18s;
-}
-
-.menu-slot.clickable {
-  cursor: pointer;
-}
-
-.menu-slot:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 0 0 1px rgba(216, 192, 106, 0.32),
-    0 0 18px rgba(216, 192, 106, 0.18),
-    0 12px 26px rgba(0, 0, 0, 0.45);
-}
-
-/* Leere Slots dezent gedämpft, damit belegte Spielstände sofort ins Auge fallen. */
-.menu-slot--empty {
-  filter: grayscale(0.25) brightness(0.88);
-}
-.menu-slot--empty:hover {
-  filter: none;
-}
-
-/* Slot-Nummer: kleine Plakette ÜBER der Porträt-Ecke. */
-.menu-slot-index {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: 2;
-  min-width: 26px;
-  height: 26px;
-  padding: 0 6px;
-  background: rgba(0, 0, 0, 0.62);
-  border: 1px solid rgba(216, 192, 106, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: var(--gold);
-  font-size: 14px;
-  font-family: var(--font-head);
-}
-
-/* Das Porträt IST die Karte: volle Breite, hochformatiger Anschnitt (Kopf/Oberkörper im Fokus). */
-.menu-slot-portrait {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  background: radial-gradient(circle at 50% 28%, var(--panel-hover), var(--slot));
-}
-
-.menu-slot-portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  transition: transform 0.35s ease-out, filter 0.2s;
-}
-
-.menu-slot:hover .menu-slot-portrait img {
-  transform: scale(1.045);
-  filter: brightness(1.1);
-}
-
 /* Platzhalter, falls ein Alt-Save kein Portrait trägt. */
 .menu-slot-portrait-blank {
   width: 100%;
   height: 100%;
-}
-
-/* „Leerer Speicherstand" darf zweizeilig umbrechen statt zu ellipsen. */
-.menu-slot--empty .menu-slot-meta {
-  white-space: normal;
 }
 
 /* Leerer Slot: dezente Siegel-Raute in der Porträt-Fläche. */
@@ -385,74 +287,6 @@
   color: rgba(216, 192, 106, 0.28);
 }
 
-/* Name + Gesamtlevel als Plakette über dem Bildfuß — liest sich wie eine Charakter-Auswahl. */
-.menu-slot-nameplate {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 34px 10px 8px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 30%, rgba(0, 0, 0, 0));
-  text-align: center;
-}
-
-.menu-slot-name {
-  /* Cinzel ist breit — lange Namen („Korveth Grimhollow") brechen auf 2 Zeilen um statt zu
-     ellipsen; erst DANACH klemmt der line-clamp als Schutz gegen Extremfälle. */
-  font-size: clamp(15px, 1vw, 19px);
-  font-weight: 600;
-  font-family: var(--font-head);
-  letter-spacing: 0.4px;
-  line-height: 1.2;
-  color: var(--text);
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.menu-slot-nameplate .menu-slot-meta {
-  font-size: 13px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-}
-
-.menu-slot-info {
-  padding: 8px 12px 2px;
-  text-align: center;
-  min-width: 0;
-}
-
-.menu-slot-meta {
-  font-size: 14px;
-  color: #cdbb8e;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Sekundär-Zeile: „Last played: …" — gedämpft, kleiner.
-   1.0.1-Fix (Clip-Audit, 2026-08-23): war `nowrap + ellipsis` — schnitt bei JEDER gemessenen
-   Sprache und Auflösung die Uhrzeit ganz ab (EN sogar noch bei 1920×1080: "...11:01 P" ohne "M";
-   RU verlor bei 1920×1080 gleich die komplette Uhrzeit "22.07.2026" ohne ", 23:01"). `.menu-slot`
-   ist eine Flex-Spalte ohne Höhenlimit und `.menu-slots` stretcht die ganze Kartenreihe ohnehin
-   auf die höchste Karte — eine zweite Zeile hier kostet nichts, kappt aber auch keine Zeitangabe
-   mehr (Chef-Regel „nie abschneiden"). */
-.menu-slot-sub {
-  font-size: 12.5px;
-  color: var(--muted);
-  margin-top: 3px;
-  white-space: normal;
-  overflow-wrap: break-word;
-}
-
-.menu-slot-actions {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 12px 0;
-  margin-top: auto;
-}
 
 .menu-panel-title {
   position: sticky;
@@ -760,7 +594,10 @@
   height: clamp(340px, 44vh, 560px);
 }
 
-/* ─── Spielstand-Dossier (Default-Inhalt des Rahmens) — Miras `.save-dossier`-Rezept. ────────── */
+/* ─── Spielstand-Dossier (Default-Inhalt des Rahmens) — Miras `.save-dossier`-Rezept, seit
+   Chef-Auftrag 26.08.2026 (Rahmen-Regel: "wir bleiben beim Metal-Rahmen") auf den Stahlrahmen
+   umgestellt statt des vorherigen `frame-panel.webp` (Holz) — identische Rezeptur wie
+   NewGameScreen/LoadGameScreen `.active-relic`, s. styles/menu-submenu.css. */
 .save-dossier {
   width: 100%;
   height: 100%;
@@ -769,11 +606,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: clamp(11px, 1vw, 15px);
-  border-image-source: url("../assets/ui/gravewood/frames/frame-panel.webp");
-  border-image-slice: 28 fill;
-  border-image-width: clamp(11px, 1vw, 15px);
-  border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background: linear-gradient(120deg, rgba(18, 18, 17, 0.97), rgba(32, 25, 20, 0.94));
   box-shadow: 0 18px 55px rgba(0, 0, 0, 0.72);
   overflow: hidden;
@@ -974,43 +807,11 @@
     transition: background 0.12s, box-shadow 0.12s, color 0.12s;
     transform: none;
   }
-  .menu-slot:hover {
-    transform: none;
-  }
-}
-
-/* Chef-Nachtrag 26.08.2026: New/Load-Panel-INHALT (Slot-Grid) bleibt unverändert — nur der
-   äußere Rahmen ist neu. Diese beiden Raster-Regeln sind 1:1 aus dem vorherigen Layout
-   übernommen. */
-.menu--war-table.menu--panel-new .menu-slots {
-  grid-template-columns: repeat(5, minmax(176px, 238px));
-  justify-content: center;
-  gap: clamp(14px, 1.35vw, 24px);
-}
-
-/* 1.1.0: "Spiel laden" hatte dasselbe FESTE Fuenf-Spalten-Raster wie "Neues Spiel" — aber
-   waehrend "Neues Spiel" alle Slots rendert und es damit fuellt, rendert "Spiel laden" nur die
-   BELEGTEN. Mit einem Spielstand blieben vier Spalten als Leerraum stehen, die Karte klebte
-   oben links in einem grossen dunklen Kasten, und das sah nach Fehler aus statt nach Absicht —
-   auf dem zweiten Bildschirm, den ein Kaeufer ueberhaupt sieht.
-   `auto-fit` laesst leere Spuren zusammenfallen: bei einem Spielstand steht eine Karte mittig,
-   bei fuenf sieht es aus wie vorher. */
-.menu--war-table.menu--panel-load .menu-slots {
-  grid-template-columns: repeat(auto-fit, minmax(176px, 238px));
-  justify-content: center;
-  gap: clamp(14px, 1.35vw, 24px);
 }
 
 .menu--war-table .menu-options .opz-section,
 .menu--war-table .menu-options .bugreport-entry-banner {
   background-color: rgba(13, 10, 8, 0.82);
-}
-
-@media (max-width: 1280px) {
-  .menu--war-table.menu--panel-new .menu-slots,
-  .menu--war-table.menu--panel-load .menu-slots {
-    grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
-  }
 }
 
 /* Sicherheitsnetz unterhalb der offiziellen Ziel-Auflösungen (1366×768 ist die kleinste): sehr

@@ -24,6 +24,10 @@
 /* 5a. Main menu (Task #282 redesign — hero title screen) */
 @import "./menu.css";
 
+/* 5a-0. New-Game-/Load-Game-Vollbild-Screens (Chef-Auftrag 26.08.2026, Vorlage Mira "Ember
+   Reliquary") — Metallrahmen statt Miras Holzrahmen, s. pages/NewGameScreen.tsx-JSDoc. */
+@import "./menu-submenu.css";
+
 /* 5a-1. Bildschirm-Überblendung (Chef-Kurswechsel 26.08.2026) — app-weites Overlay, s.
    components/ScreenFade.tsx. */
 @import "./screen-fade.css";
@@ -98,9 +102,6 @@
 
 /* codex:2026-07-30T23:19:21+02:00 — isolierte Lederkarten und neuer Einsammeln-Button im Offline-Bericht. */
 @import "./gravewood-offline.css";
-
-/* codex:2026-07-30T23:28:43+02:00 — isolierte Load-Game-Karten mit Character-Wald, Lederflächen und Holzrahmen. */
-@import "./gravewood-loadgame.css";
 
 /* codex:2026-07-30T23:38:38+02:00 — Equipment-Top-Inset und ausschließlich Action-Card-spezifische Material-/Typografieverbesserung. */
 @import "./gravewood-character-fixes.css";

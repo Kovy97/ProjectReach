@@ -138,6 +138,28 @@ export function formatDate(epochMs: number): string {
 }
 
 /**
+ * Relative Zuletzt-gespielt-Angabe fürs Menü ("Today"/"Yesterday"/"N days ago"), fällt für
+ * älteres auf `formatDate` zurück. Kalendertag-Vergleich statt reiner 24h-Differenz, damit
+ * "Gestern" auch kurz nach Mitternacht stimmt; ein (theoretisch) in der Zukunft liegender
+ * Zeitstempel fällt defensiv auf "Today" statt auf eine negative Tageszahl.
+ *
+ * Aus MainMenu.tsx extrahiert (Neuguss New-Game/Load-Game-Screens, Chef-Auftrag 26.08.2026):
+ * jetzt auch von pages/LoadGameScreen.tsx genutzt, eine Quelle statt eines Duplikats.
+ */
+export function formatLastPlayed(savedAt: number, t: (key: string) => string): string {
+  const startOfDay = (ms: number): number => {
+    const d = new Date(ms);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  };
+  const dayDiff = Math.round((startOfDay(Date.now()) - startOfDay(savedAt)) / 86_400_000);
+  if (dayDiff <= 0) return t("menu.today");
+  if (dayDiff === 1) return t("menu.yesterday");
+  if (dayDiff < 7) return t("menu.daysAgo").replace("{n}", String(dayDiff));
+  return formatDate(savedAt);
+}
+
+/**
  * Lager-Ausbaustufe als römische Ziffer (0 = ungebaut ⇒ leerer String). Sprachneutral, in allen
  * sieben Locales identisch — deshalb kein i18n-Schlüssel.
  *

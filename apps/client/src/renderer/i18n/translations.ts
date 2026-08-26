@@ -78,6 +78,16 @@ const en = {
     "menu.daysAgo": "{n} days ago",
     "menu.noSaveYet": "You don't have a save yet.",
     "menu.noSaveYetHint": "Start your journey.",
+    // Neuguss New-Game/Load-Game-Screens (Chef-Auftrag 26.08.2026, Vorlage Mira "Ember
+    // Reliquary"): eigene Vollbild-Screens statt Aufklapp-Panels, s. pages/NewGameScreen.tsx +
+    // pages/LoadGameScreen.tsx. "Ort" (Zone) fehlt als SaveSummary-Feld — die Eyebrow zeigt
+    // stattdessen "menu.slotN" (bereits vorhanden), kein neues Feld erfunden.
+    "menu.backToSaves": "← Back to saves",
+    "menu.newGame.sub": "Choose the chronicle that will bear your name",
+    "menu.loadGame.sub": "Return to a surviving chronicle",
+    "menu.unwrittenChronicle": "Unwritten Chronicle",
+    "menu.noOath": "No oath has been sworn in this reliquary.",
+    "menu.begin": "Begin",
     "offline.title": "While You Were Away",
     "offline.duration": "Away for {time}",
     "offline.items": "Items gained",
@@ -545,6 +555,9 @@ const en = {
     "creation.style.ranged.desc": "The bow. Strikes from afar and trains Dexterity.",
     "creation.style.magic.desc": "Staff & spells. Wields arcane power, trains Intelligence.",
     "creation.style.hint": "This sets your starting weapon only — equip any weapon later to change your combat style.",
+    // Frontline-Registry-Rework (Chef-Auftrag 26.08.2026): Unterzeile am Begin-Adventure-Knopf,
+    // s. pages/CharacterCreation.tsx.
+    "creation.beginHint": "Register {name} as a {style} initiate.",
 
     // Character page
     "char.totalLevel": "Total level {n}",
@@ -2294,6 +2307,12 @@ const de: Record<keyof typeof en, string> = {
     "menu.daysAgo": "Vor {n} Tagen",
     "menu.noSaveYet": "Du hast noch keinen Spielstand.",
     "menu.noSaveYetHint": "Beginne deine Reise.",
+    "menu.backToSaves": "← Zurück zu den Spielständen",
+    "menu.newGame.sub": "Wähle die Chronik, die deinen Namen tragen wird",
+    "menu.loadGame.sub": "Kehre zu einer erhaltenen Chronik zurück",
+    "menu.unwrittenChronicle": "Ungeschriebene Chronik",
+    "menu.noOath": "In diesem Reliquiar wurde noch kein Eid geschworen.",
+    "menu.begin": "Beginnen",
     "offline.title": "Während du weg warst",
     "offline.duration": "Abwesend: {time}",
     "offline.items": "Erbeutete Gegenstände",
@@ -2742,6 +2761,7 @@ const de: Record<keyof typeof en, string> = {
     "creation.style.ranged.desc": "Der Bogen. Greift aus der Ferne an, trainiert Geschick.",
     "creation.style.magic.desc": "Stab & Zauber. Entfacht arkane Macht, trainiert Intelligenz.",
     "creation.style.hint": "Dies bestimmt nur deine Startwaffe — lege jederzeit eine andere Waffe an, um den Kampfstil zu wechseln.",
+    "creation.beginHint": "Registriere {name} als {style}-Adept.",
 
     // Character page
     "char.totalLevel": "Gesamtlevel {n}",

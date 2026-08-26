@@ -563,6 +563,19 @@ command list on the left, the last save as a dossier with a big Continue on the 
 Kulisse mainmenu_war_table.webp (q85, Original archiviert); Befehlsknöpfe nach Miras `.menu-action`,
 Panel-Knöpfe weiter btn-iron/shop-citadel-btn.*
 
+**Neues Spiel, Laden und Charaktererstellung als eigene Screens (Miras Entwürfe „Ember Reliquary"
+und „Frontline Registry", 26.08.):** DE: Neues Spiel und Laden klappen nicht mehr im Menü auf, sondern
+blenden über Schwarz in eigene Bildschirme: eine Reliquien-Karte mit Slot-Leiste für neue
+Chroniken, ein großes Dossier mit Porträt, Level, Spielzeit und letztem Spiel zum Laden, oben links
+immer „Zurück zum Menü". Die Charaktererstellung zeigt links den gewählten Helden groß, rechts die
+drei Schritte Name, Porträt und Kampfstil mit „Abenteuer beginnen". Alle Rahmen im Stahl der
+Knopf-Familie. / EN: New Game, Load Game and character creation are full screens with fade
+transitions, a Back to Menu button and the game's steel frames.
+
+*Dev-Notiz: Vorlagen CODEX/outbox/2026-08-26-mainmenu-submenus-html; Kulisse ember_reliquary_bg.webp
+(q85, Original archiviert); Miras Holzrahmen bewusst durch den Stahl-9-Slice ersetzt (Chef); Screens als
+Unter-Ansichten des Menü-Screens, GameContext unverändert; ScreenFade für alle Wechsel.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

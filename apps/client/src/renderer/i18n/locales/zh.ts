@@ -56,6 +56,12 @@ export const zh: Record<string, string> = {
     "menu.daysAgo": "{n} 天前",
     "menu.noSaveYet": "你还没有存档。",
     "menu.noSaveYetHint": "开始你的旅程。",
+    "menu.backToSaves": "← 返回存档",
+    "menu.newGame.sub": "选择将承载你姓名的编年史",
+    "menu.loadGame.sub": "回到幸存的编年史",
+    "menu.unwrittenChronicle": "未书写的编年史",
+    "menu.noOath": "这个圣髑匣中还未立下誓言。",
+    "menu.begin": "开始",
     "offline.title": "离开期间",
     "offline.duration": "离开了 {time}",
     "offline.items": "获得的物品",
@@ -464,6 +470,7 @@ export const zh: Record<string, string> = {
     "creation.style.ranged.desc": "弓。从远处出击，训练敏捷。",
     "creation.style.magic.desc": "法杖与法术。驾驭奥术之力，训练智力。",
     "creation.style.hint": "这仅设定你的初始武器——之后装备任意武器即可改变战斗风格。",
+    "creation.beginHint": "将 {name} 注册为 {style} 新手。",
 
     // Character page
     "char.totalLevel": "总等级 {n}",

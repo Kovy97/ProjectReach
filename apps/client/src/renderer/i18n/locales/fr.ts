@@ -56,6 +56,12 @@ export const fr: Record<string, string> = {
     "menu.daysAgo": "Il y a {n} jours",
     "menu.noSaveYet": "Tu n'as pas encore de sauvegarde.",
     "menu.noSaveYetHint": "Commence ton aventure.",
+    "menu.backToSaves": "← Retour aux sauvegardes",
+    "menu.newGame.sub": "Choisis la chronique qui portera ton nom",
+    "menu.loadGame.sub": "Retourne à une chronique survivante",
+    "menu.unwrittenChronicle": "Chronique inécrite",
+    "menu.noOath": "Aucun serment n'a été prononcé dans ce reliquaire.",
+    "menu.begin": "Commencer",
     "offline.title": "Pendant votre absence",
     "offline.duration": "Absent pendant {time}",
     "offline.items": "Objets obtenus",
@@ -464,6 +470,7 @@ export const fr: Record<string, string> = {
     "creation.style.ranged.desc": "L'arc. Frappe de loin et entraîne la Dextérité.",
     "creation.style.magic.desc": "Bâton et sorts. Manie le pouvoir arcanique, entraîne l'Intelligence.",
     "creation.style.hint": "Ceci ne définit que votre arme de départ — équipez n'importe quelle arme plus tard pour changer de style de combat.",
+    "creation.beginHint": "Enregistrer {name} en tant qu'initié {style}.",
 
     // Character page
     "char.totalLevel": "Niveau total {n}",

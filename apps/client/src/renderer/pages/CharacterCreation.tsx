@@ -6,29 +6,35 @@ import { processPortraitFile } from "../util/portraitUpload";
 import { PortraitPickerModal } from "../components/PortraitPickerModal";
 import { useGameControl } from "../game/GameContext";
 import { useI18n } from "../i18n";
-import { getUiIcon } from "../uiIcons";
+import { runWithScreenFade } from "../util/screenFade";
+import menuLogo from "../assets/ui/mainmenu_logo.webp";
+// Frontline-Registry-Rework (Chef-Auftrag 26.08.2026, Vorlage Mira "Character Creation 03 ·
+// Frontline Registry"): die Stil-Karten zeigen jetzt dieselben Illustrationen wie Miras Mockup
+// statt der kleinen Attribut-Schaden-Icons — statischer Import statt getUiIcon (liegt außerhalb
+// von assets/icons/*, s. uiIcons.ts).
+import styleWarrior from "../assets/ui/citadel/created-resources/character_warrior.webp";
+import styleRanger from "../assets/ui/citadel/created-resources/character_ranger.webp";
+import styleWarlock from "../assets/ui/citadel/created-resources/character_warlock.webp";
 
 const PORTRAITS = listPortraits();
+const NAME_MAX_LENGTH = 24;
 
 // ─── Style-Karten-Definition ─────────────────────────────────────────────────
 
 interface StyleCardDef {
   id: WeaponStyle;
-  iconKey: string;
-  emoji: string;
+  img: string;
   nameKey: string;
   descKey: string;
 }
 
 const STYLE_CARDS: StyleCardDef[] = [
-  { id: "melee",  iconKey: "icon_attribute_meeledamage",  emoji: "⚔️", nameKey: "style.melee",  descKey: "creation.style.melee.desc"  },
-  { id: "ranged", iconKey: "icon_attribute_rangedamage",   emoji: "🏹", nameKey: "style.ranged", descKey: "creation.style.ranged.desc" },
-  { id: "magic",  iconKey: "icon_attribute_magicdamage",   emoji: "🔮", nameKey: "style.magic",  descKey: "creation.style.magic.desc"  },
+  { id: "melee", img: styleWarrior, nameKey: "style.melee", descKey: "creation.style.melee.desc" },
+  { id: "ranged", img: styleRanger, nameKey: "style.ranged", descKey: "creation.style.ranged.desc" },
+  { id: "magic", img: styleWarlock, nameKey: "style.magic", descKey: "creation.style.magic.desc" },
 ];
 
 // ─── StylePicker ─────────────────────────────────────────────────────────────
-// Task #282: die Waffen-FX-Icons sind eigenständige Illustrationen (kein simples Icon-Set) —
-// deutlich größer inszeniert als zuvor, damit sie als echte "Waffen-Vorschau" pro Startstil lesen.
 
 interface StylePickerProps {
   value: WeaponStyle;
@@ -39,52 +45,46 @@ function StylePicker({ value, onChange }: StylePickerProps): JSX.Element {
   const { t } = useI18n();
   return (
     <div className="creation-style-grid">
-      {STYLE_CARDS.map(({ id, iconKey, emoji, nameKey, descKey }) => {
-        const img = getUiIcon(iconKey);
-        return (
-          <button
-            key={id}
-            type="button"
-            className={`creation-style-card${value === id ? " active" : ""}`}
-            onClick={() => onChange(id)}
-          >
-            <span className="creation-style-icon">
-              {img
-                ? <img loading="lazy" decoding="async" src={img} alt="" className="creation-style-icon-img" />
-                : <span>{emoji}</span>
-              }
-            </span>
+      {STYLE_CARDS.map(({ id, img, nameKey, descKey }) => (
+        <button
+          key={id}
+          type="button"
+          className={`creation-style-card${value === id ? " active" : ""}`}
+          onClick={() => onChange(id)}
+        >
+          <img loading="lazy" decoding="async" src={img} alt="" className="creation-style-img" />
+          <span className="creation-style-copy">
             <span className="creation-style-name">{t(nameKey)}</span>
             <span className="creation-style-desc">{t(descKey)}</span>
-          </button>
-        );
-      })}
+          </span>
+        </button>
+      ))}
     </div>
   );
 }
 
-// ─── PortraitStrip ────────────────────────────────────────────────────────────
-// Task #282: ersetzt die alte Pfeil-Klick-Navigation — alle Portraits liegen als Filmstreifen
-// griffbereit da (sofortige Auswahl statt blindem Durchblättern), "Alle anzeigen" öffnet
+// ─── PortraitGrid ─────────────────────────────────────────────────────────────
+// Frontline-Registry-Rework: ersetzt den horizontalen Filmstreifen durch ein umbrechendes Raster
+// (Vorlage Mira) — alle Portraits bleiben per internem Scroll erreichbar, "Alle anzeigen" öffnet
 // weiterhin die große Modal-Galerie (PortraitPickerModal, geteilt mit CharacterPage).
 
-interface PortraitStripProps {
+interface PortraitGridProps {
   value: string;
   onChange: (id: string) => void;
   onShowAll: () => void;
 }
 
-function PortraitStrip({ value, onChange, onShowAll }: PortraitStripProps): JSX.Element {
+function PortraitGrid({ value, onChange, onShowAll }: PortraitGridProps): JSX.Element {
   const { t } = useI18n();
   const activeRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    activeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [value]);
 
   return (
-    <div className="creation-portrait-row">
-      <div className="creation-portrait-strip">
+    <>
+      <div className="creation-portrait-grid">
         {PORTRAITS.map((p) => {
           const isActive = p.id === value;
           return (
@@ -92,7 +92,7 @@ function PortraitStrip({ value, onChange, onShowAll }: PortraitStripProps): JSX.
               key={p.id}
               type="button"
               ref={isActive ? activeRef : undefined}
-              className={`creation-portrait-chip${isActive ? " active" : ""}`}
+              className={`creation-portrait-cell${isActive ? " active" : ""}`}
               aria-pressed={isActive}
               onClick={() => onChange(p.id)}
             >
@@ -101,14 +101,26 @@ function PortraitStrip({ value, onChange, onShowAll }: PortraitStripProps): JSX.
           );
         })}
       </div>
-      <button type="button" className="creation-portrait-more-btn" onClick={onShowAll}>
+      <button type="button" className="btn-iron btn-iron--sm creation-portrait-more-btn" onClick={onShowAll}>
         {t("creation.portrait.showAll")}
       </button>
-    </div>
+    </>
   );
 }
 
 // ─── CharacterCreation ───────────────────────────────────────────────────────
+// Frontline-Registry-Rework (Chef-Auftrag 26.08.2026, wörtlich: "Mira hat aber falsche Rahmen etc.
+// hergenommen, wir bleiben beim Metal-Rahmen"): zweigeteiltes Layout wie Miras Mockup (links
+// Held-Pane mit großem Porträt, rechts Formular + Schrittleiste), aber durchgängig mit dem
+// Stahlrahmen (`.btn-iron`, `nav-bronze-lipped-iron-9slice.webp`) statt Miras Holzrahmen —
+// s. styles/creation.css für die Rezeptur. Alle Funktionen (Name, Porträt-Raster + Galerie-Modal,
+// Upload, Stil, createCharacter) sind 1:1 aus der vorherigen Fassung übernommen.
+
+const STEPS: Array<{ id: "name" | "portrait" | "style"; labelKey: string }> = [
+  { id: "name", labelKey: "creation.name" },
+  { id: "portrait", labelKey: "creation.portrait.label" },
+  { id: "style", labelKey: "creation.style.label" },
+];
 
 export function CharacterCreation(): JSX.Element {
   const { createCharacter, cancelCreation } = useGameControl();
@@ -119,110 +131,147 @@ export function CharacterCreation(): JSX.Element {
   );
   const [startingStyle, setStartingStyle] = useState<WeaponStyle>("melee");
   const [showGallery, setShowGallery] = useState(false);
+  const [activeStep, setActiveStep] = useState<"name" | "portrait" | "style">("name");
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const previewUrl = getPortrait(portraitId);
   const canStart = name.trim().length > 0;
-  const displayName = (name.trim() || t("creation.nameless")).toUpperCase();
+  const heroName = name.trim() || t("creation.nameless");
+  // Nur die Held-Pane-Caption (Vorlage Mira: Metamorphous, gesperrt) ist GROSSGESCHRIEBEN — der
+  // Fließtext der Begin-Adventure-Unterzeile bleibt normale Groß-/Kleinschreibung.
+  const displayName = heroName.toUpperCase();
+  const styleLabel = t(STYLE_CARDS.find((s) => s.id === startingStyle)?.nameKey ?? "style.melee");
+
+  const jumpToStep = (id: "name" | "portrait" | "style"): void => {
+    setActiveStep(id);
+    sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
   return (
     <div className="creation">
-      {/* Left: Arch showcase — großformatige Live-Vorschau von Name + Portrait */}
-      <div className="creation-showcase">
-        <button className="creation-back" onClick={cancelCreation}>
-          {t("creation.back")}
+      {/* Chef-Kurswechsel 26.08.2026: Übergänge zwischen Menü/New-Game/Load/Charaktererstellung
+          UND der Spielstart selbst laufen über die App-weite Schwarzblende. */}
+      <button type="button" className="btn-iron btn-iron--sm creation-back" onClick={() => void runWithScreenFade(() => cancelCreation())}>
+        {t("menu.backToSaves")}
+      </button>
+
+      {/* Links: Held-Pane — großformatige Live-Vorschau von Porträt + Name + Stil. */}
+      <div className="creation-hero-pane">
+        <img className="creation-hero-logo" src={menuLogo} alt="Grim Reach" />
+        <input
+          ref={uploadInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = ""; // gleiche Datei erneut wählbar
+            if (!file) return;
+            void processPortraitFile(file).then((dataUrl) => {
+              if (dataUrl) setPortraitId(dataUrl);
+            });
+          }}
+        />
+        {/* Eigenes Bild hochladen (Chef 2026-07-11) — bleibt über dieselbe Icon-Taste erreichbar,
+            jetzt oben rechts auf der Held-Pane statt auf dem alten Vitrinen-Rahmen. */}
+        <button
+          type="button"
+          className="creation-portrait-upload-btn"
+          onClick={() => uploadInputRef.current?.click()}
+          title={t("char.portrait.upload")}
+          aria-label={t("char.portrait.upload")}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l5.2 5.2h-3.2V15h-4V8.2H6.8L12 3z M4.5 17.5h15V21h-15v-3.5z" fill="currentColor" />
+          </svg>
         </button>
-        <span className="creation-showcase-ornament" aria-hidden="true">◆ ◆ ◆</span>
-        <div className="creation-portrait-frame">
-          {/* Chef 2026-07-11: eigenes Bild als Porträt hochladen — oben rechts im Rahmen, für
-              Spieler, die sich ihr Charakterbild selbst generieren lassen. Die Data-URL landet
-              wie eine normale Portrait-ID in `character.portrait` (createCharacter unten). */}
-          <input
-            ref={uploadInputRef}
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = ""; // gleiche Datei erneut wählbar
-              if (!file) return;
-              void processPortraitFile(file).then((dataUrl) => {
-                if (dataUrl) setPortraitId(dataUrl);
-              });
-            }}
-          />
-          <button
-            type="button"
-            className="creation-portrait-upload-btn"
-            onClick={() => uploadInputRef.current?.click()}
-            title={t("char.portrait.upload")}
-            aria-label={t("char.portrait.upload")}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3l5.2 5.2h-3.2V15h-4V8.2H6.8L12 3z M4.5 17.5h15V21h-15v-3.5z" fill="currentColor" />
-            </svg>
-          </button>
-          {previewUrl ? (
-            <img loading="lazy" decoding="async" className="showcase-img" src={previewUrl} alt="" />
-          ) : (
-            <span className="showcase-silhouette">👤</span>
-          )}
-          <div className="showcase-name">{displayName}</div>
+        {previewUrl ? (
+          <img loading="lazy" decoding="async" className="creation-hero-art" src={previewUrl} alt="" />
+        ) : (
+          <span className="creation-hero-silhouette">👤</span>
+        )}
+        <div className="creation-hero-caption">
+          <strong>{displayName}</strong>
+          <small>{styleLabel}</small>
         </div>
       </div>
 
-      {/* Right: Form panel — geführte Reise Name → Look → Stil → Los */}
-      <div className="creation-panel">
-        <div className="creation-panel-inner">
+      {/* Rechts: Formular-Pane — Titel + Schrittleiste + drei Arbeitsschritte + Begin Adventure. */}
+      <div className="creation-form-pane">
+        <header className="creation-heading">
           <h1>{t("creation.title")}</h1>
-          <p className="creation-subtitle">{t("creation.subtitle")}</p>
+          <span>{t("creation.subtitle")}</span>
+        </header>
 
-          <div className="creation-divider" aria-hidden="true">
-            <div className="creation-divider-line" />
-            <span className="creation-divider-diamond">◆</span>
-            <div className="creation-divider-line" />
-          </div>
+        <nav className="creation-step-rail" aria-label={t("creation.title")}>
+          {STEPS.map((step, i) => (
+            <button
+              key={step.id}
+              type="button"
+              className={activeStep === step.id ? "active" : ""}
+              onClick={() => jumpToStep(step.id)}
+            >
+              <b>{i + 1}</b>
+              <span>{t(step.labelKey)}</span>
+            </button>
+          ))}
+        </nav>
 
-          <div className="field">
-            <div className="field-label">
-              <span className="creation-step-num">1</span>
-              {t("creation.name")}
+        <div className="creation-form">
+          <section
+            className="creation-step"
+            ref={(el) => { sectionRefs.current.name = el; }}
+          >
+            <label className="creation-step-label">
+              <span>1</span> {t("creation.name")}
+            </label>
+            <div className="creation-name-field">
+              <input
+                className="creation-input"
+                value={name}
+                maxLength={NAME_MAX_LENGTH}
+                placeholder={t("creation.namePlaceholder")}
+                onChange={(e) => setName(e.target.value)}
+                onFocus={() => setActiveStep("name")}
+                autoFocus
+              />
+              <small>{name.length}/{NAME_MAX_LENGTH}</small>
             </div>
-            <input
-              className="creation-input"
-              value={name}
-              maxLength={24}
-              placeholder={t("creation.namePlaceholder")}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus
-            />
-          </div>
+          </section>
 
-          <div className="field">
-            <div className="field-label">
-              <span className="creation-step-num">2</span>
-              {t("creation.portrait.label")}
-            </div>
-            <PortraitStrip value={portraitId} onChange={setPortraitId} onShowAll={() => setShowGallery(true)} />
-          </div>
+          <section
+            className="creation-step"
+            ref={(el) => { sectionRefs.current.portrait = el; }}
+          >
+            <label className="creation-step-label">
+              <span>2</span> {t("creation.portrait.label")}
+            </label>
+            <PortraitGrid value={portraitId} onChange={setPortraitId} onShowAll={() => setShowGallery(true)} />
+          </section>
 
-          <div className="field">
-            <div className="field-label">
-              <span className="creation-step-num">3</span>
-              {t("creation.style.label")}
-            </div>
+          <section
+            className="creation-step"
+            ref={(el) => { sectionRefs.current.style = el; }}
+          >
+            <label className="creation-step-label">
+              <span>3</span> {t("creation.style.label")}
+            </label>
             <StylePicker value={startingStyle} onChange={setStartingStyle} />
             <p className="creation-style-hint">{t("creation.style.hint")}</p>
-          </div>
+          </section>
 
           <button
-            className="creation-start"
+            className="btn-iron creation-start"
             disabled={!canStart}
             onClick={() =>
-              void createCharacter({ name, portrait: portraitId, startingStyle, starterKit: true })
+              void runWithScreenFade(() =>
+                createCharacter({ name, portrait: portraitId, startingStyle, starterKit: true }),
+              )
             }
           >
-            {t("creation.start")}
+            <span>{t("creation.start")}</span>
+            <small>{t("creation.beginHint").replace("{name}", heroName).replace("{style}", styleLabel)}</small>
           </button>
         </div>
       </div>

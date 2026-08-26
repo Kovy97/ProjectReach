@@ -55,6 +55,12 @@ export const ru: Record<string, string> = {
     "menu.daysAgo": "{n} дн. назад",
     "menu.noSaveYet": "У вас пока нет сохранения.",
     "menu.noSaveYetHint": "Начните свой путь.",
+    "menu.backToSaves": "← Назад к сохранениям",
+    "menu.newGame.sub": "Выбери хронику, которая понесёт твоё имя",
+    "menu.loadGame.sub": "Вернись к уцелевшей хронике",
+    "menu.unwrittenChronicle": "Ненаписанная хроника",
+    "menu.noOath": "В этом реликварии ещё не была принесена клятва.",
+    "menu.begin": "Начать",
     "offline.title": "Пока вас не было",
     "offline.duration": "Отсутствие: {time}",
     "offline.items": "Получено предметов",
@@ -463,6 +469,7 @@ export const ru: Record<string, string> = {
     "creation.style.ranged.desc": "Лук. Бьёт издали и тренирует Ловкость.",
     "creation.style.magic.desc": "Посох и заклинания. Владеет тайной силой, тренирует Интеллект.",
     "creation.style.hint": "Это задаёт только ваше стартовое оружие — наденьте любое оружие позже, чтобы сменить боевой стиль.",
+    "creation.beginHint": "Зарегистрировать {name} как посвящённого стиля «{style}».",
 
     // Character page
     "char.totalLevel": "Общий уровень {n}",

@@ -1,0 +1,544 @@
+/* ═══════════════════════════════════════════════════════════════════════════════════════════
+   NEW GAME / LOAD GAME — eigene Vollbild-Screens (Chef-Auftrag 26.08.2026, wörtlich: "New Game
+   und Load Game sind keine Aufklapp-Menüs mehr, sondern eigene Screens mit Transition"; Vorlage
+   Mira "New Game 05 / Load Game 05 · Ember Reliquary"). Mira hatte dafür Holz-/Gravewood-Rahmen
+   verwendet — Chef-Nachtrag: das Spiel bleibt beim Metall-/Stahlrahmen, s. `.btn-iron`
+   (design-system.css) und die Panel-Rezeptur unten (identisch zu `.pouch-row`/`.pouch-head`,
+   styles/variant-pouch.css: Schnitt 85, `border-image-width` = Rahmenbreite × 2,125, `round`).
+   Beide Screens teilen dieselbe Bühne (`.subscreen*`) + Slot-Leiste (`.slot-rail`/`.slot-thumb`,
+   s. components/SlotThumb.tsx); nur die zentrale Karte unterscheidet sich (`.new-relic`/
+   `.load-dossier-card`). React-Seite: pages/NewGameScreen.tsx, pages/LoadGameScreen.tsx.
+   ═══════════════════════════════════════════════════════════════════════════════════════════ */
+
+.subscreen {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #070808;
+}
+
+.subscreen-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: url("../assets/ui/ember_reliquary_bg.webp") center / cover no-repeat;
+}
+
+.subscreen-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.48) 76%, rgba(0, 0, 0, 0.84)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 26%, transparent 58%, rgba(0, 0, 0, 0.56));
+}
+
+.subscreen-back {
+  position: fixed;
+  z-index: 30;
+  top: clamp(14px, 2.2vh, 24px);
+  left: clamp(14px, 2vw, 26px);
+}
+
+/* Sprachchips — NUR der New-Game-Screen (Vorlage Mira); Load Game/Charaktererstellung haben
+   keine eigene Sprachwahl (Schnellzugriff bleibt dem Hauptmenü vorbehalten). */
+.subscreen-lang {
+  position: fixed;
+  z-index: 30;
+  top: clamp(14px, 2.2vh, 24px);
+  right: clamp(14px, 2vw, 26px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  max-width: 58vw;
+}
+.subscreen-lang .btn-iron--sm {
+  min-width: clamp(38px, 3vw, 52px);
+  padding: clamp(5px, 0.45vw, 8px) clamp(8px, 0.8vw, 14px);
+  font-family: "Cinzel", var(--font-head);
+  font-size: clamp(11px, 0.85vw, 15px);
+}
+
+.subscreen-header {
+  position: relative;
+  z-index: 3;
+  /* `.subscreen`s Elternflex zentriert Kreuzachsen-Kinder auf ihre INHALTSBREITE (align-items:
+     center) — ohne `width:100%` schrumpft dieser Header auf die Breite von `h1`, wodurch das
+     absolut positionierte Logo der Kompakt-Variante nicht mehr am Viewport-Rand, sondern relativ
+     zu dieser geschrumpften Box verankert war und mitten im Titel landete (Bugfund: "SGRIM REACH
+     LADEN" auf Load Game). */
+  width: 100%;
+  text-align: center;
+  padding-top: clamp(16px, 2.8vh, 30px);
+  flex-shrink: 0;
+}
+.subscreen-header img {
+  display: block;
+  width: clamp(200px, 19vw, 340px);
+  margin: 0 auto -6px;
+  filter: drop-shadow(0 9px 22px rgba(0, 0, 0, 0.82));
+}
+.subscreen-header h1 {
+  margin: 0;
+  font-family: "Metamorphous", var(--font-head), Georgia, serif;
+  font-size: clamp(28px, 3.6vw, 56px);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #e9dfc7;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+  line-height: 1.1;
+}
+.subscreen-header span {
+  display: block;
+  margin-top: 4px;
+  color: #aa9d82;
+  font-family: "Cinzel", var(--font-head);
+  font-size: clamp(11px, 0.85vw, 14px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Load Game: Logo klein oben links statt zentriert über dem Titel (Vorlage Mira, kompaktere
+   Kopfzeile — das große Dossier braucht mehr vertikalen Raum als New Game). */
+.subscreen-header--compact {
+  padding-top: clamp(14px, 2.4vh, 26px);
+}
+.subscreen-header--compact img {
+  position: absolute;
+  left: clamp(14px, 2vw, 26px);
+  top: 0;
+  width: clamp(140px, 11vw, 200px);
+  margin: 0;
+}
+
+.subscreen-main {
+  position: relative;
+  z-index: 3;
+  width: min(1500px, 94vw);
+  margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(16px, 2.2vh, 26px);
+  padding: clamp(12px, 2vh, 22px) 0 clamp(26px, 4vh, 48px);
+}
+
+/* ─── Gemeinsame Panel-Rezeptur (Stahlrahmen) — identisch zu `.pouch-row`/`.pouch-head`
+   (styles/variant-pouch.css): Schnitt 85, Zeichenbreite = Rahmenbreite × 2,125, `round` (keine
+   Streckung). Leder-Grund für die großen Karten, Basalt für die kleinen Slot-Thumbnails
+   (dieselbe Materialtrennung wie im übrigen Spiel). ───────────────────────────────────────── */
+.active-relic {
+  position: relative;
+  border: 9px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(135deg, rgba(20, 19, 17, 0.95), rgba(8, 9, 9, 0.97)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.72);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ─── New Game: aktive Reliquie (mittig, Slot-Nummer + Bogenfenster + Text + Knopf) ─────────── */
+.new-relic {
+  width: min(460px, 92vw);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.new-relic-badge {
+  position: absolute;
+  z-index: 4;
+  left: 12px;
+  top: 12px;
+  width: clamp(34px, 3vw, 44px);
+  height: clamp(34px, 3vw, 44px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gold);
+  background: rgba(10, 10, 10, 0.85);
+  color: #ead07e;
+  font-family: "Metamorphous", var(--font-head), Georgia, serif;
+  font-size: clamp(18px, 1.6vw, 24px);
+}
+
+.new-relic-window {
+  position: relative;
+  height: clamp(150px, 20vh, 230px);
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 24%, rgba(0, 0, 0, 0.8)),
+    url("../assets/ui/ember_reliquary_bg.webp") 22% 55% / 220% auto no-repeat;
+}
+.new-relic-window img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.85));
+  position: relative;
+  z-index: 1;
+}
+/* Bogenfenster-Silhouette — reine CSS-Deko (Vorlage Mira `.relic-window i`), zeigt den Slot noch
+   unbeschrieben ist, wenn kein Porträt vorliegt. */
+.new-relic-arch {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 16%;
+  width: clamp(64px, 7vw, 92px);
+  height: clamp(104px, 12vh, 150px);
+  transform: translateX(-50%);
+  border: 3px solid #201d19;
+  border-radius: 50% 50% 8% 8%;
+  box-shadow: 0 0 0 1px rgba(113, 83, 43, 0.6), 0 0 32px rgba(189, 59, 24, 0.14), inset 0 0 24px rgba(0, 0, 0, 0.8);
+}
+
+.new-relic-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: clamp(14px, 2vh, 20px) clamp(18px, 2.4vw, 28px) clamp(16px, 2.2vh, 24px);
+  text-align: center;
+  background:
+    linear-gradient(rgba(32, 29, 25, 0.94), rgba(16, 16, 15, 0.98)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  background-size: auto, 260px 260px;
+}
+.new-relic-copy .eyebrow {
+  margin: 0;
+  color: var(--gold);
+  font-family: "Cinzel", var(--font-head);
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.new-relic-copy h2 {
+  margin: 2px 0;
+  font-family: "Metamorphous", var(--font-head), Georgia, serif;
+  font-size: clamp(21px, 2vw, 28px);
+  color: #d5cbb4;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.new-relic-copy > p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: clamp(12.5px, 0.95vw, 14.5px);
+}
+.new-relic-cta {
+  width: 84%;
+  margin-top: 6px;
+}
+
+/* ─── Load Game: großes Dossier (Porträt | Info+Aktionen) ───────────────────────────────────── */
+.load-dossier-card {
+  width: min(920px, 88vw);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 40% 60%;
+  /* Bugfund (Verifikation): bei 32vh lief der Inhalt (Eyebrow+Name+Level+Metadaten+Knöpfe) bei
+     900px UND 768px Fensterhöhe über den Kartenrand — die LADEN/LÖSCHEN-Knöpfe waren am unteren
+     Rand angeschnitten. Etwas mehr Höhe + gestraffte Innenabstände (s. `.load-dossier-info` etc.
+     unten) lösen es zusammen, ohne den übrigen Screen (Kopfzeile + Slot-Leiste) zu verdrängen. */
+  height: clamp(280px, 38vh, 420px);
+}
+
+.load-dossier-portrait {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 28%, #45423c, #111);
+}
+.load-dossier-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset -20px 0 26px rgba(0, 0, 0, 0.72);
+  pointer-events: none;
+}
+.load-dossier-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: saturate(0.82) contrast(1.04);
+}
+.load-dossier-portrait-blank {
+  width: 100%;
+  height: 100%;
+}
+
+.load-dossier-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(12px, 1.8vh, 22px) clamp(20px, 2.4vw, 32px) clamp(10px, 1.4vh, 16px);
+  background:
+    linear-gradient(135deg, rgba(27, 27, 25, 0.98), rgba(11, 12, 12, 0.98)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+  overflow-y: auto;
+}
+.load-dossier-info .eyebrow {
+  margin: 0;
+  color: var(--gold);
+  font-family: "Cinzel", var(--font-head);
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.load-dossier-info h2 {
+  margin: 3px 0 6px;
+  font-family: "Metamorphous", var(--font-head), Georgia, serif;
+  font-size: clamp(21px, 1.9vw, 32px);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.load-empty-note {
+  margin: 4px 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.load-level-block {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(190, 156, 91, 0.32);
+}
+.load-level-block span {
+  color: var(--muted);
+  font-family: "Cinzel", var(--font-head);
+  font-size: clamp(10px, 0.8vw, 12px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.load-level-block strong {
+  font-family: "Metamorphous", var(--font-head), Georgia, serif;
+  font-size: clamp(23px, 2.1vw, 34px);
+  color: var(--text);
+}
+
+.load-metadata {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 16px;
+  margin: 8px 0;
+}
+.load-metadata div {
+  min-width: 0;
+  border-left: 2px solid rgba(190, 156, 91, 0.32);
+  padding-left: 10px;
+}
+.load-metadata dt {
+  margin: 0;
+  color: var(--muted);
+  font-family: "Cinzel", var(--font-head);
+  font-size: clamp(9px, 0.75vw, 11px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.load-metadata dd {
+  margin: 2px 0 0;
+  color: #cfc2a2;
+  font-size: clamp(13px, 1vw, 16px);
+  overflow-wrap: anywhere;
+}
+
+.load-dossier-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 6px;
+  flex-shrink: 0;
+}
+.load-dossier-actions .btn-iron {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ─── Slot-Leiste — reine Auswahl, keine eingebetteten Aktionen (Chef-Vorgabe: Aktionen leben
+   zentral in `.active-relic` darüber). Fünf Karten nebeneinander bei allen Zielauflösungen ab
+   1366×768. ───────────────────────────────────────────────────────────────────────────────── */
+.slot-rail {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 18px);
+  flex-shrink: 0;
+}
+
+.slot-thumb {
+  position: relative;
+  min-width: 0;
+  height: clamp(128px, 16vh, 172px);
+  padding: 0;
+  border: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(20, 19, 17, 0.68), rgba(8, 9, 9, 0.86)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 220px 220px;
+  color: var(--muted);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: filter 0.14s, box-shadow 0.14s;
+}
+.slot-thumb:hover,
+.slot-thumb:focus-visible {
+  filter: brightness(1.14);
+  outline: none;
+}
+/* Gewählter Slot: goldene Kante + unterer Leuchtbalken (Vorlage Mira `.save-slot.selected::after`). */
+.slot-thumb.is-active {
+  box-shadow: inset 0 0 0 2px rgba(216, 192, 106, 0.55), 0 0 16px rgba(216, 192, 106, 0.22);
+}
+.slot-thumb.is-active::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 3px;
+  background: var(--gold);
+  box-shadow: 0 0 12px rgba(216, 192, 106, 0.6);
+}
+
+.slot-thumb-index {
+  position: absolute;
+  z-index: 2;
+  top: 6px;
+  left: 6px;
+  min-width: 24px;
+  padding: 2px 5px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(216, 192, 106, 0.4);
+  color: var(--gold);
+  font-family: "Metamorphous", var(--font-head), Georgia, serif;
+  font-size: 13px;
+  text-align: center;
+}
+
+.slot-thumb--filled {
+  display: flex;
+  flex-direction: column;
+}
+.slot-thumb-portrait {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 28%, var(--panel-hover), var(--slot));
+}
+.slot-thumb-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.slot-thumb-portrait-blank {
+  width: 100%;
+  height: 100%;
+}
+.slot-thumb-nameplate {
+  padding: 22px 8px 6px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 34%, transparent);
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.slot-thumb-name {
+  font-family: var(--font-head);
+  font-size: clamp(13px, 0.95vw, 16px);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+  overflow-wrap: anywhere;
+}
+.slot-thumb-meta {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: #cdbb8e;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.slot-thumb-sub {
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--muted);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.slot-thumb--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 8px;
+  filter: grayscale(0.25) brightness(0.88);
+}
+.slot-thumb--empty:hover {
+  filter: none;
+}
+.slot-thumb-empty-mark {
+  font-size: clamp(20px, 2.2vw, 28px);
+  color: rgba(216, 192, 106, 0.3);
+}
+.slot-thumb-empty-label {
+  font-size: clamp(11px, 0.85vw, 13px);
+  color: var(--muted);
+  text-transform: uppercase;
+  font-family: "Cinzel", var(--font-head);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+.slot-thumb-begin {
+  font-size: clamp(10px, 0.8vw, 12px);
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ─── Kompaktere Bühne bei knappen Fensterhöhen (1366×768/1600×900) — Größen-Floor statt Clip. ── */
+@media (max-height: 820px) {
+  .subscreen-header img { width: clamp(160px, 15vw, 260px); }
+  .subscreen-header h1 { font-size: clamp(24px, 3vw, 40px); }
+  .new-relic-window { height: clamp(110px, 15vh, 170px); }
+  .new-relic-copy { padding: 10px clamp(16px, 2vw, 22px) 14px; gap: 4px; }
+  .load-dossier-card { height: clamp(270px, 36vh, 380px); }
+  .load-dossier-info { padding: 10px clamp(16px, 2vw, 24px) 8px; }
+  .load-level-block strong { font-size: 24px; }
+  .slot-thumb { height: clamp(110px, 14vh, 148px); }
+}
+
+/* ─── Schmale Fenster: Slot-Leiste bricht auf zwei Reihen statt zu clippen. ──────────────────── */
+@media (max-width: 900px) {
+  .subscreen-lang { display: none; }
+  .load-dossier-card {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .load-dossier-portrait { height: 220px; }
+  .slot-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
