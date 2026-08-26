@@ -1958,7 +1958,15 @@
   display: flex;
   flex-direction: column;
   gap: 7px;
-  overflow: hidden;
+  /* UI-Fix 26.08. (Chef-Runde "Karten groesser"): `overflow: hidden` + Zeile 5 als `minmax(200px,
+     1fr)` hat bei JEDER Karte den Bauen-Knopf abgeschnitten, sobald ein zweiter Knopf ("Einreihen")
+     oder die Sperr-Zeile ("Gold oder Material fehlen") dazukam — gemessen (sim-harness): 13/13
+     Karten betroffen, DE 271-372px Inhalt in einer 190-194px hohen Box, RU sogar bis 444px. Ursache:
+     `overflow: hidden` macht den Content-Beitrag dieses Kindes fuer die `1fr`-Zeile laut Spec zu 0,
+     UND `1fr` in einem nur-min-height-Container verteilt sich nur innerhalb von dessen bereits
+     resolvter Hoehe, waechst also nicht mit. `visible` + `auto` (s. Zeilen-Definition unten) macht
+     die Aktionszone zum selben "Boden, kein Deckel"-Verhalten wie Flavor-Zeile/Karte selbst. */
+  overflow: visible;
   padding: 8px;
   border: 4px solid transparent;
   border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
@@ -2086,8 +2094,22 @@
    hierarchie in Liste und Popup, aber flüssige Maße zwischen 1920×1080 und Ultrawide. Kleine
    Inhaltsmodule verwenden ruhige Steinflächen statt verkleinerter Zierrahmen und Lederteppiche. */
 .nh-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(330px, 18vw, 430px)), 1fr));
-  gap: clamp(10px, 0.75vw, 16px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(360px, 22vw, 460px)), 1fr));
+  gap: clamp(10px, 0.9vw, 18px);
+}
+
+/* Chef-Feedback 26.08. ("Bau-Leiste, Karten zu klein, mind. 4 pro Zeile bei 1366x768 ohne
+   Scrollen"): die fluessige clamp() oben trifft diese Untergrenze allein nicht zuverlaessig — die
+   Inhaltsbreite waechst NICHT proportional zur vw (die Sidebar links nimmt eine feste Breite,
+   keinen Anteil), eine einzelne lineare Formel kann darum nicht gleichzeitig "genau 4 Spalten bei
+   1366" UND "deutlich groessere Karten bei 1920" treffen. Zwei gestufte Breakpoints statt einer
+   Formel — dieselbe Technik wie der bestehende ≤1180px-Schritt weiter unten in dieser Datei — und
+   bewusst VOR jenem Schritt in der Quellreihenfolge platziert, damit der bestehende, separat
+   austarierte ≤1180px-Wert für sehr schmale Fenster weiterhin das letzte (gewinnende) Wort hat. */
+@media (max-width: 1400px) {
+  .nh-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 235px), 1fr));
+  }
 }
 
 .nh-grid > .nh-card {
@@ -2102,13 +2124,38 @@
      sind gleich hoch), also verteilt das Raster nur um, und 248 nahm zu viel. 200 px reichen dem
      Dock überall (gemessen 1366x768 / 1920x1080 / 3840x2160: Inhalt max. 260 px, Box nie kleiner
      als der Inhalt) und geben der Flavor-Zeile ihre volle Höhe. */
-  min-height: clamp(680px, 178cqw, 760px);
+  /* Chef-Feedback 26.08.: die Karten waren bei den meisten praktischen Breiten (330-430px) FLACH
+     an diesem Boden festgenagelt (178cqw ueberschreitet 680 schon ab ~382px Breite) — eine hohe,
+     schmale Taefel statt einer "grossen" Karte, UND der Grund, warum bei 1366px nur 2 statt 4
+     Karten pro Zeile passten (jede mit Riesenhoehe bei mittlerer Breite). Boden UND Deckel gesenkt,
+     Bildzeile (Reihe 1) im Gegenzug angehoben (satt sichtbareres Motiv, s. Chef "Bild-/Icon-Bereich
+     proportional groesser") — bleibt ein BODEN, kein Deckel (s. Kommentar oben), laengerer Inhalt
+     (Reihe 3 `auto`, Reihe 5 `1fr`) darf die Karte weiterhin ueber diesen Wert hinaus wachsen. */
+  min-height: clamp(560px, 165cqw, 660px);
+  /* UI-Fix 26.08.: Reihe 5 war `minmax(200px, 1fr)` — `1fr` verteilt sich nur innerhalb der
+     bereits resolvten Kartenhoehe (hier `min-height`, kein `height`), waechst also NICHT ueber
+     die 200px hinaus, egal wie viel Inhalt (Kosten + Bauen-Knopf + "Einreihen"-Knopf +
+     Sperr-Zeile) tatsaechlich da ist — gemessen (sim-harness, alle 13 Nicht-Veredelungs-Karten,
+     DE+RU, 1366/1920): 271-444px Inhalt in einer 190-194px hohen, `overflow:hidden` geklippten
+     Box, "Einreihen" + Sperr-Zeile fielen bei JEDER Karte komplett aus dem sichtbaren Bereich.
+     WICHTIG: `auto`/`max-content` als Zeilen-Deckel wuerde man hier erwarten, waechst in der
+     Praxis aber NICHT — `.nh-card-action-slot` ist selbst ein Flex-Column-Container und wird per
+     Grid-Default `align-items: stretch` auf die Zeilenhoehe gestreckt; dessen Content-Beitrag zur
+     `auto`-Zeilenberechnung bleibt bei genau der alten 200px-Zahl haengen (nachgemessen, auch mit
+     `max-content` statt `auto`), erst `align-self: start` befreit die BOX (dann aber ohne die
+     Zeile mitzuziehen → Ueberlappung mit der Karte darunter). Deshalb hier bewusst wie beim
+     Veredelungs-Boden (248px, s. `.is-refinery` unten) ein HARTER, gemessener Boden statt eines
+     Auto-Mechanismus — 360px deckt den breiten Fall (`.nh-card-action-slot` hat selbst einen
+     `border` von bis zu 2×5px, der Content-Box-Boden liegt also ~10px unter dem Zeilenwert;
+     gemessen DE/RU 1920: Inhalt bis 332px in einer 330px-Content-Box bei 340px Zeile — 360px gibt
+     spuerbare Reserve); der schmale 4-Spalten-Fall (≤1400px, bis 444px RU) bekommt unten einen
+     eigenen, hoeheren Boden. */
   grid-template-rows:
-    clamp(154px, 42cqw, 188px)
+    clamp(168px, 44cqw, 210px)
     auto
     auto
     clamp(100px, 27cqw, 118px)
-    minmax(200px, 1fr);
+    minmax(360px, auto);
   gap: clamp(7px, 2.2cqw, 11px);
   padding: clamp(8px, 2.4cqw, 12px);
   border-width: clamp(6px, 3cqw, 8px);
@@ -2126,6 +2173,21 @@
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
 }
 
+/* UI-Fix 26.08.: der schmale 4-Spalten-Fall (≤1400px, s. Media-Query oben) wickelt spuerbar mehr
+   Text (Kosten-/Zeittext, Knopfbeschriftungen) auf mehr Zeilen als die breiteren Layouts —
+   gemessen (sim-harness) RU-Boden bis 444px, DE bis 372px. Eigener, hoeherer Aktionszonen-Boden
+   fuer genau diesen Fall statt den breiten 340px-Boden unnoetig fuer alle aufzublasen. */
+@media (max-width: 1400px) {
+  .nh-grid > .nh-card {
+    grid-template-rows:
+      clamp(168px, 44cqw, 210px)
+      auto
+      auto
+      clamp(100px, 27cqw, 118px)
+      minmax(460px, auto);
+  }
+}
+
 /* Release-Fix-Welle 0.3.0 Fix 2 (+ Nachschlag nach Abschluss-Smoke): die Aktionszone war zu knapp
    fuer die Reason-Zeile (`.nh-blocked`), sobald ein Veredelungsgebaeude (Smelter/Smokehouse)
    blockiert ist — bei 1920×1080/4 Spalten bekam die fr-Verteilung der Zeile real nur ~223px, der
@@ -2137,14 +2199,40 @@
 .nh-grid > .nh-card.is-refinery {
   /* Clip-Audit-Fix G001 (1.0.1): `height` (Deckel) entfernt, s. Begründung an `.nh-grid > .nh-card`
      oben — dieselbe Flavor-Zeile (Reihe 3) ist jetzt `auto` statt fest 48-58px. */
-  min-height: clamp(868px, 219cqw, 978px);
+  /* Selber Boden-statt-Deckel-Rutsch wie `.nh-grid > .nh-card` oben, um denselben Betrag (~120px)
+     gesenkt — der 248px-Aktionszonen-Boden und die 160px/0.9fr-Veredelungszeile (beide oben
+     ausfuehrlich begruendet/gemessen) bleiben unangetastet. */
+  min-height: clamp(748px, 205cqw, 878px);
+  /* UI-Fix 26.08.: derselbe Boden-statt-Auto-Fix wie bei `.nh-grid > .nh-card` oben (Begruendung
+     dort) — der alte 248px-Boden war fuer die urspruengliche Kostenzeile bemessen, nicht fuer die
+     inzwischen groesseren Schriften + Zwei-Knopf/Sperr-Zeile-Faelle. Gemessen (sim-harness,
+     Schmelzofen/Raeucherhaus, DE+RU, 1366-2560): breiter Fall bis 340px → 360px-Boden (wie die
+     Normalkarte); schmaler ≤1400px-Fall bis 436px RU → eigener Boden im Media-Query unten. Reihe 6
+     (Veredelungspanel) bleibt `0.9fr` — `.nh-card-function-slot` blieb in derselben Messung
+     durchgehend clip-frei (160px Inhalt in 160px Box). */
   grid-template-rows:
-    clamp(154px, 42cqw, 188px)
+    clamp(168px, 44cqw, 210px)
     auto
     auto
     clamp(100px, 27cqw, 118px)
-    minmax(248px, 1fr)
+    minmax(360px, auto)
     minmax(160px, 0.9fr);
+}
+
+/* Muss NACH der Basisregel oben stehen: `.is-refinery` hat dieselbe Spezifitaet wie die
+   Media-Query-Regel fuer `.nh-grid > .nh-card` (generisch) UND die Basisregel oben (beide zwei
+   Klassen) — bei einem Gleichstand gewinnt die spaetere Quellposition, darum hier statt vor der
+   Basisregel. Deckt den schmalen ≤1400px-Fall (gemessen bis 436px RU) ab. */
+@media (max-width: 1400px) {
+  .nh-grid > .nh-card.is-refinery {
+    grid-template-rows:
+      clamp(168px, 44cqw, 210px)
+      auto
+      auto
+      clamp(100px, 27cqw, 118px)
+      minmax(460px, auto)
+      minmax(160px, 0.9fr);
+  }
 }
 
 .nh-card .nh-art {
@@ -2256,11 +2344,16 @@
     url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 280px 280px repeat;
 }
 
+/* Chef-Vorgabe 26.08.: "Kosten/Zeit"-Text in der Bau-Leiste ≥ 14px, in der (deutlich breiteren)
+   Infokarte ≥ 15px — EIN Regelsatz deckt beides ab, weil die schmalste Bau-Leisten-Karte (235px,
+   ≤1400px-Spalte) am Boden landet und die breiteste Infokarte-Karte (Popup-Card ist ~100% der
+   500-700px breiten Popup-Breite) an der Decke: 3.4cqw trifft bei 235px 8px (→Boden 14px) und bei
+   500px+ 17px+ (→Decke 16px, > 15px-Vorgabe). Vorher lag der Boden bei 11px — sichtbar zu klein. */
 .nh-cost-title,
 .nh-cost-time {
   color: #9eabb1;
   font-style: normal;
-  font-size: clamp(11px, 3.2cqw, 14px);
+  font-size: clamp(14px, 3.4cqw, 16px);
 }
 
 .nh-card .mat-chip {
@@ -2277,6 +2370,13 @@
   background:
     linear-gradient(rgba(72, 18, 15, 0.28), rgba(24, 7, 7, 0.54)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 180px 180px repeat !important;
+}
+
+/* Chef-Vorgabe 26.08.: "0/40"-Mengentext ≥ 14px in der Bau-Leiste — skills.css' geteilter
+   `.mat-count` (Boden 13px) bleibt für alle anderen Seiten unangetastet, hier nur ein spezifischerer
+   Override fürs Baumenü (gleiche Technik wie `.nh-card .mat-chip` direkt darüber). */
+.nh-card .mat-count {
+  font-size: clamp(14px, 3.8cqw, 18px);
 }
 
 .nh-card :is(.nh-build-btn, .nh-cancel-btn, .nh-refine-btn),
@@ -2328,6 +2428,20 @@
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px 360px repeat !important;
 }
 
+/* Chef-Feedback 26.08. ("Info-Cards sollen groesser sein"): DER Fund dazu — `.modal` (modals.css,
+   gilt fuer ALLE Modale im Spiel) setzt `max-width: 480px` auf derselben Spezifitaet (eine
+   Klasse) wie jede `.nh-popup`-Breitenregel oben. Je nachdem, welche Datei zuletzt im Bundle
+   geladen wird, gewinnt `.modal` den Gleichstand und deckelt die Karte hart auf 480px — die ganze
+   vw-Fluessigkeit oben (500-680px) griff dadurch nie. Gemessen (sim-harness, 1366/1600/1920): die
+   Karte stand bei ALLEN drei Breiten auf exakt 480px. `.modal.nh-popup` (zwei Klassen kombiniert)
+   hat eine hoehere Spezifitaet als `.modal` allein und gewinnt unabhaengig von der Ladereihenfolge.
+   Chef-Vorgabe war ein Boden von 560px ("min(560px, 92vw)"); hier zusaetzlich mit vw nach oben
+   skaliert, damit 1920+ nicht bei 560px stehen bleibt (s. "Karten sollen groesser sein"). */
+.modal.nh-popup {
+  width: min(clamp(560px, 40vw, 760px), calc(100vw - 28px));
+  max-width: min(760px, calc(100vw - 28px));
+}
+
 .nh-popup-close {
   position: absolute;
   z-index: 5;
@@ -2373,9 +2487,25 @@
   gap: clamp(8px, 2cqw, 13px);
 }
 
+/* UI-Fix 26.08. (Chef-Vorgabe "Gebaeudebild ≥ 160px"): `.nh-art` (Basisregel weiter oben)
+   setzt global `min-height: 0`, und `.nh-popup` ist selbst eine Flex-Spalte mit `max-height` —
+   ohne eigenen Boden schrumpft Flexbox das Bild bei knappem Platz weit unter seine `height`
+   (nachgemessen: 490px breite Karte, `height` wollte 186px, tatsaechlich gerendert nur 136.6px
+   DE / 129px RU bei 1366×768 — Flex-Shrink zieht sich den Platz zuerst vom groessten/am
+   wenigsten geschuetzten Kind). Eigener Boden verhindert das, ohne die anderen Zeilen am
+   Schrumpfen zu hindern — der Rest weicht stattdessen ins interne Popup-Scrollen aus. */
 .nh-popup .nh-art {
   height: clamp(180px, 38cqw, 245px);
+  min-height: 180px;
   aspect-ratio: auto;
+}
+
+/* Chef-Vorgabe 26.08.: Titel in der Infokarte ≥ 22px. Die geteilte `.nh-card-name`-Regel (Liste +
+   Popup) deckelt bei 23px — knapp am Boden, sobald die Karte selbst schmal ist. Eigener Popup-Satz
+   mit hartem 22px-Boden statt Verlass auf den geteilten cqw-Wert. */
+.nh-popup .nh-card-name {
+  font-size: clamp(22px, 6cqw, 27px);
+  line-height: 1.15;
 }
 
 .nh-popup .nh-card-flavor {
@@ -2383,8 +2513,8 @@
   min-height: 0;
   max-height: none;
   overflow: visible;
-  font-size: clamp(14px, 3.1cqw, 18px);
-  line-height: 1.45;
+  font-size: clamp(16px, 3.4cqw, 19px);
+  line-height: 1.5;
   -webkit-line-clamp: unset;
 }
 
@@ -2538,14 +2668,15 @@
 }
 
 .nh-popup .nh-effect-label {
-  font-size: clamp(11px, 2.5cqw, 13px);
+  font-size: clamp(12px, 2.6cqw, 14px);
   line-height: 1;
 }
 
+/* Chef-Vorgabe 26.08.: Effekt-/Kostenzeilen der Infokarte ≥ 15px. */
 .nh-popup .nh-effect-value {
   padding-top: 6px;
-  font-size: clamp(13px, 3cqw, 16px);
-  line-height: 1.22;
+  font-size: clamp(15px, 3.4cqw, 18px);
+  line-height: 1.28;
 }
 
 .nh-popup-close {
