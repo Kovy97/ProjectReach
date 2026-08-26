@@ -600,3 +600,21 @@
   filter: brightness(1.15);
   color: #fff1bd;
 }
+
+/* Chef 27.08.2026: „Die Buttons sind reversed, geklickte sehen normal aus und normale wie geklickt."
+   Die alte `.is-active`-Fassung war nur minimal heller als der Grundzustand und wurde als
+   „gedrückt" gelesen. Jetzt ist die getroffene Wahl unmissverständlich die beleuchtete Platte:
+   goldgetönte Fläche, hellere Rahmenplatte, Goldschrift mit Glühen und eine goldene Innenkante;
+   die unmarkierten Geschwister bleiben die gedämpfte Grundplatte. Am Dateiende, überschreibt oben. */
+.btn-iron.is-active {
+  background-color: #2a2113;
+  background-image:
+    linear-gradient(rgba(216, 192, 106, 0.44), rgba(122, 92, 44, 0.26)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  color: #fff1bd;
+  text-shadow: 0 1px 2px #000, 0 0 12px rgba(216, 192, 106, 0.55);
+  filter: brightness(1.18);
+  box-shadow: inset 0 0 0 2px rgba(216, 192, 106, 0.6), 0 0 14px rgba(216, 192, 106, 0.28);
+}
+.btn-iron.is-active:hover,
+.btn-iron.is-active:focus-visible { filter: brightness(1.28); }
