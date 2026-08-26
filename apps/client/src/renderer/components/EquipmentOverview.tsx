@@ -1,3 +1,4 @@
+import { gameAlert } from "../components/GameAlert";
 import { type CSSProperties } from "react";
 import { content } from "@hearthforge/content";
 import { activeSets, computeStats, equipItem, equipTool, unequipItem } from "@hearthforge/engine";
@@ -260,7 +261,7 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
                     actions={
                       interactive
                         ? [
-                            { key: "unequip", label: t("item.unequip"), onClick: () => { if (unequipItem(state, content, slot)) playSfx("equip"); } },
+                            { key: "unequip", label: t("item.unequip"), onClick: () => { if (unequipItem(state, content, slot)) playSfx("equip"); else gameAlert("alert.unequipInventoryFull"); } },
                           ]
                         : []
                     }

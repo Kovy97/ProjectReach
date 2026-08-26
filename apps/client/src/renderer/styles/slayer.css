@@ -773,3 +773,20 @@
   border-style: solid;
   background: rgba(0, 0, 0, 0.35);
 }
+
+/* Chef-Test 26.08.2026: „Im Slayer-Shop wird die Seltenheit via farbigem Rand angezeigt, sollte aber
+   genau so wie bei Item-Karten sein, mit dieser farblichen Background-Cloud." → Seltenheit als
+   Farbwolke HINTER dem Bild (radial, zum Rand transparent), dieselbe Palette wie `.inv-slot.rarity-*`
+   in components.css, aber kräftiger (0,62 statt 0,34) und weiter (72 %), weil die Zelle hier ~200 px groß
+   ist und auf dunklem Leder liegt, sonst geht die Wolke unter; der 1px-Rarity-Rand der Zelle (`body .item-cell.rarity-*`) wird hier transparent,
+   sonst doppelt. Vier Klassen Spezifität schlagen den body-Präfix. */
+.slayer-page .slayer-shop-card .slayer-shop-cell.item-cell {
+  border-color: transparent;
+  outline: none;
+}
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-magic     { background: radial-gradient(circle at 50% 45%, rgba(91, 143, 214, 0.62), transparent 72%); }
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-rare      { background: radial-gradient(circle at 50% 45%, rgba(60, 176, 67, 0.62), transparent 72%); }
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-superRare { background: radial-gradient(circle at 50% 45%, rgba(91, 143, 214, 0.62), transparent 72%); }
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-epic      { background: radial-gradient(circle at 50% 45%, rgba(176, 127, 216, 0.62), transparent 72%); }
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-legendary { background: radial-gradient(circle at 50% 45%, rgba(224, 144, 42, 0.62), transparent 72%); }
+.slayer-page .slayer-shop-card .slayer-shop-cell.rarity-godly     { background: radial-gradient(circle at 50% 45%, rgba(255, 215, 0, 0.62), transparent 72%); }

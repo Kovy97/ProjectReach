@@ -901,6 +901,7 @@ export const ptBR: Record<string, string> = {
     "shop.counter.chooseAmount": "Escolha a quantidade",
     "shop.counter.unlimited": "Estoque ilimitado",
     "shop.counter.inventoryFull": "Inventário cheio — libere um espaço ou compre uma melhoria.",
+    "alert.unequipInventoryFull": "Inventário cheio: libere um espaço antes de tirar um equipamento.",
     "shop.counter.notEnoughGold": "Ouro insuficiente para este item.",
     "shop.qtyLabel": "Qtd:",
     "shop.sell": "Vender",

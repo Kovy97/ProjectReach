@@ -903,6 +903,7 @@ export const es: Record<string, string> = {
     "shop.counter.chooseAmount": "Elige la cantidad",
     "shop.counter.unlimited": "Existencias ilimitadas",
     "shop.counter.inventoryFull": "Inventario lleno: libera un espacio o compra una mejora.",
+    "alert.unequipInventoryFull": "Inventario lleno: libera un espacio antes de quitarte equipo.",
     "shop.counter.notEnoughGold": "No tienes suficiente oro para este objeto.",
     "shop.qtyLabel": "Cant.:",
     "shop.sell": "Vender",

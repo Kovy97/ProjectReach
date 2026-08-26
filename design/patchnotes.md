@@ -502,6 +502,28 @@ Karten, die mit der Fensterbreite wachsen; die Gebäude-Infokarte ist breiter, m
 besser lesbaren Texten und Kostenzeilen. / EN: New Haven build cards and building info cards are
 larger with more readable text.
 
+**Bestiarium neu gesetzt (Chef-Test 26.08.):** DE: Die Monsterkarten sind jetzt gleich groß und
+gleich aufgebaut, die Werte größer und als Tabelle mit Symbolen lesbar, die Beute nach Chance
+sortiert und in Ausrüstung, Materialien und Sonstiges gruppiert, jeder entdeckte Eintrag mit Typ und
+Seltenheitsrahmen wie auf den Dungeon-Karten. Die Knöpfe tragen die Knopf-Familie des Spiels. / EN:
+Bestiary cards are uniform, stats larger, loot sorted by chance and grouped, buttons in the game's
+button family.
+
+**Ablegen bei vollem Inventar gesperrt (Chef-Test 26.08.):** DE: Bei 48/48 ließ sich Ausrüstung
+weiter ablegen, das Inventar lief auf 49/48. Jetzt bleibt das Stück angelegt und eine Meldung sagt,
+dass zuerst Platz geschaffen werden muss. Das galt vor allem für verzauberte Stücke, die gar nicht
+geprüft wurden. Beute geht weiterhin ins Lager und bei vollem Lager in die Post. / EN: Taking gear
+off with a full inventory is blocked with a message instead of overflowing.
+
+*Dev-Notiz: `canUnequip` in equipment.ts prüft Kapazitäts-Einheiten (Slots + Instanz-Zellen) statt
+physischer Slots und deckt Instanzen über `hasInstanceRoom` ab; UI-Meldung `alert.unequipInventoryFull`
+(7 Sprachen); Test unequip-capacity.test.ts.*
+
+**Slayer-Laden: Seltenheit als Farbwolke (Chef-Test 26.08.):** DE: Die Karten im Laden des
+Slayer-Meisters zeigen die Seltenheit jetzt wie Inventar und Item-Karten als farbige Wolke hinter dem
+Bild statt als dünnen farbigen Rand. / EN: The slayer shop shows rarity as the familiar coloured
+glow behind the item instead of a thin coloured border.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

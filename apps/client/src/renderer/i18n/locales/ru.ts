@@ -916,6 +916,7 @@ export const ru: Record<string, string> = {
     "shop.counter.chooseAmount": "Выберите количество",
     "shop.counter.unlimited": "Неограниченный запас",
     "shop.counter.inventoryFull": "Инвентарь полон — освободите ячейку или купите улучшение.",
+    "alert.unequipInventoryFull": "Инвентарь полон: освободи ячейку, прежде чем снимать снаряжение.",
     "shop.counter.notEnoughGold": "Недостаточно золота для этого предмета.",
     "shop.qtyLabel": "Кол-во:",
     "shop.sell": "Продать",

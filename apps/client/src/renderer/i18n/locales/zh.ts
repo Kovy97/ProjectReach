@@ -916,6 +916,7 @@ export const zh: Record<string, string> = {
     "shop.counter.chooseAmount": "选择数量",
     "shop.counter.unlimited": "库存不限",
     "shop.counter.inventoryFull": "背包已满——请腾出一格或购买背包升级。",
+    "alert.unequipInventoryFull": "背包已满：卸下装备前请先腾出空位。",
     "shop.counter.notEnoughGold": "金币不足，无法购买该物品。",
     "shop.qtyLabel": "数量：",
     "shop.sell": "出售",

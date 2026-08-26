@@ -1,6 +1,6 @@
 import type { ContentDB, EquipSlot, GameState, ItemDef, ItemId } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
-import { addInstance, addItem, freeSlots, getInstance, isFull, removeInstance, removeItem } from "./inventory";
+import { addInstance, addItem, freeSlots, getInstance, isFull, removeInstance, removeItem, hasInstanceRoom, usedCapacityUnits, effectiveCapacity } from "./inventory";
 
 /**
  * Legt das aktuell in `slot` getragene Item zurück ins Inventar und leert den Slot — egal ob es
@@ -238,12 +238,27 @@ export function equipInstance(
 // equipAmmo: ENTFERNT (#286 Ammo-Removal) — der Köcher-Slot existiert nicht mehr.
 
 /** Legt das Item eines Slots ab (zurück ins Inventar, falls Platz). */
+/**
+ * Darf der Slot ins Inventar abgelegt werden, ohne die Kapazität zu überschreiten? Chef-Report
+ * 26.08.2026: „Warum darf ich Items unequippen, wenn mein Inventar 48/48 ist? Es darf kein Overflow
+ * geben." Zwei Lücken vorher: (1) `isFull` zählte physische Slots statt Kapazitäts-EINHEITEN
+ * (Slots + Instanz-Zellen, s. usedCapacityUnits) — bei freiem Null-Slot, aber vollen Einheiten lief
+ * das Inventar auf 49/48; (2) verzauberte Instanzen wurden GAR NICHT geprüft (unbegrenzte Tasche).
+ * Jetzt: Instanz → nur wenn ihre Basis-Art schon eine Zelle hat (teilt sie) oder eine Einheit frei ist
+ * (hasInstanceRoom); schlichtes Item → nur mit freier Einheit. Beute geht weiter Bank → Post, das
+ * bleibt der einzige Überlauf-Pfad.
+ */
+export function canUnequip(state: GameState, content: ContentDB, slot: EquipSlot): boolean {
+  const inst = state.character.equippedInstances[slot];
+  const itemId = state.character.equipment[slot];
+  if (!itemId && !inst) return false;
+  if (inst) return hasInstanceRoom(state.inventory, content, inst.baseItemId);
+  return usedCapacityUnits(state.inventory) < effectiveCapacity(state.inventory, content);
+}
+
 export function unequipItem(state: GameState, content: ContentDB, slot: EquipSlot): boolean {
   const itemId = state.character.equipment[slot];
   if (!itemId) return false;
-  // Eine Instanz geht in die unbegrenzte Tasche (kein freier Slot nötig); ein plain Item braucht
-  // einen freien Inventar-Slot. Nur im plain-Fall bei vollem Inventar abbrechen.
-  if (!state.character.equippedInstances[slot] && isFull(state.inventory)) return false;
-  // stowEquipped legt plain Item ODER Instanz (mit Modifikation) korrekt zurück ins Inventar.
+  if (!canUnequip(state, content, slot)) return false;
   return stowEquipped(state, content, slot);
 }
