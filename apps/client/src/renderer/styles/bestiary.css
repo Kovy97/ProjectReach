@@ -271,9 +271,26 @@
   align-items: flex-end;
   justify-content: center;
   background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.07), transparent 70%);
+  /* Chef 26.08.2026: Zonen-Kulisse hinter dem Monster — `background-image` kommt inline aus
+     BestiaryPage.tsx (getZoneBackgroundCard), hier nur Zuschnitt: Kulisse darf `cover` (Szenerie,
+     kein Monster-Art), Monster-Bild bleibt `contain` + `bottom center`. */
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
   border-bottom: 1px solid rgba(216, 192, 106, 0.22);
   overflow: hidden;
 }
+/* Leichte Abdunklung über der Kulisse, damit Porträt und Level-Abzeichen lesbar bleiben; das
+   Porträt (.bestiary-card-portrait, z-index 1) und der Platzhalter liegen darüber. */
+.bjw-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.42));
+  pointer-events: none;
+}
+.bjw-art .bestiary-portrait-ph { position: relative; z-index: 1; }
 
 /* Erstfund-Flip-Wrapper (FlipReveal, s. BestiaryPage.tsx) — füllt `.bjw-art` komplett, ersetzt die
    frühere `.bestiary-card-art-flip`-Größenregel (styles/bestiary-flip.css, dort jetzt ungenutzt). */

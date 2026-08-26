@@ -6,6 +6,7 @@ import { EQUIP_SLOT_LABELS } from "@hearthforge/shared";
 import type { DungeonDef, EliteVariantDef, GameState, ItemDef, LocalizedString, LootRoll, MonsterDef, QuestDef } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
+import { getZoneBackgroundCard } from "../zoneBackgrounds";
 import { getItemImage, rarityClass } from "../items";
 import { useI18n } from "../i18n";
 import { inflictHintFor } from "../util/inflictHint";
@@ -649,9 +650,12 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
 }: BestiaryMonsterCardProps): JSX.Element {
   const art = known ? getMonsterSrc(m.id) : null;
   const lootGroups = MONSTER_LOOT_GROUPS_INDEX[m.id] ?? { equipment: [], material: [], other: [] };
+  // Chef 26.08.2026: „Im Bestiarium sollten die Monsterkarten ihren Zonen-Background haben." →
+  // Zonen-Kulisse (Card-Variante) hinter dem Porträt; Dungeon-Monster nehmen die Zone ihres Dungeons.
+  const zoneArt = getZoneBackgroundCard(m.zone ?? owningDungeon?.zone);
   return (
     <div className={`bjw-card${known ? "" : " unknown"}`}>
-      <div className="bjw-art">
+      <div className="bjw-art" style={zoneArt ? { backgroundImage: `url("${zoneArt}")` } : undefined}>
         <FlipReveal
           className="bjw-art-flip"
           flipping={flipping}
@@ -895,9 +899,10 @@ function ChampionCodex(): JSX.Element {
               const known = (entry?.sightings ?? 0) > 0;
               const art = known ? getEliteMonsterSrc(variant.id, variant.baseMonsterId) : null;
               const baseLevel = content.monsters[variant.baseMonsterId]?.level;
+              const zoneArt = getZoneBackgroundCard(variant.zone);
               return (
                 <div key={variant.id} className={`bjw-card${known ? "" : " unknown"}`}>
-                  <div className="bjw-art">
+                  <div className="bjw-art" style={zoneArt ? { backgroundImage: `url("${zoneArt}")` } : undefined}>
                     {art ? (
                       <img
                         loading="lazy"
