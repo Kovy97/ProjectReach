@@ -10,7 +10,14 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
-## Unveröffentlicht — Sammelnotizen für den nächsten Patch (Stand 25.08.2026)
+## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 26.08.2026)
+
+_(leer, hier sammeln sich die Änderungen nach 1.1.0)_
+
+## 1.1.0 „Patch #2: The Slayer's Ledger" — HOCHGELADEN (Build 24956428, 2026-08-26 21:31, `setlive` leer, Chef schaltet live)
+
+Steam-Post: `design/steam-post-1.1.0.txt`, Bilder: `design/steam-post-1.1.0-assets/`, Testbericht: `design/testbericht-1.1.0.html`.
+
 
 _Chef-Regel vom 25.08.: alles, was seit dem 1.0.2-Upload geändert wurde, landet hier, auch
 Halbfertiges (mit „in Arbeit" markiert). Beim nächsten Upload: Versions-Nummer festlegen, die
