@@ -669,6 +669,18 @@ export const fr: Record<string, string> = {
     "itemwiki.sourceLockedLegend": "Grisé = zone pas encore débloquée. Survolez une carte pour plus de détails.",
     "itemwiki.yes": "Oui",
     "itemwiki.no": "Non",
+    "itemwiki.sources": "Sources",
+    "itemwiki.sourcesCount": "{n} voies",
+    "itemwiki.usedForCount": "{n} recettes",
+    "itemwiki.selectedSource": "Source sélectionnée",
+    "itemwiki.selectedUse": "Usage sélectionné",
+    "itemwiki.requiresQty": "nécessite {n}×",
+    "itemwiki.sourceKind.dungeon": "Coffre de donjon",
+    "itemwiki.filter.all": "Tout",
+    "itemwiki.filter.weapons": "Armes",
+    "itemwiki.filter.armor": "Armure",
+    "itemwiki.filter.consumables": "Consommables",
+    "itemwiki.filter.other": "Autres",
 
     // Weapon type names
     "item.weaponType.dagger": "Dague",

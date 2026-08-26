@@ -668,6 +668,18 @@ export const ru: Record<string, string> = {
     "itemwiki.stackable": "Складируется",
     "itemwiki.yes": "Да",
     "itemwiki.no": "Нет",
+    "itemwiki.sources": "Источники",
+    "itemwiki.sourcesCount": "{n} способов",
+    "itemwiki.usedForCount": "{n} рецептов",
+    "itemwiki.selectedSource": "Выбранный источник",
+    "itemwiki.selectedUse": "Выбранное применение",
+    "itemwiki.requiresQty": "требуется {n}×",
+    "itemwiki.sourceKind.dungeon": "Сундук подземелья",
+    "itemwiki.filter.all": "Все",
+    "itemwiki.filter.weapons": "Оружие",
+    "itemwiki.filter.armor": "Броня",
+    "itemwiki.filter.consumables": "Расходники",
+    "itemwiki.filter.other": "Прочее",
 
     // Weapon type names
     "item.weaponType.dagger": "Кинжал",

@@ -669,6 +669,18 @@ export const zh: Record<string, string> = {
     "itemwiki.stackable": "可堆叠",
     "itemwiki.yes": "是",
     "itemwiki.no": "否",
+    "itemwiki.sources": "来源",
+    "itemwiki.sourcesCount": "{n} 种途径",
+    "itemwiki.usedForCount": "{n} 个配方",
+    "itemwiki.selectedSource": "已选来源",
+    "itemwiki.selectedUse": "已选用途",
+    "itemwiki.requiresQty": "需要 {n}×",
+    "itemwiki.sourceKind.dungeon": "地下城宝箱",
+    "itemwiki.filter.all": "全部",
+    "itemwiki.filter.weapons": "武器",
+    "itemwiki.filter.armor": "护甲",
+    "itemwiki.filter.consumables": "消耗品",
+    "itemwiki.filter.other": "其他",
 
     // Weapon type names
     "item.weaponType.dagger": "匕首",

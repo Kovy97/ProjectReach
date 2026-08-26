@@ -540,6 +540,29 @@ now serves all three combat styles equally.
 SLAYER_OMNI_SET, nur feste modifiers) und des 1-Boost-Guards (itemization-guards, Omni-Boost
 attack = ranged = magic); Hüllen-Pins §5 neu gemessen mit Begründung.*
 
+**Item-Wiki als Werkbank (Miras Entwurf „Forge Flow", 26.08.):** DE: Das Item-Wiki zeigt jetzt
+drei Tafeln nebeneinander: links die Quellen zum Anwählen (Monster, Rezepte, Läden, Truhen mit
+Chance), in der Mitte das Item groß mit Wert, Stapelbarkeit und Beschreibung, rechts alles, wofür es
+gebraucht wird, mit Filtern nach Waffen, Rüstung und Verbrauch. Unten fasst ein Band die gewählte
+Quelle und Verwendung zusammen, daneben der Knopf „Rezept öffnen". Zurück führt wie bisher zum
+vorherigen Item. / EN: The item wiki is now a three panel workbench: sources, the item, and its uses,
+with a summary band and a recipe button.
+
+*Dev-Notiz: ItemWikiModal.tsx + item-wiki.css nach CODEX/outbox/2026-08-26-wiki-modal-html/02-forge-flow.html;
+Datenlogik unverändert, Monster-Zeilen springen nicht mehr ins Kampfgebiet (Regel „Nur die zwei").
+Drei Spalten ab 1280 px, darunter zwei; Panels scrollen intern.*
+
+**Hauptmenü als Kriegstisch (Miras Entwurf „War Table", 26.08.):** DE: Das Hauptmenü zeigt jetzt
+eine gemalte Kulisse mit Kartentisch, links die Befehle Neues Spiel, Laden, Optionen, Credits und
+Beenden mit Emblemen, rechts das Dossier des zuletzt gespielten Charakters mit Porträt, Gesamtlevel,
+letztem Spiel, Spielzeit und einem großen Weiter-Knopf. Laden, Neues Spiel und Optionen öffnen sich
+im selben Rahmen, das Bild springt nicht. / EN: The main menu is now a war table: painted backdrop,
+command list on the left, the last save as a dossier with a big Continue on the right.
+
+*Dev-Notiz: MainMenu.tsx + menu.css nach CODEX/outbox/2026-08-26-mainmenu-itemstack-html/main-menu-02-war-table.html;
+Kulisse mainmenu_war_table.webp (q85, Original archiviert); Befehlsknöpfe nach Miras `.menu-action`,
+Panel-Knöpfe weiter btn-iron/shop-citadel-btn.*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

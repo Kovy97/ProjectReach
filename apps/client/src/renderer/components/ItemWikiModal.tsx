@@ -1,4 +1,4 @@
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
 import { isZoneUnlocked } from "@hearthforge/engine";
 import type { GameState, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
@@ -14,31 +14,27 @@ import { registerEscCloser } from "../util/escStack";
 import { formatDamage, formatDropPct, formatNum, formatSeconds1, formatStat } from "../util/format";
 import { ITEM_SOURCE_INDEX, ITEM_USED_FOR_INDEX, type ItemWikiSource, type ItemWikiUse } from "../util/itemWiki";
 import { jumpToAction } from "../util/skillJump";
-import { jumpToMonster } from "../util/monsterJump";
 
 const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
 // Chef-Redesign 26.08.2026 ("Emojis durch unsere neuen Achievement-Icons ersetzen"): die kleinen
-// Kennzeichnungs-Icons je Quelle-/Verwendungs-Zeilenart (Laden/Slayer-Turm/Belohnungsladen/Monster/
-// Dungeon) wechseln von rohen Emoji-Zeichen (teils ganz ohne Fallback-Kette) auf dieselbe gemalte
-// Embleme-Familie wie AchievementsPage.tsx' Kategorie-Icons (assets/icons/icon_ach_*.webp),
-// dieselbe Zuordnung: Laden/Wert = Münzsack, Kampf/Slayer = Klingen, Belohnungsladen = Siegelrolle,
-// Kiste/Dungeon = Truhe. Wo bereits ein echtes Skill-Icon existiert (`WikiSkillIcon` unten), bleibt
-// das unangetastet — nur dessen allerletzter Notfall-Fallback (kein Skill-/Sidebar-Icon gefunden)
-// zeigt jetzt ebenfalls ein gemaltes Emblem statt eines Text-Emoji.
+// Kennzeichnungs-Icons je Quelle-Zeilenart (Laden/Slayer-Turm/Belohnungsladen/Monster/Dungeon/
+// Rezept) wechseln von rohen Emoji-Zeichen auf dieselbe gemalte Embleme-Familie wie
+// AchievementsPage.tsx' Kategorie-Icons (assets/icons/icon_ach_*.webp). Zuordnung (Mira-Mockup
+// "02 Forge Flow", Chef-Auftrag 26.08.2026): Rezept = Amboss/Forge, Monster/Slayer = Klingen,
+// Belohnungsladen = Siegelrolle, Truhe/Dungeon/Laden = Kiste bzw. Münzsack.
 const SHOP_ICON_URL = getUiIcon("icon_ach_gold");
 const COMBAT_ICON_URL = getUiIcon("icon_ach_combat");
 const SCROLL_ICON_URL = getUiIcon("icon_ach_scroll");
 const CHEST_ICON_URL = getUiIcon("icon_ach_gift");
+const FORGE_ICON_URL = getUiIcon("icon_ach_forge");
 const GENERIC_ICON_URL = getUiIcon("icon_ach_star");
 // Story-Zonen-Gate (Task #350, Chef-Fund "Wiki-Links führen in gesperrte Zonen"): dasselbe
 // Schloss-Icon wie die Zonen-/Dungeon-Karten in CombatPage.tsx (`LOCK_ICON_URL`-Muster dort).
 const LOCK_ICON_URL = getUiIcon("icon_locked");
 
-/** Skill-Icon für eine Quelle-/Verwendungs-Zeile: Kampf-PNG → Sidebar-PNG → generisches Emblem
- *  (dieselbe 3-stufige Kette wie SkillsOverviewPage's `SkillIconImg`; letzte Stufe seit dem
- *  Chef-Redesign 26.08.2026 ein gemaltes Icon statt eines Text-Emoji — reine Sicherheitsnetz-Stufe,
- *  jede aktuell im Wiki vorkommende Skill-ID hat bereits ein echtes Bild über eine der ersten
- *  beiden Stufen). */
+/** Skill-Icon-Fallback-Kette (Kampf-PNG → Sidebar-PNG → generisches Emblem) — nur noch für die
+ *  Ernte-Quelle (Farming) gebraucht, seit Rezept-Quellen ein festes Amboss-Icon tragen (s.o.) und
+ *  Verwendungs-Knoten das Bild des erzeugten Items zeigen statt eines Skill-Icons. */
 function WikiSkillIcon({ skillId }: { skillId: string }): JSX.Element {
   const url = getSkillIcon(skillId) ?? getSidebarIcon(skillId) ?? GENERIC_ICON_URL;
   return url ? (
@@ -50,11 +46,8 @@ function WikiSkillIcon({ skillId }: { skillId: string }): JSX.Element {
 
 /**
  * Formatiert eine Drop-/Erfolgschance IMMER als Prozent (Chef-Entscheid 2026-07-09: „Das sollte
- * immer % sein" — die Bruch-Schreibweise 1/2500 ist raus). Delegiert an `formatDropPct` (Welle KK,
- * Grete-Retest #8b: Karte zeigte „0,10 %" — lokalisiert mit Komma —, das Wiki daneben „0.1%" mit
- * fest verdrahtetem Punkt; dieselbe Quelle wie die Dungeon-Beute-Vorschau/Bestiarium behebt beide
- * Symptome auf einen Schlag: gleiche Rundung UND locale-bewusstes Trennzeichen). Die „—"-Sonderrolle
- * für eine echte 0 bleibt lokal (Content-Bug-Signal, kein Fall für die geteilte Funktion).
+ * immer % sein"). Delegiert an `formatDropPct` (gleiche Quelle wie Karte/Bestiarium). Die „—"-
+ * Sonderrolle für eine echte 0 bleibt lokal (Content-Bug-Signal, kein Fall für die geteilte Funktion).
  */
 function pct(chance: number): string {
   if (chance <= 0) return "—"; // echte 0 wäre ein Content-Bug; ehrlich als „—" statt „0%"
@@ -62,12 +55,10 @@ function pct(chance: number): string {
 }
 
 /**
- * Typ-Zeile im Wiki-Kopf ("Zweihand-Schwert" / "Kopf" / "Verzehrbar" …), Redesign Chef-Auftrag
- * (großer Kopfblock statt kompaktem "?"-Tooltip-Ableger). Bewusst eine eigene schlanke Kopie von
- * ItemTooltip.tsx' `buildItemTypeLine` statt eines Re-Imports von dort: ItemTooltip.tsx importiert
- * bereits `openItemWikiModal` VON HIER (Wiki-„?"-Button) — ein Re-Import in die Gegenrichtung würde
- * einen Zirkelbezug zwischen den beiden Modulen öffnen. Die Funktion ist klein/stabil genug, um sie
- * hier eigenständig zu halten statt dieses Risiko einzugehen.
+ * Typ-Zeile im Wiki-Kopf ("Zweihand-Schwert" / "Kopf" / "Verzehrbar" …). Bewusst eine eigene
+ * schlanke Kopie von ItemTooltip.tsx' `buildItemTypeLine` statt eines Re-Imports von dort:
+ * ItemTooltip.tsx importiert bereits `openItemWikiModal` VON HIER — ein Re-Import in die
+ * Gegenrichtung würde einen Zirkelbezug öffnen.
  */
 function wikiTypeLine(item: ItemDef, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
   if (item.weaponType) return t(`item.weaponType.${item.weaponType}`);
@@ -82,10 +73,8 @@ function wikiTypeLine(item: ItemDef, t: (k: string) => string, tr: (v: Localized
 
 /**
  * Fundort einer Monster-Quelle, roh (Content-Ableitung, kein `t()`/`tr()` nötig) — wird erst beim
- * Rendern über `locationLabel` in einen Anzeigetext aufgelöst (Sprachwechsel-sicher, dieselbe Regel
- * wie die `LocalizedString`-Namen in itemWiki.ts). Drei Fundort-Arten: reine Zonen-Begegnung,
- * Dungeon-Welle (`MonsterDef.dungeonOnly`, gefunden über `DungeonDef.encounters`) und Slayer-Turm-
- * Etage (`MonsterDef.slayerFloor`).
+ * Rendern über `locationLabel` in einen Anzeigetext aufgelöst. Drei Fundort-Arten: reine Zonen-
+ * Begegnung, Dungeon-Welle (`MonsterDef.dungeonOnly`) und Slayer-Turm-Etage (`MonsterDef.slayerFloor`).
  */
 type MonsterLocation =
   | { type: "zone"; zoneId: string }
@@ -105,13 +94,10 @@ function resolveMonsterLocation(monsterId: string): MonsterLocation {
   return { type: "unknown" };
 }
 
-/** Sortier-Rang für die Fundort-Aufschlüsselung EINER Karte: Zone vor Dungeon vor Turm (die
- *  "ursprünglichste" Fundstelle zuerst) statt der zufälligen Content-Deklarationsreihenfolge. */
+/** Sortier-Rang für die Fundort-Aufschlüsselung EINER Karte: Zone vor Dungeon vor Turm. */
 const LOCATION_RANK: Record<MonsterLocation["type"], number> = { zone: 0, dungeon: 1, tower: 2, unknown: 3 };
 
-/** Löst einen `MonsterLocation` in seinen Anzeigetext auf — Turm-Etage exakt im Muster von
- *  SlayerPage.tsx' `towerFloorLabel` (`slayer.location.tower` + `{n}`-Platzhalter), Zone/Dungeon
- *  über die jeweilige Content-Definition + `tr()`. Nie hartkodiert. */
+/** Löst einen `MonsterLocation` in seinen Anzeigetext auf (Zone/Dungeon/Turm-Etage). Nie hartkodiert. */
 function locationLabel(loc: MonsterLocation, t: (k: string) => string, tr: (v: LocalizedString) => string): string {
   switch (loc.type) {
     case "zone": {
@@ -137,20 +123,18 @@ interface MonsterLocationEntry {
 
 /**
  * Eine (ggf. über mehrere Fundorte) zusammengeführte Monster-Quelle-Karte — s. `groupMonsterSources`
- * für den WARUM. Ersetzt `ItemWikiSource`'s `kind: "monster"` auf der Anzeige-Seite vollständig
- * (jede rohe "monster"-Quelle landet in genau einer Gruppe, auch wenn sie nur einen Fundort hat).
+ * für den WARUM. Ersetzt `ItemWikiSource`'s `kind: "monster"` auf der Anzeige-Seite vollständig.
  */
 interface MonsterGroupSource {
   kind: "monsterGroup";
   name: LocalizedString;
-  /** Klick-/Zonen-Gate-Ziel: die reine Zonen-Variante, falls vorhanden (nach `LOCATION_RANK`-Sortierung
-   *  steht sie an erster Stelle) — sonst best-effort die erste bekannte Fundstelle (`jumpToMonster`
-   *  selbst bleibt für Dungeon-/Turm-Ids ein reiner Seitenwechsel ohne Karten-Highlight, s. dortiges
-   *  JSDoc + CombatPage.tsx — kein Absturz, nur kein Highlight). */
+  /** Klick-Ziel bei einem evtl. künftigen Zonen-Sprung — aktuell nur für den Sperr-Status genutzt:
+   *  die reine Zonen-Variante, falls vorhanden (nach `LOCATION_RANK`-Sortierung steht sie an erster
+   *  Stelle) — sonst best-effort die erste bekannte Fundstelle. */
   primaryMonsterId: string;
   locations: MonsterLocationEntry[];
   /** true, wenn jede Fundstelle dieselbe Chance trägt — dann genügt EIN Prozentwert auf der Karte
-   *  statt der Fundort-Aufschlüsselung (Chef-Vorgabe 2026-08-25). Bei nur einem Fundort immer true. */
+   *  statt der Fundort-Aufschlüsselung. Bei nur einem Fundort immer true. */
   sameChance: boolean;
 }
 
@@ -158,18 +142,12 @@ type DisplaySource = ItemWikiSource | MonsterGroupSource;
 
 /**
  * Führt "monster"-Quellen mit identischem Anzeige-Namen zu EINER Karte zusammen (Chef-Befund
- * 2026-08-25: „Skelettkrieger 90% erscheint zweimal in QUELLE", ebenso Skelett-Bogenschütze/
- * -Schlächter/-Eismagier/Nekromantenfürst). Ursache: dieselbe Kreatur lebt im Content oft als
- * mehrere unabhängige `MonsterDef`-Einträge mit GLEICHEM `name`, aber eigener MonsterId — z.B.
- * `skeleton_warrior` (Zone Krypta) + `dg_skeleton_warrior` (Dungeon-Welle crypt_depths,
- * `dungeonOnly: true`) + `tower_skeleton_warrior` (Slayer-Turm Etage 2, `slayerFloor: 2`), s.
- * packages/content/src/index.ts. `buildIndices()` (util/itemWiki.ts) indiziert strikt über die
- * MonsterId — für sie sind das drei unabhängige Quellen. Die Zusammenführung passiert bewusst NUR
- * hier auf der Anzeige-Seite (util/itemWiki.ts bleibt unverändert — dortiger Index wird auch von
- * evtl. anderen Aufrufern konsumiert). Gruppierschlüssel ist `name.en`, die einzige garantiert
- * vorhandene, sprachunabhängige Identität einer `LocalizedString` — ein Sprachwechsel darf den
- * Schlüssel nicht auseinanderreißen. Alle anderen Quellen-Arten (shop/action/dungeon/crop/…) laufen
- * unverändert durch.
+ * 2026-08-25: „Skelettkrieger 90% erscheint zweimal in QUELLE"). Ursache: dieselbe Kreatur lebt im
+ * Content oft als mehrere unabhängige `MonsterDef`-Einträge mit GLEICHEM `name`, aber eigener
+ * MonsterId (Zone/Dungeon-Welle/Turm-Etage, s. packages/content/src/index.ts). Die Zusammenführung
+ * passiert bewusst NUR hier auf der Anzeige-Seite. Gruppierschlüssel ist `name.en`, die einzige
+ * garantiert vorhandene, sprachunabhängige Identität einer `LocalizedString`. Alle anderen Quellen-
+ * Arten (shop/action/dungeon/crop/…) laufen unverändert durch.
  */
 function groupMonsterSources(sources: ItemWikiSource[]): DisplaySource[] {
   const result: DisplaySource[] = [];
@@ -200,24 +178,112 @@ function groupMonsterSources(sources: ItemWikiSource[]): DisplaySource[] {
   return result;
 }
 
+/** Icon je Quelle-Art (Chef-Auftrag "02 Forge Flow" 26.08.2026: "jede Quelle bekommt ein Icon nach
+ *  Art — Rezept=forge, Monster=combat, Truhe/Dungeon=gift/chest, Shop=bestehendes Shop-Icon,
+ *  Slayer=combat, Quest-Laden=scroll"). Ernte bleibt beim echten Farming-Skill-Icon. */
+function sourceIconNode(entry: DisplaySource): JSX.Element {
+  const img = (url: string | null): JSX.Element =>
+    url ? <img loading="lazy" decoding="async" src={url} alt="" /> : <span className="iwk-row-icon-emoji" aria-hidden="true" />;
+  switch (entry.kind) {
+    case "monsterGroup":
+    case "slayerShop":
+      return img(COMBAT_ICON_URL);
+    case "action":
+      return img(FORGE_ICON_URL);
+    case "dungeon":
+      return img(CHEST_ICON_URL);
+    case "shop":
+      return img(SHOP_ICON_URL);
+    case "tokenShop":
+      return img(SCROLL_ICON_URL);
+    case "crop":
+      return <WikiSkillIcon skillId="farming" />;
+    default:
+      return img(GENERIC_ICON_URL);
+  }
+}
+
+interface SourceMeta {
+  name: string;
+  subline: string;
+  value: JSX.Element;
+}
+
 /**
- * Trägt die einzige `useGameState()`-Abhängigkeit der Quelle-Liste (Task #350 Zonen-Gate-Check
- * je Monster-Zeile, s. `SourceRow`). Bewusst ALS EIGENE KOMPONENTE statt `useGameState()` direkt
- * in `ItemWikiModalOverlay` (die app-weit gemountet ist, s. App.tsx) — `useGameState()`/
- * LiveContext re-rendert bei JEDEM 10-Hz-Tick (GameContext.tsx-JSDoc); die Overlay-Komponente
- * selbst bliebe sonst dauerhaft im 10-Hz-Takt, auch wenn kein Wiki-Modal offen ist. Diese
- * Komponente existiert nur, SOLANGE das Modal offen ist (Aufrufer rendert sie innerhalb des
- * `if (!payload) return null`-Zweigs) — der 10-Hz-Re-Render läuft also nur während der Spieler
- * das Wiki tatsächlich ansieht, exakt wie die Perf-Welle-Konvention andernorts (s. z.B.
- * EliteMiniWindow's `activeEliteSelector`).
+ * Anzeige-Inhalt (Name/Unterzeile/Wert) EINER Quelle-Karte — von der Zeile im QUELLEN-Panel UND
+ * vom Fußband für die "Ausgewählte Quelle" gemeinsam genutzt (Chef-Auftrag: "Fußband zeigt Name,
+ * Unterzeile (Ort/Skill/Laden) und Chance"). Reine Text-/JSX-Ableitung, kein Hook — darf aus jeder
+ * Komponente heraus aufgerufen werden.
  */
-function SourceList({ sources }: { sources: DisplaySource[] }): JSX.Element {
+function sourceMeta(entry: DisplaySource, t: (k: string) => string, tr: (v: LocalizedString) => string): SourceMeta {
+  switch (entry.kind) {
+    case "monsterGroup": {
+      const name = tr(entry.name);
+      if (entry.sameChance) {
+        const loc = entry.locations[0]!;
+        return { name, subline: locationLabel(loc.location, t, tr), value: <>{pct(loc.chance)}</> };
+      }
+      // Mehrere Fundorte mit UNTERSCHIEDLICHER Chance: Chef-Vorgabe "Aufschlüsselung wie bisher in
+      // der Unterzeile" — dieselbe Fundort+Chance-Liste, die vorher unter der aktiven Zeile stand.
+      const subline = entry.locations.map((l) => `${locationLabel(l.location, t, tr)} ${pct(l.chance)}`).join(" · ");
+      return { name, subline, value: <>{pct(entry.locations[0]!.chance)}</> };
+    }
+    case "action": {
+      const skill = content.skills[entry.skillId];
+      return { name: tr(entry.name), subline: skill ? tr(skill.name) : entry.skillId, value: <>{pct(entry.chance)}</> };
+    }
+    case "dungeon":
+      return { name: tr(entry.name), subline: t("itemwiki.sourceKind.dungeon"), value: <>{pct(entry.chance)}</> };
+    case "crop":
+      return { name: tr(entry.name), subline: "", value: <>100%</> };
+    case "shop":
+      return {
+        name: t("itip.sourceShop"),
+        subline: "",
+        value: (
+          <>
+            {formatNum(entry.cost)}
+            {GOLD_ICON_URL && <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />}
+          </>
+        ),
+      };
+    case "slayerShop":
+      return { name: t("nav.slayer"), subline: "", value: <>{formatNum(entry.cost)} {t("slayer.points")}</> };
+    case "tokenShop":
+      return {
+        name: t("quests.shop.title"),
+        subline: "",
+        value: (
+          <>
+            {formatNum(entry.tokenCost)}
+            {SCROLL_ICON_URL && <img loading="lazy" decoding="async" src={SCROLL_ICON_URL} alt="" className="ui-icon" />}
+          </>
+        ),
+      };
+    default:
+      return { name: "", subline: "", value: <></> };
+  }
+}
+
+/**
+ * Trägt die einzige `useGameState()`-Abhängigkeit der Quelle-Liste (Task #350 Zonen-Gate-Check je
+ * Monster-Zeile). Bewusst ALS EIGENE KOMPONENTE statt `useGameState()` direkt in
+ * `ItemWikiModalOverlay` — `useGameState()`/LiveContext re-rendert bei JEDEM 10-Hz-Tick, die
+ * Overlay-Komponente selbst bliebe sonst dauerhaft im 10-Hz-Takt, auch wenn kein Wiki offen ist.
+ * Existiert nur, SOLANGE das Modal offen ist.
+ */
+function SourceList({
+  sources,
+  selectedIndex,
+  onSelect,
+}: {
+  sources: DisplaySource[];
+  selectedIndex: number;
+  onSelect: (i: number) => void;
+}): JSX.Element {
   const state = useGameState();
   const { t } = useI18n();
-  // Legende NUR einblenden, wenn dieses Item tatsächlich eine noch gesperrte Monster-Quelle hat
-  // (Chef-Befund 2026-08-25: Grau/Weiß-Abstufung ohne Erklärung war „unklar" — die Abstufung IST
-  // das Story-Zonen-Gate, Task #350, s. `MonsterGroupRow`; bei den meisten Items gibt es aber gar
-  // keine gesperrte Quelle, dort bliebe eine dauerhafte Legende reine Platzverschwendung).
+  // Legende NUR einblenden, wenn dieses Item tatsächlich eine noch gesperrte Monster-Quelle hat.
   const hasLockedMonster = sources.some((s) => {
     if (s.kind !== "monsterGroup") return false;
     const monster = content.monsters[s.primaryMonsterId];
@@ -233,9 +299,9 @@ function SourceList({ sources }: { sources: DisplaySource[] }): JSX.Element {
           {t("itemwiki.sourceLockedLegend")}
         </div>
       )}
-      <ul className="iwk-list">
+      <ul className="iwk-source-list">
         {sources.map((s, i) => (
-          <SourceRow key={i} entry={s} state={state} />
+          <SourceRowItem key={i} entry={s} index={i} isActive={i === selectedIndex} onSelect={onSelect} state={state} />
         ))}
       </ul>
     </>
@@ -243,251 +309,173 @@ function SourceList({ sources }: { sources: DisplaySource[] }): JSX.Element {
 }
 
 /**
- * Eine zusammengeführte Monster-Quelle-Karte (`kind: "monsterGroup"`, s. `groupMonsterSources`).
- * Eigene Komponente statt eines weiteren `SourceRow`-Zweigs, weil der Zonen-Gate-Tooltip jetzt
- * `useCitadelTip` braucht (Chef-Auftrag „HoverTip/CitadelTip statt natives `title`" — `<li>` liegt
- * außerhalb von `HoverTip`s Tag-Liste (nur span/div), also der direkte Weg wie CombatPage.tsx'
- * `DiffNameLabel` ihn schon vormacht) — ein Hook darf nicht bedingt in `SourceRow`s großem If/Else
- * hängen, deshalb hier unbedingt an der Komponentenwurzel.
+ * Eine Zeile im QUELLEN-Panel (Mira-Mockup "02 Forge Flow"). Chef-Redesign 26.08.2026: der Klick
+ * auf die Zeile WÄHLT sie nur noch aus (Fußband zeigt Details) — er springt NICHT mehr direkt weg.
+ * Springende Navigation bleibt auf genau zwei Stellen beschränkt (Chef-Regel "nur die zwei"): der
+ * "Rezept öffnen"-Knopf hier IN der Rezept-Zeile (`.iwk-open-recipe`, Datenlogik bleibt unverändert)
+ * und der gleichnamige Knopf im Fußband für die ausgewählte Verwendung. Der frühere direkte
+ * Zeilen-Klick-Sprung zum Kampfgebiet (Monster-Quelle) entfällt damit — die Zone-Sperr-Anzeige
+ * (Badge + Tooltip) bleibt als reine Information stehen, blockiert aber nichts mehr.
  */
-function MonsterGroupRow({ entry, state }: { entry: MonsterGroupSource; state: GameState }): JSX.Element {
+function SourceRowItem({
+  entry,
+  index,
+  isActive,
+  onSelect,
+  state,
+}: {
+  entry: DisplaySource;
+  index: number;
+  isActive: boolean;
+  onSelect: (i: number) => void;
+  state: GameState;
+}): JSX.Element {
   const { t, tr } = useI18n();
   const { tip, open, close } = useCitadelTip<true>();
-  const monster = content.monsters[entry.primaryMonsterId];
-  const zoneLocked = !!monster?.zone && !isZoneUnlocked(state, content, monster.zone);
-  // Aufschlüsselung je Fundort NUR, wenn die Chance tatsächlich variiert (Chef-Vorgabe) — bei
-  // gleicher Chance an jedem Fundort (der Regelfall im bestehenden Content) bleibt die Karte eine
-  // einzeilige Standard-Zeile mit einem Prozentwert.
-  const breakdown = !entry.sameChance;
+  const meta = sourceMeta(entry, t, tr);
+  const monster = entry.kind === "monsterGroup" ? content.monsters[entry.primaryMonsterId] : undefined;
+  const zoneLocked = entry.kind === "monsterGroup" && !!monster?.zone && !isZoneUnlocked(state, content, monster.zone);
+  const select = (): void => onSelect(index);
 
-  const body = (
-    <>
-      <div className="iwk-row-main">
-        {COMBAT_ICON_URL
-          ? <img loading="lazy" decoding="async" src={COMBAT_ICON_URL} alt="" className="iwk-row-icon-img" />
-          : <span className="iwk-row-icon-emoji" aria-hidden="true" />}
-        <span className="iwk-row-name">{tr(entry.name)}</span>
-        {zoneLocked && (
-          <span className="iwk-row-lock-badge" aria-hidden="true">
-            {LOCK_ICON_URL && <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />}
-          </span>
-        )}
-        {!breakdown && <span className="iwk-row-val">{pct(entry.locations[0]!.chance)}</span>}
-      </div>
-      {breakdown && (
-        <div className="iwk-row-sublocations">
-          {entry.locations.map((loc, i) => (
-            <span key={loc.monsterId}>
-              {i > 0 && " · "}
-              {locationLabel(loc.location, t, tr)} {pct(loc.chance)}
-            </span>
-          ))}
-        </div>
-      )}
-    </>
-  );
-
-  if (zoneLocked) {
-    // Story-Zonen-Gate (Task #350, Chef-Fund "Über Wiki-Links können wir in Gebiete rein, wo wir
-    // noch nicht rein sollten"): der Eintrag bleibt SICHTBAR (keine Spoiler-Politik-Änderung —
-    // Bestiarium/Wiki zeigen weiter alle Quellen), aber für eine gesperrte Zone ist die Karte nicht
-    // klickbar: gedimmt + Schloss-Icon + Tooltip, exakt das Muster der Zonen-/Dungeon-Karten
-    // (`zone-card-story-locked`, s. CombatPage.tsx) und des Bestiarium-„Kämpfen"-Buttons
-    // (BestiaryPage.tsx `zoneLocked`). Tooltip jetzt als `CitadelTip` (Chef-Auftrag, s. Komponenten-
-    // JSDoc oben) statt eines nativen `title` — konsistent mit dem Rest des Repos UND lesbar, statt
-    // nur bei zufälligem Hover als Browser-Standard-Tooltip aufzupoppen.
-    const zoneDef = content.zones.find((z) => z.id === monster!.zone);
-    const gateQuest = zoneDef?.requiresQuest
-      ? content.quests.find((q) => q.id === zoneDef.requiresQuest)
-      : undefined;
-    const gateHint = t("combat.zoneGate.requires").replace("{name}", gateQuest ? tr(gateQuest.name) : t("app.unknown"));
-    return (
-      <li
-        className={`iwk-row iwk-row-locked${breakdown ? " iwk-row-stacked" : ""}`}
-        tabIndex={0}
-        onMouseEnter={(e) => open(true, e.currentTarget)}
-        onMouseLeave={close}
-        onFocus={(e) => open(true, e.currentTarget)}
-        onBlur={close}
-      >
-        {body}
-        {tip && <CitadelTip rect={tip.rect}>{gateHint}</CitadelTip>}
-      </li>
-    );
+  let gateHint: string | null = null;
+  if (zoneLocked && monster?.zone) {
+    const zoneDef = content.zones.find((z) => z.id === monster.zone);
+    const gateQuest = zoneDef?.requiresQuest ? content.quests.find((q) => q.id === zoneDef.requiresQuest) : undefined;
+    gateHint = t("combat.zoneGate.requires").replace("{name}", gateQuest ? tr(gateQuest.name) : t("app.unknown"));
   }
+
   return (
     <li
-      className={`iwk-row iwk-row-clickable${breakdown ? " iwk-row-stacked" : ""}`}
+      className={`iwk-source-node${isActive ? " is-active" : ""}${zoneLocked ? " iwk-source-node-locked" : ""}`}
       role="button"
       tabIndex={0}
-      title={t("itemwiki.jumpToMonster")}
-      onClick={() => {
-        closeItemWikiModal();
-        jumpToMonster(entry.primaryMonsterId);
-      }}
+      onClick={select}
       onKeyDown={(e) => {
-        if (e.key !== "Enter" && e.key !== " ") return;
-        closeItemWikiModal();
-        jumpToMonster(entry.primaryMonsterId);
+        if (e.key === "Enter" || e.key === " ") select();
       }}
+      onMouseEnter={zoneLocked ? (e) => open(true, e.currentTarget) : undefined}
+      onMouseLeave={zoneLocked ? close : undefined}
+      onFocus={zoneLocked ? (e) => open(true, e.currentTarget) : undefined}
+      onBlur={zoneLocked ? close : undefined}
     >
-      {body}
-    </li>
-  );
-}
-
-function SourceRow({ entry, state }: { entry: DisplaySource; state: GameState }): JSX.Element {
-  const { t, tr } = useI18n();
-  if (entry.kind === "shop") {
-    return (
-      <li className="iwk-row iwk-row-shop">
-        {SHOP_ICON_URL && <img loading="lazy" decoding="async" src={SHOP_ICON_URL} alt="" className="iwk-row-icon-img" />}
-        <span className="iwk-row-name">{t("itip.sourceShop")}</span>
-        <span className="iwk-row-val">
-          {formatNum(entry.cost)}
-          {GOLD_ICON_URL && <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />}
-        </span>
-      </li>
-    );
-  }
-  if (entry.kind === "slayerShop") {
-    return (
-      <li className="iwk-row iwk-row-shop">
-        {COMBAT_ICON_URL && <img loading="lazy" decoding="async" src={COMBAT_ICON_URL} alt="" className="iwk-row-icon-img" />}
-        <span className="iwk-row-name">{t("nav.slayer")}</span>
-        <span className="iwk-row-val">{formatNum(entry.cost)} {t("slayer.points")}</span>
-      </li>
-    );
-  }
-  if (entry.kind === "tokenShop") {
-    return (
-      <li className="iwk-row iwk-row-shop">
-        {SCROLL_ICON_URL && <img loading="lazy" decoding="async" src={SCROLL_ICON_URL} alt="" className="iwk-row-icon-img" />}
-        <span className="iwk-row-name">{t("quests.shop.title")}</span>
-        <span className="iwk-row-val">
-          {formatNum(entry.tokenCost)}
-          {SCROLL_ICON_URL && <img loading="lazy" decoding="async" src={SCROLL_ICON_URL} alt="" className="ui-icon" />}
-        </span>
-      </li>
-    );
-  }
-  if (entry.kind === "crop") {
-    // Ernte-Ertrag: Farming-Skill-Icon + Beet-Name; garantierter Ertrag → 100 %.
-    return (
-      <li className="iwk-row">
-        <WikiSkillIcon skillId="farming" />
-        <span className="iwk-row-name">{tr(entry.name)}</span>
-        <span className="iwk-row-val">100%</span>
-      </li>
-    );
-  }
-  if (entry.kind === "action") {
-    // Wiki→Rezept-Sprung (Chef-Auftrag, Beispiel "Sinew Bowstring" → Quelle "Twist Bowstring"):
-    // die erzeugende Aktion ist klickbar — schließt das Modal, springt zur Skill-Seite, klappt
-    // die Kategorie auf und hebt die Rezeptkarte kurz hervor (s. util/skillJump.ts + SkillPage.tsx).
-    return (
-      <li
-        className="iwk-row iwk-row-clickable"
-        role="button"
-        tabIndex={0}
-        title={t("itemwiki.jumpToRecipe")}
-        onClick={() => {
-          closeItemWikiModal();
-          jumpToAction(entry.actionId);
-        }}
-        onKeyDown={(e) => {
-          if (e.key !== "Enter" && e.key !== " ") return;
-          closeItemWikiModal();
-          jumpToAction(entry.actionId);
-        }}
-      >
-        <WikiSkillIcon skillId={entry.skillId} />
-        <span className="iwk-row-name">{tr(entry.name)}</span>
-        <span className="iwk-row-val">{pct(entry.chance)}</span>
-        {/* Chef 25.08.2026: der Sprung war nur als Hover-Titel sichtbar; jetzt ein Knopf in der Zeile,
-            auf eigener Zeile (Umbruch-Element), damit der Aktionsname in der schmalen Karte nicht
-            buchstabenweise bricht. */}
-        <span className="iwk-row-break" aria-hidden="true" />
-        <button
-          type="button"
-          className="btn-iron btn-iron--sm iwk-open-recipe"
-          onClick={(e) => {
-            e.stopPropagation();
-            closeItemWikiModal();
-            jumpToAction(entry.actionId);
-          }}
-        >
-          {t("itemwiki.openRecipe")}
-        </button>
-      </li>
-    );
-  }
-  if (entry.kind === "monsterGroup") {
-    // Wiki→Kampfgebiet-Sprung + Story-Zonen-Gate: ausgelagert nach `MonsterGroupRow` (s. dortiges
-    // JSDoc) — die Karte kann jetzt mehrere Fundorte EINER Kreatur zusammenfassen (Chef-Befund
-    // 2026-08-25 "Skelettkrieger doppelt", s. `groupMonsterSources`) und braucht dafür einen Hook
-    // (`useCitadelTip`) an fester Komponentenwurzel statt in diesem If/Else.
-    return <MonsterGroupRow entry={entry} state={state} />;
-  }
-  // dungeon — dieselbe Zeilenform, nicht klickbar (Chef-Scope, s. Kommentar oben).
-  return (
-    <li className="iwk-row">
-      {CHEST_ICON_URL && <img loading="lazy" decoding="async" src={CHEST_ICON_URL} alt="" className="iwk-row-icon-img" />}
-      <span className="iwk-row-name">{tr(entry.name)}</span>
-      <span className="iwk-row-val">{pct(entry.chance)}</span>
-    </li>
-  );
-}
-
-function UseRow({ entry, onOpenOutput }: { entry: ItemWikiUse; onOpenOutput: (itemId: string) => void }): JSX.Element {
-  const { tr, t } = useI18n();
-  const outputImg = getItemImage(entry.outputItemId);
-  const outputItem = content.items[entry.outputItemId];
-  // Wiki→Rezept-Sprung: nur für ECHTE Aktionen klickbar — Farming-Ernte-Einträge tragen eine
-  // synthetische `crop:<id>`-ID ohne content.actions-Gegenstück (s. util/itemWiki.ts buildIndices)
-  // und haben keine Rezeptkarte auf einer SkillPage; dort bleibt dieser Teil reiner Text.
-  const isRealAction = !!content.actions[entry.actionId];
-  const jump = (): void => {
-    closeItemWikiModal();
-    jumpToAction(entry.actionId);
-  };
-  return (
-    <li className="iwk-row iwk-row-use">
-      {isRealAction ? (
-        <span
-          className="iwk-use-source iwk-row-clickable"
-          role="button"
-          tabIndex={0}
-          title={t("itemwiki.jumpToRecipe")}
-          onClick={jump}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") jump();
-          }}
-        >
-          <WikiSkillIcon skillId={entry.skillId} />
-          <span className="iwk-row-name">{tr(entry.actionName)}</span>
-        </span>
-      ) : (
+      <span className="iwk-source-icon" aria-hidden="true">
+        {sourceIconNode(entry)}
+      </span>
+      <span className="iwk-source-text">
+        <strong className="iwk-source-name">
+          {meta.name}
+          {zoneLocked && (
+            <span className="iwk-row-lock-badge" aria-hidden="true">
+              {LOCK_ICON_URL && <img loading="lazy" decoding="async" src={LOCK_ICON_URL} alt="" className="ui-icon" />}
+            </span>
+          )}
+        </strong>
+        {meta.subline && <small className="iwk-source-subline">{meta.subline}</small>}
+      </span>
+      <b className="iwk-source-value">{meta.value}</b>
+      {entry.kind === "action" && (
         <>
-          <WikiSkillIcon skillId={entry.skillId} />
-          <span className="iwk-row-name">{tr(entry.actionName)}</span>
+          <span className="iwk-row-break" aria-hidden="true" />
+          <button
+            type="button"
+            className="btn-iron btn-iron--sm iwk-open-recipe"
+            onClick={(e) => {
+              e.stopPropagation();
+              closeItemWikiModal();
+              jumpToAction(entry.actionId);
+            }}
+          >
+            {t("itemwiki.openRecipe")}
+          </button>
         </>
       )}
-      <span className="iwk-use-arrow" aria-hidden="true">&#9658;</span>
-      <button
-        type="button"
-        className={`iwk-use-output ${rarityClass(outputItem?.rarity)}`}
-        onClick={() => onOpenOutput(entry.outputItemId)}
-        title={t("itemwiki.openAria")}
-      >
-        {outputImg ? (
-          <img loading="lazy" decoding="async" src={outputImg} alt="" className="pixelart iwk-use-output-img" />
-        ) : outputItem?.icon ? (
-          <span className="iwk-row-icon-emoji">{outputItem.icon}</span>
-        ) : null}
-        {tr(entry.outputName)}
-      </button>
+      {zoneLocked && tip && gateHint && <CitadelTip rect={tip.rect}>{gateHint}</CitadelTip>}
     </li>
+  );
+}
+
+/** Grob-Kategorie einer Verwendung nach dem AUSGABE-Item (für die Filter-Chips im VERWENDET-FÜR-
+ *  Panel — Chef-Auftrag: nur einblenden, wenn ≥2 Arten vorkommen). */
+type UseCategory = "weapons" | "armor" | "consumables" | "other";
+
+function categorizeItem(item: ItemDef | undefined): UseCategory {
+  if (!item) return "other";
+  if (item.type === "equipment" && item.weaponStyle) return "weapons";
+  if (item.type === "equipment") return "armor";
+  if (item.type === "consumable") return "consumables";
+  return "other";
+}
+
+interface UseMeta {
+  use: ItemWikiUse;
+  outputItem: ItemDef | undefined;
+  category: UseCategory;
+  /** Menge DIESES Items, die ein Durchlauf des Rezepts verbraucht (Chef-Mockup: "2×"-Abzeichen). */
+  qty: number;
+  levelRequired: number | undefined;
+  /** false bei synthetischen Farming-Erträgen (`crop:<id>`, kein echtes `ActionDef`) — dafür gibt
+   *  es keine Rezeptkarte zum Aufspringen (s. util/itemWiki.ts buildIndices). */
+  isRealAction: boolean;
+}
+
+function buildUsesMeta(uses: ItemWikiUse[], currentItemId: string): UseMeta[] {
+  return uses.map((u) => {
+    const outputItem = content.items[u.outputItemId];
+    const action = content.actions[u.actionId];
+    const isRealAction = !!action;
+    const qty = action?.inputs?.find((i) => i.itemId === currentItemId)?.qty ?? 1;
+    let levelRequired = action?.levelRequired;
+    if (!isRealAction && u.actionId.startsWith("crop:")) {
+      const crop = content.crops?.[u.actionId.slice(5)];
+      levelRequired = crop?.levelRequired;
+    }
+    return { use: u, outputItem, category: categorizeItem(outputItem), qty, levelRequired, isRealAction };
+  });
+}
+
+/**
+ * Ein Knoten im VERWENDET-FÜR-Raster (Mira-Mockup "02 Forge Flow"): zeigt das ERZEUGTE Item (Bild +
+ * Name + Menge), nicht mehr die erzeugende Aktion selbst — die Rezept-Details (Skill/Stufe/Menge)
+ * wandern ins Fußband, sobald der Knoten ausgewählt ist. Chef-Vorgabe "Verhalten": ein Klick auf
+ * einen noch nicht aktiven Knoten wählt ihn nur aus; ein weiterer Klick auf den BEREITS aktiven
+ * Knoten (= "Doppelklick/zweiter Klick", ohne separaten `dblclick`-Listener — zwei normale Klicks
+ * hintereinander liefern exakt dasselbe Ergebnis) springt weiter ins Wiki des erzeugten Items
+ * (bestehende `openItemWikiModal`-Verlaufslogik, unverändert).
+ */
+function UseNode({
+  meta,
+  isActive,
+  onSelect,
+  onOpenOutput,
+}: {
+  meta: UseMeta;
+  isActive: boolean;
+  onSelect: () => void;
+  onOpenOutput: () => void;
+}): JSX.Element {
+  const { t, tr } = useI18n();
+  const outputImg = meta.outputItem ? getItemImage(meta.outputItem.id) : null;
+  return (
+    <button
+      type="button"
+      className={`iwk-use-node ${rarityClass(meta.outputItem?.rarity)}${isActive ? " is-active" : ""}`}
+      title={isActive ? t("itemwiki.openAria") : undefined}
+      onClick={() => {
+        if (isActive) {
+          onOpenOutput();
+          return;
+        }
+        onSelect();
+      }}
+    >
+      {outputImg ? (
+        <img loading="lazy" decoding="async" src={outputImg} alt="" className="pixelart iwk-use-node-img" />
+      ) : meta.outputItem?.icon ? (
+        <span className="iwk-row-icon-emoji">{meta.outputItem.icon}</span>
+      ) : null}
+      <span className="iwk-use-node-name">{tr(meta.use.outputName)}</span>
+      <em className="iwk-use-node-qty">{meta.qty}×</em>
+    </button>
   );
 }
 
@@ -512,9 +500,6 @@ const store = {
   get: (): WikiPayload | null => current,
 };
 
-/** Öffnet das Item-Wiki-Modal (aus dem "?"-Button im Tooltip ODER dem Klick auf einen Verwendungs-
- *  Zielitem in einem bereits offenen Wiki-Modal — s. `UseRow`). Ersetzt einen evtl. bereits offenen
- *  Wiki-Eintrag direkt (kein Stack), spiegelbildlich zu `useItemTooltip().pin`. */
 /**
  * Verlauf (Chef 25.08.2026, aus dem Spieler-Vorschlag "Wiki wie ein Browser"): wer sich von Item zu
  * Item klickt (Verwendungs-Ziel, Zutat), bekommt oben links "Zurück". Der Stapel lebt nur, solange
@@ -522,6 +507,9 @@ const store = {
  */
 let history: Array<{ itemId: string; instance?: ItemInstance }> = [];
 
+/** Öffnet das Item-Wiki-Modal (aus dem "?"-Button im Tooltip ODER dem Klick auf einen Verwendungs-
+ *  Zielitem in einem bereits offenen Wiki-Modal — s. `UseNode`). Ersetzt einen evtl. bereits offenen
+ *  Wiki-Eintrag direkt (kein Stack), spiegelbildlich zu `useItemTooltip().pin`. */
 export function openItemWikiModal(itemId: string, instance?: ItemInstance): void {
   if (current && current.itemId !== itemId) history.push(current);
   current = { itemId, instance };
@@ -545,12 +533,17 @@ export function closeItemWikiModal(): void {
 
 /**
  * Einmalig in App montiert (neben `ItemTooltipOverlay`): rendert das Item-Wiki-Modal, sobald
- * `openItemWikiModal` aufgerufen wurde. Citadel-Modal-Grundgerüst (`.modal-overlay`/`.modal`, wie
- * `PortraitPickerModal`) + eigener `iwk-*`-Namespace für den Inhalt (styles/item-wiki.css).
+ * `openItemWikiModal` aufgerufen wurde.
+ *
+ * Layout (Redesign nach Mira-Mockup "02 Forge Flow", Chef-Auftrag 26.08.2026): Titelleiste (Zurück ·
+ * ITEM WIKI · Schließen) → drei Panels nebeneinander (Quellen · Item-Held · Verwendet für) → Fußband
+ * mit der ausgewählten Quelle/Verwendung + "Rezept öffnen". Quellen/Verwendungen sind jetzt AUSWAHL-
+ * Listen (erster Eintrag vorausgewählt) statt Sofort-Sprung-Listen — s. `SourceRowItem`/`UseNode`.
  */
 export function ItemWikiModalOverlay(): JSX.Element | null {
   const payload = useSyncExternalStore(store.subscribe, store.get);
   const { t, tr, locale } = useI18n();
+  const item = payload ? content.items[payload.itemId] : undefined;
 
   // Escape schließt über die zentrale Prioritäts-Registry (util/escStack.ts, Priorität "modal" —
   // ein gepinntes ItemTooltip darunter schließt zuerst, s. dortiges JSDoc), NICHT über einen
@@ -560,9 +553,41 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
     return registerEscCloser("modal", closeItemWikiModal);
   }, [payload]);
 
-  if (!payload) return null;
-  const item = content.items[payload.itemId];
-  if (!item) return null;
+  // Rohe Quellen/Verwendungen erst zu Anzeige-Karten aufbereiten (dieselbe Kreatur taucht im
+  // Content oft mehrfach mit eigener MonsterId auf, s. `groupMonsterSources`-JSDoc). Leere Arrays
+  // ohne Item, DAMIT alle Hooks unten unabhängig vom frühen `return null` unten aufgerufen werden
+  // (Rules of Hooks — der eigentliche Null-Guard steht bewusst erst NACH allen Hooks).
+  const sources = item ? groupMonsterSources(ITEM_SOURCE_INDEX.get(item.id) ?? []) : [];
+  const uses = item ? ITEM_USED_FOR_INDEX.get(item.id) ?? [] : [];
+  const usesMeta = item ? buildUsesMeta(uses, item.id) : [];
+
+  const [selSrcIdx, setSelSrcIdx] = useState(0);
+  const [selUseIdx, setSelUseIdx] = useState(0);
+  const [filter, setFilter] = useState<UseCategory | "all">("all");
+
+  // Chef-Vorgabe "Verhalten": beim Wechsel des angezeigten Items (Öffnen, Zurück, Sprung auf ein
+  // Verwendungs-Ziel) ist wieder der ERSTE Eintrag je Panel vorausgewählt, nicht der zuletzt
+  // gewählte Index des vorherigen Items.
+  useEffect(() => {
+    setSelSrcIdx(0);
+    setSelUseIdx(0);
+    setFilter("all");
+  }, [payload?.itemId]);
+
+  // Wechselt der Filter auf eine Kategorie, die den aktuell ausgewählten Knoten ausblendet, springt
+  // die Auswahl auf den ersten sichtbaren Knoten dieser Kategorie — das Fußband zeigt sonst einen
+  // Knoten, der im Raster gar nicht mehr zu sehen ist.
+  useEffect(() => {
+    if (filter === "all") return;
+    setSelUseIdx((cur) => {
+      if (usesMeta[cur]?.category === filter) return cur;
+      const idx = usesMeta.findIndex((m) => m.category === filter);
+      return idx >= 0 ? idx : cur;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- nur auf explizite Filter-Klicks reagieren
+  }, [filter]);
+
+  if (!payload || !item) return null;
 
   const img = getItemImage(item.id);
   const rarity = getItemRarity(item);
@@ -571,116 +596,231 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
       ? instanceDisplayName(payload.instance, content, locale)
       : tr(item.name);
 
-  // Rohe Quellen erst zu Anzeige-Karten gruppieren (dieselbe Kreatur taucht im Content oft mehrfach
-  // mit eigener MonsterId auf — Zone/Dungeon-Welle/Turm-Etage, s. `groupMonsterSources`-JSDoc).
-  const sources = groupMonsterSources(ITEM_SOURCE_INDEX.get(item.id) ?? []);
-  const uses = ITEM_USED_FOR_INDEX.get(item.id) ?? [];
+  const clampedSrcIdx = sources.length > 0 ? Math.min(selSrcIdx, sources.length - 1) : 0;
+  const clampedUseIdx = usesMeta.length > 0 ? Math.min(selUseIdx, usesMeta.length - 1) : 0;
+
+  const presentCategories = (["weapons", "armor", "consumables", "other"] as const).filter((c) =>
+    usesMeta.some((m) => m.category === c),
+  );
+  const showFilters = presentCategories.length >= 2;
+
+  // ── Fußband-Inhalt: ausgewählte Quelle + ausgewählte Verwendung (Chef-Auftrag "02 Forge Flow") ──
+  const selectedSource = sources.length > 0 ? sources[clampedSrcIdx]! : null;
+  const selectedSourceMeta = selectedSource ? sourceMeta(selectedSource, t, tr) : null;
+  const selectedUse = usesMeta.length > 0 ? usesMeta[clampedUseIdx]! : null;
+  let selectedUseName = "";
+  let selectedUseSubline = "";
+  if (selectedUse) {
+    selectedUseName = tr(selectedUse.use.outputName);
+    const skill = content.skills[selectedUse.use.skillId];
+    const skillName = skill ? tr(skill.name) : selectedUse.use.skillId;
+    const levelLabel = t("skill.levelShort").replace("{n}", String(selectedUse.levelRequired ?? 1));
+    const qtyLabel = t("itemwiki.requiresQty").replace("{n}", String(selectedUse.qty));
+    selectedUseSubline = `${skillName} · ${levelLabel} · ${qtyLabel}`;
+  }
 
   return (
     <div className="modal-overlay iwk-overlay" onClick={closeItemWikiModal}>
       <div className="modal iwk-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close ds-close-button" onClick={closeItemWikiModal} aria-label={t("common.close")} />
-        {history.length > 0 && (
-          <button type="button" className="btn-iron btn-iron--sm iwk-back" onClick={backItemWikiModal}>
-            {t("itemwiki.back")}
-          </button>
-        )}
-
-        <div className="iwk-kicker">{t("itemwiki.kicker")}</div>
-
-        <div className="iwk-head">
-          <div className={`iwk-head-icon ${rarityClass(item.rarity)}`}>
-            {img ? (
-              <img loading="lazy" decoding="async" src={img} alt="" className="pixelart" />
-            ) : item.icon ? (
-              <span className="iwk-head-emoji">{item.icon}</span>
-            ) : (
-              <span className="iwk-head-emoji">?</span>
+        <header className="iwk-titlebar">
+          <div className="iwk-titlebar-side iwk-titlebar-side--start">
+            {history.length > 0 && (
+              <button type="button" className="btn-iron btn-iron--sm iwk-back" onClick={backItemWikiModal}>
+                {t("itemwiki.back")}
+              </button>
             )}
           </div>
-          <div className="iwk-head-text">
-            <div className={`iwk-head-name ${rarityClass(item.rarity)}`}>{displayName}</div>
-            <div className={`iwk-head-typeline ${rarityClass(item.rarity)}`}>
+          <div className="iwk-titlebar-kicker">{t("itemwiki.kicker")}</div>
+          <div className="iwk-titlebar-side iwk-titlebar-side--end">
+            <button className="modal-close ds-close-button" onClick={closeItemWikiModal} aria-label={t("common.close")} />
+          </div>
+        </header>
+
+        <div className="iwk-stage">
+          <aside className="iwk-panel iwk-source-panel">
+            <div className="iwk-panel-head">
+              <span>{t("itemwiki.sources")}</span>
+              <span>{t("itemwiki.sourcesCount").replace("{n}", String(sources.length))}</span>
+            </div>
+            {sources.length === 0 ? (
+              <div className="iwk-empty">{t("itemwiki.noSource")}</div>
+            ) : (
+              <SourceList sources={sources} selectedIndex={clampedSrcIdx} onSelect={setSelSrcIdx} />
+            )}
+          </aside>
+
+          <article className="iwk-panel iwk-item-panel">
+            <div className={`iwk-item-kicker ${rarityClass(item.rarity)}`}>
               {wikiTypeLine(item, t, tr)} · {tr(RARITY_LABEL[rarity])}
             </div>
-            {item.description && <div className="iwk-head-flavor">{tr(item.description)}</div>}
+            <h2 className={`iwk-item-name ${rarityClass(item.rarity)}`}>{displayName}</h2>
+            <div className="iwk-item-hero">
+              {img ? (
+                <img loading="lazy" decoding="async" src={img} alt="" className="pixelart" />
+              ) : item.icon ? (
+                <span className="iwk-item-hero-emoji">{item.icon}</span>
+              ) : (
+                <span className="iwk-item-hero-emoji">?</span>
+              )}
+            </div>
 
-            {/* Kernwerte-Zeile (Chef-Redesign): rohe Item-Felder als Chips — bewusst KEINE
-                Neuberechnung der effektiven Kampfwerte (computeStats/Delta-Vergleich bleibt
-                ItemTooltip.tsx vorbehalten, dort inkl. Ausrüstungs-/Instanz-Kontext). Das Wiki
-                ist eine Nachschlage-Ansicht, keine Ersatz-Statuskarte. */}
-            <div className="iwk-head-facts">
+            {/* Kernwerte-Zeile als Fakten-Kacheln (Chef-Redesign): rohe Item-Felder — bewusst KEINE
+                Neuberechnung der effektiven Kampfwerte (bleibt ItemTooltip.tsx vorbehalten). */}
+            <div className="iwk-facts">
               {item.requirements &&
                 Object.entries(item.requirements).map(([skillId, lvl]) => {
                   const skill = content.skills[skillId];
                   return (
-                    <span className="iwk-head-fact" key={`req-${skillId}`}>
-                      {t("itip.requires")} {skill ? tr(skill.name) : skillId}: {lvl}
+                    <span className="iwk-fact-tile" key={`req-${skillId}`}>
+                      <span className="iwk-fact-label">
+                        {t("itip.requires")} {skill ? tr(skill.name) : skillId}
+                      </span>
+                      <span className="iwk-fact-value">{lvl}</span>
                     </span>
                   );
                 })}
               {item.damageMin !== undefined && item.damageMax !== undefined && (
-                <span className="iwk-head-fact">
-                  {t("itip.weaponDamage")}: {formatDamage(item.damageMin)}–{formatDamage(item.damageMax)}
+                <span className="iwk-fact-tile">
+                  <span className="iwk-fact-label">{t("itip.weaponDamage")}</span>
+                  <span className="iwk-fact-value">
+                    {formatDamage(item.damageMin)}–{formatDamage(item.damageMax)}
+                  </span>
                 </span>
               )}
               {item.damageMin !== undefined && item.attackIntervalMs !== undefined && (
-                <span className="iwk-head-fact">
-                  {t("itip.tempo")}: {formatSeconds1(item.attackIntervalMs / 1000)}s
+                <span className="iwk-fact-tile">
+                  <span className="iwk-fact-label">{t("itip.tempo")}</span>
+                  <span className="iwk-fact-value">{formatSeconds1(item.attackIntervalMs / 1000)}s</span>
                 </span>
               )}
               {!!item.armorRating && (
-                <span className="iwk-head-fact">{t("stat.armorRating")}: {formatStat(item.armorRating)}</span>
-              )}
-              {!!item.evasionRating && (
-                <span className="iwk-head-fact">{t("stat.evasionRating")}: {formatStat(item.evasionRating)}</span>
-              )}
-              {!!item.wardCapacity && (
-                <span className="iwk-head-fact">{t("stat.wardCapacity")}: +{formatStat(item.wardCapacity)}</span>
-              )}
-              {!!item.blockChance && (
-                <span className="iwk-head-fact">{t("stat.blockChance")}: {Math.round(item.blockChance * 100)}%</span>
-              )}
-              {item.value !== undefined && (
-                <span className="iwk-head-fact">
-                  {t("char.itemValue")}: {formatNum(item.value)}
-                  {GOLD_ICON_URL && <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />}
+                <span className="iwk-fact-tile">
+                  <span className="iwk-fact-label">{t("stat.armorRating")}</span>
+                  <span className="iwk-fact-value">{formatStat(item.armorRating)}</span>
                 </span>
               )}
-              <span className="iwk-head-fact">
-                {t("itemwiki.stackable")}: {item.stackable ? t("itemwiki.yes") : t("itemwiki.no")}
+              {!!item.evasionRating && (
+                <span className="iwk-fact-tile">
+                  <span className="iwk-fact-label">{t("stat.evasionRating")}</span>
+                  <span className="iwk-fact-value">{formatStat(item.evasionRating)}</span>
+                </span>
+              )}
+              {!!item.wardCapacity && (
+                <span className="iwk-fact-tile">
+                  <span className="iwk-fact-label">{t("stat.wardCapacity")}</span>
+                  <span className="iwk-fact-value">+{formatStat(item.wardCapacity)}</span>
+                </span>
+              )}
+              {!!item.blockChance && (
+                <span className="iwk-fact-tile">
+                  <span className="iwk-fact-label">{t("stat.blockChance")}</span>
+                  <span className="iwk-fact-value">{Math.round(item.blockChance * 100)}%</span>
+                </span>
+              )}
+              {item.value !== undefined && (
+                <span className="iwk-fact-tile">
+                  <span className="iwk-fact-label">{t("char.itemValue")}</span>
+                  <span className="iwk-fact-value">
+                    {formatNum(item.value)}
+                    {GOLD_ICON_URL && <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />}
+                  </span>
+                </span>
+              )}
+              <span className="iwk-fact-tile">
+                <span className="iwk-fact-label">{t("itemwiki.stackable")}</span>
+                <span className="iwk-fact-value">{item.stackable ? t("itemwiki.yes") : t("itemwiki.no")}</span>
               </span>
             </div>
-          </div>
+
+            {item.description && <p className="iwk-item-flavor">{tr(item.description)}</p>}
+          </article>
+
+          <section className="iwk-panel iwk-uses-panel">
+            <div className="iwk-panel-head">
+              <span>{t("itip.usedFor")}</span>
+              <span>{t("itemwiki.usedForCount").replace("{n}", String(uses.length))}</span>
+            </div>
+            {uses.length === 0 ? (
+              <div className="iwk-empty">{t("itemwiki.noUsedFor")}</div>
+            ) : (
+              <>
+                {showFilters && (
+                  <div className="iwk-filter-row">
+                    <button
+                      type="button"
+                      className={`btn-iron btn-iron--sm iwk-filter-chip${filter === "all" ? " is-active" : ""}`}
+                      onClick={() => setFilter("all")}
+                    >
+                      {t("itemwiki.filter.all")}
+                    </button>
+                    {presentCategories.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        className={`btn-iron btn-iron--sm iwk-filter-chip${filter === c ? " is-active" : ""}`}
+                        onClick={() => setFilter(c)}
+                      >
+                        {t(`itemwiki.filter.${c}`)}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <div className="iwk-output-grid">
+                  {usesMeta.map((meta, i) => {
+                    if (filter !== "all" && meta.category !== filter) return null;
+                    return (
+                      <UseNode
+                        key={i}
+                        meta={meta}
+                        isActive={i === clampedUseIdx}
+                        onSelect={() => setSelUseIdx(i)}
+                        onOpenOutput={() => openItemWikiModal(meta.use.outputItemId)}
+                      />
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </section>
         </div>
 
-        <div className="iwk-body">
-          {/* Zwei klar getrennte Blöcke Herkunft/Verwendung (Chef-Redesign) als eigenes Grid,
-              das bei knapper Fensterbreite (1366×768) auf eine Spalte fällt — s. item-wiki.css. */}
-          <div className="iwk-columns">
-            <section className="iwk-section">
-              <h3 className="iwk-section-title">{t("itip.source")}</h3>
-              {sources.length === 0 ? (
-                <div className="iwk-empty">{t("itemwiki.noSource")}</div>
-              ) : (
-                <SourceList sources={sources} />
-              )}
-            </section>
-
-            <section className="iwk-section">
-              <h3 className="iwk-section-title">{t("itip.usedFor")}</h3>
-              {uses.length === 0 ? (
-                <div className="iwk-empty">{t("itemwiki.noUsedFor")}</div>
-              ) : (
-                <ul className="iwk-list">
-                  {uses.map((u, i) => (
-                    <UseRow key={i} entry={u} onOpenOutput={(id) => openItemWikiModal(id)} />
-                  ))}
-                </ul>
-              )}
-            </section>
-          </div>
-        </div>
+        {(selectedSourceMeta || selectedUse) && (
+          <footer className="iwk-ribbon">
+            {selectedSourceMeta && (
+              <div className="iwk-ribbon-block">
+                <div className="iwk-ribbon-text">
+                  <span className="iwk-ribbon-label">{t("itemwiki.selectedSource")}</span>
+                  <strong className="iwk-ribbon-name">{selectedSourceMeta.name}</strong>
+                  {selectedSourceMeta.subline && <small className="iwk-ribbon-sub">{selectedSourceMeta.subline}</small>}
+                </div>
+                <b className="iwk-ribbon-badge">{selectedSourceMeta.value}</b>
+              </div>
+            )}
+            {selectedSourceMeta && selectedUse && <span className="iwk-ribbon-divider" aria-hidden="true" />}
+            {selectedUse && (
+              <>
+                <div className="iwk-ribbon-block">
+                  <div className="iwk-ribbon-text">
+                    <span className="iwk-ribbon-label">{t("itemwiki.selectedUse")}</span>
+                    <strong className="iwk-ribbon-name">{selectedUseName}</strong>
+                    <small className="iwk-ribbon-sub">{selectedUseSubline}</small>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn-iron iwk-ribbon-open"
+                  disabled={!selectedUse.isRealAction}
+                  onClick={() => {
+                    closeItemWikiModal();
+                    jumpToAction(selectedUse.use.actionId);
+                  }}
+                >
+                  {t("itemwiki.openRecipe")}
+                </button>
+              </>
+            )}
+          </footer>
+        )}
       </div>
     </div>
   );

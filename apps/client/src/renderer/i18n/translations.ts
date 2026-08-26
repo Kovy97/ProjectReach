@@ -778,6 +778,20 @@ const en = {
     "itemwiki.stackable": "Stackable",
     "itemwiki.yes": "Yes",
     "itemwiki.no": "No",
+    // Redesign "02 Forge Flow" (Chef order 2026-08-26): source/use panels are now selectable lists
+    // with a footer ribbon showing the selection — these are the new labels that came with it.
+    "itemwiki.sources": "Sources",
+    "itemwiki.sourcesCount": "{n} ways",
+    "itemwiki.usedForCount": "{n} recipes",
+    "itemwiki.selectedSource": "Selected Source",
+    "itemwiki.selectedUse": "Selected Use",
+    "itemwiki.requiresQty": "requires {n}×",
+    "itemwiki.sourceKind.dungeon": "Dungeon Chest",
+    "itemwiki.filter.all": "All",
+    "itemwiki.filter.weapons": "Weapons",
+    "itemwiki.filter.armor": "Armor",
+    "itemwiki.filter.consumables": "Consumables",
+    "itemwiki.filter.other": "Other",
 
     // Weapon type names (shown in tooltip type line for weapons)
     "item.weaponType.dagger": "Dagger",
@@ -2941,6 +2955,20 @@ const de: Record<keyof typeof en, string> = {
     "itemwiki.stackable": "Stapelbar",
     "itemwiki.yes": "Ja",
     "itemwiki.no": "Nein",
+    // Redesign "02 Forge Flow" (Chef-Auftrag 26.08.2026): Quelle-/Verwendungs-Panels sind jetzt
+    // Auswahl-Listen mit Fußband-Anzeige der Auswahl — das sind die dafür neuen Beschriftungen.
+    "itemwiki.sources": "Quellen",
+    "itemwiki.sourcesCount": "{n} Wege",
+    "itemwiki.usedForCount": "{n} Rezepte",
+    "itemwiki.selectedSource": "Ausgewählte Quelle",
+    "itemwiki.selectedUse": "Ausgewählte Verwendung",
+    "itemwiki.requiresQty": "benötigt {n}×",
+    "itemwiki.sourceKind.dungeon": "Dungeon-Truhe",
+    "itemwiki.filter.all": "Alle",
+    "itemwiki.filter.weapons": "Waffen",
+    "itemwiki.filter.armor": "Rüstung",
+    "itemwiki.filter.consumables": "Verbrauch",
+    "itemwiki.filter.other": "Sonstiges",
 
     // Waffentyp-Namen (im Tooltip-Typ-Label für Waffen)
     "item.weaponType.dagger": "Dolch",

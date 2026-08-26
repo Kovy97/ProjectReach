@@ -1,369 +1,304 @@
 /* ═══════════════════════════════════════════════════════════
-   ITEM WIKI MODAL (Task #308, Chef-Feature; Redesign-Auftrag 2026-08-25: "viel zu klein — mehr
-   Platz des Screens nutzen, Source/Used-for besser präsentieren, alles größer für die Lesbarkeit")
+   ITEM WIKI MODAL (Task #308, Chef-Feature; Redesign nach Mira-Mockup "02 Forge Flow",
+   Chef-Auftrag 26.08.2026: Titelleiste → drei Panels (Quellen · Item-Held · Verwendet für) auf
+   Basalt in einem Leder-Modal → Fußband mit ausgewählter Quelle/Verwendung + "Rezept öffnen".)
    — geöffnet über den "?"-Button im ItemTooltip-Rahmen (siehe .itip-wiki-btn in components.css).
-   Eigener `iwk-*`-Namespace, komplett unabhängig von der Tooltip-Karte (`itip-*`).
+   Eigener `iwk-*`-Namespace, komplett unabhängig von der Tooltip-Karte (`itip-*`). Das Modal liegt
+   im Portal AUSSERHALB von `#root` (an document.body, s. App.tsx) — jede Regel hier bleibt deshalb
+   bewusst OHNE `#root`-Präfix.
    ═══════════════════════════════════════════════════════════ */
 
 /* `.modal.iwk-modal` (ZWEI Klassen), nicht nur `.iwk-modal` — dieselbe Absicherung wie
    `.modal.farm-picker-modal` (skills.css): `modals.css` setzt generisch `.modal { max-width: 480px }`
-   und lädt VOR dieser Datei (index.css), item-wiki.css würde die Kaskade bei gleicher Spezifität
-   also ohnehin gewinnen — die zusätzliche Klasse macht das aber unabhängig von der Lade-Reihenfolge
-   robust, statt sich darauf zu verlassen (genau dieser Kaskaden-Fehler wurde heute an anderer
-   Stelle — dem Saatgut-Modal — scharf gefunden). Live mit getComputedStyle verifiziert. */
+   und lädt VOR dieser Datei — die zusätzliche Klasse macht die Kaskade unabhängig davon robust. */
 .modal.iwk-modal {
-  width: min(1280px, 92vw);
-  max-width: min(1280px, 92vw);
-  max-height: 88vh;
-  padding: 30px 38px;
+  width: min(1440px, calc(100vw - 32px));
+  max-width: min(1440px, calc(100vw - 32px));
+  /* Bindend (Chef-Auftrag): passt bei 1366×768/1600×900/1920×1080 immer ohne Überlauf — die drei
+     Panels darunter scrollen intern, statt den Rahmen zu sprengen. */
+  max-height: calc(100vh - 32px);
+  padding: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* der Rahmen selbst scrollt nicht — nur .iwk-body darunter */
-  /* Chef-Fund 2026-08-25 ("dieser Stein Background ist einfach nicht gut um darauf zu lesen"):
-     ersetzt die geerbte Stein-/Fels-Textur der Basis-`.modal`-Regel (bg_black.webp, modals.css)
-     durch eine ruhige, flache Parchment-Fläche im Design-System — dieselbe Formel wie die dort
-     schon vorhandene, bisher ungenutzte `.ds-parchment-panel` (design-system.css). Der Holz-9-Slice-
-     Rahmen bleibt (geerbt von `.modal`, unverändert) — nur die Lesefläche dahinter wechselt. */
-  /* Chef 25.08. (Runde 4): Ledertextur statt Pergament-Verlauf, dieselbe Flaeche wie Menue und Navigation
-     (texture-leather 280 px gekachelt, nie gestreckt). */
-  background:
-    linear-gradient(rgba(18, 13, 9, 0.22), rgba(4, 4, 4, 0.5)),
-    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
-  background-size: auto, 280px 280px;
+  overflow: hidden; /* der Rahmen selbst scrollt nicht — nur die Panels darunter */
 }
 
-.iwk-kicker {
+/* Der 4-State-Citadel-Schließer (`.ds-close-button`, design-system.css) sitzt jetzt IN der
+   Titelleiste (Flex-Endspalte) statt frei über `position:absolute` in der Modal-Ecke — sonst
+   verlöre die Titelleiste ihre dritte Flex-Spalte und der Kicker säße nicht mehr wirklich mittig. */
+.modal.iwk-modal .modal-close {
+  position: static;
+}
+
+/* ─── Titelleiste: Zurück · „ITEM WIKI" · Schließen (Mira-Mockup) ──────────────────────────── */
+.iwk-titlebar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.iwk-titlebar-side {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.iwk-titlebar-side--start {
+  justify-content: flex-start;
+}
+
+.iwk-titlebar-side--end {
+  justify-content: flex-end;
+}
+
+.iwk-titlebar-kicker {
   flex: 0 0 auto;
   text-align: center;
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: clamp(18px, 1.6vw, 24px);
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
-  opacity: 0.75;
-  margin-bottom: 14px;
-  padding-right: 30px; /* Platz für den Schließen-Button oben rechts */
-}
-
-/* ─── Kopf: großes Bild · Name/Typ/Rarity · Flavor · Kernwerte-Chips ────── */
-.iwk-head {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.iwk-head-icon {
-  flex: 0 0 176px;
-  width: 176px;
-  height: 176px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    linear-gradient(rgba(10, 8, 6, 0.6), rgba(10, 8, 6, 0.6)),
-    url("../assets/bg_black.webp") repeat;
-  border: 3px solid var(--border);
-  border-radius: 4px;
-}
-
-.iwk-head-icon img {
-  max-width: 86%;
-  max-height: 86%;
-  object-fit: contain;
-}
-
-.iwk-head-icon.rarity-poor      { border-color: var(--rar-poor); }
-.iwk-head-icon.rarity-common    { border-color: var(--rar-common); }
-.iwk-head-icon.rarity-magic     { border-color: var(--rar-magic); }
-.iwk-head-icon.rarity-rare      { border-color: var(--rar-rare); }
-.iwk-head-icon.rarity-superRare { border-color: var(--rar-superRare); }
-.iwk-head-icon.rarity-epic      { border-color: var(--rar-epic); }
-.iwk-head-icon.rarity-legendary { border-color: var(--rar-legendary); }
-.iwk-head-icon.rarity-godly     { border-color: var(--rar-godly); }
-
-.iwk-head-emoji {
-  font-size: 74px;
-}
-
-.iwk-head-text {
-  flex: 1;
-  min-width: 0;
-  padding-top: 2px;
-}
-
-.iwk-head-name {
-  font-family: var(--font-head);
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-
-.iwk-head-name.rarity-poor      { color: var(--rar-poor); }
-.iwk-head-name.rarity-common    { color: var(--text); }
-.iwk-head-name.rarity-magic     { color: var(--rar-magic); }
-.iwk-head-name.rarity-rare      { color: var(--rar-rare); }
-.iwk-head-name.rarity-superRare { color: var(--rar-superRare); }
-.iwk-head-name.rarity-epic      { color: var(--rar-epic); }
-.iwk-head-name.rarity-legendary { color: var(--rar-legendary); }
-.iwk-head-name.rarity-godly     { color: var(--rar-godly); }
-
-.iwk-head-typeline {
-  font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.85;
-  margin-top: 4px;
-}
-
-.iwk-head-typeline.rarity-poor      { color: var(--rar-poor); }
-.iwk-head-typeline.rarity-common    { color: var(--muted); }
-.iwk-head-typeline.rarity-magic     { color: var(--rar-magic); }
-.iwk-head-typeline.rarity-rare      { color: var(--rar-rare); }
-.iwk-head-typeline.rarity-superRare { color: var(--rar-superRare); }
-.iwk-head-typeline.rarity-epic      { color: var(--rar-epic); }
-.iwk-head-typeline.rarity-legendary { color: var(--rar-legendary); }
-.iwk-head-typeline.rarity-godly     { color: var(--rar-godly); }
-
-.iwk-head-flavor {
-  margin-top: 10px;
-  max-width: 62ch;
-  font-size: 15px;
-  font-style: italic;
-  line-height: 1.5;
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
-
-.iwk-head-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  margin-top: 14px;
-}
-
-.iwk-head-fact {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 11px;
-  font-size: 14.5px;
-  color: var(--text);
-  background: rgba(0, 0, 0, 0.32);
-  border: 1px solid rgba(154, 128, 96, 0.32);
-  border-radius: 3px;
   white-space: nowrap;
 }
 
-/* ─── Body: scrollbare Herkunft-/Verwendung-Sektionen (overflow-x NIE) ──── */
-.iwk-body {
+.modal.iwk-modal .iwk-back {
+  min-height: 34px;
+  min-width: 0;
+  padding: 2px 12px;
+  font-size: 12px;
+  border-width: 6px;
+  border-image-width: calc(6px * 2.125);
+}
+
+/* ─── Stage: drei Panels nebeneinander ───────────────────────────────────────────────────────
+   Runde 2 (Chef-Fund: bei 1366×768 wurde die alte <1400px-Schwelle fällig, obwohl 1366px selbst
+   noch reichlich Platz für drei Spalten hat — 260+330+520px Mindestbreiten + zwei 20px-Lücken
+   passen mit Luft in die 1334px-Modalbreite bei 1366px Fensterbreite). Spaltenmaße 1:1 aus Miras
+   Mockup übernommen (`.flow-stage`), NUR die Zwei-Spalten-Schwelle sitzt jetzt bei <1280px statt
+   <1400px — darunter (dort beginnt der eigentliche Skalierungs-Schmerz, s.
+   ui-skalierung-kleine-aufloesungen.md) fallen Quellen+Item auf zwei Spalten, Verwendungen rutscht
+   volle Breite darunter. */
+.iwk-stage {
   flex: 1 1 auto;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 6px;
-  /* Firefox-only scrollbar-Regeln entfernt (2026-07-09): Chromium 121+ honoriert sie und
-     überschrieb die globalen Citadel-Scrollbalken (base.css) — global gilt jetzt überall. */
-}
-
-/* Zwei klar getrennte Blöcke nebeneinander (Chef-Redesign) — EIN gemeinsamer Scroll-Container
-   (.iwk-body) statt je einer eigenen Scrollleiste pro Spalte. Fällt bei knapper Fensterbreite
-   (1366×768 — dort sitzt der Schmerz, s. Chef-Vorgabe) auf eine Spalte, in der Herkunft komplett
-   vor Verwendung steht; 1600×900+ behält die Seite-an-Seite-Ansicht (dieselbe 1400-1500px-
-   Bruchgrößen-Konvention wie shop.css/components.css). */
-.iwk-columns {
+  min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  align-items: start;
+  grid-template-columns: minmax(260px, 0.78fr) minmax(330px, 0.9fr) minmax(520px, 1.7fr);
+  gap: 20px;
+  padding: 18px 28px;
+  overflow: hidden;
 }
 
-@media (max-width: 1500px) {
-  .iwk-columns {
-    grid-template-columns: 1fr;
+@media (max-width: 1279px) {
+  /* `fr`-Zeilen statt `auto`: Quellen/Item-Panel sind selbst `display:flex` mit intern
+     scrollendem Inhalt (`min-height:0`) — als GRID-Zeilenhöhe "auto" berechnet, wollte die erste
+     Zeile ihren vollen (ungescrollten) Max-Content und drückte die zweite Zeile auf 0 Höhe, das
+     Verwendet-für-Panel verschwand komplett. `fr` teilt stattdessen die tatsächlich verfügbare
+     Höhe von `.iwk-stage` (die selbst über Flexbox begrenzt ist) fest zwischen beiden Zeilen auf. */
+  .iwk-stage {
+    grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.3fr);
+    grid-template-rows: minmax(0, 1.3fr) minmax(0, 1fr);
+  }
+  .iwk-uses-panel {
+    grid-column: 1 / -1;
   }
 }
 
-.iwk-section-title {
-  margin: 0 0 12px;
-  font-family: var(--font-head);
-  font-size: 16px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #9a8060;
-  border-bottom: 1px solid rgba(154, 128, 96, 0.35);
+@media (max-width: 900px) {
+  .iwk-stage {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    overflow-y: auto;
+  }
+  .iwk-source-panel,
+  .iwk-item-panel,
+  .iwk-uses-panel {
+    grid-column: auto;
+  }
+}
+
+/* ─── Panel-Grundgerüst: Basalt-Fläche im Gravewood-Rahmen (Mira-Mockup: "panel-surface") ────── */
+.iwk-panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+  border-style: solid;
+  border-width: 10px;
+  border-image: url("../assets/ui/gravewood/frames/frame-panel.webp") 34 / 10px;
+  background:
+    linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.42);
+}
+
+.iwk-panel-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
   padding-bottom: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.iwk-panel-head > span:first-child {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.iwk-panel-head > span:last-child {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 .iwk-empty {
-  font-size: 15px;
+  font-size: 14px;
   font-style: italic;
   color: var(--muted);
   padding: 4px 0 6px;
 }
 
-/* Karten-Raster statt endloser Liste (Chef-Vorgabe für Items mit vielen Quellen, z.B. 20 Monster) —
-   `auto-fill` bestimmt selbst, wie viele Karten je Zeile passen; `minmax(0, 1fr)` als Obergrenze
-   verhindert, dass eine Karte die Spalte breiter macht als der Block (dasselbe Muster wie
-   `.farm-picker-list`, skills.css). */
-.iwk-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  /* 260px (nicht 220px) Mindestbreite je Karte: gemessen (1366×768, 5 statt 4 Spalten) brach ein
-     langes deutsches Kompositum ohne Bindestrich ("Skelettkrieger", "Nekromantenfürst") sonst
-     mangels Platz neben Icon+Prozent-Badge mitten im Wort — ein einzelner Buchstabe rutschte
-     dabei allein in die nächste Zeile. Bei 260px bleibt daneben genug Raum für Icon+Name+Badge
-     auf einer Zeile (dieselbe Lehre wie `.farm-picker-head .farm-picker-name`, skills.css). */
-  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
-  gap: 10px;
-  align-items: start;
-}
-
-/* Jede Zeile ist jetzt eine eigenständige Karte — Holz-Textur-Rahmen wäre bei dieser Kleinteiligkeit
-   zu unruhig (viele Karten gleichzeitig), deshalb ein dünner Goldrand statt eines vollen 9-Slice-
-   Rahmens. Chef-Fund 2026-08-25 ("Stein Background ... nicht gut um darauf zu lesen") UND
-   Chef-Fund 26.08.2026 ("Hintergründe fast zu gleich, der Zeilen-Hintergrund hat dieselbe Farbe wie
-   der Modal-Hintergrund"): die Karte lief zwischenzeitlich mit exakt derselben Leder-Textur wie
-   `.modal.iwk-modal` oben — jetzt Basalt (dieselbe ruhige, dunkle Fläche wie `.btn-iron`,
-   design-system.css) statt Leder: deutlich andere Maserung/Ton, genauso dunkel (eher dunkler durch
-   den stärkeren Verlauf), damit der helle Fließtext seinen Kontrast behält, aber klar vom
-   Leder-Modal-Grund getrennt zu erkennen ist. */
-.iwk-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  padding: 10px 12px;
-  font-size: 15px;
-  background:
-    linear-gradient(rgba(70, 66, 60, 0.30), rgba(10, 9, 8, 0.55)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
-  background-size: auto, 280px 280px;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.32);
-}
-
-.iwk-row-icon-img {
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-}
-
-.iwk-row-icon-emoji {
-  flex: 0 0 auto;
-  font-size: 22px;
-  line-height: 1;
-  width: 28px;
-  text-align: center;
-}
-
-.iwk-row-name {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  color: var(--text);
-}
-
-.iwk-row-val {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  white-space: nowrap;
-  color: var(--accent-2);
-  font-weight: 600;
-}
-
-.iwk-row-shop .iwk-row-val {
-  color: var(--gold);
-}
-
-/* ─── Wiki→Rezept-Sprung (Chef-Auftrag): Quelle-/Verwendungs-Aktion springt zur Rezeptkarte ──
-   auf der zugehörigen Skill-Seite (s. util/skillJump.ts). Die ganze Karte ist jetzt die Hover-
-   Zielfläche (vorher nur ein negativ ausgeglichener Innenstreifen einer schmalen Zeile). */
-.iwk-row-clickable {
-  cursor: pointer;
-  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
-}
-
-.iwk-row-clickable:hover,
-.iwk-row-clickable:focus-visible {
-  border-color: var(--gold);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.32), 0 0 10px rgba(216, 192, 106, 0.2);
-}
-
-.iwk-row-clickable:hover .iwk-row-name,
-.iwk-row-clickable:focus-visible .iwk-row-name {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-.iwk-use-source {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-/* ─── Monster-Quelle mit mehreren Fundorten (Chef-Befund 2026-08-25 „Skelettkrieger 90% zweimal"):
-   `groupMonsterSources` (ItemWikiModal.tsx) führt dieselbe Kreatur aus Zone/Dungeon-Welle/Turm-Etage
-   zu EINER Karte zusammen. `.iwk-row-main` bündelt Icon+Name+Prozent wie eine normale Zeile;
-   `.iwk-row-stacked` schaltet NUR ein, wenn die Chance je Fundort tatsächlich unterschiedlich ist —
-   dieselbe Zwei-Zeilen-Idee wie `.iwk-row-use` weiter unten. */
-.iwk-row-main {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  width: 100%;
-}
-
-.iwk-row-stacked {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 6px;
-}
-
-.iwk-row-sublocations {
-  padding-left: 38px; /* rückt unter den Namen ein: Icon-Spalte (28px) + Row-Gap (10px) */
-  font-size: 12.5px;
-  line-height: 1.4;
-  color: var(--muted);
-  overflow-wrap: anywhere; /* nie abschneiden — ein langer Dungeon-/Zonen-Name darf umbrechen */
-}
-
-/* ─── Legende über dem Quelle-Raster (Chef-Befund: die Grau/Weiß-Abstufung war ohne Erklärung
-   „unklar" — sie IST das Story-Zonen-Gate unten, s. `.iwk-row-locked`). Nur eingeblendet, wenn die
-   Liste tatsächlich eine gesperrte Quelle enthält (SourceList in ItemWikiModal.tsx). */
+/* ─── Quellen-Panel: auswählbare Liste (Mira-Mockup: "source-node") ─────────────────────────── */
 .iwk-source-legend {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 10px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-style: italic;
   color: var(--muted);
 }
 
-/* ─── Story-Zonen-Gate (Task #350): Monster-Quelle einer noch gesperrten Zone — sichtbar (keine
-   Spoiler-Änderung), aber gedimmt + nicht klickbar. Spiegelt `.zone-card-story-locked`
-   (CombatPage.tsx) und den deaktivierten Bestiarium-„Kämpfen"-Button (BestiaryPage.tsx). */
-.iwk-row-locked {
-  opacity: 0.55;
-  cursor: default;
+.iwk-source-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 0 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.iwk-row-locked .iwk-row-name {
+/* Chef-Redesign 26.08.2026: der Klick wählt jetzt nur noch aus (Fußband zeigt Details) — springt
+   NICHT mehr direkt weg (s. ItemWikiModal.tsx `SourceRowItem`-JSDoc, Regel "nur die zwei").
+   Runde 2 (Chef-Fund: "Zeile bricht bei langen Namen dreizeilig um, Chance rutscht unter den
+   Namen"): fest verdrahtetes Grid statt Flex-Wrap (Mira-Mockup `.source-node`) —
+   `38px minmax(0,1fr) auto` garantiert, dass die Chance-Spalte IMMER in derselben Zeile bleibt,
+   egal wie viele Zeilen der Name braucht. `.iwk-row-break` (nur bei der Rezept-Zeile im DOM) ist
+   dafür jetzt `display:none` — Grid schiebt den Rezept-Knopf über `grid-column:2/-1` von selbst
+   in eine eigene Zeile, sobald Zeile 1 (Icon/Text/Wert) schon belegt ist. */
+.iwk-source-node {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 6px;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  background: rgba(6, 6, 6, 0.5);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.iwk-source-node:hover,
+.iwk-source-node:focus-visible {
+  border-color: var(--gold);
+  outline: none;
+}
+
+/* Aktive Zeile: goldener Rand + 3px Goldkante links (Mira-Mockup: `.source-node.active`). */
+.iwk-source-node.is-active {
+  border-color: var(--gold);
+  background: linear-gradient(90deg, rgba(113, 72, 31, 0.24), rgba(6, 6, 6, 0.5));
+  box-shadow: inset 3px 0 0 var(--gold), inset 0 0 10px rgba(0, 0, 0, 0.32);
+}
+
+.iwk-source-node-locked {
+  opacity: 0.55;
+}
+
+.iwk-source-icon {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iwk-source-icon img {
+  /* Runde 2 (Chef-Fund: "Schwerter wirken ausgegraut"): volle 38px statt vormals 32px in einer
+     38px-Box — der Icon füllt seine Spalte jetzt exakt aus (Mira-Mockup `.source-node img`). */
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.iwk-source-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.iwk-source-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  /* Runde 2 (Chef-Fund: lange Namen brachen mitten im Wort um, z.B. "Aschtyran"+"n"): ohne
+     explizite Größe erbte dieser Zeilen-Name den 21px-Basalt-Body-Text ("UI größer"-Skalierung,
+     design-system.css) — viel zu groß für die feste `minmax(0,1fr)`-Spalte neben Icon und Chance.
+     15px matcht die übrigen kompakten Zeilen-Namen im Spiel (z.B. `.cl-food-name`/`.cl-stance-
+     name`, combat.css). */
+  font-size: 15px;
+  line-height: 1.28;
+  color: var(--text);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  /* Bei sehr schmaler Spalte (1366px-Fall) reicht reines Wortumbruch nicht mehr für ungebrochene
+     deutsche Monster-Komposita ("Aschtyrann") — `hyphens:auto` (mit dem längst pro Sprache
+     gesetzten `<html lang>`, s. i18n/index.tsx) trennt sauber an einer Silbengrenze statt mitten
+     im Wort; `overflow-wrap:anywhere` bleibt als Fallback für Sprachen ohne Trennmuster (zh/ru). */
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.iwk-source-subline {
   color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.iwk-source-value {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--gold);
+  font-family: var(--font-head);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .iwk-row-lock-badge {
@@ -373,103 +308,372 @@
 }
 
 .iwk-row-lock-badge img {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   object-fit: contain;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
-/* ─── Verwendung: Rezept → Ziel-Item als klar getrennte Mini-Karte-in-der-Karte (Chef: "Used-for
-   besser präsentieren") ─ statt einer engen Inline-Zeile jetzt zwei gestapelte Zeilen: oben die
-   erzeugende Aktion, darunter (Pfeil zeigt nach unten) das klickbare Ziel-Item groß und deutlich. */
-.iwk-row-use {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-}
-
-.iwk-use-arrow {
-  align-self: center;
-  color: var(--muted);
-  font-size: 13px;
-  transform: rotate(90deg);
-}
-
-.iwk-use-output {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  overflow-wrap: anywhere;
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(154, 128, 96, 0.28);
-  border-radius: 3px;
-  padding: 7px 10px;
-  margin: 0;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--text);
-  text-align: left;
-  transition: border-color 0.12s ease, box-shadow 0.12s ease;
-}
-
-.iwk-use-output:hover {
-  text-decoration: underline;
-  color: var(--accent);
-  border-color: var(--gold);
-  box-shadow: 0 0 8px rgba(216, 192, 106, 0.18);
-}
-
-.iwk-use-output.rarity-poor      { color: var(--rar-poor); }
-.iwk-use-output.rarity-magic     { color: var(--rar-magic); }
-.iwk-use-output.rarity-rare      { color: var(--rar-rare); }
-.iwk-use-output.rarity-superRare { color: var(--rar-superRare); }
-.iwk-use-output.rarity-epic      { color: var(--rar-epic); }
-.iwk-use-output.rarity-legendary { color: var(--rar-legendary); }
-.iwk-use-output.rarity-godly     { color: var(--rar-godly); }
-
-.iwk-use-output-img {
-  flex: 0 0 auto;
-  width: 26px;
-  height: 26px;
+.iwk-row-icon-img {
+  width: 38px;
+  height: 38px;
   object-fit: contain;
 }
 
-/* Chef 25.08.2026 ("nur die zwei"): sichtbarer Rezept-Knopf in der Quellen-Zeile und "Zurueck" oben
-   links, wenn man sich von Item zu Item geklickt hat. Beides im Stahlrahmen-Standard (.btn-iron). */
-.iwk-row:has(.iwk-open-recipe) {
-  flex-wrap: wrap;
-  row-gap: 6px;
+.iwk-row-icon-emoji {
+  width: 38px;
+  height: 38px;
 }
-.iwk-row:has(.iwk-open-recipe) .iwk-row-name {
-  overflow-wrap: normal;
-  hyphens: manual;
-  white-space: normal;
-}
+
+/* Chef 25.08.2026 ("nur die zwei"): sichtbarer Rezept-Knopf IN der Rezept-Quelle-Zeile — bleibt
+   bei diesem Redesign unverändert bestehen (Datenlogik-Vorgabe „.iwk-open-recipe Rezept-Sprung
+   BLEIBT"). Runde 2: `.iwk-row-break` diente nur dem alten Flex-Wrap-Layout als Zeilenumbruch-
+   Trick — im Grid (s. `.iwk-source-node` oben) ist er überflüssig, `display:none` nimmt ihn
+   komplett aus der Grid-Platzierung heraus (kein leerer Zeilen-Slot mehr). Der Knopf selbst
+   bekommt seine eigene Zeile automatisch: Zeile 1 (Icon/Text/Wert) ist schon voll belegt, Grid
+   schiebt ihn deshalb von selbst in Zeile 2, `grid-column:2/-1` lässt die Icon-Spalte aus und
+   `justify-self:end` hält ihn rechtsbündig (Ersatz für das alte `margin-left:auto`). */
 .iwk-row-break {
-  flex: 1 0 100%;
-  height: 0;
+  display: none;
 }
-.iwk-row .iwk-open-recipe {
-  flex: 0 0 auto;
-  margin-left: auto;
-  min-height: 32px;
+
+.iwk-source-node .iwk-open-recipe {
+  grid-column: 2 / -1;
+  justify-self: end;
+  min-height: 30px;
   min-width: 0;
   padding: 2px 10px;
   font-size: 12px;
   border-width: 6px;
   border-image-width: calc(6px * 2.125);
 }
-.modal.iwk-modal .iwk-back {
-  position: absolute;
-  top: 22px;
-  left: 30px;
-  min-height: 34px;
-  min-width: 0;
-  padding: 2px 12px;
+
+/* ─── Item-Panel: Kicker · Name · Held-Bild · Fakten-Kacheln · Beschreibung (mittig, Mira-Mockup:
+   "flow-item") ─────────────────────────────────────────────────────────────────────────────── */
+.iwk-item-panel {
+  align-items: center;
+  text-align: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.iwk-item-kicker {
+  flex: 0 0 auto;
+  font-family: var(--font-head);
   font-size: 12px;
-  border-width: 6px;
-  border-image-width: calc(6px * 2.125);
-  z-index: 2;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.iwk-item-kicker.rarity-poor      { color: var(--rar-poor); }
+.iwk-item-kicker.rarity-common    { color: var(--muted); }
+.iwk-item-kicker.rarity-magic     { color: var(--rar-magic); }
+.iwk-item-kicker.rarity-rare      { color: var(--rar-rare); }
+.iwk-item-kicker.rarity-superRare { color: var(--rar-superRare); }
+.iwk-item-kicker.rarity-epic      { color: var(--rar-epic); }
+.iwk-item-kicker.rarity-legendary { color: var(--rar-legendary); }
+.iwk-item-kicker.rarity-godly     { color: var(--rar-godly); }
+
+.iwk-item-name {
+  flex: 0 0 auto;
+  margin: 6px 0 14px;
+  font-family: var(--font-head);
+  font-size: clamp(21px, 2vw, 29px);
+  font-weight: 700;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
+.iwk-item-name.rarity-poor      { color: var(--rar-poor); }
+.iwk-item-name.rarity-common    { color: var(--text); }
+.iwk-item-name.rarity-magic     { color: var(--rar-magic); }
+.iwk-item-name.rarity-rare      { color: var(--rar-rare); }
+.iwk-item-name.rarity-superRare { color: var(--rar-superRare); }
+.iwk-item-name.rarity-epic      { color: var(--rar-epic); }
+.iwk-item-name.rarity-legendary { color: var(--rar-legendary); }
+.iwk-item-name.rarity-godly     { color: var(--rar-godly); }
+
+/* Kein Rarity-Glühen auf dem Item-Bild (Chef-Regel) — neutraler Rahmen, nur ein Drop-Shadow auf
+   dem Bild selbst, wie im Mockup. Die Seltenheitsfarbe steckt allein im Kicker-Text oben. */
+.iwk-item-hero {
+  flex: 0 0 auto;
+  /* Runde 2 (Chef-Fund: bei 768px Fensterhöhe fraß das feste 260px-Bild den Platz für
+     Fakten-Kacheln + Beschreibung): Größe folgt jetzt der Fensterhöhe (24vh), min. 140px,
+     max. weiter 260px wie zuvor bei großen Fenstern (Chef-Vorgabe). */
+  width: min(100%, clamp(140px, 24vh, 260px));
+  aspect-ratio: 1;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: radial-gradient(circle, rgba(90, 72, 52, 0.22), rgba(3, 3, 3, 0.74) 70%);
+}
+
+.iwk-item-hero img {
+  max-width: 82%;
+  max-height: 82%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.7));
+}
+
+.iwk-item-hero-emoji {
+  font-size: 68px;
+  line-height: 1;
+}
+
+.iwk-facts {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 14px;
+}
+
+.iwk-fact-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  font-size: 13px;
+  border: 1px solid rgba(154, 128, 96, 0.32);
+  background: rgba(0, 0, 0, 0.34);
+}
+
+.iwk-fact-label {
+  color: var(--muted);
+  text-align: left;
+}
+
+.iwk-fact-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--gold);
+  font-family: var(--font-head);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.iwk-item-flavor {
+  flex: 0 0 auto;
+  max-width: 60ch;
+  margin: 0;
+  font-size: 13.5px;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+/* ─── Verwendet-für-Panel: Filter-Chips + 2-spaltiges Knoten-Raster (Mira-Mockup: "flow-uses") ── */
+.iwk-uses-panel {
+  overflow: hidden;
+}
+
+.iwk-filter-row {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.iwk-filter-chip {
+  min-width: auto;
+  min-height: 32px;
+  padding: 3px 12px;
+}
+
+.iwk-output-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+@media (max-width: 560px) {
+  .iwk-output-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Knoten sind jetzt echte <button>: ein Klick auf den bereits aktiven Knoten öffnet dessen Wiki
+   (s. ItemWikiModal.tsx `UseNode`-JSDoc) — Tastatur bekommt Enter/Space dadurch automatisch. */
+/* Runde 2 (Chef-Fund: "grüne/gelbe Seltenheitsränder um den ganzen Knoten"): der Knoten zeigt eine
+   ERZEUGBARE Verwendung, kein besessenes Item — ein Seltenheits-Rahmen las sich wie ein Besitz-
+   Status, den es hier nicht gibt. Neutraler Bronze-Rand + goldene Aktiv/Hover-Kante wie Miras
+   Mockup `.output-node` (exakte Werte aus dem Auftrag), die frühere `.iwk-use-node.rarity-*`-
+   Rahmenfarbe entfällt komplett — `rarityClass(...)` bleibt in ItemWikiModal.tsx nur noch als
+   inaktive Klasse ohne CSS-Gegenstück stehen (kein Datenlogik-Eingriff nötig). */
+.iwk-use-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 62px;
+  padding: 8px 10px;
+  border: 1px solid rgba(125, 100, 67, 0.32);
+  background: rgba(6, 6, 6, 0.5);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.iwk-use-node:hover,
+.iwk-use-node:focus-visible {
+  border-color: rgba(221, 180, 103, 0.82);
+  outline: none;
+}
+
+.iwk-use-node.is-active {
+  border-color: rgba(221, 180, 103, 0.82);
+  background: linear-gradient(90deg, rgba(113, 72, 31, 0.24), rgba(6, 6, 6, 0.5));
+  box-shadow: inset 0 0 0 1px rgba(221, 180, 103, 0.82), inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.iwk-use-node-img {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+/* Runde 2 (Chef-Fund: "Eisen-Streitkolb… abgeschnitten"): kein Ellipsis mehr — lange Kompositum-
+   Namen brechen stattdessen auf bis zu 2 Zeilen um (`-webkit-line-clamp`), der Knoten wächst dafür
+   nicht (min-height 62px reicht für zwei Zeilen + Bild). */
+.iwk-use-node-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Runde 2: derselbe 21px-Body-Erb-Fehler wie `.iwk-source-name` (s. dortiger Kommentar) — in der
+     schmalen 2-spaltigen Knoten-Karte erst recht zu groß, 14px passt neben Bild (42px) + Menge. */
+  font-size: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  line-height: 1.24;
+  color: var(--text);
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.iwk-use-node-qty {
+  flex: 0 0 auto;
+  color: var(--gold);
+  font-style: normal;
+  font-family: var(--font-head);
+  font-weight: 700;
+}
+
+/* ─── Fußband: ausgewählte Quelle → Trenner → ausgewählte Verwendung → „Rezept öffnen" ─────────
+   (Mira-Mockup: "detail-ribbon"), auf Gravewood-Textur wie Menü/Navigation. */
+.iwk-ribbon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 28px 20px;
+  border-top: 1px solid var(--border);
+  background:
+    linear-gradient(rgba(4, 4, 4, 0.5), rgba(20, 13, 8, 0.5)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") repeat;
+  background-size: auto, 320px 320px;
+}
+
+.iwk-ribbon-block {
+  flex: 1 1 220px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.iwk-ribbon-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.iwk-ribbon-label {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.iwk-ribbon-name {
+  /* Runde 2: derselbe 21px-Body-Erb-Fehler wie `.iwk-source-name` (s. dortiger Kommentar). */
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.iwk-ribbon-sub {
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.iwk-ribbon-badge {
+  flex: 0 0 auto;
+  min-width: 68px;
+  text-align: center;
+  padding: 8px 10px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: var(--font-head);
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.38);
+}
+
+/* Zeigt dieselbe geschnitzte Diamant-Zierleiste wie Menü/Navigation statt der Text-Rauten aus dem
+   Mockup ("◆────◆────◆") — echtes Asset statt Unicode-Glyphen. */
+.iwk-ribbon-divider {
+  flex: 0 0 auto;
+  width: 84px;
+  height: 13px;
+  background: url("../assets/ui/gravewood/misc/divider.webp") center / contain no-repeat;
+  opacity: 0.8;
+}
+
+.iwk-ribbon .iwk-ribbon-open {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1400px) {
+  /* Nur die Zierleiste weicht — die beiden Blöcke BLEIBEN nebeneinander (genug Breite selbst bei
+     1366px), nicht auf volle Breite erzwungen: eine erzwungene Stapelung hier machte das Fußband
+     3-zeilig hoch und quetschte den darüberliegenden 3-Panel-Bereich auf ein paar Zeilen Resthöhe
+     zusammen (gefunden bei der 1366×768-RU-Prüfung — das Verwendet-für-Raster verschwand). */
+  .iwk-ribbon-divider {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .iwk-ribbon {
+    align-items: stretch;
+  }
+  .iwk-ribbon-block {
+    flex-basis: 100%;
+  }
 }
