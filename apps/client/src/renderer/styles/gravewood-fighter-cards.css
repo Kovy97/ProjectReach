@@ -356,7 +356,7 @@
   width: 100%;
 }
 
-#root .mc-queue-picker .qty-picker-btn {
+#root .mc-queue-picker .qty-btn {
   width: 100%;
   min-width: 0;
   min-height: clamp(32px, 9.6cqw, 43px);

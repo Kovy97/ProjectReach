@@ -305,7 +305,7 @@ export function SpotlightGuide({
           {requireAction ? (
             <span className="guide-bubble-hint">{hintLabel}</span>
           ) : (
-            <button type="button" className="combat-btn" onClick={onAdvance}>
+            <button type="button" className="btn-iron" onClick={onAdvance}>
               {continueLabel}
             </button>
           )}

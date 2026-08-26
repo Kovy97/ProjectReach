@@ -374,13 +374,6 @@
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
 }
 
-#root .bugreport-dropzone .combat-btn,
-#root .bugreport-fallback .combat-btn,
-#root .bugreport-primary .combat-btn {
-  min-height: 38px;
-  font-size: 14px;
-}
-
 #root .bugreport-auto-block {
   border: 5px solid transparent;
   border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 5px;
@@ -428,25 +421,21 @@
   border-image-width: var(--frame-w);
 }
 
-#root .bugreport-dropzone .combat-btn,
-#root .bugreport-fallback .combat-btn,
-#root .bugreport-primary .combat-btn {
+/* Knopf-Vereinheitlichung 26.08.2026: Absenden ist die Hauptaktion (`.btn-iron`), Datei-wählen/
+   Zwischenablage/E-Mail-Fallback/Kopieren sind leisere Nebenaktionen (`.shop-citadel-btn`) — beide
+   Familien bringen ihre eigene Rahmenoptik schon mit, hier nur noch die Modal-Größe. */
+#root .bugreport-primary .btn-iron {
   min-height: 48px;
   height: auto;
   padding: 7px 16px;
-  border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
-  background-color: #111315;
-  background-image:
-    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
-  background-size: auto, 192px 192px;
-  background-repeat: no-repeat, repeat;
-  color: #ead8a0;
-  font-family: var(--font-head);
   font-size: clamp(15px, 1vw, 19px);
-  line-height: 1.15;
-  white-space: normal;
+}
+
+#root .bugreport-dropzone .shop-citadel-btn,
+#root .bugreport-fallback .shop-citadel-btn {
+  min-height: 48px;
+  padding: 9px 16px;
+  font-size: clamp(14px, 0.95vw, 17px);
 }
 
 #root .bugreport-auto-block {

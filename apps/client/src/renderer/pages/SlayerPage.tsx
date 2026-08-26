@@ -379,12 +379,10 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                 <div className="slayer-task-fight-row">
                   {/* Chef-Fund 25.08. (1.1.0 live): "sehen aus wie Windows-Buttons" — `.btn` war
                       nirgends in der CSS definiert, lief also auf dem nackten Browser-Default.
-                      Jetzt dieselbe Gravewood-Knopf-Familie wie das Fight/Close-Paar im
-                      Zonenkarten-Modal (CombatPage) bzw. das Bestaetigungs-Paar in New Haven:
-                      Primaer (Sofort kaempfen) = `.combat-btn`, Sekundaer (Einreihen) =
-                      `.combat-btn.ghost`. */}
+                      Knopf-Vereinheitlichung 26.08.2026: Primaer (Sofort kaempfen) = `.btn-iron`,
+                      Sekundaer (Einreihen) = `.shop-citadel-btn`. */}
                   <button
-                    className="shop-citadel-btn slayer-task-fight-btn"
+                    className="btn-iron slayer-task-fight-btn"
                     onClick={handleTaskFightNow}
                     disabled={!taskKaempfbar}
                     title={taskKaempfbar ? undefined : t("slayer.task.fightBlocked")}

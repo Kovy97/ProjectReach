@@ -354,7 +354,7 @@
    (1.1.0 live): die Buttons liefen auf der nackten `.btn`-Klasse, die es in der CSS gar nicht
    gibt — reiner Browser-Default ("Windows-Buttons"), zusätzlich über die volle Zettelbreite
    gestreckt. Jetzt dieselbe Gravewood-Knopf-Familie wie das Bestätigungs-Paar in New Haven
-   (newhaven.css `.nh-confirm-actions .combat-btn`): natürliche Breite mit Mindestbreite,
+   (newhaven.css `.nh-confirm-actions`): natürliche Breite mit Mindestbreite,
    mittig nebeneinander, bricht bei schmalem Zettel um statt zu schrumpfen oder abzuschneiden. */
 .slayer-task-fight-row {
   display: flex;
@@ -363,9 +363,11 @@
   margin: 10px 0 2px;
   justify-content: center;
 }
-/* Chef-Korrektur 25.08. (2. Runde): NICHT die Kampfseiten-Familie (combat-btn / ghost), sondern die
-   Knopf-Familie DIESER Seite: shop-citadel-btn, wie "Neuen Auftrag holen" und die Shop-Kaufknoepfe. */
-.slayer-task-fight-row .shop-citadel-btn {
+/* Chef-Entscheid 26.08.2026: Primaeraktion "Sofort kaempfen" = .btn-iron, Sekundaeraktion
+   "Einreihen" = .shop-citadel-btn (wie "Neuen Auftrag holen" und die Shop-Kaufknoepfe) — beide
+   auf derselben Mindestbreite, damit das Paar nebeneinander gleich breit bleibt. */
+.slayer-task-fight-row .shop-citadel-btn,
+.slayer-task-fight-row .btn-iron {
   min-width: 170px;
   flex: 0 1 auto;
 }

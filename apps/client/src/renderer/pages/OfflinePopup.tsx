@@ -531,7 +531,7 @@ export function OfflinePopup({
             <p className="ofs-empty-text">{t("offline.empty.body")}</p>
             <button
               type="button"
-              className="combat-btn ofs-empty-btn"
+              className="btn-iron ofs-empty-btn"
               onClick={() => {
                 dismissOffline();
                 onNavigate?.(lastStopSkillId ?? "skills-overview");
@@ -543,7 +543,7 @@ export function OfflinePopup({
         )}
         </div>
 
-        <button className="combat-btn ofs-collect" onClick={dismissOffline}>
+        <button className="btn-iron ofs-collect" onClick={dismissOffline}>
           {t("offline.collect")}
         </button>
       </div>

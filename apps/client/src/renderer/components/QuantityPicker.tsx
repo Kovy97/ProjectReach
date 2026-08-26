@@ -93,7 +93,7 @@ export function QuantityPicker({
           <button
             key={q}
             type="button"
-            className="ds-button ds-button--sm qty-picker-btn"
+            className="btn-iron btn-iron--sm qty-btn"
             disabled={disabled || !!isPresetDisabled?.(q)}
             title={presetTitle?.(q)}
             onClick={(e) => onPick(q, e.shiftKey)}
@@ -104,7 +104,7 @@ export function QuantityPicker({
         {maxLabel !== undefined && max !== undefined && max > 0 && (
           <button
             type="button"
-            className="ds-button ds-button--sm qty-picker-btn qty-picker-btn--max"
+            className="btn-iron btn-iron--sm qty-btn"
             disabled={disabled}
             onClick={(e) => onPick(max, e.shiftKey)}
           >
@@ -114,7 +114,7 @@ export function QuantityPicker({
         {infiniteLabel !== undefined && onInfinite && (
           <button
             type="button"
-            className="ds-button ds-button--sm qty-picker-btn qty-picker-btn--infinite"
+            className="btn-iron btn-iron--sm qty-btn qty-btn--infinite"
             disabled={disabled}
             onClick={(e) => onInfinite(e.shiftKey)}
           >
@@ -139,7 +139,7 @@ export function QuantityPicker({
         />
         <button
           type="button"
-          className="ds-button ds-button--sm qty-picker-confirm"
+          className="btn-iron btn-iron--sm qty-picker-confirm"
           disabled={disabled || custom.trim() === ""}
           onClick={(e) => confirmCustom(e.shiftKey)}
         >

@@ -397,7 +397,7 @@
    dessen eigener `.qty-picker-presets`-Flex-Reihe, s. styles/quantity-picker.css) — hier nur noch
    volle Breite für den Widget-Root innerhalb der zentrierten `.shopv2-card`-Spalte. Die frühere
    2×2-CSS-Grid-Regel + der `.shopv2-buyqty-btn`-Rahmen-Fix leben jetzt generisch in
-   `.qty-picker-btn` (quantity-picker.css), da Verkauf/Bank denselben Klein-Button-Zuschnitt teilen. */
+   `.qty-btn` (quantity-picker.css), da Verkauf/Bank denselben Klein-Button-Zuschnitt teilen. */
 .shopv2-card-buys {
   width: 100%;
 }
@@ -948,7 +948,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   gap: 6px;
 }
 
-#root .shopv2-counter-quantity .qty-picker-btn {
+#root .shopv2-counter-quantity .qty-btn {
   min-height: 48px;
   display: flex;
   flex-direction: column;

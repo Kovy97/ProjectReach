@@ -1470,14 +1470,6 @@
   margin-top: 4px;
 }
 
-/* Task #273: Details-Button entfernt — EIN voller Fight-Button (kein flex:1-Split mehr nötig,
-   aber harmlos, da nur noch ein Kind im Container). */
-.monster-card-actions .combat-btn {
-  flex: 1;
-  padding: 4px 6px;
-  font-size: 9px;
-}
-
 /* ─── Kampf-Seite ────────────────────────────────────────── */
 .combat-page {
   display: flex;
@@ -1851,12 +1843,6 @@
   font-size: 13px;
   opacity: 0.7;
   margin-top: 2px;
-}
-
-.battle-controls .combat-btn.flee {
-  margin-left: auto;
-  width: auto;
-  padding: 10px 24px;
 }
 
 /* ─── Arena ──────────────────────────────────────────────── */
@@ -3584,124 +3570,11 @@
    specificity declarations in this file (last-write wins).
    ═══════════════════════════════════════════════════════════ */
 
-/* ─── Combat buttons → universal 9-slice button set (Task #332, Chef 24.07.) ─────────────────
-   Ersetzt die alte rote sidebar_btn_{normal,hover,active}.webp-Bannerfamilie (Chef 2026-07-02)
-   durch dasselbe ButtonNew-Rezept wie Sidebar/TopBar (sidebar.css `.sb-skill-btn`, topbar.css
-   `.topbar-item`): border-image mit "fill" trägt die gesamte Optik (Ornament-Rand + Füllung),
-   Hover/Active tauschen nur die border-image-source. border-image-width bewusst kleiner als
-   Sidebar (18px)/TopBar (15px) — `.combat-btn` läuft auch in kompakten Kontexten (Options-
-   Segmente, 38px min-height), ein zu breiter Ornament-Rand würde dort den Textraum fressen. */
-.combat-btn {
-  position: relative;
-  isolation: isolate;
-  background: transparent;
-  border-style: solid;
-  border-color: transparent;
-  /* 1.1.0 (Chef-Fund "utopisch der Rand" am Einsammeln-Knopf): Das Bild ist 1826x331 und
-     sein Goldrand nur rund 16 px stark. Der Schnitt 90 pro Seite presste diese 16 px in eine
-     12-px-Zeichenbreite — der Rand kam mit 2,1 px heraus und der Knopf sah aus wie ein
-     duennes Gestell mit Eckmarken statt wie ein Knopf.
-     Jetzt: senkrecht 35 schneiden (die Nieten reichen bis y=33, bleiben also in der Ecke),
-     waagerecht 95 (Nieten bis x=93), und die ZEICHENBREITE getrennt von der Rahmenbreite
-     setzen. Die Rahmenbreite bleibt klein, damit der Textbereich unangetastet bleibt; das
-     Bild darf breiter zeichnen und legt den Ueberschuss unsichtbar nach innen.
-     Rechnung: 20 px Zeichenbreite bei Schnitt 35 ergibt 20*16/35 = 9,1 px sichtbaren
-     Goldrand, und 20+20 = 40 px bleiben unter der Mindesthoehe von 44 px — sonst wuerde der
-     Browser beide Baender proportional stauchen und alles waere wieder verzerrt. */
-  /* 1.1.0 (Chef-Fund): Hier lag `button_new.webp`, das alte genietete Lederschild. Im Repo
-     liegt eine neuere Knopf-Familie (gravewood/buttons/), deren `primary`-Motiv exakt
-     dieselben Bildmasse hat — 1826x331 — und offensichtlich als Nachfolger gebaut wurde:
-     dunkles Leder, feiner Goldrand, abgeschraegte Ecken statt vier Nieten. Sie war nie
-     eingebunden; `primary` und `square` standen ungenutzt im Ordner.
-     Schnitt 40/48 statt 90/95: die Zier dieses Bildes misst 36-46 px (gemessen), waehrend
-     der Vorgaenger seine Nieten weiter innen hatte und darum die groessere Eckzone
-     brauchte. Zeichenbreite 14/22, damit der Rahmen bei 46 px Knopfhoehe Luft laesst. */
-  border-image: url("../assets/ui/gravewood/buttons/primary/primary-normal.webp") 40 48 40 48 fill / 14px 22px 14px 22px;
-  border-radius: 0;
-  min-height: 44px;
-  color: #ffffff;
-  text-shadow: 0 1px 3px #000;
-  filter: none;
-  transition: color 0.12s, filter 0.12s;
-}
-.combat-btn:hover {
-  filter: none;
-  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-hover.webp");
-  color: #fff;
-  box-shadow: none;
-}
-.combat-btn:active {
-  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-pressed.webp");
-  color: #fff;
-  box-shadow: none;
-}
-.combat-btn[disabled] {
-  cursor: default;
-  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-normal.webp");
-  filter: grayscale(0.6) brightness(0.7);
-  opacity: 0.7;
-}
-.combat-btn[disabled]:hover,
-.combat-btn[disabled]:active {
-  border-image-source: url("../assets/ui/gravewood/buttons/primary/primary-normal.webp");
-}
-
-/* ghost → same frame, compact size */
-.combat-btn.ghost {
-  background: url("../assets/bg_black.webp") repeat;
-  border: none;
-  color: var(--ds-parch-ink, #e8d8b0);
-}
-.combat-btn.ghost:hover {
-  filter: none;
-  background:
-    linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)),
-    url("../assets/bg_black.webp") repeat;
-  box-shadow: 0 0 10px rgba(216, 184, 112, 0.20);
-}
-.combat-btn.ghost:active {
-  background:
-    linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)),
-    url("../assets/bg_black.webp") repeat;
-  color: var(--ds-gold-bright, #f0d898);
-}
-
-/* flee → dasselbe neue ButtonNew-Rahmenbild wie die Basis .combat-btn (hier nicht
-   überschrieben, wird also automatisch mitgeerbt) + ein halbtransparenter roter Tint-Layer
-   als ::after (z-index:-1, malt zwischen border-image und dem echten Button-Text — .combat-btn
-   trägt bereits position:relative + isolation:isolate, s. Basisregel oben) als destruktiver
-   Hinweis. Kein eigenes rotes Banner-Asset mehr nötig ("keine roten Reste" außerhalb des Rahmens),
-   Zustand kommt weiterhin vom geerbten Ornament-Rahmen (normal/hover/pressed). */
-.combat-btn.flee {
-  margin-top: 0;
-}
-.combat-btn.flee::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: rgba(120, 24, 16, 0.35);
-  pointer-events: none;
-}
-.combat-btn.flee:hover {
-  filter: none;
-  color: #ffb49c;
-  box-shadow: 0 0 12px rgba(200, 60, 40, 0.35);
-}
-.combat-btn.flee:hover::after {
-  background: rgba(150, 30, 20, 0.50);
-}
-.combat-btn.flee:active {
-  color: #ff8a6c;
-}
-.combat-btn.flee:active::after {
-  background: rgba(170, 34, 22, 0.62);
-}
-
-/* Standalone flee button (outside .battle-controls) */
-.battle > .combat-btn.flee {
-  align-self: flex-end;
-}
+/* Knopf-Vereinheitlichung 26.08.2026 (Chef-Entscheid): die frühere `.combat-btn`/`.ghost`/`.flee`-
+   ButtonNew-Familie (Task #332) ist komplett entfernt — Standard ist jetzt `.btn-iron` (Haupt-
+   aktion, design-system.css), Sekundär `.shop-citadel-btn` (pages.css), destruktiv zusätzlich
+   `.btn-iron--danger`. Bestehende Kontextklassen (`.combat-stop-btn`, `.mc-fight-now-btn`,
+   `.dungeon-enter`, `.combat-return-btn` …) bleiben für Layout/Größe erhalten. */
 
 /* ─── Battle-controls panel — 9-slice wooden frame ───────── */
 .battle-controls {
@@ -4238,7 +4111,6 @@
 .monster-card-drops .drop-icon { font-size: 20px; }
 .monster-card-drops .drop-icon-img { width: 22px; height: 22px; object-fit: contain; }
 .monster-card-actions { gap: 10px; margin-top: 8px; }
-.monster-card-actions .combat-btn { padding: 9px 12px; font-size: 14px; }
 /* Slayer target badge a touch bigger on the larger cards */
 .monster-card .slayer-target-badge { font-size: 14px; }
 
@@ -4880,12 +4752,6 @@
    da er sich nicht mehr die Zeile teilen muss). Buttons unten bündig: margin-top:auto schiebt sie
    ans untere Ende, Footer-Padding = Rand-Abstand. */
 .monster-card-actions { margin-top: auto; padding-top: 6px; }
-.monster-card-actions .combat-btn {
-  width: 100%;
-  padding: clamp(11px, 4.2cqw, 16px) 16px;
-  font-size: clamp(15px, 6cqw, 21px);
-  letter-spacing: 0.06em;
-}
 
 /* Task #315 (Kampf-Queue-UI) — der geteilte QuantityPicker (Shop/Bank-Widget, s. components/
    QuantityPicker.tsx) ersetzte hier ursprünglich den vollbreiten Einzel-Fight-Button. Container-
@@ -4898,30 +4764,15 @@
   flex-direction: column;
 }
 /* Task #348 — Sofort-Kämpfen-CTA über dem Mengen-Grid: erbt die volle Kachel-Optik von
-   `.monster-card-actions .combat-btn` weiter oben (width:100%, große clamp()-Schrift, Ornament-
-   Rahmen) — hier nur der Abstand zum darunterliegenden Mengen-Grid, da `.mc-queue-actions` selbst
+   `.btn-iron` + `.mc-fight-now-btn` (gravewood-fighter-cards.css, width:100%, große clamp()-
+   Schrift) — hier nur der Abstand zum darunterliegenden Mengen-Grid, da `.mc-queue-actions` selbst
    kein `gap` setzt (die Kinder bringen ihren Abstand bisher einzeln mit, s. `.mc-shift-hint`). */
 .mc-fight-now-btn {
   margin-bottom: 8px;
 }
-/* Fix-Welle (Screenshot-Verifikation Task #315): OHNE `flex` schrumpfen die 4 Presets auf ihre
-   reine Textbreite (bei "1×"/"∞" nur ~17px) — bei so wenig Platz rendert der 6px-Holzrahmen
-   (`.qty-picker-btn::before`, quantity-picker.css) fast nur noch Textur statt eines lesbaren
-   Buttons. `nowrap` + `flex:1` lässt alle 4 Presets die volle Kartenbreite gleichmäßig teilen
-   (Muster `.skillcard-craft-cta` grid-template-columns: repeat(4,1fr) auf den Skill-Karten). */
-.mc-queue-picker .qty-picker-presets {
-  flex-wrap: nowrap;
-}
-.mc-queue-picker .qty-picker-btn {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: clamp(36px, 11cqw, 50px);
-  padding: clamp(5px, 1.8cqw, 8px) clamp(3px, 1.2cqw, 6px);
-  font-size: clamp(11px, 3.6cqw, 14px);
-}
-.mc-queue-picker .qty-picker-btn--infinite {
-  font-size: clamp(16px, 5.4cqw, 20px);
-}
+/* Knopf-Vereinheitlichung 26.08.2026: die Presets-Grid-/Groessenregeln fuer `.qty-btn` (vormals
+   `.qty-picker-btn`) leben jetzt gebuendelt in gravewood-fighter-cards.css (`#root .mc-queue-picker
+   .qty-btn`, hoehere Spezifitaet durch `#root`) — hier bleibt nur noch die freie Zahleneingabe. */
 .mc-queue-picker .qty-picker-input {
   font-size: clamp(12px, 4cqw, 14px);
   padding: clamp(4px, 1.6cqw, 6px) clamp(6px, 2.4cqw, 10px);
@@ -6167,8 +6018,9 @@
   color: var(--gold, #d6a04a);
 }
 /* Chef-Test 25.08.2026: der Knopf lief auf `.btn`, das im CSS nicht existiert (Browser-Default,
-   "Windows-Knopf"). Jetzt die Gravewood-Knopf-Familie wie im Zonen-Fenster. */
-.combat-return-bar .combat-btn {
+   "Windows-Knopf"). Jetzt die Gravewood-Knopf-Familie wie im Zonen-Fenster. Knopf-Vereinheitlichung
+   26.08.2026: `.btn-iron` statt `.combat-btn` — Selektor greift ueber die feste Kontextklasse. */
+.combat-return-bar .combat-return-btn {
   flex: 0 0 auto;
   min-width: 160px;
 }

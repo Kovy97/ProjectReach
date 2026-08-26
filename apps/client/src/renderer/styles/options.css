@@ -12,10 +12,10 @@
    (design-system.css, der Standard-Knopf) mit `.is-active` für den gewählten Zustand — die
    frühere Zwischenlösung `.combat-btn`/`.combat-btn.active`, scoped auf `#root .opz-page`, griff
    im Hauptmenü nicht (anderer Container, `.menu-options` statt `.opz-page`) und blieb dort beim
-   alten Holzrahmen/nackten `.lang-btn` stehen. Einzige Ausnahme: die destruktive "Übernehmen"-
-   Aktion beim Speicherstand-Import bleibt `.combat-btn.flee` (roter Warn-Tint aus combat.css,
-   dasselbe Muster wie die Quit-Bestätigung) — kein Eisenrahmen-Sonderfall, sondern eine eigene
-   Bedeutung. `.opz-section`/`.opz-row`/`.opz-header` waren schon vorher `#root`-weit (nicht
+   alten Holzrahmen/nackten `.lang-btn` stehen. Update 26.08.2026 (Chef-Entscheid, `.combat-btn`
+   fällt komplett weg): auch die destruktive "Übernehmen"-Aktion beim Speicherstand-Import ist
+   jetzt `.btn-iron.btn-iron--danger` (roter Text statt eigenem Warn-Tint) — keine Ausnahme mehr.
+   `.opz-section`/`.opz-row`/`.opz-header` waren schon vorher `#root`-weit (nicht
    `.opz-page`-gescoped) und damit bereits in beiden Flächen identisch.
    ═══════════════════════════════════════════════════════════ */
 
@@ -185,18 +185,16 @@
   justify-content: flex-end;
 }
 
-/* `.opz-segment .combat-btn` lebt weiter NUR für BugReportDialog.tsx (Datei-wählen/Zwischenablage/
-   E-Mail-Fallback-Knöpfe) — dieser Dialog ist kein Options-Besitz (TABU) und bleibt bewusst bei
-   `.combat-btn`. Alle echten Options-Segmente (`.opz-lang-grid` eingeschlossen) sind seit der
-   Button-Vereinheitlichung 25.08.2026 `.btn-iron`/`.btn-iron--sm` (OptionControls.tsx/
-   OptionsPage.tsx) und brauchen diese Größenregel nicht mehr. */
-.opz-segment .combat-btn {
+/* `.opz-segment .shop-citadel-btn` lebt weiter NUR für BugReportDialog.tsx (Datei-wählen/
+   Zwischenablage/E-Mail-Fallback/Kopieren-Knöpfe, seit 26.08.2026 `.shop-citadel-btn` statt
+   `.combat-btn`) — dieser Dialog ist kein Options-Besitz (TABU). Alle echten Options-Segmente
+   (`.opz-lang-grid` eingeschlossen) sind seit der Button-Vereinheitlichung 25.08.2026
+   `.btn-iron`/`.btn-iron--sm` (OptionControls.tsx/OptionsPage.tsx) und brauchen diese
+   Größenregel nicht mehr. */
+.opz-segment .shop-citadel-btn {
   padding: 9px 18px;
   font-size: 15px;
   min-height: 38px;
-  /* Task #332: kompaktere Buttons brauchen einen schmaleren Ornament-Rand als die 12px-Basis
-     (combat.css `.combat-btn`), sonst fressen die Ecken bei 38px Höhe den Textraum. */
-  border-image-width: var(--frame-w);
 }
 
 .opz-lang-grid {
@@ -468,35 +466,9 @@
   background-clip: border-box;
 }
 
-/* Button-Vereinheitlichung 25.08.2026: alle neutralen Options-Knöpfe sind `.btn-iron` (unscoped,
-   design-system.css) — diese Regel bleibt nur noch für die EINE Ausnahme, die destruktive
-   "Übernehmen"-Aktion beim Speicherstand-Import (`.combat-btn.flee`, OptionsPage.tsx), deren
-   roter Warn-Tint (combat.css `.combat-btn.flee::after`) eine eigene Bedeutung trägt und kein
-   `.btn-iron`-Fall ist. Behält denselben Eisen-Look wie zuvor, nur auf `.flee` verengt. */
-#root .opz-page .combat-btn.flee {
-  min-height: 46px;
-  height: auto;
-  padding: 7px 15px;
-  border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
-  background-color: #111315;
-  background-image:
-    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
-  background-size: auto, 192px 192px;
-  background-repeat: no-repeat, repeat;
-  color: #ead8a0;
-  font-family: var(--font-head);
-  font-size: clamp(14px, 0.95vw, 18px);
-  line-height: 1.15;
-  white-space: normal;
-  text-wrap: balance;
-}
-
-#root .opz-page .combat-btn.flee:hover {
-  filter: brightness(1.12);
-  color: #fff1bd;
-}
+/* Button-Vereinheitlichung 26.08.2026: alle Options-Knöpfe sind `.btn-iron`, inkl. der destruktiven
+   "Übernehmen"-Aktion beim Speicherstand-Import (jetzt `.btn-iron.btn-iron--danger`, OptionsPage.tsx)
+   — kein eigener Größen-/Look-Sonderfall mehr nötig, `.btn-iron` deckt das bereits ab. */
 
 /* codex:2026-08-01T13:30:36+02:00 — Einheitliche, transparente Ashen-Iron-Systemglyphen statt
    Emoji-Fonts. Die Assets bleiben bei kleinen Optionsgrößen scharf und übernehmen keine

@@ -2800,10 +2800,10 @@ function Battle({
           codex:2026-08-02T17:30:00+02:00 — eigener aktueller Ashen-Iron-Vertrag statt des
           veralteten universellen ButtonNew/Flee-Layers. */}
       <div className="battle-topbar">
-        <button className="combat-btn flee combat-stop-btn combat-zones-btn" onClick={onShowEnemyList}>
+        <button className="btn-iron combat-stop-btn combat-zones-btn" onClick={onShowEnemyList}>
           {t("combat.zones")}
         </button>
-        <button className="combat-btn flee combat-stop-btn" onClick={() => stopCombat(state)}>
+        <button className="btn-iron btn-iron--danger combat-stop-btn" onClick={() => stopCombat(state)}>
           {t("combat.flee")}
         </button>
       </div>
@@ -3173,10 +3173,10 @@ function ZoneMapTokenModal({
           {" · "}{statIcon("def")} {formatStat(monster.defense)}
         </div>
         <div className="zonemap-token-modal-actions">
-          <button className="combat-btn ghost" onClick={onClose}>
+          <button className="shop-citadel-btn" onClick={onClose}>
             {t("combat.close")}
           </button>
-          <button className="combat-btn" onClick={onFight}>
+          <button className="btn-iron" onClick={onFight}>
             {t("combat.fight")}
           </button>
         </div>
@@ -5582,7 +5582,7 @@ export function CombatPage(): JSX.Element {
           <span className="combat-return-note">
             {t("combat.stillFighting").replace("{name}", tr(monster.name))}
           </span>
-          <button type="button" className="combat-btn combat-return-btn" onClick={() => setEnemyListInCombat(false)}>
+          <button type="button" className="btn-iron combat-return-btn" onClick={() => setEnemyListInCombat(false)}>
             {t("combat.backToFight")}
           </button>
         </div>

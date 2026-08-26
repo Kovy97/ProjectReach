@@ -57,10 +57,10 @@ export function PortraitPickerModal({ currentId, title, onConfirm, onCancel }: P
           </div>
         </div>
         <div className="portrait-gallery-actions">
-          <button className="combat-btn" onClick={onCancel}>
+          <button className="shop-citadel-btn" onClick={onCancel}>
             {t("creation.portrait.cancel")}
           </button>
-          <button className="combat-btn" onClick={() => onConfirm(tempId)}>
+          <button className="btn-iron" onClick={() => onConfirm(tempId)}>
             {t("creation.portrait.confirm")}
           </button>
         </div>

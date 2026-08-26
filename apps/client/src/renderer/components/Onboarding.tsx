@@ -196,7 +196,7 @@ export function Onboarding(): JSX.Element | null {
 
         <div className="onboarding-nav">
           <button
-            className="combat-btn ghost"
+            className="shop-citadel-btn"
             disabled={step === 0}
             onClick={() => setStep((s) => Math.max(0, s - 1))}
           >
@@ -206,11 +206,11 @@ export function Onboarding(): JSX.Element | null {
             {step + 1} / {STEPS.length}
           </span>
           {isLast ? (
-            <button className="combat-btn" onClick={close}>
+            <button className="btn-iron" onClick={close}>
               {t("onboarding.start")}
             </button>
           ) : (
-            <button className="combat-btn" onClick={() => setStep((s) => s + 1)}>
+            <button className="btn-iron" onClick={() => setStep((s) => s + 1)}>
               {t("onboarding.next")}
             </button>
           )}

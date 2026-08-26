@@ -568,6 +568,19 @@
   font-size: clamp(13px, 0.85vw, 16px);
 }
 
+/* ── Destruktive Variante (Chef-Entscheid 26.08.2026, "combat-btn/flee faellt komplett weg") ───
+   Ersetzt die alte rote `.combat-btn.flee`-Familie (combat.css) fuer zerstoererische Haupt-
+   aktionen (Kampf beenden, Speicherstand ueberschreiben, Charakter loeschen): derselbe Eisen-
+   rahmen wie `.btn-iron`, nur die Schrift warnt. Kombiniert immer MIT `.btn-iron`, kein
+   eigenstaendiger Rahmen. */
+.btn-iron--danger {
+  color: #e8a08a;
+}
+.btn-iron--danger:hover,
+.btn-iron--danger:focus-visible {
+  color: #ffb49c;
+}
+
 /* ── Aktiv-/Ausgewählt-Zustand (Options-Vereinheitlichung 25.08.2026) ──────────────────────────
    Segment-Reihen (Vollbild/Randlos/Fenster …), An/Aus-Umschalter und die Sprachwahl sind alles
    `.btn-iron.is-active` statt eines eigenen Pressed-Assets: hellere Fläche + Goldschrift für die

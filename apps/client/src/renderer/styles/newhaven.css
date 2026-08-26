@@ -6,8 +6,8 @@
    mail.css/inv-filter.css: andere Agenten arbeiten parallel in pages.css/skills.css). Namensraum
    durchgängig `nh-*`, Seiten-Wurzel `.newhaven-page`.
 
-   Geerbt statt neu erfunden: `.shop-panel` (Kopfzeile), `.combat-btn` (+ `.ghost`/`.flee`),
-   `.bar`/`.bar-fill`/`.bar.tall` (Fortschritt), `.mat-chip`/`.mats-list`/`.mat-count`
+   Geerbt statt neu erfunden: `.shop-panel` (Kopfzeile), `.btn-iron`/`.shop-citadel-btn`
+   (+ `.btn-iron--danger`), `.bar`/`.bar-fill`/`.bar.tall` (Fortschritt), `.mat-chip`/`.mats-list`/`.mat-count`
    (Kosten-Chips inkl. grün/rot), `.modal-overlay`/`.modal` (Abbruch-Rückfrage).
    Abstände ausschließlich über die --ds-gap-Skala (4/8/12/20/32), Schriftgrößen über --ds-fs-*.
    Alle url() bewusst GEQUOTET (Launch-Regel: Installpfade mit Klammern).
@@ -709,7 +709,8 @@
   justify-content: center;
 }
 
-.nh-confirm-actions .combat-btn {
+.nh-confirm-actions .btn-iron,
+.nh-confirm-actions .shop-citadel-btn {
   min-width: 160px;
 }
 
@@ -1123,18 +1124,17 @@
   white-space: nowrap;
 }
 
-.nh-map-object-tools .combat-btn {
+.nh-map-object-tools .shop-citadel-btn {
   min-width: 0;
   width: auto;
   min-height: 27px;
   padding: 2px 8px;
-  border-width: 3px;
   font-family: var(--font-info);
   font-size: clamp(11px, 4.4cqw, 13px);
   line-height: 1;
 }
 
-.nh-map-object-tools .combat-btn.active {
+.nh-map-object-tools .shop-citadel-btn.is-active {
   color: #fff0b0;
   filter: brightness(1.16);
 }

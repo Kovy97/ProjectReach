@@ -1,9 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    QUANTITY-PICKER — gemeinsames "Wie viele?"-Mengen-Widget (Task #314 B2).
-   Presets (.ds-button/.ds-button--sm, Citadel-Optik erben sie bereits) + eine
-   schmale freie Zahleneingabe darunter. Eigener Namensraum "qty-picker-*",
-   direkt importiert von components/QuantityPicker.tsx (Kollisions-Schutz,
-   gleiches Muster wie styles/action-queue.css).
+   Presets + eine schmale freie Zahleneingabe darunter. Eigener Namensraum
+   "qty-picker-*"/"qty-btn", direkt importiert von components/QuantityPicker.tsx
+   (Kollisions-Schutz, gleiches Muster wie styles/action-queue.css).
+   Knopf-Vereinheitlichung 26.08.2026 (Chef-Entscheid, Nachtrag nach Live-Test): Presets, Max-/
+   ∞-Knopf UND der "GO"-Bestätigen-Knopf der freien Eingabe sind jetzt alle `.btn-iron.btn-iron--sm`
+   (design-system.css) statt des früheren `.ds-button`/`.qty-picker-btn`-Holzrahmens — nur noch
+   `min-width:0` hier, damit vier Presets + GO-Knopf bei 1366×768 passen; Kontextgrößen (Monsterkarte,
+   Shop-Kaufzähler) sitzen weiter in combat.css/gravewood-fighter-cards.css/shop.css.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .qty-picker {
@@ -18,31 +22,13 @@
   gap: 6px;
 }
 
-/* Chef 2026-07-10-Fix (ursprünglich .shopv2-buyqty-btn, jetzt generisch für ALLE Presets — Bank/
-   Sell teilen denselben kleinen 2-Zeilen-Zuschnitt): der 10px-Holzrahmen des .ds-button liegt ÜBER
-   dem Text (::before, z:1) — bei kleinen Buttons schnitt das Preise/Mengen ab. Schlankerer
-   6px-Rahmen + Innenabstand ≥ Rahmenstärke behebt das für jeden Preset-Button dieses Widgets. */
-.qty-picker-btn {
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 8px 6px 7px;
-  min-height: 46px;
-  line-height: 1.2;
-}
-
-.qty-picker-btn::before {
-  border-width: var(--frame-w);
-  border-image-width: var(--frame-w);
-}
-
-.qty-picker-btn--max {
-  flex-direction: row;
+.qty-btn {
+  min-width: 0;
 }
 
 /* Task #315 — eigenständiger "unbegrenzt"-Knopf (Kampf-Queue ∞): größeres Glyph, sonst gleiche
-   Kachel-Optik wie die Zahlen-Presets. */
-.qty-picker-btn--infinite {
+   Optik wie die Zahlen-Presets. */
+.qty-btn--infinite {
   font-size: 20px;
   font-weight: 700;
 }
@@ -89,6 +75,7 @@
 
 .qty-picker-confirm {
   flex-shrink: 0;
+  min-width: 0;
 }
 
 /* ─── Bank-Teilmengen-Modal (Task #314 B2, components/pages BankPage.tsx BankQtyModal) ────────

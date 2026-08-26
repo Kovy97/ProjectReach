@@ -110,7 +110,7 @@ export function StalematePopup(): JSX.Element {
         {inDungeon && (
           <p className="death-modal-paragon-hint">🚪 {t("dungeon.death.reset")}</p>
         )}
-        <button className="combat-btn" onClick={dismiss}>
+        <button className="btn-iron" onClick={dismiss}>
           {t("common.close")}
         </button>
       </div>

@@ -217,7 +217,7 @@ export function OptionsPage(): JSX.Element {
           <div className="opz-import-row">
             {/* Rote Aktion (wie die Quit-Bestätigung, Sidebar.tsx): überschreibt den aktuellen
                 Spielstand unwiderruflich — die einzige "primäre" (destruktive) Aktion dieser Seite. */}
-            <button className="combat-btn flee" disabled={!importText.trim()} onClick={() => void doImport()}>
+            <button className="btn-iron btn-iron--danger" disabled={!importText.trim()} onClick={() => void doImport()}>
               {t("options.importApply")}
             </button>
             {status === "ok" && <span className="opz-status-ok">✓ {t("options.importOk")}</span>}

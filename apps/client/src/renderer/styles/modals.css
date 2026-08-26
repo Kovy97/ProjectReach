@@ -200,7 +200,8 @@
   color: var(--muted);
 }
 
-.onboarding-nav .combat-btn {
+.onboarding-nav .btn-iron,
+.onboarding-nav .shop-citadel-btn {
   min-width: 120px;
 }
 
@@ -474,7 +475,7 @@
   margin: 0 0 18px;
 }
 
-.death-modal .combat-btn {
+.death-modal .btn-iron {
   width: 100%;
 }
 
@@ -546,7 +547,8 @@
   gap: 12px;
 }
 
-.quit-confirm-actions .combat-btn {
+.quit-confirm-actions .btn-iron,
+.quit-confirm-actions .shop-citadel-btn {
   flex: 1 1 0;
 }
 

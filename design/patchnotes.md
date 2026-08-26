@@ -463,6 +463,18 @@ offline.
 (erkennt den Auto-Neustart über `clearNo`). Vault-Pin v80 → v83. Zwischen zwei Läufen keine
 Atempause (wie manuell).*
 
+**Eine Knopf-Familie im ganzen Spiel (Chef-Entscheid 26.08.):** DE: Hauptknöpfe tragen jetzt
+überall den Stahlrahmen, Zweitknöpfe (Abbrechen, Einreihen, Zurück) den kleineren Citadel-Rahmen,
+gefährliche Aktionen (Kampf beenden, Spiel verlassen, Spielstand ersetzen) den Stahlrahmen mit roter
+Schrift. Die Mengen-Knöpfe 1× / 25× / 50× / ∞ und „Los" unter Monster- und Skill-Karten sind ebenfalls
+Stahl. Das alte Gravewood-Ledermotiv und die Holz-Mengenknöpfe sind komplett verschwunden. / EN: One
+button family across the whole game: iron frame for primary actions, the smaller Citadel frame for
+secondary ones, red text for dangerous ones; quantity buttons included.
+
+*Dev-Notiz: `combat-btn` (+ghost/flee) und `qty-picker-btn` aus 13 Komponenten/Seiten entfernt,
+~120 Zeilen tote CSS gelöscht (combat.css, quantity-picker.css, options.css, bug-report.css),
+`.btn-iron--danger` neu, Mengenpicker `.qty-btn`. Screenshots ui-audit/shots-buttons (32).*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

@@ -204,10 +204,10 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
           <div className="bugreport-dropzone-actions">
             {/* codex:2026-08-01T13:02:00+02:00 — Das Dialogformular verwendet denselben
                 Gravewood-Buttonvertrag wie die restlichen Options-Aktionen. */}
-            <button type="button" className="combat-btn" onClick={() => fileInputRef.current?.click()}>
+            <button type="button" className="shop-citadel-btn" onClick={() => fileInputRef.current?.click()}>
               {t("bugReport.selectFileBtn")}
             </button>
-            <button type="button" className="combat-btn" onClick={() => void handlePasteFromClipboard()}>
+            <button type="button" className="shop-citadel-btn" onClick={() => void handlePasteFromClipboard()}>
               {t("bugReport.pasteBtn")}
             </button>
           </div>
@@ -261,7 +261,7 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
 
         {webhookUrl && (
           <div className="bugreport-primary">
-            <button className="combat-btn" disabled={!canSend || sendState === "sending"} onClick={() => void handleSend()}>
+            <button className="btn-iron" disabled={!canSend || sendState === "sending"} onClick={() => void handleSend()}>
               {sendState === "sending" ? t("bugReport.sending") : t("bugReport.send")}
             </button>
             {sendState === "success" && (
@@ -288,10 +288,10 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
           {fallbackVisible && (
             <div className="bugreport-fallback-body">
               <div className="opz-segment" style={{ justifyContent: "flex-start" }}>
-                <button className="combat-btn" disabled={!canSend} onClick={() => void handleEmail()}>
+                <button className="shop-citadel-btn" disabled={!canSend} onClick={() => void handleEmail()}>
                   {t("bugReport.emailBtn")}
                 </button>
-                <button className="combat-btn" disabled={!canSend} onClick={handleCopy}>
+                <button className="shop-citadel-btn" disabled={!canSend} onClick={handleCopy}>
                   {t("bugReport.copyBtn")}
                 </button>
                 {copied && <span className="opz-status-ok">✓ {t("bugReport.copied")}</span>}

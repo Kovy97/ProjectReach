@@ -438,11 +438,11 @@ function RefinePanel({
 
       {level >= 1 && (
         <div className="nh-refine-actions">
-          <button type="button" className="combat-btn ghost nh-refine-btn" onClick={() => setOpen((o) => !o)}>
+          <button type="button" className="shop-citadel-btn nh-refine-btn" onClick={() => setOpen((o) => !o)}>
             {recipe ? t("newhaven.refine.change") : t("newhaven.refine.choose")}
           </button>
           {recipe && (
-            <button type="button" className="combat-btn ghost nh-refine-btn" onClick={() => choose(null)}>
+            <button type="button" className="shop-citadel-btn nh-refine-btn" onClick={() => choose(null)}>
               {t("newhaven.refine.stop")}
             </button>
           )}
@@ -690,7 +690,7 @@ function BuildingCardImpl({
           <div className="bar tall nh-progress-bar">
             <div className="bar-fill" style={{ transform: `scaleX(${buildPct})` }} />
           </div>
-          <button type="button" className="combat-btn flee nh-cancel-btn" onClick={onRequestCancel}>
+          <button type="button" className="btn-iron btn-iron--danger nh-cancel-btn" onClick={onRequestCancel}>
             {t("newhaven.build.cancel")}
           </button>
           </div>
@@ -742,7 +742,7 @@ function BuildingCardImpl({
 
           <button
             type="button"
-            className="combat-btn nh-build-btn"
+            className="btn-iron nh-build-btn"
             disabled={reason !== "ok"}
             onClick={() => {
               // codex:2026-07-31T19:00:03+02:00 — Debug-Free beeinflusst nur diese Buchung.
@@ -761,7 +761,7 @@ function BuildingCardImpl({
           {queueReason === "ok" && reason !== "ok" && (
             <button
               type="button"
-              className="combat-btn nh-queue-btn"
+              className="shop-citadel-btn nh-queue-btn"
               onClick={() => {
                 if (enqueueCampBuild(state, content, def.id) === "ok") onDirty();
               }}
@@ -841,10 +841,10 @@ function CancelConfirm({
           {t("newhaven.cancel.body").replace("{name}", name).replace("{level}", roman(level))}
         </p>
         <div className="nh-confirm-actions">
-          <button type="button" className="combat-btn ghost" onClick={onClose}>
+          <button type="button" className="shop-citadel-btn" onClick={onClose}>
             {t("newhaven.cancel.no")}
           </button>
-          <button type="button" className="combat-btn flee" onClick={onConfirm}>
+          <button type="button" className="btn-iron btn-iron--danger" onClick={onConfirm}>
             {t("newhaven.cancel.yes")}
           </button>
         </div>
@@ -920,10 +920,10 @@ function DemolishConfirm({
           )}
         </div>
         <div className="nh-confirm-actions">
-          <button type="button" className="combat-btn ghost" onClick={onClose}>
+          <button type="button" className="shop-citadel-btn" onClick={onClose}>
             {t("newhaven.demolish.no")}
           </button>
-          <button type="button" className="combat-btn flee" onClick={onConfirm}>
+          <button type="button" className="btn-iron btn-iron--danger" onClick={onConfirm}>
             {t("newhaven.demolish.yes")}
           </button>
         </div>
@@ -1022,12 +1022,12 @@ function BuildingPopup({
             deshalb als gleichwertiger, sichtbarer Befehl vorhanden statt als versteckte Geste. */}
         <div className="nh-popup-actions">
           {core.level > 0 && core.jobRemainingMs < 0 && (
-            <button type="button" className="combat-btn nh-move-btn" onClick={onStartMove}>
+            <button type="button" className="btn-iron nh-move-btn" onClick={onStartMove}>
               {t("newhaven.move.button")}
             </button>
           )}
           {demolishReason === "ok" && (
-            <button type="button" className="combat-btn flee nh-demolish-btn" onClick={() => setConfirmingDemolish(true)}>
+            <button type="button" className="btn-iron btn-iron--danger nh-demolish-btn" onClick={() => setConfirmingDemolish(true)}>
               {t("newhaven.demolish.button")}
             </button>
           )}
@@ -1311,7 +1311,7 @@ function MapTile({
             <span>{t("newhaven.move.effectiveScale").replace("{value}", visualScale.toFixed(2))}</span>
             <button
               type="button"
-              className={`combat-btn ghost${calibration.flipped ? " active" : ""}`}
+              className={`shop-citadel-btn${calibration.flipped ? " is-active" : ""}`}
               aria-pressed={calibration.flipped}
               aria-label={t("newhaven.move.flip")}
               title={t("newhaven.move.flip")}
@@ -1321,7 +1321,7 @@ function MapTile({
             </button>
             <button
               type="button"
-              className="combat-btn ghost"
+              className="shop-citadel-btn"
               aria-label={t("newhaven.move.reset")}
               title={t("newhaven.move.reset")}
               onClick={onCalibrationReset}
@@ -1646,7 +1646,7 @@ function CampMapView({
           <div className="nh-move-banner">
             <p>{t("newhaven.move.hint")}</p>
             <p className="nh-map-calibration-empty">{t("newhaven.move.selectHint")}</p>
-            <button type="button" className="combat-btn ghost" onClick={() => onMoveModeChange(false)}>
+            <button type="button" className="shop-citadel-btn" onClick={() => onMoveModeChange(false)}>
               {t("newhaven.move.done")}
             </button>
           </div>
@@ -1657,7 +1657,7 @@ function CampMapView({
             {placeReason !== "ok" && (
               <p className="nh-place-reason">{reasonText(state, placeReason, 1, hallName, busyName, "", t)}</p>
             )}
-            <button type="button" className="combat-btn ghost nh-place-cancel" onClick={() => setPlacingId(null)}>
+            <button type="button" className="shop-citadel-btn nh-place-cancel" onClick={() => setPlacingId(null)}>
               {t("newhaven.map.placing.cancel")}
             </button>
           </div>

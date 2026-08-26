@@ -136,10 +136,9 @@ body.guide-active .onboarding-guide-root .guide-bubble * {
   color: var(--gold);
 }
 
-/* Primärer "Weiter"-Button: scoped statt .combat-btn direkt anzufassen (combat.css ist gesperrt,
-   parallel belegt) — höhere Selektor-Spezifität gewinnt zuverlässig gegen beide globalen
-   .combat-btn-Regeln unabhängig von deren Quellreihenfolge. */
-.guide-bubble-footer .combat-btn {
+/* Primärer "Weiter"-Button: eigene Größenregel statt .btn-iron direkt anzufassen (design-system.css
+   ist gesperrt, parallel belegt) — höhere Selektor-Spezifität gewinnt zuverlässig. */
+.guide-bubble-footer .btn-iron {
   font-size: clamp(16px, 1vw, 20px);
   padding: clamp(11px, 1vw, 14px) clamp(20px, 2vw, 28px);
   min-height: 48px;

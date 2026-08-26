@@ -576,13 +576,13 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
             <p className="quit-confirm-body">{t("sidebar.quitConfirm")}</p>
             <div className="quit-confirm-actions">
               <button
-                className="combat-btn ghost"
+                className="shop-citadel-btn"
                 onClick={() => setQuitConfirmOpen(false)}
               >
                 {t("sidebar.quitCancel")}
               </button>
               <button
-                className="combat-btn flee"
+                className="btn-iron btn-iron--danger"
                 onClick={() => {
                   // Bugfund aus dem Backup-Plan (#281): quit() ohne Speichern verlor bis zu
                   // AUTOSAVE-Intervall an Fortschritt. Erst speichern, DANN beenden — und auch
