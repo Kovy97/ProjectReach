@@ -356,20 +356,33 @@
    gestreckt. Jetzt dieselbe Gravewood-Knopf-Familie wie das Bestätigungs-Paar in New Haven
    (newhaven.css `.nh-confirm-actions`): natürliche Breite mit Mindestbreite,
    mittig nebeneinander, bricht bei schmalem Zettel um statt zu schrumpfen oder abzuschneiden. */
+/* Chef-Fund 26.08.2026 ("Buttons gehen unter"): eigene volle-Breite-Zeile direkt unter
+   Fortschritt/VOR den Belohnungs-Chips (klarer Abstand per margin-bottom), statt zwischen
+   Monster-Info und Belohnungen unterzugehen. flex-wrap fängt schmale Breiten ab (untereinander
+   statt Clip) — bei 1366×768 ist die Zeile (Basis 230px+150px+Gap) breit genug für nebeneinander. */
 .slayer-task-fight-row {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 10px 0 2px;
-  justify-content: center;
+  margin: 6px 0 18px;
+  width: 100%;
 }
 /* Chef-Entscheid 26.08.2026: Primaeraktion "Sofort kaempfen" = .btn-iron, Sekundaeraktion
-   "Einreihen" = .shop-citadel-btn (wie "Neuen Auftrag holen" und die Shop-Kaufknoepfe) — beide
-   auf derselben Mindestbreite, damit das Paar nebeneinander gleich breit bleibt. */
-.slayer-task-fight-row .shop-citadel-btn,
+   "Einreihen" = .shop-citadel-btn (wie "Neuen Auftrag holen" und die Shop-Kaufknoepfe).
+   Chef-Fund (Nachtrag) "Sofort kaempfen groesser": min-height 52px + 2:1-Wachstum gegenüber
+   Einreihen (flex 2 vs. 1) statt gleicher Mindestbreite für beide. */
 .slayer-task-fight-row .btn-iron {
-  min-width: 170px;
-  flex: 0 1 auto;
+  flex: 2 1 230px;
+  min-height: 52px;
+  font-size: clamp(15px, 1vw, 17px);
+}
+.slayer-task-fight-row .shop-citadel-btn {
+  flex: 1 1 150px;
+  min-height: 44px;
+  /* Basis-`.shop-citadel-btn` setzt white-space:nowrap (pages.css) — bei längeren RU/DE-
+     Übersetzungen von "Einreihen (n)" in der jetzt schmaleren 1-Anteil-Spalte wäre das ein
+     Clip-Risiko (Studio-Regel: nie clip). */
+  white-space: normal;
 }
 
 .slayer-task-reward-row {
@@ -454,6 +467,15 @@
   gap: 8px;
 }
 
+/* Chef-GO 26.08.2026: "Marke einlösen" (Auftragsmarke, chronicle_task_token) sitzt neben
+   "Überspringen" statt darunter — beide klein/sekundär, Zeile bricht bei schmalem Zettel um. */
+.slayer-task-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
 .slayer-cancel-confirm {
   display: flex;
   flex-direction: column;
@@ -487,68 +509,193 @@
   color: var(--text);
 }
 
-/* ─── Reward shop ────────────────────────────────────────── */
-/* Uses .shop-panel + .shop-items-grid from pages.css.
-   slayer-shop-grid overrides columns and removes the 58vh cap so all
-   cards are visible without an inner scrollbar. */
+/* ─── Reward-Shop- und Auftrags-Fläche: Basalt statt Holz ─────────────────
+   Chef-Fund 26.08.2026: "Hintergrund-Textur des Reward Shops und des Tasks-Bereiches ...
+   sticht heraus aus dem Spiel, nimm was anderes." Dasselbe Rezept wie die Optionen-Sektionen
+   (options.css `#root :is(.opz-header, .opz-section)`): panel-frame.webp + texture-basalt.webp,
+   256px gekachelt. Zwei-Klassen-Selektor (Spezifität schlägt `.shop-panel`/`.slayer-task-panel`
+   unabhängig von der Lade-Reihenfolge) statt pages.css/shop.css anzufassen — beide bleiben
+   Fremdbesitz (TABU). Die linke Meister-/Sprechblasen-Spalte (`.slayer-dialog-col`) ist NICHT
+   Teil der Chef-Meldung und bleibt unverändert (Holz-Fläche wie zuvor). */
+.shop-panel.slayer-shop-panel,
+.slayer-task-panel.shop-panel {
+  border-width: 11px;
+  border-image-source: url("../assets/ui/gravewood/v3/frames/panel-frame.webp");
+  border-image-slice: 48;
+  border-image-width: 11px;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background-color: #111518;
+  background-image:
+    radial-gradient(ellipse at 15% 0%, rgba(140, 86, 39, 0.10), transparent 55%),
+    linear-gradient(rgba(6, 9, 11, 0.32), rgba(4, 6, 8, 0.58)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 256px 256px;
+  background-repeat: no-repeat, no-repeat, repeat;
+}
+
+/* ─── Reward-Shop-Karten ─────────────────────────────────────────────────
+   Chef-Fund 26.08.2026: "Karten sind uneinheitlich. Wegen längeren Namen ist bei manchen das
+   Bild größer und kleiner, gibt komische Ränder um die Rarity des Items zu displayen anstatt
+   es so zu machen wie im Item Shop oder im Inventar. Bild auch auf ganze Größe des Bild-
+   Containers nutzen." Eigene `slayer-shop-*`-Kartenfamilie (NICHT die pages.css
+   `shop-item-card`-Familie, deren Kartenhöhe mit der Namenslänge wuchs) — jede Sektion
+   (Bild/Name/Fußzeile) bekommt eine deterministische Größe, damit die Kartenhöhe unabhängig
+   vom Item-Namen konstant bleibt. */
 .slayer-shop-grid {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   gap: 14px;
   max-height: none;
   overflow-y: visible;
   padding-right: 0;
 }
 
-/* Locked cards dim the whole card */
-.slayer-page .slayer-card-locked {
-  filter: brightness(0.60);
+/* Karte auf Leder statt Holz-Textur (Chef 26.08.: "kein Holz"). Der geschnitzte Holz-Eckrahmen
+   bleibt — das ist Struktur-Chrome des gesamten Citadel-UI (auch btn-iron etc.), kein
+   Holz-Flächen-Fill —, nur die Fläche dahinter wechselt auf texture-leather.webp (280px
+   gekachelt, wie item-wiki.css/menu.css: "Karten auf Leder"). */
+.slayer-shop-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 10px 12px;
+  min-width: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-width: var(--frame-w);
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(18, 12, 7, 0.58), rgba(8, 5, 3, 0.74)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
 }
 
-/* Rarity tints — same crisp inset ring as pages.css baseline (kein Blur-Halo,
-   zentrale --rar-*-Palette), scoped to slayer/Token-Shop. */
-.slayer-page .shop-item-card.rarity-magic     { box-shadow: inset 0 0 0 2px var(--rar-magic); }
-.slayer-page .shop-item-card.rarity-rare      { box-shadow: inset 0 0 0 2px var(--rar-rare); }
-.slayer-page .shop-item-card.rarity-superRare { box-shadow: inset 0 0 0 2px var(--rar-superRare); }
-.slayer-page .shop-item-card.rarity-epic      { box-shadow: inset 0 0 0 2px var(--rar-epic); }
-.slayer-page .shop-item-card.rarity-legendary { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
-.slayer-page .shop-item-card.rarity-godly     { box-shadow: inset 0 0 0 2px var(--rar-godly); }
-
-.slayer-rewards-empty {
-  padding: 12px 0;
-  text-align: center;
+.slayer-page .slayer-shop-card.slayer-card-locked {
+  filter: brightness(0.62);
 }
 
-/* Stufen-Label auf freigeschalteten Shop-Karten (Chef-Nachtrag 25.08.) — dezent unter dem
-   Namen, damit die nach Stufe sortierten Karten ihre Reihenfolge auch optisch erklären. */
-.slayer-shop-level {
-  font-family: var(--font-head);
-  font-size: 11px;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  margin-top: -4px;
+/* Bildfläche: festes 1:1-Seitenverhältnis, unabhängig vom Namen — wächst/schrumpft nur mit der
+   Kartenbreite (Grid-Spalte), nie mit dem Textinhalt darunter. KEIN eigener Rahmen/Slot-Hintergrund
+   hier — die Karte selbst rahmt bereits; die Seltenheit zeigt sich einzig am Rahmen der Item-Zelle
+   selbst (ItemCell setzt rarityClass(item.rarity) automatisch, s. components.css
+   `body .item-cell.rarity-*`) statt eines zweiten, eigens gemalten Rarity-Rahmens/Balkens. */
+.slayer-shop-card .slayer-shop-cell {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  background: transparent;
+}
+/* Bild füllt den Container (Chef: "nutzt aktuell nur einen kleinen Teilbereich") — 100%/100%,
+   kein Innen-Padding, das es auf einen Teil schrumpft; object-fit:contain hält die Proportionen. */
+.slayer-shop-card .slayer-shop-cell .item-cell-img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+}
+.slayer-shop-card .slayer-shop-cell .item-cell-emoji {
+  font-size: 64px;
 }
 
-/* Lock badge inside shop-item-info (above item name on locked cards) */
-.slayer-reward-lock {
+/* Schloss-Badge auf dem Bild (ItemCell `overlay`-Prop) statt einer eigenen Text-Zeile, die die
+   Karte je nach Sperr-Status unterschiedlich hoch machte. */
+.slayer-shop-lockbadge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
+  justify-content: center;
+  background: rgba(6, 4, 2, 0.72);
+  z-index: 2;
 }
-.slayer-reward-lock .locked-icon-img {
-  width: 11px;
-  height: 11px;
-  opacity: 0.7;
+.slayer-shop-lockbadge .locked-icon-img {
+  width: 12px;
+  height: 12px;
+  opacity: 0.85;
 }
 
-/* Fehler-Feedback für einen fehlgeschlagenen Kauf (buySlayerShopItem-Reason, s. SlayerPage.tsx
-   handleBuyShopItem) — erscheint kurz unter dem Kaufen-Button, Auto-Clear nach 4s. */
-.slayer-shop-error {
+.slayer-shop-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 6px;
+}
+
+/* Fester Namensblock — 2 Zeilen Reserveplatz (Muster shopv2-card-name, shop.css), nie geclippt;
+   nur echte Ausreißer wachsen minimal darüber hinaus statt gekappt zu werden. */
+.slayer-shop-card-name {
+  width: 100%;
+  min-height: 2.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Feste Fußzeile: Stufe links, Preis/Kaufen rechts — IMMER beide, ob gesperrt oder nicht
+   (Chef-Nachtrag: "Preis und Stufe in einer festen Fußzeile"). */
+.slayer-shop-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.slayer-shop-card-level {
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.slayer-shop-buy-btn {
+  flex-shrink: 0;
+}
+
+/* "Zu teuer" (freigeschaltet, aber nicht leistbar): Preis rot statt der neutralen Knopf-Schrift —
+   das Level-Lock dimmt bereits die ganze Karte, braucht keine zweite Farbe. Der geerbte
+   `.btn-iron[disabled]`-Graustich (grayscale(0.4)) wäscht Rot sichtbar Richtung Braun aus (per
+   getComputedStyle verifiziert: #c84a3a → rgb(168,90,82)) — hier NUR die Helligkeit dämpfen,
+   ohne die Sättigung zu killen, sonst ist "zu teuer" farblich kaum von "gesperrt" zu unterscheiden. */
+.slayer-shop-buy-btn.slayer-shop-buy-btn--tooExpensive[disabled] {
+  color: var(--danger, #c84a3a);
+  filter: brightness(0.88);
+}
+
+/* Reservierte Fehlerzeile — feste Höhe, damit ein Kauf-Fehler (buySlayerShopItem-Reason,
+   s. SlayerPage.tsx handleBuyShopItem) die Kartenhöhe nicht kurzzeitig verschiebt (Auto-Clear
+   nach 4s). */
+.slayer-shop-card-error-slot {
   display: block;
-  margin-top: 4px;
+  min-height: 13px;
   font-size: 11px;
   font-weight: 600;
   color: var(--danger, #c84a3a);
+  text-align: center;
+}
+
+.slayer-rewards-empty {
+  padding: 12px 0;
   text-align: center;
 }
 

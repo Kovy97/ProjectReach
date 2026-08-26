@@ -6,14 +6,17 @@ import {
   campBoost,
   campFreeSkipAvailable,
   campKindAtMaxLevel,
+  consumeFailReason,
   effectiveSkipCost,
   enqueueFight,
   enqueueFightAtFront,
   getActiveTask,
   getAvailableMasters,
+  itemCount,
   levelFromXp,
   skipTask,
   slayerRequirementMet,
+  useConsumable,
 } from "@hearthforge/engine";
 import type { SlayerShopReason } from "@hearthforge/engine";
 import { SLAYER_STREAK_TOKEN_INTERVAL } from "@hearthforge/shared";
@@ -22,7 +25,7 @@ import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { formatNum } from "../util/format";
 import { CampBoostNote } from "../components/CampBoostNote";
-import { rarityClass } from "../items";
+import { gameAlert } from "../components/GameAlert";
 import { getMonsterSrc } from "../monsters";
 import { getPortrait } from "../portraits";
 import { getSidebarIcon } from "../sidebarIcons";
@@ -218,6 +221,21 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
     enqueueFight(state, content, task.monsterId, taskRest);
   }
 
+  // Chef-GO 26.08.2026: "Marke einlösen" neben "Überspringen" — Auftragsmarke (Sonder-Wirkung
+  // `slayerReroll`, engine/consumable.ts) würfelt den aktiven Auftrag gratis neu, ohne Punkte/
+  // Serie zu kosten. Sichtbar nur mit Bestand > 0; die Menge kommt bewusst aus DEMSELBEN Topf,
+  // den `useConsumable` tatsächlich verbraucht (state.inventory) — nicht zusätzlich aus dem Lager
+  // (state.bank), sonst könnte der Knopf aktiv/beleuchtet erscheinen, obwohl der eigentliche
+  // Verzehr (nur Inventar) mangels Bestand dort scheitern würde.
+  const taskTokenCount = itemCount(state.inventory, "chronicle_task_token");
+
+  function handleUseToken(): void {
+    if (!useConsumable(state, content, "chronicle_task_token")) {
+      const reason = consumeFailReason(state, content, "chronicle_task_token");
+      gameAlert(reason === "no_slayer_task" ? "alert.consumeNoSlayerTask" : "alert.consumeCooldown");
+    }
+  }
+
   function towerFloorLabel(monsterId: string): string {
     const floor = allFloors.find((f) => f.monsters.includes(monsterId));
     if (floor) return t("slayer.location.tower").replace("{n}", String(floor.floor));
@@ -372,9 +390,34 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                 </div>
               </div>
 
+              {/* Progress bar — Chef-Fund 26.08.2026: gehört visuell zum "Zielmonster"-Block
+                  (Bild+Name+Fortschritt) direkt über den Kampf-Knöpfen, nicht mehr danach. */}
+              <div className="slayer-task-progress">
+                <div className="slayer-task-progress-label">
+                  <span>
+                    {t("slayer.task.progress")
+                      .replace("{done}", String(task.progress))
+                      .replace("{total}", String(task.required))}
+                  </span>
+                  <span className="muted">
+                    {Math.floor((task.progress / Math.max(1, task.required)) * 100)}%
+                  </span>
+                </div>
+                <div className="bar tall">
+                  <div
+                    className="bar-fill"
+                    style={{
+                      transform: `scaleX(${Math.min(100, (task.progress / Math.max(1, task.required)) * 100) / 100})`,
+                    }}
+                  />
+                </div>
+              </div>
+
               {/* Spieler-Report 1.0.2: beide Wege direkt vom Zettel, mit der Restmenge als Ziel.
                   Vorher blieb nur der Sprung auf die Kampfseite — dort das Monster wiederfinden
-                  und die Restzahl selbst abzaehlen. */}
+                  und die Restzahl selbst abzaehlen. Chef-Fund 26.08.2026 ("gehen unter"): eigene
+                  volle-Breite-Zeile direkt unter Fortschritt/VOR den Belohnungs-Chips, Primäraktion
+                  deutlich größer (slayer.css `.slayer-task-fight-row`). */}
               {taskRest > 0 && (
                 <div className="slayer-task-fight-row">
                   {/* Chef-Fund 25.08. (1.1.0 live): "sehen aus wie Windows-Buttons" — `.btn` war
@@ -445,28 +488,6 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                 )}
               </div>
 
-              {/* Progress bar */}
-              <div className="slayer-task-progress">
-                <div className="slayer-task-progress-label">
-                  <span>
-                    {t("slayer.task.progress")
-                      .replace("{done}", String(task.progress))
-                      .replace("{total}", String(task.required))}
-                  </span>
-                  <span className="muted">
-                    {Math.floor((task.progress / Math.max(1, task.required)) * 100)}%
-                  </span>
-                </div>
-                <div className="bar tall">
-                  <div
-                    className="bar-fill"
-                    style={{
-                      transform: `scaleX(${Math.min(100, (task.progress / Math.max(1, task.required)) * 100) / 100})`,
-                    }}
-                  />
-                </div>
-              </div>
-
               {/* Requirement warning */}
               {!reqMet && reqItemName && (
                 <div className="slayer-req-warning">
@@ -516,16 +537,27 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                 </div>
               ) : (
                 <div className="slayer-task-actions">
-                  <button
-                    className="shop-citadel-btn"
-                    onClick={handleSkipClick}
-                    disabled={state.slayerPoints < skipCost}
-                    title={state.slayerPoints < skipCost ? t("slayer.shop.notEnough") : undefined}
-                  >
-                    {skipCost > 0
-                      ? t("slayer.task.skipCost").replace("{n}", String(skipCost))
-                      : t("slayer.task.skipFree")}
-                  </button>
+                  <div className="slayer-task-actions-row">
+                    <button
+                      className="shop-citadel-btn"
+                      onClick={handleSkipClick}
+                      disabled={state.slayerPoints < skipCost}
+                      title={state.slayerPoints < skipCost ? t("slayer.shop.notEnough") : undefined}
+                    >
+                      {skipCost > 0
+                        ? t("slayer.task.skipCost").replace("{n}", String(skipCost))
+                        : t("slayer.task.skipFree")}
+                    </button>
+                    {/* Chef-GO 26.08.2026: nur sichtbar mit Bestand — s. taskTokenCount-Kommentar. */}
+                    {taskTokenCount > 0 && (
+                      <button
+                        className="btn-iron btn-iron--sm"
+                        onClick={handleUseToken}
+                      >
+                        {t("slayer.task.useToken").replace("{n}", String(taskTokenCount))}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -557,7 +589,9 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
           Platz mehr im Hauptinterface belegt. BountyBoard.tsx entfernt. */}
 
       {/* ── Reward Shop ───────────────────────────────────────────── */}
-      <div className="shop-panel">
+      {/* Chef-Fund 26.08.2026: eigene Basalt-Fläche (slayer-shop-panel, s. slayer.css) statt der
+          Holz-Textur von `.shop-panel` — klare Trennung zur Leder-Fläche der Karten darunter. */}
+      <div className="shop-panel slayer-shop-panel">
         <SectionHead title={t("slayer.tab.shop")} />
         {(!content.slayerShop || content.slayerShop.length === 0) ? (
           <p className="muted slayer-rewards-empty">{t("slayer.shop.empty")}</p>
@@ -574,6 +608,10 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
               // wirklich beide Töpfe voll sind (no_space) — der seltene Fall landet als Fehlermeldung
               // nach dem Klick statt den Button vorschnell zu sperren.
               const canBuy = levelOk && pointsOk;
+              // "Preis rot" (Chef) nur für den leistbaren-aber-noch-gesperrten Fall gibt es nicht —
+              // rot markiert gezielt "freigeschaltet, aber (noch) nicht leistbar"; das Level-Lock
+              // dimmt bereits die ganze Karte (`slayer-card-locked`), braucht keine zweite Farbe.
+              const tooExpensive = levelOk && !pointsOk;
 
               let disabledTitle: string | undefined;
               if (!levelOk) {
@@ -585,51 +623,52 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
               const buyError = shopError?.itemId === entry.itemId ? shopError : null;
 
               return (
+                // Chef-Fund 26.08.2026 ("Karten uneinheitlich, komische Ränder für Rarity, Bild nutzt
+                // nur einen kleinen Teilbereich"): eigene `slayer-shop-*`-Kartenfamilie (slayer.css)
+                // statt der pages.css `shop-item-card`-Familie — deren Kartenhöhe wuchs mit der
+                // Namenslänge. Seltenheit zeigt sich NUR noch am Rahmen der Item-Zelle selbst
+                // (ItemCell setzt rarityClass(item.rarity) intern, s. components.css
+                // `body .item-cell.rarity-*`) — keine zweite, eigens gemalte Rarity-Kontur mehr auf
+                // der Karte.
                 <div
                   key={entry.itemId}
-                  className={`shop-item-card ${rarityClass(item.rarity)}${!levelOk ? " slayer-card-locked" : ""}`}
+                  className={`slayer-shop-card${!levelOk ? " slayer-card-locked" : ""}`}
                 >
-                  {/* YGO-Stil: gerahmtes Bildfenster oben */}
-                  <div className="shop-item-image-area">
-                    <ItemCell itemId={entry.itemId} className="shop-cell" />
-                  </div>
-                  {/* Info-Block unten: Lock-Badge + Name + Kaufen-Button */}
-                  <div className="shop-item-info">
-                    {!levelOk && (
-                      <span className="slayer-reward-lock">
-                        {LOCKED_ICON_URL && (
-                          <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" className="locked-icon-img" />
-                        )}
-                        <span className="muted">
-                          {t("slayer.shop.reason.level_locked").replace("{n}", String(levelRequired))}
+                  <ItemCell
+                    itemId={entry.itemId}
+                    className="slayer-shop-cell"
+                    overlay={
+                      !levelOk ? (
+                        <span className="slayer-shop-lockbadge" aria-hidden="true">
+                          {LOCKED_ICON_URL
+                            ? <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" className="locked-icon-img" />
+                            : "🔒"}
                         </span>
-                      </span>
-                    )}
-                    <span className="shop-item-name">{tr(item.name)}</span>
-                    {/* Chef-Nachtrag 25.08.: Stufe/Requirement soll auf JEDER Karte sichtbar sein,
-                        nicht nur bei gesperrten (dort steht der Lock-Grund bereits oben, redundant
-                        mit dieser Zeile). Reuse von `skill.levelShort` (dieselbe Kurzform wie
-                        Farm-/Skill-Katalog) statt eines neuen i18n-Keys. */}
-                    {levelOk && (
-                      <span className="slayer-shop-level muted">
+                      ) : undefined
+                    }
+                  />
+                  <div className="slayer-shop-card-body">
+                    <span className="slayer-shop-card-name">{tr(item.name)}</span>
+                    {/* Feste Fußzeile: Stufe links, Preis/Kaufen rechts — immer beide, ob gesperrt
+                        oder nicht (Chef: "Preis und Stufe in einer festen Fußzeile"). */}
+                    <div className="slayer-shop-card-footer">
+                      <span className="slayer-shop-card-level muted">
                         {t("skill.levelShort").replace("{n}", String(levelRequired))}
                       </span>
-                    )}
-                    <span className="shop-item-price">
                       <button
-                        className="shop-citadel-btn shop-citadel-btn--sm"
+                        className={`btn-iron btn-iron--sm slayer-shop-buy-btn${tooExpensive ? " slayer-shop-buy-btn--tooExpensive" : ""}`}
                         disabled={!canBuy}
                         title={disabledTitle}
                         onClick={() => handleBuyShopItem(entry.itemId)}
                       >
                         <SlayerPtIcon /> {entry.cost}
                       </button>
+                    </div>
+                    {/* Reservierte Fehlerzeile (immer gerendert, leer ohne Fehler) — ein Kauf-Fehler
+                        darf die Kartenhöhe nicht kurzzeitig verschieben. */}
+                    <span className="slayer-shop-card-error-slot" role="alert">
+                      {buyError ? t(`slayer.shop.reason.${buyError.reason}`) : ""}
                     </span>
-                    {buyError && (
-                      <span className="slayer-shop-error" role="alert">
-                        {t(`slayer.shop.reason.${buyError.reason}`)}
-                      </span>
-                    )}
                   </div>
                 </div>
               );

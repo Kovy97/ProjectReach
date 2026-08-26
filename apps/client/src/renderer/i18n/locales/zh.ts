@@ -730,6 +730,7 @@ export const zh: Record<string, string> = {
     "dungeon.clear.next": "继续",
     "dungeon.clear.ariaLabel": "地下城通关仪式",
     "dungeon.clear.skipHint": "点击立即显示全部",
+    "dungeon.clear.runToast": "第 {n} 轮已完成",
     "dungeon.death.reset": "本次地下城挑战已结束。",
     "paragon.sectionTitle": "帕拉贡之塔",
     "paragon.floor": "第 {n} 层",
@@ -1015,6 +1016,7 @@ export const zh: Record<string, string> = {
     "skill.queue.hint": "加入队列。",
     "header.doing": "正在：",
     "header.fighting": "战斗中：",
+    "header.dungeon": "地下城：",
     "header.jumpToFight": "点击跳转到战斗",
     "header.idle": "空闲",
     "header.stopped": "已停止：",
@@ -1293,6 +1295,7 @@ export const zh: Record<string, string> = {
     "slayer.task.rewardPoints": "+{n} 点",
     "slayer.task.skipCost": "跳过任务（{n} 点）",
     "slayer.task.skipFree": "跳过任务（免费）",
+    "slayer.task.useToken": "使用代币（{n}）",
     "slayer.task.cancelConfirm": "花费 {n} 猎魔点数取消此任务？将不会分配新任务。",
     "slayer.task.cancelConfirmFree": "免费取消此任务？将不会分配新任务。",
     "slayer.task.cancelYes": "确认（{n} 点）",
@@ -1580,6 +1583,8 @@ export const zh: Record<string, string> = {
     "queue.skip.unknown_monster": "已从队列中移除：{monster} 不再存在。",
     "queue.skip.not_queueable": "已从队列中移除：{monster} 无法再排队。",
     "queue.skip.gate_locked": "已从队列中移除：{monster}——条件未满足。",
+    "queue.skip.unknown_dungeon": "已从队列中移除：{dungeon} 不再存在。",
+    "queue.skip.dungeon_locked": "已从队列中移除：{dungeon}——条件未满足。",
     // 任务 #327——优先级 UI：每个等待中队列行的“立即开始”按钮 + 技能/制作/怪物卡片上共用的
     // Shift+点击提示。
     "queue.startNow": "立即开始",
@@ -1598,6 +1603,10 @@ export const zh: Record<string, string> = {
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "根据当前战斗属性粗略估算，并非模拟战斗。",
     "queue.duration.unknownHint": "目前无法估算。",
+    "queue.dungeon.progress": "第 {n} 轮，共 {m} 轮",
+    "queue.dungeon.progressInfinite": "第 {n} 轮 · ∞ 轮",
+    "queue.dungeon.runShort": "第{n}/{m}轮",
+    "queue.dungeon.runShortInfinite": "第{n}/∞轮",
     "toast.queueBlocked.title": "队列正在等待",
 
     // Nachzügler-Welle (Sweep-Fund T6, 2026-07-11): Inv-Filter, Log-Tabs, Zonen-Fortschritt,

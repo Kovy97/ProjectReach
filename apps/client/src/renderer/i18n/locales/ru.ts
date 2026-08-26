@@ -729,6 +729,7 @@ export const ru: Record<string, string> = {
     "dungeon.clear.next": "Продолжить",
     "dungeon.clear.ariaLabel": "Церемония завершения подземелья",
     "dungeon.clear.skipHint": "Нажмите, чтобы показать всё сразу",
+    "dungeon.clear.runToast": "Забег {n} завершён",
     "dungeon.death.reset": "Подземелье завершено.",
     "paragon.sectionTitle": "Башня Парагона",
     "paragon.floor": "Этаж {n}",
@@ -1015,6 +1016,7 @@ export const ru: Record<string, string> = {
     "skill.queue.hint": "Добавить в очередь.",
     "header.doing": "Занятие:",
     "header.fighting": "В бою:",
+    "header.dungeon": "Подземелье:",
     "header.jumpToFight": "Нажмите, чтобы перейти к бою",
     "header.idle": "Простой",
     "header.stopped": "Остановлено:",
@@ -1293,6 +1295,7 @@ export const ru: Record<string, string> = {
     "slayer.task.rewardPoints": "+{n} очк.",
     "slayer.task.skipCost": "Пропустить задание ({n} очк.)",
     "slayer.task.skipFree": "Пропустить задание (Бесплатно)",
+    "slayer.task.useToken": "Использовать жетон ({n})",
     "slayer.task.cancelConfirm": "Отменить это задание за {n} Очков истребления? Новое задание не будет назначено.",
     "slayer.task.cancelConfirmFree": "Отменить это задание бесплатно? Новое задание не будет назначено.",
     "slayer.task.cancelYes": "Подтвердить ({n} очк.)",
@@ -1580,6 +1583,8 @@ export const ru: Record<string, string> = {
     "queue.skip.unknown_monster": "Удалено из очереди: {monster} больше не существует.",
     "queue.skip.not_queueable": "Удалено из очереди: {monster} больше нельзя поставить в очередь.",
     "queue.skip.gate_locked": "Удалено из очереди: {monster} — условие не выполнено.",
+    "queue.skip.unknown_dungeon": "Удалено из очереди: {dungeon} больше не существует.",
+    "queue.skip.dungeon_locked": "Удалено из очереди: {dungeon} — условие не выполнено.",
     // Задача #327 — UI приоритета: «Начать сейчас» для каждой ожидающей строки + общая подсказка
     // Shift+клик на карточках навыков/крафта/монстров.
     "queue.startNow": "Начать сейчас",
@@ -1598,6 +1603,10 @@ export const ru: Record<string, string> = {
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Грубая оценка по текущим боевым характеристикам, не симуляция.",
     "queue.duration.unknownHint": "Сейчас оценить нельзя.",
+    "queue.dungeon.progress": "Забег {n} из {m}",
+    "queue.dungeon.progressInfinite": "Забег {n} · ∞ забегов",
+    "queue.dungeon.runShort": "Забег {n}/{m}",
+    "queue.dungeon.runShortInfinite": "Забег {n}/∞",
     "toast.queueBlocked.title": "Очередь ждёт",
 
     // Nachzügler-Welle (Sweep-Fund T6, 2026-07-11): Inv-Filter, Log-Tabs, Zonen-Fortschritt,

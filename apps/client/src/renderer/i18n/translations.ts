@@ -866,6 +866,10 @@ const en = {
     "dungeon.clear.next": "Continue",
     "dungeon.clear.ariaLabel": "Dungeon clear ceremony",
     "dungeon.clear.skipHint": "Click to reveal it all",
+    // Chef-Auftrag 26.08.2026 ("Dungeons queuebar"): repeat clears within a running queue no
+    // longer show the full ceremony (it would block every single run) — a short toast instead,
+    // s. components/DungeonClearCeremony.tsx.
+    "dungeon.clear.runToast": "Run {n} complete",
     "dungeon.death.reset": "The dungeon run has ended.",
 
     // Paragonturm (dungeon-rework-spec §7, Welle P2): endless prestige tower, floor pause,
@@ -1236,6 +1240,9 @@ const en = {
     "skill.queue.hint": "Add to the queue.",
     "header.doing": "Doing:",
     "header.fighting": "Fighting:",
+    // Chef-Auftrag 26.08.2026 ("Dungeons queuebar"): top-bar label while a queue-dungeon run is
+    // active, replaces "header.fighting" — "Dungeon: {name} · Run {n}/{m}", s. App.tsx GameStats.
+    "header.dungeon": "Dungeon:",
     "header.jumpToFight": "Click to jump to the fight",
     "header.idle": "Idle",
     "header.stopped": "Stopped:",
@@ -1530,6 +1537,8 @@ const en = {
     "slayer.task.rewardPoints": "+{n} pts",
     "slayer.task.skipCost": "Skip Task ({n} pts)",
     "slayer.task.skipFree": "Skip Task (Free)",
+    // Chef-GO 26.08.2026: Auftragsmarke (chronicle_task_token) direkt vom Auftragszettel einlösen.
+    "slayer.task.useToken": "Use token ({n})",
     "slayer.task.cancelConfirm": "Cancel this task for {n} Slayer Points? No new task will be assigned.",
     "slayer.task.cancelConfirmFree": "Cancel this task for free? No new task will be assigned.",
     "slayer.task.cancelYes": "Confirm ({n} pts)",
@@ -1827,6 +1836,10 @@ const en = {
     "queue.skip.unknown_monster": "Removed from queue: {monster} no longer exists.",
     "queue.skip.not_queueable": "Removed from queue: {monster} can no longer be queued.",
     "queue.skip.gate_locked": "Removed from queue: {monster} — requirement not met.",
+    // SAVE 83 (Chef-Auftrag 26.08.2026 "dungeons queueable") — dungeon-flavored mirror of the two
+    // reasons above, s. shared/index.ts QueueSkipReason.
+    "queue.skip.unknown_dungeon": "Removed from queue: {dungeon} no longer exists.",
+    "queue.skip.dungeon_locked": "Removed from queue: {dungeon} — requirement not met.",
     // Task #327 — Priority-UI: "Start now" per waiting row (ActionQueuePanel) + the shared
     // shift-click hint shown on skill/craft/monster cards (Shop/Bank convention).
     "queue.startNow": "Start now",
@@ -1851,6 +1864,14 @@ const en = {
     "queue.duration.estimateHint": "Rough estimate from your current combat stats, not a simulation.",
     "queue.duration.unknownHint": "Can't be estimated right now.",
     "toast.queueBlocked.title": "Queue is waiting",
+    // SAVE 83 (Chef-Auftrag 26.08.2026 "dungeons queueable"): run progress of the active
+    // queue-dungeon run. `queue.dungeon.progress`/`progressInfinite` = spelled-out "run n of m"
+    // wording in the queue panel (ActionQueuePanel.tsx `dungeonProgressLabel`); `runShort`/
+    // `runShortInfinite` = the compact "n/m" wording in the top bar (App.tsx GameStats).
+    "queue.dungeon.progress": "Run {n} of {m}",
+    "queue.dungeon.progressInfinite": "Run {n} · ∞ runs",
+    "queue.dungeon.runShort": "Run {n}/{m}",
+    "queue.dungeon.runShortInfinite": "Run {n}/∞",
 
     // ─── NPC-Begrüßungen („Speaking Head", Chef-GO 2026-07-13): Kopf + Sprechblase oben auf
     //     Bank/Shop/Slayer/Quests, s. components/NpcGreeting.tsx. Welle QQ (2026-07-17): die
@@ -3003,6 +3024,10 @@ const de: Record<keyof typeof en, string> = {
     "dungeon.clear.next": "Weiter",
     "dungeon.clear.ariaLabel": "Dungeon-Abschluss-Zeremonie",
     "dungeon.clear.skipHint": "Klicken, um alles sofort zu zeigen",
+    // Chef-Auftrag 26.08.2026 ("Dungeons queuebar"): Wiederholungsläufe innerhalb einer laufenden
+    // Warteschlange zeigen nicht mehr die volle Zeremonie (die würde jeden einzelnen Lauf
+    // blockieren) — stattdessen ein kurzer Toast, s. components/DungeonClearCeremony.tsx.
+    "dungeon.clear.runToast": "Lauf {n} abgeschlossen",
     "dungeon.death.reset": "Der Dungeon-Lauf wurde beendet.",
 
     // Paragonturm (dungeon-rework-spec §7, Welle P2): endlos skalierender Prestige-Turm,
@@ -3326,6 +3351,10 @@ const de: Record<keyof typeof en, string> = {
     "skill.queue.hint": "Zur Warteschlange hinzufügen.",
     "header.doing": "Aktiv:",
     "header.fighting": "Kampf:",
+    // Chef-Auftrag 26.08.2026 ("Dungeons queuebar"): Kopfleisten-Label bei laufendem
+    // Queue-Dungeon-Lauf, ersetzt "header.fighting" — "Dungeon: {Name} · Lauf {n}/{m}",
+    // s. App.tsx GameStats.
+    "header.dungeon": "Dungeon:",
     "header.jumpToFight": "Klicken, um zum Kampf zu springen",
     "header.idle": "Untätig",
     "header.stopped": "Gestoppt:",
@@ -3606,6 +3635,8 @@ const de: Record<keyof typeof en, string> = {
     "slayer.task.rewardPoints": "+{n} Pkt.",
     "slayer.task.skipCost": "Auftrag überspringen ({n} Pkt.)",
     "slayer.task.skipFree": "Auftrag überspringen (Gratis)",
+    // Chef-GO 26.08.2026: Auftragsmarke (chronicle_task_token) direkt vom Auftragszettel einlösen.
+    "slayer.task.useToken": "Marke einlösen ({n})",
     "slayer.task.cancelConfirm": "Diesen Auftrag für {n} Punkte abbrechen? Es wird kein neuer Auftrag vergeben.",
     "slayer.task.cancelConfirmFree": "Diesen Auftrag kostenlos abbrechen? Es wird kein neuer Auftrag vergeben.",
     "slayer.task.cancelYes": "Bestätigen ({n} Pkt.)",
@@ -3894,6 +3925,10 @@ const de: Record<keyof typeof en, string> = {
     "queue.skip.unknown_monster": "Aus der Warteschlange entfernt: {monster} existiert nicht mehr.",
     "queue.skip.not_queueable": "Aus der Warteschlange entfernt: {monster} kann nicht mehr eingereiht werden.",
     "queue.skip.gate_locked": "Aus der Warteschlange entfernt: {monster} — Voraussetzung nicht erfüllt.",
+    // SAVE 83 (Chef-Auftrag 26.08.2026 "Dungeons queuebar") — Dungeon-Pendant der beiden obigen
+    // Gründe, s. shared/index.ts QueueSkipReason.
+    "queue.skip.unknown_dungeon": "Aus der Warteschlange entfernt: {dungeon} existiert nicht mehr.",
+    "queue.skip.dungeon_locked": "Aus der Warteschlange entfernt: {dungeon} — Voraussetzung nicht erfüllt.",
     // Task #327 — Priority-UI: „Jetzt starten" pro wartender Zeile (ActionQueuePanel) + der
     // gemeinsame Shift-Klick-Hinweis auf Skill-/Craft-/Monster-Karten (Shop/Bank-Konvention).
     "queue.startNow": "Jetzt starten",
@@ -3918,6 +3953,14 @@ const de: Record<keyof typeof en, string> = {
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Grobe Schätzung aus deinen aktuellen Kampfwerten, keine Simulation.",
     "queue.duration.unknownHint": "Lässt sich gerade nicht schätzen.",
+    // SAVE 83 (Chef-Auftrag 26.08.2026 "Dungeons queuebar"): Lauf-Fortschritt des aktiven
+    // Queue-Dungeon-Laufs. `queue.dungeon.progress`/`progressInfinite` = ausgeschriebene
+    // "Lauf n von m"-Variante im Queue-Panel (ActionQueuePanel.tsx `dungeonProgressLabel`);
+    // `runShort`/`runShortInfinite` = die kompakte "n/m"-Variante in der Kopfleiste (App.tsx GameStats).
+    "queue.dungeon.progress": "Lauf {n} von {m}",
+    "queue.dungeon.progressInfinite": "Lauf {n} · ∞ Läufe",
+    "queue.dungeon.runShort": "Lauf {n}/{m}",
+    "queue.dungeon.runShortInfinite": "Lauf {n}/∞",
     "toast.queueBlocked.title": "Warteschlange wartet",
 
     // ─── NPC-Begrüßungen („Speaking Head", Chef-GO 2026-07-13) ───

@@ -731,6 +731,7 @@ export const fr: Record<string, string> = {
     "dungeon.clear.next": "Continuer",
     "dungeon.clear.ariaLabel": "Cérémonie de fin de donjon",
     "dungeon.clear.skipHint": "Cliquez pour tout révéler",
+    "dungeon.clear.runToast": "Passage {n} terminé",
     "dungeon.death.reset": "Le donjon a pris fin.",
     "paragon.sectionTitle": "La Tour Paragon",
     "paragon.floor": "Étage {n}",
@@ -1017,6 +1018,7 @@ export const fr: Record<string, string> = {
     "skill.queue.hint": "Ajouter à la file d'attente.",
     "header.doing": "En cours :",
     "header.fighting": "Combat :",
+    "header.dungeon": "Donjon :",
     "header.jumpToFight": "Cliquez pour accéder au combat",
     "header.idle": "Inactif",
     "header.stopped": "Arrêté :",
@@ -1295,6 +1297,7 @@ export const fr: Record<string, string> = {
     "slayer.task.rewardPoints": "+{n} pts",
     "slayer.task.skipCost": "Passer la tâche ({n} pts)",
     "slayer.task.skipFree": "Passer la tâche (Gratuit)",
+    "slayer.task.useToken": "Utiliser le jeton ({n})",
     "slayer.task.cancelConfirm": "Annuler cette tâche pour {n} points de chasseur ? Aucune nouvelle tâche ne sera attribuée.",
     "slayer.task.cancelConfirmFree": "Annuler cette tâche gratuitement ? Aucune nouvelle tâche ne sera attribuée.",
     "slayer.task.cancelYes": "Confirmer ({n} pts)",
@@ -1582,6 +1585,8 @@ export const fr: Record<string, string> = {
     "queue.skip.unknown_monster": "Retiré de la file : {monster} n'existe plus.",
     "queue.skip.not_queueable": "Retiré de la file : {monster} ne peut plus être mis en file.",
     "queue.skip.gate_locked": "Retiré de la file : {monster} — condition non remplie.",
+    "queue.skip.unknown_dungeon": "Retiré de la file : {dungeon} n'existe plus.",
+    "queue.skip.dungeon_locked": "Retiré de la file : {dungeon} — condition non remplie.",
     // Task #327 — UI de priorité : « Démarrer maintenant » par ligne en attente + l'indice
     // Maj+clic partagé sur les cartes de compétence/artisanat/monstre.
     "queue.startNow": "Démarrer maintenant",
@@ -1600,6 +1605,10 @@ export const fr: Record<string, string> = {
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Estimation approximative d'après tes statistiques de combat actuelles, pas une simulation.",
     "queue.duration.unknownHint": "Impossible à estimer pour le moment.",
+    "queue.dungeon.progress": "Passage {n} sur {m}",
+    "queue.dungeon.progressInfinite": "Passage {n} · ∞ passages",
+    "queue.dungeon.runShort": "Passage {n}/{m}",
+    "queue.dungeon.runShortInfinite": "Passage {n}/∞",
     "toast.queueBlocked.title": "La file attend",
 
     // Nachzügler-Welle (Sweep-Fund T6, 2026-07-11): Inv-Filter, Log-Tabs, Zonen-Fortschritt,

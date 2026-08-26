@@ -715,6 +715,7 @@ export const ptBR: Record<string, string> = {
     "dungeon.clear.next": "Continuar",
     "dungeon.clear.ariaLabel": "Cerimônia de conclusão da masmorra",
     "dungeon.clear.skipHint": "Clique para revelar tudo",
+    "dungeon.clear.runToast": "Run {n} concluída",
     "dungeon.death.reset": "A masmorra chegou ao fim.",
     "paragon.sectionTitle": "A Torre Paragon",
     "paragon.floor": "Andar {n}",
@@ -999,6 +1000,7 @@ export const ptBR: Record<string, string> = {
     "skill.queue.hint": "Adicionar à fila.",
     "header.doing": "Fazendo:",
     "header.fighting": "Lutando:",
+    "header.dungeon": "Masmorra:",
     "header.jumpToFight": "Clique para ir à luta",
     "header.idle": "Ocioso",
     "header.stopped": "Parado:",
@@ -1262,6 +1264,7 @@ export const ptBR: Record<string, string> = {
     "slayer.task.rewardPoints": "+{n} pts",
     "slayer.task.skipCost": "Pular Tarefa ({n} pts)",
     "slayer.task.skipFree": "Pular Tarefa (Grátis)",
+    "slayer.task.useToken": "Usar marca ({n})",
     "slayer.task.cancelConfirm": "Cancelar esta tarefa por {n} Pontos de Caçador? Nenhuma nova tarefa será atribuída.",
     "slayer.task.cancelConfirmFree": "Cancelar esta tarefa gratuitamente? Nenhuma nova tarefa será atribuída.",
     "slayer.task.cancelYes": "Confirmar ({n} pts)",
@@ -1536,6 +1539,8 @@ export const ptBR: Record<string, string> = {
     "queue.skip.unknown_monster": "Removido da fila: {monster} não existe mais.",
     "queue.skip.not_queueable": "Removido da fila: {monster} não pode mais ser enfileirado.",
     "queue.skip.gate_locked": "Removido da fila: {monster} — requisito não atendido.",
+    "queue.skip.unknown_dungeon": "Removido da fila: {dungeon} não existe mais.",
+    "queue.skip.dungeon_locked": "Removido da fila: {dungeon} — requisito não atendido.",
     // Task #327 — UI de prioridade: "Iniciar agora" por linha em espera + a dica de Shift+clique
     // compartilhada nas cartas de habilidade/criação/monstro.
     "queue.startNow": "Iniciar agora",
@@ -1554,6 +1559,10 @@ export const ptBR: Record<string, string> = {
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Estimativa aproximada com base nos seus atributos de combate atuais, não é uma simulação.",
     "queue.duration.unknownHint": "Não é possível estimar agora.",
+    "queue.dungeon.progress": "Run {n} de {m}",
+    "queue.dungeon.progressInfinite": "Run {n} · ∞ runs",
+    "queue.dungeon.runShort": "Run {n}/{m}",
+    "queue.dungeon.runShortInfinite": "Run {n}/∞",
     "toast.queueBlocked.title": "A fila está esperando",
 
     // Nachzügler-Welle (Sweep-Fund T6, 2026-07-11): Inv-Filter, Log-Tabs, Zonen-Fortschritt,

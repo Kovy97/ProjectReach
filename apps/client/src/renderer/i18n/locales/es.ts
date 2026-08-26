@@ -717,6 +717,7 @@ export const es: Record<string, string> = {
     "dungeon.clear.next": "Continuar",
     "dungeon.clear.ariaLabel": "Ceremonia de mazmorra completada",
     "dungeon.clear.skipHint": "Haz clic para revelarlo todo",
+    "dungeon.clear.runToast": "Ronda {n} completada",
     "dungeon.death.reset": "La mazmorra ha terminado.",
     "paragon.sectionTitle": "La Torre Paragon",
     "paragon.floor": "Piso {n}",
@@ -1001,6 +1002,7 @@ export const es: Record<string, string> = {
     "skill.queue.hint": "Añadir a la cola.",
     "header.doing": "Haciendo:",
     "header.fighting": "Luchando:",
+    "header.dungeon": "Mazmorra:",
     "header.jumpToFight": "Haz clic para ir al combate",
     "header.idle": "Inactivo",
     "header.stopped": "Detenido:",
@@ -1264,6 +1266,7 @@ export const es: Record<string, string> = {
     "slayer.task.rewardPoints": "+{n} pts",
     "slayer.task.skipCost": "Saltar tarea ({n} pts)",
     "slayer.task.skipFree": "Saltar tarea (Gratis)",
+    "slayer.task.useToken": "Usar marca ({n})",
     "slayer.task.cancelConfirm": "¿Cancelar esta tarea por {n} Puntos de Cazador? No se asignará ninguna tarea nueva.",
     "slayer.task.cancelConfirmFree": "¿Cancelar esta tarea gratis? No se asignará ninguna tarea nueva.",
     "slayer.task.cancelYes": "Confirmar ({n} pts)",
@@ -1538,6 +1541,8 @@ export const es: Record<string, string> = {
     "queue.skip.unknown_monster": "Eliminado de la cola: {monster} ya no existe.",
     "queue.skip.not_queueable": "Eliminado de la cola: {monster} ya no se puede encolar.",
     "queue.skip.gate_locked": "Eliminado de la cola: {monster} — no cumples el requisito.",
+    "queue.skip.unknown_dungeon": "Eliminado de la cola: {dungeon} ya no existe.",
+    "queue.skip.dungeon_locked": "Eliminado de la cola: {dungeon} — no cumples el requisito.",
     // Task #327 — UI de prioridad: "Empezar ahora" por fila en espera + aviso de Shift+clic
     // compartido en las tarjetas de habilidad/fabricación/monstruo.
     "queue.startNow": "Empezar ahora",
@@ -1556,6 +1561,10 @@ export const es: Record<string, string> = {
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Estimación aproximada según tus estadísticas de combate actuales, no es una simulación.",
     "queue.duration.unknownHint": "No se puede estimar ahora mismo.",
+    "queue.dungeon.progress": "Ronda {n} de {m}",
+    "queue.dungeon.progressInfinite": "Ronda {n} · ∞ rondas",
+    "queue.dungeon.runShort": "Ronda {n}/{m}",
+    "queue.dungeon.runShortInfinite": "Ronda {n}/∞",
     "toast.queueBlocked.title": "La cola está esperando",
 
     // Nachzügler-Welle (Sweep-Fund T6, 2026-07-11): Inv-Filter, Log-Tabs, Zonen-Fortschritt,
