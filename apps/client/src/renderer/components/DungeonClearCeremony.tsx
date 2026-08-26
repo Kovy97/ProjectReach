@@ -8,6 +8,7 @@ import { rarityRank } from "../items";
 import { registerEscCloser } from "../util/escStack";
 import { formatNum } from "../util/format";
 import { effectiveFxLevel } from "../util/fxLevel";
+import { pushUiToast } from "../util/toastBus";
 import "../styles/dungeon-clear-ceremony.css";
 
 interface ClearData {
@@ -85,58 +86,68 @@ function DungeonLootReveal({
  * Dungeon-Name, "BEZWUNGEN", Beute-Showcase, Erst-Clear-Badge. Mirrors das MasteryCeremony-/
  * PetCelebration-Muster (Snapshot-Vergleich pro Tick, KEIN Engine-/Save-Eingriff).
  *
- * Erkennung: `combat.ts onEnemyDefeated` nullt `dungeonId`+`monsterId` IM SELBEN Tick, in dem
- * `grantDungeonRewards` die Belohnungen vergibt (`endDungeon` danach) — CombatPage schaltet also
- * synchron von <Battle> auf <MonsterSelect> um, eine lokale Battle-State-Lösung würde den Moment
- * verpassen. Diese Komponente lebt deshalb auf App-Ebene (wie DeathPopup/PetCelebration) und
- * erkennt den Übergang "dungeonId war gesetzt → ist jetzt null" + `dungeonsCleared[id]` gestiegen
- * (unterscheidet Clear von Tod/Abbruch/Stalemate, die denselben Übergang auslösen, aber den Zähler
- * NICHT erhöhen). Das Belohnungs-Bundle wird aus `combat.log` rekonstruiert: `grantDungeonRewards`
- * pusht selbst einen zweiten `kind:"kill"`-Marker (combat.ts ~Z.1098) BEVOR es Gold/XP/Loot loggt —
- * alles NACH diesem letzten "kill"-Eintrag ist die Abschluss-Belohnung (robust, kein hartcodierter
- * Event-Zähler). Das Log lebt unverändert weiter, bis der nächste Kampf es leert (startCombat/
- * startDungeon) — dieser Effekt läuft VOR jedem möglichen Re-Start, da er an denselben Tick bindet.
+ * Erkennung (SAVE 83, Chef-Auftrag 26.08.2026 "Dungeons queuebar" — UMGEBAUT): früher erkannte
+ * dieser Effekt den Übergang "dungeonId war gesetzt → ist jetzt null" (combat.ts nullte beide beim
+ * Clear, bevor der nächste Kampf/Leerlauf begann) und rekonstruierte die Belohnung per Marker-Scan
+ * aus `combat.log`. Seit ein Queue-Dungeon-Lauf nach dem Endboss im SELBEN Tick automatisch wieder
+ * bei Welle 1 beginnt (`onQueuedDungeonCleared`), tritt dieser Übergang bei Wiederholungsläufen NIE
+ * MEHR ein — `dungeonId` bleibt durchgehend gesetzt, nur `combat.log` wird vom Neustart geleert.
+ * Neuer, stabiler Vertrag: `state.combat.lastDungeonClear` (s. dortiges JSDoc in shared/index.ts) —
+ * `grantDungeonRewards` setzt es direkt aus den geloggten Belohnungen, BEVOR ein möglicher Neustart
+ * das Log leert, und `clearNo` (== `dungeonsCleared[dungeonId]` nach dem Clear) steigt monoton je
+ * Clear. Dieser Effekt merkt sich das zuletzt VERARBEITETE (dungeonId, clearNo)-Paar und reagiert
+ * nur auf einen echten Fortschritt — kein Log-Marker-Scan mehr nötig, `lastDungeonClear` trägt
+ * Gold/XP/Loot bereits fertig aufbereitet.
+ *
+ * Wiederholungsläufe (Queue ×25/∞ oder wiederholtes manuelles Betreten) blockieren NICHT mehr jeden
+ * einzelnen Lauf mit der Vollbild-Zeremonie (das würde eine laufende Queue de facto anhalten, bis
+ * jemand wegklickt) — nur der ERSTE Clear eines Dungeons (`firstClear`) bekommt die volle Zeremonie,
+ * jeder weitere Clear einen kurzen, nicht-blockierenden Toast "Lauf n abgeschlossen" über das
+ * bestehende UI-Toast-System (util/toastBus.ts — Toasts.tsx besitzt den einzigen Toast-Stack).
  */
 export function DungeonClearCeremony(): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
   const [ceremony, setCeremony] = useState<ClearData | null>(null);
   const [exiting, setExiting] = useState(false);
-  const snap = useRef<{ dungeonId: string | null; cleared: Record<string, number> } | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Welle PP: monotone Ceremony-Instanz-Nummer, s. `ClearData.seq`-JSDoc.
   const ceremonySeqRef = useRef(0);
+  // SAVE 83 — zuletzt VERARBEITETES (dungeonId, clearNo)-Paar, s. Klassen-JSDoc oben. `null` bis
+  // zum ersten beobachteten Clear dieser Mount-Lebensdauer (das Feld ist transient/nicht persistiert,
+  // startet also nach jedem Laden leer — kein nachgeholter Clear nach einem Reload, gewollt).
+  const lastSeenRef = useRef<{ dungeonId: string; clearNo: number } | null>(null);
 
   useEffect(() => {
-    const cs = state.combat;
-    const prev = snap.current;
-    if (prev && prev.dungeonId && !cs.dungeonId) {
-      const id = prev.dungeonId;
-      const prevCount = prev.cleared[id] ?? 0;
-      const curCount = state.dungeonsCleared[id] ?? 0;
-      if (curCount > prevCount) {
-        let markerSeq = -1;
-        for (const e of cs.log) if (e.kind === "kill") markerSeq = e.seq;
-        let gold = 0;
-        let xp = 0;
-        const loot: Array<{ itemId: string; qty: number }> = [];
-        for (const e of cs.log) {
-          if (e.seq <= markerSeq) continue;
-          if (e.kind === "gold") gold += e.amount;
-          else if (e.kind === "xp") xp += e.amount;
-          else if (e.kind === "loot" && e.itemId) {
-            const existing = loot.find((l) => l.itemId === e.itemId);
-            if (existing) existing.qty += e.amount;
-            else loot.push({ itemId: e.itemId, qty: e.amount });
-          }
-        }
-        ceremonySeqRef.current += 1;
-        setCeremony({ dungeonId: id, firstClear: curCount === 1, gold, xp, loot, seq: ceremonySeqRef.current });
-        setExiting(false);
-        if (timerRef.current) clearTimeout(timerRef.current);
-      }
+    const clear = state.combat.lastDungeonClear;
+    if (!clear) return;
+    const prev = lastSeenRef.current;
+    if (prev && prev.dungeonId === clear.dungeonId && prev.clearNo === clear.clearNo) return; // schon verarbeitet
+    lastSeenRef.current = { dungeonId: clear.dungeonId, clearNo: clear.clearNo };
+
+    if (clear.firstClear) {
+      ceremonySeqRef.current += 1;
+      setCeremony({
+        dungeonId: clear.dungeonId,
+        firstClear: true,
+        gold: clear.gold,
+        xp: clear.xp,
+        loot: clear.loot,
+        seq: ceremonySeqRef.current,
+      });
+      setExiting(false);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    } else {
+      // Wiederholungslauf: kurzer Toast statt Vollbild-Zeremonie (Chef-Auftrag 26.08.2026, s.
+      // Klassen-JSDoc). "⚔" als Icon — dieselbe Platzhalter-Wahl wie `DungeonQueueIcon`
+      // (ActionQueuePanel.tsx)/`FightQueueIcon`, es existiert kein eigenes Dungeon-Icon-Set.
+      const dungeon = content.dungeons.find((d) => d.id === clear.dungeonId);
+      pushUiToast({
+        icon: "⚔",
+        title: dungeon ? tr(dungeon.name) : clear.dungeonId,
+        detail: t("dungeon.clear.runToast").replace("{n}", String(clear.clearNo)),
+      });
     }
-    snap.current = { dungeonId: cs.dungeonId, cleared: { ...state.dungeonsCleared } };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.totalTicks]);
 

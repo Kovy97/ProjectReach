@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { content } from "@hearthforge/content";
-import { actionLevelMet, clearActionQueue, dequeueAction, moveQueueItem, prioritizeQueueEntry, queueBlockReason, resumeActionQueue, setActiveAction, stopCombat } from "@hearthforge/engine";
-import { isFightQueueEntry } from "@hearthforge/shared";
+import { actionLevelMet, clearActionQueue, dequeueAction, dungeonRunProgress, moveQueueItem, prioritizeQueueEntry, queueBlockReason, resumeActionQueue, setActiveAction, stopCombat } from "@hearthforge/engine";
+import type { DungeonRunProgress } from "@hearthforge/engine";
+import { isDungeonQueueEntry, isFightQueueEntry } from "@hearthforge/shared";
 import type { ActionDef, GameState, LocalizedString, QueuedAction } from "@hearthforge/shared";
 // Direkt importiert statt über styles/index.css eingehängt — Kollisions-Schutz, gleiches Muster
 // wie components/ItemFilterBar.tsx + styles/inv-filter.css (index.css ist eine gemeinsame Datei,
@@ -11,6 +12,7 @@ import "../styles/action-queue.css";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getActionSrc } from "../actionIcons";
+import { getDungeonBackgroundCard } from "../dungeonBackgrounds";
 import { getItemImage } from "../items";
 import { getMonsterSrc } from "../monsters";
 import { getSidebarIcon } from "../sidebarIcons";
@@ -66,6 +68,36 @@ function FightQueueIcon({ monsterId }: { monsterId: string }): JSX.Element {
 function fightMonsterName(monsterId: string, tr: (loc: LocalizedString) => string): string {
   const monster = content.monsters[monsterId];
   return monster ? tr(monster.name) : monsterId;
+}
+
+/**
+ * SAVE 83 (Chef-Auftrag 26.08.2026 "Dungeons queuebar") — Dungeon-Icon einer Dungeon-Queue-Zeile:
+ * dieselbe kleine Karten-Bild-Auflösung wie die Dungeon-Karte (`getDungeonBackgroundCard`,
+ * CombatPage.tsx), Schwert-Emoji-Platzhalter wie `FightQueueIcon`, falls kein Bild existiert.
+ */
+function DungeonQueueIcon({ dungeonId }: { dungeonId: string }): JSX.Element {
+  const src = getDungeonBackgroundCard(dungeonId);
+  return src ? (
+    <img loading="lazy" decoding="async" src={src} alt="" className="queue-row-icon-img pixelart" />
+  ) : (
+    <span className="queue-row-icon-emoji">⚔</span>
+  );
+}
+
+/** Lokalisierter Anzeigename eines Dungeon-Queue-Ziels — Content-Drift-fest (Muster `fightMonsterName`). */
+function dungeonQueueName(dungeonId: string, tr: (loc: LocalizedString) => string): string {
+  const dungeon = content.dungeons.find((d) => d.id === dungeonId);
+  return dungeon ? tr(dungeon.name) : dungeonId;
+}
+
+/**
+ * "Lauf {n} von {m}"/"Lauf {n} · ∞ Läufe" — Fortschritt des LAUFENDEN Queue-Dungeon-Laufs
+ * (SAVE 83), direkt aus der reinen Engine-Ableitung `dungeonRunProgress` (s. dort).
+ */
+function dungeonProgressLabel(progress: DungeonRunProgress, t: (key: string) => string): string {
+  return progress.target === null
+    ? t("queue.dungeon.progressInfinite").replace("{n}", String(progress.run))
+    : t("queue.dungeon.progress").replace("{n}", String(progress.run)).replace("{m}", String(progress.target));
 }
 
 /** Skill-Icon-Auflösung für die Level-Zeile (s. `QueueLevelRow` unten): erst das Kampf-Skill-Set
@@ -225,6 +257,14 @@ export function ActionQueuePanel(): JSX.Element {
       : `${Math.max(0, (fightSessionRef.current?.total ?? queueFight.remaining) - queueFight.remaining)}/${fightSessionRef.current?.total ?? queueFight.remaining}`
     : null;
 
+  // ── SAVE 83 (Chef-Auftrag 26.08.2026 "Dungeons queuebar") — Lauf-Fortschritt des AKTIVEN
+  // Queue-Dungeon-Laufs ("Lauf 2 von 3"). Anders als beim Kampf-Pendant oben braucht es HIER
+  // keinen eigenen Session-Ref-Mitschnitt: `dungeonRunProgress` liefert `run`/`target` bereits
+  // fertig aus `state.queueDungeon` (die Engine hält `completed` selbst fest, s. QueueDungeonRuntime-
+  // JSDoc) — reine Ableitung, kein Client-seitiger Zustand nötig.
+  const queueDungeon = state.queueDungeon;
+  const runProgress = dungeonRunProgress(state);
+
   // Skip-Hinweis (`state.lastQueueSkip`): die Engine leert das Feld bewusst NICHT selbst (JSDoc
   // "die UI-Welle entscheidet über die Anzeige-Dauer") — dieses Panel ist der Melder und quittiert
   // deshalb per ×-Button mit `null` im STATE (Regel „wer meldet, quittiert", Vorbild Toasts.tsx ↔
@@ -299,9 +339,14 @@ export function ActionQueuePanel(): JSX.Element {
    */
   function startNowDisabled(entry: QueuedAction): boolean {
     const fightEntry = isFightQueueEntry(entry) ? entry : null;
-    return fightEntry
-      ? state.queueFight !== null && state.queueFight.monsterId === fightEntry.monsterId
-      : state.activeActionId === entry.actionId || !actionLevelMet(state, content, entry.actionId);
+    if (fightEntry) return state.queueFight !== null && state.queueFight.monsterId === fightEntry.monsterId;
+    // SAVE 83: Dungeon-Eintrag — Spiegel des Kampf-Zweigs (Muster `prioritizeQueueEntry`s eigener
+    // No-op-Check in der Engine). OHNE diesen Zweig würde `entry.actionId` (Platzhalter "") in den
+    // Aktions-Zweig unten durchfallen: `content.actions[""]` ist immer undefined ⇒ der ⚡-Knopf
+    // wäre für JEDEN Dungeon-Eintrag dauerhaft ausgegraut, egal ob derselbe Dungeon schon läuft.
+    const dungeonEntry = isDungeonQueueEntry(entry) ? entry : null;
+    if (dungeonEntry) return state.queueDungeon !== null && state.queueDungeon.dungeonId === dungeonEntry.dungeonId;
+    return state.activeActionId === entry.actionId || !actionLevelMet(state, content, entry.actionId);
   }
 
   // Ziel des „jetzt starten"-Knopfes im Sperr-Hinweis: der erste WIRKLICH startbare Eintrag —
@@ -530,7 +575,7 @@ export function ActionQueuePanel(): JSX.Element {
           verdichtet — pro Eintrag EIN kleiner Slot (Icon + "×N"-Badge) statt Name/Buttons/Index.
           Nutzt dieselbe combinedTarget-Faltung wie oben (laufende Aktion + direkt angrenzende
           gleiche Queue-Einträge in EINER Zahl), damit "läuft" und "wartet" nicht auseinanderfallen. */}
-      {collapsed && (queueFight || activeAction || visibleQueue.length > 0) && (
+      {collapsed && (queueFight || queueDungeon || activeAction || visibleQueue.length > 0) && (
         <div className="queue-rail">
           {queueFight && (
             <HoverTip
@@ -548,6 +593,29 @@ export function ActionQueuePanel(): JSX.Element {
                 <FightQueueIcon monsterId={queueFight.monsterId} />
               </div>
               <span className="queue-rail-badge">{fightProgressLabel}</span>
+            </HoverTip>
+          )}
+          {/* SAVE 83 — Dungeon-Pendant zum Kampf-Rail-Item oben, gleiches Muster (Rechtsklick =
+              `stopCombat`, s. dortiger Kommentar; die Engine räumt den Rest sauber, s. actions.ts
+              `requeueDungeonFront`-Aufrufer in tick.ts). */}
+          {queueDungeon && (
+            <HoverTip
+              as="div"
+              className="queue-rail-item queue-rail-item--active"
+              content={
+                <span className="ct-tip-desc">
+                  {dungeonQueueName(queueDungeon.dungeonId, tr)} {runProgress ? dungeonProgressLabel(runProgress, t) : ""}
+                  {activeRowDuration ? ` · ${activeRowDuration.text}` : ""} · {t("queue.rightClickEject")}
+                </span>
+              }
+              onContextMenu={(e) => { e.preventDefault(); stopCombat(state); }}
+            >
+              <div className="queue-rail-icon-box">
+                <DungeonQueueIcon dungeonId={queueDungeon.dungeonId} />
+              </div>
+              <span className="queue-rail-badge">
+                {queueDungeon.remaining === null ? "∞" : `${runProgress?.run ?? 1}/${runProgress?.target ?? "?"}`}
+              </span>
             </HoverTip>
           )}
           {activeAction && (
@@ -569,22 +637,31 @@ export function ActionQueuePanel(): JSX.Element {
             </HoverTip>
           )}
           {visibleQueue.map((entry, vi) => {
-            // isFightQueueEntry ist ein Type-Guard (entry is QueuedAction & {monsterId: MonsterId})
-            // — nur über eine EIGENE narrowed Variable (nicht ein separates Boolean-Flag) bleibt
-            // `entry.monsterId` (auf QueuedAction nur optional getippt) für TS non-null bekannt.
+            // isFightQueueEntry/isDungeonQueueEntry sind Type-Guards (entry is QueuedAction & {…})
+            // — nur über EIGENE narrowed Variablen (nicht ein separates Boolean-Flag) bleibt
+            // `entry.monsterId`/`entry.dungeonId` (auf QueuedAction nur optional getippt) für TS
+            // non-null bekannt.
             const fightEntry = isFightQueueEntry(entry) ? entry : null;
-            const action = fightEntry ? null : content.actions[entry.actionId];
-            if (!fightEntry && !action) return null;
+            const dungeonEntry = isDungeonQueueEntry(entry) ? entry : null;
+            const action = fightEntry || dungeonEntry ? null : content.actions[entry.actionId];
+            if (!fightEntry && !dungeonEntry && !action) return null;
             const i = vi + foldedCount; // echter Index ins rohe state.actionQueue (Rail-Faltung, s.o.)
-            const label = fightEntry ? fightMonsterName(fightEntry.monsterId, tr) : tr(action!.name);
-            const qtyLabel = fightEntry
+            const label = fightEntry
+              ? fightMonsterName(fightEntry.monsterId, tr)
+              : dungeonEntry
+                ? dungeonQueueName(dungeonEntry.dungeonId, tr)
+                : tr(action!.name);
+            // SAVE 83: Dungeon-Ziel-Anzeige spiegelt den Kampf-Eintrag (×n/∞), NICHT die
+            // "Alle"-Beschriftung der Sammel-/Craft-Aktionen — ein Dungeon-Lauf ist immer eine
+            // Zahl von Läufen (oder ∞), nie "alles vom Material, das gerade reicht".
+            const qtyLabel = fightEntry || dungeonEntry
               ? entry.target === null ? "∞" : `×${entry.target}`
               : entry.target === null ? t("skill.qty.all") : `×${entry.target}`;
             const rowTiming = timing.queue[i];
             return (
               <HoverTip
                 as="div"
-                key={`rail-${fightEntry ? fightEntry.monsterId : entry.actionId}-${vi}`}
+                key={`rail-${fightEntry ? fightEntry.monsterId : dungeonEntry ? dungeonEntry.dungeonId : entry.actionId}-${vi}`}
                 className="queue-rail-item"
                 content={
                   <span className="ct-tip-desc">
@@ -595,7 +672,13 @@ export function ActionQueuePanel(): JSX.Element {
                 onContextMenu={(e) => { e.preventDefault(); dequeueAction(state, i); }}
               >
                 <div className="queue-rail-icon-box">
-                  {fightEntry ? <FightQueueIcon monsterId={fightEntry.monsterId} /> : <QueueIcon action={action!} />}
+                  {fightEntry ? (
+                    <FightQueueIcon monsterId={fightEntry.monsterId} />
+                  ) : dungeonEntry ? (
+                    <DungeonQueueIcon dungeonId={dungeonEntry.dungeonId} />
+                  ) : (
+                    <QueueIcon action={action!} />
+                  )}
                 </div>
                 <span className="queue-rail-badge">{qtyLabel}</span>
               </HoverTip>
@@ -664,7 +747,15 @@ export function ActionQueuePanel(): JSX.Element {
             <div className="queue-panel-skip">
               <span>
                 {WARNING_ICON_URL ? <img loading="lazy" decoding="async" src={WARNING_ICON_URL} alt="" className="ui-icon" /> : "⚠"}{" "}
-                {t(`queue.skip.${skip.reason}`).replace("{monster}", fightMonsterName(skip.monsterId, tr))}
+                {/* SAVE 83 (Chef-Auftrag 26.08.2026 "Dungeons queuebar"): ein Dungeon-Skip trägt
+                    `dungeonId` (s. QueueSkip-JSDoc, shared/index.ts) — `monsterId` ist dort nur der
+                    Übergangs-Platzhalter "" (FIGHT_QUEUE_ACTION_ID) und würde über `fightMonsterName`
+                    still zu einer leeren Lücke im Text werden. Eigene, dungeon-benannte Keys
+                    (`queue.skip.unknown_dungeon`/`dungeon_locked`) mit `{dungeon}`-Platzhalter statt
+                    `{monster}` lösen das sauber auf. */}
+                {skip.dungeonId
+                  ? t(`queue.skip.${skip.reason}`).replace("{dungeon}", dungeonQueueName(skip.dungeonId, tr))
+                  : t(`queue.skip.${skip.reason}`).replace("{monster}", fightMonsterName(skip.monsterId, tr))}
               </span>
               {/* Chef 25.08.2026: Custom-Tooltip statt native `title=` (Vorbild Charakter-Stats). */}
               <HoverTip
@@ -704,6 +795,28 @@ export function ActionQueuePanel(): JSX.Element {
                   )}
                 </div>
                 <span className="queue-row-target">{fightProgressLabel}</span>
+              </HoverTip>
+            ) : queueDungeon ? (
+              // SAVE 83 — Dungeon-Pendant der "läuft"-Zeile: Fortschritt als volle "Lauf n von m"-
+              // Phrase (dungeonProgressLabel) statt der kompakten "n/m"-Kampf-Kurzform — ein
+              // Dungeon-Lauf ist der seltenere, gewichtigere Vorgang, die ausgeschriebene Phrase
+              // trägt das mit (Chef-Auftrag 26.08.2026).
+              <HoverTip
+                as="div"
+                className="queue-row queue-row--active"
+                content={<span className="ct-tip-desc">{t("queue.rightClickEject")}</span>}
+                onContextMenu={(e) => { e.preventDefault(); stopCombat(state); }}
+              >
+                <DungeonQueueIcon dungeonId={queueDungeon.dungeonId} />
+                <div className="queue-row-text">
+                  <span className="queue-row-name">{dungeonQueueName(queueDungeon.dungeonId, tr)}</span>
+                  {activeRowTiming && (
+                    <span className={`queue-row-duration${activeRowDuration!.warn ? " queue-row-duration--warn" : ""}`}>
+                      {activeRowDuration!.text}
+                    </span>
+                  )}
+                </div>
+                <span className="queue-row-target">{runProgress ? dungeonProgressLabel(runProgress, t) : ""}</span>
               </HoverTip>
             ) : activeAction ? (
               <HoverTip
@@ -818,23 +931,32 @@ export function ActionQueuePanel(): JSX.Element {
                   // hier absichtlich nicht mehr gerendert; move/remove müssen trotzdem den
                   // richtigen Index im ROHEN Array treffen.
                   const i = vi + foldedCount;
-                  // s. Kommentar in der Collapsed-Rail oben — narrowed Variable statt Boolean-Flag.
+                  // s. Kommentar in der Collapsed-Rail oben — narrowed Variablen statt Boolean-Flag.
                   const fightEntry = isFightQueueEntry(entry) ? entry : null;
-                  const action = fightEntry ? null : content.actions[entry.actionId];
-                  if (!fightEntry && !action) return null;
+                  // SAVE 83 (Chef-Auftrag 26.08.2026 "Dungeons queuebar"): dritter Eintrags-Zweig
+                  // neben Kampf/Aktion — ohne ihn fiel `entry.actionId` (Platzhalter "") in den
+                  // Aktions-Fall unten durch, `content.actions[""]` ist immer undefined, und der
+                  // bestehende `!action`-Guard blendete die ganze Zeile aus (Vorher-Zustand, den
+                  // dieser Auftrag ausdrücklich aufhebt).
+                  const dungeonEntry = isDungeonQueueEntry(entry) ? entry : null;
+                  const action = fightEntry || dungeonEntry ? null : content.actions[entry.actionId];
+                  if (!fightEntry && !dungeonEntry && !action) return null;
                   // Task #327 (Priority-UI): ⚡-Knopf ausgrauen, wenn `prioritizeQueueEntry` ein
                   // No-op wäre — s. `startNowDisabled` oben (seit #369 geteilt mit dem Sperr-Hinweis).
                   const rowStartDisabled = startNowDisabled(entry);
                   // Warteschlangen-Timer (1.0.1): `timing.queue` ist 1:1 zum ROHEN `state.actionQueue`
                   // ausgerichtet (auch Content-Drift-Zeilen bekommen dort eine Zeile, s.
                   // queueTiming.ts) — derselbe Index `i` trifft also immer den richtigen Eintrag.
+                  // Dungeon-Einträge liefern dort aktuell `unknown: true` (queueTiming.ts kennt "dungeon"
+                  // noch nicht, s. Bericht) — zeigt "?" statt einer Dauer, kein Crash.
                   const rowTiming = timing.queue[i];
                   const rowDuration = rowTiming ? formatEntryDuration(rowTiming, t) : null;
                   // Warteschlangen-Level-Projektion (Chef 25.08.2026): `levels.queue` ist genau wie
                   // `timing.queue` 1:1 zum ROHEN `state.actionQueue` ausgerichtet — derselbe Index
-                  // `i` trifft den richtigen Eintrag. Kampf-Einträge liefern dort ohnehin `null`
-                  // (queueLevels.ts), der explizite Guard hier spart nur den Array-Zugriff.
-                  const rowLevel = fightEntry ? null : levels.queue[i];
+                  // `i` trifft den richtigen Eintrag. Kampf-/Dungeon-Einträge liefern dort ohnehin
+                  // `null` (queueLevels.ts kennt nur Sammel-/Handwerks-Skills), der explizite Guard
+                  // hier spart nur den Array-Zugriff.
+                  const rowLevel = fightEntry || dungeonEntry ? null : levels.queue[i];
                   return (
                     // Chef 25.08.2026: die Zeile selbst ist ab jetzt ein PLAIN div (kein HoverTip
                     // mehr über die GANZE Zeile) — Drag-Handler unverändert, aber der Zeilen-
@@ -846,7 +968,7 @@ export function ActionQueuePanel(): JSX.Element {
                     // `mouseenter` auf dem äußeren div nie schließt, solange der Zeiger irgendwo in
                     // der Zeile bleibt. Aufgeteilt vermeiden beide Tooltips sich sauber.
                     <div
-                      key={`${fightEntry ? fightEntry.monsterId : entry.actionId}-${i}`}
+                      key={`${fightEntry ? fightEntry.monsterId : dungeonEntry ? dungeonEntry.dungeonId : entry.actionId}-${i}`}
                       className="queue-row"
                       ref={setRowRef(vi)}
                       onContextMenu={(e) => { e.preventDefault(); dequeueAction(state, i); }}
@@ -867,10 +989,20 @@ export function ActionQueuePanel(): JSX.Element {
                           </span>
                         }
                       >
-                        {fightEntry ? <FightQueueIcon monsterId={fightEntry.monsterId} /> : <QueueIcon action={action!} />}
+                        {fightEntry ? (
+                          <FightQueueIcon monsterId={fightEntry.monsterId} />
+                        ) : dungeonEntry ? (
+                          <DungeonQueueIcon dungeonId={dungeonEntry.dungeonId} />
+                        ) : (
+                          <QueueIcon action={action!} />
+                        )}
                         <div className="queue-row-text">
                           <span className="queue-row-name">
-                            {fightEntry ? fightMonsterName(fightEntry.monsterId, tr) : tr(action!.name)}
+                            {fightEntry
+                              ? fightMonsterName(fightEntry.monsterId, tr)
+                              : dungeonEntry
+                                ? dungeonQueueName(dungeonEntry.dungeonId, tr)
+                                : tr(action!.name)}
                           </span>
                           {/* 1.0.2 (Spieler-Report): Menge und Dauer teilen sich eine Zeile UNTER
                               dem Namen. Vorher war die Menge eine eigene Spalte rechts und nahm
@@ -878,7 +1010,7 @@ export function ActionQueuePanel(): JSX.Element {
                               buchstabenweise um. */}
                           <span className="queue-row-meta">
                             <span className="queue-row-target">
-                              {fightEntry
+                              {fightEntry || dungeonEntry
                                 ? entry.target === null ? "∞" : `×${entry.target}`
                                 : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
                             </span>

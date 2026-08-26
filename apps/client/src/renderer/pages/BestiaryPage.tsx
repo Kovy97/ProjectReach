@@ -36,6 +36,9 @@ import "../styles/bestiary.css";
  */
 
 const LOCK_ICON_URL = getUiIcon("icon_locked");
+/** Generisches Emblem für Drop-Chips ohne Bild UND ohne eigenes Item-Icon (Muster ItemWikiModal
+ *  GENERIC_ICON_URL) — ersetzt den alten "▪"-Platzhalter-Charakter. */
+const GENERIC_DROP_ICON_URL = getUiIcon("icon_ach_star");
 
 /**
  * Champion-Kodex-Index (Jagd-Paket Task 3, Chef-GO): `content.elites` einmal beim Modul-Laden nach
@@ -676,8 +679,12 @@ const BestiaryMonsterCard = memo(function BestiaryMonsterCard({
                     <span className="bjw-drop-chip">
                       {dropImg ? (
                         <img loading="lazy" decoding="async" src={dropImg} alt="" className="item-chip-img pixelart" />
+                      ) : dropItem?.icon ? (
+                        <span className="item-chip-emoji">{dropItem.icon}</span>
+                      ) : GENERIC_DROP_ICON_URL ? (
+                        <img loading="lazy" decoding="async" src={GENERIC_DROP_ICON_URL} alt="" className="item-chip-img" />
                       ) : (
-                        <span className="item-chip-emoji">{dropItem?.icon ?? "▪"}</span>
+                        <span className="item-chip-emoji">▪</span>
                       )}
                       {/* Item-Checkliste (Fun-Sweep FF, Pip P3c): explizites ✓ auf
                           gefundenen Drops — bislang unterschied sich "gefunden" nur

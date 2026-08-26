@@ -15,6 +15,8 @@ import {
   eliteScaledMonster,
   eliteVariantsForZone,
   enemyEffectiveAccuracy,
+  enqueueDungeonRuns,
+  enqueueDungeonRunsAtFront,
   enqueueFight,
   enqueueFightAtFront,
   equippedPet,
@@ -41,7 +43,6 @@ import {
   setRangedStance,
   setMagicStance,
   slayerRequirementMet,
-  startDungeon,
   startEliteCombat,
   startParagonFloor,
   stopCombat,
@@ -4618,14 +4619,42 @@ function MonsterSelectImpl(): JSX.Element {
                             {levelWarn}
                           </div>
                         )}
+                        {/* Chef-Auftrag 26.08.2026 ("Dungeons sollen nun queuebar sein, wie Kämpfe
+                            mit 1×/25×/50×/∞"): "Betreten" läuft jetzt über den Queue-Sofort-Start-
+                            Pfad (`enqueueDungeonRunsAtFront`, Ziel 1) statt direkt `startDungeon` —
+                            verhält sich für einen einzelnen Lauf IDENTISCH zu heute (sofort rein,
+                            eine laufende Aktivität wandert mit Rest-Ziel an die Queue-Front), reiht
+                            sich aber sauber in denselben Mechanismus wie der Mengen-Picker darunter
+                            ein. Der Picker selbst (derselbe geteilte Baustein wie auf der
+                            Monsterkarte, s. MonsterCard `mc-queue-actions`-JSDoc) reicht Klicks über
+                            `onQueue`-Muster durch: normaler Klick → `enqueueDungeonRuns` (hinten
+                            anstellen), Shift-Klick → `enqueueDungeonRunsAtFront` (sofort, Muster
+                            `atFront` bei MonsterCard). Nur sichtbar, wenn der Dungeon WIRKLICH
+                            betretbar ist (`canEnter`) — ein gesperrter Dungeon (Quest-Gate) zeigt
+                            keinen Picker, nur den (deaktivierten) Betreten-Knopf mit Sperr-Grund. */}
                         <button
                           className="btn-iron dungeon-enter"
                           disabled={!canEnter}
                           title={reason || undefined}
-                          onClick={() => startDungeon(state, content, d.id)}
+                          onClick={() => enqueueDungeonRunsAtFront(state, content, d.id, 1)}
                         >
                           {t("combat.dungeonEnter")}
                         </button>
+                        {canEnter && (
+                          <div className="dungeon-queue-actions">
+                            <QuantityPicker
+                              className="dungeon-queue-picker"
+                              presets={CRAFT_TARGET_PRESETS}
+                              onPick={(qty, atFront) =>
+                                (atFront ? enqueueDungeonRunsAtFront : enqueueDungeonRuns)(state, content, d.id, qty)
+                              }
+                              infiniteLabel="∞"
+                              onInfinite={(atFront) =>
+                                (atFront ? enqueueDungeonRunsAtFront : enqueueDungeonRuns)(state, content, d.id, null)
+                              }
+                            />
+                          </div>
+                        )}
                       </>
                     ) : (
                       <div className="zone-card-meta zone-card-locked-hint">

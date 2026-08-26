@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
-import { combatLevel, computeStats, effectiveActionDurationMs, effectiveCapacity, levelFromXp, stopCombat, usedCapacityUnits, xpForLevel } from "@hearthforge/engine";
+import { combatLevel, computeStats, dungeonRunProgress, effectiveActionDurationMs, effectiveCapacity, levelFromXp, stopCombat, usedCapacityUnits, xpForLevel } from "@hearthforge/engine";
 import type { GameState, SkillId } from "@hearthforge/shared";
 import { activeStanceMods } from "@hearthforge/shared";
 import { computeActionRate, formatEta } from "./util/actionRate";
@@ -554,6 +554,26 @@ function GameStats({
     const monsterName = m ? tr(m.name) : "";
     const playerHpTitle = `${state.character.name}: ${Math.ceil(playerHp)}/${Math.round(playerMaxHp)}`;
     const enemyHpTitle = `${monsterName}: ${Math.ceil(enemyHp)}/${Math.round(enemyMaxHp)}`;
+    // Chef-Auftrag 26.08.2026 ("Dungeons queuebar"): läuft der Kampf gerade als Queue-Dungeon-Lauf
+    // (`state.queueDungeon`), ersetzt "Kampf: {Monster}" den Dungeon-Namen + Lauf-Fortschritt —
+    // "Dungeon: {Name} · Lauf {n}/{m}" (kompakte Kurzform, s. ActionQueuePanel.tsx
+    // `dungeonProgressLabel` für die ausgeschriebene "Lauf n von m"-Variante im Queue-Panel). Direkter
+    // `state`-Zugriff statt eigenem Selector-Eintrag — dieselbe Zeile liest bereits `computeStats(state, …)`
+    // ungegated, s. Kommentar dort; ein Wellenwechsel (neuer `monsterId`) löst über den bestehenden
+    // Selector ohnehin einen Re-Render aus, GENAU wenn `queueDungeon.completed` gestiegen ist.
+    const queueDungeon = state.queueDungeon;
+    const runProgress = queueDungeon ? dungeonRunProgress(state) : null;
+    const dungeonHeaderName = queueDungeon
+      ? (() => {
+          const dungeon = content.dungeons.find((d) => d.id === queueDungeon.dungeonId);
+          return dungeon ? tr(dungeon.name) : queueDungeon.dungeonId;
+        })()
+      : "";
+    const dungeonRunShort = runProgress
+      ? runProgress.target === null
+        ? t("queue.dungeon.runShortInfinite").replace("{n}", String(runProgress.run))
+        : t("queue.dungeon.runShort").replace("{n}", String(runProgress.run)).replace("{m}", String(runProgress.target))
+      : "";
     activity = (
       <span
         className="activity activity-fighting"
@@ -562,8 +582,18 @@ function GameStats({
         tabIndex={0}
         title={t("header.jumpToFight")}
       >
-        <span className="muted">{t("header.fighting")}</span>{" "}
-        <span className="activity-name">{monsterName}</span>
+        {queueDungeon ? (
+          <>
+            <span className="muted">{t("header.dungeon")}</span>{" "}
+            <span className="activity-name">{dungeonHeaderName}</span>
+            <span className="muted"> · {dungeonRunShort}</span>
+          </>
+        ) : (
+          <>
+            <span className="muted">{t("header.fighting")}</span>{" "}
+            <span className="activity-name">{monsterName}</span>
+          </>
+        )}
         <span className="gamestats-hp-inline">
           <span className="gamestats-hp-mini" title={playerHpTitle}>
             <span className="gamestats-hp-mini-icon" aria-hidden="true">

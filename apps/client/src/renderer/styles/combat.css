@@ -316,6 +316,40 @@
   min-width: 0;
 }
 
+/* Chef-Auftrag 26.08.2026 ("Dungeons queuebar — wie Kämpfe mit 1×/25×/50×/∞"): derselbe geteilte
+   QuantityPicker wie auf der Monsterkarte (`components/QuantityPicker.tsx`), hier eigene, schlanke
+   Kontextklassen statt der Monsterkarten-`.mc-queue-*`-Regeln (die leben in gravewood-fighter-
+   cards.css, nicht im ui-dev-Revier für diese Karte) — feste px-Größen statt `cqw`, da `.zone-card`/
+   `.dungeon-card` kein Container-Query-Kontext ist. Unter dem "Betreten"-Knopf, volle Kartenbreite. */
+.dungeon-queue-actions {
+  margin-top: 6px;
+  width: 100%;
+}
+.dungeon-queue-picker {
+  width: 100%;
+}
+.dungeon-queue-picker .qty-picker-presets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  width: 100%;
+}
+.dungeon-queue-picker .qty-btn {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  padding: 4px 2px;
+  font-size: 12px;
+}
+.dungeon-queue-picker .qty-picker-custom {
+  gap: 5px;
+}
+.dungeon-queue-picker .qty-picker-input {
+  font-size: 12px;
+  padding: 4px 6px;
+  min-height: 34px;
+}
+
 .dungeon-locked-hint {
   margin-top: 8px;
   width: 100%;
@@ -5999,22 +6033,31 @@
     url("../assets/ui/gravewood/textures/texture-gravewood.webp") repeat;
 }
 
+/* Chef-Auftrag 26.08.2026 ("oben der 'Still Fighting: X'-Teil sollte zentriert in der Leiste sein
+   und groesser, den ganzen Space nutzen"): von einer schmalen linksbuendigen Zeile (Text +
+   Knopf nebeneinander) zu einer zentrierten, gestapelten Leiste — Text OBEN volle Breite zentriert
+   (Kopfschrift, groesser), Knopf darunter mittig. Gestapelt statt Text+Knopf nebeneinander, weil
+   echtes Zentrieren ueber die volle Breite NEBEN einem unterschiedlich breiten Knopf ohne
+   Spacer-Trickserei nicht robust ist — bei 1366x768 UND langen (ru/de) Monster-/Dungeon-Namen
+   bleibt diese Variante garantiert unbeschnitten (kein Nebeneinander-Clipping-Risiko). */
 .combat-return-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  gap: 10px 16px;
+  gap: 10px;
   margin-bottom: 8px;
-  padding: 7px 14px;
+  padding: 14px 20px;
   border: 1px solid rgba(214, 160, 74, 0.55);
   border-left: 3px solid var(--gold, #d6a04a);
   background: rgba(60, 30, 10, 0.42);
 }
 .combat-return-note {
-  flex: 1 1 220px;
-  min-width: 0;
+  display: block;
+  width: 100%;
+  text-align: center;
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: clamp(17px, 2.4vw, 20px);
+  letter-spacing: 0.03em;
   color: var(--gold, #d6a04a);
 }
 /* Chef-Test 25.08.2026: der Knopf lief auf `.btn`, das im CSS nicht existiert (Browser-Default,
@@ -6022,7 +6065,7 @@
    26.08.2026: `.btn-iron` statt `.combat-btn` — Selektor greift ueber die feste Kontextklasse. */
 .combat-return-bar .combat-return-btn {
   flex: 0 0 auto;
-  min-width: 160px;
+  min-width: 200px;
 }
 
 .battle-fortress-context {
