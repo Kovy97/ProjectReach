@@ -10,3 +10,13 @@
 4. Chef oder Claude entscheiden entsprechend ihrer Projektrolle in **Teil D – Abnahme**.
 
 Die Vorlage ist eine Präzisionshilfe und keine Zugangshürde. Ideen, Bildreferenzen und Anweisungen können jederzeit frei vom Chef oder von Claude kommen. Niemand muss einen bereits klar formulierten Auftrag noch einmal formal ausfüllen.
+
+<!-- codex:2026-08-23T18:21:18+02:00 -->
+
+Für Grim-Reach-Bildproduktion gilt zusätzlich:
+
+- `design/asset-anforderungen.md` ist die bindende technische und visuelle Quelle.
+- `IMAGEGEN-ASSET-PROMPT.md` enthält den wiederverwendbaren Native-Alpha-Prompt sowie das
+  sechsteilige Abnahmegate.
+- Freisteller werden nie per Chroma-Key, Schachbrett oder nachträglicher Key-Matte erzeugt.
+- Die bestätigte Content-ID ist ohne Namenszusatz der finale Dateiname.

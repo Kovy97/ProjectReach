@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-08-23T18:47:23.582Z",
+  "files": {
+    "mire_wisp.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 1353049,
+      "partialAlphaPixels": 45408,
+      "opaquePixels": 174059,
+      "visibleMagentaPixels": 0,
+      "brightPureGreenPixels": 0,
+      "partialEdgeGreenPixels": 0,
+      "sha256": "ef9dad129992774c53184a7f519e454e25a153ebf8e76c12e3317a7e5742f8aa"
+    },
+    "elite_crypt_icemage.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 1021731,
+      "partialAlphaPixels": 39400,
+      "opaquePixels": 511385,
+      "visibleMagentaPixels": 0,
+      "brightPureGreenPixels": 0,
+      "partialEdgeGreenPixels": 0,
+      "sha256": "be04e9286c192b1936df71f74f4fedb26acf3243966c0de9b4cbec5364294c16"
+    },
+    "elite_high_wyvern.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 954722,
+      "partialAlphaPixels": 29467,
+      "opaquePixels": 588327,
+      "visibleMagentaPixels": 0,
+      "brightPureGreenPixels": 0,
+      "partialEdgeGreenPixels": 0,
+      "sha256": "b2b0d12cc26f1667b48951c20a91d3a1dcbd28c369e3635e68f2fed717653f34"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "rotbark": {
+    "meta": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true
+    },
+    "alpha": {
+      "transparent": 1017221,
+      "partial": 555037,
+      "opaque": 258
+    },
+    "saturatedEdge": 14042
+  },
+  "cragmaw": {
+    "meta": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true
+    },
+    "alpha": {
+      "transparent": 962002,
+      "partial": 610233,
+      "opaque": 281
+    },
+    "saturatedEdge": 14636
+  },
+  "gillrot": {
+    "meta": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true
+    },
+    "alpha": {
+      "transparent": 880218,
+      "partial": 692172,
+      "opaque": 126
+    },
+    "saturatedEdge": 15653
+  },
+  "witherling": {
+    "meta": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "hasAlpha": true
+    },
+    "alpha": {
+      "transparent": 1062779,
+      "partial": 509597,
+      "opaque": 140
+    },
+    "saturatedEdge": 39901
+  }
+}

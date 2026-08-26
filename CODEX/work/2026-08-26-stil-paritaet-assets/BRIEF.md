@@ -134,10 +134,91 @@ Abnahme durch Claude (Kontaktbogen je Gruppe), Freigabe durch den Chef. Item-Wer
 ---
 
 # Teil B – Designauflösung
-_(Mira)_
+
+<!-- codex:2026-08-26T10:35:00+02:00 -->
+
+## B1. Gemeinsamer Serienguss
+
+Alle 47 Motive werden als eine Ashen-Iron-Serie mit weichem Licht von oben links, gedeckter
+Sättigung, körnigen Gebrauchsspuren und klaren 48-px-Silhouetten ausgeführt. Die Herkunft wird
+über Material und einen kontrollierten Farbakzent erzählt, nicht über Effekte. Common bleibt
+schlicht und funktional; rare erhält einen lesbaren Akzent; superRare verbindet zwei Materialien
+und feinere Beschläge; epic ist innerhalb seines Typs am reichsten, bleibt aber gealtert.
+
+## B2. Formsystem nach Gruppe
+
+- **A1 Bögen:** vollständige gespannte Silhouette diagonal von unten links nach oben rechts;
+  Kurzbögen kompakter und kräftiger, Langbögen höher und schlanker. Jeder Bogen muss mechanisch
+  funktionsfähig sein: ein durchgehender symmetrisch belastbarer Stab, zwei plausible Wurfarme,
+  eine gerade gespannte Sehne von Nocke zu Nocke und eine saubere Biegelinie um den Mittelgriff;
+  keine dekorative S-Form, getrennten Wurfarme oder asymmetrischen Lastpfade. Materialmotive sind
+  nur Beschlag und Verkleidung der funktionalen Grundform. Griff, beide Nocken und Sehne bleiben
+  sichtbar. `ranger_longbow.webp` fehlt im Bestand; `copper_longbow.webp`,
+  `iron_longbow.webp`, `spectral_longbow.webp` und `stagstride_longbow.webp` bilden den
+  nächstliegenden Korridor.
+- **A2 Magie:** Stäbe, Ruten und Zauberstäbe diagonal wie die Bögen, aber über Kopfstück und
+  Griffmaß klar getrennt. Foki liegen frei und leicht von oben. Kein magisches Licht; Steine,
+  Rauchglas und Pigmente bleiben materialgebunden und stumpf.
+- **A3 Leder:** Wämser, Beinlinge und Armschienen frontal wie hängend; Kappen dreiviertel;
+  Stiefel immer als vollständiges Paar. Material des Quellmonsters bleibt Beschlag oder Besatz,
+  nicht die Silhouette einer echten Kreatur.
+- **A4 Stoff:** Roben und Röcke frontal hängend, Handschuhe paarweise, Kapuzen und Mitra
+  dreiviertel. Stoff bleibt deutlich weicher und leichter als Leder, ohne Körper oder Mannequin.
+- **A7 Tonika:** je ein einzelnes verschlossenes Gefäß leicht von oben; nur die Flüssigkeit darf
+  schwach von innen leuchten, ohne äußeren Halo oder Partikel.
+
+## B3. Produktion und autonomes Qualitäts-Gate
+
+Jedes Motiv wird einzeln mit seinem freigegebenen Prompt und einem strikten nativen-Alpha-Block
+erzeugt. Die Gruppenfolge A1 → A2 → A3 → A4 → A7 bleibt als internes Konsistenz-Gate bestehen;
+gemäß aktueller Chef-Anweisung läuft die Produktion jedoch ohne Zwischenfreigabe bis 47/47 durch.
+Erzeugungen mit Schachbrett, Hintergrundfläche, abgeschnittener Hauptsilhouette, Ausrüstungs-Glow,
+falscher Objektanzahl oder unpassender Typ-Perspektive werden selbstständig verworfen und ersetzt.
+Kein Chroma-Key, keine Matte und kein nachträgliches Freistellen.
+
+## B4. Aufbereitung und Abnahmebild
+
+Angenommene Generatorausgaben werden unverändert unter `raw/` archiviert. Finals werden nur über
+den vorhandenen Alphakanal zugeschnitten, proportional auf 80 bis 90 Prozent Motivhöhe skaliert
+und unten mittig auf transparentem 1024er-Canvas platziert. Für jede Gruppe entstehen ein
+Bestandsvergleich, ein Serienbogen, Schwarz-/Grau-/Grellrosa-Kantenprüfungen und eine
+48-/96-/175-px-Lesbarkeitsprobe; Einzelwerte und SHA-256 stehen in `qa/qa.json`.
 
 # Teil C – Lieferung und QA
 _(Mira)_
 
+<!-- codex:2026-08-26T14:18:00+02:00 -->
+
+- Lieferung vollständig: 47/47 Finals unter
+  `CODEX/assets/stil-paritaet-2026-08-26/fertig/`, exakt nach den Content-IDs benannt.
+- Gruppen vollständig: A1 10, A2 8, A3 11, A4 16, A7 2. Dieselben 47 angenommenen
+  Generatorausgaben liegen unverändert als `<Content-ID>-raw.png` unter `raw/`.
+- Erzeugung mit eingebautem ImageGen im Standardmodus und nativem Alpha. Kein Keying, keine
+  Matte, kein Despill, kein Freistellen. Aufbereitung nur über vorhandenes Alpha: transparenter
+  Zuschnitt, proportionale Skalierung und Bottom-Center-Platzierung.
+- Automatische Endprüfung: alle Finals 1024 × 1024 sRGB-RGBA, Alpha 0 bis 255, äußerer
+  16-px-Rand vollständig Alpha 0, Motivhöhe 850 bis 880 px. Keine fehlenden oder zusätzlichen
+  Dateien. SHA-256 und Einzelmaße stehen in `qa/qa.json`.
+- Je Gruppe vorhanden: Serienbogen auf Transparent, Schwarz, Grau und Grellrosa,
+  Bestandsvergleich sowie 48-/96-/175-px-Lesbarkeitsprobe. Die Bögen wurden zusätzlich
+  vergrößert auf mechanische Plausibilität geprüft.
+- Nach Chef-Hinweis wurde A1 vollständig neu gegossen. Alle zehn angenommenen Bögen besitzen
+  einen durchgehenden tragenden Stab, ausbalancierte Wurfarme, klare Nocken und genau eine gerade
+  gespannte Sehne von Nocke zu Nocke; keine S-Waffen, gespaltenen Wurfarme oder Dekorsehnen.
+- Drei technisch saubere, aber zu breit komponierte A4-Rohfassungen wurden kompakter neu erzeugt,
+  damit auch `imp_hide_slippers`, `stormcaller_sandals` und `warlock_handwraps` den Höhenkorridor
+  erfüllen. Nur die angenommenen Fassungen liegen in `raw/` und `fertig/`.
+- Visuelle Prüfung: gemeinsames Licht oben links, gedämpfte Ashen-Iron-Sättigung,
+  typgerechte Perspektiven und nachvollziehbare Rarity-Staffelung. Kein Glühen, keine Partikel
+  oder Aura auf Ausrüstung; nur schwaches inneres Flüssigkeitslicht bei beiden Tonika.
+- Keine Renderer-, Content-, Save-, i18n- oder `.claude/**`-Datei verändert.
+
 # Teil D – Abnahme
 _(Claude, dann Chef)_
+
+<!-- codex:2026-08-26T14:18:00+02:00 -->
+
+- Mira Produktions-/QA-Gate: **GO** — 47/47 vollständig, technische und visuelle Eigenprüfung
+  bestanden.
+- Claude Gegenprüfung: **ausstehend**.
+- Chef-Freigabe: **ausstehend**.

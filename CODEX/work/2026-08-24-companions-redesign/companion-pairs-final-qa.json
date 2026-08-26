@@ -1,0 +1,1134 @@
+{
+  "expectedIds": [
+    "rotbark",
+    "cragmaw",
+    "gillrot",
+    "witherling",
+    "sporewretch",
+    "gloomrat",
+    "slagfiend",
+    "ashgut",
+    "quillshrike",
+    "flayling",
+    "gemwraith",
+    "glyphmaw",
+    "vellumoth",
+    "hemlock",
+    "ironmaw",
+    "carapace",
+    "gorehound",
+    "carrionwing",
+    "pyreling",
+    "hoarspite",
+    "charnel"
+  ],
+  "card": {
+    "rotbark": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 701990,
+        "partial": 345180,
+        "opaque": 1406
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 119,
+        "top": 117,
+        "width": 786,
+        "height": 790
+      },
+      "sha256": "3d559426c327d25617bcdd202f3cdbbedcdb2df33c8e1d5bf6c6e9f4026e7efd"
+    },
+    "cragmaw": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 730154,
+        "partial": 316763,
+        "opaque": 1659
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 129,
+        "width": 790,
+        "height": 765
+      },
+      "sha256": "958bc8b9778a43cb567a638b5565118f1831462c98db4e11c59925a3de8b9414"
+    },
+    "gillrot": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 756133,
+        "partial": 291815,
+        "opaque": 628
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 170,
+        "top": 117,
+        "width": 684,
+        "height": 790
+      },
+      "sha256": "79ea45aa0f10a8c820e7bd3a946500ab5119650772b102f6647ea1960b504236"
+    },
+    "witherling": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 701087,
+        "partial": 346456,
+        "opaque": 1033
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 157,
+        "top": 117,
+        "width": 710,
+        "height": 790
+      },
+      "sha256": "dff0ddf1aa6310328aa356d13c8f64d25b6a537fa78f8831ad3a25e56af62538"
+    },
+    "sporewretch": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 754211,
+        "partial": 293090,
+        "opaque": 1275
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 176,
+        "top": 117,
+        "width": 672,
+        "height": 790
+      },
+      "sha256": "486387aedaff738d3088fa0719d2290e1f3108439c9cba6f4c034db2645abcea"
+    },
+    "gloomrat": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 848591,
+        "partial": 197094,
+        "opaque": 2891
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 131,
+        "top": 117,
+        "width": 762,
+        "height": 790
+      },
+      "sha256": "b5936f8791fcedb89e042401653aeb0fadb28887959e0e92574711c4e0d847c2"
+    },
+    "slagfiend": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 782197,
+        "partial": 264679,
+        "opaque": 1700
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 157,
+        "top": 116,
+        "width": 708,
+        "height": 792
+      },
+      "sha256": "34f24ac857d79763347fea70887ed35b24f7c337edcc7d663e923fe91461e7c1"
+    },
+    "ashgut": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 696010,
+        "partial": 350449,
+        "opaque": 2117
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 122,
+        "top": 117,
+        "width": 779,
+        "height": 790
+      },
+      "sha256": "f83d83933b4edd9a4c4168c0433c2a4bae39a97efcb5567c019cd1612c74c70a"
+    },
+    "quillshrike": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 870041,
+        "partial": 176223,
+        "opaque": 2312
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 132,
+        "top": 115,
+        "width": 759,
+        "height": 792
+      },
+      "sha256": "f318fdd22412db24e32c2fcc011c86c5905f05c25301ecd4e104d17684196eec"
+    },
+    "flayling": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 871891,
+        "partial": 174975,
+        "opaque": 1710
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 121,
+        "width": 790,
+        "height": 782
+      },
+      "sha256": "ec91bc7217005a18b727b1dd2052902c5ab8c1a1035436efe48ffff7c06dd05f"
+    },
+    "gemwraith": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 880138,
+        "partial": 167138,
+        "opaque": 1300
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 160,
+        "top": 117,
+        "width": 702,
+        "height": 790
+      },
+      "sha256": "05526ee8645cc718bfa9fcda6667380fc521099ff09e7831696a6996172fef57"
+    },
+    "glyphmaw": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 729441,
+        "partial": 318118,
+        "opaque": 1017
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 137,
+        "top": 117,
+        "width": 750,
+        "height": 790
+      },
+      "sha256": "a37e88606b67b44b70cfdba757166ca58dc56573bef618bd2bbaacaf8bbd6280"
+    },
+    "vellumoth": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 806607,
+        "partial": 240566,
+        "opaque": 1403
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 119,
+        "top": 117,
+        "width": 786,
+        "height": 790
+      },
+      "sha256": "da90555036a607666ddaecfb5c9aa96b897cae2aab6eaf366803dac820d8526e"
+    },
+    "hemlock": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 781034,
+        "partial": 265771,
+        "opaque": 1771
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 126,
+        "width": 790,
+        "height": 772
+      },
+      "sha256": "075b70efa3dfb7fbd5f3768a9b51b56d6e89314f12f119aca16eb2ddc309ddc0"
+    },
+    "ironmaw": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 735700,
+        "partial": 311131,
+        "opaque": 1745
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 132,
+        "width": 790,
+        "height": 760
+      },
+      "sha256": "c00f00664f3cc2e2558e03bedc7aa6639bb6337334e2ed182a94bf723a04d93b"
+    },
+    "carapace": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 775267,
+        "partial": 272225,
+        "opaque": 1084
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 122,
+        "width": 790,
+        "height": 779
+      },
+      "sha256": "4543c625084b931c98353e7aef77ac828de1528475f6d9a4dc33fff5f1915c1f"
+    },
+    "gorehound": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 794938,
+        "partial": 252623,
+        "opaque": 1015
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 135,
+        "top": 117,
+        "width": 753,
+        "height": 790
+      },
+      "sha256": "bbe12b2d789cfa097d08a2655f29d0091f5ceda96c60abf166219cb56a1d243a"
+    },
+    "carrionwing": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 816110,
+        "partial": 230796,
+        "opaque": 1670
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 200,
+        "top": 117,
+        "width": 624,
+        "height": 790
+      },
+      "sha256": "785ea4626b36e93df4c3c00de9d2f1ee40f5c52f93b89d0340ff293461eab56b"
+    },
+    "pyreling": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 709911,
+        "partial": 337094,
+        "opaque": 1571
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 128,
+        "width": 790,
+        "height": 768
+      },
+      "sha256": "f3081a738447f51d4defae0eb5e56fac4ba51d8cda70f725fa726f274dc71d2c"
+    },
+    "hoarspite": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 763371,
+        "partial": 284035,
+        "opaque": 1170
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 118,
+        "top": 130,
+        "width": 788,
+        "height": 764
+      },
+      "sha256": "ab37c9778e2a14d67c7fdf3afc618be48afd4d42f43fbbae0d11ebf654c8cfca"
+    },
+    "charnel": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 802385,
+        "partial": 244510,
+        "opaque": 1681
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 168,
+        "top": 113,
+        "width": 687,
+        "height": 796
+      },
+      "sha256": "19c93b95d702da83abab729229fb88dd74035fa36b66edb52a3211bb88673f9c"
+    }
+  },
+  "fight": {
+    "rotbark": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 754129,
+        "partial": 24669,
+        "opaque": 269778
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 160,
+        "width": 790,
+        "height": 703
+      },
+      "sha256": "c4021bf4724b677c08bc82791ed2717a306c5c168a7999cc7f003803d85de103"
+    },
+    "cragmaw": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 833459,
+        "partial": 18029,
+        "opaque": 197088
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 231,
+        "width": 790,
+        "height": 561
+      },
+      "sha256": "89951aef766fda007841be9cd60396d301ccdcc52ff25b76b9160e50920fbdc6"
+    },
+    "gillrot": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 763705,
+        "partial": 42263,
+        "opaque": 242608
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 119,
+        "top": 117,
+        "width": 785,
+        "height": 790
+      },
+      "sha256": "90711a81d8dd48ec0875d23517a05b4fcbf951eea505cd9dcf90fb0fa3d9c774"
+    },
+    "witherling": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 824611,
+        "partial": 43074,
+        "opaque": 180891
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 116,
+        "top": 167,
+        "width": 791,
+        "height": 690
+      },
+      "sha256": "7bd5e78f8c3670e42c8d8a388b4ceea3fc7eff14c39d601cc70a1023a71cfbb4"
+    },
+    "sporewretch": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 784181,
+        "partial": 29687,
+        "opaque": 234708
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 126,
+        "top": 117,
+        "width": 771,
+        "height": 790
+      },
+      "sha256": "821197141f30f5a9afd3fe59460f420f6b828723f007533afbcff4ddf9b2f166"
+    },
+    "gloomrat": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 826832,
+        "partial": 36165,
+        "opaque": 185579
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 118,
+        "top": 128,
+        "width": 788,
+        "height": 768
+      },
+      "sha256": "a341ff9c7081a1ddf1617f6281038ecfbc63bf01ec54cabe325b8f6945a64ab8"
+    },
+    "slagfiend": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 795820,
+        "partial": 17284,
+        "opaque": 235472
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 130,
+        "top": 117,
+        "width": 763,
+        "height": 789
+      },
+      "sha256": "8f142a333a2709a4d95b2d488f92663ce105f0e297ae4769337e78c0655f5254"
+    },
+    "ashgut": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 818161,
+        "partial": 20574,
+        "opaque": 209841
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 177,
+        "width": 790,
+        "height": 670
+      },
+      "sha256": "610b51ef6fec740aa3f08ff5e5431f86955d174b71ca25075527e39e4c52fb64"
+    },
+    "quillshrike": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 871489,
+        "partial": 45999,
+        "opaque": 131088
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 133,
+        "top": 117,
+        "width": 758,
+        "height": 790
+      },
+      "sha256": "3d06d59454305be7be95da67c4a67c13f94c2123865cf437e5ee3121f2254af8"
+    },
+    "flayling": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 920420,
+        "partial": 20887,
+        "opaque": 107269
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 212,
+        "width": 790,
+        "height": 599
+      },
+      "sha256": "128790b54f77326faa78bea2102203aca8ba7305aaedc45834a4e47c9f816466"
+    },
+    "gemwraith": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 918024,
+        "partial": 30348,
+        "opaque": 100204
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 116,
+        "top": 204,
+        "width": 791,
+        "height": 615
+      },
+      "sha256": "5678ffb73839e664e9ecc750943f7eed95a0ec07045abbde73112517efb684ab"
+    },
+    "glyphmaw": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 749626,
+        "partial": 27857,
+        "opaque": 271093
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 137,
+        "width": 789,
+        "height": 749
+      },
+      "sha256": "45fa5100e61541db5418a04122230e514622e2f78aca1c0bc5ba13dae14bd9db"
+    },
+    "vellumoth": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 823859,
+        "partial": 41225,
+        "opaque": 183492
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 152,
+        "width": 790,
+        "height": 720
+      },
+      "sha256": "45c0809686e5f4af5951610dd776ca788e2d00a9dc6c7d6a650b8e590832279a"
+    },
+    "hemlock": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 824128,
+        "partial": 28803,
+        "opaque": 195645
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 152,
+        "width": 790,
+        "height": 719
+      },
+      "sha256": "72f8e4f00a02b91fa97ef6cecc077a2c3fa7e027fb44e7fa067bca5dcab57e9e"
+    },
+    "ironmaw": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 839602,
+        "partial": 14451,
+        "opaque": 194523
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 254,
+        "width": 790,
+        "height": 516
+      },
+      "sha256": "b4ce489454980721a0af46289467085dd1f158a53894d0c1b62e25bc3e2d893e"
+    },
+    "carapace": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 811706,
+        "partial": 27495,
+        "opaque": 209375
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 171,
+        "width": 791,
+        "height": 682
+      },
+      "sha256": "ad7d3036c7f402ab6751a3090f9a71e0794ea36764416502d493f7b8ade5a1c0"
+    },
+    "gorehound": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 875526,
+        "partial": 30000,
+        "opaque": 143050
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 186,
+        "width": 790,
+        "height": 651
+      },
+      "sha256": "6d46822ecfb7af59a53e77563883bd5483c9ffd609588dca15e0632858eb5f95"
+    },
+    "carrionwing": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 821695,
+        "partial": 49465,
+        "opaque": 177416
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 137,
+        "top": 118,
+        "width": 749,
+        "height": 788
+      },
+      "sha256": "41cb2aa85487a0258c1ba2b94dabf8d6c9f173dfa3296cb0905382d766a8c583"
+    },
+    "pyreling": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 823852,
+        "partial": 27353,
+        "opaque": 197371
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 190,
+        "width": 790,
+        "height": 644
+      },
+      "sha256": "2ed8f82352b0db0f6b884671d7ea8b275f68ae9f5ba844baded96c54992b8c51"
+    },
+    "hoarspite": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 813125,
+        "partial": 54718,
+        "opaque": 180733
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 126,
+        "width": 790,
+        "height": 771
+      },
+      "sha256": "bbbb87511fc0a3edf8407c9b1e6286b871bf85c7f410ae46b6011264e6767992"
+    },
+    "charnel": {
+      "width": 1024,
+      "height": 1024,
+      "channels": 4,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 800505,
+        "partial": 29397,
+        "opaque": 218674
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visibleBbox": {
+        "left": 117,
+        "top": 119,
+        "width": 790,
+        "height": 786
+      },
+      "sha256": "0029f461e952ad7f9ee1e1748a9796d82a6dfcb1ec1c4a7b3800b3fb4217150f"
+    }
+  },
+  "filenameCheck": {
+    "expected": [
+      "ashgut.png",
+      "carapace.png",
+      "carrionwing.png",
+      "charnel.png",
+      "cragmaw.png",
+      "flayling.png",
+      "gemwraith.png",
+      "gillrot.png",
+      "gloomrat.png",
+      "glyphmaw.png",
+      "gorehound.png",
+      "hemlock.png",
+      "hoarspite.png",
+      "ironmaw.png",
+      "pyreling.png",
+      "quillshrike.png",
+      "rotbark.png",
+      "slagfiend.png",
+      "sporewretch.png",
+      "vellumoth.png",
+      "witherling.png"
+    ],
+    "card": [
+      "ashgut.png",
+      "carapace.png",
+      "carrionwing.png",
+      "charnel.png",
+      "cragmaw.png",
+      "flayling.png",
+      "gemwraith.png",
+      "gillrot.png",
+      "gloomrat.png",
+      "glyphmaw.png",
+      "gorehound.png",
+      "hemlock.png",
+      "hoarspite.png",
+      "ironmaw.png",
+      "pyreling.png",
+      "quillshrike.png",
+      "rotbark.png",
+      "slagfiend.png",
+      "sporewretch.png",
+      "vellumoth.png",
+      "witherling.png"
+    ],
+    "fight": [
+      "ashgut.png",
+      "carapace.png",
+      "carrionwing.png",
+      "charnel.png",
+      "cragmaw.png",
+      "flayling.png",
+      "gemwraith.png",
+      "gillrot.png",
+      "gloomrat.png",
+      "glyphmaw.png",
+      "gorehound.png",
+      "hemlock.png",
+      "hoarspite.png",
+      "ironmaw.png",
+      "pyreling.png",
+      "quillshrike.png",
+      "rotbark.png",
+      "slagfiend.png",
+      "sporewretch.png",
+      "vellumoth.png",
+      "witherling.png"
+    ]
+  },
+  "manualVisualQa": {
+    "reviewedAt": "2026-08-24T14:20:00+02:00",
+    "backgrounds": [
+      "black",
+      "gray",
+      "pink"
+    ],
+    "noCheckerResiduals": true,
+    "noWhiteRectangles": true,
+    "noVisibleColorMatte": true,
+    "pairIdentity": true,
+    "cardPoseLeftOrIconic": true,
+    "fightPoseFacingRight": true,
+    "carapaceFightCorrectedByHorizontalFlip": true
+  },
+  "failures": [],
+  "pass": true,
+  "normalization": {
+    "canvas": "1024x1024",
+    "targetLongestAxis": 800,
+    "measuredAlphaThreshold": 8,
+    "acceptedMeasuredRange": [
+      780,
+      800
+    ]
+  }
+}

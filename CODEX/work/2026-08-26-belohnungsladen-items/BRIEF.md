@@ -103,10 +103,92 @@ nicht Teil dieses Auftrags.
 ---
 
 # Teil B – Designauflösung
-_(Mira)_
+
+<!-- codex:2026-08-26T10:23:25+02:00 -->
+
+## B1. Gemeinsamer Serienguss
+
+Die sieben Stücke werden als zusammengehörige, verdiente Chronikzeichen ausgeführt: gedeckte
+Ashen-Iron-Materialien, körnige handgemalte Oberflächen, weiches Licht von oben links und pro
+Stück genau ein zurückhaltender Kapitel-Akzent. Es gibt keine Rarity-Effekte im Motiv. Das
+Chronisten-Signet erhält als einziges Stück eine reichere Gravur und Edelmetallfassung, bleibt
+aber gealtert und spielweltlich glaubwürdig.
+
+## B2. Form- und Perspektivsystem
+
+- Ringe: dreiviertel von leicht oben, klar lesbare Ringschiene und zentraler Kopf; Wanderersiegel
+  schlicht, Götzenauge massiv und matt, Chronisten-Signet am detailreichsten.
+- Amulette: kurze sichtbare Tragekette oder Lederschnur, der Anhänger bildet die dominante
+  Silhouette; Aschenmarke kompakt und geschwärzt, Gezeitenkette organischer und salzverwittert.
+- Umhang: frei hängend und unten mittig, mit lesbarer Schulter-/Kragenform; die erloschene
+  Laternen-Schließe bleibt bei 48 px als einzelner Metallakzent erkennbar.
+- Auftragsmarke: eine einzelne flache, leicht schräg liegende Eisenmünze; Reißzahn-Siegel als
+  große, einfache Binnenform statt filigraner Illustration.
+
+## B3. Produktionsweg
+
+Jedes Motiv wird einzeln mit dem freigegebenen Prompt und einem strikten nativen-Alpha-Zusatz
+erzeugt. Ein Ergebnis mit Hintergrundfläche, Alphahintergrund, Schachbrett oder Farbsäumen wird
+verworfen und neu erzeugt; Keying und nachträgliches Freistellen sind ausgeschlossen. Zuerst
+werden `chronicle_chronicler_signet` und `chronicle_task_token` als Serienanker geprüft, danach
+folgen die fünf übrigen Stücke im gleichen Guss. Die Rohbilder werden unverändert unter `raw/`
+archiviert; die normalisierten 1024-px-Dateien entstehen ohne Hintergrundentfernung unter
+`fertig/`.
+
+## B4. Abnahmekriterien vor Batch-Freigabe
+
+- [x] Typ-Perspektiven und relative Größe gegen die Bestandsstücke festgelegt.
+- [x] Einheitliches Licht oben links und gedeckte Sättigung festgelegt.
+- [x] Kapitel-Akzente und Hierarchie des Chase-Signets festgelegt.
+- [x] Natives Alpha ohne Keying als technischer Liefervertrag bestätigt.
+- [x] Exakte Content-IDs und 1024 × 1024 PNG als Dateivertrag bestätigt.
 
 # Teil C – Lieferung und QA
-_(Mira)_
+
+<!-- codex:2026-08-26T10:26:05+02:00 -->
+
+## C1. Gelieferte Dateien
+
+Sieben finale PNGs liegen unter `CODEX/assets/belohnungsladen-2026-08-26/fertig/`, exakt benannt
+wie die sieben Content-IDs aus A3. Die angenommenen unveränderten Generatorausgaben liegen unter
+`raw/`. Prüfwerte, Prüfsummen und Kontaktbögen liegen unter `qa/`.
+
+## C2. Technische Prüfung
+
+- 7/7 Dateien: PNG, sRGB, RGBA, exakt 1024 × 1024.
+- 7/7: echtes Generator-Alpha bewahrt; Null-, weiches Kanten- und solides Material-Alpha belegt.
+- 7/7: äußerer 16-px-Rand vollständig transparent.
+- 7/7: opaker Motivkörper 869 bis 870 px hoch und damit innerhalb 80 bis 90 Prozent.
+- 7/7: exakte Dateinamen; SHA-256 und Einzelwerte in `qa/qa.json`.
+- Kein Keying, keine Matte, kein Despill und kein nachträgliches Freistellen.
+
+## C3. Visuelle Prüfung
+
+Die Serie wurde auf Schwarz, Grau und Grellrosa, bei 48/96/128 px und neben typgleichen
+Bestandsstücken geprüft. Keine Hintergrundfläche oder Farbsäume sind sichtbar. Ring-, Amulett-,
+Umhang- und Marken-Silhouetten bleiben in Kleinformat unterscheidbar; Licht und Sättigung sind
+einheitlich. Der Götzenring bleibt matt und geschlossen, die Gruftlaterne erloschen, der
+Ascheriss ist als Pigment ohne Bloom ausgeführt. Das Chronisten-Signet ist sichtbar reicher als
+die sechs übrigen Stücke, ohne Glow oder Rarity-Effekt.
+
+## C4. Verworfene Erzeugungen
+
+Technisch oder gestalterisch ungeeignete Fassungen wurden nicht ausgeliefert: ein Signet mit
+knappem Rand, zwei Gruftumhänge mit Schachbrett beziehungsweise Studiovignette sowie eine erste
+Aschenmarke mit zu leuchtendem Riss. `raw/` enthält ausschließlich die sieben angenommenen
+Erzeugungen.
 
 # Teil D – Abnahme
-_(Claude, dann Chef)_
+
+<!-- codex:2026-08-26T10:26:05+02:00 -->
+
+## D1. Mira-Produktionsabnahme
+
+**GO zur Gegenprüfung.** Lieferumfang und technische Gates sind vollständig; die visuellen
+Pflichtmerkmale sind auf den Kontaktbögen belegt. Keine Renderer- oder Produktdatei wurde
+verändert.
+
+## D2. Bindende Abnahme
+
+Claude prüft die Lieferung gegen A9 und den Bestandsvergleich. Die finale Produktfreigabe bleibt
+beim Chef. Status: ausstehend.

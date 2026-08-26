@@ -1,0 +1,739 @@
+{
+  "elite_slag_hexer": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          245,
+          245,
+          245
+        ],
+        [
+          246,
+          246,
+          246
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          247,
+          247,
+          247
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          253,
+          253,
+          254
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 36310,
+      "bbox": {
+        "left": 21,
+        "top": 0,
+        "width": 1003,
+        "height": 1525
+      },
+      "subject": {
+        "width": 723,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1099394,
+        "partial": 79896,
+        "opaque": 393226
+      },
+      "visibleMagenta": 0
+    }
+  },
+  "elite_wild_wolf": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          247,
+          247,
+          247
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          248,
+          248,
+          247
+        ],
+        [
+          247,
+          247,
+          246
+        ],
+        [
+          250,
+          250,
+          250
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          254,
+          253,
+          253
+        ]
+      ],
+      "width": 1536,
+      "height": 1024
+    },
+    "normalization": {
+      "sourcePartial": 3662,
+      "bbox": {
+        "left": 147,
+        "top": 195,
+        "width": 1322,
+        "height": 731
+      },
+      "subject": {
+        "width": 1100,
+        "height": 608
+      },
+      "alpha": {
+        "transparent": 1205978,
+        "partial": 21147,
+        "opaque": 345391
+      },
+      "visibleMagenta": 0
+    }
+  },
+  "elite_high_specter": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          245,
+          245,
+          245
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          247,
+          247,
+          247
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          246,
+          246,
+          246
+        ],
+        [
+          249,
+          249,
+          249
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 32735,
+      "bbox": {
+        "left": 0,
+        "top": 21,
+        "width": 1021,
+        "height": 1498
+      },
+      "subject": {
+        "width": 750,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1169056,
+        "partial": 77771,
+        "opaque": 325689
+      },
+      "visibleMagenta": 0
+    }
+  },
+  "elite_black_witch": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          243,
+          243,
+          243
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          242,
+          242,
+          242
+        ],
+        [
+          244,
+          244,
+          243
+        ],
+        [
+          243,
+          243,
+          242
+        ],
+        [
+          253,
+          253,
+          254
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 27653,
+      "bbox": {
+        "left": 5,
+        "top": 31,
+        "width": 1011,
+        "height": 1481
+      },
+      "subject": {
+        "width": 751,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1135829,
+        "partial": 75615,
+        "opaque": 361072
+      },
+      "visibleMagenta": 1
+    }
+  },
+  "elite_crypt_pyroclasp": {
+    "extraction": {
+      "palette": [
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          247,
+          247,
+          247
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          249,
+          249,
+          249
+        ],
+        [
+          250,
+          250,
+          250
+        ],
+        [
+          246,
+          246,
+          246
+        ],
+        [
+          251,
+          251,
+          251
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 17390,
+      "bbox": {
+        "left": 26,
+        "top": 19,
+        "width": 988,
+        "height": 1487
+      },
+      "subject": {
+        "width": 731,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1171090,
+        "partial": 58246,
+        "opaque": 343180
+      },
+      "visibleMagenta": 1
+    }
+  },
+  "elite_coast_drowned": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          249,
+          249,
+          249
+        ],
+        [
+          250,
+          250,
+          250
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          249,
+          249,
+          248
+        ],
+        [
+          251,
+          251,
+          251
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 16867,
+      "bbox": {
+        "left": 13,
+        "top": 10,
+        "width": 1007,
+        "height": 1495
+      },
+      "subject": {
+        "width": 741,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1197751,
+        "partial": 71736,
+        "opaque": 303029
+      },
+      "visibleMagenta": 1
+    }
+  },
+  "elite_black_golem": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          249,
+          249,
+          249
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          249,
+          249,
+          248
+        ],
+        [
+          250,
+          250,
+          250
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          250,
+          250,
+          249
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 16551,
+      "bbox": {
+        "left": 10,
+        "top": 68,
+        "width": 1004,
+        "height": 1384
+      },
+      "subject": {
+        "width": 798,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1041755,
+        "partial": 44954,
+        "opaque": 485807
+      },
+      "visibleMagenta": 0
+    }
+  },
+  "elite_wild_stag": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          243,
+          243,
+          243
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          246,
+          246,
+          246
+        ],
+        [
+          244,
+          244,
+          243
+        ],
+        [
+          254,
+          253,
+          254
+        ],
+        [
+          244,
+          243,
+          243
+        ]
+      ],
+      "width": 1536,
+      "height": 1024
+    },
+    "normalization": {
+      "sourcePartial": 6014,
+      "bbox": {
+        "left": 189,
+        "top": 7,
+        "width": 1257,
+        "height": 998
+      },
+      "subject": {
+        "width": 1100,
+        "height": 873
+      },
+      "alpha": {
+        "transparent": 1203376,
+        "partial": 33342,
+        "opaque": 335798
+      },
+      "visibleMagenta": 0
+    }
+  },
+  "iron_sentinel": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          247,
+          247,
+          247
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          250,
+          250,
+          250
+        ],
+        [
+          249,
+          249,
+          249
+        ],
+        [
+          246,
+          246,
+          246
+        ],
+        [
+          251,
+          251,
+          251
+        ]
+      ],
+      "width": 1008,
+      "height": 1560
+    },
+    "normalization": {
+      "sourcePartial": 4146,
+      "bbox": {
+        "left": 10,
+        "top": 3,
+        "width": 965,
+        "height": 1549
+      },
+      "subject": {
+        "width": 685,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1150205,
+        "partial": 22340,
+        "opaque": 399971
+      },
+      "visibleMagenta": 0
+    }
+  },
+  "elite_crypt_butcher": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          246,
+          246,
+          246
+        ],
+        [
+          245,
+          245,
+          245
+        ],
+        [
+          246,
+          246,
+          245
+        ],
+        [
+          247,
+          247,
+          247
+        ],
+        [
+          255,
+          255,
+          255
+        ],
+        [
+          246,
+          245,
+          245
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 12648,
+      "bbox": {
+        "left": 24,
+        "top": 79,
+        "width": 989,
+        "height": 1364
+      },
+      "subject": {
+        "width": 798,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1204828,
+        "partial": 53254,
+        "opaque": 314434
+      },
+      "visibleMagenta": 1
+    }
+  },
+  "barrow_chanter": {
+    "extraction": {
+      "palette": [
+        [
+          254,
+          254,
+          254
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          243,
+          243,
+          243
+        ],
+        [
+          253,
+          253,
+          253
+        ],
+        [
+          244,
+          243,
+          243
+        ],
+        [
+          244,
+          244,
+          243
+        ],
+        [
+          254,
+          253,
+          254
+        ],
+        [
+          243,
+          243,
+          242
+        ]
+      ],
+      "width": 1024,
+      "height": 1536
+    },
+    "normalization": {
+      "sourcePartial": 61465,
+      "bbox": {
+        "left": 30,
+        "top": 42,
+        "width": 974,
+        "height": 1474
+      },
+      "subject": {
+        "width": 727,
+        "height": 1100
+      },
+      "alpha": {
+        "transparent": 1115677,
+        "partial": 81392,
+        "opaque": 375447
+      },
+      "visibleMagenta": 3
+    }
+  }
+}

@@ -576,6 +576,13 @@ transitions, a Back to Menu button and the game's steel frames.
 (q85, Original archiviert); Miras Holzrahmen bewusst durch den Stahl-9-Slice ersetzt (Chef); Screens als
 Unter-Ansichten des Menü-Screens, GameContext unverändert; ScreenFade für alle Wechsel.*
 
+**Wildleder-Set und Jagdbogen mit Bildern (Chef-Test 26.08., Bilder von Mira):** DE: Haube, Wams,
+Beinlinge, Armschützer und Stiefel aus Wildleder sowie der Jagdbogen waren die letzten sechs
+Ausrüstungsstücke ohne Bild und zeigten nur ein Symbol. Jetzt haben sie eigene Bilder im Stil der
+übrigen Lederrüstung. Das Bestiarium zeigt außerdem auf jeder Monsterkarte die Kulisse seiner Zone,
+und die Tafeln im Item-Wiki tragen den Stahlrahmen. / EN: The buckhide set and the hunting bow have
+proper art, bestiary cards show their zone backdrop, and the item wiki panels use the steel frame.
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*

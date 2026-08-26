@@ -1,0 +1,255 @@
+{
+  "elite_slag_hexer": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  },
+  "elite_wild_wolf": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1536,
+      "height": 1024,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1536,
+        "height": 1024
+      }
+    }
+  },
+  "elite_high_specter": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  },
+  "elite_black_witch": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  },
+  "elite_crypt_pyroclasp": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  },
+  "elite_coast_drowned": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  },
+  "elite_black_golem": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  },
+  "elite_wild_stag": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1536,
+      "height": 1024,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1536,
+        "height": 1024
+      }
+    }
+  },
+  "iron_sentinel": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1008,
+      "height": 1560,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1008,
+        "height": 1560
+      }
+    }
+  },
+  "elite_crypt_butcher": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  },
+  "barrow_chanter": {
+    "accepted": false,
+    "reason": "no-native-alpha",
+    "meta": {
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1536,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1536
+      }
+    }
+  }
+}

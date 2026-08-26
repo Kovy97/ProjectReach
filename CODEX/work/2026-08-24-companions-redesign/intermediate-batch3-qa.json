@@ -1,0 +1,829 @@
+{
+  "expectedIds": [
+    "rotbark",
+    "cragmaw",
+    "gillrot",
+    "witherling",
+    "sporewretch",
+    "gloomrat",
+    "slagfiend",
+    "ashgut",
+    "quillshrike",
+    "flayling",
+    "gemwraith",
+    "glyphmaw",
+    "vellumoth",
+    "hemlock",
+    "ironmaw",
+    "carapace",
+    "gorehound",
+    "carrionwing",
+    "pyreling",
+    "hoarspite",
+    "charnel"
+  ],
+  "card": {
+    "carrionwing": {
+      "source": "exec-34244b8e-3e59-4fd5-95e2-ed23975415d6.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 4,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": true,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "native-alpha-edge-corrected"
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 155,
+          "top": 3,
+          "width": 989,
+          "height": 1247
+        },
+        "normalizedSubject": {
+          "width": 634,
+          "height": 800
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 816110,
+          "partial": 230796,
+          "opaque": 1670
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 200,
+          "top": 117,
+          "width": 624,
+          "height": 790
+        },
+        "sha256": "785ea4626b36e93df4c3c00de9d2f1ee40f5c52f93b89d0340ff293461eab56b"
+      }
+    },
+    "pyreling": {
+      "source": "exec-a4afca0f-cdf8-4cf3-92a6-1709beef1d05.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 4,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": true,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "native-alpha-edge-corrected"
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 4,
+          "top": 3,
+          "width": 1247,
+          "height": 1212
+        },
+        "normalizedSubject": {
+          "width": 800,
+          "height": 778
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 709911,
+          "partial": 337094,
+          "opaque": 1571
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 117,
+          "top": 128,
+          "width": 790,
+          "height": 768
+        },
+        "sha256": "f3081a738447f51d4defae0eb5e56fac4ba51d8cda70f725fa726f274dc71d2c"
+      }
+    },
+    "hoarspite": {
+      "source": "exec-c299c07b-bb59-4094-943c-e0ad2bb1d550.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 4,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": true,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "native-alpha-edge-corrected"
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 26,
+          "top": 13,
+          "width": 1192,
+          "height": 1154
+        },
+        "normalizedSubject": {
+          "width": 800,
+          "height": 774
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 763371,
+          "partial": 284035,
+          "opaque": 1170
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 118,
+          "top": 130,
+          "width": 788,
+          "height": 764
+        },
+        "sha256": "ab37c9778e2a14d67c7fdf3afc618be48afd4d42f43fbbae0d11ebf654c8cfca"
+      }
+    },
+    "charnel": {
+      "source": "exec-f408f57f-51f1-42f4-8a2a-b0eb5515e981.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 4,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": true,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "native-alpha-edge-corrected"
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 88,
+          "top": 0,
+          "width": 1093,
+          "height": 1254
+        },
+        "normalizedSubject": {
+          "width": 697,
+          "height": 800
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 802385,
+          "partial": 244510,
+          "opaque": 1681
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 168,
+          "top": 113,
+          "width": 687,
+          "height": 796
+        },
+        "sha256": "19c93b95d702da83abab729229fb88dd74035fa36b66edb52a3211bb88673f9c"
+      }
+    }
+  },
+  "fight": {
+    "carrionwing": {
+      "source": "exec-4c79d9a5-c321-418d-8359-4b609b53ca1a.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 3,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": false,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "neutral-checker-component-matte",
+        "palette": [
+          [
+            254,
+            254,
+            254
+          ],
+          [
+            246,
+            246,
+            246
+          ],
+          [
+            245,
+            245,
+            245
+          ],
+          [
+            246,
+            246,
+            245
+          ],
+          [
+            253,
+            253,
+            253
+          ],
+          [
+            245,
+            246,
+            245
+          ],
+          [
+            255,
+            255,
+            255
+          ],
+          [
+            254,
+            253,
+            254
+          ],
+          [
+            246,
+            245,
+            245
+          ],
+          [
+            255,
+            255,
+            254
+          ],
+          [
+            253,
+            253,
+            254
+          ],
+          [
+            247,
+            247,
+            247
+          ]
+        ]
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 126,
+          "top": 115,
+          "width": 996,
+          "height": 1047
+        },
+        "normalizedSubject": {
+          "width": 761,
+          "height": 800
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 821695,
+          "partial": 49465,
+          "opaque": 177416
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 137,
+          "top": 118,
+          "width": 749,
+          "height": 788
+        },
+        "sha256": "41cb2aa85487a0258c1ba2b94dabf8d6c9f173dfa3296cb0905382d766a8c583"
+      }
+    },
+    "pyreling": {
+      "source": "exec-d6644855-abd2-4edb-801c-a068cfdaa493.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 3,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": false,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "neutral-checker-component-matte",
+        "palette": [
+          [
+            254,
+            254,
+            254
+          ],
+          [
+            244,
+            244,
+            244
+          ],
+          [
+            253,
+            253,
+            253
+          ],
+          [
+            243,
+            243,
+            243
+          ],
+          [
+            244,
+            244,
+            243
+          ],
+          [
+            247,
+            247,
+            247
+          ],
+          [
+            244,
+            243,
+            243
+          ],
+          [
+            255,
+            255,
+            255
+          ],
+          [
+            248,
+            248,
+            248
+          ],
+          [
+            254,
+            253,
+            253
+          ],
+          [
+            254,
+            253,
+            254
+          ],
+          [
+            242,
+            242,
+            242
+          ]
+        ]
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 17,
+          "top": 136,
+          "width": 1199,
+          "height": 980
+        },
+        "normalizedSubject": {
+          "width": 800,
+          "height": 654
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 823852,
+          "partial": 27353,
+          "opaque": 197371
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 117,
+          "top": 190,
+          "width": 790,
+          "height": 644
+        },
+        "sha256": "2ed8f82352b0db0f6b884671d7ea8b275f68ae9f5ba844baded96c54992b8c51"
+      }
+    },
+    "hoarspite": {
+      "source": "exec-badd4ccb-5b78-402f-86b8-29caf3e6a78a.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 3,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": false,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "neutral-checker-component-matte",
+        "palette": [
+          [
+            254,
+            254,
+            254
+          ],
+          [
+            245,
+            245,
+            245
+          ],
+          [
+            246,
+            246,
+            246
+          ],
+          [
+            253,
+            253,
+            253
+          ],
+          [
+            245,
+            245,
+            244
+          ],
+          [
+            255,
+            255,
+            255
+          ],
+          [
+            246,
+            246,
+            245
+          ],
+          [
+            244,
+            244,
+            244
+          ],
+          [
+            246,
+            245,
+            245
+          ],
+          [
+            254,
+            253,
+            254
+          ],
+          [
+            245,
+            244,
+            244
+          ],
+          [
+            253,
+            253,
+            254
+          ]
+        ]
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 43,
+          "top": 43,
+          "width": 1178,
+          "height": 1150
+        },
+        "normalizedSubject": {
+          "width": 800,
+          "height": 781
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 813125,
+          "partial": 54718,
+          "opaque": 180733
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 117,
+          "top": 126,
+          "width": 790,
+          "height": 771
+        },
+        "sha256": "bbbb87511fc0a3edf8407c9b1e6286b871bf85c7f410ae46b6011264e6767992"
+      }
+    },
+    "charnel": {
+      "source": "exec-e3b86baf-06c3-47aa-a892-daf7bfe48206.png",
+      "sourceMeta": {
+        "format": "png",
+        "width": 1254,
+        "height": 1254,
+        "space": "srgb",
+        "channels": 3,
+        "depth": "uchar",
+        "density": 72,
+        "isProgressive": false,
+        "isPalette": false,
+        "bitsPerSample": 8,
+        "hasProfile": false,
+        "hasAlpha": false,
+        "autoOrient": {
+          "width": 1254,
+          "height": 1254
+        }
+      },
+      "extraction": {
+        "method": "neutral-checker-component-matte",
+        "palette": [
+          [
+            254,
+            254,
+            254
+          ],
+          [
+            245,
+            245,
+            245
+          ],
+          [
+            244,
+            244,
+            244
+          ],
+          [
+            253,
+            253,
+            253
+          ],
+          [
+            245,
+            245,
+            244
+          ],
+          [
+            255,
+            255,
+            255
+          ],
+          [
+            244,
+            245,
+            244
+          ],
+          [
+            254,
+            253,
+            254
+          ],
+          [
+            245,
+            244,
+            244
+          ],
+          [
+            253,
+            253,
+            254
+          ],
+          [
+            254,
+            253,
+            253
+          ],
+          [
+            243,
+            243,
+            243
+          ]
+        ]
+      },
+      "normalization": {
+        "sourceBbox": {
+          "left": 79,
+          "top": 90,
+          "width": 1094,
+          "height": 1089
+        },
+        "normalizedSubject": {
+          "width": 800,
+          "height": 796
+        }
+      },
+      "stats": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true,
+        "alpha": {
+          "transparent": 800505,
+          "partial": 29397,
+          "opaque": 218674
+        },
+        "corners": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visibleBbox": {
+          "left": 117,
+          "top": 119,
+          "width": 790,
+          "height": 786
+        },
+        "sha256": "0029f461e952ad7f9ee1e1748a9796d82a6dfcb1ec1c4a7b3800b3fb4217150f"
+      }
+    }
+  },
+  "filenameCheck": {
+    "expected": [
+      "ashgut.png",
+      "carapace.png",
+      "carrionwing.png",
+      "charnel.png",
+      "cragmaw.png",
+      "flayling.png",
+      "gemwraith.png",
+      "gillrot.png",
+      "gloomrat.png",
+      "glyphmaw.png",
+      "gorehound.png",
+      "hemlock.png",
+      "hoarspite.png",
+      "ironmaw.png",
+      "pyreling.png",
+      "quillshrike.png",
+      "rotbark.png",
+      "slagfiend.png",
+      "sporewretch.png",
+      "vellumoth.png",
+      "witherling.png"
+    ],
+    "card": [
+      "ashgut.png",
+      "carapace.png",
+      "carrionwing.png",
+      "charnel.png",
+      "cragmaw.png",
+      "flayling.png",
+      "gemwraith.png",
+      "gillrot.png",
+      "gloomrat.png",
+      "glyphmaw.png",
+      "gorehound.png",
+      "hemlock.png",
+      "hoarspite.png",
+      "ironmaw.png",
+      "pyreling.png",
+      "quillshrike.png",
+      "rotbark.png",
+      "slagfiend.png",
+      "sporewretch.png",
+      "vellumoth.png",
+      "witherling.png"
+    ],
+    "fight": [
+      "ashgut.png",
+      "carapace.png",
+      "carrionwing.png",
+      "charnel.png",
+      "cragmaw.png",
+      "flayling.png",
+      "gemwraith.png",
+      "gillrot.png",
+      "gloomrat.png",
+      "glyphmaw.png",
+      "gorehound.png",
+      "hemlock.png",
+      "hoarspite.png",
+      "ironmaw.png",
+      "pyreling.png",
+      "quillshrike.png",
+      "rotbark.png",
+      "slagfiend.png",
+      "sporewretch.png",
+      "vellumoth.png",
+      "witherling.png"
+    ]
+  },
+  "pass": false
+}

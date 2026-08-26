@@ -1858,3 +1858,653 @@ die 37 transparenten 512er PNG/WebP-Dateien und verschiebt den Auftrag anschlie�
   Baseline-Luft und bleiben unter 900 px.
 - Keine Runtime-, Engine-, Persistenz-, i18n-, Manifest- oder Save-Änderung;
   kein Save-Bump. Claude bleibt Owner der Builder-Verdrahtung.
+
+## Grim Reach 1.0 — Release-Titelbild und Hauptkapsel 2026-08-23
+
+<!-- codex:2026-08-23T17:38:21+02:00 -->
+
+- Direkter Chef-Auftrag. Zwei finale Staging-Dateien unter `CODEX/AssetControl/event-1.0/`:
+  `grim_reach_1_0_title_1920x622.png` und
+  `grim_reach_1_0_main_capsule_800x450.png`.
+- Neues ImageGen-Keyart setzt die 1.0-Identität als Schwellenbild um: einzelner Wächter auf der
+  alten Straße, letztes Wachfeuer links, feindseliger Elite-Champion und Paragonturm in der Ferne.
+  Das Motiv folgt der bindenden These „die Welt lebt und schlägt zurück“ und ist kein Fake-Gameplay.
+- Das bestehende transparente `Grim Reach Idle`-Logo aus
+  `apps/client/src/renderer/assets/ui/mainmenu_logo.webp` wurde unverändert und deterministisch
+  komponiert. Die Bild-KI erzeugte weder Logo noch Schrift. Der statusneutrale Zusatz lautet
+  `VERSION 1.0 · FULL RELEASE`; die laufende Patchversion 1.0.2 ändert die 1.0-Eventbezeichnung nicht.
+- Built-in ImageGen wurde für das unbeschriftete 1672×941-Keyart verwendet. Exakter Prompt:
+  `CODEX/AssetControl/event-1.0/PROMPT.md`; reproduzierbarer Crop-/Logo-Compositor:
+  `CODEX/work/2026-08-23-release-1.0-artwork/build-release-artwork.mjs`.
+- Visuelle QA erfolgte einzeln in beiden Zielgrößen und gemeinsam über
+  `preview-target-sizes.png`. Eine erste Komposition wurde nach Sichtprüfung gezielt korrigiert,
+  damit die Krone des offiziellen Logos vollständig innerhalb beider Canvas bleibt.
+- Maß-/Format-/SHA256-Prüfung ist im kommentarfreien
+  `CODEX/AssetControl/event-1.0/qa.json` dokumentiert; dieser HANDOFF-Eintrag ist der verpflichtende
+  `codex:`-Nachweis für diese JSON-Datei sowie für die vier kommentarfreien PNG-Binärdateien.
+- Ausschließlich CODEX-Staging und Dokumentation geändert. Kein Steam-Upload, keine Runtime-,
+  Engine-, Content-, Persistenz-, i18n- oder Save-Änderung; kein Save-Bump.
+- Empfohlener nächster Owner: Claude für Marketinggegenprüfung; Chef für finale Motivfreigabe und
+  späteren Steam-Upload.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-23T17:38:21+02:00` — Produktionsscript, Prompt, README, Handoff und Worklog.
+- `codex:2026-08-23T17:44:00+02:00` — gezielte Logo-Safe-Area-Korrektur im Produktionsscript.
+
+<!-- codex:2026-08-23T17:51:05+02:00 -->
+
+- Chef-Nachfix: Die `VERSION 1.0 · FULL RELEASE`-Plakette wurde in beiden Zielgrößen deutlich unter
+  die untere Logo-Spitze gesetzt. Goldene Flachschrift wurde durch eine gravierte Cinzel-Fassung
+  mit silberner Eisenstaffelung, dunkler Kontur und rotem Logo-Akzent ersetzt. Die exakte
+  Wortmarkenschrift existiert nur im fertigen Rasterlogo; deshalb ist Cinzel die reproduzierbare
+  gebündelte Näherung. Keyart, Crop und offizielles Logo blieben unverändert.
+- Marker: `codex:2026-08-23T17:51:05+02:00` im Produktionsscript, HANDOFF und WORKLOG.
+
+<!-- codex:2026-08-23T18:00:20+02:00 -->
+
+- Chef-QA-Nachfix: Die beiden roten horizontalen Plakettenornamente liefen hinter der Release-
+  Beschriftung und wurden zwischen den Buchstaben von `RELEASE` sichtbar. Beide Querlinien wurden
+  vollständig entfernt; nur der kleine rote Diamant oberhalb der Schrift bleibt. Beide Finalformate,
+  Preview und Hash-QA wurden neu erzeugt.
+
+## Verbindlicher Native-Alpha- und ID-Prozess 2026-08-23
+
+<!-- codex:2026-08-23T18:21:18+02:00 -->
+
+- Claudes bindende Quelle `design/asset-anforderungen.md` vollständig gelesen und als dauerhafte
+  Grundlage in `CODEX/RULES.md` sowie `CODEX/PROJECT.md` verankert.
+- Projektinterner Konflikt aufgelöst: Der allgemeine ImageGen-Leitfaden erlaubt Chroma-Key plus
+  Freistellung; Grim Reach verbietet diesen Weg für neue Freisteller. Innerhalb des Projekts gilt
+  ausschließlich natives echtes Alpha. Kann der aktuelle Erzeugungsweg dies nicht garantieren,
+  stoppt die Produktion vor der Generierung.
+- `CODEX/templates/ASSET-BRIEF.md` korrigiert: alte Chroma-Key-Option entfernt, exakte Content-ID
+  vor Produktionsbeginn verpflichtend, Native-Alpha-Promptblock und alle sechs Abnahmepunkte aus
+  Abschnitt 5 ergänzt.
+- Neue aktive Vorlage `CODEX/templates/IMAGEGEN-ASSET-PROMPT.md` enthält gemeinsame Ashen-Iron-
+  Vorgaben, den nativen Alpha-Pflichtblock, Kreaturen-/Ausrüstungsregeln, exakte Dateibenennung und
+  das sechsteilige Abnahmegate. `CODEX/templates/README.md` verweist darauf.
+- Prompt-Audit: 72 prompt-/brief-/templateartige CODEX-Dateien geprüft. 17 enthalten Chroma-
+  Referenzen; in den beiden aktiven Vorlagen nur noch als Verbot, die übrigen 15 ausschließlich in
+  datierten oder abgelehnten historischen Lieferungen. Diese Altbestände und Elite 11–28 wurden
+  auftragsgemäß nicht verändert.
+- Ausführlicher Befund: `CODEX/notes/2026-08-23-native-alpha-process-audit.md`.
+- Keine Bild-, Runtime-, Content-, Engine-, Persistenz-, i18n-, Save- oder `.claude/**`-Änderung.
+  Kein Save-Bump. Claude bleibt Owner der bekannten Elite-Altlasten; Mira wendet das neue Gate auf
+  jede künftige Bildlieferung an.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-23T18:21:18+02:00` — RULES, PROJECT, beide aktiven Vorlagen, Auditnotiz,
+  HANDOFF und WORKLOG.
+
+## Nachtrag: aktive Downloads-Prompts auf Native Alpha 2026-08-23
+
+<!-- codex:2026-08-23T18:52:28+02:00 -->
+
+- Claudes Hinweis bestätigt: Die weiterhin operative Sammlung
+  `C:\Users\MSchu\Downloads\ASSETS\newGPTAssets\` lag außerhalb des ersten CODEX-Prompt-Audits.
+  `alle-prompts-aktuell.txt` und `elite-nachschlag-chroma.txt` verlangten dort noch vollflächiges
+  `#FF00FF` und behaupteten fälschlich eine saubere Freistellung ohne pinke Säume.
+- Beide Quellen vollständig gelesen und überschreibfertig nach
+  `CODEX/outbox/2026-08-23-newGPTAssets-native-alpha/` korrigiert. Alle fünf Batch-Blöcke verlangen
+  nun natives transparentes PNG mit echtem Alpha; Magenta/Chroma und nachträgliches Freistellen
+  erscheinen nur noch als Verbot. Alle 33 exakten Bild-IDs blieben erhalten.
+- QA: pro Datei sechs Alpha-Pflichtblöcke, 33 `.png`-IDs, kein `#FF00FF`, keine alte Saum-
+  Behauptung. Prüfsummen und Zielzuordnung stehen in `DEPLOYMENT.md`.
+- Offener technischer Schritt: Die Sitzung besitzt nur Schreibzugriff unter `G:\GameDev` und konnte
+  die zwei externen TXT-Ziele daher nicht überschreiben. Es sind ausschließlich die zwei
+  bereitgestellten Textdateien zu kopieren; Bilder und Runtime-Dateien blieben unangetastet.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-23T18:52:28+02:00` — Auditnachtrag, Deployment-Hinweis, HANDOFF und WORKLOG.
+
+## Neuguss-Pilot für drei magenta-belastete Kreaturen 2026-08-23
+
+<!-- codex:2026-08-23T20:47:23+02:00 -->
+
+- Direkter Chef-Auftrag nach aktualisierter Ergebnisregel: eingebautes ImageGen mit flachem
+  Rein-Grün als Quelle, danach lokales Despill, weiche Alpha-Matte und Kantenkorrektur.
+- `ASSETS/neuguss-2026-08-23/LIESMICH.md` und Promptdatei 1 vollständig gelesen. Für die ersten
+  drei Motive sämtliche sechs Referenzbilder im Original geprüft; Basisbilder bestimmten Palette,
+  Pinselführung, Material, Beleuchtung und Familienidentität.
+- Drei Zwischenabnahme-Dateien mit exakten IDs nach `ASSETS/neuguss-2026-08-23/fertig/` geliefert:
+  `mire_wisp.png`, `elite_crypt_icemage.png`, `elite_high_wyvern.png`.
+- `mire_wisp` erforderte randverbundenes statt globalem Grün-Keying, damit sein echtes blaugrünes
+  Binnenmotiv erhalten bleibt. Eine aggressive Matte wurde nach pinker Kontrastprüfung verworfen.
+- Finale QA je Datei: 1254×1254 RGBA, Alpha benutzt, transparente Ecken, Teilalpha vorhanden,
+  null sichtbare Magenta-Pixel, null helles Rein-Grün und null grün-dominante Teilalpha-Kanten.
+  Werte und Hashes: `CODEX/work/2026-08-23-neuguss-pilot/pilot-qa.json`.
+- Keine Runtime-Datei ersetzt. Die übrigen elf Motive aus Datei 1 warten wie beauftragt auf die
+  Zwischenabnahme des Chefs; Companion-Prompts unangetastet.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-23T20:47:23+02:00` — Pilot-README, HANDOFF und WORKLOG; zugleich Nachweis für
+  `pilot-qa.json` und die drei kommentarfreien PNG-Binärdateien.
+
+## Neuguss Promptdatei 1 nach Chef-Zwischenabnahme 2026-08-23
+
+<!-- codex:2026-08-23T21:24:26+02:00 -->
+
+- Chefkorrektur umgesetzt: `mire_wisp.png` in der vom Chef wiederhergestellten weichen Fassung
+  unangetastet gelassen; `elite_high_wyvern.png` referenzgebunden deutlich massiver und mit mehr
+  Rückenstacheln neu geliefert.
+- Neu nach `ASSETS/neuguss-2026-08-23/fertig/` geliefert: `elite_slag_revenant.png` und
+  `elite_coast_crab.png`. Beide sind farbsichere harte Motive, wurden als Notweg mit motivfremdem
+  Grün beziehungsweise Blau freigestellt, despillt und auf pinkem Kontrastgrund geprüft.
+- Aktueller Lieferstand in `fertig/`: fünf exakte IDs, alle 1254×1254 RGBA, Alpha benutzt,
+  transparente Ecken, Teilalpha vorhanden, null sichtbare Magenta- oder Key-Farbreste. Vollständige
+  Werte und Hashes: `CODEX/work/2026-08-23-neuguss-prompt1/batch-qa.json`.
+- Neun weitere referenzgebundene Motive wurden im eingebauten ImageGen erzeugt, kamen jedoch trotz
+  wiederholtem RGBA-Pflichtblock nur als dreikanalige PNGs mit eingebranntem Schachbrett/Weiß zurück.
+  Wegen Fell, Federn, Haaren, Leuchten, Nebel, Feuer, Kelp, Moos oder Geweih wurden sie gemäß direkter
+  Chefregel nicht gekeyt und nicht ausgeliefert. Details und Rohbildpfade stehen im Arbeits-README.
+- Keine Runtime-Datei und keine `.claude/**`-Datei verändert. Der Companion-Batch wurde nicht
+  begonnen, solange der Neuguss technisch unvollständig ist.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-23T21:24:26+02:00` — Arbeits-README, HANDOFF und WORKLOG; zugleich Nachweis für
+  `batch-qa.json`, die zwei neuen Final-PNGs und den revidierten Wyvern.
+
+## Neuguss und Companion-Serie vollständig 2026-08-24
+
+<!-- codex:2026-08-24T12:35:04+02:00 -->
+
+- Direkter Chef-Auftrag vollständig abgeschlossen: 17/17 Neugüsse unter
+  `ASSETS/neuguss-2026-08-23/fertig/` und 21/21 Begleiter unter
+  `ASSETS/companions-2026-08-23/fertig/`, jeweils mit Dateiname exakt gleich ID.
+- Chefhinweis zu weißen Elementen bestätigt und behoben: Es waren eingeschlossene Felder des
+  gemalten Weiß-/Hellgrau-Schachbretts. Die revidierte neutrale Matte entfernt nun auch nicht mit
+  dem Bildrand verbundene Zwischenräume. Schwarz-, Grau- und Magenta-Kontaktbögen sind sauber.
+- Alle 21 Begleiter kamen nativ als RGBA. Kein Companion wurde gekeyt; niedrig deckende farbige
+  Render-Randpixel wurden aus benachbarten Motivfarben korrigiert. Finals sind 1024×1024, ihre
+  längste sichtbare Achse misst 800 Pixel, alle Ecken Alpha 0.
+- Neuguss-Finals sind 1254×1254 RGBA. Die freigegebenen Pilotdateien blieben erhalten;
+  `elite_high_roc` wurde mit nativem Alpha übernommen, elf Schachbrett-Quellen nach direkter
+  Ergebnisfreigabe neutral vermattet und auf drei Hintergründen geprüft.
+- Gesamt-QA: 38 erwartete und 38 vorhandene PNGs, keine fehlenden oder unerwarteten Dateien und
+  keine Maß-, RGBA-, Alpha- oder Eckenverletzung. Werte und SHA-256 stehen in
+  `CODEX/work/2026-08-24-final-qa/final-asset-qa.json`.
+- Produktionsprotokolle und Kontaktbögen:
+  `CODEX/work/2026-08-24-neuguss-native/` und
+  `CODEX/work/2026-08-24-companions-native/`.
+- Keine Runtime-Datei und keine `.claude/**`-Datei verändert; beide `fertig/`-Ordner sind die
+  Übergabe an Claude/Asset-Integration.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-24T12:35:04+02:00` — Verarbeitungs-/QA-Skripte, Arbeits-READMEs, HANDOFF und
+  WORKLOG; zugleich Nachweis für die 38 kommentarfreien PNG-Binärdateien und QA-JSONs.
+
+## Companion-Neuguss als Karten- und Kampfserie 2026-08-24
+
+<!-- codex:2026-08-24T14:25:00+02:00 -->
+
+- Chefkorrektur ersetzt den oben dokumentierten ersten Companion-Batch vollständig: Alle 21
+  Begleiter wurden als eigenständige Ashen-Iron-Fantasiewesen mit nicht natürlichem Körperbau neu
+  entworfen. Die alte Serie war zu eng an reale Tiere angelehnt und gilt ausdrücklich als verworfen.
+- Neue Lieferung umfasst 42 exakt benannte 1024×1024-RGBA-PNGs: je 21 Kartenmotive unter
+  `ASSETS/companions-2026-08-23/fertig/card/<id>.png` und 21 zugehörige Kampfvarianten unter
+  `ASSETS/companions-2026-08-23/fertig/fight/<id>.png`.
+- Kartenmotive zeigen die vollständige Kreatur in ikonischer linker beziehungsweise neutraler
+  Kartenpose. Kampfvarianten bewahren Anatomie, Material, Palette und Signaturdetails des Partners
+  und sind nach rechts ausgerichtet; `carapace` wurde nach der Sichtprüfung eindeutig nach rechts
+  gespiegelt.
+- Natives Alpha der Karten wurde erhalten und an niedrig deckenden Rändern motivfarbenkorrigiert.
+  Die referenzgebundenen Kampf-Rohbilder mit neutralem Weiß-/Hellgrau-Schachbrett wurden
+  komponentenweise vermattet, einschließlich eingeschlossener Zwischenräume. Schwarz-, Grau- und
+  Magenta-Kontaktbögen zeigen keine Schachfelder, weißen Rechtecke oder sichtbaren Farbsäume.
+- Finale technische Abnahme bestanden: 42/42 Dateien vorhanden, exakte IDs in beiden Serien,
+  1024×1024, vier Kanäle, verwendetes Voll- und Teilalpha, transparente Ecken und normalisierte
+  Silhouetten. Werte und SHA-256: `CODEX/work/2026-08-24-companions-redesign/companion-pairs-final-qa.json`.
+- Die 21 verworfenen PNGs wurden wiederherstellbar nach
+  `CODEX/work/2026-08-24-companions-redesign/rejected-too-natural/` verschoben. Im Root von
+  `fertig/` liegen keine alten PNGs mehr.
+- Keine Runtime-, Save-, i18n- oder `.claude/**`-Datei verändert. Die Zweiserien-Namenskonvention
+  ist eine Staging-Übergabe; die spätere Runtime-Zuordnung bleibt bei Claude/Asset-Integration.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-24T13:30:00+02:00` bis `codex:2026-08-24T14:25:00+02:00` — Arbeits-README,
+  ESM-Verarbeitungs-/QA-Ablauf, HANDOFF und WORKLOG; zugleich Nachweis für die 42 kommentarfreien
+  PNG-Binärdateien, die sechs Kontaktbögen und das finale QA-JSON.
+
+## Generische Patchnotes-Artworks 2026-08-24
+
+<!-- codex:2026-08-24T15:10:00+02:00 -->
+
+- Zwei dauerhaft versionsneutrale Grim-Reach-Patchnotes-Motive im Stil des 1.0-Release-Artworks
+  fertiggestellt: `CODEX/AssetControl/patchnotes-generic/grim_reach_patchnotes_title_1920x622.png`
+  und `CODEX/AssetControl/patchnotes-generic/grim_reach_patchnotes_main_capsule_800x450.png`.
+- Das Motiv aus repariertem schwarzem Eisen, Hammer und versiegelter Notizrolle ist für Hotfixes,
+  Patches und allgemeine Updates wiederverwendbar. Es enthält weder Versionsnummer noch Datum.
+- Das offizielle Projektlogo und `PATCH NOTES` in Cinzel wurden deterministisch auf die textlose
+  ImageGen-Quelle gesetzt. Die Plakette liegt vollständig unter dem Logo; keine rote Linie kreuzt
+  die Beschriftung.
+- Zielmaße und PNG-Format bestätigt; SHA-256-Werte stehen in
+  `CODEX/AssetControl/patchnotes-generic/qa.json`. Prompt, Quelle und Zielgrößen-Vorschau liegen im
+  selben Übergabeordner.
+- Keine Runtime-, Produktdaten- oder `.claude/**`-Datei verändert; die Ausgabe bleibt im
+  AssetControl-Staging bis zur Integration durch Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-24T15:10:00+02:00` — Render-Skript, Promptdokument, HANDOFF und WORKLOG;
+  zugleich Nachweis für die drei kommentarfreien PNG-Binärdateien und `qa.json`.
+
+## Runen Tier IV und Schmuck-Linie 2026-08-25
+
+<!-- codex:2026-08-25T11:52:00+02:00 -->
+
+- 14 neue Verzauberungsrunen vollständig nach `CODEX/assets/runen-tier-iv-2026-08-25/` geliefert.
+  Finals liegen unter `fertig/`, unveränderte Generatorausgaben unter `raw/` und Prüfbelege unter
+  `qa/`. Dateiname entspricht bei jeder Datei exakt der Content-ID.
+- Fünf Waffenrunen nutzen Glut-Gold, vier Rüstungsrunen Eis-Blau und fünf Schmuckrunen Violett.
+  Alle neun Waffen- und Rüstungsrunen tragen die IV. Die Schmucklinie besitzt keine Ziffer.
+- Alle Rohbilder besitzen natives Generator-Alpha. Finals wurden nur beschnitten, skaliert und auf
+  transparentem 1024er-Canvas zentriert. Kein Keying und keine nachträgliche Freistellung.
+- Finale QA bestanden: 14 von 14 Dateien, 1024 × 1024 PNG sRGB RGBA, äußere 32 px Alpha 0,
+  Teilalpha vorhanden, Steinkörper 80 bis 88 % hoch, keine fehlenden oder unerwarteten IDs.
+- Kontaktbögen auf Schwarz, Grau und Grellrosa sowie 64-/96-px- und Tier-III-Vergleich liegen in
+  `CODEX/assets/runen-tier-iv-2026-08-25/qa/`. Vollständige Werte und SHA-256 stehen in `qa.json`.
+- Zwei Gericht- und vier Waffenfassungen mit gemaltem Schachbrett wurden technisch verworfen und
+  ausschließlich unter `CODEX/work/2026-08-25-runen-tier-iv/rejected-alpha/` quarantänisiert.
+- Keine Renderer-, Content-, Save-, i18n- oder `.claude/**`-Datei verändert. Nächster Owner ist
+  `asset-integrator`, danach `kontrolleur`.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-25T10:30:00+02:00` bis `codex:2026-08-25T11:52:00+02:00` — Brief,
+  Aufbereitungs- und QA-Skript, Asset-README, HANDOFF und WORKLOG. Die Marker dokumentieren zugleich
+  die 28 kommentarfreien PNG-Lieferdateien, fünf QA-PNGs und das kommentarfreie `qa.json`.
+
+### Chef-Abnahme
+
+<!-- codex:2026-08-25T11:00:35+02:00 -->
+
+- Chef-Abnahme am 2026-08-25: 14 von 14 Runen angenommen, keine Korrekturen.
+- Gegenprüfung bestätigt RGBA 1024², vollständig transparenten Außenrand, Steinkörper mit 84 bis
+  90 % Höhe, keine Schachbrettsignale in opaken Zonen, exakte IDs und lesbare Glyphen.
+- Stilprüfung neben Tier III bestanden. Waffen-, Rüstungs- und Schmucklinie sind sauber getrennt.
+- Produktive Integration läuft separat durch den zuständigen Agenten. Geplant sind WebP mit 640 px,
+  Ablage im Renderer und Archivierung der Originale. Mira hat diese Integrationspfade nicht berührt.
+
+## Achievement-Kategorie-Embleme 2026-08-25
+
+<!-- codex:2026-08-25T20:55:00+02:00 -->
+
+- Zehn neue handgemalte Kategorie-Embleme und der optionale neue Meilenstein vollständig nach
+  `CODEX/assets/achievement-icons-2026-08-25/` geliefert. Finals liegen unter `fertig/`,
+  unveränderte Generatorausgaben unter `raw/` und Prüfbelege unter `qa/`.
+- Jede Rohdatei wurde mit dem eingebauten ImageGen-Werkzeug im Standardmodus als natives
+  1254 × 1254-RGBA-PNG erzeugt. Es wurden keine Bildreferenzen in die Erzeugung eingespeist.
+  Die finalen 512er bewahren dieses Alpha und wurden nur transparent beschnitten, proportional
+  skaliert und zentriert. Kein Keying, keine Matte und kein nachträgliches Freistellen.
+- Finale technische QA bestanden: 10 von 10 Pflicht-IDs plus genau `icon_ach_milestone`, alle
+  512 × 512 PNG sRGB RGBA, benutztes Voll- und Teilalpha, äußerer 16-px-Rand vollständig Alpha 0,
+  opake Motivhöhe 434 bis 435 px, keine fehlenden oder unerwarteten Dateien.
+- Der exakte `qa/contact-sheet-ring-28-46.png` zeigt alle zehn Kategorien bei 28 px in den fünf
+  Rarity-Ringen und in der gesperrten Reihe. Schwarz-, Grau- und Grellrosa-Bögen zeigen keine
+  Schachbrettflächen oder Farbsäume. Der Kleinformatbogen deckt 24 und 50 px sowie die 12-px-
+  Farm-Ähre und den Meilenstein bei 12 und 20 px ab.
+- Amboss und Truhe wurden nach dem ersten Maßlauf neu erzeugt, weil ihre breiten Rohsilhouetten die
+  Mindesthöhe verfehlten. Die angenommenen Fassungen erreichen jeweils 435 px Motivhöhe ohne
+  unproportionale Dehnung.
+- `icon_achievments` und `icon_achievement_unlocked` wurden bewusst nicht neu erzeugt. Beide
+  Bestandsassets sind bereits gemalt und erfüllen ihre reichere Kopf- beziehungsweise Statusrolle.
+  Der bislang flache Meilenstein wurde ersetzt.
+- Vollständige Messwerte und SHA-256 stehen in
+  `CODEX/assets/achievement-icons-2026-08-25/qa/qa.json`. Brief Teil B und C sind ausgefüllt;
+  Teil D enthält Miras Produktions-GO und wartet auf die bindende Gegenprüfung.
+- Keine Renderer-, Content-, Save-, i18n- oder `.claude/**`-Datei verändert. Nächster Owner ist
+  `asset-integrator`, danach `ui-dev` für die Sichtprüfung auf der laufenden Seite.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-25T20:18:00+02:00` bis `codex:2026-08-25T20:55:00+02:00` —
+  Aufbereitungs-/QA-Skript, Asset-README, Brief, HANDOFF und WORKLOG. Die Marker dokumentieren
+  zugleich die 22 kommentarfreien PNG-Lieferdateien, sieben QA-PNGs und das kommentarfreie
+  `qa.json`.
+
+## Jägerumhang für den Slayer-Shop 2026-08-25
+
+<!-- codex:2026-08-25T21:34:00+02:00 -->
+
+- Finales Itembild `slayer_hunters_cape.png` nach
+  `CODEX/assets/slayer-jaegerumhang-2026-08-25/fertig/` geliefert. Die Datei ist exakt nach der
+  Content-ID benannt und für Grim Reach 1.1.0, Slayer-Shop Phase 2 vorgesehen.
+- Zwei technisch saubere native Alpha-Varianten wurden erzeugt. Variante A wurde gewählt, weil
+  ihre breitere Silhouette, grüne Umschlagkante und Reißzahn-Schließe bei 48 px klarer lesen.
+  Variante B bleibt als unveränderte Wahlquelle unter `raw/`.
+- Beide gültigen Rohdateien sind 1254 × 1254 RGBA mit Alpha 0 bis 255. Das Final ist 1024 × 1024
+  sRGB RGBA, opake Motivhöhe 880 px, äußerer 16-px-Rand vollständig transparent.
+- Die Aufbereitung beschränkte sich auf transparenten Zuschnitt, proportionale Skalierung und
+  bottom-center-Zentrierung. Kein Keying, keine Matte, kein Despill und kein nachträgliches
+  Freistellen. Ein früher Entwurf mit halbtransparenter brauner Studiofläche wurde am Alpha-Gate
+  verworfen und nicht in die Lieferung übernommen.
+- Kontaktbögen auf Schwarz, Grau und Grellrosa, der Vergleich neben fünf Bestandsumhängen,
+  48-/96-/128-px-Ansichten und der Abgleich mit Slayer-Ausrüstung und Brenna liegen unter `qa/`.
+  Variante A bleibt sichtbar unter der helleren, bestickten Wertigkeit von `mariner_cloak`.
+- Vollständige Messwerte und SHA-256 stehen in
+  `CODEX/assets/slayer-jaegerumhang-2026-08-25/qa/qa.json`. Alle automatischen Gates sind `true`.
+- Brief Teil B bis D, Asset-README und WORKLOG sind aktualisiert. Keine Renderer-, Content-,
+  Save-, i18n- oder `.claude/**`-Datei wurde verändert. Nächster Owner ist `asset-integrator`;
+  bindende Abnahme bleibt bei Claude und Chef.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-25T21:18:00+02:00` bis `codex:2026-08-25T21:34:00+02:00` —
+  Aufbereitungs-/QA-Skript, Asset-README, Brief, HANDOFF und WORKLOG. Die Marker dokumentieren
+  zugleich drei kommentarfreie Liefer-PNGs, acht QA-PNGs und das kommentarfreie `qa.json`.
+
+## Belohnungsladen-Kapitelitems 2026-08-26
+
+<!-- codex:2026-08-26T10:26:05+02:00 -->
+
+- Sieben neue Kapitel-Belohnungen vollständig nach
+  `CODEX/assets/belohnungsladen-2026-08-26/` geliefert. Finals liegen unter `fertig/`, die sieben
+  angenommenen Generatorausgaben unter `raw/` und die Prüfbelege unter `qa/`.
+- Enthalten sind zwei Ringe, zwei Amulette, ein Umhang, das reichere Chronisten-Signet und eine
+  stapelbare Auftragsmarke. Alle Dateien sind exakt nach den Content-IDs benannt.
+- Erzeugung mit eingebautem ImageGen im Standardmodus und nativem Alpha. Die Aufbereitung bewahrt
+  das Alpha und beschränkt sich auf transparenten Zuschnitt, proportionale Skalierung und
+  Bottom-Center-Platzierung. Kein Keying, keine Matte, kein Despill oder Freistellen.
+- Finale technische QA bestanden: 7/7 PNG sRGB RGBA mit 1024 × 1024, äußerer 16-px-Rand vollständig
+  transparent, Motivkörper 869 bis 870 px hoch, keine fehlenden oder unerwarteten IDs.
+- Kontaktbögen auf Schwarz, Grau und Grellrosa, neben typgleichen Bestandsitems und bei 48/96/128 px
+  liegen unter `qa/`; Einzelwerte und SHA-256 stehen in `qa/qa.json`.
+- Verworfen wurden Fassungen mit knappem Rand, gemaltem Schachbrett, Studiovignette oder zu
+  leuchtendem Ascheriss. Sie wurden nicht in die Lieferung übernommen.
+- Brief Teil B bis D und Asset-README sind ausgefüllt. Keine Renderer-, Content-, Save-, i18n-
+  oder `.claude/**`-Datei verändert. Nächster Owner ist `asset-integrator`; bindende Abnahme durch
+  Claude und Chef steht aus.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T10:23:25+02:00` bis `codex:2026-08-26T10:26:05+02:00` —
+  Aufbereitungs-/QA-Skript, Asset-README, Brief, HANDOFF und WORKLOG. Die Marker dokumentieren
+  zugleich 14 kommentarfreie Liefer-PNGs, sieben QA-PNGs und das kommentarfreie `qa.json`.
+
+## Stil-Parität: 47 Item-Bilder 2026-08-26
+
+<!-- codex:2026-08-26T14:18:00+02:00 -->
+
+- Vollständige Lieferung unter `CODEX/assets/stil-paritaet-2026-08-26/`: 47 angenommene native
+  Alpha-Raws, 47 produktionsfertige Finals und 32 QA-Dateien.
+- Enthalten sind 10 Bögen, 6 Magiewaffen, 2 Foki, 11 Lederteile, 16 Stoffteile und 2 Tonika.
+  Alle Finals heißen exakt wie ihre Content-ID und liegen als 1024 × 1024 PNG unter `fertig/`.
+- Erzeugung mit eingebautem ImageGen im Standardmodus. Kein Keying, keine Matte, kein Despill
+  oder Freistellen. Finals bewahren das native Alpha und wurden nur transparent beschnitten,
+  proportional skaliert und unten mittig platziert.
+- Technische Endprüfung bestanden: 47/47 sRGB-RGBA, Alpha 0 bis 255, äußerer 16-px-Rand
+  vollständig transparent, sichtbare Motivhöhe 850 bis 880 px, keine fehlenden oder zusätzlichen
+  IDs. Einzelwerte und SHA-256 stehen in `qa/qa.json`.
+- Nach Chef-Hinweis wurde die komplette A1-Serie neu gegossen. Die angenommenen Bögen haben
+  durchgehende belastbare Wurfarme, klare Nocken und je eine gerade gespannte Sehne; der
+  Bestandsvergleich und die Grellrosa-Kantenprüfung liegen unter `qa/`.
+- Drei breite A4-Paarfassungen wurden für den Höhenkorridor kompakter neu erzeugt. Die fertige
+  Stoffserie ist bei 48/96/175 px geprüft und bleibt frei von Glühen und Partikeln.
+- Je Gruppe liegen vier Hintergrundbögen, ein Bestandsvergleich und eine UI-Größenprobe vor.
+  Keine Renderer-, Content-, Save-, i18n- oder `.claude/**`-Datei verändert.
+- Nächster Owner: Claude für Gegenprüfung, danach `asset-integrator` für WebP-Konvertierung und
+  Renderer-Ablage. `CODEX/assets/**` bleibt bis dahin reines Staging.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T13:40:00+02:00` bis `codex:2026-08-26T14:18:00+02:00` —
+  Aufbereitungs-/QA-Skript, Asset-README, Brief, HANDOFF und WORKLOG. Die Marker dokumentieren
+  zugleich die kommentarfreien 94 Liefer-PNGs, 31 QA-PNGs und `qa/qa.json`.
+
+## Item-Wiki-Modal: fünf Redesign-Richtungen 2026-08-26
+
+<!-- codex:2026-08-26T14:48:00+02:00 -->
+
+- Fünf eigenständige High-Fidelity-Mockups nach Chef-Auftrag unter
+  `CODEX/assets/wiki-modal-mockups-2026-08-26/` geliefert; gemeinsamer Vergleichsbogen inklusive.
+- Bestehender Screenshot wurde nur als Stil- und Inhaltsreferenz genutzt. Kein Renderer-, React-,
+  CSS-, i18n- oder Engine-Code verändert.
+- Richtungen: Codex Ledger, Forge Flow, Archiv-Schubladen, Blacksteel Index und Relic Showcase.
+  Alle bewahren Gravewood-&-Bronze/Ashen-Iron, ordnen Item, Quelle und Verwendungen aber
+  strukturell neu.
+- Miras Empfehlung ist Variante 3 als Umsetzungsbasis; Variante 4 ist die Alternative für
+  maximale Datendichte. Bindende Richtungswahl bleibt beim Chef.
+- Brief, Referenzkopie und vollständiges Promptset liegen unter
+  `CODEX/work/2026-08-26-wiki-modal-mockups/`. Erzeugung erfolgte mit eingebautem ImageGen im
+  Standardmodus.
+- Nächster Owner nach Chefwahl: `ui-dev` für eine HTML/CSS-Annäherung im Renderer und anschließende
+  headless Typecheck-/Build-Prüfung.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T14:32:00+02:00` bis `codex:2026-08-26T14:48:00+02:00` — Brief, Promptset,
+  Asset-README, HANDOFF und WORKLOG; zugleich Dokumentation der sechs kommentarfreien Mockup-PNGs.
+
+## Item-Wiki: interaktive HTML-Prototypen 02 und 05 2026-08-26
+
+<!-- codex:2026-08-26T15:24:00+02:00 -->
+
+- Nach direkter Chef-Auswahl die Bildrichtungen 02 `Forge Flow` und 05 `Relic Showcase` als
+  eigenständige HTML/CSS/JS-Prototypen unter
+  `CODEX/outbox/2026-08-26-wiki-modal-html/` umgesetzt.
+- `index.html` schaltet zwischen beiden Seiten um und bietet einen Vollbildlink. Die Einzeldateien
+  sind `02-forge-flow.html` und `05-relic-showcase.html`.
+- Beide Konzepte behandeln Quellen als beliebig lange Sammlung. Vier Herkunftsarten dienen als
+  interaktive Layoutbeispiele; Auswahl aktualisiert Chance, Typ und Detailband. Diese Namen und
+  Chancen sind ausdrücklich keine neuen Content-/Lore-Entscheidungen.
+- Konzept 02 ergänzt Used-for-Filter für Waffen/Rüstung und einen Quelle→Item→Verwendung-Detailfluss.
+  Konzept 05 ergänzt ein Mehrquellen-Band, horizontale Verwendungsgalerie und Auswahl-Detailpanel.
+- 29 lokale Kopien bestehender Grim-Reach-Items, Icons, Texturen und Fonts liegen in `assets/`,
+  damit der Prototyp ohne Renderer-Abhängigkeit geöffnet werden kann. Keine Quelldatei verändert.
+- Statische QA bestanden: alle Links/Assets vorhanden, JS-Syntax gültig, CSS-Blockstruktur gültig.
+  Automatischer Browser-/Screenshotlauf war nicht möglich, weil in dieser Sitzung kein Browser-
+  Backend verfügbar war; vor Runtime-Übernahme offen nachholen.
+- Keine Renderer-, React-, CSS-, i18n-, Engine-, Content- oder `.claude/**`-Datei verändert.
+  Nächster Owner nach Chefentscheid: `ui-dev` für die echte Komponenten-/i18n-Umsetzung.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T15:12:00+02:00` bis `codex:2026-08-26T15:24:00+02:00` — beide HTML-Seiten,
+  gemeinsame Styles/Interaktionen, README, QA, HANDOFF und WORKLOG. Die Marker dokumentieren
+  zugleich die 29 kommentarfreien lokalen Assetkopien.
+
+## Main-Menü und Item-Stack — je fünf Design-Mockups 2026-08-26
+
+<!-- codex:2026-08-26T16:03:00+02:00 -->
+
+- Direkten Chefauftrag als zehn reine Designstudien umgesetzt: fünf Main-Menüs und fünf
+  Item-Stack-Modals. Jede Nummer bildet eine zusammengehörige Designfamilie.
+- Lieferung unter `CODEX/assets/mainmenu-itemstack-mockups-2026-08-26/`; Einzelbilder liegen in
+  `main-menu/` und `item-stack/`, drei nummerierte Kontaktbögen in `qa/`.
+- Designfamilien: `Ashen Gate`, `War Table`, `Black Chronicle`, `Frontline Registry`,
+  `Ember Reliquary`.
+- Alle zehn PNGs sind 1672 × 941 px und visuell geprüft. Main-Menüs enthalten die Kernaktionen;
+  Stack-Modals zeigen mehrere Varianten zugleich und demonstrieren unterschiedliche
+  Skalierungsmodelle.
+- Fachliche Empfehlung: Main-Menü 02 oder 05; Stack-Modal 02 als beste Balance, 04 bei maximaler
+  Datendichte. Finale Produktentscheidung bleibt beim Chef.
+- Brief, Referenzen und vollständige Prompts liegen unter
+  `CODEX/work/2026-08-26-mainmenu-itemstack-mockups/`.
+- Erzeugungsweg: eingebautes ImageGen-Werkzeug im Standardmodus. Keine HTML-, Renderer-, React-,
+  CSS-, i18n-, Engine-, Content- oder `.claude/**`-Datei verändert.
+
+### Codex-Marker
+
+- `codex:2026-08-26T15:48:00+02:00` — Brief und Prompt-Set.
+- `codex:2026-08-26T16:03:00+02:00` — Staging-README, HANDOFF und WORKLOG; dokumentiert zugleich
+  die zehn PNG-Mockups und drei kommentarfreien Kontaktbögen.
+
+## Ausgewählte Main-Menüs und Item-Stack als HTML-Prototypen 2026-08-26
+
+<!-- codex:2026-08-26T16:42:00+02:00 -->
+
+- Nach direkter Chef-Auswahl vier eigenständige Standalone-Prototypen unter
+  `CODEX/outbox/2026-08-26-mainmenu-itemstack-html/` umgesetzt: Main-Menü 01 `Ashen Gate`,
+  Main-Menü 02 `War Table`, Main-Menü 04 `Frontline Registry` und Item-Stack 02 `War Table`.
+- `index.html` dient als gemeinsame Auswahlseite und verwendet die abgenommenen Konzeptbilder als
+  Vorschau. Jede Detailseite verlinkt zurück.
+- Der Item-Stack besitzt eine funktionale Variantenwahl mit live aktualisiertem Vergleich,
+  Qualitätsbalken, Verkaufspreis und Filter-/Sortierzuständen. Die Main-Menüs demonstrieren
+  Sprachwahl und Aktionsfeedback.
+- 24 lokale Kopien bestehender Grim-Reach-Assets liegen in `assets/`. Nach Chefkorrektur wurden
+  zusätzlich ein echtes RGBA-Gate und ein deckender War-Table-Hintergrund erzeugt und eingebaut.
+  Produktionsquellen blieben unverändert.
+- Statische QA bestanden: alle HTML- und CSS-Referenzen vorhanden, JS-Syntax gültig,
+  CSS-Klammerbilanz ausgeglichen. Browser-/Screenshotprüfung blieb offen, weil das Browser-Plugin
+  nach vorgesehener Initialisierung und Diagnose kein verfügbares Backend meldete.
+- Keine React-, Renderer-, CSS-Produktions-, i18n-, Engine-, Content- oder `.claude/**`-Datei
+  verändert. Nächster Owner nach Chefentscheidung: `ui-dev` für die echte Integration.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T16:18:00+02:00` bis `codex:2026-08-26T16:42:00+02:00` — Brief,
+  HTML-Seiten, gemeinsame Styles/Interaktionen, README, QA, HANDOFF und WORKLOG. Die Marker
+  dokumentieren zugleich die 24 kommentarfreien lokalen Assetkopien.
+
+### Chefkorrektur: echte Großmotive
+
+<!-- codex:2026-08-26T17:08:00+02:00 -->
+
+- Chef beanstandete zu Recht, dass Main 01 das Gate nur per CSS andeutete und Main 02 keinen
+  physischen War Table besaß.
+- `assets/ashen-gate-overlay-v1.png` als vollständiges monumentales RGBA-Foreground-Asset
+  erzeugt und in Main 01 eingebaut. Alpha gemessen: 0 bis 255, keine deckende Hintergrundfläche.
+- `assets/mainmenu-war-table-background-v1.png` als deckende, nahtlose Panorama-/Tischkomposition
+  erzeugt und in Main 02 eingebaut.
+- Zwei vorherige War-Table-Freistellversuche wurden wegen gemaltem Schachbrett und fehlendem Alpha
+  verworfen. Kein Keying; finale Lösung ist ein bewusst deckender Szenenhintergrund.
+- Kompositions-QA mit Originalpanorama und Logo liegt in `qa/`. Vollständiges Promptprotokoll:
+  `CODEX/work/2026-08-26-mainmenu-itemstack-html/PROMPTS.md`.
+- Keine Produktivdatei verändert.
+
+### Chefkorrektur: Item-Stack erhält ebenfalls ein echtes War-Table-Motiv
+
+<!-- codex:2026-08-26T17:24:00+02:00 -->
+
+- Auf direkte Chefkorrektur `assets/itemstack-war-table-shell-v1.png` erzeugt und als tragende
+  Hintergrundschale des Item-Stack-Modals eingebaut.
+- Die Schale enthält echten dunklen Kartentisch, Lederflächen, Eisenschienen, Kartengravur,
+  Kompass-/Siegelmotive und drei vorbereitete Arbeitszonen. Sie enthält bewusst keine statischen
+  Texte oder Items; Auswahl, Werte und Buttons bleiben funktionales HTML.
+- Desktop-CSS auf die feste Bildarchitektur ausgerichtet; unter 1250 px kontrollierter Rückfall auf
+  die skalierbaren bestehenden Gravewood-Rahmen.
+- RGB 1672 × 941 geprüft und mit den echten Mithril-Helmen als Platzierungs-QA kontrolliert.
+- Keine Produktivdatei verändert.
+
+## Main-Menü-Unterseiten: je fünf Design-Mockups 2026-08-26
+
+<!-- codex:2026-08-26T18:52:00+02:00 -->
+
+- Direkten Chefauftrag als 15 reine Designstudien umgesetzt: je fünf Entwürfe für `New Game`,
+  `Load Game` und `Character Creation`; ausdrücklich noch kein HTML.
+- Die fünf screenübergreifenden Familien sind `Ashen Gate`, `War Table`, `Frontline Registry`,
+  `Black Chronicle` und `Ember Reliquary`. Jede Familie überträgt dieselbe räumliche Metapher auf
+  alle drei Unterseiten, statt nur drei isolierte Screens zu liefern.
+- Lieferung unter `CODEX/assets/mainmenu-submenus-mockups-2026-08-26/`. Einzelbilder liegen in
+  `new-game/`, `load-game/` und `character-creation/`; vier Kontaktbögen liegen unter `qa/`.
+- Alle 15 PNGs sind 1672 × 941 px, RGB und visuell geprüft. New Game enthält fünf leere Slots,
+  Load Game drei belegte plus zwei leere Slots, Character Creation Name, Porträts, drei Startstile
+  und Abschlussaktion.
+- Fachliche Einordnung: 01 ist die stärkste filmische Gesamtrichtung, 02 der konsequenteste
+  Anschluss an das favorisierte War-Table-Hauptmenü, 03 die robusteste responsive Datenstruktur.
+  Die bindende Auswahl bleibt beim Chef.
+- Erzeugung mit eingebautem ImageGen im Standardmodus. Brief, Referenzen, Promptset und
+  reproduzierbare Staging-/Kontaktbogen-Skripte liegen unter
+  `CODEX/work/2026-08-26-mainmenu-submenus-mockups/`.
+- Keine HTML-, Renderer-, React-, CSS-, i18n-, Engine-, Content- oder `.claude/**`-Datei verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T18:20:00+02:00` bis `codex:2026-08-26T18:52:00+02:00` — Arbeitsbrief,
+  Promptset, Staging-/QA-Skripte, Asset-README, HANDOFF und WORKLOG. Die Marker dokumentieren
+  zugleich die 15 kommentarfreien Mockup-PNGs und vier Kontaktbögen.
+
+## Ausgewählte Untermenüs als HTML-Prototypen 2026-08-26
+
+<!-- codex:2026-08-26T19:36:00+02:00 -->
+
+- Chef-Auswahl umgesetzt: Character Creation 03 `Frontline Registry`, Load Game 05
+  `Ember Reliquary` und passend dazu New Game 05 `Ember Reliquary`.
+- Standalone-Lieferung unter `CODEX/outbox/2026-08-26-mainmenu-submenus-html/` mit gemeinsamer
+  Auswahlseite und drei eigenständigen HTML-Dateien.
+- New Game besitzt fünf anwählbare Slots und führt in die gewählte Registry. Load Game besitzt
+  drei belegte plus zwei leere Slots, vollständig wechselnde Dossierdaten und einen
+  nicht-destruktiven Delete-Dialog. Character Creation synchronisiert Name, Porträt, Startstil,
+  Schrittleiste und Abschlussaktion.
+- Für New/Load wurde eine textfreie deckende Ember-Reliquary-Landschaft mit eingebautem ImageGen im
+  Standardmodus erzeugt. Ein neuer Heldenfreisteller fiel am Alpha-Gate durch, weil das
+  Schachbrett gemalt war; kein Keying. Der Prototyp verwendet stattdessen den bestehenden echten
+  RGBA-Helden `knight_m.webp` als lokale Kopie.
+- Statische QA bestanden: alle lokalen Referenzen vorhanden, JS-Syntax gültig, CSS-Bilanz 0,
+  Szenenplatte 1672 × 941 RGB, Held 1086 × 1448 RGBA mit Alpha 0 bis 255.
+- Browser-Live-QA blieb offen, weil die initialisierte Browser-Laufzeit keine verfügbare Instanz
+  meldete. Dieser Blocker ist in `QA.md` dokumentiert; keine alternative Browserautomation wurde
+  eingesetzt.
+- Keine Renderer-, React-, produktive CSS-, i18n-, Engine-, Content-, Save- oder `.claude/**`-
+  Datei verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T19:08:00+02:00` bis `codex:2026-08-26T19:36:00+02:00` — Brief,
+  Promptprotokoll, Assetvorbereitung, vier HTML-Dateien, CSS, Interaktionen, README, QA, HANDOFF und
+  WORKLOG. Die Marker dokumentieren zugleich die kommentarfreien lokalen Assetkopien und die neue
+  deckende Szenenplatte.
+
+## 2026-08-26 — Human-Roster-Workflow und Sechser-Pilot
+
+<!-- codex:2026-08-26T20:52:00+02:00 -->
+
+- Chefentscheid in einen gesperrten Vertrag für 15 Kampfklassen, 15 Berufe und 60 eigenständige
+  Human-Identitäten übertragen: `CODEX/work/2026-08-26-human-roster/`.
+- Neue harte Paarregel übernommen: männliche und weibliche Variante tragen dieselbe sichtbare
+  Waffen-/Werkzeugfamilie und gleiche Anzahl Hauptgeräte; Kleidung darf geschlechtsspezifisch
+  variieren und bei Frauen moderat offener sein, bleibt aber funktional.
+- Neue harte Richtungsregel übernommen: Körper, Gesicht, Nase und Blick zeigen immer nach
+  Bildschirm-rechts.
+- Pilot mit Krieger, Feuermagier und Schurke, jeweils männlich/weiblich, unter
+  `CODEX/assets/human-character-roster-2026-08-26/fertig/` abgeliefert.
+- Alle sechs Finals messen 1086 × 1448 RGBA, Alpha 0–255 und 85,9–87,4 % sichtbare Höhe. Heller
+  und dunkler Kontaktbogen sowie Einzelmessungen liegen unter `qa/`.
+- Eingebautes ImageGen im Standardmodus verwendet. Ein erster referenzgebundener RGB-Durchlauf
+  wurde vollständig verworfen; kein Keying oder nachträgliches Freistellen. Die akzeptierten
+  Motive besitzen natives Alpha aus der Erzeugung.
+- Nur Staging und Dokumentation geändert; nichts in Renderer, Content, Save, Engine oder
+  `.claude/**` integriert. Die übrigen 54 Figuren folgen nach Richtungsabnahme im gleichen Vertrag.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T20:44:00+02:00` bis `codex:2026-08-26T20:52:00+02:00` — aktualisierter
+  Produktionsvertrag, Identitätsmatrix, Promptset, Kontaktbogen-Skript, Staging-README, QA,
+  HANDOFF und WORKLOG. Kommentarlose PNGs sind über diese Einträge mit ihren exakten Zielpfaden
+  dokumentiert.
+
+## 2026-08-26 — Buckhide-Set und Jagdbogen, 6/6
+
+<!-- codex:2026-08-26T21:32:00+02:00 -->
+
+- Sechs fehlende frühe Fernkampf-Items unter
+  `CODEX/assets/buckhide-set-2026-08-26/fertig/` abgeliefert: `buckhide_helm`, `buckhide_body`,
+  `buckhide_legs`, `buckhide_vambraces`, `buckhide_boots`, `hunting_bow`.
+- Alle Finals sind exakt 1024 × 1024 PNG RGBA mit Alpha 0–255, transparentem Außenrand und
+  slotweise an den Bestandsreferenzen gemessener Canvasbelegung.
+- Materialserie: raues dunkel rauchbraunes Hirschleder, kurze graubraune Fellkanten, matte
+  Hornknebel, Handnähte; sichtbar einfacher als `cured_leather_*`, ohne Magieeffekte.
+- Jagdbogen auf Funktion geprüft: ein durchgehender Eschenholzstab, zwei Nocken, eine gerade
+  Sehne und gleichmäßige C-Kurve. Höhe 88,7 % gegenüber 88,5 % bei `bronze_shortbow`.
+- Eingebautes ImageGen im Standardmodus verwendet. Ein erster Beinling-Durchlauf mit deckender
+  brauner Fläche wurde verworfen; der gelieferte Neuguss besitzt natives Alpha. Kein Keying und
+  keine nachträgliche Freistellung.
+- QA auf dunklem, hellem und grellrosa Grund, im 48-px-Maßstab und neben Wams-/Bogenreferenz
+  bestanden. Details: `CODEX/assets/buckhide-set-2026-08-26/qa/QA.md`.
+- Native akzeptierte Ausgaben liegen in `raw/`; verwendete Prompts in
+  `CODEX/work/2026-08-26-buckhide-set/PROMPTS-USED.md`.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert. Claude übernimmt
+  WebP-Konvertierung, Produktionsablage und Archivierung nach Gegenprüfung.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T21:05:00+02:00` bis `codex:2026-08-26T21:32:00+02:00` — Produktionsplan,
+  Promptprotokoll, QA-Skript, Brief-Abnahme, Staging-README, QA, HANDOFF und WORKLOG. Die
+  kommentarfreien PNGs sind hier über ihre exakten Zielpfade dokumentiert.

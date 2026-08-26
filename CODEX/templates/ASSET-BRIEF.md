@@ -5,6 +5,8 @@
 > **Benutzung:** Dokument kopieren nach `CODEX/work/YYYY-MM-DD-auftrag/BRIEF.md`. Keine Zeile löschen; Unzutreffendes mit `entfällt` markieren.
 >
 > **Keine Zugangshürde:** Ein freier Chat-Auftrag, eine Skizze oder eine Bildreferenz genügt. Codex überträgt vorhandene Angaben selbst in die Vorlage, markiert Annahmen und fragt nur nach, wenn eine fehlende echte Produktentscheidung das Ergebnis wesentlich verändern würde.
+>
+> <!-- codex:2026-08-23T18:21:18+02:00 --> **Bindender Bildvertrag für Grim Reach:** Vor jeder Produktion `design/asset-anforderungen.md` lesen. Freisteller erfordern echtes natives Alpha; Chroma-Key, gemaltes Schachbrett und nachträgliches Keying sind unzulässig. Die exakte Content-ID ist zugleich der finale Dateiname.
 
 ---
 
@@ -42,7 +44,7 @@
 
 | # | Asset-ID / Dateiname | Inhalt / Motiv | Typ | Varianten / Stufen | Priorität |
 |---:|---|---|---|---|---|
-| 1 | `[exakte ID]` | `[was dargestellt wird]` | `[Icon / Item / Monster / Porträt / Gebäude / Hintergrund / UI / Marketing]` | `[z. B. 0–3]` | `[P0–P3]` |
+| 1 | `[exakte Content-ID; zugleich finaler Dateiname]` | `[was dargestellt wird]` | `[Icon / Item / Monster / Porträt / Gebäude / Hintergrund / UI / Marketing]` | `[z. B. 0–3]` | `[P0–P3]` |
 | 2 |  |  |  |  |  |
 
 **Vollständigkeitsregel:**  
@@ -96,7 +98,8 @@ Der Auftraggeber trägt bekannte Werte ein; bei freien Anweisungen überträgt C
 | Zielpfad im Produkt | `[exakter Ordner / Codex ermittelt]` |
 | Dateiformat | `[WebP / PNG / SVG / JPG / Codex ermittelt]` |
 | Maße / Seitenverhältnis | `[z. B. 880×495, 16:9]` |
-| Hintergrund | `[Standard: final transparent / ausdrücklich Chroma-Key / ausdrücklich deckend]` |
+| Hintergrund | `[Freisteller: echtes natives Alpha / Szene oder Kulisse: ausdrücklich deckend]` |
+| Alpha-Erzeugung | `[nativ im Quellbild; kein Chroma-Key, kein Schachbrett, kein nachträgliches Keying]` |
 | Alpha-Rand / Beschnitt | `[Vorgabe / Codex ermittelt]` |
 | Farbraum | `[sRGB, falls nichts anderes nötig]` |
 | Dateigrößenlimit | `[Wert / keines bekannt]` |
@@ -172,6 +175,8 @@ Der Auftraggeber trägt bekannte Werte ein; bei freien Anweisungen überträgt C
 | Zielauflösung |  |
 | Zielformat |  |
 | Hintergrund / Alpha |  |
+| Bindende Content-ID / finaler Dateiname |  |
+| Native-Alpha-Produktionsweg bestätigt | `[ja / nicht erforderlich, da deckende Szene]` |
 | Beschnitt / Safe Area |  |
 | Namensschema |  |
 | Staging-Pfad | `CODEX/assets/[auftrag]/` |
@@ -197,6 +202,20 @@ Der Auftraggeber trägt bekannte Werte ein; bei freien Anweisungen überträgt C
 [wird von Codex geschrieben]
 ```
 
+<!-- codex:2026-08-23T18:21:18+02:00 -->
+**Pflichtblock für jeden Grim-Reach-Freisteller:**
+```text
+Output requirement: a native transparent PNG/WebP with a real alpha channel generated as part of the image.
+The canvas outside the subject must be genuinely transparent (alpha 0), with natural soft semi-transparent edge pixels where fur, feathers, smoke, fog, cloth fibers, glow, or fine detail require them.
+Do not draw or simulate transparency. No checkerboard or transparency grid. No magenta, green, blue, white, black, or other solid-color background for later removal. No chroma key and no post-key extraction.
+No floor plane, ground patch, pedestal, contact shadow, cast shadow, border, text, or watermark unless the brief explicitly requires it.
+Keep the complete subject inside the canvas with safe padding and an uncropped silhouette.
+```
+
+**Dateinamenspflicht außerhalb des Bildprompts:** Das geprüfte Finalformat heißt exakt
+`<content_id>.png` beziehungsweise `<content_id>.webp`; keine Zusätze wie `final`, `v2` oder
+Variantennummern.
+
 **Asset-spezifische variable Prompt-Felder:**  
 `[Motiv, ID, Stufe, Materialien, Funktion, Akzent …]`
 
@@ -208,8 +227,11 @@ Der Auftraggeber trägt bekannte Werte ein; bei freien Anweisungen überträgt C
 ## B5. Prüfplan vor Produktion
 
 - [ ] CEO-Pflichtfelder ausreichend
+- [ ] `design/asset-anforderungen.md` vollständig gelesen
 - [ ] relevante Design-/Lore-Dokumente gelesen
 - [ ] Ziel-Loader und Namensschema geprüft
+- [ ] exakte Content-ID und finaler Dateiname vor Generierung bestätigt
+- [ ] bei Freistellern ein echter nativer Alpha-Produktionsweg bestätigt; kein Keying eingeplant
 - [ ] bestehende Assets in echter Zielgröße betrachtet
 - [ ] Rechte-/Lizenzlage der Referenzen klar
 - [ ] Konflikte mit Claudes Revier oder laufender Arbeit ausgeschlossen
@@ -235,15 +257,21 @@ Der Auftraggeber trägt bekannte Werte ein; bei freien Anweisungen überträgt C
 - [ ] Keine unerwünschten Texte, Logos oder Wasserzeichen
 - [ ] Keine typischen Generierungsfehler an Anatomie, Geometrie, Kanten oder Wiederholungen
 - [ ] Keine abgeschnittenen wichtigen Formen
-- [ ] Alpha/Chroma-Key/Hintergrund technisch sauber
+- [ ] Alphakanal vorhanden und tatsächlich benutzt; kein Karo und kein Vollflächen-Hintergrund
+- [ ] Silhouette auf grellrosa Prüffläche ohne Farbsaum kontrolliert
+- [ ] Auflösungsuntergrenze aus `design/asset-anforderungen.md` erreicht
+- [ ] Dateiname entspricht exakt der Content-ID
+- [ ] Ausrüstung besitzt kein Schimmern, Glühen oder Leuchten; Ausnahme nur freigegebene Runen/Tränke
+- [ ] Kreatur/Charakter blickt nach links, sofern der Auftrag nichts anderes festlegt
 - [ ] Farb- und Helligkeitswerte passen zum echten UI-Kontext
 - [ ] Upgrade-/Seltenheits-/Fraktionsunterschiede sind klar, aber systemtreu
 - [ ] Reduced-size-Preview und mindestens eine echte UI-Einbettung geprüft
 
 ## C3. Technische QA
 
-- [ ] Dateinamen entsprechen exakt den IDs
+- [ ] Dateinamen entsprechen exakt den IDs; Kleinbuchstaben/Unterstriche, keine `final`-/`v2`-/Variantenanhänge
 - [ ] Maße, Format und Farbraum korrekt
+- [ ] Freisteller sind PNG/WebP mit echtem Alpha; kein JPG und keine nachträgliche Key-Matte
 - [ ] Dateigröße im Zielrahmen
 - [ ] Keine versehentliche automatische Bindung aus dem Staging
 - [ ] Zielpfad und Loader-Regel verifiziert

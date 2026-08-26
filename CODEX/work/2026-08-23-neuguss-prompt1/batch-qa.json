@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-08-23T19:24:26.906Z",
+  "files": {
+    "elite_coast_crab.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 1047132,
+      "partialAlphaPixels": 6313,
+      "opaquePixels": 519071,
+      "visibleMagentaPixels": 0,
+      "brightGreenPixels": 0,
+      "brightBluePixels": 0,
+      "sha256": "9e13878e114db61412be91365620a73201f40436177d3e50e4640d522ab608ad"
+    },
+    "elite_crypt_icemage.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 1021731,
+      "partialAlphaPixels": 39400,
+      "opaquePixels": 511385,
+      "visibleMagentaPixels": 0,
+      "brightGreenPixels": 0,
+      "brightBluePixels": 997,
+      "sha256": "be04e9286c192b1936df71f74f4fedb26acf3243966c0de9b4cbec5364294c16"
+    },
+    "elite_high_wyvern.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 794681,
+      "partialAlphaPixels": 29499,
+      "opaquePixels": 748336,
+      "visibleMagentaPixels": 0,
+      "brightGreenPixels": 0,
+      "brightBluePixels": 0,
+      "sha256": "a19c373c3541b2b6617d6d674b13f536e26451d3f9673774cdd42e3305152ca1"
+    },
+    "elite_slag_revenant.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 1003465,
+      "partialAlphaPixels": 21241,
+      "opaquePixels": 547810,
+      "visibleMagentaPixels": 0,
+      "brightGreenPixels": 0,
+      "brightBluePixels": 0,
+      "sha256": "493ed4c90e6d121bc5320da3ea1e0d8bd0fe774437c06f29f33f085c0643ceac"
+    },
+    "mire_wisp.png": {
+      "width": 1254,
+      "height": 1254,
+      "channels": 4,
+      "transparentPixels": 1121601,
+      "partialAlphaPixels": 396980,
+      "opaquePixels": 53935,
+      "visibleMagentaPixels": 0,
+      "brightGreenPixels": 0,
+      "brightBluePixels": 0,
+      "sha256": "c7ce3ad5fd1cd273540e6624a0336e7d1a034dcc2ecd4975ce5d10aadca069b0"
+    }
+  },
+  "notDelivered": [
+    "elite_slag_hexer",
+    "elite_wild_wolf",
+    "elite_high_roc",
+    "elite_high_specter",
+    "elite_black_witch",
+    "elite_crypt_pyroclasp",
+    "elite_coast_drowned",
+    "elite_black_golem",
+    "elite_wild_stag"
+  ]
+}

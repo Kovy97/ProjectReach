@@ -45,7 +45,9 @@ Codex kann auf Chef-/Claude-Auftrag in diesen Bereichen arbeiten, dokumentiert d
 - Bestehende Art Direction, UI-Variablen, Kartenformate, Icon-Systeme und Auto-Discovery-Konventionen zuerst untersuchen und wiederverwenden.
 - Keine fremden Markenstile oder geschützten Assets imitieren. Genre-Referenzen dienen nur zur Funktionsanalyse.
 - Neue Assets erhalten nachvollziehbare Quelle, Lizenz-/Urheberstatus, Ziel-ID, Format, Maße und Integrationsstatus.
-- **Hintergrund-Dauerregel:** Jedes neu erzeugte Spiel-Asset wird final transparent geliefert, sofern Chef oder Claude nicht ausdrücklich einen anderen Hintergrund verlangen. Eine für die Produktion verwendete Chroma-Key-Fläche ist nur Zwischenstufe und muss vor Lieferung sauber in Alpha umgewandelt werden.
+- **Hintergrund-Dauerregel:** Jedes neu erzeugte Spiel-Asset wird final mit echtem Alpha transparent geliefert, sofern Chef oder Claude nicht ausdrücklich eine deckende Szene oder Kulisse verlangen.
+- <!-- codex:2026-08-23T18:21:18+02:00 --> **Verbindlicher Assetvertrag:** `design/asset-anforderungen.md` ist für jede neue Bildlieferung maßgeblich. Freisteller werden mit echtem, nativ erzeugtem Alpha geliefert; gemaltes Schachbrett, Magenta-/Grün-/Blau-Key und nachträgliches Keying sind für neue Grim-Reach-Assets verboten. Halbtransparente Fell-, Feder-, Rauch-, Nebel- und Glutkanten bleiben erhalten.
+- Der Runtime-Dateiname entspricht vor Produktionsbeginn exakt der Content-ID: Kleinbuchstaben und Unterstriche, kein `final`, `v2` oder Variantenanhang. Eine Lieferung ohne bestätigte ID ist nicht integrationsbereit.
 - Keine Quelldatei löschen. Ersetzungen und Konvertierungen bleiben nachvollziehbar.
 - Staging unter `CODEX/assets/**`; produktive Übergabe erst nach Freigabe in den echten Renderer-Assetpfad.
 

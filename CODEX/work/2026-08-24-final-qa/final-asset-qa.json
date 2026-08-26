@@ -1,0 +1,975 @@
+{
+  "generatedAt": "2026-08-24T12:35:04+02:00",
+  "batches": {
+    "neuguss": {
+      "expectedCount": 17,
+      "actualCount": 17,
+      "missing": [],
+      "unexpected": [],
+      "requiredSize": 1254,
+      "violations": [],
+      "files": {
+        "mire_wisp": {
+          "sha256": "c7ce3ad5fd1cd273540e6624a0336e7d1a034dcc2ecd4975ce5d10aadca069b0",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1121601,
+            "partial": 396980,
+            "opaque": 53935
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 131,
+            "top": 68,
+            "width": 1030,
+            "height": 1129
+          },
+          "visibleMagenta": 0
+        },
+        "elite_crypt_icemage": {
+          "sha256": "be04e9286c192b1936df71f74f4fedb26acf3243966c0de9b4cbec5364294c16",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1021731,
+            "partial": 39400,
+            "opaque": 511385
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 73,
+            "top": 44,
+            "width": 1112,
+            "height": 1183
+          },
+          "visibleMagenta": 0
+        },
+        "elite_high_wyvern": {
+          "sha256": "a19c373c3541b2b6617d6d674b13f536e26451d3f9673774cdd42e3305152ca1",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 794681,
+            "partial": 29499,
+            "opaque": 748336
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 22,
+            "top": 95,
+            "width": 1219,
+            "height": 1066
+          },
+          "visibleMagenta": 1
+        },
+        "elite_slag_hexer": {
+          "sha256": "f26e7f7dfe7e4db52297a84ce6ff5fae40b831459e8259e0e3a0bc6436b598fe",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1099394,
+            "partial": 79896,
+            "opaque": 393226
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 273,
+            "top": 85,
+            "width": 708,
+            "height": 1084
+          },
+          "visibleMagenta": 0
+        },
+        "elite_slag_revenant": {
+          "sha256": "493ed4c90e6d121bc5320da3ea1e0d8bd0fe774437c06f29f33f085c0643ceac",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1003465,
+            "partial": 21241,
+            "opaque": 547810
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 44,
+            "top": 38,
+            "width": 1131,
+            "height": 1172
+          },
+          "visibleMagenta": 3
+        },
+        "elite_wild_wolf": {
+          "sha256": "954f9ba6fc317e0faec7773e796c36eb0ef58ede7aee31cae97b1be9dfe0ec22",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1205978,
+            "partial": 21147,
+            "opaque": 345391
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 86,
+            "top": 333,
+            "width": 1081,
+            "height": 589
+          },
+          "visibleMagenta": 0
+        },
+        "elite_high_roc": {
+          "sha256": "93fbeecdb0ffdc886675f1714ef98d0c33050fade7a8e69b494aaab60aa2c7c8",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1110495,
+            "partial": 461647,
+            "opaque": 374
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 86,
+            "top": 256,
+            "width": 1082,
+            "height": 744
+          },
+          "visibleMagenta": 0
+        },
+        "elite_high_specter": {
+          "sha256": "0e1dc22f8f63513c2888fbb06b071fda9b0552d36829b0e90b27d2e5d8dccfe3",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1169056,
+            "partial": 77771,
+            "opaque": 325689
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 261,
+            "top": 85,
+            "width": 733,
+            "height": 1084
+          },
+          "visibleMagenta": 0
+        },
+        "elite_black_witch": {
+          "sha256": "50904473a3465e2024c30811cebdaf4421c12cd315fb09b6fa9d4be36f923094",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1135829,
+            "partial": 75615,
+            "opaque": 361072
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 259,
+            "top": 86,
+            "width": 735,
+            "height": 1082
+          },
+          "visibleMagenta": 1
+        },
+        "elite_crypt_pyroclasp": {
+          "sha256": "e705c5403a13204a5632148ec0458ffbd4b14eb6a28e7a3ba3ae56cc068f62ad",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1171090,
+            "partial": 58246,
+            "opaque": 343180
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 269,
+            "top": 85,
+            "width": 714,
+            "height": 1084
+          },
+          "visibleMagenta": 1
+        },
+        "elite_coast_drowned": {
+          "sha256": "1476cb3703994000034c988924c2cd0432880f2ebee4c58c87b295fb4f92ca64",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1197751,
+            "partial": 71736,
+            "opaque": 303029
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 264,
+            "top": 85,
+            "width": 724,
+            "height": 1083
+          },
+          "visibleMagenta": 1
+        },
+        "elite_black_golem": {
+          "sha256": "76fc721b6efce8839dd1175908a5bf0abe3a3c0230edc0241b5c57839ad94376",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1041755,
+            "partial": 44954,
+            "opaque": 485807
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 237,
+            "top": 87,
+            "width": 780,
+            "height": 1081
+          },
+          "visibleMagenta": 0
+        },
+        "elite_wild_stag": {
+          "sha256": "4bdaada9a69f5ae20798b915475e0fea366800ca2a4d40958778b0ea8c2a7754",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1203376,
+            "partial": 33342,
+            "opaque": 335798
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 87,
+            "top": 200,
+            "width": 1080,
+            "height": 853
+          },
+          "visibleMagenta": 0
+        },
+        "elite_coast_crab": {
+          "sha256": "9e13878e114db61412be91365620a73201f40436177d3e50e4640d522ab608ad",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1047132,
+            "partial": 6313,
+            "opaque": 519071
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 25,
+            "top": 199,
+            "width": 1214,
+            "height": 846
+          },
+          "visibleMagenta": 1
+        },
+        "iron_sentinel": {
+          "sha256": "f299f6881a6a51f8d8b72902281b23e897a039e710baaf54ee5c6d9b757befec",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1150205,
+            "partial": 22340,
+            "opaque": 399971
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 292,
+            "top": 85,
+            "width": 669,
+            "height": 1084
+          },
+          "visibleMagenta": 0
+        },
+        "elite_crypt_butcher": {
+          "sha256": "96b05f8df7dfdfaf09da488ccfe50b9d8351fc5388c0fdc3eff115636288683b",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1204828,
+            "partial": 53254,
+            "opaque": 314434
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 237,
+            "top": 85,
+            "width": 780,
+            "height": 1083
+          },
+          "visibleMagenta": 1
+        },
+        "barrow_chanter": {
+          "sha256": "105a111928ade32ee608f973a17fe87710c0449722e1f337a5d4ec6bca4c9956",
+          "width": 1254,
+          "height": 1254,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 1115677,
+            "partial": 81392,
+            "opaque": 375447
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 272,
+            "top": 85,
+            "width": 709,
+            "height": 1084
+          },
+          "visibleMagenta": 3
+        }
+      }
+    },
+    "companions": {
+      "expectedCount": 21,
+      "actualCount": 21,
+      "missing": [],
+      "unexpected": [],
+      "requiredSize": 1024,
+      "violations": [],
+      "files": {
+        "rotbark": {
+          "sha256": "adcc6c72b1697196d6e1060b39e6149dc4a16591ec1670e961770c32dbf8dd2f",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 817463,
+            "partial": 230618,
+            "opaque": 495
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 261,
+            "width": 790,
+            "height": 501
+          },
+          "visibleMagenta": 0
+        },
+        "cragmaw": {
+          "sha256": "1f282bd530f28bcd68637f9db465eb96cb16d4f48422a6b125488ecd3dfcb2cc",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 782307,
+            "partial": 265644,
+            "opaque": 625
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 218,
+            "width": 790,
+            "height": 587
+          },
+          "visibleMagenta": 10
+        },
+        "gillrot": {
+          "sha256": "94551210d68db7161a719ee7dd1f012c7d911b5906b8fc4efecb85efbc1902cb",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 767669,
+            "partial": 280476,
+            "opaque": 431
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 240,
+            "width": 789,
+            "height": 544
+          },
+          "visibleMagenta": 0
+        },
+        "witherling": {
+          "sha256": "7375589b6ff5ef26cc6f12edb3fc0acbbe7c66aebd66b19bddc98099e4f2a174",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 828915,
+            "partial": 219385,
+            "opaque": 276
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 235,
+            "top": 118,
+            "width": 554,
+            "height": 789
+          },
+          "visibleMagenta": 0
+        },
+        "sporewretch": {
+          "sha256": "670b2458861ceae8d209bbf9188eae4b644c0301fb9cfb2cfa5b4d5a871e5b52",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 664774,
+            "partial": 383494,
+            "opaque": 308
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 155,
+            "top": 117,
+            "width": 713,
+            "height": 788
+          },
+          "visibleMagenta": 0
+        },
+        "gloomrat": {
+          "sha256": "d01f3f8debae13f188dce9968f6c306399e0dc0f05062066fcdf1afeeaa0efb9",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 866822,
+            "partial": 180981,
+            "opaque": 773
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 216,
+            "top": 114,
+            "width": 592,
+            "height": 795
+          },
+          "visibleMagenta": 0
+        },
+        "slagfiend": {
+          "sha256": "6081347e4eda58ff0553d231cf63c3d5598133966fa340fb07d0dd9b538a2baf",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 699227,
+            "partial": 348448,
+            "opaque": 901
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 189,
+            "top": 116,
+            "width": 646,
+            "height": 790
+          },
+          "visibleMagenta": 0
+        },
+        "ashgut": {
+          "sha256": "1c972a5c0e8b3811eec12edea337bea43de5ae516136116d20778b3eb58716db",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 738653,
+            "partial": 309042,
+            "opaque": 881
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 158,
+            "top": 117,
+            "width": 708,
+            "height": 790
+          },
+          "visibleMagenta": 0
+        },
+        "quillshrike": {
+          "sha256": "fba83fd4e4035d803c936f8f8449fc9961e115c5a67967f59aef403ad406c376",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 836414,
+            "partial": 211281,
+            "opaque": 881
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 183,
+            "top": 117,
+            "width": 657,
+            "height": 789
+          },
+          "visibleMagenta": 0
+        },
+        "flayling": {
+          "sha256": "4989201cf28c80608e6b85813f358d5c4489f9be74187d0b6260d7e55202884a",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 875600,
+            "partial": 171973,
+            "opaque": 1003
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 116,
+            "top": 284,
+            "width": 790,
+            "height": 455
+          },
+          "visibleMagenta": 0
+        },
+        "gemwraith": {
+          "sha256": "3e4ef03407df086b0fd63653a407abd22b257e24301892f87b364d48e6f257c5",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 945057,
+            "partial": 101576,
+            "opaque": 1943
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 118,
+            "top": 131,
+            "width": 788,
+            "height": 761
+          },
+          "visibleMagenta": 0
+        },
+        "glyphmaw": {
+          "sha256": "2afb2feef557d940c2a1bb27653cdbb4bee489cdf122cf4e3180388faf781b26",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 722418,
+            "partial": 324890,
+            "opaque": 1268
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 118,
+            "width": 789,
+            "height": 787
+          },
+          "visibleMagenta": 1
+        },
+        "vellumoth": {
+          "sha256": "a0caaae2b69dc09588045ba7b51ab1101f5ee7f1b24338c5bbdbb57ed53623ab",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 745341,
+            "partial": 302733,
+            "opaque": 502
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 118,
+            "top": 119,
+            "width": 789,
+            "height": 785
+          },
+          "visibleMagenta": 0
+        },
+        "hemlock": {
+          "sha256": "9ea990ee8a62f7ce7badb2daec835af35f43333f1ec83c71bbda0f18ff640075",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 682818,
+            "partial": 364622,
+            "opaque": 1136
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 154,
+            "width": 789,
+            "height": 716
+          },
+          "visibleMagenta": 0
+        },
+        "ironmaw": {
+          "sha256": "2d6473675b207d03e1bac9eabfb14fcf119a262e00e234a81397eca847d3ec2f",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 700455,
+            "partial": 347413,
+            "opaque": 708
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 123,
+            "width": 790,
+            "height": 779
+          },
+          "visibleMagenta": 0
+        },
+        "carapace": {
+          "sha256": "bddef0aa59410aef6e5e4e212f71f65330896de1b81e77442e80aef09e54dfbf",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 863449,
+            "partial": 184102,
+            "opaque": 1025
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 280,
+            "width": 790,
+            "height": 462
+          },
+          "visibleMagenta": 0
+        },
+        "gorehound": {
+          "sha256": "0820236d981248a68a4e85f966c8a87b355439815bc08e630c078de28f12315e",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 810081,
+            "partial": 236733,
+            "opaque": 1762
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 117,
+            "top": 157,
+            "width": 790,
+            "height": 711
+          },
+          "visibleMagenta": 0
+        },
+        "carrionwing": {
+          "sha256": "38c85a391fb9eefb21b18e3970432b622200f45b482fb88b1f2ee1f88f1d4d2c",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 687547,
+            "partial": 359764,
+            "opaque": 1265
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 150,
+            "top": 117,
+            "width": 723,
+            "height": 790
+          },
+          "visibleMagenta": 0
+        },
+        "pyreling": {
+          "sha256": "a2bfbc1bcbeeec8c50b9b1616e43869db375d203d331cd2c496dfe7f203a85dc",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 768390,
+            "partial": 279937,
+            "opaque": 249
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 130,
+            "top": 118,
+            "width": 764,
+            "height": 788
+          },
+          "visibleMagenta": 0
+        },
+        "hoarspite": {
+          "sha256": "0ba867bb4b69fd12564bda57969bba7367d2f6bd02aa7758d20a4935c5af4381",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 782908,
+            "partial": 265578,
+            "opaque": 90
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 247,
+            "top": 117,
+            "width": 530,
+            "height": 790
+          },
+          "visibleMagenta": 0
+        },
+        "charnel": {
+          "sha256": "16466aa1b5847ed1bde5fe9972885116ff836e512d8e77d4a24de73b92611c10",
+          "width": 1024,
+          "height": 1024,
+          "channels": 4,
+          "hasAlpha": true,
+          "alpha": {
+            "transparent": 873516,
+            "partial": 172798,
+            "opaque": 2262
+          },
+          "corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bbox": {
+            "left": 243,
+            "top": 117,
+            "width": 537,
+            "height": 790
+          },
+          "visibleMagenta": 4
+        }
+      }
+    }
+  }
+}

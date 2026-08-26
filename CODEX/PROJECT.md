@@ -64,6 +64,12 @@ Für laufende Arbeit sind die jeweils neuesten bindend markierten Dokumente maß
 
 Viele Renderer-Assets werden über `import.meta.glob` automatisch an Content-IDs gebunden. Allgemeine Regel: Dateiname entspricht exakt der ID. Relevante Ziele liegen unter `apps/client/src/renderer/assets/**`.
 
+<!-- codex:2026-08-23T18:21:18+02:00 -->
+Für jede neue Bildlieferung gilt zusätzlich verbindlich `design/asset-anforderungen.md`. Runtime-
+Freisteller benötigen bereits aus der Erzeugung echtes Alpha; Chroma-Key, Schachbrettdarstellung und
+nachträgliches Ausschneiden sind kein zulässiger Grim-Reach-Produktionsweg mehr. Vor Generierung und
+Lieferung muss die exakte Content-ID als Dateiname feststehen.
+
 Beispiele:
 
 - Items: `assets/items/<itemId>.(webp|png)`

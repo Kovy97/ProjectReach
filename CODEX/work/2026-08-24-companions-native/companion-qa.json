@@ -1,0 +1,737 @@
+{
+  "rotbark": {
+    "normalization": {
+      "bbox": {
+        "left": 9,
+        "top": 232,
+        "width": 1238,
+        "height": 791
+      },
+      "subject": {
+        "width": 800,
+        "height": 511
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 817463,
+        "partial": 230618,
+        "opaque": 495
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 5616,
+      "visibleMagenta": 0
+    }
+  },
+  "cragmaw": {
+    "normalization": {
+      "bbox": {
+        "left": 41,
+        "top": 206,
+        "width": 1209,
+        "height": 902
+      },
+      "subject": {
+        "width": 800,
+        "height": 597
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 782307,
+        "partial": 265644,
+        "opaque": 625
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 5615,
+      "visibleMagenta": 10
+    }
+  },
+  "gillrot": {
+    "normalization": {
+      "bbox": {
+        "left": 0,
+        "top": 187,
+        "width": 1250,
+        "height": 865
+      },
+      "subject": {
+        "width": 800,
+        "height": 554
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 767669,
+        "partial": 280476,
+        "opaque": 431
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 6680,
+      "visibleMagenta": 0
+    }
+  },
+  "witherling": {
+    "normalization": {
+      "bbox": {
+        "left": 181,
+        "top": 17,
+        "width": 858,
+        "height": 1217
+      },
+      "subject": {
+        "width": 564,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 828915,
+        "partial": 219385,
+        "opaque": 276
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 15719,
+      "visibleMagenta": 0
+    }
+  },
+  "sporewretch": {
+    "normalization": {
+      "bbox": {
+        "left": 114,
+        "top": 67,
+        "width": 1047,
+        "height": 1155
+      },
+      "subject": {
+        "width": 725,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 664774,
+        "partial": 383494,
+        "opaque": 308
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 14394,
+      "visibleMagenta": 0
+    }
+  },
+  "gloomrat": {
+    "normalization": {
+      "bbox": {
+        "left": 156,
+        "top": 0,
+        "width": 944,
+        "height": 1254
+      },
+      "subject": {
+        "width": 602,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 866822,
+        "partial": 180981,
+        "opaque": 773
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 2691,
+      "visibleMagenta": 0
+    }
+  },
+  "slagfiend": {
+    "normalization": {
+      "bbox": {
+        "left": 139,
+        "top": 8,
+        "width": 1012,
+        "height": 1235
+      },
+      "subject": {
+        "width": 656,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 699227,
+        "partial": 348448,
+        "opaque": 901
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 2569,
+      "visibleMagenta": 0
+    }
+  },
+  "ashgut": {
+    "normalization": {
+      "bbox": {
+        "left": 117,
+        "top": 24,
+        "width": 1085,
+        "height": 1206
+      },
+      "subject": {
+        "width": 720,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 738653,
+        "partial": 309042,
+        "opaque": 881
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 1015,
+      "visibleMagenta": 0
+    }
+  },
+  "quillshrike": {
+    "normalization": {
+      "bbox": {
+        "left": 188,
+        "top": 29,
+        "width": 995,
+        "height": 1193
+      },
+      "subject": {
+        "width": 667,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 836414,
+        "partial": 211281,
+        "opaque": 881
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 625,
+      "visibleMagenta": 0
+    }
+  },
+  "flayling": {
+    "normalization": {
+      "bbox": {
+        "left": 47,
+        "top": 297,
+        "width": 1195,
+        "height": 694
+      },
+      "subject": {
+        "width": 800,
+        "height": 465
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 875600,
+        "partial": 171973,
+        "opaque": 1003
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 1373,
+      "visibleMagenta": 0
+    }
+  },
+  "gemwraith": {
+    "normalization": {
+      "bbox": {
+        "left": 30,
+        "top": 51,
+        "width": 1197,
+        "height": 1153
+      },
+      "subject": {
+        "width": 800,
+        "height": 771
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 945057,
+        "partial": 101576,
+        "opaque": 1943
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 284,
+      "visibleMagenta": 0
+    }
+  },
+  "glyphmaw": {
+    "normalization": {
+      "bbox": {
+        "left": 42,
+        "top": 34,
+        "width": 1174,
+        "height": 1170
+      },
+      "subject": {
+        "width": 800,
+        "height": 797
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 722418,
+        "partial": 324890,
+        "opaque": 1268
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 389,
+      "visibleMagenta": 1
+    }
+  },
+  "vellumoth": {
+    "normalization": {
+      "bbox": {
+        "left": 36,
+        "top": 6,
+        "width": 1203,
+        "height": 1195
+      },
+      "subject": {
+        "width": 800,
+        "height": 795
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 745341,
+        "partial": 302733,
+        "opaque": 502
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 8272,
+      "visibleMagenta": 0
+    }
+  },
+  "hemlock": {
+    "normalization": {
+      "bbox": {
+        "left": 62,
+        "top": 106,
+        "width": 1163,
+        "height": 1058
+      },
+      "subject": {
+        "width": 800,
+        "height": 728
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 682818,
+        "partial": 364622,
+        "opaque": 1136
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 319,
+      "visibleMagenta": 0
+    }
+  },
+  "ironmaw": {
+    "normalization": {
+      "bbox": {
+        "left": 22,
+        "top": 20,
+        "width": 1223,
+        "height": 1207
+      },
+      "subject": {
+        "width": 800,
+        "height": 790
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 700455,
+        "partial": 347413,
+        "opaque": 708
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 928,
+      "visibleMagenta": 0
+    }
+  },
+  "carapace": {
+    "normalization": {
+      "bbox": {
+        "left": 27,
+        "top": 262,
+        "width": 1202,
+        "height": 710
+      },
+      "subject": {
+        "width": 800,
+        "height": 473
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 863449,
+        "partial": 184102,
+        "opaque": 1025
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 803,
+      "visibleMagenta": 0
+    }
+  },
+  "gorehound": {
+    "normalization": {
+      "bbox": {
+        "left": 33,
+        "top": 76,
+        "width": 1219,
+        "height": 1100
+      },
+      "subject": {
+        "width": 800,
+        "height": 722
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 810081,
+        "partial": 236733,
+        "opaque": 1762
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 457,
+      "visibleMagenta": 0
+    }
+  },
+  "carrionwing": {
+    "normalization": {
+      "bbox": {
+        "left": 74,
+        "top": 16,
+        "width": 1130,
+        "height": 1234
+      },
+      "subject": {
+        "width": 733,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 687547,
+        "partial": 359764,
+        "opaque": 1265
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 433,
+      "visibleMagenta": 0
+    }
+  },
+  "pyreling": {
+    "normalization": {
+      "bbox": {
+        "left": 124,
+        "top": 23,
+        "width": 1125,
+        "height": 1163
+      },
+      "subject": {
+        "width": 774,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 768390,
+        "partial": 279937,
+        "opaque": 249
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 8654,
+      "visibleMagenta": 0
+    }
+  },
+  "hoarspite": {
+    "normalization": {
+      "bbox": {
+        "left": 208,
+        "top": 3,
+        "width": 840,
+        "height": 1245
+      },
+      "subject": {
+        "width": 540,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 782908,
+        "partial": 265578,
+        "opaque": 90
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 2595,
+      "visibleMagenta": 0
+    }
+  },
+  "charnel": {
+    "normalization": {
+      "bbox": {
+        "left": 213,
+        "top": 9,
+        "width": 845,
+        "height": 1236
+      },
+      "subject": {
+        "width": 547,
+        "height": 800
+      }
+    },
+    "stats": {
+      "meta": {
+        "width": 1024,
+        "height": 1024,
+        "channels": 4,
+        "hasAlpha": true
+      },
+      "alpha": {
+        "transparent": 873516,
+        "partial": 172798,
+        "opaque": 2262
+      },
+      "corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "saturatedLowAlpha": 945,
+      "visibleMagenta": 4
+    }
+  }
+}

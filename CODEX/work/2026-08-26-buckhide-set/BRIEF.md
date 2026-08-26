@@ -69,12 +69,80 @@ Nachbarstücke.
 
 # Teil B – Produktionsplan (Mira)
 
-_(füllt Mira)_
+<!-- codex:2026-08-26T21:05:00+02:00 -->
+
+## B1. Serienauflösung
+
+- Die fünf Rüstungsteile übernehmen Slotwinkel, mittige Freisteller-Komposition, Licht von oben
+  links und ruhige Sättigung der jeweiligen `cured_leather_*`-Referenz.
+- Gemeinsames Materialsignal: raues, dunkel rauchbraunes gehärtetes Hirschleder, kurze
+  graubraune Fellkante, matte Hirschhorn-Knebel und sichtbare Handnähte.
+- Hierarchie: gröber und wilder als frühes Kuhleder, aber eindeutig einfacher als das gegerbte
+  Bestandsleder; keine Metallplatten, Ziernieten, Edelsteine oder ornamentale Prägung.
+- Der Jagdbogen ist ein schlichter einteiliger Eschenholz-Selbstbogen. Seine Sehne bildet eine
+  gerade Linie zwischen beiden Nocken; beide Wurfarme bilden eine belastbare, gleichmäßige
+  C-Kurve ohne S-Knick, Bruch, Zusatzsehne oder asymmetrischen Totpunkt.
+
+## B2. Produktionsweg
+
+1. `buckhide_body` und `hunting_bow` als Material- und Formanker erzeugen.
+2. Beide Anker auf natives RGBA, Slotlesbarkeit bei 48 px und beim Bogen auf mechanisch
+   glaubwürdige Wurfarm-/Sehnengeometrie prüfen.
+3. Die vier übrigen Rüstungsteile mit demselben Materialkern erzeugen.
+4. Akzeptierte native Ausgaben unverändert nach `raw/` kopieren; Finals unter exakter ID nach
+   `fertig/` übernehmen. Nur transparente Außenluft und Canvasbelegung dürfen bei Bedarf ohne
+   Freistellung normiert werden.
+5. Einzelmessung und Kontaktbögen auf dunklem, hellem und grellrosa Untergrund erstellen.
+
+## B3. Abnahme-Gates
+
+- 1024 × 1024 PNG, RGBA mit tatsächlich genutztem Alpha 0–255
+- vollständig transparenter Außenrand; natürliche Teiltransparenz an Fellfasern
+- genau ein Slotmotiv pro Datei, kein Körper, keine Hand, kein Mannequin
+- klare Lesbarkeit des Slots bei 48 px und konsistente Serie bei 96 px
+- kein Leuchten, keine Partikel, keine Aura, kein Bodenkontakt und kein Schlagschatten
+- exakter Dateiname; keine Zusätze wie `final`, `v2` oder laufende Nummern
+- Bogen-Gate zusätzlich: durchgängiger Holzstab, zwei Nocken, genau eine straffe Sehne,
+  gleichmäßig funktionale Biegung und vollständige Form innerhalb des Canvas
 
 # Teil C – QA-Protokoll (Mira)
 
-_(füllt Mira)_
+<!-- codex:2026-08-26T21:28:00+02:00 -->
+
+| Content-ID | Final | Alpha | sichtbare Höhe | Slot-/Inhaltsprüfung |
+|---|---:|---:|---:|---|
+| `buckhide_helm` | 1024² RGBA | 0–255 | 79,1 % | Haube, Fellrand, ein Hornknebel; bestanden |
+| `buckhide_body` | 1024² RGBA | 0–255 | 88,3 % | ärmellos, drei Hornknebel, Schulterfell; bestanden |
+| `buckhide_legs` | 1024² RGBA | 0–255 | 91,4 % | Seitenlacing, doppelte Kniepolster; bestanden |
+| `buckhide_vambraces` | 1024² RGBA | 0–255 | 80,1 % | Paar, Kreuzriemen, Hornknebel; bestanden |
+| `buckhide_boots` | 1024² RGBA | 0–255 | 85,2 % | Paar, Fellumschlag, Hornknebel; bestanden |
+| `hunting_bow` | 1024² RGBA | 0–255 | 88,7 % | funktionale C-Kurve, zwei Nocken, eine Sehne; bestanden |
+
+Zusätzliche Prüfung:
+
+- alle Dateinamen entsprechen exakt den sechs Content-IDs
+- vollständiger transparenter Sicherheitsrand und natürliche Teiltransparenz an Fellfasern
+- keine deckende Fläche, kein gemaltes Transparenzmuster und kein Chroma-Key
+- kein Glühen, keine Partikel, keine Aura, kein Rahmen, kein Boden und kein Schlagschatten
+- heller, dunkler und grellrosa Kontaktbogen ohne auffälligen Farbsaum visuell bestanden
+- 48-px-Kontaktbogen: alle fünf Slots und der Bogen bleiben unterscheidbar
+- Referenzbogen: `hunting_bow` 88,7 % Höhe gegenüber `bronze_shortbow` 88,5 %
+- Referenz-Wams: gleiches Licht und Slotwinkel; Buckhide sichtbar gröber und weniger veredelt
+
+Verworfen: Der erste Beinling-Durchlauf besaß zwar einen RGBA-Kanal, trug aber eine deckende
+braune Hintergrundfläche. Er wurde nicht nachbearbeitet, nicht gekeyt und nicht in Staging
+übernommen; der Neuguss besitzt natives Alpha.
 
 # Teil D – Übergabe (Mira)
 
-_(füllt Mira)_
+<!-- codex:2026-08-26T21:28:00+02:00 -->
+
+- Finals: `CODEX/assets/buckhide-set-2026-08-26/fertig/`
+- native akzeptierte ImageGen-Ausgaben: `CODEX/assets/buckhide-set-2026-08-26/raw/`
+- QA und Kontaktbögen: `CODEX/assets/buckhide-set-2026-08-26/qa/`
+- verwendetes Promptset: `CODEX/work/2026-08-26-buckhide-set/PROMPTS-USED.md`
+- Erzeugungsweg: eingebautes ImageGen, Standardmodus, natives Alpha
+- Finalisierung: ausschließlich Größen-/Canvasnormierung unter Erhalt des erzeugten Alpha;
+  keine Freistellung und kein Keying
+- Renderer-Integration ausdrücklich nicht durchgeführt; Claude übernimmt WebP 640 px q92,
+  Produktionsablage und Archivierung nach Gegenprüfung
