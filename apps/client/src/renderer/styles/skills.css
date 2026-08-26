@@ -447,6 +447,13 @@
 .skillcard-drop {
   cursor: help;
 }
+/* Mengen-Badge am Loot-Chip (Chef-Test 26.08.: Kohlefloeze x2/x3/x4 sichtbar machen). */
+.skillcard-drop-qty {
+  margin-left: 2px;
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.9em;
+}
 /* Klickbarer Loot-Chip (Foraging entdeckt + Thieving): ganzer Chip öffnet den Item-Tooltip. */
 .skillcard-drop.clickable {
   cursor: pointer;

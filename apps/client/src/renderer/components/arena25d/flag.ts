@@ -42,7 +42,7 @@ import { isZoneArenaCapable } from "./assets";
  * Rollout kommt laut Spec erst zum Ship dieser Welle, dieser Schalter ist weiterhin reine
  * Chef-Testinstrumentierung.
  */
-const ARENA25D_PAUSED = false;
+const ARENA25D_PAUSED = true; // Chef 26.08.2026: Debug-Zugang (Hotkey + gr.arena25d) gekappt, bis das Feature wieder aufgegriffen wird.
 
 const STORAGE_KEY = "gr.arena25d";
 

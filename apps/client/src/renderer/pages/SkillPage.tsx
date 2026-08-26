@@ -1068,7 +1068,16 @@ const ActionCard = memo(function ActionCard({
               {/* codex:2026-08-01T12:18:00+02:00 — Feste Zweizeilen-Hierarchie: Label oben,
                   Ergebnis darunter. Damit bleibt die Ausgabe auch bei langen Übersetzungen lesbar. */}
               <span className="skillcard-produces-label">{t("skill.produces")}:</span>
-              <span className="skillcard-produces-item"><ItemChip itemId={out.itemId} showName /></span>
+              <span className="skillcard-produces-item">
+                <ItemChip itemId={out.itemId} showName />
+                {/* Chef-Test 26.08.2026: Kohlefloeze geben 2/3/4 Kohle je Abbau, das sah man nirgends. */}
+                {(() => {
+                  const r = action.loot.find((l) => l.itemId === out.itemId);
+                  return r && r.max > 1 ? (
+                    <span className="skillcard-drop-qty">×{r.min === r.max ? r.max : `${r.min}–${r.max}`}</span>
+                  ) : null;
+                })()}
+              </span>
             </div>
           )
         )}
@@ -1331,6 +1340,10 @@ function LootChip({
       }}
     >
       <ItemChip itemId={roll.itemId} />
+      {/* Chef-Test 26.08.2026: Kohlefloeze geben 2/3/4 Kohle, das sah man nirgends. Menge > 1 als "x2". */}
+      {roll.max > 1 && (
+        <span className="skillcard-drop-qty">×{roll.min === roll.max ? roll.max : `${roll.min}–${roll.max}`}</span>
+      )}
       {" "}{Math.round(roll.chance * 100)}%
       {item && <span className="item-chip-name" style={{ fontSize: "0.85em", marginLeft: 3 }}>{tr(item.name)}</span>}
     </span>

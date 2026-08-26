@@ -406,6 +406,19 @@ you came from with a Back button.
 `.btn-iron--sm`. Der volle Spieler-Vorschlag (Handwerkskette, Skill-Seiten, Browser-Wiki) liegt als
 Prototyp in design/wiki-prototyp-2026-08-25.html, Chef: nur diese zwei Teile.*
 
+**Kohleflöze zeigen ihre Menge (Chef-Test 26.08.):** DE: An den neuen Flözen war nicht zu sehen,
+dass sie 2, 3 oder 4 Kohle geben. Loot-Chips auf Skill-Karten tragen jetzt „×2" usw., sobald ein
+Abbau mehr als ein Stück liefert. / EN: Loot chips on skill cards now show the quantity when an
+action yields more than one item.
+
+**Auftragsmarke (Belohnungsladen, Chef-GO 02):** DE: Neues Verbrauchsgut: würfelt den aktuellen
+Slayer-Auftrag gratis neu, ohne Punkte und ohne Serienbruch; ohne Auftrag nicht benutzbar. / EN:
+The Contract Token rerolls your current Slayer task for free.
+
+*Dev-Notiz: `ItemDef.consumable: { kind: "slayerReroll" }`, `rerollTask` in slayer.ts, kein
+SAVE-Bump; Tooltip-Wirkungszeile und eigene Meldung `alert.consumeNoSlayerTask`. Der 2,5D-Arena-
+Debugzugang (Hotkey + `gr.arena25d`) ist per `ARENA25D_PAUSED = true` gekappt (Chef 26.08.).*
+
 *Dev-Notiz: `luckyStrike` bleibt als Engine-Kind erhalten, aber ein Content-Guard
 (`dead-effects.test.ts`) verbietet seine Nutzung, solange kein Monster Gold trägt (heute 0/110).
 Rune-Doku `design/runen-tier-iv.html` §8 nachgezogen.*
