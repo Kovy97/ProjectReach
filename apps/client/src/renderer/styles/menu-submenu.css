@@ -42,7 +42,7 @@
 .subscreen-back {
   position: fixed;
   z-index: 30;
-  top: clamp(14px, 2.2vh, 24px);
+  top: 18px;
   left: clamp(14px, 2vw, 26px);
 }
 
@@ -106,15 +106,22 @@
 }
 
 /* Load Game: Logo klein oben links statt zentriert über dem Titel (Vorlage Mira, kompaktere
-   Kopfzeile — das große Dossier braucht mehr vertikalen Raum als New Game). */
+   Kopfzeile — das große Dossier braucht mehr vertikalen Raum als New Game).
+   Bugfund (Chef-Prüfrunde 26.08.): der Zurück-Knopf (`.subscreen-back`, fixed, top:18px) saß
+   GENAU über diesem Logo (Logo-`top:0` ignoriert die Header-Polsterung, weil `position:absolute`
+   sich an der Padding-Box orientiert) — der Knopf lag mit `z-index:30` über dem Header (`z-index:3`)
+   und verdeckte die obere Logo-Hälfte. Fix: Logo rutscht unter den Knopf (`top: 70px`), der Header
+   bekommt `min-height`, damit das nun tiefer sitzende + größere Logo nicht in `.subscreen-main`
+   hineinragt. */
 .subscreen-header--compact {
   padding-top: clamp(14px, 2.4vh, 26px);
+  min-height: clamp(200px, 24vh, 240px);
 }
 .subscreen-header--compact img {
   position: absolute;
   left: clamp(14px, 2vw, 26px);
-  top: 0;
-  width: clamp(140px, 11vw, 200px);
+  top: 70px;
+  width: clamp(170px, 14vw, 260px);
   margin: 0;
 }
 

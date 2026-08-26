@@ -156,7 +156,9 @@
   height: 100vh;
   overflow: hidden;
   display: grid;
-  grid-template-columns: clamp(74px, 6.4vw, 100px) 1fr;
+  /* Spalte breit genug für das längste ungebrochene Schrittleisten-Wort (Bugfund RU: "НАЧАЛЬНЫЙ"
+     brach sonst mitten im Wort um) — s. `.creation-step-rail span`. */
+  grid-template-columns: clamp(96px, 7.2vw, 116px) 1fr;
   grid-template-rows: auto 1fr;
   background:
     linear-gradient(rgba(13, 14, 14, 0.96), rgba(10, 11, 11, 0.985)),
@@ -238,11 +240,16 @@
 }
 .creation-step-rail span {
   font-family: "Cinzel", var(--font-head);
-  font-size: clamp(8.5px, 0.7vw, 10.5px);
+  font-size: clamp(9px, 0.7vw, 11px);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  max-width: 68px;
-  overflow-wrap: break-word;
+  max-width: 92px;
+  /* Bugfund (Chef-Prüfrunde 26.08., RU): "НАЧАЛЬНЫЙ СТИЛЬ" brach mitten im ersten Wort um
+     ("НАЧАЛЬН / ЫЙ СТИЛЬ") — `break-word` durfte JEDE Stelle trennen. Nur an Wortgrenzen umbrechen,
+     bis zu drei Zeilen sind erlaubt (s. Spaltenbreite oben). */
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: manual;
 }
 .creation-step-rail button.active,
 .creation-step-rail button:hover {
@@ -409,7 +416,12 @@
   content: "✓";
   position: absolute;
   top: 8px;
-  right: 10px;
+  /* Bugfund (Screenshot-Check Chef-Prüfrunde 26.08.): am rechten Kartenrand kollidierte das
+     Häkchen mit dem Namenstext, sobald eine Übersetzung die Textspalte fast ausfüllt (RU
+     "БЛИЖНИЙ" reicht bis dicht an den Kartenrand) — der Name sitzt IMMER am linken Rand der
+     Textspalte, während die Bild-Spalte links textfrei bleibt. Links statt rechts verankert ist
+     das für jede Sprache kollisionsfrei. */
+  left: 8px;
   color: var(--gold);
   font-size: 15px;
   font-weight: 700;
@@ -438,9 +450,12 @@
   color: var(--gold);
 }
 .creation-style-desc {
-  font-size: clamp(11px, 0.85vw, 13px);
+  font-size: clamp(12px, 0.9vw, 14px);
   color: var(--muted);
   line-height: 1.35;
+  /* Fließtext bleibt auch bei knapper Höhe sichtbar (s. Media-Query unten) statt sich zu
+     verstecken — die Karte wächst mit, statt zu clippen. */
+  overflow-wrap: anywhere;
 }
 
 .creation-style-hint {
@@ -487,7 +502,10 @@
   .creation-step { padding: 8px 0; }
   .creation-portrait-grid { max-height: 156px; }
   .creation-style-card { padding: 9px; gap: 8px; }
-  .creation-style-desc { display: none; }
+  /* Bugfund (Chef-Prüfrunde 26.08.): die Beschreibung war hier komplett ausgeblendet — Karten
+     zeigten nur Bild+Name. Sie bleibt jetzt sichtbar (etwas kompakter), die Karte wächst mit statt
+     zu clippen (`.creation-form` scrollt ohnehin). */
+  .creation-style-desc { font-size: 11.5px; line-height: 1.25; }
   .creation-start { min-height: 58px; margin-top: 8px; padding: 10px 20px; }
 }
 
