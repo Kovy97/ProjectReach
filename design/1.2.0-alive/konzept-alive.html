@@ -1,0 +1,154 @@
+<title>Alive 1.2.0 Konzept</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #0f1112; --panel: #1a1c1c; --panel-2: #222423; --line: rgba(212, 182, 109, 0.22);
+    --line-strong: rgba(212, 182, 109, 0.5); --text: #e6dcc0; --muted: #8f8a7c; --gold: #d4b66d;
+    --gold-soft: rgba(212, 182, 109, 0.12); --ember: #a3352a; --ember-soft: rgba(163, 53, 42, 0.16);
+    --moss: #6f9a5e; --moss-soft: rgba(111, 154, 94, 0.14);
+    --display: "Cinzel", "Times New Roman", serif; --body: "Spectral", Georgia, serif; --mono: "IBM Plex Mono", Consolas, monospace;
+  }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+  .page { max-width: 1040px; margin: 0 auto; padding: 48px 28px 96px; }
+  .eyebrow { font-family: var(--display); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 4vw, 44px); letter-spacing: 0.06em; margin: 8px 0 14px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 22px; letter-spacing: 0.08em; margin: 0 0 14px; color: var(--gold); text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: 0.06em; margin: 0 0 6px; }
+  p { margin: 0 0 12px; max-width: 68ch; }
+  .lead { font-size: 19px; max-width: 62ch; color: var(--text); }
+  .muted { color: var(--muted); }
+  section { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .theses { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 18px; }
+  .thesis { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; }
+  .thesis h3 { color: var(--text); }
+  .thesis p { font-size: 15.5px; color: var(--muted); margin: 0; max-width: none; }
+  .core { display: grid; gap: 14px; }
+  .sys { display: grid; grid-template-columns: 64px 1fr; gap: 0 18px; background: var(--panel); border: 1px solid var(--line); padding: 18px 20px; }
+  .sys .key { font-family: var(--display); font-size: 22px; color: var(--gold); letter-spacing: 0.04em; }
+  .sys .effort { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .sys h3 { font-size: 18px; margin-bottom: 8px; }
+  .sys .feel { font-style: italic; color: var(--text); margin-bottom: 10px; }
+  .sys .what { font-size: 15px; color: var(--muted); margin: 0; max-width: none; }
+  .weeks { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+  .week { background: var(--panel); border: 1px solid var(--line); padding: 12px; min-height: 120px; }
+  .week .n { font-family: var(--mono); font-size: 12px; color: var(--gold); }
+  .week p { font-size: 14px; margin: 6px 0 0; color: var(--text); max-width: none; }
+  .caps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; }
+  .cap { background: var(--panel-2); border: 1px solid var(--line); padding: 14px 16px; }
+  .cap .num { font-family: var(--mono); font-size: 26px; font-variant-numeric: tabular-nums; color: var(--gold); }
+  .cap .lbl { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .tablewrap { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 10px 12px; border-bottom: 1px solid var(--line-strong); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--text); }
+  td.dim { color: var(--muted); }
+  .decisions { display: grid; gap: 10px; margin-top: 12px; }
+  .dec { display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: start; background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; }
+  .dec .id { font-family: var(--display); color: var(--gold); font-size: 16px; letter-spacing: 0.06em; }
+  .dec .q { margin: 0; max-width: none; }
+  .dec .q b { font-weight: 600; }
+  .dec .why { font-size: 14px; color: var(--muted); margin: 4px 0 0; max-width: none; }
+  .chip { font-family: var(--display); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 10px; border: 1px solid var(--line-strong); color: var(--gold); background: var(--gold-soft); white-space: nowrap; }
+  .chip.later { color: var(--muted); border-color: var(--line); background: transparent; }
+  .chip.block { color: var(--text); border-color: var(--ember); background: var(--ember-soft); }
+  .day { background: var(--panel); border-left: 3px solid var(--gold); padding: 18px 22px; margin-top: 14px; font-style: italic; max-width: 72ch; }
+  .day p { max-width: none; }
+  .sources { font-size: 14px; color: var(--muted); }
+  .sources code { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  @media (max-width: 760px) { .weeks { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dec { grid-template-columns: 44px 1fr; } .dec .chip { grid-column: 2; justify-self: start; } .sys { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page">
+  <div class="eyebrow">Grim Reach · Update 1.2.0 · Synthese vom 26. August 2026</div>
+  <h1>Alive</h1>
+  <p class="lead">Vier Perspektiven haben unabhängig voneinander dieselben drei Bausteine erfunden: ein Gesicht an jedem Zettel, ein Ereignislog des Wächters und eine Uhr statt einer Simulation. Die Kreuzkritik hat die Doppelungen eingedampft und die Ökonomie gedeckelt. Übrig bleibt ein Kern aus fünf Systemen, der in vier Wochen mit drei parallelen Agenten baubar ist, ohne ein einziges neues Bild zu brauchen.</p>
+  <p class="sources">Quellen: <code>design/1.2.0-alive/brainstorm-lore.md</code>, <code>brainstorm-aufgaben.md</code>, <code>brainstorm-weltsysteme.md</code>, <code>brainstorm-erlebnis.md</code> und die vier <code>kritik-*.md</code>. Diese Seite als Text: <code>konzept-alive.md</code>.</p>
+
+  <section>
+    <h2>Der gemeinsame Nenner</h2>
+    <div class="theses">
+      <div class="thesis"><h3>Jemand hat gemerkt, dass du weg warst</h3><p>Der stärkste Moment im Idle-Spiel ist das Wieder-Hinschauen. Die Welt erzählt nach hinten, was geschah, und kündigt nach vorn an, was kommt.</p></div>
+      <div class="thesis"><h3>Jeder Zettel hat ein Gesicht</h3><p>Sieben Porträts liegen fertig im Spiel: Wächter, Brenna, Urga, Voss, Mux, Shairi, Eske. Dailies werden Bitten echter Leute, Briefe kommen von ihnen, in New Haven stehen sie an ihren Gebäuden.</p></div>
+      <div class="thesis"><h3>Eine Uhr, keine Simulation</h3><p>Alles, was ohne den Spieler passiert, wird aus Kalendertag und Welt-Seed abgeleitet, wie der Wochentags-Segen. Offline und live bit-identisch, kein Echtzeitzwang.</p></div>
+      <div class="thesis"><h3>Kein zweiter Ungelesen-Kosmos</h3><p>Genau zwei Eingänge: der Wächter-Bericht beim Wiederkommen und ein freiwilliges Chronik-Fach ohne Zähler. Alles andere hängt sich an bestehende Flächen.</p></div>
+      <div class="thesis"><h3>Ein Tagesbudget, ein Wochenbudget</h3><p>Naiv addiert hätten die Vorschläge 434 statt 180 Tokens je Woche gezahlt. Deshalb 26 Tokens am Tag, 55 aus drei Wochenzetteln, und Lagen, Kopfgelder und Post zahlen nie Tokens.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Der Alive-Kern: fünf Systeme, die zusammen leben</h2>
+    <div class="core">
+      <div class="sys"><div><div class="key">K1</div><div class="effort">M · 6 Tage</div></div><div><h3>Weltuhr und Zonenlagen</h3><p class="feel">Die Zonenkarte sieht jeden Tag anders aus: Nebel über der Küste, Blutfährte im Schwarzdorn. Eine Weltzeile in der Kopfleiste sagt, was heute los ist.</p><p class="what">Welt-Seed, Tages- und Wochenstempel, Tageswechsel-Hook im Tick. Je Zone eine Lage pro Tag aus einem kanon-sicheren Pool (zwei bis drei erlaubte Lagen je Zone, von Lore kuratiert), Effekte höchstens 1,15 und nie unter Grundwert, ein Lage-Badge je Karte, das mit Elite und Spuren rotiert statt zu stapeln.</p></div></div>
+      <div class="sys"><div><div class="key">K2</div><div class="effort">M · 4,5 Tage</div></div><div><h3>Chronik und Rückkehr-Bericht</h3><p class="feel">Morgens sagt der Wächter in drei Zeilen, was die Nacht war: die Welt, du, New Haven. Wer will, blättert sieben Tage zurück.</p><p class="what">Ein einziger Ereignis-Datensatz (sieben Tage, zwölf Zeilen je Tag, Wächter-Stimme aus Bausteinen), gefüllt bei Tageswechsel, fertigem Bau, Elite-Kill, Quest-Claim und Brief. Das Offline-Popup wird dreiteilig, die Chronik ein Reiter auf der Quest-Seite ohne Ungelesen-Zähler.</p></div></div>
+      <div class="sys"><div><div class="key">K3</div><div class="effort">S–M · 3,5 Tage</div></div><div><h3>Absender-Schicht und Raben-Post</h3><p class="feel">Brenna will Köpfe, weil die Geier dreist werden; Eske dankt für Proviant; nach dem ersten Champion liegt ein Brief am Tor. Bank und Laden zeigen Voss und Mux mit Namen.</p><p class="what">Absender je Daily über eine Ableitungsregel (Kills zu Brenna, Barren zu Urga, Gerichte zu Eske, Sammelgut zu Shairi, Lieferzettel zu Voss, Handel zu Mux), Bitte- und Dank-Texte, Erinnerungszeilen nach Meilensteinen. Briefe laufen über das bestehende Postfach; ein Klick reiht die passende Aktion ein. Gemeinsamer Tagesdeckel für Briefe, Text-Pass über die Phantom-Bauern der 60 Dailies.</p></div></div>
+      <div class="sys"><div><div class="key">K4</div><div class="effort">M · 5 Tage</div></div><div><h3>Aufgaben-Takt</h3><p class="feel">Drei von sechs Zetteln wählen, einen gratis tauschen, abends den Tag abschließen. Fertige Zettel werden um Mitternacht bezahlt, ein Ruhetag pro Woche kühlt die Glut nur ab. Drei große Wochenzettel.</p><p class="what">Drei aus sechs plus Tausch, Tagesabschluss mit drei Tokens, Auto-Claim am Tageswechsel, Glut statt Streak, Launenkarte auf Platz sechs mit der Zonenlage als Vorgeschichte, drei Wochenzettel-Slots (Erzählen, Liefern, Jagen oder Wachsen) für 55 Tokens, neue Zettelarten liefern, rüsten, streifen.</p></div></div>
+      <div class="sys"><div><div class="key">K5</div><div class="effort">M · 6 Tage</div></div><div><h3>New Haven lebt</h3><p class="feel">Am Zentralhaus hängt das Tagesblatt: wer heute da ist, was das Lager braucht, was passiert ist. Donnerstags steht Mux' Karren am Handelsposten; wer die Lieferung bringt, öffnet den großen Markt.</p><p class="what">Besucher als Porträt-Chips an den Gebäuden, Bedarfe als Lieferkarten aus dem Tagesbudget, Vorfälle aus Ereignisketten. Die Karawane kommt nach Fahrplan aus der Weltuhr, die Lieferung vergrößert den Markt (Kauf mindestens doppelter Verkaufswert, ein Unikat je Halt, nie kampf-gegatete Ware). Dazu die vier fertigen New-Haven-Quests aus dem Juli und eine kleine Bau-Zeremonie.</p></div></div>
+    </div>
+    <p class="muted" style="margin-top:14px">Summe rund 25 Agent-Tage plus Übersetzungen (2) und Kontrolleur (3): etwa 30. Neue Bilder: keine verpflichtend, alle Porträts, Zonenbilder und Embleme sind vorhanden.</p>
+  </section>
+
+  <section>
+    <h2>Reihenfolge: sechs Wochen</h2>
+    <p>Die Reihenfolge folgt den Abhängigkeiten. Die Weltuhr und die Absender-Schicht haben keine Vorbedingung und starten parallel; alle Save-Felder aller fünf Systeme kommen in einem einzigen Bump 83 auf 84, damit nur einmal migriert wird.</p>
+    <div class="weeks">
+      <div class="week"><div class="n">Woche 1</div><p>K1 Weltuhr mit dem einen Save-Bump (logic-dev). Parallel K3-Texte (lore-dev) und K3-Content: Absender, Namens-Labels, Phantom-Bauern.</p></div>
+      <div class="week"><div class="n">Woche 2</div><p>K2 Chronik und Rückkehr-Bericht (logic + ui), parallel K4-Engine: drei aus sechs, Auto-Claim, Wochenstempel.</p></div>
+      <div class="week"><div class="n">Woche 3</div><p>K5 New Haven (Tagesblatt, Karawane), parallel K4-UI und K3-UI (Absender auf den Karten, Briefe).</p></div>
+      <div class="week"><div class="n">Woche 4</div><p>Integration, Weltzeile, Overlays in fünf Sprachen, Kontrolleur-Sweep, Chef-Test.</p></div>
+      <div class="week"><div class="n">Woche 5</div><p>Puffer und Beifang aus 1.1.0: Schutz-Items tragen statt besitzen, echte Zone auf der Fortsetzen-Karte.</p></div>
+      <div class="week"><div class="n">Woche 6</div><p>Kompat-Vault, Testbericht, Steam-Post, Upload auf Kommando.</p></div>
+    </div>
+    <p class="muted" style="margin-top:14px">Technischer Befund, der alles trägt: Der Tageswechsel der Dailies läuft heute nur im Client (Mitternachts-Timer der Quest-Seite). Alles, was über Nacht passieren soll, braucht den Tageswechsel-Hook im Tick, sonst laufen Offline und Live auseinander.</p>
+  </section>
+
+  <section>
+    <h2>Ökonomie-Deckel</h2>
+    <div class="caps">
+      <div class="cap"><div class="num">26</div><div class="lbl">Tokens am Tag als Deckel; Kern 7 / 13 / 16 je Level-Band. Die Bitte des Tages ist Platz sechs, kein siebter.</div></div>
+      <div class="cap"><div class="num">55</div><div class="lbl">Tokens je Woche aus genau drei Wochenzetteln (12 / 18 / 25). Gerücht, Karawane, Feuerwache sind Angebote für diese Slots.</div></div>
+      <div class="cap"><div class="num">≤ 1,30</div><div class="lbl">Gesamtfaktor je Art aus Lage und Segen; gleiche Art stapelt nicht, nie unter Grundwert.</div></div>
+      <div class="cap"><div class="num">167 / 237</div><div class="lbl">Endgame-Woche Kern / Maximum, plus 30 Prozent gegen heute, weil der Karawanenmarkt als Senke dazukommt.</div></div>
+      <div class="cap"><div class="num">0</div><div class="lbl">Tokens aus Lagen, Kopfgeldern und Post. Post-Anhänge nur an Meilenstein-Briefen.</div></div>
+    </div>
+    <p class="muted" style="margin-top:14px">Guard-Test: Monte-Carlo über vier Wochen je Level-Band; Tokens je Woche im Endgame in [150, 240], in der ersten Woche in [40, 80].</p>
+  </section>
+
+  <section>
+    <h2>Bewusst nicht in 1.2.0</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Idee</th><th>Warum nicht jetzt</th><th>Wohin</th></tr>
+      <tr><td>Auftragsbuch als eigene Seite mit Reitern</td><td class="dim">Kollidiert mit dem Chronik-Reiter um die Quest-Seite, eng bei 1366×768. Absender direkt auf den Karten reicht.</td><td>1.3, falls die Quest-Seite neu geschnitten wird</td></tr>
+      <tr><td>Kopfgeldtafel mit wandernden Gezeichneten</td><td class="dim">Dupliziert Slayer-Aufträge, Eliten und das zurückgebaute Kopfgeld-Brett.</td><td>1.2.x als Ziel von Brennas Stufe „Blutjagd"</td></tr>
+      <tr><td>Gunst-Stufen mit Regalen, Titeln, Porträtrahmen</td><td class="dim">Vierte Progressionsachse, zwölf neue Bilder. 1.2.0 führt nur den Zähler.</td><td>1.3</td></tr>
+      <tr><td>Gerücht der Woche</td><td class="dim">Textlastig in sieben Sprachen, leicht zu verpassen.</td><td>1.2.x als Erzähl-Slot der Wochenzettel</td></tr>
+      <tr><td>Nacht, Zeit-Tönung, Wetter</td><td class="dim">Chef-Entscheid „nur Vignette" vom 24. Juli.</td><td>Nur mit ausdrücklichem GO</td></tr>
+      <tr><td>Monde und Feste, Zonen-Gedächtnis</td><td class="dim">Verpassbarer Kalender bzw. schwer lesbare Rückkopplung, Badge-Inflation.</td><td>1.3</td></tr>
+      <tr><td>Deko-Siedler aus Spieler-Porträts, Begleiter als Briefträger</td><td class="dim">Kanon: Zwillinge des Namenlosen auf dem Platz; die Post bringen Raben.</td><td>Gestrichen</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Deine Entscheidungen</h2>
+    <p>D1 bis D5 blockieren Woche 1. Alles Weitere kann während des Baus fallen.</p>
+    <div class="decisions">
+      <div class="dec"><div class="id">D1</div><div><p class="q"><b>Echte Uhr.</b> Lagen, Fahrplan und Tageswechsel hängen an der lokalen Uhr wie der Wochentags-Segen?</p><p class="why">Ist verdrahtet, offline-fair, und „die Welt bewegt sich, auch wenn keiner hinschaut" ist mit einer Spieluhr wörtlich falsch.</p></div><span class="chip block">Empfehlung: Ja</span></div>
+      <div class="dec"><div class="id">D2</div><div><p class="q"><b>Namen statt Amtstitel.</b> Bank zeigt „Voss" statt „Die Verwalterin", Laden „Mux" statt „Der Händler", die Sechs überall mit Namen?</p><p class="why">Zwei Label-Keys mal sieben Sprachen; ohne Namen bleibt jede Bitte anonym.</p></div><span class="chip block">Empfehlung: Ja</span></div>
+      <div class="dec"><div class="id">D3</div><div><p class="q"><b>Karawane nach Fahrplan.</b> Sie kommt jede Woche, die Lieferung vergrößert den Markt?</p><p class="why">„Kommt nur, wenn ich liefere" stellt die Welt still, sobald der Spieler pausiert.</p></div><span class="chip block">Empfehlung: Ja</span></div>
+      <div class="dec"><div class="id">D4</div><div><p class="q"><b>Gunst nur als Zähler.</b> In 1.2.0 Erinnerungszeilen und ein kleiner Mux-Rabatt, Regale und Titel später?</p><p class="why">Sonst eine vierte Progressionsachse mit zwölf Bildern in einem Update, das ohne neue Bilder auskommt.</p></div><span class="chip block">Empfehlung: Ja</span></div>
+      <div class="dec"><div class="id">D5</div><div><p class="q"><b>Lagen dürfen nicht wehtun.</b> Nie unter Grundwert bei XP und Gold, Härte nur über Gegnerwerte?</p><p class="why">Wer morgens stellt und abends erntet, darf nie bestraft werden.</p></div><span class="chip block">Empfehlung: Ja</span></div>
+      <div class="dec"><div class="id">D6</div><div><p class="q"><b>Chronik-Ort.</b> Reiter auf der Quest-Seite ohne Ungelesen-Zähler statt eines Sidebar-Fachs?</p><p class="why">Drei Perspektiven haben dieses Fach unabhängig erfunden; es darf nur einmal gebaut werden.</p></div><span class="chip">Empfehlung: Ja</span></div>
+      <div class="dec"><div class="id">D7</div><div><p class="q"><b>Brennas Stufen.</b> Jetzt im Design festlegen, damit Wochenzettel und spätere Kopfgelder sie kennen, Bau in 1.2.x?</p><p class="why">Vertagt aus 1.1.0; die Stufe „Blutjagd" wäre der Platz für die Gezeichneten.</p></div><span class="chip later">Design jetzt, Bau später</span></div>
+      <div class="dec"><div class="id">D8</div><div><p class="q"><b>Eine echte Entscheidung.</b> Die Halbmarke (Tarrik: zu Brenna oder Siedler) als Pilot mit einem kleinen `excludes`-Feld und einem Tarrik-Porträt von Mira?</p><p class="why">Nur wenn Mira nach den Start-Charakteren Luft hat; sonst bleibt die Entscheidung erzählt.</p></div><span class="chip later">Ja, wenn Mira Zeit hat</span></div>
+      <div class="dec"><div class="id">D9</div><div><p class="q"><b>Mira-Wünsche, optional.</b> Maren als Siedlerin, Tarrik, sechs Siegel-Embleme für die Absender.</p><p class="why">Nichts davon blockiert den Kern; alles verschönert ihn.</p></div><span class="chip later">Optional</span></div>
+      <div class="dec"><div class="id">D10</div><div><p class="q"><b>Beifang aus 1.1.0 in Woche 5.</b> Schutz-Items tragen statt besitzen, echte Zone auf der Fortsetzen-Karte, Paritäts-Entscheidungen E2 bis E5?</p><p class="why">Schutz-Items passen zum Save-Bump; der Rest nach Bedarf.</p></div><span class="chip later">Schutz-Items ja</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ein Tag im Leben, nur mit dem Kern</h2>
+    <div class="day">
+      <p>Morgens meldet der Wächter Nebel über der Küste, einen Brief von Mux und den fertigen Vorratsspeicher. Auf der Tafel bittet Shairi um Sammelgut, Brenna um Köpfe aus dem Schwarzdorn, wo heute Blutfährte liegt; der Spieler nimmt drei Zettel, tauscht einen, stellt die Warteschlange und geht.</p>
+      <p>Mittags ein Blick: Die Chronik notiert den ersten Kopf und Eskes Dank für den Proviant. Abends ist der Tag geschlossen, der Wochenzettel „Karawanenlieferung" steht bei zwei von drei, und am Donnerstag wartet Mux' Karren mit einer Kiste, die es nur gibt, wenn geliefert wurde. Nichts blinkt, nichts verfällt, und morgen ist die Welt wieder eine andere.</p>
+    </div>
+  </section>
+</div>
