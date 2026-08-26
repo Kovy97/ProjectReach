@@ -254,7 +254,7 @@ export function CharacterCreation(): JSX.Element {
           </section>
 
           <section
-            className="creation-step"
+            className="creation-step creation-step--portrait"
             ref={(el) => { sectionRefs.current.portrait = el; }}
           >
             {/* Chef 26.08.2026: Schrittmarke auf Höhe des Abschnitts, reiner Indikator (nicht klickbar). */}
@@ -264,13 +264,12 @@ export function CharacterCreation(): JSX.Element {
             </div>
             <label className="creation-step-label">{t("creation.portrait.label")}</label>
 
-            <div className="creation-filter-row">
+            {/* Chef 27.08.2026: kein Scrollen auf dem Charakter-Screen → Rasse, Gruppe und Variante in EINER Leiste. */}
+            <div className="creation-filter-bar">
               <span className="creation-filter-label">{t("creation.race")}</span>
               {/* Einzige Rasse zum Release — bewusst kein Platzhalter für weitere Rassen. */}
               <span className="btn-iron btn-iron--sm is-active">{t("creation.race.human")}</span>
-            </div>
-
-            <div className="creation-filter-row">
+              <span className="creation-filter-sep" aria-hidden="true" />
               <button
                 type="button"
                 className={`btn-iron btn-iron--sm${group === "combat" ? " is-active" : ""}`}
@@ -285,9 +284,7 @@ export function CharacterCreation(): JSX.Element {
               >
                 {t("creation.group.profession")}
               </button>
-            </div>
-
-            <div className="creation-filter-row">
+              <span className="creation-filter-sep" aria-hidden="true" />
               <button
                 type="button"
                 className={`btn-iron btn-iron--sm${sex === "m" ? " is-active" : ""}`}
@@ -302,12 +299,15 @@ export function CharacterCreation(): JSX.Element {
               >
                 {t("creation.sex.f")}
               </button>
+              {/* „Alle anzeigen" wandert in die Leiste, damit unter dem Raster keine Zeile verloren geht. */}
+              <button type="button" className="btn-iron btn-iron--sm creation-portrait-more-btn" onClick={() => setShowGallery(true)}>
+                {t("creation.portrait.showAll")}
+              </button>
             </div>
 
-            <HumanArchetypeGrid group={group} sex={sex} value={portraitId} onSelect={selectArchetype} />
-            <button type="button" className="btn-iron btn-iron--sm creation-portrait-more-btn" onClick={() => setShowGallery(true)}>
-              {t("creation.portrait.showAll")}
-            </button>
+            <div className="creation-portrait-area">
+              <HumanArchetypeGrid group={group} sex={sex} value={portraitId} onSelect={selectArchetype} />
+            </div>
           </section>
 
           <section

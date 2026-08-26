@@ -99,8 +99,10 @@
   left: 50%;
   bottom: -2%;
   transform: translateX(-50%);
-  width: min(90%, 480px);
-  height: 92%;
+  /* Chef 27.08.2026: „Der Char ist immer noch so klein" → keine 480-px-Deckelung mehr; die Figur
+     nimmt 94 % der Pane-Breite bzw. -Höhe ein (was zuerst begrenzt) und wächst mit dem Fenster. */
+  width: 94%;
+  height: 94%;
   object-fit: contain;
   object-position: bottom;
   filter: drop-shadow(0 22px 26px rgba(0, 0, 0, 0.85));
@@ -369,9 +371,9 @@
   display: grid;
   /* Chef 26.08.2026: „Die Bilder sind in der Preview zu klein, skalieren nicht mit der Auflösung."
      → Kartenbreite und Rasterhöhe wachsen mit dem Viewport (vw/vh) statt bei 120 px zu enden. */
-  grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 9.5vw, 220px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 11.5vw, 270px), 1fr));
   gap: clamp(8px, 0.7vw, 14px);
-  max-height: clamp(240px, 40vh, 560px);
+  max-height: clamp(280px, 46vh, 660px);
   overflow-y: auto;
   padding: 3px 3px 10px;
 }
@@ -661,3 +663,108 @@
 
 /* Der „Alle anzeigen"-Knopf soll in der Raster-Spalte nicht auf Vollbreite gestreckt werden. */
 .creation-step .creation-portrait-more-btn { justify-self: start; }
+
+/* ─── Chef 27.08.2026: „Der Char-Screen soll niemals scrollen, anders Platz machen." ──────────
+   Das Formular ist eine feste Spalte ohne Scrollcontainer: Name und Startstil nehmen ihre
+   natürliche Höhe, der Porträt-Abschnitt bekommt den gesamten Rest. Das Raster zeigt die 15
+   Archetypen in zwei Reihen à acht Karten; die Kartengröße ergibt sich aus Breite und Resthöhe,
+   das Bild passt sich per `contain` ein. Nichts scrollt, nichts wird abgeschnitten. */
+.creation-form {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: clamp(10px, 1.4vh, 20px);
+  padding-bottom: clamp(10px, 1.4vh, 20px);
+}
+.creation-form > .creation-step { flex: 0 0 auto; padding: clamp(8px, 1.1vh, 14px) 0; }
+.creation-form > .creation-step--portrait {
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+.creation-step--portrait > .creation-step-marker { grid-row: 1 / span 3; }
+.creation-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: clamp(6px, 0.9vh, 12px);
+}
+.creation-filter-sep { width: 1px; height: 22px; background: rgba(186, 149, 85, 0.35); margin: 0 6px; }
+.creation-portrait-area {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: clamp(6px, 0.8vh, 10px);
+}
+.creation-portrait-area .creation-portrait-more-btn { flex: 0 0 auto; align-self: flex-start; }
+.creation-step .creation-portrait-grid,
+.creation-portrait-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(6px, 0.6vw, 12px);
+  padding: 2px;
+}
+.creation-portrait-cell { min-height: 0; display: flex; flex-direction: column; }
+.creation-portrait-cell-img { flex: 1 1 auto; min-height: 0; aspect-ratio: auto; }
+.creation-portrait-cell-img img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
+.creation-portrait-cell-name {
+  flex: 0 0 auto;
+  padding: 3px 3px 5px;
+  font-size: clamp(9px, 0.72vw, 13px);
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: unset;
+  display: block;
+}
+.creation-style-card { padding: clamp(6px, 0.8vh, 10px); gap: 8px; }
+.creation-style-desc { font-size: clamp(10.5px, 0.75vw, 13px); line-height: 1.25; }
+.creation-start { min-height: clamp(52px, 6vh, 72px); margin-top: clamp(6px, 0.8vh, 12px); }
+
+/* Nachbesserung 27.08.: Die Karten brachten über das Bild ihre natürliche Höhe ein, das Raster
+   schrumpfte nicht und ragte in „Startstil". Basis 0 statt auto und absolut positionierte Bilder
+   nehmen dem Inhalt jede Eigenhöhe; die Fläche ergibt sich nur noch aus dem Restplatz. */
+.creation-portrait-area { overflow: hidden; }
+.creation-step .creation-portrait-grid,
+.creation-portrait-grid { flex: 1 1 0; height: auto; }
+.creation-portrait-cell { overflow: hidden; }
+.creation-portrait-cell-img { position: relative; flex: 1 1 0; min-height: 0; height: auto; aspect-ratio: auto; }
+.creation-portrait-cell-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
+
+.creation-form > .creation-step--portrait { flex: 1 1 0; }
+
+/* Die Sektion richtet Kinder oben aus (align-items: start); der Porträt-Bereich muss seine 1fr-Zeile aber füllen. */
+.creation-form > .creation-step--portrait { align-items: stretch; }
+.creation-step--portrait > .creation-step-marker { align-self: start; }
+.creation-step--portrait > .creation-portrait-area { align-self: stretch; }
+
+/* Platz fürs Raster: „Alle anzeigen" sitzt rechts in der Filterleiste; Name-, Stil- und Startknopf
+   bleiben kompakt, damit die Porträts den Rest bekommen (Chef 27.08.: nie scrollen, Char groß). */
+.creation-filter-bar .creation-portrait-more-btn { margin-left: auto; }
+.creation-form > .creation-step { padding: clamp(6px, 0.9vh, 12px) 0; }
+.creation-step-label { margin-bottom: clamp(6px, 0.8vh, 12px); }
+.creation-input { min-height: clamp(40px, 4.6vh, 56px); }
+.creation-style-card { padding: clamp(5px, 0.7vh, 10px) clamp(8px, 0.8vw, 12px); }
+.creation-style-icon, .creation-style-icon-img { width: clamp(40px, 4.4vh, 64px); height: clamp(40px, 4.4vh, 64px); }
+.creation-style-desc { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.creation-style-hint { margin: clamp(4px, 0.6vh, 10px) 0 0; font-size: clamp(10px, 0.75vw, 13px); }
+@media (max-height: 900px) {
+  .creation-style-desc { -webkit-line-clamp: 1; }
+  .creation-heading { padding-top: 10px; padding-bottom: 6px; }
+  .creation-heading h1 { font-size: 24px; }
+}
+
+@media (max-height: 800px) {
+  .creation-style-hint { display: none; }
+  .creation-heading span { display: none; }
+  .creation-heading { padding-top: 8px; padding-bottom: 4px; }
+  .creation-heading h1 { font-size: 22px; }
+  .creation-start { min-height: 48px; }
+}
