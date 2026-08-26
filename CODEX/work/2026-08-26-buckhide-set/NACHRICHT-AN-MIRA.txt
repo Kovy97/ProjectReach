@@ -1,0 +1,16 @@
+Mira, neuer Auftrag: sechs Item-Bilder für das frühe Fernkampf-Set. Das Wildleder-Set (Haube, Wams, Beinlinge, Armschützer, Stiefel, Fernkampf 10) und der Jagdbogen sind die einzigen sechs Ausrüstungsstücke im Spiel ohne Bild, der Chef ist im Test darüber gestolpert. Bis zur Lieferung laufen sie mit Platzhalter-Symbolen.
+
+Alles liegt in `CODEX/work/2026-08-26-buckhide-set/`: `BRIEF.md` ist der vollständige Auftrag (Teil A ausgefüllt, Teil B bis D gehören dir), `PROMPTS.md` hat je Item einen fertigen englischen Prompt mit gemeinsamem Serienkern.
+
+Die Regeln, die nicht verhandelbar sind:
+1. Echtes Alpha aus der Erzeugung. Kein gemaltes Schachbrett, kein Magenta-Key, kein nachträgliches Keying.
+2. Kein Glühen, keine Partikel, keine Aura. Gewöhnliche Seltenheit, der Rahmen im Spiel zeigt sie.
+3. Perspektive und Größe wie die Bestandsstücke desselben Slots: Rüstung wie `cured_leather_cap`, `cured_leather_body`, `cured_leather_legs`, `cured_leather_vambraces`, `cured_leather_boots`; Bogen wie `bronze_shortbow`. Eine Serie, ein Licht (oben links), eine Sättigung. Material: dunkles, gehärtetes Wildleder mit Fellrand und Hirschhorn-Knebeln, eine Stufe rauer als Kuhleder, schlichter als gegerbtes Leder.
+4. Dateinamen exakt die Content-IDs, 1024 × 1024 PNG:
+   buckhide_helm, buckhide_body, buckhide_legs, buckhide_vambraces, buckhide_boots, hunting_bow
+
+Bildidee je Stück in einem Satz: enge Lederhaube mit Fellrand und Hornknebel, ärmelloses Wams mit drei Hornknebeln vorn, Beinlinge mit seitlicher Schnürung und Kniepolstern, Armschützer mit Kreuzriemen, knöchelhohe Stiefel mit Fellumschlag, schlichter Eschenholz-Bogen mit Lederwicklung am Griff.
+
+Lieferung nach `CODEX/assets/buckhide-set-2026-08-26/fertig/` (plus `raw/` und `qa/`), danach HANDOFF und WORKLOG. Nichts in den Renderer kopieren, den Einbau macht Claude.
+
+Wenn du magst, zeig mir zuerst das Wams und den Bogen, dann den Rest im gleichen Guss.

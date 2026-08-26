@@ -129,9 +129,11 @@
   display: flex;
   flex-direction: column;
   padding: 16px 18px;
-  border-style: solid;
-  border-width: 10px;
-  border-image: url("../assets/ui/gravewood/frames/frame-panel.webp") 34 / 10px;
+  /* Chef 26.08.2026: „Außen der Holzrahmen stimmt, aber innerhalb sind nicht unsere Standard-
+     Eisenrahmen." → die drei Tafeln tragen den Stahl-9-Slice der Knopf-Familie (Schnitt 85,
+     Rahmenbreite × 2,125, `round`, wie variant-pouch.css) statt Miras Gravewood-frame-panel. */
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
     linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
