@@ -1,87 +1,64 @@
 Grim Reach 1.1.0 - Patch #2: The Slayer's Ledger
 
-Hunters, this is the biggest update since launch: the Slayer system got a full pass (tasks that actually challenge you, a shop worth saving for, a new cape and a contract token), dungeons can be queued like monsters, enchanting grows by fourteen Tier IV runes and rune stacking, cooking yields portions, farming plans its next crop, the reward shop opens chapter by chapter with real keepsakes, and dozens of interface fixes from your reports landed. Full list below.
+Hunters,
 
-COMBAT, SLAYER AND DUNGEONS
+this is the biggest update since launch, and most of it comes straight from your reviews, reports and screenshots. Over the last weeks I focused on four things: making the Slayer system worth your time (tasks that challenge you, a shop worth saving for, gear that serves every combat style), letting you play the way an idle game should be played (dungeons and buildings queue up like everything else, the queue tells you what level you will have when it is done), closing the gap between melee, ranged and magic (45 new uniques, aligned runes, new tonics), and giving the game a proper face: a new main menu, new save and character screens, a rebuilt item wiki, a rebuilt bestiary and one consistent button family everywhere. On top of that come fourteen endgame runes, cooking that yields portions, farming that plans its next crop, a reward shop that opens chapter by chapter, and a long list of fixes. Saves stay compatible as always.
+
+NEW
+
+- Dungeons can be queued like monsters: 1x, 25x, 50x or endless runs. A run counts when the final boss falls, and the dungeon restarts at wave 1 until the target is met, online and offline.
+- Ranged and magic catch up: 45 new uniques (bows, wands, staves, foci, leather and cloth) now drop from monsters that only dropped melee gear, all following the rare drop rule with an effect. The Hunter rune now gives dexterity and luck, all stat runes share the same Runecrafting levels, two new tonics (Windstride, Wardveil) and a magic speed suffix arrive.
+- Fourteen new runes from Runecrafting 85 to 95, including the first jewellery runes, and runes can be stacked.
+- The reward shop opens in six chapter-gated shelves with 47 offers: one keepsake per chapter, six idle riders, a consumable, plus ten late-zone daily tasks.
+- The Contract Token rerolls your current Slayer task for free.
+- The Hunter's Cape (Slayer 30, 150 points) fills the gap in the Slayer shop: +15 % damage against an unwounded target.
+- Fight now or queue up straight from the Slayer task, with the remaining count preset.
+- A Zones button during combat opens the enemy list without ending the fight, so more battles can be queued.
+- New Haven has a build queue: line up what builds next, costs are paid when a build starts.
+- Farming: pick what a plot sows next, the plan waits with a warning if you lack the seed, and "Plant all" shows the cost before you commit.
+- Three new coal seams at Mining 50, 75 and 90 yield 2, 3 and 4 coal per swing, and the cards say so.
+- Each queued action shows the skill level you will have when it finishes.
+- The item wiki is a three panel workbench: sources on the left, the item in the middle, everything it is used for on the right, with a summary band, an Open recipe button and a Back button that remembers where you came from.
+- A new main menu: painted war table backdrop, command list, and your last save as a dossier with a big Continue.
+- New Game, Load Game and character creation are full screens now, with fade transitions and a Back to Menu button.
+- Gear you cannot equip yet shows a small red prohibition mark on its cell.
+
+IMPROVEMENTS
 
 - Dropped gear now always beats crafted gear of its tier and carries an effect; drop rates are lower to compensate.
-- Sixteen dishes now yield two to four portions per cook, and each combat style has dishes with a matching bonus.
-- Every piece of gear shows its enchantment slots, filled and empty, and runes say what they fit.
-- Searching in a gear stack no longer closes the box.
-- Fight now or queue up straight from the slayer task, with the remaining count preset.
-- A Zones button during combat opens the enemy list without ending the fight, so more battles can be queued.
-- The removed from queue notice no longer returns on every load. *Dev-Notiz (Spieler-Report 1.0.2): `lastQueueSkip` wird vom Panel im State quittiert; die Persistenz prüft den Grund beim Laden gegen das echte Gate neu (`canFightMonster`). Neuer Test `queue-skip-load.test.ts`.*
-- Starting a fight from the bestiary no longer drops the running order. *Dev-Notiz (Chef-Report): `startCombat` stellt endliche Aufträge selbst zurück, damit jeder Aufrufer sicher ist. Nur endliche Ziele (Sims starten Kämpfe direkt, ihre Queue würde sonst wachsen). `queue-forced-fight.test.ts`.*
-- Gear you cannot equip yet shows a small red prohibition mark in the bottom left of its cell.
-- Four items and the Tallyman rune promised gold from kills, which no longer exists; they now grant loot chance (items) or every fifth hit +50 % (rune).
-- Slayer buttons now use the page's own button family, and the Slayer shop is sorted by level with the level shown on every card.
-- The Slayer target in the header wraps instead of being cut off.
 - Slayer tasks no longer hand out trivial targets: the tower window reaches at most 3 levels below you, a thin pool stretches upward first, and a tower that lags behind your combat level yields world tasks instead.
-- Slayer armor now carries real armor or evasion values plus a slayer effect (bounty, giant slayer, heal on kill); two dead offers are gone and the draught unlocks at Slayer 20.
-- The back-to-fight button now uses the proper button family.
-- Dungeon cards now list boss drops and show the item type on every discovered entry.
-- The dead defence skill boost on 51 items is replaced by constitution (jewelry, capes) or a higher class value (armor, shields).
-- The update notice button, the dungeon Enter buttons and the fight buttons on monster cards now use the iron frame, the new standard button.
-- The Hunter's Cape (Slayer 30, 150 points) fills the gap in the Slayer shop: +15 % damage against an unwounded target.
-- The Contract Token rerolls your current Slayer task for free.
-- Dungeons can be queued like monsters (1×, 25×, 50×, ∞ runs); a run counts when the final boss falls and the dungeon restarts at wave 1 until the target is met, online and offline.
-- Taking gear off with a full inventory is blocked with a message instead of overflowing.
-- The slayer shop shows rarity as the familiar coloured glow behind the item instead of a thin coloured border.
-- Slayer gear now serves all three combat styles equally.
-
-RUNES AND ENCHANTING
-
-- Suffixes and fixed attributes now match the armour class.
-- Fourteen new runes from Runecrafting 85 to 95, including the first jewellery runes.
-- The enchanting table draws runes from storage as well.
-- The item wiki and the variant pouch sit on the game's dark leather surface; the pouch is as wide as the wiki and lists every enchanted version with a large image, one line per rune, the roll, the requirements and its actions.
-- Rune of Wasting now +35 %.
-- The reward shop now sells one keepsake per chapter shelf, six idle riders and a consumable, all below rune power.
-
-CRAFTING, SKILLS AND FARMING
-
-- The token shop now has six chapter-gated shelves with 47 offers, plus ten late-zone daily tasks.
-- Pick what a plot sows next; the plan waits with a warning if you lack the seed.
-- Three new coal seams at 50, 75 and 90 yield 2, 3 and 4 coal per swing.
-- Queue up what builds next in New Haven. Costs are paid when a build starts, not when it is planned.
-- Queue names no longer wrap one letter per line.
-- Smithing time now scales with bars used, so XP per bar is consistent. Smithing only.
-- Each queued action shows the skill level you will have when it finishes.
-- Queue names no longer hyphenate.
-- The first item of each smithing tier now unlocks with its bar; items spread across the tier.
-- Queue tooltips no longer vanish under the cursor.
-- Easy dailies now stop appearing above a total level of 150 to 300, so veterans only get tasks of their tier.
-- Loot chips on skill cards now show the quantity when an action yields more than one item.
-- Five mid-tier kill dailies stop at total level 600.
-- One button family across the whole game: iron frame for primary actions, the smaller Citadel frame for secondary ones, red text for dangerous ones; quantity buttons included.
-- New Haven build cards and building info cards are larger with more readable text.
-
-SHOPS AND REWARDS
-
-- Achievement category emblems are now painted icons.
-- The reward shop scrolls again, and shelves you have not unlocked stay hidden until their chapter.
-
-INVENTORY, BANK, WINDOWS AND UI
-
-- The iron frames no longer stretch half a corner bracket along the edge.
-- The item wiki is large and readable, with Source and Used-for as card grids.
-- In windowed mode the bank shows six full rows instead of three, and the sidebar fits or signals that it scrolls.
-- The sidebar scroll hint now stays at the bottom edge and fades once you reach the end.
+- Slayer armour carries real armour or evasion values plus a slayer effect (bounty, giant slayer, heal on kill), serves all three combat styles equally, and two dead offers are gone. The draught unlocks at Slayer 20, the vambraces recipe uses a floor 3 material.
+- The Slayer shop is sorted by level, shows the level on every card and rarity as the familiar coloured glow.
+- Sixteen dishes now yield two to four portions per cook, and each combat style has dishes with a matching bonus. Late game feasts call for venison or wyvern haunch instead of beef.
+- Suffixes and fixed attributes now match the armour class: plate, leather and cloth roll what fits them.
+- Four items and the Tallyman rune promised gold from kills, which no longer exists; they now grant loot chance or every fifth hit +50 %. The dead defence boost on 51 items is replaced by constitution or a higher class value. Rune of Wasting now +35 %.
+- Every piece of gear shows its enchantment slots, filled and empty, runes say what they fit, and the enchanting table draws runes from storage as well.
+- The variant pouch is as wide as the wiki and lists every enchanted version with a large image, one line per rune, the roll, the requirements and its actions; wiki and pouch sit on the game's dark leather surface.
+- Dungeon cards list boss drops and show the item type on every discovered entry.
+- The bestiary is rebuilt: uniform cards with their zone backdrop, larger stats, loot sorted by chance and grouped.
+- One button family across the whole game: iron frame for primary actions, the smaller Citadel frame for secondary ones, red text for dangerous ones. The options screen looks the same in the main menu and in game.
+- In windowed mode the bank shows six full rows instead of three, the sidebar fits or signals that it scrolls, and the activity panel holds both progress bars.
+- Smithing time now scales with bars used, so XP per bar is consistent, and the first item of each smithing tier unlocks with its bar.
+- The queue is readable: names no longer wrap or hyphenate, tooltips stay put, the Slayer target in the header wraps instead of being cut off.
+- Easy dailies stop appearing above a total level of 150 to 300 and five mid-tier kill dailies stop at 600, so veterans only get tasks of their tier.
+- Boosted skill levels show the real level first and the boosted one in green. Loot chips on skill cards show the quantity when an action yields more than one item.
+- New Haven build cards and building info cards are larger with more readable text. Achievement category emblems are painted icons.
+- The buckhide set and the hunting bow have proper art.
 - The inventory grid shows exactly as many empty cells as you have free capacity.
-- The options screen now looks the same in the main menu and in game: one iron-frame button family, toggles instead of checkboxes, language chips and the back button included.
-- Recipe sources now show an "Open recipe" button, and the wiki remembers where you came from with a Back button.
-- Bestiary cards are uniform, stats larger, loot sorted by chance and grouped, buttons in the game's button family.
-- The item wiki is now a three panel workbench: sources, the item, and its uses, with a summary band and a recipe button.
-- New Game, Load Game and character creation are full screens with fade transitions, a Back to Menu button and the game's steel frames.
-- The buckhide set and the hunting bow have proper art, bestiary cards show their zone backdrop, and the item wiki panels use the steel frame.
 
-OTHER FIXES
+FIXES
 
+- The "requirement not met" notice no longer returns on every load.
+- Starting a fight from the bestiary no longer drops the running order.
+- Taking gear off with a full inventory is blocked with a message instead of overflowing.
+- Searching in a gear stack no longer closes the box.
 - The thieving loot box no longer scrolls next to four empty crates.
-- The activity panel now holds both progress bars and uses the free space at smaller widths.
-- Late game feasts now call for venison or wyvern haunch instead of beef.
-- The main menu is now a war table: painted backdrop, command list on the left, the last save as a dossier with a big Continue on the right.
+- The reward shop scrolls again, and shelves you have not unlocked stay hidden until their chapter.
+- The iron frames no longer stretch half a corner bracket along the edge.
+- The sidebar scroll hint stays at the bottom edge and fades once you reach the end.
 
-Saves stay compatible as always. Thank you for every report, review and screenshot; keep them coming.
+WHAT COMES NEXT
 
-(62 entries, generated 2026-08-26 from design/patchnotes.md; title is a proposal)
+The next big update is 1.2.0, the "Alive" update. It takes on the quest system: a reworked quest flow, proper dailies, more quest NPCs across the Reach, and more life in the world. More on that soon.
+
+Thank you for every report, review and screenshot; keep them coming.
