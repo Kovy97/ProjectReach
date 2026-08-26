@@ -107,6 +107,17 @@ describe("content integrity: alle Item-Referenzen existieren", () => {
     // (sie gaten über `slayer`, eine eigene Fortschritts-Achse), die strikte Leiter dieser Funktion
     // vergleicht aber nur defence/ranged — dieselbe Klasse Falsch-Positiv wie bei den Elite-Uniques.
     "slayer_helm", "slayer_greaves", "slayer_vambraces",
+    // Stil-Parität 4a (Chef-GO 26.08.2026, design/stil-paritaet-2026-08-26.md §4a A3/A4): 45
+    // Spiegel-Uniques an Monstern, die bisher nur Nahkampf-Ausrüstung droppten — dieselbe
+    // Rare-Drop-Philosophie-Standing-Rule wie oben. Leder (11):
+    "goat_hide_jerkin", "rogue_hide_vambraces", "skirmisher_hide_jerkin", "butchers_hide_boots",
+    "ratpelt_cap", "chitinweave_leggings", "thornwolf_pelt_hood", "mossbound_treads",
+    "cryptstalker_vambraces", "butchers_hide_leggings", "roc_feather_cap",
+    // Stil-Parität 4a: Stoff (16) — die ersten Stoff-Drops von normalen Monstern überhaupt.
+    "shamans_cowl", "imp_hide_slippers", "goblin_ragged_robe", "felmagician_robe",
+    "stormcaller_sandals", "warlock_handwraps", "ashtyrant_cinder_robe", "emberweave_cowl",
+    "chanters_skirt", "rootling_sap_sandals", "treemonster_bark_sandals", "gravechant_vestment",
+    "hexed_bone_gloves", "drowned_choir_mitre", "emberheart_robe", "hexer_frostweave_gloves",
   ]);
 
   function expectStrictLadder(field: "armorRating" | "evasionRating" | "wardCapacity" | "blockChance", reqField: "defence" | "ranged" | "magic", slots: readonly string[]) {
@@ -330,7 +341,9 @@ describe("content integrity: alle Item-Referenzen existieren", () => {
     expect(offenders).toEqual([]);
     // Bestands-Detektor: heute 44 getaggte Buff-Consumables (15 food / 8 regeneration / 10 offense /
     // 4 defense / 2 attribute / 5 utility). Neue Buff-Items erhöhen die Zahl — bewusst mitziehen.
-    expect(tagged).toBe(44);
+    // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A7): +2 (tonic_windstride "attribute", tonic_wardveil
+    // "defense") → 46.
+    expect(tagged).toBe(46);
   });
 });
 

@@ -486,7 +486,7 @@ alle nach der Rare-Drop-Regel mit Effekt. Die Jäger-Rune gibt jetzt Geschick un
 Glück, alle Stat-Runen kommen auf denselben Runenkunst-Stufen (15/38/62), die Bewahrende Rune
 schützt Stoff wie Ägide Platte. Zwei neue Tonika (Windschritt: Geschick, Schleierhaut: Ward), der tote
 Schmuck-Suffix „des Bollwerks" gibt Konstitution, neuer Magie-Suffix „des Zephyrs" (Tempo). Arkan-
-Surge, Dämmerflossen-Jäger-Eintopf und Zauberwächter-Bisque kommen früher. Bilder folgen von Mira. /
+Surge, Dämmerflossen-Jäger-Eintopf und Zauberwächter-Bisque kommen früher. Alle 47 Bilder von Mira. /
 EN: 45 mirror uniques for ranged and magic (bows, wands, staves, foci, leather and cloth) drop from
 monsters that only dropped melee gear, the Hunter rune and rune levels are aligned, two new tonics
 and a magic speed suffix arrive.

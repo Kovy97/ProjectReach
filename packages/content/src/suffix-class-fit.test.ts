@@ -58,7 +58,9 @@ describe("Suffix-Klassen-Trennung (#p14): Pool-Tags", () => {
     // erstmals armorRating (+2 armor_plate), slayer_vambraces evasionRating (+1 armor_leather) —
     // vorher trugen alle drei KEINEN Trinity-Wert (der Chef-Befund "die Rüstungen sind zu
     // schlecht" war exakt das: 0 Mitigation/Ausweichen). 176→178, 84→85.
-    expect(counts).toEqual({ armor_plate: 178, armor_leather: 85, armor_cloth: 57 });
+    // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A3/A4): 11 neue Leder- + 16 neue Stoff-Drops
+    // (design/stil-paritaet-2026-08-26.md) — 85→96, 57→73.
+    expect(counts).toEqual({ armor_plate: 178, armor_leather: 96, armor_cloth: 73 });
   });
 
   it("jedes Rüstungsteil mit Klassen-Tag behält zusätzlich das allgemeine armor-Tag (Runen-Gate)", () => {

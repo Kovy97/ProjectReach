@@ -55,6 +55,14 @@ const CRAFT_VALUE_EXEMPT = new Set<ItemId>([
   "dreadfang_glaive", // #p8: Req bleibt, Zonen-Anker Turm F4 (attack 70, "dazwischen" gg. runite_spear)
   "abyssal_devourer_fang", // #p8: Req bleibt, Zonen-Anker Turm F5 (attack 90, "dazwischen" gg. titanium_dagger)
   "greytooth_mantle", // reine bonus.lifesteal-Signatur ohne modifiers/skillBoost (s.o.)
+  // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A2): felmagician_rod ist ein Szepter — die einzige
+  // "Craft-Familie" `weapon|scepter` hat nur zwei Einzelstücke im ganzen Katalog (frost_scepter@8,
+  // stormcaller_rod@50, s. Kommentar "Szepter-Linie fehlte in Spec §3.3" bei den Scepter-Items).
+  // Bei Req 25 wäre der automatisch ermittelte "nächste Tier" stormcaller_rod (Req 50) — laut
+  // Dokument bewusst auf der Stab-Kurve gebaut (Req-30-Bracket, "gleich" gegen steel/blacksteel),
+  // nicht auf der eigenen, viel zu dünnen Szepter-Leiter (derselbe Randfall wie dreadfang_glaive
+  // oben, nur bei einer anderen Waffenfamilie).
+  "felmagician_rod",
 ]);
 
 function reqLevel(item: ItemDef): number {

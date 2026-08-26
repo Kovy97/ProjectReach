@@ -193,6 +193,28 @@ const LADDER_BASELINE = new Set([
   // (Zonen-Drop, jetzt DPS 4.05..4.07 statt 4.03) überholt knapp das Elite-Unique blackantler_warbow
   // (dessen eigener Wert unverändert blieb, coreStatScore ignoriert dessen Precision-Feld).
   "antler_warbow->blackantler_warbow",
+  // Stil-Parität 4a (Chef-GO 26.08.2026, design/stil-paritaet-2026-08-26.md §4a A1–A4): dieselbe
+  // Rare-Drop-Philosophie wie oben — Kernwert/value der 45 Spiegel-Uniques ist am Craft-Gegenstück
+  // der NÄCHSTEN Familienstufe verankert (Requirement bleibt die eigene, niedrigere Stufe), darum
+  // überholen sie in der reinen Level-Nachbarschaft der eigenen Waffen-/Rüstungs-Familie absichtlich
+  // die nächste Craft-Sprosse ("Drop lohnt sich trotzdem"-Muster).
+  "bullhorn_longbow->steel_longbow",
+  "mossbound_longbow->runite_longbow",
+  "bonewrought_longbow->stagstride_longbow",
+  "drovers_shortbow->iron_shortbow",
+  "marrow_shortbow->stolen_shortbow",
+  "emberglass_shortbow->runite_shortbow",
+  "rogue_hide_vambraces->hardened_leather_vambraces",
+  "cryptstalker_vambraces->warhide_vambraces",
+  "impfire_wand->steel_wand",
+  "felglass_orb->aether_orb",
+  "emberweave_cowl->arcane_cowl",
+  "drowned_choir_mitre->godspark_mitre",
+  "gravechant_vestment->godspark_vestment",
+  // crossbower_warbow ist ein longbow (Req ranged 24) auf der Stab-artigen "next tier"-Regel
+  // gebaut (Craft-Gegenstück Req ~40) — überholt darum den Zonen-Drop antler_warbow (Lv80), dessen
+  // eigener value-Wert schon vor 4a ungewöhnlich niedrig lag (s. Rezension-#8-Pin oben).
+  "crossbower_warbow->antler_warbow",
 ]);
 
 /** Akzeptierte Drop-Level-Gaps ("monster:item") — Zonen-Uniques bewusst unter Beute-Klasse. */

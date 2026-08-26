@@ -219,10 +219,23 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     // CL30/ranged erreicht jetzt sogar den 0.5-Deckel exakt (0.4963→0.5, ein neu angehobener
     // Fernkampf-Drop trägt genug lck) — Sonderfall unten separat behandelt. CL30/magic steigt
     // ebenfalls (0.4363→0.4871, ein neu angehobener Fokus-/Stab-Drop trägt mehr lck).
+    // Re-Messung 2026-08-26 (Stil-Parität 4a, Chef-GO 26.08.2026, design/stil-paritaet-2026-08-26.md
+    // §4a A1–A4/A7): der "crit"-Score (scoreContribution) ist STIL-UNABHÄNGIG (dex·0.4+lck·0.6) und
+    // gilt für ALLE Nicht-Waffen-Slots gleich (nur die Waffe selbst wird per weaponStyle gefiltert,
+    // s. buildBisCharacter §2) — der Voll-Stack-Builder trägt für melee/ranged/magic denselben
+    // Rüstungs-/Schmuck-/Buff-Satz. Die 11 neuen A3-Leder-Teile (u.a. ratpelt_cap dex1,
+    // skirmisher_hide_jerkin dex1) UND das neue Attribut-Tonikum tonic_windstride (dex 6, "attribute"-
+    // Kategorie, schlägt tonic_bloodrage[str 6] im dex/lck-Score) sind ab CL 30 requirement-legal und
+    // heben den attribut-Score für ALLE DREI Stile gleichermaßen — CL30/melee erreicht dadurch jetzt
+    // ebenfalls den 0.5-Deckel exakt (0.4920→0.5), CL30/magic ebenso (0.4871→0.5). Kein Melee-Item
+    // wurde geändert; die Bewegung ist eine Konsequenz des stilneutralen Nicht-Waffen-Scorings, exakt
+    // wie schon bei den vorigen Re-Messungen oben (Rezension #8 hob umgekehrt melee/ranged/magic
+    // gemeinsam). Nahkampf-KIT bleibt unverändert an sich — nur der bereits vorher fast erreichte
+    // Deckel bindet jetzt zusätzlich exakt.
     const CL30_CRIT_CHANCE: Record<WeaponStyle, number> = {
-      melee: 0.492,
+      melee: CRIT_CHANCE_CAP,
       ranged: CRIT_CHANCE_CAP,
-      magic: 0.4871,
+      magic: CRIT_CHANCE_CAP,
     };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
@@ -273,7 +286,12 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
     // (Fernkampf-Trinity-Zutat, #p11 Regel 3) — der Voll-Stack-Builder sammelt das mit ein (allBuffs:
     // true, kein Level-Gate in der Hülle) und hebt CL 30 leicht an: 0.3912 → 0.3943. CL 60/90 bleiben
     // am 0.40-Deckel (Clamp, unverändert).
-    const expected: Record<number, number> = { 30: 0.3943, 60: DODGE_CAP, 90: DODGE_CAP };
+    // Re-Messung 2026-08-26 (Stil-Parität 4a, Chef-GO 26.08.2026, §4a A1–A4/A7): derselbe stil-
+    // unabhängige Nicht-Waffen-Score wie beim Krit-Detektor oben (evasionRating·100 + dex-Anteil) —
+    // die neuen A3-Leder-Teile (evasionRating je Slot über dem alten Pick) und tonic_windstride
+    // heben CL 30 für alle drei Stile gleichermaßen auf den 0.40-Deckel: 0.3943 → 0.40 (Clamp,
+    // kein Melee-Item geändert). CL 60/90 bleiben unverändert am Deckel.
+    const expected: Record<number, number> = { 30: DODGE_CAP, 60: DODGE_CAP, 90: DODGE_CAP };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
         const d = computeStats(bis(style, lvl, "dodge").state, content).dodgeChance;
@@ -417,9 +435,17 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // fällt aus dem CL-60-Fenster (Requirement jetzt oberhalb) — der CL-60-BiS-Build fällt auf das
     // nächstschwächere Stoff-Teil zurück: maxWard 807→730.8. CL 30/90 unverändert (dort war
     // pyrebound_vestment nie BiS bzw. bleibt es bei CL 90 weiterhin).
-    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(613, 0);
-    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(730.8, 1);
-    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1209.5, 1);
+    // Re-Messung 2026-08-26 (Stil-Parität 4a, Chef-GO 26.08.2026, §4a A5): affix_warding
+    // trinityByTier Tier II/III 25/40 → 35/60 (Ward-Relativwert 31%→47% des Stoff-Kits laut
+    // Dokument) — seit der Runen-Stapelung (25.08.) summiert der Voll-Stack-Builder die Bewahrende-
+    // Rune mehrfach über bis zu 5 Slots, der Tier-Sprung wirkt daher vervielfacht statt additiv-flach:
+    // CL30 613→818.06, CL60 730.8→947.64, CL90 1209.5→1558.32. Kein Stoff-ITEM wurde in diesem Zug
+    // geändert (die A4-Stoff-Drops selbst tragen moderate wardCapacity je Rare-Drop-Philosophie) —
+    // die Bewegung kommt ausschließlich aus der gepinnten Runenwert-Änderung, wie in §6 des
+    // Dokuments vorhergesagt ("Ward-Schiene ... steigt ... neu pinnen").
+    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(818.06, 1);
+    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(947.64, 1);
+    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1558.32, 1);
   });
 
   it("Buff-Exklusivitäts-Inventur (#303 L3): alle Tempo-/Krit-Tonika sind 'offense' ⇒ aktiv max. −750 ms / +0.20 crit", () => {
@@ -470,7 +496,11 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Drops im CL-90-Fenster (u.a. wyvernscale_aegis/-greaves, direkt next-Tier-EV bei Craft-Req)
     // schlagen jetzt die bisherige BiS-Wahl für einzelne Slots und heben den dex-Anteil: evasion
     // 16.079 → 16.530.
-    expect(st.evasion).toBeCloseTo(16.53, 3);
+    // Re-Messung 2026-08-26 (Stil-Parität 4a, Chef-GO 26.08.2026, §4a A3): roc_feather_cap (R90,
+    // dex 2/con 6/EV 25.4) schlägt an der Helm-Zeile die bisherige BiS-Wahl, weitere A3-Leder-Teile
+    // (u.a. cryptstalker_vambraces) verdrängen kleinere Slots — evasion 16.530 → 16.809 (Fernkampf-
+    // eigene Verbesserung, wie in §6 des Dokuments für die TTK-Matrix vorhergesagt).
+    expect(st.evasion).toBeCloseTo(16.8088, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -496,12 +526,15 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Re-Messung 2026-08-25 (Rezension #8, Drops ≥ Craft, Chef-GO 25.08.2026, #p8): `evasion` steigt
     // weiter (16.079 → 16.530, s.o.) ⇒ der Gegner landet noch etwas seltener (0.4062 → 0.3996 /
     // 0.2437 → 0.2397 / 0.7775 → 0.7727 / 0.4665 → 0.4636) — marginal, der Cap-Befund bleibt.
+    // Re-Messung 2026-08-26 (Stil-Parität 4a, Chef-GO 26.08.2026, §4a A3): `evasion` steigt weiter
+    // (16.530 → 16.809, s.o.) ⇒ der Gegner landet noch etwas seltener (0.3996 → 0.3956 /
+    // 0.2397 → 0.2373 / 0.7727 → 0.7698 / 0.4636 → 0.4619) — marginal, der Cap-Befund bleibt.
     const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
-    expect(hcOn).toBeCloseTo(0.3996, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2397, 3);
+    expect(hcOn).toBeCloseTo(0.3956, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2373, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7727, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4636, 3);
+    expect(hc150).toBeCloseTo(0.7698, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4619, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -521,8 +554,12 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
       (1 - TEMPO_REDUCTION_CAP) * 0.9 * 0.85,
       6,
     );
+    // Re-Messung 2026-08-26 (Stil-Parität 4a, Chef-GO 26.08.2026, §4a A2): sentinel_core_wand
+    // (R90, attackIntervalMs 2580) ist jetzt die schnellste legale magic-Waffe bei CL 90 und
+    // schlägt die bisherige Haste-BiS-Wahl (2600) — echte Waffenwahl (weaponStyle-gefiltert),
+    // kein Cross-Class-Effekt. Die Kompressionsrate bleibt exakt 1−TEMPO_REDUCTION_CAP (s.u.).
     const magic = bis("magic", 90, "haste");
-    expect(magic.weaponBaseIntervalMs).toBe(2600);
+    expect(magic.weaponBaseIntervalMs).toBe(2580);
     expect(computeStats(magic.state, content).attackIntervalMs / magic.weaponBaseIntervalMs).toBe(
       1 - TEMPO_REDUCTION_CAP,
     );
@@ -632,13 +669,26 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // melee/last_idol 14.1→14.40, ranged/idol_warden 17.83→18.19. ranged/last_idol (13.23) und alle
     // magic-Zeilen (kein wardCapacity-Item unter den 51 skillBoost.defence-Traegern) bleiben exakt.
     // Spieler→Gegner-Zeilen (player) bleiben unveraendert (kein DPS-Gear betroffen).
+    // Re-Messung 2026-08-26 (Stil-Parität 4a, Chef-GO 26.08.2026, §4a A1–A4): das "damage"-Ziel
+    // filtert Nicht-Waffen-Slots über den STIL-EIGENEN Attribut-Term (attrDmg = dex·0.24 ranged /
+    // int·0.34 magic / str·0.3 melee, s. scoreContribution) — die neuen A1/A3-Bögen/Leder-Teile
+    // tragen nur dex/lck, die neuen A2/A4-Magie-Waffen/Stoff-Teile nur int/wis/lck: kein Melee-Item
+    // punktet auf dem melee-"damage"-Score, darum bleiben BEIDE Melee-Paare exakt (56.87/20.20,
+    // 186.56/14.40 unverändert). Ranged und Magic verbessern sich hingegen wie in §6 des Dokuments
+    // vorhergesagt ("Fernkampf-/Magie-Zeilen sinken"): ranged/idol_warden 87.24→81.02 (schnellerer
+    // Kill über neue Bogen-/Leder-Drops), ranged/last_idol 289.16→268.31; magic/idol_warden
+    // 73.98→72.29, magic/last_idol 248.98→243.30 (neue Stab-/Fokus-/Stoff-Drops). Die Boss→Spieler-
+    // Zeilen bewegen sich gemischt (Trade-off zwischen mehr dex/int-Schaden und leicht anderer
+    // Trinity-Verteilung je Slot, kein hartes Muster über alle vier Paare) — ranged/idol_warden
+    // 18.19→15.45, ranged/last_idol 13.23→13.86, magic/idol_warden 25.34→27.32, magic/last_idol
+    // 27.39→29.53. Alle Werte per buildCache-Neumessung, kein Melee-Kit betroffen.
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 56.87, 20.2],
       ["melee", "last_idol", 186.56, 14.4],
-      ["ranged", "idol_warden", 87.24, 18.19],
-      ["ranged", "last_idol", 289.16, 13.23],
-      ["magic", "idol_warden", 73.98, 25.34],
-      ["magic", "last_idol", 248.98, 27.39],
+      ["ranged", "idol_warden", 81.02, 15.45],
+      ["ranged", "last_idol", 268.31, 13.86],
+      ["magic", "idol_warden", 72.29, 27.32],
+      ["magic", "last_idol", 243.3, 29.53],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);

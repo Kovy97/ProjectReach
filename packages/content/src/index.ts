@@ -7195,6 +7195,564 @@ export const content: ContentDB = {
         de: "Eine gestempelte Marke, die Monsterjäger gegen einen frischen Auftrag eintauschen. Würfelt deinen aktiven Slayer-Auftrag gratis neu, ohne deine Serie zu brechen.",
       },
     },
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Stil-Parität 4a (Chef-GO 26.08.2026): 45 Spiegel-Uniques (design/stil-paritaet-2026-08-26.md
+    // §4a A1–A4) — Fernkampf-/Magie-Waffen, Foki, Leder- und Stoff-Rüstung an Monstern, die bisher
+    // nur Nahkampf-Ausrüstung droppten. Kernwerte = Craft-Gegenstück der NÄCHSTEN Familienstufe bei
+    // Requirement der AKTUELLEN Stufe (Rare-Drop-Philosophie, wie Rezension #8). Platzhalter-Emoji
+    // als icon (Mira liefert 47 Bilder, Auto-Discovery bindet assets/items/<id>.webp später).
+    // ════════════════════════════════════════════════════════════════════════
+
+    // ── A1: Spiegel-Uniques Fernkampf-Waffen (10) ──────────────────────────
+    drovers_shortbow: {
+      id: "drovers_shortbow", name: { en: "Drover's Shortbow", de: "Treiber-Kurzbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
+      damageMin: 1.6, damageMax: 2.2, attackIntervalMs: 2650,
+      modifiers: { lck: 1 },
+      weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
+      requirements: { ranged: 5 }, value: 120, rarity: "common",
+      description: {
+        en: "A stiff-strung bow cattle drovers keep slung over a shoulder for stray wolves. The first arrow off the string always lands cleanest.",
+        de: "Ein straff bespannter Bogen, den Rinderhirten gegen streunende Wölfe griffbereit tragen. Der erste Pfeil von der Sehne trifft immer am saubersten.",
+      },
+    },
+    bullhorn_longbow: {
+      id: "bullhorn_longbow", name: { en: "Bullhorn Longbow", de: "Stierhorn-Langbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
+      damageMin: 2.1, damageMax: 3.1, attackIntervalMs: 3000,
+      modifiers: { lck: 1 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { ranged: 10 }, value: 230, rarity: "rare",
+      description: {
+        en: "Strung along a curved horn taken from the pasture's maddened bull. It bites hardest into anything built twice as big as its wielder.",
+        de: "Bespannt entlang eines gekrümmten Horns vom rasenden Bullen der Weiden. Es beißt am härtesten in alles, was doppelt so groß gebaut ist wie sein Träger.",
+      },
+    },
+    marrow_shortbow: {
+      id: "marrow_shortbow", name: { en: "Marrow Shortbow", de: "Knochenmark-Kurzbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
+      damageMin: 2.1, damageMax: 2.9, attackIntervalMs: 2650,
+      modifiers: { lck: 1 },
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 2, durationMs: 0 },
+      requirements: { ranged: 15 }, value: 230, rarity: "rare",
+      description: {
+        en: "Carved from bone hollowed out by the Slayer Tower's lowest wretches. Every kill draws a sliver of vigor back through the bowstring.",
+        de: "Geschnitzt aus Knochen, die von den niedrigsten Elenden des Monsterjäger-Turms ausgehöhlt wurden. Jede Tötung zieht einen Splitter Kraft zurück durch die Bogensehne.",
+      },
+    },
+    crossbower_warbow: {
+      id: "crossbower_warbow", name: { en: "Crossbower's Warbow", de: "Kriegsbogen des Armbrustschützen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
+      damageMin: 2.6, damageMax: 4.0, attackIntervalMs: 3000,
+      modifiers: { lck: 1 },
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { ranged: 24 }, value: 390, rarity: "rare",
+      description: {
+        en: "Salvaged from a goblin crossbowman who never got off a second shot. It answers a lucky hit against its bearer with interest.",
+        de: "Geborgen von einem Goblin-Armbrustschützen, der nie zu einem zweiten Schuss kam. Er beantwortet einen glücklichen Treffer gegen seinen Träger mit Zinsen.",
+      },
+    },
+    chitin_recurve: {
+      id: "chitin_recurve", name: { en: "Chitin Recurve", de: "Chitin-Recurvebogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
+      damageMin: 4.0, damageMax: 5.6, attackIntervalMs: 2650,
+      modifiers: { lck: 1 },
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
+      requirements: { ranged: 40 }, value: 900, rarity: "superRare",
+      description: {
+        en: "Recurved from the lacquered chitin plating of a pitch beetle's shell. Draws hardest when its wielder's own strength is running thin.",
+        de: "Rückgebogen aus der lackierten Chitinpanzerung eines Pechkäfers. Wird am härtesten gespannt, wenn die eigene Kraft des Trägers zur Neige geht.",
+      },
+    },
+    mossbound_longbow: {
+      id: "mossbound_longbow", name: { en: "Mossbound Longbow", de: "Moosgebundener Langbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
+      damageMin: 5.0, damageMax: 7.6, attackIntervalMs: 3000,
+      modifiers: { lck: 2 },
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      requirements: { ranged: 50 }, value: 1200, rarity: "superRare",
+      description: {
+        en: "Grown and bent around a moss golem's petrified heartwood core. Draws true against anything already staggering toward death.",
+        de: "Gewachsen und gebogen um den versteinerten Kernholzkern eines Moosgolems. Zielt sicher auf alles, was bereits dem Tod entgegentaumelt.",
+      },
+    },
+    emberglass_shortbow: {
+      id: "emberglass_shortbow", name: { en: "Emberglass Shortbow", de: "Glutglas-Kurzbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
+      damageMin: 5.0, damageMax: 6.9, attackIntervalMs: 2650,
+      modifiers: { lck: 2 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { ranged: 50 }, value: 1200, rarity: "superRare",
+      description: {
+        en: "Fired from emberglass that cooled around a slain elemental's core, veins of heat still glowing in the grain. Punishes anything built bigger than its wielder.",
+        de: "Gefertigt aus Glutglas, das um den Kern eines erlegten Elementars erkaltete, Adern von Hitze noch in der Maserung glühend. Bestraft alles, was größer gebaut ist als sein Träger.",
+      },
+    },
+    colossus_ribbow: {
+      id: "colossus_ribbow", name: { en: "Colossus Ribbow", de: "Kolossrippen-Bogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
+      damageMin: 6.3, damageMax: 8.8, attackIntervalMs: 2650,
+      modifiers: { lck: 2 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { ranged: 68 }, value: 1500, rarity: "superRare",
+      description: {
+        en: "Strung between two ribs pried from a bone colossus in the Tower's whispering depths. It, too, punishes anything larger than its wielder.",
+        de: "Bespannt zwischen zwei Rippen, die einem Knochenkoloss in den flüsternden Tiefen des Turms entrissen wurden. Auch er bestraft alles, was größer ist als sein Träger.",
+      },
+    },
+    bonewrought_longbow: {
+      id: "bonewrought_longbow", name: { en: "Bonewrought Longbow", de: "Knochengeschmiedeter Langbogen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
+      damageMin: 7.8, damageMax: 11.8, attackIntervalMs: 3000,
+      modifiers: { dex: 1, lck: 1 },
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { ranged: 70 }, value: 1900, rarity: "superRare",
+      description: {
+        en: "Wrought from the fused vertebrae of a Crypt spearman who never laid down his spear. The first drop of blood it draws always draws the most.",
+        de: "Geschmiedet aus den verschmolzenen Wirbeln eines Gruft-Speerträgers, der seinen Speer nie ablegte. Der erste gezogene Blutstropfen zieht stets am meisten.",
+      },
+    },
+    butchers_hookbow: {
+      id: "butchers_hookbow", name: { en: "Butcher's Hookbow", de: "Hakenbogen des Fleischhauers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true, weaponType: "shortbow",
+      damageMin: 7.8, damageMax: 10.8, attackIntervalMs: 2650,
+      modifiers: { lck: 2 },
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
+      requirements: { ranged: 70 }, value: 1900, rarity: "superRare",
+      description: {
+        en: "Fitted with the meat hooks of the Crypt's skeleton butcher, still faintly rust red. Every kill lets its wielder carve a little vigor back for themselves.",
+        de: "Bestückt mit den Fleischerhaken des Gruft-Skelettschlächters, noch leicht rostrot. Jede Tötung erlaubt seinem Träger, sich ein wenig Kraft zurückzuschneiden.",
+      },
+    },
+
+    // ── A2: Spiegel-Uniques Magie-Waffen (6) und Foki (2) ──────────────────
+    impfire_wand: {
+      id: "impfire_wand", name: { en: "Impfire Wand", de: "Impfeuer-Zauberstab" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
+      damageMin: 1.3, damageMax: 1.6, attackIntervalMs: 2700, manaCost: 5,
+      weaponEffect: { type: "burn", chance: 0.2, magnitude: 2, durationMs: 3000 },
+      requirements: { magic: 10 }, value: 230, rarity: "rare",
+      description: {
+        en: "Whittled from a pasture imp's own charred horn, still warm to the touch. A tap of its tip is enough to set cloth smoldering.",
+        de: "Geschnitzt aus dem verkohlten Horn eines Weiden-Imps, noch warm bei Berührung. Eine Berührung mit der Spitze genügt, um Stoff schwelen zu lassen.",
+      },
+    },
+    shaman_gnarlstaff: {
+      id: "shaman_gnarlstaff", name: { en: "Shaman's Gnarlstaff", de: "Knorrenstab des Schamanen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
+      damageMin: 1.7, damageMax: 2.6, attackIntervalMs: 3000, manaCost: 6,
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { magic: 15 }, value: 230, rarity: "rare",
+      description: {
+        en: "Knotted from the same gnarled bough a Borderlands shaman once leaned on. It falls hardest on anything built bigger than its bearer.",
+        de: "Verknotet aus demselben knorrigen Ast, auf den sich einst ein Grenzland-Schamane stützte. Er trifft am härtesten alles, was größer gebaut ist als sein Träger.",
+      },
+    },
+    felmagician_rod: {
+      id: "felmagician_rod", name: { en: "Felmagician's Rod", de: "Rute des Felmagiers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "scepter",
+      damageMin: 2.1, damageMax: 3.2, attackIntervalMs: 3000, manaCost: 7,
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      requirements: { magic: 25 }, value: 390, rarity: "rare",
+      description: {
+        en: "Bent from felwarped iron a Borderlands magician carried into every duel. It finishes what already stands at death's door.",
+        de: "Gebogen aus felverzerrtem Eisen, das ein Grenzland-Magier in jedes Duell trug. Er beendet, was bereits an der Schwelle des Todes steht.",
+      },
+    },
+    stalker_bonewand: {
+      id: "stalker_bonewand", name: { en: "Stalker's Bonewand", de: "Knochenstab des Pirschers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
+      damageMin: 2.0, damageMax: 2.6, attackIntervalMs: 2700, manaCost: 6,
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
+      requirements: { magic: 30 }, value: 530, rarity: "rare",
+      description: {
+        en: "Fashioned from a Tower stalker's own finger bones, still faintly ticking with old malice. Draws deepest when its wielder's own strength is running thin.",
+        de: "Gefertigt aus den Fingerknochen eines Turm-Schleichers, noch leicht tickend von alter Bosheit. Wirkt am tiefsten, wenn die eigene Kraft des Trägers zur Neige geht.",
+      },
+    },
+    drowned_choirstaff: {
+      id: "drowned_choirstaff", name: { en: "Drowned Choirstaff", de: "Chorstab der Ertrunkenen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
+      damageMin: 8.1, damageMax: 12.2, attackIntervalMs: 2730, manaCost: 8,
+      modifiers: { int: 1 },
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      requirements: { magic: 80 }, value: 2500, rarity: "epic",
+      description: {
+        en: "Raised from a drowned choir singer's coral crusted staff, still humming an old hymn underwater. It finishes what already stands at death's door.",
+        de: "Geborgen aus dem korallenverkrusteten Stab eines ertrunkenen Chorsängers, noch immer eine alte Hymne unter Wasser summend. Er beendet, was bereits an der Schwelle des Todes steht.",
+      },
+    },
+    sentinel_core_wand: {
+      id: "sentinel_core_wand", name: { en: "Sentinel Core Wand", de: "Wächterkern-Zauberstab" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
+      damageMin: 7.9, damageMax: 9.9, attackIntervalMs: 2580, manaCost: 7,
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { magic: 90 }, value: 3600, rarity: "epic",
+      description: {
+        en: "Cored from the same spark chamber that once powered an iron sentinel's watching gaze. A lucky hit against its bearer comes back doubled.",
+        de: "Aus derselben Funkenkammer gewonnen, die einst den wachenden Blick eines Eisernen Wächters speiste. Ein glücklicher Treffer gegen seinen Träger kommt doppelt zurück.",
+      },
+    },
+    felglass_orb: {
+      id: "felglass_orb", name: { en: "Felglass Orb", de: "Felglas-Kugel" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🔮", slot: "offhand", weaponStyle: "magic", weaponType: "focus",
+      modifiers: { int: 2, wis: 3, lck: 1 },
+      weaponEffect: { type: "catalyst", chance: 1, magnitude: 0, durationMs: 1500 },
+      requirements: { magic: 30 }, value: 640, rarity: "rare",
+      description: {
+        en: "Blown from felglass cooled on the Tower's whispering floor, an ashfield wraith's dying breath sealed inside. Every so often it shortens the wait before the next spell.",
+        de: "Aus Felglas geblasen, das auf der flüsternden Etage des Turms erkaltete, der letzte Atemzug eines Aschefeld-Wraiths darin versiegelt. Hin und wieder verkürzt es die Wartezeit bis zum nächsten Zauber.",
+      },
+    },
+    dreadfang_fetish: {
+      id: "dreadfang_fetish", name: { en: "Dreadfang Fetish", de: "Schreckenszahn-Fetisch" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🔮", slot: "offhand", weaponStyle: "magic", weaponType: "focus",
+      modifiers: { int: 3, wis: 5, lck: 2 },
+      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 },
+      requirements: { magic: 60 }, value: 2700, rarity: "superRare",
+      description: {
+        en: "Strung from the fangs of Dreadfang itself, deep on the Tower's whispering floor. Every hit siphons a sliver of its target's own ward back to its bearer.",
+        de: "Aus den Fängen von Schreckenzahn selbst gefertigt, tief auf der flüsternden Etage des Turms. Jeder Treffer entzieht dem Ziel einen Splitter seines eigenen Schilds und gibt ihn dem Träger zurück.",
+      },
+    },
+
+    // ── A3: Spiegel-Uniques Leder-Rüstung (11) ──────────────────────────────
+    goat_hide_jerkin: {
+      id: "goat_hide_jerkin", name: { en: "Goat-Hide Jerkin", de: "Ziegenleder-Wams" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🦺", slot: "body",
+      modifiers: { con: 2 },
+      weaponEffect: { type: "firstBlood", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { ranged: 10 }, value: 260, rarity: "common", evasionRating: 13.5,
+      description: {
+        en: "Cut from a feral pasture goat's tough hide, cured stiff at the seams. The first wound it draws always sits deepest.",
+        de: "Geschnitten aus dem zähen Fell einer wilden Weidenziege, an den Nähten steif gegerbt. Die erste Wunde, die es schlägt, sitzt immer am tiefsten.",
+      },
+    },
+    rogue_hide_vambraces: {
+      id: "rogue_hide_vambraces", name: { en: "Rogue's Hide Vambraces", de: "Armschienen des Halunken" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🧤", slot: "gloves",
+      modifiers: { con: 2 },
+      weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
+      requirements: { ranged: 10 }, value: 130, rarity: "common", evasionRating: 6.3,
+      description: {
+        en: "Strapped together from a goblin rogue's own stolen leathers. The first blow they land always lands cleanest.",
+        de: "Zusammengeschnürt aus dem gestohlenen Leder eines Goblin-Schurken. Der erste Schlag, den sie führen, sitzt immer am saubersten.",
+      },
+    },
+    skirmisher_hide_jerkin: {
+      id: "skirmisher_hide_jerkin", name: { en: "Skirmisher's Jerkin", de: "Plänkler-Lederwams" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🦺", slot: "body",
+      modifiers: { dex: 1, con: 4 },
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { ranged: 20 }, value: 720, rarity: "rare", evasionRating: 18.6,
+      description: {
+        en: "Worn by a Borderlands spearman before his own spear turned against him. A lucky hit against its wearer comes back with interest.",
+        de: "Getragen von einem Grenzland-Speerträger, bevor sich sein eigener Speer gegen ihn wandte. Ein glücklicher Treffer gegen seinen Träger kommt mit Zinsen zurück.",
+      },
+    },
+    butchers_hide_boots: {
+      id: "butchers_hide_boots", name: { en: "Butcher's Hide Boots", de: "Lederstiefel des Schlächters" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🥾", slot: "boots",
+      modifiers: { con: 3 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { ranged: 20 }, value: 150, rarity: "rare", evasionRating: 7.3,
+      description: {
+        en: "Soled from a goblin butcher's own boots, the leather still faintly bloodstained. They fall hardest on anything built bigger than their wearer.",
+        de: "Besohlt aus den eigenen Stiefeln eines Goblin-Schlächters, das Leder noch leicht blutfleckig. Sie treffen am härtesten alles, was größer gebaut ist als ihr Träger.",
+      },
+    },
+    ratpelt_cap: {
+      id: "ratpelt_cap", name: { en: "Ratpelt Cap", de: "Rattenfell-Kappe" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪖", slot: "helmet",
+      modifiers: { dex: 1, con: 3 },
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
+      requirements: { ranged: 30 }, value: 450, rarity: "rare", evasionRating: 12.4,
+      description: {
+        en: "Stitched from ash rat pelts, patched together with more haste than skill. Sits heaviest on the head when its wearer's own strength is running thin.",
+        de: "Genäht aus Aschratten-Fellen, mit mehr Eile als Geschick zusammengeflickt. Sitzt am schwersten, wenn die eigene Kraft des Trägers zur Neige geht.",
+      },
+    },
+    chitinweave_leggings: {
+      id: "chitinweave_leggings", name: { en: "Chitinweave Leggings", de: "Chitingeflecht-Beinlinge" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👖", slot: "legs",
+      modifiers: { dex: 1, con: 3 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      requirements: { ranged: 40 }, value: 750, rarity: "superRare", evasionRating: 16.1,
+      description: {
+        en: "Woven from the same lacquered chitin plating as the pitch beetle's shell. They fall hardest on anything built bigger than their wearer.",
+        de: "Gewebt aus derselben lackierten Chitinpanzerung wie der Panzer des Pechkäfers. Sie treffen am härtesten alles, was größer gebaut ist als ihr Träger.",
+      },
+    },
+    thornwolf_pelt_hood: {
+      id: "thornwolf_pelt_hood", name: { en: "Thornwolf Pelt Hood", de: "Dornenwolf-Fellkapuze" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪖", slot: "helmet",
+      modifiers: { dex: 1, con: 4 },
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
+      requirements: { ranged: 50 }, value: 1100, rarity: "superRare", evasionRating: 16.8,
+      description: {
+        en: "Cut from a thorn wolf's own bramble matted pelt. Every kill lets its wearer tear back a little vigor from the fight.",
+        de: "Geschnitten aus dem eigenen dornenverfilzten Fell eines Dornwolfs. Jede Tötung lässt seinen Träger ein wenig Kraft aus dem Kampf zurückreißen.",
+      },
+    },
+    mossbound_treads: {
+      id: "mossbound_treads", name: { en: "Mossbound Treads", de: "Moosgebundene Tritte" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🥾", slot: "boots",
+      modifiers: { dex: 1, con: 5 },
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 },
+      requirements: { ranged: 50 }, value: 800, rarity: "superRare", evasionRating: 11.8,
+      description: {
+        en: "Soled with bark torn from a moss golem's petrified hide. Every kill shaves a moment off the wait before the next stride.",
+        de: "Besohlt mit Rinde, die aus der versteinerten Haut eines Moosgolems gerissen wurde. Jede Tötung verkürzt die Wartezeit bis zum nächsten Schritt.",
+      },
+    },
+    cryptstalker_vambraces: {
+      id: "cryptstalker_vambraces", name: { en: "Cryptstalker Vambraces", de: "Gruftpirscher-Armschienen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🧤", slot: "gloves",
+      modifiers: { dex: 1, con: 5 },
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
+      requirements: { ranged: 60 }, value: 1150, rarity: "superRare", evasionRating: 13.3,
+      description: {
+        en: "Wrapped from a Crypt skeleton's own binding cloth, still holding its shape long after the bone beneath it crumbled. Sit tightest when their wearer's own strength is running thin.",
+        de: "Umwickelt mit dem eigenen Bindetuch eines Gruft-Skeletts, das seine Form noch lange hielt, nachdem der Knochen darunter zerfiel. Sitzen am festesten, wenn die eigene Kraft des Trägers zur Neige geht.",
+      },
+    },
+    butchers_hide_leggings: {
+      id: "butchers_hide_leggings", name: { en: "Butcher's Hide Leggings", de: "Lederbeinlinge des Fleischhauers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👖", slot: "legs",
+      modifiers: { dex: 2, con: 6 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück dragonhide_legs
+      // (R82) trägt 23.64, nicht 23.6 aus der Dokument-Rundung — auf 23.7 angehoben.
+      requirements: { ranged: 70 }, value: 5300, rarity: "superRare", evasionRating: 23.7,
+      description: {
+        en: "Cut from the same hide the Crypt's skeleton butcher once wore into its own kills. They fall hardest on anything built bigger than their wearer.",
+        de: "Geschnitten aus demselben Leder, das der Gruft-Skelettschlächter einst bei seinen eigenen Tötungen trug. Sie treffen am härtesten alles, was größer gebaut ist als ihr Träger.",
+      },
+    },
+    roc_feather_cap: {
+      id: "roc_feather_cap", name: { en: "Roc-Feather Cap", de: "Rochfeder-Kappe" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🪖", slot: "helmet",
+      modifiers: { dex: 2, con: 6 },
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück shadowhide_helm
+      // (R95) trägt 25.31, nicht 25.3 aus der Dokument-Rundung — auf 25.4 angehoben.
+      requirements: { ranged: 90 }, value: 7000, rarity: "epic", evasionRating: 25.4,
+      description: {
+        en: "Woven from down plucked off a highland roc fledgling. A lucky hit against its wearer comes back with interest.",
+        de: "Gewoben aus Daunen, die einem Hochland-Roc-Jungvogel gerupft wurden. Ein glücklicher Treffer gegen seinen Träger kommt mit Zinsen zurück.",
+      },
+    },
+
+    // ── A4: Spiegel-Uniques Stoff-Rüstung (16, erste Stoff-Drops von normalen Monstern) ────────
+    shamans_cowl: {
+      id: "shamans_cowl", name: { en: "Shaman's Cowl", de: "Schamanen-Kapuze" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🎩", slot: "helmet",
+      modifiers: { con: 1, int: 1 },
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 2, durationMs: 0 },
+      requirements: { magic: 10 }, value: 400, rarity: "rare", wardCapacity: 15.0,
+      description: {
+        en: "Woven from a Borderlands shaman's own prayer cloth, still smelling faintly of totem smoke. Every kill draws a trickle of mana back through the weave.",
+        de: "Gewebt aus dem eigenen Gebetstuch eines Grenzland-Schamanen, noch leicht nach Totemrauch riechend. Jede Tötung zieht ein Rinnsal Mana zurück durch das Gewebe.",
+      },
+    },
+    imp_hide_slippers: {
+      id: "imp_hide_slippers", name: { en: "Imp-Hide Slippers", de: "Impleder-Schlappen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🥿", slot: "boots",
+      modifiers: { con: 1, int: 1 },
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1000 },
+      requirements: { magic: 10 }, value: 470, rarity: "rare", wardCapacity: 10.5,
+      description: {
+        en: "Soled from a pasture imp's own hide, still warm as embers. Every kill shaves a moment off the wait before the next spell.",
+        de: "Besohlt aus dem eigenen Fell eines Weiden-Imps, noch warm wie Glut. Jede Tötung verkürzt die Wartezeit bis zum nächsten Zauber.",
+      },
+    },
+    goblin_ragged_robe: {
+      id: "goblin_ragged_robe", name: { en: "Ragged Goblin Robe", de: "Zerlumpte Goblinrobe" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👗", slot: "body",
+      modifiers: { con: 2, int: 2 },
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
+      requirements: { magic: 10 }, value: 600, rarity: "rare", wardCapacity: 22.5,
+      description: {
+        en: "Stitched from a common goblin's own ragged robe, patched more than it's whole. Sits heaviest when its wearer's own strength is running thin.",
+        de: "Genäht aus der eigenen zerlumpten Robe eines gewöhnlichen Goblins, mehr geflickt als ganz. Sitzt am schwersten, wenn die eigene Kraft des Trägers zur Neige geht.",
+      },
+    },
+    felmagician_robe: {
+      id: "felmagician_robe", name: { en: "Felmagician's Robe", de: "Robe des Felmagiers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👗", slot: "body",
+      modifiers: { con: 3, int: 3, wis: 1 },
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { magic: 22 }, value: 1250, rarity: "rare", wardCapacity: 30.9,
+      description: {
+        en: "Cut from a Borderlands fel magician's own robe, the hem still singed at the edges. A lucky hit against its wearer comes back with interest.",
+        de: "Geschnitten aus der eigenen Robe eines Grenzland-Felmagiers, der Saum noch an den Rändern versengt. Ein glücklicher Treffer gegen seinen Träger kommt mit Zinsen zurück.",
+      },
+    },
+    stormcaller_sandals: {
+      id: "stormcaller_sandals", name: { en: "Stormcaller Sandals", de: "Sturmrufer-Sandalen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🥿", slot: "boots",
+      modifiers: { con: 2, int: 1 },
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1000 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück ember_sandals
+      // (R30) trägt 14.42, nicht 14.4 aus der Dokument-Rundung — auf 14.5 angehoben.
+      requirements: { magic: 22 }, value: 490, rarity: "rare", wardCapacity: 14.5,
+      description: {
+        en: "Soled from a stormcaller's own storm charred hide. Every kill shaves a moment off the wait before the next spell.",
+        de: "Besohlt aus dem eigenen sturmversengten Fell eines Sturmrufers. Jede Tötung verkürzt die Wartezeit bis zum nächsten Zauber.",
+      },
+    },
+    warlock_handwraps: {
+      id: "warlock_handwraps", name: { en: "Warlock's Handwraps", de: "Handwickel des Hexers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🧤", slot: "gloves",
+      modifiers: { con: 2, int: 2, wis: 1 },
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück aether_gloves
+      // (R40) trägt 19.32, nicht 19.3 aus der Dokument-Rundung — auf 19.4 angehoben.
+      requirements: { magic: 30 }, value: 1250, rarity: "rare", wardCapacity: 19.4,
+      description: {
+        en: "Wound from a Borderlands warlock's own binding cloth, still faintly warm with old fel fire. Sit tightest when their wearer's own strength is running thin.",
+        de: "Gewickelt aus dem eigenen Bindetuch eines Grenzland-Hexenmeisters, noch leicht warm von altem Felfeuer. Sitzen am festesten, wenn die eigene Kraft des Trägers zur Neige geht.",
+      },
+    },
+    ashtyrant_cinder_robe: {
+      id: "ashtyrant_cinder_robe", name: { en: "Ash Tyrant's Cinder Robe", de: "Aschenrobe des Aschtyrannen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👗", slot: "body",
+      modifiers: { con: 4, int: 6, wis: 2 },
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { magic: 40 }, value: 2200, rarity: "superRare", wardCapacity: 64.8,
+      description: {
+        en: "Cut from cinder cloth that smoldered against the Ash Tyrant's own hide. A lucky hit against its wearer comes back with interest.",
+        de: "Geschnitten aus Glutstoff, der am eigenen Fell des Aschtyrannen schwelte. Ein glücklicher Treffer gegen seinen Träger kommt mit Zinsen zurück.",
+      },
+    },
+    emberweave_cowl: {
+      id: "emberweave_cowl", name: { en: "Emberweave Cowl", de: "Glutgewebe-Kapuze" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🎩", slot: "helmet",
+      modifiers: { con: 3, int: 3, wis: 1 },
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
+      requirements: { magic: 50 }, value: 1450, rarity: "superRare", wardCapacity: 43.2,
+      description: {
+        en: "Woven from ember thread spun around a slain elemental's cooling core. Every kill lets its wearer draw a little vigor back from the fight.",
+        de: "Gewebt aus Glutfaden, gesponnen um den erkaltenden Kern eines erlegten Elementars. Jede Tötung lässt seinen Träger ein wenig Kraft aus dem Kampf zurückgewinnen.",
+      },
+    },
+    chanters_skirt: {
+      id: "chanters_skirt", name: { en: "Chanter's Skirt", de: "Rock des Grabsängers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👖", slot: "legs",
+      modifiers: { con: 3, int: 4, wis: 1 },
+      weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück arcane_robe_legs
+      // (R55) trägt 47.52, nicht 47.5 aus der Dokument-Rundung — auf 47.6 angehoben.
+      requirements: { magic: 50 }, value: 1900, rarity: "superRare", wardCapacity: 47.6,
+      description: {
+        en: "Cut from a barrow chanter's own burial shroud, the hem still humming its old dirge. Falls hardest on anything built bigger than its wearer.",
+        de: "Geschnitten aus dem eigenen Grabtuch eines Hügelgrab-Choristen, der Saum noch von der alten Totenklage summend. Trifft am härtesten alles, was größer gebaut ist als sein Träger.",
+      },
+    },
+    rootling_sap_sandals: {
+      id: "rootling_sap_sandals", name: { en: "Rootling-Sap Sandals", de: "Wurzelsaft-Sandalen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🥿", slot: "boots",
+      modifiers: { con: 3, int: 3 },
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück arcane_slippers
+      // (R55) trägt 30.24, nicht 30.2 aus der Dokument-Rundung — auf 30.3 angehoben.
+      requirements: { magic: 50 }, value: 1700, rarity: "superRare", wardCapacity: 30.3,
+      description: {
+        en: "Soled with hardened sap bled from a thorned rootling's bark. Every kill shaves a moment off the wait before the next spell.",
+        de: "Besohlt mit gehärtetem Saft, der aus der Rinde eines dornigen Wurzlings floss. Jede Tötung verkürzt die Wartezeit bis zum nächsten Zauber.",
+      },
+    },
+    treemonster_bark_sandals: {
+      id: "treemonster_bark_sandals", name: { en: "Bark Sandals of the Treemonster", de: "Rindensandalen des Baumungetüms" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🥿", slot: "boots",
+      modifiers: { con: 4, int: 5 },
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 1500 },
+      requirements: { magic: 60 }, value: 2730, rarity: "superRare", wardCapacity: 47.0,
+      description: {
+        en: "Cut from bark peeled off Blackthorn's elder treant while it still stood. Every kill shaves a moment off the wait before the next spell.",
+        de: "Geschnitten aus Rinde, die dem alten Baumriesen des Schwarzdornwalds bei lebendigem Leib abgeschält wurde. Jede Tötung verkürzt die Wartezeit bis zum nächsten Zauber.",
+      },
+    },
+    gravechant_vestment: {
+      id: "gravechant_vestment", name: { en: "Gravechant Vestment", de: "Grabgesang-Gewand" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👗", slot: "body",
+      modifiers: { con: 6, int: 10, wis: 5, lck: 2 },
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück godspark_vestment
+      // (R85) trägt 142.85, nicht 142.8 aus der Dokument-Rundung — auf 142.9 angehoben.
+      requirements: { magic: 70 }, value: 8600, rarity: "superRare", wardCapacity: 142.9,
+      description: {
+        en: "Draped from a Crypt spearman's own burial vestment, the weave still cold as the grave. A lucky hit against its wearer comes back with interest.",
+        de: "Drapiert aus dem eigenen Grabgewand eines Gruft-Speerträgers, das Gewebe noch kalt wie das Grab. Ein glücklicher Treffer gegen seinen Träger kommt mit Zinsen zurück.",
+      },
+    },
+    hexed_bone_gloves: {
+      id: "hexed_bone_gloves", name: { en: "Hexed Bone Gloves", de: "Verhexte Knochenhandschuhe" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🧤", slot: "gloves",
+      modifiers: { con: 4, int: 7, wis: 3 },
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      requirements: { magic: 70 }, value: 5600, rarity: "superRare", wardCapacity: 66.7,
+      description: {
+        en: "Fitted with finger bones hexed by the Crypt's own skeleton butcher. They finish what already stands at death's door.",
+        de: "Bestückt mit Fingerknochen, die vom Skelettschlächter der Gruft selbst verhext wurden. Sie beenden, was bereits an der Schwelle des Todes steht.",
+      },
+    },
+    drowned_choir_mitre: {
+      id: "drowned_choir_mitre", name: { en: "Drowned Choir Mitre", de: "Mitra des Ertrunkenenchors" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🎩", slot: "helmet",
+      modifiers: { con: 4, int: 7, wis: 4, lck: 1 },
+      weaponEffect: { type: "healOnKill", chance: 1, magnitude: 4, durationMs: 0 },
+      // Guard-Korrektur (drop-gear-beats-craft.test.ts): echtes Craft-Gegenstück godspark_mitre
+      // (R85) trägt 95.23, nicht 95.2 aus der Dokument-Rundung — auf 95.3 angehoben.
+      requirements: { magic: 80 }, value: 4550, rarity: "epic", wardCapacity: 95.3,
+      description: {
+        en: "Salvaged from a drowned choir singer's coral crusted mitre. Every kill lets its wearer draw a little vigor back from the fight.",
+        de: "Geborgen aus der korallenverkrusteten Mitra eines ertrunkenen Chorsängers. Jede Tötung lässt seinen Träger ein wenig Kraft aus dem Kampf zurückgewinnen.",
+      },
+    },
+    emberheart_robe: {
+      id: "emberheart_robe", name: { en: "Emberheart Robe", de: "Glutherz-Robe" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "👗", slot: "body",
+      modifiers: { con: 8, int: 13, wis: 7, lck: 2 },
+      weaponEffect: { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 },
+      requirements: { magic: 90 }, value: 12600, rarity: "epic", wardCapacity: 192.0,
+      description: {
+        en: "Woven around an ember elemental's own smoldering heartcore. Once its wearer's mana runs low, every spell overflows with a burst of extra power.",
+        de: "Gewoben um den eigenen schwelenden Herzkern eines Glutelementars. Sobald das Mana des Trägers zur Neige geht, überflutet jeder Zauber mit einem Schub zusätzlicher Kraft.",
+      },
+    },
+    hexer_frostweave_gloves: {
+      id: "hexer_frostweave_gloves", name: { en: "Hexer's Frostweave Gloves", de: "Frostgewebe-Handschuhe des Hexers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "equipment", stackable: false, icon: "🧤", slot: "gloves",
+      modifiers: { con: 5, int: 9, wis: 4, lck: 1 },
+      weaponEffect: { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 },
+      requirements: { magic: 90 }, value: 6500, rarity: "epic", wardCapacity: 89.6,
+      description: {
+        en: "Knit from frost thread spun by the Slag Pit's own frost hexer. Their touch chills a foe's blood almost to stillness.",
+        de: "Gestrickt aus Frostfaden, gesponnen vom eigenen Eishexer der Schlackengrube. Ihre Berührung kühlt das Blut eines Gegners fast bis zum Stillstand.",
+      },
+    },
+
+    // ── A7: Tonika (Kräuterkunde) ────────────────────────────────────────
+    tonic_windstride: {
+      id: "tonic_windstride", name: { en: "Windstride Tonic", de: "Windschritt-Tonikum" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "consumable", stackable: true, rarity: "superRare", value: 110,
+      buff: { category: "attribute", durationMs: 90_000, bonus: {}, modifiers: { dex: 6 } },
+      description: {
+        en: "A tonic brewed to lengthen a hunter's stride between shots. The world seems to slow just enough to line up the next one.",
+        de: "Ein Tonikum, gebraut um den Schritt eines Jägers zwischen den Schüssen zu verlängern. Die Welt scheint sich gerade genug zu verlangsamen, um den nächsten zu setzen.",
+      },
+    },
+    tonic_wardveil: {
+      id: "tonic_wardveil", name: { en: "Wardveil Tonic", de: "Schleierhaut-Tonikum" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+      type: "consumable", stackable: true, rarity: "rare", value: 60,
+      buff: { category: "defense", durationMs: 150_000, bonus: {}, trinity: { wardCapacity: 35 } },
+      description: {
+        en: "A milky brew that settles over the skin like a second, unseen robe. Spells slide off easier while it holds.",
+        de: "Ein milchiges Gebräu, das sich wie ein zweites, unsichtbares Gewand über die Haut legt. Zauber gleiten leichter ab, solange es wirkt.",
+      },
+    },
   },
   actions: {
     // Holzfällen
@@ -8043,10 +8601,13 @@ export const content: ContentDB = {
       ],
       loot: [{ itemId: "bloodgrain_stew", chance: 1, min: 4, max: 4 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 48→40 (Fernkampf-Stil-Gericht kam 10 Level
+    // nach dem Nahkampf-Eintopf cook_bloodgrain_stew@38 — auf denselben Frühband gezogen), XP nach
+    // Zielkurve neu berechnet (C=600, durationMs unverändert): 156→105.
     cook_duskfin_rangers_stew: {
       id: "cook_duskfin_rangers_stew",
       name: { en: "Cook Duskfin Ranger's Stew", de: "Dämmerflossen-Jäger-Eintopf kochen" },
-      skill: "cooking", category: "cook_feasts", durationMs: 10_000, xp: 156, levelRequired: 48,
+      skill: "cooking", category: "cook_feasts", durationMs: 10_000, xp: 105, levelRequired: 40,
       inputs: [
         { itemId: "raw_duskfin_carp", qty: 1 },
         { itemId: "raw_venison", qty: 1 },
@@ -8055,10 +8616,13 @@ export const content: ContentDB = {
       ],
       loot: [{ itemId: "duskfin_rangers_stew", chance: 1, min: 2, max: 2 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 52→40 (Magie-Stil-Gericht auf denselben
+    // Frühband wie duskfin_rangers_stew gezogen), XP nach Zielkurve neu berechnet (C=600,
+    // durationMs unverändert): 190→105.
     cook_spellwarden_bisque: {
       id: "cook_spellwarden_bisque",
       name: { en: "Cook Spellwarden Bisque", de: "Zauberwächter-Bisque kochen" },
-      skill: "cooking", category: "cook_feasts", durationMs: 10_000, xp: 190, levelRequired: 52,
+      skill: "cooking", category: "cook_feasts", durationMs: 10_000, xp: 105, levelRequired: 40,
       inputs: [
         { itemId: "raw_duskfin_carp", qty: 1 },
         { itemId: "raw_venison", qty: 1 },
@@ -10656,16 +11220,22 @@ export const content: ContentDB = {
       inputs: [{ itemId: "essence_mire", qty: 1 }, { itemId: "pigment_umber", qty: 2 }, { itemId: "reed_pale", qty: 3 }],
       loot: [{ itemId: "rune_swift_i", chance: 1, min: 1, max: 1 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 28→15 (gleicher Einstieg wie affix_keen,
+    // s. craft_rune_keen_i), XP nach Zielkurve neu berechnet (C=600, durationMs unverändert): 58→31.
     craft_rune_hunter_i: {
       id: "craft_rune_hunter_i", name: { en: "Craft Hunter Rune I", de: "Jagd-Rune I herstellen" },
-      skill: "runecrafting", category: "rune_affixes", durationMs: 10000, xp: 58, levelRequired: 28,
+      skill: "runecrafting", category: "rune_affixes", durationMs: 10000, xp: 31, levelRequired: 15,
       inputs: [{ itemId: "essence_mire", qty: 2 }, { itemId: "pigment_verdant", qty: 1 }, { itemId: "reed_iron", qty: 1 }],
       loot: [{ itemId: "rune_hunter_i", chance: 1, min: 1, max: 1 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 30→15 (gleicher Einstieg wie affix_keen/
+    // affix_hunter). aether_essence (Gate 45 über ash_tyrant) wäre für ein L15-Rezept zu spät gegatet
+    // — auf dim_essence umgestellt (Foraging L1, forage_dim_essence, Gate 0). XP nach Zielkurve neu
+    // berechnet (C=600, durationMs unverändert): 64→31.
     craft_rune_arcane_i: {
       id: "craft_rune_arcane_i", name: { en: "Craft Arcane Rune I", de: "Arkane-Rune I herstellen" },
-      skill: "runecrafting", category: "rune_affixes", durationMs: 10000, xp: 64, levelRequired: 30,
-      inputs: [{ itemId: "essence_mire", qty: 2 }, { itemId: "pigment_verdant", qty: 1 }, { itemId: "aether_essence", qty: 1 }],
+      skill: "runecrafting", category: "rune_affixes", durationMs: 10000, xp: 31, levelRequired: 15,
+      inputs: [{ itemId: "essence_mire", qty: 2 }, { itemId: "pigment_verdant", qty: 1 }, { itemId: "dim_essence", qty: 3 }],
       loot: [{ itemId: "rune_arcane_i", chance: 1, min: 1, max: 1 }],
     },
 
@@ -10705,15 +11275,20 @@ export const content: ContentDB = {
     // Jetzt alle 3 Stil-Schadensrunen T2 im Band 38-42. Essenz/Pigment auf essence_grave+
     // pigment_verdant umgestellt (Tier-Nachbarn flame_ii/frost_ii, statt essence_void/pigment_violet
     // — die brauchten Foraging 62-78, ein RC40-Rezept mit RC50-Mats hätte den Fix wieder ausgehebelt).
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 40→38 (Angleichung an affix_keen/
+    // affix_arcane Tier II, s. craft_rune_keen_ii), XP nach Zielkurve neu berechnet (C=600,
+    // durationMs unverändert): 147→133.
     craft_rune_hunter_ii: {
       id: "craft_rune_hunter_ii", name: { en: "Craft Hunter Rune II", de: "Jagd-Rune II herstellen" },
-      skill: "runecrafting", category: "rune_affixes", durationMs: 14000, xp: 147, levelRequired: 40,
+      skill: "runecrafting", category: "rune_affixes", durationMs: 14000, xp: 133, levelRequired: 38,
       inputs: [{ itemId: "essence_grave", qty: 2 }, { itemId: "pigment_verdant", qty: 2 }, { itemId: "reed_iron", qty: 2 }],
       loot: [{ itemId: "rune_hunter_ii", chance: 1, min: 1, max: 1 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 42→38 (gleicher Einstieg wie Scharf/
+    // Jägerisch Tier II), XP nach Zielkurve neu berechnet (C=600, durationMs unverändert): 173→142.
     craft_rune_arcane_ii: {
       id: "craft_rune_arcane_ii", name: { en: "Craft Arcane Rune II", de: "Arkane-Rune II herstellen" },
-      skill: "runecrafting", category: "rune_affixes", durationMs: 15000, xp: 173, levelRequired: 42,
+      skill: "runecrafting", category: "rune_affixes", durationMs: 15000, xp: 142, levelRequired: 38,
       inputs: [{ itemId: "essence_grave", qty: 2 }, { itemId: "pigment_verdant", qty: 2 }, { itemId: "aether_essence", qty: 2 }],
       loot: [{ itemId: "rune_arcane_ii", chance: 1, min: 1, max: 1 }],
     },
@@ -10749,15 +11324,19 @@ export const content: ContentDB = {
       inputs: [{ itemId: "essence_void", qty: 3 }, { itemId: "pigment_radiant", qty: 2 }, { itemId: "reed_void", qty: 2 }],
       loot: [{ itemId: "rune_swift_iii", chance: 1, min: 1, max: 1 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 74→62 (Angleichung an affix_keen Tier III,
+    // s. craft_rune_keen_iii), XP nach Zielkurve neu berechnet (C=600, durationMs unverändert): 1126→622.
     craft_rune_hunter_iii: {
       id: "craft_rune_hunter_iii", name: { en: "Craft Hunter Rune III", de: "Jagd-Rune III herstellen" },
-      skill: "runecrafting", category: "rune_affixes", durationMs: 20000, xp: 1126, levelRequired: 74,
+      skill: "runecrafting", category: "rune_affixes", durationMs: 20000, xp: 622, levelRequired: 62,
       inputs: [{ itemId: "essence_divine", qty: 1 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "reed_void", qty: 2 }],
       loot: [{ itemId: "rune_hunter_iii", chance: 1, min: 1, max: 1 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 75→62 (gleicher Einstieg wie Scharf/
+    // Jägerisch Tier III), XP nach Zielkurve neu berechnet (C=600, durationMs unverändert): 1242→653.
     craft_rune_arcane_iii: {
       id: "craft_rune_arcane_iii", name: { en: "Craft Arcane Rune III", de: "Arkane-Rune III herstellen" },
-      skill: "runecrafting", category: "rune_affixes", durationMs: 21000, xp: 1242, levelRequired: 75,
+      skill: "runecrafting", category: "rune_affixes", durationMs: 21000, xp: 653, levelRequired: 62,
       inputs: [{ itemId: "essence_divine", qty: 2 }, { itemId: "pigment_radiant", qty: 3 }, { itemId: "aether_essence", qty: 3 }],
       loot: [{ itemId: "rune_arcane_iii", chance: 1, min: 1, max: 1 }],
     },
@@ -11466,6 +12045,15 @@ export const content: ContentDB = {
       inputs: [{ itemId: "herb_marshroot", qty: 2 }, { itemId: "essence_ash", qty: 1 }, { itemId: "clear_oil", qty: 1 }],
       loot: [{ itemId: "tonic_stoneskin", chance: 1, min: 1, max: 1 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): Magie-Trinity-Tonikum, Rezeptvorlage = brew_stoneskin_tonic
+    // (gleiche durationMs/Zutatenklasse), levelRequired 18 statt 16 (Bewahrende/Stoff-Trinity liegt
+    // etwas höher als die Platte-Vorlage), XP nach Zielkurve (C=600, wie food-portions.test.ts).
+    brew_wardveil_tonic: {
+      id: "brew_wardveil_tonic", name: { en: "Brew Wardveil Tonic", de: "Schleierhaut-Tonikum brauen" },
+      skill: "herblore", category: "herb_combat", durationMs: 6000, xp: 21, levelRequired: 18,
+      inputs: [{ itemId: "herb_marshroot", qty: 2 }, { itemId: "essence_ash", qty: 1 }, { itemId: "clear_oil", qty: 1 }],
+      loot: [{ itemId: "tonic_wardveil", chance: 1, min: 1, max: 1 }],
+    },
 
     // ── Herblore: Neue Vertrags-Rezepte T2 ───────────────────────────
     brew_heal: {
@@ -11491,6 +12079,15 @@ export const content: ContentDB = {
       skill: "herblore", category: "herb_combat", durationMs: 8000, xp: 76, levelRequired: 38,
       inputs: [{ itemId: "herb_bloodthistle", qty: 2 }, { itemId: "essence_mire", qty: 1 }, { itemId: "clear_oil", qty: 1 }],
       loot: [{ itemId: "tonic_bloodrage", chance: 1, min: 1, max: 1 }],
+    },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): Fernkampf-Attribut-Tonikum, 1:1-Spiegel von
+    // brew_bloodrage_tonic (Rezeptvorlage laut design/stil-paritaet-2026-08-26.md §4a A7:
+    // gleiches Level/Dauer/XP/Zutatenmuster, nur dex statt str).
+    brew_windstride_tonic: {
+      id: "brew_windstride_tonic", name: { en: "Brew Windstride Tonic", de: "Windschritt-Tonikum brauen" },
+      skill: "herblore", category: "herb_combat", durationMs: 8000, xp: 76, levelRequired: 38,
+      inputs: [{ itemId: "herb_bloodthistle", qty: 2 }, { itemId: "essence_mire", qty: 1 }, { itemId: "clear_oil", qty: 1 }],
+      loot: [{ itemId: "tonic_windstride", chance: 1, min: 1, max: 1 }],
     },
     // consumables-enchantments-spec §4.4: schließt die Block-Buff-Lücke der entfernten Glyphen.
     brew_bulwark_tonic: {
@@ -11521,9 +12118,12 @@ export const content: ContentDB = {
       inputs: [{ itemId: "herb_gravemoss", qty: 2 }, { itemId: "essence_grave", qty: 1 }, { itemId: "vial_of_water", qty: 1 }],
       loot: [{ itemId: "tonic_bounty", chance: 1, min: 1, max: 1 }],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026): levelRequired 52→42 (Magie-Attribut-Tonikum lag 14 Level
+    // nach Blutrausch/dex hätte nach Windstride keins mehr — Angleichung an dieselbe Frühband-Logik),
+    // XP nach Zielkurve neu berechnet (C=600, durationMs unverändert): 190→116.
     brew_arcane_surge: {
       id: "brew_arcane_surge", name: { en: "Brew Arcane Surge", de: "Arkan-Surge-Tonikum brauen" },
-      skill: "herblore", category: "herb_combat", durationMs: 10000, xp: 190, levelRequired: 52,
+      skill: "herblore", category: "herb_combat", durationMs: 10000, xp: 116, levelRequired: 42,
       inputs: [{ itemId: "herb_gravemoss", qty: 2 }, { itemId: "essence_grave", qty: 1 }, { itemId: "clear_oil", qty: 1 }],
       loot: [{ itemId: "tonic_arcane_surge", chance: 1, min: 1, max: 1 }],
     },
@@ -11902,6 +12502,7 @@ export const content: ContentDB = {
         { itemId: "raw_hide", chance: 0.04, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "leather_helm", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "goblin_shank", chance: 0.0017, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bonepatch_helm", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goblin_ragged_robe", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
         // Endgame-Re-Tiering (Chef-GO 2026-07-10): warband_key raus aus L20-Trash (zog nach
         // Blackthorn, s.u.) — Zeile bleibt @0 statt gelöscht (RNG-Zugzahl-Parität, Muster
         // Sim-Impact-Schranke §6: nur Chance-WERTE ändern, keine Zeile ziehen; pinnt
@@ -11927,6 +12528,8 @@ export const content: ContentDB = {
         { itemId: "wooden_shield", chance: 0.08, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bronze_bar", chance: 0.05, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bronze_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "raw_hide", chance: 0.05, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "leather_body", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        { itemId: "shaman_gnarlstaff", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "shamans_cowl", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     // — Goblin-Warband (Grenzlande) —
@@ -11937,6 +12540,7 @@ export const content: ContentDB = {
       loot: [{ itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 }, { itemId: "stolen_coinpurse", chance: 0.15, min: 1, max: 1 },
         { itemId: "cutpurse_ring", chance: 0.0022, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "scavenger_boots", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "rogue_hide_vambraces", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     goblin_spearman: {
@@ -11947,6 +12551,7 @@ export const content: ContentDB = {
         { itemId: "crude_waraxe", chance: 0.0025, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "goblin_buckler", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "rivetfist_gloves", chance: 0.0021, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "skirmisher_hide_jerkin", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     goblin_archer: {
@@ -11963,6 +12568,7 @@ export const content: ContentDB = {
       xp: 50, gold: 0,
       loot: [{ itemId: "goblin_ear", chance: 0.6, min: 1, max: 2 }, { itemId: "iron_ore", chance: 0.2, min: 1, max: 1 },
         { itemId: "warband_hauberk", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "crossbower_warbow", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     goblin_butcher: {
@@ -11972,6 +12578,7 @@ export const content: ContentDB = {
       loot: [{ itemId: "raw_beef", chance: 0.5, min: 1, max: 2 }, { itemId: "crude_bone", chance: 0.4, min: 1, max: 2 },
         { itemId: "goblin_warkilt", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "goblin_cleaver", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "butchers_hide_boots", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     goblin_felmagician: {
@@ -11986,6 +12593,8 @@ export const content: ContentDB = {
         // vorher nur tower_ember_elemental (Slayer-Tower F3, Slayer 40) / barrow_chanter L55.
         { itemId: "frost_essence", chance: 0.20, min: 1, max: 2 },
         { itemId: "felmagician_eye", chance: 0.00037, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "felmagician_rod", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "felmagician_robe", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     goblin_stormcaller: {
@@ -11997,6 +12606,7 @@ export const content: ContentDB = {
       xp: 60, gold: 0,
       loot: [{ itemId: "shaman_totem", chance: 0.14, min: 1, max: 1 }, { itemId: "dim_essence", chance: 0.2, min: 1, max: 1 }, { itemId: "storm_essence", chance: 0.10, min: 1, max: 1 },
         { itemId: "stormcaller_totem", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "stormcaller_sandals", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     goblin_warlock: {
@@ -12012,6 +12622,7 @@ export const content: ContentDB = {
       loot: [{ itemId: "shaman_totem", chance: 0.2, min: 1, max: 1 }, { itemId: "dim_essence", chance: 0.3, min: 1, max: 2 }, { itemId: "ember_essence", chance: 0.15, min: 1, max: 1 },
         { itemId: "warbanner_cape", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "warlock_felstaff", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "warlock_handwraps", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -12133,6 +12744,7 @@ export const content: ContentDB = {
         { itemId: "sickle_shiv", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "wattle_shield", chance: 0.0021, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "muckboots", chance: 0.002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "drovers_shortbow", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     boar: {
@@ -12178,6 +12790,7 @@ export const content: ContentDB = {
         { itemId: "raw_hide", chance: 0.65, min: 1, max: 2 },
         { itemId: "hide_leggings", chance: 0.0018, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "cowhide_cap", chance: 0.0018, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goat_hide_jerkin", chance: 0.0018, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     bull_boss: {
@@ -12192,6 +12805,7 @@ export const content: ContentDB = {
         { itemId: "boartusk_ring", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "gorehorn_cleaver", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bulls_heart_pendant", chance: 0.00074, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "bullhorn_longbow", chance: 0.0019, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     // balance-fix 2026-07 (Chef-Konzept): kleiner magischer Gegner als frühe, verlässliche
@@ -12216,6 +12830,8 @@ export const content: ContentDB = {
         { itemId: "dim_essence", chance: 0.6, min: 1, max: 2 },
         { itemId: "force_rune", chance: 0.18, min: 1, max: 2 },
         { itemId: "imp_horn", chance: 0.5, min: 1, max: 1 },
+        { itemId: "impfire_wand", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "imp_hide_slippers", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -12241,6 +12857,7 @@ export const content: ContentDB = {
         { itemId: "ember_essence", chance: 0.12, min: 1, max: 1 }, // fix 2026-07: 2nd source, was goblin_warlock-only
         { itemId: "dustblade", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "ashen_gauntlets", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ratpelt_cap", chance: 0.0014, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     // armor-iter2 §9 Content-Gap-Fix: L31–33 hatte GAR keinen Mob (ash_rat L30 → dust_vulture L34).
@@ -12345,6 +12962,8 @@ export const content: ContentDB = {
         { itemId: "chitin_helm", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "sootscale_greaves", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "chitinshell_sparker", chance: 0.0119, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chitin_recurve", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "chitinweave_leggings", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     ash_tyrant: {
@@ -12380,6 +12999,7 @@ export const content: ContentDB = {
         { itemId: "cinderloop_ring", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "ashfall_recurve", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "ash_tyrant_crown", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "ashtyrant_cinder_robe", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -12410,6 +13030,7 @@ export const content: ContentDB = {
         { itemId: "aether_essence", chance: 0.13, min: 1, max: 1 }, // balance-pass2 2026-07-01: 8a — frühere Quelle (L51), on-level für L40-50-Rezepte
         // Key-Drop entfernt (Welle K, 2026-07-13): der hier gelandete warband_key ist raus —
         // goblin_warband öffnet quest-basiert (chronicle_04).
+        { itemId: "rootling_sap_sandals", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     rootling_treemonster: {
@@ -12419,6 +13040,7 @@ export const content: ContentDB = {
       xp: 410, gold: 0,
       loot: [{ itemId: "oak_log", chance: 1, min: 3, max: 6 }, { itemId: "deathmoss", chance: 0.4, min: 1, max: 2 }, { itemId: "soulopal", chance: 0.05, min: 1, max: 1 },
         { itemId: "thornmail_gauntlets", chance: 0.0011, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "treemonster_bark_sandals", chance: 0.0011, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -12441,6 +13063,7 @@ export const content: ContentDB = {
         { itemId: "raw_wolf_haunch", chance: 0.30, min: 1, max: 1 },
         { itemId: "thornfang_blade", chance: 0.0162, min: 1, max: 1 },
         { itemId: "thornvine_whip", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "thornwolf_pelt_hood", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     // Combat-Feel v2 #8: Mid-Band freier Ward-Mob (L18-85-Ward-Lücke) — Grabhügel-Geist am Waldrand.
@@ -12456,6 +13079,7 @@ export const content: ContentDB = {
         { itemId: "dim_essence", chance: 0.3, min: 1, max: 2 },
         { itemId: "frost_essence", chance: 0.12, min: 1, max: 1 },
         { itemId: "barrowsong_crook", chance: 0.010, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chanters_skirt", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     moss_golem: {
@@ -12479,6 +13103,8 @@ export const content: ContentDB = {
         { itemId: "bark_bulwark", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "mossweave_leggings", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "mossheart_crusher", chance: 0.0084, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "mossbound_longbow", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "mossbound_treads", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     // Task #213 (Bane-Familien-Tagging): bewusst OHNE family. Blackthorn ist die "lebende Wald"-
@@ -12624,6 +13250,11 @@ export const content: ContentDB = {
         // gezielte, dokumentierte Loot-Ausnahme (s. LOOT_PARITY_EXCEPTIONS in tower-monsters.test.ts).
         // NUR die Zonen-Version bekommt die Row; tower_ember_elemental bleibt beim Turm-Tuning unverändert.
         { itemId: "aetherium_bar", chance: 0.0025, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_gauntlets", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        // Stil-Parität 4a (Chef-GO 26.08.2026): Welt-/Turm-Doppelquelle (tower_ember_elemental trägt
+        // dieselben zwei Zeilen, s. dort) plus die Zonen-exklusive emberheart_robe (R90).
+        { itemId: "emberglass_shortbow", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "emberweave_cowl", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "emberheart_robe", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     iron_revenant: {
@@ -12698,6 +13329,7 @@ export const content: ContentDB = {
         { itemId: "frostplate_greaves", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "frosthex_wand", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "void_rune", chance: 0.003, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Slagpit = Aetherium-Fenster (Caster-Thema); frost_hexer hat keinen Turm-Twin.
+        { itemId: "hexer_frostweave_gloves", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -12720,6 +13352,9 @@ export const content: ContentDB = {
         // tower_skeleton_warrior bleibt UNVERÄNDERT beim Turm-Tuning; nur die Zonen-Version bekommt die
         // on-band-Row (spiegelt dg_skeleton_warrior oben).
         { itemId: "runite_bar", chance: 0.01, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_sword", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
+        // Stil-Parität 4a (Chef-GO 26.08.2026): Welt-/Turm-Doppelquelle (tower_skeleton_warrior
+        // trägt dieselbe Zeile, s. dort) — skeleton_warrior steht bereits in LOOT_PARITY_EXCEPTIONS.
+        { itemId: "cryptstalker_vambraces", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     skeleton_archer: {
@@ -12742,6 +13377,8 @@ export const content: ContentDB = {
         { itemId: "gravetread_sabatons", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "gravewarden_greatshield", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "runite_bar", chance: 0.008, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_spear", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dito (Krypta on-band)
+        { itemId: "bonewrought_longbow", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "gravechant_vestment", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     skeleton_butcher: {
@@ -12753,6 +13390,9 @@ export const content: ContentDB = {
         { itemId: "tombplate_greaves", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bonecharm_amulet", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "runite_bar", chance: 0.006, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): schließt Loch C1 (Platte def 55-75 aus Welt-Zonen)
+        { itemId: "butchers_hookbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "butchers_hide_leggings", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "hexed_bone_gloves", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     skeleton_icemage: {
@@ -12904,6 +13544,7 @@ export const content: ContentDB = {
         { itemId: "titanium_ore", chance: 0.30, min: 1, max: 2 },
         { itemId: "iron_bar", chance: 0.35, min: 1, max: 2 },
         { itemId: "sentinel_coreblade", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "sentinel_core_wand", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -12917,6 +13558,7 @@ export const content: ContentDB = {
       loot: [{ itemId: "feather", chance: 1, min: 3, max: 8 }, { itemId: "raw_roc_drumstick", chance: 0.45, min: 1, max: 2 }, { itemId: "storm_essence", chance: 0.08, min: 1, max: 1 },
         { itemId: "talon_dagger", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "aetherium_bar", chance: 0.002, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "aetherium_medhelm", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Highlands-Frühmonster zahlt endlich ins 92+-Fenster (niedrigste Prio)
+        { itemId: "roc_feather_cap", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     roc_hunter: {
@@ -13038,6 +13680,8 @@ export const content: ContentDB = {
         { itemId: "reefscale_helm", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "barnacle_gauntlets", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "titanium_bar", chance: 0.004, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_kiteshield", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster
+        { itemId: "drowned_choirstaff", chance: 0.0005, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        { itemId: "drowned_choir_mitre", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     tide_siren: {
@@ -13474,6 +14118,7 @@ export const content: ContentDB = {
         { itemId: "blighted_bone", chance: 0.40, min: 1, max: 2 },
         { itemId: "crude_bone", chance: 0.8, min: 1, max: 3 },
         { itemId: "marrow_cap", chance: 0.0044, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "marrow_shortbow", chance: 0.0044, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -13519,6 +14164,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "crude_bone", chance: 1, min: 2, max: 4 },
         { itemId: "blighted_bone", chance: 0.25, min: 1, max: 1 },
+        { itemId: "stalker_bonewand", chance: 0.0013, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     ashfield_wraith: {
@@ -13532,6 +14178,7 @@ export const content: ContentDB = {
       loot: [
         { itemId: "shade_wisp", chance: 0.20, min: 1, max: 1 },
         { itemId: "ashen_dust", chance: 0.40, min: 1, max: 2 },
+        { itemId: "felglass_orb", chance: 0.0012, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -13596,6 +14243,7 @@ export const content: ContentDB = {
         { itemId: "dread_fang_shard", chance: 0.35, min: 1, max: 1 },
         { itemId: "scarred_hide", chance: 0.40, min: 1, max: 2 },
         { itemId: "dreadfang_glaive", chance: 0.0004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "dreadfang_fetish", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
     void_stalker: {
@@ -13639,6 +14287,7 @@ export const content: ContentDB = {
         { itemId: "dread_fang_shard", chance: 0.20, min: 1, max: 1 },
         { itemId: "ribcage_hewer", chance: 0.0089, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "colossus_marrowaxe", chance: 0.0015, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "colossus_ribbow", chance: 0.0015, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       ],
     },
 
@@ -13719,6 +14368,7 @@ export const content: ContentDB = {
         { itemId: "raw_hide", chance: 0.04, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "leather_helm", identisch zum Handwerk) — als Material-Beikost ersetzt. */,
         { itemId: "goblin_shank", chance: 0.0017, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bonepatch_helm", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "goblin_ragged_robe", chance: 0.0016, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026) — 1:1-Loot-Parität mit "goblin" gewahrt.
         // tower-monsters.test.ts verlangt 1:1-Loot-Parität mit der Basis "goblin" — beide
         // Listen sind seit dem Key-Purge (Welle K, 2026-07-13) ohne Schlüssel-Zeile, Parität hält.
       ],
@@ -13734,6 +14384,7 @@ export const content: ContentDB = {
         { itemId: "stolen_coinpurse", chance: 0.15, min: 1, max: 1 },
         { itemId: "cutpurse_ring", chance: 0.0022, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "scavenger_boots", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "rogue_hide_vambraces", chance: 0.0023, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026) — 1:1-Loot-Parität mit "goblin_rogue" gewahrt.
       ],
     },
     tower_skeleton_warrior: {
@@ -13749,6 +14400,9 @@ export const content: ContentDB = {
         { itemId: "boneblade", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "cryptguard_helm", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "boneknuckle_gauntlets", chance: 0.001, min: 1, max: 1, suffixChance: 0.30 },
+        // Stil-Parität 4a (Chef-GO 26.08.2026): Welt-/Turm-Doppelquelle (skeleton_warrior trägt
+        // dieselbe Zeile, s. dort).
+        { itemId: "cryptstalker_vambraces", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     tower_skeleton_archer: {
@@ -13778,6 +14432,10 @@ export const content: ContentDB = {
         { itemId: "emberforge_helm", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "moltengrip_gauntlets", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "emberforge_hammer", chance: 0.00032, min: 1, max: 1, suffixChance: 0.30 },
+        // Stil-Parität 4a (Chef-GO 26.08.2026): Welt-/Turm-Doppelquelle (ember_elemental trägt
+        // dieselben zwei Zeilen, s. dort).
+        { itemId: "emberglass_shortbow", chance: 0.00093, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "emberweave_cowl", chance: 0.0009, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
     tower_iron_revenant: {
@@ -18151,15 +18809,17 @@ export const content: ContentDB = {
         {},
         {},
       ],
-      // TRIM (itemization-regate-2026-07-02, Finding 2/T2): T3 "kühlen" — die dex-Zeile gestrichen.
-      // dex wirkt DOPPELT quantisierungs-unabhängig (Krit-Chance UND -40ms Angriffsintervall via
-      // computeStats' `attackIntervalMs -= dex*40`), was den Stil-Ø-Uplift von Jägerisch spürbar
-      // über Scharf/Arkan hob (Re-Gate: ranged Ø +9.4pp vs magic Ø +3.2pp, Spread 6.2pp > 5pp-Ziel).
-      // lck bleibt oben auf 4 (weiterhin die höchste Krit-Chance-Stufe der Leiter).
+      // Stil-Parität 4a (Chef-GO 26.08.2026, design/stil-paritaet-2026-08-26.md §4a A5): die
+      // 2026-07-02-Trimmung machte Jägerisch zum Drittel-Wert von Scharf/Arkan (Itemization-2 §5.1:
+      // Scharf III = 10 str ≈ +12% DPS, Arkan III = 10 int ≈ +12%, Jägerisch III war nur 4 lck ≈ +4%).
+      // Roh-Äquivalent-Mix (dex 0,85 · lck 0,25) neu austariert: 1,1 / 1,95 / 3,05 gegen Scharf
+      // 0,9 / 1,8 / 3,0 und Arkan 1,0 / 2,0 / 3,4 — innerhalb der ±15%-Toleranz aus G7(ii). Ein reiner
+      // dex-Spiegel (3/6/10) wäre mit 8,5 Roh-Äquivalent 2,8× zu stark (der o.g. Doppel-Rider), darum
+      // der Mix aus geringerem dex + etwas lck.
       modifiersByTier: [
-        { lck: 2 },
-        { dex: 1, lck: 3 },
-        { lck: 4 },
+        { dex: 1, lck: 1 },
+        { dex: 2, lck: 1 },
+        { dex: 3, lck: 2 },
       ],
       appliesTo: ["weapon_ranged"],
     },
@@ -18211,14 +18871,17 @@ export const content: ContentDB = {
       ],
       appliesTo: ["armor"],
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A5): Bewahrende III trug am Endgame nur 31% des
+    // Stoff-Ward-Kits gegen Ägis III 53% (Platte) / Ausweichend III 59% (Leder) — Tier II/III
+    // angehoben (Tier I unverändert), neuer Relativwert ≈ 47% (100 Ward über 5 Slots von 640 Kit-Ward).
     affix_warding: {
       id: "affix_warding",
       prefix: { en: "Warded", de: "Bewahrende" },
       bonusByTier: [{}, {}, {}],
       trinityByTier: [
         { wardCapacity: 12 },
-        { wardCapacity: 25 },
-        { wardCapacity: 40 },
+        { wardCapacity: 35 },
+        { wardCapacity: 60 },
       ],
       appliesTo: ["armor"],
     },
@@ -18693,13 +19356,29 @@ export const content: ContentDB = {
       weight: 40,
       minIlvl: 15,
     },
+    // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A6): boostPerIlvl.defence war ein toter Roll
+    // (Chef-Entscheidung E1 25.08.2026: skillBoost.defence/boostPerIlvl.defence speist keinen
+    // Kampfterm) — umgewidmet auf attrPerIlvl.con (Phrase/w/minIlvl unverändert, kein Save-Belang,
+    // bestehende Instanzen rechnen ab sofort con statt "+0 defence").
     suffix_bulwark: {
       id: "suffix_bulwark",
       suffix: { en: "of the Bulwark", de: "des Bollwerks" },
       appliesTo: ["jewelry"],
-      boostPerIlvl: { defence: 0.15 },
+      boostPerIlvl: {},
+      attrPerIlvl: { con: 0.2 },
       weight: 40,
       minIlvl: 15,
+    },
+    // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A6): Magie-Waffenpool hatte als einziger keinen
+    // Tempo-Suffix (7 Suffixe, Σw 396 gegen Bogen 8/456) — Spiegel von suffix_wolf/suffix_viper.
+    suffix_zephyr: {
+      id: "suffix_zephyr",
+      suffix: { en: "of the Zephyr", de: "des Zephyrs" },
+      appliesTo: ["weapon_magic"],
+      attrPerIlvl: { int: 0.15 },
+      softStats: ["attackIntervalMs"],
+      weight: 60,
+      minIlvl: 10,
     },
   },
   // Elite-/World-Spawns („Champions des Reach", design/elite-spawns-concept.md +
