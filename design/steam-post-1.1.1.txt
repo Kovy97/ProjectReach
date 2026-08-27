@@ -1,0 +1,12 @@
+Grim Reach 1.1.1 - Hotfix: Champions and the Queue
+
+Hunters,
+
+a quick fix for the most-reported issue since Patch #2: champions and your queue did not get along.
+
+FIXED
+
+- Fighting a champion no longer wrecks your queue. Starting a champion fight now works like Shift-click everywhere else: the action, queued fight or dungeon run you were on is parked at the front of the queue with its remaining count, the champion fight starts at once, and your queue resumes by itself after the kill.
+- The champion's Fight button is no longer locked while you are in another fight. It only stays locked while a champion fight is already running.
+
+Saves stay compatible as always. Thank you for the report; keep them coming.

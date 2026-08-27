@@ -36,6 +36,11 @@ Rasse/Archetyp/Variante werden abgeleitet → kein SAVE-Bump; Bilder 1086×1448 
 CODEX/assets/human-character-roster-2026-08-26, Originale in Downloads/ASSETS/archive/human-roster-2026-08-26.*
 
 
+## 1.1.1 — Hotfix (Champions und Warteschlange), HOCHGELADEN 2026-08-27 09:04 (Build 24965081, `setlive` leer, Chef schaltet live)
+
+Branch `hotfix-1.1.1` ab 4723fbf (1.1.0-Stand), nur der Champion-Fix (s. Eintrag „Champions ohne Warteschlangen-Verlust" oben
+in der 1.2.0-Sammelsektion; derselbe Code liegt hier auf dem Feature-Branch). Steam-Post: `design/steam-post-1.1.1.txt`.
+
 ## 1.1.0 „Patch #2: The Slayer's Ledger" — HOCHGELADEN (Build 24956428, 2026-08-26 21:31, `setlive` leer, Chef schaltet live)
 
 Steam-Post: `design/steam-post-1.1.0.txt`, Bilder: `design/steam-post-1.1.0-assets/`, Testbericht: `design/testbericht-1.1.0.html`.
