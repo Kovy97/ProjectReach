@@ -300,6 +300,7 @@ export const fr: Record<string, string> = {
     "queue.amount.addToQueue": "Ajouter à la file",
     "queue.amount.doNow": "Faire maintenant",
     "queue.amount.eta": "≈ {time}",
+    "queue.amount.level": "Niveau {from} → {to}",
     "queue.amount.nowUnavailable": "Il faut les matériaux en stock",
     "qty.confirm": "OK",
     "mail.list.title": "Messages",

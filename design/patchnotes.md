@@ -14,7 +14,7 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 **Warteschlangen-Raster 1 / 25 / X / ∞ (Chef 27.08.):** DE: Der 50er-Knopf auf Aktions-, Monster- und
 Dungeon-Karten weicht einem „X": Es öffnet ein kleines Mengen-Fenster im Spielstil mit Eingabefeld, Vorschau
-der Dauer („≈ 28 min") und zwei Knöpfen: „In die Warteschlange" hängt hinten an, „Jetzt ausführen" startet
+der Dauer („≈ 28 min") und der Stufe („Stufe 24 → 31") und zwei Knöpfen: „In die Warteschlange" hängt hinten an, „Jetzt ausführen" startet
 sofort (die laufende Tätigkeit rückt mit Rest an die Spitze, wie Shift-Klick). So lassen sich 650 Kupfererz in
 einem Schritt einreihen, und das Warteschlangen-Panel zeigt Dauer und Level-Prognose dafür an. Enter =
 einreihen, Shift+Enter = jetzt. / EN: The queue buttons are now 1 / 25 / X / ∞; X opens a small amount dialog

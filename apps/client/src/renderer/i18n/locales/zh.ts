@@ -300,6 +300,7 @@ export const zh: Record<string, string> = {
     "queue.amount.addToQueue": "加入队列",
     "queue.amount.doNow": "立即执行",
     "queue.amount.eta": "≈ {time}",
+    "queue.amount.level": "等级 {from} → {to}",
     "queue.amount.nowUnavailable": "需要手头有材料",
     "qty.confirm": "确定",
     "mail.list.title": "信件",

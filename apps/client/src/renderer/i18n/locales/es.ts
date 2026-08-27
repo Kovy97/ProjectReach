@@ -296,6 +296,7 @@ export const es: Record<string, string> = {
     "queue.amount.addToQueue": "Añadir a la cola",
     "queue.amount.doNow": "Hacer ahora",
     "queue.amount.eta": "≈ {time}",
+    "queue.amount.level": "Nivel {from} → {to}",
     "queue.amount.nowUnavailable": "Necesita los materiales a mano",
     "qty.confirm": "Ir",
     "mail.list.title": "Mensajes",

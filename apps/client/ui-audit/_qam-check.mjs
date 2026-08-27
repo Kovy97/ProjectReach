@@ -18,7 +18,7 @@ try {
   const info = await page.evaluate(() => {
     const m = document.querySelector(".qam-modal");
     const r = m?.getBoundingClientRect();
-    return { open: !!m, w: r ? Math.round(r.width) : 0, h: r ? Math.round(r.height) : 0, eta: document.querySelector(".qam-eta")?.textContent, btns: Array.from(document.querySelectorAll(".qam-actions button")).map((b) => [b.textContent?.trim(), b.disabled]) };
+    return { open: !!m, w: r ? Math.round(r.width) : 0, h: r ? Math.round(r.height) : 0, eta: document.querySelector(".qam-eta")?.textContent, level: document.querySelector(".qam-level")?.textContent, btns: Array.from(document.querySelectorAll(".qam-actions button")).map((b) => [b.textContent?.trim(), b.disabled]) };
   });
   console.log("BEFUND", JSON.stringify(info));
   await page.screenshot({ path: `${OUT}/queue-amount-modal-1600x900-de.png` });

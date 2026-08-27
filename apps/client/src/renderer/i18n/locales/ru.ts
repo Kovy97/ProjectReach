@@ -299,6 +299,7 @@ export const ru: Record<string, string> = {
     "queue.amount.addToQueue": "В очередь",
     "queue.amount.doNow": "Сделать сейчас",
     "queue.amount.eta": "≈ {time}",
+    "queue.amount.level": "Уровень {from} → {to}",
     "queue.amount.nowUnavailable": "Нужны материалы в наличии",
     "qty.confirm": "Ок",
     "mail.list.title": "Сообщения",

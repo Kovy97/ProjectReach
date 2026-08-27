@@ -22,6 +22,9 @@ export interface QueueAmountRequest {
   perRunMs?: number;
   /** Obergrenze der Eingabe (Standard: 1 000 000, s. Engine QUEUE_TARGET_CAP). */
   max?: number;
+  /** Chef 27.08.2026: Stufen-Vorschau „Stufe 24 → 31“ für die Menge (Skill-Aktionen; gleiche Rechnung wie das
+   *  Warteschlangen-Panel, util/queueLevels.ts `effectiveActionXpGain`). Fehlt → keine Zeile. */
+  levelPreview?: (qty: number) => { from: number; to: number } | null;
   /** Hinten anhängen. */
   onQueue: (qty: number) => void;
   /** Sofort starten (Shift-Klick-Semantik). Fehlt → Knopf deaktiviert (z. B. ohne Material). */
@@ -116,10 +119,20 @@ export function QueueAmountModalHost(): JSX.Element | null {
             run(e.shiftKey && req.onNow ? "now" : "queue");
           }}
         />
-        <div className="qam-eta">
-          {valid && req.perRunMs && req.perRunMs > 0
-            ? t("queue.amount.eta").replace("{time}", formatEta(req.perRunMs * qty, t))
-            : " "}
+        <div className="qam-preview">
+          <span className="qam-eta">
+            {valid && req.perRunMs && req.perRunMs > 0
+              ? t("queue.amount.eta").replace("{time}", formatEta(req.perRunMs * qty, t))
+              : " "}
+          </span>
+          {(() => {
+            const lv = valid && req.levelPreview ? req.levelPreview(qty) : null;
+            return lv ? (
+              <span className={`qam-level${lv.to > lv.from ? " up" : ""}`}>
+                {t("queue.amount.level").replace("{from}", String(lv.from)).replace("{to}", String(lv.to))}
+              </span>
+            ) : null;
+          })()}
         </div>
         <div className="qam-actions">
           <button type="button" className="btn-iron btn-iron--sm" disabled={!valid} onClick={() => run("queue")}>

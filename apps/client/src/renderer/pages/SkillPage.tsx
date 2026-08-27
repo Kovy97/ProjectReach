@@ -32,6 +32,7 @@ import { getSkillBackgroundCard } from "../skillBackgrounds";
 import { getPetSrc } from "../pets";
 import { HoverTip } from "../components/CitadelTip";
 import { openQueueAmountModal } from "../components/QueueAmountModal";
+import { effectiveActionXpGain } from "../util/queueLevels";
 import { ItemChip } from "../components/ItemChip";
 import { useItemTooltip } from "../components/ItemTooltip";
 import { formatCompactK, formatPct1, formatSeconds1 } from "../util/format";
@@ -1332,6 +1333,11 @@ const ActionCard = memo(function ActionCard({
                   openQueueAmountModal({
                     subject: tr(action.name),
                     perRunMs: effDur,
+                    levelPreview: (n) => {
+                      const cur = state.skills[action.skill]?.xp ?? 0;
+                      const gain = effectiveActionXpGain(state, content, action, Date.now());
+                      return { from: levelFromXp(cur), to: levelFromXp(cur + gain * n) };
+                    },
                     onQueue: (n) => enqueueAction(state, content, action.id, n),
                     onNow: ready ? (n) => enqueueActionAtFront(state, content, action.id, n) : undefined,
                   })

@@ -294,6 +294,7 @@ export const ptBR: Record<string, string> = {
     "queue.amount.addToQueue": "Adicionar à fila",
     "queue.amount.doNow": "Fazer agora",
     "queue.amount.eta": "≈ {time}",
+    "queue.amount.level": "Nível {from} → {to}",
     "queue.amount.nowUnavailable": "Precisa dos materiais em mãos",
     "qty.confirm": "Ir",
     "mail.list.title": "Mensagens",
