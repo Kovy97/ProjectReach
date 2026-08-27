@@ -19,8 +19,7 @@ import {
   ELITE_WINDOW_MS,
   TICK_MS,
   createPetAbilityRuntime,
-  eliteZoneCooldownBand,
-} from "@hearthforge/shared";
+  eliteZoneCooldownBand, makeFightQueueEntry, makeDungeonQueueEntry } from "@hearthforge/shared";
 import { nextFloat, nextInt } from "./rng";
 import { mintInstanceId, intakeInstance } from "./enchant";
 import { createSuffixInstance, rollSuffix, tryCraftSuffix } from "./suffix";
@@ -426,6 +425,38 @@ function pushEliteLog(cs: CombatState, event: Omit<CombatEvent, "seq">): void {
  * laufenden Kampf). Deterministisch, KEIN RNG-Zug. `false` bei fehlender/abgelaufener Variante,
  * gesperrter Zone oder laufendem Fremdkampf.
  */
+/**
+ * Stellt die LAUFENDE Aktivität mit ihrem Rest an die Queue-Front zurück (Spiegel von
+ * insertQueueEntryAtFront Schritte 1+2 in actions.ts, dort dokumentiert): laufender Queue-Kampf →
+ * "fight"-Eintrag mit Rest-Kills (∞ bleibt ∞), laufender Queue-Dungeon-Lauf → "dungeon"-Eintrag mit
+ * Rest-Läufen, laufende Aktion → "action"-Eintrag mit Rest-Menge. Ein MANUELLER Kampf ohne Queue-
+ * Ziel wird schlicht ersetzt. Bewusst hier statt als Import aus actions.ts (Import-Kreis
+ * actions → combat → elites); die Fabriken kommen aus shared. Zieht KEIN RNG.
+ */
+function parkRunningActivityAtFront(state: GameState, content: ContentDB): void {
+  if (!Array.isArray(state.actionQueue)) state.actionQueue = [];
+  const qf = state.queueFight;
+  if (qf) {
+    state.queueFight = null;
+    if (qf.remaining === null || qf.remaining > 0) state.actionQueue.unshift(makeFightQueueEntry(qf.monsterId, qf.remaining));
+  }
+  const run = state.queueDungeon;
+  if (run) {
+    state.queueDungeon = null;
+    if (run.remaining === null || run.remaining > 0) state.actionQueue.unshift(makeDungeonQueueEntry(run.dungeonId, run.remaining));
+  }
+  const runningActionId = state.activeActionId;
+  if (runningActionId !== null) {
+    if (content.actions[runningActionId] && (state.actionTarget === null || state.actionTarget > 0)) {
+      state.actionQueue.unshift({ kind: "action", actionId: runningActionId, target: state.actionTarget });
+    }
+    state.activeActionId = null;
+    state.actionTarget = null;
+    state.actionProgressMs = 0;
+  }
+  state.queuePaused = false;
+}
+
 export function startEliteCombat(state: GameState, content: ContentDB, zoneId: string): boolean {
   const entry = state.eliteZones?.[zoneId];
   if (!entry || !("variantId" in entry)) return false;
@@ -437,12 +468,17 @@ export function startEliteCombat(state: GameState, content: ContentDB, zoneId: s
   // mehr, die Persistenz räumt ihn beim Laden ab). KEIN RNG-Zug.
   const variantDef = content.elites?.[entry.variantId];
   if (!variantDef || !isEliteVariantHuntable(content, variantDef)) return false;
-  if (state.combat.monsterId !== null) return false;
+  // Spieler-Feedback 27.08.2026 („Champions and Queues: there's gotta be a way to fight a champion
+  // without messing up your queue"): Ein Champion-Kampf ist ein Prioritäts-Start wie Shift-Klick
+  // (insertQueueEntryAtFront, Schritte 1+2) — der laufende Queue-Kampf oder Queue-Dungeon-Lauf
+  // und die laufende Aktion wandern mit ihrem Rest an die Queue-Front und laufen nach dem Kill
+  // von selbst weiter (onEliteKilled räumt den Kampf, step() zieht die Queue nach). Vorher wurde
+  // die laufende Aktivität still verworfen und ein laufender Kampf blockierte den Knopf ganz.
+  // Nur ein bereits laufender Champion-Kampf bleibt gesperrt. Zieht KEIN RNG.
+  if (state.combat.eliteVariantId) return false;
   const monster = eliteScaledMonster(content, entry.variantId);
   if (!monster) return false;
-  state.activeActionId = null;
-  state.actionProgressMs = 0;
-  state.actionTarget = null;
+  parkRunningActivityAtFront(state, content);
   state.lastStop = null;
   state.stunMs = 0;
   state.combat = {

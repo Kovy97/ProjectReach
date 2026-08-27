@@ -12,6 +12,17 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 26.08.2026)
 
+**Champions ohne Warteschlangen-Verlust (Spieler-Feedback 27.08.):** DE: Ein Champion-Kampf ist
+jetzt ein Vorrang-Start wie Shift-Klick bei allem anderen: Die laufende Aktion oder der laufende
+Warteschlangen-Kampf wandert mit seinem Rest an die Spitze der Warteschlange und läuft nach dem Kill
+von selbst weiter. Vorher ging die laufende Aktivität verloren, und während eines Kampfes ließ sich
+der Champion gar nicht angreifen. Gesperrt bleibt nur ein bereits laufender Champion-Kampf. / EN:
+Fighting a champion now parks your running action or queued fight at the front of the queue and
+resumes it after the kill; the fight button is only locked during another champion fight.
+
+*Dev-Notiz: `startEliteCombat` (elites.ts) spiegelt insertQueueEntryAtFront Schritte 1+2 (parkRunningActivityAtFront);
+CombatPage `busy` nur bei `combat.eliteVariantId`; Test elite-queue-preserve.test.ts (4 Fälle inkl. Wiederaufnahme).*
+
 **Charaktererstellung: 30 Archetypen für Menschen (Mira, 26.08.):** DE: Die Rasse Mensch bietet jetzt
 15 Kampfklassen (Krieger bis Runenritter) und 15 Berufe (Bergarbeiter bis Baumeister), jeweils als
 Mann und Frau mit eigenem Gesicht und Körper, gleicher Waffe oder gleichem Werkzeug. In der

@@ -4771,7 +4771,7 @@ function MonsterSelectImpl(): JSX.Element {
               remainingMs={zoneEliteActive2.remainingMs}
               offenseLevel={offenseLevel}
               stats={stats}
-              busy={state.combat.monsterId !== null}
+              busy={!!state.combat.eliteVariantId}
               onFight={() => startEliteCombat(state, content, zoneId)}
             />
           )}
