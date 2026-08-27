@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { CAMP_TAVERN_ID, SAVE_VERSION, TAVERN_SEATS, defaultTavernState } from "@hearthforge/shared";
+import { CAMP_TAVERN_ID, SAVE_VERSION, TAVERN_SEATS, defaultHuntTraps, defaultTavernState } from "@hearthforge/shared";
 import { createGame, tavernRefresh, acceptTavernTask, xpForLevel, syncProgression } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -80,6 +80,10 @@ describe("Migration v83 → v84 (Taverne)", () => {
     erwartet.state.tavern = defaultTavernState();
     erwartet.state.stats.actionRunsById = {};
     erwartet.state.stats.producedById = {};
+    // Kette v83 → v84 → v85 (Jagen, SAVE_VERSION 85): sechs leere Fallenplätze, Fang-Nummer 0, Fang-Zähler 0.
+    erwartet.state.huntTraps = defaultHuntTraps();
+    erwartet.state.huntCatchSeq = 0;
+    erwartet.state.stats.huntCatches = 0;
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -268,7 +272,7 @@ describe("Sanitize: state.tavern gegen den Content härten", () => {
 });
 
 describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
-  it("lädt ohne Migration, trägt vier besetzte Plätze (eine angenommen), Abgabe-Zähler und beide Stats-Zähler", () => {
+  it("lädt über die Kette v84 → v85, trägt vier besetzte Plätze (eine angenommen), Abgabe-Zähler und beide Stats-Zähler", () => {
     const json = readFileSync(join(VAULT_DIR, "v84-synthetic-1.2.0.json"), "utf-8");
     const raw = JSON.parse(json) as SaveShape;
     expect(raw.version).toBe(84);
@@ -285,7 +289,15 @@ describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
     expect(s.tavern.introSeen).toBe(true);
     expect(Object.keys(s.stats.actionRunsById).length).toBeGreaterThan(0);
     expect(Object.keys(s.stats.producedById).length).toBeGreaterThan(0);
-    // Sanitize-Fixpunkt: das Fixture IST bereits die gehärtete Form.
-    expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(raw);
+    // Sanitize-Fixpunkt: das Fixture IST bereits die gehärtete Form — bis auf die v85-Kette (Jagen):
+    // Version 85, sechs leere Fallenplätze, Fang-Nummer 0, Fang-Zähler 0 (hunt-persistence.test.ts pinnt
+    // die Migration v84 → v85 byte-genau; hier nur die Taverne).
+    const erwartet = JSON.parse(json) as SaveShape;
+    erwartet.version = SAVE_VERSION;
+    erwartet.state.version = SAVE_VERSION;
+    erwartet.state.huntTraps = defaultHuntTraps();
+    erwartet.state.huntCatchSeq = 0;
+    erwartet.state.stats.huntCatches = 0;
+    expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

@@ -95,6 +95,10 @@ export const navigation: NavSection[] = [
       { id: "woodcutting", label: "nav.woodcutting", icon: "🪓", view: "skill", skillId: "woodcutting" },
       { id: "mining", label: "nav.mining", icon: "⛏️", view: "skill", skillId: "mining" },
       { id: "fishing", label: "nav.fishing", icon: "🎣", view: "skill", skillId: "fishing" },
+      // Jagen (1.2.0 „Fasern und Fallen", design/handwerk-fasern-jagen/spec-technik.md §4): direkt
+      // hinter Angeln (Chef-Vorgabe) — Emoji-Fallback 🪤 bis Miras `sidebaricon_hunting.webp`
+      // liegt (Auto-Discovery, s. sidebarIcons.ts — kein Code-Eintrag nötig, sobald sie da ist).
+      { id: "hunting", label: "nav.hunting", icon: "🪤", view: "skill", skillId: "hunting" },
       { id: "smithing", label: "nav.smithing", icon: "🔨", view: "skill", skillId: "smithing" },
       { id: "cooking", label: "nav.cooking", icon: "🍳", view: "skill", skillId: "cooking" },
       { id: "farming", label: "nav.farming", icon: "🌾", view: "skill", skillId: "farming" },

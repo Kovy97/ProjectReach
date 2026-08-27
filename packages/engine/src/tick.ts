@@ -19,6 +19,7 @@ import { bestToolSpeed } from "./tools";
 import { bankCount } from "./bank";
 import { evaluateQuests } from "./quests";
 import { tickFarmPlots } from "./farming";
+import { tickHuntTraps, type HuntCatchTally } from "./hunting";
 import { tryCraftSuffix } from "./suffix";
 import { markActionDropSeen } from "./drops";
 import {
@@ -636,7 +637,7 @@ export function advance(
   state: GameState,
   content: ContentDB,
   dtMs: number,
-  opts: { offline?: boolean; nowMs?: number } = {},
+  opts: { offline?: boolean; nowMs?: number; huntTally?: HuntCatchTally } = {},
 ): number {
   const offline = opts.offline ?? false;
   // Nicht-endliches/nicht-positives dt wie ein No-op behandeln: ein NaN würde `accumulatorMs`
@@ -672,6 +673,13 @@ export function advance(
     // wird zum FENSTERBEGINN eingesät, sobald Saat da ist — der einzige Zeitpunkt, den Live-Loop
     // und Offline-Catch-up gleich sehen (offline == online). Ohne Plan wirkungslos.
     tickFarmPlots(state, content, steps * TICK_MS);
+
+    // Jagen (1.2.0, SAVE 85, spec-technik §3): Fallen ticken direkt NACH den Beeten, ebenfalls EINMAL
+    // pro advance gegen das Fenster (offline == online, Rest-Übertrag in der Falle). Zieht RNG nur,
+    // wenn eine gestellte Falle wirklich wirft; ohne `content.huntingZones`/ohne gestellte Fallen ein
+    // No-op → bestehende RNG-Sequenzen bleiben bit-identisch. `huntTally` (optional) sammelt die
+    // Fänge je Monster dieses Fensters für die OfflineSummary (persistence deserialize).
+    tickHuntTraps(state, content, steps * TICK_MS, opts.huntTally);
 
     // Offline-Veredelung: tickt seit Task #335 PRO TICK in der Schleife oben (nach step()) —
     // nicht mehr einmal pro advance. Ihr Output fließt weiterhin VOR syncProgression/Quests/

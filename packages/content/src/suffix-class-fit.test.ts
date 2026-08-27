@@ -69,7 +69,10 @@ describe("Suffix-Klassen-Trennung (#p14): Pool-Tags", () => {
     // schlecht" war exakt das: 0 Mitigation/Ausweichen). 176→178, 84→85.
     // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A3/A4): 11 neue Leder- + 16 neue Stoff-Drops
     // (design/stil-paritaet-2026-08-26.md) — 85→96, 57→73.
-    expect(counts).toEqual({ armor_plate: 178, armor_leather: 96, armor_cloth: 73 });
+    // 1.2.0 „Fasern und Fallen" (content-dev, 27.08.2026): neuer Meisterring ring_master_hunting
+    // trägt evasionRating 4 (Flavor, Muster ring_master_fishing/-foraging, s. Kommentar unten) —
+    // 96→97.
+    expect(counts).toEqual({ armor_plate: 178, armor_leather: 97, armor_cloth: 73 });
   });
 
   it("jedes Rüstungsteil mit Klassen-Tag behält zusätzlich das allgemeine armor-Tag (Runen-Gate)", () => {

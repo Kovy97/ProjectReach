@@ -1,0 +1,443 @@
+/* ═══════════════════════════════════════════════════════════
+   HUNTING PAGE (Jagen, 1.2.0 „Fasern und Fallen")
+   Direkt von HuntingPage.tsx importiert (Kollisionsschutz-Muster wie bestiary.css/newhaven.css —
+   NICHT in index.css, andere Agenten arbeiten parallel an geteilten Stylesheets).
+   Wiederverwendet bewusst `.action-categories`/`.category-header`/`.farm-section-content`
+   (skills.css), `.bar`/`.bar-fill`/`.bar.tall` (skills.css), `.zone-card` (combat.css) und
+   `.btn-iron` (design-system.css) — hier nur Jagd-eigene Klassen.
+   ═══════════════════════════════════════════════════════════ */
+
+.hunt-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ─── Info bar (Köder-Zähler + Hinweis) ─────────────────────── */
+.hunt-info-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 16px;
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.60), rgba(8, 6, 4, 0.60)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: var(--frame-w);
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+}
+
+.hunt-bait-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.hunt-bait-count img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* ─── Trap grid ──────────────────────────────────────────────── */
+.hunt-traps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .hunt-traps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .hunt-traps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Trap card — wooden 9-slice frame (Muster .plot-card) ────── */
+.trap-card {
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
+    url("../assets/bg_black.webp") repeat;
+  border-style: solid;
+  border-color: transparent;
+  border-width: var(--frame-w);
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.trap-card.locked {
+  filter: brightness(0.65);
+}
+
+.trap-card.active {
+  box-shadow: 0 0 18px rgba(216, 192, 106, 0.28);
+}
+
+.trap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.trap-label {
+  font-family: var(--font-head);
+  font-size: 16px;
+  color: #9a8060;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.trap-lv-badge {
+  font-size: 14px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(154, 128, 96, 0.30);
+  white-space: nowrap;
+}
+
+.trap-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 14px;
+}
+
+/* Locked slot — centered lock glyph, Muster .plot-state-center */
+.trap-state-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  min-height: 160px;
+}
+
+.trap-state-icon {
+  font-size: 40px;
+  opacity: 0.5;
+  line-height: 1;
+}
+
+.trap-state-text {
+  font-size: 15px;
+  max-width: 180px;
+  line-height: 1.4;
+}
+
+/* ─── Zonen-Banner (Kartenhintergrund der gewählten/aktiven Zone) ── */
+.trap-zone-banner {
+  position: relative;
+  min-height: 72px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+}
+
+.trap-zone-banner.has-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.10) 0%, rgba(10, 8, 6, 0.55) 60%, rgba(10, 8, 6, 0.90) 100%);
+}
+
+.trap-banner-art {
+  font-size: 34px;
+  line-height: 1;
+  padding: 14px 0;
+}
+
+.trap-banner-art img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.trap-banner-name {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-head);
+  font-size: 15px;
+  color: #fff;
+  text-shadow: 0 1px 4px #000;
+  padding: 4px 8px 6px;
+  text-align: center;
+}
+
+.trap-no-zones {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Gebiets-Auswahl (leere Karte) — schlichtes natives Select im Citadel-Ton */
+.trap-zone-select {
+  width: 100%;
+  padding: 7px 30px 7px 10px;
+  font-size: 14px;
+  font-family: inherit;
+  /* Explizite Farben statt Variablen: natives <select> fiel im Harness auf Weiß zurück (Chef-Sichtprüfung 27.08.). */
+  color: #e6dcc0;
+  background-color: #15171a;
+  background-image: linear-gradient(45deg, transparent 50%, #d4b66d 50%), linear-gradient(135deg, #d4b66d 50%, transparent 50%);
+  background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  border: 1px solid rgba(212, 182, 109, 0.35);
+  border-radius: 2px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.trap-zone-select:focus { outline: none; border-color: rgba(212, 182, 109, 0.8); }
+.trap-zone-select option { background: #15171a; color: #e6dcc0; }
+
+.trap-meta {
+  font-size: 13px;
+}
+
+/* ─── Restzeit-Balken ────────────────────────────────────────── */
+.trap-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trap-remaining {
+  font-size: 13px;
+  text-align: right;
+}
+
+/* ─── Auto-Erneuern-Schalter — Muster .plot-autoreplant ────────── */
+.trap-autorebait {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ─── Letzter Fang ───────────────────────────────────────────── */
+.trap-lastcatch {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+
+.trap-lastcatch--missed {
+  font-size: 13px;
+  border-top: 1px dashed var(--border);
+  padding-top: 6px;
+}
+
+.trap-lastcatch-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trap-lastcatch-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trap-lastcatch-monster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.trap-lastcatch-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.trap-lastcatch-loot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.trap-lastcatch-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  color: var(--gold);
+}
+
+.trap-lastcatch-gold img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+/* ─── Actions ────────────────────────────────────────────────── */
+.trap-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   JAGDBUCH
+   ═══════════════════════════════════════════════════════════ */
+
+.hunt-book {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hunt-book-empty {
+  font-size: 14px;
+}
+
+.hunt-book-zone {
+  background:
+    linear-gradient(rgba(8, 6, 4, 0.62), rgba(8, 6, 4, 0.62)),
+    url("../assets/bg_black.webp") repeat;
+  border: 1px solid var(--border);
+  padding: 10px 14px 12px;
+}
+
+.hunt-book-zone-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hunt-book-zone-name {
+  font-family: var(--font-head);
+  font-size: 17px;
+  color: var(--gold);
+}
+
+.hunt-book-zone-meta {
+  font-size: 13px;
+}
+
+.hunt-book-empty-zone {
+  font-size: 13px;
+}
+
+.hunt-book-monsters {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hunt-book-monster {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hunt-book-monster:last-child {
+  border-bottom: none;
+}
+
+.hunt-book-monster-img {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hunt-book-monster-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.hunt-book-monster-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hunt-book-monster-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.hunt-book-monster.is-defeated .hunt-book-monster-name {
+  color: var(--text);
+}
+
+.hunt-book-monster:not(.is-defeated) .hunt-book-monster-name {
+  color: var(--muted);
+}
+
+.hunt-book-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.hunt-book-check.checked {
+  color: #8fd28f;
+  border-color: rgba(111, 200, 111, 0.5);
+}
+
+.hunt-book-monster-loot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}

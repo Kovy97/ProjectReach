@@ -33,6 +33,7 @@ export const SKILL_EMOJI_FALLBACK: Record<string, string> = {
   woodcutting: "🪓",
   mining: "⛏️",
   fishing: "🎣",
+  hunting: "🪤",
   smithing: "🔨",
   cooking: "🍳",
   farming: "🌾",

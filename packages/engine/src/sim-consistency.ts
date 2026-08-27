@@ -28,6 +28,7 @@ import type {
   LocalizedString,
 } from "@hearthforge/shared";
 import {
+  BAIT_ITEM_ID,
   BOOSTABLE_COMBAT_SKILL_IDS,
   PARAGON_DUNGEON_ID,
   effectiveWeaponEffects,
@@ -691,6 +692,10 @@ export function checkReferenceCompleteness(content: ContentDB, opts: Consistency
   // bis Welle K die Key-Rows aus dem Content nimmt).
   for (const d of content.dungeons) if (d.keyItem) used.add(d.keyItem);
   for (const c of Object.values(content.crops ?? {})) used.add(c.seedItem);
+  // Jagd-Köder (1.2.0 „Fasern und Fallen", engine/hunting.ts): `bait_worm` wird von KEINEM Rezept
+  // verbraucht, sondern beim Stellen/Erneuern einer Falle — ein Konsum-Sink wie die Crop-Saat.
+  // Zählt nur, solange der Jagd-Katalog existiert (ohne `huntingZones` ist die Jagd inert).
+  if (Array.isArray(content.huntingZones) && content.huntingZones.length > 0) used.add(BAIT_ITEM_ID);
   for (const m of Object.values(content.monsters)) if (m.slayerRequirement) used.add(m.slayerRequirement);
   // Lager-Baukosten zählen als Verwendung (Task #366): ein Item, das AUSSCHLIESSLICH als
   // New-Haven-Baumaterial dient, ist genauso wenig „verwaist" wie eines, das nur als Rezept-Input

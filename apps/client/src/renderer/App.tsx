@@ -72,6 +72,7 @@ import { QuestsPage } from "./pages/QuestsPage";
 import { AchievementsPage } from "./pages/AchievementsPage";
 import { PetGalleryPage } from "./pages/PetGalleryPage";
 import { FarmPage } from "./pages/FarmPage";
+import { HuntingPage } from "./pages/HuntingPage";
 import { SlayerPage } from "./pages/SlayerPage";
 import { EnchantingPage } from "./pages/EnchantingPage";
 import { MailPage } from "./pages/MailPage";
@@ -127,6 +128,7 @@ function PageContent({
     case "skill":
       if (page.skillId === "farming") return <FarmPage />;
       if (page.skillId === "slayer") return <SlayerPage onNavigate={onNavigate} />;
+      if (page.skillId === "hunting") return <HuntingPage />;
       // key erzwingt einen Remount pro Skill — sonst recycelt React dieselbe Instanz bei
       // Skill→Skill-Navigation und der lokale Kategorie-Collapse-State (SkillPage.tsx) leckt
       // zwischen Skills (verschärft dadurch, dass Smithing/Leatherworking dieselben Kategorie-IDs teilen).

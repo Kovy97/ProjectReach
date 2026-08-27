@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { SAVE_VERSION, defaultTavernState, eliteZoneCooldownBand } from "@hearthforge/shared";
+import { SAVE_VERSION, defaultHuntTraps, defaultTavernState, eliteZoneCooldownBand } from "@hearthforge/shared";
 import { computeStats } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -60,6 +60,14 @@ import { deserialize, serialize } from "./index";
  * `v84-synthetic-1.2.0.json` ist SYNTHETISCH wie v83 (createGame + Zustandsaufbau über `serialize`,
  * diesmal MIT gebauter Taverne, Tagesbesetzung, angenommener Aufgabe und einer Abgabe auf dem
  * echten Content) — die Sanitize-Fälle deckt tavern-persistence.test.ts ab.
+ *
+ * SAVE_VERSION 85 (Jagen — 1.2.0 „Fasern und Fallen", design/handwerk-fasern-jagen/spec-technik.md):
+ * fünfter Bump, v84 wurde ebenfalls nie ausgeliefert (die Taverne rückte per Chef-Entscheid J7 auf 1.3.0).
+ * Der v80-Pin belegt jetzt die Kette v80 → v85 mit GENAU FÜNF Flächen: die vier oben plus
+ * `huntTraps: defaultHuntTraps()` (sechs leere Fallenplätze) + `huntCatchSeq: 0` + `stats.huntCatches: 0`
+ * (v85). `v85-synthetic-1.2.0.json` ist SYNTHETISCH wie v83/v84 (createGame + Zustandsaufbau über
+ * `serialize` auf dem echten Content: Jagen-XP, Fang-Breadcrumb, Fang-Zähler) — Migration v84 → v85
+ * byte-genau, Sanitize-Fälle und OfflineSummary.huntCatches deckt hunt-persistence.test.ts ab.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -221,7 +229,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(SAVE_VERSION).toBeGreaterThanOrEqual(80);
   });
 
-  it("migriert v80 → v84 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
+  it("migriert v80 → v85 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
     // now === savedAt ⇒ offlineMs 0 ⇒ KEIN Catch-up-Tick: gemessen wird allein, was
     // Migration+Sanitize am gespeicherten Save tun. Das ist die schärfere Form des früheren
     // Identitäts-Guards: nicht nur „nichts geht kaputt", sondern „ES ÄNDERT SICH NUR, WAS SICH
@@ -252,9 +260,15 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(result!.state.tavern).toEqual(defaultTavernState());
     expect(result!.state.stats.actionRunsById).toEqual({});
     expect(result!.state.stats.producedById).toEqual({});
+    // Die neuen v85-Felder (Jagen, 1.2.0): sechs leere Fallenplätze (Auto-Erneuern AN, kein Fang),
+    // Fang-Nummer 0, Fang-Zähler 0 — rückwirkend gibt es nichts zu rekonstruieren.
+    expect(result!.state.huntTraps).toEqual(defaultHuntTraps());
+    expect(result!.state.huntCatchSeq).toBe(0);
+    expect(result!.state.stats.huntCatches).toBe(0);
 
     // Gegenprobe: das Original um genau diese erwarteten Änderungen ergänzt (Version, buildQueue,
-    // nextCropId je Beet, queueDungeon, tavern + die zwei Stats-Zähler), muss die frisch
+    // nextCropId je Beet, queueDungeon, tavern + die zwei Stats-Zähler, huntTraps + Fang-Nummer +
+    // Fang-Zähler), muss die frisch
     // serialisierten Bytes exakt treffen. Reißt DAS, hat die Migration mehr angefasst als
     // angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
     const erwartet = JSON.parse(json) as { version: number; state: GameState };
@@ -266,6 +280,9 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     erwartet.state.tavern = defaultTavernState();
     erwartet.state.stats.actionRunsById = {};
     erwartet.state.stats.producedById = {};
+    erwartet.state.huntTraps = defaultHuntTraps();
+    erwartet.state.huntCatchSeq = 0;
+    erwartet.state.stats.huntCatches = 0;
     // Achievements 1.2.0 (Chef-Entscheid 27.08.2026, KEIN SAVE_VERSION-Bump): der Katalog wurde von
     // 537 auf 311 Erfolge neu geschnitten (Kill-Tripel, Skill-Stufen 10/20/30/40/60/70/80 entfallen).
     // sanitize streift seit jeher Achievement-IDs ohne Content-Def ab (s. index.ts `knownAch`) —
@@ -456,5 +473,12 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(s.tavern).toEqual(defaultTavernState());
     expect(s.stats.actionRunsById).toEqual({});
     expect(s.stats.producedById).toEqual({});
+
+    // (20) v85 JAGEN (1.2.0): migrierte Alt-Saves tragen sechs leere Fallenplätze, Fang-Nummer 0 und
+    //      Fang-Zähler 0. Befüllte Fallen + Sanitize + OfflineSummary sichert hunt-persistence.test.ts,
+    //      das v85-Fixture trägt Breadcrumb/Zähler/Jagen-XP.
+    expect(s.huntTraps).toEqual(defaultHuntTraps());
+    expect(s.huntCatchSeq).toBe(0);
+    expect(s.stats.huntCatches).toBe(0);
   });
 });

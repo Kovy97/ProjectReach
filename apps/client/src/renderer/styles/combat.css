@@ -2571,6 +2571,40 @@
 .fx-flash.s-bleed  { --fx-flash-color: rgba(220, 60, 50, 0.95); }
 .fx-flash.s-frost  { --fx-flash-color: rgba(127, 208, 255, 0.95); }
 
+/* ─── KAMPFEFFEKTE WELLE 1 (design/combat-fx/konzept-kampfeffekte.md) ────────────────────────
+   Mira-Sprites on top vom Kampf-Juice-FX-Layer oben: `.fx-sprite` ist ein Drei-Zellen-Streifen
+   (Einschlag/Slash/Blut/Begleiter/Fehlschlag/Crit-Overlay, 768×256-Quelle = drei 256×256-Felder),
+   `.fx-missile` ist das einzelne Geschoss-Bild (256×128). Größe/Position/Rotation/Spiegelung
+   setzt CombatPage.tsx (Battle: playStripFx/playMissileFx) inline je Treffer — hier nur die
+   Grund-Mechanik (Zellen-Ausschnitt per background-position, Pool-Reset via `.active`). */
+.fx-sprite {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.fx-sprite-cell {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-repeat: no-repeat;
+  /* Streifen ist exakt 3 gleich breite Felder — bei background-size 300% zeigt 0/50/100%
+     Prozent-Position genau Feld 1/2/3 (Standard-CSS-Sprite-Trick für N gleich breite Zellen). */
+  background-size: 300% 100%;
+  will-change: opacity;
+}
+
+.fx-sprite-cell:nth-child(1) { background-position: 0% 0%; }
+.fx-sprite-cell:nth-child(2) { background-position: 50% 0%; }
+.fx-sprite-cell:nth-child(3) { background-position: 100% 0%; }
+
+.fx-missile {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
 /* §1b — Punch-Wrapper (Scale-Punch/Weißblitz am Getroffenen, WAAPI): spiegelt die Layout-Kette
    von .fighter-figure-art, damit das img seine 100%-Höhen-Kette behält (s. Fighter-JSX). */
 .fighter-figure-punch {
@@ -5458,7 +5492,8 @@
      über fxLevel="off" (matchMedia-Override in Battle) unterdrückt — hier die zweite Absicherung
      für die CSS-getriebenen Teile: Low-HP-Vignetten-Puls aus (statische Vignette wäre ok, aber
      die Klasse wird bei "off" ohnehin nicht gesetzt), Crit-Zahlen zurück auf das normale
-     floatUp (Zahlen selbst sind Kernfeedback und bleiben), FX-Layer sicherheitshalber weg. */
+     floatUp (Zahlen selbst sind Kernfeedback und bleiben), die ALTEN Juice-Elemente
+     sicherheitshalber weg. */
   .battle-arena.low-hp::after {
     animation: none !important;
   }
@@ -5471,7 +5506,15 @@
     animation: none !important;
   }
 
-  .arena-fx-layer {
+  /* NICHT der ganze `.arena-fx-layer` (Kampfeffekte Welle 1, Konzept §4): die neuen `.fx-sprite`/
+     `.fx-missile`-Elemente bleiben bei OS prefers-reduced-motion sichtbar — CombatPage.tsx spielt
+     dort bewusst nur noch die "reduziert"-Stufe (Einschläge/Slashes, kein Geschoss/Blut,
+     s. `spriteFxLevel`). Nur die alten, motion-lastigen Kampf-Juice-Elemente (Funken/Beams/Ring/
+     Flash) fallen hier zusätzlich zu ihrer JS-Gate weg — zweite Absicherung wie oben. */
+  .arena-fx-layer .fx-spark,
+  .arena-fx-layer .fx-beam,
+  .arena-fx-layer .fx-ring,
+  .arena-fx-layer .fx-flash {
     display: none !important;
   }
 }

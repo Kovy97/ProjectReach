@@ -499,6 +499,34 @@ export function OfflinePopup({
           </section>
         )}
 
+        {/* Jagen (1.2.0 „Fasern und Fallen", SAVE 85, design/handwerk-fasern-jagen/spec-technik.md
+            §4): „Jagd: Eber ×3, Ziege ×1" — je Monster ein Zeile, `OfflineSummary.huntCatches`.
+            Fehlt ganz, wenn im Offline-Fenster kein Fang gelang (Muster campBuilds/campRefined
+            oben). Items/Gold der Fänge stecken bereits in den regulären `items`/`gold`-Summen
+            unten — diese Zeile ist reine ZUORDNUNG (welches Tier), keine zweite Beute-Zählung. */}
+        {(o.huntCatches?.length ?? 0) > 0 && (
+          <section className="ofs-section ofs-section--hunt">
+            <h3 className="ofs-section-title">{t("offline.hunt.title")}</h3>
+            <div className="ofs-skills">
+              {o.huntCatches!.map((h, i) => {
+                const monster = content.monsters[h.monsterId];
+                const icon = getMonsterSrc(h.monsterId);
+                return (
+                  <div key={`${h.monsterId}-${i}`} className="ofs-skill-row">
+                    <span className="ofs-skill-icon">
+                      {icon && <img loading="lazy" decoding="async" src={icon} alt="" className="ui-icon" />}
+                    </span>
+                    <span className="ofs-skill-name">{monster ? tr(monster.name) : h.monsterId}</span>
+                    <span className="ofs-skill-gain">
+                      <span className="ofs-skill-lvl">×{h.count}</span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {items.length > 0 && (
           <section className="ofs-section ofs-section--loot">
             <h3 className="ofs-section-title">{t("offline.items")}</h3>

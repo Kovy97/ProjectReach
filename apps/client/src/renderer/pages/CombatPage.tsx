@@ -61,6 +61,17 @@ import { openItemWikiModal } from "../components/ItemWikiModal";
 import { QuantityPicker } from "../components/QuantityPicker";
 import { openQueueAmountModal } from "../components/QueueAmountModal";
 import { getPetSrc } from "../pets";
+import {
+  bloodVariantFor,
+  fxSprite,
+  magicThemeFor,
+  petFxImageFor,
+  petFxTargetSide,
+  slashFamilyFor,
+  type BloodVariant,
+  type PetFxImage,
+  type SlashFamily,
+} from "../combatFx";
 import { getPortrait } from "../portraits";
 import { COMBAT_TOUR_STEPS } from "../areaTourSteps";
 import { getSkillIcon } from "../skillIcons";
@@ -869,6 +880,37 @@ const PET_ABILITY_BUCKET: Record<PetAbilityKind, PetFxBucket> = {
   armorPierceHit: "damage",
   multiHit: "damage",
 };
+
+// ─── Kampfeffekte Welle 1 (design/combat-fx/konzept-kampfeffekte.md) ────────────────────────────
+// Sprites on top vom bestehenden Kampf-Juice-FX-Layer (derselbe `arena-fx-layer`, ein eigener
+// Element-Pool je Rolle — s. Battle: acquireSpriteFx/acquireMissileFx/playStripFx/playMissileFx).
+// Themen-/Familien-/Blutvariante-Auflösung sitzt in combatFx.ts (pur, testbar).
+
+/** Gepoolte Streifen-Sprites je SEITE (Konzept §4 "max. drei gleichzeitige Sprites je Seite") —
+ *  ein Element deckt Einschlag/Slash/Blut/Pet/Miss/Crit-Overlay gleichermaßen ab (nur URL/Größe/
+ *  Rotation unterscheiden sich je Aufruf). */
+const SPRITE_FX_POOL_SIZE = 3;
+/** Geschosse fliegen nur ~200ms und sind selten gleichzeitig aktiv — ein kleinerer, seitenloser
+ *  Pool reicht (Konzept-Deckel bezieht sich auf die LANDENDEN Effekte je Seite). */
+const MISSILE_FX_POOL_SIZE = 2;
+/** Flugdauer eines Geschoss-Sprites (Konzept §2/§4 "~200ms") — auch von der SFX-Verzögerung des
+ *  Bogen-Impact-Sounds genutzt (s. Battle SFX-Block: „Sound beim Ankommen des Geschosses"). */
+const MISSILE_FLIGHT_MS = 200;
+
+/** Drei überlappende Opacity-Fenster (Beginn/Höhepunkt/Ausklang) für den Zellen-Crossfade jedes
+ *  768×256-Streifen-Sprites — dieselbe Kurve für alle Rollen, nur `duration` variiert je Aufruf. */
+const STRIP_CELL_KEYFRAMES: Keyframe[][] = [
+  [{ opacity: 1, offset: 0 }, { opacity: 1, offset: 0.3 }, { opacity: 0, offset: 0.42 }, { opacity: 0, offset: 1 }],
+  [
+    { opacity: 0, offset: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1, offset: 0.4 },
+    { opacity: 1, offset: 0.62 }, { opacity: 0, offset: 0.72 }, { opacity: 0, offset: 1 },
+  ],
+  [{ opacity: 0, offset: 0 }, { opacity: 0, offset: 0.6 }, { opacity: 1, offset: 0.7 }, { opacity: 1, offset: 1 }],
+];
+
+/** Größen-Anteil an der Figurenhöhe je Sprite-Rolle (Konzept §4: "Einschlag ≈55 %, Slash ≈70 %,
+ *  Geschoss ≈28 %" — Blut/Pet/Wischer sind dort nicht beziffert, eigene UI-Ermessens-Werte). */
+const SPRITE_SIZE_RATIO = { impact: 0.55, slash: 0.7, blood: 0.42, pet: 0.45, miss: 0.5 } as const;
 
 /** Ein Drop-Icon im Collection-Log-Stil: `???` bis entdeckt, danach klickbar → Item-Info-Tooltip. */
 function DropIcon({
@@ -1703,15 +1745,29 @@ function Battle({
   // Task #296 P0 §1.6 — Kampf-Effekte-Stufe: OS `prefers-reduced-motion` übersteuert IMMER
   // zusätzlich auf "off", unabhängig vom gespeicherten Options-Wert. Einmal pro Battle-Mount
   // berechnet (Plan-Vorgabe) — spart wiederholte matchMedia/localStorage-Reads auf jedem Tick.
+  const prefersReducedMotion = useMemo(
+    () => typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+    [],
+  );
   const fxLevel: CombatFxLevel = useMemo(() => {
-    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      return "off";
-    }
+    if (prefersReducedMotion) return "off";
     return getCombatFxLevel();
-  }, []);
+  }, [prefersReducedMotion]);
   // Reine Bewegung (Skalier-/Aufstieg-Keyframes der Wellen-Ansage/des Boss-Intros) nur bei "full" —
   // "reduced"/"off" behalten Opacity-Fades, aber keine Transform-Animation (Fighter-Muster oben).
   const fxMotion = fxLevel === "full";
+
+  // Kampfeffekte Welle 1 (Konzept §4) — EIGENE, milde Stufe für die neuen Sprites: "reduziert"
+  // (Geschoss + Blut aus, Einschläge/Slashes bleiben) greift auch bei `prefers-reduced-motion`
+  // statt komplett zu verschwinden wie das bestehende `fxLevel` (Konzept-Vorgabe, bewusst
+  // GROSSZÜGIGER als die App-weite Kampf-Juice-Stufe oben — Arena-Shake/Rune-Ring/Beam/Spark
+  // bleiben unverändert an `fxLevel` gebunden und damit bei OS-reduced-motion komplett aus).
+  const spriteFxLevel: CombatFxLevel = useMemo(() => {
+    const userLevel = getCombatFxLevel();
+    if (userLevel === "off") return "off";
+    if (prefersReducedMotion || userLevel === "reduced") return "reduced";
+    return "full";
+  }, [prefersReducedMotion]);
 
   // Dungeon-Rework-Spec §5.6.2 — Wellen-Ansage: "Welle X/Y — <Name>" beim Wellenwechsel (inkl.
   // dem Auftakt beim Betreten, encounterIndex 0). `cs.dungeonId`/`cs.encounterIndex` sind primitive
@@ -2048,6 +2104,11 @@ function Battle({
     return null;
   }, [c.equipment.mainhand]);
 
+  // Kampfeffekte Welle 1 (design/combat-fx/konzept-kampfeffekte.md) — dieselbe Mainhand-Waffe wie
+  // `weaponStatus` oben, hier zusätzlich für die Sprite-Themen-/Slash-Familien-Auflösung
+  // (combatFx.ts magicThemeFor/slashFamilyFor) gebraucht.
+  const mainhandWeapon = useMemo(() => content.items[c.equipment.mainhand ?? ""], [c.equipment.mainhand]);
+
   /** Rechteck eines Stage-Kindes in FX-Layer-Koordinaten (der Layer liegt inset:0 AUF der Stage).
    *  getBoundingClientRect läuft NUR beim Trigger (kein Layout-Read pro Frame/Tick). */
   const fxRect = (sel: string): { x: number; y: number; w: number; h: number } | null => {
@@ -2228,6 +2289,246 @@ function Battle({
     );
   };
 
+  // ─── Kampfeffekte Welle 1: Sprite-Wiedergabe (design/combat-fx/konzept-kampfeffekte.md §4) ────
+  // Eigener Pool neben `fxPoolRef` oben — dieselben Anker (`fxRect`), derselbe Layer
+  // (`fxLayerRef`), derselbe `bumpFx`-Assertion-Anker (Zähler "sprites"). Rückfall-Regel: fehlt
+  // ein Sprite (fxSprite → null), ruft der jeweilige play*Fx-Aufrufer den ALTEN Form-Effekt
+  // (spawnBeam/spawnSparks/spawnImpactFlash) — praktisch tot, solange alle 33 Welle-1-Dateien
+  // vorliegen, bleibt aber für künftige Nachlieferungen als Degradations-Kette bestehen.
+  const spriteFxPoolRef = useRef<Record<"player" | "enemy", { els: HTMLDivElement[]; next: number }>>({
+    player: { els: [], next: 0 },
+    enemy: { els: [], next: 0 },
+  });
+  const missileFxPoolRef = useRef<{ els: HTMLImageElement[]; next: number }>({ els: [], next: 0 });
+
+  /** Streifen-Element (3 Zellen, s. `.fx-sprite`/`.fx-sprite-cell` in combat.css) holen — gepoolt
+   *  je Seite, Deckel `SPRITE_FX_POOL_SIZE` (Round-Robin-Recycling darüber, wie `acquireFx`). */
+  const acquireSpriteFx = (side: "player" | "enemy"): HTMLDivElement | null => {
+    const layer = fxLayerRef.current;
+    if (!layer) return null;
+    const pool = spriteFxPoolRef.current[side];
+    let el: HTMLDivElement;
+    if (pool.els.length < SPRITE_FX_POOL_SIZE) {
+      el = document.createElement("div");
+      // Fix 28.08.2026 (CEO-Probe): die Zellen brauchen die Klasse `fx-sprite-cell` (absolute Lage, Ausschnitt per
+      // background-size/-position aus combat.css) — ohne sie waren die Streifen unsichtbare Inline-Spans.
+      for (let i = 0; i < 3; i++) {
+        const cell = document.createElement("span");
+        cell.className = "fx-sprite-cell";
+        el.appendChild(cell);
+      }
+      layer.appendChild(el);
+      pool.els.push(el);
+    } else {
+      el = pool.els[pool.next % pool.els.length]!;
+      pool.next += 1;
+      if (typeof el.getAnimations === "function") for (const a of el.getAnimations()) a.cancel();
+      for (const cell of Array.from(el.children)) {
+        if (typeof (cell as HTMLElement).getAnimations === "function") {
+          for (const a of (cell as HTMLElement).getAnimations()) a.cancel();
+        }
+      }
+    }
+    el.className = "fx-sprite";
+    return el;
+  };
+
+  /** Geschoss-Element (einzelnes `<img>`) holen — gepoolt, Deckel `MISSILE_FX_POOL_SIZE`. */
+  const acquireMissileFx = (): HTMLImageElement | null => {
+    const layer = fxLayerRef.current;
+    if (!layer) return null;
+    const pool = missileFxPoolRef.current;
+    let el: HTMLImageElement;
+    if (pool.els.length < MISSILE_FX_POOL_SIZE) {
+      el = document.createElement("img");
+      el.setAttribute("aria-hidden", "true");
+      el.decoding = "async";
+      layer.appendChild(el);
+      pool.els.push(el);
+    } else {
+      el = pool.els[pool.next % pool.els.length]!;
+      pool.next += 1;
+      if (typeof el.getAnimations === "function") for (const a of el.getAnimations()) a.cancel();
+    }
+    el.className = "fx-missile";
+    return el;
+  };
+
+  /** Spielt einen Drei-Zellen-Streifen als gepooltes Element auf `side` ab (Anker
+   *  `.arena-side-<side> .fighter-figure-art`, mittig auf ~45 % Figurenhöhe — Brust-Höhe wie die
+   *  alten Einschlag-/Funken-Effekte). `mirror` spiegelt horizontal (Gegner-Angriffe laufen
+   *  rechts→links, D5), `rotateDeg` ist der zufällige Slash-Dreh, `driftPx` der leichte Blut-
+   *  Fall nach unten. Rückgabe `false` = Anker fehlt (Aufrufer fällt selbst zurück). */
+  const playStripFx = (
+    side: "player" | "enemy",
+    url: string,
+    ratio: number,
+    opts: { mirror?: boolean; rotateDeg?: number; scale?: number; durationMs?: number; yFrac?: number; driftPx?: number } = {},
+  ): boolean => {
+    const box = fxRect(`.arena-side-${side} .fighter-figure-art`);
+    if (!box) return false;
+    const el = acquireSpriteFx(side);
+    if (!el) return false;
+    bumpFx("sprites");
+    const size = Math.round(box.h * ratio * (opts.scale ?? 1));
+    const yFrac = opts.yFrac ?? 0.45;
+    el.style.width = `${size}px`;
+    el.style.height = `${size}px`;
+    el.style.left = `${Math.round(box.x + box.w / 2 - size / 2)}px`;
+    el.style.top = `${Math.round(box.y + box.h * yFrac - size / 2)}px`;
+    for (const cell of Array.from(el.children)) {
+      (cell as HTMLElement).style.backgroundImage = `url("${url}")`;
+    }
+    const flip = opts.mirror ? -1 : 1;
+    const rot = opts.rotateDeg ?? 0;
+    const drift = opts.driftPx ?? 0;
+    const base = `scaleX(${flip}) rotate(${rot}deg)`;
+    el.style.transform = `${base} scale(1)`;
+    const duration = opts.durationMs ?? 300;
+    if (typeof el.animate === "function") {
+      el.classList.add("active");
+      const wrapAnim = el.animate(
+        [
+          { transform: `${base} translateY(0px) scale(1)` },
+          { transform: `${base} translateY(${Math.round(drift * 0.5)}px) scale(1.08)`, offset: 0.4 },
+          { transform: `${base} translateY(${drift}px) scale(1)` },
+        ],
+        { duration, easing: "ease-out" },
+      );
+      wrapAnim.onfinish = () => el.classList.remove("active");
+      wrapAnim.oncancel = () => el.classList.remove("active");
+    }
+    Array.from(el.children).forEach((cell, i) => {
+      if (typeof (cell as HTMLElement).animate !== "function") return;
+      (cell as HTMLElement).animate(STRIP_CELL_KEYFRAMES[i]!, { duration, easing: "linear" });
+    });
+    return true;
+  };
+
+  /** Geschoss-Flug (Konzept §2 A + Pfeil): Hand des Angreifers (oberes Drittel) → Brust des
+   *  Ziels, ~200ms, leicht gebogen; spiegelt bei Flug von rechts (Gegner-Cast/-Schuss). Ruft
+   *  `onArrive` beim Landen — der Aufrufer spielt dort den Einschlag + retimten Sound. */
+  const playMissileFx = (from: "player" | "enemy", url: string, onArrive: () => void): boolean => {
+    const to = from === "player" ? "enemy" : "player";
+    const fromBox = fxRect(`.arena-side-${from} .fighter-figure-art`);
+    const toBox = fxRect(`.arena-side-${to} .fighter-figure-art`);
+    if (!fromBox || !toBox) return false;
+    const el = acquireMissileFx();
+    if (!el) return false;
+    bumpFx("sprites");
+    const h = Math.round(fromBox.h * 0.28);
+    const w = h * 2; // Geschoss-Kunst ist 256×128 (Konzept §3)
+    const x1 = fromBox.x + fromBox.w * 0.55 - w / 2;
+    const y1 = fromBox.y + fromBox.h * 0.32 - h / 2;
+    const x2 = toBox.x + toBox.w / 2 - w / 2;
+    const y2 = toBox.y + toBox.h * 0.45 - h / 2;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const mirror = from === "enemy"; // Kunst fliegt nach rechts (Dateikonvention); Gegner-Wurf läuft rechts→links
+    el.src = url;
+    el.style.width = `${w}px`;
+    el.style.height = `${h}px`;
+    el.style.left = `${Math.round(x1)}px`;
+    el.style.top = `${Math.round(y1)}px`;
+    const flipPrefix = mirror ? "scaleX(-1) " : "";
+    const dist = Math.hypot(dx, dy);
+    const bow = Math.min(36, dist * 0.12) * (Math.random() < 0.5 ? -1 : 1); // leichte Bogen-Kurve
+    const midX = dx * 0.5;
+    const midY = dy * 0.5 - Math.abs(bow);
+    if (typeof el.animate !== "function") {
+      onArrive();
+      return true;
+    }
+    el.classList.add("active");
+    const anim = el.animate(
+      [
+        { transform: `${flipPrefix}translate(0px, 0px)`, opacity: 0 },
+        { opacity: 1, offset: 0.15 },
+        { transform: `${flipPrefix}translate(${Math.round(midX)}px, ${Math.round(midY)}px)`, offset: 0.55 },
+        { transform: `${flipPrefix}translate(${Math.round(dx)}px, ${Math.round(dy)}px)`, opacity: 1 },
+      ],
+      { duration: MISSILE_FLIGHT_MS, easing: "ease-in" },
+    );
+    anim.onfinish = () => {
+      el.classList.remove("active");
+      onArrive();
+    };
+    anim.oncancel = () => el.classList.remove("active");
+    return true;
+  };
+
+  /** Einschlag-Sprite am Ziel (Familie A/B-Landung). `crit` skaliert 1,4× und legt zusätzlich das
+   *  Crit-Overlay darüber (Konzept "Crit: Einschlag 1,4× plus Crit-Overlay"). Rückfall: fehlt
+   *  `fx_impact_<thema>`, spielt der alte elementfarbene Flash (zielt wie bisher nur auf den
+   *  Gegner — der alte Effekt kennt keine Spieler-Seite). */
+  const playImpactFx = (
+    side: "player" | "enemy",
+    theme: string,
+    crit: boolean,
+    critFamily: "magic" | "weapon",
+    fallbackStatus: StatusType | null,
+  ): void => {
+    const url = fxSprite(`fx_impact_${theme}`);
+    if (!url) {
+      if (side === "enemy") spawnImpactFlash(fallbackStatus);
+      return;
+    }
+    playStripFx(side, url, SPRITE_SIZE_RATIO.impact, { scale: crit ? 1.4 : 1, durationMs: 300 });
+    if (crit) {
+      const critUrl = fxSprite(`fx_crit_${critFamily}`);
+      if (critUrl) playStripFx(side, critUrl, SPRITE_SIZE_RATIO.impact, { scale: 1.3, durationMs: 300 });
+    }
+  };
+
+  /** Waffen-Slash über der Trefferzone (Familie B), leicht zufällig rotiert (±12°), gespiegelt
+   *  bei Gegner-Angriffen. Rückfall: fehlt `fx_slash_<familie>`, die alten Einschlags-Funken. */
+  const playSlashFx = (side: "player" | "enemy", family: SlashFamily, crit: boolean, mirror: boolean): void => {
+    const url = fxSprite(`fx_slash_${family}`);
+    if (!url) {
+      spawnSparks(side, crit ? 10 : 6, false);
+      return;
+    }
+    const rotateDeg = Math.round((Math.random() - 0.5) * 24); // ±12°
+    playStripFx(side, url, SPRITE_SIZE_RATIO.slash, { mirror, rotateDeg, scale: crit ? 1.4 : 1, durationMs: 280 });
+    if (crit) {
+      const critUrl = fxSprite("fx_crit_weapon");
+      if (critUrl) playStripFx(side, critUrl, SPRITE_SIZE_RATIO.impact, { scale: 1.3, durationMs: 280 });
+    }
+  };
+
+  /** Blut-/Ichor-/Knochenstaub-Spritzer am Einschlagpunkt, driftet leicht nach unten (Familie C).
+   *  Kein Rückfall nötig — die alten Funken decken den „harten Treffer" bereits über spawnSparks/
+   *  playSlashFx ab, ein fehlendes Blut-Sprite lässt den Treffer einfach ohne Spritzer. */
+  const playBloodFx = (side: "player" | "enemy", variant: BloodVariant): void => {
+    const url = fxSprite(`fx_blood_${variant}`);
+    if (!url) return;
+    playStripFx(side, url, SPRITE_SIZE_RATIO.blood, { durationMs: 320, yFrac: 0.5, driftPx: 14 });
+  };
+
+  /** Begleiter-Effekt-Sprite am Ziel (Familie D) — ergänzt den bestehenden Portrait-Puls
+   *  (`pet-ability-glow`), ersetzt ihn NICHT (zwei unterschiedliche Orte: Portrait vs. Ziel-
+   *  Figur, kein Konflikt mit der Rückfall-Regel). */
+  const playPetFx = (image: PetFxImage): void => {
+    const url = fxSprite(`fx_pet_${image}`);
+    if (!url) return;
+    playStripFx(petFxTargetSide(image), url, SPRITE_SIZE_RATIO.pet, { durationMs: 300 });
+  };
+
+  /** Fehlschlag-Wischer (Familie C) — heute ohne Alt-Entsprechung (miss hatte bislang keinen FX),
+   *  darum kein Fallback-Zweig nötig. */
+  const playMissFx = (side: "player" | "enemy"): void => {
+    const url = fxSprite("fx_miss_whiff");
+    if (!url) return;
+    playStripFx(side, url, SPRITE_SIZE_RATIO.miss, { durationMs: 260 });
+  };
+
+  /** Block-Funken auf dem Schild-Anker (Familie C) — ebenfalls ohne Alt-Entsprechung. */
+  const playBlockFx = (side: "player" | "enemy"): void => {
+    const url = fxSprite("fx_impact_block");
+    if (!url) return;
+    playStripFx(side, url, SPRITE_SIZE_RATIO.impact, { durationMs: 260 });
+  };
+
   // Neue Treffer (seq > zuletzt gesehen) als Schadenszahlen einblenden.
   useEffect(() => {
     if (lastSeqRef.current === null) {
@@ -2250,26 +2551,89 @@ function Battle({
           triggerHitFx(e.by === "player" ? "enemy" : "player", e.kind === "crit");
         }
       }
-      // Kampf-Juice-Welle (Chef-GO 2026-07-12): Wucht-FX am GELANDETEN Treffer — alles imperativ
-      // über den gepoolten FX-Layer; die Spawn-Funktionen gaten selbst auf fxLevel "full".
+      // Kampfeffekte Welle 1 (Konzept §2 Familien A–C) am GELANDETEN Treffer: Sprite-FX über den
+      // neuen Pool, die alten Form-Effekte (spawnBeam/spawnSparks/spawnImpactFlash/spawnRuneRing
+      // aus der Kampf-Juice-Welle, Chef-GO 2026-07-12) laufen nur noch als Rückfall in den
+      // play*Fx-Wrappern (fehlendes Sprite) bzw. wenn `spriteFxLevel` "off" ist (praktisch
+      // deckungsgleich mit `fxLevel` "off" — s. spriteFxLevel-JSDoc). `spriteFxLevel==="reduced"`
+      // spielt nur Einschläge/Slashes, KEIN Geschoss, KEIN Blut (Konzept §4).
       if ((e.kind === "hit" || e.kind === "crit") && e.amount > 0) {
-        // §1a: Arena-Shake NUR bei Crits (beide Seiten) — normale Treffer schütteln bewusst nicht.
-        if (e.kind === "crit") triggerArenaShake();
-        if (e.by === "player" && stats.style === "magic") {
-          // §3 Spell-Moment: Runen-Ring unterm Caster + Projektil-Streif, Einschlag =
-          // elementfarbener Flash am Gegner (Statusfarbe der Waffe, sonst Arkan-Violett).
-          spawnRuneRing();
-          spawnBeam("arcane", () => spawnImpactFlash(weaponStatus));
-        } else if (e.by === "player" && stats.style === "ranged") {
-          // §4 Bogen-Tracer: dünner heller Strich zur Gegner-Figur (~130ms) — Ranged liest sich
-          // damit als Distanz-Angriff, nicht als „Melee auf Abstand".
-          spawnBeam("tracer");
+        const attacker = e.by;
+        const target: "player" | "enemy" = attacker === "player" ? "enemy" : "player";
+        const crit = e.kind === "crit";
+        // §1a: Arena-Shake NUR bei Crits (beide Seiten) — bleibt an der strikten `fxLevel`
+        // gebunden (OS prefers-reduced-motion schaltet echte Bewegung wie Shake weiter ganz ab,
+        // anders als die sanftere `spriteFxLevel` unten).
+        if (crit) triggerArenaShake();
+
+        if (spriteFxLevel !== "off") {
+          const allowMissileAndBlood = spriteFxLevel === "full";
+          const bloodVariant = bloodVariantFor(target === "enemy" ? monster : undefined);
+
+          if (attacker === "player" && stats.style === "magic") {
+            spawnRuneRing(); // kein Sprite-Äquivalent — bleibt an der alten fxLevel-Gate hängen
+            const theme = magicThemeFor(mainhandWeapon);
+            const doImpact = (): void => {
+              playImpactFx(target, theme, crit, "magic", weaponStatus);
+              if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+            };
+            const missileUrl = allowMissileAndBlood ? fxSprite(`fx_missile_${theme}`) : null;
+            if (missileUrl) {
+              if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
+            } else if (allowMissileAndBlood) {
+              spawnBeam("arcane", () => spawnImpactFlash(weaponStatus)); // Geschoss-Sprite fehlt
+            } else {
+              doImpact(); // "reduziert": sofort Einschlag ohne Flug
+            }
+          } else if (attacker === "player" && stats.style === "ranged") {
+            const doImpact = (): void => {
+              playImpactFx(target, "arrow", crit, "weapon", null);
+              if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+            };
+            const missileUrl = allowMissileAndBlood ? fxSprite("fx_missile_arrow") : null;
+            if (missileUrl) {
+              if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
+            } else if (allowMissileAndBlood) {
+              spawnBeam("tracer"); // Pfeil-Sprite fehlt
+            } else {
+              doImpact();
+            }
+          } else if (attacker === "player") {
+            // Nahkampf: Slash direkt am Ziel, kein Geschoss.
+            playSlashFx(target, slashFamilyFor(mainhandWeapon?.weaponType), crit, false);
+            if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+          } else {
+            // Gegner-Angriff, gespiegelt (Chef-D5) — Monster tragen keine Waffendaten, darum der
+            // feste Standard-Slash "cut" (s. slashFamilyFor-JSDoc); ein monster-eigenes
+            // Magie-Thema ist mangels Datenfeld noch offen (Bericht an den Chef).
+            playSlashFx(target, "cut", crit, true);
+            if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+          }
         } else {
-          // §1c Funken am Einschlagpunkt bei Melee-Treffern (Spieler-Melee + Monster-Schläge).
-          spawnSparks(e.by === "player" ? "enemy" : "player", e.kind === "crit" ? 10 : 6, false);
+          // Sicherheitsnetz: sollte laut spriteFxLevel-JSDoc mit fxLevel "off" zusammenfallen.
+          if (attacker === "player" && stats.style === "magic") {
+            spawnRuneRing();
+            spawnBeam("arcane", () => spawnImpactFlash(weaponStatus));
+          } else if (attacker === "player" && stats.style === "ranged") {
+            spawnBeam("tracer");
+          } else {
+            spawnSparks(target, crit ? 10 : 6, false);
+          }
         }
       }
-      // Pet-Ability: Sprite-Animation + Farb-Blitz (Bucket aus combatAbility.kind) auslösen.
+      // Fehlschlag-Wischer (Familie C) — dieselbe Zielseite wie der bestehende Miss-Floater.
+      if (e.kind === "miss" && spriteFxLevel !== "off") {
+        playMissFx(e.by === "player" ? "enemy" : "player");
+      }
+      // Block-Funken auf dem Schild-Anker (Familie C). `by` ist hier bereits die BLOCKENDE Seite
+      // (anders als bei hit/crit/miss — s. combat.ts pushLog kind:"block").
+      if (e.kind === "block" && e.amount > 0 && spriteFxLevel !== "off") {
+        playBlockFx(e.by);
+      }
+      // Pet-Ability: Sprite-Animation + Farb-Blitz (Bucket aus combatAbility.kind) auslösen, PLUS
+      // (Kampfeffekte Welle 1, Familie D) den neuen Bild-Sprite am Ziel (Gegner, bzw. Spieler bei
+      // Schutz/Heilung) — ergänzt den bestehenden Portrait-Puls, ersetzt ihn nicht (zwei
+      // unterschiedliche Orte, s. playPetFx-JSDoc).
       if (e.kind === "petAbility") {
         setPetLunge((l) => l + 1);
         const pet = e.petId ? content.pets[e.petId] : undefined;
@@ -2277,6 +2641,7 @@ function Battle({
         if (kind) {
           const bucket = PET_ABILITY_BUCKET[kind];
           setPetFx((p) => ({ n: p.n + 1, bucket }));
+          if (spriteFxLevel !== "off") playPetFx(petFxImageFor(kind));
         }
       }
       // SFX an die Events knüpfen (gedrosselt im Audio-Modul).
@@ -2293,8 +2658,15 @@ function Battle({
       } else if (isPlayerSwing && stats.style !== "magic") {
         const set = stats.style === "ranged" ? "bow" : "sword";
         const attackPlayed = playCombatSfx(`${set}_attack`);
-        const resultGroup = e.kind === "hit" || e.kind === "crit" ? `${set}_impact` : `${set}_blocked`;
-        const resultPlayed = playCombatSfx(resultGroup, 140);
+        const isHitResult = e.kind === "hit" || e.kind === "crit";
+        const resultGroup = isHitResult ? `${set}_impact` : `${set}_blocked`;
+        // Kampfeffekte Welle 1 (Konzept §4 "Sound: <set>_impact beim Ankommen des Geschosses statt
+        // sofort"): beim Bogen fliegt jetzt ein echtes Pfeil-Sprite (~200ms) zum Ziel — der Impact-
+        // Sound folgt dessen Landung statt des alten pauschalen 140ms-Schwung-Delays. Melee hat kein
+        // Geschoss und bleibt unverändert beim Chef-Schema (140ms). Miss/Block hat ebenfalls kein
+        // Geschoss (playMissFx/playBlockFx sind Landungs-Effekte ohne Flug) und bleibt bei 140ms.
+        const resultDelayMs = isHitResult && set === "bow" && e.amount > 0 ? MISSILE_FLIGHT_MS : 140;
+        const resultPlayed = playCombatSfx(resultGroup, resultDelayMs);
         // Sweep2-T7 (2026-07-13): Fallback hängt am RESULT, nicht am Attack-Whoosh — vorher
         // unterdrückte ein vorhandenes sword_attack den Synth-Treffer, obwohl die
         // impact/blocked-Dateien noch fehlen → gelandete Treffer waren komplett stumm.
@@ -3042,9 +3414,14 @@ function Battle({
               />
               {cs.lastKill && <KillSummaryCard lastKill={cs.lastKill} />}
             </div>
-            {/* Kampf-Juice: FX-Layer für gepoolte Funken/Projektile/Runen-Ring/Einschlag-Flash —
-                z-index 3 (über den Figuren, UNTER Buff-/Debuff-Chips z:4 und Nameplates z:5). */}
-            {fxLevel === "full" && <div className="arena-fx-layer" ref={fxLayerRef} aria-hidden="true" />}
+            {/* Kampf-Juice: FX-Layer für gepoolte Funken/Projektile/Runen-Ring/Einschlag-Flash UND
+                (Kampfeffekte Welle 1) die neuen Sprite-/Geschoss-Elemente — z-index 3 (über den
+                Figuren, UNTER Buff-/Debuff-Chips z:4 und Nameplates z:5). Gerendert bei `fxLevel`
+                "full" (alte Effekte) ODER `spriteFxLevel` !== "off" (neue Sprites, auch bei OS
+                prefers-reduced-motion — s. spriteFxLevel-JSDoc). */}
+            {(fxLevel === "full" || spriteFxLevel !== "off") && (
+              <div className="arena-fx-layer" ref={fxLayerRef} aria-hidden="true" />
+            )}
           </div>
             </>
           )}

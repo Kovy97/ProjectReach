@@ -24,6 +24,7 @@ export * from "./quests";
 export * from "./pets";
 export * from "./capes";
 export * from "./farming";
+export * from "./hunting";
 export * from "./slayer";
 export * from "./zones";
 export * from "./enchant";

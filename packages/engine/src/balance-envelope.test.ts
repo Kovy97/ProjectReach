@@ -504,7 +504,13 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // slayer_helm dex 2→4 (beide Plattenteile/Leder-Teil bleiben trotzdem hinter der jeweils
     // besten Craft-/Drop-Wahl zurueck, s.u. TTK-Matrix fuer die tatsaechlichen Slot-Verschiebungen)
     // heben den flachen dex-Kontest-Stat leicht an: 16.8088 → 16.8537.
-    expect(st.evasion).toBeCloseTo(16.8537, 3);
+    // Re-Messung 2026-08-27 (content-dev, 1.2.0 „Fasern und Fallen"): neuer Skill "hunting" (trains
+    // dex) — NICHT der neue Meisterring (ring_master_hunting verlangt hunting:99 > CL90-Deckel,
+    // requirementsOk schließt ihn hier wie jeden Meisterring aus, bisektiv verifiziert: Pin bleibt
+    // identisch verschoben auch ohne das Ring-Item). buildBisCharacter setzt jeden Skill auf
+    // targetLevel — der zusätzliche trainierte Skill hebt trained.dex (character.ts computeStats
+    // §2 Hybrid) und damit den flachen evasion-Kontest-Stat: 16.8537 → 17.3194.
+    expect(st.evasion).toBeCloseTo(17.3194, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -536,11 +542,13 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     const hcOn = hitChance(enemyEffectiveAccuracy(onLevel), st.evasion); // L90 < Schwelle ⇒ acc unverändert
     // Re-Messung 2026-08-26 (Slayer omnifunktional, s.o.): evasion 16.8088→16.8537 laesst den
     // Gegner marginal seltener landen: 0.3956 → 0.3949 / 0.7698 → 0.7693.
-    expect(hcOn).toBeCloseTo(0.3949, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2370, 3);
+    // Re-Messung 2026-08-27 (content-dev, 1.2.0 „Fasern und Fallen", neuer Skill "hunting" trains
+    // dex, s.o.): evasion 16.8537 → 17.3194 laesst den Gegner spuerbar seltener landen.
+    expect(hcOn).toBeCloseTo(0.3884, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2334, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7693, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4616, 3);
+    expect(hc150).toBeCloseTo(0.7643, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4586, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -698,13 +706,22 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Platten-/Lederteile schlagen die bestehenden Stoff-Picks des Magic-Builds nicht (72.29/27.32 und
     // 243.30/29.53 exakt wie zuvor): ranged/idol_warden 81.02/15.45 → 82.20/19.64,
     // ranged/last_idol 268.31/13.86 → 272.31/13.60.
+    // Re-Messung 2026-08-27 (content-dev, 1.2.0 „Fasern und Fallen", neuer Skill "hunting" trains
+    // dex, s.o. §5-Kopf): buildBisCharacter setzt jeden Skill auf targetLevel, der zusätzliche
+    // trainierte Skill hebt trained.dex bei JEDEM All-Skills-CL90-Build (character.ts computeStats
+    // §2 Hybrid) — kein neuer BiS-Slot-Pick (kein Gear-Item betroffen), aber der flache dex-Zuwachs
+    // speist sowohl den ranged-damage-Score (dex-Anteil) als auch den Kontest-Stat `evasion` (s.o.),
+    // der wiederum in JEDE hitChance-Rechnung (Spieler↔Gegner, alle drei Stile) eingeht. Re-gemessen:
+    // ALLE sechs Paare bewegen sich leicht — Spieler-Seite sinkt überall (schnellerer Kill dank mehr
+    // dex-Schaden bzw. Ranged-Trade-off), Gegner-Seite steigt überall (Spieler weicht minimal
+    // häufiger aus). Größter Ausschlag bei ranged (dex ist dort der Haupt-Schadensterm).
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 56.87, 20.2],
-      ["melee", "last_idol", 186.56, 14.4],
-      ["ranged", "idol_warden", 82.2, 19.64],
-      ["ranged", "last_idol", 272.31, 13.6],
-      ["magic", "idol_warden", 72.29, 27.32],
-      ["magic", "last_idol", 243.3, 29.53],
+      ["melee", "idol_warden", 55.96, 20.76],
+      ["melee", "last_idol", 183.02, 14.7],
+      ["ranged", "idol_warden", 78.23, 19.78],
+      ["ranged", "last_idol", 258.94, 13.67],
+      ["magic", "idol_warden", 71.22, 28.03],
+      ["magic", "last_idol", 239.01, 30.12],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);
@@ -782,9 +799,10 @@ describe("Balance-Envelope §6: Runen-Stapelung (Chef-Entscheid 25.08.2026)", ()
 // ───────────────────────────────────────────────────────────────────────────
 // §8 Meister-Perk-Inventur (Meisterweihe-Fundament, master-capes-konzept.md — Content-Welle
 //    2026-07-10; seit SAVE 69 sind die Meister-Items RINGE statt Capes, Chef-Entscheid
-//    2026-07-17, Stats/Perks 1:1 übernommen): 13 der 20 Meisterringe tragen einen `masterPerk`
-//    (die Ökonomie-Perks); die 7 Kampf-Ringe (attack/power/defence/ranged/magic/warding/
-//    vitality) nutzen bestehende Bonus-/Signaturfelder — KEIN masterPerk (Konzept §2).
+//    2026-07-17, Stats/Perks 1:1 übernommen): 14 der 21 Meisterringe tragen einen `masterPerk`
+//    (die Ökonomie-Perks, seit 1.2.0 „Fasern und Fallen" inkl. ring_master_hunting); die 7
+//    Kampf-Ringe (attack/power/defence/ranged/magic/warding/vitality) nutzen bestehende
+//    Bonus-/Signaturfelder — KEIN masterPerk (Konzept §2).
 //    `ring_master_completion` trägt ebenfalls keinen masterPerk (Krönung, kein Stapeln).
 //    Der vormals geparkte `ring_master_enchanting` ist ENTFERNT (Welle TT, Chef-Entscheid
 //    2026-07-18: Enchanting in Runecrafting integriert — es kommt kein Enchanting-Skill).
@@ -794,7 +812,7 @@ describe("Balance-Envelope §6: Runen-Stapelung (Chef-Entscheid 25.08.2026)", ()
 //    Suite (idol-sanctum-clear.test.ts) kann sie tragen, dort rein verhaltensbasiert geprüft.
 // ───────────────────────────────────────────────────────────────────────────
 describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () => {
-  it("Ring-Umbau SAVE 69: alle 20 Meisterringe existieren, GENAU 13 tragen einen masterPerk", () => {
+  it("Ring-Umbau SAVE 69: alle 21 Meisterringe existieren, GENAU 14 tragen einen masterPerk", () => {
     // Detektor: reißt dieser Pin, hat sich die Perk-Verteilung der Meisterringe verschoben —
     // bewusst neu messen & pinnen (Anzahl Träger, Kampf-Envelopes §2-§5 gegenprüfen).
     const carriers = Object.values(content.items)
@@ -808,6 +826,7 @@ describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () 
         "ring_master_fishing",
         "ring_master_foraging",
         "ring_master_herblore",
+        "ring_master_hunting",
         "ring_master_jewelcrafting",
         "ring_master_leatherworking",
         "ring_master_mining",

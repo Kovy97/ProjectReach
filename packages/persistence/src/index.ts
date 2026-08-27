@@ -76,7 +76,8 @@ import {
   makeDungeonQueueEntry,
   makeFightQueueEntry,
 } from "@hearthforge/shared";
-import type { EliteZoneState, FarmPlot } from "@hearthforge/shared";
+import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
+import type { HuntCatchTally } from "@hearthforge/engine";
 import { MAX_STACK, actionInputsOnHand, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
 
 /**
@@ -1362,21 +1363,45 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   st.goldSpent = finiteNonNeg(st.goldSpent, 0);
   st.dailyStreak = finiteNonNeg(st.dailyStreak, 0);
   st.lastDailyDay = finiteNonNeg(st.lastDailyDay, 0);
-  // Jagen (SAVE 85, Grund-Härtung; Zonen-/Monster-Prüfung ergänzt logic-dev): Länge exakt HUNT_TRAP_SLOTS.
-  if (!Array.isArray(state.huntTraps)) state.huntTraps = defaultHuntTraps();
-  state.huntTraps = Array.from({ length: HUNT_TRAP_SLOTS }, (_, i) => {
-    const t = state.huntTraps[i];
-    if (!t || typeof t !== "object") return emptyHuntTrap();
-    return {
-      zoneId: typeof t.zoneId === "string" ? t.zoneId : null,
-      remainingMs: finiteNonNeg(t.remainingMs, 0),
-      autoRebait: t.autoRebait !== false,
-      lastCatch: t.lastCatch && typeof t.lastCatch === "object" ? t.lastCatch : null,
-      lastMissed: t.lastMissed === true,
-    };
-  });
-  state.huntCatchSeq = finiteNonNeg(state.huntCatchSeq, 0);
-  st.huntCatches = finiteNonNeg(st.huntCatches, 0);
+  // — Jagen (SAVE_VERSION 85, spec-technik §3/§5): `huntTraps` STRIKT härten — fixe Länge HUNT_TRAP_SLOTS;
+  //   Gebiet nur, wenn es in `content.huntingZones` steht (sonst Platz leer, Köder verfällt — Muster
+  //   unbekannte Crop), `remainingMs` endlich in [0, trapMs] (nie „ewig gestellt"), `autoRebait`/
+  //   `lastMissed` strikt boolean, `lastCatch` nur mit bekanntem Monster und bekannten Items (Mengen
+  //   ganzzahlig ≥ 1, `gold`/`seq` endlich ≥ 0), sonst null. `huntCatchSeq` ≥ jede gespeicherte
+  //   Fang-Nummer (Toast-Dedupe der UI verlässt sich auf strikt steigende seq). Ohne Jagd-Katalog
+  //   (Alt-Content) werden alle Plätze geleert, die Breadcrumbs bleiben. Idempotent. —
+  {
+    const huntZones = Array.isArray(content.huntingZones) ? content.huntingZones : [];
+    const rawTraps: unknown[] = Array.isArray(state.huntTraps) ? state.huntTraps : [];
+    let maxSeq = 0;
+    state.huntTraps = Array.from({ length: HUNT_TRAP_SLOTS }, (_, i): HuntTrap => {
+      const t = rawTraps[i] as Partial<Record<keyof HuntTrap, unknown>> | null | undefined;
+      if (!t || typeof t !== "object") return emptyHuntTrap();
+      const zone = typeof t.zoneId === "string" ? huntZones.find((z) => z.zoneId === t.zoneId) : undefined;
+      const remainingMs = zone ? clampFinite(t.remainingMs, 0, Math.max(1, zone.trapMs), 0) : 0;
+      let lastCatch: HuntCatch | null = null;
+      const lc = t.lastCatch as Partial<Record<keyof HuntCatch, unknown>> | null | undefined;
+      if (lc && typeof lc === "object" && typeof lc.monsterId === "string" && content.monsters[lc.monsterId]) {
+        const seq = finiteIntNonNeg(lc.seq, Number.MAX_SAFE_INTEGER, 0);
+        if (seq > maxSeq) maxSeq = seq;
+        lastCatch = {
+          seq,
+          monsterId: lc.monsterId,
+          items: sanitizeRewardItems(lc.items, content),
+          gold: finiteIntNonNeg(lc.gold, GOLD_HARD_CAP, 0),
+        };
+      }
+      return {
+        zoneId: zone ? zone.zoneId : null,
+        remainingMs,
+        autoRebait: t.autoRebait !== false,
+        lastCatch,
+        lastMissed: t.lastMissed === true,
+      };
+    });
+    state.huntCatchSeq = Math.max(finiteIntNonNeg(state.huntCatchSeq, Number.MAX_SAFE_INTEGER, 0), maxSeq);
+    st.huntCatches = finiteIntNonNeg(st.huntCatches, Number.MAX_SAFE_INTEGER, 0);
+  }
   // Taverne (SAVE 84): Zähler-Records nur mit endlichen, nicht-negativen Zahlen (Muster craftedById).
   for (const key of ["actionRunsById", "producedById"] as const) {
     const rec = st[key];
@@ -3348,7 +3373,10 @@ export function deserialize(
   // [savedAt..now] — advance() leitet daraus PRO TICK den korrekten lokalen Kalendertag ab (segmentiert
   // also automatisch an einer evtl. dazwischenliegenden lokalen Mitternacht), damit ein Offline-Sprung
   // über mehrere Stunden bit-identisch zum tickweisen Live-Verlauf bleibt (offline==online).
-  const offlineTicks = advance(state, content, offlineMs, { offline: true, nowMs: now });
+  // Jagen (SAVE 85): Fänge je Monster im Offline-Fenster — der Fallen-Tick (engine/hunting.ts) zählt in
+  // diesen Sammler, weil der State selbst nur den JÜNGSTEN Fang je Platz trägt (kein neues Save-Feld nötig).
+  const huntTally: HuntCatchTally = {};
+  const offlineTicks = advance(state, content, offlineMs, { offline: true, nowMs: now, huntTally });
 
   const itemsAfter = inventoryCounts(state);
   const items: Record<string, number> = {};
@@ -3438,6 +3466,13 @@ export function deserialize(
     refined.push({ buildingId: id, itemId: out.itemId, qty: runs * out.min });
   }
   if (refined.length > 0) offline.campRefined = refined;
+
+  // Offline-Fänge (SAVE 85, „Jagd: Eber ×3, Ziege ×1"): transient, fehlt (statt leerem Array), wenn
+  // nichts in die Fallen ging — Muster campRefined. Reihenfolge = erster Fang je Monster.
+  const huntCatches = Object.entries(huntTally)
+    .filter(([, n]) => n > 0)
+    .map(([monsterId, count]) => ({ monsterId, count }));
+  if (huntCatches.length > 0) offline.huntCatches = huntCatches;
 
   // Offline fertiggestellte Lager-Bauten (SAVE 76, „Die Hände haben gearbeitet"): transient,
   // fehlt (statt leerem Array), wenn nichts fertig wurde — Muster kills/deaths/petDrops.

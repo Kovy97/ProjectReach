@@ -12,6 +12,34 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — 1.2.0 „Fasern und Fallen" (Chef 27.08.: Fasern/Stoff-Roben + neuer Skill Jagen; in Arbeit)
 
+**Fasern und Stoff (Chef 27.08.):** DE: Handwerk hing bis Stufe 30 fast komplett an Monster-Leder. Jetzt gibt es Fasern in
+fünf Stufen: Nessel, Flachs, Dornhanf, Geisterseide und Sternflachs. Man sammelt sie an neuen Sammel-Knoten (samt Saat),
+baut sie in New Havens Beeten an und webt sie im Handwerk zu Nesselstoff, Leinen, Dornleinen, Geistertuch und Sternweb.
+Alle 26 Magier-Roben werden aus Stoff statt Leder gefertigt, und die Nessel-Sehne macht Bogen ab Stufe 1 ohne Kampf möglich.
+Leder bleibt die Rüstung des Ausweichens. / EN: Fibers in five tiers (forage, farm, weave) replace leather in all mage robes,
+and a nettle bowstring lets you fletch bows from level 1 without fighting.
+
+**Jagen, ein neuer Skill (Chef 27.08.):** DE: Stell Fallen in Gebieten, die du im Kampf freigeschaltet hast. Ein zufälliges
+Tier oder Kleinvolk, das du schon einmal besiegt hast, tappt hinein und lässt fünf Beute-Würfe seiner Tabelle da, ohne Kampf.
+Jede Falle braucht einen Köder (Angeln, Stufe 1: „Köder graben"), läuft 5 Minuten (Weiden) bis 60 Minuten (Götzenhalle)
+und erneuert sich auf Wunsch von selbst, online wie offline. Sechs Fallenplätze ab Jagen-Stufe 1, 10, 25, 45, 65 und 85;
+Fangchance 70 % plus Stufenbonus. Fänge zählen nicht als Kills: Jagen ist Beute, Kampf bleibt Fortschritt. Das Jagdbuch zeigt
+je Gebiet, wer fangbar ist und was er fallen lässt. Stufe 99 bringt den Ring des Fallenstellers. / EN: Hunting is a new
+skill: set baited traps in unlocked zones and collect five loot rolls from a random beast or humanoid you have beaten
+before, online and offline.
+
+**Kampfeffekte, Welle 1 (Chef 27.08.):** DE: Treffer sind jetzt sichtbar: Magie-Geschosse in sieben Themen (arkan, Feuer,
+Frost, Blitz, Gift, Leere, Aether, je nach Waffe), Schnitte, Hiebe, Stöße und Pfeile nach Waffenart, gedeckte Blutspritzer,
+Ichor und Knochenstaub nach Gegnerfamilie, Block-Funken, Fehlschlag-Wischer, Begleiter-Effekte und Crit-Ringe. Alles
+gemalt, drei Bilder je Effekt, Gegner-Angriffe gespiegelt; die Effekt-Stufe in den Optionen gilt weiter. / EN: Combat now
+shows painted spell missiles, slashes, blood and companion effects.
+
+*Dev-Notiz: SAVE_VERSION 85 (huntTraps, huntCatchSeq, stats.huntCatches); Content 16 Items, 12 Aktionen, 5 Crops, Skill hunting
+(trains dex), huntingZones ×10 mit Anbau-XP-Kurve, ring_master_hunting, 5 Skill-Erfolge; engine/hunting.ts (Tick nach den Beeten,
+Würfe in Zeitreihenfolge über alle Fallen, kein Kill-Zähler), Vault-Fixture v85; HuntingPage + Jagdbuch + Offline-Bericht;
+combatFx.ts + Sprite-Layer in CombatPage (Zellen-Klasse-Fix 28.08.), 33 Sprites unter assets/fx; Balance-Pins §5/§8 neu gemessen
+(neuer DEX-Skill hebt Basis-DEX um 1). Mira-Assets Fasern/Jagen (26) eingebunden; Meisterring-Icon folgt.*
+
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
 Kampf macht, mit Takt („Diebesgriff. Alle 6 s: 40 % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit

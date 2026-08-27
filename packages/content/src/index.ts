@@ -35,6 +35,9 @@ export const content: ContentDB = {
     herblore: { id: "herblore", name: { en: "Herblore", de: "Kräuterkunde" }, trains: "wis" }, // Kräuterkunde = Weisheit/Naturwissen → WIS
     // ── Slayer-Fertigkeit ─────────────────────────────────────────────
     slayer: { id: "slayer", name: { en: "Slayer", de: "Monsterjäger" }, trains: "con" },
+    // ── Jagen (1.2.0 „Fasern und Fallen", design/handwerk-fasern-jagen/spec-technik.md §1.7) ──
+    // Passive Beute über Fallen (engine/hunting.ts); trainiert DEX (Falle stellen/Köder wählen).
+    hunting: { id: "hunting", name: { en: "Hunting", de: "Jagen" }, trains: "dex" },
   },
 // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8)
   // Regel: Drops aus Kampfquellen (Monster/Elite/Dungeon-Truhe/Paragon) tragen jetzt die
@@ -6446,12 +6449,16 @@ export const content: ContentDB = {
         attack: 99, power: 99, defence: 99, ranged: 99, magic: 99, warding: 99, vitality: 99,
         farming: 99, foraging: 99, thieving: 99, leatherworking: 99, jewelcrafting: 99,
         runecrafting: 99, herblore: 99, slayer: 99,
+        // 1.2.0 „Fasern und Fallen": 21. Skill. Der Grant-Pfad (engine/capes.ts checkMasteryCapes)
+        // prüft ohnehin dynamisch ALLE content.skills ≥ 99 — dieses Feld nur nachgezogen, damit die
+        // Anzeige/Flavor-Text ("21 Fertigkeiten") stimmt.
+        hunting: 99,
       },
       value: 100000,
       modifiers: { str: 2, dex: 2, con: 2, int: 2, wis: 2, lck: 2 },
       description: {
-        en: "Worn only by those who have mastered all twenty disciplines. A quiet band of gold, granted, never bought.",
-        de: "Getragen nur von jenen, die alle zwanzig Fertigkeiten gemeistert haben. Ein stiller Reif aus Gold, verliehen, niemals gekauft.",
+        en: "Worn only by those who have mastered all twenty-one disciplines. A quiet band of gold, granted, never bought.",
+        de: "Getragen nur von jenen, die alle einundzwanzig Fertigkeiten gemeistert haben. Ein stiller Reif aus Gold, verliehen, niemals gekauft.",
       },
     },
     ring_master_cooking: {
@@ -6518,6 +6525,26 @@ export const content: ContentDB = {
       description: {
         en: "Steeped in bitter fumes for longer than memory. Tonics and brews last 10% longer while worn.",
         de: "Länger als jede Erinnerung in bitteren Dämpfen gezogen. Tonika und Tränke wirken im Tragen 10 % länger.",
+      },
+    },
+    // 1.2.0 „Fasern und Fallen": 21. Skill "hunting" braucht seinen Meisterring (Muster wie jeder
+    // andere Skill, s. Kopfkommentar über ring_master_farming). Chef-Nachtrag (27.08.2026, über den
+    // CEO): exakt auf dem Niveau der Sammel-Ringe ring_master_fishing/-foraging (con:3, evasionRating
+    // 4, masterPerk doubleYield 0.05) — Platzhalter-Perk, die Verdrahtung „5 % Chance auf doppelte
+    // Beute-Würfe je Fang" macht logic-dev in engine/hunting.ts. Engine-Guards (capes.test.ts §6,
+    // balance-envelope.test.ts §8, master-ring-shop.test.ts §1/§3) erwarten diesen Ring bereits.
+    // ACHTUNG (Content-Bericht): con/evasionRating hier zieht dieselbe evasion-lastige BiS-Auswahl
+    // wie fishing/foraging — verschiebt vsl. dieselben Balance-Envelope-§5-Pins (Evasion-Kontest/
+    // Melee-TTK), unabhängig vom masterPerk. Das ist Kampf-Balance-Revier (nicht content-dev);
+    // s. Bericht an den Chef, ob Kontrolleur/balance-designer neu pinnen soll.
+    ring_master_hunting: {
+      id: "ring_master_hunting", name: { en: "Trapper's Ring", de: "Ring des Fallenstellers" },
+      type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
+      requirements: { hunting: 99 }, value: 50000,
+      modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "hunting", value: 0.05 },
+      description: {
+        en: "Worn smooth by a thousand snares set and sprung. 5% chance to spring a double catch.",
+        de: "Glattgetragen von tausend gestellten und ausgelösten Fallen. 5 % Chance auf doppelten Fang.",
       },
     },
     ring_master_jewelcrafting: {
@@ -7830,6 +7857,141 @@ export const content: ContentDB = {
         de: "Der Fremde wollte nicht sagen, wer diese hier gepackt hat. Allein das sollte dir etwas sagen.",
       },
     },
+
+    // ════════════════════════════════════════════════════════════════════
+    // FASERN, STOFF UND JAGEN (1.2.0 „Fasern und Fallen", content-dev 27.08.2026)
+    // design/handwerk-fasern-jagen/spec-technik.md §1.1: 5 Fasern + 5 Saaten + 5 Stoffe (Weben-
+    // Kategorie) + 1 Köder. Fasern/Saaten aus Sammeln (forage_fibers) UND Anbau (crops); Stoffe aus
+    // Weben (Handwerk-Kategorie "weave", 3 Faser → 1 Stoff); Köder aus Angeln (dig_bait).
+    // ════════════════════════════════════════════════════════════════════
+    fiber_nettle: {
+      id: "fiber_nettle", name: { en: "Nettle Fiber", de: "Nesselfaser" },
+      type: "material", stackable: true, icon: "🧵", value: 4,
+      description: {
+        en: "Stinging nettle stalks, stripped and dried until the sting is gone and only the thread remains.",
+        de: "Brennnesselstängel, gestreift und getrocknet, bis der Stich verschwindet und nur der Faden bleibt.",
+      },
+    },
+    fiber_flax: {
+      id: "fiber_flax", name: { en: "Flax", de: "Flachs" },
+      type: "material", stackable: true, icon: "🧵", value: 9,
+      description: {
+        en: "Slender stalks retted and combed smooth, the oldest thread the Reach ever spun.",
+        de: "Schlanke Stängel, geröstet und glattgekämmt, der älteste Faden, den der Reach je gesponnen hat.",
+      },
+    },
+    fiber_thornhemp: {
+      id: "fiber_thornhemp", name: { en: "Thornhemp", de: "Dornhanf" },
+      type: "material", stackable: true, icon: "🧵", value: 18,
+      description: {
+        en: "Coarse fiber from a hedge that fights back, tough enough to shrug off a blade's edge.",
+        de: "Grobe Faser einer Hecke, die sich wehrt, zäh genug, um einer Klingenschneide zu trotzen.",
+      },
+    },
+    fiber_ghostsilk: {
+      id: "fiber_ghostsilk", name: { en: "Ghostsilk", de: "Geisterseide" },
+      type: "material", stackable: true, icon: "🧵", value: 36,
+      description: {
+        en: "Pale strands spun by something that lives where the light gives out.",
+        de: "Bleiche Fäden, gesponnen von etwas, das dort lebt, wo das Licht aufgibt.",
+      },
+    },
+    fiber_starflax: {
+      id: "fiber_starflax", name: { en: "Starflax", de: "Sternflachs" },
+      type: "material", stackable: true, icon: "🧵", value: 70,
+      description: {
+        en: "Fiber with a faint cold shimmer, as if it remembers the sky it grew under.",
+        de: "Faser mit schwachem, kaltem Schimmer, als erinnere sie sich an den Himmel, unter dem sie wuchs.",
+      },
+    },
+    nettle_seed: {
+      id: "nettle_seed", name: { en: "Nettle Seed", de: "Nesselsaat" },
+      type: "material", stackable: true, icon: "🌱", value: 2,
+      description: {
+        en: "Tiny black seed, plant it and mind your hands come harvest.",
+        de: "Winziger schwarzer Same, pflanze ihn und schone deine Hände zur Ernte.",
+      },
+    },
+    flax_seed: {
+      id: "flax_seed", name: { en: "Flax Seed", de: "Flachssaat" },
+      type: "material", stackable: true, icon: "🌱", value: 5,
+      description: {
+        en: "Oil-slick little seed that grows into the Reach's oldest cloth.",
+        de: "Ölig glänzender kleiner Same, aus dem der älteste Stoff des Reachs wächst.",
+      },
+    },
+    thornhemp_seed: {
+      id: "thornhemp_seed", name: { en: "Thornhemp Seed", de: "Dornhanfsaat" },
+      type: "material", stackable: true, icon: "🌱", value: 10,
+      description: {
+        en: "Hard-shelled seed from a hedge that would rather bite than bloom.",
+        de: "Hartschaliger Same einer Hecke, die lieber beißt als blüht.",
+      },
+    },
+    ghostsilk_seed: {
+      id: "ghostsilk_seed", name: { en: "Ghostsilk Seed", de: "Geisterseide-Saat" },
+      type: "material", stackable: true, icon: "🌱", value: 20,
+      description: {
+        en: "Seed pale as bone, said to sprout best where nothing else will grow.",
+        de: "Same, bleich wie Knochen, wächst angeblich am besten dort, wo sonst nichts gedeiht.",
+      },
+    },
+    starflax_seed: {
+      id: "starflax_seed", name: { en: "Starflax Seed", de: "Sternflachssaat" },
+      type: "material", stackable: true, icon: "🌱", value: 40,
+      description: {
+        en: "Seed that glints faintly at dusk, patient enough to wait out a whole season underground.",
+        de: "Same, der in der Dämmerung schwach glänzt, geduldig genug, eine ganze Jahreszeit unter der Erde abzuwarten.",
+      },
+    },
+    cloth_nettle: {
+      id: "cloth_nettle", name: { en: "Nettlecloth", de: "Nesselstoff" },
+      type: "material", stackable: true, icon: "🧵", value: 15,
+      description: {
+        en: "Rough-spun cloth from the humblest fiber in the Reach, warm enough for a first robe.",
+        de: "Grob gesponnener Stoff aus der bescheidensten Faser des Reachs, warm genug für eine erste Robe.",
+      },
+    },
+    cloth_linen: {
+      id: "cloth_linen", name: { en: "Linen", de: "Leinen" },
+      type: "material", stackable: true, icon: "🧵", value: 32,
+      description: {
+        en: "Smooth, even-woven linen, the workhorse cloth of every tailor's bench.",
+        de: "Glatt und gleichmäßig gewebtes Leinen, der Arbeitsstoff jeder Schneiderbank.",
+      },
+    },
+    cloth_thornlinen: {
+      id: "cloth_thornlinen", name: { en: "Thornlinen", de: "Dornleinen" },
+      type: "material", stackable: true, icon: "🧵", value: 65,
+      description: {
+        en: "Linen woven tight with thornhemp thread, stiff enough to turn a light blow.",
+        de: "Leinen, dicht gewebt mit Dornhanffaden, steif genug, um einen leichten Hieb abzulenken.",
+      },
+    },
+    cloth_ghostweave: {
+      id: "cloth_ghostweave", name: { en: "Ghostweave", de: "Geistertuch" },
+      type: "material", stackable: true, icon: "🧵", value: 130,
+      description: {
+        en: "Cloth woven from ghostsilk, pale and cool, said to muffle a caster's own heartbeat.",
+        de: "Aus Geisterseide gewebter Stoff, bleich und kühl, dämpft angeblich den eigenen Herzschlag des Zauberers.",
+      },
+    },
+    cloth_starweave: {
+      id: "cloth_starweave", name: { en: "Starweave", de: "Sternweb" },
+      type: "material", stackable: true, icon: "🧵", value: 250,
+      description: {
+        en: "Starflax woven into cloth that holds a faint cold light long after the loom goes still.",
+        de: "Sternflachs, zu Stoff gewebt, der noch lange nach dem Stillstand des Webstuhls schwach kalt leuchtet.",
+      },
+    },
+    bait_worm: {
+      id: "bait_worm", name: { en: "Worm Bait", de: "Wurmköder" },
+      type: "material", stackable: true, icon: "🪱", value: 1,
+      description: {
+        en: "A fat, wriggling worm, dug fresh from the riverbank for hook or trap alike.",
+        de: "Ein fetter, sich windender Wurm, frisch vom Flussufer gegraben, für Angel wie Falle gleichermaßen.",
+      },
+    },
   },
   actions: {
     // Holzfällen
@@ -8098,6 +8260,21 @@ export const content: ContentDB = {
       ],
     },
     // Angeln
+    // Köder graben (1.2.0 „Fasern und Fallen" §1.6, B1): schnell, wenig XP, füttert die Jagen-Fallen
+    // (engine/hunting.ts). Fest xp:1 laut Spec (kein C-600-Wert — bewusst der billigste Fisch-Loop
+    // im Spiel), 20 % Chance auf einen zweiten Köder.
+    dig_bait: {
+      id: "dig_bait",
+      name: { en: "Dig for Bait", de: "Köder graben" },
+      skill: "fishing",
+      durationMs: 2500,
+      xp: 1,
+      levelRequired: 1,
+      loot: [
+        { itemId: "bait_worm", chance: 1, min: 1, max: 1 },
+        { itemId: "bait_worm", chance: 0.2, min: 1, max: 1 },
+      ],
+    },
     catch_shrimp: {
       id: "catch_shrimp",
       name: { en: "Catch Shrimp", de: "Shrimps fangen" },
@@ -9871,6 +10048,51 @@ export const content: ContentDB = {
       ],
     },
 
+    // ── Foraging: Fasern (1.2.0 „Fasern und Fallen", Kategorie forage_fibers) ────────────────
+    // Dauer/XP wie der Kräuter-Knoten derselben Stufe (C-600-Kurve): forage_marshroot (L1) und
+    // forage_cinderwood (L40) exakt übernommen; L20/60/80 (keine exakte Stufe im Kräuter-Katalog)
+    // nach derselben Formel target_xph(L)=600·√(xpForLevel(L+1)−xpForLevel(L)) neu berechnet.
+    forage_nettle: {
+      id: "forage_nettle", name: { en: "Forage Nettle", de: "Nessel sammeln" },
+      skill: "foraging", category: "forage_fibers", durationMs: 3000, xp: 5, levelRequired: 1,
+      loot: [
+        { itemId: "fiber_nettle", chance: 0.65, min: 1, max: 2 },
+        { itemId: "nettle_seed", chance: 0.15, min: 1, max: 1 },
+      ],
+    },
+    forage_flax: {
+      id: "forage_flax", name: { en: "Forage Flax", de: "Flachs sammeln" },
+      skill: "foraging", category: "forage_fibers", durationMs: 4400, xp: 17, levelRequired: 20,
+      loot: [
+        { itemId: "fiber_flax", chance: 0.65, min: 1, max: 2 },
+        { itemId: "flax_seed", chance: 0.14, min: 1, max: 1 },
+      ],
+    },
+    forage_thornhemp: {
+      id: "forage_thornhemp", name: { en: "Forage Thornhemp", de: "Dornhanf sammeln" },
+      skill: "foraging", category: "forage_fibers", durationMs: 5400, xp: 57, levelRequired: 40,
+      loot: [
+        { itemId: "fiber_thornhemp", chance: 0.62, min: 1, max: 2 },
+        { itemId: "thornhemp_seed", chance: 0.13, min: 1, max: 1 },
+      ],
+    },
+    forage_ghostsilk: {
+      id: "forage_ghostsilk", name: { en: "Forage Ghostsilk", de: "Geisterseide sammeln" },
+      skill: "foraging", category: "forage_fibers", durationMs: 6700, xp: 189, levelRequired: 60,
+      loot: [
+        { itemId: "fiber_ghostsilk", chance: 0.60, min: 1, max: 2 },
+        { itemId: "ghostsilk_seed", chance: 0.12, min: 1, max: 1 },
+      ],
+    },
+    forage_starflax: {
+      id: "forage_starflax", name: { en: "Forage Starflax", de: "Sternflachs sammeln" },
+      skill: "foraging", category: "forage_fibers", durationMs: 7800, xp: 591, levelRequired: 80,
+      loot: [
+        { itemId: "fiber_starflax", chance: 0.58, min: 1, max: 2 },
+        { itemId: "starflax_seed", chance: 0.12, min: 1, max: 1 },
+      ],
+    },
+
     // ── Thieving (Erfolgschance + Betäubung bei Fehlschlag; Gold + Wertsachen) ──
     // Zahlen (Dauer/XP/Gold/Chancen) sind PLATZHALTER und vom User feinzujustieren.
     pickpocket_beggar: {
@@ -10276,6 +10498,20 @@ export const content: ContentDB = {
       inputs: [{ itemId: "raw_hide", qty: 3 }],
       loot: [{ itemId: "bowstring", chance: 1, min: 1, max: 1 }],
     },
+    // Nessel-Sehne (1.2.0 „Fasern und Fallen", Chef-Entscheid J6): zweiter, kampf-freier Weg zur
+    // Sehne neben twist_rawhide_cord — Bögen sind so ab Handwerk 1 ohne einen einzigen Kampf möglich.
+    // Dauer/XP 1:1 wie twist_rawhide_cord derselben Stufe (C-600-Kurve, gleiche Kategorie).
+    twist_nettle_cord: {
+      id: "twist_nettle_cord",
+      name: { en: "Twist Nettle Cord", de: "Nesselschnur drehen" },
+      skill: "leatherworking",
+      category: "leather_raw",
+      durationMs: 3000,
+      xp: 5,
+      levelRequired: 1,
+      inputs: [{ itemId: "fiber_nettle", qty: 2 }],
+      loot: [{ itemId: "bowstring", chance: 1, min: 1, max: 1 }],
+    },
     // Task #286 Stage B: die gesamte Munitions-Kette (fletch_shafts + 12× fletch_*_arrows) ist
     // GELÖSCHT — keine Pfeile mehr im Spiel. Die verbleibenden Fletching-Aktionen (Bögen/Holzschilde,
     // unten) laufen jetzt unter skill: "leatherworking" (Fletching-Skill stirbt, SAVE_VERSION 57).
@@ -10376,6 +10612,42 @@ export const content: ContentDB = {
       inputs: [{ itemId: "raw_hide", qty: 2 }],
       loot: [{ itemId: "cured_leather", chance: 1, min: 1, max: 1 }],
     },
+
+    // ── Weben (1.2.0 „Fasern und Fallen", Kategorie weave): 3 Fasern → 1 Stoff, Dauer/XP auf
+    // derselben C-600-Kurve wie die Leder-Härte-Kette (tan_leather L1 exakt übernommen; L20/40/60/80
+    // nach target_xph(L)=600·√(xpForLevel(L+1)−xpForLevel(L)) interpoliert zwischen tan_hardened_leather
+    // (L22), reinforce_studded_leather (L50), cure_warhide (L70) und tan_wyvern_scale (L75)).
+    weave_nettle: {
+      id: "weave_nettle", name: { en: "Weave Nettlecloth", de: "Nesselstoff weben" },
+      skill: "leatherworking", category: "weave", durationMs: 3000, xp: 5, levelRequired: 1,
+      inputs: [{ itemId: "fiber_nettle", qty: 3 }],
+      loot: [{ itemId: "cloth_nettle", chance: 1, min: 1, max: 1 }],
+    },
+    weave_linen: {
+      id: "weave_linen", name: { en: "Weave Linen", de: "Leinen weben" },
+      skill: "leatherworking", category: "weave", durationMs: 5700, xp: 22, levelRequired: 20,
+      inputs: [{ itemId: "fiber_flax", qty: 3 }],
+      loot: [{ itemId: "cloth_linen", chance: 1, min: 1, max: 1 }],
+    },
+    weave_thornlinen: {
+      id: "weave_thornlinen", name: { en: "Weave Thornlinen", de: "Dornleinen weben" },
+      skill: "leatherworking", category: "weave", durationMs: 8000, xp: 84, levelRequired: 40,
+      inputs: [{ itemId: "fiber_thornhemp", qty: 3 }],
+      loot: [{ itemId: "cloth_thornlinen", chance: 1, min: 1, max: 1 }],
+    },
+    weave_ghostweave: {
+      id: "weave_ghostweave", name: { en: "Weave Ghostweave", de: "Geistertuch weben" },
+      skill: "leatherworking", category: "weave", durationMs: 10500, xp: 296, levelRequired: 60,
+      inputs: [{ itemId: "fiber_ghostsilk", qty: 3 }],
+      loot: [{ itemId: "cloth_ghostweave", chance: 1, min: 1, max: 1 }],
+    },
+    weave_starweave: {
+      id: "weave_starweave", name: { en: "Weave Starweave", de: "Sternweb weben" },
+      skill: "leatherworking", category: "weave", durationMs: 14500, xp: 1099, levelRequired: 80,
+      inputs: [{ itemId: "fiber_starflax", qty: 3 }],
+      loot: [{ itemId: "cloth_starweave", chance: 1, min: 1, max: 1 }],
+    },
+
     craft_leather_cap: {
       id: "craft_leather_cap",
       name: { en: "Stitch Leather Cap", de: "Lederkappe nähen" },
@@ -11634,20 +11906,23 @@ export const content: ContentDB = {
     craft_apprentice_hat: {
       id: "craft_apprentice_hat", name: { en: "Stitch Apprentice Hat", de: "Lehrlings-Zauberhut nähen" },
       skill: "leatherworking", category: "robe_apprentice", durationMs: 4000, xp: 6, levelRequired: 1,
-      inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cured_leather", qty: 1 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
+      inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cloth_nettle", qty: 1 }],
       loot: [{ itemId: "apprentice_robe_hat", chance: 1, min: 1, max: 1 }],
     },
     craft_apprentice_robe: {
       id: "craft_apprentice_robe", name: { en: "Stitch Apprentice Robe", de: "Lehrlings-Robe nähen" },
       skill: "leatherworking", category: "robe_apprentice", durationMs: 5500, xp: 8, levelRequired: 1,
-      inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "cured_leather", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
+      inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "cloth_nettle", qty: 2 }],
       loot: [{ itemId: "apprentice_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_apprentice_robe_legs: {
       id: "craft_apprentice_robe_legs", name: { en: "Stitch Apprentice Skirt", de: "Lehrlings-Gewand (Beine) nähen" },
       // balance-fix 2026-07: xp 1→2 (1-XP floor + monotonicity vs L1 craft_leather_body)
       skill: "leatherworking", category: "robe_apprentice", durationMs: 4000, xp: 7, levelRequired: 2,
-      inputs: [{ itemId: "dim_essence", qty: 3 }, { itemId: "cured_leather", qty: 1 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
+      inputs: [{ itemId: "dim_essence", qty: 3 }, { itemId: "cloth_nettle", qty: 1 }],
       loot: [{ itemId: "apprentice_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_apprentice_mitts: {
@@ -11668,7 +11943,8 @@ export const content: ContentDB = {
     craft_dimweave_hood: {
       id: "craft_dimweave_hood", name: { en: "Bind Dimweave Hood", de: "Trübgewebe-Kapuze binden" },
       skill: "leatherworking", category: "robe_dimweave", durationMs: 5000, xp: 12, levelRequired: 8,
-      inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "force_rune", qty: 2 }, { itemId: "cured_leather", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
+      inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "force_rune", qty: 2 }, { itemId: "cloth_nettle", qty: 2 }],
       loot: [{ itemId: "dimweave_hood", chance: 1, min: 1, max: 1 }],
     },
     craft_dimweave_sandals: {
@@ -11680,7 +11956,8 @@ export const content: ContentDB = {
     craft_dimweave_robe: {
       id: "craft_dimweave_robe", name: { en: "Weave Dimweave Robe", de: "Trübgewebe-Robe weben" },
       skill: "leatherworking", category: "robe_dimweave", durationMs: 7000, xp: 20, levelRequired: 12,
-      inputs: [{ itemId: "dim_essence", qty: 6 }, { itemId: "force_rune", qty: 3 }, { itemId: "cured_leather", qty: 3 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
+      inputs: [{ itemId: "dim_essence", qty: 6 }, { itemId: "force_rune", qty: 3 }, { itemId: "cloth_nettle", qty: 3 }],
       loot: [{ itemId: "dimweave_robe", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_circlet: {
@@ -11692,13 +11969,15 @@ export const content: ContentDB = {
     craft_frost_robe_body: {
       id: "craft_frost_robe_body", name: { en: "Weave Frost Robe", de: "Frost-Robe weben" },
       skill: "leatherworking", category: "robe_frost", durationMs: 9000, xp: 39, levelRequired: 22,
-      inputs: [{ itemId: "frost_essence", qty: 6 }, { itemId: "frost_rune", qty: 6 }, { itemId: "hardened_leather", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: hardened_leather → cloth_linen (Menge unverändert).
+      inputs: [{ itemId: "frost_essence", qty: 6 }, { itemId: "frost_rune", qty: 6 }, { itemId: "cloth_linen", qty: 2 }],
       loot: [{ itemId: "frost_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_robe_legs: {
       id: "craft_frost_robe_legs", name: { en: "Weave Frost Skirt", de: "Frost-Gewand (Beine) weben" },
       skill: "leatherworking", category: "robe_frost", durationMs: 7500, xp: 31, levelRequired: 21,
-      inputs: [{ itemId: "frost_essence", qty: 4 }, { itemId: "frost_rune", qty: 4 }, { itemId: "cured_leather", qty: 3 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_linen (Menge unverändert).
+      inputs: [{ itemId: "frost_essence", qty: 4 }, { itemId: "frost_rune", qty: 4 }, { itemId: "cloth_linen", qty: 3 }],
       loot: [{ itemId: "frost_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_handwraps: {
@@ -11716,19 +11995,22 @@ export const content: ContentDB = {
     craft_aether_hood: {
       id: "craft_aether_hood", name: { en: "Bind Aether Hood", de: "Aether-Kapuze binden" },
       skill: "leatherworking", category: "robe_aether", durationMs: 10000, xp: 134, levelRequired: 45,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "scaled_leather", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "cloth_thornlinen", qty: 2 }],
       loot: [{ itemId: "aether_hood", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_robe_body: {
       id: "craft_aether_robe_body", name: { en: "Weave Aether Robe", de: "Aether-Robe weben" },
       skill: "leatherworking", category: "robe_aether", durationMs: 13000, xp: 192, levelRequired: 47,
-      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }, { itemId: "scaled_leather", qty: 4 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }, { itemId: "cloth_thornlinen", qty: 4 }],
       loot: [{ itemId: "aether_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_robe_legs: {
       id: "craft_aether_robe_legs", name: { en: "Weave Aether Skirt", de: "Aether-Gewand (Beine) weben" },
       skill: "leatherworking", category: "robe_aether", durationMs: 11000, xp: 155, levelRequired: 46,
-      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 6 }, { itemId: "scaled_leather", qty: 3 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 6 }, { itemId: "cloth_thornlinen", qty: 3 }],
       loot: [{ itemId: "aether_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_gloves: {
@@ -11747,19 +12029,22 @@ export const content: ContentDB = {
     craft_arcane_cowl: {
       id: "craft_arcane_cowl", name: { en: "Bind Arcane Cowl", de: "Arkane Kapuze binden" },
       skill: "leatherworking", category: "robe_arcane", durationMs: 12000, xp: 291, levelRequired: 57,
-      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 7 }, { itemId: "scaled_leather", qty: 3 }, { itemId: "storm_essence", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 7 }, { itemId: "cloth_thornlinen", qty: 3 }, { itemId: "storm_essence", qty: 2 }],
       loot: [{ itemId: "arcane_cowl", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_robe_body: {
       id: "craft_arcane_robe_body", name: { en: "Weave Arcane Robe", de: "Arkane Robe weben" },
       skill: "leatherworking", category: "robe_arcane", durationMs: 14000, xp: 357, levelRequired: 58,
-      inputs: [{ itemId: "aether_essence", qty: 8 }, { itemId: "aether_rune", qty: 10 }, { itemId: "scaled_leather", qty: 5 }, { itemId: "storm_essence", qty: 3 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 8 }, { itemId: "aether_rune", qty: 10 }, { itemId: "cloth_thornlinen", qty: 5 }, { itemId: "storm_essence", qty: 3 }],
       loot: [{ itemId: "arcane_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_robe_legs: {
       id: "craft_arcane_robe_legs", name: { en: "Weave Arcane Skirt", de: "Arkanes Gewand (Beine) weben" },
       skill: "leatherworking", category: "robe_arcane", durationMs: 12000, xp: 291, levelRequired: 57,
-      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }, { itemId: "scaled_leather", qty: 4 }, { itemId: "storm_essence", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }, { itemId: "cloth_thornlinen", qty: 4 }, { itemId: "storm_essence", qty: 2 }],
       loot: [{ itemId: "arcane_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_mitts: {
@@ -11783,19 +12068,22 @@ export const content: ContentDB = {
     craft_duskweave_cowl: {
       id: "craft_duskweave_cowl", name: { en: "Bind Duskweave Cowl", de: "Dämmergewebe-Kapuze binden" },
       skill: "leatherworking", category: "robe_duskweave", durationMs: 13000, xp: 425, levelRequired: 63,
-      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 8 }, { itemId: "studded_leather", qty: 3 }, { itemId: "shade_rune", qty: 1 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: studded_leather → cloth_ghostweave (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 8 }, { itemId: "cloth_ghostweave", qty: 3 }, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_cowl", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_robe_body: {
       id: "craft_duskweave_robe_body", name: { en: "Weave Duskweave Robe", de: "Dämmergewebe-Robe weben" },
       skill: "leatherworking", category: "robe_duskweave", durationMs: 16000, xp: 577, levelRequired: 65,
-      inputs: [{ itemId: "aether_essence", qty: 8 }, { itemId: "aether_rune", qty: 11 }, { itemId: "studded_leather", qty: 5 }, { itemId: "shade_rune", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: studded_leather → cloth_ghostweave (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 8 }, { itemId: "aether_rune", qty: 11 }, { itemId: "cloth_ghostweave", qty: 5 }, { itemId: "shade_rune", qty: 2 }],
       loot: [{ itemId: "duskweave_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_robe_legs: {
       id: "craft_duskweave_robe_legs", name: { en: "Weave Duskweave Skirt", de: "Dämmergewebe-Gewand (Beine) weben" },
       skill: "leatherworking", category: "robe_duskweave", durationMs: 14000, xp: 481, levelRequired: 64,
-      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 9 }, { itemId: "studded_leather", qty: 4 }, { itemId: "shade_rune", qty: 1 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: studded_leather → cloth_ghostweave (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 9 }, { itemId: "cloth_ghostweave", qty: 4 }, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_handwraps: {
@@ -11814,19 +12102,22 @@ export const content: ContentDB = {
     craft_runewoven_cowl: {
       id: "craft_runewoven_cowl", name: { en: "Bind Runewoven Cowl", de: "Runenwirk-Kapuze binden" },
       skill: "leatherworking", category: "robe_runewoven", durationMs: 14000, xp: 680, levelRequired: 71,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "void_rune", qty: 6 }, { itemId: "warhide", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_ghostweave (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "void_rune", qty: 6 }, { itemId: "cloth_ghostweave", qty: 2 }],
       loot: [{ itemId: "runewoven_cowl", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_robe_body: {
       id: "craft_runewoven_robe_body", name: { en: "Weave Runewoven Robe", de: "Runenwirk-Robe weben" },
       skill: "leatherworking", category: "robe_runewoven", durationMs: 17000, xp: 867, levelRequired: 72,
-      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "void_rune", qty: 10 }, { itemId: "warhide", qty: 4 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_ghostweave (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "void_rune", qty: 10 }, { itemId: "cloth_ghostweave", qty: 4 }],
       loot: [{ itemId: "runewoven_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_robe_legs: {
       id: "craft_runewoven_robe_legs", name: { en: "Weave Runewoven Skirt", de: "Runenwirk-Gewand (Beine) weben" },
       skill: "leatherworking", category: "robe_runewoven", durationMs: 14000, xp: 680, levelRequired: 71,
-      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "void_rune", qty: 8 }, { itemId: "warhide", qty: 3 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_ghostweave (Menge unverändert).
+      inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "void_rune", qty: 8 }, { itemId: "cloth_ghostweave", qty: 3 }],
       loot: [{ itemId: "runewoven_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_handwraps: {
@@ -11850,7 +12141,8 @@ export const content: ContentDB = {
     craft_godspark_vestment: {
       id: "craft_godspark_vestment", name: { en: "Weave Godspark Vestment", de: "Götzenfunken-Ornat weben" },
       skill: "leatherworking", category: "robe_godspark", durationMs: 21000, xp: 2611, levelRequired: 90,
-      inputs: [{ itemId: "void_rune", qty: 12 }, { itemId: "aether_essence", qty: 6 }, { itemId: "warhide", qty: 4 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_starweave (Menge unverändert).
+      inputs: [{ itemId: "void_rune", qty: 12 }, { itemId: "aether_essence", qty: 6 }, { itemId: "cloth_starweave", qty: 4 }],
       loot: [{ itemId: "godspark_vestment", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_skirt: {
@@ -11883,7 +12175,8 @@ export const content: ContentDB = {
     craft_starweave_vestment: {
       id: "craft_starweave_vestment", name: { en: "Bind Starweave Vestment", de: "Sterngewebe-Ornat binden" },
       skill: "leatherworking", category: "robe_starweave", durationMs: 21000, xp: 3029, levelRequired: 93,
-      inputs: [{ itemId: "void_rune", qty: 10 }, { itemId: "aether_essence", qty: 5 }, { itemId: "warhide", qty: 3 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_starweave (Menge unverändert).
+      inputs: [{ itemId: "void_rune", qty: 10 }, { itemId: "aether_essence", qty: 5 }, { itemId: "cloth_starweave", qty: 3 }],
       loot: [{ itemId: "starweave_vestment", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_skirt: {
@@ -11912,21 +12205,24 @@ export const content: ContentDB = {
       id: "craft_ember_robe_hood", name: { en: "Bind Ember Cowl", de: "Glut-Kapuze binden" },
       // balance-fix 2026-07: xp 30→10 (was 3.6x target, a spike that dead-tiered scaled/aether/arcane for 26 levels)
       skill: "leatherworking", category: "robe_ember", durationMs: 9000, xp: 58, levelRequired: 30,
-      inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "scaled_leather", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_linen (Menge unverändert).
+      inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "cloth_linen", qty: 2 }],
       loot: [{ itemId: "ember_robe_hood", chance: 1, min: 1, max: 1 }],
     },
     craft_ember_robe_body: {
       id: "craft_ember_robe_body", name: { en: "Weave Ember Robe", de: "Glut-Robe weben" },
       // balance-fix 2026-07: xp 42→14 (was 3.6x target, a spike that dead-tiered scaled/aether/arcane for 26 levels)
       skill: "leatherworking", category: "robe_ember", durationMs: 11000, xp: 78, levelRequired: 32,
-      inputs: [{ itemId: "ember_essence", qty: 5 }, { itemId: "fire_rune", qty: 3 }, { itemId: "scaled_leather", qty: 3 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_linen (Menge unverändert).
+      inputs: [{ itemId: "ember_essence", qty: 5 }, { itemId: "fire_rune", qty: 3 }, { itemId: "cloth_linen", qty: 3 }],
       loot: [{ itemId: "ember_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_ember_robe_legs: {
       id: "craft_ember_robe_legs", name: { en: "Weave Ember Skirt", de: "Glut-Gewand (Beine) weben" },
       // balance-fix 2026-07: xp 36→12 (was 3.6x target, a spike that dead-tiered scaled/aether/arcane for 26 levels)
       skill: "leatherworking", category: "robe_ember", durationMs: 10000, xp: 67, levelRequired: 31,
-      inputs: [{ itemId: "ember_essence", qty: 4 }, { itemId: "fire_rune", qty: 2 }, { itemId: "scaled_leather", qty: 2 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_linen (Menge unverändert).
+      inputs: [{ itemId: "ember_essence", qty: 4 }, { itemId: "fire_rune", qty: 2 }, { itemId: "cloth_linen", qty: 2 }],
       loot: [{ itemId: "ember_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     // Magier-Material-Paritäts-Audit F3 (2026-07-23): frost_essence/aether_rune → ember_essence/
@@ -11993,7 +12289,8 @@ export const content: ContentDB = {
     craft_voidweave_vestment: {
       id: "craft_voidweave_vestment", name: { en: "Weave Voidweave Vestment", de: "Leerengewebe-Ornat weben" },
       skill: "leatherworking", category: "robe_voidweave", durationMs: 20000, xp: 3883, levelRequired: 99,
-      inputs: [{ itemId: "warhide", qty: 4 }, { itemId: "void_rune", qty: 12 }, { itemId: "aether_essence", qty: 6 }, { itemId: "idol_shard", qty: 4 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_starweave (Menge unverändert).
+      inputs: [{ itemId: "cloth_starweave", qty: 4 }, { itemId: "void_rune", qty: 12 }, { itemId: "aether_essence", qty: 6 }, { itemId: "idol_shard", qty: 4 }],
       loot: [{ itemId: "voidweave_vestment", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_skirt: {
@@ -12536,7 +12833,8 @@ export const content: ContentDB = {
     craft_silk_mantle: {
       id: "craft_silk_mantle", name: { en: "Craft Silk Mantle", de: "Spinnenseiden-Mantel weben" },
       skill: "leatherworking", category: "leather_scaled", durationMs: 9000, xp: 58, levelRequired: 30,
-      inputs: [{ itemId: "spider_silk", qty: 4 }, { itemId: "cured_leather", qty: 1 }],
+      // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_linen (Menge unverändert).
+      inputs: [{ itemId: "spider_silk", qty: 4 }, { itemId: "cloth_linen", qty: 1 }],
       loot: [{ itemId: "silk_mantle", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_pelt_hood: {
@@ -14707,6 +15005,13 @@ export const content: ContentDB = {
     { id: "ach_skill_foraging_75", name: { en: "Foraging Master", de: "Sammeln-Meister" }, description: { en: "Reach Foraging level 75.", de: "Erreiche Sammeln Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "foraging", count: 75 } },
     { id: "ach_skill_foraging_90", name: { en: "Foraging Legend", de: "Sammeln-Legende" }, description: { en: "Reach Foraging level 90.", de: "Erreiche Sammeln Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "foraging", count: 90 } },
     { id: "ach_skill_foraging_99", name: { en: "Foraging Maxed", de: "Sammeln-Maximiert" }, description: { en: "Reach Foraging level 99.", de: "Erreiche Sammeln Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "foraging", count: 99 } },
+    // 1.2.0 „Fasern und Fallen": neuer Skill "hunting" — Leiter nach demselben Muster wie alle
+    // anderen Skills oben (25/50/75/90/99, achievements-1-2-0.test.ts "Skill-Leitern").
+    { id: "ach_skill_hunting_25", name: { en: "Hunting Journeyman", de: "Jagen-Geselle" }, description: { en: "Reach Hunting level 25.", de: "Erreiche Jagen Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "hunting", count: 25 } },
+    { id: "ach_skill_hunting_50", name: { en: "Hunting Veteran", de: "Jagen-Veteran" }, description: { en: "Reach Hunting level 50.", de: "Erreiche Jagen Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "hunting", count: 50 } },
+    { id: "ach_skill_hunting_75", name: { en: "Hunting Master", de: "Jagen-Meister" }, description: { en: "Reach Hunting level 75.", de: "Erreiche Jagen Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "hunting", count: 75 } },
+    { id: "ach_skill_hunting_90", name: { en: "Hunting Legend", de: "Jagen-Legende" }, description: { en: "Reach Hunting level 90.", de: "Erreiche Jagen Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "hunting", count: 90 } },
+    { id: "ach_skill_hunting_99", name: { en: "Hunting Maxed", de: "Jagen-Maximiert" }, description: { en: "Reach Hunting level 99.", de: "Erreiche Jagen Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "hunting", count: 99 } },
     { id: "ach_skill_thieving_25", name: { en: "Thieving Journeyman", de: "Diebeskunst-Geselle" }, description: { en: "Reach Thieving level 25.", de: "Erreiche Diebeskunst Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "thieving", count: 25 } },
     { id: "ach_skill_thieving_50", name: { en: "Thieving Veteran", de: "Diebeskunst-Veteran" }, description: { en: "Reach Thieving level 50.", de: "Erreiche Diebeskunst Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "thieving", count: 50 } },
     { id: "ach_skill_thieving_75", name: { en: "Thieving Master", de: "Diebeskunst-Meister" }, description: { en: "Reach Thieving level 75.", de: "Erreiche Diebeskunst Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "thieving", count: 75 } },
@@ -15378,6 +15683,9 @@ export const content: ContentDB = {
     { id: "leather_wraithhide", name: { en: "Wraithhide", de: "Geisterleder" } },
     { id: "leather_shadowhide", name: { en: "Shadowhide", de: "Schattenleder" } },
     { id: "leather_voidhide", name: { en: "Voidhide", de: "Leerenleder" } },
+    // Handwerk-Kategorie „Weben" (1.2.0 „Fasern und Fallen"): 3 Fasern → 1 Stoff, ersetzt Leder
+    // in den Magier-Roben (s. Kategorie robe_* unten, jetzt auf cloth_* statt leather_*/warhide).
+    { id: "weave", name: { en: "Weaving", de: "Weben" } },
     // Crafting: Magie-Roben (aus Runecrafting migriert)
     { id: "robe_apprentice", name: { en: "Apprentice Robes", de: "Lehrlings-Roben" } },
     // Magier-Material-Paritäts-Audit F4 (2026-07-23): schließt die Stoff-Lücke L1→L22.
@@ -15446,6 +15754,8 @@ export const content: ContentDB = {
     { id: "forage_fungi", name: { en: "Fungi & Spores", de: "Pilze & Sporen" } },
     { id: "forage_essences", name: { en: "Essences & Pigments", de: "Essenzen & Farbstoffe" } },
     { id: "forage_misc", name: { en: "Wild Finds", de: "Wildfunde" } },
+    // 1.2.0 „Fasern und Fallen": Sammel-Kategorie für die 5 Faser-Knoten (parallel zu forage_herbs).
+    { id: "forage_fibers", name: { en: "Fibers", de: "Fasern" } },
   ],
   sets: [
     // Ausrüstungs-Sets: genug Teile getragen → Set-Bonus (skaliert Power nach oben).
@@ -18436,7 +18746,92 @@ export const content: ContentDB = {
       xp: 34399,
       tier: 5,
     },
+
+    // ── Fasern (1.2.0 „Fasern und Fallen" §1.3): parallel zu den 5 Faser-Sammel-Knoten und den
+    // 5 Weben-Rezepten. Ertrag laut Spec 6–9 für alle fünf (bewusste Ausnahme von der sonstigen
+    // Tier-Ertrags-Staffel oben). XP wie die Pflanze derselben Stufe: flax/thornhemp/ghostsilk/
+    // starflax liegen exakt auf bloodgrain/pigment_verdant/pigment_violet/reed_void (identisches
+    // levelRequired+growMs → identische XP); nettle (L2, kein exaktes T1-Vorbild auf L2) nach
+    // derselben Formel xp=round(0.15·90·√(xpForLevel(L+1)−xpForLevel(L))·growMs/3_600_000).
+    nettle: {
+      id: "nettle",
+      name: { en: "Nettle", de: "Nessel" },
+      seedItem: "nettle_seed",
+      yieldItem: "fiber_nettle",
+      yieldMin: 6, yieldMax: 9,
+      levelRequired: 2,
+      growMs: 600_000,
+      xp: 21,
+      tier: 1,
+    },
+    flax: {
+      id: "flax",
+      name: { en: "Flax", de: "Flachs" },
+      seedItem: "flax_seed",
+      yieldItem: "fiber_flax",
+      yieldMin: 6, yieldMax: 9,
+      levelRequired: 22,
+      growMs: 1_200_000,
+      xp: 116,
+      tier: 2,
+    },
+    thornhemp: {
+      id: "thornhemp",
+      name: { en: "Thornhemp", de: "Dornhanf" },
+      seedItem: "thornhemp_seed",
+      yieldItem: "fiber_thornhemp",
+      yieldMin: 6, yieldMax: 9,
+      levelRequired: 44,
+      growMs: 2_400_000,
+      xp: 689,
+      tier: 3,
+    },
+    ghostsilk: {
+      id: "ghostsilk",
+      name: { en: "Ghostsilk Shrub", de: "Geisterseide-Staude" },
+      seedItem: "ghostsilk_seed",
+      yieldItem: "fiber_ghostsilk",
+      yieldMin: 6, yieldMax: 9,
+      levelRequired: 64,
+      growMs: 4_800_000,
+      xp: 3707,
+      tier: 4,
+    },
+    starflax: {
+      id: "starflax",
+      name: { en: "Starflax", de: "Sternflachs" },
+      seedItem: "starflax_seed",
+      yieldItem: "fiber_starflax",
+      yieldMin: 6, yieldMax: 9,
+      levelRequired: 84,
+      growMs: 9_600_000,
+      xp: 19954,
+      tier: 5,
+    },
   },
+
+  // ════════════════════════════════════════════════════════════════════
+  // JAGEN (1.2.0 „Fasern und Fallen", design/handwerk-fasern-jagen/spec-technik.md §1.7)
+  // Passive Beute über Fallen (engine/hunting.ts, hier nur gelesen): 10 Gebiete = alle Zonen
+  // außer slayer_tower (dort nichts Fangbares, s. Konzept B3 — Krypta/Götzenhalle absichtlich
+  // OHNE Fänge, s. huntableMonsters-Familienfilter in der Engine). xp je Fang auf der Anbau-Kurve
+  // ("Jagen liegt auf der Anbau-Kurve, nicht darüber", konzept.md B4): xp=round(0.15·90·
+  // √(xpForLevel(L+1)−xpForLevel(L))·trapMs/3_600_000) — dieselbe Formel wie die Crops oben, nicht
+  // die rohe 600er-Sammel-Kurve (die läge ~40× über den vom Chef abgesegneten Richtwerten B4:
+  // Weiden ~10 XP/5min, Aschfelder ~50/10min, Wildwald ~460/25min, Hochland ~4800/55min — alle vier
+  // treffen die Anbau-Formel auf ≤20%, die rohe 600er-Formel verfehlt sie um Faktor ~40).
+  huntingZones: [
+    { zoneId: "pastures", levelRequired: 1, trapMs: 300_000, xp: 10 },
+    { zoneId: "borderlands", levelRequired: 10, trapMs: 480_000, xp: 26 },
+    { zoneId: "ashfields", levelRequired: 20, trapMs: 600_000, xp: 53 },
+    { zoneId: "blackthorn", levelRequired: 30, trapMs: 900_000, xp: 129 },
+    { zoneId: "crypt", levelRequired: 40, trapMs: 1_200_000, xp: 283 },
+    { zoneId: "wildwood", levelRequired: 50, trapMs: 1_500_000, xp: 579 },
+    { zoneId: "coast", levelRequired: 60, trapMs: 2_100_000, xp: 1331 },
+    { zoneId: "slagpit", levelRequired: 70, trapMs: 2_700_000, xp: 2806 },
+    { zoneId: "highlands", levelRequired: 80, trapMs: 3_300_000, xp: 5627 },
+    { zoneId: "idolhall", levelRequired: 90, trapMs: 3_600_000, xp: 10071 },
+  ],
 
   // ════════════════════════════════════════════════════════════════════
   // SLAYER-SYSTEM (Phase 1 + Phase 2 — Kern)
