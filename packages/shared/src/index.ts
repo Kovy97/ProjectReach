@@ -629,7 +629,14 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     `queueDungeon = null`; Alt-Einträge unverändert. sanitizeState: "dungeon"-Einträge nur mit
 //     bekanntem Dungeon (≥ 1 Welle), queueDungeon nur zusammen mit genau diesem laufenden Dungeon
 //     (sonst Rest an die Queue-Front). Keine Item-ID-Renames, keine Kampfwerte-Änderung.
-export const SAVE_VERSION = 83;
+// v84 (Taverne — 1.2.0 „Alive“, Chef-Entscheide E1–E3 + 27.08.2026, design/1.2.0-alive/taverne-spec-technik.md):
+//     (a) EIN neues GameState-Feld `tavern: TavernState` (Tagesbesetzung der vier Plätze, angenommene Aufgaben,
+//     Wechsel-/Abgabe-Zähler, Breadcrumb); (b) zwei neue PlayerStats-Zähler `actionRunsById`/`producedById`
+//     (Baselines der "run"/"produce"-Aufgaben); (c) neues Lager-Gebäude `camp_tavern` (Boost-Art "tavernPerks",
+//     belegt keinen Bauplatz); (d) Consumable-Effekt "blackMarketCrate" (+ `tier`) für black_market_crate_i..v.
+//     Migration (< 84): `tavern = defaultTavernState()`, beide Zähler `{}`. sanitizeState: Plätze nur mit
+//     bekanntem Gast + Vorlage, Zahlen geklemmt, Länge TAVERN_SEATS. Keine Item-ID-Renames, keine Kampfwerte.
+export const SAVE_VERSION = 84;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -753,9 +760,11 @@ export type BuffCategory =
  * Save-State) ⇒ KEIN SAVE_VERSION-Bump. Sonder-Wirkungen feuern AUSSCHLIESSLICH beim spieler-
  * ausgelösten Verzehr — nie über Auto-Eat/Auto-Trank/Auto-Rebuff.
  */
-export type ConsumableEffectKind = "slayerReroll";
+export type ConsumableEffectKind = "slayerReroll" | "blackMarketCrate";
 export interface ConsumableEffect {
   kind: ConsumableEffectKind;
+  /** NUR kind "blackMarketCrate" (Taverne, SAVE 84): Behälter-Stufe 1..5 = Band (design/1.2.0-alive/taverne-spec-technik.md §7). */
+  tier?: number;
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -4868,6 +4877,12 @@ export interface ContentDB {
    * der persistierte Fortschritt lebt in `GameState.camp`.
    */
   campBuildings?: CampBuildingDef[];
+  /**
+   * Taverne (1.2.0, taverne-spec-technik.md §3): die 19 Gäste und ihre Aufgaben-Vorlagen. OPTIONAL → Fehlen =
+   * Taverne inert (tavernRefresh besetzt nichts, Seite zeigt die Baustelle). Reine Content-Daten.
+   */
+  tavernGuests?: TavernGuestDef[];
+  tavernTasks?: TavernTaskTemplateDef[];
 }
 
 /** Liefert den Affix+Tier, den ein Runen-Item anbringt — oder null, wenn es keine Rune ist. */
@@ -5511,6 +5526,16 @@ export interface PlayerStats {
    * 0 = noch nie. KEIN Achievement-Zähler, nur Hilfszustand für `dailyStreak`.
    */
   lastDailyDay: number;
+  /**
+   * Taverne (SAVE_VERSION 84, taverne-spec-technik.md §2): je Aktions-ID die Zahl ERFOLGREICH abgeschlossener
+   * Durchläufe (tick.ts, online == offline). Baseline-Zähler für "run"-Aufgaben (z.B. Pims Griffe). Migration: {}.
+   */
+  actionRunsById: Record<ActionId, number>;
+  /**
+   * Taverne (SAVE_VERSION 84): je Item-ID die Zahl frisch ERZEUGTER Stücke aus Aktionen (tick.ts) UND
+   * Feld-Ernten (farming.ts). Baseline-Zähler für "produce"-Aufgaben. Migration: {}.
+   */
+  producedById: Record<ItemId, number>;
 }
 
 /**
@@ -6123,6 +6148,171 @@ export interface GameState {
    * deterministisch in tick.ts `step()` (offline==online). Alt-Saves (< 76): `defaultCampState()`.
    */
   camp: CampState;
+  /**
+   * Die Taverne (1.2.0, SAVE_VERSION 84, design/1.2.0-alive/taverne-spec-technik.md): Tagesbesetzung der
+   * vier Plätze, angenommene Aufgaben, Wechsel-/Abgabe-Zähler. Verben AUSSCHLIESSLICH über engine/tavern.ts.
+   * Alt-Saves (< 84): `defaultTavernState()`. Zufall NUR aus reinem Hash (Seed + Tag + Platz), nie state.rng.
+   */
+  tavern: TavernState;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Taverne (1.2.0 „Alive“, Chef-Entscheide E1–E3 + 27.08.2026; Spezifikation
+// design/1.2.0-alive/taverne-spec-technik.md — Typen-Vertrag für logic-dev/content-dev/ui-dev)
+// ───────────────────────────────────────────────────────────────────────────
+
+/** Gebäude-ID der Taverne im Lager-Katalog (belegt KEINEN Bauplatz, Ausnahme wie das Zentralhaus). */
+export const CAMP_TAVERN_ID: CampBuildingId = "camp_tavern";
+/** Plätze in der Taverne (Szene: drei Tische + Tresen). */
+export const TAVERN_SEATS = 4;
+/** Bänder nach Skill-Level: 1–20 → 1, 21–40 → 2, 41–60 → 3, 61–80 → 4, 81–99 → 5. */
+export const TAVERN_BANDS = 5;
+/** Gold-Grundbelohnung je Band (Index = Band, 0 unbenutzt; Art-Faktor s. Spec §4). */
+export const TAVERN_GOLD_BY_BAND: readonly number[] = [0, 150, 400, 900, 1800, 3200];
+/** Slayer-XP je Band für Kampf-Aufgaben (Dungeon/Champion ×2). */
+export const TAVERN_COMBAT_XP_BY_BAND: readonly number[] = [0, 300, 1200, 3000, 6000, 12000];
+/** Kill-Mengen je Band für "kill"-Aufgaben. */
+export const TAVERN_KILL_COUNT_BY_BAND: readonly number[] = [0, 8, 12, 16, 20, 25];
+/** Zusatzchance je Abgabe auf einen Schwarzmarktbehälter des Bands. */
+export const TAVERN_CRATE_BONUS_CHANCE = 0.1;
+/** Gold je Band für einen Gäste-Wechsel über das Gratis-Kontingent hinaus. */
+export const TAVERN_SWAP_GOLD_PER_BAND = 100;
+/** Gold-Faktor der Taverne Stufe III auf Aufgaben-Belohnungen. */
+export const TAVERN_LEVEL3_GOLD_FACTOR = 1.15;
+/** Präfix der Behälter-Items: black_market_crate_i … _v (Tier = Band). */
+export const BLACK_MARKET_CRATE_PREFIX = "black_market_crate_";
+
+export function tavernBandForLevel(level: number): number {
+  return Math.max(1, Math.min(TAVERN_BANDS, Math.ceil(Math.max(1, level) / 20)));
+}
+
+export type TavernRace = "human" | "elf" | "orc" | "goblin";
+export type TavernGuestId = string;
+
+/** Ein Gast (Fassung 2 der Gästeliste, 19 Personen; Halvard vergibt keine Aufgaben). */
+export interface TavernGuestDef {
+  id: TavernGuestId;
+  name: LocalizedString;
+  race: TavernRace;
+  sex: "m" | "f";
+  /** Rolle/Beruf als Anzeige ("Slayer", "Bergarbeiter" …). */
+  role: LocalizedString;
+  /** Skill, dessen Level das Band bestimmt; null = Gesamtlevel-Band (Fremder, Karawane). */
+  skill: SkillId | null;
+  /** false = nur Kulisse/Tresen (Halvard). */
+  givesTasks: boolean;
+  /** Die Stimme des Gastes (ein Satz; ≤ 1 Gedankenstrich). */
+  greeting: LocalizedString;
+  /** "daily" = im normalen Pool; "rare" = nur an Hash-Tagen (stranger 1/12, ashka 1/4). */
+  rarity: "daily" | "rare";
+}
+
+export type TavernTaskKind = "deliver" | "produce" | "run" | "kill" | "dungeon" | "champion" | "assortment";
+
+/** Wie das Ziel einer Vorlage aus dem Content gewählt wird (Spec §3). */
+export interface TavernTaskSelect {
+  /** Aktionen dieses Skills (deliver/produce/run/assortment). */
+  skill?: SkillId;
+  /** Nur Aktionen dieser Kategorie(n). */
+  categories?: string[];
+  /** Nur Aktionen mit (true) / ohne (false) inputs. */
+  hasInputs?: boolean;
+  /** Nur Aktionen, deren Haupt-Output diesen Item-Typ hat. */
+  itemType?: ItemType;
+  /** Nur Aktionen, deren Haupt-Output diese Slot(s) belegt (z.B. Waffen bei Merrit). */
+  equipSlots?: string[];
+  /** kill: Monster aus freigeschalteten Zonen im Band (Spec §3). */
+  zoneBand?: boolean;
+}
+
+export interface TavernTaskTemplateDef {
+  id: string;
+  guestId: TavernGuestId;
+  kind: TavernTaskKind;
+  select: TavernTaskSelect;
+  /** Arbeitsminuten je Band (Index 0 = Band 1 … 4 = Band 5); Menge = minutes × 60 000 / durationMs × outputQty. */
+  minutes: readonly number[];
+  minBand?: number;
+  maxBand?: number;
+  /** Ansprache mit Platzhaltern {count}, {target}, {zone}. */
+  line: LocalizedString;
+}
+
+/** Eine gewürfelte Tagesaufgabe (alles Feste wird bei der Vergabe bestimmt, Spec §4). */
+export interface TavernTask {
+  templateId: string;
+  kind: TavernTaskKind;
+  band: number;
+  /** Item-ID (deliver/produce), Aktions-ID (run), Monster-ID (kill), Dungeon-ID (dungeon), Varianten-ID (champion). */
+  targetId: string;
+  /** Nur assortment: die drei Items (targetId = erstes davon). */
+  targetIds?: string[];
+  /** Nur produce/run: die erzeugende Aktion (für "In die Warteschlange"). */
+  actionId?: ActionId;
+  count: number;
+  /** Nötige Skill-Stufe der Zielaktion (0 = keine); über dem Spieler-Level ⇒ "Stufe X nötig", Annahme erlaubt. */
+  requiredLevel: number;
+  accepted: boolean;
+  /** Zählerstand bei Annahme (produce/run/kill/dungeon/champion); deliver/assortment: 0. */
+  baseline: number;
+  rewardGold: number;
+  rewardXp: number;
+  rewardSkill: SkillId;
+  rewardItems: { id: ItemId; qty: number }[];
+  /** true = zahlt einen Schwarzmarktbehälter (Tier = band) statt Gold + Rohstoffe (Fremder, Karawane). */
+  paysCrate: boolean;
+}
+
+export interface TavernSeat {
+  guestId: TavernGuestId;
+  /** null nur transient (unbesetzt) — der nächste tavernRefresh besetzt neu. */
+  task: TavernTask | null;
+  /** Wechsel dieses Platzes am aktuellen Tag (Hash-Zutat für die Neubesetzung). */
+  swaps: number;
+}
+
+/** Transienter Breadcrumb der jüngsten Abgabe (UI-Zeremonie; seq monoton). */
+export interface TavernDelivery {
+  seq: number;
+  guestId: TavernGuestId;
+  gold: number;
+  xp: number;
+  skill: SkillId;
+  items: { id: ItemId; qty: number }[];
+  /** Behälter-Item-IDs, die diese Abgabe gezahlt hat (Bezahlung und/oder 10-%-Bonus). */
+  crates: ItemId[];
+}
+
+export interface TavernState {
+  /** Tagesstempel (YYYYMMDD, lokal, vom Client) der letzten Besetzung; 0 = nie. */
+  day: number;
+  /** Genau TAVERN_SEATS Einträge (leer nur vor der ersten Besetzung). */
+  seats: TavernSeat[];
+  /** Gäste-Wechsel heute (Gratis-Kontingent 1 + (Stufe ≥ 2 ? 1 : 0)). */
+  swapsUsed: number;
+  deliveredToday: number;
+  totalDelivered: number;
+  /** Abgaben je Gast (Stammgast-Vorbereitung Phase 2). */
+  deliveredByGuest: Record<TavernGuestId, number>;
+  /** Monoton steigende Abgabe-Nummer (Hash-Zutat des Behälter-Wurfs, Toast-Breadcrumb). */
+  deliverSeq: number;
+  lastDelivery: TavernDelivery | null;
+  /** Halvards Erklärung beim ersten Besuch gesehen. */
+  introSeen: boolean;
+}
+
+export function defaultTavernState(): TavernState {
+  return {
+    day: 0,
+    seats: [],
+    swapsUsed: 0,
+    deliveredToday: 0,
+    totalDelivered: 0,
+    deliveredByGuest: {},
+    deliverSeq: 0,
+    lastDelivery: null,
+    introSeen: false,
+  };
 }
 
 /**
@@ -6353,7 +6543,9 @@ export type CampBoostKind =
   | "smokeRate"
   | "slayerPoints"
   | "blessing"
-  | "sellBonus";
+  | "sellBonus"
+  /** Taverne (SAVE 84): Stufen-Marker, Wirkung in engine/tavern.ts (Gratis-Wechsel, Gold-Faktor). */
+  | "tavernPerks";
 
 /**
  * Laengen-Deckel der New-Haven-Bauwarteschlange (SAVE_VERSION 81). Bei EINEM Bautrupp und drei

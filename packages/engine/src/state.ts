@@ -1,5 +1,5 @@
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultFarmPlots, defaultParagonState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
+import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultFarmPlots, defaultTavernState, defaultParagonState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
 import { createRng } from "./rng";
 import { addItem, createInventory, discoverPossessedItems } from "./inventory";
 import { createCombat } from "./combat";
@@ -57,6 +57,9 @@ export function createGame(
       goldSpent: 0,
       dailyStreak: 0,
       lastDailyDay: 0,
+      // Taverne (SAVE 84): Baseline-Zähler der run/produce-Aufgaben (taverne-spec-technik.md §2).
+      actionRunsById: {},
+      producedById: {},
     },
     achievements: [],
     // AP-Meilensteine (SAVE 66, Welle GG): frisch = nichts vergeben; die Zähler starten bei 0
@@ -148,6 +151,8 @@ export function createGame(
     // New Haven ab Spielstart offen (kein Freischaltungs-Gate mehr) — der leere Lager-Zustand IST
     // der Startzustand: ein karger Rastplatz an der Furt, den der Spieler von hier aus aufbaut.
     camp: defaultCampState(),
+    // Taverne (SAVE 84): ungebaut, keine Plätze — tavernRefresh besetzt erst nach dem Bau.
+    tavern: defaultTavernState(),
   };
 
   // Start-Ausrüstung an den gewählten Stil koppeln und sofort ausrüsten, damit der

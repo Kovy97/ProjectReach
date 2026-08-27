@@ -61,6 +61,7 @@ import {
   createPetAbilityRuntime,
   defaultAutoPotion,
   defaultCampState,
+  defaultTavernState,
   defaultDailyState,
   defaultParagonState,
   defaultQuestState,
@@ -1201,6 +1202,12 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   st.goldSpent = finiteNonNeg(st.goldSpent, 0);
   st.dailyStreak = finiteNonNeg(st.dailyStreak, 0);
   st.lastDailyDay = finiteNonNeg(st.lastDailyDay, 0);
+  // Taverne (SAVE 84): Zähler-Records nur mit endlichen, nicht-negativen Zahlen (Muster craftedById).
+  for (const key of ["actionRunsById", "producedById"] as const) {
+    const rec = st[key];
+    if (!rec || typeof rec !== "object") { st[key] = {}; continue; }
+    for (const id of Object.keys(rec)) rec[id] = finiteNonNeg(rec[id], 0);
+  }
 
   // — Slayer: Punkte/Completed clampen; Task gegen aktuellen Content validieren —
   state.slayerPoints = clampFinite(state.slayerPoints, 0, GOLD_HARD_CAP, 0);
@@ -1844,6 +1851,11 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (!state.camp || typeof state.camp !== "object" || Array.isArray(state.camp)) {
     state.camp = defaultCampState();
   }
+  // Taverne (SAVE_VERSION 83→84): EIN neues Feld `tavern`. Alt-Saves → `defaultTavernState()` (ungebaut,
+  // keine Plätze; die Besetzung macht engine/tavern.ts nach dem Bau). Feld-Härtung: sanitizeState.
+  if (!state.tavern || typeof state.tavern !== "object" || !Array.isArray(state.tavern.seats)) {
+    state.tavern = defaultTavernState();
+  }
 
   // Offline-Veredelung (SAVE_VERSION 76→77, Task #359): neues Teilfeld `camp.refine`. Alt-Saves
   // (< 77, inkl. der frischen v76-Lager-Saves) haben es nicht → `{}` (kein Rezept gewählt, beide
@@ -1961,6 +1973,8 @@ function migrateState(state: GameState, content: ContentDB): GameState {
       goldSpent: 0,
       dailyStreak: 0,
       lastDailyDay: 0,
+      actionRunsById: {},
+      producedById: {},
     };
   if (typeof state.stats.itemsGathered !== "number") state.stats.itemsGathered = 0;
   // Craft-Zähler (SAVE_VERSION 27): für craft_items-Quests. Alt-Saves starten bei 0 (rückwirkend
@@ -1975,6 +1989,10 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (typeof state.stats.goldSpent !== "number") state.stats.goldSpent = 0;
   if (typeof state.stats.dailyStreak !== "number") state.stats.dailyStreak = 0;
   if (typeof state.stats.lastDailyDay !== "number") state.stats.lastDailyDay = 0;
+  // Taverne (SAVE_VERSION 83→84, taverne-spec-technik.md §2): zwei neue Baseline-Zähler. Alt-Saves
+  // starten leer (rückwirkend nicht rekonstruierbar). Idempotent.
+  if (!state.stats.actionRunsById || typeof state.stats.actionRunsById !== "object") state.stats.actionRunsById = {};
+  if (!state.stats.producedById || typeof state.stats.producedById !== "object") state.stats.producedById = {};
   // Achievements für Saves von vor dem Meilenstein-System.
   if (!Array.isArray(state.achievements)) state.achievements = [];
   // Bestiarium-Kills für Saves von vor dem Bestiarium-System.
