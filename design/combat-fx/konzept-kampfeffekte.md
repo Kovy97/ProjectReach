@@ -63,10 +63,12 @@ Dateien (s. Mira-Auftrag), um Format, Größe und Lesbarkeit auf dem Battlescree
 3. Mira: Serie Welle 1 (~40) im gleichen Guss; Claude bindet stückweise ein (jede Datei ersetzt ihren Rückfall).
 4. Welle 2: Status-Loops, Champion-Sondereffekte, Dungeon-Boss-Einleitungen mit Sprite.
 
-## 6 Entscheidungen des Chefs
+## 6 Entscheidungen des Chefs (entschieden 27.08.2026)
 
-- **D1 Themen:** die sieben Magie-Themen so (arkan, Feuer, Frost, Blitz, Gift, Leere, Aether)? Oder weniger für Welle 1?
-- **D2 Format:** drei Schlüsselbilder je Effekt (Empfehlung) oder Einzelbild + reine Renderer-Bewegung?
-- **D3 Blut:** gedeckte Spritzer ja, aber kein Gore, keine Verstümmelung (Steam-Freigabe). Einverstanden?
-- **D4 Umfang Welle 1:** alle vier Familien (~40 Dateien) oder erst A + B + C, Begleiter in Welle 2?
-- **D5 Gegner-Angriffe:** gleiche Sprites gespiegelt (Empfehlung) oder eigene Gegner-Varianten?
+- **D1 Themen:** alle sieben Magie-Themen (arkan, Feuer, Frost, Blitz, Gift, Leere, Aether).
+- **D2 Format:** drei Schlüsselbilder je Effekt in einem Streifen; Geschosse als Einzelbild.
+- **D3 Blut:** gedeckte Spritzer, kein Gore, keine Verstümmelung.
+- **D4 Umfang:** alle vier Familien in Welle 1, keine Aufteilung.
+- **D5 Gegner:** dieselben Sprites gespiegelt; eigene Varianten erst für Champions in Welle 2.
+
+Serie Welle 1 (33 Dateien, davon 6 aus dem Testlauf): `CODEX/work/2026-08-27-kampfeffekte-welle-1/PROMPTS.md`.

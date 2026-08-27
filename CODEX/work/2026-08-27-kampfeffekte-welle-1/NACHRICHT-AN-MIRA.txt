@@ -1,0 +1,5 @@
+Mira, die Serie zu den Kampfeffekten ist freigegeben (Chef-Entscheide: sieben Magie-Themen, drei Schlüsselbilder je Effekt, gedecktes Blut ohne Gore, alle vier Familien, Gegner gespiegelt). Brief und alle 33 Prompts liegen in CODEX/work/2026-08-27-kampfeffekte-welle-1/.
+
+Erst der Testlauf mit den sechs Dateien (kampfeffekte-testbatch), damit Claude Format und Lesbarkeit im Spiel prüft. Dann die Serie, gern Familie für Familie: Magie (7 Geschosse + 7 Einschläge), Slashes und Pfeil (6), Blut/Block/Fehlschlag (5), Begleiter (6), zwei Crit-Overlays. Die sechs Testlauf-Dateien gehören zur Serie und werden übernommen.
+
+Gleiche Regeln wie beim Testlauf: echtes Alpha, kein Boden, kein Schatten, gleicher Mittelpunkt in den drei Feldern, Geschosse fliegen nach rechts. Lieferung nach CODEX/assets/kampfeffekte-welle-1-2026-08-27/fertig/ mit Kontaktbogen auf dunklem Grund und über einem Battlescreen-Ausschnitt.
