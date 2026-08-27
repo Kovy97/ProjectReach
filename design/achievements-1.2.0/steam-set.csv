@@ -1,0 +1,91 @@
+api_name,display_name,description,hidden,trigger_internal_id,icon_idea
+CH01_THE_FIRST_PAGE,The First Page,Finish Chronicle chapter 1: The First Page.,no,"neu: ach_chapter_01 (quests_completed, target chronicle_01, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Federkiel und Tintenfass"
+BLOODED,Blooded,Defeat 100 enemies in the Reach.,no,ach_kills_100,Gekerbter Bronzedolch auf Ascheboden
+CH02_FIRST_BLOOD,First Blood,Finish Chronicle chapter 2: First Blood.,no,"neu: ach_chapter_02 (quests_completed, target chronicle_02, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Stierhorn mit Blutstropfen"
+FIRST_HARVEST,First Harvest,"Gather 1,000 resources.",no,ach_gather_1000,"Bündel aus Holz, Erz und Fisch auf einem Sack"
+COIN_PURSE,Coin Purse,"Hold 1,000 gold at once.",no,ach_gold_1000,"Lederbeutel, aus dem Münzen fallen"
+CH03_SPARK_IN_THE_GRAIN,The Spark in the Grain,Finish Chronicle chapter 3: The Spark in the Grain.,no,"neu: ach_chapter_03 (quests_completed, target chronicle_03, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Glühende Impsglut zwischen Kornähren"
+ARTISAN,Artisan,Craft 100 items.,no,ach_craft_100,Hammer über Amboss mit Funken
+CH04_THE_EMPTY_MARCH,The Empty March,Finish Chronicle chapter 4: The Empty March.,no,"neu: ach_chapter_04 (quests_completed, target chronicle_04, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Zerrissenes Goblin-Banner im Wind"
+CHAMPIONS_BANE,Champion's Bane,Defeat your first Champion of the Reach.,no,"neu: ach_elite_first (elite_kills, count 1)",Gekrönter Monsterschädel mit rotem Champion-Glühen
+CH05_THE_WAR_BANNER,The War Banner,Finish Chronicle chapter 5: The War Banner.,no,"neu: ach_chapter_05 (quests_completed, target chronicle_05, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Aufgerichtetes Kriegsbanner des Warchiefs"
+FIRST_CLEAR,First Clear,Clear a dungeon for the first time.,no,"neu: ach_dungeons_distinct_1 (dungeons_distinct, count 1)",Aufgebrochenes Verlies-Tor mit Fackellicht
+MASTER_OF_TRADES,Master of Trades,Reach a total level of 250.,no,ach_total_level_250,"Drei gekreuzte Werkzeuge (Axt, Spitzhacke, Angel) auf Wappenschild"
+CH06_THE_ASH_LESSON,The Ash Lesson,Finish Chronicle chapter 6: The Ash Lesson.,no,"neu: ach_chapter_06 (quests_completed, target chronicle_06, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Rattenschädel in Ascheschicht"
+FRIEND_IN_THE_ASH,A Friend in the Ash,Find your first companion.,no,ach_pets_1,"Kleine Pfotenspur in Asche, ein Auge glimmt im Dunkel"
+CH07_THE_CARRION_KING,The Carrion King,Finish Chronicle chapter 7: The Carrion King.,no,"neu: ach_chapter_07 (quests_completed, target chronicle_07, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Gekrönter Geierkopf (Aschetyrann)"
+CH08_THORNS,Thorns,Finish Chronicle chapter 8: Thorns.,no,"neu: ach_chapter_08 (quests_completed, target chronicle_08, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Dornenranke um ein zerbrochenes Schwert"
+CH09_CHOIR_BENEATH_BARROWS,The Choir Beneath the Barrows,Finish Chronicle chapter 9: The Choir Beneath the Barrows.,no,"neu: ach_chapter_09 (quests_completed, target chronicle_09, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Grablaterne mit grünem Licht"
+CH10_THE_BROKEN_SEAL,The Broken Seal,Finish Chronicle chapter 10: The Broken Seal.,no,"neu: ach_chapter_10 (quests_completed, target chronicle_10, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Zerbrochenes Wachssiegel auf Stein"
+CH11_LORD_OF_THE_DEPTHS,The Lord of the Depths,Finish Chronicle chapter 11: The Lord of the Depths.,no,"neu: ach_chapter_11 (quests_completed, target chronicle_11, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Nekromantenkrone über Knochenhaufen"
+MERCHANT_PRINCE,Merchant Prince,"Hold 1,000,000 gold at once.",no,ach_gold_1000000,Goldkrone auf Münzberg
+CH12_THE_GIANTS,The Giants,Finish Chronicle chapter 12: The Giants.,no,"neu: ach_chapter_12 (quests_completed, target chronicle_12, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Wolfspranke, überdimensional"
+ANNIHILATOR,Annihilator,"Defeat 10,000 enemies.",no,ach_kills_10000,Schädelpyramide mit Schwert obenauf
+CH13_THE_OLD_HUNT,The Old Hunt,Finish Chronicle chapter 13: The Old Hunt.,no,"neu: ach_chapter_13 (quests_completed, target chronicle_13, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Bärenkralle und Jagdhorn"
+OBSESSED,Obsessed,Keep a 30-day daily streak.,no,ach_daily_streak_30,Kalenderblatt mit brennender 30
+CH14_WHAT_THE_SEA_GIVES,What the Sea Gives Back,Finish Chronicle chapter 14: What the Sea Gives Back.,no,"neu: ach_chapter_14 (quests_completed, target chronicle_14, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Rostige Gezeitenkette mit Seetang"
+CONTRACT_KILLER,Contract Killer,Complete 100 Slayer tasks.,no,"neu: ach_slayer_tasks_100 (slayer_tasks, count 100)",Auftragszettel mit blutigem Daumenabdruck
+CH15_THE_COLD_FORGE,The Cold Forge,Finish Chronicle chapter 15: The Cold Forge.,no,"neu: ach_chapter_15 (quests_completed, target chronicle_15, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Vereister Amboss"
+NEW_HAVEN_RISES,New Haven Rises,Raise every building in New Haven to its final stage.,no,"neu: ach_camp_levels_45 (camp_levels, count 45)","Rathaus mit Fahne, dahinter fertige Palisade"
+CH16_THE_THIN_SKY,The Thin Sky,Finish Chronicle chapter 16: The Thin Sky.,no,"neu: ach_chapter_16 (quests_completed, target chronicle_16, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Rocfeder über Klippenkante"
+DUNGEON_LEGEND,Dungeon Legend,Complete 100 dungeon runs.,no,ach_dungeons_total_100,Verliesschlüssel mit Lorbeerkranz
+CH17_THE_AERIE,The Aerie,Finish Chronicle chapter 17: The Aerie.,no,"neu: ach_chapter_17 (quests_completed, target chronicle_17, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Sturmroc-Nest mit Blitz"
+CH18_THE_LAST_GATE,The Last Gate,Finish Chronicle chapter 18: The Last Gate.,no,"neu: ach_chapter_18 (quests_completed, target chronicle_18, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Steinernes Götzentor, halb geöffnet"
+CH19_THE_JUDGEMENT,The Judgement,Finish Chronicle chapter 19: The Judgement.,no,"neu: ach_chapter_19 (quests_completed, target chronicle_19, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Waagschalen aus Obsidian"
+DELVER_OF_EVERY_DEPTH,Delver of Every Depth,Clear every dungeon in the Reach at least once.,no,"neu: ach_dungeons_distinct_all (dungeons_distinct, count 7)",Sieben Schlüssel an einem Ring
+CH20_THE_TRUE_CULPRIT,The True Culprit,Turn the final page of the Chronicle.,yes,"neu: ach_chapter_20 (quests_completed, target chronicle_20, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Kapuzengestalt mit Sichelklinge (erst nach Freischaltung sichtbar)"
+CH21_THE_SECOND_VOLUME,Epilogue: The Second Volume,Open the Second Volume.,yes,"neu: ach_chapter_21 (quests_completed, target chronicle_21, count 1)","Aufgeschlagene Chronik, Kapitelmotiv: Geschlossenes zweites Buch mit Turmsymbol auf dem Einband"
+ENCYCLOPEDIST,Encyclopedist,Discover 500 unique items.,no,"neu: ach_discovered_500 (items_discovered, count 500)",Dickes Lexikon mit Lupe
+THE_ABYSSAL_THRONE,The Abyssal Throne,Slay a creature on the fifth floor of the Slayer Tower.,no,"neu: ach_slayer_floor_5 (slayer_floor, count 5)",Schwarzer Thron auf Turmspitze über Abgrund
+PEAK_CONTENDER,Peak Contender,Reach floor 20 of the Paragon Spire.,no,ach_paragon_floor_20,Turmsilhouette mit leuchtender 20
+ASCENDANT,Ascendant,"Reach a total level of 1,000.",no,ach_total_level_1000,Aufsteigender Stern über Wappenschild
+MASTER_WOODCUTTING,Master Woodcutter,Reach level 99 in Woodcutting.,no,ach_skill_woodcutting_99,"Axt im Godwood-Stumpf, goldener Meisterrahmen"
+MASTER_MINING,Master Miner,Reach level 99 in Mining.,no,ach_skill_mining_99,"Spitzhacke auf Götzeneisen-Ader, goldener Meisterrahmen"
+MASTER_FISHING,Master Angler,Reach level 99 in Fishing.,no,ach_skill_fishing_99,"Angelhaken mit Seelenfisch, goldener Meisterrahmen"
+MASTER_FORAGING,Master Forager,Reach level 99 in Foraging.,no,ach_skill_foraging_99,"Strahlende Blüte in Handschale, goldener Meisterrahmen"
+MASTER_COOKING,Master Cook,Reach level 99 in Cooking.,no,ach_skill_cooking_99,"Kessel mit Seelenfeuer-Bankett, goldener Meisterrahmen"
+MASTER_SMITHING,Master Smith,Reach level 99 in Smithing.,no,ach_skill_smithing_99,"Amboss mit Götzeneisen-Schwert, goldener Meisterrahmen"
+MASTER_LEATHERWORKING,Master Crafter,Reach level 99 in Crafting.,no,ach_skill_leatherworking_99,"Nadel, Faden und Leerenhaut, goldener Meisterrahmen"
+MASTER_FARMING,Master Farmer,Reach level 99 in Farming.,no,ach_skill_farming_99,"Godbloom-Blüte auf neun Beeten, goldener Meisterrahmen"
+MASTER_THIEVING,Master Thief,Reach level 99 in Thieving.,no,ach_skill_thieving_99,"Dietrich und Götzenreliquie, goldener Meisterrahmen"
+MASTER_JEWELCRAFTING,Master Jeweler,Reach level 99 in Jewelcrafting.,no,ach_skill_jewelcrafting_99,"Godgem-Amulett auf Samt, goldener Meisterrahmen"
+MASTER_RUNECRAFTING,Master Runecrafter,Reach level 99 in Runecrafting.,no,ach_skill_runecrafting_99,"Glühender Götzeneisen-Fokus, goldener Meisterrahmen"
+MASTER_HERBLORE,Master Herbalist,Reach level 99 in Herblore.,no,ach_skill_herblore_99,"Götteratem-Elixier im Kolben, goldener Meisterrahmen"
+MASTER_ATTACK,Master of Arms,Reach level 99 in Attack.,no,ach_skill_attack_99,"Zwei gekreuzte Schwerter, goldener Meisterrahmen"
+MASTER_POWER,Master of Might,Reach level 99 in Power.,no,ach_skill_power_99,"Geballte Panzerfaust, goldener Meisterrahmen"
+MASTER_DEFENCE,Master of the Shield,Reach level 99 in Defence.,no,ach_skill_defence_99,"Turmschild mit Kerben, goldener Meisterrahmen"
+MASTER_RANGED,Master Marksman,Reach level 99 in Ranged.,no,ach_skill_ranged_99,"Bogen mit gespanntem Pfeil, goldener Meisterrahmen"
+MASTER_MAGIC,Master Mage,Reach level 99 in Magic.,no,ach_skill_magic_99,"Stab mit Leerenfunken, goldener Meisterrahmen"
+MASTER_VITALITY,Master of Vitality,Reach level 99 in Vitality.,no,ach_skill_vitality_99,"Herz aus Eisen, goldener Meisterrahmen"
+MASTER_WARDING,Master Warder,Reach level 99 in Warding.,no,ach_skill_warding_99,"Schimmernde Bannkuppel, goldener Meisterrahmen"
+MASTER_SLAYER,Master Slayer,Reach level 99 in Slayer.,no,"neu: ach_skill_slayer_99 (skill_level, target slayer, count 99)","Slayer-Helm mit Turmsilhouette, goldener Meisterrahmen"
+BEASTMASTER,Beastmaster,Own all 21 companions.,no,ach_pets_all,Kreis aus 21 kleinen Tiersilhouetten
+MASTER_OF_ALL_SETS,Master of All Sets,Own every complete equipment set.,no,ach_sets_all,"Rüstungsständer mit drei Rüstungstypen (Platte, Leder, Stoff)"
+THE_WHOLE_BESTIARY,The Whole Bestiary,Defeat every creature in the bestiary at least once.,no,"neu: ach_bestiary_all (monsters_discovered, count 110)",Aufgeschlagenes Bestiarium mit Monsterschädeln
+TROPHY_HALL,Trophy Hall,Claim the unique trophy of every Champion of the Reach.,no,"neu: ach_elite_uniques_all (elite_uniques, count 28)","Wand mit 28 Trophäenköpfen, mittig ein rotes Glühen"
+TRUE_COMPLETIONIST,True Completionist,"Reach the maximum total level of 1,980.",no,ach_total_level_2079 (count 1980),Goldener Pokal mit 20 Skill-Symbolen im Kranz
+GRANDMASTER_WOODCUTTING,Woodcutting Grandmaster,Earn 200 million Woodcutting XP.,no,"neu: ach_xp_woodcutting_200m (skill_xp, target woodcutting, count 200000000)","Axt im Godwood-Stumpf, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_MINING,Mining Grandmaster,Earn 200 million Mining XP.,no,"neu: ach_xp_mining_200m (skill_xp, target mining, count 200000000)","Spitzhacke auf Götzeneisen-Ader, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_FISHING,Fishing Grandmaster,Earn 200 million Fishing XP.,no,"neu: ach_xp_fishing_200m (skill_xp, target fishing, count 200000000)","Angelhaken mit Seelenfisch, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_FORAGING,Foraging Grandmaster,Earn 200 million Foraging XP.,no,"neu: ach_xp_foraging_200m (skill_xp, target foraging, count 200000000)","Strahlende Blüte in Handschale, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_COOKING,Cooking Grandmaster,Earn 200 million Cooking XP.,no,"neu: ach_xp_cooking_200m (skill_xp, target cooking, count 200000000)","Kessel mit Seelenfeuer-Bankett, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_SMITHING,Smithing Grandmaster,Earn 200 million Smithing XP.,no,"neu: ach_xp_smithing_200m (skill_xp, target smithing, count 200000000)","Amboss mit Götzeneisen-Schwert, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_LEATHERWORKING,Crafting Grandmaster,Earn 200 million Crafting XP.,no,"neu: ach_xp_leatherworking_200m (skill_xp, target leatherworking, count 200000000)","Nadel, Faden und Leerenhaut, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_FARMING,Farming Grandmaster,Earn 30 million Farming XP.,no,"neu: ach_xp_farming_30m (skill_xp, target farming, count 30000000)","Godbloom-Blüte auf neun Beeten, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_THIEVING,Thieving Grandmaster,Earn 100 million Thieving XP.,no,"neu: ach_xp_thieving_100m (skill_xp, target thieving, count 100000000)","Dietrich und Götzenreliquie, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_JEWELCRAFTING,Jewelcrafting Grandmaster,Earn 200 million Jewelcrafting XP.,no,"neu: ach_xp_jewelcrafting_200m (skill_xp, target jewelcrafting, count 200000000)","Godgem-Amulett auf Samt, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_RUNECRAFTING,Runecrafting Grandmaster,Earn 200 million Runecrafting XP.,no,"neu: ach_xp_runecrafting_200m (skill_xp, target runecrafting, count 200000000)","Glühender Götzeneisen-Fokus, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_HERBLORE,Herblore Grandmaster,Earn 200 million Herblore XP.,no,"neu: ach_xp_herblore_200m (skill_xp, target herblore, count 200000000)","Götteratem-Elixier im Kolben, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_ATTACK,Attack Grandmaster,Earn 200 million Attack XP.,no,"neu: ach_xp_attack_200m (skill_xp, target attack, count 200000000)","Zwei gekreuzte Schwerter, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_POWER,Power Grandmaster,Earn 200 million Power XP.,no,"neu: ach_xp_power_200m (skill_xp, target power, count 200000000)","Geballte Panzerfaust, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_DEFENCE,Defence Grandmaster,Earn 200 million Defence XP.,no,"neu: ach_xp_defence_200m (skill_xp, target defence, count 200000000)","Turmschild mit Kerben, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_RANGED,Ranged Grandmaster,Earn 200 million Ranged XP.,no,"neu: ach_xp_ranged_200m (skill_xp, target ranged, count 200000000)","Bogen mit gespanntem Pfeil, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_MAGIC,Magic Grandmaster,Earn 200 million Magic XP.,no,"neu: ach_xp_magic_200m (skill_xp, target magic, count 200000000)","Stab mit Leerenfunken, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_VITALITY,Vitality Grandmaster,Earn 30 million Vitality XP.,no,"neu: ach_xp_vitality_30m (skill_xp, target vitality, count 30000000)","Herz aus Eisen, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_WARDING,Warding Grandmaster,Earn 20 million Warding XP.,no,"neu: ach_xp_warding_20m (skill_xp, target warding, count 20000000)","Schimmernde Bannkuppel, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+GRANDMASTER_SLAYER,Slayer Grandmaster,Earn 100 million Slayer XP.,no,"neu: ach_xp_slayer_100m (skill_xp, target slayer, count 100000000)","Slayer-Helm mit Turmsilhouette, schwarz-goldener Großmeisterrahmen mit Lorbeer"
+ASH_TO_ASH,Ash to Ash,Fall in battle for the first time.,yes,"neu: ach_deaths_1 (deaths, count 1)",Erloschene Fackel in Asche
+FEATHERS_EVERYWHERE,Feathers Everywhere,"Defeat 1,000 chickens.",yes,ach_kills_chicken_1000,Hühnerfeder-Wirbel um einen Kochtopf
+BULL_HEADED,Bull-Headed,Defeat the Maddened Bull 100 times.,yes,ach_kills_bull_boss_100,Stierschädel mit verbogenem Horn
+THE_NINTH_WARDEN,The Ninth Warden,Defeat the Ninth Warden.,yes,"neu: ach_elite_idol_warden (elite_kills, target elite_idol_warden, count 1)","Neun Wächtermasken, die neunte zerbrochen"
+A_HUNDRED_HOURS,A Hundred Hours in the Reach,Play actively for 100 hours.,yes,"neu: ach_play_hours_100 (play_hours, count 100)",Sanduhr mit Asche statt Sand

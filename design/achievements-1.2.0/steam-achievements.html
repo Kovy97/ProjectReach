@@ -1,0 +1,183 @@
+<title>Erfolge für Steam</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #0f1112; --panel: #1a1c1c; --panel-2: #222423; --line: rgba(212, 182, 109, 0.22); --line-strong: rgba(212, 182, 109, 0.5);
+    --text: #e6dcc0; --muted: #8f8a7c; --gold: #d4b66d; --gold-soft: rgba(212, 182, 109, 0.12); --ember: #a3352a; --ember-soft: rgba(163, 53, 42, 0.16);
+    --display: "Cinzel", "Times New Roman", serif; --body: "Spectral", Georgia, serif; --mono: "IBM Plex Mono", Consolas, monospace;
+  }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+  .page { max-width: 1080px; margin: 0 auto; padding: 48px 28px 96px; }
+  .eyebrow { font-family: var(--display); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 4vw, 44px); letter-spacing: 0.06em; margin: 8px 0 14px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 22px; letter-spacing: 0.08em; margin: 0 0 14px; color: var(--gold); text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 500; font-size: 15px; letter-spacing: 0.08em; margin: 22px 0 8px; color: var(--text); }
+  p { margin: 0 0 12px; max-width: 70ch; }
+  .lead { font-size: 19px; max-width: 64ch; }
+  .muted { color: var(--muted); }
+  section { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 14px; }
+  .fact { background: var(--panel-2); border: 1px solid var(--line); padding: 14px 16px; }
+  .fact .num { font-family: var(--mono); font-size: 26px; font-variant-numeric: tabular-nums; color: var(--gold); }
+  .fact .lbl { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .theses { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 18px; }
+  .thesis { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; }
+  .thesis h3 { margin: 0 0 6px; }
+  .thesis p { font-size: 15.5px; color: var(--muted); margin: 0; max-width: none; }
+  .tablewrap { overflow-x: auto; margin-top: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 9px 10px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.api { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  td.dim { color: var(--muted); }
+  .tag { display: inline-block; font-family: var(--display); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 7px; border: 1px solid var(--line-strong); color: var(--gold); background: var(--gold-soft); white-space: nowrap; }
+  .tag.new { color: var(--text); border-color: var(--ember); background: var(--ember-soft); }
+  .tag.hidden { color: var(--muted); border-color: var(--line); background: transparent; }
+  .decisions { display: grid; gap: 10px; margin-top: 12px; }
+  .dec { display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: start; background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; }
+  .dec .id { font-family: var(--display); color: var(--gold); font-size: 16px; letter-spacing: 0.06em; }
+  .dec p { margin: 0; max-width: none; }
+  .dec .why { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .chip { font-family: var(--display); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 10px; border: 1px solid var(--ember); color: var(--text); background: var(--ember-soft); white-space: nowrap; }
+  .steps { counter-reset: s; display: grid; gap: 8px; margin-top: 10px; }
+  .step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+  .step::before { counter-increment: s; content: counter(s); font-family: var(--display); color: var(--gold); border: 1px solid var(--line-strong); width: 26px; height: 26px; display: grid; place-items: center; font-size: 13px; }
+  .step p { margin: 0; max-width: none; }
+  .sources { font-size: 14px; color: var(--muted); }
+  .sources code { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  @media (max-width: 720px) { .dec { grid-template-columns: 44px 1fr; } .dec .chip { grid-column: 2; justify-self: start; } }
+</style>
+
+<div class="page">
+  <div class="eyebrow">Grim Reach · Achievement-Audit · 27. August 2026</div>
+  <h1>Erfolge für Steam</h1>
+  <p class="lead">Das Spiel hat 537 Erfolge, aber 85 Prozent davon sind Fließband: Kill-Ketten je Monster und Skill-Leitern in Zehnerschritten. Sieben lebende Systeme haben keinen einzigen Erfolg, kein Erfolg ist versteckt, und die Seltenheit passt oft nicht zur Schwierigkeit. Für Steam schlagen wir ein kuratiertes Set aus 90 Erfolgen vor: 21 Kapitel, 20 Meister, 20 Großmeister, 20 große Meilensteine, 4 Frühgame, 5 versteckte. Die 200-Millionen-XP-Frage ist gerechnet: für 15 von 20 Skills realistisch, für fünf bewusst abgestuft.</p>
+  <p class="sources">Vollständiges Audit: <code>design/achievements-1.2.0/audit.md</code>, Tabelle zum Abtippen: <code>steam-set.csv</code> (Spalten api_name, display_name, description, hidden, trigger_internal_id, icon_idea).</p>
+
+  <section>
+    <h2>Befund</h2>
+    <div class="facts">
+      <div class="fact"><div class="num">537</div><div class="lbl">Erfolge im Spiel, davon 268 Kill-Tripel (84 Monster) und 190 Skill-Leitern</div></div>
+      <div class="fact"><div class="num">0</div><div class="lbl">versteckte Erfolge; Belohnung nur AP, die zu Quest-Marken werden</div></div>
+      <div class="fact"><div class="num">7</div><div class="lbl">Systeme ohne Erfolg: Slayer, Champions, New Haven, Runen, Meisterschaft, Chronik-Kapitel, Bestiarium</div></div>
+      <div class="fact"><div class="num">~85</div><div class="lbl">Erfolge in den ersten zehn Stunden, danach eine Wand aus 1000er-Ketten</div></div>
+    </div>
+    <div class="theses">
+      <div class="thesis"><h3>Seltenheit lügt</h3><p>„Bull Slayer" (ein Pflicht-Kill in Kapitel 2, etwa eine Stunde) ist episch wie „Woodcutting 99" (rund 35 Fokus-Stunden). 1000 Hühner (1,4 h) sind selten wie 1000 Last Idols (über 30 Endgame-Stunden).</p></div>
+      <div class="thesis"><h3>Die Mitte ist leer</h3><p>Zwischen Woche 2 und Woche 8 liegt die meiste Spielzeit, aber dort tragen genau die Systeme keine Erfolge, die man dann spielt: Kapitel, Slayer, Champions, New Haven.</p></div>
+      <div class="thesis"><h3>Altes Export-Dokument ist überholt</h3><p>Der Export vom 13. Juli führt 21 Skills, 33 Sets und falsche Skill-IDs (magic_off, magic_def). Das Spiel hat 20 Skills, Maximum ist Gesamtlevel 1980. Dieses Audit ersetzt ihn.</p></div>
+      <div class="thesis"><h3>Empfehlung im Spiel</h3><p>Auf etwa 330 Erfolge eindampfen (Kill-Ketten zu Zonen-Bestiarium und Bossen, Skill-Leitern 25/50/75/90/99), rund 75 neue für die leeren Systeme, 12 versteckte, Titel an AP-Quoten. Sechs neue Bedingungstypen, alle nur lesend, kein Save-Bump.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ist 200 Millionen XP erreichbar?</h2>
+    <p>Grundlage: Stufe 99 braucht 13 034 431 XP, XP läuft nach 99 weiter (die Engine deckelt nicht). XP pro Stunde im Endgame kommt aus der Sim mit der besten Aktion auf höchster Stufe. Ziel war ein Langzeitziel von 200 bis 400 Fokus-Stunden.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Skill</th><th>XP/h Endgame</th><th>h bis 99</th><th>h bis 100 Mio.</th><th>h bis 200 Mio.</th><th>Empfehlung</th></tr>
+      <tr><td>Holzfällen, Bergbau, Angeln, Sammeln</td><td class="num">700–820 k</td><td class="num">16–19</td><td class="num">122–143</td><td class="num">244–286</td><td><span class="tag">200 Mio.</span></td></tr>
+      <tr><td>Kochen, Schmieden, Handwerk, Juwelierkunst, Runenkunst, Kräuterkunde</td><td class="num">785–825 k</td><td class="num">16–17</td><td class="num">121–127</td><td class="num">242–255</td><td><span class="tag">200 Mio.</span></td></tr>
+      <tr><td>Angriff, Kraft, Verteidigung, Fernkampf, Magie</td><td class="num">1,1–2,2 Mio.</td><td class="num">6–12</td><td class="num">45–91</td><td class="num">91–182</td><td><span class="tag">200 Mio.</span></td></tr>
+      <tr><td>Diebeskunst</td><td class="num">560 k</td><td class="num">23</td><td class="num">179</td><td class="num">357</td><td><span class="tag">100 Mio.</span> <span class="dim">(≈ 180 h)</span></td></tr>
+      <tr><td>Slayer</td><td class="num">580 k</td><td class="num">22</td><td class="num">172</td><td class="num">345</td><td><span class="tag">100 Mio.</span> <span class="dim">(≈ 170 h)</span></td></tr>
+      <tr><td>Anbau (passiv, 9 Beete Götteratem)</td><td class="num">100 k</td><td class="num">130</td><td class="num">1 000</td><td class="num">2 000</td><td><span class="tag">30 Mio.</span> <span class="dim">(≈ 300 h passiv)</span></td></tr>
+      <tr><td>Vitalität (0,5 XP je Schaden)</td><td class="num">120 k</td><td class="num">109</td><td class="num">833</td><td class="num">1 667</td><td><span class="tag">30 Mio.</span> <span class="dim">(≈ 250 h Kampf)</span></td></tr>
+      <tr><td>Bannmagie (0,25 XP je absorbiert, nur Magie)</td><td class="num">60 k</td><td class="num">217</td><td class="num">1 667</td><td class="num">3 333</td><td><span class="tag">20 Mio.</span> <span class="dim">(≈ 330 h)</span></td></tr>
+    </table></div>
+    <p class="muted" style="margin-top:12px">Nebenbefund: Bannmagie braucht rund 220 Stunden reinen Magie-Kampf bis 99, Vitalität 110 Stunden; beide sind fünf- bis zehnmal langsamer als jeder andere Skill. Das ist eine Balance-Frage, bevor die Erfolge auf Steam sichtbar werden (D3).</p>
+  </section>
+
+  <section>
+    <h2>Das Steam-Set: 90 Erfolge in Backend-Reihenfolge</h2>
+    <p>Die Reihenfolge ist die Anzeigereihenfolge im Steam-Backend: frühe Erfolge zuerst, die langen Ziele hinten. <span class="tag new">neu</span> heißt, der interne Erfolg existiert noch nicht und kommt mit 1.2.0; <span class="tag hidden">versteckt</span> heißt, die Beschreibung zeigt Steam erst nach dem Freischalten.</p>
+
+    <h3>Kapitel der Chronik (21)</h3>
+    <div class="tablewrap"><table>
+      <tr><th>API-Name</th><th>Name</th><th>Beschreibung</th><th></th></tr>
+      <tr><td class="api">CH01_THE_FIRST_PAGE</td><td>The First Page</td><td class="dim">Finish Chronicle chapter 1: The First Page.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH02_FIRST_BLOOD</td><td>First Blood</td><td class="dim">Finish Chronicle chapter 2: First Blood.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH03_SPARK_IN_THE_GRAIN</td><td>The Spark in the Grain</td><td class="dim">Finish Chronicle chapter 3.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH04_THE_EMPTY_MARCH</td><td>The Empty March</td><td class="dim">Finish Chronicle chapter 4.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH05_THE_WAR_BANNER</td><td>The War Banner</td><td class="dim">Finish Chronicle chapter 5.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH06_THE_ASH_LESSON</td><td>The Ash Lesson</td><td class="dim">Finish Chronicle chapter 6.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH07_THE_CARRION_KING</td><td>The Carrion King</td><td class="dim">Finish Chronicle chapter 7.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH08_THORNS</td><td>Thorns</td><td class="dim">Finish Chronicle chapter 8.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH09_CHOIR_BENEATH_BARROWS</td><td>The Choir Beneath the Barrows</td><td class="dim">Finish Chronicle chapter 9.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH10_THE_BROKEN_SEAL</td><td>The Broken Seal</td><td class="dim">Finish Chronicle chapter 10.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH11_LORD_OF_THE_DEPTHS</td><td>The Lord of the Depths</td><td class="dim">Finish Chronicle chapter 11.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH12_THE_GIANTS</td><td>The Giants</td><td class="dim">Finish Chronicle chapter 12.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH13_THE_OLD_HUNT</td><td>The Old Hunt</td><td class="dim">Finish Chronicle chapter 13.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH14_WHAT_THE_SEA_GIVES</td><td>What the Sea Gives Back</td><td class="dim">Finish Chronicle chapter 14.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH15_THE_COLD_FORGE</td><td>The Cold Forge</td><td class="dim">Finish Chronicle chapter 15.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH16_THE_THIN_SKY</td><td>The Thin Sky</td><td class="dim">Finish Chronicle chapter 16.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH17_THE_AERIE</td><td>The Aerie</td><td class="dim">Finish Chronicle chapter 17.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH18_THE_LAST_GATE</td><td>The Last Gate</td><td class="dim">Finish Chronicle chapter 18.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH19_THE_JUDGEMENT</td><td>The Judgement</td><td class="dim">Finish Chronicle chapter 19.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">CH20_THE_TRUE_CULPRIT</td><td>The True Culprit</td><td class="dim">Turn the final page of the Chronicle.</td><td><span class="tag new">neu</span> <span class="tag hidden">versteckt</span></td></tr>
+      <tr><td class="api">CH21_THE_SECOND_VOLUME</td><td>Epilogue: The Second Volume</td><td class="dim">Open the Second Volume.</td><td><span class="tag new">neu</span> <span class="tag hidden">versteckt</span></td></tr>
+    </table></div>
+
+    <h3>Frühgame und große Meilensteine (24)</h3>
+    <div class="tablewrap"><table>
+      <tr><th>API-Name</th><th>Name</th><th>Beschreibung</th><th></th></tr>
+      <tr><td class="api">BLOODED</td><td>Blooded</td><td class="dim">Defeat 100 enemies in the Reach.</td><td></td></tr>
+      <tr><td class="api">FIRST_HARVEST</td><td>First Harvest</td><td class="dim">Gather 1,000 resources.</td><td></td></tr>
+      <tr><td class="api">COIN_PURSE</td><td>Coin Purse</td><td class="dim">Hold 1,000 gold at once.</td><td></td></tr>
+      <tr><td class="api">ARTISAN</td><td>Artisan</td><td class="dim">Craft 100 items.</td><td></td></tr>
+      <tr><td class="api">CHAMPIONS_BANE</td><td>Champion's Bane</td><td class="dim">Defeat your first Champion of the Reach.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">FIRST_CLEAR</td><td>First Clear</td><td class="dim">Clear a dungeon for the first time.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">MASTER_OF_TRADES</td><td>Master of Trades</td><td class="dim">Reach a total level of 250.</td><td></td></tr>
+      <tr><td class="api">FRIEND_IN_THE_ASH</td><td>A Friend in the Ash</td><td class="dim">Find your first companion.</td><td></td></tr>
+      <tr><td class="api">MERCHANT_PRINCE</td><td>Merchant Prince</td><td class="dim">Hold 1,000,000 gold at once.</td><td></td></tr>
+      <tr><td class="api">ANNIHILATOR</td><td>Annihilator</td><td class="dim">Defeat 10,000 enemies.</td><td></td></tr>
+      <tr><td class="api">OBSESSED</td><td>Obsessed</td><td class="dim">Keep a 30-day daily streak.</td><td></td></tr>
+      <tr><td class="api">CONTRACT_KILLER</td><td>Contract Killer</td><td class="dim">Complete 100 Slayer tasks.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">NEW_HAVEN_RISES</td><td>New Haven Rises</td><td class="dim">Raise every building in New Haven to its final stage.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">DUNGEON_LEGEND</td><td>Dungeon Legend</td><td class="dim">Complete 100 dungeon runs.</td><td></td></tr>
+      <tr><td class="api">DELVER_OF_EVERY_DEPTH</td><td>Delver of Every Depth</td><td class="dim">Clear every dungeon in the Reach at least once.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">ENCYCLOPEDIST</td><td>Encyclopedist</td><td class="dim">Discover 500 unique items.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">THE_ABYSSAL_THRONE</td><td>The Abyssal Throne</td><td class="dim">Slay a creature on the fifth floor of the Slayer Tower.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">PEAK_CONTENDER</td><td>Peak Contender</td><td class="dim">Reach floor 20 of the Paragon Spire.</td><td></td></tr>
+      <tr><td class="api">ASCENDANT</td><td>Ascendant</td><td class="dim">Reach a total level of 1,000.</td><td></td></tr>
+      <tr><td class="api">BEASTMASTER</td><td>Beastmaster</td><td class="dim">Own all 21 companions.</td><td></td></tr>
+      <tr><td class="api">MASTER_OF_ALL_SETS</td><td>Master of All Sets</td><td class="dim">Own every complete equipment set.</td><td></td></tr>
+      <tr><td class="api">THE_WHOLE_BESTIARY</td><td>The Whole Bestiary</td><td class="dim">Defeat every creature in the bestiary at least once.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">TROPHY_HALL</td><td>Trophy Hall</td><td class="dim">Claim the unique trophy of every Champion of the Reach.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">TRUE_COMPLETIONIST</td><td>True Completionist</td><td class="dim">Reach the maximum total level of 1,980.</td><td><span class="dim">Zahl korrigiert (20 × 99)</span></td></tr>
+    </table></div>
+
+    <h3>Meister und Großmeister (20 + 20)</h3>
+    <p>Je Skill ein „Master …" für Stufe 99 (Master Woodcutter, Master Miner, Master Angler, Master Forager, Master Cook, Master Smith, Master Crafter, Master Farmer, Master Thief, Master Jeweler, Master Runecrafter, Master Herbalist, Master of Arms, Master of Might, Master of the Shield, Master Marksman, Master Mage, Master of Vitality, Master Warder, Master Slayer; Slayer-99 ist neu) und je Skill ein „… Grandmaster" für den XP-Meilenstein aus der Tabelle oben: 200 Millionen für 15 Skills, 100 Millionen für Diebeskunst und Slayer, 30 Millionen für Anbau und Vitalität, 20 Millionen für Bannmagie. Alle 20 Großmeister sind neu und brauchen den Bedingungstyp <code>skill_xp</code> (drei Zeilen Engine).</p>
+
+    <h3>Versteckt (5)</h3>
+    <div class="tablewrap"><table>
+      <tr><th>API-Name</th><th>Name</th><th>Beschreibung</th><th></th></tr>
+      <tr><td class="api">ASH_TO_ASH</td><td>Ash to Ash</td><td class="dim">Fall in battle for the first time.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">FEATHERS_EVERYWHERE</td><td>Feathers Everywhere</td><td class="dim">Defeat 1,000 chickens.</td><td></td></tr>
+      <tr><td class="api">BULL_HEADED</td><td>Bull-Headed</td><td class="dim">Defeat the Maddened Bull 100 times.</td><td></td></tr>
+      <tr><td class="api">THE_NINTH_WARDEN</td><td>The Ninth Warden</td><td class="dim">Defeat the Ninth Warden.</td><td><span class="tag new">neu</span></td></tr>
+      <tr><td class="api">A_HUNDRED_HOURS</td><td>A Hundred Hours in the Reach</td><td class="dim">Play actively for 100 hours.</td><td><span class="tag new">neu</span></td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>So kommt es nach Steam</h2>
+    <div class="steps">
+      <div class="step"><p><b>Content und Engine (1.2.0):</b> 54 neue interne Erfolge (Kapitel, XP, Slayer, Champions, New Haven, Bestiarium, Tode, Spielstunden) und sechs neue Bedingungstypen, alle nur lesend, kein Save-Bump. Bestehende Spieler bekommen beim ersten Start alles gutgeschrieben, was sie längst erreicht haben.</p></div>
+      <div class="step"><p><b>Steamworks-Backend (du):</b> 90 Einträge nach der CSV anlegen, API-Name exakt wie in der Tabelle, „Ausgelöst durch: Client", „Versteckt" bei den sieben markierten, dann Veröffentlichen und im Store unter „Unterstützte Funktionen" die Errungenschaften einschalten.</p></div>
+      <div class="step"><p><b>Icons (Mira):</b> 90 Motive, je 256 × 256 JPG farbig und in Graustufen; die Idee je Erfolg steht in der CSV. Serien: 21 Kapitel als aufgeschlagene Chronik mit Kapitelmotiv, 20 Meisterrahmen und 20 Großmeisterrahmen als Serie, der Rest Einzelmotive.</p></div>
+      <div class="step"><p><b>Client (ich):</b> <code>steamworks.js</code> installieren, AppID 4915450 setzen, die Mapping-Tabelle in <code>steam.ts</code> füllen (interne ID → API-Name), Sync beim Start, Test mit einem echten Spielstand. Die Brücke ist seit Juli verdrahtet und inert.</p></div>
+    </div>
+    <p class="muted" style="margin-top:14px">Steam deckelt neue Apps bei 100 Erfolgen, bis das Profil-Feature freigeschaltet ist; 90 lässt Luft für Elfen oder das Alive-Update.</p>
+  </section>
+
+  <section>
+    <h2>Deine Entscheidungen</h2>
+    <div class="decisions">
+      <div class="dec"><div class="id">D1</div><div><p><b>Schnitt im Spiel:</b> Von 537 auf etwa 330 eindampfen (Kill-Ketten zu Zonen-Bestiarium und Bossen, Skill-Leitern 25/50/75/90/99) oder die 537 unangetastet lassen und nur die ~170 neuen obendrauf?</p><p class="why">Beim Schnitt springt die AP-Quote der Bestandsspieler einmalig, bis zu drei Nachhol-Marken; entfernte IDs bleiben im Save harmlos.</p></div><span class="chip">Empfehlung: eindampfen</span></div>
+      <div class="dec"><div class="id">D2</div><div><p><b>XP-Schwellen:</b> 200 Millionen für 15 Skills und abgestuft für fünf (Diebeskunst und Slayer 100, Anbau und Vitalität 30, Bannmagie 20), oder eine einheitliche Zahl fürs Profil?</p><p class="why">Einheitlich hieße 100 Millionen für alle; dann wären Anbau, Vitalität und Bannmagie praktisch unerreichbar.</p></div><span class="chip">Empfehlung: abgestuft</span></div>
+      <div class="dec"><div class="id">D3</div><div><p><b>Bannmagie und Vitalität:</b> Vor der Steam-Sichtbarkeit die XP-Rate beider Skills nachziehen (Faktor 3 bis 5), damit 99 in 40 bis 70 statt 110 bis 220 Stunden erreichbar ist?</p><p class="why">Sonst stehen zwei „Master"-Erfolge im Profil, die kaum jemand je sieht.</p></div><span class="chip">Empfehlung: Retune in 1.2.0</span></div>
+    </div>
+  </section>
+</div>
