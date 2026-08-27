@@ -282,7 +282,7 @@ describe("Jagen — Tick, Fang, Auto-Erneuern", () => {
     expect(huntBaitCount(s)).toBe(3); // 5 − 1 (stellen) − 1 (erneuern)
   });
 
-  it("ein Fang erzeugt KEINE Kill-Spuren: monsterKills, stats.kills, seenDrops, Slayer bleiben unberührt", () => {
+  it("ein Fang erzeugt KEINE Kill-Spuren: monsterKills, stats.kills, Slayer bleiben unberührt (seenDrops zählt, Chef 28.08.)", () => {
     const c = testContent();
     // Seed suchen, bei dem der erste Wurf sitzt (Chance 70 %).
     let s: GameState | null = null;
@@ -294,7 +294,8 @@ describe("Jagen — Tick, Fang, Auto-Erneuern", () => {
     expect(s).not.toBeNull();
     expect(s!.monsterKills[HARE.id]).toBe(1); // unverändert (Baseline aus readyGame)
     expect(s!.stats.kills).toBe(0);
-    expect(s!.seenDrops[HARE.id]).toBeUndefined();
+    // Chef 28.08.2026: Fänge zählen ins Collection-Log (Jagdbuch zeigt Beute erst nach dem ersten Fund) — aber NICHT als Kill.
+    expect(s!.seenDrops[HARE.id]?.length ?? 0).toBeGreaterThan(0);
     expect(s!.skills.slayer).toBeUndefined();
     expect(s!.combat.monsterId).toBeNull();
     expect(s!.stats.huntCatches).toBe(1);

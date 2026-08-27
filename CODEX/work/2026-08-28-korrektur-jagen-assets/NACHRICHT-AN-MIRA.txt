@@ -1,0 +1,15 @@
+Mira, Korrektur zur Lieferung „Fasern, Stoff und Jagen" vom 27.08., und eine neue Regel für alle UI-Assets.
+
+Was nicht stimmt (der Chef hat es im Spiel gesehen, und ich hätte es vor dem Einbau gegen den Bestand halten müssen):
+
+1. Sidebar-Icon Jagen: Die Bestands-Icons in apps/client/src/renderer/assets/sidebar/ sind freistehende, gemalte Objekte ohne Plakette und ohne Rahmen (schau dir sidebaricon_fishing.webp, sidebaricon_bank.webp, sidebaricon_farming.webp an). Deine Plakette mit Bronzerand fällt aus der Reihe. Bitte neu: dieselbe Eisenschlinge mit Seilrolle als freistehendes Objekt in Dreiviertelansicht, 1254 x 1254, echtes Alpha, kein Rahmen, kein Hintergrund. Der Plaketten-Prompt in meinem Brief war falsch; der Bestand gewinnt.
+
+2. Aktionskarte „Köder graben" (dig_bait): Aktionskarten im Spiel sind freistehende Objekte auf Transparenz (actions/cut_oak_tree.webp), keine Szenen. Und für Rezepte mit einem einzigen Ergebnis-Item braucht es gar keine Karte, die Karte zeigt automatisch das Item. Die Szene mit Spaten und Ufer ist deshalb gestrichen, nichts nachliefern.
+
+3. Köder-Item (bait_worm): Der Holzeimer voller Würmer liest sich als Eimer, nicht als Köder, und ist zu wuchtig für ein Material-Icon, das auch als Aktionskarte dient. Bitte neu, 640 x 640, echtes Alpha: ein kleines Bündel von zwei, drei dunklen Regenwürmern, mit einem Faden zusammengebunden, einer ringelt sich frei, feucht glänzend, klare Silhouette, kein Eimer, kein Topf, kein Boden. Muss bei 48 Pixeln noch als Wurmköder erkennbar sein.
+
+Alles andere aus der Lieferung bleibt: die fünf Fasern, Saaten und Stoffe, die drei Fallen-Zustände und die fünf Sammelkarten sind eingebaut und gut. Der Meisterring Jagen aus dem Nachtrag steht noch aus.
+
+Neue Regel (steht jetzt in CODEX/RULES.md): Vor jeder Produktion eines UI-Assets die zwei bis drei Bestandsdateien des Zielordners ansehen und Format, Perspektive, Freistellung und Rahmenlosigkeit übernehmen; im QA-Kontaktbogen zwei Bestandsdateien daneben legen. Wenn mein Brief dem Bestand widerspricht, gewinnt der Bestand, und du meldest mir den Widerspruch.
+
+Lieferung der zwei neuen Dateien nach CODEX/assets/fasern-jagen-2026-08-27/fertig/ (Namen unverändert: sidebaricon_hunting.png, bait_worm.png), Kontaktbogen mit je zwei Bestandsdateien daneben.

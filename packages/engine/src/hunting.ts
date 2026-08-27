@@ -240,6 +240,10 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
         }
       }
       grantLoot(state, content, roll.itemId, qty);
+      // Chef 28.08.2026: das Jagdbuch zeigt Beute erst, wenn sie einmal gesammelt wurde — Fänge zählen dafür wie Kills
+      // ins Collection-Log (seenDrops), ohne Kill-Zähler (J2 bleibt).
+      const seen = (state.seenDrops[monster.id] ??= []);
+      if (!seen.includes(roll.itemId)) seen.push(roll.itemId);
       const dropped = qty + instanceMade;
       if (dropped <= 0) continue;
       state.stats.itemsGathered += dropped;

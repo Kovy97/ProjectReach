@@ -81,3 +81,17 @@ Codex kann auf Chef-/Claude-Auftrag in diesen Bereichen arbeiten, dokumentiert d
 - Löschen fremder Arbeit oder „Bereinigen“ eines schmutzigen Worktrees
 - Starten der Live-App zur Prüfung
 - Vermischen von Grim Reach und Kreidestadt
+
+## Stilabgleich mit dem Zielordner (Chef, 28.08.2026)
+
+- Vor JEDER Produktion eines Runtime-Assets die zwei bis drei Bestandsdateien des Zielordners ansehen
+  (`apps/client/src/renderer/assets/<ordner>/`) und Format, Perspektive, Freistellung und Rahmenlosigkeit übernehmen.
+  Beispiele: Sidebar-Icons sind freistehende gemalte Objekte OHNE Plakette/Rahmen (`sidebaricon_fishing.webp`);
+  Aktionskarten sind freistehende Objekte auf Transparenz (`actions/cut_oak_tree.webp`), keine Szenen; Item-Icons ein
+  Objekt, mittig, 640 × 640.
+- Wenn ein Rezept KEINE eigene Aktionskarte hat, zeigt die Karte automatisch das Ergebnis-Item. Für Aktionen mit einem
+  einzelnen Ergebnis-Item wird deshalb KEINE Aktionskarte produziert (Beispiel „Köder graben" → das Köder-Item ist die Karte).
+- Im QA-Kontaktbogen jedes UI-Assets stehen zwei Bestandsdateien desselben Ordners daneben. Weicht der Stil ab, wird
+  nicht geliefert, sondern nachgefragt.
+- Ein Brief-Text von Claude ersetzt diesen Abgleich nicht; wenn der Brief dem Bestand widerspricht, gewinnt der Bestand,
+  und Mira meldet den Widerspruch.
