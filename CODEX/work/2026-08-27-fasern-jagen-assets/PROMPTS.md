@@ -1,4 +1,4 @@
-# Prompts — Fasern, Stoff und Jagen (26 Dateien)
+# Prompts — Fasern, Stoff und Jagen (27 Dateien)
 
 Gehört zu `BRIEF.md`. Vorlage `CODEX/templates/IMAGEGEN-ASSET-PROMPT.md`. Dateiname = Content-ID (Claude konvertiert zu WebP und legt sie in die Auto-Discovery-Ordner).
 
@@ -30,6 +30,7 @@ Gehört zu `BRIEF.md`. Vorlage `CODEX/templates/IMAGEGEN-ASSET-PROMPT.md`. Datei
 | 24 | `forage_starflax.png` | 1672 × 941, deckend | Sammel-Karte |
 | 25 | `dig_bait.png` | 1254 × 1254, deckend | Aktions-Karte Angeln |
 | 26 | `sidebaricon_hunting.png` | 1254 × 1254, Alpha außen | Sidebar-Icon |
+| 27 | `ring_master_hunting.png` | 640 × 640, Alpha | Item-Icon Meisterring Jagen (Stufe 99) |
 
 ---
 
@@ -161,4 +162,9 @@ Opaque square action card for a dark fantasy idle RPG, painterly realism in the 
 ## 26 · `sidebaricon_hunting.png` (1254 × 1254, Alpha außen)
 ```
 Sidebar icon for a dark fantasy idle RPG: a single emblem on a dark iron plaque with a thin bronze rim, painterly, muted palette with one warm accent, isolated on a fully transparent background outside the plaque (true alpha), no text. Canvas 1254 x 1254, matching the existing sidebar icons. Subject: an iron-jawed snare trap with a coiled rope, seen from above.
+```
+
+## 27 · `ring_master_hunting.png` (640 × 640, Alpha)
+```
+Game item icon for a dark fantasy idle RPG, painterly realism in the muted "ashen iron" palette, isolated on a fully transparent background (true alpha), single object centered with generous padding, soft top-left light, no text. Canvas 640 x 640. Subject: the Trapper's Ring, the level-99 master ring of the Hunting skill, in the same series as the other master rings: a heavy dark iron band shaped like a coiled snare rope, set with a small amber stone and a tiny bone-white fang, restrained warm glow on the stone only. Output requirement: a native transparent PNG with a real alpha channel generated as part of the image; no checkerboard, no solid background, no chroma key, no floor, no shadow, no text.
 ```

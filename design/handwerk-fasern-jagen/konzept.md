@@ -76,13 +76,13 @@ auch in den Zutaten stimmt.
 | Der Schwarzdornwald | 30 | 15 min | Dornwolf; Hexe (Schlinge) |
 | Die Krypta | 40 | 20 min | nichts Fangbares (Skelette) |
 | Wildwald-Jagdgründe | 50 | 25 min | Waldhase, Grauwolf, Hirsch, Schattenwolf |
-| Gezeitenuntiefen | 60 | 35 min | Schlammkrabbe, Tiefenkrake, Gezeitenschlange |
+| Gezeitenuntiefen | 60 | 35 min | Schlammkrabbe, Gezeitenschlange |
 | Schlackengrube | 70 | 45 min | Grubenspinne, Frosthund; Kobolde (Schlinge) |
-| Das Hochland | 80 | 55 min | Roc, Roc-Jäger, Roc-Ältester |
+| Das Hochland | 80 | 55 min | Roc, Roc-Jäger |
 | Die Götzenhalle | 90 | 60 min | nichts Fangbares (Konstrukte, Untote, Drazhan) |
 
-Fangbar: Familien **Tier** und **Humanoid** (Schlinge, J1). Nie: Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster,
-Champions. Krypta und Götzenhalle haben damit keine Fänge, das ist Absicht. Die Jagen-Stufe je Gebiet ist die Leiter des Skills,
+Fangbar: Familien **Tier** und **Humanoid** (Schlinge, J1). Nie: Untote, Konstrukte, Dämonen, Drachen, benannte Bosse (Wutmodus, Dungeon-Endgegner,
+Erfolgsziele), Dungeon-Monster, Champions. Krypta und Götzenhalle haben damit keine Fänge, das ist Absicht. Die Jagen-Stufe je Gebiet ist die Leiter des Skills,
 die Kampf-Freischaltung die Tür.
 
 ### B4 Zahlen
