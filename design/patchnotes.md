@@ -12,6 +12,18 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
 
+**Endlose Aktion ließ sich nicht beenden (Spieler-Bug-Report 27.08., Hotfix-Kandidat 1.1.2):** DE: Wer
+eine Aktion mit ∞ startete und danach noch einmal auf ∞ klickte, legte unbemerkt einen zweiten endlosen
+Eintrag derselben Aktion in die Warteschlange; nach „Stopp" lief die Aktion im nächsten Moment wieder an,
+scheinbar unbeendbar (gemeldet beim Stehlen an der Stadtwache). Jetzt ist ein weiterer ∞-Klick auf eine
+bereits endlos laufende Aktion wirkungslos, ∞-Einträge derselben Aktion stapeln nicht mehr, und „Stopp"
+räumt wartende ∞-Doppel derselben Aktion mit ab; endliche Einträge bleiben. / EN: Clicking ∞ again on an
+action that was already running endlessly silently queued a second endless entry, so Stop looked broken.
+Fixed: duplicate ∞ entries are ignored and Stop clears them.
+
+*Dev-Notiz: engine/actions.ts enqueueAction (∞-Guard gegen laufende ∞-Aktion und ∞-Eintrag am Queue-Ende)
++ setActiveAction(null) filtert ∞-Doppel derselben Aktion; Test endless-duplicate-stop.test.ts. Kein Save-Feld.*
+
 **Die Taverne (Kern von 1.2.0, Chef-Entscheide E1–E3, 27.08.):** DE: New Haven bekommt eine Taverne
 (1 500 Gold, 100 Eichenholz, 15 Minuten; belegt keinen Bauplatz). Jeden Tag sitzen vier Gäste aus
 einem Kreis von 18 benannten Menschen, Elfen, Orks und Goblins an drei Tischen und am Tresen, jeder mit
