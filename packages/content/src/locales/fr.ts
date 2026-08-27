@@ -1201,7 +1201,6 @@ export const fr: Record<string, string> = {
   "categories:robe_voidweave:name": "Habits tissés du néant",
   "categories:rod_wood:name": "Cannes à pêche",
   "categories:rune_affixes:name": "Runes d'enchantement",
-  "categories:rune_foci:name": "Focalisateurs",
   "categories:rune_runes:name": "Éclats",
   "categories:rune_staves:name": "Bâtons",
   "categories:rune_wands:name": "Baguettes",

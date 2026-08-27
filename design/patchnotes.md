@@ -35,7 +35,9 @@ Stufe III Gold ×1,15), Lager-Raster auf 6 Spalten. Kulisse von Mira liegt vor, 
 **Runenkunst: Fokus-Rohlinge heißen jetzt so (Chef 27.08.):** DE: Das Zwischenprodukt der Fokus-Kette hieß
 „Verzauberter Kupfer-Fokus", war aber der unverzauberte Rohling; die Kette las sich verkehrt herum. Jetzt: „Kupfer-
 Fokus-Rohling schmieden" (Kategorie „Rohlinge schmieden") ergibt den „Kupfer-Fokus-Rohling", „Kupfer-Fokus verzaubern"
-macht daraus den tragbaren Kupfer-Fokus. Alle zwölf Metalle, nur Namen, keine IDs. / EN: The runecrafting focus
+macht daraus den tragbaren Kupfer-Fokus. Alle zwölf Metalle, nur Namen, keine IDs. Die Kategorie „Foki" ist
+aufgelöst: Trübkristall-, Frost-, Leeren- und Götzenfunken-Fokus sowie die Aether-Kugel stehen jetzt bei „Fokus
+verzaubern" und brauchen wie alle anderen zuerst einen Rohling der passenden Stufe (Kupfer, Stahl, Mithril, Runit, Titan). / EN: The runecrafting focus
 chain is named the right way round now: forge a Focus Blank, enchant it into the Focus.
 
 **Goblins in der Charaktererstellung (Mira, 27.08.):** DE: Die vierte Rasse: 30 Goblin-Archetypen, je männlich und

@@ -1204,7 +1204,6 @@ export const ptBR: Record<string, string> = {
   "categories:robe_voidweave:name": "Vestimentas de Trama do Vazio",
   "categories:rod_wood:name": "Varas de Pesca",
   "categories:rune_affixes:name": "Runas de Encantamento",
-  "categories:rune_foci:name": "Focos",
   "categories:rune_runes:name": "Fragmentos",
   "categories:rune_staves:name": "Cajados",
   "categories:rune_wands:name": "Varinhas",

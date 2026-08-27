@@ -1203,7 +1203,6 @@ export const zh: Record<string, string> = {
   "categories:robe_voidweave:name": "虚空织法衣",
   "categories:rod_wood:name": "钓竿",
   "categories:rune_affixes:name": "附魔符文",
-  "categories:rune_foci:name": "法器",
   "categories:rune_runes:name": "碎片",
   "categories:rune_staves:name": "法杖",
   "categories:rune_wands:name": "魔杖",

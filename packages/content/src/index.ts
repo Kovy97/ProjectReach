@@ -11123,14 +11123,17 @@ export const content: ContentDB = {
       inputs: [{ itemId: "aether_essence", qty: 1 }],
       loot: [{ itemId: "aether_rune", chance: 1, min: 2, max: 2 }],
     },
+    // Chef 27.08.2026: die fünf Sonder-Foki (Trübkristall, Frost, Aether-Kugel, Leere, Götzenfunken) laufen jetzt wie die
+    // Metallkette über einen Rohling der passenden Stufe und stehen mit ihr in EINER Kategorie „Fokus verzaubern“
+    // (Kategorie „Foki“ aufgelöst). Keine ID-Änderung.
     enchant_dim_focus: {
       id: "enchant_dim_focus",
       name: { en: "Enchant Dim Focus", de: "Trübkristall-Fokus verzaubern" },
       skill: "runecrafting",
-      category: "rune_foci",
+      category: "rc_focus_enchant",
       durationMs: 5000,
       xp: 8,
-      inputs: [{ itemId: "dim_essence", qty: 4 }],
+      inputs: [{ itemId: "enchanted_copper_focus", qty: 1 }, { itemId: "dim_essence", qty: 4 }],
       loot: [{ itemId: "dim_focus", chance: 1, min: 1, max: 1 }],
     },
     enchant_frost_scepter: {
@@ -11171,26 +11174,26 @@ export const content: ContentDB = {
     },
     enchant_frost_focus: {
       id: "enchant_frost_focus", name: { en: "Enchant Frost Focus", de: "Frost-Fokus verzaubern" },
-      skill: "runecrafting", category: "rune_foci", durationMs: 6000, xp: 30, levelRequired: 25,
-      inputs: [{ itemId: "frost_essence", qty: 6 }, { itemId: "frost_rune", qty: 8 }],
+      skill: "runecrafting", category: "rc_focus_enchant", durationMs: 6000, xp: 30, levelRequired: 25,
+      inputs: [{ itemId: "enchanted_steel_focus", qty: 1 }, { itemId: "frost_essence", qty: 6 }, { itemId: "frost_rune", qty: 8 }],
       loot: [{ itemId: "frost_focus", chance: 1, min: 1, max: 1 }],
     },
     enchant_aether_orb: {
       id: "enchant_aether_orb", name: { en: "Enchant Aether Orb", de: "Aether-Kugel verzaubern" },
-      skill: "runecrafting", category: "rune_foci", durationMs: 8000, xp: 107, levelRequired: 45,
-      inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }],
+      skill: "runecrafting", category: "rc_focus_enchant", durationMs: 8000, xp: 107, levelRequired: 45,
+      inputs: [{ itemId: "enchanted_mithril_focus", qty: 1 }, { itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }],
       loot: [{ itemId: "aether_orb", chance: 1, min: 1, max: 1 }],
     },
     enchant_void_focus: {
       id: "enchant_void_focus", name: { en: "Enchant Void Focus", de: "Leeren-Fokus verzaubern" },
-      skill: "runecrafting", category: "rune_foci", durationMs: 10000, xp: 361, levelRequired: 65,
-      inputs: [{ itemId: "void_rune", qty: 6 }, { itemId: "sapphire", qty: 1 }],
+      skill: "runecrafting", category: "rc_focus_enchant", durationMs: 10000, xp: 361, levelRequired: 65,
+      inputs: [{ itemId: "enchanted_runite_focus", qty: 1 }, { itemId: "void_rune", qty: 6 }, { itemId: "sapphire", qty: 1 }],
       loot: [{ itemId: "void_focus", chance: 1, min: 1, max: 1 }],
     },
     enchant_god_focus: {
       id: "enchant_god_focus", name: { en: "Enchant Godspark Focus", de: "Götzenfunken-Fokus verzaubern" },
-      skill: "runecrafting", category: "rune_foci", durationMs: 13000, xp: 1262, levelRequired: 85,
-      inputs: [{ itemId: "void_rune", qty: 10 }, { itemId: "diamond", qty: 1 }],
+      skill: "runecrafting", category: "rc_focus_enchant", durationMs: 13000, xp: 1262, levelRequired: 85,
+      inputs: [{ itemId: "enchanted_titanium_focus", qty: 1 }, { itemId: "void_rune", qty: 10 }, { itemId: "diamond", qty: 1 }],
       loot: [{ itemId: "god_focus", chance: 1, min: 1, max: 1 }],
     },
 
@@ -15413,7 +15416,6 @@ export const content: ContentDB = {
     { id: "bow_godwood", name: { en: "Godwood Bows", de: "Götzenholz-Bögen" } },
     // Runecrafting-Typen
     { id: "rune_runes", name: { en: "Shards", de: "Splitter" } },
-    { id: "rune_foci", name: { en: "Foci", de: "Foki" } },
     // #227 Focus-Rework: 2-Stufen-Split der Foci-Linie (kampf-freie Grundlage → Essenz-Gear)
     { id: "rc_focus_forge", name: { en: "Forge Blanks", de: "Rohlinge schmieden" } },
     { id: "rc_focus_enchant", name: { en: "Enchant Focus", de: "Fokus verzaubern" } },
@@ -20275,13 +20277,13 @@ export const content: ContentDB = {
     },
     {
       id: "orin_produce_focus_next", guestId: "orin", kind: "produce",
-      select: { skill: "runecrafting", categories: ["rune_foci"], hasInputs: true }, minBand: 3,
+      select: { skill: "runecrafting", categories: ["rc_focus_enchant"], hasInputs: true }, minBand: 3,
       minutes: [8, 10, 12, 15, 18],
       line: { en: "Reach one tier higher. Bind {count} {target}, the veil wants finer thread.", de: "Greif eine Stufe höher. Binde {count} {target}, das Tuch will feineren Faden." },
     },
     // ── Wenna (Verzauberung über runecrafting/rune_foci) ─────────────────
     {
-      id: "wenna_produce_enchant", guestId: "wenna", kind: "produce", select: { skill: "runecrafting", categories: ["rune_foci"], hasInputs: true },
+      id: "wenna_produce_enchant", guestId: "wenna", kind: "produce", select: { skill: "runecrafting", categories: ["rc_focus_enchant"], hasInputs: true },
       minutes: [8, 10, 12, 15, 18],
       line: { en: "The dead don't ask prices. I do. Enchant {count} {target} for me.", de: "Die Toten fragen nicht nach Preisen. Ich schon. Verzaubere {count} {target} für mich." },
     },

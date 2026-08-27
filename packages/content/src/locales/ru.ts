@@ -1201,7 +1201,6 @@ export const ru: Record<string, string> = {
   "categories:robe_voidweave:name": "Облачения пустотного плетения",
   "categories:rod_wood:name": "Удочки",
   "categories:rune_affixes:name": "Руны зачарования",
-  "categories:rune_foci:name": "Фокусы",
   "categories:rune_runes:name": "Осколки",
   "categories:rune_staves:name": "Посохи",
   "categories:rune_wands:name": "Жезлы",

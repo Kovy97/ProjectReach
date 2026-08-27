@@ -1202,7 +1202,6 @@ export const es: Record<string, string> = {
   "categories:robe_voidweave:name": "Vestiduras de tejido del vacío",
   "categories:rod_wood:name": "Cañas de pescar",
   "categories:rune_affixes:name": "Runas de encantamiento",
-  "categories:rune_foci:name": "Focos",
   "categories:rune_runes:name": "Fragmentos",
   "categories:rune_staves:name": "Bastones",
   "categories:rune_wands:name": "Varitas",
