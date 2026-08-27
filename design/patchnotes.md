@@ -30,7 +30,7 @@ state.rng), Content 19 Gäste + 49 Vorlagen, Gebäude `camp_tavern` (Stufe II zw
 Stufe III Gold ×1,15), Lager-Raster auf 6 Spalten. Kulisse von Mira liegt vor, Gäste-Figuren folgen
 (Platzhalter aus dem Spieler-Roster). Steam-Set unverändert.*
 
-## 1.1.2 „Vier Völker" — IN VORBEREITUNG (Chef 27.08.: alles außer Taverne; Upload nur auf GO, `setlive` leer)
+## 1.1.2 „Vier Völker" — HOCHGELADEN 2026-08-27 21:28 (Build 24977904, `setlive` leer, Chef schaltet live; alles außer Taverne, Schalter TAVERN_ENABLED aus)
 
 **Runenkunst: Fokus-Rohlinge heißen jetzt so (Chef 27.08.):** DE: Das Zwischenprodukt der Fokus-Kette hieß
 „Verzauberter Kupfer-Fokus", war aber der unverzauberte Rohling; die Kette las sich verkehrt herum. Jetzt: „Kupfer-

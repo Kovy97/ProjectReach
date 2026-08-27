@@ -15,6 +15,7 @@ NEW
 - The queue knows its chain. If you queue 650 Copper Vein and then Smelt Copper, the smelting card shows in yellow that the material will be there when its turn comes, instead of claiming you have nothing.
 - Achievements reworked. 311 achievements instead of 537: the long kill chains and the tier ladders are gone, what remains are real milestones. Nothing you earned is lost.
 - Warding levels faster. Absorbed ward grants four times the XP it did.
+- Runecrafting foci read the right way round. Forge a Focus Blank, then enchant it into the Focus; the five special foci (Dim Crystal, Frost, Aether Orb, Void, Godspark) now follow the same chain and sit in the same category.
 
 FIXES
 
