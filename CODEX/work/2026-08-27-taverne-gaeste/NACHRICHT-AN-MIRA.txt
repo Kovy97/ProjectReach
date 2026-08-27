@@ -1,0 +1,12 @@
+Mira, neuer großer Auftrag: die Taverne. Das wird der Kern von 1.2.0, ein Spieler-Hub mit wechselnden Gästen, die Aufträge vergeben. Brief und Prompts liegen in `CODEX/work/2026-08-27-taverne-gaeste/`.
+
+Was wir brauchen:
+1. Die Szene `tavern_interior.png`: Schankraum von innen, deckend, 1672 x 941, mit VIER klar lesbaren freien Plätzen (drei Tische, Tresen) plus Anschlagtafel, Kamin, Tür. Keine Personen, kein Text. Bitte die Koordinaten der vier Plätze (Fußpunkt) und der Objekte ins QA-Blatt.
+2. 19 Gäste, je ZWEI Dateien: `tavern_<id>_idle.png` (Ganzkörper 1086 x 1448, Alpha, friedliche Idle-Stellung, als stünden sie gerade in der Taverne, gern mit Krug oder Becher, Blick nach rechts, keine Kampfpose, kein Glühen) und `tavern_<id>_face.png` (Gesichtskarte 1024 x 1024, Alpha, Brustbild, dieselbe Person wie die Figur). Erst die Figur, dann das Gesicht aus derselben Beschreibung, damit beides eindeutig eine Person ist.
+3. Zwei Icons: `icon_tavern.png` (Sidebar, Krug) und `building_tavern.png` (Gebäudebild für New Haven).
+
+Völker nur Mensch, Elf, Ork, Goblin, Profile stehen in den Prompts. Echtes Alpha wie immer, kein Schachbrett, kein Key.
+
+Reihenfolge: Szene, dann Halvard (Wirt), dann Viktor und Billy, dann der Rest. Lieferung nach `CODEX/assets/taverne-gaeste-2026-08-27/fertig/` plus raw/ und qa/ mit Kontaktbögen. Nichts in den Renderer kopieren, den Einbau macht Claude.
+
+Wenn du magst, zeig zuerst die Szene und Halvard, dann machen wir die anderen im gleichen Guss.
