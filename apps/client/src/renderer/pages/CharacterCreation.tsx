@@ -161,7 +161,7 @@ export function CharacterCreation(): JSX.Element {
   const selectedArchetype = selectedArchetypeId
     ? ARCHETYPES.find((a) => a.id === selectedArchetypeId)
     : undefined;
-  const raceLabel = t(race === "elf" ? "creation.race.elf" : race === "orc" ? "creation.race.orc" : "creation.race.human");
+  const raceLabel = t(`creation.race.${race}`);
   const archetypeCaption = selectedArchetype
     ? `${raceLabel} ${t(selectedArchetype.nameKey)} · ${styleLabel}`
     : styleLabel;
@@ -304,6 +304,13 @@ export function CharacterCreation(): JSX.Element {
                 onClick={() => changeRace("orc")}
               >
                 {t("creation.race.orc")}
+              </button>
+              <button
+                type="button"
+                className={`btn-iron btn-iron--sm${race === "goblin" ? " is-active" : ""}`}
+                onClick={() => changeRace("goblin")}
+              >
+                {t("creation.race.goblin")}
               </button>
               <span className="creation-filter-sep" aria-hidden="true" />
               <button

@@ -17,11 +17,12 @@ import { listPortraits } from "./portraits";
 
 export type ArchetypeGroup = "combat" | "profession";
 export type Sex = "m" | "f";
-export type Race = "human" | "elf" | "orc";
+export type Race = "human" | "elf" | "orc" | "goblin";
 
 /** Reihenfolge = Anzeigereihenfolge der Rassen-Filterchips (Mensch zuerst, Standardwahl). */
 // Ork-Roster (Mira, 27.08.2026): dritte Rasse, 60 Porträts orc_<archetyp>_<m|f>.
-export const RACES: Race[] = ["human", "elf", "orc"];
+// Goblin-Roster (Mira, 27.08.2026): vierte Rasse, 60 Porträts goblin_<archetyp>_<m|f>.
+export const RACES: Race[] = ["human", "elf", "orc", "goblin"];
 
 export interface Archetype {
   id: string;
@@ -90,7 +91,7 @@ export interface ParsedPortrait {
  *  Data-URL-Uploads). */
 export function parsePortraitId(id: string | null | undefined): ParsedPortrait | null {
   if (!id) return null;
-  const match = /^(human|elf|orc)_(.+)_(m|f)$/.exec(id);
+  const match = /^(human|elf|orc|goblin)_(.+)_(m|f)$/.exec(id);
   if (!match) return null;
   const race = match[1]! as Race;
   const archetype = match[2]!;

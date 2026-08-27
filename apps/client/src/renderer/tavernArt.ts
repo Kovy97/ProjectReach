@@ -73,6 +73,10 @@ const GUEST_PORTRAIT_FALLBACK: Readonly<Record<string, string>> = {
   brakka: "orc_woodcutter_f",
   dashk: "orc_blacksmith_m",
   kell: "orc_leatherworker_m",
+  // Goblin-Roster (27.08.2026): Merrit, Pim und der Fremde zeigen Goblin-Porträts statt Silhouetten.
+  merrit: "goblin_weaponsmith_f",
+  pim: "goblin_thief_m",
+  stranger: "goblin_shadow_mage_m",
   ashka: "human_ranger_f",
 };
 
