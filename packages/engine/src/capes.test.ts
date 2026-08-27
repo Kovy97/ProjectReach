@@ -424,8 +424,10 @@ describe("Meisterweihe §5: Perk-Verdrahtungen einzeln", () => {
     addItem(s.inventory, local, "t_tonic", 2);
     expect(useConsumable(s, local, "t_tonic")).toBe(true);
     expect(s.character.buffs.find((b) => b.itemId === "t_tonic")?.remainingMs).toBe(11_000);
-    expect(useConsumable(s, local, "t_tonic")).toBe(true); // Refresh → ebenfalls verlängerte Dauer
-    expect(s.character.buffs.find((b) => b.itemId === "t_tonic")?.remainingMs).toBe(11_000);
+    // Aufladen (Chef 27.08.2026, buff-stacking.test.ts): der zweite Schluck ADDIERT seine ebenfalls verlängerte
+    // Dauer auf die Restzeit (11 000 + 11 000) — der Cape-Faktor wirkt also auf jedes Stück, nicht nur aufs erste.
+    expect(useConsumable(s, local, "t_tonic")).toBe(true);
+    expect(s.character.buffs.find((b) => b.itemId === "t_tonic")?.remainingMs).toBe(22_000);
 
     // Kontrolle ohne Cape: exakt die Content-Dauer (Faktor exakt 1, keine Rundung).
     const s2 = createGame({ name: "X" }, local, 1);
