@@ -69,6 +69,7 @@ import { campBoostLine } from "../util/campBoostText";
 import { CampBoostNote } from "../components/CampBoostNote";
 import { formatEta } from "../util/actionRate";
 import { registerEscCloser } from "../util/escStack";
+import { openItemWikiModal } from "../components/ItemWikiModal";
 import {
   getCampImage,
   getCampCardFit,
@@ -552,6 +553,15 @@ interface CardProps {
   debugFreeBuild: boolean;
   onDirty: () => void;
   onRequestCancel: () => void;
+  /**
+   * Chef-Bug 27.08.2026 (Bau-Container-Modal): ersetzt bei GENAU DIESER Karte, was der „Bauen"-
+   * Knopf tut. Ohne gesetzten Wert (Listenkarte, Popup eines bereits platzierten Gebäudes)
+   * bleibt es beim direkten `startCampBuild` von heute — unverändert. Das neue Info-Modal des
+   * Bau-Menüs (noch nicht platziertes Gebäude) reicht hier stattdessen den Wechsel in den
+   * bestehenden Platzierungs-Modus durch: der heutige Erstklick-Ablauf bleibt so als Zweitschritt
+   * (nach dem Modal) vollständig erhalten, nur der Anlauf verschiebt sich um einen Klick.
+   */
+  onBuildOverride?: () => void;
 }
 
 /** Das nicht-statische Kernstück von `CardProps` — alles außer `def`/`gold`/`hallName`/`busyName`/
@@ -610,6 +620,7 @@ function BuildingCardImpl({
   debugFreeBuild,
   onDirty,
   onRequestCancel,
+  onBuildOverride,
 }: CardProps): JSX.Element {
   const { t, tr } = useI18n();
   const building = jobRemainingMs >= 0;
@@ -715,12 +726,23 @@ function BuildingCardImpl({
                   <HoverTip
                     key={cost.itemId}
                     className={debugFreeBuild || owned >= cost.qty ? "mat-chip" : "mat-chip lacking"}
-                    focusable={false}
+                    focusable
+                    role="button"
                     // Release-Fix-Welle 0.3.0 Fix 2 (Erstkontakt): bisher nur der Item-Name — ein
                     // frischer Spieler sah "Timber Beam" ohne jeden Hinweis, woher das Teil kommt.
                     // `matChipTip` hängt die Beschreibung (falls vorhanden) jetzt darunter an —
                     // dieselbe Funktion bedient auch die Baumenü-Chips weiter unten (Fix 1).
                     content={matChipTip(cost.itemId, tr)}
+                    // Chef-Bug 27.08.2026: die Bau-Materialien waren nur ein Tooltip, kein Klick —
+                    // ein Spieler konnte ihre Quelle nicht nachschlagen. Klick öffnet jetzt direkt
+                    // das Item-Wiki (dasselbe Muster wie ItemTooltip.tsx' Wiki-Knopf), der Hover-
+                    // Tooltip (`matChipTip` oben) bleibt unverändert.
+                    onClick={() => openItemWikiModal(cost.itemId)}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Enter" && e.key !== " ") return;
+                      e.preventDefault();
+                      openItemWikiModal(cost.itemId);
+                    }}
                   >
                     {img ? (
                       <img loading="lazy" decoding="async" src={img} alt="" className="mat-img pixelart" />
@@ -745,6 +767,13 @@ function BuildingCardImpl({
             className="btn-iron nh-build-btn"
             disabled={reason !== "ok"}
             onClick={() => {
+              // Chef-Bug 27.08.2026 (Bau-Container-Modal): Info-Modal für noch nicht platzierte
+              // Gebäude reicht hier den Wechsel in den Platzierungs-Modus durch, statt direkt zu
+              // bauen — s. `onBuildOverride`-JSDoc oben.
+              if (onBuildOverride) {
+                onBuildOverride();
+                return;
+              }
               // codex:2026-07-31T19:00:03+02:00 — Debug-Free beeinflusst nur diese Buchung.
               if (startCampBuild(state, content, def.id, { waiveCosts: debugFreeBuild }) === "ok") onDirty();
             }}
@@ -815,6 +844,7 @@ const BuildingCard = memo(BuildingCardImpl, (a, b) =>
   a.debugFreeBuild === b.debugFreeBuild &&
   a.onDirty === b.onDirty &&
   a.onRequestCancel === b.onRequestCancel &&
+  a.onBuildOverride === b.onBuildOverride &&
   tupleEquals(a.have, b.have),
 );
 
@@ -952,6 +982,7 @@ function BuildingPopup({
   onClose,
   onDirty,
   onRequestCancel,
+  onBuildNew,
 }: {
   buildingId: string;
   state: GameState;
@@ -962,6 +993,14 @@ function BuildingPopup({
   onClose: () => void;
   onDirty: () => void;
   onRequestCancel: () => void;
+  /**
+   * Chef-Bug 27.08.2026: gesetzt, wenn dieses Popup als Gebäude-Infokarte aus dem Bau-Menü der
+   * Dorfkarte kommt (Gebäude noch NICHT platziert) statt aus einem Klick auf eine bereits
+   * stehende Kachel. Reicht den Wechsel in den bestehenden Platzierungs-Modus durch (die Karte
+   * merkt sich selbst, WO gebaut wird) — unverändert `undefined` bei einer bereits platzierten
+   * Karte, deren „Bauen"/„Ausbau"-Knopf direkt baut wie bisher.
+   */
+  onBuildNew?: () => void;
 }): JSX.Element | null {
   const { t, tr } = useI18n();
   const [confirmingDemolish, setConfirmingDemolish] = useState(false);
@@ -1017,6 +1056,7 @@ function BuildingPopup({
           debugFreeBuild={debugFreeBuild}
           onDirty={onDirty}
           onRequestCancel={onRequestCancel}
+          onBuildOverride={onBuildNew}
         />
         {/* codex:2026-07-31T23:42:00+02:00 — Verschieben ist eine kostenlose Kartenaktion und
             deshalb als gleichwertiger, sichtbarer Befehl vorhanden statt als versteckte Geste. */}
@@ -1080,8 +1120,10 @@ function BuildMenu({
                 key={def.id}
                 type="button"
                 role="listitem"
-                className={`nh-buildmenu-item${activeId === def.id ? " is-active" : ""}`}
-                disabled={reason !== "ok"}
+                // Chef-Bug 27.08.2026: auch ein (noch) nicht baubares Gebäude muss anklickbar
+                // bleiben — der Klick öffnet jetzt IMMER erst die Infokarte (kein `disabled` mehr,
+                // `is-locked` übernimmt stattdessen die abgedunkelte Optik, s. newhaven.css).
+                className={`nh-buildmenu-item${activeId === def.id ? " is-active" : ""}${reason !== "ok" ? " is-locked" : ""}`}
                 onClick={() => onSelect(def.id)}
               >
                 <span className="nh-buildmenu-art" aria-hidden="true">
@@ -1394,6 +1436,10 @@ function CampMapView({
   const [placingId, setPlacingId] = useState<string | null>(null);
   const [placeReason, setPlaceReason] = useState<CampPlacementReason>("out_of_bounds");
   const [popupId, setPopupId] = useState<string | null>(null);
+  // Chef-Bug 27.08.2026: Klick auf eine Bau-Menü-Karte (noch nicht platziertes Gebäude) öffnet
+  // jetzt erst die Infokarte statt sofort den Platzierungs-Modus zu starten — s. `BuildingPopup`s
+  // `onBuildNew`-JSDoc weiter unten.
+  const [menuInfoId, setMenuInfoId] = useState<string | null>(null);
   // codex:2026-08-03T12:45:00+02:00 — Nur die aktuelle Auswahl ist flüchtig; visuelle Werte liegen
   // im zentralen Camp-State und laufen über dieselbe Dirty-/Save-Pipeline wie Positionen.
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -1664,12 +1710,15 @@ function CampMapView({
         )}
         <BuildMenu
           buildings={notBuilt}
-          activeId={placingId}
+          activeId={placingId ?? menuInfoId}
           state={state}
           hallName={hallName}
           busyName={busyName}
           debugFreeBuild={debugFreeBuild}
-          onSelect={(id) => setPlacingId((cur) => (cur === id ? null : id))}
+          // Chef-Bug 27.08.2026: Erstklick öffnet nur noch die Infokarte (`BuildingPopup` unten,
+          // `onBuildNew`) — der bisherige Sofort-Wechsel in den Platzierungs-Modus lebt dort als
+          // Zweitschritt hinter dem „Bauen"-Knopf weiter.
+          onSelect={(id) => setMenuInfoId((cur) => (cur === id ? null : id))}
         />
       </aside>
 
@@ -1689,6 +1738,31 @@ function CampMapView({
           onClose={() => setPopupId(null)}
           onDirty={onDirty}
           onRequestCancel={onRequestCancel}
+        />
+      )}
+
+      {/* Chef-Bug 27.08.2026: dieselbe Infokarte wie oben, jetzt für ein noch NICHT platziertes
+          Gebäude aus dem Bau-Menü — Bild, Beschreibung, Effekt, Kosten mit klickbaren Material-
+          Zellen und Bauzeit sind identisch (`BuildingPopup` fragt für Stufe 0 automatisch dieselben
+          Engine-Prädikate ab, „Verschieben"/„Abreißen" bleiben durch `core.level`/`demolishReason`
+          von selbst verborgen). Einzig `onBuildNew` weicht vom Popup einer stehenden Kachel ab. */}
+      {menuInfoId && (
+        <BuildingPopup
+          buildingId={menuInfoId}
+          state={state}
+          hallName={hallName}
+          busyName={busyName}
+          debugFreeBuild={debugFreeBuild}
+          onStartMove={() => {}} // unerreichbar: Stufe 0 zeigt nie den „Verschieben"-Knopf
+          onClose={() => setMenuInfoId(null)}
+          onDirty={onDirty}
+          onRequestCancel={onRequestCancel}
+          onBuildNew={() => {
+            // Zweitschritt = der bisherige Erstklick: Info-Modal schließt, der bestehende
+            // Platzierungs-Modus (Geist folgt der Maus, Klick auf die Karte platziert) startet.
+            setMenuInfoId(null);
+            setPlacingId(menuInfoId);
+          }}
         />
       )}
     </div>

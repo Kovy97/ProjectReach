@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { CSSProperties, DragEvent, FocusEvent, MouseEvent, PointerEvent, ReactNode } from "react";
+import type { CSSProperties, DragEvent, FocusEvent, KeyboardEvent, MouseEvent, PointerEvent, ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 /**
@@ -105,6 +105,9 @@ export function HoverTip({
   focusable = true,
   children,
   className,
+  role,
+  onClick,
+  onKeyDown,
   onContextMenu,
   onDragOver,
   onDrop,
@@ -122,6 +125,14 @@ export function HoverTip({
   focusable?: boolean;
   children: ReactNode;
   className?: string;
+  /** ARIA-Rolle des äußeren Elements — z.B. "button" für klickbare Chips (New Haven Fix
+   *  27.08.: Baukosten-Materialien öffnen jetzt per Klick das Item-Wiki). */
+  role?: string;
+  /** Bug-Fix 27.08.2026 (Chef-Meldung „Materialien nicht klickbar"): dieselbe Passthrough-
+   *  Konvention wie die Pointer-/Drag-Callbacks unten — der Hover-Tooltip bleibt unverändert,
+   *  ein Klick ist rein additiv. */
+  onClick?: (e: MouseEvent<HTMLElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLElement>) => void;
   onContextMenu?: (e: MouseEvent<HTMLElement>) => void;
   onDragOver?: (e: DragEvent<HTMLElement>) => void;
   onDrop?: (e: DragEvent<HTMLElement>) => void;
@@ -139,6 +150,9 @@ export function HoverTip({
   const { tip, open, close } = useCitadelTip<true>();
   const shared = {
     className,
+    role,
+    onClick,
+    onKeyDown,
     onMouseEnter: (e: MouseEvent<HTMLElement>) => open(true, e.currentTarget),
     onMouseLeave: close,
     onContextMenu,

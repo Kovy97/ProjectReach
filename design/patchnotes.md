@@ -31,6 +31,14 @@ resumes it after the kill; the fight button is only locked during another champi
 *Dev-Notiz: `startEliteCombat` (elites.ts) spiegelt insertQueueEntryAtFront Schritte 1+2 (parkRunningActivityAtFront);
 CombatPage `busy` nur bei `combat.eliteVariantId`; Test elite-queue-preserve.test.ts (4 Fälle inkl. Wiederaufnahme).*
 
+**New Haven: Materialquellen und Gebäude-Modal (Chef-Test 27.08.):** DE: In der Listenansicht lassen
+sich die benötigten Materialien anklicken und öffnen das Item-Wiki mit ihren Quellen. In der
+Kartenansicht öffnet jeder Klick auf ein Gebäude in der Bau-Leiste zuerst die Infokarte mit Bild,
+Beschreibung, Wirkung jetzt und nächste Stufe, Kosten und Bauzeit; der Knopf „Bauen" ist nur aktiv,
+wenn Material und Voraussetzungen da sind, sonst steht der Grund darunter, und „Einreihen" bleibt
+für die Bauwarteschlange. / EN: New Haven material chips open the item wiki, and every building card
+opens its info card first, with Build enabled only when you can afford it.
+
 **Charaktererstellung: Elfen als zweite Rasse (Mira, 27.08.):** DE: Neben den Menschen gibt es jetzt
 Elfen mit denselben 30 Archetypen, jeweils als Mann und Frau mit eigenem Gesicht. In der
 Charaktererstellung und im Porträt-Picker wählst du die Rasse mit einem Klick, Archetyp und

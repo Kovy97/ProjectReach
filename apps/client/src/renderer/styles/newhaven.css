@@ -1742,8 +1742,11 @@
     var(--gw-action-leather) center / 256px 256px repeat;
 }
 
-.nh-buildmenu-item:disabled {
-  cursor: not-allowed;
+/* Chef-Bug 27.08.2026: der Eintrag bleibt klickbar (öffnet die Infokarte), zeigt seine
+   Nicht-baubar-Optik jetzt über `.is-locked` statt über das native `:disabled` — sonst
+   bräuchte der Klick-Handler das `disabled`-Attribut, das genau diesen Klick verhindern würde. */
+.nh-buildmenu-item.is-locked {
+  cursor: pointer;
   filter: grayscale(0.38) brightness(0.7);
 }
 
@@ -2861,7 +2864,7 @@
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
 }
 
-.nh-buildmenu-item:hover:not(:disabled),
+.nh-buildmenu-item:hover:not(.is-locked),
 .nh-buildmenu-item.is-active {
   filter: brightness(1.1);
   background:
@@ -2869,7 +2872,7 @@
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
 }
 
-.nh-buildmenu-item:disabled {
+.nh-buildmenu-item.is-locked {
   filter: grayscale(0.3) brightness(0.72);
 }
 
