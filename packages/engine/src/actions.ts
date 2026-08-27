@@ -52,6 +52,16 @@ export function setActiveAction(
     // Neuer Start → alten Stopp-Hinweis verwerfen.
     state.lastStop = null;
   }
+  if (actionId === null && state.activeActionId !== null && state.actionTarget === null && Array.isArray(state.actionQueue)) {
+    // Manueller Stopp einer ENDLOSEN Aktion: wartende ∞-Einträge DERSELBEN Aktion fallen mit weg. Sie
+    // stammen aus Wiederholungsklicks (Alt-Saves vor dem Guard in enqueueAction) und würden die eben
+    // gestoppte Aktion im nächsten Leerlauf-Tick still neu starten (Bug-Report 27.08.2026). Endliche
+    // Einträge und andere Aktionen bleiben unberührt — Stopp heißt „diese endlose Sache beenden“.
+    const stopped = state.activeActionId;
+    state.actionQueue = state.actionQueue.filter(
+      (e) => !(e.kind === "action" && e.actionId === stopped && e.target === null),
+    );
+  }
   state.activeActionId = actionId;
   state.actionProgressMs = 0;
   // Ziel nur bei laufender Aktion und positivem, endlichem Wert; sonst unbegrenzt (null).
@@ -111,6 +121,16 @@ export function enqueueAction(
   state.queuePaused = false;
   const normalized = normalizeTarget(target);
   const last = state.actionQueue[state.actionQueue.length - 1];
+  // Endlos-Doppel (Bug-Report 27.08.2026, „Endlosschleife beim Stehlen (Stadtwache) lässt sich nicht
+  // beenden“): seit die Karten nur noch einreihen, legte JEDER weitere ∞-Klick auf die bereits endlos
+  // laufende Aktion still einen zweiten ∞-Eintrag derselben Aktion hinter sie — nach dem Stopp
+  // startete der nächste Tick sie sofort neu, für den Spieler unbeendbar. Ein ∞-Klick auf die
+  // laufende ∞-Aktion oder auf einen ∞-Eintrag derselben Aktion am Queue-Ende ist deshalb ein
+  // No-op (angenommen, nichts eingereiht): ∞ deckt jeden weiteren Wunsch bereits ab. Kein RNG.
+  if (normalized === null) {
+    if (state.activeActionId === actionId && state.actionTarget === null && state.combat.monsterId === null) return true;
+    if (last !== undefined && last.kind === "action" && last.actionId === actionId && last.target === null) return true;
+  }
   // Stapeln nur, wenn der unmittelbar letzte Eintrag dieselbe AKTION (kind "action" — ein
   // Kampf-Eintrag stapelt hier nie, sein actionId-Platzhalter matcht ohnehin keine echte Aktion)
   // mit endlichem Ziel ist UND das neue Ziel ebenfalls endlich ist ⇒ addieren (geklemmt).
