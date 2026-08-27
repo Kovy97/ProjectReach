@@ -15,6 +15,7 @@ export * from "./paragon";
 export * from "./elites";
 export * from "./state";
 export * from "./actions";
+export * from "./queueProjection";
 export * from "./tick";
 export * from "./mastery";
 export * from "./bank";

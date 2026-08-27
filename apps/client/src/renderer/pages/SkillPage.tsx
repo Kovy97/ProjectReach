@@ -13,9 +13,13 @@ import {
   masteryLevel,
   masteryProgress,
   masterySpeedFor,
+  projectQueue,
+  projectedProducers,
+  projectedRunsFrom,
   setActiveAction,
   setThievingRisk,
 } from "@hearthforge/engine";
+import type { ProjectedQty } from "@hearthforge/engine";
 import type { ActionDef, GameState, LocalizedString, SkillId, ThievingRisk } from "@hearthforge/shared";
 import { CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, CRAFT_TARGET_PRESETS } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
@@ -419,6 +423,12 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
       !action.inputs || action.inputs.every((i) => matCount(i.itemId) >= i.qty),
     [matCount],
   );
+  // Warteschlangen-Projektion (Chef-Auftrag 27.08.2026): was liefern laufende Aktion + Queue-Kette
+  // an Material, bevor ein NEUER Eintrag hinten dran käme? EINMAL pro Render für alle Karten
+  // (Engine `projectQueue`, rein lesend, kein RNG) — pro Karte gehen nur Primitive weiter
+  // (`projectedRuns`, `matProjection`-String), damit `memo(ActionCard)` weiter greift.
+  const projection = projectQueue(state, content);
+  const fmtProjected = (q: ProjectedQty): string => (q === "infinite" ? "inf" : String(q));
 
   const activeAction = actions.find((a) => a.id === state.activeActionId) ?? null;
   // Werkzeug-Tempo (z.B. Spitzhacke beschleunigt Bergbau). 1 = kein Werkzeug.
@@ -586,6 +596,14 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
     const craftable = action.inputs
       ? Math.min(...action.inputs.map((i) => Math.floor(matCount(i.itemId) / i.qty)))
       : 0;
+    // Projektion je Karte (s. `projection` oben): Läufe aus projizierten Materialien (Infinity =
+    // ∞-Produzent in der Kette) + je Input der projizierte Bestand als kompakter String
+    // ("copper_ore:650|tin_ore:inf") — ein Primitiv, das sich nur ändert, wenn sich die Prognose ändert.
+    const projRuns = action.inputs ? projectedRunsFrom(projection.materials, action) : 0;
+    const projectedRuns = projRuns === "infinite" ? Number.POSITIVE_INFINITY : projRuns;
+    const matProjection = (action.inputs ?? [])
+      .map((i) => `${i.itemId}:${fmtProjected(projection.materials.get(i.itemId) ?? 0)}`)
+      .join("|");
     return (
       <ActionCard
         key={action.id}
@@ -604,6 +622,8 @@ export function SkillPage({ skillId }: { skillId: SkillId }): JSX.Element {
         mLvl={mLvl}
         mProg={mProg}
         craftable={craftable}
+        projectedRuns={projectedRuns}
+        matProjection={matProjection}
       />
     );
   }
@@ -632,6 +652,11 @@ interface ActionCardProps {
   mLvl: number;
   mProg: number;
   craftable: number;
+  /** Läufe aus PROJIZIERTEN Materialien (Bestand + sichere Queue-Ausgaben − Queue-Verbrauch);
+   *  `Infinity` = ein ∞-Produzent liefert. 0 bei Sammel-Aktionen (ohne Inputs irrelevant). */
+  projectedRuns: number;
+  /** Je Input der projizierte Bestand, "itemId:qty|itemId:inf" — Primitiv-Prop fürs memo(). */
+  matProjection: string;
 }
 
 /**
@@ -662,9 +687,35 @@ const ActionCard = memo(function ActionCard({
   mLvl,
   mProg,
   craftable,
+  projectedRuns,
+  matProjection,
 }: ActionCardProps): JSX.Element {
   const tooltip = useItemTooltip();
   const fx = effectiveFxLevel();
+  // Warteschlangen-Projektion (Chef-Auftrag 27.08.2026): „werde haben" — der echte Bestand reicht
+  // nicht, aber ein früheres Ketten-Glied (laufende Aktion / Queue-Eintrag) liefert das Material.
+  // Einreihen (hinten anhängen) ist dann erlaubt; Sofort-Start (Shift) braucht weiterhin Bestand.
+  const willHave = !ready && projectedRuns > 0;
+  const canQueue = ready || willHave;
+  const projectedMap = new Map<string, number>();
+  if (matProjection) {
+    for (const part of matProjection.split("|")) {
+      const sep = part.lastIndexOf(":");
+      if (sep <= 0) continue;
+      const v = part.slice(sep + 1);
+      projectedMap.set(part.slice(0, sep), v === "inf" ? Number.POSITIVE_INFINITY : Number(v));
+    }
+  }
+  const fmtRuns = (n: number): string => (Number.isFinite(n) ? formatCompactK(n) : "∞");
+  // Herkunft fürs Tooltip eines gelben Chips — NUR beim Rendern des Tooltips berechnet (kein
+  // Render-Kosten pro Tick): „Kupferader ×650, Zinnader ×∞".
+  const queueSources = (itemId: string): string =>
+    projectedProducers(projectQueue(state, content), itemId)
+      .map((p) => {
+        const a = content.actions[p.actionId];
+        return `${a ? tr(a.name) : p.actionId} ×${p.qty === "infinite" ? "∞" : formatCompactK(p.qty)}`;
+      })
+      .join(", ");
 
   // isActive/ready/levelOk/rate/mLvl/mProg/craftable kommen jetzt bereits fertig berechnet vom
   // Parent (renderCard oben) — Primitive/eine stabile Objekt-Referenz statt hier neu aus `state`
@@ -1095,12 +1146,69 @@ const ActionCard = memo(function ActionCard({
             }
                 const have = matCount(inp.itemId); // Inventar + Bank
                 const enough = have >= inp.qty;
+                // Drei Zustände (Chef 27.08.2026): grün = habe, GELB = werde haben (die Queue liefert
+                // es, s. `matProjection`), rot = fehlt auch dann. Die Zahl bleibt ehrlich (Bestand);
+                // nur Rand/Hintergrund tragen die Prognose.
+                const projectedHave = projectedMap.get(inp.itemId) ?? 0;
+                const chipWillHave = !enough && projectedHave >= inp.qty;
+                const chipClass = enough ? "mat-chip" : chipWillHave ? "mat-chip will-have" : "mat-chip lacking";
                 const inpItem = content.items[inp.itemId];
                 const matImg = getItemImage(inp.itemId);
+                const chipBody = (
+                  <>
+                    {matImg ? (
+                      <img loading="lazy" decoding="async" src={matImg} alt="" className="mat-img pixelart" />
+                    ) : (
+                      <span className="mat-emoji">{inpItem?.icon ?? "▪"}</span>
+                    )}
+                    <span className="mat-count">
+                      <b>{formatCompactK(have)}</b>/{formatCompactK(inp.qty)}
+                    </span>
+                  </>
+                );
+                if (chipWillHave) {
+                  // Gelber Chip: der Hover erklärt die HERKUNFT („Kommt aus der Warteschlange:
+                  // Kupferader ×650") über den Citadel-HoverTip; Klick pinnt wie gehabt das
+                  // Item-Tooltip (der ItemTooltip kennt keine Zusatzzeile, s. Bericht).
+                  return (
+                    <span
+                      key={inp.itemId}
+                      className={chipClass}
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        tooltip.pin(inp.itemId, e.clientX, e.clientY, []);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter" && e.key !== " ") return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        tooltip.pin(inp.itemId, rect.left + rect.width / 2, rect.top + rect.height / 2, []);
+                      }}
+                    >
+                      <HoverTip
+                        as="span"
+                        className="mat-chip-tip"
+                        focusable={false}
+                        content={
+                          <span className="ct-tip-desc">
+                            <b>{inpItem ? tr(inpItem.name) : inp.itemId}</b>
+                            <br />
+                            {t("skill.mat.fromQueue").replace("{sources}", queueSources(inp.itemId))}
+                          </span>
+                        }
+                      >
+                        {chipBody}
+                      </HoverTip>
+                    </span>
+                  );
+                }
                 return (
                   <span
                     key={inp.itemId}
-                    className={enough ? "mat-chip" : "mat-chip lacking"}
+                    className={chipClass}
                     role="button"
                     tabIndex={0}
                     onMouseEnter={(e) => tooltip.show(inp.itemId, e.clientX, e.clientY, [])}
@@ -1117,20 +1225,14 @@ const ActionCard = memo(function ActionCard({
                       tooltip.pin(inp.itemId, rect.left + rect.width / 2, rect.top + rect.height / 2, []);
                     }}
                   >
-                    {matImg ? (
-                      <img loading="lazy" decoding="async" src={matImg} alt="" className="mat-img pixelart" />
-                    ) : (
-                      <span className="mat-emoji">{inpItem?.icon ?? "▪"}</span>
-                    )}
                     {/* Hotfix 2026-08-04 (Discord-Bugreport): rohe 3+-stellige Bestände ("978/1",
                         "309/1") sprengten die Chip-Breite und wurden vom `overflow:hidden` des Chips
                         unsichtbar abgeschnitten (Label da, Wert weg) — genau wie die Nachbar-Kacheln
                         XP/h und Ertrag/h weiter oben nutzt der Bestand jetzt formatCompactK (ab 1000
                         → „4,2k" statt „4230"); die CSS-Seite bekommt zusätzlich einen Stapel-Fallback
-                        (s. gravewood-actioncards.css @container 300px), falls selbst das noch zu eng wird. */}
-                    <span className="mat-count">
-                      <b>{formatCompactK(have)}</b>/{formatCompactK(inp.qty)}
-                    </span>
+                        (s. gravewood-actioncards.css @container 300px), falls selbst das noch zu eng wird.
+                        (Bild + Zahl: `chipBody` oben, geteilt mit dem gelben Chip.) */}
+                    {chipBody}
                   </span>
                 );
           })}
@@ -1139,7 +1241,7 @@ const ActionCard = memo(function ActionCard({
 
         {/* codex:2026-07-31T19:32:00+02:00 — STOP, Craftable, Locked und neutraler Zustand
             ersetzen dieselbe reservierte Platte; kein Zustand fügt eine neue Zeile hinzu. */}
-        <div className={`skillcard-state-slot${isActive ? " active" : ""}${!levelOk || !ready ? " blocked" : ""}`}>
+        <div className={`skillcard-state-slot${isActive ? " active" : ""}${!levelOk || !canQueue ? " blocked" : ""}${!isActive && levelOk && willHave ? " projected" : ""}`}>
           {isActive ? (
             <button
               className="skillcard-cta stop"
@@ -1151,6 +1253,21 @@ const ActionCard = memo(function ActionCard({
             </button>
           ) : !levelOk ? (
             <span className="skillcard-state-label muted">{t("skill.lockedCta")}</span>
+          ) : isCraft && willHave ? (
+            // Gelber Zustand: ehrliche Zahl (Bestand) + was die Warteschlange noch liefert (kurz,
+            // die Platte ist schmal; die Langform steckt im HoverTip).
+            <HoverTip
+              as="span"
+              className="craftable projected"
+              focusable={false}
+              content={
+                <span className="ct-tip-desc">
+                  {t("skill.craftableProjected.tip").replace("{m}", fmtRuns(projectedRuns))}
+                </span>
+              }
+            >
+              🔨 {t("skill.craftableProjected").replace("{n}", String(craftable)).replace("{m}", fmtRuns(projectedRuns))}
+            </HoverTip>
           ) : isCraft ? (
             <span className={`craftable${craftable > 0 ? "" : " none"}`}>
               🔨 {t("skill.craftable").replace("{n}", String(craftable))}
@@ -1187,13 +1304,17 @@ const ActionCard = memo(function ActionCard({
                 </span>
               }
             >
+              {/* Warteschlangen-Projektion (27.08.2026): auch „werde haben" (gelb) darf einreihen —
+                  hinten anhängen. Shift-Sofortstart nur mit echtem Bestand (`ready`); sonst fällt der
+                  Shift-Klick auf das normale Einreihen zurück (die Engine lehnt den Sofort-Start
+                  ohne Material ohnehin ab, s. `enqueueActionAtFront`). */}
               {CRAFT_TARGET_PRESETS.map((n) => (
                 <button
                   key={n}
                   className="skillcard-cta qty"
-                  disabled={!levelOk || !ready}
+                  disabled={!levelOk || !canQueue}
                   onClick={(e) =>
-                    (e.shiftKey ? enqueueActionAtFront : enqueueAction)(state, content, action.id, n)
+                    (e.shiftKey && ready ? enqueueActionAtFront : enqueueAction)(state, content, action.id, n)
                   }
                 >
                   {n}
@@ -1201,9 +1322,9 @@ const ActionCard = memo(function ActionCard({
               ))}
               <button
                 className="skillcard-cta qty all"
-                disabled={!levelOk || !ready}
+                disabled={!levelOk || !canQueue}
                 onClick={(e) =>
-                  (e.shiftKey ? enqueueActionAtFront : enqueueAction)(state, content, action.id, null)
+                  (e.shiftKey && ready ? enqueueActionAtFront : enqueueAction)(state, content, action.id, null)
                 }
               >
                 ∞

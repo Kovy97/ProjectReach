@@ -9,6 +9,7 @@ import {
 import { levelFromXp } from "./leveling";
 import { startCombat } from "./combat";
 import { canEnterDungeon, startDungeon } from "./dungeon";
+import { actionInputsOnHand } from "./queueProjection";
 import { canFightMonster } from "./slayer";
 
 /** Prüft, ob das Skill-Level für eine Aktion ausreicht. */
@@ -84,8 +85,9 @@ function normalizeTarget(target: number | null): number | null {
  * Unbekannte Aktions-IDs werden NICHT eingereiht (Content-Guard). Das Skill-Level wird hier BEWUSST
  * nicht geprüft — man darf eine Aktion vorplanen, deren Level (oder Material) erst später da ist;
  * `advanceActionQueue` überspringt gesperrte Einträge erst beim tatsächlichen Anlauf, fehlendes
- * Material überspringt der Tick (endActionOrAdvanceQueue mit `no_materials`). `target` wird wie bei
- * `setActiveAction` normalisiert.
+ * Material ebenfalls dort (seit 27.08.2026 mit `lastQueueSkip`-Grund `no_materials`; die
+ * Warteschlangen-Projektion in queueProjection.ts sagt der UI vorher, was ein früheres Ketten-
+ * Glied liefern wird). `target` wird wie bei `setActiveAction` normalisiert.
  *
  * STAPEL-REGEL (nur der LETZTE, also benachbarte, Eintrag): hat der letzte Queue-Eintrag DIESELBE
  * `actionId` UND sind sein Ziel und das neue Ziel BEIDE endlich (nicht null/∞), wird das neue Ziel
@@ -381,7 +383,8 @@ export function insertQueueEntryAtFront(
  * bzw. Gegner-HP nullen.
  *
  * Start-Checks: ein NICHT startbarer Aktions-Eintrag (Aktion unbekannt geworden / Level fehlt
- * noch) wird NICHT konsumiert — Sofort-Start braucht Startbarkeit (Muster setActiveAction), der
+ * noch / Material fehlt — ein nur über die Projektion gedeckter „werde haben"-Eintrag, 27.08.2026)
+ * wird NICHT konsumiert — Sofort-Start braucht Startbarkeit (Muster setActiveAction), der
  * vorgeplante Eintrag bleibt unangetastet stehen (false). Kampf-Einträge laufen dagegen BEWUSST
  * in den Start-Gate-Check (Chef-GO #326): ein gesperrter Kampf wird mit `lastQueueSkip`-Grund
  * konsumiert, der nächste läuft (s. insertQueueEntryAtFront Punkt 3).
@@ -405,9 +408,14 @@ export function prioritizeQueueEntry(state: GameState, content: ContentDB, index
     if (state.queueDungeon !== null && state.queueDungeon.dungeonId === entry.dungeonId) return false;
   } else {
     if (state.activeActionId === entry.actionId) return false;
-    if (!content.actions[entry.actionId] || !actionLevelMet(state, content, entry.actionId)) {
+    const entryAction = content.actions[entry.actionId];
+    if (!entryAction || !actionLevelMet(state, content, entry.actionId)) {
       return false;
     }
+    // Sofort-Start braucht ECHTEN Bestand (27.08.2026): ein nur über die Warteschlangen-
+    // Projektion gedeckter Eintrag („werde haben") bleibt unangetastet stehen — sonst würde er
+    // beim Start mit no_materials konsumiert und die laufende Aktion nur Fortschritt verlieren.
+    if (!actionInputsOnHand(state, entryAction)) return false;
   }
   q.splice(i, 1);
   return insertQueueEntryAtFront(state, content, entry);
@@ -428,8 +436,12 @@ export function enqueueActionAtFront(
   actionId: ActionId,
   target: number | null = null,
 ): boolean {
-  if (!content.actions[actionId]) return false;
+  const action = content.actions[actionId];
+  if (!action) return false;
   if (!actionLevelMet(state, content, actionId)) return false;
+  // Sofort-Start braucht ECHTEN Bestand (27.08.2026) — Vorplanen über die Projektion geht nur
+  // hinten anhängen (`enqueueAction`); ohne Material hier ablehnen, nichts wird unterbrochen.
+  if (!actionInputsOnHand(state, action)) return false;
   return insertQueueEntryAtFront(state, content, {
     kind: "action",
     actionId,
@@ -542,7 +554,8 @@ export function moveQueueItem(state: GameState, from: number, to: number): void 
  * beendet dann die aktive Aktion regulär).
  *
  *  • kind "action": unbekannte actionId ODER Skill-Level nicht erreicht → still überspringen
- *    (bisheriges Verhalten); Start via `setActiveAction`.
+ *    (bisheriges Verhalten); Material fehlt (Inventar + Lager, `actionInputsOnHand`) → MIT Grund
+ *    `no_materials` + `actionId` überspringen (27.08.2026); Start via `setActiveAction`.
  *  • kind "fight": GATE-CHECK BEIM START (Chef-GO #312) — Monster unbekannt/nicht mehr queue-fähig/
  *    Gate gesperrt (canFightMonster: Story-Zone, Slayer-Anforderung, Turm-Etage) → Eintrag MIT
  *    maschinenlesbarem Grund überspringen (`state.lastQueueSkip`, für die spätere UI), Queue läuft
@@ -608,8 +621,20 @@ export function advanceActionQueue(state: GameState, content: ContentDB): boolea
       state.queueDungeon = { dungeonId, remaining: next.target ?? null, completed: 0 };
       return true;
     }
-    if (!content.actions[next.actionId]) continue; // unbekannte Aktion → überspringen
+    const nextAction = content.actions[next.actionId];
+    if (!nextAction) continue; // unbekannte Aktion → überspringen
     if (!actionLevelMet(state, content, next.actionId)) continue; // Level/gesperrt → überspringen
+    // MATERIAL-CHECK BEIM START (Chef-Auftrag 27.08.2026, Warteschlangen-Projektion): ein Eintrag
+    // darf vorgeplant werden, obwohl sein Material erst ein früheres Ketten-Glied liefert
+    // („Kupferader ×650, dann Kupfer schmelzen ×650"). Fehlt es beim tatsächlichen Anlauf trotzdem
+    // (Produzent entfernt/umsortiert, Material verkauft) → NICHT still starten-und-sofort-enden
+    // (so lief es vorher: der nächste Tick beendete die Aktion mit no_materials, und weil die
+    // Queue weiterschaltete, blieb KEIN Hinweis zurück), sondern wie Kampf-/Dungeon-Gates mit
+    // maschinenlesbarem Grund überspringen; die Kette läuft weiter. Zieht kein RNG.
+    if (!actionInputsOnHand(state, nextAction)) {
+      state.lastQueueSkip = { monsterId: FIGHT_QUEUE_ACTION_ID, actionId: next.actionId, reason: "no_materials" };
+      continue;
+    }
     setActiveAction(state, content, next.actionId, next.target ?? null);
     return true; // vorvalidiert ⇒ setActiveAction ist garantiert angelaufen
   }

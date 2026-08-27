@@ -71,7 +71,7 @@ import {
   makeFightQueueEntry,
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot } from "@hearthforge/shared";
-import { MAX_STACK, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, actionInputsOnHand, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -1664,7 +1664,16 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       const monsterId = (rawSkip as { monsterId?: unknown }).monsterId;
       const reason = (rawSkip as { reason?: unknown }).reason;
       const skipDungeonId = (rawSkip as { dungeonId?: unknown }).dungeonId;
-      if (typeof skipDungeonId === "string" && skipDungeonId.length > 0) {
+      const skipActionId = (rawSkip as { actionId?: unknown }).actionId;
+      if (typeof skipActionId === "string" && skipActionId.length > 0) {
+        // Aktions-Skip (27.08.2026, Warteschlangen-Projektion): `no_materials` nur, solange das
+        // Material HEUTE noch fehlt (Inventar + Lager) — hat der Spieler inzwischen Nachschub,
+        // wäre „keine Materialien" beim Start eine veraltete Meldung. Unbekannte Aktion → weg.
+        const action = content.actions[skipActionId];
+        if (reason === "no_materials" && action && !actionInputsOnHand(state, action)) {
+          state.lastQueueSkip = { monsterId: "", actionId: skipActionId, reason };
+        }
+      } else if (typeof skipDungeonId === "string" && skipDungeonId.length > 0) {
         // Dungeon-Skip (SAVE 83): dieselbe „gilt der Grund HEUTE noch?"-Regel wie beim Monster —
         // unknown_dungeon nur, solange der Dungeon fehlt/keine Wellen hat; dungeon_locked nur,
         // solange das Gate (canEnterDungeon) weiterhin zu ist. `monsterId` = Platzhalter "".

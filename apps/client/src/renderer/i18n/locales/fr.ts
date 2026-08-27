@@ -435,6 +435,9 @@ export const fr: Record<string, string> = {
     "achievements.milestonesComplete": "Tous les paliers atteints",
     "achievements.milestoneStrip.next": "Prochain palier : {pct} % — +{tokens} Jetons de quête",
     "achievements.footer": "De nouveaux succès sont ajoutés régulièrement. Continuez à repousser vos limites.",
+    "achievements.hidden.name": "???",
+    "achievements.hidden.desc": "Un succès caché. Son nom est révélé une fois débloqué.",
+    "achievements.hidden.badge": "Caché",
     "completion.title": "Achèvement",
     "completion.achievements": "Succès",
     "completion.bestiary": "Bestiaire",
@@ -1624,7 +1627,8 @@ export const fr: Record<string, string> = {
     "queue.row.willHave": "Les matériaux viennent d'entrées précédentes de la file.",
     "queue.row.willSkip": "Aucun matériau en vue — cette entrée sera ignorée.",
     "skill.mat.fromQueue": "Vient de la file : {sources}",
-    "skill.craftableProjected": "Fabricable : {n}× · {m} de plus grâce à la file",
+    "skill.craftableProjected": "Fabricable : {n}× · {m} à venir",
+    "skill.craftableProjected.tip": "{m} cycles de plus deviendront possibles dès que la file livrera les matériaux.",
     // Task #327 — UI de priorité : « Démarrer maintenant » par ligne en attente + l'indice
     // Maj+clic partagé sur les cartes de compétence/artisanat/monstre.
     "queue.startNow": "Démarrer maintenant",

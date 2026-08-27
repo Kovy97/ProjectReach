@@ -429,6 +429,9 @@ export const ptBR: Record<string, string> = {
     "achievements.milestonesComplete": "Todos os marcos alcançados",
     "achievements.milestoneStrip.next": "Próximo marco: {pct}% — +{tokens} Fichas de missão",
     "achievements.footer": "Novas conquistas são adicionadas regularmente. Continue superando seus limites.",
+    "achievements.hidden.name": "???",
+    "achievements.hidden.desc": "Uma conquista oculta. Seu nome é revelado ao desbloqueá-la.",
+    "achievements.hidden.badge": "Oculta",
     "completion.title": "Conclusão",
     "completion.achievements": "Conquistas",
     "completion.bestiary": "Bestiário",
@@ -1578,7 +1581,8 @@ export const ptBR: Record<string, string> = {
     "queue.row.willHave": "Os materiais vêm de entradas anteriores da fila.",
     "queue.row.willSkip": "Sem materiais à vista — esta entrada será pulada.",
     "skill.mat.fromQueue": "Vem da fila: {sources}",
-    "skill.craftableProjected": "Fabricável: {n}× · {m} a mais vindos da fila",
+    "skill.craftableProjected": "Fabricável: {n}× · {m} a caminho",
+    "skill.craftableProjected.tip": "Mais {m} ciclos ficarão possíveis assim que a fila entregar os materiais.",
     // Task #327 — UI de prioridade: "Iniciar agora" por linha em espera + a dica de Shift+clique
     // compartilhada nas cartas de habilidade/criação/monstro.
     "queue.startNow": "Iniciar agora",

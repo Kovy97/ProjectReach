@@ -434,6 +434,9 @@ export const ru: Record<string, string> = {
     "achievements.milestonesComplete": "Все вехи достигнуты",
     "achievements.milestoneStrip.next": "Следующая веха: {pct}% — +{tokens} жетонов заданий",
     "achievements.footer": "Новые достижения добавляются регулярно. Продолжайте раздвигать свои пределы.",
+    "achievements.hidden.name": "???",
+    "achievements.hidden.desc": "Скрытое достижение. Его название откроется после получения.",
+    "achievements.hidden.badge": "Скрытое",
     "completion.title": "Завершение",
     "completion.achievements": "Достижения",
     "completion.bestiary": "Бестиарий",
@@ -1622,7 +1625,8 @@ export const ru: Record<string, string> = {
     "queue.row.willHave": "Материалы придут из более ранних записей очереди.",
     "queue.row.willSkip": "Материалов не предвидится — эта запись будет пропущена.",
     "skill.mat.fromQueue": "Придёт из очереди: {sources}",
-    "skill.craftableProjected": "Можно изготовить: {n}× · ещё {m} из очереди",
+    "skill.craftableProjected": "Можно изготовить: {n}× · {m} на подходе",
+    "skill.craftableProjected.tip": "Ещё {m} циклов станут возможны, как только очередь доставит материалы.",
     // Задача #327 — UI приоритета: «Начать сейчас» для каждой ожидающей строки + общая подсказка
     // Shift+клик на карточках навыков/крафта/монстров.
     "queue.startNow": "Начать сейчас",

@@ -552,6 +552,63 @@
   color: var(--danger);
 }
 
+/* ─── Warteschlangen-Projektion (Chef-Auftrag 27.08.2026): dritter Chip-Zustand „werde haben" ────
+   grün = habe (Basis), GELB = die Warteschlange liefert das Material noch (Gold-Ton des Design-
+   Systems), rot = fehlt auch dann. Die Zahl bleibt der ehrliche Bestand — nur Rand/Hintergrund
+   tragen die Prognose. `#root .skillcard-resource-rack`-Spezifität, weil gravewood-actioncards.css
+   Hintergrund/Rahmen der Chips auf dieser Ebene setzt. */
+.mat-chip.will-have,
+#root .skillcard-resource-rack .mat-chip.will-have {
+  background:
+    linear-gradient(rgba(64, 50, 12, 0.46), rgba(38, 29, 6, 0.56)),
+    var(--gw-action-leather, url("../assets/bg_black.webp")) center / 256px 256px repeat;
+  box-shadow: inset 0 0 0 1px rgba(216, 192, 106, 0.55);
+}
+
+.mat-chip.will-have .mat-count b,
+#root .skillcard-resource-rack .mat-chip.will-have .mat-count b {
+  color: var(--gold, #d8c06a);
+}
+
+/* Innerer HoverTip-Wrapper des gelben Chips (Herkunfts-Tooltip): füllt den Chip, damit Hover
+   überall greift; Layout-neutral (übernimmt Richtung/Abstand des Chips). */
+.mat-chip-tip {
+  display: flex;
+  flex-direction: inherit;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+/* State-Platte im gelben Zustand: „Herstellbar: 0× · 650 weitere aus der Warteschlange" in Gold,
+   nicht entsättigt wie `blocked`. */
+#root .skillcard-state-slot.projected .craftable.projected,
+.craftable.projected {
+  color: var(--gold, #d8c06a);
+}
+
+/* Warteschlangen-Panel: Projektions-Punkt je Eintrag (gelb = Material kommt aus früheren
+   Einträgen, rot = wird beim Start übersprungen). Lebt hier statt in action-queue.css, weil nur
+   skills.css im Auftrag vom 27.08.2026 lag — Umzug ist ein reiner Datei-Wechsel. */
+.queue-row-matdot {
+  font-size: 11px;
+  line-height: 1;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.queue-row-matdot--will_have {
+  color: var(--gold, #d8c06a);
+  text-shadow: 0 0 4px rgba(216, 192, 106, 0.6);
+}
+
+.queue-row-matdot--missing {
+  color: var(--danger, #a85a52);
+}
+
 .craftable {
   /* sitzt rechts neben den Mat-Chips in derselben Zeile, gleich hoch (Parent: align-items stretch). */
   display: inline-flex;

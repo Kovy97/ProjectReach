@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { content } from "@hearthforge/content";
-import { actionLevelMet, clearActionQueue, dequeueAction, dungeonRunProgress, moveQueueItem, prioritizeQueueEntry, queueBlockReason, resumeActionQueue, setActiveAction, stopCombat } from "@hearthforge/engine";
-import type { DungeonRunProgress } from "@hearthforge/engine";
+import { actionInputsOnHand, actionLevelMet, clearActionQueue, dequeueAction, dungeonRunProgress, moveQueueItem, prioritizeQueueEntry, projectQueue, queueBlockReason, resumeActionQueue, setActiveAction, stopCombat } from "@hearthforge/engine";
+import type { DungeonRunProgress, ProjectedLink } from "@hearthforge/engine";
 import { isDungeonQueueEntry, isFightQueueEntry } from "@hearthforge/shared";
 import type { ActionDef, GameState, LocalizedString, QueuedAction } from "@hearthforge/shared";
 // Direkt importiert statt über styles/index.css eingehängt — Kollisions-Schutz, gleiches Muster
@@ -276,6 +276,15 @@ export function ActionQueuePanel(): JSX.Element {
   // Gate heute nicht mehr greift (packages/persistence sanitize, Kampf-Queue-Block).
   const skip = state.lastQueueSkip;
 
+  // Warteschlangen-Projektion (Chef-Auftrag 27.08.2026): je Aktions-Eintrag, ob sein Material
+  // JETZT da ist (have), erst aus früheren Ketten-Gliedern kommt (will_have → gelber Punkt) oder
+  // auch dann fehlt (missing → roter Punkt: der Start wird ihn überspringen). Engine
+  // `projectQueue`, rein lesend, einmal pro Render; Index = ROHER `state.actionQueue`-Index.
+  const projectedStatus = new Map<number, ProjectedLink["status"]>();
+  for (const link of projectQueue(state, content).links) {
+    if (typeof link.source === "number") projectedStatus.set(link.source, link.status);
+  }
+
   // 4er-Queue-Grid-Rework (Chef): jeder Grid-Klick reiht jetzt IMMER über enqueueAction ein
   // (auch während dieselbe Aktion schon läuft) — Engine-seitig stapelt dabei nur der jeweils
   // LETZTE Queue-Eintrag (s. `enqueueAction`-JSDoc), die laufende Aktion selbst lebt separat in
@@ -346,7 +355,15 @@ export function ActionQueuePanel(): JSX.Element {
     // wäre für JEDEN Dungeon-Eintrag dauerhaft ausgegraut, egal ob derselbe Dungeon schon läuft.
     const dungeonEntry = isDungeonQueueEntry(entry) ? entry : null;
     if (dungeonEntry) return state.queueDungeon !== null && state.queueDungeon.dungeonId === dungeonEntry.dungeonId;
-    return state.activeActionId === entry.actionId || !actionLevelMet(state, content, entry.actionId);
+    // 27.08.2026: Sofort-Start braucht ECHTEN Bestand (Spiegel von `prioritizeQueueEntry`) — ein nur
+    // über die Projektion gedeckter „werde haben"-Eintrag bekommt keinen toten ⚡-Klick.
+    const entryAction = content.actions[entry.actionId];
+    return (
+      state.activeActionId === entry.actionId ||
+      !entryAction ||
+      !actionLevelMet(state, content, entry.actionId) ||
+      !actionInputsOnHand(state, entryAction)
+    );
   }
 
   // Ziel des „jetzt starten"-Knopfes im Sperr-Hinweis: der erste WIRKLICH startbare Eintrag —
@@ -753,9 +770,16 @@ export function ActionQueuePanel(): JSX.Element {
                     still zu einer leeren Lücke im Text werden. Eigene, dungeon-benannte Keys
                     (`queue.skip.unknown_dungeon`/`dungeon_locked`) mit `{dungeon}`-Platzhalter statt
                     `{monster}` lösen das sauber auf. */}
-                {skip.dungeonId
-                  ? t(`queue.skip.${skip.reason}`).replace("{dungeon}", dungeonQueueName(skip.dungeonId, tr))
-                  : t(`queue.skip.${skip.reason}`).replace("{monster}", fightMonsterName(skip.monsterId, tr))}
+                {/* 27.08.2026: Aktions-Skip (`actionId`, Grund `no_materials`) — der Eintrag kam an
+                    die Reihe, sein Produzent war aber aus der Kette verschwunden. */}
+                {skip.actionId
+                  ? t(`queue.skip.${skip.reason}`).replace(
+                      "{action}",
+                      content.actions[skip.actionId] ? tr(content.actions[skip.actionId]!.name) : skip.actionId,
+                    )
+                  : skip.dungeonId
+                    ? t(`queue.skip.${skip.reason}`).replace("{dungeon}", dungeonQueueName(skip.dungeonId, tr))
+                    : t(`queue.skip.${skip.reason}`).replace("{monster}", fightMonsterName(skip.monsterId, tr))}
               </span>
               {/* Chef 25.08.2026: Custom-Tooltip statt native `title=` (Vorbild Charakter-Stats). */}
               <HoverTip
@@ -957,6 +981,10 @@ export function ActionQueuePanel(): JSX.Element {
                   // `null` (queueLevels.ts kennt nur Sammel-/Handwerks-Skills), der explizite Guard
                   // hier spart nur den Array-Zugriff.
                   const rowLevel = fightEntry || dungeonEntry ? null : levels.queue[i];
+                  // Warteschlangen-Projektion (27.08.2026): gelber Punkt = Material kommt aus früheren
+                  // Einträgen, roter Punkt = kommt auch dann nicht (wird beim Start übersprungen).
+                  const rowMat = fightEntry || dungeonEntry ? undefined : projectedStatus.get(i);
+                  const rowMatDot = rowMat === "will_have" || rowMat === "missing" ? rowMat : null;
                   return (
                     // Chef 25.08.2026: die Zeile selbst ist ab jetzt ein PLAIN div (kein HoverTip
                     // mehr über die GANZE Zeile) — Drag-Handler unverändert, aber der Zeilen-
@@ -986,6 +1014,8 @@ export function ActionQueuePanel(): JSX.Element {
                             {t("queue.dragHandle")} · {t("queue.rightClickEject")}
                             {rowTiming?.isEstimate ? ` · ${t("queue.duration.estimateHint")}` : ""}
                             {rowTiming?.unknown ? ` · ${t("queue.duration.unknownHint")}` : ""}
+                            {rowMatDot === "will_have" ? ` · ${t("queue.row.willHave")}` : ""}
+                            {rowMatDot === "missing" ? ` · ${t("queue.row.willSkip")}` : ""}
                           </span>
                         }
                       >
@@ -1014,6 +1044,9 @@ export function ActionQueuePanel(): JSX.Element {
                                 ? entry.target === null ? "∞" : `×${entry.target}`
                                 : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
                             </span>
+                            {rowMatDot && (
+                              <span className={`queue-row-matdot queue-row-matdot--${rowMatDot}`} aria-hidden="true">●</span>
+                            )}
                             {rowDuration && (
                               <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>
                                 {rowDuration.text}

@@ -519,6 +519,9 @@ const en = {
     "achievements.milestonesComplete": "All milestones reached",
     "achievements.milestoneStrip.next": "Next milestone: {pct}% — +{tokens} Quest Tokens",
     "achievements.footer": "New achievements are added regularly. Keep pushing your limits.",
+    "achievements.hidden.name": "???",
+    "achievements.hidden.desc": "A hidden achievement. Its name is revealed once you unlock it.",
+    "achievements.hidden.badge": "Hidden",
     "completion.title": "Completion",
     "completion.achievements": "Achievements",
     "completion.items": "Item Collection",
@@ -1886,7 +1889,8 @@ const en = {
     "queue.row.willHave": "Materials come from earlier entries in the queue.",
     "queue.row.willSkip": "No materials in sight — this entry will be skipped.",
     "skill.mat.fromQueue": "Coming from the queue: {sources}",
-    "skill.craftableProjected": "Craftable: {n}× · {m} more from the queue",
+    "skill.craftableProjected": "Craftable: {n}× · {m} incoming",
+    "skill.craftableProjected.tip": "{m} more runs become possible once the queue delivers the materials.",
     // Task #327 — Priority-UI: "Start now" per waiting row (ActionQueuePanel) + the shared
     // shift-click hint shown on skill/craft/monster cards (Shop/Bank convention).
     "queue.startNow": "Start now",
@@ -2771,6 +2775,9 @@ const de: Record<keyof typeof en, string> = {
     "achievements.milestonesComplete": "Alle Meilensteine erreicht",
     "achievements.milestoneStrip.next": "Nächster Meilenstein: {pct} % — +{tokens} Aufgabenmarken",
     "achievements.footer": "Neue Erfolge kommen regelmäßig hinzu. Übertriff dich weiter.",
+    "achievements.hidden.name": "???",
+    "achievements.hidden.desc": "Ein versteckter Erfolg. Sein Name wird erst beim Freischalten enthüllt.",
+    "achievements.hidden.badge": "Versteckt",
     "completion.title": "Gesamtfortschritt",
     "completion.achievements": "Erfolge",
     "completion.items": "Item-Sammlung",
@@ -4055,7 +4062,8 @@ const de: Record<keyof typeof en, string> = {
     "queue.row.willHave": "Das Material kommt aus früheren Einträgen der Warteschlange.",
     "queue.row.willSkip": "Kein Material in Sicht — dieser Eintrag wird übersprungen.",
     "skill.mat.fromQueue": "Kommt aus der Warteschlange: {sources}",
-    "skill.craftableProjected": "Herstellbar: {n}× · {m} weitere aus der Warteschlange",
+    "skill.craftableProjected": "Herstellbar: {n}× · {m} in Aussicht",
+    "skill.craftableProjected.tip": "{m} weitere Läufe werden möglich, sobald die Warteschlange das Material liefert.",
     // Task #327 — Priority-UI: „Jetzt starten" pro wartender Zeile (ActionQueuePanel) + der
     // gemeinsame Shift-Klick-Hinweis auf Skill-/Craft-/Monster-Karten (Shop/Bank-Konvention).
     "queue.startNow": "Jetzt starten",

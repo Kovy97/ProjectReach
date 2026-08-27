@@ -435,6 +435,9 @@ export const zh: Record<string, string> = {
     "achievements.milestonesComplete": "已达成所有里程碑",
     "achievements.milestoneStrip.next": "下一个里程碑：{pct}% — +{tokens} 任务代币",
     "achievements.footer": "新成就会定期加入。继续挑战你的极限。",
+    "achievements.hidden.name": "???",
+    "achievements.hidden.desc": "隐藏成就。解锁后才会显示名称。",
+    "achievements.hidden.badge": "隐藏",
     "completion.title": "完成度",
     "completion.achievements": "成就",
     "completion.bestiary": "怪物图鉴",
@@ -1622,7 +1625,8 @@ export const zh: Record<string, string> = {
     "queue.row.willHave": "材料将由队列中更早的条目提供。",
     "queue.row.willSkip": "没有材料——此条目将被跳过。",
     "skill.mat.fromQueue": "来自队列：{sources}",
-    "skill.craftableProjected": "可制作：{n}× · 队列还将提供 {m}",
+    "skill.craftableProjected": "可制作：{n}× · 即将 {m}",
+    "skill.craftableProjected.tip": "队列送来材料后，还可再进行 {m} 次。",
     // 任务 #327——优先级 UI：每个等待中队列行的“立即开始”按钮 + 技能/制作/怪物卡片上共用的
     // Shift+点击提示。
     "queue.startNow": "立即开始",

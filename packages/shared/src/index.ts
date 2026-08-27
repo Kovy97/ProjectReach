@@ -1354,10 +1354,21 @@ export const WARDING_REGEN_CAP = 2.0;
 export const WARDING_DEF_STANCE_MULT = 1.5;
 /**
  * Warding-XP je absorbiertem Ward-Punkt (Armor-Iteration 2 §9.3): jeder Magier, der Treffer
- * schluckt, levelt Warding (stil-neutral, „man lernt Abwehr durch Abwehren"). Startwert — combat-dev
- * (Phase B) kalibriert ihn gegen die vitality/defence-XP-Rate. combat-dev wendet ihn beim absorbWard an.
+ * schluckt, levelt Warding (stil-neutral, „man lernt Abwehr durch Abwehren"). combat-dev wendet ihn
+ * beim absorbWard an.
+ *
+ * Retune D3 (Chef-Entscheid 27.08.2026, Achievements-Audit § 3.1/Frage 3): 0,25 → 1,0 (Faktor 4, obere
+ * Kante der Chef-Spanne 3–4). Messung (engine/warding-xp-rate.test.ts, `advance`-Sim mit Auto-Essen,
+ * Offensiv-Haltung, 2 Sim-h je Band): der Ward-Zufluss (Mana-Cast ×WARD_PER_MANA + Kill-Refill +
+ * Warding-Regen) deckelt das Absorbierte auf ~14–30 k Ward/h — bei 0,25 also nur 3,5–7,6 k XP/h,
+ * das wären 1 700–3 700 h bis 99 auf dem passiven Pfad (das Audit hatte 60 k XP/h ≈ 220 h geschätzt).
+ * Mit 1,0 liefert der passive Pfad 14–30 k XP/h ≈ 8–25 % des gleichzeitig verdienten Magie-XP —
+ * ein spürbares Nebeneinkommen für den Offensiv-Magier, das NIE den Offensiv-Skill überholt
+ * (Pin: Bannmagie-XP < 50 % der Magie-XP im selben Kampf). Der eigentliche 99er-Pfad bleibt die
+ * Defensiv-Magie-Haltung (activeStanceMods → xpSkill "warding": 100 % Offensiv-+Kill-XP; gemessen
+ * ~74 h bis 99 im Endgame-Band, paritätisch zur Verteidigung).
  */
-export const WARDING_XP_PER_ABSORB = 0.25;
+export const WARDING_XP_PER_ABSORB = 1.0;
 
 // ───────────────────────────────────────────────────────────────────────────
 // Crit-Zähmung (design/crit-taming-spec.md §3/§5.1, Task #294) — Endgame-One-Hit-Fix.
@@ -4336,6 +4347,29 @@ export type AchievementCategory =
  * - paragon_floor                      → state.paragon.best (Prestige-Rekord „Höchste abgeschlossene
  *                                        Turm-Etage"; count = geforderte Etage — Welle JJ, für die
  *                                        Paragon-Achievement-Leiter von content-dev)
+ *
+ * Achievements 1.2.0 (Chef-Entscheid 27.08.2026, design/achievements-1.2.0/audit.md § 2.5) — alle
+ * neuen Typen lesen NUR bestehenden State (kein neues Feld, kein SAVE_VERSION-Sprung):
+ * - quests_completed target=QuestId?  → mit target: 1 wenn `quests.claimed` die Quest enthält, sonst 0
+ *                                        (Chronik-Kapitel-Erfolge); ohne target wie bisher (Anzahl)
+ * - monsters_discovered                → Anzahl Content-Monster mit monsterKills ≥ 1 (Bestiarium)
+ * - zone_bestiary    target=ZoneId    → MIN der Kills über alle Content-Monster der Zone (count 1 =
+ *                                        „jedes Wesen besiegt", count 100 = „Zone gemeistert")
+ * - dungeons_distinct                  → Anzahl Dungeon-IDs mit ≥ 1 Clear (ohne paragon_tower)
+ * - slayer_tasks · slayer_streak       → state.slayerTasksCompleted · state.slayerStreak
+ * - slayer_floor                       → höchste `MonsterDef.slayerFloor` unter Monstern mit Kill ≥ 1
+ * - elite_kills      target=EliteId?  → Σ eliteCodex[*].kills bzw. Kills EINER Variante
+ * - elite_variants · elite_uniques     → Anzahl Varianten mit kills ≥ 1 · mit uniques ≥ 1
+ * - camp_levels      target=BuildingId?→ Σ camp.buildings-Stufen bzw. Stufe EINES Gebäudes
+ * - camp_buildings                     → Anzahl gebauter Gebäude (Stufe ≥ 1)
+ * - mastery_maxed                      → Anzahl Aktionen mit Meisterschafts-Level ≥ MASTERY_MAX_LEVEL
+ * - min_skill_level                    → kleinstes Level über alle Content-Skills („Alleskönner")
+ * - dailies_distinct                   → Anzahl VERSCHIEDENER Daily-Quests in `quests.claimed`
+ * - bank_slots                         → state.bankSlotsPurchased
+ * - food_cooked                        → Σ craftedById über alle Outputs von Kochen-Aktionen
+ * - runes_discovered                   → Anzahl entdeckter Items mit `rune`-Feld (discoveredItems)
+ * - farm_plots_planted                 → Anzahl bepflanzter Beete (farmPlots[].cropId ≠ null)
+ * - deaths · play_hours                → state.stats.deaths · floor(activePlayMs / 3 600 000)
  */
 export type AchievementConditionType =
   | "skill_level"
@@ -4352,7 +4386,27 @@ export type AchievementConditionType =
   | "daily_streak"
   | "pets_owned"
   | "sets_completed"
-  | "paragon_floor";
+  | "paragon_floor"
+  | "monsters_discovered"
+  | "zone_bestiary"
+  | "dungeons_distinct"
+  | "slayer_tasks"
+  | "slayer_streak"
+  | "slayer_floor"
+  | "elite_kills"
+  | "elite_variants"
+  | "elite_uniques"
+  | "camp_levels"
+  | "camp_buildings"
+  | "mastery_maxed"
+  | "min_skill_level"
+  | "dailies_distinct"
+  | "bank_slots"
+  | "food_cooked"
+  | "runes_discovered"
+  | "farm_plots_planted"
+  | "deaths"
+  | "play_hours";
 
 export interface AchievementCondition {
   type: AchievementConditionType;
@@ -4370,6 +4424,13 @@ export interface AchievementDef {
   category: AchievementCategory;
   rarity: AchievementRarity;
   condition: AchievementCondition;
+  /**
+   * Versteckter Erfolg (Achievements 1.2.0 § 2.6): Name, Beschreibung und Fortschritt werden in der
+   * UI bis zum Freischalten maskiert („???" + Schloss), damit Story-Twists (Kapitel 20/21) und die
+   * Augenzwinker-Erfolge nicht gespoilert werden. Engine-Auswertung ist identisch zu sichtbaren
+   * Erfolgen; das Flag ist reines Anzeige-Metadatum (Steam-Backend: „Hidden"-Haken, s. steam-set.csv).
+   */
+  hidden?: boolean;
 }
 
 /** AP-Wert eines einzelnen Achievements (rein aus rarity abgeleitet). */
@@ -5574,18 +5635,27 @@ export type QueueSkipReason =
   /** "dungeon"-Eintrag (SAVE 83): Dungeon existiert nicht (mehr) im Content oder hat keine Wellen. */
   | "unknown_dungeon"
   /** "dungeon"-Eintrag (SAVE 83): Gate nicht erfüllt (canEnterDungeon false — Quest/Trägerzone). */
-  | "dungeon_locked";
+  | "dungeon_locked"
+  /**
+   * "action"-Eintrag (Chef-Auftrag 27.08.2026, Warteschlangen-Projektion): beim START fehlte das
+   * Material (Inventar + Lager) — typisch, weil der Produzent (z.B. „Kupferader ×650") vorher aus
+   * der Kette entfernt wurde. Reine Union-Erweiterung, KEIN SAVE-Bump (alte Saves kennen den Grund
+   * nicht; die Persistenz-Whitelist prüft ihn beim Laden neu).
+   */
+  | "no_materials";
 
 /**
- * Breadcrumb des letzten übersprungenen Kampf-/Dungeon-Queue-Eintrags (Muster `lastStop`).
+ * Breadcrumb des letzten übersprungenen Kampf-/Dungeon-/Aktions-Queue-Eintrags (Muster `lastStop`).
  * Dungeon-Skips (SAVE 83) tragen `dungeonId` und die Gründe `unknown_dungeon`/`dungeon_locked`;
- * `monsterId` ist dann der Platzhalter "" (Übergangs-Shape wie `FIGHT_QUEUE_ACTION_ID` — die
- * bestehende UI liest `monsterId` unkonditioniert). Die UI-Welle verzweigt auf `dungeonId`.
+ * Aktions-Skips (27.08.2026) tragen `actionId` und den Grund `no_materials`. `monsterId` ist in
+ * beiden Fällen der Platzhalter "" (Übergangs-Shape wie `FIGHT_QUEUE_ACTION_ID` — die bestehende
+ * UI liest `monsterId` unkonditioniert). Die UI verzweigt auf `dungeonId` bzw. `actionId`.
  */
 export interface QueueSkip {
   monsterId: MonsterId;
   reason: QueueSkipReason;
   dungeonId?: string;
+  actionId?: ActionId;
 }
 
 export interface GameState {

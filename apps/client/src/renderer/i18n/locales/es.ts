@@ -431,6 +431,9 @@ export const es: Record<string, string> = {
     "achievements.milestonesComplete": "Todos los hitos alcanzados",
     "achievements.milestoneStrip.next": "Siguiente hito: {pct}% — +{tokens} Fichas de misión",
     "achievements.footer": "Se añaden logros nuevos con regularidad. Sigue superando tus límites.",
+    "achievements.hidden.name": "???",
+    "achievements.hidden.desc": "Un logro oculto. Su nombre se revela al desbloquearlo.",
+    "achievements.hidden.badge": "Oculto",
     "completion.title": "Finalización",
     "completion.achievements": "Logros",
     "completion.bestiary": "Bestiario",
@@ -1580,7 +1583,8 @@ export const es: Record<string, string> = {
     "queue.row.willHave": "Los materiales vienen de entradas anteriores de la cola.",
     "queue.row.willSkip": "Sin materiales a la vista — esta entrada se omitirá.",
     "skill.mat.fromQueue": "Viene de la cola: {sources}",
-    "skill.craftableProjected": "Fabricable: {n}× · {m} más desde la cola",
+    "skill.craftableProjected": "Fabricable: {n}× · {m} en camino",
+    "skill.craftableProjected.tip": "{m} ciclos más serán posibles cuando la cola entregue los materiales.",
     // Task #327 — UI de prioridad: "Empezar ahora" por fila en espera + aviso de Shift+clic
     // compartido en las tarjetas de habilidad/fabricación/monstruo.
     "queue.startNow": "Empezar ahora",
