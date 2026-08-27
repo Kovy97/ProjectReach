@@ -55,7 +55,7 @@ auch in den Zutaten stimmt.
 1. **Köder holen:** Angeln 1, „Köder graben", 2,5 s, 1 XP, 1 Köder (20 % zwei). Schnell, wenig XP, ein Vorrat für die Fallen.
 2. **Falle stellen:** Fallenplatz wählen, Gebiet wählen, 1 Köder. Nur Gebiete, die im Kampf freigeschaltet sind, und nur wenn dort
    mindestens ein fangbares Monster schon einmal besiegt wurde.
-3. **Warten:** je Gebiet eine feste Zeit (15 min bis 2 h, Tabelle B3), online wie offline im Tick, wie die Beete.
+3. **Warten:** je Gebiet eine feste Zeit (5 min Weiden bis 60 min Götzenhalle, Tabelle B3), online wie offline im Tick, wie die Beete.
 4. **Fang:** ein zufälliges fangbares, bereits besiegtes Monster des Gebiets geht in die Falle: **5 Beute-Würfe** seiner Tabelle
    (Rare-Drop-Regel gilt, keine Champion-Unikate, keine Begleiter-Drops) plus Jagen-XP.
 5. **Erneuern:** Auto-Erneuern wie beim Anbau, jede Falle nimmt 1 Köder; ohne Köder bleibt sie leer.
@@ -66,31 +66,31 @@ auch in den Zutaten stimmt.
 |---|---|---|---|---|---|---|
 | Plätze | 1 | 2 | 3 | 4 | 5 | 6 |
 
-### B3 Gebiete
+### B3 Gebiete (Fallenzeiten nach Chef-Entscheid 27.08.: 5 bis 60 Minuten)
 
 | Gebiet | Jagen-Stufe | Fallenzeit | Fangbar heute (Beispiele) |
 |---|---|---|---|
-| Die Weiden | 1 | 15 min | Huhn, Kuh, Eber, wilde Ziege |
-| Die Grenzlande | 10 | 20 min | Goblins (Schlinge) |
-| Die Aschfelder | 20 | 30 min | Aschratte, Schakal, Staubgeier, Moorkriecher, Pechkäfer |
-| Der Schwarzdornwald | 30 | 40 min | Dornwolf, Hexe (Schlinge) |
-| Die Krypta | 40 | 50 min | nur Skelette (s. J1) |
-| Wildwald-Jagdgründe | 50 | 60 min | Waldhase, Grauwolf, Hirsch, Schattenwolf |
-| Gezeitenuntiefen | 60 | 75 min | Schlammkrabbe, Tiefenkrake, Gezeitenschlange |
-| Schlackengrube | 70 | 90 min | Grubenspinne, Frosthund, Kobolde (Schlinge) |
-| Das Hochland | 80 | 105 min | Roc, Roc-Jäger, Roc-Ältester |
-| Die Götzenhalle | 90 | 120 min | nichts Fangbares (Konstrukte, Untote, Drazhan) |
+| Die Weiden | 1 | 5 min | Huhn, Kuh, Eber, wilde Ziege |
+| Die Grenzlande | 10 | 8 min | Goblins (Schlinge) |
+| Die Aschfelder | 20 | 10 min | Aschratte, Schakal, Staubgeier, Moorkriecher, Pechkäfer |
+| Der Schwarzdornwald | 30 | 15 min | Dornwolf; Hexe (Schlinge) |
+| Die Krypta | 40 | 20 min | nichts Fangbares (Skelette) |
+| Wildwald-Jagdgründe | 50 | 25 min | Waldhase, Grauwolf, Hirsch, Schattenwolf |
+| Gezeitenuntiefen | 60 | 35 min | Schlammkrabbe, Tiefenkrake, Gezeitenschlange |
+| Schlackengrube | 70 | 45 min | Grubenspinne, Frosthund; Kobolde (Schlinge) |
+| Das Hochland | 80 | 55 min | Roc, Roc-Jäger, Roc-Ältester |
+| Die Götzenhalle | 90 | 60 min | nichts Fangbares (Konstrukte, Untote, Drazhan) |
 
-Fangbar: Familien **Tier** und **Humanoid** (Schlinge). Nie: Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster,
-Champions. Damit hat die Krypta keine Fänge; die Götzenhalle auch nicht. Beides ist Absicht: Fallen sind Jägerwerkzeug,
-keine zweite Kampfmaschine. Die Jagen-Stufe je Gebiet ist die Leiter des Skills, die Kampf-Freischaltung die Tür.
+Fangbar: Familien **Tier** und **Humanoid** (Schlinge, J1). Nie: Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster,
+Champions. Krypta und Götzenhalle haben damit keine Fänge, das ist Absicht. Die Jagen-Stufe je Gebiet ist die Leiter des Skills,
+die Kampf-Freischaltung die Tür.
 
 ### B4 Zahlen
 
 - **Fangchance** 70 % plus 0,5 Prozentpunkte je Jagen-Stufe über der Gebietsstufe, Deckel 95 %. Bei Fehlschlag ist der Köder weg,
   die Falle erneuert sich (mit Köder) von selbst.
 - **XP je Fang** aus der bekannten C-600-Kurve (wie Schmieden/Kochen): Ziel-XP/h der Gebietsstufe × Fallenzeit/60, verteilt auf die
-  Plätze. Richtwerte: Weiden 25 XP je Fang, Aschfelder 140, Wildwald 1 100, Hochland 9 000. Mit sechs Fallen liegt Jagen damit auf der
+  Plätze. Richtwerte bei den neuen Zeiten: Weiden ~10 XP je Fang (5 min), Aschfelder ~50 (10 min), Wildwald ~460 (25 min), Hochland ~4 800 (55 min). Mit sechs Fallen liegt Jagen damit auf der
   Anbau-Kurve, nicht darüber.
 - **Beute** 5× der Beutetabelle des Monsters. Beispiel Eber: 5 Würfe auf Rohhaut (70 %) ergeben im Schnitt 3,5 Häute je Fang alle
   15 Minuten, ohne Kampf. Gold der Tabelle fällt ebenfalls (5×), Auftragsmarken nicht.
@@ -116,12 +116,13 @@ den Beutezeilen. Offline-Bericht listet Fänge („Eber ×3, Ziege ×1"). Sideba
 - **Mira:** Icons Fasern ×5, Stoffe ×5, Köder, Falle, Sidebar-Icon Jagen, Sammel-Knoten-Karten ×5.
 - **Aufwand:** Content 1 Tag, Engine 1–2 Tage, UI 2 Tage, Tests/Sim 1 Tag. Passt in 1.2.0 neben die Taverne (ein Save-Bump für beides).
 
-## D Entscheidungen des Chefs
+## D Entscheidungen des Chefs (entschieden 27.08.2026)
 
-- **J1 Fangbar:** Tiere und Humanoide (Schlinge), nie Untote/Konstrukte/Dämonen/Drachen/Bosse? Oder nur Tiere?
-- **J2 Ruhm:** Fänge zählen nicht als Kills (Empfehlung) oder doch für Bestiarium/Slayer?
-- **J3 Plätze:** 6 Plätze mit Freischaltung 1/10/25/45/65/85, oder 9 wie beim Anbau?
-- **J4 Chance:** 70 % + Stufenbonus (Empfehlung) oder garantierter Fang?
-- **J5 Fasern:** die fünf Stufen und Namen so (Nessel, Flachs, Dornhanf, Geisterseide, Sternflachs)?
-- **J6 Sehne:** Nessel-Sehne als kampffreie Alternative für Bogen ab Stufe 1?
-- **J7 Version:** beides in 1.2.0 zusammen mit der Taverne?
+- **J1 Fangbar:** Tiere und Humanoide (Schlinge); nie Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster, Champions.
+- **J2 Ruhm:** Fänge zählen nicht als Kills. Kampf bleibt der Fortschrittsweg.
+- **J3 Plätze:** sechs, Freischaltung bei Jagen 1/10/25/45/65/85.
+- **J4 Chance:** 70 % plus 0,5 Prozentpunkte je Stufe über der Gebietsstufe, Deckel 95 %.
+- **J5 Fasern:** Nessel, Flachs, Dornhanf, Geisterseide, Sternflachs, Stufen wie in A1.
+- **J6 Sehne:** Nessel-Sehne ab Handwerk 1.
+- **J7 Version:** Fasern, Stoff und Jagen werden **1.2.0**; die Taverne rückt auf **1.3.0**.
+- **Fallenzeiten:** 5 Minuten (Weiden) bis 60 Minuten (Götzenhalle), Tabelle B3.

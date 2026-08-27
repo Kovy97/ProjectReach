@@ -110,7 +110,7 @@
     <ol class="steps">
       <li><b>Köder holen.</b> Angeln 1, „Köder graben": 2,5 s, 1 XP, ein Köder (20 % zwei). Schnell, wenig XP, ein Vorrat für die Fallen.</li>
       <li><b>Falle stellen.</b> Platz wählen, Gebiet wählen, ein Köder. Nur Gebiete, die im Kampf freigeschaltet sind, und nur wenn dort ein fangbares Monster schon einmal besiegt wurde.</li>
-      <li><b>Warten.</b> Feste Zeit je Gebiet, 15 Minuten bis 2 Stunden, online wie offline im Tick, wie die Beete.</li>
+      <li><b>Warten.</b> Feste Zeit je Gebiet, 5 Minuten (Weiden) bis 60 Minuten (Götzenhalle), online wie offline im Tick, wie die Beete.</li>
       <li><b>Fang.</b> Ein zufälliges fangbares, bereits besiegtes Monster des Gebiets geht in die Falle: fünf Beute-Würfe seiner Tabelle plus Jagen-XP.</li>
       <li><b>Erneuern.</b> Auto-Erneuern wie beim Anbau, jede Falle nimmt einen Köder; ohne Köder bleibt sie leer.</li>
     </ol>
@@ -121,22 +121,22 @@
     <h3>Gebiete</h3>
     <div class="tablewrap"><table>
       <tr><th>Gebiet</th><th>Jagen-Stufe</th><th>Fallenzeit</th><th>Fangbar heute</th></tr>
-      <tr><td>Die Weiden</td><td class="num">1</td><td class="num">15 min</td><td>Huhn, Kuh, Eber, wilde Ziege</td></tr>
-      <tr><td>Die Grenzlande</td><td class="num">10</td><td class="num">20 min</td><td class="dim">Goblins (Schlinge, s. J1)</td></tr>
-      <tr><td>Die Aschfelder</td><td class="num">20</td><td class="num">30 min</td><td>Aschratte, Schakal, Staubgeier, Moorkriecher, Pechkäfer</td></tr>
-      <tr><td>Der Schwarzdornwald</td><td class="num">30</td><td class="num">40 min</td><td>Dornwolf; Hexe (Schlinge)</td></tr>
-      <tr><td>Die Krypta</td><td class="num">40</td><td class="num">50 min</td><td class="dim">nichts Fangbares (Skelette)</td></tr>
-      <tr><td>Wildwald-Jagdgründe</td><td class="num">50</td><td class="num">60 min</td><td>Waldhase, Grauwolf, Hirsch, Schattenwolf</td></tr>
-      <tr><td>Gezeitenuntiefen</td><td class="num">60</td><td class="num">75 min</td><td>Schlammkrabbe, Tiefenkrake, Gezeitenschlange</td></tr>
-      <tr><td>Schlackengrube</td><td class="num">70</td><td class="num">90 min</td><td>Grubenspinne, Frosthund; Kobolde (Schlinge)</td></tr>
-      <tr><td>Das Hochland</td><td class="num">80</td><td class="num">105 min</td><td>Roc, Roc-Jäger, Roc-Ältester</td></tr>
-      <tr><td>Die Götzenhalle</td><td class="num">90</td><td class="num">120 min</td><td class="dim">nichts Fangbares (Konstrukte, Untote, Drazhan)</td></tr>
+      <tr><td>Die Weiden</td><td class="num">1</td><td class="num">5 min</td><td>Huhn, Kuh, Eber, wilde Ziege</td></tr>
+      <tr><td>Die Grenzlande</td><td class="num">10</td><td class="num">8 min</td><td class="dim">Goblins (Schlinge)</td></tr>
+      <tr><td>Die Aschfelder</td><td class="num">20</td><td class="num">10 min</td><td>Aschratte, Schakal, Staubgeier, Moorkriecher, Pechkäfer</td></tr>
+      <tr><td>Der Schwarzdornwald</td><td class="num">30</td><td class="num">15 min</td><td>Dornwolf; Hexe (Schlinge)</td></tr>
+      <tr><td>Die Krypta</td><td class="num">40</td><td class="num">20 min</td><td class="dim">nichts Fangbares (Skelette)</td></tr>
+      <tr><td>Wildwald-Jagdgründe</td><td class="num">50</td><td class="num">25 min</td><td>Waldhase, Grauwolf, Hirsch, Schattenwolf</td></tr>
+      <tr><td>Gezeitenuntiefen</td><td class="num">60</td><td class="num">35 min</td><td>Schlammkrabbe, Tiefenkrake, Gezeitenschlange</td></tr>
+      <tr><td>Schlackengrube</td><td class="num">70</td><td class="num">45 min</td><td>Grubenspinne, Frosthund; Kobolde (Schlinge)</td></tr>
+      <tr><td>Das Hochland</td><td class="num">80</td><td class="num">55 min</td><td>Roc, Roc-Jäger, Roc-Ältester</td></tr>
+      <tr><td>Die Götzenhalle</td><td class="num">90</td><td class="num">60 min</td><td class="dim">nichts Fangbares (Konstrukte, Untote, Drazhan)</td></tr>
     </table></div>
     <div class="rules">
       <div class="rule"><b>Fangbar</b><p>Familien Tier und Humanoid (Schlinge). Nie Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster, Champions. Fallen sind Jägerwerkzeug, keine zweite Kampfmaschine.</p></div>
       <div class="rule"><b>Fangchance</b><p>70 % plus 0,5 Prozentpunkte je Jagen-Stufe über der Gebietsstufe, Deckel 95 %. Fehlschlag: Köder weg, Falle erneuert sich mit Köder von selbst.</p></div>
       <div class="rule"><b>Beute</b><p>Fünf Würfe auf die Tabelle des Monsters (Rare-Drop-Regel gilt, Gold 5×). Eber: im Schnitt 3,5 Häute je Fang alle 15 Minuten, ohne Kampf. Keine Champion-Unikate, keine Begleiter, keine Marken.</p></div>
-      <div class="rule"><b>XP</b><p>Aus der C-600-Kurve wie Schmieden und Kochen: Weiden ~25 XP je Fang, Aschfelder ~140, Wildwald ~1 100, Hochland ~9 000. Mit sechs Fallen liegt Jagen auf der Anbau-Kurve.</p></div>
+      <div class="rule"><b>XP</b><p>Aus der C-600-Kurve wie Schmieden und Kochen: Weiden ~10 XP je Fang (5 min), Aschfelder ~50, Wildwald ~460, Hochland ~4 800 (55 min). Mit sechs Fallen liegt Jagen auf der Anbau-Kurve.</p></div>
       <div class="rule"><b>Kein Ruhm</b><p>Fänge zählen nicht als Kills: keine Slayer-Aufträge, keine Kill-Erfolge, kein Bestiarium-Zähler. Jagen ist Beute, Kampf bleibt Fortschritt.</p></div>
       <div class="rule"><b>Gesamtlevel</b><p>Ein neuer Skill hebt das erreichbare Gesamtlevel um 99; Dailies-Deckel, Tavernen-Bänder und Gesamtlevel-Erfolge ziehen nach. Kein Steam-Erfolg, das Set ist eingefroren.</p></div>
     </div>
@@ -156,15 +156,16 @@
   </section>
 
   <section>
-    <h2>Entscheidungen des Chefs</h2>
+    <h2>Entscheidungen des Chefs, entschieden am 27.08.2026</h2>
     <div class="decisions">
-      <div class="dec"><div class="id">J1 · Fangbar</div><p>Tiere und Humanoide (Schlinge), nie Untote, Konstrukte, Dämonen, Drachen, Bosse? Oder nur Tiere?</p><p class="rec">Empfehlung: Tiere und Humanoide; sonst haben Grenzlande und Schlackengrube nichts zu fangen.</p></div>
-      <div class="dec"><div class="id">J2 · Ruhm</div><p>Fänge zählen nicht als Kills, oder doch für Bestiarium und Slayer?</p><p class="rec">Empfehlung: nicht; Kampf bleibt der einzige Fortschrittsweg.</p></div>
-      <div class="dec"><div class="id">J3 · Plätze</div><p>Sechs Plätze mit Freischaltung 1/10/25/45/65/85, oder neun wie beim Anbau?</p><p class="rec">Empfehlung: sechs; die Beute ist reicher als eine Ernte.</p></div>
-      <div class="dec"><div class="id">J4 · Chance</div><p>70 % plus Stufenbonus oder garantierter Fang?</p><p class="rec">Empfehlung: Chance; sie macht die Jagen-Stufe spürbar.</p></div>
-      <div class="dec"><div class="id">J5 · Fasern</div><p>Fünf Stufen mit diesen Namen: Nessel, Flachs, Dornhanf, Geisterseide, Sternflachs?</p><p class="rec">Empfehlung: so; Lore-Namen kann lore-dev noch schleifen.</p></div>
-      <div class="dec"><div class="id">J6 · Sehne</div><p>Nessel-Sehne als kampffreie Alternative für Bogen ab Stufe 1?</p><p class="rec">Empfehlung: ja, Fernkampf hängt sonst weiter an Haut.</p></div>
-      <div class="dec"><div class="id">J7 · Version</div><p>Beides in 1.2.0 zusammen mit der Taverne?</p><p class="rec">Empfehlung: ja, ein Save-Bump für alles.</p></div>
+      <div class="dec"><div class="id">J1 · Fangbar</div><p>Tiere und Humanoide (Schlinge); nie Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster, Champions.</p></div>
+      <div class="dec"><div class="id">J2 · Ruhm</div><p>Fänge zählen nicht als Kills. Kampf bleibt der Fortschrittsweg.</p></div>
+      <div class="dec"><div class="id">J3 · Plätze</div><p>Sechs, Freischaltung bei Jagen 1 / 10 / 25 / 45 / 65 / 85.</p></div>
+      <div class="dec"><div class="id">J4 · Chance</div><p>70 % plus 0,5 Prozentpunkte je Stufe über der Gebietsstufe, Deckel 95 %.</p></div>
+      <div class="dec"><div class="id">J5 · Fasern</div><p>Nessel, Flachs, Dornhanf, Geisterseide, Sternflachs, Stufen wie oben.</p></div>
+      <div class="dec"><div class="id">J6 · Sehne</div><p>Nessel-Sehne ab Handwerk 1.</p></div>
+      <div class="dec"><div class="id">J7 · Version</div><p>Fasern, Stoff und Jagen werden 1.2.0. Die Taverne rückt auf 1.3.0.</p></div>
+      <div class="dec"><div class="id">Fallenzeiten</div><p>5 Minuten (Weiden) bis 60 Minuten (Götzenhalle), Tabelle oben.</p></div>
     </div>
   </section>
 </div>

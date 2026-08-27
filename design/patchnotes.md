@@ -10,7 +10,9 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
-## Unveröffentlicht — 1.2.0 „Alive" (Chef 27.08.: NUR die Taverne; Schalter `TAVERN_ENABLED` in shared, 1.1.2 = aus)
+## Unveröffentlicht — 1.2.0 „Fasern und Fallen" (Chef 27.08.: Fasern/Stoff-Roben + neuer Skill Jagen; in Arbeit)
+
+## Unveröffentlicht — 1.3.0 „Alive" (Chef 27.08.: die Taverne, von 1.2.0 verschoben; Schalter `TAVERN_ENABLED` bleibt aus)
 
 **Die Taverne (Kern von 1.2.0, Chef-Entscheide E1–E3, 27.08.):** DE: New Haven bekommt eine Taverne
 (1 500 Gold, 100 Eichenholz, 15 Minuten; belegt keinen Bauplatz). Jeden Tag sitzen vier Gäste aus
