@@ -1,0 +1,39 @@
+REDDIT-ANTWORTEN ZUM WORKFLOW (r/aigamedev, Folgekommentare zum Post "My AI assisted game just left early access and it's popping off")
+Stand 27.08.2026. Englisch, nüchtern, keine Namen der Agenten-Personas, kein Glazen. Drei Bausteine: eine lange Hauptantwort
+(als eigener Kommentar oder Edit im Post), dazu kurze Antworten auf die drei häufigsten Einzelfragen.
+
+============================================================
+A) HAUPTANTWORT (ca. 550 Wörter)
+============================================================
+
+A lot of you asked how the "CEO agent" thing actually works and how the design agent turns orders into assets, so here is the honest version.
+
+**The setup.** One human (me), one Claude Code session that runs the project, and one OpenAI Codex session that does art direction and asset production. Both agents live in the same repo, but they never touch the same files. Claude owns code, tests, builds, Steam uploads and the design docs. Codex owns a folder called CODEX/ and an assets staging area. Codex never commits, never runs the build and never edits game code. That separation is the whole trick; everything else is paperwork.
+
+**How I work with Claude.** I don't prompt features line by line. I make decisions and Claude turns them into work. A typical day: I play the build, write a list of what bugs me ("the buttons look reversed", "the character screen must never scroll", "these achievements are boring"), and Claude plans the waves, spawns sub-agents for the parts that can run in parallel (engine, content data, UI), verifies each delivery itself and commits when the gates are green. The gates are boring on purpose: typecheck, unit tests per package (about 2,400 right now), a save-compatibility guard that loads frozen real saves from every shipped version, and screenshots from a Playwright-driven Electron harness at 1920x1080 and 1366x768 in German and Russian, because those are the resolutions and languages where layouts break. Claude looks at its own screenshots before it tells me something is done. If it can't show me a screenshot, it isn't done.
+
+The sub-agents get a written brief with file ownership and a taboo list (files they must not touch), their own dev port, and a rule that they don't build or commit. Claude rebuilds and verifies after they report. Anything with judgment in it (reviews, balance calls, audits) runs on the strongest model; mechanical work runs on cheaper ones. Long-lived rules live in a memory folder as one fact per file ("saves must always stay compatible", "no rarity glow on equipment art", "never remove old assets a save might still reference"), so a fresh session starts with the same constraints.
+
+**How Claude works with Codex.** Assets are ordered, not requested in chat. For every batch Claude writes three files into CODEX/work/<date-task>/: a brief (what, how many, exact file names = content IDs, resolutions, alpha or opaque, viewing direction, what must never appear, where to deliver), a prompt file with one complete English image prompt per asset built from a shared "series core" so 19 characters come out in one style, and a short plain-language message to the design agent. I read the message, paste it into the Codex session, and Codex takes it from there: it reads the brief and the two design docs it points to, generates the images with its image tooling, runs its own QA (exact pixel size, real alpha channel instead of a painted checkerboard, contact sheets, coordinate sheets for scenes), writes what it did into a worklog and a handoff file, and drops the finished files into a staging folder. The rejects stay in the log. Last week it refused to deliver a whole batch because every output had a fake transparency checkerboard, which is exactly what I want from it.
+
+Then Claude takes over again: verifies alpha and sizes with a script, converts to WebP at the quality we fixed (items 640px q92, portraits 1086x1448 q92, backdrops q85), copies files into the renderer's asset folders where filename-based auto-discovery binds them to content IDs, archives the originals, and re-runs the screenshot pass. Codex's folder is never a runtime path.
+
+**What I actually do.** Decisions, taste and money. I decide what gets built and in which order, I approve or reject art in the chat with a couple of examples before a batch runs, I set the rules both agents work under, and I press the Steam upload button. Claude asks for a "GO" before anything irreversible (depot upload, save-format bump, deleting anything).
+
+**What doesn't work.** Agents drift on long tasks, so briefs are short and verification is mandatory. A stopped agent often can't be resumed, so state has to live in files, not in the chat. Parallel agents step on each other unless ownership is written down. And it costs real money: I'm on the 180 EUR/month plan and use most of it. It is still far cheaper than the alternative for a one-person studio, but it is not free and it is not hands-off.
+
+============================================================
+B) KURZANTWORTEN AUF EINZELFRAGEN
+============================================================
+
+--- "How do you give Codex orders?" ---
+Three files per batch, written by Claude, pasted by me: a brief (scope, exact file names = content IDs, size, alpha/opaque, facing direction, forbidden things, delivery folder), a prompt file (one full English prompt per asset, all built on the same "series core" paragraph so a batch stays in one style), and a plain-language message. Codex reads the brief and the design docs it links, produces, QAs and logs. I only relay and judge.
+
+--- "How does Codex turn that into assets?" ---
+It generates from the prompts with its image tooling, then checks its own output against the brief: exact pixel dimensions, a real alpha channel (it rejects painted checkerboards), the same face across a full-body and a portrait card, and for scenes a JSON with the pixel anchors where characters and clickable objects go. It writes a worklog and a handoff file and puts only passing files into a "finished" folder. Claude then verifies again with a script, converts to WebP and integrates. Codex never touches the renderer.
+
+--- "How does Claude 'steer' the other agents?" ---
+Written briefs with file ownership and a taboo list, one dev port per agent, no builds and no commits inside sub-agents, and a report format at the end. Claude verifies every delivery itself (typecheck, per-package tests, save-compat guard, harness screenshots), fixes small things directly instead of spawning another round, and commits per verified wave. Judgment tasks run on the strongest model, mechanical ones on cheaper models. Standing rules live in a memory folder, one fact per file, so nothing depends on chat history.
+
+--- "Isn't that just prompting with extra steps?" ---
+Mostly, yes. The extra steps are the point: written ownership, mandatory verification and files instead of chat memory are what make it survive a week instead of an afternoon.
