@@ -12,6 +12,15 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
 
+**Das Item-Wiki wird gezeigt, statt versteckt (Chef 27.08., Reddit-Fragen):** DE: Beim ersten Öffnen einer
+Item-Karte auf einem Spielstand erklärt der Wächter in vier kurzen Schritten, was auf der Karte steht: Name und
+Seltenheit, die Werte, und das Fragezeichen oben rechts, das das Wiki mit allen Quellen, Rezepten und Dropchancen
+öffnet. Überspringbar, kommt nur einmal. Bis dahin pulsiert das Fragezeichen leicht. / EN: The first item card you
+open now comes with a short guided tour that points at the wiki button; the "?" pulses gently until you have seen it.
+
+*Dev-Notiz: areaTourSteps.ts ITEM_CARD_TOUR_STEPS über AreaTourGuide/SpotlightGuide, data-guide-ids in ItemTooltip.tsx,
+Flag onboarding.toursSeen.itemCardGuideV1 (kein Save-Bump), `.itip-wiki-btn--pulse`, Keys guide.itemCard.* in 7 Sprachen.*
+
 **Endlose Aktion ließ sich nicht beenden (Spieler-Bug-Report 27.08., Hotfix-Kandidat 1.1.2):** DE: Wer
 eine Aktion mit ∞ startete und danach noch einmal auf ∞ klickte, legte unbemerkt einen zweiten endlosen
 Eintrag derselben Aktion in die Warteschlange; nach „Stopp" lief die Aktion im nächsten Moment wieder an,
