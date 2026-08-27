@@ -68,6 +68,11 @@ const GUEST_PORTRAIT_FALLBACK: Readonly<Record<string, string>> = {
   orin: "elf_runecrafter_m",
   wenna: "human_enchanter_f",
   torvald: "human_builder_m",
+  // Ork-Roster (27.08.2026): die vier Ork-Gäste zeigen bis zu Miras Figuren Ork-Porträts statt Silhouetten.
+  grumm: "orc_miner_m",
+  brakka: "orc_woodcutter_f",
+  dashk: "orc_blacksmith_m",
+  kell: "orc_leatherworker_m",
   ashka: "human_ranger_f",
 };
 

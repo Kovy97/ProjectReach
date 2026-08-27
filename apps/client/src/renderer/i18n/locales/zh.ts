@@ -2015,6 +2015,7 @@ export const zh: Record<string, string> = {
     "creation.race": "种族",
     "creation.race.human": "人类",
     "creation.race.elf": "精灵",
+    "creation.race.orc": "兽人",
     "creation.group.combat": "战斗职业",
     "creation.group.profession": "生活职业",
     "creation.sex.m": "男",

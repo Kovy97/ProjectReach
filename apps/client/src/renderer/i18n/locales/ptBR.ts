@@ -1971,6 +1971,7 @@ export const ptBR: Record<string, string> = {
     "creation.race": "Raça",
     "creation.race.human": "Humano",
     "creation.race.elf": "Elfo",
+    "creation.race.orc": "Orc",
     "creation.group.combat": "Classes de Combate",
     "creation.group.profession": "Profissões",
     "creation.sex.m": "Masculino",

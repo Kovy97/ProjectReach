@@ -12,6 +12,16 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
 
+**Orks in der Charaktererstellung (Mira, 27.08.):** DE: Neben Menschen und Elfen gibt es jetzt Orks: 30
+Archetypen, je männlich und weiblich, 60 neue Porträts im gleichen Stil. Rassen-Filter „Ork" in der
+Charaktererstellung und im Porträt-Wechsler; die Ork-Gäste der Taverne (Grumm, Brakka, Dashk, Kell) tragen
+bis zu ihren eigenen Figuren passende Ork-Porträts. / EN: Orcs join humans and elves in character creation
+with 60 new portraits (30 archetypes, male and female).
+
+*Dev-Notiz: assets/portraits/orc_<archetyp>_<m|f>.webp (1086×1448 q92, Originale in Downloads\ASSETS\archive\
+orc-roster-2026-08-27), playerRoster.ts Race/RACES/parsePortraitId, CharacterCreation + PortraitPickerModal Chips,
+tavernArt GUEST_PORTRAIT_FALLBACK, creation.race.orc ×7. Harness: 15/15 Ork-Bilder geladen.*
+
 **Tonika laden sich auf (Spieler-Feedback, Chef 27.08.):** DE: Ein Sammler- oder Kampf-Tonikum hielt fünf
 Minuten, und erneutes Trinken setzte die Zeit nur zurück. Jetzt addiert sich dieselbe Sorte auf die Restzeit,
 und man kann mehrere auf einmal trinken: „×5", „×10" oder „Aufladen" bis zum Deckel von drei Stunden (zehn

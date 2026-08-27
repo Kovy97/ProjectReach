@@ -2017,6 +2017,7 @@ export const fr: Record<string, string> = {
     "creation.race": "Race",
     "creation.race.human": "Humain",
     "creation.race.elf": "Elfe",
+    "creation.race.orc": "Orc",
     "creation.group.combat": "Classes de Combat",
     "creation.group.profession": "Métiers",
     "creation.sex.m": "Masculin",

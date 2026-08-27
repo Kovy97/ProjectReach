@@ -2015,6 +2015,7 @@ export const ru: Record<string, string> = {
     "creation.race": "Раса",
     "creation.race.human": "Человек",
     "creation.race.elf": "Эльф",
+    "creation.race.orc": "Орк",
     "creation.group.combat": "Боевые классы",
     "creation.group.profession": "Профессии",
     "creation.sex.m": "Мужской",

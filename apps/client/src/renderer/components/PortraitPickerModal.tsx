@@ -13,7 +13,7 @@ const LEGACY_PORTRAITS = PORTRAITS.filter((p) => !p.id.startsWith("human_") && !
 type PickerTab = Race | "legacy";
 
 function isRaceTab(tab: PickerTab): tab is Race {
-  return tab === "human" || tab === "elf";
+  return tab === "human" || tab === "elf" || tab === "orc";
 }
 
 export interface PortraitPickerModalProps {
@@ -73,6 +73,13 @@ export function PortraitPickerModal({ currentId, title, onConfirm, onCancel }: P
             onClick={() => setTab("elf")}
           >
             {t("creation.race.elf")}
+          </button>
+          <button
+            type="button"
+            className={`btn-iron btn-iron--sm${tab === "orc" ? " is-active" : ""}`}
+            onClick={() => setTab("orc")}
+          >
+            {t("creation.race.orc")}
           </button>
           <button
             type="button"

@@ -1973,6 +1973,7 @@ export const es: Record<string, string> = {
     "creation.race": "Raza",
     "creation.race.human": "Humano",
     "creation.race.elf": "Elfo",
+    "creation.race.orc": "Orco",
     "creation.group.combat": "Clases de Combate",
     "creation.group.profession": "Profesiones",
     "creation.sex.m": "Masculino",
