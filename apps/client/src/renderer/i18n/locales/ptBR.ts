@@ -1367,6 +1367,12 @@ export const ptBR: Record<string, string> = {
     "hunting.reason.nothing_huntable": "Ainda não há nada para caçar aqui — derrote algo aqui primeiro.",
     "hunting.reason.no_bait": "Sem isca.",
     "hunting.reason.busy": "Armadilha já armada.",
+    "hunting.digBait": "Cavar isca",
+    "hunting.pickZone.title": "Escolher área de caça",
+    "hunting.beatenCount": "{n}/{total} derrotados",
+    "hunting.noZoneSet": "Sem área",
+    "hunting.autoChip": "Auto",
+    "hunting.book.undefeated": "Ainda não derrotado",
     "offline.hunt.title": "Caça",
 
     "nav.slayer": "Caçador",

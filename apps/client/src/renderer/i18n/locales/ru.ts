@@ -1397,6 +1397,12 @@ export const ru: Record<string, string> = {
     "hunting.reason.nothing_huntable": "Здесь пока не на кого охотиться — сначала победи кого-то тут.",
     "hunting.reason.no_bait": "Наживка закончилась.",
     "hunting.reason.busy": "Капкан уже поставлен.",
+    "hunting.digBait": "Копать наживку",
+    "hunting.pickZone.title": "Выбрать место охоты",
+    "hunting.beatenCount": "{n}/{total} побеждено",
+    "hunting.noZoneSet": "Нет местности",
+    "hunting.autoChip": "Авто",
+    "hunting.book.undefeated": "Ещё не побеждён",
     "offline.hunt.title": "Охота",
 
     // Slayer skill page

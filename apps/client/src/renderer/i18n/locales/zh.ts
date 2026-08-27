@@ -1396,6 +1396,12 @@ export const zh: Record<string, string> = {
     "hunting.reason.nothing_huntable": "这里暂时没有可猎捕的对象，先在这里击败一个目标。",
     "hunting.reason.no_bait": "诱饵已用完。",
     "hunting.reason.busy": "陷阱已经布置好了。",
+    "hunting.digBait": "挖掘诱饵",
+    "hunting.pickZone.title": "选择狩猎区域",
+    "hunting.beatenCount": "已击败 {n}/{total}",
+    "hunting.noZoneSet": "尚未选择区域",
+    "hunting.autoChip": "自动",
+    "hunting.book.undefeated": "尚未击败",
     "offline.hunt.title": "狩猎",
 
     // Slayer skill page

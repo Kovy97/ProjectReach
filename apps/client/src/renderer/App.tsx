@@ -128,7 +128,7 @@ function PageContent({
     case "skill":
       if (page.skillId === "farming") return <FarmPage />;
       if (page.skillId === "slayer") return <SlayerPage onNavigate={onNavigate} />;
-      if (page.skillId === "hunting") return <HuntingPage />;
+      if (page.skillId === "hunting") return <HuntingPage onNavigate={onNavigate} />;
       // key erzwingt einen Remount pro Skill — sonst recycelt React dieselbe Instanz bei
       // Skill→Skill-Navigation und der lokale Kategorie-Collapse-State (SkillPage.tsx) leckt
       // zwischen Skills (verschärft dadurch, dass Smithing/Leatherworking dieselben Kategorie-IDs teilen).

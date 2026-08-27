@@ -1650,6 +1650,13 @@ const en = {
     "hunting.reason.nothing_huntable": "Nothing huntable here yet — defeat something here first.",
     "hunting.reason.no_bait": "No bait left.",
     "hunting.reason.busy": "Trap already set.",
+    // Redesign 28.08.2026 (Gebietswahl-Modal + Fallen-Karten-Fußzeile + Jagdbuch-Zeilen).
+    "hunting.digBait": "Dig for Bait",
+    "hunting.pickZone.title": "Choose Hunting Ground",
+    "hunting.beatenCount": "{n}/{total} beaten",
+    "hunting.noZoneSet": "No Ground",
+    "hunting.autoChip": "Auto",
+    "hunting.book.undefeated": "Not defeated yet",
     "offline.hunt.title": "Hunting",
 
     // Slayer skill page
@@ -3979,6 +3986,13 @@ const de: Record<keyof typeof en, string> = {
     "hunting.reason.nothing_huntable": "Hier gibt es noch nichts zu jagen — erst etwas hier besiegen.",
     "hunting.reason.no_bait": "Kein Köder mehr.",
     "hunting.reason.busy": "Falle bereits gestellt.",
+    // Redesign 28.08.2026 (Gebietswahl-Modal + Fallen-Karten-Fußzeile + Jagdbuch-Zeilen).
+    "hunting.digBait": "Köder graben",
+    "hunting.pickZone.title": "Gebiet wählen",
+    "hunting.beatenCount": "{n}/{total} besiegt",
+    "hunting.noZoneSet": "Kein Gebiet",
+    "hunting.autoChip": "Auto",
+    "hunting.book.undefeated": "Noch nie besiegt",
     "offline.hunt.title": "Jagd",
 
     // Slayer-Seite

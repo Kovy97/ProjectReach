@@ -1,10 +1,13 @@
 /* ═══════════════════════════════════════════════════════════
-   HUNTING PAGE (Jagen, 1.2.0 „Fasern und Fallen")
+   HUNTING PAGE (Jagen, 1.2.0 „Fasern und Fallen" — Redesign 28.08.2026)
    Direkt von HuntingPage.tsx importiert (Kollisionsschutz-Muster wie bestiary.css/newhaven.css —
    NICHT in index.css, andere Agenten arbeiten parallel an geteilten Stylesheets).
-   Wiederverwendet bewusst `.action-categories`/`.category-header`/`.farm-section-content`
-   (skills.css), `.bar`/`.bar-fill`/`.bar.tall` (skills.css), `.zone-card` (combat.css) und
-   `.btn-iron` (design-system.css) — hier nur Jagd-eigene Klassen.
+   Design-System dieses Redesigns: Stahl-9-Slice-Panel (item-wiki.css `.iwk-panel`-Muster:
+   `border-image: nav-bronze-lipped-iron-9slice.webp 85 / 2.125 round` + Basalt-Textur) statt der
+   alten Holz-9-Slice-Karten; `.btn-iron`/`.btn-iron--sm`/`.is-active` (design-system.css) als
+   Knöpfe, `.shop-citadel-btn` als Sekundär-Knopf; `.bar`/`.bar-fill`/`.bar.tall` (skills.css) für
+   alle Fortschrittsbalken; `.category-header`/`.category-caret`/`.category-name`/`.category-count`
+   (skills.css) fürs Jagdbuch-Akkordeon.
    ═══════════════════════════════════════════════════════════ */
 
 .hunt-page {
@@ -13,27 +16,85 @@
   gap: 16px;
 }
 
-/* ─── Info bar (Köder-Zähler + Hinweis) ─────────────────────── */
-.hunt-info-bar {
+/* ─── Kopfzeile (Layout #1) ──────────────────────────────────────────────── */
+.hunt-head {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  font-size: 16px;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
-    linear-gradient(rgba(8, 6, 4, 0.60), rgba(8, 6, 4, 0.60)),
-    url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  border-radius: 0;
+    linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.42);
+}
+
+.hunt-head-skill {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.hunt-head-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.hunt-head-icon img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.hunt-head-skill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.hunt-head-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.hunt-head-name {
+  font-family: var(--font-head);
+  font-size: 24px;
+  letter-spacing: 0.4px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.hunt-head-lvl {
+  font-size: 15px;
+  color: var(--accent-2);
+  white-space: nowrap;
+}
+
+.hunt-head-bar {
+  max-width: 420px;
+}
+
+.hunt-head-xp {
+  font-size: 12px;
+}
+
+.hunt-head-bait {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
 }
 
 .hunt-bait-count {
@@ -42,78 +103,85 @@
   gap: 6px;
   font-weight: 600;
   color: var(--gold);
+  white-space: nowrap;
 }
 
 .hunt-bait-count img {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
 }
 
-/* ─── Trap grid ──────────────────────────────────────────────── */
+/* ─── Fallen-Sektionstitel (nicht klappbar, nur Orientierung — Pendant zur Jagdbuch-Kopfzeile) ── */
+.hunt-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background:
+    linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)),
+    url("../assets/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+}
+
+/* ─── Fallen-Raster (Layout #2): 3×2, darunter 2×3 ──────────────────────── */
 .hunt-traps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1499px) {
   .hunt-traps {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 520px) {
   .hunt-traps {
     grid-template-columns: 1fr;
   }
 }
 
-/* ─── Trap card — wooden 9-slice frame (Muster .plot-card) ────── */
-.trap-card {
+/* ─── Fallen-Karte — Stahl-9-Slice-Panel ────────────────────────────────── */
+.hunt-trap-card {
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
-    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
-    url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  border-radius: 0;
-  overflow: hidden;
+    linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.42);
   display: flex;
   flex-direction: column;
 }
 
-.trap-card.locked {
-  filter: brightness(0.65);
+.hunt-trap-card.locked {
+  filter: brightness(0.62) saturate(0.7);
 }
 
-.trap-card.active {
-  box-shadow: 0 0 18px rgba(216, 192, 106, 0.28);
+.hunt-trap-card.active {
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.42), 0 0 18px rgba(216, 192, 106, 0.24);
 }
 
-.trap-header {
+.hunt-trap-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px 8px;
+  padding: 4px 4px 10px;
   border-bottom: 1px solid var(--border);
 }
 
-.trap-label {
+.hunt-trap-label {
   font-family: var(--font-head);
   font-size: 16px;
-  color: #9a8060;
+  color: var(--gold);
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
-.trap-lv-badge {
-  font-size: 14px;
+.hunt-trap-lv-badge {
+  font-size: 13px;
   padding: 2px 7px;
   border-radius: 3px;
   background: rgba(0, 0, 0, 0.35);
@@ -121,16 +189,8 @@
   white-space: nowrap;
 }
 
-.trap-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px 14px 14px;
-}
-
-/* Locked slot — centered lock glyph, Muster .plot-state-center */
-.trap-state-center {
+/* Gesperrter Platz: abgedunkelt (via .locked oben), Schloss + Stufen-Hinweis, sonst nichts. */
+.hunt-trap-state-center {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -138,114 +198,114 @@
   justify-content: center;
   gap: 10px;
   text-align: center;
-  min-height: 160px;
+  min-height: 180px;
+  padding: 12px 14px;
 }
 
-.trap-state-icon {
-  font-size: 40px;
+.hunt-trap-state-icon {
+  font-size: 38px;
   opacity: 0.5;
   line-height: 1;
 }
 
-.trap-state-text {
-  font-size: 15px;
-  max-width: 180px;
+.hunt-trap-state-text {
+  font-size: 14px;
+  max-width: 200px;
   line-height: 1.4;
 }
 
-/* ─── Zonen-Banner (Kartenhintergrund der gewählten/aktiven Zone) ── */
-.trap-zone-banner {
-  position: relative;
-  min-height: 72px;
+.hunt-trap-body {
+  flex: 1;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+/* Fallen-Illustration — das visuelle Zentrum der Karte (~45 % der Kartenhöhe, mittig). */
+.hunt-trap-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 168px;
+  font-size: 64px;
+}
+
+.hunt-trap-art img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Zonen-Band: 100 % Breite × 56 px, Kulisse als Kachelhintergrund + Name im Cinzel-Band. */
+.hunt-trap-zoneband {
+  position: relative;
+  height: 56px;
+  display: flex;
+  align-items: center;
   justify-content: center;
   background-size: cover;
   background-position: center;
   background-color: rgba(0, 0, 0, 0.35);
-  border: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
-.trap-zone-banner.has-bg::before {
+.hunt-trap-zoneband.has-bg::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(10, 8, 6, 0.10) 0%, rgba(10, 8, 6, 0.55) 60%, rgba(10, 8, 6, 0.90) 100%);
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.15) 0%, rgba(10, 8, 6, 0.55) 60%, rgba(10, 8, 6, 0.85) 100%);
 }
 
-.trap-banner-art {
-  font-size: 34px;
-  line-height: 1;
-  padding: 14px 0;
-}
-
-.trap-banner-art img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-}
-
-.trap-banner-name {
+.hunt-trap-zoneband-name {
   position: relative;
   z-index: 1;
   font-family: var(--font-head);
   font-size: 15px;
+  letter-spacing: 0.3px;
   color: #fff;
   text-shadow: 0 1px 4px #000;
-  padding: 4px 8px 6px;
+  padding: 0 10px;
   text-align: center;
 }
 
-.trap-no-zones {
-  font-size: 13px;
-  line-height: 1.4;
+.hunt-trap-zoneband:not(.has-bg) .hunt-trap-zoneband-name {
+  color: var(--muted);
+  text-shadow: none;
 }
 
-/* Gebiets-Auswahl (leere Karte) — schlichtes natives Select im Citadel-Ton */
-.trap-zone-select {
-  width: 100%;
-  padding: 7px 30px 7px 10px;
-  font-size: 14px;
-  font-family: inherit;
-  /* Explizite Farben statt Variablen: natives <select> fiel im Harness auf Weiß zurück (Chef-Sichtprüfung 27.08.). */
-  color: #e6dcc0;
-  background-color: #15171a;
-  background-image: linear-gradient(45deg, transparent 50%, #d4b66d 50%), linear-gradient(135deg, #d4b66d 50%, transparent 50%);
-  background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
-  border: 1px solid rgba(212, 182, 109, 0.35);
-  border-radius: 2px;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-}
-.trap-zone-select:focus { outline: none; border-color: rgba(212, 182, 109, 0.8); }
-.trap-zone-select option { background: #15171a; color: #e6dcc0; }
-
-.trap-meta {
-  font-size: 13px;
+/* Restzeit-Balken + Fangchance, eine Zeile. */
+.hunt-trap-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 20px;
 }
 
-/* ─── Restzeit-Balken ────────────────────────────────────────── */
-.trap-progress-wrap {
+.hunt-trap-progress-row--empty {
+  min-height: 4px;
+}
+
+.hunt-trap-progress-wrap {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 
-.trap-remaining {
-  font-size: 13px;
+.hunt-trap-remaining {
+  font-size: 12px;
   text-align: right;
 }
 
-/* ─── Auto-Erneuern-Schalter — Muster .plot-autoreplant ────────── */
-.trap-autorebait {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  cursor: pointer;
+.hunt-trap-chance {
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-2);
+  white-space: nowrap;
 }
 
 /* ─── Letzter Fang ───────────────────────────────────────────── */
@@ -295,6 +355,10 @@
   gap: 4px;
 }
 
+.trap-lastcatch-more {
+  font-size: 12px;
+}
+
 .trap-lastcatch-gold {
   display: inline-flex;
   align-items: center;
@@ -309,21 +373,164 @@
   object-fit: contain;
 }
 
-/* ─── Actions ────────────────────────────────────────────────── */
-.trap-actions {
+/* ─── Fußzeile: Falle stellen/Leeren links, Auto-Schalter-Chip rechts ───── */
+.hunt-trap-footer {
   margin-top: auto;
+  padding-top: 8px;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hunt-trap-auto {
+  min-width: 72px;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   JAGDBUCH
+   GEBIETSWAHL-MODAL (Layout #3) — Muster QueueAmountModal: klein, Stahlrahmen, Basalt.
    ═══════════════════════════════════════════════════════════ */
+
+.hunt-zone-modal {
+  position: relative;
+  isolation: isolate;
+  width: min(520px, calc(100vw - 32px));
+  max-height: min(78vh, 640px);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px 16px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.7)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+  color: #e6d9b8;
+  font-family: "Cinzel", "Georgia", serif;
+}
+
+.hunt-zone-modal-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-right: 28px;
+  flex: 0 0 auto;
+}
+
+.hunt-zone-modal-title {
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f0d98a;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.hunt-zone-modal-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #d8c9a2;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.hunt-zone-modal-close:hover {
+  color: #fff;
+  background: rgba(120, 30, 20, 0.7);
+}
+
+.hunt-zone-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 2px;
+}
+
+.hunt-zone-tile {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  min-height: 84px;
+  padding: 10px 14px;
+  border: 1px solid rgba(190, 160, 100, 0.35);
+  background-color: rgba(0, 0, 0, 0.4);
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: #f0e6cf;
+}
+
+.hunt-zone-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(8, 6, 4, 0.82) 0%, rgba(8, 6, 4, 0.55) 55%, rgba(8, 6, 4, 0.35) 100%);
+}
+
+.hunt-zone-tile:hover:not(.locked) {
+  border-color: rgba(240, 217, 138, 0.7);
+  box-shadow: 0 0 10px rgba(216, 192, 106, 0.3);
+}
+
+.hunt-zone-tile.locked {
+  cursor: not-allowed;
+  filter: grayscale(0.5) brightness(0.7);
+}
+
+.hunt-zone-tile-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #f0d98a;
+  text-shadow: 0 1px 3px #000;
+}
+
+.hunt-zone-tile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 12px;
+  color: #d9cba6;
+  text-shadow: 0 1px 3px #000;
+}
+
+.hunt-zone-tile-reason {
+  font-size: 12px;
+  color: #e8a08a;
+  text-shadow: 0 1px 3px #000;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   JAGDBUCH (Layout #4)
+   ═══════════════════════════════════════════════════════════ */
+
+.hunt-book-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
 .hunt-book {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
+  padding-top: 10px;
 }
 
 .hunt-book-empty {
@@ -331,22 +538,33 @@
 }
 
 .hunt-book-zone {
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
-    linear-gradient(rgba(8, 6, 4, 0.62), rgba(8, 6, 4, 0.62)),
-    url("../assets/bg_black.webp") repeat;
-  border: 1px solid var(--border);
-  padding: 10px 14px 12px;
+    linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
 }
 
 .hunt-book-zone-head {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  padding-bottom: 6px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--border);
+  gap: 10px;
+  padding: 4px 6px 4px 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.hunt-book-zone-caret {
+  color: var(--accent-2);
+  width: 14px;
+  flex: 0 0 auto;
 }
 
 .hunt-book-zone-name {
@@ -361,12 +579,16 @@
 
 .hunt-book-empty-zone {
   font-size: 13px;
+  padding: 0 6px 6px 28px;
 }
 
 .hunt-book-monsters {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 8px 6px 4px 28px;
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
 }
 
 .hunt-book-monster {
@@ -407,6 +629,7 @@
 .hunt-book-monster-name {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
   font-size: 14px;
 }
@@ -417,6 +640,10 @@
 
 .hunt-book-monster:not(.is-defeated) .hunt-book-monster-name {
   color: var(--muted);
+}
+
+.hunt-book-monster-status {
+  font-size: 12px;
 }
 
 .hunt-book-check {
@@ -440,4 +667,56 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+/* ─── Beute-Chips (Jagdbuch) — bekannt = echtes Item-Icon (Klick öffnet Item-Wiki), unbekannt =
+   „???"-Silhouette wie im Bestiarium. ─────────────────────────────────────────────────────── */
+.hunt-loot-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.hunt-loot-chip.unknown {
+  cursor: default;
+  opacity: 0.7;
+}
+
+button.hunt-loot-chip:hover {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 6px rgba(154, 128, 96, 0.3);
+}
+
+.hunt-loot-chip-img {
+  max-width: 22px;
+  max-height: 22px;
+  object-fit: contain;
+}
+
+.hunt-loot-chip-silhouette {
+  filter: brightness(0);
+  opacity: 0.6;
+}
+
+.hunt-loot-chip-emoji {
+  font-size: 16px;
+}
+
+.hunt-loot-chip-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }

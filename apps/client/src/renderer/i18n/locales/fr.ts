@@ -1400,6 +1400,12 @@ export const fr: Record<string, string> = {
     "hunting.reason.nothing_huntable": "Il n'y a encore rien à chasser ici — vaincs d'abord quelque chose ici.",
     "hunting.reason.no_bait": "Plus d'appât.",
     "hunting.reason.busy": "Piège déjà posé.",
+    "hunting.digBait": "Creuser un appât",
+    "hunting.pickZone.title": "Choisir un terrain de chasse",
+    "hunting.beatenCount": "{n}/{total} vaincus",
+    "hunting.noZoneSet": "Aucun terrain",
+    "hunting.autoChip": "Auto",
+    "hunting.book.undefeated": "Pas encore vaincu",
     "offline.hunt.title": "Chasse",
 
     // Slayer skill page

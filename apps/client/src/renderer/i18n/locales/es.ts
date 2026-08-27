@@ -1369,6 +1369,12 @@ export const es: Record<string, string> = {
     "hunting.reason.nothing_huntable": "Aquí aún no hay nada que cazar — derrota algo aquí primero.",
     "hunting.reason.no_bait": "No queda cebo.",
     "hunting.reason.busy": "La trampa ya está puesta.",
+    "hunting.digBait": "Cavar cebo",
+    "hunting.pickZone.title": "Elegir zona de caza",
+    "hunting.beatenCount": "{n}/{total} vencidos",
+    "hunting.noZoneSet": "Sin zona",
+    "hunting.autoChip": "Auto",
+    "hunting.book.undefeated": "Aún no derrotado",
     "offline.hunt.title": "Caza",
 
     "nav.slayer": "Cazador",

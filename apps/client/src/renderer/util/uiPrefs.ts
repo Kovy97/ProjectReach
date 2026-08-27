@@ -401,3 +401,20 @@ export function getCombatRecordCollapsed(): boolean {
 export function setCombatRecordCollapsed(value: boolean): void {
   localStorage.setItem(COMBAT_RECORD_COLLAPSED_KEY, value ? "1" : "0");
 }
+
+// ─── Jagdbuch-Akkordeon (1.2.0 „Fasern und Fallen", HuntingPage-Redesign) ───
+// Reine Anzeige-Vorliebe wie oben — kein Save-State-Feld, kein SAVE_VERSION-Bump. Nur die
+// äußere „Jagdbuch"-Kopfzeile wird gemerkt (Muster getQueuePanelCollapsed); die einzelnen
+// Gebiets-Zeilen darunter bleiben reiner, nicht-persistierter Component-State (starten IMMER
+// zugeklappt, Chef-Vorgabe).
+const HUNT_BOOK_COLLAPSED_KEY = "gr.huntBookCollapsed";
+
+/** Ob das Jagdbuch eingeklappt ist (Default: AUSGEKLAPPT — fehlender Key ⇒ false). */
+export function getHuntBookCollapsed(): boolean {
+  return localStorage.getItem(HUNT_BOOK_COLLAPSED_KEY) === "1";
+}
+
+/** Persistiert den Ein-/Ausklapp-Zustand des Jagdbuchs. */
+export function setHuntBookCollapsed(value: boolean): void {
+  localStorage.setItem(HUNT_BOOK_COLLAPSED_KEY, value ? "1" : "0");
+}

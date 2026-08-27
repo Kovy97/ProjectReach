@@ -307,7 +307,7 @@
       "bait_worm": 30
     },
     "bankSlotsPurchased": 0,
-    "seenDrops": {},
+    "seenDrops": { "chicken": ["feather", "raw_chicken"] },
     "seenActionDrops": {},
     "discoveredItems": {
       "rusty_sword": true
