@@ -113,17 +113,6 @@ find popups now show the item's drop rate in the bottom right corner.
 *Dev-Notiz: Toasts.tsx `note` + `dropChanceFor` (Tabellenwert ohne Segen/Glück, damit die Zahl der im Wiki entspricht),
 `.toast-note` in pages.css, Schlüssel `toast.dropRate` in 7 Sprachen.*
 
-**Champions ohne Warteschlangen-Verlust (Spieler-Feedback 27.08.):** DE: Ein Champion-Kampf ist
-jetzt ein Vorrang-Start wie Shift-Klick bei allem anderen: Die laufende Aktion oder der laufende
-Warteschlangen-Kampf wandert mit seinem Rest an die Spitze der Warteschlange und läuft nach dem Kill
-von selbst weiter. Vorher ging die laufende Aktivität verloren, und während eines Kampfes ließ sich
-der Champion gar nicht angreifen. Gesperrt bleibt nur ein bereits laufender Champion-Kampf. / EN:
-Fighting a champion now parks your running action or queued fight at the front of the queue and
-resumes it after the kill; the fight button is only locked during another champion fight.
-
-*Dev-Notiz: `startEliteCombat` (elites.ts) spiegelt insertQueueEntryAtFront Schritte 1+2 (parkRunningActivityAtFront);
-CombatPage `busy` nur bei `combat.eliteVariantId`; Test elite-queue-preserve.test.ts (4 Fälle inkl. Wiederaufnahme).*
-
 **Erfolge neu geschnitten (Chef-Entscheid 27.08.):** DE: 311 statt 537 Erfolge. Die 84 Monster-Kill-Ketten
 weichen Zonen-Bestiarium und Boss-Erfolgen, Skill-Leitern haben jetzt fünf Stufen (25/50/75/90/99),
 und Slayer, Champions, New Haven, Runen, Meisterschaft, Chronik-Kapitel und Bestiarium bekommen
