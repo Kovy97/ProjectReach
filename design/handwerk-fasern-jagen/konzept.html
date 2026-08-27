@@ -1,0 +1,170 @@
+<title>Fasern, Stoff und Jagen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #0f1112; --panel: #1a1c1c; --panel-2: #222423; --line: rgba(212, 182, 109, 0.22); --line-strong: rgba(212, 182, 109, 0.5);
+    --text: #e6dcc0; --muted: #8f8a7c; --gold: #d4b66d; --gold-soft: rgba(212, 182, 109, 0.12); --ember: #a3352a; --ember-soft: rgba(163, 53, 42, 0.16);
+    --moss: #7a9a4a; --moss-soft: rgba(122, 154, 74, 0.14);
+    --display: "Cinzel", "Times New Roman", serif; --body: "Spectral", Georgia, serif; --mono: "IBM Plex Mono", Consolas, monospace;
+  }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 48px 28px 96px; }
+  .eyebrow { font-family: var(--display); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 4vw, 44px); letter-spacing: 0.06em; margin: 8px 0 14px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 22px; letter-spacing: 0.08em; margin: 0 0 14px; color: var(--gold); text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 500; font-size: 15px; letter-spacing: 0.08em; margin: 26px 0 8px; }
+  p { margin: 0 0 12px; max-width: 72ch; }
+  .lead { font-size: 19px; max-width: 66ch; }
+  .sources { font-size: 14px; color: var(--muted); max-width: none; }
+  code { font-family: var(--mono); font-size: 0.86em; color: var(--gold); }
+  section { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .part { display: inline-block; font-family: var(--display); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--line-strong); color: var(--gold); margin-bottom: 10px; }
+  .part.hunt { color: var(--text); border-color: var(--moss); background: var(--moss-soft); }
+  .diag { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 12px; }
+  .diag div { background: var(--panel); border: 1px solid var(--line); padding: 10px 12px; }
+  .diag b { display: block; font-family: var(--display); font-size: 12px; letter-spacing: 0.08em; color: var(--muted); }
+  .diag .n { font-family: var(--mono); font-size: 22px; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .diag .n.bad { color: #d9533f; }
+  .diag small { color: var(--muted); font-size: 12.5px; }
+  .tablewrap { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 9px 10px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.dim { color: var(--muted); }
+  td.num { font-family: var(--mono); color: var(--gold); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td.old { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(163,53,42,0.6); }
+  td.new { color: var(--text); font-weight: 600; }
+  .chain { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 14px 0 6px; }
+  .link { background: var(--panel); border: 1px solid var(--line); padding: 12px 14px; position: relative; }
+  .link b { display: block; font-family: var(--display); font-size: 12px; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 4px; }
+  .link p { font-size: 14px; color: var(--muted); margin: 0; max-width: none; }
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; max-width: 800px; }
+  .steps li { counter-increment: step; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; background: var(--panel); border: 1px solid var(--line); padding: 12px 14px; font-size: 15px; }
+  .steps li::before { content: counter(step); font-family: var(--display); color: var(--gold); border: 1px solid var(--line-strong); width: 26px; height: 26px; display: grid; place-items: center; font-size: 13px; }
+  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-top: 12px; }
+  .rule { background: var(--panel-2); border: 1px solid var(--line); padding: 12px 14px; }
+  .rule b { font-family: var(--display); font-size: 13px; letter-spacing: 0.06em; }
+  .rule p { font-size: 14px; color: var(--muted); margin: 4px 0 0; max-width: none; }
+  .slots { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 4px; }
+  .slot { width: 92px; aspect-ratio: 1.1; border: 1px dashed var(--line-strong); display: grid; place-items: center; text-align: center; font-family: var(--mono); font-size: 12px; color: var(--gold); background: var(--panel); }
+  .slot small { display: block; color: var(--muted); font-family: var(--body); font-size: 12px; }
+  .decisions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 12px; }
+  .dec { background: var(--panel-2); border: 1px solid var(--line); padding: 12px 14px; }
+  .dec .id { font-family: var(--display); font-size: 12px; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 4px; }
+  .dec p { font-size: 14.5px; margin: 0; max-width: none; }
+  .dec .rec { color: var(--muted); font-style: italic; }
+</style>
+<div class="page">
+  <div class="eyebrow">Grim Reach · Handwerk und ein neuer Skill · 27. August 2026</div>
+  <h1>Fasern, Stoff und Jagen</h1>
+  <p class="lead">Handwerk fühlt sich am Anfang schlecht an, weil fast jedes Rezept Haut von erschlagenen Monstern braucht. Zwei Bausteine lösen das, ohne den Kampf zu entwerten: Fasern in fünf Stufen, die man sammelt, anbaut und zu Stoff webt, aus dem alle Magier-Roben entstehen; und Jagen als neuer Skill, der Monsterbeute passiv über Fallen liefert, mit Köder aus dem Angeln.</p>
+  <p class="sources">Textfassung: <code>design/handwerk-fasern-jagen/konzept.md</code>. Entscheidungen J1 bis J7 am Ende.</p>
+
+  <section>
+    <h2>Diagnose: Rezepte bis Stufe 30 mit Monster-Zutat</h2>
+    <div class="diag">
+      <div><b>Handwerk</b><span class="n bad">61 / 66</span><small>Rohhaut, vernarbte Haut</small></div>
+      <div><b>Runenkunst</b><span class="n">13 / 39</span><small>Frostessenz ab 10</small></div>
+      <div><b>Kochen</b><span class="n">6 / 18</span><small>Fleisch</small></div>
+      <div><b>Juwelierkunst</b><span class="n">2 / 11</span><small>Reißzahn, Seelenopal</small></div>
+      <div><b>Schmieden</b><span class="n">1 / 96</span><small>Erz aus dem Bergbau</small></div>
+      <div><b>Kräuterkunde</b><span class="n">1 / 15</span><small>Kräuter aus dem Sammeln</small></div>
+    </div>
+    <p style="margin-top:12px">Es ist kein Handwerks-Problem im Allgemeinen, es ist ein Leder-Problem: Alle 26 Roben-Rezepte von Lehrling bis Leerenweb verlangen Leder, dazu die Bogensehnen. Die Wand trifft damit auch Magie und Fernkampf.</p>
+  </section>
+
+  <section>
+    <div class="part">Teil A</div>
+    <h2>Fasern und Stoff</h2>
+    <div class="chain">
+      <div class="link"><b>Sammeln</b><p>Faser-Knoten je Stufe: Faser 60–65 %, Saat 12–15 %, wie die Kräuter-Knoten.</p></div>
+      <div class="link"><b>Anbau</b><p>Faser-Pflanzen aus der Saat, Reifezeit und Ertrag der jeweiligen Stufe.</p></div>
+      <div class="link"><b>Handwerk: Weben</b><p>Neue Kategorie, 3 Fasern → 1 Stoff, XP wie Leder gerben derselben Stufe.</p></div>
+      <div class="link"><b>Handwerk: Roben</b><p>26 Roben-Rezepte nehmen Stoff der passenden Stufe statt Leder, Mengen wie heute.</p></div>
+    </div>
+    <div class="tablewrap"><table>
+      <tr><th>Stufe</th><th>Faser</th><th>Sammeln</th><th>Anbau</th><th>Stoff (Handwerk)</th></tr>
+      <tr><td class="num">T1</td><td><b>Nesselfaser</b></td><td>Nesselgrund, Stufe 1</td><td>Nessel, Stufe 2, 10 min</td><td><b>Nesselstoff</b>, Stufe 1</td></tr>
+      <tr><td class="num">T2</td><td><b>Flachs</b></td><td>Flachsufer, Stufe 20</td><td>Flachs, Stufe 22, 20 min</td><td><b>Leinen</b>, Stufe 20</td></tr>
+      <tr><td class="num">T3</td><td><b>Dornhanf</b></td><td>Dornhanfdickicht, Stufe 40</td><td>Dornhanf, Stufe 44, 40 min</td><td><b>Dornleinen</b>, Stufe 40</td></tr>
+      <tr><td class="num">T4</td><td><b>Geisterseide</b></td><td>Geisterspinnweb-Lichtung, Stufe 60</td><td>Geisterseide-Staude, Stufe 64, 80 min</td><td><b>Geistertuch</b>, Stufe 60</td></tr>
+      <tr><td class="num">T5</td><td><b>Sternflachs</b></td><td>Sternflachs-Feld, Stufe 80</td><td>Sternflachs, Stufe 84, 160 min</td><td><b>Sternweb</b>, Stufe 80</td></tr>
+    </table></div>
+    <h3>Roben aus Stoff statt Leder</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Roben-Reihe</th><th>Handwerk</th><th>heute</th><th>neu</th></tr>
+      <tr><td>Lehrling (Hut, Robe, Hose)</td><td class="num">1–2</td><td class="old">gegerbtes Leder</td><td class="new">Nesselstoff</td></tr>
+      <tr><td>Dämmerweb (Kapuze, Robe)</td><td class="num">8–12</td><td class="old">gegerbtes Leder</td><td class="new">Nesselstoff</td></tr>
+      <tr><td>Frost (Robe, Hose)</td><td class="num">21–22</td><td class="old">gegerbtes, gehärtetes Leder</td><td class="new">Leinen</td></tr>
+      <tr><td>Glut (Kapuze, Robe, Hose), Seidenmantel</td><td class="num">30–32</td><td class="old">geschupptes Leder</td><td class="new">Leinen</td></tr>
+      <tr><td>Aether, Arkan (je Kapuze, Robe, Hose)</td><td class="num">45–58</td><td class="old">geschupptes Leder</td><td class="new">Dornleinen</td></tr>
+      <tr><td>Dämmerweb-Serie, Runenweb</td><td class="num">63–72</td><td class="old">genietetes Leder, Kriegshaut</td><td class="new">Geistertuch</td></tr>
+      <tr><td>Götzenfunken, Sternweb, Leerenweb</td><td class="num">90–99</td><td class="old">Kriegshaut</td><td class="new">Sternweb</td></tr>
+    </table></div>
+    <p style="margin-top:12px">Dazu die <b>Nessel-Sehne</b> (Handwerk 1, 2 Nesselfaser → 1 Sehne) als zweites Rezept neben der Haut-Sehne, damit Bogen ab Stufe 1 ohne Kampf gehen. Leder bleibt die Rüstung des Ausweichens, Stoff die des Schilds; die Trinität stimmt dann auch in den Zutaten. Die Frostpelz-Kapuze bleibt Pelz.</p>
+  </section>
+
+  <section>
+    <div class="part hunt">Teil B</div>
+    <h2>Jagen: passive Beute über Fallen</h2>
+    <ol class="steps">
+      <li><b>Köder holen.</b> Angeln 1, „Köder graben": 2,5 s, 1 XP, ein Köder (20 % zwei). Schnell, wenig XP, ein Vorrat für die Fallen.</li>
+      <li><b>Falle stellen.</b> Platz wählen, Gebiet wählen, ein Köder. Nur Gebiete, die im Kampf freigeschaltet sind, und nur wenn dort ein fangbares Monster schon einmal besiegt wurde.</li>
+      <li><b>Warten.</b> Feste Zeit je Gebiet, 15 Minuten bis 2 Stunden, online wie offline im Tick, wie die Beete.</li>
+      <li><b>Fang.</b> Ein zufälliges fangbares, bereits besiegtes Monster des Gebiets geht in die Falle: fünf Beute-Würfe seiner Tabelle plus Jagen-XP.</li>
+      <li><b>Erneuern.</b> Auto-Erneuern wie beim Anbau, jede Falle nimmt einen Köder; ohne Köder bleibt sie leer.</li>
+    </ol>
+    <h3>Fallenplätze nach Jagen-Stufe</h3>
+    <div class="slots">
+      <div class="slot">1<small>Stufe 1</small></div><div class="slot">2<small>Stufe 10</small></div><div class="slot">3<small>Stufe 25</small></div><div class="slot">4<small>Stufe 45</small></div><div class="slot">5<small>Stufe 65</small></div><div class="slot">6<small>Stufe 85</small></div>
+    </div>
+    <h3>Gebiete</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Gebiet</th><th>Jagen-Stufe</th><th>Fallenzeit</th><th>Fangbar heute</th></tr>
+      <tr><td>Die Weiden</td><td class="num">1</td><td class="num">15 min</td><td>Huhn, Kuh, Eber, wilde Ziege</td></tr>
+      <tr><td>Die Grenzlande</td><td class="num">10</td><td class="num">20 min</td><td class="dim">Goblins (Schlinge, s. J1)</td></tr>
+      <tr><td>Die Aschfelder</td><td class="num">20</td><td class="num">30 min</td><td>Aschratte, Schakal, Staubgeier, Moorkriecher, Pechkäfer</td></tr>
+      <tr><td>Der Schwarzdornwald</td><td class="num">30</td><td class="num">40 min</td><td>Dornwolf; Hexe (Schlinge)</td></tr>
+      <tr><td>Die Krypta</td><td class="num">40</td><td class="num">50 min</td><td class="dim">nichts Fangbares (Skelette)</td></tr>
+      <tr><td>Wildwald-Jagdgründe</td><td class="num">50</td><td class="num">60 min</td><td>Waldhase, Grauwolf, Hirsch, Schattenwolf</td></tr>
+      <tr><td>Gezeitenuntiefen</td><td class="num">60</td><td class="num">75 min</td><td>Schlammkrabbe, Tiefenkrake, Gezeitenschlange</td></tr>
+      <tr><td>Schlackengrube</td><td class="num">70</td><td class="num">90 min</td><td>Grubenspinne, Frosthund; Kobolde (Schlinge)</td></tr>
+      <tr><td>Das Hochland</td><td class="num">80</td><td class="num">105 min</td><td>Roc, Roc-Jäger, Roc-Ältester</td></tr>
+      <tr><td>Die Götzenhalle</td><td class="num">90</td><td class="num">120 min</td><td class="dim">nichts Fangbares (Konstrukte, Untote, Drazhan)</td></tr>
+    </table></div>
+    <div class="rules">
+      <div class="rule"><b>Fangbar</b><p>Familien Tier und Humanoid (Schlinge). Nie Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster, Champions. Fallen sind Jägerwerkzeug, keine zweite Kampfmaschine.</p></div>
+      <div class="rule"><b>Fangchance</b><p>70 % plus 0,5 Prozentpunkte je Jagen-Stufe über der Gebietsstufe, Deckel 95 %. Fehlschlag: Köder weg, Falle erneuert sich mit Köder von selbst.</p></div>
+      <div class="rule"><b>Beute</b><p>Fünf Würfe auf die Tabelle des Monsters (Rare-Drop-Regel gilt, Gold 5×). Eber: im Schnitt 3,5 Häute je Fang alle 15 Minuten, ohne Kampf. Keine Champion-Unikate, keine Begleiter, keine Marken.</p></div>
+      <div class="rule"><b>XP</b><p>Aus der C-600-Kurve wie Schmieden und Kochen: Weiden ~25 XP je Fang, Aschfelder ~140, Wildwald ~1 100, Hochland ~9 000. Mit sechs Fallen liegt Jagen auf der Anbau-Kurve.</p></div>
+      <div class="rule"><b>Kein Ruhm</b><p>Fänge zählen nicht als Kills: keine Slayer-Aufträge, keine Kill-Erfolge, kein Bestiarium-Zähler. Jagen ist Beute, Kampf bleibt Fortschritt.</p></div>
+      <div class="rule"><b>Gesamtlevel</b><p>Ein neuer Skill hebt das erreichbare Gesamtlevel um 99; Dailies-Deckel, Tavernen-Bänder und Gesamtlevel-Erfolge ziehen nach. Kein Steam-Erfolg, das Set ist eingefroren.</p></div>
+    </div>
+    <h3>Oberfläche</h3>
+    <p>Seite „Jagen" nach dem Muster der Anbau-Seite: sechs Fallenplätze als Karten (Gebiet, Restzeit, Köder, Auto-Erneuern, letzter Fang), Köder-Zähler oben, daneben das <b>Jagdbuch</b>: je Gebiet die fangbaren Monster mit Häkchen „schon besiegt" aus dem Bestiarium und ihren Beutezeilen. Der Offline-Bericht listet Fänge. Sidebar-Eintrag hinter Angeln, Icon von Mira.</p>
+  </section>
+
+  <section>
+    <h2>Technik und Aufwand</h2>
+    <div class="rules">
+      <div class="rule"><b>Content</b><p>5 Fasern, 5 Saaten, 5 Stoffe, 5 Pflanzen, 5 Sammel-Knoten, 5 Web-Rezepte, Nessel-Sehne, 26 Roben-Rezepte umgestellt, Skill Jagen (trainiert Geschick), Köder und Angel-Aktion, Gebietstabelle.</p></div>
+      <div class="rule"><b>Engine</b><p><code>state.huntTraps[6]</code>, Tick wie die Beete (offline == online, bit-identisch), Fang-Wurf über <code>state.rng</code> in fester Reihenfolge, Beute über <code>grantLoot</code>. <code>SAVE_VERSION 85</code> mit Migration und Sanitize.</p></div>
+      <div class="rule"><b>Client</b><p><code>HuntingPage</code> nach FarmPage, Sidebar, Offline-Bericht, Jagdbuch aus Bestiarium-Daten, sieben Sprachen.</p></div>
+      <div class="rule"><b>Mira</b><p>Icons: Fasern ×5, Stoffe ×5, Köder, Falle, Sidebar-Icon Jagen, Sammel-Knoten-Karten ×5.</p></div>
+      <div class="rule"><b>Aufwand</b><p>Content 1 Tag, Engine 1 bis 2 Tage, UI 2 Tage, Tests und Sim 1 Tag. Passt in 1.2.0 neben die Taverne, ein Save-Bump für beides.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Entscheidungen des Chefs</h2>
+    <div class="decisions">
+      <div class="dec"><div class="id">J1 · Fangbar</div><p>Tiere und Humanoide (Schlinge), nie Untote, Konstrukte, Dämonen, Drachen, Bosse? Oder nur Tiere?</p><p class="rec">Empfehlung: Tiere und Humanoide; sonst haben Grenzlande und Schlackengrube nichts zu fangen.</p></div>
+      <div class="dec"><div class="id">J2 · Ruhm</div><p>Fänge zählen nicht als Kills, oder doch für Bestiarium und Slayer?</p><p class="rec">Empfehlung: nicht; Kampf bleibt der einzige Fortschrittsweg.</p></div>
+      <div class="dec"><div class="id">J3 · Plätze</div><p>Sechs Plätze mit Freischaltung 1/10/25/45/65/85, oder neun wie beim Anbau?</p><p class="rec">Empfehlung: sechs; die Beute ist reicher als eine Ernte.</p></div>
+      <div class="dec"><div class="id">J4 · Chance</div><p>70 % plus Stufenbonus oder garantierter Fang?</p><p class="rec">Empfehlung: Chance; sie macht die Jagen-Stufe spürbar.</p></div>
+      <div class="dec"><div class="id">J5 · Fasern</div><p>Fünf Stufen mit diesen Namen: Nessel, Flachs, Dornhanf, Geisterseide, Sternflachs?</p><p class="rec">Empfehlung: so; Lore-Namen kann lore-dev noch schleifen.</p></div>
+      <div class="dec"><div class="id">J6 · Sehne</div><p>Nessel-Sehne als kampffreie Alternative für Bogen ab Stufe 1?</p><p class="rec">Empfehlung: ja, Fernkampf hängt sonst weiter an Haut.</p></div>
+      <div class="dec"><div class="id">J7 · Version</div><p>Beides in 1.2.0 zusammen mit der Taverne?</p><p class="rec">Empfehlung: ja, ein Save-Bump für alles.</p></div>
+    </div>
+  </section>
+</div>
