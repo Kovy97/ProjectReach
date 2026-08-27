@@ -1,3 +1,8 @@
+> **Chef-Entscheidungen 27.08.2026:** D1 eindampfen wie empfohlen (537 → ~330). D2 KEINE XP-Meilensteine („Ich kann von keinem
+> Spieler 1000 h für 100 % verlangen; Erfolge müssen bestehen bleiben und werden später nicht erweitert.“). Steam-Set damit 70
+> Erfolge, Stufe 99 ist die Spitze. D3 Vitalität kein Retune (levelt über alle Stile), Bannmagie nachziehen (nur defensive Magie).
+> Der Chef kreuzt in der HTML-Checkliste an, welche der 70 bleiben; das Ergebnis kommt zurück.
+
 # Achievements 1.2.0 — Audit, In-Game-Vorschlag, Steam-Set
 
 Autor: balance-designer · Stand: 27.08.2026 · Status: ENTWURF für den Chef (kein Code, kein Content geändert)
