@@ -1,0 +1,134 @@
+<title>Völker und Gäste der Taverne</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #0f1112; --panel: #1a1c1c; --panel-2: #222423; --line: rgba(212, 182, 109, 0.22); --line-strong: rgba(212, 182, 109, 0.5);
+    --text: #e6dcc0; --muted: #8f8a7c; --gold: #d4b66d; --gold-soft: rgba(212, 182, 109, 0.12); --ember: #a3352a; --ember-soft: rgba(163, 53, 42, 0.16);
+    --display: "Cinzel", "Times New Roman", serif; --body: "Spectral", Georgia, serif; --mono: "IBM Plex Mono", Consolas, monospace;
+  }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 48px 28px 96px; }
+  .eyebrow { font-family: var(--display); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 4vw, 44px); letter-spacing: 0.06em; margin: 8px 0 14px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 22px; letter-spacing: 0.08em; margin: 0 0 14px; color: var(--gold); text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 500; font-size: 15px; letter-spacing: 0.08em; margin: 22px 0 8px; }
+  p { margin: 0 0 12px; max-width: 72ch; }
+  .lead { font-size: 19px; max-width: 66ch; }
+  .muted { color: var(--muted); }
+  section { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .tablewrap { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 9px 10px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.dim { color: var(--muted); }
+  td.name { white-space: nowrap; font-weight: 600; }
+  td.num { font-family: var(--mono); color: var(--gold); white-space: nowrap; }
+  td.voice { font-style: italic; color: var(--text); }
+  .tag { display: inline-block; font-family: var(--display); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 7px; border: 1px solid var(--line-strong); color: var(--gold); background: var(--gold-soft); white-space: nowrap; }
+  .tag.new { color: var(--text); border-color: var(--ember); background: var(--ember-soft); }
+  .peoples { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 14px; }
+  .people { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; }
+  .people h3 { margin: 0 0 4px; }
+  .people .size { font-family: var(--mono); font-size: 12px; color: var(--gold); }
+  .people p { font-size: 14.5px; color: var(--muted); margin: 6px 0 0; max-width: none; }
+  .objects { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 12px; }
+  .obj { background: var(--panel-2); border: 1px solid var(--line); padding: 12px 14px; }
+  .obj b { font-family: var(--display); font-size: 13px; letter-spacing: 0.06em; }
+  .obj p { font-size: 14px; color: var(--muted); margin: 4px 0 0; max-width: none; }
+  .decisions { display: grid; gap: 10px; margin-top: 12px; }
+  .dec { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: start; background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; }
+  .dec .id { font-family: var(--display); color: var(--gold); font-size: 16px; letter-spacing: 0.06em; }
+  .dec p { margin: 0; max-width: none; }
+  .sources { font-size: 14px; color: var(--muted); }
+  .sources code { font-family: var(--mono); font-size: 13px; color: var(--text); }
+</style>
+
+<div class="page">
+  <div class="eyebrow">Grim Reach · Die Taverne · 27. August 2026</div>
+  <h1>Völker und Gäste der Taverne</h1>
+  <p class="lead">Deine Entscheidungen sind eingearbeitet: Die Taverne ist baubar, die Dailies wandern als Anschlagtafel hinein, alles Klickbare ist ein eigenes Objekt, die Wirtin ist eine neue Figur. Hier zuerst die Völker des Reachs, dann ein Gast je Beruf mit Name, Volk, Aussehen, Wesen, Auftragsbogen und Stimme. Wenn du die Gäste freigibst, folgen die Aufträge mit Zahlen.</p>
+  <p class="sources">Textfassung: <code>design/1.2.0-alive/taverne-voelker-und-gaeste.md</code>. Grundlage: Lore-Bibel § 3.4 und Charakter-Kodex § 2 (Juli), plus Miras Elfen.</p>
+
+  <section>
+    <h2>Die Völker: neun stehen schon</h2>
+    <p>Der Kanon von Juli kennt mehr Völker, als bisher Artwork haben. Zusammen mit Miras Elfen sind es neun, genug, um jeden Beruf mit einem eigenen Gesicht zu besetzen, ohne dass sich zwei Gäste gleichen. Größen und Merkmale sind für Mira verbindlich.</p>
+    <div class="peoples">
+      <div class="people"><h3>Menschen</h3><div class="size">1,70–1,90 m</div><p>Das Volk des Reachs. Wettergegerbt, Narben-Kultur, volles Spektrum. Bauern, Grabwächter-Erben, Schmiede, Schreiber.</p></div>
+      <div class="people"><h3>Elfen <span class="tag new">neu im Kanon</span></h3><div class="size">1,80–1,95 m</div><p>Vorschlag: das Waldvolk der alten königlichen Jagdgründe (Wildwald, Schwarzdorn), das den Wald nie verließ. Spitze Ohren, feine Züge, alle Hauttöne. Jäger, Kräuterkunde, Bogenbau, das Gedächtnis des Waldes. Miras 60 Porträts liegen vor.</p></div>
+      <div class="people"><h3>Orks</h3><div class="size">~2,10 m</div><p>Sippenvolk der Grenzlande, seit Generationen Mitbauer des Walls. Dunkelolive bis graugrüne Haut, kurze Hauer. Eisen, Holz, Stein; wortkarg, unbestechlich (Urga).</p></div>
+      <div class="people"><h3>Rakhari</h3><div class="size">~1,90 m</div><p>Tiger-Menschen der verbrannten Karawanenheimat: Fell sand/rost mit Streifen, senkrechte Pupillen, Kopf nah am Menschen. Saatgut, Geduld, Handel, Jagd (Shairi).</p></div>
+      <div class="people"><h3>Goblins (Freie)</h3><div class="size">~1,50 m</div><p>Abtrünnige der Kriegsbande, moosgrüne Haut, große Ohren. Handel, Schleichen, Tüftelei (Mux).</p></div>
+      <div class="people"><h3>Duvra, das Tiefenvolk</h3><div class="size">1,40–1,50 m, fassbreit</div><p>Graue Steinhaut mit Mineral-Sprenkeln, schwere Brauen. Halb in den Wall gegraben. Bergbau, Waffen; Schulden und Adern im selben Buch.</p></div>
+      <div class="people"><h3>Sesskar, das Salzvolk</h3><div class="size">~1,80 m</div><p>Feine graublaue Schuppenhaut, Flossenkämme statt Haar, Kiemenlinien. Fischzug, Kähne, der Gezeitenzähler.</p></div>
+      <div class="people"><h3>Aschgänger</h3><div class="size">~1,90 m, hager</div><p>Blassgraue Haut mit Asche-Sprenkeln, früh weißes Haar. Die Kärrner der Toten, Register, Gehen durch das Grau der Aschfelder.</p></div>
+      <div class="people"><h3>Faryn, das Klippenvolk</h3><div class="size">2,00–2,10 m</div><p>Fast weiße Haut, silbernes Haar mit Knochen- und Federringen. Hochland, Wetter, Seilkunst, das älteste Verhältnis zu Runen und zum „Tuch".</p></div>
+    </div>
+    <h3>Zwei Vorschläge für später, nur wenn du sie willst</h3>
+    <div class="peoples">
+      <div class="people"><h3>Die Gebrannten</h3><div class="size">Menschen und Orks, vom Fel-Feuer gezeichnet</div><p>Glutrote Narbenadern an Hals und Händen, Funkenring in den Augen. Gefürchtet, weil man ihnen den Dämon ansieht; nützlich, weil nur sie mit Fel-Feuer umgehen. Hexenmeister, Feuerkunde, heiße Öfen. Gibt Slayer-Turm und Aschfeldern eine moralische Kante.</p></div>
+      <div class="people"><h3>Die Halbriesen</h3><div class="size">~2,40 m</div><p>Nachfahren der Riesen des Wildwalds (Kapitel 12), langsam, sehr höflich, bauen, was sonst niemand hebt. Baumeister, Steinmetz, Holzfäller. Ein Gast, der am Tresen stehen muss, weil kein Stuhl passt.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Die Gäste: ein Gesicht je Beruf</h2>
+    <p>Jeder Gast ist eine Person mit festem Volk und Geschlecht, damit Mira eine Figur je Gast malt; die Zufalls-Namen aus dem ersten Konzept entfallen. Gäste kommen wieder, und ihre Aufträge steigen an. Reihenfolge = Vorschlag für Miras Serie.</p>
+    <div class="tablewrap"><table>
+      <tr><th>#</th><th>Gast</th><th>Volk</th><th>Beruf</th><th>Aussehen</th><th>Wesen</th><th>Auftragsbogen</th><th>Stimme</th></tr>
+      <tr><td class="num">1</td><td class="name">Halvard Kessel<br><span class="dim">Halvard Kettle</span></td><td>Mensch, m, 52</td><td>Wirt</td><td class="dim">Breiter Mann mit Lederschürze, Unterarme wie Fässer, grauer Zopfbart, ein Auge milchig</td><td class="dim">Hört alles, sagt wenig, vergisst keine Schuld</td><td class="dim">Kein Auftrag; begrüßt, erklärt, verkauft später Getränke</td><td class="voice">„Setz dich. Wer hier sitzt, redet. Wer redet, bleibt."</td></tr>
+      <tr><td class="num">2</td><td class="name">Viktor Dornhauer<br><span class="dim">Viktor Thornhewer</span></td><td>Mensch, m, 41</td><td>Slayer</td><td class="dim">Kettenhemd unter Wolfsfell, drei Krallennarben quer über die Wange, Kurzschwert</td><td class="dim">Ruhig, zählt Köpfe wie andere Münzen</td><td class="dim">Wölfe → Grabräuber → ein Champion → Turm-Etage → „die Sache mit dem Geier"</td><td class="voice">„Die Geier werden dreist. Zwanzig Köpfe, und ich zahle."</td></tr>
+      <tr><td class="num">3</td><td class="name">Billy Furchenkraut<br><span class="dim">Billy Furrowweed</span></td><td>Mensch, m, 29</td><td>Bauer</td><td class="dim">Sonnenrot, Strohhut, Erde bis zu den Ellbogen, breites Grinsen</td><td class="dim">Redet mit seinen Beeten, hält jeden für einen Freund</td><td class="dim">Kohl ernten → voller Zyklus → Götteratem → drei Sorten an einem Tag</td><td class="voice">„Meine Beete stehen voll und ich hab nur zwei Hände."</td></tr>
+      <tr><td class="num">4</td><td class="name">Grumm Tiefenschlag<br><span class="dim">Grumm Deepstrike</span></td><td>Duvra, m, 88</td><td>Bergarbeiter</td><td class="dim">Fassbreit, Steinhaut mit Kupfersprenkeln, Spitzhacke mit Kerben für jede Ader</td><td class="dim">Zählt Schulden und Adern im selben Buch, lacht nie, meint es gut</td><td class="dim">Kupfer → Eisen → Kohle-Flöz → Mithril → „die kalte Ader"</td><td class="voice">„Metall lügt nicht. Bring mir vierzig Barren, dann reden wir."</td></tr>
+      <tr><td class="num">5</td><td class="name">Brakka Eichenspalt<br><span class="dim">Brakka Oakcleft</span></td><td>Ork, w, 46</td><td>Holzfällerin</td><td class="dim">Zwei Meter, Axt so lang wie ein Kind, Zöpfe mit Eisenperlen</td><td class="dim">Wortkarg, prüft jedes Holz mit dem Daumen</td><td class="dim">Eiche → Schwarzdorn-Holz → Riesenholz → „das Holz, das nicht brennt"</td><td class="voice">„Zu weich. Bring Härteres."</td></tr>
+      <tr><td class="num">6</td><td class="name">Nessu Gezeitenknoten<br><span class="dim">Nessu Tideknot</span></td><td>Sesskar, w, 34</td><td>Fischerin</td><td class="dim">Graublaue Schuppen, Flossenkamm mit Knotenschnur, Reuse über der Schulter</td><td class="dim">Zählt Fluten, kurze Sätze, vergisst keinen Namen</td><td class="dim">Forelle → Blutfang-Aal → Geisterschupper → Seelenfisch → „der Fang der Ertrunkenen"</td><td class="voice">„Die Flut nimmt, die Flut gibt. Heute gibt sie. Nutz es."</td></tr>
+      <tr><td class="num">7</td><td class="name">Tamsin Mondfell<br><span class="dim">Tamsin Moonpelt</span></td><td>Rakhari, w, 22</td><td>Sammlerin</td><td class="dim">Sandfarbenes Fell, rostrote Streifen, Korb voller Kräuter, barfuß; Shairis Nichte</td><td class="dim">Neugierig, schnell, hält Geduld für eine Kunst, die sie noch lernt</td><td class="dim">Beeren → Grabmoos → Nachtblüte → Götteratem → „ein Korb für die Alte"</td><td class="voice">„Die Alte sagt, ich soll Geduld lernen. Hilf mir schummeln."</td></tr>
+      <tr><td class="num">8</td><td class="name">Ilvara Dornlied<br><span class="dim">Ilvara Thornsong</span></td><td>Elfe, w, 130</td><td>Kräuterkundige</td><td class="dim">Hochgewachsen, Haar mit Efeu, Mörser am Gürtel, Hände grün vom Saft</td><td class="dim">Spricht leise, kennt jede Pflanze beim alten Namen</td><td class="dim">Heiltrank → Tonikum → Gegengift → Elixier → „das Rezept aus dem Königswald"</td><td class="voice">„Der Wald erinnert sich an Rezepte, die ihr vergessen habt."</td></tr>
+      <tr><td class="num">9</td><td class="name">Odo Salzbart<br><span class="dim">Odo Saltbeard</span></td><td>Mensch, m, 60</td><td>Koch</td><td class="dim">Rund, rote Wangen, Kelle im Gürtel wie ein Schwert</td><td class="dim">Laut, gutmütig, beleidigt, wenn jemand rohes Fleisch isst</td><td class="dim">Eintopf → Braten → Festmahl → „das Bankett für die Wache"</td><td class="voice">„Die Wache frisst rohes Fleisch. Das ist eine Schande. Hilf mir."</td></tr>
+      <tr><td class="num">10</td><td class="name">Dashk Kohlenzahn<br><span class="dim">Dashk Coaltooth</span></td><td>Ork, m, 24</td><td>Schmied</td><td class="dim">Schlank für einen Ork, Brandflecken auf den Armen, Hammer über der Schulter; Urgas Lehrling</td><td class="dim">Will Urga beeindrucken, redet zu schnell</td><td class="dim">Barren → Bronze-Rüstung → Stahlklinge → Grabstahl → „das Stück, das Urga sehen soll"</td><td class="voice">„Urga sagt, Stahl hört auf Geduld. Ich hab keine. Du?"</td></tr>
+      <tr><td class="num">11</td><td class="name">Merrit Feinschliff<br><span class="dim">Merrit Finehone</span></td><td>Duvra, w, 71</td><td>Waffenschmiedin</td><td class="dim">Klein, breit, Lupe am Band, Finger voller Feilspäne</td><td class="dim">Verachtet stumpfe Klingen mehr als Feinde</td><td class="dim">Dolch → Schwert → Streitaxt → Mithril-Waffe → „die Klinge für den Turm"</td><td class="voice">„Eine Klinge ohne Schneide ist ein Stock mit Ausreden."</td></tr>
+      <tr><td class="num">12</td><td class="name">Kell Narbenhaut<br><span class="dim">Kell Scarhide</span></td><td>Rakhari, m, 38</td><td>Lederarbeiter</td><td class="dim">Fell mit Kerben, Lederschürze, Ahle hinter dem Ohr</td><td class="dim">Sachlich, riecht Leder wie andere Wein</td><td class="dim">Kuhleder → Wildleder → Bärenhaut → Krakenhaut → „die Haut des Champions"</td><td class="voice">„Gutes Leder hat eine Geschichte. Bring mir eine."</td></tr>
+      <tr><td class="num">13</td><td class="name">Sefra Windring<br><span class="dim">Sefra Windring</span></td><td>Faryn, w, 90</td><td>Juwelierin</td><td class="dim">Über zwei Meter, silbernes Haar mit Federringen, Hände wie Vogelknochen</td><td class="dim">Sagt Sätze erst, wenn sie fertig sind</td><td class="dim">Kupferring → Granat-Amulett → Saphir → Diamant → „der Ring für den Wind"</td><td class="voice">„Ein Stein trägt Wetter. Schleif ihn richtig."</td></tr>
+      <tr><td class="num">14</td><td class="name">Orin Tuchleser<br><span class="dim">Orin Clothreader</span></td><td>Faryn, m, 140</td><td>Runenhandwerker</td><td class="dim">Hager, weiße Haut, Runenstaub im Bart, Blick nach oben</td><td class="dim">Nennt den Schleier das Tuch und die Runen Nähte</td><td class="dim">Essenz → Runen der Stärke → Bewahrende Rune → Tier-IV-Rune → „die Naht im Tuch"</td><td class="voice">„Das Tuch reißt oben. Näh mir etwas, das hält."</td></tr>
+      <tr><td class="num">15</td><td class="name">Wenna Grauhand<br><span class="dim">Wenna Greyhand</span></td><td>Aschgängerin, w, 44</td><td>Verzauberin</td><td class="dim">Aschesprenkel um die Augen, weißes Haar, Handschuhe, die sie nie auszieht</td><td class="dim">Ruhig, langsam, spricht zuerst mit den Toten, dann mit dir</td><td class="dim">Erste Verzauberung → Suffix-Rolle → Runen stapeln → Legendär → „das Stück für einen Toten"</td><td class="voice">„Die Toten fragen nicht nach Preisen. Ich schon."</td></tr>
+      <tr><td class="num">16</td><td class="name">Pim Zwölffinger<br><span class="dim">Pim Twelvefingers</span></td><td>Goblin (frei), m, 31</td><td>Dieb</td><td class="dim">Klein, Messingringe im Ohr, zu viele Taschen, ehrliches Grinsen</td><td class="dim">Stiehlt nur von denen, die es verdienen, sagt er</td><td class="dim">Taschen in den Weiden → Karawane → Krypta-Wächter → Turm → „das Ding aus der Idol-Halle"</td><td class="voice">„Niemand vermisst, was er nie gezählt hat."</td></tr>
+      <tr><td class="num">17</td><td class="name">Torvald Balkenmaß<br><span class="dim">Torvald Beammeasure</span></td><td>Mensch, m, 57</td><td>Baumeister</td><td class="dim">Zollstock im Gürtel, Sägemehl im Haar, Brille auf der Stirn</td><td class="dim">Misst zweimal, baut einmal, flucht auf Nägel</td><td class="dim">Balken liefern → Wachturm-Material → Vorratsspeicher → Zentralhaus → „das Dach, das hält"</td><td class="voice">„Ein Haus ist ein Versprechen aus Holz. Bring mir Holz."</td></tr>
+      <tr><td class="num">18</td><td class="name">Der Fremde<br><span class="dim">The Stranger</span></td><td>Aschgänger, m, unbekannt</td><td>Generisch (Schwarzmarkt)</td><td class="dim">Kapuze, Aschesprenkel an den Händen, ein Sack, der sich bewegt</td><td class="dim">Sagt nie seinen Namen, zahlt in Behältern</td><td class="dim">Dungeon → Champion → Turm-Etage → Idol-Halle → „was im Sack ist"</td><td class="voice">„Ich frage nicht, woher. Du fragst nicht, wohin."</td></tr>
+      <tr><td class="num">19</td><td class="name">Ashka Sandlauf<br><span class="dim">Ashka Sandrun</span></td><td>Rakhari, w, 49</td><td>Generisch (Karawane)</td><td class="dim">Rostrotes Fell, Wüstentuch, Ledertasche mit Siegeln; Karawanenführerin</td><td class="dim">Handelt hart, hält Wort, lacht laut</td><td class="dim">Sortiment → Kohle für den Treck → Proviant → seltene Ware → „die Ladung, die keiner fahren will"</td><td class="voice">„Drei Waren, gute Ware, und ich vergesse deinen Namen nicht."</td></tr>
+      <tr><td class="num">20</td><td class="name">Rona Steinlied<br><span class="dim">Rona Stonesong</span></td><td>Duvra, w, 35</td><td>Sängerin (Phase 2)</td><td class="dim">Kurz, breit, Laute aus Grubenholz</td><td class="dim">Singt unter Tage, weil das Lied die Richtung hält</td><td class="dim">Phase 2: Getränke und Segen</td><td class="voice">„Ein Lied, ein Krug, ein Weg."</td></tr>
+    </table></div>
+    <p class="muted" style="margin-top:12px">Zusammen: 9 Völker, 17 Berufsgäste (15 Berufe + Slayer + Wirt), 2 generische Auftraggeber, 1 Reserve für Phase 2.</p>
+  </section>
+
+  <section>
+    <h2>Die Objekte der Taverne</h2>
+    <p>Alles, was man anklicken kann, ist ein eigenes Objekt mit eigener Karte im Stahlrahmen.</p>
+    <div class="objects">
+      <div class="obj"><b>Gast (Platz 1–4)</b><p>Gäste-Karte: Porträt, Anliegen, aktueller Auftrag der Reihe, Annehmen, Ablehnen, „In die Warteschlange".</p></div>
+      <div class="obj"><b>Anschlagtafel</b><p>Die täglichen Aufgaben als Zettel an der Wand: heutiges Brett, Einlösen, Tagesabschluss. Deckel wie 1.1.0.</p></div>
+      <div class="obj"><b>Tresen, Halvard</b><p>Begrüßung, Erklärung beim ersten Besuch, ein Satz zur Lage. Phase 2: Getränke.</p></div>
+      <div class="obj"><b>Kamin</b><p>Chronik-Zeile des Tages (Segen, Lage); später Erzähl-Gäste.</p></div>
+      <div class="obj"><b>Tür</b><p>Zurück nach New Haven.</p></div>
+      <div class="obj"><b>Der Sack des Fremden</b><p>Nur wenn er da ist: Schwarzmarktbehälter öffnen.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Schwarzmarktbehälter</h2>
+    <p>Item <code>black_market_crate</code> in Stufen I bis V nach Level-Band, stapelbar und Bank-fähig. Herkunft: Belohnung der generischen Gäste (Fremder, Karawane) und <b>10 Prozent Zusatzchance bei jedem abgegebenen Auftrag</b>, gewürfelt über den Welt-Seed, offline gleich live. Inhalt beim Öffnen: ein sicheres Bündel des Bands (Rohstoffe oder Barren), ein Ausrüstungsstück aus dem Drop-Pool des Bands nach der Rare-Drop-Regel, mit 10 Prozent ein Champion-Unikat des freigeschalteten Pools, mit 5 Prozent eine Rune, mit 2 Prozent ein Andenken. Kein Gold, keine Marken, damit die Ökonomie hält. Öffnen über die Tasche wie Truhen oder am Sack des Fremden, Ergebnis als kleine Zeremonie.</p>
+  </section>
+
+  <section>
+    <h2>Aufträge, sobald die Gäste stehen</h2>
+    <p>Je Gast drei bis fünf Aufträge in fester Reihenfolge; der nächste wird sichtbar, wenn der vorige abgegeben ist. Ziel immer machbar mit dem aktuellen Skill oder höchstens fünf Stufen darüber (dann steht „Stufe 32 nötig, du bist 27" auf der Karte, und der Auftrag bleibt liegen, bis es reicht). Belohnung immer Gold plus passende Rohstoffe plus Skill-XP; generische Gäste zahlen Behälter. Zwischen zwei Aufträgen desselben Gastes liegt ein Tag, damit die Reihe nicht an einem Abend leergespielt wird. Die Zahlen je Band rechne ich nach deiner Freigabe.</p>
+  </section>
+
+  <section>
+    <h2>Fragen an dich</h2>
+    <div class="decisions">
+      <div class="dec"><div class="id">F1</div><p><b>Elfen</b> als Waldvolk der Königsjagdgründe in den Kanon (Bibel-Absatz folgt)?</p></div>
+      <div class="dec"><div class="id">F2</div><p>Reichen die <b>neun Völker</b>, oder willst du <b>Gebrannte</b> und/oder <b>Halbriesen</b> dazu, jetzt oder später?</p></div>
+      <div class="dec"><div class="id">F3</div><p><b>Gäste 1–19</b> so freigeben, Namen ändern, Völker tauschen? Danach schreibe ich die Aufträge mit Zahlen und den Mira-Auftrag.</p></div>
+      <div class="dec"><div class="id">F4</div><p><b>Rona (20)</b> als Reserve für Phase 2, oder soll Mira sie gleich mitmalen?</p></div>
+    </div>
+  </section>
+</div>
