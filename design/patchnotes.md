@@ -12,6 +12,16 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
 
+**New Haven: Baukosten zeigen die richtige Item-Karte (Steam-Forum L1GR, 27.08., Hotfix-Kandidat 1.1.2):**
+DE: Die Material-Chips an Gebäudekarten und im Baumenü zeigten beim Überfahren nur einen Flavor-Text statt
+der Item-Karte, die es überall sonst gibt; wer wissen wollte, woher Grabessenz kommt, fand dort keinen
+Weg. Jetzt erscheint die normale Item-Karte mit dem Fragezeichen, und ein Klick auf den Chip öffnet direkt
+das Item-Wiki mit allen Quellen und Dropchancen. / EN: Building cost chips in New Haven now show the
+standard item card (with the wiki button) on hover, and a click opens the item wiki directly.
+
+*Dev-Notiz: NewHavenPage.tsx BuildingCardImpl + BuildMenu nutzen useItemTooltip (show/hide) statt HoverTip/matChipTip;
+Klick → openItemWikiModal (seit f60e088). Harness `_nh-chip-tooltip.mjs`: itip-card + itip-wiki-btn sichtbar.*
+
 **Orks in der Charaktererstellung (Mira, 27.08.):** DE: Neben Menschen und Elfen gibt es jetzt Orks: 30
 Archetypen, je männlich und weiblich, 60 neue Porträts im gleichen Stil. Rassen-Filter „Ork" in der
 Charaktererstellung und im Porträt-Wechsler; die Ork-Gäste der Taverne (Grumm, Brakka, Dashk, Kell) tragen

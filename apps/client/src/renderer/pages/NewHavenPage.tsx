@@ -71,6 +71,7 @@ import { CampBoostNote } from "../components/CampBoostNote";
 import { formatEta } from "../util/actionRate";
 import { registerEscCloser } from "../util/escStack";
 import { openItemWikiModal } from "../components/ItemWikiModal";
+import { useItemTooltip } from "../components/ItemTooltip";
 import {
   getCampImage,
   getCampCardFit,
@@ -160,25 +161,6 @@ function roman(level: number): string {
   return ROMAN[Math.max(0, Math.min(ROMAN.length - 1, Math.floor(level)))] ?? String(level);
 }
 
-/**
- * Tooltip-Inhalt für einen Mat-Chip (Baukosten): Item-Name + Beschreibung, falls im Content
- * vorhanden (`ItemDef.description`, LocalizedString, existiert an ~40 New-Haven-Baumaterialien
- * inkl. allen drei Timber-Stufen) — dasselbe `ct-tip-title`/`ct-tip-desc`-Paar, das jeder andere
- * Item-Tooltip im Spiel nutzt. Release-Fix-Welle 0.3.0 Fix 1: vorher hatte NUR die Listenkarte
- * (`BuildingCardImpl`) diesen Hinweis, das Kachel-Baumenü (`BuildMenu`, die Default-Ansicht!)
- * zeigte reine Zahlen-Chips ohne jeden Hinweis, woher das Material kommt. Beide Stellen rufen
- * jetzt diese eine Funktion statt zweier Kopien, die auseinanderlaufen können.
- */
-function matChipTip(itemId: string, tr: (value: LocalizedString) => string): JSX.Element | string {
-  const item = content.items[itemId];
-  if (!item) return itemId;
-  return (
-    <>
-      <span className="ct-tip-title">{tr(item.name)}</span>
-      {item.description && <span className="ct-tip-desc">{tr(item.description)}</span>}
-    </>
-  );
-}
 
 // ── Wirkungs-Texte ──────────────────────────────────────────────────────────────────────────────
 //
@@ -628,6 +610,8 @@ function BuildingCardImpl({
   onBuildOverride,
   onNavigate,
 }: CardProps): JSX.Element {
+  // Steam-Forum 27.08.2026 (L1GR): Kosten-Chips zeigen die STANDARD-Item-Karte (mit Wiki-Knopf).
+  const tooltip = useItemTooltip();
   const { t, tr } = useI18n();
   const building = jobRemainingMs >= 0;
   const targetLevel = building ? jobTargetLevel : level + 1;
@@ -730,21 +714,21 @@ function BuildingCardImpl({
                 const item = content.items[cost.itemId];
                 const img = getItemImage(cost.itemId);
                 return (
-                  <HoverTip
+                  <div
                     key={cost.itemId}
                     className={debugFreeBuild || owned >= cost.qty ? "mat-chip" : "mat-chip lacking"}
-                    focusable
                     role="button"
-                    // Release-Fix-Welle 0.3.0 Fix 2 (Erstkontakt): bisher nur der Item-Name — ein
-                    // frischer Spieler sah "Timber Beam" ohne jeden Hinweis, woher das Teil kommt.
-                    // `matChipTip` hängt die Beschreibung (falls vorhanden) jetzt darunter an —
-                    // dieselbe Funktion bedient auch die Baumenü-Chips weiter unten (Fix 1).
-                    content={matChipTip(cost.itemId, tr)}
-                    // Chef-Bug 27.08.2026: die Bau-Materialien waren nur ein Tooltip, kein Klick —
-                    // ein Spieler konnte ihre Quelle nicht nachschlagen. Klick öffnet jetzt direkt
-                    // das Item-Wiki (dasselbe Muster wie ItemTooltip.tsx' Wiki-Knopf), der Hover-
-                    // Tooltip (`matChipTip` oben) bleibt unverändert.
-                    onClick={() => openItemWikiModal(cost.itemId)}
+                    tabIndex={0}
+                    // Steam-Forum 27.08.2026 (L1GR, 1.1.1): „there is a popup, but not that one with the ? mark“ —
+                    // die Bau-Materialien zeigten den Flavor-Tooltip (CitadelTip) statt der Item-Karte. Jetzt beim
+                    // Hover die STANDARD-Item-Karte wie überall (mit Wiki-Knopf); Klick öffnet weiterhin direkt
+                    // das Item-Wiki (Chef-Bug 27.08.2026).
+                    onMouseEnter={(e) => tooltip.show(cost.itemId, e.clientX, e.clientY, [])}
+                    onMouseLeave={() => tooltip.hide()}
+                    onClick={() => {
+                      tooltip.hide();
+                      openItemWikiModal(cost.itemId);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key !== "Enter" && e.key !== " ") return;
                       e.preventDefault();
@@ -759,7 +743,7 @@ function BuildingCardImpl({
                     <span className="mat-count">
                       <b>{formatNum(owned)}</b>/{cost.qty}
                     </span>
-                  </HoverTip>
+                  </div>
                 );
               })}
             </div>
@@ -1118,6 +1102,8 @@ function BuildMenu({
   debugFreeBuild: boolean;
   onSelect: (id: string) => void;
 }): JSX.Element {
+  // Steam-Forum 27.08.2026 (L1GR): Kosten-Chips zeigen die STANDARD-Item-Karte (mit Wiki-Knopf).
+  const tooltip = useItemTooltip();
   const { t, tr } = useI18n();
   return (
     <div className="nh-buildmenu">
@@ -1183,15 +1169,16 @@ function BuildMenu({
                         // Release-Fix-Welle 0.3.0 Fix 1: das Baumenü ist die Default-Ansicht, zeigte
                         // seine Kosten-Chips bisher aber ohne Tooltip — nur die Listenkarte (oben)
                         // hatte den Erstkontakt-Hinweis. `matChipTip` bedient jetzt beide Stellen.
-                        <HoverTip
+                        <span
                           key={cost.itemId}
                           className={`nh-buildmenu-cost${debugFreeBuild || owned >= cost.qty ? "" : " lacking"}`}
-                          focusable={false}
-                          content={matChipTip(cost.itemId, tr)}
+                          // Steam-Forum 27.08.2026 (L1GR): Standard-Item-Karte beim Hover statt Flavor-Tooltip.
+                          onMouseEnter={(e) => tooltip.show(cost.itemId, e.clientX, e.clientY, [])}
+                          onMouseLeave={() => tooltip.hide()}
                         >
                           {img ? <img loading="lazy" decoding="async" src={img} alt="" className="pixelart" /> : null}
                           {formatNum(owned)}/{formatNum(cost.qty)}
-                        </HoverTip>
+                        </span>
                       );
                     })}
                   </span>
