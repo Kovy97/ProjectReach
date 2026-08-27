@@ -12,6 +12,15 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
 
+**Goblins in der Charaktererstellung (Mira, 27.08.):** DE: Die vierte Rasse: 30 Goblin-Archetypen, je männlich und
+weiblich, 60 neue Porträts. Rassen-Filter „Goblin" in Charaktererstellung und Porträt-Wechsler; Merrit, Pim und der
+Fremde in der Taverne tragen Goblin-Porträts als Platzhalter. / EN: Goblins are the fourth playable race with 60 new
+portraits.
+
+**Bank: „Vorhandenes einlagern" (Steam-Forum L1GR, 27.08.):** DE: Neuer Knopf neben „Alles einlagern": legt nur die
+Gegenstände ins Lager, die dort schon liegen, und lässt alles andere in der Tasche. Praktisch nach einer Sammelrunde.
+/ EN: New "Stack all" button in the bank moves every inventory item that already exists in the bank onto its stack.
+
 **Warteschlangen-Raster 1 / 25 / X / ∞ (Chef 27.08.):** DE: Der 50er-Knopf auf Aktions-, Monster- und
 Dungeon-Karten weicht einem „X": Es öffnet ein kleines Mengen-Fenster im Spielstil mit Eingabefeld, Vorschau
 der Dauer („≈ 28 min") und der Stufe („Stufe 24 → 31") und zwei Knöpfen: „In die Warteschlange" hängt hinten an, „Jetzt ausführen" startet

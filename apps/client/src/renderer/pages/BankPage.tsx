@@ -9,6 +9,7 @@ import {
   canDeposit,
   depositAll,
   depositInstance,
+  depositStackable,
   depositItem,
   depositItemGroup,
   effectiveCapacity,
@@ -474,6 +475,15 @@ export function BankPage(): JSX.Element {
               onClick={() => depositAll(state, content)}
             >
               {t("bank.depositAll")}
+            </button>
+            {/* „Stack all" (Steam-Forum L1GR 27.08.2026): nur Sorten einlagern, die im Lager schon liegen. */}
+            <button
+              className="shop-citadel-btn shop-citadel-btn--sm"
+              title={t("bank.stackAll.tip")}
+              disabled={!state.inventory.slots.some((sl) => sl && (state.bank[sl.itemId] ?? 0) > 0)}
+              onClick={() => depositStackable(state, content)}
+            >
+              {t("bank.stackAll")}
             </button>
           </div>
           {depositEntriesUnsorted.length === 0 ? (

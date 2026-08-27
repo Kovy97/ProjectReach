@@ -84,6 +84,22 @@ export function depositAll(state: GameState, content: ContentDB): number {
 }
 
 /**
+ * „Stack all" (Steam-Forum L1GR, 27.08.2026): lagert NUR die Inventar-Items ein, die im Lager BEREITS liegen
+ * (Bestand > 0) — die neuen Stapel fallen auf die bestehenden, das Lager braucht keinen freien Slot, das
+ * Inventar wird um genau die Sorten leichter, die man ohnehin sammelt. Alles andere bleibt in der Tasche.
+ * Ausrüstungs-/Taschen-Slots und Instanzen unberührt (wie depositAll). Gibt die bewegte Stückzahl zurück.
+ */
+export function depositStackable(state: GameState, content: ContentDB): number {
+  let total = 0;
+  const counts: Record<string, number> = {};
+  for (const slot of state.inventory.slots) {
+    if (slot && (state.bank[slot.itemId] ?? 0) > 0) counts[slot.itemId] = (counts[slot.itemId] ?? 0) + slot.qty;
+  }
+  for (const [itemId, qty] of Object.entries(counts)) total += depositItem(state, content, itemId, qty);
+  return total;
+}
+
+/**
  * Hebt bis zu `qty` eines Items aus dem Lager ab — begrenzt durch Lagerbestand
  * UND freien Inventarplatz. Gibt die tatsächlich abgehobene Menge zurück.
  */
