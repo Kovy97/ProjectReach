@@ -1,0 +1,155 @@
+<title>Die Taverne</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #0f1112; --panel: #1a1c1c; --panel-2: #222423; --line: rgba(212, 182, 109, 0.22); --line-strong: rgba(212, 182, 109, 0.5);
+    --text: #e6dcc0; --muted: #8f8a7c; --gold: #d4b66d; --gold-soft: rgba(212, 182, 109, 0.12); --ember: #a3352a; --ember-soft: rgba(163, 53, 42, 0.16);
+    --display: "Cinzel", "Times New Roman", serif; --body: "Spectral", Georgia, serif; --mono: "IBM Plex Mono", Consolas, monospace;
+  }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+  .page { max-width: 1040px; margin: 0 auto; padding: 48px 28px 96px; }
+  .eyebrow { font-family: var(--display); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 4vw, 44px); letter-spacing: 0.06em; margin: 8px 0 14px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 22px; letter-spacing: 0.08em; margin: 0 0 14px; color: var(--gold); text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 500; font-size: 15px; letter-spacing: 0.08em; margin: 22px 0 8px; }
+  p { margin: 0 0 12px; max-width: 70ch; }
+  .lead { font-size: 19px; max-width: 64ch; }
+  .muted { color: var(--muted); }
+  section { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 16px; }
+  .rule { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; }
+  .rule h3 { margin: 0 0 6px; }
+  .rule p { font-size: 15.5px; color: var(--muted); margin: 0; max-width: none; }
+  .scene { position: relative; margin-top: 16px; border: 1px solid var(--line-strong); background: linear-gradient(180deg, #2a2016, #14110d); padding: 22px; }
+  .scene .bar { position: absolute; left: 22px; right: 22px; bottom: 22px; height: 46px; border: 1px solid var(--line); background: rgba(0,0,0,.35); display: flex; align-items: center; padding: 0 14px; font-family: var(--display); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+  .seats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 64px; }
+  .seat { border: 1px solid var(--line); background: var(--panel-2); padding: 14px; min-height: 120px; display: flex; flex-direction: column; gap: 6px; }
+  .seat .who { font-family: var(--display); font-size: 14px; letter-spacing: .06em; color: var(--text); }
+  .seat .ask { font-size: 14px; color: var(--muted); font-style: italic; }
+  .seat .rw { font-family: var(--mono); font-size: 12px; color: var(--gold); margin-top: auto; }
+  .seat.empty { border-style: dashed; color: var(--muted); justify-content: center; align-items: center; font-family: var(--display); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .tablewrap { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 10px 12px; border-bottom: 1px solid var(--line-strong); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.dim { color: var(--muted); }
+  .phases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .phase { background: var(--panel); border: 1px solid var(--line); padding: 14px; }
+  .phase .n { font-family: var(--mono); font-size: 12px; color: var(--gold); }
+  .phase p { font-size: 14.5px; margin: 6px 0 0; max-width: none; }
+  .decisions { display: grid; gap: 10px; margin-top: 12px; }
+  .dec { display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: start; background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; }
+  .dec .id { font-family: var(--display); color: var(--gold); font-size: 16px; letter-spacing: 0.06em; }
+  .dec p { margin: 0; max-width: none; }
+  .dec .why { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .chip { font-family: var(--display); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 10px; border: 1px solid var(--line-strong); color: var(--gold); background: var(--gold-soft); white-space: nowrap; }
+  .sources { font-size: 14px; color: var(--muted); }
+  .sources code { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  @media (max-width: 760px) { .seats { grid-template-columns: repeat(2, 1fr); } .phases { grid-template-columns: 1fr; } .dec { grid-template-columns: 44px 1fr; } .dec .chip { grid-column: 2; justify-self: start; } }
+</style>
+
+<div class="page">
+  <div class="eyebrow">Grim Reach · Update 1.2.0 · Konzept vom 27. August 2026</div>
+  <h1>Die Taverne</h1>
+  <p class="lead">Der Ort, an dem die Welt zum Spieler kommt. Statt einer Tafel mit Zetteln sitzen in der Taverne Leute mit Namen, Gesicht und einem Anliegen: Viktor der Slayer will Köpfe aus dem Schwarzdorn, Billy der Bauer braucht eine Ernte. Wer hilft, bekommt Erfahrung im passenden Skill, Rohstoffe, Gold und bei manchen Gästen Slayer-Punkte oder Marken. Die Gäste wechseln, die Taverne bleibt und wächst mit jedem Update zum Spieler-Hub.</p>
+  <p class="sources">Textfassung: <code>design/1.2.0-alive/taverne-konzept.md</code>. Ersetzt den Alive-Kern (Chef-Entscheid 27.08.); die Brainstorm-Dokumente bleiben als Ideenspeicher.</p>
+
+  <section>
+    <h2>Drei Regeln, die den Idle-Charakter schützen</h2>
+    <div class="rules">
+      <div class="rule"><h3>Kein Echtzeitzwang</h3><p>Gäste bleiben, bis ihr Auftrag erledigt ist oder der Tag wechselt. Ein angenommener Auftrag verfällt nie still.</p></div>
+      <div class="rule"><h3>Eine Uhr, keine Simulation</h3><p>Wer sitzt und was er will, folgt aus Welt-Seed und Kalendertag wie der Wochentags-Segen. Offline und live sehen dieselben Gäste.</p></div>
+      <div class="rule"><h3>Die Warteschlange bleibt das Spiel</h3><p>Aufträge laufen über die bestehende Warteschlange; die Taverne ist Anlass und Belohnung, kein zweites System.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Zugang</h2>
+    <p><b>Empfehlung: Die Taverne ist das erste Gebäude von New Haven, billig und schnell.</b> 100 Holz, 1 500 Gold, 15 Minuten Bauzeit, keine Voraussetzung. Vor dem Bau steht in der Sidebar unter „New Haven" ein gedimmter Reiter „Taverne" mit dem Hinweis „Bau die Taverne in New Haven"; nach dem Bau wird er aktiv. Zweiter Weg: auf der New-Haven-Karte die Taverne anklicken und „Betreten".</p>
+    <p class="muted">Warum bauen statt von Anfang an: Der Bau ist ein natürlicher erster Schritt in New Haven, 15 Minuten sind ein sichtbares erstes Idle-Ziel, und die Chronik kann in Kapitel 1 darauf zeigen. Alte Spielstände bekommen die Taverne beim ersten Start geschenkt.</p>
+  </section>
+
+  <section>
+    <h2>Die Szene</h2>
+    <p>Miras Kulisse zeigt den Schankraum von innen, deckend, 1672 × 941 wie die Menü-Kulissen, mit vier klar lesbaren Plätzen: drei Tische und der Tresen. An jedem Platz kann ein Gast stehen oder sitzen (Freisteller mit echtem Alpha, gleiche Größe und Blickrichtung wie die Spieler-Porträts). Ein leerer Platz zeigt Stuhl und Krug. Am Tresen steht dauerhaft die Wirtin.</p>
+    <div class="scene">
+      <div class="seats">
+        <div class="seat"><div class="who">Viktor der Slayer</div><div class="ask">„Die Wölfe im Schwarzdorn werden dreist. Zwanzig Köpfe, und ich zahle."</div><div class="rw">Slayer-XP · 40 Slayer-Punkte · Kampf-XP</div></div>
+        <div class="seat"><div class="who">Billy der Bauer</div><div class="ask">„Meine Beete stehen voll und ich hab nur zwei Hände. Dreißig Kohlköpfe?"</div><div class="rw">Anbau-XP · Saatgut · 2 Speisen</div></div>
+        <div class="seat"><div class="who">Ella mit den schnellen Händen</div><div class="ask">„Zeig mir, dass du leise sein kannst. Zehn Griffe in den Weiden, ohne dass es jemand merkt."</div><div class="rw">Diebeskunst-XP · Gold · ein Fundstück</div></div>
+        <div class="seat empty">Leerer Platz</div>
+      </div>
+      <div class="bar">Tresen · Mutter Eske: „Heute sitzen zwei Jäger hier. Die Geier werden dreist."</div>
+    </div>
+    <p style="margin-top:14px">Klick auf einen Gast öffnet die Gäste-Karte im Stahlrahmen: Porträt, Name mit Beiname, zwei Sätze Ansprache, der Auftrag mit Ziel und Belohnung, <b>Annehmen</b> und <b>Ablehnen</b>. Ein angenommener Auftrag erscheint auf der Quest-Seite im neuen Reiter „Taverne" und im Tracker; passende Aktionen lassen sich direkt aus der Karte einreihen, wie heute beim Slayer-Auftrag. Kerzenflackern als CSS, Tag und Nacht nur als Tönung, ein gehender Gast verblasst, ein neuer blendet ein.</p>
+  </section>
+
+  <section>
+    <h2>Besucher-System</h2>
+    <p><b>Pool:</b> Besucher sind Archetypen mit Namen. Mira liefert je Archetyp ein Gesicht (erste Serie zehn Gäste), die Namen kommen aus einer Liste je Archetyp, sodass derselbe Archetyp mit anderem Namen wiederkommt. Männlich und weiblich je Archetyp wie beim Spieler-Roster.</p>
+    <p><b>Spawn:</b> Jeden Tag um lokale Mitternacht werden die vier Plätze neu besetzt; Welt-Seed, Tagesstempel und Platz wählen Archetyp, Name und Auftrag aus dem Level-Band des Spielers. Ein Gast mit angenommenem Auftrag bleibt sitzen, bis abgegeben ist, auch über den Tageswechsel; die anderen Plätze wechseln. Kein Druck, keine leeren Tage.</p>
+    <p><b>Mischung:</b> höchstens ein Slayer, höchstens zwei Sammler, mindestens ein Gast aus einem Skill, den der Spieler in den letzten sieben Tagen benutzt hat. Ein „Fremder" kommt an einem von zwölf Tagen mit einem Auftrag mit besonderer Belohnung.</p>
+    <p><b>Ablehnen und Tauschen:</b> Ein Gast pro Tag lässt sich gratis wegschicken; weitere Wechsel kosten „eine Runde" Gold. Keine Strafe.</p>
+    <p><b>Die Wirtin:</b> Mutter Eske aus dem Lore-Roster übernimmt den Tresen (Köchin von New Haven, Porträt vorhanden). Sie begrüßt, erklärt beim ersten Besuch die Plätze, sagt einmal am Tag einen Satz zur Lage und verkauft in Phase 2 die Getränke.</p>
+  </section>
+
+  <section>
+    <h2>Aufträge und Belohnungen</h2>
+    <p>Vorlagen je Archetyp mit Zufallszahlen aus dem Level-Band, wie die Slayer-Vergabe: in Reichweite, nie trivial, nie unerreichbar. Skill-XP entspricht etwa 10 bis 20 Minuten Fokus-Spielzeit des Bands, Rohstoffe im Wert der Abgabe plus Aufschlag, Gold je Tag gedeckelt. Slayer-Punkte nur beim Slayer-Gast, Marken nur bei Fremden und beim Tagesabschluss, damit der Belohnungsladen aus 1.1.0 hält.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Gast</th><th>Auftrag</th><th>Belohnung</th></tr>
+      <tr><td>Slayer (Viktor, Runa)</td><td class="dim">Töte N Monster einer Art aus deinem Band; Varianten: ein Champion, N Turm-Kills</td><td>Slayer-XP, Slayer-Punkte, Kampf-XP; selten eine Auftragsmarke</td></tr>
+      <tr><td>Bauer (Billy, Marla)</td><td class="dim">Ernte N × Pflanze; Variante: ein voller Zyklus vom Pflanzen bis zur Ernte</td><td>Anbau-XP, Saatgut, Speisen</td></tr>
+      <tr><td>Bergmann, Holzfäller, Fischer, Sammler</td><td class="dim">Bring N × Rohstoff, aus dem Bestand oder frisch</td><td>Skill-XP, Gold, ein Bündel des nächsten Tiers</td></tr>
+      <tr><td>Schmied, Handwerker, Juwelier, Runenschreiber</td><td class="dim">Stelle N × Gegenstand her und liefere ihn ab</td><td>Skill-XP, Material für das nächste Rezept, Gold</td></tr>
+      <tr><td>Der hungrige Söldner (Kochen)</td><td class="dim">Koche N Portionen einer Speise deines Bands</td><td>Kochen-XP, Zutaten, ein Festmahl</td></tr>
+      <tr><td>Kräuterkundige, Verzauberer</td><td class="dim">Braue N Tränke, verzaubere ein Stück</td><td>Skill-XP, Runenstaub, ein Tonikum</td></tr>
+      <tr><td>Ella mit den schnellen Händen</td><td class="dim">Stiehl N Mal erfolgreich in einer Zone</td><td>Diebeskunst-XP, Gold, ein Fundstück</td></tr>
+      <tr><td>Der Fremde (Wanderer)</td><td class="dim">Schließe einen Dungeon ab, besiege einen Champion, erreiche einen Ort</td><td>Andenken, Rune, seltenes Material, Chronik-Zeile</td></tr>
+      <tr><td>Karawanenleute (Handel)</td><td class="dim">Liefere ein Sortiment aus drei Waren</td><td>Gold über Verkaufswert, Karawanen-Kiste</td></tr>
+    </table></div>
+    <p style="margin-top:12px"><b>Tagesabschluss:</b> Drei abgegebene Aufträge an einem Tag geben „Ein guter Abend": ein kleines Bündel und eine Marke. Kein Streak, keine Strafe.</p>
+  </section>
+
+  <section>
+    <h2>Vom Auftragsort zum Hub</h2>
+    <div class="phases">
+      <div class="phase"><div class="n">Phase 1 · 1.2.0</div><p>Gebäude, Szene mit vier Plätzen, Wirtin, zehn Gäste-Archetypen mit Vorlagen, Tagesrotation, Ablehnen und Tauschen, Quest-Reiter „Taverne", Tagesabschluss.</p></div>
+      <div class="phase"><div class="n">Phase 2 · 1.2.x</div><p>Getränke (Eske verkauft Segen für Gold, eine Stunde +10 % XP in einem Skill), Stammgäste mit besseren Aufträgen, Aushang mit Kopfgeldern und Karawane, Begleiter sitzen in der Taverne. Die Dailies werden zu Gästen.</p></div>
+      <div class="phase"><div class="n">Phase 3 · 1.3</div><p>Raben-Post am Tresen, Erzähl-Gäste mit Chronik-Bezug, Ereignisse aus Sicht der Gäste, Titel und Trophäen an der Wand.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Bedarf bei Mira</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Asset</th><th>Spezifikation</th></tr>
+      <tr><td>Taverne innen</td><td class="dim">Deckend, 1672 × 941, vier klar lesbare Plätze (drei Tische, Tresen) mit Pixelkoordinaten im QA-Blatt, leere Stühle mit Krug, Tagesfassung; Nacht als Tönung im Spiel</td></tr>
+      <tr><td>Gäste, erste Serie (10)</td><td class="dim">Slayer m/w, Bauer m/w, Bergmann, Fischer, Schmied, Kräuterkundige, Dieb, Fremder mit Kapuze; Freisteller mit Alpha, Ganzkörper, Größe und Blickrichtung wie das Spieler-Roster, sitzend oder stehend je Platz</td></tr>
+      <tr><td>Wirtin</td><td class="dim">Eske liegt vor; optional eine Tresen-Pose</td></tr>
+      <tr><td>Icons und Gebäude</td><td class="dim">Sidebar-Icon „Taverne" (Krug), Gebäude-Bild für New Haven (Taverne außen, Tag)</td></tr>
+      <tr><td>Später</td><td class="dim">Zehn weitere Gäste, Getränke-Icons, Stammgast-Posen</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Technik in Kürze</h2>
+    <p><b>State (ein Save-Bump 83 → 84):</b> <code>tavern</code> mit gebaut, Tagesstempel, vier Plätzen (Archetyp, Variante, Namensindex, Auftrag mit gewürfelten Parametern und Fortschritts-Baseline, angenommen), Tageszähler, Tausch-Zähler, Stammgäste. Alt-Saves bekommen die Taverne geschenkt; die Plätze füllen sich beim ersten Tick.</p>
+    <p><b>Engine:</b> Tageswechsel-Hook im Tick (fehlt heute, die Dailies laufen im Client; er kommt mit dieser Arbeit und macht Offline gleich Live), Vorlagen als Content in sieben Sprachen, Fortschritt aus bestehenden Zählern, Abgabe über den Lieferweg der Warteschlangen-Arbeit.</p>
+    <p><b>UI:</b> Tavernen-Seite mit Szene und Gäste-Karte im Stahlrahmen, Sidebar-Eintrag unter New Haven, Quest-Reiter „Taverne", Tracker, ein Hinweis beim Gästewechsel, keine Ungelesen-Zähler.</p>
+    <p class="muted">Aufwand rund 17 Agent-Tage (Engine 4, Content 3, UI 5, Texte 3, QA 2); mit drei parallelen Agenten zwei bis drei Wochen. Ohne Miras Szene lässt sich alles mit Platzhalter-Kulisse bauen und am Ende tauschen.</p>
+  </section>
+
+  <section>
+    <h2>Deine Entscheidungen</h2>
+    <div class="decisions">
+      <div class="dec"><div class="id">E1</div><div><p><b>Zugang:</b> baubar als erstes Gebäude (100 Holz, 1 500 Gold, 15 min) oder von Anfang an da?</p><p class="why">Baubar gibt ein erstes Idle-Ziel und einen Grund, New Haven früh zu öffnen; Alt-Saves bekommen sie geschenkt.</p></div><span class="chip">Empfehlung: baubar</span></div>
+      <div class="dec"><div class="id">E2</div><div><p><b>Dailies:</b> in 1.2.0 neben der Taverne belassen und in 1.2.x zu Gästen machen?</p><p class="why">So bleibt die Marken-Ökonomie stabil, und die Taverne muss nicht am ersten Tag alles können.</p></div><span class="chip">Empfehlung: ja</span></div>
+      <div class="dec"><div class="id">E3</div><div><p><b>Wirtin:</b> Eske am Tresen oder eine neue Figur?</p><p class="why">Eske ist Kanon und hat ein Porträt; eine neue Figur kostet Mira Zeit.</p></div><span class="chip">Empfehlung: Eske</span></div>
+      <div class="dec"><div class="id">E4</div><div><p><b>Plätze:</b> vier (drei Tische und Tresen) oder drei?</p><p class="why">Vier lassen Slayer, zwei Sammler und einen Fremden gleichzeitig zu.</p></div><span class="chip">Empfehlung: vier</span></div>
+      <div class="dec"><div class="id">E5</div><div><p><b>Rotation:</b> täglich um Mitternacht mit einem Gratis-Tausch oder alle acht Stunden?</p><p class="why">Täglich passt zum Segen und zum Idle-Rhythmus, der Tausch nimmt den Druck.</p></div><span class="chip">Empfehlung: täglich</span></div>
+      <div class="dec"><div class="id">E6</div><div><p><b>Marken:</b> nur Fremde und Tagesabschluss zahlen Marken?</p><p class="why">Sonst kippt der Belohnungsladen aus 1.1.0.</p></div><span class="chip">Empfehlung: ja</span></div>
+      <div class="dec"><div class="id">E7</div><div><p><b>Erste Gäste-Serie:</b> die zehn aus der Mira-Tabelle freigeben, damit der Auftrag rausgehen kann?</p><p class="why">Mit Szene und zehn Gästen steht Phase 1 komplett; weitere Gäste kommen in 1.2.x.</p></div><span class="chip">Freigabe?</span></div>
+    </div>
+  </section>
+</div>
