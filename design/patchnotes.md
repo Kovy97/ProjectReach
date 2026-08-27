@@ -12,6 +12,16 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — 1.2.0 „Fasern und Fallen" (Chef 27.08.: Fasern/Stoff-Roben + neuer Skill Jagen; in Arbeit)
 
+**Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
+mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
+Kampf macht, mit Takt („Diebesgriff. Alle 6 s: 40 % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit
+mindestens 5 % Chance, Menge 1."). Auch für noch nicht gefundene Begleiter, damit man weiß, wofür man jagt. Im Kampf zeigt
+das Begleiter-Portrait denselben Text beim Überfahren. / EN: Companion cards now spell out their passive bonus and their
+combat ability with real numbers and timing, also for companions you have not found yet.
+
+*Dev-Notiz: util/petText.ts (Sätze aus PetDef + firePetAbility-Konstanten), PetGalleryPage Dossier ungegatet, CombatPage
+Begleiter-Hover (war tot: pointer-events none), pages.css Breakpoint 1400px, 38 Keys ×7. Fixtures: toursSeen ergänzt.*
+
 ## Unveröffentlicht — 1.3.0 „Alive" (Chef 27.08.: die Taverne, von 1.2.0 verschoben; Schalter `TAVERN_ENABLED` bleibt aus)
 
 **Die Taverne (Kern von 1.2.0, Chef-Entscheide E1–E3, 27.08.):** DE: New Haven bekommt eine Taverne

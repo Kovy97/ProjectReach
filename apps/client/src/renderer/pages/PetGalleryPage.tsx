@@ -8,6 +8,7 @@ import { useI18n } from "../i18n";
 import { getPetSrc, PET_ZONE_ID } from "../pets";
 import { getUiIcon } from "../uiIcons";
 import { formatNum, formatPct1, formatSeconds1 } from "../util/format";
+import { abilityText, passiveText } from "../util/petText";
 import { getZoneBackgroundCard } from "../zoneBackgrounds";
 
 // Welle QQ (2026-07-17): echtes Pfoten-Icon statt 🐾-Emoji, falls ein Pet weder Sprite-Art noch
@@ -252,11 +253,24 @@ export function PetGalleryPage(): JSX.Element {
               <p className="pet-field-description">{tr(selectedPet.description)}</p>
             )}
 
-            {selectedOwned && (
-              <div className="pet-field-effects">
-                <PetEffectRows pet={selectedPet} t={tFn} tr={tr} />
+            {/* Chef-Auftrag 27.08.2026: „Da fehlen mir Erklärungen zu den aktiven und passiven
+                Skills der Pets." — volle Sätze mit echten Zahlen statt der kompakten Kind-Labels
+                (die kompakte PetEffectRows-Zeile bleibt exklusiv der Feier-Overlay/Kopf-Anzeige
+                vorbehalten, s. dort). AUCH für noch nicht besessene Pets sichtbar: der Spieler
+                soll wissen, wofür er jagt, bevor er es hat — nur der Name bleibt „???". */}
+            <div className="pet-field-effects pet-field-effects-detailed">
+              <div className="pet-effect-row">
+                <span className="pet-effect-tag pet-effect-tag-passive">{t("pet.effect.passive")}</span>
+                <span className="pet-effect-value">{passiveText(selectedPet, tFn, tr)}</span>
               </div>
-            )}
+              <div className="pet-effect-row">
+                <span className="pet-effect-tag pet-effect-tag-active">{t("pet.effect.activeCombat")}</span>
+                <span className="pet-effect-value">
+                  <span>{abilityText(selectedPet, tFn, tr)}</span>
+                  <small className="pet-field-effects-hint">{t("pet.ability.autoHint")}</small>
+                </span>
+              </div>
+            </div>
 
             {selectedOwned && (
               <div className="pet-field-actions">

@@ -2034,7 +2034,15 @@
   justify-content: center;
   transform: scaleX(-1);
   z-index: 3;
-  pointer-events: none;
+  /* 1.0.1-Fix (Chef 27.08.2026 „mehr Kontext"): war `none` — das alte `title=` auf diesem Element
+     (Name+Ability+Takt) konnte dadurch NIE erscheinen, `pointer-events:none` nimmt das Element aus
+     dem Hit-Testing raus (der Browser reicht den Mauszeiger einfach an das Held-Portrait darunter
+     durch, unabhängig vom z-index — bestätigt per `elementFromPoint`). Jetzt echte HoverTip
+     (CombatPage.tsx) — braucht `auto`, um Hover/Fokus überhaupt zu empfangen. Bewusste
+     Kernabweichung: die kurze Sprung-Animation („jumps toward the enemy and returns") deckt
+     dadurch für den Bruchteil einer Sekunde das darunterliegende UI ab — vernachlässigbar gegen
+     einen Tooltip, der bisher NIE sichtbar war. */
+  pointer-events: auto;
   /* Sweep-Fund T2 (Kampf-Juice-Welle): das Pet verschmolz farblich mit dem Boden — zusätzlich
      zum weichen Fall-Schatten ein hauchdünner heller Rim (1px-Drop-Shadow, KEIN Glow — bewusst
      unter der No-Glow-Schwelle) hebt die Silhouette vom Zonenbild ab. */

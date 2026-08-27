@@ -1442,6 +1442,51 @@ const en = {
     "pet.effect.combat.armorPierceHit": "Armor-pierce hit",
     "pet.effect.combat.multiHit": "Multi-hit",
 
+    // Pet effect FULL SENTENCES (Chef 27.08.2026: "Da fehlen mir Erklärungen zu den aktiven und
+    // passiven Skills der Pets" — mehr Kontext). Built by apps/client/src/renderer/util/petText.ts
+    // from the real PetDef numbers, nothing invented. Placeholders: {value}/{pct} (bare number, the
+    // template supplies the % sign), {sec} (seconds, 1 decimal), {skill}/{status} (resolved display
+    // names); a few kinds need one extra number: {min} (stealDrop's loot-chance floor), {count}/
+    // {total} (multiHit's hit count / summed damage).
+    "pet.effect.activeCombat": "Active (in combat)",
+    "pet.ability.frame": "{name}. Every {sec}s: {body}",
+    "pet.ability.autoHint": "Fires automatically in combat — nothing to click.",
+    "pet.passive.instantAction": "{pct}% chance to instantly complete an extra {skill} action.",
+    "pet.passive.doubleDrop": "+{pct}% chance for a doubled yield on {skill}.",
+    "pet.passive.gatherYield": "+{pct}% chance for a doubled gathering yield on {skill}.",
+    "pet.passive.thievingSuccess": "+{pct}% success chance on {skill}.",
+    "pet.passive.refundMaterial": "{pct}% chance to get the material back on {skill}.",
+    "pet.passive.perfectCook": "{pct}% chance nothing goes wrong on {skill} (no spoiled batch).",
+    "pet.passive.bonusAmmo": "No effect (ammunition was removed from the game).",
+    "pet.passive.flawlessGem": "+{pct}% chance for a doubled gem yield on {skill}.",
+    "pet.passive.bonusRunes": "+{pct}% chance for doubled runes on {skill}.",
+    "pet.passive.potionPreserve": "+{pct}% chance to keep a potion's ingredients on {skill}.",
+    "pet.passive.manaRegen": "+{pct}% faster mana regeneration in combat.",
+    "pet.passive.lifesteal": "+{pct}% lifesteal on all damage you deal in combat.",
+    "pet.passive.skillBoost": "+{value} effective {skill} levels for combat formulas (no XP, unlocks nothing).",
+    "pet.passive.damageReduction": "You take {pct}% less damage in combat (after armor, ward and block).",
+    "pet.passive.doubleLoot": "{pct}% chance per kill to roll the entire loot and gold drop a second time.",
+    "pet.passive.killHeal": "Heals you for {pct}% of your max HP on every kill.",
+    "pet.passive.sellBonus": "+{pct}% gold when selling items at the shop.",
+    "pet.ability.stun": "Stuns the enemy for {sec}s — it skips its next attack.",
+    "pet.ability.burstDamage": "Deals instant damage equal to {pct}% of the enemy's max HP.",
+    "pet.ability.onHitStatus": "Instantly applies {status} to the enemy: {pct}%/s damage for {sec}s.",
+    "pet.ability.onHitStatus.frost": "Instantly applies frost to the enemy: slows its attack speed for {sec}s.",
+    "pet.ability.delayedDot": "Applies a longer-running {status} effect: {pct}%/s damage for {sec}s.",
+    "pet.ability.delayedDot.frost": "Applies a longer-running frost effect: slows the enemy's attack speed for {sec}s.",
+    "pet.ability.accuracyDownEnemy": "Lowers the enemy's hit chance by {pct}% for {sec}s.",
+    "pet.ability.stealDrop": "{pct}% chance to steal an item from the enemy's loot. Only drops with at least {min}% chance, quantity 1.",
+    "pet.ability.heal": "Instantly heals you for {pct}% of your max HP.",
+    "pet.ability.shield": "Grants a shield that absorbs damage equal to {pct}% of your max HP, until it's spent.",
+    "pet.ability.armorRend": "The enemy takes {pct}% more damage from you for {sec}s.",
+    "pet.ability.guaranteedCrit": "Guaranteed critical hit: {pct}% of the enemy's max HP as instant damage.",
+    "pet.ability.manaRestore": "Instantly restores {pct}% of your max mana.",
+    "pet.ability.lifestealBurst": "Deals instant damage equal to {pct}% of the enemy's max HP and heals you for the same share of your max HP.",
+    "pet.ability.enemyAttackDelay": "Pushes the enemy's next attack back by {sec}s.",
+    "pet.ability.blockNextEnemyHit": "Blocks the enemy's next hit completely, no matter how much damage it would have dealt.",
+    "pet.ability.armorPierceHit": "Deals instant damage equal to {pct}% of the enemy's max HP, ignoring its armor.",
+    "pet.ability.multiHit": "Hits the enemy {count}x in a row for {pct}% of its max HP each ({total}% total).",
+
     // Pet combat-log entries
     "combat.petLog.stealDrop": "{pet} steals: {item}!",
     "combat.petLog.withAmount": "{pet} — {ability} ({amount})",
@@ -3703,6 +3748,52 @@ const de: Record<keyof typeof en, string> = {
     "pet.effect.combat.blockNextEnemyHit": "Nächsten Treffer blocken",
     "pet.effect.combat.armorPierceHit": "Rüstungsdurchschlag",
     "pet.effect.combat.multiHit": "Mehrfachtreffer",
+
+    // Pet-Effekt-VOLLSÄTZE (Chef 27.08.2026: „Da fehlen mir Erklärungen zu den aktiven und
+    // passiven Skills der Pets" — mehr Kontext). Gebaut von
+    // apps/client/src/renderer/util/petText.ts aus den echten PetDef-Zahlen, nichts erfunden.
+    // Platzhalter: {value}/{pct} (nackte Zahl, das Template liefert das %-Zeichen), {sec}
+    // (Sekunden, 1 Dezimale), {skill}/{status} (aufgelöste Anzeigenamen); ein paar Kinds
+    // brauchen eine Extra-Zahl: {min} (Diebstahl-Untergrenze der Drop-Chance), {count}/{total}
+    // (Mehrfachtreffer-Anzahl / Summenschaden).
+    "pet.effect.activeCombat": "Aktiv (im Kampf)",
+    "pet.ability.frame": "{name}. Alle {sec} s: {body}",
+    "pet.ability.autoHint": "Feuert automatisch im Kampf – du musst nichts tun.",
+    "pet.passive.instantAction": "{pct} % Chance, eine {skill}-Aktion zusätzlich sofort abzuschließen.",
+    "pet.passive.doubleDrop": "+{pct} % Chance auf einen doppelten Ertrag bei {skill}.",
+    "pet.passive.gatherYield": "+{pct} % Chance auf einen doppelten Sammelertrag bei {skill}.",
+    "pet.passive.thievingSuccess": "+{pct} % Erfolgschance bei {skill}.",
+    "pet.passive.refundMaterial": "{pct} % Chance, das Material bei {skill} zurückzubekommen.",
+    "pet.passive.perfectCook": "{pct} % Chance, dass dir bei {skill} nichts misslingt (kein Ausschuss).",
+    "pet.passive.bonusAmmo": "Ohne Wirkung (Munition wurde aus dem Spiel entfernt).",
+    "pet.passive.flawlessGem": "+{pct} % Chance auf einen doppelten Edelstein-Ertrag bei {skill}.",
+    "pet.passive.bonusRunes": "+{pct} % Chance auf doppelte Runen bei {skill}.",
+    "pet.passive.potionPreserve": "+{pct} % Chance, die Zutaten eines Tranks bei {skill} zu behalten.",
+    "pet.passive.manaRegen": "+{pct} % schnellere Mana-Regeneration im Kampf.",
+    "pet.passive.lifesteal": "+{pct} % Lebensraub auf allen Schaden, den du im Kampf verursachst.",
+    "pet.passive.skillBoost": "+{value} effektive Stufen in {skill} für Kampfformeln (kein XP, schaltet nichts frei).",
+    "pet.passive.damageReduction": "Du nimmst im Kampf {pct} % weniger Schaden (nach Rüstung, Ward und Block).",
+    "pet.passive.doubleLoot": "{pct} % Chance je besiegtem Gegner, Beute und Gold ein zweites Mal zu erhalten.",
+    "pet.passive.killHeal": "Heilt dich um {pct} % deiner maximalen Lebenspunkte bei jedem besiegten Gegner.",
+    "pet.passive.sellBonus": "+{pct} % Gold beim Verkaufen von Items im Laden.",
+    "pet.ability.stun": "Betäubt den Gegner für {sec} s — er setzt seinen nächsten Angriff aus.",
+    "pet.ability.burstDamage": "Fügt dem Gegner sofort Schaden in Höhe von {pct} % seiner maximalen Lebenspunkte zu.",
+    "pet.ability.onHitStatus": "Legt sofort {status} auf den Gegner: {pct} %/s Schaden für {sec} s.",
+    "pet.ability.onHitStatus.frost": "Legt sofort Frost auf den Gegner: verlangsamt sein Angriffstempo für {sec} s.",
+    "pet.ability.delayedDot": "Legt einen länger laufenden {status}-Effekt: {pct} %/s Schaden für {sec} s.",
+    "pet.ability.delayedDot.frost": "Legt einen länger laufenden Frost-Effekt: verlangsamt das Angriffstempo des Gegners für {sec} s.",
+    "pet.ability.accuracyDownEnemy": "Senkt die Trefferchance des Gegners für {sec} s um {pct} %.",
+    "pet.ability.stealDrop": "{pct} % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit mindestens {min} % Chance, Menge 1.",
+    "pet.ability.heal": "Heilt dich sofort um {pct} % deiner maximalen Lebenspunkte.",
+    "pet.ability.shield": "Gibt dir einen Schild, der Schaden in Höhe von {pct} % deiner maximalen Lebenspunkte absorbiert, bis er aufgebraucht ist.",
+    "pet.ability.armorRend": "Der Gegner nimmt für {sec} s {pct} % mehr Schaden von dir.",
+    "pet.ability.guaranteedCrit": "Garantierter kritischer Treffer: {pct} % der maximalen Gegner-Lebenspunkte als Sofortschaden.",
+    "pet.ability.manaRestore": "Stellt dir sofort {pct} % deiner maximalen Mana wieder her.",
+    "pet.ability.lifestealBurst": "Fügt dem Gegner sofort {pct} % seiner maximalen Lebenspunkte Schaden zu und heilt dich um denselben Anteil deiner maximalen Lebenspunkte.",
+    "pet.ability.enemyAttackDelay": "Schiebt den nächsten Angriff des Gegners um {sec} s nach hinten.",
+    "pet.ability.blockNextEnemyHit": "Blockt den nächsten Treffer des Gegners vollständig, egal wie hoch der Schaden wäre.",
+    "pet.ability.armorPierceHit": "Fügt dem Gegner sofort {pct} % seiner maximalen Lebenspunkte Schaden zu und ignoriert dabei seine Rüstung.",
+    "pet.ability.multiHit": "Trifft den Gegner {count}× hintereinander mit je {pct} % seiner maximalen Lebenspunkte Schaden ({total} % insgesamt).",
 
     // Pet combat-log entries
     "combat.petLog.stealDrop": "{pet} stiehlt: {item}!",

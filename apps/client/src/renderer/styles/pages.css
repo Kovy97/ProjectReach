@@ -3601,7 +3601,12 @@ body.bank-dragging-noselect {
 
 .pet-field-effects .pet-effect-row {
   display: grid;
-  grid-template-columns: clamp(82px, 6.2vw, 112px) minmax(0, 1fr);
+  /* 1.0.1-Fix (Chef 27.08.2026 „mehr Kontext"): eigenes, breiteres Tag-Label „Aktiv (im Kampf)"
+     (pet.effect.activeCombat) statt des kurzen „Aktiv" — in ES/EN/RU/FR/PT-BR deutlich länger als
+     das alte Einwort-Label; die vorherige 82-112px-Spalte ließ das Wort über den Kartenrand in die
+     Wert-Spalte hineinlaufen (kein Wrap, da Grid-/Flex-Items ohne `min-width:0` ihre
+     Intrinsic-Breite behalten). Breiter + `min-width:0` unten beheben beides zusammen. */
+  grid-template-columns: clamp(96px, 8.2vw, 138px) minmax(0, 1fr);
   align-items: stretch;
   gap: 0;
   min-height: clamp(64px, 4.8vw, 82px);
@@ -3616,21 +3621,40 @@ body.bank-dragging-noselect {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
   padding: 8px;
   border: 0;
   border-right: 1px solid rgba(167, 123, 67, 0.43);
   background: rgba(17, 21, 21, 0.72);
   font-family: var(--font-info);
   font-size: clamp(10px, 0.65vw, 13px);
+  text-align: center;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
+/* 1.0.1-Fix (Chef 27.08.2026 „mehr Kontext"): die Passiv-/Aktiv-Zeilen tragen jetzt volle Sätze
+   (petText.ts) statt eines kompakten Kind-Labels — mehrzeilig statt eine feste Höhe zentriert;
+   die Zeile wächst über den `.pet-effect-row`-Floor hinaus, das Dossier scrollt bereits
+   (`.pet-field-dossier { overflow-y: auto }`), nie Clip. */
 .pet-field-effects .pet-effect-value {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
   padding: 10px 14px;
   color: #ddd1a4;
   font-size: clamp(13px, 0.84vw, 17px);
   line-height: 1.35;
+}
+
+.pet-field-effects-hint {
+  color: #8f9a9d;
+  font-family: var(--font-info);
+  font-size: clamp(10px, 0.62vw, 12px);
+  font-style: italic;
+  line-height: 1.3;
 }
 
 
@@ -3674,7 +3698,14 @@ body.bank-dragging-noselect {
   min-height: 300px;
 }
 
-@media (max-width: 1180px) {
+/* 1.0.1-Fix (Chef 27.08.2026 "mehr Kontext"): Schwelle von 1180px auf 1400px angehoben — die
+   Passiv-/Aktiv-Zeilen tragen jetzt volle Sätze statt eines kompakten Kind-Labels und brauchen
+   spürbar mehr Breite. Bei 1366px Fensterbreite bleiben der Sidebar-Navigation und dem
+   Fundindex (`.pet-field-index`) nur ~660px für `.pet-field-detail` — der ALTE Default
+   (340+376=716px Spalten-Minimum) überstieg das und ließ Text/Badges an `.pet-field-detail`s
+   `overflow:hidden` abgeschnitten wirken (Text lief unsichtbar über den Kartenrand hinaus).
+   Die hier schon vorhandenen kompakteren Werte (280+340=620px) passen bei 1366px bequem. */
+@media (max-width: 1400px) {
   .pet-field-layout {
     grid-template-columns: 310px minmax(0, 1fr);
   }

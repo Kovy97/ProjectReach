@@ -81,6 +81,7 @@ import { StatLine } from "../components/StatLine";
 import { tupleEquals, useGameSelector, useGameState, useGetGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { inflictHintFor } from "../util/inflictHint";
+import { abilityText } from "../util/petText";
 import { playCombatSfx, playSfx } from "../util/audio";
 import {
   getCombatFxLevel,
@@ -2965,11 +2966,19 @@ function Battle({
                 companionSprite={
                   activePet
                     ? (
-                      <div
-                        ref={petSpriteRef}
+                      // Chef-Auftrag 27.08.2026 „mehr Kontext": das rohe `title=` (Name + Kind-Label +
+                      // Takt) ersetzt durch denselben vollen Fähigkeitstext (petText.ts abilityText),
+                      // den auch die Begleiter-Seite zeigt — als echte HoverTip statt Browser-Tooltip.
+                      <HoverTip
+                        as="div"
+                        elementRef={(el) => { petSpriteRef.current = el; }}
                         className="battle-pet-sprite"
-                        title={`${tr(activePet.name)} — ⚔ ${tr(activePet.combatAbility.name)} · ${formatSeconds1(activePet.combatAbility.intervalMs / 1000)}s`}
-                        aria-label={tr(activePet.name)}
+                        content={
+                          <>
+                            <span className="ct-tip-title">{tr(activePet.name)}</span>
+                            <span className="ct-tip-desc">{abilityText(activePet, t, tr)}</span>
+                          </>
+                        }
                       >
                         {activePetSrc
                           ? <img loading="lazy" decoding="async" src={activePetSrc} alt={tr(activePet.name)} className="pixelart" />
@@ -2980,7 +2989,7 @@ function Battle({
                           )}
                         {/* Task #296 P0 §1.4: separater Glow-Overlay, Farbe je combatAbility.kind-Bucket. */}
                         <div ref={petGlowRef} className="pet-ability-glow" />
-                      </div>
+                      </HoverTip>
                     )
                     : undefined
                 }
