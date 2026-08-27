@@ -68,6 +68,9 @@ const KILL_LADDER_INDEX: Record<string, number[]> = (() => {
   const idx: Record<string, number[]> = {};
   for (const a of content.achievements) {
     if (a.condition.type !== "monster_kills" || !a.condition.target || !a.condition.count) continue;
+    // Achievements 1.2.0: die 84 Kill-Tripel sind weg (Zonen-Bestiarium statt Leiter); übrig sind
+    // Boss-Erstkills und vier VERSTECKTE Scherz-Erfolge — letztere dürfen die Karte nicht spoilern.
+    if (a.hidden) continue;
     (idx[a.condition.target] ??= []).push(a.condition.count);
   }
   for (const list of Object.values(idx)) list.sort((x, y) => x - y);

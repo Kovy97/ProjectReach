@@ -1,4 +1,5 @@
 import { ipcMain } from "electron";
+import { steamApiName } from "./steamAchievements";
 
 /**
  * Steam-Integration (steamworks.js) — VOLLSTÄNDIG VERDRAHTET, aber INERT bis der Chef die echte
@@ -10,9 +11,12 @@ import { ipcMain } from "electron";
  *   2. STEAM_APP_ID unten auf die echte, im Steamworks-Backend registrierte AppID setzen
  *      (oder die Umgebungsvariable GRIMREACH_STEAM_APPID beim Start setzen).
  *   3. steam_appid.txt (nur die AppID als Zahl) für die Dev-Ausführung neben die Executable legen.
- *   4. Im Steamworks-Partner-Backend die Achievements anlegen und ihre „API Name"-Werte in
- *      STEAM_ACHIEVEMENTS mappen — ODER die API-Namen exakt gleich unseren internen IDs benennen,
- *      dann bleibt die Map leer (Default ist 1:1).
+ *   4. Im Steamworks-Partner-Backend die 67 Achievements aus design/achievements-1.2.0/steam-set.csv
+ *      anlegen (API-Namen exakt wie in steamAchievements.ts) und die Konfiguration VERÖFFENTLICHEN.
+ *
+ * Achievements 1.2.0 (27.08.2026): das Mapping ist gefüllt (steamAchievements.ts, 67 Paare, Wächter-
+ * Test gegen den Content). Nur gemappte IDs werden gemeldet; das frühere 1:1-Namensfallback ist aus.
+ * steamworks.js und die AppID setzt der Chef zusammen mit logic-dev (bewusst NICHT hier).
  */
 
 /**
@@ -24,14 +28,6 @@ import { ipcMain } from "electron";
  */
 const STEAM_APP_ID = Number(process.env["GRIMREACH_STEAM_APPID"] ?? 0);
 
-/**
- * Mapping interner Achievement-IDs (content.achievements[].id) → Steam-Achievement-„API Name"
- * (im Steamworks-Partner-Backend angelegt). Nur explizit gemappte ODER 1:1-namensgleiche IDs
- * werden gemeldet. Leer lassen und die Steam-API-Namen gleich unseren IDs benennen = 1:1 (Default).
- */
-const STEAM_ACHIEVEMENTS: Record<string, string> = {
-  // Beispiel: "ach_kills_10": "ACH_FIRST_BLOOD",
-};
 
 /** Minimale Teil-Signatur der steamworks.js-Client-API, die wir tatsächlich nutzen. */
 type SteamClient = {
@@ -85,16 +81,17 @@ export function initSteam(): void {
   }
 }
 
-/** Übersetzt eine interne Achievement-ID in den Steam-API-Namen (Default: 1:1). */
-function steamApiName(internalId: string): string {
-  return STEAM_ACHIEVEMENTS[internalId] ?? internalId;
-}
-
-/** Schaltet EIN Steam-Achievement frei (idempotent). No-Op ohne aktive Steam-Verbindung. */
+/**
+ * Schaltet EIN Steam-Achievement frei (idempotent). No-Op ohne aktive Steam-Verbindung und für
+ * In-Game-only-Erfolge ohne Steam-Mapping (steamApiName → null; kein Backend-Fehlversuch, kein Log-Rauschen).
+ * Der Sync beim Start (steam:achievement-sync) läuft über dieselbe Funktion und zieht Alt-Fortschritt
+ * nach — auch die neuen 1.2.0-Erfolge, die die Engine beim ersten Tick rückwirkend freischaltet.
+ */
 export function unlockAchievement(internalId: string): void {
   if (!steam) return;
   try {
     const name = steamApiName(internalId);
+    if (name === null) return;
     if (!steam.achievement.isActivated(name)) steam.achievement.activate(name);
   } catch (err) {
     console.warn("[steam] Achievement konnte nicht gesetzt werden:", internalId, err);

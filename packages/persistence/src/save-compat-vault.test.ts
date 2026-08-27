@@ -248,6 +248,15 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     erwartet.state.camp.buildQueue = [];
     for (const plot of erwartet.state.farmPlots) plot.nextCropId = null;
     erwartet.state.queueDungeon = null;
+    // Achievements 1.2.0 (Chef-Entscheid 27.08.2026, KEIN SAVE_VERSION-Bump): der Katalog wurde von
+    // 537 auf 311 Erfolge neu geschnitten (Kill-Tripel, Skill-Stufen 10/20/30/40/60/70/80 entfallen).
+    // sanitize streift seit jeher Achievement-IDs ohne Content-Def ab (s. index.ts `knownAch`) —
+    // der v80-Save trägt 14 solcher Alt-IDs (ach_skill_fishing_10 …). Erwartet ist also GENAU
+    // die Content-Filterung, sonst nichts; die Nachholung neuer Erfolge (Kapitel, Bestiarium …)
+    // passiert erst im Catch-up-Tick (hier bewusst 0 Ticks) und ist in engine/achievements.test.ts
+    // („Alt-Save-Nachholung") gepinnt.
+    const knownAch = new Set(content.achievements.map((a) => a.id));
+    erwartet.state.achievements = erwartet.state.achievements.filter((id) => knownAch.has(id));
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 

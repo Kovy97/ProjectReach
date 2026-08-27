@@ -31,6 +31,22 @@ resumes it after the kill; the fight button is only locked during another champi
 *Dev-Notiz: `startEliteCombat` (elites.ts) spiegelt insertQueueEntryAtFront Schritte 1+2 (parkRunningActivityAtFront);
 CombatPage `busy` nur bei `combat.eliteVariantId`; Test elite-queue-preserve.test.ts (4 Fälle inkl. Wiederaufnahme).*
 
+**Erfolge neu geschnitten (Chef-Entscheid 27.08.):** DE: 311 statt 537 Erfolge. Die 84 Monster-Kill-Ketten
+weichen Zonen-Bestiarium und Boss-Erfolgen, Skill-Leitern haben jetzt fünf Stufen (25/50/75/90/99),
+und Slayer, Champions, New Haven, Runen, Meisterschaft, Chronik-Kapitel und Bestiarium bekommen
+eigene Erfolge; zwölf davon sind versteckt. Bereits Erreichtes bleibt erhalten, neue Erfolge werden
+rückwirkend gutgeschrieben. / EN: Achievements reworked: 311 instead of 537, with zone bestiary and
+boss achievements replacing the kill chains, five-step skill ladders, achievements for every system
+and twelve hidden ones; everything earned stays and new ones are credited retroactively.
+
+**Bannmagie levelt schneller (Chef-Entscheid 27.08.):** DE: Absorbierter Ward gibt viermal so viel
+Erfahrung wie bisher. / EN: Absorbed ward now grants four times the experience.
+
+*Dev-Notiz: 20 neue Bedingungstypen (rein lesend, kein Save-Bump, kein neues Feld), `hidden` an AchievementDef,
+Overlays 5 Sprachen vollständig (Guard-Test), Steam-Mapping der 67 API-Namen in apps/client/src/main/steamAchievements.ts
+(+Test gegen die CSV); WARDING_XP_PER_ABSORB 0,25 → 1,0 mit Pins in warding-xp-rate.test.ts. Befund: der 99er-Pfad für
+Bannmagie ist die Defensiv-Magie-Haltung (~74 h im Endgame), der passive Absorb-Pfad bleibt Nebeneinkommen.*
+
 **Die Warteschlange kennt ihre Kette (Chef 27.08.):** DE: Wer 650× Kupferader eingereiht hat, kann
 jetzt auch 650× Kupfer schmelzen dahinter einreihen, obwohl noch kein Erz in der Tasche liegt. Die
 Material-Chips zeigen drei Zustände: grün (habe), gelb (kommt aus der Warteschlange, mit Herkunft im

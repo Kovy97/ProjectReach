@@ -1,5 +1,5 @@
 import type { AchievementCondition, ContentDB, GameState, ItemId } from "@hearthforge/shared";
-import { AP_MILESTONE_STEP_PCT, apMilestoneTokens, earnedAP, totalAP } from "@hearthforge/shared";
+import { AP_MILESTONE_STEP_PCT, MASTERY_MAX_LEVEL, apMilestoneTokens, earnedAP, totalAP } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 
 /**
@@ -59,13 +59,170 @@ function totalDungeonsCleared(state: GameState): number {
   return sum;
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// Achievements 1.2.0 (Chef-Entscheid 27.08.2026, design/achievements-1.2.0/audit.md § 2.5):
+// Zähler-Ableitungen für die neuen Bedingungstypen. Alle REIN LESEND aus bestehendem State
+// (kein neues Feld, kein SAVE_VERSION-Sprung); wo eine Content-Menge gebraucht wird (Zonen-
+// Monster, Turm-Etagen, Kochen-Outputs, Daily-Pool), liefert die Funktion ohne Content defensiv 0
+// — der echte Unlock-Pfad `checkAchievements` reicht den Content immer durch.
+// ───────────────────────────────────────────────────────────────────────────
+
+/** Paragonturm-ID: hat eine eigene Etagen-Leiter (`paragon_floor`) und zählt NICHT als Dungeon. */
+const PARAGON_TOWER_ID = "paragon_tower";
+
+/** Anzahl Content-Monster mit mindestens einem Kill (Bestiarium-Vollständigkeit). */
+function monstersDiscovered(state: GameState, content?: ContentDB): number {
+  if (!content) return 0;
+  let n = 0;
+  for (const id of Object.keys(content.monsters)) {
+    if ((state.monsterKills[id] ?? 0) >= 1) n++;
+  }
+  return n;
+}
+
+/**
+ * Zonen-Bestiarium: KLEINSTER Kill-Stand über alle Content-Monster der Zone (inkl. Nur-Dungeon-
+ * Wesen der Zone). count 1 = „jedes Wesen besiegt", count 100 = „Zone gemeistert". Zone ohne
+ * Monster (oder unbekannt) → 0, damit ein Tippfehler nie einen Gratis-Unlock erzeugt.
+ */
+function zoneBestiaryMin(state: GameState, zoneId: string, content?: ContentDB): number {
+  if (!content) return 0;
+  let min = Number.POSITIVE_INFINITY;
+  for (const m of Object.values(content.monsters)) {
+    if (m.zone !== zoneId) continue;
+    min = Math.min(min, state.monsterKills[m.id] ?? 0);
+  }
+  return Number.isFinite(min) ? min : 0;
+}
+
+/** Anzahl verschiedener Dungeons mit ≥ 1 Clear — ohne Paragonturm; mit Content nur echte Dungeon-IDs. */
+function dungeonsDistinct(state: GameState, content?: ContentDB): number {
+  const known = content ? new Set(content.dungeons.map((d) => d.id)) : null;
+  let n = 0;
+  for (const [id, clears] of Object.entries(state.dungeonsCleared)) {
+    if (id === PARAGON_TOWER_ID || clears < 1) continue;
+    if (known && !known.has(id)) continue;
+    n++;
+  }
+  return n;
+}
+
+/** Höchste Slayer-Turm-Etage, auf der der Spieler mindestens ein Wesen erlegt hat (0 = keine). */
+function slayerFloorReached(state: GameState, content?: ContentDB): number {
+  if (!content) return 0;
+  let best = 0;
+  for (const m of Object.values(content.monsters)) {
+    if (!m.slayerFloor || (state.monsterKills[m.id] ?? 0) < 1) continue;
+    best = Math.max(best, m.slayerFloor);
+  }
+  return best;
+}
+
+/** Champion-Kodex: Σ Kills (ohne target) bzw. Kills EINER Variante. Defensiv gegen rohe Alt-States. */
+function eliteKills(state: GameState, variantId?: string): number {
+  const codex = state.eliteCodex ?? {};
+  if (variantId) return codex[variantId]?.kills ?? 0;
+  let sum = 0;
+  for (const e of Object.values(codex)) sum += e.kills;
+  return sum;
+}
+
+/** Anzahl Champion-Varianten mit `field ≥ 1` (kills → „alle Champions", uniques → „Trophäenhalle"). */
+function eliteVariantsWith(state: GameState, field: "kills" | "uniques", content?: ContentDB): number {
+  const codex = state.eliteCodex ?? {};
+  let n = 0;
+  for (const [id, e] of Object.entries(codex)) {
+    if (content?.elites && !content.elites[id]) continue; // verwaiste Variante zählt nicht
+    if (e[field] >= 1) n++;
+  }
+  return n;
+}
+
+/** New Haven: Σ Gebäude-Stufen (ohne target) bzw. Stufe EINES Gebäudes. `camp` fehlt bei rohen Alt-States. */
+function campLevels(state: GameState, buildingId?: string): number {
+  const buildings = state.camp?.buildings ?? {};
+  if (buildingId) return buildings[buildingId] ?? 0;
+  let sum = 0;
+  for (const lvl of Object.values(buildings)) sum += lvl;
+  return sum;
+}
+
+/** New Haven: Anzahl gebauter Gebäude (Stufe ≥ 1). */
+function campBuildingsBuilt(state: GameState): number {
+  let n = 0;
+  for (const lvl of Object.values(state.camp?.buildings ?? {})) if (lvl >= 1) n++;
+  return n;
+}
+
+/** Anzahl Aktionen mit Meisterschafts-Level ≥ MASTERY_MAX_LEVEL (mit Content nur echte Aktions-IDs). */
+function masteryMaxed(state: GameState, content?: ContentDB): number {
+  let n = 0;
+  for (const [actionId, st] of Object.entries(state.mastery)) {
+    if (content && !content.actions[actionId]) continue;
+    if (levelFromXp(st.xp) >= MASTERY_MAX_LEVEL) n++;
+  }
+  return n;
+}
+
+/** Kleinstes Skill-Level über alle Content-Skills („Alleskönner": alle ≥ 50/75). Ohne Content über state.skills. */
+function minSkillLevel(state: GameState, content?: ContentDB): number {
+  const ids = content ? Object.keys(content.skills) : Object.keys(state.skills);
+  if (ids.length === 0) return 0;
+  let min = Number.POSITIVE_INFINITY;
+  for (const id of ids) min = Math.min(min, levelFromXp(state.skills[id]?.xp ?? 0));
+  return Number.isFinite(min) ? min : 0;
+}
+
+/**
+ * Anzahl VERSCHIEDENER Daily-Quests, die je einmal abgeholt wurden. `quests.claimed` trägt jede
+ * (auch wiederholbare) Quest-ID genau einmal (quests.ts claimQuest pusht nur, wenn noch nicht enthalten).
+ */
+function dailiesDistinct(state: GameState, content?: ContentDB): number {
+  if (!content) return 0;
+  const daily = new Set(content.quests.filter((q) => q.daily).map((q) => q.id));
+  let n = 0;
+  for (const id of state.quests.claimed) if (daily.has(id)) n++;
+  return n;
+}
+
+/** Σ gekochter Portionen = craftedById über alle Loot-Outputs von Kochen-Aktionen. */
+function foodCooked(state: GameState, content?: ContentDB): number {
+  if (!content) return 0;
+  const outputs = new Set<ItemId>();
+  for (const a of Object.values(content.actions)) {
+    if (a.skill !== "cooking") continue;
+    for (const roll of a.loot) outputs.add(roll.itemId);
+  }
+  let sum = 0;
+  for (const id of outputs) sum += state.stats.craftedById[id] ?? 0;
+  return sum;
+}
+
+/** Anzahl entdeckter Runen-Items (`ItemDef.rune` gesetzt) im monotonen Erst-Besitz-Marker. */
+function runesDiscovered(state: GameState, content?: ContentDB): number {
+  if (!content) return 0;
+  let n = 0;
+  for (const id of Object.keys(state.discoveredItems ?? {})) {
+    if (content.items[id]?.rune) n++;
+  }
+  return n;
+}
+
+/** Anzahl aktuell bepflanzter Beete. */
+function farmPlotsPlanted(state: GameState): number {
+  let n = 0;
+  for (const p of state.farmPlots ?? []) if (p.cropId !== null) n++;
+  return n;
+}
+
 /**
  * Roher (absoluter) Zählerstand einer Achievement-Bedingung — gelesen aus BEREITS VORHANDENEN
  * State-Zählern (plus den neuen `goldSpent`/`dungeonsCleared`/`dailyStreak`). KEIN neuer
  * Event-Hook (Muster aus quests.ts `rawProgress`). Auch für die UI als Fortschrittswert nutzbar.
  *
- * `content` ist optional, weil die meisten Zähler rein aus dem State lesbar sind; nur `sets_completed`
- * braucht den Content (Set-Definitionen). Ohne Content liefert dieser Typ defensiv 0 (der echte
+ * `content` ist optional, weil die meisten Zähler rein aus dem State lesbar sind; Typen, die eine
+ * Content-Menge brauchen (sets_completed, monsters_discovered, zone_bestiary, slayer_floor,
+ * dailies_distinct, food_cooked, runes_discovered), liefern ohne Content defensiv 0 (der echte
  * Unlock-Pfad `checkAchievements` reicht den Content immer durch).
  */
 export function achievementProgress(
@@ -87,7 +244,10 @@ export function achievementProgress(
     case "items_crafted":
       return cond.target ? (state.stats.craftedById[cond.target] ?? 0) : state.stats.itemsCrafted;
     case "quests_completed":
-      return state.quests.claimed.length;
+      // Mit target (Achievements 1.2.0, Chronik-Kapitel): 1/0 — „Kapitel abgeschlossen" heißt
+      // ABGEHOLT (`claimed`), nicht nur Objectives erfüllt (`completed`), damit der Erfolg exakt
+      // mit dem Kapitel-Popup/der Belohnung zusammenfällt. Ohne target wie bisher: Anzahl.
+      return cond.target ? (state.quests.claimed.includes(cond.target) ? 1 : 0) : state.quests.claimed.length;
     case "gold_reached":
       return state.character.gold;
     case "gold_spent":
@@ -121,6 +281,49 @@ export function achievementProgress(
       // monoton, sanitize erzwingt best ≥ checkpoint). Defensiv gegen rohe Alt-States ohne
       // paragon-Feld (Muster paragon.ts: dort ??= defaultParagonState()).
       return state.paragon?.best ?? 0;
+    // ── Achievements 1.2.0 (§ 2.5) — rein lesend aus bestehendem State ──────────────────
+    case "monsters_discovered":
+      return monstersDiscovered(state, content);
+    case "zone_bestiary":
+      return cond.target ? zoneBestiaryMin(state, cond.target, content) : 0;
+    case "dungeons_distinct":
+      return dungeonsDistinct(state, content);
+    case "slayer_tasks":
+      return state.slayerTasksCompleted ?? 0;
+    case "slayer_streak":
+      return state.slayerStreak ?? 0;
+    case "slayer_floor":
+      return slayerFloorReached(state, content);
+    case "elite_kills":
+      return eliteKills(state, cond.target);
+    case "elite_variants":
+      return eliteVariantsWith(state, "kills", content);
+    case "elite_uniques":
+      return eliteVariantsWith(state, "uniques", content);
+    case "camp_levels":
+      return campLevels(state, cond.target);
+    case "camp_buildings":
+      return campBuildingsBuilt(state);
+    case "mastery_maxed":
+      return masteryMaxed(state, content);
+    case "min_skill_level":
+      return minSkillLevel(state, content);
+    case "dailies_distinct":
+      return dailiesDistinct(state, content);
+    case "bank_slots":
+      return state.bankSlotsPurchased ?? 0;
+    case "food_cooked":
+      return foodCooked(state, content);
+    case "runes_discovered":
+      return runesDiscovered(state, content);
+    case "farm_plots_planted":
+      return farmPlotsPlanted(state);
+    case "deaths":
+      return state.stats.deaths;
+    case "play_hours":
+      // Aktive Spielzeit (ohne Offline-Catch-up), volle Stunden. `activePlayMs` ist monoton (sanitize
+      // klemmt nur nach oben auf elapsedMs) — ein Meilenstein kann also nie „zurückfallen".
+      return Math.floor((state.activePlayMs ?? 0) / 3_600_000);
     default:
       return 0;
   }
@@ -141,7 +344,9 @@ export function achievementMet(
  * pro advance, auch bei ~660 Defs). Gibt die in diesem Aufruf neu freigeschalteten IDs zurück.
  *
  * Save-kompatibel: `state.achievements` bleibt ein string[]; alte IDs (ach_kills_10 …) bleiben
- * als gültige Defs erhalten und werden nie doppelt aufgenommen.
+ * als gültige Defs erhalten und werden nie doppelt aufgenommen. Entfernte IDs (Achievements 1.2.0:
+ * Kill-Tripel, Skill-Stufen 10/20/30/40/60/70/80, ach_total_level_2079 → ach_total_level_1980)
+ * bleiben im Save harmlos stehen (earnedAP zählt nur IDs mit Def; nie neu angelegt).
  */
 export function checkAchievements(state: GameState, content: ContentDB): string[] {
   const unlocked = new Set(state.achievements);

@@ -720,3 +720,40 @@
   .achv-grid { grid-template-columns: 1fr; }
   .achv-hero { padding: 18px 20px; }
 }
+
+/* ─── Versteckte Erfolge (Achievements 1.2.0 § 2.6): bis zum Unlock eine „???"-Karte mit Schloss —
+   kein Name, keine Beschreibung, kein Balken. Seltenheit/AP bleiben lesbar („wie schwer", nicht „was"). */
+.achv-card--hidden {
+  filter: saturate(0.35) brightness(0.7);
+}
+.achv-card--hidden .achv-name {
+  letter-spacing: 0.22em;
+  color: #8f877a;
+}
+.achv-card--hidden .achv-desc {
+  font-style: italic;
+  color: #7d7669;
+}
+.achv-card--hidden .achv-emblem {
+  border-style: dashed;
+  border-color: #4a5058;
+}
+.achv-card--hidden .achv-emblem img {
+  opacity: 0.65;
+}
+.achv-hidden-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  color: #8f877a;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.achv-hidden-lock img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  opacity: 0.7;
+}

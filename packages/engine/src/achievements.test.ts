@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import {
   AP_MILESTONE_STEP_PCT,
+  MASTERY_MAX_LEVEL,
+  MAX_BANK_SLOTS_PURCHASED,
+  MAX_FARM_PLOTS,
   apMilestoneTokens,
   earnedAP,
   totalAP,
@@ -9,6 +12,7 @@ import {
   type AchievementConditionType,
   type ContentDB,
 } from "@hearthforge/shared";
+import { xpForLevel } from "./leveling";
 import { createGame } from "./state";
 import {
   achievementMet,
@@ -34,6 +38,27 @@ const HANDLED: ReadonlySet<AchievementConditionType> = new Set<AchievementCondit
   "pets_owned",
   "sets_completed",
   "paragon_floor",
+  // Achievements 1.2.0 (Audit § 2.5, 27.08.2026)
+  "monsters_discovered",
+  "zone_bestiary",
+  "dungeons_distinct",
+  "slayer_tasks",
+  "slayer_streak",
+  "slayer_floor",
+  "elite_kills",
+  "elite_variants",
+  "elite_uniques",
+  "camp_levels",
+  "camp_buildings",
+  "mastery_maxed",
+  "min_skill_level",
+  "dailies_distinct",
+  "bank_slots",
+  "food_cooked",
+  "runes_discovered",
+  "farm_plots_planted",
+  "deaths",
+  "play_hours",
 ]);
 
 const VALID_RARITIES = new Set(["common", "uncommon", "rare", "epic", "legendary"]);
@@ -52,6 +77,7 @@ const VALID_CATEGORIES = new Set([
 const TARGET_REQUIRED: ReadonlySet<AchievementConditionType> = new Set<AchievementConditionType>([
   "skill_level",
   "monster_kills",
+  "zone_bestiary",
 ]);
 
 describe("achievements", () => {
@@ -292,6 +318,15 @@ describe("achievements", () => {
     const maxDistinctSets = new Set(content.sets.map((s) => [...s.pieces].sort().join("|"))).size;
     const maxItems = Object.keys(content.items).length;
     const maxQuests = content.quests.length;
+    // Achievements 1.2.0: Content-Obergrenzen der neuen Typen (Audit § 2.5).
+    const maxMonsters = Object.keys(content.monsters).length;
+    const maxDungeonsDistinct = content.dungeons.filter((d) => d.id !== "paragon_tower").length;
+    const maxSlayerFloor = Math.max(...Object.values(content.monsters).map((m) => m.slayerFloor ?? 0));
+    const maxElites = Object.keys(content.elites ?? {}).length;
+    const maxBuildings = (content.campBuildings ?? []).length;
+    const maxActions = Object.keys(content.actions).length;
+    const maxDailies = content.quests.filter((q) => q.daily).length;
+    const maxRunes = Object.values(content.items).filter((i) => i.rune).length;
 
     const ceilings: Partial<Record<AchievementConditionType, number>> = {
       total_level: maxTotalLevel,
@@ -300,6 +335,19 @@ describe("achievements", () => {
       sets_completed: maxDistinctSets,
       items_discovered: maxItems,
       quests_completed: maxQuests,
+      monsters_discovered: maxMonsters,
+      dungeons_distinct: maxDungeonsDistinct,
+      slayer_floor: maxSlayerFloor,
+      elite_variants: maxElites,
+      elite_uniques: maxElites,
+      camp_levels: maxBuildings * 3,
+      camp_buildings: maxBuildings,
+      mastery_maxed: maxActions,
+      min_skill_level: skillLevelCap,
+      dailies_distinct: maxDailies,
+      bank_slots: MAX_BANK_SLOTS_PURCHASED,
+      runes_discovered: maxRunes,
+      farm_plots_planted: MAX_FARM_PLOTS,
     };
 
     for (const a of content.achievements) {
@@ -326,6 +374,10 @@ describe("achievements", () => {
     const monsters = new Set(Object.keys(content.monsters));
     const items = new Set(Object.keys(content.items));
     const dungeons = new Set(content.dungeons.map((d) => d.id));
+    const quests = new Set(content.quests.map((q) => q.id));
+    const zones = new Set(content.zones.map((z) => z.id));
+    const elites = new Set(Object.keys(content.elites ?? {}));
+    const buildings = new Set((content.campBuildings ?? []).map((b) => b.id));
 
     for (const a of content.achievements) {
       expect(ids.has(a.id), `doppelte Achievement-ID: ${a.id}`).toBe(false);
@@ -351,6 +403,14 @@ describe("achievements", () => {
           expect(items.has(t), `${a.id}: Item ${t} existiert nicht`).toBe(true);
         } else if (a.condition.type === "dungeons_cleared") {
           expect(dungeons.has(t), `${a.id}: Dungeon ${t} existiert nicht`).toBe(true);
+        } else if (a.condition.type === "quests_completed") {
+          expect(quests.has(t), `${a.id}: Quest ${t} existiert nicht`).toBe(true);
+        } else if (a.condition.type === "zone_bestiary") {
+          expect(zones.has(t), `${a.id}: Zone ${t} existiert nicht`).toBe(true);
+        } else if (a.condition.type === "elite_kills") {
+          expect(elites.has(t), `${a.id}: Champion ${t} existiert nicht`).toBe(true);
+        } else if (a.condition.type === "camp_levels") {
+          expect(buildings.has(t), `${a.id}: Lager-Gebäude ${t} existiert nicht`).toBe(true);
         }
       }
     }
@@ -490,5 +550,196 @@ describe("AP-Meilensteine (Welle GG P1)", () => {
     expect(checkApMilestones(s, { ...content, achievements: [] })).toEqual([]);
     expect(s.character.questTokens).toBe(0);
     expect(s.lastApMilestone).toBeNull();
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────────────
+// Achievements 1.2.0 (Chef-Entscheid 27.08.2026, design/achievements-1.2.0/audit.md § 2.5):
+// neue Bedingungstypen — je Typ ein Test gegen den echten Content, rein lesend aus bestehendem State.
+// ───────────────────────────────────────────────────────────────────────────
+
+describe("Achievements 1.2.0 — neue Bedingungstypen", () => {
+  const fresh = () => createGame({ name: "Test" }, content, 1);
+
+  it("quests_completed mit target: 1/0 aus quests.claimed (Chronik-Kapitel), ohne target weiterhin Anzahl", () => {
+    const s = fresh();
+    const cond = { type: "quests_completed", target: "chronicle_01", count: 1 } as const;
+    expect(achievementProgress(s, cond)).toBe(0);
+    s.quests.completed.push("chronicle_01"); // nur erfüllt, noch nicht abgeholt → zählt NICHT
+    expect(achievementProgress(s, cond)).toBe(0);
+    s.quests.claimed.push("chronicle_01");
+    expect(achievementProgress(s, cond)).toBe(1);
+    expect(achievementProgress(s, { type: "quests_completed", count: 1 })).toBe(1);
+    const newly = checkAchievements(s, content);
+    expect(newly).toContain("ach_chapter_01");
+    expect(newly).not.toContain("ach_chapter_02");
+  });
+
+  it("monsters_discovered zählt nur Content-Monster mit ≥ 1 Kill; zone_bestiary = MIN der Zone", () => {
+    const s = fresh();
+    expect(achievementProgress(s, { type: "monsters_discovered", count: 1 }, content)).toBe(0);
+    s.monsterKills["chicken"] = 3;
+    s.monsterKills["cow"] = 1;
+    s.monsterKills["nicht_existent"] = 99;
+    expect(achievementProgress(s, { type: "monsters_discovered", count: 1 }, content)).toBe(2);
+    expect(achievementProgress(s, { type: "monsters_discovered", count: 1 })).toBe(0); // ohne Content defensiv 0
+
+    const pastures = Object.values(content.monsters).filter((m) => m.zone === "pastures");
+    expect(pastures.length).toBeGreaterThan(2);
+    const zone = { type: "zone_bestiary", target: "pastures", count: 1 } as const;
+    expect(achievementProgress(s, zone, content)).toBe(0); // boar & Co. noch 0 → MIN 0
+    for (const m of pastures) s.monsterKills[m.id] = 5;
+    s.monsterKills["chicken"] = 100;
+    expect(achievementProgress(s, zone, content)).toBe(5); // der Balken zeigt das schwächste Glied
+    expect(achievementMet(s, zone, content)).toBe(true);
+    expect(achievementMet(s, { type: "zone_bestiary", target: "pastures", count: 100 }, content)).toBe(false);
+    expect(achievementProgress(s, { type: "zone_bestiary", target: "gibt_es_nicht", count: 1 }, content)).toBe(0);
+    expect(checkAchievements(s, content)).toContain("ach_zone_pastures_1");
+  });
+
+  it("dungeons_distinct zählt Dungeons mit ≥ 1 Clear — ohne Paragonturm, ohne Unbekannte", () => {
+    const s = fresh();
+    s.dungeonsCleared["goblin_warband"] = 3;
+    s.dungeonsCleared["crypt_depths"] = 1;
+    s.dungeonsCleared["paragon_tower"] = 10; // eigene Leiter, zählt nicht
+    s.dungeonsCleared["fremd"] = 5;
+    expect(achievementProgress(s, { type: "dungeons_distinct", count: 1 }, content)).toBe(2);
+    expect(achievementProgress(s, { type: "dungeons_distinct", count: 1 })).toBe(3); // ohne Content: nur Paragon-Filter
+    const newly = checkAchievements(s, content);
+    expect(newly).toContain("ach_dungeons_distinct_1");
+    expect(newly).not.toContain("ach_dungeons_distinct_all");
+  });
+
+  it("slayer_tasks / slayer_streak lesen die Slayer-Zähler; slayer_floor = höchste Etage mit Kill", () => {
+    const s = fresh();
+    s.slayerTasksCompleted = 100;
+    s.slayerStreak = 10;
+    expect(achievementProgress(s, { type: "slayer_tasks", count: 1 })).toBe(100);
+    expect(achievementProgress(s, { type: "slayer_streak", count: 1 })).toBe(10);
+    expect(achievementProgress(s, { type: "slayer_floor", count: 1 }, content)).toBe(0);
+    s.monsterKills["rot_rat"] = 1; // Etage 1
+    expect(achievementProgress(s, { type: "slayer_floor", count: 1 }, content)).toBe(1);
+    s.monsterKills["dread_knight"] = 1; // Etage 5
+    expect(achievementProgress(s, { type: "slayer_floor", count: 1 }, content)).toBe(5);
+    const newly = checkAchievements(s, content);
+    expect(newly).toEqual(expect.arrayContaining(["ach_slayer_tasks_100", "ach_slayer_streak_10", "ach_slayer_floor_5", "ach_slayer_floor_1"]));
+  });
+
+  it("elite_kills (Σ / Variante), elite_variants, elite_uniques aus dem Champion-Kodex", () => {
+    const s = fresh();
+    s.eliteCodex = {
+      elite_pastures_boar: { sightings: 3, kills: 2, uniques: 1, fastestKillMs: null },
+      elite_idol_warden: { sightings: 1, kills: 1, uniques: 0, fastestKillMs: null },
+      verwaist: { sightings: 1, kills: 5, uniques: 5, fastestKillMs: null },
+    };
+    expect(achievementProgress(s, { type: "elite_kills", count: 1 })).toBe(8);
+    expect(achievementProgress(s, { type: "elite_kills", target: "elite_idol_warden", count: 1 })).toBe(1);
+    expect(achievementProgress(s, { type: "elite_kills", target: "elite_black_witch", count: 1 })).toBe(0);
+    expect(achievementProgress(s, { type: "elite_variants", count: 1 }, content)).toBe(2); // verwaist gefiltert
+    expect(achievementProgress(s, { type: "elite_uniques", count: 1 }, content)).toBe(1);
+    const newly = checkAchievements(s, content);
+    expect(newly).toEqual(expect.arrayContaining(["ach_elite_first", "ach_elite_idol_warden", "ach_elite_uniques_1"]));
+    expect(newly).not.toContain("ach_elite_kills_10");
+  });
+
+  it("camp_levels (Σ / Gebäude) und camp_buildings aus dem Lager-Zustand", () => {
+    const s = fresh();
+    expect(achievementProgress(s, { type: "camp_levels", count: 1 })).toBe(0);
+    s.camp.buildings = { camp_townhall: 3, camp_sawpit: 1, camp_watchtower: 2 };
+    expect(achievementProgress(s, { type: "camp_levels", count: 1 })).toBe(6);
+    expect(achievementProgress(s, { type: "camp_levels", target: "camp_townhall", count: 3 })).toBe(3);
+    expect(achievementProgress(s, { type: "camp_levels", target: "camp_smelter", count: 1 })).toBe(0);
+    expect(achievementProgress(s, { type: "camp_buildings", count: 1 })).toBe(3);
+    const newly = checkAchievements(s, content);
+    expect(newly).toEqual(expect.arrayContaining(["ach_camp_first", "ach_camp_townhall_3"]));
+    expect(newly).not.toContain("ach_camp_levels_30");
+  });
+
+  it("mastery_maxed zählt Aktionen auf MASTERY_MAX_LEVEL; min_skill_level ist das schwächste Skill-Level", () => {
+    const s = fresh();
+    const actionIds = Object.keys(content.actions).slice(0, 3);
+    for (const id of actionIds) s.mastery[id] = { xp: xpForLevel(MASTERY_MAX_LEVEL) };
+    s.mastery["fremde_aktion"] = { xp: xpForLevel(MASTERY_MAX_LEVEL) };
+    s.mastery[Object.keys(content.actions)[5]!] = { xp: xpForLevel(98) };
+    expect(achievementProgress(s, { type: "mastery_maxed", count: 1 }, content)).toBe(3);
+    expect(checkAchievements(s, content)).toContain("ach_mastery_1");
+
+    for (const id of Object.keys(content.skills)) s.skills[id] = { xp: xpForLevel(60) };
+    expect(achievementProgress(s, { type: "min_skill_level", count: 50 }, content)).toBe(60);
+    s.skills["slayer"] = { xp: xpForLevel(12) };
+    expect(achievementProgress(s, { type: "min_skill_level", count: 50 }, content)).toBe(12);
+  });
+
+  it("dailies_distinct zählt nur Daily-IDs in claimed (je einmal); bank_slots liest bankSlotsPurchased", () => {
+    const s = fresh();
+    const dailies = content.quests.filter((q) => q.daily).map((q) => q.id);
+    expect(dailies.length).toBeGreaterThanOrEqual(10);
+    s.quests.claimed.push("chronicle_01", ...dailies.slice(0, 10));
+    expect(achievementProgress(s, { type: "dailies_distinct", count: 1 }, content)).toBe(10);
+    expect(achievementProgress(s, { type: "dailies_distinct", count: 1 })).toBe(0);
+    s.bankSlotsPurchased = 10;
+    expect(achievementProgress(s, { type: "bank_slots", count: 10 })).toBe(10);
+    const newly = checkAchievements(s, content);
+    expect(newly).toEqual(expect.arrayContaining(["ach_dailies_10", "ach_bank_slots_10"]));
+  });
+
+  it("food_cooked summiert craftedById über Kochen-Outputs; runes_discovered zählt entdeckte Runen", () => {
+    const s = fresh();
+    const cooking = Object.values(content.actions).filter((a) => a.skill === "cooking");
+    expect(cooking.length).toBeGreaterThan(0);
+    const dish = cooking[0]!.loot[0]!.itemId;
+    s.stats.craftedById[dish] = 60;
+    s.stats.craftedById["bronze_bar"] = 500; // kein Gericht
+    expect(achievementProgress(s, { type: "food_cooked", count: 1 }, content)).toBe(60);
+
+    const runes = Object.values(content.items).filter((i) => i.rune).map((i) => i.id);
+    expect(runes.length).toBeGreaterThanOrEqual(10);
+    for (const id of runes.slice(0, 10)) s.discoveredItems[id] = true;
+    s.discoveredItems["copper_ore"] = true;
+    expect(achievementProgress(s, { type: "runes_discovered", count: 1 }, content)).toBe(10);
+    expect(checkAchievements(s, content)).toContain("ach_runes_10");
+  });
+
+  it("farm_plots_planted, deaths und play_hours (volle aktive Stunden, nie Offline-Zeit)", () => {
+    const s = fresh();
+    expect(achievementProgress(s, { type: "farm_plots_planted", count: 9 })).toBe(0);
+    for (const p of s.farmPlots) p.cropId = "graywort_seed";
+    expect(achievementProgress(s, { type: "farm_plots_planted", count: 9 })).toBe(s.farmPlots.length);
+
+    s.stats.deaths = 1;
+    expect(achievementProgress(s, { type: "deaths", count: 1 })).toBe(1);
+    s.elapsedMs = 200 * 3_600_000;
+    s.activePlayMs = 100 * 3_600_000 - 1; // knapp unter 100 h
+    expect(achievementProgress(s, { type: "play_hours", count: 100 })).toBe(99);
+    s.activePlayMs = 100 * 3_600_000;
+    expect(achievementProgress(s, { type: "play_hours", count: 100 })).toBe(100);
+    const newly = checkAchievements(s, content);
+    expect(newly).toEqual(expect.arrayContaining(["ach_deaths_1", "ach_play_hours_10", "ach_play_hours_100", "ach_farm_ninefold"]));
+  });
+
+  it("Alt-Save-Nachholung: Chronik-Kapitel, Bestiarium und Champions werden beim ersten Check rückwirkend freigeschaltet", () => {
+    const s = fresh();
+    // Bestandsspieler mit Kapitel 1–5, 30 entdeckten Monstern, einem Champion-Kill — ohne je ein
+    // Achievement gesehen zu haben (die Defs sind neu). Ein Check reicht.
+    for (let n = 1; n <= 5; n++) s.quests.claimed.push(`chronicle_0${n}`);
+    for (const id of Object.keys(content.monsters).slice(0, 30)) s.monsterKills[id] = 1;
+    s.eliteCodex = { elite_pastures_boar: { sightings: 1, kills: 1, uniques: 0, fastestKillMs: null } };
+    const newly = checkAchievements(s, content);
+    for (let n = 1; n <= 5; n++) expect(newly).toContain(`ach_chapter_0${n}`);
+    expect(newly).toContain("ach_bestiary_25");
+    expect(newly).toContain("ach_elite_first");
+    // Entfernte IDs aus einem Alt-Save bleiben harmlos stehen und zählen 0 AP.
+    s.achievements.push("ach_kills_chicken_10", "ach_skill_mining_20", "ach_total_level_2079");
+    const before = earnedAP(s, content);
+    expect(checkAchievements(s, content)).toEqual([]);
+    expect(earnedAP(s, content)).toBe(before);
+  });
+
+  it("hidden ist reines Anzeige-Metadatum: versteckte Erfolge schalten identisch frei", () => {
+    const hidden = content.achievements.filter((a) => a.hidden);
+    expect(hidden.length).toBe(12);
+    const s = fresh();
+    s.stats.deaths = 1;
+    expect(checkAchievements(s, content)).toContain("ach_deaths_1");
   });
 });

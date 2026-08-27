@@ -108,6 +108,16 @@ const RARITY_CLASS: Record<AchievementRarity, string> = {
 
 type FilterMode = "all" | "unlocked" | "locked";
 
+/** Versteckter Erfolg, der noch nicht freigeschaltet ist → Name/Beschreibung/Fortschritt maskieren. */
+function isMasked(def: AchievementDef, unlocked: boolean): boolean {
+  return def.hidden === true && !unlocked;
+}
+
+/** Schloss-Symbol der maskierten Karte (PNG, sonst Emoji). */
+function lockIcon(): JSX.Element {
+  return LOCKED_ICON_URL ? <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" /> : <>🔒</>;
+}
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function clamp(v: number, lo: number, hi: number): number {
@@ -181,11 +191,16 @@ const AchievementCard = memo(function AchievementCard({
   const rc = RARITY_CLASS[def.rarity];
   const ap = rarityAP(def.rarity);
   const cornerIconUrl = unlocked ? UNLOCKED_ICON_URL : LOCKED_ICON_URL;
+  // Achievements 1.2.0 (§ 2.6): versteckte Erfolge zeigen bis zum Unlock nur „???" + Schloss —
+  // kein Name, keine Beschreibung, kein Fortschrittsbalken (Steam-Parität, keine Story-Spoiler).
+  // Seltenheit und AP bleiben sichtbar (sagen „wie schwer", nicht „was").
+  const masked = isMasked(def, unlocked);
 
   // Welle PP (Antizipation-Moment 1b): derselbe statische Glanz + einmaliger Mount-Sweep wie die
   // Mastery-Aktionszeile (s. MasteryPage.tsx `almostRank` für die volle Begründung) — hier an den
-  // vorhandenen `pct`-Wert dieser Karte gekoppelt statt an ein Mastery-Level.
-  const almost = !unlocked && pct >= ALMOST_THRESHOLD_PCT;
+  // vorhandenen `pct`-Wert dieser Karte gekoppelt statt an ein Mastery-Level. Maskierte Karten
+  // schimmern nie (der Fortschritt ist ja verborgen).
+  const almost = !unlocked && !masked && pct >= ALMOST_THRESHOLD_PCT;
   const [sweep, setSweep] = useState(false);
   useEffect(() => {
     if (!almost || effectiveFxLevel() === "off") return;
@@ -201,7 +216,7 @@ const AchievementCard = memo(function AchievementCard({
       role="button"
       tabIndex={0}
       id={`achv-card-${def.id}`}
-      className={`achv-card${unlocked ? " achv-card--unlocked" : ""}${almost ? " achv-card--almost" : ""}${selected ? " achv-card--selected" : ""}`}
+      className={`achv-card${unlocked ? " achv-card--unlocked" : ""}${almost ? " achv-card--almost" : ""}${selected ? " achv-card--selected" : ""}${masked ? " achv-card--hidden" : ""}`}
       aria-pressed={selected}
       onClick={onSelect}
       onKeyDown={(event) => {
@@ -220,14 +235,14 @@ const AchievementCard = memo(function AchievementCard({
 
       {/* Round rarity-framed medallion — per-achievement icon if set, else category icon. */}
       <div className={`achv-emblem ${rc}`} aria-hidden="true">
-        {achievementIcon(def)}
+        {masked ? lockIcon() : achievementIcon(def)}
       </div>
 
       {/* Card body */}
       <div className="achv-body">
         {/* Header: name + rarity badge */}
         <div className="achv-head">
-          <span className="achv-name">{tr(def.name)}</span>
+          <span className="achv-name">{masked ? t("achievements.hidden.name") : tr(def.name)}</span>
           <span className={`achv-badge ${rc}`}>{t(`achievements.rarity.${def.rarity}`)}</span>
         </div>
 
@@ -242,11 +257,16 @@ const AchievementCard = memo(function AchievementCard({
         </div>
 
         {/* Description */}
-        <p className="achv-desc">{tr(def.description)}</p>
+        <p className="achv-desc">{masked ? t("achievements.hidden.desc") : tr(def.description)}</p>
 
         {/* Progress or unlocked mark */}
         {unlocked ? (
           <div className="achv-status">✓ {t("achievements.unlocked")}</div>
+        ) : masked ? (
+          <div className="achv-hidden-lock">
+            {lockIcon()}
+            <span>{t("achievements.hidden.badge")}</span>
+          </div>
         ) : (
           <div className="achv-progress">
             <div className="achv-progress-bar">
@@ -326,6 +346,9 @@ export function AchievementsPage(): JSX.Element {
       if (activeCategory !== "all" && def.category !== activeCategory) return false;
       if (!matchesFilter(def)) return false;
       if (!searchNeedle) return true;
+      // Maskierte (versteckte, noch gesperrte) Erfolge sind nicht durchsuchbar — weder Name/Text
+      // noch die ID (die z. B. „chicken" verrät). Sie tauchen nur ohne Suchbegriff als „???" auf.
+      if (isMasked(def, unlockedIds.has(def.id))) return false;
       return def.id.toLocaleLowerCase().includes(searchNeedle)
         || tr(def.name).toLocaleLowerCase().includes(searchNeedle)
         || tr(def.description).toLocaleLowerCase().includes(searchNeedle);
@@ -345,7 +368,7 @@ export function AchievementsPage(): JSX.Element {
   // Endspurt. Fallback: wenn NICHTS über 50 % steht, die höchsten Kandidaten trotzdem zeigen — die
   // Leiste bleibt nur leer, wenn wirklich alles erledigt ist.
   const almostThereCandidates = allDefs
-    .filter((d) => !unlockedIds.has(d.id) && d.condition.count > 0)
+    .filter((d) => !unlockedIds.has(d.id) && d.condition.count > 0 && !d.hidden)
     .map((d) => ({
       def: d,
       pct: clamp((achievementProgress(state, d.condition, content) / d.condition.count) * 100, 0, 100),
@@ -373,8 +396,9 @@ export function AchievementsPage(): JSX.Element {
 
   // codex:2026-08-03T19:02:00+02:00 — Das Detailblatt verwendet exakt dieselbe Engine-Fortschrittsquelle wie die Liste.
   const selectedUnlocked = selectedDef ? unlockedIds.has(selectedDef.id) : false;
+  const selectedMasked = selectedDef ? isMasked(selectedDef, selectedUnlocked) : false;
   const selectedProgress = selectedDef
-    ? (selectedUnlocked ? selectedDef.condition.count : achievementProgress(state, selectedDef.condition, content))
+    ? (selectedUnlocked ? selectedDef.condition.count : selectedMasked ? 0 : achievementProgress(state, selectedDef.condition, content))
     : 0;
   const selectedPct = selectedDef
     ? clamp(selectedDef.condition.count > 0 ? (selectedProgress / selectedDef.condition.count) * 100 : 0, 0, 100)
@@ -563,13 +587,13 @@ export function AchievementsPage(): JSX.Element {
           {selectedDef ? (
             <div className="achv-ledger-detail-plaque">
               <div className={`achv-ledger-detail-emblem ${RARITY_CLASS[selectedDef.rarity]}`} aria-hidden="true">
-                {achievementIcon(selectedDef)}
+                {selectedMasked ? lockIcon() : achievementIcon(selectedDef)}
               </div>
-              <h2>{tr(selectedDef.name)}</h2>
+              <h2>{selectedMasked ? t("achievements.hidden.name") : tr(selectedDef.name)}</h2>
               <span className={`achv-badge ${RARITY_CLASS[selectedDef.rarity]}`}>
                 {t(`achievements.rarity.${selectedDef.rarity}`)}
               </span>
-              <p>{tr(selectedDef.description)}</p>
+              <p>{selectedMasked ? t("achievements.hidden.desc") : tr(selectedDef.description)}</p>
 
               <div className="achv-ledger-detail-row">
                 <span>{t(`achievements.cat.${selectedDef.category}`)}</span>
@@ -577,7 +601,7 @@ export function AchievementsPage(): JSX.Element {
               </div>
               <div className="achv-ledger-detail-row">
                 <span>{t("achievements.unlockedStat")}</span>
-                <strong>{formatNum(Math.min(selectedProgress, selectedDef.condition.count))} / {formatNum(selectedDef.condition.count)}</strong>
+                <strong>{selectedMasked ? t("achievements.hidden.name") : `${formatNum(Math.min(selectedProgress, selectedDef.condition.count))} / ${formatNum(selectedDef.condition.count)}`}</strong>
               </div>
               <div className="achv-progress-bar">
                 <div className={`achv-progress-fill ${RARITY_CLASS[selectedDef.rarity]}`} style={{ width: `${selectedPct}%` }} />
