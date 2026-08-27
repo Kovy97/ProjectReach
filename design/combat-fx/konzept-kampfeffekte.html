@@ -1,0 +1,157 @@
+<title>Kampfeffekte Welle 1</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #0f1112; --panel: #1a1c1c; --panel-2: #222423; --line: rgba(212, 182, 109, 0.22); --line-strong: rgba(212, 182, 109, 0.5);
+    --text: #e6dcc0; --muted: #8f8a7c; --gold: #d4b66d; --gold-soft: rgba(212, 182, 109, 0.12); --ember: #a3352a; --ember-soft: rgba(163, 53, 42, 0.16);
+    --display: "Cinzel", "Times New Roman", serif; --body: "Spectral", Georgia, serif; --mono: "IBM Plex Mono", Consolas, monospace;
+  }
+  body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--body); font-size: 17px; line-height: 1.55; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 48px 28px 96px; }
+  .eyebrow { font-family: var(--display); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+  h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 4vw, 44px); letter-spacing: 0.06em; margin: 8px 0 14px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-weight: 500; font-size: 22px; letter-spacing: 0.08em; margin: 0 0 14px; color: var(--gold); text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 500; font-size: 15px; letter-spacing: 0.08em; margin: 0 0 6px; }
+  p { margin: 0 0 12px; max-width: 72ch; }
+  .lead { font-size: 19px; max-width: 66ch; }
+  .sources { font-size: 14px; color: var(--muted); max-width: none; }
+  code { font-family: var(--mono); font-size: 0.86em; color: var(--gold); }
+  section { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .today { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .today span { font-size: 13.5px; padding: 5px 10px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); }
+  .families { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-top: 14px; }
+  .fam { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .fam .letter { font-family: var(--display); font-size: 12px; letter-spacing: 0.14em; color: var(--gold); }
+  .fam p { font-size: 14.5px; color: var(--muted); margin: 0; max-width: none; }
+  .fam .trigger { font-size: 13.5px; color: var(--text); border-left: 2px solid var(--line-strong); padding-left: 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 3px 8px 3px 5px; border: 1px solid var(--line); background: var(--panel-2); }
+  .chip i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 6px currentColor; }
+  .tablewrap { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 9px 10px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.dim { color: var(--muted); }
+  td.num { font-family: var(--mono); color: var(--gold); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-width: 540px; margin: 14px 0 6px; }
+  .cell { aspect-ratio: 1; background: var(--panel-2); border: 1px dashed var(--line-strong); display: grid; place-items: center; position: relative; }
+  .cell b { position: absolute; top: 6px; left: 8px; font-family: var(--display); font-size: 10.5px; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; }
+  .cell i { display: block; border-radius: 50%; background: radial-gradient(circle, rgba(212,182,109,0.9), rgba(163,53,42,0.35) 55%, transparent 72%); }
+  .cell.onset i { width: 26%; height: 26%; opacity: 0.8; }
+  .cell.peak i { width: 62%; height: 62%; }
+  .cell.fade i { width: 48%; height: 48%; opacity: 0.35; filter: blur(2px); }
+  .spec { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; max-width: 760px; }
+  .steps li { counter-increment: step; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; background: var(--panel); border: 1px solid var(--line); padding: 12px 14px; font-size: 15px; }
+  .steps li::before { content: counter(step); font-family: var(--display); color: var(--gold); border: 1px solid var(--line-strong); width: 26px; height: 26px; display: grid; place-items: center; font-size: 13px; }
+  .decisions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 12px; }
+  .dec { background: var(--panel-2); border: 1px solid var(--line); padding: 12px 14px; }
+  .dec .id { font-family: var(--display); font-size: 12px; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 4px; }
+  .dec p { font-size: 14.5px; margin: 0; max-width: none; }
+  .dec .rec { color: var(--muted); font-style: italic; }
+  @media (prefers-reduced-motion: no-preference) { .cell.peak i { animation: pulse 2.4s ease-in-out infinite; } }
+  @keyframes pulse { 50% { transform: scale(1.06); } }
+</style>
+<div class="page">
+  <div class="eyebrow">Grim Reach · Kampfgefühl · 27. August 2026</div>
+  <h1>Kampfeffekte, Welle 1</h1>
+  <p class="lead">Sichtbare Treffer im Auto-Kampf: Magie-Geschosse in Themen, Waffen-Slashes, Blut und Begleiter-Angriffe. Gebaut auf dem Effekt-Layer, der heute schon Funken und Bolzen zeichnet, mit Bildern von Mira statt Strichen. Kein Balance-Eingriff, keine Engine-Änderung; alles läuft im Renderer aus dem Kampflog.</p>
+  <p class="sources">Textfassung: <code>design/combat-fx/konzept-kampfeffekte.md</code>. Mira-Testlauf: <code>CODEX/work/2026-08-27-kampfeffekte-testbatch/</code>. Entscheidungen D1 bis D5 am Ende.</p>
+
+  <section>
+    <h2>Was heute da ist</h2>
+    <p>Der Kampfscreen hat einen Effekt-Layer mit drei Stufen in den Optionen (voll, reduziert, aus). Alles darin ist Form und Farbe, kein Bild. Die Sprites setzen an denselben Auslösern und Ankern an; fehlt ein Bild, bleibt der heutige Effekt als Rückfall. Die Serie ist damit stückweise lieferbar.</p>
+    <div class="today">
+      <span>Ausfallschritt der Figur</span><span>Funken am Einschlag</span><span>Treffer-Blitz in Statusfarbe</span><span>Zauber-Bolzen als Linie</span><span>Pfeil-Tracer</span><span>Arena-Shake bei Crit</span><span>Sterbe-Animation</span><span>Status-Ring</span><span>Low-HP-Vignette</span><span>Treffer- und Block-Sounds je Waffenfamilie</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Vier Familien</h2>
+    <div class="families">
+      <div class="fam">
+        <div class="letter">A · Magie-Geschosse</div>
+        <h3>Ein Thema je Waffe</h3>
+        <div class="trigger">Auslöser: Angriff im Magie-Stil (Spieler und Gegner). Geschoss fliegt ~200 ms von der Hand zur Brust des Ziels, dann Einschlag ~300 ms im selben Thema. Crit = Einschlag 1,4× plus Shake.</div>
+        <p>Das Thema kommt aus dem Waffeneffekt des Stabs, Zauberstabs oder Fokus. Ohne Effekt: arkan.</p>
+        <div class="chips">
+          <span class="chip"><i style="color:#9d7cff"></i>Arkan</span>
+          <span class="chip"><i style="color:#e0682a"></i>Feuer</span>
+          <span class="chip"><i style="color:#8ad4ff"></i>Frost</span>
+          <span class="chip"><i style="color:#f2e36b"></i>Blitz</span>
+          <span class="chip"><i style="color:#7fbf4a"></i>Gift</span>
+          <span class="chip"><i style="color:#5a3f7a"></i>Leere</span>
+          <span class="chip"><i style="color:#f6e6b0"></i>Aether</span>
+        </div>
+      </div>
+      <div class="fam">
+        <div class="letter">B · Waffen-Slashes</div>
+        <h3>Fünf Formen für sechzehn Waffen</h3>
+        <div class="trigger">Auslöser: Nahkampf- oder Fernkampf-Treffer. Slash über der Trefferzone ~250 ms, je Angriff leicht gedreht, für die Gegnerseite gespiegelt. Pfeil als Geschoss mit Einschlag.</div>
+        <p><b>Schnitt</b> (Schwert, Krummsäbel, Dolch), <b>schwerer Hieb</b> (Zweihänder, Große Axt, Streitaxt, Axt), <b>Wucht</b> (Streitkolben, Hammer), <b>Stoß</b> (Speer), <b>Pfeil</b> (Kurz- und Langbogen).</p>
+      </div>
+      <div class="fam">
+        <div class="letter">C · Treffer und Blut</div>
+        <h3>Drei Spritzer, ein Funke, ein Wischer</h3>
+        <div class="trigger">Auslöser: jeder gelandete Treffer, jeder Block, jeder Fehlschlag. Spritzer ~350 ms am Einschlagpunkt, fällt leicht nach unten.</div>
+        <p><b>Blut rot</b> (Tiere, Menschen, Orks, Goblins), <b>Ichor dunkel</b> (Untote, Leere, Dämonen), <b>Knochenstaub</b> (Skelette). Variante nach Monster-Familie, sonst rot. Block-Funken auf dem Schild, Fehlschlag als schwacher Luftzug hinter dem Ziel. Gedeckt, kein Gore.</p>
+      </div>
+      <div class="fam">
+        <div class="letter">D · Begleiter-Angriffe</div>
+        <h3>Sechzehn Fähigkeiten, sechs Bilder</h3>
+        <div class="trigger">Auslöser: Begleiter-Fähigkeit feuert. Effekt am Ziel, bei Schutz und Heilung am Spieler, ~300 ms; das Begleiter-Portrait blitzt am Rand auf.</div>
+        <p><b>Biss/Kralle</b> (Mehrfachtreffer, Schadensstoß, Rüstung reißen), <b>Bolzen</b> (verzögerter Schaden, Status bei Treffer), <b>Schutz/Heilung</b> (Schild, Heilung, Block, Mana, Lebensraub), <b>Mal</b> (Treffsicherheit senken, Verzögern, Betäuben), <b>Diebesgriff</b>, <b>Crit-Stern</b>.</p>
+      </div>
+    </div>
+    <p class="sources" style="margin-top:12px">Status-Ticks (Brennen, Bluten, Gift, Frost, Schock) bekommen in Welle 2 eigene kleine Loops am Ziel; bis dahin bleibt der Status-Ring.</p>
+  </section>
+
+  <section>
+    <h2>Format für Miras Werkzeug</h2>
+    <p>Mira liefert Einzelbilder mit echtem Alpha. Acht-Frame-Sheets driften bei ihrem Generator. Deshalb drei Schlüsselbilder je Effekt in einem Streifen; der Renderer blendet über und ergänzt Bewegung (Skalierung, Rotation, Verschiebung, Nachleuchten). Bei 250 bis 350 ms Laufzeit reicht das vollständig.</p>
+    <div class="strip">
+      <div class="cell onset"><b>Beginn</b><i></i></div>
+      <div class="cell peak"><b>Höhepunkt</b><i></i></div>
+      <div class="cell fade"><b>Ausklang</b><i></i></div>
+    </div>
+    <div class="spec">fx_&lt;familie&gt;_&lt;variante&gt;.png · 768 × 256 · drei Felder à 256 × 256 · Alpha · Motiv mittig je Feld</div>
+    <p style="margin-top:14px">Geschosse sind ein Einzelbild (256 × 128, Flugrichtung rechts); Schweif und Flug macht der Renderer. Einbindung als WebP q90 unter <code>assets/fx/</code> mit Auto-Discovery wie bei den Kampf-Sounds. Welle 1 komplett: etwa 40 Dateien (7 Geschosse + 7 Einschläge, 5 Slashes + Pfeil, 3 Spritzer + Block + Wischer, 6 Begleiter, 2 Crit-Overlays). Davor ein Testlauf mit sechs Dateien.</p>
+  </section>
+
+  <section>
+    <h2>Auslöser und Zeiten</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Ereignis im Kampflog</th><th>Effekt</th><th>Anker</th><th>Dauer</th></tr>
+      <tr><td>Treffer, Magie-Stil</td><td>Geschoss im Thema → Einschlag im Thema → Spritzer nach Familie</td><td class="dim">Hand → Brust des Ziels</td><td class="num">200 + 300 ms</td></tr>
+      <tr><td>Treffer, Nahkampf</td><td>Slash nach Waffenfamilie + Spritzer</td><td class="dim">Trefferzone des Ziels</td><td class="num">250 ms</td></tr>
+      <tr><td>Treffer, Fernkampf</td><td>Pfeil-Geschoss → Einschlag + Spritzer</td><td class="dim">Bogen → Brust des Ziels</td><td class="num">180 + 250 ms</td></tr>
+      <tr><td>Crit</td><td>wie Treffer, Einschlag 1,4×, Crit-Overlay, Arena-Shake (bestehend)</td><td class="dim">wie oben</td><td class="num">+160 ms</td></tr>
+      <tr><td>Block</td><td>Block-Funken (Sprite statt Span)</td><td class="dim">Schild-Anker</td><td class="num">200 ms</td></tr>
+      <tr><td>Fehlschlag</td><td>Wischer hinter dem Ziel</td><td class="dim">hinter der Figur</td><td class="num">200 ms</td></tr>
+      <tr><td>Begleiter-Fähigkeit</td><td>eine der sechs Begleiter-Familien</td><td class="dim">Ziel bzw. Spieler</td><td class="num">300 ms</td></tr>
+      <tr><td>Gegner-Angriff</td><td>dieselben Effekte, gespiegelt, Thema aus Monster-Familie</td><td class="dim">gespiegelt</td><td class="num">wie oben</td></tr>
+    </table></div>
+    <p class="sources" style="margin-top:12px">Zeitbudget je Treffer ≤ 350 ms, höchstens drei gleichzeitige Sprites je Seite, Pool wie heute. „Reduziert" spielt nur Einschläge ohne Geschoss, „aus" bleibt aus, <code>prefers-reduced-motion</code> = reduziert. Der Einschlag-Sound feuert beim Ankommen des Geschosses statt sofort.</p>
+  </section>
+
+  <section>
+    <h2>Reihenfolge</h2>
+    <ol class="steps">
+      <li>Mira: Testlauf mit sechs Dateien (arkanes Geschoss und Einschlag, Feuer-Einschlag, Schwert-Schnitt, Blut rot, Begleiter-Biss).</li>
+      <li>Claude: <code>combatFx.ts</code>, Einbindung der sechs, Screenshots 1920 und 1366, Abnahme am laufenden Kampf.</li>
+      <li>Mira: Serie Welle 1 (~40) im gleichen Guss; Claude bindet stückweise ein, jede Datei ersetzt ihren Rückfall.</li>
+      <li>Welle 2: Status-Loops, Champion-Sondereffekte, Dungeon-Boss-Einleitungen mit Sprite.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Entscheidungen des Chefs</h2>
+    <div class="decisions">
+      <div class="dec"><div class="id">D1 · Themen</div><p>Sieben Magie-Themen (arkan, Feuer, Frost, Blitz, Gift, Leere, Aether) oder weniger für Welle 1?</p><p class="rec">Empfehlung: alle sieben, sie fallen aus den vorhandenen Waffeneffekten heraus.</p></div>
+      <div class="dec"><div class="id">D2 · Format</div><p>Drei Schlüsselbilder je Effekt oder Einzelbild mit reiner Renderer-Bewegung?</p><p class="rec">Empfehlung: drei Bilder; das Einzelbild wirkt bei Einschlägen wie ein Aufkleber.</p></div>
+      <div class="dec"><div class="id">D3 · Blut</div><p>Gedeckte Spritzer ja, kein Gore, keine Verstümmelung, damit die Steam-Freigabe bleibt.</p><p class="rec">Empfehlung: so.</p></div>
+      <div class="dec"><div class="id">D4 · Umfang</div><p>Alle vier Familien in Welle 1 (~40 Dateien) oder erst A + B + C und die Begleiter in Welle 2?</p><p class="rec">Empfehlung: alle vier, der Begleiter-Teil ist mit sechs Bildern klein.</p></div>
+      <div class="dec"><div class="id">D5 · Gegner</div><p>Dieselben Sprites gespiegelt oder eigene Gegner-Varianten?</p><p class="rec">Empfehlung: gespiegelt; eigene Varianten erst für Champions in Welle 2.</p></div>
+    </div>
+  </section>
+</div>

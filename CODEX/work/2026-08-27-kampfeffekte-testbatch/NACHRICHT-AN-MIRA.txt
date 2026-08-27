@@ -1,0 +1,9 @@
+Mira, ein neues Feld: Kampfeffekte. Der Kampfscreen zeigt Treffer heute nur als Formen und Farben; jetzt sollen echte Bilder her: Magie-Geschosse in Themen, Waffen-Slashes, Blutspritzer, Begleiter-Angriffe. Konzept liegt in design/combat-fx/konzept-kampfeffekte.md, Brief und Prompts in CODEX/work/2026-08-27-kampfeffekte-testbatch/.
+
+Bevor die Serie (~40 Dateien) läuft, ein Testlauf mit sechs Dateien, damit wir Format und Lesbarkeit prüfen:
+1. fx_missile_arcane.png, Geschoss 256 x 128, fliegt nach rechts.
+2. fx_impact_arcane.png, 3. fx_impact_fire.png, 4. fx_slash_sword.png, 5. fx_blood_red.png, 6. fx_pet_bite.png: je ein Streifen 768 x 256 mit drei Feldern à 256 x 256 (Beginn, Höhepunkt, Ausklang), gleicher Mittelpunkt in jedem Feld.
+
+Echtes Alpha wie beim Roster, kein Boden, kein Schatten. Blut gedeckt und kurz, kein Gore. Bitte im QA einen Kontaktbogen auf dunklem Grund UND einen über einem Battlescreen-Ausschnitt (z. B. apps/client/src/renderer/assets/battlescreens/ashfields.webp), damit wir sehen, ob die Effekte bei 256 px noch lesbar sind. Lieferung nach CODEX/assets/kampfeffekte-testlauf-2026-08-27/fertig/, den Einbau macht Claude.
+
+Wenn die sechs sitzen, kommt die Serie im gleichen Guss.
