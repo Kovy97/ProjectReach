@@ -1745,6 +1745,15 @@ export const zh: Record<string, string> = {
     "onboarding.tour.bank.slotPurchase.title": "更多存储空间",
     "onboarding.tour.bank.slotPurchase.body": "空间不够?在这里花金币购买更多仓库格。存放大量装备时非常值得。",
 
+    "guide.itemCard.identity.title": "名称与稀有度",
+    "guide.itemCard.identity.body": "每张物品卡片都以名称、稀有度和类型开头——稀有度越高，颜色越亮。",
+    "guide.itemCard.stats.title": "属性与需求",
+    "guide.itemCard.stats.body": "下方是战斗属性、等级需求，以及该物品所属套装的加成（如果有）。",
+    "guide.itemCard.wikiBtn.title": "物品百科",
+    "guide.itemCard.wikiBtn.body": "这个\"?\"按钮会打开该物品的百科：所有来源、配方、掉落概率，以及它的用途。",
+    "guide.itemCard.outro.title": "永远触手可及",
+    "guide.itemCard.outro.body": "游戏中每张物品卡片上都有这个百科按钮——背包、商店、仓库，到处都是。",
+
     // ─── "更新内容"导览 (Chef-Auftrag 2026-07-21) ───
     "onboarding.feature.intro.title": "本次更新的新内容！",
     "onboarding.feature.intro.body": "我们来快速介绍两个实用的新功能。",

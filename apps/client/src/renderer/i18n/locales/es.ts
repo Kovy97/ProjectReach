@@ -1703,6 +1703,15 @@ export const es: Record<string, string> = {
     "onboarding.tour.bank.slotPurchase.title": "Más espacio",
     "onboarding.tour.bank.slotPurchase.body": "¿Sin espacio? Compra más ranuras de banco aquí con oro. Vale la pena cuando ya guardas mucho equipo.",
 
+    "guide.itemCard.identity.title": "Nombre y rareza",
+    "guide.itemCard.identity.body": "Cada carta de objeto empieza con su nombre, rareza y tipo — los objetos más raros brillan con un color más intenso.",
+    "guide.itemCard.stats.title": "Estadísticas y requisitos",
+    "guide.itemCard.stats.body": "Debajo: estadísticas de combate, requisitos de nivel y cualquier bono de conjunto al que contribuya este objeto.",
+    "guide.itemCard.wikiBtn.title": "La wiki del objeto",
+    "guide.itemCard.wikiBtn.body": "Este \"?\" abre la wiki de este objeto: todas sus fuentes, recetas que lo usan, probabilidades de caída y para qué sirve.",
+    "guide.itemCard.outro.title": "Siempre a un clic",
+    "guide.itemCard.outro.body": "Encontrarás este botón de wiki en cada carta de objeto del juego — inventario, tienda, banco, donde sea.",
+
     // ─── Versión „Novedades" (Chef-Auftrag 2026-07-21) ───
     "onboarding.feature.intro.title": "¡Novedades en esta actualización!",
     "onboarding.feature.intro.body": "Te mostramos rápidamente dos incorporaciones útiles.",

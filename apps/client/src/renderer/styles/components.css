@@ -821,6 +821,31 @@ body .item-cell.rarity-godly {
   font-weight: 500;
 }
 
+/* Erstkontakt-Hinweis (Chef-Auftrag „Item-Wiki unauffindbar" 2026-08-27, Reddit-Feedback: Spieler
+   klicken nie auf den kleinen „?"-Knopf): dezentes Glühen/Pulsieren, SOLANGE der Item-Karten-Guide
+   (guide.itemCard.*, Persistenz `state.onboarding.toursSeen.itemCardGuideV1`) noch nie gesehen
+   wurde — s. ItemTooltip.tsx `wikiBtnPulse`-Prop. Sobald die Tour einmal gesehen/übersprungen
+   wurde, verschwindet die Klasse für immer, der Knopf bleibt ruhig (kein Dauer-Ablenker). */
+.itip-wiki-btn--pulse {
+  animation: itip-wiki-pulse 2.2s ease-in-out infinite;
+}
+@keyframes itip-wiki-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(216, 192, 106, 0.5);
+    border-color: rgba(180, 150, 80, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 9px 3px rgba(216, 192, 106, 0.6);
+    border-color: var(--gold);
+    color: #fff2c8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .itip-wiki-btn--pulse {
+    animation: none;
+  }
+}
+
 /* ─── Doppelzeilen-Header: Name groß (Band 1) + Typ · Seltenheit (Band 2) ───
    Chef-Nachbesserung Runde 2: KEIN volles Rarity-Farbband mehr ("wirkt billig") —
    beide Bänder sind jetzt transparent und zeigen einfach die dunkle bg_black-

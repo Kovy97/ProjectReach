@@ -1701,6 +1701,15 @@ export const ptBR: Record<string, string> = {
     "onboarding.tour.bank.slotPurchase.title": "Mais armazenamento",
     "onboarding.tour.bank.slotPurchase.body": "Sem espaço? Compre mais espaços de banco aqui com ouro. Vale a pena quando você já guarda muito equipamento.",
 
+    "guide.itemCard.identity.title": "Nome e raridade",
+    "guide.itemCard.identity.body": "Toda carta de item começa com nome, raridade e tipo — itens mais raros brilham em uma cor mais intensa.",
+    "guide.itemCard.stats.title": "Atributos e requisitos",
+    "guide.itemCard.stats.body": "Abaixo disso: atributos de combate, requisitos de nível e qualquer bônus de conjunto ao qual este item contribui.",
+    "guide.itemCard.wikiBtn.title": "A wiki do item",
+    "guide.itemCard.wikiBtn.body": "Este \"?\" abre a wiki deste item: todas as fontes, receitas que o usam, chances de drop e para que serve.",
+    "guide.itemCard.outro.title": "Sempre a um clique",
+    "guide.itemCard.outro.body": "Você encontra esse botão de wiki em toda carta de item do jogo — inventário, loja, banco, em qualquer lugar.",
+
     // ─── Tour „Novidades" (Chef-Auftrag 2026-07-21) ───
     "onboarding.feature.intro.title": "Novidades desta atualização!",
     "onboarding.feature.intro.body": "Vamos mostrar rapidamente duas novidades úteis.",

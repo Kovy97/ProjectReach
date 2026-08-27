@@ -2005,6 +2005,18 @@ const en = {
     "onboarding.tour.bank.slotPurchase.title": "More Storage",
     "onboarding.tour.bank.slotPurchase.body": "Out of space? Buy more bank slots here with gold. Worth it once you're storing a lot of gear.",
 
+    // ─── Item-Karten-Guide (Chef-Auftrag „Item-Wiki unauffindbar" 2026-08-27): feuert einmalig,
+    //     sobald zum ersten Mal auf diesem Save eine Item-Karte GEPINNT (angeklickt) wird — s.
+    //     areaTourSteps.ts ITEM_CARD_TOUR_STEPS + AreaTourGuide-Mount in ItemTooltip.tsx. ───
+    "guide.itemCard.identity.title": "Name & Rarity",
+    "guide.itemCard.identity.body": "Every item card starts with its name, rarity and type — rarer items glow in a stronger colour.",
+    "guide.itemCard.stats.title": "Stats & Requirements",
+    "guide.itemCard.stats.body": "Below that: combat stats, level requirements, and any set bonus this item contributes to.",
+    "guide.itemCard.wikiBtn.title": "The Item Wiki",
+    "guide.itemCard.wikiBtn.body": "This \"?\" opens the wiki for this item: every source it drops from, recipes that use it, drop chances, and what it's good for.",
+    "guide.itemCard.outro.title": "Always One Click Away",
+    "guide.itemCard.outro.body": "You'll find this wiki button on every item card in the game — inventory, shop, bank, anywhere.",
+
     // ─── Versions-„Was ist neu"-Tour (Chef-Auftrag 2026-07-21): feuert einmalig für Alt-Saves,
     //     s. components/FeatureTourGuide.tsx + areaTourSteps.ts FEATURE_TOUR_STEPS. ───
     "onboarding.feature.intro.title": "New in this update!",
@@ -4208,6 +4220,16 @@ const de: Record<keyof typeof en, string> = {
     "onboarding.tour.bank.columns.body": "Links dein Inventar, rechts deine Bank. Klicke ein Item zum Einlagern oder Entnehmen — oder zieh es rüber.",
     "onboarding.tour.bank.slotPurchase.title": "Mehr Stauraum",
     "onboarding.tour.bank.slotPurchase.body": "Kein Platz mehr? Kauf hier mit Gold weitere Bank-Slots. Lohnt sich, sobald du viel Ausrüstung lagerst.",
+
+    // ─── Item-Karten-Guide (Chef-Auftrag „Item-Wiki unauffindbar" 2026-08-27) ───
+    "guide.itemCard.identity.title": "Name & Seltenheit",
+    "guide.itemCard.identity.body": "Jede Item-Karte beginnt mit Name, Seltenheit und Typ — seltenere Items leuchten in kräftigerer Farbe.",
+    "guide.itemCard.stats.title": "Werte & Anforderungen",
+    "guide.itemCard.stats.body": "Darunter: Kampfwerte, Stufenanforderungen und ein möglicher Set-Bonus, zu dem dieses Item beiträgt.",
+    "guide.itemCard.wikiBtn.title": "Das Item-Wiki",
+    "guide.itemCard.wikiBtn.body": "Dieses „?\" öffnet das Wiki zu diesem Item: alle Quellen, Rezepte, Dropchancen und wofür man es braucht.",
+    "guide.itemCard.outro.title": "Immer einen Klick entfernt",
+    "guide.itemCard.outro.body": "Diesen Wiki-Knopf findest du auf jeder Item-Karte im Spiel — im Inventar, im Laden, in der Bank, überall.",
 
     // ─── Versions-„Was ist neu"-Tour (Chef-Auftrag 2026-07-21) ───
     "onboarding.feature.intro.title": "Neu in diesem Update!",

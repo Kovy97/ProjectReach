@@ -1747,6 +1747,15 @@ export const fr: Record<string, string> = {
     "onboarding.tour.bank.slotPurchase.title": "Plus de stockage",
     "onboarding.tour.bank.slotPurchase.body": "Plus de place ? Achète ici plus d'emplacements de banque avec de l'or. Ça vaut le coup une fois que tu stockes beaucoup d'équipement.",
 
+    "guide.itemCard.identity.title": "Nom et rareté",
+    "guide.itemCard.identity.body": "Chaque fiche d'objet commence par son nom, sa rareté et son type — les objets plus rares brillent d'une couleur plus intense.",
+    "guide.itemCard.stats.title": "Statistiques et prérequis",
+    "guide.itemCard.stats.body": "En dessous : les statistiques de combat, le niveau requis et un éventuel bonus d'ensemble auquel cet objet contribue.",
+    "guide.itemCard.wikiBtn.title": "Le wiki de l'objet",
+    "guide.itemCard.wikiBtn.body": "Ce \"?\" ouvre le wiki de cet objet : toutes ses sources, les recettes qui l'utilisent, les chances de drop et à quoi il sert.",
+    "guide.itemCard.outro.title": "Toujours à portée de clic",
+    "guide.itemCard.outro.body": "Tu trouveras ce bouton wiki sur chaque fiche d'objet du jeu — inventaire, boutique, banque, partout.",
+
     // ─── Tournée « Nouveautés » (Chef-Auftrag 2026-07-21) ───
     "onboarding.feature.intro.title": "Nouveautés de cette mise à jour !",
     "onboarding.feature.intro.body": "On te montre vite deux ajouts bien pratiques.",

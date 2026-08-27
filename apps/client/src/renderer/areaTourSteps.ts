@@ -110,3 +110,20 @@ export const FEATURE_TOUR_STEPS: AreaTourStepDef[] = [
 export const FEATURE_TOUR_STEPS_V2: AreaTourStepDef[] = [
   { guideId: "sidebar.newhaven", textKey: "onboarding.feature2.newHaven", requireAction: true },
 ];
+
+/**
+ * Item-Karten-Guide (Chef-Auftrag „Item-Wiki fürs Auffindbarkeit fehlt" 2026-08-27): Reddit-Spieler
+ * kennen das Wiki nicht, weil sie nie auf den kleinen „?"-Knopf oben rechts an der Item-Karte
+ * klicken. Kurzer Spotlight-Rundgang über die PINNED (geklickte, nicht nur gehoverte) Karte, EINMAL
+ * pro Save, s. `AreaTourGuide`-Mount in `ItemTooltip.tsx` (`payload?.pinned`-gegatet statt
+ * seiten-lokal — die Karte selbst ist der „Bereich"). `itemCard.stats` deckt gleichzeitig Werte,
+ * Anforderungen UND Set-Bonus ab (alle drei leben in `.itip-warbanner-record`, s. ItemTooltipCard).
+ * Kein eigener Quellen/Nutzen-Schritt: DAS ist genau das, was die Karte NICHT zeigt und das Wiki
+ * (nächster Schritt) füllt — die dortige "?"-Button-Erklärung übernimmt diesen Übergang.
+ */
+export const ITEM_CARD_TOUR_STEPS: AreaTourStepDef[] = [
+  { guideId: "itemCard.identity", textKey: "guide.itemCard.identity" },
+  { guideId: "itemCard.stats", textKey: "guide.itemCard.stats" },
+  { guideId: "itemCard.wikiBtn", textKey: "guide.itemCard.wikiBtn" },
+  { guideId: null, textKey: "guide.itemCard.outro" },
+];

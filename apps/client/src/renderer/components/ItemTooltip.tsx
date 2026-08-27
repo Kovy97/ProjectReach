@@ -11,6 +11,8 @@ import { getItemImage, rarityClass } from "../items";
 import { getSkillIcon, SKILL_EMOJI_FALLBACK } from "../skillIcons";
 import { getUiIcon } from "../uiIcons";
 import { openItemWikiModal } from "./ItemWikiModal";
+import { AreaTourGuide } from "./AreaTourGuide";
+import { ITEM_CARD_TOUR_STEPS } from "../areaTourSteps";
 import { registerEscCloser } from "../util/escStack";
 import { formatDamage, formatNum, formatSeconds1, formatStat } from "../util/format";
 import { isTooltipImagePopupEnabled } from "../util/uiPrefs";
@@ -1458,6 +1460,7 @@ function ItemTooltipCard({
   isEquipped,
   deltaAgainst,
   slotFreeHint,
+  wikiBtnPulse,
 }: {
   item: ItemDef;
   instance?: ItemInstance;
@@ -1479,6 +1482,13 @@ function ItemTooltipCard({
   /** Chef-GO Regel 2: Ring1/Ring2 bzw. Tool1/Tool2 — einer der beiden Zwillings-Slots ist frei, es
    *  gibt also nichts zu verdrängen (kein Delta möglich/nötig), stattdessen dieser Hinweis. */
   slotFreeHint?: boolean;
+  /**
+   * Item-Karten-Guide (Chef-Auftrag 2026-08-27, s. `areaTourSteps.ts` ITEM_CARD_TOUR_STEPS-JSDoc):
+   * true, solange `state.onboarding.toursSeen.itemCardGuideV1` noch fehlt — der „?"-Wiki-Knopf
+   * pulsiert dezent, um überhaupt erst Aufmerksamkeit zu wecken (Reddit-Befund: Spieler finden ihn
+   * nie). Sobald die Tour einmal gesehen/übersprungen wurde, bleibt der Knopf für immer ruhig.
+   */
+  wikiBtnPulse?: boolean;
 }): JSX.Element {
   const { t, tr, locale } = useI18n();
 
@@ -1572,9 +1582,10 @@ function ItemTooltipCard({
         {badge && <span className="itip-equipped-badge">{badge}</span>}
         <button
           type="button"
-          className="itip-wiki-btn"
+          className={`itip-wiki-btn${wikiBtnPulse ? " itip-wiki-btn--pulse" : ""}`}
           aria-label={t("itemwiki.openAria")}
           title={t("itemwiki.openAria")}
+          data-guide-id={badge ? undefined : "itemCard.wikiBtn"}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
@@ -1600,13 +1611,19 @@ function ItemTooltipCard({
       </div>
 
       {/* Doppelzeilen-Rarity-Header: Name groß (Zeile 1) + Typ · Seltenheit (Zeile 2), beide
-          Header-Bänder rarity-getönt via --rarity-col. */}
-      <div className="itip-header-band-1">
-        <div className="itip-name">{displayName}</div>
-      </div>
-      <div className="itip-header-band-2">
-        <div className="itip-type-line">
-          {typeLine} · {tr(RARITY_LABEL[rarity])}
+          Header-Bänder rarity-getönt via --rarity-col. Ungestylte Gruppen-Hülle NUR für den
+          Item-Karten-Guide-Spotlight (data-guide-id, s. ITEM_CARD_TOUR_STEPS) — kein CSS daran,
+          verändert das bestehende Layout nicht. `badge` markiert die sekundäre „Angelegt"-
+          Vergleichskarte (s. ItemTooltipOverlay unten): die bekommt keine Guide-Ziele, sonst gäbe
+          es zwei DOM-Knoten mit derselben `data-guide-id` gleichzeitig. */}
+      <div data-guide-id={badge ? undefined : "itemCard.identity"}>
+        <div className="itip-header-band-1">
+          <div className="itip-name">{displayName}</div>
+        </div>
+        <div className="itip-header-band-2">
+          <div className="itip-type-line">
+            {typeLine} · {tr(RARITY_LABEL[rarity])}
+          </div>
         </div>
       </div>
 
@@ -1640,7 +1657,7 @@ function ItemTooltipCard({
           <div className="itip-flavor">{tr(flavor)}</div>
         </div>
 
-        <div className="itip-warbanner-record">
+        <div className="itip-warbanner-record" data-guide-id={badge ? undefined : "itemCard.stats"}>
           {/* Stat-Gruppen: auf breiten Karten zweispaltig, damit Informationen nicht gestapelt wachsen. */}
           {(hasStats || hasStatExtras) && (
             <div className="itip-body">
@@ -1715,6 +1732,13 @@ export function ItemTooltipOverlay(): JSX.Element | null {
   const shift = useShiftHeld();
   const ref = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState<{ left: number; top: number }>({ left: 0, top: 0 });
+  // Item-Karten-Guide (Chef-Auftrag 2026-08-27): hält die Payload-REFERENZ, für die `pos` zuletzt
+  // korrekt berechnet wurde — NICHT einfach ein Bool, weil `ItemTooltipOverlay` app-weit EINMAL
+  // gemountet ist (nie erneut). Ein simples Bool bliebe ab dem ALLERERSTEN Hover für immer `true`
+  // und würde beim ERSTEN echten Pin (der Guide-Auslöser) wieder die STALE Position eines früheren
+  // Hovers durchlassen. Gate NUR für den `AreaTourGuide`-Mount weiter unten (Bugfund im eigenen
+  // Testlauf, s. dortiger JSDoc), sonst überall unbenutzt.
+  const [positionedFor, setPositionedFor] = useState<TooltipPayload | null>(null);
 
   // Position am Viewport-Rand clampen, sobald die echte Größe bekannt ist (inkl. Vergleichskarte).
   useLayoutEffect(() => {
@@ -1758,6 +1782,7 @@ export function ItemTooltipOverlay(): JSX.Element | null {
     }
 
     setPos({ left, top });
+    setPositionedFor(payload);
   }, [payload, shift]);
 
   // Gepinntes Tooltip via Esc / Klick außerhalb schließen. Escape läuft über die zentrale
@@ -1875,6 +1900,11 @@ export function ItemTooltipOverlay(): JSX.Element | null {
   const hoveredCompareMap = showCompare ? buildCompareMap(item, payload.instance) : null;
   const equippedCompareMap = showCompare && compareItem ? buildCompareMap(compareItem, compareInst) : null;
 
+  // Item-Karten-Guide (Chef-Auftrag 2026-08-27): dezenter Puls auf dem „?"-Knopf, solange die Tour
+  // (unten) noch nie gesehen/übersprungen wurde — auf JEDER Karte (auch der Vergleichskarte und
+  // reinen Hover-Vorschauen), nicht nur der gepinnten, damit der Knopf überhaupt erst auffällt.
+  const wikiBtnPulse = !state?.onboarding.toursSeen.itemCardGuideV1;
+
   return (
     <div ref={ref} className="itip-compare-wrap" style={{ left: pos.left, top: pos.top }}>
       <ItemTooltipCard
@@ -1886,6 +1916,7 @@ export function ItemTooltipOverlay(): JSX.Element | null {
         isEquipped={mainIsEquipped}
         deltaAgainst={deltaAgainst}
         slotFreeHint={slotFreeHint}
+        wikiBtnPulse={wikiBtnPulse}
       />
       {showCompare && compareItem && (
         <ItemTooltipCard
@@ -1897,7 +1928,29 @@ export function ItemTooltipOverlay(): JSX.Element | null {
           // Diese Karte ist per Definition das Item, das der Charakter GERADE trägt (aus
           // state.character.equipment gelesen) — immer isEquipped, unabhängig von mainIsEquipped.
           isEquipped
+          wikiBtnPulse={wikiBtnPulse}
         />
+      )}
+      {/*
+       * Item-Karten-Guide (Chef-Auftrag „Wiki unauffindbar" 2026-08-27): Reddit-Spieler kennen den
+       * „?"-Knopf nicht — kurzer Spotlight-Rundgang, sobald zum ERSTEN MAL auf diesem Save eine
+       * Karte GEPINNT (angeklickt, nicht nur gehovert) wird. `AreaTourGuide` unverändert wieder-
+       * verwendet, nur anders GEMOUNTET als bei Kampf/Shop/Bank: dort ist "die Seite ist offen" das
+       * Gate (seiten-lokaler Mount), hier ist "eine Karte ist gepinnt" das Gate — exakt dasselbe
+       * Prinzip (der Bereich IST hier die Karte). Schließt der Spieler die Karte vor dem Ende, un-
+       * mountet die Tour einfach (kein Fortschritt gespeichert) und beginnt beim nächsten Pin von
+       * vorn — identisches Verhalten zu einem Seitenwechsel mitten in COMBAT_TOUR_STEPS.
+       *
+       * `positionedFor`-Gate (Bugfund im eigenen Testlauf, Screenshot zeigte den Spotlight-Ring
+       * oben links statt um die Karte): `.itip-compare-wrap` startet JEDEN neuen Payload bei
+       * `pos={0,0}` und korrigiert sich erst im `useLayoutEffect` oben auf die echte Bildschirm-
+       * position — Kind-Layout-Effekte (SpotlightGuide misst `data-guide-id`-Rects) feuern
+       * INNERHALB DESSELBEN Commits VOR diesem Eltern-Effekt und würden die Karte sonst noch bei
+       * {0,0} vermessen. Erst wenn `positionedFor === payload` (im SELBEN Effect-Batch wie die
+       * echte `pos` gesetzt, s. dortiger JSDoc) steht die Karte an ihrer finalen Stelle.
+       */}
+      {payload.pinned && state && positionedFor === payload && (
+        <AreaTourGuide tourKey="itemCardGuideV1" steps={ITEM_CARD_TOUR_STEPS} />
       )}
     </div>
   );

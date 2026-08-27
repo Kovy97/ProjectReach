@@ -1745,6 +1745,15 @@ export const ru: Record<string, string> = {
     "onboarding.tour.bank.slotPurchase.title": "Больше места",
     "onboarding.tour.bank.slotPurchase.body": "Не хватает места? Купи здесь ещё ячейки банка за золото. Окупается, когда хранишь много снаряжения.",
 
+    "guide.itemCard.identity.title": "Название и редкость",
+    "guide.itemCard.identity.body": "Каждая карточка предмета начинается с названия, редкости и типа — более редкие предметы светятся ярче.",
+    "guide.itemCard.stats.title": "Характеристики и требования",
+    "guide.itemCard.stats.body": "Ниже: боевые характеристики, требования по уровню и бонус набора, если предмет входит в комплект.",
+    "guide.itemCard.wikiBtn.title": "Вики предмета",
+    "guide.itemCard.wikiBtn.body": "Кнопка «?» открывает вики предмета: все источники, рецепты, шансы выпадения и для чего он нужен.",
+    "guide.itemCard.outro.title": "Всегда под рукой",
+    "guide.itemCard.outro.body": "Эту кнопку вики ты найдёшь на каждой карточке предмета в игре — в инвентаре, в магазине, в банке, где угодно.",
+
     // ─── Тур «Что нового» (Chef-Auftrag 2026-07-21) ───
     "onboarding.feature.intro.title": "Новое в этом обновлении!",
     "onboarding.feature.intro.body": "Быстро покажем две полезные новинки.",
