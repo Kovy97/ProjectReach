@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } fr
 import { content } from "@hearthforge/content";
 import { combatLevel, computeStats, dungeonRunProgress, effectiveActionDurationMs, effectiveCapacity, levelFromXp, stopCombat, usedCapacityUnits, xpForLevel } from "@hearthforge/engine";
 import type { GameState, SkillId } from "@hearthforge/shared";
-import { activeStanceMods } from "@hearthforge/shared";
+import { activeStanceMods, TAVERN_ENABLED } from "@hearthforge/shared";
 import { computeActionRate, formatEta } from "./util/actionRate";
 import {
   type CombatFxLevel,
@@ -136,7 +136,8 @@ function PageContent({
     case "newhaven":
       return <NewHavenPage onNavigate={onNavigate} />;
     case "tavern":
-      return <TavernPage onNavigate={onNavigate} />;
+      // Release-Schalter: ohne Taverne landet die (unerreichbare) Route auf New Haven.
+      return TAVERN_ENABLED ? <TavernPage onNavigate={onNavigate} /> : <NewHavenPage onNavigate={onNavigate} />;
     default:
       return <PlaceholderPage label={page.label} />;
   }

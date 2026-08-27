@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason } from "@hearthforge/engine";
 import type { AchievementDef, SkillId } from "@hearthforge/shared";
-import { achievementPoints, MASTERY_POOL_CHECKPOINTS, ELITE_UNIQUE_DROP_CHANCE_DEFAULT } from "@hearthforge/shared";
+import { achievementPoints, MASTERY_POOL_CHECKPOINTS, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, TAVERN_ENABLED } from "@hearthforge/shared";
 import { useGameControl, useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { playSfx } from "../util/audio";
@@ -580,6 +580,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
   // intern bereits, ob die Taverne überhaupt gebaut ist.
   useEffect(() => {
     const runTavernRefresh = (): void => {
+      if (!TAVERN_ENABLED) return; // Release-Schalter (1.1.2 ohne Taverne)
       if (tavernRefresh(state, content, todayStamp())) {
         push({
           kind: "drop",

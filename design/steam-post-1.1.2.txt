@@ -1,0 +1,29 @@
+TITLE: Update 1.1.2: Elves, Orcs and Goblins
+
+Hey everyone,
+
+1.1.2 is out. It started as a hotfix and grew into a proper update, mostly because of your reports and questions over the last two days. Thank you for those. The short version: three new playable peoples in character creation, a lot of quality of life around the queue, and the fixes you asked for.
+
+NEW
+
+- Three new peoples. Character creation now offers Humans, Elves, Orcs and Goblins, each with 30 archetypes (15 combat classes, 15 professions), male and female. That is 240 portraits in total, all in the same hand-painted style. Pick the face that fits how you want to play; the archetype is cosmetic and never locks anything.
+- Amount dialog for the queue. The buttons on every action, monster and dungeon card are now 1 / 25 / X / ∞. X opens a small dialog where you type any amount, see how long it will take and which level you will reach, and then either add it to the queue or run it right away. No more stacking in steps of 50.
+- Tonics charge up. Drinking the same tonic again adds its duration instead of resetting it, and you can drink several at once (×5, ×10, or "Charge up"), up to three hours. Ten Forager's Tonics are now 50 minutes, not 5.
+- The item wiki introduces itself. The first time you open an item card, a short guided tour shows what is on it and points at the "?" in the top right corner, which opens the wiki with every source, recipe and drop rate. Several of you never found that button; now it also pulses gently until you have seen the tour.
+- Bank: "Stack all". A new button next to "Deposit all" that moves every inventory item you already keep in the bank onto its stack and leaves everything else in your bag.
+- Rare finds show their drop rate. The "Rare find" popup now tells you the exact chance of what you just found.
+- The queue knows its chain. If you queue 650 Copper Vein and then Smelt Copper, the smelting card shows in yellow that the material will be there when its turn comes, instead of claiming you have nothing.
+- Achievements reworked. 311 achievements instead of 537: the long kill chains and the tier ladders are gone, what remains are real milestones. Nothing you earned is lost.
+- Warding levels faster. Absorbed ward grants four times the XP it did.
+
+FIXES
+
+- An endless action could not be stopped. Clicking ∞ again on an action that was already running endlessly silently queued a second endless entry, so Stop looked broken. Duplicate ∞ entries are now ignored and Stop clears them.
+- New Haven building costs finally show the real item card. Hovering a material shows the normal card with the wiki button, and clicking it opens the wiki directly, so you can see where Grave Essence comes from without asking the forum.
+- New Haven: in the list view the material chips open their source, and the build bar opens the building's info card first.
+
+Save games from every previous version load as they always have.
+
+As always, the forum and the in-game bug report are the fastest ways to reach me. The next update is 1.2.0, and it is a bigger one: New Haven gets a tavern.
+
+Stefan

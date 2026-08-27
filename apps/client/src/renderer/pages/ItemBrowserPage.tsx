@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { content } from "@hearthforge/content";
 import type { ItemDef } from "@hearthforge/shared";
+import { TAVERN_ENABLED } from "@hearthforge/shared";
 import { getItemImage, rarityClass } from "../items";
 
 // ── Reverse-lookup: which monsters / actions produce each item ────────────────
@@ -299,7 +300,8 @@ export function ItemBrowserPage(): JSX.Element {
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [selected, setSelected] = useState<ItemDef | null>(null);
 
-  const allItems = useMemo(() => Object.values(content.items) as ItemDef[], []);
+  // Release-Schalter: Schwarzmarktbehälter (Taverne) erst mit 1.2.0 sichtbar.
+  const allItems = useMemo(() => (Object.values(content.items) as ItemDef[]).filter((i) => TAVERN_ENABLED || !i.id.startsWith("black_market_crate_")), []);
 
   const types = useMemo(() => {
     const set = new Set(allItems.map((i) => i.type));

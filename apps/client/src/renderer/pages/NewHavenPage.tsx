@@ -46,6 +46,7 @@ import type {
 } from "@hearthforge/engine";
 import {
   CAMP_TAVERN_ID,
+  TAVERN_ENABLED,
   CAMP_TOWNHALL_ID,
   CAMP_MAP_VISUAL_SCALE_MAX_PERCENT,
   CAMP_MAP_VISUAL_SCALE_MIN_PERCENT,
@@ -133,7 +134,8 @@ const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
 
 /** Katalog-Reihenfolge, aber das Zentralhaus immer zuerst — es schaltet alles andere frei. */
 const BUILDINGS: CampBuildingDef[] = (() => {
-  const all = content.campBuildings ?? [];
+  // Release-Schalter: ohne Taverne (1.1.2) erscheint camp_tavern weder als Karte noch im Baumenü/auf der Karte.
+  const all = (content.campBuildings ?? []).filter((b) => TAVERN_ENABLED || b.id !== CAMP_TAVERN_ID);
   const hall = all.filter((b) => b.id === CAMP_TOWNHALL_ID);
   return [...hall, ...all.filter((b) => b.id !== CAMP_TOWNHALL_ID)];
 })();

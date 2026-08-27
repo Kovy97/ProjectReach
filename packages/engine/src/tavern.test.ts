@@ -17,6 +17,10 @@ import { syncProgression, totalLevel } from "./character";
 import { addItem, itemCount } from "./inventory";
 import { bankCount } from "./bank";
 import { campBuildStartReason, campUsedBuildSlots, campBuildSlots } from "./camp";
+import { features } from "./features";
+
+// Release-Schalter für die Tests einschalten (1.1.2 liefert die Taverne aus, 1.2.0 schaltet sie frei).
+features.tavern = true;
 import { useConsumable } from "./consumable";
 import { setActiveAction } from "./actions";
 import { advance } from "./tick";

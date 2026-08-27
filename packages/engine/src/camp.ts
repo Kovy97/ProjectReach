@@ -1,3 +1,4 @@
+import { features } from "./features";
 import type {
   CampBoostKind,
   CampBuildingDef,
@@ -267,6 +268,8 @@ export function campBuildStartReason(
   buildingId: string,
   options: Readonly<CampBuildStartOptions> = {},
 ): CampBuildStartReason {
+  // Release-Schalter (shared TAVERN_ENABLED / engine features.tavern): ohne Taverne ist camp_tavern nicht baubar.
+  if (buildingId === CAMP_TAVERN_ID && !features.tavern) return "unknown_building";
   const def = campBuildingDef(content, buildingId);
   if (!def) return "unknown_building";
 
@@ -421,6 +424,7 @@ export function campEnqueueReason(
   content: ContentDB,
   buildingId: string,
 ): CampQueueReason {
+  if (buildingId === CAMP_TAVERN_ID && !features.tavern) return "unknown_building";
   const def = campBuildingDef(content, buildingId);
   if (!def) return "unknown_building";
   const camp = campOf(state);

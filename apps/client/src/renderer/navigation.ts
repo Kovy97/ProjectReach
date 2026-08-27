@@ -1,4 +1,5 @@
 import type { SkillId } from "@hearthforge/shared";
+import { TAVERN_ENABLED } from "@hearthforge/shared";
 
 export type NavView =
   | "character"
@@ -81,7 +82,8 @@ export const navigation: NavSection[] = [
       // Die Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): direkt unter New Haven (Chef-
       // Vorgabe), eigener Sidebar-Eintrag. Emoji-Fallback 🍺 bis Miras `sidebaricon_tavern.webp`
       // liegt (Auto-Discovery, s. sidebarIcons.ts — kein Code-Eintrag nötig, sobald sie da ist).
-      { id: "tavern", label: "nav.tavern", icon: "🍺", view: "tavern" },
+      // Release-Schalter (1.1.2 ohne Taverne, 1.2.0 mit): Eintrag nur bei TAVERN_ENABLED.
+      ...(TAVERN_ENABLED ? [{ id: "tavern", label: "nav.tavern", icon: "🍺", view: "tavern" as const }] : []),
       { id: "bestiary", label: "nav.bestiary", icon: "📖", view: "bestiary", placement: "topbar" },
     ],
   },

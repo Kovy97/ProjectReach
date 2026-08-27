@@ -10,7 +10,27 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
-## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
+## Unveröffentlicht — 1.2.0 „Alive" (Chef 27.08.: NUR die Taverne; Schalter `TAVERN_ENABLED` in shared, 1.1.2 = aus)
+
+**Die Taverne (Kern von 1.2.0, Chef-Entscheide E1–E3, 27.08.):** DE: New Haven bekommt eine Taverne
+(1 500 Gold, 100 Eichenholz, 15 Minuten; belegt keinen Bauplatz). Jeden Tag sitzen vier Gäste aus
+einem Kreis von 18 benannten Menschen, Elfen, Orks und Goblins an drei Tischen und am Tresen, jeder mit
+einer Tagesaufgabe seines Berufs, passend zu deiner Stufe in diesem Beruf (fünf Schwierigkeitsbänder,
+Ziel höchstens fünf Stufen über dir). Annehmen, erledigen, abgeben: immer Gold, passende Rohstoffe und
+Skill-Erfahrung. Ein Gast pro Tag lässt sich gratis austauschen. Der Fremde und die Karawanenführerin
+zahlen mit Schwarzmarktbehältern (Stufe I bis V) voller Ausrüstung aus deinem Band, mit Chance auf ein
+Champion-Unikat oder eine Rune; jede Abgabe hat zehn Prozent Zusatzchance auf einen Behälter. Die 60
+täglichen Aufgaben hängen als Anschlagtafel in der Taverne. / EN: New Haven gets a tavern: four named
+guests a day, each with a daily job from their trade matched to your level, paying gold, materials and
+skill XP; the Stranger and the caravan leader pay in Black Market Crates.
+
+*Dev-Notiz: SAVE_VERSION 84 (`tavern`, Zähler `actionRunsById`/`producedById`), Spezifikation
+`design/1.2.0-alive/taverne-spec-technik.md`, Engine `engine/tavern.ts` (Zufall nur per Hash, nie
+state.rng), Content 19 Gäste + 49 Vorlagen, Gebäude `camp_tavern` (Stufe II zweiter Gratis-Wechsel,
+Stufe III Gold ×1,15), Lager-Raster auf 6 Spalten. Kulisse von Mira liegt vor, Gäste-Figuren folgen
+(Platzhalter aus dem Spieler-Roster). Steam-Set unverändert.*
+
+## 1.1.2 „Vier Völker" — IN VORBEREITUNG (Chef 27.08.: alles außer Taverne; Upload nur auf GO, `setlive` leer)
 
 **Goblins in der Charaktererstellung (Mira, 27.08.):** DE: Die vierte Rasse: 30 Goblin-Archetypen, je männlich und
 weiblich, 60 neue Porträts. Rassen-Filter „Goblin" in Charaktererstellung und Porträt-Wechsler; Merrit, Pim und der
@@ -84,24 +104,6 @@ Fixed: duplicate ∞ entries are ignored and Stop clears them.
 
 *Dev-Notiz: engine/actions.ts enqueueAction (∞-Guard gegen laufende ∞-Aktion und ∞-Eintrag am Queue-Ende)
 + setActiveAction(null) filtert ∞-Doppel derselben Aktion; Test endless-duplicate-stop.test.ts. Kein Save-Feld.*
-
-**Die Taverne (Kern von 1.2.0, Chef-Entscheide E1–E3, 27.08.):** DE: New Haven bekommt eine Taverne
-(1 500 Gold, 100 Eichenholz, 15 Minuten; belegt keinen Bauplatz). Jeden Tag sitzen vier Gäste aus
-einem Kreis von 18 benannten Menschen, Elfen, Orks und Goblins an drei Tischen und am Tresen, jeder mit
-einer Tagesaufgabe seines Berufs, passend zu deiner Stufe in diesem Beruf (fünf Schwierigkeitsbänder,
-Ziel höchstens fünf Stufen über dir). Annehmen, erledigen, abgeben: immer Gold, passende Rohstoffe und
-Skill-Erfahrung. Ein Gast pro Tag lässt sich gratis austauschen. Der Fremde und die Karawanenführerin
-zahlen mit Schwarzmarktbehältern (Stufe I bis V) voller Ausrüstung aus deinem Band, mit Chance auf ein
-Champion-Unikat oder eine Rune; jede Abgabe hat zehn Prozent Zusatzchance auf einen Behälter. Die 60
-täglichen Aufgaben hängen als Anschlagtafel in der Taverne. / EN: New Haven gets a tavern: four named
-guests a day, each with a daily job from their trade matched to your level, paying gold, materials and
-skill XP; the Stranger and the caravan leader pay in Black Market Crates.
-
-*Dev-Notiz: SAVE_VERSION 84 (`tavern`, Zähler `actionRunsById`/`producedById`), Spezifikation
-`design/1.2.0-alive/taverne-spec-technik.md`, Engine `engine/tavern.ts` (Zufall nur per Hash, nie
-state.rng), Content 19 Gäste + 49 Vorlagen, Gebäude `camp_tavern` (Stufe II zweiter Gratis-Wechsel,
-Stufe III Gold ×1,15), Lager-Raster auf 6 Spalten. Kulisse von Mira liegt vor, Gäste-Figuren folgen
-(Platzhalter aus dem Spieler-Roster). Steam-Set unverändert.*
 
 **Seltene Funde zeigen ihre Dropchance (Chef 27.08.):** DE: Das Popup „Seltener Fund" trägt unten rechts
 die Dropchance des Items: die Tabellenchance des gerade bekämpften Monsters, sonst die beste Quelle

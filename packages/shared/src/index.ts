@@ -6164,6 +6164,13 @@ export interface GameState {
 
 /** Gebäude-ID der Taverne im Lager-Katalog (belegt KEINEN Bauplatz, Ausnahme wie das Zentralhaus). */
 export const CAMP_TAVERN_ID: CampBuildingId = "camp_tavern";
+/**
+ * Release-Schalter der Taverne (Chef 27.08.2026: „Die Taverne soll 1.2.0 werden, alles andere 1.1.2“). AUS = 1.1.2:
+ * kein Sidebar-Eintrag, keine Gebäudekarte/kein Bau (engine/camp.ts), kein Tageswechsel-Hook, Behälter-Items nicht im
+ * Item-Browser. Save-Format bleibt 84 (Feld `tavern` liegt leer im Save, Migration ist additiv). 1.2.0 stellt auf true.
+ * Engine-Tests überschreiben zur Laufzeit `features.tavern` (engine/features.ts).
+ */
+export const TAVERN_ENABLED = false;
 /** Plätze in der Taverne (Szene: drei Tische + Tresen). */
 export const TAVERN_SEATS = 4;
 /** Bänder nach Skill-Level: 1–20 → 1, 21–40 → 2, 41–60 → 3, 61–80 → 4, 81–99 → 5. */
