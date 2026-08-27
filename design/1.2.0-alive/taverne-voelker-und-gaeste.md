@@ -1,109 +1,91 @@
-# Die Taverne — Völker und Gäste (27.08.2026)
+# Die Taverne — Völker und Gäste (Fassung 2, 27.08.2026)
 
-> Chef-Entscheide 27.08.: E1 baubar. E2 Dailies bleiben, wandern visuell als Anschlagtafel in die Taverne;
-> alles Klickbare ist ein eigenes Objekt (Gäste, Tafel, Tresen …). E3 neue Wirtin mit eigenem Artwork.
-> Belohnungen immer Gold + passende Rohstoffe + Skill-XP; generische Aufträge zahlen stattdessen einen
-> **Schwarzmarktbehälter**; jeder Auftrag hat 10 % Chance auf einen Behälter obendrauf. Aufträge sind
-> immer machbar oder höchstens 5 Stufen über dem aktuellen Skill. Dieses Dokument: erst die Völker,
-> dann die Gäste; die Aufträge je Gast folgen nach der Abnahme.
+> Chef-Entscheide 27.08.: E1 baubar. E2 Dailies bleiben, wandern als Anschlagtafel in die Taverne; alles
+> Klickbare ist ein eigenes Objekt. E3 neue Wirtin mit eigenem Artwork. **Völker vorerst nur Mensch, Elf,
+> Ork, Goblin.** **Die Gäste-Aufträge sind tägliche Aufgaben, keine Story-Bögen.** Belohnungen immer
+> Gold + passende Rohstoffe + Skill-XP; generische Aufträge zahlen einen Schwarzmarktbehälter; jeder
+> Auftrag hat 10 % Chance auf einen Behälter obendrauf. Aufträge immer machbar oder höchstens 5 Stufen
+> über dem aktuellen Skill.
 
-## 1 Die Völker des Reachs
+## 1 Die vier Völker (vorerst)
 
-### 1.1 Was der Kanon schon hat (Lore-Bibel § 3.4, Charakter-Kodex § 2, Juli 2026)
+| Volk | Größe, Aussehen (verbindlich für Mira) | Was sie in der Taverne sind |
+|---|---|---|
+| **Menschen** | 1,70–1,90 m; wettergegerbt, Narben-Kultur, volles Spektrum | Die meisten Gesichter: Bauern, Köche, Schmiede, Slayer |
+| **Elfen** | 1,80–1,95 m, schlank; spitze Ohren, feine Züge, alle Hauttöne (Miras Roster) | Wald und Wissen: Kräuter, Sammeln, Runen, Juwelen, Verzauberung |
+| **Orks** | ~2,10 m, massiv; dunkelolive bis graugrüne Haut, kurze Hauer | Schweres Handwerk: Holz, Bergbau, Leder, Waffen |
+| **Goblins (Freie)** | ~1,50 m, drahtig, moosgrüne Haut, große Ohren | Handel, Diebeskunst, Tüftelei, der Fremde |
 
-| Volk | Größe, Aussehen (verbindlich für Mira) | Wo sie stehen | Was sie mitbringen |
-|---|---|---|---|
-| **Menschen** | 1,70–1,90 m; wettergegerbt, Narben-Kultur, volles Spektrum | Weiden, Glutfeste; die meisten Gesichter | Bauern, Grabwächter-Erben, Schmiede, Schreiber |
-| **Elfen** *(neu im Kanon, Mira hat 60 Porträts geliefert)* | 1,80–1,95 m, schlank; spitze Ohren, feine Züge, alle Hauttöne | Wildwald und Schwarzdorn: das Volk der alten königlichen Jagdgründe, Kaenors Ritualland | Jäger, Kräuterkunde, Bogenbau, das Gedächtnis des Waldes |
-| **Orks** | ~2,10 m, massiv; dunkelolive bis graugrüne Haut, kurze Hauer | Grenzlande, seit Generationen Mitbauer des Walls | Eisenkunde, Holz und Stein, wortkarg, unbestechlich (Urga) |
-| **Rakhari** | ~1,90 m, athletisch; Tigerfell sand/rost mit Streifen, senkrechte Pupillen, Kopf nah am Menschen | Karawanen, Wildwald-Riten | Saatgut, Geduld, Handel und Jagd (Shairi) |
-| **Goblins (Freie)** | ~1,50 m, drahtig, moosgrüne Haut, große Ohren | Abtrünnige der Kriegsbande, Glutfeste | Handel, Schleichen, Tüftelei (Mux) |
-| **Duvra** (Tiefenvolk) | 1,40–1,50 m, fassbreit; graue Steinhaut mit Mineral-Sprenkeln, schwere Brauen | Halb in den Wall gegraben; Schlackengrube, Frostkavernen | Bergbau, Waffen, Schulden und Adern im selben Buch |
-| **Sesskar** (Salzvolk) | ~1,80 m, schlank; feine graublaue Schuppenhaut, Flossenkämme statt Haar, Kiemenlinien | Gezeitenuntiefen, Flussmündungen | Fischzug, Kähne, Gezeitenzähler |
-| **Aschgänger** | ~1,90 m, hager; blassgraue Haut mit Asche-Sprenkeln, früh weißes Haar | Aschfelder, die grauen Straßen zur Krypta | Totenkarren, Register, Gehen durch das Grau |
-| **Faryn** (Klippenvolk) | 2,00–2,10 m, windschlank; fast weiße Haut, silbernes Haar mit Knochen- und Federringen | Hochland, Grabklippen | Wetter, Seilkunst, das älteste Verhältnis zu Runen und zum „Tuch" |
-
-Neun Völker reichen, um jeden Beruf mit einem eigenen Gesicht zu besetzen, ohne dass sich zwei Gäste gleichen.
-**Elfen** brauchen einen Kanon-Absatz in der Bibel (Vorschlag oben: das Waldvolk, das den Königsjagdgrund
-nie verlassen hat); das schreibt lore-dev nach deiner Abnahme.
-
-### 1.2 Zwei Vorschläge für später (nur wenn du sie willst)
-
-- **Die Gebrannten (the Seared).** Menschen und Orks, die das geliehene Feuer der Diener überlebt haben:
-  glutrote Narbenadern an Hals und Händen, Augen mit Funkenring. Gefürchtet, weil man ihnen den Dämon
-  ansieht; nützlich, weil nur sie mit Fel-Feuer umgehen können. Berufe: Hexenmeister, Feuerkunde,
-  Schmiede der heißen Öfen. Passt zu Slayer-Turm und Aschfeldern, gibt dem Spiel eine moralische Kante.
-- **Die Halbriesen (the Half-Giants).** Nachfahren der Riesen des Wildwalds (Chronik-Kapitel 12),
-  2,40 m, langsam, sehr höflich, bauen, was sonst niemand hebt. Berufe: Baumeister, Steinmetz, Holzfäller.
-  Ein Gast am Tresen, der stehen muss, weil kein Stuhl passt, ist ein Bild, das man nicht vergisst.
+Die übrigen Kanon-Völker (Rakhari, Duvra, Sesskar, Aschgänger, Faryn) bleiben in der Lore-Bibel und
+können später als Gäste nachrücken, ohne dass sich am System etwas ändert.
 
 ## 2 Die Gäste: ein Gesicht je Beruf
 
-Alle Gäste werden von Mira als Ganzkörper-Freisteller geliefert (Alpha, Größe und Blickrichtung wie das
-Spieler-Roster, Blick zum Tresen). Je Gast: Name (DE / EN), Volk, Alter, Aussehen in einem Satz, Wesen in
-einem Satz, Auftragsbogen (drei bis fünf Aufträge mit steigender Schwierigkeit, Ziel immer machbar oder
-höchstens 5 Stufen über dem Skill), ein Satz Stimme. Nummerierung = Vorschlag für Miras Reihenfolge.
+Jeder Gast ist eine feste Person (Volk, Geschlecht, Alter, Aussehen für Mira, Wesen, Stimme). Seine
+**Aufgaben sind tägliche Aufträge**: Vorlagen seines Berufs in fünf Schwierigkeitsstufen, aus denen die
+Taverne jeden Tag eine zieht, die zum Skill des Spielers passt (machbar oder höchstens 5 Stufen darüber).
+Kein Bogen, keine Reihenfolge, kein „nächstes Kapitel": heute „Bring mir 30 Kupfererz", morgen „Schmelz
+40 Barren", übermorgen „Bring 20 Kohle". Die Stufe steigt mit dem Skill, nicht mit der Vorgeschichte.
 
-| # | Gast | Volk | Beruf (Skill) | Aussehen | Wesen | Auftragsbogen | Stimme |
+| # | Gast | Volk | Beruf (Skill) | Aussehen | Wesen | Aufgabentypen (steigend nach Skill-Band) | Stimme |
 |---|---|---|---|---|---|---|---|
-| 1 | **Halvard Kessel** / Halvard Kettle | Mensch, m, 52 | **Wirt** (kein Skill) | Breiter Mann mit Lederschürze, Unterarme wie Fässer, grauer Zopfbart, ein Auge milchig | Hört alles, sagt wenig, vergisst keine Schuld | Kein Auftrag; begrüßt, erklärt, verkauft später Getränke | „Setz dich. Wer hier sitzt, redet. Wer redet, bleibt." |
-| 2 | **Viktor Dornhauer** / Viktor Thornhewer | Mensch, m, 41 | **Slayer** (Slayer, Kampf) | Kettenhemd unter Wolfsfell, drei Krallennarben quer über die Wange, Kurzschwert | Ruhig, zählt Köpfe wie andere Münzen | Wölfe → Grabräuber → ein Champion → Turm-Etage → „die Sache mit dem Geier" | „Die Geier werden dreist. Zwanzig Köpfe, und ich zahle." |
-| 3 | **Billy Furchenkraut** / Billy Furrowweed | Mensch, m, 29 | **Bauer** (Anbau) | Sonnenrot, Strohhut, Erde bis zu den Ellbogen, breites Grinsen | Redet mit seinen Beeten, hält jeden für einen Freund | Kohl ernten → voller Zyklus → Götteratem → drei Sorten an einem Tag | „Meine Beete stehen voll und ich hab nur zwei Hände." |
-| 4 | **Grumm Tiefenschlag** / Grumm Deepstrike | Duvra, m, 88 | **Bergarbeiter** (Bergbau) | Fassbreit, Steinhaut mit Kupfersprenkeln, Spitzhacke mit Kerben für jede Ader | Zählt Schulden und Adern im selben Buch, lacht nie, meint es gut | Kupfer → Eisen → Kohle-Flöz → Mithril → „die kalte Ader" | „Metall lügt nicht. Bring mir vierzig Barren, dann reden wir." |
-| 5 | **Brakka Eichenspalt** / Brakka Oakcleft | Ork, w, 46 | **Holzfällerin** (Holzfällen) | Zwei Meter, Axt so lang wie ein Kind, Haar zu Zöpfen mit Eisenperlen | Wortkarg, prüft jedes Holz mit dem Daumen | Eiche → Schwarzdorn-Holz → Wildwald-Riesenholz → „das Holz, das nicht brennt" | „Zu weich. Bring Härteres." |
-| 6 | **Nessu Gezeitenknoten** / Nessu Tideknot | Sesskar, w, 34 | **Fischerin** (Angeln) | Graublaue Schuppen, Flossenkamm mit Knotenschnur, Reuse über der Schulter | Zählt Fluten, spricht in kurzen Sätzen, vergisst keinen Namen | Forelle → Blutfang-Aal → Geisterschupper → Seelenfisch → „der Fang der Ertrunkenen" | „Die Flut nimmt, die Flut gibt. Heute gibt sie. Nutz es." |
-| 7 | **Shairi-Nichte Tamsin Mondfell** / Tamsin Moonpelt | Rakhari, w, 22 | **Sammlerin** (Sammeln) | Sandfarbenes Fell, rostrote Streifen, Korb voller Kräuter, barfuß | Neugierig, schnell, hält Geduld für eine Kunst, die sie noch lernt | Beeren → Grabmoos → Nachtblüte → Götteratem → „ein Korb für die Alte" | „Die Alte sagt, ich soll Geduld lernen. Hilf mir schummeln." |
-| 8 | **Ilvara Dornlied** / Ilvara Thornsong | Elfe, w, 130 | **Kräuterkundige** (Kräuterkunde) | Hochgewachsen, Haar mit Efeu, Mörser am Gürtel, Hände grün vom Saft | Spricht leise, kennt jede Pflanze beim alten Namen | Heiltrank → Tonikum → Gegengift → Elixier → „das Rezept aus dem Königswald" | „Der Wald erinnert sich an Rezepte, die ihr vergessen habt." |
-| 9 | **Odo Salzbart** / Odo Saltbeard | Mensch, m, 60 | **Koch** (Kochen) | Rund, rote Wangen, Kelle im Gürtel wie ein Schwert | Laut, gutmütig, beleidigt, wenn jemand rohes Fleisch isst | Portionen Eintopf → Braten → Festmahl → „das Bankett für die Wache" | „Die Wache frisst rohes Fleisch. Das ist eine Schande. Hilf mir." |
-| 10 | **Urga-Lehrling Dashk Kohlenzahn** / Dashk Coaltooth | Ork, m, 24 | **Schmied** (Schmieden) | Schlank für einen Ork, Brandflecken auf den Armen, Hammer über der Schulter | Will Urga beeindrucken, redet zu schnell | Barren → Bronze-Rüstung → Stahlklinge → Grabstahl → „das Stück, das Urga sehen soll" | „Urga sagt, Stahl hört auf Geduld. Ich hab keine. Du?" |
-| 11 | **Merrit Feinschliff** / Merrit Finehone | Duvra, w, 71 | **Waffenschmiedin** (Schmieden, Waffen) | Klein, breit, Lupe am Band, Finger voller Feilspäne | Verachtet stumpfe Klingen mehr als Feinde | Dolch → Schwert → Streitaxt → Mithril-Waffe → „die Klinge für den Turm" | „Eine Klinge ohne Schneide ist ein Stock mit Ausreden." |
-| 12 | **Kell Narbenhaut** / Kell Scarhide | Rakhari, m, 38 | **Lederarbeiter** (Handwerk) | Fell mit Kerben, Lederschürze, Ahle hinter dem Ohr | Sachlich, riecht Leder wie andere Wein | Kuhleder → Wildleder → Bärenhaut → Krakenhaut → „die Haut des Champions" | „Gutes Leder hat eine Geschichte. Bring mir eine." |
-| 13 | **Sefra Windring** / Sefra Windring | Faryn, w, 90 | **Juwelierin** (Juwelierkunst) | Über zwei Meter, silbernes Haar mit Federringen, Hände wie Vogelknochen | Sagt Sätze erst, wenn sie fertig sind | Kupferring → Granat-Amulett → Saphir → Diamant → „der Ring für den Wind" | „Ein Stein trägt Wetter. Schleif ihn richtig." |
-| 14 | **Orin Tuchleser** / Orin Clothreader | Faryn, m, 140 | **Runenhandwerker** (Runenkunst) | Hager, weiße Haut, Runenstaub im Bart, Blick nach oben | Nennt den Schleier das Tuch und die Runen Nähte | Essenz → Runen der Stärke → Bewahrende Rune → Tier-IV-Rune → „die Naht im Tuch" | „Das Tuch reißt oben. Näh mir etwas, das hält." |
-| 15 | **Wenna Grauhand** / Wenna Greyhand | Aschgängerin, w, 44 | **Verzauberin** (Verzauberung) | Aschesprenkel um die Augen, weißes Haar, Handschuhe, die sie nie auszieht | Ruhig, langsam, spricht zuerst mit den Toten, dann mit dir | Erste Verzauberung → Suffix-Rolle → Runen stapeln → Legendär → „das Stück für einen Toten" | „Die Toten fragen nicht nach Preisen. Ich schon." |
-| 16 | **Pim Zwölffinger** / Pim Twelvefingers | Goblin (frei), m, 31 | **Dieb** (Diebeskunst) | Klein, Messingringe im Ohr, zu viele Taschen, ehrliches Grinsen | Stiehlt nur von denen, die es verdienen, sagt er | Taschen in den Weiden → Karawane → Krypta-Wächter → Turm → „das Ding aus der Idol-Halle" | „Niemand vermisst, was er nie gezählt hat." |
-| 17 | **Torvald Balkenmaß** / Torvald Beammeasure | Mensch, m, 57 | **Baumeister** (New Haven) | Zollstock im Gürtel, Sägemehl im Haar, Brille auf der Stirn | Misst zweimal, baut einmal, flucht auf Nägel | Balken liefern → Wachturm-Material → Vorratsspeicher → Zentralhaus → „das Dach, das hält" | „Ein Haus ist ein Versprechen aus Holz. Bring mir Holz." |
-| 18 | **Der Fremde** / The Stranger | Aschgänger, m, unbekannt | **Generisch** (Schwarzmarkt) | Kapuze, Aschesprenkel an den Händen, ein Sack, der sich bewegt | Sagt nie seinen Namen, zahlt in Behältern | Dungeon → Champion → Turm-Etage → Idol-Halle → „was im Sack ist" | „Ich frage nicht, woher. Du fragst nicht, wohin." |
-| 19 | **Karawanenführerin Ashka Sandlauf** / Ashka Sandrun | Rakhari, w, 49 | **Generisch** (Handel, Lieferung) | Rostrotes Fell, Wüstentuch, Ledertasche mit Siegeln | Handelt hart, hält Wort, lacht laut | Sortiment liefern → Kohle für den Treck → Proviant → seltene Ware → „die Ladung, die keiner fahren will" | „Drei Waren, gute Ware, und ich vergesse deinen Namen nicht." |
-| 20 | **Mira-Reserve: Rona Steinlied** / Rona Stonesong | Duvra, w, 35 | **Sängerin** (Taverne, Phase 2) | Kurz, breit, Laute aus Grubenholz | Singt unter Tage, weil das Lied die Richtung hält | Phase 2: Getränke und Segen | „Ein Lied, ein Krug, ein Weg." |
+| 1 | **Halvard Kessel** / Halvard Kettle | Mensch, m, 52 | **Wirt** | Breiter Mann mit Lederschürze, Unterarme wie Fässer, grauer Zopfbart, ein Auge milchig | Hört alles, sagt wenig, vergisst keine Schuld | Keine Aufträge; Begrüßung, Erklärung, Lage des Tages, später Getränke | „Setz dich. Wer hier sitzt, redet. Wer redet, bleibt." |
+| 2 | **Viktor Dornhauer** / Viktor Thornhewer | Mensch, m, 41 | **Slayer** (Slayer, Kampf) | Kettenhemd unter Wolfsfell, drei Krallennarben quer über die Wange, Kurzschwert | Ruhig, zählt Köpfe wie andere Münzen | Töte N × Monster einer Zone deines Bands; N Turm-Kills; ein Champion (nur hohe Bänder) | „Die Geier werden dreist. Zwanzig Köpfe, und ich zahle." |
+| 3 | **Billy Furchenkraut** / Billy Furrowweed | Mensch, m, 29 | **Bauer** (Anbau) | Sonnenrot, Strohhut, Erde bis zu den Ellbogen, breites Grinsen | Redet mit seinen Beeten, hält jeden für einen Freund | Ernte N × Pflanze; pflanze N Beete; liefere N Ernte aus dem Bestand | „Meine Beete stehen voll und ich hab nur zwei Hände." |
+| 4 | **Grumm Kohlenfaust** / Grumm Coalfist | Ork, m, 58 | **Bergarbeiter** (Bergbau) | Massig, Ruß in den Furchen, Spitzhacke mit Kerben für jede Ader | Lacht nie, meint es gut, zählt Barren wie Schulden | Bring N × Erz; bring N × Kohle; schürfe N × Erz frisch | „Metall lügt nicht. Vierzig Erz, dann reden wir." |
+| 5 | **Brakka Eichenspalt** / Brakka Oakcleft | Ork, w, 46 | **Holzfällerin** (Holzfällen) | Zwei Meter, Axt so lang wie ein Kind, Zöpfe mit Eisenperlen | Wortkarg, prüft jedes Holz mit dem Daumen | Bring N × Holz einer Sorte; fälle N × frisch; liefere N Balken | „Zu weich. Bring Härteres." |
+| 6 | **Nessa Reusenhand** / Nessa Trapnet | Mensch, w, 34 | **Fischerin** (Angeln) | Salzgegerbt, Reuse über der Schulter, Knotenschnur am Handgelenk | Zählt Fluten, kurze Sätze, vergisst keinen Namen | Fang N × Fisch einer Art; liefere N Fisch aus dem Bestand; koche N davon (Kombi mit Odo) | „Die Flut nimmt, die Flut gibt. Heute gibt sie. Nutz es." |
+| 7 | **Tamsin Wegwarte** / Tamsin Wayside | Elfe, w, 22 | **Sammlerin** (Sammeln) | Schlank, Korb voller Kräuter, barfuß, Zweige im Haar | Neugierig, schnell, hält Geduld für eine Kunst, die sie noch lernt | Sammle N × Kraut/Beere; liefere N aus dem Bestand; sammle in Zone X | „Die Alte sagt, ich soll Geduld lernen. Hilf mir schummeln." |
+| 8 | **Ilvara Dornlied** / Ilvara Thornsong | Elfe, w, 130 | **Kräuterkundige** (Kräuterkunde) | Hochgewachsen, Haar mit Efeu, Mörser am Gürtel, Hände grün vom Saft | Spricht leise, kennt jede Pflanze beim alten Namen | Braue N × Trank/Tonikum; liefere N Kräuter; braue ein Elixier (hohe Bänder) | „Der Wald erinnert sich an Rezepte, die ihr vergessen habt." |
+| 9 | **Odo Salzbart** / Odo Saltbeard | Mensch, m, 60 | **Koch** (Kochen) | Rund, rote Wangen, Kelle im Gürtel wie ein Schwert | Laut, gutmütig, beleidigt, wenn jemand rohes Fleisch isst | Koche N Portionen; liefere N Speisen; koche ein Festmahl (hohe Bänder) | „Die Wache frisst rohes Fleisch. Das ist eine Schande. Hilf mir." |
+| 10 | **Dashk Kohlenzahn** / Dashk Coaltooth | Ork, m, 24 | **Schmied** (Schmieden) | Schlank für einen Ork, Brandflecken auf den Armen, Hammer über der Schulter; Urgas Lehrling | Will Urga beeindrucken, redet zu schnell | Schmelz N Barren; schmiede N × Rüstungsteil; liefere N Barren | „Urga sagt, Stahl hört auf Geduld. Ich hab keine. Du?" |
+| 11 | **Merrit Feinschliff** / Merrit Finehone | Goblin, w, 47 | **Waffenschmiedin** (Schmieden, Waffen) | Klein, Lupe am Band, Finger voller Feilspäne, Lederkappe | Verachtet stumpfe Klingen mehr als Feinde | Schmiede N × Waffe eines Tiers; liefere N Waffen; schmiede ein Stück des nächsten Tiers (5 Stufen drüber) | „Eine Klinge ohne Schneide ist ein Stock mit Ausreden." |
+| 12 | **Kell Narbenhaut** / Kell Scarhide | Ork, m, 38 | **Lederarbeiter** (Handwerk) | Narben auf den Unterarmen, Lederschürze, Ahle hinter dem Ohr | Sachlich, riecht Leder wie andere Wein | Gerbe N × Leder; fertige N × Lederteil; liefere N Häute | „Gutes Leder hat eine Geschichte. Bring mir eine." |
+| 13 | **Sefra Windring** / Sefra Windring | Elfe, w, 90 | **Juwelierin** (Juwelierkunst) | Hochgewachsen, silbernes Haar mit Federringen, Hände wie Vogelknochen | Sagt Sätze erst, wenn sie fertig sind | Schleife N × Edelstein; fertige N × Ring/Amulett; liefere N Steine | „Ein Stein trägt Wetter. Schleif ihn richtig." |
+| 14 | **Orin Tuchleser** / Orin Clothreader | Elf, m, 140 | **Runenhandwerker** (Runenkunst) | Hager, Runenstaub im Bart, Blick nach oben | Nennt den Schleier das Tuch und die Runen Nähte | Fertige N × Rune eines Tiers; liefere N Essenz; fertige eine Rune des nächsten Tiers | „Das Tuch reißt oben. Näh mir etwas, das hält." |
+| 15 | **Wenna Grauhand** / Wenna Greyhand | Mensch, w, 44 | **Verzauberin** (Verzauberung) | Grau um die Augen, früh weißes Haar, Handschuhe, die sie nie auszieht | Ruhig, langsam, spricht erst, wenn es sich lohnt | Verzaubere N Stücke; rolle N Suffixe; liefere N Runen | „Die Toten fragen nicht nach Preisen. Ich schon." |
+| 16 | **Pim Zwölffinger** / Pim Twelvefingers | Goblin, m, 31 | **Dieb** (Diebeskunst) | Klein, Messingringe im Ohr, zu viele Taschen, ehrliches Grinsen | Stiehlt nur von denen, die es verdienen, sagt er | N erfolgreiche Griffe in Zone X; liefere N Diebesgut; N Griffe ohne Betäubung (hohe Bänder) | „Niemand vermisst, was er nie gezählt hat." |
+| 17 | **Torvald Balkenmaß** / Torvald Beammeasure | Mensch, m, 57 | **Baumeister** (New Haven) | Zollstock im Gürtel, Sägemehl im Haar, Brille auf der Stirn | Misst zweimal, baut einmal, flucht auf Nägel | Liefere N Balken/Stein; schließe einen Bau ab; liefere Baumaterial des nächsten Gebäudes | „Ein Haus ist ein Versprechen aus Holz. Bring mir Holz." |
+| 18 | **Der Fremde** / The Stranger | Goblin, m, unbekannt | **Generisch** (Schwarzmarkt) | Kapuze, lange Finger, ein Sack, der sich bewegt | Sagt nie seinen Namen, zahlt in Behältern | Schließe einen Dungeon ab; besiege einen Champion; N Kills in Zone X; liefere ein Sortiment | „Ich frage nicht, woher. Du fragst nicht, wohin." |
+| 19 | **Ashka Sandlauf** / Ashka Sandrun | Mensch, w, 49 | **Generisch** (Karawane) | Wüstentuch, Ledertasche mit Siegeln, sonnengegerbt | Handelt hart, hält Wort, lacht laut | Liefere drei verschiedene Waren; liefere N Proviant; liefere N Kohle | „Drei Waren, gute Ware, und ich vergesse deinen Namen nicht." |
+| 20 | **Rona Steinlied** / Rona Stonesong | Goblin, w, 35 | **Sängerin** (Phase 2) | Klein, Laute aus Grubenholz, Ringe an jedem Finger | Singt, weil das Lied die Richtung hält | Phase 2: Getränke und Segen | „Ein Lied, ein Krug, ein Weg." |
 
-Zusammen: 9 Völker, 17 Berufsgäste (15 Berufe + Slayer + Wirt), 2 generische Auftraggeber, 1 Reserve.
-Weiblich/männlich ist je Gast festgelegt, damit Mira eine Figur je Gast malt; die Zufalls-Namen aus dem
-Konzept entfallen damit: **jeder Gast ist eine Person**, die wiederkommt, und ihre Aufträge steigen an.
+Verteilung: Menschen 8, Elfen 4, Orks 4, Goblins 4. Jeder Gast hat fünf Schwierigkeitsstufen je Aufgabentyp
+(Band 1–5 nach Skill 1–20 / 21–40 / 41–60 / 61–80 / 81–99), die Zahlen kommen mit der Auftrags-Tabelle.
 
-## 3 Die Objekte der Taverne (alles Klickbare ist ein Objekt)
+## 3 Tägliche Aufgaben: die Regeln
 
-| Objekt | Was passiert beim Klick |
+- **Angebot:** Vier Plätze, jeden Tag neu besetzt (Welt-Seed + Tag); je Platz ein Gast mit **einem** Auftrag
+  seines Berufs aus dem Band des Spielers. Ein angenommener Auftrag bleibt bis zur Abgabe, auch über
+  Mitternacht; die anderen Plätze wechseln.
+- **Machbar oder 5 Stufen drüber:** Ist der Spieler unter der Stufe, steht auf der Karte „Stufe 32 nötig, du
+  bist 27"; der Auftrag lässt sich trotzdem annehmen und wartet.
+- **Belohnung:** immer Gold (Bandwert) + passende Rohstoffe (Bandwert) + Skill-XP (etwa 10–20 Minuten
+  Fokus-Spielzeit des Bands). Generische Gäste (Fremder, Karawane) zahlen stattdessen einen
+  Schwarzmarktbehälter. Jeder abgegebene Auftrag hat 10 % Chance auf einen zusätzlichen Behälter.
+- **Ablehnen:** ein Gratis-Tausch pro Tag, weitere gegen „eine Runde" Gold.
+- **Anschlagtafel:** die 60 Dailies aus 1.1.0 hängen an der Wand, unverändert in Deckel und Marken.
+
+## 4 Die Objekte der Taverne
+
+| Objekt | Beim Klick |
 |---|---|
-| **Gast** (Platz 1–4) | Gäste-Karte im Stahlrahmen: Porträt, Anliegen, aktueller Auftrag der Reihe, Annehmen/Ablehnen, „In die Warteschlange" |
-| **Anschlagtafel** | Die täglichen Aufgaben (60 Zettel, Deckel wie 1.1.0) als Zettel an der Wand; heutiges Brett, Einlösen, Tagesabschluss |
+| **Gast** (Platz 1–4) | Gäste-Karte im Stahlrahmen: Porträt, Anliegen, Auftrag des Tages, Annehmen/Ablehnen, „In die Warteschlange" |
+| **Anschlagtafel** | Die täglichen Aufgaben als Zettel an der Wand: heutiges Brett, Einlösen, Tagesabschluss |
 | **Tresen / Halvard** | Begrüßung, Erklärung beim ersten Besuch, ein Satz zur Lage; Phase 2 Getränke |
-| **Kamin** | Chronik-Zeile des Tages (Segen, Lage), später Erzähl-Gäste |
+| **Kamin** | Chronik-Zeile des Tages (Segen, Lage) |
 | **Tür** | Zurück nach New Haven |
-| **Der Sack des Fremden** (nur wenn er da ist) | Schwarzmarktbehälter öffnen, wenn man welche hat |
+| **Der Sack des Fremden** | Schwarzmarktbehälter öffnen, wenn man welche hat |
 
-## 4 Schwarzmarktbehälter
+## 5 Schwarzmarktbehälter
 
-- **Item** `black_market_crate` (stapelbar, Bank-fähig), Stufen nach Level-Band: Kiste I–V.
-- **Herkunft:** Belohnung generischer Aufträge (Fremder, Karawane) und **10 % Zusatzchance bei jedem
-  abgegebenen Auftrag** (Wurf über den Welt-Seed, deterministisch, offline gleich live).
-- **Inhalt beim Öffnen:** 1 sicheres Bündel des Bands (Rohstoffe oder Barren), 1 Ausrüstungsstück aus dem
-  Drop-Pool des Bands (Rare-Drop-Regel), mit 10 % Chance ein Champion-Unikat des freigeschalteten
-  Pools, mit 5 % eine Rune, mit 2 % ein Andenken. Kein Gold, keine Marken (die Ökonomie bleibt).
-- **Öffnen** über die Tasche (wie Truhen) oder am Sack des Fremden; Ergebnis als Zeremonie-Popup.
+Item `black_market_crate` I–V nach Band, stapelbar, Bank-fähig. Inhalt: ein sicheres Bündel des Bands,
+ein Ausrüstungsstück aus dem Drop-Pool des Bands (Rare-Drop-Regel), 10 % ein Champion-Unikat des
+freigeschalteten Pools, 5 % eine Rune, 2 % ein Andenken. Kein Gold, keine Marken. Öffnen über die Tasche
+wie Truhen oder am Sack des Fremden, Ergebnis als kleine Zeremonie.
 
-## 5 Aufträge (nach deiner Abnahme der Gäste)
+## 6 Fragen
 
-Je Gast drei bis fünf Aufträge in fester Reihenfolge; der nächste wird sichtbar, wenn der vorige abgegeben
-ist. Ziel: immer machbar mit dem aktuellen Skill oder höchstens 5 Stufen darüber (dann steht „Stufe 32
-nötig, du bist 27" auf der Karte, und der Auftrag bleibt liegen, bis es reicht). Belohnung immer Gold +
-passende Rohstoffe + Skill-XP; generische Gäste zahlen Behälter. Zwischen zwei Aufträgen desselben
-Gastes liegt ein Tag (Gast „geht kurz weg"), damit die Reihe nicht an einem Abend leergespielt wird.
-Die genauen Zahlen (Mengen, XP, Gold je Band) rechne ich, sobald die Gäste stehen.
-
-## 6 Fragen an dich
-
-1. Elfen als „Waldvolk der Königsjagdgründe" in den Kanon? (Bibel-Absatz folgt.)
-2. Die neun Völker reichen; willst du Gebrannte und/oder Halbriesen zusätzlich, jetzt oder später?
-3. Gäste 1–19 so freigeben, Namen ändern, Völker tauschen? Danach schreibe ich die Aufträge mit Zahlen.
-4. Rona (20) als Phase-2-Reserve okay, oder soll Mira sie gleich mitmalen?
+1. Gäste 1–19 mit dieser Völkerverteilung freigeben (Namen/Völker ändern, wo du willst)?
+2. Rona (20) jetzt mitmalen oder Phase 2?
+3. Soll ich als Nächstes die Aufgaben-Tabelle mit Zahlen je Band (Mengen, Gold, XP) machen, dann den Mira-Auftrag?
