@@ -1,3 +1,5 @@
+> **FINALES SET (Chef 27.08.2026):** 67 Erfolge, eingefroren. Raus: Master of All Sets, Feathers Everywhere, Bull-Headed.
+
 > **Chef-Entscheidungen 27.08.2026:** D1 eindampfen wie empfohlen (537 → ~330). D2 KEINE XP-Meilensteine („Ich kann von keinem
 > Spieler 1000 h für 100 % verlangen; Erfolge müssen bestehen bleiben und werden später nicht erweitert.“). Steam-Set damit 70
 > Erfolge, Stufe 99 ist die Spitze. D3 Vitalität kein Retune (levelt über alle Stile), Bannmagie nachziehen (nur defensive Magie).

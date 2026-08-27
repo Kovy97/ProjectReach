@@ -1,0 +1,7 @@
+Mira, neuer Auftrag nach den Elfen: 67 Steam-Achievement-Icons. Das Set ist vom Chef eingefroren, die Liste liegt in `design/achievements-1.2.0/steam-set.csv`, Brief und Prompts in `CODEX/work/2026-08-27-steam-achievement-icons/`.
+
+Je Erfolg zwei JPG 256 x 256, deckend, kein Alpha: `<api_name>.jpg` farbig und `<api_name>_gray.jpg` als Graustufenfassung derselben Datei. Steam zeigt sie mit 64 px, also grobe Silhouetten, keine Buchstaben, keine Zahlen, kein Text.
+
+Drei Serien: 21 Kapitel auf dem aufgeschlagenen Chronik-Buch, 20 Meister mit Skill-Symbol im Bronze-Lorbeer, der Rest Einzelmotive. Gemeinsamer Grund: dunkle Eisen-Plakette mit Bronzerand, Licht von oben links, ein Goldakzent, kein Glühen.
+
+Lieferung nach `CODEX/assets/steam-achievement-icons-2026-08-27/fertig/` plus Kontaktbogen bei 64 px. Wenn du magst, zeig zuerst ein Kapitel, einen Meister und einen Meilenstein, dann den Rest im gleichen Guss.
