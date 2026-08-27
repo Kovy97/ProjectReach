@@ -32,6 +32,12 @@ Stufe III Gold ×1,15), Lager-Raster auf 6 Spalten. Kulisse von Mira liegt vor, 
 
 ## 1.1.2 „Vier Völker" — IN VORBEREITUNG (Chef 27.08.: alles außer Taverne; Upload nur auf GO, `setlive` leer)
 
+**Runenkunst: Fokus-Rohlinge heißen jetzt so (Chef 27.08.):** DE: Das Zwischenprodukt der Fokus-Kette hieß
+„Verzauberter Kupfer-Fokus", war aber der unverzauberte Rohling; die Kette las sich verkehrt herum. Jetzt: „Kupfer-
+Fokus-Rohling schmieden" (Kategorie „Rohlinge schmieden") ergibt den „Kupfer-Fokus-Rohling", „Kupfer-Fokus verzaubern"
+macht daraus den tragbaren Kupfer-Fokus. Alle zwölf Metalle, nur Namen, keine IDs. / EN: The runecrafting focus
+chain is named the right way round now: forge a Focus Blank, enchant it into the Focus.
+
 **Goblins in der Charaktererstellung (Mira, 27.08.):** DE: Die vierte Rasse: 30 Goblin-Archetypen, je männlich und
 weiblich, 60 neue Porträts. Rassen-Filter „Goblin" in Charaktererstellung und Porträt-Wechsler; Merrit, Pim und der
 Fremde in der Taverne tragen Goblin-Porträts als Platzhalter. / EN: Goblins are the fourth playable race with 60 new
