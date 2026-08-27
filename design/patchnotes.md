@@ -12,6 +12,17 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
 
+**Tonika laden sich auf (Spieler-Feedback, Chef 27.08.):** DE: Ein Sammler- oder Kampf-Tonikum hielt fünf
+Minuten, und erneutes Trinken setzte die Zeit nur zurück. Jetzt addiert sich dieselbe Sorte auf die Restzeit,
+und man kann mehrere auf einmal trinken: „×5", „×10" oder „Aufladen" bis zum Deckel von drei Stunden (zehn
+Tonika = 50 Minuten). Ein anderes Tonikum derselben Art verdrängt weiterhin. Heiltränke bleiben Einzelschlucke.
+Die Buff-Anzeige zeigt Minuten:Sekunden. / EN: Tonics of the same kind now stack their duration and can be
+drunk in batches (×5, ×10, Charge up) up to a three-hour cap; healing potions stay single sips.
+
+*Dev-Notiz: engine/consumable.ts `BUFF_STACK_CAP_MS` (3 h), `applyConsumableBuff` addiert statt ersetzt,
+`useConsumableMany` (nur reine Dauer-Tonika), `buffChargeInfo` für die UI; CharacterPage-Aktionen ×5/×10/Aufladen,
+ActiveBuffs m:ss; Test buff-stacking.test.ts; Auto-Rebuff unverändert (feuert erst nach Ablauf).*
+
 **Das Item-Wiki wird gezeigt, statt versteckt (Chef 27.08., Reddit-Fragen):** DE: Beim ersten Öffnen einer
 Item-Karte auf einem Spielstand erklärt der Wächter in vier kurzen Schritten, was auf der Karte steht: Name und
 Seltenheit, die Werte, und das Fragezeichen oben rechts, das das Wiki mit allen Quellen, Rezepten und Dropchancen

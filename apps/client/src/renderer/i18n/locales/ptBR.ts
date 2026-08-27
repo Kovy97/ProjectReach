@@ -585,6 +585,8 @@ export const ptBR: Record<string, string> = {
     "item.equip": "Equipar",
     "item.unequip": "Desequipar",
     "item.use": "Usar",
+    "item.useN": "×{n}",
+    "item.useCharge": "Carregar (×{n})",
     "item.sell": "Vender",
     "item.type.material": "Material",
     "item.type.consumable": "Consumível",

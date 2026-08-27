@@ -597,6 +597,8 @@ export const fr: Record<string, string> = {
     "item.equip": "Équiper",
     "item.unequip": "Déséquiper",
     "item.use": "Utiliser",
+    "item.useN": "×{n}",
+    "item.useCharge": "Recharger (×{n})",
     "item.sell": "Vendre",
     "item.type.material": "Matériau",
     "item.type.consumable": "Consommable",

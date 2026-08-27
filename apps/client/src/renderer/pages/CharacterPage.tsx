@@ -11,7 +11,7 @@ import {
   moveInventorySlot,
   sellInstance,
   sellItem,
-  useConsumable,
+  buffChargeInfo, itemCount, useConsumable, useConsumableMany,
   usedCapacityUnits,
   consumeFailReason,
 } from "@hearthforge/engine";
@@ -211,6 +211,14 @@ export function CharacterPage(): JSX.Element {
       // Rückmeldung wäre das ein stiller Klick ins Leere. Eigene Meldung statt des generischen
       // „Das geht gerade nicht": der Spieler soll den Grund sehen (es liegt an der Zeit, nicht
       // am Item) — sonst klickt er weiter und hält das Spiel für kaputt.
+      // Aufladen (Chef 27.08.2026): reine Dauer-Tonika bekommen neben „Benutzen“ (×1) Stapel-Knöpfe ×5/×10 und
+      // „Aufladen“ (bis zum Deckel BUFF_STACK_CAP_MS, engine/consumable.ts). Heil-/Sonder-Items bleiben einzeln.
+      const chargeable = !!it.buff && !((it.healAmount ?? 0) > 0 || (it.healPct ?? 0) > 0) && !it.curesPoison && !it.consumable;
+      const charge = chargeable ? buffChargeInfo(state, content, itemId) : null;
+      const have = itemCount(state.inventory, itemId);
+      const useMany = (n: number) => {
+        if (!useConsumableMany(state, content, itemId, n)) gameAlert("alert.consumeCooldown");
+      };
       acts.push({
         key: "use",
         label: t("item.use"),
@@ -221,6 +229,13 @@ export function CharacterPage(): JSX.Element {
           }
         },
       });
+      if (charge && charge.usesToCap > 1 && have > 1) {
+        for (const n of [5, 10]) {
+          if (have >= n && charge.usesToCap >= n) acts.push({ key: `use${n}`, label: t("item.useN").replace("{n}", String(n)), onClick: () => useMany(n) });
+        }
+        const all = Math.min(have, charge.usesToCap);
+        if (all > 1) acts.push({ key: "charge", label: t("item.useCharge").replace("{n}", String(all)), onClick: () => useMany(all) });
+      }
     }
     acts.push({ key: "sell", label: t("item.sell"), onClick: () => sellItem(state, content, itemId, 1) });
     return acts;

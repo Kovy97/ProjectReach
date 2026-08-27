@@ -282,14 +282,15 @@ describe("Buff-Kategorien / Verdrängung (#303 L3)", () => {
     );
   });
 
-  it("dasselbe Item erneut = Dauer-Refresh (kein Verdrängen, kein Stapeln)", () => {
+  it("dasselbe Item erneut = Aufladen (kein Verdrängen, Dauer addiert sich auf die Restzeit; Chef 27.08.2026)", () => {
     const s = createTestGame({ name: "X" }, content, 1);
     addItem(s.inventory, content, "tonic_warpath", 2);
     useConsumable(s, content, "tonic_warpath");
     s.character.buffs[0]!.remainingMs = 1000; // fast abgelaufen
     useConsumable(s, content, "tonic_warpath");
     expect(s.character.buffs).toHaveLength(1);
-    expect(s.character.buffs[0]!.remainingMs).toBe(content.items.tonic_warpath!.buff!.durationMs);
+    // Vorher: Reset auf durationMs. Seit dem Aufladen (buff-stacking.test.ts): Restzeit + Dauer.
+    expect(s.character.buffs[0]!.remainingMs).toBe(1000 + content.items.tonic_warpath!.buff!.durationMs);
   });
 
   it("kategorielose Buffs (HoT-Heiltränke) stapeln wie bisher frei und werden nicht verdrängt", () => {

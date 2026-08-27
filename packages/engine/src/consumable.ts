@@ -7,6 +7,15 @@ import { consumeBlocked, noteConsumeCooldown } from "./consume-gate";
 import { rerollTask } from "./slayer";
 import { openBlackMarketCrate } from "./tavern";
 
+/**
+ * Aufladen von Dauer-Tonika (Chef 27.08.2026, Spieler-Feedback „Sammler-Tonikum hält nur 5 Minuten, erneutes
+ * Trinken setzt nur zurück“): dasselbe Item ADDIERT seine Dauer auf die Restzeit statt sie zu ersetzen —
+ * zehn Tonika auf einmal = 50 Minuten. Deckel je Buff, damit ein versehentlicher Stapel-Klick nicht den ganzen
+ * Vorrat schluckt (Übernacht-Bedarf deckt der Auto-Rebuff). Ein ANDERES Item derselben Kategorie verdrängt
+ * weiterhin (Exklusiv-Slot, s. applyConsumableBuff) und startet mit seiner eigenen Dauer.
+ */
+export const BUFF_STACK_CAP_MS = 3 * 3_600_000;
+
 export { consumeBlocked, consumeCooldownKind, noteConsumeCooldown } from "./consume-gate";
 export type { ConsumeCooldownKind } from "./consume-gate";
 
@@ -62,8 +71,28 @@ export function applyConsumableBuff(state: GameState, content: ContentDB, itemId
   const durMult = masterBuffDurationMult(state, content);
   const durationMs = durMult === 1 ? buff.durationMs : Math.round(buff.durationMs * durMult);
   const existing = state.character.buffs.find((b) => b.itemId === itemId);
-  if (existing) existing.remainingMs = durationMs;
+  // Aufladen statt Zurücksetzen (BUFF_STACK_CAP_MS): Restzeit + Dauer, gedeckelt. Der Auto-Rebuff trifft nie
+  // einen laufenden Eintrag (er feuert erst nach dem Ablauf), für ihn ist das bit-identisch zu vorher.
+  if (existing) existing.remainingMs = Math.min(BUFF_STACK_CAP_MS, Math.max(0, existing.remainingMs) + durationMs);
   else state.character.buffs.push({ itemId, remainingMs: durationMs });
+}
+
+/**
+ * Ladezustand eines Dauer-Tonikums für die UI: Restzeit des laufenden Buffs DIESES Items, Dauer je Stück,
+ * Deckel und wie viele Stücke bis zum Deckel noch sinnvoll sind (0 = voll). Rein lesend.
+ */
+export function buffChargeInfo(
+  state: GameState,
+  content: ContentDB,
+  itemId: ItemId,
+): { remainingMs: number; perUseMs: number; capMs: number; usesToCap: number } | null {
+  const buff = content.items[itemId]?.buff;
+  if (!buff) return null;
+  const durMult = masterBuffDurationMult(state, content);
+  const perUseMs = durMult === 1 ? buff.durationMs : Math.round(buff.durationMs * durMult);
+  const remainingMs = Math.max(0, state.character.buffs.find((b) => b.itemId === itemId)?.remainingMs ?? 0);
+  const usesToCap = perUseMs > 0 ? Math.max(0, Math.ceil((BUFF_STACK_CAP_MS - remainingMs) / perUseMs)) : 0;
+  return { remainingMs, perUseMs, capMs: BUFF_STACK_CAP_MS, usesToCap };
 }
 
 /**
@@ -94,6 +123,18 @@ export function useConsumable(
   itemId: ItemId,
   source: ConsumeSource = "player",
 ): boolean {
+  return consumeInternal(state, content, itemId, source, 1);
+}
+
+/**
+ * Aufladen (Chef 27.08.2026): bis zu `qty` Stücke eines reinen Dauer-Tonikums auf einmal trinken (spieler-
+ * ausgelöst, gleicher Takt-/Sperr-Pfad wie useConsumable). Heil-/Antidot-/Sonder-Items bleiben Einzelschlucke.
+ */
+export function useConsumableMany(state: GameState, content: ContentDB, itemId: ItemId, qty: number): boolean {
+  return consumeInternal(state, content, itemId, "player", qty);
+}
+
+function consumeInternal(state: GameState, content: ContentDB, itemId: ItemId, source: ConsumeSource, qty: number): boolean {
   const item = content.items[itemId];
   if (!item || item.type !== "consumable") return false;
   if (itemCount(state.inventory, itemId) < 1) return false;
@@ -127,6 +168,14 @@ export function useConsumable(
     // `openBlackMarketCrate` direkt (liefert das `CrateResult`); dieser Pfad ist der generische
     // „Benutzen"-Knopf des Inventars.
     if (!openBlackMarketCrate(state, content, itemId)) return false;
+  } else if (buffs && !heals && !cures && !special && source !== "rebuff" && qty > 1) {
+    // Aufladen (Chef 27.08.2026): reine Dauer-Tonika dürfen MEHRERE Stücke auf einmal trinken — so viele wie
+    // gewünscht, vorrätig und bis zum Deckel sinnvoll (mindestens eins). Heil-/Antidot-/Sonder-Items bleiben
+    // Einzelschlucke (Heilung stapelt nicht, Sonder-Wirkung ist eine bewusste Einzel-Entscheidung).
+    const info = buffChargeInfo(state, content, itemId);
+    const n = Math.max(1, Math.min(Math.floor(qty), itemCount(state.inventory, itemId), info?.usesToCap ?? 1));
+    removeItem(state.inventory, itemId, n);
+    for (let i = 1; i < n; i++) applyConsumableBuff(state, content, itemId);
   } else {
     removeItem(state.inventory, itemId, 1);
   }

@@ -597,6 +597,8 @@ export const zh: Record<string, string> = {
     "item.equip": "装备",
     "item.unequip": "卸下",
     "item.use": "使用",
+    "item.useN": "×{n}",
+    "item.useCharge": "充能（×{n}）",
     "item.sell": "出售",
     "item.type.material": "材料",
     "item.type.consumable": "消耗品",

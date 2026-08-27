@@ -596,6 +596,8 @@ export const ru: Record<string, string> = {
     "item.equip": "Надеть",
     "item.unequip": "Снять",
     "item.use": "Использовать",
+    "item.useN": "×{n}",
+    "item.useCharge": "Зарядить (×{n})",
     "item.sell": "Продать",
     "item.type.material": "Материал",
     "item.type.consumable": "Расходник",

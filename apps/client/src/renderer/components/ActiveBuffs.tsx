@@ -56,7 +56,7 @@ export function ActiveBuffsBar({ buffs }: { buffs: ActiveBuff[] }): JSX.Element 
               )}
             </span>
             <span className="active-buff-name">{name}</span>
-            <span className="active-buff-timer">{Math.ceil(b.remainingMs / 1000)}s</span>
+            <span className="active-buff-timer">{b.remainingMs >= 60_000 ? `${Math.floor(b.remainingMs / 60_000)}:${String(Math.ceil((b.remainingMs % 60_000) / 1000) % 60).padStart(2, "0")}` : `${Math.ceil(b.remainingMs / 1000)}s`}</span>
           </span>
         );
       })}
