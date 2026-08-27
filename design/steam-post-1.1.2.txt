@@ -27,4 +27,4 @@ Save games from every previous version load as they always have.
 
 As always, the forum and the in-game bug report are the fastest ways to reach me. The next update is 1.2.0, and it is a bigger one: New Haven gets a tavern.
 
-Stefan
+Adhavar
