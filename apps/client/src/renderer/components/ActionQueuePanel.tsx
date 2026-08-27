@@ -282,7 +282,17 @@ export function ActionQueuePanel(): JSX.Element {
   // `projectQueue`, rein lesend, einmal pro Render; Index = ROHER `state.actionQueue`-Index.
   const projectedStatus = new Map<number, ProjectedLink["status"]>();
   for (const link of projectQueue(state, content).links) {
-    if (typeof link.source === "number") projectedStatus.set(link.source, link.status);
+    if (typeof link.source !== "number") continue;
+    projectedStatus.set(link.source, link.status);
+    // Die Dauer-Zeile ("Reicht fuer x von y", util/queueTiming.ts) rechnet nur mit dem Bestand und
+    // widersprach dem gelben Punkt daneben. Mit der Prognose: reicht die Kette fuer das ganze Ziel,
+    // faellt der Material-Hinweis weg; sonst zeigt er die projizierten Laeufe statt des Bestands.
+    const row = timing.queue[link.source];
+    if (row && row.materialLimited) {
+      const want = row.requestedTarget ?? 0;
+      if (link.runs === "infinite" || link.runs >= want) { row.materialLimited = false; row.reachableCount = null; }
+      else if (link.runs > (row.reachableCount ?? 0)) row.reachableCount = link.runs;
+    }
   }
 
   // 4er-Queue-Grid-Rework (Chef): jeder Grid-Klick reiht jetzt IMMER über enqueueAction ein

@@ -31,6 +31,19 @@ resumes it after the kill; the fight button is only locked during another champi
 *Dev-Notiz: `startEliteCombat` (elites.ts) spiegelt insertQueueEntryAtFront Schritte 1+2 (parkRunningActivityAtFront);
 CombatPage `busy` nur bei `combat.eliteVariantId`; Test elite-queue-preserve.test.ts (4 Fälle inkl. Wiederaufnahme).*
 
+**Die Warteschlange kennt ihre Kette (Chef 27.08.):** DE: Wer 650× Kupferader eingereiht hat, kann
+jetzt auch 650× Kupfer schmelzen dahinter einreihen, obwohl noch kein Erz in der Tasche liegt. Die
+Material-Chips zeigen drei Zustände: grün (habe), gelb (kommt aus der Warteschlange, mit Herkunft im
+Tooltip) und rot (fehlt); die Karte sagt „Herstellbar: 0× · 650 in Aussicht". Sofortstart braucht
+weiterhin echten Bestand. Fehlt das Material, wenn der Eintrag an die Reihe kommt, wird er
+übersprungen und die Warteschlange meldet es mit Grund. / EN: Queued gathering counts toward what you
+can queue after it; material chips show have, will have and missing; entries without materials are
+skipped with a visible reason.
+
+*Dev-Notiz: `packages/engine/src/queueProjection.ts` (deterministisch, nur loot chance ≥ 1, min-Menge, ∞ = unbegrenzt,
+Kampf/Dungeon zählen nicht), `advanceActionQueue` setzt `lastQueueSkip.reason = "no_materials"` (Union additiv, kein Bump),
+Sanitize prüft den Grund beim Laden; Tests queueProjection.test.ts (13) + queue-skip-no-materials.test.ts.*
+
 **New Haven: Materialquellen und Gebäude-Modal (Chef-Test 27.08.):** DE: In der Listenansicht lassen
 sich die benötigten Materialien anklicken und öffnen das Item-Wiki mit ihren Quellen. In der
 Kartenansicht öffnet jeder Klick auf ein Gebäude in der Bau-Leiste zuerst die Infokarte mit Bild,
