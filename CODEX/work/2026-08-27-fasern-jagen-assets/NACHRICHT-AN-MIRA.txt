@@ -1,7 +1,7 @@
-Mira, neuer Auftrag für 1.2.0: Fasern, Stoff und Jagen. Handwerk hing bisher komplett an Monster-Leder; jetzt kommen Fasern in fünf Stufen (sammeln, anbauen, weben), alle Magier-Roben werden aus Stoff, und ein neuer Skill Jagen fängt Monster passiv mit Fallen und Köder aus dem Angeln. Brief und alle 27 Prompts liegen in CODEX/work/2026-08-27-fasern-jagen-assets/.
+Mira, neuer Auftrag für 1.2.0: Fasern, Stoff und Jagen. Handwerk hing bisher komplett an Monster-Leder; jetzt kommen Fasern in fünf Stufen (sammeln, anbauen, weben), alle Magier-Roben werden aus Stoff, und ein neuer Skill Jagen fängt Monster passiv mit Fallen und Köder aus dem Angeln. Brief und alle 26 Prompts liegen in CODEX/work/2026-08-27-fasern-jagen-assets/.
 
 Was wir brauchen:
-1. 17 Item-Icons (640 x 640, Alpha): fünf Fasern, fünf Saaten, fünf Stoffe, ein Köder, und eine Eisenschlinge in drei Zuständen (leer, gestellt, zugeschnappt). Die fünf Stufen sollen eine Farbleiter ergeben: grau-grün, strohgold, dunkeloliv, silberweiß, blassgold mit Sternflecken. Kein Glühen, außer bei der Stern-Stufe schwach.
+1. 19 Item-Icons (640 x 640, Alpha): fünf Fasern, fünf Saaten, fünf Stoffe, ein Köder, und eine Eisenschlinge in drei Zuständen (leer, gestellt, zugeschnappt). Die fünf Stufen sollen eine Farbleiter ergeben: grau-grün, strohgold, dunkeloliv, silberweiß, blassgold mit Sternflecken. Kein Glühen, außer bei der Stern-Stufe schwach.
 2. Fünf Sammel-Karten (1672 x 941, deckend) im Stil der vorhandenen foraging-cards: der Ort, wo die Faser wächst.
 3. Eine Aktions-Karte Köder graben (1254 x 1254, deckend) im Stil der actions-Karten.
 4. Ein Sidebar-Icon Jagen (Plakette 1254 x 1254, außen Alpha): Eisenschlinge mit Seil.

@@ -1,4 +1,4 @@
-# Prompts — Fasern, Stoff und Jagen (27 Dateien)
+# Prompts — Fasern, Stoff und Jagen (26 Dateien)
 
 Gehört zu `BRIEF.md`. Vorlage `CODEX/templates/IMAGEGEN-ASSET-PROMPT.md`. Dateiname = Content-ID (Claude konvertiert zu WebP und legt sie in die Auto-Discovery-Ordner).
 

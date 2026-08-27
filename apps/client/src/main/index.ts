@@ -126,7 +126,9 @@ function createWindow(): void {
   win.webContents.on("before-input-event", (_event, input) => {
     if (input.type !== "keyDown") return;
     if (input.key === "F11") win.setFullScreen(!win.isFullScreen());
-    if (input.key === "F12") win.webContents.toggleDevTools();
+    // Chef 27.08.2026: Spieler öffnen die DevTools versehentlich mit F12. Im ausgelieferten Spiel ist F12 deshalb tot;
+    // im Dev-Lauf (nicht gepackt) und mit GR_DEVTOOLS=1 in der Umgebung bleibt der Notausgang erhalten.
+    if (input.key === "F12" && (!app.isPackaged || process.env.GR_DEVTOOLS === "1")) win.webContents.toggleDevTools();
   });
 
   // Vollbild-Wechsel (egal ob via F11, Optionen oder OS) an den Renderer melden, damit dieser die
