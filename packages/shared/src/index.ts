@@ -636,7 +636,13 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     belegt keinen Bauplatz); (d) Consumable-Effekt "blackMarketCrate" (+ `tier`) für black_market_crate_i..v.
 //     Migration (< 84): `tavern = defaultTavernState()`, beide Zähler `{}`. sanitizeState: Plätze nur mit
 //     bekanntem Gast + Vorlage, Zahlen geklemmt, Länge TAVERN_SEATS. Keine Item-ID-Renames, keine Kampfwerte.
-export const SAVE_VERSION = 84;
+// v85 (Jagen — 1.2.0 „Fasern und Fallen", Chef-Entscheide J1–J7 27.08.2026, design/handwerk-fasern-jagen/spec-technik.md):
+//     (a) `huntTraps: HuntTrap[]` (fixe Länge HUNT_TRAP_SLOTS) + `huntCatchSeq`; (b) `stats.huntCatches`; (c) Skill "hunting"
+//     (skills[...] entsteht beim ersten XP-Gewinn wie jeder Skill); (d) Content `huntingZones`, neue Items (Fasern/Saaten/Stoffe/
+//     Köder). Migration (< 85): `huntTraps = defaultHuntTraps()`, `huntCatchSeq = 0`, `stats.huntCatches = 0`. sanitizeState:
+//     Fallen nur mit bekannter Zone, remainingMs ≥ 0, Länge exakt HUNT_TRAP_SLOTS, lastCatch nur mit bekanntem Monster/Items.
+//     Keine Item-ID-Renames (Roben-Rezepte wechseln nur ihre Zutaten).
+export const SAVE_VERSION = 85;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -1775,6 +1781,8 @@ export interface OfflineSummary {
    * Fehlt (statt leerem Array), wenn nichts produziert wurde — Muster campBuilds.
    */
   campRefined?: { buildingId: CampBuildingId; itemId: ItemId; qty: number }[];
+  /** Jagen (SAVE 85): Fänge im Offline-Fenster je Monster. */
+  huntCatches?: { monsterId: MonsterId; count: number }[];
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -4884,6 +4892,8 @@ export interface ContentDB {
    */
   tavernGuests?: TavernGuestDef[];
   tavernTasks?: TavernTaskTemplateDef[];
+  /** Jagen (1.2.0): Gebiete mit Stufe, Fallenzeit und XP. OPTIONAL → Fehlen = Jagd inert. */
+  huntingZones?: HuntZoneDef[];
 }
 
 /** Liefert den Affix+Tier, den ein Runen-Item anbringt — oder null, wenn es keine Rune ist. */
@@ -5537,6 +5547,8 @@ export interface PlayerStats {
    * Feld-Ernten (farming.ts). Baseline-Zähler für "produce"-Aufgaben. Migration: {}.
    */
   producedById: Record<ItemId, number>;
+  /** Jagen (SAVE 85): erfolgreiche Fänge gesamt (kein Kill-Zähler, s. Chef-Entscheid J2). Migration: 0. */
+  huntCatches: number;
 }
 
 /**
@@ -6155,6 +6167,73 @@ export interface GameState {
    * Alt-Saves (< 84): `defaultTavernState()`. Zufall NUR aus reinem Hash (Seed + Tag + Platz), nie state.rng.
    */
   tavern: TavernState;
+  /**
+   * Jagen (1.2.0 „Fasern und Fallen", SAVE_VERSION 85, design/handwerk-fasern-jagen/spec-technik.md): sechs Fallenplätze
+   * (fixe Länge HUNT_TRAP_SLOTS, gesperrte Plätze sind leer), Fang-Zähler. Verben nur über engine/hunting.ts; Tick wie die Beete.
+   */
+  huntTraps: HuntTrap[];
+  /** Monoton steigende Fang-Nummer (Breadcrumb `HuntTrap.lastCatch.seq`, Toast-Dedupe). */
+  huntCatchSeq: number;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Jagen (1.2.0 „Fasern und Fallen“, Chef-Entscheide J1–J7 vom 27.08.2026;
+// Spezifikation design/handwerk-fasern-jagen/spec-technik.md)
+// ───────────────────────────────────────────────────────────────────────────
+
+export const HUNT_TRAP_SLOTS = 6;
+/** Jagen-Stufe, ab der Platz i (0-basiert) offen ist. */
+export const HUNT_SLOT_LEVELS: readonly number[] = [1, 10, 25, 45, 65, 85];
+export const HUNT_LOOT_ROLLS = 5;
+export const HUNT_CATCH_BASE = 0.7;
+export const HUNT_CATCH_PER_LEVEL = 0.005;
+export const HUNT_CATCH_CAP = 0.95;
+export const HUNT_TRAPPABLE_FAMILIES: readonly MonsterFamily[] = ["beast", "humanoid"];
+export const BAIT_ITEM_ID: ItemId = "bait_worm";
+export const HUNTING_SKILL_ID: SkillId = "hunting";
+
+export function huntTrapSlotsForLevel(level: number): number {
+  let n = 0;
+  for (const l of HUNT_SLOT_LEVELS) if (level >= l) n++;
+  return Math.min(HUNT_TRAP_SLOTS, n);
+}
+
+/** Gebiets-Eintrag der Jagd (Content `huntingZones`). */
+export interface HuntZoneDef {
+  zoneId: string;
+  /** Jagen-Stufe, ab der hier Fallen stehen dürfen (Kampf-Freischaltung der Zone bleibt zusätzlich Pflicht). */
+  levelRequired: number;
+  /** Fallenzeit in ms (5 min Weiden … 60 min Götzenhalle). */
+  trapMs: number;
+  /** Jagen-XP je erfolgreichem Fang. */
+  xp: number;
+}
+
+export interface HuntCatch {
+  seq: number;
+  monsterId: MonsterId;
+  items: { id: ItemId; qty: number }[];
+  gold: number;
+}
+
+export interface HuntTrap {
+  /** Gebiet der Falle; null = Platz leer. */
+  zoneId: string | null;
+  /** Restzeit bis zum Wurf in ms (Spielzeit, offline == online). */
+  remainingMs: number;
+  /** Nach dem Wurf automatisch mit neuem Köder stellen (Muster FarmPlot.autoReplant). */
+  autoRebait: boolean;
+  /** Jüngster Fang dieses Platzes (transient fürs UI; null = noch keiner oder letzter Wurf ging leer aus). */
+  lastCatch: HuntCatch | null;
+  /** true = der letzte Wurf ging leer aus (Köder weg, Falle neu gestellt oder leer). */
+  lastMissed: boolean;
+}
+
+export function emptyHuntTrap(): HuntTrap {
+  return { zoneId: null, remainingMs: 0, autoRebait: true, lastCatch: null, lastMissed: false };
+}
+export function defaultHuntTraps(): HuntTrap[] {
+  return Array.from({ length: HUNT_TRAP_SLOTS }, () => emptyHuntTrap());
 }
 
 // ───────────────────────────────────────────────────────────────────────────

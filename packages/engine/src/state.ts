@@ -1,5 +1,5 @@
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultFarmPlots, defaultTavernState, defaultParagonState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
+import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
 import { createRng } from "./rng";
 import { addItem, createInventory, discoverPossessedItems } from "./inventory";
 import { createCombat } from "./combat";
@@ -60,6 +60,7 @@ export function createGame(
       // Taverne (SAVE 84): Baseline-Zähler der run/produce-Aufgaben (taverne-spec-technik.md §2).
       actionRunsById: {},
       producedById: {},
+      huntCatches: 0,
     },
     achievements: [],
     // AP-Meilensteine (SAVE 66, Welle GG): frisch = nichts vergeben; die Zähler starten bei 0
@@ -153,6 +154,9 @@ export function createGame(
     camp: defaultCampState(),
     // Taverne (SAVE 84): ungebaut, keine Plätze — tavernRefresh besetzt erst nach dem Bau.
     tavern: defaultTavernState(),
+    // Jagen (SAVE 85): sechs leere Fallenplätze, Fang-Nummer 0.
+    huntTraps: defaultHuntTraps(),
+    huntCatchSeq: 0,
   };
 
   // Start-Ausrüstung an den gewählten Stil koppeln und sofort ausrüsten, damit der

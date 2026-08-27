@@ -62,6 +62,9 @@ import {
   defaultAutoPotion,
   defaultCampState,
   defaultTavernState,
+  defaultHuntTraps,
+  HUNT_TRAP_SLOTS,
+  emptyHuntTrap,
   TAVERN_BANDS,
   TAVERN_SEATS,
   defaultDailyState,
@@ -1359,6 +1362,21 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   st.goldSpent = finiteNonNeg(st.goldSpent, 0);
   st.dailyStreak = finiteNonNeg(st.dailyStreak, 0);
   st.lastDailyDay = finiteNonNeg(st.lastDailyDay, 0);
+  // Jagen (SAVE 85, Grund-Härtung; Zonen-/Monster-Prüfung ergänzt logic-dev): Länge exakt HUNT_TRAP_SLOTS.
+  if (!Array.isArray(state.huntTraps)) state.huntTraps = defaultHuntTraps();
+  state.huntTraps = Array.from({ length: HUNT_TRAP_SLOTS }, (_, i) => {
+    const t = state.huntTraps[i];
+    if (!t || typeof t !== "object") return emptyHuntTrap();
+    return {
+      zoneId: typeof t.zoneId === "string" ? t.zoneId : null,
+      remainingMs: finiteNonNeg(t.remainingMs, 0),
+      autoRebait: t.autoRebait !== false,
+      lastCatch: t.lastCatch && typeof t.lastCatch === "object" ? t.lastCatch : null,
+      lastMissed: t.lastMissed === true,
+    };
+  });
+  state.huntCatchSeq = finiteNonNeg(state.huntCatchSeq, 0);
+  st.huntCatches = finiteNonNeg(st.huntCatches, 0);
   // Taverne (SAVE 84): Zähler-Records nur mit endlichen, nicht-negativen Zahlen (Muster craftedById).
   for (const key of ["actionRunsById", "producedById"] as const) {
     const rec = st[key];
@@ -2017,6 +2035,9 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (!state.tavern || typeof state.tavern !== "object" || !Array.isArray(state.tavern.seats)) {
     state.tavern = defaultTavernState();
   }
+  // Jagen (SAVE_VERSION 84→85): sechs leere Fallenplätze, Fang-Nummer 0. Feld-Härtung in sanitizeState.
+  if (!Array.isArray(state.huntTraps)) state.huntTraps = defaultHuntTraps();
+  if (typeof state.huntCatchSeq !== "number") state.huntCatchSeq = 0;
 
   // Offline-Veredelung (SAVE_VERSION 76→77, Task #359): neues Teilfeld `camp.refine`. Alt-Saves
   // (< 77, inkl. der frischen v76-Lager-Saves) haben es nicht → `{}` (kein Rezept gewählt, beide
@@ -2136,6 +2157,7 @@ function migrateState(state: GameState, content: ContentDB): GameState {
       lastDailyDay: 0,
       actionRunsById: {},
       producedById: {},
+      huntCatches: 0,
     };
   if (typeof state.stats.itemsGathered !== "number") state.stats.itemsGathered = 0;
   // Craft-Zähler (SAVE_VERSION 27): für craft_items-Quests. Alt-Saves starten bei 0 (rückwirkend
@@ -2154,6 +2176,8 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   // starten leer (rückwirkend nicht rekonstruierbar). Idempotent.
   if (!state.stats.actionRunsById || typeof state.stats.actionRunsById !== "object") state.stats.actionRunsById = {};
   if (!state.stats.producedById || typeof state.stats.producedById !== "object") state.stats.producedById = {};
+  // Jagen (SAVE_VERSION 84→85): Fang-Zähler. Alt-Saves 0.
+  if (typeof state.stats.huntCatches !== "number") state.stats.huntCatches = 0;
   // Achievements für Saves von vor dem Meilenstein-System.
   if (!Array.isArray(state.achievements)) state.achievements = [];
   // Bestiarium-Kills für Saves von vor dem Bestiarium-System.
