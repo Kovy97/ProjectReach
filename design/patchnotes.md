@@ -12,6 +12,18 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 27.08.2026)
 
+**Warteschlangen-Raster 1 / 25 / X / ∞ (Chef 27.08.):** DE: Der 50er-Knopf auf Aktions-, Monster- und
+Dungeon-Karten weicht einem „X": Es öffnet ein kleines Mengen-Fenster im Spielstil mit Eingabefeld, Vorschau
+der Dauer („≈ 28 min") und zwei Knöpfen: „In die Warteschlange" hängt hinten an, „Jetzt ausführen" startet
+sofort (die laufende Tätigkeit rückt mit Rest an die Spitze, wie Shift-Klick). So lassen sich 650 Kupfererz in
+einem Schritt einreihen, und das Warteschlangen-Panel zeigt Dauer und Level-Prognose dafür an. Enter =
+einreihen, Shift+Enter = jetzt. / EN: The queue buttons are now 1 / 25 / X / ∞; X opens a small amount dialog
+with "Add to queue" and "Do now".
+
+*Dev-Notiz: shared CRAFT_TARGET_PRESETS [1, 25]; components/QueueAmountModal.tsx (Store + Host in App.tsx, Stahl-9-Slice,
+styles/queue-amount.css); SkillPage X-Knopf (`effDur` für die Vorschau, „Jetzt" nur mit Bestand); QuantityPicker `onCustom`
+ersetzt die Inline-Freitext-Zeile bei Kampf/Dungeon; Keys queue.amount.* ×7. Harness `_qam-check.mjs`: 650 → Queue mine_copper 650.*
+
 **New Haven: Baukosten zeigen die richtige Item-Karte (Steam-Forum L1GR, 27.08., Hotfix-Kandidat 1.1.2):**
 DE: Die Material-Chips an Gebäudekarten und im Baumenü zeigten beim Überfahren nur einen Flavor-Text statt
 der Item-Karte, die es überall sonst gibt; wer wissen wollte, woher Grabessenz kommt, fand dort keinen

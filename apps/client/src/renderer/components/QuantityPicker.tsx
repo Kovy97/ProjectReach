@@ -41,6 +41,11 @@ export interface QuantityPickerProps {
   infiniteLabel?: string;
   /** s. `onPick`-JSDoc — `atFront` ist dasselbe Shift-Signal, nur für den ∞-Knopf. */
   onInfinite?: (atFront: boolean) => void;
+  /**
+   * Chef 27.08.2026 (Karten-Raster 1 / 25 / X / ∞): ist `onCustom` gesetzt, erscheint ein „X“-Knopf hinter den
+   * Presets (vor ∞), der das Mengen-Modal öffnet — und die Inline-Freitext-Zeile entfällt.
+   */
+  onCustom?: () => void;
   /** Pro Preset zusätzlich deaktivieren (z.B. zu wenig Gold). */
   isPresetDisabled?: (qty: number) => boolean;
   /** Eigener Button-Inhalt je Preset (z.B. Kosten-Zeile im Shop); Standard: "{n}×". */
@@ -68,6 +73,7 @@ export function QuantityPicker({
   maxLabel,
   infiniteLabel,
   onInfinite,
+  onCustom,
   isPresetDisabled,
   renderPreset,
   presetTitle,
@@ -111,6 +117,18 @@ export function QuantityPicker({
             {maxLabel}
           </button>
         )}
+        {onCustom && (
+          <button
+            type="button"
+            className="btn-iron btn-iron--sm qty-btn qty-btn--custom"
+            data-bot="qty-custom"
+            disabled={disabled}
+            title={t("qty.customPlaceholder")}
+            onClick={onCustom}
+          >
+            X
+          </button>
+        )}
         {infiniteLabel !== undefined && onInfinite && (
           <button
             type="button"
@@ -122,6 +140,7 @@ export function QuantityPicker({
           </button>
         )}
       </div>
+      {!onCustom && (
       <div className="qty-picker-custom">
         <input
           type="number"
@@ -146,6 +165,7 @@ export function QuantityPicker({
           {t("qty.confirm")}
         </button>
       </div>
+      )}
     </div>
   );
 }

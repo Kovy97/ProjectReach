@@ -31,6 +31,7 @@ import { getForagingCard } from "../foragingCards";
 import { getSkillBackgroundCard } from "../skillBackgrounds";
 import { getPetSrc } from "../pets";
 import { HoverTip } from "../components/CitadelTip";
+import { openQueueAmountModal } from "../components/QueueAmountModal";
 import { ItemChip } from "../components/ItemChip";
 import { useItemTooltip } from "../components/ItemTooltip";
 import { formatCompactK, formatPct1, formatSeconds1 } from "../util/format";
@@ -1320,6 +1321,24 @@ const ActionCard = memo(function ActionCard({
                   {n}
                 </button>
               ))}
+              {/* Chef 27.08.2026: „X“ öffnet das Mengen-Modal (QueueAmountModal) — beliebige Menge, links
+                  „In die Warteschlange", rechts „Jetzt ausführen" (nur mit echtem Bestand, wie Shift-Klick). */}
+              <button
+                className="skillcard-cta qty custom"
+                data-bot="qty-custom"
+                disabled={!levelOk || !canQueue}
+                title={t("qty.customPlaceholder")}
+                onClick={() =>
+                  openQueueAmountModal({
+                    subject: tr(action.name),
+                    perRunMs: effDur,
+                    onQueue: (n) => enqueueAction(state, content, action.id, n),
+                    onNow: ready ? (n) => enqueueActionAtFront(state, content, action.id, n) : undefined,
+                  })
+                }
+              >
+                X
+              </button>
               <button
                 className="skillcard-cta qty all"
                 disabled={!levelOk || !canQueue}

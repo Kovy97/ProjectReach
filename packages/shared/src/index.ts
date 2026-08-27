@@ -645,7 +645,8 @@ export const SAVE_VERSION = 84;
  * Stapelt der Spieler dieselbe Aktion mehrfach, addiert `enqueueAction` die endlichen Ziele
  * (5× 50 → EIN Eintrag mit Ziel 250), sodass die höheren Presets die Queue nicht zumüllen.
  */
-export const CRAFT_TARGET_PRESETS: readonly number[] = [1, 25, 50];
+// Chef 27.08.2026: Karten-Raster 1 / 25 / X / ∞ — „X“ öffnet das Mengen-Modal (QueueAmountModal), „50“ entfällt.
+export const CRAFT_TARGET_PRESETS: readonly number[] = [1, 25];
 
 /** Default-/Fallback-Portrait-ID für die Charaktererstellung. */
 export const DEFAULT_PORTRAIT = "char_1";

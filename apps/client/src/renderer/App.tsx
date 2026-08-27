@@ -22,6 +22,7 @@ import { TopBar } from "./components/TopBar";
 import { closeItemTooltip, ItemTooltipOverlay } from "./components/ItemTooltip";
 import { ItemWikiModalOverlay } from "./components/ItemWikiModal";
 import { GameAlerts } from "./components/GameAlert";
+import { QueueAmountModalHost } from "./components/QueueAmountModal";
 import { UpdateNotice } from "./components/UpdateNotice";
 import { Toasts } from "./components/Toasts";
 import { ActionQueuePanel } from "./components/ActionQueuePanel";
@@ -1069,6 +1070,7 @@ function MainLayout(): JSX.Element {
       <OfflinePopup onNavigate={setActivePageId} />
       <Toasts activePageId={activePageId} />
       <GameAlerts />
+      <QueueAmountModalHost />
       <UpdateNotice />
       <PetCelebration />
       <MasteryCeremony />

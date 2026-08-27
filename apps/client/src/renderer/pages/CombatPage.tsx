@@ -59,6 +59,7 @@ import { ActiveBuffsBar } from "../components/ActiveBuffs";
 import { DefenseTypeBadge } from "../components/DefenseTypeBadge";
 import { openItemWikiModal } from "../components/ItemWikiModal";
 import { QuantityPicker } from "../components/QuantityPicker";
+import { openQueueAmountModal } from "../components/QueueAmountModal";
 import { getPetSrc } from "../pets";
 import { getPortrait } from "../portraits";
 import { COMBAT_TOUR_STEPS } from "../areaTourSteps";
@@ -3534,6 +3535,13 @@ function MonsterCard({
             className="mc-queue-picker"
             presets={CRAFT_TARGET_PRESETS}
             onPick={(qty, atFront) => onQueue(qty, atFront)}
+            onCustom={() =>
+              openQueueAmountModal({
+                subject: tr(m.name),
+                onQueue: (qty) => onQueue(qty, false),
+                onNow: (qty) => onQueue(qty, true),
+              })
+            }
             infiniteLabel="∞"
             onInfinite={(atFront) => onQueue(null, atFront)}
             disabled={!reqMet}
@@ -4647,6 +4655,13 @@ function MonsterSelectImpl(): JSX.Element {
                               presets={CRAFT_TARGET_PRESETS}
                               onPick={(qty, atFront) =>
                                 (atFront ? enqueueDungeonRunsAtFront : enqueueDungeonRuns)(state, content, d.id, qty)
+                              }
+                              onCustom={() =>
+                                openQueueAmountModal({
+                                  subject: tr(d.name),
+                                  onQueue: (qty) => enqueueDungeonRuns(state, content, d.id, qty),
+                                  onNow: (qty) => enqueueDungeonRunsAtFront(state, content, d.id, qty),
+                                })
                               }
                               infiniteLabel="∞"
                               onInfinite={(atFront) =>

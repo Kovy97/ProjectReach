@@ -342,6 +342,11 @@ const en = {
     // Task #314 B2: shared "how many?" widget (QuantityPicker) — presets + free entry, used by
     // shop buy/sell AND the new bank partial-amount modal.
     "qty.customPlaceholder": "Custom amount",
+    "queue.amount.title": "Amount",
+    "queue.amount.addToQueue": "Add to queue",
+    "queue.amount.doNow": "Do now",
+    "queue.amount.eta": "≈ {time}",
+    "queue.amount.nowUnavailable": "Needs the materials on hand",
     "qty.confirm": "Go",
     "inv.filter.searchPlaceholder": "Search name or ID…",
     "inv.filter.all": "All",
@@ -2663,6 +2668,11 @@ const de: Record<keyof typeof en, string> = {
     "bank.depositQty": "Menge einlagern…",
     "bank.withdrawQty": "Menge entnehmen…",
     "qty.customPlaceholder": "Andere Menge",
+    "queue.amount.title": "Menge",
+    "queue.amount.addToQueue": "In die Warteschlange",
+    "queue.amount.doNow": "Jetzt ausführen",
+    "queue.amount.eta": "≈ {time}",
+    "queue.amount.nowUnavailable": "Braucht das Material im Bestand",
     "qty.confirm": "Los",
     "inv.filter.searchPlaceholder": "Name oder ID suchen…",
     "inv.filter.all": "Alle",
