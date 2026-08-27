@@ -1,8 +1,9 @@
+import type { GameState } from "@hearthforge/shared";
 import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason } from "@hearthforge/engine";
 import type { AchievementDef, SkillId } from "@hearthforge/shared";
-import { achievementPoints, MASTERY_POOL_CHECKPOINTS } from "@hearthforge/shared";
+import { achievementPoints, MASTERY_POOL_CHECKPOINTS, ELITE_UNIQUE_DROP_CHANCE_DEFAULT } from "@hearthforge/shared";
 import { useGameControl, useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { playSfx } from "../util/audio";
@@ -77,6 +78,8 @@ interface Toast {
   title: string;
   detail: string;
   kind: "level" | "total" | "drop" | "achievement" | "pet" | "rare" | "mastery" | "elite";
+  /** Chef 27.08.2026: kleine Zeile unten rechts im Popup, z. B. die Dropchance eines seltenen Funds. */
+  note?: string;
   /** Nur bei kind "rare": Item-Rarity, damit legendary den Jackpot-Look eine Spur kräftiger bekommt. */
   rarity?: string;
   /** Nur bei kind "rare": Belohnungs-FX-Stufe zum PUSH-Zeitpunkt (s. effectiveFxLevel) — steuert
@@ -932,11 +935,16 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         // Überraschung — der Spieler weiß vorher, was er bekommt (s. activeCraftOutputs oben).
         if (qty > before && !activeCraftOutputs.has(itemId)) {
           const item = content.items[itemId];
+          // Chef 27.08.2026: „unten rechts im Popup bei rare und mythical drops soll die Droprate
+          // dranstehen" — Tabellenchance des gerade bekämpften Monsters, sonst die beste Quelle
+          // (Monster-Beute, Elite-Unique). Kein Fund aus einer Drop-Tabelle (Handwerk, Truhe) → keine Zeile.
+          const dropChance = dropChanceFor(itemId);
           push(
             {
               kind: "rare",
               rarity: item?.rarity,
               fx: effectiveFxLevel(),
+              note: dropChance !== null ? t("toast.dropRate").replace("{pct}", formatDropPct(dropChance)) : undefined,
               icon: item?.icon ?? "✨",
               iconUrl: getItemImage(itemId), // echtes Item-Bild statt Emoji, wenn vorhanden
               // Welle MM (Grete R3-Fund #9, "Godly-Wortstufe"): der seltenste Fund des Spiels trug
@@ -1259,6 +1267,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
                 ? <img loading="lazy" decoding="async" src={toast.iconUrl} alt="" className="ui-icon" />
                 : toast.icon}
             </span>
+            {toast.note && <span className="toast-note">{toast.note}</span>}
             <span className="toast-body">
               <span className="toast-title">{toast.title}</span>
               <span className="toast-detail">{toast.detail}</span>
@@ -1268,4 +1277,34 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
       })}
     </div>
   );
+}
+
+/**
+ * Dropchance eines Items für die Rare-Fund-Notiz (Chef 27.08.2026): Tabellenwert des gerade
+ * bekämpften Monsters, sonst die beste Quelle über alle Monster und Elite-Uniques. Bewusst der
+ * Tabellenwert ohne Segen/Glücks-Modifikatoren, damit die Zahl der im Wiki entspricht.
+ */
+function dropChanceFor(itemId: string): number | null {
+  const st = (window as unknown as { __hfDebug?: { state?: GameState } }).__hfDebug?.state;
+  const curId = st?.combat?.monsterId ?? null;
+  const cur = curId ? content.monsters[curId] : undefined;
+  const fromCur = cur?.loot?.find((l) => l.itemId === itemId)?.chance;
+  if (typeof fromCur === "number" && fromCur > 0) return fromCur;
+  let best: number | null = null;
+  for (const m of Object.values(content.monsters)) {
+    for (const l of m.loot ?? []) if (l.itemId === itemId && l.chance > 0) best = best === null ? l.chance : Math.max(best, l.chance);
+  }
+  for (const v of Object.values(content.elites ?? {})) {
+    if (v.uniqueItemId === itemId) {
+      const ch = v.uniqueDropChance ?? ELITE_UNIQUE_DROP_CHANCE_DEFAULT;
+      if (ch > 0) best = best === null ? ch : Math.max(best, ch);
+    }
+  }
+  return best;
+}
+
+function formatDropPct(chance: number): string {
+  const pct = chance * 100;
+  const digits = pct >= 10 ? 0 : pct >= 1 ? 1 : 2;
+  return `${pct.toFixed(digits).replace(".", ",")} %`;
 }

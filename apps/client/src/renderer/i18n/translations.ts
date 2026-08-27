@@ -18,6 +18,7 @@ const en = {
     "toast.levelUp": "Level up!",
     "toast.totalLevel": "Total level",
     "toast.rareFind": "Rare find!",
+    "toast.dropRate": "Drop rate {pct}",
     "toast.rareFind.godly": "Mythic find!",
     "toast.achievement": "Achievement unlocked!",
     // Elite-/World-Spawns („Champions des Reach", design/elite-spawns-concept.md §2.1, Phase 3
@@ -2298,6 +2299,7 @@ const de: Record<keyof typeof en, string> = {
     "toast.levelUp": "Stufenaufstieg!",
     "toast.totalLevel": "Gesamtlevel",
     "toast.rareFind": "Seltener Fund!",
+    "toast.dropRate": "Dropchance {pct}",
     "toast.rareFind.godly": "Sagenhafter Fund!",
     "toast.achievement": "Meilenstein erreicht!",
     "toast.elite.title": "Champion gesichtet!",

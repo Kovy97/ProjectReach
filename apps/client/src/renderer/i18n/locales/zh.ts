@@ -9,6 +9,7 @@ export const zh: Record<string, string> = {
     "toast.totalLevel": "总等级",
     "toast.rareFind": "稀有发现！",
     "toast.rareFind.godly": "神话发现！",
+    "toast.dropRate": "掉落率 {pct}",
     "toast.achievement": "成就解锁！",
     "toast.elite.title": "发现精英！",
     "toast.elite.detail": "{zone}出现了一个强大的敌人。",

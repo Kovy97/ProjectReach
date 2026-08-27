@@ -5521,3 +5521,22 @@ body.bank-dragging-noselect {
     grid-auto-rows: clamp(48px, 3.65vw, 70px);
   }
 }
+
+/* Chef 27.08.2026: Notiz unten rechts im Popup (z. B. Dropchance eines seltenen Funds). */
+.toast { position: relative; }
+.toast-note {
+  position: absolute;
+  right: 26px;
+  bottom: 9px;
+  font-family: "Cinzel", var(--font-head);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: 0 1px 2px #000;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+/* Platz fuer die Notiz: die Zeile soll den Item-Namen nicht ueberlagern. */
+.toast:has(.toast-note) { padding-bottom: 38px; }

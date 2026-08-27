@@ -6,6 +6,7 @@ export const ptBR: Record<string, string> = {
     "toast.totalLevel": "Nível total",
     "toast.rareFind": "Achado raro!",
     "toast.rareFind.godly": "Achado mítico!",
+    "toast.dropRate": "Chance de drop {pct}",
     "toast.achievement": "Conquista desbloqueada!",
     "toast.elite.title": "Campeão avistado!",
     "toast.elite.detail": "Um inimigo poderoso foi avistado em {zone}.",

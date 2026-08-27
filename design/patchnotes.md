@@ -12,6 +12,14 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — Sammelnotizen für den nächsten Patch (1.2.0 „Alive", Stand 26.08.2026)
 
+**Seltene Funde zeigen ihre Dropchance (Chef 27.08.):** DE: Das Popup „Seltener Fund" trägt unten rechts
+die Dropchance des Items: die Tabellenchance des gerade bekämpften Monsters, sonst die beste Quelle
+(Monsterbeute oder Champion-Unikat). Funde aus Handwerk oder Truhen zeigen keine Zeile. / EN: Rare
+find popups now show the item's drop rate in the bottom right corner.
+
+*Dev-Notiz: Toasts.tsx `note` + `dropChanceFor` (Tabellenwert ohne Segen/Glück, damit die Zahl der im Wiki entspricht),
+`.toast-note` in pages.css, Schlüssel `toast.dropRate` in 7 Sprachen.*
+
 **Champions ohne Warteschlangen-Verlust (Spieler-Feedback 27.08.):** DE: Ein Champion-Kampf ist
 jetzt ein Vorrang-Start wie Shift-Klick bei allem anderen: Die laufende Aktion oder der laufende
 Warteschlangen-Kampf wandert mit seinem Rest an die Spitze der Warteschlange und läuft nach dem Kill

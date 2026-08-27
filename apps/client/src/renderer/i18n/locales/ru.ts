@@ -8,6 +8,7 @@ export const ru: Record<string, string> = {
     "toast.totalLevel": "Общий уровень",
     "toast.rareFind": "Редкая находка!",
     "toast.rareFind.godly": "Мифическая находка!",
+    "toast.dropRate": "Шанс выпадения {pct}",
     "toast.achievement": "Достижение получено!",
     "toast.elite.title": "Чемпион замечен!",
     "toast.elite.detail": "Могущественный враг замечен в {zone}.",

@@ -8,6 +8,7 @@ export const es: Record<string, string> = {
     "toast.totalLevel": "Nivel total",
     "toast.rareFind": "¡Hallazgo raro!",
     "toast.rareFind.godly": "¡Hallazgo mítico!",
+    "toast.dropRate": "Probabilidad de botín {pct}",
     "toast.achievement": "¡Logro desbloqueado!",
     "toast.elite.title": "¡Campeón avistado!",
     "toast.elite.detail": "Un enemigo poderoso ha sido avistado en {zone}.",
