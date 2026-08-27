@@ -45,6 +45,7 @@ import type {
   CampPlacementReason,
 } from "@hearthforge/engine";
 import {
+  CAMP_TAVERN_ID,
   CAMP_TOWNHALL_ID,
   CAMP_MAP_VISUAL_SCALE_MAX_PERCENT,
   CAMP_MAP_VISUAL_SCALE_MIN_PERCENT,
@@ -562,6 +563,10 @@ interface CardProps {
    * (nach dem Modal) vollständig erhalten, nur der Anlauf verschiebt sich um einen Klick.
    */
   onBuildOverride?: () => void;
+  /** Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): NUR für die camp_tavern-Karte —
+   *  „Betreten"-Knopf ab Stufe 1 (s. nh-card-function-slot unten). `setActivePageId` aus
+   *  App.tsx, referenziell stabil (useState-Setter) — kostet den memo-Vergleich unten nichts. */
+  onNavigate: (id: string) => void;
 }
 
 /** Das nicht-statische Kernstück von `CardProps` — alles außer `def`/`gold`/`hallName`/`busyName`/
@@ -621,6 +626,7 @@ function BuildingCardImpl({
   onDirty,
   onRequestCancel,
   onBuildOverride,
+  onNavigate,
 }: CardProps): JSX.Element {
   const { t, tr } = useI18n();
   const building = jobRemainingMs >= 0;
@@ -631,6 +637,7 @@ function BuildingCardImpl({
   const current = boostOf(def, level);
   const next = boostOf(def, targetLevel);
   const isRefinery = refineKindOf(content, def.id) !== null;
+  const isTavern = def.id === CAMP_TAVERN_ID;
 
   const questDef = levelDef?.requiresQuest
     ? content.quests.find((q) => q.id === levelDef.requiresQuest)
@@ -812,8 +819,17 @@ function BuildingCardImpl({
 
       {/* codex:2026-07-31T23:42:00+02:00 — Die Funktionszone ist in jeder Listenkarte reserviert.
           Refineries dürfen darin intern scrollen; normale Gebäude behalten dieselbe Außenhöhe. */}
-      <div className={`nh-card-function-slot${isRefinery ? "" : " is-empty"}`}>
+      <div className={`nh-card-function-slot${isRefinery || isTavern ? "" : " is-empty"}`}>
         {isRefinery && <RefinePanel def={def} level={level} state={state} onDirty={onDirty} />}
+        {/* Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): ab Stufe 1 „Betreten" statt der
+            Veredelungs-Anlage — die Taverne ist keine Refinery, braucht aber denselben Sprung-Knopf-
+            Slot. `def.id === CAMP_TAVERN_ID` ist die einzige Stelle dieser Datei, die die Taverne
+            überhaupt kennt (Regel 1 der Datei: keine Gebäude-ID-Literale sonst). */}
+        {isTavern && level >= 1 && (
+          <button type="button" className="btn-iron nh-tavern-enter-btn" onClick={() => onNavigate("tavern")}>
+            {t("tavern.newhaven.enter")}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -845,6 +861,7 @@ const BuildingCard = memo(BuildingCardImpl, (a, b) =>
   a.onDirty === b.onDirty &&
   a.onRequestCancel === b.onRequestCancel &&
   a.onBuildOverride === b.onBuildOverride &&
+  a.onNavigate === b.onNavigate &&
   tupleEquals(a.have, b.have),
 );
 
@@ -983,6 +1000,7 @@ function BuildingPopup({
   onDirty,
   onRequestCancel,
   onBuildNew,
+  onNavigate,
 }: {
   buildingId: string;
   state: GameState;
@@ -993,6 +1011,7 @@ function BuildingPopup({
   onClose: () => void;
   onDirty: () => void;
   onRequestCancel: () => void;
+  onNavigate: (id: string) => void;
   /**
    * Chef-Bug 27.08.2026: gesetzt, wenn dieses Popup als Gebäude-Infokarte aus dem Bau-Menü der
    * Dorfkarte kommt (Gebäude noch NICHT platziert) statt aus einem Klick auf eine bereits
@@ -1057,6 +1076,7 @@ function BuildingPopup({
           onDirty={onDirty}
           onRequestCancel={onRequestCancel}
           onBuildOverride={onBuildNew}
+          onNavigate={onNavigate}
         />
         {/* codex:2026-07-31T23:42:00+02:00 — Verschieben ist eine kostenlose Kartenaktion und
             deshalb als gleichwertiger, sichtbarer Befehl vorhanden statt als versteckte Geste. */}
@@ -1417,6 +1437,7 @@ function CampMapView({
   onMoveModeChange,
   onDirty,
   onRequestCancel,
+  onNavigate,
 }: {
   state: GameState;
   lightPhase: CampLightPhase;
@@ -1427,6 +1448,7 @@ function CampMapView({
   onMoveModeChange: (active: boolean) => void;
   onDirty: () => void;
   onRequestCancel: () => void;
+  onNavigate: (id: string) => void;
 }): JSX.Element {
   const { t, tr } = useI18n();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -1738,6 +1760,7 @@ function CampMapView({
           onClose={() => setPopupId(null)}
           onDirty={onDirty}
           onRequestCancel={onRequestCancel}
+          onNavigate={onNavigate}
         />
       )}
 
@@ -1763,6 +1786,7 @@ function CampMapView({
             setMenuInfoId(null);
             setPlacingId(menuInfoId);
           }}
+          onNavigate={onNavigate}
         />
       )}
     </div>
@@ -1883,7 +1907,7 @@ function BuildQueueStrip({
   );
 }
 
-function NewHavenPageImpl(): JSX.Element {
+function NewHavenPageImpl({ onNavigate }: { onNavigate: (id: string) => void }): JSX.Element {
   useGameSelector(newHavenGate);
   const getState = useGetGameState();
   const state = getState()!;
@@ -2059,6 +2083,7 @@ function NewHavenPageImpl(): JSX.Element {
           onMoveModeChange={setMoveMode}
           onDirty={onDirty}
           onRequestCancel={onRequestCancel}
+          onNavigate={onNavigate}
         />
       ) : (
         <div className="nh-grid">
@@ -2074,6 +2099,7 @@ function NewHavenPageImpl(): JSX.Element {
               debugFreeBuild={debugFreeBuild}
               onDirty={onDirty}
               onRequestCancel={onRequestCancel}
+              onNavigate={onNavigate}
             />
           ))}
         </div>

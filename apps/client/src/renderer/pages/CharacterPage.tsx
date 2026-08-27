@@ -27,6 +27,7 @@ import { ItemCell } from "../components/ItemCell";
 import { ItemFilterChips, ItemFilterSearch } from "../components/ItemFilterBar";
 import type { ItemAction } from "../components/ItemTooltip";
 import { PortraitPickerModal } from "../components/PortraitPickerModal";
+import { CrateOpenModal } from "../components/CrateOpenModal";
 import { VariantContainerCell } from "../components/VariantContainerCell";
 import type { ItemInstance } from "@hearthforge/shared";
 import { instanceDisplayName } from "@hearthforge/shared";
@@ -164,6 +165,13 @@ export function CharacterPage(): JSX.Element {
   // der Zähler erzwingt den sofortigen Re-Render nach dem direkten State-Write (s. onConfirm).
   const [, bumpPortrait] = useState(0);
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  // Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): ein Behälter-Item im Inventar öffnet
+  // denselben Dialog wie der „Sack des Fremden" in der Taverne, statt des generischen "Benutzen"
+  // (`useConsumable` hat für `blackMarketCrate`-Items keinen Sofort-Effekt — sie brauchen die
+  // Tier-/Mengen-Wahl des Dialogs, s. CrateOpenModal). Eigener Dirty-Zähler (Muster NewHavenPage
+  // `onDirty`), unabhängig vom Portrait-Upload-Zähler oben.
+  const [crateItemId, setCrateItemId] = useState<string | null>(null);
+  const [, bumpCrate] = useState(0);
 
   // ── inventory actions (plain, stapelbare Slots) ──────────────────────────────
   const invActions = (itemId: string): ItemAction[] => {
@@ -189,7 +197,15 @@ export function CharacterPage(): JSX.Element {
         },
       });
     }
-    if (it?.type === "consumable") {
+    if (it?.type === "consumable" && it.consumable?.kind === "blackMarketCrate") {
+      // Taverne (1.2.0 „Alive"): Behälter öffnen den Tier-/Mengen-Dialog statt des generischen
+      // Sofort-Verzehrs — derselbe Dialog wie der „Sack des Fremden" in der Taverne (Spec §6).
+      acts.push({
+        key: "open",
+        label: t("tavern.crate.open"),
+        onClick: () => setCrateItemId(itemId),
+      });
+    } else if (it?.type === "consumable") {
       // Konsum-Abklingzeit (Engine, consume-gate.ts): `useConsumable` liefert im Kampf `false`,
       // solange der Ess-/Trank-Takt läuft (oder während der Kill-Verschnaufpause). Ohne
       // Rückmeldung wäre das ein stiller Klick ins Leere. Eigene Meldung statt des generischen
@@ -649,6 +665,13 @@ export function CharacterPage(): JSX.Element {
             setPortraitPickerOpen(false);
           }}
           onCancel={() => setPortraitPickerOpen(false)}
+        />
+      )}
+      {crateItemId && (
+        <CrateOpenModal
+          initialItemId={crateItemId}
+          onClose={() => setCrateItemId(null)}
+          onDirty={() => bumpCrate((n) => n + 1)}
         />
       )}
     </div>

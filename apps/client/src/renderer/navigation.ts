@@ -17,6 +17,7 @@ export type NavView =
   | "companions"
   | "enchanting"
   | "newhaven"
+  | "tavern"
   | "mail";
 
 export interface NavPage {
@@ -77,6 +78,10 @@ export const navigation: NavSection[] = [
       // der sichtbaren Kante der Navigationsliste (im gepackten Build gemessen: 275 px Ueberlauf,
       // Eintrag bei y=1204). Als Kernfeature des Lagers gehoert es nach oben, nicht hinter 14 Skills.
       { id: "newhaven", label: "nav.newhaven", icon: "⛺", view: "newhaven" },
+      // Die Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): direkt unter New Haven (Chef-
+      // Vorgabe), eigener Sidebar-Eintrag. Emoji-Fallback 🍺 bis Miras `sidebaricon_tavern.webp`
+      // liegt (Auto-Discovery, s. sidebarIcons.ts — kein Code-Eintrag nötig, sobald sie da ist).
+      { id: "tavern", label: "nav.tavern", icon: "🍺", view: "tavern" },
       { id: "bestiary", label: "nav.bestiary", icon: "📖", view: "bestiary", placement: "topbar" },
     ],
   },
@@ -180,4 +185,27 @@ export function getSidebarPages(): NavPage[] {
     }
   }
   return pages;
+}
+
+/**
+ * Taverne (1.2.0, taverne-spec-technik.md §6): die Anschlagtafel in der Taverne soll auf der
+ * Quests-Seite gezielt den Daily-Reiter öffnen — die Navigation selbst kennt aber keinen
+ * Reiter-Parameter (`onNavigate` nimmt nur eine Seiten-ID). Statt die ganze Routing-Architektur
+ * umzubauen, ein winziger einmaliger Bus (Muster util/toastBus.ts): der Klick-Handler setzt den
+ * gewünschten Reiter UNMITTELBAR vor `onNavigate("quests")`, QuestsPage liest ihn einmalig in
+ * ihrem `tab`-Lazy-Initializer und verwirft ihn danach. Jede andere Navigation zur Quests-Seite
+ * (Sidebar/TopBar-Klick) ruft `consumeRequestedQuestsTab` nie auf — die bestehende Vorauswahl
+ * (aktives Chronik-Kapitel → "chronicle", sonst "daily") bleibt für sie unverändert.
+ */
+export type QuestNavTab = "chronicle" | "contracts" | "daily" | "shop";
+let pendingQuestsTab: QuestNavTab | null = null;
+/** Von jeder Seite aus aufrufbar, direkt vor `onNavigate("quests")`. */
+export function requestQuestsTab(tab: QuestNavTab): void {
+  pendingQuestsTab = tab;
+}
+/** QuestsPage liest dies EINMAL beim eigenen Mount (Lazy-Initializer) und verwirft es sofort. */
+export function consumeRequestedQuestsTab(): QuestNavTab | null {
+  const tab = pendingQuestsTab;
+  pendingQuestsTab = null;
+  return tab;
 }

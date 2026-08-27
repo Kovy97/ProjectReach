@@ -75,6 +75,7 @@ import { SlayerPage } from "./pages/SlayerPage";
 import { EnchantingPage } from "./pages/EnchantingPage";
 import { MailPage } from "./pages/MailPage";
 import { NewHavenPage } from "./pages/NewHavenPage";
+import { TavernPage } from "./pages/TavernPage";
 
 const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
 const INVENTORY_ICON_URL = getUiIcon("icon_inventory");
@@ -132,7 +133,9 @@ function PageContent({
     case "enchanting":
       return <EnchantingPage />;
     case "newhaven":
-      return <NewHavenPage />;
+      return <NewHavenPage onNavigate={onNavigate} />;
+    case "tavern":
+      return <TavernPage onNavigate={onNavigate} />;
     default:
       return <PlaceholderPage label={page.label} />;
   }

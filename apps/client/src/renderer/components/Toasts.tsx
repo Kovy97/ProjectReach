@@ -17,7 +17,9 @@ import { type CombatFxLevel, getCombatFxLevel } from "../util/uiPrefs";
 import { getUiIcon } from "../uiIcons";
 import { getCampImage } from "../campArt";
 import { getItemImage } from "../items";
-import { romanLevel } from "../util/format";
+import { formatNum, romanLevel } from "../util/format";
+import { msUntilMidnight, todayStamp } from "../util/dayStamp";
+import { tavernGuestDef, tavernRefresh } from "../tavernApi";
 import { getEliteMonsterSrc } from "../monsters";
 import { getSkillIcon } from "../skillIcons";
 import { getSidebarIcon } from "../sidebarIcons";
@@ -567,6 +569,74 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     playSfx("achievement");
     // Quittung (shared-Vertrag `CampState.lastCompletedBuild`: „Die UI quittiert mit null").
     if (state.camp) state.camp.lastCompletedBuild = null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.totalTicks]);
+
+  // ── Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): App-weiter Tageswechsel-Hook ─────────
+  // beim Mount + um Mitternacht `tavernRefresh` — TavernPage selbst ruft es beim eigenen Mount
+  // ZUSÄTZLICH auf (idempotent, s. dortiger Kommentar); dieser Hook hier deckt den Fall ab, dass
+  // der Spieler NICHT auf der Taverne-Seite steht (z.B. beim App-Start). Kein seenSeq-Muster
+  // nötig: `tavernRefresh` selbst ist idempotent (gleicher Tag ⇒ false, kein Toast) und prüft
+  // intern bereits, ob die Taverne überhaupt gebaut ist.
+  useEffect(() => {
+    const runTavernRefresh = (): void => {
+      if (tavernRefresh(state, content, todayStamp())) {
+        push({
+          kind: "drop",
+          icon: "🍺",
+          iconUrl: getSidebarIcon("tavern"),
+          title: t("tavern.toast.newGuests.title"),
+          detail: t("tavern.toast.newGuests.detail"),
+        });
+      }
+    };
+    runTavernRefresh();
+    const timer = window.setTimeout(runTavernRefresh, msUntilMidnight() + 1000);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Taverne — Abgabe-Zeremonie (Spec §6): `state.tavern.lastDelivery` ({seq; guestId; gold; xp;
+  // skill; items; crates}), quittiert mit `null` (Muster `lastParagonChest`). seenSeq-PFLICHT-
+  // Muster (Pip-P2-Lehre, s. JSDoc bei `seenUnlockSeq` weiter oben): initialisiert aus dem
+  // monotonen `tavern.deliverSeq`, mit der Ausnahme für einen beim Mount bereits unquittierten
+  // Breadcrumb. Rare-Toast-Regeln für den Behälter-Inhalt gelten automatisch mit — der reguläre
+  // Rare-Diff weiter unten in dieser Datei scannt Inventar/Bank/Instanzen ohnehin bei jedem Tick,
+  // ein per Behälter gewonnenes Rare-Item feuert also seinen eigenen Jackpot-Toast ganz von selbst.
+  const seenTavernDeliverySeq = useRef(
+    state.tavern.lastDelivery ? state.tavern.lastDelivery.seq - 1 : state.tavern.deliverSeq,
+  );
+  useEffect(() => {
+    const delivery = state.tavern.lastDelivery;
+    if (!delivery || delivery.seq <= seenTavernDeliverySeq.current) return;
+    seenTavernDeliverySeq.current = delivery.seq;
+    const guest = tavernGuestDef(content, delivery.guestId);
+    const parts: string[] = [];
+    if (delivery.gold > 0) parts.push(`+${formatNum(delivery.gold)} ${t("tavern.reward.gold")}`);
+    if (delivery.xp > 0) {
+      const skillDef = content.skills[delivery.skill];
+      parts.push(`+${formatNum(delivery.xp)} ${t("tavern.reward.xp")} (${skillDef ? tr(skillDef.name) : delivery.skill})`);
+    }
+    for (const it of delivery.items) {
+      const def = content.items[it.id];
+      parts.push(`${it.qty}× ${def ? tr(def.name) : it.id}`);
+    }
+    for (const crateId of delivery.crates) {
+      const def = content.items[crateId];
+      parts.push(def ? tr(def.name) : crateId);
+    }
+    push(
+      {
+        kind: "achievement",
+        icon: "🍺",
+        iconUrl: getSidebarIcon("tavern"),
+        title: t("tavern.toast.delivered.title").replace("{name}", guest ? tr(guest.name) : delivery.guestId),
+        detail: parts.join(" · "),
+      },
+      6000,
+    );
+    playSfx("achievement");
+    state.tavern.lastDelivery = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.totalTicks]);
 

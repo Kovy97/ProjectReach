@@ -92,6 +92,10 @@ const CAMP_CARD_FIT: Readonly<Record<string, readonly (readonly [number, number]
   camp_smelter: [[2.54, 72], [2.71, 78], [2.08, 70]],
   camp_smokehouse: [[2.59, 72], [2.13, 72], [1.88, 69]],
   camp_storehouse: [[2.64, 72], [2.3, 69], [1.89, 67]],
+  // Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): Sprites sind Platzhalter (Kopien der
+  // camp_trade_post-Bilder, s. assets/camp/camp_tavern_*.webp) — darum vorerst dieselben Werte
+  // wie camp_trade_post; Mira liefert eigene Kalibrierung mit dem echten Gebäudebild nach.
+  camp_tavern: [[2.34, 74], [1.92, 72], [1.69, 70]],
   camp_townhall: [[1.87, 69], [1.6, 66], [1.61, 63]],
   camp_trade_post: [[2.34, 74], [1.92, 72], [1.69, 70]],
   camp_trophy_wall: [[3.15, 74], [2.43, 72], [1.71, 70]],
@@ -121,6 +125,8 @@ const CAMP_MAP_VISUAL_SCALE: Readonly<Record<string, readonly [number, number, n
   camp_smelter: [0.72, 0.84, 0.92],
   camp_smokehouse: [0.64, 0.78, 0.9],
   camp_storehouse: [0.68, 0.79, 0.9],
+  // Taverne: Platzhalter-Sprites (Kopien von camp_trade_post) — dieselben Werte, s. CAMP_CARD_FIT oben.
+  camp_tavern: [0.72, 0.84, 0.93],
   camp_trade_post: [0.72, 0.84, 0.93],
   camp_trophy_wall: [0.52, 0.72, 0.9],
   camp_warden_shrine: [0.62, 0.7, 0.8],

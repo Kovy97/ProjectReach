@@ -1,0 +1,563 @@
+/* ═══════════════════════════════════════════════════════════
+   TAVERNE (1.2.0 „Alive", design/1.2.0-alive/taverne-spec-technik.md §6)
+   Szene (tvn-stage/-seat/-object), Gäste-Karte (tvn-gm-*), Behälter-Dialog (tvn-crate-*).
+   Panels nutzen den Stahl-9-Slice-Rahmen (`.iwk-panel`, item-wiki.css) statt Holz — Ashen-Iron-
+   Palette (--panel/--border/--gold/--accent/--text/--muted) wie der Rest des Spiels.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Muster NewHavenPage/BankPage (newhaven.css/pages.css): `.tavern-page{height:100%}` allein
+   resolviert gegen NICHTS, solange `.page-transition`/`.content-body` (topbar.css) selbst keine
+   definite Höhe tragen — der Bug-Fund war ein ~28px-Überlauf am unteren Rand bei 1920x1080 (die
+   Bühne wuchs auf ihre volle Breiten-abgeleitete Höhe statt sich am Viewport zu stauchen, weil die
+   Kette nirgends eine echte Höhe hatte). Diese beiden `:has()`-Regeln schließen die Kette exakt wie
+   bei den anderen full-bleed-Seiten. */
+.content-body:has(.tavern-page) {
+  overflow-y: hidden;
+}
+
+.page-transition:has(> .tavern-page) {
+  height: 100%;
+  min-height: 0;
+}
+
+.tavern-page {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap);
+  overflow: hidden;
+}
+
+/* ─── Baustelle (Taverne noch nicht gebaut) ─────────────────────────────────────────────────── */
+
+.tavern-page--construction {
+  align-items: center;
+  justify-content: center;
+}
+
+.tvn-construction {
+  max-width: 520px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-gap);
+  align-items: center;
+}
+
+.tvn-construction-body {
+  margin: 0;
+  font-size: 17px;
+  color: var(--text);
+}
+
+/* ─── Bühne ──────────────────────────────────────────────────────────────────────────────────── */
+
+.tvn-stage-outer {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.tvn-stage {
+  position: relative;
+  /* Fallback für den allerersten Frame, bevor TavernPage.tsx den ResizeObserver ausgewertet hat
+     (dort werden width/height danach exakt in Pixeln gesetzt, s. Kommentar dort — width:100% +
+     aspect-ratio allein schrumpft NICHT beide Achsen gemeinsam, das war der 1920x1080-Überlauf-Bug). */
+  width: 100%;
+  aspect-ratio: 1672 / 941;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65), inset 0 0 80px rgba(0, 0, 0, 0.35);
+}
+
+.tvn-stage-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 55%, rgba(4, 3, 2, 0.55) 100%);
+}
+
+/* ─── Sitzplätze ─────────────────────────────────────────────────────────────────────────────── */
+
+.tvn-seat {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.tvn-seat:disabled {
+  cursor: default;
+}
+
+.tvn-seat-portrait-wrap {
+  position: relative;
+  width: clamp(64px, 9vw, 108px);
+  height: clamp(64px, 9vw, 108px);
+  border-radius: 50%;
+  overflow: visible;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.6));
+}
+
+.tvn-seat-portrait {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 2px solid var(--gold);
+  background: var(--panel);
+  display: block;
+}
+
+.tvn-seat-portrait--empty {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(216, 192, 106, 0.22) 0%, rgba(0, 0, 0, 0) 45%),
+    linear-gradient(160deg, #23282e, #0d1013);
+  border-color: var(--border);
+}
+
+.tvn-seat:hover .tvn-seat-portrait,
+.tvn-seat:focus-visible .tvn-seat-portrait {
+  border-color: var(--accent);
+}
+
+.tvn-seat-flag {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.tvn-seat-flag--ready {
+  color: #0c0a06;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.tvn-seat-nameband {
+  font-family: var(--font-head);
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--ds-parch-ink, var(--text));
+  background: rgba(10, 8, 6, 0.72);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+.tvn-seat--empty .tvn-seat-chair {
+  display: block;
+  width: clamp(40px, 5vw, 60px);
+  height: clamp(40px, 5vw, 60px);
+  border: 2px dashed rgba(200, 200, 200, 0.28);
+  border-radius: 6px;
+  opacity: 0.6;
+}
+
+/* ─── Szenen-Objekte (Anschlagtafel/Tresen/Kamin/Tür/Sack) ──────────────────────────────────────
+   Hover-Label kommt aus `HoverTip` (components/CitadelTip.tsx); dieser Wrapper trägt nur die
+   absolute Prozent-Position der Szenen-Koordinaten (tavernArt.ts TAVERN_OBJECT_POS). */
+
+.tvn-object {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.tvn-object-hit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(40px, 4.4vw, 58px);
+  height: clamp(40px, 4.4vw, 58px);
+  border-radius: 50%;
+  background: rgba(10, 8, 6, 0.4);
+  border: 1px solid rgba(216, 192, 106, 0.35);
+  cursor: pointer;
+  font-size: clamp(18px, 2vw, 26px);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tvn-object-hit:hover,
+.tvn-object-hit:focus-visible {
+  background: rgba(216, 192, 106, 0.22);
+  border-color: var(--gold);
+  transform: scale(1.08);
+}
+
+.tvn-level-note {
+  flex: 0 0 auto;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* ─── Info-Popup (Tresen/Halvard, Kamin/Segen) ──────────────────────────────────────────────── */
+
+.modal.tvn-info-modal {
+  max-width: 420px;
+}
+
+.tvn-info-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-gap);
+  margin-bottom: var(--ds-gap);
+}
+
+.tvn-info-portrait {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 2px solid var(--gold);
+}
+
+.tvn-info-title {
+  font-family: var(--font-head);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.tvn-info-panel {
+  gap: 8px;
+}
+
+.tvn-info-line {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.tvn-info-line:last-child {
+  margin-bottom: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GÄSTE-KARTE (TavernGuestModal)
+   ═══════════════════════════════════════════════════════════ */
+
+.modal.tvn-guest-modal {
+  max-width: 560px;
+  width: 100%;
+}
+
+.tvn-gm-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-gap-lg);
+  margin-bottom: var(--ds-gap-lg);
+}
+
+.tvn-gm-face {
+  flex: 0 0 auto;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--gold);
+  background: var(--panel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tvn-gm-face-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.tvn-gm-face-fallback {
+  font-size: 36px;
+}
+
+.tvn-gm-head-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tvn-gm-name {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.tvn-gm-role {
+  font-size: 14px;
+}
+
+.tvn-gm-greeting {
+  margin-top: 4px;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text);
+}
+
+.tvn-gm-panel {
+  margin-bottom: var(--ds-gap-lg);
+  gap: var(--ds-gap-sm);
+}
+
+.tvn-gm-line {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: var(--ds-gap);
+}
+
+.tvn-gm-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-gap);
+  margin-bottom: var(--ds-gap);
+}
+
+.tvn-gm-progress-bar {
+  flex: 1 1 auto;
+}
+
+.tvn-gm-progress-label {
+  flex: 0 0 auto;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.tvn-gm-levelgate {
+  margin-bottom: var(--ds-gap);
+  padding: 6px 10px;
+  border: 1px solid var(--danger);
+  border-radius: 3px;
+  color: var(--danger);
+  font-size: 13px;
+  background: rgba(168, 90, 82, 0.1);
+}
+
+.tvn-gm-reward-head {
+  font-family: var(--font-head);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.tvn-gm-rewards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tvn-gm-reward-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.tvn-gm-reward-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.tvn-gm-reward-icon-emoji {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tvn-gm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-gap-sm);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCHWARZMARKTBEHÄLTER (CrateOpenModal)
+   ═══════════════════════════════════════════════════════════ */
+
+.modal.tvn-crate-modal {
+  max-width: 480px;
+  width: 100%;
+}
+
+.tvn-crate-title {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: var(--ds-gap-lg);
+}
+
+.tvn-crate-empty {
+  margin: 0;
+}
+
+.tvn-crate-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: var(--ds-gap-sm);
+  margin-bottom: var(--ds-gap-lg);
+}
+
+.tvn-crate-tier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.tvn-crate-tier:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tvn-crate-tier.is-active {
+  border-color: var(--gold);
+  background: rgba(216, 192, 106, 0.14);
+}
+
+.tvn-crate-tier-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.tvn-crate-tier-emoji {
+  font-size: 28px;
+}
+
+.tvn-crate-tier-name {
+  text-align: center;
+  line-height: 1.25;
+}
+
+.tvn-crate-tier-owned {
+  font-size: 11px;
+}
+
+.tvn-crate-qty-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-gap-sm);
+  margin-bottom: var(--ds-gap-lg);
+}
+
+.tvn-crate-qty-input {
+  width: 72px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text);
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.tvn-crate-reveal-head {
+  font-family: var(--font-head);
+  font-size: 15px;
+  color: var(--gold);
+  margin-bottom: var(--ds-gap);
+}
+
+.tvn-crate-reveal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: var(--ds-gap-sm);
+  margin-bottom: var(--ds-gap-lg);
+}
+
+.tvn-crate-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.28);
+  text-align: center;
+}
+
+.tvn-crate-card-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.tvn-crate-card-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tvn-crate-card-name {
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.tvn-crate-card-qty {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--gold);
+}
+
+/* ─── Größen-Floor / kleine Auflösungen ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1400px) {
+  .tvn-gm-actions .btn-iron,
+  .tvn-gm-actions .shop-citadel-btn {
+    flex: 1 1 auto;
+  }
+}

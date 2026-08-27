@@ -31,6 +31,8 @@ import {
   unlocksForQuest,
 } from "../util/chronicle";
 import { deriveQuestStrands, questSpeaker } from "../util/questStrands";
+import { msUntilMidnight, todayStamp } from "../util/dayStamp";
+import { consumeRequestedQuestsTab } from "../navigation";
 import "../styles/quests.css";
 import "../styles/chronicle.css";
 
@@ -49,19 +51,6 @@ const PIN_ICON_URL = getUiIcon("icon_quest_pin");
 const DIALOG_ICON_URL = getUiIcon("icon_quest_dialog");
 const CALENDAR_ICON_URL = getUiIcon("icon_quest_calendar");
 const JOURNAL_ICON_URL = getUiIcon("icon_quest_journal");
-
-/** Returns today as a YYYYMMDD number in local time. */
-function todayStamp(): number {
-  const d = new Date();
-  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-}
-
-/** Milliseconds until the next local midnight. */
-function msUntilMidnight(): number {
-  const now = new Date();
-  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  return midnight.getTime() - now.getTime();
-}
 
 /** Format ms as HH:MM:SS countdown. */
 function formatCountdown(ms: number): string {
@@ -1282,9 +1271,15 @@ export function QuestsPage(): JSX.Element {
   // Chronik soll "die Bühne bekommen") — sonst wie bisher auf "Daily". Lazy-Initializer läuft
   // nur beim ersten Render; ein späteres Claim/Fortschreiten wechselt den Tab NICHT von selbst
   // zurück (der Spieler bleibt, wo er hingeklickt hat).
-  const [tab, setTab] = useState<QuestTab>(() =>
-    activeChronicleChapter(state, content) ? "chronicle" : "daily",
-  );
+  // Taverne (1.2.0, taverne-spec-technik.md §6): die Anschlagtafel springt gezielt auf den
+  // Daily-Reiter — `consumeRequestedQuestsTab` ist ein einmaliger Bus-Wert (Muster util/toastBus.ts),
+  // gesetzt vom Klick-Handler VOR dem Navigieren hierher. Hat Vorrang vor der Chronik-Vorauswahl,
+  // sonst würde ein aktives Kapitel den gewünschten Sprung sofort wieder überschreiben.
+  const [tab, setTab] = useState<QuestTab>(() => {
+    const requested = consumeRequestedQuestsTab();
+    if (requested) return requested;
+    return activeChronicleChapter(state, content) ? "chronicle" : "daily";
+  });
   // Local bump counter: incremented on every claim → forces immediate re-render.
   const [bump, setBump] = useState(0);
 
