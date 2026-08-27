@@ -7777,6 +7777,57 @@ export const content: ContentDB = {
         de: "Ein milchiges Gebräu, das sich wie ein zweites, unsichtbares Gewand über die Haut legt. Zauber gleiten leichter ab, solange es wirkt.",
       },
     },
+
+    // ── Taverne (1.2.0, design/1.2.0-alive/taverne-spec-technik.md §7): Schwarzmarktbehälter,
+    // fünf Stufen (Tier = Band). Einzige Quelle = TavernTask.paysCrate + der 10%-Bonuswurf jeder
+    // Abgabe (engine/tavern.ts, logic-dev) — KEIN Loot-/Shop-/Quest-Eintrag (wie die Meisterringe/
+    // Elite-Uniques, s. deren Kommentar in wiring-audit.test.ts). Öffnen: `openBlackMarketCrate`
+    // (Consumable-Pfad `blackMarketCrate`, logic-dev). Verkaufswert bewusst 0 (Spec §7: "Kein Gold").
+    black_market_crate_i: {
+      id: "black_market_crate_i", name: { en: "Black Market Crate I", de: "Schwarzmarktbehälter I" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "common", value: 0,
+      consumable: { kind: "blackMarketCrate", tier: 1 },
+      description: {
+        en: "A crate that changed hands more than once before reaching you. Nobody asks what's inside until it's open.",
+        de: "Eine Kiste, die mehr als einmal den Besitzer wechselte, bevor sie dich erreichte. Niemand fragt, was drin ist, bevor sie offen ist.",
+      },
+    },
+    black_market_crate_ii: {
+      id: "black_market_crate_ii", name: { en: "Black Market Crate II", de: "Schwarzmarktbehälter II" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "rare", value: 0,
+      consumable: { kind: "blackMarketCrate", tier: 2 },
+      description: {
+        en: "Heavier than the last one, and the nails are new. Someone wanted this to look ordinary.",
+        de: "Schwerer als die letzte, und die Nägel sind neu. Jemand wollte, dass die hier gewöhnlich aussieht.",
+      },
+    },
+    black_market_crate_iii: {
+      id: "black_market_crate_iii", name: { en: "Black Market Crate III", de: "Schwarzmarktbehälter III" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "superRare", value: 0,
+      consumable: { kind: "blackMarketCrate", tier: 3 },
+      description: {
+        en: "Sealed with a stamp that means something in a town you've never visited.",
+        de: "Versiegelt mit einem Stempel, der in einer Stadt etwas bedeutet, die du nie besucht hast.",
+      },
+    },
+    black_market_crate_iv: {
+      id: "black_market_crate_iv", name: { en: "Black Market Crate IV", de: "Schwarzmarktbehälter IV" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "epic", value: 0,
+      consumable: { kind: "blackMarketCrate", tier: 4 },
+      description: {
+        en: "It rattled once on the way here and hasn't since. Best to open it somewhere quiet.",
+        de: "Sie klapperte einmal auf dem Weg hierher und seither nicht mehr. Am besten öffnest du sie irgendwo, wo es ruhig ist.",
+      },
+    },
+    black_market_crate_v: {
+      id: "black_market_crate_v", name: { en: "Black Market Crate V", de: "Schwarzmarktbehälter V" },
+      icon: "📦", type: "consumable", stackable: true, rarity: "legendary", value: 0,
+      consumable: { kind: "blackMarketCrate", tier: 5 },
+      description: {
+        en: "The Stranger wouldn't say who packed this one. That alone should tell you something.",
+        de: "Der Fremde wollte nicht sagen, wer diese hier gepackt hat. Allein das sollte dir etwas sagen.",
+      },
+    },
   },
   actions: {
     // Holzfällen
@@ -19879,6 +19930,433 @@ export const content: ContentDB = {
         { gold: 15_000, items: [{ itemId: "guard_insignia", qty: 20 }, { itemId: "cut_gemstone", qty: 12 }, { itemId: "smugglers_key", qty: 15 }, { itemId: "timber_brace", qty: 10 }], buildMs: 36_000_000, boost: { kind: "sellBonus", value: 0.02 } },
         { gold: 60_000, items: [{ itemId: "ornate_goblet", qty: 12 }, { itemId: "signet_ring", qty: 15 }, { itemId: "reliquary_shard", qty: 8 }, { itemId: "timber_anchor", qty: 20 }], buildMs: 108_000_000, boost: { kind: "sellBonus", value: 0.02 } },
       ],
+    },
+    // ══════════════════════════════════════════════════════════════════════
+    // Taverne (1.2.0 „Alive", design/1.2.0-alive/taverne-spec-technik.md §1, Chef-Entscheide
+    // E1–E3 + 27.08.2026): 16. Lager-Gebäude, belegt KEINEN Bauplatz (Ausnahme wie das Zentralhaus,
+    // s. CAMP_TAVERN_ID/campUsedBuildSlots, logic-dev). Alt-Saves bekommen sie NICHT geschenkt
+    // (E1: baubar). `boost: { kind: "tavernPerks", value: 1 }` ist ein reiner Stufen-Marker — die
+    // tatsächliche Wirkung (Gratis-Wechsel, Gold-Faktor III) steht in engine/tavern.ts, nicht hier.
+    // ══════════════════════════════════════════════════════════════════════
+    {
+      id: "camp_tavern",
+      name: { en: "The Tavern", de: "Die Taverne" },
+      description: {
+        en: "Halvard poured the first round before the roof was even finished. Word travels faster over a full mug.",
+        de: "Halvard schenkte die erste Runde aus, bevor das Dach überhaupt fertig war. Nachrichten reisen schneller über einem vollen Krug.",
+      },
+      levels: [
+        { gold: 1_500, items: [{ itemId: "oak_log", qty: 100 }], buildMs: 900_000, boost: { kind: "tavernPerks", value: 1 } },
+        { gold: 7_500, items: [{ itemId: "ironbark_log", qty: 60 }, { itemId: "timber_brace", qty: 8 }], buildMs: 28_800_000, boost: { kind: "tavernPerks", value: 1 } },
+        { gold: 30_000, items: [{ itemId: "shadowpine_log", qty: 80 }, { itemId: "bloodiron_bar", qty: 12 }, { itemId: "timber_anchor", qty: 20 }], buildMs: 86_400_000, boost: { kind: "tavernPerks", value: 1 } },
+      ],
+    },
+  ],
+
+  // ══════════════════════════════════════════════════════════════════════
+  // Taverne — Gäste und Tages-Vorlagen (1.2.0 „Alive", design/1.2.0-alive/taverne-spec-technik.md
+  // §3, design/1.2.0-alive/taverne-voelker-und-gaeste.md Fassung 2). 19 Gäste (Rona/#20 kommt in
+  // Phase 2). Halvard vergibt keine Aufgaben (givesTasks:false, reiner Tresen/Kulisse-Gast).
+  // Enchanting-Hinweis (Wenna): es gibt KEINEN eigenen "enchanting"-Skill im Katalog — Verzauberung
+  // läuft unter "runecrafting" (rune_foci-Kategorie, die enchant_*-Aktionen). Wenna und Orin teilen
+  // sich daher den Skill, unterscheiden sich aber in der Kategorie (rune_runes vs. rune_foci) und im
+  // Flavor. An die CEO/logic-dev gemeldet (s. Content-Bericht).
+  // ══════════════════════════════════════════════════════════════════════
+  tavernGuests: [
+    {
+      id: "halvard", name: { en: "Halvard Kettle", de: "Halvard Kessel" }, race: "human", sex: "m",
+      role: { en: "Innkeeper", de: "Wirt" }, skill: null, givesTasks: false,
+      greeting: { en: "Sit. Whoever sits here, talks. Whoever talks, stays.", de: "Setz dich. Wer hier sitzt, redet. Wer redet, bleibt." },
+      rarity: "daily",
+    },
+    {
+      id: "viktor", name: { en: "Viktor Thornhewer", de: "Viktor Dornhauer" }, race: "human", sex: "m",
+      role: { en: "Slayer", de: "Slayer" }, skill: "slayer", givesTasks: true,
+      greeting: { en: "The vultures grow bold. Twenty heads, and I pay.", de: "Die Geier werden dreist. Zwanzig Köpfe, und ich zahle." },
+      rarity: "daily",
+    },
+    {
+      id: "billy", name: { en: "Billy Furrowweed", de: "Billy Furchenkraut" }, race: "human", sex: "m",
+      role: { en: "Farmer", de: "Bauer" }, skill: "farming", givesTasks: true,
+      greeting: { en: "My beds stand full and I've only got two hands.", de: "Meine Beete stehen voll und ich hab nur zwei Hände." },
+      rarity: "daily",
+    },
+    {
+      id: "grumm", name: { en: "Grumm Coalfist", de: "Grumm Kohlenfaust" }, race: "orc", sex: "m",
+      role: { en: "Miner", de: "Bergarbeiter" }, skill: "mining", givesTasks: true,
+      greeting: { en: "Metal doesn't lie. Forty ore, then we'll talk.", de: "Metall lügt nicht. Vierzig Erz, dann reden wir." },
+      rarity: "daily",
+    },
+    {
+      id: "brakka", name: { en: "Brakka Oakcleft", de: "Brakka Eichenspalt" }, race: "orc", sex: "f",
+      role: { en: "Woodcutter", de: "Holzfällerin" }, skill: "woodcutting", givesTasks: true,
+      greeting: { en: "Too soft. Bring something harder.", de: "Zu weich. Bring Härteres." },
+      rarity: "daily",
+    },
+    {
+      id: "nessa", name: { en: "Nessa Trapnet", de: "Nessa Reusenhand" }, race: "human", sex: "f",
+      role: { en: "Angler", de: "Fischerin" }, skill: "fishing", givesTasks: true,
+      greeting: { en: "The tide takes, the tide gives. Today it gives. Use it.", de: "Die Flut nimmt, die Flut gibt. Heute gibt sie. Nutz es." },
+      rarity: "daily",
+    },
+    {
+      id: "tamsin", name: { en: "Tamsin Wayside", de: "Tamsin Wegwarte" }, race: "elf", sex: "f",
+      role: { en: "Forager", de: "Sammlerin" }, skill: "foraging", givesTasks: true,
+      greeting: { en: "The old woman says I should learn patience. Help me cheat.", de: "Die Alte sagt, ich soll Geduld lernen. Hilf mir schummeln." },
+      rarity: "daily",
+    },
+    {
+      id: "ilvara", name: { en: "Ilvara Thornsong", de: "Ilvara Dornlied" }, race: "elf", sex: "f",
+      role: { en: "Herbalist", de: "Kräuterkundige" }, skill: "herblore", givesTasks: true,
+      greeting: { en: "The forest remembers recipes you've all forgotten.", de: "Der Wald erinnert sich an Rezepte, die ihr vergessen habt." },
+      rarity: "daily",
+    },
+    {
+      id: "odo", name: { en: "Odo Saltbeard", de: "Odo Salzbart" }, race: "human", sex: "m",
+      role: { en: "Cook", de: "Koch" }, skill: "cooking", givesTasks: true,
+      greeting: { en: "The watch eats raw meat. That's a disgrace. Help me.", de: "Die Wache frisst rohes Fleisch. Das ist eine Schande. Hilf mir." },
+      rarity: "daily",
+    },
+    {
+      id: "dashk", name: { en: "Dashk Coaltooth", de: "Dashk Kohlenzahn" }, race: "orc", sex: "m",
+      role: { en: "Smith", de: "Schmied" }, skill: "smithing", givesTasks: true,
+      greeting: { en: "Urga says steel listens to patience. I've got none. You?", de: "Urga sagt, Stahl hört auf Geduld. Ich hab keine. Du?" },
+      rarity: "daily",
+    },
+    {
+      id: "merrit", name: { en: "Merrit Finehone", de: "Merrit Feinschliff" }, race: "goblin", sex: "f",
+      role: { en: "Weaponsmith", de: "Waffenschmiedin" }, skill: "smithing", givesTasks: true,
+      greeting: { en: "A blade without an edge is a stick with excuses.", de: "Eine Klinge ohne Schneide ist ein Stock mit Ausreden." },
+      rarity: "daily",
+    },
+    {
+      id: "kell", name: { en: "Kell Scarhide", de: "Kell Narbenhaut" }, race: "orc", sex: "m",
+      role: { en: "Leatherworker", de: "Lederarbeiter" }, skill: "leatherworking", givesTasks: true,
+      greeting: { en: "Good leather has a story. Bring me one.", de: "Gutes Leder hat eine Geschichte. Bring mir eine." },
+      rarity: "daily",
+    },
+    {
+      id: "sefra", name: { en: "Sefra Windring", de: "Sefra Windring" }, race: "elf", sex: "f",
+      role: { en: "Jeweler", de: "Juwelierin" }, skill: "jewelcrafting", givesTasks: true,
+      greeting: { en: "A stone carries weather. Cut it right.", de: "Ein Stein trägt Wetter. Schleif ihn richtig." },
+      rarity: "daily",
+    },
+    {
+      id: "orin", name: { en: "Orin Clothreader", de: "Orin Tuchleser" }, race: "elf", sex: "m",
+      role: { en: "Runecrafter", de: "Runenhandwerker" }, skill: "runecrafting", givesTasks: true,
+      greeting: { en: "The veil is tearing up top. Sew me something that holds.", de: "Das Tuch reißt oben. Näh mir etwas, das hält." },
+      rarity: "daily",
+    },
+    {
+      // Kein "enchanting"-Skill im Katalog (s. Bericht) — Wenna trainiert wie Orin runecrafting,
+      // unterscheidet sich über die Kategorie ihrer Vorlagen (rune_foci statt rune_runes).
+      id: "wenna", name: { en: "Wenna Greyhand", de: "Wenna Grauhand" }, race: "human", sex: "f",
+      role: { en: "Enchantress", de: "Verzauberin" }, skill: "runecrafting", givesTasks: true,
+      greeting: { en: "The dead don't ask prices. I do.", de: "Die Toten fragen nicht nach Preisen. Ich schon." },
+      rarity: "daily",
+    },
+    {
+      id: "pim", name: { en: "Pim Twelvefingers", de: "Pim Zwölffinger" }, race: "goblin", sex: "m",
+      role: { en: "Thief", de: "Dieb" }, skill: "thieving", givesTasks: true,
+      greeting: { en: "Nobody misses what they never counted.", de: "Niemand vermisst, was er nie gezählt hat." },
+      rarity: "daily",
+    },
+    {
+      id: "torvald", name: { en: "Torvald Beammeasure", de: "Torvald Balkenmaß" }, race: "human", sex: "m",
+      role: { en: "Builder", de: "Baumeister" }, skill: "woodcutting", givesTasks: true,
+      greeting: { en: "A house is a promise made of wood. Bring me wood.", de: "Ein Haus ist ein Versprechen aus Holz. Bring mir Holz." },
+      rarity: "daily",
+    },
+    {
+      id: "stranger", name: { en: "The Stranger", de: "Der Fremde" }, race: "goblin", sex: "m",
+      role: { en: "Black Market", de: "Schwarzmarkt" }, skill: null, givesTasks: true,
+      greeting: { en: "I don't ask where from. You don't ask where to.", de: "Ich frage nicht, woher. Du fragst nicht, wohin." },
+      rarity: "rare",
+    },
+    {
+      id: "ashka", name: { en: "Ashka Sandrun", de: "Ashka Sandlauf" }, race: "human", sex: "f",
+      role: { en: "Caravan Trader", de: "Karawane" }, skill: null, givesTasks: true,
+      greeting: { en: "Three goods, good goods, and I won't forget your name.", de: "Drei Waren, gute Ware, und ich vergesse deinen Namen nicht." },
+      rarity: "rare",
+    },
+  ],
+
+  // Vorlagen je Gast (2–4, Spec §3 „Aufgabentypen"). `minutes` = Arbeitsminuten je Band 1..5
+  // (deliver/assortment 6/8/10/12/15, produce 8/10/12/15/18, run 6/8/10/12/15 — Spec-Richtwerte;
+  // kill/dungeon/champion nutzen `minutes` NICHT für Menge/XP (feste Tabellen, Spec §4), das Feld
+  // ist aber Pflicht im Typ — hier auf die run-Skala gesetzt). `line` mit {count} (Pflicht außer
+  // dungeon/champion), {target} (Item-/Aktionsname) und {zone} (nur kill).
+  tavernTasks: [
+    // ── Viktor (slayer) ──────────────────────────────────────────────────
+    {
+      id: "viktor_kill_zone", guestId: "viktor", kind: "kill", select: { zoneBand: true },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Twenty heads would do for a start. Clear {count} in {zone}.", de: "Zwanzig Köpfe wären ein Anfang. Räum {count} in {zone} weg." },
+    },
+    {
+      id: "viktor_kill_tower", guestId: "viktor", kind: "kill", select: { zoneBand: true }, minBand: 2,
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The watch up top counts heads too. Bring me {count} from {zone}.", de: "Die Wache oben zählt auch Köpfe. Bring mir {count} aus {zone}." },
+    },
+    {
+      id: "viktor_champion", guestId: "viktor", kind: "champion", select: {}, minBand: 4,
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "One of the named ones is close. Bring it down and I'll pay well.", de: "Einer der Benannten ist nah. Bring ihn zu Fall, ich zahl gut." },
+    },
+    // ── Billy (farming) — Sonderfall: farming hat KEINE content.actions (Anbau läuft über
+    // content.crops/farmPlots), s. Content-Bericht an logic-dev. ────────────────────────────
+    {
+      id: "billy_deliver_harvest", guestId: "billy", kind: "deliver", select: { skill: "farming", itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "My beds stand full. Bring me {count} {target} from your stores.", de: "Meine Beete stehen voll. Bring mir {count} {target} aus deinem Bestand." },
+    },
+    {
+      id: "billy_produce_harvest", guestId: "billy", kind: "produce", select: { skill: "farming", itemType: "material" },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Fresh off the vine is worth more. Harvest {count} {target} for me.", de: "Frisch von der Ranke ist mehr wert. Ernte {count} {target} für mich." },
+    },
+    // ── Grumm (mining) ───────────────────────────────────────────────────
+    {
+      id: "grumm_deliver_ore", guestId: "grumm", kind: "deliver", select: { skill: "mining", itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Metal doesn't lie. Bring me {count} {target}, then we'll talk.", de: "Metall lügt nicht. Bring mir {count} {target}, dann reden wir." },
+    },
+    {
+      id: "grumm_produce_ore", guestId: "grumm", kind: "produce", select: { skill: "mining", itemType: "material" },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Straight out of the seam is best. Dig up {count} {target} fresh.", de: "Frisch aus dem Flöz ist am besten. Grab {count} {target} frisch." },
+    },
+    // ── Brakka (woodcutting, rohes Holz) ─────────────────────────────────
+    {
+      id: "brakka_deliver_log", guestId: "brakka", kind: "deliver", select: { skill: "woodcutting", itemType: "material", hasInputs: false },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Too soft, most of what I get. Bring me {count} {target}.", de: "Zu weich, das meiste, was ich bekomme. Bring mir {count} {target}." },
+    },
+    {
+      id: "brakka_produce_log", guestId: "brakka", kind: "produce", select: { skill: "woodcutting", itemType: "material", hasInputs: false },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Fell {count} {target} yourself. I'll check the grain.", de: "Fäll {count} {target} selbst. Ich prüf die Maserung." },
+    },
+    // ── Nessa (fishing) ──────────────────────────────────────────────────
+    {
+      id: "nessa_deliver_fish", guestId: "nessa", kind: "deliver", select: { skill: "fishing", itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The tide gives today. Bring me {count} {target} while it does.", de: "Die Flut gibt heute. Bring mir {count} {target}, solang sie's tut." },
+    },
+    {
+      id: "nessa_produce_fish", guestId: "nessa", kind: "produce", select: { skill: "fishing", itemType: "material" },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Cast your line and land {count} {target}, fresh out of the water.", de: "Wirf die Leine aus und fang {count} {target}, frisch aus dem Wasser." },
+    },
+    // ── Tamsin (foraging) ────────────────────────────────────────────────
+    {
+      id: "tamsin_deliver_forage", guestId: "tamsin", kind: "deliver", select: { skill: "foraging", itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The old woman says I should learn patience. Bring {count} {target} instead.", de: "Die Alte sagt, ich soll Geduld lernen. Bring stattdessen {count} {target}." },
+    },
+    {
+      id: "tamsin_produce_forage", guestId: "tamsin", kind: "produce", select: { skill: "foraging", itemType: "material" },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Gather {count} {target} fresh. I'll pretend I found them myself.", de: "Sammle {count} {target} frisch. Ich tu so, als hätt ich sie selbst gefunden." },
+    },
+    // ── Ilvara (herblore) ────────────────────────────────────────────────
+    {
+      id: "ilvara_deliver_potion", guestId: "ilvara", kind: "deliver", select: { skill: "herblore", itemType: "consumable" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The forest remembers what you've forgotten. Bring {count} {target}.", de: "Der Wald erinnert sich, was ihr vergessen habt. Bring {count} {target}." },
+    },
+    {
+      id: "ilvara_produce_potion", guestId: "ilvara", kind: "produce", select: { skill: "herblore", itemType: "consumable", hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Brew {count} {target} at the mortar. The old recipes still hold.", de: "Brau {count} {target} am Mörser. Die alten Rezepte halten noch." },
+    },
+    {
+      id: "ilvara_produce_elixir", guestId: "ilvara", kind: "produce", select: { skill: "herblore", itemType: "consumable", hasInputs: true }, minBand: 4,
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "This one calls for a steadier hand. Brew {count} {target} without spilling a drop.", de: "Das hier braucht eine ruhigere Hand. Brau {count} {target}, ohne einen Tropfen zu verschütten." },
+    },
+    // ── Odo (cooking) ────────────────────────────────────────────────────
+    {
+      id: "odo_deliver_meal", guestId: "odo", kind: "deliver", select: { skill: "cooking", itemType: "consumable" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The watch eats raw meat. That's a disgrace. Bring me {count} {target}.", de: "Die Wache frisst rohes Fleisch. Das ist eine Schande. Bring mir {count} {target}." },
+    },
+    {
+      id: "odo_produce_meal", guestId: "odo", kind: "produce", select: { skill: "cooking", itemType: "consumable", hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Cook {count} {target} at my stove. Mind the fire, it bites.", de: "Koch {count} {target} an meinem Herd. Pass auf, das Feuer beißt." },
+    },
+    {
+      id: "odo_produce_feast", guestId: "odo", kind: "produce", select: { skill: "cooking", itemType: "consumable", hasInputs: true }, minBand: 4,
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "A real feast, {count} {target}, nothing burnt this time.", de: "Ein echtes Festmahl, {count} {target}, diesmal nichts Angebranntes." },
+    },
+    // ── Dashk (smithing: Barren + Rüstung) ───────────────────────────────
+    {
+      id: "dashk_deliver_bar", guestId: "dashk", kind: "deliver", select: { skill: "smithing", itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Urga counts every bar twice. Bring me {count} {target}.", de: "Urga zählt jeden Barren zweimal. Bring mir {count} {target}." },
+    },
+    {
+      id: "dashk_produce_bar", guestId: "dashk", kind: "produce", select: { skill: "smithing", itemType: "material", hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Melt {count} {target} at the forge. Urga says steel listens to patience.", de: "Schmelz {count} {target} an der Esse. Urga sagt, Stahl hört auf Geduld." },
+    },
+    {
+      id: "dashk_produce_armor", guestId: "dashk", kind: "produce",
+      select: { skill: "smithing", itemType: "equipment", equipSlots: ["helmet", "body", "legs", "gloves", "boots"], hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Forge {count} {target}. I want Urga to nod, just once.", de: "Schmiede {count} {target}. Ich will, dass Urga einmal nickt." },
+    },
+    // ── Merrit (Waffen) ──────────────────────────────────────────────────
+    {
+      id: "merrit_deliver_weapon", guestId: "merrit", kind: "deliver", select: { skill: "smithing", itemType: "equipment", equipSlots: ["mainhand"] },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "A blade without an edge is a stick with excuses. Bring me {count} {target}.", de: "Eine Klinge ohne Schneide ist ein Stock mit Ausreden. Bring mir {count} {target}." },
+    },
+    {
+      id: "merrit_produce_weapon", guestId: "merrit", kind: "produce",
+      select: { skill: "smithing", itemType: "equipment", equipSlots: ["mainhand"], hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Forge {count} {target} and mind the edge. I check every one.", de: "Schmiede {count} {target} und achte auf die Schneide. Ich prüf jede." },
+    },
+    {
+      id: "merrit_produce_weapon_next", guestId: "merrit", kind: "produce",
+      select: { skill: "smithing", itemType: "equipment", equipSlots: ["mainhand"], hasInputs: true }, minBand: 2,
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Reach past your own tier. Forge {count} {target}, one step ahead.", de: "Greif über deine eigene Stufe hinaus. Schmiede {count} {target}, einen Schritt voraus." },
+    },
+    // ── Kell (Leder) ─────────────────────────────────────────────────────
+    {
+      id: "kell_deliver_leather", guestId: "kell", kind: "deliver", select: { skill: "leatherworking", itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Good leather has a story. Bring me {count} {target}.", de: "Gutes Leder hat eine Geschichte. Bring mir {count} {target}." },
+    },
+    {
+      id: "kell_produce_leather", guestId: "kell", kind: "produce", select: { skill: "leatherworking", itemType: "material", hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Tan {count} {target} for me. Cure it right, or don't bother.", de: "Gerbe {count} {target} für mich. Gerb es richtig oder lass es." },
+    },
+    {
+      id: "kell_produce_piece", guestId: "kell", kind: "produce",
+      select: { skill: "leatherworking", itemType: "equipment", equipSlots: ["body", "legs", "gloves", "boots"], hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Stitch {count} {target}. I want it to outlast whoever wears it.", de: "Näh {count} {target}. Es soll länger halten als der, der's trägt." },
+    },
+    // ── Sefra (Juwelen) ──────────────────────────────────────────────────
+    {
+      id: "sefra_deliver_gem", guestId: "sefra", kind: "deliver", select: { skill: "jewelcrafting", categories: ["jewel_cut"] },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "A stone carries weather. Bring me {count} {target}.", de: "Ein Stein trägt Wetter. Bring mir {count} {target}." },
+    },
+    {
+      id: "sefra_produce_gem", guestId: "sefra", kind: "produce", select: { skill: "jewelcrafting", categories: ["jewel_cut"], hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Cut {count} {target} for me. Slowly. A rushed cut ruins the stone.", de: "Schleif {count} {target} für mich. Langsam. Ein hastiger Schnitt ruiniert den Stein." },
+    },
+    {
+      id: "sefra_produce_jewelry", guestId: "sefra", kind: "produce",
+      select: { skill: "jewelcrafting", equipSlots: ["ring1", "ring2", "amulet"], hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Set {count} {target}. I'll finish the sentence when it's done.", de: "Fass {count} {target}. Den Satz beend ich, wenn es fertig ist." },
+    },
+    // ── Orin (Runen/Foki) ────────────────────────────────────────────────
+    {
+      id: "orin_deliver_rune", guestId: "orin", kind: "deliver", select: { skill: "runecrafting", categories: ["rune_runes"] },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The veil is tearing up top. Bring me {count} {target}.", de: "Das Tuch reißt oben. Bring mir {count} {target}." },
+    },
+    {
+      id: "orin_produce_rune", guestId: "orin", kind: "produce", select: { skill: "runecrafting", categories: ["rune_runes"], hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Bind {count} {target} for me. Sew something that holds.", de: "Binde {count} {target} für mich. Näh etwas, das hält." },
+    },
+    {
+      id: "orin_produce_focus_next", guestId: "orin", kind: "produce",
+      select: { skill: "runecrafting", categories: ["rune_foci"], hasInputs: true }, minBand: 3,
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "Reach one tier higher. Bind {count} {target}, the veil wants finer thread.", de: "Greif eine Stufe höher. Binde {count} {target}, das Tuch will feineren Faden." },
+    },
+    // ── Wenna (Verzauberung über runecrafting/rune_foci) ─────────────────
+    {
+      id: "wenna_produce_enchant", guestId: "wenna", kind: "produce", select: { skill: "runecrafting", categories: ["rune_foci"], hasInputs: true },
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "The dead don't ask prices. I do. Enchant {count} {target} for me.", de: "Die Toten fragen nicht nach Preisen. Ich schon. Verzaubere {count} {target} für mich." },
+    },
+    {
+      id: "wenna_deliver_rune", guestId: "wenna", kind: "deliver", select: { skill: "runecrafting", categories: ["rune_runes"] },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Bring me {count} {target}. My gloves stay on either way.", de: "Bring mir {count} {target}. Meine Handschuhe bleiben so oder so an." },
+    },
+    // ── Pim (Diebeskunst) ────────────────────────────────────────────────
+    {
+      id: "pim_run_heist", guestId: "pim", kind: "run", select: { skill: "thieving" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Nobody misses what they never counted. Pull off {target}, {count} times.", de: "Niemand vermisst, was er nie gezählt hat. Zieh {target} durch, {count} Mal." },
+    },
+    {
+      id: "pim_deliver_loot", guestId: "pim", kind: "deliver", select: { skill: "thieving", itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Bring me {count} {target}. I won't ask where from.", de: "Bring mir {count} {target}. Ich frag nicht, woher." },
+    },
+    {
+      id: "pim_run_heist_high", guestId: "pim", kind: "run", select: { skill: "thieving" }, minBand: 4,
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The good jobs pay in more than coin. Land {target}, {count} times, clean.", de: "Die guten Griffe zahlen mehr als Münzen. Zieh {target} sauber durch, {count} Mal." },
+    },
+    // ── Torvald (Baumaterial über woodcutting) ───────────────────────────
+    {
+      id: "torvald_deliver_log", guestId: "torvald", kind: "deliver", select: { skill: "woodcutting", itemType: "material", hasInputs: false },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "A house is a promise made of wood. Bring me {count} {target}.", de: "Ein Haus ist ein Versprechen aus Holz. Bring mir {count} {target}." },
+    },
+    {
+      id: "torvald_deliver_timber", guestId: "torvald", kind: "deliver", select: { skill: "woodcutting", itemType: "material", hasInputs: true },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Measure twice, curse once. Bring me {count} {target}.", de: "Zweimal messen, einmal fluchen. Bring mir {count} {target}." },
+    },
+    {
+      id: "torvald_produce_timber", guestId: "torvald", kind: "produce",
+      select: { skill: "woodcutting", itemType: "material", hasInputs: true }, minBand: 2,
+      minutes: [8, 10, 12, 15, 18],
+      line: { en: "The next building wants proper joinery. Assemble {count} {target}.", de: "Der nächste Bau will ordentliches Zimmerwerk. Füg {count} {target} zusammen." },
+    },
+    // ── Der Fremde (Schwarzmarkt, generisch) ─────────────────────────────
+    {
+      id: "stranger_kill", guestId: "stranger", kind: "kill", select: { zoneBand: true },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "I don't ask where from. Clear {count} in {zone}.", de: "Ich frage nicht, woher. Räum {count} in {zone}." },
+    },
+    {
+      id: "stranger_dungeon", guestId: "stranger", kind: "dungeon", select: {},
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "There's a door that shouldn't open twice. Close it for me.", de: "Es gibt eine Tür, die sich nicht zweimal öffnen sollte. Schließ sie für mich." },
+    },
+    {
+      id: "stranger_champion", guestId: "stranger", kind: "champion", select: {}, minBand: 4,
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "One of the named ones owes somebody. Collect.", de: "Einer der Benannten schuldet jemandem was. Treib es ein." },
+    },
+    {
+      id: "stranger_assortment", guestId: "stranger", kind: "assortment", select: { itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Bring me a mixed sack, {count} of each, three kinds. You don't ask where it goes.", de: "Bring mir einen gemischten Sack, {count} von jeder Sorte, drei Sorten. Du fragst nicht, wohin." },
+    },
+    // ── Ashka (Karawane, generisch) ──────────────────────────────────────
+    {
+      id: "ashka_assortment", guestId: "ashka", kind: "assortment", select: { itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Three goods, good goods, {count} of each, and I won't forget your name.", de: "Drei Waren, gute Ware, {count} von jeder, und ich vergesse deinen Namen nicht." },
+    },
+    {
+      id: "ashka_deliver_provisions", guestId: "ashka", kind: "deliver", select: { itemType: "consumable" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "The road is long and my mules complain. Bring me {count} {target}.", de: "Die Straße ist lang und meine Maultiere murren. Bring mir {count} {target}." },
+    },
+    {
+      id: "ashka_deliver_coal", guestId: "ashka", kind: "deliver", select: { itemType: "material" },
+      minutes: [6, 8, 10, 12, 15],
+      line: { en: "Coal burns the same wherever it's dug. Bring me {count} {target}.", de: "Kohle brennt überall gleich, egal wo sie gegraben wurde. Bring mir {count} {target}." },
     },
   ],
 };

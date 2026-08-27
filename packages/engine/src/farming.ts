@@ -119,6 +119,10 @@ function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: Fa
   // Ertrag: ein nextInt-Zug pro Ernte (Plots speisen KEINE Mastery → kein Doppelertrag-Wurf, CEO #4).
   const qty = nextInt(state.rng, c.yieldMin, c.yieldMax);
   if (qty > 0) {
+    // Taverne (SAVE 84): jedes frisch geerntete Stück zählt als „erzeugt" (Baseline der "produce"-
+    // Aufgaben) — zum ERNTE-Zeitpunkt in voller Menge, auch wenn ein Rest als readyYield parkt
+    // (der wird beim Einlagern nicht ein zweites Mal gezählt). Kein RNG, online == offline.
+    (state.stats.producedById ??= {})[c.yieldItem] = (state.stats.producedById[c.yieldItem] ?? 0) + qty;
     const { toInventory, toBank } = addItemOrBank(state, content, c.yieldItem, qty);
     const placed = toInventory + toBank;
     state.stats.itemsGathered += placed;

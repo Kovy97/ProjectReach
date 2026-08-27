@@ -101,6 +101,17 @@ function forEachLocalizableField(
   }
   // #p13 (Chef-GO 25.08.2026, 1.1.0): Token-Shop-Regal-Namen, gleiches Muster wie zones/categories.
   if (db.tokenShopShelves) for (const sh of db.tokenShopShelves) visit(sh, "name", "tokenShopShelves", sh.id);
+  // Taverne (1.2.0 „Alive", design/1.2.0-alive/taverne-spec-technik.md §3): Gäste (role/greeting;
+  // `name` darf laut Spec bleiben, wird hier trotzdem mitbesucht — ein Overlay-Eintrag ist optional,
+  // fehlt er, bleibt der en-Name über resolveText stehen) + Vorlagen-Ansprachen (line).
+  if (db.tavernGuests) {
+    for (const g of db.tavernGuests) {
+      visit(g, "name", "tavernGuests", g.id);
+      visit(g, "role", "tavernGuests", g.id);
+      visit(g, "greeting", "tavernGuests", g.id);
+    }
+  }
+  if (db.tavernTasks) for (const t of db.tavernTasks) visit(t, "line", "tavernTasks", t.id);
   // NICHT lokalisiert (kein name/description-Feld im Shape): shop, slayerShop, tokenShop (Angebote
   // zeigen nur das gekaufte Item — dessen Name ist bereits lokalisiert).
 }

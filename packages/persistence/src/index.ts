@@ -62,6 +62,8 @@ import {
   defaultAutoPotion,
   defaultCampState,
   defaultTavernState,
+  TAVERN_BANDS,
+  TAVERN_SEATS,
   defaultDailyState,
   defaultParagonState,
   defaultQuestState,
@@ -102,6 +104,161 @@ function finiteNonNeg(value: unknown, fallback = 0): number {
 function clampFinite(value: unknown, min: number, max: number, fallback = min): number {
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
   return Math.max(min, Math.min(max, value));
+}
+
+/** Endliche, nicht-negative GANZE Zahl (abgerundet, Cap), sonst Default. */
+function finiteIntNonNeg(value: unknown, cap: number, fallback = 0): number {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return fallback;
+  return Math.floor(Math.min(value, cap));
+}
+
+/** Item-Liste `{ id, qty }[]` auf bekannte Items mit positiver ganzer Menge reduzieren (gleiche IDs bleiben getrennt). */
+function sanitizeRewardItems(raw: unknown, content: ContentDB): { id: ItemId; qty: number }[] {
+  const out: { id: ItemId; qty: number }[] = [];
+  if (!Array.isArray(raw)) return out;
+  for (const e of raw as unknown[]) {
+    if (!e || typeof e !== "object") continue;
+    const id = (e as { id?: unknown }).id;
+    const qty = finiteIntNonNeg((e as { qty?: unknown }).qty, QTY_HARD_CAP, 0);
+    if (typeof id !== "string" || !content.items[id] || qty < 1) continue;
+    out.push({ id, qty });
+  }
+  return out;
+}
+
+const TAVERN_TASK_KINDS: ReadonlySet<string> = new Set(["deliver", "produce", "run", "kill", "dungeon", "champion", "assortment"]);
+
+/**
+ * Härtet EINE gewürfelte Tavernen-Aufgabe gegen den Content (taverne-spec-technik.md §2): bekannte
+ * Vorlage DES Gastes (gleiche Art), Ziel je Art vorhanden (Item/Aktion/Monster/Dungeon/Variante),
+ * Zahlen geklemmt (count ≥ 1, band 1..5, baseline ≥ 0, Gold/XP endlich ≥ 0), rewardItems nur
+ * bekannte Items, bekannter Belohnungs-Skill, `actionId` nur bekannt. null = Aufgabe verwerfen
+ * (Platz bleibt mit `task: null`, der nächste tavernRefresh besetzt neu). Idempotent.
+ */
+function sanitizeTavernTask(raw: unknown, guestId: string, content: ContentDB): GameState["tavern"]["seats"][number]["task"] {
+  if (!raw || typeof raw !== "object") return null;
+  const r = raw as Record<string, unknown>;
+  const templateId = r.templateId;
+  if (typeof templateId !== "string") return null;
+  const tpl = content.tavernTasks?.find((t) => t.id === templateId);
+  if (!tpl || tpl.guestId !== guestId) return null;
+  const kind = r.kind;
+  if (typeof kind !== "string" || !TAVERN_TASK_KINDS.has(kind) || kind !== tpl.kind) return null;
+  const targetId = r.targetId;
+  if (typeof targetId !== "string" || targetId.length === 0) return null;
+  switch (kind) {
+    case "deliver":
+    case "produce":
+    case "assortment":
+      if (!content.items[targetId]) return null;
+      break;
+    case "run":
+      if (!content.actions[targetId]) return null;
+      break;
+    case "kill":
+      if (!content.monsters[targetId]) return null;
+      break;
+    case "dungeon":
+      if (!content.dungeons.some((d) => d.id === targetId)) return null;
+      break;
+    case "champion":
+      if (!content.elites?.[targetId]) return null;
+      break;
+    default:
+      return null;
+  }
+  const rewardSkill = r.rewardSkill;
+  if (typeof rewardSkill !== "string" || !content.skills[rewardSkill]) return null;
+  const band = finiteIntNonNeg(r.band, TAVERN_BANDS, 1);
+  const task: NonNullable<GameState["tavern"]["seats"][number]["task"]> = {
+    templateId,
+    kind: kind as NonNullable<GameState["tavern"]["seats"][number]["task"]>["kind"],
+    band: Math.max(1, band),
+    targetId,
+    count: Math.max(1, finiteIntNonNeg(r.count, QTY_HARD_CAP, 1)),
+    requiredLevel: finiteIntNonNeg(r.requiredLevel, 999, 0),
+    accepted: r.accepted === true,
+    baseline: finiteIntNonNeg(r.baseline, GOLD_HARD_CAP, 0),
+    rewardGold: finiteIntNonNeg(r.rewardGold, GOLD_HARD_CAP, 0),
+    rewardXp: finiteIntNonNeg(r.rewardXp, GOLD_HARD_CAP, 0),
+    rewardSkill,
+    rewardItems: sanitizeRewardItems(r.rewardItems, content),
+    paysCrate: r.paysCrate === true,
+  };
+  if (kind === "assortment") {
+    const ids = Array.isArray(r.targetIds) ? (r.targetIds as unknown[]).filter((x): x is string => typeof x === "string" && !!content.items[x]) : [];
+    if (ids.length === 0) return null;
+    task.targetIds = ids;
+  }
+  if (typeof r.actionId === "string" && content.actions[r.actionId]) task.actionId = r.actionId;
+  return task;
+}
+
+/**
+ * Härtet `state.tavern` (SAVE_VERSION 84, taverne-spec-technik.md §2): Zahlen geklemmt, Plätze nur
+ * mit bekanntem Gast (unbekannt ⇒ Platzhalter = erster Aufgaben-Gast des Contents, `task: null`),
+ * Aufgaben über `sanitizeTavernTask`, Länge 0 (nie besetzt / kein Tavernen-Content) oder EXAKT
+ * `TAVERN_SEATS` (fehlende Plätze = Platzhalter mit `task: null` → nächster tavernRefresh besetzt
+ * neu), `lastDelivery` nur mit gültiger Form, `deliveredByGuest` nur bekannte Gäste. Idempotent.
+ */
+function sanitizeTavern(state: GameState, content: ContentDB): void {
+  const raw = (state.tavern && typeof state.tavern === "object" && !Array.isArray(state.tavern) ? state.tavern : null) as
+    | Partial<Record<keyof GameState["tavern"], unknown>>
+    | null;
+  const t = defaultTavernState();
+  if (!raw) {
+    state.tavern = t;
+    return;
+  }
+  t.day = finiteIntNonNeg(raw.day, 99_999_999, 0);
+  t.swapsUsed = finiteIntNonNeg(raw.swapsUsed, QTY_HARD_CAP, 0);
+  t.deliveredToday = finiteIntNonNeg(raw.deliveredToday, QTY_HARD_CAP, 0);
+  t.totalDelivered = finiteIntNonNeg(raw.totalDelivered, GOLD_HARD_CAP, 0);
+  t.deliverSeq = finiteIntNonNeg(raw.deliverSeq, GOLD_HARD_CAP, 0);
+  t.introSeen = raw.introSeen === true;
+
+  const guests = content.tavernGuests ?? [];
+  const knownGuest = (id: unknown): id is string => typeof id === "string" && guests.some((g) => g.id === id);
+  const placeholder = guests.find((g) => g.givesTasks)?.id ?? null;
+
+  // Plätze: Länge 0 oder exakt TAVERN_SEATS.
+  const rawSeats = Array.isArray(raw.seats) ? (raw.seats as unknown[]) : [];
+  if (rawSeats.length > 0 && placeholder !== null) {
+    for (let i = 0; i < TAVERN_SEATS; i++) {
+      const s = rawSeats[i];
+      const obj = s && typeof s === "object" ? (s as Record<string, unknown>) : null;
+      const guestId = obj && knownGuest(obj.guestId) ? obj.guestId : placeholder;
+      const task = obj && guestId === obj.guestId ? sanitizeTavernTask(obj.task, guestId, content) : null;
+      t.seats.push({ guestId, task, swaps: finiteIntNonNeg(obj?.swaps, QTY_HARD_CAP, 0) });
+    }
+  }
+
+  // Abgaben je Gast: nur bekannte Gäste, endliche ganze Zahlen ≥ 0.
+  if (raw.deliveredByGuest && typeof raw.deliveredByGuest === "object" && !Array.isArray(raw.deliveredByGuest)) {
+    for (const [id, n] of Object.entries(raw.deliveredByGuest as Record<string, unknown>)) {
+      if (!knownGuest(id)) continue;
+      const v = finiteIntNonNeg(n, GOLD_HARD_CAP, 0);
+      if (v > 0) t.deliveredByGuest[id] = v;
+    }
+  }
+
+  // Breadcrumb der jüngsten Abgabe: nur mit gültiger Form (bekannter Gast + Skill, Zahlen, Listen).
+  const ld = raw.lastDelivery;
+  if (ld && typeof ld === "object") {
+    const d = ld as Record<string, unknown>;
+    if (knownGuest(d.guestId) && typeof d.skill === "string" && content.skills[d.skill]) {
+      t.lastDelivery = {
+        seq: finiteIntNonNeg(d.seq, GOLD_HARD_CAP, 0),
+        guestId: d.guestId,
+        gold: finiteIntNonNeg(d.gold, GOLD_HARD_CAP, 0),
+        xp: finiteIntNonNeg(d.xp, GOLD_HARD_CAP, 0),
+        skill: d.skill,
+        items: sanitizeRewardItems(d.items, content),
+        crates: Array.isArray(d.crates) ? (d.crates as unknown[]).filter((x): x is string => typeof x === "string" && !!content.items[x]) : [],
+      };
+    }
+  }
+  state.tavern = t;
 }
 
 /**
@@ -1799,6 +1956,10 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     done: ob.done === true,
     toursSeen: tours,
   };
+
+  // — Taverne (SAVE_VERSION 84): Plätze/Aufgaben/Zähler/Breadcrumb gegen den Content härten
+  //   (Gäste + Vorlagen + Ziele + Items); ohne Tavernen-Content bleiben nur die Zähler. —
+  sanitizeTavern(state, content);
 
   // — HP-Deckel gegen die abgeleiteten Stats: hp > maxHp (Alt-Save über eine Skalen-Migration wie
   //   den Stat-Squish ÷10 hinweg, entwertetes Gear, manipulierter Save) beim Laden direkt auf maxHp

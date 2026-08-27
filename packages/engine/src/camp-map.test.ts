@@ -115,7 +115,7 @@ describe("Dorfkarte — freie Kartenfläche & Auto-Raster (0..1-Koordinaten, kei
 
   it("das Raster trägt mehr Plätze als es je Gebäude gibt, liegt komplett auf der Lichtung und vergibt jede Zelle nur einmal", () => {
     const slots = campLayoutSlots();
-    // 15 Katalog-Gebäude — das Raster muss jedes unterbringen können (Migration/Autoplatzierung).
+    // 16 Katalog-Gebäude (15 + Taverne) — das Raster muss jedes unterbringen können (Migration/Autoplatzierung).
     expect(slots.length).toBeGreaterThanOrEqual((content.campBuildings ?? []).length);
     for (const s of slots) {
       expect(campPointInBuildable(s.x, s.y)).toBe(true);
@@ -145,9 +145,10 @@ describe("Dorfkarte — freie Kartenfläche & Auto-Raster (0..1-Koordinaten, kei
     expect(campLayoutSlots()).toEqual(slots);
   });
 
-  it("Auto-Verteilung: ALLE 15 Katalog-Gebäude bekommen je einen EIGENEN Rasterplatz (Migrations-Garantie)", () => {
+  it("Auto-Verteilung: ALLE 16 Katalog-Gebäude bekommen je einen EIGENEN Rasterplatz (Migrations-Garantie)", () => {
     // Härtester Fall der v77→v78-Migration: volles Lager, keine einzige gespeicherte Position.
-    // Muss trotz des dichteren Lichtungs-Rasters 1:1 auf die 15 Plätze abbilden (Zellen-Semantik).
+    // Muss trotz des dichteren Lichtungs-Rasters 1:1 auf die Plätze abbilden (Zellen-Semantik) —
+    // seit 1.2.0 inkl. Taverne (16. Gebäude, sechste Raster-Spalte, s. shared CAMP_LAYOUT_COLS).
     const camp = defaultCampState();
     for (const def of content.campBuildings ?? []) camp.buildings[def.id] = 1;
     campRepairPositions(camp, content.campBuildings);

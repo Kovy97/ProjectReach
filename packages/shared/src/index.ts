@@ -6874,10 +6874,16 @@ export const CAMP_POS_EPSILON = 1e-9;
  * Jeder Rasterplatz erfüllt `campPositionFitsMap` (volle Bühne im Kartenrand) — Auto-Plätze sind
  * dadurch load-stabil (der Reparatur-Pass fasst sie nie wieder an).
  */
-export const CAMP_LAYOUT_AREA = { minX: 0.22, maxX: 0.7, minY: 0.26, maxY: 0.68 } as const;
+export const CAMP_LAYOUT_AREA = { minX: 0.22, maxX: 0.82, minY: 0.26, maxY: 0.68 } as const;
 
-/** Spalten × Zeilen des Auto-Rasters — 15 Plätze für die 15 heutigen Gebäudefamilien. */
-export const CAMP_LAYOUT_COLS = 5;
+/**
+ * Spalten × Zeilen des Auto-Rasters — 18 Plätze für die 16 Gebäudefamilien (15 aus 0.3.0 + die
+ * Taverne, 1.2.0/SAVE 84). logic-dev 27.08.2026: sechste Spalte RECHTS angehängt (maxX 0.70 →
+ * 0.82) bei UNVERÄNDERTER Schrittweite 0.12 — die 15 bestehenden Rasterplätze behalten exakt ihre
+ * Koordinaten (Migrations-/Load-Stabilität der Alt-Saves), nur ein VOLLES Lager schiebt das 16.
+ * Gebäude in die neue Spalte (x 0.82, am Baumbestand — kostenlos verschiebbar).
+ */
+export const CAMP_LAYOUT_COLS = 6;
 export const CAMP_LAYOUT_ROWS = 3;
 
 /**

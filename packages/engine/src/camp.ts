@@ -13,6 +13,7 @@ import type {
 import {
   CAMP_BLESSING_BOOST_CAP,
   CAMP_TOWNHALL_ID,
+  CAMP_TAVERN_ID,
   CAMP_BUILD_QUEUE_MAX,
   CAMP_MAX_BUILDING_LEVEL,
   CAMP_MAP_VISUAL_SCALE_MAX_PERCENT,
@@ -162,21 +163,30 @@ export function campBuildSlots(state: GameState, content: ContentDB): number {
 }
 
 /**
- * Belegte Kapazität = Anzahl GEBAUTER Nicht-Zentralhaus-Gebäude (Stufe ≥ 1) + 1, falls gerade ein
- * Nicht-Zentralhaus-NEUBAU (Zielstufe 1) läuft (der Bautrupp reserviert den Platz). Das Zentralhaus
- * selbst zählt NIE gegen das Limit (Task-Vorgabe #358); Ausbauten (Stufe ≥ 2) belegen keinen
+ * Gebäude, die KEINEN Bauplatz belegen: das Zentralhaus (Task-Vorgabe #358) und die Taverne
+ * (1.2.0, taverne-spec-technik.md §1 — `CAMP_TAVERN_ID`, Ausnahme wie das Zentralhaus; die
+ * Zentralhaus-Kopplung K4 für Stufe II/III bleibt für die Taverne bestehen).
+ */
+function campBuildingUsesSlot(buildingId: string): boolean {
+  return buildingId !== CAMP_TOWNHALL_ID && buildingId !== CAMP_TAVERN_ID;
+}
+
+/**
+ * Belegte Kapazität = Anzahl GEBAUTER platzbelegender Gebäude (Stufe ≥ 1) + 1, falls gerade ein
+ * platzbelegender NEUBAU (Zielstufe 1) läuft (der Bautrupp reserviert den Platz). Zentralhaus und
+ * Taverne zählen NIE gegen das Limit (`campBuildingUsesSlot`); Ausbauten (Stufe ≥ 2) belegen keinen
  * neuen Platz.
  */
 export function campUsedBuildSlots(state: GameState, content: ContentDB): number {
   const catalog = content.campBuildings ?? [];
   let used = 0;
   for (const b of catalog) {
-    if (b.id === CAMP_TOWNHALL_ID) continue;
+    if (!campBuildingUsesSlot(b.id)) continue;
     if (campBuildingLevel(state, b.id) >= 1) used++;
   }
   // Lesender Zugriff (nicht `campOf`, s. campBuildingLevel): legt kein Feld an, mutiert nichts.
   const job = state.camp?.buildJob ?? null;
-  if (job && job.buildingId !== CAMP_TOWNHALL_ID && job.targetLevel === 1) used++;
+  if (job && campBuildingUsesSlot(job.buildingId) && job.targetLevel === 1) used++;
   return used;
 }
 
@@ -271,8 +281,9 @@ export function campBuildStartReason(
     if (campBuildingLevel(state, CAMP_TOWNHALL_ID) < targetLevel) return "townhall_required";
   }
 
-  // Bauplatz-Limit: nur der NEUBAU (Stufe 0→1) eines Nicht-Zentralhaus-Gebäudes belegt einen Platz.
-  if (buildingId !== CAMP_TOWNHALL_ID && targetLevel === 1) {
+  // Bauplatz-Limit: nur der NEUBAU (Stufe 0→1) eines platzbelegenden Gebäudes (nicht Zentralhaus,
+  // nicht Taverne — s. campBuildingUsesSlot) belegt einen Platz.
+  if (campBuildingUsesSlot(buildingId) && targetLevel === 1) {
     if (campUsedBuildSlots(state, content) >= campBuildSlots(state, content)) return "no_slot";
   }
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
-import { masterRingItemId } from "@hearthforge/shared";
+import { BLACK_MARKET_CRATE_PREFIX, TAVERN_BANDS, masterRingItemId } from "@hearthforge/shared";
+import { tavernCrateItemId } from "./tavern";
 
 /**
  * Verdrahtungs-Audit: Jedes Item muss erhältlich sein (Aktions-/Monster-Loot, Shop,
@@ -62,6 +63,12 @@ function obtainableSet(): Set<string> {
   // sein einziger Erhältlichkeits-Pfad ist `EliteVariantDef.uniqueItemId` (engine/elites.ts
   // onEliteKilled). Analog zu den Meisterringen oben: eigener, benannter Erhältlichkeits-Pfad.
   for (const e of Object.values(content.elites ?? {})) produced.add(e.uniqueItemId);
+  // Taverne (1.2.0, SAVE 84 — design/1.2.0-alive/taverne-spec-technik.md §4/§7): die fünf
+  // Schwarzmarktbehälter `black_market_crate_i..v` sind NIE in Loot/Shop/Quest verdrahtet — ihre
+  // einzigen Quellen sind die Tavernen-Abgabe (`TavernTask.paysCrate`, Fremder/Karawane) und der
+  // 10-%-Bonuswurf jeder Abgabe (engine/tavern.ts deliverTavernTask). Benannte Ausnahme nach dem
+  // Muster der Elite-uniqueItemId oben; das Öffnen (openBlackMarketCrate) liefert nur Katalog-Items.
+  for (let band = 1; band <= TAVERN_BANDS; band++) produced.add(tavernCrateItemId(band));
   return produced;
 }
 
@@ -102,6 +109,9 @@ describe("Item-Verdrahtung", () => {
     const produced = obtainableSet();
     const noSellValue = Object.keys(content.items)
       .filter((id) => produced.has(id))
+      // Schwarzmarktbehälter tragen laut Spec §7 BEWUSST Verkaufswert 0 (kein Shop, nicht verkaufbar
+      // — man öffnet sie); benannte Ausnahme, s. obtainableSet.
+      .filter((id) => !id.startsWith(BLACK_MARKET_CRATE_PREFIX))
       .filter((id) => (content.items[id]!.value ?? 0) <= 0);
     expect(
       noSellValue,

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { SAVE_VERSION, eliteZoneCooldownBand } from "@hearthforge/shared";
+import { SAVE_VERSION, defaultTavernState, eliteZoneCooldownBand } from "@hearthforge/shared";
 import { computeStats } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -51,6 +51,15 @@ import { deserialize, serialize } from "./index";
  * Queue-Dungeon-Laufs; Alt-Queue-Einträge bleiben byte-gleich). Ein `v83-*.json` kommt beim
  * Release von 1.1.0 ins Vault (Ritual: echtes ausgeliefertes Save, kein synthetisches Fixture —
  * die Ladepfade der neuen Felder deckt dungeon-queue-persistence.test.ts ab).
+ *
+ * SAVE_VERSION 84 (Taverne — 1.2.0 „Alive", design/1.2.0-alive/taverne-spec-technik.md): vierter
+ * Bump, v83 wurde ebenfalls nie ausgeliefert (1.1.0 ging mit v83-Stand als synthetisches Fixture
+ * ins Vault, s. unten). Der v80-Pin belegt jetzt die Kette v80 → v84 mit GENAU VIER Flächen:
+ * `camp.buildQueue: []` (v81), `farmPlots[*].nextCropId: null` (v82), `queueDungeon: null` (v83)
+ * und `tavern: defaultTavernState()` + `stats.actionRunsById: {}` + `stats.producedById: {}` (v84).
+ * `v84-synthetic-1.2.0.json` ist SYNTHETISCH wie v83 (createGame + Zustandsaufbau über `serialize`,
+ * diesmal MIT gebauter Taverne, Tagesbesetzung, angenommener Aufgabe und einer Abgabe auf dem
+ * echten Content) — die Sanitize-Fälle deckt tavern-persistence.test.ts ab.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -212,7 +221,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(SAVE_VERSION).toBeGreaterThanOrEqual(80);
   });
 
-  it("migriert v80 → v83 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
+  it("migriert v80 → v84 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
     // now === savedAt ⇒ offlineMs 0 ⇒ KEIN Catch-up-Tick: gemessen wird allein, was
     // Migration+Sanitize am gespeicherten Save tun. Das ist die schärfere Form des früheren
     // Identitäts-Guards: nicht nur „nichts geht kaputt", sondern „ES ÄNDERT SICH NUR, WAS SICH
@@ -237,17 +246,26 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // des Alt-Saves bleiben unverändert (die neue Sorte "dungeon" kann dort nicht vorkommen).
     expect(result!.state.queueDungeon).toBeNull();
     expect(result!.state.actionQueue).toEqual(raw.state.actionQueue);
+    // Die neuen v84-Felder (Taverne, 1.2.0): ungebaute Taverne ohne Plätze — Alt-Saves bekommen
+    // NICHTS geschenkt (Chef E1: baubar) — und beide Baseline-Zähler leer (rückwirkend nicht
+    // rekonstruierbar). Explizit gesetzt statt fehlend, damit die Byte-Gegenprobe unten greift.
+    expect(result!.state.tavern).toEqual(defaultTavernState());
+    expect(result!.state.stats.actionRunsById).toEqual({});
+    expect(result!.state.stats.producedById).toEqual({});
 
     // Gegenprobe: das Original um genau diese erwarteten Änderungen ergänzt (Version, buildQueue,
-    // nextCropId je Beet, queueDungeon), muss die frisch serialisierten Bytes exakt treffen. Reißt
-    // DAS, hat die Migration mehr angefasst als angekündigt — und genau davor schützt das
-    // Save-Kompat-Gesetz.
+    // nextCropId je Beet, queueDungeon, tavern + die zwei Stats-Zähler), muss die frisch
+    // serialisierten Bytes exakt treffen. Reißt DAS, hat die Migration mehr angefasst als
+    // angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
     const erwartet = JSON.parse(json) as { version: number; state: GameState };
     erwartet.version = SAVE_VERSION;
     erwartet.state.version = SAVE_VERSION;
     erwartet.state.camp.buildQueue = [];
     for (const plot of erwartet.state.farmPlots) plot.nextCropId = null;
     erwartet.state.queueDungeon = null;
+    erwartet.state.tavern = defaultTavernState();
+    erwartet.state.stats.actionRunsById = {};
+    erwartet.state.stats.producedById = {};
     // Achievements 1.2.0 (Chef-Entscheid 27.08.2026, KEIN SAVE_VERSION-Bump): der Katalog wurde von
     // 537 auf 311 Erfolge neu geschnitten (Kill-Tripel, Skill-Stufen 10/20/30/40/60/70/80 entfallen).
     // sanitize streift seit jeher Achievement-IDs ohne Content-Def ab (s. index.ts `knownAch`) —
@@ -431,5 +449,12 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     //      Auto-Rebuff starten GESPERRT (der 50.000-Gold-Kauf darf nicht geschenkt werden). Das
     //      Feld MUSS im Fixture präsent sein (Byte-Identitäts-Guard oben erzwingt den Key).
     expect(s.character.autoPotion.autoRebuffUnlocked).toBe(false);
+
+    // (19) v84 TAVERNE (1.2.0): migrierte Alt-Saves tragen die ungebaute Taverne ohne Plätze
+    //      (Chef E1: baubar, nichts geschenkt) und leere Baseline-Zähler. Befüllte Taverne +
+    //      Sanitize sichert tavern-persistence.test.ts, das v84-Fixture trägt die volle Fläche.
+    expect(s.tavern).toEqual(defaultTavernState());
+    expect(s.stats.actionRunsById).toEqual({});
+    expect(s.stats.producedById).toEqual({});
   });
 });

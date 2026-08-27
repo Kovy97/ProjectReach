@@ -33,3 +33,4 @@ export * from "./mail";
 export * from "./blessing";
 export * from "./camp";
 export * from "./refine";
+export * from "./tavern";

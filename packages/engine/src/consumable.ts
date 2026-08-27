@@ -5,6 +5,7 @@ import { itemCount, removeItem } from "./inventory";
 import { masterBuffDurationMult } from "./capes";
 import { consumeBlocked, noteConsumeCooldown } from "./consume-gate";
 import { rerollTask } from "./slayer";
+import { openBlackMarketCrate } from "./tavern";
 
 export { consumeBlocked, consumeCooldownKind, noteConsumeCooldown } from "./consume-gate";
 export type { ConsumeCooldownKind } from "./consume-gate";
@@ -118,7 +119,17 @@ export function useConsumable(
   // bleibt das Item im Inventar und die UI meldet den Grund (`consumeFailReason`).
   if (special?.kind === "slayerReroll" && !rerollTask(state, content)) return false;
 
-  removeItem(state.inventory, itemId, 1);
+  if (special?.kind === "blackMarketCrate") {
+    // Schwarzmarktbehälter (Taverne, SAVE 84 — taverne-spec-technik.md §7): `openBlackMarketCrate`
+    // würfelt den Inhalt per reinem Hash, legt ihn ab UND verbraucht das Stück SELBST (Inventar
+    // zuerst, sonst Lager) — deshalb hier KEIN zweites removeItem. Schlägt es fehl (kein Behälter/
+    // leerer Inhalt), bleibt das Stück liegen. Wer den Inhalt für die Zeremonie braucht, ruft
+    // `openBlackMarketCrate` direkt (liefert das `CrateResult`); dieser Pfad ist der generische
+    // „Benutzen"-Knopf des Inventars.
+    if (!openBlackMarketCrate(state, content, itemId)) return false;
+  } else {
+    removeItem(state.inventory, itemId, 1);
+  }
 
   if (heals) {
     const max = computeStats(state, content).maxHp;

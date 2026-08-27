@@ -139,6 +139,12 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
     }
   }
 
+  // Taverne (SAVE 84, taverne-spec-technik.md §2): jeder ERFOLGREICH abgeschlossene Durchlauf zählt —
+  // Baseline-Zähler der "run"-Aufgaben (Pims Griffe). Steht NACH dem Erfolgs-Wurf (ein Thieving-
+  // Fehlschlag zählt nicht) und VOR jeder Belohnung. Online == offline (derselbe Pfad). Kein RNG.
+  // Defensiv gegen handgebaute Alt-States ohne das v84-Feld.
+  (state.stats.actionRunsById ??= {})[action.id] = (state.stats.actionRunsById[action.id] ?? 0) + 1;
+
   const skill = (state.skills[action.skill] ??= { xp: 0 });
   // Skilling-Buffs (Sammel-Tonika, `gatherXpMult`): aktive Buffs multiplizieren die Skill-XP
   // (z.B. 1.10 = +10 %). Ohne aktiven Buff ist der Faktor 1 → bit-identisch zu vorher
@@ -258,6 +264,11 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
       // UI-Sache (später foraging-spezifisch). Idempotent; verbraucht kein RNG.
       if (gained > 0) markActionDropSeen(state, action.id, roll.itemId);
       state.stats.itemsGathered += gained;
+      // Taverne (SAVE 84): jedes frisch ERZEUGTE Stück je Item-ID — Baseline-Zähler der "produce"-
+      // Aufgaben (neben itemsGathered, das auch Loot/Belohnungen zählt). Kein RNG, online == offline.
+      if (gained > 0) {
+        (state.stats.producedById ??= {})[roll.itemId] = (state.stats.producedById[roll.itemId] ?? 0) + gained;
+      }
       if (isCraft && gained > 0) {
         state.stats.itemsCrafted += gained;
         state.stats.craftedById[roll.itemId] = (state.stats.craftedById[roll.itemId] ?? 0) + gained;

@@ -48,6 +48,8 @@ const EXPECTED_IDS = [
   "camp_trophy_wall",
   "camp_warden_shrine",
   "camp_trade_post",
+  // Taverne (1.2.0, SAVE 84, taverne-spec-technik.md §1): 16. Gebäude, belegt keinen Bauplatz.
+  "camp_tavern",
 ] as const;
 
 const ALL_KINDS: CampBoostKind[] = [
@@ -98,9 +100,11 @@ describe("Lager-Katalog: 15 Gebäude × 3 Stufen exakt nach encampment-balance.m
     }
   });
 
-  it("Gold-Leiter (Balance-K5): Σ Stufe I = 27 300 · Σ II = 136 500 · Σ III = 551 000; II = 5×I, III = 4×II (Ausnahme Zentralhaus III = 15 000)", () => {
+  it("Gold-Leiter (Balance-K5): Σ Stufe I = 28 800 · Σ II = 144 000 · Σ III = 581 000; II = 5×I, III = 4×II (Ausnahme Zentralhaus III = 15 000)", () => {
     // Task #366: Schrein der Stillen 4 000/20 000/80 000 → 1 500/7 500/30 000 verschiebt jede
     // Summe um genau das eigene Gold-Delta des Schreins (-2 500/-12 500/-50 000).
+    // Taverne (1.2.0, Spec §1): 1 500/7 500/30 000 hebt die Summen um genau ihr Gold
+    // (27 300 → 28 800, 136 500 → 144 000, 551 000 → 581 000).
     const sums = [0, 0, 0];
     for (const b of catalog) {
       b.levels.forEach((lvl, i) => (sums[i]! += lvl.gold));
@@ -111,7 +115,7 @@ describe("Lager-Katalog: 15 Gebäude × 3 Stufen exakt nach encampment-balance.m
         expect(b.levels[2]!.gold, `${b.id}: III ≠ 4×II`).toBe(b.levels[1]!.gold * 4);
       }
     }
-    expect(sums).toEqual([27_300, 136_500, 551_000]);
+    expect(sums).toEqual([28_800, 144_000, 581_000]);
   });
 
   it("Bauzeiten exakt nach der Konzept-Tabelle (encampment-konzept.md)", () => {
@@ -133,6 +137,7 @@ describe("Lager-Katalog: 15 Gebäude × 3 Stufen exakt nach encampment-balance.m
       camp_trophy_wall: [4 * H, 16 * H, 48 * H],
       camp_warden_shrine: [2 * H, 16 * H, 48 * H],
       camp_trade_post: [1 * H, 10 * H, 30 * H],
+      camp_tavern: [15 * MIN, 8 * H, 24 * H], // taverne-spec-technik.md §1
     };
     for (const b of catalog) {
       expect(b.levels.map((l) => l.buildMs), b.id).toEqual(expected[b.id]);
@@ -157,6 +162,8 @@ describe("Lager-Katalog: 15 Gebäude × 3 Stufen exakt nach encampment-balance.m
       camp_trophy_wall: { kind: "slayerPoints", values: [0.10, 0.10, 0.10] },
       camp_warden_shrine: { kind: "blessing", values: [0.10, 0.10, 0.10] },
       camp_trade_post: { kind: "sellBonus", values: [0.02, 0.02, 0.02] },
+      // Taverne: reiner Stufen-Marker (Gratis-Wechsel/Gold-Faktor wertet engine/tavern.ts über die Stufe aus).
+      camp_tavern: { kind: "tavernPerks", values: [1, 1, 1] },
     };
     for (const b of catalog) {
       const e = expected[b.id]!;
