@@ -1576,6 +1576,11 @@ export const es: Record<string, string> = {
     "queue.skip.gate_locked": "Eliminado de la cola: {monster} — no cumples el requisito.",
     "queue.skip.unknown_dungeon": "Eliminado de la cola: {dungeon} ya no existe.",
     "queue.skip.dungeon_locked": "Eliminado de la cola: {dungeon} — no cumples el requisito.",
+    "queue.skip.no_materials": "Eliminado de la cola: {action} — sin materiales.",
+    "queue.row.willHave": "Los materiales vienen de entradas anteriores de la cola.",
+    "queue.row.willSkip": "Sin materiales a la vista — esta entrada se omitirá.",
+    "skill.mat.fromQueue": "Viene de la cola: {sources}",
+    "skill.craftableProjected": "Fabricable: {n}× · {m} más desde la cola",
     // Task #327 — UI de prioridad: "Empezar ahora" por fila en espera + aviso de Shift+clic
     // compartido en las tarjetas de habilidad/fabricación/monstruo.
     "queue.startNow": "Empezar ahora",
@@ -1952,6 +1957,7 @@ export const es: Record<string, string> = {
     "offline.camp.refinedTitle": "Refinado en New Haven",
     "creation.race": "Raza",
     "creation.race.human": "Humano",
+    "creation.race.elf": "Elfo",
     "creation.group.combat": "Clases de Combate",
     "creation.group.profession": "Profesiones",
     "creation.sex.m": "Masculino",

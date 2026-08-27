@@ -31,6 +31,15 @@ resumes it after the kill; the fight button is only locked during another champi
 *Dev-Notiz: `startEliteCombat` (elites.ts) spiegelt insertQueueEntryAtFront Schritte 1+2 (parkRunningActivityAtFront);
 CombatPage `busy` nur bei `combat.eliteVariantId`; Test elite-queue-preserve.test.ts (4 Fälle inkl. Wiederaufnahme).*
 
+**Charaktererstellung: Elfen als zweite Rasse (Mira, 27.08.):** DE: Neben den Menschen gibt es jetzt
+Elfen mit denselben 30 Archetypen, jeweils als Mann und Frau mit eigenem Gesicht. In der
+Charaktererstellung und im Porträt-Picker wählst du die Rasse mit einem Klick, Archetyp und
+Variante bleiben dabei erhalten. Bisherige Porträts bleiben unter „Bestand" erreichbar. / EN: Elves
+join humans as a playable race with all 30 archetypes in male and female variants.
+
+*Dev-Notiz: 60 Bilder `elf_<archetyp>_<m|f>.webp` (1086×1448 q92) aus CODEX/assets/elf-character-roster-2026-08-27, Originale in
+Downloads/ASSETS/archive/elf-roster-2026-08-27; Roster verallgemeinert (playerRoster, RACES human|elf), Portrait-ID bleibt einziges Save-Feld.*
+
 **Charaktererstellung: 30 Archetypen für Menschen (Mira, 26.08.):** DE: Die Rasse Mensch bietet jetzt
 15 Kampfklassen (Krieger bis Runenritter) und 15 Berufe (Bergarbeiter bis Baumeister), jeweils als
 Mann und Frau mit eigenem Gesicht und Körper, gleicher Waffe oder gleichem Werkzeug. In der

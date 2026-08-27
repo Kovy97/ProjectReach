@@ -1618,6 +1618,11 @@ export const zh: Record<string, string> = {
     "queue.skip.gate_locked": "已从队列中移除：{monster}——条件未满足。",
     "queue.skip.unknown_dungeon": "已从队列中移除：{dungeon} 不再存在。",
     "queue.skip.dungeon_locked": "已从队列中移除：{dungeon}——条件未满足。",
+    "queue.skip.no_materials": "已从队列中移除：{action}——缺少材料。",
+    "queue.row.willHave": "材料将由队列中更早的条目提供。",
+    "queue.row.willSkip": "没有材料——此条目将被跳过。",
+    "skill.mat.fromQueue": "来自队列：{sources}",
+    "skill.craftableProjected": "可制作：{n}× · 队列还将提供 {m}",
     // 任务 #327——优先级 UI：每个等待中队列行的“立即开始”按钮 + 技能/制作/怪物卡片上共用的
     // Shift+点击提示。
     "queue.startNow": "立即开始",
@@ -1994,6 +1999,7 @@ export const zh: Record<string, string> = {
     "offline.camp.refinedTitle": "在 New Haven 精炼",
     "creation.race": "种族",
     "creation.race.human": "人类",
+    "creation.race.elf": "精灵",
     "creation.group.combat": "战斗职业",
     "creation.group.profession": "生活职业",
     "creation.sex.m": "男",

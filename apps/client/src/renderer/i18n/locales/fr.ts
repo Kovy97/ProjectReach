@@ -1620,6 +1620,11 @@ export const fr: Record<string, string> = {
     "queue.skip.gate_locked": "Retiré de la file : {monster} — condition non remplie.",
     "queue.skip.unknown_dungeon": "Retiré de la file : {dungeon} n'existe plus.",
     "queue.skip.dungeon_locked": "Retiré de la file : {dungeon} — condition non remplie.",
+    "queue.skip.no_materials": "Retiré de la file : {action} — pas de matériaux.",
+    "queue.row.willHave": "Les matériaux viennent d'entrées précédentes de la file.",
+    "queue.row.willSkip": "Aucun matériau en vue — cette entrée sera ignorée.",
+    "skill.mat.fromQueue": "Vient de la file : {sources}",
+    "skill.craftableProjected": "Fabricable : {n}× · {m} de plus grâce à la file",
     // Task #327 — UI de priorité : « Démarrer maintenant » par ligne en attente + l'indice
     // Maj+clic partagé sur les cartes de compétence/artisanat/monstre.
     "queue.startNow": "Démarrer maintenant",
@@ -1996,6 +2001,7 @@ export const fr: Record<string, string> = {
     "offline.camp.refinedTitle": "Affiné à New Haven",
     "creation.race": "Race",
     "creation.race.human": "Humain",
+    "creation.race.elf": "Elfe",
     "creation.group.combat": "Classes de Combat",
     "creation.group.profession": "Métiers",
     "creation.sex.m": "Masculin",

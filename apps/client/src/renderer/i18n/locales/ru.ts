@@ -1618,6 +1618,11 @@ export const ru: Record<string, string> = {
     "queue.skip.gate_locked": "Удалено из очереди: {monster} — условие не выполнено.",
     "queue.skip.unknown_dungeon": "Удалено из очереди: {dungeon} больше не существует.",
     "queue.skip.dungeon_locked": "Удалено из очереди: {dungeon} — условие не выполнено.",
+    "queue.skip.no_materials": "Удалено из очереди: {action} — нет материалов.",
+    "queue.row.willHave": "Материалы придут из более ранних записей очереди.",
+    "queue.row.willSkip": "Материалов не предвидится — эта запись будет пропущена.",
+    "skill.mat.fromQueue": "Придёт из очереди: {sources}",
+    "skill.craftableProjected": "Можно изготовить: {n}× · ещё {m} из очереди",
     // Задача #327 — UI приоритета: «Начать сейчас» для каждой ожидающей строки + общая подсказка
     // Shift+клик на карточках навыков/крафта/монстров.
     "queue.startNow": "Начать сейчас",
@@ -1994,6 +1999,7 @@ export const ru: Record<string, string> = {
     "offline.camp.refinedTitle": "Переработано в New Haven",
     "creation.race": "Раса",
     "creation.race.human": "Человек",
+    "creation.race.elf": "Эльф",
     "creation.group.combat": "Боевые классы",
     "creation.group.profession": "Профессии",
     "creation.sex.m": "Мужской",

@@ -1574,6 +1574,11 @@ export const ptBR: Record<string, string> = {
     "queue.skip.gate_locked": "Removido da fila: {monster} — requisito não atendido.",
     "queue.skip.unknown_dungeon": "Removido da fila: {dungeon} não existe mais.",
     "queue.skip.dungeon_locked": "Removido da fila: {dungeon} — requisito não atendido.",
+    "queue.skip.no_materials": "Removido da fila: {action} — sem materiais.",
+    "queue.row.willHave": "Os materiais vêm de entradas anteriores da fila.",
+    "queue.row.willSkip": "Sem materiais à vista — esta entrada será pulada.",
+    "skill.mat.fromQueue": "Vem da fila: {sources}",
+    "skill.craftableProjected": "Fabricável: {n}× · {m} a mais vindos da fila",
     // Task #327 — UI de prioridade: "Iniciar agora" por linha em espera + a dica de Shift+clique
     // compartilhada nas cartas de habilidade/criação/monstro.
     "queue.startNow": "Iniciar agora",
@@ -1950,6 +1955,7 @@ export const ptBR: Record<string, string> = {
     "offline.camp.refinedTitle": "Refinado em New Haven",
     "creation.race": "Raça",
     "creation.race.human": "Humano",
+    "creation.race.elf": "Elfo",
     "creation.group.combat": "Classes de Combate",
     "creation.group.profession": "Profissões",
     "creation.sex.m": "Masculino",

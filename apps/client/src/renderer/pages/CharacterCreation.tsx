@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { DEFAULT_PORTRAIT } from "@hearthforge/shared";
 import type { WeaponStyle } from "@hearthforge/shared";
 import { listPortraits, getPortrait } from "../portraits";
-import { HUMAN_ARCHETYPES, parsePortraitId, portraitIdFor } from "../humanRoster";
-import type { ArchetypeGroup, Sex } from "../humanRoster";
+import { ARCHETYPES, parsePortraitId, portraitIdFor } from "../playerRoster";
+import type { ArchetypeGroup, Race, Sex } from "../playerRoster";
 import { processPortraitFile } from "../util/portraitUpload";
 import { PortraitPickerModal } from "../components/PortraitPickerModal";
 import { useGameControl } from "../game/GameContext";
@@ -65,34 +65,37 @@ function StylePicker({ value, onChange }: StylePickerProps): JSX.Element {
   );
 }
 
-// ─── Human-Archetypen-Raster ──────────────────────────────────────────────────
-// Chef+Mira-Auftrag 26.08.2026: 30 Human-Archetypen (15 Kampfklassen + 15 Berufe, je m/w) ersetzen
-// die frühere freie Porträt-Liste als primäre Schritt-2-Auswahl. "Alle anzeigen" öffnet weiterhin
-// die große Modal-Galerie (PortraitPickerModal, geteilt mit CharacterPage) — dort liegt zusätzlich
-// der Bestand der alten Nicht-Human-Porträts (Reiter "Bestand").
+// ─── Archetypen-Raster ────────────────────────────────────────────────────────
+// Chef+Mira-Auftrag 26./27.08.2026: 30 Archetypen (15 Kampfklassen + 15 Berufe, je m/w) je Rasse
+// (Mensch, Elf) ersetzen die frühere freie Porträt-Liste als primäre Schritt-2-Auswahl. "Alle
+// anzeigen" öffnet weiterhin die große Modal-Galerie (PortraitPickerModal, geteilt mit
+// CharacterPage) — dort liegt zusätzlich der Bestand der alten Nicht-Rassen-Porträts (Reiter
+// "Bestand").
 
-interface HumanArchetypeGridProps {
+interface ArchetypeGridProps {
+  race: Race;
   group: ArchetypeGroup;
   sex: Sex;
   value: string;
   onSelect: (archetypeId: string) => void;
 }
 
-function HumanArchetypeGrid({ group, sex, value, onSelect }: HumanArchetypeGridProps): JSX.Element {
+function ArchetypeGrid({ race, group, sex, value, onSelect }: ArchetypeGridProps): JSX.Element {
   const { t } = useI18n();
   const activeRef = useRef<HTMLButtonElement | null>(null);
-  const activeArchetype = parsePortraitId(value)?.archetype;
-  const items = HUMAN_ARCHETYPES.filter((a) => a.group === group);
+  const parsedValue = parsePortraitId(value);
+  const activeArchetype = parsedValue?.race === race ? parsedValue.archetype : undefined;
+  const items = ARCHETYPES.filter((a) => a.group === group);
 
   useEffect(() => {
     activeRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [group, activeArchetype]);
+  }, [race, group, activeArchetype]);
 
   return (
     <div className="creation-portrait-grid">
       {items.map((a) => {
         const isActive = a.id === activeArchetype;
-        const url = getPortrait(portraitIdFor(a.id, sex));
+        const url = getPortrait(portraitIdFor(race, a.id, sex));
         return (
           <button
             key={a.id}
@@ -122,9 +125,9 @@ function HumanArchetypeGrid({ group, sex, value, onSelect }: HumanArchetypeGridP
 // Upload, Stil, createCharacter) sind 1:1 aus der vorherigen Fassung übernommen.
 
 
-// Standardwahl (Chef-Auftrag 26.08.2026): Krieger, männlich — fällt nur zurück, falls das Asset
-// ausnahmsweise fehlen sollte (Integritätsnetz s. humanRoster.ts).
-const DEFAULT_ARCHETYPE_PORTRAIT = portraitIdFor("warrior", "m");
+// Standardwahl (Chef-Auftrag 26./27.08.2026): Mensch, Krieger, männlich — fällt nur zurück, falls
+// das Asset ausnahmsweise fehlen sollte (Integritätsnetz s. playerRoster.ts).
+const DEFAULT_ARCHETYPE_PORTRAIT = portraitIdFor("human", "warrior", "m");
 
 export function CharacterCreation(): JSX.Element {
   const { createCharacter, cancelCreation } = useGameControl();
@@ -136,6 +139,7 @@ export function CharacterCreation(): JSX.Element {
       ?? PORTRAITS[0]?.id
       ?? DEFAULT_PORTRAIT,
   );
+  const [race, setRace] = useState<Race>("human");
   const [group, setGroup] = useState<ArchetypeGroup>("combat");
   const [sex, setSex] = useState<Sex>("m");
   const [startingStyle, setStartingStyle] = useState<WeaponStyle>("melee");
@@ -150,25 +154,38 @@ export function CharacterCreation(): JSX.Element {
   // Fließtext der Begin-Adventure-Unterzeile bleibt normale Groß-/Kleinschreibung.
   const displayName = heroName.toUpperCase();
   const styleLabel = t(STYLE_CARDS.find((s) => s.id === startingStyle)?.nameKey ?? "style.melee");
-  // Held-Pane-Caption zweite Zeile: Archetyp (falls Human-Porträt) + Stil, z.B. "Krieger · Nahkampf".
-  // Bestands-/Custom-Porträts (kein Human-Match) zeigen weiterhin nur den Stil (altes Verhalten).
+  // Held-Pane-Caption zweite Zeile: Rasse + Archetyp (falls Rassen-Porträt) + Stil, z.B.
+  // "Elf Waldläufer · Fernkampf". Bestands-/Custom-Porträts (kein Rassen-Match) zeigen weiterhin
+  // nur den Stil (altes Verhalten).
   const selectedArchetypeId = parsePortraitId(portraitId)?.archetype;
   const selectedArchetype = selectedArchetypeId
-    ? HUMAN_ARCHETYPES.find((a) => a.id === selectedArchetypeId)
+    ? ARCHETYPES.find((a) => a.id === selectedArchetypeId)
     : undefined;
-  const archetypeCaption = selectedArchetype ? `${t(selectedArchetype.nameKey)} · ${styleLabel}` : styleLabel;
+  const raceLabel = t(race === "elf" ? "creation.race.elf" : "creation.race.human");
+  const archetypeCaption = selectedArchetype
+    ? `${raceLabel} ${t(selectedArchetype.nameKey)} · ${styleLabel}`
+    : styleLabel;
 
   const selectArchetype = (archetypeId: string): void => {
-    setPortraitId(portraitIdFor(archetypeId, sex));
+    setPortraitId(portraitIdFor(race, archetypeId, sex));
   };
 
   const changeSex = (nextSex: Sex): void => {
     setSex(nextSex);
-    // Aktuell gewählter Human-Archetyp wechselt mit (Chef-Auftrag: "Der Umschalter wechselt die
-    // Bilder aller Karten" — inkl. der bereits getroffenen Auswahl). Bestands-/Custom-Porträts
-    // bleiben unangetastet, da sie keinem Archetyp zugeordnet sind.
+    // Aktuell gewählter Archetyp wechselt mit (Chef-Auftrag: "Der Umschalter wechselt die Bilder
+    // aller Karten" — inkl. der bereits getroffenen Auswahl). Bestands-/Custom-Porträts bleiben
+    // unangetastet, da sie keinem Archetyp zugeordnet sind.
     const parsed = parsePortraitId(portraitId);
-    if (parsed) setPortraitId(portraitIdFor(parsed.archetype, nextSex));
+    if (parsed) setPortraitId(portraitIdFor(parsed.race, parsed.archetype, nextSex));
+  };
+
+  const changeRace = (nextRace: Race): void => {
+    setRace(nextRace);
+    // Chef-Auftrag 27.08.2026: Wechsel tauscht die Bilder aller Karten UND, wenn ein Archetyp
+    // gewählt ist, das Held-Porträt (Archetyp + Variante bleiben erhalten). Bestands-/Custom-
+    // Porträts bleiben unangetastet.
+    const parsed = parsePortraitId(portraitId);
+    if (parsed) setPortraitId(portraitIdFor(nextRace, parsed.archetype, parsed.sex));
   };
 
 
@@ -267,8 +284,20 @@ export function CharacterCreation(): JSX.Element {
             {/* Chef 27.08.2026: kein Scrollen auf dem Charakter-Screen → Rasse, Gruppe und Variante in EINER Leiste. */}
             <div className="creation-filter-bar">
               <span className="creation-filter-label">{t("creation.race")}</span>
-              {/* Einzige Rasse zum Release — bewusst kein Platzhalter für weitere Rassen. */}
-              <span className="btn-iron btn-iron--sm is-active">{t("creation.race.human")}</span>
+              <button
+                type="button"
+                className={`btn-iron btn-iron--sm${race === "human" ? " is-active" : ""}`}
+                onClick={() => changeRace("human")}
+              >
+                {t("creation.race.human")}
+              </button>
+              <button
+                type="button"
+                className={`btn-iron btn-iron--sm${race === "elf" ? " is-active" : ""}`}
+                onClick={() => changeRace("elf")}
+              >
+                {t("creation.race.elf")}
+              </button>
               <span className="creation-filter-sep" aria-hidden="true" />
               <button
                 type="button"
@@ -306,7 +335,7 @@ export function CharacterCreation(): JSX.Element {
             </div>
 
             <div className="creation-portrait-area">
-              <HumanArchetypeGrid group={group} sex={sex} value={portraitId} onSelect={selectArchetype} />
+              <ArchetypeGrid race={race} group={group} sex={sex} value={portraitId} onSelect={selectArchetype} />
             </div>
           </section>
 
@@ -345,12 +374,13 @@ export function CharacterCreation(): JSX.Element {
           title={t("creation.portrait.showAll")}
           onConfirm={(id) => {
             setPortraitId(id);
-            // Filter der Karten-Ansicht (Gruppe/Variante) an die aus der Galerie gewählte Human-
+            // Filter der Karten-Ansicht (Rasse/Gruppe/Variante) an die aus der Galerie gewählte
             // Figur angleichen, damit das Raster darunter danach wieder zur Auswahl passt.
             const parsed = parsePortraitId(id);
             if (parsed) {
+              setRace(parsed.race);
               setSex(parsed.sex);
-              const archetype = HUMAN_ARCHETYPES.find((a) => a.id === parsed.archetype);
+              const archetype = ARCHETYPES.find((a) => a.id === parsed.archetype);
               if (archetype) setGroup(archetype.group);
             }
             setShowGallery(false);

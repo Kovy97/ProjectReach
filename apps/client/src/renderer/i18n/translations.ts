@@ -1882,6 +1882,11 @@ const en = {
     // reasons above, s. shared/index.ts QueueSkipReason.
     "queue.skip.unknown_dungeon": "Removed from queue: {dungeon} no longer exists.",
     "queue.skip.dungeon_locked": "Removed from queue: {dungeon} — requirement not met.",
+    "queue.skip.no_materials": "Removed from queue: {action} — no materials.",
+    "queue.row.willHave": "Materials come from earlier entries in the queue.",
+    "queue.row.willSkip": "No materials in sight — this entry will be skipped.",
+    "skill.mat.fromQueue": "Coming from the queue: {sources}",
+    "skill.craftableProjected": "Craftable: {n}× · {m} more from the queue",
     // Task #327 — Priority-UI: "Start now" per waiting row (ActionQueuePanel) + the shared
     // shift-click hint shown on skill/craft/monster cards (Shop/Bank convention).
     "queue.startNow": "Start now",
@@ -2254,6 +2259,7 @@ const en = {
     // 30 Archetypen (15 Kampfklassen + 15 Berufe) x m/w als Charakter-Ersteller-Auswahl.
     "creation.race": "Race",
     "creation.race.human": "Human",
+    "creation.race.elf": "Elf",
     "creation.group.combat": "Combat Classes",
     "creation.group.profession": "Professions",
     "creation.sex.m": "Male",
@@ -4045,6 +4051,11 @@ const de: Record<keyof typeof en, string> = {
     // Gründe, s. shared/index.ts QueueSkipReason.
     "queue.skip.unknown_dungeon": "Aus der Warteschlange entfernt: {dungeon} existiert nicht mehr.",
     "queue.skip.dungeon_locked": "Aus der Warteschlange entfernt: {dungeon} — Voraussetzung nicht erfüllt.",
+    "queue.skip.no_materials": "Aus der Warteschlange entfernt: {action} — keine Materialien.",
+    "queue.row.willHave": "Das Material kommt aus früheren Einträgen der Warteschlange.",
+    "queue.row.willSkip": "Kein Material in Sicht — dieser Eintrag wird übersprungen.",
+    "skill.mat.fromQueue": "Kommt aus der Warteschlange: {sources}",
+    "skill.craftableProjected": "Herstellbar: {n}× · {m} weitere aus der Warteschlange",
     // Task #327 — Priority-UI: „Jetzt starten" pro wartender Zeile (ActionQueuePanel) + der
     // gemeinsame Shift-Klick-Hinweis auf Skill-/Craft-/Monster-Karten (Shop/Bank-Konvention).
     "queue.startNow": "Jetzt starten",
@@ -4380,6 +4391,7 @@ const de: Record<keyof typeof en, string> = {
     "offline.camp.refinedTitle": "In New Haven veredelt",
     "creation.race": "Rasse",
     "creation.race.human": "Mensch",
+    "creation.race.elf": "Elf",
     "creation.group.combat": "Kampfklassen",
     "creation.group.profession": "Berufe",
     "creation.sex.m": "Männlich",
