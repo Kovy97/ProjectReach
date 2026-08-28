@@ -29,8 +29,9 @@ and a nettle bowstring lets you fletch bows from level 1 without fighting.
 **Jagen, ein neuer Skill (Chef 27.08.):** DE: Stell Fallen in Gebieten, die du im Kampf freigeschaltet hast. Ein zufälliges
 Tier oder Kleinvolk, das du schon einmal besiegt hast, tappt hinein und lässt fünf Beute-Würfe seiner Tabelle da, ohne Kampf.
 Jede Falle braucht einen Köder (Angeln, Stufe 1: „Köder graben"), läuft 5 Minuten (Weiden) bis 60 Minuten (Götzenhalle)
-und erneuert sich auf Wunsch von selbst, online wie offline. Sechs Fallenplätze ab Jagen-Stufe 1, 10, 25, 45, 65 und 85;
-Fangchance 70 % plus Stufenbonus. Fänge zählen nicht als Kills: Jagen ist Beute, Kampf bleibt Fortschritt. Das Jagdbuch zeigt
+und erneuert sich auf Wunsch von selbst, online wie offline. Sechs Fallenplätze ab Jagen-Stufe 1, 5, 15, 30, 50 und 75;
+Fangchance 70 % plus Stufenbonus. Jagen-XP richtet sich nach dem Fang: fünffache Kampf-XP des gefangenen Tiers, der erste
+Fang jeder Art zählt zehnfach (Chef 28.08.: die Zonen-Pauschale war zu langsam, die zweite Falle kam erst nach Stunden). Fänge zählen nicht als Kills: Jagen ist Beute, Kampf bleibt Fortschritt. Das Jagdbuch zeigt
 je Gebiet, wer fangbar ist und was er fallen lässt. Stufe 99 bringt den Ring des Fallenstellers. / EN: Hunting is a new
 skill: set baited traps in unlocked zones and collect five loot rolls from a random beast or humanoid you have beaten
 before, online and offline.
@@ -42,10 +43,37 @@ gemalt, drei Bilder je Effekt, Gegner-Angriffe gespiegelt; die Effekt-Stufe in d
 shows painted spell missiles, slashes, blood and companion effects.
 
 *Dev-Notiz: SAVE_VERSION 85 (huntTraps, huntCatchSeq, stats.huntCatches); Content 16 Items, 12 Aktionen, 5 Crops, Skill hunting
-(trains dex), huntingZones ×10 mit Anbau-XP-Kurve, ring_master_hunting, 5 Skill-Erfolge; engine/hunting.ts (Tick nach den Beeten,
+(trains dex), huntingZones ×10 (XP je Fang seit 28.08. = monster.xp × HUNT_XP_PER_CATCH 5, Erstfang × HUNT_FIRST_CATCH_MULT 2,
+stats.huntCatchesById; HUNT_SLOT_LEVELS 1/5/15/30/50/75), ring_master_hunting, 5 Skill-Erfolge; engine/hunting.ts (Tick nach den Beeten,
 Würfe in Zeitreihenfolge über alle Fallen, kein Kill-Zähler), Vault-Fixture v85; HuntingPage + Jagdbuch + Offline-Bericht;
 combatFx.ts + Sprite-Layer in CombatPage (Zellen-Klasse-Fix 28.08.), 33 Sprites unter assets/fx; Balance-Pins §5/§8 neu gemessen
 (neuer DEX-Skill hebt Basis-DEX um 1). Mira-Assets Fasern/Jagen (26) eingebunden; Meisterring-Icon folgt.*
+
+**Ausrüstungs-Kits (Spieler-Wunsch, Chef-Entscheid 28.08.):** DE: Die drei Ausrüstungs-Vorlagen werden zu drei echten Kits.
+Jedes Kit trägt seine eigenen Gegenstände, du wechselst im Charakterbogen mit einem Klick zwischen Kit 1, 2 und 3, ohne
+Umräumen im Inventar. Gewechselt wird nur außerhalb des Kampfes. Bestehende Vorlagen werden übernommen: Was davon im
+Inventar liegt, wandert ins Kit; Werkzeuge in jedem Kit zählen fürs Sammeln. / EN: The three loadout templates become three
+real kits with their own items; switch between them on the character sheet outside combat.
+
+*Dev-Notiz: shared EquipKit/equipKits/activeKit (kein SAVE-Bump, Migration aus equipLoadouts + Inventar), engine/loadouts.ts
+neu (switchEquipKit/kitSummary/syncActiveKit), Sanitize inaktiver Kits (Fremdteile in Bank/Gear-Vault), tools.ts liest
+inaktive Kits mit; Client kitsApi.ts + EquipKitBar, Paperdoll-Höhe bei leerem Kit gefixt; 13 + 13 Guard-Tests.*
+
+**Gebiet wählen beim Jagen (Chef 28.08.):** DE: Das Fenster zur Gebietswahl ist jetzt groß und zweispaltig: links alle
+Jagdgebiete mit Stufe, Fallenzeit und Fangchance, rechts das gewählte Gebiet mit Kulisse, Kennzahlen, allen fangbaren Tieren
+samt ihrer möglichen Beute (unbekannte Beute bleibt ein Fragezeichen, bis sie einmal gefallen ist) und der Liste, wer dort
+nicht fangbar ist und warum (Boss, Untoter, noch nie besiegt). Die Falle wird erst mit dem Knopf gestellt. / EN: The hunting
+zone picker is now a large two-column window with full zone details, trappable animals and their loot.
+
+**Kill-Heilung stapelt (Spieler-Report 28.08., RU):** DE: Heilung, Mana und Abklingzeit je Kill aus mehreren Gegenständen
+zählten nicht zusammen, nur der stärkste Gegenstand wirkte. Jetzt addieren sich alle getragenen Quellen (Armschützer +4 und
+Klinge +2 sind +6 Leben je Kill). Andere Spezialeffekte wie Bane bleiben bei „der stärkste zählt“. / EN: On-kill heal, mana and
+cooldown effects from several items now add up.
+
+**Kleinigkeiten (28.08.):** DE: Der Discord-Knopf in den Optionen ist weg, es gibt keinen Server. Der Fehlermelde-Dialog
+schließt nicht mehr, wenn eine Textmarkierung außerhalb endet, und dein Entwurf bleibt bis zum Senden erhalten. In Bank und
+Inventar lässt sich beim Shift-Klick kein Text mehr versehentlich markieren. / EN: Discord button removed, bug-report draft
+survives, no more accidental text selection on shift-click.
 
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
