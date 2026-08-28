@@ -2618,7 +2618,7 @@ export const zh: Record<string, string> = {
   // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
   "pets:booted_tomcat:combatAbility.name": "绳套陷阱",
   "pets:booted_tomcat:description": "一只灰银色虎斑雄猫，黄绿色的眼睛，穿着靴子和皮甲直立行走，用绳套和弩狩猎。在陷阱旁，它在猎物落脚之前就知道爪子会踏向何处；战斗中，它甩出绳套，让敌人在一个心跳间动弹不得。",
-  "pets:booted_tomcat:name": "穿靴雄猫",
+  "pets:booted_tomcat:name": "Felyx",
   "pets:silkweaver:combatAbility.name": "丝幕",
   "pets:silkweaver:description": "一只苍白的夜蛾，细如纺锤的腿从不停止纺丝。在织机旁，它在布料索取之前把用过的线绕回线轴；战斗中，它把一层丝幕披在敌人眼前，让每一击都落空。",
   "pets:silkweaver:name": "织丝蛾",

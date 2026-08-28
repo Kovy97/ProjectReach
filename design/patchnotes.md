@@ -221,13 +221,13 @@ und zwei Hochland-Raritäten in seiner Zusatzbeute. Der Erfolg „Alle Champions
 Ossric the Marrowbound, stalks the Highlands and drops the legendary greataxe "Esthar, Storm of Bones" (bleed plus every
 fourth hit striking twice), based on a player's idea.
 
-**Zwei neue Begleiter (Chef 28.08.):** DE: Jagen und Schneidern haben jetzt eigene Begleiter. Der Gestiefelte Kater, ein
+**Zwei neue Begleiter (Chef 28.08.):** DE: Jagen und Schneidern haben jetzt eigene Begleiter. Felyx, ein Kater, ein
 grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und
 Armbrust jagt, fällt beim Jagen mit jedem Fang und hebt die Fangchance deiner Fallen um 3 Prozentpunkte (der Deckel von
 95 % bleibt); im Kampf hält seine Schlingenfalle den Gegner kurz fest. Der Seidenweber, eine bleiche Nachtmotte mit
 spindeldürren Beinen, fällt beim Schneidern, spart 5 % Stoff beim Weben und legt im Kampf einen Seidenschleier über die
 Augen des Gegners. Beide zeigen wie alle Begleiter Passiv und Aktiv mit echten Zahlen auf der Karte. / EN: Two new
-companions: the Booted Tomcat (Hunting, +3 pp trap catch chance, Snare Trap stun) and the Silkweaver (Tailoring, 5 %
+companions: Felyx the tomcat (Hunting, +3 pp trap catch chance, Snare Trap stun) and the Silkweaver (Tailoring, 5 %
 material refund, Silk Veil accuracy debuff).
 
 *Dev-Notiz: Content `esthar` (33,5–62,4 @3450, Blutung 0,35×6/6 s + everyNth n=4, value 16 000, legendär), `elite_ossric`

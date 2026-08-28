@@ -18653,7 +18653,7 @@ export const content: ContentDB = {
     // ── 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter der beiden neuen Skills Jagen/Schneidern ──
     booted_tomcat: {
       id: "booted_tomcat",
-      name: { en: "Booted Tomcat", de: "Gestiefelter Kater" },
+      name: { en: "Felyx", de: "Felyx" }, // Chef 28.08.2026: der Kater heisst Felyx (Community-Pet)
       description: {
         en: "A grey-and-silver tabby tom with yellow-green eyes who walks upright in boots and a leather harness, hunting with snare and crossbow. At the traps he knows where a paw will land before it does — and in a fight he throws a snare that holds the enemy still for a heartbeat.",
         de: "Ein grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und Armbrust jagt. An den Fallen weiß er, wohin eine Pfote tritt, bevor sie es tut — und im Kampf wirft er eine Schlinge, die den Gegner einen Herzschlag lang festhält.",

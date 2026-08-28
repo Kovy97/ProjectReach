@@ -2617,7 +2617,7 @@ export const es: Record<string, string> = {
   // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
   "pets:booted_tomcat:combatAbility.name": "Trampa de lazo",
   "pets:booted_tomcat:description": "Un gato atigrado gris plateado de ojos verde amarillentos que camina erguido con botas y arnés de cuero y caza con lazo y ballesta. En las trampas sabe dónde pisará una pata antes de que lo haga, y en combate suelta un lazo que deja al enemigo quieto durante un latido.",
-  "pets:booted_tomcat:name": "Gato con Botas",
+  "pets:booted_tomcat:name": "Felyx",
   "pets:silkweaver:combatAbility.name": "Velo de seda",
   "pets:silkweaver:description": "Una pálida polilla nocturna de patas finas como husos que nunca deja de hilar. En el telar devuelve el hilo gastado a la bobina antes de que la tela lo reclame, y en combate cubre los ojos del enemigo con un velo de seda para que sus golpes caigan lejos.",
   "pets:silkweaver:name": "Tejedora de Seda",

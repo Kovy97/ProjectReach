@@ -2619,7 +2619,7 @@ export const ptBR: Record<string, string> = {
   // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
   "pets:booted_tomcat:combatAbility.name": "Armadilha de laço",
   "pets:booted_tomcat:description": "Um gato malhado cinza-prateado de olhos verde-amarelados que anda ereto, de botas e arnês de couro, e caça com laço e besta. Nas armadilhas ele sabe onde uma pata vai pisar antes que pise — e, em combate, solta um laço que prende o inimigo por um instante.",
-  "pets:booted_tomcat:name": "Gato de Botas",
+  "pets:booted_tomcat:name": "Felyx",
   "pets:silkweaver:combatAbility.name": "Véu de seda",
   "pets:silkweaver:description": "Uma mariposa noturna pálida, de pernas finas como fusos, que nunca para de fiar. No tear ela devolve o fio gasto ao carretel antes que o tecido o reclame — e, em combate, cobre os olhos do inimigo com um véu de seda para que seus golpes passem longe.",
   "pets:silkweaver:name": "Tecelã de Seda",

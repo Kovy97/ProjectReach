@@ -2616,7 +2616,7 @@ export const fr: Record<string, string> = {
   // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
   "pets:booted_tomcat:combatAbility.name": "Piège à collet",
   "pets:booted_tomcat:description": "Un matou tigré gris argent aux yeux jaune-vert qui marche debout, bottes aux pieds et harnais de cuir sur le dos, et chasse au collet et à l'arbalète. Aux pièges, il sait où une patte se posera avant qu'elle ne le fasse — et au combat, il lance un collet qui immobilise l'ennemi le temps d'un battement de cœur.",
-  "pets:booted_tomcat:name": "Matou Botté",
+  "pets:booted_tomcat:name": "Felyx",
   "pets:silkweaver:combatAbility.name": "Voile de soie",
   "pets:silkweaver:description": "Une pâle phalène aux pattes fines comme des fuseaux qui ne cesse jamais de filer. Au métier, elle rembobine le fil usé avant que l'étoffe ne le réclame — et au combat, elle drape un voile de soie sur les yeux de l'ennemi pour que ses coups frappent dans le vide.",
   "pets:silkweaver:name": "Tisseuse de Soie",
