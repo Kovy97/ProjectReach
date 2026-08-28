@@ -67,4 +67,11 @@ contextBridge.exposeInMainWorld("hearthforge", {
     readClipboardImage: (): Promise<BugReportClipboardImage | null> =>
       ipcRenderer.invoke("bugreport:readClipboardImage"),
   },
+  // Prompt-Extractor (Chef-Auftrag 28.08.2026, main/characterExport.ts): Charakterbogen → kit.png/
+  // portrait.png/prompt.txt nach Downloads\Grim Reach Exports\<Name>-<Zeitstempel>\, Ordner öffnet
+  // sich danach automatisch.
+  export: {
+    characterKit: (characterName: string, files: CharacterExportFileInput[]): Promise<CharacterExportResult> =>
+      ipcRenderer.invoke("export:characterKit", characterName, files),
+  },
 });

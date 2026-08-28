@@ -120,6 +120,28 @@ interface BugReportBridge {
   readClipboardImage(): Promise<BugReportClipboardImage | null>;
 }
 
+/** Eine Export-Datei für den Prompt-Extractor (s. main/characterExportFiles.ts) — genau EINS von
+ *  `dataUrl` (PNG, `data:image/png;base64,…`) oder `text` (Klartext) ist gesetzt. `name` muss exakt
+ *  "kit.png"/"portrait.png"/"prompt.txt" sein (main-seitige Allowlist, s. main/characterExport.ts). */
+interface CharacterExportFileInput {
+  name: string;
+  dataUrl?: string;
+  text?: string;
+}
+
+/** Ergebnis eines Prompt-Extractor-Exports (main/characterExport.ts). `path` nur bei `ok`. */
+interface CharacterExportResult {
+  ok: boolean;
+  path?: string;
+  error?: "no_files" | "write_failed";
+}
+
+interface CharacterExportBridge {
+  /** Schreibt kit.png/portrait.png/prompt.txt nach Downloads\Grim Reach Exports\<Name>-<Zeitstempel>\
+   *  und öffnet den Ordner (Prompt-Extractor, Chef-Auftrag 28.08.2026). */
+  characterKit(characterName: string, files: CharacterExportFileInput[]): Promise<CharacterExportResult>;
+}
+
 interface HearthforgeBridge {
   platform: NodeJS.Platform;
   app: AppBridge;
@@ -129,6 +151,7 @@ interface HearthforgeBridge {
   steam: SteamBridge;
   shell: ShellBridge;
   bugReport: BugReportBridge;
+  export: CharacterExportBridge;
 }
 
 interface Window {

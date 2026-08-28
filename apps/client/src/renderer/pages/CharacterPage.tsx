@@ -35,6 +35,7 @@ import { getPortrait, listPortraits } from "../portraits";
 import { playSfx } from "../util/audio";
 import { gameAlert } from "../components/GameAlert";
 import { equipSucceeded, reportEquipFailure } from "../util/equipFeedback";
+import { exportCharacterKit } from "../util/characterExport";
 import citadelSlotFrameImg from "../assets/ui/citadel/box-character-sheet/slots/slot_frame.webp";
 import coinGoldImg from "../assets/ui/citadel/box-inventory/coin_gold.webp";
 import emblGearImg from "../assets/ui/emblem_gear.svg";
@@ -172,6 +173,10 @@ export function CharacterPage(): JSX.Element {
   // `onDirty`), unabhängig vom Portrait-Upload-Zähler oben.
   const [crateItemId, setCrateItemId] = useState<string | null>(null);
   const [, bumpCrate] = useState(0);
+  // Prompt-Extractor (Chef-Auftrag 28.08.2026, "Charakter exportieren"): sperrt den Knopf während
+  // Canvas-Rendern + IPC-Schreiben laufen — verhindert Doppel-Klicks, die denselben Export zweimal
+  // anstoßen (Canvas-Bildladen ist async, ein zweiter Klick vor dem ersten Toast wäre sonst möglich).
+  const [exporting, setExporting] = useState(false);
 
   // ── inventory actions (plain, stapelbare Slots) ──────────────────────────────
   const invActions = (itemId: string): ItemAction[] => {
@@ -484,6 +489,26 @@ export function CharacterPage(): JSX.Element {
                   Puppe — jedes Kit trägt eigene Items, Umschalten tauscht das ganze Set (nur
                   außerhalb des Kampfes), s. components/EquipKitBar.tsx. */}
               <EquipKitBar />
+              {/* Prompt-Extractor (Chef-Auftrag 28.08.2026): Ein-Klick-Export von Ausrüstungs-Blatt
+                  (kit.png), Portrait (portrait.png) und einem fertigen englischen Bildgenerator-
+                  Prompt (prompt.txt) nach Downloads\Grim Reach Exports\ — s. util/characterExport.ts
+                  (Orchestrierung), util/characterExportPrompt.ts (Prompt-Text, unit-getestet) und
+                  main/characterExport.ts (IPC-Schreiber). */}
+              <div className="cs-export-row">
+                <HoverTip as="div" className="cs-export-tipwrap" content={<span className="ct-tip-desc">{t("char.export.tooltip")}</span>}>
+                  <button
+                    type="button"
+                    className="btn-iron btn-iron--sm"
+                    disabled={exporting}
+                    onClick={() => {
+                      setExporting(true);
+                      void exportCharacterKit(state, t).finally(() => setExporting(false));
+                    }}
+                  >
+                    {t("char.export.button")}
+                  </button>
+                </HoverTip>
+              </div>
               <EquipmentDoll interactive dragItem={dragItem} onDragItem={setDragItem} />
             </div>
           ) : (
