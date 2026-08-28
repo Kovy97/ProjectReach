@@ -2092,23 +2092,24 @@ registerRecipe("pet_pilfer", [petPilfer]);
 
 const defaultStatusBox = (ctx: RecipeContext) => ctx.box ?? { x: ctx.to.x - 40, y: ctx.to.y - 100, w: 80, h: 200 };
 
-function makeStatusFlare(th: ThemeColors, flashPrefix: string): RecipeFn {
+// `scale` (Chef 28.08.2026: "die Flammen sind zu klein"): Brand laeuft mit 2,0, die anderen Status mit 1,0.
+function makeStatusFlare(th: ThemeColors, flashPrefix: string, scale = 1): RecipeFn {
   const color = themeColorFn(th);
   return (ctx) => {
     const { to: d, api } = ctx;
     const b = defaultStatusBox(ctx);
-    api.flash(d, 60, flashPrefix, 220);
-    api.timed(450, () => {}, (dt) => {
-      const n = api.count(9, dt);
+    api.flash(d, 60 * scale, flashPrefix, 220);
+    api.timed(450 + 150 * (scale - 1), () => {}, (dt) => {
+      const n = api.count(9 * scale, dt);
       for (let i = 0; i < n; i++) {
-        api.ember(b.x + api.rand(b.w * 0.1, b.w * 0.9), b.y + api.rand(b.h * 0.15, b.h), api.rand(-16, 16), api.rand(-95, -45), api.rand(300, 620), api.rand(4, 9), color, -28, 0.98);
+        api.ember(b.x + api.rand(b.w * 0.05, b.w * 0.95), b.y + api.rand(b.h * 0.1, b.h), api.rand(-16, 16), api.rand(-95, -45) * scale, api.rand(300, 620) * scale, api.rand(4, 9) * scale, color, -28, 0.98);
         if (Math.random() < 0.3) api.mote(b.x + api.rand(0, b.w), b.y + api.rand(0, b.h), api.rand(-10, 10), api.rand(-40, -10), api.rand(400, 700), api.rand(1.5, 3), color, -10);
       }
     });
   };
 }
 
-function makeStatusAmbient(th: ThemeColors, kind: "flame" | "frost" | "spark" | "poison" | "drip"): RecipeFn {
+function makeStatusAmbient(th: ThemeColors, kind: "flame" | "frost" | "spark" | "poison" | "drip", scale = 1): RecipeFn {
   const color = themeColorFn(th);
   return (ctx) => {
     const { api, isActive } = ctx;
@@ -2119,15 +2120,17 @@ function makeStatusAmbient(th: ThemeColors, kind: "flame" | "frost" | "spark" | 
       update(dt) {
         acc += dt;
         crystalPhase += dt;
-        if (acc < 190) return;
+        if (acc < 190 / scale) return;
         acc = 0;
-        const n = api.burst(2);
+        const n = api.burst(Math.round(2 * scale));
         for (let i = 0; i < n; i++) {
           const x = b.x + api.rand(b.w * 0.12, b.w * 0.88);
           const y = b.y + b.h * api.rand(0.35, 0.98);
           if (kind === "flame") {
-            api.ember(x, y, api.rand(-10, 10), api.rand(-75, -35), api.rand(400, 700), api.rand(3, 6), color, -25, 0.98);
-            if (Math.random() < 0.35) api.smoke(x, y, api.rand(-8, 8), api.rand(-30, -10), api.rand(600, 1000), api.rand(8, 14), th.smoke, 0.2, -6);
+            // Flammenzungen: gross, langsam aufsteigend, dazu Glut und Rauch (Chef 28.08.: deutlich groesser)
+            api.ember(x, y, api.rand(-10, 10), api.rand(-75, -35) * scale, api.rand(400, 700) * scale, api.rand(3, 6) * scale, color, -25, 0.98);
+            if (scale > 1 && Math.random() < 0.6) api.ember(x + api.rand(-8, 8), y, api.rand(-6, 6), api.rand(-120, -70), api.rand(500, 800), api.rand(10, 18), color, -40, 0.985);
+            if (Math.random() < 0.35) api.smoke(x, y, api.rand(-8, 8), api.rand(-30, -10), api.rand(600, 1000), api.rand(8, 14) * scale, th.smoke, 0.2, -6);
           } else if (kind === "frost") {
             if (Math.random() < 0.5) api.rime(x, y, api.rand(500, 900), api.rand(3, 6), th);
             api.mote(x, y, api.rand(-6, 6), api.rand(-30, -10), api.rand(500, 900), api.rand(1.3, 2.4), color, -6);
@@ -2155,8 +2158,8 @@ function makeStatusAmbient(th: ThemeColors, kind: "flame" | "frost" | "spark" | 
   };
 }
 
-registerRecipe("status_burn", [makeStatusFlare(FIRE_TH, "rgba(255,150,60,")]);
-registerRecipe("statusAmbient_burn", [makeStatusAmbient(FIRE_TH, "flame")]);
+registerRecipe("status_burn", [makeStatusFlare(FIRE_TH, "rgba(255,150,60,", 2)]);
+registerRecipe("statusAmbient_burn", [makeStatusAmbient(FIRE_TH, "flame", 2)]);
 registerRecipe("status_frost", [makeStatusFlare(FROST_TH, "rgba(150,210,255,")]);
 registerRecipe("statusAmbient_frost", [makeStatusAmbient(FROST_TH, "frost")]);
 registerRecipe("status_shock", [makeStatusFlare(SHOCK_TH, "rgba(246,231,161,")]);
