@@ -181,7 +181,10 @@ const SelectorStoreContext = createContext<SelectorStore | null>(null);
 // Aktionen zwischen zwei Autosaves (Ausrüstungswechsel, Verkäufe, Quest-Claims, …) waren bei einem
 // Hart-Kill bis zu 30s verlierbar. 15s halbiert dieses Fenster, ohne spürbaren Overhead (lokale
 // Datei, kein Netzwerk-Roundtrip).
-const AUTOSAVE_MS = 15_000;
+// Chef 28.08.2026: 15s -> 5s. Kosten je Save: serialize (<= ~130 KB JSON, ~1-3 ms im Renderer) + IPC + atomarer
+// Schreibvorgang im Main-Prozess (tmp + rename, Write-Mutex in saves.ts); Rolling-Backups bleiben bei 15 min
+// (ROLLING_MIN_INTERVAL_MS), Steam Cloud synchronisiert erst beim Beenden. Kein spuerbarer Overhead.
+const AUTOSAVE_MS = 5_000;
 
 // Welle AA (Welcome-Back-Polish, Task 4): Schwelle für die "leere Rückkehr" — > 1h weg, 0 Ertrag,
 // kein Tod, nichts lief (weder Aktion noch Kampf). Kürzere leere Abwesenheiten bleiben bewusst
