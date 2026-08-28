@@ -82,6 +82,7 @@ import { hasRecipe as hasParticleRecipe, ParticleStage, type Rect } from "../fxP
 // wird hier direkt aufgerufen, nur importiert, damit `registerRecipe` läuft.
 import "../fxParticleLibrary";
 import { getPortrait } from "../portraits";
+import { anchorToStagePoint, containedImageRect, getPortraitAnchor, parseObjectPosition } from "../portraitAnchors";
 import { COMBAT_TOUR_STEPS } from "../areaTourSteps";
 import { getSkillIcon } from "../skillIcons";
 import { getSidebarIcon } from "../sidebarIcons";
@@ -2216,6 +2217,80 @@ function Battle({
     return { x: b.left - sb.left, y: b.top - sb.top, w: b.width, h: b.height };
   };
 
+  /** Chef-Auftrag 28.08.2026 „Magie-Ankerpunkt": Startpunkt eines SPIELER-Geschosses ist der pro
+   *  Portrait vermessene Anker (`portraitAnchors.ts`: Stabspitze, sonst führende Hand/Waffenspitze),
+   *  umgerechnet auf die tatsächlich gezeichnete Fläche des `<img>` (object-fit: contain,
+   *  object-position aus dem Computed Style) in FX-Layer-Koordinaten. Eine Spiegelung (negativer
+   *  scaleX irgendwo zwischen `img` und `.arena-side-player`) klappt die x-Achse. `null`, wenn kein
+   *  Bild/keine natürliche Größe vorliegt (Silhouette, Bild noch nicht geladen) — Aufrufer fallen
+   *  dann auf den alten Box-Punkt zurück. Läuft NUR beim Trigger (kein Layout-Read pro Frame). */
+  const playerAnchorPoint = (kind: "magic" | "hand"): { x: number; y: number } | null => {
+    const stage = stageRef.current;
+    const img = stage?.querySelector<HTMLImageElement>(".arena-side-player .fighter-figure-art img");
+    if (!stage || !img || !img.naturalWidth || !img.naturalHeight) return null;
+    const sb = stage.getBoundingClientRect();
+    const b = img.getBoundingClientRect();
+    const pos = parseObjectPosition(getComputedStyle(img).objectPosition);
+    const drawn = containedImageRect(
+      { x: b.left - sb.left, y: b.top - sb.top, w: b.width, h: b.height },
+      img.naturalWidth,
+      img.naturalHeight,
+      pos.x,
+      pos.y,
+    );
+    let mirrored = false;
+    for (let el: Element | null = img; el && el !== stage && !el.classList.contains("arena-side-player"); el = el.parentElement) {
+      const m = /matrix(?:3d)?\(\s*([-\d.e]+)/.exec(getComputedStyle(el).transform);
+      if (m && Number(m[1]) < 0) mirrored = !mirrored;
+    }
+    const anchor = getPortraitAnchor(c.portrait);
+    return anchorToStagePoint(kind === "magic" ? anchor.magic : anchor.hand, drawn, mirrored);
+  };
+
+  /** Geschoss-Startpunkt einer Seite: Spieler = Magie-Anker des Portraits, Gegner (keine Anker,
+   *  Monster-Art) und Rückfall = bisheriger Box-Punkt (55 % Breite / 32 % Höhe der Figurenbox). */
+  const missileOrigin = (from: "player" | "enemy", box: { x: number; y: number; w: number; h: number }): { x: number; y: number } =>
+    (from === "player" && playerAnchorPoint("magic")) || { x: box.x + box.w * 0.55, y: box.y + box.h * 0.32 };
+
+  // Dev-Hilfsschalter `?anchorDebug=1` (nur DEV, Muster wie `?levelTest` in App.tsx): zeichnet den
+  // Magie-Anker (rot) und den Hand-Anker (blau) des Spieler-Portraits als Punkt auf die Stage, damit
+  // sich die Messung aus portraitAnchors.ts im Harness/Browser gegen das Bild prüfen lässt.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    if (new URLSearchParams(window.location.search).get("anchorDebug") !== "1") return;
+    const stage = stageRef.current;
+    if (!stage) return;
+    const mkDot = (color: string): HTMLDivElement => {
+      const d = document.createElement("div");
+      d.className = "anchor-debug-dot";
+      d.style.cssText =
+        `position:absolute;left:0;top:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;` +
+        `background:${color};border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.65);pointer-events:none;z-index:50;display:none`;
+      stage.appendChild(d);
+      return d;
+    };
+    const dots = { magic: mkDot("#ff2020"), hand: mkDot("#2a5cff") };
+    const place = (): void => {
+      for (const kind of ["magic", "hand"] as const) {
+        const p = playerAnchorPoint(kind);
+        const d = dots[kind];
+        d.style.display = p ? "block" : "none";
+        if (p) {
+          d.style.left = `${p.x}px`;
+          d.style.top = `${p.y}px`;
+        }
+      }
+    };
+    place();
+    const timer = window.setInterval(place, 400);
+    return () => {
+      window.clearInterval(timer);
+      dots.magic.remove();
+      dots.hand.remove();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- playerAnchorPoint liest nur Refs/DOM; Neuaufbau nur bei Portraitwechsel
+  }, [c.portrait]);
+
   /** Zählt einen data-<name>-Zähler auf dem FX-Layer hoch (DOM-Assertion-Anker, s. juice-check). */
   const bumpFx = (name: string, by = 1): void => {
     const layer = fxLayerRef.current;
@@ -2329,8 +2404,9 @@ function Battle({
     const from = fxRect(".arena-side-player .fighter-figure-art");
     const to = fxRect(".arena-side-enemy .fighter-figure-art");
     if (!from || !to) return;
-    const x1 = from.x + from.w * 0.6;
-    const y1 = from.y + from.h * (variant === "arcane" ? 0.35 : 0.42);
+    const origin = playerAnchorPoint("magic") ?? { x: from.x + from.w * 0.6, y: from.y + from.h * (variant === "arcane" ? 0.35 : 0.42) };
+    const x1 = origin.x;
+    const y1 = origin.y;
     const dx = to.x + to.w / 2 - x1;
     const dy = to.y + to.h * 0.45 - y1;
     const len = Math.hypot(dx, dy);
@@ -2600,8 +2676,9 @@ function Battle({
     bumpFx("sprites");
     const h = Math.round(fromBox.h * 0.28);
     const w = h * 2; // Geschoss-Feld ist 256×128 (Konzept §3, 2:1)
-    const x1 = fromBox.x + fromBox.w * 0.55 - w / 2;
-    const y1 = fromBox.y + fromBox.h * 0.32 - h / 2;
+    const origin = missileOrigin(from, fromBox);
+    const x1 = origin.x - w / 2;
+    const y1 = origin.y - h / 2;
     const x2 = toBox.x + toBox.w / 2 - w / 2;
     const y2 = toBox.y + toBox.h * 0.45 - h / 2;
     const dx = x2 - x1;
@@ -2675,7 +2752,7 @@ function Battle({
     const toAnchor = particleAnchor(to);
     if (!fromBox || !toAnchor) return false;
     return stage.play(`missile_${theme}`, {
-      from: { x: fromBox.x + fromBox.w * 0.55, y: fromBox.y + fromBox.h * 0.32 },
+      from: missileOrigin(from, fromBox),
       to: toAnchor.center,
       crit,
       durationMs: MISSILE_FLIGHT_MS,
