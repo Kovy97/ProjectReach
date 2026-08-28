@@ -75,6 +75,48 @@ schließt nicht mehr, wenn eine Textmarkierung außerhalb endet, und dein Entwur
 Inventar lässt sich beim Shift-Klick kein Text mehr versehentlich markieren. / EN: Discord button removed, bug-report draft
 survives, no more accidental text selection on shift-click.
 
+**Köder in fünf Stufen (Chef-Idee 28.08.):** DE: Angeln und Jagen greifen ineinander. Jedes Jagdgebiet verlangt den Köder
+seiner Stufe, und das Angeln liefert ihn auf derselben Stufe: Wurmköder (Stufe 1) für Weiden und Grenzlande, Madenköder
+(Angeln 20) für Aschfelder und Schwarzdornwald, Krebsköder (40) für Krypta und Wildwald, Tintenfischköder (60) für Küste und
+Schlackengrube, Glühköder (80) für Hochland und Götzenhalle. Auto-Erneuern nimmt den passenden Köder aus Inventar oder Lager. /
+EN: Bait now comes in five tiers from fishing, and each hunting zone needs the bait of its tier.
+
+*Dev-Notiz: shared HUNT_BAIT_TIERS + huntBaitForZoneLevel, HuntZoneDef.baitItemId; engine huntZoneBaitId/huntBaitCount(state, baitId);
+Content 4 Items + 4 Angel-Aktionen (Form wie dig_bait, wenig XP) ×7 Sprachen; Guard in fibers-hunting-content.test; Bilder folgen (Mira).*
+
+**Zauberfokus: Magiewaffen wachsen mit Intelligenz (Chef 28.08., Spieler-Report RU):** DE: Jeder Zauberstab, Stab und
+jedes Zepter trägt jetzt einen Zauberfokus. Die Schadensspanne der Waffe wächst mit deiner Intelligenz, ein Stab um etwa
+0,3 % je Punkt, ein einhändiger Zauberstab um etwa 0,25 % (er behält dafür die Nebenhand). Auf Stufe 30 sind das rund 15 %
+mehr Waffenschaden, auf Stufe 60 etwa 22 %, auf Stufe 90 etwa 30 %. Die Item-Karte zeigt den Satz und darunter deine
+tatsächliche Spanne mit deinem aktuellen INT, das Item-Wiki ebenso. Nahkampf und Fernkampf bleiben unverändert. / EN: Magic
+weapons now carry a Spell Focus: their damage range grows with your Intelligence (about +15 / 22 / 30 % at level 30 / 60 / 90).
+The item card shows the rate and your real range with your current INT.
+
+*Dev-Notiz: bewusster Magier-Buff über die Stil-Parität hinaus (design/zauberfokus-2026-08-28.md, Nachtrag in
+stil-paritaet-2026-08-26.md). shared ItemDef.spellFocus; engine spellFocusMult + Range-Form in computeStats (min UND max
+× (1 + focus·int), kein Sonderpfad in combat.ts); Content: 57 Magie-Haupthände (Stab 0,0030–0,0032, 1H 0,0025–0,0027, Drops
+nach der Stufe ihrer Stats), Foki tragen nichts; Balance-Pins §5 magic 71,22→65,15 / 239,01→218,63 s; Tests 10 Engine + 6
+Content-Guard; ItemTooltip/ItemWikiModal + 3 Keys ×7.*
+
+**Kampfeffekte: mehr Frames, Varianten, Crit (Chef-Feedback 28.08.):** DE: Geschosse und Einschläge
+können jetzt mehrere Bildfelder statt fix drei zeigen (Feldzahl kommt aus der jeweiligen Bilddatei) und
+mehrere Zufallsvarianten haben, die nie zweimal hintereinander dieselbe spielen; ein optionales
+Crit-Sondermotiv ersetzt bei kritischen Treffern die normale Auswahl. Geschosse fliegen spürbar länger
+(statt fast unsichtbar schnell), Einschläge bleiben länger sichtbar. Wirkt automatisch auf jedes
+zukünftige Effekt-Thema im selben Dateischema, ganz ohne Codeänderung. / EN: Projectiles and impacts can
+now show several frames instead of a fixed three (frame count comes from the image itself) and several
+random variants that never repeat back-to-back; an optional crit-special art replaces the normal pick on
+critical hits. Projectiles fly noticeably slower/longer, impacts stay visible longer.
+
+*Dev-Notiz: design/combat-fx/konzept-kampfeffekte.md §7. combatFx.ts: `fxVariants`/`fxCritVariant`/
+`fxAllUrls` (reine Auflösung, kein Zufall). CombatPage.tsx Battle: `pickFxVariant` (Zufallspool +
+Crit-Vorrang + Anti-Repeat-Ref), `fieldCountFor` (Bildmaße-Preload → Feldzahl aus Breite/Höhe),
+`setStripCells` (N Zellen statt fix drei, background-size/-position inline), `buildStripKeyframes`
+(N-Felder-Crossfade, 3 Felder bit-identisch zur alten Kurve). `.fx-missile` ist jetzt ebenfalls ein
+Zellen-Streifen statt eines einzelnen `<img>`. `MISSILE_FLIGHT_MS` 200→560ms, `IMPACT_FX_MS` 300→390ms
+(+30%). Erste Serie im neuen Schema: Feuer-Geschosse v1–v3 + Crit, Feuer-Einschläge v1–v3
+(`CODEX/work/2026-08-28-kampfeffekte-feuer/`); alte Einzeldateien bleiben als Rückfall.*
+
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
 Kampf macht, mit Takt („Diebesgriff. Alle 6 s: 40 % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit

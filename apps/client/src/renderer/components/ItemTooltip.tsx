@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { content } from "@hearthforge/content";
-import { computeStats, meetsRequirements } from "@hearthforge/engine";
+import { computeStats, meetsRequirements, spellFocusMult } from "@hearthforge/engine";
 import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
 import { ATTRIBUTES, EQUIP_SLOT_LABELS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, MANA_PER_CAST, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
 import { isEnchantable, runeFitsHint, runeTargetLabel } from "../runeTargets";
@@ -14,7 +14,7 @@ import { openItemWikiModal } from "./ItemWikiModal";
 import { AreaTourGuide } from "./AreaTourGuide";
 import { ITEM_CARD_TOUR_STEPS } from "../areaTourSteps";
 import { registerEscCloser } from "../util/escStack";
-import { formatDamage, formatNum, formatSeconds1, formatStat } from "../util/format";
+import { formatDamage, formatNum, formatPct2, formatSeconds1, formatStat } from "../util/format";
 import { isTooltipImagePopupEnabled } from "../util/uiPrefs";
 
 /**
@@ -801,6 +801,39 @@ function OffenseGroup({
   if (item.weaponStyle === "magic") {
     const cost = item.manaCost ?? MANA_PER_CAST;
     rows.push(<StatRow key="mc" icon="✦" label={t("item.manaCost")} value={String(cost)} />);
+  }
+
+  // Zauberfokus (Chef-GO 28.08.2026, bewusster Magier-Buff): Magiewaffen wachsen mit INT. Zeile 1
+  // „+0,3 % Schaden je INT" (Item-Feld `spellFocus`), Zeile 2 nur mit geladenem Charakter: die
+  // Waffenspanne bei SEINEM aktuellen INT — exakt die computeStats-Rechnung (`spellFocusMult` ×
+  // Spanne inkl. Affix-/Suffix-Delta), damit Tooltip und Kampf nie auseinanderlaufen. Bewusst
+  // NICHT in die Schaden-/DPS-Kopfzeilen eingerechnet: die bleiben der reine Item-Wert (vergleichbar
+  // über Charaktere hinweg), die INT-Zeile zeigt, was dieser Spieler daraus macht.
+  const spellFocus = item.spellFocus ?? 0;
+  if (item.weaponStyle === "magic" && spellFocus > 0 && item.damageMin !== undefined && item.damageMax !== undefined) {
+    rows.push(
+      <StatRow
+        key="sf"
+        icon={statIcon("icon_attribute_magicdamage", "✨")}
+        label={t("itip.spellFocus")}
+        value={t("itip.spellFocus.perInt").replace("{pct}", formatPct2(spellFocus))}
+      />,
+    );
+    if (state) {
+      const int = computeStats(state, content).attributes.int;
+      const mult = spellFocusMult(item, int);
+      const dmgDelta = delta?.magicDamage ?? 0;
+      const min = Math.max(0, item.damageMin + dmgDelta) * mult;
+      const max = Math.max(min, (item.damageMax + dmgDelta) * mult);
+      rows.push(
+        <StatRow
+          key="sfint"
+          icon={statIcon("icon_attribute_magicdamage", "✨")}
+          label={t("itip.spellFocus.withInt").replace("{int}", String(int))}
+          value={`${formatDamage(min)}–${formatDamage(max)}`}
+        />,
+      );
+    }
   }
 
   if (rows.length === 0) return null;

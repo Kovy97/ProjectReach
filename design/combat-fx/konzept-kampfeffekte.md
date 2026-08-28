@@ -71,4 +71,52 @@ Dateien (s. Mira-Auftrag), um Format, Größe und Lesbarkeit auf dem Battlescree
 - **D4 Umfang:** alle vier Familien in Welle 1, keine Aufteilung.
 - **D5 Gegner:** dieselben Sprites gespiegelt; eigene Varianten erst für Champions in Welle 2.
 
+## 7 Sequenzen, Varianten, Crit (28.08.2026)
+
+Chef-Feedback zu Welle 1: „mehr Frames pro Effekt, Projektile zu schnell, wir sehen die Assets nicht" —
+plus Wunsch nach zufälligen Varianten und einem Crit-Special. Reiner Renderer-Umbau (`combatFx.ts` +
+CombatPage.tsx Battle), kein neues Asset-FORMAT — §3 gilt weiter für Einzelbild-Geschosse und Ein-Feld-
+Rückfälle, das Folgende ist die Erweiterung für Mehrfeld-Sequenzen.
+
+**Namenskonvention** je Effekt-Schlüssel `<familie>_<thema/variante>` (z.B. `missile_fire`,
+`impact_fire`, `slash_cut`, `blood_red`, `pet_bite`):
+
+- `fx_<key>.webp` — Basisdatei (Pflicht, wie bisher; bleibt der garantierte Rückfall).
+- `fx_<key>_v1.webp` … `fx_<key>_v9.webp` — optionale Varianten. Existieren welche, spielt der
+  Renderer beim Abspielen zufällig eine aus dem Pool (Basisdatei + alle vorhandenen `_v*`), NIE
+  zweimal hintereinander dieselbe (bei nur zwei Varianten erzwingt das strikte Alternation).
+  Fehlen sie, ändert sich nichts — die Basisdatei spielt wie bisher.
+- `fx_<key>_crit.webp` — optionale Crit-Sonderdatei. Existiert sie, ersetzt sie bei kritischen
+  Treffern die normale Zufallsauswahl komplett (kein Pool-Eintrag, kein "nicht zweimal
+  hintereinander" nötig). Fehlt sie, wählt ein Crit ganz normal aus dem Varianten-Pool. Getrennt
+  vom bestehenden Crit-OVERLAY (`fx_crit_magic`/`fx_crit_weapon`), das unverändert zusätzlich
+  obendrauf gelegt wird.
+- Gilt generisch für JEDEN Effekt-Schlüssel (Geschosse, Einschläge, Slashes, Blut, Begleiter,
+  Miss/Block) — keine Codeänderung nötig, wenn ein weiteres Thema in diesem Schema nachgeliefert
+  wird.
+
+**Feldzahl statt fix drei/eins:** die Feldanzahl eines Streifens wird aus der Bildbreite abgeleitet
+(Breite ÷ Feldbreite; Feldbreite = Bildhöhe bei den quadratischen Familien B–D/Crit-Overlay, das
+Doppelte der Bildhöhe bei Geschossen, deren Felder 256×128 statt quadratisch sind). Ein Streifen
+kann also 1, 3, 5 oder beliebig viele gleich breite Felder haben; sie spielen gleichmäßig über die
+volle Effektdauer als Crossfade ab. Drei Felder verhalten sich dabei bit-identisch zum bisherigen
+Verhalten (eigene Kurve `STRIP_CELL_KEYFRAMES`), andere Feldzahlen bekommen ein generisches
+gleichmäßiges Crossfade-Raster (`buildStripKeyframes` in CombatPage.tsx).
+
+**Tempo (Konstanten in CombatPage.tsx Battle):**
+
+| Konstante | vorher | nachher | Effekt |
+|---|---|---|---|
+| `MISSILE_FLIGHT_MS` (Projektil-Flugzeit) | 200ms | 560ms | Geschoss bleibt ~500–600ms sichtbar unterwegs (Chef-Ziel) statt fast unsichtbar |
+| `IMPACT_FX_MS` (Einschlag-Dauer, Familie A/B-Landung) | 300ms | 390ms (+30%) | Einschlag-Sprite bleibt länger lesbar |
+
+Slash/Blut/Pet/Miss/Block-Dauern sind unverändert (nicht Teil des Feedbacks). Die Frame-Sequenz
+eines Geschosses läuft über dieselbe Dauer wie der Flug, damit eine Mehr-Felder-Sequenz sichtbar
+„lebt". Die Effektstufe aus den Optionen (voll/reduziert/aus) greift unverändert: „reduziert"
+spielt weiterhin nur Einschläge ohne Geschoss und ohne Blut.
+
+Erste Serie in diesem Schema: `CODEX/work/2026-08-28-kampfeffekte-feuer/` (Feuer-Geschosse v1–v3 +
+Crit, Feuer-Einschläge v1–v3, je 5 bzw. 3 Felder) — die übrigen sechs Magie-Themen folgen nach
+Chef-Abnahme im selben Format.
+
 Serie Welle 1 (33 Dateien, davon 6 aus dem Testlauf): `CODEX/work/2026-08-27-kampfeffekte-welle-1/PROMPTS.md`.

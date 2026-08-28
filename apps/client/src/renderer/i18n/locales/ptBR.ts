@@ -680,6 +680,10 @@ export const ptBR: Record<string, string> = {
     "itip.masterPerk.fallback": "Concede um bônus passivo adicional.",
     "itip.delta.slotFree": "Slot livre disponível — não é preciso trocar nada",
     "itip.delta.twoHandReplacesOffhand": "Também substitui sua mão secundária (escudo)",
+    // Foco arcano (decisão do chefe 28.08.2026): armas mágicas crescem com a Inteligência.
+    "itip.spellFocus": "Foco arcano",
+    "itip.spellFocus.perInt": "+{pct} % de dano por ponto de INT",
+    "itip.spellFocus.withInt": "Com sua INT ({int})",
 
     // Modal de wiki do item (Tarefa #308)
     "itemwiki.kicker": "Wiki do Item",
@@ -1394,8 +1398,22 @@ export const ptBR: Record<string, string> = {
     "hunting.picker.family.demon": "Demônio",
     "hunting.picker.family.dragonkin": "Draconiano",
     "hunting.picker.footerHint": "Cinco rolagens de saque por captura — capturas não contam como vitórias.",
-    "hunting.picker.confirm": "Armar armadilha (1 isca)",
+    "hunting.picker.confirm": "Armar armadilha (1 {bait})",
     "hunting.picker.cancel": "Cancelar",
+    "hunting.head.nextSlotLabel": "Próxima armadilha",
+    "hunting.head.nextSlotValue": "A partir do nível {n}",
+    "hunting.head.nextSlotAll": "Todas desbloqueadas",
+    "hunting.head.catchesLabel": "Capturas",
+    "hunting.badge.running": "Em andamento",
+    "hunting.badge.waiting": "Captura pronta",
+    "hunting.badge.empty": "Vazia",
+    "hunting.card.pickZone": "Escolher área",
+    "hunting.noCatchYet": "Ainda sem capturas",
+    "hunting.book.summaryZones": "{n} áreas abertas",
+    "hunting.book.summarySpecies": "{n}/{total} espécies capturadas",
+    "hunting.zone.bait": "Isca: {bait} · {n} em estoque",
+    "hunting.zone.baitValue": "{bait} · {n} em estoque",
+    "hunting.reason.no_bait_named": "Sem {bait}, Pesca nível {n}: {action}",
 
     "offline.hunt.title": "Caça",
 

@@ -2571,12 +2571,18 @@
 .fx-flash.s-bleed  { --fx-flash-color: rgba(220, 60, 50, 0.95); }
 .fx-flash.s-frost  { --fx-flash-color: rgba(127, 208, 255, 0.95); }
 
-/* ─── KAMPFEFFEKTE WELLE 1 (design/combat-fx/konzept-kampfeffekte.md) ────────────────────────
-   Mira-Sprites on top vom Kampf-Juice-FX-Layer oben: `.fx-sprite` ist ein Drei-Zellen-Streifen
-   (Einschlag/Slash/Blut/Begleiter/Fehlschlag/Crit-Overlay, 768×256-Quelle = drei 256×256-Felder),
-   `.fx-missile` ist das einzelne Geschoss-Bild (256×128). Größe/Position/Rotation/Spiegelung
-   setzt CombatPage.tsx (Battle: playStripFx/playMissileFx) inline je Treffer — hier nur die
-   Grund-Mechanik (Zellen-Ausschnitt per background-position, Pool-Reset via `.active`). */
+/* ─── KAMPFEFFEKTE WELLE 1+ (design/combat-fx/konzept-kampfeffekte.md, Abschnitt „Sequenzen,
+   Varianten, Crit" 28.08.2026) ────────────────────────────────────────────────────────────────
+   Mira-Sprites on top vom Kampf-Juice-FX-Layer oben: `.fx-sprite` ist ein N-Zellen-Streifen
+   (Einschlag/Slash/Blut/Begleiter/Fehlschlag/Crit-Overlay, quadratische Felder, z.B. 768×256 = 3×
+   256×256), `.fx-missile` ist seit 28.08. ebenfalls ein N-Zellen-Streifen (Geschoss-Felder 256×128,
+   2:1 statt quadratisch — sonst dieselbe Zellen-Mechanik). N ist NICHT mehr fix drei bzw. eins:
+   CombatPage.tsx (Battle: `setStripCells`) setzt Hintergrundbild, `background-size` und
+   `background-position` JE ZELLE inline, weil die Feldzahl aus der jeweiligen Bilddatei kommt
+   (`fieldCountFor`) und sich von Sprite zu Sprite unterscheidet — die alte feste Drittel-Regel
+   (`background-size: 300%`, `nth-child(1..3)`) ist deshalb hier entfallen. Größe/Position/
+   Rotation/Spiegelung/Flugbahn setzt CombatPage.tsx (Battle: playStripFx/playMissileFx) inline je
+   Treffer — hier nur die Grund-Mechanik (Pool-Reset via `.active`). */
 .fx-sprite {
   position: absolute;
   pointer-events: none;
@@ -2588,15 +2594,8 @@
   inset: 0;
   opacity: 0;
   background-repeat: no-repeat;
-  /* Streifen ist exakt 3 gleich breite Felder — bei background-size 300% zeigt 0/50/100%
-     Prozent-Position genau Feld 1/2/3 (Standard-CSS-Sprite-Trick für N gleich breite Zellen). */
-  background-size: 300% 100%;
   will-change: opacity;
 }
-
-.fx-sprite-cell:nth-child(1) { background-position: 0% 0%; }
-.fx-sprite-cell:nth-child(2) { background-position: 50% 0%; }
-.fx-sprite-cell:nth-child(3) { background-position: 100% 0%; }
 
 .fx-missile {
   position: absolute;

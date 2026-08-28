@@ -1,17 +1,17 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
-import { isZoneUnlocked } from "@hearthforge/engine";
+import { computeStats, isZoneUnlocked, spellFocusMult } from "@hearthforge/engine";
 import type { GameState, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
 import { EQUIP_SLOT_LABELS, getItemRarity, instanceDisplayName, RARITY_LABEL } from "@hearthforge/shared";
 import { CitadelTip, useCitadelTip } from "./CitadelTip";
-import { useGameState } from "../game/GameContext";
+import { useGameState, useGameStateMaybe } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
 import { getSidebarIcon } from "../sidebarIcons";
 import { getSkillIcon } from "../skillIcons";
 import { getUiIcon } from "../uiIcons";
 import { registerEscCloser } from "../util/escStack";
-import { formatDamage, formatDropPct, formatNum, formatSeconds1, formatStat } from "../util/format";
+import { formatDamage, formatDropPct, formatNum, formatPct2, formatSeconds1, formatStat } from "../util/format";
 import { ITEM_SOURCE_INDEX, ITEM_USED_FOR_INDEX, type ItemWikiSource, type ItemWikiUse } from "../util/itemWiki";
 import { jumpToAction } from "../util/skillJump";
 
@@ -692,6 +692,7 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
                   </span>
                 </span>
               )}
+              <SpellFocusTiles item={item} />
               {item.damageMin !== undefined && item.attackIntervalMs !== undefined && (
                 <span className="iwk-fact-tile">
                   <span className="iwk-fact-label">{t("itip.tempo")}</span>
@@ -828,5 +829,38 @@ export function ItemWikiModalOverlay(): JSX.Element | null {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * Zauberfokus-Kacheln (Chef-GO 28.08.2026, bewusster Magier-Buff): „Zauberfokus: +0,3 % Schaden je
+ * INT" und, mit geladenem Charakter, „Mit deinem INT (42): 15–23" — dieselbe Rechnung wie
+ * ItemTooltip/computeStats (`spellFocusMult` × Roh-Spanne). Eigene Komponente, damit nur SIE
+ * `useGameStateMaybe()` abonniert (das 10-Hz-Re-Render bleibt lokal, s. Kommentar zur Quelle-Liste).
+ */
+function SpellFocusTiles({ item }: { item: ItemDef }): JSX.Element | null {
+  const { t } = useI18n();
+  const state = useGameStateMaybe();
+  const focus = item.spellFocus ?? 0;
+  if (item.weaponStyle !== "magic" || focus <= 0 || item.damageMin === undefined || item.damageMax === undefined) {
+    return null;
+  }
+  const int = state ? computeStats(state, content).attributes.int : null;
+  const mult = int === null ? 1 : spellFocusMult(item, int);
+  return (
+    <>
+      <span className="iwk-fact-tile">
+        <span className="iwk-fact-label">{t("itip.spellFocus")}</span>
+        <span className="iwk-fact-value">{t("itip.spellFocus.perInt").replace("{pct}", formatPct2(focus))}</span>
+      </span>
+      {int !== null && (
+        <span className="iwk-fact-tile">
+          <span className="iwk-fact-label">{t("itip.spellFocus.withInt").replace("{int}", String(int))}</span>
+          <span className="iwk-fact-value">
+            {formatDamage(item.damageMin * mult)}–{formatDamage(item.damageMax * mult)}
+          </span>
+        </span>
+      )}
+    </>
   );
 }

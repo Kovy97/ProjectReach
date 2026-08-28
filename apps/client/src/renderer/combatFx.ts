@@ -34,6 +34,45 @@ export function fxSprite(name: string): string | null {
   return FX_BY_NAME[name] ?? null;
 }
 
+// ─── Sequenzen, Varianten, Crit (28.08.2026, Chef-Feedback "mehr Frames, Varianten, Crit") ─────
+// Reine Auflösungs-Helfer, kein Zufall/State hier (das bleibt in CombatPage, s. dortiges
+// `pickFxVariant` — dieselbe "kein React-State"-Trennung wie beim Rest der Datei).
+
+/** Varianten-Suffixe für Zufallspools: Basisdatei `fx_<key>.webp` plus optional `_v1`…`_v9`. */
+const VARIANT_SUFFIXES = Array.from({ length: 9 }, (_, i) => `_v${i + 1}`);
+
+/**
+ * Alle vorhandenen Varianten-URLs eines Effekt-Schlüssels (Basisdatei zuerst, dann `_v1`…`_v9` in
+ * Reihenfolge), z.B. `missile_fire` → [fx_missile_fire, fx_missile_fire_v1, …_v3]. Gilt generisch
+ * für jeden Schlüssel (Geschosse `missile_<thema>`, Einschläge `impact_<thema>`, Slashes
+ * `slash_<familie>`, Blut `blood_<variante>`, Begleiter `pet_<bild>`, Miss/Block …) — Auto-
+ * Discovery wie bei `fxSprite`: fehlende Dateien fehlen einfach im Array, leeres Array = kein
+ * Sprite vorhanden.
+ */
+export function fxVariants(key: string): string[] {
+  const out: string[] = [];
+  const base = fxSprite(`fx_${key}`);
+  if (base) out.push(base);
+  for (const suffix of VARIANT_SUFFIXES) {
+    const url = fxSprite(`fx_${key}${suffix}`);
+    if (url) out.push(url);
+  }
+  return out;
+}
+
+/** Crit-Sonderdatei eines Effekt-Schlüssels (`fx_<key>_crit.webp`), oder `null`. Getrennt von den
+ *  normalen Varianten und vom bestehenden Crit-OVERLAY (`fx_crit_magic`/`fx_crit_weapon`, bleibt
+ *  unverändert zusätzlich obendrauf, s. CombatPage `playImpactFx`/`playSlashFx`). */
+export function fxCritVariant(key: string): string | null {
+  return fxSprite(`fx_${key}_crit`);
+}
+
+/** Alle bekannten fx-URLs, für den Bild-Maße-Preload in CombatPage (Feldzahl-Ableitung aus der
+ *  Bildbreite). */
+export function fxAllUrls(): string[] {
+  return Object.values(FX_BY_NAME);
+}
+
 // ─── Familie A — Magie-Thema ─────────────────────────────────────────────────
 // Chef-D1: alle sieben Themen. Reihenfolge = Priorität: klassischer Waffeneffekt zuerst
 // (effectiveWeaponEffects deckt weaponEffect + weaponEffects[]), danach die Aether-Tier-ID,

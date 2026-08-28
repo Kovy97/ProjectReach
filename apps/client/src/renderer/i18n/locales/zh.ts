@@ -693,6 +693,10 @@ export const zh: Record<string, string> = {
     "itip.masterPerk.fallback": "赋予额外的被动加成。",
     "itip.delta.slotFree": "有空闲栏位——无需替换",
     "itip.delta.twoHandReplacesOffhand": "同时会替换副手(盾牌)",
+    // 法术专注（老板决定 28.08.2026）：魔法武器随智力增强。
+    "itip.spellFocus": "法术专注",
+    "itip.spellFocus.perInt": "每点智力 +{pct} % 伤害",
+    "itip.spellFocus.withInt": "以你的智力 ({int})",
 
     // 物品百科弹窗 (任务 #308)
     "itemwiki.kicker": "物品百科",
@@ -1423,8 +1427,22 @@ export const zh: Record<string, string> = {
     "hunting.picker.family.demon": "恶魔",
     "hunting.picker.family.dragonkin": "龙类",
     "hunting.picker.footerHint": "每次捕获掷五次战利品，捕获不计入击杀数。",
-    "hunting.picker.confirm": "设置陷阱（消耗1个诱饵）",
+    "hunting.picker.confirm": "设置陷阱（消耗1个{bait}）",
     "hunting.picker.cancel": "取消",
+    "hunting.head.nextSlotLabel": "下一个陷阱位",
+    "hunting.head.nextSlotValue": "狩猎等级 {n} 解锁",
+    "hunting.head.nextSlotAll": "已全部解锁",
+    "hunting.head.catchesLabel": "捕获次数",
+    "hunting.badge.running": "进行中",
+    "hunting.badge.waiting": "捕获待查看",
+    "hunting.badge.empty": "空置",
+    "hunting.card.pickZone": "选择区域",
+    "hunting.noCatchYet": "尚无捕获",
+    "hunting.book.summaryZones": "{n} 个区域已开放",
+    "hunting.book.summarySpecies": "已捕获 {n}/{total} 种",
+    "hunting.zone.bait": "诱饵：{bait} · 库存 {n}",
+    "hunting.zone.baitValue": "{bait} · 库存 {n}",
+    "hunting.reason.no_bait_named": "没有{bait}，钓鱼等级 {n}：{action}",
 
     "offline.hunt.title": "狩猎",
 

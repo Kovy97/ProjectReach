@@ -692,6 +692,10 @@ export const ru: Record<string, string> = {
     "itip.masterPerk.fallback": "Даёт дополнительный пассивный бонус.",
     "itip.delta.slotFree": "Есть свободный слот — менять ничего не нужно",
     "itip.delta.twoHandReplacesOffhand": "Также заменяет предмет в левой руке (щит)",
+    // Фокус чар (решение шефа 28.08.2026): магическое оружие усиливается Интеллектом.
+    "itip.spellFocus": "Фокус чар",
+    "itip.spellFocus.perInt": "+{pct} % урона за очко INT",
+    "itip.spellFocus.withInt": "С вашим INT ({int})",
 
     // Окно вики предмета (задача #308)
     "itemwiki.kicker": "Вики предмета",
@@ -1424,8 +1428,22 @@ export const ru: Record<string, string> = {
     "hunting.picker.family.demon": "Демон",
     "hunting.picker.family.dragonkin": "Дракон",
     "hunting.picker.footerHint": "Пять бросков добычи за поимку — поимки не считаются победами.",
-    "hunting.picker.confirm": "Поставить капкан (1 наживка)",
+    "hunting.picker.confirm": "Поставить капкан (1 {bait})",
     "hunting.picker.cancel": "Отмена",
+    "hunting.head.nextSlotLabel": "Следующий капкан",
+    "hunting.head.nextSlotValue": "С {n}-го уровня",
+    "hunting.head.nextSlotAll": "Все открыты",
+    "hunting.head.catchesLabel": "Поимок",
+    "hunting.badge.running": "Работает",
+    "hunting.badge.waiting": "Добыча ждёт",
+    "hunting.badge.empty": "Пусто",
+    "hunting.card.pickZone": "Выбрать местность",
+    "hunting.noCatchYet": "Пока нет добычи",
+    "hunting.book.summaryZones": "{n} местности открыто",
+    "hunting.book.summarySpecies": "{n}/{total} видов поймано",
+    "hunting.zone.bait": "Наживка: {bait} · в запасе {n}",
+    "hunting.zone.baitValue": "{bait} · в запасе {n}",
+    "hunting.reason.no_bait_named": "Нет «{bait}», рыбалка {n}-го уровня: {action}",
 
     "offline.hunt.title": "Охота",
 

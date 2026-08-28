@@ -693,6 +693,10 @@ export const fr: Record<string, string> = {
     "itip.masterPerk.fallback": "Accorde un bonus passif supplémentaire.",
     "itip.delta.slotFree": "Emplacement libre disponible — aucun échange nécessaire",
     "itip.delta.twoHandReplacesOffhand": "Remplace aussi votre main secondaire (bouclier)",
+    // Focalisation arcanique (décision du chef 28.08.2026) : les armes magiques grandissent avec l'Intelligence.
+    "itip.spellFocus": "Focalisation arcanique",
+    "itip.spellFocus.perInt": "+{pct} % de dégâts par point d'INT",
+    "itip.spellFocus.withInt": "Avec votre INT ({int})",
 
     // Fenêtre wiki de l'objet (Tâche #308)
     "itemwiki.kicker": "Wiki de l'objet",
@@ -1427,8 +1431,22 @@ export const fr: Record<string, string> = {
     "hunting.picker.family.demon": "Démon",
     "hunting.picker.family.dragonkin": "Draconien",
     "hunting.picker.footerHint": "Cinq tirages de butin par capture — les captures ne comptent pas comme des victoires.",
-    "hunting.picker.confirm": "Poser le piège (1 appât)",
+    "hunting.picker.confirm": "Poser le piège (1 {bait})",
     "hunting.picker.cancel": "Annuler",
+    "hunting.head.nextSlotLabel": "Prochain piège",
+    "hunting.head.nextSlotValue": "Dès le niveau {n}",
+    "hunting.head.nextSlotAll": "Tous débloqués",
+    "hunting.head.catchesLabel": "Captures",
+    "hunting.badge.running": "En cours",
+    "hunting.badge.waiting": "Capture en attente",
+    "hunting.badge.empty": "Vide",
+    "hunting.card.pickZone": "Choisir un terrain",
+    "hunting.noCatchYet": "Aucune capture pour l'instant",
+    "hunting.book.summaryZones": "{n} terrains ouverts",
+    "hunting.book.summarySpecies": "{n}/{total} espèces capturées",
+    "hunting.zone.bait": "Appât : {bait} · {n} en stock",
+    "hunting.zone.baitValue": "{bait} · {n} en stock",
+    "hunting.reason.no_bait_named": "Pas de {bait}, Pêche niveau {n} : {action}",
 
     "offline.hunt.title": "Chasse",
 

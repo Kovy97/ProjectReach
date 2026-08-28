@@ -61,6 +61,15 @@ export function formatPct1(fraction: number): string {
 }
 
 /**
+ * Prozentwert einer Fraktion mit bis zu 2 Nachkommastellen — für kleine Sätze wie den Zauberfokus
+ * („+0,31 % Schaden je INT", Chef-GO 28.08.2026), bei denen 1 Nachkommastelle die Stufen (0,30 /
+ * 0,31 / 0,32) nicht mehr unterscheiden würde. Glatte Werte ohne Nullen-Schwanz wie `formatPct1`.
+ */
+export function formatPct2(fraction: number): string {
+  return (fraction * 100).toLocaleString(formatLocale, { maximumFractionDigits: 2 });
+}
+
+/**
  * Drop-/Loot-Chance (0..1) als Prozent-Text, CHEF-REGEL „immer %, nie Brüche": gestaffelte
  * Präzision je Seltenheit (<1% → 2 Nachkommastellen, <10% → 1, sonst ganzzahlig) — sonst würde
  * z.B. 0,1% als "0%" verschwinden. Extrahiert aus BestiaryPage (Fun-Sweep FF, Grete G1): geteilte

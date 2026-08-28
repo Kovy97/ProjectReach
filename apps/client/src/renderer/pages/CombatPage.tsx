@@ -63,7 +63,10 @@ import { openQueueAmountModal } from "../components/QueueAmountModal";
 import { getPetSrc } from "../pets";
 import {
   bloodVariantFor,
+  fxAllUrls,
+  fxCritVariant,
   fxSprite,
+  fxVariants,
   magicThemeFor,
   petFxImageFor,
   petFxTargetSide,
@@ -893,12 +896,21 @@ const SPRITE_FX_POOL_SIZE = 3;
 /** Geschosse fliegen nur ~200ms und sind selten gleichzeitig aktiv — ein kleinerer, seitenloser
  *  Pool reicht (Konzept-Deckel bezieht sich auf die LANDENDEN Effekte je Seite). */
 const MISSILE_FX_POOL_SIZE = 2;
-/** Flugdauer eines Geschoss-Sprites (Konzept §2/§4 "~200ms") — auch von der SFX-Verzögerung des
+/** Flugdauer eines Geschoss-Sprites. Chef-Feedback 28.08.2026 ("Projektile sind zu schnell, wir
+ *  sehen die Assets nicht"): vorher 200ms (Konzept §2/§4 "~200ms"), jetzt so verlängert, dass ein
+ *  Geschoss ~500–600ms sichtbar unterwegs ist (das explizite Ziel aus dem Feedback — reine +60%
+ *  hätten nur 320ms ergeben und das Ziel verfehlt). Auch von der SFX-Verzögerung des
  *  Bogen-Impact-Sounds genutzt (s. Battle SFX-Block: „Sound beim Ankommen des Geschosses"). */
-const MISSILE_FLIGHT_MS = 200;
+const MISSILE_FLIGHT_MS = 560;
+/** Dauer des Einschlag-Sprites am Ziel (Familie A/B-Landung, `playImpactFx`). Chef-Feedback
+ *  28.08.2026 ("wir sehen die Assets nicht"): vorher 300ms, jetzt +30% — reine Slash-/Blut-/Pet-/
+ *  Miss-/Block-Dauern bleiben unverändert (nicht Teil des Feedbacks). */
+const IMPACT_FX_MS = 390;
 
-/** Drei überlappende Opacity-Fenster (Beginn/Höhepunkt/Ausklang) für den Zellen-Crossfade jedes
- *  768×256-Streifen-Sprites — dieselbe Kurve für alle Rollen, nur `duration` variiert je Aufruf. */
+/** Drei überlappende Opacity-Fenster (Beginn/Höhepunkt/Ausklang) für den Zellen-Crossfade eines
+ *  768×256-Drei-Felder-Streifens — dieselbe Kurve für alle Rollen, nur `duration` variiert je
+ *  Aufruf. Bleibt als Sonderfall in `buildStripKeyframes` erhalten (Anforderung "drei Felder
+ *  verhalten sich exakt wie heute", 28.08.2026). */
 const STRIP_CELL_KEYFRAMES: Keyframe[][] = [
   [{ opacity: 1, offset: 0 }, { opacity: 1, offset: 0.3 }, { opacity: 0, offset: 0.42 }, { opacity: 0, offset: 1 }],
   [
@@ -907,6 +919,36 @@ const STRIP_CELL_KEYFRAMES: Keyframe[][] = [
   ],
   [{ opacity: 0, offset: 0 }, { opacity: 0, offset: 0.6 }, { opacity: 1, offset: 0.7 }, { opacity: 1, offset: 1 }],
 ];
+
+/** Zellen-Crossfade-Keyframes für `count` gleich große Felder (N-Felder statt fix drei, Chef-
+ *  Feedback 28.08.2026 "mehr Frames pro Effekt"): `count===3` liefert exakt `STRIP_CELL_KEYFRAMES`
+ *  (bit-identisch zum bisherigen Verhalten), alle anderen Feldzahlen bekommen ein gleichmäßiges
+ *  Crossfade-Raster (Haltefenster ± ein Drittel-Segment-Überlappung pro Seite). `count<=1` zeigt
+ *  das einzelne Feld konstant (alte Ein-Feld-Geschosse, unverändert). */
+function buildStripKeyframes(count: number): Keyframe[][] {
+  if (count <= 1) return [[{ opacity: 1, offset: 0 }, { opacity: 1, offset: 1 }]];
+  if (count === 3) return STRIP_CELL_KEYFRAMES;
+  const width = 1 / count;
+  const fade = width * 0.3;
+  const frames: Keyframe[][] = [];
+  for (let i = 0; i < count; i++) {
+    const holdStart = i * width;
+    const holdEnd = (i + 1) * width;
+    const kf: Keyframe[] = [];
+    if (i === 0) {
+      kf.push({ opacity: 1, offset: 0 });
+    } else {
+      kf.push({ opacity: 0, offset: 0 }, { opacity: 0, offset: holdStart }, { opacity: 1, offset: holdStart + fade });
+    }
+    if (i === count - 1) {
+      kf.push({ opacity: 1, offset: 1 });
+    } else {
+      kf.push({ opacity: 1, offset: holdEnd - fade }, { opacity: 0, offset: holdEnd }, { opacity: 0, offset: 1 });
+    }
+    frames.push(kf);
+  }
+  return frames;
+}
 
 /** Größen-Anteil an der Figurenhöhe je Sprite-Rolle (Konzept §4: "Einschlag ≈55 %, Slash ≈70 %,
  *  Geschoss ≈28 %" — Blut/Pet/Wischer sind dort nicht beziffert, eigene UI-Ermessens-Werte). */
@@ -2299,10 +2341,70 @@ function Battle({
     player: { els: [], next: 0 },
     enemy: { els: [], next: 0 },
   });
-  const missileFxPoolRef = useRef<{ els: HTMLImageElement[]; next: number }>({ els: [], next: 0 });
+  const missileFxPoolRef = useRef<{ els: HTMLDivElement[]; next: number }>({ els: [], next: 0 });
+  // Sequenzen/Varianten/Crit (28.08.2026): zuletzt gespielte Variante je Effekt-Schlüssel
+  // (`missile_fire`, `impact_fire`, `slash_cut`, …) — verhindert dieselbe Variante zweimal
+  // hintereinander (s. `pickFxVariant`). Reine Battle-Instanz-Ref, kein Speicherstand-Bezug.
+  const lastFxVariantRef = useRef<Map<string, string>>(new Map());
+  // Bild-Maße je fx-URL, für die Feldzahl-Ableitung (N-Felder statt fix drei, s. `fieldCountFor`).
+  // Einmaliger Preload beim Battle-Mount unten; bis ein Bild geladen ist, greift dessen Fallback.
+  const fxDimsRef = useRef<Map<string, { w: number; h: number }>>(new Map());
 
-  /** Streifen-Element (3 Zellen, s. `.fx-sprite`/`.fx-sprite-cell` in combat.css) holen — gepoolt
-   *  je Seite, Deckel `SPRITE_FX_POOL_SIZE` (Round-Robin-Recycling darüber, wie `acquireFx`). */
+  useEffect(() => {
+    let cancelled = false;
+    for (const url of fxAllUrls()) {
+      if (fxDimsRef.current.has(url)) continue;
+      const img = new Image();
+      img.onload = () => {
+        if (!cancelled) fxDimsRef.current.set(url, { w: img.naturalWidth, h: img.naturalHeight });
+      };
+      img.src = url;
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /** Feldzahl eines Sprites aus der Bilddatei (Breite ÷ Feldbreite, Konzept „Sequenzen, Varianten,
+   *  Crit" 28.08.2026): quadratische Felder (Einschlag/Slash/Blut/Pet/Miss/Block/Crit-Overlay) —
+   *  Feldbreite = Bildhöhe. Geschoss-Felder sind 256×128 (2:1, `wide=true`) — Feldbreite = 2×
+   *  Bildhöhe. Ohne geladene Maße (Preload noch nicht durch) der alte Fixwert: drei Felder für
+   *  Streifen, ein Feld für Geschosse — verhält sich dadurch exakt wie heute (Anforderung 1). */
+  const fieldCountFor = (url: string, wide: boolean): number => {
+    const dims = fxDimsRef.current.get(url);
+    if (!dims || dims.h <= 0) return wide ? 1 : 3;
+    const fieldWidth = wide ? dims.h * 2 : dims.h;
+    return Math.max(1, Math.round(dims.w / fieldWidth));
+  };
+
+  /** Wählt die Sprite-URL für einen Effekt-Schlüssel (z.B. `missile_fire`, `impact_fire`,
+   *  `slash_cut`, `blood_red`, `pet_bite`, `miss_whiff`, `impact_block`) — bei `crit` zuerst
+   *  `fx_<key>_crit` (falls vorhanden), sonst zufällig aus dem Varianten-Pool (Basisdatei +
+   *  `_v1`…`_v9`), nie zweimal hintereinander dieselbe, wenn mehr als eine Variante existiert.
+   *  `null`, wenn gar keine Datei vorliegt (Aufrufer fällt wie bisher auf den alten Form-Effekt
+   *  zurück). Gilt generisch für jeden Schlüssel — Themen ohne Varianten/Crit (noch alles außer
+   *  Feuer) liefern einfach die eine Basisdatei, unverändert zum bisherigen Verhalten. */
+  const pickFxVariant = (key: string, crit: boolean): string | null => {
+    if (crit) {
+      const critUrl = fxCritVariant(key);
+      if (critUrl) return critUrl;
+    }
+    const pool = fxVariants(key);
+    if (pool.length === 0) return null;
+    if (pool.length === 1) return pool[0]!;
+    const last = lastFxVariantRef.current.get(key);
+    let pick = pool[Math.floor(Math.random() * pool.length)]!;
+    if (pick === last) {
+      const rest = pool.filter((u) => u !== last);
+      pick = rest[Math.floor(Math.random() * rest.length)]!;
+    }
+    lastFxVariantRef.current.set(key, pick);
+    return pick;
+  };
+
+  /** Streifen-Element (s. `.fx-sprite`/`.fx-sprite-cell` in combat.css) holen — gepoolt je Seite,
+   *  Deckel `SPRITE_FX_POOL_SIZE` (Round-Robin-Recycling darüber, wie `acquireFx`). Zellen-Kinder
+   *  legt `setStripCells` je Aufruf an (Feldzahl wechselt je Sprite, s. Anforderung 1). */
   const acquireSpriteFx = (side: "player" | "enemy"): HTMLDivElement | null => {
     const layer = fxLayerRef.current;
     if (!layer) return null;
@@ -2310,13 +2412,6 @@ function Battle({
     let el: HTMLDivElement;
     if (pool.els.length < SPRITE_FX_POOL_SIZE) {
       el = document.createElement("div");
-      // Fix 28.08.2026 (CEO-Probe): die Zellen brauchen die Klasse `fx-sprite-cell` (absolute Lage, Ausschnitt per
-      // background-size/-position aus combat.css) — ohne sie waren die Streifen unsichtbare Inline-Spans.
-      for (let i = 0; i < 3; i++) {
-        const cell = document.createElement("span");
-        cell.className = "fx-sprite-cell";
-        el.appendChild(cell);
-      }
       layer.appendChild(el);
       pool.els.push(el);
     } else {
@@ -2333,32 +2428,62 @@ function Battle({
     return el;
   };
 
-  /** Geschoss-Element (einzelnes `<img>`) holen — gepoolt, Deckel `MISSILE_FX_POOL_SIZE`. */
-  const acquireMissileFx = (): HTMLImageElement | null => {
+  /** Geschoss-Element holen — gepoolt, Deckel `MISSILE_FX_POOL_SIZE`. Seit 28.08.2026 ein
+   *  Zellen-Streifen wie `.fx-sprite` (statt eines einzelnen `<img>`): Geschosse liefern jetzt
+   *  ebenfalls mehrere Felder (Mira-Lieferung 5 Felder je Feuer-Variante), die über die Flugzeit
+   *  durchlaufen (s. `playMissileFx`). */
+  const acquireMissileFx = (): HTMLDivElement | null => {
     const layer = fxLayerRef.current;
     if (!layer) return null;
     const pool = missileFxPoolRef.current;
-    let el: HTMLImageElement;
+    let el: HTMLDivElement;
     if (pool.els.length < MISSILE_FX_POOL_SIZE) {
-      el = document.createElement("img");
+      el = document.createElement("div");
       el.setAttribute("aria-hidden", "true");
-      el.decoding = "async";
       layer.appendChild(el);
       pool.els.push(el);
     } else {
       el = pool.els[pool.next % pool.els.length]!;
       pool.next += 1;
       if (typeof el.getAnimations === "function") for (const a of el.getAnimations()) a.cancel();
+      for (const cell of Array.from(el.children)) {
+        if (typeof (cell as HTMLElement).getAnimations === "function") {
+          for (const a of (cell as HTMLElement).getAnimations()) a.cancel();
+        }
+      }
     }
     el.className = "fx-missile";
     return el;
   };
 
-  /** Spielt einen Drei-Zellen-Streifen als gepooltes Element auf `side` ab (Anker
+  /** Synchronisiert die `.fx-sprite-cell`-Kinder eines Streifen-Elements auf `count` (N-Felder
+   *  statt fix drei, 28.08.2026): legt fehlende Zellen an bzw. entfernt überzählige (der Pool wird
+   *  über wechselnde Feldzahlen hinweg wiederverwendet), setzt Hintergrundbild + Ausschnitt je
+   *  Zelle per Inline-Style (ersetzt die alte feste Drittel-`nth-child`-Regel aus combat.css, die
+   *  nur für genau drei Felder stimmte). */
+  const setStripCells = (el: HTMLElement, url: string, count: number): void => {
+    while (el.children.length < count) {
+      const cell = document.createElement("span");
+      cell.className = "fx-sprite-cell";
+      el.appendChild(cell);
+    }
+    while (el.children.length > count) el.removeChild(el.lastElementChild!);
+    const size = `${count * 100}% 100%`;
+    Array.from(el.children).forEach((cell, i) => {
+      const c = cell as HTMLElement;
+      c.style.backgroundImage = `url("${url}")`;
+      c.style.backgroundSize = size;
+      c.style.backgroundPosition = count > 1 ? `${(i / (count - 1)) * 100}% 0%` : "0% 0%";
+    });
+  };
+
+  /** Spielt einen N-Zellen-Streifen als gepooltes Element auf `side` ab (Anker
    *  `.arena-side-<side> .fighter-figure-art`, mittig auf ~45 % Figurenhöhe — Brust-Höhe wie die
    *  alten Einschlag-/Funken-Effekte). `mirror` spiegelt horizontal (Gegner-Angriffe laufen
    *  rechts→links, D5), `rotateDeg` ist der zufällige Slash-Dreh, `driftPx` der leichte Blut-
-   *  Fall nach unten. Rückgabe `false` = Anker fehlt (Aufrufer fällt selbst zurück). */
+   *  Fall nach unten. Feldzahl kommt aus `fieldCountFor` (quadratische Felder) — drei Felder
+   *  spielen bit-identisch zum bisherigen Verhalten (`buildStripKeyframes`). Rückgabe `false` =
+   *  Anker fehlt (Aufrufer fällt selbst zurück). */
   const playStripFx = (
     side: "player" | "enemy",
     url: string,
@@ -2376,9 +2501,8 @@ function Battle({
     el.style.height = `${size}px`;
     el.style.left = `${Math.round(box.x + box.w / 2 - size / 2)}px`;
     el.style.top = `${Math.round(box.y + box.h * yFrac - size / 2)}px`;
-    for (const cell of Array.from(el.children)) {
-      (cell as HTMLElement).style.backgroundImage = `url("${url}")`;
-    }
+    const count = fieldCountFor(url, false);
+    setStripCells(el, url, count);
     const flip = opts.mirror ? -1 : 1;
     const rot = opts.rotateDeg ?? 0;
     const drift = opts.driftPx ?? 0;
@@ -2398,16 +2522,20 @@ function Battle({
       wrapAnim.onfinish = () => el.classList.remove("active");
       wrapAnim.oncancel = () => el.classList.remove("active");
     }
+    const cellFrames = buildStripKeyframes(count);
     Array.from(el.children).forEach((cell, i) => {
       if (typeof (cell as HTMLElement).animate !== "function") return;
-      (cell as HTMLElement).animate(STRIP_CELL_KEYFRAMES[i]!, { duration, easing: "linear" });
+      (cell as HTMLElement).animate(cellFrames[i]!, { duration, easing: "linear" });
     });
     return true;
   };
 
-  /** Geschoss-Flug (Konzept §2 A + Pfeil): Hand des Angreifers (oberes Drittel) → Brust des
-   *  Ziels, ~200ms, leicht gebogen; spiegelt bei Flug von rechts (Gegner-Cast/-Schuss). Ruft
-   *  `onArrive` beim Landen — der Aufrufer spielt dort den Einschlag + retimten Sound. */
+  /** Geschoss-Flug (Konzept §2 A + Pfeil): Hand des Angreifers (oberes Drittel) → Brust des Ziels,
+   *  `MISSILE_FLIGHT_MS`, leicht gebogen; spiegelt bei Flug von rechts (Gegner-Cast/-Schuss). Die
+   *  Frame-Sequenz des Geschosses (Feldzahl aus `fieldCountFor`, `wide=true` für 256×128-Felder)
+   *  läuft über dieselbe Dauer wie der Flug, damit eine Mehr-Felder-Sequenz sichtbar „lebt"
+   *  (Anforderung 4). Ruft `onArrive` beim Landen — der Aufrufer spielt dort den Einschlag +
+   *  retimten Sound. */
   const playMissileFx = (from: "player" | "enemy", url: string, onArrive: () => void): boolean => {
     const to = from === "player" ? "enemy" : "player";
     const fromBox = fxRect(`.arena-side-${from} .fighter-figure-art`);
@@ -2417,7 +2545,7 @@ function Battle({
     if (!el) return false;
     bumpFx("sprites");
     const h = Math.round(fromBox.h * 0.28);
-    const w = h * 2; // Geschoss-Kunst ist 256×128 (Konzept §3)
+    const w = h * 2; // Geschoss-Feld ist 256×128 (Konzept §3, 2:1)
     const x1 = fromBox.x + fromBox.w * 0.55 - w / 2;
     const y1 = fromBox.y + fromBox.h * 0.32 - h / 2;
     const x2 = toBox.x + toBox.w / 2 - w / 2;
@@ -2425,7 +2553,8 @@ function Battle({
     const dx = x2 - x1;
     const dy = y2 - y1;
     const mirror = from === "enemy"; // Kunst fliegt nach rechts (Dateikonvention); Gegner-Wurf läuft rechts→links
-    el.src = url;
+    const count = fieldCountFor(url, true);
+    setStripCells(el, url, count);
     el.style.width = `${w}px`;
     el.style.height = `${h}px`;
     el.style.left = `${Math.round(x1)}px`;
@@ -2454,13 +2583,19 @@ function Battle({
       onArrive();
     };
     anim.oncancel = () => el.classList.remove("active");
+    const cellFrames = buildStripKeyframes(count);
+    Array.from(el.children).forEach((cell, i) => {
+      if (typeof (cell as HTMLElement).animate !== "function") return;
+      (cell as HTMLElement).animate(cellFrames[i]!, { duration: MISSILE_FLIGHT_MS, easing: "linear" });
+    });
     return true;
   };
 
   /** Einschlag-Sprite am Ziel (Familie A/B-Landung). `crit` skaliert 1,4× und legt zusätzlich das
-   *  Crit-Overlay darüber (Konzept "Crit: Einschlag 1,4× plus Crit-Overlay"). Rückfall: fehlt
-   *  `fx_impact_<thema>`, spielt der alte elementfarbene Flash (zielt wie bisher nur auf den
-   *  Gegner — der alte Effekt kennt keine Spieler-Seite). */
+   *  Crit-Overlay darüber (Konzept "Crit: Einschlag 1,4× plus Crit-Overlay"); wählt außerdem per
+   *  `pickFxVariant` eine Crit-Sonderdatei `fx_impact_<thema>_crit`, falls vorhanden (28.08.2026).
+   *  Rückfall: fehlt jede Datei zu `impact_<thema>`, spielt der alte elementfarbene Flash (zielt
+   *  wie bisher nur auf den Gegner — der alte Effekt kennt keine Spieler-Seite). */
   const playImpactFx = (
     side: "player" | "enemy",
     theme: string,
@@ -2468,22 +2603,23 @@ function Battle({
     critFamily: "magic" | "weapon",
     fallbackStatus: StatusType | null,
   ): void => {
-    const url = fxSprite(`fx_impact_${theme}`);
+    const url = pickFxVariant(`impact_${theme}`, crit);
     if (!url) {
       if (side === "enemy") spawnImpactFlash(fallbackStatus);
       return;
     }
-    playStripFx(side, url, SPRITE_SIZE_RATIO.impact, { scale: crit ? 1.4 : 1, durationMs: 300 });
+    playStripFx(side, url, SPRITE_SIZE_RATIO.impact, { scale: crit ? 1.4 : 1, durationMs: IMPACT_FX_MS });
     if (crit) {
       const critUrl = fxSprite(`fx_crit_${critFamily}`);
-      if (critUrl) playStripFx(side, critUrl, SPRITE_SIZE_RATIO.impact, { scale: 1.3, durationMs: 300 });
+      if (critUrl) playStripFx(side, critUrl, SPRITE_SIZE_RATIO.impact, { scale: 1.3, durationMs: IMPACT_FX_MS });
     }
   };
 
   /** Waffen-Slash über der Trefferzone (Familie B), leicht zufällig rotiert (±12°), gespiegelt
-   *  bei Gegner-Angriffen. Rückfall: fehlt `fx_slash_<familie>`, die alten Einschlags-Funken. */
+   *  bei Gegner-Angriffen. Varianten-Pool + Crit-Sonderdatei über `pickFxVariant` (28.08.2026).
+   *  Rückfall: fehlt jede Datei zu `slash_<familie>`, die alten Einschlags-Funken. */
   const playSlashFx = (side: "player" | "enemy", family: SlashFamily, crit: boolean, mirror: boolean): void => {
-    const url = fxSprite(`fx_slash_${family}`);
+    const url = pickFxVariant(`slash_${family}`, crit);
     if (!url) {
       spawnSparks(side, crit ? 10 : 6, false);
       return;
@@ -2497,19 +2633,22 @@ function Battle({
   };
 
   /** Blut-/Ichor-/Knochenstaub-Spritzer am Einschlagpunkt, driftet leicht nach unten (Familie C).
-   *  Kein Rückfall nötig — die alten Funken decken den „harten Treffer" bereits über spawnSparks/
-   *  playSlashFx ab, ein fehlendes Blut-Sprite lässt den Treffer einfach ohne Spritzer. */
-  const playBloodFx = (side: "player" | "enemy", variant: BloodVariant): void => {
-    const url = fxSprite(`fx_blood_${variant}`);
+   *  Varianten-Pool + Crit-Sonderdatei über `pickFxVariant` (28.08.2026, generisch — bislang hat
+   *  keine Blut-Datei Varianten, der Pool liefert dann einfach die eine Basisdatei). Kein Rückfall
+   *  nötig — die alten Funken decken den „harten Treffer" bereits über spawnSparks/playSlashFx ab,
+   *  ein fehlendes Blut-Sprite lässt den Treffer einfach ohne Spritzer. */
+  const playBloodFx = (side: "player" | "enemy", variant: BloodVariant, crit: boolean): void => {
+    const url = pickFxVariant(`blood_${variant}`, crit);
     if (!url) return;
     playStripFx(side, url, SPRITE_SIZE_RATIO.blood, { durationMs: 320, yFrac: 0.5, driftPx: 14 });
   };
 
   /** Begleiter-Effekt-Sprite am Ziel (Familie D) — ergänzt den bestehenden Portrait-Puls
    *  (`pet-ability-glow`), ersetzt ihn NICHT (zwei unterschiedliche Orte: Portrait vs. Ziel-
-   *  Figur, kein Konflikt mit der Rückfall-Regel). */
+   *  Figur, kein Konflikt mit der Rückfall-Regel). Varianten-Pool über `pickFxVariant`
+   *  (28.08.2026, generisch); Begleiter-Treffer kennen kein Crit, darum `crit=false`. */
   const playPetFx = (image: PetFxImage): void => {
-    const url = fxSprite(`fx_pet_${image}`);
+    const url = pickFxVariant(`pet_${image}`, false);
     if (!url) return;
     playStripFx(petFxTargetSide(image), url, SPRITE_SIZE_RATIO.pet, { durationMs: 300 });
   };
@@ -2517,14 +2656,14 @@ function Battle({
   /** Fehlschlag-Wischer (Familie C) — heute ohne Alt-Entsprechung (miss hatte bislang keinen FX),
    *  darum kein Fallback-Zweig nötig. */
   const playMissFx = (side: "player" | "enemy"): void => {
-    const url = fxSprite("fx_miss_whiff");
+    const url = pickFxVariant("miss_whiff", false);
     if (!url) return;
     playStripFx(side, url, SPRITE_SIZE_RATIO.miss, { durationMs: 260 });
   };
 
   /** Block-Funken auf dem Schild-Anker (Familie C) — ebenfalls ohne Alt-Entsprechung. */
   const playBlockFx = (side: "player" | "enemy"): void => {
-    const url = fxSprite("fx_impact_block");
+    const url = pickFxVariant("impact_block", false);
     if (!url) return;
     playStripFx(side, url, SPRITE_SIZE_RATIO.impact, { durationMs: 260 });
   };
@@ -2575,9 +2714,9 @@ function Battle({
             const theme = magicThemeFor(mainhandWeapon);
             const doImpact = (): void => {
               playImpactFx(target, theme, crit, "magic", weaponStatus);
-              if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+              if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
             };
-            const missileUrl = allowMissileAndBlood ? fxSprite(`fx_missile_${theme}`) : null;
+            const missileUrl = allowMissileAndBlood ? pickFxVariant(`missile_${theme}`, crit) : null;
             if (missileUrl) {
               if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
             } else if (allowMissileAndBlood) {
@@ -2588,9 +2727,9 @@ function Battle({
           } else if (attacker === "player" && stats.style === "ranged") {
             const doImpact = (): void => {
               playImpactFx(target, "arrow", crit, "weapon", null);
-              if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+              if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
             };
-            const missileUrl = allowMissileAndBlood ? fxSprite("fx_missile_arrow") : null;
+            const missileUrl = allowMissileAndBlood ? pickFxVariant("missile_arrow", crit) : null;
             if (missileUrl) {
               if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
             } else if (allowMissileAndBlood) {
@@ -2601,13 +2740,13 @@ function Battle({
           } else if (attacker === "player") {
             // Nahkampf: Slash direkt am Ziel, kein Geschoss.
             playSlashFx(target, slashFamilyFor(mainhandWeapon?.weaponType), crit, false);
-            if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+            if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
           } else {
             // Gegner-Angriff, gespiegelt (Chef-D5) — Monster tragen keine Waffendaten, darum der
             // feste Standard-Slash "cut" (s. slashFamilyFor-JSDoc); ein monster-eigenes
             // Magie-Thema ist mangels Datenfeld noch offen (Bericht an den Chef).
             playSlashFx(target, "cut", crit, true);
-            if (allowMissileAndBlood) playBloodFx(target, bloodVariant);
+            if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
           }
         } else {
           // Sicherheitsnetz: sollte laut spriteFxLevel-JSDoc mit fxLevel "off" zusammenfallen.

@@ -19,3 +19,6 @@ export {
   tickHuntTraps,
 } from "@hearthforge/engine";
 export type { HuntSetReason } from "@hearthforge/engine";
+// Köder-Stufen (28.08.2026): welcher Köder für ein Gebiet gilt; huntBaitCount(state, baitId) zählt je Sorte.
+export { huntZoneBaitId } from "@hearthforge/engine";
+export { HUNT_BAIT_TIERS, huntBaitForZoneLevel } from "@hearthforge/shared";

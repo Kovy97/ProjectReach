@@ -682,6 +682,10 @@ export const es: Record<string, string> = {
     "itip.masterPerk.fallback": "Otorga una bonificación pasiva adicional.",
     "itip.delta.slotFree": "Ranura libre disponible: no hace falta cambiar nada",
     "itip.delta.twoHandReplacesOffhand": "También sustituye tu mano secundaria (escudo)",
+    // Foco arcano (decisión del jefe 28.08.2026): las armas mágicas crecen con la Inteligencia.
+    "itip.spellFocus": "Foco arcano",
+    "itip.spellFocus.perInt": "+{pct} % de daño por punto de INT",
+    "itip.spellFocus.withInt": "Con tu INT ({int})",
 
     // Modal de wiki de objeto (Tarea #308)
     "itemwiki.kicker": "Wiki del objeto",
@@ -1396,8 +1400,22 @@ export const es: Record<string, string> = {
     "hunting.picker.family.demon": "Demonio",
     "hunting.picker.family.dragonkin": "Dracónido",
     "hunting.picker.footerHint": "Cinco tiradas de botín por captura — las capturas no cuentan como victorias.",
-    "hunting.picker.confirm": "Poner trampa (1 cebo)",
+    "hunting.picker.confirm": "Poner trampa (1 {bait})",
     "hunting.picker.cancel": "Cancelar",
+    "hunting.head.nextSlotLabel": "Próxima trampa",
+    "hunting.head.nextSlotValue": "Desde nivel {n}",
+    "hunting.head.nextSlotAll": "Todas desbloqueadas",
+    "hunting.head.catchesLabel": "Capturas",
+    "hunting.badge.running": "En marcha",
+    "hunting.badge.waiting": "Captura lista",
+    "hunting.badge.empty": "Vacía",
+    "hunting.card.pickZone": "Elegir zona",
+    "hunting.noCatchYet": "Aún sin capturas",
+    "hunting.book.summaryZones": "{n} zonas abiertas",
+    "hunting.book.summarySpecies": "{n}/{total} especies cazadas",
+    "hunting.zone.bait": "Cebo: {bait} · {n} en reserva",
+    "hunting.zone.baitValue": "{bait} · {n} en reserva",
+    "hunting.reason.no_bait_named": "Sin {bait}, Pesca nivel {n}: {action}",
 
     "offline.hunt.title": "Caza",
 

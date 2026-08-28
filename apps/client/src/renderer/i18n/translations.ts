@@ -807,6 +807,11 @@ const en = {
     // (nichts zu verdrängen) und die 2H-vs-Schild-Fußnote.
     "itip.delta.slotFree": "Free slot available — no need to swap",
     "itip.delta.twoHandReplacesOffhand": "Also replaces your off-hand (shield)",
+    // Zauberfokus (Chef-GO 28.08.2026): magic weapons grow with INT. Row 1 = the item's per-INT
+    // rate, row 2 (only with a loaded character) = the weapon range at the player's current INT.
+    "itip.spellFocus": "Spell Focus",
+    "itip.spellFocus.perInt": "+{pct} % damage per INT",
+    "itip.spellFocus.withInt": "With your INT ({int})",
 
     // Item-Wiki-Modal (Task #308, Chef-Feature): opened via the "?" button in the item tooltip
     // frame. Reuses itip.source/itip.usedFor/itip.sourceShop/char.itemValue/common.close for the
@@ -1681,8 +1686,22 @@ const en = {
     "hunting.picker.family.demon": "Demon",
     "hunting.picker.family.dragonkin": "Dragon",
     "hunting.picker.footerHint": "Five loot rolls per catch — catches don't count as kills.",
-    "hunting.picker.confirm": "Set Trap (1 Bait)",
+    "hunting.picker.confirm": "Set Trap (1 {bait})",
     "hunting.picker.cancel": "Cancel",
+    "hunting.head.nextSlotLabel": "Next Trap",
+    "hunting.head.nextSlotValue": "From Lv {n}",
+    "hunting.head.nextSlotAll": "All unlocked",
+    "hunting.head.catchesLabel": "Catches",
+    "hunting.badge.running": "Running",
+    "hunting.badge.waiting": "Catch waiting",
+    "hunting.badge.empty": "Empty",
+    "hunting.card.pickZone": "Choose a ground",
+    "hunting.noCatchYet": "No catch yet",
+    "hunting.book.summaryZones": "{n} grounds open",
+    "hunting.book.summarySpecies": "{n}/{total} species caught",
+    "hunting.zone.bait": "Bait: {bait} · {n} in stock",
+    "hunting.zone.baitValue": "{bait} · {n} in stock",
+    "hunting.reason.no_bait_named": "No {bait}, Fishing Lv {n}: {action}",
 
     "offline.hunt.title": "Hunting",
 
@@ -3235,6 +3254,11 @@ const de: Record<keyof typeof en, string> = {
     // (nichts zu verdrängen) und die 2H-vs-Schild-Fußnote.
     "itip.delta.slotFree": "Freier Slot verfügbar – kein Tausch nötig",
     "itip.delta.twoHandReplacesOffhand": "Ersetzt auch deine Schildhand",
+    // Zauberfokus (Chef-GO 28.08.2026): Magiewaffen wachsen mit INT. Zeile 1 = Satz je INT des
+    // Items, Zeile 2 (nur mit geladenem Charakter) = die Waffenspanne beim aktuellen INT des Spielers.
+    "itip.spellFocus": "Zauberfokus",
+    "itip.spellFocus.perInt": "+{pct} % Schaden je INT",
+    "itip.spellFocus.withInt": "Mit deinem INT ({int})",
 
     // Item-Wiki-Modal (Task #308, Chef-Feature): über den "?"-Button im Tooltip-Rahmen geöffnet.
     // Nutzt itip.source/itip.usedFor/itip.sourceShop/char.itemValue/common.close mit — hier nur
@@ -4044,8 +4068,22 @@ const de: Record<keyof typeof en, string> = {
     "hunting.picker.family.demon": "Dämon",
     "hunting.picker.family.dragonkin": "Drache",
     "hunting.picker.footerHint": "Fünf Beute-Würfe je Fang, Fänge zählen nicht als Kills",
-    "hunting.picker.confirm": "Falle stellen (1 Köder)",
+    "hunting.picker.confirm": "Falle stellen (1 {bait})",
     "hunting.picker.cancel": "Abbrechen",
+    "hunting.head.nextSlotLabel": "Nächster Platz",
+    "hunting.head.nextSlotValue": "Ab Stufe {n}",
+    "hunting.head.nextSlotAll": "Alle offen",
+    "hunting.head.catchesLabel": "Fänge",
+    "hunting.badge.running": "Läuft",
+    "hunting.badge.waiting": "Fang wartet",
+    "hunting.badge.empty": "Leer",
+    "hunting.card.pickZone": "Gebiet wählen",
+    "hunting.noCatchYet": "Noch kein Fang",
+    "hunting.book.summaryZones": "{n} Gebiete offen",
+    "hunting.book.summarySpecies": "{n}/{total} Arten gefangen",
+    "hunting.zone.bait": "Köder: {bait} · {n} im Vorrat",
+    "hunting.zone.baitValue": "{bait} · {n} im Vorrat",
+    "hunting.reason.no_bait_named": "Kein {bait}, Angeln ab Stufe {n}: {action}",
 
     "offline.hunt.title": "Jagd",
 

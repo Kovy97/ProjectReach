@@ -1,5 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
-   HUNTING PAGE (Jagen, 1.2.0 „Fasern und Fallen" — Redesign 28.08.2026)
+   HUNTING PAGE (Jagen, 1.2.0 „Fasern und Fallen" — Redesign 28.08.2026, Runde 2:
+   Chef-Kritik „sieht immer noch komisch aus, Modal immer noch zu klein")
    Direkt von HuntingPage.tsx importiert (Kollisionsschutz-Muster wie bestiary.css/newhaven.css —
    NICHT in index.css, andere Agenten arbeiten parallel an geteilten Stylesheets).
    Design-System dieses Redesigns: Stahl-9-Slice-Panel (item-wiki.css `.iwk-panel`-Muster:
@@ -7,7 +8,8 @@
    alten Holz-9-Slice-Karten; `.btn-iron`/`.btn-iron--sm`/`.is-active` (design-system.css) als
    Knöpfe, `.shop-citadel-btn` als Sekundär-Knopf; `.bar`/`.bar-fill`/`.bar.tall` (skills.css) für
    alle Fortschrittsbalken; `.category-header`/`.category-caret`/`.category-name`/`.category-count`
-   (skills.css) fürs Jagdbuch-Akkordeon.
+   (skills.css) fürs Jagdbuch-Akkordeon; volle Zonen-Kulisse als Karten-Hintergrund (`.has-bg` +
+   `::before`-Verlauf) im Muster `.pet-card.has-bg`/`.monster-card.has-bg` (pages.css/combat.css).
    ═══════════════════════════════════════════════════════════ */
 
 .hunt-page {
@@ -16,14 +18,17 @@
   gap: 16px;
 }
 
-/* ─── Kopfzeile (Layout #1) ──────────────────────────────────────────────── */
+/* ─── Kopfzeile (Layout #1, Runde 2 — Chef: „zwei Drittel sind leer") ───────────────────────────
+   Kompakt: links Skill-Name+Stufe+XP-Leiste (unverändert), rechts eine Reihe kleiner Stahl-
+   Kacheln (Köder+Grabknopf, Fallen x/y, nächster Fallenplatz, Fänge gesamt) statt der vorherigen
+   Leerfläche. */
 .hunt-head {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 20px;
+  padding: 10px 20px;
   border: 8px solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
@@ -38,7 +43,7 @@
   align-items: center;
   gap: 14px;
   min-width: 0;
-  flex: 1 1 320px;
+  flex: 1 1 300px;
 }
 
 .hunt-head-icon {
@@ -60,6 +65,7 @@
   gap: 4px;
   min-width: 0;
   flex: 1 1 auto;
+  max-width: 380px;
 }
 
 .hunt-head-title-row {
@@ -83,48 +89,97 @@
 }
 
 .hunt-head-bar {
-  max-width: 420px;
+  max-width: 100%;
 }
 
 .hunt-head-xp {
   font-size: 12px;
 }
 
-.hunt-head-bait {
+/* Rechte Kachel-Reihe: Köder(+Knopf) · Fallen x/y · Nächster Platz · Fänge gesamt. */
+.hunt-head-stats {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: stretch;
+  gap: 10px;
   flex: 0 0 auto;
+  flex-wrap: wrap;
 }
 
-.hunt-bait-count {
+.hunt-head-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-width: 96px;
+  padding: 5px 12px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 200px 200px;
+}
+
+.hunt-head-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.hunt-head-stat-value {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 600;
+  gap: 5px;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--gold);
   white-space: nowrap;
 }
 
-.hunt-bait-count img {
-  width: 22px;
-  height: 22px;
+.hunt-head-stat-value img {
+  width: 18px;
+  height: 18px;
   object-fit: contain;
 }
 
-/* ─── Fallen-Sektionstitel (nicht klappbar, nur Orientierung — Pendant zur Jagdbuch-Kopfzeile) ── */
-.hunt-section-title {
+/* Wert + „Köder graben"-Knopf in EINER Zeile (statt darunter) — hält die Kachel auf zwei Zeilen
+   Innenhöhe wie ihre drei Geschwister, sonst zieht sie die ganze Kopfzeile unnötig hoch. */
+.hunt-head-bait-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 18px;
-  background:
-    linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)),
-    url("../assets/bg_tileable_leather.webp") repeat;
-  background-size: auto, 320px 320px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* ─── Fallen-Raster (Layout #2): 3×2, darunter 2×3 ──────────────────────── */
+/* Köder-Stufen (28.08.2026): mehrere Sorten können nebeneinander stehen (je eine gestellte Falle
+   mit anderer Zonen-Stufe). */
+.hunt-head-baits {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.hunt-head-bait-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hunt-head-bait-entry img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+@media (max-width: 1100px) {
+  .hunt-head-stats {
+    flex-wrap: wrap;
+  }
+}
+
+/* ─── Fallen-Raster (Layout #2, Runde 2): 3×2 bei voller Breite, Ziel: 6 Karten ohne Seiten-
+   Scroll bei 1920×1080 (Chef-Vorgabe, Kartenhöhe ~300px). ─────────────────────────────────── */
 .hunt-traps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -143,8 +198,15 @@
   }
 }
 
-/* ─── Fallen-Karte — Stahl-9-Slice-Panel ────────────────────────────────── */
+/* ─── Fallen-Karte — jetzt eine vollflächige Szene statt Karte-mit-Leerraum (Chef-Kritik Runde 2:
+   „die Falle schwebt in schwarzem Nichts"): die Zonen-Kulisse (`.has-bg`, Muster `.pet-card.has-bg`/
+   `.monster-card.has-bg`) füllt die GESAMTE Karte als Hintergrund, ein `::before`-Verlauf dunkelt
+   nach unten ab (Textzone unten bleibt lesbar), Fallen-Illustration + Text sitzen per `> *` auf
+   z-index 1 darüber. Ohne Gebiet (kein Bild) bleibt die Basalt-Textur als Untergrund. */
 .hunt-trap-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
   border: 8px solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
@@ -156,40 +218,124 @@
   flex-direction: column;
 }
 
+.hunt-trap-card.has-bg {
+  background-size: cover;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-color: #0c0a08;
+}
+
+.hunt-trap-card.has-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 6, 4, 0.22) 0%,
+    rgba(8, 6, 4, 0.28) 32%,
+    rgba(8, 6, 4, 0.60) 56%,
+    rgba(8, 6, 4, 0.90) 78%,
+    rgba(8, 6, 4, 0.97) 100%
+  );
+  pointer-events: none;
+}
+
+.hunt-trap-card.has-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
 .hunt-trap-card.locked {
-  filter: brightness(0.62) saturate(0.7);
+  filter: brightness(0.6) saturate(0.65);
+}
+
+/* Kein Gebiet gesetzt (mit ODER ohne Fang-Historie): leicht gedämpft + anklickbar (öffnet das
+   Gebiet-Modal), statt nur über den Fußzeilen-Knopf erreichbar zu sein. */
+.hunt-trap-card.needs-zone {
+  filter: brightness(0.86) saturate(0.85);
+}
+.hunt-trap-card.needs-zone.clickable {
+  cursor: pointer;
+}
+.hunt-trap-card.needs-zone.clickable:hover,
+.hunt-trap-card.needs-zone.clickable:focus-visible {
+  filter: brightness(1) saturate(0.95);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.42), 0 0 14px rgba(216, 192, 106, 0.2);
+  outline: none;
 }
 
 .hunt-trap-card.active {
   box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.42), 0 0 18px rgba(216, 192, 106, 0.24);
 }
 
-.hunt-trap-header {
+/* Oberes Cinzel-Band: „Falle N · Gebietsname" links, Status-Badge (+ Köder-Chip) rechts. */
+.hunt-trap-topband {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 4px 4px 10px;
-  border-bottom: 1px solid var(--border);
+  gap: 8px;
+  padding: 6px 10px;
 }
 
-.hunt-trap-label {
+.hunt-trap-topband-name {
   font-family: var(--font-head);
-  font-size: 16px;
+  font-size: 15px;
+  letter-spacing: 0.4px;
   color: var(--gold);
-  letter-spacing: 0.8px;
   text-transform: uppercase;
+  text-shadow: 0 1px 3px #000;
+  overflow-wrap: break-word;
 }
 
-.hunt-trap-lv-badge {
-  font-size: 13px;
-  padding: 2px 7px;
+.hunt-trap-topband-right {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.hunt-trap-badge {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 3px 8px;
   border-radius: 3px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(154, 128, 96, 0.30);
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+  text-shadow: 0 1px 2px #000;
+}
+
+.hunt-trap-badge--running { color: #a8d9a8; border-color: rgba(111, 200, 111, 0.45); }
+.hunt-trap-badge--waiting { color: var(--gold); border-color: rgba(216, 192, 106, 0.5); }
+.hunt-trap-badge--empty   { color: var(--muted); }
+.hunt-trap-badge--locked  { color: var(--muted); }
+
+/* Köder-Sorte der Falle mit Vorratszahl (Köder-Stufen 28.08.2026, Chef-Nachtrag) — rot getönt,
+   sobald die Sorte aufgebraucht ist (Auto-Erneuern hört dann auf). */
+.hunt-trap-bait-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-shadow: 0 1px 2px #000;
   white-space: nowrap;
 }
+.hunt-trap-bait-chip.out {
+  color: #e8a08a;
+}
+.hunt-trap-bait-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
 
-/* Gesperrter Platz: abgedunkelt (via .locked oben), Schloss + Stufen-Hinweis, sonst nichts. */
+/* Gesperrter Platz: abgedunkelt (via .locked oben), Schloss + Stufen-Hinweis mittig. */
 .hunt-trap-state-center {
   flex: 1;
   display: flex;
@@ -198,7 +344,6 @@
   justify-content: center;
   gap: 10px;
   text-align: center;
-  min-height: 180px;
   padding: 12px 14px;
 }
 
@@ -214,77 +359,49 @@
   line-height: 1.4;
 }
 
-.hunt-trap-body {
+/* Fallen-Illustration — visuelles Zentrum der Karte, füllt den Raum zwischen Band und Textzone.
+   Bewusst gedeckelt (nicht frei wachsend): sechs Karten müssen bei 1920×1080 ohne Seiten-Scroll
+   passen (Chef-Vorgabe) — ein größeres Bild würde die Karte über ihr Zeilenbudget hinaustreiben. */
+.hunt-trap-art {
   flex: 1;
+  min-height: 46px;
+  max-height: 124px; /* CEO 28.08.: Falle ist das Zentrum der Szene, nicht ein Icon in der Kulisse */
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-top: 10px;
-}
-
-/* Fallen-Illustration — das visuelle Zentrum der Karte (~45 % der Kartenhöhe, mittig). */
-.hunt-trap-art {
-  display: flex;
   align-items: center;
   justify-content: center;
-  height: 168px;
-  font-size: 64px;
+  gap: 3px;
+  font-size: 44px;
+  padding: 0 14px;
 }
 
 .hunt-trap-art img {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 76%;
+  max-height: 110px;
   object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.65));
 }
 
-/* Zonen-Band: 100 % Breite × 56 px, Kulisse als Kachelhintergrund + Name im Cinzel-Band. */
-.hunt-trap-zoneband {
-  position: relative;
-  height: 56px;
+.hunt-trap-art-hint {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  text-shadow: 0 1px 3px #000;
+}
+
+/* Untere Textzone — sitzt in der dunkelsten Zone des Verlaufs (s. .has-bg::before), Timer + letzter
+   Fang + Fußzeile. */
+.hunt-trap-lower {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-size: cover;
-  background-position: center;
-  background-color: rgba(0, 0, 0, 0.35);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 12px 8px;
 }
 
-.hunt-trap-zoneband.has-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(10, 8, 6, 0.15) 0%, rgba(10, 8, 6, 0.55) 60%, rgba(10, 8, 6, 0.85) 100%);
-}
-
-.hunt-trap-zoneband-name {
-  position: relative;
-  z-index: 1;
-  font-family: var(--font-head);
-  font-size: 15px;
-  letter-spacing: 0.3px;
-  color: #fff;
-  text-shadow: 0 1px 4px #000;
-  padding: 0 10px;
-  text-align: center;
-}
-
-.hunt-trap-zoneband:not(.has-bg) .hunt-trap-zoneband-name {
-  color: var(--muted);
-  text-shadow: none;
-}
-
-/* Restzeit-Balken + Fangchance, eine Zeile. */
 .hunt-trap-progress-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 20px;
-}
-
-.hunt-trap-progress-row--empty {
-  min-height: 4px;
 }
 
 .hunt-trap-progress-wrap {
@@ -298,6 +415,7 @@
 .hunt-trap-remaining {
   font-size: 12px;
   text-align: right;
+  text-shadow: 0 1px 2px #000;
 }
 
 .hunt-trap-chance {
@@ -306,45 +424,50 @@
   font-weight: 600;
   color: var(--accent-2);
   white-space: nowrap;
+  text-shadow: 0 1px 2px #000;
 }
 
-/* ─── Letzter Fang ───────────────────────────────────────────── */
+/* ─── Letzter Fang — jetzt auf jeder Karte, inkl. „Noch kein Fang"-Platzhalter. ────────────────── */
 .trap-lastcatch {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-top: 6px;
-  border-top: 1px dashed var(--border);
+  gap: 2px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.trap-lastcatch--empty,
 .trap-lastcatch--missed {
-  font-size: 13px;
-  border-top: 1px dashed var(--border);
-  padding-top: 6px;
+  font-size: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 4px;
+  text-shadow: 0 1px 2px #000;
 }
 
 .trap-lastcatch-label {
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px #000;
 }
 
 .trap-lastcatch-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .trap-lastcatch-monster {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
+  gap: 5px;
+  font-size: 13px;
+  text-shadow: 0 1px 2px #000;
 }
 
 .trap-lastcatch-img {
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
 
@@ -352,11 +475,41 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+}
+
+/* Beute-Icons in dieser Zeile kompakt halten (sonst zieht `.item-chip-img`s generische `1.6em`-
+   Formel — components.css — die Karte über ihr Zeilenbudget bei sechs Karten/1920×1080). */
+.trap-lastcatch-loot .item-chip-img,
+.trap-lastcatch-loot .item-chip-emoji {
+  width: 20px;
+  height: 20px;
+  font-size: 15px;
+}
+
+.trap-lastcatch-chip {
+  position: relative;
+  display: inline-flex;
+}
+
+.trap-lastcatch-chip-qty {
+  position: absolute;
+  bottom: -4px;
+  right: -5px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 13px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  pointer-events: none;
 }
 
 .trap-lastcatch-more {
   font-size: 12px;
+  text-shadow: 0 1px 2px #000;
 }
 
 .trap-lastcatch-gold {
@@ -365,6 +518,7 @@
   gap: 3px;
   font-size: 13px;
   color: var(--gold);
+  text-shadow: 0 1px 2px #000;
 }
 
 .trap-lastcatch-gold img {
@@ -376,11 +530,18 @@
 /* ─── Fußzeile: Falle stellen/Leeren links, Auto-Schalter-Chip rechts ───── */
 .hunt-trap-footer {
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+/* Etwas flacher als der `.btn-iron--sm`-Standard (38px) — sechs Karten müssen bei 1920×1080 ohne
+   Seiten-Scroll passen (Chef-Vorgabe), jeder Pixel Fußzeile zählt. Bleibt klar anklickbar. */
+.hunt-trap-footer .btn-iron--sm {
+  min-height: 32px;
+  padding: 3px 10px;
 }
 
 .hunt-trap-auto {
@@ -388,24 +549,23 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   GEBIET-MODAL (Layout #3, Redesign Chef-Auftrag 28.08.2026) — großes zweispaltiges Fenster:
-   links scrollbare Zonen-Liste (~36 %, nur Auswahl), rechts Zonen-Detail (~64 %: Kulissen-Banner,
-   vier Kennzahl-Kacheln, „Fangbar"-Tabelle mit Beute-Chips, aufklappbares „Nicht fangbar"),
-   Fußzeile mit Hinweis + `.btn-iron`-Bestätigung. Stahlrahmen/Basalt wie `.iwk-panel`
-   (item-wiki.css) — dasselbe Muster wie das alte kleine Modal, nur größer und zweispaltig.
-   `hzp-*`-Namespace („Hunt Zone Picker"), ersetzt die vorige `hunt-zone-modal`-Familie komplett
-   (keine anderen Referenzen mehr im Code). ═══════════════════════════════════════════════════ */
+   GEBIET-MODAL (Layout #3, Runde 2 — Chef-Kritik „nutzt den Bildschirm nicht"): ~92vw × 90vh
+   (statt vormals hart 1100×720), zweispaltiges Fenster: links scrollbare Zonen-Liste (~36 %, nur
+   Auswahl), rechts Zonen-Detail (~64 %: Kulissen-Banner, vier Kennzahl-Kacheln, „Fangbar"-Karten-
+   Raster mit Beute-Chips inkl. Chance-%, aufklappbares „Nicht fangbar"-Raster), Fußzeile mit
+   Hinweis + `.btn-iron`-Bestätigung. Stahlrahmen/Basalt wie `.iwk-panel` (item-wiki.css).
+   `hzp-*`-Namespace („Hunt Zone Picker"). ═══════════════════════════════════════════════════ */
 
 .hzp-modal {
   position: relative;
   isolation: isolate;
-  width: min(1100px, 94vw);
-  height: min(720px, 92vh);
-  max-width: 94vw;
-  max-height: 92vh;
+  width: min(1800px, 92vw);
+  height: min(1000px, 90vh);
+  max-width: 96vw;
+  max-height: 96vh;
   display: flex;
   flex-direction: column;
-  padding: 16px 20px 18px;
+  padding: 18px 24px 20px;
   border: 8px solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
@@ -415,6 +575,16 @@
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.78);
   color: #e6d9b8;
   font-family: "Cinzel", "Georgia", serif;
+}
+
+/* Kleine/kurze Fenster (u.a. 1366×768, Chef-Vorgabe „volle Fläche mit Rand 16px"): die feste
+   vw/vh-Formel oben zielt auf großzügige Auflösungen — hier übernimmt die Fensterfläche minus
+   Rand, damit das Modal auch bei 768px Höhe spürbar größer als vorher bleibt. */
+@media (max-width: 1650px), (max-height: 900px) {
+  .hzp-modal {
+    width: calc(100vw - 32px);
+    height: calc(100vh - 32px);
+  }
 }
 
 .hzp-head {
@@ -482,7 +652,7 @@
   align-items: flex-start;
   justify-content: center;
   gap: 3px;
-  min-height: 92px;
+  min-height: 100px;
   padding: 10px 14px;
   border: 1px solid rgba(190, 160, 100, 0.35);
   background-color: rgba(0, 0, 0, 0.4);
@@ -553,7 +723,7 @@
   position: relative;
   isolation: isolate;
   flex: 0 0 auto;
-  height: 160px;
+  height: 200px;
   display: flex;
   align-items: flex-end;
   background-size: cover;
@@ -574,14 +744,17 @@
   width: 100%;
   padding: 10px 16px;
   font-family: var(--font-head);
-  font-size: 20px;
+  font-size: 22px;
   letter-spacing: 0.4px;
   color: var(--gold);
   text-transform: uppercase;
   text-shadow: 0 1px 4px #000;
 }
 
-/* Vier Kennzahl-Kacheln: Jagen-Stufe · Fallenzeit · Fangchance mit deiner Stufe · Köder. */
+/* Vier Kennzahl-Kacheln in EINER Zeile (Chef-Vorgabe): Jagen-Stufe · Fallenzeit · Fangchance mit
+   deiner Stufe · Köder (Sorte + Vorrat). Bleibt bei allen unterstützten Fenstergrößen 4-spaltig —
+   die Spalten scrollen ohnehin intern, ein Umbruch auf 2 Spalten war der alte Notbehelf gegen das
+   vormals hart 1100px breite Modal. */
 .hzp-stats {
   flex: 0 0 auto;
   display: grid;
@@ -614,14 +787,23 @@
   color: var(--gold);
 }
 
-/* Bindend bei 1366×768 (Chef-Vorgabe): Banner schrumpft, Kacheln werden zweizeilig — alles bleibt
-   ohne Überlauf, die Spalten scrollen ohnehin intern. */
-@media (max-height: 820px) {
+.hzp-stat-value--bait {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.hzp-stat-value--bait img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+@media (max-height: 900px) {
   .hzp-banner {
-    height: 120px;
+    height: 130px;
   }
-  .hzp-stats {
-    grid-template-columns: repeat(2, 1fr);
+  .hzp-stat {
+    padding: 6px 10px;
   }
 }
 
@@ -680,78 +862,174 @@
   padding: 2px 2px 6px;
 }
 
-.hzp-mon-list {
+/* ─── „Fangbar"/„Nicht fangbar": Karten-Raster statt schmaler Zeilen (Chef-Kritik Runde 2: „nicht
+   als schmale Tabelle") — Portrait/Monster-Art groß, Name+Stufe+Status, Beute-Chips mit Chance-%. */
+.hzp-mon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.hzp-mon-card {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.32);
 }
 
-.hzp-mon-row {
+.hzp-mon-card.is-defeated {
+  border-color: rgba(111, 200, 111, 0.32);
+}
+
+.hzp-mon-card--nt {
+  opacity: 0.72;
+  filter: grayscale(0.5);
+}
+
+.hzp-mon-card-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
-  padding: 7px 2px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-.hzp-mon-row:last-child {
-  border-bottom: none;
 }
 
-.hzp-mon-img {
-  width: 34px;
-  height: 34px;
+.hzp-mon-card-img {
   flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
 }
-.hzp-mon-img img {
+.hzp-mon-card-img img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
 
-.hzp-mon-info {
+.hzp-mon-card-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
   flex: 1;
 }
 
-.hzp-mon-name-row {
+.hzp-mon-card-name-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  font-size: 14px;
 }
 
-.hzp-mon-name {
+.hzp-mon-card-name {
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text);
 }
-
-.hzp-mon-row--nt .hzp-mon-name {
+.hzp-mon-card--nt .hzp-mon-card-name {
   color: var(--muted);
+  font-weight: 600;
 }
 
-.hzp-mon-lvl {
+.hzp-mon-card-lvl {
   font-size: 12px;
 }
 
-.hzp-mon-status {
+.hzp-mon-card-status {
   font-size: 12px;
   color: var(--muted);
 }
-.hzp-mon-status.defeated {
+.hzp-mon-card-status.defeated {
   color: #8fd28f;
 }
 
-.hzp-mon-loot {
+.hzp-mon-card-reason {
+  font-size: 12px;
+  color: #e8a08a;
+}
+
+.hzp-mon-card-loot {
   display: flex;
   flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Beute-Chip mit sichtbarer Fangchance (Chef-Kritik Runde 2) — Icon + Prozent gestapelt, Maskierung
+   „?" für unentdeckte Beute bleibt (Muster `.hunt-loot-chip`, hier eigener kompakter Turm-Stil). */
+.hzp-loot-chip {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  width: 32px;
+}
+
+.hzp-loot-chip-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.hzp-loot-chip-icon.unknown {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.hzp-loot-chip-icon.rarity-poor      { border-color: var(--rar-poor); }
+.hzp-loot-chip-icon.rarity-common    { border-color: var(--rar-common); }
+.hzp-loot-chip-icon.rarity-magic     { border-color: var(--rar-magic); }
+.hzp-loot-chip-icon.rarity-rare      { border-color: var(--rar-rare); }
+.hzp-loot-chip-icon.rarity-superRare { border-color: var(--rar-superRare); }
+.hzp-loot-chip-icon.rarity-epic      { border-color: var(--rar-epic); }
+.hzp-loot-chip-icon.rarity-legendary { border-color: var(--rar-legendary); }
+.hzp-loot-chip-icon.rarity-godly     { border-color: var(--rar-godly); }
+
+button.hzp-loot-chip-icon:hover {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 6px rgba(154, 128, 96, 0.3);
+}
+
+.hzp-loot-chip-img {
+  max-width: 20px;
+  max-height: 20px;
+  object-fit: contain;
+}
+
+.hzp-loot-chip-silhouette {
+  filter: brightness(0);
+  opacity: 0.6;
+}
+
+.hzp-loot-chip-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.hzp-loot-chip-pct {
+  font-size: 9px;
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 .hzp-nt-reason {
@@ -801,8 +1079,8 @@
   gap: 10px;
 }
 
-/* Schmale Fenster (Not-Fallback — die 1100px-Sollbreite bleibt bei 1366×768 zweispaltig, s.o.):
-   darunter kippt die Liste über die volle Breite, statt die Detailspalte auf unter 260px zu quetschen. */
+/* Schmale Fenster (Not-Fallback): darunter kippt die Liste über die volle Breite, statt die
+   Detailspalte auf unter 260px zu quetschen. */
 @media (max-width: 900px) {
   .hzp-body {
     flex-direction: column;
@@ -829,6 +1107,14 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+/* Zugeklappt-Zusammenfassung („4 Gebiete offen · 12/38 Arten gefangen", Chef-Kritik Runde 2) —
+   sitzt in derselben Flex-Zeile wie Name/Zähler (`.category-name` nimmt den Mittelraum per
+   `flex:1`, diese Spanne landet also rechtsbündig direkt danach). */
+.hunt-book-summary {
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .hunt-book {
@@ -1036,4 +1322,9 @@ button.hunt-loot-chip:hover {
   font-weight: 700;
   color: var(--muted);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 1500px), (max-height: 900px) {
+  .hunt-trap-art { max-height: 96px; }
+  .hunt-trap-art img { max-height: 84px; }
 }
