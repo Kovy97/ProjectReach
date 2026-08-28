@@ -1382,7 +1382,7 @@ export const fr: Record<string, string> = {
     "farm.seed.action":   "Graines : {skill}",
 
     // Chasse (1.2.0 « Fibres et pièges »)
-    "onboarding.guide.hunting": "Pose des pièges appâtés dans une zone où tu as déjà combattu. Ils capturent bêtes et humanoïdes tout seuls, même hors ligne.",
+    "onboarding.guide.hunting": "Pose des pièges appâtés dans une zone où tu as déjà combattu. Ils capturent tout seuls n'importe quelle créature que tu as déjà vaincue, même hors ligne.",
     "hunting.section.traps": "Pièges",
     "hunting.section.book": "Journal de chasse",
     "hunting.trap": "Piège {n}",

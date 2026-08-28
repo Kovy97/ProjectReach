@@ -1351,7 +1351,7 @@ export const es: Record<string, string> = {
     "farm.seed.action":   "Semillas: {skill}",
 
     // Caza (1.2.0 «Fibras y trampas»)
-    "onboarding.guide.hunting": "Coloca trampas cebadas en una zona donde ya hayas combatido. Atrapan bestias y humanoides solas, incluso desconectado.",
+    "onboarding.guide.hunting": "Coloca trampas cebadas en una zona donde ya hayas combatido. Atrapan por sí solas cualquier criatura que ya hayas vencido, incluso desconectado.",
     "hunting.section.traps": "Trampas",
     "hunting.section.book": "Diario de caza",
     "hunting.trap": "Trampa {n}",

@@ -118,16 +118,16 @@ describe("Jagen — Plätze & Katalog", () => {
 });
 
 describe("Jagen — fangbare Monster", () => {
-  it("nur Familie beast/humanoid, nicht dungeonOnly, kein Boss (enrage/Dungeon-Endgegner), zone passt, ≥ 1 Kill", () => {
+  it("jede Familie, auch dungeonOnly (Chef 28.08.2026); nur dg_-Varianten und Bosse (enrage/Dungeon-Endgegner) bleiben draußen; zone passt, ≥ 1 Kill", () => {
     const c = testContent();
     const s = game(c);
     expect(huntableMonsters(s, c, "pastures")).toEqual([]); // nichts besiegt
-    // Weiden: bull_boss (enrage) und the_imp (Dämon) fallen trotz Kill heraus.
+    // Weiden: bull_boss (enrage) fällt trotz Kill heraus; the_imp (Dämon) ist seit 28.08.2026 fangbar.
     for (const id of ["boar", "chicken", "bull_boss", "the_imp"]) s.monsterKills[id] = 5;
-    expect(huntableMonsters(s, c, "pastures")).toEqual(["chicken", "boar"]); // Content-Reihenfolge
+    expect(huntableMonsters(s, c, "pastures")).toEqual(["chicken", "boar", "the_imp"]); // Content-Reihenfolge, Daemon zaehlt seit 28.08.2026 mit
     // Grenzlande: goblin_reaver (dungeonOnly) und goblin_warchief (Dungeon-Endgegner + enrage) nie.
     for (const id of ["goblin", "goblin_reaver", "goblin_warchief"]) s.monsterKills[id] = 1;
-    expect(huntableMonsters(s, c, "borderlands")).toEqual(["goblin"]);
+    expect(huntableMonsters(s, c, "borderlands")).toEqual(["goblin", "goblin_reaver"]); // Reaver ist dungeonOnly, seit 28.08.2026 fangbar
     // Zone muss passen: der Eber taucht in den Grenzlanden nicht auf.
     expect(huntableMonsters(s, c, "borderlands")).not.toContain("boar");
   });
@@ -151,9 +151,11 @@ describe("Jagen — fangbare Monster", () => {
     for (const id of ["chicken", "cow", "boar", "feral_goat", "goblin", "thorn_wolf", "forest_hare", "gray_wolf", "mud_crab", "frost_hound", "roc", "roc_hunter"]) {
       expect(huntable.has(id), id).toBe(true);
     }
-    // Krypta und Götzenhalle: nichts Fangbares (Absicht laut Konzept).
-    expect(huntableMonsters(s, c, "crypt")).toEqual([]);
-    expect(huntableMonsters(s, c, "idolhall")).toEqual([]);
+    // Chef 28.08.2026: jede Familie ist fangbar — Krypta (Untote) und Götzenhalle (Konstrukte) liefern jetzt Kandidaten,
+    // der Endgegner der Götzenhalle bleibt als Boss draußen.
+    expect(huntableMonsters(s, c, "crypt").length).toBeGreaterThan(0);
+    expect(huntableMonsters(s, c, "idolhall").length).toBeGreaterThan(0);
+    expect(huntableMonsters(s, c, "idolhall")).not.toContain("drazhan");
   });
 });
 

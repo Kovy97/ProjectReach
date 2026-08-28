@@ -10,7 +10,6 @@ import {
   HUNT_CATCH_PER_LEVEL,
   HUNT_LOOT_ROLLS,
   HUNT_TRAP_SLOTS,
-  HUNT_TRAPPABLE_FAMILIES,
   huntTrapSlotsForLevel, huntCatchXp, HUNT_FIRST_CATCH_MULT,} from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { nextFloat, nextInt } from "./rng";
@@ -101,7 +100,7 @@ function bossMonsterIds(content: ContentDB): Set<MonsterId> {
 }
 
 /**
- * Fangbare Monster eines Gebiets in Content-Reihenfolge: Familie in HUNT_TRAPPABLE_FAMILIES, nicht
+ * Fangbare Monster eines Gebiets in Content-Reihenfolge: jede Familie (Chef 28.08.2026), nicht
  * dungeonOnly, kein Boss/Champion, `zone === zoneId` und mindestens einmal im Kampf besiegt
  * (`monsterKills[id] ≥ 1`). Rein, kein RNG.
  */
@@ -110,8 +109,8 @@ export function huntableMonsters(state: GameState, content: ContentDB, zoneId: s
   const bosses = bossMonsterIds(content);
   for (const m of Object.values(content.monsters)) {
     if (!m || m.zone !== zoneId) continue;
-    if (!m.family || !HUNT_TRAPPABLE_FAMILIES.includes(m.family)) continue;
-    if (m.dungeonOnly) continue;
+    // Chef 28.08.2026: dungeonOnly-Kreaturen (Götzenhalle, Krypta-Pyroclasp) sind fangbar, sobald sie einmal besiegt wurden;
+    // nur die dg_-Varianten (Duplikate der Freilandmonster) und Bosse bleiben draußen.
     if (m.id.startsWith(DUNGEON_VARIANT_PREFIX)) continue;
     if (bosses.has(m.id)) continue;
     if (monsterKills(state, m.id) < 1) continue;

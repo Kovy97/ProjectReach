@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Feuer-Serie, prozedural</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Crimson+Pro:wght@400;600&display=swap">
+<style>
+  :root { color-scheme: dark; --ground: #0b0a09; --panel: #14110e; --line: #3a3129; --text: #d8cdb6; --muted: #9c8f78; --bronze: #e7b96b; --iron: #6b5a44; }
+  body { margin: 0; background: var(--ground); color: var(--text); font: 15px/1.45 "Crimson Pro", Georgia, "Times New Roman", serif; }
+  header { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { font: 600 15px/1 Cinzel, Georgia, serif; margin: 0 10px 0 0; color: var(--bronze); letter-spacing: .08em; text-transform: uppercase; }
+  .group { display: inline-flex; align-items: center; gap: 6px; padding-left: 12px; border-left: 1px solid var(--line); }
+  .group > span { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  button { font: inherit; padding: 5px 12px; background: linear-gradient(#3b332b, #221d18); color: #e9dcc0; border: 1px solid var(--iron); border-radius: 3px; cursor: pointer; }
+  button:hover { border-color: #c9a15b; }
+  button.on { border-color: var(--bronze); box-shadow: 0 0 6px #b0802a inset; }
+  button.crit { color: #ffd9a8; }
+  label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  input[type=range] { width: 110px; }
+  select { font: inherit; background: #221d18; color: #e9dcc0; border: 1px solid var(--iron); border-radius: 3px; padding: 4px 6px; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--bronze); outline-offset: 2px; }
+  #wrap { position: relative; width: 100%; max-width: 1280px; margin: 12px auto; aspect-ratio: 16/9; background: #000; box-shadow: 0 0 0 1px var(--line); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #hud { position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: #8f836d; pointer-events: none; }
+  #tag { position: absolute; right: 12px; top: 10px; font: 600 12px/1 Cinzel, Georgia, serif; letter-spacing: .1em; text-transform: uppercase; color: var(--bronze); opacity: 0; transition: opacity .2s; pointer-events: none; }
+  p.note { max-width: 1280px; margin: 6px auto 18px; padding: 0 4px; color: var(--muted); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { #bAuto { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Feuer-Serie</h1>
+  <div class="group"><span>Angriff</span>
+    <button id="v1">Feuerball</button><button id="v2">Feuerlanze</button><button id="v3">Glutschwarm</button><button id="vc" class="crit">Crit</button><button id="vr">Zufall</button>
+  </div>
+  <div class="group"><span>Einschlag</span>
+    <select id="impact"><option value="r">zufällig</option><option value="1">Feuerstoß</option><option value="2">Flammenspritzer</option><option value="3">Glutsäule</option></select>
+  </div>
+  <div class="group">
+    <button id="bAuto">Auto</button>
+    <label>Flugzeit <input type="range" id="travel" min="300" max="1400" value="620"> <span id="travelV">620 ms</span></label>
+    <label>Dichte <input type="range" id="dens" min="30" max="200" value="100"> <span id="densV">100 %</span></label>
+    <label><input type="checkbox" id="slow"> Zeitlupe ×4</label>
+    <label><input type="checkbox" id="mirror"> Gegnerseite</label>
+  </div>
+</header>
+<div id="wrap">
+  <canvas id="bg"></canvas>
+  <canvas id="fx"></canvas>
+  <div id="tag"></div>
+  <div id="hud"></div>
+</div>
+<p class="note">Dieselbe Anforderung wie an Mira, nur prozedural: drei Angriffs-Varianten (Feuerball, Feuerlanze, Glutschwarm), eine Crit-Variante, drei Einschläge (Feuerstoß, Flammenspritzer, Glutsäule). Reines Canvas2D, keine Bibliothek, jede Wiedergabe fällt anders aus. Tasten: 1, 2, 3 = Varianten, C = Crit, Leertaste = Zufall.</p>
+<script>
+(() => {
+  const bg = document.getElementById("bg"), fx = document.getElementById("fx");
+  const bctx = bg.getContext("2d"), ctx = fx.getContext("2d");
+  const hud = document.getElementById("hud"), tag = document.getElementById("tag");
+  const W = 1280, H = 720;
+  let dpr = 1;
+  function resize() { dpr = Math.min(2, window.devicePixelRatio || 1); for (const c of [bg, fx]) { c.width = W * dpr; c.height = H * dpr; } drawBg(); }
+  window.addEventListener("resize", resize);
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  // ---------- Szene
+  const caster = { x: 250, y: 420 }, enemy = { x: 1010, y: 400 };
+  let enemyFlash = 0, shake = 0;
+  function drawBg() {
+    const c = bctx; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#1a1512"); g.addColorStop(0.62, "#0f0d0b"); g.addColorStop(1, "#070605");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    const h = c.createRadialGradient(640, 470, 20, 640, 470, 700); h.addColorStop(0, "rgba(120,60,20,0.25)"); h.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = h; c.fillRect(0, 0, W, H);
+    c.fillStyle = "#151210"; c.fillRect(0, 520, W, 200);
+    c.strokeStyle = "#2b241d"; c.lineWidth = 2; c.beginPath(); c.moveTo(0, 520); c.lineTo(W, 520); c.stroke();
+    const v = c.createRadialGradient(640, 360, 300, 640, 360, 820); v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,0.75)");
+    c.fillStyle = v; c.fillRect(0, 0, W, H);
+  }
+  function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+  function drawFigures(c, t) {
+    c.save(); c.globalCompositeOperation = "source-over";
+    c.fillStyle = "#231d18"; roundRect(c, caster.x - 40, caster.y - 110, 80, 220, 26); c.fill();
+    c.strokeStyle = "#6b5a44"; c.lineWidth = 3; c.beginPath(); c.moveTo(caster.x + 28, caster.y + 90); c.lineTo(caster.x + 62, caster.y - 120); c.stroke();
+    const orb = c.createRadialGradient(caster.x + 62, caster.y - 122, 2, caster.x + 62, caster.y - 122, 14 + 3 * Math.sin(t / 180));
+    orb.addColorStop(0, "rgba(255,220,170,0.9)"); orb.addColorStop(1, "rgba(255,120,40,0)"); c.fillStyle = orb; c.fillRect(caster.x + 30, caster.y - 160, 70, 70);
+    const f = enemyFlash; c.fillStyle = f > 0 ? `rgb(${42 + 200 * f},${34 + 190 * f},${28 + 170 * f})` : "#2a221c";
+    roundRect(c, enemy.x - 60, enemy.y - 140, 120, 280, 30); c.fill();
+    c.fillStyle = "#3a2f26"; c.beginPath(); c.arc(enemy.x, enemy.y - 150, 34, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+
+  // ---------- Partikel
+  const P = [], MAX = 2600;
+  function spawn(p) { if (P.length < MAX) P.push(p); }
+  const density = () => +document.getElementById("dens").value / 100;
+  const mirrored = () => document.getElementById("mirror").checked;
+  const src = () => mirrored() ? { x: enemy.x - 70, y: enemy.y - 60 } : { x: caster.x + 62, y: caster.y - 122 };
+  const dst = () => mirrored() ? { x: caster.x, y: caster.y - 20 } : { x: enemy.x - 10, y: enemy.y - 40 };
+  function fireColor(u, a) {
+    if (u < 0.18) return `rgba(255,236,190,${a})`;
+    if (u < 0.5) return `rgba(255,${Math.round(150 - 60 * (u - 0.18) / 0.32)},40,${a})`;
+    return `rgba(${Math.round(190 - 120 * (u - 0.5) / 0.5)},${Math.round(50 - 40 * (u - 0.5) / 0.5)},20,${a})`;
+  }
+  const ember = (x, y, vx, vy, life, size, grav = -40, drag = 0.985) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "ember", drag, grav });
+  const smoke = (x, y, vx, vy, life, size) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "smoke", drag: 0.97, grav: -20 });
+  const spark = (x, y, vx, vy, life, size = 2, grav = 120) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "spark", drag: 0.99, grav });
+  const ash = (x, y, vx, vy, life, size) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "ash", drag: 0.985, grav: -12, spin: rnd(2, 5), ax: x });
+
+  // ---------- Kern-Zeichner
+  function core(c, x, y, r, hot) {
+    const g = c.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, hot ? "rgba(255,255,250,1)" : "rgba(255,255,235,1)");
+    g.addColorStop(0.25, "rgba(255,220,150,0.95)"); g.addColorStop(0.55, "rgba(255,120,30,0.8)"); g.addColorStop(0.8, "rgba(150,30,10,0.35)"); g.addColorStop(1, "rgba(80,10,5,0)");
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    const h = c.createRadialGradient(x, y, r, x, y, r * 3.2); h.addColorStop(0, "rgba(255,90,20,0.22)"); h.addColorStop(1, "rgba(255,60,10,0)");
+    c.fillStyle = h; c.beginPath(); c.arc(x, y, r * 3.2, 0, Math.PI * 2); c.fill();
+  }
+
+  // ---------- Angriffe
+  const active = [];
+  const NAMES = { v1: "Feuerball", v2: "Feuerlanze", v3: "Glutschwarm", vc: "Crit-Feuerball" };
+  function showTag(txt) { tag.textContent = txt; tag.style.opacity = 1; clearTimeout(showTag.t); showTag.t = setTimeout(() => (tag.style.opacity = 0), 1400); }
+  function attack(kind) {
+    const s = src(), d = dst(), T = +document.getElementById("travel").value, dir = Math.sign(d.x - s.x);
+    const crit = kind === "vc"; let age = 0, done = false; const e = { x: s.x, y: s.y };
+    const sub = kind === "v3" ? [0, 1, 2, 3].map((i) => ({ ph: rnd(0, 6.28), amp: rnd(10, 26), sp: rnd(5, 9), lag: i * 0.04 })) : null;
+    showTag(NAMES[kind] + " · " + IMPACT_NAMES[impactChoice()]);
+    const chosenImpact = impactChoice();
+    e.update = (dt) => {
+      if (done) return; age += dt; const u = Math.min(1, age / T);
+      const arc = kind === "v2" ? 12 : 60;
+      e.x = s.x + (d.x - s.x) * u; e.y = s.y + (d.y - s.y) * u - Math.sin(u * Math.PI) * arc;
+      const n = Math.round(14 * density() * (dt / 16.7));
+      if (kind === "v1" || crit) {
+        const k = crit ? 1.7 : 1;
+        for (let i = 0; i < n * k; i++) {
+          const back = -dir * rnd(60, 260) * k;
+          ember(e.x + rnd(-8, 8) * k, e.y + rnd(-8, 8) * k, back + rnd(-40, 40), rnd(-70, 30), rnd(280, 640), rnd(5, 13) * k);
+          if (Math.random() < 0.35) smoke(e.x, e.y, back * 0.5 + rnd(-30, 30), rnd(-90, -30), rnd(500, 1000), rnd(10, 22) * k);
+          if (Math.random() < 0.25) spark(e.x, e.y, back * 0.3 + rnd(-160, 160), rnd(-160, 160), rnd(200, 450), rnd(1.5, 3));
+        }
+        if (crit && u > 0.85 && !e.pulsed) { e.pulsed = true; flash({ x: e.x, y: e.y }, 90, "rgba(255,240,200,", 120); }
+      } else if (kind === "v2") {
+        // Feuerlanze: gestreckter Kern, Hitzeschlieren statt Glutwolke, kaum Rauch
+        for (let i = 0; i < n * 0.7; i++) {
+          const back = -dir * rnd(220, 520);
+          spark(e.x + rnd(-4, 4), e.y + rnd(-4, 4), back, rnd(-25, 25), rnd(160, 320), rnd(1.5, 2.6), 0);
+          if (Math.random() < 0.4) ember(e.x - dir * rnd(0, 40), e.y + rnd(-5, 5), back * 0.35, rnd(-30, 10), rnd(180, 380), rnd(3, 7), -10);
+        }
+        if (Math.random() < 0.15) smoke(e.x - dir * 30, e.y, -dir * 60, rnd(-60, -20), 700, rnd(8, 14));
+      } else if (kind === "v3") {
+        // Glutschwarm: vier Glutkugeln als Traube, jede zieht eine Funkenspur
+        for (const b of sub) {
+          const uu = Math.max(0, u - b.lag);
+          b.x = s.x + (d.x - s.x) * uu + Math.sin(age / 90 * b.sp / 7 + b.ph) * b.amp * 0.5;
+          b.y = s.y + (d.y - s.y) * uu - Math.sin(uu * Math.PI) * 50 + Math.cos(age / 90 * b.sp / 7 + b.ph) * b.amp;
+          for (let i = 0; i < n * 0.3; i++) {
+            ember(b.x, b.y, -dir * rnd(40, 160) + rnd(-20, 20), rnd(-40, 20), rnd(200, 460), rnd(3, 7));
+            if (Math.random() < 0.4) spark(b.x, b.y, -dir * rnd(60, 200), rnd(-80, 80), rnd(150, 350), 1.6);
+          }
+        }
+      }
+      if (u >= 1) { done = true; impact(d, dir, crit, chosenImpact, kind === "v3" ? 0.7 : 1); }
+    };
+    e.draw = (c) => {
+      if (done) return;
+      if (kind === "v1" || crit) {
+        const r = (crit ? 36 : 24) * (1 + 0.12 * Math.sin(age / 28)); core(c, e.x, e.y, r, crit);
+        if (crit) { c.strokeStyle = "rgba(150,20,10,0.55)"; c.lineWidth = 6; c.beginPath(); c.arc(e.x, e.y, r * 1.15, 0, Math.PI * 2); c.stroke(); }
+      } else if (kind === "v2") {
+        c.save(); c.translate(e.x, e.y); c.scale(dir * 3.2, 1);
+        const g = c.createRadialGradient(4, 0, 0, 0, 0, 16);
+        g.addColorStop(0, "rgba(255,255,240,1)"); g.addColorStop(0.35, "rgba(255,200,120,0.95)"); g.addColorStop(0.7, "rgba(255,110,30,0.7)"); g.addColorStop(1, "rgba(120,20,10,0)");
+        c.fillStyle = g; c.beginPath(); c.ellipse(0, 0, 16, 16, 0, 0, Math.PI * 2); c.fill(); c.restore();
+        c.strokeStyle = "rgba(255,240,200,0.9)"; c.lineWidth = 2.5; c.beginPath(); c.moveTo(e.x - dir * 52, e.y); c.lineTo(e.x + dir * 26, e.y); c.stroke();
+      } else if (kind === "v3") { for (const b of sub) if (b.x !== undefined) core(c, b.x, b.y, 11 + 2 * Math.sin(age / 40 + b.ph), false); }
+    };
+    e.alive = () => !done;
+    active.push(e);
+  }
+
+  // ---------- Einschläge
+  const IMPACT_NAMES = { 1: "Feuerstoß", 2: "Flammenspritzer", 3: "Glutsäule" };
+  function impactChoice() { const v = document.getElementById("impact").value; return v === "r" ? pick([1, 2, 3]) : +v; }
+  function impact(d, dir, crit, which, scale) {
+    const k = (crit ? 1.7 : 1) * scale, n = Math.round(90 * k * density());
+    enemyFlash = 1; shake = crit ? 9 : 4;
+    if (which === 1) { // Feuerstoß: runde Explosion, Glutwolke, Rauchkrone
+      for (let i = 0; i < n; i++) {
+        const a = rnd(0, Math.PI * 2), sp = rnd(60, 380) * k;
+        ember(d.x, d.y, Math.cos(a) * sp - dir * 40, Math.sin(a) * sp - 60, rnd(300, 700), rnd(4, 11) * k, 160, 0.96);
+        if (i % 3 === 0) spark(d.x, d.y, Math.cos(a) * sp * 1.4, Math.sin(a) * sp * 1.4, rnd(200, 500), rnd(1.5, 3), 200);
+        if (i % 4 === 0) smoke(d.x + rnd(-20, 20), d.y + rnd(-20, 20), rnd(-60, 60), rnd(-140, -40), rnd(700, 1400), rnd(16, 34) * k);
+      }
+      flash(d, crit ? 170 : 120, "rgba(255,170,80,", crit ? 240 : 170); ring(d, crit ? 150 : 100, 260);
+    } else if (which === 2) { // Flammenspritzer: Feuer schlaegt seitlich weg wie Fluessigkeit, Funkenfaecher nach oben
+      for (let i = 0; i < n; i++) {
+        const a = rnd(-0.5, 0.5), sp = rnd(120, 420) * k;
+        ember(d.x, d.y, dir * Math.cos(a) * sp * 0.9, Math.sin(a) * sp * 0.6 - 30, rnd(350, 750), rnd(6, 14) * k, 260, 0.975);
+        if (i % 2 === 0) { const b = rnd(-1.2, 1.2); spark(d.x, d.y - 10, Math.sin(b) * rnd(60, 260), -Math.cos(b) * rnd(180, 420), rnd(300, 600), rnd(1.5, 2.8), 320); }
+        if (i % 5 === 0) smoke(d.x + dir * rnd(0, 40), d.y, dir * rnd(20, 90), rnd(-90, -30), rnd(600, 1100), rnd(10, 22) * k);
+      }
+      flash(d, crit ? 130 : 90, "rgba(255,150,60,", 150);
+    } else { // Glutsaeule: senkrechte Flammensaeule mit Aschewirbel, verglimmt zu Glutpunkten
+      let age = 0; const dur = 380 * (crit ? 1.3 : 1);
+      active.push({ update(dt) {
+        age += dt; if (age > dur) return;
+        const m = Math.round(6 * k * density() * (dt / 16.7));
+        for (let i = 0; i < m; i++) {
+          const yy = d.y - rnd(0, 150 * k) * Math.min(1, age / 160);
+          ember(d.x + rnd(-14, 14) * k, yy, rnd(-30, 30), rnd(-260, -120), rnd(220, 520), rnd(5, 12) * k, -80, 0.98);
+          if (Math.random() < 0.5) ash(d.x, yy, 0, rnd(-90, -40), rnd(700, 1300), rnd(2, 4));
+          if (Math.random() < 0.12) ember(d.x + rnd(-20, 20), d.y + rnd(-6, 6), rnd(-20, 20), rnd(-20, 0), rnd(1500, 2600), rnd(2, 4), 10, 0.99);
+        }
+      }, draw(c) {
+        if (age > dur) return; const a = age < dur * 0.7 ? 1 : 1 - (age - dur * 0.7) / (dur * 0.3);
+        const hgt = 150 * k * Math.min(1, age / 160), g = c.createLinearGradient(0, d.y, 0, d.y - hgt);
+        g.addColorStop(0, `rgba(255,220,150,${0.9 * a})`); g.addColorStop(0.5, `rgba(255,120,30,${0.6 * a})`); g.addColorStop(1, "rgba(120,20,10,0)");
+        c.fillStyle = g; c.beginPath(); c.ellipse(d.x, d.y - hgt / 2, 16 * k * (1 + 0.1 * Math.sin(age / 30)), hgt / 2, 0, 0, Math.PI * 2); c.fill();
+      }, alive: () => age < dur + 40 });
+      flash(d, 90, "rgba(255,140,50,", 140);
+    }
+  }
+  function flash(at, r, pre, ms) { let age = 0; active.push({ update(dt) { age += dt; }, draw(c) { const u = Math.min(1, age / ms), rr = r * (0.6 + 0.9 * u); const g = c.createRadialGradient(at.x, at.y, 0, at.x, at.y, rr); g.addColorStop(0, pre + (0.9 * (1 - u)) + ")"); g.addColorStop(0.5, pre + (0.35 * (1 - u)) + ")"); g.addColorStop(1, pre + "0)"); c.fillStyle = g; c.beginPath(); c.arc(at.x, at.y, rr, 0, Math.PI * 2); c.fill(); }, alive: () => age < ms }); }
+  function ring(at, r, ms) { let age = 0; active.push({ update(dt) { age += dt; }, draw(c) { const u = Math.min(1, age / ms); c.strokeStyle = `rgba(255,120,40,${0.5 * (1 - u)})`; c.lineWidth = 10 * (1 - u) + 2; c.beginPath(); c.arc(at.x, at.y, r * (0.2 + 1.1 * u), 0, Math.PI * 2); c.stroke(); }, alive: () => age < ms }); }
+
+  // ---------- Loop
+  let last = performance.now(), fpsAcc = 0, fpsN = 0, fpsShown = 0, autoOn = false, autoT = 0, autoNext = 0;
+  function frame(now) {
+    const slow = document.getElementById("slow").checked;
+    let dt = Math.min(50, now - last); last = now; if (slow) dt /= 4;
+    for (const e of active) e.update(dt);
+    for (let i = active.length - 1; i >= 0; i--) if (!active[i].alive()) active.splice(i, 1);
+    for (let i = P.length - 1; i >= 0; i--) {
+      const p = P[i]; p.age += dt; if (p.age >= p.life) { P[i] = P[P.length - 1]; P.pop(); continue; }
+      const s = dt / 1000; p.vx *= p.drag; p.vy *= p.drag; p.vy += p.grav * s; p.x += p.vx * s; p.y += p.vy * s;
+      if (p.kind === "ember") p.x += Math.sin(p.age / 60 + p.size) * 18 * s;
+      if (p.kind === "ash") p.x = p.ax + Math.sin(p.age / 1000 * p.spin) * 22;
+    }
+    enemyFlash = Math.max(0, enemyFlash - dt / 90); shake = Math.max(0, shake - dt / 25);
+    if (autoOn) { autoT += dt; if (autoT > autoNext) { autoT = 0; autoNext = 1700; attack(pick(["v1", "v2", "v3", "v1", "v2", "v3", "vc"])); } }
+    const c = ctx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+    c.save(); if (shake > 0) c.translate(rnd(-shake, shake), rnd(-shake, shake));
+    drawFigures(c, now);
+    c.globalCompositeOperation = "source-over";
+    for (const p of P) {
+      const u = p.age / p.life;
+      if (p.kind === "smoke") { c.fillStyle = `rgba(40,30,26,${0.28 * (1 - u)})`; c.beginPath(); c.arc(p.x, p.y, p.size * (0.6 + u), 0, Math.PI * 2); c.fill(); }
+      else if (p.kind === "ash") { c.fillStyle = `rgba(120,110,100,${0.7 * (1 - u)})`; c.beginPath(); c.arc(p.x, p.y, p.size, 0, Math.PI * 2); c.fill(); }
+    }
+    c.globalCompositeOperation = "lighter";
+    for (const p of P) {
+      const u = p.age / p.life;
+      if (p.kind === "ember") { const r = p.size * (1 - u * 0.8); const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r); g.addColorStop(0, fireColor(u, 0.9 * (1 - u))); g.addColorStop(1, fireColor(u, 0)); c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r, 0, Math.PI * 2); c.fill(); }
+      else if (p.kind === "spark") { c.strokeStyle = fireColor(Math.min(0.45, u), 0.9 * (1 - u)); c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 0.02, p.y - p.vy * 0.02); c.stroke(); }
+    }
+    for (const e of active) e.draw(c);
+    c.restore();
+    fpsAcc += dt; fpsN++; if (fpsAcc > 500) { fpsShown = Math.round(1000 / (fpsAcc / fpsN)); fpsAcc = 0; fpsN = 0; }
+    hud.textContent = `${fpsShown} fps · ${P.length} Partikel`;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // ---------- Bedienung
+  for (const id of ["v1", "v2", "v3", "vc"]) document.getElementById(id).onclick = () => attack(id);
+  document.getElementById("vr").onclick = () => attack(pick(["v1", "v2", "v3", "vc"]));
+  const bAuto = document.getElementById("bAuto"); bAuto.onclick = () => { autoOn = !autoOn; bAuto.classList.toggle("on", autoOn); autoT = 0; autoNext = 0; };
+  document.getElementById("travel").oninput = (e) => (document.getElementById("travelV").textContent = e.target.value + " ms");
+  document.getElementById("dens").oninput = (e) => (document.getElementById("densV").textContent = e.target.value + " %");
+  window.addEventListener("keydown", (e) => {
+    if (e.target && e.target.tagName === "SELECT") return;
+    if (e.key === "1") attack("v1"); else if (e.key === "2") attack("v2"); else if (e.key === "3") attack("v3");
+    else if (e.key === "c" || e.key === "C") attack("vc"); else if (e.code === "Space") { e.preventDefault(); attack(pick(["v1", "v2", "v3", "vc"])); }
+  });
+  resize();
+})();
+</script>
+</body>
+</html>

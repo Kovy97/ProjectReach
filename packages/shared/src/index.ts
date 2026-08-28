@@ -6227,7 +6227,8 @@ export const HUNT_LOOT_ROLLS = 5;
 export const HUNT_CATCH_BASE = 0.7;
 export const HUNT_CATCH_PER_LEVEL = 0.005;
 export const HUNT_CATCH_CAP = 0.95;
-export const HUNT_TRAPPABLE_FAMILIES: readonly MonsterFamily[] = ["beast", "humanoid"];
+// Chef 28.08.2026: JEDE Kreaturenart ist fangbar (war J1 "Tiere und Kleinvolk"; Krypta/Goetzenhalle standen sonst mit 0/0 da).
+// Ausgeschlossen bleiben nur Bosse, Dungeon-Varianten und nie besiegte Monster (engine/hunting.ts huntableMonsters).
 export const BAIT_ITEM_ID: ItemId = "bait_worm";
 /**
  * Köder-Stufen (Chef 28.08.2026, Symbiose Angeln ↔ Jagen): jedes Jagdgebiet verlangt den Köder seiner Stufe, und das

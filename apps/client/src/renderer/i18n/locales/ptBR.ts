@@ -1349,7 +1349,7 @@ export const ptBR: Record<string, string> = {
     "farm.seed.action":   "Sementes: {skill}",
 
     // Caça (1.2.0 "Fibras e Armadilhas")
-    "onboarding.guide.hunting": "Arme armadilhas com isca numa zona onde você já lutou. Elas capturam feras e humanoides sozinhas, mesmo offline.",
+    "onboarding.guide.hunting": "Arme armadilhas com isca numa zona onde você já lutou. Elas capturam sozinhas qualquer criatura que você já derrotou, mesmo offline.",
     "hunting.section.traps": "Armadilhas",
     "hunting.section.book": "Diário de caça",
     "hunting.trap": "Armadilha {n}",

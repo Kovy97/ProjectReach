@@ -26,14 +26,14 @@ Alle 26 Magier-Roben werden aus Stoff statt Leder gefertigt, und die Nessel-Sehn
 Leder bleibt die Rüstung des Ausweichens. / EN: Fibers in five tiers (forage, farm, weave) replace leather in all mage robes,
 and a nettle bowstring lets you fletch bows from level 1 without fighting.
 
-**Jagen, ein neuer Skill (Chef 27.08.):** DE: Stell Fallen in Gebieten, die du im Kampf freigeschaltet hast. Ein zufälliges
-Tier oder Kleinvolk, das du schon einmal besiegt hast, tappt hinein und lässt fünf Beute-Würfe seiner Tabelle da, ohne Kampf.
+**Jagen, ein neuer Skill (Chef 27.08.):** DE: Stell Fallen in Gebieten, die du im Kampf freigeschaltet hast. Eine zufällige
+Kreatur, die du schon einmal besiegt hast (jede Familie, Chef 28.08.), tappt hinein und lässt fünf Beute-Würfe seiner Tabelle da, ohne Kampf.
 Jede Falle braucht einen Köder (Angeln, Stufe 1: „Köder graben"), läuft 5 Minuten (Weiden) bis 60 Minuten (Götzenhalle)
 und erneuert sich auf Wunsch von selbst, online wie offline. Sechs Fallenplätze ab Jagen-Stufe 1, 5, 15, 30, 50 und 75;
 Fangchance 70 % plus Stufenbonus. Jagen-XP richtet sich nach dem Fang: fünffache Kampf-XP des gefangenen Tiers, der erste
 Fang jeder Art zählt zehnfach (Chef 28.08.: die Zonen-Pauschale war zu langsam, die zweite Falle kam erst nach Stunden). Fänge zählen nicht als Kills: Jagen ist Beute, Kampf bleibt Fortschritt. Das Jagdbuch zeigt
 je Gebiet, wer fangbar ist und was er fallen lässt. Stufe 99 bringt den Ring des Fallenstellers. / EN: Hunting is a new
-skill: set baited traps in unlocked zones and collect five loot rolls from a random beast or humanoid you have beaten
+skill: set baited traps in unlocked zones and collect five loot rolls from a random creature you have beaten
 before, online and offline.
 
 **Kampfeffekte, Welle 1 (Chef 27.08.):** DE: Treffer sind jetzt sichtbar: Magie-Geschosse in sieben Themen (arkan, Feuer,

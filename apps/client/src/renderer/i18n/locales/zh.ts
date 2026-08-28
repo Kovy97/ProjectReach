@@ -1378,7 +1378,7 @@ export const zh: Record<string, string> = {
     "farm.seed.action":   "种子：{skill}",
 
     // 狩猎（1.2.0「纤维与陷阱」）
-    "onboarding.guide.hunting": "在你战斗过的区域布置诱饵陷阱。它们会自动捕捉野兽和类人生物，离线时也一样。",
+    "onboarding.guide.hunting": "在你战斗过的区域布置诱饵陷阱。它们会自动捕捉你击败过的任何生物，离线时也一样。",
     "hunting.section.traps": "陷阱",
     "hunting.section.book": "狩猎日志",
     "hunting.trap": "陷阱 {n}",

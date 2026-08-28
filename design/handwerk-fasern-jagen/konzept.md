@@ -141,3 +141,5 @@ Chef-Idee 28.08.: Köder in Stufen, je höher das Gebiet, desto höher der Köde
 
 Jedes Gebiet verlangt genau seinen Köder (`huntingZones[*].baitItemId`, Tabelle `HUNT_BAIT_TIERS` in shared). Auto-Erneuern zieht den
 Köder des Gebiets aus Inventar oder Lager. Bilder der vier neuen Köder: Mira-Auftrag `CODEX/work/2026-08-28-koeder-stufen`.
+
+**Nachtrag 28.08. (Chef):** J1 aufgehoben, jede Kreaturenart ist fangbar (Untote, Daemonen, Konstrukte, Drachenartige ...); ausgeschlossen bleiben Bosse, Dungeon-Varianten und nie besiegte Monster.

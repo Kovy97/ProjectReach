@@ -1379,7 +1379,7 @@ export const ru: Record<string, string> = {
     "farm.seed.action":   "Семена: {skill}",
 
     // Охота (1.2.0 «Волокна и капканы»)
-    "onboarding.guide.hunting": "Ставь капканы с наживкой в местности, где уже сражался. Они сами ловят зверей и гуманоидов, даже офлайн.",
+    "onboarding.guide.hunting": "Ставь капканы с наживкой в местности, где уже сражался. Они сами ловят любых существ, которых ты уже побеждал, даже офлайн.",
     "hunting.section.traps": "Капканы",
     "hunting.section.book": "Дневник охоты",
     "hunting.trap": "Капкан {n}",

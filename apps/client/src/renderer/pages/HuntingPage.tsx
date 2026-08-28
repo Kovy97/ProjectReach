@@ -7,7 +7,6 @@ import {
   HUNT_BAIT_TIERS,
   HUNT_LOOT_ROLLS,
   HUNT_SLOT_LEVELS,
-  HUNT_TRAPPABLE_FAMILIES,
   HUNT_TRAP_SLOTS,
 } from "@hearthforge/shared";
 import type { GameState, HuntTrap, HuntZoneDef, LocalizedString, MonsterDef } from "@hearthforge/shared";
@@ -98,11 +97,8 @@ function huntCandidatesForZone(c: typeof content, zoneId: string) {
   return Object.values(c.monsters).filter(
     (m) =>
       m.zone === zoneId &&
-      !m.dungeonOnly &&
       !m.id.startsWith(DUNGEON_VARIANT_PREFIX) &&
-      !BOSS_MONSTER_IDS.has(m.id) &&
-      !!m.family &&
-      HUNT_TRAPPABLE_FAMILIES.includes(m.family),
+      !BOSS_MONSTER_IDS.has(m.id),
   );
 }
 
@@ -167,14 +163,11 @@ function huntNonTrappableForZone(c: typeof content, zoneId: string): MonsterDef[
 
 /** i18n-Key des Grunds aus `huntNonTrappableForZone` — dieselben drei Signale wie die private
  *  `bossMonsterIds`/Familien-Prüfung der Engine (`packages/engine/src/hunting.ts`): Dungeon-
- *  gebunden → Familie außerhalb `HUNT_TRAPPABLE_FAMILIES` (zeigt die Familie selbst) → sonst Boss
+ *  gebunden → sonst (jede Familie ist fangbar, Chef 28.08.2026) → Boss
  *  (einzig verbleibender Ausschlussgrund für ein zonen-/familienpassendes, nicht dungeongebundenes
  *  Monster). */
 function nonTrappableReasonKey(m: MonsterDef): string {
   if (m.dungeonOnly || m.id.startsWith(DUNGEON_VARIANT_PREFIX)) return "hunting.picker.reason.dungeon";
-  if (!m.family || !HUNT_TRAPPABLE_FAMILIES.includes(m.family)) {
-    return m.family ? `hunting.picker.family.${m.family}` : "hunting.picker.reason.other";
-  }
   return "hunting.picker.reason.boss";
 }
 
@@ -665,7 +658,7 @@ function HuntZonePicker({ slot, onClose }: { slot: number; onClose: () => void }
                 >
                   {t("hunting.picker.confirm").replace("{bait}", zoneBaitName)}
                 </button>
-                <button type="button" className="shop-citadel-btn" onClick={onClose}>
+                <button type="button" className="btn-iron" onClick={onClose}>
                   {t("hunting.picker.cancel")}
                 </button>
               </div>
