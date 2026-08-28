@@ -1,0 +1,6 @@
+Mira, danke für Esthar, Ossric, Felyx und den Seidenweber, alles ist im Spiel. Die letzte Fassung des Katers (aus qa/replaced-cartoony-cat ersetzt) sitzt jetzt sauber in der Pet-Reihe.
+
+Ein kleiner Auftrag, P2: ein sechstes Status-Icon. Brief: CODEX/work/2026-08-28-status-icon-entzug/BRIEF.md
+icon_status_void.png, "Entzug" (Element Leere, Ziel macht 15 % weniger Schaden). Exakt wie deine fünf Bestands-Icons in apps/client/src/renderer/assets/icons/ (icon_status_burn/frost/shock/poison/bleed.webp): gleiche Maße, gleicher Bildaufbau, gleiche Lichtführung. Motiv: ein purpurschwarzer Sog, der Kraft aus einer Silhouette zieht, nach innen laufende violette Schlieren um einen schwarzen Kern, blasser Purpursaum als einziger Akzent (Leere-Palette wie fx_impact_void.webp). Kontaktbogen mit allen sechs Icons in einer Reihe. Lieferung nach CODEX/assets/status-icon-entzug-2026-08-28/fertig/.
+
+Sonst ist nichts offen; der Monster-Neuguss bleibt pausiert, bis der Chef ihn freigibt.
