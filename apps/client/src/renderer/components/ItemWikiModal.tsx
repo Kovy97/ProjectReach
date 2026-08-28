@@ -187,6 +187,7 @@ function sourceIconNode(entry: DisplaySource): JSX.Element {
   switch (entry.kind) {
     case "monsterGroup":
     case "slayerShop":
+    case "champion":
       return img(COMBAT_ICON_URL);
     case "action":
       return img(FORGE_ICON_URL);
@@ -234,6 +235,10 @@ function sourceMeta(entry: DisplaySource, t: (k: string) => string, tr: (v: Loca
     }
     case "dungeon":
       return { name: tr(entry.name), subline: t("itemwiki.sourceKind.dungeon"), value: <>{pct(entry.chance)}</> };
+    case "champion": {
+      const zone = content.zones.find((z) => z.id === entry.zoneId);
+      return { name: tr(entry.name), subline: `${t("itemwiki.sourceKind.champion")} · ${zone ? tr(zone.name) : entry.zoneId}`, value: <>{pct(entry.chance)}</> };
+    }
     case "crop":
       return { name: tr(entry.name), subline: "", value: <>100%</> };
     case "shop":

@@ -1,5 +1,6 @@
 import { content } from "@hearthforge/content";
 import type { LocalizedString } from "@hearthforge/shared";
+import { ELITE_UNIQUE_DROP_CHANCE_DEFAULT } from "@hearthforge/shared";
 
 /**
  * Item-Wiki-Modal (Task #308, Chef-Feature): reverse-lookup indices "wo kommt das her" / "wofür
@@ -23,6 +24,9 @@ import type { LocalizedString } from "@hearthforge/shared";
 export type ItemWikiSource =
   | { kind: "monster"; monsterId: string; name: LocalizedString; chance: number }
   | { kind: "dungeon"; dungeonId: string; name: LocalizedString; chance: number }
+  // Spieler-Report 28.08.2026 („Greytooth Mantle: no Sources info"): Champion-Unikate und Champion-Zusatzbeute
+  // (content.elites, uniqueItemId/extraLoot) waren wiki-blind.
+  | { kind: "champion"; eliteId: string; name: LocalizedString; zoneId: string; chance: number }
   | { kind: "action"; actionId: string; name: LocalizedString; skillId: string; chance: number }
   | { kind: "shop"; cost: number }
   // Chef-Audit 2026-07-09: 20 Items waren wiki-blind — Farming-Erträge, Slayer-Shop, Token-Shop
@@ -64,6 +68,16 @@ function buildIndices(): {
   for (const dungeon of content.dungeons) {
     for (const roll of dungeon.loot) {
       pushSource(roll.itemId, { kind: "dungeon", dungeonId: dungeon.id, name: dungeon.name, chance: roll.chance });
+    }
+  }
+
+  for (const elite of Object.values(content.elites ?? {})) {
+    pushSource(elite.uniqueItemId, {
+      kind: "champion", eliteId: elite.id, name: elite.name, zoneId: elite.zone,
+      chance: elite.uniqueDropChance ?? ELITE_UNIQUE_DROP_CHANCE_DEFAULT,
+    });
+    for (const roll of elite.extraLoot ?? []) {
+      pushSource(roll.itemId, { kind: "champion", eliteId: elite.id, name: elite.name, zoneId: elite.zone, chance: roll.chance });
     }
   }
 

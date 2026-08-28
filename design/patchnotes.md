@@ -12,6 +12,13 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — 1.2.0 „Fasern und Fallen" (Chef 27.08.: Fasern/Stoff-Roben + neuer Skill Jagen; in Arbeit)
 
+**Champion-Unikate zeigen Effekt und Quelle (Spieler-Report 28.08., Hotfix-Kandidat 1.1.3):** DE: Der Grauzahn-Mantel
+(legendär, Champion „Grauzahn der Ausgehungerte" im Wildwald) hat absichtlich keine Attribute, sein Effekt sind 3 %
+Lebensraub, aber die Item-Karte zeigte Lebensraub nicht an und das Wiki kannte keine Champion-Quellen. Jetzt stehen
+Lebensraub und die Skilling-Boni auf der Karte, und das Wiki listet Champions als Quelle mit Gebiet und Chance (Unikat
+und Zusatzbeute). / EN: Champion uniques now show their effect (e.g. lifesteal) on the item card and the wiki lists the
+champion as a source.
+
 **Fasern und Stoff (Chef 27.08.):** DE: Handwerk hing bis Stufe 30 fast komplett an Monster-Leder. Jetzt gibt es Fasern in
 fünf Stufen: Nessel, Flachs, Dornhanf, Geisterseide und Sternflachs. Man sammelt sie an neuen Sammel-Knoten (samt Saat),
 baut sie in New Havens Beeten an und webt sie im Handwerk zu Nesselstoff, Leinen, Dornleinen, Geistertuch und Sternweb.

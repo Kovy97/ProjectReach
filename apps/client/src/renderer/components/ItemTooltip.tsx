@@ -376,6 +376,7 @@ export function suffixEffectParts(
   if (bonus.manaRegen) parts.push(`+${formatStat(bonus.manaRegen)}/s ${t("stat.manaRegen")}`);
   if (bonus.critChance) parts.push(`+${Math.round(bonus.critChance * 100)}% ${t("stat.critChance")}`);
   if (bonus.critDamage) parts.push(`+${Math.round(bonus.critDamage * 100)}% ${t("stat.critDamage")}`);
+  if (bonus.lifesteal) parts.push(`+${Math.round(bonus.lifesteal * 100)}% ${t("stat.lifesteal")}`);
   if (bonus.attackIntervalMs) {
     const v = bonus.attackIntervalMs;
     parts.push(`${v > 0 ? "+" : ""}${formatSeconds1(v / 1000)}s ${t("itip.attackSpeed")}`);
@@ -1154,6 +1155,14 @@ function SuffixGroup({
     rows.push(<StatRow key="scc" tone={tone} icon={statIcon("icon_attribute_crit_chance", "🎲")} label={t("stat.critChance")} value={`+${Math.round(bonus.critChance * 100)}%`} />);
   if (bonus.critDamage)
     rows.push(<StatRow key="scd" tone={tone} icon={statIcon("icon_attribute_critdamage", "💥")} label={t("stat.critDamage")} value={`+${Math.round(bonus.critDamage * 100)}%`} />);
+  // Spieler-Report 28.08.2026 („Legendary cape without attributes"): Signatur-Effekte wie Lebensraub (Grauzahn-Mantel)
+  // und die Skilling-Boni standen nirgends auf der Karte — die Karte wirkte leer, obwohl der Effekt aktiv ist.
+  if (bonus.lifesteal)
+    rows.push(<StatRow key="sls" tone={tone} icon={statIcon("icon_attribute_hp", "🩸")} label={t("stat.lifesteal")} value={`+${Math.round(bonus.lifesteal * 100)}%`} />);
+  if (bonus.gatherXpMult && bonus.gatherXpMult !== 1)
+    rows.push(<StatRow key="sgx" tone={tone} icon={statIcon("icon_attribute_lck", "✨")} label={t("stat.gatherXpMult")} value={`+${Math.round((bonus.gatherXpMult - 1) * 100)}%`} />);
+  if (bonus.gatherYieldMult)
+    rows.push(<StatRow key="sgy" tone={tone} icon={statIcon("icon_attribute_lck", "✨")} label={t("stat.gatherYieldMult")} value={`+${Math.round(bonus.gatherYieldMult * 100)}%`} />);
   if (bonus.attackIntervalMs) {
     const v = bonus.attackIntervalMs;
     const sign = v > 0 ? "+" : "";
