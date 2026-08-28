@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Partikel-Demo: Feuerball und Blitz</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #0b0a09; color: #d8cdb6; font: 14px/1.4 Georgia, "Times New Roman", serif; }
+  header { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; padding: 10px 16px; border-bottom: 1px solid #3a3129; background: #14110e; }
+  header h1 { font-size: 16px; margin: 0 12px 0 0; color: #e7b96b; letter-spacing: .04em; }
+  button { font: inherit; padding: 6px 14px; background: linear-gradient(#3b332b, #221d18); color: #e9dcc0; border: 1px solid #6b5a44; border-radius: 3px; cursor: pointer; }
+  button:hover { border-color: #c9a15b; }
+  button.on { border-color: #e7b96b; box-shadow: 0 0 6px #b0802a inset; }
+  label { display: inline-flex; align-items: center; gap: 6px; color: #b9ab92; }
+  input[type=range] { width: 120px; }
+  #wrap { position: relative; width: 100%; max-width: 1280px; margin: 12px auto; aspect-ratio: 16/9; background: #000; box-shadow: 0 0 0 1px #3a3129; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #hud { position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: #8f836d; pointer-events: none; }
+  p.note { max-width: 1280px; margin: 6px auto 18px; padding: 0 4px; color: #9c8f78; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Prozedurale Partikel, Demo</h1>
+  <button id="bFire">Feuerball</button>
+  <button id="bBolt">Blitz</button>
+  <button id="bAuto">Auto (abwechselnd)</button>
+  <label><input type="checkbox" id="crit"> Crit</label>
+  <label>Flugzeit <input type="range" id="travel" min="300" max="1400" value="650"> <span id="travelV">650 ms</span></label>
+  <label>Dichte <input type="range" id="dens" min="30" max="200" value="100"> <span id="densV">100 %</span></label>
+  <label><input type="checkbox" id="slow"> Zeitlupe ×4</label>
+  <label><input type="checkbox" id="mirror"> Gegnerseite (gespiegelt)</label>
+</header>
+<div id="wrap">
+  <canvas id="bg"></canvas>
+  <canvas id="fx"></canvas>
+  <div id="hud"></div>
+</div>
+<p class="note">Reines Canvas2D ohne Bibliothek: additive Glut- und Funkenpartikel, weiche Radialgradienten statt Sprites, Blitz als Mittelpunkt-Verschiebung mit Ästen und Flackern. Palette nach dem Kampfeffekte-Konzept (Feuer glutorange, Blitz blassgelb). Zum Vergleich mit Miras gemalten 5-Frame-Sequenzen gedacht; im Spiel wäre die Partikelschicht der Schweif und Funkenflug ÜBER dem gemalten Kern.</p>
+<script>
+(() => {
+  const wrap = document.getElementById("wrap");
+  const bg = document.getElementById("bg"), fx = document.getElementById("fx");
+  const bctx = bg.getContext("2d"), ctx = fx.getContext("2d");
+  const hud = document.getElementById("hud");
+  const W = 1280, H = 720;
+  let dpr = 1;
+  function resize() {
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    for (const c of [bg, fx]) { c.width = W * dpr; c.height = H * dpr; }
+    drawBg();
+  }
+  window.addEventListener("resize", resize);
+
+  // ---------- Szene (Platzhalter für den Battlescreen)
+  const caster = { x: 250, y: 420 }, enemy = { x: 1010, y: 400 };
+  let enemyFlash = 0, shake = 0;
+  function drawBg() {
+    const c = bctx; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const g = c.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#1a1512"); g.addColorStop(0.62, "#0f0d0b"); g.addColorStop(1, "#070605");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    // ferne Glut am Horizont
+    const h = c.createRadialGradient(640, 470, 20, 640, 470, 700);
+    h.addColorStop(0, "rgba(120,60,20,0.25)"); h.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = h; c.fillRect(0, 0, W, H);
+    c.fillStyle = "#151210"; c.fillRect(0, 520, W, 200);
+    c.strokeStyle = "#2b241d"; c.lineWidth = 2; c.beginPath(); c.moveTo(0, 520); c.lineTo(W, 520); c.stroke();
+    // Vignette
+    const v = c.createRadialGradient(640, 360, 300, 640, 360, 820);
+    v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,0.75)");
+    c.fillStyle = v; c.fillRect(0, 0, W, H);
+  }
+  function drawFigures(c, t) {
+    // Zauberer (links) und Gegner (rechts) als Silhouetten
+    c.save(); c.globalCompositeOperation = "source-over";
+    c.fillStyle = "#231d18";
+    roundRect(c, caster.x - 40, caster.y - 110, 80, 220, 26); c.fill();
+    c.strokeStyle = "#6b5a44"; c.lineWidth = 3; c.beginPath(); c.moveTo(caster.x + 28, caster.y + 90); c.lineTo(caster.x + 62, caster.y - 120); c.stroke();
+    const orb = c.createRadialGradient(caster.x + 62, caster.y - 122, 2, caster.x + 62, caster.y - 122, 14 + 3 * Math.sin(t / 180));
+    orb.addColorStop(0, "rgba(255,220,170,0.9)"); orb.addColorStop(1, "rgba(255,120,40,0)");
+    c.fillStyle = orb; c.fillRect(caster.x + 30, caster.y - 160, 70, 70);
+    c.fillStyle = enemyFlash > 0 ? `rgba(${60 + 195 * enemyFlash},${40 + 200 * enemyFlash},${30 + 200 * enemyFlash},1)` : "#2a221c";
+    roundRect(c, enemy.x - 60, enemy.y - 140, 120, 280, 30); c.fill();
+    c.fillStyle = "#3a2f26"; c.beginPath(); c.arc(enemy.x, enemy.y - 150, 34, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+  function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+  // ---------- Partikel
+  const P = []; // {x,y,vx,vy,life,age,size,kind,drag,grav}
+  const MAX = 2200;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function spawn(p) { if (P.length < MAX) P.push(p); }
+  const density = () => +document.getElementById("dens").value / 100;
+  const critOn = () => document.getElementById("crit").checked;
+  const mirrored = () => document.getElementById("mirror").checked;
+  function src() { return mirrored() ? { x: enemy.x - 70, y: enemy.y - 60 } : { x: caster.x + 62, y: caster.y - 122 }; }
+  function dst() { return mirrored() ? { x: caster.x, y: caster.y - 20 } : { x: enemy.x - 10, y: enemy.y - 40 }; }
+
+  // Farben (Konzept: Feuer glutorange mit dunkelrotem Saum, wenig Gelb; Blitz blassgelb)
+  function fireColor(u, a) { // u 0..1 Alter
+    if (u < 0.18) return `rgba(255,236,190,${a})`;
+    if (u < 0.5) return `rgba(255,${Math.round(150 - 60 * (u - 0.18) / 0.32)},40,${a})`;
+    return `rgba(${Math.round(190 - 120 * (u - 0.5) / 0.5)},${Math.round(50 - 40 * (u - 0.5) / 0.5)},20,${a})`;
+  }
+  const boltColor = (a) => `rgba(246,231,161,${a})`;
+
+  // ---------- Effekte
+  const active = []; // laufende Effekte mit update(dt,t)/draw(c,t)
+  function fireball(crit) {
+    const s = src(), d = dst(), T = +document.getElementById("travel").value;
+    const dir = Math.sign(d.x - s.x), k = crit ? 1.6 : 1;
+    let age = 0, done = false, impacted = false;
+    const e = {
+      update(dt) {
+        if (done) return;
+        age += dt; const u = Math.min(1, age / T);
+        const x = s.x + (d.x - s.x) * u, y = s.y + (d.y - s.y) * u - Math.sin(u * Math.PI) * 60;
+        e.x = x; e.y = y; e.u = u;
+        const n = Math.round(14 * k * density() * (dt / 16.7));
+        for (let i = 0; i < n; i++) {
+          const back = -dir * rnd(60, 260) * k; // Schweif nach hinten
+          spawn({ x: x + rnd(-8, 8) * k, y: y + rnd(-8, 8) * k, vx: back + rnd(-40, 40), vy: rnd(-70, 30), life: rnd(280, 640), age: 0, size: rnd(5, 13) * k, kind: "ember", drag: 0.985, grav: -40 });
+          if (Math.random() < 0.35) spawn({ x: x + rnd(-6, 6), y: y + rnd(-6, 6), vx: back * 0.5 + rnd(-30, 30), vy: rnd(-90, -30), life: rnd(500, 1000), age: 0, size: rnd(10, 22) * k, kind: "smoke", drag: 0.97, grav: -20 });
+          if (Math.random() < 0.25) spawn({ x, y, vx: back * 0.3 + rnd(-160, 160), vy: rnd(-160, 160), life: rnd(200, 450), age: 0, size: rnd(1.5, 3), kind: "spark", drag: 0.99, grav: 120 });
+        }
+        if (u >= 1 && !impacted) { impacted = true; impact(d, dir, crit); done = true; }
+      },
+      draw(c) {
+        if (done) return;
+        const r = (crit ? 34 : 24) * (1 + 0.12 * Math.sin(age / 28));
+        const g = c.createRadialGradient(e.x, e.y, 0, e.x, e.y, r);
+        g.addColorStop(0, "rgba(255,255,235,1)"); g.addColorStop(0.25, "rgba(255,220,150,0.95)"); g.addColorStop(0.55, "rgba(255,120,30,0.8)"); g.addColorStop(0.8, "rgba(150,30,10,0.35)"); g.addColorStop(1, "rgba(80,10,5,0)");
+        c.fillStyle = g; c.beginPath(); c.arc(e.x, e.y, r, 0, Math.PI * 2); c.fill();
+        // weicher Hitzeschein
+        const h = c.createRadialGradient(e.x, e.y, r, e.x, e.y, r * 3.2);
+        h.addColorStop(0, "rgba(255,90,20,0.22)"); h.addColorStop(1, "rgba(255,60,10,0)");
+        c.fillStyle = h; c.beginPath(); c.arc(e.x, e.y, r * 3.2, 0, Math.PI * 2); c.fill();
+      },
+      alive: () => !done,
+    };
+    active.push(e);
+  }
+  function impact(d, dir, crit) {
+    const k = crit ? 1.7 : 1, n = Math.round(90 * k * density());
+    for (let i = 0; i < n; i++) {
+      const a = rnd(0, Math.PI * 2), sp = rnd(60, 380) * k;
+      spawn({ x: d.x, y: d.y, vx: Math.cos(a) * sp - dir * 40, vy: Math.sin(a) * sp - 60, life: rnd(300, 700), age: 0, size: rnd(4, 11) * k, kind: "ember", drag: 0.96, grav: 160 });
+      if (i % 3 === 0) spawn({ x: d.x, y: d.y, vx: Math.cos(a) * sp * 1.4, vy: Math.sin(a) * sp * 1.4, life: rnd(200, 500), age: 0, size: rnd(1.5, 3), kind: "spark", drag: 0.98, grav: 200 });
+      if (i % 4 === 0) spawn({ x: d.x + rnd(-20, 20), y: d.y + rnd(-20, 20), vx: rnd(-60, 60), vy: rnd(-140, -40), life: rnd(700, 1400), age: 0, size: rnd(16, 34) * k, kind: "smoke", drag: 0.97, grav: -25 });
+    }
+    flash(d, crit ? 170 : 120, "rgba(255,170,80,", crit ? 240 : 170);
+    enemyFlash = 1; shake = crit ? 9 : 4;
+  }
+  function flash(at, r, rgbaPrefix, ms) {
+    let age = 0;
+    active.push({ update(dt) { age += dt; }, draw(c) {
+      const u = Math.min(1, age / ms), rr = r * (0.6 + 0.9 * u);
+      const g = c.createRadialGradient(at.x, at.y, 0, at.x, at.y, rr);
+      g.addColorStop(0, rgbaPrefix + (0.9 * (1 - u)) + ")"); g.addColorStop(0.5, rgbaPrefix + (0.35 * (1 - u)) + ")"); g.addColorStop(1, rgbaPrefix + "0)");
+      c.fillStyle = g; c.beginPath(); c.arc(at.x, at.y, rr, 0, Math.PI * 2); c.fill();
+    }, alive: () => age < ms });
+  }
+  function bolt(crit) {
+    const s = src(), d = dst(), k = crit ? 1.5 : 1, dir = Math.sign(d.x - s.x);
+    const charge = 140, hold = crit ? 380 : 280;
+    let age = 0, segs = null, lastGen = -1, struck = false;
+    function gen() {
+      const pts = [{ x: s.x, y: s.y }, { x: d.x, y: d.y }];
+      let disp = 70 * k;
+      for (let it = 0; it < 5; it++) {
+        for (let i = pts.length - 1; i > 0; i--) {
+          const a = pts[i - 1], b = pts[i], m = { x: (a.x + b.x) / 2 + rnd(-disp, disp) * 0.35, y: (a.y + b.y) / 2 + rnd(-disp, disp) };
+          pts.splice(i, 0, m);
+        }
+        disp *= 0.55;
+      }
+      const branches = [];
+      for (let b = 0; b < (crit ? 4 : 2); b++) {
+        const i = Math.floor(rnd(pts.length * 0.25, pts.length * 0.8)); const p0 = pts[i];
+        const br = [p0]; let px = p0.x, py = p0.y, ang = rnd(-1.1, 1.1) + (dir > 0 ? 0 : Math.PI);
+        for (let j = 0; j < 6; j++) { px += Math.cos(ang) * rnd(12, 34); py += Math.sin(ang) * rnd(12, 34); ang += rnd(-0.6, 0.6); br.push({ x: px, y: py }); }
+        branches.push(br);
+      }
+      return { pts, branches };
+    }
+    const e = {
+      update(dt) {
+        age += dt;
+        if (age < charge) { // Ladung am Stab: Funken, die nach innen ziehen
+          for (let i = 0; i < 3 * density(); i++) { const a = rnd(0, Math.PI * 2), r = rnd(18, 46); spawn({ x: s.x + Math.cos(a) * r, y: s.y + Math.sin(a) * r, vx: -Math.cos(a) * 120, vy: -Math.sin(a) * 120, life: 260, age: 0, size: 2, kind: "bolt", drag: 1, grav: 0 }); }
+          return;
+        }
+        if (age - charge > hold) return;
+        if (age - lastGen > 42) { segs = gen(); lastGen = age; }
+        if (!struck) { struck = true; enemyFlash = 1; shake = crit ? 7 : 3; flash(d, crit ? 140 : 100, "rgba(246,231,161,", 160);
+          const n = Math.round(50 * k * density());
+          for (let i = 0; i < n; i++) { const a = rnd(0, Math.PI * 2), sp = rnd(80, 420); spawn({ x: d.x, y: d.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: rnd(180, 420), age: 0, size: rnd(1.5, 3), kind: "bolt", drag: 0.97, grav: 260 }); }
+        }
+      },
+      draw(c) {
+        if (!segs || age < charge || age - charge > hold) return;
+        const u = (age - charge) / hold, a = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3, fl = 0.75 + 0.25 * Math.random();
+        const path = (pts) => { c.beginPath(); c.moveTo(pts[0].x, pts[0].y); for (let i = 1; i < pts.length; i++) c.lineTo(pts[i].x, pts[i].y); };
+        c.lineCap = "round"; c.lineJoin = "round";
+        for (const [w, col] of [[26 * k, `rgba(200,190,120,${0.10 * a * fl})`], [11 * k, `rgba(246,231,161,${0.35 * a * fl})`], [4 * k, `rgba(255,250,220,${0.95 * a * fl})`], [1.6, `rgba(255,255,255,${a})`]]) {
+          c.strokeStyle = col; c.lineWidth = w; path(segs.pts); c.stroke();
+          for (const br of segs.branches) { c.lineWidth = w * 0.45; path(br); c.stroke(); }
+        }
+      },
+      alive: () => age < charge + hold + 40,
+    };
+    active.push(e);
+  }
+
+  // ---------- Loop
+  let last = performance.now(), fpsAcc = 0, fpsN = 0, fpsShown = 0, autoOn = false, autoT = 0, autoNext = 0;
+  function frame(now) {
+    const slow = document.getElementById("slow").checked;
+    let dt = Math.min(50, now - last); last = now; if (slow) dt /= 4;
+    const t = now;
+    // Update
+    for (const e of active) e.update(dt);
+    for (let i = active.length - 1; i >= 0; i--) if (!active[i].alive()) active.splice(i, 1);
+    for (let i = P.length - 1; i >= 0; i--) {
+      const p = P[i]; p.age += dt; if (p.age >= p.life) { P[i] = P[P.length - 1]; P.pop(); continue; }
+      const s = dt / 1000; p.vx *= p.drag; p.vy *= p.drag; p.vy += p.grav * s; p.x += p.vx * s; p.y += p.vy * s;
+      if (p.kind === "ember") { p.x += Math.sin(p.age / 60 + p.size) * 18 * s; }
+    }
+    enemyFlash = Math.max(0, enemyFlash - dt / 90); shake = Math.max(0, shake - dt / 25);
+    if (autoOn) { autoT += dt; if (autoT > autoNext) { autoT = 0; autoNext = 1500; (autoNext = 1500, (autoStep++ % 2 === 0) ? fireball(critOn()) : bolt(critOn())); } }
+    // Draw
+    const c = ctx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+    c.save(); if (shake > 0) c.translate(rnd(-shake, shake), rnd(-shake, shake));
+    drawFigures(c, t);
+    c.globalCompositeOperation = "source-over";
+    for (const p of P) if (p.kind === "smoke") { const u = p.age / p.life; c.fillStyle = `rgba(40,30,26,${0.28 * (1 - u)})`; c.beginPath(); c.arc(p.x, p.y, p.size * (0.6 + u), 0, Math.PI * 2); c.fill(); }
+    c.globalCompositeOperation = "lighter";
+    for (const p of P) {
+      const u = p.age / p.life;
+      if (p.kind === "ember") { const r = p.size * (1 - u * 0.8); const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r); g.addColorStop(0, fireColor(u, 0.9 * (1 - u))); g.addColorStop(1, fireColor(u, 0)); c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r, 0, Math.PI * 2); c.fill(); }
+      else if (p.kind === "spark") { c.strokeStyle = fireColor(Math.min(0.45, u), 0.9 * (1 - u)); c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 0.02, p.y - p.vy * 0.02); c.stroke(); }
+      else if (p.kind === "bolt") { c.strokeStyle = boltColor(0.95 * (1 - u)); c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 0.015, p.y - p.vy * 0.015); c.stroke(); }
+    }
+    for (const e of active) e.draw(c);
+    c.restore();
+    fpsAcc += dt; fpsN++; if (fpsAcc > 500) { fpsShown = Math.round(1000 / (fpsAcc / fpsN)); fpsAcc = 0; fpsN = 0; }
+    hud.textContent = `${fpsShown} fps · ${P.length} Partikel · Leertaste = Feuerball, B = Blitz`;
+    requestAnimationFrame(frame);
+  }
+  let autoStep = 0;
+  requestAnimationFrame(frame);
+
+  // ---------- Bedienung
+  document.getElementById("bFire").onclick = () => fireball(critOn());
+  document.getElementById("bBolt").onclick = () => bolt(critOn());
+  const bAuto = document.getElementById("bAuto");
+  bAuto.onclick = () => { autoOn = !autoOn; bAuto.classList.toggle("on", autoOn); autoT = 0; autoNext = 0; };
+  document.getElementById("travel").oninput = (e) => document.getElementById("travelV").textContent = e.target.value + " ms";
+  document.getElementById("dens").oninput = (e) => document.getElementById("densV").textContent = e.target.value + " %";
+  window.addEventListener("keydown", (e) => { if (e.code === "Space") { e.preventDefault(); fireball(critOn()); } if (e.key === "b" || e.key === "B") bolt(critOn()); });
+  resize();
+})();
+</script>
+</body>
+</html>

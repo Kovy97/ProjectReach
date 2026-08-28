@@ -126,3 +126,18 @@ den Beutezeilen. Offline-Bericht listet Fänge („Eber ×3, Ziege ×1"). Sideba
 - **J6 Sehne:** Nessel-Sehne ab Handwerk 1.
 - **J7 Version:** Fasern, Stoff und Jagen werden **1.2.0**; die Taverne rückt auf **1.3.0**.
 - **Fallenzeiten:** 5 Minuten (Weiden) bis 60 Minuten (Götzenhalle), Tabelle B3.
+
+## Nachtrag 28.08.: Köder-Stufen (Symbiose Angeln ↔ Jagen)
+
+Chef-Idee 28.08.: Köder in Stufen, je höher das Gebiet, desto höher der Köder, und das Angeln liefert ihn auf derselben Stufe.
+
+| Stufe | Köder | Angel-Aktion (Angeln-Stufe) | Jagdgebiete |
+|---|---|---|---|
+| 1 | Wurmköder | Köder graben (1) | Weiden, Grenzlande |
+| 2 | Madenköder | Maden sammeln (20) | Aschfelder, Schwarzdornwald |
+| 3 | Krebsköder | Krebse fangen (40) | Krypta, Wildwald |
+| 4 | Tintenfischköder | Tintenfische keschern (60) | Küste, Schlackengrube |
+| 5 | Glühköder | Glühwürmer sammeln (80) | Hochland, Götzenhalle |
+
+Jedes Gebiet verlangt genau seinen Köder (`huntingZones[*].baitItemId`, Tabelle `HUNT_BAIT_TIERS` in shared). Auto-Erneuern zieht den
+Köder des Gebiets aus Inventar oder Lager. Bilder der vier neuen Köder: Mira-Auftrag `CODEX/work/2026-08-28-koeder-stufen`.

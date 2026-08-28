@@ -470,7 +470,7 @@ export const content: ContentDB = {
       weaponStyle: "magic",
       weaponType: "staff",
       twoHanded: true,
-      damageMin: 0.4, damageMax: 0.6, attackIntervalMs: 3000,
+      damageMin: 0.4, damageMax: 0.6, spellFocus: 0.003, attackIntervalMs: 3000,
       requirements: { magic: 1 },
       weaponEffect: { type: "burn", chance: 0.5, magnitude: 1, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.3→1 (rounded to "0 damage/s" in tooltip)
       // Content-Fix (Live-Bug 2026-08-23): value fehlte (s. rusty_sword-Kommentar, gleiche
@@ -529,7 +529,7 @@ export const content: ContentDB = {
       weaponStyle: "magic",
       weaponType: "staff",
       twoHanded: true,
-      damageMin: 0.2, damageMax: 0.2, attackIntervalMs: 3000,
+      damageMin: 0.2, damageMax: 0.2, spellFocus: 0.003, attackIntervalMs: 3000,
       manaCost: 5,
       weaponEffect: { type: "burn", chance: 0.25, magnitude: 1, durationMs: 3000 }, // balance-fix 2026-07-05: magnitude 0.2→1 (rounded to "0 damage/s" in tooltip)
       rarity: "common",
@@ -2828,7 +2828,7 @@ export const content: ContentDB = {
       name: { en: "Skarn Idol Staff", de: "Skarn-Götzen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
-      damageMin: 11.3, damageMax: 17, attackIntervalMs: 3000,
+      damageMin: 11.3, damageMax: 17, spellFocus: 0.0032, attackIntervalMs: 3000,
       manaCost: 10,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 8, durationMs: 6500 }, // balance-fix 2026-07-05: magnitude 3.6→8 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 4 },
@@ -2898,7 +2898,7 @@ export const content: ContentDB = {
       name: { en: "Last Condemnation", de: "Die Letzte Verdammnis" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
-      damageMin: 11.3, damageMax: 16.9, attackIntervalMs: 3000,
+      damageMin: 11.3, damageMax: 16.9, spellFocus: 0.0032, attackIntervalMs: 3000,
       manaCost: 10,
       weaponEffect: { type: "burn", chance: 0.60, magnitude: 10, durationMs: 7000 }, // balance-fix 2026-07-05: magnitude 4.8→10 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { wis: 7, lck: 5 },
@@ -3658,12 +3658,18 @@ export const content: ContentDB = {
     },
 
     // ── Magie-Waffen: Tier-Stäbe/Wands/Foki (Runecrafting, 12 Tiers je Typ) ──────
+    // Zauberfokus (Chef-GO 28.08.2026, bewusster Magier-Buff): JEDE Magie-Haupthand trägt `spellFocus`
+    // (Anteil je INT, um den die Waffenspanne wächst; Engine: spellFocusMult in character.ts). Kalibriert auf
+    // den INT des besten legalen Kits ohne Runen/Suffixe/Tränke je Stufe (CL 30/60/90 → 46/70/95) auf
+    // +15/22/30 % Spanne: Stab (2H) 0,0030→0,0032, Zauberstab/Zepter (1H) 0,0025→0,0027 (≈ 20 % weniger,
+    // sie behalten die Nebenhand). Drops/Champion-Waffen: Fokus der Craft-Stufe, deren Schaden sie tragen
+    // (Rare-Drop-Philosophie). Tabelle + Herleitung: design/zauberfokus-2026-08-28.md. Foki (offhand) NIE.
     // STAFF: 0.85·D, twoHanded, Burn-DoT (eskalierend), manaCost 8→24 (post ×1.5 nerf)
     copper_staff: {
       id: "copper_staff", name: { en: "Copper Staff", de: "Kupfer-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 0.4, damageMax: 0.6, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
+      damageMin: 0.4, damageMax: 0.6, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 3500 }, // Combat-Feel v2 #5: chance 0.25→0.45 (uniform), magnitude ×1.5 (Staff-Identität: DoT-Säule); balance-fix 2026-07-05: 0.15→1 (rundete auf "0 damage/s")
       requirements: { magic: 1 }, value: 38, // balance-pass3: value 50→38
     },
@@ -3671,7 +3677,7 @@ export const content: ContentDB = {
       id: "bronze_staff", name: { en: "Bronze Staff", de: "Bronze-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 0.9, damageMax: 1.3, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
+      damageMin: 0.9, damageMax: 1.3, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 3800 }, // Combat-Feel v2 #5: chance 0.26→0.45 (uniform), magnitude ×1.5; balance-fix 2026-07-05: 0.3→1 (rundete auf "0 damage/s")
       requirements: { magic: 5 }, value: 75, // balance-pass3: value 95→75
     },
@@ -3679,7 +3685,7 @@ export const content: ContentDB = {
       id: "iron_staff", name: { en: "Iron Staff", de: "Eisen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 1.4, damageMax: 2, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
+      damageMin: 1.4, damageMax: 2, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 4000 }, // Combat-Feel v2 #5: chance 0.28→0.45 (uniform), magnitude ×1.5; balance-fix 2026-07-05: 0.45→1 (rundete auf "0 damage/s")
       requirements: { magic: 10 }, value: 100, rarity: "rare", // balance-pass3: value 200→100
     },
@@ -3687,7 +3693,7 @@ export const content: ContentDB = {
       id: "steel_staff", name: { en: "Steel Staff", de: "Stahl-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 1.7, damageMax: 2.6, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2/3)
+      damageMin: 1.7, damageMax: 2.6, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2/3)
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 2, durationMs: 4300 }, // Combat-Feel v2 #5: chance 0.30→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 0.75→2, Ganzzahl-Retune]
       requirements: { magic: 20 }, value: 190, rarity: "rare", // balance-pass3: value 560→190
     },
@@ -3695,7 +3701,7 @@ export const content: ContentDB = {
       id: "blacksteel_staff", name: { en: "Blacksteel Staff", de: "Schwarzstahl-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 2.1, damageMax: 3.2, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.6/4)
+      damageMin: 2.1, damageMax: 3.2, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.6/4)
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 3, durationMs: 4600 }, // Combat-Feel v2 #5: chance 0.31→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 1.05→3, Ganzzahl-Retune]
       requirements: { magic: 30 }, value: 325, rarity: "rare", // balance-pass3: value 860→325
     },
@@ -3703,7 +3709,7 @@ export const content: ContentDB = {
       id: "mithril_staff", name: { en: "Mithril Staff", de: "Mithril-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 2.7, damageMax: 4.1, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.2/4.8)
+      damageMin: 2.7, damageMax: 4.1, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.2/4.8)
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 3, durationMs: 4900 }, // Combat-Feel v2 #5: chance 0.32→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 1.35→3, Ganzzahl-Retune]
       requirements: { magic: 40 }, value: 440, rarity: "superRare", // balance-pass3: value 1350→440
     },
@@ -3711,7 +3717,7 @@ export const content: ContentDB = {
       id: "adamantium_staff", name: { en: "Adamantium Staff", de: "Adamantium-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 3.3, damageMax: 4.9, attackIntervalMs: 3000, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4/6)
+      damageMin: 3.3, damageMax: 4.9, spellFocus: 0.0031, attackIntervalMs: 3000, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4/6)
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 4, durationMs: 5200 }, // Combat-Feel v2 #5: chance 0.33→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 1.65→4, Ganzzahl-Retune]
       requirements: { magic: 50 }, value: 750, rarity: "superRare", // balance-pass3: value 2250→750
     },
@@ -3719,7 +3725,7 @@ export const content: ContentDB = {
       id: "runite_staff", name: { en: "Runite Staff", de: "Runit-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 4.2, damageMax: 6.2, attackIntervalMs: 2880, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5/7.4); attackIntervalMs unverändert
+      damageMin: 4.2, damageMax: 6.2, spellFocus: 0.0031, attackIntervalMs: 2880, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5/7.4); attackIntervalMs unverändert
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 5, durationMs: 5500 }, // Combat-Feel v2 #5: chance 0.34→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 2.1→5, Ganzzahl-Retune]
       requirements: { magic: 60 }, value: 1000, rarity: "superRare", // balance-pass3: value 3900→1000
     },
@@ -3727,7 +3733,7 @@ export const content: ContentDB = {
       id: "bloodiron_staff", name: { en: "Bloodiron Staff", de: "Bluteisen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 5.2, damageMax: 7.7, attackIntervalMs: 2830, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.8/8.6); attackIntervalMs unverändert
+      damageMin: 5.2, damageMax: 7.7, spellFocus: 0.0031, attackIntervalMs: 2830, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.8/8.6); attackIntervalMs unverändert
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 5, durationMs: 5800 }, // Combat-Feel v2 #5: chance 0.36→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 2.7→5, Ganzzahl-Retune]
       requirements: { magic: 70 }, value: 1250, rarity: "superRare", // balance-pass3: value 6300→1250
     },
@@ -3735,7 +3741,7 @@ export const content: ContentDB = {
       id: "titanium_staff", name: { en: "Titanium Staff", de: "Titan-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 6.5, damageMax: 9.8, attackIntervalMs: 2780, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
+      damageMin: 6.5, damageMax: 9.8, spellFocus: 0.0031, attackIntervalMs: 2780, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 6, durationMs: 6100 }, // Combat-Feel v2 #5: chance 0.37→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 3.3→6, Ganzzahl-Retune]
       requirements: { magic: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 9600→1600
     },
@@ -3743,7 +3749,7 @@ export const content: ContentDB = {
       id: "aetherium_staff", name: { en: "Aetherium Staff", de: "Aetherium-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 8.1, damageMax: 12.2, attackIntervalMs: 2730, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
+      damageMin: 8.1, damageMax: 12.2, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 7, durationMs: 6300 }, // Combat-Feel v2 #5: chance 0.38→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 3.9→7, Ganzzahl-Retune]
       modifiers: { int: 1 },
       requirements: { magic: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 13500→2100
@@ -3752,7 +3758,7 @@ export const content: ContentDB = {
       id: "godiron_staff", name: { en: "Godiron Staff", de: "Götzeneisen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 10.2, damageMax: 15.2, attackIntervalMs: 2700, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.8/11.6); attackIntervalMs unverändert
+      damageMin: 10.2, damageMax: 15.2, spellFocus: 0.0032, attackIntervalMs: 2700, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.8/11.6); attackIntervalMs unverändert
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 7, durationMs: 6500 }, // Combat-Feel v2 #5: chance 0.40→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 4.65→7, Ganzzahl-Retune]
       modifiers: { int: 1, wis: 1 },
       requirements: { magic: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 21000→3000
@@ -3762,7 +3768,7 @@ export const content: ContentDB = {
       id: "copper_wand", name: { en: "Copper Wand", de: "Kupfer-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 0.4, damageMax: 0.4, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
+      damageMin: 0.4, damageMax: 0.4, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
       weaponEffect: { type: "frost", chance: 0.18, magnitude: 1, durationMs: 3000 },
       requirements: { magic: 1 }, value: 38, // balance-pass3: value 28→38
     },
@@ -3770,7 +3776,7 @@ export const content: ContentDB = {
       id: "bronze_wand", name: { en: "Bronze Wand", de: "Bronze-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 0.6, damageMax: 0.8, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
+      damageMin: 0.6, damageMax: 0.8, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
       weaponEffect: { type: "frost", chance: 0.20, magnitude: 1, durationMs: 3200 },
       requirements: { magic: 5 }, value: 75, // balance-pass3: value 55→75
     },
@@ -3778,7 +3784,7 @@ export const content: ContentDB = {
       id: "iron_wand", name: { en: "Iron Wand", de: "Eisen-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 1.1, damageMax: 1.3, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
+      damageMin: 1.1, damageMax: 1.3, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
       weaponEffect: { type: "frost", chance: 0.22, magnitude: 1, durationMs: 3400 },
       requirements: { magic: 10 }, value: 100, rarity: "rare", // balance-pass3: value 110→100
     },
@@ -3786,7 +3792,7 @@ export const content: ContentDB = {
       id: "steel_wand", name: { en: "Steel Wand", de: "Stahl-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 1.3, damageMax: 1.6, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 1.6/2)
+      damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 1.6/2)
       weaponEffect: { type: "frost", chance: 0.25, magnitude: 1, durationMs: 3600 },
       requirements: { magic: 20 }, value: 190, rarity: "rare", // balance-pass3: value 340→190
     },
@@ -3794,7 +3800,7 @@ export const content: ContentDB = {
       id: "blacksteel_wand", name: { en: "Blacksteel Wand", de: "Schwarzstahl-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 1.6, damageMax: 2.1, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.1/2.7)
+      damageMin: 1.6, damageMax: 2.1, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.1/2.7)
       weaponEffect: { type: "shock", chance: 0.20, magnitude: 0.22, durationMs: 3500 },
       requirements: { magic: 30 }, value: 325, rarity: "rare", // balance-pass3: value 520→325
     },
@@ -3802,7 +3808,7 @@ export const content: ContentDB = {
       id: "mithril_wand", name: { en: "Mithril Wand", de: "Mithril-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 2.0, damageMax: 2.6, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.7/3.5)
+      damageMin: 2.0, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.7/3.5)
       weaponEffect: { type: "shock", chance: 0.22, magnitude: 0.24, durationMs: 3800 },
       requirements: { magic: 40 }, value: 440, rarity: "superRare", // balance-pass3: value 840→440
     },
@@ -3810,7 +3816,7 @@ export const content: ContentDB = {
       id: "adamantium_wand", name: { en: "Adamantium Wand", de: "Adamantium-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 2.6, damageMax: 3.3, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.5/4.5)
+      damageMin: 2.6, damageMax: 3.3, spellFocus: 0.0026, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.5/4.5)
       weaponEffect: { type: "shock", chance: 0.24, magnitude: 0.26, durationMs: 4000 },
       requirements: { magic: 50 }, value: 750, rarity: "superRare", // balance-pass3: value 1400→750
     },
@@ -3818,7 +3824,7 @@ export const content: ContentDB = {
       id: "runite_wand", name: { en: "Runite Wand", de: "Runit-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 3.2, damageMax: 4.1, attackIntervalMs: 2670, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.2/5.4); attackIntervalMs unverändert
+      damageMin: 3.2, damageMax: 4.1, spellFocus: 0.0026, attackIntervalMs: 2670, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.2/5.4); attackIntervalMs unverändert
       weaponEffect: { type: "shock", chance: 0.26, magnitude: 0.28, durationMs: 4200 },
       requirements: { magic: 60 }, value: 1000, rarity: "superRare", // balance-pass3: value 2400→1000
     },
@@ -3826,7 +3832,7 @@ export const content: ContentDB = {
       id: "bloodiron_wand", name: { en: "Bloodiron Wand", de: "Bluteisen-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 4.0, damageMax: 5.2, attackIntervalMs: 2640, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.8/6.2); attackIntervalMs unverändert
+      damageMin: 4.0, damageMax: 5.2, spellFocus: 0.0026, attackIntervalMs: 2640, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.8/6.2); attackIntervalMs unverändert
       weaponEffect: { type: "shock", chance: 0.28, magnitude: 0.30, durationMs: 4400 },
       requirements: { magic: 70 }, value: 1250, rarity: "superRare", // balance-pass3: value 3800→1250
     },
@@ -3834,7 +3840,7 @@ export const content: ContentDB = {
       id: "titanium_wand", name: { en: "Titanium Wand", de: "Titan-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 5.1, damageMax: 6.4, attackIntervalMs: 2630, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.5/6.9); attackIntervalMs unverändert
+      damageMin: 5.1, damageMax: 6.4, spellFocus: 0.0026, attackIntervalMs: 2630, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.5/6.9); attackIntervalMs unverändert
       weaponEffect: { type: "shock", chance: 0.30, magnitude: 0.32, durationMs: 4600 },
       requirements: { magic: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 5800→1600
     },
@@ -3842,7 +3848,7 @@ export const content: ContentDB = {
       id: "aetherium_wand", name: { en: "Aetherium Wand", de: "Aetherium-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 6.3, damageMax: 8.0, attackIntervalMs: 2600, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.9/7.5); attackIntervalMs unverändert
+      damageMin: 6.3, damageMax: 8.0, spellFocus: 0.0027, attackIntervalMs: 2600, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.9/7.5); attackIntervalMs unverändert
       weaponEffect: { type: "shock", chance: 0.32, magnitude: 0.34, durationMs: 4800 },
       requirements: { magic: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 8200→2100
     },
@@ -3850,7 +3856,7 @@ export const content: ContentDB = {
       id: "godiron_wand", name: { en: "Godiron Wand", de: "Götzeneisen-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 7.9, damageMax: 9.9, attackIntervalMs: 2580, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.2/7.8); attackIntervalMs unverändert
+      damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.2/7.8); attackIntervalMs unverändert
       weaponEffect: { type: "shock", chance: 0.34, magnitude: 0.36, durationMs: 5000 },
       requirements: { magic: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 13000→3000
     },
@@ -3982,7 +3988,7 @@ export const content: ContentDB = {
       slot: "mainhand",
       weaponStyle: "magic",
       weaponType: "scepter",
-      damageMin: 1.9, damageMax: 2.9, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Scepter-Linie fehlte in Spec §3.3 — auf Stab-Kurve eingeordnet (geometrisch zwischen steel/blacksteel bei req25 interpoliert; war 1.4/2.2)
+      damageMin: 1.9, damageMax: 2.9, spellFocus: 0.0025, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Scepter-Linie fehlte in Spec §3.3 — auf Stab-Kurve eingeordnet (geometrisch zwischen steel/blacksteel bei req25 interpoliert; war 1.4/2.2)
       manaCost: 6, wardBreak: 0.25,
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 4000 },
       requirements: { magic: 25 },
@@ -4003,7 +4009,7 @@ export const content: ContentDB = {
       weaponStyle: "magic",
       weaponType: "staff",
       twoHanded: true,
-      damageMin: 2.2, damageMax: 3.2, attackIntervalMs: 3000,
+      damageMin: 2.2, damageMax: 3.2, spellFocus: 0.003, attackIntervalMs: 3000,
       manaCost: 7,
       weaponEffect: { type: "burn", chance: 0.3, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 1→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       requirements: { magic: 40 },
@@ -4038,7 +4044,7 @@ export const content: ContentDB = {
     },
     stormcaller_rod: {
       id: "stormcaller_rod", name: { en: "Stormcaller Rod", de: "Sturmrufer-Rute" }, type: "equipment", stackable: false,
-      icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 3.3, damageMax: 4.9, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Scepter-Linie auf Stab-Kurve eingeordnet (req50 = exakt Adamantium-Anker; war 3/4.4)
+      icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 3.3, damageMax: 4.9, spellFocus: 0.0026, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Scepter-Linie auf Stab-Kurve eingeordnet (req50 = exakt Adamantium-Anker; war 3/4.4)
       manaCost: 7, wardBreak: 0.25,
       weaponType: "scepter",
       weaponEffect: { type: "shock", chance: 0.35, magnitude: 0.28, durationMs: 4000 },
@@ -4046,7 +4052,7 @@ export const content: ContentDB = {
     },
     voidcaller_staff: {
       id: "voidcaller_staff", name: { en: "Voidcaller Staff", de: "Leerenrufer-Stab" }, type: "equipment", stackable: false,
-      icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 3.8, damageMax: 5.8, attackIntervalMs: 3000,
+      icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 3.8, damageMax: 5.8, spellFocus: 0.0031, attackIntervalMs: 3000,
       manaCost: 8,
       weaponType: "staff",
       twoHanded: true,
@@ -4056,7 +4062,7 @@ export const content: ContentDB = {
     },
     godspark_staff: {
       id: "godspark_staff", name: { en: "Godspark Staff", de: "Götzenfunken-Stab" }, type: "equipment", stackable: false,
-      icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 4.8, damageMax: 7.2, attackIntervalMs: 3000,
+      icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 4.8, damageMax: 7.2, spellFocus: 0.0031, attackIntervalMs: 3000,
       manaCost: 9,
       weaponType: "staff",
       twoHanded: true,
@@ -4122,7 +4128,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "staff",
       twoHanded: true,
-      damageMin: 4.4, damageMax: 6.5, attackIntervalMs: 3000, // item-drop-audit P2 (2026-07-25): dmg 1.7-2.5→3.4-5.0 — exakt Steel-Stab-Schaden bei mag-52-Req; jetzt ≈Adamant-Stab + poison, on-band.
+      damageMin: 4.4, damageMax: 6.5, spellFocus: 0.0031, attackIntervalMs: 3000, // item-drop-audit P2 (2026-07-25): dmg 1.7-2.5→3.4-5.0 — exakt Steel-Stab-Schaden bei mag-52-Req; jetzt ≈Adamant-Stab + poison, on-band.
       // sweep6-batchC T2-F2: frost→poison — frost ist kein DoT, die antiRegen-Zeile war dadurch
       // unerfüllbar (gleiches Muster wie gravesteel_blade). Poison passt zum Ranken-/Hexensud-Thema
       // und macht antiRegen selbsttragend (kein externes DoT-Pet mehr nötig).
@@ -5091,7 +5097,7 @@ export const content: ContentDB = {
     hedgewitch_twig: {
       id: "hedgewitch_twig", name: { en: "Hedge-Witch Twig", de: "Heckenhexen-Zweig" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 1, damageMax: 1.5, attackIntervalMs: 2700,
+      damageMin: 1, damageMax: 1.5, spellFocus: 0.0025, attackIntervalMs: 2700,
       manaCost: 6, weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 3, durationMs: 0 },
       requirements: { magic: 5 }, value: 50, rarity: "common",
     },
@@ -5283,7 +5289,7 @@ export const content: ContentDB = {
     warlock_felstaff: {
       id: "warlock_felstaff", name: { en: "Warlock's Felstaff", de: "Felstab des Hexenmeisters" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 2.1, damageMax: 3.2, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
+      damageMin: 2.1, damageMax: 3.2, spellFocus: 0.003, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
       weaponEffect: { type: "burn", chance: 0.30, magnitude: 1, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.6→1 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 8, weaponEffects: [ { type: "manaDrain", chance: 1, magnitude: 2, durationMs: 0 } ],
       requirements: { magic: 20 }, value: 300, rarity: "rare",
@@ -5355,7 +5361,7 @@ export const content: ContentDB = {
     mire_hexstaff: {
       id: "mire_hexstaff", name: { en: "Mire Hexstaff", de: "Morast-Hexenstab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 3.2, damageMax: 5.1, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
+      damageMin: 3.2, damageMax: 5.1, spellFocus: 0.0031, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
       weaponEffect: { type: "poison", chance: 0.30, magnitude: 1, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.5→1 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 8, weaponEffects: [ { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 } ],
       requirements: { magic: 40 }, value: 320, rarity: "rare",
@@ -5459,7 +5465,7 @@ export const content: ContentDB = {
     witchroot_wand: {
       id: "witchroot_wand", name: { en: "Witchroot Wand", de: "Hexenwurz-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 3.2, damageMax: 4.3, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.3/4.3). Leicht unter wailing_wand(req28) gehalten, da niedrigeres Requirement (req26) — Tier-Leiter-Monotonie
+      damageMin: 3.2, damageMax: 4.3, spellFocus: 0.0026, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.3/4.3). Leicht unter wailing_wand(req28) gehalten, da niedrigeres Requirement (req26) — Tier-Leiter-Monotonie
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 3500 },
       manaCost: 8, weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
       requirements: { magic: 50 }, value: 480, rarity: "rare",
@@ -5541,7 +5547,7 @@ export const content: ContentDB = {
     pyre_staff: {
       id: "pyre_staff", name: { en: "Pyre Staff", de: "Scheiterhaufen-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 7, damageMax: 10.6, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 76% (Staff-Mid-Kurve wurde gesenkt); auf Next-Tier(Mithril)-Deckel korrigiert (war 4.8/7.2)
+      damageMin: 7, damageMax: 10.6, spellFocus: 0.0031, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 76% (Staff-Mid-Kurve wurde gesenkt); auf Next-Tier(Mithril)-Deckel korrigiert (war 4.8/7.2)
       weaponEffect: { type: "burn", chance: 0.35, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.9→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 9, weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 4, durationMs: 0 } ],
       requirements: { magic: 70 }, value: 750, rarity: "superRare",
@@ -5606,7 +5612,7 @@ export const content: ContentDB = {
     frostbone_scepter: {
       id: "frostbone_scepter", name: { en: "Frostbone Scepter", de: "Frostknochen-Zepter" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "scepter",
-      damageMin: 5.2, damageMax: 7.9, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — Scepter-Linie auf Stab-Kurve eingeordnet; req28 (Steel-Bracket) auf Next-Tier-Niveau (Blacksteel) gedeckelt, war 2.7/4.1 (= Mithril-Niveau, 2 Tiers über eigenem Bracket → Verstoß gegen Max-Nächstes-Tier-Regel)
+      damageMin: 5.2, damageMax: 7.9, spellFocus: 0.0027, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — Scepter-Linie auf Stab-Kurve eingeordnet; req28 (Steel-Bracket) auf Next-Tier-Niveau (Blacksteel) gedeckelt, war 2.7/4.1 (= Mithril-Niveau, 2 Tiers über eigenem Bracket → Verstoß gegen Max-Nächstes-Tier-Regel)
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 3500 },
       manaCost: 9, modifiers: { lck: 1 },
       weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
@@ -5771,7 +5777,7 @@ export const content: ContentDB = {
     siren_shockstaff: {
       id: "siren_shockstaff", name: { en: "Siren's Shockstaff", de: "Sirenen-Schockstab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 4.8, damageMax: 7.3, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 12%; auf Next-Tier(Mithril)-Deckel korrigiert (war 3/4.6)
+      damageMin: 4.8, damageMax: 7.3, spellFocus: 0.0031, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 12%; auf Next-Tier(Mithril)-Deckel korrigiert (war 3/4.6)
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 4000 },
       manaCost: 10, modifiers: { wis: 2 },
       weaponEffects: [ { type: "manaOnKill", chance: 1, magnitude: 4, durationMs: 0 } ],
@@ -6035,7 +6041,7 @@ export const content: ContentDB = {
     stormcrest_staff: {
       id: "stormcrest_staff", name: { en: "Stormcrest Staff", de: "Sturmkamm-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 11.3, damageMax: 17, attackIntervalMs: 3000,
+      damageMin: 11.3, damageMax: 17, spellFocus: 0.0032, attackIntervalMs: 3000,
       weaponEffect: { type: "shock", chance: 0.30, magnitude: 0.30, durationMs: 4000 },
       manaCost: 10, modifiers: { wis: 3, lck: 2 },
       weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 } ],
@@ -6161,7 +6167,7 @@ export const content: ContentDB = {
     frosthex_wand: {
       id: "frosthex_wand", name: { en: "Frosthex Wand", de: "Frosthex-Zauberstab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 8.1, damageMax: 10.6, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Bloodiron-Craft-Tier um 42% (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Bloodiron)-Deckel korrigiert (war 5.9/7.5)
+      damageMin: 8.1, damageMax: 10.6, spellFocus: 0.0027, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Bloodiron-Craft-Tier um 42% (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Bloodiron)-Deckel korrigiert (war 5.9/7.5)
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 4000 },
       manaCost: 8, modifiers: { wis: 3 },
       weaponEffects: [ { type: "catalyst", chance: 1, magnitude: 0, durationMs: 3000 } ],
@@ -6300,7 +6306,7 @@ export const content: ContentDB = {
     wailing_wand: {
       id: "wailing_wand", name: { en: "Wailing Wand", de: "Wehklage-Stab" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 2, damageMax: 2.6, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.5/4.5)
+      damageMin: 2, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.5/4.5)
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 3500 },
       manaCost: 8, requirements: { magic: 30 }, value: 560, rarity: "rare",
     },
@@ -6353,7 +6359,7 @@ export const content: ContentDB = {
       // Wächterprüfung zusätzlich gefunden (DPS unter dem nächsten Craft-Tier titanium_staff R80,
       // 2.93 DPS) — mitbehoben, Tempo unverändert (3 s), Requirement bleibt (aktuelles Craft-Tier
       // bloodiron_staff liegt bei R70, unter den vorhandenen R72).
-      damageMin: 7.2, damageMax: 10.4, attackIntervalMs: 3000,
+      damageMin: 7.2, damageMax: 10.4, spellFocus: 0.0031, attackIntervalMs: 3000,
       weaponEffect: { type: "burn", chance: 0.35, magnitude: 5, durationMs: 5500 }, // balance-fix 2026-07-05: magnitude 1.8→5 (Ganzzahl, tier-gestuft nach Level/Rarity)
       manaCost: 10, modifiers: { wis: 3 },
       weaponEffects: [ { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 } ],
@@ -6698,7 +6704,7 @@ export const content: ContentDB = {
       id: "impbone_wand", name: { en: "Impbone Wand", de: "Impknochen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 1.3, damageMax: 1.6, attackIntervalMs: 2700,
+      damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700,
       weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 2, durationMs: 0 },
       requirements: { magic: 8 }, value: 300, rarity: "rare",
     },
@@ -6807,7 +6813,7 @@ export const content: ContentDB = {
       id: "hoargrim_scepter", name: { en: "Hoargrim Scepter", de: "Raugram-Szepter" },
       type: "equipment", stackable: false, icon: "❄️", slot: "mainhand", weaponStyle: "magic",
       weaponType: "scepter",
-      damageMin: 5, damageMax: 6.5, attackIntervalMs: 2640,
+      damageMin: 5, damageMax: 6.5, spellFocus: 0.0026, attackIntervalMs: 2640,
       weaponEffect: { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 },
       requirements: { magic: 70 }, value: 4000, rarity: "superRare",
     },
@@ -7048,7 +7054,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 3.4, damageMax: 4.9, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
+      damageMin: 3.4, damageMax: 4.9, spellFocus: 0.0031, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 2, durationMs: 4200 },
       requirements: { magic: 40 }, value: 250, rarity: "rare",
     },
@@ -7060,7 +7066,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 2.6, damageMax: 3.4, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
+      damageMin: 2.6, damageMax: 3.4, spellFocus: 0.0026, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
       weaponEffect: { type: "shock", chance: 0.22, magnitude: 0.24, durationMs: 3600 },
       requirements: { magic: 40 }, value: 360, rarity: "rare",
     },
@@ -7072,7 +7078,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "scepter",
-      damageMin: 3.6, damageMax: 5.4, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.28,
+      damageMin: 3.6, damageMax: 5.4, spellFocus: 0.0026, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.28,
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 4200 },
       requirements: { magic: 47 }, value: 580, rarity: "rare",
     },
@@ -7098,7 +7104,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 7.7, damageMax: 11.2, attackIntervalMs: 2900, manaCost: 8, wardBreak: 0.30,
+      damageMin: 7.7, damageMax: 11.2, spellFocus: 0.0032, attackIntervalMs: 2900, manaCost: 8, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 5, durationMs: 5500 },
       requirements: { magic: 72 }, value: 2700, rarity: "epic",
     },
@@ -7383,7 +7389,7 @@ export const content: ContentDB = {
     impfire_wand: {
       id: "impfire_wand", name: { en: "Impfire Wand", de: "Impfeuer-Zauberstab" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 1.3, damageMax: 1.6, attackIntervalMs: 2700, manaCost: 5,
+      damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5,
       weaponEffect: { type: "burn", chance: 0.2, magnitude: 2, durationMs: 3000 },
       requirements: { magic: 10 }, value: 230, rarity: "rare",
       description: {
@@ -7394,7 +7400,7 @@ export const content: ContentDB = {
     shaman_gnarlstaff: {
       id: "shaman_gnarlstaff", name: { en: "Shaman's Gnarlstaff", de: "Knorrenstab des Schamanen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 1.7, damageMax: 2.6, attackIntervalMs: 3000, manaCost: 6,
+      damageMin: 1.7, damageMax: 2.6, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6,
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
       requirements: { magic: 15 }, value: 230, rarity: "rare",
       description: {
@@ -7405,7 +7411,7 @@ export const content: ContentDB = {
     felmagician_rod: {
       id: "felmagician_rod", name: { en: "Felmagician's Rod", de: "Rute des Felmagiers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "scepter",
-      damageMin: 2.1, damageMax: 3.2, attackIntervalMs: 3000, manaCost: 7,
+      damageMin: 2.1, damageMax: 3.2, spellFocus: 0.0026, attackIntervalMs: 3000, manaCost: 7,
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       requirements: { magic: 25 }, value: 390, rarity: "rare",
       description: {
@@ -7416,7 +7422,7 @@ export const content: ContentDB = {
     stalker_bonewand: {
       id: "stalker_bonewand", name: { en: "Stalker's Bonewand", de: "Knochenstab des Pirschers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 2.0, damageMax: 2.6, attackIntervalMs: 2700, manaCost: 6,
+      damageMin: 2.0, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 6,
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
       requirements: { magic: 30 }, value: 530, rarity: "rare",
       description: {
@@ -7427,7 +7433,7 @@ export const content: ContentDB = {
     drowned_choirstaff: {
       id: "drowned_choirstaff", name: { en: "Drowned Choirstaff", de: "Chorstab der Ertrunkenen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 8.1, damageMax: 12.2, attackIntervalMs: 2730, manaCost: 8,
+      damageMin: 8.1, damageMax: 12.2, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8,
       modifiers: { int: 1 },
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       requirements: { magic: 80 }, value: 2500, rarity: "epic",
@@ -7439,7 +7445,7 @@ export const content: ContentDB = {
     sentinel_core_wand: {
       id: "sentinel_core_wand", name: { en: "Sentinel Core Wand", de: "Wächterkern-Zauberstab" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 7.9, damageMax: 9.9, attackIntervalMs: 2580, manaCost: 7,
+      damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580, manaCost: 7,
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
       requirements: { magic: 90 }, value: 3600, rarity: "epic",
       description: {
@@ -7992,6 +7998,41 @@ export const content: ContentDB = {
         de: "Ein fetter, sich windender Wurm, frisch vom Flussufer gegraben, für Angel wie Falle gleichermaßen.",
       },
     },
+    // Köder-Stufen (Chef 28.08.2026, Symbiose Angeln ↔ Jagen): je Gebietsstufe ein Köder, den das Angeln auf derselben
+    // Stufe liefert (gather_maggots 20, trap_crabs 40, net_squid 60, gather_glowworms 80). Bilder: Mira-Auftrag
+    // CODEX/work/2026-08-28-koeder-stufen, bis dahin Emoji-Icon.
+    bait_maggot: {
+      id: "bait_maggot", name: { en: "Maggot Bait", de: "Madenköder" },
+      type: "material", stackable: true, icon: "🐛", value: 3,
+      description: {
+        en: "Fat maggots scooped from the mud where the fish gather; game in the ash and thorn country cannot resist them.",
+        de: "Fette Maden aus dem Schlamm, in dem sich die Fische sammeln; das Wild der Asche- und Dornenlande kann ihnen nicht widerstehen.",
+      },
+    },
+    bait_crab: {
+      id: "bait_crab", name: { en: "Crab Bait", de: "Krebsköder" },
+      type: "material", stackable: true, icon: "🦀", value: 8,
+      description: {
+        en: "Cracked crab meat, salted for the trip; the beasts of crypt and wildwood follow the smell for miles.",
+        de: "Aufgebrochenes Krebsfleisch, für den Weg gesalzen; das Wild von Krypta und Wildwald folgt dem Geruch meilenweit.",
+      },
+    },
+    bait_squid: {
+      id: "bait_squid", name: { en: "Squid Bait", de: "Tintenfischköder" },
+      type: "material", stackable: true, icon: "🦑", value: 20,
+      description: {
+        en: "Strips of squid from the deep coast, dark and oily; nothing on the shore or in the slag pits ignores it.",
+        de: "Streifen Tintenfisch von der tiefen Küste, dunkel und ölig; nichts am Strand oder in den Schlackengruben lässt ihn liegen.",
+      },
+    },
+    bait_glow: {
+      id: "bait_glow", name: { en: "Glow Bait", de: "Glühköder" },
+      type: "material", stackable: true, icon: "✨", value: 50,
+      description: {
+        en: "Glowworms bound into a faintly shining lure; the wyverns of the highlands and the wardens of the idol hall come to the light.",
+        de: "Glühwürmer, zu einem schwach leuchtenden Köder gebunden; die Wyvern des Hochlands und die Wächter der Götzenhalle kommen zum Licht.",
+      },
+    },
   },
   actions: {
     // Holzfällen
@@ -8273,6 +8314,56 @@ export const content: ContentDB = {
       loot: [
         { itemId: "bait_worm", chance: 1, min: 1, max: 1 },
         { itemId: "bait_worm", chance: 0.2, min: 1, max: 1 },
+      ],
+    },
+    // Köder-Stufen (Chef 28.08.2026): dieselbe Form wie dig_bait, je Angel-Stufe 20/40/60/80 der Köder des
+    // gleichstufigen Jagdgebiets (HUNT_BAIT_TIERS). Wenig XP: Köder ist Versorgung, nicht Angel-Fortschritt.
+    gather_maggots: {
+      id: "gather_maggots",
+      name: { en: "Gather Maggots", de: "Maden sammeln" },
+      skill: "fishing",
+      durationMs: 3000,
+      xp: 8,
+      levelRequired: 20,
+      loot: [
+        { itemId: "bait_maggot", chance: 1, min: 1, max: 1 },
+        { itemId: "bait_maggot", chance: 0.2, min: 1, max: 1 },
+      ],
+    },
+    trap_crabs: {
+      id: "trap_crabs",
+      name: { en: "Trap Crabs", de: "Krebse fangen" },
+      skill: "fishing",
+      durationMs: 3500,
+      xp: 25,
+      levelRequired: 40,
+      loot: [
+        { itemId: "bait_crab", chance: 1, min: 1, max: 1 },
+        { itemId: "bait_crab", chance: 0.2, min: 1, max: 1 },
+      ],
+    },
+    net_squid: {
+      id: "net_squid",
+      name: { en: "Net Squid", de: "Tintenfische keschern" },
+      skill: "fishing",
+      durationMs: 4000,
+      xp: 70,
+      levelRequired: 60,
+      loot: [
+        { itemId: "bait_squid", chance: 1, min: 1, max: 1 },
+        { itemId: "bait_squid", chance: 0.2, min: 1, max: 1 },
+      ],
+    },
+    gather_glowworms: {
+      id: "gather_glowworms",
+      name: { en: "Gather Glowworms", de: "Glühwürmer sammeln" },
+      skill: "fishing",
+      durationMs: 4500,
+      xp: 180,
+      levelRequired: 80,
+      loot: [
+        { itemId: "bait_glow", chance: 1, min: 1, max: 1 },
+        { itemId: "bait_glow", chance: 0.2, min: 1, max: 1 },
       ],
     },
     catch_shrimp: {
@@ -18821,16 +18912,16 @@ export const content: ContentDB = {
   // Weiden ~10 XP/5min, Aschfelder ~50/10min, Wildwald ~460/25min, Hochland ~4800/55min — alle vier
   // treffen die Anbau-Formel auf ≤20%, die rohe 600er-Formel verfehlt sie um Faktor ~40).
   huntingZones: [
-    { zoneId: "pastures", levelRequired: 1, trapMs: 300_000, xp: 10 },
-    { zoneId: "borderlands", levelRequired: 10, trapMs: 480_000, xp: 26 },
-    { zoneId: "ashfields", levelRequired: 20, trapMs: 600_000, xp: 53 },
-    { zoneId: "blackthorn", levelRequired: 30, trapMs: 900_000, xp: 129 },
-    { zoneId: "crypt", levelRequired: 40, trapMs: 1_200_000, xp: 283 },
-    { zoneId: "wildwood", levelRequired: 50, trapMs: 1_500_000, xp: 579 },
-    { zoneId: "coast", levelRequired: 60, trapMs: 2_100_000, xp: 1331 },
-    { zoneId: "slagpit", levelRequired: 70, trapMs: 2_700_000, xp: 2806 },
-    { zoneId: "highlands", levelRequired: 80, trapMs: 3_300_000, xp: 5627 },
-    { zoneId: "idolhall", levelRequired: 90, trapMs: 3_600_000, xp: 10071 },
+    { zoneId: "pastures", levelRequired: 1, trapMs: 300_000, xp: 10, baitItemId: "bait_worm" },
+    { zoneId: "borderlands", levelRequired: 10, trapMs: 480_000, xp: 26, baitItemId: "bait_worm" },
+    { zoneId: "ashfields", levelRequired: 20, trapMs: 600_000, xp: 53, baitItemId: "bait_maggot" },
+    { zoneId: "blackthorn", levelRequired: 30, trapMs: 900_000, xp: 129, baitItemId: "bait_maggot" },
+    { zoneId: "crypt", levelRequired: 40, trapMs: 1_200_000, xp: 283, baitItemId: "bait_crab" },
+    { zoneId: "wildwood", levelRequired: 50, trapMs: 1_500_000, xp: 579, baitItemId: "bait_crab" },
+    { zoneId: "coast", levelRequired: 60, trapMs: 2_100_000, xp: 1331, baitItemId: "bait_squid" },
+    { zoneId: "slagpit", levelRequired: 70, trapMs: 2_700_000, xp: 2806, baitItemId: "bait_squid" },
+    { zoneId: "highlands", levelRequired: 80, trapMs: 3_300_000, xp: 5627, baitItemId: "bait_glow" },
+    { zoneId: "idolhall", levelRequired: 90, trapMs: 3_600_000, xp: 10071, baitItemId: "bait_glow" },
   ],
 
   // ════════════════════════════════════════════════════════════════════

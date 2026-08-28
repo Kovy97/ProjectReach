@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { HUNT_BAIT_TIERS, huntBaitForZoneLevel } from "@hearthforge/shared";
 import { content } from "./index";
 import type { ActionDef, LocalizedString } from "@hearthforge/shared";
 
@@ -203,6 +204,28 @@ describe("Fasern, Stoff und Jagen (1.2.0): Item-/Aktions-/Crop-/Skill-Wächter",
       expect(z.levelRequired, z.zoneId).toBeGreaterThan(0);
       expect(z.trapMs, z.zoneId).toBeGreaterThan(0);
       expect(z.xp, z.zoneId).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe("Köder-Stufen (Chef 28.08.2026: Angeln liefert je Gebietsstufe den Köder)", () => {
+  it("fünf Köder, je einer aus einer Angel-Aktion auf Stufe 1/20/40/60/80 (1 sicher + 20 % Zweitköder)", () => {
+    expect(HUNT_BAIT_TIERS.map((t) => t.fishingLevel)).toEqual([1, 20, 40, 60, 80]);
+    for (const t of HUNT_BAIT_TIERS) {
+      const it = content.items[t.itemId];
+      expect(it, t.itemId).toBeDefined();
+      expect(it!.type, t.itemId).toBe("material");
+      expect(it!.stackable, t.itemId).toBe(true);
+      const sources = Object.values(content.actions).filter((a) => a.skill === "fishing" && a.loot?.some((l) => l.itemId === t.itemId));
+      expect(sources.length, `Angel-Aktion für ${t.itemId}`).toBe(1);
+      expect(sources[0]!.levelRequired, t.itemId).toBe(t.fishingLevel);
+      expect(sources[0]!.loot!.map((l) => l.chance)).toEqual([1, 0.2]);
+    }
+  });
+
+  it("jedes Jagdgebiet nennt den Köder seiner Stufe (Tabelle huntBaitForZoneLevel)", () => {
+    for (const z of content.huntingZones ?? []) {
+      expect(z.baitItemId, z.zoneId).toBe(huntBaitForZoneLevel(z.levelRequired).itemId);
     }
   });
 });

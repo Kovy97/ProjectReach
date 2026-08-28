@@ -10,6 +10,7 @@ import type {
   EquipBonus,
   EquipSlot,
   GameState,
+  ItemDef,
   ItemId,
   SetDef,
   SkillBoostMap,
@@ -287,6 +288,23 @@ function walkStatsKey(state: GameState, content: ContentDB, key: StatsCacheKey, 
  * Abgeleitete Werte — memoisierter Einstieg (EINZIGE Aggregations-Quelle bleibt
  * computeStatsUncached darunter; dieser Wrapper ist ein ergebnis-identischer Cache).
  */
+/**
+ * Zauberfokus (Chef-GO 28.08.2026, bewusster Magier-Buff): Multiplikator, um den die Waffenspanne
+ * einer MAGIEWAFFE mit der Intelligenz des Trägers wächst — `1 + spellFocus · int`. Liefert 1 für
+ * alles andere: keine Waffe, Nicht-Magie-Stil (Nahkampf/Fernkampf bleiben unberührt, selbst wenn
+ * ein Item das Feld fälschlich trüge), spellFocus fehlt/0/ungültig. Reine Funktion — computeStats
+ * und die UI (ItemTooltip/Item-Wiki „Mit deinem INT") rechnen damit exakt dasselbe.
+ */
+export function spellFocusMult(
+  item: Pick<ItemDef, "weaponStyle" | "spellFocus"> | null | undefined,
+  int: number,
+): number {
+  if (!item || item.weaponStyle !== "magic") return 1;
+  const focus = item.spellFocus ?? 0;
+  if (!Number.isFinite(focus) || focus <= 0) return 1;
+  return 1 + focus * Math.max(0, Number.isFinite(int) ? int : 0);
+}
+
 export function computeStats(state: GameState, content: ContentDB): DerivedStats {
   const entry = statsCache.get(state);
   if (entry && entry.content === content && walkStatsKey(state, content, entry.key, true)) {
@@ -592,11 +610,15 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   //  - Legacy-Form (Alt-Content ohne damageMin/Max): Spanne aus dem Flat abgeleitet
   //    (max = Flat×DMG_MAX_HIT_MULT, min = max×DMG_ROLL_FLOOR) — bisheriges Wurf-Verhalten,
   //    nur dass der Roll jetzt zentral über attackDamageMin/Max läuft (Übergangs-Kompatibilität).
+  //  - Zauberfokus (Chef-GO 28.08.2026): bei aktivem Stil "magic" wächst die WAFFENspanne mit INT —
+  //    min UND max × (1 + spellFocus · int), s. spellFocusMult. Teil der Range-Form (die Waffe
+  //    definiert die Breite), kein Sonderpfad in combat.ts; der Charakter-Anteil C bleibt unberührt.
   let attackDamageMin: number;
   let attackDamageMax: number;
   if (weaponRange) {
-    attackDamageMin = Math.max(0, charDamage + weaponRange.min);
-    attackDamageMax = Math.max(attackDamageMin, charDamage + weaponRange.max);
+    const focusMult = style === "magic" ? spellFocusMult(mainhandItem, attr.int) : 1;
+    attackDamageMin = Math.max(0, charDamage + weaponRange.min * focusMult);
+    attackDamageMax = Math.max(attackDamageMin, charDamage + weaponRange.max * focusMult);
   } else {
     attackDamageMax = Math.max(0, charDamage * DMG_MAX_HIT_MULT);
     attackDamageMin = attackDamageMax * DMG_ROLL_FLOOR;

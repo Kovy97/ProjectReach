@@ -26,8 +26,7 @@ import {
   huntableMonsters,
   setHuntAutoRebait,
   setHuntTrap,
-  tickHuntTraps,
-} from "./hunting";
+  tickHuntTraps, huntZoneBaitId } from "./hunting";
 
 /**
  * Jagen (1.2.0 „Fasern und Fallen", spec-technik §3): Plätze nach Stufe, Gebiets-Gates, Köderverbrauch
@@ -495,5 +494,32 @@ describe("Jagen: XP nach dem gefangenen Monster (Chef 28.08.2026)", () => {
     expect(huntCatchXp(2050)).toBe(10250);
     expect(huntCatchXp(0)).toBe(1);
     expect(HUNT_FIRST_CATCH_MULT).toBe(2);
+  });
+});
+
+describe("Koeder-Stufen (Chef 28.08.2026: Angeln liefert je Gebietsstufe den Koeder)", () => {
+  it("huntZoneBaitId: Tabelle nach Gebietsstufe, eigenes Feld gewinnt", () => {
+    expect(huntZoneBaitId({ levelRequired: 1 })).toBe("bait_worm");
+    expect(huntZoneBaitId({ levelRequired: 39 })).toBe("bait_maggot");
+    expect(huntZoneBaitId({ levelRequired: 40 })).toBe("bait_crab");
+    expect(huntZoneBaitId({ levelRequired: 95 })).toBe("bait_glow");
+    expect(huntZoneBaitId({ levelRequired: 1, baitItemId: "bait_squid" })).toBe("bait_squid");
+  });
+
+  it("Gebiet mit Krebskoeder: Wuermer reichen nicht, Krebskoeder wird beim Stellen und beim Erneuern gezogen", () => {
+    const base = testContent();
+    const c: ContentDB = { ...base, huntingZones: base.huntingZones!.map((z) => (z.zoneId === "pastures" ? { ...z, baitItemId: "bait_crab" } : z)) };
+    const s = game(c, 5);
+    s.monsterKills[HARE.id] = 1;
+    addItem(s.inventory, c, BAIT_ITEM_ID, 5);
+    expect(huntSetReason(s, c, 0, "pastures")).toBe("no_bait");
+    addItem(s.inventory, c, "bait_crab", 2);
+    expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+    expect(itemCount(s.inventory, "bait_crab")).toBe(1);
+    expect(itemCount(s.inventory, BAIT_ITEM_ID)).toBe(5);
+    advance(s, c, PASTURES_MS + 1000);
+    expect(itemCount(s.inventory, "bait_crab")).toBe(0);
+    expect(itemCount(s.inventory, BAIT_ITEM_ID)).toBe(5);
+    expect(s.huntTraps[0]!.zoneId).toBe("pastures");
   });
 });

@@ -1,0 +1,9 @@
+Mira, zwei neue Aufträge vom Chef, beide mit Brief und Bestandsreferenz. Reihenfolge: erst die Köder (klein, 4 Dateien), dann Feuer.
+
+1) Köder-Stufen, 4 Item-Icons: CODEX/work/2026-08-28-koeder-stufen/BRIEF.md
+   bait_maggot, bait_crab, bait_squid, bait_glow (640 x 640, echtes Alpha). Das Item ist die Karte: freistehendes Objekt, kein Rahmen, keine Szene, kein Boden. Bestandsreferenz ist dein Wurmköder (CODEX/assets/fasern-jagen-2026-08-27/fertig/bait_worm.png) plus zwei Material-Nachbarn aus apps/client/src/renderer/assets/items/. Die Reihe muss stufig lesen (Maden schlicht bis Glühköder edel); nur der Glühköder darf schwach leuchten. Kontaktbogen mit dem Wurmköder daneben. Lieferung nach CODEX/assets/koeder-stufen-2026-08-28/fertig/.
+
+2) Kampfeffekte Welle 2, Feuer in Sequenzen, 7 Streifen: CODEX/work/2026-08-28-kampfeffekte-feuer/BRIEF.md
+   Chef-Feedback zu Welle 1: cool, aber mehr Frames, und die Assets sollen sichtbar werden. Deshalb: 3 Geschoss-Varianten (Feuerball, Feuerlanze, Glutschwarm) mit je 5 Feldern à 256 x 128 (Streifen 1280 x 128), 1 Crit-Feuerball mit 5 Feldern, 3 Einschläge (Feuerstoß, Flammenspritzer, Glutsäule) mit je 3 Feldern à 256 x 256 (768 x 256 wie Welle 1). Bestandsreferenz sind deine fx_missile_fire.png und fx_impact_fire.png aus Welle 1, gleiche Palette, gleicher Mittelpunkt, Flug nach rechts, Schweif nach links. Wichtig: die fünf Felder müssen als EIN zusammenhängender Film lesen (erst ein Bild, daraus die Phasen), kein Neuwürfeln je Feld. Kontaktbogen als Zeilen plus ein Bild der drei Varianten über dem Ashfields-Battlescreen. Lieferung nach CODEX/assets/kampfeffekte-feuer-2026-08-28/fertig/, gern erst Geschosse, dann Einschläge.
+
+Wie immer: erst die Bestandsdateien im Zielordner ansehen, dann generieren; Alpha-Prüfung; danach HANDOFF und WORKLOG.

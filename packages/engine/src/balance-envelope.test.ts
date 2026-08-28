@@ -715,13 +715,21 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // ALLE sechs Paare bewegen sich leicht — Spieler-Seite sinkt überall (schnellerer Kill dank mehr
     // dex-Schaden bzw. Ranged-Trade-off), Gegner-Seite steigt überall (Spieler weicht minimal
     // häufiger aus). Größter Ausschlag bei ranged (dex ist dort der Haupt-Schadensterm).
+    // Re-Messung 2026-08-28 — Zauberfokus (Chef-GO 28.08.2026): bewusster Magier-Buff +15/22/30 %
+    // Waffenspanne (CL 30/60/90 bei realistischem INT, s. design/zauberfokus-2026-08-28.md; die
+    // Engine multipliziert die Magie-Waffenspanne mit 1 + spellFocus·int). Der CL-90-Magic-"damage"-
+    // Build (stormcrest_staff spellFocus 0.0032 × int 182 ⇒ Spanne ×1.58) hebt seine Spanne
+    // 85.54–91.24 → 92.12–101.14 (+9,3 % mittlerer Schaden) ⇒ NUR die beiden magic-Spieler-Zeilen
+    // sinken: idol_warden 71.22→65.15 s, last_idol 239.01→218.63 s. Boss→Spieler-Zeilen (28.03/
+    // 30.12) und alle melee/ranged-Paare exakt unverändert (kein Nicht-Magie-Item trägt spellFocus,
+    // die Engine ignoriert das Feld außerhalb des Magie-Stils — s. spell-focus.test.ts).
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 55.96, 20.76],
       ["melee", "last_idol", 183.02, 14.7],
       ["ranged", "idol_warden", 78.23, 19.78],
       ["ranged", "last_idol", 258.94, 13.67],
-      ["magic", "idol_warden", 71.22, 28.03],
-      ["magic", "last_idol", 239.01, 30.12],
+      ["magic", "idol_warden", 65.15, 28.03],
+      ["magic", "last_idol", 218.63, 30.12],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);

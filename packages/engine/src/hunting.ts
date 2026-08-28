@@ -1,6 +1,7 @@
 import type { ContentDB, GameState, HuntCatch, HuntTrap, HuntZoneDef, ItemId, MonsterDef, MonsterId } from "@hearthforge/shared";
 import {
   BAIT_ITEM_ID,
+  huntBaitForZoneLevel,
   DEFAULT_DROP_SUFFIX_CHANCE,
   DUNGEON_VARIANT_PREFIX,
   HUNTING_SKILL_ID,
@@ -119,18 +120,23 @@ export function huntableMonsters(state: GameState, content: ContentDB, zoneId: s
   return out;
 }
 
-/** Köder gesamt in Inventar UND Lager (Köder darf aus beidem gezogen werden — Muster Saat). */
-export function huntBaitCount(state: GameState): number {
-  return itemCount(state.inventory, BAIT_ITEM_ID) + bankCount(state, BAIT_ITEM_ID);
+/** Köder, den ein Gebiet verlangt (Köder-Stufen, Chef 28.08.2026): eigenes Feld, sonst Tabelle nach Gebietsstufe. */
+export function huntZoneBaitId(zone: Pick<HuntZoneDef, "levelRequired" | "baitItemId">): ItemId {
+  return zone.baitItemId ?? huntBaitForZoneLevel(zone.levelRequired).itemId;
 }
 
-/** Verbraucht GENAU einen Köder (zuerst Inventar, dann Lager). true bei Erfolg. */
-function consumeBait(state: GameState): boolean {
-  if (removeItem(state.inventory, BAIT_ITEM_ID, 1) === 1) return true;
-  const inBank = state.bank[BAIT_ITEM_ID] ?? 0;
+/** Köder einer Sorte gesamt in Inventar UND Lager (Köder darf aus beidem gezogen werden — Muster Saat). */
+export function huntBaitCount(state: GameState, baitId: ItemId = BAIT_ITEM_ID): number {
+  return itemCount(state.inventory, baitId) + bankCount(state, baitId);
+}
+
+/** Verbraucht GENAU einen Köder der Sorte (zuerst Inventar, dann Lager). true bei Erfolg. */
+function consumeBait(state: GameState, baitId: ItemId): boolean {
+  if (removeItem(state.inventory, baitId, 1) === 1) return true;
+  const inBank = state.bank[baitId] ?? 0;
   if (inBank > 0) {
-    state.bank[BAIT_ITEM_ID] = inBank - 1;
-    if (state.bank[BAIT_ITEM_ID]! <= 0) delete state.bank[BAIT_ITEM_ID];
+    state.bank[baitId] = inBank - 1;
+    if (state.bank[baitId]! <= 0) delete state.bank[baitId];
     return true;
   }
   return false;
@@ -168,7 +174,7 @@ export function huntSetReason(state: GameState, content: ContentDB, slot: number
   if (!zone || !isZoneUnlocked(state, content, zoneId)) return "zone_locked";
   if (huntingLevel(state) < zone.levelRequired) return "level";
   if (huntableMonsters(state, content, zoneId).length === 0) return "nothing_huntable";
-  if (huntBaitCount(state) <= 0) return "no_bait";
+  if (huntBaitCount(state, huntZoneBaitId(zone)) <= 0) return "no_bait";
   return "ok";
 }
 
@@ -188,7 +194,7 @@ export function setHuntTrap(
   if (reason !== "ok") return reason;
   const trap = trapAt(state, slot)!;
   const zone = huntZoneDef(content, zoneId)!;
-  if (!consumeBait(state)) return "no_bait";
+  if (!consumeBait(state, huntZoneBaitId(zone))) return "no_bait";
   trap.zoneId = zoneId;
   trap.remainingMs = Math.max(1, zone.trapMs);
   trap.autoRebait = !!autoRebait;
@@ -328,7 +334,7 @@ export function tickHuntTraps(state: GameState, content: ContentDB, dtMs: number
     for (const p of pending) if (p.due <= dtMs && (next === null || p.due < next.due)) next = p;
     if (!next) break;
     throwTrap(state, content, next.trap, next.zone, tally);
-    if (next.trap.autoRebait && consumeBait(state)) {
+    if (next.trap.autoRebait && consumeBait(state, huntZoneBaitId(next.zone))) {
       next.due += next.trapMs;
     } else {
       next.trap.zoneId = null;

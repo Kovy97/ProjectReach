@@ -396,3 +396,14 @@ Die Apply-Liste 4a (A1–A7) selbst braucht nur das GO auf dieses Dokument; sie 
 - Material-Audit und Guards G1–G3: `design/magier-material-parity-audit.md` §5, `packages/engine/src/content-integrity.test.ts` Z. 338–528.
 - Rezension #8 / Drop ≥ Craft: `packages/content/src/drop-gear-beats-craft.test.ts`.
 - Klassen-Suffixe #14: `packages/content/src/suffix-class-fit.test.ts`.
+
+---
+
+## Nachtrag 28.08.: Zauberfokus, bewusst über Parität
+
+**Chef-GO 28.08.2026 (Spieler-Feedback RU „Magieschaden 0, keine Skalierung"): Magiewaffen werden durch Intelligenz stärker.** Das ist ein BEWUSSTER Magier-Buff, kein paritätsneutrales Umverteilen — die Zählmatrix und die Kraft-Ziele oben (Frage 3: Magie ≥ 0,90 des Nahkampfs) bleiben, Magie darf jetzt darüber liegen.
+
+- **Mechanik:** `ItemDef.spellFocus` (Anteil je INT-Punkt). computeStats multipliziert bei aktivem Stil „magic" die Waffenspanne der Haupthand mit `1 + spellFocus · int` (min UND max, Range-Form, kein Sonderpfad in combat.ts). Nahkampf/Fernkampf unberührt; `spellFocusMult(item, int)` in engine/character.ts ist die eine Rechnung für Engine und Tooltip.
+- **Kalibrierung:** +15 / +22 / +30 % Waffenspanne auf CL 30 / 60 / 90, gemessen am INT des besten legalen Kits OHNE Runen/Suffixe/Tränke (46 / 70 / 95). Der volle Runen-Suffix-Tränke-Stack des Envelope-Builders hat 123 / 147 / 182 INT und bekommt entsprechend +37 / +46 / +58 % Spanne (auf den GESAMT-Schaden des CL-90-BiS-Magiers sind das +9,3 %). Stab (2H) 0,0030–0,0032, Zauberstab/Zepter (1H) 0,0025–0,0027 (≈ 20 % weniger, sie behalten den Fokus in der Nebenhand). Drops/Champion-Waffen tragen den Fokus der Craft-Stufe, deren Schaden sie tragen.
+- **Hülle:** §5 TTK-Matrix, nur die beiden Magie-Spieler-Zeilen: idol_warden 71,22 → 65,15 s, last_idol 239,01 → 218,63 s; Boss→Spieler und alle Nahkampf-/Fernkampf-Paare exakt unverändert. §2-Deckel halten, Sim-Guard 0 Auffälligkeiten.
+- **Vollständige Tabelle (57 Magiewaffen, INT je Stufe, Koeffizient, Bonus):** `design/zauberfokus-2026-08-28.md`.

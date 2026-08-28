@@ -2744,6 +2744,17 @@ export interface ItemDef {
   damageMin?: number;
   damageMax?: number;
   /**
+   * Zauberfokus (Chef-GO 28.08.2026, bewusster Magier-Buff nach RU-Spielerfeedback „Magieschaden 0,
+   * keine Skalierung"): Anteil je INT-Punkt, um den die Waffenspanne (damageMin/damageMax) einer
+   * MAGIEWAFFE wächst — computeStats multipliziert die Spanne der Haupthand mit `1 + spellFocus · int`
+   * (Range-Form, nur aktiver Stil "magic", nur wenn > 0; `spellFocusMult` in engine/character.ts ist
+   * die eine Rechnung für Engine UND Tooltip). 0.008 = +0,8 % je INT. NUR auf mainhand-Waffen mit
+   * `weaponStyle: "magic"` und Schadensspanne gültig (Guard: content spell-focus-content.test.ts);
+   * Foki/Orbs (offhand, keine Spanne) tragen es NICHT. Zielkurve + Koeffizienten je Stufe:
+   * design/zauberfokus-2026-08-28.md (Stab ≈ 0,0030–0,0032, Zauberstab/Zepter ≈ 0,0025–0,0027).
+   */
+  spellFocus?: number;
+  /**
    * Waffen 2.0 (§1.4): ABSOLUTES Waffentempo in ms („Tempo 2.8 s"). Wird NUR bei Range-Form-Waffen
    * (damageMin/Max gesetzt) gelesen; Default 3000 (unbewaffnet-Basis). Legacy-Waffen behalten ihr
    * Tempo-DELTA in `bonus.attackIntervalMs`. Nicht-Waffen-Quellen (Suffixe/Buffs) bleiben Deltas.
@@ -6218,6 +6229,31 @@ export const HUNT_CATCH_PER_LEVEL = 0.005;
 export const HUNT_CATCH_CAP = 0.95;
 export const HUNT_TRAPPABLE_FAMILIES: readonly MonsterFamily[] = ["beast", "humanoid"];
 export const BAIT_ITEM_ID: ItemId = "bait_worm";
+/**
+ * Köder-Stufen (Chef 28.08.2026, Symbiose Angeln ↔ Jagen): jedes Jagdgebiet verlangt den Köder seiner Stufe, und das
+ * Angeln liefert genau diesen Köder auf derselben Stufe (Sammel-Aktion mit levelRequired = fishingLevel). Ein Gebiet ohne
+ * eigenes `baitItemId` fällt über `huntBaitForZoneLevel(levelRequired)` auf die Tabelle zurück.
+ */
+export interface HuntBaitTier {
+  itemId: ItemId;
+  tier: 1 | 2 | 3 | 4 | 5;
+  /** Ab dieser Gebietsstufe (huntingZones.levelRequired) ist das der verlangte Köder. */
+  minZoneLevel: number;
+  /** Angel-Stufe der liefernden Sammel-Aktion. */
+  fishingLevel: number;
+}
+export const HUNT_BAIT_TIERS: readonly HuntBaitTier[] = [
+  { itemId: "bait_worm", tier: 1, minZoneLevel: 1, fishingLevel: 1 },
+  { itemId: "bait_maggot", tier: 2, minZoneLevel: 20, fishingLevel: 20 },
+  { itemId: "bait_crab", tier: 3, minZoneLevel: 40, fishingLevel: 40 },
+  { itemId: "bait_squid", tier: 4, minZoneLevel: 60, fishingLevel: 60 },
+  { itemId: "bait_glow", tier: 5, minZoneLevel: 80, fishingLevel: 80 },
+];
+export function huntBaitForZoneLevel(zoneLevel: number): HuntBaitTier {
+  let best = HUNT_BAIT_TIERS[0]!;
+  for (const t of HUNT_BAIT_TIERS) if (zoneLevel >= t.minZoneLevel) best = t;
+  return best;
+}
 export const HUNTING_SKILL_ID: SkillId = "hunting";
 
 export function huntTrapSlotsForLevel(level: number): number {
@@ -6233,6 +6269,8 @@ export interface HuntZoneDef {
   levelRequired: number;
   /** Fallenzeit in ms (5 min Weiden … 60 min Götzenhalle). */
   trapMs: number;
+  /** Verlangter Köder (Köder-Stufen 28.08.2026); fehlt er, gilt `huntBaitForZoneLevel(levelRequired)`. */
+  baitItemId?: ItemId;
   /** Historisch: Jagen-XP je Fang. Seit 28.08.2026 zählt `huntCatchXp(monster.xp)`; das Feld bleibt als Content-Kennzahl. */
   xp: number;
 }
