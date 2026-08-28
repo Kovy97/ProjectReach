@@ -76,6 +76,9 @@ const CRAFT_VALUE_EXEMPT = new Set<ItemId>([
   // Philosophie bleibt intakt) und sind über coreStatScore (sim-consistency.test.ts) weiterhin real
   // stärker als ihre jeweils VORHERIGE Craft-Stufe — nur der neue, Effekt-lose Vergleichspartner
   // ist an der reinen Basis-DPS-Messung vorbeigezogen.
+  // Aether-Klippe (Chef-GO 29.08.2026, balance-audit-magie R5 (b)): titanium_staff 8,8–13,3 (Basis-DPS 3,97,
+  // war 5,14) und aetherium_staff 11,0–16,6 (5,05, war 5,73). Neu gemessen: die drei Titan-Nachbarn liegen
+  // weiter darunter (pyre 2,93 / choirbound 3,26 / sorrow 2,93) — Ausnahmen bleiben nötig, Liste unverändert.
   "shaman_gnarlstaff", // Req 15 → nächstes Tier steel_staff (Req 20, jetzt Arkan)
   "warlock_felstaff", // Req 20 → nächstes Tier blacksteel_staff (Req 30, jetzt Leere)
   "chitinshell_sparker", // Req 40 → nächstes Tier adamantium_wand (Req 50, jetzt Arkan)

@@ -1,0 +1,389 @@
+====================================================================================================
+A) TTK (s, unsterblich, Kit-Charakter) je Stil und Gegner — HEAD, BiS-Kit; Verhältnis = TTK Stil / TTK Nahkampf (<1 = schneller)
+====================================================================================================
+
+-- CL 30 --
+Gegner              Lv Def             Nah    Fern     Mag |  Fern/Nah  Mag/Nah Mag/Fern | Papier-TTK Nah/Fern/Mag
+goblin_butcher      26 armor           6.3     4.6     5.0 |      0.73     0.78     1.07 | 4.2/5.7/4.5
+dust_vulture        34 evasion         7.2     5.1     5.9 |      0.71     0.82     1.16 | 4.9/6.2/5.2
+goblin_warlock      30 ward+ward       6.6     6.4     5.1 |      0.97     0.77     0.80 | 5.3/7.2/5.2
+ash_tyrant          45 armor          12.4    14.2    14.0 |      1.14     1.13     0.99 | 12.9/17.8/14.1
+Ø Standard (geom.)                                         |      0.79     0.79     1.00
+Ø Bosse (geom.)                                            |      1.14     1.13     0.99
+
+-- CL 60 --
+Gegner              Lv Def             Nah    Fern     Mag |  Fern/Nah  Mag/Nah Mag/Fern | Papier-TTK Nah/Fern/Mag
+skeleton_warrior    65 armor           6.1     9.4     8.9 |      1.55     1.47     0.95 | 6.0/9.6/7.2
+spectral_stag       58 evasion         7.3     9.8     8.5 |      1.35     1.16     0.86 | 6.1/8.7/6.8
+bramble_witch       60 ward+ward       9.0    11.3     8.2 |      1.26     0.92     0.73 | 6.8/10.2/7.7
+goblin_warchief     60 armor          13.6    18.5    12.8 |      1.36     0.94     0.69 | 11.7/17.9/13.4
+forest_warden       65 armor          14.3    20.4    15.5 |      1.43     1.08     0.76 | 14.4/22.5/17.0
+Ø Standard (geom.)                                         |      1.38     1.16     0.84
+Ø Bosse (geom.)                                            |      1.39     1.01     0.72
+
+-- CL 90 --
+Gegner              Lv Def             Nah    Fern     Mag |  Fern/Nah  Mag/Nah Mag/Fern | Papier-TTK Nah/Fern/Mag
+iron_sentinel       90 armor           6.4     8.3     6.1 |      1.29     0.95     0.74 | 5.4/7.7/6.0
+gray_wolf           97 evasion         3.8     4.2     2.9 |      1.11     0.75     0.68 | 2.4/3.3/2.7
+skeleton_nekro      90 ward+ward      13.4    19.5    12.6 |      1.45     0.94     0.65 | 14.2/20.2/14.7
+roc                200 evasion        65.3    96.0   103.9 |      1.47     1.59     1.08 | 100.1/124.6/112.9
+roc_elder          215 evasion        88.0   126.3   133.8 |      1.44     1.52     1.06 | 132.4/164.3/149.5
+idol_warden        245 armor          64.1   107.5    96.6 |      1.68     1.51     0.90 | 101.5/144.2/112.9
+last_idol          295 armor         209.8   400.0   340.9 |      1.91     1.63     0.85 | 340.4/480.4/379.0
+Ø Standard (geom.)                                         |      1.27     0.88     0.69
+Ø Bosse (geom.)                                            |      1.61     1.56     0.97
+
+====================================================================================================
+A2) Dasselbe mit CRAFT-Waffe der Stufe (Nahkampf/Fernkampf: bester Craft; Magie: Craft-Stab) — HEAD
+====================================================================================================
+
+-- CL 30 --
+goblin_butcher     Nah     6.3  Fern     5.6  Stab     5.0  Zauberstab     4.3 | Fern/Nah 0.88  Stab/Nah 0.78  Zst/Nah 0.69
+dust_vulture       Nah     7.2  Fern     5.9  Stab     5.9  Zauberstab     5.2 | Fern/Nah 0.83  Stab/Nah 0.82  Zst/Nah 0.73
+goblin_warlock     Nah     6.6  Fern     7.1  Stab     5.1  Zauberstab     5.1 | Fern/Nah 1.07  Stab/Nah 0.77  Zst/Nah 0.78
+ash_tyrant         Nah    12.4  Fern    14.5  Stab    14.0  Zauberstab    11.8 | Fern/Nah 1.16  Stab/Nah 1.13  Zst/Nah 0.95
+  Ø Standard: Fern/Nah 0.92  Stab/Nah 0.79  Zauberstab/Nah 0.73   |   Ø Bosse: Fern/Nah 1.16  Stab/Nah 1.13  Zauberstab/Nah 0.95
+
+-- CL 60 --
+skeleton_warrior   Nah     6.1  Fern     8.4  Stab     8.6  Zauberstab     8.0 | Fern/Nah 1.38  Stab/Nah 1.41  Zst/Nah 1.31
+spectral_stag      Nah     7.3  Fern     8.2  Stab     8.2  Zauberstab     7.5 | Fern/Nah 1.12  Stab/Nah 1.12  Zst/Nah 1.03
+bramble_witch      Nah     9.0  Fern    10.1  Stab     6.8  Zauberstab     8.1 | Fern/Nah 1.12  Stab/Nah 0.75  Zst/Nah 0.90
+goblin_warchief    Nah    13.6  Fern    15.9  Stab    11.0  Zauberstab    13.2 | Fern/Nah 1.17  Stab/Nah 0.81  Zst/Nah 0.97
+forest_warden      Nah    14.3  Fern    17.4  Stab    13.1  Zauberstab    16.0 | Fern/Nah 1.22  Stab/Nah 0.92  Zst/Nah 1.12
+  Ø Standard: Fern/Nah 1.20  Stab/Nah 1.06  Zauberstab/Nah 1.07   |   Ø Bosse: Fern/Nah 1.19  Stab/Nah 0.86  Zauberstab/Nah 1.04
+
+-- CL 90 --
+iron_sentinel      Nah     6.8  Fern     9.6  Stab     6.1  Zauberstab     6.7 | Fern/Nah 1.42  Stab/Nah 0.90  Zst/Nah 0.98
+gray_wolf          Nah     3.9  Fern     4.1  Stab     2.9  Zauberstab     5.0 | Fern/Nah 1.06  Stab/Nah 0.74  Zst/Nah 1.30
+skeleton_nekro     Nah    16.9  Fern    22.4  Stab    12.6  Zauberstab    15.1 | Fern/Nah 1.33  Stab/Nah 0.75  Zst/Nah 0.89
+roc                Nah    84.8  Fern   100.0  Stab   103.9  Zauberstab    98.0 | Fern/Nah 1.18  Stab/Nah 1.23  Zst/Nah 1.16
+roc_elder          Nah   112.3  Fern   130.9  Stab   133.8  Zauberstab   124.3 | Fern/Nah 1.17  Stab/Nah 1.19  Zst/Nah 1.11
+idol_warden        Nah    81.7  Fern   116.1  Stab    96.6  Zauberstab    89.1 | Fern/Nah 1.42  Stab/Nah 1.18  Zst/Nah 1.09
+last_idol          Nah   274.9  Fern   423.5  Stab   340.9  Zauberstab   311.0 | Fern/Nah 1.54  Stab/Nah 1.24  Zst/Nah 1.13
+  Ø Standard: Fern/Nah 1.26  Stab/Nah 0.79  Zauberstab/Nah 1.04   |   Ø Bosse: Fern/Nah 1.32  Stab/Nah 1.21  Zauberstab/Nah 1.12
+
+====================================================================================================
+B) Verlauf über die Commits (BiS-Kit, unsterblich): TTK Magie je Gegner, Nahkampf/Fernkampf zur Kontrolle
+====================================================================================================
+
+-- CL 30 --
+Gegner                    vorher (75a1806)  +Zauberfokus (351f6f7)  +Elementleiter (3bb136  +Elementar = HEAD (523
+mag goblin_butcher       5.0 blacksteel_st       5.0 blacksteel_st       4.9 blacksteel_st       5.0 blacksteel_st
+mag dust_vulture         5.9 blacksteel_st       5.9 blacksteel_st       6.0 blacksteel_st       5.9 blacksteel_st
+mag goblin_warlock       5.1 blacksteel_st       5.1 blacksteel_st       5.1 blacksteel_st       5.1 blacksteel_st
+mag ash_tyrant          14.6 blacksteel_st      14.3 blacksteel_st      14.0 blacksteel_st      14.0 blacksteel_st
+mel goblin_butcher       6.3 blacksteel_ma       6.3 blacksteel_ma       6.3 blacksteel_ma       6.3 blacksteel_ma
+mel dust_vulture         7.2 blacksteel_ma       7.2 blacksteel_ma       7.2 blacksteel_ma       7.2 blacksteel_ma
+mel goblin_warlock       6.6 blacksteel_ma       6.6 blacksteel_ma       6.6 blacksteel_ma       6.6 blacksteel_ma
+mel ash_tyrant          12.4 blacksteel_ma      12.4 blacksteel_ma      12.4 blacksteel_ma      12.4 blacksteel_ma
+ran goblin_butcher       4.6 skeletal_long       4.6 skeletal_long       4.6 skeletal_long       4.6 skeletal_long
+ran dust_vulture         5.1 skeletal_long       5.1 skeletal_long       5.1 skeletal_long       5.1 skeletal_long
+ran goblin_warlock       6.4 skeletal_long       6.4 skeletal_long       6.4 skeletal_long       6.4 skeletal_long
+ran ash_tyrant          14.2 skeletal_long      14.2 skeletal_long      14.2 skeletal_long      14.2 skeletal_long
+Mag/Nah Ø std|boss             0.80 | 1.17             0.79 | 1.15             0.79 | 1.12             0.79 | 1.13
+
+-- CL 60 --
+Gegner                    vorher (75a1806)  +Zauberfokus (351f6f7)  +Elementleiter (3bb136  +Elementar = HEAD (523
+mag skeleton_warrior       8.9 bramble_witch       8.9 bramble_witch       8.9 bramble_witch       8.9 bramble_witch
+mag spectral_stag        8.5 bramble_witch       8.5 bramble_witch       8.5 bramble_witch       8.5 bramble_witch
+mag bramble_witch        8.2 bramble_witch       8.2 bramble_witch       8.2 bramble_witch       8.2 bramble_witch
+mag goblin_warchief      13.3 bramble_witch      13.1 bramble_witch      13.1 bramble_witch      12.8 bramble_witch
+mag forest_warden       16.7 bramble_witch      16.2 bramble_witch      16.2 bramble_witch      15.5 bramble_witch
+mel skeleton_warrior       6.1 runite_maul         6.1 runite_maul         6.1 runite_maul         6.1 runite_maul  
+mel spectral_stag        7.3 runite_maul         7.3 runite_maul         7.3 runite_maul         7.3 runite_maul  
+mel bramble_witch        9.0 runite_maul         9.0 runite_maul         9.0 runite_maul         9.0 runite_maul  
+mel goblin_warchief      13.6 runite_maul        13.6 runite_maul        13.6 runite_maul        13.6 runite_maul  
+mel forest_warden       14.3 runite_maul        14.3 runite_maul        14.3 runite_maul        14.3 runite_maul  
+ran skeleton_warrior       9.4 spectral_hunt       9.4 spectral_hunt       9.4 spectral_hunt       9.4 spectral_hunt
+ran spectral_stag        9.8 spectral_hunt       9.8 spectral_hunt       9.8 spectral_hunt       9.8 spectral_hunt
+ran bramble_witch       11.3 spectral_hunt      11.3 spectral_hunt      11.3 spectral_hunt      11.3 spectral_hunt
+ran goblin_warchief      18.5 spectral_hunt      18.5 spectral_hunt      18.5 spectral_hunt      18.5 spectral_hunt
+ran forest_warden       20.4 spectral_hunt      20.4 spectral_hunt      20.4 spectral_hunt      20.4 spectral_hunt
+Mag/Nah Ø std|boss             1.16 | 1.07             1.16 | 1.04             1.16 | 1.04             1.16 | 1.01
+
+-- CL 90 --
+Gegner                    vorher (75a1806)  +Zauberfokus (351f6f7)  +Elementleiter (3bb136  +Elementar = HEAD (523
+mag iron_sentinel        6.9 stormcrest_st       6.7 stormcrest_st       6.1 aetherium_sta       6.1 aetherium_sta
+mag gray_wolf            4.8 stormcrest_st       3.6 stormcrest_st       2.9 aetherium_sta       2.9 aetherium_sta
+mag skeleton_nekro      17.5 stormcrest_st      16.9 stormcrest_st      13.9 aetherium_sta      12.6 aetherium_sta
+mag roc                122.1 stormcrest_st     112.3 stormcrest_st     103.9 aetherium_sta     103.9 aetherium_sta
+mag roc_elder          165.4 stormcrest_st     154.5 stormcrest_st     133.8 aetherium_sta     133.8 aetherium_sta
+mag idol_warden        116.0 stormcrest_st     108.8 stormcrest_st      96.6 aetherium_sta      96.6 aetherium_sta
+mag last_idol          421.5 stormcrest_st     398.0 stormcrest_st     340.9 aetherium_sta     340.9 aetherium_sta
+mel iron_sentinel        6.8 aetherium_mau       6.8 aetherium_mau       6.8 aetherium_mau       6.4 esthar       
+mel gray_wolf            3.9 aetherium_mau       3.9 aetherium_mau       3.9 aetherium_mau       3.8 esthar       
+mel skeleton_nekro      16.9 aetherium_mau      16.9 aetherium_mau      16.9 aetherium_mau      13.4 esthar       
+mel roc                 84.8 aetherium_mau      84.8 aetherium_mau      84.8 aetherium_mau      65.3 esthar       
+mel roc_elder          112.3 aetherium_mau     112.3 aetherium_mau     112.3 aetherium_mau      88.0 esthar       
+mel idol_warden         81.7 aetherium_mau      81.7 aetherium_mau      81.7 aetherium_mau      64.1 esthar       
+mel last_idol          274.9 aetherium_mau     274.9 aetherium_mau     274.9 aetherium_mau     209.8 esthar       
+ran iron_sentinel        8.4 skytalon_recu       8.4 skytalon_recu       8.4 skytalon_recu       8.3 skytalon_recu
+ran gray_wolf            4.2 skytalon_recu       4.2 skytalon_recu       4.2 skytalon_recu       4.2 skytalon_recu
+ran skeleton_nekro      22.1 skytalon_recu      22.1 skytalon_recu      22.1 skytalon_recu      19.5 skytalon_recu
+ran roc                110.8 skytalon_recu     110.8 skytalon_recu     110.8 skytalon_recu      96.0 skytalon_recu
+ran roc_elder          146.9 skytalon_recu     146.9 skytalon_recu     146.9 skytalon_recu     126.3 skytalon_recu
+ran idol_warden        122.0 skytalon_recu     122.0 skytalon_recu     122.0 skytalon_recu     107.5 skytalon_recu
+ran last_idol          450.0 skytalon_recu     450.0 skytalon_recu     450.0 skytalon_recu     400.0 skytalon_recu
+Mag/Nah Ø std|boss             1.09 | 1.47             0.98 | 1.37             0.82 | 1.21             0.88 | 1.56
+
+====================================================================================================
+C) Attribution (HEAD, Magie BiS-Kit, unsterblich): TTK je Variante; Δ = TTK(Variante)/TTK(voll) − 1 (positiv = ohne die Quelle langsamer ⇒ Beitrag der Quelle)
+   Varianten: noFocus = spellFocus 0 · oldSpan = Grundspannen vor Elementleiter · noStatus = Haupthand ohne Waffeneffekte · oldItem = alte Spanne + alter Brand (mit HEAD-Engine/Glut)
+====================================================================================================
+
+-- CL 30 --
+Gegner                voll  noFocus       Δ  oldSpan       Δ noStatus       Δ  oldItem       Δ
+BiS goblin_butcher     5.0      5.0    +1 %      5.0    +1 %      4.9    -1 %      5.0    +0 %
+BiS dust_vulture       5.9      5.9    +0 %      5.9    +0 %      6.0    +2 %      5.8    -1 %
+BiS goblin_warlock     5.1      5.2    +1 %      5.2    +1 %      5.1    -1 %      5.1    -0 %
+BiS ash_tyrant        14.0     14.2    +1 %     14.3    +2 %     14.0    -1 %     14.3    +2 %
+craft goblin_butcher     5.0        —                —              4.9    -1 %      5.0    +0 %
+craft dust_vulture     5.9        —                —              6.0    +2 %      5.8    -1 %
+craft goblin_warlock     5.1        —                —              5.1    -1 %      5.1    -0 %
+craft ash_tyrant      14.0        —                —             14.0    -1 %     14.3    +2 %
+
+-- CL 60 --
+Gegner                voll  noFocus       Δ  oldSpan       Δ noStatus       Δ  oldItem       Δ
+BiS skeleton_warrior     8.9      8.9    +0 %      8.9    +0 %      8.9    +0 %      8.9    +0 %
+BiS spectral_stag      8.5      8.5    +0 %      8.5    +0 %      8.3    -2 %      8.5    +0 %
+BiS bramble_witch      8.2      8.3    +1 %      8.2    +0 %      9.1   +10 %      8.2    +0 %
+BiS goblin_warchief    12.8     13.0    +2 %     12.8    +0 %     15.1   +18 %     12.8    +0 %
+BiS forest_warden     15.5     16.0    +3 %     15.5    +0 %     17.8   +15 %     15.5    +0 %
+craft skeleton_warrior     8.6        —                —              8.6    +1 %      8.6    +0 %
+craft spectral_stag     8.2        —                —              8.0    -2 %      8.2    +0 %
+craft bramble_witch     6.8        —                —              8.3   +22 %      6.8    +0 %
+craft goblin_warchief    11.0        —                —             14.8   +34 %     11.0    +0 %
+craft forest_warden    13.1        —                —             16.9   +29 %     13.1    +0 %
+
+-- CL 90 --
+Gegner                voll  noFocus       Δ  oldSpan       Δ noStatus       Δ  oldItem       Δ
+BiS iron_sentinel      6.1      6.2    +0 %      6.5    +5 %      6.1    +0 %      6.0    -2 %
+BiS gray_wolf          2.9      3.7   +28 %      4.2   +48 %      2.9    +0 %      3.8   +34 %
+BiS skeleton_nekro    12.6     13.8    +9 %     14.0   +11 %     13.9   +10 %     11.6    -8 %
+BiS roc              103.9    108.8    +5 %    114.1   +10 %    103.9    +0 %     78.9   -24 %
+BiS roc_elder        133.8    142.0    +6 %    148.0   +11 %    133.8    +0 %    103.9   -22 %
+BiS idol_warden       96.6    103.9    +8 %    107.1   +11 %     96.6    +0 %     78.0   -19 %
+BiS last_idol        340.9    376.9   +11 %    376.9   +11 %    340.9    +0 %    255.1   -25 %
+craft iron_sentinel     6.1        —                —              6.1    +0 %      6.0    -2 %
+craft gray_wolf        2.9        —                —              2.9    +0 %      3.8   +34 %
+craft skeleton_nekro    12.6        —                —             13.9   +10 %     11.6    -8 %
+craft roc            103.9        —                —            103.9    +0 %     78.9   -24 %
+craft roc_elder      133.8        —                —            133.8    +0 %    103.9   -22 %
+craft idol_warden     96.6        —                —             96.6    +0 %     78.0   -19 %
+craft last_idol      340.9        —                —            340.9    +0 %    255.1   -25 %
+
+====================================================================================================
+D) Elementar-Effekte im vollen Lauf (HEAD, unsterblich): Schadensanteile in % des Gesamtschadens (Treffer+Überspringen+DoT+Pet)
+====================================================================================================
+ CL Kit          Waffe                 Gegner             Glut   Arc GiftSt Reson   DoT Brand%t Schock s/h Frost# Void%t
+ 30 craft-wand   blacksteel_wand       goblin_butcher      0.0   0.0    0.0   0.0   1.8       0          0      0      0
+ 30 craft-wand   blacksteel_wand       dust_vulture        0.0   0.0    0.0   0.0   1.7       0          0      0      0
+ 30 craft-wand   blacksteel_wand       goblin_warlock      0.0   0.0    0.0   0.0   3.0       0          0      0      0
+ 30 craft-wand   blacksteel_wand       ash_tyrant          0.0   0.0    0.8   0.0   5.5       0          0      0      0
+ 30 alt:steel_st steel_staff           goblin_butcher      0.0   0.0    0.0   0.9   0.0       0          0      0      0
+ 30 alt:steel_st steel_staff           dust_vulture        0.0   0.0    0.0   0.9   0.0       0          0      0      0
+ 30 alt:steel_st steel_staff           goblin_warlock      0.0   0.0    0.0   1.1   0.0       0          0      0      0
+ 30 alt:steel_st steel_staff           ash_tyrant          0.0   0.0    0.0   3.9   0.0       0          0      0      0
+ 30 alt:steel_wa steel_wand            goblin_butcher      0.0   1.0    0.0   0.0   0.0       0        101      0      0
+ 30 alt:steel_wa steel_wand            dust_vulture        0.0   0.0    0.0   0.0   0.0       0         88      0      0
+ 30 alt:steel_wa steel_wand            goblin_warlock      0.0   2.0    0.0   0.0   0.0       0        111      0      0
+ 30 alt:steel_wa steel_wand            ash_tyrant          0.0   4.6    0.0   0.0   0.0       0        129      0      0
+ 30 alt:frost_sc frost_scepter         ash_tyrant          0.0   0.0    0.0   0.0   0.0       0          0     48      0
+ 30 alt:warlock_ warlock_felstaff      goblin_butcher      1.3   0.0    0.0   0.0   1.6      13          0      0      0
+ 30 alt:warlock_ warlock_felstaff      dust_vulture        1.2   0.0    0.0   0.0   1.6      12          0      0      0
+ 30 alt:warlock_ warlock_felstaff      goblin_warlock      2.5   0.0    0.0   0.0   4.3      20          0      0      0
+ 30 alt:wailing_ wailing_wand          goblin_butcher      0.0   0.0    0.0   0.0   0.0       0        101      0      0
+ 30 alt:wailing_ wailing_wand          dust_vulture        0.0   0.0    0.0   0.0   0.0       0         88      0      0
+ 30 alt:wailing_ wailing_wand          goblin_warlock      0.0   3.4    0.0   0.0   0.0       0        114      0      0
+ 30 alt:wailing_ wailing_wand          ash_tyrant          0.0   4.4    0.0   0.0   0.0       0        125      0      0
+ 60 BiS          bramble_witchstaff    bramble_witch       0.0   0.0    0.8   0.0  12.1       0          0      0      0
+ 60 BiS          bramble_witchstaff    goblin_warchief     0.0   0.0    2.6   0.0  11.4       0          0      0      0
+ 60 BiS          bramble_witchstaff    forest_warden       0.0   0.0    3.6   0.0  13.6       0          0      0      0
+ 60 craft-staff  runite_staff          bramble_witch       0.0   0.0    2.3   0.0  18.6       0          0      0      0
+ 60 craft-staff  runite_staff          goblin_warchief     0.0   0.0    5.2   0.0  19.3       0          0      0      0
+ 60 craft-staff  runite_staff          forest_warden       0.0   0.0    7.8   0.0  23.2       0          0      0      0
+ 60 alt:adamanti adamantium_staff      skeleton_warrior    0.0   4.4    0.0   0.0   0.0       0        233      0      0
+ 60 alt:adamanti adamantium_staff      spectral_stag       0.0   3.0    0.0   0.0   0.0       0        195      0      0
+ 60 alt:adamanti adamantium_staff      bramble_witch       0.0   5.1    0.0   0.0   0.0       0        231      0      0
+ 60 alt:adamanti adamantium_staff      goblin_warchief     0.0   5.0    0.0   0.0   0.0       0        249      0      0
+ 60 alt:adamanti adamantium_staff      forest_warden       0.0   5.9    0.0   0.0   0.0       0        254      0      0
+ 60 alt:adamanti adamantium_wand       skeleton_warrior    0.0   0.0    0.0   2.6   0.0       0          0      0      0
+ 60 alt:adamanti adamantium_wand       spectral_stag       0.0   0.0    0.0   1.7   0.0       0          0      0      0
+ 60 alt:adamanti adamantium_wand       bramble_witch       0.0   0.0    0.0   3.0   0.0       0          0      0      0
+ 60 alt:adamanti adamantium_wand       goblin_warchief     0.0   0.0    0.0   4.7   0.0       0          0      0      0
+ 60 alt:adamanti adamantium_wand       forest_warden       0.0   0.0    0.0   5.7   0.0       0          0      0      0
+ 60 alt:stormcal stormcaller_rod       skeleton_warrior    0.0   4.5    0.0   0.0   0.0       0        180      0      0
+ 60 alt:stormcal stormcaller_rod       spectral_stag       0.0   2.6    0.0   0.0   0.0       0        150      0      0
+ 60 alt:stormcal stormcaller_rod       bramble_witch       0.0   5.4    0.0   0.0   0.0       0        184      0      0
+ 60 alt:stormcal stormcaller_rod       goblin_warchief     0.0   5.7    0.0   0.0   0.0       0        192      0      0
+ 60 alt:stormcal stormcaller_rod       forest_warden       0.0   6.1    0.0   0.0   0.0       0        194      0      0
+ 60 alt:bramble_ bramble_witchstaff    bramble_witch       0.0   0.0    0.8   0.0  12.1       0          0      0      0
+ 60 alt:bramble_ bramble_witchstaff    goblin_warchief     0.0   0.0    2.6   0.0  11.4       0          0      0      0
+ 60 alt:bramble_ bramble_witchstaff    forest_warden       0.0   0.0    3.6   0.0  13.6       0          0      0      0
+ 60 alt:witchroo witchroot_wand        goblin_warchief     0.0   0.0    0.0   0.0   0.0       0          0     23      0
+ 60 alt:witchroo witchroot_wand        forest_warden       0.0   0.0    0.0   0.0   0.0       0          0     27      0
+ 90 craft-wand   aetherium_wand        iron_sentinel       0.0   0.0    0.0   2.2   0.0       0          0      0      0
+ 90 craft-wand   aetherium_wand        gray_wolf           0.0   0.0    0.0   0.9   0.0       0          0      0      0
+ 90 craft-wand   aetherium_wand        skeleton_nekro      0.0   0.0    0.0   6.5   0.0       0          0      0      0
+ 90 craft-wand   aetherium_wand        roc                 0.0   0.0    0.0  12.9   0.0       0          0      0      0
+ 90 craft-wand   aetherium_wand        roc_elder           0.0   0.0    0.0  13.7   0.0       0          0      0      0
+ 90 craft-wand   aetherium_wand        idol_warden         0.0   0.0    0.0  14.6   0.0       0          0      0      0
+ 90 craft-wand   aetherium_wand        last_idol           0.0   0.0    0.0  16.1   0.0       0          0      0      0
+ 90 alt:titanium titanium_wand         iron_sentinel       0.0   5.3    0.0   0.0   0.0       0        166      0      0
+ 90 alt:titanium titanium_wand         gray_wolf           0.0   0.0    0.0   0.0   0.0       0        107      0      0
+ 90 alt:titanium titanium_wand         skeleton_nekro      0.0   9.2    0.0   0.0   0.0       0        171      0      0
+ 90 alt:titanium titanium_wand         roc                 0.0   8.8    0.0   0.0   0.0       0         89      0      0
+ 90 alt:titanium titanium_wand         roc_elder           0.0   8.9    0.0   0.0   0.0       0         88      0      0
+ 90 alt:titanium titanium_wand         idol_warden         0.0   8.8    0.0   0.0   0.0       0        173      0      0
+ 90 alt:titanium titanium_wand         last_idol           0.0   9.3    0.0   0.0   0.0       0          0      0      0
+ 90 alt:godspark godspark_staff        iron_sentinel       3.3   0.0    0.0   0.0   8.8      30          0      0      0
+ 90 alt:godspark godspark_staff        gray_wolf           0.2   0.0    0.0   0.0   2.1       6          0      0      0
+ 90 alt:godspark godspark_staff        skeleton_nekro      5.3   0.0    0.0   0.0  18.8      46          0      0      0
+ 90 alt:godspark godspark_staff        roc                 3.9   0.0    0.0   0.0  20.3      33          0      0      0
+ 90 alt:godspark godspark_staff        roc_elder           4.1   0.0    0.0   0.0  21.6      33          0      0      0
+ 90 alt:godspark godspark_staff        idol_warden         5.9   0.0    0.0   0.0  19.6      61          0      0      0
+ 90 alt:godspark godspark_staff        last_idol           6.1   0.0    0.0   0.0  22.0      64          0      0      0
+ 90 alt:siren_sh siren_shockstaff      iron_sentinel       0.0   5.1    0.0   0.0   0.0       0        120      0      0
+ 90 alt:siren_sh siren_shockstaff      gray_wolf           0.0   0.0    0.0   0.0   0.0       0         81      0      0
+ 90 alt:siren_sh siren_shockstaff      skeleton_nekro      0.0   8.6    0.0   0.0   0.0       0        123      0      0
+ 90 alt:siren_sh siren_shockstaff      roc                 0.0   8.5    0.0   0.0   0.0       0         68      0      0
+ 90 alt:siren_sh siren_shockstaff      roc_elder           0.0   8.0    0.0   0.0   0.0       0         69      0      0
+ 90 alt:siren_sh siren_shockstaff      idol_warden         0.0   8.4    0.0   0.0   0.0       0        141      0      0
+ 90 alt:siren_sh siren_shockstaff      last_idol           0.0   8.7    0.0   0.0   0.0       0          0      0      0
+ 90 alt:stormcre stormcrest_staff      iron_sentinel       0.0   3.4    0.0   0.0   0.0       0        129      0      0
+ 90 alt:stormcre stormcrest_staff      gray_wolf           0.0   0.0    0.0   0.0   0.0       0         80      0      0
+ 90 alt:stormcre stormcrest_staff      skeleton_nekro      0.0   9.1    0.0   0.0   0.0       0        152      0      0
+ 90 alt:stormcre stormcrest_staff      roc                 0.0   8.4    0.0   0.0   0.0       0         77      0      0
+ 90 alt:stormcre stormcrest_staff      roc_elder           0.0   8.4    0.0   0.0   0.0       0         75      0      0
+ 90 alt:stormcre stormcrest_staff      idol_warden         0.0   8.7    0.0   0.0   0.0       0        170      0      0
+ 90 alt:stormcre stormcrest_staff      last_idol           0.0   9.0    0.0   0.0   0.0       0          0      0      0
+ 90 alt:frosthex frosthex_wand         skeleton_nekro      0.0   0.0    0.0   0.0   0.0       0          0     39      0
+ 90 alt:frosthex frosthex_wand         roc                 0.0   0.0    0.0   0.0   0.0       0          0     45      0
+ 90 alt:frosthex frosthex_wand         roc_elder           0.0   0.0    0.0   0.0   0.0       0          0     43      0
+ 90 alt:frosthex frosthex_wand         idol_warden         0.0   0.0    0.0   0.0   0.0       0          0    191      0
+ 90 alt:frosthex frosthex_wand         last_idol           0.0   0.0    0.0   0.0   0.0       0          0    197      0
+
+====================================================================================================
+E) Alternative Magiewaffen der Phase (HEAD, unsterblich): TTK und Verhältnis zur Nahkampf-BiS (Ø geometrisch über Standardgegner | Bosse)
+====================================================================================================
+
+-- CL 30 --
+BiS                      blacksteel_staff        Mag/Nah std  0.79 | boss  1.13   eff[execute@1x0.25/0+void@0.45x0.15/4600]
+alt:felmagician_rod      felmagician_rod         Mag/Nah std  0.90 | boss  1.13   eff[execute@1x0.25/0+void@0.35x0.15/4000]
+alt:frost_scepter        frost_scepter           Mag/Nah std  0.80 | boss  1.12   eff[frost@0.35x1/4000]
+alt:stalker_bonewand     stalker_bonewand        Mag/Nah std  0.79 | boss  1.01   eff[desperation@1x0.2/0]
+alt:steel_staff          steel_staff             Mag/Nah std  0.80 | boss  1.08   eff[momentum@1x0.02/0]
+alt:steel_wand           steel_wand              Mag/Nah std  0.77 | boss  0.97   eff[shock@0.25x0.2/3600]
+alt:wailing_wand         wailing_wand            Mag/Nah std  0.78 | boss  0.94   eff[shock@0.25x0.25/3500]
+alt:warlock_felstaff     warlock_felstaff        Mag/Nah std  0.87 | boss  1.15   eff[burn@0.3x1/5000+manaDrain@1x2/0]
+craft-staff              blacksteel_staff        Mag/Nah std  0.79 | boss  1.13   eff[execute@1x0.25/0+void@0.45x0.15/4600]
+craft-wand               blacksteel_wand         Mag/Nah std  0.73 | boss  0.95   eff[poison@0.2x2/3500]
+
+-- CL 60 --
+BiS                      bramble_witchstaff      Mag/Nah std  1.16 | boss  1.01   eff[poison@0.3x4/5000+antiRegen@1x0/0]
+alt:adamantium_staff     adamantium_staff        Mag/Nah std  1.14 | boss  1.16   eff[shock@0.45x0.26/5200]
+alt:adamantium_wand      adamantium_wand         Mag/Nah std  1.08 | boss  1.04   eff[momentum@1x0.02/0]
+alt:bramble_witchstaff   bramble_witchstaff      Mag/Nah std  1.16 | boss  1.01   eff[poison@0.3x4/5000+antiRegen@1x0/0]
+alt:stormcaller_rod      stormcaller_rod         Mag/Nah std  1.12 | boss  1.13   eff[shock@0.35x0.28/4000]
+alt:witchroot_wand       witchroot_wand          Mag/Nah std  1.06 | boss  1.03   eff[frost@0.3x1/3500+frostbite@1x0.25/0]
+craft-staff              runite_staff            Mag/Nah std  1.06 | boss  0.86   eff[poison@0.45x5/5500]
+craft-wand               runite_wand             Mag/Nah std  1.07 | boss  1.04   eff[execute@1x0.25/0+void@0.25x0.15/4100]
+
+-- CL 90 --
+BiS                      aetherium_staff         Mag/Nah std  0.88 | boss  1.56   eff[lightblessing@1x0.04/0]
+alt:drowned_choirstaff   drowned_choirstaff      Mag/Nah std  1.11 | boss  1.67   eff[execute@1x0.25/0+void@0.45x0.15/5800]
+alt:frosthex_wand        frosthex_wand           Mag/Nah std  1.05 | boss  1.50   eff[frost@0.35x1/4000+catalyst@1x0/3000]
+alt:godspark_staff       godspark_staff          Mag/Nah std  1.12 | boss  1.52   eff[burn@0.38x6/6000+critBurst@1x10/0+lightblessing@1x0.04/0]
+alt:sentinel_core_wand   sentinel_core_wand      Mag/Nah std  1.07 | boss  1.37   eff[vengeance@1x0.25/0]
+alt:siren_shockstaff     siren_shockstaff        Mag/Nah std  1.39 | boss  1.97   eff[shock@0.25x0.25/4000+manaOnKill@1x4/0]
+alt:stormcrest_staff     stormcrest_staff        Mag/Nah std  1.02 | boss  1.61   eff[shock@0.3x0.3/4000+surplus@1x0.2/0]
+alt:titanium_staff       titanium_staff          Mag/Nah std  0.93 | boss  1.63   eff[lightblessing@1x0.04/0]
+alt:titanium_wand        titanium_wand           Mag/Nah std  1.19 | boss  1.62   eff[shock@0.3x0.32/4600]
+craft-staff              aetherium_staff         Mag/Nah std  0.88 | boss  1.56   eff[lightblessing@1x0.04/0]
+craft-wand               aetherium_wand          Mag/Nah std  1.15 | boss  1.45   eff[momentum@1x0.02/0]
+
+====================================================================================================
+F) Nachhaltigkeit (HEAD, sterblich, BiS-Kit): Tode/h · Ø HP % · Ø Ward % · Schaden erlitten/h · Ward-Absorb/h · Ward-Zuwachs/h · Lebensraub/h · Food/h — ohne Food | mit Phasen-Food
+====================================================================================================
+
+-- CL 30 --
+Gegner           Stil     Tode/h   ØHP  ØWard   erl/h WardAbs/h WardZu/h   LS/h Kills/h ||  Tode/h   ØHP Food/h Kills/h  Papier Boss→Spieler s
+goblin_butcher   melee       0.0   101      0    1879         0        0    349   432.0 ||     0.0   101      0   432.0  107.3
+goblin_butcher   ranged      0.0   102     90       0      2882     2890      0   702.0 ||     0.0   102      0   702.0  146.2
+goblin_butcher   magic       0.0   100     99       0      3253     3252      0   517.0 ||     0.0   100      0   517.0  112.0
+dust_vulture     melee       0.0    91      0    3405         0        0    685   393.0 ||     0.0    91      0   393.0  59.2
+dust_vulture     ranged      0.0    95     66     633      4310     4279      0   647.0 ||     0.0    95      0   647.0  79.6
+dust_vulture     magic       0.0   100     92       0      5545     5529      0   456.0 ||     0.0   100      0   456.0  61.6
+goblin_warlock   melee       0.0    95      0    3206         0        0    658   420.0 ||     0.0    95      0   420.0  61.1
+goblin_warlock   ranged      2.0    51     63    1397      4320     4178      0   566.0 ||     0.0    65     35   525.0  81.3
+goblin_warlock   magic       4.0    49     96     404      5290     5028      0   505.0 ||     0.0    53     39   508.0  63.5
+ash_tyrant       melee      37.5    57      0   12123         0        0   1296   225.5 ||     2.0    49    480   248.5  44.6
+ash_tyrant       ranged     24.0    54     50    5634      6279     4393      0   242.5 ||     1.5    50    348   246.5  58.7
+ash_tyrant       magic      25.5    73     42    4536     13166     8312      0   209.0 ||    11.5    59    364   215.0  46.2
+
+-- CL 60 --
+Gegner           Stil     Tode/h   ØHP  ØWard   erl/h WardAbs/h WardZu/h   LS/h Kills/h ||  Tode/h   ØHP Food/h Kills/h  Papier Boss→Spieler s
+skeleton_warrior melee       1.0    69      0    4888         0        0    942   444.0 ||     0.0    78     15   446.0  52.9
+skeleton_warrior ranged     41.0    55      0   15411         0        0      0   377.0 ||     2.0    49    419   387.0  56.8
+skeleton_warrior magic       1.0    85     70     232     15466    14938      0   380.0 ||     0.0    56     27   382.0  56.7
+spectral_stag    melee       5.0    57      0    5596         0        0    870   382.0 ||     0.0    61     56   387.0  60.2
+spectral_stag    ranged     35.0    51      0   12798         0        0      0   364.0 ||     0.0    50    367   363.0  64.7
+spectral_stag    magic       1.0    88     70     221     15661    15123      0   402.0 ||     0.0    64      9   401.0  64.5
+bramble_witch    melee      19.0    55      0    9215         0        0    977   319.0 ||     0.0    53    194   328.0  58.0
+bramble_witch    ranged     43.0    53      0   14788         0        0      0   316.0 ||     2.0    48    457   325.0  62.3
+bramble_witch    magic       7.0    52     81    1447     15642    14028      0   407.0 ||     0.0    51     84   413.0  62.2
+goblin_warchief  melee      36.5    52      0   15709         0        0   1458   211.5 ||     0.0    50    370   230.5  51.6
+goblin_warchief  ranged     59.0    56      0   22878         0        0      0   169.0 ||    15.0    47    566   188.0  55.5
+goblin_warchief  magic      22.5    80     42    6095     21789    14074      0   256.5 ||     9.5    61    270   263.0  55.3
+forest_warden    melee      36.0    49      0   15162         0        0   1452   198.0 ||     0.0    50    362   221.0  53.1
+forest_warden    ranged     63.5    54      0   24919         0        0      0   146.0 ||    14.5    46    608   173.5  56.2
+forest_warden    magic      24.5    75     37    6572     21379    13315      0   210.0 ||    12.5    60    341   215.5  56.7
+
+-- CL 90 --
+Gegner           Stil     Tode/h   ØHP  ØWard   erl/h WardAbs/h WardZu/h   LS/h Kills/h ||  Tode/h   ØHP Food/h Kills/h  Papier Boss→Spieler s
+iron_sentinel    melee      11.0    53      0    9055         0        0   1182   421.0 ||     0.0    55    104   427.0  67.0
+iron_sentinel    ranged     32.0    52      0   11750         0        0      0   450.0 ||     0.0    49    351   434.0  78.0
+iron_sentinel    magic       0.0   100     99       0     21304    21287      0   443.0 ||     0.0   100      0   443.0  91.7
+gray_wolf        melee       1.0    70      0    5272         0        0    671   623.0 ||     0.0    74     17   623.0  60.4
+gray_wolf        ranged     30.0    54      0   10431         0        0      0   858.0 ||     0.0    50    329   858.0  71.8
+gray_wolf        magic       0.0   100     99     139      5630     5625      0   742.0 ||     0.0   100      0   742.0  82.9
+skeleton_nekro   melee      33.0    50      0   17525         0        0   1115   211.0 ||     0.0    52    275   233.0  66.4
+skeleton_nekro   ranged     43.0    56      0   17259         0        0      0   172.0 ||     1.0    47    454   183.0  76.9
+skeleton_nekro   magic       1.0    61     97    1248     25175    24754      0   245.0 ||     0.0    62      8   246.0  90.8
+roc              melee     153.5    55      0   99857         0        0   1114     0.0 ||   111.5    49    926     2.5  18.3
+roc              ranged    159.0    56      0   93352         0        0      0     0.0 ||   122.5    53    901     0.5  19.7
+roc              magic      88.5    86     40   48141    138942    26832      0     0.0 ||    86.5    83    356     0.0  24.7
+roc_elder        melee     177.5    55      0  117458         0        0   1060     0.0 ||   132.5    51    947     0.0  15.9
+roc_elder        ranged    182.0    58      0  107662         0        0      0     0.0 ||   146.0    54    905     0.0  17.0
+roc_elder        magic     102.0    86     39   54924    156819    24760      0     0.0 ||    97.5    84    362     0.0  23.4
+idol_warden      melee     183.0    55      0  123493         0        0   2114     0.0 ||   149.0    54    863     0.0  14.8
+idol_warden      ranged    181.0    57      0  112284         0        0      0     0.0 ||   158.5    58    777     0.0  15.7
+idol_warden      magic      66.5    85     39   34231    137778    43285      0     1.0 ||    62.0    82    355     0.5  27.3
+last_idol        melee     262.5    58      0  191274         0        0   2032     0.0 ||   238.5    59    732     0.0  10.5
+last_idol        ranged    220.5    60      0  138712         0        0      0     0.0 ||   194.0    58    669     0.0  11.9
+last_idol        magic      64.5    85     39   33063    136929    44183      0     0.0 ||    57.5    83    330     0.0  29.4
+
+====================================================================================================
+G) Kits (HEAD) — Beschreibung der BiS-/Craft-Kits je Stil und Stufe
+====================================================================================================
+CL30 melee  BiS         blacksteel_maul span 7.1-16.6@3700 focus 0 eff[] | str58 dex16 int14 con61 wis10 lck26 | dmg 27.6-37.1 iv3294 acc29.3 crit0.102x1.76 hp136 ward0 def64 dodge0.00 mana210+5.5/s apen0.4 wb0 pet=ironmaw
+CL30 melee  craft       blacksteel_maul span 7.1-16.6@3700 focus 0 eff[] | str58 dex16 int14 con61 wis10 lck26 | dmg 27.6-37.1 iv3294 acc29.3 crit0.102x1.76 hp136 ward0 def64 dodge0.00 mana210+5.5/s apen0.4 wb0 pet=ironmaw
+CL30 ranged BiS         skeletal_longbow span 3-5.1@3000 focus 0 eff[eagleEye@1x0/0] | str17 dex34 int22 con59 wis10 lck32 | dmg 14.2-16.3 iv2160 acc40.2 crit0.197x1.82 hp132 ward22 def0 dodge0.17 mana290+5.5/s apen0 wb0 pet=null
+CL30 ranged craft       blacksteel_shortbow span 2.6-3.6@2650 focus 0 eff[] | str17 dex34 int22 con59 wis10 lck32 | dmg 13.8-14.8 iv1908 acc40.2 crit0.197x1.82 hp132 ward22 def0 dodge0.17 mana290+5.5/s apen0 wb0 pet=null
+CL30 magic  BiS         blacksteel_staff span 2.5-3.8@3000 focus 0.003 eff[execute@1x0.25/0+void@0.45x0.15/4600] | str14 dex19 int46 con44 wis28 lck34 | dmg 23.4-24.9 iv2538 acc30.8 crit0.122x1.84 hp102 ward103 def0 dodge0.00 mana602+12.7/s apen0 wb0.3 pet=null
+CL30 magic  craft-staff blacksteel_staff span 2.5-3.8@3000 focus 0.003 eff[execute@1x0.25/0+void@0.45x0.15/4600] | str14 dex19 int46 con44 wis28 lck34 | dmg 23.4-24.9 iv2538 acc30.8 crit0.122x1.84 hp102 ward103 def0 dodge0.00 mana602+12.7/s apen0 wb0.3 pet=null
+CL30 magic  craft-wand  blacksteel_wand+ashtongue_fetish span 1.6-2.1@2700 focus 0.0025 eff[poison@0.2x2/3500] | str14 dex19 int48 con44 wis30 lck35 | dmg 23.0-23.6 iv2238 acc30.8 crit0.124x1.85 hp102 ward103 def0 dodge0.00 mana630+13.5/s apen0 wb0.2 pet=null
+CL60 melee  BiS         runite_maul span 13.7-31.9@3700 focus 0 eff[] | str86 dex27 int22 con89 wis18 lck40 | dmg 45.2-63.4 iv3107 acc48.4 crit0.143x1.90 hp201 ward0 def89 dodge0.00 mana322+8.7/s apen0.4 wb0 pet=ironmaw
+CL60 melee  craft       runite_maul span 13.7-31.9@3700 focus 0 eff[] | str86 dex27 int22 con89 wis18 lck40 | dmg 45.2-63.4 iv3107 acc48.4 crit0.143x1.90 hp201 ward0 def89 dodge0.00 mana322+8.7/s apen0.4 wb0 pet=ironmaw
+CL60 ranged BiS         spectral_hunter_bow span 4.7-8@3000 focus 0 eff[bounty@1x0.2/0] | str21 dex52 int25 con81 wis18 lck41 | dmg 23.5-26.8 iv2160 acc65.2 crit0.230x1.91 hp185 ward0 def0 dodge0.28 mana352+8.7/s apen0 wb0 pet=null
+CL60 ranged craft       runite_shortbow span 5-6.9@2650 focus 0 eff[momentum@1x0.02/0] | str21 dex51 int25 con81 wis18 lck42 | dmg 23.5-25.4 iv1908 acc64.6 crit0.230x1.92 hp185 ward0 def0 dodge0.28 mana352+8.7/s apen0 wb0 pet=null
+CL60 magic  BiS         bramble_witchstaff span 4.4-6.5@3000 focus 0.0031 eff[poison@0.3x4/5000+antiRegen@1x0/0] | str22 dex30 int70 con68 wis39 lck48 | dmg 38.0-40.6 iv2400 acc48.9 crit0.159x1.98 hp159 ward200 def0 dodge0.00 mana886+17.1/s apen0 wb0 pet=null
+CL60 magic  craft-staff runite_staff span 4.2-6.2@2880 focus 0.0031 eff[poison@0.45x5/5500] | str22 dex30 int70 con68 wis39 lck47 | dmg 37.8-40.2 iv2304 acc48.9 crit0.157x1.97 hp159 ward200 def0 dodge0.00 mana886+17.1/s apen0 wb0.3 pet=null
+CL60 magic  craft-wand  runite_wand+dreadfang_fetish span 3.2-4.1@2670 focus 0.0026 eff[execute@1x0.25/0+void@0.25x0.15/4100] | str22 dex30 int73 con68 wis44 lck49 | dmg 37.5-38.6 iv2136 acc48.9 crit0.160x1.99 hp159 ward200 def0 dodge0.00 mana936+19.1/s apen0 wb0.2 pet=null
+CL90 melee  BiS         esthar span 33.5-62.4@3450 focus 0 eff[bleed@0.35x6/6000+everyNth@1x1/0] | str124 dex38 int29 con130 wis25 lck57 | dmg 78.9-107.8 iv2760 acc67.6 crit0.179x2.07 hp292 ward0 def122 dodge0.00 mana420+11.5/s apen0 wb0 pet=ironmaw
+CL90 melee  craft       aetherium_maul span 24.3-56.4@3700 focus 0 eff[] | str127 dex38 int29 con131 wis25 lck54 | dmg 70.6-102.7 iv2965 acc67.6 crit0.175x2.04 hp294 ward0 def122 dodge0.00 mana420+11.5/s apen0.4 wb0 pet=ironmaw
+CL90 ranged BiS         skytalon_recurve span 12-18.3@2650 focus 0 eff[shock@0.2x0.2/3500] | str41 dex71 int44 con113 wis25 lck56 | dmg 38.5-44.8 iv1908 acc90.6 crit0.264x2.06 hp258 ward0 def46 dodge0.26 mana570+11.5/s apen0 wb0 pet=null
+CL90 ranged craft       aetherium_shortbow span 9.7-13.5@2650 focus 0 eff[momentum@1x0.02/0] | str41 dex71 int44 con113 wis25 lck56 | dmg 36.2-40.0 iv1908 acc90.6 crit0.264x2.06 hp258 ward0 def46 dodge0.26 mana570+11.5/s apen0 wb0 pet=null
+CL90 magic  BiS         aetherium_staff span 12.5-18.8@2730 focus 0.0032 eff[lightblessing@1x0.04/0] | str29 dex41 int96 con97 wis62 lck62 | dmg 61.3-69.6 iv2184 acc65.6 crit0.188x2.12 hp226 ward548 def0 dodge0.00 mana1238+26.3/s apen0 wb0.3 pet=null
+CL90 magic  craft-staff aetherium_staff span 12.5-18.8@2730 focus 0.0032 eff[lightblessing@1x0.04/0] | str29 dex41 int96 con97 wis62 lck62 | dmg 61.3-69.6 iv2184 acc65.6 crit0.188x2.12 hp226 ward548 def0 dodge0.00 mana1238+26.3/s apen0 wb0.3 pet=null
+CL90 magic  craft-wand  aetherium_wand+furnaceheart_core span 6.3-8@2600 focus 0.0027 eff[momentum@1x0.02/0] | str29 dex41 int101 con97 wis70 lck64 | dmg 54.7-56.9 iv2080 acc65.6 crit0.190x2.14 hp226 ward548 def0 dodge0.00 mana1320+29.5/s apen0 wb0.2 pet=null

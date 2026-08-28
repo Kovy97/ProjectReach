@@ -1520,7 +1520,7 @@ export const es: Record<string, string> = {
   "items:ring_master_attack:name": "Anillo del Maestro de la Espada",
   "items:ring_master_completion:description": "Llevado solo por quienes han dominado las veintiuna disciplinas. Un aro silencioso de oro, concedido, jamás comprado.",
   "items:ring_master_hunting:name": "Anillo del Trampero",
-  "items:ring_master_hunting:description": "Alisado por mil trampas colocadas y disparadas. 5 % de probabilidad de una captura doble.",
+  "items:ring_master_hunting:description": "Alisado por mil trampas colocadas y disparadas. Cada botín de una captura tiene un 5 % de probabilidad de caer por duplicado.",
   "items:ring_master_completion:name": "Anillo de la Culminación",
   "items:ring_master_cooking:description": "Manchado por cada plato que ha supervisado. Los platos preparados mientras se lleva puesto nunca fallan.",
   "items:ring_master_cooking:name": "Anillo del Cocinero de Almas",

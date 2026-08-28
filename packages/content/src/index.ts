@@ -3786,7 +3786,10 @@ export const content: ContentDB = {
       // (Spec §Mechanik). manaOnKill hat durationMs 0 (Kill-Trigger, kein DoT) und trägt daher
       // KEINEN coreStatScore-Beitrag — Parität über Grundspanne (Spanne 6,5-9,8→11,4-17,2,
       // Herleitung im Bericht; Magnitude 5 = üblicher manaOnKill-Flatwert, s. z.B. sorrow_staff).
-      damageMin: 11.4, damageMax: 17.2, spellFocus: 0.0031, attackIntervalMs: 2780, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
+      // Aether-Klippe (Chef-GO 29.08.2026, design/balance-audit-magie-2026-08-28.md R5 (b)): die Parität-
+      // Anhebung war eine Klippe (Roh-DPS ×2,25 bei R80, Boss-Leiter R70→R90 flach). Jetzt einheitliche
+      // +36-%-Prämie auf die alte Spanne wie godiron_staff: 11,4-17,2 → 8,8-13,3 (Roh-DPS 3,97); Tempo unverändert.
+      damageMin: 8.8, damageMax: 13.3, spellFocus: 0.0031, attackIntervalMs: 2780, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Lichtsegen ersetzt den manaOnKill-Platzhalter — jeder Zauber füllt 4 % des eigenen
       // Ward-Maximums und durchdringt 50 % des Gegner-Wards (Engine: AETHER_WARD_ON_HIT/AETHER_WARD_PIERCE).
       // durationMs 0 ⇒ kein coreStatScore-Beitrag, Grundspannen-Parität bleibt wie von der Elementleiter gesetzt.
@@ -3800,7 +3803,10 @@ export const content: ContentDB = {
       weaponType: "staff",
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Aether — Mana-Rückfluss (manaOnKill) statt Brand.
       // Parität über Grundspanne (Spanne 8,1-12,2→12,5-18,8, Herleitung im Bericht).
-      damageMin: 12.5, damageMax: 18.8, spellFocus: 0.0032, attackIntervalMs: 2730, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
+      // Aether-Klippe (Chef-GO 29.08.2026, R5 (b), s. titanium_staff): einheitliche +36-%-Prämie auf die alte Spanne
+      // wie godiron_staff: 12,5-18,8 → 11,0-16,6 (Roh-DPS 5,05; Leiter bloodiron→titanium→aetherium→godiron
+      // 2,28 → 3,97 → 5,05 → 6,39 statt 2,28 → 5,14 → 5,73 → 6,39); Tempo unverändert.
+      damageMin: 11.0, damageMax: 16.6, spellFocus: 0.0032, attackIntervalMs: 2730, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Lichtsegen ersetzt den manaOnKill-Platzhalter (s. titanium_staff).
       weaponEffect: { type: "lightblessing", chance: 1, magnitude: 0.02, durationMs: 0 },
       magicTheme: "aether",
@@ -6670,8 +6676,8 @@ export const content: ContentDB = {
       requirements: { hunting: 99 }, value: 50000,
       modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "hunting", value: 0.05 },
       description: {
-        en: "Worn smooth by a thousand snares set and sprung. 5% chance to spring a double catch.",
-        de: "Glattgetragen von tausend gestellten und ausgelösten Fallen. 5 % Chance auf doppelten Fang.",
+        en: "Worn smooth by a thousand snares set and sprung. Every piece of loot from a catch has a 5% chance to come in double.",
+        de: "Von tausend gestellten und zugeschnappten Schlingen glatt geschliffen. Jeder Beute-Eintrag eines Fangs fällt mit 5 % Chance doppelt.",
       },
     },
     ring_master_jewelcrafting: {

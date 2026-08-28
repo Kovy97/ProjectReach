@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grim Reach — Testbericht 1.0.2</title>
+<style>
+  :root{
+    --bg:#14120f; --bg2:#1c1915; --panel:#211d18; --line:#3a332a;
+    --gold:#d8b870; --gold-dim:#a08a55; --text:#e6ddcb; --muted:#9a8f7c;
+    --red:#c05a4a; --amber:#c9903f; --green:#6f9a5e; --blue:#5f7fa8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.6 "Segoe UI",system-ui,sans-serif;padding:0 0 80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#1d1a15,#14120f);padding:40px 0 32px;margin-bottom:36px}
+  h1{font-size:30px;margin:0 0 6px;color:var(--gold);letter-spacing:.5px}
+  .sub{color:var(--muted);margin:0}
+  h2{font-size:21px;color:var(--gold);margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h3{font-size:17px;margin:0 0 6px}
+  p{margin:0 0 12px}
+  .lead{font-size:18px;line-height:1.65}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0 8px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);padding:16px 18px}
+  .kpi .n{font-size:30px;color:var(--gold);line-height:1.1}
+  .kpi .l{color:var(--muted);font-size:14px;margin-top:4px}
+  .kpi.bad{border-left-color:var(--red)} .kpi.bad .n{color:var(--red)}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:15px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--gold-dim);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.6px}
+  .tw{overflow-x:auto}
+
+  .f{background:var(--panel);border:1px solid var(--line);margin:0 0 16px;padding:18px 20px}
+  .f.crit{border-left:3px solid var(--red)}
+  .f.high{border-left:3px solid var(--amber)}
+  .f.med{border-left:3px solid var(--blue)}
+  .fh{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .count{font-size:13px;color:var(--muted);white-space:nowrap}
+  .count b{color:var(--gold)}
+  blockquote{margin:12px 0;padding:2px 0 2px 16px;border-left:2px solid var(--gold-dim);
+    color:#cfc4ae;font-style:italic}
+  blockquote cite{display:block;font-style:normal;font-size:13px;color:var(--muted);margin-top:6px}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.5px;text-transform:uppercase;
+    padding:2px 8px;border:1px solid var(--line);color:var(--muted);margin-right:6px}
+  .tag.ok{border-color:#4a5f3f;color:var(--green)}
+  .tag.no{border-color:#5f3f3a;color:var(--red)}
+  ul{margin:8px 0 12px;padding-left:22px} li{margin:5px 0}
+  code{background:#191612;border:1px solid var(--line);padding:1px 6px;font-size:14px;color:#cbbf9d}
+  .good{background:#1a1e17;border:1px solid #33402b;border-left:3px solid var(--green);padding:18px 20px;margin-bottom:16px}
+  .note{background:#1a1a20;border:1px solid #333a4a;border-left:3px solid var(--blue);padding:16px 20px;margin:16px 0}
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Was fünf neue Spieler erleben</h1>
+  <p class="sub">Grim Reach 1.0.2 · sechs unabhängige Testläufe · 24.08.2026</p>
+</div></header>
+
+<div class="wrap">
+
+<p class="lead">Fünf Tester haben mit einem frischen Charakter angefangen, jeder mit einer anderen
+Haltung. Ein sechster hat das Endgame vermessen. Sie wussten nichts voneinander. Was mehrere
+unabhängig an derselben Stelle finden, steht hier oben; was nur einer sagt, weiter unten.</p>
+
+<div class="kpis">
+  <div class="kpi bad"><div class="n">Minute 5</div><div class="l">Erster Gedanke an Rückgabe</div></div>
+  <div class="kpi"><div class="n">Minute 7,5</div><div class="l">Erster Moment, der Spaß macht</div></div>
+  <div class="kpi bad"><div class="n">22</div><div class="l">Pflichtklicks, bevor man spielt</div></div>
+  <div class="kpi"><div class="n">0</div><div class="l">Gold nach 25 Kämpfen</div></div>
+</div>
+
+<p><strong>Die eine Zahl, die alles erklärt:</strong> Der Fluchtgedanke kommt zweieinhalb Minuten
+<em>bevor</em> der Spaß beginnt. Und der Spaß lag die ganze Zeit da — der Skeptiker hat es selbst
+ausgerechnet: „Hätte ich die Tour sofort weggeklickt, wäre er nach zwei Minuten gekommen."</p>
+
+<h2>Die Urteile</h2>
+<div class="tw"><table>
+<tr><th>Tester</th><th>Haltung</th><th>Urteil</th><th>Begründung in einem Satz</th></tr>
+<tr><td><b>Der Skeptiker</b></td><td>20 Minuten, dann Entscheidung</td><td><span class="tag no">Rückgabe</span></td>
+    <td>Mehr Zeit im Tutorial als im Spiel, null Gold, nichts kaufbar, tot.</td></tr>
+<tr><td><b>Der Ungeduldige</b></td><td>Überspringt alles, will kämpfen</td><td><span class="tag">bleibt, knapp</span></td>
+    <td>Wegen der Optik, nicht wegen des Spiels — acht Minuten bis zur Grundschleife.</td></tr>
+<tr><td><b>Der Ahnungslose</b></td><td>Nie ein Idle gespielt</td><td><span class="tag">verwirrt</span></td>
+    <td>Hat nach 20 Minuten nicht verstanden, woher Gold kommt.</td></tr>
+<tr><td><b>Der Gründliche</b></td><td>Liest jeden Schritt</td><td><span class="tag">ratlos</span></td>
+    <td>„Ich kenne die Namen von allem und weiß nicht, wie man etwas startet."</td></tr>
+<tr><td><b>Der Genre-Kenner</b></td><td>Melvor-Veteran</td><td><span class="tag ok">beeindruckt</span></td>
+    <td>Fand ein Feature, das die Konkurrenz nicht hat — musste es aber selbst suchen.</td></tr>
+</table></div>
+
+<h2>Reibungspunkte, nach unabhängigen Bestätigungen</h2>
+
+<div class="f crit">
+  <div class="fh"><h3>1. Der Rundgang erklärt das Menü, nicht das Spiel</h3>
+    <span class="count">bestätigt von <b>5 von 5</b></span></div>
+  <p>22 Pflichtklicks, 865 Wörter, fünf bis sieben Minuten Lesezeit, bevor man das Spiel zum
+  ersten Mal berührt. <b>58 % davon</b> sind zwölf Fertigkeits-Blasen in derselben Satzschablone —
+  deren Inhalt zwei Schritte vorher schon auf der Übersichtsseite stand. Kein Fortschrittszähler:
+  Bei Blase 9 weiß niemand, ob noch drei oder dreißig kommen.</p>
+  <p>Der erste Satz des Spiels lautet wörtlich: <em>„Ich zeige dir dein Menü. Ich zeige dir jede
+  Schaltfläche."</em> Er hält Wort. Kampf, Slayer, Verzauberung und New Haven kommen darin nicht vor.</p>
+  <blockquote>Das Spiel erklärt mir zwanzig Minuten lang, wo die Knöpfe sind, und nie, dass Warten
+  das Spiel ist.<cite>Der Ahnungslose</cite></blockquote>
+  <blockquote>Ich lerne das Möbelinventar, nicht das Spiel.<cite>Der Genre-Kenner</cite></blockquote>
+</div>
+
+<div class="f crit">
+  <div class="fh"><h3>2. Der Rundgang hat eine Sackgasse, aus der nur „Überspringen" führt</h3>
+    <span class="count">bestätigt von <b>3 von 5</b> · von mir nachgemessen</span></div>
+  <p>Schritt 21 sagt „klicke auf die hervorgehobene Stelle" und zeigt auf den Optionen-Knopf. Der
+  sitzt in der zugeklappten Fußleisten-Schublade — gemessen bei <code>y = 1199</code> in einem
+  1080er-Fenster, also unter dem Bildrand. Der sichtbare Knopf heißt <code>MENÜ</code>, nicht
+  Optionen. Wer die Schublade errät, findet darunter die Sprechblase, die den eigentlichen Knopf
+  verdeckt.</p>
+  <p>Ein Fix ist geschrieben (die Schublade klappt sich selbst auf), aber <b>noch nicht
+  verifiziert</b> — und er löst nur die Hälfte: Der Schritt verlangt weiterhin zwei Klicks, wo die
+  Blase einen ansagt.</p>
+  <blockquote>Das ist der Punkt, an dem ich mich in einem gekauften Spiel gefragt habe, ob das
+  jemand vorher durchgespielt hat.<cite>Der Skeptiker</cite></blockquote>
+</div>
+
+<div class="f crit">
+  <div class="fh"><h3>3. Nach 25 Kämpfen: null Gold, und niemand sagt warum</h3>
+    <span class="count">bestätigt von <b>4 von 5</b> · von mir nachgemessen</span></div>
+  <p><b>Kein einziges Monster im Spiel gibt Gold</b> — 0 von 83 über alle 10 Zonen. Das ist eine
+  bewusste Design-Entscheidung und bleibt es. Der Fehler ist ein anderer: <b>Das Spiel sagt nie,
+  dass Gold aus dem Verkauf der Beute kommt.</b> Die Tester saßen auf 40 Federn und 13 rohen
+  Hühnchen, gingen in den Laden und lasen dort „Nicht genug Gold".</p>
+  <p>Der Ausweg existiert und liegt nah: Kapitel 1 der Chronik bringt 100 Gold und ist beim
+  Hühnerrupfen nebenbei erfüllt. Nur weist im Kampf nichts darauf hin.</p>
+  <blockquote>Ein Laden, den ich in Minute 12 nicht benutzen kann, ist schlimmer als gar kein
+  Laden.<cite>Der Skeptiker</cite></blockquote>
+</div>
+
+<div class="f high">
+  <div class="fh"><h3>4. Offline-Fortschritt wird nirgends erklärt — und es gibt keine Rückkehr-Bilanz</h3>
+    <span class="count">Spezialbefund des <b>Genre-Kenners</b></span></div>
+  <p>Nicht im Rundgang, nicht in den Optionen, nicht in einem Tooltip. Das Wort „Idle" steht genau
+  einmal im ganzen Spiel — versteckt in der Beschreibung einer Lager-Option. Er hat es selbst
+  getestet: Es läuft weiter. Aber es gibt <b>kein „Während du weg warst"-Fenster</b>.</p>
+  <p>Das ist die erste Frage, die jeder Genre-Kenner an ein Idle-Spiel stellt, und der emotionale
+  Kern des Genres — bei Melvor und NGU ist die Rückkehr-Bilanz der Moment, für den man das Spiel
+  öffnet.</p>
+</div>
+
+<div class="f high">
+  <div class="fh"><h3>5. Das beste Feature des Spiels versteckt sich hinter einem Mouseover</h3>
+    <span class="count">Spezialbefund des <b>Genre-Kenners</b></span></div>
+  <p>Er hat 25 Bäume, 25 Kupfer und 5 Hühner in <em>eine</em> Reihe gelegt und zugesehen, wie das
+  Spiel sie nacheinander abgearbeitet hat — inklusive automatischem Kampfstart nach dem letzten
+  Baum. Eine gemeinsame Warteschlange über Fertigkeiten <em>und</em> Kampf, die selbsttätig
+  weiterrückt.</p>
+  <blockquote>Melvor kann das nicht. NGU kann das nicht. Das ist kein Detail, das ist ein
+  Generationssprung im Genre — und es ist das Argument, mit dem dieses Spiel verkauft werden
+  sollte.<cite>Der Genre-Kenner</cite></blockquote>
+  <p>Gefunden hat er es nur, weil er als Veteran gezielt danach suchte. Der Rundgang erwähnt die
+  Warteschlange mit keinem Wort, der einzige Hinweis ist ein Tooltip, und die Leiste selbst ist
+  ~20 Pixel schmal am rechten Rand. Der Fortschritt „0/25" steht dort als senkrechter,
+  halb abgeschnittener Minitext.</p>
+</div>
+
+<div class="f high">
+  <div class="fh"><h3>6. Auf den Fertigkeitskarten steht kein einziges Verb</h3>
+    <span class="count">bestätigt von <b>3 von 5</b></span></div>
+  <p>Nur <code>1× 25× 50× ∞</code>. Kein „Fällen", kein „Start". Daneben ein breiter, komplett
+  leerer Knopf — der Platzhalter, aus dem später „Anhalten" wird. Zwei Tester hielten ihn für einen
+  fehlenden Übersetzungsschlüssel und klickten mehrfach darauf.</p>
+  <p>Dazu: Der <b>große beschriftete Knopf ist der Endlosmodus</b>, die kleinen unbeschrifteten
+  Zahlen sind die begrenzten. Für den ersten Kontakt ist das genau verkehrt herum.</p>
+</div>
+
+<div class="f high">
+  <div class="fh"><h3>7. Kapitel 2 schickt zu einem Gegner, der unter der Bildkante steht</h3>
+    <span class="count">gefunden vom <b>Ungeduldigen</b> · von mir nachgemessen</span></div>
+  <p>„Rasender Bulle — Die Weiden — 0/1". Die Zone wirbt mit 6 Gegnern, das Bestiarium führt 6,
+  auf dem Bildschirm stehen 3. Sie sind <b>nicht gefiltert</b> — das Raster ist dreispaltig, die
+  restlichen Karten beginnen bei <code>y = 1396</code> in einem 1080er-Fenster. Kein Scrollbalken,
+  kein Hinweis.</p>
+  <p>Das ist dieselbe Ursache wie beim New-Haven-Umzug: Inhalt unter der sichtbaren Kante, den
+  niemand findet. Nur trifft es hier eine Quest.</p>
+  <blockquote>Das ist der Punkt, an dem ich das Fenster schließe, weil ich denke, das Spiel ist
+  kaputt.<cite>Der Ungeduldige</cite></blockquote>
+</div>
+
+<div class="f med">
+  <div class="fh"><h3>8. „Überspringen" überspringt nur eine Seite</h3>
+    <span class="count">gefunden vom <b>Ungeduldigen</b></span></div>
+  <p>Er drückte Überspringen — und wurde danach auf der Kampfseite, im Shop und in der Bank erneut
+  von Vollbild-Popups abgefangen. Vier Mal insgesamt.</p>
+  <blockquote>Skip ist ein Vertrag.<cite>Der Ungeduldige</cite></blockquote>
+</div>
+
+<div class="f med">
+  <div class="fh"><h3>9. Der Todesbildschirm rät „iss dich stark" — es gibt keinen Ess-Knopf</h3>
+    <span class="count">bestätigt von <b>2 von 5</b></span></div>
+  <p>Der Text ist gut und beruhigt. Nur: Essen liegt hinter dem Reiter „Vorbereitung", wo es
+  niemand vermutet, Auto-Eat lief die ganze Zeit unbemerkt, und ein Shrimp heilt 2 Leben, während
+  das Wildschwein für 5 zuschlägt. Ein Ratschlag, den man nicht befolgen kann.</p>
+  <p>Dahinter steckt eine Falle aus zwei bewussten Entscheidungen: <b>Leben regenerieren nicht</b>,
+  und <b>Essen gibt es nicht im Laden</b> (16 Einträge, null Verbrauchsgüter — nachgemessen). Beides
+  ist so gewollt; nur der Ausweg über Angeln und Kochen wird nirgends genannt.</p>
+</div>
+
+<div class="f med">
+  <div class="fh"><h3>10. Die Speicherplätze zeigen einen sonnigen Frühlingswald</h3>
+    <span class="count">bestätigt von <b>4 von 5</b></span></div>
+  <p>Alle fünf, direkt nach einem Titelbild mit verbrannter Ruinenlandschaft. Kleinigkeit, aber es
+  ist das erste Bild des eigentlichen Spiels, und vier von fünf Testern haben von sich aus gestutzt.</p>
+</div>
+
+<h2>Wortliste: was keiner erklärt bekommt</h2>
+<p>Der Ahnungslose sollte jeden Begriff notieren, bei dem er raten muss. Die Liste ist lang;
+das hier sind die, die mehrfach oder in den ersten Minuten auftauchen:</p>
+<ul>
+<li><b>„Ges. Lv 20"</b> beim frischen Charakter — zwei Tester dachten, sie hätten einen fremden Spielstand geladen</li>
+<li><b>„UNTÄTIG / Keine aktive Fertigkeit"</b> — liest sich wie eine Fehlermeldung, ist der Normalzustand</li>
+<li><b>„STARK"</b> auf der Monsterkarte, direkt unter „Stufe 1" — meint <em>du</em> bist stark, wird als „das Huhn ist stark" gelesen. Die Legende daneben benutzt fünf andere Wörter für dieselbe Sache</li>
+<li><b>„Meisterschaft", „Aufgabenmarken", „Loadouts"</b> — drei Systeme, drei Währungen, keine Erklärung</li>
+<li><b>„Tor der Glutfeste"</b> in der ersten Quest — der Ort steht nirgends in der Navigation</li>
+</ul>
+<p>Dazu drei Sprachfehler, die ich im Code bestätigt habe: <code>„Gebratener Shrimp"</code> ist halb
+übersetzt, <code>„Loadouts"</code> steht auch im deutschen Text, und die Seitenleiste sagt
+<code>„Slayer"</code>, während der Wächter dasselbe „Monsterjagd" nennt.</p>
+
+<h2>Was gut ist — und zwar einhellig</h2>
+<div class="good">
+<p><b>Die Charaktererstellung ist der beste Bildschirm des Spiels.</b> Vier von fünf Testern haben
+sie von sich aus gelobt, besonders den Satz „Dies bestimmt nur deine Startwaffe — lege jederzeit
+eine andere an." Genau diese Klarheit fehlt danach überall.</p>
+<p><b>Die Kunst trägt alles.</b> „Das sieht nach einem Spiel aus, nicht nach einem Browser-Idler."
+Menü, Porträts, Monsterkarten, Zonenbilder — mehrfach als „sieht nach Geld aus" beschrieben.</p>
+<p><b>Zahlen vor der Entscheidung.</b> XP/h, Ertrag/h, beide Trefferchancen, Beute-Vorschau,
+„Level 3 in &lt; 1 Min". Der Genre-Kenner: „Im Genre-Standard rechnet man das im Wiki nach — hier
+steht es vor dem Klick auf dem Schirm. Das ist der stärkste Eindruck der ganzen Sitzung."</p>
+<p><b>Der Todesbildschirm.</b> „Kein Verlust: Du behältst alles." Von zwei Testern unabhängig als
+bester Text im Spiel bezeichnet.</p>
+<p><b>Die kontextuellen Mini-Rundgänge.</b> Ein Satz auf der Kampfseite erklärt die Schleife
+besser als 22 Blasen davor. Sie sind schon da — sie kommen nur zu spät.</p>
+</div>
+
+<h2>Endgame</h2>
+<p>Der sechste Läufer hat den Content vermessen statt gespielt. Sein Fazit:
+<b>es steht besser da als befürchtet, aber nicht dort, wo man hinschaut.</b> Fünf Schleifen laufen
+mathematisch unendlich. Was fehlt, sind <b>Namen für das, was man tut</b>.</p>
+<div class="tw"><table>
+<tr><th>Befund</th><th>Zahl</th><th>Status</th></tr>
+<tr><td>Items im Spiel — Entdecker-Erfolg endet bei 200</td><td>1115</td><td><span class="tag no">von mir bestätigt</span></td></tr>
+<tr><td>Drazhan (Lv 310, Endgegner) hat einen Kill-Erfolg</td><td>nein</td><td><span class="tag no">von mir bestätigt</span></td></tr>
+<tr><td>Champions, Meisterschaft, New Haven, Slayer-Aufträge: Erfolge</td><td>0</td><td>Bericht</td></tr>
+<tr><td>Auftragspool am Kampflevel-Deckel</td><td>5 Monster</td><td><span class="tag">ungeprüft</span></td></tr>
+</table></div>
+<p>Die „stille Wand" steht laut Bericht nicht bei Gesamtlevel 1980, sondern bei Kampflevel 92–96:
+Chronik zu Ende, New Haven fertig, Slayer-Turm am Ende, Marken-Shop gesättigt. Danach ist alles
+noch da — es heißt nur nichts mehr.</p>
+
+<div class="note">
+<p><b>Was ich selbst nachgemessen habe</b> — die Tester sind Rollen, keine Belege:</p>
+<ul>
+<li><span class="tag ok">bestätigt</span> Optionen-Ziel bei y=1199 in 1080er-Fenster</li>
+<li><span class="tag ok">bestätigt</span> 0 von 83 Monstern geben Gold; 16 Shop-Einträge, keine Verbrauchsgüter</li>
+<li><span class="tag ok">bestätigt</span> Weiden-Karten ab y=1396 unter der Kante, nicht gefiltert</li>
+<li><span class="tag ok">bestätigt</span> 1115 Items / Erfolg bei 200; Drazhan ohne Kill-Erfolg</li>
+<li><span class="tag ok">bestätigt</span> die drei halb übersetzten Begriffe</li>
+<li><span class="tag no">widerlegt</span> „Nebelwacht −10 % EP". Der Wert ist <code>mult: 1.10</code>,
+das Abzeichen sagt <b>+10 %</b>. Zwei Tester und ich haben das Plus als Minus gelesen — schlecht
+lesbar, aber kein Fehler.</li>
+<li><span class="tag no">widerlegt</span> „DEBUG-Knöpfe im Verkaufsbuild". Sie hängen an
+<code>import.meta.env.DEV</code> und existieren im Release nicht. Drei Tester haben sie gesehen,
+zwei haben es selbst aufgeklärt.</li>
+<li><span class="tag">offen</span> Slayer-Auftragspool am Level-Deckel — mein erster Versuch
+scheiterte an der Funktionssignatur.</li>
+</ul>
+</div>
+
+<h2>Was ich daraus vorschlagen würde</h2>
+<p>Nicht als Aufgabenliste, sondern nach Wirkung pro Aufwand:</p>
+<ul>
+<li><b>Die zwölf Fertigkeits-Blasen zu einer zusammenfassen.</b> Halbiert den Rundgang sofort,
+kostet fast nichts, nimmt niemandem etwas.</li>
+<li><b>Den Optionen-Schritt streichen.</b> Er ist die einzige echte Sackgasse, und sein einziger
+nützlicher Inhalt („du kannst den Rundgang neu starten") gehört ohnehin in die Abschluss-Blase.</li>
+<li><b>Zwei Sätze einbauen, die heute fehlen:</b> „Deine Beute wird im Laden zu Gold" nach dem
+ersten Kampf, und „Essen kommt aus Angeln und Kochen" wenn die Vorräte unter fünf fallen.</li>
+<li><b>Einen geführten ersten Kampf statt zwölf vorgelesener Berufe.</b> Ein Beruf gespielt schlägt
+zwölf Berufe erklärt — das schreiben zwei Tester unabhängig voneinander.</li>
+<li><b>Eine Rückkehr-Bilanz.</b> „Während du weg warst" ist im Idle-Genre der Moment, für den man
+das Spiel öffnet. Er fehlt komplett.</li>
+</ul>
+<p>Und der Satz, der für mich der beste Rat des ganzen Tages ist:</p>
+<blockquote>Zeigt mir die Weiden-Ansicht in Minute 1, nicht in Minute 7. Das ist euer bester
+Bildschirm. Er verkauft das Spiel besser als alles, was der Wächter zu sagen hat.<cite>Der Skeptiker</cite></blockquote>
+
+<footer>Sechs unabhängige Läufe gegen 1.0.2, Screenshots je Lauf unter
+<code>apps/client/ui-audit/bot-runs/</code>. Die Tester haben nichts am Spiel verändert.</footer>
+
+</div>
+</body>
+</html>

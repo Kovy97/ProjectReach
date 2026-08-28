@@ -52,7 +52,11 @@ const LADDER_BASELINE = new Set([
   "bloodiron_staff->sorrow_staff",
   "sorrow_staff->stormcrest_staff",
   "stormcrest_staff->titanium_staff",
-  "titanium_staff->godspark_staff",
+  // Aether-Klippe (Chef-GO 29.08.2026, balance-audit-magie R5 (b)): titanium_staff 11,4–17,2 → 8,8–13,3,
+  // aetherium_staff 12,5–18,8 → 11,0–16,6. Neu gemessen: "titanium_staff->godspark_staff" (Drop R88 mit
+  // Brand + Lichtsegen war gegen die Klippen-Spanne "schwächer") feuert nicht mehr — Pin entfernt, der
+  // Drop schlägt die Craft-Stufe wieder. "sorrow_staff->titanium_staff" (Score) und "godspark_staff->
+  // aetherium_staff" (value) feuern weiterhin und bleiben gepinnt.
   "godspark_staff->aetherium_staff",
   "rotfang_dagger->iron_dagger",
   "steel_dagger->mire_fang_dagger",

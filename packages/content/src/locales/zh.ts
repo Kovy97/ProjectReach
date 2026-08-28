@@ -1521,7 +1521,7 @@ export const zh: Record<string, string> = {
   "items:ring_master_attack:name": "剑术大师之戒",
   "items:ring_master_completion:description": "唯有精通全部二十一项技艺者方可佩戴。一枚静默的金环，是授予之物，从不贩售。",
   "items:ring_master_hunting:name": "猎人陷阱戒指",
-  "items:ring_master_hunting:description": "被千次布设与触发的陷阱磨得光滑。有 5% 概率获得双倍猎物。",
+  "items:ring_master_hunting:description": "被千次布设与触发的陷阱磨得光滑。每次猎获的每件猎物都有 5% 概率翻倍。",
   "items:ring_master_completion:name": "圆满之戒",
   "items:ring_master_cooking:description": "沾染过它监督过的每一道菜肴。佩戴此物烹饪，菜肴永不失败。",
   "items:ring_master_cooking:name": "灵魂厨师之戒",

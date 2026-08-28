@@ -7,7 +7,7 @@ import { content } from "./index";
 /**
  * Wächter für den Achievement-Katalog 1.2.0 (Chef-Entscheid 27.08.2026, design/achievements-1.2.0/audit.md § 2).
  *
- *  1. Alle 67 Steam-Auslöser (steam-set.csv, Spalte `trigger_internal_id`) existieren als interne
+ *  1. Alle 69 Steam-Auslöser (steam-set.csv, Spalte `trigger_internal_id`) existieren als interne
  *     Erfolge — bestehende unter ihrer alten ID, neue exakt wie in der CSV benannt
  *     (`ach_total_level_2079 (count 1980)` heißt laut CSV jetzt `ach_total_level_1980`).
  *  2. Hidden-Flag stimmt mit der CSV überein (kein Spoiler im Spiel, wo Steam versteckt).
@@ -60,13 +60,13 @@ export function steamSetFromCsv(): Array<{ api: string; internalId: string; hidd
 describe("Achievements 1.2.0 — Katalog-Wächter", () => {
   const byId = new Map(content.achievements.map((a) => [a.id, a]));
 
-  it("alle 67 Steam-Auslöser aus steam-set.csv existieren, API-Namen sind eindeutig und ≤ 32 Zeichen", () => {
+  it("alle 69 Steam-Auslöser aus steam-set.csv (1.2.0: +MASTER_TAILORING, +MASTER_HUNTING) existieren, API-Namen sind eindeutig und ≤ 32 Zeichen", () => {
     const set = steamSetFromCsv();
-    expect(set.length).toBe(67);
+    expect(set.length).toBe(69);
     const missing = set.filter((s) => !byId.has(s.internalId)).map((s) => `${s.api} → ${s.internalId}`);
     expect(missing, `fehlende interne Erfolge:\n${missing.join("\n")}`).toEqual([]);
     const apis = new Set(set.map((s) => s.api));
-    expect(apis.size).toBe(67);
+    expect(apis.size).toBe(69);
     for (const s of set) expect(s.api.length, s.api).toBeLessThanOrEqual(32);
     expect(byId.has("ach_total_level_2079"), "alte ID wurde laut CSV umbenannt").toBe(false);
     expect(byId.get("ach_total_level_1980")!.condition.count).toBe(1980);

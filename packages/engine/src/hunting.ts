@@ -22,6 +22,7 @@ import { monsterKills } from "./drops";
 import { isZoneUnlocked } from "./zones";
 import { tryCraftSuffix } from "./suffix";
 import { petHuntDoubleRollsChance, tryPetDrop } from "./pets";
+import { masterDoubleYieldBonus } from "./capes";
 
 // ───────────────────────────────────────────────────────────────────────────
 // Jagen (1.2.0 „Fasern und Fallen", SAVE_VERSION 85 — design/handwerk-fasern-jagen/spec-technik.md §3,
@@ -51,15 +52,20 @@ import { petHuntDoubleRollsChance, tryPetDrop } from "./pets";
 //                   Treffer ⇒ Schritt 5 läuft HUNT_LOOT_ROLLS_DOUBLED (10) statt HUNT_LOOT_ROLLS (5) mal.
 //                   Ohne solches Pet KEIN Zug — Content/Saves ohne Leon bleiben bit-identisch.
 //   5. HUNT_LOOT_ROLLS (bzw. ×2) komplette Durchläufe der Monster-Beutetabelle, je Eintrag: nextFloat
-//                   (Chance) → bei Erfolg nextInt (Menge) → ggf. Suffix-Rolls über `tryCraftSuffix`
-//                   (zieht NUR bei Equipment mit Pool, wie im Kill-Pfad).
+//                   (Chance) → bei Erfolg nextInt (Menge) → Meisterring Jagen (`ring_master_hunting`,
+//                   masterPerk doubleYield/hunting, capes.ts — Revision 29.08.2026): bei Menge > 0 EIN
+//                   nextFloat NUR mit ausgerüstetem Perk (`masterDoubleYieldBonus` > 0), Treffer ⇒ Menge ×2
+//                   (ohne Ring KEIN Zug — Saves ohne Ring bleiben bit-identisch) → ggf. Suffix-Rolls über
+//                   `tryCraftSuffix` (zieht NUR bei Equipment mit Pool, wie im Kill-Pfad; die Instanz
+//                   zweigt ein Exemplar der bereits verdoppelten Menge ab).
 //   6. Begleiter-Wurf (`tryPetDrop`, NACH Beute und XP — Muster tick.ts): je nextFloat NUR, wenn
 //                   es für `hunting` ein noch nicht besessenes Pet gibt; ohne passendes Pet (oder
 //                   schon im Besitz) KEIN Zug — Content ohne Jagen-Pet bleibt bit-identisch.
 // Die FANGCHANCE (`huntCatchChance`) kennt KEIN Begleiter-Passiv mehr (das frühere Kind
 // `huntCatchChance` +3 pp ist gestrichen, Chef 28.08.2026). Kein Segen-/Runen-/Pet-Multiplikator auf
 // die BEUTE-CHANCEN (der Fallen-Tick kennt keine Wanduhr, und Kampf-Effekte gehören dem Kampf) — die
-// Tabelle fällt exakt mit ihren Content-Chancen; Leon verdoppelt nur die Zahl der Durchläufe.
+// Tabelle fällt exakt mit ihren Content-Chancen; Leon verdoppelt nur die Zahl der Durchläufe, der
+// Meisterring nur die MENGE eines getroffenen Eintrags (Schritt 5), nie die Chance.
 // Ohne `content.huntingZones` ist alles inert (kein RNG-Zug, kein State-Schreibzugriff).
 // ───────────────────────────────────────────────────────────────────────────
 
@@ -233,7 +239,8 @@ export function setHuntAutoRebait(state: GameState, slot: number, on: boolean): 
  * EIN erfolgreicher Fang: Gold (Kill-Streuung ×5), HUNT_LOOT_ROLLS Durchläufe der Beutetabelle über den
  * normalen Drop-Pfad (Suffix-Instanz möglich, grantLoot: Inventar → Lager → Postfach, itemsGathered),
  * Jagen-XP (Sammel-Tonika multiplizieren wie beim Beet), Breadcrumb mit laufender Fang-Nummer.
- * RNG-Züge s. Kopfkommentar (Schritte 3–6; Schritt 4 = Leon-Glückswurf, Schritt 6 = Begleiter-Wurf).
+ * RNG-Züge s. Kopfkommentar (Schritte 3–6; Schritt 4 = Leon-Glückswurf, Schritt 5 = Beute inkl.
+ * Meisterring-Zug je getroffenem Eintrag, Schritt 6 = Begleiter-Wurf).
  */
 function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, monster: MonsterDef): HuntCatch {
   // 3. Gold: derselbe Streuungs-Wurf wie im Kill-Pfad (combat.ts rollKillGold), dann ×HUNT_LOOT_ROLLS
@@ -249,11 +256,18 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
   const passes = doubled ? HUNT_LOOT_ROLLS_DOUBLED : HUNT_LOOT_ROLLS;
 
   // 5. Beute: HUNT_LOOT_ROLLS komplette Tabellen-Durchläufe (J: „5 Beute-Würfe seiner Tabelle"), mit Leon-Glück zehn.
+  //    Meisterring Jagen (Revision 29.08.2026, review-1.2.0 P1-4: der 99er-Ring tat beim Jagen nichts, weil der
+  //    doubleYield-Perk nur im Aktions-Pfad tick.ts gelesen wurde): `masterDoubleYieldBonus` ist rein (kein RNG),
+  //    0 ohne ausgerüsteten Träger — dann fällt der Perk-Zug unten komplett weg (bit-identisch zu vorher).
+  const perkDouble = masterDoubleYieldBonus(state, content, HUNTING_SKILL_ID);
   const items: { id: ItemId; qty: number }[] = [];
   for (let pass = 0; pass < passes; pass++) {
     for (const roll of monster.loot) {
       if (nextFloat(state.rng) > Math.min(1, roll.chance)) continue;
       let qty = nextInt(state.rng, roll.min, roll.max);
+      // Meisterring: je getroffenem Eintrag mit Menge > 0 EIN nextFloat, Treffer ⇒ Menge ×2 — VOR dem
+      // Suffix-Schritt, damit die Instanz aus der verdoppelten Menge abzweigt (Muster tick.ts Mastery-Doppelertrag).
+      if (qty > 0 && perkDouble > 0 && nextFloat(state.rng) < perkDouble) qty *= 2;
       let instanceMade = 0;
       const suffixChance = roll.suffixChance ?? DEFAULT_DROP_SUFFIX_CHANCE;
       if (qty > 0 && suffixChance > 0) {

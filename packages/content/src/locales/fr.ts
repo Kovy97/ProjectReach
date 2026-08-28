@@ -1519,7 +1519,7 @@ export const fr: Record<string, string> = {
   "items:ring_master_attack:name": "Anneau du Maître d'Armes",
   "items:ring_master_completion:description": "Porté uniquement par ceux qui ont maîtrisé les vingt et une disciplines. Un discret anneau d'or, accordé, jamais acheté.",
   "items:ring_master_hunting:name": "Anneau du Trappeur",
-  "items:ring_master_hunting:description": "Lissé par mille pièges posés et déclenchés. 5 % de chance de capture double.",
+  "items:ring_master_hunting:description": "Lissé par mille pièges posés et déclenchés. Chaque butin d'une capture a 5 % de chance de tomber en double.",
   "items:ring_master_completion:name": "Anneau de l'Accomplissement",
   "items:ring_master_cooking:description": "Taché par chaque plat qu'il a supervisé. Les plats préparés en le portant ne ratent jamais.",
   "items:ring_master_cooking:name": "Anneau de l'Âme-Cuisinier",

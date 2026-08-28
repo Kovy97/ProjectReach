@@ -1519,7 +1519,7 @@ export const ru: Record<string, string> = {
   "items:ring_master_attack:name": "Кольцо Мастера Клинка",
   "items:ring_master_completion:description": "Носят лишь те, кто постиг все двадцать одно ремесло. Тихий золотой ободок, дарованный, а не купленный.",
   "items:ring_master_hunting:name": "Кольцо Ловчего",
-  "items:ring_master_hunting:description": "Отполировано тысячей поставленных и сработавших ловушек. 5 % шанс на двойной улов.",
+  "items:ring_master_hunting:description": "Отполировано тысячей поставленных и сработавших ловушек. Каждая добыча с поимки с шансом 5 % выпадает вдвойне.",
   "items:ring_master_completion:name": "Кольцо Завершения",
   "items:ring_master_cooking:description": "Испачкано каждым блюдом, за которым оно присматривало. Блюда, приготовленные в нём, никогда не портятся.",
   "items:ring_master_cooking:name": "Кольцо Кулинара Душ",

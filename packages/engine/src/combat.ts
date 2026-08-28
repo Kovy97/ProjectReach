@@ -581,7 +581,12 @@ interface AttackResult {
  */
 type SpecialEffects = Partial<Record<SpecialEffectType, WeaponEffect>>;
 
-/** Flache Kill-Rückflüsse: Magnituden addieren sich über alle Quellen (s. Kopfkommentar). */
+/**
+ * Flache Kill-Rückflüsse: `magnitude` UND `durationMs` addieren sich über alle Quellen (s. Kopfkommentar).
+ * healOnKill/wardOnKill tragen ihren Wert in `magnitude`, cooldownOnKill seinen ms-Abzug in `durationMs`
+ * (magnitude dort 0) — der Kill-Pfad liest je Kind genau dieses Feld (Revision 29.08.2026: die Summe
+ * addierte nur magnitude, Waffe + Handschuhe kürzten den Cooldown daher nicht gemeinsam).
+ */
 const ADDITIVE_KILL_FLATS: ReadonlySet<SpecialEffectType> = new Set<SpecialEffectType>(["healOnKill", "wardOnKill", "cooldownOnKill"]);
 
 /** Sammelt die Spezial-Effekte der aktuellen Ausrüstung. Rein lesend, kein RNG. */
@@ -604,8 +609,13 @@ export function collectSpecialEffects(state: GameState, content: ContentDB): Spe
       const kind = e.type;
       if (isStatusEffectType(kind)) continue;
       const existing = fx[kind];
-      if (existing && ADDITIVE_KILL_FLATS.has(kind)) fx[kind] = { ...existing, magnitude: existing.magnitude + e.magnitude };
-      else if (!existing || e.magnitude > existing.magnitude) fx[kind] = e;
+      if (existing && ADDITIVE_KILL_FLATS.has(kind)) {
+        fx[kind] = {
+          ...existing,
+          magnitude: existing.magnitude + e.magnitude,
+          durationMs: Math.max(0, existing.durationMs) + Math.max(0, e.durationMs),
+        };
+      } else if (!existing || e.magnitude > existing.magnitude) fx[kind] = e;
     }
   }
   return fx;
@@ -2413,8 +2423,8 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   // cooldownOnKill den Cooldown auf 0, rückt der Dungeon-Wellen-Pfad OHNE aktiven Cooldown zur
   // nächsten Welle vor — der Rest-Tick würde sonst mit dem lokalen `monster` der ALTEN Welle gegen
   // die neue `enemyHp` weiterrechnen (Pet-Schaden aus altem maxHp, alte Angriffswerte/enrage/bane).
-  // Heute unerreichbar (max. cooldownOnKill 2000 ms < KILL_COOLDOWN_MS), aber ein Content-/Tuning-
-  // Drop macht den Pfad scharf. Der Normalkampf-Respawn behält dieselbe monsterId → weiter erlaubt.
+  // Heute unerreichbar (cooldownOnKill summiert seit 29.08.2026 über die Slots: Bogen 2000 ms +
+  // Handschuhe 2000 ms = 4000 ms < KILL_COOLDOWN_MS), aber ein Content-/Tuning-Drop macht den Pfad scharf. Der Normalkampf-Respawn behält dieselbe monsterId → weiter erlaubt.
   const status = tickEnemyEffects(state, fx, monster);
   if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;

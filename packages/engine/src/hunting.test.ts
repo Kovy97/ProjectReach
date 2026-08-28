@@ -19,6 +19,7 @@ import { bankCount } from "./bank";
 import { xpForLevel } from "./leveling";
 import { nextFloat, nextInt } from "./rng";
 import { equipPet, grantPet, petHuntDoubleRollsChance } from "./pets";
+import { masterDoubleYieldBonus } from "./capes";
 import {
   clearHuntTrap,
   huntBaitCount,
@@ -630,6 +631,134 @@ describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
     expect(steps.character.ownedPets.booted_tomcat).toBe(true);
     expect(jump.petDropSeq).toBe(steps.petDropSeq);
     expect(jump.lastPetDrop).toEqual(steps.lastPetDrop);
+  });
+});
+
+describe("Jagen — Meisterring Jagen (ring_master_hunting, Revision 29.08.2026)", () => {
+  const RING = "ring_master_hunting";
+  /** Test-Content ohne Begleiter-Wurf (booted_tomcat dropChance 0 ⇒ Schritt 6 zieht nicht): die Fang-Sequenz ist exakt nachrechenbar. */
+  function ringContent(): ContentDB {
+    const base = testContent();
+    const tomcat = base.pets?.booted_tomcat;
+    return tomcat ? { ...base, pets: { ...base.pets, booted_tomcat: { ...tomcat, dropChance: 0 } } } : base;
+  }
+
+  it("Content: der Ring trägt doubleYield/hunting 5 %; masterDoubleYieldBonus liest ihn nur ausgerüstet und nur für hunting", () => {
+    const c = ringContent();
+    expect(content.items[RING]?.masterPerk).toEqual({ kind: "doubleYield", skill: "hunting", value: 0.05 });
+    const s = game(c);
+    expect(masterDoubleYieldBonus(s, c, HUNTING_SKILL_ID)).toBe(0); // kein Ring
+    s.character.equipment.ring1 = RING;
+    expect(masterDoubleYieldBonus(s, c, HUNTING_SKILL_ID)).toBe(0.05);
+    expect(masterDoubleYieldBonus(s, c, "fishing")).toBe(0); // skill-gebunden
+    s.character.equipment.ring1 = "ring_master_fishing"; // fremder Sammler-Ring: doubleYield/fishing
+    expect(masterDoubleYieldBonus(s, c, HUNTING_SKILL_ID)).toBe(0);
+  });
+
+  it("Perk aktiv: je getroffenem Beute-Eintrag EIN Zug in Schritt 5, Treffer ⇒ Menge ×2 (exakte RNG-Züge, Gold bleibt ×5)", () => {
+    const c = ringContent();
+    let seenDouble = false;
+    let seenSingle = false;
+    for (let seed = 1; seed < 800 && !(seenDouble && seenSingle); seed++) {
+      const s = readyGame(c, seed, 5);
+      s.character.equipment.ring1 = RING;
+      advance(s, c, PASTURES_MS - 1000);
+      const rng = { state: s.rng.state };
+      if (!(nextFloat(rng) < huntCatchChance(s, c, "pastures"))) continue; // 1. Fangchance
+      nextInt(rng, 0, 0); // 2. Monster (Pool = [test_hare])
+      const goldRoll = HARE.gold + nextInt(rng, 0, Math.ceil(HARE.gold * 0.4)); // 3. Gold-Streuung
+      // Schritt 4 (Leon-Glück) entfällt: kein Pet.
+      let expectQty = 0;
+      for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
+        nextFloat(rng); // 5. Chance (rawhide, chance 1)
+        const qty = nextInt(rng, 1, 1); // 5. Menge
+        expectQty += nextFloat(rng) < 0.05 ? qty * 2 : qty; // 5. Meisterring-Zug (genau EINER je Treffer)
+      }
+      // Schritt 6 entfällt (dropChance 0).
+      const goldBefore = s.character.gold;
+      advance(s, c, 1000);
+      expect(s.rng.state).toBe(rng.state);
+      expect(s.huntTraps[0]!.lastCatch).toMatchObject({ seq: 1, monsterId: HARE.id, items: [{ id: "rawhide", qty: expectQty }], gold: goldRoll * HUNT_LOOT_ROLLS });
+      expect(s.character.gold - goldBefore).toBe(goldRoll * HUNT_LOOT_ROLLS); // Gold NIE verdoppelt
+      expect(itemCount(s.inventory, "rawhide")).toBe(expectQty);
+      expect(s.stats.itemsGathered).toBe(expectQty);
+      expect(expectQty).toBeGreaterThanOrEqual(HUNT_LOOT_ROLLS);
+      expect(expectQty).toBeLessThanOrEqual(HUNT_LOOT_ROLLS * 2);
+      if (expectQty > HUNT_LOOT_ROLLS) seenDouble = true;
+      else seenSingle = true;
+    }
+    expect(seenDouble).toBe(true);
+    expect(seenSingle).toBe(true);
+  });
+
+  it("Perk-Zug nur bei Menge > 0: ein Eintrag mit min=max=0 zieht keinen Meisterring-Wurf", () => {
+    const base = ringContent();
+    const nothing: MonsterDef = { ...HARE, id: "test_hare_empty", loot: [{ itemId: "rawhide", chance: 1, min: 0, max: 0 }] };
+    const c: ContentDB = { ...base, monsters: { ...base.monsters, [nothing.id]: nothing } };
+    delete (c.monsters as Record<string, MonsterDef>)[HARE.id]; // Pool = [test_hare_empty]
+    let checked = 0;
+    for (let seed = 1; seed < 80 && checked < 3; seed++) {
+      const s = game(c, seed);
+      s.monsterKills[nothing.id] = 1;
+      addItem(s.inventory, c, BAIT_ITEM_ID, 5);
+      expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+      s.character.equipment.ring1 = RING;
+      advance(s, c, PASTURES_MS - 1000);
+      const rng = { state: s.rng.state };
+      if (!(nextFloat(rng) < huntCatchChance(s, c, "pastures"))) continue;
+      nextInt(rng, 0, 0);
+      nextInt(rng, 0, Math.ceil(HARE.gold * 0.4));
+      for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
+        nextFloat(rng);
+        nextInt(rng, 0, 0); // Menge 0 ⇒ KEIN Perk-Zug
+      }
+      advance(s, c, 1000);
+      expect(s.rng.state).toBe(rng.state);
+      expect(s.huntTraps[0]!.lastCatch?.items).toEqual([]);
+      checked++;
+    }
+    expect(checked).toBe(3);
+  });
+
+  it("ohne Ring / mit fremdem Sammler-Ring (fishing) fällt der Perk-Zug komplett weg — Sequenz und Stand bit-identisch", () => {
+    const c = ringContent();
+    const bare = readyGame(c, 11, 10);
+    const foreign = readyGame(c, 11, 10);
+    foreign.character.equipment.ring1 = "ring_master_fishing";
+    expect(masterDoubleYieldBonus(foreign, c, HUNTING_SKILL_ID)).toBe(0);
+    advance(bare, c, 4 * PASTURES_MS);
+    advance(foreign, c, 4 * PASTURES_MS);
+    expect(bare.rng.state).toBe(foreign.rng.state);
+    expect(huntSnapshot(bare)).toEqual(huntSnapshot(foreign));
+    expect(bare.huntCatchSeq).toBeGreaterThan(0);
+    // Und der Perk-Zug allein trennt beide Stände: MIT Jagen-Ring läuft die Sequenz auseinander (mind. ein Fang ⇒ ≥ 5 Extra-Züge).
+    const ring = readyGame(c, 11, 10);
+    ring.character.equipment.ring1 = RING;
+    advance(ring, c, 4 * PASTURES_MS);
+    // Bis zum ersten Fang laufen beide identisch (Schritt 1 ist derselbe Zug), ab dort zieht nur der Ring weiter.
+    expect(ring.rng.state).not.toBe(bare.rng.state);
+  });
+
+  it("offline == online mit Ring (55-Minuten-Sprung == 55 × 1 Minute, zwei Fallen)", () => {
+    const c = ringContent();
+    const build = (): GameState => {
+      const s = game(c, 47);
+      setLevel(s, 25);
+      s.monsterKills[HARE.id] = 1;
+      s.monsterKills.boar = 1;
+      s.character.equipment.ring1 = RING;
+      addItem(s.inventory, c, BAIT_ITEM_ID, 40);
+      expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+      expect(setHuntTrap(s, c, 1, "pastures", true)).toBe("ok");
+      return s;
+    };
+    const jump = build();
+    const steps = build();
+    advance(jump, c, 55 * 60_000);
+    for (let i = 0; i < 55; i++) advance(steps, c, 60_000);
+    expect(huntSnapshot(jump)).toEqual(huntSnapshot(steps));
+    expect(jump.rng.state).toBe(steps.rng.state);
+    expect(jump.huntCatchSeq).toBeGreaterThan(0);
   });
 });
 

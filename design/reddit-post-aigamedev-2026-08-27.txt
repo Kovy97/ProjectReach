@@ -1,0 +1,25 @@
+Title: My AI Assisted Game just left early access and its popping off.
+
+Grim Reach Idle started as a "let's see if this even works" project. I wanted a dark-fantasy idle RPG that felt like a real game rather than a spreadsheet: three combat styles that actually play differently, a slayer tower with contracts, dungeons, enchanting, a little settlement you build up, and a world that keeps working while you don't. I built the first version for myself, then handed it to a few friends to test. They didn't give it back. That was the moment I decided to put it on Steam.
+
+It went into Early Access first, while I kept working on it in the open. A month of patches later it hit 1.0, and a few days ago we shipped the first big post-launch update, Patch #2. Today a hotfix went out for a queue issue someone reported yesterday, which pretty much sums up how the last months have felt: the community reports, we fix, we ship.
+
+How it was built
+
+I'm a solo dev, but I haven't worked alone. Claude runs the studio side: think of it as the CEO and lead engineer in one seat. It plans the update, spawns specialised agents (content, engine, UI, balance, QA) that work in parallel on separate parts of the repo, verifies every delivery itself (tests, save-compatibility guards, screenshot sweeps at 1366x768 up to 1440p in seven languages), and comes back to me only with decisions that are actually mine to make: is this the button style, does this drop rate feel right, do we ship.
+
+Codex is the design agent. While the code side was being built, it generated the art in parallel from written briefs: monster and item art with real alpha, portraits for 60 playable archetypes, painted backdrops, UI mockups for the main menu and the item wiki. It also writes its own QA notes and hands the assets over in a staging folder; nothing goes into the game before it's checked.
+
+My job is to be the one with taste and the one who says no. I test every build, I write the feedback that becomes the next patch, I decide what the game is. Honestly, the biggest lesson was that "AI assisted" only works if someone verifies everything. Every feature has a test, every UI change has a screenshot, every save from launch day still loads. The agents are fast; being right is still my responsibility.
+
+Working with the community
+
+This is the part I didn't expect to enjoy this much. Steam reviews and Discord reports turned into concrete patch notes within days: cooking that yields portions instead of single bites, dropped gear that finally beats crafted gear, an item wiki you can actually navigate, dungeons you can queue like everything else, and a slayer system that got a full second pass because people told me the tasks were too easy and the shop wasn't worth it. Several patch notes literally have a review number next to them. If you've ever wondered whether devs read the reviews: this one does, and so does his CEO.
+
+The game
+
+Grim Reach Idle on Steam: https://store.steampowered.com/app/4915450
+
+Dark fantasy, idle progression, seven languages, offline progress, no microtransactions, saves that stay compatible across every update. If you try it, the feedback channels are the Steam forums and the in-game report button; both land on my desk the same day.
+
+Happy to answer questions about the workflow, the agent setup, the verification pipeline, or the art side. It's been a strange, wonderful few months.

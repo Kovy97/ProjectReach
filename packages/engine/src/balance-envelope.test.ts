@@ -755,13 +755,20 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Spieler-Zeilen sinken daher exakt um den Faktor 1/1,15 (idol_warden 58.05→50.48 s, last_idol
     // 194.82→169.41 s). Boss→Spieler unverändert (der Weisheits-Status-Widerstand greift nur auf
     // Statuseffekte, nicht auf den Treffer-Schaden dieser Formel); melee/ranged exakt unverändert.
+    // Re-Messung 2026-08-29 — Aether-Klippe (Chef-GO 29.08.2026, design/balance-audit-magie-2026-08-28.md
+    // R5 (b)): die Paritäts-Anhebung der Aether-Stäbe war eine Klippe (Roh-DPS ×2,25 R70→R80); jetzt
+    // einheitliche +36-%-Prämie wie godiron_staff: titanium_staff 11,4–17,2 → 8,8–13,3, aetherium_staff
+    // 12,5–18,8 → 11,0–16,6 (Tempo unverändert). Der CL-90-Magic-"damage"-Build behält aetherium_staff
+    // als BiS-Mainhand (Roh-DPS 5,05 > stormcrest_staff 4,72), seine Kit-Spanne mit Zauberfokus liegt jetzt
+    // bei 105,8–116,0 ⇒ NUR die beiden magic-Spieler-Zeilen steigen leicht (langsamerer Kill): idol_warden 50.48→52.02 s,
+    // last_idol 169.41→174.56 s. Boss→Spieler (28.03/30.12) und alle melee/ranged-Paare exakt unverändert.
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 59.39, 20.65],
       ["melee", "last_idol", 199.15, 14.63],
       ["ranged", "idol_warden", 78.23, 19.78],
       ["ranged", "last_idol", 258.94, 13.67],
-      ["magic", "idol_warden", 50.48, 28.03],
-      ["magic", "last_idol", 169.41, 30.12],
+      ["magic", "idol_warden", 52.02, 28.03],
+      ["magic", "last_idol", 174.56, 30.12],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);

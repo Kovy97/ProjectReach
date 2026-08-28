@@ -1522,7 +1522,7 @@ export const ptBR: Record<string, string> = {
   "items:ring_master_attack:name": "Anel do Mestre das Lâminas",
   "items:ring_master_completion:description": "Usado apenas por aqueles que dominaram as vinte e uma disciplinas. Um aro silencioso de ouro, concedido, jamais comprado.",
   "items:ring_master_hunting:name": "Anel do Armadilheiro",
-  "items:ring_master_hunting:description": "Alisado por mil armadilhas montadas e disparadas. 5% de chance de captura dupla.",
+  "items:ring_master_hunting:description": "Alisado por mil armadilhas montadas e disparadas. Cada espólio de uma captura tem 5% de chance de cair em dobro.",
   "items:ring_master_completion:name": "Anel da Completude",
   "items:ring_master_cooking:description": "Manchado por cada prato que já supervisionou. Refeições preparadas enquanto usado nunca falham.",
   "items:ring_master_cooking:name": "Anel do Cozinheiro de Almas",

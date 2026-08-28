@@ -22,9 +22,10 @@ champion as a source.
 **Fasern und Stoff (Chef 27.08.):** DE: Handwerk hing bis Stufe 30 fast komplett an Monster-Leder. Jetzt gibt es Fasern in
 fünf Stufen: Nessel, Flachs, Dornhanf, Geisterseide und Sternflachs. Man sammelt sie an neuen Sammel-Knoten (samt Saat),
 baut sie in New Havens Beeten an und webt sie im Handwerk zu Nesselstoff, Leinen, Dornleinen, Geistertuch und Sternweb.
-Alle 29 Magier-Roben werden aus Stoff statt Leder gefertigt, und die Nessel-Sehne macht Bogen ab Stufe 1 ohne Kampf möglich.
-Leder bleibt die Rüstung des Ausweichens. / EN: Fibers in five tiers (forage, farm, weave) replace leather in all mage robes,
-and a nettle bowstring lets you fletch bows from level 1 without fighting.
+Roben und Umhänge werden aus Stoff gefertigt; Handschuhe, Schuhe und Zierteile tragen teils noch Leder als Beikost. Die
+Nessel-Sehne macht Bogen ab Stufe 1 ohne Kampf möglich.
+Leder bleibt die Rüstung des Ausweichens. / EN: Fibers in five tiers (forage, farm, weave) replace leather in mage robes and
+capes (gloves, boots and trim pieces still use some leather), and a nettle bowstring lets you fletch bows from level 1 without fighting.
 
 **Jagen, ein neuer Skill (Chef 27.08.):** DE: Stell Fallen in Gebieten, die du im Kampf freigeschaltet hast. Eine zufällige
 Kreatur, die du schon einmal besiegt hast (jede Familie, Chef 28.08.), tappt hinein und lässt fünf Beute-Würfe seiner Tabelle da, ohne Kampf.
@@ -44,7 +45,8 @@ shows painted spell missiles, slashes, blood and companion effects.
 
 *Dev-Notiz: SAVE_VERSION 85 (huntTraps, huntCatchSeq, stats.huntCatches); Content 16 Items, 12 Aktionen, 5 Crops, Skill hunting
 (trains dex), huntingZones ×10 (XP je Fang seit 28.08. = monster.xp × HUNT_XP_PER_CATCH 5, Erstfang × HUNT_FIRST_CATCH_MULT 2,
-stats.huntCatchesById; HUNT_SLOT_LEVELS 1/5/15/30/50/75), ring_master_hunting, 5 Skill-Erfolge; engine/hunting.ts (Tick nach den Beeten,
+stats.huntCatchesById; HUNT_SLOT_LEVELS 1/5/15/30/50/75), ring_master_hunting (Meisterring Jagen greift jetzt: der doubleYield-Perk
+wird seit 29.08. in grantCatch je getroffenem Beute-Eintrag gewürfelt, Menge ×2, RNG-Zug nur mit Ring), 5 Skill-Erfolge; engine/hunting.ts (Tick nach den Beeten,
 Würfe in Zeitreihenfolge über alle Fallen, kein Kill-Zähler), Vault-Fixture v85; HuntingPage + Jagdbuch + Offline-Bericht;
 combatFx.ts + Sprite-Layer in CombatPage (Zellen-Klasse-Fix 28.08.), 33 Sprites unter assets/fx; Balance-Pins §5/§8 neu gemessen
 (neuer DEX-Skill hebt Basis-DEX um 1). Mira-Assets Fasern/Jagen (26) eingebunden; Meisterring-Icon folgt.*
@@ -66,9 +68,9 @@ samt ihrer möglichen Beute (unbekannte Beute bleibt ein Fragezeichen, bis sie e
 nicht fangbar ist und warum (Boss, Untoter, noch nie besiegt). Die Falle wird erst mit dem Knopf gestellt. / EN: The hunting
 zone picker is now a large two-column window with full zone details, trappable animals and their loot.
 
-**Kill-Heilung stapelt (Spieler-Report 28.08., RU):** DE: Heilung, Mana und Abklingzeit je Kill aus mehreren Gegenständen
+**Kill-Heilung stapelt (Spieler-Report 28.08., RU):** DE: Heilung, Ward und Abklingzeit je Kill aus mehreren Gegenständen
 zählten nicht zusammen, nur der stärkste Gegenstand wirkte. Jetzt addieren sich alle getragenen Quellen (Armschützer +4 und
-Klinge +2 sind +6 Leben je Kill). Andere Spezialeffekte wie Bane bleiben bei „der stärkste zählt“. / EN: On-kill heal, mana and
+Klinge +2 sind +6 Leben je Kill). Andere Spezialeffekte wie Bane bleiben bei „der stärkste zählt“. / EN: On-kill heal, ward and
 cooldown effects from several items now add up.
 
 **Kleinigkeiten (28.08.):** DE: Der Discord-Knopf in den Optionen ist weg, es gibt keinen Server. Der Fehlermelde-Dialog
@@ -135,7 +137,7 @@ painted pieces, no leather required.
 
 *Dev-Notiz: SAVE 86, Migration `tailoringXpFromCraftLog` (Σ craftedById × Rezept-XP über die 68 Schneidern-Rezepte, geklemmt auf
 das Handwerks-Konto), Handwerk 88 Rezepte; Capes auf Stoff (Tabelle in spec-technik §6); Skill-Def ohne trains; 5 Erfolge
-`ach_skill_tailoring_*`, Steam-ID MASTER_TAILORING; `ring_master_tailoring` (int 2 / wis 2, inputSaver 5 %), Vollender-Ring
+`ach_skill_tailoring_*`, das Steam-Achievement wird beim Upload angelegt; `ring_master_tailoring` (int 2 / wis 2, inputSaver 5 %), Vollender-Ring
 verlangt 22 Skills; Vault-Fixture v86; Client: Sidebar/Skill-Seite/Meisterschaft/Onboarding/Erfolge ×7 Sprachen, Update-Hinweis;
 Mira-Assets (Sidebar-Icon, Kulisse, Karte, Ring, Steam-Plakette) eingebunden.*
 
@@ -174,6 +176,8 @@ Blitz, Gift und Arkan in wechselnder Kombination, ab Titan kommt Aether dazu –
 Effektbibliothek endlich sichtbar. / EN: Crafted staves and wands now carry different elements instead of
 nearly all sharing the same burn effect. Every crafting tier shows fire, frost, shock, poison and arcane in
 a rotating mix, with aether joining from Titan onward - the full effect library finally shows up in combat.
+Nachtrag 29.08.: Die Aether-Stäbe (Titan, Aetherium) verlieren rund 15 % Waffenspanne, damit die Stab-Leiter bis zum Endgame gleichmäßig
+steigt statt bei Stufe 80 zu springen. / EN: Aether staves (titanium, aetherium) lose about 15% weapon range so the staff ladder climbs evenly.
 
 *Dev-Notiz: design/elementleiter-magiewaffen.md. Vorher 24 von 57 Magie-Haupthänden Feuer (jeder gefertigte
 Stab trug Brand), 0 Aether. content-dev themt die 26 Craft-Ladder-Items (Stab 2H + Zauberstab 1H je Stufe)
@@ -192,13 +196,13 @@ kritische Treffer mit einer Schock-Waffe springen über und treffen ein zweites 
 (Schaden je Stapel) und halbiert Regeneration und Lebensraub des Ziels. Leere: neuer Status „Entzug", das Ziel macht
 15 % weniger Schaden (Schwarzstahl-Stab, Götzeneisen-Stab, Runit-Zauberstab, Leerenrufer-Stab, Rute des Felmagiers,
 Chorstab der Ertrunkenen). Arkan: „Resonanz", jeder Treffer +2 % Schaden bis 10 Stapel (Morscher Stab, Stahl-Stab,
-Adamantium- und Aetherium-Zauberstab). Aether: „Lichtsegen", jeder Zauber füllt 4 % des eigenen Wards und durchdringt
+Adamantium- und Aetherium-Zauberstab). Aether: „Lichtsegen", jeder Zauber füllt 2 % des eigenen Wards und durchdringt
 die Hälfte des gegnerischen Wards (Titan- und Aetherium-Stab, Aether-Runenstab, Götzenfunken-Stab). Item-Karten und
 Bestiariums-Hinweise beschreiben jede Mechanik in einem Satz. / EN: Every element now has its own identity, for your
 weapons and for monsters alike: Burn (10% more damage taken while burning), Frost (third chill in a row freezes for
 one attack, then 6 s immunity), Shock (no more skipped attacks; each shock delays the target's next attack by 0.4 s up to
 1.2 s, crits arc for 30%), Poison (stacks up to 5, halves regeneration and lifesteal), Void (new "Drain" status, 15% less
-damage dealt), Arcane (Resonance: +2% per hit up to 10 stacks), Aether (Lightblessing: every spell restores 4% of your
+damage dealt), Arcane (Resonance: +2% per hit up to 10 stacks), Aether (Lightblessing: every spell restores 2% of your
 ward and pierces half of the enemy's ward).
 
 *Dev-Notiz: design/elementar-status-konzept.md „Umgesetzt". Engine combat.ts: Glut/Entzug als Multiplikatoren im
