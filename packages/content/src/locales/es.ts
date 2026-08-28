@@ -3779,4 +3779,19 @@ export const es: Record<string, string> = {
   "achievements:ach_skill_hunting_90:description": "Alcanza el nivel 90 en Caza.",
   "achievements:ach_skill_hunting_99:name": "Caza al máximo",
   "achievements:ach_skill_hunting_99:description": "Alcanza el nivel 99 en Caza.",
+
+  // ── Skill-Split "Schneidern" (SAVE_VERSION 86, 28.08.2026): Skill, Meisterring, Erfolge ──────────
+  "skills:tailoring:name": "Sastrería",
+  "items:ring_master_tailoring:name": "Anillo del Maestro Sastre",
+  "items:ring_master_tailoring:description": "Enhebrado por una mano que nunca desperdició una puntada. 5 % de probabilidad de que el oficio ahorre sus materiales.",
+  "achievements:ach_skill_tailoring_25:name": "Oficial de Sastrería",
+  "achievements:ach_skill_tailoring_25:description": "Alcanza el nivel 25 en Sastrería.",
+  "achievements:ach_skill_tailoring_50:name": "Veterano en Sastrería",
+  "achievements:ach_skill_tailoring_50:description": "Alcanza el nivel 50 en Sastrería.",
+  "achievements:ach_skill_tailoring_75:name": "Maestro de Sastrería",
+  "achievements:ach_skill_tailoring_75:description": "Alcanza el nivel 75 en Sastrería.",
+  "achievements:ach_skill_tailoring_90:name": "Leyenda en Sastrería",
+  "achievements:ach_skill_tailoring_90:description": "Alcanza el nivel 90 en Sastrería.",
+  "achievements:ach_skill_tailoring_99:name": "Sastrería al máximo",
+  "achievements:ach_skill_tailoring_99:description": "Alcanza el nivel 99 en Sastrería.",
 };

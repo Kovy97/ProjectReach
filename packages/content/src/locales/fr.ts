@@ -3779,4 +3779,19 @@ export const fr: Record<string, string> = {
   "achievements:ach_skill_hunting_90:description": "Atteindre le niveau 90 en Chasse.",
   "achievements:ach_skill_hunting_99:name": "Niveau max en Chasse",
   "achievements:ach_skill_hunting_99:description": "Atteindre le niveau 99 en Chasse.",
+
+  // ── Skill-Split "Schneidern" (SAVE_VERSION 86, 28.08.2026): Skill, Meisterring, Erfolge ──────────
+  "skills:tailoring:name": "Couture",
+  "items:ring_master_tailoring:name": "Anneau du Maître Tailleur",
+  "items:ring_master_tailoring:description": "Enfilé par une main qui n'a jamais gaspillé un point. 5 % de chance que l'ouvrage épargne ses matériaux.",
+  "achievements:ach_skill_tailoring_25:name": "Compagnon en Couture",
+  "achievements:ach_skill_tailoring_25:description": "Atteignez le niveau 25 en Couture.",
+  "achievements:ach_skill_tailoring_50:name": "Vétéran en Couture",
+  "achievements:ach_skill_tailoring_50:description": "Atteignez le niveau 50 en Couture.",
+  "achievements:ach_skill_tailoring_75:name": "Maître en Couture",
+  "achievements:ach_skill_tailoring_75:description": "Atteignez le niveau 75 en Couture.",
+  "achievements:ach_skill_tailoring_90:name": "Légende en Couture",
+  "achievements:ach_skill_tailoring_90:description": "Atteignez le niveau 90 en Couture.",
+  "achievements:ach_skill_tailoring_99:name": "Niveau max en Couture",
+  "achievements:ach_skill_tailoring_99:description": "Atteignez le niveau 99 en Couture.",
 };

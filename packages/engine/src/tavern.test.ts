@@ -58,6 +58,8 @@ const c = tavernTestContent();
 const DAY = 20260827;
 const CREATED_AT = 1_700_000_000_000;
 
+// (Skill-Split Schneidern SAVE 86: `tailoring` bewusst NICHT hier — tavernTestContent() ist synthetisch ohne
+// Schneidern-Gast, und die Gesamtlevel-Band-Pins unten rechnen mit genau dieser Skill-Menge.)
 const SKILLING = ["mining", "woodcutting", "fishing", "foraging", "cooking", "smithing", "leatherworking", "thieving", "herblore", "runecrafting", "jewelcrafting"];
 
 /** Midgame-Held (Skills 30, Kampf 30, Slayer 25) mit gebauter Taverne I und Gold. */

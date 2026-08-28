@@ -807,8 +807,9 @@ describe("Balance-Envelope §6: Runen-Stapelung (Chef-Entscheid 25.08.2026)", ()
 // ───────────────────────────────────────────────────────────────────────────
 // §8 Meister-Perk-Inventur (Meisterweihe-Fundament, master-capes-konzept.md — Content-Welle
 //    2026-07-10; seit SAVE 69 sind die Meister-Items RINGE statt Capes, Chef-Entscheid
-//    2026-07-17, Stats/Perks 1:1 übernommen): 14 der 21 Meisterringe tragen einen `masterPerk`
-//    (die Ökonomie-Perks, seit 1.2.0 „Fasern und Fallen" inkl. ring_master_hunting); die 7
+//    2026-07-17, Stats/Perks 1:1 übernommen): 15 der 22 Meisterringe tragen einen `masterPerk`
+//    (die Ökonomie-Perks, seit 1.2.0 „Fasern und Fallen" inkl. ring_master_hunting, seit dem
+//    Skill-Split Schneidern (SAVE 86) inkl. ring_master_tailoring); die 7
 //    Kampf-Ringe (attack/power/defence/ranged/magic/warding/vitality) nutzen bestehende
 //    Bonus-/Signaturfelder — KEIN masterPerk (Konzept §2).
 //    `ring_master_completion` trägt ebenfalls keinen masterPerk (Krönung, kein Stapeln).
@@ -838,6 +839,7 @@ describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () 
         "ring_master_jewelcrafting",
         "ring_master_leatherworking",
         "ring_master_mining",
+        "ring_master_tailoring", // Skill-Split Schneidern (SAVE 86, 28.08.2026): inputSaver wie leatherworking
         "ring_master_runecrafting",
         "ring_master_slayer",
         "ring_master_smithing",

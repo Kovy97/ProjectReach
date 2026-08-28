@@ -85,9 +85,9 @@ describe("Lager-Tempo im Aktions-Pfad", () => {
     );
   });
 
-  it("Werkhof beschleunigt ALLE 6 Handwerks-Skills um 9 % (eine gemeinsame Art)", () => {
+  it("Werkhof beschleunigt ALLE 7 Handwerks-Skills um 9 % (eine gemeinsame Art; seit SAVE 86 auch Schneidern)", () => {
     const s = withBuilding("camp_workyard", 3);
-    const crafts = ["smithing", "cooking", "leatherworking", "jewelcrafting", "runecrafting", "herblore"];
+    const crafts = ["smithing", "cooking", "leatherworking", "tailoring", "jewelcrafting", "runecrafting", "herblore"];
     for (const skill of crafts) {
       const action = Object.values(content.actions).find((a) => a.skill === skill);
       if (!action) continue;

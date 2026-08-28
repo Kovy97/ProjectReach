@@ -40,6 +40,7 @@ export const SKILL_EMOJI_FALLBACK: Record<string, string> = {
   foraging: "🌿",
   thieving: "🗝️",
   leatherworking: "🧵",
+  tailoring: "🪡",
   jewelcrafting: "💍",
   runecrafting: "🔮",
   herblore: "🧪",

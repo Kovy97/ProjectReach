@@ -134,3 +134,65 @@ Sanitize/Migration 84→85 (persistence), Vault-Fixture `v85-synthetic-1.2.0.jso
 
 Typecheck 0, alle Suiten grün, Vault-Guard v85, Sim-Läufe (Personas mit Jagen), Screenshots Jagen-Seite 1920/1366 de+ru,
 Handwerk-Seite Weben, Sammeln-Seite Fasern; Alt-Save 84 lädt mit leeren Fallen.
+
+## 6 Skill-Split Schneidern (Chef-Entscheid 28.08.2026, SAVE_VERSION 85 → 86)
+
+Der Skill `leatherworking` (EN „Crafting“ / DE „Handwerk“) wird geteilt. Neuer Skill `tailoring` (EN „Tailoring“ / DE „Schneidern“,
+kein `trains`, in allen Skill-Listen direkt NACH `leatherworking`). Kein neues `GameState`-Feld, nur das neue Konto `skills.tailoring`.
+
+### 6.1 Rezepte je Skill (Stand 28.08.2026)
+
+| Skill | Rezepte | Kategorien |
+|---|---|---|
+| `tailoring` (Schneidern) | **66** | `weave` 5 (weave_nettle … weave_starweave), `capes` 8 (craft_leather_cape, craft_arcane_cape, craft_leather_warcape, craft_ranger_cape, craft_frost_shroud, craft_hardened_warcape, craft_silk_mantle, craft_void_shroud), `robe_*` 53 (alle elf Roben-Kategorien apprentice/dimweave/frost/ember/aether/arcane/duskweave/runewoven/godspark/starweave/voidweave, je Kopf/Körper/Beine/Hände/Füße) |
+| `leatherworking` (Handwerk) | **88** | `leather_*` 77 (tan_leather … Voidhide-Rüstung, Chitin-Haube, Frostpelz-Kapuze), `bow_*` 24 (fletch_*), `shield_wood` 3, `rod_wood` 4, `twist_nettle_cord` (Nessel-Sehne = Bogen-Zubehör, bleibt Handwerk), `slayer_requirements` 3 (Seuchenmaske, Ohrenstopfen, Slayer-Armschienen) |
+
+Entscheidung zu den Roben-Kategorien: ALLE `robe_*`-Rezepte wandern (auch die Handschuh-/Schuh-Teile, die noch `cured_leather` als
+Beikost tragen) — eine Kategorie darf nicht auf zwei Skills verteilt sein. `craft_silk_mantle` (war `leather_scaled`) und
+`craft_void_shroud` (war `leather_warhide`) sind Umhänge und ziehen in die Kategorie `capes` um.
+
+### 6.2 Umhänge auf Stoff-Stufen (Chef-Wunsch)
+
+Hauptstoff = Stoff-Stufe des Rezept-Levels (Muster Roben), Leder bleibt Beikost (Riemen/Verschluss). Dauer und XP bleiben
+unverändert — sie liegen bereits exakt auf der C-600-Kurve der Roben (kein Balance-Pin kippt).
+
+| Rezept | Stufe | Zutaten neu | vorher |
+|---|---|---|---|
+| craft_leather_cape | 8 | cloth_nettle ×2, cured_leather ×1 | cured_leather ×2 |
+| craft_arcane_cape | 12 | cloth_nettle ×2, dim_essence ×3 | cured_leather ×2, dim_essence ×3 |
+| craft_leather_warcape | 18 | cloth_nettle ×3, cured_leather ×1 | cured_leather ×2 |
+| craft_silk_mantle | 30 | spider_silk ×4, cloth_linen ×1 (unverändert, seit 1.2.0 auf Stoff) | – |
+| craft_ranger_cape | 35 | cloth_linen ×3, hardened_leather ×1 | hardened_leather ×3 |
+| craft_frost_shroud | 38 | cloth_linen ×3, frost_essence ×4 | hardened_leather ×3, frost_essence ×4 |
+| craft_hardened_warcape | 45 | cloth_thornlinen ×3, hardened_leather ×1 | hardened_leather ×3 |
+| craft_void_shroud | 65 | void_thread ×3, cloth_ghostweave ×3, shade_rune ×2 | void_thread ×3, scarred_hide ×2, steel_bar ×1, shade_rune ×2 |
+
+### 6.3 Neuer Content
+
+- Erfolge `ach_skill_tailoring_25/50/75/90/99` (Muster der anderen Skill-Leitern; Overlays es/fr/pt-BR/ru/zh). Steam-Set
+  (`steam-set.csv`, 67 Auslöser) unverändert bis zum Chef-Entscheid; Icons bestellt Claude bei Mira.
+- Meisterring `ring_master_tailoring` („Needlemaster's Ring“ / „Ring des Nadelmeisters“, int 2 / wis 2, `inputSaver` 5 % auf
+  tailoring, Muster `ring_master_leatherworking`, kein evasionRating). Kein Rezept: Meisterringe verleiht die Engine beim
+  Level-99-Hook. `ring_master_completion` verlangt jetzt 22 Skills.
+- Werkhof-Tempo (`CAMP_SKILL_SPEED_KIND`) gilt auch für Schneidern (7 Handwerks-Skills).
+- Taverne: Kell (Lederarbeiter) behält seine Handwerk-Vorlagen (Leder-Rüstung); Roben fallen damit aus seinem Pool.
+  Ein eigener Schneider-Gast ist offen (braucht NPC-Bild von Mira + Vorlagen).
+
+### 6.4 Migration v85 → v86 (persistence, `migrateState`)
+
+XP-Aufteilung NACH TATSÄCHLICH HERGESTELLTEM: für jedes Rezept, das jetzt `tailoring` ist, zählt
+`stats.craftedById[ergebnisItem] × rezept.xp` (`craftedById` gibt es seit SAVE 27 und zählt jedes aus einem Rezept mit Zutaten
+erzeugte Stück, Weben eingeschlossen; `producedById`/`actionRunsById` existieren erst seit v84 und bringen nichts Zusätzliches).
+Ergebnis-Items, die auch ein Rezept eines anderen Skills liefert, zählen konservativ nicht. Dann:
+
+```
+tailoring.xp     = min(Σ, leatherworking.xp)
+leatherworking.xp -= tailoring.xp        (nie unter 0, Gesamt-XP exakt erhalten)
+```
+
+Ohne Zähler (oder ohne Handwerk-Konto): `tailoring = { xp: 0 }`, Handwerk unverändert. Beispiel: Handwerk 200 000 XP, Craft-Log
+10 Lehrlings-Roben (8 XP), 30 Leinen (22 XP), 4 Leder-Kriegsumhänge (18 XP), 5 Lederwämser (Handwerk) → tailoring 812, Handwerk 199 188.
+Vault-Fixture `v86-synthetic-1.2.0.json` (reale Kette, Handwerk 60 + Craft-Log): 1 092 XP wandern, Handwerk 273 742 → 272 650.
+Mastery hängt an Aktions-IDs und wandert mit; Meisterweihe-Marker, Erfolge und angelegte Ringe bleiben (`meetsRequirements` prüft
+nur beim Anlegen). `sanitizeState` legt das Konto NICHT nachträglich an (Muster hunting). Pins: tailoring-split-persistence.test.ts,
+save-compat-vault.test.ts (v80 → v86: sechste Fläche `skills.tailoring = { xp: 0 }`), hunt-/tavern-persistence (v83/v84/v85-Fixtures).

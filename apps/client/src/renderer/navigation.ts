@@ -105,6 +105,11 @@ export const navigation: NavSection[] = [
       { id: "foraging", label: "nav.foraging", icon: "🌿", view: "skill", skillId: "foraging" },
       { id: "thieving", label: "nav.thieving", icon: "🗝️", view: "skill", skillId: "thieving" },
       { id: "leatherworking", label: "nav.leatherworking", icon: "🧵", view: "skill", skillId: "leatherworking" },
+      // Schneidern (Chef-Entscheid 28.08.: Handwerk-Aufteilung, design/1.2.0-alive/… Weben/Stoff-
+      // Roben/Umhänge) — direkt hinter Handwerk (Chef-Vorgabe). Emoji-Fallback 🪡 (Nadel, unter-
+      // scheidbar vom Faden-Spulen-Icon 🧵 des Handwerks) bis Miras `sidebaricon_tailoring.webp`
+      // liegt (Auto-Discovery, s. sidebarIcons.ts — kein Code-Eintrag nötig, sobald sie da ist).
+      { id: "tailoring", label: "nav.tailoring", icon: "🪡", view: "skill", skillId: "tailoring" },
       { id: "jewelcrafting", label: "nav.jewelcrafting", icon: "💍", view: "skill", skillId: "jewelcrafting" },
       { id: "runecrafting", label: "nav.runecrafting", icon: "🔮", view: "skill", skillId: "runecrafting" },
       { id: "herblore", label: "nav.herblore", icon: "🧪", view: "skill", skillId: "herblore" },

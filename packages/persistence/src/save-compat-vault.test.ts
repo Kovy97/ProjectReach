@@ -74,6 +74,16 @@ import { deserialize, serialize } from "./index";
  * equipment + equippedInstances) + `activeKit` ersetzt. Der v80-Pin belegt damit die Kette v80 → v85 mit
  * GENAU SECHS Flächen: die fünf oben plus `equipKits` = [Spiegel der getragenen Ausrüstung, leer, leer]
  * + `activeKit: 0`, wobei `equipLoadouts` (im v80-Save `[null, null, null]`) aus dem State VERSCHWINDET.
+ * SAVE_VERSION 86 (Skill-Split „Schneidern", Chef-Entscheid 28.08.2026, design/handwerk-fasern-jagen/
+ * spec-technik.md §6): sechster Bump, v85 wurde ebenfalls nie ausgeliefert. KEIN neues State-Feld — nur das
+ * neue Skill-Konto `skills.tailoring`, das die Migration für JEDEN Alt-Save anlegt (`{ xp: 0 }` ohne Craft-
+ * Log/Handwerk-XP; sonst der nach `stats.craftedById` × Rezept-XP berechnete Anteil, den Handwerk abgibt —
+ * Regel und Beispielzahlen pinnt tailoring-split-persistence.test.ts). Der v80-Pin belegt damit die Kette
+ * v80 → v86 mit der SECHSTEN Fläche `skills.tailoring: { xp: 0 }` (der v80-Save hat weder Handwerk-XP noch
+ * Stoff-Rezepte im Craft-Log — nur garnet/sapphire). `v86-synthetic-1.2.0.json` ist SYNTHETISCH und über die
+ * REALE KETTE gepinnt (v85-Stand mit Handwerk 60 + Craft-Log aus Roben/Stoff/Umhang/Leder → deserialize →
+ * serialize): trägt tailoring > 0 UND leatherworking > 0 samt Craft-Zählern.
+ *
  * Das v85-Fixture wurde durch die reale Kette neu gepinnt (Präzedenz: synthetisch). Befüllte Vorlagen
  * → Kits (Items aus dem Inventar) deckt equip-kits-persistence.test.ts ab.
  */
@@ -237,7 +247,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(SAVE_VERSION).toBeGreaterThanOrEqual(80);
   });
 
-  it("migriert v80 → v85 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
+  it("migriert v80 → v86 und ändert dabei GENAU die neuen Felder — sonst byte-genau derselbe Save", () => {
     // now === savedAt ⇒ offlineMs 0 ⇒ KEIN Catch-up-Tick: gemessen wird allein, was
     // Migration+Sanitize am gespeicherten Save tun. Das ist die schärfere Form des früheren
     // Identitäts-Guards: nicht nur „nichts geht kaputt", sondern „ES ÄNDERT SICH NUR, WAS SICH
@@ -282,10 +292,15 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(result!.state.equipKits[1]).toEqual(emptyEquipKit());
     expect(result!.state.equipKits[2]).toEqual(emptyEquipKit());
     expect((result!.state as unknown as { equipLoadouts?: unknown }).equipLoadouts).toBeUndefined();
+    // Das neue v86-Konto (Skill-Split Schneidern, Chef-Entscheid 28.08.2026): der v80-Save hat weder
+    // Handwerk-XP noch Stoff-Rezepte im Craft-Log (craftedById: garnet/sapphire) → `tailoring = { xp: 0 }`,
+    // und es wird KEIN Handwerk-Konto erfunden (der Key bleibt abwesend wie im Original).
+    expect(result!.state.skills.tailoring).toEqual({ xp: 0 });
+    expect(result!.state.skills.leatherworking).toBeUndefined();
 
     // Gegenprobe: das Original um genau diese erwarteten Änderungen ergänzt (Version, buildQueue,
     // nextCropId je Beet, queueDungeon, tavern + die zwei Stats-Zähler, huntTraps + Fang-Nummer +
-    // Fang-Zähler, equipKits + activeKit statt equipLoadouts), muss die frisch
+    // Fang-Zähler, equipKits + activeKit statt equipLoadouts, skills.tailoring), muss die frisch
     // serialisierten Bytes exakt treffen. Reißt DAS, hat die Migration mehr angefasst als
     // angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
     const erwartet = JSON.parse(json) as { version: number; state: GameState };
@@ -308,6 +323,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     ];
     erwartet.state.activeKit = 0;
     delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
+    erwartet.state.skills.tailoring = { xp: 0 }; // Skill-Split Schneidern (SAVE 86, 28.08.2026)
     // Achievements 1.2.0 (Chef-Entscheid 27.08.2026, KEIN SAVE_VERSION-Bump): der Katalog wurde von
     // 537 auf 311 Erfolge neu geschnitten (Kill-Tripel, Skill-Stufen 10/20/30/40/60/70/80 entfallen).
     // sanitize streift seit jeher Achievement-IDs ohne Content-Def ab (s. index.ts `knownAch`) —
@@ -513,5 +529,12 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(s.huntTraps).toEqual(defaultHuntTraps());
     expect(s.huntCatchSeq).toBe(0);
     expect(s.stats.huntCatches).toBe(0);
+
+    // (21) v86 SKILL-SPLIT SCHNEIDERN (28.08.2026): migrierte Alt-Saves tragen das Konto `skills.tailoring`
+    //      (hier 0: kein Handwerk-XP, kein Stoff im Craft-Log) — Handwerk bleibt, was es war. Die echte
+    //      XP-Aufteilung + Klemme + Idempotenz sichert tailoring-split-persistence.test.ts, das v86-Fixture
+    //      trägt tailoring > 0 und leatherworking > 0 samt Craft-Zählern.
+    expect(s.skills.tailoring).toEqual({ xp: 0 });
+    expect(s.skills.leatherworking).toBeUndefined();
   });
 });

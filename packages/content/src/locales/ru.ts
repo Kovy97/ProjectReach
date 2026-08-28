@@ -3779,4 +3779,19 @@ export const ru: Record<string, string> = {
   "achievements:ach_skill_hunting_90:description": "Достигните 90-го уровня навыка «Охота».",
   "achievements:ach_skill_hunting_99:name": "Охота: Предел",
   "achievements:ach_skill_hunting_99:description": "Достигните 99-го уровня навыка «Охота».",
+
+  // ── Skill-Split "Schneidern" (SAVE_VERSION 86, 28.08.2026): Skill, Meisterring, Erfolge ──────────
+  "skills:tailoring:name": "Портняжное дело",
+  "items:ring_master_tailoring:name": "Кольцо Мастера-Портного",
+  "items:ring_master_tailoring:description": "Продето рукой, что не потратила впустую ни одного стежка. 5% шанс, что работа сбережёт материалы.",
+  "achievements:ach_skill_tailoring_25:name": "Подмастерье: Портняжное дело",
+  "achievements:ach_skill_tailoring_25:description": "Достигните 25-го уровня навыка «Портняжное дело».",
+  "achievements:ach_skill_tailoring_50:name": "Портняжное дело: Ветеран",
+  "achievements:ach_skill_tailoring_50:description": "Достигните 50-го уровня навыка «Портняжное дело».",
+  "achievements:ach_skill_tailoring_75:name": "Мастер: Портняжное дело",
+  "achievements:ach_skill_tailoring_75:description": "Достигните 75-го уровня навыка «Портняжное дело».",
+  "achievements:ach_skill_tailoring_90:name": "Портняжное дело: Легенда",
+  "achievements:ach_skill_tailoring_90:description": "Достигните 90-го уровня навыка «Портняжное дело».",
+  "achievements:ach_skill_tailoring_99:name": "Портняжное дело: Предел",
+  "achievements:ach_skill_tailoring_99:description": "Достигните 99-го уровня навыка «Портняжное дело».",
 };

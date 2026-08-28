@@ -13,14 +13,16 @@
  * Alt-Saves feuern — wer neu kauft, bekam beide nie erklaert.
  *
  * Aktueller Stand: Intro + jeder verbliebene Topbar-Unterpunkt einzeln + Skills-Overview
- * (Sidebar-Anfang) + ALLE 12 Sammel-/Handwerks-Skills (woodcutting, mining, fishing, smithing,
- * cooking, farming, foraging, thieving, leatherworking, jewelcrafting, runecrafting,
+ * (Sidebar-Anfang) + ALLE 13 Sammel-/Handwerks-Skills (woodcutting, mining, fishing, smithing,
+ * cooking, farming, foraging, thieving, leatherworking, tailoring, jewelcrafting, runecrafting,
  * herblore) + Statistics/Options (Sidebar-Ende) + ein Aufgaben-Hub-Schritt ("topbar.quests",
  * ceo-run-2026-07-14 Welle Y) + ein Abschluss-Schritt ("interlude") ganz am Ende, der den Guide
- * sauber beendet (finishGuide). 12 = alle content.skills OHNE die 7 Kampf-Substats (attack/power/
- * defence/ranged/magic/warding/vitality) und OHNE slayer — Kampf/Slayer/Shop/Bank/Enchanting sind
- * laut Design-Plan spätere, eigene Passes: design/onboarding-guide-plan.md, Abschnitt
- * "Kernflächen". (Task #224 zog Shop/Bank in die Top Bar und Statistics/Options in die Sidebar;
+ * sauber beendet (finishGuide). 13 = alle content.skills OHNE die 7 Kampf-Substats (attack/power/
+ * defence/ranged/magic/warding/vitality) und OHNE slayer/hunting — Kampf/Slayer/Shop/Bank/
+ * Enchanting sind laut Design-Plan spätere, eigene Passes: design/onboarding-guide-plan.md,
+ * Abschnitt "Kernflächen"; Jagen hat (Stand 27.08.) noch keinen eigenen Guide-Schritt, s. dessen
+ * eigene Seite HuntingPage.tsx statt der generischen SkillPage. (Task #224 zog Shop/Bank in die
+ * Top Bar und Statistics/Options in die Sidebar;
  * Task #274 tauschte zusätzlich Quests (→ Top Bar) mit Skills-Overview (→ Sidebar-Anfang) — die
  * Guide-Registry unten wurde jeweils entsprechend nachgezogen, siehe Kommentare bei den jeweiligen
  * Schritten. Welle Y ergänzte den Quests-Schritt bewusst ALS LETZTEN Klick-Schritt, damit der
@@ -86,6 +88,9 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   { id: "sidebar.foraging", guideId: "sidebar.foraging", textKey: "onboarding.guide.sidebarSkill.foraging", requireAction: true },
   { id: "sidebar.thieving", guideId: "sidebar.thieving", textKey: "onboarding.guide.sidebarSkill.thieving", requireAction: true },
   { id: "sidebar.leatherworking", guideId: "sidebar.leatherworking", textKey: "onboarding.guide.sidebarSkill.leatherworking", requireAction: true },
+  // Schneidern (Chef-Entscheid 28.08., Handwerk-Aufteilung) — direkt nach Handwerk, s.
+  // navigation.ts.
+  { id: "sidebar.tailoring", guideId: "sidebar.tailoring", textKey: "onboarding.guide.sidebarSkill.tailoring", requireAction: true },
   { id: "sidebar.jewelcrafting", guideId: "sidebar.jewelcrafting", textKey: "onboarding.guide.sidebarSkill.jewelcrafting", requireAction: true },
   { id: "sidebar.runecrafting", guideId: "sidebar.runecrafting", textKey: "onboarding.guide.sidebarSkill.runecrafting", requireAction: true },
   { id: "sidebar.herblore", guideId: "sidebar.herblore", textKey: "onboarding.guide.sidebarSkill.herblore", requireAction: true },

@@ -37,7 +37,7 @@ const GATHERING_SKILLS = new Set([
   "woodcutting", "mining", "fishing", "farming", "foraging", "thieving",
 ]);
 const CRAFTING_SKILLS = new Set([
-  "smithing", "cooking", "leatherworking",
+  "smithing", "cooking", "leatherworking", "tailoring",
   "jewelcrafting", "runecrafting", "herblore",
 ]);
 const COMBAT_SKILLS = new Set([

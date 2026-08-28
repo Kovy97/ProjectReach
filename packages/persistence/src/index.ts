@@ -66,6 +66,8 @@ import {
   defaultHuntTraps,
   HUNT_TRAP_SLOTS,
   emptyHuntTrap,
+  LEATHERWORKING_SKILL_ID,
+  TAILORING_SKILL_ID,
   TAVERN_BANDS,
   TAVERN_SEATS,
   defaultDailyState,
@@ -2066,6 +2068,43 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
  * Bringt einen geladenen State auf das aktuelle Schema. Hier landen alle
  * Save-Migrationen, damit alte Spielstände nach Modelländerungen weiter laufen.
  */
+/**
+ * Skill-Split „Schneidern" (SAVE_VERSION 85 → 86, Chef-Entscheid 28.08.2026, design/handwerk-fasern-jagen/
+ * spec-technik.md §6): XP-Anteil, der NACH TATSÄCHLICH HERGESTELLTEM aus dem Handwerk-Konto (`leatherworking`)
+ * ins neue Konto `tailoring` wandert. Für jedes Rezept, das im AKTUELLEN Content `tailoring` ist (Weben,
+ * Roben, Umhänge), zählt `stats.craftedById[ergebnisItem] × rezept.xp`. `craftedById` existiert seit SAVE 27
+ * und zählt jedes aus einem Rezept mit Zutaten erzeugte Stück (tick.ts `isCraft`; Weben eingeschlossen);
+ * `producedById`/`actionRunsById` gibt es erst seit v84 (unveröffentlicht) und tragen nichts bei, was
+ * `craftedById` nicht schon hätte. Mastery-Doppel-Erträge zählen mit (der Zähler kann sie nicht
+ * unterscheiden — die Klemme auf das Handwerk-Konto in der Migration fängt jede Überzählung). Ergebnis-
+ * Items, die AUCH ein Rezept eines anderen Skills liefert, werden konservativ übersprungen. Reine Lese-
+ * Funktion (kein RNG, kein State-Schreibzugriff); exportiert für die Persistenz-Tests.
+ */
+export function tailoringXpFromCraftLog(state: GameState, content: ContentDB): number {
+  const crafted = state.stats?.craftedById;
+  if (!crafted || typeof crafted !== "object") return 0;
+  const xpByItem = new Map<ItemId, number>();
+  const foreign = new Set<ItemId>();
+  for (const action of Object.values(content.actions)) {
+    if (!action.inputs || action.inputs.length === 0) continue; // nur Rezepte zählen in craftedById
+    for (const l of action.loot) {
+      if (action.skill === TAILORING_SKILL_ID) {
+        xpByItem.set(l.itemId, Math.max(xpByItem.get(l.itemId) ?? 0, finiteNonNeg(action.xp, 0)));
+      } else {
+        foreign.add(l.itemId);
+      }
+    }
+  }
+  let moved = 0;
+  for (const [itemId, xp] of xpByItem) {
+    if (foreign.has(itemId)) continue;
+    const n = (crafted as Record<string, unknown>)[itemId];
+    if (typeof n !== "number" || !Number.isFinite(n) || n <= 0) continue;
+    moved += Math.floor(n) * xp;
+  }
+  return moved;
+}
+
 function migrateState(state: GameState, content: ContentDB): GameState {
   // Equip-Slots: fehlende/umbenannte Slots auffüllen.
   const oldEquip = state.character.equipment as Record<string, ItemId | null>;
@@ -3315,6 +3354,26 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     syncActiveKit(state);
   }
   delete (state as { equipLoadouts?: unknown }).equipLoadouts;
+
+  // ── Skill-Split „Schneidern" (SAVE_VERSION 85 → 86, Chef-Entscheid 28.08.2026) ──────────────────
+  // Der Skill `leatherworking` (Handwerk) gibt alles aus Stoff an den neuen Skill `tailoring` ab. Die
+  // XP werden NACH TATSÄCHLICH HERGESTELLTEM geteilt (s. tailoringXpFromCraftLog): `tailoring.xp =
+  // min(Σ craftedById × xp, leatherworking.xp)`, `leatherworking.xp −= tailoring.xp` — die Gesamt-XP
+  // des Spielers bleibt exakt erhalten, Handwerk sinkt nie unter 0. Ohne Zähler (oder ohne Handwerk-
+  // XP) entsteht `tailoring = { xp: 0 }` und Handwerk bleibt unverändert. Mastery hängt an Aktions-IDs
+  // und wandert mit; Meisterweihe-Marker, Erfolge und angelegte Ringe bleiben stehen (Save-Kompat-
+  // Gesetz: nichts geht verloren; `meetsRequirements` prüft nur beim Anlegen). Läuft NACH dem
+  // Fletching-Merge (v57, oben) — die Handwerk-XP ist dann vollständig. Nur über die Versions-Schranke
+  // (ein v86-Save wird nie ein zweites Mal geteilt). sanitizeState klemmt beide Konten wie jeden Skill.
+  if ((state.version ?? 0) < 86) {
+    if (!state.skills || typeof state.skills !== "object") state.skills = {};
+    const lw = state.skills[LEATHERWORKING_SKILL_ID];
+    const lwXp = lw ? finiteNonNeg(lw.xp, 0) : 0;
+    const prior = finiteNonNeg(state.skills[TAILORING_SKILL_ID]?.xp, 0);
+    const moved = Math.min(lwXp, tailoringXpFromCraftLog(state, content));
+    state.skills[TAILORING_SKILL_ID] = { xp: prior + moved };
+    if (lw) lw.xp = lwXp - moved;
+  }
 
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;

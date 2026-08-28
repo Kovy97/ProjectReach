@@ -22,7 +22,7 @@ type SaveShape = { version: number; savedAt: number; state: GameState };
 function tavernSave(): SaveShape {
   const s = createGame({ name: "Wirtin" }, content, 77);
   s.character.createdAt = 1_700_000_000_000;
-  for (const id of ["mining", "woodcutting", "fishing", "foraging", "cooking", "smithing", "leatherworking", "thieving", "herblore", "runecrafting", "jewelcrafting", "farming", "attack", "power", "defence", "vitality"]) {
+  for (const id of ["mining", "woodcutting", "fishing", "foraging", "cooking", "smithing", "leatherworking", "tailoring", "thieving", "herblore", "runecrafting", "jewelcrafting", "farming", "attack", "power", "defence", "vitality"]) {
     s.skills[id] = { xp: xpForLevel(30) };
   }
   s.skills.slayer = { xp: xpForLevel(25) };
@@ -93,6 +93,7 @@ describe("Migration v83 → v84 (Taverne)", () => {
     ];
     erwartet.state.activeKit = 0;
     erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026): Fänge je Art, Default {}
+    erwartet.state.skills.tailoring = { xp: 0 }; // v86 Skill-Split Schneidern (28.08.2026): neues Konto, hier 0 (kein Handwerk-XP/Stoff im Craft-Log)
     delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
@@ -282,7 +283,7 @@ describe("Sanitize: state.tavern gegen den Content härten", () => {
 });
 
 describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
-  it("lädt über die Kette v84 → v85, trägt vier besetzte Plätze (eine angenommen), Abgabe-Zähler und beide Stats-Zähler", () => {
+  it("lädt über die Kette v84 → v86, trägt vier besetzte Plätze (eine angenommen), Abgabe-Zähler und beide Stats-Zähler", () => {
     const json = readFileSync(join(VAULT_DIR, "v84-synthetic-1.2.0.json"), "utf-8");
     const raw = JSON.parse(json) as SaveShape;
     expect(raw.version).toBe(84);
@@ -317,6 +318,7 @@ describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
     ];
     erwartet.state.activeKit = 0;
     erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026): Fänge je Art, Default {}
+    erwartet.state.skills.tailoring = { xp: 0 }; // v86 Skill-Split Schneidern (28.08.2026): neues Konto, hier 0 (kein Handwerk-XP/Stoff im Craft-Log)
     delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

@@ -3782,4 +3782,19 @@ export const ptBR: Record<string, string> = {
   "achievements:ach_skill_hunting_90:description": "Alcance o nível 90 em Caça.",
   "achievements:ach_skill_hunting_99:name": "Caça no Máximo",
   "achievements:ach_skill_hunting_99:description": "Alcance o nível 99 em Caça.",
+
+  // ── Skill-Split "Schneidern" (SAVE_VERSION 86, 28.08.2026): Skill, Meisterring, Erfolge ──────────
+  "skills:tailoring:name": "Alfaiataria",
+  "items:ring_master_tailoring:name": "Anel do Mestre Alfaiate",
+  "items:ring_master_tailoring:description": "Enfiado por uma mão que nunca desperdiçou um ponto. 5% de chance de o ofício poupar seus materiais.",
+  "achievements:ach_skill_tailoring_25:name": "Oficial de Alfaiataria",
+  "achievements:ach_skill_tailoring_25:description": "Alcance o nível 25 em Alfaiataria.",
+  "achievements:ach_skill_tailoring_50:name": "Veterano em Alfaiataria",
+  "achievements:ach_skill_tailoring_50:description": "Alcance o nível 50 em Alfaiataria.",
+  "achievements:ach_skill_tailoring_75:name": "Mestre de Alfaiataria",
+  "achievements:ach_skill_tailoring_75:description": "Alcance o nível 75 em Alfaiataria.",
+  "achievements:ach_skill_tailoring_90:name": "Lenda em Alfaiataria",
+  "achievements:ach_skill_tailoring_90:description": "Alcance o nível 90 em Alfaiataria.",
+  "achievements:ach_skill_tailoring_99:name": "Alfaiataria no Máximo",
+  "achievements:ach_skill_tailoring_99:description": "Alcance o nível 99 em Alfaiataria.",
 };

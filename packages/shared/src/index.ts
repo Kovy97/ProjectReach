@@ -660,7 +660,28 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     sanitizeState: Länge exakt 3, activeKit 0..2, je Kit nur bekannte + slot-korrekte Items (Rettung in
 //     Bank/Gear-Vault wie beim Charakter), Instanz-Invariante je Kit, Zweihand ⇒ Offhand leer (Rückgabe über
 //     den Grant-Pfad), Kit[activeKit] am Ende = Spiegel des Charakters. Keine Item-ID-Renames.
-export const SAVE_VERSION = 85;
+// v86 (Skill-Split „Schneidern" — 1.2.0 „Fasern und Fallen", Chef-Entscheid 28.08.2026,
+//     design/handwerk-fasern-jagen/spec-technik.md §6): der Skill `leatherworking` (EN „Crafting"/DE „Handwerk")
+//     wird GETEILT. NEUER Skill `tailoring` (EN „Tailoring"/DE „Schneidern", kein `trains`) übernimmt alles aus
+//     Stoff: Weben (weave_*), sämtliche Magier-Roben-Kategorien robe_* (inkl. der Handschuh-/Schuh-Teile derselben
+//     Kategorien) und alle Umhang-Rezepte (Kategorie capes, dazu craft_silk_mantle/craft_void_shroud, die dorthin
+//     umziehen); die Umhänge werden dabei auf die fünf Stoff-Stufen umgestellt (Leder bleibt Beikost).
+//     `leatherworking` behält Leder (tan/leather_*), Bögen (fletch_*), Holzschilde/Angelruten, Nessel-Sehne
+//     (twist_nettle_cord) und die Slayer-Anforderungs-Rezepte. KEIN neues GameState-Feld — nur ein neuer
+//     Schlüssel `skills.tailoring`, der wie jeder Skill beim ersten XP-Gewinn entsteht.
+//     Migration (< 86), XP-AUFTEILUNG NACH TATSÄCHLICH HERGESTELLTEM: für jedes Rezept, das JETZT `tailoring`
+//     ist, zählt `stats.craftedById[ergebnisItem] × rezept.xp` (craftedById existiert seit SAVE 27 und zählt
+//     jedes aus einem Rezept mit Zutaten erzeugte Stück, Weben eingeschlossen; `producedById`/`actionRunsById`
+//     gibt es erst seit v84 und bringen nichts Zusätzliches). Ergebnis-Items, die auch ein Nicht-Schneidern-
+//     Rezept liefert, werden konservativ NICHT gezählt. Dann `tailoring.xp = min(Σ, leatherworking.xp)` und
+//     `leatherworking.xp −= tailoring.xp` (Handwerk sinkt entsprechend, nie unter 0; Gesamt-XP bleibt exakt
+//     erhalten). Ohne Zähler: `tailoring = { xp: 0 }`, Handwerk unverändert. Mastery-Einträge hängen an
+//     Aktions-IDs und wandern automatisch mit. Meisterweihe-Marker/Erfolge/angelegte Ringe bleiben stehen
+//     (meetsRequirements prüft nur beim Anlegen). sanitizeState: unbekannte Skill-Keys weiter tolerant, `tailoring`
+//     wird NICHT nachträglich erzeugt (Muster hunting). Content: 5 neue Erfolge ach_skill_tailoring_25..99,
+//     Meisterring ring_master_tailoring (inputSaver 5 %), ring_master_completion verlangt jetzt 22 Skills.
+//     Keine Item-ID-Renames, keine Kampfwerte.
+export const SAVE_VERSION = 86;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -6257,6 +6278,16 @@ export function huntBaitForZoneLevel(zoneLevel: number): HuntBaitTier {
 }
 export const HUNTING_SKILL_ID: SkillId = "hunting";
 
+/**
+ * Skill-Split „Schneidern" (SAVE_VERSION 86, Chef-Entscheid 28.08.2026): `tailoring` (EN „Tailoring"/
+ * DE „Schneidern") trägt alles aus Stoff — Weben, Magier-Roben, Umhänge; `leatherworking` (EN „Crafting"/
+ * DE „Handwerk") behält Leder, Bögen, Holzschilde, Angelruten und die Nessel-Sehne. Die Migration
+ * (persistence, v85 → v86) teilt die Handwerk-XP nach tatsächlich Hergestelltem (`stats.craftedById`).
+ * Reihenfolge in Skill-Listen: `tailoring` direkt NACH `leatherworking`.
+ */
+export const LEATHERWORKING_SKILL_ID: SkillId = "leatherworking";
+export const TAILORING_SKILL_ID: SkillId = "tailoring";
+
 export function huntTrapSlotsForLevel(level: number): number {
   let n = 0;
   for (const l of HUNT_SLOT_LEVELS) if (level >= l) n++;
@@ -7283,10 +7314,11 @@ export const CAMP_SKILL_SPEED_KIND: Readonly<Partial<Record<SkillId, CampBoostKi
   mining: "miningSpeed",
   thieving: "thievingSpeed",
   foraging: "farmingSpeed",
-  // Die 6 Handwerks-Skills (Werkhof, +9 % gesamt):
+  // Die 7 Handwerks-Skills (Werkhof, +9 % gesamt; seit SAVE 86 auch Schneidern):
   smithing: "craftSpeed",
   cooking: "craftSpeed",
   leatherworking: "craftSpeed",
+  tailoring: "craftSpeed",
   jewelcrafting: "craftSpeed",
   runecrafting: "craftSpeed",
   herblore: "craftSpeed",

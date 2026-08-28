@@ -109,11 +109,11 @@ describe("Fasern, Stoff und Jagen (1.2.0): Item-/Aktions-/Crop-/Skill-Wächter",
     for (let i = 1; i < cropLevels.length; i++) expect(cropLevels[i]!).toBeGreaterThan(cropLevels[i - 1]!);
   });
 
-  it("fünf Weben-Rezepte + twist_nettle_cord existieren (Kategorie weave, 3 Fasern → 1 Stoff)", () => {
+  it("fünf Weben-Rezepte + twist_nettle_cord existieren (Kategorie weave, 3 Fasern → 1 Stoff; Weben seit SAVE 86 tailoring, Sehne bleibt Handwerk)", () => {
     for (const t of FIBER_TIERS) {
       const a = content.actions[t.weave];
       expect(a, t.weave).toBeDefined();
-      expect(a!.skill, t.weave).toBe("leatherworking");
+      expect(a!.skill, t.weave).toBe("tailoring");
       expect(a!.category, t.weave).toBe("weave");
       expect(a!.levelRequired ?? 1, t.weave).toBe(t.level);
       expect(a!.inputs, t.weave).toEqual([{ itemId: t.fiber, qty: 3 }]);
@@ -122,6 +122,7 @@ describe("Fasern, Stoff und Jagen (1.2.0): Item-/Aktions-/Crop-/Skill-Wächter",
     }
     const cord = content.actions["twist_nettle_cord"];
     expect(cord).toBeDefined();
+    expect(cord!.skill).toBe("leatherworking"); // Bogen-Zubehör bleibt Handwerk (Chef-Entscheid 28.08.2026)
     expect(cord!.levelRequired).toBe(1);
     expect(cord!.inputs).toEqual([{ itemId: "fiber_nettle", qty: 2 }]);
     expect(cord!.loot).toEqual([{ itemId: "bowstring", chance: 1, min: 1, max: 1 }]);

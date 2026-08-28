@@ -30,6 +30,11 @@ export const content: ContentDB = {
     // verlustfrei in leatherworking; Persistence-Migration lebt in packages/persistence/src/index.ts).
     // Die Bogen-/Holzschild-Aktionen (ehemals skill:"fletching") laufen jetzt unter leatherworking.
     leatherworking: { id: "leatherworking", name: { en: "Crafting", de: "Handwerk" } },
+    // Skill-Split „Schneidern" (SAVE_VERSION 86, Chef-Entscheid 28.08.2026, design/handwerk-fasern-jagen/
+    // spec-technik.md §6): alles aus Stoff — Weben (weave_*), Magier-Roben (robe_*), Umhänge (capes) — liegt
+    // jetzt hier; Handwerk behält Leder, Bögen, Holzschilde, Angelruten und die Nessel-Sehne. Kein `trains`
+    // (Muster leatherworking/jewelcrafting). Reihenfolge in Skill-Listen: direkt NACH leatherworking.
+    tailoring: { id: "tailoring", name: { en: "Tailoring", de: "Schneidern" } },
     jewelcrafting: { id: "jewelcrafting", name: { en: "Jewelcrafting", de: "Juwelierskunst" } },
     runecrafting: { id: "runecrafting", name: { en: "Runecrafting", de: "Runenkunst" }, trains: "int" }, // Runenkunst = arkanes Wissen → INT
     herblore: { id: "herblore", name: { en: "Herblore", de: "Kräuterkunde" }, trains: "wis" }, // Kräuterkunde = Weisheit/Naturwissen → WIS
@@ -6459,12 +6464,14 @@ export const content: ContentDB = {
         // prüft ohnehin dynamisch ALLE content.skills ≥ 99 — dieses Feld nur nachgezogen, damit die
         // Anzeige/Flavor-Text ("21 Fertigkeiten") stimmt.
         hunting: 99,
+        // Skill-Split Schneidern (SAVE 86, 28.08.2026): 22. Skill.
+        tailoring: 99,
       },
       value: 100000,
       modifiers: { str: 2, dex: 2, con: 2, int: 2, wis: 2, lck: 2 },
       description: {
-        en: "Worn only by those who have mastered all twenty-one disciplines. A quiet band of gold, granted, never bought.",
-        de: "Getragen nur von jenen, die alle einundzwanzig Fertigkeiten gemeistert haben. Ein stiller Reif aus Gold, verliehen, niemals gekauft.",
+        en: "Worn only by those who have mastered all twenty-two disciplines. A quiet band of gold, granted, never bought.",
+        de: "Getragen nur von jenen, die alle zweiundzwanzig Fertigkeiten gemeistert haben. Ein stiller Reif aus Gold, verliehen, niemals gekauft.",
       },
     },
     ring_master_cooking: {
@@ -6641,6 +6648,20 @@ export const content: ContentDB = {
       description: {
         en: "Scorched by a thousand forges, never once melted down. 5% chance the forge spares its materials.",
         de: "Von tausend Essen versengt, doch nie eingeschmolzen. 5 % Chance, dass die Schmiede ihre Materialien verschont.",
+      },
+    },
+    // Skill-Split Schneidern (SAVE 86, Chef-Entscheid 28.08.2026): 22. Skill "tailoring" braucht seinen
+    // Meisterring — exakt das Muster von ring_master_leatherworking (int/wis 2, inputSaver 5 % auf den
+    // eigenen Skill, KEIN evasionRating ⇒ suffix-class-fit-Zählpins unverändert). Kein Rezept: Meisterringe
+    // werden von der Engine beim Level-99-Hook verliehen (engine/capes.ts), wie alle anderen. Bild folgt (Mira).
+    ring_master_tailoring: {
+      id: "ring_master_tailoring", name: { en: "Needlemaster's Ring", de: "Ring des Nadelmeisters" },
+      type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
+      requirements: { tailoring: 99 }, value: 50000,
+      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "inputSaver", skill: "tailoring", value: 0.05 },
+      description: {
+        en: "Threaded by a hand that never wasted a stitch. 5% chance the craft spares its materials.",
+        de: "Gefädelt von einer Hand, die nie einen Stich verschwendete. 5 % Chance, dass das Schneidern seine Materialien verschont.",
       },
     },
     ring_master_thieving: {
@@ -10704,37 +10725,37 @@ export const content: ContentDB = {
       loot: [{ itemId: "cured_leather", chance: 1, min: 1, max: 1 }],
     },
 
-    // ── Weben (1.2.0 „Fasern und Fallen", Kategorie weave): 3 Fasern → 1 Stoff, Dauer/XP auf
+    // ── Weben (1.2.0 „Fasern und Fallen", Kategorie weave; seit SAVE 86 Skill tailoring): 3 Fasern → 1 Stoff, Dauer/XP auf
     // derselben C-600-Kurve wie die Leder-Härte-Kette (tan_leather L1 exakt übernommen; L20/40/60/80
     // nach target_xph(L)=600·√(xpForLevel(L+1)−xpForLevel(L)) interpoliert zwischen tan_hardened_leather
     // (L22), reinforce_studded_leather (L50), cure_warhide (L70) und tan_wyvern_scale (L75)).
     weave_nettle: {
       id: "weave_nettle", name: { en: "Weave Nettlecloth", de: "Nesselstoff weben" },
-      skill: "leatherworking", category: "weave", durationMs: 3000, xp: 5, levelRequired: 1,
+      skill: "tailoring", category: "weave", durationMs: 3000, xp: 5, levelRequired: 1,
       inputs: [{ itemId: "fiber_nettle", qty: 3 }],
       loot: [{ itemId: "cloth_nettle", chance: 1, min: 1, max: 1 }],
     },
     weave_linen: {
       id: "weave_linen", name: { en: "Weave Linen", de: "Leinen weben" },
-      skill: "leatherworking", category: "weave", durationMs: 5700, xp: 22, levelRequired: 20,
+      skill: "tailoring", category: "weave", durationMs: 5700, xp: 22, levelRequired: 20,
       inputs: [{ itemId: "fiber_flax", qty: 3 }],
       loot: [{ itemId: "cloth_linen", chance: 1, min: 1, max: 1 }],
     },
     weave_thornlinen: {
       id: "weave_thornlinen", name: { en: "Weave Thornlinen", de: "Dornleinen weben" },
-      skill: "leatherworking", category: "weave", durationMs: 8000, xp: 84, levelRequired: 40,
+      skill: "tailoring", category: "weave", durationMs: 8000, xp: 84, levelRequired: 40,
       inputs: [{ itemId: "fiber_thornhemp", qty: 3 }],
       loot: [{ itemId: "cloth_thornlinen", chance: 1, min: 1, max: 1 }],
     },
     weave_ghostweave: {
       id: "weave_ghostweave", name: { en: "Weave Ghostweave", de: "Geistertuch weben" },
-      skill: "leatherworking", category: "weave", durationMs: 10500, xp: 296, levelRequired: 60,
+      skill: "tailoring", category: "weave", durationMs: 10500, xp: 296, levelRequired: 60,
       inputs: [{ itemId: "fiber_ghostsilk", qty: 3 }],
       loot: [{ itemId: "cloth_ghostweave", chance: 1, min: 1, max: 1 }],
     },
     weave_starweave: {
       id: "weave_starweave", name: { en: "Weave Starweave", de: "Sternweb weben" },
-      skill: "leatherworking", category: "weave", durationMs: 14500, xp: 1099, levelRequired: 80,
+      skill: "tailoring", category: "weave", durationMs: 14500, xp: 1099, levelRequired: 80,
       inputs: [{ itemId: "fiber_starflax", qty: 3 }],
       loot: [{ itemId: "cloth_starweave", chance: 1, min: 1, max: 1 }],
     },
@@ -11198,42 +11219,46 @@ export const content: ContentDB = {
       loot: [{ itemId: "shadowhide_boots", chance: 1, min: 1, max: 1 }],
     },
 
-    // ── Leatherworking: Umhänge (Capes, alle Stil-Tiers 1–2) ─────────────
+    // ── Schneidern: Umhänge (Capes, alle Stil-Tiers 1–2) ─────────────────
+    // Skill-Split Schneidern (SAVE 86, Chef-Wunsch 28.08.2026): Hauptstoff ist die Stoff-Stufe des
+    // Rezept-Levels (Nesselstoff L1 / Leinen L20 / Dornleinen L40 / Geistertuch L60 / Sternweb L80,
+    // Muster der Roben-Rezepte), Leder bleibt Beikost (Riemen/Verschluss). Dauer/XP unverändert — sie
+    // liegen bereits exakt auf der C-600-Kurve der Roben (kein Balance-Pin kippt).
     craft_leather_warcape: {
       id: "craft_leather_warcape", name: { en: "Stitch Leather Warcape", de: "Leder-Kriegsumhang nähen" },
-      skill: "leatherworking", category: "capes", durationMs: 5000, xp: 18, levelRequired: 18,
-      inputs: [{ itemId: "cured_leather", qty: 2 }],
+      skill: "tailoring", category: "capes", durationMs: 5000, xp: 18, levelRequired: 18,
+      inputs: [{ itemId: "cloth_nettle", qty: 3 }, { itemId: "cured_leather", qty: 1 }],
       loot: [{ itemId: "leather_warcape", chance: 1, min: 1, max: 1 }],
     },
     craft_hardened_warcape: {
       id: "craft_hardened_warcape", name: { en: "Craft Hardened Warcape", de: "Gehärteten Kriegsumhang fertigen" },
-      skill: "leatherworking", category: "capes", durationMs: 9000, xp: 121, levelRequired: 45,
-      inputs: [{ itemId: "hardened_leather", qty: 3 }],
+      skill: "tailoring", category: "capes", durationMs: 9000, xp: 121, levelRequired: 45,
+      inputs: [{ itemId: "cloth_thornlinen", qty: 3 }, { itemId: "hardened_leather", qty: 1 }],
       loot: [{ itemId: "hardened_warcape", chance: 1, min: 1, max: 1 }],
     },
     craft_leather_cape: {
       id: "craft_leather_cape", name: { en: "Stitch Leather Cape", de: "Leder-Umhang nähen" },
-      skill: "leatherworking", category: "capes", durationMs: 5000, xp: 11, levelRequired: 8,
-      inputs: [{ itemId: "cured_leather", qty: 2 }],
+      skill: "tailoring", category: "capes", durationMs: 5000, xp: 11, levelRequired: 8,
+      inputs: [{ itemId: "cloth_nettle", qty: 2 }, { itemId: "cured_leather", qty: 1 }],
       loot: [{ itemId: "leather_cape", chance: 1, min: 1, max: 1 }],
     },
     craft_ranger_cape: {
       id: "craft_ranger_cape", name: { en: "Craft Ranger's Cape", de: "Waldläufer-Umhang fertigen" },
-      skill: "leatherworking", category: "capes", durationMs: 8000, xp: 65, levelRequired: 35,
-      inputs: [{ itemId: "hardened_leather", qty: 3 }],
+      skill: "tailoring", category: "capes", durationMs: 8000, xp: 65, levelRequired: 35,
+      inputs: [{ itemId: "cloth_linen", qty: 3 }, { itemId: "hardened_leather", qty: 1 }],
       loot: [{ itemId: "ranger_cape", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_cape: {
       id: "craft_arcane_cape", name: { en: "Stitch Arcane Cape", de: "Arkan-Umhang nähen" },
       // balance-fix 2026-07: xp 2→3 (was below curve at 0.84x + read as a downgrade vs L1 craft_leather_body)
-      skill: "leatherworking", category: "capes", durationMs: 6000, xp: 16, levelRequired: 12,
-      inputs: [{ itemId: "cured_leather", qty: 2 }, { itemId: "dim_essence", qty: 3 }],
+      skill: "tailoring", category: "capes", durationMs: 6000, xp: 16, levelRequired: 12,
+      inputs: [{ itemId: "cloth_nettle", qty: 2 }, { itemId: "dim_essence", qty: 3 }],
       loot: [{ itemId: "arcane_cape", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_shroud: {
       id: "craft_frost_shroud", name: { en: "Weave Frost Shroud", de: "Frost-Überwurf weben" },
-      skill: "leatherworking", category: "capes", durationMs: 9000, xp: 85, levelRequired: 38,
-      inputs: [{ itemId: "hardened_leather", qty: 3 }, { itemId: "frost_essence", qty: 4 }],
+      skill: "tailoring", category: "capes", durationMs: 9000, xp: 85, levelRequired: 38,
+      inputs: [{ itemId: "cloth_linen", qty: 3 }, { itemId: "frost_essence", qty: 4 }],
       loot: [{ itemId: "frost_shroud", chance: 1, min: 1, max: 1 }],
     },
 
@@ -11993,17 +12018,17 @@ export const content: ContentDB = {
       loot: [{ itemId: "rune_gleaning", chance: 1, min: 1, max: 1 }],
     },
 
-    // ── B) INT-Rüstungs-Crafting (Runecrafting → Mage Robes) ─────────
+    // ── B) INT-Rüstungs-Crafting (Runecrafting → Mage Robes; seit SAVE 86 Skill tailoring, alle robe_*) ─────────
     craft_apprentice_hat: {
       id: "craft_apprentice_hat", name: { en: "Stitch Apprentice Hat", de: "Lehrlings-Zauberhut nähen" },
-      skill: "leatherworking", category: "robe_apprentice", durationMs: 4000, xp: 6, levelRequired: 1,
+      skill: "tailoring", category: "robe_apprentice", durationMs: 4000, xp: 6, levelRequired: 1,
       // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
       inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cloth_nettle", qty: 1 }],
       loot: [{ itemId: "apprentice_robe_hat", chance: 1, min: 1, max: 1 }],
     },
     craft_apprentice_robe: {
       id: "craft_apprentice_robe", name: { en: "Stitch Apprentice Robe", de: "Lehrlings-Robe nähen" },
-      skill: "leatherworking", category: "robe_apprentice", durationMs: 5500, xp: 8, levelRequired: 1,
+      skill: "tailoring", category: "robe_apprentice", durationMs: 5500, xp: 8, levelRequired: 1,
       // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
       inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "cloth_nettle", qty: 2 }],
       loot: [{ itemId: "apprentice_robe_body", chance: 1, min: 1, max: 1 }],
@@ -12011,20 +12036,20 @@ export const content: ContentDB = {
     craft_apprentice_robe_legs: {
       id: "craft_apprentice_robe_legs", name: { en: "Stitch Apprentice Skirt", de: "Lehrlings-Gewand (Beine) nähen" },
       // balance-fix 2026-07: xp 1→2 (1-XP floor + monotonicity vs L1 craft_leather_body)
-      skill: "leatherworking", category: "robe_apprentice", durationMs: 4000, xp: 7, levelRequired: 2,
+      skill: "tailoring", category: "robe_apprentice", durationMs: 4000, xp: 7, levelRequired: 2,
       // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
       inputs: [{ itemId: "dim_essence", qty: 3 }, { itemId: "cloth_nettle", qty: 1 }],
       loot: [{ itemId: "apprentice_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_apprentice_mitts: {
       id: "craft_apprentice_mitts", name: { en: "Stitch Apprentice Mitts", de: "Lehrlings-Handschuhe nähen" },
-      skill: "leatherworking", category: "robe_apprentice", durationMs: 3500, xp: 5, levelRequired: 1,
+      skill: "tailoring", category: "robe_apprentice", durationMs: 3500, xp: 5, levelRequired: 1,
       inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cured_leather", qty: 1 }],
       loot: [{ itemId: "apprentice_mitts", chance: 1, min: 1, max: 1 }],
     },
     craft_apprentice_slippers: {
       id: "craft_apprentice_slippers", name: { en: "Stitch Apprentice Slippers", de: "Lehrlings-Pantöffelchen nähen" },
-      skill: "leatherworking", category: "robe_apprentice", durationMs: 3500, xp: 5, levelRequired: 1,
+      skill: "tailoring", category: "robe_apprentice", durationMs: 3500, xp: 5, levelRequired: 1,
       inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cured_leather", qty: 1 }],
       loot: [{ itemId: "apprentice_slippers", chance: 1, min: 1, max: 1 }],
     },
@@ -12033,120 +12058,120 @@ export const content: ContentDB = {
     // seltene Monster-Drops mit chance<1%).
     craft_dimweave_hood: {
       id: "craft_dimweave_hood", name: { en: "Bind Dimweave Hood", de: "Trübgewebe-Kapuze binden" },
-      skill: "leatherworking", category: "robe_dimweave", durationMs: 5000, xp: 12, levelRequired: 8,
+      skill: "tailoring", category: "robe_dimweave", durationMs: 5000, xp: 12, levelRequired: 8,
       // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
       inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "force_rune", qty: 2 }, { itemId: "cloth_nettle", qty: 2 }],
       loot: [{ itemId: "dimweave_hood", chance: 1, min: 1, max: 1 }],
     },
     craft_dimweave_sandals: {
       id: "craft_dimweave_sandals", name: { en: "Bind Dimweave Sandals", de: "Trübgewebe-Sandalen binden" },
-      skill: "leatherworking", category: "robe_dimweave", durationMs: 6000, xp: 16, levelRequired: 10,
+      skill: "tailoring", category: "robe_dimweave", durationMs: 6000, xp: 16, levelRequired: 10,
       inputs: [{ itemId: "dim_essence", qty: 5 }, { itemId: "force_rune", qty: 2 }, { itemId: "cured_leather", qty: 2 }],
       loot: [{ itemId: "dimweave_sandals", chance: 1, min: 1, max: 1 }],
     },
     craft_dimweave_robe: {
       id: "craft_dimweave_robe", name: { en: "Weave Dimweave Robe", de: "Trübgewebe-Robe weben" },
-      skill: "leatherworking", category: "robe_dimweave", durationMs: 7000, xp: 20, levelRequired: 12,
+      skill: "tailoring", category: "robe_dimweave", durationMs: 7000, xp: 20, levelRequired: 12,
       // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_nettle (Menge unverändert).
       inputs: [{ itemId: "dim_essence", qty: 6 }, { itemId: "force_rune", qty: 3 }, { itemId: "cloth_nettle", qty: 3 }],
       loot: [{ itemId: "dimweave_robe", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_circlet: {
       id: "craft_frost_circlet", name: { en: "Bind Frost Circlet", de: "Frost-Zirkel binden" },
-      skill: "leatherworking", category: "robe_frost", durationMs: 7000, xp: 27, levelRequired: 20,
+      skill: "tailoring", category: "robe_frost", durationMs: 7000, xp: 27, levelRequired: 20,
       inputs: [{ itemId: "frost_essence", qty: 4 }, { itemId: "frost_rune", qty: 4 }, { itemId: "cured_leather", qty: 2 }],
       loot: [{ itemId: "frost_circlet", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_robe_body: {
       id: "craft_frost_robe_body", name: { en: "Weave Frost Robe", de: "Frost-Robe weben" },
-      skill: "leatherworking", category: "robe_frost", durationMs: 9000, xp: 39, levelRequired: 22,
+      skill: "tailoring", category: "robe_frost", durationMs: 9000, xp: 39, levelRequired: 22,
       // 1.2.0 „Fasern und Fallen" §1.5: hardened_leather → cloth_linen (Menge unverändert).
       inputs: [{ itemId: "frost_essence", qty: 6 }, { itemId: "frost_rune", qty: 6 }, { itemId: "cloth_linen", qty: 2 }],
       loot: [{ itemId: "frost_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_robe_legs: {
       id: "craft_frost_robe_legs", name: { en: "Weave Frost Skirt", de: "Frost-Gewand (Beine) weben" },
-      skill: "leatherworking", category: "robe_frost", durationMs: 7500, xp: 31, levelRequired: 21,
+      skill: "tailoring", category: "robe_frost", durationMs: 7500, xp: 31, levelRequired: 21,
       // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_linen (Menge unverändert).
       inputs: [{ itemId: "frost_essence", qty: 4 }, { itemId: "frost_rune", qty: 4 }, { itemId: "cloth_linen", qty: 3 }],
       loot: [{ itemId: "frost_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_handwraps: {
       id: "craft_frost_handwraps", name: { en: "Bind Frost Handwraps", de: "Frost-Handwickel binden" },
-      skill: "leatherworking", category: "robe_frost", durationMs: 6500, xp: 25, levelRequired: 20,
+      skill: "tailoring", category: "robe_frost", durationMs: 6500, xp: 25, levelRequired: 20,
       inputs: [{ itemId: "frost_essence", qty: 3 }, { itemId: "frost_rune", qty: 3 }, { itemId: "cured_leather", qty: 2 }],
       loot: [{ itemId: "frost_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_treads: {
       id: "craft_frost_treads", name: { en: "Bind Frost Treads", de: "Frost-Schrittschuhe binden" },
-      skill: "leatherworking", category: "robe_frost", durationMs: 6500, xp: 25, levelRequired: 20,
+      skill: "tailoring", category: "robe_frost", durationMs: 6500, xp: 25, levelRequired: 20,
       inputs: [{ itemId: "frost_essence", qty: 3 }, { itemId: "frost_rune", qty: 3 }, { itemId: "cured_leather", qty: 2 }],
       loot: [{ itemId: "frost_treads", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_hood: {
       id: "craft_aether_hood", name: { en: "Bind Aether Hood", de: "Aether-Kapuze binden" },
-      skill: "leatherworking", category: "robe_aether", durationMs: 10000, xp: 134, levelRequired: 45,
+      skill: "tailoring", category: "robe_aether", durationMs: 10000, xp: 134, levelRequired: 45,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "cloth_thornlinen", qty: 2 }],
       loot: [{ itemId: "aether_hood", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_robe_body: {
       id: "craft_aether_robe_body", name: { en: "Weave Aether Robe", de: "Aether-Robe weben" },
-      skill: "leatherworking", category: "robe_aether", durationMs: 13000, xp: 192, levelRequired: 47,
+      skill: "tailoring", category: "robe_aether", durationMs: 13000, xp: 192, levelRequired: 47,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }, { itemId: "cloth_thornlinen", qty: 4 }],
       loot: [{ itemId: "aether_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_robe_legs: {
       id: "craft_aether_robe_legs", name: { en: "Weave Aether Skirt", de: "Aether-Gewand (Beine) weben" },
-      skill: "leatherworking", category: "robe_aether", durationMs: 11000, xp: 155, levelRequired: 46,
+      skill: "tailoring", category: "robe_aether", durationMs: 11000, xp: 155, levelRequired: 46,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 6 }, { itemId: "cloth_thornlinen", qty: 3 }],
       loot: [{ itemId: "aether_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_gloves: {
       id: "craft_aether_gloves", name: { en: "Bind Aether Gloves", de: "Aether-Handschuhe binden" },
-      skill: "leatherworking", category: "robe_aether", durationMs: 9500, xp: 127, levelRequired: 45,
+      skill: "tailoring", category: "robe_aether", durationMs: 9500, xp: 127, levelRequired: 45,
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 5 }, { itemId: "scaled_leather", qty: 2 }],
       loot: [{ itemId: "aether_gloves", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_slippers: {
       id: "craft_aether_slippers", name: { en: "Bind Aether Slippers", de: "Aether-Pantoffeln binden" },
-      skill: "leatherworking", category: "robe_aether", durationMs: 9500, xp: 127, levelRequired: 45,
+      skill: "tailoring", category: "robe_aether", durationMs: 9500, xp: 127, levelRequired: 45,
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 5 }, { itemId: "scaled_leather", qty: 2 }],
       loot: [{ itemId: "aether_slippers", chance: 1, min: 1, max: 1 }],
     },
     // ── Arkane Roben (ERFUNDEN: Tier ~L58) ──────────────────────────────
     craft_arcane_cowl: {
       id: "craft_arcane_cowl", name: { en: "Bind Arcane Cowl", de: "Arkane Kapuze binden" },
-      skill: "leatherworking", category: "robe_arcane", durationMs: 12000, xp: 291, levelRequired: 57,
+      skill: "tailoring", category: "robe_arcane", durationMs: 12000, xp: 291, levelRequired: 57,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 7 }, { itemId: "cloth_thornlinen", qty: 3 }, { itemId: "storm_essence", qty: 2 }],
       loot: [{ itemId: "arcane_cowl", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_robe_body: {
       id: "craft_arcane_robe_body", name: { en: "Weave Arcane Robe", de: "Arkane Robe weben" },
-      skill: "leatherworking", category: "robe_arcane", durationMs: 14000, xp: 357, levelRequired: 58,
+      skill: "tailoring", category: "robe_arcane", durationMs: 14000, xp: 357, levelRequired: 58,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 8 }, { itemId: "aether_rune", qty: 10 }, { itemId: "cloth_thornlinen", qty: 5 }, { itemId: "storm_essence", qty: 3 }],
       loot: [{ itemId: "arcane_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_robe_legs: {
       id: "craft_arcane_robe_legs", name: { en: "Weave Arcane Skirt", de: "Arkanes Gewand (Beine) weben" },
-      skill: "leatherworking", category: "robe_arcane", durationMs: 12000, xp: 291, levelRequired: 57,
+      skill: "tailoring", category: "robe_arcane", durationMs: 12000, xp: 291, levelRequired: 57,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_thornlinen (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 8 }, { itemId: "cloth_thornlinen", qty: 4 }, { itemId: "storm_essence", qty: 2 }],
       loot: [{ itemId: "arcane_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_mitts: {
       id: "craft_arcane_mitts", name: { en: "Bind Arcane Mitts", de: "Arkane Fäustlinge binden" },
-      skill: "leatherworking", category: "robe_arcane", durationMs: 11000, xp: 267, levelRequired: 57,
+      skill: "tailoring", category: "robe_arcane", durationMs: 11000, xp: 267, levelRequired: 57,
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "scaled_leather", qty: 3 }, { itemId: "storm_essence", qty: 1 }],
       loot: [{ itemId: "arcane_mitts", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_slippers: {
       id: "craft_arcane_slippers", name: { en: "Bind Arcane Slippers", de: "Arkane Schlupfschuhe binden" },
-      skill: "leatherworking", category: "robe_arcane", durationMs: 11000, xp: 267, levelRequired: 57,
+      skill: "tailoring", category: "robe_arcane", durationMs: 11000, xp: 267, levelRequired: 57,
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "scaled_leather", qty: 3 }, { itemId: "storm_essence", qty: 1 }],
       loot: [{ itemId: "arcane_slippers", chance: 1, min: 1, max: 1 }],
     },
@@ -12158,99 +12183,99 @@ export const content: ContentDB = {
     // Identität dort intakt — nur diese eine Zwischenstufe wird entkoppelt).
     craft_duskweave_cowl: {
       id: "craft_duskweave_cowl", name: { en: "Bind Duskweave Cowl", de: "Dämmergewebe-Kapuze binden" },
-      skill: "leatherworking", category: "robe_duskweave", durationMs: 13000, xp: 425, levelRequired: 63,
+      skill: "tailoring", category: "robe_duskweave", durationMs: 13000, xp: 425, levelRequired: 63,
       // 1.2.0 „Fasern und Fallen" §1.5: studded_leather → cloth_ghostweave (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "aether_rune", qty: 8 }, { itemId: "cloth_ghostweave", qty: 3 }, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_cowl", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_robe_body: {
       id: "craft_duskweave_robe_body", name: { en: "Weave Duskweave Robe", de: "Dämmergewebe-Robe weben" },
-      skill: "leatherworking", category: "robe_duskweave", durationMs: 16000, xp: 577, levelRequired: 65,
+      skill: "tailoring", category: "robe_duskweave", durationMs: 16000, xp: 577, levelRequired: 65,
       // 1.2.0 „Fasern und Fallen" §1.5: studded_leather → cloth_ghostweave (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 8 }, { itemId: "aether_rune", qty: 11 }, { itemId: "cloth_ghostweave", qty: 5 }, { itemId: "shade_rune", qty: 2 }],
       loot: [{ itemId: "duskweave_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_robe_legs: {
       id: "craft_duskweave_robe_legs", name: { en: "Weave Duskweave Skirt", de: "Dämmergewebe-Gewand (Beine) weben" },
-      skill: "leatherworking", category: "robe_duskweave", durationMs: 14000, xp: 481, levelRequired: 64,
+      skill: "tailoring", category: "robe_duskweave", durationMs: 14000, xp: 481, levelRequired: 64,
       // 1.2.0 „Fasern und Fallen" §1.5: studded_leather → cloth_ghostweave (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "aether_rune", qty: 9 }, { itemId: "cloth_ghostweave", qty: 4 }, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_handwraps: {
       id: "craft_duskweave_handwraps", name: { en: "Bind Duskweave Handwraps", de: "Dämmergewebe-Handwickel binden" },
-      skill: "leatherworking", category: "robe_duskweave", durationMs: 12500, xp: 408, levelRequired: 63,
+      skill: "tailoring", category: "robe_duskweave", durationMs: 12500, xp: 408, levelRequired: 63,
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 7 }, { itemId: "studded_leather", qty: 3 }, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_treads: {
       id: "craft_duskweave_treads", name: { en: "Bind Duskweave Treads", de: "Dämmergewebe-Schrittschuhe binden" },
-      skill: "leatherworking", category: "robe_duskweave", durationMs: 12500, xp: 408, levelRequired: 63,
+      skill: "tailoring", category: "robe_duskweave", durationMs: 12500, xp: 408, levelRequired: 63,
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 7 }, { itemId: "studded_leather", qty: 3 }, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_treads", chance: 1, min: 1, max: 1 }],
     },
     // ── Runenwirk Roben (ERFUNDEN: Tier ~L72) ──────────────────────────
     craft_runewoven_cowl: {
       id: "craft_runewoven_cowl", name: { en: "Bind Runewoven Cowl", de: "Runenwirk-Kapuze binden" },
-      skill: "leatherworking", category: "robe_runewoven", durationMs: 14000, xp: 680, levelRequired: 71,
+      skill: "tailoring", category: "robe_runewoven", durationMs: 14000, xp: 680, levelRequired: 71,
       // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_ghostweave (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "void_rune", qty: 6 }, { itemId: "cloth_ghostweave", qty: 2 }],
       loot: [{ itemId: "runewoven_cowl", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_robe_body: {
       id: "craft_runewoven_robe_body", name: { en: "Weave Runewoven Robe", de: "Runenwirk-Robe weben" },
-      skill: "leatherworking", category: "robe_runewoven", durationMs: 17000, xp: 867, levelRequired: 72,
+      skill: "tailoring", category: "robe_runewoven", durationMs: 17000, xp: 867, levelRequired: 72,
       // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_ghostweave (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 6 }, { itemId: "void_rune", qty: 10 }, { itemId: "cloth_ghostweave", qty: 4 }],
       loot: [{ itemId: "runewoven_robe_body", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_robe_legs: {
       id: "craft_runewoven_robe_legs", name: { en: "Weave Runewoven Skirt", de: "Runenwirk-Gewand (Beine) weben" },
-      skill: "leatherworking", category: "robe_runewoven", durationMs: 14000, xp: 680, levelRequired: 71,
+      skill: "tailoring", category: "robe_runewoven", durationMs: 14000, xp: 680, levelRequired: 71,
       // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_ghostweave (Menge unverändert).
       inputs: [{ itemId: "aether_essence", qty: 5 }, { itemId: "void_rune", qty: 8 }, { itemId: "cloth_ghostweave", qty: 3 }],
       loot: [{ itemId: "runewoven_robe_legs", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_handwraps: {
       id: "craft_runewoven_handwraps", name: { en: "Bind Runewoven Handwraps", de: "Runenwirk-Handwickel binden" },
-      skill: "leatherworking", category: "robe_runewoven", durationMs: 13000, xp: 631, levelRequired: 71,
+      skill: "tailoring", category: "robe_runewoven", durationMs: 13000, xp: 631, levelRequired: 71,
       inputs: [{ itemId: "aether_essence", qty: 3 }, { itemId: "void_rune", qty: 6 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "runewoven_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_treads: {
       id: "craft_runewoven_treads", name: { en: "Bind Runewoven Treads", de: "Runenwirk-Schrittschuhe binden" },
-      skill: "leatherworking", category: "robe_runewoven", durationMs: 13000, xp: 631, levelRequired: 71,
+      skill: "tailoring", category: "robe_runewoven", durationMs: 13000, xp: 631, levelRequired: 71,
       inputs: [{ itemId: "aether_essence", qty: 3 }, { itemId: "void_rune", qty: 6 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "runewoven_treads", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_mitre: {
       id: "craft_godspark_mitre", name: { en: "Bind Godspark Mitre", de: "Götzenfunken-Mitra binden" },
-      skill: "leatherworking", category: "robe_godspark", durationMs: 16000, xp: 1802, levelRequired: 88,
+      skill: "tailoring", category: "robe_godspark", durationMs: 16000, xp: 1802, levelRequired: 88,
       inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "godspark_mitre", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_vestment: {
       id: "craft_godspark_vestment", name: { en: "Weave Godspark Vestment", de: "Götzenfunken-Ornat weben" },
-      skill: "leatherworking", category: "robe_godspark", durationMs: 21000, xp: 2611, levelRequired: 90,
+      skill: "tailoring", category: "robe_godspark", durationMs: 21000, xp: 2611, levelRequired: 90,
       // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_starweave (Menge unverändert).
       inputs: [{ itemId: "void_rune", qty: 12 }, { itemId: "aether_essence", qty: 6 }, { itemId: "cloth_starweave", qty: 4 }],
       loot: [{ itemId: "godspark_vestment", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_skirt: {
       id: "craft_godspark_skirt", name: { en: "Weave Godspark Skirt", de: "Götzenfunken-Gewand (Beine) weben" },
-      skill: "leatherworking", category: "robe_godspark", durationMs: 17500, xp: 2071, levelRequired: 89,
+      skill: "tailoring", category: "robe_godspark", durationMs: 17500, xp: 2071, levelRequired: 89,
       inputs: [{ itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "warhide", qty: 3 }],
       loot: [{ itemId: "godspark_skirt", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_handwraps: {
       id: "craft_godspark_handwraps", name: { en: "Bind Godspark Handwraps", de: "Götzenfunken-Handwickel binden" },
-      skill: "leatherworking", category: "robe_godspark", durationMs: 15000, xp: 1689, levelRequired: 88,
+      skill: "tailoring", category: "robe_godspark", durationMs: 15000, xp: 1689, levelRequired: 88,
       inputs: [{ itemId: "void_rune", qty: 7 }, { itemId: "aether_essence", qty: 3 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "godspark_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_sandals: {
       id: "craft_godspark_sandals", name: { en: "Bind Godspark Sandals", de: "Götzenfunken-Sandalen binden" },
-      skill: "leatherworking", category: "robe_godspark", durationMs: 15000, xp: 1689, levelRequired: 88,
+      skill: "tailoring", category: "robe_godspark", durationMs: 15000, xp: 1689, levelRequired: 88,
       inputs: [{ itemId: "void_rune", qty: 7 }, { itemId: "aether_essence", qty: 3 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "godspark_sandals", chance: 1, min: 1, max: 1 }],
     },
@@ -12259,32 +12284,32 @@ export const content: ContentDB = {
     // (godspark L85 → voidweave L99 hatte eine 14-Level-Lücke) ─────────────────────────────────
     craft_starweave_coronet: {
       id: "craft_starweave_coronet", name: { en: "Bind Starweave Coronet", de: "Sterngewebe-Krone binden" },
-      skill: "leatherworking", category: "robe_starweave", durationMs: 16000, xp: 2308, levelRequired: 93,
+      skill: "tailoring", category: "robe_starweave", durationMs: 16000, xp: 2308, levelRequired: 93,
       inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "starweave_coronet", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_vestment: {
       id: "craft_starweave_vestment", name: { en: "Bind Starweave Vestment", de: "Sterngewebe-Ornat binden" },
-      skill: "leatherworking", category: "robe_starweave", durationMs: 21000, xp: 3029, levelRequired: 93,
+      skill: "tailoring", category: "robe_starweave", durationMs: 21000, xp: 3029, levelRequired: 93,
       // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_starweave (Menge unverändert).
       inputs: [{ itemId: "void_rune", qty: 10 }, { itemId: "aether_essence", qty: 5 }, { itemId: "cloth_starweave", qty: 3 }],
       loot: [{ itemId: "starweave_vestment", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_skirt: {
       id: "craft_starweave_skirt", name: { en: "Bind Starweave Skirt", de: "Sterngewebe-Gewand binden" },
-      skill: "leatherworking", category: "robe_starweave", durationMs: 17500, xp: 2524, levelRequired: 93,
+      skill: "tailoring", category: "robe_starweave", durationMs: 17500, xp: 2524, levelRequired: 93,
       inputs: [{ itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "warhide", qty: 3 }],
       loot: [{ itemId: "starweave_skirt", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_handwraps: {
       id: "craft_starweave_handwraps", name: { en: "Bind Starweave Handwraps", de: "Sterngewebe-Handwickel binden" },
-      skill: "leatherworking", category: "robe_starweave", durationMs: 15000, xp: 2164, levelRequired: 93,
+      skill: "tailoring", category: "robe_starweave", durationMs: 15000, xp: 2164, levelRequired: 93,
       inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "starweave_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_sandals: {
       id: "craft_starweave_sandals", name: { en: "Bind Starweave Sandals", de: "Sterngewebe-Sandalen binden" },
-      skill: "leatherworking", category: "robe_starweave", durationMs: 15000, xp: 2164, levelRequired: 93,
+      skill: "tailoring", category: "robe_starweave", durationMs: 15000, xp: 2164, levelRequired: 93,
       inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
       loot: [{ itemId: "starweave_sandals", chance: 1, min: 1, max: 1 }],
     },
@@ -12295,7 +12320,7 @@ export const content: ContentDB = {
     craft_ember_robe_hood: {
       id: "craft_ember_robe_hood", name: { en: "Bind Ember Cowl", de: "Glut-Kapuze binden" },
       // balance-fix 2026-07: xp 30→10 (was 3.6x target, a spike that dead-tiered scaled/aether/arcane for 26 levels)
-      skill: "leatherworking", category: "robe_ember", durationMs: 9000, xp: 58, levelRequired: 30,
+      skill: "tailoring", category: "robe_ember", durationMs: 9000, xp: 58, levelRequired: 30,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_linen (Menge unverändert).
       inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "cloth_linen", qty: 2 }],
       loot: [{ itemId: "ember_robe_hood", chance: 1, min: 1, max: 1 }],
@@ -12303,7 +12328,7 @@ export const content: ContentDB = {
     craft_ember_robe_body: {
       id: "craft_ember_robe_body", name: { en: "Weave Ember Robe", de: "Glut-Robe weben" },
       // balance-fix 2026-07: xp 42→14 (was 3.6x target, a spike that dead-tiered scaled/aether/arcane for 26 levels)
-      skill: "leatherworking", category: "robe_ember", durationMs: 11000, xp: 78, levelRequired: 32,
+      skill: "tailoring", category: "robe_ember", durationMs: 11000, xp: 78, levelRequired: 32,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_linen (Menge unverändert).
       inputs: [{ itemId: "ember_essence", qty: 5 }, { itemId: "fire_rune", qty: 3 }, { itemId: "cloth_linen", qty: 3 }],
       loot: [{ itemId: "ember_robe_body", chance: 1, min: 1, max: 1 }],
@@ -12311,7 +12336,7 @@ export const content: ContentDB = {
     craft_ember_robe_legs: {
       id: "craft_ember_robe_legs", name: { en: "Weave Ember Skirt", de: "Glut-Gewand (Beine) weben" },
       // balance-fix 2026-07: xp 36→12 (was 3.6x target, a spike that dead-tiered scaled/aether/arcane for 26 levels)
-      skill: "leatherworking", category: "robe_ember", durationMs: 10000, xp: 67, levelRequired: 31,
+      skill: "tailoring", category: "robe_ember", durationMs: 10000, xp: 67, levelRequired: 31,
       // 1.2.0 „Fasern und Fallen" §1.5: scaled_leather → cloth_linen (Menge unverändert).
       inputs: [{ itemId: "ember_essence", qty: 4 }, { itemId: "fire_rune", qty: 2 }, { itemId: "cloth_linen", qty: 2 }],
       loot: [{ itemId: "ember_robe_legs", chance: 1, min: 1, max: 1 }],
@@ -12322,14 +12347,14 @@ export const content: ContentDB = {
     craft_ember_handwraps: {
       id: "craft_ember_handwraps", name: { en: "Stitch Ember Handwraps", de: "Glut-Handwickel nähen" },
       // balance-fix 2026-07: xp 13→9 (part of the ember-set spike fix, matches the re-tuned robe pieces)
-      skill: "leatherworking", category: "robe_ember", durationMs: 8000, xp: 51, levelRequired: 30,
+      skill: "tailoring", category: "robe_ember", durationMs: 8000, xp: 51, levelRequired: 30,
       inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "scaled_leather", qty: 1 }],
       loot: [{ itemId: "ember_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_ember_sandals: {
       id: "craft_ember_sandals", name: { en: "Bind Ember Sandals", de: "Glut-Sandalen binden" },
       // balance-fix 2026-07: xp 13→9 (part of the ember-set spike fix, matches the re-tuned robe pieces)
-      skill: "leatherworking", category: "robe_ember", durationMs: 8000, xp: 51, levelRequired: 30,
+      skill: "tailoring", category: "robe_ember", durationMs: 8000, xp: 51, levelRequired: 30,
       inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "scaled_leather", qty: 1 }],
       loot: [{ itemId: "ember_sandals", chance: 1, min: 1, max: 1 }],
     },
@@ -12373,32 +12398,32 @@ export const content: ContentDB = {
     // XP: target_xph(99) ≈ 200 000 xph
     craft_voidweave_mitre: {
       id: "craft_voidweave_mitre", name: { en: "Bind Voidweave Mitre", de: "Leerengewebe-Mitra binden" },
-      skill: "leatherworking", category: "robe_voidweave", durationMs: 15000, xp: 2912, levelRequired: 99,
+      skill: "tailoring", category: "robe_voidweave", durationMs: 15000, xp: 2912, levelRequired: 99,
       inputs: [{ itemId: "warhide", qty: 2 }, { itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
       loot: [{ itemId: "voidweave_mitre", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_vestment: {
       id: "craft_voidweave_vestment", name: { en: "Weave Voidweave Vestment", de: "Leerengewebe-Ornat weben" },
-      skill: "leatherworking", category: "robe_voidweave", durationMs: 20000, xp: 3883, levelRequired: 99,
+      skill: "tailoring", category: "robe_voidweave", durationMs: 20000, xp: 3883, levelRequired: 99,
       // 1.2.0 „Fasern und Fallen" §1.5: warhide → cloth_starweave (Menge unverändert).
       inputs: [{ itemId: "cloth_starweave", qty: 4 }, { itemId: "void_rune", qty: 12 }, { itemId: "aether_essence", qty: 6 }, { itemId: "idol_shard", qty: 4 }],
       loot: [{ itemId: "voidweave_vestment", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_skirt: {
       id: "craft_voidweave_skirt", name: { en: "Weave Voidweave Skirt", de: "Leerengewebe-Gewand (Beine) weben" },
-      skill: "leatherworking", category: "robe_voidweave", durationMs: 17000, xp: 3300, levelRequired: 99,
+      skill: "tailoring", category: "robe_voidweave", durationMs: 17000, xp: 3300, levelRequired: 99,
       inputs: [{ itemId: "warhide", qty: 3 }, { itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "idol_shard", qty: 3 }],
       loot: [{ itemId: "voidweave_skirt", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_handwraps: {
       id: "craft_voidweave_handwraps", name: { en: "Bind Voidweave Handwraps", de: "Leerengewebe-Handwickel binden" },
-      skill: "leatherworking", category: "robe_voidweave", durationMs: 13000, xp: 2524, levelRequired: 99,
+      skill: "tailoring", category: "robe_voidweave", durationMs: 13000, xp: 2524, levelRequired: 99,
       inputs: [{ itemId: "warhide", qty: 2 }, { itemId: "void_rune", qty: 6 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
       loot: [{ itemId: "voidweave_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_sandals: {
       id: "craft_voidweave_sandals", name: { en: "Bind Voidweave Sandals", de: "Leerengewebe-Sandalen binden" },
-      skill: "leatherworking", category: "robe_voidweave", durationMs: 13000, xp: 2524, levelRequired: 99,
+      skill: "tailoring", category: "robe_voidweave", durationMs: 13000, xp: 2524, levelRequired: 99,
       inputs: [{ itemId: "warhide", qty: 2 }, { itemId: "void_rune", qty: 6 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
       loot: [{ itemId: "voidweave_sandals", chance: 1, min: 1, max: 1 }],
     },
@@ -12923,7 +12948,8 @@ export const content: ContentDB = {
     },
     craft_silk_mantle: {
       id: "craft_silk_mantle", name: { en: "Craft Silk Mantle", de: "Spinnenseiden-Mantel weben" },
-      skill: "leatherworking", category: "leather_scaled", durationMs: 9000, xp: 58, levelRequired: 30,
+      // Skill-Split Schneidern (SAVE 86): Umhang ⇒ tailoring, Kategorie capes (war leather_scaled).
+      skill: "tailoring", category: "capes", durationMs: 9000, xp: 58, levelRequired: 30,
       // 1.2.0 „Fasern und Fallen" §1.5: cured_leather → cloth_linen (Menge unverändert).
       inputs: [{ itemId: "spider_silk", qty: 4 }, { itemId: "cloth_linen", qty: 1 }],
       loot: [{ itemId: "silk_mantle", chance: 1, min: 1, max: 1 }],
@@ -12936,8 +12962,10 @@ export const content: ContentDB = {
     },
     craft_void_shroud: {
       id: "craft_void_shroud", name: { en: "Craft Void Shroud", de: "Leeren-Umhang weben" },
-      skill: "leatherworking", category: "leather_warhide", durationMs: 13000, xp: 469, levelRequired: 65,
-      inputs: [{ itemId: "void_thread", qty: 3 }, { itemId: "scarred_hide", qty: 2 }, { itemId: "steel_bar", qty: 1 }, { itemId: "shade_rune", qty: 2 }],
+      // Skill-Split Schneidern (SAVE 86): Umhang ⇒ tailoring, Kategorie capes (war leather_warhide);
+      // Hauptstoff Geistertuch (Weben L60) statt scarred_hide + steel_bar, Leerenfäden/Schattenrune bleiben.
+      skill: "tailoring", category: "capes", durationMs: 13000, xp: 469, levelRequired: 65,
+      inputs: [{ itemId: "void_thread", qty: 3 }, { itemId: "cloth_ghostweave", qty: 3 }, { itemId: "shade_rune", qty: 2 }],
       loot: [{ itemId: "void_shroud", chance: 1, min: 1, max: 1 }],
     },
 
@@ -15113,6 +15141,13 @@ export const content: ContentDB = {
     { id: "ach_skill_leatherworking_75", name: { en: "Crafting Master", de: "Handwerk-Meister" }, description: { en: "Reach Crafting level 75.", de: "Erreiche Handwerk Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "leatherworking", count: 75 } },
     { id: "ach_skill_leatherworking_90", name: { en: "Crafting Legend", de: "Handwerk-Legende" }, description: { en: "Reach Crafting level 90.", de: "Erreiche Handwerk Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "leatherworking", count: 90 } },
     { id: "ach_skill_leatherworking_99", name: { en: "Crafting Maxed", de: "Handwerk-Maximiert" }, description: { en: "Reach Crafting level 99.", de: "Erreiche Handwerk Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "leatherworking", count: 99 } },
+    // Skill-Split Schneidern (SAVE 86, 28.08.2026): 22. Skill "tailoring" — Leiter nach demselben Muster.
+    // Steam-Set: Icons bestellt Claude bei Mira; steam-set.csv bleibt bis zum Chef-Entscheid bei 67.
+    { id: "ach_skill_tailoring_25", name: { en: "Tailoring Journeyman", de: "Schneidern-Geselle" }, description: { en: "Reach Tailoring level 25.", de: "Erreiche Schneidern Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "tailoring", count: 25 } },
+    { id: "ach_skill_tailoring_50", name: { en: "Tailoring Veteran", de: "Schneidern-Veteran" }, description: { en: "Reach Tailoring level 50.", de: "Erreiche Schneidern Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "tailoring", count: 50 } },
+    { id: "ach_skill_tailoring_75", name: { en: "Tailoring Master", de: "Schneidern-Meister" }, description: { en: "Reach Tailoring level 75.", de: "Erreiche Schneidern Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "tailoring", count: 75 } },
+    { id: "ach_skill_tailoring_90", name: { en: "Tailoring Legend", de: "Schneidern-Legende" }, description: { en: "Reach Tailoring level 90.", de: "Erreiche Schneidern Stufe 90." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 90 } },
+    { id: "ach_skill_tailoring_99", name: { en: "Tailoring Maxed", de: "Schneidern-Maximiert" }, description: { en: "Reach Tailoring level 99.", de: "Erreiche Schneidern Stufe 99." }, category: "skilling", rarity: "epic", condition: { type: "skill_level", target: "tailoring", count: 99 } },
     { id: "ach_skill_jewelcrafting_25", name: { en: "Jewelcrafting Journeyman", de: "Juwelierskunst-Geselle" }, description: { en: "Reach Jewelcrafting level 25.", de: "Erreiche Juwelierskunst Stufe 25." }, category: "skilling", rarity: "uncommon", condition: { type: "skill_level", target: "jewelcrafting", count: 25 } },
     { id: "ach_skill_jewelcrafting_50", name: { en: "Jewelcrafting Veteran", de: "Juwelierskunst-Veteran" }, description: { en: "Reach Jewelcrafting level 50.", de: "Erreiche Juwelierskunst Stufe 50." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 50 } },
     { id: "ach_skill_jewelcrafting_75", name: { en: "Jewelcrafting Master", de: "Juwelierskunst-Meister" }, description: { en: "Reach Jewelcrafting level 75.", de: "Erreiche Juwelierskunst Stufe 75." }, category: "skilling", rarity: "rare", condition: { type: "skill_level", target: "jewelcrafting", count: 75 } },
@@ -15791,7 +15826,7 @@ export const content: ContentDB = {
     // Rüstungs-Trinität / Itemization 2.5 (armor-trinity-spec §11): Zwischen-Tier L85→L99.
     { id: "robe_starweave", name: { en: "Starweave Vestments", de: "Sterngewebe-Ornat" } },
     { id: "robe_voidweave", name: { en: "Voidweave Vestments", de: "Leerengewebe-Ornat" } },
-    // Crafting: Umhänge
+    // Schneidern (seit SAVE 86): Umhänge
     { id: "capes", name: { en: "Capes", de: "Umhänge" } },
     // Fletching: Holzschilde (tote Holztiers, QA-Run3 Fix C)
     { id: "shield_wood", name: { en: "Wood Shields", de: "Holzschilde" } },

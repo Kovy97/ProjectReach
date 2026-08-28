@@ -67,7 +67,7 @@ function withoutDiscovered(save: SaveShape): SaveShape {
 }
 
 describe("Migration v84 → v85 (Jagen)", () => {
-  it("v84-Fixture: huntTraps = Default, huntCatchSeq 0, stats.huntCatches 0 — sonst byte-genau; Round-Trip stabil", () => {
+  it("v84-Fixture: huntTraps = Default, huntCatchSeq 0, stats.huntCatches 0 (+ v86-Konto tailoring 0) — sonst byte-genau; Round-Trip stabil", () => {
     const json = readFileSync(join(VAULT_DIR, "v84-synthetic-1.2.0.json"), "utf-8");
     const raw = JSON.parse(json) as SaveShape;
     expect(raw.version).toBe(84);
@@ -98,6 +98,7 @@ describe("Migration v84 → v85 (Jagen)", () => {
     ];
     erwartet.state.activeKit = 0;
     erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026): Fänge je Art, Default {}
+    erwartet.state.skills.tailoring = { xp: 0 }; // v86 Skill-Split Schneidern (28.08.2026): neues Konto, hier 0 (kein Handwerk-XP/Stoff im Craft-Log)
     delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
@@ -255,7 +256,7 @@ describe("OfflineSummary.huntCatches", () => {
 });
 
 describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
-  it("lädt (Kette v85, aktuell ohne Migration), trägt Jagen-XP, Fang-Breadcrumb und Fang-Zähler; Sanitize-Fixpunkt", () => {
+  it("lädt (Kette v85 → v86), trägt Jagen-XP, Fang-Breadcrumb und Fang-Zähler; Sanitize-Fixpunkt bis auf das v86-Konto", () => {
     const json = readFileSync(join(VAULT_DIR, "v85-synthetic-1.2.0.json"), "utf-8");
     const raw = JSON.parse(json) as SaveShape;
     expect(raw.version).toBe(85);
@@ -275,7 +276,14 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     }
     expect(s.monsterKills.boar).toBeGreaterThan(0);
     expect(huntBaitCount(s)).toBeGreaterThan(0);
-    // Sanitize-Fixpunkt: das Fixture IST bereits die gehärtete Form.
-    expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(raw);
+    // Sanitize-Fixpunkt: das Fixture IST bereits die gehärtete Form — bis auf die v86-Kette (Skill-Split
+    // Schneidern, 28.08.2026): Version 86 und das neue Konto `skills.tailoring = { xp: 0 }` (das Fixture
+    // trägt weder Handwerk-XP noch Stoff-Rezepte im Craft-Log; die XP-Aufteilung pinnt
+    // tailoring-split-persistence.test.ts).
+    const erwartet = JSON.parse(json) as SaveShape;
+    erwartet.version = SAVE_VERSION;
+    erwartet.state.version = SAVE_VERSION;
+    erwartet.state.skills.tailoring = { xp: 0 };
+    expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

@@ -3781,4 +3781,19 @@ export const zh: Record<string, string> = {
   "achievements:ach_skill_hunting_90:description": "将狩猎提升至 90 级。",
   "achievements:ach_skill_hunting_99:name": "狩猎满级",
   "achievements:ach_skill_hunting_99:description": "将狩猎提升至 99 级。",
+
+  // ── Skill-Split "Schneidern" (SAVE_VERSION 86, 28.08.2026): Skill, Meisterring, Erfolge ──────────
+  "skills:tailoring:name": "裁缝",
+  "items:ring_master_tailoring:name": "裁缝大师之戒",
+  "items:ring_master_tailoring:description": "由一双从不浪费一针的手穿线而成。5%几率使工艺节省材料。",
+  "achievements:ach_skill_tailoring_25:name": "裁缝熟手",
+  "achievements:ach_skill_tailoring_25:description": "裁缝达到 25 级。",
+  "achievements:ach_skill_tailoring_50:name": "裁缝老手",
+  "achievements:ach_skill_tailoring_50:description": "将裁缝提升至 50 级。",
+  "achievements:ach_skill_tailoring_75:name": "裁缝大师",
+  "achievements:ach_skill_tailoring_75:description": "裁缝达到 75 级。",
+  "achievements:ach_skill_tailoring_90:name": "裁缝传奇",
+  "achievements:ach_skill_tailoring_90:description": "将裁缝提升至 90 级。",
+  "achievements:ach_skill_tailoring_99:name": "裁缝满级",
+  "achievements:ach_skill_tailoring_99:description": "将裁缝提升至 99 级。",
 };

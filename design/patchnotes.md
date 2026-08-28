@@ -117,6 +117,24 @@ Zellen-Streifen statt eines einzelnen `<img>`. `MISSILE_FLIGHT_MS` 200→560ms, 
 (+30%). Erste Serie im neuen Schema: Feuer-Geschosse v1–v3 + Crit, Feuer-Einschläge v1–v3
 (`CODEX/work/2026-08-28-kampfeffekte-feuer/`); alte Einzeldateien bleiben als Rückfall.*
 
+**Handwerk wird geteilt: Handwerk und Schneidern (Chef-Entscheid 28.08.):** DE: Handwerk war zu groß geworden. Ab jetzt
+kümmert sich Handwerk um Leder, Bögen, Sehnen und Schilde, und der neue Skill Schneidern um das Weben der fünf Stoffe, alle
+Magier-Roben und alle Umhänge. Umhänge werden dabei aus Stoff-Stufen gefertigt statt aus Leder. Dein bisheriger Fortschritt
+wird nach dem aufgeteilt, was du tatsächlich hergestellt hast: Die Erfahrung aus Roben, Umhängen und Stoffen wandert ins
+Schneidern, der Rest bleibt im Handwerk; angelegte Ausrüstung bleibt angelegt. Ein Wort vom Entwickler: Es tut mir leid, dass
+diese Aufteilung deinen Handwerks-Fortschritt auseinanderzieht. Für das Spiel im Ganzen war es die bessere Entscheidung, und
+ich wollte sie lieber jetzt treffen als später. / EN: Crafting is split into Crafting (leather, bows, strings, shields) and the
+new Tailoring skill (weaving, all mage robes, all capes; capes now use cloth tiers). Your progress is divided by what you
+actually crafted: XP from robes, capes and cloth moves to Tailoring, the rest stays in Crafting, and equipped gear stays
+equipped. A word from the developer: I am sorry that this splits your Crafting progress. It was the better call for the game as
+a whole, and better made now than later.
+
+*Dev-Notiz: SAVE 86, Migration `tailoringXpFromCraftLog` (Σ craftedById × Rezept-XP über die 66 Schneidern-Rezepte, geklemmt auf
+das Handwerks-Konto), Handwerk 88 Rezepte; Capes auf Stoff (Tabelle in spec-technik §6); Skill-Def ohne trains; 5 Erfolge
+`ach_skill_tailoring_*`, Steam-ID MASTER_TAILORING; `ring_master_tailoring` (int 2 / wis 2, inputSaver 5 %), Vollender-Ring
+verlangt 22 Skills; Vault-Fixture v86; Client: Sidebar/Skill-Seite/Meisterschaft/Onboarding/Erfolge ×7 Sprachen, Update-Hinweis;
+Mira-Assets (Sidebar-Icon, Kulisse, Karte, Ring, Steam-Plakette) eingebunden.*
+
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
 Kampf macht, mit Takt („Diebesgriff. Alle 6 s: 40 % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit
