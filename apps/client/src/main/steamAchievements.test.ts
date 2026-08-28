@@ -43,10 +43,10 @@ describe("Steam-Achievement-Mapping", () => {
     expect(missing, `unbekannte IDs im Mapping: ${missing.join(", ")}`).toEqual([]);
   });
 
-  it("Mapping ist exakt das eingefrorene Steam-Set (67 Paare, API-Namen + Auslöser aus der CSV)", () => {
+  it("Mapping ist exakt das eingefrorene Steam-Set (69 Paare, API-Namen + Auslöser aus der CSV; 1.2.0: MASTER_TAILORING, MASTER_HUNTING)", () => {
     const rows = csvRows();
-    expect(rows.length).toBe(67);
-    expect(Object.keys(STEAM_ACHIEVEMENTS).length).toBe(67);
+    expect(rows.length).toBe(69);
+    expect(Object.keys(STEAM_ACHIEVEMENTS).length).toBe(69);
     for (const r of rows) expect(STEAM_ACHIEVEMENTS[r.id], `${r.id} → ${r.api}`).toBe(r.api);
   });
 

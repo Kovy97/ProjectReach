@@ -1,6 +1,6 @@
 # Steam-Erfolge: FINALES SET (eingefroren 27.08.2026, Chef-Auswahl)
 
-67 Erfolge, davon 5 versteckt, 34 brauchen neue interne Erfolge. Raus: Master of All Sets, Feathers Everywhere, Bull-Headed.
+69 Erfolge (1.2.0: +MASTER_TAILORING, +MASTER_HUNTING), davon 5 versteckt, 34 brauchen neue interne Erfolge. Raus: Master of All Sets, Feathers Everywhere, Bull-Headed.
 
 - `CH01_THE_FIRST_PAGE` — The First Page: Finish Chronicle chapter 1: The First Page.
 - `BLOODED` — Blooded: Defeat 100 enemies in the Reach.

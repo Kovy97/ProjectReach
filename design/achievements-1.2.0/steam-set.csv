@@ -46,6 +46,8 @@ MASTER_FORAGING,Master Forager,Reach level 99 in Foraging.,no,ach_skill_foraging
 MASTER_COOKING,Master Cook,Reach level 99 in Cooking.,no,ach_skill_cooking_99,"Kessel mit Seelenfeuer-Bankett, goldener Meisterrahmen"
 MASTER_SMITHING,Master Smith,Reach level 99 in Smithing.,no,ach_skill_smithing_99,"Amboss mit Götzeneisen-Schwert, goldener Meisterrahmen"
 MASTER_LEATHERWORKING,Master Crafter,Reach level 99 in Crafting.,no,ach_skill_leatherworking_99,"Nadel, Faden und Leerenhaut, goldener Meisterrahmen"
+MASTER_TAILORING,Master Tailor,Reach level 99 in Tailoring.,no,ach_skill_tailoring_99,"Nadel und Faden ueber gefaltetem Sternweb, goldener Meisterrahmen (Mira 28.08.)"
+MASTER_HUNTING,Master Hunter,Reach level 99 in Hunting.,no,ach_skill_hunting_99,"Eisenschlinge mit Koedertopf, goldener Meisterrahmen"
 MASTER_FARMING,Master Farmer,Reach level 99 in Farming.,no,ach_skill_farming_99,"Godbloom-Blüte auf neun Beeten, goldener Meisterrahmen"
 MASTER_THIEVING,Master Thief,Reach level 99 in Thieving.,no,ach_skill_thieving_99,"Dietrich und Götzenreliquie, goldener Meisterrahmen"
 MASTER_JEWELCRAFTING,Master Jeweler,Reach level 99 in Jewelcrafting.,no,ach_skill_jewelcrafting_99,"Godgem-Amulett auf Samt, goldener Meisterrahmen"

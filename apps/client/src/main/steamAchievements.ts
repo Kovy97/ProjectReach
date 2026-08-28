@@ -59,6 +59,8 @@ export const STEAM_ACHIEVEMENTS: Readonly<Record<string, string>> = {
   "ach_skill_cooking_99": "MASTER_COOKING",
   "ach_skill_smithing_99": "MASTER_SMITHING",
   "ach_skill_leatherworking_99": "MASTER_LEATHERWORKING",
+  "ach_skill_tailoring_99": "MASTER_TAILORING", // 1.2.0 Skill-Split (Chef 29.08.2026)
+  "ach_skill_hunting_99": "MASTER_HUNTING", // 1.2.0 neuer Skill Jagen
   "ach_skill_farming_99": "MASTER_FARMING",
   "ach_skill_thieving_99": "MASTER_THIEVING",
   "ach_skill_jewelcrafting_99": "MASTER_JEWELCRAFTING",
