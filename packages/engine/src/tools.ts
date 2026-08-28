@@ -21,6 +21,12 @@ export function bestToolSpeed(state: GameState, content: ContentDB, skill: Skill
 
   for (const slot of state.inventory.slots) consider(slot?.itemId ?? null);
   for (const itemId of Object.values(state.character.equipment)) consider(itemId);
+  // Ausrüstungs-Kits (28.08.2026): ein Werkzeug in einem inaktiven Kit gehört dem Spieler genauso — es zählt,
+  // sonst müsste er zum Sammeln das Kit wechseln (CEO-Entscheid auf offenen Punkt des Kits-Agenten).
+  state.equipKits?.forEach((kit, i) => {
+    if (i === state.activeKit) return;
+    for (const itemId of Object.values(kit.equipment)) consider(itemId);
+  });
 
   return best;
 }
