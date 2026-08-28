@@ -28,7 +28,7 @@ function secs(ms: number): string {
  * `weaponEffect.<kind>` (en+de, translations.ts). Platzhalter im Template:
  *   {chance}    — effect.chance als gerundeter Prozentwert (0.22 → "22")
  *   {magnitude} — effect.magnitude als gerundeter Prozentwert (Anteils-Boni, DoT-%/s-Chancen …)
- *   {flat}      — effect.magnitude als Rohwert (formatStat, 1 Dezimale) — FLAT-Effekte (Mana/HP/Schaden)
+ *   {flat}      — effect.magnitude als Rohwert (formatStat, 1 Dezimale) — FLAT-Effekte (Ward/HP/Schaden)
  *   {threshold} — effect.threshold als gerundeter Prozentwert
  *   {stacks}    — effect.stacks als Ganzzahl
  *   {duration}  — effect.durationMs in Sekunden (formatStat, 1 Dezimale)

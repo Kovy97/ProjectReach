@@ -167,7 +167,7 @@ const PET_ABILITY_IMAGE: Record<PetAbilityKind, PetFxImage> = {
   shield: "ward",
   heal: "ward",
   blockNextEnemyHit: "ward",
-  manaRestore: "ward",
+  wardRestore: "ward",
   lifestealBurst: "ward",
   accuracyDownEnemy: "mark",
   enemyAttackDelay: "mark",
@@ -184,7 +184,7 @@ export function petFxImageFor(kind: PetAbilityKind): PetFxImage {
 
 /**
  * Ziel-Seite eines Begleiter-Effekts (Konzept §2 D: „Effekt am Ziel (Gegner) bzw. am Spieler
- * bei Schutz/Heilung"). Nur die "ward"-Bildfamilie (shield/heal/blockNextEnemyHit/manaRestore/
+ * bei Schutz/Heilung"). Nur die "ward"-Bildfamilie (shield/heal/blockNextEnemyHit/wardRestore/
  * lifestealBurst) trifft den Spieler, alles andere den Gegner.
  */
 export function petFxTargetSide(image: PetFxImage): "player" | "enemy" {

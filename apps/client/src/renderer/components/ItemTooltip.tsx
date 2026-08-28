@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, meetsRequirements, spellFocusMult } from "@hearthforge/engine";
 import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
-import { ATTRIBUTES, EQUIP_SLOT_LABELS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, MANA_PER_CAST, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
+import { ATTRIBUTES, EQUIP_SLOT_LABELS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
 import { isEnchantable, runeFitsHint, runeTargetLabel } from "../runeTargets";
 import { useGameStateMaybe } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -377,7 +377,6 @@ export function suffixEffectParts(
   if (bonus.maxHp) parts.push(`${fmtBonus(bonus.maxHp)} ${t("stat.hp")}`);
   if (bonus.hpRegenPerSec) parts.push(`+${formatDamage(bonus.hpRegenPerSec)}/s ${t("stat.hpRegen")}`);
   if (bonus.maxMana) parts.push(`${fmtBonus(bonus.maxMana)} ${t("stat.maxMana")}`);
-  if (bonus.manaRegen) parts.push(`+${formatStat(bonus.manaRegen)}/s ${t("stat.manaRegen")}`);
   if (bonus.critChance) parts.push(`+${Math.round(bonus.critChance * 100)}% ${t("stat.critChance")}`);
   if (bonus.critDamage) parts.push(`+${Math.round(bonus.critDamage * 100)}% ${t("stat.critDamage")}`);
   if (bonus.lifesteal) parts.push(`+${Math.round(bonus.lifesteal * 100)}% ${t("stat.lifesteal")}`);
@@ -462,7 +461,6 @@ const BONUS_COMPARE_KEYS: (keyof EquipBonus)[] = [
   "maxHp",
   "hpRegenPerSec",
   "maxMana",
-  "manaRegen",
   "critChance",
   "critDamage",
   "attackIntervalMs",
@@ -801,12 +799,6 @@ function OffenseGroup({
     rows.push(<div key="2hoff" className="itip-tag itip-tool-hint">{t("itip.delta.twoHandReplacesOffhand")}</div>);
   }
 
-  // Mana cost — shown for magic weapons (uses item.manaCost if set, otherwise global default).
-  if (item.weaponStyle === "magic") {
-    const cost = item.manaCost ?? MANA_PER_CAST;
-    rows.push(<StatRow key="mc" icon="✦" label={t("item.manaCost")} value={String(cost)} />);
-  }
-
   // Zauberfokus (Chef-GO 28.08.2026, bewusster Magier-Buff): Magiewaffen wachsen mit INT. Zeile 1
   // „+0,3 % Schaden je INT" (Item-Feld `spellFocus`), Zeile 2 nur mit geladenem Charakter: die
   // Waffenspanne bei SEINEM aktuellen INT — exakt die computeStats-Rechnung (`spellFocusMult` ×
@@ -888,8 +880,6 @@ function DefenseGroup({
     rows.push(<StatRow key="hregen" icon={statIcon("icon_attribute_hp", "💚")} label={t("stat.hpRegen")} value={`+${formatDamage(b.hpRegenPerSec)}/s`} delta={deltaTagFor(deltaMap, "hpRegenPerSec", b.hpRegenPerSec)} />);
   if (b?.maxMana)
     rows.push(<StatRow key="mana" icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(b.maxMana)} delta={deltaTagFor(deltaMap, "maxMana", b.maxMana)} />);
-  if (b?.manaRegen)
-    rows.push(<StatRow key="mregen" icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.manaRegen")} value={`+${formatStat(b.manaRegen)}/s`} delta={deltaTagFor(deltaMap, "manaRegen", b.manaRegen)} />);
 
   // ── Rüstungs-Trinität: je Klassen-Schicht NUR zeigen, wenn das Feld > 0 (Chef-Vorgabe) ──
   if (item.armorRating) {
@@ -1092,7 +1082,6 @@ function MiscRows({
     if (bb.critChance) rows.push(<StatRow key="bcc" icon={statIcon("icon_attribute_crit_chance", "🎲")} label={t("stat.critChance")} value={`+${Math.round(bb.critChance * 100)}%`} />);
     if (bb.critDamage) rows.push(<StatRow key="bcd" icon={statIcon("icon_attribute_critdamage", "💥")} label={t("stat.critDamage")} value={`+${Math.round(bb.critDamage * 100)}%`} />);
     if (bb.maxMana) rows.push(<StatRow key="bmana" icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(bb.maxMana)} />);
-    if (bb.manaRegen) rows.push(<StatRow key="bmregen" icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.manaRegen")} value={`+${formatStat(bb.manaRegen)}/s`} />);
     if (bb.attackIntervalMs) {
       const v = bb.attackIntervalMs;
       const sign = v > 0 ? "+" : "";
@@ -1186,8 +1175,6 @@ function SuffixGroup({
     rows.push(<StatRow key="shregen" tone={tone} icon={statIcon("icon_attribute_hp", "💚")} label={t("stat.hpRegen")} value={`+${formatDamage(bonus.hpRegenPerSec)}/s`} />);
   if (bonus.maxMana)
     rows.push(<StatRow key="smana" tone={tone} icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.maxMana")} value={fmtBonus(bonus.maxMana)} />);
-  if (bonus.manaRegen)
-    rows.push(<StatRow key="smregen" tone={tone} icon={statIcon("icon_attribute_mana", "✦")} label={t("stat.manaRegen")} value={`+${formatStat(bonus.manaRegen)}/s`} />);
   if (bonus.critChance)
     rows.push(<StatRow key="scc" tone={tone} icon={statIcon("icon_attribute_crit_chance", "🎲")} label={t("stat.critChance")} value={`+${Math.round(bonus.critChance * 100)}%`} />);
   if (bonus.critDamage)
@@ -1561,7 +1548,6 @@ function ItemTooltipCard({
     !!item.consumable ||
     item.weaponEffect ||
     item.weaponEffects?.length ||
-    item.manaCost !== undefined ||
     item.weaponStyle === "magic" ||
     item.tool ||
     item.buff ||

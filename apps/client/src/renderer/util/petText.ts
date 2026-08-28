@@ -131,9 +131,9 @@ function abilityBody(ce: PetCombatAbility, t: TFn): string {
       // petDamageEnemy(value) — mechanisch identisch zu burstDamage, aber als garantierter Krit
       // benannt/geframt (PetCombatAbility-Doc-Tabelle, shared/index.ts).
       return t("pet.ability.guaranteedCrit").replace("{pct}", pct(value));
-    case "manaRestore":
-      // character.mana += player.maxMana * value (gekappt bei maxMana).
-      return t("pet.ability.manaRestore").replace("{pct}", pct(value));
+    case "wardRestore":
+      // player.ward += player.maxWard * value (gekappt bei maxWard).
+      return t("pet.ability.wardRestore").replace("{pct}", pct(value));
     case "lifestealBurst":
       // petDamageEnemy(value) + healPlayer(player.maxHp * value) — derselbe Bruch, zwei Basen.
       return t("pet.ability.lifestealBurst").replace(/\{pct\}/g, pct(value));

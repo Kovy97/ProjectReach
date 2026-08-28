@@ -47,7 +47,6 @@ export type Sfx =
   | "heal"
   | "levelup"
   | "cast"
-  | "castWeak"
   | "click"
   | "achievement"
   // Datei-Sounds (Chef-Lieferung 2026-07-11):
@@ -303,10 +302,8 @@ export function playSfx(sfx: Sfx): void {
       blip(c, 340, 820, "sine", 0.14, 0.38);
       blip(c, 680, 1240, "sine", 0.1, 0.22, 0.06);
       break;
-    // Schwacher Stab-Nahkampf bei leerem Mana: gedämpfter, abwärts-Sweep.
-    case "castWeak":
-      blip(c, 220, 110, "sine", 0.12, 0.22);
-      break;
+    // "castWeak" (gedämpfter Ton bei leerem Mana) ENTFERNT (Zauberreserve 28.08.2026): Zauber
+    // kosten nichts mehr, der "schwache Magier" entfällt — es gibt keinen leeren Zustand mehr.
   }
 }
 

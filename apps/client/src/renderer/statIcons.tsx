@@ -45,9 +45,11 @@ const STAT_ICON_KEYS: Record<string, string> = {
   // Rüstungs-Trinität (Stoff-Ward, Spec §8): eigenes Icon-Key, fällt bis content-dev ein PNG
   // liefert auf ein arkanes Kristall-Emoji zurück (bewusst NICHT 🛡, das ist schon "def").
   ward: "icon_attribute_ward",
+  // Zauberreserve (28.08.2026): löst den früheren Mana-Balken ab, gleiches Icon.
+  mana: "icon_attribute_mana",
 };
 const STAT_ICON_FALLBACK: Record<string, string> = {
-  hp: "❤", atk: "⚔", def: "🛡", acc: "🎯", eva: "💨", spd: "⏱", gold: "🪙", ward: "🔷",
+  hp: "❤", atk: "⚔", def: "🛡", acc: "🎯", eva: "💨", spd: "⏱", gold: "🪙", ward: "🔷", mana: "✦",
 };
 export function statIcon(key: string): JSX.Element | string {
   const iconName = STAT_ICON_KEYS[key];

@@ -3767,6 +3767,33 @@
   cursor: help;
 }
 
+/* Zauberreserve (28.08.2026): löst den früheren Mana-Balken ab — Mana verbraucht sich nicht mehr,
+   also nur noch eine ruhige Kapazitätszahl statt eines (jetzt irreführenden) Füllbalkens. Sitzt
+   zwischen dem Ward-Balken und dem Schwung-Timer, s. Fighter()/NameplateOverlay() JSDoc. */
+.fighter-reserve-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.fighter-reserve-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+}
+
+.fighter-reserve-val {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
 .fighter-details-toggle {
   background: none;
   border: 1px solid rgba(216, 192, 106, 0.25);

@@ -142,12 +142,13 @@ export interface Arena25DFighter {
   hpMax: number;
   wardCur?: number;
   wardMax?: number;
-  /** Task #330d Punkt 6 (Chef-Nachtrag "Manabalken fehlt"): NUR gesetzt, wenn die 2D-Ansicht ihn
-   *  auch zeigen würde (`showManaBar`-Ableitung aus CombatPage.tsx, unverändert 1:1 übernommen —
-   *  s. CombatPage.tsx "ARENA25D MOUNT SWITCH"). `manaMax undefined/0` ⇒ keine Leiste, exakt wie
-   *  der 2D-`Fighter()`s `showMana`-Gate. Nur Spieler-Seite wird je gesetzt (Gegner haben kein Mana). */
-  manaCur?: number;
-  manaMax?: number;
+  /** Task #330d Punkt 6 (Chef-Nachtrag "Manabalken fehlt"), Zauberreserve 28.08.2026: NUR gesetzt,
+   *  wenn die 2D-Ansicht die Zahl auch zeigen würde (`showReserve`-Ableitung aus CombatPage.tsx,
+   *  unverändert 1:1 übernommen — s. CombatPage.tsx "ARENA25D MOUNT SWITCH"). `reserveMax`
+   *  undefined/0 ⇒ keine Zeile, exakt wie der 2D-`Fighter()`s `showReserve`-Gate. Nur Spieler-Seite
+   *  wird je gesetzt (Gegner haben keine Zauberreserve). Reine Kapazitätszahl, kein Balken mehr
+   *  (Mana verbraucht sich nicht) — daher kein `reserveCur`-Pendant. */
+  reserveMax?: number;
   /** Task #330d Punkt 6 (Chef-Nachtrag "Angriffsbalken fehlt"): derselbe Schwung-/Cast-Timer wie
    *  die 2D-Nameplate (`Fighter`s `timerPct`/`timerRemainingSec`, s. dortiges JSDoc) — BEIDE Seiten
    *  gesetzt, kein optionales Feld (jeder Kämpfer hat einen Angriffstimer). */
@@ -1084,8 +1085,7 @@ function StatusEffectRow({ effects, t }: { effects: StatusEffect[]; t: (key: str
 
 function NameplateOverlay({ fighter, hpKind, dimmed }: { fighter: Arena25DFighter; hpKind: string; dimmed?: boolean }): JSX.Element {
   const { t } = useI18n();
-  const showMana = (fighter.manaMax ?? 0) > 0;
-  const manaEmpty = showMana && (fighter.manaCur ?? 0) === 0;
+  const showReserve = (fighter.reserveMax ?? 0) > 0;
   const showWard = (fighter.wardMax ?? 0) > 0;
   return (
     <div className={dimmed ? "a25-dimmed" : undefined}>
@@ -1100,23 +1100,20 @@ function NameplateOverlay({ fighter, hpKind, dimmed }: { fighter: Arena25DFighte
           kind={hpKind}
           label={<>{statIcon("hp")} {formatNum(Math.max(0, Math.round(fighter.hpCur)))} / {formatStat(fighter.hpMax)}</>}
         />
-        {showMana && (
-          <MiniBar
-            pct={((fighter.manaCur ?? 0) / (fighter.manaMax ?? 1)) * 100}
-            kind={manaEmpty ? "mana depleted" : "mana"}
-            label={
-              <span className={manaEmpty ? "cbar-label-dim" : undefined}>
-                ✦ {formatNum(Math.round(fighter.manaCur ?? 0))} / {formatStat(fighter.manaMax ?? 0)}
-              </span>
-            }
-          />
-        )}
         {showWard && (
           <MiniBar
             pct={((fighter.wardCur ?? 0) / (fighter.wardMax ?? 1)) * 100}
             kind="ward"
             label={<>{statIcon("ward")} {formatNum(Math.round(fighter.wardCur ?? 0))} / {formatStat(fighter.wardMax ?? 0)}</>}
           />
+        )}
+        {/* Zauberreserve (28.08.2026): keine Ressource mehr, die sich verbraucht — reine
+            Kapazitätszahl statt eines eigenen (irreführenden) Balkens, s. 2D-Fighter()-Pendant. */}
+        {showReserve && (
+          <div className="fighter-reserve-row">
+            <span className="fighter-reserve-label">{statIcon("mana")} {t("combat.spellReserve")}</span>
+            <span className="fighter-reserve-val">{formatStat(fighter.reserveMax ?? 0)}</span>
+          </div>
         )}
         <MiniBar pct={fighter.timerPct} kind="timer" label={`${formatSeconds1(Math.max(0, fighter.timerRemainingSec))}s`} />
       </div>

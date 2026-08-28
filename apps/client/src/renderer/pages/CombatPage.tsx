@@ -890,7 +890,7 @@ const FX_TAG: Record<FxKind, "span" | "div"> = { spark: "span", beam: "div", rin
  * Farb-Buckets abgebildet (ui-dev-Entscheidung, laut Plan „kann ui-dev selbst entscheiden"):
  * - "damage"  (rot/orange, `--danger`-nah): Sofortschaden am Gegner.
  * - "heal"    (grün, matcht den grünen Heil-Floater): stellt Spieler-HP wieder her.
- * - "support" (blau, matcht Ward/Mana-Töne): Schild/Mana/Block — defensive Ressourcen-Hilfe.
+ * - "support" (blau, matcht Ward-Töne): Schild/Ward-Auffüllung/Block — defensive Ressourcen-Hilfe.
  * - "control" (violett, matcht den Status-Proc-Floater/`.log-line.status`): Stun/Debuff/Steal/
  *   DoT-Auflage/Timing-Sabotage — alles, was den Gegner in seiner Aktion einschränkt.
  * `lifestealBurst` zählt trotz Heil-Nebeneffekt als "damage" (Sofortschaden ist der Haupteffekt);
@@ -908,7 +908,7 @@ const PET_ABILITY_BUCKET: Record<PetAbilityKind, PetFxBucket> = {
   shield: "support",
   armorRend: "control",
   guaranteedCrit: "damage",
-  manaRestore: "support",
+  wardRestore: "support",
   lifestealBurst: "damage",
   enemyAttackDelay: "control",
   blockNextEnemyHit: "support",
@@ -1115,8 +1115,13 @@ interface FighterProps {
   hpCur: number;
   hpMax: number;
   hpKind: string;
-  manaCur?: number;
-  manaMax?: number;
+  /**
+   * Zauberreserve (28.08.2026, löst den früheren depletierbaren Mana-Balken ab): reiner Kapazitäts-
+   * wert (`stats.maxMana`), wird nicht mehr verbraucht — nur gesetzt für die Spieler-Seite, wenn
+   * `showReserve` zutrifft (Magie-Stil ODER Ausrüstungs-Bonus über dem Basiswert). Gerendert als
+   * Zahl neben dem Ward-Balken, NICHT als Balken (kein "leer/voll" mehr, s. `showReserve`-JSDoc).
+   */
+  reserveMax?: number;
   /**
    * Stoff-Ward-Pool (Rüstungs-Trinität Spec §8). Balken nur gerendert wenn `wardMax > 0`
    * (Magier/Stoff-Träger) — Melee/Ranged (Platte/Leder) zeigen KEINE dritte Leiste.
@@ -1280,9 +1285,8 @@ function BuffChipsOverlay({ buffs }: { buffs: ActiveBuff[] }): JSX.Element | nul
 
 function Fighter(props: FighterProps): JSX.Element {
   const { t } = useI18n();
-  const showMana = props.manaMax !== undefined && props.manaMax > 0;
-  // Mana depleted = pool is empty → hero fights weakly with a staff until it refills
-  const manaEmpty = showMana && (props.manaCur ?? 0) === 0;
+  // Zauberreserve (28.08.2026): reine Kapazitätszahl, kein Balken mehr (Mana verbraucht sich nicht).
+  const showReserve = props.reserveMax !== undefined && props.reserveMax > 0;
   // Ward (Stoff-Klassenschicht, Spec §8): dritte Leiste NUR bei maxWard > 0 (Magier/Stoff-Träger).
   // Platte/Leder liefern wardMax===0 → gar keine Leiste (kein leerer Slot, kein Layout-Sprung).
   const showWard = props.wardMax !== undefined && props.wardMax > 0;
@@ -1590,17 +1594,6 @@ function Fighter(props: FighterProps): JSX.Element {
             </>
           }
         />
-        {showMana && (
-          <Bar
-            pct={((props.manaCur ?? 0) / (props.manaMax ?? 1)) * 100}
-            kind={manaEmpty ? "mana depleted" : "mana"}
-            label={
-              <span className={manaEmpty ? "cbar-label-dim" : undefined}>
-                ✦ {formatNum(Math.round(props.manaCur ?? 0))} / {formatStat(props.manaMax ?? 0)}
-              </span>
-            }
-          />
-        )}
         {showWard && (
           <Bar
             pct={((props.wardCur ?? 0) / (props.wardMax ?? 1)) * 100}
@@ -1615,6 +1608,14 @@ function Fighter(props: FighterProps): JSX.Element {
               </span>
             }
           />
+        )}
+        {/* Zauberreserve (28.08.2026): keine Ressource mehr, die sich verbraucht — reine
+            Kapazitätszahl neben dem Ward-Balken statt eines eigenen (irreführenden) Balkens. */}
+        {showReserve && (
+          <div className="fighter-reserve-row">
+            <span className="fighter-reserve-label">{statIcon("mana")} {t("combat.spellReserve")}</span>
+            <span className="fighter-reserve-val">{formatStat(props.reserveMax ?? 0)}</span>
+          </div>
         )}
         {/* Schwung-Timer: läuft mit ~10Hz-Renderrhythmus glatt runter (0,1s-Schritte passen exakt
             auf die eine Nachkommastelle) — kein zusätzliches rAF-Interpolations-Gerüst nötig. */}
@@ -3152,7 +3153,7 @@ function Battle({
         if (anchor) {
           const dir: 1 | -1 = target === "enemy" ? 1 : -1;
           particleStageRef.current.play(`status_${e.status}`, { from: anchor.center, to: anchor.center, dir, box: anchor.box });
-          particleStageRef.current.startAmbient(`statusAmbient_${e.status}`, `${target}:${e.status}`, { at: anchor.center, dir, box: anchor.box });
+          particleStageRef.current.startAmbient(`statusAmbient_${e.status}`, `${target}:${e.status}`, { at: anchor.center, dir, box: anchor.box, getBox: () => particleAnchor(target)?.box });
         }
       }
       // Einfrieren (Elementar-Effekte 28.08.2026, fxParticleLibrary.ts `status_frozen`): kurzes
@@ -3168,7 +3169,8 @@ function Battle({
         }
       }
       // SFX an die Events knüpfen (gedrosselt im Audio-Modul).
-      // Bei Magie-Stil: Cast-SFX statt Melee-Hit, bei leerem Mana: gedämpfter Ton.
+      // Bei Magie-Stil: Cast-SFX statt Melee-Hit (Zauberreserve 28.08.2026: kein gedämpfter
+      // "schwacher Magier"-Ton mehr, s. `playSfx("cast")`-Kommentar unten).
       const isPlayerAttack = (e.kind === "hit" || e.kind === "crit") && e.by === "player" && e.amount > 0;
       // Waffen-Sound-Sets (Chef-Schema 2026-07-11, echte Aufnahmen mit 3 Zufalls-Variationen):
       // Spieler-Schwung mit Schwert/Bogen → <set>_attack, danach das ERGEBNIS mit ~140 ms Delay —
@@ -3177,7 +3179,9 @@ function Battle({
       const isPlayerSwing =
         e.by === "player" && (e.kind === "hit" || e.kind === "crit" || e.kind === "miss" || e.kind === "block");
       if (isPlayerAttack && stats.style === "magic") {
-        playSfx(manaEmpty ? "castWeak" : "cast");
+        // Zauberreserve (28.08.2026): kein "schwacher Magier" mehr — Zauber kosten nichts, also
+        // immer der volle Cast-Sound (früher hier auf `manaEmpty` verzweigt).
+        playSfx("cast");
       } else if (isPlayerSwing && stats.style !== "magic") {
         const set = stats.style === "ranged" ? "bow" : "sword";
         const attackPlayed = playCombatSfx(`${set}_attack`);
@@ -3405,11 +3409,11 @@ function Battle({
   const activePet = equippedPet(state, content);
   const activePetSrc = activePet ? getPetSrc(activePet.id) : null;
 
-  // Mana-Leiste nur zeigen, wenn der Held Magie-Stil führt ODER ein Item (Focus) Mana-Bonus gibt.
-  // Basiswert ohne Ausrüstung: 10 + int*5 + wis*2 (aus computeStats).
-  const baseMana = 10 + stats.attributes.int * 5 + stats.attributes.wis * 2;
-  const showManaBar = stats.style === "magic" || stats.maxMana > baseMana;
-  const manaEmpty = showManaBar && c.mana === 0;
+  // Zauberreserve-Zahl nur zeigen, wenn der Held Magie-Stil führt ODER ein Item (Focus) einen
+  // Reserve-Bonus gibt. Basiswert ohne Ausrüstung: 30 + int*10 + wis*4 (aus computeStats,
+  // Zauberreserve 28.08.2026 — abgelöste Formel war 10 + int*5 + wis*2).
+  const baseSpellReserve = 30 + stats.attributes.int * 10 + stats.attributes.wis * 4;
+  const showReserve = stats.style === "magic" || stats.maxMana > baseSpellReserve;
   // Kampf-Juice §6 — Low-HP-Spannung: pulsierende dunkelrote Vignette am Arena-Rand ab < 25%
   // Spieler-HP (Klasse hier, ::after + Puls in combat.css). Dauerzustands-tauglich: langsamer
   // 1.6s-Puls, Vignette liegt UNTER der Stage (verdeckt keine Figuren/Plaketten/Chips). Bei
@@ -3780,12 +3784,11 @@ function Battle({
                 level: combatLevel(state),
                 hpCur: c.hp,
                 hpMax: stats.maxHp,
-                // Chef-Nachtrag 2026-07-24 ("Manabalken fehlt"): dieselbe `showManaBar`-Ableitung
-                // wie der 2D-Zweig weiter unten (Style==magic ODER Gear-Mana über dem Basiswert) —
-                // `manaMax` bleibt undefined, wenn die 2D-Ansicht auch keine Leiste zeigen würde
-                // (Arena25DStage rendert die Mana-Leiste nur bei `manaMax > 0`, s. dortiges JSDoc).
-                manaCur: c.mana,
-                manaMax: showManaBar ? stats.maxMana : undefined,
+                // Chef-Nachtrag 2026-07-24 ("Manabalken fehlt"), Zauberreserve 28.08.2026: dieselbe
+                // `showReserve`-Ableitung wie der 2D-Zweig weiter unten (Style==magic ODER Gear-
+                // Reserve über dem Basiswert) — `reserveMax` bleibt undefined, wenn die 2D-Ansicht
+                // die Zahl auch nicht zeigen würde (Arena25DStage rendert sie nur bei `reserveMax > 0`).
+                reserveMax: showReserve ? stats.maxMana : undefined,
                 wardCur: c.ward,
                 wardMax: stats.maxWard,
                 // Chef-Nachtrag ("Angriffsbalken fehlt"): identische Berechnung wie die 2D-
@@ -3839,8 +3842,7 @@ function Battle({
                 hpCur={c.hp}
                 hpMax={stats.maxHp}
                 hpKind="hp"
-                manaCur={c.mana}
-                manaMax={showManaBar ? stats.maxMana : undefined}
+                reserveMax={showReserve ? stats.maxMana : undefined}
                 wardCur={c.ward}
                 wardMax={stats.maxWard}
                 effects={cs.playerEffects}

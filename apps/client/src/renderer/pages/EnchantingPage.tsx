@@ -97,7 +97,6 @@ const PREVIEW_LABEL_KEY: Record<string, string> = {
   maxHp: "stat.hp",
   hpRegenPerSec: "stat.hpRegen",
   maxMana: "stat.maxMana",
-  manaRegen: "stat.manaRegen",
   critChance: "stat.critChance",
   critDamage: "stat.critDamage",
   attackIntervalMs: "itip.attackSpeed",

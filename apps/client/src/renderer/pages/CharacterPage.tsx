@@ -72,7 +72,7 @@ function Vital({
   icon: string | JSX.Element;
   cur: number;
   max: number;
-  kind: "hp" | "mp" | "ward";
+  kind: "hp" | "ward";
 }): JSX.Element {
   const pct = max > 0 ? Math.min(100, (cur / max) * 100) : 0;
   return (
@@ -107,9 +107,6 @@ function PanelHeader({ title }: { title: string }): JSX.Element {
 
 // HP-Icon (für den Vital-Balken)
 const HP_ICON_URL = getUiIcon("icon_attribute_hp");
-
-// Mana-Icon (für den Vital-Balken) — Welle QQ (2026-07-17): ersetzt den ✦-Platzhalter.
-const MANA_ICON_URL = getUiIcon("icon_mana");
 
 // Defensiver Fallback fürs große Portrait (#249): `App.tsx` (usePortraitFallback) korrigiert
 // einen ungültigen `character.portrait` bereits beim Mount + persistiert die Wahl — dieser
@@ -411,13 +408,9 @@ export function CharacterPage(): JSX.Element {
               max={stats.maxHp}
               kind="hp"
             />
-            <Vital
-              label={t("char.mana")}
-              icon={MANA_ICON_URL ? <img loading="lazy" decoding="async" src={MANA_ICON_URL} alt="" className="ui-icon" /> : "✦"}
-              cur={Math.round(c.mana)}
-              max={stats.maxMana}
-              kind="mp"
-            />
+            {/* Zauberreserve (28.08.2026): Mana verbraucht sich nicht mehr — kein Vital-Balken mehr
+                dafür (der wäre immer voll und damit sinnlos); die Zahl steht jetzt als Stat-Zeile
+                im "Stats"-Tab (CombatStatsPanelGrouped), mit Fokus-/Schild-Tooltip. */}
             {/* Rüstungs-Trinität (Spec §8): dritte Vitals-Zeile NUR bei Stoff-Trägern (maxWard > 0) —
                 Platte/Leder zeigen sie gar nicht (kein leerer Balken). */}
             {stats.maxWard > 0 && (

@@ -145,7 +145,7 @@ describe("petFxImageFor / petFxTargetSide — Familie D (alle 16 PetAbilityKind-
   });
 
   it("mappt Schutz/Heilung auf 'ward', Timing-Sabotage auf 'mark', Diebstahl/Krit separat", () => {
-    for (const kind of ["shield", "heal", "blockNextEnemyHit", "manaRestore", "lifestealBurst"] as const) {
+    for (const kind of ["shield", "heal", "blockNextEnemyHit", "wardRestore", "lifestealBurst"] as const) {
       expect(petFxImageFor(kind)).toBe("ward");
     }
     for (const kind of ["accuracyDownEnemy", "enemyAttackDelay", "stun"] as const) {

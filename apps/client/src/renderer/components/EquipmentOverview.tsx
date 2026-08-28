@@ -87,7 +87,7 @@ const ATTR_COLORS: Record<string, string> = {
   dex: "#5ec46e",   // vivid green — dexterity, speed, precision
   con: "#d39a4e",   // earthy amber — constitution, endurance
   int: "#5b8fd6",   // steel blue — intelligence, magic
-  wis: "#a875d8",   // arcane purple — wisdom, mana mastery
+  wis: "#a875d8",   // arcane purple — wisdom, status resistance & spell reserve
   lck: "#e0c060",   // burnished gold — luck, fortune
 };
 const ATTR_ICON_URLS: Record<string, string | null> = {
@@ -118,6 +118,8 @@ export const COMBAT_STAT_ICON: Record<string, string | null> = {
   armorPen:         getUiIcon("icon_attribute_armorpen"),
   precision:        getUiIcon("icon_attribute_precision"),
   wardBreak:        getUiIcon("icon_attribute_wardbreak"),
+  // Zauberreserve (28.08.2026): löst den früheren Mana-Vital-Balken ab, jetzt eine Stat-Zeile.
+  mana:             getUiIcon("icon_attribute_mana"),
 };
 
 /** Paperdoll-Slot-Reihenfolge (matcht das CSS-Grid `.cs-slot.<slot>` in character.css). */
@@ -183,6 +185,14 @@ export function AttributesGrid(): JSX.Element {
         <CitadelTip rect={tip.rect} glow glowColor={ATTR_COLORS[tip.data.id]}>
           <span className="ct-tip-title">{tr(tip.data.name)}</span>
           <span className="ct-tip-desc">{tr(tip.data.description)}</span>
+          {/* Zauberreserve 28.08.2026: Weisheit-Tooltip zeigt zusätzlich den TATSÄCHLICHEN
+              Status-Widerstand dieses Charakters (stats.statusResist, DerivedStats aus
+              computeStats) — dieselbe Rechnung wie der Kampf-Effekt (engine/character.ts). */}
+          {tip.data.id === "wis" && (
+            <span className="ct-tip-desc">
+              {t("attrtip.wis.statusResist").replace("{pct}", String(Math.round(stats.statusResist * 100)))}
+            </span>
+          )}
         </CitadelTip>
       )}
     </div>
@@ -278,6 +288,19 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
   );
 }
 
+/**
+ * Zauberreserve-Tooltip-Text (28.08.2026): dieselben zwei Zahlen, die die Engine tatsächlich
+ * anwendet (`computeStats` → `DerivedStats.spellReserveDamageBonus`/`spellReserveWardRegenBonus`,
+ * s. packages/shared/src/index.ts JSDoc) — Fokus-Haltung Zauberschaden, Schild-Haltung Ward-Regen.
+ * Geteilt zwischen CombatStatsPanel (Combat-Log „Ausrüstung"-Tab) und CombatStatsPanelGrouped
+ * (Character-Screen „Stats"-Tab), damit beide nie auseinanderlaufen.
+ */
+function spellReserveDesc(stats: ReturnType<typeof computeStats>, t: TFn): string {
+  return t("statdesc.spellReserve")
+    .replace("{focusPct}", String(Math.round(stats.spellReserveDamageBonus * 100)))
+    .replace("{shieldPct}", String(Math.round(stats.spellReserveWardRegenBonus * 100)));
+}
+
 /** Kampfwerte-Panel (linke+rechte Stat-Spalte + Set-Boni). Reiner Display-Block. */
 export function CombatStatsPanel(): JSX.Element {
   const { t, tr } = useI18n();
@@ -339,6 +362,9 @@ export function CombatStatsPanel(): JSX.Element {
     const wardRegenPct = (stats.wardRegenPerSec / stats.maxWard) * 100;
     rightCombat.push([t("stat.wardRegen"), `${formatStat(wardRegenPct)}%/s`, t("statdesc.wardRegen"), "wardRegen"]);
   }
+  // Zauberreserve (28.08.2026): löst den früheren Mana-Vital-Balken ab — immer sichtbar (jeder
+  // Charakter hat eine Reserve, s. computeStats-Basiswert), Tooltip zeigt Fokus-/Schild-Boni.
+  rightCombat.push([t("stat.maxMana"), formatStat(stats.maxMana), spellReserveDesc(stats, t), "mana"]);
   if (stats.armorPen > 0) {
     rightCombat.push([t("stat.armorPen"), `+${Math.round(stats.armorPen * 100)}%`, t("statdesc.armorPen"), "armorPen"]);
   }
@@ -521,6 +547,9 @@ export function CombatStatsPanelGrouped(): JSX.Element {
     const wardRegenPct = (stats.wardRegenPerSec / stats.maxWard) * 100;
     defensive.push([t("stat.wardRegen"), `${formatStat(wardRegenPct)}%/s`, t("statdesc.wardRegen"), "wardRegen"]);
   }
+  // Zauberreserve (28.08.2026): löst den früheren Mana-Vital-Balken auf der Character-Seite ab —
+  // immer sichtbar (jeder Charakter hat eine Reserve), Tooltip zeigt Fokus-/Schild-Boni.
+  defensive.push([t("stat.maxMana"), formatStat(stats.maxMana), spellReserveDesc(stats, t), "mana"]);
 
   const tempoCrit: StatRow[] = [
     [
