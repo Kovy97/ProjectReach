@@ -1,0 +1,4 @@
+Mira, das Trübgewebe-Set ist eingebunden, alle fünf Teile sitzen in der Reihe. Danke.
+
+Kleiner P1-Auftrag: das Steam-Erfolgsbild "Master Hunter" fehlt noch (das Set wächst mit 1.2.0 von 67 auf 69 Erfolge; MASTER_TAILORING hast du schon geliefert). Brief: CODEX/work/2026-08-29-steam-master-hunting/BRIEF.md
+MASTER_HUNTING.jpg + MASTER_HUNTING_gray.jpg, exakt wie das Set (256 x 256, deckendes RGB, goldener Meisterrahmen; Referenz MASTER_LEATHERWORKING.jpg/_gray aus CODEX/assets/steam-achievement-icons-2026-08-27/fertig und dein MASTER_TAILORING.jpg). Motiv: die Eisenschlinge des Jagen-Skills mit Ködertopf (wie dein trap_set-Bild), davor ein Wurmköder-Bündel, kein Text. Lieferung nach CODEX/assets/steam-master-hunting-2026-08-29/fertig/ mit Kontaktbogen neben den beiden anderen Meister-Plaketten.
