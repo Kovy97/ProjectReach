@@ -1620,7 +1620,7 @@ body .item-cell.rarity-godly {
    „Damage“ hineinlaufen. Die pensionierten Bildpfeile bleiben zusätzlich defensiv verborgen. */
 #root .itip-offense-group .itip-stat-row {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) max-content max-content;
+  grid-template-columns: 25px minmax(0, 1fr) max-content max-content;
   align-items: center;
   column-gap: 7px;
 }
@@ -1644,7 +1644,7 @@ body .item-cell.rarity-godly {
      overflow that the ancestor's `overflow: hidden` then rendered as an invisible value cell.
      Every other offense value (damage range, flat %/flat numbers) has no space to break at, so
      this is a no-op for them. */
-  white-space: normal;
+  white-space: nowrap; /* Chef 28.08.2026: Spalten sind jetzt max-content, nichts bricht mehr um */
   text-align: right;
 }
 
