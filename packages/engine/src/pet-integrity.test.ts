@@ -31,6 +31,7 @@ import {
   petDamageReduction,
   petDoubleLootChance,
   petDoubleYieldBonus,
+  petHuntDoubleRollsChance,
   petInstantActionChance,
   petKillHealFraction,
   petLifesteal,
@@ -47,8 +48,9 @@ const ALL_SKILL_KINDS: PetSkillEffectKind[] = [
   "perfectCook", "bonusAmmo", "flawlessGem", "bonusRunes", "potionPreserve", "spellReserve",
   // #276 Pet-Redesign: die 6 neuen Passiv-Kinds (Spec §4.2)
   "lifesteal", "skillBoost", "damageReduction", "doubleLoot", "killHeal", "sellBonus",
-  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter — Fangchance der Fallen (hunting.ts)
-  "huntCatchChance",
+  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter Leon — Chance je Fang auf zehn statt fünf
+  // Beute-Durchläufe (hunting.ts grantCatch); das frühere Kind huntCatchChance ist gestrichen.
+  "huntDoubleRolls",
 ];
 const ALL_ABILITY_KINDS: PetAbilityKind[] = [
   "stun", "burstDamage", "onHitStatus", "delayedDot", "accuracyDownEnemy", "stealDrop", "heal",
@@ -315,6 +317,7 @@ describe("pet XP-Verbot (#276): kein Pet-Passiv mit XP-Wirkung — dauerhaft", (
     expect(petDoubleYieldBonus(s, c, "woodcutting")).toBe(0);
     expect(petPreserveBonus(s, c, "woodcutting")).toBe(0);
     expect(petThievingBonus(s, c, "thieving")).toBe(0);
+    expect(petHuntDoubleRollsChance(s, c, "hunting")).toBe(0);
     expect(petSpellReserveMult(s, c)).toBe(1);
     expect(petLifesteal(s, c)).toBe(0);
     expect(petSkillBoost(s, c, "attack")).toBe(0);

@@ -27,7 +27,7 @@ import { nextFloat } from "./rng";
  *
  * Die Skill-Helfer (`petDoubleYieldBonus`, `petPreserveBonus`, `petThievingBonus`,
  * `petInstantActionChance`, `petSpellReserveMult`, `petLifesteal`, `petSkillBoost`,
- * `petDamageReduction`, `petSellBonus`, `petHuntCatchBonus`) ruft tick.ts/computeStats/shop.ts/
+ * `petDamageReduction`, `petSellBonus`, `petHuntDoubleRollsChance`) ruft tick.ts/computeStats/shop.ts/
  * hunting.ts an genau definierten Stellen ab; `petDoubleLootChance`/`petKillHealFraction`
  * konsumiert combat-dev im Kill-Pfad.
  * Die Combat-Seite konsumiert sonst NUR `petCombatAbility(state, content)` (reine Lese-API);
@@ -134,13 +134,14 @@ export function petThievingBonus(state: GameState, content: ContentDB, skill: Sk
 }
 
 /**
- * Additiver Fangchancen-Bonus (0..0.03) für einen Skill (1.2.0 „Fasern und Fallen": booted_tomcat
- * auf `hunting`). hunting.ts `huntCatchChance` addiert ihn VOR dem bestehenden Deckel
- * HUNT_CATCH_CAP (95 %) — der Deckel bleibt, das Pet füllt nur den Weg dorthin schneller.
+ * Chance (0..0.05) je FANG, dass der Fang HUNT_LOOT_ROLLS_DOUBLED (zehn statt fünf) Beute-Durchläufe
+ * liefert (1.2.0 „Fasern und Fallen", Chef 28.08.2026: Leon/booted_tomcat auf `hunting`).
+ * hunting.ts `grantCatch` zieht den Erfolgs-nextFloat NUR, wenn diese Chance > 0 ist (Muster
+ * petDoubleLootChance/tryPetDrop) — ohne passendes Pet bleibt die RNG-Sequenz bit-identisch.
  * Rein lesend, kein RNG.
  */
-export function petHuntCatchBonus(state: GameState, content: ContentDB, skill: SkillId): number {
-  return skillScopedValue(state, content, ["huntCatchChance"], skill);
+export function petHuntDoubleRollsChance(state: GameState, content: ContentDB, skill: SkillId): number {
+  return skillScopedValue(state, content, ["huntDoubleRolls"], skill);
 }
 
 // ── Globale Effekte (computeStats / shop.ts / combat-dev-Kill-Pfad) ─────────

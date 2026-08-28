@@ -22,7 +22,7 @@ champion as a source.
 **Fasern und Stoff (Chef 27.08.):** DE: Handwerk hing bis Stufe 30 fast komplett an Monster-Leder. Jetzt gibt es Fasern in
 fünf Stufen: Nessel, Flachs, Dornhanf, Geisterseide und Sternflachs. Man sammelt sie an neuen Sammel-Knoten (samt Saat),
 baut sie in New Havens Beeten an und webt sie im Handwerk zu Nesselstoff, Leinen, Dornleinen, Geistertuch und Sternweb.
-Alle 26 Magier-Roben werden aus Stoff statt Leder gefertigt, und die Nessel-Sehne macht Bogen ab Stufe 1 ohne Kampf möglich.
+Alle 29 Magier-Roben werden aus Stoff statt Leder gefertigt, und die Nessel-Sehne macht Bogen ab Stufe 1 ohne Kampf möglich.
 Leder bleibt die Rüstung des Ausweichens. / EN: Fibers in five tiers (forage, farm, weave) replace leather in all mage robes,
 and a nettle bowstring lets you fletch bows from level 1 without fighting.
 
@@ -125,13 +125,15 @@ Magier-Roben und alle Umhänge. Umhänge werden dabei aus Stoff-Stufen gefertigt
 wird nach dem aufgeteilt, was du tatsächlich hergestellt hast: Die Erfahrung aus Roben, Umhängen und Stoffen wandert ins
 Schneidern, der Rest bleibt im Handwerk; angelegte Ausrüstung bleibt angelegt. Ein Wort vom Entwickler: Es tut mir leid, dass
 diese Aufteilung deinen Handwerks-Fortschritt auseinanderzieht. Für das Spiel im Ganzen war es die bessere Entscheidung, und
-ich wollte sie lieber jetzt treffen als später. / EN: Crafting is split into Crafting (leather, bows, strings, shields) and the
-new Tailoring skill (weaving, all mage robes, all capes; capes now use cloth tiers). Your progress is divided by what you
-actually crafted: XP from robes, capes and cloth moves to Tailoring, the rest stays in Crafting, and equipped gear stays
-equipped. A word from the developer: I am sorry that this splits your Crafting progress. It was the better call for the game as
-a whole, and better made now than later.
+ich wollte sie lieber jetzt treffen als später. Das Trübgewebe-Set ist dabei vollständig geworden: fünf Teile (Kapuze, Robe,
+Beinkleid, Binden, Sandalen, Schneidern 8 bis 12), neu gemalt und ganz ohne Leder. / EN: Crafting is split into Crafting
+(leather, bows, strings, shields) and the new Tailoring skill (weaving, all mage robes, all capes; capes now use cloth tiers).
+Your progress is divided by what you actually crafted: XP from robes, capes and cloth moves to Tailoring, the rest stays in
+Crafting, and equipped gear stays equipped. A word from the developer: I am sorry that this splits your Crafting progress. It
+was the better call for the game as a whole, and better made now than later. The Dimweave set is now complete: five newly
+painted pieces, no leather required.
 
-*Dev-Notiz: SAVE 86, Migration `tailoringXpFromCraftLog` (Σ craftedById × Rezept-XP über die 66 Schneidern-Rezepte, geklemmt auf
+*Dev-Notiz: SAVE 86, Migration `tailoringXpFromCraftLog` (Σ craftedById × Rezept-XP über die 68 Schneidern-Rezepte, geklemmt auf
 das Handwerks-Konto), Handwerk 88 Rezepte; Capes auf Stoff (Tabelle in spec-technik §6); Skill-Def ohne trains; 5 Erfolge
 `ach_skill_tailoring_*`, Steam-ID MASTER_TAILORING; `ring_master_tailoring` (int 2 / wis 2, inputSaver 5 %), Vollender-Ring
 verlangt 22 Skills; Vault-Fixture v86; Client: Sidebar/Skill-Seite/Meisterschaft/Onboarding/Erfolge ×7 Sprachen, Update-Hinweis;
@@ -221,23 +223,27 @@ und zwei Hochland-Raritäten in seiner Zusatzbeute. Der Erfolg „Alle Champions
 Ossric the Marrowbound, stalks the Highlands and drops the legendary greataxe "Esthar, Storm of Bones" (bleed plus every
 fourth hit striking twice), based on a player's idea.
 
-**Zwei neue Begleiter (Chef 28.08.):** DE: Jagen und Schneidern haben jetzt eigene Begleiter. Felyx, ein Kater, ein
+**Zwei neue Begleiter (Chef 28./29.08.):** DE: Jagen und Schneidern haben jetzt eigene Begleiter. Leon, der Gefürchtete, ein
 grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und
-Armbrust jagt, fällt beim Jagen mit jedem Fang und hebt die Fangchance deiner Fallen um 3 Prozentpunkte (der Deckel von
-95 % bleibt); im Kampf hält seine Schlingenfalle den Gegner kurz fest. Der Seidenweber, eine bleiche Nachtmotte mit
+Armbrust jagt, fällt beim Jagen mit jedem Fang. Seine Bärenfalle lässt den Gegner im Kampf bluten, und mit etwas Glück
+(5 %) bringt ein Fang zehn Beute-Würfe statt fünf. Der Seidenweber, eine bleiche Nachtmotte mit
 spindeldürren Beinen, fällt beim Schneidern, spart 5 % Stoff beim Weben und legt im Kampf einen Seidenschleier über die
 Augen des Gegners. Beide zeigen wie alle Begleiter Passiv und Aktiv mit echten Zahlen auf der Karte. / EN: Two new
-companions: Felyx the tomcat (Hunting, +3 pp trap catch chance, Snare Trap stun) and the Silkweaver (Tailoring, 5 %
-material refund, Silk Veil accuracy debuff).
+companions: Leon, the Feared, a booted tomcat (Hunting, 5 % chance per catch for ten loot rolls instead of five, Bear Trap
+bleed) and the Silkweaver (Tailoring, 5 % material refund, Silk Veil accuracy debuff).
 
 *Dev-Notiz: Content `esthar` (33,5–62,4 @3450, Blutung 0,35×6/6 s + everyNth n=4, value 16 000, legendär), `elite_ossric`
 (Basis gravecliff_specter, hp/ward ×2,2, dmg ×1,15, xp ×2,75, inflictOverride bleed 0,30×2/5 s), Pets `booted_tomcat`
-(neues shared-Kind `huntCatchChance`, Cap 0,03, Wurf je Fang in engine/hunting.ts grantCatch = RNG-Schritt 5) und
-`silkweaver` (refundMaterial tailoring, Aktions-Pfad). Locales ×5 für Item, Champion, Pets, Fähigkeiten; Erfolge
+(Name Chef 29.08.: „Leon, der Gefürchtete", war Felyx, ID bleibt; shared-Kind `huntDoubleRolls`, Cap 0,05: EIN RNG-Zug
+vor den Beute-Würfen nur mit aktivem Leon = Schritt 4 in
+engine/hunting.ts grantCatch, Treffer ⇒ HUNT_LOOT_ROLLS_DOUBLED = 10 Durchläufe, Gold bleibt ×5; Begleiter-Wurf je Fang =
+Schritt 6; das erste Kind `huntCatchChance` +3 pp ist gestrichen, `petHuntCatchBonus` entfernt; Kampf: onHitStatus bleed
+0,030/4,5 s „Bärenfalle", Muster gorehound) und `silkweaver` (refundMaterial tailoring, Aktions-Pfad). Locales ×5 für Item, Champion, Pets, Fähigkeiten; Erfolge
 ach_elite_variants_all/ach_elite_uniques_all 28→29 (Texte in 7 Sprachen). Balance-Envelope-Pin CL-90-Melee-„damage"-TTK
 neu gemessen (BiS-Picker wählt Esthar statt aetherium_maul; gegen die gepanzerten Idol-Bosse zählt der Maul-armorPen, daher
 +6/+9 % Spieler-TTK dort, s. Kommentar im Test). Kein neuer Save-State (SAVE_VERSION unverändert). Offen (Client):
-Texte `pet.effect.skill.huntCatchChance`/`pet.passive.huntCatchChance` in 7 Sprachen, `PET_ZONE_ID` für die zwei Pets,
+Texte `pet.effect.skill.huntDoubleRolls`/`pet.passive.huntDoubleRolls` in 7 Sprachen (die alten
+`…huntCatchChance`-Keys sind verwaist und können weg), `PET_ZONE_ID` für die zwei Pets,
 Bilder von Mira (`esthar`, `elite_ossric`, `pets/booted_tomcat`, `pets/silkweaver`).*
 
 **Zauberreserve und Weisheit (Chef 28.08.):** DE: Mana wird zur Zauberreserve. Zauber kosten nichts mehr, der schwache

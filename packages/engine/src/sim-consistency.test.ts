@@ -215,6 +215,11 @@ const LADDER_BASELINE = new Set([
   // gebaut (Craft-Gegenstück Req ~40) — überholt darum den Zonen-Drop antler_warbow (Lv80), dessen
   // eigener value-Wert schon vor 4a ungewöhnlich niedrig lag (s. Rezension-#8-Pin oben).
   "crossbower_warbow->antler_warbow",
+  // Chef 28./29.08.2026 (Trübgewebe auf fünf Teile): dimweave_leggings (magic 10, con 1/int 1, ward 12) eröffnet die
+  // Familie legs|-|magic|leggings, in der bisher nur rimebound_leggings (magic 92, ward 140.8, KEINE modifiers) stand.
+  // coreStatScore ignoriert das Trinity-Feld wardCapacity und sieht darum 2 → 0 — dasselbe Formel-Artefakt wie
+  // reefscale_helm->chitin_helm / buckhide_boots->quietstep_boots oben; real ist der Lv-92-Drop um Faktor 12 stärker.
+  "dimweave_leggings->rimebound_leggings",
 ]);
 
 /** Akzeptierte Drop-Level-Gaps ("monster:item") — Zonen-Uniques bewusst unter Beute-Klasse. */

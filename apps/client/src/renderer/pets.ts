@@ -41,7 +41,7 @@ export const PET_ZONE_ID: Record<string, string> = {
   ashgut: "pastures", // cooking — Kochen nahe den Weiden-Höfen
   quillshrike: "highlands", // leatherworking (Feder/Kiel-Räuber) — windige Hochland-Klippen
   flayling: "ashfields", // leatherworking (Häuten/Gerben) — zähes Wesen der Aschfelder
-  booted_tomcat: "pastures", // hunting (Felyx, 28.08.2026) — Hofkater im ersten Jagdgebiet
+  booted_tomcat: "pastures", // hunting (Leon, der Gefuerchtete; 29.08.2026) — Hofkater im ersten Jagdgebiet
   silkweaver: "blackthorn", // tailoring (Seidenweber) — Nachtmotte des dunklen Walds
   gemwraith: "idolhall", // jewelcrafting — Edelsteine an Götzenstatuen
   glyphmaw: "idolhall", // runecrafting — Runen/Glyphen in der Götzenhalle

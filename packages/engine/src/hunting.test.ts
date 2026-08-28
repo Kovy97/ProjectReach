@@ -6,8 +6,10 @@ import {
   HUNT_CATCH_BASE,
   HUNT_CATCH_CAP,
   HUNT_LOOT_ROLLS,
+  HUNT_LOOT_ROLLS_DOUBLED,
   HUNT_SLOT_LEVELS,
   HUNT_TRAP_SLOTS,
+  PET_SKILL_EFFECT_CAP,
   defaultHuntTraps, huntCatchXp, HUNT_FIRST_CATCH_MULT, HUNT_XP_PER_CATCH } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { createGame } from "./state";
@@ -16,7 +18,7 @@ import { addItem, itemCount } from "./inventory";
 import { bankCount } from "./bank";
 import { xpForLevel } from "./leveling";
 import { nextFloat, nextInt } from "./rng";
-import { equipPet, grantPet } from "./pets";
+import { equipPet, grantPet, petHuntDoubleRollsChance } from "./pets";
 import {
   clearHuntTrap,
   huntBaitCount,
@@ -449,32 +451,98 @@ describe("Jagen — Determinismus & offline == online", () => {
 });
 
 /**
- * 1.2.0 (Chef 28.08.2026): Jagen-Begleiter booted_tomcat — Passiv `huntCatchChance` (+3 pp auf die Fangchance,
- * Deckel 95 % bleibt) und Begleiter-Wurf je FANG als Schritt 5 der RNG-Reihenfolge (Kopfkommentar hunting.ts).
+ * 1.2.0 (Chef 28.08.2026, zweiter Umbau): Jagen-Begleiter booted_tomcat (Leon) — Passiv `huntDoubleRolls` (5 % Chance je
+ * Fang auf HUNT_LOOT_ROLLS_DOUBLED = 10 statt 5 Beute-Durchläufe; EIN RNG-Zug vor den Beute-Würfen, nur mit aktivem Leon =
+ * Schritt 4 der RNG-Reihenfolge) und Begleiter-Wurf je FANG als Schritt 6 (Kopfkommentar hunting.ts). Das frühere Passiv
+ * `huntCatchChance` (+3 pp) ist gestrichen: die Fangchance kennt kein Begleiter-Passiv mehr.
  */
 describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
-  it("Passiv huntCatchChance: +3 pp auf die Fangchance, additiv VOR dem 95-%-Deckel; fremde Pets wirken nicht", () => {
+  it("Passiv huntDoubleRolls: Content 5 % auf hunting (Cap 0,05); die Fangchance bleibt OHNE Begleiter-Bonus; fremde Pets 0", () => {
     const c = testContent();
     const s = game(c);
-    expect(content.pets?.booted_tomcat?.skillEffect).toMatchObject({ kind: "huntCatchChance", skill: "hunting", value: 0.03 });
+    expect(content.pets?.booted_tomcat?.skillEffect).toEqual({ kind: "huntDoubleRolls", skill: "hunting", value: 0.05 });
+    expect(PET_SKILL_EFFECT_CAP.huntDoubleRolls).toBe(0.05);
+    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBe(0); // kein Pet
     grantPet(s, "booted_tomcat"); // erstes Pet rüstet sich selbst aus
     expect(s.character.companionPetId).toBe("booted_tomcat");
-    expect(huntCatchChance(s, c, "pastures")).toBeCloseTo(HUNT_CATCH_BASE + 0.03, 10);
-    expect(huntCatchChance(s, c, "borderlands")).toBeCloseTo(0.7 - 9 * 0.005 + 0.03, 10);
+    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBe(0.05);
+    expect(petHuntDoubleRollsChance(s, c, "fishing")).toBe(0); // skill-gebunden
+    // Kein Fangchancen-Bonus mehr (war +3 pp): Basis 70 %, Stufenformel, Deckel 95 % — mit und ohne Leon identisch.
+    expect(huntCatchChance(s, c, "pastures")).toBeCloseTo(HUNT_CATCH_BASE, 10);
+    expect(huntCatchChance(s, c, "borderlands")).toBeCloseTo(0.7 - 9 * 0.005, 10);
     setLevel(s, 99);
-    expect(huntCatchChance(s, c, "pastures")).toBe(HUNT_CATCH_CAP); // Deckel bleibt
+    expect(huntCatchChance(s, c, "pastures")).toBe(HUNT_CATCH_CAP);
     expect(huntCatchChance(s, c, "nirgendwo")).toBe(0);
-    // Ein Pet eines anderen Skills (rotbark, woodcutting) hebt die Fangchance nicht.
+    // Ein Pet eines anderen Skills (rotbark, woodcutting) liefert kein Jagen-Glück.
     setLevel(s, 1);
     grantPet(s, "rotbark");
     expect(equipPet(s, "rotbark")).toBe(true);
-    expect(huntCatchChance(s, c, "pastures")).toBeCloseTo(HUNT_CATCH_BASE, 10);
-    // Abgelegt ⇒ kein Bonus.
+    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBe(0);
+    // Abgelegt ⇒ 0.
     expect(equipPet(s, null)).toBe(true);
-    expect(huntCatchChance(s, c, "pastures")).toBeCloseTo(HUNT_CATCH_BASE, 10);
+    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBe(0);
   });
 
-  it("Begleiter-Wurf je Fang (RNG-Schritt 5, nach Beute/XP): dropChance 1 ⇒ Pet beim ersten Fang; im Besitz ⇒ kein weiterer Zug", () => {
+  it("huntDoubleRolls: EIN Zug (Schritt 4) nur mit aktivem Leon — Treffer ⇒ 10 Beute-Durchläufe, sonst 5; Gold bleibt ×5 (exakte RNG-Züge)", () => {
+    const c = testContent();
+    let seenDouble = false;
+    let seenSingle = false;
+    for (let seed = 1; seed < 800 && !(seenDouble && seenSingle); seed++) {
+      const s = readyGame(c, seed, 5);
+      grantPet(s, "booted_tomcat"); // besessen UND ausgerüstet ⇒ Schritt 4 zieht, Schritt 6 (Begleiter-Wurf) nicht mehr
+      expect(s.character.companionPetId).toBe("booted_tomcat");
+      advance(s, c, PASTURES_MS - 1000);
+      const rng = { state: s.rng.state };
+      if (!(nextFloat(rng) < huntCatchChance(s, c, "pastures"))) continue; // 1. Fangchance
+      nextInt(rng, 0, 0); // 2. Monster (Pool = [test_hare])
+      const goldRoll = HARE.gold + nextInt(rng, 0, Math.ceil(HARE.gold * 0.4)); // 3. Gold-Streuung
+      const doubled = nextFloat(rng) < 0.05; // 4. Leon-Glück (genau EIN Zug)
+      const passes = doubled ? HUNT_LOOT_ROLLS_DOUBLED : HUNT_LOOT_ROLLS;
+      for (let pass = 0; pass < passes; pass++) {
+        nextFloat(rng); // 5. Chance (rawhide, chance 1)
+        nextInt(rng, 1, 1); // 5. Menge (Material ⇒ kein Suffix-Zug)
+      }
+      // 6. Begleiter-Wurf entfällt (Leon im Besitz, kein weiteres Jagen-Pet im Test-Content).
+      const goldBefore = s.character.gold;
+      advance(s, c, 1000);
+      expect(s.rng.state).toBe(rng.state);
+      expect(s.huntTraps[0]!.lastCatch).toMatchObject({ seq: 1, monsterId: HARE.id, items: [{ id: "rawhide", qty: passes }], gold: goldRoll * HUNT_LOOT_ROLLS });
+      expect(s.character.gold - goldBefore).toBe(goldRoll * HUNT_LOOT_ROLLS); // Gold NIE verdoppelt
+      expect(itemCount(s.inventory, "rawhide")).toBe(passes);
+      expect(s.stats.itemsGathered).toBe(passes);
+      if (doubled) seenDouble = true;
+      else seenSingle = true;
+    }
+    expect(seenDouble).toBe(true);
+    expect(seenSingle).toBe(true);
+    expect(HUNT_LOOT_ROLLS_DOUBLED).toBe(HUNT_LOOT_ROLLS * 2);
+  });
+
+  it("ohne Leon (kein Pet / fremdes Pet) fällt Schritt 4 komplett weg — die Fang-Sequenz bleibt bit-identisch", () => {
+    const c = testContent();
+    let checked = 0;
+    for (let seed = 1; seed < 60 && checked < 3; seed++) {
+      const s = readyGame(c, seed, 5);
+      grantPet(s, "rotbark"); // fremdes Pet (woodcutting), ausgerüstet
+      advance(s, c, PASTURES_MS - 1000);
+      const rng = { state: s.rng.state };
+      if (!(nextFloat(rng) < huntCatchChance(s, c, "pastures"))) continue;
+      nextInt(rng, 0, 0);
+      nextInt(rng, 0, Math.ceil(HARE.gold * 0.4));
+      for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
+        nextFloat(rng);
+        nextInt(rng, 1, 1);
+      }
+      nextFloat(rng); // 6. Begleiter-Wurf: booted_tomcat noch nicht im Besitz (dropChance 1/15000 ⇒ praktisch nie)
+      advance(s, c, 1000);
+      expect(s.rng.state).toBe(rng.state);
+      expect(s.huntTraps[0]!.lastCatch?.items).toEqual([{ id: "rawhide", qty: HUNT_LOOT_ROLLS }]);
+      checked++;
+    }
+    expect(checked).toBe(3);
+  });
+
+  it("Begleiter-Wurf je Fang (RNG-Schritt 6, nach Beute/XP): dropChance 1 ⇒ Pet beim ersten Fang; im Besitz ⇒ kein weiterer Zug", () => {
     const base = testContent();
     const tomcat = base.pets!.booted_tomcat!;
     const c: ContentDB = { ...base, pets: { ...base.pets, booted_tomcat: { ...tomcat, dropChance: 1 } } };
@@ -488,11 +556,12 @@ describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
       if (!(nextFloat(rng) < huntCatchChance(g, c, "pastures"))) continue; // 1. Fangchance
       nextInt(rng, 0, 0); // 2. Monster (Pool = [test_hare])
       nextInt(rng, 0, Math.ceil(HARE.gold * 0.4)); // 3. Gold-Streuung
+      // Schritt 4 (Leon-Glück) entfällt: das Pet ist noch nicht im Besitz, also nicht aktiv.
       for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
-        nextFloat(rng); // 4. Chance (rawhide, chance 1)
-        nextInt(rng, 1, 1); // 4. Menge (Material ⇒ kein Suffix-Zug)
+        nextFloat(rng); // 5. Chance (rawhide, chance 1)
+        nextInt(rng, 1, 1); // 5. Menge (Material ⇒ kein Suffix-Zug)
       }
-      nextFloat(rng); // 5. Begleiter-Wurf (booted_tomcat noch nicht im Besitz)
+      nextFloat(rng); // 6. Begleiter-Wurf (booted_tomcat noch nicht im Besitz)
       expectedRng = rng.state;
       advance(g, c, 1000);
       s = g;
@@ -504,12 +573,14 @@ describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
     expect(s!.lastPetDrop).toEqual({ petId: "booted_tomcat", seq: 1 });
     expect(s!.petDropSeq).toBe(1);
     expect(s!.rng.state).toBe(expectedRng); // exakt 14 Züge — Pet-Wurf NACH der Beute
-    // Zweiter Fang: Pet im Besitz ⇒ Schritt 5 zieht NICHT mehr (13 Züge bei Treffer, 1 bei Fehlschlag).
+    // Zweiter Fang: Pet im Besitz UND ausgerüstet ⇒ Schritt 6 zieht NICHT mehr, dafür Schritt 4 (Leon-Glück) genau
+    // einmal (14 bzw. 24 Züge bei Treffer, 1 bei Fehlschlag).
     const rng2 = { state: s!.rng.state };
     if (nextFloat(rng2) < huntCatchChance(s!, c, "pastures")) {
       nextInt(rng2, 0, 0);
       nextInt(rng2, 0, Math.ceil(HARE.gold * 0.4));
-      for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
+      const passes = nextFloat(rng2) < 0.05 ? HUNT_LOOT_ROLLS_DOUBLED : HUNT_LOOT_ROLLS; // 4. Leon-Glück
+      for (let pass = 0; pass < passes; pass++) {
         nextFloat(rng2);
         nextInt(rng2, 1, 1);
       }

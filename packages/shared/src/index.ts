@@ -2324,7 +2324,7 @@ export type PetId = string;
  * | doubleLoot      | Chance je Monster-Kill, den kompletten Loot+Gold-Wurf zu wiederholen (ohne Pet-Drop/Dungeon-Token) | combat.ts Kill-Pfad (`petDoubleLootChance`) |
  * | killHeal        | heilt % player.maxHp bei jedem Monster-Kill      | combat.ts Kill-Pfad (`petKillHealFraction`)     |
  * | sellBonus       | +% Gold beim Item-Verkauf (Shop-Sell-Pfad)       | shop.ts `effectiveSellPrice` (`petSellBonus`)   |
- * | huntCatchChance | +Fangchance einer Falle beim Jagen (additiv, skill-gebunden auf `hunting`; der bestehende Deckel HUNT_CATCH_CAP 95 % bleibt) | hunting.ts `huntCatchChance` (`petHuntCatchBonus`) |
+ * | huntDoubleRolls | Chance je FANG beim Jagen, dass der Fang HUNT_LOOT_ROLLS × 2 (zehn statt fünf) Beute-Durchläufe liefert (skill-gebunden auf `hunting`; ein eigener RNG-Zug vor den Beute-Würfen, nur mit aktivem Pet) | hunting.ts `grantCatch` (`petHuntDoubleRollsChance`) |
  *
  * Mehrere Kinds docken funktional an dieselbe Mechanik an (doubleDrop/gatherYield/
  * flawlessGem/bonusRunes → Doppelertrag-Chance; refundMaterial/perfectCook/
@@ -2353,9 +2353,11 @@ export type PetSkillEffectKind =
   | "doubleLoot"
   | "killHeal"
   | "sellBonus"
-  // ── 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter booted_tomcat — Fangchance der Fallen
-  //    (hunting.ts läuft NICHT über den Aktions-Pfad, darum ein eigenes, skill-gebundenes Kind statt doubleDrop) ──
-  | "huntCatchChance";
+  // ── 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter booted_tomcat (Leon) — mit dieser Chance
+  //    liefert ein Fang zehn statt fünf Beute-Würfe (hunting.ts läuft NICHT über den Aktions-Pfad, darum ein
+  //    eigenes, skill-gebundenes Kind statt doubleDrop). Das frühere Kind `huntCatchChance` (+pp Fangchance)
+  //    ist ersatzlos gestrichen (Chef 28.08.2026, zweiter Umbau). ──
+  | "huntDoubleRolls";
 
 // RemovedPetSkillEffectKind („skillXp"): GELÖSCHT (#276 Schritt 3 erledigt) — Content ist auf die
 // neuen Passive umgestellt, XP-Kinds sind per Guard-Test dauerhaft verboten. Alt-Saves unberührt
@@ -2429,7 +2431,7 @@ export const SKILL_SCOPED_PET_KINDS: PetSkillEffectKind[] = [
   "bonusRunes",
   "potionPreserve",
   "skillBoost",
-  "huntCatchChance",
+  "huntDoubleRolls",
 ];
 
 /**
@@ -2464,7 +2466,7 @@ export const PET_SKILL_EFFECT_CAP: Record<PetSkillEffectKind, number> = {
   doubleLoot: 0.05, // Chance je Kill (Ökonomie-Spiegel des gemwraith-5-%-Referenzlevels)
   killHeal: 0.05, // Bruch player.maxHp je Kill (reines Food-Sparen im Grind)
   sellBonus: 0.05, // Bruch: +5 % Verkaufs-Gold max
-  huntCatchChance: 0.03, // Bruch: +3 pp Fangchance max (additiv auf eine Erfolgschance — enger wie thievingSuccess)
+  huntDoubleRolls: 0.05, // Chance je Fang auf HUNT_LOOT_ROLLS × 2 Beute-Durchläufe (Ökonomie-Spiegel von doubleLoot, 5 % Referenzlevel)
 };
 
 /**
@@ -6400,6 +6402,11 @@ export function huntCatchXp(monsterXp: number): number {
   return Math.max(1, Math.round(Math.max(0, monsterXp) * HUNT_XP_PER_CATCH));
 }
 export const HUNT_LOOT_ROLLS = 5;
+/**
+ * Beute-Durchläufe eines Fangs mit Begleiter-Glück (Chef 28.08.2026, Leon `huntDoubleRolls`): zehn statt fünf.
+ * Gilt NUR für die Beutetabelle (engine/hunting.ts grantCatch); die Gold-Streuung bleibt ×HUNT_LOOT_ROLLS.
+ */
+export const HUNT_LOOT_ROLLS_DOUBLED = HUNT_LOOT_ROLLS * 2;
 export const HUNT_CATCH_BASE = 0.7;
 export const HUNT_CATCH_PER_LEVEL = 0.005;
 export const HUNT_CATCH_CAP = 0.95;

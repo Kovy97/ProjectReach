@@ -72,7 +72,8 @@ describe("Suffix-Klassen-Trennung (#p14): Pool-Tags", () => {
     // 1.2.0 „Fasern und Fallen" (content-dev, 27.08.2026): neuer Meisterring ring_master_hunting
     // trägt evasionRating 4 (Flavor, Muster ring_master_fishing/-foraging, s. Kommentar unten) —
     // 96→97.
-    expect(counts).toEqual({ armor_plate: 178, armor_leather: 97, armor_cloth: 73 });
+    // Chef 28./29.08.2026: Trübgewebe-Set auf fünf Teile (dimweave_leggings/dimweave_wraps, wardCapacity 12/7) — 73→75.
+    expect(counts).toEqual({ armor_plate: 178, armor_leather: 97, armor_cloth: 75 });
   });
 
   it("jedes Rüstungsteil mit Klassen-Tag behält zusätzlich das allgemeine armor-Tag (Runen-Gate)", () => {

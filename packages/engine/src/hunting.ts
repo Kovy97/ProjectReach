@@ -9,6 +9,7 @@ import {
   HUNT_CATCH_CAP,
   HUNT_CATCH_PER_LEVEL,
   HUNT_LOOT_ROLLS,
+  HUNT_LOOT_ROLLS_DOUBLED,
   HUNT_TRAP_SLOTS,
   huntTrapSlotsForLevel, huntCatchXp, HUNT_FIRST_CATCH_MULT,} from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
@@ -20,7 +21,7 @@ import { grantLoot } from "./mail";
 import { monsterKills } from "./drops";
 import { isZoneUnlocked } from "./zones";
 import { tryCraftSuffix } from "./suffix";
-import { petHuntCatchBonus, tryPetDrop } from "./pets";
+import { petHuntDoubleRollsChance, tryPetDrop } from "./pets";
 
 // ───────────────────────────────────────────────────────────────────────────
 // Jagen (1.2.0 „Fasern und Fallen", SAVE_VERSION 85 — design/handwerk-fasern-jagen/spec-technik.md §3,
@@ -43,17 +44,22 @@ import { petHuntCatchBonus, tryPetDrop } from "./pets";
 //                   (leerer Pool ⇒ Fehlschlag OHNE Zug — kann nur durch Content-Änderung entstehen).
 //   bei Erfolg:
 //   2. nextInt    — Monster gleichverteilt aus `huntableMonsters` (Content-Reihenfolge).
-//   3. nextInt    — Gold-Streuung wie im Kill-Pfad (`gold + nextInt(0, ceil(gold·0,4))`), danach ×5.
-//   4. HUNT_LOOT_ROLLS komplette Durchläufe der Monster-Beutetabelle, je Eintrag: nextFloat
+//   3. nextInt    — Gold-Streuung wie im Kill-Pfad (`gold + nextInt(0, ceil(gold·0,4))`), danach ×5
+//                   (IMMER ×HUNT_LOOT_ROLLS, auch bei verdoppelten Beute-Durchläufen in Schritt 4/5).
+//   4. nextFloat  — Begleiter-Passiv `huntDoubleRolls` (Leon/booted_tomcat, Chef 28.08.2026): NUR,
+//                   wenn ein Pet mit diesem Kind für `hunting` aktiv ist (`petHuntDoubleRollsChance` > 0);
+//                   Treffer ⇒ Schritt 5 läuft HUNT_LOOT_ROLLS_DOUBLED (10) statt HUNT_LOOT_ROLLS (5) mal.
+//                   Ohne solches Pet KEIN Zug — Content/Saves ohne Leon bleiben bit-identisch.
+//   5. HUNT_LOOT_ROLLS (bzw. ×2) komplette Durchläufe der Monster-Beutetabelle, je Eintrag: nextFloat
 //                   (Chance) → bei Erfolg nextInt (Menge) → ggf. Suffix-Rolls über `tryCraftSuffix`
 //                   (zieht NUR bei Equipment mit Pool, wie im Kill-Pfad).
-//   5. Begleiter-Wurf (`tryPetDrop`, NACH Beute und XP — Muster tick.ts): je nextFloat NUR, wenn
+//   6. Begleiter-Wurf (`tryPetDrop`, NACH Beute und XP — Muster tick.ts): je nextFloat NUR, wenn
 //                   es für `hunting` ein noch nicht besessenes Pet gibt; ohne passendes Pet (oder
 //                   schon im Besitz) KEIN Zug — Content ohne Jagen-Pet bleibt bit-identisch.
-// Begleiter-Passiv auf die FANGCHANCE: `huntCatchChance` addiert `petHuntCatchBonus` (booted_tomcat
-// +3 pp) VOR dem Deckel HUNT_CATCH_CAP — reines Lesen, kein zusätzlicher RNG-Zug. Kein Segen-/Runen-/
-// Pet-Multiplikator auf die BEUTE (der Fallen-Tick kennt keine Wanduhr, und Kampf-Effekte gehören
-// dem Kampf) — die Tabelle fällt exakt mit ihren Content-Chancen.
+// Die FANGCHANCE (`huntCatchChance`) kennt KEIN Begleiter-Passiv mehr (das frühere Kind
+// `huntCatchChance` +3 pp ist gestrichen, Chef 28.08.2026). Kein Segen-/Runen-/Pet-Multiplikator auf
+// die BEUTE-CHANCEN (der Fallen-Tick kennt keine Wanduhr, und Kampf-Effekte gehören dem Kampf) — die
+// Tabelle fällt exakt mit ihren Content-Chancen; Leon verdoppelt nur die Zahl der Durchläufe.
 // Ohne `content.huntingZones` ist alles inert (kein RNG-Zug, kein State-Schreibzugriff).
 // ───────────────────────────────────────────────────────────────────────────
 
@@ -164,9 +170,7 @@ export function huntCatchChance(state: GameState, content: ContentDB, zoneId: st
   const zone = huntZoneDef(content, zoneId);
   if (!zone) return 0;
   const raw = HUNT_CATCH_BASE + (huntingLevel(state) - zone.levelRequired) * HUNT_CATCH_PER_LEVEL;
-  // Begleiter-Passiv (booted_tomcat, Kind huntCatchChance): additiv VOR dem Deckel — der 95-%-Deckel bleibt.
-  const pet = petHuntCatchBonus(state, content, HUNTING_SKILL_ID);
-  return Math.min(HUNT_CATCH_CAP, Math.max(0, raw + pet));
+  return Math.min(HUNT_CATCH_CAP, Math.max(0, raw));
 }
 
 /**
@@ -229,17 +233,24 @@ export function setHuntAutoRebait(state: GameState, slot: number, on: boolean): 
  * EIN erfolgreicher Fang: Gold (Kill-Streuung ×5), HUNT_LOOT_ROLLS Durchläufe der Beutetabelle über den
  * normalen Drop-Pfad (Suffix-Instanz möglich, grantLoot: Inventar → Lager → Postfach, itemsGathered),
  * Jagen-XP (Sammel-Tonika multiplizieren wie beim Beet), Breadcrumb mit laufender Fang-Nummer.
- * RNG-Züge s. Kopfkommentar (Schritte 3–5; Schritt 5 = Begleiter-Wurf).
+ * RNG-Züge s. Kopfkommentar (Schritte 3–6; Schritt 4 = Leon-Glückswurf, Schritt 6 = Begleiter-Wurf).
  */
 function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, monster: MonsterDef): HuntCatch {
-  // 3. Gold: derselbe Streuungs-Wurf wie im Kill-Pfad (combat.ts rollKillGold), dann ×HUNT_LOOT_ROLLS.
+  // 3. Gold: derselbe Streuungs-Wurf wie im Kill-Pfad (combat.ts rollKillGold), dann ×HUNT_LOOT_ROLLS
+  //    (bewusst NICHT verdoppelt — Leons Glück gilt der Beutetabelle, nicht der Börse).
   const goldRoll = monster.gold + nextInt(state.rng, 0, Math.ceil(monster.gold * 0.4));
   const gold = Math.max(0, Math.round(goldRoll * HUNT_LOOT_ROLLS));
   state.character.gold += gold;
 
-  // 4. Beute: HUNT_LOOT_ROLLS komplette Tabellen-Durchläufe (J: „5 Beute-Würfe seiner Tabelle").
+  // 4. Leon (Chef 28.08.2026, Kind huntDoubleRolls): EIN nextFloat NUR mit aktivem Pet dieses Kinds auf
+  //    `hunting` — sonst kein Zug (RNG-Sequenz ohne Leon bleibt bit-identisch, offline == online).
+  const doubleChance = petHuntDoubleRollsChance(state, content, HUNTING_SKILL_ID);
+  const doubled = doubleChance > 0 && nextFloat(state.rng) < doubleChance;
+  const passes = doubled ? HUNT_LOOT_ROLLS_DOUBLED : HUNT_LOOT_ROLLS;
+
+  // 5. Beute: HUNT_LOOT_ROLLS komplette Tabellen-Durchläufe (J: „5 Beute-Würfe seiner Tabelle"), mit Leon-Glück zehn.
   const items: { id: ItemId; qty: number }[] = [];
-  for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
+  for (let pass = 0; pass < passes; pass++) {
     for (const roll of monster.loot) {
       if (nextFloat(state.rng) > Math.min(1, roll.chance)) continue;
       let qty = nextInt(state.rng, roll.min, roll.max);
@@ -278,7 +289,7 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
   state.huntCatchSeq += 1;
   state.stats.huntCatches += 1;
 
-  // 5. Begleiter-Wurf (Chef 28.08.2026, Jagen-Begleiter): ein Fang ist der Aktions-Abschluss des
+  // 6. Begleiter-Wurf (Chef 28.08.2026, Jagen-Begleiter): ein Fang ist der Aktions-Abschluss des
   // Jagens — derselbe Wurf wie in tick.ts `completeAction`, NACH Beute/XP/Zählern. `tryPetDrop` zieht
   // NUR dann einen nextFloat, wenn für `hunting` ein noch nicht besessenes Pet existiert (Breadcrumb
   // `lastPetDrop`/`petDropSeq` setzt es selbst) — Determinismus offline == online bleibt, weil der

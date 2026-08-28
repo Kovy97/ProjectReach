@@ -27,12 +27,17 @@ const FIBER_TIERS = [
 
 const LEATHER_FAMILY = new Set(["cured_leather", "hardened_leather", "scaled_leather", "studded_leather", "warhide"]);
 
-// Die 26 Roben-Rezepte aus spec-technik.md §1.5, je mit ihrem Stoff-Tier-Index (0..4 in FIBER_TIERS).
+// Die 26 Roben-Rezepte aus spec-technik.md §1.5, je mit ihrem Stoff-Tier-Index (0..4 in FIBER_TIERS) — plus die drei
+// Trübgewebe-Teile vom 28./29.08.2026 (Chef: Set auf fünf Teile, Stoff-Sets ohne Leder: Sandalen von Leder auf
+// Nesselstoff, Binden und Beinkleid neu) ⇒ 29.
 const ROBE_RECIPES: Array<{ id: string; tier: number }> = [
   { id: "craft_apprentice_hat", tier: 0 },
   { id: "craft_apprentice_robe", tier: 0 },
   { id: "craft_apprentice_robe_legs", tier: 0 },
   { id: "craft_dimweave_hood", tier: 0 },
+  { id: "craft_dimweave_wraps", tier: 0 },
+  { id: "craft_dimweave_sandals", tier: 0 },
+  { id: "craft_dimweave_leggings", tier: 0 },
   { id: "craft_dimweave_robe", tier: 0 },
   { id: "craft_frost_robe_body", tier: 1 },
   { id: "craft_frost_robe_legs", tier: 1 },
@@ -155,8 +160,8 @@ describe("Fasern, Stoff und Jagen (1.2.0): Item-/Aktions-/Crop-/Skill-Wächter",
     expect(ids.has("weave")).toBe(true);
   });
 
-  it("genau 26 Roben-Rezepte, keines verlangt noch Leder (cured/hardened/scaled/studded_leather, warhide)", () => {
-    expect(ROBE_RECIPES.length).toBe(26);
+  it("genau 29 Roben-Rezepte (26 + Trübgewebe-Binden/-Sandalen/-Beinkleid), keines verlangt noch Leder (cured/hardened/scaled/studded_leather, warhide)", () => {
+    expect(ROBE_RECIPES.length).toBe(29);
     const offenders: string[] = [];
     for (const r of ROBE_RECIPES) {
       const a: ActionDef | undefined = content.actions[r.id];

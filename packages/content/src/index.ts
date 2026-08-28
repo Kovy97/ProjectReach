@@ -4367,6 +4367,9 @@ export const content: ContentDB = {
     // duskweave_* — siehe Bericht an den Chef). wardCapacity 8 auf den Füßen (statt der ursprünglich
     // geplanten 13) hält den harten Ladder-Guard "Stoff: wardCapacity steigt streng mit magic-Req je
     // Slot" ein (apprentice_slippers 6 @req1 < dimweave_sandals 8 @req10 < frost_treads 10.5 @req22).
+    // Chef 28./29.08.2026: auf FÜNF Teile ergänzt (Beinkleid ward 12: apprentice_robe_legs 10 < 12 <
+    // frost_robe_legs 16.5; Binden ward 7: apprentice_mitts 6 < 7 < frost_handwraps 10.5) — Attribute/
+    // Wert interpoliert zwischen Kapuze und Sandalen, Bilder von Mira (dimweave_leggings/-wraps.webp).
     dimweave_hood: {
       id: "dimweave_hood",
       name: { en: "Dimweave Hood", de: "Trübgewebe-Kapuze" },
@@ -4382,6 +4385,22 @@ export const content: ContentDB = {
       modifiers: { con: 1, int: 1 },
       requirements: { magic: 10 }, value: 190,
       description: { en: "Robes layered with dim-essence weave, humming faintly between apprentice cloth and true power.", de: "Roben aus mehrlagigem Trübessenz-Gewebe, die schwach zwischen Lehrlingsstoff und wahrer Macht summen." }, wardCapacity: 17,
+    },
+    dimweave_leggings: {
+      id: "dimweave_leggings",
+      name: { en: "Dimweave Leggings", de: "Trübgewebe-Beinkleid" },
+      type: "equipment", stackable: false, icon: "👖", slot: "legs",
+      modifiers: { con: 1, int: 1 },
+      requirements: { magic: 10 }, value: 170,
+      description: { en: "Leggings of coarse nettle weave dyed dusk-grey, a twilight rune stitched along the hem. They hang heavier than they look.", de: "Beinkleid aus grobem Nesselgewebe in Dämmergrau, eine Zwielicht-Rune am Saum eingenäht. Es hängt schwerer, als es aussieht." }, wardCapacity: 12,
+    },
+    dimweave_wraps: {
+      id: "dimweave_wraps",
+      name: { en: "Dimweave Wraps", de: "Trübgewebe-Binden" },
+      type: "equipment", stackable: false, slot: "gloves",
+      modifiers: { con: 1 },
+      requirements: { magic: 10 }, value: 130,
+      description: { en: "Hand wraps of coarse nettle weave dyed dusk-grey, a twilight rune sewn into each palm. The fingers stay free for casting.", de: "Handbinden aus grobem Nesselgewebe in Dämmergrau, in jede Handfläche eine Zwielicht-Rune genäht. Die Finger bleiben frei zum Zaubern." }, wardCapacity: 7,
     },
     dimweave_sandals: {
       id: "dimweave_sandals",
@@ -12187,11 +12206,26 @@ export const content: ContentDB = {
       inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "force_rune", qty: 2 }, { itemId: "cloth_nettle", qty: 2 }],
       loot: [{ itemId: "dimweave_hood", chance: 1, min: 1, max: 1 }],
     },
+    // Chef 28./29.08.2026: Trübgewebe auf fünf Teile — Binden (Stufe 9) und Beinkleid (Stufe 11) zwischen den
+    // Bestandsstufen 8/10/12, Zutaten interpoliert (nur Essenz/Rune/Nesselstoff, Stoff-Sets ohne Leder).
+    craft_dimweave_wraps: {
+      id: "craft_dimweave_wraps", name: { en: "Bind Dimweave Wraps", de: "Trübgewebe-Binden binden" },
+      skill: "tailoring", category: "robe_dimweave", durationMs: 5500, xp: 14, levelRequired: 9,
+      inputs: [{ itemId: "dim_essence", qty: 4 }, { itemId: "force_rune", qty: 2 }, { itemId: "cloth_nettle", qty: 1 }],
+      loot: [{ itemId: "dimweave_wraps", chance: 1, min: 1, max: 1 }],
+    },
     craft_dimweave_sandals: {
       id: "craft_dimweave_sandals", name: { en: "Bind Dimweave Sandals", de: "Trübgewebe-Sandalen binden" },
       skill: "tailoring", category: "robe_dimweave", durationMs: 6000, xp: 16, levelRequired: 10,
-      inputs: [{ itemId: "dim_essence", qty: 5 }, { itemId: "force_rune", qty: 2 }, { itemId: "cured_leather", qty: 2 }],
+      // Chef 28./29.08.2026 (Stoff-Sets ohne Leder): cured_leather → cloth_nettle (Menge unverändert).
+      inputs: [{ itemId: "dim_essence", qty: 5 }, { itemId: "force_rune", qty: 2 }, { itemId: "cloth_nettle", qty: 2 }],
       loot: [{ itemId: "dimweave_sandals", chance: 1, min: 1, max: 1 }],
+    },
+    craft_dimweave_leggings: {
+      id: "craft_dimweave_leggings", name: { en: "Weave Dimweave Leggings", de: "Trübgewebe-Beinkleid weben" },
+      skill: "tailoring", category: "robe_dimweave", durationMs: 6500, xp: 18, levelRequired: 11,
+      inputs: [{ itemId: "dim_essence", qty: 5 }, { itemId: "force_rune", qty: 3 }, { itemId: "cloth_nettle", qty: 2 }],
+      loot: [{ itemId: "dimweave_leggings", chance: 1, min: 1, max: 1 }],
     },
     craft_dimweave_robe: {
       id: "craft_dimweave_robe", name: { en: "Weave Dimweave Robe", de: "Trübgewebe-Robe weben" },
@@ -16083,13 +16117,13 @@ export const content: ContentDB = {
       bonus: {}, modifiers: { str: 16, con: 17, lck: 7 }, skillBoost: { power: 5 }, // balance-pass2 2026-07-01: Metall-Set-Tempo-Fortsetzung
     },
     // ── B) Magier-Rüstungs-Sets ───────────────────────────────────────
-    // Magier-Material-Paritäts-Audit F4 (2026-07-23): 3-teilig (Kopf/Brust/Füße) statt der
-    // sonst üblichen 5 — schließt die L1→L22-Stoff-Lücke, ohne apprentice_robe_legs/-mitts zu
-    // verdrängen (bleiben als günstige Beine/Hände-Slots bis frost_robe_legs/frost_handwraps L22).
+    // Magier-Material-Paritäts-Audit F4 (2026-07-23): ursprünglich 3-teilig (Kopf/Brust/Füße), um die
+    // L1→L22-Stoff-Lücke zu schließen. Chef 28./29.08.2026: auf die üblichen 5 Teile ergänzt
+    // (dimweave_leggings/dimweave_wraps, neu gemalt); minPieces 2 bleibt (Muster frost_robe_set).
     {
       id: "dimweave_set",
       name: { en: "Dimweave Set", de: "Trübgewebe-Set" },
-      pieces: ["dimweave_hood", "dimweave_robe", "dimweave_sandals"],
+      pieces: ["dimweave_hood", "dimweave_robe", "dimweave_leggings", "dimweave_wraps", "dimweave_sandals"],
       minPieces: 2,
       bonus: {}, modifiers: { int: 1, con: 1 }, skillBoost: { magic: 1 },
     },
@@ -18651,22 +18685,26 @@ export const content: ContentDB = {
     // ── 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter der beiden neuen Skills Jagen/Schneidern ──
     booted_tomcat: {
       id: "booted_tomcat",
-      name: { en: "Felyx", de: "Felyx" }, // Chef 28.08.2026: der Kater heisst Felyx (Community-Pet)
+      name: { en: "Leon, the Feared", de: "Leon, der Gefürchtete" }, // Chef 29.08.2026: war Felyx (Community-Pet), ID bleibt booted_tomcat
       description: {
-        en: "A grey-and-silver tabby tom with yellow-green eyes who walks upright in boots and a leather harness, hunting with snare and crossbow. At the traps he knows where a paw will land before it does — and in a fight he throws a snare that holds the enemy still for a heartbeat.",
-        de: "Ein grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und Armbrust jagt. An den Fallen weiß er, wohin eine Pfote tritt, bevor sie es tut — und im Kampf wirft er eine Schlinge, die den Gegner einen Herzschlag lang festhält.",
+        en: "A grey-and-silver tabby tom with yellow-green eyes who walks upright in boots and a leather harness, hunting with snare and crossbow. At the traps he empties the snare twice when luck is on his side, and a catch leaves ten loot rolls instead of five. In a fight he throws his bear trap: it snaps shut, and the target bleeds.",
+        de: "Ein grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und Armbrust jagt. An den Fallen leert er die Schlinge mit etwas Glück zweimal, und ein Fang lässt zehn Beute-Würfe da statt fünf. Im Kampf wirft er seine Bärenfalle: Sie schnappt zu, und das Ziel blutet.",
       },
-      // Neues Kind huntCatchChance (shared): +3 pp Fangchance der Fallen, additiv VOR dem 95-%-Deckel
-      // (engine/hunting.ts huntCatchChance). Jagen läuft nicht über Aktionen, darum kein doubleDrop.
-      skillEffect: { kind: "huntCatchChance", skill: "hunting", value: 0.03 },
-      // #276 §3 Budget: stun 600 ms / 5 s = 12 % Uptime-Cut (Muster rotbark „Wurzelschlinge").
+      // Chef 28.08.2026 (zweiter Umbau): Kind huntDoubleRolls (shared) — mit 5 % Chance je Fang liefert der Fang
+      // HUNT_LOOT_ROLLS × 2 Beute-Durchläufe (engine/hunting.ts grantCatch, RNG-Schritt 4, ein Zug nur mit
+      // aktivem Leon). Das frühere Kind huntCatchChance (+3 pp Fangchance) ist gestrichen. Jagen läuft nicht
+      // über Aktionen, darum kein doubleDrop.
+      skillEffect: { kind: "huntDoubleRolls", skill: "hunting", value: 0.05 },
+      // Chef 28.08.2026: „Bärenfalle" statt Schlingenfalle-Stun — onHitStatus bleed (Muster gorehound „Maul",
+      // #276 §3+§5.1 Budget: 3,0 % enemy.maxHp/s über 3 s alle 4,5 s = 2,00 %/s, Cap 0,04).
       combatAbility: {
-        kind: "stun",
-        name: { en: "Snare Trap", de: "Schlingenfalle" },
-        intervalMs: 5000,
-        value: 600,
+        kind: "onHitStatus",
+        name: { en: "Bear Trap", de: "Bärenfalle" },
+        intervalMs: 4500,
+        status: "bleed",
+        value: 0.030,
       },
-      // Drop je FANG (engine/hunting.ts grantCatch, Schritt 5 der RNG-Reihenfolge), nicht je Aktion.
+      // Drop je FANG (engine/hunting.ts grantCatch, Schritt 6 der RNG-Reihenfolge), nicht je Aktion.
       source: { kind: "skill", skill: "hunting" },
       // Jagen ist fang-arm wie Farming ernte-arm (Muster witherling 1/15000): 5–60 min je Falle, XP je Fang
       // = 5× Monster-XP (Hochland ~20k), Stufe 99 = 13,0 M XP ⇒ ~1 000–2 500 Fänge über einen vollen
