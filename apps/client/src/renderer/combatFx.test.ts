@@ -60,9 +60,9 @@ describe("magicThemeFor — Familie A (Konzept §2, Chef-D1: alle sieben Themen)
   // Status VOR der ID-Erkennung, das "aether"-Thema ist mit dem heutigen Katalog also nie in echt zu
   // sehen. Dieser Test hält die Ist-Reihenfolge fest, damit eine künftige Content-Änderung (Waffe ohne
   // burn) sofort auf "aether" umschlägt, statt dass die Divergenz unbemerkt bleibt.
-  it("Content-Realität: aether_runestaff/godspark_staff lösen HEUTE zu 'fire' auf (eigener burn-Effekt)", () => {
-    expect(magicThemeFor(content.items.aether_runestaff)).toBe("fire");
-    expect(magicThemeFor(content.items.godspark_staff)).toBe("fire");
+  it("Elementleiter (Chef-GO 28.08.2026): aether_runestaff/godspark_staff tragen Brand, lösen aber per magicTheme zu 'aether' auf", () => {
+    expect(magicThemeFor(content.items.aether_runestaff)).toBe("aether");
+    expect(magicThemeFor(content.items.godspark_staff)).toBe("aether");
   });
 
   it("Priorität: ein klassischer Statuseffekt schlägt eine Aether-ID (Reihenfolge aus dem Auftrag)", () => {
