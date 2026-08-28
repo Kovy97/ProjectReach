@@ -263,6 +263,9 @@ export interface RecipeContext {
   /** Bounding-Box des GETROFFENEN Kämpfers (Status-Ambient am Körper, Leere-Riss/-Nachbild,
    *  Begleiter-Schutzschild-Kuppel um den Spieler). */
   box?: Rect;
+  /** Chef 29.08.2026: Status-Ambient folgt dem Koerper auch beim Umlegen/Resizen der Kampf-Panels — Ambient-Rezepte
+   *  lesen die Box je Frame ueber diesen Getter neu (Stage-Koordinaten), `box` ist nur der Startwert. */
+  getBox?: () => Rect | undefined;
   /** Bodenpunkt unter dem Ziel (Nahkampf-Bodenriss/-Stoßwelle, Blitzregen-Bodenentladung). */
   feet?: Point;
   /** Position des Begleiter-Portraits (Begleiter-Rezepte: Bolzen/Diebesgriff starten hier). */
@@ -1077,7 +1080,7 @@ export class ParticleStage {
    *  `id` (z.B. `"enemy:burn"`): ein zweiter Aufruf mit derselben `id`, während sie noch läuft,
    *  tut nichts. `false` = kein Rezept/Level "off". Der Aufrufer merkt sich KEINEN Rückgabewert
    *  fürs Beenden — dafür `stopAmbient(id)`. */
-  startAmbient(key: string, id: string, opts: { at: Point; dir?: 1 | -1; box?: Rect }): boolean {
+  startAmbient(key: string, id: string, opts: { at: Point; dir?: 1 | -1; box?: Rect; getBox?: () => Rect | undefined }): boolean {
     if (!FX_PARTICLES || this.level === "off" || !this.ctx) return false;
     if (this.ambientFlags.has(id)) return true;
     const picked = selectRecipe(key, false, this.lastVariant);
@@ -1093,6 +1096,7 @@ export class ParticleStage {
       density: this.currentDensity(),
       api: this.buildApi(),
       box: opts.box,
+      getBox: opts.getBox,
       isActive: () => flag.active,
     });
     this.ensureRunning();

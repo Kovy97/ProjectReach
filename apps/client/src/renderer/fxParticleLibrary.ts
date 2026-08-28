@@ -2113,11 +2113,14 @@ function makeStatusAmbient(th: ThemeColors, kind: "flame" | "frost" | "spark" | 
   const color = themeColorFn(th);
   return (ctx) => {
     const { api, isActive } = ctx;
-    const b = defaultStatusBox(ctx);
+    let b = defaultStatusBox(ctx);
     let acc = 0;
     let crystalPhase = 0;
     const effect: Effect = {
       update(dt) {
+        // Chef 29.08.2026: Koerper-Box je Frame neu lesen (Panels umlegen/resizen), sonst brennt die Luft
+        const nb = ctx.getBox?.();
+        if (nb) b = nb;
         acc += dt;
         crystalPhase += dt;
         if (acc < 190 / scale) return;
@@ -2129,7 +2132,7 @@ function makeStatusAmbient(th: ThemeColors, kind: "flame" | "frost" | "spark" | 
           if (kind === "flame") {
             // Flammenzungen: gross, langsam aufsteigend, dazu Glut und Rauch (Chef 28.08.: deutlich groesser)
             api.ember(x, y, api.rand(-10, 10), api.rand(-75, -35) * scale, api.rand(400, 700) * scale, api.rand(3, 6) * scale, color, -25, 0.98);
-            if (scale > 1 && Math.random() < 0.6) api.ember(x + api.rand(-8, 8), y, api.rand(-6, 6), api.rand(-120, -70), api.rand(500, 800), api.rand(10, 18), color, -40, 0.985);
+            if (Math.random() < 0.45) api.ember(x + api.rand(-8, 8), y, api.rand(-6, 6), api.rand(-120, -70), api.rand(500, 800), api.rand(10, 18), color, -40, 0.985);
             if (Math.random() < 0.35) api.smoke(x, y, api.rand(-8, 8), api.rand(-30, -10), api.rand(600, 1000), api.rand(8, 14) * scale, th.smoke, 0.2, -6);
           } else if (kind === "frost") {
             if (Math.random() < 0.5) api.rime(x, y, api.rand(500, 900), api.rand(3, 6), th);
@@ -2158,8 +2161,9 @@ function makeStatusAmbient(th: ThemeColors, kind: "flame" | "frost" | "spark" | 
   };
 }
 
-registerRecipe("status_burn", [makeStatusFlare(FIRE_TH, "rgba(255,150,60,", 2)]);
-registerRecipe("statusAmbient_burn", [makeStatusAmbient(FIRE_TH, "flame", 2)]);
+// Chef 29.08.2026: "Feuer-Effekt zu krass, um 50 % kleiner" -> Skalierung 2,0 -> 1,0 (Flammenzungen bleiben)
+registerRecipe("status_burn", [makeStatusFlare(FIRE_TH, "rgba(255,150,60,", 1)]);
+registerRecipe("statusAmbient_burn", [makeStatusAmbient(FIRE_TH, "flame", 1)]);
 registerRecipe("status_frost", [makeStatusFlare(FROST_TH, "rgba(150,210,255,")]);
 registerRecipe("statusAmbient_frost", [makeStatusAmbient(FROST_TH, "frost")]);
 registerRecipe("status_shock", [makeStatusFlare(SHOCK_TH, "rgba(246,231,161,")]);
@@ -2199,12 +2203,14 @@ const statusFlareVoid: RecipeFn = (ctx) => {
 
 const statusAmbientVoid: RecipeFn = (ctx) => {
   const { api, isActive } = ctx;
-  const b = defaultStatusBox(ctx);
-  const cx = b.x + b.w / 2;
-  const cy = b.y + b.h * 0.5;
+  let b = defaultStatusBox(ctx);
+  let cx = b.x + b.w / 2;
+  let cy = b.y + b.h * 0.5;
   let acc = 0;
   const effect: Effect = {
     update(dt) {
+      const nb = ctx.getBox?.();
+      if (nb) { b = nb; cx = b.x + b.w / 2; cy = b.y + b.h * 0.5; }
       acc += dt;
       if (acc < 240) return;
       acc = 0;
