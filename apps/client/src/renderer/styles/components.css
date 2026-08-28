@@ -2745,7 +2745,9 @@ body .item-cell.rarity-godly {
 /* ── Item-Karte horizontal dynamisch (Chef 28.08.2026) ───────────────────────────────────────────
    Die Wertespalten (Offensive/Attribute) wachsen mit ihrem Inhalt; die Karte wird dafuer breiter statt
    Werte umzubrechen oder die gruenen Vergleichszahlen ueber die Werte zu legen. Selektoren bewusst mit
-   wiederholter Klasse, damit sie die aelteren #root-Regeln (inkl. :not()-Ketten) in der Kaskade schlagen. */
+   wiederholter Klasse, damit sie die aelteren #root-Regeln (inkl. :not()-Ketten) in der Kaskade schlagen.
+   Chef 29.08.: Verbrauchsgueter- und Simple-Karten haben einen eigenen Body-Aufbau und bleiben bei ihren Regeln
+   (die Eintopf-Karte lief sonst nach rechts aus dem Rahmen). */
 #root .item-tooltip.itip-panel.itip-panel.itip-panel {
   width: max-content;
   min-width: min(860px, calc(100vw - 24px));
@@ -2755,13 +2757,13 @@ body .item-cell.rarity-godly {
   width: min(1160px, calc((100vw - 52px) / 2));
   max-width: calc((100vw - 52px) / 2);
 }
-#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-main {
+#root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-main {
   grid-template-columns: minmax(250px, 0.82fr) minmax(max-content, 1.18fr);
 }
-#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-record .itip-body {
+#root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-record .itip-body {
   grid-template-columns: repeat(2, minmax(max-content, 1fr));
 }
-#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-record .itip-body > :only-child {
+#root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-record .itip-body > :only-child {
   grid-column: 1 / -1;
 }
 #root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-offense-group .itip-stat-row {
