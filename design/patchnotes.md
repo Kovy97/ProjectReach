@@ -240,6 +240,41 @@ neu gemessen (BiS-Picker wählt Esthar statt aetherium_maul; gegen die gepanzert
 Texte `pet.effect.skill.huntCatchChance`/`pet.passive.huntCatchChance` in 7 Sprachen, `PET_ZONE_ID` für die zwei Pets,
 Bilder von Mira (`esthar`, `elite_ossric`, `pets/booted_tomcat`, `pets/silkweaver`).*
 
+**Zauberreserve und Weisheit (Chef 28.08.):** DE: Mana wird zur Zauberreserve. Zauber kosten nichts mehr, der schwache
+Stabschlag bei leerem Mana ist Geschichte. Die Reserve ist jetzt ein fester Wert wie die Rüstung, und die beiden
+Magie-Haltungen lesen ihn: In der Fokus-Haltung gibt jede 60 Reserve 1 % mehr Zauberschaden (bis 15 %), in der
+Schild-Haltung jede 40 Reserve 1 % mehr Ward-Regeneration (bis 30 %). Weisheit schützt jetzt alle Kampfstile: Jeder
+Punkt macht Brand, Frost, Schock, Gift, Blutung und Entzug, die ein Gegner auf dich legt, 1 % kürzer und 1 % schwächer
+(bis 40 %); ab 20 % Widerstand braucht Frost vier statt drei Treffer, um dich einzufrieren. Alte Mana-Boni sind
+umgerechnet (+1 Mana-Regen = +10 Zauberreserve), das Arkan-Surge-Tonikum gibt 90 Sekunden lang +100 Zauberreserve.
+Waffen und Schmuck, die Mana bei Tötungen zurückgaben, füllen jetzt den Ward (gleiche Zahl), der Glyphenschlund füllt
+mit seinem Runenfraß 10 % Ward, Scheiterling und Frostgroll erhöhen die Zauberreserve um 5 bzw. 4 %. Überschuss
+(Glutherz-Robe, Skarn-Götzen-Stab, Sturmkamm-Stab, Rune Verschleiert) zündet, solange dein Ward über 80 % liegt. /
+EN: Mana becomes the Spell Reserve: spells no longer cost anything and the weak staff swing is gone. The reserve is a
+fixed value like armour, and the two magic stances read it: Focus grants 1 % more spell damage per 60 reserve (up to
+15 %), Shield grants 1 % more ward regeneration per 40 reserve (up to 30 %). Wisdom now protects every combat style:
+each point makes enemy burn, frost, shock, poison, bleed and void 1 % shorter and 1 % weaker (up to 40 %); from 20 %
+resistance frost needs four hits instead of three to freeze you. Old mana bonuses are converted (+1 mana regen = +10
+spell reserve), the Arcane Surge Tonic gives +100 spell reserve for 90 seconds, kill-mana effects now refill ward
+instead, Glyphmaw restores ward, Pyreling and Hoarspite raise the spell reserve, and Surplus triggers while your ward
+is above 80 %.
+
+*Dev-Notiz (combat-dev, Spec design/zauberreserve-weisheit.md „Umgesetzt"): shared-Konstanten FOCUS_STANCE_DMG_PER_RESERVE
+(1/60 %, Deckel 0,15 — Balance-Audit-Korrektur, Spec nannte 1/40 und 0,30), SHIELD_STANCE_WARDREGEN_PER_RESERVE (1/40 %,
+Deckel 0,30 — Chef-Korrektur, Spec nannte 1/20 und 0,60), WIS_STATUS_RESIST_PER_POINT 0,01 / CAP 0,4, WIS_FROST_EXTRA_STACK_RESIST
+0,2, WARD_RECHARGE_PER_CAST 1,2 (ersetzt WARD_PER_MANA·Kosten), Helfer spellReserveDamageBonus/spellReserveWardRegenBonus/
+wisdomStatusResist; DerivedStats neu spellReserveDamageBonus/spellReserveWardRegenBonus/statusResist, `manaRegen` weg,
+`maxMana` bleibt Feldname; ItemDef.manaCost, EquipBonus.manaRegen, MANA_PER_CAST, MAGIC_WEAK_FACTOR, castManaCost, Kinds
+manaOnKill/manaDrain, Pet-Kind manaRegen, Ability manaRestore entfernt; neu Kind wardOnKill, Pet-Kind spellReserve, Ability
+wardRestore; surplus liest den Ward-Anteil. computeStats: Fokus auf die ganze Magie-Spanne (nur offensiv), Schild-Bonus
+NACH WARDING_REGEN_CAP (nur defensiv). combat.ts: applyMonsterInflict skaliert Dauer/Magnitude, delayNextAttack/onStatusApplied
+tragen `resist`; tickPlayerRegen hält mana = maxMana. Content: 53 manaCost weg, 10× manaOnKill→wardOnKill, last_condemnation
+ohne Kill-Rückfluss, tideterror_grip wardSiphon 0,08, warlock_felstaff nur Brand, glyphmaw wardRestore 0,10, Pets spellReserve,
+Tonikum maxMana 100; Texte ×7 für 6 Einträge. Pins: balance-envelope TTK magic idol_warden 58,05→50,48, last_idol
+194,82→169,41 (1/1,15, Kit am Fokus-Deckel). Kein SAVE-Bump; Vault-Guard grün. Neu spell-reserve.test.ts (21). Offen (Client):
+ItemTooltip/CharacterPage/CombatPage/combatFx/petText + i18n (Zauberreserve-Label, Fokus/Schild/Weisheit-Tooltips, wardRestore,
+spellReserve, wardOnKill, surplus-Text, Onboarding ×7).*
+
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
 Kampf macht, mit Takt („Diebesgriff. Alle 6 s: 40 % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit

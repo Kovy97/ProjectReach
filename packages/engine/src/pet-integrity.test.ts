@@ -34,7 +34,7 @@ import {
   petInstantActionChance,
   petKillHealFraction,
   petLifesteal,
-  petManaRegenMult,
+  petSpellReserveMult,
   petPreserveBonus,
   petSellBonus,
   petSkillBoost,
@@ -44,7 +44,7 @@ import {
 
 const ALL_SKILL_KINDS: PetSkillEffectKind[] = [
   "instantAction", "doubleDrop", "gatherYield", "thievingSuccess", "refundMaterial",
-  "perfectCook", "bonusAmmo", "flawlessGem", "bonusRunes", "potionPreserve", "manaRegen",
+  "perfectCook", "bonusAmmo", "flawlessGem", "bonusRunes", "potionPreserve", "spellReserve",
   // #276 Pet-Redesign: die 6 neuen Passiv-Kinds (Spec §4.2)
   "lifesteal", "skillBoost", "damageReduction", "doubleLoot", "killHeal", "sellBonus",
   // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter — Fangchance der Fallen (hunting.ts)
@@ -52,14 +52,14 @@ const ALL_SKILL_KINDS: PetSkillEffectKind[] = [
 ];
 const ALL_ABILITY_KINDS: PetAbilityKind[] = [
   "stun", "burstDamage", "onHitStatus", "delayedDot", "accuracyDownEnemy", "stealDrop", "heal",
-  "shield", "armorRend", "guaranteedCrit", "manaRestore", "lifestealBurst", "enemyAttackDelay",
+  "shield", "armorRend", "guaranteedCrit", "wardRestore", "lifestealBurst", "enemyAttackDelay",
   "blockNextEnemyHit", "armorPierceHit", "multiHit",
 ];
 /** Status-bringende Kinds müssen ein gültiges `status` tragen. */
 const STATUS_KINDS = new Set<PetAbilityKind>(["onHitStatus", "delayedDot"]);
 /** Globale (skill-freie) Passiv-Kinds — Gegenstück zu SKILL_SCOPED_PET_KINDS. */
 const GLOBAL_SKILL_KINDS: PetSkillEffectKind[] = [
-  "manaRegen", "lifesteal", "damageReduction", "doubleLoot", "killHeal", "sellBonus",
+  "spellReserve", "lifesteal", "damageReduction", "doubleLoot", "killHeal", "sellBonus",
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -315,7 +315,7 @@ describe("pet XP-Verbot (#276): kein Pet-Passiv mit XP-Wirkung — dauerhaft", (
     expect(petDoubleYieldBonus(s, c, "woodcutting")).toBe(0);
     expect(petPreserveBonus(s, c, "woodcutting")).toBe(0);
     expect(petThievingBonus(s, c, "thieving")).toBe(0);
-    expect(petManaRegenMult(s, c)).toBe(1);
+    expect(petSpellReserveMult(s, c)).toBe(1);
     expect(petLifesteal(s, c)).toBe(0);
     expect(petSkillBoost(s, c, "attack")).toBe(0);
     expect(petDamageReduction(s, c)).toBe(0);
@@ -469,13 +469,14 @@ describe("pet skillEffect: angewandt (nicht defined-but-never-applied)", () => {
     expect(petPreserveBonus(s, content, "cooking")).toBe(0);
   });
 
-  it("manaRegen-Pet skaliert die Mana-Regeneration (global)", () => {
+  it("spellReserve-Pet skaliert die Zauberreserve (global, ×1.05 auf maxMana; Zauberreserve 28.08.2026)", () => {
     const s = freshGame();
-    grantPet(s, "pyreling"); // manaRegen 0.05
+    const base = computeStats(s, content).maxMana;
+    grantPet(s, "pyreling"); // spellReserve 0.05
     equipPet(s, "pyreling");
-    expect(petManaRegenMult(s, content)).toBeCloseTo(1.05, 5);
+    expect(petSpellReserveMult(s, content)).toBeCloseTo(1.05, 5);
     const stats = computeStats(s, content);
-    expect(stats.manaRegen).toBeGreaterThan(0);
+    expect(stats.maxMana).toBeCloseTo(base * 1.05, 6);
   });
 
   it("nicht besessenes/ausgerüstetes Pet wirkt nicht", () => {
@@ -700,7 +701,7 @@ describe("pet Combat-Stil-Bindung (Chef-Fix 2026-07-22): tryPetDrop filtert nach
     return {
       id,
       name: { en: id, de: id },
-      skillEffect: { kind: "manaRegen", value: 0.01 },
+      skillEffect: { kind: "spellReserve", value: 0.01 },
       combatAbility: { name: { en: "T", de: "T" }, kind: "heal", intervalMs: 6000, value: 0.03 },
       source: { kind: "combat", style },
       dropChance,

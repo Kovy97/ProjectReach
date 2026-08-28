@@ -27,7 +27,7 @@ function withAbility(
         id: "test_pet",
         name: { en: "T", de: "T" },
         // #276: skillXp ist verboten/gelöscht — neutrales globales Passiv fürs Fixture.
-        skillEffect: { kind: "manaRegen", value: 0.05 },
+        skillEffect: { kind: "spellReserve", value: 0.05 },
         combatAbility: named,
         source: { kind: "combat", style: "melee" },
         dropChance: 1,
@@ -181,7 +181,7 @@ describe("Pet-Drop am Kill-Pfad (Zwei-Effekt-Modell)", () => {
           id: "debug_combat_pet",
           name: { en: "Dbg", de: "Dbg" },
           // #276: skillXp ist verboten/gelöscht — neutrales globales Passiv fürs Fixture.
-          skillEffect: { kind: "manaRegen", value: 0.05 },
+          skillEffect: { kind: "spellReserve", value: 0.05 },
           combatAbility: { name: { en: "Test Ability", de: "Test-Fähigkeit" }, kind: "heal", intervalMs: 6000, value: 0.03 },
           source: { kind: "combat", style: "melee" },
           dropChance: 1, // garantiert (Test-Override)

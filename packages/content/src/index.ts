@@ -536,7 +536,6 @@ export const content: ContentDB = {
       weaponType: "staff",
       twoHanded: true,
       damageMin: 0.2, damageMax: 0.2, spellFocus: 0.003, attackIntervalMs: 3000,
-      manaCost: 5,
       // Elementleiter (Chef-GO 28.08.2026): Arkan statt Feuer — kein Status (Parität über den
       // Zauberfokus-Zauberstab-Nachbarn ist bei diesem Starter-Item vernachlässigbar, s. Bericht).
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Resonanz = momentum (+2 % Schaden je Treffer, bis 10 Stapel, reset je Gegner).
@@ -868,7 +867,9 @@ export const content: ContentDB = {
     // armor-iter2 §10.2: Weisheits-Trank-Analog auf Attribut (int) umgewidmet, Mana-Flats bleiben.
     // Task #238: int 4→6 (Modifiers-Guard-Ceiling §4.3); maxMana/manaRegen verdoppelt (einziger Nutzer
     // im ganzen Spiel — kein Gear-Referenzpunkt, daher direkt spürbar dimensioniert).
-    tonic_arcane_surge: { id: "tonic_arcane_surge", name: { en: "Arcane Surge Tonic", de: "Arkan-Surge-Tonikum" }, type: "consumable", stackable: true, rarity: "superRare", value: 150, buff: { category: "attribute", durationMs: 90_000, bonus: { maxMana: 60, manaRegen: 4 }, modifiers: { int: 6 } } },
+    // Zauberreserve (Chef-GO 28.08.2026, Spec §4): der Mana-Trank wird zum temporären Reserve-Bonus —
+    // maxMana 60 + manaRegen 4 × 10 (MANA_REGEN_TO_RESERVE) = +100 Zauberreserve für 90 s (Fokus ≈ +2,5 Pp).
+    tonic_arcane_surge: { id: "tonic_arcane_surge", name: { en: "Arcane Surge Tonic", de: "Arkan-Surge-Tonikum" }, type: "consumable", stackable: true, rarity: "superRare", value: 150, buff: { category: "attribute", durationMs: 90_000, bonus: { maxMana: 100 }, modifiers: { int: 6 } } },
     // Itemization 2.5: evasion (verboten) → hpRegenPerSec (Sustain-Äquivalent).
     // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.1 — tooltip-rounding workaround, not a
     // real buff (maxHp 40 is a deliberate Task #238 balance value and stays).
@@ -2839,7 +2840,6 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
       damageMin: 11.3, damageMax: 17, spellFocus: 0.0032, attackIntervalMs: 3000,
-      manaCost: 10,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 8, durationMs: 6500 }, // balance-fix 2026-07-05: magnitude 3.6→8 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 } ],
@@ -2909,10 +2909,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
       damageMin: 11.3, damageMax: 16.9, spellFocus: 0.0032, attackIntervalMs: 3000,
-      manaCost: 10,
       weaponEffect: { type: "burn", chance: 0.60, magnitude: 10, durationMs: 7000 }, // balance-fix 2026-07-05: magnitude 4.8→10 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { wis: 7, lck: 5 },
-      weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 }, { type: "manaOnKill", chance: 1, magnitude: 6, durationMs: 0 } ],
+      weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 } ], // Zauberreserve (Chef-GO 28.08.2026, Spec §4): manaOnKill 6 entfernt — der Stab trägt mit surplus bereits einen zweiten Effekt
       requirements: { magic: 99 },
       value: 60000, rarity: "godly",
       description: {
@@ -3655,7 +3654,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "cape",
       modifiers: { dex: 1, con: 2 }, value: 380, rarity: "rare", // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +1 con.
     },
-    // -- Mage (magicDamage + manaRegen/int, aus Leder + Essenzen)
+    // -- Mage (magicDamage + Zauberreserve/int, aus Leder + Essenzen)
     arcane_cape: {
       id: "arcane_cape", name: { en: "Arcane Cape", de: "Arkan-Umhang" },
       type: "equipment", stackable: false, slot: "cape",
@@ -3674,12 +3673,12 @@ export const content: ContentDB = {
     // +15/22/30 % Spanne: Stab (2H) 0,0030→0,0032, Zauberstab/Zepter (1H) 0,0025→0,0027 (≈ 20 % weniger,
     // sie behalten die Nebenhand). Drops/Champion-Waffen: Fokus der Craft-Stufe, deren Schaden sie tragen
     // (Rare-Drop-Philosophie). Tabelle + Herleitung: design/zauberfokus-2026-08-28.md. Foki (offhand) NIE.
-    // STAFF: 0.85·D, twoHanded, Burn-DoT (eskalierend), manaCost 8→24 (post ×1.5 nerf)
+    // STAFF: 0.85·D, twoHanded, Burn-DoT (eskalierend); Manakosten entfallen (Zauberreserve, Chef-GO 28.08.2026)
     copper_staff: {
       id: "copper_staff", name: { en: "Copper Staff", de: "Kupfer-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 0.4, damageMax: 0.6, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
+      damageMin: 0.4, damageMax: 0.6, spellFocus: 0.003, attackIntervalMs: 3000, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 3500 }, // Combat-Feel v2 #5: chance 0.25→0.45 (uniform), magnitude ×1.5 (Staff-Identität: DoT-Säule); balance-fix 2026-07-05: 0.15→1 (rundete auf "0 damage/s")
       magicTheme: "fire", // Elementleiter (Chef-GO 28.08.2026): Feuer, unverändert
       requirements: { magic: 1 }, value: 38, // balance-pass3: value 50→38
@@ -3694,7 +3693,7 @@ export const content: ContentDB = {
       // 0,9-1,3→1,25-1,8 (statt der ursprünglich kleineren Korrektur): coreStatScore-Nachbar ist
       // NICHT copper_staff, sondern der interleaved Drop gnarled_staff (Lv1, Score 45 aus seinem
       // Burn-Status) — sim-consistency.ts Tier-Leiter-Monotonie zählt ihn in derselben Familie mit.
-      damageMin: 1.25, damageMax: 1.8, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
+      damageMin: 1.25, damageMax: 1.8, spellFocus: 0.003, attackIntervalMs: 3000, wardBreak: 0.30,
       weaponEffect: { type: "shock", chance: 0.45, magnitude: 0.16, durationMs: 3800 },
       magicTheme: "shock",
       requirements: { magic: 5 }, value: 75, // balance-pass3: value 95→75
@@ -3703,7 +3702,7 @@ export const content: ContentDB = {
       id: "iron_staff", name: { en: "Iron Staff", de: "Eisen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 1.4, damageMax: 2, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
+      damageMin: 1.4, damageMax: 2, spellFocus: 0.003, attackIntervalMs: 3000, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 4000 }, // Combat-Feel v2 #5: chance 0.28→0.45 (uniform), magnitude ×1.5; balance-fix 2026-07-05: 0.45→1 (rundete auf "0 damage/s")
       magicTheme: "fire", // Elementleiter (Chef-GO 28.08.2026): Feuer, unverändert
       requirements: { magic: 10 }, value: 100, rarity: "rare", // balance-pass3: value 200→100
@@ -3715,7 +3714,7 @@ export const content: ContentDB = {
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Arkan — kein Status, Parität über Grundspanne
       // (Spec §Mechanik: „etwas höhere Grundspanne"). Kern-Score-Herleitung (coreStatScore) im
       // Bericht: verlorener Burn-Score wird durch die Spanne 1,7-2,6→2,3-3,5 ausgeglichen.
-      damageMin: 2.3, damageMax: 3.5, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2/3)
+      damageMin: 2.3, damageMax: 3.5, spellFocus: 0.003, attackIntervalMs: 3000, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2/3)
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Resonanz = momentum (kein Status; durationMs 0 ⇒ kein coreStatScore-Beitrag, Parität unverändert).
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 10 },
       magicTheme: "arcane",
@@ -3729,7 +3728,7 @@ export const content: ContentDB = {
       // Content, s. z.B. felmagician_rod/drowned_choirstaff). execute hat durationMs 0 (Instant-
       // Bedingungseffekt) und trägt daher KEINEN coreStatScore-Beitrag — Parität über Grundspanne
       // (Spanne 2,1-3,2→2,5-3,8, Herleitung im Bericht).
-      damageMin: 2.5, damageMax: 3.8, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.6/4)
+      damageMin: 2.5, damageMax: 3.8, spellFocus: 0.003, attackIntervalMs: 3000, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.6/4)
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Leere-Waffen tragen zusätzlich Entzug (void: Ziel macht 15 % weniger Schaden). Chance/
       // Dauer nach dem Stab-Muster der Leiter (0,45; Dauer zwischen Eisen 4000 und Mithril 4900).
@@ -3741,7 +3740,7 @@ export const content: ContentDB = {
       id: "mithril_staff", name: { en: "Mithril Staff", de: "Mithril-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 2.7, damageMax: 4.1, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.2/4.8)
+      damageMin: 2.7, damageMax: 4.1, spellFocus: 0.003, attackIntervalMs: 3000, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.2/4.8)
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Frost (Chance/Dauer vom Feuer-Vorgänger
       // übernommen — frost-Magnitude ist mechanisch ungenutzt, s. StatusEffect-Doku in shared).
       weaponEffect: { type: "frost", chance: 0.45, magnitude: 1, durationMs: 4900 },
@@ -3752,7 +3751,7 @@ export const content: ContentDB = {
       id: "adamantium_staff", name: { en: "Adamantium Staff", de: "Adamantium-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 3.3, damageMax: 4.9, spellFocus: 0.0031, attackIntervalMs: 3000, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4/6)
+      damageMin: 3.3, damageMax: 4.9, spellFocus: 0.0031, attackIntervalMs: 3000, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4/6)
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Blitz (Chance/Dauer vom Feuer-Vorgänger
       // übernommen; Magnitude nach der Shock-Wand-Formel auf Tier-Index 7 → 0,26).
       weaponEffect: { type: "shock", chance: 0.45, magnitude: 0.26, durationMs: 5200 },
@@ -3763,7 +3762,7 @@ export const content: ContentDB = {
       id: "runite_staff", name: { en: "Runite Staff", de: "Runit-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 4.2, damageMax: 6.2, spellFocus: 0.0031, attackIntervalMs: 2880, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5/7.4); attackIntervalMs unverändert
+      damageMin: 4.2, damageMax: 6.2, spellFocus: 0.0031, attackIntervalMs: 2880, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5/7.4); attackIntervalMs unverändert
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Gift. poison ist mechanisch identisch zu burn
       // (Schaden/Sek-DoT) — Werte 1:1 vom Feuer-Vorgänger übernommen, reine Typ-Umflaggung, DPS-neutral.
       weaponEffect: { type: "poison", chance: 0.45, magnitude: 5, durationMs: 5500 },
@@ -3774,7 +3773,7 @@ export const content: ContentDB = {
       id: "bloodiron_staff", name: { en: "Bloodiron Staff", de: "Bluteisen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 5.2, damageMax: 7.7, spellFocus: 0.0031, attackIntervalMs: 2830, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.8/8.6); attackIntervalMs unverändert
+      damageMin: 5.2, damageMax: 7.7, spellFocus: 0.0031, attackIntervalMs: 2830, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.8/8.6); attackIntervalMs unverändert
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 5, durationMs: 5800 }, // Combat-Feel v2 #5: chance 0.36→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 2.7→5, Ganzzahl-Retune]
       magicTheme: "fire", // Elementleiter (Chef-GO 28.08.2026): Feuer, unverändert
       requirements: { magic: 70 }, value: 1250, rarity: "superRare", // balance-pass3: value 6300→1250
@@ -3787,11 +3786,11 @@ export const content: ContentDB = {
       // (Spec §Mechanik). manaOnKill hat durationMs 0 (Kill-Trigger, kein DoT) und trägt daher
       // KEINEN coreStatScore-Beitrag — Parität über Grundspanne (Spanne 6,5-9,8→11,4-17,2,
       // Herleitung im Bericht; Magnitude 5 = üblicher manaOnKill-Flatwert, s. z.B. sorrow_staff).
-      damageMin: 11.4, damageMax: 17.2, spellFocus: 0.0031, attackIntervalMs: 2780, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
+      damageMin: 11.4, damageMax: 17.2, spellFocus: 0.0031, attackIntervalMs: 2780, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Lichtsegen ersetzt den manaOnKill-Platzhalter — jeder Zauber füllt 4 % des eigenen
       // Ward-Maximums und durchdringt 50 % des Gegner-Wards (Engine: AETHER_WARD_ON_HIT/AETHER_WARD_PIERCE).
       // durationMs 0 ⇒ kein coreStatScore-Beitrag, Grundspannen-Parität bleibt wie von der Elementleiter gesetzt.
-      weaponEffect: { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 },
+      weaponEffect: { type: "lightblessing", chance: 1, magnitude: 0.02, durationMs: 0 },
       magicTheme: "aether",
       requirements: { magic: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 9600→1600
     },
@@ -3801,9 +3800,9 @@ export const content: ContentDB = {
       weaponType: "staff",
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Aether — Mana-Rückfluss (manaOnKill) statt Brand.
       // Parität über Grundspanne (Spanne 8,1-12,2→12,5-18,8, Herleitung im Bericht).
-      damageMin: 12.5, damageMax: 18.8, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
+      damageMin: 12.5, damageMax: 18.8, spellFocus: 0.0032, attackIntervalMs: 2730, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Lichtsegen ersetzt den manaOnKill-Platzhalter (s. titanium_staff).
-      weaponEffect: { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 },
+      weaponEffect: { type: "lightblessing", chance: 1, magnitude: 0.02, durationMs: 0 },
       magicTheme: "aether",
       modifiers: { int: 1 },
       requirements: { magic: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 13500→2100
@@ -3815,7 +3814,7 @@ export const content: ContentDB = {
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Leere (execute, Standard-Werte). execute trägt
       // KEINEN coreStatScore-Beitrag (durationMs 0) — Parität über Grundspanne (Spanne
       // 10,2-15,2→13,9-20,6, Herleitung im Bericht).
-      damageMin: 13.9, damageMax: 20.6, spellFocus: 0.0032, attackIntervalMs: 2700, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.8/11.6); attackIntervalMs unverändert
+      damageMin: 13.9, damageMax: 20.6, spellFocus: 0.0032, attackIntervalMs: 2700, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.8/11.6); attackIntervalMs unverändert
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Entzug (void) zusätzlich; Stab-Muster (0,45; Dauer über Bluteisen 5800 fortgeschrieben).
       weaponEffects: [ { type: "void", chance: 0.45, magnitude: 0.15, durationMs: 6400 } ],
@@ -3823,12 +3822,12 @@ export const content: ContentDB = {
       modifiers: { int: 1, wis: 1 },
       requirements: { magic: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 21000→3000
     },
-    // WAND: 0.55·D, 1H, −300 aIMs, Control (frost T1–4 → shock T5–12), manaCost 5→12 (post ×1.5 nerf)
+    // WAND: 0.55·D, 1H, −300 aIMs, Control (frost T1–4 → shock T5–12); Manakosten entfallen (Zauberreserve, Chef-GO 28.08.2026)
     copper_wand: {
       id: "copper_wand", name: { en: "Copper Wand", de: "Kupfer-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 0.4, damageMax: 0.4, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
+      damageMin: 0.4, damageMax: 0.4, spellFocus: 0.0025, attackIntervalMs: 2700, wardBreak: 0.20,
       weaponEffect: { type: "frost", chance: 0.18, magnitude: 1, durationMs: 3000 },
       magicTheme: "frost", // Elementleiter (Chef-GO 28.08.2026): Frost, unverändert
       requirements: { magic: 1 }, value: 38, // balance-pass3: value 28→38
@@ -3837,7 +3836,7 @@ export const content: ContentDB = {
       id: "bronze_wand", name: { en: "Bronze Wand", de: "Bronze-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 0.6, damageMax: 0.8, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
+      damageMin: 0.6, damageMax: 0.8, spellFocus: 0.0025, attackIntervalMs: 2700, wardBreak: 0.20,
       // Elementleiter (Chef-GO 28.08.2026): Frost→Gift. Chance/Dauer vom Frost-Vorgänger
       // übernommen; Magnitude 1 = kleinster DoT-Ganzzahlwert (Starter-Tier).
       weaponEffect: { type: "poison", chance: 0.20, magnitude: 1, durationMs: 3200 },
@@ -3848,7 +3847,7 @@ export const content: ContentDB = {
       id: "iron_wand", name: { en: "Iron Wand", de: "Eisen-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 1.1, damageMax: 1.3, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
+      damageMin: 1.1, damageMax: 1.3, spellFocus: 0.0025, attackIntervalMs: 2700, wardBreak: 0.20,
       weaponEffect: { type: "frost", chance: 0.22, magnitude: 1, durationMs: 3400 },
       magicTheme: "frost", // Elementleiter (Chef-GO 28.08.2026): Frost, unverändert
       requirements: { magic: 10 }, value: 100, rarity: "rare", // balance-pass3: value 110→100
@@ -3857,7 +3856,7 @@ export const content: ContentDB = {
       id: "steel_wand", name: { en: "Steel Wand", de: "Stahl-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 1.6/2)
+      damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 1.6/2)
       // Elementleiter (Chef-GO 28.08.2026): Frost→Blitz. Chance/Dauer vom Frost-Vorgänger
       // übernommen; Magnitude nach der Shock-Wand-Formel 0,22+0,02·(Tier-Index−5) auf Tier-Index 4 → 0,20.
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.20, durationMs: 3600 },
@@ -3868,7 +3867,7 @@ export const content: ContentDB = {
       id: "blacksteel_wand", name: { en: "Blacksteel Wand", de: "Schwarzstahl-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 1.6, damageMax: 2.1, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.1/2.7)
+      damageMin: 1.6, damageMax: 2.1, spellFocus: 0.0025, attackIntervalMs: 2700, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.1/2.7)
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Gift. Chance/Dauer vom Blitz-Vorgänger übernommen.
       weaponEffect: { type: "poison", chance: 0.20, magnitude: 2, durationMs: 3500 },
       magicTheme: "poison",
@@ -3878,7 +3877,7 @@ export const content: ContentDB = {
       id: "mithril_wand", name: { en: "Mithril Wand", de: "Mithril-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 2.0, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.7/3.5)
+      damageMin: 2.0, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.7/3.5)
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Feuer. Chance/Dauer vom Blitz-Vorgänger übernommen.
       weaponEffect: { type: "burn", chance: 0.22, magnitude: 2, durationMs: 3800 },
       magicTheme: "fire",
@@ -3890,7 +3889,7 @@ export const content: ContentDB = {
       weaponType: "wand",
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Arkan — kein Status, Parität über Grundspanne
       // (Spanne 2,6-3,3→3,1-3,9, Herleitung im Bericht).
-      damageMin: 3.1, damageMax: 3.9, spellFocus: 0.0026, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.5/4.5)
+      damageMin: 3.1, damageMax: 3.9, spellFocus: 0.0026, attackIntervalMs: 2700, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.5/4.5)
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Resonanz = momentum (kein Status, kein Score-Beitrag).
       weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 10 },
       magicTheme: "arcane",
@@ -3900,7 +3899,7 @@ export const content: ContentDB = {
       id: "runite_wand", name: { en: "Runite Wand", de: "Runit-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 3.2, damageMax: 4.1, spellFocus: 0.0026, attackIntervalMs: 2670, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.2/5.4); attackIntervalMs unverändert
+      damageMin: 3.2, damageMax: 4.1, spellFocus: 0.0026, attackIntervalMs: 2670, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.2/5.4); attackIntervalMs unverändert
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Leere (execute, Standard-Werte).
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Entzug (void) zusätzlich; Zauberstab-Muster (Chance/Dauer zwischen Mithril 0,22/3800 und Bluteisen 0,28/4400).
@@ -3912,7 +3911,7 @@ export const content: ContentDB = {
       id: "bloodiron_wand", name: { en: "Bloodiron Wand", de: "Bluteisen-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 4.0, damageMax: 5.2, spellFocus: 0.0026, attackIntervalMs: 2640, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.8/6.2); attackIntervalMs unverändert
+      damageMin: 4.0, damageMax: 5.2, spellFocus: 0.0026, attackIntervalMs: 2640, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.8/6.2); attackIntervalMs unverändert
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Frost. Chance/Dauer vom Blitz-Vorgänger übernommen.
       weaponEffect: { type: "frost", chance: 0.28, magnitude: 1, durationMs: 4400 },
       magicTheme: "frost",
@@ -3922,7 +3921,7 @@ export const content: ContentDB = {
       id: "titanium_wand", name: { en: "Titanium Wand", de: "Titan-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 5.1, damageMax: 6.4, spellFocus: 0.0026, attackIntervalMs: 2630, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.5/6.9); attackIntervalMs unverändert
+      damageMin: 5.1, damageMax: 6.4, spellFocus: 0.0026, attackIntervalMs: 2630, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.5/6.9); attackIntervalMs unverändert
       weaponEffect: { type: "shock", chance: 0.30, magnitude: 0.32, durationMs: 4600 },
       magicTheme: "shock", // Elementleiter (Chef-GO 28.08.2026): Blitz, unverändert
       requirements: { magic: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 5800→1600
@@ -3931,7 +3930,7 @@ export const content: ContentDB = {
       id: "aetherium_wand", name: { en: "Aetherium Wand", de: "Aetherium-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 6.3, damageMax: 8.0, spellFocus: 0.0027, attackIntervalMs: 2600, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.9/7.5); attackIntervalMs unverändert
+      damageMin: 6.3, damageMax: 8.0, spellFocus: 0.0027, attackIntervalMs: 2600, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.9/7.5); attackIntervalMs unverändert
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Arkan — kein Status. Score bleibt ohne Bump über
       // dem Titan-Zauberstab-Nachbarn (Bericht); magicTheme MUSS gesetzt sein, sonst greift die
       // ID-Präfix-Heuristik in combatFx.ts (`id.startsWith("aether")`) fälschlich auf "aether".
@@ -3944,13 +3943,13 @@ export const content: ContentDB = {
       id: "godiron_wand", name: { en: "Godiron Wand", de: "Götzeneisen-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.2/7.8); attackIntervalMs unverändert
+      damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.2/7.8); attackIntervalMs unverändert
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Feuer. Chance/Dauer vom Blitz-Vorgänger übernommen.
       weaponEffect: { type: "burn", chance: 0.34, magnitude: 4, durationMs: 5000 },
       magicTheme: "fire",
       requirements: { magic: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 13000→3000
     },
-    // FOCUS: 0.30·D, offhand, +maxMana, +manaRegen, +critChance (reiner Stat-Stick)
+    // FOCUS: 0.30·D, offhand, +Zauberreserve (maxMana), +critChance (reiner Stat-Stick)
     copper_focus: {
       id: "copper_focus", name: { en: "Copper Focus", de: "Kupfer-Fokus" },
       type: "equipment", stackable: false, icon: "🔮", slot: "offhand", weaponStyle: "magic",
@@ -4079,7 +4078,7 @@ export const content: ContentDB = {
       weaponStyle: "magic",
       weaponType: "scepter",
       damageMin: 1.9, damageMax: 2.9, spellFocus: 0.0025, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Scepter-Linie fehlte in Spec §3.3 — auf Stab-Kurve eingeordnet (geometrisch zwischen steel/blacksteel bei req25 interpoliert; war 1.4/2.2)
-      manaCost: 6, wardBreak: 0.25,
+      wardBreak: 0.25,
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 4000 },
       requirements: { magic: 25 },
       value: 340,
@@ -4100,12 +4099,11 @@ export const content: ContentDB = {
       weaponType: "staff",
       twoHanded: true,
       damageMin: 2.2, damageMax: 3.2, spellFocus: 0.003, attackIntervalMs: 3000,
-      manaCost: 7,
       weaponEffect: { type: "burn", chance: 0.3, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 1→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       // Elementleiter (Chef-GO 28.08.2026): Bild/Name sind Aether, der Status bleibt Brand
       // (unverändert, Rare-Drop-Philosophie) — magicTheme überschreibt nur die FX-Optik.
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Aether-Drop trägt zusätzlich Lichtsegen (Brand bleibt).
-      weaponEffects: [ { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 } ],
+      weaponEffects: [ { type: "lightblessing", chance: 1, magnitude: 0.02, durationMs: 0 } ],
       magicTheme: "aether",
       requirements: { magic: 40 },
       value: 520,
@@ -4140,7 +4138,7 @@ export const content: ContentDB = {
     stormcaller_rod: {
       id: "stormcaller_rod", name: { en: "Stormcaller Rod", de: "Sturmrufer-Rute" }, type: "equipment", stackable: false,
       icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 3.3, damageMax: 4.9, spellFocus: 0.0026, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Scepter-Linie auf Stab-Kurve eingeordnet (req50 = exakt Adamantium-Anker; war 3/4.4)
-      manaCost: 7, wardBreak: 0.25,
+      wardBreak: 0.25,
       weaponType: "scepter",
       weaponEffect: { type: "shock", chance: 0.35, magnitude: 0.28, durationMs: 4000 },
       requirements: { magic: 50 }, value: 1100, rarity: "superRare",
@@ -4148,7 +4146,6 @@ export const content: ContentDB = {
     voidcaller_staff: {
       id: "voidcaller_staff", name: { en: "Voidcaller Staff", de: "Leerenrufer-Stab" }, type: "equipment", stackable: false,
       icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 3.8, damageMax: 5.8, spellFocus: 0.0031, attackIntervalMs: 3000,
-      manaCost: 8,
       weaponType: "staff",
       twoHanded: true,
       weaponEffect: { type: "shock", chance: 0.3, magnitude: 0.32, durationMs: 4500 },
@@ -4163,7 +4160,6 @@ export const content: ContentDB = {
     godspark_staff: {
       id: "godspark_staff", name: { en: "Godspark Staff", de: "Götzenfunken-Stab" }, type: "equipment", stackable: false,
       icon: "🪄", slot: "mainhand", weaponStyle: "magic", damageMin: 4.8, damageMax: 7.2, spellFocus: 0.0031, attackIntervalMs: 3000,
-      manaCost: 9,
       weaponType: "staff",
       twoHanded: true,
       weaponEffect: { type: "burn", chance: 0.38, magnitude: 6, durationMs: 6000 }, // balance-fix 2026-07-05: magnitude 2.2→6 (Ganzzahl, tier-gestuft nach Level/Rarity)
@@ -4172,7 +4168,7 @@ export const content: ContentDB = {
       magicTheme: "aether",
       modifiers: { int: 1, lck: 2 },
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Aether-Drop trägt zusätzlich Lichtsegen (Brand + critBurst bleiben).
-      weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 10, durationMs: 0 }, { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 } ],
+      weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 10, durationMs: 0 }, { type: "lightblessing", chance: 1, magnitude: 0.02, durationMs: 0 } ],
       requirements: { magic: 88 }, value: 4200, rarity: "epic",
     },
 
@@ -4623,7 +4619,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "👖", slot: "legs",
       modifiers: { con: 4, int: 6 },
       requirements: { magic: 70 }, value: 3000, rarity: "superRare",
-      description: { en: "Flowing leg wraps laced with void rune sigils. Mana flows freely.", de: "Fließende Beinwickel mit Leerenrunen-Sigilen besetzt. Mana strömt frei." }, wardCapacity: 73.85,
+      description: { en: "Flowing leg wraps laced with void rune sigils. Your spell reserve runs deep.", de: "Fließende Beinwickel mit Leerenrunen-Sigilen besetzt. Die Zauberreserve strömt frei." }, wardCapacity: 73.85,
     },
     runewoven_handwraps: {
       id: "runewoven_handwraps",
@@ -5202,7 +5198,7 @@ export const content: ContentDB = {
       id: "hedgewitch_twig", name: { en: "Hedge-Witch Twig", de: "Heckenhexen-Zweig" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
       damageMin: 1, damageMax: 1.5, spellFocus: 0.0025, attackIntervalMs: 2700,
-      manaCost: 6, weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 3, durationMs: 0 },
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 3, durationMs: 0 },
       requirements: { magic: 5 }, value: 50, rarity: "common",
     },
     wattle_shield: {
@@ -5395,7 +5391,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
       damageMin: 2.1, damageMax: 3.2, spellFocus: 0.003, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
       weaponEffect: { type: "burn", chance: 0.30, magnitude: 1, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.6→1 (Ganzzahl, tier-gestuft nach Level/Rarity)
-      manaCost: 8, weaponEffects: [ { type: "manaDrain", chance: 1, magnitude: 2, durationMs: 0 } ],
+      // Zauberreserve (Chef-GO 28.08.2026): manaDrain 2 entfernt (Mana wird nicht verbraucht) — der Brand bleibt die Signatur.
       requirements: { magic: 20 }, value: 300, rarity: "rare",
     },
     felmagician_eye: {
@@ -5403,7 +5399,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "amulet",
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 3, durationMs: 0 },
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 3, durationMs: 0 },
       modifiers: { int: 4, wis: 5 }, skillBoost: { attack: 2 }, value: 360, rarity: "superRare",
     },
     // Welle T (Story-Review, Davorin Band 2): Loot-Inversion behoben — der Dungeon-Endboss
@@ -5467,7 +5463,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
       damageMin: 3.2, damageMax: 5.1, spellFocus: 0.0031, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Steel-Craft-Tier um 12%; auf Next-Tier(Steel)-Deckel korrigiert (war 1.9/2.9)
       weaponEffect: { type: "poison", chance: 0.30, magnitude: 1, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.5→1 (Ganzzahl, tier-gestuft nach Level/Rarity)
-      manaCost: 8, weaponEffects: [ { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 } ],
+      weaponEffects: [ { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 } ],
       requirements: { magic: 40 }, value: 320, rarity: "rare",
     },
     chitin_helm: {
@@ -5571,7 +5567,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
       damageMin: 3.2, damageMax: 4.3, spellFocus: 0.0026, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.3/4.3). Leicht unter wailing_wand(req28) gehalten, da niedrigeres Requirement (req26) — Tier-Leiter-Monotonie
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 3500 },
-      manaCost: 8, weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
+      weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
       requirements: { magic: 50 }, value: 480, rarity: "rare",
     },
     bark_bulwark: {
@@ -5603,7 +5599,7 @@ export const content: ContentDB = {
       requirements: { defence: 50 }, value: 300, rarity: "rare", armorRating: 12.47,
     },
     soulopal_band: {
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "soulopal_band", name: { en: "Soulopal Band", de: "Seelenopal-Reif" },
       type: "equipment", stackable: false, slot: "ring1",
       modifiers: { str: 3, dex: 3, int: 3, lck: 3 }, skillBoost: { power: 1 },
@@ -5653,7 +5649,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
       damageMin: 7, damageMax: 10.6, spellFocus: 0.0031, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 76% (Staff-Mid-Kurve wurde gesenkt); auf Next-Tier(Mithril)-Deckel korrigiert (war 4.8/7.2)
       weaponEffect: { type: "burn", chance: 0.35, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 0.9→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
-      manaCost: 9, weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 4, durationMs: 0 } ],
+      weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 4, durationMs: 0 } ],
       requirements: { magic: 70 }, value: 750, rarity: "superRare",
     },
     cryptguard_helm: {
@@ -5718,7 +5714,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "scepter",
       damageMin: 5.2, damageMax: 7.9, spellFocus: 0.0027, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — Scepter-Linie auf Stab-Kurve eingeordnet; req28 (Steel-Bracket) auf Next-Tier-Niveau (Blacksteel) gedeckelt, war 2.7/4.1 (= Mithril-Niveau, 2 Tiers über eigenem Bracket → Verstoß gegen Max-Nächstes-Tier-Regel)
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 3500 },
-      manaCost: 9, modifiers: { lck: 1 },
+      modifiers: { lck: 1 },
       weaponEffects: [ { type: "frostbite", chance: 1, magnitude: 0.25, durationMs: 0 } ],
       requirements: { magic: 70 }, value: 700, rarity: "superRare",
     },
@@ -5803,7 +5799,7 @@ export const content: ContentDB = {
       requirements: { attack: 80 }, value: 420, rarity: "rare",
     },
     tidecaller_focus: {
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 6, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 6, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "tidecaller_focus", name: { en: "Tidecaller Focus", de: "Gezeitenruf-Fokus" },
       type: "equipment", stackable: false, slot: "offhand", weaponType: "focus",
       modifiers: { int: 1, wis: 3 },
@@ -5883,8 +5879,8 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
       damageMin: 4.8, damageMax: 7.3, spellFocus: 0.0031, attackIntervalMs: 3000, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Mithril-Craft-Tier um 12%; auf Next-Tier(Mithril)-Deckel korrigiert (war 3/4.6)
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 4000 },
-      manaCost: 10, modifiers: { wis: 2 },
-      weaponEffects: [ { type: "manaOnKill", chance: 1, magnitude: 4, durationMs: 0 } ],
+      modifiers: { wis: 2 },
+      weaponEffects: [ { type: "wardOnKill", chance: 1, magnitude: 4, durationMs: 0 } ],
       requirements: { magic: 80 }, value: 850, rarity: "superRare",
     },
     abyssal_tide_bow: {
@@ -6130,7 +6126,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "ring1",
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 },
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 5, durationMs: 0 },
       modifiers: { str: 4, dex: 2, con: 3, int: 4, lck: 4 }, skillBoost: { power: 4 },
       value: 4500, rarity: "epic",
     },
@@ -6147,7 +6143,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
       damageMin: 11.3, damageMax: 17, spellFocus: 0.0032, attackIntervalMs: 3000,
       weaponEffect: { type: "shock", chance: 0.30, magnitude: 0.30, durationMs: 4000 },
-      manaCost: 10, modifiers: { wis: 3, lck: 2 },
+      modifiers: { wis: 3, lck: 2 },
       weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 } ],
       requirements: { magic: 90 }, value: 6000, rarity: "epic",
     },
@@ -6273,7 +6269,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
       damageMin: 8.1, damageMax: 10.6, spellFocus: 0.0027, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Bloodiron-Craft-Tier um 42% (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Bloodiron)-Deckel korrigiert (war 5.9/7.5)
       weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 4000 },
-      manaCost: 8, modifiers: { wis: 3 },
+      modifiers: { wis: 3 },
       weaponEffects: [ { type: "catalyst", chance: 1, magnitude: 0, durationMs: 3000 } ],
       requirements: { magic: 90 }, value: 4500, rarity: "epic",
     },
@@ -6412,7 +6408,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
       damageMin: 2, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, // weapon-curve-2026-07 (#287): Drop-Gegenprüfung — dominierte Blacksteel-Craft-Tier über 2× (Wand-Mid-Kurve wurde gesenkt); auf Next-Tier(Blacksteel)-Deckel korrigiert (war 3.5/4.5)
       weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 3500 },
-      manaCost: 8, requirements: { magic: 30 }, value: 560, rarity: "rare",
+      requirements: { magic: 30 }, value: 560, rarity: "rare",
     },
     slagheart_cuirass: {
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -6465,8 +6461,8 @@ export const content: ContentDB = {
       // bloodiron_staff liegt bei R70, unter den vorhandenen R72).
       damageMin: 7.2, damageMax: 10.4, spellFocus: 0.0031, attackIntervalMs: 3000,
       weaponEffect: { type: "burn", chance: 0.35, magnitude: 5, durationMs: 5500 }, // balance-fix 2026-07-05: magnitude 1.8→5 (Ganzzahl, tier-gestuft nach Level/Rarity)
-      manaCost: 10, modifiers: { wis: 3 },
-      weaponEffects: [ { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 } ],
+      modifiers: { wis: 3 },
+      weaponEffects: [ { type: "wardOnKill", chance: 1, magnitude: 5, durationMs: 0 } ],
       requirements: { magic: 72 }, value: 4500, rarity: "epic",
     },
     soulflayer_amulet: {
@@ -6474,7 +6470,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "amulet",
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 },
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 5, durationMs: 0 },
       modifiers: { str: 4, con: 5, int: 5, lck: 9 }, skillBoost: { power: 4 },
       value: 5000, rarity: "epic",
     },
@@ -6825,7 +6821,7 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700,
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 2, durationMs: 0 },
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 2, durationMs: 0 },
       requirements: { magic: 8 }, value: 300, rarity: "rare",
     },
     blackhoof_charm: {
@@ -6977,7 +6973,7 @@ export const content: ContentDB = {
       id: "tideterror_grip", name: { en: "Grip of the Tideterror", de: "Griff des Gezeitenschreckens" },
       type: "equipment", stackable: false, icon: "🧤", slot: "gloves",
       wardCapacity: 90,
-      weaponEffect: { type: "manaDrain", chance: 1, magnitude: 1.5, durationMs: 0 },
+      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 }, // Zauberreserve (Chef-GO 28.08.2026): manaDrain 1.5/Treffer → wardSiphon 8 % des Schadens (≈ 1,2 Ward je 15er-Treffer, gleiche Größenordnung)
       requirements: { magic: 88 }, value: 8500, rarity: "epic",
     },
     shellfather_aegis: {
@@ -7199,7 +7195,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 3.4, damageMax: 4.9, spellFocus: 0.0031, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
+      damageMin: 3.4, damageMax: 4.9, spellFocus: 0.0031, attackIntervalMs: 3000, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 2, durationMs: 4200 },
       requirements: { magic: 40 }, value: 250, rarity: "rare",
     },
@@ -7211,7 +7207,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 2.6, damageMax: 3.4, spellFocus: 0.0026, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
+      damageMin: 2.6, damageMax: 3.4, spellFocus: 0.0026, attackIntervalMs: 2700, wardBreak: 0.20,
       weaponEffect: { type: "shock", chance: 0.22, magnitude: 0.24, durationMs: 3600 },
       requirements: { magic: 40 }, value: 360, rarity: "rare",
     },
@@ -7223,7 +7219,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "scepter",
-      damageMin: 3.6, damageMax: 5.4, spellFocus: 0.0026, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.28,
+      damageMin: 3.6, damageMax: 5.4, spellFocus: 0.0026, attackIntervalMs: 3000, wardBreak: 0.28,
       weaponEffect: { type: "frost", chance: 0.30, magnitude: 1, durationMs: 4200 },
       requirements: { magic: 47 }, value: 580, rarity: "rare",
     },
@@ -7249,7 +7245,7 @@ export const content: ContentDB = {
       },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 7.7, damageMax: 11.2, spellFocus: 0.0032, attackIntervalMs: 2900, manaCost: 8, wardBreak: 0.30,
+      damageMin: 7.7, damageMax: 11.2, spellFocus: 0.0032, attackIntervalMs: 2900, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 5, durationMs: 5500 },
       requirements: { magic: 72 }, value: 2700, rarity: "epic",
     },
@@ -7534,7 +7530,7 @@ export const content: ContentDB = {
     impfire_wand: {
       id: "impfire_wand", name: { en: "Impfire Wand", de: "Impfeuer-Zauberstab" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5,
+      damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700,
       weaponEffect: { type: "burn", chance: 0.2, magnitude: 2, durationMs: 3000 },
       requirements: { magic: 10 }, value: 230, rarity: "rare",
       description: {
@@ -7545,7 +7541,7 @@ export const content: ContentDB = {
     shaman_gnarlstaff: {
       id: "shaman_gnarlstaff", name: { en: "Shaman's Gnarlstaff", de: "Knorrenstab des Schamanen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 1.7, damageMax: 2.6, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6,
+      damageMin: 1.7, damageMax: 2.6, spellFocus: 0.003, attackIntervalMs: 3000,
       weaponEffect: { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 },
       requirements: { magic: 15 }, value: 230, rarity: "rare",
       description: {
@@ -7556,7 +7552,7 @@ export const content: ContentDB = {
     felmagician_rod: {
       id: "felmagician_rod", name: { en: "Felmagician's Rod", de: "Rute des Felmagiers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "scepter",
-      damageMin: 2.1, damageMax: 3.2, spellFocus: 0.0026, attackIntervalMs: 3000, manaCost: 7,
+      damageMin: 2.1, damageMax: 3.2, spellFocus: 0.0026, attackIntervalMs: 3000,
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Leere-Drop (execute ⇒ Thema void) trägt zusätzlich Entzug; Szepter-Muster wie stormcaller_rod (0,35/4000).
       weaponEffects: [ { type: "void", chance: 0.35, magnitude: 0.15, durationMs: 4000 } ],
@@ -7569,7 +7565,7 @@ export const content: ContentDB = {
     stalker_bonewand: {
       id: "stalker_bonewand", name: { en: "Stalker's Bonewand", de: "Knochenstab des Pirschers" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 2.0, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 6,
+      damageMin: 2.0, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700,
       weaponEffect: { type: "desperation", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.3 },
       requirements: { magic: 30 }, value: 530, rarity: "rare",
       description: {
@@ -7580,7 +7576,7 @@ export const content: ContentDB = {
     drowned_choirstaff: {
       id: "drowned_choirstaff", name: { en: "Drowned Choirstaff", de: "Chorstab der Ertrunkenen" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "staff", twoHanded: true,
-      damageMin: 8.1, damageMax: 12.2, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8,
+      damageMin: 8.1, damageMax: 12.2, spellFocus: 0.0032, attackIntervalMs: 2730,
       modifiers: { int: 1 },
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
       // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Leere-Drop (execute ⇒ Thema void) trägt zusätzlich Entzug; Stab-Muster (0,45; Dauer wie Bluteisen-Stab 5800).
@@ -7594,7 +7590,7 @@ export const content: ContentDB = {
     sentinel_core_wand: {
       id: "sentinel_core_wand", name: { en: "Sentinel Core Wand", de: "Wächterkern-Zauberstab" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "wand",
-      damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580, manaCost: 7,
+      damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580,
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
       requirements: { magic: 90 }, value: 3600, rarity: "epic",
       description: {
@@ -7757,11 +7753,11 @@ export const content: ContentDB = {
       id: "shamans_cowl", name: { en: "Shaman's Cowl", de: "Schamanen-Kapuze" }, // Stil-Parität 4a (Chef-GO 26.08.2026)
       type: "equipment", stackable: false, icon: "🎩", slot: "helmet",
       modifiers: { con: 1, int: 1 },
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 2, durationMs: 0 },
+      weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 2, durationMs: 0 },
       requirements: { magic: 10 }, value: 400, rarity: "rare", wardCapacity: 15.0,
       description: {
-        en: "Woven from a Borderlands shaman's own prayer cloth, still smelling faintly of totem smoke. Every kill draws a trickle of mana back through the weave.",
-        de: "Gewebt aus dem eigenen Gebetstuch eines Grenzland-Schamanen, noch leicht nach Totemrauch riechend. Jede Tötung zieht ein Rinnsal Mana zurück durch das Gewebe.",
+        en: "Woven from a Borderlands shaman's own prayer cloth, still smelling faintly of totem smoke. Every kill draws a trickle of ward back through the weave.",
+        de: "Gewebt aus dem eigenen Gebetstuch eines Grenzland-Schamanen, noch leicht nach Totemrauch riechend. Jede Tötung zieht ein Rinnsal Ward zurück durch das Gewebe.",
       },
     },
     imp_hide_slippers: {
@@ -7926,8 +7922,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 },
       requirements: { magic: 90 }, value: 12600, rarity: "epic", wardCapacity: 192.0,
       description: {
-        en: "Woven around an ember elemental's own smoldering heartcore. Once its wearer's mana runs low, every spell overflows with a burst of extra power.",
-        de: "Gewoben um den eigenen schwelenden Herzkern eines Glutelementars. Sobald das Mana des Trägers zur Neige geht, überflutet jeder Zauber mit einem Schub zusätzlicher Kraft.",
+        en: "Woven around an ember elemental's own smoldering heartcore. While its wearer's ward holds strong, every spell overflows with a burst of extra power.",
+        de: "Gewoben um den eigenen schwelenden Herzkern eines Glutelementars. Solange der Ward des Trägers gut gefüllt ist, überflutet jeder Zauber mit einem Schub zusätzlicher Kraft.",
       },
     },
     hexer_frostweave_gloves: {
@@ -12207,7 +12203,7 @@ export const content: ContentDB = {
     craft_frost_circlet: {
       id: "craft_frost_circlet", name: { en: "Bind Frost Circlet", de: "Frost-Zirkel binden" },
       skill: "tailoring", category: "robe_frost", durationMs: 7000, xp: 27, levelRequired: 20,
-      inputs: [{ itemId: "frost_essence", qty: 4 }, { itemId: "frost_rune", qty: 4 }, { itemId: "cured_leather", qty: 2 }],
+      inputs: [{ itemId: "frost_essence", qty: 4 }, { itemId: "frost_rune", qty: 4 }, { itemId: "cloth_linen", qty: 2 } /* Chef 29.08.: Frost-Stoffset ohne Leder */],
       loot: [{ itemId: "frost_circlet", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_robe_body: {
@@ -12227,13 +12223,13 @@ export const content: ContentDB = {
     craft_frost_handwraps: {
       id: "craft_frost_handwraps", name: { en: "Bind Frost Handwraps", de: "Frost-Handwickel binden" },
       skill: "tailoring", category: "robe_frost", durationMs: 6500, xp: 25, levelRequired: 20,
-      inputs: [{ itemId: "frost_essence", qty: 3 }, { itemId: "frost_rune", qty: 3 }, { itemId: "cured_leather", qty: 2 }],
+      inputs: [{ itemId: "frost_essence", qty: 3 }, { itemId: "frost_rune", qty: 3 }, { itemId: "cloth_linen", qty: 2 } /* Chef 29.08.: Frost-Stoffset ohne Leder */],
       loot: [{ itemId: "frost_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_frost_treads: {
       id: "craft_frost_treads", name: { en: "Bind Frost Treads", de: "Frost-Schrittschuhe binden" },
       skill: "tailoring", category: "robe_frost", durationMs: 6500, xp: 25, levelRequired: 20,
-      inputs: [{ itemId: "frost_essence", qty: 3 }, { itemId: "frost_rune", qty: 3 }, { itemId: "cured_leather", qty: 2 }],
+      inputs: [{ itemId: "frost_essence", qty: 3 }, { itemId: "frost_rune", qty: 3 }, { itemId: "cloth_linen", qty: 2 } /* Chef 29.08.: Frost-Stoffset ohne Leder */],
       loot: [{ itemId: "frost_treads", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_hood: {
@@ -18126,7 +18122,7 @@ export const content: ContentDB = {
     { id: "ts_greater_heal_12",   itemId: "potion_greater_heal",    qty: 12, tokenCost: 13, sortOrder: 240, shelfId: "shelf_crypt" }, // Herblore L41, heal 15+20%
     { id: "ts_bloodrage_6",       itemId: "tonic_bloodrage",        qty: 6,  tokenCost: 11, sortOrder: 250, shelfId: "shelf_crypt" }, // Herblore L38, +6 STR 90s
     { id: "ts_bulwark_5",         itemId: "tonic_bulwark",          qty: 5,  tokenCost: 13, sortOrder: 260, shelfId: "shelf_crypt" }, // Herblore L40, +10% Block 150s
-    { id: "ts_arcane_surge_5",    itemId: "tonic_arcane_surge",     qty: 5,  tokenCost: 13, sortOrder: 270, shelfId: "shelf_crypt" }, // Herblore L52, +6 INT +Mana 90s
+    { id: "ts_arcane_surge_5",    itemId: "tonic_arcane_surge",     qty: 5,  tokenCost: 13, sortOrder: 270, shelfId: "shelf_crypt" }, // Herblore L52, +6 INT +100 Zauberreserve 90s
     { id: "ts_soulgourd_seed_30", itemId: "soulgourd_seed",         qty: 30, tokenCost: 4,  sortOrder: 280, shelfId: "shelf_crypt" }, // Farming L42 (Vorgriff auf Regal 3)
     { id: "ts_gravemoss_seed_15", itemId: "gravemoss_seed",         qty: 15, tokenCost: 6,  sortOrder: 290, shelfId: "shelf_crypt" }, // Farming L46 (dito)
     // Kapitel-Meilenstein (Chef-GO 02 26.08.2026).
@@ -18433,15 +18429,17 @@ export const content: ContentDB = {
       id: "glyphmaw",
       name: { en: "Glyphmaw", de: "Glyphenschlund" },
       description: {
-        en: "It swallows runes whole and regurgitates more than it consumed. The throat-glow never fades. In combat it feeds on each blow like a leech with a hunger for mana rather than blood.",
-        de: "Es schluckt Runen ganz und speit mehr aus, als es verschluckt hat. Das Schlundleuchten erlischt nie. Im Kampf nährt es sich von jedem Schlag wie ein Blutegel mit Hunger nach Mana statt Blut.",
+        en: "It swallows runes whole and regurgitates more than it consumed. The throat-glow never fades. In combat it gorges on runes and spits the surplus into your ward, like a leech with a hunger for wards rather than blood.",
+        de: "Es schluckt Runen ganz und speit mehr aus, als es verschluckt hat. Das Schlundleuchten erlischt nie. Im Kampf frisst es Runen und speit den Überschuss in deinen Ward, wie ein Blutegel mit Hunger nach Ward statt Blut.",
       },
       skillEffect: { kind: "bonusRunes", skill: "runecrafting", value: 0.045 },
       combatAbility: {
-        kind: "manaRestore",
+        // Zauberreserve (Chef-GO 28.08.2026, Spec §4): manaRestore 30 % maxMana → wardRestore 10 % maxWard
+        // alle 5 s (≈ 2 % Pool/s, Budget #276 §3 wie ashgut-heal; Cap PET_ABILITY_CAP.wardRestore 0.15).
+        kind: "wardRestore",
         name: { en: "Rune Feast", de: "Runenfraß" },
         intervalMs: 5000,
-        value: 0.30,
+        value: 0.10,
       },
       source: { kind: "skill", skill: "runecrafting" },
       // balance-fix 2026-07 (#276 §6): 1/120000 → 1/80000 (teilt sich runecrafting mit vellumoth, B5)
@@ -18590,10 +18588,10 @@ export const content: ContentDB = {
       id: "pyreling",
       name: { en: "Pyreling", de: "Scheiterling" },
       description: {
-        en: "Something was burned alive and refused to scatter. It orbits you in a slow heat-smear and bleeds warmth into your mana without being asked — then reaches through every strike you land to leave a coal behind.",
-        de: "Etwas wurde lebendig verbrannt und weigerte sich zu zerstieben. Es kreist in einem langsamen Wärmeschimmer um dich und speist Wärme in dein Mana, ohne gefragt zu werden — dann greift es durch jeden deiner Schläge und hinterlässt eine Glut.",
+        en: "Something was burned alive and refused to scatter. It orbits you in a slow heat-smear and bleeds warmth into your spell reserve without being asked — then reaches through every strike you land to leave a coal behind.",
+        de: "Etwas wurde lebendig verbrannt und weigerte sich zu zerstieben. Es kreist in einem langsamen Wärmeschimmer um dich und speist Wärme in deine Zauberreserve, ohne gefragt zu werden — dann greift es durch jeden deiner Schläge und hinterlässt eine Glut.",
       },
-      skillEffect: { kind: "manaRegen", value: 0.05 },
+      skillEffect: { kind: "spellReserve", value: 0.05 }, // Zauberreserve 28.08.2026: war manaRegen 5 % → +5 % Zauberreserve
       // #276 §3+§5.1: Flame Nova, value ist jetzt Bruch enemy.maxHp/s (war 1.0 flat/s).
       combatAbility: {
         kind: "onHitStatus",
@@ -18611,10 +18609,10 @@ export const content: ContentDB = {
       id: "hoarspite",
       name: { en: "Hoarspite", de: "Frostgroll" },
       description: {
-        en: "Pure spite condensed into winter. It holds a grudge against warmth and vents it slowly into your mana reserves — then exhales that grudge onto your enemies as a rime that stiffens joints and slows the kill.",
-        de: "Purer Groll zu Winter verdichtet. Es hegt einen Groll gegen Wärme und leitet ihn langsam in deine Mana-Reserven — dann haucht es diesen Groll auf deine Feinde als Reif, der Gelenke versteift und den Tod verlangsamt.",
+        en: "Pure spite condensed into winter. It holds a grudge against warmth and vents it slowly into your spell reserve — then exhales that grudge onto your enemies as a rime that stiffens joints and slows the kill.",
+        de: "Purer Groll zu Winter verdichtet. Es hegt einen Groll gegen Wärme und leitet ihn langsam in deine Zauberreserve — dann haucht es diesen Groll auf deine Feinde als Reif, der Gelenke versteift und den Tod verlangsamt.",
       },
-      skillEffect: { kind: "manaRegen", value: 0.04 },
+      skillEffect: { kind: "spellReserve", value: 0.04 }, // Zauberreserve 28.08.2026: war manaRegen 4 % → +4 % Zauberreserve
       // #276 §3: Grave Frost, value 1200 → 1100 ms.
       combatAbility: {
         kind: "stun",

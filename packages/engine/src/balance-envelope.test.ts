@@ -748,13 +748,20 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // (Hochland-Rocs, Klippengeister, Esthars eigenes Gebiet) greift die +27 % Roh-DPS voll, und die
     // Formel ignoriert Esthars Drop-Premium (everyNth n=4 = +25 % auf die Grundspanne, Blutung 0,35×6/6 s)
     // komplett. Ranged/Magic exakt unverändert (kein Nicht-Melee-Slot betroffen).
+    // Re-Messung 2026-08-28 — Zauberreserve (Chef-GO 28.08.2026, design/zauberreserve-weisheit.md):
+    // Mana ist kein Verbrauch mehr, die Fokus-Haltung (offensive Magie-Haltung) liest die Reserve:
+    // +1 % Zauberschaden je 60 Reserve, Deckel +15 % (Balance-Audit-Korrektur; die Spec nannte 1 %/40 und
+    // +30 %). Das CL-90-Magie-„damage"-Kit liegt am Deckel (Reserve ≈ 1 000 ⇒ +15 %), die beiden Magie-
+    // Spieler-Zeilen sinken daher exakt um den Faktor 1/1,15 (idol_warden 58.05→50.48 s, last_idol
+    // 194.82→169.41 s). Boss→Spieler unverändert (der Weisheits-Status-Widerstand greift nur auf
+    // Statuseffekte, nicht auf den Treffer-Schaden dieser Formel); melee/ranged exakt unverändert.
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 59.39, 20.65],
       ["melee", "last_idol", 199.15, 14.63],
       ["ranged", "idol_warden", 78.23, 19.78],
       ["ranged", "last_idol", 258.94, 13.67],
-      ["magic", "idol_warden", 58.05, 28.03],
-      ["magic", "last_idol", 194.82, 30.12],
+      ["magic", "idol_warden", 50.48, 28.03],
+      ["magic", "last_idol", 169.41, 30.12],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);

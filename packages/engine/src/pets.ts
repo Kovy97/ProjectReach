@@ -26,7 +26,7 @@ import { nextFloat } from "./rng";
  * `character.ownedPets`. Nur das ausgerüstete UND besessene Pet wirkt — kein Stacking.
  *
  * Die Skill-Helfer (`petDoubleYieldBonus`, `petPreserveBonus`, `petThievingBonus`,
- * `petInstantActionChance`, `petManaRegenMult`, `petLifesteal`, `petSkillBoost`,
+ * `petInstantActionChance`, `petSpellReserveMult`, `petLifesteal`, `petSkillBoost`,
  * `petDamageReduction`, `petSellBonus`, `petHuntCatchBonus`) ruft tick.ts/computeStats/shop.ts/
  * hunting.ts an genau definierten Stellen ab; `petDoubleLootChance`/`petKillHealFraction`
  * konsumiert combat-dev im Kill-Pfad.
@@ -72,7 +72,7 @@ function capAbility(kind: PetAbilityKind, value: number): number {
 
 /**
  * Magnitude des aktiven Skill-Effekts, falls sein Kind in `kinds` liegt UND (für
- * skill-gebundene Kinds) auf `skill` gemünzt ist; sonst 0. `manaRegen` ist global
+ * skill-gebundene Kinds) auf `skill` gemünzt ist; sonst 0. `spellReserve` ist global
  * und ignoriert den Skill-Filter (über `skillFiltered: false`).
  */
 function skillScopedValue(
@@ -155,9 +155,13 @@ function globalValue(state: GameState, content: ContentDB, kind: PetSkillEffectK
   return capSkill(kind, eff.value ?? 0);
 }
 
-/** Mana-Regen-Multiplikator (≥1) durch ein manaRegen-Pet. Für computeStats. */
-export function petManaRegenMult(state: GameState, content: ContentDB): number {
-  return 1 + globalValue(state, content, "manaRegen");
+/**
+ * Zauberreserve-Multiplikator (≥1) durch ein spellReserve-Pet (Zauberreserve, Chef-GO 28.08.2026:
+ * ersetzt den früheren manaRegen-Multiplikator — es gibt keine Mana-Regeneration mehr). Für computeStats
+ * (multipliziert maxMana NACH allen additiven Boni).
+ */
+export function petSpellReserveMult(state: GameState, content: ContentDB): number {
+  return 1 + globalValue(state, content, "spellReserve");
 }
 
 // ── #276 Pet-Redesign: die 6 neuen Passiv-Kinds (Spec §4.2/§5.3) ────────────

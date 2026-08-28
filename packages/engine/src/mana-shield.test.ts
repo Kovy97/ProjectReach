@@ -24,7 +24,6 @@ const WAND: ItemDef = {
   weaponStyle: "magic",
   twoHanded: false,
   bonus: { magicDamage: 5, accuracy: 40 },
-  manaCost: 10,
 };
 
 function robe(id: string, wardCapacity: number): ItemDef {
@@ -67,15 +66,17 @@ describe("Mana ist kein Schild mehr (Ward ersetzt applyManaShield)", () => {
     s.character.hp = st.maxHp;
     startCombat(s, c, "ms_mob");
     s.character.ward = 0; // kein Ward → der Treffer MUSS voll auf die HP durchschlagen
-    s.character.mana = 0; // kein Cast (kein Ward-Recharge) → Mana bleibt konstant, wenn kein Schild zehrt
+    // Zauberreserve (28.08.2026): Zauber kosten nichts und JEDER Cast lädt Ward nach — um den Ward hier
+    // garantiert leer zu halten, wird der Spieler-Angriff abgeklemmt (Timer weit negativ, kein Cast).
 
     let enemyHits = 0;
     for (let i = 0; i < 60 && enemyHits < 3; i++) {
       const hpBefore = s.character.hp;
+      s.combat.playerTimerMs = -1_000_000; // kein Spieler-Angriff → kein Cast-Recharge
       combatStep(s, c);
-      s.character.mana = 0; // Regen abklemmen → beobachtbar bleibt nur ein (fälschlicher) Schild-Abzug
       if (s.character.hp < hpBefore) enemyHits++;
     }
+    expect(s.character.mana).toBe(st.maxMana); // Zauberreserve: mana wird auf maxMana gehalten, nie abgezogen
     expect(enemyHits).toBeGreaterThan(0); // der Mob trifft und kostet HP
     // Kein Mana-Schild mehr: es gibt keinen einzigen "shield"-Log aus Mana-Absorption.
     expect(s.combat.log.some((e) => e.kind === "shield")).toBe(false);

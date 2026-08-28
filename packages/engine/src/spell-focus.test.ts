@@ -84,11 +84,14 @@ describe("Zauberfokus §2: computeStats skaliert die Waffenspanne mit INT", () =
     expect(mult).toBeGreaterThan(1.2);
     // Charakter-Anteil C ist derselbe (gleiche Attribute, gleicher Stil) …
     expect(b.magicDamage).toBeCloseTo(a.magicDamage, 9);
-    // … die Spanne ist C + Waffe·mult
-    expect(b.attackDamageMin).toBeCloseTo(b.magicDamage + 10 * mult, 9);
-    expect(b.attackDamageMax).toBeCloseTo(b.magicDamage + 16 * mult, 9);
-    expect(a.attackDamageMin).toBeCloseTo(a.magicDamage + 10, 9);
-    expect(a.attackDamageMax).toBeCloseTo(a.magicDamage + 16, 9);
+    // … die Spanne ist (C + Waffe·mult) × Fokus-Haltung (Zauberreserve 28.08.2026: 1 + spellReserveDamageBonus,
+    // gleicher Faktor für beide Waffen — dieselbe Reserve)
+    const focus = 1 + b.spellReserveDamageBonus;
+    expect(focus).toBe(1 + a.spellReserveDamageBonus);
+    expect(b.attackDamageMin).toBeCloseTo((b.magicDamage + 10 * mult) * focus, 9);
+    expect(b.attackDamageMax).toBeCloseTo((b.magicDamage + 16 * mult) * focus, 9);
+    expect(a.attackDamageMin).toBeCloseTo((a.magicDamage + 10) * focus, 9);
+    expect(a.attackDamageMax).toBeCloseTo((a.magicDamage + 16) * focus, 9);
     // Breite der Spanne wächst exakt mit dem Multiplikator
     expect(b.attackDamageMax - b.attackDamageMin).toBeCloseTo((a.attackDamageMax - a.attackDamageMin) * mult, 9);
     // min/maxHit (Anzeige + combat.ts-Roll) tragen dieselbe Spanne
@@ -99,8 +102,9 @@ describe("Zauberfokus §2: computeStats skaliert die Waffenspanne mit INT", () =
   it("mehr INT ⇒ größerer Waffenbonus (linear in INT)", () => {
     const lo = computeStats(hero(c, "zf_focus", 20), c);
     const hi = computeStats(hero(c, "zf_focus", 60), c);
-    const bonusLo = lo.attackDamageMax - lo.magicDamage - 16;
-    const bonusHi = hi.attackDamageMax - hi.magicDamage - 16;
+    // Fokus-Haltung (Zauberreserve) herausrechnen: die Spanne ist × (1 + spellReserveDamageBonus).
+    const bonusLo = lo.attackDamageMax / (1 + lo.spellReserveDamageBonus) - lo.magicDamage - 16;
+    const bonusHi = hi.attackDamageMax / (1 + hi.spellReserveDamageBonus) - hi.magicDamage - 16;
     expect(bonusLo).toBeCloseTo(16 * 0.008 * lo.attributes.int, 9);
     expect(bonusHi).toBeCloseTo(16 * 0.008 * hi.attributes.int, 9);
     expect(bonusHi / bonusLo).toBeCloseTo(hi.attributes.int / lo.attributes.int, 9);
@@ -137,7 +141,7 @@ describe("Zauberfokus §2: computeStats skaliert die Waffenspanne mit INT", () =
     const st = computeStats(s, content);
     const mult = spellFocusMult(staff, st.attributes.int);
     expect(mult).toBeGreaterThan(1.1);
-    expect(st.attackDamageMax).toBeCloseTo(st.magicDamage + (staff.damageMax ?? 0) * mult, 9);
+    expect(st.attackDamageMax).toBeCloseTo((st.magicDamage + (staff.damageMax ?? 0) * mult) * (1 + st.spellReserveDamageBonus), 9);
   });
 });
 

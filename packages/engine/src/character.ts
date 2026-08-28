@@ -54,10 +54,13 @@ import {
   activeStanceMods,
   defaultAutoPotion,
   instanceBonusDelta,
+  spellReserveDamageBonus,
+  spellReserveWardRegenBonus,
+  wisdomStatusResist,
 } from "@hearthforge/shared";
 import { emptyAttributeRecord } from "./attributes";
 import { levelFromXp } from "./leveling";
-import { petDamageReduction, petLifesteal, petManaRegenMult, petSkillBoost } from "./pets";
+import { petDamageReduction, petLifesteal, petSkillBoost, petSpellReserveMult } from "./pets";
 
 function clamp(value: number, min: number, max: number): number {
   // NaN-/Infinity-fest: ein nicht-endlicher Wert (z.B. aus einem manipulierten Save, der
@@ -347,7 +350,7 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   // 3) Ausrüstungs-Boni (Attribut-Mods + flache Kampf-Boni) und aktiver Stil
   const eq = {
     meleeDamage: 0, rangedDamage: 0, magicDamage: 0, defense: 0, accuracy: 0, evasion: 0, maxHp: 0,
-    maxMana: 0, manaRegen: 0, hpRegenPerSec: 0, critChance: 0, critDamage: 0, attackIntervalMs: 0,
+    maxMana: 0, hpRegenPerSec: 0, critChance: 0, critDamage: 0, attackIntervalMs: 0,
     lifesteal: 0,
     // Rüstungs-Trinität (Spec §3): Klassen-Schicht-Aggregatoren aus den ItemDef-Top-Level-Feldern
     // (NICHT EquipBonus). armorRating/evasionRating/wardCapacity summiert; blockChance als MAX (ein
@@ -392,7 +395,6 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     eq.evasion += b.evasion ?? 0;
     eq.maxHp += b.maxHp ?? 0;
     eq.maxMana += b.maxMana ?? 0;
-    eq.manaRegen += b.manaRegen ?? 0;
     eq.hpRegenPerSec += b.hpRegenPerSec ?? 0;
     eq.critChance += b.critChance ?? 0;
     eq.critDamage += b.critDamage ?? 0;
@@ -556,14 +558,30 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   // Armor-Iteration 2 §2: WARD_CORE_PER_INT=0 ⇒ maxWard = Σ wardCapacity (Ward NUR aus Stoffgear,
   // kein INT-Kern mehr). Der Term bleibt konstanten-getrieben (WARD_CORE_PER_INT·int = 0).
   const maxWard = WARD_CORE_PER_INT * attr.int + eq.wardCapacity; // Stoff-Absorptionspool
+
+  // Zauberreserve (Chef-GO 28.08.2026, design/zauberreserve-weisheit.md): Feldname bleibt `maxMana`,
+  // Bedeutung ist ein statischer Wert wie Rüstung (kein Verbrauch mehr). 30 + 10·INT + 4·WIS + Σ Boni
+  // (Ausrüstung/Sets/Buffs; frühere manaRegen-Boni sind ×10 hier eingefaltet), × Pet-spellReserve.
+  // Grund-Pool 30 (Parität-Fix 2026-06-28) unverändert. Die beiden Magie-Haltungen lesen den Wert
+  // NACH allen Boni (Spec §2): Fokus → Zauberschaden, Schild → Ward-Regeneration.
+  const maxMana = (30 + attr.int * 10 + attr.wis * 4 + eq.maxMana) * petSpellReserveMult(state, content);
+  const reserveDamageBonus = spellReserveDamageBonus(maxMana);
+  const reserveWardRegenBonus = spellReserveWardRegenBonus(maxMana);
+  // Weisheit = Status-Widerstand für ALLE Stile (Spec §3): 1 % je effektivem WIS-Punkt, Deckel 40 %.
+  // combat.ts wendet ihn beim Anlegen von Gegner-Status auf den Spieler an (applyMonsterInflict).
+  const statusResist = wisdomStatusResist(attr.wis);
   // Armor-Iteration 2 §9.2: Warding-Skill → Ward-Regen/s, ×1.5 in der Defensiv-Magie-Stance.
   // combat-dev (Phase B) wendet es pro Tick an (analog hpRegenPerSec); hier nur bereitstellen.
   // Gate-C #1: Cap NACH dem Stance-Mult klemmen — die Defensiv-Stance (×1.5) darf den in Spec §9.2
   // dokumentierten Deckel (WARDING_REGEN_CAP = 2.0/s) nicht überschreiten.
-  const wardRegenPerSec = Math.min(
-    WARDING_REGEN_CAP,
-    sWarding * WARDING_REGEN_PER_LEVEL * (c.magicStance === "defensive" ? WARDING_DEF_STANCE_MULT : 1),
-  );
+  // Schild-Haltung (Zauberreserve §2, Chef-Korrektur 28.08.): zusätzlich +1 % Ward-Regen je 40 Reserve (Deckel +30 %) — als
+  // Multiplikator NACH dem Warding-Cap, damit der Bonus auch am Endgame (Cap erreicht) sichtbar bleibt
+  // (max 2.0 · 1.3 = 2.6/s, weiterhin ≪ Endgame-DPS-in). Nur in der defensiven Haltung angewandt.
+  const wardRegenPerSec =
+    Math.min(
+      WARDING_REGEN_CAP,
+      sWarding * WARDING_REGEN_PER_LEVEL * (c.magicStance === "defensive" ? WARDING_DEF_STANCE_MULT : 1),
+    ) * (c.magicStance === "defensive" ? 1 + reserveWardRegenBonus : 1);
 
   // Combat-Stance-Boni (OSRS-artig) je Waffenstil + gewählter Stance — zentral in activeStanceMods.
   const sm = activeStanceMods(style, c);
@@ -595,7 +613,7 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   const magicDamage = (attr.int * 0.34 + sMagic * 0.12 + eq.magicDamage) * dmgMult;
   // Zwei-Effekt-Modell: Pets verändern den Roh-Schaden NICHT mehr in computeStats.
   // Combat-Pet-Boni (armorRend/critDamage/bonusCritChance/…) wendet combat-dev über
-  // `petCombatEffect` direkt im Fight an (siehe pets.ts). Nur manaRegen bleibt hier.
+  // `petCombatEffect` direkt im Fight an (siehe pets.ts). Nur der spellReserve-Multiplikator (maxMana) bleibt hier.
   // Waffen 2.0 §1.2: der CHARAKTER-Anteil C des aktiven Stils (Formeln unverändert; bei
   // Range-Form-Waffen fließen deren Flats oben nicht mehr in eq.* ein → C ist rein Charakter+Rüstung).
   const charDamage =
@@ -623,10 +641,19 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     attackDamageMax = Math.max(0, charDamage * DMG_MAX_HIT_MULT);
     attackDamageMin = attackDamageMax * DMG_ROLL_FLOOR;
   }
+  // Fokus-Haltung (Zauberreserve, Chef-GO 28.08.2026, Spec §2): in der OFFENSIVEN Magie-Haltung
+  // wächst der gesamte Zauberschaden (Charakter-Anteil + Waffenspanne) um +1 % je 60 Reserve,
+  // Deckel +15 % (spellReserveDamageBonus; Balance-Audit-Korrektur 28.08., CL-90-Kit ≈ +13 %). Ersetzt den Wegfall des „schwachen
+  // Magiers" (der nie griff) und ist ein bewusster Magie-Buff (Spec §7). Nicht in der Schild-Haltung
+  // (die hat dmgMult 0.85 + Ward-Regen-Bonus), nie für Nahkampf/Fernkampf.
+  if (style === "magic" && c.magicStance !== "defensive" && reserveDamageBonus > 0) {
+    attackDamageMin *= 1 + reserveDamageBonus;
+    attackDamageMax *= 1 + reserveDamageBonus;
+  }
   // Mittel der Spanne = einzige Budget-/Anzeige-Quelle (Legacy: ≈ alter Flat, Abweichung < 0,002 %).
   const attackDamage = (attackDamageMin + attackDamageMax) / 2;
 
-  // Stil-Eigenheiten: Nahkampf=Lebensraub (Kampf), Magie=Mana/Status, Fernkampf=Krit+Tempo.
+  // Stil-Eigenheiten: Nahkampf=Lebensraub (Kampf), Magie=Zauberreserve/Status, Fernkampf=Krit+Tempo.
   // Crit-Zähmung (design/crit-taming-spec.md §3.1/§5.2, #294): der Attribut-Beitrag lief vorher
   // LINEAR (S/100, ~1 pp je Punkt) gegen einen real erreichten 0.9-Cap → BiS-Endgame krittete mit
   // 90 %/533 % und one-hittete Bosse. Neu: Sättigungskurve `ATTR_MAX·S/(S+K)` (gleiche Form wie
@@ -687,15 +714,15 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     maxHit: attackDamageMax,
     minHit: attackDamageMin,
     maxHp: 5 + attr.con * 2 + (sVitality - 1) * 0.3 + eq.maxHp,
-    // Ausrüstung (Magie-Focus) erweitert Mana-Pool & -Regeneration additiv (analog maxHp).
-    // Grund-Pool von 10→30 angehoben: entglast die FRÜHE Magie (kleiner Pool ⇒ ständiger Absturz
-    // in den Weak-Melee ×0.35). Flacher Konstanten-Term wirkt fast nur früh — Endgame (hohes int/wis)
-    // wächst nur um wenige % (Parität-Fix Tester-Sweep 2026-06-28, konservativ).
-    maxMana: 30 + attr.int * 10 + attr.wis * 4 + eq.maxMana,
-    // Pet (manaRegen, ≤5 %): multipliziert die Mana-Regeneration; eq.manaRegen ist additiv davor.
-    // Regen-Basis 1→1.5: früher Caster nimmt das Casten nach Leerung etwas schneller wieder auf,
-    // ohne den Endgame-Durchsatz spürbar zu verschieben.
-    manaRegen: (1.5 + attr.wis * 0.4 + eq.manaRegen) * petManaRegenMult(state, content),
+    // Zauberreserve (s. Herleitung oben; Feldname bleibt `maxMana`, UI-Label „Zauberreserve").
+    maxMana,
+    // Haltungs-Boni aus der Reserve (immer berechnet für den Tooltip; angewandt je Haltung oben) und
+    // der Weisheits-Status-Widerstand (combat.ts liest ihn in applyMonsterInflict).
+    spellReserveDamageBonus: reserveDamageBonus,
+    spellReserveWardRegenBonus: reserveWardRegenBonus,
+    statusResist,
+    // manaRegen: ENTFERNT (Zauberreserve 28.08.2026) — Mana wird nicht mehr verbraucht, also auch
+    // nicht regeneriert; tickPlayerRegen hält `character.mana` auf maxMana.
     // HP-Regen/Sek rein additiv aus Ausrüstung/Set/Buffs (kein Attribut-Beitrag) → 0 ohne Quelle,
     // damit Bestands-Saves/Fixtures unverändert bleiben. Angewandt pro Tick in tick.ts + combat.ts.
     hpRegenPerSec: eq.hpRegenPerSec,

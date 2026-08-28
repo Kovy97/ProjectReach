@@ -288,8 +288,7 @@ export function coreStatScore(item: ItemDef): number {
     (b.evasion ?? 0) * 2.5 +
     (b.critChance ?? 0) * 100 +
     (b.critDamage ?? 0) * 20 +
-    (b.maxMana ?? 0) * 0.2 +
-    (b.manaRegen ?? 0) * 5 +
+    (b.maxMana ?? 0) * 0.2 + // Zauberreserve 28.08.2026: manaRegen-Term entfallen (in maxMana ×10 eingefaltet)
     (b.lifesteal ?? 0) * 100 +
     tempoTerm;
   if (item.modifiers) for (const v of Object.values(item.modifiers)) score += (v ?? 0) * 1;

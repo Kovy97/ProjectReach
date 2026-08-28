@@ -87,15 +87,19 @@ describe("Armor-Iteration 2 §9.2: Warding-Skill → Ward-Regen pro Kampf-Tick",
   it("Defensiv-Magie-Stance skaliert den Ward-Regen ×1.5 (§9.2)", () => {
     const off = setup(50, "offensive");
     const def = setup(50, "defensive");
-    expect(def.st.wardRegenPerSec).toBeCloseTo(off.st.wardRegenPerSec * 1.5, 6);
+    // Zauberreserve (Chef-GO 28.08.2026): die Schild-Haltung legt zusätzlich +1 % je 40 Reserve obendrauf
+    // (spellReserveWardRegenBonus, nur defensiv) — der ×1.5-Stance-Faktor bleibt darunter unverändert.
+    const shield = 1.5 * (1 + def.st.spellReserveWardRegenBonus);
+    expect(def.st.spellReserveWardRegenBonus).toBeGreaterThan(0);
+    expect(def.st.wardRegenPerSec).toBeCloseTo(off.st.wardRegenPerSec * shield, 6);
     off.s.character.ward = 100;
     def.s.character.ward = 100;
     for (let i = 0; i < 20; i++) {
       combatStep(off.s, off.c);
       combatStep(def.s, def.c);
     }
-    // Defensiv regeneriert im selben Fenster mehr Ward (×1.5).
-    expect(def.s.character.ward - 100).toBeCloseTo((off.s.character.ward - 100) * 1.5, 6);
+    // Defensiv regeneriert im selben Fenster mehr Ward (×1.5 × Reserve-Bonus).
+    expect(def.s.character.ward - 100).toBeCloseTo((off.s.character.ward - 100) * shield, 6);
   });
 
   it("deckelt den Ward-Regen auf maxWard (kein Overshoot)", () => {
@@ -105,7 +109,7 @@ describe("Armor-Iteration 2 §9.2: Warding-Skill → Ward-Regen pro Kampf-Tick",
     expect(s.character.ward).toBe(st.maxWard); // exakt gedeckelt, kein Überlauf
   });
 
-  it("ist KAMPF-scoped: außerhalb des Kampfes (Idle-Tick) regeneriert Ward NICHT", () => {
+  it("Idle-Tick füllt Ward mit 5 % des Maximums je Sekunde (Chef 28.08.2026), der Skill-Regen bleibt kampf-scoped", () => {
     const c = withItems([armor("ai2_robe_idle", "body", { wardCapacity: 100_000 })]);
     const s = createGame({ name: "I", baseAttributes: { con: 40 } }, c, 1);
     s.character.equipment.body = "ai2_robe_idle";
@@ -114,7 +118,10 @@ describe("Armor-Iteration 2 §9.2: Warding-Skill → Ward-Regen pro Kampf-Tick",
     expect(computeStats(s, c).wardRegenPerSec).toBeGreaterThan(0);
     s.character.ward = 5; // niedrig, aber KEIN Kampf aktiv (combat.monsterId === null)
     advance(s, c, 5_000); // 50 Idle-Ticks
-    expect(s.character.ward).toBe(5); // unverändert — Ward-Regen läuft nur im combatStep
+    // Chef 28.08.2026 ("Warum startet mein Ward-Pool immer bei 0?"): im Leerlauf fuellt sich Ward wie das Leben, mit
+    // 5 % des Maximums je Sekunde (tick.ts OUT_OF_COMBAT_WARD_REGEN_PCT); der Abwehr-Skill-Regen (1,0/s hier) laeuft
+    // weiterhin NUR im combatStep, sonst laegen wir bei 25 010.
+    expect(s.character.ward).toBeCloseTo(5 + 100_000 * 0.05 * 5, 3);
   });
 });
 

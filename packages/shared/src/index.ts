@@ -814,13 +814,63 @@ export interface ConsumableEffect {
 }
 
 // ───────────────────────────────────────────────────────────────────────────
-// Magie: Mana & Statuseffekte
+// Magie: Zauberreserve, Weisheit & Statuseffekte
 // ───────────────────────────────────────────────────────────────────────────
 
-/** Manakosten pro Zauber. */
-export const MANA_PER_CAST = 6;
-/** Schadensfaktor, wenn nicht genug Mana da ist (schwacher Stab-Schlag). */
-export const MAGIC_WEAK_FACTOR = 0.35;
+// ── Zauberreserve und Weisheit (Chef-GO 28.08.2026, design/zauberreserve-weisheit.md) ──────────
+// Mana ist kein Verbrauch mehr: Zauber kosten nichts, `character.mana` wird auf `maxMana` gehalten
+// (Save-Kompat, nicht mehr angezeigt). `maxMana` bleibt der FELDNAME des Stats (Engine, Save,
+// Item-Boni `EquipBonus.maxMana`), seine BEDEUTUNG ist jetzt „Zauberreserve" (EN „Spell Reserve"):
+// ein statischer Wert wie Rüstung, den die beiden Magie-Haltungen lesen (MagicStance "offensive" =
+// Fokus, "defensive" = Schild). Weisheit wird für ALLE Stile zum Status-Widerstand.
+// MANA_PER_CAST / MAGIC_WEAK_FACTOR / ItemDef.manaCost: ENTFERNT — der „schwache Magier" bei leerem
+// Mana existiert nicht mehr (er griff faktisch nie: Regen 1,5 + 0,4·WIS/s > Kosten ≈ 2/s).
+/**
+ * Fokus-Haltung (offensive Magie-Haltung): +Zauberschaden je Punkt Zauberreserve (+1 % je 60 Reserve).
+ * Balance-Audit-Korrektur (design/balance-audit-magie-2026-08-28.md, CEO 28.08.2026): die Spec nannte
+ * 1 %/40 mit Deckel +30 % — der Magier liegt im Kit-Charakter zwar 12–21 % hinter dem Nahkampf, ein
+ * +20-%-Bonus am CL-90-Kit hätte ihn gegen Trash aber deutlich über die ±10-%-Parität gehoben.
+ */
+export const FOCUS_STANCE_DMG_PER_RESERVE = 0.01 / 60;
+/** Fokus-Haltung: Deckel des Zauberschaden-Bonus (+15 %; ein CL-90-Kit mit ≈ 800 Reserve liegt bei ≈ +13 %). */
+export const FOCUS_STANCE_DMG_CAP = 0.15;
+/**
+ * Schild-Haltung (defensive Magie-Haltung): +Ward-Regeneration je Punkt Zauberreserve (+1 % je 40 Reserve).
+ * Chef-Korrektur 28.08.2026 („langweilig, wenn der Ward-Regen beinahe overpowered ist"; das Audit zeigt den
+ * Magier beim Überleben schon weit vorn): die Spec nannte 1 %/20 mit Deckel +60 %.
+ */
+export const SHIELD_STANCE_WARDREGEN_PER_RESERVE = 0.01 / 40;
+/** Schild-Haltung: Deckel des Ward-Regen-Bonus (+30 %). Wirkt ZUSÄTZLICH zu WARDING_DEF_STANCE_MULT, NACH WARDING_REGEN_CAP. */
+export const SHIELD_STANCE_WARDREGEN_CAP = 0.30;
+/** Weisheit: Status-Widerstand je Punkt (1 % kürzer UND 1 % schwächer je Statuseffekt, der auf den SPIELER gelegt wird). */
+export const WIS_STATUS_RESIST_PER_POINT = 0.01;
+/** Weisheit: Deckel des Status-Widerstands (40 %). Gegner haben keine Weisheit — Spieler-Status gegen Gegner bleiben ungeschützt. */
+export const WIS_STATUS_RESIST_CAP = 0.4;
+/** Weisheit/Frost: ab diesem Widerstand braucht das Einfrieren des Spielers eine Frost-Anwendung MEHR (vier statt FROST_FREEZE_STACKS = drei). */
+export const WIS_FROST_EXTRA_STACK_RESIST = 0.2;
+/**
+ * Umrechner der Alt-Werte (Spec §4): +1 alter `manaRegen`-Bonus (je Sekunde) ⇒ +10 Zauberreserve.
+ * Der Content ist damit UMGESCHRIEBEN (EquipBonus.manaRegen existiert nicht mehr, alle Quellen tragen
+ * jetzt `maxMana`); die Konstante dokumentiert die Herleitung für Reports/Tooltips.
+ */
+export const MANA_REGEN_TO_RESERVE = 10;
+
+/** Fokus-Haltung: Zauberschaden-Bonus (Bruch, 0..FOCUS_STANCE_DMG_CAP) aus der Zauberreserve NACH allen Boni. Eine Rechnung für Engine UND Tooltip. */
+export function spellReserveDamageBonus(maxMana: number): number {
+  if (!Number.isFinite(maxMana) || maxMana <= 0) return 0;
+  return Math.min(FOCUS_STANCE_DMG_CAP, maxMana * FOCUS_STANCE_DMG_PER_RESERVE);
+}
+/** Schild-Haltung: Ward-Regen-Bonus (Bruch, 0..SHIELD_STANCE_WARDREGEN_CAP) aus der Zauberreserve NACH allen Boni. */
+export function spellReserveWardRegenBonus(maxMana: number): number {
+  if (!Number.isFinite(maxMana) || maxMana <= 0) return 0;
+  return Math.min(SHIELD_STANCE_WARDREGEN_CAP, maxMana * SHIELD_STANCE_WARDREGEN_PER_RESERVE);
+}
+/** Weisheit: Status-Widerstand (Bruch, 0..WIS_STATUS_RESIST_CAP) aus dem EFFEKTIVEN Weisheitswert (Attribut nach Ausrüstung/Buffs). */
+export function wisdomStatusResist(wis: number): number {
+  if (!Number.isFinite(wis) || wis <= 0) return 0;
+  return Math.min(WIS_STATUS_RESIST_CAP, wis * WIS_STATUS_RESIST_PER_POINT);
+}
+
 // RANGED_WEAK_FACTOR: ENTFERNT (#286 Ammo-Removal) — es gibt keine Munition mehr, Bögen feuern
 // immer mit voller (eingebackener) Spanne; der „improvisierte Notschlag" existiert nicht mehr.
 /** Frost verlangsamt den Gegner-Angriffstimer um diesen Anteil. */
@@ -848,33 +898,13 @@ export const POISON_REGEN_MULT = 0.5;
 /** Entzug (Leere): ein entkräftetes Ziel macht diesen Anteil weniger Schaden. */
 export const VOID_WEAKEN = 0.15;
 /** Lichtsegen (Aether, Kind `lightblessing`): jeder Treffer füllt diesen Anteil des eigenen Ward-Maximums auf (Default, wenn magnitude 0). */
-export const AETHER_WARD_ON_HIT = 0.04;
+export const AETHER_WARD_ON_HIT = 0.02; // Balance-Audit 28.08.2026: 0,04 verdreifachte den Ward-Zuwachs, Chef: nicht beinahe overpowered
 /** Lichtsegen: Treffer durchdringen diesen Anteil des Gegner-Wards (effektiver wardBreak = max(Stat, Konstante)). */
 export const AETHER_WARD_PIERCE = 0.5;
 
-/**
- * Mana-Schild (Magie-Defensiv-Identität, Playtest-Hebel P3 / r6 Cassia „Mana-Schild").
- *
- * Der Magie-Stil hat offensiv INT-Skalierung, aber bisher KEINEN Survival-Term → Magier sind
- * glasig und der dritte Stil hinkt bei der Überlebensfähigkeit hinter melee (Lebensraub) und
- * ranged (+Evasion/Tempo) zurück. Schließt diese Lücke stilspezifisch und gedeckelt:
- *
- * Nur im Magie-Stil absorbiert Mana einen Anteil eines eingehenden Treffers, BEVOR der Rest auf
- * die HP geht. Pro absorbiertem Schadenspunkt werden `MANA_SHIELD_COST_PER_DAMAGE` Mana verbraucht.
- * Es kann höchstens `MANA_SHIELD_ABSORB_PCT` eines Treffers absorbiert werden (Deckel) und nur so
- * weit, wie Mana reicht — fällt das Mana aus, schlägt der Rest voll durch. Dadurch:
- *   - moderate, idle-faire Survival (keine Unsterblichkeit: Deckel < 1 und Mana ist endlich),
- *   - macht Mana zur defensiven Ressource (verbraucht denselben Pool wie das Zaubern → echte
- *     Opportunitätskosten gegen den Offensiv-Burst),
- *   - die Mitigation/Lifesteal-Endgame-Deckel bleiben unangetastet (greift NACH der Mitigation
- *     auf den bereits reduzierten Treffer, ersetzt sie nicht).
- *
- * Konservativ gewählt (Chef kann justieren): 50 % eines Treffers, 20 Mana je absorbiertem HP.
- * (Stat-Squish ÷10: Schaden ist ×0.1, Mana bleibt unskaliert → Kosten pro absorbiertem HP ×10,
- * damit die Schild-Ökonomie Mana:Treffer EXAKT identisch bleibt — Spec §3.2/§3.4.)
- */
-export const MANA_SHIELD_ABSORB_PCT = 0.5;
-export const MANA_SHIELD_COST_PER_DAMAGE = 20;
+// MANA_SHIELD_ABSORB_PCT / MANA_SHIELD_COST_PER_DAMAGE: ENTFERNT (Zauberreserve, 28.08.2026). Der
+// Mana-Schild war seit Itemization 2.5 (Ward = der eine Magie-Absorb-Layer, `absorbWard`) tote
+// Konstante; ohne Mana-Verbrauch gibt es auch keine „Kosten je absorbiertem HP" mehr.
 
 /**
  * Status-Arten (Elementar-Effekte, Chef-GO 28.08.2026, design/elementar-status-konzept.md):
@@ -943,17 +973,16 @@ export const MONSTER_FAMILIES: MonsterFamily[] = [
  * | critBurst      | FLAT-Zusatzschaden bei Krit            | —                                     |
  * | vengeance      | +Anteil auf den nächsten Treffer nach erlittenem Treffer (0.4) | —            |
  * | cooldownOnKill | —                                      | durationMs: −ms vom Kill-Cooldown     |
- * | manaOnKill     | FLAT Mana je Kill                      | —                                     |
+ * | wardOnKill     | FLAT Ward je Kill (auf maxWard gedeckelt; ohne Stoff-Pool ein No-op). Zauberreserve 28.08.2026: ersetzt manaOnKill (gleiche Magnitude) | — |
  * | healOnKill     | FLAT HP je Kill                        | —                                     |
  * | overkillCarry  | — (Überschuss trifft nächsten Gegner)  | —                                     |
  * | antiRegen      | — (Ziele mit aktivem DoT burn/bleed/poison regenerieren nicht) | —             |
- * | manaDrain      | FLAT Mana je Treffer                   | —                                     |
  * | wardSiphon     | +Anteil verurs. Schaden → eigener Ward (0.08) | —                              |
  * | plaguebearer   | Fallback-Gift-Magnitude (0 ⇒ Gift-Status der Waffe) | durationMs: Fallback-Dauer |
  * | gutter         | +Anteil auf eigene DoT-Ticks (0.5)     | —                                     |
  * | frostbite      | +Anteil vs. verlangsamte Ziele (0.25)  | —                                     |
  * | catalyst       | —                                      | durationMs: +ms auf eigene Status     |
- * | surplus        | +Anteil Zauberschaden (0.2)            | threshold: Mana-Anteil (Default 0.8)  |
+ * | surplus        | +Anteil Zauberschaden (0.2), solange der EIGENE Ward über threshold·maxWard liegt (Zauberreserve 28.08.2026: las vorher den Mana-Anteil, der jetzt immer 100 % wäre; ohne Stoff-Pool inaktiv) | threshold: Ward-Anteil (Default 0.8) |
  * | ammoSaver      | NO-OP seit Ammo-Removal #286 (es gibt keine Munition mehr; Stage B ersetzt/entfernt die Träger-Items) | — |
  * | luckyStrike    | +Anteil Gold von Kills (0.15)          | —                                     |
  * | packLeader     | +Anteil Pet-Ability-Frequenz (0.25)    | —                                     |
@@ -963,7 +992,7 @@ export const MONSTER_FAMILIES: MonsterFamily[] = [
  * | blockRestore   | +Anteil maxHp Heilung je ERFOLGREICHEM Block (0.02); Klemme BLOCK_RESTORE_CAP_PCT und BLOCK_RESTORE_CAP_ABS | — |
  * | combatXp       | +Anteil auf JEDE Kampf-XP des Kampfmoduls (0.10); Klemme COMBAT_XP_BONUS_CAP | — |
  * | lootChance     | +Anteil auf die Chance regulaerer Kill-Loot-Tabellen (0.10); Klemme LOOT_CHANCE_BONUS_CAP | — |
- * | lightblessing  | Lichtsegen (Aether): Anteil des eigenen Ward-Maximums je Treffer (0.04; 0 ⇒ AETHER_WARD_ON_HIT), Treffer durchdringen AETHER_WARD_PIERCE des Gegner-Wards | — |
+ * | lightblessing  | Lichtsegen (Aether): Anteil des eigenen Ward-Maximums je Treffer (0.02; 0 ⇒ AETHER_WARD_ON_HIT), Treffer durchdringen AETHER_WARD_PIERCE des Gegner-Wards | — |
  *
  * Die drei letzten Kinds sind die Runen-Tier-IV-Hooks (Chef-Entscheid 25.08.2026,
  * design/runen-tier-iv.html §3/§4): Ungebrochene Mauer (blockRestore, Schild), Chronik (combatXp,
@@ -984,11 +1013,10 @@ export type SpecialEffectType =
   | "critBurst"
   | "vengeance"
   | "cooldownOnKill"
-  | "manaOnKill"
+  | "wardOnKill"
   | "healOnKill"
   | "overkillCarry"
   | "antiRegen"
-  | "manaDrain"
   | "wardSiphon"
   | "plaguebearer"
   | "gutter"
@@ -1020,11 +1048,10 @@ export const SPECIAL_EFFECT_TYPES: SpecialEffectType[] = [
   "critBurst",
   "vengeance",
   "cooldownOnKill",
-  "manaOnKill",
+  "wardOnKill",
   "healOnKill",
   "overkillCarry",
   "antiRegen",
-  "manaDrain",
   "wardSiphon",
   "plaguebearer",
   "gutter",
@@ -1157,8 +1184,8 @@ export const LOOT_CHANCE_BONUS_CAP = 0.20;
 // Basis-HP-Regeneration (früher 0.04 HP/Tick außerhalb des Kampfes) existiert nicht mehr —
 // Heilung kommt AUSSCHLIESSLICH aus Items/Effekten: Auto-Eat-Food, Tränken (Auto-Trank-System),
 // Melee-/Gear-Lifesteal, Pet-Heals, Voll-Heal beim Tod-Abbruch und `hpRegenPerSec` aus
-// Ausrüstung/Set-Boni/Buffs („Special Effects", bleiben voll wirksam). Mana-Regeneration
-// (WIS-basiert, computeStats.manaRegen) ist bewusst UNBERÜHRT — nur Health ist betroffen.
+// Ausrüstung/Set-Boni/Buffs („Special Effects", bleiben voll wirksam). Eine Mana-Regeneration
+// gibt es seit der Zauberreserve (28.08.2026) nicht mehr — Mana wird nicht verbraucht.
 /**
  * Auto-Eat-Upgrade-Stufen (Melvor-artige Gold-Senke). Stufe 0 = Basis (entspricht dem alten
  * festen Verhalten). Höhere Stufen essen früher (höhere `threshold` = mehr Sicherheitspuffer)
@@ -1426,18 +1453,19 @@ export const LEATHER_HIT_FLOOR = 0.18;
  * den Ward-Pool nur um diesen Anteil von maxWard nach → in einem Dauerkampf erodiert der Pool
  * (Food-Druck für Magier). Kampf-START/Tod-Voll-Heal bleiben voller Ward. combat-dev (Phase B).
  * Armor-Iteration 2.1 F1b: 0.20 → 0.10 — der Kill-Refill ist am Low/Mid-Band der DOMINANTE Ward-
- * Zufluss; ohne ihn zu halbieren bleibt der Magier food-frei (WARD_PER_MANA allein reicht nicht,
+ * Zufluss; ohne ihn zu halbieren bleibt der Magier food-frei (der Cast-Recharge allein reicht nicht,
  * beide Hebel gekoppelt). De-facto Magier-only: WARD_CORE_PER_INT=0 ⇒ Melee/Ranged maxWard=0 ⇒
  * 0.10·0 = 0 → Melee/Ranged unberührt.
  */
 export const WARD_KILL_REFILL_PCT = 0.10;
 /**
- * Ward, das je 1 verbrauchtem Mana-Punkt auflädt (Recharge-an-Cast-Kopplung). Spec §1.4.
- * Armor-Iteration 2.1 F1a: 0.5 → 0.20 — der flache Cast-Recharge (≈1.0–1.47/s über alle Bänder)
- * war die eigentliche Low/Mid-Band-Sustain-Engine (nie erodierender Ward → nie Food); 0.20 drückt
- * ihn auf Endgame-Niveau (≈0.40–0.59/s), bleibt ein kleiner thematischer Cast-Trickle.
+ * Ward, das JEDER Zauber auflädt (Cast-Recharge, Spec §1.4). Zauberreserve (Chef-GO 28.08.2026):
+ * Zauber kosten kein Mana mehr, darum ist der Recharge nicht mehr an einen Verbrauch gekoppelt,
+ * sondern ein fester Wert je Zauber. 1.2 = die frühere Rechnung `Manakosten · WARD_PER_MANA` mit dem
+ * globalen Default (6 · 0.20; die Waffen lagen bei 4–10 Kosten ⇒ 0.8–2.0) — der kleine thematische
+ * Cast-Trickle (Armor-Iteration 2.1 F1a: ≈0.40–0.59/s) bleibt damit in derselben Größenordnung.
  */
-export const WARD_PER_MANA = 0.20;
+export const WARD_RECHARGE_PER_CAST = 1.2;
 /** Anti-One-Shot: kein Einzeltreffer > 50 % der max. HP. combat-dev (A2) wendet es an. Spec §1.6. */
 export const ONE_SHOT_CAP = 0.5;
 /**
@@ -1461,7 +1489,7 @@ export const WARDING_DEF_STANCE_MULT = 1.5;
  *
  * Retune D3 (Chef-Entscheid 27.08.2026, Achievements-Audit § 3.1/Frage 3): 0,25 → 1,0 (Faktor 4, obere
  * Kante der Chef-Spanne 3–4). Messung (engine/warding-xp-rate.test.ts, `advance`-Sim mit Auto-Essen,
- * Offensiv-Haltung, 2 Sim-h je Band): der Ward-Zufluss (Mana-Cast ×WARD_PER_MANA + Kill-Refill +
+ * Offensiv-Haltung, 2 Sim-h je Band): der Ward-Zufluss (Cast-Recharge WARD_RECHARGE_PER_CAST + Kill-Refill +
  * Warding-Regen) deckelt das Absorbierte auf ~14–30 k Ward/h — bei 0,25 also nur 3,5–7,6 k XP/h,
  * das wären 1 700–3 700 h bis 99 auf dem passiven Pfad (das Audit hatte 60 k XP/h ≈ 220 h geschätzt).
  * Mit 1,0 liefert der passive Pfad 14–30 k XP/h ≈ 8–25 % des gleichzeitig verdienten Magie-XP —
@@ -1595,17 +1623,18 @@ export const STATUS_VS_WARD_MULT = 1.2;
 
 /**
  * Ward-Recharge beim Zaubern (reiner Helfer für combat.ts, Phase A2). Koppelt den Ward-Aufbau an
- * den Mana-VERBRAUCH statt an Zeit: jeder Cast lädt `manaSpent · WARD_PER_MANA` Ward, gedeckelt auf
- * `maxWard`. Läuft Mana leer (Weak-Melee), gibt es keinen Cast → kein Recharge (gewollter Druck).
+ * den ZAUBER statt an Zeit: jeder Cast lädt `amount` Ward (Default WARD_RECHARGE_PER_CAST), gedeckelt
+ * auf `maxWard`. Zauberreserve (28.08.2026): kein Mana-Verbrauch mehr ⇒ jeder Magie-Angriff ist ein
+ * Zauber und lädt.
  * Deterministisch & seiteneffektfrei; NaN-fest (nicht-endliche Eingaben lassen `currentWard` stehen).
- * VERTRAG für combat-dev (A2): bei `casts === true` in performPlayerAttack aufrufen —
- *   `state.character.ward = rechargeWard(state.character.ward, stats.maxWard, cost)`.
+ * VERTRAG für combat-dev: bei `casts === true` in performPlayerAttack aufrufen —
+ *   `state.character.ward = rechargeWard(state.character.ward, stats.maxWard)`.
  */
-export function rechargeWard(currentWard: number, maxWard: number, manaSpent: number): number {
-  if (!Number.isFinite(currentWard) || !Number.isFinite(maxWard) || !Number.isFinite(manaSpent)) {
+export function rechargeWard(currentWard: number, maxWard: number, amount: number = WARD_RECHARGE_PER_CAST): number {
+  if (!Number.isFinite(currentWard) || !Number.isFinite(maxWard) || !Number.isFinite(amount)) {
     return currentWard;
   }
-  return Math.min(maxWard, currentWard + Math.max(0, manaSpent) * WARD_PER_MANA);
+  return Math.min(maxWard, currentWard + Math.max(0, amount));
 }
 
 /**
@@ -1933,13 +1962,13 @@ export const ATTRIBUTES = [
     name: { en: "Intelligence", de: "Intelligenz", es: "Inteligencia", fr: "Intelligence", "pt-BR": "Inteligência", ru: "Интеллект", zh: "智力" },
     abbr: "INT",
     description: {
-      en: "Magic damage & max mana",
-      de: "Magieschaden & Max. Mana",
-      es: "Daño mágico y maná máx.",
-      fr: "Dégâts magiques et mana max",
-      "pt-BR": "Dano mágico e mana máx.",
-      ru: "Магический урон и макс. мана",
-      zh: "法术伤害与最大法力",
+      en: "Magic damage & spell reserve",
+      de: "Magieschaden & Zauberreserve",
+      es: "Daño mágico y reserva de hechizos",
+      fr: "Dégâts magiques et réserve de sorts",
+      "pt-BR": "Dano mágico e reserva de feitiços",
+      ru: "Магический урон и запас чар",
+      zh: "法术伤害与法术储备",
     },
   },
   {
@@ -1947,13 +1976,13 @@ export const ATTRIBUTES = [
     name: { en: "Wisdom", de: "Weisheit", es: "Sabiduría", fr: "Sagesse", "pt-BR": "Sabedoria", ru: "Мудрость", zh: "智慧" },
     abbr: "WIS",
     description: {
-      en: "Mana regeneration & max mana",
-      de: "Mana-Regeneration & Max. Mana",
-      es: "Regeneración de maná y maná máx.",
-      fr: "Régénération de mana et mana max",
-      "pt-BR": "Regeneração de mana e mana máx.",
-      ru: "Восстановление маны и макс. мана",
-      zh: "法力回复与最大法力",
+      en: "Status resistance & spell reserve",
+      de: "Status-Widerstand & Zauberreserve",
+      es: "Resistencia a estados y reserva de hechizos",
+      fr: "Résistance aux états et réserve de sorts",
+      "pt-BR": "Resistência a estados e reserva de feitiços",
+      ru: "Сопротивление эффектам и запас чар",
+      zh: "状态抗性与法术储备",
     },
   },
   {
@@ -2127,7 +2156,7 @@ export const WEAPON_TYPE_SPECIALTY: Record<WeaponType, LocalizedString> = {
   longbow:    { en: "Range · High Precision",         de: "Reichweite · Hohe Präzision" },
   staff:      { en: "Two-Handed · Magic · Ward Break", de: "Zweihändig · Magie · Ward-Bruch" },
   wand:       { en: "Fast · Ward Break · Frost/Shock", de: "Schnell · Ward-Bruch · Frost/Schock" },
-  focus:      { en: "Offhand · +Mana & Mana Regen",   de: "Nebenhand · +Mana & Mana-Regen" },
+  focus:      { en: "Offhand · +Spell Reserve",       de: "Nebenhand · +Zauberreserve" },
   scepter:    { en: "One-Handed Magic · Ward Break",  de: "Einhändige Magie · Ward-Bruch" },
 };
 
@@ -2140,13 +2169,15 @@ export interface EquipBonus {
   accuracy?: number;
   evasion?: number;
   maxHp?: number;
-  /** Additiver Mana-Pool (z.B. Magie-Focus-Offhand). Summiert in computeStats analog zu maxHp. */
+  /**
+   * Additive Zauberreserve (Feldname bleibt `maxMana`, Chef-GO 28.08.2026 — UI-Label „Zauberreserve").
+   * Summiert in computeStats analog zu maxHp. Frühere `manaRegen`-Boni sind ×MANA_REGEN_TO_RESERVE
+   * (+1 Regen ⇒ +10 Reserve) in dieses Feld umgeschrieben; `manaRegen` existiert nicht mehr.
+   */
   maxMana?: number;
-  /** Additive Mana-Regeneration/Sek (z.B. Magie-Focus). Summiert in computeStats analog zu maxHp. */
-  manaRegen?: number;
   /**
    * Additive HP-Regeneration pro SEKUNDE (echte „Regeneration über Zeit"). Wird in computeStats
-   * analog zu manaRegen aggregiert (Ausrüstung + Set-Boni + aktive Buffs) und pro Tick angewandt —
+   * aggregiert (Ausrüstung + Set-Boni + aktive Buffs) und pro Tick angewandt —
    * im Idle-Tick (tick.ts) UND im Kampf-Tick (combat.ts), solange die Quelle aktiv ist. Hauptzweck:
    * Regenerations-Combo-Food (heilt sofort via `healAmount` UND regeneriert über die Buff-Dauer).
    */
@@ -2286,7 +2317,7 @@ export type PetId = string;
  * | flawlessGem     | +Chance auf doppelten Craft-Ertrag (Gem)         | tick.ts `completeAction` (bonusChance, additiv) |
  * | bonusRunes      | +Chance auf doppelten Craft-Ertrag (Runen)       | tick.ts `completeAction` (bonusChance, additiv) |
  * | potionPreserve  | +Chance, Trank-Zutaten zu erstatten              | tick.ts `completeAction` (preserveChance)       |
- * | manaRegen       | +% Mana-Regeneration (global)                    | character.ts `computeStats` (manaRegen-Mult)    |
+ * | spellReserve    | +% Zauberreserve (global; multipliziert maxMana). Zauberreserve 28.08.2026: ersetzt das Kind `manaRegen` | character.ts `computeStats` (petSpellReserveMult) |
  * | lifesteal       | +Lebensraub auf allem Spieler-Schaden (global)   | character.ts `computeStats` (lifestealPct, additiv) |
  * | skillBoost      | +GANZE effektive Kampf-Skill-Level (wie Gear)    | character.ts `computeStats` (Skill-Boost-Aggregat)  |
  * | damageReduction | Spieler nimmt % weniger Schaden (global)         | computeStats-Feld `damageReduction`; combat.ts wendet es multiplikativ NACH Armor/Ward/Block an |
@@ -2314,7 +2345,7 @@ export type PetSkillEffectKind =
   | "flawlessGem"
   | "bonusRunes"
   | "potionPreserve"
-  | "manaRegen"
+  | "spellReserve"
   // ── #276 Pet-Redesign: 6 neue Passiv-Kinds (Ersatz der verbotenen skillXp-Passive, Spec §4.2) ──
   | "lifesteal"
   | "skillBoost"
@@ -2354,7 +2385,7 @@ export type PetSkillEffectKind =
  * | shield (✓6)       | gibt dem Spieler einen Absorb-Schild (petShieldHp)   | Bruch der maxHp                 |
  * | armorRend         | Gegner nimmt für ein Fenster +% Schaden              | Bruch Zusatzschaden             |
  * | guaranteedCrit    | garantierter Krit-Burst (Sofortschaden)              | Bruch der enemy.maxHp           |
- * | manaRestore       | stellt Spieler-Mana her                              | Bruch der maxMana               |
+ * | wardRestore       | füllt den Ward-Pool des Spielers (No-op ohne Stoff-Pool). Zauberreserve 28.08.2026: ersetzt `manaRestore` | Bruch der maxWard |
  * | lifestealBurst    | Sofortschaden am Gegner + heilt den Spieler          | Bruch der enemy.maxHp           |
  * | enemyAttackDelay  | schiebt den Gegner-Angriffs-Timer zurück             | ms Verzögerung                  |
  * | blockNextEnemyHit | blockt den nächsten Gegner-Treffer komplett          | (ungenutzt; one-shot)           |
@@ -2372,7 +2403,7 @@ export type PetAbilityKind =
   | "shield"
   | "armorRend"
   | "guaranteedCrit"
-  | "manaRestore"
+  | "wardRestore"
   | "lifestealBurst"
   | "enemyAttackDelay"
   | "blockNextEnemyHit"
@@ -2384,7 +2415,7 @@ export type PetAbilityKind =
  * `skillBoost` (#276) ist als einziges NEUES Kind skill-gebunden: sein `skill` MUSS eine
  * `BoostableCombatSkillId` sein (`vitality` bleibt wie bei Gear unboostbar — Guard erzwingt das).
  * Alle übrigen neuen Kinds (lifesteal/damageReduction/doubleLoot/killHeal/sellBonus) sind
- * global wie `manaRegen`.
+ * global wie `spellReserve`.
  */
 export const SKILL_SCOPED_PET_KINDS: PetSkillEffectKind[] = [
   "instantAction",
@@ -2425,7 +2456,7 @@ export const PET_SKILL_EFFECT_CAP: Record<PetSkillEffectKind, number> = {
   flawlessGem: 0.05,
   bonusRunes: 0.05,
   potionPreserve: 0.05,
-  manaRegen: 0.05,
+  spellReserve: 0.05, // Bruch: +5 % Zauberreserve max (≈ +0,7 Pp Fokus-Schaden am CL-90-Kit — Komfort)
   // ── #276 Pet-Redesign (Spec §5.3) ──
   lifesteal: 0.02, // Bruch: +2 % Lebensraub max (Gear-Quellen ~10 % — Pet bleibt Komfort)
   skillBoost: 2, // GANZE Level (nicht Bruch!) — von der ≤5-%-Guard-Prüfung ausgenommen
@@ -2455,7 +2486,7 @@ export const PET_ABILITY_CAP: Record<PetAbilityKind, number> = {
   shield: 0.15, // Bruch maxHp
   armorRend: 0.3, // Bruch Zusatzschaden
   guaranteedCrit: 0.15, // Bruch enemy.maxHp
-  manaRestore: 0.5, // Bruch maxMana
+  wardRestore: 0.15, // Bruch maxWard — Ward-Spiegel von shield/heal (Budget #276 §3: ≤ 2 % Pool/s Sustain)
   lifestealBurst: 0.12, // Bruch enemy.maxHp
   enemyAttackDelay: 2000, // ms
   blockNextEnemyHit: 1, // one-shot (value ungenutzt)
@@ -2505,7 +2536,7 @@ export interface PetSkillEffect {
   /**
    * Betroffener Skill (PFLICHT für `SKILL_SCOPED_PET_KINDS`; bei `skillBoost` MUSS es eine
    * `BoostableCombatSkillId` sein — `vitality` ist unboostbar). Fehlt → global (skill-frei sind
-   * `manaRegen`, `lifesteal`, `damageReduction`, `doubleLoot`, `killHeal`, `sellBonus`).
+   * `spellReserve`, `lifesteal`, `damageReduction`, `doubleLoot`, `killHeal`, `sellBonus`).
    */
   skill?: SkillId;
   /** Magnitude als Bruch (0.05 = 5 %) — AUSNAHME `skillBoost`: GANZE Level (max 2). */
@@ -2889,17 +2920,14 @@ export interface ItemDef {
    * `apps/client/src/renderer/combatFx.ts` (`magicThemeFor`) liest dieses Feld ZUERST, bevor es
    * auf sein Status-Mapping (`weaponEffect.type` → Thema, z.B. burn→fire) und danach auf die
    * ID-Heuristik (`aether`/`godspark`-Präfix) zurückfällt. Nötig, weil Status-Typ und optisches
-   * Thema auseinanderfallen können — z.B. eine Aether-Waffe mit `manaOnKill` statt Brand (kein
+   * Thema auseinanderfallen können — z.B. eine Aether-Waffe mit `lightblessing` statt Brand (kein
    * Status-Mapping-Treffer) oder eine Aetherium-Waffe MIT Status, die über den ID-Präfix sonst
    * fälschlich als „aether" gerendert würde, obwohl ihr Status ein anderes Thema trägt. NUR auf
    * `weaponStyle: "magic"`-Mainhand-Waffen sinnvoll; rein Content-seitig, keine Engine-Wirkung.
    */
   magicTheme?: "arcane" | "fire" | "frost" | "shock" | "poison" | "void" | "aether";
-  /**
-   * Nur für Magie-Waffen: Manakosten pro Zauber (überschreibt den globalen `MANA_PER_CAST`).
-   * Fehlt das Feld, gilt der globale Default. Erwartet ≥ 0.
-   */
-  manaCost?: number;
+  // manaCost: ENTFERNT (Zauberreserve, Chef-GO 28.08.2026) — Zauber kosten nichts, die Item-Karte
+  // zeigt keine Manakosten-Zeile mehr.
   /**
    * Nur für Consumables: zeitlich begrenzter Buff (Glyphen/Tränke).
    * Armor-Iteration 2 (§10.1): zusätzlich zu den Kampf-Flats (`bonus`) kann ein Buff jetzt auch
@@ -3223,7 +3251,7 @@ export interface SuffixDef {
   /**
    * Lineare Stats: k-Koeffizient pro Stat (Wert bei Scale-Index S=1). Skaliert mit `suffixScaleIndex(ilvl)`
    * und der ±15 %-Roll-Varianz. Rundung: gesquishte Flat-Stats 1 Dezimale (min 0.1), `maxMana`
-   * ganzzahlig (min 1), `manaRegen` 1 Dezimale, `hpRegenPerSec` 2 Dezimalen (s. instanceBonusDelta).
+   * ganzzahlig (min 1), `hpRegenPerSec` 2 Dezimalen (s. instanceBonusDelta).
    */
   statsPerIlvl?: Partial<EquipBonus>;
   /**
@@ -3404,20 +3432,18 @@ export function instanceBonusDelta(
       // (maxHp/damage/def/eva/acc — k-Koeffizienten im Content sind ×0.1) runden auf 1 Dezimale
       // mit Min 0.1 — das ist EXAKT das alte `max(1, round(raw))` ÷10, also bit-identische
       // relative Suffix-Stärke (Integer-Min-1 hätte alle Rolls auf 1 kollabiert = 10×-Buff).
-      // Mana ist unskaliert (§3.4): maxMana bleibt ganzzahlig (min 1), manaRegen 1 Dezimale.
+      // Zauberreserve ist unskaliert (§3.4): maxMana bleibt ganzzahlig (min 1).
       // hpRegenPerSec ist ×0.1 → 2 Dezimalen (altes 1-Dezimal-Raster ÷10).
       if (sdef.statsPerIlvl) {
         const scaled: EquipBonus = {};
         for (const key of Object.keys(sdef.statsPerIlvl) as (keyof EquipBonus)[]) {
           const raw = (sdef.statsPerIlvl[key] ?? 0) * S * variance;
           scaled[key] =
-            key === "manaRegen"
-              ? Math.round(raw * 10) / 10
-              : key === "hpRegenPerSec"
-                ? Math.round(raw * 100) / 100
-                : key === "maxMana"
-                  ? Math.max(1, Math.round(raw))
-                  : Math.max(0.1, Math.round(raw * 10) / 10);
+            key === "hpRegenPerSec"
+              ? Math.round(raw * 100) / 100
+              : key === "maxMana"
+                ? Math.max(1, Math.round(raw))
+                : Math.max(0.1, Math.round(raw * 10) / 10);
         }
         addBonus(scaled);
       }
@@ -5060,7 +5086,11 @@ export interface CharacterState {
    * ausgegeben (`spendQuestTokens`, engine/quests.ts). Alt-Saves defaulten auf 0.
    */
   questTokens: number;
-  /** Aktuelles Mana (Maximum wird aus den Stats abgeleitet). */
+  /**
+   * Zauberreserve-Feld (Save-Kompat, Chef-GO 28.08.2026): Mana wird nicht mehr verbraucht. Die Engine
+   * hält den Wert jeden Tick auf `stats.maxMana` (tickPlayerRegen); die UI zeigt NICHT dieses Feld,
+   * sondern `stats.maxMana` als „Zauberreserve". Bleibt im Save (kein Bump), Sanitize klemmt ≥ 0.
+   */
   mana: number;
   /**
    * Aktueller Ward-Absorptionspool des Stoff-Stils (analog hp/mana; Maximum `maxWard` aus den Stats).
@@ -5124,9 +5154,31 @@ export interface DerivedStats {
   /** Minimaler Treffer (= attackDamageMin, UNGERUNDET — untere Kante der Schadensspanne). */
   minHit: number;
   maxHp: number;
+  /**
+   * Zauberreserve (Chef-GO 28.08.2026; UI-Label „Zauberreserve"/„Spell Reserve" — der FELDNAME bleibt
+   * `maxMana`): `(30 + 10·INT + 4·WIS + Σ EquipBonus.maxMana) · Pet-spellReserve`. Kein Verbrauch mehr;
+   * `character.mana` wird auf diesen Wert gehalten. Die Magie-Haltungen lesen ihn (s. unten).
+   */
   maxMana: number;
-  /** Mana-Regeneration pro Sekunde. */
-  manaRegen: number;
+  /**
+   * Fokus-Haltung (MagicStance "offensive"): Zauberschaden-Bonus als Bruch (0..FOCUS_STANCE_DMG_CAP),
+   * `spellReserveDamageBonus(maxMana)`. IMMER berechnet (Tooltip: „Fokus-Haltung: +x % Zauberschaden"),
+   * ANGEWANDT nur bei Stil "magic" in der offensiven Haltung (bereits in attackDamageMin/Max eingerechnet).
+   */
+  spellReserveDamageBonus: number;
+  /**
+   * Schild-Haltung (MagicStance "defensive"): Ward-Regen-Bonus als Bruch (0..SHIELD_STANCE_WARDREGEN_CAP),
+   * `spellReserveWardRegenBonus(maxMana)`. IMMER berechnet (Tooltip), ANGEWANDT nur in der defensiven
+   * Haltung (bereits in wardRegenPerSec eingerechnet, NACH WARDING_REGEN_CAP).
+   */
+  spellReserveWardRegenBonus: number;
+  /**
+   * Weisheit = Status-Widerstand (Bruch, 0..WIS_STATUS_RESIST_CAP) aus dem effektiven WIS: Statuseffekte,
+   * die auf den SPIELER gelegt werden, sind so viel kürzer UND schwächer (Schock: kürzere Verzögerung;
+   * Frost: ab WIS_FROST_EXTRA_STACK_RESIST vier statt drei Anwendungen zum Einfrieren). combat.ts wendet
+   * ihn in applyMonsterInflict an; Tooltip „Weisheit: Status-Widerstand x %".
+   */
+  statusResist: number;
   /** HP-Regeneration pro Sekunde aus Ausrüstung/Set/Buffs (z.B. Regenerations-Food). 0 = keine. */
   hpRegenPerSec: number;
   meleeDamage: number;

@@ -24,3 +24,66 @@
 
 - combat-dev/logic-dev (packages): shared (Konstanten, Effekt-Kinds, ItemDef.manaCost entfernen), engine (character.ts computeStats: Haltungen, Widerstand; combat.ts: Cast ohne Kosten, Status-Anwendung auf Spieler skaliert; pets.ts; consumable.ts), content (manaCost weg, Umdeutungen), Tests, Patchnotes, Doku.
 - ui-dev (client): Kampf-Panel, Charakter-/Stat-Seite, Item-Karte, Tooltips, Onboarding-Texte ×7.
+
+## Umgesetzt (packages, 28.08.2026 — combat-dev)
+
+**Korrekturen gegenüber den Regeln oben (CEO/Chef 28.08.2026, design/balance-audit-magie-2026-08-28.md):**
+Fokus-Haltung **+1 % Zauberschaden je 60 Reserve, Deckel +15 %** (statt 1 %/40 und +30 %; der Magier liegt im
+Kit-Charakter 12–21 % hinter dem Nahkampf, +20 % am CL-90-Kit hätte ihn gegen Trash über ±10 % gehoben).
+Schild-Haltung **+1 % Ward-Regeneration je 40 Reserve, Deckel +30 %** (statt 1 %/20 und +60 %; Chef: „langweilig,
+wenn der Ward-Regen beinahe overpowered ist"). Alles Übrige wie in den Regeln.
+
+**shared** (`packages/shared/src/index.ts`): `FOCUS_STANCE_DMG_PER_RESERVE = 0.01/60`, `FOCUS_STANCE_DMG_CAP = 0.15`,
+`SHIELD_STANCE_WARDREGEN_PER_RESERVE = 0.01/40`, `SHIELD_STANCE_WARDREGEN_CAP = 0.30`, `WIS_STATUS_RESIST_PER_POINT = 0.01`,
+`WIS_STATUS_RESIST_CAP = 0.4`, `WIS_FROST_EXTRA_STACK_RESIST = 0.2`, `MANA_REGEN_TO_RESERVE = 10` (Doku des Umrechners),
+`WARD_RECHARGE_PER_CAST = 1.2` (ersetzt `WARD_PER_MANA`; = früher 6·0,20). Helfer `spellReserveDamageBonus(maxMana)`,
+`spellReserveWardRegenBonus(maxMana)`, `wisdomStatusResist(wis)` (eine Rechnung für Engine UND Tooltip).
+Entfernt: `MANA_PER_CAST`, `MAGIC_WEAK_FACTOR`, `MANA_SHIELD_*`, `ItemDef.manaCost`, `EquipBonus.manaRegen`,
+`DerivedStats.manaRegen`, Kinds `manaOnKill`/`manaDrain`, Pet-Kind `manaRegen`, Pet-Ability `manaRestore`.
+Neu: Effekt-Kind `wardOnKill` (FLAT Ward je Kill, Doku-Tabelle), Pet-Kind `spellReserve` (+% maxMana, Cap 5 %),
+Pet-Ability `wardRestore` (Bruch maxWard, Cap 0,15), DerivedStats `spellReserveDamageBonus`, `spellReserveWardRegenBonus`,
+`statusResist`. `maxMana` bleibt der Feldname (Stat, Save, EquipBonus) — nur die Bedeutung ist „Zauberreserve".
+`surplus` liest jetzt den EIGENEN Ward-Anteil (threshold 0,8 · maxWard) statt des Mana-Anteils (der ohne Verbrauch
+immer 100 % wäre); ohne Stoff-Pool inaktiv. Attribut-Beschreibungen INT/WIS und `WEAPON_TYPE_SPECIALTY.focus` in
+7 Sprachen auf Zauberreserve/Status-Widerstand.
+
+**engine/character.ts:** `maxMana = (30 + 10·INT + 4·WIS + Σ EquipBonus.maxMana) · petSpellReserveMult`; Fokus:
+Spanne (min UND max) × (1 + Bonus) nur bei Stil magic und `magicStance !== "defensive"`; Schild: `wardRegenPerSec =
+min(WARDING_REGEN_CAP, warding·0,02·1,5) · (1 + Bonus)` nur defensiv (Bonus NACH dem Cap, damit er am Endgame
+sichtbar bleibt; max 2,6/s). `statusResist = min(0,4; 0,01·WIS effektiv)`. Haltungs-IDs: `MagicStance = "offensive"`
+(= Fokus) | `"defensive"` (= Schild), unverändert.
+
+**engine/combat.ts:** Cast ohne Kosten (jeder Magie-Angriff ist ein Zauber, Cast-Recharge fest 1,2 Ward);
+`castManaCost` entfernt; `tickPlayerRegen` hält `character.mana = maxMana` (Kampf UND Idle über tick.ts);
+`applyMonsterInflict(state, monster, stats)`: Dauer × (1 − r), Magnitude × (1 − r), Schock-Verzögerung und
+Ketten-Deckel × (1 − r) (`delayNextAttack(…, resist)`), Frost-Einfrieren ab r ≥ 0,2 mit vier Anwendungen
+(`onStatusApplied(…, resist)`); Gegner-Seite (`applyEnemyStatus`) ungeschützt. Kill-Pfad `wardOnKill` (summiert
+über Quellen wie healOnKill), Pet `wardRestore`. `manaDrain`-Pfad entfernt.
+
+**engine/pets.ts:** `petSpellReserveMult` ersetzt `petManaRegenMult`.
+
+**content:** `manaCost` von 53 Magiewaffen entfernt. `manaOnKill` → `wardOnKill` (gleiche Magnitude) auf
+hedgewitch_twig 3, felmagician_eye 3, soulopal_band 4, tidecaller_focus 6, siren_shockstaff 4, aetherband_ring 5,
+sorrow_staff 5, soulflayer_amulet 5, impbone_wand 2, shamans_cowl 2; entfernt auf last_condemnation (trägt surplus als
+zweiten Effekt). `manaDrain`: tideterror_grip → wardSiphon 0,08 (≈ gleiche Größenordnung), warlock_felstaff entfernt
+(Brand bleibt). glyphmaw „Runenfraß": manaRestore 30 % maxMana → wardRestore 10 % maxWard / 5 s. Pets pyreling 5 % /
+hoarspite 4 %: manaRegen → spellReserve. tonic_arcane_surge: `{ maxMana: 60, manaRegen: 4 }` → `{ maxMana: 100 }`
+(60 + 4·10) für 90 s. Gebäude/Runen/Suffixe hatten keinen Mana-Bezug mehr (nur affix_thin_veil = surplus, semantisch
+umgestellt). Texte (EN/DE + es/fr/pt-BR/ru/zh): runewoven_robe_legs, shamans_cowl, emberheart_robe, glyphmaw,
+pyreling, hoarspite.
+
+**persistence:** kein SAVE-Bump, Sanitize unverändert (`mana` ≥ 0 endlich); Vault-Guard grün (419 Tests).
+
+**Balance-Pins:** balance-envelope TTK-Matrix magic idol_warden 58,05 → 50,48 s, last_idol 194,82 → 169,41 s (exakt
+1/1,15 — das CL-90-Kit liegt am Fokus-Deckel); Boss→Spieler und melee/ranged unverändert. sim-consistency/sim-goals/
+sim-realistic ohne Pin-Änderung.
+
+**Tests:** neu `packages/engine/src/spell-reserve.test.ts` (21); umgebaut: magic-loop (Manakosten-/Depletion-Tests
+entfernt), mana-equip, mana-shield, armor-trinity-combat, lifesteal-respawn, elemental-status, ward, weapon-effects-2
+(wardOnKill/surplus-Ward), pet-*, spell-focus, armor-iteration2-combat.
+
+**Offen (ui-dev, client):** ItemTooltip (`manaCost`/`MANA_PER_CAST`/`manaRegen`-Zeilen raus, Zauberreserve-Label),
+CharacterPage (Zauberreserve als Wert statt Mana-Balken, Tooltips Fokus/Schild/Weisheit aus `stats.spellReserveDamageBonus`
+/`spellReserveWardRegenBonus`/`statusResist`), CombatPage (kein Mana-Balken, Reserve neben Ward; `PET_ABILITY_BUCKET`
+wardRestore), combatFx (`PET_ABILITY_IMAGE` wardRestore), petText (wardRestore, spellReserve), i18n-Keys
+`weaponEffect.wardOnKill`/`surplus`-Text (Ward statt Mana), `pet.*.spellReserve`/`wardRestore`, Onboarding-Texte ×7.

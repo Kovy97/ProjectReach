@@ -10,8 +10,8 @@ function withItem(item: ItemDef): ContentDB {
   return { ...content, items: { ...content.items, [item.id]: item } };
 }
 
-describe("Ticket 2 — Mana-Pool/-Regen über Ausrüstung (EquipBonus.maxMana/manaRegen)", () => {
-  it("Focus-Offhand erhöht maxMana und manaRegen additiv (analog maxHp)", () => {
+describe("Ticket 2 — Zauberreserve über Ausrüstung (EquipBonus.maxMana; manaRegen ist seit 28.08.2026 entfallen)", () => {
+  it("Focus-Offhand erhöht die Zauberreserve (maxMana) additiv (analog maxHp)", () => {
     const focus: ItemDef = {
       id: "test_focus",
       name: "Test-Focus",
@@ -19,7 +19,7 @@ describe("Ticket 2 — Mana-Pool/-Regen über Ausrüstung (EquipBonus.maxMana/ma
       stackable: false,
       slot: "offhand",
       weaponStyle: "magic",
-      bonus: { maxMana: 50, manaRegen: 2 },
+      bonus: { maxMana: 50 },
     };
     const c = withItem(focus);
     const s = createGame({ name: "Magier" }, c, 1);
@@ -28,12 +28,11 @@ describe("Ticket 2 — Mana-Pool/-Regen über Ausrüstung (EquipBonus.maxMana/ma
     s.character.equipment.offhand = "test_focus";
     const after = computeStats(s, c);
 
+    // maxMana ist additiv VOR dem Pet-Multiplikator (kein Pet aktiv → Mult 1).
     expect(after.maxMana).toBe(before.maxMana + 50);
-    // manaRegen ist additiv VOR dem Pet-Multiplikator (kein Pet aktiv → Mult 1).
-    expect(after.manaRegen).toBeCloseTo(before.manaRegen + 2, 6);
   });
 
-  it("ohne maxMana/manaRegen-Bonus bleibt der Pool unverändert (Rückwärtskompatibel)", () => {
+  it("ohne maxMana-Bonus bleibt die Reserve unverändert (Rückwärtskompatibel)", () => {
     const plain: ItemDef = {
       id: "test_plain_off",
       name: "Schlichtes Offhand",
@@ -50,7 +49,6 @@ describe("Ticket 2 — Mana-Pool/-Regen über Ausrüstung (EquipBonus.maxMana/ma
     const after = computeStats(s, c);
 
     expect(after.maxMana).toBe(before.maxMana);
-    expect(after.manaRegen).toBeCloseTo(before.manaRegen, 6);
   });
 });
 

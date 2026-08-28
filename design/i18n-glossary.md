@@ -109,8 +109,10 @@ same target word (never "Maul" once and "Kriegshammer" the next screen).
 | Magic | Magie | 魔法 | Магия | Magia | Magia | Magie |
 | Damage | Schaden | 伤害 | Урон | Daño | Dano | Dégâts |
 | Hit range (min–max) | Trefferspanne | 伤害范围 | Разброс урона | Rango de daño | Faixa de dano | Plage de dégâts |
-| Max mana | Max-Mana | 最大魔力 | Макс. мана | Maná máx. | Mana máx. | Mana max. |
-| Mana regen | Mana-Regen | 魔力回复 | Восст. маны | Regen. de maná | Regen. de mana | Régén. mana |
+| Spell reserve⁶ | Zauberreserve | 法术储备 | Запас чар | Reserva de hechizos | Reserva de feitiços | Réserve de sorts |
+| Status resistance⁶ | Status-Widerstand | 状态抗性 | Сопротивление эффектам | Resistencia a estados | Resistência a estados | Résistance aux états |
+| Focus stance⁶ | Fokus-Haltung | 专注姿态 | Стойка сосредоточения | Postura de enfoque | Postura de foco | Posture de concentration |
+| Shield stance⁶ | Schild-Haltung | 护盾姿态 | Стойка щита | Postura de escudo | Postura de escudo | Posture de bouclier |
 | Attack speed | Angriffstempo | 攻击速度 | Скорость атаки | Vel. de ataque | Vel. de ataque | Vitesse d'attaque |
 | Defense | Verteidigung | 防御 | Защита | Defensa | Defesa | Défense |
 | Accuracy⁵ | Genauigkeit | 命中 | Меткость | Puntería | Pontaria | Adresse |

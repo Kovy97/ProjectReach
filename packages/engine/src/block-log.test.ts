@@ -33,7 +33,6 @@ const WAND: ItemDef = {
   weaponStyle: "magic",
   twoHanded: false,
   bonus: { magicDamage: 5, accuracy: 40 },
-  manaCost: 10,
 };
 
 function armor(id: string, slot: ItemDef["slot"], fields: Partial<ItemDef>): ItemDef {

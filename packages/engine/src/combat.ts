@@ -44,8 +44,6 @@ import {
   effectiveInstanceWeaponEffects,
   isStatusEffectType,
   FROST_SLOW,
-  MAGIC_WEAK_FACTOR,
-  MANA_PER_CAST,
   BLOCK_DAMAGE_REDUCTION,
   LEATHER_HIT_FLOOR,
   MONSTER_ACC_LEVEL_START,
@@ -80,6 +78,7 @@ import {
   STATUS_VS_WARD_MULT,
   BURN_VULNERABILITY,
   FROST_FREEZE_STACKS,
+  WIS_FROST_EXTRA_STACK_RESIST,
   FREEZE_IMMUNITY_MS,
   SHOCK_DELAY_MS,
   SHOCK_DELAY_CAP_MS,
@@ -576,14 +575,14 @@ interface AttackResult {
  * mit packLeader, Rüstungs-Chase mit thorns), instanz-bewusst (Enchant-Procs). Status-Procs
  * (burn/…) bleiben davon getrennt Mainhand-Sache (`applyWeaponEffects`). GLEICHE Kinds aus
  * mehreren Quellen stapeln NICHT — die stärkste Magnitude gewinnt (§2.3-konservativ); AUSNAHME (Spieler-Report
- * 28.08.2026, Chef-GO): die flachen Kill-Rückflüsse healOnKill/manaOnKill/cooldownOnKill SUMMIEREN sich über alle
+ * 28.08.2026, Chef-GO): die flachen Kill-Rückflüsse healOnKill/wardOnKill/cooldownOnKill SUMMIEREN sich über alle
  * Quellen (Armschützer +4 LP und Klinge +2 LP = +6 LP je Kill), weil ein Spieler zwei Flats erwartbar addiert;
  * VERSCHIEDENE Kinds stapeln frei und wirken multiplikativ auf den Einzelschlag (§2.3.3).
  */
 type SpecialEffects = Partial<Record<SpecialEffectType, WeaponEffect>>;
 
 /** Flache Kill-Rückflüsse: Magnituden addieren sich über alle Quellen (s. Kopfkommentar). */
-const ADDITIVE_KILL_FLATS: ReadonlySet<SpecialEffectType> = new Set<SpecialEffectType>(["healOnKill", "manaOnKill", "cooldownOnKill"]);
+const ADDITIVE_KILL_FLATS: ReadonlySet<SpecialEffectType> = new Set<SpecialEffectType>(["healOnKill", "wardOnKill", "cooldownOnKill"]);
 
 /** Sammelt die Spezial-Effekte der aktuellen Ausrüstung. Rein lesend, kein RNG. */
 export function collectSpecialEffects(state: GameState, content: ContentDB): SpecialEffects {
@@ -698,10 +697,13 @@ function poisonSustainMult(targetEffects: StatusEffect[]): number {
  * der Seite (Reset in combatStep). Liefert die tatsächlich hinzugefügten ms (0 am Deckel). Loggt die
  * Verzögerung als status-Event mit `amount` = ms (kind "status", status "shock"; der Renderer zeigt
  * heute „erleidet Schock", die Klartext-Keys combat.shockDelay* liegen für die UI bereit). Kein RNG.
+ * `resist` (Weisheits-Status-Widerstand, nur Spieler-Seite): Verzögerung je Anwendung UND Ketten-
+ * Deckel × (1 − resist) — „schwächer" heißt bei Schock kürzer (Spec §3). Gegner: immer 0.
  */
-function delayNextAttack(cs: CombatState, side: Side): number {
+function delayNextAttack(cs: CombatState, side: Side, resist = 0): number {
   const c = sideCounters(cs, side);
-  const add = Math.min(SHOCK_DELAY_MS, Math.max(0, SHOCK_DELAY_CAP_MS - c.shockDelayMs));
+  const scale = 1 - resist;
+  const add = Math.round(Math.min(SHOCK_DELAY_MS * scale, Math.max(0, SHOCK_DELAY_CAP_MS * scale - c.shockDelayMs)));
   if (add <= 0) return 0;
   c.shockDelayMs += add;
   if (side === "enemy") cs.enemyTimerMs -= add;
@@ -721,11 +723,15 @@ function delayNextAttack(cs: CombatState, side: Side): number {
  *    Status-Zeile mit `amount` = Stapelzahl (UI kann „Gift ×3" zeigen).
  *  - burn/bleed/void: nur die Status-Zeile bei Erst-Anwendung (Glut/Entzug sind passive Multiplikatoren).
  * `by` = Verursacher-Seite (Gegner-Status ⇒ "player", Spieler-Status ⇒ "enemy"), wie bisher.
+ * `resist` = Weisheits-Status-Widerstand des ZIELS (Zauberreserve und Weisheit, Chef-GO 28.08.2026):
+ * nur die Spieler-Seite trägt ihn (Monster haben keine Weisheit) — Schock verzögert kürzer, Frost
+ * braucht ab WIS_FROST_EXTRA_STACK_RESIST eine Anwendung mehr zum Einfrieren. Dauer/Magnitude der
+ * DoTs skaliert bereits der Aufrufer (applyMonsterInflict).
  */
-function onStatusApplied(cs: CombatState, side: Side, type: StatusType, isNew: boolean): void {
+function onStatusApplied(cs: CombatState, side: Side, type: StatusType, isNew: boolean, resist = 0): void {
   const by: Side = side === "enemy" ? "player" : "enemy";
   if (type === "shock") {
-    if (delayNextAttack(cs, side) <= 0 && isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
+    if (delayNextAttack(cs, side, resist) <= 0 && isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
     return;
   }
   if (type === "poison") {
@@ -742,7 +748,8 @@ function onStatusApplied(cs: CombatState, side: Side, type: StatusType, isNew: b
     const c = sideCounters(cs, side);
     if (c.freezeImmunityMs > 0) return; // immun: Anwendungen zählen nicht
     c.frostStacks += 1;
-    if (c.frostStacks >= FROST_FREEZE_STACKS) {
+    const freezeStacks = FROST_FREEZE_STACKS + (resist >= WIS_FROST_EXTRA_STACK_RESIST ? 1 : 0);
+    if (c.frostStacks >= freezeStacks) {
       c.frostStacks = 0;
       c.frozen = true;
       c.freezeImmunityMs = FREEZE_IMMUNITY_MS;
@@ -905,7 +912,7 @@ function playerProfile(stats: DerivedStats): AttackProfile {
  * Offense-XP-Faktor für die ressourcen-abhängigen Stile (Fernkampf/Magie) relativ zur
  * Schadens-XP-Basis. War für ranged ×2, dadurch erreichte ein Bogen-Build in ~1h bereits L40
  * und die ranged-Gates (22/42/62/80/95) waren faktisch wirkungslos. Auf ×1.2 gesenkt: leichter
- * Bonus fürs Ressourcen-Handicap (Mana; das Munitions-Handicap ist mit #286 gestorben), aber grob
+ * Bonus fürs frühere Ressourcen-Handicap (Mana-Verbrauch ist mit der Zauberreserve 28.08.2026 entfallen, das Munitions-Handicap mit #286), aber grob
  * auf melee-Niveau, damit die Gates wieder als echte Progression greifen.
  *
  * Magie lief weiter auf ×2 → Magier levelten ihren Offense-Skill ~67 % schneller als Bogis
@@ -1246,13 +1253,15 @@ function onEnemyDefeated(
   }
 
   // — Kill-Trigger-Spezial-Effekte (Waffen 2.0 §2.1) — deterministisch, kein RNG:
-  //   manaOnKill/healOnKill = flache Ressourcen-Rückflüsse; cooldownOnKill kürzt den Kill-Cooldown
+  //   wardOnKill/healOnKill = flache Ressourcen-Rückflüsse; cooldownOnKill kürzt den Kill-Cooldown
   //   (5 s − X, s. beginKillCooldown); overkillCarry/plaguebearer schreiben ihre „nächster-Gegner"-
   //   Übergabe in die transienten Zähler (Anwendung in applyCarryToNewEnemy beim Spawn).
-  if (fx.manaOnKill) {
-    state.character.mana = Math.min(
-      stats.maxMana,
-      state.character.mana + Math.max(0, fx.manaOnKill.magnitude),
+  //   wardOnKill (Zauberreserve 28.08.2026, ersetzt manaOnKill): flacher Ward je Kill, auf maxWard
+  //   gedeckelt — ohne Stoff-Pool (maxWard 0) ein No-op, still wie die übrige Ressourcen-Familie.
+  if (fx.wardOnKill && stats.maxWard > 0) {
+    state.character.ward = Math.min(
+      stats.maxWard,
+      state.character.ward + Math.max(0, fx.wardOnKill.magnitude),
     );
   }
   if (fx.healOnKill) healPlayer(state, stats.maxHp, fx.healOnKill.magnitude, "kill");
@@ -1691,15 +1700,7 @@ function statusApplyChance(effect: { type: string; chance: number; magnitude: nu
   return effect.chance;
 }
 
-/**
- * Manakosten eines Zaubers mit der ausgerüsteten Magie-Waffe. Liest `item.manaCost` der Waffe;
- * fällt auf den globalen `MANA_PER_CAST` zurück, wenn das Feld fehlt oder ungültig (NaN/negativ)
- * ist. Staff > Wand (Spec §5) ergibt sich rein aus den Content-Werten.
- */
-export function castManaCost(content: ContentDB, weaponId: ItemId | null | undefined): number {
-  const cost = weaponId ? content.items[weaponId]?.manaCost : undefined;
-  return typeof cost === "number" && Number.isFinite(cost) && cost >= 0 ? cost : MANA_PER_CAST;
-}
+// castManaCost: ENTFERNT (Zauberreserve, Chef-GO 28.08.2026) — Zauber kosten nichts mehr.
 
 /**
  * Emittiert für Schadens-DoTs (burn/bleed/poison) ~1×/Sekunde einen `dot`-Event (Floating-Text +
@@ -1806,28 +1807,45 @@ function tickPlayerEffects(
   return { frost };
 }
 
-/** Wendet einen vom Gegner ausgelösten Statuseffekt (z.B. Gift) auf den Spieler an. */
-function applyMonsterInflict(state: GameState, monster: MonsterDef): void {
+/**
+ * Wendet einen vom Gegner ausgelösten Statuseffekt (z.B. Gift) auf den Spieler an.
+ * Weisheit = Status-Widerstand (Zauberreserve und Weisheit, Chef-GO 28.08.2026, Spec §3): `r =
+ * stats.statusResist` (min(0,4; 0,01·WIS aus den effektiven Attributen)) macht JEDEN Status auf den
+ * Spieler um r kürzer (Dauer × (1 − r)) UND um r schwächer (Magnitude × (1 − r); für Schock: kürzere
+ * Verzögerung, für Frost: ab 20 % Widerstand vier statt drei Anwendungen zum Einfrieren — beides in
+ * onStatusApplied). Die Anwendungschance bleibt unverändert. Symmetrie (Spec §5): Gegner haben keine
+ * Weisheit — applyEnemyStatus bleibt ungeschützt.
+ */
+function applyMonsterInflict(state: GameState, monster: MonsterDef, stats: DerivedStats): void {
   const inflict = monster.inflict;
   if (!inflict) return;
   // Anwendungschance wie bei Waffen-Procs (statusApplyChance: shock ⇒ magnitude) — Symmetrie-Pflicht.
   if (nextFloat(state.rng) > statusApplyChance(inflict)) return;
+  const resist = clamp01(stats.statusResist);
+  const durationMs = inflict.durationMs * (1 - resist);
+  const magnitude = inflict.magnitude * (1 - resist);
   const existing = state.combat.playerEffects.find((e) => e.type === inflict.type);
   if (existing) {
     // Spiegelt die Refresh-Semantik der Gegnerseite (applyEnemyStatus): Magnitude/Rest-Dauer per
     // `max` zusammenführen — ein Refresh darf einen stärkeren/längeren bestehenden Effekt am Spieler
     // nie abschwächen (Symmetrie-Pflicht, vom status-coverage-Test eingefordert).
-    existing.remainingMs = Math.max(existing.remainingMs, inflict.durationMs);
-    existing.magnitude = Math.max(existing.magnitude, inflict.magnitude);
+    existing.remainingMs = Math.max(existing.remainingMs, durationMs);
+    existing.magnitude = Math.max(existing.magnitude, magnitude);
   } else {
     state.combat.playerEffects.push({
       type: inflict.type,
-      remainingMs: inflict.durationMs,
-      magnitude: inflict.magnitude,
+      remainingMs: durationMs,
+      magnitude,
     });
   }
-  // Elementar-Nachlauf am Spieler (Log + Einfrieren/Verzögerung/Stapel) — dieselben Regeln wie am Gegner.
-  onStatusApplied(state.combat, "player", inflict.type, !existing);
+  // Elementar-Nachlauf am Spieler (Log + Einfrieren/Verzögerung/Stapel) — dieselben Regeln wie am
+  // Gegner, nur dass der Weisheits-Widerstand Schock-Verzögerung und Frost-Schwelle mildert.
+  onStatusApplied(state.combat, "player", inflict.type, !existing, resist);
+}
+
+/** 0..1-Klemme, NaN-fest (defekte Stats ⇒ 0 = kein Widerstand). */
+function clamp01(value: number): number {
+  return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0;
 }
 
 function performPlayerAttack(
@@ -1841,28 +1859,17 @@ function performPlayerAttack(
   const profile = playerProfile(stats);
 
   let casts = false;
-  // surplus (§2.1) prüft „Mana über X %" VOR den Cast-Kosten (der Zauber selbst zehrt nicht am Bonus).
-  const manaBeforeCast = state.character.mana;
+  // surplus (§2.1) prüft „Ward über X %" VOR dem Cast-Recharge (der Zauber selbst zehrt nicht am Bonus).
+  const wardBeforeCast = state.character.ward;
 
   if (stats.style === "magic") {
-    // Per-Waffe-Manakosten (Fallback globaler MANA_PER_CAST). Mana-Depletion-Loop:
-    // Mana ≥ Kosten → casten (voller Magie-Schaden + Spell-Status); sonst schwacher Stab-Nahkampf
-    // (×MAGIC_WEAK_FACTOR) während Mana via manaRegen/Sek (in combatStep) nachläuft → sobald wieder
-    // genug → automatisch zurück zum Casten. Kein While-Loop → deterministisch, hängt bei
-    // manaRegen=0 nicht (degradiert dann dauerhaft zum Weak-Melee, statt zu blockieren).
-    const cost = castManaCost(content, state.character.equipment.mainhand);
-    if (state.character.mana >= cost) {
-      state.character.mana -= cost;
-      casts = true;
-      // Ward-Recharge (Rüstungs-Trinität §1.4): jeder echte Cast lädt den Ward-Pool um
-      // `cost · WARD_PER_MANA`, gedeckelt auf maxWard. An den Mana-VERBRAUCH gekoppelt — läuft
-      // Mana leer (Weak-Melee unten), gibt es keinen Cast und damit keinen Recharge (gewollter Druck).
-      state.character.ward = rechargeWard(state.character.ward, stats.maxWard, cost);
-    } else {
-      // ohne (genug) Mana nur ein schwacher Schlag — die GANZE Spanne skaliert (§1.3)
-      profile.damageMin *= MAGIC_WEAK_FACTOR;
-      profile.damageMax *= MAGIC_WEAK_FACTOR;
-    }
+    // Zauberreserve (Chef-GO 28.08.2026): Zauber kosten nichts — jeder Magie-Angriff ist ein echter
+    // Cast (voller Magie-Schaden + Spell-Status). Der frühere Mana-Depletion-Loop mit dem „schwachen
+    // Stab-Schlag" (×0.35) ist entfallen; er griff faktisch nie (Regen > Kosten).
+    casts = true;
+    // Ward-Recharge (Rüstungs-Trinität §1.4): jeder Cast lädt den Ward-Pool um WARD_RECHARGE_PER_CAST,
+    // gedeckelt auf maxWard (früher `cost · WARD_PER_MANA`; jetzt fester Wert je Zauber).
+    state.character.ward = rechargeWard(state.character.ward, stats.maxWard);
   }
   // Fernkampf: KEINE Munitions-Phase mehr (#286 Ammo-Removal) — der Pfeilschaden steckt seit #287
   // in der Bogen-Spanne, jeder Schuss ist „scharf". Der frühere ammoSaver-Waffeneffekt ist damit
@@ -1876,7 +1883,7 @@ function performPlayerAttack(
     monster,
     fx,
     profile,
-    { casts, manaBeforeCast, allowDoubleStrike: true },
+    { casts, wardBeforeCast, allowDoubleStrike: true },
     nowMs,
   );
 }
@@ -1884,7 +1891,8 @@ function performPlayerAttack(
 /** Kontext eines Einzelschlags (Ressourcen-Phase von performPlayerAttack). */
 interface StrikeContext {
   casts: boolean;
-  manaBeforeCast: number;
+  /** Eigener Ward VOR dem Cast-Recharge dieses Schlags (surplus liest ihn; Zauberreserve 28.08.2026). */
+  wardBeforeCast: number;
   /** doubleStrike darf nur EINEN Zweitschlag auslösen (keine Kaskade). */
   allowDoubleStrike: boolean;
 }
@@ -1949,11 +1957,15 @@ function strikeEnemy(
     if (fx.frostbite && cs.enemyEffects.some((e) => e.type === "frost")) {
       mult *= 1 + fx.frostbite.magnitude;
     }
+    // surplus (Überschuss, §2.1) — Zauberreserve 28.08.2026: liest jetzt den EIGENEN Ward-Anteil (vorher
+    // den Mana-Anteil, der ohne Verbrauch immer 100 % wäre ⇒ der Effekt wäre bedingungslos). Ohne
+    // Stoff-Pool (maxWard 0) inaktiv; Ward VOR dem Cast-Recharge dieses Schlags.
     if (
       fx.surplus &&
       stats.style === "magic" &&
       ctx.casts &&
-      ctx.manaBeforeCast > stats.maxMana * (fx.surplus.threshold ?? 0.8)
+      stats.maxWard > 0 &&
+      ctx.wardBeforeCast > stats.maxWard * (fx.surplus.threshold ?? 0.8)
     ) {
       mult *= 1 + fx.surplus.magnitude;
     }
@@ -2073,16 +2085,11 @@ function strikeEnemy(
       pushLog(cs, { by: "player", kind: "lifesteal", amount: heal, source: "lifesteal" });
     }
   }
-  // manaDrain (Zermürbung, §2.1): flacher Mana-Rückfluss je gelandetem Treffer (auf maxMana gedeckelt).
-  if (fx.manaDrain) {
-    state.character.mana = Math.min(
-      stats.maxMana,
-      state.character.mana + Math.max(0, fx.manaDrain.magnitude),
-    );
-  }
+  // manaDrain (Zermürbung): ENTFERNT (Zauberreserve 28.08.2026) — Mana wird nicht verbraucht, ein
+  // Mana-Rückfluss je Treffer wäre wirkungslos. Träger-Items sind auf wardSiphon umgestellt/bereinigt.
   // wardSiphon (elite-balance-spec.md §5, hollowveil_locket): Anteil des soeben verursachten
   // Schadens (post-Mitigation, derselbe `damage` wie Lebensraub oben) füllt den eigenen Ward-Pool.
-  // Analog manaDrain: still (kein pushLog — Ressourcen-Rückfluss-Familie loggt nicht, nur HP-Heal
+  // Still (kein pushLog — Ressourcen-Rückfluss-Familie loggt nicht, nur HP-Heal
   // tut das). Auf maxWard gedeckelt; ohne Stoff-Pool (maxWard=0) ein reiner No-op.
   if (fx.wardSiphon && damage > 0 && stats.maxWard > 0) {
     state.character.ward = Math.min(
@@ -2141,8 +2148,8 @@ function strikeEnemy(
   }
 
   // doubleStrike (Doppelschlag, Palette-Hook — Content folgt später): Chance auf einen sofortigen
-  // Zweitschlag mit voller Treffer-/Krit-/Effekt-Auflösung, aber OHNE erneute Ressourcenkosten
-  // (kein Mana/Pfeil) und ohne Kaskade (der Zweitschlag kann keinen dritten auslösen).
+  // Zweitschlag mit voller Treffer-/Krit-/Effekt-Auflösung, aber OHNE erneuten Cast-Recharge
+  // und ohne Kaskade (der Zweitschlag kann keinen dritten auslösen).
   if (
     ctx.allowDoubleStrike &&
     fx.doubleStrike &&
@@ -2165,24 +2172,23 @@ function killCooldownActive(cs: CombatState): boolean {
 }
 
 /**
- * Spieler-seitiger Tick-Unterhalt: Mana-Regeneration + HP-Regeneration (Ausrüstung/Set/Buffs) und
- * Kappen aufs (evtl. gesunkene) Maximum. Läuft im aktiven Kampf UND während des Kill-Cooldowns
+ * Spieler-seitiger Tick-Unterhalt: Zauberreserve-Abgleich + HP-Regeneration (Ausrüstung/Set/Buffs)
+ * und Kappen aufs (evtl. gesunkene) Maximum. Läuft im aktiven Kampf UND während des Kill-Cooldowns
  * (die Verschnaufpause heilt weiter — Teil des „Kampf entschleunigen"-Designs). Kein RNG.
  */
 /**
- * Mana-/HP-Regeneration für EINEN Tick (deterministisch, kein RNG), gedeckelt aufs Maximum.
+ * Reserve-/HP-Unterhalt für EINEN Tick (deterministisch, kein RNG), gedeckelt aufs Maximum.
  * EINE Quelle der Wahrheit für Kampf- UND Idle-Tick (tick.ts `step` ruft sie pro Tick außerhalb
  * des Kampfes — Sweep6 T7-F2: vorher rechnete `advance` den Idle-Regen 1× NACH der Tick-Schleife
  * mit den END-Stats, wodurch ein im Fenster ablaufender Regen-Buff offline 0 Heilung brachte).
+ * Zauberreserve (Chef-GO 28.08.2026): `character.mana` wird nicht mehr verbraucht/regeneriert,
+ * sondern jeden Tick auf `stats.maxMana` gehalten (Save-Kompat; die UI zeigt stats.maxMana).
  * HP-Regen kommt NUR aus `hpRegenPerSec` (Ausrüstung/Set/Buffs) — natürliche Regeneration ist
- * entfernt (Chef-Entscheid 2026-07-02). Klemmt HP/Mana zusätzlich nach unten, falls ein
- * +maxHp-/+maxMana-Buff gerade abgelaufen ist.
+ * entfernt (Chef-Entscheid 2026-07-02). Klemmt HP zusätzlich nach unten, falls ein +maxHp-Buff
+ * gerade abgelaufen ist.
  */
 export function tickPlayerRegen(state: GameState, stats: DerivedStats): void {
-  state.character.mana = Math.min(
-    stats.maxMana,
-    state.character.mana + stats.manaRegen * (TICK_MS / 1000),
-  );
+  state.character.mana = Number.isFinite(stats.maxMana) ? Math.max(0, stats.maxMana) : 0;
   // HP-Regeneration über Zeit aus Ausrüstung/Set/Buffs (z.B. Regenerations-Food). Wirkt auch im
   // Kampf jeden Tick (deterministisch, kein RNG), gedeckelt aufs Maximum. 0 ohne Quelle → kein Effekt.
   if (stats.hpRegenPerSec > 0 && state.character.hp < stats.maxHp) {
@@ -2600,7 +2606,7 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
             const pct = Math.min(BLOCK_RESTORE_CAP_PCT, Math.max(0, fx.blockRestore.magnitude));
             healPlayer(state, stats.maxHp, Math.min(stats.maxHp * pct, BLOCK_RESTORE_CAP_ABS), "effect");
           }
-          applyMonsterInflict(state, monster); // z.B. Gift bei Treffer
+          applyMonsterInflict(state, monster, stats); // z.B. Gift bei Treffer (Weisheits-Widerstand aus stats)
           // vengeance (Rache, §2.1): ein ERLITTENER Treffer lädt den nächsten eigenen Schlag auf.
           if (fx.vengeance) effectCounters(cs).vengeancePrimed = true;
           // thorns (Spiegelhaut, §2.1/§5-Rüstungs-Chase): der Angreifer erleidet flachen Rückschaden
@@ -2733,9 +2739,13 @@ function firePetAbility(
     case "blockNextEnemyHit":
       pa.blockNextHit = true;
       break;
-    case "manaRestore":
-      state.character.mana = Math.min(stats.maxMana, state.character.mana + stats.maxMana * value);
-      amount = Math.round(stats.maxMana * value);
+    case "wardRestore":
+      // Zauberreserve 28.08.2026 (ersetzt manaRestore, glyphmaw „Runenfraß"): füllt den Ward-Pool um
+      // einen Bruch von maxWard (Muster shield/heal). Ohne Stoff-Pool (maxWard 0) ein No-op (Log 0).
+      if (stats.maxWard > 0) {
+        state.character.ward = Math.min(stats.maxWard, state.character.ward + stats.maxWard * value);
+      }
+      amount = Math.round(stats.maxWard * value);
       break;
     case "accuracyDownEnemy":
       pa.enemyAccDownMs = PET_ABILITY_DEBUFF_MS;

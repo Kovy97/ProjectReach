@@ -2220,7 +2220,7 @@ export class RealisticPlayer {
       (b.critChance ?? 0) * 100 +
       (b.critDamage ?? 0) * 20 +
       (b.lifesteal ?? 0) * 100;
-    if (this.style === "magic") score += (b.maxMana ?? 0) * 0.3 + (b.manaRegen ?? 0) * 5;
+    if (this.style === "magic") score += (b.maxMana ?? 0) * 0.3; // Zauberreserve 28.08.2026: manaRegen-Term entfallen (in maxMana eingefaltet)
     if (item.modifiers) {
       const w = GEAR_ATTR_STYLE_WEIGHT[this.style];
       for (const [aid, v] of Object.entries(item.modifiers)) score += (v ?? 0) * (w[aid as AttributeId] ?? 1);

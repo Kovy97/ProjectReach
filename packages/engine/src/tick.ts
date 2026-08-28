@@ -1,5 +1,7 @@
 import type { ActionId, ContentDB, GameState, ItemId } from "@hearthforge/shared";
 import { CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, thievingRiskMods } from "@hearthforge/shared";
+
+const OUT_OF_COMBAT_WARD_REGEN_PCT = 0.05;
 import type { ActionDef } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { advanceActionQueue, onQueuedDungeonCleared, requeueDungeonFront, requeueFightFront } from "./actions";
@@ -511,6 +513,15 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
     state.character.hp = Math.min(
       stats.maxHp,
       state.character.hp + stats.maxHp * OUT_OF_COMBAT_HP_REGEN_PCT * (TICK_MS / 1000),
+    );
+  }
+  // Chef 28.08.2026 ("Warum startet mein Ward-Pool immer bei 0?"): Ward regenerierte ausserhalb des Kampfes gar nicht
+  // (im Kampf nur ueber den Abwehr-Skill), blieb also nach dem letzten Kampf auf dem Restwert stehen. Jetzt fuellt
+  // er sich im Leerlauf wie das Leben von selbst auf, nur schneller (5 % des Maximums je Sekunde, voll nach 20 s).
+  if (Number.isFinite(stats.maxWard) && state.character.ward < stats.maxWard) {
+    state.character.ward = Math.min(
+      stats.maxWard,
+      state.character.ward + stats.maxWard * OUT_OF_COMBAT_WARD_REGEN_PCT * (TICK_MS / 1000),
     );
   }
 }

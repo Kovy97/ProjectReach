@@ -4,12 +4,12 @@ import {
   BLOCK_DAMAGE_REDUCTION,
   ONE_SHOT_CAP,
   WARD_KILL_REFILL_PCT,
-  WARD_PER_MANA,
+  WARD_RECHARGE_PER_CAST,
 } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { createTestGame } from "./test-helpers";
 import { computeStats } from "./character";
-import { castManaCost, startCombat, combatStep } from "./combat";
+import { startCombat, combatStep } from "./combat";
 
 /**
  * Rüstungs-Trinität / Itemization 2.5 (design/armor-trinity-spec.md), Phase A2 — die vier
@@ -39,7 +39,6 @@ const WAND: ItemDef = {
   weaponStyle: "magic",
   twoHanded: false,
   bonus: { magicDamage: 5, accuracy: 40 },
-  manaCost: 10,
 };
 
 /** Rüstungsteil-Fabrik: injiziert eine Klassen-Schicht auf einen echten Slot. */
@@ -205,7 +204,7 @@ describe("Rüstungs-Trinität A2: Ward-Absorb VOR HP (§1.4/§1.5)", () => {
 });
 
 describe("Rüstungs-Trinität A2: Ward-Recharge beim Cast (§1.4)", () => {
-  it("ein echter Cast lädt den Ward-Pool um cost · WARD_PER_MANA (an Mana-Verbrauch gekoppelt)", () => {
+  it("jeder Zauber lädt den Ward-Pool um WARD_RECHARGE_PER_CAST (Zauberreserve: fester Wert je Cast)", () => {
     // Riesiges Intervall → der Gegner schlägt in diesem Tick NICHT zu (Ward nur durch den Cast bewegt).
     const c = withMonster(
       withItems([WAND, armor("tt_robe2", "body", { wardCapacity: 1000 })]),
@@ -216,20 +215,17 @@ describe("Rüstungs-Trinität A2: Ward-Recharge beim Cast (§1.4)", () => {
     s.character.equipment.body = "tt_robe2";
     const st = computeStats(s, c);
     s.character.hp = st.maxHp;
-    s.character.mana = st.maxMana; // ≥ Cast-Kosten → castet garantiert
     startCombat(s, c, "tt_recharge_mob");
     s.character.ward = 0; // leer → der Recharge ist eindeutig messbar (Pool 1000 ⇒ kein Deckel)
     s.combat.playerTimerMs = st.attackIntervalMs; // += TICK_MS ⇒ Spieler castet in diesem Tick
     combatStep(s, c);
-    const cost = castManaCost(c, "tt_wand");
-    expect(cost).toBe(10);
     // Armor-Iteration 2 §9.2: der Ward wird pro Tick zusätzlich um den passiven Warding-Regen
     // (st.wardRegenPerSec·dt) gehoben — ADDITIV zum Cast-Recharge. Erwartung = Cast-Recharge
-    // (cost·WARD_PER_MANA = 2 nach It2.1-F1a) + ein Warding-Regen-Tick.
-    expect(s.character.ward).toBeCloseTo(cost * WARD_PER_MANA + st.wardRegenPerSec * (100 / 1000), 6);
+    // (WARD_RECHARGE_PER_CAST = 1.2, Zauberreserve 28.08.2026) + ein Warding-Regen-Tick.
+    expect(s.character.ward).toBeCloseTo(WARD_RECHARGE_PER_CAST + st.wardRegenPerSec * (100 / 1000), 6);
   });
 
-  it("ohne Mana (Weak-Melee) gibt es keinen Cast und damit KEINEN Ward-Recharge", () => {
+  it("Zauberreserve: auch mit mana 0 im Save castet der Magier (kein Weak-Melee mehr) ⇒ Cast-Recharge greift", () => {
     const c = withMonster(
       withItems([WAND, armor("tt_robe3", "body", { wardCapacity: 1000 })]),
       hitter("tt_norecharge_mob", 5, 10_000_000),
@@ -239,16 +235,15 @@ describe("Rüstungs-Trinität A2: Ward-Recharge beim Cast (§1.4)", () => {
     s.character.equipment.body = "tt_robe3";
     const st = computeStats(s, c);
     s.character.hp = st.maxHp;
-    s.character.mana = 0; // unter den Cast-Kosten → Weak-Melee, kein Cast
+    s.character.mana = 0; // Alt-Save mit leerem Mana: Zauber kosten nichts (Chef-GO 28.08.2026)
     startCombat(s, c, "tt_norecharge_mob");
     s.character.ward = 0;
     s.combat.playerTimerMs = st.attackIntervalMs;
     combatStep(s, c);
-    // Armor-Iteration 2 §9.2: ohne Mana gibt es KEINEN Cast → KEINEN Cast-Recharge (+2). Die EINZIGE
-    // Ward-Bewegung ist der passive Warding-Regen (st.wardRegenPerSec·dt ≪ 1/Tick) — der mana-leere
-    // „Weak-Melee"-Magier ist damit nicht mehr komplett ward-los, aber der Recharge bleibt cast-gegatet.
-    expect(s.character.ward).toBeCloseTo(st.wardRegenPerSec * (100 / 1000), 6); // NUR Regen, KEIN Recharge
-    expect(s.character.ward).toBeLessThan(1); // weit unter dem Cast-Recharge (der läge bei 2)
+    // Zauberreserve: der frühere Weak-Melee-Pfad (kein Cast, kein Recharge) existiert nicht mehr — der
+    // Angriff ist ein echter Zauber (Spell-Status möglich) und lädt den Ward wie jeder Cast.
+    expect(s.character.ward).toBeCloseTo(WARD_RECHARGE_PER_CAST + st.wardRegenPerSec * (100 / 1000), 6);
+    expect(s.character.mana).toBe(computeStats(s, c).maxMana); // und die Reserve steht wieder voll
   });
 });
 

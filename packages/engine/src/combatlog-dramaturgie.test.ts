@@ -78,7 +78,6 @@ const WAND: ItemDef = {
   weaponStyle: "magic",
   twoHanded: false,
   bonus: { magicDamage: 25, accuracy: 200 },
-  manaCost: 5,
 };
 
 /** Leder-Probe: riesiges evasionRating ⇒ dodgeChance sättigt auf DODGE_CAP. */

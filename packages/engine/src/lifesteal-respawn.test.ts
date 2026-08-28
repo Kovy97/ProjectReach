@@ -5,7 +5,7 @@ import {
   MELEE_LIFESTEAL_CAP_ABS,
   MELEE_LIFESTEAL_CAP_PCT,
   WARD_KILL_REFILL_PCT,
-  WARD_PER_MANA,
+  WARD_RECHARGE_PER_CAST,
 } from "@hearthforge/shared";
 import { createTestGame } from "./test-helpers";
 import { startCombat, combatStep } from "./combat";
@@ -105,7 +105,6 @@ describe("Ward statt Mana-Schild: Absorb + Respawn-Auffüllung (Itemization 2.5)
     weaponStyle: "magic",
     twoHanded: false,
     bonus: { magicDamage: 5, accuracy: 40 },
-    manaCost: 10,
   };
 
   it("erschöpfter Ward + kein Cast ⇒ der Treffer schlägt voll auf die HP (kein Mana-Schutz)", () => {
@@ -132,11 +131,11 @@ describe("Ward statt Mana-Schild: Absorb + Respawn-Auffüllung (Itemization 2.5)
     s.character.hp = st.maxHp;
     startCombat(s, c, "lr_mob");
     s.character.ward = 0; // Pool leer
-    s.character.mana = 0; // kein Cast → kein Recharge → der Pool bleibt bei 0
+    // Zauberreserve (28.08.2026): jeder Cast lädt Ward — Spieler-Angriff abklemmen, damit der Pool leer bleibt.
 
     const hpBefore = s.character.hp;
     for (let i = 0; i < 40; i++) {
-      s.character.mana = 0; // Regen/Cast abklemmen: der Ward bleibt garantiert leer
+      s.combat.playerTimerMs = -1_000_000; // kein Cast → kein Recharge → der Ward bleibt garantiert leer
       combatStep(s, c);
       if (s.character.hp < hpBefore) break;
     }
@@ -176,10 +175,10 @@ describe("Ward statt Mana-Schild: Absorb + Respawn-Auffüllung (Itemization 2.5)
     expect(s.combat.kills).toBeGreaterThan(0);
     // Armor-Iteration 2 §2: WARD_CORE_PER_INT=0 ⇒ maxWard = Σ wardCapacity (kein INT-Kern) = 300 exakt.
     expect(st.maxWard).toBe(300);
-    // §6.1 Teil-Refill: der Kill-Tick castet einmal (Recharge +cost·WARD_PER_MANA = 10·0.20 = 2 nach
-    // It2.1-F1a), danach refillt der Respawn +0.10·300 = 30 → ward ≈ 4 + 2 + 30 = 36 (KEIN Voll-Reset auf 300).
+    // §6.1 Teil-Refill: der Kill-Tick castet einmal (Recharge +WARD_RECHARGE_PER_CAST = 1.2, Zauberreserve
+    // 28.08.2026), danach refillt der Respawn +0.10·300 = 30 → ward ≈ 4 + 1.2 + 30 = 35.2 (KEIN Voll-Reset auf 300).
     expect(s.character.ward).toBeLessThan(st.maxWard); // KEIN Gratis-Voll-Reset (§6.1)
     expect(s.character.ward).toBeGreaterThan(WARD_KILL_REFILL_PCT * st.maxWard); // ≥ 10 % (über der 4-Basis)
-    expect(s.character.ward).toBeCloseTo(4 + 10 * WARD_PER_MANA + WARD_KILL_REFILL_PCT * st.maxWard, 0); // 4 + Recharge + 10 %
+    expect(s.character.ward).toBeCloseTo(4 + WARD_RECHARGE_PER_CAST + WARD_KILL_REFILL_PCT * st.maxWard, 0); // 4 + Recharge + 10 %
   });
 });

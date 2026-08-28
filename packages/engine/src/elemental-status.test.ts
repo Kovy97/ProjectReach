@@ -89,7 +89,6 @@ function wand(id: string, effects: ItemDef["weaponEffects"]): ItemDef {
     weaponStyle: "magic",
     twoHanded: false,
     bonus: { magicDamage: 25, accuracy: 200 },
-    manaCost: 5,
     weaponEffects: effects,
   };
 }
@@ -300,17 +299,21 @@ describe("Blitz — jede Anwendung verzögert den nächsten Angriff (Kette ≤ S
       attackIntervalMs: 1000,
       inflict: { type: "shock", chance: 1, magnitude: 0, durationMs: 5000 },
     });
-    const { s, c } = setup(monster, [], 42);
+    const { s, c, st } = setup(monster, [], 42);
     s.combat.playerTimerMs = 0;
     s.combat.enemyTimerMs = monster.attackIntervalMs;
     combatStep(s, c);
     expect(enemyHits(s)).toHaveLength(1);
     expect(s.combat.playerEffects.some((e) => e.type === "shock")).toBe(true);
+    // Zauberreserve und Weisheit (Chef-GO 28.08.2026): der Weisheits-Status-Widerstand des Spielers
+    // (Basis-WIS 3 ⇒ 3 %) kürzt die Verzögerung × (1 − r); die Spec pinnt das in spell-reserve.test.ts.
+    const delay = Math.round(SHOCK_DELAY_MS * (1 - st.statusResist));
+    expect(st.statusResist).toBeGreaterThan(0);
     // Der Spieler-Timer hat in diesem Tick bereits +TICK_MS gesammelt (Spieler-Zweig läuft vor dem Gegner-Zweig).
-    expect(s.combat.playerTimerMs).toBe(TICK_MS - SHOCK_DELAY_MS);
+    expect(s.combat.playerTimerMs).toBe(TICK_MS - delay);
     const ev = s.combat.log.find((e) => e.kind === "status" && e.status === "shock");
     expect(ev?.by).toBe("enemy");
-    expect(ev?.amount).toBe(SHOCK_DELAY_MS);
+    expect(ev?.amount).toBe(delay);
   });
 
   function castOnce(effects: ItemDef["weaponEffects"], seed: number) {
@@ -477,7 +480,7 @@ describe("Leere — Entzug (void): das Ziel macht VOID_WEAKEN weniger Schaden", 
 // ── Aether: Lichtsegen ───────────────────────────────────────────────────────────────────────
 
 describe("Aether — Lichtsegen (lightblessing): Ward-Füllung je Zauber, Ward-Durchdringung", () => {
-  const LIGHT = { type: "lightblessing" as const, chance: 1, magnitude: 0.04, durationMs: 0 };
+  const LIGHT = { type: "lightblessing" as const, chance: 1, magnitude: AETHER_WARD_ON_HIT, durationMs: 0 }; // 0,02 seit Balance-Audit 28.08.
 
   function castWith(effects: ItemDef["weaponEffects"], monster: MonsterDef, seed: number, mana = Infinity) {
     const w = wand("tt_el_lightwand_" + (effects?.length ?? 0), effects);
@@ -500,13 +503,12 @@ describe("Aether — Lichtsegen (lightblessing): Ward-Füllung je Zauber, Ward-D
     expect(blessed.s.character.ward - plain.s.character.ward).toBeCloseTo(AETHER_WARD_ON_HIT * blessed.st.maxWard, 5);
   });
 
-  it("kein Lichtsegen ohne Mana (schwacher Stabschlag ist kein Zauber) — nur der Warding-Regen des Ticks bleibt", () => {
+  it("Lichtsegen greift auch bei mana 0 im Save (Zauberreserve 28.08.2026: jeder Magie-Angriff ist ein Zauber, kein schwacher Stabschlag mehr)", () => {
     const monster = dummy("tt_el_light_nomana");
     const plain = castWith([], monster, 72, 0);
     const blessed = castWith([LIGHT], monster, 72, 0);
     expect(playerHits(blessed.s)).toHaveLength(1);
-    expect(blessed.s.character.ward).toBeCloseTo(plain.s.character.ward, 9);
-    expect(blessed.s.character.ward).toBeLessThan(0.01);
+    expect(blessed.s.character.ward - plain.s.character.ward).toBeCloseTo(AETHER_WARD_ON_HIT * blessed.st.maxWard, 5);
   });
 
   it("Treffer durchdringen AETHER_WARD_PIERCE des Gegner-Wards (Ward-Gegner nimmt HP-Schaden, ohne den Segen nicht)", () => {

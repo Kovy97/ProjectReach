@@ -24,7 +24,7 @@ import { computeStats, type CharacterCreation } from "./character";
 const NEVER_MS = 100_000_000;
 const NEVER_ABILITY: PetCombatAbility = { name: { en: "Test Ability", de: "Test-Fähigkeit" }, kind: "stun", intervalMs: NEVER_MS, value: 600 };
 /** Neutrales Passiv ohne Kampf-/RNG-Wirkung (Referenz-Fixture). */
-const NEUTRAL_EFFECT: PetSkillEffect = { kind: "manaRegen", value: 0.05 };
+const NEUTRAL_EFFECT: PetSkillEffect = { kind: "spellReserve", value: 0.05 };
 
 /** Lokales Content mit genau EINEM Combat-Pet (Passiv + Ability frei wählbar) + Chicken-Patch. */
 function withPet(

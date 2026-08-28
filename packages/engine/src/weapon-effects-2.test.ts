@@ -196,23 +196,47 @@ describe("Effekt-Familie: konditionale Schadens-Mods (§2.1/§2.3.3)", () => {
     expect(hits[1]!.amount).toBe(Math.round(b * 1.25)); // jetzt verlangsamt → Bonus
   });
 
-  it("surplus: +20 % Zauberschaden nur über der Mana-Schwelle (vor Cast-Kosten geprüft)", () => {
+  it("surplus: +20 % Zauberschaden nur über der WARD-Schwelle (Zauberreserve 28.08.2026: liest den eigenen Ward vor dem Cast-Recharge)", () => {
+    const surplusRobe: ItemDef = {
+      id: "fx_surplus_robe",
+      name: "FX-Stoffrobe",
+      type: "equipment",
+      stackable: false,
+      slot: "body",
+      wardCapacity: 1000,
+    };
     const c = withContent([
       meleeWeapon([eff("surplus", { magnitude: 0.2, threshold: 0.8 })], {
         weaponStyle: "magic",
         weaponType: "staff",
-        manaCost: 5,
+      }),
+      surplusRobe,
+    ]);
+    const s = newFight(c, "fx_weapon");
+    s.character.equipment.body = "fx_surplus_robe"; // NACH startCombat (wie im wardSiphon-Test)
+    const st = computeStats(s, c);
+    const b = Math.round(st.attackDamageMin);
+    s.character.ward = st.maxWard; // voll > 80 %
+    advance(s, c, 900);
+    expect(playerHits(s)[0]!.amount).toBe(Math.round(b * 1.2));
+    s.character.ward = st.maxWard * 0.5; // unter 80 %
+    advance(s, c, 800);
+    expect(playerHits(s)[1]!.amount).toBe(b);
+  });
+
+  it("surplus: ohne Stoff-Pool (maxWard 0) inaktiv — Basisschaden (Zauberreserve: Mana-Anteil wäre immer 100 %)", () => {
+    const c = withContent([
+      meleeWeapon([eff("surplus", { magnitude: 0.2, threshold: 0.8 })], {
+        weaponStyle: "magic",
+        weaponType: "staff",
       }),
     ]);
     const s = newFight(c, "fx_weapon");
     const st = computeStats(s, c);
-    const b = Math.round(st.attackDamageMin);
-    s.character.mana = st.maxMana; // voll > 80 %
+    expect(st.maxWard).toBe(0);
+    s.character.mana = st.maxMana; // Reserve voll — darf den Effekt NICHT mehr zünden
     advance(s, c, 900);
-    expect(playerHits(s)[0]!.amount).toBe(Math.round(b * 1.2));
-    s.character.mana = 20; // genug zum Casten, aber unter 80 %
-    advance(s, c, 800);
-    expect(playerHits(s)[1]!.amount).toBe(b);
+    expect(playerHits(s)[0]!.amount).toBe(Math.round(st.attackDamageMin));
   });
 
   it("vengeance: erlittener Treffer lädt GENAU EINEN Gegenschlag (+40 %) auf", () => {
@@ -399,17 +423,36 @@ describe("Effekt-Familie: Kill-Trigger (§2.1)", () => {
     expect(s.combat.log.some((e) => e.by === "enemy" && e.seq > killSeq)).toBe(false);
   });
 
-  it("manaOnKill: +X Mana je Kill (Differenz zur effektlosen Baseline, gleiche Seed)", () => {
-    const cFx = withContent([meleeWeapon([eff("manaOnKill", { magnitude: 6 })])], [KILLABLE()]);
-    const cBase = withContent([meleeWeapon([])], [KILLABLE()]);
+  it("wardOnKill: +X Ward je Kill (Differenz zur effektlosen Baseline, gleiche Seed; Zauberreserve 28.08.2026: ersetzt manaOnKill)", () => {
+    const killRobe: ItemDef = {
+      id: "fx_kill_robe",
+      name: "FX-Stoffrobe",
+      type: "equipment",
+      stackable: false,
+      slot: "body",
+      wardCapacity: 100_000, // groß genug, um nie zu deckeln (Kill-Refill 10 % läuft in beiden Läufen identisch)
+    };
+    const cFx = withContent([meleeWeapon([eff("wardOnKill", { magnitude: 6 })]), killRobe], [KILLABLE()]);
+    const cBase = withContent([meleeWeapon([]), killRobe], [KILLABLE()]);
     const run = (c: ContentDB): number => {
       const s = newFight(c, "fx_weapon");
-      s.character.mana = 0;
+      s.character.equipment.body = "fx_kill_robe"; // NACH startCombat (wie im wardSiphon-Test)
+      s.character.ward = 0;
       advance(s, c, 1_000);
       expect(s.combat.kills).toBe(1);
-      return s.character.mana;
+      return s.character.ward;
     };
-    expect(run(cFx) - run(cBase)).toBeCloseTo(6, 9);
+    expect(run(cFx) - run(cBase)).toBeCloseTo(6, 6);
+  });
+
+  it("wardOnKill: No-op ohne Stoff-Pool (maxWard 0) — kein Ward-Zufluss, kein Crash", () => {
+    const c = withContent([meleeWeapon([eff("wardOnKill", { magnitude: 6 })])], [KILLABLE()]);
+    const s = newFight(c, "fx_weapon");
+    s.character.ward = 0;
+    advance(s, c, 1_000);
+    expect(s.combat.kills).toBe(1);
+    expect(computeStats(s, c).maxWard).toBe(0);
+    expect(s.character.ward).toBe(0);
   });
 
   it("healOnKill: +X HP je Kill (Differenz zur Baseline, gleiche Seed)", () => {
@@ -503,21 +546,7 @@ describe("Effekt-Familie: Ressourcen & Sustain (§2.1)", () => {
     expect(saver.kills).toBe(base.kills);
   });
 
-  it("manaDrain: +X Mana je gelandetem Treffer (Differenz zur Baseline)", () => {
-    const cFx = withContent([meleeWeapon([eff("manaDrain", { magnitude: 2 })])]);
-    const cBase = withContent([meleeWeapon([])]);
-    const run = (c: ContentDB): { mana: number; hits: number } => {
-      const s = newFight(c, "fx_weapon");
-      s.character.mana = 0;
-      advance(s, c, 2_500); // 3 Treffer
-      return { mana: s.character.mana, hits: playerHits(s).length };
-    };
-    const fx = run(cFx);
-    const base = run(cBase);
-    expect(fx.hits).toBe(base.hits);
-    expect(fx.hits).toBeGreaterThanOrEqual(3);
-    expect(fx.mana - base.mana).toBeCloseTo(2 * fx.hits, 9);
-  });
+  // manaDrain: ENTFERNT (Zauberreserve 28.08.2026) — Mana wird nicht verbraucht; Träger auf wardSiphon umgestellt.
 
   it("wardSiphon: 8 % des verursachten Schadens füllt den eigenen Ward-Pool (Differenz zur Baseline)", () => {
     // elite-balance-spec.md §5 / hollowveil_locket: analog Lebensraub, aber Ward statt HP.
@@ -542,7 +571,7 @@ describe("Effekt-Familie: Ressourcen & Sustain (§2.1)", () => {
     const base = run(cBase);
     expect(fx.hits).toBe(base.hits);
     expect(fx.hits).toBeGreaterThanOrEqual(3);
-    // Differenz zur Baseline (wie beim manaDrain-Test oben) — isoliert den Siphon-Zufluss vom
+    // Differenz zur Baseline — isoliert den Siphon-Zufluss vom
     // passiven Warding-Skill-Regen (tickWardRegen), der in BEIDEN Läufen identisch mitläuft.
     expect(fx.ward - base.ward).toBeCloseTo(fx.dmgPerHit * 0.08 * fx.hits, 6);
   });

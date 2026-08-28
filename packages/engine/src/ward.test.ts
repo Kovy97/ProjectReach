@@ -9,7 +9,7 @@ import {
   PRECISION_CAP,
   WARD_BREAK_CAP,
   WARD_CORE_PER_INT,
-  WARD_PER_MANA,
+  WARD_RECHARGE_PER_CAST,
   absorbWard,
   rechargeWard,
 } from "@hearthforge/shared";
@@ -162,11 +162,12 @@ describe("Rüstungs-Trinität: computeStats-Klassen-Schichten", () => {
 });
 
 describe("Rüstungs-Trinität: Ward-Helfer (Vertrag für combat.ts A2)", () => {
-  it("rechargeWard lädt manaSpent·WARD_PER_MANA, gedeckelt auf maxWard", () => {
-    expect(rechargeWard(0, 100, 6)).toBeCloseTo(6 * WARD_PER_MANA, 6); // 6·0.20 = 1.2 (It2.1-F1a)
+  it("rechargeWard lädt WARD_RECHARGE_PER_CAST je Zauber (Zauberreserve: fester Betrag statt manaSpent·WARD_PER_MANA), gedeckelt auf maxWard", () => {
+    expect(rechargeWard(0, 100)).toBeCloseTo(WARD_RECHARGE_PER_CAST, 6); // 1.2 je Zauber (= früher 6·0.20)
+    expect(rechargeWard(0, 100, 6)).toBeCloseTo(6, 6); // expliziter Betrag
     expect(rechargeWard(98, 100, 10)).toBe(100); // Deckel
-    expect(rechargeWard(50, 100, 0)).toBe(50); // kein Cast, kein Recharge
-    expect(rechargeWard(50, 100, -5)).toBe(50); // negatives Mana ignoriert
+    expect(rechargeWard(50, 100, 0)).toBe(50); // kein Betrag, kein Recharge
+    expect(rechargeWard(50, 100, -5)).toBe(50); // negativer Betrag ignoriert
   });
 
   it("rechargeWard ist NaN-fest (nicht-endliche Eingaben lassen den Stand stehen)", () => {
