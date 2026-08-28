@@ -2175,12 +2175,23 @@ function Battle({
   // herunter, s. combat.ts). Battle re-rendert dank `useGameSelector((s)=>s.totalTicks)` oben
   // ohnehin JEDEN Tick — ein Set-Diff je Seite ist billig genug, um hier einfach mitzulaufen.
   const activeStatusRef = useRef<{ player: Set<StatusType>; enemy: Set<StatusType> }>({ player: new Set(), enemy: new Set() });
+  const lastEnemyKeyRef = useRef<string>("");
   useEffect(() => {
     const stage = particleStageRef.current;
     if (!stage) return;
+    // Chef-Report 28.08.2026: Brand lief ueber den Tod des Gegners hinaus weiter. Beim Tod (hp <= 0) und beim
+    // Gegnerwechsel enden ALLE Gegner-Loops sofort, unabhaengig davon, ob die Engine die Effektliste schon geleert hat.
+    const enemyKey = `${cs.monsterId ?? ""}#${cs.enemyHp > 0 ? 1 : 0}`;
+    if (enemyKey !== lastEnemyKeyRef.current) {
+      lastEnemyKeyRef.current = enemyKey;
+      if (cs.enemyHp <= 0 || cs.monsterId === null) {
+        stage.stopAmbientPrefix("enemy:");
+        activeStatusRef.current.enemy = new Set();
+      }
+    }
     for (const [side, effects] of [
       ["player", cs.playerEffects],
-      ["enemy", cs.enemyEffects],
+      ["enemy", cs.enemyHp > 0 ? cs.enemyEffects : []],
     ] as const) {
       const now = new Set(effects.map((eff) => eff.type));
       for (const type of activeStatusRef.current[side]) {

@@ -1107,6 +1107,16 @@ export class ParticleStage {
     this.ambientFlags.delete(id);
   }
 
+  /** Beendet alle Ambient-Loops, deren `id` mit `prefix` beginnt (z. B. `"enemy:"` beim Tod des Gegners,
+   *  Chef-Report 28.08.2026: Brand lief ueber den Tod hinaus weiter). */
+  stopAmbientPrefix(prefix: string): void {
+    for (const [id, flag] of this.ambientFlags) {
+      if (!id.startsWith(prefix)) continue;
+      flag.active = false;
+      this.ambientFlags.delete(id);
+    }
+  }
+
   destroy(): void {
     this.running = false;
     cancelAnimationFrame(this.raf);
