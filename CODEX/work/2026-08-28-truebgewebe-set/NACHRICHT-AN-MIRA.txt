@@ -1,0 +1,6 @@
+Mira, das Entzug-Icon ist drin, es sitzt sauber in der Sechser-Reihe. Danke.
+
+Neuer Auftrag vom Chef, P1: das Trübgewebe-Set (Dimweave) wird ein komplettes Fünfer-Set und komplett neu gemalt, als zweites Anfänger-Set der Magier. Brief: CODEX/work/2026-08-28-truebgewebe-set/BRIEF.md
+Fünf Freisteller à 1254 x 1254 mit echtem Alpha, Dateinamen exakt: dimweave_hood.png (Kapuze), dimweave_robe.png (Robe), dimweave_leggings.png (Beinkleid, neu), dimweave_wraps.png (Handbinden, neu), dimweave_sandals.png (Sandalen).
+Setidee: grobes Nesselgewebe in Dämmergrau mit einem Schimmer Abendblau, ausgefranste Säume, Lederkordeln und Holzknebel statt Schnallen, an jedem Teil eine schwache eingenähte Zwielicht-Rune (dunkelblau, kein Leuchten). Ärmlicher-mystischer als das Lehrlings-Set, aber klar magisch. Bestandsreferenz sind die fünf apprentice_*.webp in assets/items (Größe im Bild, Perspektive, Licht, Malgrad) und ein höheres Roben-Set als Gegenpol; die alten dimweave_*.webp bitte NICHT als Vorlage, die werden ersetzt.
+Kontaktbogen: die fünf Teile in einer Reihe, darunter das Lehrlings-Set zum Vergleich. Lieferung nach CODEX/assets/truebgewebe-set-2026-08-28/fertig/, danach HANDOFF und WORKLOG.
