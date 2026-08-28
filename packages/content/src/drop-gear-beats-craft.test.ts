@@ -63,6 +63,26 @@ const CRAFT_VALUE_EXEMPT = new Set<ItemId>([
   // nicht auf der eigenen, viel zu dünnen Szepter-Leiter (derselbe Randfall wie dreadfang_glaive
   // oben, nur bei einer anderen Waffenfamilie).
   "felmagician_rod",
+  // Elementleiter (Chef-GO 28.08.2026, design/elementleiter-magiewaffen.md): steel_staff/
+  // blacksteel_staff/adamantium_wand/titanium_staff/godiron_staff verlieren ihren Feuer-Status
+  // (Arkan = kein Status, Aether = manaOnKill, Leere = execute — beide DurationMs 0). `coreValue()`
+  // hier zählt NUR die rohe Basis-DPS (damageMin/damageMax/Intervall), keine Waffeneffekte — die
+  // Parität zur jeweils VORHERIGEN Craft-Stufe wird darum über die Grundspanne hergestellt (Spec-
+  // Mechanik „etwas höhere Grundspanne", Herleitung/Zahlen im Content-Bericht), was die rohe DPS
+  // dieser fünf Stufen anhebt und die folgenden sechs Zonen-Drops (deren eigener Kernwert
+  // unverändert bleibt) technisch überholt — derselbe „coreValue ignoriert X"-Bruch wie bei den
+  // Trinity-Feld-Ausnahmen oben (reefscale_helm->chitin_helm-Muster in sim-consistency.test.ts),
+  // nur hier auf coreValue statt coreStatScore. Die Drops behalten ihren eigenen Effekt (Rare-Drop-
+  // Philosophie bleibt intakt) und sind über coreStatScore (sim-consistency.test.ts) weiterhin real
+  // stärker als ihre jeweils VORHERIGE Craft-Stufe — nur der neue, Effekt-lose Vergleichspartner
+  // ist an der reinen Basis-DPS-Messung vorbeigezogen.
+  "shaman_gnarlstaff", // Req 15 → nächstes Tier steel_staff (Req 20, jetzt Arkan)
+  "warlock_felstaff", // Req 20 → nächstes Tier blacksteel_staff (Req 30, jetzt Leere)
+  "chitinshell_sparker", // Req 40 → nächstes Tier adamantium_wand (Req 50, jetzt Arkan)
+  "pyre_staff", // Req 70 → nächstes Tier titanium_staff (Req 80, jetzt Aether)
+  "choirbound_relic", // Req 72 → nächstes Tier titanium_staff (Req 80, jetzt Aether)
+  "sorrow_staff", // Req 72 → nächstes Tier titanium_staff (Req 80, jetzt Aether)
+  "stormcrest_staff", // Req 90 → nächstes Tier godiron_staff (Req 99, jetzt Leere)
 ]);
 
 function reqLevel(item: ItemDef): number {

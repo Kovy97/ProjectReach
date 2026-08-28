@@ -97,6 +97,8 @@ const WEAPON_EFFECT_THEME: Partial<Record<string, MagicTheme>> = {
  * beabsichtigt ist: die Aetherium-Tier-Magiewaffen sollen dasselbe Licht-Thema tragen).
  */
 export function magicThemeFor(weapon: ItemDef | null | undefined): MagicTheme {
+  // Elementleiter (Chef-GO 28.08.2026): expliziter Content-Override zuerst (z. B. Aether-Waffen, die Brand tragen).
+  if (weapon?.magicTheme) return weapon.magicTheme;
   for (const fx of effectiveWeaponEffects(weapon)) {
     const theme = WEAPON_EFFECT_THEME[fx.type];
     if (theme) return theme;

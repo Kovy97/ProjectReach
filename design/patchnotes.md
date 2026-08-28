@@ -180,6 +180,22 @@ Leere (Magie), 65 Schnitt/60 schwerer Hieb/30 Wucht/18 Stoß (Nahkampf), 57 Bög
 steht bereit, im heutigen Katalog lösen die beiden `aether_`/`godspark_`-Waffen wegen eigenem
 burn-Effekt zu Feuer auf.*
 
+**Elementleiter der Magiewaffen (Chef-GO 28.08.):** DE: Geschmiedete Stäbe und Zauberstäbe tragen jetzt
+unterschiedliche Elemente statt fast alle denselben Brand-Effekt. Jede Handwerksstufe zeigt Feuer, Frost,
+Blitz, Gift und Arkan in wechselnder Kombination, ab Titan kommt Aether dazu – so wird die komplette
+Effektbibliothek endlich sichtbar. / EN: Crafted staves and wands now carry different elements instead of
+nearly all sharing the same burn effect. Every crafting tier shows fire, frost, shock, poison and arcane in
+a rotating mix, with aether joining from Titan onward - the full effect library finally shows up in combat.
+
+*Dev-Notiz: design/elementleiter-magiewaffen.md. Vorher 24 von 57 Magie-Haupthänden Feuer (jeder gefertigte
+Stab trug Brand), 0 Aether. content-dev themt die 26 Craft-Ladder-Items (Stab 2H + Zauberstab 1H je Stufe)
+nach der Spec-Tabelle um (Gift/Feuer-Swaps sind DPS-neutral, beide Schaden/Sek-DoT; Leere nutzt den
+Standard-`execute`, Aether `manaOnKill` statt Brand) und setzt `ItemDef.magicTheme` (neues optionales
+shared-Feld) explizit auf allen 26 sowie auf drei Drops, deren Status nicht mehr zum Bild passt
+(aether_runestaff/godspark_staff/voidcaller_staff). Guard `element-ladder.test.ts`. Balance-Envelope-Pin
+CL-90-Magic-„damage"-TTK neu gemessen (BiS wechselt auf aetherium_staff). Renderer-Verdrahtung
+(`combatFx.ts` liest `item.magicTheme`) steht noch aus.*
+
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
 Kampf macht, mit Takt („Diebesgriff. Alle 6 s: 40 % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit

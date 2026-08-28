@@ -45,3 +45,23 @@ Magnituden je Stufe: vom gleichstufigen Bestandsvertreter desselben Elements üb
 ## Reihenfolge
 
 Startet, sobald der Skill-Split (Schneidern) im Content gelandet ist (kein paralleler Agent in `content/index.ts`). Umsetzung: content-dev (Waffen, Locales unverändert, da Namen bleiben), Balance-Pins engine, Renderer-Override client.
+
+## Umgesetzt 28.08.
+
+`shared`: `ItemDef.magicTheme?: "arcane" | "fire" | "frost" | "shock" | "poison" | "void" | "aether"` (Dok-Kommentar bei `weaponEffects`/vor `manaCost`). `content`: die gefertigte Leiter (26 Items: cracked/gnarled_staff + 12 Stufen × Stab/Zauberstab) nach der Tabelle umgethemt, `magicTheme` auf allen 26 explizit gesetzt; zusätzlich auf drei Drops (Status passte nicht zum Bild): `aether_runestaff`, `godspark_staff` → `aether`, `voidcaller_staff` → `void`. Guard-Test `packages/content/src/element-ladder.test.ts` (7 Tests, bildet `combatFx.ts` `WEAPON_EFFECT_THEME` nach, kein Import).
+
+**Verteilung Magie-Haupthände (57 gesamt) — vorher → nachher:**
+
+| Element | vorher | nachher | Liste (nachher) |
+|---|---|---|---|
+| Feuer | 24 | 14 | copper_staff, iron_staff, bloodiron_staff, gnarled_staff, mithril_wand, godiron_wand + 8 Drops |
+| Blitz | 14 | 9 | bronze_staff, adamantium_staff, steel_wand, titanium_wand + 5 Drops |
+| Frost | 10 | 10 | copper_wand, iron_wand, mithril_staff, bloodiron_wand + 6 Drops |
+| Arkan | 5 | 9 | cracked_staff, steel_staff, adamantium_wand, aetherium_wand + 5 Drops |
+| Gift | 2 | 5 | bronze_wand, blacksteel_wand, runite_staff + 2 Drops |
+| Leere | 2 | 6 | blacksteel_staff, godiron_staff, runite_wand + 3 Drops |
+| Aether | 0 | 4 | titanium_staff, aetherium_staff + aether_runestaff, godspark_staff (Drops) |
+
+Alle drei Phasen (≤30, 40–60, 70–99) zeigen alle sechs Basis-Elemente auf der gefertigten Leiter; Aether nur ≥80 (Titan/Aetherium). Magnituden: Gift↔Feuer-Swaps sind mechanisch identisch (beides Schaden/Sek-DoT) und 1:1 vom Vorgänger übernommen (DPS-neutral); Frost-Magnitude ist mechanisch ungenutzt (flach 1); Blitz (shock) folgt der Formel `0,22 + 0,02·(Tier-Index−5)`; Leere nutzt überall die Standardwerte `execute` (chance 1, magnitude 0,25, threshold 0,2, wie im übrigen Katalog); Aether nutzt `manaOnKill` (Flatwert 5/6, wie sorrow_staff/skarn_idol_staff). Arkan (kein Status) und Aether (`manaOnKill`, DurationMs 0) tragen keinen `coreStatScore`-Beitrag mehr — Parität zur jeweils vorherigen Craft-Stufe über eine höhere Grundspanne (steel_staff, bronze_staff, blacksteel_staff, adamantium_wand, titanium_staff, aetherium_staff, godiron_staff angehoben; Zahlen im Content-Bericht/Commit).
+
+**Offen für den Chef:** die Renderer-Verdrahtung (`combatFx.ts` `magicThemeFor` liest `item.magicTheme` zuerst) ist noch nicht gelandet — Content-Seite ist fertig und getestet, `apps/**` bleibt content-dev-TABU.

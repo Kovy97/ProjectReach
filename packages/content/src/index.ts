@@ -478,6 +478,7 @@ export const content: ContentDB = {
       damageMin: 0.4, damageMax: 0.6, spellFocus: 0.003, attackIntervalMs: 3000,
       requirements: { magic: 1 },
       weaponEffect: { type: "burn", chance: 0.5, magnitude: 1, durationMs: 4000 }, // balance-fix 2026-07-05: magnitude 0.3→1 (rounded to "0 damage/s" in tooltip)
+      magicTheme: "fire", // Elementleiter (Chef-GO 28.08.2026): explizit gepinnt (Status-Mapping trifft ohnehin schon fire)
       // Content-Fix (Live-Bug 2026-08-23): value fehlte (s. rusty_sword-Kommentar, gleiche
       // Herleitung). Shop-cost 120 × 8/18 ≈ 53.3 → 53 — trifft zufällig exakt hunting_bow (s.
       // dort), was zur dort dokumentierten "Ranged-Parität zu gnarled_staff" passt.
@@ -536,7 +537,9 @@ export const content: ContentDB = {
       twoHanded: true,
       damageMin: 0.2, damageMax: 0.2, spellFocus: 0.003, attackIntervalMs: 3000,
       manaCost: 5,
-      weaponEffect: { type: "burn", chance: 0.25, magnitude: 1, durationMs: 3000 }, // balance-fix 2026-07-05: magnitude 0.2→1 (rounded to "0 damage/s" in tooltip)
+      // Elementleiter (Chef-GO 28.08.2026): Arkan statt Feuer — kein Status (Parität über den
+      // Zauberfokus-Zauberstab-Nachbarn ist bei diesem Starter-Item vernachlässigbar, s. Bericht).
+      magicTheme: "arcane",
       rarity: "common",
       value: 8,
       description: {
@@ -3676,14 +3679,22 @@ export const content: ContentDB = {
       weaponType: "staff",
       damageMin: 0.4, damageMax: 0.6, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 3500 }, // Combat-Feel v2 #5: chance 0.25→0.45 (uniform), magnitude ×1.5 (Staff-Identität: DoT-Säule); balance-fix 2026-07-05: 0.15→1 (rundete auf "0 damage/s")
+      magicTheme: "fire", // Elementleiter (Chef-GO 28.08.2026): Feuer, unverändert
       requirements: { magic: 1 }, value: 38, // balance-pass3: value 50→38
     },
     bronze_staff: {
       id: "bronze_staff", name: { en: "Bronze Staff", de: "Bronze-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 0.9, damageMax: 1.3, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 3800 }, // Combat-Feel v2 #5: chance 0.26→0.45 (uniform), magnitude ×1.5; balance-fix 2026-07-05: 0.3→1 (rundete auf "0 damage/s")
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Blitz (design/elementleiter-magiewaffen.md). Chance/
+      // Dauer vom Feuer-Vorgänger übernommen (unverändert), Magnitude nach der Shock-Wand-Formel
+      // 0,22+0,02·(Tier-Index−5) auf Tier-Index 2 (Bronze) ausgewertet → 0,16 (s. Bericht). Spanne
+      // 0,9-1,3→1,25-1,8 (statt der ursprünglich kleineren Korrektur): coreStatScore-Nachbar ist
+      // NICHT copper_staff, sondern der interleaved Drop gnarled_staff (Lv1, Score 45 aus seinem
+      // Burn-Status) — sim-consistency.ts Tier-Leiter-Monotonie zählt ihn in derselben Familie mit.
+      damageMin: 1.25, damageMax: 1.8, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 5, wardBreak: 0.30,
+      weaponEffect: { type: "shock", chance: 0.45, magnitude: 0.16, durationMs: 3800 },
+      magicTheme: "shock",
       requirements: { magic: 5 }, value: 75, // balance-pass3: value 95→75
     },
     iron_staff: {
@@ -3692,22 +3703,31 @@ export const content: ContentDB = {
       weaponType: "staff",
       damageMin: 1.4, damageMax: 2, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 1, durationMs: 4000 }, // Combat-Feel v2 #5: chance 0.28→0.45 (uniform), magnitude ×1.5; balance-fix 2026-07-05: 0.45→1 (rundete auf "0 damage/s")
+      magicTheme: "fire", // Elementleiter (Chef-GO 28.08.2026): Feuer, unverändert
       requirements: { magic: 10 }, value: 100, rarity: "rare", // balance-pass3: value 200→100
     },
     steel_staff: {
       id: "steel_staff", name: { en: "Steel Staff", de: "Stahl-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 1.7, damageMax: 2.6, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2/3)
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 2, durationMs: 4300 }, // Combat-Feel v2 #5: chance 0.30→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 0.75→2, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Arkan — kein Status, Parität über Grundspanne
+      // (Spec §Mechanik: „etwas höhere Grundspanne"). Kern-Score-Herleitung (coreStatScore) im
+      // Bericht: verlorener Burn-Score wird durch die Spanne 1,7-2,6→2,3-3,5 ausgeglichen.
+      damageMin: 2.3, damageMax: 3.5, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2/3)
+      magicTheme: "arcane",
       requirements: { magic: 20 }, value: 190, rarity: "rare", // balance-pass3: value 560→190
     },
     blacksteel_staff: {
       id: "blacksteel_staff", name: { en: "Blacksteel Staff", de: "Schwarzstahl-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 2.1, damageMax: 3.2, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.6/4)
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 3, durationMs: 4600 }, // Combat-Feel v2 #5: chance 0.31→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 1.05→3, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Leere (execute, Standard-Werte wie überall im
+      // Content, s. z.B. felmagician_rod/drowned_choirstaff). execute hat durationMs 0 (Instant-
+      // Bedingungseffekt) und trägt daher KEINEN coreStatScore-Beitrag — Parität über Grundspanne
+      // (Spanne 2,1-3,2→2,5-3,8, Herleitung im Bericht).
+      damageMin: 2.5, damageMax: 3.8, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.6/4)
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      magicTheme: "void",
       requirements: { magic: 30 }, value: 325, rarity: "rare", // balance-pass3: value 860→325
     },
     mithril_staff: {
@@ -3715,7 +3735,10 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
       damageMin: 2.7, damageMax: 4.1, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.2/4.8)
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 3, durationMs: 4900 }, // Combat-Feel v2 #5: chance 0.32→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 1.35→3, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Frost (Chance/Dauer vom Feuer-Vorgänger
+      // übernommen — frost-Magnitude ist mechanisch ungenutzt, s. StatusEffect-Doku in shared).
+      weaponEffect: { type: "frost", chance: 0.45, magnitude: 1, durationMs: 4900 },
+      magicTheme: "frost",
       requirements: { magic: 40 }, value: 440, rarity: "superRare", // balance-pass3: value 1350→440
     },
     adamantium_staff: {
@@ -3723,7 +3746,10 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
       damageMin: 3.3, damageMax: 4.9, spellFocus: 0.0031, attackIntervalMs: 3000, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4/6)
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 4, durationMs: 5200 }, // Combat-Feel v2 #5: chance 0.33→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 1.65→4, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Blitz (Chance/Dauer vom Feuer-Vorgänger
+      // übernommen; Magnitude nach der Shock-Wand-Formel auf Tier-Index 7 → 0,26).
+      weaponEffect: { type: "shock", chance: 0.45, magnitude: 0.26, durationMs: 5200 },
+      magicTheme: "shock",
       requirements: { magic: 50 }, value: 750, rarity: "superRare", // balance-pass3: value 2250→750
     },
     runite_staff: {
@@ -3731,7 +3757,10 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
       damageMin: 4.2, damageMax: 6.2, spellFocus: 0.0031, attackIntervalMs: 2880, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5/7.4); attackIntervalMs unverändert
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 5, durationMs: 5500 }, // Combat-Feel v2 #5: chance 0.34→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 2.1→5, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Gift. poison ist mechanisch identisch zu burn
+      // (Schaden/Sek-DoT) — Werte 1:1 vom Feuer-Vorgänger übernommen, reine Typ-Umflaggung, DPS-neutral.
+      weaponEffect: { type: "poison", chance: 0.45, magnitude: 5, durationMs: 5500 },
+      magicTheme: "poison",
       requirements: { magic: 60 }, value: 1000, rarity: "superRare", // balance-pass3: value 3900→1000
     },
     bloodiron_staff: {
@@ -3740,22 +3769,31 @@ export const content: ContentDB = {
       weaponType: "staff",
       damageMin: 5.2, damageMax: 7.7, spellFocus: 0.0031, attackIntervalMs: 2830, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.8/8.6); attackIntervalMs unverändert
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 5, durationMs: 5800 }, // Combat-Feel v2 #5: chance 0.36→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 2.7→5, Ganzzahl-Retune]
+      magicTheme: "fire", // Elementleiter (Chef-GO 28.08.2026): Feuer, unverändert
       requirements: { magic: 70 }, value: 1250, rarity: "superRare", // balance-pass3: value 6300→1250
     },
     titanium_staff: {
       id: "titanium_staff", name: { en: "Titanium Staff", de: "Titan-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 6.5, damageMax: 9.8, spellFocus: 0.0031, attackIntervalMs: 2780, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 6, durationMs: 6100 }, // Combat-Feel v2 #5: chance 0.37→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 3.3→6, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Aether — Mana-Rückfluss (manaOnKill) statt Brand
+      // (Spec §Mechanik). manaOnKill hat durationMs 0 (Kill-Trigger, kein DoT) und trägt daher
+      // KEINEN coreStatScore-Beitrag — Parität über Grundspanne (Spanne 6,5-9,8→11,4-17,2,
+      // Herleitung im Bericht; Magnitude 5 = üblicher manaOnKill-Flatwert, s. z.B. sorrow_staff).
+      damageMin: 11.4, damageMax: 17.2, spellFocus: 0.0031, attackIntervalMs: 2780, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 },
+      magicTheme: "aether",
       requirements: { magic: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 9600→1600
     },
     aetherium_staff: {
       id: "aetherium_staff", name: { en: "Aetherium Staff", de: "Aetherium-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 8.1, damageMax: 12.2, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 7, durationMs: 6300 }, // Combat-Feel v2 #5: chance 0.38→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 3.9→7, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Aether — Mana-Rückfluss (manaOnKill) statt Brand.
+      // Parität über Grundspanne (Spanne 8,1-12,2→12,5-18,8, Herleitung im Bericht).
+      damageMin: 12.5, damageMax: 18.8, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
+      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 6, durationMs: 0 },
+      magicTheme: "aether",
       modifiers: { int: 1 },
       requirements: { magic: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 13500→2100
     },
@@ -3763,8 +3801,12 @@ export const content: ContentDB = {
       id: "godiron_staff", name: { en: "Godiron Staff", de: "Götzeneisen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
       weaponType: "staff",
-      damageMin: 10.2, damageMax: 15.2, spellFocus: 0.0032, attackIntervalMs: 2700, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.8/11.6); attackIntervalMs unverändert
-      weaponEffect: { type: "burn", chance: 0.45, magnitude: 7, durationMs: 6500 }, // Combat-Feel v2 #5: chance 0.40→0.45 (uniform), magnitude ×1.5 [balance-fix 2026-07-05: 4.65→7, Ganzzahl-Retune]
+      // Elementleiter (Chef-GO 28.08.2026): Feuer→Leere (execute, Standard-Werte). execute trägt
+      // KEINEN coreStatScore-Beitrag (durationMs 0) — Parität über Grundspanne (Spanne
+      // 10,2-15,2→13,9-20,6, Herleitung im Bericht).
+      damageMin: 13.9, damageMax: 20.6, spellFocus: 0.0032, attackIntervalMs: 2700, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.8/11.6); attackIntervalMs unverändert
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      magicTheme: "void",
       modifiers: { int: 1, wis: 1 },
       requirements: { magic: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 21000→3000
     },
@@ -3775,6 +3817,7 @@ export const content: ContentDB = {
       weaponType: "wand",
       damageMin: 0.4, damageMax: 0.4, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
       weaponEffect: { type: "frost", chance: 0.18, magnitude: 1, durationMs: 3000 },
+      magicTheme: "frost", // Elementleiter (Chef-GO 28.08.2026): Frost, unverändert
       requirements: { magic: 1 }, value: 38, // balance-pass3: value 28→38
     },
     bronze_wand: {
@@ -3782,7 +3825,10 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 0.6, damageMax: 0.8, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 4, wardBreak: 0.20,
-      weaponEffect: { type: "frost", chance: 0.20, magnitude: 1, durationMs: 3200 },
+      // Elementleiter (Chef-GO 28.08.2026): Frost→Gift. Chance/Dauer vom Frost-Vorgänger
+      // übernommen; Magnitude 1 = kleinster DoT-Ganzzahlwert (Starter-Tier).
+      weaponEffect: { type: "poison", chance: 0.20, magnitude: 1, durationMs: 3200 },
+      magicTheme: "poison",
       requirements: { magic: 5 }, value: 75, // balance-pass3: value 55→75
     },
     iron_wand: {
@@ -3791,6 +3837,7 @@ export const content: ContentDB = {
       weaponType: "wand",
       damageMin: 1.1, damageMax: 1.3, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20,
       weaponEffect: { type: "frost", chance: 0.22, magnitude: 1, durationMs: 3400 },
+      magicTheme: "frost", // Elementleiter (Chef-GO 28.08.2026): Frost, unverändert
       requirements: { magic: 10 }, value: 100, rarity: "rare", // balance-pass3: value 110→100
     },
     steel_wand: {
@@ -3798,7 +3845,10 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 1.3, damageMax: 1.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 1.6/2)
-      weaponEffect: { type: "frost", chance: 0.25, magnitude: 1, durationMs: 3600 },
+      // Elementleiter (Chef-GO 28.08.2026): Frost→Blitz. Chance/Dauer vom Frost-Vorgänger
+      // übernommen; Magnitude nach der Shock-Wand-Formel 0,22+0,02·(Tier-Index−5) auf Tier-Index 4 → 0,20.
+      weaponEffect: { type: "shock", chance: 0.25, magnitude: 0.20, durationMs: 3600 },
+      magicTheme: "shock",
       requirements: { magic: 20 }, value: 190, rarity: "rare", // balance-pass3: value 340→190
     },
     blacksteel_wand: {
@@ -3806,7 +3856,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 1.6, damageMax: 2.1, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 5, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.1/2.7)
-      weaponEffect: { type: "shock", chance: 0.20, magnitude: 0.22, durationMs: 3500 },
+      // Elementleiter (Chef-GO 28.08.2026): Blitz→Gift. Chance/Dauer vom Blitz-Vorgänger übernommen.
+      weaponEffect: { type: "poison", chance: 0.20, magnitude: 2, durationMs: 3500 },
+      magicTheme: "poison",
       requirements: { magic: 30 }, value: 325, rarity: "rare", // balance-pass3: value 520→325
     },
     mithril_wand: {
@@ -3814,15 +3866,19 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 2.0, damageMax: 2.6, spellFocus: 0.0025, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.7/3.5)
-      weaponEffect: { type: "shock", chance: 0.22, magnitude: 0.24, durationMs: 3800 },
+      // Elementleiter (Chef-GO 28.08.2026): Blitz→Feuer. Chance/Dauer vom Blitz-Vorgänger übernommen.
+      weaponEffect: { type: "burn", chance: 0.22, magnitude: 2, durationMs: 3800 },
+      magicTheme: "fire",
       requirements: { magic: 40 }, value: 440, rarity: "superRare", // balance-pass3: value 840→440
     },
     adamantium_wand: {
       id: "adamantium_wand", name: { en: "Adamantium Wand", de: "Adamantium-Zauberstab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
-      damageMin: 2.6, damageMax: 3.3, spellFocus: 0.0026, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.5/4.5)
-      weaponEffect: { type: "shock", chance: 0.24, magnitude: 0.26, durationMs: 4000 },
+      // Elementleiter (Chef-GO 28.08.2026): Blitz→Arkan — kein Status, Parität über Grundspanne
+      // (Spanne 2,6-3,3→3,1-3,9, Herleitung im Bericht).
+      damageMin: 3.1, damageMax: 3.9, spellFocus: 0.0026, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.5/4.5)
+      magicTheme: "arcane",
       requirements: { magic: 50 }, value: 750, rarity: "superRare", // balance-pass3: value 1400→750
     },
     runite_wand: {
@@ -3830,7 +3886,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 3.2, damageMax: 4.1, spellFocus: 0.0026, attackIntervalMs: 2670, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.2/5.4); attackIntervalMs unverändert
-      weaponEffect: { type: "shock", chance: 0.26, magnitude: 0.28, durationMs: 4200 },
+      // Elementleiter (Chef-GO 28.08.2026): Blitz→Leere (execute, Standard-Werte).
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      magicTheme: "void",
       requirements: { magic: 60 }, value: 1000, rarity: "superRare", // balance-pass3: value 2400→1000
     },
     bloodiron_wand: {
@@ -3838,7 +3896,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 4.0, damageMax: 5.2, spellFocus: 0.0026, attackIntervalMs: 2640, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.8/6.2); attackIntervalMs unverändert
-      weaponEffect: { type: "shock", chance: 0.28, magnitude: 0.30, durationMs: 4400 },
+      // Elementleiter (Chef-GO 28.08.2026): Blitz→Frost. Chance/Dauer vom Blitz-Vorgänger übernommen.
+      weaponEffect: { type: "frost", chance: 0.28, magnitude: 1, durationMs: 4400 },
+      magicTheme: "frost",
       requirements: { magic: 70 }, value: 1250, rarity: "superRare", // balance-pass3: value 3800→1250
     },
     titanium_wand: {
@@ -3847,6 +3907,7 @@ export const content: ContentDB = {
       weaponType: "wand",
       damageMin: 5.1, damageMax: 6.4, spellFocus: 0.0026, attackIntervalMs: 2630, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.5/6.9); attackIntervalMs unverändert
       weaponEffect: { type: "shock", chance: 0.30, magnitude: 0.32, durationMs: 4600 },
+      magicTheme: "shock", // Elementleiter (Chef-GO 28.08.2026): Blitz, unverändert
       requirements: { magic: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 5800→1600
     },
     aetherium_wand: {
@@ -3854,7 +3915,10 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 6.3, damageMax: 8.0, spellFocus: 0.0027, attackIntervalMs: 2600, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 5.9/7.5); attackIntervalMs unverändert
-      weaponEffect: { type: "shock", chance: 0.32, magnitude: 0.34, durationMs: 4800 },
+      // Elementleiter (Chef-GO 28.08.2026): Blitz→Arkan — kein Status. Score bleibt ohne Bump über
+      // dem Titan-Zauberstab-Nachbarn (Bericht); magicTheme MUSS gesetzt sein, sonst greift die
+      // ID-Präfix-Heuristik in combatFx.ts (`id.startsWith("aether")`) fälschlich auf "aether".
+      magicTheme: "arcane",
       requirements: { magic: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 8200→2100
     },
     godiron_wand: {
@@ -3862,7 +3926,9 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
       weaponType: "wand",
       damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580, manaCost: 7, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.2/7.8); attackIntervalMs unverändert
-      weaponEffect: { type: "shock", chance: 0.34, magnitude: 0.36, durationMs: 5000 },
+      // Elementleiter (Chef-GO 28.08.2026): Blitz→Feuer. Chance/Dauer vom Blitz-Vorgänger übernommen.
+      weaponEffect: { type: "burn", chance: 0.34, magnitude: 4, durationMs: 5000 },
+      magicTheme: "fire",
       requirements: { magic: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 13000→3000
     },
     // FOCUS: 0.30·D, offhand, +maxMana, +manaRegen, +critChance (reiner Stat-Stick)
@@ -4017,6 +4083,9 @@ export const content: ContentDB = {
       damageMin: 2.2, damageMax: 3.2, spellFocus: 0.003, attackIntervalMs: 3000,
       manaCost: 7,
       weaponEffect: { type: "burn", chance: 0.3, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 1→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
+      // Elementleiter (Chef-GO 28.08.2026): Bild/Name sind Aether, der Status bleibt Brand
+      // (unverändert, Rare-Drop-Philosophie) — magicTheme überschreibt nur die FX-Optik.
+      magicTheme: "aether",
       requirements: { magic: 40 },
       value: 520,
     },
@@ -4062,6 +4131,9 @@ export const content: ContentDB = {
       weaponType: "staff",
       twoHanded: true,
       weaponEffect: { type: "shock", chance: 0.3, magnitude: 0.32, durationMs: 4500 },
+      // Elementleiter (Chef-GO 28.08.2026): Bild/Name sind Leere ("Leerenrufer"), der Status bleibt
+      // Schock (unverändert, Rare-Drop-Philosophie) — magicTheme überschreibt nur die FX-Optik.
+      magicTheme: "void",
       modifiers: { lck: 1 },
       requirements: { magic: 65 }, value: 2200, rarity: "superRare",
     },
@@ -4072,6 +4144,9 @@ export const content: ContentDB = {
       weaponType: "staff",
       twoHanded: true,
       weaponEffect: { type: "burn", chance: 0.38, magnitude: 6, durationMs: 6000 }, // balance-fix 2026-07-05: magnitude 2.2→6 (Ganzzahl, tier-gestuft nach Level/Rarity)
+      // Elementleiter (Chef-GO 28.08.2026): Bild/Name sind Aether ("Götzenfunken"), der Status
+      // bleibt Brand (unverändert, Rare-Drop-Philosophie) — magicTheme überschreibt nur die FX-Optik.
+      magicTheme: "aether",
       modifiers: { int: 1, lck: 2 },
       weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 10, durationMs: 0 } ],
       requirements: { magic: 88 }, value: 4200, rarity: "epic",

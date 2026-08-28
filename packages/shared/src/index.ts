@@ -2831,6 +2831,18 @@ export interface ItemDef {
    */
   weaponEffects?: WeaponEffect[];
   /**
+   * Elementleiter der Magiewaffen (Chef-GO 28.08.2026, design/elementleiter-magiewaffen.md):
+   * expliziter Renderer-Override für das visuelle Magie-Thema (Partikel/FX) einer Magiewaffe.
+   * `apps/client/src/renderer/combatFx.ts` (`magicThemeFor`) liest dieses Feld ZUERST, bevor es
+   * auf sein Status-Mapping (`weaponEffect.type` → Thema, z.B. burn→fire) und danach auf die
+   * ID-Heuristik (`aether`/`godspark`-Präfix) zurückfällt. Nötig, weil Status-Typ und optisches
+   * Thema auseinanderfallen können — z.B. eine Aether-Waffe mit `manaOnKill` statt Brand (kein
+   * Status-Mapping-Treffer) oder eine Aetherium-Waffe MIT Status, die über den ID-Präfix sonst
+   * fälschlich als „aether" gerendert würde, obwohl ihr Status ein anderes Thema trägt. NUR auf
+   * `weaponStyle: "magic"`-Mainhand-Waffen sinnvoll; rein Content-seitig, keine Engine-Wirkung.
+   */
+  magicTheme?: "arcane" | "fire" | "frost" | "shock" | "poison" | "void" | "aether";
+  /**
    * Nur für Magie-Waffen: Manakosten pro Zauber (überschreibt den globalen `MANA_PER_CAST`).
    * Fehlt das Feld, gilt der globale Default. Erwartet ≥ 0.
    */

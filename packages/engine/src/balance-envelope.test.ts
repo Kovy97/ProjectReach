@@ -723,13 +723,25 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // sinken: idol_warden 71.22→65.15 s, last_idol 239.01→218.63 s. Boss→Spieler-Zeilen (28.03/
     // 30.12) und alle melee/ranged-Paare exakt unverändert (kein Nicht-Magie-Item trägt spellFocus,
     // die Engine ignoriert das Feld außerhalb des Magie-Stils — s. spell-focus.test.ts).
+    // Re-Messung 2026-08-28 — Elementleiter der Magiewaffen (Chef-GO 28.08.2026, design/
+    // elementleiter-magiewaffen.md): titanium_staff/aetherium_staff verlieren ihren Feuer-Status
+    // (Aether = manaOnKill statt Brand, DurationMs 0, kein DPS-Beitrag in dieser Formel — sie
+    // ignoriert Waffeneffekte komplett, nur `attackDamageMin/Max` zählt) und bekommen dafür eine
+    // deutlich höhere Grundspanne, um bei `coreStatScore` (sim-consistency.ts) Parität zur jeweils
+    // vorherigen Craft-Stufe zu halten (Herleitung/Zahlen im Content-Bericht). Der CL-90-Magic-
+    // "damage"-Build wechselt dadurch die Waffe: aetherium_staff (Spanne 12,5–18,8 vor Zauberfokus)
+    // schlägt jetzt stormcrest_staff (Drop, Spanne unverändert 11,3–17) und wird neue BiS-Mainhand
+    // ⇒ NUR die beiden magic-Spieler-Zeilen sinken (schnellerer Kill): idol_warden 65.15→58.05 s,
+    // last_idol 218.63→194.82 s. Boss→Spieler-Zeilen bleiben praktisch exakt (28.03/30.12, das neue
+    // Kit trägt keine andere Trinity-Verteilung) und alle melee/ranged-Paare unverändert (kein
+    // Nicht-Magie-Slot betroffen).
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 55.96, 20.76],
       ["melee", "last_idol", 183.02, 14.7],
       ["ranged", "idol_warden", 78.23, 19.78],
       ["ranged", "last_idol", 258.94, 13.67],
-      ["magic", "idol_warden", 65.15, 28.03],
-      ["magic", "last_idol", 218.63, 30.12],
+      ["magic", "idol_warden", 58.05, 28.03],
+      ["magic", "last_idol", 194.82, 30.12],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);
