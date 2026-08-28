@@ -201,6 +201,7 @@ export const es: Record<string, string> = {
     "weaponEffect.vengeance": "Tras recibir un golpe, tu siguiente ataque causa +{magnitude}% de daño.",
     "weaponEffect.cooldownOnKill": "Las muertes reducen tu pausa de recuperación en {duration} s.",
     "weaponEffect.wardOnKill": "Las muertes te devuelven {flat} de guarda.",
+    "weaponEffect.wardSiphon": "Al golpear, el {pct} % del daño que causas fluye a tu guarda.",
     "weaponEffect.healOnKill": "Las muertes te curan {flat} de salud.",
     "weaponEffect.overkillCarry": "El daño sobrante de un golpe mortal se transfiere al siguiente enemigo.",
     "weaponEffect.antiRegen": "Los objetivos que sufren daño con el tiempo no pueden regenerar salud.",

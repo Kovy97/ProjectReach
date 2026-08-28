@@ -199,6 +199,7 @@ export const ptBR: Record<string, string> = {
     "weaponEffect.vengeance": "Após sofrer um golpe, seu próximo ataque causa +{magnitude}% de dano.",
     "weaponEffect.cooldownOnKill": "Mortes reduzem sua pausa de recuperação em {duration}s.",
     "weaponEffect.wardOnKill": "Mortes devolvem {flat} de guarda.",
+    "weaponEffect.wardSiphon": "Ao acertar, {pct}% do dano causado flui para sua guarda.",
     "weaponEffect.healOnKill": "Mortes curam {flat} de vida.",
     "weaponEffect.overkillCarry": "O dano excedente de um golpe fatal passa para o próximo inimigo.",
     "weaponEffect.antiRegen": "Alvos sofrendo dano ao longo do tempo não podem regenerar vida.",

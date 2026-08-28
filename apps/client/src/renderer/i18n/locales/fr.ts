@@ -205,6 +205,7 @@ export const fr: Record<string, string> = {
     "weaponEffect.vengeance": "Après avoir subi un coup, votre prochaine frappe inflige +{magnitude} % de dégâts.",
     "weaponEffect.cooldownOnKill": "Les éliminations réduisent votre pause de récupération de {duration} s.",
     "weaponEffect.wardOnKill": "Les éliminations restituent {flat} de barrière.",
+    "weaponEffect.wardSiphon": "À chaque coup, {pct} % des dégâts infligés alimentent ta barrière.",
     "weaponEffect.healOnKill": "Les éliminations vous soignent de {flat} points de vie.",
     "weaponEffect.overkillCarry": "Les dégâts excédentaires d'un coup fatal se reportent sur l'ennemi suivant.",
     "weaponEffect.antiRegen": "Les cibles subissant des dégâts au fil du temps ne peuvent pas régénérer leur vie.",

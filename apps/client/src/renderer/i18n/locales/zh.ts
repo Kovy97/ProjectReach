@@ -205,6 +205,7 @@ export const zh: Record<string, string> = {
     "weaponEffect.vengeance": "受到攻击后，你的下一击造成 +{magnitude}% 伤害。",
     "weaponEffect.cooldownOnKill": "击杀使你的恢复间歇缩短 {duration} 秒。",
     "weaponEffect.wardOnKill": "击杀返还 {flat} 结界。",
+    "weaponEffect.wardSiphon": "命中时，你造成伤害的 {pct}% 会转化为结界。",
     "weaponEffect.healOnKill": "击杀为你恢复 {flat} 生命值。",
     "weaponEffect.overkillCarry": "致命一击的溢出伤害将转移到下一个敌人。",
     "weaponEffect.antiRegen": "遭受持续伤害的目标无法恢复生命值。",

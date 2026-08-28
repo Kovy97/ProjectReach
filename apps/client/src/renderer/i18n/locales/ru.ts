@@ -204,6 +204,7 @@ export const ru: Record<string, string> = {
     "weaponEffect.vengeance": "После полученного удара ваш следующий удар наносит +{magnitude}% урона.",
     "weaponEffect.cooldownOnKill": "Убийства сокращают вашу паузу восстановления на {duration} с.",
     "weaponEffect.wardOnKill": "Убийства возвращают {flat} оберега.",
+    "weaponEffect.wardSiphon": "При попадании {pct}% нанесённого урона переходит в ваш оберег.",
     "weaponEffect.healOnKill": "Убийства восстанавливают вам {flat} здоровья.",
     "weaponEffect.overkillCarry": "Избыточный урон от смертельного удара переносится на следующего врага.",
     "weaponEffect.antiRegen": "Цели, страдающие от урона с течением времени, не могут восстанавливать здоровье.",
