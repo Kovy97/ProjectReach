@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Effekt-Bibliothek, prozedural</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Crimson+Pro:wght@400;600&display=swap">
+<style>
+  :root { color-scheme: dark; --ground: #0b0a09; --panel: #14110e; --line: #3a3129; --text: #d8cdb6; --muted: #9c8f78; --bronze: #e7b96b; --iron: #6b5a44; }
+  body { margin: 0; background: var(--ground); color: var(--text); font: 15px/1.45 "Crimson Pro", Georgia, "Times New Roman", serif; }
+  header { display: flex; flex-direction: column; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+  header h1 { font: 600 15px/1 Cinzel, Georgia, serif; margin: 0 10px 0 0; color: var(--bronze); letter-spacing: .08em; text-transform: uppercase; }
+  .group { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-left: 12px; border-left: 1px solid var(--line); }
+  .group > span { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .group[hidden] { display: none; }
+  button { font: inherit; padding: 5px 12px; background: linear-gradient(#3b332b, #221d18); color: #e9dcc0; border: 1px solid var(--iron); border-radius: 3px; cursor: pointer; }
+  button:hover { border-color: #c9a15b; }
+  button.on { border-color: var(--bronze); box-shadow: 0 0 6px #b0802a inset; }
+  button.crit { color: #ffd9a8; }
+  button.tab { padding: 4px 10px; font-size: 14px; }
+  button.tab.on { background: linear-gradient(#4a3d2e, #2a231b); color: #ffe9c4; }
+  label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  input[type=range] { width: 110px; }
+  select { font: inherit; background: #221d18; color: #e9dcc0; border: 1px solid var(--iron); border-radius: 3px; padding: 4px 6px; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--bronze); outline-offset: 2px; }
+  #wrap { position: relative; width: 100%; max-width: 1280px; margin: 12px auto; aspect-ratio: 16/9; background: #000; box-shadow: 0 0 0 1px var(--line); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #hud { position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: #8f836d; pointer-events: none; }
+  #tag { position: absolute; right: 12px; top: 10px; font: 600 12px/1 Cinzel, Georgia, serif; letter-spacing: .1em; text-transform: uppercase; color: var(--bronze); opacity: 0; transition: opacity .2s; pointer-events: none; text-align: right; }
+  p.note { max-width: 1280px; margin: 6px auto 18px; padding: 0 4px; color: var(--muted); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { #bAuto { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <h1>Effekt-Bibliothek</h1>
+    <div class="group" id="tabs"><span>Familie</span></div>
+  </div>
+  <div class="row">
+    <div class="group" id="subs" hidden><span>Waffe</span></div>
+    <div class="group" id="vars"><span>Variante</span></div>
+    <div class="group" id="impactGroup"><span>Einschlag</span><select id="impact"><option value="r">zufällig</option><option value="0">1</option><option value="1">2</option><option value="2">3</option></select></div>
+    <div class="group">
+      <button id="bAuto">Auto</button>
+      <label><input type="checkbox" id="crit"> Crit</label>
+      <label>Flugzeit <input type="range" id="travel" min="300" max="1400" value="620"> <span id="travelV">620 ms</span></label>
+      <label>Dichte <input type="range" id="dens" min="30" max="200" value="100"> <span id="densV">100 %</span></label>
+      <label><input type="checkbox" id="slow"> Zeitlupe ×4</label>
+      <label><input type="checkbox" id="mirror"> Gegnerseite</label>
+    </div>
+  </div>
+</header>
+<div id="wrap">
+  <canvas id="bg"></canvas>
+  <canvas id="fx"></canvas>
+  <div id="tag"></div>
+  <div id="hud"></div>
+</div>
+<p class="note">Alle Kampfeffekte prozedural in einer Datei: sieben Magie-Themen (je drei Angriffe, ein Crit, drei Einschläge), Nahkampf (Schnitt, Hieb, Wucht, Stoß mit je zwei Varianten und Crit), Pfeil, Trefferreaktionen und Begleiter. Reines Canvas2D ohne Bibliothek, jede Wiedergabe fällt leicht anders aus. Tasten: 1–9 = Varianten, C = Crit, Leertaste = Zufall, Pfeile links/rechts = Familie, oben/unten = Waffe.</p>
+<script>
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const bg = $("bg"), fx = $("fx"), bctx = bg.getContext("2d"), ctx = fx.getContext("2d");
+  const hud = $("hud"), tag = $("tag");
+  const W = 1280, H = 720, GROUND = 520, TAU = Math.PI * 2;
+  let dpr = 1;
+  function resize() { dpr = Math.min(2, window.devicePixelRatio || 1); for (const c of [bg, fx]) { c.width = W * dpr; c.height = H * dpr; } drawBg(); }
+  window.addEventListener("resize", resize);
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  // ---------- Szene (Platzhalter für den Battlescreen: Spieler links, Gegner rechts)
+  const caster = { x: 250, y: 420 }, enemy = { x: 1010, y: 400 };
+  let targetFlash = 0, shake = 0, darken = 0;
+  const lunge = { age: 1e9, ms: 1, amp: 0 };   // Ausfallschritt des Angreifers (Nahkampf)
+  const pet = { age: 1e9, ms: 1 };              // Begleiter-Silhouette blitzt am Rand auf
+  const mirrored = () => $("mirror").checked;
+  const src = () => mirrored() ? { x: enemy.x - 70, y: enemy.y - 60 } : { x: caster.x + 62, y: caster.y - 122 };
+  const dst = () => mirrored() ? { x: caster.x, y: caster.y - 20 } : { x: enemy.x - 10, y: enemy.y - 40 };
+  const feet = () => ({ x: dst().x, y: GROUND + 12 });
+  const petPos = () => mirrored() ? { x: enemy.x + 130, y: GROUND - 16 } : { x: caster.x - 130, y: GROUND - 16 };
+  const targetBox = () => mirrored() ? { x: caster.x - 40, y: caster.y - 110, w: 80, h: 220, r: 26 } : { x: enemy.x - 60, y: enemy.y - 140, w: 120, h: 280, r: 30 };
+  function drawBg() {
+    const c = bctx; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#1a1512"); g.addColorStop(0.62, "#0f0d0b"); g.addColorStop(1, "#070605");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    const h = c.createRadialGradient(640, 470, 20, 640, 470, 700); h.addColorStop(0, "rgba(120,60,20,0.25)"); h.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = h; c.fillRect(0, 0, W, H);
+    c.fillStyle = "#151210"; c.fillRect(0, GROUND, W, H - GROUND);
+    c.strokeStyle = "#2b241d"; c.lineWidth = 2; c.beginPath(); c.moveTo(0, GROUND); c.lineTo(W, GROUND); c.stroke();
+    const v = c.createRadialGradient(640, 360, 300, 640, 360, 820); v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,0.75)");
+    c.fillStyle = v; c.fillRect(0, 0, W, H);
+  }
+  function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+  const flashCol = (f, base) => f > 0 ? `rgb(${base[0] + (230 - base[0]) * f},${base[1] + (220 - base[1]) * f},${base[2] + (200 - base[2]) * f})` : `rgb(${base[0]},${base[1]},${base[2]})`;
+  function drawFigures(c, t) {
+    c.save(); c.globalCompositeOperation = "source-over";
+    const lo = lunge.age < lunge.ms ? Math.sin(Math.PI * lunge.age / lunge.ms) * lunge.amp : 0;
+    const m = mirrored(), cx = caster.x + (m ? 0 : lo), ex = enemy.x - (m ? lo : 0);
+    c.fillStyle = flashCol(m ? targetFlash : 0, [35, 29, 24]); roundRect(c, cx - 40, caster.y - 110, 80, 220, 26); c.fill();
+    c.strokeStyle = "#6b5a44"; c.lineWidth = 3; c.beginPath(); c.moveTo(cx + 28, caster.y + 90); c.lineTo(cx + 62, caster.y - 120); c.stroke();
+    const orb = c.createRadialGradient(cx + 62, caster.y - 122, 2, cx + 62, caster.y - 122, 14 + 3 * Math.sin(t / 180));
+    orb.addColorStop(0, "rgba(255,220,170,0.9)"); orb.addColorStop(1, "rgba(255,120,40,0)"); c.fillStyle = orb; c.fillRect(cx + 30, caster.y - 160, 70, 70);
+    c.fillStyle = flashCol(m ? 0 : targetFlash, [42, 34, 28]); roundRect(c, ex - 60, enemy.y - 140, 120, 280, 30); c.fill();
+    c.fillStyle = "#3a2f26"; c.beginPath(); c.arc(ex, enemy.y - 150, 34, 0, TAU); c.fill();
+    if (pet.age < pet.ms) { // kleiner Vierbeiner am Rand, Umriss leuchtet kurz auf
+      const u = pet.age / pet.ms, a = Math.sin(Math.PI * u), p = petPos(), d = m ? -1 : 1;
+      c.fillStyle = "#241d18"; c.strokeStyle = `rgba(231,185,107,${0.9 * a})`; c.lineWidth = 2;
+      c.beginPath(); c.ellipse(p.x, p.y, 30, 15, 0, 0, TAU); c.fill(); c.stroke();
+      c.beginPath(); c.arc(p.x + d * 32, p.y - 10, 11, 0, TAU); c.fill(); c.stroke();
+      for (const lx of [-18, -6, 8, 20]) { c.fillRect(p.x + lx, p.y + 10, 5, 14); }
+    }
+    if (darken > 0) { c.fillStyle = `rgba(6,2,12,${0.55 * darken})`; c.fillRect(-20, -20, W + 40, H + 40); }
+    c.restore();
+  }
+
+  // ---------- Paletten (gedeckt, je Thema EIN Akzent)
+  const TH = {
+    arcane: { hot: [240, 226, 255], mid: [168, 110, 240], dim: [70, 25, 130], glow: "rgba(150,90,230,", smoke: "30,18,44" },
+    fire:   { hot: [255, 236, 190], mid: [255, 120, 40], dim: [80, 12, 8], glow: "rgba(255,150,60,", smoke: "40,30,26" },
+    frost:  { hot: [240, 250, 255], mid: [140, 205, 245], dim: [40, 80, 150], glow: "rgba(150,210,255,", smoke: "120,150,170" },
+    bolt:   { hot: [255, 255, 245], mid: [246, 231, 161], dim: [130, 110, 50], glow: "rgba(246,231,161,", smoke: "40,36,26" },
+    poison: { hot: [225, 255, 190], mid: [110, 205, 60], dim: [25, 70, 25], glow: "rgba(120,210,80,", smoke: "22,44,20" },
+    void:   { hot: [215, 150, 235], mid: [120, 30, 160], dim: [25, 4, 40], glow: "rgba(130,40,180,", smoke: "10,4,14" },
+    aether: { hot: [255, 252, 235], mid: [245, 215, 140], dim: [140, 100, 40], glow: "rgba(245,215,140,", smoke: "50,44,30" },
+    steel:  { hot: [255, 250, 240], mid: [225, 218, 200], dim: [110, 105, 95], glow: "rgba(230,225,210,", smoke: "60,52,44" },
+    gold:   { hot: [255, 245, 210], mid: [235, 190, 90], dim: [120, 80, 30], glow: "rgba(235,190,90,", smoke: "50,40,24" },
+    crimson:{ hot: [255, 200, 190], mid: [200, 50, 50], dim: [80, 10, 20], glow: "rgba(200,60,60,", smoke: "40,10,14" },
+    teal:   { hot: [235, 255, 250], mid: [120, 210, 200], dim: [30, 90, 90], glow: "rgba(120,210,200,", smoke: "20,40,40" },
+  };
+  const mix = (a, b, u) => [Math.round(a[0] + (b[0] - a[0]) * u), Math.round(a[1] + (b[1] - a[1]) * u), Math.round(a[2] + (b[2] - a[2]) * u)];
+  function col(th, u, a) { // Farbe über das Alter u 0..1: heiß → Akzent → dunkler Saum
+    if (th === TH.fire) { // Feuer behält die Kurve der Feuer-Serie
+      if (u < 0.18) return `rgba(255,236,190,${a})`;
+      if (u < 0.5) return `rgba(255,${Math.round(150 - 60 * (u - 0.18) / 0.32)},40,${a})`;
+      return `rgba(${Math.round(190 - 120 * (u - 0.5) / 0.5)},${Math.round(50 - 40 * (u - 0.5) / 0.5)},20,${a})`;
+    }
+    const [r, g, b] = u < 0.35 ? mix(th.hot, th.mid, u / 0.35) : mix(th.mid, th.dim, (u - 0.35) / 0.65);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  const rgb = (arr, a) => `rgba(${arr[0]},${arr[1]},${arr[2]},${a})`;
+
+  // ---------- Partikel
+  const P = [], MAX = 2500;
+  let adapt = 1; // adaptive Dichte, sinkt wenn die fps unter 45 fallen
+  const density = () => (+$("dens").value / 100) * adapt;
+  function spawn(p) { if (P.length < MAX) { P.push(p); return p; } return null; }
+  function count(base, dt) { const n = base * density() * (dt / 16.7), f = Math.floor(n); return f + (Math.random() < n - f ? 1 : 0); } // je Frame
+  const burst = (base) => Math.round(base * density()); // auf einmal
+  const ember = (th, x, y, vx, vy, life, size, grav = -40, drag = 0.985) => spawn({ th, x, y, vx, vy, life, age: 0, size, kind: "ember", drag, grav });
+  const spark = (th, x, y, vx, vy, life, size = 2, grav = 120, drag = 0.99) => spawn({ th, x, y, vx, vy, life, age: 0, size, kind: "spark", drag, grav });
+  const mote = (th, x, y, vx, vy, life, size, grav = -15, drag = 0.98) => spawn({ th, x, y, vx, vy, life, age: 0, size, kind: "mote", drag, grav, ph: rnd(0, 6) });
+  const shard = (th, x, y, vx, vy, life, size, grav = 220) => spawn({ th, x, y, vx, vy, life, age: 0, size, kind: "shard", drag: 0.985, grav, rot: rnd(0, 6), spin: rnd(-8, 8) });
+  const bubble = (th, x, y, vx, vy, life, size) => spawn({ th, x, y, vx, vy, life, age: 0, size, kind: "bubble", drag: 0.97, grav: -45 });
+  const drop = (th, x, y, vx, vy, life, size, grav = 320) => spawn({ th, x, y, vx, vy, life, age: 0, size, kind: "drop", drag: 0.995, grav });
+  const feather = (th, x, y, vx, vy, life, size) => spawn({ th, x, y, vx, vy, life, age: 0, size, kind: "feather", drag: 0.975, grav: 22, rot: rnd(-0.6, 0.6), ph: rnd(0, 6) });
+  const smoke = (x, y, vx, vy, life, size, rgbs = "40,30,26", a = 0.28, grav = -20) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "smoke", drag: 0.97, grav, rgb: rgbs, a });
+  const dust = (x, y, vx, vy, life, size) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "dust", drag: 0.96, grav: 12 });
+  const ash = (x, y, vx, vy, life, size) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "ash", drag: 0.985, grav: -12, spin: rnd(2, 5), ax: x });
+  const blood = (x, y, vx, vy, life, size, rgbs = "150,22,28") => spawn({ x, y, vx, vy, life, age: 0, size, kind: "blood", drag: 0.985, grav: 420, rgb: rgbs });
+  const bone = (x, y, vx, vy, life, size) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "bone", drag: 0.985, grav: 380, rot: rnd(0, 6), spin: rnd(-9, 9) });
+  const splinter = (x, y, vx, vy, life, size) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "splinter", drag: 0.985, grav: 380, rot: rnd(0, 6), spin: rnd(-12, 12) });
+  const glass = (x, y, vx, vy, life, size) => spawn({ x, y, vx, vy, life, age: 0, size, kind: "glass", drag: 0.985, grav: 400, rot: rnd(0, 6), spin: rnd(-10, 10) });
+  function pull(p, at, force) { if (p) { p.follow = at; p.pull = force; } return p; } // Partikel fließt zum Ziel (Leere, Implosion)
+
+  // ---------- Zeichenhelfer (immediate mode)
+  function core(c, x, y, r, th, hot) { // heißer Kern: weißes Zentrum, Akzent, dunkler Saum, Hitzeschein
+    const g = c.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, hot ? "rgba(255,255,250,1)" : rgb(th.hot, 1)); g.addColorStop(0.3, rgb(th.hot, 0.95)); g.addColorStop(0.6, rgb(th.mid, 0.8)); g.addColorStop(0.85, rgb(th.dim, 0.35)); g.addColorStop(1, rgb(th.dim, 0));
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill();
+    const h = c.createRadialGradient(x, y, r, x, y, r * 3.2); h.addColorStop(0, th.glow + "0.22)"); h.addColorStop(1, th.glow + "0)");
+    c.fillStyle = h; c.beginPath(); c.arc(x, y, r * 3.2, 0, TAU); c.fill();
+  }
+  function voidCore(c, x, y, r) { // schwarzer Kern, der Licht schluckt, purpurner Saum
+    c.save(); c.globalCompositeOperation = "source-over";
+    const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, "rgba(0,0,0,1)"); g.addColorStop(0.6, "rgba(8,2,14,0.95)"); g.addColorStop(0.85, "rgba(40,8,60,0.5)"); g.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); c.restore();
+    const h = c.createRadialGradient(x, y, r * 0.6, x, y, r * 2.4); h.addColorStop(0, "rgba(160,60,210,0.55)"); h.addColorStop(0.35, "rgba(130,40,180,0.3)"); h.addColorStop(1, "rgba(130,40,180,0)");
+    c.fillStyle = h; c.beginPath(); c.arc(x, y, r * 2.4, 0, TAU); c.fill();
+    c.strokeStyle = rgb(TH.void.hot, 0.9); c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, r * 0.82, 0, TAU); c.stroke();
+    c.strokeStyle = rgb(TH.void.mid, 0.8); c.lineWidth = 4; c.beginPath(); c.arc(x, y, r * 0.95, 0, TAU); c.stroke();
+  }
+  function drawGlyph(c, x, y, r, rot, th, a) { // Rune: zwei Ringe, Dreieck, Kerben
+    c.save(); c.translate(x, y); c.rotate(rot); c.strokeStyle = rgb(th.hot, a); c.lineWidth = 1.6;
+    c.beginPath(); c.arc(0, 0, r, 0, TAU); c.stroke(); c.beginPath(); c.arc(0, 0, r * 0.66, 0, TAU); c.stroke();
+    c.beginPath(); for (let i = 0; i < 3; i++) { const t = i * TAU / 3; c[i ? "lineTo" : "moveTo"](Math.cos(t) * r * 0.66, Math.sin(t) * r * 0.66); } c.closePath(); c.stroke();
+    for (let i = 0; i < 8; i++) { const t = i * TAU / 8; c.beginPath(); c.moveTo(Math.cos(t) * r, Math.sin(t) * r); c.lineTo(Math.cos(t) * r * 1.18, Math.sin(t) * r * 1.18); c.stroke(); }
+    c.fillStyle = rgb(th.hot, a * 0.7); for (let i = 0; i < 4; i++) { const t = i * TAU / 4 + TAU / 8; c.beginPath(); c.arc(Math.cos(t) * r * 0.85, Math.sin(t) * r * 0.85, 2.2, 0, TAU); c.fill(); }
+    c.restore();
+  }
+  function drawCrystal(c, x, y, r, rot, th, a, n = 6) { // Eiskristall: Stern mit dünnen Spitzen
+    c.save(); c.translate(x, y); c.rotate(rot); c.beginPath();
+    for (let i = 0; i < n * 2; i++) { const t = i * Math.PI / n, rr = i % 2 ? r * 0.38 : r; c[i ? "lineTo" : "moveTo"](Math.cos(t) * rr, Math.sin(t) * rr); }
+    c.closePath(); c.fillStyle = rgb(th.mid, a * 0.45); c.fill(); c.strokeStyle = rgb(th.hot, a); c.lineWidth = 1.4; c.stroke(); c.restore();
+  }
+  function drawStar(c, x, y, r, rot, th, a, n = 4) { // scharfer Stern aus dünnen Strahlen
+    c.save(); c.translate(x, y); c.rotate(rot); c.beginPath();
+    for (let i = 0; i < n * 2; i++) { const t = i * Math.PI / n, rr = i % 2 ? r * 0.12 : r; c[i ? "lineTo" : "moveTo"](Math.cos(t) * rr, Math.sin(t) * rr); }
+    c.closePath(); c.fillStyle = rgb(th.hot, a); c.fill(); c.restore();
+  }
+  function boltPath(a, b, disp, iter = 5) { // Blitz als Mittelpunkt-Verschiebung
+    const pts = [{ x: a.x, y: a.y }, { x: b.x, y: b.y }]; const dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L;
+    for (let it = 0; it < iter; it++) { for (let i = pts.length - 1; i > 0; i--) { const p = pts[i - 1], q = pts[i], o = rnd(-disp, disp); pts.splice(i, 0, { x: (p.x + q.x) / 2 + nx * o, y: (p.y + q.y) / 2 + ny * o }); } disp *= 0.55; }
+    return pts;
+  }
+  function boltBranches(pts, n, baseAng, len = 6) {
+    const out = []; for (let b = 0; b < n; b++) { const i = Math.floor(rnd(pts.length * 0.2, pts.length * 0.85)); const p0 = pts[i]; const br = [p0]; let x = p0.x, y = p0.y, ang = baseAng + rnd(-1.2, 1.2);
+      for (let j = 0; j < len; j++) { x += Math.cos(ang) * rnd(10, 30); y += Math.sin(ang) * rnd(10, 30); ang += rnd(-0.7, 0.7); br.push({ x, y }); } out.push(br); }
+    return out;
+  }
+  function drawBolt(c, pts, branches, k, a, th) {
+    const path = (ps) => { c.beginPath(); c.moveTo(ps[0].x, ps[0].y); for (let i = 1; i < ps.length; i++) c.lineTo(ps[i].x, ps[i].y); };
+    const fl = 0.75 + 0.25 * Math.random(); c.lineCap = "round"; c.lineJoin = "round";
+    for (const [w, cc] of [[26 * k, th.glow + (0.10 * a * fl) + ")"], [11 * k, rgb(th.mid, 0.35 * a * fl)], [4 * k, rgb(th.hot, 0.95 * a * fl)], [1.6, `rgba(255,255,255,${a})`]]) {
+      c.strokeStyle = cc; c.lineWidth = w; path(pts); c.stroke();
+      for (const br of branches) { c.lineWidth = w * 0.45; path(br); c.stroke(); }
+    }
+  }
+
+  // ---------- Laufende Effekte (update/draw/alive), gemeinsame Bausteine
+  const active = [];
+  function timed(ms, draw, update) { let age = 0; active.push({ update(dt) { age += dt; if (update) update(dt, age, Math.min(1, age / ms)); }, draw(c) { draw(c, age, Math.min(1, age / ms)); }, alive: () => age < ms }); }
+  function delay(ms, fn) { let age = 0, fired = false; active.push({ update(dt) { age += dt; if (!fired && age >= ms) { fired = true; fn(); } }, draw() {}, alive: () => !fired }); }
+  function flash(at, r, pre, ms) { timed(ms, (c, age, u) => { const rr = r * (0.6 + 0.9 * u), g = c.createRadialGradient(at.x, at.y, 0, at.x, at.y, rr); g.addColorStop(0, pre + (0.9 * (1 - u)) + ")"); g.addColorStop(0.5, pre + (0.35 * (1 - u)) + ")"); g.addColorStop(1, pre + "0)"); c.fillStyle = g; c.beginPath(); c.arc(at.x, at.y, rr, 0, TAU); c.fill(); }); }
+  function ring(at, r, ms, pre, w = 10, sq = 1, from = 0.2) { timed(ms, (c, age, u) => { c.strokeStyle = pre + (0.5 * (1 - u)) + ")"; c.lineWidth = w * (1 - u) + 2; const rr = r * (from + (1.1 - from) * u); c.beginPath(); c.ellipse(at.x, at.y, rr, rr * sq, 0, 0, TAU); c.stroke(); }); }
+  function column(at, h, ms, th, w = 16) { // senkrechte Säule (Glutsäule, Lichtsäule)
+    timed(ms, (c, age, u) => { const a = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3, hgt = h * Math.min(1, age / 160), g = c.createLinearGradient(0, at.y, 0, at.y - hgt);
+      g.addColorStop(0, rgb(th.hot, 0.9 * a)); g.addColorStop(0.5, rgb(th.mid, 0.6 * a)); g.addColorStop(1, rgb(th.dim, 0));
+      c.fillStyle = g; c.beginPath(); c.ellipse(at.x, at.y - hgt / 2, w * (1 + 0.1 * Math.sin(age / 30)), hgt / 2, 0, 0, TAU); c.fill(); });
+  }
+  function rayFromAbove(x, yEnd, ms, th, w, xTop = x) { // Lichtstrahl von oben, wird unten breiter und heller
+    timed(ms, (c, age, u) => { const a = u < 0.25 ? u / 0.25 : u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3; const fl = 0.85 + 0.15 * Math.sin(age / 40);
+      const g = c.createLinearGradient(0, 0, 0, yEnd); g.addColorStop(0, rgb(th.mid, 0)); g.addColorStop(0.55, rgb(th.mid, 0.22 * a * fl)); g.addColorStop(0.88, rgb(th.hot, 0.4 * a * fl)); g.addColorStop(1, rgb(th.hot, 0));
+      c.fillStyle = g; c.beginPath(); c.moveTo(xTop - w * 0.3, -10); c.lineTo(xTop + w * 0.3, -10); c.lineTo(x + w * 0.7, yEnd + 30); c.lineTo(x - w * 0.7, yEnd + 30); c.closePath(); c.fill();
+      const h = c.createRadialGradient(x, yEnd, 0, x, yEnd, w * 1.6); h.addColorStop(0, rgb(th.hot, 0.5 * a * fl)); h.addColorStop(1, rgb(th.mid, 0)); c.fillStyle = h; c.beginPath(); c.arc(x, yEnd, w * 1.6, 0, TAU); c.fill(); });
+  }
+  function beam(a, b, ms, th, w) { // kurzer Strahl mit Kern, Glut und wandernden Wellen
+    timed(ms, (c, age, u) => { const al = u < 0.15 ? u / 0.15 : u < 0.65 ? 1 : 1 - (u - 0.65) / 0.35, fl = 0.85 + 0.15 * Math.random();
+      c.lineCap = "round"; for (const [ww, cc] of [[w * 3, th.glow + (0.12 * al) + ")"], [w * 1.4, rgb(th.mid, 0.5 * al * fl)], [w * 0.5, rgb(th.hot, 0.95 * al)], [1.5, `rgba(255,255,255,${0.9 * al})`]]) { c.strokeStyle = cc; c.lineWidth = ww; c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); c.stroke(); }
+      const dx = b.x - a.x, dy = b.y - a.y; for (let i = 0; i < 5; i++) { const t = ((age / 400) + i / 5) % 1; c.fillStyle = rgb(th.hot, 0.5 * al); c.beginPath(); c.arc(a.x + dx * t, a.y + dy * t, w * 0.6, 0, TAU); c.fill(); } });
+  }
+  function slash(o) { // dünner heller Bogen, der um (x,y) fegt, mit Nachzieh-Schleier; o: {x,y,r,a0,a1,ms,w,th,tilt}
+    const th = o.th || TH.steel;
+    timed(o.ms, (c, age, u) => {
+      const sweep = Math.min(1, u / 0.5), fade = u < 0.5 ? 1 : 1 - (u - 0.5) / 0.5, aEnd = o.a0 + (o.a1 - o.a0) * sweep, ccw = o.a1 < o.a0;
+      c.save(); c.translate(o.x, o.y); if (o.tilt) c.scale(1, o.tilt); c.lineCap = "round";
+      const arc = (a0, a1, w, cc) => { c.strokeStyle = cc; c.lineWidth = w; c.beginPath(); c.arc(0, 0, o.r, a0, a1, ccw); c.stroke(); };
+      arc(o.a0, aEnd, o.w * 5, th.glow + (0.10 * fade) + ")");
+      arc(o.a0, aEnd, o.w * 2.2, rgb(th.mid, 0.3 * fade));
+      arc(aEnd - (aEnd - o.a0) * 0.45, aEnd, o.w, rgb(th.hot, 0.95 * fade));
+      arc(o.a0, aEnd, 1.2, `rgba(255,255,255,${0.85 * fade})`);
+      c.restore();
+    });
+  }
+  function crack(at, ms, n = 3, len = 120, th = null) { // Bodenriss: dunkle Zacken am Boden, kurz mit hellem Saum
+    const lines = []; for (let i = 0; i < n; i++) { const dir = i % 2 ? -1 : 1, pts = [{ x: at.x, y: at.y }]; let x = at.x, y = at.y, ang = dir > 0 ? rnd(-0.3, 0.3) : Math.PI + rnd(-0.3, 0.3);
+      for (let j = 0; j < 6; j++) { x += Math.cos(ang) * len / 6 * rnd(0.6, 1.4); y += Math.sin(ang) * 6 + rnd(-5, 5); ang += rnd(-0.5, 0.5) * 0.6; pts.push({ x, y }); } lines.push(pts); }
+    timed(ms, (c, age, u) => { const a = 1 - u * u; c.save(); c.globalCompositeOperation = "source-over"; c.lineCap = "round"; c.lineJoin = "round";
+      for (const ps of lines) { c.beginPath(); c.moveTo(ps[0].x, ps[0].y); for (let i = 1; i < ps.length; i++) c.lineTo(ps[i].x, ps[i].y); c.strokeStyle = `rgba(4,3,2,${0.9 * a})`; c.lineWidth = 3.5; c.stroke(); }
+      c.restore(); if (th && u < 0.45) { c.strokeStyle = rgb(th.mid, 0.6 * (1 - u / 0.45)); c.lineWidth = 1.2; for (const ps of lines) { c.beginPath(); c.moveTo(ps[0].x, ps[0].y); for (let i = 1; i < ps.length; i++) c.lineTo(ps[i].x, ps[i].y); c.stroke(); } } });
+  }
+  function projectile(o) { // o: {s,d,T,arc,update(e,u,dt),draw(c,e),arrive()}; e trägt x,y,u,age
+    let age = 0, done = false; const e = { x: o.s.x, y: o.s.y, u: 0, age: 0 };
+    active.push({ update(dt) { if (done) return; age += dt; e.age = age; const u = Math.min(1, age / o.T); e.u = u; e.x = o.s.x + (o.d.x - o.s.x) * u; e.y = o.s.y + (o.d.y - o.s.y) * u - Math.sin(u * Math.PI) * (o.arc || 0); if (o.update) o.update(e, u, dt); if (u >= 1) { done = true; o.arrive(); } }, draw(c) { if (!done && o.draw) o.draw(c, e); }, alive: () => !done });
+    return e;
+  }
+  function hit(k) { targetFlash = 1; shake = Math.max(shake, k); }
+  function doLunge(ms, amp) { lunge.age = 0; lunge.ms = ms; lunge.amp = amp; }
+  function petPop(ms = 420) { pet.age = 0; pet.ms = ms; }
+
+  // =====================================================================================
+  // MAGIE. Jedes Rezept bekommt o = {s, d, dir, T, k, crit, land(scale), feet}: s Hand des Angreifers,
+  // d Brust des Ziels, dir ±1, T Flugzeit, k Crit-Faktor, land() spielt den gewählten Einschlag.
+  // =====================================================================================
+
+  // ---------- FEUER (aus der Feuer-Serie übernommen)
+  const FIRE = {
+    ball(o) { // Feuerball: Bogenflug, Glutschweif, Rauch, Funken; Crit größer mit dunkelrotem Saum und Puls kurz vor dem Ziel
+      const { s, d, dir, T, k } = o, th = TH.fire; let pulsed = false;
+      projectile({ s, d, T, arc: 60, update(e, u, dt) {
+        const n = count(14 * k, dt);
+        for (let i = 0; i < n; i++) { const back = -dir * rnd(60, 260) * k; ember(th, e.x + rnd(-8, 8) * k, e.y + rnd(-8, 8) * k, back + rnd(-40, 40), rnd(-70, 30), rnd(280, 640), rnd(5, 13) * k);
+          if (Math.random() < 0.35) smoke(e.x, e.y, back * 0.5 + rnd(-30, 30), rnd(-90, -30), rnd(500, 1000), rnd(10, 22) * k);
+          if (Math.random() < 0.25) spark(th, e.x, e.y, back * 0.3 + rnd(-160, 160), rnd(-160, 160), rnd(200, 450), rnd(1.5, 3)); }
+        if (o.crit && u > 0.85 && !pulsed) { pulsed = true; flash({ x: e.x, y: e.y }, 90, "rgba(255,240,200,", 120); }
+      }, draw(c, e) { const r = (o.crit ? 36 : 24) * (1 + 0.12 * Math.sin(e.age / 28)); core(c, e.x, e.y, r, th, o.crit);
+        if (o.crit) { c.strokeStyle = "rgba(150,20,10,0.55)"; c.lineWidth = 6; c.beginPath(); c.arc(e.x, e.y, r * 1.15, 0, TAU); c.stroke(); } },
+      arrive: () => o.land() });
+    },
+    lance(o) { // Feuerlanze: gestreckter Kern, Hitzeschlieren statt Glutwolke, kaum Rauch, flacher Flug
+      const { s, d, dir, T, k } = o, th = TH.fire;
+      projectile({ s, d, T: T * 0.8, arc: 12, update(e, u, dt) {
+        const n = count(10 * k, dt);
+        for (let i = 0; i < n; i++) { const back = -dir * rnd(220, 520); spark(th, e.x + rnd(-4, 4), e.y + rnd(-4, 4), back, rnd(-25, 25), rnd(160, 320), rnd(1.5, 2.6) * k, 0);
+          if (Math.random() < 0.4) ember(th, e.x - dir * rnd(0, 40), e.y + rnd(-5, 5), back * 0.35, rnd(-30, 10), rnd(180, 380), rnd(3, 7) * k, -10); }
+        if (Math.random() < 0.15) smoke(e.x - dir * 30, e.y, -dir * 60, rnd(-60, -20), 700, rnd(8, 14));
+      }, draw(c, e) {
+        c.save(); c.translate(e.x, e.y); c.scale(dir * 3.2 * k, k); const g = c.createRadialGradient(4, 0, 0, 0, 0, 16);
+        g.addColorStop(0, "rgba(255,255,240,1)"); g.addColorStop(0.35, "rgba(255,200,120,0.95)"); g.addColorStop(0.7, "rgba(255,110,30,0.7)"); g.addColorStop(1, "rgba(120,20,10,0)");
+        c.fillStyle = g; c.beginPath(); c.ellipse(0, 0, 16, 16, 0, 0, TAU); c.fill(); c.restore();
+        c.strokeStyle = "rgba(255,240,200,0.9)"; c.lineWidth = 2.5 * k; c.beginPath(); c.moveTo(e.x - dir * 52 * k, e.y); c.lineTo(e.x + dir * 26 * k, e.y); c.stroke();
+      }, arrive: () => o.land() });
+    },
+    swarm(o) { // Glutschwarm: vier Glutkugeln als Traube, jede zieht eine Funkenspur
+      const { s, d, dir, T, k } = o, th = TH.fire;
+      const sub = [0, 1, 2, 3].map((i) => ({ ph: rnd(0, 6.28), amp: rnd(10, 26), sp: rnd(5, 9), lag: i * 0.04, x: s.x, y: s.y }));
+      projectile({ s, d, T, arc: 0, update(e, u, dt) {
+        const n = count(4 * k, dt);
+        for (const b of sub) { const uu = Math.max(0, u - b.lag);
+          b.x = s.x + (d.x - s.x) * uu + Math.sin(e.age / 90 * b.sp / 7 + b.ph) * b.amp * 0.5; b.y = s.y + (d.y - s.y) * uu - Math.sin(uu * Math.PI) * 50 + Math.cos(e.age / 90 * b.sp / 7 + b.ph) * b.amp;
+          for (let i = 0; i < n; i++) { ember(th, b.x, b.y, -dir * rnd(40, 160) + rnd(-20, 20), rnd(-40, 20), rnd(200, 460), rnd(3, 7) * k); if (Math.random() < 0.4) spark(th, b.x, b.y, -dir * rnd(60, 200), rnd(-80, 80), rnd(150, 350), 1.6); } }
+      }, draw(c, e) { for (const b of sub) core(c, b.x, b.y, (11 + 2 * Math.sin(e.age / 40 + b.ph)) * k, th, false); }, arrive: () => o.land(0.7) });
+    },
+    impacts: [
+      { name: "Feuerstoß", run(o, sc) { // runde Explosion, Glutwolke, Rauchkrone, Ring
+        const { d, dir, k: kk } = o, th = TH.fire, k = kk * sc, n = burst(90 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), sp = rnd(60, 380) * k; ember(th, d.x, d.y, Math.cos(a) * sp - dir * 40, Math.sin(a) * sp - 60, rnd(300, 700), rnd(4, 11) * k, 160, 0.96);
+          if (i % 3 === 0) spark(th, d.x, d.y, Math.cos(a) * sp * 1.4, Math.sin(a) * sp * 1.4, rnd(200, 500), rnd(1.5, 3), 200);
+          if (i % 4 === 0) smoke(d.x + rnd(-20, 20), d.y + rnd(-20, 20), rnd(-60, 60), rnd(-140, -40), rnd(700, 1400), rnd(16, 34) * k); }
+        flash(d, o.crit ? 170 : 120, "rgba(255,170,80,", o.crit ? 240 : 170); ring(d, o.crit ? 150 : 100, 260, "rgba(255,120,40,"); } },
+      { name: "Flammenspritzer", run(o, sc) { // Feuer schlägt seitlich weg wie Flüssigkeit, Funkenfächer nach oben
+        const { d, dir, k: kk } = o, th = TH.fire, k = kk * sc, n = burst(90 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(-0.5, 0.5), sp = rnd(120, 420) * k; ember(th, d.x, d.y, dir * Math.cos(a) * sp * 0.9, Math.sin(a) * sp * 0.6 - 30, rnd(350, 750), rnd(6, 14) * k, 260, 0.975);
+          if (i % 2 === 0) { const b = rnd(-1.2, 1.2); spark(th, d.x, d.y - 10, Math.sin(b) * rnd(60, 260), -Math.cos(b) * rnd(180, 420), rnd(300, 600), rnd(1.5, 2.8), 320); }
+          if (i % 5 === 0) smoke(d.x + dir * rnd(0, 40), d.y, dir * rnd(20, 90), rnd(-90, -30), rnd(600, 1100), rnd(10, 22) * k); }
+        flash(d, o.crit ? 130 : 90, "rgba(255,150,60,", 150); } },
+      { name: "Glutsäule", run(o, sc) { // senkrechte Flammensäule mit Aschewirbel, verglimmt zu Glutpunkten
+        const { d, k: kk } = o, th = TH.fire, k = kk * sc, dur = 380 * (o.crit ? 1.3 : 1);
+        timed(dur, () => {}, (dt, age) => { const m = count(6 * k, dt);
+          for (let i = 0; i < m; i++) { const yy = d.y - rnd(0, 150 * k) * Math.min(1, age / 160); ember(th, d.x + rnd(-14, 14) * k, yy, rnd(-30, 30), rnd(-260, -120), rnd(220, 520), rnd(5, 12) * k, -80, 0.98);
+            if (Math.random() < 0.5) ash(d.x, yy, 0, rnd(-90, -40), rnd(700, 1300), rnd(2, 4));
+            if (Math.random() < 0.12) ember(th, d.x + rnd(-20, 20), d.y + rnd(-6, 6), rnd(-20, 20), rnd(-20, 0), rnd(1500, 2600), rnd(2, 4), 10, 0.99); } });
+        column(d, 150 * k, dur, th, 16 * k); flash(d, 90, "rgba(255,140,50,", 140); } },
+    ],
+  };
+
+  // ---------- FROST
+  const FROST = {
+    spear(o) { // Eissplitter-Speer: schneller, gestreckter Splitter, dünne Frostspur; Crit als Gletscherspeer mit Splitterspirale
+      const { s, d, dir, T, k } = o, th = TH.frost;
+      projectile({ s, d, T: T * 0.7, arc: 8, update(e, u, dt) {
+        const n = count(6 * k, dt);
+        for (let i = 0; i < n; i++) { shard(th, e.x - dir * rnd(0, 30), e.y + rnd(-6, 6), -dir * rnd(20, 90), rnd(-30, 30), rnd(250, 550), rnd(2, 5) * k, 60);
+          if (Math.random() < 0.5) smoke(e.x - dir * 20, e.y, -dir * rnd(20, 60), rnd(-20, 10), rnd(400, 800), rnd(8, 16), th.smoke, 0.14, -5);
+          if (Math.random() < 0.4) mote(th, e.x, e.y, -dir * rnd(40, 120), rnd(-30, 30), rnd(300, 600), rnd(1.5, 3)); }
+        if (o.crit) { const a = e.age / 50; shard(th, e.x + Math.cos(a) * 26, e.y + Math.sin(a) * 26, -dir * 60, Math.sin(a) * 40, 400, 4, 0); }
+      }, draw(c, e) {
+        c.save(); c.translate(e.x, e.y); c.scale(dir, 1); const L = 64 * k, w = 9 * k;
+        const h = c.createRadialGradient(L * 0.2, 0, 0, L * 0.2, 0, 44 * k); h.addColorStop(0, th.glow + "0.35)"); h.addColorStop(1, th.glow + "0)"); c.fillStyle = h; c.fillRect(-70 * k, -50 * k, 150 * k, 100 * k);
+        c.beginPath(); c.moveTo(L * 0.55, 0); c.lineTo(-L * 0.45, -w); c.lineTo(-L * 0.25, 0); c.lineTo(-L * 0.45, w); c.closePath();
+        c.fillStyle = rgb(th.mid, 0.9); c.fill(); c.strokeStyle = rgb(th.hot, 0.95); c.lineWidth = 1.5; c.stroke();
+        c.strokeStyle = "rgba(255,255,255,0.9)"; c.lineWidth = 2; c.beginPath(); c.moveTo(-L * 0.2, 0); c.lineTo(L * 0.5, 0); c.stroke(); c.restore();
+      }, arrive: () => o.land() });
+    },
+    star(o) { // Kristallstern: zwei gegenläufig rotierende Kristalle, streut Splitter tangential, leichter Bogen
+      const { s, d, dir, T, k } = o, th = TH.frost;
+      projectile({ s, d, T: T * 1.1, arc: 40, update(e, u, dt) {
+        const n = count(5 * k, dt);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = 26 * k; shard(th, e.x + Math.cos(a) * r, e.y + Math.sin(a) * r, Math.cos(a + 1.3) * rnd(40, 120) - dir * 40, Math.sin(a + 1.3) * rnd(40, 120), rnd(300, 600), rnd(2, 4), 120);
+          if (Math.random() < 0.5) mote(th, e.x, e.y, -dir * rnd(30, 100), rnd(-40, 40), rnd(300, 700), 2); }
+      }, draw(c, e) { const rot = e.age / 90; core(c, e.x, e.y, 9 * k, th, false); drawCrystal(c, e.x, e.y, 30 * k, rot, th, 0.95); drawCrystal(c, e.x, e.y, 18 * k, -rot * 1.4, th, 0.9); },
+      arrive: () => o.land() });
+    },
+    wave(o) { // Frostwelle: Kamm aus Eis läuft am Boden zum Ziel, Splitter springen auf, Reif bleibt liegen
+      const { s, d, dir, T, k } = o, th = TH.frost, g = GROUND + 10;
+      projectile({ s: { x: s.x + dir * 30, y: g }, d: { x: d.x, y: g }, T: T * 1.2, arc: 0, update(e, u, dt) {
+        const n = count(10 * k, dt);
+        for (let i = 0; i < n; i++) { shard(th, e.x + rnd(-25, 25), g, rnd(-30, 30) - dir * 20, rnd(-260, -90) * k, rnd(300, 600), rnd(2, 5) * k, 500);
+          smoke(e.x + rnd(-30, 30), g - 6, -dir * rnd(10, 40), rnd(-40, -10), rnd(500, 900), rnd(10, 20), th.smoke, 0.16, -8);
+          if (Math.random() < 0.3) mote(th, e.x, g - rnd(0, 30), -dir * rnd(0, 60), rnd(-60, -20), rnd(400, 800), 2); }
+        if (Math.random() < 0.35 * density()) spawn({ th, x: e.x + rnd(-10, 10), y: g + rnd(-2, 6), vx: 0, vy: 0, life: rnd(900, 1500), age: 0, size: rnd(3, 6), kind: "rime", drag: 1, grav: 0, rot: rnd(0, 6) });
+      }, draw(c, e) {
+        const h = 36 * k * (0.8 + 0.2 * Math.sin(e.age / 40)); const g2 = c.createRadialGradient(e.x, g, 0, e.x, g, 60 * k); g2.addColorStop(0, rgb(th.hot, 0.6)); g2.addColorStop(0.5, rgb(th.mid, 0.3)); g2.addColorStop(1, rgb(th.mid, 0));
+        c.fillStyle = g2; c.beginPath(); c.ellipse(e.x, g - 8, 60 * k, h, 0, Math.PI, TAU); c.fill();
+        c.strokeStyle = rgb(th.hot, 0.9); c.lineWidth = 2; c.beginPath(); c.ellipse(e.x, g - 4, 46 * k, h * 0.9, 0, Math.PI, TAU); c.stroke();
+        drawCrystal(c, e.x + dir * 20, g - h * 0.8, 14 * k, e.age / 200, th, 0.8);
+      }, arrive: () => o.land(0.9) });
+    },
+    impacts: [
+      { name: "Splitterbruch", run(o, sc) { // hart und kurz: Splitter fliegen radial, glasige Funken, kaum Nebel
+        const { d, dir, k: kk } = o, th = TH.frost, k = kk * sc, n = burst(70 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), sp = rnd(120, 460) * k; shard(th, d.x, d.y, Math.cos(a) * sp - dir * 30, Math.sin(a) * sp - 60, rnd(350, 750), rnd(2.5, 6) * k, 420);
+          if (i % 2 === 0) spark(th, d.x, d.y, Math.cos(a) * sp * 1.3, Math.sin(a) * sp * 1.3, rnd(150, 350), rnd(1.2, 2.2), 200);
+          if (i % 5 === 0) smoke(d.x + rnd(-15, 15), d.y + rnd(-15, 15), rnd(-40, 40), rnd(-60, -10), rnd(500, 900), rnd(10, 20) * k, th.smoke, 0.14, -6); }
+        flash(d, 100 * k, "rgba(190,230,255,", 130); timed(220, (c, age, u) => { for (let i = 0; i < 3; i++) drawCrystal(c, d.x, d.y, (24 + 70 * u) * k, i * 1.05 + u * 0.5, th, 0.5 * (1 - u), 3); }); } },
+      { name: "Reifausbreitung", run(o, sc) { // Kristalle wachsen Schritt für Schritt vom Treffer nach außen, Frostlinien, kalter Hauch
+        const { d, k: kk } = o, th = TH.frost, k = kk * sc; const rays = [];
+        for (let i = 0; i < 7; i++) rays.push({ a: rnd(0, TAU), len: rnd(50, 110) * k, r: rnd(8, 16) * k, rot: rnd(0, 6), n: 3 + Math.floor(rnd(0, 3)) });
+        timed(900, (c, age, u) => { const grow = Math.min(1, u / 0.45), fade = u < 0.6 ? 1 : 1 - (u - 0.6) / 0.4;
+          c.strokeStyle = rgb(th.hot, 0.5 * fade); c.lineWidth = 1; for (const r of rays) { c.beginPath(); c.moveTo(d.x, d.y); c.lineTo(d.x + Math.cos(r.a) * r.len * grow, d.y + Math.sin(r.a) * r.len * grow); c.stroke(); }
+          for (const r of rays) for (let j = 0; j < r.n; j++) { const t = (j + 1) / r.n; if (t > grow + 0.05) continue; const sz = clamp((grow - t + 0.25) / 0.25, 0, 1); drawCrystal(c, d.x + Math.cos(r.a) * r.len * t, d.y + Math.sin(r.a) * r.len * t, r.r * (1 - t * 0.5) * sz, r.rot + j, th, 0.85 * fade); }
+        }, (dt, age, u) => { if (u < 0.5) { const n = count(3 * k, dt); for (let i = 0; i < n; i++) { smoke(d.x + rnd(-40, 40) * k, d.y + rnd(-40, 40) * k, rnd(-15, 15), rnd(-30, -5), rnd(600, 1100), rnd(10, 18), th.smoke, 0.13, -6); mote(th, d.x + rnd(-30, 30), d.y + rnd(-30, 30), rnd(-10, 10), rnd(-40, -10), rnd(400, 800), 2); } } });
+        flash(d, 70 * k, "rgba(190,230,255,", 160); } },
+      { name: "Frostexplosion", run(o, sc) { // runder Stoß, weiter Ring, blasser Nebel, der langsam hängen bleibt
+        const { d, k: kk } = o, th = TH.frost, k = kk * sc, n = burst(80 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), sp = rnd(40, 300) * k; ember(th, d.x, d.y, Math.cos(a) * sp, Math.sin(a) * sp - 30, rnd(300, 650), rnd(4, 10) * k, 40, 0.96);
+          if (i % 2 === 0) smoke(d.x + rnd(-10, 10), d.y + rnd(-10, 10), Math.cos(a) * sp * 0.5, Math.sin(a) * sp * 0.4 - 20, rnd(900, 1600), rnd(18, 36) * k, "150,180,200", 0.16, -8);
+          if (i % 3 === 0) shard(th, d.x, d.y, Math.cos(a) * sp * 1.2, Math.sin(a) * sp * 1.2 - 80, rnd(400, 800), rnd(2, 5), 380); }
+        flash(d, 150 * k, "rgba(200,235,255,", 220); ring(d, 130 * k, 420, "rgba(170,220,255,", 12); } },
+    ],
+  };
+
+  // ---------- BLITZ
+  function skyBolt(to, k, hold, th, onStrike) { // Blitz von oben auf einen Punkt, mit Ästen, flackernd neu gewürfelt
+    let age = 0, segs = null, lastGen = -1e9, struck = false; const from = { x: to.x + rnd(-90, 90), y: -10 };
+    active.push({ update(dt) { age += dt; if (age - lastGen > 40) { const pts = boltPath(from, to, 60 * k); segs = { pts, br: boltBranches(pts, 2, Math.PI / 2, 4) }; lastGen = age; } if (!struck) { struck = true; onStrike(); } },
+      draw(c) { if (!segs) return; const u = age / hold, a = u < 0.6 ? 1 : 1 - (u - 0.6) / 0.4; drawBolt(c, segs.pts, segs.br, k, a, th); }, alive: () => age < hold });
+  }
+  const BOLT = {
+    chain(o) { // Kettenblitz: Ladung am Stab (Funken ziehen nach innen), dann Blitz mit Ästen, der ~300 ms steht und flackert; Crit gabelt zusätzlich zu den Füßen
+      const { s, d, dir, k } = o, th = TH.bolt, charge = 140, hold = o.crit ? 380 : 280; let age = 0, segs = null, lastGen = -1, struck = false;
+      const gen = () => { const pts = boltPath(s, d, 70 * k); const out = { pts, br: boltBranches(pts, o.crit ? 4 : 2, dir > 0 ? 0 : Math.PI) }; if (o.crit) { out.pts2 = boltPath(s, o.feet, 60); } return out; };
+      active.push({ update(dt) { age += dt;
+        if (age < charge) { const n = count(3, dt); for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(18, 46); spark(th, s.x + Math.cos(a) * r, s.y + Math.sin(a) * r, -Math.cos(a) * 120, -Math.sin(a) * 120, 260, 2, 0, 1); } return; }
+        if (age - charge > hold) return; if (age - lastGen > 42) { segs = gen(); lastGen = age; } if (!struck) { struck = true; o.land(); } },
+        draw(c) { if (!segs || age < charge || age - charge > hold) return; const u = (age - charge) / hold, a = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3; drawBolt(c, segs.pts, segs.br, k, a, th); if (segs.pts2) drawBolt(c, segs.pts2, [], k * 0.6, a * 0.8, th); },
+        alive: () => age < charge + hold + 40 });
+    },
+    orb(o) { // Kugelblitz: langsame, schlingernde Kugel, knisternde Kurzbögen auf der Oberfläche, Funken rieseln
+      const { s, d, dir, T, k } = o, th = TH.bolt; let arcs = [], lastGen = -1;
+      projectile({ s, d, T: T * 1.6, arc: 30, update(e, u, dt) { e.y += Math.sin(e.age / 70) * 6;
+        if (e.age - lastGen > 55) { lastGen = e.age; arcs = []; for (let i = 0; i < 3 + (o.crit ? 2 : 0); i++) { const a = rnd(0, TAU), r = 18 * k, b = a + rnd(-0.6, 0.6); const p0 = { x: e.x + Math.cos(a) * r, y: e.y + Math.sin(a) * r }; arcs.push(boltPath(p0, { x: p0.x + Math.cos(b) * rnd(18, 44) * k, y: p0.y + Math.sin(b) * rnd(18, 44) * k }, 10, 3)); } }
+        const n = count(3 * k, dt); for (let i = 0; i < n; i++) spark(th, e.x + rnd(-14, 14), e.y + rnd(-14, 14), rnd(-40, 40), rnd(20, 80), rnd(200, 450), 1.6, 260);
+        if (Math.random() < 0.2) mote(th, e.x, e.y, -dir * rnd(20, 80), rnd(-20, 20), rnd(300, 600), 2);
+      }, draw(c, e) { core(c, e.x, e.y, 20 * k * (1 + 0.08 * Math.sin(e.age / 40)), th, true); for (const a of arcs) drawBolt(c, a, [], 0.4, 0.9, th); }, arrive: () => o.land() });
+    },
+    rain(o) { // Blitzregen: Ladung am Stab, dann vier (Crit sechs) Schläge von oben um das Ziel, der letzte trifft
+      const { s, d, k } = o, th = TH.bolt, n = o.crit ? 6 : 4;
+      timed(160, (c, age, u) => core(c, s.x, s.y, 10 + 14 * u, th, true), (dt) => { const m = count(3, dt); for (let i = 0; i < m; i++) { const a = rnd(0, TAU), r = rnd(20, 50); spark(th, s.x + Math.cos(a) * r, s.y + Math.sin(a) * r, -Math.cos(a) * 140, -Math.sin(a) * 140, 240, 2, 0, 1); } });
+      for (let i = 0; i < n; i++) { const last = i === n - 1; delay(160 + i * 110, () => {
+        const to = last ? d : { x: d.x + rnd(-110, 110), y: GROUND + 4 };
+        skyBolt(to, last ? k : 0.6, last ? 260 : 140, th, () => { if (last) o.land(); else { flash(to, 50, "rgba(246,231,161,", 120); const m = burst(14); for (let j = 0; j < m; j++) { const a = rnd(-Math.PI, 0); spark(th, to.x, to.y, Math.cos(a) * rnd(60, 220), Math.sin(a) * rnd(60, 220), rnd(150, 350), 1.6, 300); } } }); }); }
+    },
+    impacts: [
+      { name: "Funkenstern", run(o, sc) { // Sternförmiger Funkenstoß mit acht harten Strahlen
+        const { d, k: kk } = o, th = TH.bolt, k = kk * sc, n = burst(60 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), sp = rnd(80, 420) * k; spark(th, d.x, d.y, Math.cos(a) * sp, Math.sin(a) * sp, rnd(180, 420), rnd(1.5, 3), 260, 0.97); }
+        flash(d, 100 * k, "rgba(246,231,161,", 160); timed(200, (c, age, u) => { drawStar(c, d.x, d.y, (30 + 90 * u) * k, u * 0.3, th, 0.8 * (1 - u), 8); drawStar(c, d.x, d.y, (20 + 50 * u) * k, -u * 0.5 + 0.4, th, 0.6 * (1 - u), 4); }); } },
+      { name: "Bodenentladung", run(o, sc) { // Entladung kriecht als Verästelung über den Boden, Funken springen
+        const { d, feet: f, k: kk } = o, th = TH.bolt, k = kk * sc; let lastGen = -1, segs = [];
+        flash(d, 60 * k, "rgba(246,231,161,", 120); flash(f, 90 * k, "rgba(246,231,161,", 200);
+        timed(340, (c, age, u) => { const a = u < 0.6 ? 1 : 1 - (u - 0.6) / 0.4; for (const s of segs) drawBolt(c, s, [], k * 0.55, a, th); },
+          (dt, age) => { if (age - lastGen > 40) { lastGen = age; segs = []; const m = 3 + Math.round(2 * k); for (let i = 0; i < m; i++) { const dir = i % 2 ? -1 : 1, L = rnd(70, 170) * k; segs.push(boltPath(f, { x: f.x + dir * L, y: f.y + rnd(-6, 14) }, 14, 4)); } }
+            const n = count(4 * k, dt); for (let i = 0; i < n; i++) spark(th, f.x + rnd(-120, 120) * k, f.y, rnd(-60, 60), rnd(-260, -80), rnd(200, 450), 1.6, 500); }); } },
+      { name: "Nachglühen", run(o, sc) { // weicher Schein am Ziel, der langsam abklingt, Restfunken treiben, kleine Bögen zucken über den Körper
+        const { d, k: kk } = o, th = TH.bolt, k = kk * sc, b = targetBox(); let arcs = [], lastGen = -1;
+        flash(d, 110 * k, "rgba(246,231,161,", 180);
+        timed(700, (c, age, u) => { const a = (1 - u) * 0.8; const g = c.createRadialGradient(d.x, d.y, 0, d.x, d.y, 90 * k); g.addColorStop(0, rgb(th.hot, 0.35 * a)); g.addColorStop(1, rgb(th.mid, 0)); c.fillStyle = g; c.beginPath(); c.arc(d.x, d.y, 90 * k, 0, TAU); c.fill();
+          for (const s of arcs) drawBolt(c, s, [], 0.35, a, th); },
+          (dt, age, u) => { if (age - lastGen > 70) { lastGen = age; arcs = []; if (Math.random() < 1.2 - u) { const p0 = { x: b.x + rnd(0, b.w), y: b.y + rnd(0, b.h * 0.6) }; arcs.push(boltPath(p0, { x: p0.x + rnd(-40, 40), y: p0.y + rnd(-30, 30) }, 8, 3)); } }
+            const n = count(2 * k * (1 - u), dt); for (let i = 0; i < n; i++) spark(th, d.x + rnd(-40, 40), d.y + rnd(-60, 60), rnd(-30, 30), rnd(-40, 40), rnd(300, 700), 1.4, 60, 0.98); }); } },
+    ],
+  };
+
+  // ---------- GIFT
+  const POISON = {
+    vial(o) { // Giftphiole: hoher Bogen, taumelnde Glasphiole, tropft; zerplatzt am Ziel in Glas und Gift; Crit hinterlässt zusätzlich eine Pfütze
+      const { s, d, dir, T, k } = o, th = TH.poison;
+      projectile({ s, d, T: T * 1.15, arc: 150, update(e, u, dt) { if (Math.random() < 0.5 * density()) drop(th, e.x, e.y + 8, rnd(-20, 20), rnd(0, 40), rnd(300, 600), rnd(1.5, 2.5) * k, 380); if (Math.random() < 0.3) mote(th, e.x, e.y, -dir * rnd(10, 40), rnd(-20, 20), rnd(300, 600), 2); },
+        draw(c, e) { const rot = e.age / 140 * dir; c.save(); c.translate(e.x, e.y); c.rotate(rot); c.scale(k, k);
+          c.save(); c.globalCompositeOperation = "source-over"; c.fillStyle = "rgba(60,70,60,0.85)"; roundRect(c, -7, -12, 14, 26, 5); c.fill(); c.fillStyle = "#4a3a2a"; c.fillRect(-4, -16, 8, 6); c.restore();
+          c.fillStyle = rgb(th.mid, 0.85); roundRect(c, -5, 0, 10, 12, 4); c.fill(); c.strokeStyle = "rgba(220,235,225,0.6)"; c.lineWidth = 1.2; roundRect(c, -7, -12, 14, 26, 5); c.stroke();
+          const h = c.createRadialGradient(0, 4, 0, 0, 4, 26); h.addColorStop(0, th.glow + "0.3)"); h.addColorStop(1, th.glow + "0)"); c.fillStyle = h; c.fillRect(-30, -30, 60, 60); c.restore(); },
+        arrive() { const n = burst(14 * k); for (let i = 0; i < n; i++) { const a = rnd(0, TAU); glass(d.x, d.y, Math.cos(a) * rnd(60, 260), Math.sin(a) * rnd(60, 260) - 80, rnd(300, 600), rnd(3, 6)); } o.land(); if (o.crit) delay(140, () => POISON.impacts[1].run(o, 0.7)); } });
+    },
+    spores(o) { // Sporenwolke: kein Kern, eine wabernde grüne Wolke aus Sporen treibt langsam hinüber und hüllt das Ziel ein
+      const { s, d, dir, T, k } = o, th = TH.poison;
+      projectile({ s, d, T: T * 1.8, arc: 20, update(e, u, dt) { e.y += Math.sin(e.age / 120) * 14; const n = count(5 * k, dt);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(0, 34) * k; smoke(e.x + Math.cos(a) * r, e.y + Math.sin(a) * r, rnd(-20, 20) - dir * 10, rnd(-25, 10), rnd(700, 1300), rnd(14, 26) * k, th.smoke, 0.34, -10);
+          if (Math.random() < 0.5) mote(th, e.x + Math.cos(a) * r, e.y + Math.sin(a) * r, rnd(-25, 25), rnd(-30, 10), rnd(500, 1000), rnd(1.5, 3), -8);
+          if (Math.random() < 0.12) bubble(th, e.x + rnd(-20, 20), e.y + rnd(-10, 20), rnd(-10, 10), rnd(-30, -10), rnd(400, 800), rnd(2, 4)); } },
+        draw(c, e) { const g = c.createRadialGradient(e.x, e.y, 0, e.x, e.y, 46 * k); g.addColorStop(0, rgb(th.mid, 0.22)); g.addColorStop(1, rgb(th.dim, 0)); c.fillStyle = g; c.beginPath(); c.arc(e.x, e.y, 46 * k, 0, TAU); c.fill(); },
+        arrive: () => o.land(0.9) });
+    },
+    spit(o) { // Säurespucke: dünner Strahl aus Tropfen mit hellem Kopf, flacher Bogen, zischt am Ziel
+      const { s, d, dir, T, k } = o, th = TH.poison;
+      projectile({ s, d, T: T * 0.8, arc: 28, update(e, u, dt) { const n = count(6 * k, dt), vx = (d.x - s.x) / (T * 0.8) * 1000;
+        for (let i = 0; i < n; i++) { drop(th, e.x - dir * rnd(0, 14), e.y + rnd(-3, 3), vx * rnd(0.55, 0.85), rnd(-20, 20), rnd(220, 420), rnd(1.5, 3) * k, 90); if (Math.random() < 0.25) mote(th, e.x, e.y, vx * 0.3, rnd(-30, 30), rnd(200, 400), 1.8); } },
+        draw(c, e) { c.strokeStyle = rgb(th.hot, 0.9); c.lineCap = "round"; c.lineWidth = 4 * k; c.beginPath(); c.moveTo(e.x - dir * 18, e.y); c.lineTo(e.x + dir * 8, e.y); c.stroke(); core(c, e.x + dir * 6, e.y, 6 * k, th, false); },
+        arrive: () => o.land(0.8) });
+    },
+    impacts: [
+      { name: "Spritzer mit Blasen", run(o, sc) { // Gift spritzt fächerförmig weg, Blasen steigen und platzen
+        const { d, dir, k: kk } = o, th = TH.poison, k = kk * sc, n = burst(60 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(-1.1, 1.1), sp = rnd(80, 360) * k; drop(th, d.x, d.y, dir * Math.cos(a) * sp * 0.8, Math.sin(a) * sp * 0.7 - 60, rnd(350, 700), rnd(1.8, 3.5) * k, 380);
+          if (i % 3 === 0) bubble(th, d.x + rnd(-20, 20), d.y + rnd(-10, 20), rnd(-20, 20), rnd(-60, -20), rnd(400, 800), rnd(2, 5) * k);
+          if (i % 6 === 0) smoke(d.x + rnd(-15, 15), d.y + rnd(-15, 15), rnd(-20, 20), rnd(-40, -10), rnd(500, 900), rnd(10, 18), th.smoke, 0.3, -10); }
+        flash(d, 80 * k, "rgba(120,210,80,", 140); } },
+      { name: "Giftpfütze", run(o, sc) { // Gift läuft am Ziel herab und sammelt sich kurz als Pfütze, Blasen steigen daraus auf
+        const { d, feet: f, k: kk } = o, th = TH.poison, k = kk * sc, n = burst(30 * k);
+        for (let i = 0; i < n; i++) drop(th, d.x + rnd(-24, 24), d.y + rnd(-10, 30), rnd(-30, 30), rnd(40, 160), rnd(400, 800), rnd(1.5, 3) * k, 500);
+        flash(d, 60 * k, "rgba(120,210,80,", 120);
+        timed(900, (c, age, u) => { const r = 62 * k * (u < 0.3 ? u / 0.3 : 1), a = u < 0.6 ? 1 : 1 - (u - 0.6) / 0.4;
+          c.save(); c.globalCompositeOperation = "source-over"; c.fillStyle = `rgba(28,70,26,${0.85 * a})`; c.beginPath(); c.ellipse(f.x, f.y + 2, r, r * 0.26, 0, 0, TAU); c.fill(); c.restore();
+          c.strokeStyle = rgb(th.mid, 0.55 * a); c.lineWidth = 1.5; c.beginPath(); c.ellipse(f.x, f.y + 2, r * 0.9, r * 0.22, 0, 0, TAU); c.stroke(); },
+          (dt, age, u) => { if (u > 0.2 && u < 0.8) { const m = count(2.5 * k, dt); for (let i = 0; i < m; i++) bubble(th, f.x + rnd(-50, 50) * k, f.y, rnd(-10, 10), rnd(-50, -20), rnd(400, 700), rnd(2, 4)); } }); } },
+      { name: "Giftwolke", run(o, sc) { // grüne Wolke bleibt am Ziel hängen, Sporen glimmen darin, sinkt langsam
+        const { d, k: kk } = o, th = TH.poison, k = kk * sc;
+        flash(d, 90 * k, "rgba(120,210,80,", 160);
+        timed(1000, () => {}, (dt, age, u) => { const n = count(6 * k * (1 - u * 0.7), dt); for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(0, 50) * k;
+          smoke(d.x + Math.cos(a) * r, d.y + Math.sin(a) * r, rnd(-25, 25), rnd(-15, 15), rnd(800, 1500), rnd(16, 32) * k, th.smoke, 0.34, 6);
+          if (Math.random() < 0.5) mote(th, d.x + Math.cos(a) * r, d.y + Math.sin(a) * r, rnd(-20, 20), rnd(-20, 20), rnd(500, 1000), rnd(1.5, 3), -4);
+          if (Math.random() < 0.1) bubble(th, d.x + rnd(-30, 30), d.y + rnd(0, 40), 0, rnd(-30, -10), rnd(400, 700), rnd(2, 4)); } }); } },
+    ],
+  };
+
+  // ---------- ARKAN
+  const ARCANE = {
+    rune(o) { // Runenprojektil: rotierende Glyphe mit kleinem Kern, Motes flimmern hinterher; Crit als Arkan-Nova mit zweitem, gegenläufigem Ring
+      const { s, d, dir, T, k } = o, th = TH.arcane;
+      projectile({ s, d, T, arc: 30, update(e, u, dt) { const n = count(8 * k, dt);
+        for (let i = 0; i < n; i++) { mote(th, e.x + rnd(-10, 10) * k, e.y + rnd(-10, 10) * k, -dir * rnd(30, 140), rnd(-40, 40), rnd(350, 750), rnd(1.5, 3.5) * k, -10); if (Math.random() < 0.3) ember(th, e.x, e.y, -dir * rnd(40, 120), rnd(-30, 30), rnd(200, 400), rnd(3, 6) * k, 0); } },
+        draw(c, e) { const rot = e.age / 160 * dir; core(c, e.x, e.y, 9 * k, th, false); drawGlyph(c, e.x, e.y, 22 * k, rot, th, 0.95); if (o.crit) drawGlyph(c, e.x, e.y, 34 * k, -rot * 0.7, th, 0.6); },
+        arrive: () => o.land() });
+    },
+    ray(o) { // Arkanstrahl: Motes sammeln sich an der Hand, dann ein kurzer Strahl mit wandernden Wellen, Motes lösen sich vom Strahl
+      const { s, d, k } = o, th = TH.arcane, charge = 130, hold = 240 * (o.crit ? 1.3 : 1);
+      timed(charge, (c, age, u) => core(c, s.x, s.y, (6 + 16 * u) * k, th, false), (dt) => { const n = count(4, dt); for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(24, 60); pull(mote(th, s.x + Math.cos(a) * r, s.y + Math.sin(a) * r, 0, 0, 320, 2.2, 0), s, 3200); } });
+      delay(charge, () => { beam(s, d, hold, th, 10 * k); timed(hold, () => {}, (dt) => { const n = count(5 * k, dt); for (let i = 0; i < n; i++) { const t = Math.random(); mote(th, s.x + (d.x - s.x) * t, s.y + (d.y - s.y) * t, rnd(-40, 40), rnd(-60, 60), rnd(250, 500), 2, 0); } }); });
+      delay(charge + 60, () => o.land());
+    },
+    orbit(o) { // Orbit-Kugeln: drei Kugeln kreisen um einen wandernden Punkt, Bahn zieht sich zum Ziel hin zusammen, Fäden zur Mitte
+      const { s, d, dir, T, k } = o, th = TH.arcane; const orbs = [0, 1, 2].map((i) => ({ ph: i * TAU / 3, x: s.x, y: s.y }));
+      projectile({ s, d, T: T * 1.2, arc: 40, update(e, u, dt) { const R = 40 * k * (1 - u * 0.85), w = e.age / 110;
+        for (const b of orbs) { b.x = e.x + Math.cos(w + b.ph) * R; b.y = e.y + Math.sin(w + b.ph) * R * 0.5; const n = count(3 * k, dt); for (let i = 0; i < n; i++) mote(th, b.x, b.y, -dir * rnd(20, 90), rnd(-30, 30), rnd(300, 600), rnd(1.5, 3), -6); }
+        if (Math.random() < 0.3) ember(th, e.x, e.y, rnd(-20, 20), rnd(-20, 20), 300, 4 * k, 0); },
+        draw(c, e) { c.strokeStyle = rgb(th.mid, 0.35); c.lineWidth = 1; for (const b of orbs) { c.beginPath(); c.moveTo(e.x, e.y); c.lineTo(b.x, b.y); c.stroke(); } for (const b of orbs) core(c, b.x, b.y, 9 * k, th, false); },
+        arrive: () => o.land() });
+    },
+    impacts: [
+      { name: "Glyphenkreis", run(o, sc) { // große Glyphe öffnet sich am Ziel, dreht sich und verblasst, Motes steigen auf
+        const { d, k: kk } = o, th = TH.arcane, k = kk * sc;
+        flash(d, 90 * k, "rgba(150,90,230,", 160);
+        timed(520, (c, age, u) => { const a = u < 0.2 ? u / 0.2 : 1 - (u - 0.2) / 0.8; drawGlyph(c, d.x, d.y, (50 + 40 * u) * k, age / 300, th, a); drawGlyph(c, d.x, d.y, (30 + 20 * u) * k, -age / 220, th, a * 0.7); },
+          (dt, age, u) => { const n = count(4 * k * (1 - u), dt); for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(30, 80) * k; mote(th, d.x + Math.cos(a) * r, d.y + Math.sin(a) * r, rnd(-10, 10), rnd(-80, -30), rnd(400, 800), rnd(1.5, 3), -20); } }); } },
+      { name: "Arkan-Riss", run(o, sc) { // senkrechter Riss reißt kurz durch das Ziel, Motes strömen seitlich heraus
+        const { d, k: kk } = o, th = TH.arcane, k = kk * sc, pts = boltPath({ x: d.x, y: d.y - 90 * k }, { x: d.x, y: d.y + 90 * k }, 22, 4);
+        flash(d, 70 * k, "rgba(150,90,230,", 120);
+        timed(320, (c, age, u) => { const a = u < 0.15 ? u / 0.15 : 1 - (u - 0.15) / 0.85, open = Math.min(1, u / 0.15); c.save(); c.translate(d.x, d.y); c.scale(1, open); c.translate(-d.x, -d.y); drawBolt(c, pts, [], k * 0.7, a, th); c.restore(); },
+          (dt, age, u) => { if (u < 0.6) { const n = count(8 * k, dt); for (let i = 0; i < n; i++) { const p = pick(pts), dir = Math.random() < 0.5 ? -1 : 1; mote(th, p.x, p.y, dir * rnd(80, 260), rnd(-30, 30), rnd(250, 550), rnd(1.5, 3), 0, 0.96); } } }); } },
+      { name: "Motes-Implosion", run(o, sc) { // Motes stürzen von außen ins Ziel, dann ein kurzer Blitz und ein Ring nach außen
+        const { d, k: kk } = o, th = TH.arcane, k = kk * sc, n = burst(70 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(70, 130) * k; pull(mote(th, d.x + Math.cos(a) * r, d.y + Math.sin(a) * r, 0, 0, 420, rnd(2, 3.5), 0, 1), d, 5000); }
+        timed(260, (c, age, u) => { c.strokeStyle = rgb(th.mid, 0.5 * u); c.lineWidth = 1.5; c.beginPath(); c.arc(d.x, d.y, 110 * k * (1 - u), 0, TAU); c.stroke(); });
+        delay(250, () => { flash(d, 120 * k, "rgba(190,150,255,", 180); ring(d, 90 * k, 300, "rgba(150,90,230,", 8); const m = burst(25 * k); for (let i = 0; i < m; i++) { const a = rnd(0, TAU); mote(th, d.x, d.y, Math.cos(a) * rnd(100, 300), Math.sin(a) * rnd(100, 300), rnd(300, 600), 2.5, 0, 0.95); } }); } },
+    ],
+  };
+
+  // ---------- LEERE
+  const VOID = {
+    core(o) { // Leerenkern: schwarzer Kern mit purpurnem Saum, der Licht ansaugt: Motes fließen von außen in den Kern; Crit als Leeren-Schlund, der die Szene kurz verdunkelt
+      const { s, d, dir, T, k } = o, th = TH.void;
+      projectile({ s, d, T: T * 1.1, arc: 20, update(e, u, dt) { const n = count(9 * k, dt);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(40, 90) * k; pull(mote(th, e.x + Math.cos(a) * r + dir * 30, e.y + Math.sin(a) * r, 0, 0, 380, rnd(1.5, 3), 0, 1), e, 3600 * k); }
+        if (Math.random() < 0.5) smoke(e.x - dir * 10, e.y, -dir * rnd(20, 60), rnd(-20, 20), rnd(500, 900), rnd(14, 24) * k, th.smoke, 0.3, -4); },
+        draw(c, e) { voidCore(c, e.x, e.y, (o.crit ? 30 : 20) * k * (1 + 0.06 * Math.sin(e.age / 35))); },
+        arrive() { o.land(); if (o.crit) darken = 0.8; } });
+    },
+    rift(o) { // Leerenriss: ein Spalt reißt vom Angreifer zum Ziel auf (dunkle Naht, purpurner Saum), Motes kippen hinein, dann schnappt er zu
+      const { s, d, dir, T, k } = o, th = TH.void, pts = boltPath(s, d, 26 * k, 5), hold = 140;
+      let age = 0, struck = false;
+      active.push({ update(dt) { age += dt; const u = Math.min(1, age / (T * 0.8)); const n = count(6 * k, dt), lim = Math.floor(u * (pts.length - 1));
+        for (let i = 0; i < n; i++) { const p = pts[Math.floor(rnd(0, lim + 1))]; const side = Math.random() < 0.5 ? -1 : 1; pull(mote(th, p.x + rnd(-10, 10), p.y + side * rnd(20, 50), 0, 0, 300, 2, 0, 1), p, 2600); }
+        if (u >= 1 && !struck) { struck = true; o.land(); } },
+        draw(c) { const u = Math.min(1, age / (T * 0.8)), lim = Math.max(1, Math.floor(u * (pts.length - 1))), post = struck ? Math.min(1, (age - T * 0.8) / hold) : 0, wdt = (1 - post) * k;
+          const path = () => { c.beginPath(); c.moveTo(pts[0].x, pts[0].y); for (let i = 1; i <= lim; i++) c.lineTo(pts[i].x, pts[i].y); };
+          c.lineCap = "round"; c.lineJoin = "round"; c.strokeStyle = th.glow + (0.18 * (1 - post)) + ")"; c.lineWidth = 18 * wdt; path(); c.stroke();
+          c.strokeStyle = rgb(th.mid, 0.8 * (1 - post)); c.lineWidth = 6 * wdt; path(); c.stroke();
+          c.save(); c.globalCompositeOperation = "source-over"; c.strokeStyle = `rgba(0,0,0,${0.95 * (1 - post)})`; c.lineWidth = 3.5 * wdt; path(); c.stroke(); c.restore();
+          c.strokeStyle = rgb(th.hot, 0.8 * (1 - post)); c.lineWidth = 1; path(); c.stroke(); },
+        alive: () => age < T * 0.8 + hold });
+    },
+    tendrils(o) { // Tentakel-Schlieren: drei bis vier dunkle Schlieren winden sich zum Ziel, purpurne Spitzen, peitschen beim Ankommen
+      const { s, d, dir, T, k } = o, th = TH.void, n = o.crit ? 5 : 3 + Math.floor(rnd(0, 2));
+      const ts = []; for (let i = 0; i < n; i++) ts.push({ lag: i * 0.08, amp: rnd(30, 70) * (i % 2 ? 1 : -1), ph: rnd(0, 6), sp: rnd(4, 7), hx: s.x, hy: s.y, cx: s.x, cy: s.y });
+      projectile({ s, d, T: T * 1.15, arc: 0, update(e, u, dt) { const L = Math.hypot(d.x - s.x, d.y - s.y), nx = -(d.y - s.y) / L, ny = (d.x - s.x) / L;
+        for (const t of ts) { const uu = clamp((u - t.lag) / (1 - t.lag), 0, 1); const off = Math.sin(e.age / 1000 * t.sp + t.ph) * t.amp * (1 - uu * 0.6);
+          t.hx = s.x + (d.x - s.x) * uu + nx * off * 0.3; t.hy = s.y + (d.y - s.y) * uu + ny * off * 0.3; t.cx = s.x + (d.x - s.x) * uu * 0.5 + nx * off; t.cy = s.y + (d.y - s.y) * uu * 0.5 + ny * off;
+          if (Math.random() < 0.6 * density()) smoke(t.hx, t.hy, -dir * rnd(10, 40), rnd(-20, 20), rnd(400, 800), rnd(12, 20) * k, th.smoke, 0.35, -3);
+          if (Math.random() < 0.3 * density()) mote(th, t.hx, t.hy, rnd(-30, 30), rnd(-30, 30), rnd(200, 450), 2, 0); } },
+        draw(c, e) { c.lineCap = "round"; for (const t of ts) { const draw = (w, cc) => { c.strokeStyle = cc; c.lineWidth = w; c.beginPath(); c.moveTo(s.x, s.y); c.quadraticCurveTo(t.cx, t.cy, t.hx, t.hy); c.stroke(); };
+          draw(14 * k, th.glow + "0.14)"); c.save(); c.globalCompositeOperation = "source-over"; draw(7 * k, "rgba(6,2,10,0.9)"); c.restore(); draw(1.5, rgb(th.mid, 0.8)); core(c, t.hx, t.hy, 5 * k, th, false); } },
+        arrive: () => o.land(0.9) });
+    },
+    impacts: [
+      { name: "Implosion", run(o, sc) { // alles stürzt nach innen: Motes und ein Ring ziehen sich ins Ziel zusammen, dann ein dumpfer purpurner Puls
+        const { d, k: kk } = o, th = TH.void, k = kk * sc, n = burst(80 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), r = rnd(80, 150) * k; pull(mote(th, d.x + Math.cos(a) * r, d.y + Math.sin(a) * r, 0, 0, 380, rnd(2, 3.5), 0, 1), d, 6000); }
+        timed(300, (c, age, u) => { c.strokeStyle = rgb(th.mid, 0.6 * u); c.lineWidth = 3 + 6 * u; c.beginPath(); c.arc(d.x, d.y, 130 * k * (1 - u), 0, TAU); c.stroke(); voidCore(c, d.x, d.y, 34 * k * u); });
+        delay(290, () => { flash(d, 100 * k, "rgba(130,40,180,", 200); darken = Math.max(darken, 0.35); const m = burst(20 * k); for (let i = 0; i < m; i++) smoke(d.x + rnd(-20, 20), d.y + rnd(-20, 20), rnd(-80, 80), rnd(-80, 40), rnd(600, 1100), rnd(12, 24) * k, th.smoke, 0.6, -6); }); } },
+      { name: "Riss am Ziel", run(o, sc) { // dunkle Risse ziehen sich über die Silhouette des Ziels, purpurn gesäumt, Schatten sickert heraus
+        const { d, k: kk } = o, th = TH.void, k = kk * sc, b = targetBox(), lines = [];
+        for (let i = 0; i < 3; i++) { const y0 = b.y + b.h * rnd(0.15, 0.7); lines.push(boltPath({ x: b.x + rnd(-10, 10), y: y0 }, { x: b.x + b.w + rnd(-10, 10), y: y0 + rnd(-50, 50) }, 18, 4)); }
+        flash(d, 70 * k, "rgba(130,40,180,", 140);
+        timed(520, (c, age, u) => { const a = u < 0.1 ? u / 0.1 : 1 - (u - 0.1) / 0.9; for (const l of lines) { drawBolt(c, l, [], 0.45 * k, a * 0.7, th); c.save(); c.globalCompositeOperation = "source-over"; c.strokeStyle = `rgba(0,0,0,${0.9 * a})`; c.lineWidth = 2.5; c.beginPath(); c.moveTo(l[0].x, l[0].y); for (let i = 1; i < l.length; i++) c.lineTo(l[i].x, l[i].y); c.stroke(); c.restore(); } },
+          (dt, age, u) => { if (u < 0.6) { const n = count(3 * k, dt); for (let i = 0; i < n; i++) { const p = pick(pick(lines)); smoke(p.x, p.y, rnd(-20, 20), rnd(-30, 10), rnd(500, 900), rnd(8, 14), th.smoke, 0.55, -5); if (Math.random() < 0.4) mote(th, p.x, p.y, rnd(-40, 40), rnd(-40, 20), rnd(300, 600), 2); } } }); } },
+      { name: "Schatten-Nachbild", run(o, sc) { // ein dunkles Abbild des Ziels löst sich, treibt nach hinten und zerfällt in purpurne Motes
+        const { d, dir, k: kk } = o, th = TH.void, k = kk * sc, b = targetBox();
+        flash(d, 60 * k, "rgba(130,40,180,", 120);
+        timed(650, (c, age, u) => { const a = (1 - u) * 0.85, off = -dir * (10 + 50 * u) * k, dy = -20 * u; c.save(); c.globalCompositeOperation = "source-over"; c.fillStyle = `rgba(4,1,8,${a})`; roundRect(c, b.x + off, b.y + dy, b.w, b.h, b.r); c.fill(); c.restore();
+          c.strokeStyle = rgb(th.mid, a * 0.9); c.lineWidth = 2; roundRect(c, b.x + off, b.y + dy, b.w, b.h, b.r); c.stroke(); },
+          (dt, age, u) => { const n = count(4 * k, dt); for (let i = 0; i < n; i++) { const off = -dir * (10 + 50 * u) * k; mote(th, b.x + off + rnd(0, b.w), b.y + rnd(0, b.h), -dir * rnd(10, 50), rnd(-40, 10), rnd(400, 800), rnd(1.5, 3), -10); } }); } },
+    ],
+  };
+
+  // ---------- AETHER
+  function drawFeather(c, x, y, L, rot, a, th) { // goldene Feder: schmales Blatt mit Kiel
+    c.save(); c.translate(x, y); c.rotate(rot); c.fillStyle = rgb(th.mid, 0.75 * a); c.beginPath(); c.ellipse(0, 0, L, L * 0.28, 0, 0, TAU); c.fill();
+    c.strokeStyle = rgb(th.hot, a); c.lineWidth = 1.2; c.beginPath(); c.moveTo(-L, 0); c.lineTo(L * 0.9, 0); c.stroke();
+    for (let i = -3; i <= 3; i++) { c.beginPath(); c.moveTo(i * L * 0.22, 0); c.lineTo(i * L * 0.22 - L * 0.12, -L * 0.22); c.stroke(); } c.restore();
+  }
+  const AETHER = {
+    feather(o) { // Lichtfeder: zwei goldene Federn (Crit fünf) gleiten in einer S-Kurve zum Ziel, blasse Motes bleiben in der Luft
+      const { s, d, dir, T, k } = o, th = TH.aether, n = o.crit ? 5 : 2;
+      const fs = []; for (let i = 0; i < n; i++) fs.push({ lag: i * 0.06, amp: rnd(30, 60) * (i % 2 ? 1 : -1), ph: rnd(0, 3), x: s.x, y: s.y, rot: 0 });
+      projectile({ s, d, T: T * 1.2, arc: 50, update(e, u, dt) { for (const f of fs) { const uu = clamp((u - f.lag) / (1 - f.lag), 0, 1), px = f.x, py = f.y;
+          f.x = s.x + (d.x - s.x) * uu; f.y = s.y + (d.y - s.y) * uu - Math.sin(uu * Math.PI) * 50 + Math.sin(uu * TAU + f.ph) * f.amp; f.rot = Math.atan2(f.y - py, f.x - px || dir * 0.001);
+          const m = count(3 * k, dt); for (let i = 0; i < m; i++) mote(th, f.x, f.y, -dir * rnd(10, 60), rnd(-30, 30), rnd(500, 1000), rnd(1.5, 3), -18, 0.985); } },
+        draw(c, e) { for (const f of fs) { drawFeather(c, f.x, f.y, 22 * k, f.rot, 0.95, th); const g = c.createRadialGradient(f.x, f.y, 0, f.x, f.y, 30 * k); g.addColorStop(0, th.glow + "0.3)"); g.addColorStop(1, th.glow + "0)"); c.fillStyle = g; c.beginPath(); c.arc(f.x, f.y, 30 * k, 0, TAU); c.fill(); } },
+        arrive: () => o.land() });
+    },
+    rays(o) { // Strahlenbündel: kurzer Schein an der Hand, dann drei (Crit fünf) Lichtstrahlen von oben, die sich auf dem Ziel bündeln; Motes steigen im Licht
+      const { s, d, k } = o, th = TH.aether, n = o.crit ? 5 : 3, hold = 520;
+      timed(160, (c, age, u) => core(c, s.x, s.y, (6 + 14 * u) * k, th, false));
+      for (let i = 0; i < n; i++) delay(140 + i * 60, () => rayFromAbove(d.x, d.y + 30, hold, th, (26 + 10 * k) * (i === 0 ? 1.3 : 0.8), d.x + (i - (n - 1) / 2) * 140));
+      timed(140 + hold, () => {}, (dt, age) => { if (age > 140) { const m = count(4 * k, dt); for (let i = 0; i < m; i++) mote(th, d.x + rnd(-40, 40) * k, d.y + rnd(-80, 60), rnd(-8, 8), rnd(-70, -25), rnd(500, 1000), rnd(1.5, 3), -25); } });
+      delay(140 + 200, () => o.land());
+    },
+    ring(o) { // Segensring: ein goldener Ring, von der Kante gesehen, wandert zum Ziel und weitet sich, Motes rieseln aus dem Rand
+      const { s, d, dir, T, k } = o, th = TH.aether;
+      projectile({ s, d, T: T * 0.9, arc: 10, update(e, u, dt) { const R = (30 + 40 * u) * k, n = count(6 * k, dt); for (let i = 0; i < n; i++) { const a = rnd(0, TAU); mote(th, e.x + Math.cos(a) * 6, e.y + Math.sin(a) * R, -dir * rnd(20, 80), rnd(-20, 20), rnd(400, 800), rnd(1.5, 3), -10); } },
+        draw(c, e) { const R = (30 + 40 * e.u) * k; c.strokeStyle = th.glow + "0.25)"; c.lineWidth = 12 * k; c.beginPath(); c.ellipse(e.x, e.y, R * 0.22, R, 0, 0, TAU); c.stroke();
+          c.strokeStyle = rgb(th.mid, 0.8); c.lineWidth = 4 * k; c.beginPath(); c.ellipse(e.x, e.y, R * 0.22, R, 0, 0, TAU); c.stroke(); c.strokeStyle = rgb(th.hot, 0.95); c.lineWidth = 1.5; c.beginPath(); c.ellipse(e.x, e.y, R * 0.22, R, 0, 0, TAU); c.stroke(); },
+        arrive: () => o.land() });
+    },
+    impacts: [
+      { name: "Lichtplatzen", run(o, sc) { // weiches Aufplatzen: heller Kern, sechs Strahlen, blasse Funken und Motes nach außen
+        const { d, k: kk } = o, th = TH.aether, k = kk * sc, n = burst(50 * k);
+        for (let i = 0; i < n; i++) { const a = rnd(0, TAU), sp = rnd(60, 280) * k; mote(th, d.x, d.y, Math.cos(a) * sp, Math.sin(a) * sp, rnd(300, 700), rnd(2, 4), -20, 0.96); if (i % 3 === 0) spark(th, d.x, d.y, Math.cos(a) * sp * 1.3, Math.sin(a) * sp * 1.3, rnd(150, 350), 1.6, 80); }
+        flash(d, 140 * k, "rgba(245,215,140,", 220); timed(260, (c, age, u) => { drawStar(c, d.x, d.y, (30 + 90 * u) * k, u * 0.4, th, 0.7 * (1 - u), 6); }); } },
+      { name: "Federregen", run(o, sc) { // goldene Federn rieseln um das Ziel herab, wiegen sich, Motes glimmen dazwischen
+        const { d, k: kk } = o, th = TH.aether, k = kk * sc, n = burst(14 * k);
+        flash(d, 70 * k, "rgba(245,215,140,", 160);
+        for (let i = 0; i < n; i++) feather(th, d.x + rnd(-70, 70) * k, d.y - rnd(60, 140), rnd(-20, 20), rnd(10, 40), rnd(1100, 1800), rnd(8, 14));
+        timed(700, () => {}, (dt) => { const m = count(2 * k, dt); for (let i = 0; i < m; i++) mote(th, d.x + rnd(-70, 70) * k, d.y + rnd(-100, 60), rnd(-8, 8), rnd(-20, -5), rnd(600, 1100), rnd(1.5, 3), -6); }); } },
+      { name: "Nachhall-Ring", run(o, sc) { // drei Ringe laufen nacheinander nach außen, dazwischen ein Schein, Motes steigen
+        const { d, k: kk } = o, th = TH.aether, k = kk * sc;
+        flash(d, 90 * k, "rgba(245,215,140,", 200);
+        for (let i = 0; i < 3; i++) delay(i * 130, () => ring(d, (90 + i * 30) * k, 420, "rgba(245,215,140,", 8 - i * 2));
+        timed(600, () => {}, (dt, age, u) => { const m = count(3 * k * (1 - u), dt); for (let i = 0; i < m; i++) { const a = rnd(0, TAU), r = rnd(20, 90) * k; mote(th, d.x + Math.cos(a) * r, d.y + Math.sin(a) * r, 0, rnd(-60, -20), rnd(400, 900), rnd(1.5, 3), -15); } }); } },
+    ],
+  };
+
+  // =====================================================================================
+  // NAHKAMPF: kein Projektil. Der Angreifer macht einen Ausfallschritt, ein Luftzug läuft zum Ziel,
+  // dann sitzt der Bogen über der Trefferzone. Winkel werden für die Gegnerseite gespiegelt.
+  // =====================================================================================
+  const STEEL = TH.steel;
+  const ang = (dir, a) => dir > 0 ? a : Math.PI - a;
+  const kr = (k) => 1 + (k - 1) * 0.35; // Radius wächst beim Crit nur gedämpft, damit der Bogen auf dem Körper bleibt
+  function dash(o, ms = 150) { // Luftzug vom Angreifer zum Ziel + Staub am Fuß
+    const { s, d, dir } = o; const a = { x: s.x - dir * 30, y: s.y + 60 }, b = { x: s.x + (d.x - s.x) * 0.55, y: d.y };
+    timed(ms, (c, age, u) => { const al = 0.35 * (1 - u); c.lineCap = "round"; c.strokeStyle = STEEL.glow + al + ")"; c.lineWidth = 14; c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(a.x + (b.x - a.x) * Math.min(1, u * 2), a.y + (b.y - a.y) * Math.min(1, u * 2)); c.stroke(); });
+    const f = burst(6); for (let i = 0; i < f; i++) dust(s.x - dir * rnd(0, 40), GROUND + rnd(0, 8), -dir * rnd(20, 80), rnd(-40, -10), rnd(400, 800), rnd(6, 12));
+  }
+  function edgeSparks(o, at, n, spread = 1.2) { const { dir } = o; const m = burst(n); for (let i = 0; i < m; i++) { const a = rnd(-spread, spread); spark(STEEL, at.x, at.y, dir * Math.cos(a) * rnd(60, 260), Math.sin(a) * rnd(60, 260) - 40, rnd(150, 380), rnd(1.2, 2.2), 300); } }
+  function shock(o, r, ms = 260, w = 10) { ring(o.feet, r, ms, "rgba(200,180,150,", w, 0.28); const m = burst(10); for (let i = 0; i < m; i++) dust(o.feet.x + rnd(-30, 30), o.feet.y, rnd(-120, 120), rnd(-90, -20), rnd(500, 900), rnd(8, 16)); }
+  function cut(o, a0, a1, r, w, delayMs, ms = 300, cyOff = 50) { // ein Schnittbogen über der Brust des Ziels; cyOff > 0 wölbt nach oben, < 0 nach unten
+    const { d, dir, k } = o; const cx = d.x - dir * 40, cy = d.y + cyOff;
+    delay(delayMs, () => { slash({ x: cx, y: cy, r: r * kr(k), a0: ang(dir, a0), a1: ang(dir, a1), ms, w: w * k, th: STEEL }); edgeSparks(o, { x: cx + Math.cos(ang(dir, a1)) * r * kr(k), y: cy + Math.sin(ang(dir, a1)) * r * kr(k) }, 6 * k); o.land(); });
+  }
+  const MELEE = {
+    cut: { name: "Schnitt", variants: [
+      { name: "Schnitt", run(o) { doLunge(260, 60); dash(o); cut(o, -1.9, -0.3, 90, 3, 110); } }, // dünner Bogen von oben links nach rechts
+      { name: "Doppelschnitt", run(o) { doLunge(320, 60); dash(o); cut(o, -1.9, -0.3, 90, 3, 100); cut(o, 1.9, 0.3, 88, 3, 200, 300, -50); } }, // zwei Bögen als X
+    ], crit: { name: "Klingensturm", run(o) { doLunge(360, 70); dash(o); cut(o, -1.9, -0.3, 96, 3.5, 90, 260); cut(o, 1.9, 0.3, 92, 3.5, 180, 260, -50); cut(o, -1.2, -2.6, 100, 4, 270, 280); delay(250, () => { flash(o.d, 90, "rgba(230,225,210,", 140); hit(8); }); } } },
+    chop: { name: "Hieb", variants: [
+      { name: "Hieb senkrecht", run(o) { const { d, dir, k } = o; doLunge(280, 70); dash(o); delay(120, () => { slash({ x: d.x - dir * 70, y: d.y, r: 85 * kr(k), a0: ang(dir, -1.4), a1: ang(dir, 0.9), ms: 300, w: 5 * k, th: STEEL }); shock(o, 60 * k); o.land(); hit(5); }); } }, // schwerer senkrechter Bogen, kleine Stoßwelle, Staub
+      { name: "Hieb schräg", run(o) { const { d, dir, k } = o; doLunge(280, 70); dash(o); delay(120, () => { slash({ x: d.x - dir * 30, y: d.y - 40, r: 90 * kr(k), a0: ang(dir, -2.2), a1: ang(dir, 0.9), ms: 300, w: 6 * k, th: STEEL }); shock(o, 50 * k, 260, 6); edgeSparks(o, d, 8, 0.8); o.land(); hit(5); }); } }, // schräger Hieb von oben hinten, Funken an der Schneide
+    ], crit: { name: "Spalter", run(o) { const { d, dir, k } = o; doLunge(340, 80); dash(o); delay(130, () => { slash({ x: d.x - dir * 70, y: d.y, r: 100 * kr(k), a0: ang(dir, -1.5), a1: ang(dir, 1.0), ms: 330, w: 7 * k, th: STEEL }); shock(o, 90 * k, 340, 14); crack(o.feet, 900, 3, 110); flash(d, 90, "rgba(230,225,210,", 140); o.land(); hit(9); }); } } },
+    blunt: { name: "Wucht", variants: [
+      { name: "Wucht", run(o) { const { d, dir, k } = o; doLunge(300, 80); dash(o); delay(130, () => { slash({ x: d.x - dir * 20, y: d.y + 20, r: 75 * kr(k), a0: ang(dir, -2.6), a1: ang(dir, -0.2), ms: 320, w: 9 * k, th: STEEL, tilt: 0.8 }); shock(o, 100 * k, 340, 14); crack(o.feet, 800, 2, 100); o.land(); hit(8); }); } }, // breiter, flacher Bogen, Bodenriss, Wackler
+      { name: "Schmetterschlag", run(o) { const { d, dir, k } = o; doLunge(320, 80); dash(o); delay(140, () => { slash({ x: d.x - dir * 60, y: d.y - 30, r: 70 * kr(k), a0: ang(dir, -1.6), a1: ang(dir, 1.2), ms: 300, w: 10 * k, th: STEEL }); shock(o, 130 * k, 400, 18); crack(o.feet, 900, 3, 120); const m = burst(16); for (let i = 0; i < m; i++) dust(o.feet.x + rnd(-40, 40), o.feet.y, rnd(-160, 160), rnd(-140, -40), rnd(600, 1100), rnd(10, 20)); o.land(); hit(10); }); } }, // von oben herab, große Bodenwelle
+    ], crit: { name: "Erdbrecher", run(o) { const { d, dir, k } = o; doLunge(380, 90); dash(o); delay(150, () => { slash({ x: d.x - dir * 20, y: d.y + 20, r: 85 * kr(k), a0: ang(dir, -2.7), a1: ang(dir, -0.1), ms: 340, w: 11 * k, th: STEEL, tilt: 0.8 }); shock(o, 150 * k, 440, 20); delay(90, () => shock(o, 190 * k, 460, 12)); crack(o.feet, 1100, 5, 150); flash(d, 110, "rgba(230,225,210,", 160); const m = burst(24); for (let i = 0; i < m; i++) dust(o.feet.x + rnd(-60, 60), o.feet.y, rnd(-200, 200), rnd(-180, -40), rnd(700, 1300), rnd(10, 22)); o.land(); hit(14); }); } } },
+    thrust: { name: "Stoß", variants: [
+      { name: "Stoß", run(o) { doLunge(240, 70); dash(o, 100); thrust(o, 0, 0, 90); } }, // gerader Blitz aus Stahl bis zur Brust, Funken an der Spitze
+      { name: "Doppelstoß", run(o) { doLunge(320, 70); dash(o, 100); thrust(o, -14, 0, 80); thrust(o, 14, 0, 190); } }, // zwei schnelle Stiche versetzt
+    ], crit: { name: "Durchbohren", run(o) { doLunge(340, 90); dash(o, 110); thrust(o, 0, 90, 100, 260); delay(150, () => { flash(o.d, 80, "rgba(230,225,210,", 140); edgeSparks(o, { x: o.d.x + o.dir * 60, y: o.d.y }, 12, 0.7); hit(8); }); } } },
+  };
+  function thrust(o, yoff, over, delayMs, ms = 260) { // gerader Stich: helle Linie schießt von der Hand bis zur Brust (über = darüber hinaus)
+    const { s, d, dir, k } = o; const a = { x: s.x - dir * 20, y: s.y + 70 + yoff }, b = { x: d.x + dir * over, y: d.y + yoff };
+    delay(delayMs, () => { timed(ms, (c, age, u) => { const ext = Math.min(1, u / 0.35), fade = u < 0.45 ? 1 : 1 - (u - 0.45) / 0.55; const tx = a.x + (b.x - a.x) * ext, ty = a.y + (b.y - a.y) * ext; c.lineCap = "round";
+        for (const [w, cc] of [[12 * k, STEEL.glow + (0.12 * fade) + ")"], [4 * k, rgb(STEEL.mid, 0.6 * fade)], [1.5, `rgba(255,255,255,${0.95 * fade})`]]) { c.strokeStyle = cc; c.lineWidth = w; c.beginPath(); c.moveTo(a.x + (tx - a.x) * 0.4, a.y + (ty - a.y) * 0.4); c.lineTo(tx, ty); c.stroke(); } });
+      delay(ms * 0.35, () => { edgeSparks(o, { x: d.x, y: d.y + yoff }, 8 * k, 0.9); o.land(); hit(4); }); });
+  }
+
+  // ---------- PFEIL
+  function drawArrow(c, x, y, a, k, al = 1) { c.save(); c.translate(x, y); c.rotate(a); c.globalCompositeOperation = "source-over"; c.strokeStyle = `rgba(150,118,80,${al})`; c.lineWidth = 2.4 * k; c.lineCap = "round"; c.beginPath(); c.moveTo(-22 * k, 0); c.lineTo(16 * k, 0); c.stroke();
+    c.fillStyle = `rgba(200,185,150,${al})`; c.beginPath(); c.moveTo(-22 * k, 0); c.lineTo(-30 * k, -4 * k); c.lineTo(-26 * k, 0); c.lineTo(-30 * k, 4 * k); c.closePath(); c.fill();
+    c.globalCompositeOperation = "lighter"; c.fillStyle = rgb(STEEL.hot, 0.95 * al); c.beginPath(); c.moveTo(24 * k, 0); c.lineTo(14 * k, -3 * k); c.lineTo(14 * k, 3 * k); c.closePath(); c.fill(); c.restore(); }
+  function arrowFlight(o, Tm, arc, onHit) {
+    const { s, d, dir, k } = o; let px = s.x, py = s.y, a = 0;
+    projectile({ s: { x: s.x - dir * 10, y: s.y + 20 }, d, T: o.T * Tm, arc, update(e, u, dt) { a = Math.atan2(e.y - py, e.x - px || dir * 0.001); px = e.x; py = e.y; e.a = a; const n = count(3, dt); for (let i = 0; i < n; i++) spark(STEEL, e.x - dir * rnd(10, 40), e.y + rnd(-2, 2), -dir * rnd(40, 120), rnd(-10, 10), rnd(120, 240), 1.2, 0, 0.98); },
+      draw(c, e) { drawArrow(c, e.x, e.y, e.a, k); c.strokeStyle = STEEL.glow + "0.25)"; c.lineWidth = 3 * k; c.beginPath(); c.moveTo(e.x, e.y); c.lineTo(e.x - Math.cos(e.a) * 60 * k, e.y - Math.sin(e.a) * 60 * k); c.stroke(); },
+      arrive: () => onHit(a) });
+  }
+  function arrowStick(o, a, ms = 340) { const { d, k } = o; timed(ms, (c, age, u) => { const vib = Math.sin(age / 18) * (1 - u) * 0.08; drawArrow(c, d.x, d.y, a + vib, k, 1 - u * u); }); }
+  function splinters(o, n) { const { d, dir } = o; const m = burst(n); for (let i = 0; i < m; i++) { const a = rnd(-1.4, 1.4); splinter(d.x, d.y, -dir * Math.cos(a) * rnd(40, 200), Math.sin(a) * rnd(40, 200) - 60, rnd(350, 700), rnd(3, 7)); } edgeSparks(o, d, 4, 0.6); }
+  const ARROW = { variants: [
+    { name: "Pfeil", run(o) { arrowFlight(o, 0.55, 30, (a) => { arrowStick(o, a); splinters(o, 12 * o.k); o.land(); hit(3); }); } }, // flacher, schneller Streifen, bleibt kurz stecken, Splitter
+    { name: "Steilschuss", run(o) { arrowFlight(o, 0.95, 220, (a) => { arrowStick(o, a); splinters(o, 12 * o.k); o.land(); hit(3); }); } }, // hoher Bogen, kommt von oben ins Ziel
+  ], crit: { name: "Durchschlag", run(o) { arrowFlight(o, 0.42, 20, (a) => { arrowStick(o, a, 420); splinters(o, 24); flash(o.d, 70, "rgba(230,225,210,", 120); edgeSparks(o, { x: o.d.x + o.dir * 40, y: o.d.y }, 10, 0.6); o.land(); hit(7); }); } } };
+
+  // ---------- TREFFERREAKTIONEN (gedeckt, kurz, kein Gore)
+  const HITS = { variants: [
+    { name: "Blut rot", run(o) { const { d, dir, k } = o, n = burst(22 * k); hit(3); for (let i = 0; i < n; i++) { const a = rnd(-0.9, 0.9); blood(d.x + rnd(-6, 6), d.y + rnd(-14, 14), dir * Math.cos(a) * rnd(60, 240) * k, Math.sin(a) * rnd(60, 200) - 40, rnd(320, 620), rnd(2, 4) * k); } for (let i = 0; i < 3; i++) smoke(d.x + dir * rnd(0, 20), d.y + rnd(-10, 10), dir * rnd(10, 40), rnd(-20, 10), rnd(300, 500), rnd(8, 14), "60,8,12", 0.3, 0); } }, // wenige dunkelrote Tropfen, fallen schnell
+    { name: "Ichor grün", run(o) { const { d, dir, k } = o, n = burst(14 * k); hit(3); for (let i = 0; i < n; i++) { const a = rnd(-0.7, 0.7); blood(d.x + rnd(-6, 6), d.y + rnd(-14, 14), dir * Math.cos(a) * rnd(30, 140) * k, Math.sin(a) * rnd(20, 120) - 20, rnd(450, 800), rnd(3, 5.5) * k, "58,96,44"); } for (let i = 0; i < 4; i++) smoke(d.x + dir * rnd(0, 20), d.y + rnd(-10, 10), dir * rnd(10, 30), rnd(-25, 5), rnd(400, 700), rnd(10, 16), "20,40,18", 0.35, -4); } }, // zäh, dunkelgrün, tropft träger
+    { name: "Knochenstaub", run(o) { const { d, dir, k } = o, n = burst(10 * k); hit(3); for (let i = 0; i < n; i++) { const a = rnd(-1.2, 1.2); bone(d.x, d.y + rnd(-20, 20), dir * Math.cos(a) * rnd(40, 180), Math.sin(a) * rnd(40, 160) - 80, rnd(400, 800), rnd(2, 5) * k); } for (let i = 0; i < 8 * k; i++) smoke(d.x + rnd(-14, 14), d.y + rnd(-20, 20), dir * rnd(10, 60), rnd(-40, -5), rnd(500, 1000), rnd(12, 22), "190,180,160", 0.22, -8); } }, // blasse Staubwolke, kleine Splitter
+    { name: "Block-Funken", run(o) { const { d, dir, k } = o, at = { x: d.x - dir * 55, y: d.y }; shake = Math.max(shake, 2); const m = burst(22 * k); for (let i = 0; i < m; i++) { const a = rnd(-1.3, 1.3); spark(STEEL, at.x, at.y, -dir * Math.cos(a) * rnd(80, 320), Math.sin(a) * rnd(80, 320) - 60, rnd(180, 420), rnd(1.3, 2.4), 320); }
+        flash(at, 50 * k, "rgba(230,225,210,", 110); timed(200, (c, age, u) => { const a = 1 - u; c.strokeStyle = rgb(STEEL.hot, 0.9 * a); c.lineWidth = 3; c.beginPath(); c.arc(at.x + dir * 30, at.y, 48, ang(dir, Math.PI - 0.9), ang(dir, Math.PI + 0.9), dir < 0); c.stroke(); c.strokeStyle = STEEL.glow + (0.25 * a) + ")"; c.lineWidth = 12; c.stroke(); }); } }, // Funkenfächer am Schildanker, kurzer Schildbogen
+    { name: "Fehlschlag-Wischer", run(o) { const { d, dir, s } = o; const a = { x: d.x - dir * 90, y: d.y - 30 }, b = { x: d.x + dir * 130, y: d.y + 20 };
+        timed(260, (c, age, u) => { const al = (u < 0.5 ? u / 0.5 : 1 - (u - 0.5) / 0.5) * 0.35, hx = a.x + (b.x - a.x) * Math.min(1, u * 1.6), hy = a.y + (b.y - a.y) * Math.min(1, u * 1.6); c.lineCap = "round"; c.strokeStyle = STEEL.glow + al + ")"; c.lineWidth = 16; c.beginPath(); c.moveTo(hx - dir * 110, hy - 6); c.quadraticCurveTo(hx - dir * 40, hy - 18, hx, hy); c.stroke(); c.strokeStyle = STEEL.glow + (al * 0.8) + ")"; c.lineWidth = 3; c.stroke(); });
+        const m = burst(5); for (let i = 0; i < m; i++) dust(d.x + dir * rnd(20, 90), GROUND + rnd(0, 6), dir * rnd(30, 90), rnd(-30, -8), rnd(400, 700), rnd(6, 12)); } }, // schwacher Luftzug, der hinter dem Ziel verpufft, kein Treffer
+  ], crit: null };
+
+  // ---------- BEGLEITER (klein, schnell, die Silhouette blitzt am Rand auf)
+  const PETS = { variants: [
+    { name: "Biss", run(o) { const { d, dir, k } = o; petPop(); timed(320, (c, age, u) => { const gap = 30 * k * (1 - Math.min(1, u / 0.5)), a = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3, r = 30 * k; c.strokeStyle = `rgba(230,220,200,${0.95 * a})`; c.lineWidth = 3; c.fillStyle = `rgba(230,220,200,${0.9 * a})`;
+        for (const sgn of [-1, 1]) { const cy = d.y + sgn * gap; c.beginPath(); c.arc(d.x, cy, r, sgn > 0 ? 0.15 : Math.PI + 0.15, sgn > 0 ? Math.PI - 0.15 : TAU - 0.15); c.stroke(); for (let i = 0; i < 4; i++) { const t = 0.4 + i * 0.75, tx = d.x + Math.cos(sgn > 0 ? t : Math.PI + t) * r, ty = cy + Math.sin(sgn > 0 ? t : Math.PI + t) * r; c.beginPath(); c.moveTo(tx - 4, ty); c.lineTo(tx, ty - sgn * 9); c.lineTo(tx + 4, ty); c.closePath(); c.fill(); } } });
+      delay(160, () => { hit(3); const m = burst(6 * k); for (let i = 0; i < m; i++) blood(d.x + rnd(-10, 10), d.y + rnd(-10, 10), rnd(-80, 80), rnd(-60, 20), rnd(300, 500), rnd(1.5, 2.5)); }); } }, // zwei Kiefer schnappen zu, wenige rote Flecken
+    { name: "Bolzen", run(o) { const { d, dir, pet: p } = o; petPop(); projectile({ s: { x: p.x + dir * 30, y: p.y - 10 }, d, T: 220, arc: 10, update(e, u, dt) { const n = count(2, dt); for (let i = 0; i < n; i++) spark(STEEL, e.x, e.y, -dir * rnd(30, 90), rnd(-8, 8), rnd(100, 200), 1, 0, 0.98); },
+        draw(c, e) { const a = Math.atan2(d.y - p.y + 10, d.x - p.x); c.save(); c.translate(e.x, e.y); c.rotate(a); c.strokeStyle = STEEL.glow + "0.3)"; c.lineWidth = 6; c.beginPath(); c.moveTo(-40, 0); c.lineTo(0, 0); c.stroke(); c.strokeStyle = "rgba(170,140,95,0.95)"; c.lineWidth = 2.5; c.beginPath(); c.moveTo(-16, 0); c.lineTo(10, 0); c.stroke(); c.fillStyle = rgb(STEEL.hot, 0.95); c.beginPath(); c.moveTo(16, 0); c.lineTo(8, -3.5); c.lineTo(8, 3.5); c.closePath(); c.fill(); c.restore(); },
+        arrive() { hit(2); edgeSparks(o, d, 8, 1.0); flash(d, 34, "rgba(230,225,210,", 100); } }); } }, // kleiner schneller Bolzen vom Rand, Funken am Ziel
+    { name: "Markierung", run(o) { const { d, k } = o, th = TH.crimson, at = { x: d.x, y: d.y - 120 }; petPop(); targetFlash = 0.4;
+        timed(800, (c, age, u) => { const sc = u < 0.15 ? u / 0.15 : 1, a = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3, pulse = 1 + 0.08 * Math.sin(age / 60), r = 22 * k * sc * pulse; c.strokeStyle = rgb(th.mid, 0.9 * a); c.lineWidth = 2.5; c.beginPath(); c.arc(at.x, at.y, r, 0, TAU); c.stroke();
+          c.save(); c.translate(at.x, at.y); c.rotate(age / 400); for (let i = 0; i < 3; i++) { const t = i * TAU / 3; c.beginPath(); c.moveTo(Math.cos(t) * r * 0.8, Math.sin(t) * r * 0.8); c.lineTo(Math.cos(t) * r * 1.35, Math.sin(t) * r * 1.35); c.stroke(); } c.restore();
+          c.fillStyle = rgb(th.hot, 0.9 * a); c.beginPath(); c.arc(at.x, at.y, 4 * k, 0, TAU); c.fill(); const g = c.createRadialGradient(at.x, at.y, 0, at.x, at.y, r * 2); g.addColorStop(0, th.glow + (0.25 * a) + ")"); g.addColorStop(1, th.glow + "0)"); c.fillStyle = g; c.beginPath(); c.arc(at.x, at.y, r * 2, 0, TAU); c.fill(); },
+          (dt, age, u) => { const n = count(1.5 * k, dt); for (let i = 0; i < n; i++) mote(th, at.x + rnd(-16, 16), at.y + 10, rnd(-5, 5), rnd(30, 70), rnd(500, 900), 2, 20, 0.995); }); } }, // Mal schwebt über dem Kopf, dreht sich, tropft rote Motes hinab
+    { name: "Schutzschild", run(o) { const th = TH.teal, m = mirrored(), fig = m ? enemy : caster, top = m ? enemy.y - 190 : caster.y - 140, bot = m ? enemy.y + 145 : caster.y + 112, cx = fig.x + (m ? 0 : 10), cy = (top + bot) / 2, rx = m ? 90 : 70, ry = (bot - top) / 2 + 10, k = o.k; petPop();
+        const hexes = []; for (let i = 0; i < 9; i++) hexes.push({ a: rnd(0, TAU), r: rnd(0.55, 0.95), t0: rnd(0, 500), sz: rnd(7, 12) });
+        timed(900, (c, age, u) => { const a = u < 0.15 ? u / 0.15 : u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3; const g = c.createRadialGradient(cx, cy, ry * 0.5, cx, cy, ry); g.addColorStop(0, th.glow + "0)"); g.addColorStop(0.85, th.glow + (0.10 * a) + ")"); g.addColorStop(1, th.glow + (0.35 * a) + ")"); c.fillStyle = g; c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, TAU); c.fill();
+          c.strokeStyle = rgb(th.hot, 0.8 * a); c.lineWidth = 2 * k; c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, TAU); c.stroke();
+          for (const h of hexes) { const ha = Math.max(0, Math.sin((age - h.t0) / 300 * Math.PI)) * a; if (ha <= 0) continue; const hx = cx + Math.cos(h.a) * rx * h.r, hy = cy + Math.sin(h.a) * ry * h.r; c.strokeStyle = rgb(th.hot, 0.7 * ha); c.lineWidth = 1.2; c.beginPath(); for (let i = 0; i < 6; i++) { const t = i * TAU / 6; c[i ? "lineTo" : "moveTo"](hx + Math.cos(t) * h.sz, hy + Math.sin(t) * h.sz); } c.closePath(); c.stroke(); } },
+          (dt, age, u) => { if (u < 0.7) { const n = count(2 * k, dt); for (let i = 0; i < n; i++) mote(th, cx + rnd(-rx, rx) * 0.9, bot - rnd(0, 20), rnd(-5, 5), rnd(-60, -25), rnd(500, 900), 2, -10); } }); flash({ x: cx, y: cy }, 60, "rgba(120,210,200,", 200); } }, // Kuppel um den Spieler, Sechsecke schimmern auf, Motes steigen
+    { name: "Crit-Stern", run(o) { const { d, k } = o, th = TH.gold; petPop(); hit(6); flash(d, 90 * k, "rgba(235,190,90,", 160); const m = burst(20 * k); for (let i = 0; i < m; i++) { const a = rnd(0, TAU); spark(th, d.x, d.y, Math.cos(a) * rnd(80, 300), Math.sin(a) * rnd(80, 300), rnd(150, 350), rnd(1.3, 2.4), 200); }
+        timed(280, (c, age, u) => { const a = u < 0.2 ? u / 0.2 : 1 - (u - 0.2) / 0.8; drawStar(c, d.x, d.y, (20 + 70 * Math.min(1, u / 0.3)) * k, 0.2 + u * 0.4, th, 0.9 * a, 4); drawStar(c, d.x, d.y, (12 + 40 * Math.min(1, u / 0.3)) * k, 0.2 + u * 0.4 + Math.PI / 4, th, 0.7 * a, 4); }); } }, // vierzackiger goldener Stern platzt am Ziel auf
+    { name: "Diebesgriff", run(o) { const { d, dir, pet: p, k } = o, th = TH.gold, from = { x: p.x + dir * 30, y: p.y - 14 }; petPop(520);
+        timed(420, (c, age, u) => { const out = u < 0.4 ? u / 0.4 : 1 - (u - 0.4) / 0.6, hx = from.x + (d.x - from.x) * out, hy = from.y + (d.y - from.y) * out, open = u < 0.4 ? 1 : 0.35; c.lineCap = "round"; c.strokeStyle = `rgba(90,80,70,0.95)`; c.lineWidth = 2.5; c.beginPath(); c.moveTo(from.x, from.y); c.lineTo(hx, hy); c.stroke();
+          c.strokeStyle = rgb(STEEL.mid, 0.95); c.lineWidth = 2; for (const s of [-1, 0, 1]) { c.beginPath(); c.moveTo(hx, hy); c.quadraticCurveTo(hx + dir * 10, hy + s * 12 * open, hx + dir * 16, hy + s * 6 * open); c.stroke(); } });
+        delay(170, () => { targetFlash = 0.5; flash(d, 40, "rgba(235,190,90,", 120); const m = burst(10 * k); for (let i = 0; i < m; i++) { const g = mote(th, d.x + rnd(-10, 10), d.y + rnd(-10, 10), -dir * rnd(100, 200), rnd(-120, -40), 700, rnd(2.5, 4), 0, 0.99); pull(g, from, 2400); } }); } }, // Klaue schnellt zum Ziel, greift, goldene Glanzpunkte fliegen zum Begleiter zurück
+  ], crit: null };
+
+  // =====================================================================================
+  // REGISTER, WIEDERGABE, SCHLEIFE, BEDIENUNG
+  // =====================================================================================
+  const FAM = [
+    { id: "arcane", name: "Arkan", impacts: ARCANE.impacts, variants: [{ name: "Runenprojektil", run: ARCANE.rune }, { name: "Arkanstrahl", run: ARCANE.ray }, { name: "Orbit-Kugeln", run: ARCANE.orbit }], crit: { name: "Arkan-Nova", run: ARCANE.rune } },
+    { id: "fire", name: "Feuer", impacts: FIRE.impacts, variants: [{ name: "Feuerball", run: FIRE.ball }, { name: "Feuerlanze", run: FIRE.lance }, { name: "Glutschwarm", run: FIRE.swarm }], crit: { name: "Crit-Feuerball", run: FIRE.ball } },
+    { id: "frost", name: "Frost", impacts: FROST.impacts, variants: [{ name: "Eissplitter-Speer", run: FROST.spear }, { name: "Kristallstern", run: FROST.star }, { name: "Frostwelle", run: FROST.wave }], crit: { name: "Gletscherspeer", run: FROST.spear } },
+    { id: "bolt", name: "Blitz", impacts: BOLT.impacts, variants: [{ name: "Kettenblitz", run: BOLT.chain }, { name: "Kugelblitz", run: BOLT.orb }, { name: "Blitzregen", run: BOLT.rain }], crit: { name: "Doppelblitz", run: BOLT.chain } },
+    { id: "poison", name: "Gift", impacts: POISON.impacts, variants: [{ name: "Giftphiole", run: POISON.vial }, { name: "Sporenwolke", run: POISON.spores }, { name: "Säurespucke", run: POISON.spit }], crit: { name: "Giftbrecher", run: POISON.vial } },
+    { id: "void", name: "Leere", impacts: VOID.impacts, variants: [{ name: "Leerenkern", run: VOID.core }, { name: "Leerenriss", run: VOID.rift }, { name: "Tentakel-Schlieren", run: VOID.tendrils }], crit: { name: "Leeren-Schlund", run: VOID.core } },
+    { id: "aether", name: "Aether", impacts: AETHER.impacts, variants: [{ name: "Lichtfeder", run: AETHER.feather }, { name: "Strahlenbündel", run: AETHER.rays }, { name: "Segensring", run: AETHER.ring }], crit: { name: "Federsturm", run: AETHER.feather } },
+    { id: "melee", name: "Nahkampf", sub: [MELEE.cut, MELEE.chop, MELEE.blunt, MELEE.thrust] },
+    { id: "arrow", name: "Pfeil", variants: ARROW.variants, crit: ARROW.crit },
+    { id: "hits", name: "Treffer", variants: HITS.variants, crit: null },
+    { id: "pets", name: "Begleiter", variants: PETS.variants, crit: null },
+  ];
+  const cur = { fam: 1, sub: 0 };
+  const setOf = (fam, sub) => fam.sub ? fam.sub[sub] : fam;
+  function showTag(txt) { tag.textContent = txt; tag.style.opacity = 1; clearTimeout(showTag.t); showTag.t = setTimeout(() => (tag.style.opacity = 0), 1600); }
+  function play(fam, sub, which) { // which: Index der Variante oder "c" für die Crit-Signatur
+    const set = setOf(fam, sub), isCrit = which === "c", v = isCrit ? set.crit : set.variants[which]; if (!v) return;
+    const crit = isCrit || $("crit").checked, s = src(), d = dst(), dir = Math.sign(d.x - s.x) || 1, T = +$("travel").value, k = crit ? 1.6 : 1;
+    const o = { s, d, dir, T, k, crit, feet: feet(), pet: petPos() }; let impName = "";
+    if (fam.impacts) { const sel = $("impact").value, idx = sel === "r" ? Math.floor(Math.random() * fam.impacts.length) : +sel; impName = fam.impacts[idx].name; o.land = (sc = 1) => { hit(crit ? 9 : 4); fam.impacts[idx].run(o, sc); }; }
+    else o.land = () => hit(crit ? 8 : 4);
+    showTag([fam.name, fam.sub ? set.name : null, v.name + (crit && !isCrit ? " (Crit)" : ""), impName].filter(Boolean).join(" · "));
+    v.run(o);
+  }
+  function playRandom(fam, sub) { const set = setOf(fam, sub), pool = set.variants.map((_, i) => i); if (set.crit) pool.push("c"); play(fam, sub, pick(pool)); }
+
+  // ---------- Schleife
+  let last = performance.now(), fpsAcc = 0, fpsN = 0, fpsShown = 0, autoOn = false, autoT = 0, autoNext = 0;
+  let paused = false;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    const raw = Math.min(50, now - last); last = now; if (paused) return; const dt = $("slow").checked ? raw / 4 : raw;
+    tick(dt); paint(now);
+    fpsAcc += raw; fpsN++;
+    if (fpsAcc > 500) { fpsShown = Math.round(1000 / (fpsAcc / fpsN)); fpsAcc = 0; fpsN = 0;
+      if (fpsShown < 45 && P.length > 300) adapt = Math.max(0.35, adapt - 0.1); else if (fpsShown > 56 && adapt < 1) adapt = Math.min(1, adapt + 0.05); }
+    hud.textContent = `${fpsShown} fps · ${P.length} Partikel · Dichte ${Math.round(density() * 100)} %${adapt < 1 ? " (adaptiv)" : ""}`;
+  }
+  function tick(dt) { const s = dt / 1000;
+    for (const e of active) e.update(dt);
+    for (let i = active.length - 1; i >= 0; i--) if (!active[i].alive()) active.splice(i, 1);
+    for (let i = P.length - 1; i >= 0; i--) {
+      const p = P[i]; p.age += dt; if (p.age >= p.life) { P[i] = P[P.length - 1]; P.pop(); continue; }
+      if (p.follow) { const dx = p.follow.x - p.x, dy = p.follow.y - p.y, L = Math.hypot(dx, dy) || 1; p.vx += dx / L * p.pull * s; p.vy += dy / L * p.pull * s; if (L < 7) { p.age = p.life; continue; } }
+      p.vx *= p.drag; p.vy *= p.drag; p.vy += p.grav * s; p.x += p.vx * s; p.y += p.vy * s;
+      if (p.kind === "ember") p.x += Math.sin(p.age / 60 + p.size) * 18 * s;
+      else if (p.kind === "ash") p.x = p.ax + Math.sin(p.age / 1000 * p.spin) * 22;
+      else if (p.kind === "feather") p.x += Math.sin(p.age / 260 + p.ph) * 45 * s;
+      else if (p.spin) p.rot += p.spin * s;
+    }
+    targetFlash = Math.max(0, targetFlash - dt / 90); shake = Math.max(0, shake - dt / 25); darken = Math.max(0, darken - dt / 260); lunge.age += dt; pet.age += dt;
+    if (autoOn) { autoT += dt; if (autoT > autoNext) { autoT = 0; autoNext = 1800; const fam = pick(FAM), sub = fam.sub ? Math.floor(Math.random() * fam.sub.length) : 0; playRandom(fam, sub); } }
+  }
+  function paint(now) {
+    const c = ctx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+    c.save(); if (shake > 0) c.translate(rnd(-shake, shake), rnd(-shake, shake));
+    drawFigures(c, now);
+    c.globalCompositeOperation = "source-over"; c.lineCap = "round";
+    for (const p of P) { const u = p.age / p.life;
+      switch (p.kind) {
+        case "smoke": { const a = p.a * (1 - u), r = p.size * (0.6 + u); c.fillStyle = `rgba(${p.rgb},${a * 0.45})`; c.beginPath(); c.arc(p.x, p.y, r, 0, TAU); c.fill(); c.fillStyle = `rgba(${p.rgb},${a * 0.55})`; c.beginPath(); c.arc(p.x, p.y, r * 0.6, 0, TAU); c.fill(); break; }
+        case "dust": c.fillStyle = `rgba(110,92,72,${0.32 * (1 - u)})`; c.beginPath(); c.arc(p.x, p.y, p.size * (0.5 + 1.2 * u), 0, TAU); c.fill(); break;
+        case "ash": c.fillStyle = `rgba(120,110,100,${0.7 * (1 - u)})`; c.beginPath(); c.arc(p.x, p.y, p.size, 0, TAU); c.fill(); break;
+        case "blood": c.strokeStyle = `rgba(${p.rgb},${0.9 * (1 - u * u)})`; c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 0.012, p.y - p.vy * 0.012); c.stroke(); break;
+        case "bone": case "splinter": case "glass": { c.save(); c.translate(p.x, p.y); c.rotate(p.rot); const a = 1 - u;
+          if (p.kind === "bone") { c.fillStyle = `rgba(205,195,175,${0.9 * a})`; c.fillRect(-p.size, -p.size * 0.4, p.size * 2, p.size * 0.8); }
+          else if (p.kind === "splinter") { c.fillStyle = `rgba(150,115,70,${0.9 * a})`; c.fillRect(-p.size, -p.size * 0.22, p.size * 2, p.size * 0.44); }
+          else { c.strokeStyle = `rgba(210,235,240,${0.8 * a})`; c.lineWidth = 1; c.beginPath(); c.moveTo(-p.size, 0); c.lineTo(p.size * 0.5, -p.size * 0.6); c.lineTo(p.size * 0.6, p.size * 0.5); c.closePath(); c.stroke(); }
+          c.restore(); break; }
+      } }
+    c.globalCompositeOperation = "lighter";
+    for (const p of P) { const u = p.age / p.life, th = p.th;
+      switch (p.kind) {
+        case "ember": { const r = p.size * (1 - u * 0.8), g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r); g.addColorStop(0, col(th, u, 0.9 * (1 - u))); g.addColorStop(1, col(th, u, 0)); c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r, 0, TAU); c.fill(); break; }
+        case "spark": c.strokeStyle = col(th, Math.min(0.45, u), 0.9 * (1 - u)); c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 0.02, p.y - p.vy * 0.02); c.stroke(); break;
+        case "mote": { const tw = 0.6 + 0.4 * Math.sin(p.age / 45 + p.ph); c.fillStyle = col(th, u * 0.6, 0.85 * (1 - u) * tw); c.beginPath(); c.arc(p.x, p.y, p.size * (1 - u * 0.5), 0, TAU); c.fill(); break; }
+        case "shard": { c.save(); c.translate(p.x, p.y); c.rotate(p.rot); const a = 1 - u; c.fillStyle = col(th, u * 0.5, 0.8 * a); c.beginPath(); c.moveTo(p.size * 1.6, 0); c.lineTo(0, -p.size * 0.55); c.lineTo(-p.size * 1.6, 0); c.lineTo(0, p.size * 0.55); c.closePath(); c.fill(); c.strokeStyle = rgb(th.hot, a); c.lineWidth = 0.8; c.stroke(); c.restore(); break; }
+        case "rime": drawCrystal(c, p.x, p.y, p.size, p.rot, th, 0.7 * (1 - u), 4); break;
+        case "bubble": c.strokeStyle = col(th, 0.2, 0.7 * (1 - u)); c.lineWidth = 1.2; c.beginPath(); c.arc(p.x, p.y, p.size * (1 + 0.4 * u), 0, TAU); c.stroke(); break;
+        case "drop": c.strokeStyle = col(th, 0.25, 0.9 * (1 - u)); c.lineWidth = p.size; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 0.01, p.y - p.vy * 0.01); c.stroke(); break;
+        case "feather": drawFeather(c, p.x, p.y, p.size, p.rot + Math.sin(p.age / 300 + p.ph) * 0.5, 0.9 * (1 - u), th); break;
+      } }
+    for (const e of active) e.draw(c);
+    c.restore();
+  }
+  requestAnimationFrame(frame);
+
+  // ---------- Bedienung
+  const tabs = $("tabs"), subs = $("subs"), vars = $("vars"), impactSel = $("impact"), impactGroup = $("impactGroup");
+  const mkBtn = (txt, cls, on) => { const b = document.createElement("button"); b.textContent = txt; if (cls) b.className = cls; b.onclick = on; return b; };
+  FAM.forEach((f, i) => tabs.appendChild(mkBtn(f.name, "tab", () => { cur.fam = i; cur.sub = 0; render(); })));
+  function render() {
+    const fam = FAM[cur.fam], set = setOf(fam, cur.sub);
+    [...tabs.querySelectorAll("button")].forEach((b, i) => b.classList.toggle("on", i === cur.fam));
+    subs.hidden = !fam.sub; [...subs.querySelectorAll("button")].forEach((b) => b.remove());
+    if (fam.sub) fam.sub.forEach((sset, i) => { const b = mkBtn(sset.name, i === cur.sub ? "on" : "", () => { cur.sub = i; render(); }); subs.appendChild(b); });
+    [...vars.querySelectorAll("button")].forEach((b) => b.remove());
+    set.variants.forEach((v, i) => { const b = mkBtn(v.name, "", () => play(fam, cur.sub, i)); b.dataset.var = i; vars.appendChild(b); });
+    if (set.crit) { const b = mkBtn(set.crit.name, "crit", () => play(fam, cur.sub, "c")); b.dataset.var = "c"; vars.appendChild(b); }
+    const zr = mkBtn("Zufall", "", () => playRandom(fam, cur.sub)); zr.dataset.var = "r"; vars.appendChild(zr);
+    impactGroup.hidden = !fam.impacts;
+    if (fam.impacts) [...impactSel.options].forEach((op, i) => { if (i > 0) op.textContent = fam.impacts[i - 1].name; });
+  }
+  render();
+  const bAuto = $("bAuto"); bAuto.onclick = () => { if (reduced) return; autoOn = !autoOn; bAuto.classList.toggle("on", autoOn); autoT = 0; autoNext = 0; };
+  $("travel").oninput = (e) => ($("travelV").textContent = e.target.value + " ms");
+  $("dens").oninput = (e) => ($("densV").textContent = e.target.value + " %");
+  window.addEventListener("keydown", (e) => {
+    const tn = e.target && e.target.tagName; if (tn === "SELECT" || tn === "INPUT") return;
+    const fam = FAM[cur.fam], set = setOf(fam, cur.sub), n = +e.key;
+    if (n >= 1 && n <= 9) { if (set.variants[n - 1]) play(fam, cur.sub, n - 1); }
+    else if (e.key === "c" || e.key === "C") { if (set.crit) play(fam, cur.sub, "c"); }
+    else if (e.code === "Space") { e.preventDefault(); playRandom(fam, cur.sub); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); cur.fam = (cur.fam + 1) % FAM.length; cur.sub = 0; render(); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); cur.fam = (cur.fam + FAM.length - 1) % FAM.length; cur.sub = 0; render(); }
+    else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && fam.sub) { e.preventDefault(); cur.sub = (cur.sub + (e.key === "ArrowDown" ? 1 : fam.sub.length - 1)) % fam.sub.length; render(); }
+  });
+  // Für Prüfskripte: window.__fx.play("frost", 1) bzw. ("melee", "c", 2) spielt gezielt ab
+  window.__fx = { play(id, which, sub = 0) { const i = FAM.findIndex((f) => f.id === id); if (i < 0) return false; cur.fam = i; cur.sub = sub; render(); play(FAM[i], sub, which); return true; }, families: () => FAM.map((f) => ({ id: f.id, name: f.name, subs: f.sub ? f.sub.map((s) => s.name) : null, variants: setOf(f, 0).variants.map((v) => v.name), crit: setOf(f, 0).crit ? setOf(f, 0).crit.name : null })), stats: () => ({ fps: fpsShown, particles: P.length, adapt }), auto(on) { autoOn = on; bAuto.classList.toggle("on", on); autoT = 0; autoNext = 0; },
+    // deterministisch vorspulen (für Screenshots): pausiert die Echtzeit-Schleife, rechnet ms in 16,7-ms-Schritten und zeichnet einmal
+    step(ms) { paused = true; for (let t = 0; t < ms; t += 16.7) tick(16.7); paint(performance.now()); }, clear() { P.length = 0; active.length = 0; targetFlash = 0; shake = 0; darken = 0; lunge.age = 1e9; pet.age = 1e9; }, resume() { paused = false; last = performance.now(); } };
+  resize();
+})();
+</script>
+</body>
+</html>
