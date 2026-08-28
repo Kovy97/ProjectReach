@@ -11,7 +11,8 @@ import { ipcMain, shell } from "electron";
  */
 export function registerShellHandlers(): void {
   ipcMain.handle("shell:openExternal", (_event, url: unknown) => {
-    if (typeof url !== "string" || !/^mailto:/i.test(url)) return false;
+    // mailto: für den Fehlerbericht; https://discord.gg / discord.com/invite für den Discord-Knopf (Chef-Link in renderer/util/links.ts).
+    if (typeof url !== "string" || !(/^mailto:/i.test(url) || /^https:\/\/(discord\.gg|discord\.com\/invite)\//i.test(url))) return false;
     void shell.openExternal(url);
     return true;
   });

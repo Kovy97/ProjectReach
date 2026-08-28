@@ -37,7 +37,17 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
   const { t } = useI18n();
   const state = useGameStateMaybe();
 
-  const [description, setDescription] = useState("");
+  // Spieler-Report 28.08.2026 (RU): „markiert man Text und klickt daneben, ist alles weg" — der Entwurf überlebt jetzt
+  // Schließen und Neustart (localStorage) und wird erst nach dem Senden verworfen.
+  const [description, setDescription] = useState<string>(() => {
+    try { return localStorage.getItem("gr.bugReport.draft") ?? ""; } catch { return ""; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem("gr.bugReport.draft", description); } catch { /* kein Speicher */ }
+  }, [description]);
+  // Overlay schließt nur bei einem echten Klick auf das Overlay (mousedown UND mouseup dort) — eine Textauswahl,
+  // die außerhalb des Dialogs endet, schließt nicht mehr.
+  const overlayPress = useRef(false);
   // Chef-Entscheid 23.08.2026: Der einfachste Rueckkanal ist der, den der Spieler selbst
   // aufmacht. Freiwillig, leer lassen ist voellig in Ordnung - nur wer eine Antwort will,
   // traegt hier etwas ein.
@@ -155,7 +165,11 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
   const fallbackVisible = fallbackOpen || !webhookUrl;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div
+      className="modal-overlay"
+      onMouseDown={(e) => { overlayPress.current = e.target === e.currentTarget; }}
+      onClick={(e) => { if (overlayPress.current && e.target === e.currentTarget) onClose(); overlayPress.current = false; }}
+    >
       <div className="modal bugreport-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close ds-close-button" onClick={onClose} aria-label={t("common.close")} />
 

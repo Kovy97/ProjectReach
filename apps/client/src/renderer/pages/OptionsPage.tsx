@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { LOCALES } from "@hearthforge/shared";
 import { restartGuide } from "@hearthforge/engine";
 import { useI18n } from "../i18n";
+import { DISCORD_INVITE_URL } from "../util/links";
 import { useGameControl, useGameState } from "../game/GameContext";
 import { openBackupsFolder } from "../saves";
 import { AmbientEffectsPrefs, DisplayAudioPrefs, OptRow, OptSection, optBtnCls } from "../components/OptionControls";
@@ -246,9 +247,14 @@ export function OptionsPage(): JSX.Element {
             <button className={optBtnCls(false)} onClick={() => setShowBugReport(true)}>
               {t("about.bugReport")}
             </button>
-            {/* TODO(urls): replace with real Discord URL before release. `.btn-iron[disabled]`
-                dimmt bereits automatisch (kein zusätzlicher Inline-Opacity-Hack mehr nötig). */}
-            <button className={optBtnCls(false)} disabled title={t("about.comingSoon")}>
+            {/* Discord (Spieler-Report 28.08.2026: „der Knopf tut nichts, ich kenne den Kanal nicht"): sobald der Chef die
+                Einladung in util/links.ts einträgt, öffnet der Knopf sie über die shell-Bridge; bis dahin sichtbar deaktiviert. */}
+            <button
+              className={optBtnCls(false)}
+              disabled={!DISCORD_INVITE_URL}
+              title={DISCORD_INVITE_URL ? DISCORD_INVITE_URL : t("about.comingSoon")}
+              onClick={() => { if (DISCORD_INVITE_URL) void window.hearthforge?.shell?.openExternal(DISCORD_INVITE_URL); }}
+            >
               {t("about.discord")}
             </button>
           </div>
