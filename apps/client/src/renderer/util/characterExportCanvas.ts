@@ -1,5 +1,4 @@
 import {
-  EQUIP_SLOTS,
   EQUIP_SLOT_LABELS,
   RARITY_COLORS,
   RARITY_LABEL,
@@ -9,6 +8,7 @@ import {
 } from "@hearthforge/shared";
 import { getItemImage } from "../items";
 import type { CharacterExportInput } from "./characterExportPrompt";
+import { EXPORT_SLOTS } from "./characterExportPrompt";
 
 /**
  * Prompt-Extractor (Chef-Auftrag 28.08.2026): baut `kit.png` (Ausrüstungs-Blatt) und `portrait.png`
@@ -101,7 +101,7 @@ function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
 
 /**
  * Baut das Ausrüstungs-Blatt (2048×1152): Kopfzeile (Name/Level/Stil), großes Portrait links, alle
- * 14 Ausrüstungsplätze als Kacheln rechts (Bild/Name/Rarity/Slot-Beschriftung, leer = "empty").
+ * 11 Ausrüstungsplätze (ohne Werkzeuge, Chef 28.08.2026) als Kacheln rechts (Bild/Name/Rarity/Slot-Beschriftung, leer = "empty").
  * Alle Texte bewusst Englisch (`resolveText(…, "en")`) — begleitet den ebenfalls englischen
  * `prompt.txt` unabhängig von der aktiven UI-Sprache.
  */
@@ -169,13 +169,13 @@ export async function renderKitCanvas(
   const gy = py;
   const gw = KIT_W - MARGIN - gx;
   const gh = ph;
-  const rows = Math.ceil(EQUIP_SLOTS.length / GRID_COLS);
+  const rows = Math.ceil(EXPORT_SLOTS.length / GRID_COLS);
   const cellW = gw / GRID_COLS;
   const cellH = gh / rows;
   const cellPad = 10;
   const imgSize = Math.min(cellW, cellH) - 96;
 
-  EQUIP_SLOTS.forEach((slot, i) => {
+  EXPORT_SLOTS.forEach((slot, i) => {
     const col = i % GRID_COLS;
     const row = Math.floor(i / GRID_COLS);
     const cx = gx + col * cellW + cellPad;
@@ -199,7 +199,7 @@ export async function renderKitCanvas(
   // parallel anstoßen, dann in Zeichenreihenfolge auftragen, damit spätere Kacheln nie über
   // frühere „drüberlaufen").
   const tileImages = await Promise.all(
-    EQUIP_SLOTS.map(async (slot) => {
+    EXPORT_SLOTS.map(async (slot) => {
       const itemId = input.equipment[slot];
       if (!itemId) return null;
       const src = getItemImage(itemId);
@@ -212,7 +212,7 @@ export async function renderKitCanvas(
     }),
   );
 
-  EQUIP_SLOTS.forEach((slot, i) => {
+  EXPORT_SLOTS.forEach((slot, i) => {
     const col = i % GRID_COLS;
     const row = Math.floor(i / GRID_COLS);
     const cx = gx + col * cellW + cellPad;

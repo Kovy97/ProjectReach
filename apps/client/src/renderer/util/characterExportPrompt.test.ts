@@ -38,11 +38,15 @@ function fixtureInput(over: Partial<CharacterExportInput> = {}): CharacterExport
 }
 
 describe("buildCharacterExportPrompt", () => {
-  it("enthält alle 14 Ausrüstungsplätze", () => {
+  it("enthält alle Ausrüstungsplätze außer Werkzeugen (Chef 28.08.2026)", () => {
     const content = fixtureContent();
     const prompt = buildCharacterExportPrompt(fixtureInput(), content);
     expect(EQUIP_SLOTS.length).toBe(14);
     for (const slot of EQUIP_SLOTS) {
+      if (slot.startsWith("tool")) {
+        expect(prompt).not.toContain(`EN item_${slot}`);
+        continue;
+      }
       expect(prompt).toContain(`EN item_${slot}`);
       expect(prompt).toContain(`EN description of ${slot}`);
     }

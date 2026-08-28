@@ -25,6 +25,9 @@ import {
  * Tavern-NPCs haben `race`, s. `TavernGuestDef`) — die Charakterzeile lässt beides bewusst aus,
  * statt erfundene Werte zu behaupten.
  */
+
+/** Plaetze, die ins Export-Blatt und ins Prompt gehen: alle ausser Werkzeugen (Chef 28.08.2026). */
+export const EXPORT_SLOTS = EQUIP_SLOTS.filter((slot) => !slot.startsWith("tool"));
 export interface CharacterExportInput {
   name: string;
   /** Gesamtlevel über alle Skills (`character.totalLevel`) — es gibt keine separate "Kampfstufe". */
@@ -85,7 +88,8 @@ export function buildCharacterExportPrompt(input: CharacterExportInput, content:
   lines.push(`Character: ${input.name} — Total level ${input.totalLevel}, ${STYLE_DESC_EN[input.style]}.`);
   lines.push("");
   lines.push("Equipment:");
-  for (const slot of EQUIP_SLOTS) lines.push(slotLine(input.equipment, content, slot));
+  // Chef 28.08.2026: Werkzeuge (Spitzhacke, Axt, Angel) gehoeren nicht ins Bild und nicht ins Prompt.
+  for (const slot of EXPORT_SLOTS) lines.push(slotLine(input.equipment, content, slot));
   lines.push("");
   lines.push(weaponSummaryLine(input.equipment, content, input.style));
   lines.push("");
