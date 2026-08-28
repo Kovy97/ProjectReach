@@ -32,8 +32,8 @@ export { EQUIP_KIT_COUNT } from "@hearthforge/shared";
  *    prüft KEINE Requirements (die Teile wurden über den normalen Equip-Pfad ins Kit gelegt, als es
  *    aktiv war — Level sinken nie). Nur AUSSERHALB des Kampfes (`combat.monsterId === null`).
  *  • Stats: computeStats fingerprintet Slot-Belegung + Instanzen des Charakters, der Wechsel
- *    invalidiert den Cache also von selbst. hp/ward werden auf die neuen Maxima geklemmt (Muster
- *    sanitize-HP-Deckel), damit nie hp > maxHp durch den Wechsel entsteht.
+ *    invalidiert den Cache also von selbst. hp/mana/ward werden nach dem Wechsel VOLL aufgefuellt
+ *    (Chef 28.08.2026: kein Nachregenerieren nach dem Umziehen; Wechsel nur ausserhalb des Kampfes).
  *  • Alle EQUIP_SLOTS inkl. tool1..tool3 (ganzes Set tauscht — die alte LOADOUT_SLOTS-Ausnahme für
  *    Werkzeuge diente nur dem Inventar-Churn, den es nicht mehr gibt).
  *  • DETERMINISTISCH & RNG-frei: reine Spieler-Aktion (kein Tick-Pfad), zieht nie am RNG-Strom.
@@ -121,7 +121,7 @@ export function kitSummary(state: GameState, index: number): KitSummary {
  * ungültiger Index → "invalid"; bereits aktiv → "same" (No-op, auch im Kampf);
  * laufender Kampf (`combat.monsterId !== null`) → "in_combat"; sonst "ok".
  * Bei "ok": Spiegel des bisherigen Kits zurückschreiben, Ziel-Kit nach `character` kopieren,
- * `activeKit` setzen, hp/ward auf die neuen Maxima klemmen. Kein RNG, keine Inventar-Bewegung.
+ * `activeKit` setzen, hp/mana/ward voll auffuellen. Kein RNG, keine Inventar-Bewegung.
  */
 export function switchEquipKit(state: GameState, content: ContentDB, index: number): KitSwitchReason {
   if (!isValidKitIndex(index)) return "invalid";
@@ -136,9 +136,11 @@ export function switchEquipKit(state: GameState, content: ContentDB, index: numb
   state.activeKit = index;
 
   // Vitals an die neuen Maxima klemmen (Muster sanitize-HP-/Ward-Deckel): ein Tank-Kit → Glaskanone
-  // darf nicht mit hp > maxHp weiterlaufen. Nur senken, nie heilen (kein Gratis-Heal durch Wechsel).
+  // Chef 28.08.2026: Der Wechsel ist nur ausserhalb des Kampfes moeglich; danach sollen Leben, Mana und Ward
+  // VOLL sein (kein Nachregenerieren nach dem Umziehen). Das ist kein Kampfvorteil, weil der Wechsel im Kampf gesperrt ist.
   const stats = computeStats(state, content);
-  if (Number.isFinite(stats.maxHp) && state.character.hp > stats.maxHp) state.character.hp = stats.maxHp;
-  if (Number.isFinite(stats.maxWard) && state.character.ward > stats.maxWard) state.character.ward = stats.maxWard;
+  if (Number.isFinite(stats.maxHp)) state.character.hp = stats.maxHp;
+  if (Number.isFinite(stats.maxMana)) state.character.mana = stats.maxMana;
+  if (Number.isFinite(stats.maxWard)) state.character.ward = stats.maxWard;
   return "ok";
 }

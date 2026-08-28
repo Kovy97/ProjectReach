@@ -52,7 +52,8 @@ combatFx.ts + Sprite-Layer in CombatPage (Zellen-Klasse-Fix 28.08.), 33 Sprites 
 **Ausrüstungs-Kits (Spieler-Wunsch, Chef-Entscheid 28.08.):** DE: Die drei Ausrüstungs-Vorlagen werden zu drei echten Kits.
 Jedes Kit trägt seine eigenen Gegenstände, du wechselst im Charakterbogen mit einem Klick zwischen Kit 1, 2 und 3, ohne
 Umräumen im Inventar. Gewechselt wird nur außerhalb des Kampfes. Bestehende Vorlagen werden übernommen: Was davon im
-Inventar liegt, wandert ins Kit; Werkzeuge in jedem Kit zählen fürs Sammeln. / EN: The three loadout templates become three
+Inventar liegt, wandert ins Kit; Werkzeuge in jedem Kit zählen fürs Sammeln. Nach dem Wechsel sind Leben, Mana und Ward
+voll, du musst nach dem Umziehen nichts nachregenerieren. / EN: The three loadout templates become three
 real kits with their own items; switch between them on the character sheet outside combat.
 
 *Dev-Notiz: shared EquipKit/equipKits/activeKit (kein SAVE-Bump, Migration aus equipLoadouts + Inventar), engine/loadouts.ts

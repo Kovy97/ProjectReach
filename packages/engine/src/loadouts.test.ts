@@ -126,15 +126,15 @@ describe("switchEquipKit: ganzes Set tauscht, nichts wandert ins Inventar", () =
     expect(switchEquipKit(s, content, 1)).toBe("ok");
   });
 
-  it("hp/ward werden beim Wechsel nur GESENKT (≤ neues Maximum), nie geheilt", () => {
+  it("hp/mana/ward sind nach dem Wechsel VOLL (Chef 28.08.2026: kein Nachregenerieren nach dem Umziehen)", () => {
     const s = makeState();
     equipSetA(s);
     s.character.hp = 1;
     expect(switchEquipKit(s, content, 1)).toBe("ok");
-    expect(s.character.hp).toBe(1);
     const stats = computeStats(s, content);
-    expect(s.character.hp).toBeLessThanOrEqual(stats.maxHp);
-    expect(s.character.ward).toBeLessThanOrEqual(stats.maxWard);
+    expect(s.character.hp).toBe(stats.maxHp);
+    expect(s.character.mana).toBe(stats.maxMana);
+    expect(s.character.ward).toBe(stats.maxWard);
   });
 });
 
