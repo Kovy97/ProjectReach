@@ -20366,6 +20366,8 @@ export const content: ContentDB = {
       name: { en: "Ossric the Marrowbound", de: "Ossric der Markgebundene" },
       statMults: { hp: 2.2, damage: 1.15, wardCapacity: 2.2 }, xpMult: 2.75,
       inflictOverride: { type: "bleed", chance: 0.30, magnitude: 2, durationMs: 5000 },
+      // Chef 28.08.2026: 20 % Standard-Unikatchance ist fuer eine legendaere Chase-Axt zu hoch -> 2 % (1:50).
+      uniqueDropChance: 0.02,
       uniqueItemId: "esthar",
       extraLoot: [
         { itemId: "feather", chance: 0.70, min: 40, max: 80 },

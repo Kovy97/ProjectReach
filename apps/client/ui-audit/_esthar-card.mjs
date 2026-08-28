@@ -30,5 +30,5 @@ async function run(locale, viewport, name) {
     await h.stop();
   }
 }
+await run("en", { width: 1920, height: 1080 }, "esthar-card-en-1920x1080");
 await run("de", { width: 1920, height: 1080 }, "esthar-card-de-1920x1080");
-await run("ru", { width: 1366, height: 768 }, "esthar-card-ru-1366x768");

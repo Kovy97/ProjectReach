@@ -1513,9 +1513,11 @@ body .item-cell.rarity-godly {
   margin: 0;
   padding: 9px 12px 7px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Chef 28.08.2026: keine Zeilenumbrueche in den Wertespalten. Spalten wachsen mit ihrem Inhalt, die Karte
+     wird dafuer breiter (s. .iwk-modal weiter unten), statt Werte wie "33,5-62,4" umzubrechen. */
+  grid-template-columns: repeat(2, minmax(max-content, 1fr));
   align-items: start;
-  gap: 0 16px;
+  gap: 0 18px;
   border-width: var(--frame-w);
   border-image-width: var(--frame-w);
 }
@@ -1544,6 +1546,13 @@ body .item-cell.rarity-godly {
 .itip-warbanner-record .itip-stat-value {
   min-width: 38px;
   font-size: 15.5px;
+  white-space: nowrap;
+}
+.itip-warbanner-record .itip-stat-row {
+  flex-wrap: nowrap;
+}
+.itip-warbanner-record .itip-stat-label {
+  white-space: nowrap;
 }
 
 .itip-warbanner-record :is(.itip-effect-block, .itip-set, .itip-footer-block) {
@@ -2723,4 +2732,11 @@ body .item-cell.rarity-godly {
     flex-basis: auto;
     width: min(1040px, calc(100vw - 40px));
   }
+}
+
+/* Item-Karte (Wiki-/Karten-Modal, Chef 28.08.2026): horizontal dynamisch, damit die Stat-Spalten nie umbrechen. */
+.iwk-modal {
+  width: max-content;
+  min-width: min(940px, 94vw);
+  max-width: 94vw;
 }
