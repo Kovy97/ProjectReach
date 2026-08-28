@@ -496,12 +496,12 @@ export function CharacterPage(): JSX.Element {
                   Puppe — jedes Kit trägt eigene Items, Umschalten tauscht das ganze Set (nur
                   außerhalb des Kampfes), s. components/EquipKitBar.tsx. */}
               <EquipKitBar />
-              {exportAllowed && (
-                {/* Prompt-Extractor (Chef-Auftrag 28.08.2026): Ein-Klick-Export von Ausrüstungs-Blatt
+              {/* Prompt-Extractor (Chef-Auftrag 28.08.2026): Ein-Klick-Export von Ausrüstungs-Blatt
                     (kit.png), Portrait (portrait.png) und einem fertigen englischen Bildgenerator-
                     Prompt (prompt.txt) nach Downloads\Grim Reach Exports\ — s. util/characterExport.ts
                     (Orchestrierung), util/characterExportPrompt.ts (Prompt-Text, unit-getestet) und
                     main/characterExport.ts (IPC-Schreiber). */}
+              {exportAllowed && (
                 <div className="cs-export-row">
                   <HoverTip as="div" className="cs-export-tipwrap" content={<span className="ct-tip-desc">{t("char.export.tooltip")}</span>}>
                     <button
@@ -515,9 +515,9 @@ export function CharacterPage(): JSX.Element {
                     >
                       {t("char.export.button")}
                     </button>
-              )}
                 </HoverTip>
               </div>
+              )}
               <EquipmentDoll interactive dragItem={dragItem} onDragItem={setDragItem} />
             </div>
           ) : (
