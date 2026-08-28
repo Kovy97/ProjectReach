@@ -16,6 +16,7 @@ import { addItem, itemCount } from "./inventory";
 import { bankCount } from "./bank";
 import { xpForLevel } from "./leveling";
 import { nextFloat, nextInt } from "./rng";
+import { equipPet, grantPet } from "./pets";
 import {
   clearHuntTrap,
   huntBaitCount,
@@ -444,6 +445,120 @@ describe("Jagen — Determinismus & offline == online", () => {
     advance(jump, c, 70 * 60_000);
     for (let i = 0; i < 10; i++) advance(odd, c, 7 * 60_000);
     expect(huntSnapshot(jump)).toEqual(huntSnapshot(odd));
+  });
+});
+
+/**
+ * 1.2.0 (Chef 28.08.2026): Jagen-Begleiter booted_tomcat — Passiv `huntCatchChance` (+3 pp auf die Fangchance,
+ * Deckel 95 % bleibt) und Begleiter-Wurf je FANG als Schritt 5 der RNG-Reihenfolge (Kopfkommentar hunting.ts).
+ */
+describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
+  it("Passiv huntCatchChance: +3 pp auf die Fangchance, additiv VOR dem 95-%-Deckel; fremde Pets wirken nicht", () => {
+    const c = testContent();
+    const s = game(c);
+    expect(content.pets?.booted_tomcat?.skillEffect).toMatchObject({ kind: "huntCatchChance", skill: "hunting", value: 0.03 });
+    grantPet(s, "booted_tomcat"); // erstes Pet rüstet sich selbst aus
+    expect(s.character.companionPetId).toBe("booted_tomcat");
+    expect(huntCatchChance(s, c, "pastures")).toBeCloseTo(HUNT_CATCH_BASE + 0.03, 10);
+    expect(huntCatchChance(s, c, "borderlands")).toBeCloseTo(0.7 - 9 * 0.005 + 0.03, 10);
+    setLevel(s, 99);
+    expect(huntCatchChance(s, c, "pastures")).toBe(HUNT_CATCH_CAP); // Deckel bleibt
+    expect(huntCatchChance(s, c, "nirgendwo")).toBe(0);
+    // Ein Pet eines anderen Skills (rotbark, woodcutting) hebt die Fangchance nicht.
+    setLevel(s, 1);
+    grantPet(s, "rotbark");
+    expect(equipPet(s, "rotbark")).toBe(true);
+    expect(huntCatchChance(s, c, "pastures")).toBeCloseTo(HUNT_CATCH_BASE, 10);
+    // Abgelegt ⇒ kein Bonus.
+    expect(equipPet(s, null)).toBe(true);
+    expect(huntCatchChance(s, c, "pastures")).toBeCloseTo(HUNT_CATCH_BASE, 10);
+  });
+
+  it("Begleiter-Wurf je Fang (RNG-Schritt 5, nach Beute/XP): dropChance 1 ⇒ Pet beim ersten Fang; im Besitz ⇒ kein weiterer Zug", () => {
+    const base = testContent();
+    const tomcat = base.pets!.booted_tomcat!;
+    const c: ContentDB = { ...base, pets: { ...base.pets, booted_tomcat: { ...tomcat, dropChance: 1 } } };
+    // Seed suchen, bei dem der erste Wurf sitzt (Chance 70 %); die RNG-Züge des Fangs vorab nachrechnen.
+    let s: GameState | null = null;
+    let expectedRng = 0;
+    for (let seed = 1; seed < 60 && !s; seed++) {
+      const g = readyGame(c, seed, 5);
+      advance(g, c, PASTURES_MS - 1000);
+      const rng = { state: g.rng.state };
+      if (!(nextFloat(rng) < huntCatchChance(g, c, "pastures"))) continue; // 1. Fangchance
+      nextInt(rng, 0, 0); // 2. Monster (Pool = [test_hare])
+      nextInt(rng, 0, Math.ceil(HARE.gold * 0.4)); // 3. Gold-Streuung
+      for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
+        nextFloat(rng); // 4. Chance (rawhide, chance 1)
+        nextInt(rng, 1, 1); // 4. Menge (Material ⇒ kein Suffix-Zug)
+      }
+      nextFloat(rng); // 5. Begleiter-Wurf (booted_tomcat noch nicht im Besitz)
+      expectedRng = rng.state;
+      advance(g, c, 1000);
+      s = g;
+    }
+    expect(s).not.toBeNull();
+    expect(s!.huntTraps[0]!.lastCatch?.seq).toBe(1);
+    expect(s!.character.ownedPets.booted_tomcat).toBe(true);
+    expect(s!.character.companionPetId).toBe("booted_tomcat");
+    expect(s!.lastPetDrop).toEqual({ petId: "booted_tomcat", seq: 1 });
+    expect(s!.petDropSeq).toBe(1);
+    expect(s!.rng.state).toBe(expectedRng); // exakt 14 Züge — Pet-Wurf NACH der Beute
+    // Zweiter Fang: Pet im Besitz ⇒ Schritt 5 zieht NICHT mehr (13 Züge bei Treffer, 1 bei Fehlschlag).
+    const rng2 = { state: s!.rng.state };
+    if (nextFloat(rng2) < huntCatchChance(s!, c, "pastures")) {
+      nextInt(rng2, 0, 0);
+      nextInt(rng2, 0, Math.ceil(HARE.gold * 0.4));
+      for (let pass = 0; pass < HUNT_LOOT_ROLLS; pass++) {
+        nextFloat(rng2);
+        nextInt(rng2, 1, 1);
+      }
+    }
+    advance(s!, c, PASTURES_MS);
+    expect(s!.rng.state).toBe(rng2.state);
+    expect(s!.petDropSeq).toBe(1);
+  });
+
+  it("Fehlschlag der Falle ⇒ kein Begleiter-Wurf (nur der eine Fangchancen-Zug)", () => {
+    const base = testContent();
+    const c: ContentDB = { ...base, pets: { ...base.pets, booted_tomcat: { ...base.pets!.booted_tomcat!, dropChance: 1 } } };
+    let seen = false;
+    for (let seed = 1; seed < 80 && !seen; seed++) {
+      const g = readyGame(c, seed, 5);
+      advance(g, c, PASTURES_MS - 1000);
+      const rng = { state: g.rng.state };
+      if (nextFloat(rng) < huntCatchChance(g, c, "pastures")) continue; // Treffer — anderen Seed suchen
+      advance(g, c, 1000);
+      expect(g.huntTraps[0]!.lastMissed).toBe(true);
+      expect(g.rng.state).toBe(rng.state);
+      expect(g.character.ownedPets.booted_tomcat).toBeUndefined();
+      seen = true;
+    }
+    expect(seen).toBe(true);
+  });
+
+  it("offline == online bleibt mit Begleiter-Wurf und -Passiv (55-Minuten-Sprung == 55 × 1 Minute)", () => {
+    const base = testContent();
+    const c: ContentDB = { ...base, pets: { ...base.pets, booted_tomcat: { ...base.pets!.booted_tomcat!, dropChance: 0.5 } } };
+    const build = (): GameState => {
+      const s = game(c, 31);
+      setLevel(s, 25);
+      s.monsterKills[HARE.id] = 1;
+      s.monsterKills.boar = 1;
+      addItem(s.inventory, c, BAIT_ITEM_ID, 40);
+      expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+      expect(setHuntTrap(s, c, 1, "pastures", true)).toBe("ok");
+      return s;
+    };
+    const jump = build();
+    const steps = build();
+    advance(jump, c, 55 * 60_000);
+    for (let i = 0; i < 55; i++) advance(steps, c, 60_000);
+    expect(huntSnapshot(jump)).toEqual(huntSnapshot(steps));
+    expect(jump.character.ownedPets.booted_tomcat).toBe(true);
+    expect(steps.character.ownedPets.booted_tomcat).toBe(true);
+    expect(jump.petDropSeq).toBe(steps.petDropSeq);
+    expect(jump.lastPetDrop).toEqual(steps.lastPetDrop);
   });
 });
 

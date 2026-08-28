@@ -2614,6 +2614,13 @@ export const es: Record<string, string> = {
   "pets:flayling:combatAbility.name": "Desuello",
   "pets:flayling:description": "Lleva su propio pellejo del revés y no parece importarle. En el bastidor de curtido saca más cuero de cada piel, y en combate encuentra el hueco de cada armadura y lo abre de un tirón.",
   "pets:flayling:name": "Desollín",
+  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
+  "pets:booted_tomcat:combatAbility.name": "Trampa de lazo",
+  "pets:booted_tomcat:description": "Un gato atigrado gris plateado de ojos verde amarillentos que camina erguido con botas y arnés de cuero y caza con lazo y ballesta. En las trampas sabe dónde pisará una pata antes de que lo haga, y en combate suelta un lazo que deja al enemigo quieto durante un latido.",
+  "pets:booted_tomcat:name": "Gato con Botas",
+  "pets:silkweaver:combatAbility.name": "Velo de seda",
+  "pets:silkweaver:description": "Una pálida polilla nocturna de patas finas como husos que nunca deja de hilar. En el telar devuelve el hilo gastado a la bobina antes de que la tela lo reclame, y en combate cubre los ojos del enemigo con un velo de seda para que sus golpes caigan lejos.",
+  "pets:silkweaver:name": "Tejedora de Seda",
   "pets:gemwraith:combatAbility.name": "Lanza prismática",
   "pets:gemwraith:description": "Una forma hueca que se ha llenado de facetas robadas. Sangra luz por una docena de cortes, y en la mesa de tallado a veces logra extraer una segunda gema de la misma piedra. En batalla, esa precisión se vuelve algo más cruel.",
   "pets:gemwraith:name": "Espectro Gema",
@@ -3028,6 +3035,7 @@ export const es: Record<string, string> = {
   "elites:elite_high_roc:name": "Coronatormenta el Padre Celestial",
   "elites:elite_high_specter:name": "Palemourn el Guardián del Acantilado",
   "elites:elite_high_wyvern:name": "Vessk el Tirano de la Cresta",
+  "elites:elite_ossric:name": "Ossric el Atado a la Médula",
   "elites:elite_idol_warden:name": "El Noveno Guardián",
   "elites:elite_idol_wraith:name": "Velohueco el Olvidado",
 
@@ -3059,6 +3067,7 @@ export const es: Record<string, string> = {
   "items:ridgetyrant_greaves:name": "Grebas del Tirano de la Cresta",
   "items:ninth_wardens_signet:name": "Sello del Noveno Guardián",
   "items:hollowveil_locket:name": "Relicario Velo Hueco",
+  "items:esthar:name": "Esthar, Tormenta de Huesos",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Desgarrador Colmillo del Ocaso",
   "items:ribcage_hewer:name": "Hendedor de Costillas",
@@ -3554,7 +3563,7 @@ export const es: Record<string, string> = {
   "achievements:ach_elite_kills_100:name": "Matacampeones",
   "achievements:ach_elite_kills_100:description": "Derrota a 100 Campeones del Confín.",
   "achievements:ach_elite_variants_all:name": "Todos los campeones",
-  "achievements:ach_elite_variants_all:description": "Derrota a cada uno de los 28 Campeones del Confín al menos una vez.",
+  "achievements:ach_elite_variants_all:description": "Derrota a cada uno de los 29 Campeones del Confín al menos una vez.",
   "achievements:ach_elite_uniques_1:name": "Primer trofeo",
   "achievements:ach_elite_uniques_1:description": "Consigue el trofeo único de un Campeón.",
   "achievements:ach_elite_uniques_all:name": "Sala de trofeos",

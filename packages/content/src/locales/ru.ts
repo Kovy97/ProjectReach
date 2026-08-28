@@ -2613,6 +2613,13 @@ export const ru: Record<string, string> = {
   "pets:flayling:combatAbility.name": "Свежевание",
   "pets:flayling:description": "Оно носит собственную шкуру наизнанку и, похоже, не против. У дубильной рамы оно выманивает больше кожи из каждой шкуры — а в бою находит щель в любой броне и отдирает её.",
   "pets:flayling:name": "Свежеватель",
+  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
+  "pets:booted_tomcat:combatAbility.name": "Силок",
+  "pets:booted_tomcat:description": "Серо-серебристый полосатый кот с жёлто-зелёными глазами, что ходит на задних лапах в сапогах и кожаной сбруе и охотится с силком и арбалетом. У ловушек он знает, куда ступит лапа, прежде чем она ступит, а в бою набрасывает силок, который держит врага на месте один удар сердца.",
+  "pets:booted_tomcat:name": "Кот в Сапогах",
+  "pets:silkweaver:combatAbility.name": "Шёлковая вуаль",
+  "pets:silkweaver:description": "Бледная ночная моль на тонких, как веретёна, ножках, что никогда не перестаёт прясть. У ткацкого станка она наматывает истраченную нить обратно на катушку, прежде чем ткань её заберёт, а в бою набрасывает шёлковую вуаль на глаза врага, и его удары уходят мимо.",
+  "pets:silkweaver:name": "Шелкопряд",
   "pets:gemwraith:combatAbility.name": "Призматическое копьё",
   "pets:gemwraith:description": "Полая форма, наполнившая себя краденными гранями. Она сочится светом из дюжины порезов — а у гранильного стола порой умудряется добыть из того же камня второй самоцвет. В бою эта точность становится чем-то более жестоким.",
   "pets:gemwraith:name": "Самоцветный Призрак",
@@ -3027,6 +3034,7 @@ export const ru: Record<string, string> = {
   "elites:elite_high_roc:name": "Грозовая Корона Небесный Отец",
   "elites:elite_high_specter:name": "Бледная Скорбь Страж Утёса",
   "elites:elite_high_wyvern:name": "Весск Тиран Хребта",
+  "elites:elite_ossric:name": "Оссрик Скованный Костью",
   "elites:elite_idol_warden:name": "Девятый Страж",
   "elites:elite_idol_wraith:name": "Пустая Завеса Забытый",
 
@@ -3058,6 +3066,7 @@ export const ru: Record<string, string> = {
   "items:ridgetyrant_greaves:name": "Поножи Тирана Хребта",
   "items:ninth_wardens_signet:name": "Перстень Девятого Стража",
   "items:hollowveil_locket:name": "Медальон Пустой Завесы",
+  "items:esthar:name": "Эстар, Буря Костей",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Потрошитель \"Клык Сумерек\"",
   "items:ribcage_hewer:name": "Крушитель Рёбер",
@@ -3554,7 +3563,7 @@ export const ru: Record<string, string> = {
   "achievements:ach_elite_kills_100:name": "Истребитель чемпионов",
   "achievements:ach_elite_kills_100:description": "Победите 100 Чемпионов Предела.",
   "achievements:ach_elite_variants_all:name": "Все чемпионы",
-  "achievements:ach_elite_variants_all:description": "Победите каждого из 28 Чемпионов Предела хотя бы раз.",
+  "achievements:ach_elite_variants_all:description": "Победите каждого из 29 Чемпионов Предела хотя бы раз.",
   "achievements:ach_elite_uniques_1:name": "Первый трофей",
   "achievements:ach_elite_uniques_1:description": "Добудьте уникальный трофей Чемпиона.",
   "achievements:ach_elite_uniques_all:name": "Трофейный зал",

@@ -539,6 +539,8 @@ export const content: ContentDB = {
       manaCost: 5,
       // Elementleiter (Chef-GO 28.08.2026): Arkan statt Feuer — kein Status (Parität über den
       // Zauberfokus-Zauberstab-Nachbarn ist bei diesem Starter-Item vernachlässigbar, s. Bericht).
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Resonanz = momentum (+2 % Schaden je Treffer, bis 10 Stapel, reset je Gegner).
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 10 },
       magicTheme: "arcane",
       rarity: "common",
       value: 8,
@@ -3714,6 +3716,8 @@ export const content: ContentDB = {
       // (Spec §Mechanik: „etwas höhere Grundspanne"). Kern-Score-Herleitung (coreStatScore) im
       // Bericht: verlorener Burn-Score wird durch die Spanne 1,7-2,6→2,3-3,5 ausgeglichen.
       damageMin: 2.3, damageMax: 3.5, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 6, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2/3)
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Resonanz = momentum (kein Status; durationMs 0 ⇒ kein coreStatScore-Beitrag, Parität unverändert).
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 10 },
       magicTheme: "arcane",
       requirements: { magic: 20 }, value: 190, rarity: "rare", // balance-pass3: value 560→190
     },
@@ -3727,6 +3731,9 @@ export const content: ContentDB = {
       // (Spanne 2,1-3,2→2,5-3,8, Herleitung im Bericht).
       damageMin: 2.5, damageMax: 3.8, spellFocus: 0.003, attackIntervalMs: 3000, manaCost: 7, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 2.6/4)
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Leere-Waffen tragen zusätzlich Entzug (void: Ziel macht 15 % weniger Schaden). Chance/
+      // Dauer nach dem Stab-Muster der Leiter (0,45; Dauer zwischen Eisen 4000 und Mithril 4900).
+      weaponEffects: [ { type: "void", chance: 0.45, magnitude: 0.15, durationMs: 4600 } ],
       magicTheme: "void",
       requirements: { magic: 30 }, value: 325, rarity: "rare", // balance-pass3: value 860→325
     },
@@ -3781,7 +3788,10 @@ export const content: ContentDB = {
       // KEINEN coreStatScore-Beitrag — Parität über Grundspanne (Spanne 6,5-9,8→11,4-17,2,
       // Herleitung im Bericht; Magnitude 5 = üblicher manaOnKill-Flatwert, s. z.B. sorrow_staff).
       damageMin: 11.4, damageMax: 17.2, spellFocus: 0.0031, attackIntervalMs: 2780, manaCost: 9, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 6.7/10.1); attackIntervalMs unverändert
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 5, durationMs: 0 },
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Lichtsegen ersetzt den manaOnKill-Platzhalter — jeder Zauber füllt 4 % des eigenen
+      // Ward-Maximums und durchdringt 50 % des Gegner-Wards (Engine: AETHER_WARD_ON_HIT/AETHER_WARD_PIERCE).
+      // durationMs 0 ⇒ kein coreStatScore-Beitrag, Grundspannen-Parität bleibt wie von der Elementleiter gesetzt.
+      weaponEffect: { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 },
       magicTheme: "aether",
       requirements: { magic: 80 }, value: 1600, rarity: "epic", // balance-pass3: value 9600→1600
     },
@@ -3792,7 +3802,8 @@ export const content: ContentDB = {
       // Elementleiter (Chef-GO 28.08.2026): Feuer→Aether — Mana-Rückfluss (manaOnKill) statt Brand.
       // Parität über Grundspanne (Spanne 8,1-12,2→12,5-18,8, Herleitung im Bericht).
       damageMin: 12.5, damageMax: 18.8, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.1/10.7); attackIntervalMs unverändert
-      weaponEffect: { type: "manaOnKill", chance: 1, magnitude: 6, durationMs: 0 },
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Lichtsegen ersetzt den manaOnKill-Platzhalter (s. titanium_staff).
+      weaponEffect: { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 },
       magicTheme: "aether",
       modifiers: { int: 1 },
       requirements: { magic: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 13500→2100
@@ -3806,6 +3817,8 @@ export const content: ContentDB = {
       // 10,2-15,2→13,9-20,6, Herleitung im Bericht).
       damageMin: 13.9, damageMax: 20.6, spellFocus: 0.0032, attackIntervalMs: 2700, manaCost: 8, wardBreak: 0.30, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 7.8/11.6); attackIntervalMs unverändert
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Entzug (void) zusätzlich; Stab-Muster (0,45; Dauer über Bluteisen 5800 fortgeschrieben).
+      weaponEffects: [ { type: "void", chance: 0.45, magnitude: 0.15, durationMs: 6400 } ],
       magicTheme: "void",
       modifiers: { int: 1, wis: 1 },
       requirements: { magic: 99 }, value: 3000, rarity: "epic", // balance-pass3: value 21000→3000
@@ -3878,6 +3891,8 @@ export const content: ContentDB = {
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Arkan — kein Status, Parität über Grundspanne
       // (Spanne 2,6-3,3→3,1-3,9, Herleitung im Bericht).
       damageMin: 3.1, damageMax: 3.9, spellFocus: 0.0026, attackIntervalMs: 2700, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 3.5/4.5)
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Resonanz = momentum (kein Status, kein Score-Beitrag).
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 10 },
       magicTheme: "arcane",
       requirements: { magic: 50 }, value: 750, rarity: "superRare", // balance-pass3: value 1400→750
     },
@@ -3888,6 +3903,8 @@ export const content: ContentDB = {
       damageMin: 3.2, damageMax: 4.1, spellFocus: 0.0026, attackIntervalMs: 2670, manaCost: 6, wardBreak: 0.20, // weapon-curve-2026-07 (#287): ×1.25/Tier-Kurve (Spec §3.3, war 4.2/5.4); attackIntervalMs unverändert
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Leere (execute, Standard-Werte).
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Entzug (void) zusätzlich; Zauberstab-Muster (Chance/Dauer zwischen Mithril 0,22/3800 und Bluteisen 0,28/4400).
+      weaponEffects: [ { type: "void", chance: 0.25, magnitude: 0.15, durationMs: 4100 } ],
       magicTheme: "void",
       requirements: { magic: 60 }, value: 1000, rarity: "superRare", // balance-pass3: value 2400→1000
     },
@@ -3918,6 +3935,8 @@ export const content: ContentDB = {
       // Elementleiter (Chef-GO 28.08.2026): Blitz→Arkan — kein Status. Score bleibt ohne Bump über
       // dem Titan-Zauberstab-Nachbarn (Bericht); magicTheme MUSS gesetzt sein, sonst greift die
       // ID-Präfix-Heuristik in combatFx.ts (`id.startsWith("aether")`) fälschlich auf "aether".
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Resonanz = momentum (kein Status, kein Score-Beitrag).
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 10 },
       magicTheme: "arcane",
       requirements: { magic: 90 }, value: 2100, rarity: "epic", // balance-pass3: value 8200→2100
     },
@@ -4085,6 +4104,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "burn", chance: 0.3, magnitude: 3, durationMs: 5000 }, // balance-fix 2026-07-05: magnitude 1→3 (Ganzzahl, tier-gestuft nach Level/Rarity)
       // Elementleiter (Chef-GO 28.08.2026): Bild/Name sind Aether, der Status bleibt Brand
       // (unverändert, Rare-Drop-Philosophie) — magicTheme überschreibt nur die FX-Optik.
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Aether-Drop trägt zusätzlich Lichtsegen (Brand bleibt).
+      weaponEffects: [ { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 } ],
       magicTheme: "aether",
       requirements: { magic: 40 },
       value: 520,
@@ -4133,6 +4154,8 @@ export const content: ContentDB = {
       weaponEffect: { type: "shock", chance: 0.3, magnitude: 0.32, durationMs: 4500 },
       // Elementleiter (Chef-GO 28.08.2026): Bild/Name sind Leere ("Leerenrufer"), der Status bleibt
       // Schock (unverändert, Rare-Drop-Philosophie) — magicTheme überschreibt nur die FX-Optik.
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Entzug (void) zusätzlich (Chance/Dauer vom eigenen Schock übernommen).
+      weaponEffects: [ { type: "void", chance: 0.3, magnitude: 0.15, durationMs: 4500 } ],
       magicTheme: "void",
       modifiers: { lck: 1 },
       requirements: { magic: 65 }, value: 2200, rarity: "superRare",
@@ -4148,7 +4171,8 @@ export const content: ContentDB = {
       // bleibt Brand (unverändert, Rare-Drop-Philosophie) — magicTheme überschreibt nur die FX-Optik.
       magicTheme: "aether",
       modifiers: { int: 1, lck: 2 },
-      weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 10, durationMs: 0 } ],
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Aether-Drop trägt zusätzlich Lichtsegen (Brand + critBurst bleiben).
+      weaponEffects: [ { type: "critBurst", chance: 1, magnitude: 10, durationMs: 0 }, { type: "lightblessing", chance: 1, magnitude: 0.04, durationMs: 0 } ],
       requirements: { magic: 88 }, value: 4200, rarity: "epic",
     },
 
@@ -7045,6 +7069,31 @@ export const content: ContentDB = {
       value: 32000, rarity: "legendary",
     },
 
+    // ── 1.2.0 (Chef 28.08.2026): Community-Item „Esthar" nach der Idee eines Spielers — Unique des 29.
+    // Champions elite_ossric (Hochland). Stil-Vorbild colossus_marrowaxe (Knochen-Look), aber legendär
+    // statt episch, angelehnt an Bonestorm. Rare-Drop-Philosophie: Werte der NÄCHSTEN Stufe bei aktueller
+    // Anforderung — Basis = Götzeneisen-Großaxt (R99, 31,0–57,8 @3450, DPS 12,87) +8 % ⇒ 33,5–62,4 @3450
+    // (DPS 13,90; +31 % über aetherium_greataxe R90 10,58, +8 % über Götzeneisen, unter dem +12-%-Deckel
+    // 14,41). Effekte = Drop-Premium (Muster direfang_maul/emberforge_hammer): Blutung 0,35×6/6000
+    // (Hochland-Niveau, zwischen saltgrave_cutlass 5 und den Götzeneisen-8ern) + everyNth n=4 mag 1,0
+    // (jeder vierte Treffer trifft doppelt = „Knochensturm", rechnerisch +25 % auf die Grundspanne).
+    // Guards: drop-gear-beats-craft (Kernwert ≥ godiron_greataxe ✓), eigene Ein-Item-Ladder-Familie
+    // (Suffix „esthar"), Bild kommt von Mira als `esthar` (Emoji-Rückfall 🪓).
+    esthar: {
+      id: "esthar", name: { en: "Esthar, Storm of Bones", de: "Esthar, Sturm der Gebeine" },
+      description: {
+        en: "A whirling storm of bone blades lashed to a haft of petrified marrow. Swing it and the whole thing howls.",
+        de: "Ein Wirbelsturm aus Knochenklingen, an einen Schaft aus versteinertem Mark gebunden. Wer sie schwingt, hört sie heulen.",
+      },
+      type: "equipment", stackable: false, icon: "🪓", slot: "mainhand", weaponStyle: "melee", twoHanded: true,
+      weaponType: "greataxe",
+      damageMin: 33.5, damageMax: 62.4, attackIntervalMs: 3450,
+      weaponEffect: { type: "bleed", chance: 0.35, magnitude: 6, durationMs: 6000 },
+      weaponEffects: [ { type: "everyNth", chance: 1, magnitude: 1, durationMs: 0, stacks: 4 } ],
+      modifiers: { str: 2, lck: 3 },
+      requirements: { attack: 90 }, value: 16000, rarity: "legendary",
+    },
+
     // ══════════════════════════════════════════════════════════════════════════════════════
     // Content-Dev Waffen-Drop-Erweiterung (2026-07-23, Chef-Feedback „es droppen fast keine
     // Waffen"): Audit zeigte 74 Waffen-Drops im Bestand, aber davon fast alle Rare-Chase (<1 %
@@ -7509,6 +7558,8 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", weaponType: "scepter",
       damageMin: 2.1, damageMax: 3.2, spellFocus: 0.0026, attackIntervalMs: 3000, manaCost: 7,
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Leere-Drop (execute ⇒ Thema void) trägt zusätzlich Entzug; Szepter-Muster wie stormcaller_rod (0,35/4000).
+      weaponEffects: [ { type: "void", chance: 0.35, magnitude: 0.15, durationMs: 4000 } ],
       requirements: { magic: 25 }, value: 390, rarity: "rare",
       description: {
         en: "Bent from felwarped iron a Borderlands magician carried into every duel. It finishes what already stands at death's door.",
@@ -7532,6 +7583,8 @@ export const content: ContentDB = {
       damageMin: 8.1, damageMax: 12.2, spellFocus: 0.0032, attackIntervalMs: 2730, manaCost: 8,
       modifiers: { int: 1 },
       weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      // Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md): Leere-Drop (execute ⇒ Thema void) trägt zusätzlich Entzug; Stab-Muster (0,45; Dauer wie Bluteisen-Stab 5800).
+      weaponEffects: [ { type: "void", chance: 0.45, magnitude: 0.15, durationMs: 5800 } ],
       requirements: { magic: 80 }, value: 2500, rarity: "epic",
       description: {
         en: "Raised from a drowned choir singer's coral crusted staff, still humming an old hymn underwater. It finishes what already stands at death's door.",
@@ -15437,9 +15490,9 @@ export const content: ContentDB = {
     { id: "ach_elite_first", name: { en: "Champion's Bane", de: "Championsfluch" }, description: { en: "Defeat your first Champion of the Reach.", de: "Besiege deinen ersten Champion des Reach." }, icon: "👑", category: "collection", rarity: "uncommon", condition: { type: "elite_kills", count: 1 } },
     { id: "ach_elite_kills_10", name: { en: "Champion Hunter", de: "Championsjäger" }, description: { en: "Defeat 10 Champions of the Reach.", de: "Besiege 10 Champions des Reach." }, icon: "👑", category: "collection", rarity: "rare", condition: { type: "elite_kills", count: 10 } },
     { id: "ach_elite_kills_100", name: { en: "Champion Slayer", de: "Championsschlächter" }, description: { en: "Defeat 100 Champions of the Reach.", de: "Besiege 100 Champions des Reach." }, icon: "👑", category: "collection", rarity: "epic", condition: { type: "elite_kills", count: 100 } },
-    { id: "ach_elite_variants_all", name: { en: "Every Champion", de: "Alle Champions" }, description: { en: "Defeat each of the 28 Champions of the Reach at least once.", de: "Besiege jeden der 28 Champions des Reach mindestens einmal." }, icon: "👑", category: "collection", rarity: "epic", condition: { type: "elite_variants", count: 28 } },
+    { id: "ach_elite_variants_all", name: { en: "Every Champion", de: "Alle Champions" }, description: { en: "Defeat each of the 29 Champions of the Reach at least once.", de: "Besiege jeden der 29 Champions des Reach mindestens einmal." }, icon: "👑", category: "collection", rarity: "epic", condition: { type: "elite_variants", count: 29 } }, // 1.2.0 (Chef 28.08.2026): 28→29 mit elite_ossric (Hochland)
     { id: "ach_elite_uniques_1", name: { en: "First Trophy", de: "Erste Trophäe" }, description: { en: "Claim the unique trophy of a Champion.", de: "Erbeute die einzigartige Trophäe eines Champions." }, icon: "🏆", category: "collection", rarity: "rare", condition: { type: "elite_uniques", count: 1 } },
-    { id: "ach_elite_uniques_all", name: { en: "Trophy Hall", de: "Trophäenhalle" }, description: { en: "Claim the unique trophy of every Champion of the Reach.", de: "Erbeute die einzigartige Trophäe jedes Champions des Reach." }, icon: "🏆", category: "collection", rarity: "legendary", condition: { type: "elite_uniques", count: 28 } },
+    { id: "ach_elite_uniques_all", name: { en: "Trophy Hall", de: "Trophäenhalle" }, description: { en: "Claim the unique trophy of every Champion of the Reach.", de: "Erbeute die einzigartige Trophäe jedes Champions des Reach." }, icon: "🏆", category: "collection", rarity: "legendary", condition: { type: "elite_uniques", count: 29 } }, // 1.2.0 (Chef 28.08.2026): 28→29 mit esthar (elite_ossric)
     { id: "ach_elite_idol_warden", name: { en: "The Ninth Warden", de: "Der neunte Wächter" }, description: { en: "Defeat the Ninth Warden.", de: "Besiege den neunten Wächter." }, icon: "🎭", category: "collection", rarity: "epic", hidden: true, condition: { type: "elite_kills", target: "elite_idol_warden", count: 1 } },
 
     // -- Collection: Runen entdeckt (neu) --
@@ -18597,6 +18650,55 @@ export const content: ContentDB = {
       icon: "💀",
       art: "pets/charnel.png",
     },
+    // ── 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter der beiden neuen Skills Jagen/Schneidern ──
+    booted_tomcat: {
+      id: "booted_tomcat",
+      name: { en: "Booted Tomcat", de: "Gestiefelter Kater" },
+      description: {
+        en: "A grey-and-silver tabby tom with yellow-green eyes who walks upright in boots and a leather harness, hunting with snare and crossbow. At the traps he knows where a paw will land before it does — and in a fight he throws a snare that holds the enemy still for a heartbeat.",
+        de: "Ein grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und Armbrust jagt. An den Fallen weiß er, wohin eine Pfote tritt, bevor sie es tut — und im Kampf wirft er eine Schlinge, die den Gegner einen Herzschlag lang festhält.",
+      },
+      // Neues Kind huntCatchChance (shared): +3 pp Fangchance der Fallen, additiv VOR dem 95-%-Deckel
+      // (engine/hunting.ts huntCatchChance). Jagen läuft nicht über Aktionen, darum kein doubleDrop.
+      skillEffect: { kind: "huntCatchChance", skill: "hunting", value: 0.03 },
+      // #276 §3 Budget: stun 600 ms / 5 s = 12 % Uptime-Cut (Muster rotbark „Wurzelschlinge").
+      combatAbility: {
+        kind: "stun",
+        name: { en: "Snare Trap", de: "Schlingenfalle" },
+        intervalMs: 5000,
+        value: 600,
+      },
+      // Drop je FANG (engine/hunting.ts grantCatch, Schritt 5 der RNG-Reihenfolge), nicht je Aktion.
+      source: { kind: "skill", skill: "hunting" },
+      // Jagen ist fang-arm wie Farming ernte-arm (Muster witherling 1/15000): 5–60 min je Falle, XP je Fang
+      // = 5× Monster-XP (Hochland ~20k), Stufe 99 = 13,0 M XP ⇒ ~1 000–2 500 Fänge über einen vollen
+      // 1→99-Grind ⇒ P(≥1 bis 99) ≈ 7–15 % bei 1/15000 (Ausnahme vom ≤1/50000-Band im pet-integrity-Guard).
+      dropChance: 1 / 15000,
+      icon: "🐈",
+      art: "pets/booted_tomcat.png",
+    },
+    silkweaver: {
+      id: "silkweaver",
+      name: { en: "Silkweaver", de: "Seidenweber" },
+      description: {
+        en: "A pale night-moth on spindle-thin legs that never stops spinning. At the loom it winds spent thread back onto the bobbin before the cloth can claim it — and in a fight it drapes a veil of silk over the enemy's eyes so their blows land wide.",
+        de: "Eine bleiche Nachtmotte auf spindeldürren Beinen, die nie aufhört zu spinnen. Am Webstuhl wickelt sie verbrauchten Faden zurück auf die Spule, bevor der Stoff ihn fordert — und im Kampf legt sie einen Seidenschleier über die Augen des Gegners, sodass seine Schläge ins Leere gehen.",
+      },
+      // Muster slagfiend: refundMaterial 5 % auf den Herkunfts-Skill (tick.ts preserveChance).
+      skillEffect: { kind: "refundMaterial", skill: "tailoring", value: 0.05 },
+      // #276 §3 Budget: accuracyDownEnemy 0,35 / 5,5 s (Muster sporewretch „Sporenwolke", ≈ −19 % Gegner-Treffer).
+      combatAbility: {
+        kind: "accuracyDownEnemy",
+        name: { en: "Silk Veil", de: "Seidenschleier" },
+        intervalMs: 5500,
+        value: 0.35,
+      },
+      // Schneidern läuft über normale Rezepte (Aktions-Pfad tick.ts completeAction → tryPetDrop).
+      source: { kind: "skill", skill: "tailoring" },
+      dropChance: 1 / 60000, // Craft-Skill-Band (skilling-pet-rate pass, Muster slagfiend/quillshrike)
+      icon: "🦋",
+      art: "pets/silkweaver.png",
+    },
   },
 
   // ── Farming-Plots: Crop-Katalog (Phase 2, content-dev) ──────────────────────────────────
@@ -20244,6 +20346,34 @@ export const content: ContentDB = {
         { itemId: "raw_dragonhide", chance: 0.10, min: 4, max: 4 },
         { itemId: "wyvernscale_greaves", chance: 0.0039, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "wyvernscale_aegis", chance: 0.0039, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    // 1.2.0 (Chef 28.08.2026): 29. Champion, droppt das Community-Item „Esthar" (nach der Idee eines
+    // Spielers). Basis gravecliff_specter (undead — das einzige knochige/alte Nicht-Boss-Wesen des Hochlands:
+    // roc_elder ist ach_boss_*-Boss, roc_storm/roc_void sind dungeonOnly, roc/roc_hunter sind Jungvögel/Jäger).
+    // Zweite Variante auf derselben Basis wie Palemourn (mechanisch erlaubt, elites.ts skaliert nur Stats);
+    // Thema „Markgebunden" statt „Klage": Blutung statt Frost (inflictOverride, Muster elite_crypt_butcher:
+    // Hochland-Blutung 0,30×1/5000 des Wyvern mit Magnitude 1→2), etwas zäher als Palemourn.
+    // elite-balance-spec.md §0/§1.9 (Anker void_titan EHP* 6458, DPS-in 49,1): Caster-Basis ⇒ wardCapacity =
+    // hp-Mult (815×2,2=1793 / 926×2,2=2037 exakt); EHP* = 3830/(1−120/245) ≈ 7507 = 1,16× Anker (Gear-Band
+    // 0,9–1,4 ✓); DPS-in 145×1,15/2,6 = 64,1 = 1,31× (≤ ~1,35 ✓, wie Palemourn); Level bleibt die Basis (237,
+    // elites.ts skaliert kein Level), xp 7800×2,75 = 21 450.
+    // Loot: Hochland-Materialien (Mats ×4 wie die Nachbarn) + 2 bestehende Hochland-Rares (Chance ×25 der
+    // Basis-Zeile, Deckel 0,03: skybreaker_greatsword roc_elder 0,0004→0,0089 [Muster wolffang_spear],
+    // talon_dagger roc 0,0005→0,0125), Unique mit ELITE_UNIQUE_DROP_CHANCE_DEFAULT.
+    elite_ossric: {
+      id: "elite_ossric", zone: "highlands", baseMonsterId: "gravecliff_specter",
+      name: { en: "Ossric the Marrowbound", de: "Ossric der Markgebundene" },
+      statMults: { hp: 2.2, damage: 1.15, wardCapacity: 2.2 }, xpMult: 2.75,
+      inflictOverride: { type: "bleed", chance: 0.30, magnitude: 2, durationMs: 5000 },
+      uniqueItemId: "esthar",
+      extraLoot: [
+        { itemId: "feather", chance: 0.70, min: 40, max: 80 },
+        { itemId: "aether_essence", chance: 0.20, min: 4, max: 4 },
+        { itemId: "void_essence", chance: 0.08, min: 4, max: 4 },
+        { itemId: "soulopal", chance: 0.05, min: 4, max: 4 },
+        { itemId: "skybreaker_greatsword", chance: 0.0089, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "talon_dagger", chance: 0.0125, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
 

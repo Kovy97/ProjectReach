@@ -5,11 +5,12 @@ import {
   MELEE_LIFESTEAL,
   MELEE_LIFESTEAL_CAP_ABS,
   MELEE_LIFESTEAL_CAP_PCT,
+  SHOCK_DELAY_MS,
 } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { createGame } from "./state";
 import { computeStats } from "./character";
-import { startCombat, combatStep } from "./combat";
+import { applyEnemyStatus, startCombat, combatStep } from "./combat";
 
 /**
  * Regressionstests E+-Paket (design/battle-040-dramaturgie.md §E+, Chef-GO 2026-08-03) —
@@ -21,6 +22,9 @@ import { startCombat, combatStep } from "./combat";
  *  Lücke 2: Schock-Aussetzer und Leder-Dodge loggten beide als nacktes `kind:"miss"` —
  *           ununterscheidbar vom echten Fehlschlag. Jetzt additives Feld
  *           `missReason: "shock"|"dodge"`; echte Misses bleiben OHNE das Feld.
+ *           Elementar-Effekte (Chef-GO 28.08.2026): der Schock-AUSSETZER ist entfallen — Schock
+ *           verzögert jetzt bei der Anwendung (status-Event mit amount = ms), `missReason: "shock"`
+ *           wird nie mehr emittiert; der Einfrier-Aussetzer (Frost) trägt `missReason: "frozen"`.
  *  Lücke 3: der Melee-STIL-Lebensraub (MELEE_LIFESTEAL) heilte stumm (nur Gear-Lifesteal
  *           loggte). Jetzt dieselbe `kind:"lifesteal"`-Emission mit unterscheidbarer Quelle
  *           `source:"meleeLifesteal"`; ohne echte Heilung (volle HP) KEIN Geister-Event.
@@ -142,29 +146,35 @@ describe("E+ Lücke 1: bleed/poison-DoTs emittieren dot-Events (vorher stumm)", 
 });
 
 describe("E+ Lücke 2: missReason unterscheidet Schock-Aussetzer und Leder-Dodge vom echten Miss", () => {
-  it("Schock am SPIELER: fälliger Angriff setzt aus → miss by player mit missReason shock", () => {
+  it("Schock am SPIELER (Elementar-Effekte): ein liegender Schock-Status setzt den fälligen Angriff NICHT mehr aus — nie missReason shock", () => {
     const { s, c, st } = setup(dummy("tt_dram_shockp_mob"), [SWORD], 14, SWORD.id);
-    s.combat.playerEffects.push({ type: "shock", remainingMs: 5000, magnitude: 1 }); // Chance 1 ⇒ sicherer Aussetzer
+    s.combat.playerEffects.push({ type: "shock", remainingMs: 5000, magnitude: 1 });
     s.combat.playerTimerMs = st.attackIntervalMs; // Angriff DIESES Ticks fällig
     s.combat.enemyTimerMs = 0;
     combatStep(s, c);
-    const miss = s.combat.log.find((e) => e.kind === "miss" && e.by === "player");
-    expect(miss).toBeTruthy();
-    expect(miss!.missReason).toBe("shock");
-    // Der Aussetzer ersetzt den Schlag komplett — kein Treffer im selben Tick.
-    expect(s.combat.log.some((e) => e.by === "player" && (e.kind === "hit" || e.kind === "crit"))).toBe(false);
+    expect(s.combat.log.some((e) => e.kind === "miss" && e.missReason === "shock")).toBe(false);
+    // Der Angriff findet statt: Treffer oder ECHTER Fehlschlag (ohne missReason).
+    expect(
+      s.combat.log.some(
+        (e) => e.by === "player" && (e.kind === "hit" || e.kind === "crit" || (e.kind === "miss" && !e.missReason)),
+      ),
+    ).toBe(true);
   });
 
-  it("Schock am GEGNER (Symmetrie): fälliger Gegner-Angriff setzt aus → miss by enemy mit missReason shock", () => {
+  it("Schock am GEGNER (Symmetrie): die ANWENDUNG verzögert den Gegner-Timer und loggt status shock mit amount = ms", () => {
     const monster = dummy("tt_dram_shocke_mob", { attackIntervalMs: 1000 });
     const { s, c } = setup(monster, [], 15);
-    s.combat.enemyEffects.push({ type: "shock", remainingMs: 5000, magnitude: 1 });
+    s.combat.enemyTimerMs = 600;
+    applyEnemyStatus(s, monster, { type: "shock", magnitude: 1, durationMs: 5000 });
+    expect(s.combat.enemyTimerMs).toBe(600 - SHOCK_DELAY_MS);
+    const ev = s.combat.log.find((e) => e.kind === "status" && e.status === "shock");
+    expect(ev?.by).toBe("player");
+    expect(ev?.amount).toBe(SHOCK_DELAY_MS);
     s.combat.playerTimerMs = 0;
-    s.combat.enemyTimerMs = monster.attackIntervalMs; // Gegner-Angriff fällig
+    s.combat.enemyTimerMs = monster.attackIntervalMs; // Gegner-Angriff fällig — greift an, setzt nicht aus
     combatStep(s, c);
-    const miss = s.combat.log.find((e) => e.kind === "miss" && e.by === "enemy");
-    expect(miss).toBeTruthy();
-    expect(miss!.missReason).toBe("shock");
+    expect(s.combat.log.some((e) => e.kind === "miss" && e.missReason === "shock")).toBe(false);
+    expect(s.combat.log.some((e) => e.by === "enemy" && e.kind === "hit")).toBe(true);
   });
 
   it("Leder-Dodge: ausgewichener Gegner-Treffer loggt missReason dodge", () => {

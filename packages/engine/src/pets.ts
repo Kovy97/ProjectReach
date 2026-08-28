@@ -27,8 +27,9 @@ import { nextFloat } from "./rng";
  *
  * Die Skill-Helfer (`petDoubleYieldBonus`, `petPreserveBonus`, `petThievingBonus`,
  * `petInstantActionChance`, `petManaRegenMult`, `petLifesteal`, `petSkillBoost`,
- * `petDamageReduction`, `petSellBonus`) ruft tick.ts/computeStats/shop.ts an genau definierten
- * Stellen ab; `petDoubleLootChance`/`petKillHealFraction` konsumiert combat-dev im Kill-Pfad.
+ * `petDamageReduction`, `petSellBonus`, `petHuntCatchBonus`) ruft tick.ts/computeStats/shop.ts/
+ * hunting.ts an genau definierten Stellen ab; `petDoubleLootChance`/`petKillHealFraction`
+ * konsumiert combat-dev im Kill-Pfad.
  * Die Combat-Seite konsumiert sonst NUR `petCombatAbility(state, content)` (reine Lese-API);
  * die getriggerte Anwendung im Fight (Intervall-Timer + Effekt-Dispatch) macht combat-dev in
  * `combat.ts`. Hier wird KEINE Pet-Logik dupliziert.
@@ -130,6 +131,16 @@ export function petPreserveBonus(state: GameState, content: ContentDB, skill: Sk
 /** Additiver Thieving-Erfolgs-Bonus (0..0.03) für einen Skill. Cap 0.95 bleibt (actionSuccessChance). */
 export function petThievingBonus(state: GameState, content: ContentDB, skill: SkillId): number {
   return skillScopedValue(state, content, ["thievingSuccess"], skill);
+}
+
+/**
+ * Additiver Fangchancen-Bonus (0..0.03) für einen Skill (1.2.0 „Fasern und Fallen": booted_tomcat
+ * auf `hunting`). hunting.ts `huntCatchChance` addiert ihn VOR dem bestehenden Deckel
+ * HUNT_CATCH_CAP (95 %) — der Deckel bleibt, das Pet füllt nur den Weg dorthin schneller.
+ * Rein lesend, kein RNG.
+ */
+export function petHuntCatchBonus(state: GameState, content: ContentDB, skill: SkillId): number {
+  return skillScopedValue(state, content, ["huntCatchChance"], skill);
 }
 
 // ── Globale Effekte (computeStats / shop.ts / combat-dev-Kill-Pfad) ─────────

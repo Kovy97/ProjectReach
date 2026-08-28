@@ -20,6 +20,7 @@ import { grantLoot } from "./mail";
 import { monsterKills } from "./drops";
 import { isZoneUnlocked } from "./zones";
 import { tryCraftSuffix } from "./suffix";
+import { petHuntCatchBonus, tryPetDrop } from "./pets";
 
 // ───────────────────────────────────────────────────────────────────────────
 // Jagen (1.2.0 „Fasern und Fallen", SAVE_VERSION 85 — design/handwerk-fasern-jagen/spec-technik.md §3,
@@ -31,9 +32,11 @@ import { tryCraftSuffix } from "./suffix";
 // pro `advance`, offline == online). Bei ≤ 0 wird geworfen; der Rest überträgt sich wie bei den
 // Beeten (Schleife „solange remainingMs ≤ 0", Auto-Erneuern nur mit Köder).
 //
-// Kein Ruhm (J2): ein Fang ist KEIN Kill — kein `monsterKills`, kein Slayer-Credit, kein
-// Bestiarium-/Collection-Log (`seenDrops` bleibt unberührt), kein Begleiter-Wurf, keine Kampf-XP; der
-// einzige Zähler ist `stats.huntCatches`.
+// Kein Ruhm (J2): ein Fang ist KEIN Kill — kein `monsterKills`, kein Slayer-Credit, keine Kampf-XP;
+// der Kill-Zähler bleibt unberührt, gezählt wird nur `stats.huntCatches` (+ `seenDrops` fürs Jagdbuch,
+// Chef 28.08.2026). Ein Fang ist aber eine SKILL-Aktion des Jagens: wie jeder Aktions-Abschluss
+// (tick.ts `completeAction`) zieht er den Begleiter-Wurf des Herkunfts-Skills (`tryPetDrop`,
+// Quelle `{ kind: "skill", skill: "hunting" }`, Chef 28.08.2026: Jagen-Begleiter booted_tomcat).
 //
 // RNG-REIHENFOLGE je Wurf (fest, alles über `state.rng`):
 //   1. nextFloat  — Fangchance (`huntCatchChance`), NUR wenn das Gebiet ≥ 1 fangbares Monster hat
@@ -44,8 +47,13 @@ import { tryCraftSuffix } from "./suffix";
 //   4. HUNT_LOOT_ROLLS komplette Durchläufe der Monster-Beutetabelle, je Eintrag: nextFloat
 //                   (Chance) → bei Erfolg nextInt (Menge) → ggf. Suffix-Rolls über `tryCraftSuffix`
 //                   (zieht NUR bei Equipment mit Pool, wie im Kill-Pfad).
-// Kein Segen-/Runen-/Pet-Multiplikator auf Chance oder Beute (der Fallen-Tick kennt keine Wanduhr,
-// und Kampf-Effekte gehören dem Kampf) — die Tabelle fällt exakt mit ihren Content-Chancen.
+//   5. Begleiter-Wurf (`tryPetDrop`, NACH Beute und XP — Muster tick.ts): je nextFloat NUR, wenn
+//                   es für `hunting` ein noch nicht besessenes Pet gibt; ohne passendes Pet (oder
+//                   schon im Besitz) KEIN Zug — Content ohne Jagen-Pet bleibt bit-identisch.
+// Begleiter-Passiv auf die FANGCHANCE: `huntCatchChance` addiert `petHuntCatchBonus` (booted_tomcat
+// +3 pp) VOR dem Deckel HUNT_CATCH_CAP — reines Lesen, kein zusätzlicher RNG-Zug. Kein Segen-/Runen-/
+// Pet-Multiplikator auf die BEUTE (der Fallen-Tick kennt keine Wanduhr, und Kampf-Effekte gehören
+// dem Kampf) — die Tabelle fällt exakt mit ihren Content-Chancen.
 // Ohne `content.huntingZones` ist alles inert (kein RNG-Zug, kein State-Schreibzugriff).
 // ───────────────────────────────────────────────────────────────────────────
 
@@ -156,7 +164,9 @@ export function huntCatchChance(state: GameState, content: ContentDB, zoneId: st
   const zone = huntZoneDef(content, zoneId);
   if (!zone) return 0;
   const raw = HUNT_CATCH_BASE + (huntingLevel(state) - zone.levelRequired) * HUNT_CATCH_PER_LEVEL;
-  return Math.min(HUNT_CATCH_CAP, Math.max(0, raw));
+  // Begleiter-Passiv (booted_tomcat, Kind huntCatchChance): additiv VOR dem Deckel — der 95-%-Deckel bleibt.
+  const pet = petHuntCatchBonus(state, content, HUNTING_SKILL_ID);
+  return Math.min(HUNT_CATCH_CAP, Math.max(0, raw + pet));
 }
 
 /**
@@ -219,7 +229,7 @@ export function setHuntAutoRebait(state: GameState, slot: number, on: boolean): 
  * EIN erfolgreicher Fang: Gold (Kill-Streuung ×5), HUNT_LOOT_ROLLS Durchläufe der Beutetabelle über den
  * normalen Drop-Pfad (Suffix-Instanz möglich, grantLoot: Inventar → Lager → Postfach, itemsGathered),
  * Jagen-XP (Sammel-Tonika multiplizieren wie beim Beet), Breadcrumb mit laufender Fang-Nummer.
- * RNG-Züge s. Kopfkommentar (Schritte 3–4).
+ * RNG-Züge s. Kopfkommentar (Schritte 3–5; Schritt 5 = Begleiter-Wurf).
  */
 function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, monster: MonsterDef): HuntCatch {
   // 3. Gold: derselbe Streuungs-Wurf wie im Kill-Pfad (combat.ts rollKillGold), dann ×HUNT_LOOT_ROLLS.
@@ -267,6 +277,13 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
 
   state.huntCatchSeq += 1;
   state.stats.huntCatches += 1;
+
+  // 5. Begleiter-Wurf (Chef 28.08.2026, Jagen-Begleiter): ein Fang ist der Aktions-Abschluss des
+  // Jagens — derselbe Wurf wie in tick.ts `completeAction`, NACH Beute/XP/Zählern. `tryPetDrop` zieht
+  // NUR dann einen nextFloat, wenn für `hunting` ein noch nicht besessenes Pet existiert (Breadcrumb
+  // `lastPetDrop`/`petDropSeq` setzt es selbst) — Determinismus offline == online bleibt, weil der
+  // Wurf Teil des Fang-Pfads ist und nicht vom Fenster abhängt.
+  tryPetDrop(state, content, { kind: "skill", skill: HUNTING_SKILL_ID });
   return { seq: state.huntCatchSeq, monsterId: monster.id, items, gold };
 }
 

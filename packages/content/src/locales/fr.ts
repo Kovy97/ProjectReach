@@ -2613,6 +2613,13 @@ export const fr: Record<string, string> = {
   "pets:flayling:combatAbility.name": "Écorchement",
   "pets:flayling:description": "Elle porte sa propre peau à l'envers et ne semble pas s'en soucier. Au chevalet de tannage, elle tire davantage de cuir de chaque peau — et au combat, elle trouve la faille de chaque armure et la retrousse.",
   "pets:flayling:name": "Écorchon",
+  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
+  "pets:booted_tomcat:combatAbility.name": "Piège à collet",
+  "pets:booted_tomcat:description": "Un matou tigré gris argent aux yeux jaune-vert qui marche debout, bottes aux pieds et harnais de cuir sur le dos, et chasse au collet et à l'arbalète. Aux pièges, il sait où une patte se posera avant qu'elle ne le fasse — et au combat, il lance un collet qui immobilise l'ennemi le temps d'un battement de cœur.",
+  "pets:booted_tomcat:name": "Matou Botté",
+  "pets:silkweaver:combatAbility.name": "Voile de soie",
+  "pets:silkweaver:description": "Une pâle phalène aux pattes fines comme des fuseaux qui ne cesse jamais de filer. Au métier, elle rembobine le fil usé avant que l'étoffe ne le réclame — et au combat, elle drape un voile de soie sur les yeux de l'ennemi pour que ses coups frappent dans le vide.",
+  "pets:silkweaver:name": "Tisseuse de Soie",
   "pets:gemwraith:combatAbility.name": "Lance prismatique",
   "pets:gemwraith:description": "Une forme creuse qui s'est emplie de facettes volées. Elle saigne la lumière par une douzaine de tailles — et à la table de taille, elle parvient parfois à tirer une seconde gemme de la même pierre. Au combat, cette précision devient quelque chose de plus cruel.",
   "pets:gemwraith:name": "Spectregemme",
@@ -3027,6 +3034,7 @@ export const fr: Record<string, string> = {
   "elites:elite_high_roc:name": "Couronne-de-Tempête le Père-Céleste",
   "elites:elite_high_specter:name": "Palemourn le Gardien-des-Falaises",
   "elites:elite_high_wyvern:name": "Vessk le Tyran-des-Crêtes",
+  "elites:elite_ossric:name": "Ossric le Lié-à-la-Moelle",
   "elites:elite_idol_warden:name": "Le Neuvième Gardien",
   "elites:elite_idol_wraith:name": "Voile-Creux l'Oublié",
 
@@ -3058,6 +3066,7 @@ export const fr: Record<string, string> = {
   "items:ridgetyrant_greaves:name": "Grèves du Tyran-des-Crêtes",
   "items:ninth_wardens_signet:name": "Chevalière du Neuvième Gardien",
   "items:hollowveil_locket:name": "Médaillon Voile-Creux",
+  "items:esthar:name": "Esthar, Tempête d'Os",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Éventreur Croc-du-Crépuscule",
   "items:ribcage_hewer:name": "Fendeur de Cage Thoracique",
@@ -3554,7 +3563,7 @@ export const fr: Record<string, string> = {
   "achievements:ach_elite_kills_100:name": "Pourfendeur de champions",
   "achievements:ach_elite_kills_100:description": "Vainquez 100 Champions du Confin.",
   "achievements:ach_elite_variants_all:name": "Tous les champions",
-  "achievements:ach_elite_variants_all:description": "Vainquez chacun des 28 Champions du Confin au moins une fois.",
+  "achievements:ach_elite_variants_all:description": "Vainquez chacun des 29 Champions du Confin au moins une fois.",
   "achievements:ach_elite_uniques_1:name": "Premier trophée",
   "achievements:ach_elite_uniques_1:description": "Obtenez le trophée unique d'un Champion.",
   "achievements:ach_elite_uniques_all:name": "Salle des trophées",

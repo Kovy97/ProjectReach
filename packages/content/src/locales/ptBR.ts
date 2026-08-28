@@ -2616,6 +2616,13 @@ export const ptBR: Record<string, string> = {
   "pets:flayling:combatAbility.name": "Esfolamento",
   "pets:flayling:description": "Ela veste o próprio couro do avesso e não parece se importar. Na banca de curtume, ela arranca mais couro de cada pele — e, em combate, encontra a fresta em toda armadura e a descasca.",
   "pets:flayling:name": "Flayling",
+  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
+  "pets:booted_tomcat:combatAbility.name": "Armadilha de laço",
+  "pets:booted_tomcat:description": "Um gato malhado cinza-prateado de olhos verde-amarelados que anda ereto, de botas e arnês de couro, e caça com laço e besta. Nas armadilhas ele sabe onde uma pata vai pisar antes que pise — e, em combate, solta um laço que prende o inimigo por um instante.",
+  "pets:booted_tomcat:name": "Gato de Botas",
+  "pets:silkweaver:combatAbility.name": "Véu de seda",
+  "pets:silkweaver:description": "Uma mariposa noturna pálida, de pernas finas como fusos, que nunca para de fiar. No tear ela devolve o fio gasto ao carretel antes que o tecido o reclame — e, em combate, cobre os olhos do inimigo com um véu de seda para que seus golpes passem longe.",
+  "pets:silkweaver:name": "Tecelã de Seda",
   "pets:gemwraith:combatAbility.name": "Lança prismática",
   "pets:gemwraith:description": "Uma forma oca que se encheu de facetas roubadas. Ela sangra luz por uma dúzia de cortes — e, na mesa de lapidação, às vezes consegue extrair uma segunda gema da mesma pedra. Em batalha, essa precisão vira algo mais cruel.",
   "pets:gemwraith:name": "Gemwraith",
@@ -3030,6 +3037,7 @@ export const ptBR: Record<string, string> = {
   "elites:elite_high_roc:name": "Coroatormenta, o Pai Celeste",
   "elites:elite_high_specter:name": "Palemourn, o Guardião do Penhasco",
   "elites:elite_high_wyvern:name": "Vessk, o Tirano do Cume",
+  "elites:elite_ossric:name": "Ossric, o Atado à Medula",
   "elites:elite_idol_warden:name": "O Nono Guardião",
   "elites:elite_idol_wraith:name": "Véuoco, o Esquecido",
 
@@ -3061,6 +3069,7 @@ export const ptBR: Record<string, string> = {
   "items:ridgetyrant_greaves:name": "Grevas do Tirano do Cume",
   "items:ninth_wardens_signet:name": "Selo do Nono Guardião",
   "items:hollowveil_locket:name": "Medalhão Véu Oco",
+  "items:esthar:name": "Esthar, Tempestade de Ossos",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Rasgador Presa do Crepúsculo",
   "items:ribcage_hewer:name": "Talhador de Costelas",
@@ -3557,7 +3566,7 @@ export const ptBR: Record<string, string> = {
   "achievements:ach_elite_kills_100:name": "Algoz dos campeões",
   "achievements:ach_elite_kills_100:description": "Derrote 100 Campeões do Confim.",
   "achievements:ach_elite_variants_all:name": "Todos os campeões",
-  "achievements:ach_elite_variants_all:description": "Derrote cada um dos 28 Campeões do Confim pelo menos uma vez.",
+  "achievements:ach_elite_variants_all:description": "Derrote cada um dos 29 Campeões do Confim pelo menos uma vez.",
   "achievements:ach_elite_uniques_1:name": "Primeiro troféu",
   "achievements:ach_elite_uniques_1:description": "Obtenha o troféu único de um Campeão.",
   "achievements:ach_elite_uniques_all:name": "Sala de troféus",

@@ -2615,6 +2615,13 @@ export const zh: Record<string, string> = {
   "pets:flayling:combatAbility.name": "剥皮",
   "pets:flayling:description": "它将自己的皮内外翻穿，似乎毫不在意。在鞣制架旁，它能从每张兽皮多榨出些皮革——战斗中，它能找到每副甲胄的缝隙，将其层层剥开。",
   "pets:flayling:name": "剥皮幼体",
+  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Begleiter Jagen/Schneidern
+  "pets:booted_tomcat:combatAbility.name": "绳套陷阱",
+  "pets:booted_tomcat:description": "一只灰银色虎斑雄猫，黄绿色的眼睛，穿着靴子和皮甲直立行走，用绳套和弩狩猎。在陷阱旁，它在猎物落脚之前就知道爪子会踏向何处；战斗中，它甩出绳套，让敌人在一个心跳间动弹不得。",
+  "pets:booted_tomcat:name": "穿靴雄猫",
+  "pets:silkweaver:combatAbility.name": "丝幕",
+  "pets:silkweaver:description": "一只苍白的夜蛾，细如纺锤的腿从不停止纺丝。在织机旁，它在布料索取之前把用过的线绕回线轴；战斗中，它把一层丝幕披在敌人眼前，让每一击都落空。",
+  "pets:silkweaver:name": "织丝蛾",
   "pets:gemwraith:combatAbility.name": "棱镜长枪",
   "pets:gemwraith:description": "一具空壳，以偷来的切面将自己填满。它从十几道切口渗出光芒——在切割台旁，它有时能从同一块原石中多磨出一颗宝石。战场上，那份精准化作更残忍的东西。",
   "pets:gemwraith:name": "宝石怨灵",
@@ -3029,6 +3036,7 @@ export const zh: Record<string, string> = {
   "elites:elite_high_roc:name": "天父风暴之冠",
   "elites:elite_high_specter:name": "悬崖守卫苍悼",
   "elites:elite_high_wyvern:name": "山脊暴君维斯克",
+  "elites:elite_ossric:name": "髓缚者奥斯里克",
   "elites:elite_idol_warden:name": "第九守卫者",
   "elites:elite_idol_wraith:name": "被遗忘的空幔",
 
@@ -3060,6 +3068,7 @@ export const zh: Record<string, string> = {
   "items:ridgetyrant_greaves:name": "山脊暴君护胫",
   "items:ninth_wardens_signet:name": "第九守卫者的印记",
   "items:hollowveil_locket:name": "空幔挂坠",
+  "items:esthar:name": "埃斯塔，骸骨风暴",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "暮光獠牙撕裂者",
   "items:ribcage_hewer:name": "肋骨劈砍者",
@@ -3556,7 +3565,7 @@ export const zh: Record<string, string> = {
   "achievements:ach_elite_kills_100:name": "冠军屠戮者",
   "achievements:ach_elite_kills_100:description": "击败 100 位边域冠军。",
   "achievements:ach_elite_variants_all:name": "冠军全灭",
-  "achievements:ach_elite_variants_all:description": "至少击败 28 位边域冠军各一次。",
+  "achievements:ach_elite_variants_all:description": "至少击败 29 位边域冠军各一次。",
   "achievements:ach_elite_uniques_1:name": "首件战利品",
   "achievements:ach_elite_uniques_1:description": "获得一位冠军的独特战利品。",
   "achievements:ach_elite_uniques_all:name": "战利品大厅",

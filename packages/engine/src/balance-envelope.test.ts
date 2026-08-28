@@ -735,9 +735,22 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // last_idol 218.63→194.82 s. Boss→Spieler-Zeilen bleiben praktisch exakt (28.03/30.12, das neue
     // Kit trägt keine andere Trinity-Verteilung) und alle melee/ranged-Paare unverändert (kein
     // Nicht-Magie-Slot betroffen).
+    // Re-Messung 2026-08-28 — Community-Item „Esthar, Sturm der Gebeine" (Chef 28.08.2026, 1.2.0,
+    // legendäre Großaxt R90 vom neuen Hochland-Champion elite_ossric; Rare-Drop-Philosophie: Götzeneisen-
+    // Spanne +8 % = 33,5–62,4 @3450, Basis-DPS 13,90 gegen aetherium_maul 10,90): der DPS-Schätzer des
+    // BiS-Builders (`weaponScore`, reine Spanne/Intervall) wählt Esthar als neue CL-90-Melee-„damage"-
+    // Mainhand statt aetherium_maul — aber NUR die Idol-Bosse sind Rüstungs-Ziele (defense 123/150,
+    // defenseType armor), und diese Formel rechnet armorPen mit: der Maul trug 0,40 armorPen (Mitigation
+    // 0,371/0,419), Esthar trägt keinen (0,496/0,545). Gegen genau diese beiden Bosse ist der Maul also
+    // trotz geringerer Roh-DPS besser ⇒ die beiden Melee-Spieler-Zeilen STEIGEN (idol_warden 55.96→59.39 s,
+    // last_idol 183.02→199.15 s; Boss→Spieler 20.76→20.65 / 14.70→14.63, minimal — anderer str/lck-Mix).
+    // Das ist kein Balance-Rückschritt, sondern die Grenze des Schätzers: gegen Ausweich-/Ward-Ziele
+    // (Hochland-Rocs, Klippengeister, Esthars eigenes Gebiet) greift die +27 % Roh-DPS voll, und die
+    // Formel ignoriert Esthars Drop-Premium (everyNth n=4 = +25 % auf die Grundspanne, Blutung 0,35×6/6 s)
+    // komplett. Ranged/Magic exakt unverändert (kein Nicht-Melee-Slot betroffen).
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 55.96, 20.76],
-      ["melee", "last_idol", 183.02, 14.7],
+      ["melee", "idol_warden", 59.39, 20.65],
+      ["melee", "last_idol", 199.15, 14.63],
       ["ranged", "idol_warden", 78.23, 19.78],
       ["ranged", "last_idol", 258.94, 13.67],
       ["magic", "idol_warden", 58.05, 28.03],

@@ -9,19 +9,22 @@ function isBilingual(v: LocalizedString): boolean {
 
 /**
  * Elite-/World-Spawns Phase 2 (design/elite-balance-spec.md) — Content-Integritäts-Guard für
- * `content.elites` + die 28 zugehörigen Unique-Items. Ergänzt (nicht ersetzt) die generischen
+ * `content.elites` + die zugehörigen Unique-Items (28 aus Phase 2 + elite_ossric/esthar, 1.2.0
+ * Chef 28.08.2026 = 29). Ergänzt (nicht ersetzt) die generischen
  * Suiten `wiring-audit.test.ts`/`content-integrity.test.ts`, die `content.elites` selbst NICHT
  * kennen. Content-dev-Revier (packages/content/**), daher hier statt bei Kontrolleur.
  */
-describe("Elite-Content-Integrität (Phase 2, 28 Varianten)", () => {
+const ELITE_COUNT = 29; // 28 (Phase 2) + elite_ossric (1.2.0, Hochland, Community-Item Esthar)
+
+describe("Elite-Content-Integrität (Phase 2, 28 Varianten + 1.2.0 Ossric)", () => {
   const elites = Object.values(content.elites ?? {});
   const zoneIds = new Set(content.zones.map((z) => z.id));
   // Idol-Hall-Sonderfall (elite-spawns-concept.md §5/§6 P1, Chef-GO): idol_warden/aether_wraith
   // sind als dungeonOnly-Stat-Vorlagen erlaubt — last_idol/drazhan (Story-Bosse) bleiben tabu.
   const TABOO_BASE_IDS = new Set(["last_idol", "drazhan"]);
 
-  it("28 Elite-Varianten vorhanden (Bestands-Detektor — bei Absicht mitziehen)", () => {
-    expect(elites.length).toBe(28);
+  it("29 Elite-Varianten vorhanden (Bestands-Detektor — bei Absicht mitziehen)", () => {
+    expect(elites.length).toBe(ELITE_COUNT);
   });
 
   it("jede Variante referenziert eine existierende Zone", () => {
@@ -128,11 +131,12 @@ describe("Elite-Content-Integrität (Phase 2, 28 Varianten)", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("Bestands-Detektor: genau die 10 Caster-Varianten tragen wardCapacity, jeweils IDENTISCH zu statMults.hp (elite-balance-spec.md §0)", () => {
+  it("Bestands-Detektor: genau die 11 Caster-Varianten tragen wardCapacity, jeweils IDENTISCH zu statMults.hp (elite-balance-spec.md §0)", () => {
     const EXPECTED_CASTER_IDS = [
       "elite_pastures_imp", "elite_border_warlock", "elite_black_witch", "elite_crypt_icemage",
       "elite_crypt_pyroclasp", "elite_coast_siren", "elite_slag_ember", "elite_slag_hexer",
       "elite_high_specter", "elite_idol_wraith",
+      "elite_ossric", // 1.2.0 (Chef 28.08.2026): zweite Variante auf der Ward-Basis gravecliff_specter
     ].sort();
     const withWard = elites.filter((e) => e.statMults.wardCapacity !== undefined).map((e) => e.id).sort();
     expect(withWard).toEqual(EXPECTED_CASTER_IDS);
@@ -160,11 +164,11 @@ describe("Elite-Content-Integrität (Phase 2, 28 Varianten)", () => {
     expect(offenders).toEqual([]);
   });
 
-  describe("28 Unique-Items", () => {
+  describe("29 Unique-Items", () => {
     const uniqueIds = elites.map((e) => e.uniqueItemId);
 
-    it("28 Unique-Item-Ids referenziert (Bestands-Detektor)", () => {
-      expect(uniqueIds.length).toBe(28);
+    it("29 Unique-Item-Ids referenziert (Bestands-Detektor)", () => {
+      expect(uniqueIds.length).toBe(ELITE_COUNT);
     });
 
     it("jedes Unique ist Equipment mit Slot, Rarity und Verkaufswert > 0", () => {

@@ -6,6 +6,8 @@ import type {
   DungeonClearSummary,
   DungeonDef,
   EffectCounters,
+  ElementalCounters,
+  ElementalSideCounters,
   GameState,
   ItemId,
   ItemInstance,
@@ -76,6 +78,19 @@ import {
   DMG_MAX_HIT_MULT,
   activeStanceMods,
   STATUS_VS_WARD_MULT,
+  BURN_VULNERABILITY,
+  FROST_FREEZE_STACKS,
+  FREEZE_IMMUNITY_MS,
+  SHOCK_DELAY_MS,
+  SHOCK_DELAY_CAP_MS,
+  SHOCK_ARC_FRACTION,
+  POISON_MAX_STACKS,
+  POISON_REGEN_MULT,
+  VOID_WEAKEN,
+  AETHER_WARD_ON_HIT,
+  AETHER_WARD_PIERCE,
+  createElementalCounters,
+  createElementalSideCounters,
 } from "@hearthforge/shared";
 import { nextFloat, nextInt } from "./rng";
 import { blessingChance, blessingMult, shrineAmplifiedMult } from "./blessing";
@@ -443,6 +458,7 @@ export function stopCombat(state: GameState): void {
   state.combat.stopReason = undefined; // manueller Stopp = kein Auto-Grund
   state.combat.encounterXp = undefined; // Begegnung vorbei → XP-Akkumulator verfällt
   state.combat.effectCounters = undefined; // Spezial-Effekt-Zähler resetten bei Kampfende (§2.3.4)
+  state.combat.elemental = undefined; // Elementar-Zähler (Frost/Schock/Gift) verfallen bei Kampfende
   // BEWUSST NICHT geleert: cooldownRemainingMs + lastKill. Der Kill-Cooldown gilt IMMER — Stop+Start
   // darf ihn nicht überspringen (startCombat übernimmt den Rest). Außerhalb des Kampfs ruht er
   // eingefroren (combatStep läuft nicht) und läuft beim nächsten Kampfstart zu Ende. Seit Sweep6
@@ -632,6 +648,127 @@ function effectCounters(cs: CombatState): EffectCounters {
   return (cs.effectCounters ??= createEffectCounters());
 }
 
+// ── Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md) ────────────────
+// Eine Identität je Element, SYMMETRISCH für beide Seiten (Waffen-Status → Gegner, Monster-inflict →
+// Spieler): Glut (burn), Einfrieren (frost), Verzögerung + Überspringen (shock), Stapel + halbierter
+// Unterhalt (poison), Entzug (void). Zähler/Immunitäten leben transient in `cs.elemental`.
+
+/** Seite = ZIEL eines Status (auf wem er liegt). */
+type Side = "player" | "enemy";
+
+/** Transiente Elementar-Zähler beider Seiten (lazy angelegt; NIE persistiert). */
+function elementalCounters(cs: CombatState): ElementalCounters {
+  return (cs.elemental ??= createElementalCounters());
+}
+
+/** Elementar-Zähler EINER Seite (lazy). */
+function sideCounters(cs: CombatState, side: Side): ElementalSideCounters {
+  return elementalCounters(cs)[side];
+}
+
+/** Gegnerwechsel (Respawn/Welle): nur die GEGNER-Zähler frisch — der Spieler behält seine (sein Status läuft weiter). */
+function resetEnemyElemental(cs: CombatState): void {
+  if (cs.elemental) cs.elemental.enemy = createElementalSideCounters();
+}
+
+function hasStatus(effects: StatusEffect[], type: StatusType): boolean {
+  return effects.some((e) => e.type === type);
+}
+
+/** Glut: ein brennendes Ziel nimmt BURN_VULNERABILITY mehr Schaden aus ALLEN Quellen. 1 ohne Brand (bit-identisch). */
+function burnVulnMult(targetEffects: StatusEffect[]): number {
+  return hasStatus(targetEffects, "burn") ? 1 + BURN_VULNERABILITY : 1;
+}
+
+/** Entzug: ein entkräfteter Angreifer macht VOID_WEAKEN weniger Schaden. 1 ohne void. */
+function voidWeakenMult(attackerEffects: StatusEffect[]): number {
+  return hasStatus(attackerEffects, "void") ? 1 - VOID_WEAKEN : 1;
+}
+
+/** Gift: Regeneration und Lebensraub des vergifteten Ziels × POISON_REGEN_MULT. 1 ohne Gift. */
+function poisonSustainMult(targetEffects: StatusEffect[]): number {
+  return hasStatus(targetEffects, "poison") ? POISON_REGEN_MULT : 1;
+}
+
+/**
+ * Schock: schiebt den nächsten Angriff der Seite `side` um SHOCK_DELAY_MS nach hinten (Timer zurück,
+ * darf negativ werden — die Verzögerung ist dann exakt SHOCK_DELAY_MS, egal in welcher Timer-Phase der
+ * Proc fällt; der Load-Pfad klemmt Timer auf ≥ 0, ein Mid-Fight-Save verliert also höchstens den Rest
+ * der Kette). Kette: aufsummiert bis SHOCK_DELAY_CAP_MS, endet mit dem nächsten AUSGEFÜHRTEN Angriff
+ * der Seite (Reset in combatStep). Liefert die tatsächlich hinzugefügten ms (0 am Deckel). Loggt die
+ * Verzögerung als status-Event mit `amount` = ms (kind "status", status "shock"; der Renderer zeigt
+ * heute „erleidet Schock", die Klartext-Keys combat.shockDelay* liegen für die UI bereit). Kein RNG.
+ */
+function delayNextAttack(cs: CombatState, side: Side): number {
+  const c = sideCounters(cs, side);
+  const add = Math.min(SHOCK_DELAY_MS, Math.max(0, SHOCK_DELAY_CAP_MS - c.shockDelayMs));
+  if (add <= 0) return 0;
+  c.shockDelayMs += add;
+  if (side === "enemy") cs.enemyTimerMs -= add;
+  else cs.playerTimerMs -= add;
+  pushLog(cs, { by: side === "enemy" ? "player" : "enemy", kind: "status", amount: add, status: "shock" });
+  return add;
+}
+
+/**
+ * Gemeinsamer Nachlauf JEDER Status-Anwendung (beide Seiten, Symmetrie-Pflicht): Log der Anwendung
+ * plus die elementare Zusatzregel des Typs.
+ *  - frost: Anwendungen in Folge zählen; die FROST_FREEZE_STACKS-te friert ein (`frozen`: der nächste
+ *    fällige Angriff der Seite fällt aus), danach FREEZE_IMMUNITY_MS Immunität (Anwendungen zählen nicht).
+ *  - shock: jede Anwendung = Verzögerung (delayNextAttack); die Verzögerungs-Zeile ersetzt die
+ *    Status-Zeile (sonst zwei Zeilen je Proc). Am Ketten-Deckel bleibt die reine Status-Zeile.
+ *  - poison: Stapel +1 bis POISON_MAX_STACKS (Schaden je Tick × Stapel); jeder weitere Stapel loggt eine
+ *    Status-Zeile mit `amount` = Stapelzahl (UI kann „Gift ×3" zeigen).
+ *  - burn/bleed/void: nur die Status-Zeile bei Erst-Anwendung (Glut/Entzug sind passive Multiplikatoren).
+ * `by` = Verursacher-Seite (Gegner-Status ⇒ "player", Spieler-Status ⇒ "enemy"), wie bisher.
+ */
+function onStatusApplied(cs: CombatState, side: Side, type: StatusType, isNew: boolean): void {
+  const by: Side = side === "enemy" ? "player" : "enemy";
+  if (type === "shock") {
+    if (delayNextAttack(cs, side) <= 0 && isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
+    return;
+  }
+  if (type === "poison") {
+    const c = sideCounters(cs, side);
+    const stacks = Math.min(POISON_MAX_STACKS, (isNew ? 0 : Math.max(1, c.poisonStacks)) + 1);
+    const grew = stacks !== c.poisonStacks;
+    c.poisonStacks = stacks;
+    if (isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
+    else if (grew) pushLog(cs, { by, kind: "status", amount: stacks, status: type });
+    return;
+  }
+  if (isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
+  if (type === "frost") {
+    const c = sideCounters(cs, side);
+    if (c.freezeImmunityMs > 0) return; // immun: Anwendungen zählen nicht
+    c.frostStacks += 1;
+    if (c.frostStacks >= FROST_FREEZE_STACKS) {
+      c.frostStacks = 0;
+      c.frozen = true;
+      c.freezeImmunityMs = FREEZE_IMMUNITY_MS;
+    }
+  }
+}
+
+/**
+ * Tick-Nachlauf der Elementar-Zähler einer Seite (nach dem Ablaufen der Effekte): Immunität läuft
+ * herunter; ohne aktiven Frost verfällt der Anwendungszähler (die „dritte Anwendung in Folge" muss
+ * innerhalb eines Frost-Fensters fallen); ohne aktives Gift verfallen die Stapel. `frozen` bleibt
+ * bestehen, bis der nächste fällige Angriff ausfällt. Kein RNG.
+ */
+function tickElementalSide(cs: CombatState, side: Side, effects: StatusEffect[]): void {
+  const c = cs.elemental?.[side];
+  if (!c) return;
+  if (c.freezeImmunityMs > 0) c.freezeImmunityMs = Math.max(0, c.freezeImmunityMs - TICK_MS);
+  if (!hasStatus(effects, "frost")) c.frostStacks = 0;
+  if (!hasStatus(effects, "poison")) c.poisonStacks = 0;
+}
+
+/** Aktive Gift-Stapel einer Seite (≥ 1, solange Gift liegt — ein Alt-Save ohne Zähler zählt als 1 Stapel). */
+function poisonStacksOf(cs: CombatState, side: Side): number {
+  return Math.max(1, cs.elemental?.[side]?.poisonStacks ?? 0);
+}
+
 /**
  * Effektive STATUS-Effekte der Mainhand (Basis + Enchant-Procs) — geteilt von
  * `applyWeaponEffects` (Proc-Anwendung) und `plaguebearer` (Gift-Parameter der Basiswaffe).
@@ -645,6 +782,11 @@ function mainhandStatusEffects(state: GameState, content: ContentDB): WeaponEffe
       ? effectiveInstanceWeaponEffects(inst, item, content)
       : effectiveWeaponEffects(item);
   return effects.filter((e) => isStatusEffectType(e.type));
+}
+
+/** Trägt die Mainhand (Basis oder Enchant-Proc) einen Schock-Status? (Überspringen bei Krit, s. strikeEnemy.) */
+function weaponHasShock(state: GameState, content: ContentDB): boolean {
+  return mainhandStatusEffects(state, content).some((e) => e.type === "shock");
 }
 
 /**
@@ -1175,6 +1317,7 @@ function onEnemyDefeated(
         cs.enemyWard = next.wardCapacity ?? 0;
         cs.enemyTimerMs = 0;
         cs.enemyEffects = [];
+        resetEnemyElemental(cs); // neue Welle = frische Frost-/Schock-/Gift-Zähler (vor applyCarryToNewEnemy)
         // Armor-Iteration 2 §6.1: Ward ist FARM-SESSION-scoped, kein Gratis-Voll-Reset je Kill mehr.
         // Die neue Welle refillt nur WARD_KILL_REFILL_PCT (20 %) des Pools — verbraucht ein Dauerkampf
         // mehr als 20 %+Cast-Recharge/Warding-Regen zurückgeben, erodiert der Pool → Food kehrt zurück.
@@ -1221,6 +1364,7 @@ function onEnemyDefeated(
   cs.enemyWard = monster.wardCapacity ?? 0;
   cs.enemyTimerMs = 0;
   cs.enemyEffects = [];
+  resetEnemyElemental(cs); // Respawn = frische Frost-/Schock-/Gift-Zähler (vor applyCarryToNewEnemy)
   // Armor-Iteration 2 §6.1: Ward beim Respawn nur TEIL-Refill (WARD_KILL_REFILL_PCT = 20 %) statt
   // Gratis-Voll-Reset — der Pool ist farm-session-scoped und erodiert über eine Farm-Serie, sobald
   // pro Kill mehr Ward verbraucht wird als 20 %+Recharge+Warding-Regen zurückgeben (→ Food-Druck für
@@ -1277,6 +1421,7 @@ function endDungeon(state: GameState): void {
   cs.petAbility = createPetAbilityRuntime();
   cs.encounterXp = undefined; // Begegnung/Run vorbei → Kill-Summary-Akkumulator verfällt
   cs.effectCounters = undefined; // Spezial-Effekt-Zähler resetten bei Kampfende (§2.3.4)
+  cs.elemental = undefined; // Elementar-Zähler verfallen mit dem Run
 }
 
 /**
@@ -1463,6 +1608,7 @@ function onPlayerDefeated(state: GameState, maxHp: number): void {
   resetStalemate(cs); // Stalemate-Tracking der beendeten Begegnung zurücksetzen
   cs.encounterXp = undefined; // Begegnung vorbei → Kill-Summary-Akkumulator verfällt
   cs.effectCounters = undefined; // Spezial-Effekt-Zähler resetten bei Tod (§2.3.4)
+  cs.elemental = undefined; // Elementar-Zähler (Frost/Schock/Gift, beide Seiten) verfallen beim Tod
   // cooldownRemainingMs/lastKill bleiben BEWUSST stehen (falls der Tod in einen laufenden Kill-
   // Cooldown fiel): der Cooldown gilt immer — der nächste manuelle startCombat übernimmt den Rest.
 }
@@ -1499,8 +1645,9 @@ export function applyEnemyStatus(
       remainingMs: effect.durationMs,
       magnitude: effect.magnitude,
     });
-    pushLog(state.combat, { by: "player", kind: "status", amount: 0, status: effect.type });
   }
+  // Elementar-Nachlauf (Log + Einfrieren/Verzögerung/Stapel) — auch bei Refresh (jede Anwendung zählt).
+  onStatusApplied(state.combat, "enemy", effect.type, !existing);
 }
 
 /**
@@ -1522,13 +1669,26 @@ function applyWeaponEffects(
   for (const effect of mainhandStatusEffects(state, content)) {
     const type = effect.type;
     if (!isStatusEffectType(type)) continue; // defensive (mainhandStatusEffects filtert bereits)
-    if (nextFloat(state.rng) > effect.chance) continue;
+    if (nextFloat(state.rng) > statusApplyChance(effect)) continue;
     applyEnemyStatus(state, monster, {
       type,
       magnitude: effect.magnitude,
       durationMs: effect.durationMs + catalystMs,
     });
   }
+}
+
+/**
+ * Anwendungschance eines Status je Treffer. Elementar-Effekte (Chef-GO 28.08.2026): für shock ist die
+ * Content-`chance` die Anwendungschance (CEO-Korrektur 28.08.2026; `magnitude` bleibt bei Schock ungenutzt) — die frühere
+ * Aussetz-Chance je Angriff ist entfallen, die Verzögerung selbst ist konstant (SHOCK_DELAY_MS).
+ * `chance` wird für shock nicht gelesen (Alt-Feld; bei Drops/Affixen ohnehin ≈ magnitude). Alle
+ * anderen Status: `chance` wie gehabt. Gilt für Waffen-Procs UND Monster-inflict (Symmetrie).
+ */
+function statusApplyChance(effect: { type: string; chance: number; magnitude: number }): number {
+  // CEO 28.08.2026: auch bei Schock zaehlt `chance` als Anwendungschance (wie bei allen Status); `magnitude` ist fuer
+  // Schock ohne Wirkung (Verzoegerung ist die feste SHOCK_DELAY_MS-Kette). Sonst fielen Bronze-/Adamantium-Stab auf 16-26 %.
+  return effect.chance;
 }
 
 /**
@@ -1554,10 +1714,10 @@ export function castManaCost(content: ContentDB, weaponId: ItemId | null | undef
  * keine Schadens-DoTs und emittieren weiterhin nichts. Log-only: kein RNG-Draw, keine Schadens-/
  * Timing-Änderung — offline==online bleibt byte-gleich (beide Pfade laufen durch combatStep).
  */
-function emitDotTick(cs: CombatState, by: "player" | "enemy", e: StatusEffect, before: number): void {
+function emitDotTick(cs: CombatState, by: "player" | "enemy", e: StatusEffect, before: number, perSec = e.magnitude): void {
   if (e.type !== "burn" && e.type !== "bleed" && e.type !== "poison") return;
   if (Math.floor(before / 1000) === Math.floor(e.remainingMs / 1000)) return;
-  pushLog(cs, { by, kind: "dot", amount: Math.max(1, Math.round(e.magnitude)), status: e.type });
+  pushLog(cs, { by, kind: "dot", amount: Math.max(1, Math.round(perSec)), status: e.type });
 }
 
 /**
@@ -1569,10 +1729,13 @@ function tickEnemyEffects(
   state: GameState,
   fx: SpecialEffects,
   monster?: MonsterDef,
-): { frost: boolean; shock: number } {
+): { frost: boolean } {
   const cs = state.combat;
   let frost = false;
-  let shock = 0;
+  // Elementar-Effekte: Glut (brennendes Ziel ×(1+BURN_VULNERABILITY) auf JEDEN DoT-Tick, auch den Brand
+  // selbst) und Gift-Stapel (Schaden × Stapel). Ohne Brand/Gift Faktor 1 bzw. Stapel 1 ⇒ bit-identisch.
+  const vuln = burnVulnMult(cs.enemyEffects);
+  const poisonStacks = poisonStacksOf(cs, "enemy");
   // gutter (Ausweider, §2.1): eigene DoT-Ticks am Gegner (burn/bleed/poison — alle vom Spieler/Pet
   // appliziert) schlagen um +Anteil härter. Kein RNG.
   const dotMult = fx.gutter ? 1 + Math.max(0, fx.gutter.magnitude) : 1;
@@ -1582,16 +1745,20 @@ function tickEnemyEffects(
   // durch (umgehen den Ward-Pool bereits vor diesem Fix) — hier NUR der reine Schadens-Mult.
   const statusVsWardMult = (monster?.wardCapacity ?? 0) > 0 ? STATUS_VS_WARD_MULT : 1;
   for (const e of cs.enemyEffects) {
-    if (e.type === "poison" || e.type === "burn" || e.type === "bleed")
-      cs.enemyHp -= e.magnitude * dotMult * statusVsWardMult * (TICK_MS / 1000);
-    else if (e.type === "frost") frost = true;
-    else if (e.type === "shock") shock = Math.max(shock, Math.min(1, e.magnitude)); // shock = Chance 0..1
+    let perSec = e.magnitude;
+    if (e.type === "poison" || e.type === "burn" || e.type === "bleed") {
+      perSec = e.magnitude * (e.type === "poison" ? poisonStacks : 1) * vuln;
+      cs.enemyHp -= perSec * dotMult * statusVsWardMult * (TICK_MS / 1000);
+    } else if (e.type === "frost") frost = true;
+    // shock/void: keine Tick-Wirkung — Verzögerung passiert bei der Anwendung, Entzug ist ein
+    // Multiplikator im Schadenspfad (voidWeakenMult).
     const before = e.remainingMs;
     e.remainingMs -= TICK_MS;
-    emitDotTick(cs, "player", e, before); // DoT am Gegner → vom Spieler verursacht
+    emitDotTick(cs, "player", e, before, perSec); // DoT am Gegner → vom Spieler verursacht
   }
   cs.enemyEffects = cs.enemyEffects.filter((e) => e.remainingMs > 0);
-  return { frost, shock };
+  tickElementalSide(cs, "enemy", cs.enemyEffects);
+  return { frost };
 }
 
 /**
@@ -1604,13 +1771,17 @@ function tickPlayerEffects(
   content: ContentDB,
   nowMs?: number,
   fx?: SpecialEffects,
-): { frost: boolean; shock: number } {
+): { frost: boolean } {
   const cs = state.combat;
   let frost = false;
-  let shock = 0;
+  // Symmetrie (Elementar-Effekte): Glut und Gift-Stapel wirken auf den Spieler wie auf den Gegner.
+  const vuln = burnVulnMult(cs.playerEffects);
+  const poisonStacks = poisonStacksOf(cs, "player");
   for (const e of cs.playerEffects) {
+    let perSec = e.magnitude;
     if (e.type === "poison" || e.type === "burn" || e.type === "bleed") {
-      const dmg = e.magnitude * (TICK_MS / 1000);
+      perSec = e.magnitude * (e.type === "poison" ? poisonStacks : 1) * vuln;
+      const dmg = perSec * (TICK_MS / 1000);
       state.character.hp -= dmg;
       // Überleben härtet ab — aber seit Chef-Entscheid (2026-07-08) mit derselben Level-Bandbreite
       // wie alle Kampf-XP: am über-levelten Trivial-Mob gibt auch Erleiden keine Vitality-XP mehr.
@@ -1624,22 +1795,23 @@ function tickPlayerEffects(
       // nicht durchs Einstecken.
     } else if (e.type === "frost") {
       frost = true;
-    } else if (e.type === "shock") {
-      shock = Math.max(shock, Math.min(1, e.magnitude)); // shock = Aussetz-Chance 0..1 (gegen >1-Dauerstun)
     }
+    // shock/void: keine Tick-Wirkung (s. tickEnemyEffects).
     const before = e.remainingMs;
     e.remainingMs -= TICK_MS;
-    emitDotTick(cs, "enemy", e, before); // DoT am Spieler → vom Gegner verursacht
+    emitDotTick(cs, "enemy", e, before, perSec); // DoT am Spieler → vom Gegner verursacht
   }
   cs.playerEffects = cs.playerEffects.filter((e) => e.remainingMs > 0);
-  return { frost, shock };
+  tickElementalSide(cs, "player", cs.playerEffects);
+  return { frost };
 }
 
 /** Wendet einen vom Gegner ausgelösten Statuseffekt (z.B. Gift) auf den Spieler an. */
 function applyMonsterInflict(state: GameState, monster: MonsterDef): void {
   const inflict = monster.inflict;
   if (!inflict) return;
-  if (nextFloat(state.rng) > inflict.chance) return;
+  // Anwendungschance wie bei Waffen-Procs (statusApplyChance: shock ⇒ magnitude) — Symmetrie-Pflicht.
+  if (nextFloat(state.rng) > statusApplyChance(inflict)) return;
   const existing = state.combat.playerEffects.find((e) => e.type === inflict.type);
   if (existing) {
     // Spiegelt die Refresh-Semantik der Gegnerseite (applyEnemyStatus): Magnitude/Rest-Dauer per
@@ -1653,8 +1825,9 @@ function applyMonsterInflict(state: GameState, monster: MonsterDef): void {
       remainingMs: inflict.durationMs,
       magnitude: inflict.magnitude,
     });
-    pushLog(state.combat, { by: "enemy", kind: "status", amount: 0, status: inflict.type });
   }
+  // Elementar-Nachlauf am Spieler (Log + Einfrieren/Verzögerung/Stapel) — dieselben Regeln wie am Gegner.
+  onStatusApplied(state.combat, "player", inflict.type, !existing);
 }
 
 function performPlayerAttack(
@@ -1802,6 +1975,15 @@ function strikeEnemy(
   const critFlat = result.crit && fx.critBurst ? Math.max(0, fx.critBurst.magnitude) : 0;
   let damage = Math.max(1, Math.round(result.damage * mult + critFlat));
 
+  // Elementar-Effekte (Chef-GO 28.08.2026): Entzug am ANGREIFER (Spieler mit void-Status schlägt
+  // VOID_WEAKEN schwächer) und Glut am ZIEL (brennender Gegner nimmt BURN_VULNERABILITY mehr) —
+  // multiplikativ nach den Spezial-Mods, vor Pet-Vuln/Ward. Beide 1 ohne Status ⇒ bit-identisch.
+  const elementalMult = voidWeakenMult(cs.playerEffects) * burnVulnMult(cs.enemyEffects);
+  if (elementalMult !== 1) damage = Math.max(1, Math.round(damage * elementalMult));
+  // Waffeneffekt-Bedingung (auch für Lichtsegen/Überspringen unten): Magie nur bei echtem Zauber,
+  // sonst bei jedem Treffer (#286: Fernkampf hat keine Munitions-Bedingung mehr).
+  const appliesEffect = stats.style === "magic" ? ctx.casts : true;
+
   // armorRend-Pet (enemyVuln): der Gegner nimmt für ein Fenster mehr Schaden.
   if (cs.petAbility.enemyVulnMs > 0) {
     damage = Math.max(1, Math.round(damage * (1 + cs.petAbility.enemyVulnPct)));
@@ -1826,9 +2008,15 @@ function strikeEnemy(
   // (die HP-Schaden-`amount` bleibt unverändert) ihn unabhängig vom Ward-Zweig lesen kann. Bleibt 0
   // (⇒ Log-Feld `absorbed` fehlt) für wardCapacity-0-Gegner (Melee/Range).
   let wardAbsorbedThisHit = 0;
+  // Überspringen (Schock, s.u.) und Lichtsegen rechnen mit dem Treffer VOR dem Ward-Schritt.
+  const preWardDamage = damage;
   if (cs.enemyWard === undefined) cs.enemyWard = monster.wardCapacity ?? 0;
   if (cs.enemyWard > 0) {
-    const bleed = damage * stats.wardBreak; // Bonus-HP-Schaden, umgeht den Pool (additiv)
+    // Lichtsegen (Aether, Kind lightblessing): Treffer durchdringen AETHER_WARD_PIERCE des Gegner-Wards —
+    // als Boden auf den wardBreak-Stat (max), damit ein besserer Stat nicht verliert. Ohne das Kind
+    // exakt stats.wardBreak (bit-identisch).
+    const wardBreak = fx.lightblessing && appliesEffect ? Math.max(stats.wardBreak, AETHER_WARD_PIERCE) : stats.wardBreak;
+    const bleed = damage * wardBreak; // Bonus-HP-Schaden, umgeht den Pool (additiv)
     const absorbed = Math.min(cs.enemyWard, damage); // der volle Treffer drainт den Ward-Pool
     cs.enemyWard = Math.max(0, cs.enemyWard - absorbed);
     wardAbsorbedThisHit = absorbed;
@@ -1840,6 +2028,8 @@ function strikeEnemy(
 
   cs.enemyHp -= damage;
   grantOffenseXp(state, content, stats.style, monster, damage, nowMs, fx);
+  // Gift am Spieler (Elementar-Effekte): halbiert seinen Lebensraub (Stil UND Gear), solange Gift liegt.
+  const sustain = poisonSustainMult(cs.playerEffects);
   if (stats.style === "melee") {
     // Lebensraub: Anteil des Schadens, je Treffer doppelt gedeckelt — prozentual (kein Burst-
     // Vollheal im Frühgame) UND absolut (skaliert nicht mit der riesigen Endgame-HP mit, sonst
@@ -1851,7 +2041,8 @@ function strikeEnemy(
       Math.round(stats.maxHp * MELEE_LIFESTEAL_CAP_PCT * 10) / 10,
       MELEE_LIFESTEAL_CAP_ABS,
     );
-    const heal = Math.min(cap, Math.round(damage * MELEE_LIFESTEAL * 10) / 10);
+    // Gift halbiert den TATSÄCHLICHEN Raub (nach dem Deckel, sonst bliebe die Halbierung am Deckel unsichtbar).
+    const heal = Math.round(Math.min(cap, Math.round(damage * MELEE_LIFESTEAL * 10) / 10) * sustain * 10) / 10;
     // E+-Paket (battle-040-dramaturgie §E+, Chef-GO 2026-08-03): der Stil-Lebensraub heilte STUMM —
     // nur der Gear-Lebensraub (unten) loggte. Jetzt dieselbe lifesteal-Event-Emission mit
     // unterscheidbarer Quelle (source "meleeLifesteal"). Geloggt wird der TATSÄCHLICH geheilte
@@ -1872,10 +2063,11 @@ function strikeEnemy(
   // Stat-Squish ÷10: 1-Dezimal-Raster analog zum Melee-Lebensraub (min 0.1 statt min 1).
   if (stats.lifestealPct > 0 && damage > 0) {
     const missing = Math.max(0, Math.round((stats.maxHp - state.character.hp) * 10) / 10);
-    const heal = Math.min(
+    let heal = Math.min(
       Math.max(0.1, Math.round(damage * stats.lifestealPct * 10) / 10),
       missing,
     );
+    if (sustain !== 1) heal = Math.round(heal * sustain * 10) / 10; // Gift: halber Raub (nach Deckel/Rest)
     if (heal > 0) {
       state.character.hp = Math.min(stats.maxHp, state.character.hp + heal);
       pushLog(cs, { by: "player", kind: "lifesteal", amount: heal, source: "lifesteal" });
@@ -1898,6 +2090,13 @@ function strikeEnemy(
       state.character.ward + Math.max(0, damage * fx.wardSiphon.magnitude),
     );
   }
+  // Lichtsegen (Aether, Elementar-Effekte): jeder gelandete Zauber füllt einen Anteil des EIGENEN
+  // Ward-Maximums (magnitude; 0 ⇒ AETHER_WARD_ON_HIT). Still wie wardSiphon (Ressourcen-Rückfluss
+  // loggt nicht). Ohne Stoff-Pool (maxWard 0) ein No-op; Magie nur bei echtem Zauber (appliesEffect).
+  if (fx.lightblessing && appliesEffect && stats.maxWard > 0) {
+    const share = fx.lightblessing.magnitude > 0 ? fx.lightblessing.magnitude : AETHER_WARD_ON_HIT;
+    state.character.ward = Math.min(stats.maxWard, state.character.ward + stats.maxWard * share);
+  }
   // Zähler-Fortschreibung je gelandetem Treffer (§2.3.4).
   if (ec) {
     ec.firstHitDone = true;
@@ -1909,7 +2108,6 @@ function strikeEnemy(
   }
   // Waffeneffekt: Magie an echten Zauber gekoppelt, sonst bei jedem Treffer (#286: Fernkampf hat
   // keine Munitions-Bedingung mehr — jeder Schuss ist scharf und trägt den Effekt).
-  const appliesEffect = stats.style === "magic" ? ctx.casts : true;
   if (appliesEffect) applyWeaponEffects(state, content, monster, fx);
 
   // Combat-Log-Anreicherung (Task #220): der geloggte `damage` (amount) ist bereits post-Mitigation.
@@ -1930,6 +2128,17 @@ function strikeEnemy(
     mitigated,
     ...(wardAbsorbedThisHit > 0 ? { absorbed: wardAbsorbedThisHit } : {}),
   });
+
+  // Überspringen (Schock, Elementar-Effekte): ein KRITISCHER Treffer mit einer Schock-Waffe (Status-
+  // Liste der Mainhand enthält shock — Basis oder Enchant-Proc) springt über und trifft ein zweites
+  // Mal für SHOCK_ARC_FRACTION des Treffers VOR dem Ward-Schritt; der Blitz umgeht den Gegner-Ward und
+  // geht direkt auf die HP. Deterministisch (kein Proc-Wurf, kein RNG), keine XP (reiner Bonus),
+  // sichtbar als zweite Treffer-Zeile. Nur wenn der Gegner den Haupttreffer überlebt hat.
+  if (result.crit && appliesEffect && cs.enemyHp > 0 && preWardDamage > 0 && weaponHasShock(state, content)) {
+    const arc = Math.max(1, Math.round(preWardDamage * SHOCK_ARC_FRACTION));
+    cs.enemyHp -= arc;
+    pushLog(cs, { by: "player", kind: "hit", amount: arc });
+  }
 
   // doubleStrike (Doppelschlag, Palette-Hook — Content folgt später): Chance auf einen sofortigen
   // Zweitschlag mit voller Treffer-/Krit-/Effekt-Auflösung, aber OHNE erneute Ressourcenkosten
@@ -1998,11 +2207,16 @@ export function tickPlayerRegen(state: GameState, stats: DerivedStats): void {
  * Renderer bereits über `kind: "heal"`.
  */
 function tickCombatRegen(state: GameState, stats: DerivedStats): void {
+  // Gift am Spieler (Elementar-Effekte): HP-Regeneration × POISON_REGEN_MULT, solange Gift liegt. Nur
+  // der Kampf-Pfad (der Idle-Regen in tick.ts ruft tickPlayerRegen direkt; außerhalb des Kampfes gibt
+  // es keine Gift-Status — die verfallen bei Kampfende). Ohne Gift dasselbe stats-Objekt (bit-identisch).
+  const sustain = poisonSustainMult(state.combat.playerEffects);
+  const effStats = sustain !== 1 ? { ...stats, hpRegenPerSec: stats.hpRegenPerSec * sustain } : stats;
   const hpBefore = state.character.hp;
-  tickPlayerRegen(state, stats);
+  tickPlayerRegen(state, effStats);
   if (state.character.hp <= hpBefore) return; // voll / kein hpRegenPerSec → nichts zu loggen
   if (state.totalTicks % (1000 / TICK_MS) !== 0) return; // ~1×/Sek drosseln (10 Ticks = 1 s)
-  const perSec = Math.round(stats.hpRegenPerSec);
+  const perSec = Math.round(effStats.hpRegenPerSec);
   if (perSec > 0) {
     pushLog(state.combat, { by: "player", kind: "heal", amount: perSec, source: "effect" });
   }
@@ -2178,11 +2392,15 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
       fx.antiRegen &&
       cs.enemyEffects.some((e) => e.type === "burn" || e.type === "bleed" || e.type === "poison");
     if (!wounded) {
-      cs.enemyHp = Math.min(monster.maxHp, cs.enemyHp + monster.regen * (TICK_MS / 1000));
+      // Gift (Elementar-Effekte): halbiert die Regeneration des vergifteten Ziels (POISON_REGEN_MULT).
+      cs.enemyHp = Math.min(
+        monster.maxHp,
+        cs.enemyHp + monster.regen * poisonSustainMult(cs.enemyEffects) * (TICK_MS / 1000),
+      );
     }
   }
 
-  // Statuseffekte auf den Gegner (Brennen-DoT, Frost, Schock).
+  // Statuseffekte auf den Gegner (DoTs inkl. Glut/Gift-Stapel, Frost; Schock/Entzug wirken an ihren Stellen).
   // Nach jedem Kill-Pfad zusätzlich auf den frisch gestarteten Kill-Cooldown prüfen: der Respawn
   // steht zwar schon im State, aber der Rest dieses Ticks darf ihn NICHT mehr bekämpfen.
   // Die Guards prüfen `monsterId !== monster.id` statt nur `=== null` (Sweep6 T8-P3-2): drückt
@@ -2201,7 +2419,7 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
 
-  // Statuseffekte auf den Spieler (DoT durch Gift/Brennen/Blutung; Frost/Schock stören den Angriff).
+  // Statuseffekte auf den Spieler (DoT durch Gift/Brennen/Blutung; Frost verlangsamt, Einfrieren/Schock greifen am Timer).
   const pStatus = tickPlayerEffects(state, content, nowMs, fx);
   tryAutoEat(state, content, stats.maxHp); // auch DoT-Schaden soll Heilung auslösen (nicht nur Gegner-Schläge)
   tryAutoPotion(state, content, stats.maxHp); // unabhängig von Auto-Eat (eigene Schwelle/Cooldown)
@@ -2222,10 +2440,15 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   cs.playerTimerMs += TICK_MS * (pStatus.frost ? 1 - FROST_SLOW : 1);
   if (cs.playerTimerMs >= playerInterval) {
     cs.playerTimerMs -= playerInterval;
-    if (pStatus.shock > 0 && nextFloat(state.rng) < pStatus.shock) {
-      // durch Schock ausgesetzt — missReason (E+ §E+) macht den Aussetzer vom echten Fehlschlag
-      // unterscheidbar (nur Log-Feld, derselbe RNG-Draw wie vorher).
-      pushLog(cs, { by: "player", kind: "miss", amount: 0, missReason: "shock" });
+    // Elementar-Effekte: der fällige Angriff beendet die Schock-Kette (die Verzögerung selbst ist bei
+    // der Anwendung in den Timer geflossen — kein Aussetz-Wurf mehr, kein RNG-Draw hier). Einfrieren
+    // (dritter Frost): genau dieser eine Angriff fällt aus — missReason "frozen" hält ihn im Log vom
+    // echten Fehlschlag unterscheidbar.
+    const pc = cs.elemental?.player;
+    if (pc) pc.shockDelayMs = 0;
+    if (pc?.frozen) {
+      pc.frozen = false;
+      pushLog(cs, { by: "player", kind: "miss", amount: 0, missReason: "frozen" });
     } else {
       performPlayerAttack(state, content, stats, monster, fx, nowMs);
       if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
@@ -2242,9 +2465,13 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   cs.enemyTimerMs += TICK_MS * (enemyStunned ? 0 : status.frost ? 1 - FROST_SLOW : 1);
   if (!enemyStunned && cs.enemyTimerMs >= enemyInterval) {
     cs.enemyTimerMs -= enemyInterval;
-    if (status.shock > 0 && nextFloat(state.rng) < status.shock) {
-      // durch Schock ausgesetzt — missReason (E+ §E+) analog zum Spieler-Zweig (Symmetrie-Pflicht).
-      pushLog(cs, { by: "enemy", kind: "miss", amount: 0, missReason: "shock" });
+    // Elementar-Effekte (Symmetrie zum Spieler-Zweig): Schock-Kette endet mit dem fälligen Angriff;
+    // ein eingefrorener Gegner lässt genau diesen einen Angriff aus (missReason "frozen").
+    const ecEl = cs.elemental?.enemy;
+    if (ecEl) ecEl.shockDelayMs = 0;
+    if (ecEl?.frozen) {
+      ecEl.frozen = false;
+      pushLog(cs, { by: "enemy", kind: "miss", amount: 0, missReason: "frozen" });
     } else {
       // — Gegner-Treffer-Auflösung (Armor-Iteration 2 §5.2 Resolve-Order): Dodge → Accuracy-Contest →
       //   Mitigation → Leder-Floor → Block → One-Shot-Cap → Ward-Absorb → HP. Die RNG-Draws für
@@ -2274,7 +2501,10 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
       } else {
         // Wut: unter dem HP-Schwellwert schlägt der Gegner härter.
         const enraged = monster.enrage && cs.enemyHp / monster.maxHp <= monster.enrage.belowHpPct;
-        const enemyDamage = enraged ? monster.damage * monster.enrage!.damageMult : monster.damage;
+        // Entzug (Elementar-Effekte, void): ein entkräfteter Gegner schlägt VOID_WEAKEN schwächer — auf die
+        // ganze Spanne, vor dem Wurf (Faktor 1 ohne Status ⇒ bit-identisch).
+        const enemyDamage =
+          (enraged ? monster.damage * monster.enrage!.damageMult : monster.damage) * voidWeakenMult(cs.enemyEffects);
         // STEP 2 (Accuracy-Contest) + STEP 3 (Mitigation, def/(def+K)) laufen beide in resolveAttack;
         // `result.damage` ist bereits post-Mitigation. Gegner-Spanne = Legacy-Ableitung aus dem flachen
         // `damage` (identische Breite wie der alte 0,52–1,48-Wurf), bis Content Monster-Spannen liefert.
@@ -2290,18 +2520,22 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           { evasion: stats.evasion, defense: stats.defense },
         );
         if (result.hit) {
+          // Glut (Elementar-Effekte): ein brennender Spieler nimmt BURN_VULNERABILITY mehr Schaden — auf
+          // den aufgelösten Treffer VOR Pet-Block/Schild/Leder-Floor/Block/Cap/Ward (alle Folgeschritte
+          // sehen den erhöhten Betrag). Ohne Brand Faktor 1 ⇒ bit-identisch.
+          const struck = result.damage * burnVulnMult(cs.playerEffects);
           // Pet-`blockNextEnemyHit`: blockt diesen Treffer komplett (one-shot).
-          let dmg = result.damage;
+          let dmg = struck;
           if (cs.petAbility.blockNextHit) {
             cs.petAbility.blockNextHit = false;
             dmg = 0;
             // source "effect" (Task #220): Pet-Schild/-Block, kein Ward — die UI trennt beide Quellen.
-            pushLog(cs, { by: "player", kind: "shield", amount: result.damage, source: "effect" });
+            pushLog(cs, { by: "player", kind: "shield", amount: Math.round(struck), source: "effect" });
           } else if (cs.petAbility.shieldHp > 0) {
             // Pet-`shield`: Absorb-Pool fängt einen Teil des Treffers ab (vor Block/Ward).
-            const absorbed = Math.min(cs.petAbility.shieldHp, result.damage);
+            const absorbed = Math.min(cs.petAbility.shieldHp, struck);
             cs.petAbility.shieldHp = Math.max(0, cs.petAbility.shieldHp - absorbed);
-            dmg = Math.max(0, result.damage - absorbed);
+            dmg = Math.max(0, struck - absorbed);
             if (absorbed >= 1)
               pushLog(cs, { by: "player", kind: "shield", amount: Math.round(absorbed), source: "effect" });
           }
@@ -2372,7 +2606,8 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           // thorns (Spiegelhaut, §2.1/§5-Rüstungs-Chase): der Angreifer erleidet flachen Rückschaden
           // (unmitigiert — „X Schaden"). Kill-Fall wird nach dem Spieler-Überlebens-Check behandelt.
           if (fx.thorns && fx.thorns.magnitude > 0) {
-            const thornsDmg = Math.max(1, Math.round(fx.thorns.magnitude));
+            // Glut: auch Dornen-Rückschaden trifft ein brennendes Ziel härter („aus allen Quellen").
+            const thornsDmg = Math.max(1, Math.round(fx.thorns.magnitude * burnVulnMult(cs.enemyEffects)));
             cs.enemyHp -= thornsDmg;
             pushLog(cs, { by: "player", kind: "hit", amount: thornsDmg });
           }
@@ -2440,7 +2675,8 @@ function tickPetAbility(
 function petDamageEnemy(state: GameState, fraction: number, monster: MonsterDef): number {
   const pa = state.combat.petAbility;
   const vuln = pa.enemyVulnMs > 0 ? 1 + pa.enemyVulnPct : 1;
-  const dmg = Math.max(1, Math.round(monster.maxHp * fraction * vuln));
+  // Glut (Elementar-Effekte): Pet-Schaden gegen ein brennendes Ziel ×(1+BURN_VULNERABILITY).
+  const dmg = Math.max(1, Math.round(monster.maxHp * fraction * vuln * burnVulnMult(state.combat.enemyEffects)));
   state.combat.enemyHp -= dmg;
   return dmg;
 }

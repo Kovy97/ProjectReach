@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ContentDB, ItemDef, MonsterDef } from "@hearthforge/shared";
-import { STATUS_VS_WARD_MULT, TICK_MS } from "@hearthforge/shared";
+import { BURN_VULNERABILITY, STATUS_VS_WARD_MULT, TICK_MS } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { createGame } from "./state";
 import { computeStats } from "./character";
@@ -197,7 +197,9 @@ describe("Status-vs-Ward-Konter: +20% Status-DoT-Schaden gegen Ward-Monster, DoT
     s.combat.enemyEffects.push({ type: "burn", remainingMs: 5_000, magnitude: MAGNITUDE });
     combatStep(s, c);
     const hpLost = hpStart - s.combat.enemyHp;
-    expect(hpLost).toBeCloseTo(MAGNITUDE * STATUS_VS_WARD_MULT * (TICK_MS / 1000), 6);
+    // Elementar-Effekte (Chef-GO 28.08.2026): Glut — ein brennendes Ziel nimmt BURN_VULNERABILITY mehr
+    // Schaden aus ALLEN Quellen, auch vom Brand-Tick selbst; der Ward-Konter multipliziert dazu.
+    expect(hpLost).toBeCloseTo(MAGNITUDE * STATUS_VS_WARD_MULT * (1 + BURN_VULNERABILITY) * (TICK_MS / 1000), 6);
   });
 
   it("Frost/Shock (schadenslose Status) bleiben von STATUS_VS_WARD_MULT unberührt", () => {

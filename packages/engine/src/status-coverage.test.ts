@@ -7,10 +7,11 @@ import { SPECIAL_EFFECT_TYPES, effectiveWeaponEffects } from "@hearthforge/share
  * ausgelöst, aber von der Kampf-Tick-Logik nicht behandelt wird, läuft stumm ins Leere.
  * Diese Mengen müssen den switch-Zweigen in combat.ts (tickPlayerEffects/tickEnemyEffects) entsprechen.
  */
-// tickPlayerEffects: poison/burn/bleed = DoT, frost = langsamer, shock = aussetzen.
-const PLAYER_HANDLED = new Set(["poison", "burn", "bleed", "frost", "shock"]);
-// tickEnemyEffects: poison/burn/bleed = DoT, frost = langsamer, shock = Schaden-Amp.
-const ENEMY_HANDLED = new Set(["poison", "burn", "bleed", "frost", "shock"]);
+// Elementar-Effekte (Chef-GO 28.08.2026): poison/burn/bleed = DoT (Gift stapelt, Brand = Glut), frost =
+// langsamer + Einfrieren, shock = Verzögerung bei Anwendung, void = Entzug (Schadens-Malus). Beide
+// Seiten laufen durch dieselben Helfer (onStatusApplied/tickElementalSide) — die Mengen sind identisch.
+const PLAYER_HANDLED = new Set(["poison", "burn", "bleed", "frost", "shock", "void"]);
+const ENEMY_HANDLED = new Set(["poison", "burn", "bleed", "frost", "shock", "void"]);
 // Spezial-Kinds (Waffen 2.0 §2.1): passive Bedingungs-Effekte, in combat.ts implementiert
 // (collectSpecialEffects → strikeEnemy/onEnemyDefeated/…). SPECIAL_EFFECT_TYPES ist die
 // Engine-Wahrheit — ein Content-Kind außerhalb BEIDER Mengen wäre „definiert, aber nie angewandt".

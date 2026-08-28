@@ -182,6 +182,64 @@ shared-Feld) explizit auf allen 26 sowie auf drei Drops, deren Status nicht mehr
 CL-90-Magic-„damage"-TTK neu gemessen (BiS wechselt auf aetherium_staff). Renderer-Verdrahtung
 (`combatFx.ts` liest `item.magicTheme`) steht noch aus.*
 
+**Elementar-Effekte im Kampf (Chef-GO 28.08.):** DE: Jedes Element macht jetzt etwas Eigenes, für Waffen gegen
+Gegner genauso wie für Monster gegen dich. Brand: brennende Ziele nehmen 10 % mehr Schaden aus allen Quellen. Frost:
+40 % langsamer wie bisher, der dritte Frost in Folge friert das Ziel für einen Angriff ein, danach ist es 6 s immun.
+Schock: kein Aussetzer mehr, jede Anwendung verzögert den nächsten Angriff des Ziels um 0,4 s (bis 1,2 s), und
+kritische Treffer mit einer Schock-Waffe springen über und treffen ein zweites Mal für 30 %. Gift: stapelt bis 5-mal
+(Schaden je Stapel) und halbiert Regeneration und Lebensraub des Ziels. Leere: neuer Status „Entzug", das Ziel macht
+15 % weniger Schaden (Schwarzstahl-Stab, Götzeneisen-Stab, Runit-Zauberstab, Leerenrufer-Stab, Rute des Felmagiers,
+Chorstab der Ertrunkenen). Arkan: „Resonanz", jeder Treffer +2 % Schaden bis 10 Stapel (Morscher Stab, Stahl-Stab,
+Adamantium- und Aetherium-Zauberstab). Aether: „Lichtsegen", jeder Zauber füllt 4 % des eigenen Wards und durchdringt
+die Hälfte des gegnerischen Wards (Titan- und Aetherium-Stab, Aether-Runenstab, Götzenfunken-Stab). Item-Karten und
+Bestiariums-Hinweise beschreiben jede Mechanik in einem Satz. / EN: Every element now has its own identity, for your
+weapons and for monsters alike: Burn (10% more damage taken while burning), Frost (third chill in a row freezes for
+one attack, then 6 s immunity), Shock (no more skipped attacks; each shock delays the target's next attack by 0.4 s up to
+1.2 s, crits arc for 30%), Poison (stacks up to 5, halves regeneration and lifesteal), Void (new "Drain" status, 15% less
+damage dealt), Arcane (Resonance: +2% per hit up to 10 stacks), Aether (Lightblessing: every spell restores 4% of your
+ward and pierces half of the enemy's ward).
+
+*Dev-Notiz: design/elementar-status-konzept.md „Umgesetzt". Engine combat.ts: Glut/Entzug als Multiplikatoren im
+Schadenspfad (beide Seiten), Frost-Zähler + Einfrieren (`missReason: "frozen"`), Schock als Timer-Verzögerung bei der
+Anwendung (Anwendungschance = Content-`magnitude`, `missReason: "shock"` wird nicht mehr emittiert, Verzögerung als
+`kind:"status"`-Event mit `amount` = ms), Gift-Stapel, Lichtsegen als neues Kind `lightblessing`; transiente Zähler in
+`CombatState.elemental` (nicht persistiert, kein SAVE-Bump; `void` in alten Saves unmöglich, Sanitize toleriert den Typ).
+Shared: `StatusType` + "void", Konstanten BURN_VULNERABILITY/FROST_FREEZE_STACKS/FREEZE_IMMUNITY_MS/SHOCK_DELAY_MS/
+SHOCK_DELAY_CAP_MS/SHOCK_ARC_FRACTION/POISON_MAX_STACKS/POISON_REGEN_MULT/VOID_WEAKEN/AETHER_WARD_ON_HIT/AETHER_WARD_PIERCE.
+Content: 6 Leere-Waffen +void, 4 Arkan-Waffen +momentum, 4 Aether-Waffen +lightblessing (Titan/Aetherium-Stab: ersetzt
+den manaOnKill-Platzhalter). Tests: elemental-status.test.ts (24), status-coverage/combatlog-dramaturgie umgestellt,
+ward-status-counter neu gepinnt (Glut auf dem Brand-Tick). Balance-Sim 0 Auffälligkeiten, Envelope-Pins unverändert.
+Offen (Client): CombatPage-Zeilen „verzögert"/„eingefroren"/„Entzug" (Keys combat.shockDelay*/missFrozen*/void* liegen
+in 7 Sprachen bereit), Status-Icon + Partikel-Rezept für `void`.*
+
+**Esthar und ein neuer Champion im Hochland (Chef 28.08., nach der Idee eines Spielers):** DE: Im Hochland geht ein
+29. Champion um: Ossric der Markgebundene, ein alter Klippengeist, der Blutung statt Frost austeilt und etwas zäher ist
+als Bleichgram. Wer ihn fällt, hat die übliche Chance auf sein Unikat: „Esthar, Sturm der Gebeine", eine legendäre
+Großaxt (Angriff 90) aus Knochenklingen und versteinertem Mark. Sie schlägt die Götzeneisen-Großaxt um rund 8 % in der
+Spanne, lässt Gegner bluten und trifft mit jedem vierten Hieb doppelt, das ist der Knochensturm. Dazu Hochland-Materialien
+und zwei Hochland-Raritäten in seiner Zusatzbeute. Der Erfolg „Alle Champions" zählt jetzt bis 29. / EN: A 29th Champion,
+Ossric the Marrowbound, stalks the Highlands and drops the legendary greataxe "Esthar, Storm of Bones" (bleed plus every
+fourth hit striking twice), based on a player's idea.
+
+**Zwei neue Begleiter (Chef 28.08.):** DE: Jagen und Schneidern haben jetzt eigene Begleiter. Der Gestiefelte Kater, ein
+grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und
+Armbrust jagt, fällt beim Jagen mit jedem Fang und hebt die Fangchance deiner Fallen um 3 Prozentpunkte (der Deckel von
+95 % bleibt); im Kampf hält seine Schlingenfalle den Gegner kurz fest. Der Seidenweber, eine bleiche Nachtmotte mit
+spindeldürren Beinen, fällt beim Schneidern, spart 5 % Stoff beim Weben und legt im Kampf einen Seidenschleier über die
+Augen des Gegners. Beide zeigen wie alle Begleiter Passiv und Aktiv mit echten Zahlen auf der Karte. / EN: Two new
+companions: the Booted Tomcat (Hunting, +3 pp trap catch chance, Snare Trap stun) and the Silkweaver (Tailoring, 5 %
+material refund, Silk Veil accuracy debuff).
+
+*Dev-Notiz: Content `esthar` (33,5–62,4 @3450, Blutung 0,35×6/6 s + everyNth n=4, value 16 000, legendär), `elite_ossric`
+(Basis gravecliff_specter, hp/ward ×2,2, dmg ×1,15, xp ×2,75, inflictOverride bleed 0,30×2/5 s), Pets `booted_tomcat`
+(neues shared-Kind `huntCatchChance`, Cap 0,03, Wurf je Fang in engine/hunting.ts grantCatch = RNG-Schritt 5) und
+`silkweaver` (refundMaterial tailoring, Aktions-Pfad). Locales ×5 für Item, Champion, Pets, Fähigkeiten; Erfolge
+ach_elite_variants_all/ach_elite_uniques_all 28→29 (Texte in 7 Sprachen). Balance-Envelope-Pin CL-90-Melee-„damage"-TTK
+neu gemessen (BiS-Picker wählt Esthar statt aetherium_maul; gegen die gepanzerten Idol-Bosse zählt der Maul-armorPen, daher
++6/+9 % Spieler-TTK dort, s. Kommentar im Test). Kein neuer Save-State (SAVE_VERSION unverändert). Offen (Client):
+Texte `pet.effect.skill.huntCatchChance`/`pet.passive.huntCatchChance` in 7 Sprachen, `PET_ZONE_ID` für die zwei Pets,
+Bilder von Mira (`esthar`, `elite_ossric`, `pets/booted_tomcat`, `pets/silkweaver`).*
+
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im
 Kampf macht, mit Takt („Diebesgriff. Alle 6 s: 40 % Chance, ein Item aus der Beute des Gegners zu stehlen. Nur Drops mit

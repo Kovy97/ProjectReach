@@ -826,6 +826,32 @@ export const MAGIC_WEAK_FACTOR = 0.35;
 /** Frost verlangsamt den Gegner-Angriffstimer um diesen Anteil. */
 export const FROST_SLOW = 0.4;
 
+// ── Elementar-Effekte (Chef-GO 28.08.2026, design/elementar-status-konzept.md) ─────────────────
+// Eine Identität je Element; alle Regeln gelten symmetrisch (Waffe → Gegner UND Monster-inflict →
+// Spieler). Zähler/Immunitäten leben transient in `CombatState.elemental` (nie persistiert).
+/** Glut: ein brennendes Ziel nimmt diesen Anteil mehr Schaden aus ALLEN Quellen (Treffer, DoTs, Pet, Dornen, Überspringen). */
+export const BURN_VULNERABILITY = 0.1;
+/** Frost: die n-te Frost-Anwendung in Folge (ohne dass Frost zwischendurch abläuft) friert das Ziel ein — genau ein Angriff fällt aus. */
+export const FROST_FREEZE_STACKS = 3;
+/** Frost: nach einem Einfrieren ist das Ziel so lange immun gegen erneutes Einfrieren (Anwendungen zählen nicht). */
+export const FREEZE_IMMUNITY_MS = 6000;
+/** Schock: jede Anwendung schiebt den nächsten Angriff des Ziels um so viele ms nach hinten. */
+export const SHOCK_DELAY_MS = 400;
+/** Schock: Deckel der aufsummierten Verzögerung je Anwendungskette (Kette endet mit dem nächsten ausgeführten Angriff des Ziels). */
+export const SHOCK_DELAY_CAP_MS = 1200;
+/** Schock: ein kritischer Treffer mit Schock-Waffe springt über und trifft ein zweites Mal für diesen Anteil (umgeht den Gegner-Ward). */
+export const SHOCK_ARC_FRACTION = 0.3;
+/** Gift: maximale Stapel; der DoT-Schaden je Tick ist magnitude × Stapel. */
+export const POISON_MAX_STACKS = 5;
+/** Gift: Multiplikator auf Regeneration und Lebensraub des vergifteten Ziels, solange Gift aktiv ist. */
+export const POISON_REGEN_MULT = 0.5;
+/** Entzug (Leere): ein entkräftetes Ziel macht diesen Anteil weniger Schaden. */
+export const VOID_WEAKEN = 0.15;
+/** Lichtsegen (Aether, Kind `lightblessing`): jeder Treffer füllt diesen Anteil des eigenen Ward-Maximums auf (Default, wenn magnitude 0). */
+export const AETHER_WARD_ON_HIT = 0.04;
+/** Lichtsegen: Treffer durchdringen diesen Anteil des Gegner-Wards (effektiver wardBreak = max(Stat, Konstante)). */
+export const AETHER_WARD_PIERCE = 0.5;
+
 /**
  * Mana-Schild (Magie-Defensiv-Identität, Playtest-Hebel P3 / r6 Cassia „Mana-Schild").
  *
@@ -850,13 +876,31 @@ export const FROST_SLOW = 0.4;
 export const MANA_SHIELD_ABSORB_PCT = 0.5;
 export const MANA_SHIELD_COST_PER_DAMAGE = 20;
 
-export type StatusType = "burn" | "frost" | "shock" | "poison" | "bleed";
+/**
+ * Status-Arten (Elementar-Effekte, Chef-GO 28.08.2026, design/elementar-status-konzept.md):
+ *  burn   = Brand: DoT + Glut (brennendes Ziel nimmt BURN_VULNERABILITY mehr Schaden aus allen Quellen)
+ *  frost  = Frost: FROST_SLOW langsamer; die FROST_FREEZE_STACKS-te Anwendung friert ein (genau ein
+ *           Angriff fällt aus), danach FREEZE_IMMUNITY_MS Immunität gegen Einfrieren
+ *  shock  = Schock: jede Anwendung schiebt den nächsten Angriff des Ziels um SHOCK_DELAY_MS nach
+ *           hinten (Kette bis SHOCK_DELAY_CAP_MS); Krit mit Schock-Waffe springt über (SHOCK_ARC_FRACTION)
+ *  poison = Gift: DoT, der bis POISON_MAX_STACKS stapelt (Schaden × Stapel) und Regeneration/Lebensraub
+ *           des Ziels halbiert (POISON_REGEN_MULT)
+ *  bleed  = Blutung: DoT (Nahkampf), unverändert
+ *  void   = Entzug (Leere): Ziel macht VOID_WEAKEN weniger Schaden
+ */
+export type StatusType = "burn" | "frost" | "shock" | "poison" | "bleed" | "void";
 
 /** Ein aktiver Statuseffekt auf einem Kämpfer. */
 export interface StatusEffect {
   type: StatusType;
   remainingMs: number;
-  /** Bedeutung je Typ: burn/poison/bleed = Schaden/Sek, shock = Aussetz-Chance 0..1, frost = ungenutzt. */
+  /**
+   * Bedeutung je Typ: burn/poison/bleed = Schaden/Sek (poison: je Stapel), void = Schadens-Malus-
+   * Anteil (Content 0.15; die Engine wendet VOID_WEAKEN an), shock = Anwendungschance 0..1 (die
+   * Verzögerung selbst ist die Konstante SHOCK_DELAY_MS — seit den Elementar-Effekten ist die
+   * Magnitude die Proc-Chance je Treffer, `WeaponEffect.chance` wird für shock nicht gelesen),
+   * frost = ungenutzt (Slow/Einfrieren sind Konstanten).
+   */
   magnitude: number;
 }
 
@@ -919,6 +963,7 @@ export const MONSTER_FAMILIES: MonsterFamily[] = [
  * | blockRestore   | +Anteil maxHp Heilung je ERFOLGREICHEM Block (0.02); Klemme BLOCK_RESTORE_CAP_PCT und BLOCK_RESTORE_CAP_ABS | — |
  * | combatXp       | +Anteil auf JEDE Kampf-XP des Kampfmoduls (0.10); Klemme COMBAT_XP_BONUS_CAP | — |
  * | lootChance     | +Anteil auf die Chance regulaerer Kill-Loot-Tabellen (0.10); Klemme LOOT_CHANCE_BONUS_CAP | — |
+ * | lightblessing  | Lichtsegen (Aether): Anteil des eigenen Ward-Maximums je Treffer (0.04; 0 ⇒ AETHER_WARD_ON_HIT), Treffer durchdringen AETHER_WARD_PIERCE des Gegner-Wards | — |
  *
  * Die drei letzten Kinds sind die Runen-Tier-IV-Hooks (Chef-Entscheid 25.08.2026,
  * design/runen-tier-iv.html §3/§4): Ungebrochene Mauer (blockRestore, Schild), Chronik (combatXp,
@@ -958,7 +1003,8 @@ export type SpecialEffectType =
   | "bane"
   | "blockRestore"
   | "combatXp"
-  | "lootChance";
+  | "lootChance"
+  | "lightblessing";
 
 /** Alle implementierten Spezial-Kinds (Guard-Quelle: status-coverage prüft Content dagegen). */
 export const SPECIAL_EFFECT_TYPES: SpecialEffectType[] = [
@@ -994,12 +1040,13 @@ export const SPECIAL_EFFECT_TYPES: SpecialEffectType[] = [
   "blockRestore",
   "combatXp",
   "lootChance",
+  "lightblessing",
 ];
 
 /** Jeder Waffeneffekt-Typ: klassischer Status (burn/…) ODER Spezial-Kind (Waffen 2.0 §2.1). */
 export type WeaponEffectType = StatusType | SpecialEffectType;
 
-const STATUS_TYPE_SET: ReadonlySet<string> = new Set(["burn", "frost", "shock", "poison", "bleed"]);
+const STATUS_TYPE_SET: ReadonlySet<string> = new Set(["burn", "frost", "shock", "poison", "bleed", "void"]);
 /** Type-Guard: ist dieser Effekt-Typ ein klassischer Status (DoT/Frost/Schock)? */
 export function isStatusEffectType(type: WeaponEffectType): type is StatusType {
   return STATUS_TYPE_SET.has(type);
@@ -2246,6 +2293,7 @@ export type PetId = string;
  * | doubleLoot      | Chance je Monster-Kill, den kompletten Loot+Gold-Wurf zu wiederholen (ohne Pet-Drop/Dungeon-Token) | combat.ts Kill-Pfad (`petDoubleLootChance`) |
  * | killHeal        | heilt % player.maxHp bei jedem Monster-Kill      | combat.ts Kill-Pfad (`petKillHealFraction`)     |
  * | sellBonus       | +% Gold beim Item-Verkauf (Shop-Sell-Pfad)       | shop.ts `effectiveSellPrice` (`petSellBonus`)   |
+ * | huntCatchChance | +Fangchance einer Falle beim Jagen (additiv, skill-gebunden auf `hunting`; der bestehende Deckel HUNT_CATCH_CAP 95 % bleibt) | hunting.ts `huntCatchChance` (`petHuntCatchBonus`) |
  *
  * Mehrere Kinds docken funktional an dieselbe Mechanik an (doubleDrop/gatherYield/
  * flawlessGem/bonusRunes → Doppelertrag-Chance; refundMaterial/perfectCook/
@@ -2273,7 +2321,10 @@ export type PetSkillEffectKind =
   | "damageReduction"
   | "doubleLoot"
   | "killHeal"
-  | "sellBonus";
+  | "sellBonus"
+  // ── 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter booted_tomcat — Fangchance der Fallen
+  //    (hunting.ts läuft NICHT über den Aktions-Pfad, darum ein eigenes, skill-gebundenes Kind statt doubleDrop) ──
+  | "huntCatchChance";
 
 // RemovedPetSkillEffectKind („skillXp"): GELÖSCHT (#276 Schritt 3 erledigt) — Content ist auf die
 // neuen Passive umgestellt, XP-Kinds sind per Guard-Test dauerhaft verboten. Alt-Saves unberührt
@@ -2347,6 +2398,7 @@ export const SKILL_SCOPED_PET_KINDS: PetSkillEffectKind[] = [
   "bonusRunes",
   "potionPreserve",
   "skillBoost",
+  "huntCatchChance",
 ];
 
 /**
@@ -2381,6 +2433,7 @@ export const PET_SKILL_EFFECT_CAP: Record<PetSkillEffectKind, number> = {
   doubleLoot: 0.05, // Chance je Kill (Ökonomie-Spiegel des gemwraith-5-%-Referenzlevels)
   killHeal: 0.05, // Bruch player.maxHp je Kill (reines Food-Sparen im Grind)
   sellBonus: 0.05, // Bruch: +5 % Verkaufs-Gold max
+  huntCatchChance: 0.03, // Bruch: +3 pp Fangchance max (additiv auf eine Erfolgschance — enger wie thievingSuccess)
 };
 
 /**
@@ -5202,7 +5255,7 @@ export interface CombatEvent {
    * Log-Zeilen-TEXT unterscheidet. Persistenz: Log-Einträge laufen beim Load verbatim durch
    * (nur Längen-Cap, keine kind-/Feld-Allowlist) — kein SAVE_VERSION-Bump.
    */
-  missReason?: "shock" | "dodge";
+  missReason?: "shock" | "dodge" | "frozen";
   /** Nur für kind === "xp": welcher Skill die Kill-XP erhalten hat. */
   skill?: string;
   /** Nur für kind === "petAbility": welches Pet die Ability ausgelöst hat (für UI/Animation). */
@@ -5345,6 +5398,44 @@ export interface CombatState {
    * überleben genau EINEN Gegnerwechsel und verfallen bei Kampfende.
    */
   effectCounters?: EffectCounters;
+  /**
+   * Transiente Elementar-Zähler (Elementar-Effekte, Chef-GO 28.08.2026): Frost-Anwendungszähler,
+   * Einfrier-Immunität, ausstehendes Einfrieren, Schock-Verzögerungskette und Gift-Stapel — je
+   * Seite (Spieler/Gegner). Wie `effectCounters` NIE persistiert (Load-Whitelist baut `combat`
+   * ohne das Feld neu auf); lazy angelegt. Die Gegner-Seite resettet bei jedem Gegnerwechsel
+   * (Respawn/Welle), beide Seiten bei Kampfende/Tod.
+   */
+  elemental?: ElementalCounters;
+}
+
+/** Elementar-Zähler EINER Seite (Ziel der Effekte). */
+export interface ElementalSideCounters {
+  /** frost: Anwendungen in Folge (reset, sobald kein Frost mehr aktiv ist oder eingefroren wurde). */
+  frostStacks: number;
+  /** frost: Rest-Immunität gegen Einfrieren (ms). */
+  freezeImmunityMs: number;
+  /** frost: der nächste fällige Angriff dieser Seite fällt aus. */
+  frozen: boolean;
+  /** shock: bereits aufsummierte Verzögerung der laufenden Kette (ms, ≤ SHOCK_DELAY_CAP_MS). */
+  shockDelayMs: number;
+  /** poison: aktive Gift-Stapel (1..POISON_MAX_STACKS; 0 = kein Gift). */
+  poisonStacks: number;
+}
+
+/** Elementar-Zähler beider Seiten (siehe `CombatState.elemental`). */
+export interface ElementalCounters {
+  player: ElementalSideCounters;
+  enemy: ElementalSideCounters;
+}
+
+/** Frische (leere) Elementar-Zähler einer Seite. */
+export function createElementalSideCounters(): ElementalSideCounters {
+  return { frostStacks: 0, freezeImmunityMs: 0, frozen: false, shockDelayMs: 0, poisonStacks: 0 };
+}
+
+/** Frische (leere) Elementar-Zähler beider Seiten. */
+export function createElementalCounters(): ElementalCounters {
+  return { player: createElementalSideCounters(), enemy: createElementalSideCounters() };
 }
 
 /** Transiente Spezial-Effekt-Zähler (siehe `CombatState.effectCounters`). */

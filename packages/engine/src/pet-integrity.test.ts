@@ -20,6 +20,7 @@ import { createGame } from "./state";
 import { computeStats } from "./character";
 import { advance } from "./tick";
 import { plantCrop } from "./farming";
+import { setActiveAction } from "./actions";
 import { addItem } from "./inventory";
 import { effectiveSellPrice, sellItem, sellPrice } from "./shop";
 import { nextFloat } from "./rng";
@@ -46,6 +47,8 @@ const ALL_SKILL_KINDS: PetSkillEffectKind[] = [
   "perfectCook", "bonusAmmo", "flawlessGem", "bonusRunes", "potionPreserve", "manaRegen",
   // #276 Pet-Redesign: die 6 neuen Passiv-Kinds (Spec §4.2)
   "lifesteal", "skillBoost", "damageReduction", "doubleLoot", "killHeal", "sellBonus",
+  // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter — Fangchance der Fallen (hunting.ts)
+  "huntCatchChance",
 ];
 const ALL_ABILITY_KINDS: PetAbilityKind[] = [
   "stun", "burstDamage", "onHitStatus", "delayedDot", "accuracyDownEnemy", "stealDrop", "heal",
@@ -94,10 +97,12 @@ describe("pet integrity: Content-Guards (Skill-Passiv + getriggerte Ability)", (
       if (pet.source.kind === "skill") {
         const srcSkill = pet.source.skill;
         expect(skillIds.has(srcSkill), `Pet ${pet.id}: Quell-Skill ${srcSkill} fehlt`).toBe(true);
-        // Farming-Skill hat passive Crops statt Aktionen — entweder actions oder crops decken den Skill ab
+        // Farming-Skill hat passive Crops statt Aktionen — entweder actions oder crops decken den Skill ab.
+        // Jagen (1.2.0) hat passive Fallen (`huntingZones`, Wurf je Fang in hunting.ts grantCatch).
         const hasAction = Object.values(content.actions).some((a) => a.skill === srcSkill);
         const hasCrops = srcSkill === "farming" && Object.keys(content.crops ?? {}).length > 0;
-        expect(hasAction || hasCrops, `Pet ${pet.id}: keine Aktion für Skill ${srcSkill}`).toBe(true);
+        const hasTraps = srcSkill === "hunting" && (content.huntingZones?.length ?? 0) > 0;
+        expect(hasAction || hasCrops || hasTraps, `Pet ${pet.id}: keine Aktion für Skill ${srcSkill}`).toBe(true);
       } else {
         expect(Object.keys(content.monsters).length > 0, `Pet ${pet.id}: keine Monster für Combat-Drop`).toBe(true);
       }
@@ -239,8 +244,11 @@ describe("pet integrity: Content-Guards (Skill-Passiv + getriggerte Ability)", (
     // Farming ist passiv/ernte-arm (~1.500 Ernten über einen vollen 1→99-Grind statt ~100k+ Aktionen
     // wie bei aktiven Sammel-Skills), darum braucht es ~1/15000, um ein vergleichbares P(≥1 bis 99) zu
     // erreichen (vorher 1/105000 ⇒ ~1,5 %). Alle anderen Pets bleiben im ≤1/50000-Band.
+    // 1.2.0 (Chef 28.08.2026): booted_tomcat (Jagen) wirft je FANG (5–60 min je Falle, ~1 000–2 500 Fänge
+    // über einen 1→99-Grind) — dieselbe Ernte-arm-Logik wie witherling, Content trägt 1/15000.
+    const SPARSE_SOURCE_PETS = new Set(["witherling", "booted_tomcat"]);
     for (const pet of Object.values(pets)) {
-      const cap = pet.id === "witherling" ? 1 / 10000 : 1 / 50000;
+      const cap = SPARSE_SOURCE_PETS.has(pet.id) ? 1 / 10000 : 1 / 50000;
       expect(pet.dropChance, `Pet ${pet.id}: dropChance zu hoch`).toBeLessThanOrEqual(cap);
       expect(pet.dropChance, `Pet ${pet.id}: dropChance ≤ 0`).toBeGreaterThan(0);
     }
@@ -641,6 +649,30 @@ describe("pet drop: Farming-Pet fällt über den ERNTE-Pfad (nicht nur Action-Pf
     plantCrop(s, c, 0, "wp_crop");
     advance(s, c, GROW - 1000); // knapp vor der Reife → keine Ernte
     expect(s.character.ownedPets.witherling).toBeFalsy();
+  });
+});
+
+/**
+ * 1.2.0 (Chef 28.08.2026): Schneidern-Begleiter silkweaver — Schneidern läuft über normale Rezepte, der
+ * Begleiter-Wurf kommt also automatisch aus tick.ts `completeAction` (kein eigener Hook nötig; der Jagen-
+ * Begleiter booted_tomcat hat seinen Hook in hunting.ts, s. hunting.test.ts).
+ */
+describe("Schneidern-Begleiter silkweaver (1.2.0): fällt über den normalen Aktions-Pfad", () => {
+  it("weave_nettle mit dropChance 1 ⇒ silkweaver nach dem ersten Abschluss; Passiv refundMaterial 5 % NUR auf tailoring", () => {
+    const silk = content.pets.silkweaver!;
+    expect(silk.source).toEqual({ kind: "skill", skill: "tailoring" });
+    expect(silk.skillEffect).toMatchObject({ kind: "refundMaterial", skill: "tailoring", value: 0.05 });
+    const c: ContentDB = { ...content, pets: { ...content.pets, silkweaver: { ...silk, dropChance: 1 } } };
+    const s = createGame({ name: "Weberin" }, c, 99);
+    addItem(s.inventory, c, "fiber_nettle", 30);
+    setActiveAction(s, c, "weave_nettle");
+    expect(s.activeActionId).toBe("weave_nettle");
+    advance(s, c, 3200); // ein Abschluss (durationMs 3000)
+    expect(s.character.ownedPets.silkweaver).toBe(true);
+    expect(s.character.companionPetId).toBe("silkweaver");
+    expect(s.lastPetDrop?.petId).toBe("silkweaver");
+    expect(petPreserveBonus(s, c, "tailoring")).toBe(0.05);
+    expect(petPreserveBonus(s, c, "smithing")).toBe(0);
   });
 });
 
