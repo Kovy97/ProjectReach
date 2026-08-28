@@ -51,8 +51,8 @@ import {
   xpForLevel,
 } from "@hearthforge/engine";
 import type { ParagonFloorPreview, ParagonStatus } from "@hearthforge/engine";
-import type { ActiveBuff, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
-import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, PRE_BOSS_BREATHER_MS } from "@hearthforge/shared";
+import type { ActiveBuff, CombatEvent, CombatStyle, RangedStance, DerivedStats, DungeonDef, ElementalSideCounters, EliteVariantDef, LootRoll, MagicStance, GameState, ItemDef, LastKillSummary, LocalizedString, MonsterDef, PetAbilityKind, SlayerTowerFloor, StatusEffect, StatusType } from "@hearthforge/shared";
+import { autoEatHealMult, effectiveAutoEatThreshold, effectiveWeaponEffects, isStatusEffectType, EQUIP_SLOT_LABELS, AUTO_EAT_MAX_TIER, AUTO_POTION_COOLDOWN_MS, AUTO_REBUFF_UNLOCK_COST, COMBAT_SKILL_IDS, CRAFT_TARGET_PRESETS, CRIT_CHANCE_CAP, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, combatXpLevelMult, consumableHeal, FROST_FREEZE_STACKS, KILL_COOLDOWN_MS, PARAGON_BOSS_INTERVAL, PARAGON_DUNGEON_ID, POISON_MAX_STACKS, PRE_BOSS_BREATHER_MS, SHOCK_DELAY_CAP_MS } from "@hearthforge/shared";
 import { getEliteMonsterSrc, getMonsterSrc } from "../monsters";
 import { AreaTourGuide } from "../components/AreaTourGuide";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
@@ -616,13 +616,15 @@ function eventText(
       return t("combat.crit").replace("{amount}", String(e.amount));
     }
     case "miss":
-      // E+-Paket (battle-040-dramaturgie §E+): Schock-Aussetzer und Leder-Dodge sind über
-      // `missReason` vom echten Fehlschlag unterscheidbar — NUR der Zeilentext ändert sich;
-      // Filter-Kategorie, Floater und SFX behandeln alle drei weiter als "miss".
-      if (e.missReason === "shock") {
+      // E+-Paket (battle-040-dramaturgie §E+): Einfrieren (Elementar-Effekte 28.08.2026, löst den
+      // früheren Schock-Aussetzer ab — Schock verzögert seit der Umstellung statt auszusetzen, s.
+      // den "status"-Fall unten) und Leder-Dodge sind über `missReason` vom echten Fehlschlag
+      // unterscheidbar — NUR der Zeilentext ändert sich; Filter-Kategorie, Floater und SFX
+      // behandeln alle drei weiter als "miss".
+      if (e.missReason === "frozen") {
         return e.by === "player"
-          ? t("combat.missShockPlayer")
-          : t("combat.missShockEnemy").replace("{name}", monsterName);
+          ? t("combat.missFrozenPlayer")
+          : t("combat.missFrozenEnemy").replace("{name}", monsterName);
       }
       if (e.missReason === "dodge") {
         return t("combat.missDodge").replace("{name}", monsterName);
@@ -650,6 +652,29 @@ function eventText(
       // Chef-BUG-Fix: Schild-Block ist jetzt sichtbar — „Blocked! −X" (blau, analog Ward-Absorb).
       return t("combat.log.block").replace("{amount}", formatStat(e.amount));
     case "status": {
+      // Elementar-Effekte (28.08.2026): shock/void/poison bekommen eigene Zeilentexte statt der
+      // generischen "erleidet <Status>!"-Zeile — combat.ts pushLog-Kommentare an onStatusApplied/
+      // delayNextAttack dokumentieren die amount-Semantik je Typ.
+      if (e.status === "shock" && e.amount > 0) {
+        // amount = ms dieser Verzögerung (SHOCK_DELAY_MS je Anwendung, 0 nur am Ketten-Deckel —
+        // der Fall fällt unten auf die generische Zeile zurück, s. combat.ts delayNextAttack-Doku).
+        const seconds = formatSeconds1(e.amount / 1000);
+        return e.by === "player"
+          ? t("combat.shockDelayEnemy").replace("{name}", monsterName).replace("{seconds}", seconds)
+          : t("combat.shockDelayPlayer").replace("{seconds}", seconds);
+      }
+      if (e.status === "void") {
+        return e.by === "player"
+          ? t("combat.voidEnemy").replace("{name}", monsterName)
+          : t("combat.voidPlayer");
+      }
+      if (e.status === "poison" && e.amount >= 2) {
+        // amount = neue Stapelzahl (Refresh mit Zuwachs, combat.ts onStatusApplied) — die
+        // Erst-Anwendung (Stapel 1, amount 0) fällt unten auf die generische Zeile zurück.
+        return e.by === "player"
+          ? t("combat.poisonStackEnemy").replace("{name}", monsterName).replace("{amount}", String(e.amount))
+          : t("combat.poisonStackPlayer").replace("{amount}", String(e.amount));
+      }
       const label = e.status ? t(`status.${e.status}`) : "";
       return e.by === "player"
         ? t("combat.statusEnemy").replace("{name}", monsterName).replace("{status}", label)
@@ -1099,6 +1124,12 @@ interface FighterProps {
   wardCur?: number;
   wardMax?: number;
   effects?: StatusEffect[];
+  /**
+   * Elementar-Effekte (28.08.2026): transiente Frost-/Schock-/Gift-Zähler DIESER Seite
+   * (`state.combat.elemental.player`/`.enemy`) — für den Live-Zähler im Status-Icon-Tooltip
+   * (Frost n/max, Schock-Verzögerung, Gift-Stapel), s. `statusTooltipExtra`.
+   */
+  elemental?: ElementalSideCounters;
   enraged?: boolean;
   enrageLabel?: string;
   regen?: number;
@@ -1185,6 +1216,34 @@ function ZoneParticles({
 
   if (!active) return null;
   return <canvas ref={canvasRef} className="zone-particles-canvas" aria-hidden="true" />;
+}
+
+/**
+ * Elementar-Effekte (28.08.2026) — Status-Icon-Tooltip: Live-Zähler aus den transienten
+ * `state.combat.elemental`-Seiten-Countern (Frost-Anwendungen in Folge, aufsummierte Schock-
+ * Verzögerung, Gift-Stapel), ergänzt das bestehende `status.<typ>.desc` (das die Mechanik bereits
+ * qualitativ erklärt) um den AKTUELLEN Stand — kompakte Chip-Form ("Frost 2/3"), keine vollen
+ * Sätze. burn (Glut) und void (Entzug) haben keinen Zähler (reine Multiplikatoren, die verbleibende
+ * Statusdauer steht schon im Basis-Tooltip) und liefern hier bewusst nichts.
+ */
+function statusTooltipExtra(type: StatusType, side: ElementalSideCounters | undefined, t: (key: string) => string): string {
+  if (!side) return "";
+  if (type === "frost") {
+    if (side.frozen) return t("combat.tooltip.frostFrozen");
+    if (side.frostStacks > 0) {
+      return t("combat.tooltip.frostCount").replace("{n}", String(side.frostStacks)).replace("{max}", String(FROST_FREEZE_STACKS));
+    }
+    return "";
+  }
+  if (type === "shock" && side.shockDelayMs > 0) {
+    return t("combat.tooltip.shockDelay")
+      .replace("{seconds}", formatSeconds1(side.shockDelayMs / 1000))
+      .replace("{cap}", formatSeconds1(SHOCK_DELAY_CAP_MS / 1000));
+  }
+  if (type === "poison" && side.poisonStacks > 1) {
+    return t("combat.tooltip.poisonCount").replace("{n}", String(side.poisonStacks)).replace("{max}", String(POISON_MAX_STACKS));
+  }
+  return "";
 }
 
 /**
@@ -1351,15 +1410,21 @@ function Fighter(props: FighterProps): JSX.Element {
             Debuffs ↗, Spieler-Buffs ↙, Pet ↘) — nimmt keinen Layout-Platz, Bildgröße bleibt stabil. */}
         {props.effects && props.effects.length > 0 && (
           <div className="fighter-effects fighter-effects-overlay">
-            {props.effects.map((e, i) => (
-              <span
-                key={i}
-                className="effect-badge"
-                title={`${t(`status.${e.type}`)} — ${t(`status.${e.type}.desc`)} (${Math.ceil(e.remainingMs / 1000)}s)`}
-              >
-                {renderEffectIcon(e.type)} {Math.ceil(e.remainingMs / 1000)}s
-              </span>
-            ))}
+            {props.effects.map((e, i) => {
+              // Elementar-Effekte (28.08.2026): Live-Zähler aus props.elemental (Frost n/max,
+              // Schock-Verzögerung, Gift-Stapel) hinter dem bestehenden Label — Desc — Restzeit an,
+              // OHNE einen zweiten Gedankenstrich einzuführen (Regel: ≤1 Dash pro Text).
+              const extra = statusTooltipExtra(e.type, props.elemental, t);
+              return (
+                <span
+                  key={i}
+                  className="effect-badge"
+                  title={`${t(`status.${e.type}`)} — ${t(`status.${e.type}.desc`)}${extra ? ` (${extra})` : ""} (${Math.ceil(e.remainingMs / 1000)}s)`}
+                >
+                  {renderEffectIcon(e.type)} {Math.ceil(e.remainingMs / 1000)}s
+                </span>
+              );
+            })}
           </div>
         )}
         {props.buffChips}
@@ -3090,6 +3155,18 @@ function Battle({
           particleStageRef.current.startAmbient(`statusAmbient_${e.status}`, `${target}:${e.status}`, { at: anchor.center, dir, box: anchor.box });
         }
       }
+      // Einfrieren (Elementar-Effekte 28.08.2026, fxParticleLibrary.ts `status_frozen`): kurzes
+      // Eiskristall-Platzen am AUSGESETZTEN Ziel bei `missReason:"frozen"` — anders als der
+      // Status-Trigger oben ist `by` hier bereits die betroffene Seite selbst (der eigene Angriff
+      // fällt aus, s. combat.ts kommentierte pushLog-Stellen), also KEINE Ziel-Umkehr nötig.
+      if (e.kind === "miss" && e.missReason === "frozen" && particleStageRef.current) {
+        const target: "player" | "enemy" = e.by;
+        const anchor = particleAnchor(target);
+        if (anchor) {
+          const dir: 1 | -1 = target === "enemy" ? 1 : -1;
+          particleStageRef.current.play("status_frozen", { from: anchor.center, to: anchor.center, dir, box: anchor.box });
+        }
+      }
       // SFX an die Events knüpfen (gedrosselt im Audio-Modul).
       // Bei Magie-Stil: Cast-SFX statt Melee-Hit, bei leerem Mana: gedämpfter Ton.
       const isPlayerAttack = (e.kind === "hit" || e.kind === "crit") && e.by === "player" && e.amount > 0;
@@ -3767,6 +3844,7 @@ function Battle({
                 wardCur={c.ward}
                 wardMax={stats.maxWard}
                 effects={cs.playerEffects}
+                elemental={cs.elemental?.player}
                 timerPct={(cs.playerTimerMs / stats.attackIntervalMs) * 100}
                 timerRemainingSec={playerTimerRemainingSec}
                 floaters={floaters.filter((f) => f.target === "player")}
@@ -3840,6 +3918,7 @@ function Battle({
                 wardCur={cs.enemyWard ?? monster.wardCapacity ?? 0}
                 wardMax={monster.wardCapacity ?? 0}
                 effects={cs.enemyEffects}
+                elemental={cs.elemental?.enemy}
                 enraged={enraged}
                 enrageLabel={t("combat.enrageActive")}
                 regen={monster.regen}

@@ -2168,3 +2168,84 @@ registerRecipe("status_poison", [makeStatusFlare(POISON_TH, "rgba(120,210,80,")]
 registerRecipe("statusAmbient_poison", [makeStatusAmbient(POISON_TH, "poison")]);
 registerRecipe("status_bleed", [makeStatusFlare(THEMES.crimson!, "rgba(200,60,60,")]);
 registerRecipe("statusAmbient_bleed", [makeStatusAmbient(THEMES.crimson!, "drip")]);
+
+// Entzug (void, Elementar-Effekte 28.08.2026 — Chef-Auftrag CombatPage-Bericht): dunkle purpurne
+// Schlieren, die vom Körper nach INNEN ziehen (Drain-Gefühl), statt wie die übrigen fünf Status
+// nach außen/oben wegzudriften — nutzt denselben `api.pull`-Implosionsgriff wie `voidImpactImplosion`
+// oben (dort für einen Punkteinschlag, hier über die Körper-Box `defaultStatusBox`), plus ein
+// schwacher violetter Saum (dünne Ellipse in VOID_TH.mid). Eigene Flare/Ambient-Funktionen statt
+// makeStatusFlare/makeStatusAmbient (deren fixe Auswärts-/Aufwärtsdrift zum Drain-Gefühl passt nicht),
+// gleiches Registry-Muster (status_void/statusAmbient_void) wie die übrigen fünf Status.
+const statusFlareVoid: RecipeFn = (ctx) => {
+  const { to: d, api } = ctx;
+  const b = defaultStatusBox(ctx);
+  const cx = b.x + b.w / 2;
+  const cy = b.y + b.h * 0.42;
+  const n = api.burst(16);
+  for (let i = 0; i < n; i++) {
+    const a = api.rand(0, Math.PI * 2);
+    const r = Math.max(b.w, b.h * 0.5) * api.rand(0.5, 0.75);
+    api.pull(api.mote(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.6, 0, 0, 480, api.rand(2, 3.5), voidColor, 0, 1), { x: cx, y: cy }, 2600);
+  }
+  api.timed(280, (c, _age, u) => {
+    c.strokeStyle = rgba(VOID_TH.mid, 0.35 * (1 - u));
+    c.lineWidth = 2;
+    c.beginPath();
+    c.ellipse(cx, cy, Math.max(0.01, b.w * 0.42 * (1 - u * 0.5)), Math.max(0.01, b.h * 0.3 * (1 - u * 0.5)), 0, 0, Math.PI * 2);
+    c.stroke();
+  });
+  api.flash(d, 40, VOID_TH.glow, 200);
+};
+
+const statusAmbientVoid: RecipeFn = (ctx) => {
+  const { api, isActive } = ctx;
+  const b = defaultStatusBox(ctx);
+  const cx = b.x + b.w / 2;
+  const cy = b.y + b.h * 0.5;
+  let acc = 0;
+  const effect: Effect = {
+    update(dt) {
+      acc += dt;
+      if (acc < 240) return;
+      acc = 0;
+      const n = api.burst(2);
+      for (let i = 0; i < n; i++) {
+        const a = api.rand(0, Math.PI * 2);
+        const r = Math.max(b.w, b.h * 0.5) * api.rand(0.45, 0.7);
+        api.pull(api.mote(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.6, 0, 0, 620, api.rand(1.6, 2.6), voidColor, 0, 1), { x: cx, y: cy }, 1400);
+      }
+    },
+    draw(c) {
+      c.strokeStyle = rgba(VOID_TH.mid, 0.16);
+      c.lineWidth = 1.5;
+      c.beginPath();
+      c.ellipse(cx, cy, b.w * 0.4, b.h * 0.28, 0, 0, Math.PI * 2);
+      c.stroke();
+    },
+    alive: () => !!isActive?.(),
+  };
+  api.addEffect(effect);
+};
+
+registerRecipe("status_void", [statusFlareVoid]);
+registerRecipe("statusAmbient_void", [statusAmbientVoid]);
+
+// Einfrieren (frost, 3. Anwendung in Folge): kurzes Eiskristall-Platzen am ausgesetzten Ziel, wenn
+// ein Angriff wegen `missReason:"frozen"` ausfällt (Trigger im Log-Diff, CombatPage.tsx, getrennt
+// vom laufenden `statusAmbient_frost`-Loop). Kleiner/kürzer als die Waffen-Einschläge
+// `frostImpactShatter`/-`Rime` oben (reiner Momenteffekt, kein Treffer), gleiche Primitive/Palette.
+const statusFrozenBurst: RecipeFn = (ctx) => {
+  const { to: d, api } = ctx;
+  api.flash(d, 70, "rgba(200,235,255,", 180);
+  api.ring(d, 46, 320, "rgba(170,220,255,", 6, 0.75, 0.35);
+  const n = api.burst(16);
+  for (let i = 0; i < n; i++) {
+    const a = api.rand(0, Math.PI * 2);
+    const sp = api.rand(70, 220);
+    api.shard(d.x, d.y, Math.cos(a) * sp, Math.sin(a) * sp - 30, api.rand(280, 480), api.rand(2, 4), frostColor, 260);
+  }
+  api.timed(240, (c, _age, u) => {
+    for (let i = 0; i < 2; i++) api.drawCrystal(c, d.x, d.y, 14 + 34 * u, i * 1.4 + u * 0.6, FROST_TH, 0.55 * (1 - u), 5);
+  });
+};
+registerRecipe("status_frozen", [statusFrozenBurst]);

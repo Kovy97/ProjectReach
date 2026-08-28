@@ -7,7 +7,11 @@ import { getUiIcon } from "./uiIcons";
  * Kampfbildschirm dieselben Icons zeigen statt reiner Emoji-Duplikate.
  */
 
-const EFFECT_ICON: Record<string, string> = { burn: "🔥", frost: "❄️", shock: "⚡", poison: "🟢", bleed: "🩸" };
+// Elementar-Effekte (28.08.2026): "void" (Entzug/Leere) ist als sechster StatusType dazugekommen.
+// Kein bemaltes icon_status_void.webp im Bestand (die fünf Nachbarn sind alle Mira-Gemälde) —
+// Dev-Rückfall auf ein thematisch passendes Emoji (Drain-Wirbel) statt des generischen "✦"
+// (s. renderEffectIcon-Default unten), bis Mira ein echtes Icon im Stil der Nachbarn liefert.
+const EFFECT_ICON: Record<string, string> = { burn: "🔥", frost: "❄️", shock: "⚡", poison: "🟢", bleed: "🩸", void: "🌀" };
 
 // PNG-URLs für Status-Effekt-Icons (null → Emoji-Fallback aus EFFECT_ICON)
 const EFFECT_ICON_URLS: Record<string, string | null> = {
@@ -16,6 +20,9 @@ const EFFECT_ICON_URLS: Record<string, string | null> = {
   shock:  getUiIcon("icon_status_shock"),
   poison: getUiIcon("icon_status_poison"),
   bleed:  getUiIcon("icon_status_bleed"),
+  // Noch kein PNG unter assets/icons/ (Auto-Discovery greift automatisch, sobald Mira
+  // icon_status_void.webp liefert) — bis dahin liefert getUiIcon hier null.
+  void:   getUiIcon("icon_status_void"),
 };
 
 export function renderEffectIcon(type: string): JSX.Element | string {

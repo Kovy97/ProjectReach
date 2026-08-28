@@ -123,6 +123,9 @@ const STATUS_UI: Record<string, string> = {
   shock: "icon_status_shock",
   poison: "icon_status_poison",
   bleed: "icon_status_bleed",
+  // Elementar-Effekte (28.08.2026): kein Mira-PNG im Bestand — Auto-Discovery greift, sobald
+  // icon_status_void.webp geliefert wird (statIcons.tsx EFFECT_ICON_URLS-Kommentar).
+  void: "icon_status_void",
 };
 
 /** Stat-Icon: neues PNG (falls vorhanden), sonst Emoji-Fallback. */
@@ -251,6 +254,7 @@ export function statusEffectIcon(type: string): string {
     shock: "⚡",
     poison: "☠️",
     bleed: "🩸",
+    void: "🌀",
   };
   return m[type] ?? "✶";
 }

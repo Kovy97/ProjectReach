@@ -2460,6 +2460,10 @@
 .fighter.status-pulse-poison { --pulse-color: rgba(143, 216, 63, 0.85); }
 .fighter.status-pulse-bleed  { --pulse-color: rgba(165, 42, 42, 0.85); }
 .fighter.status-pulse-frost  { --pulse-color: rgba(127, 208, 255, 0.85); }
+/* Elementar-Effekte (28.08.2026): "void" (Entzug) ist als sechster StatusType dazugekommen — ohne
+   eigenen Eintrag fiele --pulse-color auf transparent zurück (Keyframe-Default oben) und der Puls
+   wäre unsichtbar. Purpur matcht .log-line.status-void/THEMES.void (fxParticles.ts). */
+.fighter.status-pulse-void   { --pulse-color: rgba(160, 90, 220, 0.85); }
 
 /* ─── Pet-Ability-Blitz (Task #296 P0 §1.4) ───────────────────
    Radialer Opacity-Puls über dem Pet-Sprite, Farbe je `combatAbility.kind`-Bucket (Zuordnung s.
@@ -3316,6 +3320,7 @@
 .log-line.status-poison { color: #8fd83f; } /* Gift — Giftgrün */
 .log-line.status-bleed  { color: #a52a2a; } /* Blutung — Dunkelrot */
 .log-line.status-frost  { color: #7fd0ff; } /* Frost — Eisblau */
+.log-line.status-void   { color: #b070e8; } /* Entzug/Leere — Purpur, matcht THEMES.void (fxParticles.ts) */
 
 /* Echtes Status-Icon-PNG inline vor der Log-Zeile (statt Emoji). */
 .log-line-icon {

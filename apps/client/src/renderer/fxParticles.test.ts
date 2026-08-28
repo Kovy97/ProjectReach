@@ -76,7 +76,8 @@ describe("fxParticleLibrary — vollständige Abdeckung (Chef-Wunsch 28.08.2026:
   const SLASH_FAMILIES = ["cut", "heavy", "blunt", "thrust"] as const;
   const BLOOD_VARIANTS = ["red", "ichor", "bone"] as const;
   const PET_IMAGES = ["bite", "bolt", "ward", "mark", "pilfer", "critstar"] as const;
-  const STATUS_TYPES = ["burn", "frost", "shock", "poison", "bleed"] as const;
+  // Elementar-Effekte (28.08.2026): "void" (Entzug) ist als sechster StatusType dazugekommen.
+  const STATUS_TYPES = ["burn", "frost", "shock", "poison", "bleed", "void"] as const;
 
   it("jedes der sieben Magie-Themen hat Geschoss- UND Einschlag-Rezepte", () => {
     for (const theme of MAGIC_THEMES) {
@@ -115,6 +116,12 @@ describe("fxParticleLibrary — vollständige Abdeckung (Chef-Wunsch 28.08.2026:
       expect(hasRecipe(`status_${type}`)).toBe(true);
       expect(hasRecipe(`statusAmbient_${type}`)).toBe(true);
     }
+  });
+
+  // Elementar-Effekte (28.08.2026): eigenes Eiskristall-Platzen für `missReason:"frozen"`
+  // (dritte Frost-Anwendung in Folge), getrennt vom laufenden status_frost/statusAmbient_frost.
+  it("Einfrieren (dritte Frost-Anwendung) hat ein eigenes Platz-Rezept", () => {
+    expect(hasRecipe("status_frozen")).toBe(true);
   });
 
   it("Feuer-Geschoss hat drei Varianten plus eine separate Crit-Variante (Serie exakt portiert)", () => {

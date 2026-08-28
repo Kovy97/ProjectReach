@@ -1407,7 +1407,7 @@ body .item-cell.rarity-godly {
    ohne eigenen Scrollcontainer. Bild/Lore bilden die linke Bannerhälfte; Werte, Effekte und
    Anforderungen liegen rechts und dürfen ihre vorhandenen Daten vollständig zeigen. */
 .item-tooltip.itip-panel {
-  width: min(860px, calc(100vw - 24px));
+  width: min(1160px, calc(100vw - 24px)); /* Chef 28.08.2026: Karte waechst, damit die gruenen Vergleichswerte nie ueberlappen */
   max-height: none;
   overflow: visible;
   padding-bottom: 16px;
@@ -1430,7 +1430,8 @@ body .item-cell.rarity-godly {
 .itip-warbanner-main {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(250px, 0.82fr) minmax(390px, 1.18fr);
+  /* Chef 28.08.2026: rechte Spalte waechst mit ihrem Inhalt (keine Umbrueche/Ueberlappungen in den Wertespalten) */
+  grid-template-columns: minmax(250px, 0.82fr) minmax(max-content, 1.18fr);
   align-items: start;
   gap: 14px;
   margin: 12px 18px 0;
@@ -1620,7 +1621,7 @@ body .item-cell.rarity-godly {
    „Damage“ hineinlaufen. Die pensionierten Bildpfeile bleiben zusätzlich defensiv verborgen. */
 #root .itip-offense-group .itip-stat-row {
   display: grid;
-  grid-template-columns: 25px minmax(0, 1fr) max-content max-content;
+  grid-template-columns: 25px minmax(max-content, 1fr) max-content max-content;
   align-items: center;
   column-gap: 7px;
 }
@@ -1701,7 +1702,7 @@ body .item-cell.rarity-godly {
 
   #root .itip-compare-wrap .item-tooltip.itip-panel {
     flex-basis: auto;
-    width: min(860px, calc(100vw - 40px));
+    width: min(1160px, calc(100vw - 40px));
   }
 
   #root .itip-compare-wrap .itip-warbanner-main {
@@ -1709,7 +1710,7 @@ body .item-cell.rarity-godly {
   }
 
   #root .itip-compare-wrap .itip-warbanner-record .itip-body {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(max-content, 1fr));
   }
 }
 
@@ -2739,4 +2740,34 @@ body .item-cell.rarity-godly {
   width: max-content;
   min-width: min(940px, 94vw);
   max-width: 94vw;
+}
+
+/* ── Item-Karte horizontal dynamisch (Chef 28.08.2026) ───────────────────────────────────────────
+   Die Wertespalten (Offensive/Attribute) wachsen mit ihrem Inhalt; die Karte wird dafuer breiter statt
+   Werte umzubrechen oder die gruenen Vergleichszahlen ueber die Werte zu legen. Selektoren bewusst mit
+   wiederholter Klasse, damit sie die aelteren #root-Regeln (inkl. :not()-Ketten) in der Kaskade schlagen. */
+#root .item-tooltip.itip-panel.itip-panel.itip-panel {
+  width: max-content;
+  min-width: min(860px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+}
+#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel {
+  width: min(1160px, calc((100vw - 52px) / 2));
+  max-width: calc((100vw - 52px) / 2);
+}
+#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-main {
+  grid-template-columns: minmax(250px, 0.82fr) minmax(max-content, 1.18fr);
+}
+#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-record .itip-body {
+  grid-template-columns: repeat(2, minmax(max-content, 1fr));
+}
+#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-record .itip-body > :only-child {
+  grid-column: 1 / -1;
+}
+#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-offense-group .itip-stat-row {
+  grid-template-columns: 25px minmax(max-content, 1fr) max-content max-content;
+}
+#root .item-tooltip.itip-panel.itip-panel.itip-panel :is(.itip-stat-value, .itip-delta, .itip-stat-label) {
+  white-space: nowrap;
+  overflow-wrap: normal;
 }

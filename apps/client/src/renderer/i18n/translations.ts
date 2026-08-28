@@ -1122,9 +1122,9 @@ const en = {
     "combat.critMitigated": "Critical hit! {amount} damage ({raw} − {mitigated} / Enemy armor)",
     "combat.youMiss": "You miss",
     "combat.enemyMisses": "{name} misses",
-    // E+-Paket (battle-040-dramaturgie §E+): Schock-Aussetzer/Leder-Dodge unterscheidbar vom Miss.
-    "combat.missShockPlayer": "You are paralyzed by shock!",
-    "combat.missShockEnemy": "{name} is paralyzed by shock!",
+    // E+-Paket (battle-040-dramaturgie §E+): Leder-Dodge unterscheidbar vom Miss. Der frühere
+    // Schock-Aussetzer (combat.missShockPlayer/Enemy) ist seit den Elementar-Effekten (28.08.2026)
+    // verwaist — Schock verzögert jetzt statt auszusetzen (s. combat.shockDelay* unten) — entfernt.
     "combat.missDodge": "You dodge {name}'s attack.",
     "combat.kill": "{name} defeated!",
     "combat.defeat": "You were defeated!",
@@ -1169,6 +1169,18 @@ const en = {
     "combat.missFrozenPlayer": "You are frozen solid and skip your attack!",
     "combat.voidEnemy": "{name} is drained: it deals 15% less damage!",
     "combat.voidPlayer": "You are drained: you deal 15% less damage!",
+    // Elementar-Effekte (28.08.2026): Gift-Stapel wächst über eine EIGENE Log-Zeile (Refresh mit
+    // Stapel-Zuwachs, s. combat.ts onStatusApplied) statt der generischen statusEnemy/Player-Zeile
+    // von oben (die bleibt für die Erst-Anwendung, Stapel 1).
+    "combat.poisonStackEnemy": "The poison on {name} intensifies to ×{amount}!",
+    "combat.poisonStackPlayer": "The poison on you intensifies to ×{amount}!",
+    // Status-Icon-Tooltip (Fighter-Effekt-Badge): Live-Zähler aus state.combat.elemental.*, ergänzt
+    // den bestehenden status.<typ>.desc-Fließtext (der die Mechanik bereits erklärt) um den
+    // AKTUELLEN Stand. Kompakte Chip-Form statt volle Sätze, s. CEO-Vorgabe „Frost 2/3".
+    "combat.tooltip.frostCount": "Frost {n}/{max}",
+    "combat.tooltip.frostFrozen": "Frozen — next attack skipped!",
+    "combat.tooltip.shockDelay": "Shock delay {seconds}/{cap} s",
+    "combat.tooltip.poisonCount": "Poison ×{n}/{max}",
     "combat.dotEnemy": "{name} takes {amount} fire damage.",
     "combat.dotPlayer": "You take {amount} fire damage.",
     // E+-Paket: bleed/poison ticken jetzt mit eigener Log-Zeile (burn behält die Keys darüber).
@@ -3586,9 +3598,9 @@ const de: Record<keyof typeof en, string> = {
     "combat.critMitigated": "Kritischer Treffer! {amount} Schaden ({raw} − {mitigated} / Gegner-Rüstung)",
     "combat.youMiss": "Du verfehlst",
     "combat.enemyMisses": "{name} verfehlt",
-    // E+-Paket (battle-040-dramaturgie §E+): Schock-Aussetzer/Leder-Dodge unterscheidbar vom Miss.
-    "combat.missShockPlayer": "Schock lähmt dich!",
-    "combat.missShockEnemy": "Schock lähmt {name}!",
+    // E+-Paket (battle-040-dramaturgie §E+): Leder-Dodge unterscheidbar vom Miss. Der frühere
+    // Schock-Aussetzer (combat.missShockPlayer/Enemy) ist seit den Elementar-Effekten (28.08.2026)
+    // verwaist — Schock verzögert jetzt statt auszusetzen (s. combat.shockDelay* unten) — entfernt.
     "combat.missDodge": "Du weichst {name} aus.",
     "combat.kill": "{name} besiegt!",
     "combat.defeat": "Du wurdest besiegt!",
@@ -3626,6 +3638,18 @@ const de: Record<keyof typeof en, string> = {
     "combat.missFrozenPlayer": "Du bist eingefroren und lässt deinen Angriff aus!",
     "combat.voidEnemy": "{name} ist entkräftet: 15 % weniger Schaden!",
     "combat.voidPlayer": "Du bist entkräftet: Du machst 15 % weniger Schaden!",
+    // Elementar-Effekte (28.08.2026): Gift-Stapel wächst über eine EIGENE Log-Zeile (Refresh mit
+    // Stapel-Zuwachs, s. combat.ts onStatusApplied) statt der generischen statusEnemy/Player-Zeile
+    // von oben (die bleibt für die Erst-Anwendung, Stapel 1).
+    "combat.poisonStackEnemy": "Das Gift auf {name} verstärkt sich auf ×{amount}!",
+    "combat.poisonStackPlayer": "Das Gift auf dir verstärkt sich auf ×{amount}!",
+    // Status-Icon-Tooltip (Fighter-Effekt-Badge): Live-Zähler aus state.combat.elemental.*, ergänzt
+    // den bestehenden status.<typ>.desc-Fließtext (der die Mechanik bereits erklärt) um den
+    // AKTUELLEN Stand. Kompakte Chip-Form statt volle Sätze, s. Chef-Vorgabe „Frost 2/3".
+    "combat.tooltip.frostCount": "Frost {n}/{max}",
+    "combat.tooltip.frostFrozen": "Eingefroren — nächster Angriff fällt aus!",
+    "combat.tooltip.shockDelay": "Schock-Verzögerung {seconds}/{cap} s",
+    "combat.tooltip.poisonCount": "Gift ×{n}/{max}",
     "combat.dotEnemy": "{name} erleidet {amount} Feuerschaden.",
     "combat.dotPlayer": "Du erleidest {amount} Feuerschaden.",
     // E+-Paket: bleed/poison ticken jetzt mit eigener Log-Zeile (burn behält die Keys darüber).
