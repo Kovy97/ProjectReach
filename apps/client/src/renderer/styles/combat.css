@@ -2491,6 +2491,17 @@
   pointer-events: none;
 }
 
+/* Kampfeffekte — Partikel-Schicht (Chef-Entscheid 28.08.2026, fxParticles.ts `ParticleStage`):
+   ein `<canvas>`, imperativ von der Klasse selbst erzeugt und angehängt (kein JSX-Element) —
+   dieselbe Box/Ebene wie `.arena-fx-layer` direkt daneben (spielt Rezepte statt Sprites für die
+   Schlüssel, die ein Partikel-Rezept haben; der Rest bleibt Sprite via `.arena-fx-layer`). */
+.arena-particle-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
 /* §1c/§5 — Funken-Partikel: kleiner heißer Punkt (weißer Kern, warmer Saum); `.gold` = der
    Loot-Aufblitz des Kill-Moments in Gold. */
 .fx-spark {

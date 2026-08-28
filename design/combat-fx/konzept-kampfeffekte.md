@@ -120,3 +120,94 @@ Crit, Feuer-Einschläge v1–v3, je 5 bzw. 3 Felder) — die übrigen sechs Magi
 Chef-Abnahme im selben Format.
 
 Serie Welle 1 (33 Dateien, davon 6 aus dem Testlauf): `CODEX/work/2026-08-27-kampfeffekte-welle-1/PROMPTS.md`.
+
+## 8 Partikel-Schicht (Chef-Entscheid 28.08.2026)
+
+„Wir wollen ja eh die generierten Partikel-Effekte nutzen" — noch am selben Tag erweitert: „Die
+Effekte sind mega geil, sofort ALLE implementieren, für alle Waffen." Prozedurale Canvas-Partikel
+ERSETZEN Miras gemalte Sprite-Streifen überall, wo ein Rezept existiert; Mira-Sprites bleiben der
+Rückfall für unbekannte Schlüssel (und über den Kill-Switch `FX_PARTICLES=false`). Zwei Dateien in
+`apps/client/src/renderer/`:
+
+- **`fxParticles.ts`** — reine ENGINE, keine Rezepte. `ParticleStage` verwaltet EIN `<canvas>` als
+  oberste Schicht über der Kampfbühne (dieselbe Box wie `.arena-fx-layer`, eigene CSS-Klasse
+  `.arena-particle-layer`, `combat.css`), rAF-Loop NUR solange Partikel/Effekte aktiv sind,
+  gepoolte Arrays ohne Allokation je Frame, Deckel **2500 Partikel**, adaptive Dichte (Frame-Zeit
+  > 22ms senkt die Dichte schrittweise auf 0,5, erholt sich langsam), `document.hidden` pausiert.
+  Die Rezept-Registry (`registerRecipe`/`hasRecipe`/`selectRecipe`) ist rein und testbar (Crit-
+  Vorrang, Zufallsauswahl ohne Wiederholung — deterministisch, kein Pool-Repeat möglich). Ein
+  `ParticleApi`-Werkzeugkasten deckt jeden Zeichen-/Spawn-Helfer der drei Demos ab (Kern/Glyphe/
+  Kristall/Stern/Leerenkern/Feder/Pfeil/Blitzpfad/Säule/Strahl/Beam/Schnittbogen/Bodenriss, Ember/
+  Spark/Mote/Shard/Bubble/Drop/Feather/Dust/Blood/Bone/Splinter/Glass/Rime), plus `timed`/`delay`
+  für mehrphasige Rezepte und `pull` für Anziehungsphysik (Leere/Arkan-Implosion). Elf Themen-
+  Paletten (`THEMES`: die sieben Magie-Themen + steel/gold/crimson/teal für Nahkampf/Crit/Markierung/
+  Schutzschild).
+- **`fxParticleLibrary.ts`** — reine REGISTRIERUNG, importiert nur die Engine, hängt beim Laden
+  (Seiteneffekt) jedes Rezept unter demselben Schlüssel ein, den auch die Sprites nutzen. CombatPage
+  importiert sie ausschließlich wegen des Seiteneffekts, ruft nie direkt hinein.
+
+**Verdrahtung (CombatPage.tsx Battle):** an jeder bestehenden Sprite-Triggerstelle fragt eine
+`playParticle*`-Zwillingsfunktion zuerst die Registry — existiert ein Rezept, übernimmt die
+Partikelschicht das Ereignis KOMPLETT (der Sprite-Aufruf läuft für diesen Schlüssel gar nicht erst
+an); sonst läuft der Sprite-Pfad unverändert weiter. Geschoss/Einschlag bleiben wie bei den Sprites
+GETRENNTE Registry-Einträge (`missile_<x>`→`impact_<x>`, `onArrive` meldet nur „angekommen").
+
+**Abdeckung (Chef-Wunsch „für alle Waffen"):**
+
+| Familie | Schlüssel | Varianten |
+|---|---|---|
+| 7 Magie-Themen | `missile_<thema>` / `impact_<thema>` | je 3 + Crit / je 3 |
+| Nahkampf (cut/heavy/blunt/thrust) | `slash_<familie>` | je 2 + Crit, gespiegelt für den Gegner |
+| Pfeil | `missile_arrow` / `impact_arrow` | 2 + Crit / 1 |
+| Trefferreaktionen | `blood_red`/`blood_ichor`/`blood_bone`/`impact_block`/`miss_whiff` | je 1 |
+| Begleiter | `pet_bite`/`bolt`/`mark`/`ward`/`critstar`/`pilfer` | je 1 |
+
+Damit ersetzen Partikel JEDEN heute genutzten Sprite-Schlüssel aus `combatFx.ts` — die generischen
+Übergangsrezepte aus dem ersten Auftrag (ein einziges "Kern+Schweif+Einschlag" je Restthema) sind
+entfallen, jedes Thema hat jetzt seine eigene, aus der Bibliothek portierte Optik.
+
+**Neu — Status-Körpereffekte** (`status_<typ>` = 450ms-Aufflammen, `statusAmbient_<typ>` = Loop,
+solange der Status aktiv ist; `typ` ∈ burn/frost/shock/poison/bleed, `shared` `StatusType`): das
+Auflegen eines Status pusht in `combat.ts` (`applyEnemyStatus`/`inflictPlayerStatus`) einen
+`kind:"status"`-Log-Eintrag NUR beim ERSTEN Auflegen (ein Refresh eines bereits aktiven Status
+aktualisiert `remainingMs`/`magnitude` still, ohne neuen Eintrag) — CombatPage nutzt genau diese
+Kante: Aufflammen abspielen UND `ParticleStage.startAmbient(key, "<seite>:<typ>", …)` starten. Das
+ABLAUFEN hat kein eigenes Log-Ereignis (die Engine zählt `remainingMs` nur still herunter); ein
+zweiter, tick-getriggerter `useEffect` (Battle re-rendert ohnehin jeden Tick über
+`useGameSelector((s)=>s.totalTicks)`) vergleicht `cs.playerEffects`/`cs.enemyEffects` gegen die
+zuletzt gesehene Typ-Menge je Seite und ruft `stopAmbient` für verschwundene Typen. Körper-Anker =
+Bounding-Box des Ziel-Portraits (`.fighter-figure-art`), aus der jedes Rezept seine Silhouette
+ableitet (Flamme/Eiskristalle/Kurzbögen/Blasen/Tropfen je nach Typ).
+
+**CombatFxLevel:** `full` = Dichte 1 + Bildschirm-Wackler (`api.shake`, nur bei Crits/schweren
+Treffern angefordert); `reduced` = Dichte 0,5, kein Wackler; `off` = nichts (räumt sofort auf,
+inkl. laufender Status-Ambient-Loops). `prefers-reduced-motion` wird wie `reduced` behandelt
+(dieselbe milde Stufe wie die Sprites, `spriteFxLevel` — Partikel und Sprite-Rückfall reagieren auf
+dieselben Optionen gleich).
+
+**Bewusste Vereinfachungen ggü. den Demos** (s. Kopfkommentar `fxParticleLibrary.ts`): Geschoss/
+Einschlag sind getrennte Aufrufe statt der Demo-Verkettung (optische Zusatz-Kopplungen wie „Gift-
+Crit löst verzögert einen zweiten Einschlag aus" sind dadurch nicht 1:1 übernommen); die
+Szenen-weite Verdunkelung/Figuren-Tönung der Demo (`targetFlash`/`darken`) läuft im echten Spiel
+bereits über das bestehende Treffer-Flash/Punch-System auf der DOM-Ebene, nicht erneut über Canvas;
+Pfeile stecken nach dem Einschlag mit einem angenäherten Winkel statt dem exakten Live-Flugwinkel.
+
+**Waffen-Verteilung** (Content-Stand 28.08.2026, `Object.values(content.items)` gefiltert auf
+`slot:"mainhand"`, 287 Nahkampf-/Fernkampf-/Magiewaffen insgesamt):
+
+| Element (Magie) | Anzahl | | Nahkampf-Familie | Anzahl |
+|---|---|---|---|---|
+| Feuer | 24 | | Schnitt (cut) | 65 |
+| Schock | 14 | | Schwerer Hieb (heavy) | 60 |
+| Frost | 10 | | Wucht (blunt) | 30 |
+| Arkan | 5 | | Stoß (thrust) | 18 |
+| Gift | 2 | | Pfeil (Bögen) | 57 |
+| Leere | 2 | | | |
+| Aether | 0* | | | |
+
+\* Aether ist nur über die ID-Erkennung (`aether_`/`godspark_`-Präfix ohne eigenen Statuseffekt)
+erreichbar — die beiden echten Content-Waffen mit diesem Präfix (`aether_runestaff`,
+`godspark_staff`) tragen selbst einen `burn`-Effekt und lösen damit (Prioritätsreihenfolge in
+`magicThemeFor`) zu „Feuer" auf, s. `combatFx.test.ts`. Das Aether-Rezept ist trotzdem voll
+funktionsfähig und feuert, sobald eine Waffe ohne eigenen Statuseffekt mit diesem Präfix im Katalog
+landet.

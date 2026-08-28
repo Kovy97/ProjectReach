@@ -75,6 +75,12 @@ import {
   type PetFxImage,
   type SlashFamily,
 } from "../combatFx";
+import { hasRecipe as hasParticleRecipe, ParticleStage, type Rect } from "../fxParticles";
+// Seiteneffekt-Import (Chef-Entscheid 28.08.2026 "alle implementieren, für alle Waffen"): hängt
+// beim Modul-Laden ALLE Partikel-Rezepte (Feuer/Blitz/Frost/Gift/Arkan/Leere/Aether, Nahkampf,
+// Pfeil, Trefferreaktionen, Begleiter, Status-Körpereffekte) in die Registry ein — nichts davon
+// wird hier direkt aufgerufen, nur importiert, damit `registerRecipe` läuft.
+import "../fxParticleLibrary";
 import { getPortrait } from "../portraits";
 import { COMBAT_TOUR_STEPS } from "../areaTourSteps";
 import { getSkillIcon } from "../skillIcons";
@@ -2136,6 +2142,54 @@ function Battle({
     flash: { els: [], next: 0 },
   });
 
+  // ─── Kampfeffekte — Partikel-Schicht (Chef-Entscheid 28.08.2026, design/combat-fx/konzept-
+  // kampfeffekte.md §8) ─────────────────────────────────────────────────────────────────────────
+  // Eigenes `<canvas>` direkt auf der Stage (verwaltet von `ParticleStage`, s. fxParticles.ts) —
+  // ein Battle-Mount lang, unabhängig vom bedingt gerenderten `.arena-fx-layer` unten (die
+  // Partikelschicht bleibt immer gemountet, `setLevel("off")` räumt sie bei Bedarf leer statt sie
+  // aus dem DOM zu nehmen). Existiert für einen Effekt-Schlüssel ein Rezept, übernimmt sie den
+  // entsprechenden Sprite-Trigger komplett (s. `playParticleMissile`/`playParticleImpact` unten).
+  const particleStageRef = useRef<ParticleStage | null>(null);
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const ps = new ParticleStage(stage);
+    particleStageRef.current = ps;
+    return () => {
+      ps.destroy();
+      particleStageRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // Dieselbe milde Stufe wie die Sprites (`spriteFxLevel`, s. dortiges JSDoc: prefers-reduced-
+  // motion → "reduced" statt komplett "off") statt eine dritte, eigene Berechnung — Partikel und
+  // Sprite-Rückfall sollen bei denselben Optionen gleich reagieren.
+  useEffect(() => {
+    particleStageRef.current?.setLevel(spriteFxLevel);
+  }, [spriteFxLevel]);
+
+  // Status-Ambient-Loops BEENDEN, wenn ein Status abläuft (Chef-Wunsch 28.08.2026) — das AUFLEGEN
+  // eines Status läuft edge-getriggert über den Log-Diff weiter unten (kind==="status"), das
+  // ABLAUFEN hat aber KEIN eigenes Log-Ereignis (nur `remainingMs` zählt in der Engine still
+  // herunter, s. combat.ts). Battle re-rendert dank `useGameSelector((s)=>s.totalTicks)` oben
+  // ohnehin JEDEN Tick — ein Set-Diff je Seite ist billig genug, um hier einfach mitzulaufen.
+  const activeStatusRef = useRef<{ player: Set<StatusType>; enemy: Set<StatusType> }>({ player: new Set(), enemy: new Set() });
+  useEffect(() => {
+    const stage = particleStageRef.current;
+    if (!stage) return;
+    for (const [side, effects] of [
+      ["player", cs.playerEffects],
+      ["enemy", cs.enemyEffects],
+    ] as const) {
+      const now = new Set(effects.map((eff) => eff.type));
+      for (const type of activeStatusRef.current[side]) {
+        if (!now.has(type)) stage.stopAmbient(`${side}:${type}`);
+      }
+      activeStatusRef.current[side] = now;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.totalTicks]);
+
   // §3 — Einschlag-Elementfarbe des Spell-Moments: erster klassischer Status (burn/frost/shock/
   // poison/bleed) der Mainhand-Effektliste, sonst null → Arkan-Violett (CSS-Klasse .s-arcane).
   const weaponStatus: StatusType | null = useMemo(() => {
@@ -2591,6 +2645,124 @@ function Battle({
     return true;
   };
 
+  /** Anker-Bündel einer Kämpfer-Seite für die Partikelschicht (Chef-Entscheid 28.08.2026,
+   *  `fxParticles.ts` §8): Mittelpunkt (Brust-/Trefferhöhe wie die Sprites), volle Bounding-Box
+   *  (Status-Ambient am Körper, Leere-Riss/-Nachbild, Begleiter-Schutzschild-Kuppel) und ein
+   *  Boden-Punkt darunter (Nahkampf-Bodenriss/-Stoßwelle, Blitzregen-Bodenentladung). `null`, wenn
+   *  der Anker (noch) nicht im DOM steht. */
+  const particleAnchor = (side: "player" | "enemy"): { center: { x: number; y: number }; box: Rect; feet: { x: number; y: number } } | null => {
+    const b = fxRect(`.arena-side-${side} .fighter-figure-art`);
+    if (!b) return null;
+    return {
+      center: { x: b.x + b.w / 2, y: b.y + b.h * 0.45 },
+      box: { x: b.x, y: b.y, w: b.w, h: b.h },
+      feet: { x: b.x + b.w / 2, y: b.y + b.h },
+    };
+  };
+
+  /** Geschoss-Gegenstück zu `playMissileFx`, dieselben Anker (`fxRect` auf `.fighter-figure-art`),
+   *  dieselbe Flugzeit `MISSILE_FLIGHT_MS`, dieselbe Spiegelung (`from` bestimmt Start-/Zielseite
+   *  wie bei Sprites). `theme` ist bewusst `string` (nicht `MagicTheme`) — dieselbe Funktion trägt
+   *  auch den Pfeil (`"arrow"`, kein Magie-Thema). `false` = kein Rezept für `missile_<schlüssel>`
+   *  registriert (oder Anker fehlt/Level "off") — der Aufrufer fällt dann auf `playMissileFx`
+   *  (Sprite) zurück; existiert ein Rezept, übernimmt die Partikelschicht den kompletten Flug UND
+   *  ruft `onArrive` selbst auf. */
+  const playParticleMissile = (from: "player" | "enemy", theme: string, crit: boolean, onArrive: () => void): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe(`missile_${theme}`)) return false;
+    const to = from === "player" ? "enemy" : "player";
+    const fromBox = fxRect(`.arena-side-${from} .fighter-figure-art`);
+    const toAnchor = particleAnchor(to);
+    if (!fromBox || !toAnchor) return false;
+    return stage.play(`missile_${theme}`, {
+      from: { x: fromBox.x + fromBox.w * 0.55, y: fromBox.y + fromBox.h * 0.32 },
+      to: toAnchor.center,
+      crit,
+      durationMs: MISSILE_FLIGHT_MS,
+      onArrive,
+      box: toAnchor.box,
+      feet: toAnchor.feet,
+    });
+  };
+
+  /** Einschlag-Gegenstück zu `playParticleMissile` — `side` ist die GETROFFENE Seite (wie bei
+   *  `playImpactFx`). `dir` wird explizit übergeben statt aus `from`/`to` abgeleitet (beide Punkte
+   *  liegen am selben Anker): Spieler→Gegner-Angriffe laufen rechts (`+1`), ein gespiegelter
+   *  Gegner→Spieler-Angriff liefe links (`-1`, Chef-D5 — heute mangels Monster-Magiedaten noch
+   *  ungenutzt, s. combatFx.ts `slashFamilyFor`-JSDoc). `false` = kein Rezept/Anker/Level "off",
+   *  Aufrufer fällt auf `playImpactFx` (Sprite) zurück. */
+  const playParticleImpact = (side: "player" | "enemy", theme: string, crit: boolean): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe(`impact_${theme}`)) return false;
+    const anchor = particleAnchor(side);
+    if (!anchor) return false;
+    const dir: 1 | -1 = side === "enemy" ? 1 : -1;
+    return stage.play(`impact_${theme}`, { from: anchor.center, to: anchor.center, dir, crit, box: anchor.box, feet: anchor.feet });
+  };
+
+  /** Nahkampf-Gegenstück zu `playSlashFx` — kein Geschoss, Wirkung sitzt direkt am Ziel; `attacker`
+   *  bestimmt den Start-Anker (Hand-Höhe) für den Luftzug/die Richtung, `target` den Trefferpunkt.
+   *  `false` = kein Rezept für `slash_<familie>`/Anker fehlt, Aufrufer fällt auf `playSlashFx`
+   *  zurück. */
+  const playParticleSlash = (attacker: "player" | "enemy", target: "player" | "enemy", family: SlashFamily, crit: boolean): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe(`slash_${family}`)) return false;
+    const fromBox = fxRect(`.arena-side-${attacker} .fighter-figure-art`);
+    const toAnchor = particleAnchor(target);
+    if (!fromBox || !toAnchor) return false;
+    return stage.play(`slash_${family}`, {
+      from: { x: fromBox.x + fromBox.w * 0.55, y: fromBox.y + fromBox.h * 0.32 },
+      to: toAnchor.center,
+      crit,
+      box: toAnchor.box,
+      feet: toAnchor.feet,
+    });
+  };
+
+  /** Blut-/Ichor-/Knochenstaub-Gegenstück zu `playBloodFx`. */
+  const playParticleBlood = (side: "player" | "enemy", variant: BloodVariant, crit: boolean): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe(`blood_${variant}`)) return false;
+    const anchor = particleAnchor(side);
+    if (!anchor) return false;
+    const dir: 1 | -1 = side === "enemy" ? 1 : -1;
+    return stage.play(`blood_${variant}`, { from: anchor.center, to: anchor.center, dir, crit });
+  };
+
+  /** Fehlschlag-Wischer-Gegenstück zu `playMissFx`. */
+  const playParticleMiss = (side: "player" | "enemy"): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe("miss_whiff")) return false;
+    const anchor = particleAnchor(side);
+    if (!anchor) return false;
+    const dir: 1 | -1 = side === "enemy" ? 1 : -1;
+    return stage.play("miss_whiff", { from: anchor.center, to: anchor.center, dir, feet: anchor.feet });
+  };
+
+  /** Block-Funken-Gegenstück zu `playBlockFx`. */
+  const playParticleBlockHit = (side: "player" | "enemy"): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe("impact_block")) return false;
+    const anchor = particleAnchor(side);
+    if (!anchor) return false;
+    const dir: 1 | -1 = side === "enemy" ? 1 : -1;
+    return stage.play("impact_block", { from: anchor.center, to: anchor.center, dir });
+  };
+
+  /** Begleiter-Gegenstück zu `playPetFx` — `petPos`/`from` kommen vom Begleiter-Portrait-Anker
+   *  (`.battle-pet-sprite`, fehlt er, fällt der Startpunkt auf den Zielanker zurück). */
+  const playParticlePet = (image: PetFxImage): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe(`pet_${image}`)) return false;
+    const side = petFxTargetSide(image);
+    const anchor = particleAnchor(side);
+    if (!anchor) return false;
+    const dir: 1 | -1 = side === "enemy" ? 1 : -1;
+    const petBox = fxRect(".battle-pet-sprite");
+    const petPos = petBox ? { x: petBox.x + petBox.w / 2, y: petBox.y + petBox.h / 2 } : undefined;
+    return stage.play(`pet_${image}`, { from: petPos ?? anchor.center, to: anchor.center, dir, box: anchor.box, petPos });
+  };
+
   /** Einschlag-Sprite am Ziel (Familie A/B-Landung). `crit` skaliert 1,4× und legt zusätzlich das
    *  Crit-Overlay darüber (Konzept "Crit: Einschlag 1,4× plus Crit-Overlay"); wählt außerdem per
    *  `pickFxVariant` eine Crit-Sonderdatei `fx_impact_<thema>_crit`, falls vorhanden (28.08.2026).
@@ -2710,43 +2882,66 @@ function Battle({
           const bloodVariant = bloodVariantFor(target === "enemy" ? monster : undefined);
 
           if (attacker === "player" && stats.style === "magic") {
-            spawnRuneRing(); // kein Sprite-Äquivalent — bleibt an der alten fxLevel-Gate hängen
+            spawnRuneRing(); // kein Sprite-/Partikel-Äquivalent — bleibt an der alten fxLevel-Gate hängen
             const theme = magicThemeFor(mainhandWeapon);
+            // Kampfeffekte Partikel-Schicht (Chef-Entscheid 28.08.2026): existiert ein
+            // Partikel-Rezept für `impact_<thema>`, ersetzt es playImpactFx (Sprite) komplett —
+            // Blut bleibt unabhängig davon der Sprite-Pfad (kein Partikel-Rezept dafür, s.
+            // fxParticles.ts §8-Doku).
             const doImpact = (): void => {
-              playImpactFx(target, theme, crit, "magic", weaponStatus);
+              if (!playParticleImpact(target, theme, crit)) {
+                playImpactFx(target, theme, crit, "magic", weaponStatus);
+              }
               if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
             };
-            const missileUrl = allowMissileAndBlood ? pickFxVariant(`missile_${theme}`, crit) : null;
-            if (missileUrl) {
-              if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
-            } else if (allowMissileAndBlood) {
-              spawnBeam("arcane", () => spawnImpactFlash(weaponStatus)); // Geschoss-Sprite fehlt
-            } else {
-              doImpact(); // "reduziert": sofort Einschlag ohne Flug
+            // Dieselbe Ersetzung für den Geschoss-Flug: ein Partikel-Rezept für `missile_<thema>`
+            // übernimmt Flug UND ruft `doImpact` selbst bei Ankunft (s. playParticleMissile-JSDoc)
+            // — der Sprite-/Beam-Zweig läuft dann für dieses Ereignis gar nicht erst an.
+            const particleMissilePlayed = allowMissileAndBlood && playParticleMissile("player", theme, crit, doImpact);
+            if (!particleMissilePlayed) {
+              const missileUrl = allowMissileAndBlood ? pickFxVariant(`missile_${theme}`, crit) : null;
+              if (missileUrl) {
+                if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
+              } else if (allowMissileAndBlood) {
+                spawnBeam("arcane", () => spawnImpactFlash(weaponStatus)); // Geschoss-Sprite fehlt
+              } else {
+                doImpact(); // "reduziert": sofort Einschlag ohne Flug
+              }
             }
           } else if (attacker === "player" && stats.style === "ranged") {
             const doImpact = (): void => {
-              playImpactFx(target, "arrow", crit, "weapon", null);
-              if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
+              if (!playParticleImpact(target, "arrow", crit)) {
+                playImpactFx(target, "arrow", crit, "weapon", null);
+              }
+              if (allowMissileAndBlood && !playParticleBlood(target, bloodVariant, crit)) playBloodFx(target, bloodVariant, crit);
             };
-            const missileUrl = allowMissileAndBlood ? pickFxVariant("missile_arrow", crit) : null;
-            if (missileUrl) {
-              if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
-            } else if (allowMissileAndBlood) {
-              spawnBeam("tracer"); // Pfeil-Sprite fehlt
-            } else {
-              doImpact();
+            const particleMissilePlayed = allowMissileAndBlood && playParticleMissile("player", "arrow", crit, doImpact);
+            if (!particleMissilePlayed) {
+              const missileUrl = allowMissileAndBlood ? pickFxVariant("missile_arrow", crit) : null;
+              if (missileUrl) {
+                if (!playMissileFx("player", missileUrl, doImpact)) doImpact();
+              } else if (allowMissileAndBlood) {
+                spawnBeam("tracer"); // Pfeil-Sprite fehlt
+              } else {
+                doImpact();
+              }
             }
           } else if (attacker === "player") {
-            // Nahkampf: Slash direkt am Ziel, kein Geschoss.
-            playSlashFx(target, slashFamilyFor(mainhandWeapon?.weaponType), crit, false);
-            if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
+            // Nahkampf: Slash direkt am Ziel, kein Geschoss. Existiert ein Partikel-Rezept für
+            // `slash_<familie>`, ersetzt es playSlashFx komplett (Chef-Entscheid 28.08.2026).
+            const family = slashFamilyFor(mainhandWeapon?.weaponType);
+            if (!playParticleSlash("player", target, family, crit)) {
+              playSlashFx(target, family, crit, false);
+            }
+            if (allowMissileAndBlood && !playParticleBlood(target, bloodVariant, crit)) playBloodFx(target, bloodVariant, crit);
           } else {
             // Gegner-Angriff, gespiegelt (Chef-D5) — Monster tragen keine Waffendaten, darum der
             // feste Standard-Slash "cut" (s. slashFamilyFor-JSDoc); ein monster-eigenes
             // Magie-Thema ist mangels Datenfeld noch offen (Bericht an den Chef).
-            playSlashFx(target, "cut", crit, true);
-            if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
+            if (!playParticleSlash("enemy", target, "cut", crit)) {
+              playSlashFx(target, "cut", crit, true);
+            }
+            if (allowMissileAndBlood && !playParticleBlood(target, bloodVariant, crit)) playBloodFx(target, bloodVariant, crit);
           }
         } else {
           // Sicherheitsnetz: sollte laut spriteFxLevel-JSDoc mit fxLevel "off" zusammenfallen.
@@ -2761,18 +2956,22 @@ function Battle({
         }
       }
       // Fehlschlag-Wischer (Familie C) — dieselbe Zielseite wie der bestehende Miss-Floater.
+      // Existiert ein Partikel-Rezept (`miss_whiff`), ersetzt es playMissFx komplett.
       if (e.kind === "miss" && spriteFxLevel !== "off") {
-        playMissFx(e.by === "player" ? "enemy" : "player");
+        const side = e.by === "player" ? "enemy" : "player";
+        if (!playParticleMiss(side)) playMissFx(side);
       }
       // Block-Funken auf dem Schild-Anker (Familie C). `by` ist hier bereits die BLOCKENDE Seite
-      // (anders als bei hit/crit/miss — s. combat.ts pushLog kind:"block").
+      // (anders als bei hit/crit/miss — s. combat.ts pushLog kind:"block"). Existiert ein
+      // Partikel-Rezept (`impact_block`), ersetzt es playBlockFx komplett.
       if (e.kind === "block" && e.amount > 0 && spriteFxLevel !== "off") {
-        playBlockFx(e.by);
+        if (!playParticleBlockHit(e.by)) playBlockFx(e.by);
       }
       // Pet-Ability: Sprite-Animation + Farb-Blitz (Bucket aus combatAbility.kind) auslösen, PLUS
       // (Kampfeffekte Welle 1, Familie D) den neuen Bild-Sprite am Ziel (Gegner, bzw. Spieler bei
       // Schutz/Heilung) — ergänzt den bestehenden Portrait-Puls, ersetzt ihn nicht (zwei
-      // unterschiedliche Orte, s. playPetFx-JSDoc).
+      // unterschiedliche Orte, s. playPetFx-JSDoc). Existiert ein Partikel-Rezept (`pet_<bild>`),
+      // ersetzt es playPetFx komplett.
       if (e.kind === "petAbility") {
         setPetLunge((l) => l + 1);
         const pet = e.petId ? content.pets[e.petId] : undefined;
@@ -2780,7 +2979,27 @@ function Battle({
         if (kind) {
           const bucket = PET_ABILITY_BUCKET[kind];
           setPetFx((p) => ({ n: p.n + 1, bucket }));
-          if (spriteFxLevel !== "off") playPetFx(petFxImageFor(kind));
+          if (spriteFxLevel !== "off") {
+            const image = petFxImageFor(kind);
+            if (!playParticlePet(image)) playPetFx(image);
+          }
+        }
+      }
+      // Status-Körpereffekte (Chef-Wunsch 28.08.2026, fxParticleLibrary.ts): "Huhn erleidet
+      // Brand!" — dieselbe Log-Kante wie oben, `e.status` ist nur bei NEU aufgelegten Status-
+      // effekten gesetzt (Refresh eines bereits aktiven Status pusht KEIN neues Log-Ereignis, s.
+      // combat.ts applyEnemyStatus/inflictPlayerStatus). `by==="player"` heißt: der SPIELER hat
+      // den Status auf den GEGNER gelegt (nicht umgekehrt!). Kurzes Aufflammen (`status_<typ>`)
+      // PLUS Start des Ambient-Loops (`statusAmbient_<typ>`, s. activeStatusRef-Effekt unten für
+      // das Beenden bei Ablauf) — beide laufen nur, wenn ein Rezept existiert (kein Sprite-
+      // Rückfall für Status-Effekte, die gab es bislang nicht).
+      if (e.kind === "status" && e.status && particleStageRef.current) {
+        const target: "player" | "enemy" = e.by === "player" ? "enemy" : "player";
+        const anchor = particleAnchor(target);
+        if (anchor) {
+          const dir: 1 | -1 = target === "enemy" ? 1 : -1;
+          particleStageRef.current.play(`status_${e.status}`, { from: anchor.center, to: anchor.center, dir, box: anchor.box });
+          particleStageRef.current.startAmbient(`statusAmbient_${e.status}`, `${target}:${e.status}`, { at: anchor.center, dir, box: anchor.box });
         }
       }
       // SFX an die Events knüpfen (gedrosselt im Audio-Modul).
