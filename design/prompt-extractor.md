@@ -80,8 +80,12 @@ Weapon style: <Melee|Ranged|Magic> (mainhand: <EN name>, offhand: <EN name>).
 
 Style: painted dark-fantasy realism, muted ashen-iron palette of dark iron, bronze and parchment
 tones; veteran presence, confident stance; a generic, immediately readable fantasy archetype — no
-folk costume, no comedy. No text, no watermark, no rarity glow or shimmer on the gear. Smoky
-battlefield background. Aspect ratio 3:4 (portrait orientation).
+folk costume, no comedy. No text, no watermark, no rarity glow or shimmer on the gear. Background: fully
+transparent. Deliver a PNG with a real alpha channel, no scene, no backdrop, no ground shadow, and do not paint a
+checkerboard pattern instead of transparency. Aspect ratio 3:4 (portrait orientation).
+
+*Chef 28.08.: ChatGPT lieferte mit der alten Regel („smoky battlefield background“) einen gemalten Hintergrund; seitdem
+verlangt das Prompt echte Transparenz (Muster unserer Freisteller-Regel, kein Schachbrett).*
 
 Attach kit.png and portrait.png with this prompt.
 ```

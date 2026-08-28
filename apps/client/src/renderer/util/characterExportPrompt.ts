@@ -93,7 +93,9 @@ export function buildCharacterExportPrompt(input: CharacterExportInput, content:
     "Style: painted dark-fantasy realism, muted ashen-iron palette of dark iron, bronze and " +
       "parchment tones; veteran presence, confident stance; a generic, immediately readable fantasy " +
       "archetype — no folk costume, no comedy. No text, no watermark, no rarity glow or shimmer on the " +
-      "gear. Smoky battlefield background. Aspect ratio 3:4 (portrait orientation).",
+      "gear. Background: fully transparent. Deliver a PNG with a real alpha channel, no scene, no backdrop, " +
+      "no ground shadow, and do not paint a checkerboard pattern instead of transparency. Aspect ratio 3:4 " +
+      "(portrait orientation).",
   );
   lines.push("");
   lines.push("Attach kit.png and portrait.png with this prompt.");
