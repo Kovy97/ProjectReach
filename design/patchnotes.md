@@ -72,7 +72,8 @@ cooldown effects from several items now add up.
 
 **Kleinigkeiten (28.08.):** DE: Der Discord-Knopf in den Optionen ist weg, es gibt keinen Server. Der Fehlermelde-Dialog
 schließt nicht mehr, wenn eine Textmarkierung außerhalb endet, und dein Entwurf bleibt bis zum Senden erhalten. In Bank und
-Inventar lässt sich beim Shift-Klick kein Text mehr versehentlich markieren. / EN: Discord button removed, bug-report draft
+Inventar lässt sich beim Shift-Klick kein Text mehr versehentlich markieren. Der Kit-Wechsel meldet keine „seltenen Funde“
+mehr (die Items im anderen Kit gehörten dir schon). / EN: Discord button removed, bug-report draft
 survives, no more accidental text selection on shift-click.
 
 **Köder in fünf Stufen (Chef-Idee 28.08.):** DE: Angeln und Jagen greifen ineinander. Jedes Jagdgebiet verlangt den Köder
@@ -150,6 +151,33 @@ Screenshot, unabhängig von UI-Skalierung) und prompt.txt rein textuell (util/ch
 gegen ein 14-Slot-Fixture); neuer IPC-Handler `export:characterKit` (main/characterExport.ts + characterExportFiles.ts,
 Downloads-Pfad per `GR_EXPORT_DIR` überschreibbar für Tests) schreibt die Dateien und öffnet den Ordner. Spec:
 design/prompt-extractor.md.*
+
+**Kampfeffekte: prozedurale Partikel für ALLE Waffen (Chef-Entscheid 28.08.):** DE: Treffer-Effekte
+laufen jetzt größtenteils als echte Partikel-Physik statt gemalter Bildstreifen — Glutkerne mit
+Funkenschweif, Eiskristalle, Kettenblitze mit Ästen, Giftblasen, arkane Runen, ein licht-
+schluckender Leerenkern, goldene Federn, dazu Nahkampf-Schnittbögen, Pfeilflug, Blut/Ichor/
+Knochenstaub, Block-Funken und alle sechs Begleiter-Fähigkeiten. Neu: liegt ein Status (Brand/
+Frost/Schock/Gift/Bluten) auf einem Kämpfer, flammt sein Körper kurz auf und ein leiser Effekt-
+Loop läuft mit, solange der Status hält. / EN: Hit effects now mostly run as real particle physics
+instead of painted image strips — glowing embers with spark trails, ice shards, branching chain
+lightning, poison bubbles, arcane runes, a light-swallowing void core, golden feathers, plus melee
+slash arcs, arrow flight, blood/ichor/bone dust, block sparks and all six companion abilities. New:
+when a status (burn/frost/shock/poison/bleed) sits on a fighter, their body briefly flares up and a
+quiet effect loop keeps running for as long as the status lasts.
+
+*Dev-Notiz: design/combat-fx/konzept-kampfeffekte.md §8. Neue Dateien `fxParticles.ts` (Engine:
+`ParticleStage`, Registry, `ParticleApi`-Werkzeugkasten, elf Themen-Paletten) + `fxParticleLibrary.ts`
+(alle Rezepte, Seiteneffekt-Import in CombatPage). Ersetzt an jeder Sprite-Triggerstelle
+`playMissileFx`/`playImpactFx`/`playSlashFx`/`playBloodFx`/`playMissFx`/`playBlockFx`/`playPetFx`
+komplett, wenn ein Rezept existiert — Mira-Sprites bleiben Rückfall (Kill-Switch `FX_PARTICLES`).
+Status-Ambient hängt an `combat.ts`s `kind:"status"`-Log-Kante (Start) + einem tick-getriggerten
+Set-Diff auf `cs.playerEffects`/`cs.enemyEffects` (Ende, kein eigenes Log-Ereignis fürs Ablaufen).
+Perf: Partikel-Deckel 2500, adaptive Dichte bei Framedrops, rAF nur bei aktiven Effekten,
+`document.hidden` pausiert; gemessene Haupt-Thread-Latenz im Feuer-Dauerkampf ~4,6ms Median (Ziel
+<8ms). Waffen-Abdeckung: 287 Mainhand-Waffen geprüft — 24 Feuer/14 Schock/10 Frost/5 Arkan/2 Gift/2
+Leere (Magie), 65 Schnitt/60 schwerer Hieb/30 Wucht/18 Stoß (Nahkampf), 57 Bögen; Aether-Rezept
+steht bereit, im heutigen Katalog lösen die beiden `aether_`/`godspark_`-Waffen wegen eigenem
+burn-Effekt zu Feuer auf.*
 
 **Begleiter erklären sich (Chef 27.08.):** DE: Jede Begleiter-Karte zeigt zwei Zeilen „Passiv" und „Aktiv (im Kampf)"
 mit echten Zahlen aus der Engine: was der passive Bonus tut („+3 % Erfolgschance bei Diebeskunst") und was die Fähigkeit im

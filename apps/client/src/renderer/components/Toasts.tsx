@@ -810,6 +810,13 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     // dazukam. `equipment` allein zählt jeden ausgerüsteten Slot exakt einmal, ob Instanz oder
     // nicht — kein separater Instanz-Durchlauf nötig.
     for (const id of Object.values(state.character.equipment)) addRare(id, 1);
+    // Ausruestungs-Kits (Chef-Report 28.08.2026, "Rare Find beim Kit-Wechsel"): die Items der INAKTIVEN Kits gehoeren
+    // genauso zum Gesamtbesitz; ein Kit-Wechsel schiebt sie nur zwischen Kit und Charakter (Netto-Null). Das aktive Kit
+    // ist der Spiegel von `character.equipment` und zaehlt deshalb NICHT noch einmal.
+    (state.equipKits ?? []).forEach((kit, i) => {
+      if (i === state.activeKit) return;
+      for (const id of Object.values(kit.equipment)) addRare(id, 1);
+    });
     for (const [id, q] of Object.entries(state.bank)) addRare(id, q);
     for (const inst of state.bankInstances ?? []) addRare(inst.baseItemId, 1);
 
