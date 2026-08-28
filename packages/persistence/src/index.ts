@@ -3,8 +3,8 @@ import type {
   BuyBackEntry,
   CampBuildJob,
   ContentDB,
-  EquipLoadout,
-  EquipLoadoutEntry,
+  EquipKit,
+  EquipKitIndex,
   EquipSlot,
   GameState,
   InventorySlot,
@@ -39,10 +39,11 @@ import {
   DUNGEON_VARIANT_PREFIX,
   ELITE_COOLDOWN_HARD_CAP_MS,
   ELITE_WINDOW_MS,
-  EQUIP_LOADOUT_COUNT,
+  EQUIP_KIT_COUNT,
   EQUIP_SLOTS,
   KILL_COOLDOWN_MS,
-  LOADOUT_SLOTS,
+  defaultEquipKits,
+  emptyEquipKit,
   LEGACY_BASE_INVENTORY_SLOTS,
   MASTER_CAPE_LEVEL,
   MAX_BANK_SLOTS_PURCHASED,
@@ -78,7 +79,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, actionInputsOnHand, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, actionInputsOnHand, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -610,39 +611,64 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     c.buffs = [];
   }
 
-  // — Ausrüstungs-Loadouts (SAVE_VERSION 75, Task #349): Shape strikt härten. Fixe Länge
-  //   EQUIP_LOADOUT_COUNT (fehlende Slots → null, Überhang gekappt); je Loadout NUR
-  //   LOADOUT_SLOTS-Keys (Werkzeug-/Fremd-Keys aus Save-Edits fliegen); je Eintrag eine bekannte
-  //   itemId (Unknown-Id-Strip wie überall — ein entferntes Item verschwindet aus dem Snapshot,
-  //   statt beim Anlegen ewig als „fehlend" zu geistern) + optional eine non-empty-String
-  //   instanceId (kaputte Typen degradieren zum plain Eintrag; ob die Instanz noch existiert,
-  //   prüft erst applyLoadout — eine im Gear-Vault liegende Instanz ist hier nicht „unbekannt").
-  //   Ein Objekt-Loadout bleibt Objekt (auch wenn alle Einträge gestrippt wurden — „nackt
-  //   gespeichert" ist legitim), null bleibt null. Rebuild in LOADOUT_SLOTS-Reihenfolge = exakt
-  //   die saveLoadout-Reihenfolge → Round-Trip byte-stabil. Idempotent. —
+  // — Ausrüstungs-Kits (SAVE_VERSION 85-Nachtrag, Chef-Entscheid 28.08.2026): STRIKT härten.
+  //   `activeKit` ganzzahlig 0..EQUIP_KIT_COUNT-1 (sonst 0); Liste exakt EQUIP_KIT_COUNT (fehlende
+  //   Kits → leer, Überhang gekappt — ein viertes Kit kann nur per Save-Edit existieren). Je
+  //   INAKTIVEM Kit exakt die Regeln des Charakter-Blocks oben: unbekannte Item-IDs → leer (nicht
+  //   rettbar); slot-fremdes Item wird GERETTET (modifizierte Instanz → Gear-Vault, plain → 1 Stück
+  //   Bank); Instanz nur bei equipment[slot] === baseItemId UND mindestens einer Modifikation;
+  //   Zweihand im Mainhand ⇒ Offhand verlustfrei über den Grant-Pfad zurück (Inventar → Bank →
+  //   Post; KEIN Warden-Brief — das Kit wird nicht getragen, es verschwindet nichts vom Körper).
+  //   Das AKTIVE Kit wird hier NICHT aus dem Save gelesen: seine Wahrheit ist `character` (oben
+  //   gehärtet), der Spiegel wird GANZ AM ENDE von sanitizeState via syncActiveKit geschrieben —
+  //   so kann kein späterer Pass (Cape-Nachreichung, HP-Deckel …) den Spiegel stale machen.
+  //   Das Alt-Feld `equipLoadouts` (v75-Vorlagen) fliegt (migrateState hat es bereits überführt).
+  //   Idempotent (Fixpunkt: ein sauberes Kit reproduziert sich byte-genau). —
   {
-    const rawLoadouts = Array.isArray(state.equipLoadouts) ? state.equipLoadouts : [];
-    const cleanLoadouts: (EquipLoadout | null)[] = [];
-    for (let i = 0; i < EQUIP_LOADOUT_COUNT; i++) {
-      const lo = rawLoadouts[i];
-      if (!lo || typeof lo !== "object" || Array.isArray(lo)) {
-        cleanLoadouts.push(null);
-        continue;
+    const rawActive = (state as { activeKit?: unknown }).activeKit;
+    state.activeKit =
+      typeof rawActive === "number" && Number.isInteger(rawActive) && rawActive >= 0 && rawActive < EQUIP_KIT_COUNT
+        ? (rawActive as EquipKitIndex)
+        : 0;
+    const rawKits: unknown[] = Array.isArray(state.equipKits) ? state.equipKits : [];
+    const cleanKits: EquipKit[] = [];
+    for (let i = 0; i < EQUIP_KIT_COUNT; i++) {
+      const kit = emptyEquipKit();
+      cleanKits.push(kit);
+      if (i === state.activeKit) continue; // Spiegel des Charakters — kommt am Ende via syncActiveKit
+      const raw = rawKits[i];
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+      const rawEq = (raw as { equipment?: unknown }).equipment;
+      const rawInst = (raw as { equippedInstances?: unknown }).equippedInstances;
+      const eqRec =
+        rawEq && typeof rawEq === "object" && !Array.isArray(rawEq) ? (rawEq as Record<string, unknown>) : {};
+      const instRec =
+        rawInst && typeof rawInst === "object" && !Array.isArray(rawInst) ? (rawInst as Record<string, unknown>) : {};
+      for (const slot of EQUIP_SLOTS) {
+        const id = eqRec[slot];
+        if (typeof id !== "string" || !known(id)) continue;
+        const inst = sanitizeInstance(instRec[slot], content);
+        const modInst = inst && inst.baseItemId === id && (inst.affixes.length > 0 || inst.suffix) ? inst : null;
+        if (!slotAccepts(slot, id)) {
+          if (modInst) state.bankInstances.push(modInst);
+          else state.bank[id] = finiteNonNeg(state.bank[id], 0) + 1;
+          continue;
+        }
+        kit.equipment[slot] = id;
+        if (modInst) kit.equippedInstances[slot] = modInst;
       }
-      const cleanLo: EquipLoadout = {};
-      for (const slot of LOADOUT_SLOTS) {
-        const entry = (lo as Record<string, unknown>)[slot];
-        if (!entry || typeof entry !== "object") continue;
-        const itemId = (entry as { itemId?: unknown }).itemId;
-        if (typeof itemId !== "string" || !known(itemId)) continue;
-        const out: EquipLoadoutEntry = { itemId };
-        const instanceId = (entry as { instanceId?: unknown }).instanceId;
-        if (typeof instanceId === "string" && instanceId.length > 0) out.instanceId = instanceId;
-        cleanLo[slot] = out;
+      const mainId = kit.equipment.mainhand;
+      if (mainId && content.items[mainId]?.twoHanded === true) {
+        const offInst = kit.equippedInstances.offhand;
+        const offId = kit.equipment.offhand;
+        if (offInst) grantLootInstance(state, content, offInst);
+        else if (offId) grantLoot(state, content, offId, 1);
+        delete kit.equippedInstances.offhand;
+        kit.equipment.offhand = null;
       }
-      cleanLoadouts.push(cleanLo);
     }
-    state.equipLoadouts = cleanLoadouts;
+    state.equipKits = cleanKits;
+    delete (state as { equipLoadouts?: unknown }).equipLoadouts;
   }
 
   // — Das Lager (SAVE_VERSION 76, Task #358): Struktur strikt härten (Neuaufbau aus dem Default,
@@ -1401,6 +1427,11 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     });
     state.huntCatchSeq = Math.max(finiteIntNonNeg(state.huntCatchSeq, Number.MAX_SAFE_INTEGER, 0), maxSeq);
     st.huntCatches = finiteIntNonNeg(st.huntCatches, Number.MAX_SAFE_INTEGER, 0);
+    if (!st.huntCatchesById || typeof st.huntCatchesById !== "object") st.huntCatchesById = {};
+    for (const id of Object.keys(st.huntCatchesById)) {
+      if (!content.monsters[id]) delete st.huntCatchesById[id];
+      else st.huntCatchesById[id] = finiteIntNonNeg(st.huntCatchesById[id], Number.MAX_SAFE_INTEGER, 0);
+    }
   }
   // Taverne (SAVE 84): Zähler-Records nur mit endlichen, nicht-negativen Zahlen (Muster craftedById).
   for (const key of ["actionRunsById", "producedById"] as const) {
@@ -2023,6 +2054,11 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     state.character.ward = derivedMaxWard;
   }
 
+  // — Ausrüstungs-Kits (SAVE_VERSION 85): Spiegel des AKTIVEN Kits = der fertig gehärtete Charakter.
+  //   BEWUSST als allerletzter Schritt (nach Slot-/Instanz-/Zweihand-Härtung, Meisterring-Umzug,
+  //   Cape-Nachreichung): nichts danach kann `character.equipment` noch ändern → Round-Trip-stabil. —
+  syncActiveKit(state);
+
   return state;
 }
 
@@ -2037,13 +2073,14 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   for (const slot of EQUIP_SLOTS) equip[slot] = oldEquip[slot] ?? null;
   state.character.equipment = equip;
 
-  // Ausrüstungs-Loadouts (SAVE_VERSION 74→75, Task #349): neues Feld `equipLoadouts`. Alt-Saves
-  // (< 75) haben es nicht → [null, null, null] (nie gespeichert; rückwirkend gibt es nichts zu
-  // rekonstruieren). BEWUSST HIER OBEN (vor dem Item-Rename-Pass unten), damit der generische
-  // RENAME-Pfad die Loadout-Einträge künftiger Item-Umbenennungen mit erfasst (Save-Disziplin:
-  // renamed ids müssen AUCH in Loadouts mitziehen). Shape-/Referenz-Härtung (fixe Länge, nur
-  // LOADOUT_SLOTS-Keys, Unknown-Id-Strip) macht sanitizeState. Idempotent.
-  if (!Array.isArray(state.equipLoadouts)) state.equipLoadouts = [null, null, null];
+  // Ausrüstungs-Loadouts (v75-VORLAGEN `equipLoadouts`) → Ausrüstungs-KITS (SAVE_VERSION 85-Nachtrag,
+  // Chef-Entscheid 28.08.2026): die Überführung in echte Kits läuft GANZ AM ENDE von migrateState
+  // (nach allen Item-Renames und Inventar-Migrationen — s. Block „Ausrüstungs-Kits" unten). Hier nur
+  // die Alt-Form greifbar machen, damit der generische RENAME-Pfad die Vorlagen-Einträge weiterhin
+  // mitnimmt (ein Rename darf keine Vorlage entwerten, bevor sie zum Kit wird).
+  const legacyLoadouts: unknown[] = Array.isArray((state as { equipLoadouts?: unknown }).equipLoadouts)
+    ? ((state as { equipLoadouts?: unknown }).equipLoadouts as unknown[])
+    : [];
 
   // Das Lager (SAVE_VERSION 75→76, Task #358): neues Feld `camp`. Alt-Saves (< 76) haben es
   // nicht → leeres Lager (`defaultCampState` — rückwirkend gibt es nichts zu rekonstruieren: ein
@@ -2183,6 +2220,7 @@ function migrateState(state: GameState, content: ContentDB): GameState {
       actionRunsById: {},
       producedById: {},
       huntCatches: 0,
+      huntCatchesById: {},
     };
   if (typeof state.stats.itemsGathered !== "number") state.stats.itemsGathered = 0;
   // Craft-Zähler (SAVE_VERSION 27): für craft_items-Quests. Alt-Saves starten bei 0 (rückwirkend
@@ -2203,6 +2241,7 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (!state.stats.producedById || typeof state.stats.producedById !== "object") state.stats.producedById = {};
   // Jagen (SAVE_VERSION 84→85): Fang-Zähler. Alt-Saves 0.
   if (typeof state.stats.huntCatches !== "number") state.stats.huntCatches = 0;
+  if (!state.stats.huntCatchesById || typeof state.stats.huntCatchesById !== "object") state.stats.huntCatchesById = {};
   // Achievements für Saves von vor dem Meilenstein-System.
   if (!Array.isArray(state.achievements)) state.achievements = [];
   // Bestiarium-Kills für Saves von vor dem Bestiarium-System.
@@ -2543,19 +2582,26 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     const nid = rename(id as ItemId);
     if (nid) renamedBank[nid] = (renamedBank[nid] ?? 0) + qty;
   }
-  // Loadout-Einträge (SAVE_VERSION 75, Task #349) laufen im generischen RENAME-Pfad mit: ein
-  // künftiger Item-Rename darf ein gespeichertes Loadout nicht entwerten (Save-Disziplin).
-  // DISCARD-Ids verlieren ihren Slot-Key (Teil existiert nicht mehr → beim Anlegen leer statt
-  // „fehlend"-Skip auf toter ID). Instanz-Referenzen bleiben unberührt (instanceId ist stabil,
-  // die baseItemId der Instanzen selbst zieht über die dedizierten Instanz-Rename-Blöcke mit).
-  for (const lo of state.equipLoadouts) {
-    if (!lo || typeof lo !== "object") continue;
-    for (const slot of LOADOUT_SLOTS) {
-      const entry = lo[slot];
-      if (!entry || typeof entry.itemId !== "string") continue;
-      const nid = rename(entry.itemId);
+  // Vorlagen-Einträge der ALTEN Loadouts (v75, bis zur Kit-Überführung am Ende von migrateState) und
+  // die Ausrüstung der KITS (SAVE_VERSION 85) laufen im generischen RENAME-Pfad mit: ein künftiger
+  // Item-Rename darf weder eine Vorlage noch ein Kit entwerten (Save-Disziplin: renamed ids AUCH in
+  // Kits). DISCARD-Ids verlieren ihren Platz. Instanz-Referenzen/-baseItemIds bleiben hier unberührt
+  // (instanceId ist stabil; baseItemIds ziehen über die dedizierten Instanz-Blöcke unten mit).
+  for (const lo of legacyLoadouts) {
+    if (!lo || typeof lo !== "object" || Array.isArray(lo)) continue;
+    const rec = lo as Record<string, { itemId?: unknown } | null | undefined>;
+    for (const slot of EQUIP_SLOTS) {
+      const entry = rec[slot];
+      if (!entry || typeof entry !== "object" || typeof entry.itemId !== "string") continue;
+      const nid = rename(entry.itemId as ItemId);
       if (nid) entry.itemId = nid;
-      else delete lo[slot];
+      else delete rec[slot];
+    }
+  }
+  if (Array.isArray(state.equipKits)) {
+    for (const kit of state.equipKits) {
+      if (!kit || typeof kit !== "object" || !kit.equipment || typeof kit.equipment !== "object") continue;
+      for (const slot of EQUIP_SLOTS) kit.equipment[slot] = rename(kit.equipment[slot] ?? null);
     }
   }
   state.bank = renamedBank;
@@ -2703,6 +2749,22 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     const inst = eqInst[slot];
     if (inst && DISCARD_IDS.has(inst.baseItemId)) delete eqInst[slot];
   }
+  // Kit-Instanzen (SAVE_VERSION 85) ebenso — Muster equippedInstances (Save-Disziplin für Kits).
+  const kitInstanceRecords: Record<string, ItemInstance | undefined>[] = [];
+  if (Array.isArray(state.equipKits)) {
+    for (const kit of state.equipKits) {
+      const rec = kit?.equippedInstances;
+      if (rec && typeof rec === "object" && !Array.isArray(rec)) {
+        kitInstanceRecords.push(rec as Record<string, ItemInstance | undefined>);
+      }
+    }
+  }
+  for (const rec of kitInstanceRecords) {
+    for (const slot of EQUIP_SLOTS) {
+      const inst = rec[slot];
+      if (inst && DISCARD_IDS.has(inst.baseItemId)) delete rec[slot];
+    }
+  }
   state.bankInstances = state.bankInstances.filter((inst) => !DISCARD_IDS.has(inst.baseItemId));
   // Instanz-Tasche (v53) ebenso: eine Instanz mit verworfener baseItemId hätte im rename()-Pfad als
   // Slot ihren Slot verloren — hier explizit spiegeln (Instanzen berührt rename() nicht). Idempotent.
@@ -2735,6 +2797,13 @@ function migrateState(state: GameState, content: ContentDB): GameState {
       const inst = eqInst[slot];
       const nid = ringRename(inst?.baseItemId);
       if (inst && nid) inst.baseItemId = nid;
+    }
+    for (const rec of kitInstanceRecords) {
+      for (const slot of EQUIP_SLOTS) {
+        const inst = rec[slot];
+        const nid = ringRename(inst?.baseItemId);
+        if (inst && nid) inst.baseItemId = nid;
+      }
     }
     // (b) Buy-Back-Regal: ein kurz vor dem Update verkauftes Meister-Cape bleibt zurückkaufbar
     // (kommt als Ring zurück; sanitize hätte den Alt-ID-Eintrag sonst verworfen).
@@ -3195,6 +3264,58 @@ function migrateState(state: GameState, content: ContentDB): GameState {
   if (state.eliteKillSeq === undefined) state.eliteKillSeq = 0;
   if (state.lastEliteKill === undefined) state.lastEliteKill = null;
 
+  // ── Ausrüstungs-Loadouts (v75-Vorlagen) → Ausrüstungs-KITS (SAVE_VERSION 85-Nachtrag, Chef-Entscheid
+  // 28.08.2026 nach Spieler-Feedback „3 separate equipment kits, not unequip/equip modes, just swap") ──
+  // Jeder Save OHNE `equipKits` (alle < 85 und frühe v85-Stände) bekommt drei Kits:
+  //  • Kit 0 = die GETRAGENE Ausrüstung (Spiegel von `character`; Vorlage 0 wird VERWORFEN — Kit 0 ist,
+  //    was man trägt; eine abweichende Vorlage 0 war nur ein Wunschbild, kein Besitz).
+  //  • Kit N (1..2) aus Vorlage N: jede Position, deren Item (bzw. Instanz per instanceId) JETZT im
+  //    INVENTAR liegt, wird dem Inventar ENTNOMMEN (1 Stück vom plain Stapel bzw. die Instanz aus der
+  //    Tasche mitsamt Affixen/Suffix) und ins Kit gelegt. Fehlt das Teil (Bank/Gear-Vault/verkauft/
+  //    gerade getragen), bleibt der Platz LEER — nichts wird dupliziert, nichts erfunden. Bank und
+  //    Vault werden BEWUSST nicht angezapft (kein stiller Umzug des Lagers; der Spieler legt die Teile
+  //    selbst ins Kit). Zwei Vorlagen mit demselben Stück: die erste bekommt es, die zweite bleibt leer.
+  //  Läuft GANZ AM ENDE von migrateState (nach Rename-Pass, Instanz-Tasche v53, Stack-Konsolidierung),
+  //  damit das Inventar in seiner finalen Form durchsucht wird. Slot-/Instanz-/Zweihand-Härtung je Kit
+  //  macht sanitizeState; dort fliegt auch das Alt-Feld. RNG-frei. Idempotent: post-Kit-Saves tragen
+  //  `equipKits` und laufen hier nicht mehr durch (ihre Vorlagen-Liste existiert nicht mehr).
+  if (!Array.isArray(state.equipKits)) {
+    state.equipKits = defaultEquipKits();
+    state.activeKit = 0;
+    for (let n = 1; n < EQUIP_KIT_COUNT; n++) {
+      const lo = legacyLoadouts[n];
+      if (!lo || typeof lo !== "object" || Array.isArray(lo)) continue;
+      const rec = lo as Record<string, { itemId?: unknown; instanceId?: unknown } | null | undefined>;
+      const kit = state.equipKits[n]!;
+      for (const slot of EQUIP_SLOTS) {
+        const entry = rec[slot];
+        if (!entry || typeof entry !== "object" || typeof entry.itemId !== "string") continue;
+        const itemId = entry.itemId as ItemId;
+        const instanceId =
+          typeof entry.instanceId === "string" && entry.instanceId.length > 0 ? entry.instanceId : null;
+        if (instanceId) {
+          const bag = inv.instances ?? [];
+          const idx = bag.findIndex((i) => !!i && i.instanceId === instanceId && i.baseItemId === itemId);
+          if (idx < 0) continue;
+          const inst = bag[idx]!;
+          bag.splice(idx, 1);
+          kit.equipment[slot] = itemId;
+          kit.equippedInstances[slot] = inst;
+        } else {
+          const idx = inv.slots.findIndex((s) => !!s && s.itemId === itemId && !s.instance && s.qty >= 1);
+          if (idx < 0) continue;
+          const s = inv.slots[idx]!;
+          s.qty -= 1;
+          if (s.qty <= 0) inv.slots[idx] = null;
+          kit.equipment[slot] = itemId;
+        }
+      }
+    }
+    // Kit-0-Spiegel sofort schreiben (sanitizeState zieht ihn am Ende erneut aus dem gehärteten Charakter).
+    syncActiveKit(state);
+  }
+  delete (state as { equipLoadouts?: unknown }).equipLoadouts;
+
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
   state.version = SAVE_VERSION;
 
@@ -3228,6 +3349,9 @@ export function summarize(state: GameState, savedAt: number): SaveSummary {
 }
 
 export function serialize(state: GameState, now: number = Date.now()): string {
+  // Ausrüstungs-Kits (SAVE_VERSION 85): der Spiegel des aktiven Kits darf zur Laufzeit stale sein —
+  // vor dem Schreiben aus der Wahrheit (`character`) nachziehen, damit der Save in sich konsistent ist.
+  syncActiveKit(state);
   const save: SaveFile = {
     version: SAVE_VERSION,
     savedAt: now,

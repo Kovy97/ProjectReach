@@ -10,8 +10,7 @@ import {
   HUNT_LOOT_ROLLS,
   HUNT_TRAP_SLOTS,
   HUNT_TRAPPABLE_FAMILIES,
-  huntTrapSlotsForLevel,
-} from "@hearthforge/shared";
+  huntTrapSlotsForLevel, huntCatchXp, HUNT_FIRST_CATCH_MULT,} from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { nextFloat, nextInt } from "./rng";
 import { itemCount, removeItem } from "./inventory";
@@ -255,7 +254,11 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
 
   // Jagen-XP über den normalen Skill-Pfad (state.skills; Level-Ups liest die UI aus der XP-Differenz).
   const skill = (state.skills[HUNTING_SKILL_ID] ??= { xp: 0 });
-  skill.xp += zone.xp * buffGatherXpMult(state, content);
+  // Chef 28.08.2026: Kampf-XP des gefangenen Monsters ×HUNT_XP_PER_CATCH (huntCatchXp), Erstfang jeder Art ×HUNT_FIRST_CATCH_MULT.
+  const byId = (state.stats.huntCatchesById ??= {});
+  const first = (byId[monster.id] ?? 0) === 0;
+  skill.xp += huntCatchXp(monster.xp) * (first ? HUNT_FIRST_CATCH_MULT : 1) * buffGatherXpMult(state, content);
+  byId[monster.id] = (byId[monster.id] ?? 0) + 1;
 
   state.huntCatchSeq += 1;
   state.stats.huntCatches += 1;

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { SAVE_VERSION, defaultHuntTraps, defaultTavernState, eliteZoneCooldownBand } from "@hearthforge/shared";
+import { SAVE_VERSION, defaultHuntTraps, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
 import { computeStats } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -68,6 +68,14 @@ import { deserialize, serialize } from "./index";
  * (v85). `v85-synthetic-1.2.0.json` ist SYNTHETISCH wie v83/v84 (createGame + Zustandsaufbau über
  * `serialize` auf dem echten Content: Jagen-XP, Fang-Breadcrumb, Fang-Zähler) — Migration v84 → v85
  * byte-genau, Sanitize-Fälle und OfflineSummary.huntCatches deckt hunt-persistence.test.ts ab.
+ *
+ * SAVE_VERSION 85-NACHTRAG (Ausrüstungs-KITS, Chef-Entscheid 28.08.2026 — KEIN weiterer Bump, v85 ist
+ * unveröffentlicht): die v75-Loadout-Vorlagen `equipLoadouts` werden durch echte Kits `equipKits` (3 ×
+ * equipment + equippedInstances) + `activeKit` ersetzt. Der v80-Pin belegt damit die Kette v80 → v85 mit
+ * GENAU SECHS Flächen: die fünf oben plus `equipKits` = [Spiegel der getragenen Ausrüstung, leer, leer]
+ * + `activeKit: 0`, wobei `equipLoadouts` (im v80-Save `[null, null, null]`) aus dem State VERSCHWINDET.
+ * Das v85-Fixture wurde durch die reale Kette neu gepinnt (Präzedenz: synthetisch). Befüllte Vorlagen
+ * → Kits (Items aus dem Inventar) deckt equip-kits-persistence.test.ts ab.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -265,10 +273,19 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(result!.state.huntTraps).toEqual(defaultHuntTraps());
     expect(result!.state.huntCatchSeq).toBe(0);
     expect(result!.state.stats.huntCatches).toBe(0);
+    // Die v85-NACHTRAG-Felder (Ausrüstungs-Kits, Chef-Entscheid 28.08.2026): Kit 0 = Spiegel der
+    // getragenen Ausrüstung, Kits 1/2 leer (die v80-Vorlagen waren alle null — es gab nichts zu
+    // überführen), Kit 0 aktiv; das Alt-Feld `equipLoadouts` ist aus dem State verschwunden.
+    expect(result!.state.activeKit).toBe(0);
+    expect(result!.state.equipKits).toHaveLength(3);
+    expect(result!.state.equipKits[0]!.equipment).toEqual(raw.state.character.equipment);
+    expect(result!.state.equipKits[1]).toEqual(emptyEquipKit());
+    expect(result!.state.equipKits[2]).toEqual(emptyEquipKit());
+    expect((result!.state as unknown as { equipLoadouts?: unknown }).equipLoadouts).toBeUndefined();
 
     // Gegenprobe: das Original um genau diese erwarteten Änderungen ergänzt (Version, buildQueue,
     // nextCropId je Beet, queueDungeon, tavern + die zwei Stats-Zähler, huntTraps + Fang-Nummer +
-    // Fang-Zähler), muss die frisch
+    // Fang-Zähler, equipKits + activeKit statt equipLoadouts), muss die frisch
     // serialisierten Bytes exakt treffen. Reißt DAS, hat die Migration mehr angefasst als
     // angekündigt — und genau davor schützt das Save-Kompat-Gesetz.
     const erwartet = JSON.parse(json) as { version: number; state: GameState };
@@ -283,6 +300,14 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     erwartet.state.huntTraps = defaultHuntTraps();
     erwartet.state.huntCatchSeq = 0;
     erwartet.state.stats.huntCatches = 0;
+    erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026)
+    erwartet.state.equipKits = [
+      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      emptyEquipKit(),
+      emptyEquipKit(),
+    ];
+    erwartet.state.activeKit = 0;
+    delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
     // Achievements 1.2.0 (Chef-Entscheid 27.08.2026, KEIN SAVE_VERSION-Bump): der Katalog wurde von
     // 537 auf 311 Erfolge neu geschnitten (Kill-Tripel, Skill-Stufen 10/20/30/40/60/70/80 entfallen).
     // sanitize streift seit jeher Achievement-IDs ohne Content-Def ab (s. index.ts `knownAch`) —
@@ -423,11 +448,19 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     expect(s.eliteKillSeq).toBe(0);
     expect(s.lastEliteKill).toBeNull();
 
-    // (10) v75 AUSRÜSTUNGS-LOADOUTS (Task #349): ein migriertes Save trägt exakt die
-    //      Migrations-Defaults — drei nie gespeicherte Slots (befüllte Loadouts sichert
-    //      equip-loadouts-persistence.test.ts). Das Feld MUSS im Fixture präsent sein
-    //      (Byte-Identitäts-Guard oben erzwingt den Key).
-    expect(s.equipLoadouts).toEqual([null, null, null]);
+    // (10) v75 AUSRÜSTUNGS-LOADOUTS (Task #349) → v85-NACHTRAG AUSRÜSTUNGS-KITS (Chef-Entscheid
+    //      28.08.2026): das v80-Fixture trägt die drei nie gespeicherten Vorlagen `[null, null, null]`
+    //      (der Key MUSS im Fixture präsent bleiben — er belegt, dass die Kit-Überführung leere
+    //      Vorlagen korrekt verwirft); nach dem Laden gibt es nur noch Kits: Kit 0 = getragene
+    //      Ausrüstung (Meisterring + Werkzeug inklusive), Kits 1/2 leer, Kit 0 aktiv, Altfeld weg.
+    //      Befüllte Vorlagen → Kits sichert equip-kits-persistence.test.ts.
+    expect(Array.isArray((raw.state as unknown as { equipLoadouts?: unknown }).equipLoadouts)).toBe(true);
+    expect(s.activeKit).toBe(0);
+    expect(s.equipKits[0]!.equipment).toEqual(s.character.equipment);
+    expect(s.equipKits[0]!.equipment.ring1).toBe(ring1);
+    expect(s.equipKits[1]).toEqual(emptyEquipKit());
+    expect(s.equipKits[2]).toEqual(emptyEquipKit());
+    expect((s as unknown as { equipLoadouts?: unknown }).equipLoadouts).toBeUndefined();
 
     // (11) v76 DAS LAGER (Task #358) + (12) v77 OFFLINE-VEREDELUNG (Task #359) + (14) v78
     //      DORFKARTE (Task #370): ein migriertes Save trägt exakt die Migrations-Defaults — leeres

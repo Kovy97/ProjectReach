@@ -1741,7 +1741,19 @@
      (max-height/-width) und zentriert (margin auto); der 576px-Deckel (=6×96) hält die Slots ≤96px
      auf sehr großen Screens, sonst schrumpfen sie mit der Panel-Höhe. */
   aspect-ratio: 1 / 2;
-  max-height: min(100%, 576px);
+  /* Kit-Fund 28.08.2026: `max-height` ALLEIN setzt nur eine Decke, keine tatsächliche Größe — mit
+     `height:auto` (Default) sizt der Browser die Box sonst aus dem INTRINSISCHEN Inhalt der Slots.
+     Solange irgendein Slot ein echtes `<img>` trug, lieferte das genug intrinsische Breite, um die
+     Box sichtbar zu füllen (der `min(100%,…)`-Ast griff wie in den Kommentaren unten gemessen).
+     Ein KOMPLETT leeres Kit (alle 14 Slots zeigen nur `.cs-slot-empty-label`, `position:absolute`
+     → trägt NICHTS zur intrinsischen Größe bei) hatte dagegen GAR KEINEN Größen-Anker mehr — die
+     Box kollabierte auf 0×0 und die Puppe wurde unsichtbar. Vorher praktisch unerreichbar (immer
+     mind. ein Teil getragen); mit den drei Ausrüstungs-Kits ist ein komplett leeres Kit 2/3 jetzt
+     ein Alltagszustand (frisches Kit startet leer). Fix: `height` statt nur `max-height` setzen —
+     die Box bekommt IMMER eine definite Größe aus dem verfügbaren Platz, unabhängig vom Inhalt;
+     `max-width` bleibt der Riegel für schmale Panels (Breite weicht dann per aspect-ratio zurück,
+     unverändertes Verhalten). Override unten (`.cs-col-mid .cs-doll`) zieht mit. */
+  height: min(100%, 576px);
   max-width: 100%;
   margin: auto;
   grid-template-columns: 1fr 1fr 1fr;
@@ -2853,7 +2865,9 @@
    1050px lässt dort spürbar mehr Puppe zu, ohne den Wrap zu sprengen (Nachbeobachtung: ~40px
    Rand bleiben). */
 .cs-col-mid .cs-doll {
-  max-height: min(100%, 1050px);
+  /* Kit-Fund 28.08.2026: zieht mit der Basisregel oben mit (`height` statt `max-height`, sonst
+     wäre dieser Deckel bei einem komplett leeren Kit wirkungslos — s. dortiger Kommentar). */
+  height: min(100%, 1050px);
 }
 
 /* ── STATS-TAB: gruppierte Sektionen (components/EquipmentOverview.tsx CombatStatsPanelGrouped)
@@ -2957,148 +2971,47 @@
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   TASK #349 — AUSRÜSTUNGS-LOADOUTS 1/2/3 (logic-dev, 0.2.3-Headline-Feature)
-   Eigener Block ans Dateiende (die #336/#340/#343-Regionen oben bleiben unangetastet).
-   Leiste oben im Equipment-Tab (CharacterPage → EquipLoadoutBar.tsx): drei Anlegen-Knöpfe
-   im ButtonNew-9-Slice-Look (Rezept identisch zu components.css `.it-action-btn`, Task #332)
-   plus je ein kleiner Disketten-Speichern-Knopf. Leerer Slot = gedimmt (disabled).
+   AUSRÜSTUNGS-KITS 1/2/3 (Chef-Entscheid 28.08.2026 — löst den alten #349-Loadout-Block ab:
+   Speichern/Anlegen ist ersatzlos raus, jedes Kit TRÄGT seine Items direkt).
+   Leiste oben im Equipment-Tab (CharacterPage → EquipKitBar.tsx): drei Standard-Stahlrahmen-
+   Knöpfe (`.btn-iron--sm`, design-system.css) plus ein einmaliger Hinweistext darunter.
    ──────────────────────────────────────────────────────────────────────────── */
-.eq-loadout-bar {
+.eq-kit-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px 2px;
+  flex: none;
+}
+
+.eq-kit-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 6px 8px 2px;
-  flex: none;
-  /* 1.0.1-Fix (Clip-Audit G004, 2026-08-23): Label + 3× (Anlegen-Knopf min-width:64px +
-     Speichern-Knopf 30px) brauchen in der Summe ~410px — bei 1366×768/1600×900 ist die
-     Ausrüstungs-Spalte selbst nur ~290-355px breit (`.cs-layout`s 1:1.15:1.55-Aufteilung). Die
-     Zeile lief seitlich über den Panelrand hinaus und wurde dort abgeschnitten ("Loa" statt
-     "Loadouts"). `flex-wrap` statt einer schmaleren/abgeschnittenen Schrift (Chef-Vorgabe:
-     Mindestgröße + Umbruch statt Abschneiden) — bricht bei zu wenig Breite auf eine 2. Zeile um,
-     bei ausreichend Breite (alles ab ~1700px Fensterbreite) bleibt eine Zeile wie bisher. */
+  gap: 8px;
+  /* Muster G004-Fix (Clip-Audit 2026-08-23, damals `.eq-loadout-bar`): bei 1366×768/1600×900
+     ist die Ausrüstungs-Spalte schmal genug, dass drei `.btn-iron--sm` knapp werden können —
+     flex-wrap bricht bei Platzmangel auf eine 2. Zeile um statt Text abzuschneiden. */
   flex-wrap: wrap;
-  row-gap: 4px;
-}
-
-.eq-loadout-label {
-  font-family: var(--font-head);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--gold, #c9a86a);
-  text-shadow: 0 1px 3px #000;
-  margin-right: 4px;
-  /* s. Kommentar bei .eq-loadout-bar: darf nicht schrumpfen (sonst Wortumbruch mitten im Label);
-     zusammen mit flex-wrap oben bricht bei Platzmangel die GANZE Zeile um, nie einzelne Wörter. */
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.eq-loadout-slot {
-  display: flex;
-  align-items: stretch;
-  gap: 3px;
-  /* s. Kommentar bei .eq-loadout-bar (G004-Fix): nie schrumpfen, damit Anlegen-/Speichern-Knopf
-     nie gequetscht werden — bei Platzmangel wandert der ganze Slot per flex-wrap in die 2. Zeile. */
-  flex-shrink: 0;
+  row-gap: 6px;
 }
 
 /* HoverTip-Wrapper (as="div") soll das Layout nicht aufbrechen. */
-.eq-loadout-tipwrap {
+.eq-kit-tipwrap {
   display: flex;
 }
 
-.eq-loadout-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 64px;
-  height: 40px;
-  padding: 0 12px;
-  background: transparent;
-  border-style: solid;
-  border-color: transparent;
-  border-image: url("../assets/ui/buttons/button_new.webp") 90 92 90 90 fill / 12px 12px 12px 12px;
-  border-radius: 0;
-  color: #ffffff;
-  text-shadow: 0 1px 3px #000;
-  cursor: pointer;
-  font-family: var(--font-head);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  transition: color 0.12s;
+.eq-kit-btn {
+  min-width: 92px;
 }
 
-.eq-loadout-btn:hover {
-  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
-}
-
-.eq-loadout-btn:active {
-  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
-}
-
-/* Leerer Loadout-Slot: gedimmt, kein Hover-Wechsel (Muster `.it-action-btn:disabled`). */
-.eq-loadout-btn:disabled,
-.eq-loadout-btn.eq-loadout-empty {
-  filter: grayscale(75%) brightness(0.6);
-  opacity: 0.7;
-}
-
-.eq-loadout-btn:disabled:hover,
-.eq-loadout-btn:disabled:active {
-  border-image-source: url("../assets/ui/buttons/button_new.webp");
-}
-
-.eq-loadout-btn-icon {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-  filter: drop-shadow(0 1px 2px #000);
-}
-
-.eq-loadout-btn-num {
-  line-height: 1;
-}
-
-.eq-loadout-save-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 40px;
-  padding: 0;
-  background: transparent;
-  border-style: solid;
-  border-color: transparent;
-  border-image: url("../assets/ui/buttons/button_new.webp") 90 92 90 90 fill / 10px 10px 10px 10px;
-  border-radius: 0;
-  color: #d8cdb6;
-  cursor: pointer;
-}
-
-.eq-loadout-save-btn:hover {
-  border-image-source: url("../assets/ui/buttons/button_new_hover.webp");
-  color: #ffffff;
-}
-
-.eq-loadout-save-btn:active {
-  border-image-source: url("../assets/ui/buttons/button_new_pressed.webp");
-}
-
-.eq-loadout-save-icon {
-  width: 16px;
-  height: 16px;
-}
-
-/* Erfolgs-Ton der GameAlert-Einblendung (GameAlert.tsx `tone:"success"`, Task #349):
-   goldene Bestätigung statt Fehler-Rot — global gültige Klasse, lebt hier im #349-Block,
-   weil der einzige Sender (EquipLoadoutBar) zum Character-Screen gehört. */
-.game-alert-success {
-  color: var(--gold, #c9a86a);
+.eq-kit-hint {
+  margin: 0;
+  max-width: 42ch;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 /* Chef 27.08.2026 (Porträt-Picker, gleiche Regel wie in der Charaktererstellung): Stahlrahmen der

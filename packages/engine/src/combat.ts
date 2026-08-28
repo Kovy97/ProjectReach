@@ -559,13 +559,18 @@ interface AttackResult {
  * Aggregierte Spezial-Effekte je Kind. Quelle: ALLE ausgerüsteten Slots (Waffe, Offhand-Totems
  * mit packLeader, Rüstungs-Chase mit thorns), instanz-bewusst (Enchant-Procs). Status-Procs
  * (burn/…) bleiben davon getrennt Mainhand-Sache (`applyWeaponEffects`). GLEICHE Kinds aus
- * mehreren Quellen stapeln NICHT — die stärkste Magnitude gewinnt (§2.3-konservativ);
+ * mehreren Quellen stapeln NICHT — die stärkste Magnitude gewinnt (§2.3-konservativ); AUSNAHME (Spieler-Report
+ * 28.08.2026, Chef-GO): die flachen Kill-Rückflüsse healOnKill/manaOnKill/cooldownOnKill SUMMIEREN sich über alle
+ * Quellen (Armschützer +4 LP und Klinge +2 LP = +6 LP je Kill), weil ein Spieler zwei Flats erwartbar addiert;
  * VERSCHIEDENE Kinds stapeln frei und wirken multiplikativ auf den Einzelschlag (§2.3.3).
  */
 type SpecialEffects = Partial<Record<SpecialEffectType, WeaponEffect>>;
 
+/** Flache Kill-Rückflüsse: Magnituden addieren sich über alle Quellen (s. Kopfkommentar). */
+const ADDITIVE_KILL_FLATS: ReadonlySet<SpecialEffectType> = new Set<SpecialEffectType>(["healOnKill", "manaOnKill", "cooldownOnKill"]);
+
 /** Sammelt die Spezial-Effekte der aktuellen Ausrüstung. Rein lesend, kein RNG. */
-function collectSpecialEffects(state: GameState, content: ContentDB): SpecialEffects {
+export function collectSpecialEffects(state: GameState, content: ContentDB): SpecialEffects {
   const fx: SpecialEffects = {};
   const c = state.character;
   for (const slot of EQUIP_SLOTS) {
@@ -584,7 +589,8 @@ function collectSpecialEffects(state: GameState, content: ContentDB): SpecialEff
       const kind = e.type;
       if (isStatusEffectType(kind)) continue;
       const existing = fx[kind];
-      if (!existing || e.magnitude > existing.magnitude) fx[kind] = e;
+      if (existing && ADDITIVE_KILL_FLATS.has(kind)) fx[kind] = { ...existing, magnitude: existing.magnitude + e.magnitude };
+      else if (!existing || e.magnitude > existing.magnitude) fx[kind] = e;
     }
   }
   return fx;

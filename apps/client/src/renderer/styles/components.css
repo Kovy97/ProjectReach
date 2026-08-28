@@ -113,6 +113,10 @@
 .item-cell {
   position: relative;
   cursor: pointer;
+  /* Chef 28.08.2026: Shift-Klick (Bank: alles einlagern) zog eine Textmarkierung über die Zellen. Zelleninhalt
+     (Name, Menge) ist nie zum Kopieren gedacht. */
+  user-select: none;
+  -webkit-user-select: none;
   /* 1.1.0: Das Bild ist 88 % gross, die Zelle hat es aber nie zentriert — es sass oben links.
      In den fast quadratischen Inventar- und Bankfeldern faellt der Rest kaum auf, im deutlich
      groesseren Shop-Bildfeld klebte das Symbol sichtbar in der Ecke. */

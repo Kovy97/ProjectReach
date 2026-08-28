@@ -642,6 +642,24 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     Köder). Migration (< 85): `huntTraps = defaultHuntTraps()`, `huntCatchSeq = 0`, `stats.huntCatches = 0`. sanitizeState:
 //     Fallen nur mit bekannter Zone, remainingMs ≥ 0, Länge exakt HUNT_TRAP_SLOTS, lastCatch nur mit bekanntem Monster/Items.
 //     Keine Item-ID-Renames (Roben-Rezepte wechseln nur ihre Zutaten).
+//     NACHTRAG im SELBEN Bump (v85 ist unveröffentlicht — kein weiterer Bump; Chef-Entscheid 28.08.2026,
+//     Spieler-Feedback „3 separate equipment kits, not unequip/equip modes, just swap"): die v75-Loadout-
+//     VORLAGEN `equipLoadouts: (EquipLoadout | null)[]` werden ERSETZT durch ECHTE KITS
+//     `equipKits: EquipKit[]` (fixe Länge EQUIP_KIT_COUNT = 3; ein Kit = `equipment` + `equippedInstances`
+//     in der Form von `character`) + `activeKit: 0|1|2`. Die WAHRHEIT des aktiven Kits bleibt
+//     `character.equipment`/`equippedInstances` (alle Pfade lesen weiter dort), `equipKits[activeKit]` ist
+//     dessen Spiegel (`syncActiveKit` beim Umschalten/Serialisieren/Sanitize). Umschalten
+//     (engine/loadouts.ts `switchEquipKit`) tauscht das GANZE Set inkl. Instanzen (Verzauberung reist mit),
+//     verschiebt nichts ins Inventar, nur außerhalb des Kampfes (`combat.monsterId === null`). RNG-frei.
+//     Migration (jeder Save ohne `equipKits`, also < 85 UND frühe v85-Stände): Kit 0 = getragene
+//     Ausrüstung (Loadout 0 wird VERWORFEN — Kit 0 ist das, was man trägt); für Loadout N (1..2) wird jede
+//     Vorlagen-Position, deren Item (bzw. Instanz per instanceId) JETZT im INVENTAR liegt, aus dem Inventar
+//     ENTNOMMEN und in Kit N gelegt (Instanz aus inventory.instances mitsamt Affixen/Suffix); fehlt das Teil
+//     (Bank/Vault/verkauft/getragen), bleibt der Platz leer — nichts wird dupliziert. Alt-Saves ohne
+//     `equipLoadouts`: Kits 1/2 leer. `equipLoadouts` wird aus dem State gelöscht (Typ entfernt).
+//     sanitizeState: Länge exakt 3, activeKit 0..2, je Kit nur bekannte + slot-korrekte Items (Rettung in
+//     Bank/Gear-Vault wie beim Charakter), Instanz-Invariante je Kit, Zweihand ⇒ Offhand leer (Rückgabe über
+//     den Grant-Pfad), Kit[activeKit] am Ende = Spiegel des Charakters. Keine Item-ID-Renames.
 export const SAVE_VERSION = 85;
 
 /**
@@ -1930,49 +1948,40 @@ export const EQUIP_SLOTS = [
 // restlos entfernt — Alt-Saves migriert v57 (Köcher verfällt gegen Gold-Gutschrift).
 export type EquipSlot = (typeof EQUIP_SLOTS)[number];
 
-// ── Ausrüstungs-Loadouts 1/2/3 (SAVE_VERSION 75, Task #349) ─────────────────────────────────
-/** Anzahl der Loadout-Slots — FIX 3 (je Kampfstil einer; bewusst nicht konfigurierbar). */
-export const EQUIP_LOADOUT_COUNT = 3;
-/**
- * Die von Loadouts erfassten Ausrüstungs-Slots — alle Kampf-Slots, bewusst OHNE tool1/tool2/tool3:
- * Werkzeuge sind Skill-Ausrüstung (Spitzhacke/Angel/…), kein Kampfstil-Wechselgut — sie bei jedem
- * Stil-Wechsel mit umzuziehen würde nur Inventar-Churn erzeugen (`bestToolSpeed` liest sie ohnehin
- * auch aus dem Inventar). REIHENFOLGE IST VERTRAG für engine/loadouts.ts `applyLoadout`:
- * mainhand VOR offhand (Zweihand-Verdrängung greift zuerst), ring1 VOR ring2 (equipItem füllt
- * Ringe kanonisch ring1→ring2 auf).
- */
-export const LOADOUT_SLOTS: readonly EquipSlot[] = [
-  "mainhand",
-  "offhand",
-  "helmet",
-  "amulet",
-  "body",
-  "legs",
-  "gloves",
-  "boots",
-  "cape",
-  "ring1",
-  "ring2",
-];
+// ── Ausrüstungs-Kits 1/2/3 (SAVE_VERSION 85 — unveröffentlicht; Chef-Entscheid 28.08.2026) ────
+/** Anzahl der Kits — FIX 3 (je Kampfstil eines; bewusst nicht konfigurierbar). */
+export const EQUIP_KIT_COUNT = 3;
+/** Gültiger Kit-Index (0..EQUIP_KIT_COUNT-1). */
+export type EquipKitIndex = 0 | 1 | 2;
 
 /**
- * Ein Loadout-Eintrag: referenziert das Item eines Slots per Basis-`itemId`; trägt der Slot eine
- * modifizierte Instanz (Verzauberung/Suffix), zusätzlich deren `instanceId` — beim Anlegen wird
- * EXAKT diese Instanz gesucht (Inventar-Tasche → Gear-Vault); ist sie nicht mehr im Besitz
- * (verkauft/zersalvagt), gilt der Slot als fehlend (KEIN stiller Basis-Item-Ersatz).
+ * Ein Ausrüstungs-KIT: besitzt seine EIGENEN Items je Slot — exakt die Form von
+ * `character.equipment` + `character.equippedInstances` (Spieler-Feedback „3 separate equipment
+ * kits, not unequip/equip modes, just swap"; Chef-Entscheid 28.08.2026). Ersetzt die v75-Loadout-
+ * VORLAGEN (Snapshots aus itemId/instanceId, die beim Anlegen aus Inventar/Bank bedient wurden):
+ * ein Kit trägt seine Teile selbst, ein Wechsel (engine/loadouts.ts `switchEquipKit`) tauscht das
+ * GANZE Set — verbraucht nichts, verschiebt nichts ins Inventar, nur außerhalb des Kampfes.
+ * Alle EQUIP_SLOTS inkl. tool1..tool3 (ganzes Set tauscht; die alte LOADOUT_SLOTS-Ausnahme für
+ * Werkzeuge entfällt — es gibt keinen Inventar-Churn mehr, den sie verhindern müsste).
+ * Invarianten je Kit (sanitizeState): `equippedInstances[slot]` existiert nur, wenn
+ * `equipment[slot] === equippedInstances[slot].baseItemId`; Zweihandwaffe im Mainhand ⇒ Offhand leer.
  */
-export interface EquipLoadoutEntry {
-  itemId: ItemId;
-  instanceId?: string;
+export interface EquipKit {
+  equipment: Record<EquipSlot, ItemId | null>;
+  equippedInstances: Partial<Record<EquipSlot, ItemInstance>>;
 }
 
-/**
- * Ein gespeichertes Ausrüstungs-Loadout (SAVE_VERSION 75): Snapshot der LOADOUT_SLOTS.
- * NUR belegte Slots tragen einen Key (fehlender Key = Slot war beim Speichern leer und wird beim
- * Anlegen geleert) — hält den Save klein und macht `{}` (nackt gespeichert) von `null`
- * (nie gespeichert, GameState.equipLoadouts) unterscheidbar.
- */
-export type EquipLoadout = Partial<Record<EquipSlot, EquipLoadoutEntry>>;
+/** Leeres Kit (alle Slots null, keine Instanzen). */
+export function emptyEquipKit(): EquipKit {
+  const equipment = {} as Record<EquipSlot, ItemId | null>;
+  for (const slot of EQUIP_SLOTS) equipment[slot] = null;
+  return { equipment, equippedInstances: {} };
+}
+
+/** Frische Kit-Liste fixer Länge EQUIP_KIT_COUNT (alle leer). */
+export function defaultEquipKits(): EquipKit[] {
+  return Array.from({ length: EQUIP_KIT_COUNT }, () => emptyEquipKit());
+}
 
 // Sweep-Fund T6 (2026-07-11): Slot-Namen erscheinen im Tooltip-Kopf/Paperdoll → alle 7 Sprachen.
 export const EQUIP_SLOT_LABELS: Record<EquipSlot, LocalizedString> = {
@@ -5549,6 +5558,8 @@ export interface PlayerStats {
   producedById: Record<ItemId, number>;
   /** Jagen (SAVE 85): erfolgreiche Fänge gesamt (kein Kill-Zähler, s. Chef-Entscheid J2). Migration: 0. */
   huntCatches: number;
+  /** Jagen (28.08.2026): Fänge je Monster-Art; 0/fehlend = Erstfang (HUNT_FIRST_CATCH_MULT). Migration: {}. */
+  huntCatchesById: Record<MonsterId, number>;
 }
 
 /**
@@ -6147,13 +6158,18 @@ export interface GameState {
    */
   lastEliteKill: EliteKillSummary | null;
   /**
-   * Ausrüstungs-Loadouts 1/2/3 (SAVE_VERSION 75, Task #349): fixe Länge EQUIP_LOADOUT_COUNT (3).
-   * Jeder Slot ist `null` (nie gespeichert — UI dimmt ihn) oder ein Snapshot der LOADOUT_SLOTS
-   * (`EquipLoadout`, ohne Werkzeug-Slots — s. LOADOUT_SLOTS-Doku). Speichern/Anlegen ausschließlich
-   * über engine/loadouts.ts (`saveLoadout`/`applyLoadout` — Anlegen läuft Item für Item über den
-   * NORMALEN Equip-Pfad inkl. Requirements-Prüfung). RNG-frei, reine Spieler-Aktion.
+   * Ausrüstungs-Kits 1/2/3 (SAVE_VERSION 85, Chef-Entscheid 28.08.2026; ersetzt die v75-Loadout-
+   * Vorlagen `equipLoadouts`): fixe Länge EQUIP_KIT_COUNT (3), jedes Kit BESITZT seine Teile.
+   * WAHRHEIT des AKTIVEN Kits ist `character.equipment`/`character.equippedInstances` (alle
+   * bestehenden Pfade — computeStats, Kampf, equip/unequip — lesen und schreiben weiter dort);
+   * `equipKits[activeKit]` ist nur dessen SPIEGEL und darf zur Laufzeit stale sein. Synchronisiert
+   * wird beim Umschalten (`switchEquipKit`), beim Serialisieren und im Sanitize (`syncActiveKit`,
+   * engine/loadouts.ts). Inaktive Kits tragen ihre Items SELBST (nicht im Inventar); ein Wechsel
+   * verschiebt nichts und ist nur außerhalb des Kampfes erlaubt. RNG-frei, reine Spieler-Aktion.
    */
-  equipLoadouts: (EquipLoadout | null)[];
+  equipKits: EquipKit[];
+  /** Index des aktiven Kits (0..EQUIP_KIT_COUNT-1). Alt-Saves (< 85 bzw. ohne Kits): 0. */
+  activeKit: EquipKitIndex;
   /**
    * Das Lager (Encampment Phase 1, SAVE_VERSION 76, Task #358): Gebäude-Stufen + der EINE
    * Bautrupp-Auftrag + Fertigstellungs-Breadcrumb. Verben/Selektoren AUSSCHLIESSLICH über
@@ -6183,7 +6199,19 @@ export interface GameState {
 
 export const HUNT_TRAP_SLOTS = 6;
 /** Jagen-Stufe, ab der Platz i (0-basiert) offen ist. */
-export const HUNT_SLOT_LEVELS: readonly number[] = [1, 10, 25, 45, 65, 85];
+// Chef 28.08.2026: 1/10/25/45/65/85 war utopisch langsam (zweite Falle erst nach Stunden), deshalb früher.
+export const HUNT_SLOT_LEVELS: readonly number[] = [1, 5, 15, 30, 50, 75];
+/**
+ * Jagen-XP je Fang (Chef 28.08.2026): die Kampf-XP des GEFANGENEN Monsters × HUNT_XP_PER_CATCH (ein Fang = fünf
+ * Beute-Würfe = fünf Kills); der ERSTE Fang jeder Art zusätzlich × HUNT_FIRST_CATCH_MULT (Jagdbuch-Entdeckung, ×10 gesamt).
+ * Huhn 10, Eber 100, Ziege 210, Goblin 120, Dornenwolf 980, Roc 10 250, Wyvern 28 250; sechs Fallen im Hochland
+ * ≈ 80 000 XP/h, also auf der Anbau-Kurve (99 in ~150 h); Stufe 5 (zweite Falle) fällt auf den Weiden nach drei bis vier Fängen.
+ */
+export const HUNT_XP_PER_CATCH = 5;
+export const HUNT_FIRST_CATCH_MULT = 2;
+export function huntCatchXp(monsterXp: number): number {
+  return Math.max(1, Math.round(Math.max(0, monsterXp) * HUNT_XP_PER_CATCH));
+}
 export const HUNT_LOOT_ROLLS = 5;
 export const HUNT_CATCH_BASE = 0.7;
 export const HUNT_CATCH_PER_LEVEL = 0.005;
@@ -6205,7 +6233,7 @@ export interface HuntZoneDef {
   levelRequired: number;
   /** Fallenzeit in ms (5 min Weiden … 60 min Götzenhalle). */
   trapMs: number;
-  /** Jagen-XP je erfolgreichem Fang. */
+  /** Historisch: Jagen-XP je Fang. Seit 28.08.2026 zählt `huntCatchXp(monster.xp)`; das Feld bleibt als Content-Kennzahl. */
   xp: number;
 }
 

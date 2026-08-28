@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { content } from "@hearthforge/content";
 import { isZoneUnlocked, levelFromXp, xpForLevel } from "@hearthforge/engine";
 import {
   BAIT_ITEM_ID,
   DUNGEON_VARIANT_PREFIX,
+  HUNT_LOOT_ROLLS,
   HUNT_SLOT_LEVELS,
   HUNT_TRAPPABLE_FAMILIES,
   HUNT_TRAP_SLOTS,
 } from "@hearthforge/shared";
-import type { GameState, HuntTrap, HuntZoneDef } from "@hearthforge/shared";
+import type { GameState, HuntTrap, HuntZoneDef, MonsterDef } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { formatNum } from "../util/format";
@@ -20,6 +21,7 @@ import { SKILL_EMOJI_FALLBACK } from "../skillIcons";
 import { getZoneBackgroundCard } from "../zoneBackgrounds";
 import { getHuntingTrapArt } from "../huntingArt";
 import { getHuntBookCollapsed, setHuntBookCollapsed } from "../util/uiPrefs";
+import { registerEscCloser } from "../util/escStack";
 import { openItemWikiModal } from "../components/ItemWikiModal";
 import {
   clearHuntTrap,
@@ -103,6 +105,39 @@ function huntZoneProgress(state: GameState, c: typeof content, zoneId: string): 
 function reasonText(t: (key: string) => string, reason: HuntSetReason, levelRequired: number): string {
   if (reason === "level") return t("hunting.reason.level").replace("{n}", String(levelRequired));
   return t(`hunting.reason.${reason}`);
+}
+
+/** Grund, warum ein Gebiet im Gebiet-Modal (Layout-Vorgabe #3, Chef-Auftrag 28.08.2026) abgedunkelt
+ *  ist — bewusst OHNE Platz-/Köder-Achse (die prüft erst der „Falle stellen"-Knopf unten über das
+ *  volle `huntSetReason`): Browsen soll nicht wegen leerem Köder-Vorrat jedes Gebiet ausgrauen. */
+type ZoneGateReason = "zone_locked" | "level" | "nothing_huntable";
+function zoneGateReason(state: GameState, c: typeof content, huntLevel: number, zoneId: string): ZoneGateReason | null {
+  const zone = huntZoneDef(c, zoneId);
+  if (!zone || !isZoneUnlocked(state, c, zoneId)) return "zone_locked";
+  if (huntLevel < zone.levelRequired) return "level";
+  if (huntableMonsters(state, c, zoneId).length === 0) return "nothing_huntable";
+  return null;
+}
+
+/** Gegenstück zu `huntCandidatesForZone`: Zonenmonster, die NIE fangbar werden (Struktur, nicht
+ *  „noch nicht besiegt") — alle Zonenmonster minus deren Kandidaten. Für den „Nicht fangbar"-
+ *  Abschnitt des Gebiet-Modals, damit der Spieler den Grund sieht statt eine Lücke zu raten. */
+function huntNonTrappableForZone(c: typeof content, zoneId: string): MonsterDef[] {
+  const candidateIds = new Set(huntCandidatesForZone(c, zoneId).map((m) => m.id));
+  return Object.values(c.monsters).filter((m) => m.zone === zoneId && !candidateIds.has(m.id));
+}
+
+/** i18n-Key des Grunds aus `huntNonTrappableForZone` — dieselben drei Signale wie die private
+ *  `bossMonsterIds`/Familien-Prüfung der Engine (`packages/engine/src/hunting.ts`): Dungeon-
+ *  gebunden → Familie außerhalb `HUNT_TRAPPABLE_FAMILIES` (zeigt die Familie selbst) → sonst Boss
+ *  (einzig verbleibender Ausschlussgrund für ein zonen-/familienpassendes, nicht dungeongebundenes
+ *  Monster). */
+function nonTrappableReasonKey(m: MonsterDef): string {
+  if (m.dungeonOnly || m.id.startsWith(DUNGEON_VARIANT_PREFIX)) return "hunting.picker.reason.dungeon";
+  if (!m.family || !HUNT_TRAPPABLE_FAMILIES.includes(m.family)) {
+    return m.family ? `hunting.picker.family.${m.family}` : "hunting.picker.reason.other";
+  }
+  return "hunting.picker.reason.boss";
 }
 
 /** Letzter Fang eines Platzes: Beute-Chips + Gold, oder „leer ausgegangen", oder nichts (noch nie
@@ -221,69 +256,275 @@ function HuntHeader({ onNavigate }: { onNavigate: (id: string) => void }): JSX.E
 }
 
 /**
- * Gebietswahl-Modal (Layout-Vorgabe #3): kein natives `<select>` mehr — Klick auf „Falle stellen"
- * eines leeren Platzes öffnet dieses kleine Modal (Muster QueueAmountModal: Stahlrahmen, Basalt,
- * klein), listet ALLE `content.huntingZones`, gesperrte Gebiete ausgegraut mit dem Grund aus
- * `huntSetReason`. Auswahl stellt die Falle sofort (zieht 1 Köder, Engine-Pfad `setHuntTrap`).
+ * Gebietswahl-Modal (Layout-Vorgabe #3, Chef-Auftrag 28.08.2026 — großes zweispaltiges Fenster mit
+ * vollen Zonen-Details statt der alten schmalen Klick-sofort-Liste): links eine scrollbare Liste
+ * ALLER `content.huntingZones` (nur Auswahl, stellt noch NICHTS), rechts das Detail des gewählten
+ * Gebiets (Kulissen-Banner, vier Kennzahl-Kacheln, „Fangbar"-Tabelle mit Beute-Chips, aufklappbarer
+ * „Nicht fangbar"-Abschnitt). Erst der Fußzeilen-Knopf „Falle stellen" committet (zieht 1 Köder,
+ * Engine-Pfad `setHuntTrap`, wie zuvor).
  */
 function HuntZonePicker({ slot, onClose }: { slot: number; onClose: () => void }): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
   const trap = state.huntTraps[slot] as HuntTrap | undefined;
   const allZones = [...(content.huntingZones ?? [])].sort((a, b) => a.levelRequired - b.levelRequired);
+  const huntLevel = levelFromXp(state.skills["hunting"]?.xp ?? 0);
+  const baitCount = huntBaitCount(state);
 
-  function pick(zoneId: string): void {
-    setHuntTrap(state, content, slot, zoneId, trap?.autoRebait ?? true);
+  useEffect(() => registerEscCloser("modal", onClose), [onClose]);
+
+  // Vorauswahl (Layout-Vorgabe): die Falle hat bereits eine Zone → diese; sonst die höchste
+  // WIRKLICH stellbare Zone (volles `huntSetReason` inkl. Köder) → sonst zumindest die höchste
+  // freigeschaltete (Gate ohne Köder-Achse, s. `zoneGateReason`) → sonst die erste der Liste. Nur
+  // beim ersten Öffnen berechnet (`useState`-Initializer) — danach steuert allein der Klick.
+  const [selected, setSelected] = useState<string | null>(() => {
+    if (trap?.zoneId) return trap.zoneId;
+    const byFull = [...allZones].reverse().find((z) => huntSetReason(state, content, slot, z.zoneId) === "ok");
+    if (byFull) return byFull.zoneId;
+    const byGate = [...allZones].reverse().find((z) => zoneGateReason(state, content, huntLevel, z.zoneId) === null);
+    if (byGate) return byGate.zoneId;
+    return allZones[0]?.zoneId ?? null;
+  });
+  // „Nicht fangbar" startet zugeklappt (Layout-Vorgabe) — je Zone gemerkt, damit ein Zonenwechsel
+  // einen einmal aufgeklappten Zustand nicht wegwirft (Muster HuntBook `openRows`).
+  const [ntOpenZones, setNtOpenZones] = useState<Set<string>>(() => new Set());
+
+  function confirm(): void {
+    if (!selected) return;
+    setHuntTrap(state, content, slot, selected, trap?.autoRebait ?? true);
     onClose();
   }
 
+  const selZone = selected ? (allZones.find((z) => z.zoneId === selected) ?? null) : null;
+  const selZoneMeta = selZone ? content.zones.find((zz) => zz.id === selZone.zoneId) : undefined;
+  const selName = selZoneMeta ? tr(selZoneMeta.name) : (selZone?.zoneId ?? "");
+  const selBg = selZone ? getZoneBackgroundCard(selZone.zoneId) : null;
+  const selChance = selZone ? huntCatchChance(state, content, selZone.zoneId) : 0;
+  const setReason: HuntSetReason = selZone ? huntSetReason(state, content, slot, selZone.zoneId) : "no_slot";
+  const canSet = setReason === "ok";
+  const candidates = selZone ? huntCandidatesForZone(content, selZone.zoneId) : [];
+  const selProgress = selZone ? huntZoneProgress(state, content, selZone.zoneId) : { defeated: 0, total: 0 };
+  const nonTrappable = selZone ? huntNonTrappableForZone(content, selZone.zoneId) : [];
+  const ntOpen = selZone ? ntOpenZones.has(selZone.zoneId) : false;
+
+  function toggleNt(): void {
+    if (!selZone) return;
+    const zoneId = selZone.zoneId;
+    setNtOpenZones((prev) => {
+      const next = new Set(prev);
+      if (next.has(zoneId)) next.delete(zoneId);
+      else next.add(zoneId);
+      return next;
+    });
+  }
+
   return (
-    <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="hunt-zone-modal">
-        <div className="hunt-zone-modal-head">
-          <span className="hunt-zone-modal-title">{t("hunting.pickZone.title")}</span>
-          <button type="button" className="hunt-zone-modal-close" aria-label={t("common.close")} onClick={onClose}>
+    <div
+      className="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="hzp-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="hzp-head">
+          <span className="hzp-title">{t("hunting.picker.title").replace("{n}", String(slot + 1))}</span>
+          <button type="button" className="hzp-close" aria-label={t("common.close")} onClick={onClose}>
             ×
           </button>
         </div>
+
         {allZones.length === 0 ? (
           <p className="muted">{t("hunting.inert")}</p>
         ) : (
-          <div className="hunt-zone-list">
-            {allZones.map((z) => {
-              const zoneMeta = content.zones.find((zz) => zz.id === z.zoneId);
-              const name = zoneMeta ? tr(zoneMeta.name) : z.zoneId;
-              const bg = getZoneBackgroundCard(z.zoneId);
-              const chance = huntCatchChance(state, content, z.zoneId);
-              const progress = huntZoneProgress(state, content, z.zoneId);
-              const reason = huntSetReason(state, content, slot, z.zoneId);
-              const ok = reason === "ok";
-              return (
+          <>
+            <div className="hzp-body">
+              <div className="hzp-col-list">
+                {allZones.map((z) => {
+                  const zoneMeta = content.zones.find((zz) => zz.id === z.zoneId);
+                  const name = zoneMeta ? tr(zoneMeta.name) : z.zoneId;
+                  const bg = getZoneBackgroundCard(z.zoneId);
+                  const chance = huntCatchChance(state, content, z.zoneId);
+                  const progress = huntZoneProgress(state, content, z.zoneId);
+                  const gate = zoneGateReason(state, content, huntLevel, z.zoneId);
+                  const isSel = z.zoneId === selected;
+                  return (
+                    <button
+                      key={z.zoneId}
+                      type="button"
+                      className={`hzp-zone-tile${gate ? " locked" : ""}${isSel ? " is-active" : ""}`}
+                      style={bg ? { backgroundImage: `url("${bg}")` } : undefined}
+                      title={gate ? reasonText(t, gate, z.levelRequired) : undefined}
+                      onClick={() => setSelected(z.zoneId)}
+                    >
+                      <span className="hzp-zone-tile-name">{name}</span>
+                      <span className="hzp-zone-tile-meta">
+                        {t("skill.levelShort").replace("{n}", String(z.levelRequired))}
+                        {" · "}
+                        {t("hunting.trapTime").replace("{time}", formatMs(z.trapMs))}
+                        {" · "}
+                        {t("hunting.catchChance").replace("{pct}", String(Math.round(chance * 100)))}
+                      </span>
+                      <span className="hzp-zone-tile-meta">
+                        {t("hunting.beatenCount")
+                          .replace("{n}", String(progress.defeated))
+                          .replace("{total}", String(progress.total))}
+                      </span>
+                      {gate && <span className="hzp-zone-tile-reason">{reasonText(t, gate, z.levelRequired)}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="hzp-col-detail">
+                {selZone ? (
+                  <>
+                    <div
+                      className={`hzp-banner${selBg ? " has-bg" : ""}`}
+                      style={selBg ? { backgroundImage: `url("${selBg}")` } : undefined}
+                    >
+                      <span className="hzp-banner-name">{selName}</span>
+                    </div>
+
+                    <div className="hzp-stats">
+                      <div className="hzp-stat">
+                        <span className="hzp-stat-label muted">{t("hunting.picker.statLevel")}</span>
+                        <span className="hzp-stat-value">
+                          {t("skill.levelShort").replace("{n}", String(selZone.levelRequired))}
+                        </span>
+                      </div>
+                      <div className="hzp-stat">
+                        <span className="hzp-stat-label muted">{t("hunting.picker.statTrapTime")}</span>
+                        <span className="hzp-stat-value">{formatMs(selZone.trapMs)}</span>
+                      </div>
+                      <div className="hzp-stat">
+                        <span className="hzp-stat-label muted">{t("hunting.picker.statChance")}</span>
+                        <span className="hzp-stat-value">{Math.round(selChance * 100)}%</span>
+                      </div>
+                      <div className="hzp-stat">
+                        <span className="hzp-stat-label muted">{t("hunting.picker.statBait")}</span>
+                        <span className="hzp-stat-value">
+                          {t("hunting.picker.baitValue").replace("{n}", String(baitCount))}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="hzp-section">
+                      <div className="hzp-section-head">
+                        <span className="hzp-section-name">{t("hunting.picker.trappable")}</span>
+                        <span className="hzp-section-count muted">
+                          {t("hunting.beatenCount")
+                            .replace("{n}", String(selProgress.defeated))
+                            .replace("{total}", String(selProgress.total))}
+                        </span>
+                      </div>
+                      {candidates.length === 0 ? (
+                        <p className="muted hzp-empty">{t("hunting.book.noneHere")}</p>
+                      ) : (
+                        <div className="hzp-mon-list">
+                          {candidates.map((m) => {
+                            const defeated = (state.monsterKills[m.id] ?? 0) >= 1;
+                            const src = getMonsterSrc(m.id);
+                            const seen = state.seenDrops[m.id] ?? [];
+                            const lootSorted = [...m.loot].sort((a, b) => b.chance - a.chance);
+                            return (
+                              <div key={m.id} className={`hzp-mon-row${defeated ? " is-defeated" : ""}`}>
+                                <div className="hzp-mon-img">
+                                  {src ? (
+                                    <img loading="lazy" decoding="async" src={src} alt="" className="pixelart" />
+                                  ) : (
+                                    <span aria-hidden="true">🐾</span>
+                                  )}
+                                </div>
+                                <div className="hzp-mon-info">
+                                  <div className="hzp-mon-name-row">
+                                    <span className={`hunt-book-check${defeated ? " checked" : ""}`} aria-hidden="true">
+                                      {defeated ? "✓" : "○"}
+                                    </span>
+                                    <span className="hzp-mon-name">{tr(m.name)}</span>
+                                    <span className="hzp-mon-lvl muted">
+                                      {t("skill.levelShort").replace("{n}", String(m.level))}
+                                    </span>
+                                    <span className={`hzp-mon-status${defeated ? " defeated" : ""}`}>
+                                      {defeated ? t("bestiary.seal.defeated") : t("hunting.picker.undefeatedHint")}
+                                    </span>
+                                  </div>
+                                  {(lootSorted.length > 0 || m.gold > 0) && (
+                                    <div className="hzp-mon-loot">
+                                      {lootSorted.map((roll) => (
+                                        <HuntLootChip key={roll.itemId} itemId={roll.itemId} discovered={seen.includes(roll.itemId)} />
+                                      ))}
+                                      <HuntGoldRangeChip monster={m} />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {nonTrappable.length > 0 && (
+                      <div className="hzp-section">
+                        <button type="button" className="hzp-nt-head" onClick={toggleNt} aria-expanded={ntOpen}>
+                          <span className="hzp-nt-caret">{ntOpen ? "▾" : "▸"}</span>
+                          <span className="hzp-section-name">{t("hunting.picker.notTrappable")}</span>
+                          <span className="hzp-section-count muted">{nonTrappable.length}</span>
+                        </button>
+                        {ntOpen && (
+                          <div className="hzp-mon-list">
+                            {nonTrappable.map((m) => {
+                              const src = getMonsterSrc(m.id);
+                              return (
+                                <div key={m.id} className="hzp-mon-row hzp-mon-row--nt">
+                                  <div className="hzp-mon-img">
+                                    {src ? (
+                                      <img loading="lazy" decoding="async" src={src} alt="" className="pixelart" />
+                                    ) : (
+                                      <span aria-hidden="true">🐾</span>
+                                    )}
+                                  </div>
+                                  <div className="hzp-mon-info">
+                                    <div className="hzp-mon-name-row">
+                                      <span className="hzp-mon-name">{tr(m.name)}</span>
+                                      <span className="hzp-mon-lvl muted">
+                                        {t("skill.levelShort").replace("{n}", String(m.level))}
+                                      </span>
+                                    </div>
+                                    <span className="hzp-nt-reason">{t(nonTrappableReasonKey(m))}</span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="muted">{t("hunting.inert")}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="hzp-footer">
+              <span className="hzp-footer-hint muted">{t("hunting.picker.footerHint")}</span>
+              <div className="hzp-footer-actions">
                 <button
-                  key={z.zoneId}
                   type="button"
-                  className={`hunt-zone-tile${ok ? "" : " locked"}`}
-                  style={bg ? { backgroundImage: `url("${bg}")` } : undefined}
-                  disabled={!ok}
-                  title={ok ? undefined : reasonText(t, reason, z.levelRequired)}
-                  onClick={() => pick(z.zoneId)}
+                  className="btn-iron"
+                  disabled={!canSet}
+                  title={canSet ? undefined : reasonText(t, setReason, selZone?.levelRequired ?? 0)}
+                  onClick={confirm}
                 >
-                  <span className="hunt-zone-tile-name">{name}</span>
-                  <span className="hunt-zone-tile-meta">
-                    <span>{t("skill.levelShort").replace("{n}", String(z.levelRequired))}</span>
-                    <span>{t("hunting.trapTime").replace("{time}", formatMs(z.trapMs))}</span>
-                    <span>{t("hunting.catchChance").replace("{pct}", String(Math.round(chance * 100)))}</span>
-                    <span>
-                      {t("hunting.beatenCount")
-                        .replace("{n}", String(progress.defeated))
-                        .replace("{total}", String(progress.total))}
-                    </span>
-                  </span>
-                  {!ok && <span className="hunt-zone-tile-reason">{reasonText(t, reason, z.levelRequired)}</span>}
+                  {t("hunting.picker.confirm")}
                 </button>
-              );
-            })}
-          </div>
+                <button type="button" className="shop-citadel-btn" onClick={onClose}>
+                  {t("hunting.picker.cancel")}
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -435,7 +676,7 @@ function HuntLootChip({ itemId, discovered }: { itemId: string; discovered: bool
 
   if (!discovered) {
     return (
-      <span className="hunt-loot-chip unknown" title="???" aria-hidden="true">
+      <span className={`hunt-loot-chip unknown ${rarityClass(item?.rarity)}`} title="???" aria-hidden="true">
         {img && (
           <img loading="lazy" decoding="async" src={img} alt="" className="hunt-loot-chip-img hunt-loot-chip-silhouette pixelart" />
         )}
@@ -458,6 +699,27 @@ function HuntLootChip({ itemId, discovered }: { itemId: string; discovered: bool
         <span className="hunt-loot-chip-emoji">{item?.icon ?? "▪"}</span>
       )}
     </button>
+  );
+}
+
+/** Gold-Spanne eines Fangs als letzter Beute-Chip (Gebiet-Modal, Chef-Auftrag 28.08.2026): exakt
+ *  dieselbe Rechnung wie `grantCatch` (engine/hunting.ts) — Streuungswurf `gold + [0..ceil(gold·0,4)]`,
+ *  dann ×`HUNT_LOOT_ROLLS` (fünf Würfe je Fang). Kein Chip, wenn das Monster gar kein Gold trägt
+ *  (Muster `LastCatchRow`: `c.gold > 0 &&`) — die meisten Frühzonen-Monster tragen 0. */
+function HuntGoldRangeChip({ monster }: { monster: MonsterDef }): JSX.Element | null {
+  if (monster.gold <= 0) return null;
+  const perCatchMax = monster.gold + Math.ceil(monster.gold * 0.4);
+  const min = monster.gold * HUNT_LOOT_ROLLS;
+  const max = perCatchMax * HUNT_LOOT_ROLLS;
+  return (
+    <span className="hzp-gold-chip">
+      {GOLD_ICON_URL ? (
+        <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />
+      ) : (
+        "🪙"
+      )}
+      {min === max ? formatNum(min) : `${formatNum(min)}–${formatNum(max)}`}
+    </span>
   );
 }
 

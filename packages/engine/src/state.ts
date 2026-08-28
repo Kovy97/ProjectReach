@@ -1,6 +1,7 @@
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
+import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultEquipKits, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
 import { createRng } from "./rng";
+import { syncActiveKit } from "./loadouts";
 import { addItem, createInventory, discoverPossessedItems } from "./inventory";
 import { createCombat } from "./combat";
 import { computeStats, createCharacter, totalLevel } from "./character";
@@ -61,6 +62,7 @@ export function createGame(
       actionRunsById: {},
       producedById: {},
       huntCatches: 0,
+      huntCatchesById: {},
     },
     achievements: [],
     // AP-Meilensteine (SAVE 66, Welle GG): frisch = nichts vergeben; die Zähler starten bei 0
@@ -145,9 +147,11 @@ export function createGame(
     // (Muster eliteSpawnSeq/lastEliteSpawn; Schreib-Ort ist onEliteKilled, engine/elites.ts).
     eliteKillSeq: 0,
     lastEliteKill: null,
-    // Ausrüstungs-Loadouts 1/2/3 (SAVE 75, Task #349): frisch alle leer (null = nie gespeichert);
-    // Speichern/Anlegen ausschließlich über engine/loadouts.ts.
-    equipLoadouts: [null, null, null],
+    // Ausrüstungs-Kits 1/2/3 (SAVE 85, Chef-Entscheid 28.08.2026): drei leere Kits, Kit 0 aktiv —
+    // der Spiegel von Kit 0 wird unten (nach der Start-Ausrüstung) via syncActiveKit geschrieben.
+    // Umschalten ausschließlich über engine/loadouts.ts `switchEquipKit`.
+    equipKits: defaultEquipKits(),
+    activeKit: 0,
     // Das Lager (SAVE 76, Task #358): frisch nichts gebaut, Bautrupp frei. SEIT TASK #365 steht
     // New Haven ab Spielstart offen (kein Freischaltungs-Gate mehr) — der leere Lager-Zustand IST
     // der Startzustand: ein karger Rastplatz an der Furt, den der Spieler von hier aus aufbaut.
@@ -229,5 +233,8 @@ export function createGame(
   state.character.mana = startStats.maxMana;
   // Ward-Pool (Rüstungs-Trinität, SAVE_VERSION 50): frisch auf maxWard finalisieren (mirror hp/mana).
   state.character.ward = startStats.maxWard;
+  // Kit-0-Spiegel = die soeben direkt ausgerüstete Start-Ausrüstung (RNG-frei; ein frischer State ist
+  // damit exakt die Form, die auch ein Load liefert — Round-Trip-stabil ab dem ersten Tick).
+  syncActiveKit(state);
   return state;
 }

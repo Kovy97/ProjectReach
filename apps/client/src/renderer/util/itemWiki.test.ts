@@ -13,7 +13,7 @@ describe("Item-Wiki: Champion-Quellen", () => {
       const champ = sources.filter((s) => s.kind === "champion" && s.eliteId === elite.id);
       expect(champ.length, elite.id).toBeGreaterThan(0);
       expect(champ[0]!.kind === "champion" && champ[0]!.zoneId, elite.id).toBe(elite.zone);
-      expect(champ[0]!.chance, elite.id).toBeGreaterThan(0);
+      expect(champ[0]!.kind === "champion" && champ[0]!.chance, elite.id).toBeGreaterThan(0);
     }
   });
 

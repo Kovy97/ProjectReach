@@ -62,7 +62,7 @@ auch in den Zutaten stimmt.
 
 ### B2 Fallenplätze nach Stufe
 
-| Jagen-Stufe | 1 | 10 | 25 | 45 | 65 | 85 |
+| Jagen-Stufe | 1 | 5 | 15 | 30 | 50 | 75 |
 |---|---|---|---|---|---|---|
 | Plätze | 1 | 2 | 3 | 4 | 5 | 6 |
 
@@ -120,7 +120,7 @@ den Beutezeilen. Offline-Bericht listet Fänge („Eber ×3, Ziege ×1"). Sideba
 
 - **J1 Fangbar:** Tiere und Humanoide (Schlinge); nie Untote, Konstrukte, Dämonen, Drachen, Bosse, Dungeon-Monster, Champions.
 - **J2 Ruhm:** Fänge zählen nicht als Kills. Kampf bleibt der Fortschrittsweg.
-- **J3 Plätze:** sechs, Freischaltung bei Jagen 1/10/25/45/65/85.
+- **J3 Plätze:** sechs, Freischaltung bei Jagen 1/5/15/30/50/75 (Chef 28.08.: früher).
 - **J4 Chance:** 70 % plus 0,5 Prozentpunkte je Stufe über der Gebietsstufe, Deckel 95 %.
 - **J5 Fasern:** Nessel, Flachs, Dornhanf, Geisterseide, Sternflachs, Stufen wie in A1.
 - **J6 Sehne:** Nessel-Sehne ab Handwerk 1.

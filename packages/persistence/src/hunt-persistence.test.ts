@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, HuntTrap, HuntZoneDef, ItemDef } from "@hearthforge/shared";
-import { BAIT_ITEM_ID, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, emptyHuntTrap } from "@hearthforge/shared";
+import { BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
 import { addItem, createGame, huntBaitCount, setHuntTrap, xpForLevel } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -89,6 +89,16 @@ describe("Migration v84 → v85 (Jagen)", () => {
     erwartet.state.huntTraps = defaultHuntTraps();
     erwartet.state.huntCatchSeq = 0;
     erwartet.state.stats.huntCatches = 0;
+    // v85-Nachtrag (Ausrüstungs-Kits, Chef-Entscheid 28.08.2026): Vorlagen `[null, null, null]` → Kit 0 =
+    // getragene Ausrüstung, Kits 1/2 leer, Kit 0 aktiv; `equipLoadouts` verschwindet aus dem State.
+    erwartet.state.equipKits = [
+      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      emptyEquipKit(),
+      emptyEquipKit(),
+    ];
+    erwartet.state.activeKit = 0;
+    erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026): Fänge je Art, Default {}
+    delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -234,7 +244,9 @@ describe("OfflineSummary.huntCatches", () => {
     const caught = later.state.huntCatchSeq;
     expect(caught).toBeGreaterThan(0); // 8 Würfe à 70 % — mindestens einer sitzt
     expect(later.offline.huntCatches).toEqual([{ monsterId: "boar", count: caught }]);
-    expect(later.offline.skillXp[HUNTING_SKILL_ID]?.xp).toBe(caught * 10);
+    // XP je Fang = Kampf-XP des Ebers × HUNT_XP_PER_CATCH, der erste Fang zusätzlich × HUNT_FIRST_CATCH_MULT.
+    expect(later.offline.skillXp[HUNTING_SKILL_ID]?.xp).toBe(huntCatchXp(c.monsters.boar!.xp) * (caught - 1 + HUNT_FIRST_CATCH_MULT));
+    expect(later.state.stats.huntCatchesById.boar).toBe(caught);
     expect(later.state.stats.huntCatches).toBe(caught);
     // Kein Ruhm: Offline-Kills bleiben 0, obwohl gefangen wurde.
     expect(later.offline.kills).toBeUndefined();

@@ -1,199 +1,144 @@
 import type {
   ContentDB,
-  EquipLoadout,
-  EquipLoadoutEntry,
+  EquipKit,
+  EquipKitIndex,
   EquipSlot,
   GameState,
   ItemId,
+  ItemInstance,
 } from "@hearthforge/shared";
-import { EQUIP_LOADOUT_COUNT, LOADOUT_SLOTS } from "@hearthforge/shared";
-import { withdrawInstance, withdrawItem } from "./bank";
-import { equipInstance, equipItem, meetsRequirements, unequipItem } from "./equipment";
-import { getInstance } from "./inventory";
+import { EQUIP_KIT_COUNT, EQUIP_SLOTS, emptyEquipKit } from "@hearthforge/shared";
+import { computeStats } from "./character";
+
+export { EQUIP_KIT_COUNT } from "@hearthforge/shared";
 
 /**
- * Ausrüstungs-Loadouts 1/2/3 (SAVE_VERSION 75, Task #349 — Spieler-Wunsch „drei Loadout-Slots zum
- * schnellen Stil-Wechsel", passt exakt zum 3-Stile-Design: Waffe bestimmt Stil).
+ * Ausrüstungs-KITS 1/2/3 (SAVE_VERSION 85 — unveröffentlicht; Chef-Entscheid 28.08.2026 nach
+ * Spieler-Feedback „3 separate equipment kits, not unequip/equip modes, just swap").
+ *
+ * Ersetzt die v75-Loadout-VORLAGEN (saveLoadout/applyLoadout: Snapshots aus itemId/instanceId, beim
+ * Anlegen Item für Item aus Inventar/Bank bedient). Jetzt BESITZT jedes Kit seine Teile selbst.
  *
  * GRUNDSÄTZE:
- *  • Ein Loadout ist ein SNAPSHOT der LOADOUT_SLOTS (Kampf-Slots OHNE Werkzeuge — Werkzeuge sind
- *    Skill-Ausrüstung und bleiben beim Stil-Wechsel unangetastet, s. shared LOADOUT_SLOTS-Doku).
- *  • ANLEGEN läuft Item für Item über den NORMALEN Equip-Pfad (equipItem/equipInstance):
- *    Requirements gelten BEIM ANLEGEN (Bestandsschutz-Regel „nur equip prüft" — ein Loadout-Wechsel
- *    IST ein Anlegen, kein Sonderweg), Kapazitäts-/Datenverlust-Schutz der Equip-Funktionen greift
- *    unverändert. Fehlende/verweigerte Teile werden ÜBERSPRUNGEN, der Rest zieht an („X von Y").
- *  • Fehlt ein Teil im Inventar, wird es aus der Bank (withdrawItem) bzw. dem Gear-Vault
- *    (withdrawInstance) abgehoben — ebenfalls Normalpfade, kein Slot-Hexwerk.
- *  • Instanzen (Verzauberung/Suffix) reisen per `instanceId` EXAKT mit; eine verkaufte/zersalvagte
- *    Instanz gilt als fehlend (KEIN stiller Basis-Item-Ersatz — der Spieler soll ehrlich sehen,
- *    dass sein verzaubertes Teil weg ist).
- *  • KEIN Kampf-Gate: manuelles Umziehen ist im Kampf heute erlaubt (weder equipment.ts noch die
- *    UI gaten es) — Konsistenz gewinnt, ein Loadout-Wechsel ist dieselbe Aktion in Serie.
+ *  • WAHRHEIT des aktiven Kits ist `character.equipment` + `character.equippedInstances` — alle
+ *    bestehenden Pfade (computeStats, Kampf, equipItem/equipInstance/equipTool/unequipItem, Werkzeug-
+ *    Tempo) lesen und schreiben weiter dort. Ausrüsten/Ablegen wirkt IMMER auf das aktive Kit.
+ *  • `state.equipKits[state.activeKit]` ist nur der SPIEGEL des aktiven Kits und darf zur Laufzeit
+ *    stale sein; `syncActiveKit` schreibt ihn beim Umschalten, beim Serialisieren (persistence
+ *    `serialize`) und am Ende von `sanitizeState` zurück.
+ *  • UMSCHALTEN (`switchEquipKit`) tauscht das GANZE Set inkl. Instanzen (Verzauberung/Suffix reisen
+ *    exakt mit): aktives Kit aus `character` in `equipKits[activeKit]` zurückschreiben, Ziel-Kit nach
+ *    `character` kopieren, `activeKit` setzen. Verbraucht nichts, verschiebt nichts ins Inventar,
+ *    prüft KEINE Requirements (die Teile wurden über den normalen Equip-Pfad ins Kit gelegt, als es
+ *    aktiv war — Level sinken nie). Nur AUSSERHALB des Kampfes (`combat.monsterId === null`).
+ *  • Stats: computeStats fingerprintet Slot-Belegung + Instanzen des Charakters, der Wechsel
+ *    invalidiert den Cache also von selbst. hp/ward werden auf die neuen Maxima geklemmt (Muster
+ *    sanitize-HP-Deckel), damit nie hp > maxHp durch den Wechsel entsteht.
+ *  • Alle EQUIP_SLOTS inkl. tool1..tool3 (ganzes Set tauscht — die alte LOADOUT_SLOTS-Ausnahme für
+ *    Werkzeuge diente nur dem Inventar-Churn, den es nicht mehr gibt).
  *  • DETERMINISTISCH & RNG-frei: reine Spieler-Aktion (kein Tick-Pfad), zieht nie am RNG-Strom.
  */
 
-/** Warum ein einzelner Loadout-Slot beim Anlegen übersprungen wurde (i18n-Mapping macht die UI). */
-export type LoadoutSkipReason = "missing" | "requirements" | "inventoryFull";
+/** Ergebnis von `switchEquipKit` (i18n-Mapping macht die UI). */
+export type KitSwitchReason = "ok" | "in_combat" | "same" | "invalid";
 
-export interface LoadoutSkip {
-  slot: EquipSlot;
-  itemId: ItemId;
-  reason: LoadoutSkipReason;
+/** Lese-Sicht auf ein Kit für die UI (Kopie — Mutation wirkt nie auf den State). */
+export interface KitSummary {
+  /** Anzahl belegter Slots (inkl. Werkzeug-Slots). */
+  pieces: number;
+  equipment: Record<EquipSlot, ItemId | null>;
+  instances: Partial<Record<EquipSlot, ItemInstance>>;
 }
 
-export interface ApplyLoadoutResult {
-  /** false NUR bei ungültigem Index/leerem Loadout-Slot — Teil-Erfolge sind ok:true. */
-  ok: boolean;
-  /** Anzahl der Einträge im Loadout (Y in „X von Y angelegt"). */
-  total: number;
-  /** Einträge, die nach dem Anlegen tatsächlich getragen werden (X). */
-  applied: number;
-  skipped: LoadoutSkip[];
+/** Gültiger Kit-Index? (0..EQUIP_KIT_COUNT-1, ganzzahlig) */
+export function isValidKitIndex(index: number): index is EquipKitIndex {
+  return Number.isInteger(index) && index >= 0 && index < EQUIP_KIT_COUNT;
 }
 
-/** Gültiger Loadout-Index? (0..EQUIP_LOADOUT_COUNT-1, ganzzahlig) */
-function validIndex(index: number): boolean {
-  return Number.isInteger(index) && index >= 0 && index < EQUIP_LOADOUT_COUNT;
+/** Tiefe Kopie einer Instanz (Affixe/Suffix), damit Kit und Charakter nie dasselbe Objekt teilen. */
+function cloneInstance(inst: ItemInstance): ItemInstance {
+  const out: ItemInstance = {
+    instanceId: inst.instanceId,
+    baseItemId: inst.baseItemId,
+    affixes: Array.isArray(inst.affixes) ? inst.affixes.map((a) => ({ ...a })) : [],
+  };
+  if (inst.suffix) out.suffix = { ...inst.suffix };
+  return out;
 }
 
-/** Der aktuell in `slot` getragene Inhalt als Loadout-Eintrag (null = leer). */
-function currentEntry(state: GameState, slot: EquipSlot): EquipLoadoutEntry | null {
-  const itemId = state.character.equipment[slot];
-  if (!itemId) return null;
-  const inst = state.character.equippedInstances[slot];
-  return inst ? { itemId, instanceId: inst.instanceId } : { itemId };
-}
-
-/** Referenz-Gleichheit zweier Einträge: gleiches Basis-Item UND gleiche (bzw. keine) Instanz. */
-function entriesEqual(a: EquipLoadoutEntry | null, b: EquipLoadoutEntry | null): boolean {
-  if (!a || !b) return a === b;
-  return a.itemId === b.itemId && (a.instanceId ?? null) === (b.instanceId ?? null);
-}
-
-/**
- * Speichert die aktuell getragene Ausrüstung als Loadout `index` (überschreibt kommentarlos —
- * die UI bestätigt per Toast). Snapshot NUR der LOADOUT_SLOTS; leere Slots bekommen KEINEN Key
- * (s. EquipLoadout-Doku in shared). Liefert false nur bei ungültigem Index.
- */
-export function saveLoadout(state: GameState, index: number): boolean {
-  if (!validIndex(index)) return false;
-  const snapshot: EquipLoadout = {};
-  for (const slot of LOADOUT_SLOTS) {
-    const entry = currentEntry(state, slot);
-    if (entry) snapshot[slot] = entry;
+/** Kopie von equipment + equippedInstances in Kit-Form (alle EQUIP_SLOTS-Keys, Instanzen geklont). */
+function snapshotKit(
+  equipment: Partial<Record<EquipSlot, ItemId | null>> | undefined,
+  instances: Partial<Record<EquipSlot, ItemInstance>> | undefined,
+): EquipKit {
+  // Tolerant gegen fehlende Records (serialize läuft auch über hand-korrumpierte Alt-Saves in Tests —
+  // die strikte Härtung macht sanitizeState; hier darf nichts werfen).
+  const eq = equipment ?? {};
+  const inst = instances ?? {};
+  const kit = emptyEquipKit();
+  for (const slot of EQUIP_SLOTS) {
+    kit.equipment[slot] = eq[slot] ?? null;
+    const i = inst[slot];
+    if (i && typeof i === "object") kit.equippedInstances[slot] = cloneInstance(i);
   }
-  state.equipLoadouts[index] = snapshot;
-  return true;
+  return kit;
 }
 
 /**
- * Versucht, EINEN Loadout-Eintrag über den Normalpfad anzulegen. Beschafft das Teil bei Bedarf
- * aus Bank/Gear-Vault. Liefert "ok" oder den Skip-Grund. Reihenfolge der Prüfungen: Content →
- * Requirements → Besitz → Kapazität — so wird NIE etwas bewegt (Bank-Abhebung!), das danach an
- * einer Anforderung scheitern würde.
+ * Schreibt die Wahrheit des aktiven Kits (`character.equipment`/`equippedInstances`) in
+ * `equipKits[activeKit]` zurück. Idempotent; wird beim Umschalten, Serialisieren und im Sanitize
+ * gerufen. Repariert nebenbei eine fehlende/zu kurze Kit-Liste (Engine-Pfad ist tolerant, die
+ * strikte Härtung macht sanitizeState).
  */
-function tryEquipEntry(
-  state: GameState,
-  content: ContentDB,
-  entry: EquipLoadoutEntry,
-): "ok" | LoadoutSkipReason {
-  const item = content.items[entry.itemId];
-  // Loadout-Einträge sind immer Equipment mit Slot (Snapshot der LOADOUT_SLOTS); alles andere
-  // (Content-Drift/Save-Edit) gilt als fehlend.
-  if (!item || item.type !== "equipment" || !item.slot) return "missing";
-  if (!meetsRequirements(state, item)) return "requirements";
-
-  if (entry.instanceId) {
-    // EXAKTE Instanz: Inventar-Tasche → Gear-Vault → sonst fehlend (verkauft/zersalvagt).
-    const inBag = getInstance(state.inventory, entry.instanceId);
-    if (inBag) {
-      if (inBag.baseItemId !== entry.itemId) return "missing"; // defensiv: ID-Drift
-    } else {
-      const vaultInst = state.bankInstances.find((i) => i.instanceId === entry.instanceId);
-      if (!vaultInst || vaultInst.baseItemId !== entry.itemId) return "missing";
-      // Vault → unbegrenzte Inventar-Tasche (withdrawInstance schlägt strukturell nie fehl).
-      if (!withdrawInstance(state, entry.instanceId)) return "missing";
-    }
-    const r = equipInstance(state, content, entry.instanceId);
-    // Nach Content-/Requirements-/Besitz-Vorprüfung bleibt als Fehlgrund nur die Kapazität
-    // (verdrängtes PLAIN Item braucht einen freien Inventar-Slot). Die evtl. aus dem Vault
-    // geholte Instanz bleibt dann in der unbegrenzten Tasche liegen — kein Verlust.
-    return r.ok ? "ok" : "inventoryFull";
-  }
-
-  // Plain Item: Inventar → sonst aus der Bank abheben (braucht einen freien Slot).
-  const inInv = state.inventory.slots.some((s) => s !== null && s.itemId === entry.itemId && !s.instance);
-  if (!inInv) {
-    if ((state.bank[entry.itemId] ?? 0) < 1) return "missing";
-    if (withdrawItem(state, content, entry.itemId, 1) < 1) return "inventoryFull";
-  }
-  const r = equipItem(state, content, entry.itemId);
-  return r.ok ? "ok" : "inventoryFull";
+export function syncActiveKit(state: GameState): void {
+  if (!Array.isArray(state.equipKits)) state.equipKits = [];
+  while (state.equipKits.length < EQUIP_KIT_COUNT) state.equipKits.push(emptyEquipKit());
+  if (!isValidKitIndex(state.activeKit)) state.activeKit = 0;
+  state.equipKits[state.activeKit] = snapshotKit(state.character.equipment, state.character.equippedInstances);
 }
 
 /**
- * Legt Loadout `index` an — Item für Item über den normalen Equip-Pfad:
- *  1. Slots, deren Ist-Inhalt vom Soll abweicht, werden erst abgelegt (unequipItem, best effort —
- *     schlägt das Ablegen bei vollem Inventar fehl, übernimmt der atomare Tausch in equipItem den
- *     Rest); Slots, die bereits exakt stimmen, bleiben unangetastet (kein Churn).
- *  2. Danach wird jeder Soll-Eintrag angelegt; fehlende Teile/verfehlte Requirements/volle
- *     Kapazität überspringen NUR diesen Slot (Skip-Liste), der Rest zieht an.
- *  RINGE laufen als PAAR (Multiset itemId+instanceId): equipItem füllt Ringe kanonisch
- *  ring1→ring2 auf, die konkrete Slot-Position eines Rings ist daher kosmetisch — ohne die
- *  Paar-Betrachtung würde ein „nur Position getauscht"-Zustand sinnlos ab- und wieder anlegen.
- *  Reihenfolge LOADOUT_SLOTS (mainhand vor offhand — Zweihand-Verdrängung greift zuerst).
+ * Lese-Sicht auf Kit `index` für die UI. Für das AKTIVE Kit wird aus `character` gelesen (Wahrheit —
+ * der Spiegel darf stale sein), sonst aus `equipKits[index]`. Ungültiger Index → leeres Kit.
  */
-export function applyLoadout(state: GameState, content: ContentDB, index: number): ApplyLoadoutResult {
-  if (!validIndex(index)) return { ok: false, total: 0, applied: 0, skipped: [] };
-  const loadout = state.equipLoadouts[index];
-  if (!loadout) return { ok: false, total: 0, applied: 0, skipped: [] };
-
-  const skipped: LoadoutSkip[] = [];
-  let applied = 0;
-  let total = 0;
-
-  // ── Nicht-Ring-Slots: exakter Slot-Abgleich in Vertrags-Reihenfolge ────────────────────────
-  for (const slot of LOADOUT_SLOTS) {
-    if (slot === "ring1" || slot === "ring2") continue; // Ringe unten als Paar
-    const desired = loadout[slot] ?? null;
-    if (desired) total++;
-    const current = currentEntry(state, slot);
-    if (entriesEqual(current, desired)) {
-      if (desired) applied++;
-      continue;
-    }
-    if (current) unequipItem(state, content, slot); // best effort — s. Funktions-Doku
-    if (!desired) continue;
-    const r = tryEquipEntry(state, content, desired);
-    if (r === "ok") applied++;
-    else skipped.push({ slot, itemId: desired.itemId, reason: r });
+export function kitSummary(state: GameState, index: number): KitSummary {
+  let source: EquipKit;
+  if (!isValidKitIndex(index)) {
+    source = emptyEquipKit();
+  } else if (index === state.activeKit) {
+    source = snapshotKit(state.character.equipment, state.character.equippedInstances);
+  } else {
+    const kit = state.equipKits[index];
+    source = kit ? snapshotKit(kit.equipment, kit.equippedInstances) : emptyEquipKit();
   }
+  let pieces = 0;
+  for (const slot of EQUIP_SLOTS) if (source.equipment[slot]) pieces++;
+  return { pieces, equipment: source.equipment, instances: source.equippedInstances };
+}
 
-  // ── Ringe als Paar (Multiset-Abgleich, Positions-Drift ist kosmetisch) ─────────────────────
-  const RING_SLOTS: readonly EquipSlot[] = ["ring1", "ring2"];
-  const desiredRings: EquipLoadoutEntry[] = [];
-  for (const slot of RING_SLOTS) {
-    const d = loadout[slot];
-    if (d) desiredRings.push(d);
-  }
-  total += desiredRings.length;
-  const unmatched = [...desiredRings];
-  for (const slot of RING_SLOTS) {
-    const cur = currentEntry(state, slot);
-    if (!cur) continue;
-    const matchIdx = unmatched.findIndex((d) => entriesEqual(d, cur));
-    if (matchIdx >= 0) {
-      unmatched.splice(matchIdx, 1);
-      applied++;
-    } else {
-      unequipItem(state, content, slot); // best effort
-    }
-  }
-  for (const d of unmatched) {
-    const r = tryEquipEntry(state, content, d);
-    if (r === "ok") applied++;
-    else skipped.push({ slot: "ring1", itemId: d.itemId, reason: r });
-  }
+/**
+ * Schaltet auf Kit `index` um (ganzes Set tauscht). Reihenfolge der Prüfungen:
+ * ungültiger Index → "invalid"; bereits aktiv → "same" (No-op, auch im Kampf);
+ * laufender Kampf (`combat.monsterId !== null`) → "in_combat"; sonst "ok".
+ * Bei "ok": Spiegel des bisherigen Kits zurückschreiben, Ziel-Kit nach `character` kopieren,
+ * `activeKit` setzen, hp/ward auf die neuen Maxima klemmen. Kein RNG, keine Inventar-Bewegung.
+ */
+export function switchEquipKit(state: GameState, content: ContentDB, index: number): KitSwitchReason {
+  if (!isValidKitIndex(index)) return "invalid";
+  if (index === state.activeKit) return "same";
+  if (state.combat.monsterId !== null) return "in_combat";
 
-  return { ok: true, total, applied, skipped };
+  syncActiveKit(state);
+  const target = state.equipKits[index] ?? emptyEquipKit();
+  const next = snapshotKit(target.equipment, target.equippedInstances);
+  state.character.equipment = next.equipment;
+  state.character.equippedInstances = next.equippedInstances;
+  state.activeKit = index;
+
+  // Vitals an die neuen Maxima klemmen (Muster sanitize-HP-/Ward-Deckel): ein Tank-Kit → Glaskanone
+  // darf nicht mit hp > maxHp weiterlaufen. Nur senken, nie heilen (kein Gratis-Heal durch Wechsel).
+  const stats = computeStats(state, content);
+  if (Number.isFinite(stats.maxHp) && state.character.hp > stats.maxHp) state.character.hp = stats.maxHp;
+  if (Number.isFinite(stats.maxWard) && state.character.ward > stats.maxWard) state.character.ward = stats.maxWard;
+  return "ok";
 }

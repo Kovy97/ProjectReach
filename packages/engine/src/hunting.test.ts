@@ -8,8 +8,7 @@ import {
   HUNT_LOOT_ROLLS,
   HUNT_SLOT_LEVELS,
   HUNT_TRAP_SLOTS,
-  defaultHuntTraps,
-} from "@hearthforge/shared";
+  defaultHuntTraps, huntCatchXp, HUNT_FIRST_CATCH_MULT, HUNT_XP_PER_CATCH } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { createGame } from "./state";
 import { advance } from "./tick";
@@ -97,7 +96,7 @@ describe("Jagen — Plätze & Katalog", () => {
     expect(s.stats.huntCatches).toBe(0);
   });
 
-  it("huntTrapSlots folgt HUNT_SLOT_LEVELS (1/10/25/45/65/85 → 1..6, Deckel 6)", () => {
+  it("huntTrapSlots folgt HUNT_SLOT_LEVELS (1/5/15/30/50/75 → 1..6, Deckel 6)", () => {
     const s = game(testContent());
     expect(huntTrapSlots(s)).toBe(1); // ohne Skill-Eintrag = Stufe 1
     const expected = [1, 2, 3, 4, 5, 6];
@@ -266,7 +265,8 @@ describe("Jagen — Tick, Fang, Auto-Erneuern", () => {
       expect(t.lastMissed).toBe(false);
       expect(s.character.gold - goldBefore).toBe(expectedGold);
       expect(itemCount(s.inventory, "rawhide")).toBe(HUNT_LOOT_ROLLS);
-      expect(s.skills[HUNTING_SKILL_ID]!.xp).toBe(PASTURES_XP);
+      expect(s.skills[HUNTING_SKILL_ID]!.xp).toBe(huntCatchXp(HARE.xp) * HUNT_FIRST_CATCH_MULT);
+      expect(s.stats.huntCatchesById[HARE.id]).toBe(1);
       expect(s.huntCatchSeq).toBe(1);
       expect(s.stats.huntCatches).toBe(1);
       expect(s.stats.itemsGathered).toBe(HUNT_LOOT_ROLLS);
@@ -354,7 +354,11 @@ describe("Jagen — Tick, Fang, Auto-Erneuern", () => {
   });
 
   it("Jagen-XP hebt die Stufe und schaltet Plätze frei (Level-up über den normalen Skill-Pfad)", () => {
-    const c: ContentDB = { ...testContent(), huntingZones: [{ zoneId: "pastures", levelRequired: 1, trapMs: PASTURES_MS, xp: xpForLevel(10) }] };
+    // Seit 28.08.2026 kommt die XP vom gefangenen Monster: ein Erstfang (×HUNT_XP_PER_CATCH × HUNT_FIRST_CATCH_MULT)
+    // soll hier genau die Stufe des zweiten Fallenplatzes erreichen.
+    const base = testContent();
+    const fatHare = { ...HARE, xp: Math.ceil(xpForLevel(HUNT_SLOT_LEVELS[1]!) / (HUNT_XP_PER_CATCH * HUNT_FIRST_CATCH_MULT)) };
+    const c: ContentDB = { ...base, monsters: { ...base.monsters, [HARE.id]: fatHare } };
     let s: GameState | null = null;
     for (let seed = 1; seed < 60 && !s; seed++) {
       const g = readyGame(c, seed, 2);
@@ -481,5 +485,15 @@ describe("Jagen — echter Content (nur wenn content-dev geliefert hat)", () => 
     expect(a.huntCatchSeq).toBeGreaterThan(0);
     expect(a.monsterKills.boar).toBe(1);
     expect(a.skills[HUNTING_SKILL_ID]!.xp).toBeGreaterThan(0);
+  });
+});
+
+describe("Jagen: XP nach dem gefangenen Monster (Chef 28.08.2026)", () => {
+  it("huntCatchXp = Kampf-XP des Monsters × 5 (Huhn 10, Eber 100, Roc 10 250), Erstfang ×2 obendrauf", () => {
+    expect(huntCatchXp(2)).toBe(10);
+    expect(huntCatchXp(20)).toBe(100);
+    expect(huntCatchXp(2050)).toBe(10250);
+    expect(huntCatchXp(0)).toBe(1);
+    expect(HUNT_FIRST_CATCH_MULT).toBe(2);
   });
 });

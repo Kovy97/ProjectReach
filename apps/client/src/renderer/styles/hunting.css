@@ -388,82 +388,101 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   GEBIETSWAHL-MODAL (Layout #3) — Muster QueueAmountModal: klein, Stahlrahmen, Basalt.
-   ═══════════════════════════════════════════════════════════ */
+   GEBIET-MODAL (Layout #3, Redesign Chef-Auftrag 28.08.2026) — großes zweispaltiges Fenster:
+   links scrollbare Zonen-Liste (~36 %, nur Auswahl), rechts Zonen-Detail (~64 %: Kulissen-Banner,
+   vier Kennzahl-Kacheln, „Fangbar"-Tabelle mit Beute-Chips, aufklappbares „Nicht fangbar"),
+   Fußzeile mit Hinweis + `.btn-iron`-Bestätigung. Stahlrahmen/Basalt wie `.iwk-panel`
+   (item-wiki.css) — dasselbe Muster wie das alte kleine Modal, nur größer und zweispaltig.
+   `hzp-*`-Namespace („Hunt Zone Picker"), ersetzt die vorige `hunt-zone-modal`-Familie komplett
+   (keine anderen Referenzen mehr im Code). ═══════════════════════════════════════════════════ */
 
-.hunt-zone-modal {
+.hzp-modal {
   position: relative;
   isolation: isolate;
-  width: min(520px, calc(100vw - 32px));
-  max-height: min(78vh, 640px);
+  width: min(1100px, 94vw);
+  height: min(720px, 92vh);
+  max-width: 94vw;
+  max-height: 92vh;
   display: flex;
   flex-direction: column;
-  padding: 14px 16px 16px;
+  padding: 16px 20px 18px;
   border: 8px solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
-    linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.7)),
+    linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.72)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+  background-size: auto, 240px 240px;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.78);
   color: #e6d9b8;
   font-family: "Cinzel", "Georgia", serif;
 }
 
-.hunt-zone-modal-head {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding-right: 28px;
+.hzp-head {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 
-.hunt-zone-modal-title {
-  font-size: 1.05rem;
+.hzp-title {
+  font-size: 1.15rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #f0d98a;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-.hunt-zone-modal-close {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
+.hzp-close {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
   border: 0;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.5);
   color: #d8c9a2;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1;
   cursor: pointer;
 }
-.hunt-zone-modal-close:hover {
+.hzp-close:hover {
   color: #fff;
   background: rgba(120, 30, 20, 0.7);
 }
 
-.hunt-zone-list {
+.hzp-body {
   flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: 18px;
+}
+
+/* ─── Linke Spalte: Zonen-Liste (~36 %, nur Auswahl — committet nichts) ─────────────────────── */
+.hzp-col-list {
+  flex: 0 0 36%;
+  min-width: 240px;
   min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-right: 2px;
+  padding-right: 14px;
+  border-right: 1px solid var(--border);
 }
 
-.hunt-zone-tile {
+.hzp-zone-tile {
   position: relative;
   isolation: isolate;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 4px;
-  min-height: 84px;
+  gap: 3px;
+  min-height: 92px;
   padding: 10px 14px;
   border: 1px solid rgba(190, 160, 100, 0.35);
   background-color: rgba(0, 0, 0, 0.4);
@@ -475,45 +494,331 @@
   color: #f0e6cf;
 }
 
-.hunt-zone-tile::before {
+.hzp-zone-tile::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(90deg, rgba(8, 6, 4, 0.82) 0%, rgba(8, 6, 4, 0.55) 55%, rgba(8, 6, 4, 0.35) 100%);
+  background: linear-gradient(90deg, rgba(8, 6, 4, 0.84) 0%, rgba(8, 6, 4, 0.55) 55%, rgba(8, 6, 4, 0.3) 100%);
 }
 
-.hunt-zone-tile:hover:not(.locked) {
-  border-color: rgba(240, 217, 138, 0.7);
-  box-shadow: 0 0 10px rgba(216, 192, 106, 0.3);
+.hzp-zone-tile:hover {
+  border-color: rgba(240, 217, 138, 0.6);
 }
 
-.hunt-zone-tile.locked {
-  cursor: not-allowed;
-  filter: grayscale(0.5) brightness(0.7);
+/* Ausgewählt (Layout-Vorgabe: „is-active-Rahmen") — bewusst über beide, gesperrt UND offen, damit
+   sich auch ein gesperrtes Gebiet als „gerade angeschaut" von den übrigen abhebt. */
+.hzp-zone-tile.is-active {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold), 0 0 12px rgba(216, 192, 106, 0.35);
 }
 
-.hunt-zone-tile-name {
-  font-size: 1.02rem;
+.hzp-zone-tile.locked {
+  filter: grayscale(0.45) brightness(0.68);
+}
+
+.hzp-zone-tile-name {
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: #f0d98a;
   text-shadow: 0 1px 3px #000;
 }
 
-.hunt-zone-tile-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
+.hzp-zone-tile-meta {
   font-size: 12px;
   color: #d9cba6;
   text-shadow: 0 1px 3px #000;
 }
 
-.hunt-zone-tile-reason {
-  font-size: 12px;
+.hzp-zone-tile-reason {
+  font-size: 11.5px;
   color: #e8a08a;
   text-shadow: 0 1px 3px #000;
+}
+
+/* ─── Rechte Spalte: Zonen-Detail (~64 %) ────────────────────────────────────────────────────── */
+.hzp-col-detail {
+  flex: 1 1 64%;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 4px;
+}
+
+.hzp-banner {
+  position: relative;
+  isolation: isolate;
+  flex: 0 0 auto;
+  height: 160px;
+  display: flex;
+  align-items: flex-end;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+}
+
+.hzp-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.1) 0%, rgba(10, 8, 6, 0.55) 65%, rgba(10, 8, 6, 0.88) 100%);
+}
+
+.hzp-banner-name {
+  width: 100%;
+  padding: 10px 16px;
+  font-family: var(--font-head);
+  font-size: 20px;
+  letter-spacing: 0.4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px #000;
+}
+
+/* Vier Kennzahl-Kacheln: Jagen-Stufe · Fallenzeit · Fangchance mit deiner Stufe · Köder. */
+.hzp-stats {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.hzp-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 200px 200px;
+}
+
+.hzp-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.hzp-stat-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+/* Bindend bei 1366×768 (Chef-Vorgabe): Banner schrumpft, Kacheln werden zweizeilig — alles bleibt
+   ohne Überlauf, die Spalten scrollen ohnehin intern. */
+@media (max-height: 820px) {
+  .hzp-banner {
+    height: 120px;
+  }
+  .hzp-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ─── Abschnitte „Fangbar" / „Nicht fangbar" ─────────────────────────────────────────────────── */
+.hzp-section {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hzp-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 2px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hzp-nt-head {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 2px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.hzp-nt-caret {
+  color: var(--accent-2);
+  width: 12px;
+  flex: 0 0 auto;
+}
+
+.hzp-section-name {
+  font-family: var(--font-head);
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  color: var(--gold);
+  flex: 1;
+}
+
+.hzp-section-count {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.hzp-empty {
+  font-size: 13px;
+  padding: 2px 2px 6px;
+}
+
+.hzp-mon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hzp-mon-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.hzp-mon-row:last-child {
+  border-bottom: none;
+}
+
+.hzp-mon-img {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hzp-mon-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.hzp-mon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hzp-mon-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.hzp-mon-name {
+  color: var(--text);
+}
+
+.hzp-mon-row--nt .hzp-mon-name {
+  color: var(--muted);
+}
+
+.hzp-mon-lvl {
+  font-size: 12px;
+}
+
+.hzp-mon-status {
+  font-size: 12px;
+  color: var(--muted);
+}
+.hzp-mon-status.defeated {
+  color: #8fd28f;
+}
+
+.hzp-mon-loot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.hzp-nt-reason {
+  font-size: 12px;
+  color: #e8a08a;
+}
+
+.hzp-gold-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+}
+.hzp-gold-chip img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+/* ─── Fußzeile: Hinweis links, `.btn-iron`-Bestätigung + `.shop-citadel-btn`-Abbruch rechts ───── */
+.hzp-footer {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.hzp-footer-hint {
+  font-size: 12px;
+  max-width: 480px;
+}
+
+.hzp-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Schmale Fenster (Not-Fallback — die 1100px-Sollbreite bleibt bei 1366×768 zweispaltig, s.o.):
+   darunter kippt die Liste über die volle Breite, statt die Detailspalte auf unter 260px zu quetschen. */
+@media (max-width: 900px) {
+  .hzp-body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .hzp-col-list {
+    flex: 0 0 auto;
+    max-height: 220px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding-right: 0;
+    padding-bottom: 12px;
+  }
+  .hzp-col-detail {
+    overflow-y: visible;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -688,6 +993,18 @@
   cursor: default;
   opacity: 0.7;
 }
+
+/* Seltenheits-Tint (Gebiet-Modal-Vorgabe, gilt fürs Jagdbuch gleich mit — dieselbe `--rar-*`-Palette
+   wie `.item-cell`/components.css): bekannt UND unbekannt tragen die Rand-Farbe ihrer Seltenheit,
+   die „???"-Maskierung bleibt unangetastet (nur der Rahmen verrät den Rang, nie das Bild). */
+.hunt-loot-chip.rarity-poor      { border-color: var(--rar-poor); }
+.hunt-loot-chip.rarity-common    { border-color: var(--rar-common); }
+.hunt-loot-chip.rarity-magic     { border-color: var(--rar-magic); }
+.hunt-loot-chip.rarity-rare      { border-color: var(--rar-rare); }
+.hunt-loot-chip.rarity-superRare { border-color: var(--rar-superRare); }
+.hunt-loot-chip.rarity-epic      { border-color: var(--rar-epic); }
+.hunt-loot-chip.rarity-legendary { border-color: var(--rar-legendary); }
+.hunt-loot-chip.rarity-godly     { border-color: var(--rar-godly); }
 
 button.hunt-loot-chip:hover {
   border-color: var(--accent-2);

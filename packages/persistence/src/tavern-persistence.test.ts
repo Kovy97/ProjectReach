@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { CAMP_TAVERN_ID, SAVE_VERSION, TAVERN_SEATS, defaultHuntTraps, defaultTavernState } from "@hearthforge/shared";
+import { CAMP_TAVERN_ID, SAVE_VERSION, TAVERN_SEATS, defaultHuntTraps, defaultTavernState, emptyEquipKit } from "@hearthforge/shared";
 import { createGame, tavernRefresh, acceptTavernTask, xpForLevel, syncProgression } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -84,6 +84,16 @@ describe("Migration v83 → v84 (Taverne)", () => {
     erwartet.state.huntTraps = defaultHuntTraps();
     erwartet.state.huntCatchSeq = 0;
     erwartet.state.stats.huntCatches = 0;
+    // v85-Nachtrag (Ausrüstungs-Kits, Chef-Entscheid 28.08.2026): Vorlagen `[null, null, null]` → Kit 0 =
+    // getragene Ausrüstung, Kits 1/2 leer, Kit 0 aktiv; `equipLoadouts` verschwindet aus dem State.
+    erwartet.state.equipKits = [
+      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      emptyEquipKit(),
+      emptyEquipKit(),
+    ];
+    erwartet.state.activeKit = 0;
+    erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026): Fänge je Art, Default {}
+    delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -298,6 +308,16 @@ describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
     erwartet.state.huntTraps = defaultHuntTraps();
     erwartet.state.huntCatchSeq = 0;
     erwartet.state.stats.huntCatches = 0;
+    // v85-Nachtrag (Ausrüstungs-Kits, Chef-Entscheid 28.08.2026): Vorlagen `[null, null, null]` → Kit 0 =
+    // getragene Ausrüstung, Kits 1/2 leer, Kit 0 aktiv; `equipLoadouts` verschwindet aus dem State.
+    erwartet.state.equipKits = [
+      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      emptyEquipKit(),
+      emptyEquipKit(),
+    ];
+    erwartet.state.activeKit = 0;
+    erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026): Fänge je Art, Default {}
+    delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

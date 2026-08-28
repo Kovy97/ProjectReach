@@ -2,6 +2,7 @@
 const KEY = "hf.onboardingDone";
 const KEY_RANGED = "hf.seenRangedHint";
 const KEY_MAGIC = "hf.seenMagicHint";
+const KEY_KIT = "hf.seenKitHint";
 
 /** Event, mit dem die Optionen das Tutorial erneut öffnen. */
 export const ONBOARDING_OPEN_EVENT = "hf:onboarding-open";
@@ -42,4 +43,13 @@ export function hasSeenMagicHint(): boolean {
 }
 export function setSeenMagicHint(): void {
   localStorage.setItem(KEY_MAGIC, "1");
+}
+
+// ─── Ausrüstungs-Kits-Hinweis (Chef-Entscheid 28.08.2026, einmalig pro Save-Slot) ──────────
+
+export function hasSeenKitHint(): boolean {
+  return localStorage.getItem(KEY_KIT) === "1";
+}
+export function setSeenKitHint(): void {
+  localStorage.setItem(KEY_KIT, "1");
 }

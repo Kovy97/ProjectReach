@@ -82,10 +82,92 @@ diesem Projekt — bisher läuft nichts von uns rund um die Uhr.
 
 ---
 
+## Stufe 4 — Bot auf dem eigenen NAS, echter Zwei-Wege-Verkehr *(Chef-Wunsch 23.08.)*
+
+Der Chef hat einen NAS, der ohnehin durchläuft. Damit fällt der einzige Grund weg, der die
+kleinen Stufen attraktiv gemacht hat: „wir haben nichts, das 24/7 läuft". Das ändert die
+Empfehlung — mit eigenem Dauerbetrieb ist die vollständige Lösung nicht mehr die teuerste,
+sondern die naheliegende.
+
+### Der Weg einer Nachricht, Schritt für Schritt
+
+Wichtig zum Verständnis vorweg: **Das Spiel läuft auf dem PC des Spielers und hat keine offene
+Verbindung zu uns.** Discord kann dort nichts hinschicken. Es gibt keinen Weg, bei dem eine
+Nachricht von selbst im Spiel auftaucht — das Spiel muss fragen. Jede Lösung baut darauf auf.
+
+| # | Was passiert | Wo |
+|---|---|---|
+| 1 | Spieler schickt einen Report. Das Spiel würfelt eine Ticket-Nummer (lang genug, dass sie niemand errät), merkt sie sich lokal und schickt sie mit. | Spiel |
+| 2 | Der Bot nimmt den Report an und legt im Discord-Kanal einen **Thread** an, Ticket-Nummer im Titel. | NAS → Discord |
+| 3 | Der Chef antwortet im Thread. Normal tippen, keine Befehle. | Discord |
+| 4 | Der Bot hängt dauerhaft an Discords Gateway, sieht die Antwort sofort und legt sie unter der Ticket-Nummer ab. **Das ist der Grund für den Dauerbetrieb.** | NAS |
+| 5 | Das Spiel fragt beim Start und danach etwa minütlich: „gibt es etwas für meine Tickets?" | Spiel → NAS |
+| 6 | Popup „A Developer sent you mail!", Brief im Postfach, Marker am Postfach-Eintrag. | Spiel |
+| 7 | Antwortet der Spieler aus dem Spiel, geht sein Text an den Bot, und der Bot postet ihn **in denselben Thread**. | Spiel → NAS → Discord |
+
+Ab Schritt 7 ist es für den Chef ein Gespräch in Discord, für den Spieler ein Briefwechsel im
+Postfach. Beide Seiten benutzen das Werkzeug, das sie ohnehin offen haben.
+
+### Die eine echte Hürde: der NAS muss erreichbar sein
+
+Der Bot verbindet sich **nach außen** zu Discord, das funktioniert hinter jedem Router ohne
+Konfiguration. Aber in Schritt 5 muss das Spiel des Spielers **den NAS erreichen**. Dafür braucht
+es eine öffentliche Adresse mit HTTPS.
+
+**Nicht per Portfreigabe.** Dann stünde die Heim-IP des Chefs in jedem ausgelieferten Client, und
+jeder Scanner im Netz klopft irgendwann an.
+
+**Sondern per Cloudflare Tunnel** (kostenlos): Der NAS baut die Verbindung selbst nach außen auf,
+es wird kein Port geöffnet, die Heim-IP bleibt verborgen. Man bekommt einen festen Hostnamen wie
+`support.grimreach.dev`, gültiges Zertifikat inklusive, und Cloudflare filtert Spam ab, bevor er
+das Heimnetz erreicht. Alternativen mit demselben Prinzip: Tailscale Funnel, ngrok (kostenpflichtig
+für feste Adressen).
+
+### Was das am Spielstand ändert
+
+Genau eine Sache, und sie ist unvermeidbar: Die vorhandenen Briefe tragen bewusst **nur
+i18n-Schlüssel, nie Rohtext** (`MailMessage`, `kind: "letter"`, `textKey`). Eine Entwickler-Antwort
+*ist* Rohtext. Das verlangt eine neue Postfach-Art (`kind: "support"`) mit Rohtext, Ticket-Nummer
+und Richtung — also **SAVE_VERSION-Sprung plus Migration plus Vault-Ritual**. Der einzige Punkt in
+diesem ganzen Vorhaben, der den Speicherstand berührt.
+
+### Was wir vorher festlegen müssen
+
+1. **Sprache.** Die Antwort des Chefs wird nicht übersetzt. Ein russischer Spieler bekommt sie so,
+   wie sie getippt wurde. Entweder alle Antworten auf Englisch, oder wir zeigen im Brief dazu,
+   in welcher Sprache geantwortet wurde.
+2. **Missbrauch.** Der Endpunkt ist öffentlich erreichbar, weil er es sein muss. Nötig sind:
+   Ticket-Nummern mit genug Zufall (sonst liest ein Fremder fremde Antworten), eine Obergrenze
+   pro IP, und eine Längenbegrenzung für Spieler-Antworten.
+3. **Aufbewahrung.** Wie lange hebt der Bot Tickets auf? Vorschlag: 90 Tage, danach löschen.
+4. **Wenn der NAS aus ist.** Nichts geht verloren: Der Spieler kommt nicht durch und versucht es
+   beim nächsten Start erneut; deine Antworten liegen auf dem NAS und werden zugestellt, sobald er
+   wieder fragt. Es ist eine Verzögerung, kein Datenverlust.
+
+### Ehrliche Einordnung
+
+**Es ist kein Live-Chat.** Bei einem Abruf pro Minute kommt eine Antwort binnen einer Minute an,
+solange das Spiel läuft. Das fühlt sich an wie eine Textnachricht, nicht wie ein Gespräch.
+Kürzer als 30 Sekunden sollte das Intervall nicht werden: bei tausend gleichzeitigen Spielern
+sind das sonst spürbar viele Anfragen für einen NAS.
+
+**Aufwand:** Bot (Discord-Gateway, Threads, Ablage, HTTP-Endpunkt) etwa 1 bis 2 Tage. Client
+(Ticket-Nummer, Abruf, neue Postfach-Art, Popup, Antwortfeld) etwa 1 Tag. Tunnel einrichten eine
+knappe Stunde. Dazu die Save-Migration mit Vault-Ritual.
+
+**Der Nutzen ist real:** Von den bisherigen Reports waren zwei an einem einzigen Tag gar keine
+Defekte, sondern Missverständnisse („The New Haven disappeared", „Bogen und Schild gleichzeitig?").
+Beide hätte ein Zweizeiler an den Spieler erledigt.
+
+---
+
 ## Was ich empfehle
 
-**Stufe 1 sofort, Stufe 2 mit Bot als Ziel.** Stufe 3 ist Komfort für den Chef, nicht für den
-Spieler, und lohnt erst, wenn die Report-Menge so groß wird, dass Kennungen tippen nervt.
+**Aktualisiert 23.08. nach dem NAS-Hinweis: Stufe 1 sofort, danach direkt Stufe 4.**
+Stufe 2 und 3 waren Umwege um das fehlende Dauerbetrieb-Problem herum. Mit einem NAS, der
+ohnehin läuft, entfällt ihr einziger Vorteil — und die öffentlich lesbare Antwortdatei aus
+Stufe 2 (mit ihrem Datenschutz-Beigeschmack) wird durch eine private Ablage auf dem eigenen
+Gerät ersetzt. Stufe 1 bleibt trotzdem sinnvoll als Sofortmaßnahme, solange Stufe 4 gebaut wird.
 
 Die ehrliche Einordnung: Der Nutzen liegt fast vollständig in Stufe 2. Der Spieler, der heute
 „The New Haven disappeared" meldet, will keine Direktnachricht — er will im Spiel lesen, dass

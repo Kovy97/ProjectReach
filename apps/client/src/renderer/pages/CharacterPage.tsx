@@ -17,7 +17,7 @@ import {
 } from "@hearthforge/engine";
 import { ActiveBuffsBar } from "../components/ActiveBuffs";
 import { HoverTip } from "../components/CitadelTip";
-import { EquipLoadoutBar } from "../components/EquipLoadoutBar";
+import { EquipKitBar } from "../components/EquipKitBar";
 import {
   AttributesGrid,
   CombatStatsPanelGrouped,
@@ -480,9 +480,10 @@ export function CharacterPage(): JSX.Element {
               aria-labelledby="cs-tab-equipment"
               className="cs-col cs-col-mid cs-tabpanel-content"
             >
-              {/* Ausrüstungs-Loadouts 1/2/3 (Task #349): kompakte Leiste ÜBER der Puppe —
-                  Speichern/Anlegen kompletter Kampf-Sets, s. components/EquipLoadoutBar.tsx. */}
-              <EquipLoadoutBar />
+              {/* Ausrüstungs-Kits 1/2/3 (Chef-Entscheid 28.08.2026): kompakte Leiste ÜBER der
+                  Puppe — jedes Kit trägt eigene Items, Umschalten tauscht das ganze Set (nur
+                  außerhalb des Kampfes), s. components/EquipKitBar.tsx. */}
+              <EquipKitBar />
               <EquipmentDoll interactive dragItem={dragItem} onDragItem={setDragItem} />
             </div>
           ) : (
