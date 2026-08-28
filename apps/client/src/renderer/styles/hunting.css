@@ -1120,124 +1120,8 @@ button.hzp-loot-chip-icon:hover {
   white-space: nowrap;
 }
 
-.hunt-book {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 10px;
-}
-
 .hunt-book-empty {
   font-size: 14px;
-}
-
-.hunt-book-zone {
-  border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
-  background:
-    linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
-  background-size: auto, 240px 240px;
-}
-
-.hunt-book-zone-head {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 10px;
-  padding: 4px 6px 4px 0;
-  border: none;
-  background: transparent;
-  color: inherit;
-  font-family: inherit;
-  cursor: pointer;
-  text-align: left;
-}
-
-.hunt-book-zone-caret {
-  color: var(--accent-2);
-  width: 14px;
-  flex: 0 0 auto;
-}
-
-.hunt-book-zone-name {
-  font-family: var(--font-head);
-  font-size: 17px;
-  color: var(--gold);
-}
-
-.hunt-book-zone-meta {
-  font-size: 13px;
-}
-
-.hunt-book-empty-zone {
-  font-size: 13px;
-  padding: 0 6px 6px 28px;
-}
-
-.hunt-book-monsters {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px 6px 4px 28px;
-  border-top: 1px solid var(--border);
-  margin-top: 6px;
-}
-
-.hunt-book-monster {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.hunt-book-monster:last-child {
-  border-bottom: none;
-}
-
-.hunt-book-monster-img {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hunt-book-monster-img img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.hunt-book-monster-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  flex: 1;
-}
-
-.hunt-book-monster-name {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 14px;
-}
-
-.hunt-book-monster.is-defeated .hunt-book-monster-name {
-  color: var(--text);
-}
-
-.hunt-book-monster:not(.is-defeated) .hunt-book-monster-name {
-  color: var(--muted);
-}
-
-.hunt-book-monster-status {
-  font-size: 12px;
 }
 
 .hunt-book-check {
@@ -1257,74 +1141,354 @@ button.hzp-loot-chip-icon:hover {
   border-color: rgba(111, 200, 111, 0.5);
 }
 
-.hunt-book-monster-loot {
+/* ═══════════════════════════════════════════════════════════
+   JAGDBUCH — SAMMELALBUM (Redesign 28.08.2026 Runde 3, Chef-Kritik „aktuell sehr simpel und
+   langweilig"): kein Tabellen-Akkordeon mehr. Kopf-Fortschrittsbalken + vier Stahl-Kacheln (reuse
+   `.hunt-head-stat`, s.o.) → Alle/Gefangen/Offen-Filter + Suche → je Gebiet ein Kulissen-Band
+   (Muster `.hunt-trap-card.has-bg`/`.hzp-banner`) mit den Arten als eigene Karten (Stilreferenz
+   Chef-Auftrag: `.hzp-mon-card` des Gebiet-Modals — eigene `hbk-*`-Namensfamilie statt geteilter
+   Klassen, damit das TABU-Modal nie versehentlich mitgetroffen wird).
+   `hbk-*` = "Hunt Book Kodex". ═══════════════════════════════════════════════════════════ */
+
+.hbk-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 10px;
+}
+
+/* ─── Kopf: Fortschrittsbalken + vier Kacheln ─────────────────────────────────────────────── */
+.hbk-summary {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  gap: 14px;
 }
 
-/* ─── Beute-Chips (Jagdbuch) — bekannt = echtes Item-Icon (Klick öffnet Item-Wiki), unbekannt =
-   „???"-Silhouette wie im Bestiarium. ─────────────────────────────────────────────────────── */
-.hunt-loot-chip {
+.hbk-summary-progress {
+  flex: 1 1 240px;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 14px;
+  color: var(--gold);
+  font-family: var(--font-head);
+  letter-spacing: 0.2px;
+}
+
+.hbk-summary-bar {
+  max-width: 100%;
+}
+
+.hbk-summary-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 2 1 460px;
+}
+
+/* Die beiden Text-Kacheln (seltenster Fund/Lieblingsfang) brauchen mehr Platz und dürfen umbrechen
+   statt wie die kurzen Zahlen-Kacheln der Kopfzeile einzeilig zu bleiben. */
+.hbk-tile-wide {
+  min-width: 190px;
+  flex: 1 1 190px;
+}
+
+.hunt-head-stat-value.hbk-tile-wrap {
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.hbk-tile-wrap img,
+.hbk-tile-wrap .item-chip {
+  flex-shrink: 0;
+}
+
+/* ─── Filter/Suche ─────────────────────────────────────────────────────────────────────────── */
+.hbk-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.hbk-filter-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.hbk-search {
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 320px;
+  box-sizing: border-box;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.6), rgba(18, 12, 6, 0.6)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 200px 200px;
+  color: var(--text);
+  font-size: 13px;
+  padding: 6px 10px;
+  outline: none;
+}
+
+.hbk-search::placeholder {
+  color: var(--muted);
+}
+
+.hbk-search:focus {
+  box-shadow: 0 0 8px rgba(216, 192, 106, 0.3);
+}
+
+/* ─── Gebiets-Bänder ───────────────────────────────────────────────────────────────────────── */
+.hbk-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hbk-zone {
+  overflow: hidden;
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+}
+
+.hbk-zone.locked {
+  filter: grayscale(0.35) brightness(0.82);
+}
+
+.hbk-zone-banner {
   position: relative;
-  display: inline-flex;
+  isolation: isolate;
+  min-height: 100px;
+  display: flex;
+  align-items: flex-end;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 12px 16px;
+}
+
+.hbk-zone-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.15) 0%, rgba(10, 8, 6, 0.62) 68%, rgba(10, 8, 6, 0.92) 100%);
+}
+
+.hbk-zone-banner-row {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+.hbk-zone-name {
+  font-family: var(--font-head);
+  font-size: 19px;
+  letter-spacing: 0.3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px #000;
+  flex: 0 0 auto;
+}
+
+.hbk-zone-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #e8dcc0;
+  text-shadow: 0 1px 3px #000;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+}
+
+.hbk-zone-bar.bar {
+  width: 140px;
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+.hbk-zone-locked-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-style: italic;
+  color: #e8dcc0;
+  background: rgba(10, 8, 6, 0.4);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.2);
+}
+
+.hbk-zone-locked-note .ui-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ─── Arten-Karten (Medaillons) — Stilreferenz `.hzp-mon-card` (Gebiet-Modal), eigene Klassen ─── */
+.hbk-mon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-items: stretch;
+  gap: 12px;
+  padding: 14px 16px 16px;
+}
+
+.hbk-mon-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(201, 161, 91, 0.3);
+  border-radius: 3px;
+  background: linear-gradient(180deg, rgba(64, 48, 34, 0.94) 0%, rgba(34, 26, 20, 0.97) 60%, rgba(22, 17, 13, 0.98) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 232, 190, 0.09), inset 0 0 0 1px rgba(0, 0, 0, 0.45), 0 3px 8px rgba(0, 0, 0, 0.55);
+}
+
+.hbk-mon-card--caught {
+  border-color: rgba(111, 200, 111, 0.34);
+}
+
+.hbk-mon-card--uncaught {
+  opacity: 0.92;
+}
+
+.hbk-mon-card--locked {
+  opacity: 0.78;
+  filter: grayscale(0.3);
+}
+
+.hbk-mon-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Medaillon: rundes Porträt-Fenster statt des quadratischen Modal-Rahmens — eigene Bildsprache
+   fürs Sammelalbum, wie der Chef-Auftrag es nennt. */
+.hbk-mon-portrait {
+  position: relative;
+  flex: 0 0 auto;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.35);
-  cursor: pointer;
+  background: radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.55) 75%);
+  border: 2px solid rgba(201, 161, 91, 0.55);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.hunt-loot-chip.unknown {
-  cursor: default;
-  opacity: 0.7;
-}
-
-/* Seltenheits-Tint (Gebiet-Modal-Vorgabe, gilt fürs Jagdbuch gleich mit — dieselbe `--rar-*`-Palette
-   wie `.item-cell`/components.css): bekannt UND unbekannt tragen die Rand-Farbe ihrer Seltenheit,
-   die „???"-Maskierung bleibt unangetastet (nur der Rahmen verrät den Rang, nie das Bild). */
-.hunt-loot-chip.rarity-poor      { border-color: var(--rar-poor); }
-.hunt-loot-chip.rarity-common    { border-color: var(--rar-common); }
-.hunt-loot-chip.rarity-magic     { border-color: var(--rar-magic); }
-.hunt-loot-chip.rarity-rare      { border-color: var(--rar-rare); }
-.hunt-loot-chip.rarity-superRare { border-color: var(--rar-superRare); }
-.hunt-loot-chip.rarity-epic      { border-color: var(--rar-epic); }
-.hunt-loot-chip.rarity-legendary { border-color: var(--rar-legendary); }
-.hunt-loot-chip.rarity-godly     { border-color: var(--rar-godly); }
-
-button.hunt-loot-chip:hover {
-  border-color: var(--accent-2);
-  box-shadow: 0 0 6px rgba(154, 128, 96, 0.3);
-}
-
-.hunt-loot-chip-img {
-  max-width: 22px;
-  max-height: 22px;
+.hbk-mon-portrait-img {
+  max-width: 84%;
+  max-height: 84%;
   object-fit: contain;
 }
 
-.hunt-loot-chip-silhouette {
-  filter: brightness(0);
+.hbk-mon-card--uncaught .hbk-mon-portrait-img {
+  filter: grayscale(1) brightness(0.5);
+  opacity: 0.85;
+}
+
+.hbk-mon-card--locked .hbk-mon-portrait-img {
+  filter: grayscale(1) brightness(0.3);
   opacity: 0.6;
 }
 
-.hunt-loot-chip-emoji {
-  font-size: 16px;
-}
-
-.hunt-loot-chip-mark {
+.hbk-mon-portrait-lock {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.hbk-mon-portrait-lock-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+.hbk-mon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hbk-mon-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hbk-mon-name {
+  font-size: 14px;
   font-weight: 700;
-  color: var(--muted);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  color: var(--text);
+}
+
+.hbk-mon-lvl {
+  font-size: 12px;
+}
+
+.hbk-mon-status--locked {
+  font-size: 12px;
+  color: #e8a08a;
+}
+
+.hbk-mon-catchrow {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hbk-mon-catchcount {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.hbk-mon-firstbadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(216, 192, 106, 0.4);
+  background: rgba(216, 192, 106, 0.08);
+  white-space: normal;
+}
+
+.hbk-mon-xp {
+  font-size: 11px;
+}
+
+.hbk-mon-loot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 @media (max-width: 1500px), (max-height: 900px) {

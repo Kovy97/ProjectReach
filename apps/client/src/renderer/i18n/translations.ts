@@ -1666,7 +1666,6 @@ const en = {
     "hunting.beatenCount": "{n}/{total} beaten",
     "hunting.noZoneSet": "No Ground",
     "hunting.autoChip": "Auto",
-    "hunting.book.undefeated": "Not defeated yet",
 
     // Gebiet-Modal (Chef-Auftrag 28.08.2026, großes zweispaltiges Auswahlfenster)
     "hunting.picker.title": "Choose Hunting Ground · Trap {n}",
@@ -1702,6 +1701,21 @@ const en = {
     "hunting.zone.bait": "Bait: {bait} · {n} in stock",
     "hunting.zone.baitValue": "{bait} · {n} in stock",
     "hunting.reason.no_bait_named": "No {bait}, Fishing Lv {n}: {action}",
+
+    // Jagdbuch-Sammelalbum (Redesign 28.08.2026 Runde 3, Chef-Kritik „sehr simpel und langweilig")
+    "hunting.book.needsKill": "Defeat it in combat first",
+    "hunting.book.neverCaught": "Never caught yet · First catch counts double",
+    "hunting.book.xpPerCatch": "{n} XP per catch",
+    "hunting.book.tile.catches": "Total Catches",
+    "hunting.book.tile.zones": "Grounds Open",
+    "hunting.book.tile.rarest": "Rarest Find",
+    "hunting.book.tile.favorite": "Favorite Catch",
+    "hunting.book.filter.all": "All",
+    "hunting.book.filter.caught": "Caught",
+    "hunting.book.filter.open": "Open",
+    "hunting.book.searchPlaceholder": "Search species…",
+    "hunting.book.noMatches": "No species match this filter.",
+    "hunting.book.speciesCount": "{n}/{total} caught",
 
     "offline.hunt.title": "Hunting",
 
@@ -4048,7 +4062,6 @@ const de: Record<keyof typeof en, string> = {
     "hunting.beatenCount": "{n}/{total} besiegt",
     "hunting.noZoneSet": "Kein Gebiet",
     "hunting.autoChip": "Auto",
-    "hunting.book.undefeated": "Noch nie besiegt",
 
     // Gebiet-Modal (Chef-Auftrag 28.08.2026, großes zweispaltiges Auswahlfenster)
     "hunting.picker.title": "Gebiet wählen · Falle {n}",
@@ -4084,6 +4097,21 @@ const de: Record<keyof typeof en, string> = {
     "hunting.zone.bait": "Köder: {bait} · {n} im Vorrat",
     "hunting.zone.baitValue": "{bait} · {n} im Vorrat",
     "hunting.reason.no_bait_named": "Kein {bait}, Angeln ab Stufe {n}: {action}",
+
+    // Jagdbuch-Sammelalbum (Redesign 28.08.2026 Runde 3, Chef-Kritik „sehr simpel und langweilig")
+    "hunting.book.needsKill": "Erst im Kampf besiegen",
+    "hunting.book.neverCaught": "Noch nie gefangen · Erstfang zählt doppelt",
+    "hunting.book.xpPerCatch": "{n} XP je Fang",
+    "hunting.book.tile.catches": "Fänge gesamt",
+    "hunting.book.tile.zones": "Gebiete offen",
+    "hunting.book.tile.rarest": "Seltenster Fund",
+    "hunting.book.tile.favorite": "Lieblingsfang",
+    "hunting.book.filter.all": "Alle",
+    "hunting.book.filter.caught": "Gefangen",
+    "hunting.book.filter.open": "Offen",
+    "hunting.book.searchPlaceholder": "Art suchen…",
+    "hunting.book.noMatches": "Keine Art passt zu diesem Filter.",
+    "hunting.book.speciesCount": "{n}/{total} gefangen",
 
     "offline.hunt.title": "Jagd",
 

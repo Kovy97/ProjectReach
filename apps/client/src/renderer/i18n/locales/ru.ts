@@ -1409,7 +1409,6 @@ export const ru: Record<string, string> = {
     "hunting.beatenCount": "{n}/{total} побеждено",
     "hunting.noZoneSet": "Нет местности",
     "hunting.autoChip": "Авто",
-    "hunting.book.undefeated": "Ещё не побеждён",
 
     "hunting.picker.title": "Выбрать место охоты · Капкан {n}",
     "hunting.picker.statLevel": "Уровень охоты",
@@ -1444,6 +1443,20 @@ export const ru: Record<string, string> = {
     "hunting.zone.bait": "Наживка: {bait} · в запасе {n}",
     "hunting.zone.baitValue": "{bait} · в запасе {n}",
     "hunting.reason.no_bait_named": "Нет «{bait}», рыбалка {n}-го уровня: {action}",
+
+    "hunting.book.needsKill": "Сначала победи его в бою",
+    "hunting.book.neverCaught": "Ещё не поймано · Первая поимка даёт двойной опыт",
+    "hunting.book.xpPerCatch": "{n} опыта за поимку",
+    "hunting.book.tile.catches": "Поимок всего",
+    "hunting.book.tile.zones": "Открыто угодий",
+    "hunting.book.tile.rarest": "Редчайшая находка",
+    "hunting.book.tile.favorite": "Любимая добыча",
+    "hunting.book.filter.all": "Все",
+    "hunting.book.filter.caught": "Пойманные",
+    "hunting.book.filter.open": "Не пойманные",
+    "hunting.book.searchPlaceholder": "Поиск вида…",
+    "hunting.book.noMatches": "Ни один вид не подходит под этот фильтр.",
+    "hunting.book.speciesCount": "{n}/{total} поймано",
 
     "offline.hunt.title": "Охота",
 

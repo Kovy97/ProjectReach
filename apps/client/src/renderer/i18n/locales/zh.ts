@@ -1408,7 +1408,6 @@ export const zh: Record<string, string> = {
     "hunting.beatenCount": "已击败 {n}/{total}",
     "hunting.noZoneSet": "尚未选择区域",
     "hunting.autoChip": "自动",
-    "hunting.book.undefeated": "尚未击败",
 
     "hunting.picker.title": "选择狩猎区域 · 陷阱 {n}",
     "hunting.picker.statLevel": "狩猎等级",
@@ -1443,6 +1442,20 @@ export const zh: Record<string, string> = {
     "hunting.zone.bait": "诱饵：{bait} · 库存 {n}",
     "hunting.zone.baitValue": "{bait} · 库存 {n}",
     "hunting.reason.no_bait_named": "没有{bait}，钓鱼等级 {n}：{action}",
+
+    "hunting.book.needsKill": "先在战斗中击败它",
+    "hunting.book.neverCaught": "尚未捕获 · 首次捕获经验翻倍",
+    "hunting.book.xpPerCatch": "每次捕获 {n} 经验",
+    "hunting.book.tile.catches": "总捕获数",
+    "hunting.book.tile.zones": "开放猎场",
+    "hunting.book.tile.rarest": "最稀有的发现",
+    "hunting.book.tile.favorite": "最爱的猎物",
+    "hunting.book.filter.all": "全部",
+    "hunting.book.filter.caught": "已捕获",
+    "hunting.book.filter.open": "未捕获",
+    "hunting.book.searchPlaceholder": "搜索物种…",
+    "hunting.book.noMatches": "没有符合筛选条件的物种。",
+    "hunting.book.speciesCount": "{n}/{total} 已捕获",
 
     "offline.hunt.title": "狩猎",
 

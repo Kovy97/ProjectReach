@@ -8,6 +8,7 @@ import {
   HUNT_LOOT_ROLLS,
   HUNT_SLOT_LEVELS,
   HUNT_TRAP_SLOTS,
+  huntCatchXp,
 } from "@hearthforge/shared";
 import type { GameState, HuntTrap, HuntZoneDef, LocalizedString, MonsterDef } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
@@ -858,45 +859,10 @@ function TrapCard({
   );
 }
 
-/** Ein Beute-Chip im Jagdbuch: bekannte Items (im Collection-Log, `state.seenDrops[monsterId]`)
- *  sind ein echtes Item-Icon, Klick öffnet das Item-Wiki (Muster BestiaryPage `LootRow`); unbekannte
- *  bleiben eine „???"-Maskierung wie im Bestiarium — kein Spoiler auf noch nie erhaltene Beute. */
-function HuntLootChip({ itemId, discovered }: { itemId: string; discovered: boolean }): JSX.Element {
-  const { tr } = useI18n();
-  const item = content.items[itemId];
-  const img = getItemImage(itemId);
-
-  if (!discovered) {
-    return (
-      <span className={`hunt-loot-chip unknown ${rarityClass(item?.rarity)}`} title="???" aria-hidden="true">
-        {img && (
-          <img loading="lazy" decoding="async" src={img} alt="" className="hunt-loot-chip-img hunt-loot-chip-silhouette pixelart" />
-        )}
-        <span className="hunt-loot-chip-mark">?</span>
-      </span>
-    );
-  }
-
-  const name = item ? tr(item.name) : itemId;
-  return (
-    <button
-      type="button"
-      className={`hunt-loot-chip ${rarityClass(item?.rarity)}`}
-      title={name}
-      onClick={() => openItemWikiModal(itemId)}
-    >
-      {img ? (
-        <img loading="lazy" decoding="async" src={img} alt="" className="hunt-loot-chip-img pixelart" />
-      ) : (
-        <span className="hunt-loot-chip-emoji">{item?.icon ?? "▪"}</span>
-      )}
-    </button>
-  );
-}
-
-/** Beute-Chip im Gebiet-Modal (Chef-Kritik Runde 2: „Beute-Chips mit Chance-Prozent und Masken ?"):
- *  wie `HuntLootChip`, zusätzlich mit sichtbarer Fangchance (`formatDropPct`, Muster Bestiarium/
- *  Item-Wiki — dieselbe Prozent-Formatierung, unabhängig vom Entdeckt-Status). */
+/** Beute-Chip im Gebiet-Modal UND im Jagdbuch (Redesign 28.08.2026 Runde 3 — Chef-Kritik „Jagdbuch
+ *  sehr simpel und langweilig"): Icon + sichtbare Fangchance (`formatDropPct`, Muster Bestiarium/
+ *  Item-Wiki — dieselbe Prozent-Formatierung, unabhängig vom Entdeckt-Status), „???"-Maskierung bis
+ *  zum ersten Fund (Muster Bestiarium). Beide Stellen teilen denselben Chip statt zweier Kopien. */
 function HzpLootChip({ itemId, discovered, chance }: { itemId: string; discovered: boolean; chance: number }): JSX.Element {
   const { tr } = useI18n();
   const item = content.items[itemId];
@@ -953,110 +919,204 @@ function HuntGoldRangeChip({ monster }: { monster: MonsterDef }): JSX.Element | 
   );
 }
 
-/** Eine Gebiets-Zeile im Jagdbuch-Akkordeon — startet zugeklappt (Layout-Vorgabe #4). */
-function HuntBookZoneRow({ zone, open, onToggle }: { zone: HuntZoneDef; open: boolean; onToggle: () => void }): JSX.Element {
+/** Sammelalbum-Karte einer Art im Jagdbuch (Redesign 28.08.2026 Runde 3, Chef-Kritik „sehr simpel
+ *  und langweilig") — drei Zustände nach Kampf-/Fang-Historie:
+ *  - nie besiegt (`monsterKills` 0): Porträt gesperrt (Schloss-Overlay + Abdunklung), nur Name/
+ *    Stufe/Hinweis „Erst im Kampf besiegen" — keine Fangdaten, die es noch nicht geben kann.
+ *  - besiegt, aber nie gefangen: Porträt gedämpft (Graustufen), Abzeichen „Noch nie gefangen ·
+ *    Erstfang zählt doppelt" statt Fangzähler, XP je Fang informativ sichtbar, Beute-Chips mit
+ *    Chance-% + „?"-Maske (Muster `HzpLootChip`, geteilt mit dem Gebiet-Modal).
+ *  - mind. 1 Fang: volles Porträt, Fangzähler „×N", XP je Fang, Beute-Chips (teils schon entdeckt). */
+function HuntBookMonsterCard({ monster }: { monster: MonsterDef }): JSX.Element {
   const state = useGameState();
   const { t, tr } = useI18n();
-  const zoneMeta = content.zones.find((zz) => zz.id === zone.zoneId);
-  const name = zoneMeta ? tr(zoneMeta.name) : zone.zoneId;
-  const chance = huntCatchChance(state, content, zone.zoneId);
-  const progress = huntZoneProgress(state, content, zone.zoneId);
-  const candidates = huntCandidatesForZone(content, zone.zoneId);
+  const kills = state.monsterKills[monster.id] ?? 0;
+  const defeated = kills > 0;
+  const catches = state.stats.huntCatchesById?.[monster.id] ?? 0;
+  const src = getMonsterSrc(monster.id);
+  const seen = state.seenDrops[monster.id] ?? [];
+  const lootSorted = [...monster.loot].sort((a, b) => b.chance - a.chance);
+  const xpPerCatch = huntCatchXp(monster.xp);
+
+  const stateCls = !defeated ? " hbk-mon-card--locked" : catches === 0 ? " hbk-mon-card--uncaught" : " hbk-mon-card--caught";
 
   return (
-    <div className="hunt-book-zone">
-      <button type="button" className="hunt-book-zone-head" onClick={onToggle} aria-expanded={open}>
-        <span className="hunt-book-zone-caret">{open ? "▾" : "▸"}</span>
-        <span className="hunt-book-zone-name">{name}</span>
-        <span className="hunt-book-zone-meta muted">
-          {t("skill.levelShort").replace("{n}", String(zone.levelRequired))}
-          {" · "}
-          {t("hunting.trapTime").replace("{time}", formatMs(zone.trapMs))}
-          {" · "}
-          {t("hunting.catchChance").replace("{pct}", String(Math.round(chance * 100)))}
-          {" · "}
-          {t("hunting.beatenCount").replace("{n}", String(progress.defeated)).replace("{total}", String(progress.total))}
-        </span>
-      </button>
-
-      {open && (
-        candidates.length === 0 ? (
-          <p className="muted hunt-book-empty-zone">{t("hunting.book.noneHere")}</p>
-        ) : (
-          <div className="hunt-book-monsters">
-            {candidates.map((m) => {
-              const defeated = (state.monsterKills[m.id] ?? 0) >= 1;
-              const src = getMonsterSrc(m.id);
-              const seen = state.seenDrops[m.id] ?? [];
-              const lootSorted = [...m.loot].sort((a, b) => b.chance - a.chance);
-              return (
-                <div key={m.id} className={`hunt-book-monster${defeated ? " is-defeated" : ""}`}>
-                  <div className="hunt-book-monster-img">
-                    {src ? (
-                      <img loading="lazy" decoding="async" src={src} alt="" className="pixelart" />
-                    ) : (
-                      <span aria-hidden="true">🐾</span>
-                    )}
-                  </div>
-                  <div className="hunt-book-monster-info">
-                    <span className="hunt-book-monster-name">
-                      <span className={`hunt-book-check${defeated ? " checked" : ""}`} aria-hidden="true">
-                        {defeated ? "✓" : "○"}
-                      </span>
-                      {tr(m.name)}
-                      <span className="hunt-book-monster-status muted">
-                        {t(defeated ? "bestiary.seal.defeated" : "hunting.book.undefeated")}
-                      </span>
-                    </span>
-                    {lootSorted.length > 0 && (
-                      <div className="hunt-book-monster-loot">
-                        {lootSorted.map((roll) => (
-                          <HuntLootChip key={roll.itemId} itemId={roll.itemId} discovered={seen.includes(roll.itemId)} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+    <div className={`hbk-mon-card${stateCls}`}>
+      <div className="hbk-mon-card-top">
+        <div className="hbk-mon-portrait">
+          {src ? (
+            <img loading="lazy" decoding="async" src={src} alt="" className="pixelart hbk-mon-portrait-img" />
+          ) : (
+            <span aria-hidden="true">🐾</span>
+          )}
+          {!defeated && (
+            <span className="hbk-mon-portrait-lock" aria-hidden="true">
+              {LOCKED_ICON_URL ? (
+                <img src={LOCKED_ICON_URL} alt="" className="hbk-mon-portrait-lock-img" />
+              ) : (
+                "🔒"
+              )}
+            </span>
+          )}
+        </div>
+        <div className="hbk-mon-info">
+          <div className="hbk-mon-name-row">
+            <span className="hbk-mon-name">{tr(monster.name)}</span>
+            <span className="hbk-mon-lvl muted">{t("skill.levelShort").replace("{n}", String(monster.level))}</span>
           </div>
-        )
+          {!defeated ? (
+            <span className="hbk-mon-status hbk-mon-status--locked">{t("hunting.book.needsKill")}</span>
+          ) : (
+            <div className="hbk-mon-catchrow">
+              {catches > 0 ? (
+                <span className="hbk-mon-catchcount">×{formatNum(catches)}</span>
+              ) : (
+                <span className="hbk-mon-firstbadge">{t("hunting.book.neverCaught")}</span>
+              )}
+              <span className="hbk-mon-xp muted">{t("hunting.book.xpPerCatch").replace("{n}", formatNum(xpPerCatch))}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {defeated && (lootSorted.length > 0 || monster.gold > 0) && (
+        <div className="hbk-mon-loot">
+          {lootSorted.map((roll) => (
+            <HzpLootChip key={roll.itemId} itemId={roll.itemId} discovered={seen.includes(roll.itemId)} chance={roll.chance} />
+          ))}
+          <HuntGoldRangeChip monster={monster} />
+        </div>
       )}
     </div>
   );
 }
 
-/** Jagdbuch (Layout-Vorgabe #4): Akkordeon unter dem Fallen-Raster. Die äußere Kopfzeile merkt
- *  ihren Auf-/Zugeklappt-Zustand in localStorage (Muster getQueuePanelCollapsed) und zeigt
- *  zugeklappt eine Zusammenfassung („4 Gebiete offen · 12/38 Arten gefangen", Chef-Kritik Runde 2);
- *  die einzelnen Gebiets-Zeilen darunter starten IMMER zugeklappt (reiner Component-State, nicht
- *  persistiert). */
+/** Ein Gebiets-Band im Jagdbuch (Redesign Runde 3) — Zonen-Kulisse als Hintergrund (Muster
+ *  Fallen-Karte/`.has-bg`), Name/Stufe/Köder/„x/y Arten gefangen" + kleiner Fortschrittsbalken im
+ *  Banner, darunter das Karten-Raster der Arten (`HuntBookMonsterCard`, Stufe aufsteigend). Bänder
+ *  bleiben IMMER offen (kein zweites Akkordeon-Level mehr — Chef-Kritik „langweilige Tabelle"; ein
+ *  echtes Sammelalbum blättert nicht doppelt) — gesperrte Gebiete bleiben trotzdem als Vorschau
+ *  sichtbar (Muster BestiaryPage `ZoneBandShell.locked`: gedämpft + Grund-Hinweis), die Arten selbst
+ *  tragen ihren eigenen Sperr-/Fang-Zustand unabhängig vom Gebiets-Lock (ein Jagen-stufengesperrtes
+ *  Gebiet kann trotzdem längst im Kampf bereiste Arten zeigen). `candidates` = ungefiltert (für die
+ *  Band-Kennzahlen), `visible` = nach Filter/Suche (für das Karten-Raster) — leer heißt: nichts
+ *  passt, der Elternteil blendet das ganze Band dann aus (s. `HuntBook`). */
+function HuntBookZoneBand({
+  zone,
+  candidates,
+  visible,
+}: {
+  zone: HuntZoneDef;
+  candidates: MonsterDef[];
+  visible: MonsterDef[];
+}): JSX.Element {
+  const state = useGameState();
+  const { t, tr } = useI18n();
+  const huntLevel = levelFromXp(state.skills["hunting"]?.xp ?? 0);
+  const zoneMeta = content.zones.find((zz) => zz.id === zone.zoneId);
+  const name = zoneMeta ? tr(zoneMeta.name) : zone.zoneId;
+  const bg = getZoneBackgroundCard(zone.zoneId);
+  const isOpen = huntZoneIsOpen(state, content, huntLevel, zone.zoneId);
+  const gate = zoneGateReason(state, content, huntLevel, zone.zoneId);
+  const lockedNote = !isOpen && (gate === "zone_locked" || gate === "level") ? reasonText(t, gate, zone.levelRequired) : null;
+  const baitId = huntZoneBaitId(zone);
+  const baitItem = content.items[baitId];
+  const baitName = baitItem ? tr(baitItem.name) : baitId;
+  const caught = candidates.filter((m) => (state.stats.huntCatchesById?.[m.id] ?? 0) > 0).length;
+  const total = candidates.length;
+  const pct = total > 0 ? (caught / total) * 100 : 0;
+
+  return (
+    <section className={`hbk-zone${isOpen ? "" : " locked"}`}>
+      <div className="hbk-zone-banner" style={bg ? { backgroundImage: `url("${bg}")` } : undefined}>
+        <div className="hbk-zone-banner-row">
+          <span className="hbk-zone-name">{name}</span>
+          <div className="hbk-zone-meta">
+            <span>{t("skill.levelShort").replace("{n}", String(zone.levelRequired))}</span>
+            <span>{t("hunting.zone.bait").replace("{bait}", baitName).replace("{n}", String(huntBaitCount(state, baitId)))}</span>
+            <span>{t("hunting.book.speciesCount").replace("{n}", String(caught)).replace("{total}", String(total))}</span>
+            <span className="bar tall hbk-zone-bar">
+              <span className="bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {lockedNote && (
+        <div className="hbk-zone-locked-note">
+          <span aria-hidden="true">
+            {LOCKED_ICON_URL ? <img src={LOCKED_ICON_URL} alt="" className="ui-icon" loading="lazy" decoding="async" /> : "🔒"}
+          </span>
+          {lockedNote}
+        </div>
+      )}
+
+      <div className="hbk-mon-grid">
+        {visible.map((m) => (
+          <HuntBookMonsterCard key={m.id} monster={m} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Jagdbuch (Redesign 28.08.2026 Runde 3, Chef-Kritik „aktuell sehr simpel und langweilig"): kein
+ *  Tabellen-Akkordeon mehr, sondern ein Sammelalbum. Die äußere Kopfzeile merkt weiterhin ihren
+ *  Auf-/Zugeklappt-Zustand in localStorage (Muster getQueuePanelCollapsed) und zeigt zugeklappt die
+ *  bestehende Zusammenfassung („4 Gebiete offen · 12/38 Arten gefangen"). Aufgeklappt: Kopf-
+ *  Fortschrittsbalken + vier Stahl-Kacheln (Fänge gesamt/Gebiete offen/seltenster Fund/
+ *  Lieblingsfang, Muster `.hunt-head-stat`), ein Alle/Gefangen/Offen-Filter + Namenssuche, dann je
+ *  Gebiet ein Kulissen-Band mit seinen Arten-Karten (`HuntBookZoneBand`). Ein einziger Durchlauf
+ *  über alle Zonen-Kandidaten berechnet Kopf-Kennzahlen UND Filter-Ergebnis in einem Zug. */
 function HuntBook({ zones }: { zones: HuntZoneDef[] }): JSX.Element {
   const state = useGameState();
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
   const [open, setOpen] = useState<boolean>(() => !getHuntBookCollapsed());
-  const [openRows, setOpenRows] = useState<Set<string>>(() => new Set());
+  const [filter, setFilter] = useState<"all" | "caught" | "open">("all");
+  const [search, setSearch] = useState("");
   const huntLevel = levelFromXp(state.skills["hunting"]?.xp ?? 0);
 
   const openZoneCount = zones.filter((z) => huntZoneIsOpen(state, content, huntLevel, z.zoneId)).length;
-  const speciesTotals = zones.reduce(
-    (acc, z) => {
-      const p = huntZoneProgress(state, content, z.zoneId);
-      acc.defeated += p.defeated;
-      acc.total += p.total;
-      return acc;
-    },
-    { defeated: 0, total: 0 },
-  );
 
-  function toggleRow(zoneId: string): void {
-    setOpenRows((prev) => {
-      const next = new Set(prev);
-      if (next.has(zoneId)) next.delete(zoneId);
-      else next.add(zoneId);
-      return next;
-    });
+  // Ein Durchlauf über alle Zonen/Arten: Kopf-Kennzahlen (Arten gefangen, seltenster Fund via
+  // `state.seenDrops`, Lieblingsfang via `state.stats.huntCatchesById`) UND je Zone die sortierte
+  // Kandidatenliste (Stufe aufsteigend, Layout-Vorgabe) für die Bänder unten. Bewusst als
+  // EXPLIZITE `for`-Schleife statt `.map()`/`.filter()`-Ketten: TS verliert bei Zuweisungen an
+  // äußere `let`-Variablen INNERHALB verschachtelter Callback-Funktionen die Verfeinerung des
+  // Werts an dieser Stelle (`favorite`/`rarest` würden nach der Kette als "never" statt ihres
+  // deklarierten Union-Typs gelesen) — derselbe Rechenweg in einer geteilten Funktionsebene bleibt
+  // dagegen sauber typisiert.
+  let speciesCaught = 0;
+  let speciesTotal = 0;
+  let favorite: { monsterId: string; count: number } | null = null;
+  let rarest: { itemId: string; chance: number } | null = null;
+  const searchTerm = search.trim().toLowerCase();
+  const zoneRows: { zone: HuntZoneDef; candidates: MonsterDef[]; visible: MonsterDef[] }[] = [];
+  for (const z of zones) {
+    const candidates = huntCandidatesForZone(content, z.zoneId).slice().sort((a, b) => a.level - b.level);
+    speciesTotal += candidates.length;
+    const visible: MonsterDef[] = [];
+    for (const m of candidates) {
+      const catches = state.stats.huntCatchesById?.[m.id] ?? 0;
+      if (catches > 0) {
+        speciesCaught++;
+        if (!favorite || catches > favorite.count) favorite = { monsterId: m.id, count: catches };
+      }
+      const seen = state.seenDrops[m.id] ?? [];
+      for (const roll of m.loot) {
+        if (!seen.includes(roll.itemId)) continue;
+        if (!rarest || roll.chance < rarest.chance) rarest = { itemId: roll.itemId, chance: roll.chance };
+      }
+      if (filter === "caught" && catches === 0) continue;
+      if (filter === "open" && catches > 0) continue;
+      if (searchTerm && !tr(m.name).toLowerCase().includes(searchTerm)) continue;
+      visible.push(m);
+    }
+    if (visible.length > 0) zoneRows.push({ zone: z, candidates, visible });
   }
+
+  const favMonster = favorite ? content.monsters[favorite.monsterId] : undefined;
+  const favSrc = favorite ? getMonsterSrc(favorite.monsterId) : null;
 
   return (
     <section className="hunt-book-section">
@@ -1079,8 +1139,8 @@ function HuntBook({ zones }: { zones: HuntZoneDef[] }): JSX.Element {
             {t("hunting.book.summaryZones").replace("{n}", String(openZoneCount))}
             {" · "}
             {t("hunting.book.summarySpecies")
-              .replace("{n}", String(speciesTotals.defeated))
-              .replace("{total}", String(speciesTotals.total))}
+              .replace("{n}", String(speciesCaught))
+              .replace("{total}", String(speciesTotal))}
           </span>
         )}
       </button>
@@ -1089,10 +1149,106 @@ function HuntBook({ zones }: { zones: HuntZoneDef[] }): JSX.Element {
         zones.length === 0 ? (
           <p className="muted hunt-book-empty">{t("hunting.book.empty")}</p>
         ) : (
-          <div className="hunt-book">
-            {zones.map((z) => (
-              <HuntBookZoneRow key={z.zoneId} zone={z} open={openRows.has(z.zoneId)} onToggle={() => toggleRow(z.zoneId)} />
-            ))}
+          <div className="hbk-body">
+            <div className="hbk-summary">
+              <div className="hbk-summary-progress">
+                <span>
+                  {t("hunting.book.summarySpecies")
+                    .replace("{n}", String(speciesCaught))
+                    .replace("{total}", String(speciesTotal))}
+                </span>
+                <div className="bar tall hbk-summary-bar">
+                  <div
+                    className="bar-fill"
+                    style={{ transform: `scaleX(${speciesTotal > 0 ? speciesCaught / speciesTotal : 0})` }}
+                  />
+                </div>
+              </div>
+
+              <div className="hbk-summary-tiles">
+                <div className="hunt-head-stat">
+                  <span className="hunt-head-stat-label muted">{t("hunting.book.tile.catches")}</span>
+                  <span className="hunt-head-stat-value">{formatNum(state.stats.huntCatches)}</span>
+                </div>
+                <div className="hunt-head-stat">
+                  <span className="hunt-head-stat-label muted">{t("hunting.book.tile.zones")}</span>
+                  <span className="hunt-head-stat-value">
+                    {openZoneCount}/{zones.length}
+                  </span>
+                </div>
+                <div className="hunt-head-stat hbk-tile-wide">
+                  <span className="hunt-head-stat-label muted">{t("hunting.book.tile.rarest")}</span>
+                  {rarest ? (
+                    <span className="hunt-head-stat-value hbk-tile-wrap">
+                      <ItemChip itemId={rarest.itemId} showName />
+                      <span className="muted">{formatDropPct(rarest.chance)}</span>
+                    </span>
+                  ) : (
+                    <span className="hunt-head-stat-value muted">—</span>
+                  )}
+                </div>
+                <div className="hunt-head-stat hbk-tile-wide">
+                  <span className="hunt-head-stat-label muted">{t("hunting.book.tile.favorite")}</span>
+                  {favorite ? (
+                    <span className="hunt-head-stat-value hbk-tile-wrap">
+                      {favSrc ? (
+                        <img loading="lazy" decoding="async" src={favSrc} alt="" className="pixelart" />
+                      ) : (
+                        <span aria-hidden="true">🐾</span>
+                      )}
+                      {favMonster ? tr(favMonster.name) : favorite.monsterId}
+                      <span className="muted">×{formatNum(favorite.count)}</span>
+                    </span>
+                  ) : (
+                    <span className="hunt-head-stat-value muted">—</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="hbk-controls">
+              <div className="hbk-filter-btns">
+                <button
+                  type="button"
+                  className={`btn-iron btn-iron--sm${filter === "all" ? " is-active" : ""}`}
+                  onClick={() => setFilter("all")}
+                >
+                  {t("hunting.book.filter.all")}
+                </button>
+                <button
+                  type="button"
+                  className={`btn-iron btn-iron--sm${filter === "caught" ? " is-active" : ""}`}
+                  onClick={() => setFilter("caught")}
+                >
+                  {t("hunting.book.filter.caught")}
+                </button>
+                <button
+                  type="button"
+                  className={`btn-iron btn-iron--sm${filter === "open" ? " is-active" : ""}`}
+                  onClick={() => setFilter("open")}
+                >
+                  {t("hunting.book.filter.open")}
+                </button>
+              </div>
+              <input
+                type="search"
+                className="hbk-search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t("hunting.book.searchPlaceholder")}
+                aria-label={t("hunting.book.searchPlaceholder")}
+              />
+            </div>
+
+            {zoneRows.length === 0 ? (
+              <p className="muted hunt-book-empty">{t("hunting.book.noMatches")}</p>
+            ) : (
+              <div className="hbk-zones">
+                {zoneRows.map((row) => (
+                  <HuntBookZoneBand key={row.zone.zoneId} zone={row.zone} candidates={row.candidates} visible={row.visible} />
+                ))}
+              </div>
+            )}
           </div>
         )
       )}

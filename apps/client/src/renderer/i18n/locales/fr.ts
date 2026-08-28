@@ -1412,7 +1412,6 @@ export const fr: Record<string, string> = {
     "hunting.beatenCount": "{n}/{total} vaincus",
     "hunting.noZoneSet": "Aucun terrain",
     "hunting.autoChip": "Auto",
-    "hunting.book.undefeated": "Pas encore vaincu",
 
     "hunting.picker.title": "Choisir un terrain de chasse · Piège {n}",
     "hunting.picker.statLevel": "Niveau de Chasse",
@@ -1447,6 +1446,20 @@ export const fr: Record<string, string> = {
     "hunting.zone.bait": "Appât : {bait} · {n} en stock",
     "hunting.zone.baitValue": "{bait} · {n} en stock",
     "hunting.reason.no_bait_named": "Pas de {bait}, Pêche niveau {n} : {action}",
+
+    "hunting.book.needsKill": "Vaincs-le d'abord au combat",
+    "hunting.book.neverCaught": "Jamais capturé · La première capture compte double",
+    "hunting.book.xpPerCatch": "{n} XP par capture",
+    "hunting.book.tile.catches": "Captures totales",
+    "hunting.book.tile.zones": "Zones ouvertes",
+    "hunting.book.tile.rarest": "Trouvaille la plus rare",
+    "hunting.book.tile.favorite": "Capture favorite",
+    "hunting.book.filter.all": "Toutes",
+    "hunting.book.filter.caught": "Capturées",
+    "hunting.book.filter.open": "En attente",
+    "hunting.book.searchPlaceholder": "Rechercher une espèce…",
+    "hunting.book.noMatches": "Aucune espèce ne correspond à ce filtre.",
+    "hunting.book.speciesCount": "{n}/{total} capturées",
 
     "offline.hunt.title": "Chasse",
 

@@ -1379,7 +1379,6 @@ export const ptBR: Record<string, string> = {
     "hunting.beatenCount": "{n}/{total} derrotados",
     "hunting.noZoneSet": "Sem área",
     "hunting.autoChip": "Auto",
-    "hunting.book.undefeated": "Ainda não derrotado",
 
     "hunting.picker.title": "Escolher área de caça · Armadilha {n}",
     "hunting.picker.statLevel": "Nível de Caça",
@@ -1414,6 +1413,20 @@ export const ptBR: Record<string, string> = {
     "hunting.zone.bait": "Isca: {bait} · {n} em estoque",
     "hunting.zone.baitValue": "{bait} · {n} em estoque",
     "hunting.reason.no_bait_named": "Sem {bait}, Pesca nível {n}: {action}",
+
+    "hunting.book.needsKill": "Derrote-o em combate primeiro",
+    "hunting.book.neverCaught": "Ainda não capturado · A primeira captura conta em dobro",
+    "hunting.book.xpPerCatch": "{n} XP por captura",
+    "hunting.book.tile.catches": "Capturas totais",
+    "hunting.book.tile.zones": "Áreas abertas",
+    "hunting.book.tile.rarest": "Achado mais raro",
+    "hunting.book.tile.favorite": "Captura favorita",
+    "hunting.book.filter.all": "Todas",
+    "hunting.book.filter.caught": "Capturadas",
+    "hunting.book.filter.open": "Pendentes",
+    "hunting.book.searchPlaceholder": "Buscar espécie…",
+    "hunting.book.noMatches": "Nenhuma espécie corresponde a este filtro.",
+    "hunting.book.speciesCount": "{n}/{total} capturadas",
 
     "offline.hunt.title": "Caça",
 

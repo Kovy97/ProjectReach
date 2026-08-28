@@ -1381,7 +1381,6 @@ export const es: Record<string, string> = {
     "hunting.beatenCount": "{n}/{total} vencidos",
     "hunting.noZoneSet": "Sin zona",
     "hunting.autoChip": "Auto",
-    "hunting.book.undefeated": "Aún no derrotado",
 
     "hunting.picker.title": "Elegir zona de caza · Trampa {n}",
     "hunting.picker.statLevel": "Nivel de Caza",
@@ -1416,6 +1415,20 @@ export const es: Record<string, string> = {
     "hunting.zone.bait": "Cebo: {bait} · {n} en reserva",
     "hunting.zone.baitValue": "{bait} · {n} en reserva",
     "hunting.reason.no_bait_named": "Sin {bait}, Pesca nivel {n}: {action}",
+
+    "hunting.book.needsKill": "Derrótalo en combate primero",
+    "hunting.book.neverCaught": "Aún no capturado · La primera captura cuenta doble",
+    "hunting.book.xpPerCatch": "{n} XP por captura",
+    "hunting.book.tile.catches": "Capturas totales",
+    "hunting.book.tile.zones": "Zonas abiertas",
+    "hunting.book.tile.rarest": "Hallazgo más raro",
+    "hunting.book.tile.favorite": "Captura favorita",
+    "hunting.book.filter.all": "Todas",
+    "hunting.book.filter.caught": "Capturadas",
+    "hunting.book.filter.open": "Pendientes",
+    "hunting.book.searchPlaceholder": "Buscar especie…",
+    "hunting.book.noMatches": "Ninguna especie coincide con este filtro.",
+    "hunting.book.speciesCount": "{n}/{total} capturadas",
 
     "offline.hunt.title": "Caza",
 
