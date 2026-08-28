@@ -243,6 +243,7 @@ Skripte: **5261–5279** oder **5281+**.
 | 5331 | champion-defeat-325-shot.mjs (Task #325 Vhazrak-Art-Fix + Champion-Sieg-Zeremonie Verifikation, 2026-07-24) |
 | 5332-5338 | Task #335 Name-Clipping/Drops-Overlap-Diagnose + Verifikations-Shots (Grid/Elite/schmal), 2026-07-25, Wegwerf — alle Skripte nach Lauf gelöscht |
 | **5340-5359** | **`bot.mjs` (Task #351, Spieler-Bot-Toolkit) — PERMANENT reserviert, kein Sweep-Skript.** Default 5340 für einen einzelnen/sequenziellen Bot; bei mehreren PARALLELEN Bot-Sessions je Session einen weiteren freien Port aus diesem Bereich. S. `BOT-GUIDE.md`. |
+| 5482 | review-1.2.0-fixes-shot.mjs (Review-Fix-Verifikation: Gebiet-Modal Hochland-Bosse + Update-Hinweis 1.2.0, 2026-08-29, Wegwerf) |
 | _dein Skript_ | _→ hier eintragen_ |
 
 ## Regeln

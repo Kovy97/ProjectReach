@@ -134,6 +134,10 @@ export function BugReportDialog({ onClose, screenLabel = null }: BugReportDialog
     if (result.ok) {
       setSendState("success");
       if (result.skippedImages > 0) setSendNote(t("bugReport.imagesSkippedNote"));
+      // Entwurf nur nach erfolgreichem Versand verwerfen (beim Abbrechen bleibt er stehen, s. Kommentar oben) —
+      // sonst geht der alte Text beim nächsten Report wieder mit.
+      try { localStorage.removeItem("gr.bugReport.draft"); } catch { /* kein Speicher */ }
+      setDescription("");
     } else {
       setSendState("error");
       setFallbackOpen(true);

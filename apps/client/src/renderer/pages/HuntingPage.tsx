@@ -71,14 +71,22 @@ function formatMs(ms: number): string {
   return `${s}s`;
 }
 
-// Boss-Erkennung (Muster/Parität zur PRIVATEN gleichnamigen Hilfsfunktion in
-// packages/engine/src/hunting.ts `huntableMonsters` — Bosse bleiben dort dauerhaft ausgeschlossen,
-// auch nach dem ersten Kill, erkannt an ihrem `ach_boss_*`-Erfolg). Nicht exportiert → hier einmalig
-// aus demselben Content-Signal nachgebaut, rein lesend, damit das Jagdbuch keine Kandidaten zeigt,
-// die `huntableMonsters` nie freigeben würde (z.B. `bull_boss` in "pastures").
+// Boss-Erkennung (Parität zur PRIVATEN gleichnamigen Hilfsfunktion in
+// packages/engine/src/hunting.ts `bossMonsterIds`, dort intern von `huntableMonsters` genutzt —
+// Bosse bleiben dauerhaft ausgeschlossen, auch nach dem ersten Kill). Nicht exportiert → hier
+// einmalig aus denselben drei Content-Signalen nachgebaut, rein lesend, damit das Gebiet-Modal und
+// das Jagdbuch keine Kandidaten zeigen, die `huntableMonsters` nie freigeben würde:
+//  (a) `enrage` — De-facto-Boss-Marker im Content (z. B. Hochland-Wyvern, Leerenroc);
+//  (b) Endgegner eines Dungeons (letzter Eintrag von `encounters`, z. B. Voidhusk-Crusher);
+//  (c) Ziel eines `ach_boss_*`-Erfolgs (monster_kills) — deckt Zonen-Bosse ohne enrage ab.
 const BOSS_ACHIEVEMENT_PREFIX = "ach_boss_";
 const BOSS_MONSTER_IDS: ReadonlySet<string> = (() => {
   const out = new Set<string>();
+  for (const m of Object.values(content.monsters)) if (m?.enrage) out.add(m.id);
+  for (const d of content.dungeons ?? []) {
+    const last = d.encounters[d.encounters.length - 1];
+    if (last) out.add(last);
+  }
   for (const a of content.achievements ?? []) {
     if (!a.id.startsWith(BOSS_ACHIEVEMENT_PREFIX)) continue;
     const cond = a.condition as { type?: string; target?: string };
