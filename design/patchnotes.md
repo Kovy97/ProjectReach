@@ -137,21 +137,7 @@ das Handwerks-Konto), Handwerk 88 Rezepte; Capes auf Stoff (Tabelle in spec-tech
 verlangt 22 Skills; Vault-Fixture v86; Client: Sidebar/Skill-Seite/Meisterschaft/Onboarding/Erfolge ×7 Sprachen, Update-Hinweis;
 Mira-Assets (Sidebar-Icon, Kulisse, Karte, Ring, Steam-Plakette) eingebunden.*
 
-**Prompt-Extractor: Charakter für Bildgeneratoren exportieren (Chef 28.08.):** DE: Ein Knopf „Charakter exportieren"
-im Charakterbogen (neben den Ausrüstungs-Kits) speichert drei Dateien in einen neuen Ordner unter Downloads\Grim Reach
-Exports\: ein Ausrüstungs-Blatt (kit.png, alle 14 Slots mit Bild/Name/Seltenheit), eine PNG-Fassung des Porträts
-(portrait.png) und ein fertiges englisches Prompt (prompt.txt), das direkt in ChatGPT oder einen anderen Bildgenerator
-eingefügt werden kann, um sich den eigenen Charakter mit aktueller Ausrüstung malen zu lassen. Das Prompt landet
-zusätzlich in der Zwischenablage, der Export-Ordner öffnet sich automatisch. / EN: A new "Export Character" button on
-the character sheet saves an equipment sheet, a portrait PNG and a ready-to-paste English prompt for AI image
-generators (e.g. ChatGPT) — the prompt describes your character's current gear slot by slot and is copied to your
-clipboard automatically.
-
-*Dev-Notiz: Rein clientseitig, kein neuer Save-State. Renderer baut kit.png/portrait.png per Canvas 2D (kein DOM-
-Screenshot, unabhängig von UI-Skalierung) und prompt.txt rein textuell (util/characterExportPrompt.ts, unit-getestet
-gegen ein 14-Slot-Fixture); neuer IPC-Handler `export:characterKit` (main/characterExport.ts + characterExportFiles.ts,
-Downloads-Pfad per `GR_EXPORT_DIR` überschreibbar für Tests) schreibt die Dateien und öffnet den Ordner. Spec:
-design/prompt-extractor.md.*
+*Dev-Notiz: Charakter-Export (kit.png/portrait.png/prompt.txt für Bildgeneratoren) existiert als Dev-Werkzeug (nur ungepackt oder GR_DEVTOOLS=1), nicht für Spieler: Browser-ChatGPT liefert keine saubere Transparenz (Chef 28.08.).*
 
 **Kampfeffekte: prozedurale Partikel für ALLE Waffen (Chef-Entscheid 28.08.):** DE: Treffer-Effekte
 laufen jetzt größtenteils als echte Partikel-Physik statt gemalter Bildstreifen — Glutkerne mit

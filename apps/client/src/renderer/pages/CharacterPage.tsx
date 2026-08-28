@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent, useEffect } from "react";
 import { getUiIcon } from "../uiIcons";
 import { content } from "@hearthforge/content";
 import {
@@ -177,6 +177,13 @@ export function CharacterPage(): JSX.Element {
   // Canvas-Rendern + IPC-Schreiben laufen — verhindert Doppel-Klicks, die denselben Export zweimal
   // anstoßen (Canvas-Bildladen ist async, ein zweiter Klick vor dem ersten Toast wäre sonst möglich).
   const [exporting, setExporting] = useState(false);
+  // Chef 28.08.2026: Export nur im Dev-Modus sichtbar (Browser-ChatGPT kann keine saubere Transparenz; privat ueber Mira).
+  const [exportAllowed, setExportAllowed] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void window.hearthforge?.app?.devToolsAllowed?.().then((ok) => { if (alive) setExportAllowed(!!ok); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   // ── inventory actions (plain, stapelbare Slots) ──────────────────────────────
   const invActions = (itemId: string): ItemAction[] => {
@@ -489,24 +496,26 @@ export function CharacterPage(): JSX.Element {
                   Puppe — jedes Kit trägt eigene Items, Umschalten tauscht das ganze Set (nur
                   außerhalb des Kampfes), s. components/EquipKitBar.tsx. */}
               <EquipKitBar />
-              {/* Prompt-Extractor (Chef-Auftrag 28.08.2026): Ein-Klick-Export von Ausrüstungs-Blatt
-                  (kit.png), Portrait (portrait.png) und einem fertigen englischen Bildgenerator-
-                  Prompt (prompt.txt) nach Downloads\Grim Reach Exports\ — s. util/characterExport.ts
-                  (Orchestrierung), util/characterExportPrompt.ts (Prompt-Text, unit-getestet) und
-                  main/characterExport.ts (IPC-Schreiber). */}
-              <div className="cs-export-row">
-                <HoverTip as="div" className="cs-export-tipwrap" content={<span className="ct-tip-desc">{t("char.export.tooltip")}</span>}>
-                  <button
-                    type="button"
-                    className="btn-iron btn-iron--sm"
-                    disabled={exporting}
-                    onClick={() => {
-                      setExporting(true);
-                      void exportCharacterKit(state, t).finally(() => setExporting(false));
-                    }}
-                  >
-                    {t("char.export.button")}
-                  </button>
+              {exportAllowed && (
+                {/* Prompt-Extractor (Chef-Auftrag 28.08.2026): Ein-Klick-Export von Ausrüstungs-Blatt
+                    (kit.png), Portrait (portrait.png) und einem fertigen englischen Bildgenerator-
+                    Prompt (prompt.txt) nach Downloads\Grim Reach Exports\ — s. util/characterExport.ts
+                    (Orchestrierung), util/characterExportPrompt.ts (Prompt-Text, unit-getestet) und
+                    main/characterExport.ts (IPC-Schreiber). */}
+                <div className="cs-export-row">
+                  <HoverTip as="div" className="cs-export-tipwrap" content={<span className="ct-tip-desc">{t("char.export.tooltip")}</span>}>
+                    <button
+                      type="button"
+                      className="btn-iron btn-iron--sm"
+                      disabled={exporting}
+                      onClick={() => {
+                        setExporting(true);
+                        void exportCharacterKit(state, t).finally(() => setExporting(false));
+                      }}
+                    >
+                      {t("char.export.button")}
+                    </button>
+              )}
                 </HoverTip>
               </div>
               <EquipmentDoll interactive dragItem={dragItem} onDragItem={setDragItem} />

@@ -18,6 +18,7 @@ declare module "*?asset" {
 interface AppBridge {
   /** Beendet die App sauber (Sidebar „Spiel verlassen"-Button). */
   quit(): Promise<void>;
+  devToolsAllowed(): Promise<boolean>;
   /** Save-on-Close (#281): Main bittet den Renderer vor dem Fenster-Schließen zu speichern.
    *  Rückgabe = Unsubscribe. */
   onSaveThenQuit(cb: () => void): () => void;
@@ -133,7 +134,7 @@ interface CharacterExportFileInput {
 interface CharacterExportResult {
   ok: boolean;
   path?: string;
-  error?: "no_files" | "write_failed";
+  error?: "no_files" | "write_failed" | "disabled";
 }
 
 interface CharacterExportBridge {

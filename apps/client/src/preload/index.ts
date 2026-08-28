@@ -8,6 +8,8 @@ contextBridge.exposeInMainWorld("hearthforge", {
   platform: process.platform,
   app: {
     quit: (): Promise<void> => ipcRenderer.invoke("app:quit"),
+    /** Dev-Modus (ungepackt oder GR_DEVTOOLS=1): schaltet Dev-Werkzeuge wie den Charakter-Export frei. */
+    devToolsAllowed: (): Promise<boolean> => ipcRenderer.invoke("app:devToolsAllowed"),
     /** Main fängt Fenster-X/Alt+F4 ab und bittet den Renderer, VOR dem Beenden zu speichern
      *  (Save-on-Close, #281-Bugfund: sonst gehen bis zu 30 s Autosave-Fenster verloren). */
     onSaveThenQuit: (cb: () => void): (() => void) => {

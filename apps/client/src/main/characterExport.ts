@@ -36,13 +36,21 @@ function exportsRoot(): string {
 export interface CharacterExportResult {
   ok: boolean;
   path?: string;
-  error?: "no_files" | "write_failed";
+  error?: "no_files" | "write_failed" | "disabled";
+}
+
+export function devToolsAllowed(): boolean {
+  return !app.isPackaged || process.env.GR_DEVTOOLS === "1";
 }
 
 export function registerCharacterExportHandlers(): void {
+  ipcMain.handle("app:devToolsAllowed", () => devToolsAllowed());
   ipcMain.handle(
     "export:characterKit",
     async (_event, characterName: unknown, files: unknown): Promise<CharacterExportResult> => {
+      // Chef 28.08.2026: Export nur im Dev-Modus (ungepackt oder GR_DEVTOOLS=1), Spieler sehen den Knopf nicht;
+      // Browser-ChatGPT liefert keine saubere Transparenz, der Chef nutzt es privat ueber Mira.
+      if (!devToolsAllowed()) return { ok: false, error: "disabled" };
       const name = typeof characterName === "string" && characterName.trim() ? characterName : "Charakter";
       const list = (Array.isArray(files) ? files : []).filter(isCharacterExportFile);
       if (list.length === 0) return { ok: false, error: "no_files" };
