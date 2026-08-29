@@ -269,8 +269,10 @@ Bilder von Mira (`esthar`, `elite_ossric`, `pets/booted_tomcat`, `pets/silkweave
 
 **Zauberreserve und Weisheit (Chef 28.08.):** DE: Mana wird zur Zauberreserve. Zauber kosten nichts mehr, der schwache
 Stabschlag bei leerem Mana ist Geschichte. Die Reserve ist jetzt ein fester Wert wie die Rüstung, und die beiden
-Magie-Haltungen lesen ihn: In der Fokus-Haltung gibt jede 60 Reserve 1 % mehr Zauberschaden (bis 15 %), in der
-Schild-Haltung jede 40 Reserve 1 % mehr Ward-Regeneration (bis 30 %). Weisheit schützt jetzt alle Kampfstile: Jeder
+Magie-Haltungen lesen ihn: In der Fokus-Haltung gibt jede 30 Reserve 1 % mehr Zauberschaden (bis 15 %), in der
+Abwehr-Haltung jede 20 Reserve 1 % mehr Ward-Regeneration (bis 30 %). Die Reserve kommt aus Weisheit (30 + 10 je
+Punkt, plus Item-Boni), Intelligenz bleibt der reine Schadenswert; die Magie-Haltungen heißen jetzt Fokus und Abwehr
+statt Offensiv und Defensiv (Chef 29.08.). Weisheit schützt außerdem alle Kampfstile: Jeder
 Punkt macht Brand, Frost, Schock, Gift, Blutung und Entzug, die ein Gegner auf dich legt, 1 % kürzer und 1 % schwächer
 (bis 40 %); ab 20 % Widerstand braucht Frost vier statt drei Treffer, um dich einzufrieren. Alte Mana-Boni sind
 umgerechnet (+1 Mana-Regen = +10 Zauberreserve), das Arkan-Surge-Tonikum gibt 90 Sekunden lang +100 Zauberreserve.
@@ -278,15 +280,19 @@ Waffen und Schmuck, die Mana bei Tötungen zurückgaben, füllen jetzt den Ward 
 mit seinem Runenfraß 10 % Ward, Scheiterling und Frostgroll erhöhen die Zauberreserve um 5 bzw. 4 %. Überschuss
 (Glutherz-Robe, Skarn-Götzen-Stab, Sturmkamm-Stab, Rune Verschleiert) zündet, solange dein Ward über 80 % liegt. /
 EN: Mana becomes the Spell Reserve: spells no longer cost anything and the weak staff swing is gone. The reserve is a
-fixed value like armour, and the two magic stances read it: Focus grants 1 % more spell damage per 60 reserve (up to
-15 %), Shield grants 1 % more ward regeneration per 40 reserve (up to 30 %). Wisdom now protects every combat style:
+fixed value like armour, and the two magic stances read it: Focus grants 1 % more spell damage per 30 reserve (up to
+15 %), Warding grants 1 % more ward regeneration per 20 reserve (up to 30 %). The reserve comes from Wisdom (30 + 10 per
+point, plus item bonuses); Intelligence stays pure spell damage. The magic stances are now called Focus and Warding
+instead of Offensive and Defensive. Wisdom also protects every combat style:
 each point makes enemy burn, frost, shock, poison, bleed and void 1 % shorter and 1 % weaker (up to 40 %); from 20 %
 resistance frost needs four hits instead of three to freeze you. Old mana bonuses are converted (+1 mana regen = +10
 spell reserve), the Arcane Surge Tonic gives +100 spell reserve for 90 seconds, kill-mana effects now refill ward
 instead, Glyphmaw restores ward, Pyreling and Hoarspite raise the spell reserve, and Surplus triggers while your ward
 is above 80 %.
 
-*Dev-Notiz (combat-dev, Spec design/zauberreserve-weisheit.md „Umgesetzt"): shared-Konstanten FOCUS_STANCE_DMG_PER_RESERVE
+*Dev-Notiz (combat-dev, Spec design/zauberreserve-weisheit.md „Umgesetzt"; Chef 29.08.: `maxMana = 30 + 10·WIS + Boni`, INT raus,
+Teiler 30/20 statt 60/40 nach Nachmessung CL-90-Kit WIS 34 ⇒ Reserve 370 ⇒ +12 %/+18,5 %; Stance-IDs bleiben offensive/defensive,
+nur Labels `style.offensive`/`style.magicDefensive*` ×7): shared-Konstanten FOCUS_STANCE_DMG_PER_RESERVE
 (1/60 %, Deckel 0,15 — Balance-Audit-Korrektur, Spec nannte 1/40 und 0,30), SHIELD_STANCE_WARDREGEN_PER_RESERVE (1/40 %,
 Deckel 0,30 — Chef-Korrektur, Spec nannte 1/20 und 0,60), WIS_STATUS_RESIST_PER_POINT 0,01 / CAP 0,4, WIS_FROST_EXTRA_STACK_RESIST
 0,2, WARD_RECHARGE_PER_CAST 1,2 (ersetzt WARD_PER_MANA·Kosten), Helfer spellReserveDamageBonus/spellReserveWardRegenBonus/

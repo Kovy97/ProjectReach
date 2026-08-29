@@ -87,3 +87,7 @@ CharacterPage (Zauberreserve als Wert statt Mana-Balken, Tooltips Fokus/Schild/W
 /`spellReserveWardRegenBonus`/`statusResist`), CombatPage (kein Mana-Balken, Reserve neben Ward; `PET_ABILITY_BUCKET`
 wardRestore), combatFx (`PET_ABILITY_IMAGE` wardRestore), petText (wardRestore, spellReserve), i18n-Keys
 `weaponEffect.wardOnKill`/`surplus`-Text (Ward statt Mana), `pet.*.spellReserve`/`wardRestore`, Onboarding-Texte ×7.
+
+## Nachtrag 29.08.2026 (Chef): Reserve aus Weisheit, Haltungen heißen Fokus und Abwehr
+
+Chef: „Ich dachte, wir machen Weisheit als Gegenstück zu Intelligenz; die Zauberreserve sollte durch Weisheit kommen." Umgesetzt: `maxMana = (30 + 10·WIS + Σ EquipBonus.maxMana) · petSpellReserveMult` (INT raus; INT bleibt Grundschaden 0,34/Punkt + Zauberfokus). Nachmessung mit dem CL-90-Götterfunken-Kit (Magie/Abwehr 99): INT 58, WIS 34, Reserve 746 → 370. Damit dieselben Haltungswerte herauskommen, Teiler 60 → 30 (Fokus, CL-90 ≈ +12,3 %) und 40 → 20 (Abwehr, ≈ +18,5 %); Deckel 15 %/30 % ab Reserve 450/600 (WIS 42/57). CL-50 Dämmerweb: WIS 15 → Reserve 180 → +6 %/+9 % (vorher 7,8/11,8). Haltungs-IDs bleiben `offensive`/`defensive` (Saves), die Labels heißen jetzt Fokus/Abwehr (EN Focus/Warding, es Enfoque/Guarda arcana, fr Concentration/Barrière, ptBR Foco/Guarda Arcana, ru Сосредоточение/Оберегание, zh 专注/结界术), Tooltip `statdesc.spellReserve` nennt „+10 je Weisheit".

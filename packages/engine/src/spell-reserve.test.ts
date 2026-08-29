@@ -126,18 +126,18 @@ const NEVER = -1_000_000_000; // Spieler-Timer weit negativ ⇒ kein eigener Ang
 // ── §2 Helfer/Konstanten ─────────────────────────────────────────────────────
 
 describe("Zauberreserve §2: Haltungs-Boni aus der Reserve (Helfer, Deckel)", () => {
-  it("Fokus: +1 % Zauberschaden je 60 Reserve, Deckel 15 % (Balance-Audit-Korrektur 28.08.: statt 1 %/40 und 30 %)", () => {
+  it("Fokus: +1 % Zauberschaden je 30 Reserve, Deckel 15 % (Chef 29.08.: Reserve aus Weisheit, Teiler 60 → 30)", () => {
     expect(FOCUS_STANCE_DMG_CAP).toBe(0.15);
-    expect(spellReserveDamageBonus(600)).toBeCloseTo(0.1, 9);
-    expect(spellReserveDamageBonus(900)).toBeCloseTo(FOCUS_STANCE_DMG_CAP, 9);
+    expect(spellReserveDamageBonus(300)).toBeCloseTo(0.1, 9);
+    expect(spellReserveDamageBonus(450)).toBeCloseTo(FOCUS_STANCE_DMG_CAP, 9);
     expect(spellReserveDamageBonus(5000)).toBe(FOCUS_STANCE_DMG_CAP);
     expect(spellReserveDamageBonus(0)).toBe(0);
     expect(spellReserveDamageBonus(Number.NaN)).toBe(0);
   });
-  it("Schild: +1 % Ward-Regen je 40 Reserve, Deckel 30 % (Chef-Korrektur 28.08.: statt 1 %/20 und 60 %)", () => {
+  it("Abwehr (war Schild): +1 % Ward-Regen je 20 Reserve, Deckel 30 % (Chef 29.08.: Teiler 40 → 20)", () => {
     expect(SHIELD_STANCE_WARDREGEN_CAP).toBe(0.3);
-    expect(spellReserveWardRegenBonus(400)).toBeCloseTo(0.1, 9);
-    expect(spellReserveWardRegenBonus(1200)).toBeCloseTo(SHIELD_STANCE_WARDREGEN_CAP, 9);
+    expect(spellReserveWardRegenBonus(200)).toBeCloseTo(0.1, 9);
+    expect(spellReserveWardRegenBonus(600)).toBeCloseTo(SHIELD_STANCE_WARDREGEN_CAP, 9);
     expect(spellReserveWardRegenBonus(5000)).toBe(SHIELD_STANCE_WARDREGEN_CAP);
     expect(spellReserveWardRegenBonus(-5)).toBe(0);
   });
@@ -152,25 +152,27 @@ describe("Zauberreserve §2: Haltungs-Boni aus der Reserve (Helfer, Deckel)", ()
 // ── §1/§2 computeStats ───────────────────────────────────────────────────────
 
 describe("Zauberreserve §1/§2: computeStats (maxMana bleibt der Feldname, Haltungen lesen ihn)", () => {
-  const c = withAll([STAFF, SWORD, ring("sr_ring600", 600), ring("sr_ring_big", 20_000)], [DUMMY]);
+  const c = withAll([STAFF, SWORD, ring("sr_ring600", 600), ring("sr_ring150", 150), ring("sr_ring_big", 20_000)], [DUMMY]);
 
-  it("maxMana = 30 + 10·INT + 4·WIS + Σ Boni; manaRegen existiert nicht mehr", () => {
+  it("maxMana = 30 + 10·WIS + Σ Boni (Chef 29.08.: Reserve aus Weisheit, INT trägt nichts bei); manaRegen existiert nicht mehr", () => {
     const s = mage(c, { int: 10, wis: 5 });
     const st = computeStats(s, c);
     // effektive Attribute = Basis (BASE_ATTRIBUTE_VALUE) + Erstellung + Training + Ausrüstung
-    const expected = 30 + 10 * st.attributes.int + 4 * st.attributes.wis;
+    const expected = 30 + 10 * st.attributes.wis;
     expect(st.maxMana).toBe(expected);
+    // INT ändert die Reserve nicht mehr (Gegenstück-Vertrag: INT = Schaden, WIS = Reserve)
+    expect(computeStats(mage(c, { int: 40, wis: 5 }), c).maxMana).toBe(30 + 10 * computeStats(mage(c, { int: 40, wis: 5 }), c).attributes.wis);
     expect("manaRegen" in st).toBe(false);
     s.character.equipment.ring1 = "sr_ring600";
     expect(computeStats(s, c).maxMana).toBe(expected + 600);
   });
 
-  it("Fokus-Haltung: die ganze Magie-Spanne wächst mit der Reserve (+600 Reserve ⇒ +10 Pp), Bonus immer im Stat sichtbar", () => {
+  it("Fokus-Haltung: die ganze Magie-Spanne wächst mit der Reserve (+150 Reserve ⇒ +5 Pp), Bonus immer im Stat sichtbar", () => {
     const s = mage(c, { int: 10, wis: 5 });
     const before = computeStats(s, c);
-    s.character.equipment.ring1 = "sr_ring600";
+    s.character.equipment.ring1 = "sr_ring150";
     const after = computeStats(s, c);
-    expect(after.spellReserveDamageBonus - before.spellReserveDamageBonus).toBeCloseTo(0.1, 9);
+    expect(after.spellReserveDamageBonus - before.spellReserveDamageBonus).toBeCloseTo(0.05, 9);
     expect(after.spellReserveDamageBonus).toBeCloseTo(spellReserveDamageBonus(after.maxMana), 9);
     const ratio = (1 + after.spellReserveDamageBonus) / (1 + before.spellReserveDamageBonus);
     expect(after.attackDamageMin / before.attackDamageMin).toBeCloseTo(ratio, 9);

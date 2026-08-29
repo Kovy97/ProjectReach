@@ -37,7 +37,7 @@ Reihenfolge nach Risiko. Erst mit einem ALTEN Save (1.1.x) testen, dann mit eine
 ## D. Magie: Zauberreserve, Zauberfokus, Elemente
 
 - [ ] Kein Mana-Balken mehr im Kampf, stattdessen Zeile „Zauberreserve" auf dem Charakterbogen; Zauber kosten nichts, kein Stabhieb-Rückfall mehr.
-- [ ] Haltung Fokus: +1 % Zauberschaden je 60 Reserve (Deckel 15 %), Haltung Schild: +1 % Ward-Regen je 40 Reserve (Deckel 30 %); Tooltips zeigen die echten Werte.
+- [ ] Magie-Haltungen heißen Fokus und Abwehr (nicht Offensiv/Defensiv). Fokus: +1 % Zauberschaden je 30 Reserve (Deckel 15 %), Abwehr: +1 % Ward-Regen je 20 Reserve (Deckel 30 %); Reserve = 30 + 10·Weisheit + Item-Boni (INT ändert sie NICHT); Tooltips zeigen die echten Werte.
 - [ ] Weisheit: Tooltip nennt Status-Widerstand (1 %/Punkt, Deckel 40 %); mit hoher WIS sind Gegner-Brand/Gift sichtbar kürzer.
 - [ ] Ward regeneriert außerhalb des Kampfes 5 %/s, Kampf startet mit vollem Ward.
 - [ ] Zauberfokus: Karte eines Stabs zeigt „Zauberfokus" und die echte Spanne mit deiner INT; INT erhöhen (Rüstung wechseln) ändert die Spanne.

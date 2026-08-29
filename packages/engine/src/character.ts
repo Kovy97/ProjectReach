@@ -560,11 +560,12 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   const maxWard = WARD_CORE_PER_INT * attr.int + eq.wardCapacity; // Stoff-Absorptionspool
 
   // Zauberreserve (Chef-GO 28.08.2026, design/zauberreserve-weisheit.md): Feldname bleibt `maxMana`,
-  // Bedeutung ist ein statischer Wert wie Rüstung (kein Verbrauch mehr). 30 + 10·INT + 4·WIS + Σ Boni
-  // (Ausrüstung/Sets/Buffs; frühere manaRegen-Boni sind ×10 hier eingefaltet), × Pet-spellReserve.
-  // Grund-Pool 30 (Parität-Fix 2026-06-28) unverändert. Die beiden Magie-Haltungen lesen den Wert
-  // NACH allen Boni (Spec §2): Fokus → Zauberschaden, Schild → Ward-Regeneration.
-  const maxMana = (30 + attr.int * 10 + attr.wis * 4 + eq.maxMana) * petSpellReserveMult(state, content);
+  // Bedeutung ist ein statischer Wert wie Rüstung (kein Verbrauch mehr). Chef 29.08.2026: die Reserve
+  // ist das Gegenstück zu Intelligenz und kommt NUR aus Weisheit: 30 + 10·WIS + Σ Boni (Ausrüstung/
+  // Sets/Buffs; frühere manaRegen-Boni sind ×10 hier eingefaltet), × Pet-spellReserve. Intelligenz
+  // bleibt reiner Zauberschaden (Grundschaden + Zauberfokus). Grund-Pool 30 unverändert. Die beiden
+  // Magie-Haltungen lesen den Wert NACH allen Boni (Spec §2): Fokus → Zauberschaden, Abwehr → Ward-Regen.
+  const maxMana = (30 + attr.wis * 10 + eq.maxMana) * petSpellReserveMult(state, content);
   const reserveDamageBonus = spellReserveDamageBonus(maxMana);
   const reserveWardRegenBonus = spellReserveWardRegenBonus(maxMana);
   // Weisheit = Status-Widerstand für ALLE Stile (Spec §3): 1 % je effektivem WIS-Punkt, Deckel 40 %.

@@ -1,0 +1,280 @@
+Grim Reach 1.2.0 — Threads, Traps & Spellfire
+
+Hunters,
+
+Update 1.2.0 rebuilds three major parts of the game at once.
+
+Magic now has a proper identity. Every element brings its own combat effect, crafted staves and wands span the full elemental range, and magic weapons finally scale with Intelligence. Mana, an old forgotten system, has been replaced by Spell Reserve, a value that grows with Wisdom and powers two distinct magic stances instead of being consumed with every cast.
+
+Hunting arrives as a brand-new skill, featuring baited traps that continue working while you are away and a complete bait progression tied directly into Fishing.
+
+At the same time, the long-standing leather bottleneck in Crafting is gone. Five tiers of fibres, cloth and farming materials now feed into the new Tailoring skill, making robes and capes part of their own dedicated progression.
+
+The update also introduces procedural combat effects for every weapon and element type, three true equipment kits, a 29th Champion with a legendary greataxe, two new companions and smaller improvements and fixes.
+
+Your existing saves remain fully compatible.
+
+NEW SKILL: HUNTING
+Set baited traps throughout zones you have already unlocked in combat and collect creature loot both online and offline.
+
+Traps and Progression
+Trap slots unlock at Hunting levels 1, 5, 15, 30, 50 and 75.
+
+Every successful catch provides five loot rolls from a creature you have previously defeated.
+
+Hunting continues while you are offline.
+
+Catch XP is equal to five times the creature's combat XP.
+
+The first successful catch of each creature grants double XP.
+
+Bait
+Five bait tiers have been added to Fishing:
+
+Worms — Fishing level 1
+
+Grubs — Fishing level 20
+
+Crabs — Fishing level 40
+
+Squid — Fishing level 60
+
+Glow Bait — Fishing level 80
+
+Each Hunting zone requires bait matching its tier.
+
+If a trap runs out of bait, it keeps its assigned zone and waits. Hunting resumes automatically as soon as the correct bait becomes available in your inventory or bank.
+
+New Hunting Companion: Leon, the Feared
+Leon is a booted tomcat obtainable through Hunting.
+
+Drop rate: 1 in 8,000 per successful catch
+
+NEW SKILL: TAILORING
+Weaving, mage robes and capes have been moved out of Crafting and into the new Tailoring skill.
+
+Fibres and Cloth
+Five new fibre tiers can be gathered from new Foraging nodes and grown in New Haven:
+
+Nettle
+
+Flax
+
+Thornhemp
+
+Ghost Silk
+
+Starflax
+
+These fibres can be woven into five corresponding tiers of cloth.
+
+Every cloth armour set, from Apprentice robes to Voidweave, is now crafted entirely from cloth. Leather remains limited to ranged equipment and a small selection of capes.
+
+Existing Crafting Progress
+Your existing Crafting progress will be divided according to the items you have actually crafted:
+
+XP earned from robes, capes and cloth will be transferred to Tailoring.
+
+All remaining XP will stay in Crafting.
+
+Equipped items will remain equipped during the conversion.
+
+A word from Adhavar:
+
+I am sorry that this update splits your existing Crafting progress. Giving cloth equipment its own materials and progression is the better decision for the game as a whole, and it is better to make that change now rather than much later.
+
+The Dimweave Set
+The Dimweave set is now complete as it was missing a few pieces, with five newly painted pieces forming a second starter mage set that requires no leather.
+
+New Tailoring Companion: The Silkweaver
+The Silkweaver can be obtained through Tailoring.
+
+MAGIC REWORK: ELEMENTAL IDENTITIES
+Every magical element now has its own combat identity for both players and monsters.
+
+Fire — Burn
+Burning targets take 10% increased damage from all sources.
+
+Frost — Chill and Freeze
+The third consecutive Chill freezes the target for one attack. After being frozen, the target becomes immune to Freeze for 6 seconds.
+
+Shock — Attack Delay and Arcing Critical Hits
+Shock no longer causes skipped attacks.
+
+Instead, each application delays the target's next attack by 0.4 seconds, stacking up to a maximum delay of 1.2 seconds.
+
+Critical Shock hits also arc for 30% additional damage.
+
+Poison — Stacking Decay
+Poison can now stack up to five times.
+
+While poisoned, the target's regeneration and lifesteal are reduced by 50%.
+
+Void — Drain
+Void damage applies the new Drain status, reducing the target's damage dealt by 15%.
+
+Arcane — Resonance
+Each Arcane hit grants one stack of Resonance.
+
+Every stack increases damage by 2%, up to a maximum of ten stacks.
+
+Aether — Lightblessing
+Every Aether spell:
+
+Restores 2% of your Ward
+
+Ignores 50% of the enemy's Ward
+
+MAGIC REWORK: SPELL RESERVE AND WISDOM
+Mana, an unused system, has been replaced by Spell Reserve, a fixed combat stat similar to Armour. Spell Reserve is Wisdom's counterpart to Intelligence: it starts at 30 and grows by 10 for every point of Wisdom, plus any Spell Reserve bonuses on your gear. It powers one of two magic stances, which have been renamed to match.
+
+Focus Stance (formerly Offensive)
+Grants 1% increased spell damage for every 30 Spell Reserve, up to a maximum of 15%.
+
+Warding Stance (formerly Defensive)
+Grants 1% increased Ward regeneration for every 20 Spell Reserve, up to a maximum of 30%, on top of its existing +50% Ward regeneration.
+
+Wisdom Rework
+Wisdom now protects every combat style.
+
+Each point of Wisdom reduces the duration and strength of enemy Burn, Frost, Shock, Poison, Bleed and Drain effects by 1%, up to a maximum reduction of 40%.
+
+Existing mana-related bonuses will be converted automatically:
+
++1 Mana Regeneration becomes +10 Spell Reserve
+
+MAGIC REWORK: SPELL FOCUS
+Magic weapons now scale with your Intelligence through the new Spell Focus stat.
+
+Depending on the weapon, Spell Focus provides approximately:
+
++15% damage range at level 30
+
++22% damage range at level 60
+
++30% damage range at level 90
+
+Magic weapon cards now display both their Spell Focus scaling rate and their actual damage range based on your current Intelligence.
+
+MAGIC REWORK: THE ELEMENTAL LADDER
+Crafted staves and wands no longer share the same Burn effect.
+
+Every crafting tier now contains a rotating selection of:
+
+Fire
+
+Frost
+
+Shock
+
+Poison
+
+Arcane
+
+Void joins the ladder from Blacksteel onward, and Aether from Titanium onward.
+
+This brings the complete elemental effect library into regular combat and gives crafted magic weapons distinct purposes throughout progression.
+
+COMBAT EFFECTS OVERHAUL
+Every weapon type and combat effect now uses procedural particles and animations.
+
+New effects include:
+
+Glowing embers and spark trails
+
+Ice shards
+
+Branching chain lightning
+
+Poison bubbles
+
+Arcane runes
+
+Light-swallowing Void cores
+
+Golden Aether feathers
+
+Melee slash arcs
+
+Arrow flight
+
+Blood, ichor and bone dust
+
+Block sparks
+
+Companion abilities
+
+Active status effects now remain visible on their target. The affected fighter briefly flares when the status is applied, followed by a quieter looping effect that lasts until the status expires.
+
+The Combat Effects option now provides three settings:
+
+Full
+
+Reduced
+
+Off
+
+NEW SYSTEM: EQUIPMENT KITS
+The three previous loadout templates are now true equipment kits.
+
+Each kit holds its own equipped items, including tools. You can switch between them from the character sheet whenever you are outside combat.
+
+Switching kits fully restores:
+
+Health
+
+Ward
+
+Tooltips for inactive kits now also show which tools are stored inside them.
+
+NEW CHAMPION: OSSRIC THE MARROWBOUND
+Ossric the Marrowbound, the game's 29th Champion, now stalks the Highlands. He carries the legendary greataxe Esthar, Storm of Bones: it makes enemies bleed, and every fourth swing strikes twice.
+
+COMPANION CHANGES
+Hunting and Farming provide fewer reward rolls than most other skills. Their companions therefore have higher drop chances:
+
+Leon, the Feared: 1 in 8,000 per successful Hunting catch
+
+Farming companion: 1 in 4,000 per harvest, increased from 1 in 15,000
+
+Companion cards now display the exact effects of their passive bonuses and combat abilities, including numerical values and timing, once the companion has been obtained.
+
+IMPROVEMENTS
+Champion unique items now display their special effects, such as lifesteal, directly on their item cards.
+
+The Item Wiki now lists the appropriate Champion as a source for Champion unique items.
+
+Multiple on-kill healing, Ward restoration and cooldown reduction effects now stack instead of only applying the strongest effect.
+
+Ward now regenerates outside combat at a rate of 5% per second, preventing magic users from beginning every fight at zero Ward.
+
+If you fall during a queued fight or dungeon run, the queue no longer pauses. The rest of that entry is dropped and the queue moves on to the next one, online and offline, and the queue panel tells you what was skipped.
+
+The combat log now identifies Shock arcs and Ward restored by Lightblessing.
+
+Weapon ability descriptions now display their actual application chance.
+
+Item cards now resize themselves according to their contents, preventing long stat lines from becoming compressed.
+
+Action Queue amount buttons—1, 25, X and Endless—now use the same iron frame as other interface buttons.
+
+Inactive equipment kit tooltips now list their stored tools.
+
+Autosaves now occur every 5 seconds.
+
+FIXES
+Switching equipment kits no longer reports items stored in another kit as newly discovered, including enchanted items.
+
+Companions with missing passive descriptions, such as additional ammunition effects, now display the correct text.
+
+The Discord button has been removed, as there is currently no official server. Yet.
+
+Bug report drafts are now preserved after submitting a report.
+
+Shift-clicking inside the bank no longer selects interface text.
+
+Consumable item cards, including stews and tonics, now retain their frames correctly.
+
+As always, if something feels wrong, please tell me here or use the bug report button in the options menu.
+
+Thank you for playing. Adhavar.

@@ -822,25 +822,30 @@ export interface ConsumableEffect {
 // (Save-Kompat, nicht mehr angezeigt). `maxMana` bleibt der FELDNAME des Stats (Engine, Save,
 // Item-Boni `EquipBonus.maxMana`), seine BEDEUTUNG ist jetzt „Zauberreserve" (EN „Spell Reserve"):
 // ein statischer Wert wie Rüstung, den die beiden Magie-Haltungen lesen (MagicStance "offensive" =
-// Fokus, "defensive" = Schild). Weisheit wird für ALLE Stile zum Status-Widerstand.
+// Fokus / EN Focus, "defensive" = Abwehr / EN Warding; die IDs bleiben wegen Save-Kompat). Chef 29.08.2026:
+// die Reserve kommt aus WEISHEIT (30 + 10·WIS + Item-Boni), Intelligenz bleibt reiner Zauberschaden
+// (Grundschaden + Zauberfokus). Weisheit ist außerdem für ALLE Stile der Status-Widerstand.
 // MANA_PER_CAST / MAGIC_WEAK_FACTOR / ItemDef.manaCost: ENTFERNT — der „schwache Magier" bei leerem
 // Mana existiert nicht mehr (er griff faktisch nie: Regen 1,5 + 0,4·WIS/s > Kosten ≈ 2/s).
 /**
- * Fokus-Haltung (offensive Magie-Haltung): +Zauberschaden je Punkt Zauberreserve (+1 % je 60 Reserve).
+ * Fokus-Haltung (offensive Magie-Haltung, EN Focus): +Zauberschaden je Punkt Zauberreserve (+1 % je 30 Reserve).
  * Balance-Audit-Korrektur (design/balance-audit-magie-2026-08-28.md, CEO 28.08.2026): die Spec nannte
  * 1 %/40 mit Deckel +30 % — der Magier liegt im Kit-Charakter zwar 12–21 % hinter dem Nahkampf, ein
  * +20-%-Bonus am CL-90-Kit hätte ihn gegen Trash aber deutlich über die ±10-%-Parität gehoben.
  */
-export const FOCUS_STANCE_DMG_PER_RESERVE = 0.01 / 60;
-/** Fokus-Haltung: Deckel des Zauberschaden-Bonus (+15 %; ein CL-90-Kit mit ≈ 800 Reserve liegt bei ≈ +13 %). */
+// Chef 29.08.2026 (Reserve aus Weisheit statt Intelligenz): Teiler 60 → 30, damit das CL-90-Kit (WIS 34 ⇒
+// Reserve 370 statt 746 mit INT) wieder bei ≈ +12 % liegt wie im Audit; Deckel +15 % ab 450 Reserve (WIS 42).
+export const FOCUS_STANCE_DMG_PER_RESERVE = 0.01 / 30;
+/** Fokus-Haltung: Deckel des Zauberschaden-Bonus (+15 %; ein CL-90-Kit mit ≈ 370 Reserve liegt bei ≈ +12 %). */
 export const FOCUS_STANCE_DMG_CAP = 0.15;
 /**
- * Schild-Haltung (defensive Magie-Haltung): +Ward-Regeneration je Punkt Zauberreserve (+1 % je 40 Reserve).
+ * Abwehr-Haltung (defensive Magie-Haltung, EN Warding, war „Schild"): +Ward-Regeneration je Punkt Zauberreserve (+1 % je 20 Reserve).
  * Chef-Korrektur 28.08.2026 („langweilig, wenn der Ward-Regen beinahe overpowered ist"; das Audit zeigt den
  * Magier beim Überleben schon weit vorn): die Spec nannte 1 %/20 mit Deckel +60 %.
  */
-export const SHIELD_STANCE_WARDREGEN_PER_RESERVE = 0.01 / 40;
-/** Schild-Haltung: Deckel des Ward-Regen-Bonus (+30 %). Wirkt ZUSÄTZLICH zu WARDING_DEF_STANCE_MULT, NACH WARDING_REGEN_CAP. */
+// Chef 29.08.2026 (Reserve aus Weisheit): Teiler 40 → 20, CL-90-Kit ≈ +18,5 % wie vorher; Deckel +30 % ab 600 Reserve (WIS 57).
+export const SHIELD_STANCE_WARDREGEN_PER_RESERVE = 0.01 / 20;
+/** Abwehr-Haltung (EN Warding, war „Schild"): Deckel des Ward-Regen-Bonus (+30 %). Wirkt ZUSÄTZLICH zu WARDING_DEF_STANCE_MULT, NACH WARDING_REGEN_CAP. */
 export const SHIELD_STANCE_WARDREGEN_CAP = 0.30;
 /** Weisheit: Status-Widerstand je Punkt (1 % kürzer UND 1 % schwächer je Statuseffekt, der auf den SPIELER gelegt wird). */
 export const WIS_STATUS_RESIST_PER_POINT = 0.01;
