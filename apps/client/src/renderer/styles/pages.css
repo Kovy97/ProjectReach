@@ -3601,17 +3601,20 @@ body.bank-dragging-noselect {
 
 .pet-field-effects .pet-effect-row {
   display: grid;
-  /* 1.0.1-Fix (Chef 27.08.2026 „mehr Kontext"): eigenes, breiteres Tag-Label „Aktiv (im Kampf)"
-     (pet.effect.activeCombat) statt des kurzen „Aktiv" — in ES/EN/RU/FR/PT-BR deutlich länger als
-     das alte Einwort-Label; die vorherige 82-112px-Spalte ließ das Wort über den Kartenrand in die
-     Wert-Spalte hineinlaufen (kein Wrap, da Grid-/Flex-Items ohne `min-width:0` ihre
-     Intrinsic-Breite behalten). Breiter + `min-width:0` unten beheben beides zusammen. */
-  grid-template-columns: clamp(96px, 8.2vw, 138px) minmax(0, 1fr);
+  /* Chef-Review 29.08.2026 (Screenshot ~1216px, „dünne Doppellinien mit Eckartefakten"): die
+     Zeile trug eine eigene `fill / … stretch`-Variante des 9-Slice-Rahmens statt des im ganzen
+     Spiel verwendeten `85 / 2.125 round` (s. hunt-head/hunt-head-stat in hunting.css) — `stretch`
+     zerrt die Eckengrafik non-uniform, `fill` legt zusätzlich die Mittelkachel unter unseren
+     eigenen `background` (Doppel-Textur). `round` kachelt ganzzahlig, keine Verzerrung.
+     Beschriftungsspalte jetzt `max-content` (passt sich exakt der längsten Übersetzung an, z.B.
+     RU „Активный (в бою)"), nie schmaler als der Text → kein erzwungener Umbruch/Quetschen mehr;
+     die Wertspalte bleibt `minmax(0, 1fr)` und darf umbrechen (`min-width:0` unten). */
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: stretch;
   gap: 0;
   min-height: clamp(64px, 4.8vw, 82px);
   border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
   background:
     linear-gradient(rgba(10, 13, 14, 0.74), rgba(7, 9, 10, 0.88)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
@@ -3621,16 +3624,14 @@ body.bank-dragging-noselect {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 0;
-  padding: 8px;
+  padding: 8px 14px;
   border: 0;
   border-right: 1px solid rgba(167, 123, 67, 0.43);
   background: rgba(17, 21, 21, 0.72);
   font-family: var(--font-info);
   font-size: clamp(10px, 0.65vw, 13px);
   text-align: center;
-  overflow-wrap: break-word;
-  word-break: break-word;
+  white-space: nowrap;
 }
 
 /* 1.0.1-Fix (Chef 27.08.2026 „mehr Kontext"): die Passiv-/Aktiv-Zeilen tragen jetzt volle Sätze
@@ -3643,10 +3644,13 @@ body.bank-dragging-noselect {
   align-items: flex-start;
   justify-content: center;
   gap: 4px;
+  min-width: 0;
   padding: 10px 14px;
   color: #ddd1a4;
   font-size: clamp(13px, 0.84vw, 17px);
   line-height: 1.35;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .pet-field-effects-hint {
@@ -3655,6 +3659,24 @@ body.bank-dragging-noselect {
   font-size: clamp(10px, 0.62vw, 12px);
   font-style: italic;
   line-height: 1.3;
+}
+
+/* Chef-Auftrag 29.08.2026 (Sichtbarkeit): unbesessene Begleiter zeigen weder Passiv- noch
+   Aktiv-Satz (sonst „Spoiler" auf Werte, die der Spieler noch gar nicht freigespielt hat) —
+   ein einziger gedämpfter Hinweis im selben Stahl-Rahmen wie die zwei normalen Zeilen. */
+.pet-field-effects .pet-effect-row-unknown {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+}
+
+.pet-field-effects-unknown-text {
+  min-width: 0;
+  padding: 14px 16px;
+  color: #8f9a9d;
+  font-style: italic;
+  font-size: clamp(13px, 0.84vw, 17px);
+  line-height: 1.4;
+  text-align: center;
 }
 
 

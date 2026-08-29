@@ -1239,6 +1239,7 @@ export const ru: Record<string, string> = {
     // что делают активные и пассивные способности" — больше контекста). Собираются в
     // apps/client/src/renderer/util/petText.ts из реальных чисел контента, ничего не выдумано.
     "pet.effect.activeCombat": "Активный (в бою)",
+    "pet.effect.unknownHint": "Способности станут видны, как только вы найдёте этого спутника.",
     "pet.ability.frame": "{name}. Каждые {sec} с: {body}",
     "pet.ability.autoHint": "Срабатывает автоматически в бою — нажимать ничего не нужно.",
     "pet.passive.instantAction": "{pct}% шанс мгновенно завершить ещё одно действие в навыке «{skill}».",

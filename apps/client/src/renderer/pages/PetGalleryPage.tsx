@@ -256,20 +256,32 @@ export function PetGalleryPage(): JSX.Element {
             {/* Chef-Auftrag 27.08.2026: „Da fehlen mir Erklärungen zu den aktiven und passiven
                 Skills der Pets." — volle Sätze mit echten Zahlen statt der kompakten Kind-Labels
                 (die kompakte PetEffectRows-Zeile bleibt exklusiv der Feier-Overlay/Kopf-Anzeige
-                vorbehalten, s. dort). AUCH für noch nicht besessene Pets sichtbar: der Spieler
-                soll wissen, wofür er jagt, bevor er es hat — nur der Name bleibt „???". */}
+                vorbehalten, s. dort).
+                Chef-Review 29.08.2026 (Sichtbarkeit): NUR für besessene Pets — für „???"-Pets
+                verrät die volle Zahl/Formel zu viel, bevor der Spieler den Fund überhaupt hat.
+                Name-Platzhalter, Skill-Zeile und Drop-Chance-Kachel bleiben unverändert sichtbar
+                (der Spieler soll wissen, WOFÜR er jagt), nur die zwei Text-Zeilen weichen einem
+                gedämpften Hinweis im selben Rahmen. */}
             <div className="pet-field-effects pet-field-effects-detailed">
-              <div className="pet-effect-row">
-                <span className="pet-effect-tag pet-effect-tag-passive">{t("pet.effect.passive")}</span>
-                <span className="pet-effect-value">{passiveText(selectedPet, tFn, tr)}</span>
-              </div>
-              <div className="pet-effect-row">
-                <span className="pet-effect-tag pet-effect-tag-active">{t("pet.effect.activeCombat")}</span>
-                <span className="pet-effect-value">
-                  <span>{abilityText(selectedPet, tFn, tr)}</span>
-                  <small className="pet-field-effects-hint">{t("pet.ability.autoHint")}</small>
-                </span>
-              </div>
+              {selectedOwned ? (
+                <>
+                  <div className="pet-effect-row">
+                    <span className="pet-effect-tag pet-effect-tag-passive">{t("pet.effect.passive")}</span>
+                    <span className="pet-effect-value">{passiveText(selectedPet, tFn, tr)}</span>
+                  </div>
+                  <div className="pet-effect-row">
+                    <span className="pet-effect-tag pet-effect-tag-active">{t("pet.effect.activeCombat")}</span>
+                    <span className="pet-effect-value">
+                      <span>{abilityText(selectedPet, tFn, tr)}</span>
+                      <small className="pet-field-effects-hint">{t("pet.ability.autoHint")}</small>
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="pet-effect-row pet-effect-row-unknown">
+                  <span className="pet-field-effects-unknown-text">{t("pet.effect.unknownHint")}</span>
+                </div>
+              )}
             </div>
 
             {selectedOwned && (

@@ -1238,6 +1238,7 @@ export const zh: Record<string, string> = {
     // Pet 效果完整句子（Chef 2026-08-27 需求："mehr Kontext" 说明被动/主动技能的具体作用）——由
     // apps/client/src/renderer/util/petText.ts 用真实数值拼装，不臆造任何数值。
     "pet.effect.activeCombat": "主动（战斗中）",
+    "pet.effect.unknownHint": "找到这只伙伴后，即可查看其能力。",
     "pet.ability.frame": "{name}。每 {sec}s：{body}",
     "pet.ability.autoHint": "战斗中自动触发，无需操作。",
     "pet.passive.instantAction": "{pct}% 几率立即多完成一次{skill}行动。",

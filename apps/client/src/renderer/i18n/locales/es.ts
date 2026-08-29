@@ -1220,6 +1220,7 @@ export const es: Record<string, string> = {
     // explicaciones de las habilidades activas y pasivas" — más contexto). Se construyen en
     // apps/client/src/renderer/util/petText.ts con los números reales del contenido, nada inventado.
     "pet.effect.activeCombat": "Activo (en combate)",
+    "pet.effect.unknownHint": "Las habilidades se muestran en cuanto encuentras a este compañero.",
     "pet.ability.frame": "{name}. Cada {sec} s: {body}",
     "pet.ability.autoHint": "Se activa automáticamente en combate, no hace falta pulsar nada.",
     "pet.passive.instantAction": "{pct}% de probabilidad de completar al instante una acción extra de {skill}.",

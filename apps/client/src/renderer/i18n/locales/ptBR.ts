@@ -1218,6 +1218,7 @@ export const ptBR: Record<string, string> = {
     // das habilidades ativas e passivas" — mais contexto). Montadas em
     // apps/client/src/renderer/util/petText.ts com os números reais do conteúdo, nada inventado.
     "pet.effect.activeCombat": "Ativo (em combate)",
+    "pet.effect.unknownHint": "As habilidades aparecem assim que você encontrar este companheiro.",
     "pet.ability.frame": "{name}. A cada {sec} s: {body}",
     "pet.ability.autoHint": "Ativa automaticamente em combate, não precisa fazer nada.",
     "pet.passive.instantAction": "{pct}% de chance de concluir instantaneamente uma ação extra de {skill}.",

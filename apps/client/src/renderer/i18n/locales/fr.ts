@@ -1242,6 +1242,7 @@ export const fr: Record<string, string> = {
     // Construites dans apps/client/src/renderer/util/petText.ts avec les vrais chiffres du
     // contenu, rien n'est inventé.
     "pet.effect.activeCombat": "Actif (en combat)",
+    "pet.effect.unknownHint": "Les capacités s'affichent dès que vous avez trouvé ce compagnon.",
     "pet.ability.frame": "{name}. Toutes les {sec} s : {body}",
     "pet.ability.autoHint": "Se déclenche automatiquement en combat, rien à faire.",
     "pet.passive.instantAction": "{pct} % de chances de terminer instantanément une action de {skill} supplémentaire.",

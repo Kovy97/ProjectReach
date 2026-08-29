@@ -1500,6 +1500,9 @@ const en = {
     // names); a few kinds need one extra number: {min} (stealDrop's loot-chance floor), {count}/
     // {total} (multiHit's hit count / summed damage).
     "pet.effect.activeCombat": "Active (in combat)",
+    // Chef-Review 29.08.2026 (Sichtbarkeit): Ersatz für die beiden Passiv-/Aktiv-Sätze, solange
+    // der Spieler dieses Pet noch nicht besitzt (Name bleibt "???").
+    "pet.effect.unknownHint": "Abilities show once you have found this companion.",
     "pet.ability.frame": "{name}. Every {sec}s: {body}",
     "pet.ability.autoHint": "Fires automatically in combat — nothing to click.",
     "pet.passive.instantAction": "{pct}% chance to instantly complete an extra {skill} action.",
@@ -3946,6 +3949,7 @@ const de: Record<keyof typeof en, string> = {
     // brauchen eine Extra-Zahl: {min} (Diebstahl-Untergrenze der Drop-Chance), {count}/{total}
     // (Mehrfachtreffer-Anzahl / Summenschaden).
     "pet.effect.activeCombat": "Aktiv (im Kampf)",
+    "pet.effect.unknownHint": "Fähigkeiten werden sichtbar, sobald du den Begleiter gefunden hast.",
     "pet.ability.frame": "{name}. Alle {sec} s: {body}",
     "pet.ability.autoHint": "Feuert automatisch im Kampf – du musst nichts tun.",
     "pet.passive.instantAction": "{pct} % Chance, eine {skill}-Aktion zusätzlich sofort abzuschließen.",
