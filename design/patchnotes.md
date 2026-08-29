@@ -30,7 +30,9 @@ capes (gloves, boots and trim pieces still use some leather), and a nettle bowst
 **Jagen, ein neuer Skill (Chef 27.08.):** DE: Stell Fallen in Gebieten, die du im Kampf freigeschaltet hast. Eine zufällige
 Kreatur, die du schon einmal besiegt hast (jede Familie, Chef 28.08.), tappt hinein und lässt fünf Beute-Würfe seiner Tabelle da, ohne Kampf.
 Jede Falle braucht einen Köder (Angeln, Stufe 1: „Köder graben"), läuft 5 Minuten (Weiden) bis 60 Minuten (Götzenhalle)
-und erneuert sich auf Wunsch von selbst, online wie offline. Sechs Fallenplätze ab Jagen-Stufe 1, 5, 15, 30, 50 und 75;
+und erneuert sich auf Wunsch von selbst, online wie offline. Geht der Köder aus, wartet die Falle auf Nachschub, statt ihr
+Gebiet zu vergessen, und stellt sich von selbst wieder, sobald der passende Köder im Beutel oder Lager liegt (29.08.).
+Sechs Fallenplätze ab Jagen-Stufe 1, 5, 15, 30, 50 und 75;
 Fangchance 70 % plus Stufenbonus. Jagen-XP richtet sich nach dem Fang: fünffache Kampf-XP des gefangenen Tiers, der erste
 Fang jeder Art zählt zehnfach (Chef 28.08.: die Zonen-Pauschale war zu langsam, die zweite Falle kam erst nach Stunden). Fänge zählen nicht als Kills: Jagen ist Beute, Kampf bleibt Fortschritt. Das Jagdbuch zeigt
 je Gebiet, wer fangbar ist und was er fallen lässt. Stufe 99 bringt den Ring des Fallenstellers. / EN: Hunting is a new

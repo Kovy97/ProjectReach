@@ -12193,13 +12193,13 @@ export const content: ContentDB = {
     craft_apprentice_mitts: {
       id: "craft_apprentice_mitts", name: { en: "Stitch Apprentice Mitts", de: "Lehrlings-Handschuhe nähen" },
       skill: "tailoring", category: "robe_apprentice", durationMs: 3500, xp: 5, levelRequired: 1,
-      inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cured_leather", qty: 1 }],
+      inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cloth_nettle", qty: 1 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "apprentice_mitts", chance: 1, min: 1, max: 1 }],
     },
     craft_apprentice_slippers: {
       id: "craft_apprentice_slippers", name: { en: "Stitch Apprentice Slippers", de: "Lehrlings-Pantöffelchen nähen" },
       skill: "tailoring", category: "robe_apprentice", durationMs: 3500, xp: 5, levelRequired: 1,
-      inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cured_leather", qty: 1 }],
+      inputs: [{ itemId: "dim_essence", qty: 2 }, { itemId: "cloth_nettle", qty: 1 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "apprentice_slippers", chance: 1, min: 1, max: 1 }],
     },
     // Magier-Material-Paritäts-Audit F4 (2026-07-23): Dimweave — kein suffixChance auf dem Loot
@@ -12296,13 +12296,13 @@ export const content: ContentDB = {
     craft_aether_gloves: {
       id: "craft_aether_gloves", name: { en: "Bind Aether Gloves", de: "Aether-Handschuhe binden" },
       skill: "tailoring", category: "robe_aether", durationMs: 9500, xp: 127, levelRequired: 45,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 5 }, { itemId: "scaled_leather", qty: 2 }],
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 5 }, { itemId: "cloth_thornlinen", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "aether_gloves", chance: 1, min: 1, max: 1 }],
     },
     craft_aether_slippers: {
       id: "craft_aether_slippers", name: { en: "Bind Aether Slippers", de: "Aether-Pantoffeln binden" },
       skill: "tailoring", category: "robe_aether", durationMs: 9500, xp: 127, levelRequired: 45,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 5 }, { itemId: "scaled_leather", qty: 2 }],
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 5 }, { itemId: "cloth_thornlinen", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "aether_slippers", chance: 1, min: 1, max: 1 }],
     },
     // ── Arkane Roben (ERFUNDEN: Tier ~L58) ──────────────────────────────
@@ -12330,13 +12330,13 @@ export const content: ContentDB = {
     craft_arcane_mitts: {
       id: "craft_arcane_mitts", name: { en: "Bind Arcane Mitts", de: "Arkane Fäustlinge binden" },
       skill: "tailoring", category: "robe_arcane", durationMs: 11000, xp: 267, levelRequired: 57,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "scaled_leather", qty: 3 }, { itemId: "storm_essence", qty: 1 }],
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "cloth_thornlinen", qty: 3 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "storm_essence", qty: 1 }],
       loot: [{ itemId: "arcane_mitts", chance: 1, min: 1, max: 1 }],
     },
     craft_arcane_slippers: {
       id: "craft_arcane_slippers", name: { en: "Bind Arcane Slippers", de: "Arkane Schlupfschuhe binden" },
       skill: "tailoring", category: "robe_arcane", durationMs: 11000, xp: 267, levelRequired: 57,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "scaled_leather", qty: 3 }, { itemId: "storm_essence", qty: 1 }],
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 6 }, { itemId: "cloth_thornlinen", qty: 3 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "storm_essence", qty: 1 }],
       loot: [{ itemId: "arcane_slippers", chance: 1, min: 1, max: 1 }],
     },
     // ── Dämmergewebe-Roben (armor-iter2.1 §3e: Tier ~L64, schließt Lücke L55→L70) ───────
@@ -12369,13 +12369,13 @@ export const content: ContentDB = {
     craft_duskweave_handwraps: {
       id: "craft_duskweave_handwraps", name: { en: "Bind Duskweave Handwraps", de: "Dämmergewebe-Handwickel binden" },
       skill: "tailoring", category: "robe_duskweave", durationMs: 12500, xp: 408, levelRequired: 63,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 7 }, { itemId: "studded_leather", qty: 3 }, { itemId: "shade_rune", qty: 1 }],
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 7 }, { itemId: "cloth_ghostweave", qty: 3 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_duskweave_treads: {
       id: "craft_duskweave_treads", name: { en: "Bind Duskweave Treads", de: "Dämmergewebe-Schrittschuhe binden" },
       skill: "tailoring", category: "robe_duskweave", durationMs: 12500, xp: 408, levelRequired: 63,
-      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 7 }, { itemId: "studded_leather", qty: 3 }, { itemId: "shade_rune", qty: 1 }],
+      inputs: [{ itemId: "aether_essence", qty: 4 }, { itemId: "aether_rune", qty: 7 }, { itemId: "cloth_ghostweave", qty: 3 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "shade_rune", qty: 1 }],
       loot: [{ itemId: "duskweave_treads", chance: 1, min: 1, max: 1 }],
     },
     // ── Runenwirk Roben (ERFUNDEN: Tier ~L72) ──────────────────────────
@@ -12403,19 +12403,19 @@ export const content: ContentDB = {
     craft_runewoven_handwraps: {
       id: "craft_runewoven_handwraps", name: { en: "Bind Runewoven Handwraps", de: "Runenwirk-Handwickel binden" },
       skill: "tailoring", category: "robe_runewoven", durationMs: 13000, xp: 631, levelRequired: 71,
-      inputs: [{ itemId: "aether_essence", qty: 3 }, { itemId: "void_rune", qty: 6 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "aether_essence", qty: 3 }, { itemId: "void_rune", qty: 6 }, { itemId: "cloth_ghostweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "runewoven_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_runewoven_treads: {
       id: "craft_runewoven_treads", name: { en: "Bind Runewoven Treads", de: "Runenwirk-Schrittschuhe binden" },
       skill: "tailoring", category: "robe_runewoven", durationMs: 13000, xp: 631, levelRequired: 71,
-      inputs: [{ itemId: "aether_essence", qty: 3 }, { itemId: "void_rune", qty: 6 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "aether_essence", qty: 3 }, { itemId: "void_rune", qty: 6 }, { itemId: "cloth_ghostweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "runewoven_treads", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_mitre: {
       id: "craft_godspark_mitre", name: { en: "Bind Godspark Mitre", de: "Götzenfunken-Mitra binden" },
       skill: "tailoring", category: "robe_godspark", durationMs: 16000, xp: 1802, levelRequired: 88,
-      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "godspark_mitre", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_vestment: {
@@ -12428,19 +12428,19 @@ export const content: ContentDB = {
     craft_godspark_skirt: {
       id: "craft_godspark_skirt", name: { en: "Weave Godspark Skirt", de: "Götzenfunken-Gewand (Beine) weben" },
       skill: "tailoring", category: "robe_godspark", durationMs: 17500, xp: 2071, levelRequired: 89,
-      inputs: [{ itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "warhide", qty: 3 }],
+      inputs: [{ itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "cloth_starweave", qty: 3 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "godspark_skirt", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_handwraps: {
       id: "craft_godspark_handwraps", name: { en: "Bind Godspark Handwraps", de: "Götzenfunken-Handwickel binden" },
       skill: "tailoring", category: "robe_godspark", durationMs: 15000, xp: 1689, levelRequired: 88,
-      inputs: [{ itemId: "void_rune", qty: 7 }, { itemId: "aether_essence", qty: 3 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "void_rune", qty: 7 }, { itemId: "aether_essence", qty: 3 }, { itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "godspark_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_godspark_sandals: {
       id: "craft_godspark_sandals", name: { en: "Bind Godspark Sandals", de: "Götzenfunken-Sandalen binden" },
       skill: "tailoring", category: "robe_godspark", durationMs: 15000, xp: 1689, levelRequired: 88,
-      inputs: [{ itemId: "void_rune", qty: 7 }, { itemId: "aether_essence", qty: 3 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "void_rune", qty: 7 }, { itemId: "aether_essence", qty: 3 }, { itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "godspark_sandals", chance: 1, min: 1, max: 1 }],
     },
 
@@ -12449,7 +12449,7 @@ export const content: ContentDB = {
     craft_starweave_coronet: {
       id: "craft_starweave_coronet", name: { en: "Bind Starweave Coronet", de: "Sterngewebe-Krone binden" },
       skill: "tailoring", category: "robe_starweave", durationMs: 16000, xp: 2308, levelRequired: 93,
-      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "starweave_coronet", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_vestment: {
@@ -12462,19 +12462,19 @@ export const content: ContentDB = {
     craft_starweave_skirt: {
       id: "craft_starweave_skirt", name: { en: "Bind Starweave Skirt", de: "Sterngewebe-Gewand binden" },
       skill: "tailoring", category: "robe_starweave", durationMs: 17500, xp: 2524, levelRequired: 93,
-      inputs: [{ itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "warhide", qty: 3 }],
+      inputs: [{ itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "cloth_starweave", qty: 3 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "starweave_skirt", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_handwraps: {
       id: "craft_starweave_handwraps", name: { en: "Bind Starweave Handwraps", de: "Sterngewebe-Handwickel binden" },
       skill: "tailoring", category: "robe_starweave", durationMs: 15000, xp: 2164, levelRequired: 93,
-      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "starweave_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_starweave_sandals: {
       id: "craft_starweave_sandals", name: { en: "Bind Starweave Sandals", de: "Sterngewebe-Sandalen binden" },
       skill: "tailoring", category: "robe_starweave", durationMs: 15000, xp: 2164, levelRequired: 93,
-      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "warhide", qty: 2 }],
+      inputs: [{ itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "starweave_sandals", chance: 1, min: 1, max: 1 }],
     },
 
@@ -12512,14 +12512,14 @@ export const content: ContentDB = {
       id: "craft_ember_handwraps", name: { en: "Stitch Ember Handwraps", de: "Glut-Handwickel nähen" },
       // balance-fix 2026-07: xp 13→9 (part of the ember-set spike fix, matches the re-tuned robe pieces)
       skill: "tailoring", category: "robe_ember", durationMs: 8000, xp: 51, levelRequired: 30,
-      inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "scaled_leather", qty: 1 }],
+      inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "cloth_linen", qty: 1 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "ember_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_ember_sandals: {
       id: "craft_ember_sandals", name: { en: "Bind Ember Sandals", de: "Glut-Sandalen binden" },
       // balance-fix 2026-07: xp 13→9 (part of the ember-set spike fix, matches the re-tuned robe pieces)
       skill: "tailoring", category: "robe_ember", durationMs: 8000, xp: 51, levelRequired: 30,
-      inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "scaled_leather", qty: 1 }],
+      inputs: [{ itemId: "ember_essence", qty: 3 }, { itemId: "fire_rune", qty: 2 }, { itemId: "cloth_linen", qty: 1 } /* Chef 29.08.: Stoff statt Leder */],
       loot: [{ itemId: "ember_sandals", chance: 1, min: 1, max: 1 }],
     },
 
@@ -12563,7 +12563,7 @@ export const content: ContentDB = {
     craft_voidweave_mitre: {
       id: "craft_voidweave_mitre", name: { en: "Bind Voidweave Mitre", de: "Leerengewebe-Mitra binden" },
       skill: "tailoring", category: "robe_voidweave", durationMs: 15000, xp: 2912, levelRequired: 99,
-      inputs: [{ itemId: "warhide", qty: 2 }, { itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
+      inputs: [{ itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "void_rune", qty: 8 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
       loot: [{ itemId: "voidweave_mitre", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_vestment: {
@@ -12576,19 +12576,19 @@ export const content: ContentDB = {
     craft_voidweave_skirt: {
       id: "craft_voidweave_skirt", name: { en: "Weave Voidweave Skirt", de: "Leerengewebe-Gewand (Beine) weben" },
       skill: "tailoring", category: "robe_voidweave", durationMs: 17000, xp: 3300, levelRequired: 99,
-      inputs: [{ itemId: "warhide", qty: 3 }, { itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "idol_shard", qty: 3 }],
+      inputs: [{ itemId: "cloth_starweave", qty: 3 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "void_rune", qty: 9 }, { itemId: "aether_essence", qty: 5 }, { itemId: "idol_shard", qty: 3 }],
       loot: [{ itemId: "voidweave_skirt", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_handwraps: {
       id: "craft_voidweave_handwraps", name: { en: "Bind Voidweave Handwraps", de: "Leerengewebe-Handwickel binden" },
       skill: "tailoring", category: "robe_voidweave", durationMs: 13000, xp: 2524, levelRequired: 99,
-      inputs: [{ itemId: "warhide", qty: 2 }, { itemId: "void_rune", qty: 6 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
+      inputs: [{ itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "void_rune", qty: 6 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
       loot: [{ itemId: "voidweave_handwraps", chance: 1, min: 1, max: 1 }],
     },
     craft_voidweave_sandals: {
       id: "craft_voidweave_sandals", name: { en: "Bind Voidweave Sandals", de: "Leerengewebe-Sandalen binden" },
       skill: "tailoring", category: "robe_voidweave", durationMs: 13000, xp: 2524, levelRequired: 99,
-      inputs: [{ itemId: "warhide", qty: 2 }, { itemId: "void_rune", qty: 6 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
+      inputs: [{ itemId: "cloth_starweave", qty: 2 } /* Chef 29.08.: Stoff statt Leder */, { itemId: "void_rune", qty: 6 }, { itemId: "aether_essence", qty: 4 }, { itemId: "idol_shard", qty: 2 }],
       loot: [{ itemId: "voidweave_sandals", chance: 1, min: 1, max: 1 }],
     },
 
