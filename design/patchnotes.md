@@ -324,6 +324,16 @@ Begleiter-Hover (war tot: pointer-events none), pages.css Breakpoint 1400px, 38 
 
 ## Unveröffentlicht — 1.3.0 „Alive" (Chef 27.08.: die Taverne, von 1.2.0 verschoben; Schalter `TAVERN_ENABLED` bleibt aus)
 
+**Götzenhalle als Gebiet (Chef-Entscheid 29.08.):** Die Götzenhalle ist heute eine reine Dungeon-Zone; ihre beiden
+Champions (Der Neunte Wächter, Hohlschleier der Vergessene) können deshalb nie erscheinen. Mit 1.3.0 wird sie ein echtes
+Kampfgebiet, dann sind beide jagdbar.
+
+*Dev-Notiz: Beim Öffnen der Zone mitziehen — (1) `ach_elite_uniques_all` von 27 zurück auf 29 (packages/content/src/index.ts;
+in 1.2.0 auf 27 gesenkt, weil der Erfolg und der Steam-Erfolg TROPHY_HALL sonst dauerhaft 0 % gewesen wären);
+(2) `ach_elite_idol_warden` (Steam THE_NINTH_WARDEN, versteckt) ist bis dahin unerreichbar, bewusst so (Chef 29.08.:
+hinten anstellen); (3) `isEliteVariantHuntable` (engine/elites.ts) filtert Varianten auf dungeonOnly-Basen — die Basen
+`idol_warden` und `aether_wraith` brauchen dann eine Existenz außerhalb der Dungeon-Wellen, sonst greift der Filter weiter.*
+
 **Die Taverne (Kern von 1.2.0, Chef-Entscheide E1–E3, 27.08.):** DE: New Haven bekommt eine Taverne
 (1 500 Gold, 100 Eichenholz, 15 Minuten; belegt keinen Bauplatz). Jeden Tag sitzen vier Gäste aus
 einem Kreis von 18 benannten Menschen, Elfen, Orks und Goblins an drei Tischen und am Tresen, jeder mit
