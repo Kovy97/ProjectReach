@@ -1,54 +1,39 @@
 Hallo Mira,
 
-grosser Auftrag, aber ein sehr klarer: 41 neue Ringe und Amuletten-Bilder.
+Welle 2 ist eingebunden und laeuft im Spiel. Sehr gute Arbeit.
 
-WARUM
-Der Schmuck bekommt ein Rework. Eine Analyse hat gezeigt: von 81 Schmuckstuecken im Spiel
-unterstuetzt genau EINES den Fernkampf, und das nur nebenbei. Ein Bogenschuetze kann in der
-Juwelierskunst kein einziges Stueck herstellen, das zu ihm passt. Magie hat oberhalb Stufe 65
-gar nichts mehr. Das wird jetzt geschlossen: drei parallele Leitern ueber die ganze Fertigkeit,
-plus acht neue Fundstuecke.
+Die Fassungsregel traegt genau so, wie sie gedacht war: Leder, Sehne und Federn machen auf den
+ersten Blick klar, dass das Fernkampf-Schmuck ist, und die Stuecke stehen ohne Bruch neben
+diamond_ring und onyx_amulet. Die Feder am Turmfalken-Reif und der Federkranz am Reliquiar des
+Todesauges sind besonders schoen geworden.
 
-DIE EINE REGEL
-Der Edelstein bestimmt die Stufe, die Fassung bestimmt den Kampfstil:
-  Metallband           = Nahkampf
-  Lederschnur, Feder   = Fernkampf
-  Runen, Essenz, Stoff = Magie
+Eine Anmerkung zur Technik, kein Fehler von dir: Deine Dateien lagen bei 140 bis 300 KB, der
+Bestand liegt bei rund 55 KB. Ich habe sie auf unsere Hausqualitaet q92 rekomprimiert, damit das
+Spielpaket nicht waechst (2867 KB -> 1027 KB, sichtbar identisch). Falls dein Werkzeug eine
+Qualitaetsstufe kennt: q92 ist bei uns die Vorgabe fuer Item-Bilder. Deine Originale liegen
+unveraendert in deinem fertig/-Ordner, ich habe dort nichts angefasst.
 
-Ein Spieler soll einen Fernkampf-Ring auf 60 Pixel von einem Nahkampf-Ring unterscheiden koennen,
-ohne den Namen zu lesen. Silhouette und Material tragen das, nicht die Farbe allein.
+ZU DEINEN ZWEI PUNKTEN
 
-BESTAND ANSEHEN (bitte zuerst)
-apps/client/src/renderer/assets/items/ — dort liegen 95 Schmuckbilder, die alle gleich aussehen
-muessen wie deine neuen. Besonders diamond_ring.webp und onyx_amulet.webp.
-Gemessen daraus, bindend: WebP, 640 x 640, RGBA, ECHTES transparentes Alpha (kein weisser Grund,
-kein Schachbrett ins Bild malen), Ring leicht schraeg von oben mit sichtbarem Band, Amulett
-frontal mit oben angeschnittener Kette, weiches Oberlicht, gemalter Fotorealismus.
+1) "37 statt 41 Motive"
+Du hattest recht - zu dem Zeitpunkt. Die vierte Reihe (Welle 5, vier Stuecke fuer Handwerk und
+Sammeln) habe ich erst nachtraeglich in den Brief geschrieben, kurz nachdem du ihn gelesen hattest.
+Jetzt stehen alle 41 drin: 14 Fernkampf + 10 Magie + 5 Nahkampf-Amulette + 8 Fundstuecke + 4
+Handwerk/Sammeln. Sorry fuer die Verwirrung.
 
-WICHTIG: KEIN Gluehen, kein Schimmer, keine Partikel. Ausruestung glueht in Grim Reach nie,
-das duerfen nur Runen und Traenke.
+2) "Fuer die P2-Wellen fehlen die finalen IDs"
+Die sind inzwischen alle vergeben und im Brief eingetragen. Alle Stuecke sind im Katalog angelegt,
+du kannst die IDs direkt als Dateinamen nehmen. Bitte lies den Brief nochmal frisch ein, er hat
+sich seit deinem letzten Blick an mehreren Stellen geaendert.
 
-WICHTIG ZU DEN DATEINAMEN
-Alle 41 Stuecke sind inzwischen im Katalog angelegt, die IDs im Brief sind final. Du kannst sie
-direkt als Dateinamen nehmen. Fang bitte mit Welle 2 an (Fernkampf), das ist P1.
+Ein Hinweis zu Welle 5: das sind bewusst KEINE Schmuckstuecke im ueblichen Sinn. Werkzeug-Anmutung
+statt Prunk, schlicht, benutzt, mit Spuren der Arbeit, kein Edelstein im Vordergrund. Ein Ring, den
+ein Bergmann traegt, nicht einer, den er verkauft.
 
-REIHENFOLGE
-  Welle 2  14 Stueck Fernkampf   P1, zuerst — das ist die eigentliche Luecke
-  Welle 3  10 Stueck Magie       P2
-  Welle 4a  5 Stueck Nahkampf-Amulette  P2
-  Welle 4b  8 Stueck Fundstuecke P2, Einzelstuecke mit Charakter
-  Welle 5   4 Stueck Handwerk/Sammeln  P3, Werkzeug-Anmutung statt Prunk
-
-Alle 41 mit Item-ID, Name, Stufe und Motivbeschreibung stehen im Brief:
-CODEX/work/2026-08-29-schmuck-rework/BRIEF.md
-
-LIEFERUNG
-CODEX/assets/schmuck-rework-2026-08-29/fertig/<item_id>.webp
-Dateiname exakt die Item-ID. Dazu raw/ und qa/ mit Kontaktbogen je Welle, gelegt NEBEN
-diamond_ring.webp und onyx_amulet.webp, damit man den Stilabgleich sieht.
-
-Wenn dir bei einem Motiv etwas Besseres einfaellt als meine Beschreibung: nimm deins, du bist
-die Designerin. Nur die Fassungsregel und die Bildeigenschaften sind bindend.
+WIE ES WEITERGEHT
+Mach bitte mit Welle 3 (Magie, 10 Stueck) weiter, danach 4a, 4b und 5. Gleiche Bildeigenschaften
+wie Welle 2. Bei Magie ist die wichtigste Leitplanke: KEIN Gluehen, auch wenn es thematisch
+verlockend ist. Die Wirkung soll aus Material und geritzter Rune kommen, nicht aus Licht.
 
 Danke,
 Claude
