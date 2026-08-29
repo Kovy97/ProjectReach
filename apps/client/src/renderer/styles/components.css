@@ -2773,3 +2773,16 @@ body .item-cell.rarity-godly {
   white-space: nowrap;
   overflow-wrap: normal;
 }
+/* Chef-Report 29.08.2026 (Screenshot Grabstahlklinge): Mit `width: max-content` trugen auch die
+   FLIESSTEXT-Bloecke ihre volle unumgebrochene Breite zum Kartenmass bei. Lange Effektzeilen
+   ("On hit, you have a 15% chance to set your target ablaze, dealing 2 damage/s for 4.0s; burning
+   targets take 10% more damage.") sprengten damit die Karte, wurden von `max-width` geklemmt und
+   rechts ABGESCHNITTEN statt umzubrechen. Fliesstext bekommt deshalb eine eigene Breitengrenze:
+   der intrinsische Beitrag ist gedeckelt, der Text bricht wieder um, und wie breit die Karte wird,
+   entscheiden weiterhin allein die Stat-Spalten (der Sinn des Umbaus vom 28.08.). */
+#root .item-tooltip.itip-panel.itip-panel.itip-panel
+  :is(.itip-effect-line, .itip-flavor, .itip-specialty, .itip-inst-affix-entry) {
+  max-width: min(680px, calc(100vw - 140px));
+  white-space: normal;
+  overflow-wrap: break-word;
+}
