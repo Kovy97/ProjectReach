@@ -36,8 +36,8 @@ Ten zones from the pastures to the idol halls, a bestiary of 110 creatures, and 
 Twenty-three companions, each earned from the skill it belongs to. Every one brings a passive for its trade and a real move in combat: a bear trap that makes the enemy bleed, a rat that steals loot from your target, an imp that sets your blade on fire, a moth that veils the enemy's eyes. They are rare, and the card tells you exactly what they do before you have them.
 
 [h2]Human, Elf, Orc, Goblin.[/h2]
-[img]panel_05_peoples.png[/img]
-Four peoples with thirty painted archetypes each, in two versions. Your choice is a look, not a cage: every skill and every combat style stays open to everyone. Three equipment kits per character let you swap a full loadout, tools included, between fights.
+[img]panel_05_races.png[/img]
+Four races with thirty painted archetypes each, in two versions. Your choice is a look, not a cage: every skill and every combat style stays open to everyone. Three equipment kits per character let you swap a full loadout, tools included, between fights.
 
 [h2]Build a town that works while you don't.[/h2]
 [img]panel_06_newhaven.png[/img]
