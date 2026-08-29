@@ -2779,9 +2779,12 @@ body .item-cell.rarity-godly {
    targets take 10% more damage.") sprengten damit die Karte, wurden von `max-width` geklemmt und
    rechts ABGESCHNITTEN statt umzubrechen. Fliesstext bekommt deshalb eine eigene Breitengrenze:
    der intrinsische Beitrag ist gedeckelt, der Text bricht wieder um, und wie breit die Karte wird,
-   entscheiden weiterhin allein die Stat-Spalten (der Sinn des Umbaus vom 28.08.). */
+   entscheiden weiterhin allein die Stat-Spalten (der Sinn des Umbaus vom 28.08.).
+   Nachtrag 29.08. (Chef-Report Grimwood-Rute): derselbe Mechanismus traf den Werkzeug-Hinweis
+   (`.itip-tag`), der als Flex-Kind mit `align-self: flex-start` ebenfalls seine volle Textbreite
+   beitrug. Die Liste deckt jetzt ALLE Fliesstext-Traeger der Karte ab, nicht nur die Effektzeilen. */
 #root .item-tooltip.itip-panel.itip-panel.itip-panel
-  :is(.itip-effect-line, .itip-flavor, .itip-specialty, .itip-inst-affix-entry) {
+  :is(.itip-effect-line, .itip-flavor, .itip-specialty, .itip-inst-affix-entry, .itip-tag, .itip-tool-hint, .itip-set-line, .itip-req-line, .itip-source) {
   max-width: min(680px, calc(100vw - 140px));
   white-space: normal;
   overflow-wrap: break-word;
