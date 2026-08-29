@@ -749,10 +749,11 @@ export function ActionQueuePanel(): JSX.Element {
             </div>
           )}
 
-          {/* Task #315 — Queue-Pause-Badge: "Tod pausiert die Queue" (Chef-GO #312) ist ein
-              härterer Zustand als der dezente Material-Stop unten (NICHTS läuft mehr automatisch
-              weiter, bis der Spieler manuell fortsetzt) — eigener, deutlich sichtbarer Block mit
-              direktem Handlungsaufruf statt nur einer Textzeile. */}
+          {/* Task #315 — Queue-Pause-Badge: ursprünglich für "Tod pausiert die Queue" (Chef-GO
+              #312), seit Review 1.2.0 P2 überholt — Tod überspringt den Eintrag jetzt nur noch
+              (s. `lastQueueSkip`/queue.skip.* unten), keine Engine-Stelle setzt `queuePaused` mehr
+              auf `true`. Reiner Legacy-Pfad für Alt-Saves, die den Flag noch persistiert haben —
+              entfällt mit dem nächsten SAVE-Bump. */}
           {state.queuePaused && (
             <div className="queue-panel-paused">
               <span className="queue-panel-paused-badge">
