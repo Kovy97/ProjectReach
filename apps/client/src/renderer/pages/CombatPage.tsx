@@ -3456,9 +3456,10 @@ function Battle({
   const activePetSrc = activePet ? getPetSrc(activePet.id) : null;
 
   // Zauberreserve-Zahl nur zeigen, wenn der Held Magie-Stil führt ODER ein Item (Focus) einen
-  // Reserve-Bonus gibt. Basiswert ohne Ausrüstung: 30 + int*10 + wis*4 (aus computeStats,
-  // Zauberreserve 28.08.2026 — abgelöste Formel war 10 + int*5 + wis*2).
-  const baseSpellReserve = 30 + stats.attributes.int * 10 + stats.attributes.wis * 4;
+  // Reserve-Bonus gibt. Basiswert ohne Ausrüstung: 30 + wis*10 (aus computeStats; Chef 29.08.2026:
+  // die Reserve kommt NUR aus Weisheit — mit der alten INT-Formel lag die Schwelle zu niedrig und
+  // jeder Nahkämpfer mit etwas Kräuterkunde/Abwehr sah eine Magie-Zeile im Kampfpanel).
+  const baseSpellReserve = 30 + stats.attributes.wis * 10;
   const showReserve = stats.style === "magic" || stats.maxMana > baseSpellReserve;
   // Kampf-Juice §6 — Low-HP-Spannung: pulsierende dunkelrote Vignette am Arena-Rand ab < 25%
   // Spieler-HP (Klasse hier, ::after + Puls in combat.css). Dauerzustands-tauglich: langsamer

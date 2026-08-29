@@ -584,7 +584,7 @@ export const ptBR: Record<string, string> = {
     "statdesc.dodge": "Chance fixa de evitar totalmente um golpe (armadura de Couro). Retornos decrescentes, limitada a 40%.",
     "statdesc.block": "Chance de bloquear um golpe reduzindo o dano em 85% (Escudo, apenas corpo a corpo de uma mão). Limitada a 50%.",
     "statdesc.wardPool": "Absorve dano antes dos PV (armadura de Tecido). Recarrega quando você conjura um feitiço.",
-    "statdesc.wardRegen": "A guarda recarrega automaticamente com o tempo pela sua perícia de Guarda arcana. Conjurar na postura Mágica defensiva aumenta isso em 50%.",
+    "statdesc.wardRegen": "A guarda recarrega automaticamente com o tempo pela sua perícia de Guarda arcana. Conjurar na postura de Guarda Arcana aumenta isso em 50%.",
     "statdesc.spellReserve": "Seus feitiços não custam nada. A Sabedoria alimenta a reserva: +10 por ponto. Postura de foco: +{focusPct}% de dano mágico. Postura de guarda arcana: +{shieldPct}% de regeneração de guarda.",
     "statdesc.armorPen": "Ignora uma parte da mitigação de dano de um inimigo blindado.",
     "statdesc.precision": "Ignora uma parte da chance de esquiva de um inimigo evasivo.",
@@ -1273,7 +1273,7 @@ export const ptBR: Record<string, string> = {
     "toast.onboarding.rangedTitle": "Agora lutando: À distância",
     "toast.onboarding.rangedBody": "Seu arco define o estilo de combate: ataques à distância acertam de longe.",
     "toast.onboarding.magicTitle": "Agora lutando: Magia",
-    "toast.onboarding.magicBody": "Seus feitiços não custam nada. Sua reserva de feitiços potencializa suas posturas: Foco dá dano mágico, Escudo enche sua guarda.",
+    "toast.onboarding.magicBody": "Seus feitiços não custam nada. Sua reserva de feitiços potencializa suas posturas: Foco dá dano mágico, Guarda Arcana enche sua guarda.",
 
 
     "pet.flavor.rotbark": "{pet} enrola raízes no inimigo — atordoado!",
@@ -1648,7 +1648,7 @@ export const ptBR: Record<string, string> = {
     "onboarding.guide.leatherworking": "Curta peles em couro e fabrique armaduras e arcos para os estilos corpo a corpo e à distância.",
     "onboarding.guide.tailoring": "Teça fibras em tecido e costure-o em mantos mágicos e capas para os três estilos de combate.",
     "onboarding.guide.jewelcrafting": "Engaste gemas em anéis e amuletos para bônus passivos de atributos. Joias bem fabricadas podem aumentar significativamente ofensiva, defesa ou chance de crítico.",
-    "onboarding.guide.runecrafting": "Fabrique runas elementais a partir de matéria-prima na Criação de Runas — elas são usadas para construir armas mágicas e como material de encantamento. Em combate, seus feitiços não custam nada; sua reserva de feitiços potencializa suas posturas: Foco soma dano mágico, Escudo acelera a regeneração de guarda.",
+    "onboarding.guide.runecrafting": "Fabrique runas elementais a partir de matéria-prima na Criação de Runas — elas são usadas para construir armas mágicas e como material de encantamento. Em combate, seus feitiços não custam nada; sua reserva de feitiços potencializa suas posturas: Foco soma dano mágico, Guarda Arcana acelera a regeneração de guarda.",
     "onboarding.guide.herblore": "Prepare poções e tônicos de ervas colhidas. Poções de combate aumentam seus atributos; Tônicos Antídoto são essenciais ao enfrentar inimigos que envenenam.",
     "onboarding.guide.slayer": "Receba missões de abate dos Mestres Caçadores para caçar monstros específicos. Cada tarefa concluída rende Pontos de Caçador resgatáveis por desbloqueios poderosos e equipamento único.",
 
@@ -1719,7 +1719,7 @@ export const ptBR: Record<string, string> = {
     "onboarding.guide.sidebarSkill.jewelcrafting.title": "Joalheria",
     "onboarding.guide.sidebarSkill.jewelcrafting.body": "Isto é a Joalheria. Você lapida gemas e as engasta junto com barras em anéis e amuletos que concedem bônus passivos de atributos. Para treiná-la, lapide uma gema primeiro, depois fabrique uma joia; subir de nível desbloqueia joias mais fortes.",
     "onboarding.guide.sidebarSkill.runecrafting.title": "Criação de Runas",
-    "onboarding.guide.sidebarSkill.runecrafting.body": "Isto é a Criação de Runas. Você liga essência elemental em runas e as encanta em cajados, cetros e focos — suas armas mágicas. Para treiná-la, escolha uma receita e fabrique-a com sua essência; subir de nível desbloqueia runas e armas mágicas mais fortes. Em combate, seus feitiços não custam nada; sua reserva de feitiços potencializa suas posturas: Foco soma dano mágico, Escudo acelera a regeneração de guarda.",
+    "onboarding.guide.sidebarSkill.runecrafting.body": "Isto é a Criação de Runas. Você liga essência elemental em runas e as encanta em cajados, cetros e focos — suas armas mágicas. Para treiná-la, escolha uma receita e fabrique-a com sua essência; subir de nível desbloqueia runas e armas mágicas mais fortes. Em combate, seus feitiços não custam nada; sua reserva de feitiços potencializa suas posturas: Foco soma dano mágico, Guarda Arcana acelera a regeneração de guarda.",
     "onboarding.guide.sidebarSkill.herblore.title": "Herbologia",
     "onboarding.guide.sidebarSkill.herblore.body": "Isto é a Herbologia. Você prepara poções e tônicos de ervas colhidas — poções de combate aumentam seus atributos, e Tônicos Antídoto protegem você de inimigos que envenenam. Para treiná-la, escolha uma receita e prepare-a com suas ervas; subir de nível desbloqueia poções mais fortes.",
 

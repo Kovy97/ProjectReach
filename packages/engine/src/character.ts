@@ -575,7 +575,7 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   // combat-dev (Phase B) wendet es pro Tick an (analog hpRegenPerSec); hier nur bereitstellen.
   // Gate-C #1: Cap NACH dem Stance-Mult klemmen — die Defensiv-Stance (×1.5) darf den in Spec §9.2
   // dokumentierten Deckel (WARDING_REGEN_CAP = 2.0/s) nicht überschreiten.
-  // Schild-Haltung (Zauberreserve §2, Chef-Korrektur 28.08.): zusätzlich +1 % Ward-Regen je 40 Reserve (Deckel +30 %) — als
+  // Abwehr-Haltung (Zauberreserve §2; Teiler 20 seit Chef 29.08.2026, Reserve aus Weisheit): zusätzlich +1 % Ward-Regen je 20 Reserve (Deckel +30 %) — als
   // Multiplikator NACH dem Warding-Cap, damit der Bonus auch am Endgame (Cap erreicht) sichtbar bleibt
   // (max 2.0 · 1.3 = 2.6/s, weiterhin ≪ Endgame-DPS-in). Nur in der defensiven Haltung angewandt.
   const wardRegenPerSec =
@@ -643,9 +643,9 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     attackDamageMin = attackDamageMax * DMG_ROLL_FLOOR;
   }
   // Fokus-Haltung (Zauberreserve, Chef-GO 28.08.2026, Spec §2): in der OFFENSIVEN Magie-Haltung
-  // wächst der gesamte Zauberschaden (Charakter-Anteil + Waffenspanne) um +1 % je 60 Reserve,
-  // Deckel +15 % (spellReserveDamageBonus; Balance-Audit-Korrektur 28.08., CL-90-Kit ≈ +13 %). Ersetzt den Wegfall des „schwachen
-  // Magiers" (der nie griff) und ist ein bewusster Magie-Buff (Spec §7). Nicht in der Schild-Haltung
+  // wächst der gesamte Zauberschaden (Charakter-Anteil + Waffenspanne) um +1 % je 30 Reserve,
+  // Deckel +15 % (spellReserveDamageBonus; Teiler 30 seit Chef 29.08.2026, Reserve aus Weisheit, CL-90-Kit ≈ +12 %). Ersetzt den Wegfall des „schwachen
+  // Magiers" (der nie griff) und ist ein bewusster Magie-Buff (Spec §7). Nicht in der Abwehr-Haltung
   // (die hat dmgMult 0.85 + Ward-Regen-Bonus), nie für Nahkampf/Fernkampf.
   if (style === "magic" && c.magicStance !== "defensive" && reserveDamageBonus > 0) {
     attackDamageMin *= 1 + reserveDamageBonus;

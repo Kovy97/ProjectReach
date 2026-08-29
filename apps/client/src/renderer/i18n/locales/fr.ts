@@ -595,7 +595,7 @@ export const fr: Record<string, string> = {
     "statdesc.dodge": "Chance fixe d'éviter totalement un coup (armure de cuir). Rendements décroissants, plafonnée à 40 %.",
     "statdesc.block": "Chance de bloquer un coup pour −85 % de dégâts (bouclier, mêlée à une main uniquement). Plafonnée à 50 %.",
     "statdesc.wardPool": "Absorbe les dégâts avant les PV (armure d'étoffe). Se recharge quand vous lancez un sort.",
-    "statdesc.wardRegen": "La barrière se recharge automatiquement au fil du temps grâce à votre compétence Barrière. Incanter en posture Magie défensive augmente cela de 50 %.",
+    "statdesc.wardRegen": "La barrière se recharge automatiquement au fil du temps grâce à votre compétence Barrière. Incanter en posture Barrière augmente cela de 50 %.",
     "statdesc.spellReserve": "Les sorts ne coûtent rien. La Sagesse nourrit la réserve : +10 par point. Posture de concentration : +{focusPct} % de dégâts de sort. Posture de barrière : +{shieldPct} % de régénération de barrière.",
     "statdesc.armorPen": "Ignore une partie de l'atténuation des dégâts d'un ennemi blindé.",
     "statdesc.precision": "Ignore une partie de la chance d'esquive d'un ennemi évasif.",
@@ -1299,7 +1299,7 @@ export const fr: Record<string, string> = {
     "toast.onboarding.rangedTitle": "Combat actuel : à distance",
     "toast.onboarding.rangedBody": "Votre arc définit le style de combat : les attaques à distance frappent de loin.",
     "toast.onboarding.magicTitle": "Combat actuel : magie",
-    "toast.onboarding.magicBody": "Vos sorts ne coûtent rien. Votre réserve de sorts renforce vos postures : Concentration donne des dégâts de sort, Bouclier remplit votre barrière.",
+    "toast.onboarding.magicBody": "Vos sorts ne coûtent rien. Votre réserve de sorts renforce vos postures : Concentration donne des dégâts de sort, Barrière remplit votre barrière.",
 
     // Pet flavor log lines
     "pet.flavor.rotbark": "{pet} enroule des racines autour de l'ennemi — étourdi !",
@@ -1689,7 +1689,7 @@ export const fr: Record<string, string> = {
     "onboarding.guide.leatherworking": "Tannez des peaux en cuir et fabriquez armures et arcs pour les styles corps à corps et à distance.",
     "onboarding.guide.tailoring": "Tissez des fibres en tissu et cousez-le en robes magiques et capes pour les trois styles de combat.",
     "onboarding.guide.jewelcrafting": "Sertissez des gemmes dans des anneaux et amulettes pour des bonus de stat passifs. Une joaillerie bien faite peut nettement améliorer l'offense, la défense ou la chance de critique.",
-    "onboarding.guide.runecrafting": "Fabriquez des runes élémentaires à partir de matières premières en Runécriture — elles servent à créer des armes magiques et de matériau d'enchantement. En combat, vos sorts ne coûtent rien ; votre réserve de sorts renforce vos postures à la place : Concentration ajoute des dégâts de sort, Bouclier accélère la régénération de barrière.",
+    "onboarding.guide.runecrafting": "Fabriquez des runes élémentaires à partir de matières premières en Runécriture — elles servent à créer des armes magiques et de matériau d'enchantement. En combat, vos sorts ne coûtent rien ; votre réserve de sorts renforce vos postures à la place : Concentration ajoute des dégâts de sort, Barrière accélère la régénération de barrière.",
     "onboarding.guide.herblore": "Préparez potions et toniques à partir d'herbes récoltées. Les potions de combat améliorent vos stats ; les toniques antivenin sont essentiels face aux ennemis empoisonneurs.",
     "onboarding.guide.slayer": "Recevez des contrats d'élimination des Maîtres chasseurs pour traquer des monstres précis. Chaque tâche accomplie rapporte des points de chasseur échangeables contre de puissants déblocages et un équipement unique.",
 
@@ -1765,7 +1765,7 @@ export const fr: Record<string, string> = {
     "onboarding.guide.sidebarSkill.jewelcrafting.title": "Joaillerie",
     "onboarding.guide.sidebarSkill.jewelcrafting.body": "Voici la Joaillerie. Vous taillez des gemmes et les sertissez avec des lingots dans des anneaux et amulettes qui octroient des bonus de stat passifs. Pour l'entraîner, taillez d'abord une gemme, puis façonnez-la en un bijou ; monter de niveau débloque des bijoux plus puissants.",
     "onboarding.guide.sidebarSkill.runecrafting.title": "Runécriture",
-    "onboarding.guide.sidebarSkill.runecrafting.body": "Voici la Runécriture. Vous liez l'essence élémentaire en runes et les enchantez en bâtons, sceptres et focalisateurs — vos armes magiques. Pour l'entraîner, choisissez une recette et fabriquez-la à partir de votre essence ; monter de niveau débloque des runes et des armes magiques plus puissantes. En combat, vos sorts ne coûtent rien ; votre réserve de sorts renforce vos postures à la place : Concentration ajoute des dégâts de sort, Bouclier accélère la régénération de barrière.",
+    "onboarding.guide.sidebarSkill.runecrafting.body": "Voici la Runécriture. Vous liez l'essence élémentaire en runes et les enchantez en bâtons, sceptres et focalisateurs — vos armes magiques. Pour l'entraîner, choisissez une recette et fabriquez-la à partir de votre essence ; monter de niveau débloque des runes et des armes magiques plus puissantes. En combat, vos sorts ne coûtent rien ; votre réserve de sorts renforce vos postures à la place : Concentration ajoute des dégâts de sort, Barrière accélère la régénération de barrière.",
     "onboarding.guide.sidebarSkill.herblore.title": "Herboristerie",
     "onboarding.guide.sidebarSkill.herblore.body": "Voici l'Herboristerie. Vous préparez potions et toniques à partir d'herbes récoltées — les potions de combat améliorent vos stats, et les toniques antivenin vous protègent des ennemis empoisonneurs. Pour l'entraîner, choisissez une recette et préparez-la à partir de vos herbes ; monter de niveau débloque des potions plus puissantes.",
 

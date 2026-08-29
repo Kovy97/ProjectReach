@@ -1967,13 +1967,13 @@ export const ATTRIBUTES = [
     name: { en: "Intelligence", de: "Intelligenz", es: "Inteligencia", fr: "Intelligence", "pt-BR": "Inteligência", ru: "Интеллект", zh: "智力" },
     abbr: "INT",
     description: {
-      en: "Magic damage & spell reserve",
-      de: "Magieschaden & Zauberreserve",
-      es: "Daño mágico y reserva de hechizos",
-      fr: "Dégâts magiques et réserve de sorts",
-      "pt-BR": "Dano mágico e reserva de feitiços",
-      ru: "Магический урон и запас чар",
-      zh: "法术伤害与法术储备",
+      en: "Magic damage & spell focus",
+      de: "Magieschaden & Zauberfokus",
+      es: "Daño mágico y foco arcano",
+      fr: "Dégâts magiques et focalisation arcanique",
+      "pt-BR": "Dano mágico e foco arcano",
+      ru: "Магический урон и фокус чар",
+      zh: "法术伤害与法术专注",
     },
   },
   {
@@ -2463,7 +2463,7 @@ export const PET_SKILL_EFFECT_CAP: Record<PetSkillEffectKind, number> = {
   flawlessGem: 0.05,
   bonusRunes: 0.05,
   potionPreserve: 0.05,
-  spellReserve: 0.05, // Bruch: +5 % Zauberreserve max (≈ +0,7 Pp Fokus-Schaden am CL-90-Kit — Komfort)
+  spellReserve: 0.05, // Bruch: +5 % Zauberreserve max (Komfort; am CL-90-Kit 0 Pp, weil der Fokus-Deckel dort ohnehin steht — wirkt in der Mitte der Kurve ≈ +0,5 Pp)
   // ── #276 Pet-Redesign (Spec §5.3) ──
   lifesteal: 0.02, // Bruch: +2 % Lebensraub max (Gear-Quellen ~10 % — Pet bleibt Komfort)
   skillBoost: 2, // GANZE Level (nicht Bruch!) — von der ≤5-%-Guard-Prüfung ausgenommen
@@ -5163,7 +5163,8 @@ export interface DerivedStats {
   maxHp: number;
   /**
    * Zauberreserve (Chef-GO 28.08.2026; UI-Label „Zauberreserve"/„Spell Reserve" — der FELDNAME bleibt
-   * `maxMana`): `(30 + 10·INT + 4·WIS + Σ EquipBonus.maxMana) · Pet-spellReserve`. Kein Verbrauch mehr;
+   * `maxMana`): `(30 + 10·WIS + Σ EquipBonus.maxMana) · Pet-spellReserve` (Chef 29.08.2026: die Reserve ist das
+   * Gegenstück zu INT und kommt NUR aus Weisheit; INT bleibt Zauberschaden). Kein Verbrauch mehr;
    * `character.mana` wird auf diesen Wert gehalten. Die Magie-Haltungen lesen ihn (s. unten).
    */
   maxMana: number;

@@ -698,7 +698,7 @@ const en = {
     "statdesc.dodge": "Flat chance to fully avoid a hit (Leather armor). Diminishing returns, capped at 40%.",
     "statdesc.block": "Chance to block a hit for -85% damage (Shield, one-handed melee only). Capped at 50%.",
     "statdesc.wardPool": "Absorbs damage before HP (Cloth armor). Recharges when you cast a spell.",
-    "statdesc.wardRegen": "Ward recharges automatically over time from your Warding skill. Casting in the defensive Magic stance boosts this by 50%.",
+    "statdesc.wardRegen": "Ward recharges automatically over time from your Warding skill. Casting in the Warding stance boosts this by 50%.",
     "statdesc.spellReserve": "Spells cost nothing to cast. Wisdom feeds the reserve: +10 per point. Focus stance: +{focusPct}% spell damage. Warding stance: +{shieldPct}% ward regeneration.",
     "statdesc.armorPen": "Ignores a portion of an armored enemy's damage mitigation.",
     "statdesc.precision": "Ignores a portion of an evasive enemy's dodge chance.",
@@ -1569,7 +1569,7 @@ const en = {
     "toast.onboarding.rangedTitle": "Now fighting: Ranged",
     "toast.onboarding.rangedBody": "Your bow sets the combat style — ranged attacks strike from a distance.",
     "toast.onboarding.magicTitle": "Now fighting: Magic",
-    "toast.onboarding.magicBody": "Your spells cost nothing to cast. Your spell reserve empowers your stances: Focus grants spell damage, Shield fills your ward.",
+    "toast.onboarding.magicBody": "Your spells cost nothing to cast. Your spell reserve empowers your stances: Focus grants spell damage, Warding fills your ward.",
 
     // ── Pet flavor log lines (per petId) ────────────────────────────────────
     "pet.flavor.rotbark": "{pet} coils roots around the enemy — stunned!",
@@ -1984,7 +1984,7 @@ const en = {
     "onboarding.guide.leatherworking": "Tan hides into leather and craft it into armour and bows for the melee and ranged styles.",
     "onboarding.guide.tailoring": "Weave fibres into cloth and sew it into magic robes and capes for all three combat styles.",
     "onboarding.guide.jewelcrafting": "Set gems into rings and amulets for passive stat bonuses. Well-crafted jewellery can meaningfully boost offence, defence or critical chance.",
-    "onboarding.guide.runecrafting": "Craft elemental runes from raw materials in Runecrafting — they are used to build magic weapons and as enchanting material. In combat, your spells cost nothing; your spell reserve powers your stances instead: Focus adds spell damage, Shield speeds up ward regeneration.",
+    "onboarding.guide.runecrafting": "Craft elemental runes from raw materials in Runecrafting — they are used to build magic weapons and as enchanting material. In combat, your spells cost nothing; your spell reserve powers your stances instead: Focus adds spell damage, Warding speeds up ward regeneration.",
     "onboarding.guide.herblore": "Brew potions and tonics from harvested herbs. Combat potions boost your stats; Antivenom Tonics are essential when facing poison-inflicting enemies.",
     "onboarding.guide.slayer": "Receive kill assignments from Slayer Masters to hunt specific monsters. Each completed task earns Slayer Points redeemable for powerful unlocks and unique gear.",
 
@@ -2063,7 +2063,7 @@ const en = {
     "onboarding.guide.sidebarSkill.jewelcrafting.title": "Jewelcrafting",
     "onboarding.guide.sidebarSkill.jewelcrafting.body": "This is Jewelcrafting. You cut gems and set them together with bars into rings and amulets that grant passive stat bonuses. To train it, cut a gem first, then craft it into a piece of jewellery; leveling up unlocks stronger jewellery.",
     "onboarding.guide.sidebarSkill.runecrafting.title": "Runecrafting",
-    "onboarding.guide.sidebarSkill.runecrafting.body": "This is Runecrafting. You bind elemental essence into runes and enchant them into staves, sceptres and foci — your magic weapons. To train it, pick a recipe and craft it from your essence; leveling up unlocks stronger runes and magic weapons. In combat, your spells cost nothing; your spell reserve powers your stances instead: Focus adds spell damage, Shield speeds up ward regeneration.",
+    "onboarding.guide.sidebarSkill.runecrafting.body": "This is Runecrafting. You bind elemental essence into runes and enchant them into staves, sceptres and foci — your magic weapons. To train it, pick a recipe and craft it from your essence; leveling up unlocks stronger runes and magic weapons. In combat, your spells cost nothing; your spell reserve powers your stances instead: Focus adds spell damage, Warding speeds up ward regeneration.",
     "onboarding.guide.sidebarSkill.herblore.title": "Herblore",
     "onboarding.guide.sidebarSkill.herblore.body": "This is Herblore. You brew potions and tonics from harvested herbs — combat potions boost your stats, and Antivenom Tonics protect you from poison-inflicting enemies. To train it, pick a recipe and brew it from your herbs; leveling up unlocks stronger potions.",
 
@@ -3222,7 +3222,7 @@ const de: Record<keyof typeof en, string> = {
     "statdesc.dodge": "Flache Chance, einen Treffer komplett zu vermeiden (Leder-Rüstung). Mit abnehmendem Ertrag, gedeckelt bei 40 %.",
     "statdesc.block": "Chance, einen Treffer um -85 % Schaden zu blocken (Schild, nur Einhand-Nahkampf). Gedeckelt bei 50 %.",
     "statdesc.wardPool": "Absorbiert Schaden vor dem Leben (Stoff-Rüstung). Lädt beim Zaubern auf.",
-    "statdesc.wardRegen": "Ward lädt sich automatisch über Zeit durch deine Abwehr-Fertigkeit auf. Zaubern in der defensiven Magie-Haltung erhöht dies um 50 %.",
+    "statdesc.wardRegen": "Ward lädt sich automatisch über Zeit durch deine Abwehr-Fertigkeit auf. Zaubern in der Abwehr-Haltung erhöht dies um 50 %.",
     "statdesc.spellReserve": "Zauber kosten nichts. Weisheit füllt die Reserve: +10 je Punkt. Fokus-Haltung: +{focusPct} % Zauberschaden. Abwehr-Haltung: +{shieldPct} % Ward-Regeneration.",
     "statdesc.armorPen": "Ignoriert einen Teil der Schadensminderung eines gepanzerten Gegners.",
     "statdesc.precision": "Ignoriert einen Teil der Ausweichchance eines flinken Gegners.",
@@ -4026,7 +4026,7 @@ const de: Record<keyof typeof en, string> = {
     "toast.onboarding.rangedTitle": "Jetzt: Fernkampf",
     "toast.onboarding.rangedBody": "Dein Bogen bestimmt den Kampfstil — Fernkampfangriffe treffen aus der Distanz.",
     "toast.onboarding.magicTitle": "Jetzt: Magie",
-    "toast.onboarding.magicBody": "Deine Zauber kosten nichts. Die Zauberreserve stärkt deine Haltungen: Fokus gibt Zauberschaden, Schild füllt Ward.",
+    "toast.onboarding.magicBody": "Deine Zauber kosten nichts. Die Zauberreserve stärkt deine Haltungen: Fokus gibt Zauberschaden, Abwehr füllt Ward.",
 
     // ── Pet-Flavor-Logzeilen (per petId) ─────────────────────────────────────
     "pet.flavor.rotbark": "{pet} schnürt Wurzeln um den Gegner — betäubt!",
@@ -4429,7 +4429,7 @@ const de: Record<keyof typeof en, string> = {
     "onboarding.guide.leatherworking": "Gerbe Häute zu Leder und fertige daraus Rüstung und Bögen für Nahkampf und Fernkampf.",
     "onboarding.guide.tailoring": "Webe Fasern zu Stoff und nähe daraus Magie-Roben und Umhänge für alle drei Kampfstile.",
     "onboarding.guide.jewelcrafting": "Fasse Edelsteine in Ringe und Amulette für passive Stat-Boni. Gutes Schmuck kann Angriff, Verteidigung oder Kritchance spürbar stärken.",
-    "onboarding.guide.runecrafting": "Fertige in Runenkunst elementare Runen aus Rohmaterialien — sie dienen dem Bau von Magiewaffen und als Verzauberungsmaterial. Im Kampf kosten deine Zauber nichts; deine Zauberreserve stärkt stattdessen deine Haltung: Fokus erhöht den Zauberschaden, Schild beschleunigt die Ward-Regeneration.",
+    "onboarding.guide.runecrafting": "Fertige in Runenkunst elementare Runen aus Rohmaterialien — sie dienen dem Bau von Magiewaffen und als Verzauberungsmaterial. Im Kampf kosten deine Zauber nichts; deine Zauberreserve stärkt stattdessen deine Haltung: Fokus erhöht den Zauberschaden, Abwehr beschleunigt die Ward-Regeneration.",
     "onboarding.guide.herblore": "Braue Tränke und Tonika aus gesammelten Kräutern. Kampftränke stärken deine Stats; Antigift-Tonika sind unverzichtbar gegen Gift-Gegner.",
     "onboarding.guide.slayer": "Erhalte Tötungsaufträge von Slayer-Meistern für gezielte Monsterjagden. Jede abgeschlossene Aufgabe bringt Slayer-Punkte, einlösbar für mächtige Freischaltungen und einzigartiges Gear.",
 
@@ -4505,7 +4505,7 @@ const de: Record<keyof typeof en, string> = {
     "onboarding.guide.sidebarSkill.jewelcrafting.title": "Juwelierskunst",
     "onboarding.guide.sidebarSkill.jewelcrafting.body": "Das ist Juwelierskunst. Du schleifst Edelsteine und fasst sie zusammen mit Barren in Ringe und Amulette, die passive Stat-Boni geben. Zum Trainieren schleifst du zuerst einen Edelstein, dann fertigst du damit ein Schmuckstück; mit steigendem Level schaltest du stärkeren Schmuck frei.",
     "onboarding.guide.sidebarSkill.runecrafting.title": "Runenkunst",
-    "onboarding.guide.sidebarSkill.runecrafting.body": "Das ist Runenkunst. Du bindest Elementar-Essenzen zu Runen und verzauberst damit Stäbe, Zepter und Foki — deine Magiewaffen. Zum Trainieren wählst du eine Rezeptur und fertigst sie aus deinen Essenzen; mit steigendem Level schaltest du stärkere Runen und Magiewaffen frei. Im Kampf kosten deine Zauber nichts; deine Zauberreserve stärkt stattdessen deine Haltung: Fokus erhöht den Zauberschaden, Schild beschleunigt die Ward-Regeneration.",
+    "onboarding.guide.sidebarSkill.runecrafting.body": "Das ist Runenkunst. Du bindest Elementar-Essenzen zu Runen und verzauberst damit Stäbe, Zepter und Foki — deine Magiewaffen. Zum Trainieren wählst du eine Rezeptur und fertigst sie aus deinen Essenzen; mit steigendem Level schaltest du stärkere Runen und Magiewaffen frei. Im Kampf kosten deine Zauber nichts; deine Zauberreserve stärkt stattdessen deine Haltung: Fokus erhöht den Zauberschaden, Abwehr beschleunigt die Ward-Regeneration.",
     "onboarding.guide.sidebarSkill.herblore.title": "Kräuterkunde",
     "onboarding.guide.sidebarSkill.herblore.body": "Das ist Kräuterkunde. Du braust Tränke und Tonika aus gesammelten Kräutern — Kampftränke stärken deine Werte, Antigift-Tonika schützen vor Gift-Gegnern. Zum Trainieren wählst du ein Rezept und braust es aus deinen Kräutern; mit steigendem Level schaltest du stärkere Tränke frei.",
 

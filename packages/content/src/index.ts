@@ -868,7 +868,7 @@ export const content: ContentDB = {
     // Task #238: int 4→6 (Modifiers-Guard-Ceiling §4.3); maxMana/manaRegen verdoppelt (einziger Nutzer
     // im ganzen Spiel — kein Gear-Referenzpunkt, daher direkt spürbar dimensioniert).
     // Zauberreserve (Chef-GO 28.08.2026, Spec §4): der Mana-Trank wird zum temporären Reserve-Bonus —
-    // maxMana 60 + manaRegen 4 × 10 (MANA_REGEN_TO_RESERVE) = +100 Zauberreserve für 90 s (Fokus ≈ +2,5 Pp).
+    // maxMana 60 + manaRegen 4 × 10 (MANA_REGEN_TO_RESERVE) = +100 Zauberreserve für 90 s (Fokus +3,33 Pp seit Teiler 30, sofern der Deckel nicht schon steht).
     tonic_arcane_surge: { id: "tonic_arcane_surge", name: { en: "Arcane Surge Tonic", de: "Arkan-Surge-Tonikum" }, type: "consumable", stackable: true, rarity: "superRare", value: 150, buff: { category: "attribute", durationMs: 90_000, bonus: { maxMana: 100 }, modifiers: { int: 6 } } },
     // Itemization 2.5: evasion (verboten) → hpRegenPerSec (Sustain-Äquivalent).
     // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 2→0.1 — tooltip-rounding workaround, not a

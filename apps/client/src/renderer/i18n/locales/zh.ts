@@ -595,7 +595,7 @@ export const zh: Record<string, string> = {
     "statdesc.dodge": "完全躲开一次攻击的固定几率（皮甲）。收益递减，上限 40%。",
     "statdesc.block": "格挡一次攻击以减少 85% 伤害的几率（盾牌，仅限单手近战）。上限 50%。",
     "statdesc.wardPool": "在生命值之前吸收伤害（布甲）。施放法术时充能。",
-    "statdesc.wardRegen": "结界通过你的结界术技能随时间自动充能。以防御性魔法姿态施法可使其提升 50%。",
+    "statdesc.wardRegen": "结界通过你的结界术技能随时间自动充能。以结界姿态施法可使其提升 50%。",
     "statdesc.spellReserve": "施法不消耗任何东西。智慧充实储备：每点 +10。专注姿态：法术伤害 +{focusPct}%。结界姿态：结界回复 +{shieldPct}%。",
     "statdesc.armorPen": "无视披甲敌人的一部分伤害减免。",
     "statdesc.precision": "无视擅长闪避的敌人的一部分闪避几率。",
@@ -1295,7 +1295,7 @@ export const zh: Record<string, string> = {
     "toast.onboarding.rangedTitle": "当前战斗：远程",
     "toast.onboarding.rangedBody": "你的弓决定了战斗风格——远程攻击可以从远处命中敌人。",
     "toast.onboarding.magicTitle": "当前战斗：魔法",
-    "toast.onboarding.magicBody": "你的法术不消耗任何东西。法术储备会强化你的姿态：专注提供法术伤害，护盾填充你的结界。",
+    "toast.onboarding.magicBody": "你的法术不消耗任何东西。法术储备会强化你的姿态：专注提供法术伤害，结界姿态填充你的结界。",
 
     // Pet flavor log lines
     "pet.flavor.rotbark": "{pet} 用根须缠住敌人——将其眩晕！",
@@ -1685,7 +1685,7 @@ export const zh: Record<string, string> = {
     "onboarding.guide.leatherworking": "将兽皮鞣制成皮革，制作适用于近战与远程风格的护甲与弓。",
     "onboarding.guide.tailoring": "将纤维织成布料，缝制适用于全部三种战斗风格的法袍与披风。",
     "onboarding.guide.jewelcrafting": "将宝石镶入戒指与护身符以获得被动属性加成。精工细作的首饰能显著提升攻击、防御或暴击几率。",
-    "onboarding.guide.runecrafting": "在符文制作中用原材料制作元素符文——它们用于制造魔法武器并作为附魔材料。战斗中，你的法术不消耗任何东西；法术储备会强化你的姿态：专注增加法术伤害，护盾加快结界回复。",
+    "onboarding.guide.runecrafting": "在符文制作中用原材料制作元素符文——它们用于制造魔法武器并作为附魔材料。战斗中，你的法术不消耗任何东西；法术储备会强化你的姿态：专注增加法术伤害，结界姿态加快结界回复。",
     "onboarding.guide.herblore": "用收获的草药调制药水与药剂。战斗药水提升你的属性；面对施加中毒的敌人时，解毒药剂必不可少。",
     "onboarding.guide.slayer": "从猎魔大师处接受击杀任务以猎杀特定怪物。每完成一个任务赚取猎魔点数，可兑换强力解锁内容与独特装备。",
 
@@ -1761,7 +1761,7 @@ export const zh: Record<string, string> = {
     "onboarding.guide.sidebarSkill.jewelcrafting.title": "珠宝加工",
     "onboarding.guide.sidebarSkill.jewelcrafting.body": "这是珠宝加工。你切割宝石，并把它们与锭块一起镶嵌成能提供被动属性加成的戒指与护身符。要训练它，先切割一枚宝石，再把它制作成一件首饰；升级会解锁更强的首饰。",
     "onboarding.guide.sidebarSkill.runecrafting.title": "符文制作",
-    "onboarding.guide.sidebarSkill.runecrafting.body": "这是符文制作。你把元素精华束缚成符文，并将它们附魔进法杖、权杖与法器——你的魔法武器。要训练它，选择一个配方，用你的精华制作；升级会解锁更强的符文与魔法武器。战斗中，你的法术不消耗任何东西；法术储备会强化你的姿态：专注增加法术伤害，护盾加快结界回复。",
+    "onboarding.guide.sidebarSkill.runecrafting.body": "这是符文制作。你把元素精华束缚成符文，并将它们附魔进法杖、权杖与法器——你的魔法武器。要训练它，选择一个配方，用你的精华制作；升级会解锁更强的符文与魔法武器。战斗中，你的法术不消耗任何东西；法术储备会强化你的姿态：专注增加法术伤害，结界姿态加快结界回复。",
     "onboarding.guide.sidebarSkill.herblore.title": "草药学",
     "onboarding.guide.sidebarSkill.herblore.body": "这是草药学。你用收获的草药调制药水与药剂——战斗药水提升你的属性，解毒药剂保护你免受施加中毒的敌人伤害。要训练它，选择一个配方，用你的草药调制；升级会解锁更强的药水。",
 

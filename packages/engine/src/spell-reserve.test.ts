@@ -27,7 +27,8 @@ import { xpForLevel } from "./leveling";
 /**
  * Zauberreserve und Weisheit (Chef-GO 28.08.2026, design/zauberreserve-weisheit.md).
  *  §1 Mana wird Zauberreserve: kein Verbrauch, `character.mana` == `maxMana`, Zauber kosten nichts.
- *  §2 Die Magie-Haltungen lesen die Reserve: Fokus (+1 % Zauberschaden je 40, Deckel 30 %),
+ *  §2 Die Magie-Haltungen lesen die Reserve (Chef 29.08.2026: Reserve NUR aus Weisheit, Teiler 30/20):
+ *      Fokus (+1 % Zauberschaden je 30, Deckel 15 %),
  *     Schild (+1 % Ward-Regen je 20, Deckel 60 %).
  *  §3 Weisheit = Status-Widerstand für alle Stile (1 %/Punkt, Deckel 40 %): kürzer UND schwächer,
  *     Schock kürzer verzögert, Frost braucht ab 20 % vier statt drei Anwendungen.
@@ -437,5 +438,34 @@ describe("Zauberreserve §4: Alt-Werte umgedeutet (Content + Kinds)", () => {
     expect(fired[0]!.amount).toBe(Math.round(0.1 * st.maxWard));
     expect(s.character.ward).toBeGreaterThanOrEqual(0.1 * st.maxWard);
     expect(s.character.ward).toBeLessThan(0.1 * st.maxWard * fired.length + 2 + st.wardRegenPerSec * 5.2);
+  });
+});
+
+/**
+ * ECHTES-KIT-PIN (Prüfbericht 29.08.2026, Lücke 11): die bestehenden Fälle rechnen mit synthetischen
+ * Ringen. Fällt einem Stoff-Set die Weisheit weg oder ändert sich ATTRIBUTE_SKILL_DIVISOR, verschöbe
+ * sich der Magie-Schaden sonst lautlos. Dieser Pin hält den Referenzpunkt fest, an dem der Chef die
+ * Teiler 30/20 geeicht hat: CL-90-Götterfunken-Kit, Magie und Abwehr auf 99, sonst nichts.
+ */
+describe("Zauberreserve — Pin auf einem echten Content-Kit (Eichpunkt der Teiler 30/20)", () => {
+  const GODSPARK = ["godspark_staff", "godspark_mitre", "godspark_vestment", "godspark_skirt", "godspark_handwraps", "godspark_sandals"];
+
+  it("Götterfunken-Kit mit Magie/Abwehr 99: WIS 34 ⇒ Reserve 370 ⇒ Fokus ≈ 12,3 %, Abwehr ≈ 18,5 %", () => {
+    const s = createGame({ name: "Eichung" }, content, 7);
+    for (const skill of ["magic", "warding"]) s.skills[skill] = { xp: xpForLevel(99) };
+    for (const id of GODSPARK) {
+      const item = content.items[id];
+      expect(item, `Kit-Item ${id} fehlt im Content`).toBeTruthy();
+      s.character.equipment[item!.slot!] = id;
+    }
+    const st = computeStats(s, content);
+    // Der Pin ist die KETTE Weisheit → Reserve → Haltungsbonus, nicht eine einzelne Zahl:
+    expect(st.attributes.wis).toBe(34);
+    expect(st.maxMana).toBe(30 + 10 * st.attributes.wis); // kein Item der Stoff-Leiter trägt maxMana
+    expect(st.maxMana).toBe(370);
+    expect(st.spellReserveDamageBonus).toBeCloseTo(0.1233, 4); // ≈ +12,3 % (Chef-Eichung: vorher 12,43 % mit INT)
+    expect(st.spellReserveWardRegenBonus).toBeCloseTo(0.185, 4); // ≈ +18,5 %
+    // Intelligenz ist am selben Kit hoch, trägt aber NICHTS zur Reserve bei (Gegenstück-Vertrag).
+    expect(st.attributes.int).toBeGreaterThan(st.attributes.wis);
   });
 });
