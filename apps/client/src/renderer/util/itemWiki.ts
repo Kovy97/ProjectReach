@@ -31,7 +31,10 @@ export type ItemWikiSource =
   | { kind: "shop"; cost: number }
   // Chef-Audit 2026-07-09: 20 Items waren wiki-blind — Farming-Erträge, Slayer-Shop, Token-Shop
   // sind ebenso legitime Quellen und werden jetzt mitindiziert.
-  | { kind: "crop"; cropId: string; name: LocalizedString }
+  // Chef-Auftrag 29.08.2026 ("woher kriegt man das Saatgut"): die Ernte-Quelle trägt jetzt auch das
+  // Saatgut mit (ID + Name) — der Samen hat selbst einen eigenen `sourceIndex`-Eintrag (Sammeln/
+  // Laden/Drop), das Modal kann darüber direkt zur Samen-Wiki-Seite verlinken.
+  | { kind: "crop"; cropId: string; name: LocalizedString; seedItemId: string; seedName: LocalizedString }
   | { kind: "slayerShop"; cost: number }
   | { kind: "tokenShop"; tokenCost: number };
 
@@ -112,7 +115,16 @@ function buildIndices(): {
 
   // Farming: Ernte-Erträge (+ Saatgut-Verwendung — Samen werden beim Pflanzen verbraucht).
   for (const crop of Object.values(content.crops ?? {})) {
-    pushSource(crop.yieldItem, { kind: "crop", cropId: crop.id, name: crop.name });
+    const seedDef = content.items[crop.seedItem];
+    // Fallback auf die rohe Item-ID, falls ein Content-Eintrag mal ohne passende Saatgut-Definition
+    // landet (bewusst kein harter Wurf — reine Anzeige-Ableitung, soll nie das Wiki sprengen).
+    pushSource(crop.yieldItem, {
+      kind: "crop",
+      cropId: crop.id,
+      name: crop.name,
+      seedItemId: crop.seedItem,
+      seedName: seedDef ? seedDef.name : crop.seedItem,
+    });
     const yieldDef = content.items[crop.yieldItem];
     if (yieldDef) {
       const list = usedForIndex.get(crop.seedItem) ?? [];

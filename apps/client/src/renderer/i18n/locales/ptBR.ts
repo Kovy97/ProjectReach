@@ -722,6 +722,7 @@ export const ptBR: Record<string, string> = {
     "itemwiki.requiresQty": "requer {n}×",
     "itemwiki.sourceKind.dungeon": "Baú de masmorra",
     "itemwiki.sourceKind.champion": "Campeão",
+    "itemwiki.seedOrigin": "Sementes",
     "itemwiki.filter.all": "Todos",
     "itemwiki.filter.weapons": "Armas",
     "itemwiki.filter.armor": "Armadura",

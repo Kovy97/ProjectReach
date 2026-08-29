@@ -734,6 +734,7 @@ export const ru: Record<string, string> = {
     "itemwiki.requiresQty": "требуется {n}×",
     "itemwiki.sourceKind.dungeon": "Сундук подземелья",
     "itemwiki.sourceKind.champion": "Чемпион",
+    "itemwiki.seedOrigin": "Семена",
     "itemwiki.filter.all": "Все",
     "itemwiki.filter.weapons": "Оружие",
     "itemwiki.filter.armor": "Броня",

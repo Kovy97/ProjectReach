@@ -178,6 +178,34 @@ function groupMonsterSources(sources: ItemWikiSource[]): DisplaySource[] {
   return result;
 }
 
+/** Sortier-Rang für die kompakte Samen-Herkunft-Zeile der Anbau-Quelle (s. `rankSeedSources`):
+ *  Laden/Belohnungsläden vor Sammeln/Rezept vor weiterem Anbau vor Kampf-Drops — dieselbe
+ *  Zugänglichkeits-Priorität, die `FarmPage.tsx`s `SEED_SOURCE_INDEX` fürs Beet-Panel schon nutzt
+ *  (Shop > Foraging/Rezept > Anbau > Monster/Dungeon/Champion). Unbekannte künftige Quelle-Arten
+ *  fallen über `?? 9` ans Ende, statt einen `tsc`-Fehler zu riskieren.
+ */
+const SEED_SOURCE_RANK: Partial<Record<DisplaySource["kind"], number>> = {
+  shop: 0,
+  tokenShop: 1,
+  slayerShop: 1,
+  action: 2,
+  crop: 3,
+  monsterGroup: 4,
+  dungeon: 4,
+  champion: 5,
+};
+
+/**
+ * Bis zu zwei aussagekräftigste eigene Quellen EINES Saatguts (Chef-Auftrag 29.08.2026: "Wenn der
+ * Samen mehrere Quellen hat, reichen die aussagekräftigsten"). Nutzt denselben `ITEM_SOURCE_INDEX`,
+ * den auch die große Quellen-Liste bedient — der Samen hat dort bereits eigene Einträge (Sammeln/
+ * Laden/Drop), sie müssen hier nur eingesammelt und knapp priorisiert werden.
+ */
+function rankSeedSources(seedItemId: string): DisplaySource[] {
+  const grouped = groupMonsterSources(ITEM_SOURCE_INDEX.get(seedItemId) ?? []);
+  return [...grouped].sort((a, b) => (SEED_SOURCE_RANK[a.kind] ?? 9) - (SEED_SOURCE_RANK[b.kind] ?? 9));
+}
+
 /** Icon je Quelle-Art (Chef-Auftrag "02 Forge Flow" 26.08.2026: "jede Quelle bekommt ein Icon nach
  *  Art — Rezept=forge, Monster=combat, Truhe/Dungeon=gift/chest, Shop=bestehendes Shop-Icon,
  *  Slayer=combat, Quest-Laden=scroll"). Ernte bleibt beim echten Farming-Skill-Icon. */
@@ -316,9 +344,12 @@ function SourceList({
 /**
  * Eine Zeile im QUELLEN-Panel (Mira-Mockup "02 Forge Flow"). Chef-Redesign 26.08.2026: der Klick
  * auf die Zeile WÄHLT sie nur noch aus (Fußband zeigt Details) — er springt NICHT mehr direkt weg.
- * Springende Navigation bleibt auf genau zwei Stellen beschränkt (Chef-Regel "nur die zwei"): der
- * "Rezept öffnen"-Knopf hier IN der Rezept-Zeile (`.iwk-open-recipe`, Datenlogik bleibt unverändert)
- * und der gleichnamige Knopf im Fußband für die ausgewählte Verwendung. Der frühere direkte
+ * Springende Navigation bleibt auf wenige Stellen beschränkt (Chef-Regel "nur die zwei", seit
+ * 29.08.2026 um EINE dritte ergänzt): der "Rezept öffnen"-Knopf hier IN der Rezept-Zeile
+ * (`.iwk-open-recipe`, Datenlogik bleibt unverändert), der gleichnamige Knopf im Fußband für die
+ * ausgewählte Verwendung — und neu der Samen-Link IN der Anbau-Zeile (`.iwk-seed-origin-link`,
+ * springt WIE `UseNode`s Verwendungs-Klick per `openItemWikiModal` innerhalb des Wikis weiter, OHNE
+ * es zu schließen — anders als der Rezept-Sprung, der das Wiki verlässt). Der frühere direkte
  * Zeilen-Klick-Sprung zum Kampfgebiet (Monster-Quelle) entfällt damit — die Zone-Sperr-Anzeige
  * (Badge + Tooltip) bleibt als reine Information stehen, blockiert aber nichts mehr.
  */
@@ -338,6 +369,8 @@ function SourceRowItem({
   const { t, tr } = useI18n();
   const { tip, open, close } = useCitadelTip<true>();
   const meta = sourceMeta(entry, t, tr);
+  // Saatgut-Herkunft (Chef-Auftrag 29.08.2026): nur bei Anbau-Quellen berechnet, sonst leer.
+  const seedSources = entry.kind === "crop" ? rankSeedSources(entry.seedItemId).slice(0, 2) : [];
   const monster = entry.kind === "monsterGroup" ? content.monsters[entry.primaryMonsterId] : undefined;
   const zoneLocked = entry.kind === "monsterGroup" && !!monster?.zone && !isZoneUnlocked(state, content, monster.zone);
   const select = (): void => onSelect(index);
@@ -376,6 +409,35 @@ function SourceRowItem({
           )}
         </strong>
         {meta.subline && <small className="iwk-source-subline">{meta.subline}</small>}
+        {entry.kind === "crop" && (
+          <small className="iwk-seed-origin">
+            <span className="iwk-seed-origin-label">{t("itemwiki.seedOrigin")}:</span>{" "}
+            <button
+              type="button"
+              className="iwk-seed-origin-link"
+              onClick={(e) => {
+                e.stopPropagation();
+                openItemWikiModal(entry.seedItemId);
+              }}
+            >
+              {tr(entry.seedName)}
+            </button>
+            {seedSources.length > 0 && (
+              <span className="iwk-seed-origin-detail">
+                {" — "}
+                {seedSources.map((s, i) => {
+                  const sm = sourceMeta(s, t, tr);
+                  return (
+                    <span className="iwk-seed-origin-item" key={i}>
+                      {i > 0 && " · "}
+                      {sm.name} {sm.value}
+                    </span>
+                  );
+                })}
+              </span>
+            )}
+          </small>
+        )}
       </span>
       <b className="iwk-source-value">{meta.value}</b>
       {entry.kind === "action" && (

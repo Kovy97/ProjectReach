@@ -735,6 +735,7 @@ export const fr: Record<string, string> = {
     "itemwiki.requiresQty": "nécessite {n}×",
     "itemwiki.sourceKind.dungeon": "Coffre de donjon",
     "itemwiki.sourceKind.champion": "Champion",
+    "itemwiki.seedOrigin": "Graines",
     "itemwiki.filter.all": "Tout",
     "itemwiki.filter.weapons": "Armes",
     "itemwiki.filter.armor": "Armure",

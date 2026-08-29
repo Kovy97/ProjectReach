@@ -292,6 +292,44 @@
   overflow-wrap: anywhere;
 }
 
+/* Saatgut-Herkunft-Zeile der Anbau-Quelle (Chef-Auftrag 29.08.2026: "woher kriegt man das Saatgut")
+   — eingerückte Unterzeile unter dem Ernte-Namen, innerhalb `.iwk-source-text` (Spalte 2), dieselbe
+   Optik wie `.iwk-source-subline` nur mit einem klickbaren Samen-Namen mittendrin. */
+.iwk-seed-origin {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.iwk-seed-origin-label {
+  color: var(--muted);
+}
+
+.iwk-seed-origin-link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.iwk-seed-origin-link:hover,
+.iwk-seed-origin-link:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
+.iwk-seed-origin-detail,
+.iwk-seed-origin-item {
+  color: var(--muted);
+}
+
 .iwk-source-value {
   flex: 0 0 auto;
   display: inline-flex;

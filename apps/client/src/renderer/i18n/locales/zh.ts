@@ -735,6 +735,7 @@ export const zh: Record<string, string> = {
     "itemwiki.requiresQty": "需要 {n}×",
     "itemwiki.sourceKind.dungeon": "地下城宝箱",
     "itemwiki.sourceKind.champion": "冠军怪",
+    "itemwiki.seedOrigin": "种子",
     "itemwiki.filter.all": "全部",
     "itemwiki.filter.weapons": "武器",
     "itemwiki.filter.armor": "护甲",
