@@ -10,7 +10,7 @@ Hunting arrives as a brand-new skill, featuring baited traps that continue worki
 
 At the same time, the long-standing leather bottleneck in Crafting is gone. Five tiers of fibres, cloth and farming materials now feed into the new Tailoring skill, making robes and capes part of their own dedicated progression.
 
-The update also introduces procedural combat effects for every weapon and element type, three true equipment kits, a 29th Champion with a legendary greataxe, two new companions and smaller improvements and fixes.
+The update also introduces procedural combat effects for every weapon and element type, three true equipment kits, a 29th Champion with a legendary greataxe, two new companions, 69 Steam achievements and smaller improvements and fixes.
 
 Your existing saves remain fully compatible.
 
@@ -239,8 +239,24 @@ Farming companion: 1 in 4,000 per harvest, increased from 1 in 15,000
 
 Companion cards now display the exact effects of their passive bonuses and combat abilities, including numerical values and timing, once the companion has been obtained.
 
-STEAM ACHIEVEMENTS
-Grim Reach now has 69 Steam achievements, from your first Champion kill to level 99 in every skill, including the new Master Tailor and Master Hunter. Achievements you have already earned in game are reported to Steam the first time you load your save after the update.
+NEW: STEAM ACHIEVEMENTS
+Grim Reach now has 69 Steam achievements.
+
+They cover the whole journey through the Reach:
+
+Every chapter of the Chronicle
+
+Your first Champion, first dungeon clear and first companion
+
+Kill, gold, crafting, Slayer and dungeon milestones
+
+Level 99 in each of the 22 skills, including the new Master Tailor and Master Hunter
+
+New Haven fully built, the complete bestiary, every Champion trophy and the maximum total level
+
+Five achievements are hidden until you earn them.
+
+Everything you have already achieved in game is reported to Steam the first time you load your save after the update, so nobody starts from zero.
 
 IMPROVEMENTS
 Champion unique items now display their special effects, such as lifesteal, directly on their item cards.
