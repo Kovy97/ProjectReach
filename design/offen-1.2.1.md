@@ -58,3 +58,56 @@ Engine-Lauf: geht nachts das Futter aus, stirbt der Held auch in gewinnbaren Kä
 - **Götzenhalle als Kampfgebiet** → 1.3.0 (Chef-Entscheid). Dann `ach_elite_uniques_all` von 27 zurück
   auf 29 und `THE_NINTH_WARDEN` wird erreichbar. Details im Patchnotes-Abschnitt 1.3.0.
 - **Fernkampf-Rework** → späteres Update (Chef 28.08.).
+
+## 4. Chef-Merkliste 29.08.2026
+
+### 4.1 Dual Wield für Einhandwaffen (einführen/planen)
+
+Zwei Einhandwaffen gleichzeitig führen. Bewusst als **Planung zuerst**, nicht als Schnellschuss —
+die Entscheidungen davor:
+
+- Was ersetzt das Schild? Heute hängt `blockChance` am Schild und wird als MAX genommen (nicht summiert),
+  Zweihänder haben `blockChance` 0 und bekommen dafür einen armorRating-Bonus (Rüstungs-Trinität §5).
+  Dual Wield ist die dritte Variante und braucht ein eigenes Gegenstück (z. B. mehr Angriffstempo oder
+  Trefferchance statt Block).
+- Angriffsformel: eine Waffe pro Schlag abwechselnd, oder Haupthand + anteilige Nebenhand? Die
+  Waffe bestimmt heute den Kampfstil (`weaponStyle`) — zwei Waffen mit verschiedenen Stilen müssen
+  geregelt sein.
+- Waffeneffekte: Beide Waffen tragen `weaponEffect` (Brand, Frost …). Beide anwenden wäre doppelte
+  Statusrate, das trifft direkt die Elementar-Mechanik aus 1.2.0.
+- Zauberfokus/Spanne: gilt nur für die Haupthand?
+- UI: zweiter Waffen-Steckplatz auf dem Charakterbogen, Kit-System und Item-Karten ziehen mit.
+- Balance-Pins: `balance-envelope` misst je Stil; Dual Wield braucht einen eigenen Eintrag, sonst
+  verschiebt es die Parität lautlos.
+
+### 4.2 Ringe und Halsketten kontrollieren (Spielerfeedback)
+
+**Spieler:** „Lvl 55 rings — Diamond ring have 7 atributes and 2 skills, but Grave Warden Band have
+only 4 atributes and nothing else. Is it a bug with displaying some special abilities (like with
+legendary cape) or I miss something?"
+
+**Befund (geprüft am Katalog 29.08.): kein Anzeigefehler, ein echter Balance-Fehler.**
+
+| Item | Stufe | Attributpunkte | Skill-Boost | Wert | Seltenheit |
+|---|---|---|---|---|---|
+| `diamond_ring` | Juwelierskunst 55 | **7** (dex 1, con 4, lck 2) | attack +2 | 1200 | rare |
+| `grave_warden_band` | Juwelierskunst 55 | **4** (con 4) | keiner | **2200** | rare |
+
+Gleiche Anforderung, gleiche Seltenheit, strikt schlechter — und fast der doppelte Preis. Der Ring
+trägt auch sonst nichts (kein Waffeneffekt, kein Sondereffekt). Ursache ist vermutlich die Umstellung
+vom 25.08. („toter defence-Boost → +2 con", Kommentar steht an beiden Items): der Grabwächter-Reif
+lebte von seinem Verteidigungswert und wurde beim Ersetzen nicht neu bewertet.
+
+**Aufgabe:** kompletter Durchgang durch Ringe und Amulette, nicht nur diese beiden. Weitere
+Auffälligkeiten aus derselben Auswertung:
+
+- `bloodstone_amulet` (48, 10 Punkte, Wert 1200) gegen `diamond_amulet` (60, 11 Punkte, Wert 1500):
+  zwölf Stufen Unterschied für einen einzigen Attributpunkt.
+- Amulette tragen ab Stufe 48 fast nie einen Skill-Boost, Ringe fast immer — gewollt oder Zufall?
+- `ring_master_jewelcrafting` (99, legendär) hat nur 4 Attributpunkte, lebt also von seinem
+  `masterPerk`. Genau hier setzt die Rückfrage des Spielers an: **prüfen, ob `masterPerk` und
+  vergleichbare Sondereffekte auf der Item-Karte überhaupt angezeigt werden.** Wenn nicht, sieht ein
+  legendärer Meisterring auf der Karte schwächer aus als ein Ring der Stufe 55 — dann ist es
+  zusätzlich ein Anzeigefehler, und der Spieler hat mit seiner Vermutung teilweise recht.
+
+Danach: Balance-Pins neu messen und mit Chef-GO-Kommentar setzen.
