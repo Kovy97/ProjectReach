@@ -1798,6 +1798,59 @@ const bloodBone: RecipeFn = (ctx) => {
 };
 registerRecipe("blood_bone", [bloodBone]);
 
+// P2-Fix (Review 1.2.0, Chef-Auftrag): Magie-Treffer spielten die Trefferreaktion noch als
+// Blut-Sprite (`blood_red`/`ichor`/`bone` gab es dafür kein Rezept, s. CombatPage.tsx
+// `playParticleMagicBlood`) — anders als Nah-/Fernkampf, die hier längst Partikel bekommen.
+// Statt buchstäblichem Blut/Ichor/Knochenstaub (ein arkaner Stab lässt niemanden bluten) ist das
+// eine gedämpfte Funken-/Motes-Reaktion in der Themenfarbe der Waffe: ein kleiner Funkenkranz
+// (spark, wie Blut kurzlebig und materiell) plus ein paar treibende Lichtmotten (mote, langsam
+// aufsteigend/verwehend), spürbar leiser als der volle `impact_<thema>`-Einschlag daneben. Ein
+// generisches Rezept je der sieben `MagicTheme`-Werte (combatFx.ts).
+function magicHitReaction(th: ThemeColors): RecipeFn {
+  const color = themeColorFn(th);
+  return (ctx) => {
+    const { to: d, dir, crit, api } = ctx;
+    const k = crit ? 1.4 : 1;
+    api.shake(2);
+    const sparks = api.burst(9 * k);
+    for (let i = 0; i < sparks; i++) {
+      const a = api.rand(-1.1, 1.1);
+      api.spark(
+        d.x + api.rand(-6, 6),
+        d.y + api.rand(-14, 14),
+        dir * Math.cos(a) * api.rand(40, 160) * k,
+        Math.sin(a) * api.rand(40, 140) - 30,
+        api.rand(260, 460),
+        api.rand(1.4, 2.6) * k,
+        color,
+        0,
+        0.97,
+      );
+    }
+    const motes = api.burst(7 * k);
+    for (let i = 0; i < motes; i++) {
+      api.mote(
+        d.x + api.rand(-10, 10),
+        d.y + api.rand(-16, 10),
+        api.rand(-30, 30),
+        api.rand(-60, -15),
+        api.rand(500, 900),
+        api.rand(2, 4) * k,
+        color,
+        -10,
+        0.985,
+      );
+    }
+  };
+}
+registerRecipe("blood_magic_arcane", [magicHitReaction(ARCANE_TH)]);
+registerRecipe("blood_magic_fire", [magicHitReaction(FIRE_TH)]);
+registerRecipe("blood_magic_frost", [magicHitReaction(FROST_TH)]);
+registerRecipe("blood_magic_shock", [magicHitReaction(SHOCK_TH)]);
+registerRecipe("blood_magic_poison", [magicHitReaction(POISON_TH)]);
+registerRecipe("blood_magic_void", [magicHitReaction(VOID_TH)]);
+registerRecipe("blood_magic_aether", [magicHitReaction(AETHER_TH)]);
+
 const impactBlock: RecipeFn = (ctx) => {
   const { to: d, dir, api } = ctx;
   const at = { x: d.x - dir * 55, y: d.y };

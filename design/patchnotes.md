@@ -234,9 +234,13 @@ grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln un
 Armbrust jagt, fällt beim Jagen mit jedem Fang. Seine Bärenfalle lässt den Gegner im Kampf bluten, und mit etwas Glück
 (5 %) bringt ein Fang zehn Beute-Würfe statt fünf. Der Seidenweber, eine bleiche Nachtmotte mit
 spindeldürren Beinen, fällt beim Schneidern, spart 5 % Stoff beim Weben und legt im Kampf einen Seidenschleier über die
-Augen des Gegners. Beide zeigen wie alle Begleiter Passiv und Aktiv mit echten Zahlen auf der Karte. / EN: Two new
+Augen des Gegners. Beide zeigen wie alle Begleiter Passiv und Aktiv mit echten Zahlen auf der Karte. Weil Jagen und Anbau nur
+wenige Würfe hergeben, fallen ihre Begleiter öfter als die übrigen: Leon mit 1 : 8 000 je Fang, und Welkling im Anbau
+steigt von 1 : 15 000 auf 1 : 4 000 je Ernte. / EN: Two new
 companions: Leon, the Feared, a booted tomcat (Hunting, 5 % chance per catch for ten loot rolls instead of five, Bear Trap
-bleed) and the Silkweaver (Tailoring, 5 % material refund, Silk Veil accuracy debuff).
+bleed) and the Silkweaver (Tailoring, 5 % material refund, Silk Veil accuracy debuff). Hunting and Farming yield few
+rolls, so their companions drop more often than the rest: Leon at 1 in 8,000 per catch, and the Farming companion
+now at 1 in 4,000 per harvest (was 1 in 15,000).
 
 *Dev-Notiz: Content `esthar` (33,5–62,4 @3450, Blutung 0,35×6/6 s + everyNth n=4, value 16 000, legendär), `elite_ossric`
 (Basis gravecliff_specter, hp/ward ×2,2, dmg ×1,15, xp ×2,75, inflictOverride bleed 0,30×2/5 s), Pets `booted_tomcat`

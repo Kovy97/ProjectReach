@@ -60,7 +60,10 @@
   font-size: clamp(15px, 3.6cqw, 19px);
 }
 
-/* codex:2026-07-30T23:38:38+02:00 — Mengenbuttons erhalten große Werte, feste Klickhöhe und eine ruhige hochauflösende Holzfläche. */
+/* Chef-Regel "Standard-Knopf = Eisenrahmen" (25.08.2026): die Warteschlangen-Knöpfe 1/25/X/∞
+   tragen jetzt denselben Stahlrahmen wie `.btn-iron` und die Monsterkarten-Knöpfe (Review
+   1.2.0, P2 "Warteschlangen-Raster") statt der alten Holzfläche. Nur Bildquelle/Farbe getauscht,
+   Geometrie (Höhe/Grid/Responsive-Overrides weiter unten) bleibt unverändert. */
 #root .skillcard-craft-cta {
   gap: clamp(6px, 1.8cqw, 10px);
 }
@@ -72,23 +75,26 @@
   border-style: solid !important;
   border-color: transparent !important;
   border-width: 4px !important;
-  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 !important;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(207, 151, 72, 0.13), transparent 64%),
-    var(--gw-action-wood) center / 256px 256px repeat !important;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(4px * 2.125) !important;
+  background-color: #111315 !important;
+  background-image:
+    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
+    var(--gw-action-canvas) !important;
+  background-size: auto, 192px 192px !important;
+  background-repeat: no-repeat, repeat !important;
   font-size: clamp(18px, 4.8cqw, 25px) !important;
   line-height: 1;
-  color: #f1e4c6 !important;
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.88);
+  color: #ead8a0 !important;
+  text-shadow: 0 1px 2px #000;
 }
 
 #root .skillcard-craft-cta .skillcard-cta.qty:hover {
-  filter: brightness(1.12) saturate(1.05);
+  filter: brightness(1.12);
+  color: #fff1bd !important;
 }
 
 #root .skillcard-craft-cta .skillcard-cta.qty:active {
-  filter: brightness(0.9);
-  transform: translateY(1px);
+  filter: brightness(0.95);
 }
 
 #root .skillcard-craft-cta .skillcard-cta.qty.all {

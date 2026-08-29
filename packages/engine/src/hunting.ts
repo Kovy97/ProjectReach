@@ -34,6 +34,20 @@ import { masterDoubleYieldBonus } from "./capes";
 // pro `advance`, offline == online). Bei ≤ 0 wird geworfen; der Rest überträgt sich wie bei den
 // Beeten (Schleife „solange remainingMs ≤ 0", Auto-Erneuern nur mit Köder).
 //
+// WARTEN AUF KÖDER (review-1.2.0 P2, 29.08.2026): fehlt beim Auto-Erneuern der Köder der Zone, vergisst
+// die Falle ihr Gebiet NICHT mehr — sie bleibt gestellt mit `remainingMs = 0` („wartet auf Köder",
+// Selektor `huntTrapWaiting`). Kein neues State-Feld: eine LAUFENDE Falle hat immer remainingMs ≥ 1
+// (`setHuntTrap` setzt max(1, trapMs); `tickHuntTraps` behält nur due > dtMs), also ist
+// `zoneId !== null && remainingMs === 0` eindeutig — kein SAVE-Bump, Sanitize lässt den Zustand durch
+// (ein per Save-Edit auf 0 geklemmter Wert wartet damit ebenfalls, statt gratis sofort zu werfen).
+// Zu jedem FENSTERBEGINN prüft der Tick den Köder-Vorrat der Zone (`huntBaitCount`): ist welcher da,
+// zieht die Falle EINEN Köder und startet mit voller Fallenzeit ab Fensterbeginn (Muster Beet mit
+// geplanter Folgesorte, #p12 — der Fensterbeginn ist der einzige Zeitpunkt, den Live-Loop und
+// Offline-Catch-up gleich sehen; bei knappem Köder gewinnt der kleinere Platz-Index). Beim Warten fällt
+// KEIN Wurf und KEIN RNG-Zug — die RNG-Reihenfolge bleibt unverändert. Auto-Erneuern AUS leert den
+// Platz nach dem Wurf wie bisher; Auto-Erneuern auf einer WARTENDEN Falle abschalten leert sie ebenfalls
+// (die ausstehende Erneuerung ist abgesagt — kein toter Zustand „wartet, startet aber nie").
+//
 // Kein Ruhm (J2): ein Fang ist KEIN Kill — kein `monsterKills`, kein Slayer-Credit, keine Kampf-XP;
 // der Kill-Zähler bleibt unberührt, gezählt wird nur `stats.huntCatches` (+ `seenDrops` fürs Jagdbuch,
 // Chef 28.08.2026). Ein Fang ist aber eine SKILL-Aktion des Jagens: wie jeder Aktions-Abschluss
@@ -169,6 +183,15 @@ function trapAt(state: GameState, slot: number): HuntTrap | null {
 }
 
 /**
+ * Wartet die Falle auf Köder? Gestellt (Gebiet gesetzt), aber Restzeit 0: das Auto-Erneuern fand keinen
+ * Köder der Zone (s. Kopf). Sie startet von selbst, sobald wieder Köder in Inventar/Lager liegt
+ * (`tickHuntTraps`, Fensterbeginn). Für die UI: Badge „Wartet auf Köder: <Sorte>" (`huntZoneBaitId`).
+ */
+export function huntTrapWaiting(trap: Pick<HuntTrap, "zoneId" | "remainingMs">): boolean {
+  return trap.zoneId !== null && !(trap.remainingMs > 0);
+}
+
+/**
  * Fangchance eines Gebiets: clamp(HUNT_CATCH_BASE + (Jagen-Stufe − Gebietsstufe) · HUNT_CATCH_PER_LEVEL,
  * 0, HUNT_CATCH_CAP) (J4). 0 für unbekannte Gebiete.
  */
@@ -181,7 +204,8 @@ export function huntCatchChance(state: GameState, content: ContentDB, zoneId: st
 
 /**
  * Warum kann auf `slot` (noch) keine Falle für `zoneId` gestellt werden? Prüfreihenfolge:
- * Platz existiert und ist freigeschaltet (no_slot) → Platz leer (busy) → Gebiet im Jagd-Katalog UND
+ * Platz existiert und ist freigeschaltet (no_slot) → Platz leer (busy; eine WARTENDE Falle zählt als
+ * belegt, erst `clearHuntTrap`) → Gebiet im Jagd-Katalog UND
  * im Kampf freigeschaltet (zone_locked) → Jagen-Stufe (level) → ≥ 1 fangbares, besiegtes Monster
  * (nothing_huntable) → Köder in Inventar/Lager (no_bait) → ok.
  */
@@ -220,7 +244,10 @@ export function setHuntTrap(
   return "ok";
 }
 
-/** Leert einen Platz — der Köder verfällt (wie Beet roden). Auto-Erneuern und letzter Fang bleiben. */
+/**
+ * Leert einen Platz — der Köder verfällt (wie Beet roden); eine wartende Falle wird ebenfalls geleert.
+ * Auto-Erneuern und letzter Fang bleiben.
+ */
 export function clearHuntTrap(state: GameState, slot: number): void {
   const trap = trapAt(state, slot);
   if (!trap) return;
@@ -228,11 +255,16 @@ export function clearHuntTrap(state: GameState, slot: number): void {
   trap.remainingMs = 0;
 }
 
-/** Schaltet Auto-Erneuern eines Platzes um (Muster setAutoReplant). */
+/**
+ * Schaltet Auto-Erneuern eines Platzes um (Muster setAutoReplant). AUS auf einer WARTENDEN Falle leert
+ * den Platz: die ausstehende Erneuerung ist abgesagt, sonst bliebe die Falle ewig „wartend" ohne je zu
+ * starten (s. Kopf). Eine laufende Falle bleibt bei AUS gestellt und leert sich erst nach ihrem Wurf.
+ */
 export function setHuntAutoRebait(state: GameState, slot: number, on: boolean): void {
   const trap = trapAt(state, slot);
   if (!trap) return;
   trap.autoRebait = !!on;
+  if (!trap.autoRebait && huntTrapWaiting(trap)) clearHuntTrap(state, slot);
 }
 
 /**
@@ -342,9 +374,12 @@ function throwTrap(state: GameState, content: ContentDB, trap: HuntTrap, zone: H
  * würfeln jeder Falle dieselben Zahlen zu (offline == online auch mit mehreren Fallen; ein reines
  * „Platz für Platz alle Zyklen" wie bei den Beeten würde die Züge zwischen den Fallen vertauschen).
  * Je Wurf: `throwTrap`, dann Auto-Erneuern — Köder da ⇒ neuer Köder und nächste Fälligkeit +trapMs
- * (verlustfreier Rest-Übertrag), sonst Platz leer. Gesperrte Plätze (Index ≥ huntTrapSlots zum
- * Fensterbeginn) ticken NICHT (Muster Beete). Gebiet aus dem Katalog verschwunden ⇒ Platz leeren
- * (kein RNG-Zug). Ohne `content.huntingZones` sofortiger No-op.
+ * (verlustfreier Rest-Übertrag); Auto AN ohne Köder ⇒ die Falle WARTET (Gebiet bleibt, remainingMs 0,
+ * kein weiterer Wurf in diesem Fenster — Köder kann im Fenster nur weniger werden); Auto AUS ⇒ Platz
+ * leer. Zum FENSTERBEGINN startet jede wartende Falle, deren Zone wieder Köder hat (EIN Köder, volle
+ * Fallenzeit ab Fensterbeginn, Platz-Reihenfolge bei knappem Köder — kein RNG-Zug). Gesperrte Plätze
+ * (Index ≥ huntTrapSlots zum Fensterbeginn) ticken NICHT (Muster Beete). Gebiet aus dem Katalog
+ * verschwunden ⇒ Platz leeren (kein RNG-Zug). Ohne `content.huntingZones` sofortiger No-op.
  *
  * @param tally Optionaler Sammler „Fänge je Monster" für dieses Fenster (OfflineSummary.huntCatches).
  */
@@ -367,7 +402,15 @@ export function tickHuntTraps(state: GameState, content: ContentDB, dtMs: number
       trap.remainingMs = 0;
       continue;
     }
-    pending.push({ trap, zone, trapMs: Math.max(1, zone.trapMs), due: Math.max(0, trap.remainingMs) });
+    const trapMs = Math.max(1, zone.trapMs);
+    if (huntTrapWaiting(trap)) {
+      // Wartet auf Köder: zum Fensterbeginn EINEN Köder der Zone ziehen und mit voller Fallenzeit starten;
+      // ohne Köder weiter warten (kein Eintrag, kein Wurf, kein RNG-Zug, remainingMs bleibt 0).
+      if (!consumeBait(state, huntZoneBaitId(zone))) continue;
+      pending.push({ trap, zone, trapMs, due: trapMs });
+      continue;
+    }
+    pending.push({ trap, zone, trapMs, due: Math.max(0, trap.remainingMs) });
   }
 
   for (;;) {
@@ -377,11 +420,13 @@ export function tickHuntTraps(state: GameState, content: ContentDB, dtMs: number
     throwTrap(state, content, next.trap, next.zone, tally);
     if (next.trap.autoRebait && consumeBait(state, huntZoneBaitId(next.zone))) {
       next.due += next.trapMs;
-    } else {
-      next.trap.zoneId = null;
-      next.trap.remainingMs = 0;
-      pending.splice(pending.indexOf(next), 1);
+      continue;
     }
+    // Auto AN ohne Köder ⇒ WARTEN (Gebiet bleibt, review-1.2.0 P2); Auto AUS ⇒ Platz leer. In beiden
+    // Fällen kein weiterer Wurf in diesem Fenster.
+    if (!next.trap.autoRebait) next.trap.zoneId = null;
+    next.trap.remainingMs = 0;
+    pending.splice(pending.indexOf(next), 1);
   }
   for (const p of pending) p.trap.remainingMs = p.due - dtMs;
 }

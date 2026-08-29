@@ -1386,7 +1386,7 @@ export const es: Record<string, string> = {
     "hunting.trap": "Trampa {n}",
     "hunting.lockedHint": "Se desbloquea en Caza nivel {n}",
     "hunting.baitCount": "{n} cebos",
-    "hunting.baitHint": "Cebo: Pesca, Cavar cebo",
+    "hunting.baitHint": "{bait} de {action} (Pesca nivel {n})",
     "hunting.noZones": "Aún no hay zona de caza disponible — combate allí primero.",
     "hunting.trapTime": "Tiempo de trampa: {time}",
     "hunting.catchChance": "Probabilidad de captura {pct}%",

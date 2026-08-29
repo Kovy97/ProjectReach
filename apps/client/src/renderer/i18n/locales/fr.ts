@@ -1416,7 +1416,7 @@ export const fr: Record<string, string> = {
     "hunting.trap": "Piège {n}",
     "hunting.lockedHint": "Débloqué au niveau {n} de Chasse",
     "hunting.baitCount": "{n} appâts",
-    "hunting.baitHint": "Appât : Pêche, Creuser un appât",
+    "hunting.baitHint": "{bait} via {action} (Pêche niveau {n})",
     "hunting.noZones": "Aucun terrain de chasse disponible pour l'instant — combats-y d'abord.",
     "hunting.trapTime": "Temps du piège : {time}",
     "hunting.catchChance": "Chance de capture {pct}%",

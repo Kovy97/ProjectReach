@@ -3075,6 +3075,7 @@ export const zh: Record<string, string> = {
   "items:ninth_wardens_signet:name": "第九守卫者的印记",
   "items:hollowveil_locket:name": "空幔挂坠",
   "items:esthar:name": "埃斯塔，骸骨风暴",
+  "items:esthar:description": "一场骨刃组成的旋风，缠绕在石化骨髓制成的柄身上。挥动它，整件武器都会咆哮。",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "暮光獠牙撕裂者",
   "items:ribcage_hewer:name": "肋骨劈砍者",

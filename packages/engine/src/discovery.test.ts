@@ -196,4 +196,26 @@ describe("Item-Entdeckung (discoveredItems / isItemDiscovered)", () => {
     discoverPossessedItems(s);
     expect(s.discoveredItems).toEqual(snapshot);
   });
+
+  it("Ausrüstungs-Kits (review-1.2.0 P2, 29.08.2026): Teile in INAKTIVEN Kits (equipment + equippedInstances) zählen als besessen", () => {
+    const s = createGame({ name: "X" }, content, 1);
+    for (const id of ["godiron_sword", "godiron_platebody", "godiron_kiteshield"]) expect(isItemDiscovered(s, id)).toBe(false);
+    const inactive = s.activeKit === 1 ? 2 : 1;
+    const kit = s.equipKits[inactive]!;
+    kit.equipment.mainhand = "godiron_sword";
+    kit.equipment.body = "godiron_platebody";
+    kit.equippedInstances.body = { instanceId: "inst_kit", baseItemId: "godiron_platebody", affixes: [] };
+    // Nur die Instanz gesetzt (Kit-Invariante verlangt sonst equipment === baseItemId) — auch sie zählt.
+    kit.equippedInstances.offhand = { instanceId: "inst_kit2", baseItemId: "godiron_kiteshield", affixes: [] };
+    discoverPossessedItems(s);
+    for (const id of ["godiron_sword", "godiron_platebody", "godiron_kiteshield"]) {
+      expect(isItemDiscovered(s, id), `${id} fehlt nach Kit-Union`).toBe(true);
+    }
+    // Handgebauter State ohne Kits: kein Absturz, Rest der Union läuft.
+    const bare = createGame({ name: "Y" }, content, 2);
+    delete (bare as Partial<typeof bare>).equipKits;
+    addItem(bare.inventory, content, "copper_ore", 1);
+    expect(() => discoverPossessedItems(bare)).not.toThrow();
+    expect(isItemDiscovered(bare, "copper_ore")).toBe(true);
+  });
 });

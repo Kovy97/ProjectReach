@@ -30,6 +30,7 @@ import {
   huntableMonsters,
   setHuntAutoRebait,
   setHuntTrap,
+  huntTrapWaiting,
   tickHuntTraps, huntZoneBaitId } from "./hunting";
 
 /**
@@ -318,12 +319,13 @@ describe("Jagen — Tick, Fang, Auto-Erneuern", () => {
     expect(s.huntCatchSeq + (t.lastMissed ? 1 : 0)).toBeGreaterThanOrEqual(1);
   });
 
-  it("ohne Köder bleibt der Platz nach dem Wurf leer; Auto-Erneuern AUS verbraucht keinen Köder", () => {
+  it("ohne Köder WARTET die Falle nach dem Wurf (Gebiet bleibt, review-1.2.0 P2); Auto-Erneuern AUS leert den Platz und verbraucht keinen Köder", () => {
     const c = testContent();
     const a = readyGame(c, 5, 1); // einziger Köder geht beim Stellen drauf
     advance(a, c, PASTURES_MS * 5);
-    expect(a.huntTraps[0]!.zoneId).toBeNull();
+    expect(a.huntTraps[0]!.zoneId).toBe("pastures");
     expect(a.huntTraps[0]!.remainingMs).toBe(0);
+    expect(huntTrapWaiting(a.huntTraps[0]!)).toBe(true);
     expect(a.huntCatchSeq + (a.huntTraps[0]!.lastMissed ? 1 : 0)).toBe(1); // genau EIN Wurf
 
     const b = readyGame(c, 5, 4, false);
@@ -341,7 +343,7 @@ describe("Jagen — Tick, Fang, Auto-Erneuern", () => {
     expect(bankCount(s, BAIT_ITEM_ID)).toBe(0);
     expect(s.bank[BAIT_ITEM_ID]).toBeUndefined(); // 0-Eintrag entfernt
     advance(s, c, PASTURES_MS);
-    expect(s.huntTraps[0]!.zoneId).toBeNull(); // dritter Wurf ohne Köder → leer
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true); // dritter Wurf ohne Köder → wartet (Gebiet bleibt, review-1.2.0 P2)
   });
 
   it("gesperrte Plätze ticken nicht; Gebiet aus dem Katalog entfernt → Platz wird geleert (kein RNG)", () => {
@@ -452,6 +454,186 @@ describe("Jagen — Determinismus & offline == online", () => {
 });
 
 /**
+ * review-1.2.0 P2 (29.08.2026): Falle wartet auf Köder statt ihr Gebiet zu vergessen. Zustandsdefinition
+ * `zoneId !== null && remainingMs === 0` (kein neues Feld, kein SAVE-Bump), Neustart zum Fensterbeginn mit dem
+ * Köder der ZONE, kein Wurf/RNG-Zug beim Warten, Verben konsistent (busy/leeren/Auto aus), offline == online.
+ */
+describe("Jagen — Falle wartet auf Köder (review-1.2.0 P2)", () => {
+  it("Definition: leer / laufend / wartend über huntTrapWaiting; eine laufende Falle hat immer remainingMs ≥ 1", () => {
+    const c = testContent();
+    const s = game(c, 1);
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(false); // leer
+    s.monsterKills[HARE.id] = 1;
+    addItem(s.inventory, c, BAIT_ITEM_ID, 1);
+    expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+    expect(s.huntTraps[0]!.remainingMs).toBeGreaterThanOrEqual(1);
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(false); // läuft
+    advance(s, c, PASTURES_MS - 100);
+    expect(s.huntTraps[0]!.remainingMs).toBe(100);
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(false);
+    advance(s, c, 100); // Wurf, Auto-Erneuern ohne Köder ⇒ wartet
+    expect(s.huntTraps[0]).toMatchObject({ zoneId: "pastures", remainingMs: 0, autoRebait: true });
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    // Robust gegen kaputte Werte: NaN/negativ MIT Gebiet zählt als wartend, ohne Gebiet nie.
+    expect(huntTrapWaiting({ zoneId: "pastures", remainingMs: Number.NaN })).toBe(true);
+    expect(huntTrapWaiting({ zoneId: "pastures", remainingMs: -5 })).toBe(true);
+    expect(huntTrapWaiting({ zoneId: null, remainingMs: 0 })).toBe(false);
+  });
+
+  it("beim Warten fällt kein Wurf und kein RNG-Zug, auch über lange Fenster; der Breadcrumb des letzten Wurfs bleibt", () => {
+    const c = testContent();
+    const s = readyGame(c, 5, 1); // einziger Köder ging beim Stellen drauf
+    advance(s, c, PASTURES_MS);
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    const throws = s.huntCatchSeq + (s.huntTraps[0]!.lastMissed ? 1 : 0);
+    expect(throws).toBe(1);
+    const rngBefore = s.rng.state;
+    const { lastCatch, lastMissed } = s.huntTraps[0]!;
+    tickHuntTraps(s, c, PASTURES_MS * 20);
+    expect(s.rng.state).toBe(rngBefore);
+    advance(s, c, PASTURES_MS * 20);
+    expect(s.huntCatchSeq + (s.huntTraps[0]!.lastMissed ? 1 : 0)).toBe(throws);
+    expect(s.huntTraps[0]).toMatchObject({ zoneId: "pastures", remainingMs: 0, lastCatch, lastMissed });
+  });
+
+  it("Köder wieder da (Inventar ODER Lager) ⇒ Neustart zum Fensterbeginn: EIN Köder gezogen, volle Fallenzeit", () => {
+    const c = testContent();
+    const a = readyGame(c, 6, 1);
+    advance(a, c, PASTURES_MS); // wartet
+    addItem(a.inventory, c, BAIT_ITEM_ID, 3);
+    advance(a, c, 1000);
+    expect(a.huntTraps[0]).toMatchObject({ zoneId: "pastures", remainingMs: PASTURES_MS - 1000 });
+    expect(huntTrapWaiting(a.huntTraps[0]!)).toBe(false);
+    expect(huntBaitCount(a)).toBe(2);
+
+    const b = readyGame(c, 6, 1);
+    advance(b, c, PASTURES_MS);
+    b.bank[BAIT_ITEM_ID] = 1;
+    advance(b, c, 1000);
+    expect(b.huntTraps[0]!.remainingMs).toBe(PASTURES_MS - 1000);
+    expect(bankCount(b, BAIT_ITEM_ID)).toBe(0);
+    expect(b.bank[BAIT_ITEM_ID]).toBeUndefined(); // 0-Eintrag entfernt
+  });
+
+  it("Neustart im großen Fenster: mit 2 Ködern wirft die wartende Falle im 55-Minuten-Sprung zweimal und wartet dann wieder", () => {
+    const c = testContent();
+    const s = readyGame(c, 7, 1);
+    advance(s, c, PASTURES_MS); // Wurf 1, wartet
+    const seqBefore = s.huntCatchSeq;
+    addItem(s.inventory, c, BAIT_ITEM_ID, 2);
+    advance(s, c, 55 * 60_000);
+    expect(huntBaitCount(s)).toBe(0);
+    expect(s.huntTraps[0]).toMatchObject({ zoneId: "pastures", remainingMs: 0 });
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    expect(s.huntCatchSeq - seqBefore).toBeLessThanOrEqual(2); // höchstens zwei Würfe (einer je Köder)
+  });
+
+  it("Neustart-Reihenfolge bei knappem Köder: kleinerer Platz-Index zuerst, die andere Falle wartet weiter", () => {
+    const c = testContent();
+    const s = game(c, 8);
+    setLevel(s, 15); // drei Plätze
+    s.monsterKills[HARE.id] = 1;
+    addItem(s.inventory, c, BAIT_ITEM_ID, 2);
+    expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+    expect(setHuntTrap(s, c, 2, "pastures", true)).toBe("ok");
+    advance(s, c, PASTURES_MS); // beide werfen bei 5 min ohne Köder ⇒ beide warten
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    expect(huntTrapWaiting(s.huntTraps[2]!)).toBe(true);
+    addItem(s.inventory, c, BAIT_ITEM_ID, 1);
+    advance(s, c, 1000);
+    expect(s.huntTraps[0]!.remainingMs).toBe(PASTURES_MS - 1000);
+    expect(huntTrapWaiting(s.huntTraps[2]!)).toBe(true);
+    expect(huntBaitCount(s)).toBe(0);
+  });
+
+  it("Verben: Stellen auf eine wartende Falle = busy; Leeren leert sie; Auto-Erneuern AUS leert sie ebenfalls (laufende Falle bleibt gestellt)", () => {
+    const c = testContent();
+    const s = readyGame(c, 9, 1);
+    advance(s, c, PASTURES_MS);
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    addItem(s.inventory, c, BAIT_ITEM_ID, 1);
+    expect(huntSetReason(s, c, 0, "pastures")).toBe("busy");
+    expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("busy");
+    expect(huntBaitCount(s)).toBe(1); // nichts gezogen
+    clearHuntTrap(s, 0);
+    expect(s.huntTraps[0]).toMatchObject({ zoneId: null, remainingMs: 0, autoRebait: true });
+    expect(huntSetReason(s, c, 0, "pastures")).toBe("ok");
+
+    const t = readyGame(c, 9, 1);
+    advance(t, c, PASTURES_MS);
+    setHuntAutoRebait(t, 0, false);
+    expect(t.huntTraps[0]).toMatchObject({ zoneId: null, remainingMs: 0, autoRebait: false });
+    // Laufende Falle: AUS lässt sie gestellt, sie leert sich erst nach ihrem Wurf.
+    const u = readyGame(c, 9, 2);
+    setHuntAutoRebait(u, 0, false);
+    expect(u.huntTraps[0]!.zoneId).toBe("pastures");
+    advance(u, c, PASTURES_MS);
+    expect(u.huntTraps[0]!.zoneId).toBeNull();
+    expect(huntBaitCount(u)).toBe(1);
+  });
+
+  it("Köder der ZONE zählt: ein Krebsköder-Gebiet wartet trotz Würmern und startet erst mit Krebsködern", () => {
+    const base = testContent();
+    const c: ContentDB = { ...base, huntingZones: base.huntingZones!.map((z) => (z.zoneId === "pastures" ? { ...z, baitItemId: "bait_crab" } : z)) };
+    const s = game(c, 10);
+    s.monsterKills[HARE.id] = 1;
+    addItem(s.inventory, c, "bait_crab", 1);
+    addItem(s.inventory, c, BAIT_ITEM_ID, 5);
+    expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+    advance(s, c, PASTURES_MS * 2);
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    expect(itemCount(s.inventory, BAIT_ITEM_ID)).toBe(5);
+    addItem(s.inventory, c, "bait_crab", 1);
+    advance(s, c, 1000);
+    expect(s.huntTraps[0]!.remainingMs).toBe(PASTURES_MS - 1000);
+    expect(itemCount(s.inventory, "bait_crab")).toBe(0);
+    expect(itemCount(s.inventory, BAIT_ITEM_ID)).toBe(5);
+  });
+
+  it("Save-Edit (wartend + Auto AUS) ist kein toter Zustand: startet einmal mit Köder, leert sich nach dem Wurf", () => {
+    const c = testContent();
+    const s = readyGame(c, 11, 1);
+    advance(s, c, PASTURES_MS);
+    s.huntTraps[0]!.autoRebait = false; // direkt am State vorbei (setHuntAutoRebait würde leeren)
+    addItem(s.inventory, c, BAIT_ITEM_ID, 2);
+    advance(s, c, PASTURES_MS);
+    expect(s.huntTraps[0]!.zoneId).toBeNull();
+    expect(huntBaitCount(s)).toBe(1);
+  });
+
+  it("offline == online: Warten, Nachschub und Neustart — 55-Minuten-Sprung == 55 × 1 Minute (zwei Fallen, knapper Köder)", () => {
+    const c = testContent();
+    function scarce(seed: number): GameState {
+      const s = game(c, seed);
+      setLevel(s, 15);
+      s.monsterKills[HARE.id] = 1;
+      s.monsterKills.boar = 1;
+      addItem(s.inventory, c, BAIT_ITEM_ID, 3); // zwei fürs Stellen, einer fürs erste Erneuern (Platz 0 gewinnt)
+      expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+      expect(setHuntTrap(s, c, 2, "pastures", true)).toBe("ok");
+      return s;
+    }
+    const jump = scarce(31);
+    const steps = scarce(31);
+    advance(jump, c, 55 * 60_000);
+    for (let i = 0; i < 55; i++) advance(steps, c, 60_000);
+    expect(huntSnapshot(jump)).toEqual(huntSnapshot(steps));
+    expect(huntTrapWaiting(jump.huntTraps[0]!)).toBe(true);
+    expect(huntTrapWaiting(jump.huntTraps[2]!)).toBe(true);
+    expect(huntBaitCount(jump)).toBe(0);
+    // Nachschub ZWISCHEN den Fenstern (Angeln/Kauf/Post): beide Pfade starten identisch neu.
+    for (const s of [jump, steps]) addItem(s.inventory, c, BAIT_ITEM_ID, 4);
+    advance(jump, c, 55 * 60_000);
+    for (let i = 0; i < 55; i++) advance(steps, c, 60_000);
+    expect(huntSnapshot(jump)).toEqual(huntSnapshot(steps));
+    expect(huntBaitCount(jump)).toBe(0);
+    expect(huntTrapWaiting(jump.huntTraps[0]!)).toBe(true);
+    expect(huntTrapWaiting(jump.huntTraps[2]!)).toBe(true);
+    expect(jump.huntCatchSeq).toBeGreaterThan(0);
+  });
+});
+
+/**
  * 1.2.0 (Chef 28.08.2026, zweiter Umbau): Jagen-Begleiter booted_tomcat (Leon) — Passiv `huntDoubleRolls` (5 % Chance je
  * Fang auf HUNT_LOOT_ROLLS_DOUBLED = 10 statt 5 Beute-Durchläufe; EIN RNG-Zug vor den Beute-Würfen, nur mit aktivem Leon =
  * Schritt 4 der RNG-Reihenfolge) und Begleiter-Wurf je FANG als Schritt 6 (Kopfkommentar hunting.ts). Das frühere Passiv
@@ -534,7 +716,7 @@ describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
         nextFloat(rng);
         nextInt(rng, 1, 1);
       }
-      nextFloat(rng); // 6. Begleiter-Wurf: booted_tomcat noch nicht im Besitz (dropChance 1/15000 ⇒ praktisch nie)
+      nextFloat(rng); // 6. Begleiter-Wurf: booted_tomcat noch nicht im Besitz (dropChance 1/8000 ⇒ praktisch nie)
       advance(s, c, 1000);
       expect(s.rng.state).toBe(rng.state);
       expect(s.huntTraps[0]!.lastCatch?.items).toEqual([{ id: "rawhide", qty: HUNT_LOOT_ROLLS }]);

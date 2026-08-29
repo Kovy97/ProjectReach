@@ -2108,11 +2108,20 @@ function strikeEnemy(
     );
   }
   // Lichtsegen (Aether, Elementar-Effekte): jeder gelandete Zauber füllt einen Anteil des EIGENEN
-  // Ward-Maximums (magnitude; 0 ⇒ AETHER_WARD_ON_HIT). Still wie wardSiphon (Ressourcen-Rückfluss
-  // loggt nicht). Ohne Stoff-Pool (maxWard 0) ein No-op; Magie nur bei echtem Zauber (appliesEffect).
+  // Ward-Maximums (magnitude; 0 ⇒ AETHER_WARD_ON_HIT). Ohne Stoff-Pool (maxWard 0) ein No-op; Magie nur
+  // bei echtem Zauber (appliesEffect). review-1.2.0 P2 (29.08.2026): war still wie wardSiphon, steht jetzt
+  // LEISE im Protokoll — als Annotation `wardRestored` des Treffer-Ereignisses unten (Muster absorbed/
+  // mitigated), NICHT als eigenes kind "status": ein neues Status-Literal würde im Renderer als „Status
+  // auf den Gegner gelegt" laufen (Partikel/Floater/i18n `status.<typ>`, typisierte StatusType-Senken)
+  // und jede Zauber-Zeile verdoppeln. Geloggt wird der TATSÄCHLICH aufgefüllte Ward (1-Dezimal-Raster wie
+  // der Lebensraub, kein Overheal); bei vollem Ward fehlt das Feld (keine Geister-Angaben). Log-only:
+  // Ward-Anwendung und RNG bleiben byte-identisch.
+  let lightblessingWard = 0;
   if (fx.lightblessing && appliesEffect && stats.maxWard > 0) {
     const share = fx.lightblessing.magnitude > 0 ? fx.lightblessing.magnitude : AETHER_WARD_ON_HIT;
+    const wardBefore = state.character.ward;
     state.character.ward = Math.min(stats.maxWard, state.character.ward + stats.maxWard * share);
+    lightblessingWard = Math.round((state.character.ward - wardBefore) * 10) / 10;
   }
   // Zähler-Fortschreibung je gelandetem Treffer (§2.3.4).
   if (ec) {
@@ -2144,17 +2153,20 @@ function strikeEnemy(
     rawDamage,
     mitigated,
     ...(wardAbsorbedThisHit > 0 ? { absorbed: wardAbsorbedThisHit } : {}),
+    ...(lightblessingWard > 0 ? { wardRestored: lightblessingWard } : {}),
   });
 
   // Überspringen (Schock, Elementar-Effekte): ein KRITISCHER Treffer mit einer Schock-Waffe (Status-
   // Liste der Mainhand enthält shock — Basis oder Enchant-Proc) springt über und trifft ein zweites
   // Mal für SHOCK_ARC_FRACTION des Treffers VOR dem Ward-Schritt; der Blitz umgeht den Gegner-Ward und
-  // geht direkt auf die HP. Deterministisch (kein Proc-Wurf, kein RNG), keine XP (reiner Bonus),
-  // sichtbar als zweite Treffer-Zeile. Nur wenn der Gegner den Haupttreffer überlebt hat.
+  // geht direkt auf die HP. Deterministisch (kein Proc-Wurf, kein RNG), keine XP (reiner Bonus).
+  // Nur wenn der Gegner den Haupttreffer überlebt hat. Log: eigenes Merkmal `hitKind: "shockArc"`
+  // (review-1.2.0 P2, 29.08.2026 — vorher ein nacktes "hit", das im Renderer als zweites „Du triffst"
+  // mit vollem zweiten Geschoss lief); `kind` bleibt "hit", damit Floater/Filter/Alt-Clients weiterlaufen.
   if (result.crit && appliesEffect && cs.enemyHp > 0 && preWardDamage > 0 && weaponHasShock(state, content)) {
     const arc = Math.max(1, Math.round(preWardDamage * SHOCK_ARC_FRACTION));
     cs.enemyHp -= arc;
-    pushLog(cs, { by: "player", kind: "hit", amount: arc });
+    pushLog(cs, { by: "player", kind: "hit", amount: arc, hitKind: "shockArc" });
   }
 
   // doubleStrike (Doppelschlag, Palette-Hook — Content folgt später): Chance auf einen sofortigen

@@ -1413,7 +1413,7 @@ export const ru: Record<string, string> = {
     "hunting.trap": "Капкан {n}",
     "hunting.lockedHint": "Откроется на {n}-м уровне охоты",
     "hunting.baitCount": "Наживка: {n}",
-    "hunting.baitHint": "Наживка: рыбалка, копка наживки",
+    "hunting.baitHint": "«{bait}»: {action}, рыбалка {n}-го уровня",
     "hunting.noZones": "Пока нет доступной местности — сначала сразись там.",
     "hunting.trapTime": "Время капкана: {time}",
     "hunting.catchChance": "Шанс поимки {pct}%",

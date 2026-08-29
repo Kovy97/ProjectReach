@@ -292,6 +292,24 @@ function HuntHeader({ onNavigate }: { onNavigate: (id: string) => void }): JSX.E
       name: item ? tr(item.name) : id,
     };
   });
+  // P2-Fix (Review 1.2.0): der Kachel-Tooltip kannte nur Köder-Stufe 1 fest verdrahtet. Jetzt
+  // nennt er je Sorte in `baitIds` (aktive Fallen-Gebiete, sonst Wurmköder als Default) die
+  // liefernde Angel-Aktion (`BAIT_ACTION_ID`, s.o.) mit ihrer Mindeststufe (`HUNT_BAIT_TIERS`) —
+  // dasselbe Datenpaar wie `noBaitText` unten, nur positiv statt als „Kein …"-Meldung.
+  const baitHint = baitIds
+    .map((id) => {
+      const item = content.items[id];
+      const baitName = item ? tr(item.name) : id;
+      const tier = HUNT_BAIT_TIERS.find((x) => x.itemId === id);
+      const actionId = BAIT_ACTION_ID[id];
+      const action = actionId ? content.actions[actionId] : undefined;
+      const actionName = action ? tr(action.name) : (actionId ?? "");
+      return t("hunting.baitHint")
+        .replace("{bait}", baitName)
+        .replace("{action}", actionName)
+        .replace("{n}", String(tier?.fishingLevel ?? 1));
+    })
+    .join(" · ");
 
   return (
     <div className="hunt-head">
@@ -318,7 +336,7 @@ function HuntHeader({ onNavigate }: { onNavigate: (id: string) => void }): JSX.E
       </div>
 
       <div className="hunt-head-stats">
-        <div className="hunt-head-stat hunt-head-stat--bait" title={t("hunting.baitHint")}>
+        <div className="hunt-head-stat hunt-head-stat--bait" title={baitHint}>
           <span className="hunt-head-stat-label muted">{t("hunting.picker.statBait")}</span>
           <div className="hunt-head-bait-row">
             <span className="hunt-head-stat-value hunt-head-baits">

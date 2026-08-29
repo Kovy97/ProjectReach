@@ -1384,7 +1384,7 @@ export const ptBR: Record<string, string> = {
     "hunting.trap": "Armadilha {n}",
     "hunting.lockedHint": "Desbloqueia no nível {n} de Caça",
     "hunting.baitCount": "{n} iscas",
-    "hunting.baitHint": "Isca: Pesca, Cavar isca",
+    "hunting.baitHint": "{bait} de {action} (Pesca nível {n})",
     "hunting.noZones": "Ainda não há área de caça disponível — lute lá primeiro.",
     "hunting.trapTime": "Tempo da armadilha: {time}",
     "hunting.catchChance": "Chance de captura {pct}%",

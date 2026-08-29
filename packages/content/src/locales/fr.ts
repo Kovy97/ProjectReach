@@ -3073,6 +3073,7 @@ export const fr: Record<string, string> = {
   "items:ninth_wardens_signet:name": "Chevalière du Neuvième Gardien",
   "items:hollowveil_locket:name": "Médaillon Voile-Creux",
   "items:esthar:name": "Esthar, Tempête d'Os",
+  "items:esthar:description": "Une tempête tourbillonnante de lames d'os liées à un manche de moelle pétrifiée. Qui la brandit l'entend hurler.",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Éventreur Croc-du-Crépuscule",
   "items:ribcage_hewer:name": "Fendeur de Cage Thoracique",

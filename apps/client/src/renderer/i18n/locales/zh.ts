@@ -1412,7 +1412,7 @@ export const zh: Record<string, string> = {
     "hunting.trap": "陷阱 {n}",
     "hunting.lockedHint": "狩猎等级 {n} 解锁",
     "hunting.baitCount": "诱饵 {n}",
-    "hunting.baitHint": "诱饵来源：钓鱼、挖掘诱饵",
+    "hunting.baitHint": "{bait}来自{action}（钓鱼等级 {n}）",
     "hunting.noZones": "暂无可用的狩猎区域，先在那里战斗过一次。",
     "hunting.trapTime": "陷阱耗时：{time}",
     "hunting.catchChance": "捕获几率 {pct}%",

@@ -247,10 +247,14 @@ describe("pet integrity: Content-Guards (Skill-Passiv + getriggerte Ability)", (
     // wie bei aktiven Sammel-Skills), darum braucht es ~1/15000, um ein vergleichbares P(≥1 bis 99) zu
     // erreichen (vorher 1/105000 ⇒ ~1,5 %). Alle anderen Pets bleiben im ≤1/50000-Band.
     // 1.2.0 (Chef 28.08.2026): booted_tomcat (Jagen) wirft je FANG (5–60 min je Falle, ~1 000–2 500 Fänge
-    // über einen 1→99-Grind) — dieselbe Ernte-arm-Logik wie witherling, Content trägt 1/15000.
-    const SPARSE_SOURCE_PETS = new Set(["witherling", "booted_tomcat"]);
+    // über einen 1→99-Grind) — dieselbe Ernte-arm-Logik wie witherling.
+    // Chef-GO 29.08.2026: witherling 1/4000 (~1 500 Ernten ⇒ P ≈ 30 %), booted_tomcat 1/8000 (1 000–2 500 Fänge
+    // ⇒ P ≈ 12–27 %). Beide Werte sind exakt gepinnt; jede Änderung braucht ein neues Chef-GO.
+    const SPARSE_SOURCE_PET_PIN: Record<string, number> = { witherling: 1 / 4000, booted_tomcat: 1 / 8000 };
     for (const pet of Object.values(pets)) {
-      const cap = SPARSE_SOURCE_PETS.has(pet.id) ? 1 / 10000 : 1 / 50000;
+      const pin = SPARSE_SOURCE_PET_PIN[pet.id];
+      if (pin !== undefined) expect(pet.dropChance, `Pet ${pet.id}: dropChance vom Chef-Pin abgewichen`).toBeCloseTo(pin, 12);
+      const cap = pin ?? 1 / 50000;
       expect(pet.dropChance, `Pet ${pet.id}: dropChance zu hoch`).toBeLessThanOrEqual(cap);
       expect(pet.dropChance, `Pet ${pet.id}: dropChance ≤ 0`).toBeGreaterThan(0);
     }

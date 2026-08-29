@@ -349,9 +349,14 @@ describe("Blitz — jede Anwendung verzögert den nächsten Angriff (Kette ≤ S
     expect(hits[1]!.kind).toBe("hit");
     expect(hits[1]!.amount).toBe(Math.max(1, Math.round(hits[0]!.amount * SHOCK_ARC_FRACTION)));
     expect(5_000_000 - withShock.combat.enemyHp).toBeCloseTo(hits[0]!.amount + hits[1]!.amount, 5);
+    // review-1.2.0 P2 (29.08.2026): der Überspring-Treffer trägt sein eigenes Log-Merkmal (kein nacktes zweites "hit"),
+    // der Haupttreffer nicht.
+    expect(hits[0]!.hitKind).toBeUndefined();
+    expect(hits[1]!.hitKind).toBe("shockArc");
     // Ohne Schock-Status auf der Waffe springt nichts über.
     const noShock = castOnce([{ type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }], 44);
     expect(playerHits(noShock)).toHaveLength(1);
+    expect(noShock.combat.log.some((e) => e.hitKind === "shockArc")).toBe(false);
   });
 });
 
@@ -481,6 +486,8 @@ describe("Leere — Entzug (void): das Ziel macht VOID_WEAKEN weniger Schaden", 
 
 describe("Aether — Lichtsegen (lightblessing): Ward-Füllung je Zauber, Ward-Durchdringung", () => {
   const LIGHT = { type: "lightblessing" as const, chance: 1, magnitude: AETHER_WARD_ON_HIT, durationMs: 0 }; // 0,02 seit Balance-Audit 28.08.
+  /** Treffer-Ereignisse mit Lichtsegen-Annotation (review-1.2.0 P2: `wardRestored` am Treffer, kein eigenes Status-Ereignis). */
+  const blessedHits = (s: ReturnType<typeof createGame>): LogEvent[] => playerHits(s).filter((e) => (e.wardRestored ?? 0) > 0);
 
   function castWith(effects: ItemDef["weaponEffects"], monster: MonsterDef, seed: number, mana = Infinity) {
     const w = wand("tt_el_lightwand_" + (effects?.length ?? 0), effects);
@@ -501,6 +508,28 @@ describe("Aether — Lichtsegen (lightblessing): Ward-Füllung je Zauber, Ward-D
     expect(playerHits(plain.s)).toHaveLength(1);
     expect(playerHits(blessed.s)).toHaveLength(1);
     expect(blessed.s.character.ward - plain.s.character.ward).toBeCloseTo(AETHER_WARD_ON_HIT * blessed.st.maxWard, 5);
+    // review-1.2.0 P2 (29.08.2026): der Treffer trägt den tatsächlich aufgefüllten Ward als Annotation
+    // `wardRestored` (1 Dezimale); ohne Segen fehlt das Feld. Kein eigenes Status-Ereignis im Protokoll.
+    expect(blessedHits(plain.s)).toHaveLength(0);
+    expect(plain.s.combat.log.some((e) => e.kind === "status")).toBe(false);
+    expect(blessed.s.combat.log.some((e) => e.kind === "status")).toBe(false);
+    const ev = blessedHits(blessed.s);
+    expect(ev).toHaveLength(1);
+    expect(ev[0]!.wardRestored).toBeCloseTo(Math.round(AETHER_WARD_ON_HIT * blessed.st.maxWard * 10) / 10, 5);
+  });
+
+  it("bei vollem Ward KEINE Lichtsegen-Angabe am Treffer (keine Geister-Angaben); der Ward bleibt gedeckelt", () => {
+    const monster = dummy("tt_el_light_full");
+    const w = wand("tt_el_lightwand_full", [LIGHT]);
+    const { s, c, st } = setup(monster, [w, ROBE], 74, w.id, ROBE.id);
+    s.character.ward = st.maxWard;
+    s.combat.playerTimerMs = st.attackIntervalMs;
+    s.combat.enemyTimerMs = 0;
+    combatStep(s, c);
+    expect(playerHits(s)).toHaveLength(1);
+    expect(s.character.ward).toBe(st.maxWard);
+    expect(blessedHits(s)).toHaveLength(0);
+    expect(playerHits(s)[0]!.wardRestored).toBeUndefined();
   });
 
   it("Lichtsegen greift auch bei mana 0 im Save (Zauberreserve 28.08.2026: jeder Magie-Angriff ist ein Zauber, kein schwacher Stabschlag mehr)", () => {

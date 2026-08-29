@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, HuntTrap, HuntZoneDef, ItemDef } from "@hearthforge/shared";
 import { BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
-import { addItem, createGame, huntBaitCount, setHuntTrap, xpForLevel } from "@hearthforge/engine";
+import { addItem, advance, createGame, huntBaitCount, huntTrapWaiting, setHuntTrap, xpForLevel } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
 /**
@@ -224,6 +224,51 @@ describe("Sanitize: huntTraps gegen den Content härten", () => {
     expect(j.huntTraps[4]).toEqual({ zoneId: null, remainingMs: 0, autoRebait: true, lastCatch: null, lastMissed: false });
     (junk.state as unknown as Record<string, unknown>).huntTraps = "keine Liste";
     expect(load(junk, c).huntTraps).toEqual(defaultHuntTraps());
+  });
+});
+
+describe("Falle wartet auf Köder (review-1.2.0 P2, 29.08.2026): Sanitize toleriert den Zustand, Offline-Lauf startet sie", () => {
+  /** Held mit einer WARTENDEN Falle (Auto an, Gebiet gesetzt, Restzeit 0) und ohne Köder — Sanitize-Fixpunkt. */
+  function waitingSave(c: ContentDB): SaveShape {
+    const s = createGame({ name: "Wartender" }, c, 21);
+    s.character.createdAt = 1_700_000_000_000;
+    s.monsterKills.boar = 1;
+    addItem(s.inventory, c, BAIT_ITEM_ID, 1);
+    expect(setHuntTrap(s, c, 0, "pastures", true)).toBe("ok");
+    advance(s, c, PASTURES_MS); // Wurf, kein Köder ⇒ wartet
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    const normalized = deserialize(serialize(s, SAVED_AT), c, SAVED_AT)!.state;
+    return JSON.parse(serialize(normalized, SAVED_AT)) as SaveShape;
+  }
+
+  it("wartende Falle bleibt beim Laden byte-genau erhalten (zoneId gesetzt, remainingMs 0) — kein SAVE-Bump, kein neues Feld", () => {
+    const c = huntContent();
+    const save = waitingSave(c);
+    expect(save.version).toBe(SAVE_VERSION);
+    expect(save.state.huntTraps[0]).toEqual({ zoneId: "pastures", remainingMs: 0, autoRebait: true, lastCatch: save.state.huntTraps[0]!.lastCatch, lastMissed: save.state.huntTraps[0]!.lastMissed });
+    expect(Object.keys(save.state.huntTraps[0]!).sort()).toEqual(["autoRebait", "lastCatch", "lastMissed", "remainingMs", "zoneId"]);
+    const s = load(save, c);
+    expect(huntTrapWaiting(s.huntTraps[0]!)).toBe(true);
+    expect(JSON.parse(serialize(s, SAVED_AT))).toEqual(save);
+  });
+
+  it("Offline-Lauf: ohne Köder wartet sie weiter (kein Wurf, kein Fang); mit Köder im Lager startet sie beim Laden und wirft", () => {
+    const c = huntContent();
+    const save = waitingSave(c);
+    const idle = deserialize(JSON.stringify(save), c, SAVED_AT + PASTURES_MS * 6)!;
+    expect(idle.offlineTicks).toBeGreaterThan(0);
+    expect(huntTrapWaiting(idle.state.huntTraps[0]!)).toBe(true);
+    expect(idle.state.huntCatchSeq).toBe(save.state.huntCatchSeq);
+    expect(idle.state.huntTraps[0]!.lastMissed).toBe(save.state.huntTraps[0]!.lastMissed);
+    expect(idle.offline.huntCatches).toBeUndefined();
+
+    const stocked = JSON.parse(JSON.stringify(save)) as SaveShape;
+    stocked.state.bank[BAIT_ITEM_ID] = 2;
+    const later = deserialize(JSON.stringify(stocked), c, SAVED_AT + PASTURES_MS * 6)!;
+    expect(later.state.bank[BAIT_ITEM_ID]).toBeUndefined(); // beide Köder gezogen: Neustart + ein Erneuern
+    expect(huntTrapWaiting(later.state.huntTraps[0]!)).toBe(true); // nach zwei Würfen wieder ohne Köder
+    expect(later.state.huntCatchSeq).toBeGreaterThanOrEqual(save.state.huntCatchSeq);
+    expect(later.state.huntTraps[0]!.zoneId).toBe("pastures");
   });
 });
 

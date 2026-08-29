@@ -3073,6 +3073,7 @@ export const ru: Record<string, string> = {
   "items:ninth_wardens_signet:name": "Перстень Девятого Стража",
   "items:hollowveil_locket:name": "Медальон Пустой Завесы",
   "items:esthar:name": "Эстар, Буря Костей",
+  "items:esthar:description": "Кружащая буря костяных клинков, примотанных к рукояти из окаменевшего костного мозга. Взмахнёшь, и оружие завоет.",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Потрошитель \"Клык Сумерек\"",
   "items:ribcage_hewer:name": "Крушитель Рёбер",

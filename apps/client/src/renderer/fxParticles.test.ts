@@ -105,6 +105,15 @@ describe("fxParticleLibrary — vollständige Abdeckung (Chef-Wunsch 28.08.2026:
     expect(hasRecipe("miss_whiff")).toBe(true);
   });
 
+  // P2-Fix (Review 1.2.0): Magie-Treffer bekommen ihre eigene Trefferreaktion (gedämpfte Funken-/
+  // Motes statt Blut, s. fxParticleLibrary.ts `magicHitReaction`/CombatPage.tsx
+  // `playParticleMagicBlood`) — je der sieben Magie-Themen, nicht die drei Blutvarianten.
+  it("jedes der sieben Magie-Themen hat eine eigene Trefferreaktion statt Blut", () => {
+    for (const theme of MAGIC_THEMES) {
+      expect(hasRecipe(`blood_magic_${theme}`)).toBe(true);
+    }
+  });
+
   it("jede der sechs Begleiter-Bildfamilien hat ein Rezept", () => {
     for (const image of PET_IMAGES) {
       expect(hasRecipe(`pet_${image}`)).toBe(true);

@@ -2883,6 +2883,21 @@ function Battle({
     return stage.play(`blood_${variant}`, { from: anchor.center, to: anchor.center, dir, crit });
   };
 
+  /** Magie-Gegenstück zu `playParticleBlood` (P2-Fix Review 1.2.0): Magie-Treffer zeigten die
+   *  Trefferreaktion bisher IMMER als Blut-Sprite (`playBloodFx`) — kein Partikel-Versuch, weil
+   *  zur Zeit der Magie-Verzweigung unten noch kein Rezept existierte (s. deren Kommentar „Blut
+   *  bleibt … der Sprite-Pfad"). Jetzt gibt es `blood_magic_<thema>` (fxParticleLibrary.ts,
+   *  gedämpfte Funken-/Motes-Reaktion in Themenfarbe statt Blut/Ichor/Knochenstaub) — derselbe
+   *  Rückfall-Vertrag wie überall sonst: `false` = kein Rezept/Anker, Aufrufer nimmt `playBloodFx`. */
+  const playParticleMagicBlood = (side: "player" | "enemy", theme: string, crit: boolean): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe(`blood_magic_${theme}`)) return false;
+    const anchor = particleAnchor(side);
+    if (!anchor) return false;
+    const dir: 1 | -1 = side === "enemy" ? 1 : -1;
+    return stage.play(`blood_magic_${theme}`, { from: anchor.center, to: anchor.center, dir, crit });
+  };
+
   /** Fehlschlag-Wischer-Gegenstück zu `playMissFx`. */
   const playParticleMiss = (side: "player" | "enemy"): boolean => {
     const stage = particleStageRef.current;
@@ -3039,14 +3054,15 @@ function Battle({
             spawnRuneRing(); // kein Sprite-/Partikel-Äquivalent — bleibt an der alten fxLevel-Gate hängen
             const theme = magicThemeFor(mainhandWeapon);
             // Kampfeffekte Partikel-Schicht (Chef-Entscheid 28.08.2026): existiert ein
-            // Partikel-Rezept für `impact_<thema>`, ersetzt es playImpactFx (Sprite) komplett —
-            // Blut bleibt unabhängig davon der Sprite-Pfad (kein Partikel-Rezept dafür, s.
-            // fxParticles.ts §8-Doku).
+            // Partikel-Rezept für `impact_<thema>`, ersetzt es playImpactFx (Sprite) komplett.
+            // Die Trefferreaktion (P2-Fix Review 1.2.0) läuft seitdem über `blood_magic_<thema>`
+            // (playParticleMagicBlood, gedämpfte Funken-/Motes statt Blut) — nur ohne Rezept oder
+            // Anker fällt sie auf den alten Blut-Sprite (`playBloodFx`) zurück.
             const doImpact = (): void => {
               if (!playParticleImpact(target, theme, crit)) {
                 playImpactFx(target, theme, crit, "magic", weaponStatus);
               }
-              if (allowMissileAndBlood) playBloodFx(target, bloodVariant, crit);
+              if (allowMissileAndBlood && !playParticleMagicBlood(target, theme, crit)) playBloodFx(target, bloodVariant, crit);
             };
             // Dieselbe Ersetzung für den Geschoss-Flug: ein Partikel-Rezept für `missile_<thema>`
             // übernimmt Flug UND ruft `doImpact` selbst bei Ankunft (s. playParticleMissile-JSDoc)

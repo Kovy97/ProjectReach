@@ -5301,6 +5301,24 @@ export interface CombatEvent {
    */
   absorbed?: number;
   /**
+   * Elementar-Effekte (Schock-Überspringen, review-1.2.0 P2 29.08.2026) — nur für kind === "hit" mit
+   * by "player": "shockArc" = der Bonus-Treffer des Überspringens (SHOCK_ARC_FRACTION des Krits, umgeht
+   * den Gegner-Ward, kein eigener Wurf). Fehlt beim normalen Treffer. Rein additiv/optional: der Renderer
+   * zeigt daraus „Überspringen: … für X" statt eines zweiten „Du triffst" und KEIN zweites volles
+   * Geschoss (kurzer Bogen zum Ziel). Persistenz: Log läuft verbatim durch — kein SAVE_VERSION-Bump.
+   */
+  hitKind?: "shockArc";
+  /**
+   * Lichtsegen (Aether, review-1.2.0 P2 29.08.2026) — nur für kind "hit"/"crit" mit by "player": der von
+   * DIESEM Zauber tatsächlich aufgefüllte EIGENE Ward (1 Dezimale, nach Deckel maxWard). Nur gesetzt wenn
+   * > 0 (voller Ward, kein Lichtsegen, kein Stoff-Pool: Feld fehlt). Bewusst eine Annotation des Treffers
+   * (Muster absorbed/mitigated) statt eines eigenen Status-Ereignisses: ein neues `status`-Literal liefe
+   * im Renderer als „Status auf den Gegner" (Partikel/Floater/`status.<typ>`-Texte, typisierte
+   * StatusType-Senken) und würde jede Zauber-Zeile verdoppeln. Renderer: leiser Zusatz „Lichtsegen: +X Ward"
+   * an der Treffer-Zeile (oder eigene stille Zeile). Persistenz: Log läuft verbatim durch — kein Bump.
+   */
+  wardRestored?: number;
+  /**
    * E+-Paket (battle-040-dramaturgie §E+, Chef-GO 2026-08-03) — nur für kind === "miss": WARUM der
    * Angriff ausblieb. "shock" = Schock-Aussetzer (der Geschockte setzt seinen Schlag aus; beide
    * Seiten), "dodge" = Leder-Dodge des Spielers (voll ausgewichener Gegner-Treffer, by "enemy").
@@ -6479,9 +6497,14 @@ export interface HuntCatch {
 export interface HuntTrap {
   /** Gebiet der Falle; null = Platz leer. */
   zoneId: string | null;
-  /** Restzeit bis zum Wurf in ms (Spielzeit, offline == online). */
+  /**
+   * Restzeit bis zum Wurf in ms (Spielzeit, offline == online). Laufende Falle ⇒ ≥ 1. Mit Gebiet und
+   * remainingMs 0 WARTET die Falle auf Köder (Auto-Erneuern fand keinen Köder der Zone — review-1.2.0 P2,
+   * 29.08.2026; Selektor engine `huntTrapWaiting`): sie startet von selbst, sobald die Zone wieder Köder
+   * hat. Bewusst kein eigenes Feld, kein SAVE-Bump.
+   */
   remainingMs: number;
-  /** Nach dem Wurf automatisch mit neuem Köder stellen (Muster FarmPlot.autoReplant). */
+  /** Nach dem Wurf automatisch mit neuem Köder stellen (Muster FarmPlot.autoReplant). AUS auf einer wartenden Falle leert sie. */
   autoRebait: boolean;
   /** Jüngster Fang dieses Platzes (transient fürs UI; null = noch keiner oder letzter Wurf ging leer aus). */
   lastCatch: HuntCatch | null;

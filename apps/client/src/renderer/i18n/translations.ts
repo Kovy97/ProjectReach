@@ -1470,6 +1470,9 @@ const en = {
     "pet.effect.skill.perfectCook": "Perfect cook",
     "pet.effect.skill.potionPreserve": "Potion preserve",
     "pet.effect.skill.spellReserve": "Spell reserve",
+    // Guard-Fix (Review 1.2.0 P2): key was missing entirely — pets with this kind showed the raw
+    // key in the gallery. Matches the sentence-form "pet.passive.bonusAmmo" below.
+    "pet.effect.skill.bonusAmmo": "No effect",
     // #276 Pet-Redesign: 6 new passive kinds (replace the banned skillXp kind).
     "pet.effect.skill.lifesteal": "Lifesteal",
     "pet.effect.skill.skillBoost": "Skill boost",
@@ -1684,7 +1687,7 @@ const en = {
     "hunting.trap": "Trap {n}",
     "hunting.lockedHint": "Unlocks at Hunting Lv {n}",
     "hunting.baitCount": "{n} bait",
-    "hunting.baitHint": "Bait: Fishing, Dig for Bait",
+    "hunting.baitHint": "{bait} from {action} (Fishing Lv {n})",
     "hunting.noZones": "No hunting ground available yet — fight there first.",
     "hunting.trapTime": "Trap time: {time}",
     "hunting.catchChance": "Catch chance {pct}%",
@@ -3919,6 +3922,9 @@ const de: Record<keyof typeof en, string> = {
     "pet.effect.skill.perfectCook": "Perfektes Gericht",
     "pet.effect.skill.potionPreserve": "Trank-Bewahrung",
     "pet.effect.skill.spellReserve": "Zauberreserve",
+    // Guard-Fix (Review 1.2.0 P2): Key fehlte komplett — Pets mit diesem Kind zeigten den rohen
+    // Key in der Galerie. Passt zur Satzform "pet.passive.bonusAmmo" weiter unten.
+    "pet.effect.skill.bonusAmmo": "Ohne Wirkung",
     // #276 Pet-Redesign: 6 neue Passiv-Kinds (ersetzen das verbotene skillXp-Kind).
     "pet.effect.skill.lifesteal": "Lebensraub",
     "pet.effect.skill.skillBoost": "Skill-Boost",
@@ -4124,7 +4130,7 @@ const de: Record<keyof typeof en, string> = {
     "hunting.trap": "Falle {n}",
     "hunting.lockedHint": "Schaltet sich bei Jagen-Stufe {n} frei",
     "hunting.baitCount": "{n} Köder",
-    "hunting.baitHint": "Köder: Angeln, Köder graben",
+    "hunting.baitHint": "{bait} aus {action} (Angeln ab Stufe {n})",
     "hunting.noZones": "Noch kein Jagdgebiet verfügbar — erst dort kämpfen.",
     "hunting.trapTime": "Fallenzeit: {time}",
     "hunting.catchChance": "Fangchance {pct}%",

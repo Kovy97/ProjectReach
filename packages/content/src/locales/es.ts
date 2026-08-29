@@ -3074,6 +3074,7 @@ export const es: Record<string, string> = {
   "items:ninth_wardens_signet:name": "Sello del Noveno Guardián",
   "items:hollowveil_locket:name": "Relicario Velo Hueco",
   "items:esthar:name": "Esthar, Tormenta de Huesos",
+  "items:esthar:description": "Una tormenta arremolinada de hojas de hueso atadas a un astil de médula petrificada. Quien la blande la oye aullar.",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Desgarrador Colmillo del Ocaso",
   "items:ribcage_hewer:name": "Hendedor de Costillas",

@@ -223,10 +223,12 @@ export function isItemDiscovered(state: GameState, itemId: ItemId): boolean {
 
 /**
  * Unioniert den IST-Bestand in `discoveredItems`: Inventar-Slots, Instanz-Tasche, Bank (qty > 0),
- * Gear-Vault (`bankInstances`) und angelegte Ausrüstung. Idempotent & monoton (entfernt nie
- * Einträge), zieht kein RNG. Zwei Aufrufer: `createGame` (Starterbesitz inkl. direkt ausgerüsteter
- * Startwaffe/-rüstung) und der sanitize-Pass in persistence (Alt-Save-Backfill + Selbstheilung
- * für Pfade, die am zentralen Marker vorbeilaufen — z.B. Alt-UI-Direktaufrufe von addItem).
+ * Gear-Vault (`bankInstances`), angelegte Ausrüstung UND die Ausrüstungs-Kits (`equipKits`, SAVE 85 —
+ * inaktive Kits BESITZEN ihre Teile, sie sind aus dem Inventar entnommen; review-1.2.0 P2 29.08.2026:
+ * vorher galt ein Item, das nur in einem inaktiven Kit lag, als nie besessen). Idempotent & monoton
+ * (entfernt nie Einträge), zieht kein RNG. Zwei Aufrufer: `createGame` (Starterbesitz inkl. direkt
+ * ausgerüsteter Startwaffe/-rüstung) und der sanitize-Pass in persistence (Alt-Save-Backfill +
+ * Selbstheilung für Pfade, die am zentralen Marker vorbeilaufen — z.B. Alt-UI-Direktaufrufe von addItem).
  */
 export function discoverPossessedItems(state: GameState): void {
   const d = (state.discoveredItems ??= {});
@@ -235,6 +237,14 @@ export function discoverPossessedItems(state: GameState): void {
   for (const [id, qty] of Object.entries(state.bank)) if (qty > 0) d[id as ItemId] = true;
   for (const inst of state.bankInstances) if (inst?.baseItemId) d[inst.baseItemId] = true;
   for (const id of Object.values(state.character.equipment)) if (id) d[id] = true;
+  // Kits: `equipKits[activeKit]` spiegelt den Charakter (darf stale sein — die Union ist monoton, doppelt
+  // schadet nicht); die inaktiven Kits tragen Teile, die sonst nirgends im State liegen. Defensiv gegen
+  // handgebaute Test-/Alt-States ohne Feld (Sanitize legt es vor diesem Aufruf an).
+  for (const kit of state.equipKits ?? []) {
+    if (!kit) continue;
+    for (const id of Object.values(kit.equipment ?? {})) if (id) d[id] = true;
+    for (const inst of Object.values(kit.equippedInstances ?? {})) if (inst?.baseItemId) d[inst.baseItemId] = true;
+  }
 }
 
 /**

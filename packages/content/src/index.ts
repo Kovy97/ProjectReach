@@ -18308,7 +18308,8 @@ export const content: ContentDB = {
       // balance-fix 2026-07 (Sweep4 P2): 1/105000 → 1/15000. Farming is passive/harvest-sparse
       // (~1500 harvests over a full 1-99 grind vs ~100k+ actions for active gather skills), so it
       // needs a far steeper rate to reach a comparable P(≥1 by 99) (~1.5% → ~10%).
-      dropChance: 1 / 15000,
+      // 1.2.0 (Chef 29.08.2026, GO): 1/15000 → 1/4000, damit P(≥1 bis 99) über ~1 500 Ernten bei ~30 % liegt.
+      dropChance: 1 / 4000,
       icon: "🌾",
       art: "pets/witherling.png",
     },
@@ -18715,7 +18716,8 @@ export const content: ContentDB = {
       // Jagen ist fang-arm wie Farming ernte-arm (Muster witherling 1/15000): 5–60 min je Falle, XP je Fang
       // = 5× Monster-XP (Hochland ~20k), Stufe 99 = 13,0 M XP ⇒ ~1 000–2 500 Fänge über einen vollen
       // 1→99-Grind ⇒ P(≥1 bis 99) ≈ 7–15 % bei 1/15000 (Ausnahme vom ≤1/50000-Band im pet-integrity-Guard).
-      dropChance: 1 / 15000,
+      // 1.2.0 (Chef 29.08.2026, GO): 1/8000 statt 1/15000 ⇒ P(≥1 bis 99) ≈ 12–27 % über 1 000–2 500 Fänge.
+      dropChance: 1 / 8000,
       icon: "🐈",
       art: "pets/booted_tomcat.png",
     },

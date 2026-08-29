@@ -3076,6 +3076,7 @@ export const ptBR: Record<string, string> = {
   "items:ninth_wardens_signet:name": "Selo do Nono Guardião",
   "items:hollowveil_locket:name": "Medalhão Véu Oco",
   "items:esthar:name": "Esthar, Tempestade de Ossos",
+  "items:esthar:description": "Uma tempestade giratória de lâminas de osso amarradas a um cabo de medula petrificada. Quem a empunha a ouve uivar.",
   // Waffen-Drop-Erweiterung 2026-07-23 (Chef-Feedback "zu wenig Waffen-Drops")
   "items:duskfang_ripper:name": "Rasgador Presa do Crepúsculo",
   "items:ribcage_hewer:name": "Talhador de Costelas",

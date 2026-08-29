@@ -71,6 +71,13 @@ export function EquipKitBar(): JSX.Element {
             const armorId = summary.equipment.body;
             const weaponItem = weaponId ? content.items[weaponId] : undefined;
             const armorItem = armorId ? content.items[armorId] : undefined;
+            // P2-Fix (Review 1.2.0): die Zusammenfassung nannte nur Waffe/Rüstung, `pieces` zählte
+            // die drei Werkzeug-Slots (tool1..tool3) aber schon mit — ohne eigene Zeile blieb
+            // unsichtbar, WELCHE Werkzeuge im inaktiven Kit stecken.
+            const toolNames = [summary.equipment.tool1, summary.equipment.tool2, summary.equipment.tool3]
+              .map((id) => (id ? content.items[id] : undefined))
+              .filter((item): item is NonNullable<typeof item> => Boolean(item))
+              .map((item) => tr(item.name));
             tipContent = (
               <>
                 <span className="ct-tip-title">{label}</span>
@@ -87,6 +94,11 @@ export function EquipKitBar(): JSX.Element {
                     {armorItem && (
                       <span className="ct-tip-desc">
                         {t("kit.tip.armor").replace("{name}", tr(armorItem.name))}
+                      </span>
+                    )}
+                    {toolNames.length > 0 && (
+                      <span className="ct-tip-desc">
+                        {t("kit.tip.tools").replace("{names}", toolNames.join(", "))}
                       </span>
                     )}
                   </>
