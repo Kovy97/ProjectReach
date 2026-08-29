@@ -10,7 +10,7 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
-## Unveröffentlicht — 1.2.0 „Threads, Traps & Spellfire" / DE „Fäden, Fallen, Feuer" (Chef 29.08.: Name fix; Fasern/Stoff-Roben, Jagen, Schneidern, Magie-Umbau; Taverne → 1.3.0)
+## 1.2.0 „Threads, Traps & Spellfire" / DE „Fäden, Fallen, Feuer" — HOCHGELADEN 2026-08-29 09:48 (Build 25007052, `setlive` leer, Chef schaltet live; Steam-Post EN/ZH/ES/RU in design/steam-post-1.2.0*.txt)
 
 **Warteschlange springt nach dem Tod weiter (Chef 29.08.):** DE: Wer in der Warteschlange fällt (20 Eber, Tod beim fünften),
 verliert nur den Rest dieses Eintrags. Die Warteschlange macht mit dem nächsten Eintrag weiter, online wie offline, statt zu

@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.1.2 (Vier Voelker: Elfen, Orks, Goblins; Fixes und QoL)"
+	"desc"	"Grim Reach 1.2.0 Threads, Traps & Spellfire (Jagen, Schneidern, Fasern, Magie-Rework, Partikel-Effekte, Kits)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""
