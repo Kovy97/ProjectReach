@@ -1,0 +1,47 @@
+Grim Reach 1.2.0 - Patch #3: Threads, Traps & Spellfire
+
+Hunters,
+
+this update rebuilds three corners of the game at once. Magic gets a real identity: every element now does something of its own in combat, crafted staves and wands finally spread across all elements, magic weapons scale with your Intelligence, and mana becomes a Spell Reserve that feeds two stances instead of a cost you pay per cast. Hunting arrives as a brand new skill, with baited traps that keep working while you are away and a bait chain that ties Fishing into it. And the long standing leather wall in Crafting is gone: fibres in five tiers, a new Tailoring skill for robes and capes, and cloth sets that are cloth through and through. On top of that come procedural particle effects for every weapon, three real equipment kits, a 29th Champion with a legendary greataxe, two new companions and the usual list of fixes. Saves stay compatible as always.
+
+NEW
+
+- Hunting, a new skill: set baited traps in zones you have unlocked in combat, and every catch yields five loot rolls from a creature you have beaten before, online and offline. Trap slots unlock at Hunting 1, 5, 15, 30, 50 and 75. Catch XP is five times the creature's combat XP, and the first catch of each creature pays double. A hunting log collects everything you have trapped.
+- Bait in five tiers: worms, grubs, crabs, squid and glow bait come from Fishing (levels 1, 20, 40, 60, 80), and each hunting zone asks for the bait of its tier. A trap that runs out of bait keeps its zone and waits; it restarts on its own the moment the right bait is back in your inventory or bank.
+- Fibres and cloth: nettle, flax, thornhemp, ghost silk and starflax grow at new forage nodes and in your New Haven plots, and weave into five cloth tiers. Every cloth set, from the Apprentice robe to Voidweave, is now made of cloth alone; leather stays only on a few capes and on ranged gear. A nettle bowstring lets you fletch bows from level 1 without fighting.
+- Tailoring, a new skill: weaving, all mage robes and all capes move from Crafting into Tailoring. Your existing progress is divided by what you actually crafted: XP from robes, capes and cloth goes to Tailoring, the rest stays in Crafting, and equipped gear stays equipped. A word from the developer: I am sorry that this splits your Crafting progress. It was the better call for the game as a whole, and better made now than later.
+- The Dimweave set is complete: five newly painted pieces as a second starter set, no leather required.
+- Elemental effects: every element now has its own identity, for your weapons and for monsters alike. Burn: 10 % more damage taken while burning. Frost: the third chill in a row freezes the target for one attack, then 6 s immunity. Shock: no more skipped attacks; each shock delays the target's next attack by 0.4 s (up to 1.2 s), and shock crits arc for 30 %. Poison: stacks up to five and halves regeneration and lifesteal. Void: the new Drain status, 15 % less damage dealt. Arcane: Resonance, +2 % per hit up to ten stacks. Aether: Lightblessing, every spell restores 2 % of your ward and pierces half of the enemy's ward.
+- Spell Reserve and Wisdom: spells no longer cost anything and the weak staff swing is gone. Mana is now a fixed value like armour, and the two magic stances read it: Focus grants 1 % more spell damage per 60 reserve (up to 15 %), Shield grants 1 % more ward regeneration per 40 reserve (up to 30 %). Wisdom now protects every combat style: each point makes enemy burn, frost, shock, poison, bleed and drain 1 % shorter and weaker (up to 40 %). Old mana bonuses are converted (+1 mana regen = +10 spell reserve).
+- Spell Focus: magic weapons now grow with your Intelligence, about +15 / 22 / 30 % damage range at level 30 / 60 / 90. The item card shows the rate and your real range with your current INT.
+- The element ladder: crafted staves and wands no longer all share the same burn effect. Every crafting tier shows fire, frost, shock, poison and arcane in a rotating mix, with aether joining from Titan onward, so the full effect library finally shows up in combat.
+- Procedural combat effects for every weapon: glowing embers with spark trails, ice shards, branching chain lightning, poison bubbles, arcane runes, a light swallowing void core, golden feathers, melee slash arcs, arrow flight, blood, ichor and bone dust, block sparks and all companion abilities. When a status sits on a fighter, their body flares up and a quiet effect loop keeps running for as long as the status lasts. The combat effects option lets you run them in full, reduced, or off.
+- Three real equipment kits: the three loadout templates now hold their own items, including tools. Switch between them on the character sheet outside combat; switching refills HP, ward and reserve.
+- Ossric the Marrowbound, a 29th Champion, stalks the Highlands and drops the legendary greataxe Esthar, Storm of Bones: bleed on hit, and every fourth swing strikes twice. Based on a player's idea.
+- Two new companions: Leon, the Feared, a booted tomcat from Hunting (5 % chance per catch for ten loot rolls instead of five; his Bear Trap makes the enemy bleed), and the Silkweaver from Tailoring (5 % material refund; its Silk Veil blinds the enemy). Hunting and Farming yield few rolls, so their companions drop more often than the rest: Leon at 1 in 8,000 per catch, and the Farming companion now at 1 in 4,000 per harvest (was 1 in 15,000).
+- The hunting zone picker is a large two column window with full zone details, trappable creatures and their loot.
+
+IMPROVEMENTS
+
+- Companion cards spell out their passive bonus and their combat ability with real numbers and timing, once you own the companion.
+- Champion uniques show their effect (for example lifesteal) on the item card, and the wiki lists the Champion as a source.
+- On-kill heal, ward and cooldown effects from several items now add up instead of only the strongest one counting.
+- Ward regenerates out of combat, 5 % per second, so you no longer start every fight at zero.
+- The combat log names shock arcs and Lightblessing ward gains, and the ability text on each weapon card states the real application chance.
+- Item cards size themselves to their content, so long stat lines no longer squeeze.
+- Queue amount buttons (1 / 25 / X / endless) wear the same iron frame as every other button.
+- The kit tooltip lists the tools stored in an inactive kit.
+- Autosave now runs every 5 seconds.
+
+FIXES
+
+- Switching between equipment kits no longer reports the items in your other kit as new finds, including enchanted pieces.
+- Companions that had no text for their passive (extra ammo) show it now.
+- The Discord button is gone (there is no server), the bug report draft survives sending, and shift-clicking in the bank no longer selects text.
+- Consumable item cards (stews, tonics) keep their frame.
+
+Two more Steam achievements arrive with this update: Master Tailor and Master Hunter, for reaching level 99 in the new skills.
+
+As always: if something feels off, tell me here or through the bug report button in the options. The next update, 1.3.0 "Alive", brings the tavern to New Haven.
+
+Thank you for playing.
