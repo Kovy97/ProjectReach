@@ -1023,7 +1023,13 @@ export function ActionQueuePanel(): JSX.Element {
                         content={
                           <span className="ct-tip-desc">
                             {t("queue.dragHandle")} · {t("queue.rightClickEject")}
-                            {rowTiming?.isEstimate ? ` · ${t("queue.duration.estimateHint")}` : ""}
+                            {/* Zwei GRUNDVERSCHIEDENE Gründe teilen sich `isEstimate` (s. queueTiming.ts):
+                                Kampf-/Dungeon-Zeilen = grobe DPS-Prognose, Sammel-/Handwerks-Zeilen (nach
+                                1.0.1) = Material stammt (teilweise) aus der erwarteten Ausbeute eines
+                                früheren Sammel-Eintrags derselben Warteschlange — je eigener Hinweistext. */}
+                            {rowTiming?.isEstimate
+                              ? ` · ${t(fightEntry || dungeonEntry ? "queue.duration.estimateHint" : "queue.duration.materialEstimateHint")}`
+                              : ""}
                             {rowTiming?.unknown ? ` · ${t("queue.duration.unknownHint")}` : ""}
                             {rowMatDot === "will_have" ? ` · ${t("queue.row.willHave")}` : ""}
                             {rowMatDot === "missing" ? ` · ${t("queue.row.willSkip")}` : ""}

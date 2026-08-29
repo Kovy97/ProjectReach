@@ -184,6 +184,87 @@ describe("computeQueueTiming — Kämpfe (Schätzung)", () => {
   });
 });
 
+describe("computeQueueTiming — Sammeln → Verarbeitung (1.0.1, Chef-Meldung 'Copper vein → Smelt copper hat keine Zeit')", () => {
+  it("Kupferader sammeln (endliches Ziel) → Kupfer schmelzen zeigt eine Näherungs-Zeit statt 0", () => {
+    const s = freshState();
+    // Frischer State: 0 Kupfererz auf Lager — ohne den Fix sähe smelt_copper hier "0 Zyklen möglich".
+    s.actionQueue.push(
+      { kind: "action", actionId: "mine_copper", target: 500 }, // 500× Kupfererz sammeln (chance 1, min/max 1 → Ø 1/Zyklus)
+      { kind: "action", actionId: "smelt_copper", target: 500 }, // wartet vollständig auf die Sammel-Ausbeute
+    );
+    const timing = computeQueueTiming(s, content);
+    const smelt = timing.queue[1]!;
+    // mine_copper liefert Kupfererz garantiert (chance 1, min=max=1) → erwartete Ausbeute exakt 500,
+    // deckt das Ziel voll ab: NICHT materialLimited, aber als Näherung markiert (hängt von der
+    // Sammel-Ausbeute des Vorgängers ab, nicht vom aktuellen Lagerbestand).
+    expect(smelt.isEstimate).toBe(true);
+    expect(smelt.unknown).toBe(false);
+    expect(smelt.materialLimited).toBe(false);
+    expect(smelt.remainingMs).toBeGreaterThan(0);
+    // smelt_copper: durationMs 2600, kein Bonus bei frischem State → 500 volle Zyklen.
+    expect(smelt.remainingMs).toBe(500 * 2600);
+  });
+
+  it("reicht die erwartete Sammel-Ausbeute NICHT für das volle Ziel, bleibt der Folge-Eintrag materialLimited + isEstimate", () => {
+    const s = freshState();
+    s.actionQueue.push(
+      { kind: "action", actionId: "mine_copper", target: 100 }, // erwartete Ausbeute: 100 Kupfererz
+      { kind: "action", actionId: "smelt_copper", target: 500 }, // will 500, bekommt nur 100
+    );
+    const timing = computeQueueTiming(s, content);
+    const smelt = timing.queue[1]!;
+    expect(smelt.isEstimate).toBe(true);
+    expect(smelt.materialLimited).toBe(true);
+    expect(smelt.reachableCount).toBe(100);
+    expect(smelt.remainingMs).toBe(100 * 2600);
+  });
+
+  it("schmelzen ganz OHNE jeden Vorgänger bleibt weiterhin klar material-limitiert (kein falsches Näherungs-Signal)", () => {
+    const s = freshState();
+    // Kein Sammel-Eintrag davor, kein Kupfererz auf Lager: "hat schlicht nichts", nicht "wartet auf
+    // einen Vorgänger" — genau die Unterscheidung, die der Fix nicht verwischen darf.
+    s.actionQueue.push({ kind: "action", actionId: "smelt_copper", target: 500 });
+    const timing = computeQueueTiming(s, content);
+    const smelt = timing.queue[0]!;
+    expect(smelt.isEstimate).toBe(false);
+    expect(smelt.materialLimited).toBe(true);
+    expect(smelt.reachableCount).toBe(0);
+    expect(smelt.remainingMs).toBe(0);
+  });
+
+  it("ein ∞-Sammel-Vorgänger (Ziel 'Alle') lässt den Folge-Eintrag NICHT fälschlich '0' zeigen, sondern unknown", () => {
+    const s = freshState();
+    s.actionQueue.push(
+      { kind: "action", actionId: "mine_copper", target: null }, // läuft unbegrenzt weiter (Ziel "Alle")
+      { kind: "action", actionId: "smelt_copper", target: 500 },
+    );
+    const timing = computeQueueTiming(s, content);
+    const smelt = timing.queue[1]!;
+    // Ohne Fix: materialLimited mit reachableCount 0 und remainingMs 0 (aktueller Lagerbestand ist
+    // leer) — läse sich wie "sofort fertig". Mit Fix: ehrlich unbeziffert statt einer falschen "0".
+    expect(smelt.unknown).toBe(true);
+    expect(smelt.remainingMs).toBeUndefined();
+    expect(smelt.materialLimited).toBe(false);
+  });
+
+  it("ein bereits ausreichender Lagerbestand bleibt NICHT als Näherung markiert, obwohl ein Sammel-Vorgänger in der Que steht", () => {
+    const s = freshState();
+    addItem(s.inventory, content, "copper_ore", 500); // schon genug echtes Erz auf Lager
+    s.actionQueue.push(
+      { kind: "action", actionId: "mine_copper", target: 50 }, // trägt zusätzlich bei, wird aber gar nicht gebraucht
+      { kind: "action", actionId: "smelt_copper", target: 500 },
+    );
+    const timing = computeQueueTiming(s, content);
+    const smelt = timing.queue[1]!;
+    expect(smelt.materialLimited).toBe(false);
+    expect(smelt.remainingMs).toBe(500 * 2600);
+    // Erz kommt vollständig aus dem ECHTEN Lagerbestand — die Schätzung war für die Kappung
+    // gar nicht nötig; die aktuelle (bewusst konservative) Markierung flaggt trotzdem, sobald
+    // Erz überhaupt aus einem Sammel-Vorgänger stammt (s. `isEstimatedSource`-JSDoc).
+    expect(smelt.isEstimate).toBe(true);
+  });
+});
+
 describe("computeQueueTiming — gemischte Kette + Unendlich-Abbruch", () => {
   it("summiert nur die endlichen Einträge VOR dem ersten Unendlich-Eintrag", () => {
     const s = freshState();

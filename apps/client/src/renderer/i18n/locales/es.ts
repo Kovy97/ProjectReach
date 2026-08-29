@@ -1788,6 +1788,7 @@ export const es: Record<string, string> = {
     "queue.duration.materialShort": "Alcanza para {have} de {want}",
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Estimación aproximada según tus estadísticas de combate actuales, no es una simulación.",
+    "queue.duration.materialEstimateHint": "Estimación aproximada: supone el rendimiento medio de un paso de recolección anterior en esta cola, sin bonificaciones de maestría, compañero o tónico.",
     "queue.duration.unknownHint": "No se puede estimar ahora mismo.",
     "queue.dungeon.progress": "Ronda {n} de {m}",
     "queue.dungeon.progressInfinite": "Ronda {n} · ∞ rondas",

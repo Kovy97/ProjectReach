@@ -2127,6 +2127,7 @@ const en = {
     "queue.duration.materialShort": "Enough for {have} of {want}",
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Rough estimate from your current combat stats, not a simulation.",
+    "queue.duration.materialEstimateHint": "Rough estimate — assumes the average yield of an earlier collecting step in this queue, before mastery, companion, or tonic bonuses.",
     "queue.duration.unknownHint": "Can't be estimated right now.",
     "toast.queueBlocked.title": "Queue is waiting",
     // SAVE 83 (Chef-Auftrag 26.08.2026 "dungeons queueable"): run progress of the active
@@ -4570,6 +4571,7 @@ const de: Record<keyof typeof en, string> = {
     "queue.duration.materialShort": "Reicht für {have} von {want}",
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Grobe Schätzung aus deinen aktuellen Kampfwerten, keine Simulation.",
+    "queue.duration.materialEstimateHint": "Grobe Schätzung — geht vom durchschnittlichen Ertrag eines früheren Sammel-Schritts in dieser Warteschlange aus, ohne Meisterschafts-, Begleiter- oder Tonika-Boni.",
     "queue.duration.unknownHint": "Lässt sich gerade nicht schätzen.",
     // SAVE 83 (Chef-Auftrag 26.08.2026 "Dungeons queuebar"): Lauf-Fortschritt des aktiven
     // Queue-Dungeon-Laufs. `queue.dungeon.progress`/`progressInfinite` = ausgeschriebene

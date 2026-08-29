@@ -136,6 +136,22 @@ function unknownEntryTiming(target: number | null): QueueTimingEntry {
   return { infinite: false, unknown: true, isEstimate: false, materialLimited: false, reachableCount: null, requestedTarget: target };
 }
 
+/** Kontext des virtuellen Material-Pools über die GESAMTE Warteschlange hinweg (Reihenfolge:
+ *  `active` zuerst, dann `state.actionQueue` von vorn nach hinten) — s. `computeQueueTiming`. */
+interface QueuePoolCtx {
+  qty: (itemId: ItemId) => number;
+  deduct: (itemId: ItemId, qty: number) => void;
+  /** Trägt die erwartete Ausbeute EINES Sammel-Eintrags (chance × Ø-Menge × Zyklen, s.
+   *  `actionEntryTiming`) in den Pool ein und merkt sich `itemId` als „(teilweise) geschätzt" —
+   *  jeder Verarbeitungs-Eintrag, der davon zehrt, wird dadurch selbst `isEstimate: true`. */
+  addExpectedYield: (itemId: ItemId, qty: number) => void;
+  isEstimatedSource: (itemId: ItemId) => boolean;
+  /** true = `itemId` hat einen ∞-Sammel-Vorgänger (Ziel "Alle") in DERSELBEN Warteschlange —
+   *  dessen künftige Ausbeute ist der Definition nach unbeziffbar (s. `markUnbounded`). */
+  isUnbounded: (itemId: ItemId) => boolean;
+  markUnbounded: (itemId: ItemId) => void;
+}
+
 function actionEntryTiming(
   state: GameState,
   content: ContentDB,
@@ -143,45 +159,74 @@ function actionEntryTiming(
   target: number | null,
   progressMs: number,
   nowMs: number | undefined,
-  poolQty: (itemId: ItemId) => number,
-  deduct: (itemId: ItemId, qty: number) => void,
+  pool: QueuePoolCtx,
 ): QueueTimingEntry {
   const dur = effectiveActionDurationMs(state, content, action, nowMs);
   const inputs = action.inputs ?? [];
-  const base = { isEstimate: false, requestedTarget: target };
+  const base = { requestedTarget: target };
 
   if (inputs.length === 0) {
-    // Sammeln: nie material-limitiert. Ziel "Alle" (target null) läuft ECHT unbegrenzt weiter.
+    // Sammeln: nie material-limitiert. Ziel "Alle" (target null) läuft ECHT unbegrenzt weiter —
+    // und macht seine Beute für JEDEN nachgelagerten Verarbeitungs-Eintrag in dieser Warteschlange
+    // unbeziffbar (unbegrenzt viel kommt irgendwann nach, aber "irgendwann wie viel" ist keine
+    // ehrliche Zahl) — `markUnbounded` merkt das für `isUnbounded` unten vor (Chef-Vorgabe Punkt 3).
     if (target === null) {
-      return { ...base, infinite: true, unknown: false, materialLimited: false, reachableCount: null };
+      for (const drop of action.loot) pool.markUnbounded(drop.itemId);
+      return { ...base, infinite: true, unknown: false, isEstimate: false, materialLimited: false, reachableCount: null };
+    }
+    // Erwartete Ausbeute (chance × Ø-Menge × Zyklen) fließt in den virtuellen Pool ein, damit ein
+    // NACHGELAGERTER Verarbeitungs-Eintrag derselben Warteschlange sie sieht — löst die frühere
+    // "BEWUSSTE VEREINFACHUNG" auf (s. `computeQueueTiming`-JSDoc): "500× Kupfer sammeln, dann
+    // Kupfer schmelzen" zeigt jetzt eine ehrliche (als Näherung markierte) Zeit statt 0. Bewusst
+    // OHNE Meisterschaft-/Begleiter-/Tonika-Boni (echte Loot-Struktur aus dem Content, sonst nichts)
+    // — lieber leicht unterschätzen als eine zu optimistische Zahl versprechen (Chef-Vorgabe).
+    for (const drop of action.loot) {
+      const expected = drop.chance * ((drop.min + drop.max) / 2) * target;
+      pool.addExpectedYield(drop.itemId, expected);
     }
     return {
       ...base,
       infinite: false,
       unknown: false,
+      isEstimate: false,
       materialLimited: false,
       reachableCount: null,
       remainingMs: remainingMsForCycles(target, dur, progressMs),
     };
   }
 
-  // Verarbeitung: Material-Deckel über den GEMEINSAMEN Pool (Inventar+Lager, abzüglich dessen,
-  // was frühere Warteschlangen-Einträge mit denselben Zutaten schon verplant haben — s.
-  // `computeQueueTiming`-JSDoc). Ziel "Alle" ist bei Verarbeitung NIE echt unendlich (es gibt
-  // immer eine begrenzte Materialmenge) — anders als beim Sammeln oben.
+  // Verarbeitung: Material-Deckel über den GEMEINSAMEN Pool (Inventar+Lager+erwartete Ausbeute
+  // früherer Sammel-Einträge, abzüglich dessen, was frühere Warteschlangen-Einträge mit denselben
+  // Zutaten schon verplant haben — s. `computeQueueTiming`-JSDoc). Ziel "Alle" ist bei Verarbeitung
+  // NIE echt unendlich (es gibt immer eine begrenzte Materialmenge) — anders als beim Sammeln oben.
   let maxFromPool = Infinity;
+  let reliesOnEstimate = false;
+  let reliesOnUnbounded = false;
   for (const input of inputs) {
-    const possible = input.qty > 0 ? Math.floor(poolQty(input.itemId) / input.qty) : Infinity;
+    if (pool.isEstimatedSource(input.itemId)) reliesOnEstimate = true;
+    const possible = input.qty > 0 ? Math.floor(pool.qty(input.itemId) / input.qty) : Infinity;
+    if (target !== null && possible < target && pool.isUnbounded(input.itemId)) {
+      // Diese Zutat hat einen ∞-Sammel-Vorgänger (Ziel "Alle") — dessen künftige Ausbeute ist nicht
+      // bezifferbar. Als Kappung werten würde "reicht für 0 von 500 · 0:00" vorgaukeln, wo in
+      // Wahrheit unbegrenzt viel nachkommen könnte — also NICHT in `maxFromPool` einrechnen,
+      // sondern den ganzen Eintrag `unknown` machen (s.u.), ehrlicher als eine falsche Zahl.
+      reliesOnUnbounded = true;
+      continue;
+    }
     maxFromPool = Math.min(maxFromPool, possible);
   }
+  if (reliesOnUnbounded) {
+    return { ...base, infinite: false, unknown: true, isEstimate: false, materialLimited: false, reachableCount: null };
+  }
   const cycles = target === null ? maxFromPool : Math.min(target, maxFromPool);
-  for (const input of inputs) deduct(input.itemId, cycles * input.qty);
+  for (const input of inputs) pool.deduct(input.itemId, cycles * input.qty);
   const materialLimited = target !== null && maxFromPool < target;
 
   return {
     ...base,
     infinite: false,
     unknown: false,
+    isEstimate: reliesOnEstimate,
     materialLimited,
     reachableCount: materialLimited ? cycles : null,
     remainingMs: remainingMsForCycles(cycles, dur, progressMs),
@@ -197,14 +242,22 @@ function actionEntryTiming(
  * tatsächlichen Verbrauch schmälert — zwei Schmiede-Einträge, die um denselben Erzstapel
  * konkurrieren, zeigen so NICHT beide fälschlich den vollen Bestand als "verfügbar".
  *
- * BEWUSSTE VEREINFACHUNG (bereits in der Aufgabenstellung als Grenze benannt): der Pool wird NIE
- * durch spätere Ausbeute FRÜHERER Sammel-Einträge in derselben Warteschlange aufgefüllt (z.B.
- * "500× Zinn sammeln" gefolgt von "500× Bronze schmelzen") — das würde die (zufällige) Loot-Tabelle
- * vorab simulieren müssen. So eine Kette zeigt den Schmelz-Eintrag also ggf. als material-limitiert,
- * obwohl er nach dem Sammel-Eintrag real genug Material hätte; das behebt sich von selbst, sobald
- * der Sammel-Eintrag läuft und das Inventar füllt (die Anzeige rechnet jeden Tick neu, s.
- * ActionQueuePanel.tsx). Ehrlicher als eine erfundene Zahl, s. Aufgaben-Vorgabe „nicht ehrlich
- * berechenbar → Dauer bis zum Materialende zeigen".
+ * SEIT 1.0.1 (Chef-Auftrag, Steam/Forum-Meldung "Copper vein zeigt an, Smelt copper hat keine
+ * Zeit"): der Pool wird auch durch die ERWARTETE Ausbeute FRÜHERER Sammel-Einträge derselben
+ * Warteschlange aufgefüllt (z.B. "500× Kupfer sammeln" gefolgt von "500× Kupfer schmelzen") — je
+ * Beute-Eintrag chance × Ø-Menge × Zyklen, aus der echten Loot-Struktur der Aktion, OHNE
+ * Meisterschaft-/Begleiter-/Tonika-Boni (lieber leicht unterschätzt als zu optimistisch). Ein
+ * Verarbeitungs-Eintrag, der (auch nur teilweise) aus so einer Schätzung zehrt, wird selbst
+ * `isEstimate: true` (ActionQueuePanel.tsx zeigt dafür ein vorangestelltes "~" + Tooltip-Hinweis,
+ * gleiches Muster wie die Kampf-DPS-Schätzung). Zwei EINSCHRÄNKUNGEN bleiben bewusst bestehen:
+ * (1) das gilt NUR für Sammel→Verarbeitung-Ketten (`inputs.length === 0` als Quelle) — die Ausbeute
+ * EINES Verarbeitungs-Eintrags speist NICHT den Pool für einen SPÄTEREN Verarbeitungs-Eintrag
+ * (Aufgaben-Vorgabe beschränkt sich explizit auf Sammel-Vorgänger); (2) ein Sammel-Eintrag mit Ziel
+ * "Alle" (∞, `target === null`) liefert der Definition nach eine unbezifferbare Menge — er trägt
+ * weiterhin NICHTS in den Pool ein, aber ein nachgelagerter Verarbeitungs-Eintrag, dessen Material
+ * DADURCH knapp würde, zeigt statt einer falschen "reicht für 0 von 500 · 0:00" ehrlich `unknown`
+ * ("?", s. `actionEntryTiming`) — ehrlicher als eine erfundene Zahl, s. Aufgaben-Vorgabe „nicht
+ * ehrlich berechenbar → Dauer bis zum Materialende zeigen".
  *
  * `nowMs` (optional, wie `effectiveActionDurationMs`): reales Kalender-„jetzt" für die
  * Segens-Multiplikatoren (Blessings of the Reach) — ohne sie neutral (Faktor 1), was die
@@ -214,17 +267,28 @@ function actionEntryTiming(
  * in einer mehrstündigen Warteschlange, s. Aufgaben-Vorgabe „keine erfundene Präzision").
  */
 export function computeQueueTiming(state: GameState, content: ContentDB, nowMs?: number): QueueTiming {
-  const pool = new Map<ItemId, number>();
-  const poolQty = (itemId: ItemId): number => {
-    let v = pool.get(itemId);
+  const poolMap = new Map<ItemId, number>();
+  const estimatedItems = new Set<ItemId>();
+  const unboundedItems = new Set<ItemId>();
+  const qty = (itemId: ItemId): number => {
+    let v = poolMap.get(itemId);
     if (v === undefined) {
       v = itemCount(state.inventory, itemId) + bankCount(state, itemId);
-      pool.set(itemId, v);
+      poolMap.set(itemId, v);
     }
     return v;
   };
-  const deduct = (itemId: ItemId, qty: number): void => {
-    pool.set(itemId, Math.max(0, poolQty(itemId) - qty));
+  const pool: QueuePoolCtx = {
+    qty,
+    deduct: (itemId, amount) => poolMap.set(itemId, Math.max(0, qty(itemId) - amount)),
+    addExpectedYield: (itemId, amount) => {
+      if (amount <= 0) return;
+      poolMap.set(itemId, qty(itemId) + amount);
+      estimatedItems.add(itemId);
+    },
+    isEstimatedSource: (itemId) => estimatedItems.has(itemId),
+    isUnbounded: (itemId) => unboundedItems.has(itemId),
+    markUnbounded: (itemId) => unboundedItems.add(itemId),
   };
 
   // 1) Aktuell laufende Aktivität — Kampf und Aktion schließen sich gegenseitig aus (GameState-
@@ -237,7 +301,7 @@ export function computeQueueTiming(state: GameState, content: ContentDB, nowMs?:
   } else if (state.activeActionId !== null) {
     const action = content.actions[state.activeActionId];
     active = action
-      ? actionEntryTiming(state, content, action, state.actionTarget, state.actionProgressMs, nowMs, poolQty, deduct)
+      ? actionEntryTiming(state, content, action, state.actionTarget, state.actionProgressMs, nowMs, pool)
       : null; // Content-Drift: skillingStep beendet sie im nächsten Tick, sie läuft real keine Zeit mehr.
   }
 
@@ -248,7 +312,7 @@ export function computeQueueTiming(state: GameState, content: ContentDB, nowMs?:
     if (isDungeonQueueEntry(raw)) return dungeonEntryTiming(state, content, raw.dungeonId ?? "", raw.target);
     const action = content.actions[raw.actionId];
     if (!action) return unknownEntryTiming(raw.target);
-    return actionEntryTiming(state, content, action, raw.target, 0, nowMs, poolQty, deduct);
+    return actionEntryTiming(state, content, action, raw.target, 0, nowMs, pool);
   });
 
   let finiteMs = 0;

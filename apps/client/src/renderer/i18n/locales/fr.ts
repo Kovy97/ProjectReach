@@ -1832,6 +1832,7 @@ export const fr: Record<string, string> = {
     "queue.duration.materialShort": "Suffit pour {have} sur {want}",
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Estimation approximative d'après tes statistiques de combat actuelles, pas une simulation.",
+    "queue.duration.materialEstimateHint": "Estimation approximative : suppose le rendement moyen d'une étape de récolte antérieure dans cette file, sans bonus de maîtrise, de compagnon ou de tonique.",
     "queue.duration.unknownHint": "Impossible à estimer pour le moment.",
     "queue.dungeon.progress": "Passage {n} sur {m}",
     "queue.dungeon.progressInfinite": "Passage {n} · ∞ passages",

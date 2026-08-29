@@ -1828,6 +1828,7 @@ export const zh: Record<string, string> = {
     "queue.duration.materialShort": "材料够做 {want} 个中的 {have} 个",
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "根据当前战斗属性粗略估算，并非模拟战斗。",
+    "queue.duration.materialEstimateHint": "粗略估算——假设本队列中较早采集步骤的平均产出，未计入精通、伙伴或药水加成。",
     "queue.duration.unknownHint": "目前无法估算。",
     "queue.dungeon.progress": "第 {n} 轮，共 {m} 轮",
     "queue.dungeon.progressInfinite": "第 {n} 轮 · ∞ 轮",

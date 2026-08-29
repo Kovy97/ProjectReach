@@ -1786,6 +1786,7 @@ export const ptBR: Record<string, string> = {
     "queue.duration.materialShort": "Dá para {have} de {want}",
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Estimativa aproximada com base nos seus atributos de combate atuais, não é uma simulação.",
+    "queue.duration.materialEstimateHint": "Estimativa aproximada — presume o rendimento médio de uma etapa de coleta anterior nesta fila, sem bônus de maestria, companheiro ou tônico.",
     "queue.duration.unknownHint": "Não é possível estimar agora.",
     "queue.dungeon.progress": "Run {n} de {m}",
     "queue.dungeon.progressInfinite": "Run {n} · ∞ runs",

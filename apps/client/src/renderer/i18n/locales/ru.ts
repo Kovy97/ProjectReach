@@ -1829,6 +1829,7 @@ export const ru: Record<string, string> = {
     "queue.duration.materialShort": "Хватит на {have} из {want}",
     "queue.duration.unknown": "?",
     "queue.duration.estimateHint": "Грубая оценка по текущим боевым характеристикам, не симуляция.",
+    "queue.duration.materialEstimateHint": "Грубая оценка — исходит из среднего выхода более раннего этапа сбора в этой очереди, без бонусов мастерства, спутника или тоника.",
     "queue.duration.unknownHint": "Сейчас оценить нельзя.",
     "queue.dungeon.progress": "Забег {n} из {m}",
     "queue.dungeon.progressInfinite": "Забег {n} · ∞ забегов",
