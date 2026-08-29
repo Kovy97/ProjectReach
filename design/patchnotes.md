@@ -21,9 +21,11 @@ champion as a source.
 
 **Fasern und Stoff (Chef 27.08.):** DE: Handwerk hing bis Stufe 30 fast komplett an Monster-Leder. Jetzt gibt es Fasern in
 fünf Stufen: Nessel, Flachs, Dornhanf, Geisterseide und Sternflachs. Man sammelt sie an neuen Sammel-Knoten (samt Saat),
-baut sie in New Havens Beeten an und webt sie im Handwerk zu Nesselstoff, Leinen, Dornleinen, Geistertuch und Sternweb. Alle Stoff-Sets sind jetzt komplett aus Stoff, von der Lehrlings-Robe bis zum Leerenweb; Leder bleibt nur bei einzelnen Umhängen und bei Fernkampf-Ausrüstung. Die
-Nessel-Sehne macht Bogen ab Stufe 1 ohne Kampf möglich.
-Leder bleibt die Rüstung des Ausweichens. Every cloth set is now cloth through and through; leather remains only on a few capes and on ranged gear.
+baut sie in New Havens Beeten an und webt sie im Schneidern zu Nesselstoff, Leinen, Dornleinen, Geistertuch und Sternweb.
+Alle Stoff-Sets sind komplett aus Stoff, von der Lehrlings-Robe bis zum Leerenweb; Leder bleibt nur bei einzelnen Umhängen
+und bei Fernkampf-Ausrüstung. Die Nessel-Sehne macht Bogen ab Stufe 1 ohne Kampf möglich. Leder bleibt die Rüstung des
+Ausweichens. / EN: Fibres in five tiers (forage, farm, weave) replace leather in every cloth set, and a nettle bowstring
+lets you fletch bows from level 1 without fighting.
 
 **Jagen, ein neuer Skill (Chef 27.08.):** DE: Stell Fallen in Gebieten, die du im Kampf freigeschaltet hast. Eine zufällige
 Kreatur, die du schon einmal besiegt hast (jede Familie, Chef 28.08.), tappt hinein und lässt fünf Beute-Würfe seiner Tabelle da, ohne Kampf.
