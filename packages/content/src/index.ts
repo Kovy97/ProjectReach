@@ -1650,8 +1650,7 @@ export const content: ContentDB = {
     thornwarden_seal: {
       id: "thornwarden_seal", name: { en: "Thornwarden Signet", de: "Dornwächter-Siegel" }, type: "equipment", stackable: false,
       icon: "💍", slot: "ring1", modifiers: { str: 7, con: 7, lck: 2 }, skillBoost: { attack: 3 },
-      // Abweichung von §3.8 (thorns → vengeance): s. Wellen-Kopfkommentar oben.
-      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.32, durationMs: 0 },
+      weaponEffect: { type: "thorns", chance: 1, magnitude: 1.8, durationMs: 0 } /* Chef 29.08.2026: Guard gelockert, thorns darf mehrere Traeger haben — passt zum Motiv (Ring aus Eisendornen) */,
       value: 5800, rarity: "epic",
       description: {
         en: "Carved by a guardian who turned every blow taken into the next one thrown. Rewards the fighter still standing.",
