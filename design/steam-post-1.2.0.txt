@@ -40,7 +40,7 @@ FIXES
 - The Discord button is gone (there is no server), the bug report draft survives sending, and shift-clicking in the bank no longer selects text.
 - Consumable item cards (stews, tonics) keep their frame.
 
-Two more Steam achievements arrive with this update: Master Tailor and Master Hunter, for reaching level 99 in the new skills.
+Steam achievements go live with this update: 69 of them, from your first Champion kill to level 99 in every skill, including the new Master Tailor and Master Hunter. Everything you have already earned in game is reported to Steam the first time you load your save.
 
 As always: if something feels off, tell me here or through the bug report button in the options. The next update, 1.3.0 "Alive", brings the tavern to New Haven.
 

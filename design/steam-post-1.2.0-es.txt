@@ -40,7 +40,7 @@ CORRECCIONES
 - El botón de Discord ha desaparecido (no hay servidor), el borrador del informe de errores sobrevive al envío, y hacer Mayús+clic en el banco ya no selecciona texto.
 - Las fichas de objetos consumibles (guisos, tónicos) mantienen su marco.
 
-Con esta actualización llegan dos logros más de Steam: Master Tailor y Master Hunter, por alcanzar el nivel 99 en las nuevas profesiones.
+Con esta actualización se activan los logros de Steam: 69 en total, desde tu primer Campeón derrotado hasta el nivel 99 en cada habilidad, incluidos los nuevos Master Tailor y Master Hunter. Todo lo que ya hayas conseguido en el juego se enviará a Steam la primera vez que cargues tu partida.
 
 Como siempre: si algo no se siente bien, dímelo aquí o mediante el botón de informe de errores en las opciones. La próxima actualización, 1.3.0 «Alive», trae la taberna a New Haven.
 

@@ -40,7 +40,7 @@ Grim Reach 1.2.0 - Patch #3: Threads, Traps & Spellfire（丝线、陷阱与魔�
 - Discord 按钮已移除（因为目前没有服务器），提交问题报告后草稿不会再丢失，在银行界面按住 Shift 点击也不会再选中文字。
 - 消耗品的物品卡片（炖菜、补剂）现在能保住自己的边框了。
 
-这次更新还带来两个新的 Steam 成就：Master Tailor 与 Master Hunter，分别对应把新技能提升到 99 级。
+Steam 成就随本次更新正式上线：共 69 个，从击败第一位王者到把每个技能练到 99 级，包括新的 Master Tailor 与 Master Hunter。你在游戏里已经获得的成就，会在更新后第一次载入存档时自动同步到 Steam。
 
 一如既往：如果有什么感觉不对劲，欢迎在这里告诉我，或者通过选项里的问题报告按钮反馈。下一次更新 1.3.0《Alive》，会把酒馆带进 New Haven。
 
