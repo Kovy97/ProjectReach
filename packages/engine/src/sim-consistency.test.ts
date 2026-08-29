@@ -54,6 +54,13 @@ const LADDER_BASELINE = new Set([
   // (das wäre Welle 3/Ring-Kurve, außerhalb dieses Auftrags).
   "sapphire_ring->gemstone_ring",
   "alpha_fang_amulet->ruby_amulet",
+  // Schmuck-Rework W3 (content-dev, 29.08.2026, §1.5/§3.3): bloodstone_ring auf die Ring-Kurve
+  // gehoben (5→8 Attributpunkte, skillBoost power 1→2) — coreStatScore steigt über spellbinder_ring
+  // (Lv46, unverändert, 6 Pkt + magic 2). Exakt das Paar, das der Kopfkommentar oben schon als
+  // "kommen sie je zurück, bewusst neu bewerten" ankündigt (Sweep6-T6-P4-Trim 2026-07-03) — jetzt
+  // durch die Kurve wieder ausgelöst, bewusst erneut gepinnt statt spellbinder_ring (außerhalb des
+  // W3-Auftrags: nicht in der §1.5/§3.3-Liste der 6 zu hebenden Ringe) mitzuheben.
+  "bloodstone_ring->spellbinder_ring",
   "pyre_staff->mithril_staff",
   "runite_staff->voidcaller_staff",
   "voidcaller_staff->bloodiron_staff",

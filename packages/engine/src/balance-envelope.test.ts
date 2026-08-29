@@ -237,14 +237,27 @@ describe("Balance-Envelope §3: Cap-Bindungs-Detektoren (heutige Realität)", ()
       ranged: CRIT_CHANCE_CAP,
       magic: CRIT_CHANCE_CAP,
     };
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 5, §1.7 Glücks-Pass): lck sinkt
+    // katalogweit von 20,6 % auf 12,6 % des Schmuck-Attributbudgets (44 Ring-/Amulett-Items,
+    // Summe je Stück unverändert — reine Umverteilung zu str/dex/int). Der crit-optimierte CL-30-
+    // Voll-Stack (wenige Slots requirement-legal) erreicht dadurch erstmals NICHT mehr lck ≥ 100 für
+    // den 2,50-critDamage-Deckel (1,5 + lck·0,01) — critChance (dex·0,4 + lck·0,6) bleibt am
+    // 0,5-Deckel, weil der dex-Anteil den Verlust auffängt. Ab CL 60 sind genug zusätzliche Slots
+    // legal, der Deckel bindet dort weiterhin exakt.
+    const CL30_CRIT_DAMAGE: Record<WeaponStyle, number> = {
+      melee: 2.47,
+      ranged: 2.39,
+      magic: 2.43,
+    };
     for (const lvl of TIERS) {
       for (const style of STYLES) {
         const st = computeStats(bis(style, lvl, "crit").state, content);
         if (lvl === 30) {
           expect(st.critChance, `critChance CL${lvl}/${style}`).toBeCloseTo(CL30_CRIT_CHANCE[style], 4);
-        } else {
-          expect(st.critChance, `critChance CL${lvl}/${style}`).toBe(CRIT_CHANCE_CAP);
+          expect(st.critDamage, `critDamage CL${lvl}/${style}`).toBeCloseTo(CL30_CRIT_DAMAGE[style], 4);
+          continue;
         }
+        expect(st.critChance, `critChance CL${lvl}/${style}`).toBe(CRIT_CHANCE_CAP);
         expect(st.critDamage, `critDamage CL${lvl}/${style}`).toBe(CRIT_DAMAGE_CAP);
       }
     }
@@ -443,9 +456,18 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // geändert (die A4-Stoff-Drops selbst tragen moderate wardCapacity je Rare-Drop-Philosophie) —
     // die Bewegung kommt ausschließlich aus der gepinnten Runenwert-Änderung, wie in §6 des
     // Dokuments vorhergesagt ("Ward-Schiene ... steigt ... neu pinnen").
+    // Re-Messung 2026-08-29 (Schmuck-Rework W3, §3.6): die neue Magie-Ring-Reihe trägt erstmals
+    // wardCapacity auf RINGEN (emberglass_loop Req34/ward7, hollowlight_seal Req55/ward12,
+    // nightwell_loop Req70/ward15, voidscribe_glyph Req85/ward18, godsight_loop Req95/ward20) — bei
+    // "alle Skills = targetLevel" (buildBisCharacter) füllt das ab CL 60 (hollowlight_seal legal)
+    // erstmals überhaupt beide Ringplätze mit wardCapacity; bei CL 90 sind zusätzlich nightwell_loop
+    // und voidscribe_glyph legal (godsight_loop Req95 noch nicht). Vorher war dort 0 Basiswert,
+    // jeder Ring-Slot nimmt aber ZUSÄTZLICH an der Rune-Stapelung teil (s. Kommentar A5 oben) — der
+    // Sprung ist deshalb ein Vielfaches des reinen Basiswerts, nicht 1:1. CL 30 (alle Reqs >30)
+    // unverändert: 730.8→947.64→1346.64 (CL60), 1209.5→1558.32→1987.32 (CL90).
     expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(818.06, 1);
-    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(947.64, 1);
-    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1558.32, 1);
+    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(1346.64, 1);
+    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1987.32, 1);
   });
 
   it("Buff-Exklusivitäts-Inventur (#303 L3): alle Tempo-/Krit-Tonika sind 'offense' ⇒ aktiv max. −750 ms / +0.20 crit", () => {
@@ -778,13 +800,60 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // (Kontest-`evasion` verschiebt sich mit, s. Kopf-Pin oben): ranged/idol_warden 78.23/19.78 →
     // 73.03/19.60, ranged/last_idol 258.94/13.67 → 241.29/13.50. Melee/Magic exakt unverändert
     // (kein Nicht-Ranged-Slot betroffen).
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 3, §3.2/§3.3): armorPen erstmals auf
+    // den bestehenden Craft-Ringen (ruby/bloodstone/diamond/onyx/voidstone/godgem_ring + garnet/
+    // gemstone/warband/grave_warden) — der CL-90-Melee-„damage"-Build trägt jetzt godgem_ring
+    // (armorPen 0,018) auf beiden Ringplätzen (0,036 zusätzlich zur Waffe) und mitigiert die
+    // Idol-Boss-Rüstung stärker ⇒ schnellerer Kill: idol_warden 59.39→58.93 s. Boss→Spieler
+    // unverändert (kein Angriffswert des Spielers geändert, nur Verteidigung gegen Boss-Rüstung).
+    // last_idol trägt denselben armorPen-Hebel: 199.15→197.39 s.
+    // wardBreak auf der neuen Magie-Ring-Reihe (§3.6) hebt zusätzlich die Ward-Durchdringung des
+    // CL-90-Magic-„damage"-Builds (godsight_loop wardBreak 0,026 auf beiden Ringplätzen) ⇒ etwas
+    // schnellerer Kill gegen die ward-tragenden Idol-Bosse: idol_warden 52.02→52.67 s. Derselbe Kit-
+    // Wechsel trägt jetzt auch wardCapacity auf beiden Ringen (statt keiner) — der Boss braucht
+    // dadurch spürbar länger, den Magic-Build zu töten: idol_warden→Spieler 28.03→31.76 s.
+    // last_idol (schwächere Boss-Rüstung/-Angriff) trägt denselben wardBreak-Hebel: 174.56→176.94 s,
+    // und denselben wardCapacity-Hebel gegen den Boss: last_idol→Spieler 30.12→34.21 s.
+    // Re-Messung 2026-08-29 (content-dev): voidscribe_glyph int 8→6/wis 5→7 (spell-focus.test.ts §3
+    // Re-Pin, s. Item-Kommentar) senkt das INT des CL-90-Magic-Builds leicht ⇒ minimal langsamerer
+    // Kill: idol_warden 52.67→53.36 s, last_idol trägt denselben Hebel: 176.94→177.85 s.
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 4, §3.7): armorPen erstmals auf den
+    // Amulett-Slot (5 neue Nahkampf-Amulette + die 5 Edelstein-Amulette als Ersatz für das laut
+    // Doku geplante, aber Guard-verbotene bonus.hpRegenPerSec) — der CL-90-Melee-Build trägt jetzt
+    // zusätzlich warcrown_reliquary (armorPen 0,018) am Amulett-Slot obendrauf ⇒ noch schnellerer
+    // Kill: idol_warden 58.93→57.54 s. Der zusätzliche Attributpunkt-Zuwachs (Amulett trägt jetzt
+    // mehr str/con) verschiebt auch die Boss→Spieler-Zeile geringfügig: 20.65→20.48. last_idol
+    // trägt denselben Doppel-Hebel: 197.39→192.58 s, Boss→Spieler 14.63→14.50.
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 4, §3.8): der CL-90-Melee-„damage"-
+    // Build (Score-Heuristik, kein echter DPS-Optimierer) ersetzt Amulett/ring2 durch die beiden
+    // neuen Fundstücke ashenvow_locket (str8/con5, desperation) und thornwarden_seal (str7/con7/
+    // lck2, vengeance) — mehr Rohattribute, aber KEIN armorPen mehr an diesen zwei Slots (die
+    // Vorgänger trugen welches). Gegen die rüstungsbasierten Idol-Bosse (defenseType armor) wiegt
+    // der Mitigations-Verlust den Rohschaden-Gewinn auf — dasselbe „Esthar vs. aetherium_maul"-
+    // Muster wie oben: langsamerer statt schnellerer Kill: idol_warden 57.54→59.57 s, last_idol
+    // trägt denselben Effekt: 192.58→199.69 s, Boss→Spieler beider Bosse geht dabei leicht zurück
+    // auf die alten W3-Werte (20.65/14.63).
+    // Der CL-90-Magic-„damage"-Build ersetzt sein Amulett durch tidewrack_collar (int6/wis3,
+    // wardSiphon) — KEIN wardCapacity mehr an diesem Slot (der Vorgänger gravecall_sigil trug
+    // wardCapacity 20) ⇒ der Boss braucht spürbar weniger Zeit, den Build zu töten: idol_warden→
+    // Spieler 31.54→30.42 s, last_idol→Spieler 33.97→32.77 s. Spieler→Boss-Zeilen fast unverändert
+    // (minimale int/wis-Verschiebung): idol_warden 53.36→53.45 s, last_idol 179.28→179.58 s.
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 5, §1.7 Glücks-Pass): mehrere der
+    // 44 umverteilten Schmuck-/Signatur-Items tragen jetzt mehr str/con statt lck — der CL-90-
+    // Melee-„damage"-Build wird dadurch stärker, schnellerer Kill: idol_warden 59.57→57.76 s
+    // (Boss→Spieler 20.65→20.76), last_idol 199.69→193.68 s (Boss→Spieler 14.63→14.70). Derselbe
+    // Pass hebt int/wis auf mehreren Magie-Items (stormcaller_amulet, abyssal_signet, ...) — der
+    // CL-90-Magic-Build trifft dadurch stärker. Nach den beiden spell-focus-Korrekturen (abyssal_
+    // signet int 7→4/wis 0→3, hollowveil_locket int 9→8/wis 6→7, s. dortige Item-Kommentare) final
+    // gemessen: idol_warden 53.45→52.69 s (Boss→Spieler 30.42→30.00), last_idol 179.58→176.98 s
+    // (Boss→Spieler 32.77→32.32).
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 59.39, 20.65],
-      ["melee", "last_idol", 199.15, 14.63],
+      ["melee", "idol_warden", 57.76, 20.76],
+      ["melee", "last_idol", 193.68, 14.70],
       ["ranged", "idol_warden", 73.03, 19.6],
       ["ranged", "last_idol", 241.29, 13.5],
-      ["magic", "idol_warden", 52.02, 28.03],
-      ["magic", "last_idol", 174.56, 30.12],
+      ["magic", "idol_warden", 52.69, 30.00],
+      ["magic", "last_idol", 176.98, 32.32],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);
@@ -876,9 +945,12 @@ describe("Balance-Envelope §6: Runen-Stapelung (Chef-Entscheid 25.08.2026)", ()
 //    Suite (idol-sanctum-clear.test.ts) kann sie tragen, dort rein verhaltensbasiert geprüft.
 // ───────────────────────────────────────────────────────────────────────────
 describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () => {
-  it("Ring-Umbau SAVE 69: alle 21 Meisterringe existieren, GENAU 15 tragen einen masterPerk", () => {
+  it("Ring-Umbau SAVE 69: alle 21 Meisterringe existieren, GENAU 19 tragen einen masterPerk", () => {
     // Detektor: reißt dieser Pin, hat sich die Perk-Verteilung der Meisterringe verschoben —
     // bewusst neu messen & pinnen (Anzahl Träger, Kampf-Envelopes §2-§5 gegenprüfen).
+    // Schmuck-Rework Welle 5 (content-dev, 29.08.2026, §3.9): 4 neue craftbare Skilling-Ringe/
+    // -Amulette (oreveined_hoop/thriftcut_cinch/steadhand_cuff/harvestward_clutch, jeweils halbe
+    // Magnitude ihres gleichnamigen Meisterrings) — 15→19.
     const carriers = Object.values(content.items)
       .filter((it) => it.masterPerk)
       .map((it) => it.id)
@@ -900,6 +972,10 @@ describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () 
         "ring_master_smithing",
         "ring_master_thieving",
         "ring_master_woodcutting",
+        "oreveined_hoop",
+        "thriftcut_cinch",
+        "steadhand_cuff",
+        "harvestward_clutch",
       ].sort(),
     );
     const ringIds = Object.keys(content.skills)

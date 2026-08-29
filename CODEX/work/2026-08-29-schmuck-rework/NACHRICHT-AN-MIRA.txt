@@ -29,15 +29,15 @@ WICHTIG: KEIN Gluehen, kein Schimmer, keine Partikel. Ausruestung glueht in Grim
 das duerfen nur Runen und Traenke.
 
 WICHTIG ZU DEN DATEINAMEN
-Die 14 IDs der Welle 2 sind final und im Spiel angelegt, die kannst du direkt als Dateinamen nehmen.
-Die IDs der Wellen 3, 4a und 4b im Brief sind noch VORLAEUFIG - die schicke ich dir nach, sobald die
-Stuecke im Katalog stehen. Fang bitte mit Welle 2 an, das ist ohnehin P1.
+Alle 41 Stuecke sind inzwischen im Katalog angelegt, die IDs im Brief sind final. Du kannst sie
+direkt als Dateinamen nehmen. Fang bitte mit Welle 2 an (Fernkampf), das ist P1.
 
 REIHENFOLGE
   Welle 2  14 Stueck Fernkampf   P1, zuerst — das ist die eigentliche Luecke
   Welle 3  10 Stueck Magie       P2
   Welle 4a  5 Stueck Nahkampf-Amulette  P2
   Welle 4b  8 Stueck Fundstuecke P2, Einzelstuecke mit Charakter
+  Welle 5   4 Stueck Handwerk/Sammeln  P3, Werkzeug-Anmutung statt Prunk
 
 Alle 41 mit Item-ID, Name, Stufe und Motivbeschreibung stehen im Brief:
 CODEX/work/2026-08-29-schmuck-rework/BRIEF.md

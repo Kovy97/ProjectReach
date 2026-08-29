@@ -77,7 +77,10 @@ describe("Suffix-Klassen-Trennung (#p14): Pool-Tags", () => {
     // 7 neue Fernkampf-Ringe + 7 neue Fernkampf-Amulette tragen `evasionRating` als Trinity-Flavor
     // (exakt dasselbe Muster wie die bestehenden Sammel-Meisterringe, s. Kommentar oben) — 97→111.
     // Bleiben klassenfrei bei den Suffix-/modifiers-Checks unten (JEWELRY_SLOTS-Ausnahme).
-    expect(counts).toEqual({ armor_plate: 178, armor_leather: 111, armor_cloth: 75 });
+    // Schmuck-Rework Welle 3 (content-dev, 29.08.2026, §3.6): 5 neue Magie-Ringe + 5 neue
+    // Magie-Amulette tragen `wardCapacity` als Trinity-Flavor (gleiches Muster) — 75→85. Ebenfalls
+    // klassenfrei (JEWELRY_SLOTS-Ausnahme).
+    expect(counts).toEqual({ armor_plate: 178, armor_leather: 111, armor_cloth: 85 });
   });
 
   it("jedes Rüstungsteil mit Klassen-Tag behält zusätzlich das allgemeine armor-Tag (Runen-Gate)", () => {

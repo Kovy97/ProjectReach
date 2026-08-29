@@ -363,13 +363,15 @@ export const content: ContentDB = {
     // ── Edelstein-Schmuck (cut_gemstone-Senke) ────────────────────────
     gemstone_ring: {
       id: "gemstone_ring", name: { en: "Gemstone Ring", de: "Edelsteinring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { con: 1, lck: 2 }, skillBoost: { attack: 1 },
+      // Schmuck-Rework W3 (§1.5/§3.3): war con1,lck2=3 Pkt — Ziel round(0,8+0,17·20)=4. +1 str, dazu
+      // Trinity armorPen(20)=0,005 (Kurve 0,004→0,018).
+      icon: "💍", slot: "ring1", modifiers: { str: 2, con: 1, lck: 1 }, skillBoost: { attack: 1 }, armorPen: 0.005,
       requirements: { jewelcrafting: 20 }, value: 400, rarity: "rare", // sweep6-batchC T10: 350→400 (war < sapphire_ring[req15,360] — Familien-Leiter-Inversion)
     },
     // balance-pass2 2026-07-01: 8b — Füller-Item für die jewelcrafting-L20-34-Lücke (sapphire_amulet L18 → ruby_amulet L38)
     gemstone_amulet: {
       id: "gemstone_amulet", name: { en: "Gemstone Amulet", de: "Edelsteinamulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { con: 2, lck: 2 }, skillBoost: { attack: 1 },
+      icon: "📿", slot: "amulet", modifiers: { str: 1, con: 2, lck: 1 }, skillBoost: { attack: 1 },
       requirements: { jewelcrafting: 26 }, value: 480, rarity: "rare",
     },
     // ── Ausrüstung ───────────────────────────────────────────────────
@@ -1053,7 +1055,8 @@ export const content: ContentDB = {
     // ── Schmuck (Jewelcrafting: Edelstein + Barren → Amulett/Ring). Füllt Hals-/Ring-Slots. ──
     garnet_ring: {
       id: "garnet_ring", name: { en: "Garnet Ring", de: "Granatring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", skillBoost: { power: 1 },
+      // Schmuck-Rework W3 (§3.2/§3.3): Trinity-Wert armorPen(1)=0,002 (Kurvenboden, unter L15-Start 0,004).
+      icon: "💍", slot: "ring1", skillBoost: { power: 1 }, armorPen: 0.002,
       modifiers: { str: 1 },
       requirements: { jewelcrafting: 1 }, value: 160,
     },
@@ -1066,7 +1069,7 @@ export const content: ContentDB = {
     // Raubzahn-Schmuck (Jewelcrafting ohne Edelstein — verwertet Wildwald-Reißzähne, offensiv).
     fang_necklace: {
       id: "fang_necklace", name: { en: "Predator Fang Necklace", de: "Raubzahnkette" }, type: "equipment", stackable: false,
-      icon: "🦷", slot: "amulet", modifiers: { str: 1, lck: 2 }, skillBoost: { power: 1 },
+      icon: "🦷", slot: "amulet", modifiers: { str: 3 }, skillBoost: { power: 1 },
       // Schmuck-Rework W1 (§P2): Wert 90 lag unter garnet_amulet (L3, Wert 200), obwohl statistisch
       // stärker (3 vs 2 Punkte) — korrigiert.
       requirements: { jewelcrafting: 5 }, value: 240,
@@ -1077,7 +1080,9 @@ export const content: ContentDB = {
       // (Intelligenz plus Nahkampf-Treffsicherheit auf demselben Ring, Richtungskonflikt zum eigenen
       // sapphire_amulet). Chef-Entscheid E-5: umwidmen statt festnageln — der Stein ist blau, das
       // Amulett ist Magie, der Ring folgt. skillBoost.magic 1 + wis 1 ergänzt.
-      icon: "💍", slot: "ring1", modifiers: { int: 2, wis: 1 }, skillBoost: { magic: 1 },
+      // Schmuck-Rework W3 (§3.2/§3.3): Trinity-Wert auf die Craft-Leiter — wardBreak(15)=0,006
+      // (Kurve 0,006→0,026 bis L95/99, Deckel 0,03 = ring_master_magic).
+      icon: "💍", slot: "ring1", modifiers: { int: 2, wis: 1 }, skillBoost: { magic: 1 }, wardBreak: 0.006,
       requirements: { jewelcrafting: 15 }, value: 360, rarity: "common",
     },
     sapphire_amulet: {
@@ -1087,73 +1092,112 @@ export const content: ContentDB = {
     },
     ruby_ring: {
       id: "ruby_ring", name: { en: "Ruby Ring", de: "Rubinring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { str: 2, lck: 2 }, skillBoost: { power: 1 },
+      // Schmuck-Rework W3 (§1.5/§3.3): war str2,lck2=4 Pkt (Ziel round(0,8+0,17·34)=7, Δ−3) —
+      // +2 str/+1 con. skillBoost power 1→2 (ceil(34/24)=2, war auf altem Wert stehengeblieben).
+      // Trinity armorPen(34)=0,007.
+      icon: "💍", slot: "ring1", modifiers: { str: 5, con: 1, lck: 1 }, skillBoost: { power: 2 }, armorPen: 0.007,
       requirements: { jewelcrafting: 34 }, value: 640, rarity: "common",
     },
     ruby_amulet: {
       id: "ruby_amulet", name: { en: "Ruby Amulet", de: "Rubinamulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { str: 3, con: 2, lck: 2 }, skillBoost: { power: 1 },
+      icon: "📿", slot: "amulet", modifiers: { str: 4, con: 2, lck: 1 }, skillBoost: { power: 1 },
       // Schmuck-Rework W1 (§P3): Wert 760 lag unter alpha_fang_amulet (L36, 6 Pkt, Wert 900), trotz
       // höherer Stufe und mehr Punkten — korrigiert.
       requirements: { jewelcrafting: 38 }, value: 980, rarity: "rare",
     },
     diamond_ring: {
       id: "diamond_ring", name: { en: "Diamond Ring", de: "Diamantring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { dex: 1, con: 4, lck: 2 }, skillBoost: { attack: 2 },
+      // Schmuck-Rework W3 (§1.5/§2/§3.3): war dex1,con4,lck2=7 Pkt (Ziel round(0,8+0,17·55)=10, Δ−3)
+      // UND Richtungskonflikt (dex ohne ranged-Boost, §2 Liste) — der 1 dex-Punkt wandert zu str
+      // (melee bleibt melee), +2 str/+1 con zusätzlich. skillBoost attack 2→3 (ceil(55/24)=3).
+      // Trinity armorPen(55)=0,011.
+      icon: "💍", slot: "ring1", modifiers: { str: 3, con: 5, lck: 2 }, skillBoost: { attack: 3 }, armorPen: 0.011,
       // Schmuck-Rework W1 (§Teil 4 Punkt 5): Wert 1200 → 1400 (Preisbruch-Korrektur, s. schmuck-audit).
       requirements: { jewelcrafting: 55 }, value: 1400, rarity: "rare",
     },
     diamond_amulet: {
       id: "diamond_amulet", name: { en: "Diamond Amulet", de: "Diamantamulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 6, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 7, lck: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
+      // Schmuck-Rework W4 (§3.7/§3.11): armorPen(60)=0,012 statt bonus.hpRegenPerSec (Guard-Grund
+      // s. bloodstone_amulet-Kommentar).
+      armorPen: 0.012,
       requirements: { jewelcrafting: 60 }, value: 1500, rarity: "superRare",
     },
     onyx_ring: {
       id: "onyx_ring", name: { en: "Onyx Ring", de: "Onyxring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { str: 2, dex: 1, int: 2, lck: 3 }, skillBoost: { power: 3 },
+      // Schmuck-Rework W3 (§1.5/§2/§3.3): war str2,dex1,int2,lck3=8 Pkt (Ziel round(0,8+0,17·70)=13,
+      // Δ−5) UND Richtungskonflikt (2 tote int-Punkte neben skillBoost.power, §2 Liste) — int
+      // entfernt, +3 str/+2 con dafür plus die fehlenden 5 Punkte der Kurve (+2 str/+3 con weiter).
+      // skillBoost power 3 = ceil(70/24)=3, unverändert. Trinity armorPen(70)=0,014.
+      icon: "💍", slot: "ring1", modifiers: { str: 5, dex: 1, con: 4, lck: 3 }, skillBoost: { power: 3 }, armorPen: 0.014,
       // Schmuck-Rework W1 (§Teil 4 Punkt 5): Wert 2600 → 2400 (Preisbruch-Korrektur, s. schmuck-audit).
       requirements: { jewelcrafting: 70 }, value: 2400, rarity: "superRare",
     },
     onyx_amulet: {
       id: "onyx_amulet", name: { en: "Onyx Amulet", de: "Onyxamulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 7, lck: 5 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 10, lck: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
+      // Schmuck-Rework W4 (§3.7/§3.11): armorPen(75)=0,015 statt bonus.hpRegenPerSec (Guard-Grund
+      // s. bloodstone_amulet-Kommentar).
+      armorPen: 0.015,
       requirements: { jewelcrafting: 75 }, value: 3200, rarity: "superRare",
     },
     // ── Neue Schmuck-Tiers (ERFUNDEN): Lücke L38–55 + Endgame L85–100 ──
     // Magie-Ring ~L46 (füllt Lücke Sapphire L18 → Stormcaller L65)
     spellbinder_ring: {
       id: "spellbinder_ring", name: { en: "Spellbinder Ring", de: "Zauberbinder-Ring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { int: 4, lck: 2 }, skillBoost: { magic: 2 },
+      // Schmuck-Rework W3 (§3.2/§3.3): Trinity-Wert wardBreak(46)=0,006+0,020·(46−15)/80≈0,014.
+      icon: "💍", slot: "ring1", modifiers: { int: 5, lck: 1 }, skillBoost: { magic: 2 }, wardBreak: 0.014,
       requirements: { jewelcrafting: 46 }, value: 1200, rarity: "rare",
     },
     bloodstone_ring: {
       id: "bloodstone_ring", name: { en: "Bloodstone Ring", de: "Blutstein-Ring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { str: 2, dex: 1, lck: 2 }, skillBoost: { power: 1 },
+      // Schmuck-Rework W3 (§1.5/§3.3): war str2,dex1,lck2=5 Pkt (Ziel round(0,8+0,17·44)=8, Δ−3) —
+      // +2 str/+1 con. skillBoost power 1→2 (ceil(44/24)=2). Trinity armorPen(44)=0,009.
+      icon: "💍", slot: "ring1", modifiers: { str: 5, dex: 1, con: 1, lck: 1 }, skillBoost: { power: 2 }, armorPen: 0.009,
       requirements: { jewelcrafting: 44 }, value: 1000, rarity: "rare",
     },
     bloodstone_amulet: {
       id: "bloodstone_amulet", name: { en: "Bloodstone Amulet", de: "Blutstein-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { str: 3, con: 4, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
+      icon: "📿", slot: "amulet", modifiers: { str: 3, con: 5, lck: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
+      // Schmuck-Rework W4 (§3.7/§3.11): Doku wollte hier bonus.hpRegenPerSec ergänzen — verboten
+      // für Nicht-Signaturen (itemization-guards.test.ts EFFECT_WHITELIST: hpRegenPerSec nur auf
+      // legendary/godly). Ersatz in derselben "Nahkampf"-Trinity-Familie: armorPen(48)=0,010
+      // (Kurve wie bei den Craft-Ringen, §3.3).
+      armorPen: 0.010,
       requirements: { jewelcrafting: 48 }, value: 1200, rarity: "superRare",
     },
     voidstone_ring: {
       id: "voidstone_ring", name: { en: "Voidstone Ring", de: "Leerenstein-Ring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { str: 3, dex: 1, int: 4, lck: 3 }, skillBoost: { power: 3 },
+      // Schmuck-Rework W3 (§1.5/§2/§3.3): war str3,dex1,int4,lck3=11 Pkt (Ziel round(0,8+0,17·85)=15,
+      // Δ−4) UND Richtungskonflikt (4 tote int-Punkte, §2 Liste) — int entfernt, +4 str/+4 con statt-
+      // dessen (deckt die fehlenden 4 Kurve-Punkte mit ab). skillBoost power 3→4 (ceil(85/24)=4, war
+      // auf altem Wert stehengeblieben). Trinity armorPen(85)=0,016.
+      icon: "💍", slot: "ring1", modifiers: { str: 7, dex: 1, con: 4, lck: 3 }, skillBoost: { power: 4 }, armorPen: 0.016,
       requirements: { jewelcrafting: 85 }, value: 4200, rarity: "superRare",
     },
     voidstone_amulet: {
       id: "voidstone_amulet", name: { en: "Voidstone Amulet", de: "Leerenstein-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 8, lck: 5 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 11, lck: 2 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +3 con.
+      // Schmuck-Rework W4 (§3.7/§3.11): armorPen(88)=0,017 statt bonus.hpRegenPerSec (Guard-Grund
+      // s. bloodstone_amulet-Kommentar).
+      armorPen: 0.017,
       requirements: { jewelcrafting: 88 }, value: 5500, rarity: "epic",
     },
     godgem_ring: {
       id: "godgem_ring", name: { en: "Godgem Ring", de: "Göttenstein-Ring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { str: 4, dex: 2, int: 5, lck: 6 }, skillBoost: { power: 4 },
+      // Schmuck-Rework W3 (§2 Liste): war str4,dex2,int5,lck6=17 Pkt — schon auf der Kurve (Δ0), nur
+      // Richtungskonflikt (5 tote int-Punkte neben skillBoost.power) — int entfernt, +3 str/+2 con,
+      // Summe bleibt 17. skillBoost power 4 = ceil(95/24)=4, unverändert. Trinity armorPen(95)=0,018
+      // (Endpunkt der Kurve, Deckel 0,02 = ring_master_attack).
+      icon: "💍", slot: "ring1", modifiers: { str: 10, dex: 2, con: 2, lck: 3 }, skillBoost: { power: 4 }, armorPen: 0.018,
       requirements: { jewelcrafting: 95 }, value: 7800, rarity: "epic",
     },
     godgem_amulet: {
       id: "godgem_amulet", name: { en: "Godgem Amulet", de: "Göttenstein-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 9, lck: 7 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
+      icon: "📿", slot: "amulet", modifiers: { dex: 2, con: 13, lck: 3 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
+      // Schmuck-Rework W4 (§3.7/§3.11): armorPen(99)=0,018 (Deckel) statt bonus.hpRegenPerSec
+      // (Guard-Grund s. bloodstone_amulet-Kommentar).
+      armorPen: 0.018,
       requirements: { jewelcrafting: 99 }, value: 9800, rarity: "epic",
     },
     soul_amulet: {
@@ -1168,12 +1212,13 @@ export const content: ContentDB = {
       // 2200 — strikt schlechter als diamond_ring derselben Stufe (7 Pkt, attack 2, Wert 1200) bei
       // 1,8-fachem Preis, trotz zusätzlichem grave_warden_sigil-Input. Auf die Ring-Kurve gehoben
       // (10 Attributpunkte) + skillBoost ergänzt; Wert korrigiert.
-      icon: "💍", slot: "ring1", modifiers: { str: 4, con: 4, lck: 2 }, skillBoost: { power: 3 },
+      // Schmuck-Rework W3 (§3.2/§3.3): Trinity-Wert armorPen(55)=0,011 (Kurve, s. diamond_ring).
+      icon: "💍", slot: "ring1", modifiers: { str: 4, con: 4, lck: 2 }, skillBoost: { power: 3 }, armorPen: 0.011,
       requirements: { jewelcrafting: 55 }, value: 1300, rarity: "rare",
     },
     stormcaller_amulet: {
       id: "stormcaller_amulet", name: { en: "Stormcaller Amulet", de: "Sturmrufer-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 1, int: 5, lck: 4 }, skillBoost: { magic: 3 },
+      icon: "📿", slot: "amulet", modifiers: { dex: 1, int: 7, lck: 2 }, skillBoost: { magic: 3 },
       requirements: { jewelcrafting: 65 }, value: 2800, rarity: "rare",
     },
     heartforged_pendant: {
@@ -1183,12 +1228,13 @@ export const content: ContentDB = {
     },
     warband_signet: {
       id: "warband_signet", name: { en: "Warband Signet", de: "Kriegsbanden-Siegelring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { str: 2, lck: 1 }, skillBoost: { attack: 1 },
+      // Schmuck-Rework W3 (§3.2/§3.3): Trinity-Wert armorPen(15)=0,004 (Kurvenstart).
+      icon: "💍", slot: "ring1", modifiers: { str: 3 }, skillBoost: { attack: 1 }, armorPen: 0.004,
       requirements: { jewelcrafting: 15 }, value: 280, rarity: "rare",
     },
     alpha_fang_amulet: {
       id: "alpha_fang_amulet", name: { en: "Alpha Fang Amulet", de: "Leitwolf-Amulett" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { str: 3, lck: 3 }, skillBoost: { power: 1 },
+      icon: "📿", slot: "amulet", modifiers: { str: 5, lck: 1 }, skillBoost: { power: 1 },
       requirements: { jewelcrafting: 36 }, value: 900, rarity: "rare",
     },
 
@@ -1206,7 +1252,7 @@ export const content: ContentDB = {
     // Art) — neue IDs für die Asset-Bestellung im Content-Bericht.
     kestrel_loop: {
       id: "kestrel_loop", name: { en: "Kestrel Loop", de: "Turmfalken-Reif" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { dex: 2, lck: 1 }, skillBoost: { ranged: 1 },
+      icon: "💍", slot: "ring1", modifiers: { dex: 3 }, skillBoost: { ranged: 1 },
       precision: 0.004, evasionRating: 1,
       requirements: { jewelcrafting: 15 }, value: 360, rarity: "rare",
       description: {
@@ -1286,7 +1332,7 @@ export const content: ContentDB = {
     },
     windwhisper_torc: {
       id: "windwhisper_torc", name: { en: "Windwhisper Torc", de: "Windflüster-Reif" }, type: "equipment", stackable: false,
-      icon: "📿", slot: "amulet", modifiers: { dex: 4, con: 2, lck: 2 }, skillBoost: { ranged: 2 },
+      icon: "📿", slot: "amulet", modifiers: { dex: 5, con: 2, lck: 1 }, skillBoost: { ranged: 2 },
       evasionRating: 3,
       requirements: { jewelcrafting: 38 }, value: 980, rarity: "rare",
       description: {
@@ -1342,6 +1388,366 @@ export const content: ContentDB = {
       description: {
         en: "A godgem reliquary bound in shadowhide over aetherium. Holds the last aim of an archer who never needed a second arrow.",
         de: "Ein Göttenstein-Reliquiar, in Schattenhaut über Aetherium gefasst. Bewahrt das letzte Zielen einer Bogenschützin, die nie einen zweiten Pfeil brauchte.",
+      },
+    },
+
+    // ════════════════════════════════════════════════════════════════════════════════════════
+    // Schmuck-Rework Welle 3 (design/schmuck-audit-2026-08-29.md §3.6/§3.12): Magie-Reihe, füllt
+    // die Lücke oberhalb Juwelierskunst 65 (bisher endete craftbare Magie bei stormcaller_amulet).
+    // Fassung = Stil (§3.4): Runen-/Essenz-Einfassung → Magie, auf derselben Gem-Stufenleiter wie
+    // die Nahkampf-/Fernkampf-Reihen. Ringe tragen zusätzlich zu wardBreak einen kleinen
+    // wardCapacity-Wert ("ward", §3.6-Tabelle) — dadurch fallen sie unter familyKey() in die
+    // "cloth|ring1"-Familie (drop-gear-beats-craft.test.ts), bilden also eine eigene, in sich
+    // konsistente Leiter statt die Melee-"jewelry|ring1"-Familie zu verzerren; Amulette tragen nur
+    // wardCapacity (keine wardBreak, s. §3.3-Tabelle: die Zeile ist explizit "wardCapacity
+    // (Magie-Amulett)"). Attributpunkte round(0,8+0,17·L) bzw. round(1,7+0,17·L), Skill-Boost
+    // ceil(L/24), lck-Anteil ≤ 15 % — Zahlen 1:1 aus §3.6 übernommen (dort bereits gegengerechnet).
+    // Kein eigenes Bild — neue IDs für die Asset-Bestellung im Content-Bericht.
+    emberglass_loop: {
+      id: "emberglass_loop", name: { en: "Emberglass Ring", de: "Glutglas-Ring" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { int: 4, wis: 2, lck: 1 }, skillBoost: { magic: 2 },
+      wardBreak: 0.010, wardCapacity: 7,
+      requirements: { jewelcrafting: 34 }, value: 640, rarity: "rare",
+      description: {
+        en: "Fire rune set behind glass gone amber with old heat. Warms the hand before any spell is even cast.",
+        de: "Feuerrune hinter Glas gefasst, bernsteinfarben von alter Hitze. Wärmt die Hand, noch bevor ein Zauber gewirkt ist.",
+      },
+    },
+    hollowlight_seal: {
+      id: "hollowlight_seal", name: { en: "Hollowlight Signet", de: "Hohllicht-Siegel" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { int: 6, wis: 3, lck: 1 }, skillBoost: { magic: 3 },
+      wardBreak: 0.014, wardCapacity: 12,
+      requirements: { jewelcrafting: 55 }, value: 1400, rarity: "rare",
+      description: {
+        en: "An aether rune sealed in mithril, glowing faintly even in full daylight. The first ring a mage need not be ashamed of.",
+        de: "Eine Aetherrune, in Mithril versiegelt, die selbst bei vollem Tageslicht schwach leuchtet. Der erste Ring, für den sich ein Magier nicht schämen muss.",
+      },
+    },
+    nightwell_loop: {
+      id: "nightwell_loop", name: { en: "Nightwell Ring", de: "Nachtbrunnen-Ring" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { int: 7, wis: 4, lck: 2 }, skillBoost: { magic: 3 },
+      wardBreak: 0.018, wardCapacity: 15,
+      requirements: { jewelcrafting: 70 }, value: 2400, rarity: "rare",
+      description: {
+        en: "Onyx wound around a void rune, drawing its glow from something darker than moonlight. Named for a well no torch has ever lit.",
+        de: "Onyx um eine Leerenrune gewunden, sein Schimmer aus etwas Dunklerem als Mondlicht gespeist. Benannt nach einem Brunnen, den nie eine Fackel erhellte.",
+      },
+    },
+    voidscribe_glyph: {
+      id: "voidscribe_glyph", name: { en: "Voidscribe Band", de: "Leerenschreiber-Band" }, type: "equipment", stackable: false,
+      // Abweichung von §3.6 (int 8/wis 5 → int 6/wis 7, Summe bleibt 15 = round(0,8+0,17·85)):
+      // die volle Doku-Zahl trieb den CL-90-Magic-„damage"-BiS-Kit-INT über 103 und riss
+      // spell-focus.test.ts §3 (Zielkurve +30 %±3 Pp bei CL 90, aetherium_staff spellFocus 0,0032 ×
+      // int) — echter Design-Zielkorridor, kein reiner Beobachtungs-Pin, daher hier neu verteilt
+      // statt den Test aufzuweichen. Punktesumme/Kurve unverändert.
+      icon: "💍", slot: "ring1", modifiers: { int: 6, wis: 7, lck: 2 }, skillBoost: { magic: 4 },
+      wardBreak: 0.022, wardCapacity: 18,
+      requirements: { jewelcrafting: 85 }, value: 4200, rarity: "rare",
+      description: {
+        en: "A voidstone etched with a glyph that rewrites itself when no one is watching. Wearers learn not to read it too closely.",
+        de: "Ein Leerenstein, mit einem Glyphen versehen, der sich selbst umschreibt, sobald niemand hinsieht. Träger lernen, ihn nicht zu genau zu lesen.",
+      },
+    },
+    godsight_loop: {
+      id: "godsight_loop", name: { en: "Godsight Ring", de: "Gottblick-Ring" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { int: 9, wis: 5, lck: 3 }, skillBoost: { magic: 4 },
+      wardBreak: 0.026, wardCapacity: 20,
+      requirements: { jewelcrafting: 95 }, value: 7800, rarity: "epic",
+      description: {
+        en: "A godgem set in blessed silver, said to show its wearer one true thing before every cast. Few claim to enjoy what they see.",
+        de: "Ein Göttenstein, in geweihtem Silber gefasst, der seinem Träger vor jedem Zauber angeblich eine Wahrheit zeigt. Kaum jemand behauptet, sie gern zu sehen.",
+      },
+    },
+    ashcant_cord: {
+      id: "ashcant_cord", name: { en: "Ashcant Pendant", de: "Aschgesang-Anhänger" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { int: 4, wis: 2, con: 2 }, skillBoost: { magic: 2 },
+      wardCapacity: 14,
+      requirements: { jewelcrafting: 38 }, value: 980, rarity: "rare",
+      description: {
+        en: "A ruby strung on iron wire, wound with a chant sung over ash. The words are long forgotten; the warmth remains.",
+        de: "Ein Rubin an Eisendraht, umwunden mit einem über Asche gesungenen Gesang. Die Worte sind längst vergessen, die Wärme bleibt.",
+      },
+    },
+    gravecall_sigil: {
+      id: "gravecall_sigil", name: { en: "Gravecall Amulet", de: "Grabruf-Amulett" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { int: 5, wis: 3, con: 2 }, skillBoost: { magic: 2 },
+      wardCapacity: 20,
+      requirements: { jewelcrafting: 48 }, value: 1200, rarity: "rare",
+      description: {
+        en: "A bloodstone bound in gravesteel and grave-ash, meant to call a shield from somewhere the caster cannot see.",
+        de: "Ein Blutstein, in Grabstahl und Grabasche gefasst, um einen Schutzschild aus einem Ort zu rufen, den der Zauberer selbst nicht sieht.",
+      },
+    },
+    duskveil_wreath: {
+      id: "duskveil_wreath", name: { en: "Duskveil Chain", de: "Dämmerschleier-Kette" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { int: 7, wis: 4, con: 3 }, skillBoost: { magic: 3 },
+      wardCapacity: 30,
+      requirements: { jewelcrafting: 75 }, value: 3200, rarity: "rare",
+      description: {
+        en: "Onyx wrapped in runite and ghostweave, said to dim the room a little wherever it is worn.",
+        de: "Onyx, in Runit und Geistgewebe gewickelt, der den Raum ein wenig verdunkeln soll, wo immer er getragen wird.",
+      },
+    },
+    voidsong_locket: {
+      id: "voidsong_locket", name: { en: "Voidsong Amulet", de: "Leerengesang-Amulett" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { int: 8, wis: 5, con: 4 }, skillBoost: { magic: 4 },
+      wardCapacity: 36,
+      requirements: { jewelcrafting: 88 }, value: 5500, rarity: "rare",
+      description: {
+        en: "A voidstone locket that hums a note no one else can hear. Casters swear it keeps perfect time with their own pulse.",
+        de: "Ein Leerenstein-Medaillon, das einen Ton summt, den sonst niemand hört. Zauberer schwören, er halte den exakten Takt des eigenen Pulses.",
+      },
+    },
+    godgem_reliquary: {
+      id: "godgem_reliquary", name: { en: "Godgem Reliquary", de: "Gottstein-Reliquiar" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { int: 9, wis: 5, con: 4 }, skillBoost: { magic: 4 },
+      wardCapacity: 40,
+      requirements: { jewelcrafting: 99 }, value: 9800, rarity: "epic",
+      description: {
+        en: "A godgem reliquary woven through with starweave, holding the last ward of a caster who never needed a second one.",
+        de: "Ein Göttenstein-Reliquiar, mit Sterngewebe durchwoben, das den letzten Schutzschild einer Zauberin bewahrt, die nie einen zweiten brauchte.",
+      },
+    },
+
+    // ════════════════════════════════════════════════════════════════════════════════════════
+    // Schmuck-Rework Welle 4 (design/schmuck-audit-2026-08-29.md §3.7/§3.12): offensive Nahkampf-
+    // Amulette, füllt die Lücke oberhalb ruby_amulet(L38) — die Edelstein-Amulette (bloodstone/
+    // diamond/onyx/voidstone/godgem_amulet) bleiben die neutrale Zähigkeits-Linie (dex/con/lck,
+    // kein Boost außer ihrem eigenen Thema), diese fünf sind die offensive Alternative daneben.
+    // ABWEICHUNG vom Dokument: §3.7 wollte `bonus.hpRegenPerSec` — verboten für Nicht-Signaturen
+    // (itemization-guards.test.ts EFFECT_WHITELIST: hpRegenPerSec/lifesteal/critDamage nur auf
+    // legendary/godly-Items, diese hier sind rare/epic). Ersatz: `armorPen` (dieselbe "Nahkampf"-
+    // Trinity-Familie wie die Craft-Ringe aus Welle 3, §3.1/§3.3-Kurve), zusätzlich auf den fünf
+    // Edelstein-Amuletten oben nachgezogen (dieselbe Stufe, derselbe Grund). Attributpunkte
+    // round(1,7+0,17·L), Skill-Boost ceil(L/24) — Zahlen aus §3.7 übernommen.
+    gorecrown_locket: {
+      id: "gorecrown_locket", name: { en: "Gorecrown Pendant", de: "Blutkron-Anhänger" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { str: 5, con: 4, lck: 1 }, skillBoost: { power: 2 },
+      armorPen: 0.010,
+      requirements: { jewelcrafting: 48 }, value: 1200, rarity: "rare",
+      description: {
+        en: "A bloodstone set in gravesteel over warhide, said to remember every battle its wearer walked away from.",
+        de: "Ein Blutstein, in Grabstahl über Kriegshaut gefasst, der sich angeblich an jede Schlacht erinnert, die sein Träger überlebte.",
+      },
+    },
+    ironvow_collar: {
+      id: "ironvow_collar", name: { en: "Ironvow Chain", de: "Eisenschwur-Kette" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { str: 6, con: 4, lck: 2 }, skillBoost: { power: 3 },
+      armorPen: 0.012,
+      requirements: { jewelcrafting: 60 }, value: 1600, rarity: "rare",
+      description: {
+        en: "A diamond bound twice in mithril wire, worn by warriors who swore an oath they intend to outlive.",
+        de: "Ein Diamant, zweifach in Mithrildraht gebunden, getragen von Kriegern, die einen Schwur ablegten, den sie zu überleben gedenken.",
+      },
+    },
+    reavers_torc: {
+      id: "reavers_torc", name: { en: "Reaver's Torc", de: "Räuber-Reif" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { str: 7, con: 5, lck: 2 }, skillBoost: { power: 3 },
+      armorPen: 0.015,
+      requirements: { jewelcrafting: 75 }, value: 3200, rarity: "rare",
+      description: {
+        en: "Onyx set twice in runite, taken from a raider who never once let an enemy choose the ground.",
+        de: "Onyx, zweifach in Runit gefasst, einem Plünderer abgenommen, der niemals dem Feind das Schlachtfeld überließ.",
+      },
+    },
+    bloodiron_locket: {
+      id: "bloodiron_locket", name: { en: "Bloodiron Locket", de: "Bluteisen-Medaillon" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { str: 8, con: 6, lck: 3 }, skillBoost: { power: 4 },
+      armorPen: 0.017,
+      requirements: { jewelcrafting: 88 }, value: 5500, rarity: "rare",
+      description: {
+        en: "A voidstone locket wound twice in bloodiron. Opens onto nothing — the war it remembers ended badly for everyone else.",
+        de: "Ein Leerenstein-Medaillon, zweifach in Bluteisen gewunden. Öffnet sich zu nichts — der Krieg, an den es sich erinnert, endete für alle anderen schlecht.",
+      },
+    },
+    warcrown_reliquary: {
+      id: "warcrown_reliquary", name: { en: "Warcrown Reliquary", de: "Kriegskron-Reliquiar" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { str: 9, con: 6, lck: 3 }, skillBoost: { power: 4 },
+      armorPen: 0.018,
+      requirements: { jewelcrafting: 99 }, value: 9800, rarity: "epic",
+      description: {
+        en: "A godgem reliquary set twice in godiron, holding the crown of a warlord who never once needed to raise it in defense.",
+        de: "Ein Göttenstein-Reliquiar, zweifach in Götzeneisen gefasst, das die Krone eines Kriegsherrn birgt, der sie nie zur Verteidigung erheben musste.",
+      },
+    },
+
+    // ════════════════════════════════════════════════════════════════════════════════════════
+    // Schmuck-Rework Welle 4 (design/schmuck-audit-2026-08-29.md §3.8/§3.12): findbare Reihe, acht
+    // Fundstücke mit auf Schmuck bislang ungenutzten weaponEffect-Kinds (§3.2: craftbar = Trinity,
+    // findbar = Effekt). Fundorte waren bewusst offen (Chef-Entscheid E-2) — content-dev-Wahl,
+    // Begründung je Stück am Loot-Eintrag. Zwei ABWEICHUNGEN vom Dokument, beide Guard-erzwungen:
+    //  - `thorns` ist auf Rüstung/Schmuck NUR auf `thornmail_gauntlets` erlaubt
+    //    (itemization-guards.test.ts §5.1c) — thornwarden_seal trägt stattdessen `vengeance`
+    //    (nächstverwandte "reaktive Vergeltung"-Mechanik aus derselben Palette).
+    //  - Genau EIN skillBoost je Stück ist Pflicht (itemization-guards.test.ts §4.4, Ausnahme nur
+    //    für `slayer_*`-Items) — sunder_crown trägt darum KEINEN skillBoost mehr (Doku wollte
+    //    attack+ranged+magic gleichzeitig); die Hybrid-Identität trägt die gleichmäßige
+    //    str/dex/int/con-Streuung allein.
+    // Zusätzlich: execute/firstStrike/momentum/thorns/critBurst-Magnituden folgen der REALEN
+    // Katalog-Konvention (siehe die jeweiligen Bestandsbeispiele), nicht den Doku-Platzhaltern —
+    // die Doku nannte für diese fünf Kinds Werte, die mit jedem bestehenden Träger derselben Art
+    // brechen (z. B. firstStrike ist überall magnitude 1 = ×2, nie ein Bruchteil).
+    cutthroat_loop: {
+      id: "cutthroat_loop", name: { en: "Cutthroat Loop", de: "Kehlschnitt-Reif" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 6, lck: 1 }, skillBoost: { ranged: 1 },
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      value: 900, rarity: "rare",
+      description: {
+        en: "A jackal-tooth ring worn by hunters who wait for a wound to open before they strike. Rewards a strike that ends things.",
+        de: "Ein aus Schakalzähnen gefertigter Ring, getragen von Jägern, die warten, bis eine Wunde sich öffnet, bevor sie zuschlagen. Belohnt den Schlag, der alles beendet.",
+      },
+    },
+    firstlight_seal: {
+      id: "firstlight_seal", name: { en: "Firstlight Signet", de: "Erstlicht-Siegel" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { str: 4, con: 3 }, skillBoost: { attack: 2 },
+      weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
+      value: 1400, rarity: "superRare",
+      description: {
+        en: "Struck from the first ember of a forge fire. Every fight is decided in the opening blow, or not at all.",
+        de: "Aus der ersten Glut eines Schmiedefeuers geschlagen. Jeder Kampf entscheidet sich im ersten Schlag, oder gar nicht.",
+      },
+    },
+    tidewrack_collar: {
+      id: "tidewrack_collar", name: { en: "Tidewrack Chain", de: "Flutbruch-Kette" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { int: 6, wis: 3 }, skillBoost: { magic: 2 },
+      weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.12, durationMs: 0 },
+      value: 1800, rarity: "rare",
+      description: {
+        en: "Salt-crusted and cold, taken from a singer who drowned sailors with her own voice. Turns stolen strength into a shield.",
+        de: "Salzverkrustet und kalt, einer Sängerin abgenommen, die Seeleute mit der eigenen Stimme ertränkte. Verwandelt gestohlene Kraft in einen Schutzschild.",
+      },
+    },
+    hollowmarch_notch: {
+      id: "hollowmarch_notch", name: { en: "Hollowmarch Band", de: "Hohlmarsch-Band" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 7, con: 3, lck: 2 }, skillBoost: { ranged: 3 },
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 },
+      value: 3000, rarity: "epic",
+      description: {
+        en: "Worn smooth by an endless march through hollow halls. Grows stronger with every step that does not stop.",
+        de: "Glatt getragen von einem endlosen Marsch durch hohle Hallen. Wird mit jedem Schritt stärker, der nicht innehält.",
+      },
+    },
+    ashenvow_locket: {
+      id: "ashenvow_locket", name: { en: "Ashen Vow Pendant", de: "Aschenschwur-Anhänger" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { str: 8, con: 5 }, skillBoost: { power: 3 },
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 },
+      value: 3800, rarity: "epic",
+      description: {
+        en: "A vow sworn over burning coals, kept even as the flame went out. Strikes hardest with the last breath in the lungs.",
+        de: "Ein über glühenden Kohlen geschworener Eid, gehalten selbst als die Flamme erlosch. Schlägt am härtesten mit dem letzten Atemzug in der Lunge.",
+      },
+    },
+    rimeheart_locket: {
+      id: "rimeheart_locket", name: { en: "Rimeheart Locket", de: "Reifherz-Medaillon" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { int: 8, wis: 4, con: 3 }, skillBoost: { magic: 3 },
+      weaponEffect: { type: "frostbite", chance: 1, magnitude: 0.30, durationMs: 0 },
+      value: 5200, rarity: "epic",
+      description: {
+        en: "Frozen through by an ice-mage who never once felt the cold. Punishes anything already too slow to flee.",
+        de: "Durch und durch gefroren von einer Eismagierin, die die Kälte nie spürte. Bestraft alles, was schon zu langsam ist, um zu fliehen.",
+      },
+    },
+    thornwarden_seal: {
+      id: "thornwarden_seal", name: { en: "Thornwarden Signet", de: "Dornwächter-Siegel" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { str: 7, con: 7, lck: 2 }, skillBoost: { attack: 3 },
+      // Abweichung von §3.8 (thorns → vengeance): s. Wellen-Kopfkommentar oben.
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.32, durationMs: 0 },
+      value: 5800, rarity: "epic",
+      description: {
+        en: "Carved by a guardian who turned every blow taken into the next one thrown. Rewards the fighter still standing.",
+        de: "Geschnitzt von einem Wächter, der jeden erlittenen Schlag in den nächsten eigenen verwandelte. Belohnt den Kämpfer, der noch steht.",
+      },
+    },
+    sunder_crown: {
+      id: "sunder_crown", name: { en: "Sunder Crown", de: "Splitterkrone" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { str: 6, dex: 6, int: 6, con: 6, lck: 3 },
+      // Abweichung von §3.8 (kein skillBoost mehr, war attack+ranged+magic): s. Wellen-Kopfkommentar oben.
+      weaponEffect: { type: "critBurst", chance: 1, magnitude: 15, durationMs: 0 },
+      value: 15000, rarity: "legendary",
+      description: {
+        en: "Shattered from a crown that ruled over no single kingdom, worn by those who master every art at once. A killing blow lands harder when it could have come from anywhere.",
+        de: "Aus einer Krone geborsten, die über kein einziges Königreich herrschte, getragen von jenen, die jede Kunst zugleich beherrschen. Ein tödlicher Treffer schlägt härter ein, wenn er von überall hätte kommen können.",
+      },
+    },
+
+    // ════════════════════════════════════════════════════════════════════════════════════════
+    // Schmuck-Rework Welle 5 — der Glücks-Pass (design/schmuck-audit-2026-08-29.md §1.7/§3.12,
+    // Chef-Entscheid E-6): lck lag katalogweit bei 25,7 % des Schmuck-Attributbudgets, obwohl es
+    // nur Krit-Chance/-Schaden und Suffix-Chance speist (Suffix-Anteil ab lck 50 gedeckelt, BiS
+    // liegt bei lck 82 — 32 Punkte ohne jede Wirkung). Ziel ~15 %. Umgesetzt an JEDEM Ring-/
+    // Amulett-Item mit lck-Anteil ≥ 25 % (44 Stück, Katalog-Scan) — Regel: Summe der Attributpunkte
+    // je Stück bleibt EXAKT unverändert (reine Umverteilung, keine Verschlechterung), die
+    // freiwerdenden Punkte wandern zum Attribut, das dem eigenen skillBoost-Stil entspricht
+    // (attack/power → str, ranged → dex, magic → int), bei boostlosen Stücken zur bereits
+    // dominanten/thematisch passenden Zeile (meist con, bei den beiden Thieving/Slayer-Meisterringen
+    // und ring_master_ranged zu dex). Katalogweite lck-Summe (Ring1/Ring2/Amulett) 255 → 156 von
+    // 1240 Gesamtpunkten (20,6 % → 12,6 %; „rund 15 %" leicht unterschritten statt überschritten —
+    // bewusst, siehe Bericht). Betroffene IDs: emberheart_amulet, soulflayer_amulet,
+    // doomforged_band, godgem_amulet, eye_of_the_idol, sevenfold_crown_chain, fang_pendant,
+    // onyx_amulet, voidstone_amulet, godgem_ring, cutpurse_ring, cinderloop_ring, abyssal_signet,
+    // alphas_heart_ring, idolbound_signet, ninth_wardens_signet, hollowveil_locket, fang_necklace,
+    // stormcaller_amulet, alpha_fang_amulet, slayer_amulet, necrosignet_ring, ring_master_slayer,
+    // ring_master_thieving, blackhoof_charm, chronicle_chronicler_signet, gemstone_ring,
+    // gemstone_amulet, ruby_ring, ruby_amulet, diamond_amulet, spellbinder_ring, bloodstone_ring,
+    // bloodstone_amulet, warband_signet, kestrel_loop, windwhisper_torc, cutthroat_loop,
+    // oreveined_hoop, thriftcut_cinch, steadhand_cuff, harvestward_clutch, soulopal_band,
+    // ring_master_ranged. Nicht angefasst: alles unter 25 % lck-Anteil (bereits nah an der Kurve)
+    // sowie die Craft-Ringe/-Amulette, die in Welle 3/4 bereits frisch auf die Kurve gebaut wurden
+    // (deren lck-Anteil lag von Anfang an ≤ 18 %, s. dortige Kommentare).
+    // ════════════════════════════════════════════════════════════════════════════════════════
+
+    // ════════════════════════════════════════════════════════════════════════════════════════
+    // Schmuck-Rework Welle 5 (design/schmuck-audit-2026-08-29.md §3.9/§3.12): Skilling-Linie.
+    // Chef-Entscheid E-3: doubleYield ist erlaubt. `masterPerk.skill` ist pro Item EIN Skill (kein
+    // "wählbar" möglich, ohne Skill wirkt der Perk laut capes.ts `masterPerkValue` GLOBAL über
+    // JEDE Aktion — das wäre kein "wähle einen von drei", sondern "alle drei gleichzeitig plus
+    // jede andere Aktion im Spiel") — ABWEICHUNG von §3.9: die "3 Rezeptvarianten" der Zeilen 1+2
+    // sind auf je EINEN Skill festgenagelt (mining/leatherworking statt woodcutting+mining+fishing
+    // bzw. smithing+leatherworking+tailoring), Namen entsprechend angepasst; Zeilen 3+4 hatten
+    // ohnehin nur einen Skill. Werte bewusst UNTER den gleichnamigen Meisterringen (halbe
+    // Magnitude, s. Item-Kommentare) — craftbar vor Stufe 99, nicht deren Ersatz.
+    oreveined_hoop: {
+      id: "oreveined_hoop", name: { en: "Oreveined Loop", de: "Erzader-Reif" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { con: 3, lck: 1 },
+      // ring_master_mining trägt doubleYield 0,05 — hier bewusst die Hälfte (craftbar vor 99).
+      masterPerk: { kind: "doubleYield", skill: "mining", value: 0.02 },
+      requirements: { jewelcrafting: 25 }, value: 700, rarity: "rare",
+      description: {
+        en: "Set with a sapphire chip over raw ore, still smelling faintly of the seam it was pulled from. Doubles a strike's yield, once in a while.",
+        de: "Mit einem Saphirsplitter über rohem Erz gefasst, das noch schwach nach der Ader riecht, aus der es kam. Verdoppelt gelegentlich den Ertrag eines Schlags.",
+      },
+    },
+    thriftcut_cinch: {
+      id: "thriftcut_cinch", name: { en: "Thriftcut Loop", de: "Sparschnitt-Reif" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { con: 4, lck: 1 },
+      // ring_master_leatherworking trägt inputSaver 0,05 — hier bewusst die Hälfte.
+      masterPerk: { kind: "inputSaver", skill: "leatherworking", value: 0.02 },
+      requirements: { jewelcrafting: 50 }, value: 1500, rarity: "rare",
+      description: {
+        en: "A diamond set in mithril, worn smooth by hands that never wasted a single cut of hide.",
+        de: "Ein Diamant, in Mithril gefasst, glattgetragen von Händen, die nie einen einzigen Schnitt Leder verschwendeten.",
+      },
+    },
+    steadhand_cuff: {
+      id: "steadhand_cuff", name: { en: "Steadhand Loop", de: "Stetighand-Reif" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { con: 4, wis: 2, lck: 1 },
+      // ring_master_thieving (Shadowgrasp Ring) trägt successBoost 0,03 — hier bewusst die Hälfte.
+      masterPerk: { kind: "successBoost", skill: "thieving", value: 0.015 },
+      requirements: { jewelcrafting: 65 }, value: 2400, rarity: "rare",
+      description: {
+        en: "Onyx bound in void-touched wire. Keeps the hand from trembling at the one moment it matters most.",
+        de: "Onyx, in leerenberührten Draht gebunden. Bewahrt die Hand davor, ausgerechnet im entscheidenden Moment zu zittern.",
+      },
+    },
+    harvestward_clutch: {
+      id: "harvestward_clutch", name: { en: "Harvestward Chain", de: "Erntehut-Kette" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { con: 6, wis: 3, lck: 2 },
+      // ring_master_farming trägt cropSpeed 0,08 — hier bewusst die Hälfte.
+      masterPerk: { kind: "cropSpeed", skill: "farming", value: 0.04 },
+      requirements: { jewelcrafting: 80 }, value: 4000, rarity: "superRare",
+      description: {
+        en: "A voidstone chain wrapped in starweave, warm as turned soil even in the dead of winter.",
+        de: "Eine Leerenstein-Kette, in Sterngewebe gewickelt, warm wie umgegrabene Erde selbst im tiefsten Winter.",
       },
     },
 
@@ -3097,7 +3503,7 @@ export const content: ContentDB = {
       // statt weaponEffect (itemization-guards.test.ts §5.4 erlaubt bonus-Signaturen auf legendary/
       // godly-Rarity).
       bonus: { hpRegenPerSec: 0.3 },
-      modifiers: { str: 4, dex: 2, con: 10, int: 4, lck: 8 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
+      modifiers: { str: 4, dex: 2, con: 14, int: 4, lck: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
       value: 80000, rarity: "godly",
       description: {
         en: "A gemstone torn from the Last Idol's own chest. Pulses with all-seeing void-light.",
@@ -3135,7 +3541,7 @@ export const content: ContentDB = {
       id: "sevenfold_crown_chain",
       name: { en: "Chain of the Seven Broken Crowns", de: "Kette der Sieben Zerbrochenen Kronen" },
       type: "equipment", stackable: false, icon: "📿", slot: "amulet",
-      bonus: { hpRegenPerSec: 0.3 }, modifiers: { str: 5, dex: 3, con: 11, int: 5, wis: 3, lck: 10 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
+      bonus: { hpRegenPerSec: 0.3 }, modifiers: { str: 5, dex: 3, con: 15, int: 5, wis: 3, lck: 6 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +5 con.
       requirements: { defence: 99 }, value: 95000, rarity: "godly",
       description: {
         en: "Seven crowns hung broken from one chain — one for each of the Silent. Worn across the chest of the Crownless himself, until he chose to travel lighter.",
@@ -5198,7 +5604,7 @@ export const content: ContentDB = {
       name: { en: "Slayer Amulet", de: "Slayer-Amulett" },
       type: "equipment", stackable: false,
       slot: "amulet", rarity: "epic",
-      modifiers: { str: 3, dex: 3, con: 4, int: 3, lck: 5 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
+      modifiers: { str: 4, dex: 4, con: 4, int: 3, lck: 3 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
       requirements: { slayer: 70 }, value: 5500,
       description: {
         en: "A crystalline amulet set with a void herald shard. Emanates cold, precise power across all combat styles.",
@@ -5559,7 +5965,7 @@ export const content: ContentDB = {
       id: "cutpurse_ring", name: { en: "Cutpurse Ring", de: "Beutelschneider-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
       skillBoost: { attack: 1 },
-      modifiers: { lck: 3 },
+      modifiers: { str: 3 },
       value: 90, rarity: "common",
     },
     goblin_cleaver: {
@@ -5591,8 +5997,11 @@ export const content: ContentDB = {
       type: "equipment", stackable: false, slot: "amulet",
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): int/wis waren mit skillBoost.attack gepaart
+      // (9 Magie-Punkte, Nahkampf-Boost) — der Name ("Auge des Felmagiers") ist eindeutig Magie, also
+      // wandert der BOOST statt der Attribute (Muster sapphire_ring §S1-b): attack 2 → magic 2.
       weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 3, durationMs: 0 },
-      modifiers: { int: 4, wis: 5 }, skillBoost: { attack: 2 }, value: 360, rarity: "superRare",
+      modifiers: { int: 4, wis: 5 }, skillBoost: { magic: 2 }, value: 360, rarity: "superRare",
     },
     // Welle T (Story-Review, Davorin Band 2): Loot-Inversion behoben — der Dungeon-Endboss
     // goblin_warchief droppte bisher NUR Material (Beute lag komplett in der Truhe), während der
@@ -5710,7 +6119,7 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.2, durationMs: 0 },
-      modifiers: { str: 2, con: 2, lck: 4 }, skillBoost: { power: 1 },
+      modifiers: { str: 5, con: 2, lck: 1 }, skillBoost: { power: 1 },
       value: 220, rarity: "rare",
     },
     ashfall_recurve: {
@@ -5794,7 +6203,10 @@ export const content: ContentDB = {
       weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 4, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "soulopal_band", name: { en: "Soulopal Band", de: "Seelenopal-Reif" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 3, dex: 3, int: 3, lck: 3 }, skillBoost: { power: 1 },
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): war eine Gießkanne ohne Profil (str/dex/int/
+      // lck je 3) neben skillBoost.power — die 3 toten int-Punkte wandern zu str (Nahkampf-Richtung,
+      // Summe bleibt 12).
+      modifiers: { str: 7, dex: 3, lck: 2 }, skillBoost: { power: 1 },
       value: 300, rarity: "rare",
     },
     soulthorn_pendant: {
@@ -5803,7 +6215,9 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 },
-      modifiers: { str: 2, dex: 2, con: 2, int: 2, lck: 2 }, skillBoost: { power: 2 }, value: 800, rarity: "superRare",
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): Gießkanne neben skillBoost.power — die 2
+      // toten int-Punkte wandern zu str/con (Summe bleibt 10).
+      modifiers: { str: 3, dex: 2, con: 3, lck: 2 }, skillBoost: { power: 2 }, value: 800, rarity: "superRare",
     },
     warden_greatcloak: {
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
@@ -5914,7 +6328,9 @@ export const content: ContentDB = {
       weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "necrosignet_ring", name: { en: "Necrosignet Ring", de: "Nekrosiegel-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 4, con: 3, int: 4, lck: 4 }, skillBoost: { power: 1 },
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): 4 tote int-Punkte neben skillBoost.power —
+      // wandern zu str/con (Summe bleibt 15).
+      modifiers: { str: 8, con: 5, lck: 2 }, skillBoost: { power: 1 },
       value: 900, rarity: "superRare",
     },
     nekro_reaperblade: {
@@ -6056,7 +6472,10 @@ export const content: ContentDB = {
       weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "abyssal_signet", name: { en: "Abyssal Signet", de: "Abyssaler Siegelring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { dex: 3, con: 4, int: 4, lck: 6 }, skillBoost: { magic: 4 },
+      // Abweichung vom Glücks-Pass-Kommentar oben (int 7 → int 5/wis 2, Summe bleibt 17): die volle
+      // int-Zahl trieb den CL-90-Magic-„damage"-BiS-Kit-INT wieder über 103 und riss erneut
+      // spell-focus.test.ts §3 (s. voidscribe_glyph-Kommentar) — hier zugunsten von wis entschärft.
+      modifiers: { dex: 3, con: 4, int: 4, wis: 3, lck: 3 }, skillBoost: { magic: 4 },
       value: 3500, rarity: "epic",
     },
     crabshell_bulwark: {
@@ -6174,7 +6593,7 @@ export const content: ContentDB = {
       weaponEffect: { type: "healOnKill", chance: 1, magnitude: 5, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "fang_pendant", name: { en: "Fang Pendant", de: "Reißzahn-Anhänger" },
       type: "equipment", stackable: false, slot: "amulet",
-      modifiers: { str: 4, con: 4, lck: 6 }, skillBoost: { power: 1 },
+      modifiers: { str: 8, con: 4, lck: 2 }, skillBoost: { power: 1 },
       value: 300, rarity: "rare",
     },
     direhide_jerkin: {
@@ -6214,7 +6633,7 @@ export const content: ContentDB = {
       weaponEffect: { type: "packLeader", chance: 1, magnitude: 0.25, durationMs: 0 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "alphas_heart_ring", name: { en: "Alpha's Heart Ring", de: "Leitwolf-Herzring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 5, con: 6, lck: 6 }, skillBoost: { power: 4 },
+      modifiers: { str: 8, con: 6, lck: 3 }, skillBoost: { power: 4 },
       value: 3000, rarity: "epic",
     },
 
@@ -6319,7 +6738,9 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 5, durationMs: 0 },
-      modifiers: { str: 4, dex: 2, con: 3, int: 4, lck: 4 }, skillBoost: { power: 4 },
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): 4 tote int-Punkte neben skillBoost.power —
+      // wandern zu str/con (Summe bleibt 17).
+      modifiers: { str: 6, dex: 2, con: 5, lck: 4 }, skillBoost: { power: 4 },
       value: 4500, rarity: "epic",
     },
     skytalon_recurve: {
@@ -6443,7 +6864,7 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "bounty", chance: 1, magnitude: 0.2, durationMs: 0 },
-      modifiers: { str: 4, con: 4, lck: 8 }, skillBoost: { power: 4 },
+      modifiers: { str: 10, con: 4, lck: 2 }, skillBoost: { power: 4 },
       value: 3000, rarity: "epic",
     },
     emberforge_hammer: {
@@ -6489,7 +6910,9 @@ export const content: ContentDB = {
     doomforged_band: {
       id: "doomforged_band", name: { en: "Doomforged Band", de: "Doom-Schmiede-Ring" },
       type: "equipment", stackable: false, slot: "ring1",
-      bonus: { hpRegenPerSec: 0.1 }, modifiers: { str: 4, con: 3, int: 4, lck: 8 }, skillBoost: { power: 3 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 1→0.1 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): 4 tote int-Punkte neben skillBoost.power —
+      // wandern zu str/con (Summe bleibt 19). Der lck-Klumpen (8) bleibt unangetastet für Welle 5.
+      bonus: { hpRegenPerSec: 0.1 }, modifiers: { str: 11, con: 5, lck: 3 }, skillBoost: { power: 3 }, // red-team #302 (2026-07-09) L1-rollback: hpRegenPerSec 1→0.1 — 2026-07-05 value was a tooltip-rounding workaround, not a real buff
       value: 26000, rarity: "legendary",
     },
 
@@ -6532,7 +6955,9 @@ export const content: ContentDB = {
       bonus: { hpRegenPerSec: 0.3 }, /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Drop hatte keinen Effekt — Signatur ergänzt (Kind/Feld content-dev-Wahl aus der bestehenden Palette, siehe Bericht). */
       id: "idolbound_signet", name: { en: "Idolbound Signet", de: "Götzengebundener Siegelring" },
       type: "equipment", stackable: false, slot: "ring1",
-      modifiers: { str: 5, dex: 2, con: 6, int: 4, lck: 6 }, skillBoost: { attack: 3 },
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): 4 tote int-Punkte neben skillBoost.attack —
+      // wandern zu str/con (Summe bleibt 23).
+      modifiers: { str: 10, dex: 2, con: 8, lck: 3 }, skillBoost: { attack: 3 },
       value: 28000, rarity: "legendary",
     },
     idol_aegis: {
@@ -6663,7 +7088,9 @@ export const content: ContentDB = {
       // Rezension #8 (Chef-GO 25.08.2026, 1.1.0, #p8) Nachzug: über die neue drop-gear-beats-craft-
       // Wächterprüfung zusätzlich gefunden (kein Effekt) — mitbehoben, gleiche Palette/Konvention.
       weaponEffect: { type: "wardOnKill", chance: 1, magnitude: 5, durationMs: 0 },
-      modifiers: { str: 4, con: 5, int: 5, lck: 9 }, skillBoost: { power: 4 },
+      // Schmuck-Rework W3 (§2 Richtungskonflikt-Liste): 5 tote int-Punkte neben skillBoost.power —
+      // wandern zu str/con (Summe bleibt 23). Der lck-Klumpen (9) bleibt unangetastet für Welle 5.
+      modifiers: { str: 12, con: 8, lck: 3 }, skillBoost: { power: 4 },
       value: 5000, rarity: "epic",
     },
     abyssal_devourer_fang: {
@@ -6901,7 +7328,7 @@ export const content: ContentDB = {
       id: "ring_master_ranged", name: { en: "Hawkeye Ring", de: "Ring des Falkenauges" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { ranged: 99 }, value: 50000,
-      modifiers: { dex: 3, lck: 2 }, precision: 0.02,
+      modifiers: { dex: 4, lck: 1 }, precision: 0.02,
       description: {
         en: "Sharpens the eye until no dodge feels fast enough. Grants 2% precision.",
         de: "Schärft das Auge, bis kein Ausweichen mehr schnell genug scheint. Gewährt 2 % Präzision.",
@@ -6921,7 +7348,7 @@ export const content: ContentDB = {
       id: "ring_master_slayer", name: { en: "Bountymaster's Ring", de: "Ring des Kopfgeldmeisters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { slayer: 99 }, value: 50000,
-      modifiers: { dex: 2, lck: 3 }, masterPerk: { kind: "slayerPoints", skill: "slayer", value: 0.10 },
+      modifiers: { dex: 4, lck: 1 }, masterPerk: { kind: "slayerPoints", skill: "slayer", value: 0.10 },
       description: {
         en: "Marked with the tally of a thousand contracts. Earns 10% more Slayer points.",
         de: "Gezeichnet mit der Strichliste tausender Aufträge. Bringt 10 % mehr Slayer-Punkte.",
@@ -6955,7 +7382,7 @@ export const content: ContentDB = {
       id: "ring_master_thieving", name: { en: "Shadowgrasp Ring", de: "Ring des Schattengriffs" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { thieving: 99 }, value: 50000,
-      modifiers: { dex: 2, lck: 3 }, masterPerk: { kind: "successBoost", skill: "thieving", value: 0.03 },
+      modifiers: { dex: 4, lck: 1 }, masterPerk: { kind: "successBoost", skill: "thieving", value: 0.03 },
       description: {
         en: "Slips through fingers like smoke. Raises theft success by 3%.",
         de: "Gleitet wie Rauch durch die Finger. Erhöht die Diebstahl-Erfolgschance um 3 %.",
@@ -7019,7 +7446,7 @@ export const content: ContentDB = {
     blackhoof_charm: {
       id: "blackhoof_charm", name: { en: "Blackhoof Talisman", de: "Schwarzhuf-Talisman" },
       type: "equipment", stackable: false, icon: "🐂", slot: "amulet",
-      modifiers: { str: 3, con: 3, lck: 3 }, skillBoost: { power: 2 },
+      modifiers: { str: 5, con: 3, lck: 1 }, skillBoost: { power: 2 },
       weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
       value: 900, rarity: "superRare",
     },
@@ -7242,7 +7669,7 @@ export const content: ContentDB = {
     ninth_wardens_signet: {
       id: "ninth_wardens_signet", name: { en: "Signet of the Ninth Warden", de: "Siegel des Neunten Wächters" },
       type: "equipment", stackable: false, icon: "💍", slot: "ring1",
-      modifiers: { str: 5, con: 9, int: 4, lck: 7 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +4 con.
+      modifiers: { str: 5, con: 12, int: 4, lck: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +4 con.
       bonus: { hpRegenPerSec: 0.12 },
       weaponEffect: { type: "bane", chance: 1, magnitude: 0.25, durationMs: 0, targetFamily: "construct" },
       value: 30000, rarity: "legendary",
@@ -7250,7 +7677,9 @@ export const content: ContentDB = {
     hollowveil_locket: {
       id: "hollowveil_locket", name: { en: "Hollowveil Locket", de: "Hohlschleier-Medaillon" },
       type: "equipment", stackable: false, icon: "📿", slot: "amulet",
-      modifiers: { con: 5, int: 6, wis: 6, lck: 6 }, skillBoost: { magic: 5 },
+      // Abweichung vom Glücks-Pass-Kommentar oben (int 9 → int 8/wis 7, Summe bleibt 23): letzter
+      // Punkt zugunsten von wis entschärft, s. abyssal_signet-Kommentar (derselbe spell-focus-Riss).
+      modifiers: { con: 5, int: 8, wis: 7, lck: 3 }, skillBoost: { magic: 5 },
       // Ward-Siphon (elite-balance-spec.md §4 #28 / §5): 8 % des verursachten Schadens speisen
       // den eigenen Ward-Pool (Hook jetzt gebaut, s. combat.ts strikeEnemy).
       weaponEffect: { type: "wardSiphon", chance: 1, magnitude: 0.08, durationMs: 0 },
@@ -7566,7 +7995,7 @@ export const content: ContentDB = {
       name: { en: "Chronicler's Signet", de: "Chronisten-Signet" },
       icon: "📜",
       type: "equipment", stackable: false, slot: "ring1", rarity: "rare", value: 1500,
-      modifiers: { con: 3, lck: 3 },
+      modifiers: { con: 5, lck: 1 },
       weaponEffect: { type: "combatXp", chance: 1, magnitude: 0.08, durationMs: 0 },
       description: {
         en: "Pressed into the wax of every chapter sealed in the camp's growing chronicle. Grants +8% combat experience while worn.",
@@ -11745,6 +12174,134 @@ export const content: ContentDB = {
       loot: [{ itemId: "deadeye_reliquary", chance: 1, min: 1, max: 1 }],
     },
 
+    // ── Schmuck-Rework Welle 3 (§3.6/§3.12): Magie-Reihe. Dauer/XP je Stufe identisch zu den
+    // gleichstufigen Bestandsrezepten (craft_ruby_ring@34, craft_diamond_ring@55, craft_onyx_ring@70,
+    // craft_voidstone_ring@85, craft_godgem_ring@95 bzw. den Amulett-Pendants @38/48/75/88/99) —
+    // dieselbe Formel target_xph(L)=600·√(xpForLevel(L+1)−xpForLevel(L)), xp=round(xph·ms/3_600_000),
+    // gegengerechnet und identisch zu den bestehenden Werten (s. Content-Bericht).
+    craft_emberglass_loop: {
+      id: "craft_emberglass_loop", name: { en: "Craft Emberglass Ring", de: "Glutglas-Ring fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 5000, xp: 39, levelRequired: 34,
+      inputs: [{ itemId: "ruby", qty: 1 }, { itemId: "fire_rune", qty: 1 }, { itemId: "steel_bar", qty: 1 }],
+      loot: [{ itemId: "emberglass_loop", chance: 1, min: 1, max: 1 }],
+    },
+    craft_hollowlight_seal: {
+      id: "craft_hollowlight_seal", name: { en: "Craft Hollowlight Signet", de: "Hohllicht-Siegel fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 6500, xp: 143, levelRequired: 55,
+      inputs: [{ itemId: "diamond", qty: 1 }, { itemId: "aether_rune", qty: 1 }, { itemId: "mithril_bar", qty: 1 }],
+      loot: [{ itemId: "hollowlight_seal", chance: 1, min: 1, max: 1 }],
+    },
+    craft_nightwell_loop: {
+      id: "craft_nightwell_loop", name: { en: "Craft Nightwell Ring", de: "Nachtbrunnen-Ring fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 7000, xp: 323, levelRequired: 70,
+      inputs: [{ itemId: "onyx", qty: 1 }, { itemId: "void_rune", qty: 1 }, { itemId: "runite_bar", qty: 1 }],
+      loot: [{ itemId: "nightwell_loop", chance: 1, min: 1, max: 1 }],
+    },
+    craft_voidscribe_glyph: {
+      id: "craft_voidscribe_glyph", name: { en: "Craft Voidscribe Band", de: "Leerenschreiber-Band fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 8000, xp: 777, levelRequired: 85,
+      inputs: [{ itemId: "voidstone", qty: 1 }, { itemId: "void_rune", qty: 2 }, { itemId: "bloodiron_bar", qty: 1 }],
+      loot: [{ itemId: "voidscribe_glyph", chance: 1, min: 1, max: 1 }],
+    },
+    craft_godsight_loop: {
+      id: "craft_godsight_loop", name: { en: "Craft Godsight Ring", de: "Gottblick-Ring fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 10000, xp: 1593, levelRequired: 95,
+      inputs: [{ itemId: "godgem", qty: 1 }, { itemId: "essence_divine", qty: 1 }, { itemId: "aetherium_bar", qty: 1 }],
+      loot: [{ itemId: "godsight_loop", chance: 1, min: 1, max: 1 }],
+    },
+    craft_ashcant_cord: {
+      id: "craft_ashcant_cord", name: { en: "String Ashcant Pendant", de: "Aschgesang-Anhänger fädeln" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 5500, xp: 52, levelRequired: 38,
+      inputs: [{ itemId: "ruby", qty: 1 }, { itemId: "iron_bar", qty: 2 }, { itemId: "cloth_thornlinen", qty: 1 }],
+      loot: [{ itemId: "ashcant_cord", chance: 1, min: 1, max: 1 }],
+    },
+    craft_gravecall_sigil: {
+      id: "craft_gravecall_sigil", name: { en: "Forge Gravecall Amulet", de: "Grabruf-Amulett fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 6200, xp: 96, levelRequired: 48,
+      inputs: [{ itemId: "bloodstone", qty: 1 }, { itemId: "gravesteel_bar", qty: 2 }, { itemId: "essence_grave", qty: 1 }],
+      loot: [{ itemId: "gravecall_sigil", chance: 1, min: 1, max: 1 }],
+    },
+    craft_duskveil_wreath: {
+      id: "craft_duskveil_wreath", name: { en: "Craft Duskveil Chain", de: "Dämmerschleier-Kette fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 8000, xp: 473, levelRequired: 75,
+      inputs: [{ itemId: "onyx", qty: 1 }, { itemId: "runite_bar", qty: 2 }, { itemId: "cloth_ghostweave", qty: 1 }],
+      loot: [{ itemId: "duskveil_wreath", chance: 1, min: 1, max: 1 }],
+    },
+    craft_voidsong_locket: {
+      id: "craft_voidsong_locket", name: { en: "Craft Voidsong Amulet", de: "Leerengesang-Amulett fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 9000, xp: 1013, levelRequired: 88,
+      inputs: [{ itemId: "voidstone", qty: 1 }, { itemId: "bloodiron_bar", qty: 2 }, { itemId: "essence_void", qty: 1 }],
+      loot: [{ itemId: "voidsong_locket", chance: 1, min: 1, max: 1 }],
+    },
+    craft_godgem_reliquary: {
+      id: "craft_godgem_reliquary", name: { en: "Craft Godgem Reliquary", de: "Gottstein-Reliquiar fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 12000, xp: 2330, levelRequired: 99,
+      inputs: [{ itemId: "godgem", qty: 1 }, { itemId: "aetherium_bar", qty: 2 }, { itemId: "cloth_starweave", qty: 1 }],
+      loot: [{ itemId: "godgem_reliquary", chance: 1, min: 1, max: 1 }],
+    },
+
+    // ── Schmuck-Rework Welle 4 (§3.7/§3.12): Nahkampf-Amulette. Dauer/XP je Stufe identisch zu den
+    // gleichstufigen Bestandsrezepten (craft_bloodstone_amulet@48, craft_diamond_amulet@60,
+    // craft_onyx_amulet@75, craft_voidstone_amulet@88, craft_godgem_amulet@99).
+    craft_gorecrown_locket: {
+      id: "craft_gorecrown_locket", name: { en: "Forge Gorecrown Pendant", de: "Blutkron-Anhänger fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 6200, xp: 96, levelRequired: 48,
+      inputs: [{ itemId: "bloodstone", qty: 1 }, { itemId: "gravesteel_bar", qty: 2 }, { itemId: "warhide", qty: 1 }],
+      loot: [{ itemId: "gorecrown_locket", chance: 1, min: 1, max: 1 }],
+    },
+    craft_ironvow_collar: {
+      id: "craft_ironvow_collar", name: { en: "Forge Ironvow Chain", de: "Eisenschwur-Kette fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 7000, xp: 197, levelRequired: 60,
+      inputs: [{ itemId: "diamond", qty: 1 }, { itemId: "mithril_bar", qty: 2 }],
+      loot: [{ itemId: "ironvow_collar", chance: 1, min: 1, max: 1 }],
+    },
+    craft_reavers_torc: {
+      id: "craft_reavers_torc", name: { en: "Craft Reaver's Torc", de: "Räuber-Reif fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 8000, xp: 473, levelRequired: 75,
+      inputs: [{ itemId: "onyx", qty: 1 }, { itemId: "runite_bar", qty: 2 }],
+      loot: [{ itemId: "reavers_torc", chance: 1, min: 1, max: 1 }],
+    },
+    craft_bloodiron_locket: {
+      id: "craft_bloodiron_locket", name: { en: "Craft Bloodiron Locket", de: "Bluteisen-Medaillon fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 9000, xp: 1013, levelRequired: 88,
+      inputs: [{ itemId: "voidstone", qty: 1 }, { itemId: "bloodiron_bar", qty: 2 }],
+      loot: [{ itemId: "bloodiron_locket", chance: 1, min: 1, max: 1 }],
+    },
+    craft_warcrown_reliquary: {
+      id: "craft_warcrown_reliquary", name: { en: "Craft Warcrown Reliquary", de: "Kriegskron-Reliquiar fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 12000, xp: 2330, levelRequired: 99,
+      inputs: [{ itemId: "godgem", qty: 1 }, { itemId: "godiron_bar", qty: 2 }],
+      loot: [{ itemId: "warcrown_reliquary", chance: 1, min: 1, max: 1 }],
+    },
+
+    // ── Schmuck-Rework Welle 5 (§3.9/§3.12): Skilling-Linie. XP nach derselben Formel
+    // target_xph(L)=600·√(xpForLevel(L+1)−xpForLevel(L)), xp=round(xph·ms/3_600_000) — Level 25/50/
+    // 65/80 haben keine gleichstufige Bestandszeile, daher frisch gerechnet (Herleitung im Bericht).
+    craft_oreveined_hoop: {
+      id: "craft_oreveined_hoop", name: { en: "Craft Oreveined Loop", de: "Erzader-Reif fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 4500, xp: 22, levelRequired: 25,
+      inputs: [{ itemId: "sapphire", qty: 1 }, { itemId: "iron_bar", qty: 1 }, { itemId: "iron_ore", qty: 2 }],
+      loot: [{ itemId: "oreveined_hoop", chance: 1, min: 1, max: 1 }],
+    },
+    craft_thriftcut_cinch: {
+      id: "craft_thriftcut_cinch", name: { en: "Craft Thriftcut Loop", de: "Sparschnitt-Reif fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 6000, xp: 103, levelRequired: 50,
+      inputs: [{ itemId: "diamond", qty: 1 }, { itemId: "mithril_bar", qty: 1 }, { itemId: "hardened_leather", qty: 1 }],
+      loot: [{ itemId: "thriftcut_cinch", chance: 1, min: 1, max: 1 }],
+    },
+    craft_steadhand_cuff: {
+      id: "craft_steadhand_cuff", name: { en: "Craft Steadhand Loop", de: "Stetighand-Reif fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 6800, xp: 245, levelRequired: 65,
+      inputs: [{ itemId: "onyx", qty: 1 }, { itemId: "runite_bar", qty: 1 }, { itemId: "essence_void", qty: 1 }],
+      loot: [{ itemId: "steadhand_cuff", chance: 1, min: 1, max: 1 }],
+    },
+    craft_harvestward_clutch: {
+      id: "craft_harvestward_clutch", name: { en: "Forge Harvestward Chain", de: "Erntehut-Kette fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 8400, xp: 637, levelRequired: 80,
+      inputs: [{ itemId: "voidstone", qty: 1 }, { itemId: "titanium_bar", qty: 2 }, { itemId: "cloth_starweave", qty: 1 }],
+      loot: [{ itemId: "harvestward_clutch", chance: 1, min: 1, max: 1 }],
+    },
+
     craft_garnet_ring: {
       id: "craft_garnet_ring", name: { en: "Craft Garnet Ring", de: "Granatring fertigen" },
       // balance-fix 2026-07: xp 2→3 (removes the "2-XP" floor optics)
@@ -13797,6 +14354,9 @@ export const content: ContentDB = {
         { itemId: "raw_hide", chance: 0.5, min: 1, max: 1 },
         { itemId: "crude_bone", chance: 0.3, min: 1, max: 1 },
         { itemId: "ember_essence", chance: 0.1, min: 1, max: 1 },
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — Rudeljäger, die Verwundete
+        // fertigmachen, passen zum execute-Effekt.
+        { itemId: "cutthroat_loop", chance: 0.08, min: 1, max: 1 },
       ],
     },
     dust_vulture: {
@@ -13882,6 +14442,10 @@ export const content: ContentDB = {
         { itemId: "chitinshell_sparker", chance: 0.0119, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "chitin_recurve", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
         { itemId: "chitinweave_leggings", chance: 0.0010, min: 1, max: 1, suffixChance: 0.30 }, // Stil-Parität 4a (Chef-GO 26.08.2026)
+        // Schmuck-Rework W4 (§3.8): auf dem Basismonster zusätzlich zur Elite-extraLoot-Zeile
+        // verdrahtet (Muster chitin_bulwark oben — wiring-audit.test.ts scannt nur Aktions-/
+        // Monster-/Dungeon-Loot, Shop und Elite-uniqueItemId, NICHT extraLoot).
+        { itemId: "firstlight_seal", chance: 0.01, min: 1, max: 1 },
       ],
     },
     ash_tyrant: {
@@ -14322,6 +14886,9 @@ export const content: ContentDB = {
         { itemId: "shroud_of_the_dead", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "frostbone_scepter", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "shock_rune", chance: 0.007, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "runite_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): dito (Krypta on-band)
+        // Schmuck-Rework W4 (§3.8): auf dem Basismonster zusätzlich zur Elite-extraLoot-Zeile
+        // verdrahtet (wiring-audit.test.ts scannt keine Elite-extraLoot, s. Kommentar bei pitch_beetle).
+        { itemId: "rimeheart_locket", chance: 0.01, min: 1, max: 1 },
       ],
     },
     skeleton_pyroclasp: {
@@ -14333,6 +14900,9 @@ export const content: ContentDB = {
         { itemId: "pyre_staff", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "gravesteel_cuirass", chance: 0.0007, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bloodiron_bar", chance: 0.005, min: 1, max: 1 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bloodiron_medhelm", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Zonen-Top → Bloodiron-Einstieg
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — ein Brand-Skelett, das noch im
+        // Verbrennen kämpft, passt zum desperation-Effekt (schlägt härter mit sinkender eigener HP).
+        { itemId: "ashenvow_locket", chance: 0.04, min: 1, max: 1 },
       ],
     },
     skeleton_nekro: {
@@ -14613,6 +15183,9 @@ export const content: ContentDB = {
         { itemId: "mariner_cloak", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "siren_shockstaff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "void_rune", chance: 0.004, min: 2, max: 2 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "titanium_wand", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P3 (2026-07-25): Coast = Titanium-Fenster (Caster-Thema)
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — eine Sirene, die mit ihrer
+        // Stimme ertränkt, passt zum wardSiphon-Effekt (Schaden wird zum eigenen Ward).
+        { itemId: "tidewrack_collar", chance: 0.06, min: 1, max: 1 },
       ],
     },
     deep_kraken: {
@@ -14826,6 +15399,9 @@ export const content: ContentDB = {
         { itemId: "eye_of_the_idol", chance: 0.010, min: 1, max: 1 },
         { itemId: "idol_aegis", chance: 0.000031, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "last_idol_mantle", chance: 0.000031, min: 1, max: 1, suffixChance: 0.30 },
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — Chase-Stück für Hybrid-Builds,
+        // der Endboss der Götzenhalle ist der einzig passende Fundort. Chance am Chase-Deckel (0,1 %).
+        { itemId: "sunder_crown", chance: 0.001, min: 1, max: 1 },
         // Paragonturm-Freischaltung (Kopf-Chef-Entscheid Punkt 3 + Teil A): der finale Chase des
         // Kern-Reworks — kein Rate-Wert in Spec §7 gesetzt, daher CEO-Fallback @0,08.
         { itemId: "paragon_key", chance: 0.08, min: 1, max: 1 },
@@ -15773,7 +16349,7 @@ export const content: ContentDB = {
     { id: "ach_sets_completed_1", name: { en: "Set Seeker", de: "Set-Sucher" }, description: { en: "Complete 1 full equipment set.", de: "Vervollständige 1 vollständiges Ausrüstungs-Set." }, icon: "🧩", category: "collection", rarity: "uncommon", condition: { type: "sets_completed", count: 1 } },
     { id: "ach_sets_completed_5", name: { en: "Set Collector", de: "Set-Sammler" }, description: { en: "Complete 5 full equipment sets.", de: "Vervollständige 5 vollständige Ausrüstungs-Sets." }, icon: "🧩", category: "collection", rarity: "rare", condition: { type: "sets_completed", count: 5 } },
     { id: "ach_sets_completed_10", name: { en: "Set Completionist", de: "Set-Vollender" }, description: { en: "Complete 10 full equipment sets.", de: "Vervollständige 10 vollständige Ausrüstungs-Sets." }, icon: "🏅", category: "collection", rarity: "epic", condition: { type: "sets_completed", count: 10 } },
-    { id: "ach_sets_all", name: { en: "Master of All Sets", de: "Meister aller Sets" }, description: { en: "Complete all 35 equipment sets.", de: "Vervollständige alle 35 Ausrüstungs-Sets." }, icon: "👑", category: "collection", rarity: "legendary", condition: { type: "sets_completed", count: 35 } },
+    { id: "ach_sets_all", name: { en: "Master of All Sets", de: "Meister aller Sets" }, description: { en: "Complete all 38 equipment sets.", de: "Vervollständige alle 38 Ausrüstungs-Sets." }, icon: "👑", category: "collection", rarity: "legendary", condition: { type: "sets_completed", count: 38 } }, // Schmuck-Rework W5 (§3.10): +3 Schmuck-Sets (hunters_accord/void_vow/warbound) — 35→38.
     { id: "ach_pets_1", name: { en: "A Friend in the Ash", de: "Ein Freund in der Asche" }, description: { en: "Own your first pet.", de: "Besitze deinen ersten Begleiter." }, icon: "🐾", category: "collection", rarity: "common", condition: { type: "pets_owned", count: 1 } },
     { id: "ach_pets_5", name: { en: "Animal Companion", de: "Tierbegleiter" }, description: { en: "Own 5 pets.", de: "Besitze 5 Begleiter." }, icon: "🐾", category: "collection", rarity: "uncommon", condition: { type: "pets_owned", count: 5 } },
     { id: "ach_pets_10", name: { en: "Beast Friend", de: "Tierfreund" }, description: { en: "Own 10 pets.", de: "Besitze 10 Begleiter." }, icon: "🐾", category: "collection", rarity: "rare", condition: { type: "pets_owned", count: 10 } },
@@ -15899,6 +16475,11 @@ export const content: ContentDB = {
         { itemId: "necrosignet_ring", chance: 0.0247, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "nekro_reaperblade", chance: 0.0063, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "bloodiron_bar", chance: 0.012, min: 3, max: 3 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "bloodiron_platelegs", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate; #354 Paket 3.1: suffixChance-Parität mit Nachbar-Rows nachgezogen
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — kein Dungeon liegt exakt bei
+        // "~L60" (goblin_warband req45 zu früh, crypt_depths req75 der nächstliegende reale
+        // Dungeon danach) — der Name "Hohlmarsch" passt zur Krypta, der Marsch durch die Wellen
+        // zum momentum-Effekt.
+        { itemId: "hollowmarch_notch", chance: 0.05, min: 1, max: 1 },
       ],
       xp: 700,
       gold: 1200,
@@ -16061,6 +16642,9 @@ export const content: ContentDB = {
         { itemId: "bearhide_cuirass", chance: 0.0042, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "alphas_heart_ring", chance: 0.0064, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "warhide", chance: 0.01, min: 4, max: 4 } /* Rezension #8 (Chef-GO 25.08.2026, 1.1.0, design/rezension-patch-2026-08-25.html #p8): Craft-Duplikat (war "warhide_body", identisch zum Handwerk) — als Material-Beikost ersetzt. */, // item-drop-audit P4 (2026-07-25): Abschlussprüfung zahlt on-Gate, Leder-Thema; #354 Paket 3.1: suffixChance-Parität nachgezogen
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — "Dornwächter" passt zum
+        // Wildwald (nächstliegender Dungeon zu "~L88": wildwood_hunt req82).
+        { itemId: "thornwarden_seal", chance: 0.05, min: 1, max: 1 },
       ],
       xp: 950,
       gold: 1300, // dungeon-level-ladder-analyse (#338, Chef-GO 2026-07-25): 1100→1300 — Gold-Leiter monoton: 600 < 1200 < 1300 < 3600 < 5000 (XP-Leiter war schon monoton).
@@ -16587,6 +17171,34 @@ export const content: ContentDB = {
       // Toter skillBoost.defence entfernt; dafür 0,15 LP/s Regeneration (Kettenjagd-Sustain, unter
       // jeder Chase-Set-Regen 0,2–0,3).
       bonus: { hpRegenPerSec: 0.15 }, modifiers: { str: 3, dex: 1, con: 4, int: 3, lck: 2 },
+    },
+    // Schmuck-Rework Welle 5 (design/schmuck-audit-2026-08-29.md §3.10/§3.12, Chef-Entscheid E-4):
+    // drei Zwei-Teile-Schmuck-Sets, je Ring + Amulett derselben Stufe/desselben Stils — von 36
+    // Sets trug bislang KEINES ein Schmuckstück, obwohl ring1/amulet gültige Set-Slots sind.
+    // ABWEICHUNG von §3.10: die Doku wollte je einen Trinity-Bonus (precision/wardBreak/armorPen)
+    // zusätzlich zum Attribut — `SetDef.bonus` ist aber `EquipBonus` (shared/index.ts), das kennt
+    // KEIN precision/wardBreak/armorPen (das sind Item-Top-Level-Felder, keine EquipBonus-Keys).
+    // Der Attribut-Teil (+3) trägt daher allein die Set-Krönung.
+    {
+      id: "hunters_accord_set",
+      name: { en: "Hunter's Accord (2pc)", de: "Jägerbund (2-teilig)" },
+      pieces: ["blackfletch_nock", "gloomfletch_choker"],
+      minPieces: 2,
+      bonus: {}, modifiers: { dex: 3 },
+    },
+    {
+      id: "void_vow_set",
+      name: { en: "Void Vow (2pc)", de: "Leerengelübde (2-teilig)" },
+      pieces: ["nightwell_loop", "duskveil_wreath"],
+      minPieces: 2,
+      bonus: {}, modifiers: { int: 3 },
+    },
+    {
+      id: "warbound_set",
+      name: { en: "Warbound (2pc)", de: "Kriegsbund (2-teilig)" },
+      pieces: ["onyx_ring", "reavers_torc"],
+      minPieces: 2,
+      bonus: {}, modifiers: { str: 3 },
     },
   ],
   // ══════════════════════════════════════════════════════════════════════
@@ -20384,6 +20996,11 @@ export const content: ContentDB = {
         { itemId: "cinder_spike", chance: 0.0123, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "chitin_helm", chance: 0.02, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "sootscale_greaves", chance: 0.0199, min: 1, max: 1, suffixChance: 0.30 },
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — Doku wollte 20 % wie eine
+        // Elite-Signatur, das ist aber die extraLoot-Zeile eines Elite MIT eigenem uniqueItemId
+        // (cinderhusk_bulwark) — der reguläre Deckel (drop-gear-beats-craft.test.ts, ≤15 %) greift,
+        // auf 0,15 gekappt statt eine zweite "Signatur" zu erfinden.
+        { itemId: "firstlight_seal", chance: 0.15, min: 1, max: 1 },
       ],
     },
 
@@ -20461,6 +21078,10 @@ export const content: ContentDB = {
         { itemId: "frost_essence", chance: 0.2, min: 4, max: 4 },
         { itemId: "shroud_of_the_dead", chance: 0.0099, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "frostbone_scepter", chance: 0.0066, min: 1, max: 1, suffixChance: 0.30 },
+        // Schmuck-Rework W4 (§3.8): Fundort-Entscheid content-dev — eine Eismagierin passt zum
+        // frostbite-Effekt (Bonus gegen verlangsamte Ziele). 20 % laut Doku auf 0,15 gekappt (s.
+        // firstlight_seal-Kommentar bei elite_ash_beetle, gleicher Grund).
+        { itemId: "rimeheart_locket", chance: 0.15, min: 1, max: 1 },
       ],
     },
     elite_crypt_pyroclasp: {

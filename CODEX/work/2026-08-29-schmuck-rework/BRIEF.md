@@ -21,7 +21,7 @@
 
 ## A2. Produktziel
 
-41 neue Item-Bilder für Ringe und Amulette. Sie reihen sich in einen **bestehenden, sehr einheitlichen Bestand von
+41 neue Item-Bilder für Ringe und Amulette (14 Fernkampf, 10 Magie, 5 Nahkampf-Amulette, 8 Fundstücke, 4 für Handwerk und Sammeln). Sie reihen sich in einen **bestehenden, sehr einheitlichen Bestand von
 95 Schmuckbildern** ein und müssen daneben bestehen können, ohne aufzufallen.
 
 **Bestandsreferenz (Pflicht, vor der Produktion ansehen):**
@@ -75,7 +75,7 @@ Reihenfolge nach Priorität. **Welle 2 zuerst** — das ist die Lücke, die eine
 
 ## Welle 2 — Fernkampf (14 Stück, P1)
 
-> **IDs final.** Diese 14 Stücke sind seit dem 29.08. im Katalog angelegt; die Dateinamen unten stimmen
+> **IDs final.** Alle Stücke dieses Briefs sind seit dem 29.08. im Katalog angelegt; die Dateinamen stimmen
 > exakt mit den Item-IDs im Spiel überein.
 
 Leder, Sehne, Feder, Knochen. Gedeckte Grüntöne, Braun, mattes Eisen. Die Steine sind dieselben wie bei den
@@ -107,24 +107,22 @@ Nahkampf-Ringen derselben Stufe, aber in Leder gefasst statt in Metall.
 
 ## Welle 3 — Magie (10 Stück, P2)
 
-> **Achtung, Dateinamen:** Die Item-IDs der Wellen 3, 4a und 4b sind hier **vorläufig**. Sie stehen erst
-> fest, wenn die Stücke im Katalog angelegt sind — ich schicke dir die endgültige Liste nach, bevor du mit diesen
-> Wellen anfängst. Die IDs der Welle 2 unten sind dagegen **final und im Spiel angelegt**.
+> **IDs final.** Wie bei Welle 2: alle Stücke sind im Katalog angelegt, die Dateinamen stimmen exakt.
 
 Runen, Essenzkristalle, gewebte Stoffbänder. Kühle Blau-, Violett- und Aschetöne. **Trotzdem kein Glühen** — die
 Wirkung kommt aus dem Material und der geritzten Rune, nicht aus Licht.
 
 | Item-ID | Name | Slot | Stufe | Motiv |
 |---|---|---|---|---|
-| `emberglass_ring` | Glutglas-Ring | Ring | 34 | Rubin wie geschmolzenes Glas, Feuerrune ins Band geritzt |
-| `hollowlight_signet` | Hohllicht-Siegel | Ring | 55 | Diamant in hohler Fassung, Aetherrune, das Zentrum bleibt leer |
-| `nightwell_ring` | Nachtquell-Ring | Ring | 70 | Onyx wie ein Brunnenschacht, Leerenrune umlaufend |
-| `voidscribe_band` | Leerenschreiber-Band | Ring | 85 | Leerenstein, dicht beschriebenes Band, Runen überlagern sich |
-| `godsight_ring` | Gottblick-Ring | Ring | 95 | Göttergemme in göttlicher Essenz gefasst, Auge-Motiv |
-| `ashcant_pendant` | Aschgesang-Anhänger | Amulett | 38 | Rubin, Dornleinen-Band, Runenkette am Rand |
-| `gravecall_amulet` | Grabruf-Amulett | Amulett | 48 | Blutstein, Grabstahl-Fassung, Grabessenz als Einschluss |
-| `duskveil_chain` | Dämmerschleier-Kette | Amulett | 75 | Onyx hinter Geistertuch, der Stein wirkt verschleiert |
-| `voidsong_amulet` | Leerengesang-Amulett | Amulett | 88 | Leerenstein, Leerenessenz, Runen wie Notenzeilen |
+| `emberglass_loop` | Glutglas-Ring | Ring | 34 | Rubin wie geschmolzenes Glas, Feuerrune ins Band geritzt |
+| `hollowlight_seal` | Hohllicht-Siegel | Ring | 55 | Diamant in hohler Fassung, Aetherrune, das Zentrum bleibt leer |
+| `nightwell_loop` | Nachtbrunnen-Ring | Ring | 70 | Onyx wie ein Brunnenschacht, Leerenrune umlaufend |
+| `voidscribe_glyph` | Leerenschreiber-Band | Ring | 85 | Leerenstein, dicht beschriebenes Band, Runen überlagern sich |
+| `godsight_loop` | Gottblick-Ring | Ring | 95 | Göttergemme in göttlicher Essenz gefasst, Auge-Motiv |
+| `ashcant_cord` | Aschgesang-Anhänger | Amulett | 38 | Rubin, Dornleinen-Band, Runenkette am Rand |
+| `gravecall_sigil` | Grabruf-Amulett | Amulett | 48 | Blutstein, Grabstahl-Fassung, Grabessenz als Einschluss |
+| `duskveil_wreath` | Dämmerschleier-Kette | Amulett | 75 | Onyx hinter Geistertuch, der Stein wirkt verschleiert |
+| `voidsong_locket` | Leerengesang-Amulett | Amulett | 88 | Leerenstein, Leerenessenz, Runen wie Notenzeilen |
 | `godgem_reliquary` | Gottstein-Reliquiar | Amulett | 99 | Göttergemme in Sternweb, Reliquiar-Form mit Türchen |
 
 ## Welle 4a — Nahkampf-Amulette (5 Stück, P2)
@@ -133,8 +131,8 @@ Geschmiedetes Metall, Leder als Riemen. Warme Rot-, Kupfer- und Eisentöne. Wuch
 
 | Item-ID | Name | Stufe | Motiv |
 |---|---|---|---|
-| `gorecrown_pendant` | Blutkron-Anhänger | 48 | Blutstein in gezackter Krone aus Grabstahl, Kriegshaut-Riemen |
-| `ironvow_chain` | Eisenschwur-Kette | 60 | Diamant zwischen zwei Mithril-Fäusten, schwere Kette |
+| `gorecrown_locket` | Blutkron-Anhänger | 48 | Blutstein in gezackter Krone aus Grabstahl, Kriegshaut-Riemen |
+| `ironvow_collar` | Eisenschwur-Kette | 60 | Diamant zwischen zwei Mithril-Fäusten, schwere Kette |
 | `reavers_torc` | Räuber-Reif | 75 | Offener Halsreif aus Runit, Onyx als Verschluss, Kerben wie Kill-Striche |
 | `bloodiron_locket` | Bluteisen-Medaillon | 88 | Bluteisen-Medaillon, aufklappbar angedeutet, Leerenstein im Deckel |
 | `warcrown_reliquary` | Kriegskron-Reliquiar | 99 | Götzeneisen, Kronenform, Göttergemme im Zentrum, angeschlagen und geflickt |
@@ -147,13 +145,25 @@ selten fällt. Trotzdem kein Glühen.
 | Item-ID | Name | Slot | Motiv |
 |---|---|---|---|
 | `cutthroat_loop` | Kehlschnitt-Reif | Ring | Ring aus einer gebogenen Klinge geschmiedet, die Schneide zeigt nach außen |
-| `firstlight_signet` | Erstlicht-Siegel | Ring | Siegelring, halb poliert, halb angelaufen, Sonnenaufgangs-Motiv in der Platte |
-| `tidewrack_chain` | Flutbruch-Kette | Amulett | Treibholz und Muschelkalk, ein Aetherium-Splitter wie Strandgut eingefasst |
-| `hollowmarch_band` | Hohlmarsch-Band | Ring | Breites Band aus vielen dünnen Ringen, wie zusammengewachsene Schritte |
-| `ashen_vow_pendant` | Aschenschwur-Anhänger | Amulett | Verkohltes Holzstück mit Eisenklammern, ein Blutstropfen-Rubin |
+| `firstlight_seal` | Erstlicht-Siegel | Ring | Siegelring, halb poliert, halb angelaufen, Sonnenaufgangs-Motiv in der Platte |
+| `tidewrack_collar` | Flutbruch-Kette | Amulett | Treibholz und Muschelkalk, ein Aetherium-Splitter wie Strandgut eingefasst |
+| `hollowmarch_notch` | Hohlmarsch-Band | Ring | Breites Band aus vielen dünnen Ringen, wie zusammengewachsene Schritte |
+| `ashenvow_locket` | Aschenschwur-Anhänger | Amulett | Verkohltes Holzstück mit Eisenklammern, ein Blutstropfen-Rubin |
 | `rimeheart_locket` | Reifherz-Medaillon | Amulett | Medaillon aus Frostmetall, im Inneren ein Eiskristall, Reif an den Rändern |
-| `thornwarden_signet` | Dornwächter-Siegel | Ring | Ring aus verschlungenen Eisendornen, die nach außen stehen |
+| `thornwarden_seal` | Dornwächter-Siegel | Ring | Ring aus verschlungenen Eisendornen, die nach außen stehen (Effekt heißt im Spiel Vergeltung) |
 | `sunder_crown` | Splitterkrone | Amulett | Bruchstück einer Krone an einer Kette, Bruchkante scharf, fünf verschiedene Steine |
+
+## Welle 5 — Handwerk und Sammeln (4 Stück, P3)
+
+Die erste Schmuck-Linie, die außerhalb des Kampfes wirkt. Werkzeug-Anmutung statt Schmuck-Prunk:
+schlicht, benutzt, mit Spuren der Arbeit. Kein Edelstein im Vordergrund.
+
+| Item-ID | Name | Slot | Stufe | Motiv |
+|---|---|---|---|---|
+| `oreveined_hoop` | Erzader-Reif | Ring | 25 | Schlichter Eisenring, eine Kupfer-Erzader durchzieht ihn wie eine Naht |
+| `thriftcut_cinch` | Sparschnitt-Reif | Ring | 50 | Mithril-Ring mit Lederwicklung, wie von einem Handwerker selbst geflickt |
+| `steadhand_cuff` | Stetighand-Reif | Ring | 65 | Breiter Runit-Ring, innen abgegriffen, außen feine Griffkerben |
+| `harvestward_clutch` | Erntehut-Kette | Amulett | 80 | Titanium-Anhänger in Form einer Saatkapsel, Sternweb-Band, ein Korn im Inneren |
 
 ---
 
