@@ -534,6 +534,7 @@ export const ru: Record<string, string> = {
     "char.sortValue": "Ценность",
     "char.sortRarity": "Редкость",
     "char.sortLabel": "Сортировка:",
+    "char.sortType": "Тип",
     "char.itemWeight": "Вес",
     "char.itemStack": "Стопка",
     "char.itemValue": "Ценность",

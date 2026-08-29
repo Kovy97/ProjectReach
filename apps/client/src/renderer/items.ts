@@ -56,9 +56,9 @@ export function rarityClass(rarity: ItemRarity | undefined): string {
 /** Sortiermodi für Item-Listen: "newest" = unveränderte/natürliche Reihenfolge. "qty" (Menge,
  * absteigend) ist NUR in der Bank sinnvoll (Charakter-Inventar hat feste Slot-Mengen) — s.
  * BankPage, die "qty" lokal behandelt (compareItemsBy kennt nur itemId-abgeleitete Modi). */
-export type ItemSortMode = "newest" | "name" | "value" | "rarity" | "qty";
+export type ItemSortMode = "newest" | "name" | "value" | "rarity" | "qty" | "type";
 
-export const ITEM_SORT_MODES: ItemSortMode[] = ["newest", "name", "value", "rarity", "qty"];
+export const ITEM_SORT_MODES: ItemSortMode[] = ["newest", "type", "name", "value", "rarity", "qty"];
 
 // Abgeleitet aus dem vollständigen 8-Tier-Enum (shared: ITEM_RARITIES, aufsteigend niedrig→hoch),
 // statt einer eigenen Teil-Liste zu pflegen — sonst fallen neue/seltene Tiers (poor/superRare/godly)
@@ -75,8 +75,8 @@ export function rarityRank(rarity: ItemRarity | undefined): number {
 }
 
 /**
- * Vergleichsfunktion für Item-IDs nach Name/Wert/Seltenheit (Wert & Seltenheit absteigend,
- * Name alphabetisch). "newest"/"qty" werden hier NICHT behandelt — "newest" behält die eigene
+ * Vergleichsfunktion für Item-IDs nach Typ/Name/Wert/Seltenheit (Wert & Seltenheit absteigend,
+ * Name alphabetisch, Typ nach der Reihenfolge der Filter-Chips). "newest"/"qty" werden hier NICHT behandelt — "newest" behält die eigene
  * natürliche Reihenfolge des Aufrufers, "qty" braucht die tatsächliche Stückzahl je Eintrag
  * (nicht aus der Item-ID ableitbar) und wird direkt in BankPage sortiert.
  * Geteilt zwischen CharacterPage (Inventar) und BankPage, damit beide Seiten identisch sortieren.
@@ -92,6 +92,19 @@ export function compareItemsBy(
   const defB = content.items[idB];
   if (mode === "name") return tr(defA?.name ?? "").localeCompare(tr(defB?.name ?? ""));
   if (mode === "value") return (defB?.value ?? 0) - (defA?.value ?? 0);
+  if (mode === "type") {
+    // Chef-Wunsch 29.08.2026: „Inventar sortieren nach Typ — Materialien, Essen, Ruestung usw."
+    // Gruppiert nach denselben Kategorien wie die Filter-Leiste (`FILTER_CATEGORIES`) und in
+    // DERSELBEN Reihenfolge — der Spieler kennt sie von den Chips daneben. Innerhalb einer Gruppe
+    // alphabetisch, damit die Reihenfolge stabil und vorhersagbar bleibt. Unbekanntes ans Ende.
+    const rank = (id: string): number => {
+      const idx = (FILTER_CATEGORIES as readonly string[]).indexOf(filterCategoryOf(id));
+      return idx < 0 ? FILTER_CATEGORIES.length : idx;
+    };
+    const delta = rank(idA) - rank(idB);
+    if (delta !== 0) return delta;
+    return tr(defA?.name ?? "").localeCompare(tr(defB?.name ?? ""));
+  }
   return (ITEM_RARITY_ORDER[defB?.rarity ?? "common"] ?? 0) - (ITEM_RARITY_ORDER[defA?.rarity ?? "common"] ?? 0);
 }
 

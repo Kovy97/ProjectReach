@@ -535,6 +535,7 @@ export const zh: Record<string, string> = {
     "char.sortValue": "价值",
     "char.sortRarity": "稀有度",
     "char.sortLabel": "排序：",
+    "char.sortType": "类型",
     "char.itemWeight": "重量",
     "char.itemStack": "堆叠",
     "char.itemValue": "价值",

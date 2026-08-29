@@ -57,7 +57,7 @@ import { getInvFilterCat, setInvFilterCat } from "../util/uiPrefs";
 
 // ── types ────────────────────────────────────────────────────────────────────
 
-type SortMode = "newest" | "name" | "value" | "rarity";
+type SortMode = "newest" | "type" | "name" | "value" | "rarity";
 
 // ── sub-components ───────────────────────────────────────────────────────────
 
@@ -556,6 +556,7 @@ export function CharacterPage(): JSX.Element {
               onChange={(e) => setSortMode(e.target.value as SortMode)}
             >
               <option value="newest">{t("char.sortNewest")}</option>
+              <option value="type">{t("char.sortType")}</option>
               <option value="name">{t("char.sortName")}</option>
               <option value="value">{t("char.sortValue")}</option>
               <option value="rarity">{t("char.sortRarity")}</option>

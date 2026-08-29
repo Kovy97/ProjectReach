@@ -535,6 +535,7 @@ export const fr: Record<string, string> = {
     "char.sortValue": "Valeur",
     "char.sortRarity": "Rareté",
     "char.sortLabel": "Trier :",
+    "char.sortType": "Type",
     "char.itemWeight": "Poids",
     "char.itemStack": "Pile",
     "char.itemValue": "Valeur",

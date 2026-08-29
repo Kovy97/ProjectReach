@@ -525,6 +525,7 @@ export const ptBR: Record<string, string> = {
     "char.sortValue": "Valor",
     "char.sortRarity": "Raridade",
     "char.sortLabel": "Ordenar:",
+    "char.sortType": "Tipo",
     "char.itemWeight": "Peso",
     "char.itemStack": "Pilha",
     "char.itemValue": "Valor",
