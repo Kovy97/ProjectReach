@@ -815,7 +815,16 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     // ist der Spiegel von `character.equipment` und zaehlt deshalb NICHT noch einmal.
     (state.equipKits ?? []).forEach((kit, i) => {
       if (i === state.activeKit) return;
-      for (const id of Object.values(kit.equipment)) addRare(id, 1);
+      // Chef-Report 29.08.2026: verzauberte Items erschienen beim Wechsel aus einem leeren Kit als Neufund. Ein Kit
+      // kann eine Instanz auch OHNE gespiegelte Basis-ID im Slot tragen (aeltere Kit-Migration) — dann zaehlt die
+      // Instanz ueber ihre baseItemId; je Slot genau einmal.
+      for (const slot of Object.keys(kit.equipment ?? {})) {
+        const id = kit.equipment[slot as keyof typeof kit.equipment] ?? kit.equippedInstances?.[slot as keyof typeof kit.equippedInstances]?.baseItemId ?? null;
+        addRare(id, 1);
+      }
+      for (const [slot, inst] of Object.entries(kit.equippedInstances ?? {})) {
+        if (inst && !(slot in (kit.equipment ?? {}))) addRare(inst.baseItemId, 1);
+      }
     });
     for (const [id, q] of Object.entries(state.bank)) addRare(id, q);
     for (const inst of state.bankInstances ?? []) addRare(inst.baseItemId, 1);
@@ -862,6 +871,12 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     const allInstances = [
       ...state.inventory.instances,
       ...Object.values(state.character.equippedInstances).filter((i): i is NonNullable<typeof i> => !!i),
+      // Chef-Report 29.08.2026 ("Discovery-Bug bei Kits ist zurueck"): Instanzen in INAKTIVEN Kits gehoeren dazu, sonst
+      // gelten sie beim Zurueckwechseln (leeres Kit 2 -> Kit 1) als neu und der Verzaubert-Toast feuert erneut.
+      ...(state.equipKits ?? []).flatMap((kit, i) =>
+        i === state.activeKit ? [] : Object.values(kit.equippedInstances ?? {}).filter((inst): inst is NonNullable<typeof inst> => !!inst),
+      ),
+      ...(state.bankInstances ?? []),
     ];
     for (const inst of allInstances) {
       if (inst.affixes.length > 0 || !!inst.suffix) {
