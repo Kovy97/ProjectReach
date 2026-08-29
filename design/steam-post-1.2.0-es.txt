@@ -1,0 +1,47 @@
+Grim Reach 1.2.0 - Patch #3: Threads, Traps & Spellfire (Hilos, trampas y fuego arcano)
+
+Cazadores,
+
+esta actualización reconstruye tres rincones del juego a la vez. La magia por fin tiene una identidad propia: ahora cada elemento hace algo distinto en combate, los bastones y varitas fabricados por fin cubren todos los elementos, las armas mágicas escalan con tu Inteligencia, y el maná se convierte en una Reserva de hechizos que carga dos posturas en vez de ser un coste que pagas por cada conjuro. La Caza llega como una profesión totalmente nueva, con trampas cebadas que siguen funcionando mientras no estás y una cadena de cebos que la conecta con la Pesca. Y el viejo muro de cuero en Artesanía por fin desaparece: fibras en cinco niveles, una nueva profesión de Sastrería para túnicas y capas, y conjuntos de tela que son tela de principio a fin. A eso se suman efectos de partículas procedurales para cada arma, tres kits de equipo completos, un 29.º Campeón con una hacha grande legendaria, dos compañeros nuevos y la lista de correcciones de siempre. Las partidas guardadas siguen siendo compatibles como siempre.
+
+NOVEDADES
+
+- Caza, una nueva profesión: coloca trampas cebadas en zonas que ya has desbloqueado en combate, y cada captura te da cinco tiradas de botín de una criatura que ya has derrotado, tanto en línea como fuera de línea. Las ranuras de trampa se desbloquean en Caza nivel 1, 5, 15, 30, 50 y 75. La XP de captura es cinco veces la XP de combate de la criatura, y la primera captura de cada una paga el doble. Un diario de caza recopila todo lo que has atrapado.
+- El cebo tiene cinco niveles: gusanos, larvas, cangrejo, calamar y cebo luminoso, todos provienen de la Pesca (niveles 1, 20, 40, 60, 80), y cada zona de caza pide el cebo de su nivel. Una trampa sin cebo conserva su zona y espera; se reinicia sola en cuanto el cebo correcto vuelve a tu inventario o banco.
+- Fibras y telas: la ortiga, el lino, el cáñamo espinoso, la seda fantasma y el lino estelar crecen en nuevos puntos de recolección y en tus parcelas de New Haven, y se tejen en cinco niveles de tela. Todos los conjuntos de tela, desde la túnica de aprendiz hasta el tejido del vacío, están ahora hechos solo de tela; el cuero se queda solo en algunas capas y en el equipo a distancia. Una cuerda de arco de ortiga te permite fabricar arcos desde el nivel 1 sin combatir.
+- Sastrería, una nueva profesión: el tejido, todas las túnicas de mago y todas las capas pasan de Artesanía a Sastrería. Tu progreso actual se reparte según lo que realmente fabricaste: la XP de túnicas, capas y tela va a Sastrería, el resto se queda en Artesanía, y el equipo que llevas puesto sigue equipado. Una palabra del desarrollador: lamento que esta división separe tu progreso de Artesanía. Fue la mejor decisión para el juego en su conjunto, y prefería tomarla ahora que más tarde.
+- El conjunto de tejido tenue está completo: cinco piezas recién pintadas como segundo conjunto inicial, sin necesidad de cuero.
+- Efectos elementales: ahora cada elemento tiene su propia identidad, tanto en tus armas como en los monstruos. Quemadura: un 10 % más de daño recibido mientras se está en llamas. Escarcha: el tercer congelamiento seguido congela al objetivo durante un ataque, y luego lo hace inmune 6 s. Descarga: se acabaron los ataques saltados; cada descarga retrasa el próximo ataque del objetivo 0,4 s (hasta 1,2 s), y los críticos con descarga saltan y golpean una segunda vez por el 30 %. Veneno: se acumula hasta cinco veces y reduce a la mitad la regeneración y el robo de vida. Vacío: el nuevo estado Drenaje, el objetivo inflige un 15 % menos de daño. Arcano: Resonancia, +2 % por golpe hasta diez cargas. Éter: Bendición de luz, cada hechizo restaura un 2 % de tu guarda y atraviesa la mitad de la guarda enemiga.
+- Reserva de hechizos y Sabiduría: los conjuros ya no cuestan nada, y el golpe débil del bastón ha desaparecido. El maná ahora es un valor fijo como la armadura, y las dos posturas mágicas lo aprovechan: la Postura de enfoque otorga un 1 % más de daño mágico por cada 60 de reserva (hasta un 15 %), y la Postura de escudo otorga un 1 % más de regeneración de guarda por cada 40 de reserva (hasta un 30 %). La Sabiduría ahora protege todos los estilos de combate: cada punto hace que la quemadura, la escarcha, la descarga, el veneno, el sangrado y el drenaje enemigos sean un 1 % más cortos y débiles (hasta un 40 %). Las bonificaciones de maná antiguas se convierten (+1 de regeneración de maná = +10 de reserva de hechizos).
+- Foco arcano: las armas mágicas ahora crecen con tu Inteligencia, alrededor de un +15/22/30 % de rango de daño en el nivel 30/60/90. La ficha del objeto muestra la tasa y tu rango real con tu INT actual.
+- La escalera elemental: los bastones y varitas fabricados ya no comparten todos el mismo efecto de quemadura. Cada nivel de fabricación muestra fuego, escarcha, descarga, veneno y arcano en una mezcla rotativa, y el éter se suma a partir del titanio, así que por fin toda la biblioteca de efectos aparece en combate.
+- Efectos de combate procedurales para cada arma: brasas incandescentes con estelas de chispas, esquirlas de hielo, rayos en cadena ramificados, burbujas de veneno, runas arcanas, un núcleo del vacío que engulle la luz, plumas doradas, arcos de tajo cuerpo a cuerpo, vuelo de flechas, sangre, icor y polvo de hueso, chispas de bloqueo y todas las habilidades de los compañeros. Cuando un estado afecta a un luchador, su cuerpo se enciende y un discreto bucle de efecto sigue reproduciéndose mientras dure el estado. La opción de efectos de combate te deja elegir entre completo, reducido o desactivado.
+- Tres kits de equipo reales: las tres plantillas de equipamiento ahora guardan sus propios objetos, herramientas incluidas. Puedes cambiar entre ellas en la ficha de personaje fuera de combate; el cambio rellena tus PV, tu guarda y tu reserva.
+- Ossric el Atado a la Médula, un 29.º Campeón, acecha en Las Tierras Altas y suelta el hacha grande legendaria Esthar, Tormenta de Huesos: hace sangrar al golpear, y cada cuarto golpe impacta dos veces. Basada en la idea de un jugador.
+- Dos compañeros nuevos: Leon, el Temido, un gato con botas procedente de la Caza (5 % de probabilidad por captura de obtener diez tiradas de botín en vez de cinco; su Cepo de oso hace sangrar al enemigo), y la Tejedora de Seda procedente de la Sastrería (5 % de probabilidad de que se ahorren materiales; su Velo de seda ciega al enemigo). La Caza y la Agricultura dan pocas tiradas, así que sus compañeros caen con más frecuencia que el resto: Leon a 1 entre 8.000 por captura, y el compañero de Agricultura ahora a 1 entre 4.000 por cosecha (antes 1 entre 15.000).
+- El selector de zona de caza ahora es una ventana grande de dos columnas con todos los detalles de la zona, las criaturas que se pueden atrapar y su botín.
+
+MEJORAS
+
+- Las fichas de los compañeros detallan su bonificación pasiva y su habilidad de combate con números y tiempos reales, en cuanto posees al compañero.
+- Los objetos únicos de Campeón muestran su efecto (por ejemplo, robo de vida) en la ficha del objeto, y la wiki incluye al Campeón como fuente.
+- Los efectos de curación, guarda y reducción de enfriamiento al matar de varios objetos ahora se suman, en vez de contar solo el más fuerte.
+- La guarda se regenera fuera de combate, un 5 % por segundo, así que ya no empiezas cada combate a cero.
+- El registro de combate ahora nombra los saltos de descarga y las ganancias de guarda por Bendición de luz, y el texto de habilidad de cada ficha de arma indica la probabilidad real de aplicación.
+- Las fichas de objeto se ajustan a su contenido, así que las listas de estadísticas largas ya no se aprietan.
+- Los botones de cantidad de la cola (1/25/X/infinito) ahora llevan el mismo marco de hierro que el resto de los botones.
+- El tooltip del kit ahora lista las herramientas guardadas en un kit inactivo.
+- El autoguardado ahora se ejecuta cada 5 segundos.
+
+CORRECCIONES
+
+- Cambiar entre kits de equipo ya no marca los objetos del otro kit como hallazgos nuevos, ni siquiera las piezas encantadas.
+- Los compañeros a los que les faltaba el texto de su pasiva (munición extra) ahora lo muestran.
+- El botón de Discord ha desaparecido (no hay servidor), el borrador del informe de errores sobrevive al envío, y hacer Mayús+clic en el banco ya no selecciona texto.
+- Las fichas de objetos consumibles (guisos, tónicos) mantienen su marco.
+
+Con esta actualización llegan dos logros más de Steam: Master Tailor y Master Hunter, por alcanzar el nivel 99 en las nuevas profesiones.
+
+Como siempre: si algo no se siente bien, dímelo aquí o mediante el botón de informe de errores en las opciones. La próxima actualización, 1.3.0 «Alive», trae la taberna a New Haven.
+
+Gracias por jugar.
