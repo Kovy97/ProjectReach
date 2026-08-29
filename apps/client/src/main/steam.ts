@@ -20,10 +20,11 @@ import { steamApiName } from "./steamAchievements";
  */
 
 /**
- * CHEF-ENTSCHEID 2026-07-13: KEINE Steam-Achievements zum EA-Start — Integration bleibt bewusst
- * INERT (Default 0, steamworks.js nicht installiert). Die echte AppID ist dokumentiert: 4915450
- * (Partner-Backend „Grim Reach"). Falls Achievements später gewünscht: Scharfschalt-Schritte im
- * Kopfkommentar + kuratierte Backend-Liste in design/steam-achievements-export.md.
+ * CHEF-GO 2026-08-29 (1.2.0 ist ein Major-Update): Steam-Achievements sind SCHARF. steamworks.js ist
+ * installiert, AppID 4915450 ist der Default (Env-Override `GRIMREACH_STEAM_APPID`, 0 = bewusst aus,
+ * z. B. für Harness/Tests). Das Set umfasst 69 Erfolge (design/achievements-1.2.0/steam-set.csv,
+ * Mapping in steamAchievements.ts). Der frühere Entscheid vom 13.07. („keine Achievements zum
+ * EA-Start", Integration inert) ist damit überholt.
  * Steam-CLOUD braucht diesen Code NICHT (Auto-Cloud synct %APPDATA%\Grim Reach\saves\ selbst).
  */
 // Chef-GO 29.08.2026 (1.2.0 „Threads, Traps & Spellfire" wird Major-Update mit 69 Steam-Erfolgen): scharf
@@ -58,6 +59,21 @@ function loadSteamworks(): { init(appId: number): SteamClient } | null {
     return req(moduleName) as { init(appId: number): SteamClient };
   } catch {
     return null;
+  }
+}
+
+/**
+ * Schaltet das Steam-Overlay für Electron frei (Erfolgs-Einblendungen, Shift+Tab im Spiel).
+ * steamworks.js setzt dafür die Schalter `--in-process-gpu` und `--disable-direct-composition`;
+ * beide werden beim GPU-Start gelesen, der Aufruf MUSS also VOR `app.whenReady()` stehen (siehe
+ * main/index.ts, Modul-Ebene). Fehlt das Modul, bleibt es ein No-Op — Spiel läuft normal weiter.
+ */
+export function enableSteamOverlay(): void {
+  try {
+    const sw = loadSteamworks() as { electronEnableSteamOverlay?: () => void } | null;
+    sw?.electronEnableSteamOverlay?.();
+  } catch (err) {
+    console.warn("[steam] Overlay konnte nicht aktiviert werden:", err);
   }
 }
 

@@ -949,6 +949,17 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         });
       }
     }
+    if (prev && !settledRef.current) {
+      // Prüfbericht 29.08.2026: In der Runde zwischen erstem Snapshot und `settledRef` (Diff-Takt
+      // 1 Hz) unterdrückt der Block unten bewusst die Toasts — dadurch fiel aber auch der
+      // Steam-Unlock aus. Genau dort landet der Nachzügler-Batch eines Updates (checkAchievements
+      // läuft ohne Offline-Fenster erst im ersten Live-Tick): der Erfolg stand im Spiel, aber nicht
+      // auf Steam, bis der Spieler den Save neu lud. Unlock ist ein reiner Seiteneffekt und
+      // idempotent (main/steam.ts prüft isActivated) — hier ohne Toasts nachziehen.
+      for (const id of achievements) {
+        if (!prev.achievements.has(id)) void window.hearthforge?.steam?.unlockAchievement(id);
+      }
+    }
     if (prev && settledRef.current) {
       // Neu freigeschaltete Achievements. Welle EE (Pip P2, "verschluckter Jackpot"): bei ≥3
       // gleichzeitigen Unlocks im selben Diff (typischerweise ein Offline-/Nachhol-Batch) EINEN

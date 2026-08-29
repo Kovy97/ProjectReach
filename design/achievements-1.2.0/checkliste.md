@@ -1,5 +1,10 @@
 # Steam-Erfolge: FINALES SET (eingefroren 27.08.2026, Chef-Auswahl)
 
+> **VERALTET (29.08.2026) — NICHT zum Anlegen benutzen.** Diese Liste hat nur 67 Zeilen (MASTER_TAILORING und
+> MASTER_HUNTING fehlen) und nennt bei Bestienmeister/Vollender die alten Zahlen. Verbindlich sind
+> `steam-set.csv` und die untere Kopier-Tabelle in `steam-achievements.html` (69 Zeilen, Klick zum Kopieren).
+
+
 69 Erfolge (1.2.0: +MASTER_TAILORING, +MASTER_HUNTING), davon 5 versteckt, 34 brauchen neue interne Erfolge. Raus: Master of All Sets, Feathers Everywhere, Bull-Headed.
 
 - `CH01_THE_FIRST_PAGE` — The First Page: Finish Chronicle chapter 1: The First Page.
@@ -62,10 +67,10 @@
 - `MASTER_VITALITY` — Master of Vitality: Reach level 99 in Vitality.
 - `MASTER_WARDING` — Master Warder: Reach level 99 in Warding.
 - `MASTER_SLAYER` — Master Slayer: Reach level 99 in Slayer.
-- `BEASTMASTER` — Beastmaster: Own all 21 companions.
+- `BEASTMASTER` — Beastmaster: Own all 23 companions.
 - `THE_WHOLE_BESTIARY` — The Whole Bestiary: Defeat every creature in the bestiary at least once.
 - `TROPHY_HALL` — Trophy Hall: Claim the unique trophy of every Champion of the Reach.
-- `TRUE_COMPLETIONIST` — True Completionist: Reach the maximum total level of 1,980.
+- `TRUE_COMPLETIONIST` — True Completionist: Reach the maximum total level of 2,178.
 - `ASH_TO_ASH` — Ash to Ash: Fall in battle for the first time. (versteckt)
 - `THE_NINTH_WARDEN` — The Ninth Warden: Defeat the Ninth Warden. (versteckt)
 - `A_HUNDRED_HOURS` — A Hundred Hours in the Reach: Play actively for 100 hours. (versteckt)

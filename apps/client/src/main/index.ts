@@ -5,7 +5,7 @@ import { registerSaveHandlers } from "./saves";
 import { registerZoneMapHandlers } from "./zonemaps";
 import { borderlessBounds, readWindowModeSync, registerWindowHandlers } from "./window";
 import type { WindowMode } from "./window";
-import { initSteam, registerSteamHandlers } from "./steam";
+import { enableSteamOverlay, initSteam, registerSteamHandlers } from "./steam";
 import { registerShellHandlers } from "./shell";
 import { registerBugReportHandlers } from "./bugReport";
 import { registerCharacterExportHandlers } from "./characterExport";
@@ -21,6 +21,12 @@ import { registerCharacterExportHandlers } from "./characterExport";
 // (electron.vite.config.ts): im Spieler-Build literal `false`, jeder Builder-Zweig hier wird dort
 // zu totem Code gefaltet (per Bundle-Grep gegen out/main/index.js verifiziert).
 app.setName(__SCENE_BUILDER_BUILD__ ? "Grim Reach Scene Builder" : "Grim Reach");
+
+// Steam-Overlay (Prüfbericht 29.08.2026): OHNE diesen Aufruf schaltet ein Erfolg zwar auf dem Profil
+// frei, Steam zeichnet aber keine Einblendung — der Spieler sieht nichts. steamworks.js setzt dafür
+// `--in-process-gpu` und `--disable-direct-composition`, das MUSS vor `app.whenReady()` passieren
+// (Kommandozeilen-Schalter werden beim GPU-Start gelesen). No-Op ohne Steam/ohne das native Modul.
+enableSteamOverlay();
 
 function createWindow(): void {
   // Im Dev liefert electron-vite die URL des Vite-Dev-Servers, im Build die Datei.
