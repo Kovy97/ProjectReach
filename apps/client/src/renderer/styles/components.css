@@ -2786,3 +2786,52 @@ body .item-cell.rarity-godly {
   white-space: normal;
   overflow-wrap: break-word;
 }
+
+/* ── Dev-Zeitraffer (Chef 29.08.2026) ────────────────────────────────────────────────────────────
+   Werkzeug, kein Spiel-UI: bewusst nüchtern gehalten und klar als Dev-Element erkennbar. Rendert im
+   ausgelieferten Spiel gar nicht (DevSpeedPanel gibt ohne Dev-Gate `null` zurück).
+   Position: unten, RECHTS NEBEN der Sidebar. Der erste Versuch (left: 12px) lag über den unteren
+   Sidebar-Eintraegen und verdeckte zwei davon — im Electron-Screenshot 29.08. gesehen. */
+.devspeed {
+  position: fixed;
+  left: 232px;
+  bottom: 12px;
+  z-index: 90;
+  width: 178px;
+  padding: 8px 10px 7px;
+  background: rgba(10, 9, 8, 0.92);
+  border: 1px solid rgba(216, 184, 112, 0.3);
+  border-radius: 3px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  color: #9a8d78;
+  user-select: none;
+}
+.devspeed--on {
+  border-color: rgba(200, 106, 72, 0.75);
+  box-shadow: 0 0 0 1px rgba(200, 106, 72, 0.25);
+}
+.devspeed-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.devspeed-title { letter-spacing: 0.08em; text-transform: uppercase; font-size: 10.5px; }
+.devspeed-val { color: #e8dcc4; font-size: 14px; font-variant-numeric: tabular-nums; }
+.devspeed--on .devspeed-val { color: #d8904a; }
+.devspeed input[type="range"] { width: 100%; margin: 0; accent-color: #b86030; }
+.devspeed-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; gap: 8px; }
+.devspeed-reset {
+  background: none;
+  border: 1px solid rgba(216, 184, 112, 0.28);
+  border-radius: 2px;
+  color: #9a8d78;
+  font: inherit;
+  font-size: 10.5px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+.devspeed-reset:disabled { opacity: 0.4; cursor: default; }
+.devspeed-reset:not(:disabled):hover { color: #e8dcc4; border-color: rgba(216, 184, 112, 0.6); }
+.devspeed-warn { color: #c4573a; font-size: 10px; letter-spacing: 0.06em; }

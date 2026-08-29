@@ -13,6 +13,7 @@ import type { ReactNode } from "react";
 import type { GameState, OfflineSummary, SaveSlot } from "@hearthforge/shared";
 import { MAX_OFFLINE_MS } from "@hearthforge/shared";
 import { advance, createGame } from "@hearthforge/engine";
+import { getDevSpeed } from "../devSpeed";
 import type { CharacterCreation } from "@hearthforge/engine";
 import { deserialize, parseSummary, serialize } from "@hearthforge/persistence";
 import { content } from "@hearthforge/content";
@@ -540,7 +541,12 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
           // Epoch-Wert. `blessingForTime` läuft intern über `new Date(nowMs).getDay()`; mit dem
           // rAF-`now` durchgereicht läge das Datum nahe 1970-01-01 → falscher/fixer Wochentag statt
           // des tatsächlichen lokalen Kalendertags.
-          const simulationDt = simulationAccumulatorMs;
+          // Dev-Zeitraffer (Chef 29.08.2026): `getDevSpeed()` ist im ausgelieferten Spiel IMMER 1
+          // (zweite Sperre, s. devSpeed.ts) — dort ist die Zeile ein reiner No-op. Im Dev-Build
+          // streckt der Faktor das Zeitfenster, das die Engine sieht; das ist exakt der
+          // Offline-Aufhol-Pfad, also derselbe deterministische Code. Auf MAX_OFFLINE_MS geklemmt,
+          // damit ein hoher Faktor nach einem Frame-Aussetzer nicht doch die Aufhol-Sim sprengt.
+          const simulationDt = Math.min(simulationAccumulatorMs * getDevSpeed(), MAX_OFFLINE_MS);
           simulationAccumulatorMs = 0;
           advance(stateRef.current, content, simulationDt, { nowMs: Date.now() });
         }

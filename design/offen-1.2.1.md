@@ -111,3 +111,43 @@ Auffälligkeiten aus derselben Auswertung:
   zusätzlich ein Anzeigefehler, und der Spieler hat mit seiner Vermutung teilweise recht.
 
 Danach: Balance-Pins neu messen und mit Chef-GO-Kommentar setzen.
+
+### 4.3 Schriftumschaltung (Chef 29.08.2026, für 1.2.1)
+
+Chef: „Font switching. Es wurde bemängelt, dass der Font an Stellen schlecht zu lesen ist."
+
+**Ausgangslage (geprüft):** Die Hausschrift hängt an zwei CSS-Variablen in
+`apps/client/src/renderer/styles/base.css:90-91`:
+
+- `--font-head` = **IM Fell English SC** (Georgia als Rückfall) — erbt der Body und **sämtliche
+  Controls**, gilt also appweit. Das ist die Schrift, die bemängelt wird: eine historisierende
+  Kapitälchen-Antiqua mit unruhiger Grundlinie, die in kleinen Größen und bei langen Zahlenreihen
+  schwer zu lesen ist.
+- `--font-info` = **Cinzel** für Überschriften und Werte.
+- Die Ziffernschicht **Grim Reach Numerals** liegt bereits als eigene Familie davor und deckt nur
+  Ziffern und Rechenzeichen ab (`base.css:19-30`).
+
+Beide Variablen werden über alle Stylesheets hinweg konsequent benutzt (über 30 Dateien greifen auf
+`var(--font-head)` zu). **Die Umschaltung ist deshalb billig:** eine Option, die auf dem Wurzelelement
+eine Klasse oder ein `data-font`-Attribut setzt, das die beiden Variablen neu definiert. Kein einziges
+Stylesheet muss angefasst werden.
+
+Für Chinesisch, Russisch und die übrigen Sprachen gibt es bereits eigene Stacks
+(`base.css:98-104`) — die Umschaltung muss diese Sprachregeln respektieren und darf sie nicht
+überschreiben.
+
+**Vorschlag:**
+
+| Modus | `--font-head` | Wofür |
+|---|---|---|
+| **Atmosphäre** (Vorgabe) | IM Fell English SC | wie heute |
+| **Klar** | eine ruhige Serifenschrift ohne Kapitälchen | bessere Lesbarkeit, Stimmung bleibt |
+| **Maximal lesbar** | eine Grotesk mit hoher x-Höhe | Barrierefreiheit, bewusst ohne Stimmung |
+
+Zu klären: (a) Welche zwei Schriften kommen dazu — sie müssen gebündelt werden, das Spiel lädt keine
+Schriften aus dem Netz (`fonts/`-Ordner, OFL-Lizenz Pflicht). (b) Wird nur `--font-head` umgeschaltet
+oder auch `--font-info`? (c) Gehört eine getrennte Schriftgrößen-Stufe dazu, oder reicht die Schriftwahl?
+Der Branch heißt nicht ohne Grund `feat-1.0.1-ui-skalierung` — Größe und Schrift sind dasselbe Thema.
+
+**Aufwand:** gering, sofern die Schriften feststehen. Option, Zustand im Spielstand oder in den
+lokalen Einstellungen, drei Zeilen CSS je Modus, Texte in 7 Sprachen.

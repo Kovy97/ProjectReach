@@ -25,6 +25,7 @@ import { GameAlerts } from "./components/GameAlert";
 import { QueueAmountModalHost } from "./components/QueueAmountModal";
 import { UpdateNotice } from "./components/UpdateNotice";
 import { Toasts } from "./components/Toasts";
+import { DevSpeedPanel } from "./components/DevSpeedPanel";
 import { ActionQueuePanel } from "./components/ActionQueuePanel";
 import { EliteMiniWindow } from "./components/EliteMiniWindow";
 import { PetCelebration } from "./components/PetCelebration";
@@ -1074,6 +1075,7 @@ function MainLayout(): JSX.Element {
       <Toasts activePageId={activePageId} />
       <GameAlerts />
       <QueueAmountModalHost />
+      <DevSpeedPanel />
       <UpdateNotice />
       <PetCelebration />
       <MasteryCeremony />
