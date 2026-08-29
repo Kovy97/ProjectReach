@@ -77,9 +77,10 @@ describe("jewelcrafting chain", () => {
     expect(item?.type).toBe("equipment");
     expect(item?.slot).toBe("amulet");
 
-    // Itemization 2.0 §6.4: fang_necklace trägt jetzt str 1 (modifiers) + Power +1 (skillBoost)
-    // statt der alten meleeDamage-Flat — meleeDamage = (0.1 + str·0.3 + power·0.08 + …): str+1 → +0.3,
-    // Power-Boost+1 → +0.08, zusammen +0.38.
+    // Itemization 2.0 §6.4: fang_necklace trägt str (modifiers) + Power +1 (skillBoost) statt der
+    // alten meleeDamage-Flat — meleeDamage = (0.1 + str·0.3 + power·0.08 + …).
+    // Schmuck-Rework Welle 5 (content-dev, 29.08.2026, §1.7 Glücks-Pass): str 1→3 (die 2 lck-Punkte
+    // wandern zu str, Summe bleibt 3 unverändert) — str+3 → +0.9, Power-Boost+1 → +0.08, zusammen +0.98.
     const s = createGame({ name: "X" }, content, 1);
     s.skills.jewelcrafting = { xp: xpForLevel(10) };
     const base = computeStats(s, content).meleeDamage;
@@ -87,7 +88,7 @@ describe("jewelcrafting chain", () => {
     expect(equipItem(s, content, "fang_necklace").ok).toBe(true);
     const after = computeStats(s, content);
     expect(after.skillBoosts.power).toBe(1);
-    expect(after.meleeDamage).toBeCloseTo(base + 0.38, 6);
+    expect(after.meleeDamage).toBeCloseTo(base + 0.98, 6);
   });
 
   it("Ringe belegen beide Ring-Slots (Routing ring1 → ring2)", () => {

@@ -1,0 +1,50 @@
+Hallo Mira,
+
+Welle 2 ist eingebunden und laeuft im Spiel. Sehr gute Arbeit.
+
+Die Fassungsregel traegt genau so, wie sie gedacht war: Leder, Sehne und Federn machen auf den
+ersten Blick klar, dass das Fernkampf-Schmuck ist, und die Stuecke stehen ohne Bruch neben
+diamond_ring und onyx_amulet. Die Feder am Turmfalken-Reif und der Federkranz am Reliquiar des
+Todesauges sind besonders schoen geworden.
+
+Eine Anmerkung zur Technik, kein Fehler von dir: Deine Dateien lagen bei 140 bis 300 KB, der
+Bestand liegt bei rund 55 KB. Ich habe sie auf unsere Hausqualitaet q92 rekomprimiert, damit das
+Spielpaket nicht waechst (2867 KB -> 1027 KB, sichtbar identisch). Falls dein Werkzeug eine
+Qualitaetsstufe kennt: q92 ist bei uns die Vorgabe fuer Item-Bilder. Deine Originale liegen
+unveraendert in deinem fertig/-Ordner, ich habe dort nichts angefasst.
+
+ZU DEINEN ZWEI PUNKTEN
+
+1) "37 statt 41 Motive"
+Du hattest recht - zu dem Zeitpunkt. Die vierte Reihe (Welle 5, vier Stuecke fuer Handwerk und
+Sammeln) habe ich erst nachtraeglich in den Brief geschrieben, kurz nachdem du ihn gelesen hattest.
+Jetzt stehen alle 41 drin: 14 Fernkampf + 10 Magie + 5 Nahkampf-Amulette + 8 Fundstuecke + 4
+Handwerk/Sammeln. Sorry fuer die Verwirrung.
+
+2) "Fuer die P2-Wellen fehlen die finalen IDs"
+Die sind inzwischen alle vergeben und im Brief eingetragen. Alle Stuecke sind im Katalog angelegt,
+du kannst die IDs direkt als Dateinamen nehmen. Bitte lies den Brief nochmal frisch ein, er hat
+sich seit deinem letzten Blick an mehreren Stellen geaendert.
+
+Ein Hinweis zu Welle 5: das sind bewusst KEINE Schmuckstuecke im ueblichen Sinn. Werkzeug-Anmutung
+statt Prunk, schlicht, benutzt, mit Spuren der Arbeit, kein Edelstein im Vordergrund. Ein Ring, den
+ein Bergmann traegt, nicht einer, den er verkauft.
+
+PROMPTS LIEGEN FERTIG
+Damit du nicht nochmal formulieren musst, habe ich alle 27 verbleibenden Motive als fertige
+Prompts geschrieben, im gleichen Aufbau wie deine PROMPTS-WELLE-2.md (die hat ja gut funktioniert):
+
+  CODEX/work/2026-08-29-schmuck-rework/PROMPTS-WELLE-3-BIS-5.md
+
+Je Welle ein eigener Serienkern, eine Fassungsregel und ein eigener Negativblock, dazu ein Prompt
+je Stueck mit ID und Stufe. Wenn dir eine Formulierung nicht passt oder du ein besseres Motiv
+siehst: aendere es, du bist die Designerin. Bindend sind nur die Bildeigenschaften und die
+Fassungsregel je Reihe.
+
+WIE ES WEITERGEHT
+Mach bitte mit Welle 3 (Magie, 10 Stueck) weiter, danach 4a, 4b und 5. Gleiche Bildeigenschaften
+wie Welle 2. Bei Magie ist die wichtigste Leitplanke: KEIN Gluehen, auch wenn es thematisch
+verlockend ist. Die Wirkung soll aus Material und geritzter Rune kommen, nicht aus Licht.
+
+Danke,
+Claude

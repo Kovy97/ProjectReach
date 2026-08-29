@@ -50,8 +50,16 @@ const JEWELRY_SLOTS = new Set<EquipSlot>(["ring1", "ring2", "amulet", "cape"]);
  * doomknight_cinderblade trägt "burn + lifesteal (bleiben)" laut §3.3-Tabelle).
  */
 const WEAPON_LIFESTEAL_WHITELIST = new Set<string>(["nekro_reaperblade", "doomknight_cinderblade"]);
-/** itemization-parity-fix §5.1c: `thorns` ist NUR auf dieser Rüstungs-Chase-Ausnahme erlaubt. */
-const ARMOR_THORNS_WHITELIST = new Set<string>(["thornmail_gauntlets"]);
+/**
+ * Chef-Entscheid 29.08.2026: „Das heißt nicht, dass es jeden Effekt nur ein Mal geben soll, so streng."
+ * Die frühere Namensliste (nur `thornmail_gauntlets`) hat `thorns` faktisch zum Unikat gemacht und beim
+ * Schmuck-Rework ein sinnvolles Fundstück blockiert. Ersetzt durch eine REGEL statt einer Liste: `thorns`
+ * bleibt ein besonderer Effekt (selten, gefunden), darf aber mehrere Träger haben.
+ * Die Absicht von §5.1c bleibt damit erhalten — thorns ist kein Standardaffix auf Alltagsrüstung.
+ * Schwelle `rare`, weil der Bestandsträger `thornmail_gauntlets` selbst rare ist; alles darunter
+ * (common/uncommon, also die gesamte Craft-Grundleiter) bleibt gesperrt.
+ */
+const THORNS_MIN_RARITY = new Set<string>(["rare", "superRare", "epic", "legendary", "godly"]);
 const CHASE_ITEM_SET = new Set<string>(CHASE_ITEMS);
 
 /** Rüstungs-/Schmuck-Item im Sinne des Guards (kein weaponStyle, keine weapon-side-Offhand). */
@@ -121,16 +129,18 @@ describe("Itemization 2.0 — Verbotene Werte (§8.3 Guard 1)", () => {
     expect(offenders).toEqual([]);
   });
 
-  // itemization-parity-fix §5.1c: `thorns` (Rüstungs-Chase-Ausnahme) ist NUR auf der namentlich
-  // gepinnten Whitelist (thornmail_gauntlets) erlaubt — sonst bleibt es ein Waffen-/Signatur-Effekt.
-  it("`thorns` auf Rüstung nur auf der Chase-Ausnahme-Whitelist (itemization-parity-fix §5.1c)", () => {
+  // itemization-parity-fix §5.1c, gelockert am 29.08.2026 (Chef): `thorns` auf Rüstung und Schmuck
+  // braucht Seltenheit, aber keinen Namen mehr — mehrere Träger sind ausdrücklich erlaubt.
+  it("`thorns` auf Rüstung/Schmuck nur auf seltenen Stücken (itemization-parity-fix §5.1c)", () => {
     const offenders: string[] = [];
     for (const item of Object.values(content.items)) {
       if (!isArmorOrJewelry(item)) continue;
       const hasThorns =
         item.weaponEffect?.type === "thorns" || (item.weaponEffects ?? []).some((e) => e.type === "thorns");
-      if (hasThorns && !ARMOR_THORNS_WHITELIST.has(item.id)) {
-        offenders.push(`${item.id}: thorns nur auf ${[...ARMOR_THORNS_WHITELIST].join(", ")} erlaubt (§5.1c)`);
+      if (hasThorns && !THORNS_MIN_RARITY.has(item.rarity ?? "")) {
+        offenders.push(
+          `${item.id}: thorns nur auf seltenen Stücken (${[...THORNS_MIN_RARITY].join("/")}) erlaubt — hier ${item.rarity ?? "ohne Seltenheit"} (§5.1c, Chef 29.08.2026)`,
+        );
       }
     }
     expect(offenders).toEqual([]);

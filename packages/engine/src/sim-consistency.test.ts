@@ -45,7 +45,22 @@ import {
 // stormcaller_amulet->onyx_amulet (Content hat sich seither bewegt — sie brechen nicht mehr).
 // Stand nach dem Trim: JEDER verbleibende Pin feuert aktuell wirklich (35/35, geprüft 2026-07-03).
 const LADDER_BASELINE = new Set([
+  // Schmuck-Rework W1 (content-dev, 29.08.2026, design/schmuck-audit-2026-08-29.md §S1-b/Teil 4
+  // Punkt 1): sapphire_ring wurde vom Richtungskonflikt befreit (skillBoost.attack→magic,
+  // modifiers int 2→{int 2, wis 1}) — coreStatScore steigt dadurch über gemstone_ring (Lv20),
+  // weil magic den 3,5-fachen SKILL_BOOST_ATTR_EQUIV von attack trägt. War bis Sweep6 T6-P4 schon
+  // einmal gepinnt (feuerte damals, wurde entfernt, als der Content sich wegbewegte) — jetzt durch
+  // den Chef-Auftrag erneut ausgelöst und bewusst wieder gepinnt statt gemstone_ring anzuheben
+  // (das wäre Welle 3/Ring-Kurve, außerhalb dieses Auftrags).
+  "sapphire_ring->gemstone_ring",
   "alpha_fang_amulet->ruby_amulet",
+  // Schmuck-Rework W3 (content-dev, 29.08.2026, §1.5/§3.3): bloodstone_ring auf die Ring-Kurve
+  // gehoben (5→8 Attributpunkte, skillBoost power 1→2) — coreStatScore steigt über spellbinder_ring
+  // (Lv46, unverändert, 6 Pkt + magic 2). Exakt das Paar, das der Kopfkommentar oben schon als
+  // "kommen sie je zurück, bewusst neu bewerten" ankündigt (Sweep6-T6-P4-Trim 2026-07-03) — jetzt
+  // durch die Kurve wieder ausgelöst, bewusst erneut gepinnt statt spellbinder_ring (außerhalb des
+  // W3-Auftrags: nicht in der §1.5/§3.3-Liste der 6 zu hebenden Ringe) mitzuheben.
+  "bloodstone_ring->spellbinder_ring",
   "pyre_staff->mithril_staff",
   "runite_staff->voidcaller_staff",
   "voidcaller_staff->bloodiron_staff",
