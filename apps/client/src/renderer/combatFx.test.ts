@@ -8,8 +8,10 @@ import {
   magicThemeFor,
   petFxImageFor,
   petFxTargetSide,
+  petFxThemeFor,
   slashFamilyFor,
   type PetFxImage,
+  type PetFxTheme,
 } from "./combatFx";
 
 /** Minimal-Waffe wie in packages/engine/src/*.test.ts (Muster `armor()`/`meleeWeapon()`). */
@@ -160,6 +162,53 @@ describe("petFxImageFor / petFxTargetSide — Familie D (alle 16 PetAbilityKind-
     expect(petFxTargetSide("ward")).toBe("player");
     for (const image of ["bite", "bolt", "mark", "pilfer", "critstar"] as const) {
       expect(petFxTargetSide(image)).toBe("enemy");
+    }
+  });
+});
+
+// petFxThemeFor (Chef-Auftrag 29.08.2026): der Pyreling ("Flame Nova", status:"burn") schoss
+// bislang einen stahlfarbenen Blitz statt Feuer — die Begleiter-Partikel kannten kein Element.
+// Läuft gegen den echten Content-Katalog (packages/content/src/index.ts `pets`), damit ein
+// künftiger Content-Wechsel (neuer status, umgetauftes Pet) den Test sofort bricht statt still
+// falsch zu bleiben.
+describe("petFxThemeFor — Begleiter-Partikel-Thema (Familie D, Chef-Auftrag 29.08.2026)", () => {
+  it("leitet das Thema der sechs Begleiter mit status-Feld über die Elementleiter ab", () => {
+    const cases: Array<[string, PetFxTheme]> = [
+      ["pyreling", "fire"], // Flame Nova, burn
+      ["slagfiend", "fire"], // Forge Brand, burn
+      ["witherling", "poison"], // Blight Bloom, poison (delayedDot)
+      ["hemlock", "poison"], // Venom Phial, poison
+      ["gorehound", "bleed"], // Maul, bleed — kein Element
+      ["booted_tomcat", "bleed"], // Bear Trap, bleed — kein Element
+    ];
+    for (const [id, theme] of cases) {
+      const pet = content.pets[id];
+      expect(pet, `Pet ${id} fehlt im Content-Katalog`).toBeTruthy();
+      expect(petFxThemeFor(pet!)).toBe(theme);
+    }
+  });
+
+  it("leitet das Thema der fünf status-losen Begleiter über die explizite Tabelle ab", () => {
+    const cases: Array<[string, PetFxTheme]> = [
+      ["hoarspite", "frost"], // Grave Frost
+      ["gemwraith", "arcane"], // Prismatic Lance
+      ["glyphmaw", "arcane"], // Rune Feast
+      ["vellumoth", "arcane"], // Sigil Ward
+      ["charnel", "void"], // Feast of the Fallen
+    ];
+    for (const [id, theme] of cases) {
+      const pet = content.pets[id];
+      expect(pet, `Pet ${id} fehlt im Content-Katalog`).toBeTruthy();
+      expect(pet!.combatAbility.status).toBeUndefined();
+      expect(petFxThemeFor(pet!)).toBe(theme);
+    }
+  });
+
+  it("Begleiter ohne Treffer bleiben beim heutigen neutralen Aussehen (null)", () => {
+    for (const id of ["quillshrike", "gloomrat", "ironmaw", "carrionwing", "ashgut", "carapace"]) {
+      const pet = content.pets[id];
+      expect(pet, `Pet ${id} fehlt im Content-Katalog`).toBeTruthy();
+      expect(petFxThemeFor(pet!)).toBeNull();
     }
   });
 });

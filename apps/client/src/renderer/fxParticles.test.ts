@@ -120,6 +120,24 @@ describe("fxParticleLibrary — vollständige Abdeckung (Chef-Wunsch 28.08.2026:
     }
   });
 
+  // Begleiter-Partikel-Thema (Chef-Auftrag 29.08.2026, s. combatFx.ts `petFxThemeFor`/
+  // fxParticleLibrary.ts `petBolt`/`petMark`/`petWard`-Fabriken): der Pyreling schoss bislang
+  // einen stahlfarbenen Blitz statt Feuer — jede Kombination, die ein echtes Content-Pet über
+  // `petFxThemeFor` erreichen kann, braucht ein eigenes Rezept unter `pet_<bild>_<thema>`.
+  it("jede erreichbare Begleiter-Thema-Kombination (Chef-Tabelle 29.08.2026) hat ein eigenes Rezept", () => {
+    const themedPetRecipes = [
+      "pet_bolt_fire", // pyreling/slagfiend (burn)
+      "pet_bolt_poison", // witherling/hemlock (poison)
+      "pet_bolt_bleed", // gorehound/booted_tomcat (bleed, kein Element → Crimson-Palette)
+      "pet_mark_frost", // hoarspite (Grave Frost)
+      "pet_ward_arcane", // glyphmaw/vellumoth (Rune Feast/Sigil Ward)
+      "pet_ward_void", // charnel (Feast of the Fallen)
+    ];
+    for (const key of themedPetRecipes) {
+      expect(hasRecipe(key)).toBe(true);
+    }
+  });
+
   it("jeder StatusType hat ein Aufflammen- UND ein Ambient-Rezept", () => {
     for (const type of STATUS_TYPES) {
       expect(hasRecipe(`status_${type}`)).toBe(true);

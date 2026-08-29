@@ -1979,153 +1979,178 @@ const petBite: RecipeFn = (ctx) => {
 };
 registerRecipe("pet_bite", [petBite]);
 
-const petBolt: RecipeFn = (ctx) => {
-  const { to: d, dir, petPos, api } = ctx;
-  const p = petPos ?? { x: ctx.from.x - dir * 60, y: ctx.from.y };
-  const from = { x: p.x + dir * 30, y: p.y - 10 };
-  let angle = 0;
-  const eLocal = { x: from.x, y: from.y, u: 0, age: 0 };
-  const T = 220;
-  let age = 0;
-  let done = false;
-  const effect: Effect = {
-    update(dt) {
-      if (done) return;
-      age += dt;
-      const u = Math.min(1, age / T);
-      eLocal.x = from.x + (d.x - from.x) * u;
-      eLocal.y = from.y + (d.y - from.y) * u - Math.sin(u * Math.PI) * 10;
-      angle = Math.atan2(d.y - p.y + 10, d.x - p.x);
-      const n = api.count(2, dt);
-      for (let i = 0; i < n; i++) api.spark(eLocal.x, eLocal.y, -dir * api.rand(30, 90), api.rand(-8, 8), api.rand(100, 200), 1, steelColor, 0, 0.98);
-      if (u >= 1 && !done) {
-        done = true;
-        api.shake(2);
-        edgeSparks(ctx, d, 8, 1.0);
-        api.flash(d, 34, "rgba(230,225,210,", 100);
-      }
-    },
-    draw(c) {
-      if (done) return;
-      c.save();
-      c.translate(eLocal.x, eLocal.y);
-      c.rotate(angle);
-      c.strokeStyle = `${STEEL.glow}0.3)`;
-      c.lineWidth = 6;
-      c.beginPath();
-      c.moveTo(-40, 0);
-      c.lineTo(0, 0);
-      c.stroke();
-      c.strokeStyle = "rgba(170,140,95,0.95)";
+// Begleiter-Partikel-Thema (Chef-Auftrag 29.08.2026, s. combatFx.ts `petFxThemeFor`): dieselbe
+// Fabrik-Funktion wie bei den Magie-Rezepten oben (`magicHitReaction(th)`) — EIN Rezeptkörper,
+// nur die Thema-Farbe (Flugfunken, Leuchtstreif, Pfeilspitze) wird ausgetauscht, Form/Timing
+// bleiben 1:1. Der Aufprall-„Klirr" (`edgeSparks`) bleibt bewusst stahlfarben (physischer
+// Einschlag, wie bei jedem anderen Nah-/Fernkampf-Treffer — kein Thema dafür), ebenso der
+// Pfeilschaft (Holz/Leder-Material). `pet_bolt` ohne Suffix bleibt exakt die bisherige
+// Stahl-Optik (Default-Aufruf unten mit STEEL) — unveränderte Pets sehen dadurch nicht schlechter aus.
+const petBolt =
+  (th: ThemeColors): RecipeFn =>
+  (ctx) => {
+    const { to: d, dir, petPos, api } = ctx;
+    const boltColorLocal = themeColorFn(th);
+    const p = petPos ?? { x: ctx.from.x - dir * 60, y: ctx.from.y };
+    const from = { x: p.x + dir * 30, y: p.y - 10 };
+    let angle = 0;
+    const eLocal = { x: from.x, y: from.y, u: 0, age: 0 };
+    const T = 220;
+    let age = 0;
+    let done = false;
+    const effect: Effect = {
+      update(dt) {
+        if (done) return;
+        age += dt;
+        const u = Math.min(1, age / T);
+        eLocal.x = from.x + (d.x - from.x) * u;
+        eLocal.y = from.y + (d.y - from.y) * u - Math.sin(u * Math.PI) * 10;
+        angle = Math.atan2(d.y - p.y + 10, d.x - p.x);
+        const n = api.count(2, dt);
+        for (let i = 0; i < n; i++) api.spark(eLocal.x, eLocal.y, -dir * api.rand(30, 90), api.rand(-8, 8), api.rand(100, 200), 1, boltColorLocal, 0, 0.98);
+        if (u >= 1 && !done) {
+          done = true;
+          api.shake(2);
+          edgeSparks(ctx, d, 8, 1.0);
+          api.flash(d, 34, "rgba(230,225,210,", 100);
+        }
+      },
+      draw(c) {
+        if (done) return;
+        c.save();
+        c.translate(eLocal.x, eLocal.y);
+        c.rotate(angle);
+        c.strokeStyle = `${th.glow}0.3)`;
+        c.lineWidth = 6;
+        c.beginPath();
+        c.moveTo(-40, 0);
+        c.lineTo(0, 0);
+        c.stroke();
+        c.strokeStyle = "rgba(170,140,95,0.95)";
+        c.lineWidth = 2.5;
+        c.beginPath();
+        c.moveTo(-16, 0);
+        c.lineTo(10, 0);
+        c.stroke();
+        c.fillStyle = rgba(th.hot, 0.95);
+        c.beginPath();
+        c.moveTo(16, 0);
+        c.lineTo(8, -3.5);
+        c.lineTo(8, 3.5);
+        c.closePath();
+        c.fill();
+        c.restore();
+      },
+      alive: () => !done,
+    };
+    api.addEffect(effect);
+  };
+registerRecipe("pet_bolt", [petBolt(STEEL)]);
+registerRecipe("pet_bolt_fire", [petBolt(FIRE_TH)]); // pyreling/slagfiend (burn)
+registerRecipe("pet_bolt_poison", [petBolt(POISON_TH)]); // witherling/hemlock (poison)
+registerRecipe("pet_bolt_bleed", [petBolt(CRIMSON)]); // gorehound/booted_tomcat (bleed, kein Element → Crimson-Palette)
+
+// Fabrik wie `petBolt` oben — `pet_mark` ohne Suffix bleibt CRIMSON (heutige Optik, das Ziel-
+// Fadenkreuz ist ohnehin schon eine Debuff-Markierung, keine Regression für sporewretch/ironmaw
+// & Co., die kein Thema haben).
+const petMark =
+  (th: ThemeColors): RecipeFn =>
+  (ctx) => {
+    const { to: d, api } = ctx;
+    const at = { x: d.x, y: d.y - 120 };
+    api.timed(800, (c, age, u) => {
+      const sc = u < 0.15 ? u / 0.15 : 1;
+      const a = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3;
+      const pulse = 1 + 0.08 * Math.sin(age / 60);
+      const r = 22 * sc * pulse;
+      c.strokeStyle = rgba(th.mid, 0.9 * a);
       c.lineWidth = 2.5;
       c.beginPath();
-      c.moveTo(-16, 0);
-      c.lineTo(10, 0);
+      c.arc(at.x, at.y, Math.max(0.01, r), 0, Math.PI * 2);
       c.stroke();
-      c.fillStyle = rgba(STEEL.hot, 0.95);
-      c.beginPath();
-      c.moveTo(16, 0);
-      c.lineTo(8, -3.5);
-      c.lineTo(8, 3.5);
-      c.closePath();
-      c.fill();
-      c.restore();
-    },
-    alive: () => !done,
-  };
-  api.addEffect(effect);
-};
-registerRecipe("pet_bolt", [petBolt]);
-
-const petMark: RecipeFn = (ctx) => {
-  const { to: d, api } = ctx;
-  const at = { x: d.x, y: d.y - 120 };
-  api.timed(800, (c, age, u) => {
-    const sc = u < 0.15 ? u / 0.15 : 1;
-    const a = u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3;
-    const pulse = 1 + 0.08 * Math.sin(age / 60);
-    const r = 22 * sc * pulse;
-    c.strokeStyle = rgba(CRIMSON.mid, 0.9 * a);
-    c.lineWidth = 2.5;
-    c.beginPath();
-    c.arc(at.x, at.y, Math.max(0.01, r), 0, Math.PI * 2);
-    c.stroke();
-    c.save();
-    c.translate(at.x, at.y);
-    c.rotate(age / 400);
-    for (let i = 0; i < 3; i++) {
-      const t = (i * Math.PI * 2) / 3;
-      c.beginPath();
-      c.moveTo(Math.cos(t) * r * 0.8, Math.sin(t) * r * 0.8);
-      c.lineTo(Math.cos(t) * r * 1.35, Math.sin(t) * r * 1.35);
-      c.stroke();
-    }
-    c.restore();
-    c.fillStyle = rgba(CRIMSON.hot, 0.9 * a);
-    c.beginPath();
-    c.arc(at.x, at.y, 4, 0, Math.PI * 2);
-    c.fill();
-    const g = c.createRadialGradient(at.x, at.y, 0, at.x, at.y, Math.max(0.02, r * 2));
-    g.addColorStop(0, `${CRIMSON.glow}${0.25 * a})`);
-    g.addColorStop(1, `${CRIMSON.glow}0)`);
-    c.fillStyle = g;
-    c.beginPath();
-    c.arc(at.x, at.y, Math.max(0.02, r * 2), 0, Math.PI * 2);
-    c.fill();
-  }, (dt) => {
-    const n = api.count(1.5, dt);
-    for (let i = 0; i < n; i++) api.mote(at.x + api.rand(-16, 16), at.y + 10, api.rand(-5, 5), api.rand(30, 70), api.rand(500, 900), 2, themeColorFn(CRIMSON), 20, 0.995);
-  });
-};
-registerRecipe("pet_mark", [petMark]);
-
-const petWard: RecipeFn = (ctx) => {
-  const { box, api } = ctx;
-  const b = box ?? { x: ctx.to.x - 70, y: ctx.to.y - 140, w: 140, h: 280 };
-  const cx = b.x + b.w / 2;
-  const cy = b.y + b.h / 2;
-  const rx = b.w * 0.62;
-  const ry = b.h * 0.55;
-  const hexes = Array.from({ length: 9 }, () => ({ a: api.rand(0, Math.PI * 2), r: api.rand(0.55, 0.95), t0: api.rand(0, 500), sz: api.rand(7, 12) }));
-  api.timed(900, (c, age, u) => {
-    const a = u < 0.15 ? u / 0.15 : u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3;
-    const g = c.createRadialGradient(cx, cy, Math.max(0.02, ry * 0.5), cx, cy, Math.max(0.03, ry));
-    g.addColorStop(0, `${TEAL.glow}0)`);
-    g.addColorStop(0.85, `${TEAL.glow}${0.1 * a})`);
-    g.addColorStop(1, `${TEAL.glow}${0.35 * a})`);
-    c.fillStyle = g;
-    c.beginPath();
-    c.ellipse(cx, cy, Math.max(0.02, rx), Math.max(0.02, ry), 0, 0, Math.PI * 2);
-    c.fill();
-    c.strokeStyle = rgba(TEAL.hot, 0.8 * a);
-    c.lineWidth = 2;
-    c.beginPath();
-    c.ellipse(cx, cy, Math.max(0.02, rx), Math.max(0.02, ry), 0, 0, Math.PI * 2);
-    c.stroke();
-    for (const h of hexes) {
-      const ha = Math.max(0, Math.sin(((age - h.t0) / 300) * Math.PI)) * a;
-      if (ha <= 0) continue;
-      const hx = cx + Math.cos(h.a) * rx * h.r;
-      const hy = cy + Math.sin(h.a) * ry * h.r;
-      c.strokeStyle = rgba(TEAL.hot, 0.7 * ha);
-      c.lineWidth = 1.2;
-      c.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const t = (i * Math.PI * 2) / 6;
-        if (i) c.lineTo(hx + Math.cos(t) * h.sz, hy + Math.sin(t) * h.sz);
-        else c.moveTo(hx + Math.cos(t) * h.sz, hy + Math.sin(t) * h.sz);
+      c.save();
+      c.translate(at.x, at.y);
+      c.rotate(age / 400);
+      for (let i = 0; i < 3; i++) {
+        const t = (i * Math.PI * 2) / 3;
+        c.beginPath();
+        c.moveTo(Math.cos(t) * r * 0.8, Math.sin(t) * r * 0.8);
+        c.lineTo(Math.cos(t) * r * 1.35, Math.sin(t) * r * 1.35);
+        c.stroke();
       }
-      c.closePath();
+      c.restore();
+      c.fillStyle = rgba(th.hot, 0.9 * a);
+      c.beginPath();
+      c.arc(at.x, at.y, 4, 0, Math.PI * 2);
+      c.fill();
+      const g = c.createRadialGradient(at.x, at.y, 0, at.x, at.y, Math.max(0.02, r * 2));
+      g.addColorStop(0, `${th.glow}${0.25 * a})`);
+      g.addColorStop(1, `${th.glow}0)`);
+      c.fillStyle = g;
+      c.beginPath();
+      c.arc(at.x, at.y, Math.max(0.02, r * 2), 0, Math.PI * 2);
+      c.fill();
+    }, (dt) => {
+      const n = api.count(1.5, dt);
+      for (let i = 0; i < n; i++) api.mote(at.x + api.rand(-16, 16), at.y + 10, api.rand(-5, 5), api.rand(30, 70), api.rand(500, 900), 2, themeColorFn(th), 20, 0.995);
+    });
+  };
+registerRecipe("pet_mark", [petMark(CRIMSON)]);
+registerRecipe("pet_mark_frost", [petMark(FROST_TH)]); // hoarspite (Grave Frost)
+
+// Fabrik wie `petBolt`/`petMark` oben — `pet_ward` ohne Suffix bleibt TEAL (heutige Optik, für
+// ashgut/carapace & Co. ohne Thema unverändert).
+const petWard =
+  (th: ThemeColors): RecipeFn =>
+  (ctx) => {
+    const { box, api } = ctx;
+    const b = box ?? { x: ctx.to.x - 70, y: ctx.to.y - 140, w: 140, h: 280 };
+    const cx = b.x + b.w / 2;
+    const cy = b.y + b.h / 2;
+    const rx = b.w * 0.62;
+    const ry = b.h * 0.55;
+    const hexes = Array.from({ length: 9 }, () => ({ a: api.rand(0, Math.PI * 2), r: api.rand(0.55, 0.95), t0: api.rand(0, 500), sz: api.rand(7, 12) }));
+    api.timed(900, (c, age, u) => {
+      const a = u < 0.15 ? u / 0.15 : u < 0.7 ? 1 : 1 - (u - 0.7) / 0.3;
+      const g = c.createRadialGradient(cx, cy, Math.max(0.02, ry * 0.5), cx, cy, Math.max(0.03, ry));
+      g.addColorStop(0, `${th.glow}0)`);
+      g.addColorStop(0.85, `${th.glow}${0.1 * a})`);
+      g.addColorStop(1, `${th.glow}${0.35 * a})`);
+      c.fillStyle = g;
+      c.beginPath();
+      c.ellipse(cx, cy, Math.max(0.02, rx), Math.max(0.02, ry), 0, 0, Math.PI * 2);
+      c.fill();
+      c.strokeStyle = rgba(th.hot, 0.8 * a);
+      c.lineWidth = 2;
+      c.beginPath();
+      c.ellipse(cx, cy, Math.max(0.02, rx), Math.max(0.02, ry), 0, 0, Math.PI * 2);
       c.stroke();
-    }
-  }, (dt, _age, u) => {
-    if (u >= 0.7) return;
-    const n = api.count(2, dt);
-    for (let i = 0; i < n; i++) api.mote(cx + api.rand(-rx, rx) * 0.9, b.y + b.h - api.rand(0, 20), api.rand(-5, 5), api.rand(-60, -25), api.rand(500, 900), 2, themeColorFn(TEAL), -10);
-  });
-  api.flash({ x: cx, y: cy }, 60, "rgba(120,210,200,", 200);
-};
-registerRecipe("pet_ward", [petWard]);
+      for (const h of hexes) {
+        const ha = Math.max(0, Math.sin(((age - h.t0) / 300) * Math.PI)) * a;
+        if (ha <= 0) continue;
+        const hx = cx + Math.cos(h.a) * rx * h.r;
+        const hy = cy + Math.sin(h.a) * ry * h.r;
+        c.strokeStyle = rgba(th.hot, 0.7 * ha);
+        c.lineWidth = 1.2;
+        c.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const t = (i * Math.PI * 2) / 6;
+          if (i) c.lineTo(hx + Math.cos(t) * h.sz, hy + Math.sin(t) * h.sz);
+          else c.moveTo(hx + Math.cos(t) * h.sz, hy + Math.sin(t) * h.sz);
+        }
+        c.closePath();
+        c.stroke();
+      }
+    }, (dt, _age, u) => {
+      if (u >= 0.7) return;
+      const n = api.count(2, dt);
+      for (let i = 0; i < n; i++) api.mote(cx + api.rand(-rx, rx) * 0.9, b.y + b.h - api.rand(0, 20), api.rand(-5, 5), api.rand(-60, -25), api.rand(500, 900), 2, themeColorFn(th), -10);
+    });
+    api.flash({ x: cx, y: cy }, 60, `rgba(${th.mid[0]},${th.mid[1]},${th.mid[2]},`, 200);
+  };
+registerRecipe("pet_ward", [petWard(TEAL)]);
+registerRecipe("pet_ward_arcane", [petWard(ARCANE_TH)]); // glyphmaw/vellumoth (Rune Feast/Sigil Ward)
+registerRecipe("pet_ward_void", [petWard(VOID_TH)]); // charnel (Feast of the Fallen)
 
 const petCritstar: RecipeFn = (ctx) => {
   const { to: d, api } = ctx;

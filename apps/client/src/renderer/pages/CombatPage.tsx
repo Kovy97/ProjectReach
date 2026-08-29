@@ -70,9 +70,11 @@ import {
   magicThemeFor,
   petFxImageFor,
   petFxTargetSide,
+  petFxThemeFor,
   slashFamilyFor,
   type BloodVariant,
   type PetFxImage,
+  type PetFxTheme,
   type SlashFamily,
 } from "../combatFx";
 import { hasRecipe as hasParticleRecipe, ParticleStage, type Rect } from "../fxParticles";
@@ -2944,17 +2946,23 @@ function Battle({
   };
 
   /** Begleiter-Gegenstück zu `playPetFx` — `petPos`/`from` kommen vom Begleiter-Portrait-Anker
-   *  (`.battle-pet-sprite`, fehlt er, fällt der Startpunkt auf den Zielanker zurück). */
-  const playParticlePet = (image: PetFxImage): boolean => {
+   *  (`.battle-pet-sprite`, fehlt er, fällt der Startpunkt auf den Zielanker zurück). `theme`
+   *  (Familie D, Chef-Auftrag 29.08.2026, `petFxThemeFor`) wählt zuerst die themafarbene
+   *  Rezept-Variante (`pet_<bild>_<thema>`, z.B. `pet_bolt_fire` für den Pyreling) — existiert die
+   *  nicht (kein Thema oder Rezept noch nicht angelegt), spielt exakt wie bisher `pet_<bild>`. */
+  const playParticlePet = (image: PetFxImage, theme: PetFxTheme | null): boolean => {
     const stage = particleStageRef.current;
-    if (!stage || !hasParticleRecipe(`pet_${image}`)) return false;
+    if (!stage) return false;
+    const themedKey = theme ? `pet_${image}_${theme}` : null;
+    const key = themedKey && hasParticleRecipe(themedKey) ? themedKey : `pet_${image}`;
+    if (!hasParticleRecipe(key)) return false;
     const side = petFxTargetSide(image);
     const anchor = particleAnchor(side);
     if (!anchor) return false;
     const dir: 1 | -1 = side === "enemy" ? 1 : -1;
     const petBox = fxRect(".battle-pet-sprite");
     const petPos = petBox ? { x: petBox.x + petBox.w / 2, y: petBox.y + petBox.h / 2 } : undefined;
-    return stage.play(`pet_${image}`, { from: petPos ?? anchor.center, to: anchor.center, dir, box: anchor.box, petPos });
+    return stage.play(key, { from: petPos ?? anchor.center, to: anchor.center, dir, box: anchor.box, petPos });
   };
 
   /** Einschlag-Sprite am Ziel (Familie A/B-Landung). `crit` skaliert 1,4× und legt zusätzlich das
@@ -3176,12 +3184,13 @@ function Battle({
         setPetLunge((l) => l + 1);
         const pet = e.petId ? content.pets[e.petId] : undefined;
         const kind = pet?.combatAbility.kind;
-        if (kind) {
+        if (kind && pet) {
           const bucket = PET_ABILITY_BUCKET[kind];
           setPetFx((p) => ({ n: p.n + 1, bucket }));
           if (spriteFxLevel !== "off") {
             const image = petFxImageFor(kind);
-            if (!playParticlePet(image)) playPetFx(image);
+            const theme = petFxThemeFor(pet);
+            if (!playParticlePet(image, theme)) playPetFx(image);
           }
         }
       }

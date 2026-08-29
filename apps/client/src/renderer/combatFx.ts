@@ -10,7 +10,7 @@
  * (sidebarIcons.ts): fehlt eine Datei unter assets/fx/, liefert `fxSprite` null — der Aufrufer
  * fällt dann auf den alten Form-Effekt zurück (Konzept §3 „stückweise lieferbar").
  */
-import type { ItemDef, MonsterDef, PetAbilityKind, WeaponType } from "@hearthforge/shared";
+import type { ItemDef, MonsterDef, PetAbilityKind, PetDef, PetId, StatusType, WeaponType } from "@hearthforge/shared";
 import { effectiveWeaponEffects } from "@hearthforge/shared";
 
 const FX_FILES = import.meta.glob<string>("./assets/fx/*.webp", {
@@ -189,4 +189,48 @@ export function petFxImageFor(kind: PetAbilityKind): PetFxImage {
  */
 export function petFxTargetSide(image: PetFxImage): "player" | "enemy" {
   return image === "ward" ? "player" : "enemy";
+}
+
+// ─── Begleiter-Partikel-Thema (Chef-Auftrag 29.08.2026) ───────────────────────
+// Bislang wählte der Begleiter-Partikel-Effekt sein Aussehen NUR aus der Bildfamilie
+// (`petFxImageFor`, oben) — nicht aus dem Element der Fähigkeit. Der Pyreling schießt „Flame
+// Nova" (status:"burn") und feuerte damit einen stahlfarbenen Blitz statt Feuer. `petFxThemeFor`
+// leitet das Thema rein aus dem Content ab: zuerst über den Status der Fähigkeit (dieselbe
+// Elementleiter wie `magicThemeFor`/`WEAPON_EFFECT_THEME` oben), sonst über eine kleine explizite
+// Tabelle für die Begleiter, deren Fähigkeit thematisch eindeutig ist, aber kein `status`-Feld
+// trägt (packages/content/src/index.ts `pets`). `bleed` ist bewusst KEIN `MagicTheme` (kein
+// Element) — eigener Rückgabewert, das Rezept nutzt dafür die Blut-/Crimson-Palette statt einer
+// der sieben Magie-Paletten. `null` = kein Treffer = heutiges neutrales Aussehen, unverändert
+// (z.B. Quillshrikes „Quill Volley", Gloomrats „Pilfer", Ironmaws „Body Slam" — kein Element).
+export type PetFxTheme = MagicTheme | "bleed";
+
+const PET_STATUS_THEME: Partial<Record<StatusType, PetFxTheme>> = {
+  burn: "fire",
+  frost: "frost",
+  shock: "shock",
+  poison: "poison",
+  void: "void",
+  bleed: "bleed",
+};
+
+/** Begleiter ohne `status`-Feld, deren Fähigkeit trotzdem eindeutig thematisch ist: hoarspite
+ *  friert/betäubt ("Grave Frost"), gemwraith/glyphmaw/vellumoth sind arkane Rune-/Kristall-
+ *  Effekte ("Prismatic Lance"/"Rune Feast"/"Sigil Ward"), charnel ist ein Leere-Lebensraub
+ *  ("Feast of the Fallen"). */
+const PET_ID_THEME: Partial<Record<PetId, PetFxTheme>> = {
+  hoarspite: "frost",
+  gemwraith: "arcane",
+  glyphmaw: "arcane",
+  vellumoth: "arcane",
+  charnel: "void",
+};
+
+/** Partikel-Thema eines Begleiters (Familie D), oder `null` = heutiges neutrales Aussehen. */
+export function petFxThemeFor(pet: Pick<PetDef, "id" | "combatAbility">): PetFxTheme | null {
+  const status = pet.combatAbility.status;
+  if (status) {
+    const theme = PET_STATUS_THEME[status];
+    if (theme) return theme;
+  }
+  return PET_ID_THEME[pet.id] ?? null;
 }
