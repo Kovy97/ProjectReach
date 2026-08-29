@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grim Reach Store Panels</title>
+<style>
+  @font-face { font-family: "Cinzel"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype"); }
+  @font-face { font-family: "Marcellus SC"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/MarcellusSC-Regular.ttf") format("truetype"); }
+  @font-face { font-family: "IM Fell English SC"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.ttf") format("truetype"); }
+  :root {
+    --ink: #e8d8b0; --ink-dim: #b8a684; --gold: #d8b870; --gold-bright: #f0dca0; --bronze: #b86030; --bronze-bright: #d8904a;
+    --metal: #0f0d0b; --A: file:///G:/GameDev/apps/client/src/renderer/assets/;
+  }
+  html, body { margin: 0; background: transparent; }
+  body { display: flex; flex-direction: column; gap: 24px; padding: 12px; }
+  .panel {
+    position: relative; width: 1170px; height: 570px; box-sizing: border-box; overflow: hidden;
+    border: 18px solid transparent;
+    border-image: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 38px;
+    background-clip: padding-box;
+    background-color: #0f0d0b;
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.14), transparent 70%),
+      linear-gradient(rgba(8, 11, 13, 0.10), rgba(2, 4, 5, 0.40)),
+      url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-basalt.webp");
+    background-size: auto, auto, 192px 192px;
+    color: var(--ink); font-family: Georgia, "Times New Roman", serif;
+  }
+  .art { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  .art img { position: absolute; object-fit: cover; }
+  .art .fade { position: absolute; inset: 0; }
+  .body { position: relative; z-index: 2; height: 100%; display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
+  .panel.text-right .body { grid-template-columns: 1.05fr 1fr; }
+  .panel.text-left .body { grid-template-columns: 1fr var(--vis, 1.05fr); }
+  .text { padding: 34px 44px; }
+  .eyebrow { font-family: "IM Fell English SC", Georgia, serif; font-size: 22px; letter-spacing: .18em; color: var(--bronze-bright); text-transform: uppercase; margin: 0 0 8px; }
+  h2 { font-family: Cinzel, Georgia, serif; font-weight: 400; font-size: 42px; line-height: 1.08; margin: 0 0 16px; color: var(--gold-bright); text-shadow: 0 2px 8px rgba(0,0,0,.8); }
+  p { font-size: 25px; line-height: 1.38; margin: 0 0 14px; color: var(--ink); text-shadow: 0 1px 4px rgba(0,0,0,.9); max-width: 34ch; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 8px; }
+  .fact { font-family: "Marcellus SC", Cinzel, serif; font-size: 19px; letter-spacing: .06em; color: var(--gold); padding: 5px 12px; border: 1px solid rgba(216,184,112,.35); background: rgba(8,6,4,.55); white-space: nowrap; }
+  .fact b { color: var(--gold-bright); font-weight: 400; }
+  .visual { position: relative; height: 100%; overflow: hidden; }
+  .row { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: flex-end; gap: 10px; }
+  .tile { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .tile img { width: 92px; height: 92px; object-fit: contain; filter: drop-shadow(0 6px 10px rgba(0,0,0,.85)); }
+  .tile span { font-family: "Marcellus SC", Cinzel, serif; font-size: 16px; letter-spacing: .08em; color: var(--ink-dim); text-transform: uppercase; }
+  .grid { position: absolute; inset: 28px 40px 28px 10px; display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; gap: 8px 2px; align-content: center; }
+  .grid .tile img { width: 70px; height: 70px; }
+  .grid .tile span { font-size: 13px; letter-spacing: .05em; }
+  .rule { height: 2px; width: 120px; margin: 0 0 16px; background: linear-gradient(90deg, var(--bronze-bright), rgba(184,96,48,0)); }
+  .logo { position: absolute; width: 560px; left: 50%; top: 50%; transform: translate(-50%, -54%); filter: drop-shadow(0 10px 24px rgba(0,0,0,.9)); }
+</style>
+</head>
+<body>
+
+<!-- 1 · Skills -->
+<section class="panel text-left" id="p1">
+  <div class="art"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/skill-backgrounds/smithing.webp" style="left:520px;top:0;width:640px;height:100%;opacity:.55"><div class="fade" style="background:linear-gradient(90deg,#0f0d0b 44%,rgba(15,13,11,.55) 60%,rgba(15,13,11,.25) 100%)"></div></div>
+  <div class="body">
+    <div class="text">
+      <div class="eyebrow">22 skills · 810 actions</div>
+      <h2>Gather, craft, fight. Queue it all.</h2>
+      <div class="rule"></div>
+      <p>Fifteen trade skills feed into each other: ore becomes bars, bars become blades, hides and cloth become armour, herbs become tonics. Seven combat skills grow while you fight.</p>
+      <p>Line up a whole evening of work in one queue and let it run.</p>
+    </div>
+    <div class="visual">
+      <div class="grid">
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_woodcutting.webp"><span>Woodcutting</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_mining.webp"><span>Mining</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_fishing.webp"><span>Fishing</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_farming.webp"><span>Farming</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_foraging.webp"><span>Foraging</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_hunting.webp"><span>Hunting</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_thieving.webp"><span>Thieving</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_smithing.webp"><span>Smithing</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_cooking.webp"><span>Cooking</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_leatherworking.webp"><span>Crafting</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_tailoring.webp"><span>Tailoring</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_jewelcrafting.webp"><span>Jewelcrafting</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_runecrafting.webp"><span>Runecrafting</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_herblore.webp"><span>Herblore</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/sidebar/sidebaricon_slayer.webp"><span>Slayer</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · Combat styles -->
+<section class="panel text-right" id="p2">
+  <div class="art"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/battlescreens/ashfields.webp" style="left:0;top:0;width:700px;height:100%;opacity:.6"><div class="fade" style="background:linear-gradient(270deg,#0f0d0b 46%,rgba(15,13,11,.55) 62%,rgba(15,13,11,.2) 100%)"></div></div>
+  <div class="body">
+    <div class="visual">
+      <div class="row" style="bottom:196px;gap:26px">
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/items/godiron_greatsword.webp" style="width:150px;height:150px"><span>Melee</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/items/godiron_longbow.webp" style="width:150px;height:150px"><span>Ranged</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/items/godiron_staff.webp" style="width:150px;height:150px"><span>Magic</span></div>
+      </div>
+      <div class="row" style="bottom:44px;gap:30px">
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/items/godiron_platebody.webp" style="width:70px;height:70px"><span>Plate soaks</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/items/bloodiron_chainbody.webp" style="width:70px;height:70px"><span>Leather slips</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/items/aetherium_focus.webp" style="width:70px;height:70px"><span>Cloth wards</span></div>
+      </div>
+    </div>
+    <div class="text">
+      <div class="eyebrow">Three combat styles</div>
+      <h2>Your weapon picks the fight.</h2>
+      <div class="rule"></div>
+      <p>Greatswords crush, bows pick targets apart, staves cast on their own element: fire, frost, shock, poison, arcane, void and aether, each with its own status effect.</p>
+      <p>Twelve metal tiers, fifty runes, random suffixes and rare drops shape the build. Auto-battle keeps it moving; preparation decides who walks out.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · World -->
+<section class="panel text-left" id="p3">
+  <div class="art"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/zones/highlands.webp" style="left:480px;top:0;width:690px;height:100%;opacity:.7"><div class="fade" style="background:linear-gradient(90deg,#0f0d0b 42%,rgba(15,13,11,.5) 58%,rgba(15,13,11,.15) 100%)"></div></div>
+  <div class="body">
+    <div class="text">
+      <div class="eyebrow">10 zones · 7 dungeons · endless tower</div>
+      <h2>The Reach fights back.</h2>
+      <div class="rule"></div>
+      <p>110 creatures in a growing bestiary, 29 elite Champions with unique trophies, seven dungeons that run wave after wave, and a Paragon tower with no last floor.</p>
+      <div class="facts"><span class="fact"><b>36</b> gear sets</span><span class="fact"><b>119</b> quests</span><span class="fact"><b>321</b> achievements</span></div>
+    </div>
+    <div class="visual">
+      <div class="row" style="bottom:40px;gap:0">
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/elite_black_witch.webp" style="width:200px;height:200px"><span></span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/elite_ossric.webp" style="width:240px;height:240px"><span style="white-space:nowrap;color:#d8b870">Ossric the Marrowbound</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/monsters/elite_high_wyvern.webp" style="width:200px;height:200px"><span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · Companions -->
+<section class="panel text-right" id="p4">
+  <div class="art"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/zones/wildwood.webp" style="left:0;top:0;width:700px;height:100%;opacity:.55"><div class="fade" style="background:linear-gradient(270deg,#0f0d0b 46%,rgba(15,13,11,.55) 62%,rgba(15,13,11,.2) 100%)"></div></div>
+  <div class="body">
+    <div class="visual">
+      <div class="row" style="bottom:60px;gap:4px">
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/pyreling.webp" style="width:150px;height:150px"><span>Pyreling</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/gorehound.webp" style="width:190px;height:190px"><span>Gorehound</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/pets/booted_tomcat.webp" style="width:170px;height:170px"><span>Leon</span></div>
+      </div>
+    </div>
+    <div class="text">
+      <div class="eyebrow">23 companions</div>
+      <h2>They do more than buff numbers.</h2>
+      <div class="rule"></div>
+      <p>Every companion drops from the skill it belongs to and brings a passive for that trade plus a real move in combat: a bear trap that makes the enemy bleed, a rat that steals loot, an imp that sets your blade on fire.</p>
+      <p>Rare, earned, and worth the hunt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · Peoples -->
+<section class="panel text-left" id="p5" style="--vis:1.35fr">
+  <div class="art"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_war_table.webp" style="left:0;top:0;width:100%;height:100%;opacity:.35"><div class="fade" style="background:linear-gradient(90deg,#0f0d0b 38%,rgba(15,13,11,.6) 52%,rgba(15,13,11,.35) 100%)"></div></div>
+  <div class="body">
+    <div class="text">
+      <div class="eyebrow">4 peoples · 240 portraits</div>
+      <h2>Human, Elf, Orc, Goblin.</h2>
+      <div class="rule"></div>
+      <p>Thirty painted archetypes per people, each in two versions. Your choice is a look, not a cage: every skill and every combat style stays open to everyone.</p>
+      <p>Three equipment kits per character let you swap a whole loadout between fights.</p>
+    </div>
+    <div class="visual">
+      <div class="row" style="bottom:-6px;gap:0;align-items:flex-end;justify-content:flex-end;padding-right:6px">
+        <img src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/human_fire_mage_m.webp" style="height:350px;margin-right:-118px;filter:drop-shadow(0 0 14px rgba(0,0,0,.9))">
+        <img src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/elf_frost_mage_f.webp" style="height:350px;margin-right:-118px;filter:drop-shadow(0 0 14px rgba(0,0,0,.9))">
+        <img src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/orc_warrior_m.webp" style="height:350px;margin-right:-118px;filter:drop-shadow(0 0 14px rgba(0,0,0,.9))">
+        <img src="file:///G:/GameDev/apps/client/src/renderer/assets/portraits/goblin_ranger_f.webp" style="height:350px;filter:drop-shadow(0 0 14px rgba(0,0,0,.9))">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · New Haven -->
+<section class="panel text-right" id="p6">
+  <div class="art"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/camp/camp_map_day.webp" style="left:0;top:0;width:720px;height:100%;opacity:1"><div class="fade" style="background:linear-gradient(270deg,#0f0d0b 42%,rgba(15,13,11,.55) 56%,rgba(15,13,11,0) 100%)"></div></div>
+  <div class="body">
+    <div class="visual">
+      <div class="row" style="bottom:30px;gap:0">
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/camp/camp_smelter_3.webp" style="width:200px;height:200px"><span>Smelter</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/camp/camp_sawpit_3.webp" style="width:200px;height:200px"><span>Sawpit</span></div>
+        <div class="tile"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/camp/camp_watchtower_3.webp" style="width:200px;height:200px"><span>Watchtower</span></div>
+      </div>
+    </div>
+    <div class="text">
+      <div class="eyebrow">New Haven · 15 buildings · 3 tiers each</div>
+      <h2>Build a town that works while you don't.</h2>
+      <div class="rule"></div>
+      <p>Raise a smelter, a sawpit, a smokehouse, a seed garden. Each building turns raw goods into finished ones on its own clock, and keeps going after you log off.</p>
+      <p>Queue the next build, walk away, come back to a fuller storehouse.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · Idle -->
+<section class="panel text-left" id="p7">
+  <div class="art"><img src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_hero.webp" style="left:0;top:0;width:100%;height:100%;opacity:.3"><div class="fade" style="background:linear-gradient(90deg,#0f0d0b 40%,rgba(15,13,11,.7) 100%)"></div></div>
+  <div class="body">
+    <div class="text">
+      <div class="eyebrow">Made for idle time</div>
+      <h2>It grows in the dark.</h2>
+      <div class="rule"></div>
+      <p>Offline progress for skills, combat, traps and buildings. Auto-battle, auto-eat, a queue that survives a defeat and moves on, autosave every five seconds.</p>
+      <div class="facts"><span class="fact">Offline progress</span><span class="fact">No microtransactions</span><span class="fact">7 languages</span><span class="fact">Steam achievements</span></div>
+    </div>
+    <div class="visual"><img class="logo" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo.webp"></div>
+  </div>
+</section>
+
+</body>
+</html>
