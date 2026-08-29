@@ -73,7 +73,11 @@ describe("Suffix-Klassen-Trennung (#p14): Pool-Tags", () => {
     // trägt evasionRating 4 (Flavor, Muster ring_master_fishing/-foraging, s. Kommentar unten) —
     // 96→97.
     // Chef 28./29.08.2026: Trübgewebe-Set auf fünf Teile (dimweave_leggings/dimweave_wraps, wardCapacity 12/7) — 73→75.
-    expect(counts).toEqual({ armor_plate: 178, armor_leather: 97, armor_cloth: 75 });
+    // Schmuck-Rework Welle 2 (content-dev, 29.08.2026, design/schmuck-audit-2026-08-29.md §3.5):
+    // 7 neue Fernkampf-Ringe + 7 neue Fernkampf-Amulette tragen `evasionRating` als Trinity-Flavor
+    // (exakt dasselbe Muster wie die bestehenden Sammel-Meisterringe, s. Kommentar oben) — 97→111.
+    // Bleiben klassenfrei bei den Suffix-/modifiers-Checks unten (JEWELRY_SLOTS-Ausnahme).
+    expect(counts).toEqual({ armor_plate: 178, armor_leather: 111, armor_cloth: 75 });
   });
 
   it("jedes Rüstungsteil mit Klassen-Tag behält zusätzlich das allgemeine armor-Tag (Runen-Gate)", () => {

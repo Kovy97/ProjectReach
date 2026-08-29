@@ -510,7 +510,12 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // identisch verschoben auch ohne das Ring-Item). buildBisCharacter setzt jeden Skill auf
     // targetLevel — der zusätzliche trainierte Skill hebt trained.dex (character.ts computeStats
     // §2 Hybrid) und damit den flachen evasion-Kontest-Stat: 16.8537 → 17.3194.
-    expect(st.evasion).toBeCloseTo(17.3194, 3);
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 2, design/schmuck-audit-
+    // 2026-08-29.md §3.5): 7 neue Fernkampf-Ringe + 7 neue Fernkampf-Amulette (dex/con/lck +
+    // evasionRating) sind die ersten craftbaren Schmuckstücke, die für einen Ranged-Build
+    // überhaupt konkurrieren — sie schlagen an mehreren Slots die bisherige BiS-Wahl dieses
+    // Dodge-Builds und heben den dex-Anteil: evasion 17.3194 → 17.9528.
+    expect(st.evasion).toBeCloseTo(17.9528, 3);
 
     const onLevel = monsterClosestTo(content, 90);
     const plus150 = monsterClosestTo(content, 240);
@@ -544,11 +549,14 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // Gegner marginal seltener landen: 0.3956 → 0.3949 / 0.7698 → 0.7693.
     // Re-Messung 2026-08-27 (content-dev, 1.2.0 „Fasern und Fallen", neuer Skill "hunting" trains
     // dex, s.o.): evasion 16.8537 → 17.3194 laesst den Gegner spuerbar seltener landen.
-    expect(hcOn).toBeCloseTo(0.3884, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.2334, 3);
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 2, s.o.): evasion 17.3194 → 17.9528
+    // laesst den Gegner spuerbar seltener landen: 0.3884 → 0.3799 / 0.2334 → 0.2280 /
+    // 0.7643 → 0.7579 / 0.4586 → 0.4547.
+    expect(hcOn).toBeCloseTo(0.3799, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeCloseTo(0.228, 3);
     const hc150 = hitChance(enemyEffectiveAccuracy(plus150), st.evasion); // acc 24 → eff. ~65
-    expect(hc150).toBeCloseTo(0.7643, 3);
-    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4586, 3);
+    expect(hc150).toBeCloseTo(0.7579, 3);
+    expect((1 - combinedFloorDodge(st.dodgeChance, hc150)) * hc150).toBeCloseTo(0.4547, 3);
     // Harte Untergrenze (L5-Kombiboden): kombinierte Land-Chance nie unter MIN_HIT_CHANCE.
     expect((1 - combinedFloorDodge(st.dodgeChance, hcOn)) * hcOn).toBeGreaterThanOrEqual(MIN_HIT_CHANCE);
   });
@@ -762,11 +770,19 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // als BiS-Mainhand (Roh-DPS 5,05 > stormcrest_staff 4,72), seine Kit-Spanne mit Zauberfokus liegt jetzt
     // bei 105,8–116,0 ⇒ NUR die beiden magic-Spieler-Zeilen steigen leicht (langsamerer Kill): idol_warden 50.48→52.02 s,
     // last_idol 169.41→174.56 s. Boss→Spieler (28.03/30.12) und alle melee/ranged-Paare exakt unverändert.
+    // Re-Messung 2026-08-29 (content-dev, Schmuck-Rework Welle 2, design/schmuck-audit-
+    // 2026-08-29.md §3.5): 7 neue Fernkampf-Ringe + 7 neue Fernkampf-Amulette (skillBoost.ranged
+    // 1-4 + precision + evasionRating, erste jemals konkurrenzfähige craftbare Fernkampf-Schmuck-
+    // Reihe) schlagen an mehreren Slots die bisherige BiS-Wahl des CL-90-Ranged-„damage"-Builds ⇒
+    // schnellerer Kill (mehr ranged-Skalierung/Precision) und leicht höhere Gegner-Landchance
+    // (Kontest-`evasion` verschiebt sich mit, s. Kopf-Pin oben): ranged/idol_warden 78.23/19.78 →
+    // 73.03/19.60, ranged/last_idol 258.94/13.67 → 241.29/13.50. Melee/Magic exakt unverändert
+    // (kein Nicht-Ranged-Slot betroffen).
     const pins: Array<[WeaponStyle, string, number, number]> = [
       ["melee", "idol_warden", 59.39, 20.65],
       ["melee", "last_idol", 199.15, 14.63],
-      ["ranged", "idol_warden", 78.23, 19.78],
-      ["ranged", "last_idol", 258.94, 13.67],
+      ["ranged", "idol_warden", 73.03, 19.6],
+      ["ranged", "last_idol", 241.29, 13.5],
       ["magic", "idol_warden", 52.02, 28.03],
       ["magic", "last_idol", 174.56, 30.12],
     ];
@@ -860,7 +876,7 @@ describe("Balance-Envelope §6: Runen-Stapelung (Chef-Entscheid 25.08.2026)", ()
 //    Suite (idol-sanctum-clear.test.ts) kann sie tragen, dort rein verhaltensbasiert geprüft.
 // ───────────────────────────────────────────────────────────────────────────
 describe("Balance-Envelope §8: Meister-Perk-Inventur (masterPerk-Quellen)", () => {
-  it("Ring-Umbau SAVE 69: alle 21 Meisterringe existieren, GENAU 14 tragen einen masterPerk", () => {
+  it("Ring-Umbau SAVE 69: alle 21 Meisterringe existieren, GENAU 15 tragen einen masterPerk", () => {
     // Detektor: reißt dieser Pin, hat sich die Perk-Verteilung der Meisterringe verschoben —
     // bewusst neu messen & pinnen (Anzahl Träger, Kampf-Envelopes §2-§5 gegenprüfen).
     const carriers = Object.values(content.items)

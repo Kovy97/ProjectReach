@@ -1067,11 +1067,17 @@ export const content: ContentDB = {
     fang_necklace: {
       id: "fang_necklace", name: { en: "Predator Fang Necklace", de: "Raubzahnkette" }, type: "equipment", stackable: false,
       icon: "🦷", slot: "amulet", modifiers: { str: 1, lck: 2 }, skillBoost: { power: 1 },
-      requirements: { jewelcrafting: 5 }, value: 90,
+      // Schmuck-Rework W1 (§P2): Wert 90 lag unter garnet_amulet (L3, Wert 200), obwohl statistisch
+      // stärker (3 vs 2 Punkte) — korrigiert.
+      requirements: { jewelcrafting: 5 }, value: 240,
     },
     sapphire_ring: {
       id: "sapphire_ring", name: { en: "Sapphire Ring", de: "Saphirring" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { int: 2 }, skillBoost: { attack: 1 },
+      // Schmuck-Rework W1 (design/schmuck-audit-2026-08-29.md §S1-b/E-5): war int 2 + skillBoost.attack 1
+      // (Intelligenz plus Nahkampf-Treffsicherheit auf demselben Ring, Richtungskonflikt zum eigenen
+      // sapphire_amulet). Chef-Entscheid E-5: umwidmen statt festnageln — der Stein ist blau, das
+      // Amulett ist Magie, der Ring folgt. skillBoost.magic 1 + wis 1 ergänzt.
+      icon: "💍", slot: "ring1", modifiers: { int: 2, wis: 1 }, skillBoost: { magic: 1 },
       requirements: { jewelcrafting: 15 }, value: 360, rarity: "common",
     },
     sapphire_amulet: {
@@ -1087,12 +1093,15 @@ export const content: ContentDB = {
     ruby_amulet: {
       id: "ruby_amulet", name: { en: "Ruby Amulet", de: "Rubinamulett" }, type: "equipment", stackable: false,
       icon: "📿", slot: "amulet", modifiers: { str: 3, con: 2, lck: 2 }, skillBoost: { power: 1 },
-      requirements: { jewelcrafting: 38 }, value: 760, rarity: "rare",
+      // Schmuck-Rework W1 (§P3): Wert 760 lag unter alpha_fang_amulet (L36, 6 Pkt, Wert 900), trotz
+      // höherer Stufe und mehr Punkten — korrigiert.
+      requirements: { jewelcrafting: 38 }, value: 980, rarity: "rare",
     },
     diamond_ring: {
       id: "diamond_ring", name: { en: "Diamond Ring", de: "Diamantring" }, type: "equipment", stackable: false,
       icon: "💍", slot: "ring1", modifiers: { dex: 1, con: 4, lck: 2 }, skillBoost: { attack: 2 },
-      requirements: { jewelcrafting: 55 }, value: 1200, rarity: "rare",
+      // Schmuck-Rework W1 (§Teil 4 Punkt 5): Wert 1200 → 1400 (Preisbruch-Korrektur, s. schmuck-audit).
+      requirements: { jewelcrafting: 55 }, value: 1400, rarity: "rare",
     },
     diamond_amulet: {
       id: "diamond_amulet", name: { en: "Diamond Amulet", de: "Diamantamulett" }, type: "equipment", stackable: false,
@@ -1102,7 +1111,8 @@ export const content: ContentDB = {
     onyx_ring: {
       id: "onyx_ring", name: { en: "Onyx Ring", de: "Onyxring" }, type: "equipment", stackable: false,
       icon: "💍", slot: "ring1", modifiers: { str: 2, dex: 1, int: 2, lck: 3 }, skillBoost: { power: 3 },
-      requirements: { jewelcrafting: 70 }, value: 2600, rarity: "superRare",
+      // Schmuck-Rework W1 (§Teil 4 Punkt 5): Wert 2600 → 2400 (Preisbruch-Korrektur, s. schmuck-audit).
+      requirements: { jewelcrafting: 70 }, value: 2400, rarity: "superRare",
     },
     onyx_amulet: {
       id: "onyx_amulet", name: { en: "Onyx Amulet", de: "Onyxamulett" }, type: "equipment", stackable: false,
@@ -1154,8 +1164,12 @@ export const content: ContentDB = {
     // ── Dungeon-Reward-Schmuck (ERSTVORSCHLAG — Thema/Werte vom Chef überarbeitbar) ──
     grave_warden_band: {
       id: "grave_warden_band", name: { en: "Grave Warden Band", de: "Grabwächter-Reif" }, type: "equipment", stackable: false,
-      icon: "💍", slot: "ring1", modifiers: { con: 4 }, // Chef-Entscheidung E1 25.08.2026: toter defence-Boost -> +2 con.
-      requirements: { jewelcrafting: 55 }, value: 2200, rarity: "rare",
+      // Schmuck-Rework W1 (design/schmuck-audit-2026-08-29.md §S1-c/P1): war con 4, kein Boost, Wert
+      // 2200 — strikt schlechter als diamond_ring derselben Stufe (7 Pkt, attack 2, Wert 1200) bei
+      // 1,8-fachem Preis, trotz zusätzlichem grave_warden_sigil-Input. Auf die Ring-Kurve gehoben
+      // (10 Attributpunkte) + skillBoost ergänzt; Wert korrigiert.
+      icon: "💍", slot: "ring1", modifiers: { str: 4, con: 4, lck: 2 }, skillBoost: { power: 3 },
+      requirements: { jewelcrafting: 55 }, value: 1300, rarity: "rare",
     },
     stormcaller_amulet: {
       id: "stormcaller_amulet", name: { en: "Stormcaller Amulet", de: "Sturmrufer-Amulett" }, type: "equipment", stackable: false,
@@ -1176,6 +1190,159 @@ export const content: ContentDB = {
       id: "alpha_fang_amulet", name: { en: "Alpha Fang Amulet", de: "Leitwolf-Amulett" }, type: "equipment", stackable: false,
       icon: "📿", slot: "amulet", modifiers: { str: 3, lck: 3 }, skillBoost: { power: 1 },
       requirements: { jewelcrafting: 36 }, value: 900, rarity: "rare",
+    },
+
+    // ════════════════════════════════════════════════════════════════════════════════════════
+    // Schmuck-Rework Welle 2 (design/schmuck-audit-2026-08-29.md §3.5/§3.12): komplette
+    // Fernkampf-Reihe, 7 Ringe + 7 Amulette. Vorher trug genau EIN Schmuckstück im ganzen
+    // Katalog `ranged` (slayer_amulet, stilneutral) — Bogenschützen hatten in der Juwelierskunst
+    // kein einziges eigenes Stück. Fassung = Stil (§3.4): Lederschnur/-fassung → Fernkampf, auf
+    // derselben Gem-Stufenleiter wie die bestehenden Nahkampf-Ringe (sapphire/ruby/bloodstone/
+    // diamond/onyx/voidstone/godgem). Attributpunkte + Skill-Boost + Trinity-Werte + Wert exakt
+    // nach den beiden Tabellen §3.5 (Ring-Attributpunkte round(0,8+0,17·L), Amulett round(1,7+
+    // 0,17·L), lck-Anteil ≤ 15 % des Budgets). `precision`/`evasionRating` folgen dem Muster der
+    // Meisterringe (ring_master_ranged: precision 0,02 bei L99 — hier klar darunter je Craft-Stufe,
+    // s. §3.3-Deckel-Tabelle). Kein eigenes Bild (Icon-Fallback wie jeder andere Ring/Amulett ohne
+    // Art) — neue IDs für die Asset-Bestellung im Content-Bericht.
+    kestrel_loop: {
+      id: "kestrel_loop", name: { en: "Kestrel Loop", de: "Turmfalken-Reif" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 2, lck: 1 }, skillBoost: { ranged: 1 },
+      precision: 0.004, evasionRating: 1,
+      requirements: { jewelcrafting: 15 }, value: 360, rarity: "rare",
+      description: {
+        en: "A slender band worked with a kestrel's primary feather, still faintly oiled from the hunt.",
+        de: "Ein schmaler Reif, mit der Schwungfeder eines Turmfalken besetzt, noch leicht ölig vom letzten Jagdflug.",
+      },
+    },
+    hawkeye_gyre: {
+      id: "hawkeye_gyre", name: { en: "Hawkeye Band", de: "Falkenaugen-Band" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 4, con: 2, lck: 1 }, skillBoost: { ranged: 2 },
+      precision: 0.008, evasionRating: 2,
+      requirements: { jewelcrafting: 34 }, value: 640, rarity: "rare",
+      description: {
+        en: "Set with a chip of polished ruby shaped like a hawk's watching eye. Steadies the draw hand.",
+        de: "Mit einem Splitter poliertem Rubin besetzt, geschliffen wie das wachsame Auge eines Falken. Beruhigt die Zughand.",
+      },
+    },
+    sinewbound_coil: {
+      id: "sinewbound_coil", name: { en: "Sinewbound Ring", de: "Sehnenbund-Ring" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 5, con: 2, lck: 1 }, skillBoost: { ranged: 2 },
+      precision: 0.010, evasionRating: 3,
+      requirements: { jewelcrafting: 44 }, value: 1000, rarity: "rare",
+      description: {
+        en: "Bound in dried sinew over a blooded stone. Wearers claim it hums faintly before the string is loosed.",
+        de: "Mit getrockneter Sehne über einem blutgetränkten Stein gebunden. Träger schwören, er summe leise, bevor die Sehne losgelassen wird.",
+      },
+    },
+    windwidow_snare: {
+      id: "windwidow_snare", name: { en: "Windwidow Signet", de: "Windwitwen-Siegel" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 6, con: 2, lck: 2 }, skillBoost: { ranged: 3 },
+      precision: 0.012, evasionRating: 4,
+      requirements: { jewelcrafting: 55 }, value: 1400, rarity: "rare",
+      description: {
+        en: "Named for a huntress who outlived every mark she ever loosed an arrow at. The diamond never quite catches the light straight on.",
+        de: "Benannt nach einer Jägerin, die jedes Ziel überlebte, auf das sie je einen Pfeil abschoss. Der Diamant fängt das Licht nie ganz gerade.",
+      },
+    },
+    blackfletch_nock: {
+      id: "blackfletch_nock", name: { en: "Blackfletch Ring", de: "Schwarzfeder-Ring" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 7, con: 4, lck: 2 }, skillBoost: { ranged: 3 },
+      precision: 0.014, evasionRating: 5,
+      requirements: { jewelcrafting: 70 }, value: 2400, rarity: "rare",
+      description: {
+        en: "Onyx set in warhide, fletched black to vanish against a night sky. The archer's answer to the onyx ring the swordsmen wear.",
+        de: "Onyx in Kriegshaut gefasst, schwarz befiedert, um sich gegen den Nachthimmel zu verlieren. Die Antwort der Bogenschützen auf den Onyxring der Schwertkämpfer.",
+      },
+    },
+    ghostquiver_notch: {
+      id: "ghostquiver_notch", name: { en: "Ghostquiver Band", de: "Geisterköcher-Band" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 8, con: 4, lck: 3 }, skillBoost: { ranged: 4 },
+      precision: 0.016, evasionRating: 6,
+      requirements: { jewelcrafting: 85 }, value: 4200, rarity: "rare",
+      description: {
+        en: "Wrapped in dragonhide gone pale with age. Those who wear it say the quiver on their back feels lighter, though it never is.",
+        de: "In altersblass gewordene Drachenhaut gewickelt. Wer ihn trägt, sagt, der Köcher am Rücken fühle sich leichter an, obwohl er es nie ist.",
+      },
+    },
+    worldpiercer_barb: {
+      id: "worldpiercer_barb", name: { en: "Worldpiercer Ring", de: "Weltendurchbohrer-Ring" }, type: "equipment", stackable: false,
+      icon: "💍", slot: "ring1", modifiers: { dex: 9, con: 5, lck: 3 }, skillBoost: { ranged: 4 },
+      precision: 0.018, evasionRating: 7,
+      requirements: { jewelcrafting: 95 }, value: 7800, rarity: "epic",
+      description: {
+        en: "Godgem set in shadowhide over an aetherium band. Said to have put an arrow through something that should not have had a far side.",
+        de: "Göttenstein in Schattenhaut über einem Aetheriumreif gefasst. Man sagt, er habe einen Pfeil durch etwas getrieben, das keine andere Seite hätte haben dürfen.",
+      },
+    },
+    longsight_cord: {
+      id: "longsight_cord", name: { en: "Longsight Cord", de: "Weitblick-Band" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { dex: 3, con: 1, lck: 1 }, skillBoost: { ranged: 1 },
+      evasionRating: 2,
+      requirements: { jewelcrafting: 18 }, value: 440, rarity: "rare",
+      description: {
+        en: "A leather cord strung with sapphire chips. Worn by scouts who learned to trust their eyes before their legs.",
+        de: "Eine Lederschnur, mit Saphirsplittern besetzt. Getragen von Kundschaftern, die lernten, ihren Augen mehr zu trauen als ihren Beinen.",
+      },
+    },
+    windwhisper_torc: {
+      id: "windwhisper_torc", name: { en: "Windwhisper Torc", de: "Windflüster-Reif" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { dex: 4, con: 2, lck: 2 }, skillBoost: { ranged: 2 },
+      evasionRating: 3,
+      requirements: { jewelcrafting: 38 }, value: 980, rarity: "rare",
+      description: {
+        en: "A scaled-leather torc set with ruby. Riders swear it carries the sound of an arrow's flight a heartbeat before it lands.",
+        de: "Ein Reif aus geschupptem Leder, mit Rubin besetzt. Reiter schwören, er trage den Klang eines fliegenden Pfeils einen Herzschlag vor dem Einschlag.",
+      },
+    },
+    harriers_clasp: {
+      id: "harriers_clasp", name: { en: "Harrier's Chain", de: "Kette des Würgfalken" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { dex: 5, con: 3, lck: 2 }, skillBoost: { ranged: 2 },
+      evasionRating: 5,
+      requirements: { jewelcrafting: 48 }, value: 1200, rarity: "rare",
+      description: {
+        en: "Studded leather strung with bloodstone, named for a bird that never misses its stoop twice.",
+        de: "Genietetes Leder, mit Blutstein besetzt, benannt nach einem Vogel, der seinen Sturzflug nie zweimal verfehlt.",
+      },
+    },
+    kitehunter_collar: {
+      id: "kitehunter_collar", name: { en: "Kite-Hunter Pendant", de: "Anhänger des Weihenjägers" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { dex: 6, con: 4, lck: 2 }, skillBoost: { ranged: 3 },
+      evasionRating: 6,
+      requirements: { jewelcrafting: 60 }, value: 1600, rarity: "rare",
+      description: {
+        en: "Diamond bound in studded leather and mithril wire. Hangs steady even at a dead run.",
+        de: "Diamant, in genietetes Leder und Mithrildraht gefasst. Hängt selbst im vollen Lauf ruhig.",
+      },
+    },
+    gloomfletch_choker: {
+      id: "gloomfletch_choker", name: { en: "Gloomfletch Amulet", de: "Düsterfeder-Amulett" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { dex: 7, con: 4, lck: 3 }, skillBoost: { ranged: 3 },
+      evasionRating: 8,
+      requirements: { jewelcrafting: 75 }, value: 3200, rarity: "rare",
+      description: {
+        en: "Onyx caught in dark warhide, fletched with feathers that seem to drink the light around them. The archer's answer to the onyx amulet.",
+        de: "Onyx in dunkler Kriegshaut gefasst, befiedert mit Federn, die das Licht um sich herum zu trinken scheinen. Die Antwort der Bogenschützen auf das Onyxamulett.",
+      },
+    },
+    nightquarry_wreath: {
+      id: "nightquarry_wreath", name: { en: "Nightquarry Chain", de: "Nachtbeute-Kette" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { dex: 8, con: 6, lck: 3 }, skillBoost: { ranged: 4 },
+      evasionRating: 9,
+      requirements: { jewelcrafting: 88 }, value: 5500, rarity: "rare",
+      description: {
+        en: "Voidstone wound in dragonhide and blackened iron. Trophies taken by moonlight never quite look the same by day.",
+        de: "Leerenstein, in Drachenhaut und geschwärztes Eisen gewunden. Trophäen, die im Mondlicht erbeutet wurden, sehen bei Tag nie ganz dieselben aus.",
+      },
+    },
+    deadeye_reliquary: {
+      id: "deadeye_reliquary", name: { en: "Deadeye Reliquary", de: "Reliquiar des Todesauges" }, type: "equipment", stackable: false,
+      icon: "📿", slot: "amulet", modifiers: { dex: 9, con: 6, lck: 3 }, skillBoost: { ranged: 4 },
+      evasionRating: 10,
+      requirements: { jewelcrafting: 99 }, value: 9800, rarity: "epic",
+      description: {
+        en: "A godgem reliquary bound in shadowhide over aetherium. Holds the last aim of an archer who never needed a second arrow.",
+        de: "Ein Göttenstein-Reliquiar, in Schattenhaut über Aetherium gefasst. Bewahrt das letzte Zielen einer Bogenschützin, die nie einen zweiten Pfeil brauchte.",
+      },
     },
 
     // ── Spitzhacken (Werkzeug: beschleunigen Bergbau, wirken aus dem Inventar) ──
@@ -11488,6 +11655,96 @@ export const content: ContentDB = {
       inputs: [{ itemId: "alpha_fang", qty: 1 }, { itemId: "iron_bar", qty: 2 }],
       loot: [{ itemId: "alpha_fang_amulet", chance: 1, min: 1, max: 1 }],
     },
+    // ── Schmuck-Rework Welle 2 (design/schmuck-audit-2026-08-29.md §3.5/§3.12): Fernkampf-Reihe.
+    // Dauer/XP je Stufe identisch zu den gleichstufigen Bestandsrezepten (craft_sapphire_ring@15,
+    // craft_ruby_ring@34, craft_bloodstone_ring@44, craft_diamond_ring@55, craft_onyx_ring@70,
+    // craft_voidstone_ring@85, craft_godgem_ring@95 bzw. den Amulett-Pendants) — dieselbe
+    // Gem-Stufenleiter, nur Lederfassung statt Metallband/Rune (§3.4).
+    craft_kestrel_loop: {
+      id: "craft_kestrel_loop", name: { en: "Craft Kestrel Loop", de: "Turmfalken-Reif fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 4000, xp: 12, levelRequired: 15,
+      inputs: [{ itemId: "sapphire", qty: 1 }, { itemId: "cured_leather", qty: 1 }, { itemId: "iron_bar", qty: 1 }],
+      loot: [{ itemId: "kestrel_loop", chance: 1, min: 1, max: 1 }],
+    },
+    craft_hawkeye_gyre: {
+      id: "craft_hawkeye_gyre", name: { en: "Craft Hawkeye Band", de: "Falkenaugen-Band fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 5000, xp: 39, levelRequired: 34,
+      inputs: [{ itemId: "ruby", qty: 1 }, { itemId: "scaled_leather", qty: 1 }, { itemId: "steel_bar", qty: 1 }],
+      loot: [{ itemId: "hawkeye_gyre", chance: 1, min: 1, max: 1 }],
+    },
+    craft_sinewbound_coil: {
+      id: "craft_sinewbound_coil", name: { en: "Craft Sinewbound Ring", de: "Sehnenbund-Ring fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 5700, xp: 73, levelRequired: 44,
+      inputs: [{ itemId: "bloodstone", qty: 1 }, { itemId: "studded_leather", qty: 1 }, { itemId: "gravesteel_bar", qty: 1 }],
+      loot: [{ itemId: "sinewbound_coil", chance: 1, min: 1, max: 1 }],
+    },
+    craft_windwidow_snare: {
+      id: "craft_windwidow_snare", name: { en: "Craft Windwidow Signet", de: "Windwitwen-Siegel fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 6500, xp: 143, levelRequired: 55,
+      inputs: [{ itemId: "diamond", qty: 1 }, { itemId: "studded_leather", qty: 1 }, { itemId: "mithril_bar", qty: 1 }],
+      loot: [{ itemId: "windwidow_snare", chance: 1, min: 1, max: 1 }],
+    },
+    craft_blackfletch_nock: {
+      id: "craft_blackfletch_nock", name: { en: "Craft Blackfletch Ring", de: "Schwarzfeder-Ring fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 7000, xp: 323, levelRequired: 70,
+      inputs: [{ itemId: "onyx", qty: 1 }, { itemId: "warhide", qty: 1 }, { itemId: "runite_bar", qty: 1 }],
+      loot: [{ itemId: "blackfletch_nock", chance: 1, min: 1, max: 1 }],
+    },
+    craft_ghostquiver_notch: {
+      id: "craft_ghostquiver_notch", name: { en: "Craft Ghostquiver Band", de: "Geisterköcher-Band fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 8000, xp: 777, levelRequired: 85,
+      inputs: [{ itemId: "voidstone", qty: 1 }, { itemId: "dragonhide", qty: 1 }, { itemId: "bloodiron_bar", qty: 1 }],
+      loot: [{ itemId: "ghostquiver_notch", chance: 1, min: 1, max: 1 }],
+    },
+    craft_worldpiercer_barb: {
+      id: "craft_worldpiercer_barb", name: { en: "Craft Worldpiercer Ring", de: "Weltendurchbohrer-Ring fertigen" },
+      skill: "jewelcrafting", category: "jewel_rings", durationMs: 10000, xp: 1593, levelRequired: 95,
+      inputs: [{ itemId: "godgem", qty: 1 }, { itemId: "shadowhide", qty: 1 }, { itemId: "aetherium_bar", qty: 1 }],
+      loot: [{ itemId: "worldpiercer_barb", chance: 1, min: 1, max: 1 }],
+    },
+    craft_longsight_cord: {
+      id: "craft_longsight_cord", name: { en: "String Longsight Cord", de: "Weitblick-Band fädeln" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 4500, xp: 16, levelRequired: 18,
+      inputs: [{ itemId: "sapphire", qty: 1 }, { itemId: "cured_leather", qty: 2 }],
+      loot: [{ itemId: "longsight_cord", chance: 1, min: 1, max: 1 }],
+    },
+    craft_windwhisper_torc: {
+      id: "craft_windwhisper_torc", name: { en: "Craft Windwhisper Torc", de: "Windflüster-Reif fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 5500, xp: 52, levelRequired: 38,
+      inputs: [{ itemId: "ruby", qty: 1 }, { itemId: "scaled_leather", qty: 2 }],
+      loot: [{ itemId: "windwhisper_torc", chance: 1, min: 1, max: 1 }],
+    },
+    craft_harriers_clasp: {
+      id: "craft_harriers_clasp", name: { en: "Craft Harrier's Chain", de: "Kette des Würgfalken fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 6200, xp: 96, levelRequired: 48,
+      inputs: [{ itemId: "bloodstone", qty: 1 }, { itemId: "studded_leather", qty: 2 }],
+      loot: [{ itemId: "harriers_clasp", chance: 1, min: 1, max: 1 }],
+    },
+    craft_kitehunter_collar: {
+      id: "craft_kitehunter_collar", name: { en: "Craft Kite-Hunter Pendant", de: "Anhänger des Weihenjägers fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 7000, xp: 197, levelRequired: 60,
+      inputs: [{ itemId: "diamond", qty: 1 }, { itemId: "studded_leather", qty: 2 }, { itemId: "mithril_bar", qty: 1 }],
+      loot: [{ itemId: "kitehunter_collar", chance: 1, min: 1, max: 1 }],
+    },
+    craft_gloomfletch_choker: {
+      id: "craft_gloomfletch_choker", name: { en: "Craft Gloomfletch Amulet", de: "Düsterfeder-Amulett fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 8000, xp: 473, levelRequired: 75,
+      inputs: [{ itemId: "onyx", qty: 1 }, { itemId: "warhide", qty: 2 }, { itemId: "runite_bar", qty: 1 }],
+      loot: [{ itemId: "gloomfletch_choker", chance: 1, min: 1, max: 1 }],
+    },
+    craft_nightquarry_wreath: {
+      id: "craft_nightquarry_wreath", name: { en: "Forge Nightquarry Chain", de: "Nachtbeute-Kette schmieden" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 9000, xp: 1013, levelRequired: 88,
+      inputs: [{ itemId: "voidstone", qty: 1 }, { itemId: "dragonhide", qty: 2 }, { itemId: "bloodiron_bar", qty: 1 }],
+      loot: [{ itemId: "nightquarry_wreath", chance: 1, min: 1, max: 1 }],
+    },
+    craft_deadeye_reliquary: {
+      id: "craft_deadeye_reliquary", name: { en: "Craft Deadeye Reliquary", de: "Reliquiar des Todesauges fertigen" },
+      skill: "jewelcrafting", category: "jewel_amulets", durationMs: 12000, xp: 2330, levelRequired: 99,
+      inputs: [{ itemId: "godgem", qty: 1 }, { itemId: "shadowhide", qty: 2 }, { itemId: "aetherium_bar", qty: 1 }],
+      loot: [{ itemId: "deadeye_reliquary", chance: 1, min: 1, max: 1 }],
+    },
+
     craft_garnet_ring: {
       id: "craft_garnet_ring", name: { en: "Craft Garnet Ring", de: "Granatring fertigen" },
       // balance-fix 2026-07: xp 2→3 (removes the "2-XP" floor optics)
