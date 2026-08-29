@@ -253,23 +253,30 @@ describe("prioritizeQueueEntry (bestehender Eintrag, exakte Reihenfolge)", () =>
 });
 
 describe("Tod-Pause: Priorisieren hebt sie auf (Wiederaufnahme-Signal wie enqueue*)", () => {
-  it("nach dem Tod startet der priorisierte Eintrag sofort, der Kampf-Rest bleibt vorn erhalten", () => {
+  it("nach dem Tod läuft die Queue von selbst weiter (Chef 29.08.2026): der gefallene Eintrag verfällt, nichts bleibt hängen", () => {
     const s = createGame({ name: "Wagemut" }, content, 37);
     enqueueFight(s, content, "bull_boss", 5); // sicherer Tod für den frischen L1-Helden
     enqueueAction(s, content, "cut_normal_tree", 3);
     advance(s, content, 2 * 60_000);
     expect(s.stats.deaths).toBe(1);
-    expect(s.queuePaused).toBe(true);
-    expect(s.actionQueue).toEqual([
-      makeFightQueueEntry("bull_boss", 5),
-      { kind: "action", actionId: "cut_normal_tree", target: 3 },
-    ]);
+    expect(s.queuePaused).toBe(false);
+    expect(s.lastQueueSkip).toEqual({ monsterId: "bull_boss", reason: "defeated" });
+    advance(s, content, 5 * 60_000);
+    expect(itemCount(s.inventory, "normal_log")).toBe(3); // die Holz-Aktion lief ohne Zutun
+    expect(s.actionQueue).toEqual([]);
+  });
 
+  it("prioritizeQueueEntry hebt eine manuelle Pause auf und startet den vorgezogenen Eintrag sofort", () => {
+    const s = createGame({ name: "Wagemut" }, content, 38);
+    s.actionQueue.push(makeFightQueueEntry("chicken", 5), { kind: "action", actionId: "cut_normal_tree", target: 3 });
+    s.queuePaused = true;
+    advance(s, content, 60_000);
+    expect(s.combat.monsterId).toBeNull(); // Pause hält
     expect(prioritizeQueueEntry(s, content, 1)).toBe(true); // die Holz-Aktion vorziehen
     expect(s.queuePaused).toBe(false); // Pause aufgehoben
     expect(s.activeActionId).toBe("cut_normal_tree");
     expect(s.actionTarget).toBe(3);
-    expect(s.actionQueue).toEqual([makeFightQueueEntry("bull_boss", 5)]); // Rest-Ziel intakt
+    expect(s.actionQueue).toEqual([makeFightQueueEntry("chicken", 5)]);
   });
 });
 

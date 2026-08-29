@@ -31,7 +31,8 @@ import { xpForLevel } from "./leveling";
  * Vertrag (engine/actions.ts + tick.ts):
  *  • "dungeon"-Queue-Eintrag (`enqueueDungeonRuns`/`enqueueDungeonRunsAtFront`), `target` = Läufe.
  *  • Ein Lauf ZÄHLT beim Endboss-Kill (`dungeonsCleared`-Delta); danach im SELBEN Tick Welle 1.
- *  • Tod/Patt: Lauf abgebrochen (zählt nicht), Rest an die Queue-Front, Queue pausiert (wie Kampf).
+ *  • Tod/Patt: Lauf abgebrochen (zählt nicht), Rest-Läufe verfallen, `lastQueueSkip` meldet es, die
+ *    Queue macht mit dem nächsten Eintrag weiter (Chef 29.08.2026; vorher pausierte sie).
  *  • Flucht (manueller stopCombat): Eintrag beendet, Queue läuft ohne Pause weiter (wie Kampf).
  *  • Offline == online bit-identisch (derselbe Tick-Pfad, kein RNG in der Queue-Logik).
  *
@@ -254,7 +255,7 @@ describe("Tod / Flucht / Fremd-Unterbrechung", () => {
     return s;
   }
 
-  it("Tod im Lauf: kein Clear gezählt, Rest-Läufe zurück an die Front, Queue pausiert — Wiederaufnahme manuell", () => {
+  it("Tod im Lauf: kein Clear gezählt, Rest-Läufe verfallen, lastQueueSkip 'dungeon_defeated', der nächste Eintrag läuft", () => {
     const s = doomed(3);
     enqueueDungeonRuns(s, content, WARBAND, 5);
     enqueueAction(s, content, "cut_normal_tree", 1);
@@ -265,33 +266,23 @@ describe("Tod / Flucht / Fremd-Unterbrechung", () => {
     expect(s.combat.monsterId).toBeNull();
     expect(s.combat.dungeonId).toBeNull();
     expect(s.queueDungeon).toBeNull();
-    expect(s.queuePaused).toBe(true);
-    expect(s.actionQueue).toEqual([
-      makeDungeonQueueEntry(WARBAND, 5),
-      { kind: "action", actionId: "cut_normal_tree", target: 1 },
-    ]);
-    expect(itemCount(s.inventory, "normal_log")).toBe(0); // nichts wurde still übersprungen
-
-    // Manuelle Wiederaufnahme startet den Rest sofort neu (Lauf 1 von 5).
-    expect(resumeActionQueue(s, content)).toBe(true);
     expect(s.queuePaused).toBe(false);
-    expect(s.combat.dungeonId).toBe(WARBAND);
-    expect(s.queueDungeon).toEqual({ dungeonId: WARBAND, remaining: 5, completed: 0 });
+    expect(s.lastQueueSkip).toEqual({ monsterId: "", dungeonId: WARBAND, reason: "dungeon_defeated" });
+    expect(s.actionQueue).toEqual([]); // Dungeon-Eintrag weg, Holz-Aktion lief regulär
+    expect(itemCount(s.inventory, "normal_log")).toBe(1);
   });
 
-  it("offline: Tod pausiert ab dort — der Rest der Offline-Zeit verfällt für die Queue", () => {
+  it("offline: der Tod überspringt den Lauf-Eintrag, der Rest der Offline-Zeit gehört den Folge-Einträgen", () => {
     const s = doomed(5);
     enqueueDungeonRuns(s, content, WARBAND, 5);
     enqueueAction(s, content, "cut_normal_tree", 1);
     advance(s, content, 30 * 60_000, { offline: true });
 
     expect(s.stats.deaths).toBe(1);
-    expect(s.queuePaused).toBe(true);
-    expect(s.actionQueue).toEqual([
-      makeDungeonQueueEntry(WARBAND, 5),
-      { kind: "action", actionId: "cut_normal_tree", target: 1 },
-    ]);
-    expect(itemCount(s.inventory, "normal_log")).toBe(0);
+    expect(s.queuePaused).toBe(false);
+    expect(s.lastQueueSkip).toEqual({ monsterId: "", dungeonId: WARBAND, reason: "dungeon_defeated" });
+    expect(s.actionQueue).toEqual([]);
+    expect(itemCount(s.inventory, "normal_log")).toBe(1);
   });
 
   it("Flucht (manueller stopCombat) beendet den Eintrag: Rest verfällt, die Queue läuft OHNE Pause weiter", () => {

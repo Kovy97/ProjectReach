@@ -17,7 +17,7 @@ import { itemCount } from "./inventory";
 /**
  * KAMPF-QUEUE (SAVE_VERSION 73, Task #312, Chef-GO 2026-07-24): Kampf-Einträge in der
  * Action-Queue — Kill-Ziele (1/25/50/∞), kettenfähig mit normalen Aktionen, offline lauffähig,
- * Tod pausiert die Queue, Zonen-Gate-Check beim START des Eintrags.
+ * Tod überspringt den Eintrag (Chef 29.08.2026, vorher: pausiert), Zonen-Gate-Check beim START des Eintrags.
  *
  * Test-Gelände: die Weiden (pastures) sind UNGEGATED — `chicken` (L1, 3 HP), `cow` (L5, 12 HP)
  * und `bull_boss` (L15, tödlich für einen frischen L1-Helden) sind ab createGame bekämpfbar.
@@ -140,7 +140,7 @@ describe("∞-Eintrag läuft bis zum manuellen Stopp", () => {
   });
 });
 
-describe("Tod pausiert die Queue (Eintrag bleibt mit Rest-Ziel stehen)", () => {
+describe("Tod überspringt den Eintrag, die Queue macht weiter (Chef 29.08.2026)", () => {
   /** Frischer L1-Held OHNE Food gegen bull_boss (L15) = sicherer Tod binnen Sekunden. */
   function doomed(seed: number) {
     const s = createGame({ name: "Wagemut" }, content, seed);
@@ -149,58 +149,54 @@ describe("Tod pausiert die Queue (Eintrag bleibt mit Rest-Ziel stehen)", () => {
     return s;
   }
 
-  it("online: Niederlage → Eintrag mit Rest-Ziel zurück an die Front, queuePaused, NICHTS läuft weiter", () => {
+  it("online: Niederlage → Rest des Eintrags verfällt, lastQueueSkip 'defeated', der nächste Eintrag läuft von selbst", () => {
     const s = doomed(23);
     advance(s, content, 2 * 60_000);
 
-    expect(s.stats.deaths).toBe(1);
+    expect(s.stats.deaths).toBe(1); // genau EIN Tod — kein Auto-Neustart des verlorenen Kampfs
     expect(s.combat.monsterId).toBeNull();
     expect(s.combat.stopReason).toBe("defeated");
     expect(s.queueFight).toBeNull();
-    expect(s.queuePaused).toBe(true);
-    // Eintrag steht mit vollem Rest-Ziel (0 Bullen-Kills) VORNE, nichts wurde übersprungen.
-    expect(s.actionQueue).toEqual([
-      makeFightQueueEntry("bull_boss", 5),
-      { kind: "action", actionId: "cut_normal_tree", target: 3 },
-    ]);
-    // Pause hält: auch nach weiteren Minuten startet weder Kampf noch Sammel-Aktion.
-    advance(s, content, 5 * 60_000);
-    expect(s.combat.monsterId).toBeNull();
-    expect(s.activeActionId).toBeNull();
-    expect(itemCount(s.inventory, "normal_log")).toBe(0);
-  });
-
-  it("resumeActionQueue nimmt die pausierte Queue manuell wieder auf (Rest-Ziel intakt)", () => {
-    const s = doomed(29);
-    advance(s, content, 2 * 60_000);
-    expect(s.queuePaused).toBe(true);
-
-    expect(resumeActionQueue(s, content)).toBe(true); // startet die Front sofort neu
     expect(s.queuePaused).toBe(false);
-    expect(s.combat.monsterId).toBe("bull_boss");
-    expect(s.queueFight).toEqual({ monsterId: "bull_boss", remaining: 5 });
+    expect(s.lastQueueSkip).toEqual({ monsterId: "bull_boss", reason: "defeated" });
+    // Der Kampf-Eintrag ist weg (kein Rest-Ziel vorne), die Holz-Aktion dahinter lief regulär an.
+    expect(s.actionQueue.some((e) => e.kind === "fight")).toBe(false);
+    advance(s, content, 5 * 60_000);
+    expect(itemCount(s.inventory, "normal_log")).toBe(3);
+    expect(s.actionQueue).toEqual([]);
   });
 
-  it("enqueue* ist ebenfalls ein manuelles Wiederaufnahme-Signal (löscht die Pause)", () => {
-    const s = doomed(31);
-    advance(s, content, 2 * 60_000);
-    expect(s.queuePaused).toBe(true);
+  it("manuelle Pause bleibt als Vertrag: resumeActionQueue startet die Front sofort", () => {
+    const s = createGame({ name: "Wagemut" }, content, 29);
+    s.actionQueue.push(makeFightQueueEntry("chicken", 5), { kind: "action", actionId: "cut_normal_tree", target: 3 });
+    s.queuePaused = true; // direkt gesetzt (enqueue* würde die Pause löschen)
+    advance(s, content, 60_000);
+    expect(s.combat.monsterId).toBeNull(); // Pause hält: nichts startet
+    expect(s.activeActionId).toBeNull();
+
+    expect(resumeActionQueue(s, content)).toBe(true);
+    expect(s.queuePaused).toBe(false);
+    expect(s.combat.monsterId).toBe("chicken");
+    expect(s.queueFight).toEqual({ monsterId: "chicken", remaining: 5 });
+  });
+
+  it("enqueue* ist ein manuelles Wiederaufnahme-Signal (löscht die Pause)", () => {
+    const s = createGame({ name: "Wagemut" }, content, 31);
+    s.actionQueue.push(makeFightQueueEntry("chicken", 5));
+    s.queuePaused = true;
     enqueueAction(s, content, "cut_normal_tree", 1); // Spieler klickt eine Aktions-Karte
     expect(s.queuePaused).toBe(false);
   });
 
-  it("offline: Tod pausiert ab dort — der Rest der Offline-Zeit verfällt für die Queue", () => {
+  it("offline: der Tod überspringt den Eintrag, der Rest der Offline-Zeit gehört den Folge-Einträgen", () => {
     const s = doomed(37);
     advance(s, content, 30 * 60_000, { offline: true });
 
     expect(s.stats.deaths).toBe(1);
-    expect(s.queuePaused).toBe(true);
-    expect(s.actionQueue).toEqual([
-      makeFightQueueEntry("bull_boss", 5),
-      { kind: "action", actionId: "cut_normal_tree", target: 3 },
-    ]);
-    // Die Sammel-Aktion hinter dem Kampf-Eintrag lief NICHT (nichts wird still übersprungen).
-    expect(itemCount(s.inventory, "normal_log")).toBe(0);
+    expect(s.queuePaused).toBe(false);
+    expect(s.lastQueueSkip).toEqual({ monsterId: "bull_boss", reason: "defeated" });
+    expect(itemCount(s.inventory, "normal_log")).toBe(3); // die Sammel-Aktion dahinter lief
+    expect(s.actionQueue).toEqual([]);
   });
 });
 

@@ -12,6 +12,17 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## Unveröffentlicht — 1.2.0 „Threads, Traps & Spellfire" / DE „Fäden, Fallen, Feuer" (Chef 29.08.: Name fix; Fasern/Stoff-Roben, Jagen, Schneidern, Magie-Umbau; Taverne → 1.3.0)
 
+**Warteschlange springt nach dem Tod weiter (Chef 29.08.):** DE: Wer in der Warteschlange fällt (20 Eber, Tod beim fünften),
+verliert nur den Rest dieses Eintrags. Die Warteschlange macht mit dem nächsten Eintrag weiter, online wie offline, statt zu
+pausieren; das Warteschlangen-Fenster nennt den übersprungenen Eintrag. Ein Patt wird genauso behandelt. / EN: Dying in the
+queue no longer pauses it: the rest of that entry is dropped and the queue moves on to the next entry, online and offline;
+the queue panel names what was skipped. A stalemate is handled the same way.
+
+*Dev-Notiz: engine/tick.ts Kampf-Ende-Zweig: Tod/Patt ⇒ `lastQueueSkip` (`defeated`/`stalemate`, Dungeon `dungeon_defeated`/
+`dungeon_stalemate`, shared-Union ohne SAVE-Bump), `queueFight`/`queueDungeon` = null, Weiterschaltung regulär; `queuePaused`
+bleibt als manuelle Pause (resumeActionQueue/enqueue*) und für Alt-Saves. Persistenz-Whitelist lässt die vier Gründe stehen
+(vergangenes Ereignis). Tests fight-queue/dungeon-queue/priority-insert umgestellt. Client: `queue.skip.*` ×4 in 7 Sprachen.*
+
 **Champion-Unikate zeigen Effekt und Quelle (Spieler-Report 28.08., Hotfix-Kandidat 1.1.3):** DE: Der Grauzahn-Mantel
 (legendär, Champion „Grauzahn der Ausgehungerte" im Wildwald) hat absichtlich keine Attribute, sein Effekt sind 3 %
 Lebensraub, aber die Item-Karte zeigte Lebensraub nicht an und das Wiki kannte keine Champion-Quellen. Jetzt stehen

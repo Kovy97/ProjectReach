@@ -2095,6 +2095,10 @@ const en = {
     // reasons above, s. shared/index.ts QueueSkipReason.
     "queue.skip.unknown_dungeon": "Removed from queue: {dungeon} no longer exists.",
     "queue.skip.dungeon_locked": "Removed from queue: {dungeon} — requirement not met.",
+    "queue.skip.defeated": "Skipped: {monster}. You fell, the queue moves on.",
+    "queue.skip.stalemate": "Skipped: {monster}. Stalemate, the queue moves on.",
+    "queue.skip.dungeon_defeated": "Skipped: {dungeon}. You fell, the queue moves on.",
+    "queue.skip.dungeon_stalemate": "Skipped: {dungeon}. Stalemate, the queue moves on.",
     "queue.skip.no_materials": "Removed from queue: {action} — no materials.",
     "queue.row.willHave": "Materials come from earlier entries in the queue.",
     "queue.row.willSkip": "No materials in sight — this entry will be skipped.",
@@ -4533,6 +4537,10 @@ const de: Record<keyof typeof en, string> = {
     // Gründe, s. shared/index.ts QueueSkipReason.
     "queue.skip.unknown_dungeon": "Aus der Warteschlange entfernt: {dungeon} existiert nicht mehr.",
     "queue.skip.dungeon_locked": "Aus der Warteschlange entfernt: {dungeon} — Voraussetzung nicht erfüllt.",
+    "queue.skip.defeated": "Übersprungen: {monster}. Im Kampf gefallen, die Warteschlange macht weiter.",
+    "queue.skip.stalemate": "Übersprungen: {monster}. Patt, die Warteschlange macht weiter.",
+    "queue.skip.dungeon_defeated": "Übersprungen: {dungeon}. Im Kampf gefallen, die Warteschlange macht weiter.",
+    "queue.skip.dungeon_stalemate": "Übersprungen: {dungeon}. Patt, die Warteschlange macht weiter.",
     "queue.skip.no_materials": "Aus der Warteschlange entfernt: {action} — keine Materialien.",
     "queue.row.willHave": "Das Material kommt aus früheren Einträgen der Warteschlange.",
     "queue.row.willSkip": "Kein Material in Sicht — dieser Eintrag wird übersprungen.",

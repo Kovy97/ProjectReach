@@ -452,28 +452,35 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
     // Endete der Kampf in DIESEM Tick (monsterId jetzt null)?
     if (state.combat.monsterId === null) {
       const reason = state.combat.stopReason;
-      const failed = reason === "defeated" || reason === "stalemate";
+      // Chef 29.08.2026 („20 Eber, Tod beim fünften: die Queue soll zum nächsten Eintrag springen"):
+      // Tod/Patt überspringt den laufenden Eintrag — sein Rest verfällt, `lastQueueSkip` meldet es
+      // dem Queue-Panel, und die Queue schaltet unten regulär auf den nächsten Eintrag (online wie
+      // offline). Damit ist Chef-GO #312 („Tod pausiert die Queue") aufgehoben; `queuePaused`
+      // bleibt als manuelle Pause (resumeActionQueue/enqueue*) und für Alt-Saves bestehen.
+      const skipReason = reason === "defeated" ? "defeated" : reason === "stalemate" ? "stalemate" : null;
       if (state.queueFight !== null) {
-        // Kampf endete OHNE erreichtes Ziel: Eintrag mit Rest-Ziel zurück an die Front. Bei
-        // Tod/Patt pausiert die Queue (Chef-GO #312: „Tod pausiert die Queue" — KEIN Auto-
-        // Neustart eines verlorenen Kampfs; Wiederaufnahme manuell via enqueue*/setActiveAction/
-        // resumeActionQueue). Sonderpfade ohne Fail-stopReason (z.B. ein Elite-Kampf desselben
-        // Monsters endet nach dem Kill ohne Respawn) lassen die Queue weiterlaufen — der Eintrag
-        // startet im nächsten Leerlauf-Tick regulär erneut.
-        requeueFightFront(state);
-        if (failed) state.queuePaused = true;
+        if (skipReason !== null) {
+          state.lastQueueSkip = { monsterId: state.queueFight.monsterId, reason: skipReason };
+          state.queueFight = null;
+        } else {
+          // Kampf endete OHNE Fail-stopReason und ohne erreichtes Ziel (z.B. ein Elite-Kampf
+          // desselben Monsters endet nach dem Kill ohne Respawn): Eintrag mit Rest-Ziel zurück an
+          // die Front, er startet im nächsten Leerlauf-Tick regulär erneut.
+          requeueFightFront(state);
+        }
       } else if (state.queueDungeon !== null) {
-        // Dungeon-Lauf endete OHNE Clear (SAVE 83: Tod/Patt — ein Clear hätte oben sofort neu
-        // gestartet oder die Laufzeit geleert): Rest-Läufe zurück an die Front; Tod/Patt pausiert
-        // die Queue exakt wie beim Kampf-Eintrag (Wiederaufnahme manuell). Der abgebrochene Lauf
-        // zählt nicht — Verhalten des Laufs selbst wie bisher (harter Abbruch, kein Verlust).
-        requeueDungeonFront(state);
-        if (failed) state.queuePaused = true;
-      } else if (failed && Array.isArray(state.actionQueue) && state.actionQueue.length > 0) {
-        // Tod/Patt pausiert auch eine WARTENDE Queue (Verhaltens-Änderung mit Chef-GO #312:
-        // vorher lief nach einem Tod automatisch der nächste Queue-Eintrag an — jetzt startet
-        // nach einer Niederlage NICHTS mehr von selbst, Wiederaufnahme manuell).
-        state.queuePaused = true;
+        if (skipReason !== null) {
+          // Dungeon-Lauf endete durch Tod/Patt (ein Clear hätte oben sofort neu gestartet oder die
+          // Laufzeit geleert): der abgebrochene Lauf zählt nicht, die Rest-Läufe verfallen.
+          state.lastQueueSkip = {
+            monsterId: "",
+            dungeonId: state.queueDungeon.dungeonId,
+            reason: skipReason === "defeated" ? "dungeon_defeated" : "dungeon_stalemate",
+          };
+          state.queueDungeon = null;
+        } else {
+          requeueDungeonFront(state);
+        }
       }
       // Queue-Weiterschaltung (Action-Queue §4): es läuft keine Aktion, die Queue wartet und ist
       // nicht pausiert → nächsten Eintrag starten (Kampf → Kampf UND Kampf → Sammeln), damit der

@@ -5898,7 +5898,18 @@ export type QueueSkipReason =
    * der Kette entfernt wurde. Reine Union-Erweiterung, KEIN SAVE-Bump (alte Saves kennen den Grund
    * nicht; die Persistenz-Whitelist prüft ihn beim Laden neu).
    */
-  | "no_materials";
+  | "no_materials"
+  /**
+   * Tod/Patt IM Kampf-Eintrag (Chef 29.08.2026): der Rest des Eintrags verfällt, die Queue macht
+   * mit dem nächsten Eintrag weiter (vorher pausierte sie, Chef-GO #312 damit aufgehoben). Reine
+   * Union-Erweiterung, KEIN SAVE-Bump; der Breadcrumb überlebt den Load unverändert (er meldet ein
+   * vergangenes Ereignis, keinen heute prüfbaren Zustand).
+   */
+  | "defeated"
+  | "stalemate"
+  /** Dungeon-Pendant (trägt `dungeonId`): Tod/Patt im Queue-Dungeon-Lauf, Rest-Läufe verfallen. */
+  | "dungeon_defeated"
+  | "dungeon_stalemate";
 
 /**
  * Breadcrumb des letzten übersprungenen Kampf-/Dungeon-/Aktions-Queue-Eintrags (Muster `lastStop`).

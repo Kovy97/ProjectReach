@@ -1923,6 +1923,9 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
           state.lastQueueSkip = { monsterId: "", dungeonId: skipDungeonId, reason };
         } else if (reason === "dungeon_locked" && known && !canEnterDungeon(state, content, skipDungeonId)) {
           state.lastQueueSkip = { monsterId: "", dungeonId: skipDungeonId, reason };
+        } else if ((reason === "dungeon_defeated" || reason === "dungeon_stalemate") && known) {
+          // Tod/Patt im Lauf (Chef 29.08.2026): vergangenes Ereignis, bleibt bis zur Quittung stehen.
+          state.lastQueueSkip = { monsterId: "", dungeonId: skipDungeonId, reason };
         }
       } else if (typeof monsterId === "string" && monsterId.length > 0) {
         const monster = content.monsters[monsterId];
@@ -1936,6 +1939,9 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
           !monster.dungeonOnly &&
           !canFightMonster(state, content, monsterId)
         ) {
+          state.lastQueueSkip = { monsterId, reason };
+        } else if ((reason === "defeated" || reason === "stalemate") && monster) {
+          // Tod/Patt im Kampf-Eintrag (Chef 29.08.2026): vergangenes Ereignis, bleibt bis zur Quittung.
           state.lastQueueSkip = { monsterId, reason };
         }
       }
