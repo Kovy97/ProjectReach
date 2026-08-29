@@ -725,6 +725,13 @@ body .item-cell.rarity-godly {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .item-tooltip.itip-panel {
+  /* 1.0.1 UI-Skalierung (Spieler-Report FR, Chef-Auftrag): EINE Stellschraube fuer die ganze
+     Karte -- 0.8 (=80%) unterhalb 1024px Fensterbreite, linear bis 1.0 (=100%, unveraendert)
+     ab 1600px. 1600x900 und 1920x1080 (Regel 5 des Auftrags) sind damit rechnerisch identisch zu
+     heute, weil der Faktor dort bereits am clamp()-Maximum saettigt. Alle font-size-Werte auf
+     dieser Karte multiplizieren mit dieser EINEN Variable (calc(var(--itip-fs-scale) * Npx))
+     statt eigene vw-Formeln zu wiederholen. */
+  --itip-fs-scale: clamp(0.8, calc(0.8 + 0.2 * (100vw - 1024px) / 576px), 1);
   box-sizing: border-box;
   width: 480px;
   max-height: 97vh;
@@ -772,7 +779,7 @@ body .item-cell.rarity-godly {
 /* „Angelegt"-Tag — dezent, stört den Inhalt nicht. */
 .itip-equipped-badge {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: calc(var(--itip-fs-scale) * 12px);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -803,7 +810,7 @@ body .item-cell.rarity-godly {
   background: rgba(8, 6, 4, 0.72);
   color: var(--gold);
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: calc(var(--itip-fs-scale) * 13px);
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
@@ -821,7 +828,7 @@ body .item-cell.rarity-godly {
 }
 
 .itip-close-btn {
-  font-size: 18px;
+  font-size: calc(var(--itip-fs-scale) * 18px);
   font-weight: 500;
 }
 
@@ -882,7 +889,7 @@ body .item-cell.rarity-godly {
   left: 50%;
   bottom: 1px;
   transform: translateX(-50%);
-  font-size: 9px;
+  font-size: calc(var(--itip-fs-scale) * 9px);
   line-height: 1;
   color: var(--gold);
   opacity: 0.8;
@@ -893,7 +900,7 @@ body .item-cell.rarity-godly {
   width: 100%;
   text-align: center;
   font-family: var(--font-head);
-  font-size: 25px;
+  font-size: calc(var(--itip-fs-scale) * 25px);
   font-weight: 700;
   letter-spacing: 0.03em;
   color: var(--rarity-col, var(--gold));
@@ -910,7 +917,7 @@ body .item-cell.rarity-godly {
   display: block;
   width: 100%;
   text-align: center;
-  font-size: 16.5px;
+  font-size: calc(var(--itip-fs-scale) * 16.5px);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: rgba(216, 192, 106, 0.75);
@@ -921,7 +928,7 @@ body .item-cell.rarity-godly {
   display: block;
   width: 100%;
   text-align: center;
-  font-size: 15px;
+  font-size: calc(var(--itip-fs-scale) * 15px);
   font-style: italic;
   color: var(--muted);
   opacity: 0.9;
@@ -1014,13 +1021,13 @@ body .item-cell.rarity-godly {
 .itip-emoji {
   position: relative;
   z-index: 1;
-  font-size: 320px;
+  font-size: calc(var(--itip-fs-scale) * 320px);
   line-height: 1;
 }
 .itip-placeholder {
   position: relative;
   z-index: 1;
-  font-size: 220px;
+  font-size: calc(var(--itip-fs-scale) * 220px);
   color: var(--muted);
 }
 
@@ -1065,7 +1072,7 @@ body .item-cell.rarity-godly {
   border-bottom: none;
 }
 .itip-group-title {
-  font-size: 13.5px;
+  font-size: calc(var(--itip-fs-scale) * 13.5px);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1081,12 +1088,12 @@ body .item-cell.rarity-godly {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: calc(var(--itip-fs-scale) * 16px);
   padding: 3px 0;
 }
 .itip-stat-icon {
   flex-shrink: 0;
-  font-size: 18px;
+  font-size: calc(var(--itip-fs-scale) * 18px);
   width: 25px;
   text-align: center;
 }
@@ -1101,13 +1108,13 @@ body .item-cell.rarity-godly {
 .itip-stat-label {
   flex: 1;
   color: #d0c9b8;
-  font-size: 16px;
+  font-size: calc(var(--itip-fs-scale) * 16px);
   letter-spacing: 0.01em;
 }
 .itip-stat-value {
   flex-shrink: 0;
   color: var(--gold);
-  font-size: 16.5px;
+  font-size: calc(var(--itip-fs-scale) * 16.5px);
   font-weight: 700;
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -1143,7 +1150,7 @@ body .item-cell.rarity-godly {
    wenn Zeilen mit/ohne Delta in derselben Gruppe wechseln. */
 .itip-delta {
   flex-shrink: 0;
-  font-size: 13.5px;
+  font-size: calc(var(--itip-fs-scale) * 13.5px);
   font-weight: 700;
   margin-left: 6px;
   font-variant-numeric: tabular-nums;
@@ -1171,7 +1178,7 @@ body .item-cell.rarity-godly {
     url("../assets/bg_black.webp") repeat;
   border: 1px solid rgba(159, 196, 220, 0.38);
   color: var(--accent-2);
-  font-size: 14.5px;
+  font-size: calc(var(--itip-fs-scale) * 14.5px);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -1180,7 +1187,7 @@ body .item-cell.rarity-godly {
 .itip-tag {
   align-self: flex-start;
   color: var(--accent-2);
-  font-size: 15px;
+  font-size: calc(var(--itip-fs-scale) * 15px);
   font-style: italic;
   margin-top: 2px;
   padding: 3px 10px;
@@ -1195,7 +1202,7 @@ body .item-cell.rarity-godly {
 .itip-tool-hint {
   align-self: stretch;
   color: var(--muted);
-  font-size: 14.5px;
+  font-size: calc(var(--itip-fs-scale) * 14.5px);
   line-height: 1.35;
   font-style: normal;
   background: none;
@@ -1226,23 +1233,23 @@ body .item-cell.rarity-godly {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 16px;
+  font-size: calc(var(--itip-fs-scale) * 16px);
 }
 .itip-inst-affix-gem {
   color: var(--gold);
-  font-size: 13px;
+  font-size: calc(var(--itip-fs-scale) * 13px);
 }
 .itip-inst-affix-name {
   color: var(--text);
   flex: 1;
 }
 .itip-inst-affix-tier {
-  font-size: 13.5px;
+  font-size: calc(var(--itip-fs-scale) * 13.5px);
   color: var(--muted);
 }
 .itip-inst-affix-val {
   margin-left: 19px;
-  font-size: 14.5px;
+  font-size: calc(var(--itip-fs-scale) * 14.5px);
   line-height: 1.35;
   color: var(--gold, #d8b35a);
 }
@@ -1276,7 +1283,7 @@ body .item-cell.rarity-godly {
   gap: 9px;
   font-style: italic;
   color: var(--gold);
-  font-size: 16px;
+  font-size: calc(var(--itip-fs-scale) * 16px);
   line-height: 1.48;
 }
 .itip-effect-line + .itip-effect-line {
@@ -1284,7 +1291,7 @@ body .item-cell.rarity-godly {
 }
 .itip-effect-icon {
   flex-shrink: 0;
-  font-size: 17px;
+  font-size: calc(var(--itip-fs-scale) * 17px);
   width: 24px;
   text-align: center;
   line-height: 1.48;
@@ -1304,7 +1311,7 @@ body .item-cell.rarity-godly {
   margin: 10px 22px 0;
   padding-top: 8px;
   border-top: 1px solid rgba(216, 192, 106, 0.14);
-  font-size: 14.5px;
+  font-size: calc(var(--itip-fs-scale) * 14.5px);
   color: var(--muted);
 }
 
@@ -1350,7 +1357,7 @@ body .item-cell.rarity-godly {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 14.5px;
+  font-size: calc(var(--itip-fs-scale) * 14.5px);
   color: rgba(216, 192, 106, 0.6);
 }
 .itip-req-label {
@@ -1374,7 +1381,7 @@ body .item-cell.rarity-godly {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14.5px;
+  font-size: calc(var(--itip-fs-scale) * 14.5px);
   color: rgba(216, 192, 106, 0.6);
 }
 .itip-value-amount {
@@ -1383,18 +1390,18 @@ body .item-cell.rarity-godly {
   gap: 5px;
   color: var(--gold);
   font-weight: 700;
-  font-size: 17px;
+  font-size: calc(var(--itip-fs-scale) * 17px);
   font-variant-numeric: tabular-nums;
 }
 .itip-coin {
-  font-size: 17px;
+  font-size: calc(var(--itip-fs-scale) * 17px);
   color: var(--gold);
 }
 
 /* Flavor / lore line — italic, muted, always rendered at the bottom of the tooltip */
 .itip-flavor {
   font-style: italic;
-  font-size: 15.5px;
+  font-size: calc(var(--itip-fs-scale) * 15.5px);
   color: var(--muted);
   text-align: center;
   margin-top: 11px;
@@ -1472,7 +1479,11 @@ body .item-cell.rarity-godly {
 }
 
 .itip-warbanner-main .itip-stage {
-  height: clamp(250px, 31vh, 330px);
+  /* 1.0.1 UI-Skalierung: Untergrenze 250px -> 170px. Bei vh >= ~807px (z. B. 900/1080 aus unserer
+     Test-Matrix) war die 31vh-Vorgabe schon vorher groesser als 250 -- fuer diese Faelle aendert
+     sich nichts. Erst unterhalb (720/768 Fensterhoehe) griff bisher die feste 250px-Untergrenze
+     und verschenkte damit Vertikalraum, den die Karte auf kurzen Bildschirmen dringend braucht. */
+  height: clamp(170px, 31vh, 330px);
   margin: 0;
   background:
     radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--rarity-col, var(--gold)) 14%, transparent), transparent 68%),
@@ -1495,7 +1506,7 @@ body .item-cell.rarity-godly {
   position: relative;
   margin: 9px 0 0;
   padding: 10px 12px 4px;
-  font-size: 16px;
+  font-size: calc(var(--itip-fs-scale) * 16px);
   line-height: 1.35;
   text-align: left;
   color: #c5b99f;
@@ -1507,7 +1518,7 @@ body .item-cell.rarity-godly {
   margin-right: 8px;
   color: var(--rarity-col, var(--gold));
   font-style: normal;
-  font-size: 10px;
+  font-size: calc(var(--itip-fs-scale) * 10px);
 }
 
 .itip-warbanner-record .itip-body {
@@ -1529,24 +1540,24 @@ body .item-cell.rarity-godly {
 }
 
 .itip-warbanner-record .itip-group-title {
-  font-size: 13px;
+  font-size: calc(var(--itip-fs-scale) * 13px);
   margin-bottom: 2px;
 }
 
 .itip-warbanner-record .itip-stat-row {
   gap: 6px;
   padding: 2px 0;
-  font-size: 15px;
+  font-size: calc(var(--itip-fs-scale) * 15px);
 }
 
 .itip-warbanner-record .itip-stat-label {
   min-width: 0;
-  font-size: 15px;
+  font-size: calc(var(--itip-fs-scale) * 15px);
 }
 
 .itip-warbanner-record .itip-stat-value {
   min-width: 38px;
-  font-size: 15.5px;
+  font-size: calc(var(--itip-fs-scale) * 15.5px);
   white-space: nowrap;
 }
 .itip-warbanner-record .itip-stat-row {
@@ -1724,7 +1735,7 @@ body .item-cell.rarity-godly {
 /* codex:2026-08-01T12:47:00+02:00 — Diablo-nahe Effektlesung: Enchantment und On-Hit teilen
    dieselbe orange Legendary-Platte, bleiben aber zwei getrennte, schnell erfassbare Blöcke. */
 #root .itip-offense-group > .itip-stat-row:nth-child(2) .itip-stat-value {
-  font-size: 17px;
+  font-size: calc(var(--itip-fs-scale) * 17px);
 }
 
 #root .itip-warbanner-record .itip-special-effect {
@@ -1746,7 +1757,7 @@ body .item-cell.rarity-godly {
 
 #root .itip-warbanner-record .itip-enchant-group .itip-group-title {
   color: #e08a45;
-  font-size: 13px;
+  font-size: calc(var(--itip-fs-scale) * 13px);
   letter-spacing: 0.09em;
 }
 
@@ -1768,13 +1779,13 @@ body .item-cell.rarity-godly {
 }
 #root .itip-warbanner-record .itip-enchant-slot-empty {
   color: rgba(224, 138, 69, 0.45);
-  font-size: 15px;
+  font-size: calc(var(--itip-fs-scale) * 15px);
   line-height: 1;
 }
 #root .itip-warbanner-record .itip-enchant-slot-hint {
   flex: 1 1 190px;
   min-width: 0;
-  font-size: 13px;
+  font-size: calc(var(--itip-fs-scale) * 13px);
   line-height: 1.35;
   color: var(--muted);
   font-style: italic;
@@ -1788,7 +1799,7 @@ body .item-cell.rarity-godly {
   gap: 6px;
   margin-top: 7px;
   margin-left: 19px;
-  font-size: 14px;
+  font-size: calc(var(--itip-fs-scale) * 14px);
 }
 #root .itip-warbanner-record .itip-rune-target-label {
   color: var(--muted);
@@ -1800,7 +1811,7 @@ body .item-cell.rarity-godly {
 #root .itip-warbanner-record .itip-rune-target-hint {
   margin-top: 3px;
   margin-left: 19px;
-  font-size: 13px;
+  font-size: calc(var(--itip-fs-scale) * 13px);
   line-height: 1.35;
   color: var(--muted);
   font-style: italic;
@@ -2120,7 +2131,7 @@ body .item-cell.rarity-godly {
 
 .itip-offense-group .itip-stat-label {
   color: #c9c0ad;
-  font-size: 14.5px;
+  font-size: calc(var(--itip-fs-scale) * 14.5px);
   letter-spacing: 0.035em;
 }
 
@@ -2130,7 +2141,7 @@ body .item-cell.rarity-godly {
   /* codex:2026-08-01T18:06:00+02:00 — Der spaete Metamorphous-Override umging die globale
      Ziffernschicht. Werte und Compare-Deltas folgen nun explizit der lesbaren Info-Typografie. */
   font-family: var(--font-info);
-  font-size: 18px;
+  font-size: calc(var(--itip-fs-scale) * 18px);
   font-weight: 700;
   letter-spacing: 0.025em;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
@@ -2144,12 +2155,12 @@ body .item-cell.rarity-godly {
 
 .itip-offense-group > .itip-stat-row:nth-child(2) .itip-stat-value {
   color: #fff0bd;
-  font-size: 21px;
+  font-size: calc(var(--itip-fs-scale) * 21px);
 }
 
 .itip-suffix-group .itip-group-title {
   color: var(--rarity-col, var(--gold));
-  font-size: 15.5px;
+  font-size: calc(var(--itip-fs-scale) * 15.5px);
   letter-spacing: 0.04em;
   text-transform: none;
 }
@@ -2175,7 +2186,7 @@ body .item-cell.rarity-godly {
 
 .itip-warbanner-record .itip-effect-line {
   color: #e7d29e;
-  font-size: 15.5px;
+  font-size: calc(var(--itip-fs-scale) * 15.5px);
   font-style: normal;
   line-height: 1.5;
   letter-spacing: 0.015em;
@@ -2244,11 +2255,11 @@ body .item-cell.rarity-godly {
 
 #root .itip-offense-group .itip-stat-value {
   min-width: 58px;
-  font-size: 17px;
+  font-size: calc(var(--itip-fs-scale) * 17px);
 }
 
 #root .itip-offense-group > .itip-stat-row:nth-child(2) .itip-stat-value {
-  font-size: 18px;
+  font-size: calc(var(--itip-fs-scale) * 18px);
 }
 
 #root .item-tooltip.itip-panel .it-action-btn {
@@ -2788,6 +2799,91 @@ body .item-cell.rarity-godly {
   max-width: min(680px, calc(100vw - 140px));
   white-space: normal;
   overflow-wrap: break-word;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────────────────────
+   1.0.1 UI-Skalierung (Spieler-Report FR: „les encadrés de statistiques des équipements sont
+   beaucoup trop grands et débordent ou sortent même de l'écran"): Screenshot-Befund bei 1024x768
+   zeigte den Grund — die Wertespuren durften bisher NICHT unter ihre volle unumgebrochene
+   Textbreite schrumpfen (`minmax(max-content, …)` + erzwungenes `white-space: nowrap`, beides aus
+   dem 28./29.08-Vertrag „Karte wächst mit dem Inhalt"). Auf einer schmalen Karte lief das nicht in
+   einen Umbruch, sondern sichtbar über den Holzrahmen hinaus (Labels wie „Ward-Durchbr…" hinter
+   dem Inventar-Panel). 1500px als Schwelle deckt genau unsere kleinen Test-Auflösungen
+   (1024x768/1280x720/1366x768) ab und lässt 1600x900/1920x1080 unangetastet — dort bleibt die
+   Karte exakt wie heute (Regel 5 des Auftrags), diese Zeilen fassen nur die schmale Zone an, in
+   der der Vertrag mangels Platz nicht mehr aufgeht. Jede Regel hier spiegelt bewusst denselben
+   Selektor wie ihr Gegenstück oben drüber (gleiche Spezifität, aber später in der Datei — sie
+   gewinnt nur INNERHALB dieser Media Query). */
+@media (max-width: 1500px) {
+  #root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-main {
+    grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1.3fr);
+  }
+  #root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-record .itip-body {
+    /* EINE Spalte statt zwei: Ein Test mit zwei geschrumpften Spalten (repeat(2, minmax(0,1fr)))
+       ergab bei ~120px Restbreite pro Spalte Buchstaben-fuer-Buchstaben-Umbruch bei Labels wie
+       „SCHADEN" (Bildbeleg) -- unlesbar. Eine volle Spalte gibt jeder Gruppe die ganze
+       Koerperbreite (bei 1024px Kartenbreite bereits ~400px), Zeilen wie „Schaden 33,5–62,4"
+       passen dann ohne Umbruch. Die Gruppen stapeln sich dafuer untereinander statt nebeneinander
+       -- zusammen mit der Schriftskalierung und der abgesenkten Bild-Untergrenze bleibt das unterm
+       Strich kuerzer als die alte Zwei-Spalten-Buchstabenkaskade. */
+    grid-template-columns: minmax(0, 1fr);
+    /* Mehrere Aeltere Layout-Generationen (Named-Areas-Umbau + spaeterer Dense-Flow-Umbau, beide
+       1.1.0) teilen sich diesen Selektor auf genau dieser Media-Breite — je nach Spezifitaet
+       gewann mal die eine, mal die andere Generation NUR die grid-template-areas-Zeile. !important
+       erzwingt hier zuverlaessig denselben Dense-Flow-Vertrag (grid-template-areas: none +
+       grid-auto-flow: row dense), den die Karte auf breiten Bildschirmen ohnehin schon faehrt --
+       s. der unconditional-Block weiter oben in der Datei. */
+    grid-template-areas: none !important;
+    grid-auto-flow: row dense;
+  }
+  /* `grid-template-areas: none` oben reicht ALLEIN nicht: Ruestungen ohne Offense-Gruppe (Bildbeleg
+     Goetzenfunken-Ornat) haben eine EIGENE Zweispalten-Named-Area-Regel (grid-area: attributes/
+     defense/… !important auf den Kind-Gruppen selbst — andere Datei-Stelle, ebenfalls !important),
+     die weiter zwei Gruppen auf dieselbe (jetzt nicht mehr existierende) Named Line zu setzen
+     versuchte -- sichtbares Ergebnis: „Verteidigung" und „Attribute" lagen exakt uebereinander.
+     Explizit `auto` auf JEDER Gruppen-Klasse (mit derselben Selektor-Form wie das Original, damit
+     die Spezifitaet reicht) macht die Kind-Platzierung wieder abhaengig von `order`/Dokument-
+     Reihenfolge statt von einer Named Line, die es in dieser Media Query nicht mehr gibt. */
+  #root .itip-warbanner-record :is(.itip-offense-group, .itip-suffix-group, .itip-defense-group, .itip-attributes-group, .itip-skill-group, .itip-misc-group, .itip-rune-group),
+  #root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > :is(.itip-attributes-group, .itip-defense-group, .itip-suffix-group, .itip-skill-group, .itip-misc-group, .itip-rune-group) {
+    grid-area: auto !important;
+  }
+  #root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-offense-group .itip-stat-row {
+    grid-template-columns: 22px minmax(90px, 1fr) minmax(46px, max-content) minmax(40px, max-content);
+  }
+  /* `overflow: hidden` auf jeder Stat-Gruppe (aelterer Schutz gegen genau das Ausbrechen, das wir
+     jetzt per Umbruch loesen) schnitt eine zweite umgebrochene Wertezeile klanglos ab, OBWOHL das
+     Grid die Zeile korrekt hoeher berechnet hatte (Bildbeleg: „Schaden 1,6–" ohne die zweite
+     Zeile „2,1"). Sichtbar lassen, sobald hier umgebrochen werden darf. */
+  #root .itip-warbanner-record .itip-body > .itip-group {
+    overflow: visible;
+  }
+  /* `overflow-wrap: anywhere` (erster Versuch) macht die MIN-CONTENT-Breite eines Textes gleich
+     der Breite seines groessten EINZELZEICHENS -- kombiniert mit `minmax(0, …)`-Spuren liess das
+     die Werte-Spalte auf Buchstaben-/Ziffernbreite kollabieren (Bildbeleg: „1,6–2,1" senkrecht als
+     „1" / „," / „6" …). `break-word` erlaubt denselben Notausstieg (ein einzelnes zu langes Wort
+     bricht), zaehlt fuer die Spurbreite aber weiter mit dem GANZEN Wort/der ganzen Zahl -- das
+     haelt die Spalte bei ihrer natuerlichen Mindestbreite. */
+  #root .item-tooltip.itip-panel.itip-panel.itip-panel :is(.itip-stat-value, .itip-delta, .itip-stat-label) {
+    white-space: normal;
+    overflow-wrap: break-word;
+    /* Echte Silbentrennung statt hartem Wortbruch: ohne das las sich ein umgebrochenes Label als
+       „Zauberfo-kus" ohne Bindestrich (Bildbeleg 1366x768). `document.documentElement.lang` wird von
+       i18n/index.tsx je Sprache gesetzt, die Trennung folgt also den Regeln der aktiven Sprache.
+       `break-word` bleibt als Rueckfall fuer Sprachen/Woerter ohne Trennstellen. */
+    hyphens: auto;
+  }
+  /* `min-width: max-content` auf den Werte-Zellen (Offense- und die restlichen Stat-Gruppen)
+     erzwang die volle Breite selbst mit Umbruch erlaubt — die Grid-Spur konnte nie schrumpfen,
+     der Umbruch oben griff dadurch ins Leere. `auto` (statt hart 0) haelt weiterhin die
+     wort-/zahlenweise Mindestbreite (kein Buchstaben-Stapel), erlaubt der Spur aber, unter den
+     alten `max-content`-Anspruch zu schrumpfen. Dieselbe Faust für die Flex-Variante (einfache
+     Karten, Misc-Zeilen), die ohne eigenes `min-width` denselben impliziten Flex-Mindestwert hat. */
+  #root .itip-offense-group :is(.itip-stat-value, .itip-delta),
+  #root .itip-warbanner-record :is(.itip-suffix-group, .itip-attributes-group, .itip-defense-group, .itip-skill-group, .itip-misc-group) .itip-stat-value,
+  #root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-stat-label {
+    min-width: auto;
+  }
 }
 
 /* ── Dev-Zeitraffer (Chef 29.08.2026) ────────────────────────────────────────────────────────────
