@@ -26,7 +26,10 @@ import { steamApiName } from "./steamAchievements";
  * Kopfkommentar + kuratierte Backend-Liste in design/steam-achievements-export.md.
  * Steam-CLOUD braucht diesen Code NICHT (Auto-Cloud synct %APPDATA%\Grim Reach\saves\ selbst).
  */
-const STEAM_APP_ID = Number(process.env["GRIMREACH_STEAM_APPID"] ?? 0);
+// Chef-GO 29.08.2026 (1.2.0 „Threads, Traps & Spellfire" wird Major-Update mit 69 Steam-Erfolgen): scharf
+// geschaltet. steamworks.js 0.4.0 ist installiert, AppID 4915450 ist der Standard; die Umgebungsvariable
+// bleibt als Override (0 = bewusst aus, z. B. für Harness/Tests ohne Steam-Client).
+const STEAM_APP_ID = Number(process.env["GRIMREACH_STEAM_APPID"] ?? 4915450);
 
 
 /** Minimale Teil-Signatur der steamworks.js-Client-API, die wir tatsächlich nutzen. */

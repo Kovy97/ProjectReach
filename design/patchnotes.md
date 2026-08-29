@@ -12,6 +12,10 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ## 1.2.0 „Threads, Traps & Spellfire" / DE „Fäden, Fallen, Feuer" — HOCHGELADEN 2026-08-29 09:48 (Build 25007052, `setlive` leer, Chef schaltet live; Steam-Post EN/ZH/ES/RU in design/steam-post-1.2.0*.txt)
 
+**Steam-Erfolge scharf geschaltet (Chef-GO 29.08., 1.2.0 = Major-Update):** DE: Die 69 Steam-Erfolge werden jetzt wirklich an Steam gemeldet, neue beim Freischalten und bereits erspielte einmalig beim ersten Laden des Spielstands. / EN: The 69 Steam achievements now really reach Steam, new ones as you unlock them and everything you had already earned once you load your save.
+
+*Dev-Notiz: main/steam.ts war seit Juli komplett verdrahtet, aber inert (steamworks.js fehlte, AppID nur per Umgebungsvariable). Jetzt: `steamworks.js` 0.4.0 als Abhängigkeit, `STEAM_APP_ID` Standard 4915450 (Env-Override bleibt, 0 = aus), electron-builder `asarUnpack` für das native Modul + `extraFiles` legt `steam_api64.dll` neben die Exe (Windows-DLL-Suchpfad), Depot-Skript schließt `steam_appid.txt` aus. Geprüft: `init(4915450)` unter Node und unter Electron gegen den laufenden Steam-Client (Spieler Kovy), Achievement-API vorhanden. Renderer meldet via preload `steam.syncAchievements` beim Laden und `steam.unlockAchievement` bei neuen (Toasts.tsx).*
+
 **Warteschlange springt nach dem Tod weiter (Chef 29.08.):** DE: Wer in der Warteschlange fällt (20 Eber, Tod beim fünften),
 verliert nur den Rest dieses Eintrags. Die Warteschlange macht mit dem nächsten Eintrag weiter, online wie offline, statt zu
 pausieren; das Warteschlangen-Fenster nennt den übersprungenen Eintrag. Ein Patt wird genauso behandelt. / EN: Dying in the

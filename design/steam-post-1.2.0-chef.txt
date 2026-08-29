@@ -239,6 +239,9 @@ Farming companion: 1 in 4,000 per harvest, increased from 1 in 15,000
 
 Companion cards now display the exact effects of their passive bonuses and combat abilities, including numerical values and timing, once the companion has been obtained.
 
+STEAM ACHIEVEMENTS
+Grim Reach now has 69 Steam achievements, from your first Champion kill to level 99 in every skill, including the new Master Tailor and Master Hunter. Achievements you have already earned in game are reported to Steam the first time you load your save after the update.
+
 IMPROVEMENTS
 Champion unique items now display their special effects, such as lifesteal, directly on their item cards.
 

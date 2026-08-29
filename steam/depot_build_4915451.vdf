@@ -11,4 +11,5 @@
 	}
 
 	"FileExclusion"	"*.log"
+	"FileExclusion"	"steam_appid.txt"
 }

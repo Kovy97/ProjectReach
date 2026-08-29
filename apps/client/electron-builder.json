@@ -21,16 +21,29 @@
     "target": [
       {
         "target": "nsis",
-        "arch": ["x64"]
+        "arch": [
+          "x64"
+        ]
       },
       {
         "target": "portable",
-        "arch": ["x64"]
+        "arch": [
+          "x64"
+        ]
       }
     ]
   },
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true
-  }
+  },
+  "asarUnpack": [
+    "node_modules/steamworks.js/**"
+  ],
+  "extraFiles": [
+    {
+      "from": "node_modules/steamworks.js/dist/win64/steam_api64.dll",
+      "to": "steam_api64.dll"
+    }
+  ]
 }
