@@ -68,6 +68,8 @@ Reihenfolge nach Risiko. Erst mit einem ALTEN Save (1.1.x) testen, dann mit eine
 - [ ] Begleiter-Seite: Leon, der Gefürchtete (Jagen) und Seidenweber (Schneidern) mit Bild; Passiv/Aktiv nur sichtbar, wenn besessen, sonst Hinweis; kein Overflow bei 1366×768 und 1920×1080.
 - [ ] Leon im Kampf: Bärenfalle = Blutung; beim Jagen gelegentlich „zehn Beute-Würfe".
 - [ ] Kill-Heilung/-Ward/-Abklingzeit mehrerer Items summieren (Protokoll/Tooltip).
+- [ ] Warteschlange und Tod: 20× Eber einreihen, danach eine Sammel-Aktion; beim Tod (ohne Essen gegen einen zu starken Gegner) verfällt der Rest des Eber-Eintrags, die Sammel-Aktion läuft von selbst an, das Warteschlangen-Fenster nennt „Übersprungen: Eber“. Gleiches offline (Spiel schließen, Tod fällt ins Offline-Fenster).
+- [ ] Ward bei Folgekämpfen: Respawn füllt nur 10 % nach, kein voller Reset; nach dem Stoppen lädt er im Leerlauf in ~20 s voll.
 
 ## H. UI, Karten, Kleinkram
 
