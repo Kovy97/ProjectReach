@@ -184,7 +184,7 @@ export const fr: Record<string, string> = {
     "status.bleed": "Saignement",
     "status.bleed.desc": "Dégâts au fil du temps, ignore l'armure.",
 
-    "status.void": "Drain",
+    "status.void": "Affaiblissement",
     "status.void.desc": "La cible inflige 15 % de dégâts en moins.",
     // Weapon-effect prose templates
     "weaponEffect.burn": "Au contact, vous avez {chance} % de chances d'embraser votre cible, infligeant {flat} dégâts/s pendant {duration} s ; les cibles en flammes subissent 10 % de dégâts en plus de toutes les sources.",
@@ -325,7 +325,7 @@ export const fr: Record<string, string> = {
     "mail.letter.brenna.firstChampion": "Alors, le champion est tombé. Je l'admets, rien qu'une fois : du beau travail. Il y a une petite chose avec cette lettre, pour la route. Et ne va pas dire que je ne t'offre jamais rien. Le prochain traîne déjà quelque part dehors, et je veux sa tête aussi.\nBrenna",
     "mail.letter.warden.firstUnique": "Tu as trouvé là-bas quelque chose qui ne se voit pas souvent. J'en ai vu quelques pièces comme ça au fil des années, pas beaucoup. Aucune n'est jamais sortie pareille à une autre, donc la tienne est unique en son genre. Je l'ai notée dans le livre. Garde-la précieusement.\nLe Gardien",
     "mail.letter.warden.twoHandedRanged": "Un arc demande les deux mains, et il en a toujours été ainsi. Sur certaines pièces anciennes, c'était mal consigné, et l'erreur venait de nous, pas de toi. J'ai corrigé le registre. Ta main de bouclier est libre, ce que tu y portais est de retour dans ton sac.\nLe Gardien",
-    "updateNotice.title": "Mise à jour {version} : Fibres et pièges",
+    "updateNotice.title": "Mise à jour {version} : Fils, pièges et feu magique",
     "updateNotice.intro": "Ce correctif change quelques points. Voici ce qu'il faut savoir.",
     "updateNotice.point1": "La Chasse est un nouveau métier : pose des pièges, appâte-les avec des niveaux d'appât gagnés à la Pêche, et suis chaque capture dans le nouveau journal de chasse.",
     "updateNotice.point2": "L'Artisanat a été divisé en deux métiers : Artisanat (cuir, arcs, cordes, boucliers) et la nouvelle Couture (tissage, toutes les robes de mage, toutes les capes). Ta progression existante a été répartie selon ce que tu avais réellement fabriqué. Un mot du développeur : je suis désolé que cette scission divise ta progression — c'était le meilleur choix pour le jeu, et je préférais le faire maintenant plutôt que plus tard.",
@@ -359,7 +359,7 @@ export const fr: Record<string, string> = {
     "options.tooltipImagePopup": "Image d'infobulle en relief",
     "options.tooltipImagePopupHint": "Au survol, les images d'objets s'inclinent et débordent de l'infobulle. Désactivez pour des images statiques.",
     "options.combatFx": "Effets de combat",
-    "options.combatFxHint": "Flashs d'impact, recul, instant de mort, pulsations du familier et halos de statut en combat.",
+    "options.combatFxHint": "Effets de particules en combat : coups, éléments et auras de statut. Complet, réduit ou désactivé.",
     "options.combatFxFull": "Complet",
     "options.combatFxReduced": "Réduit",
     "options.combatFxOff": "Désactivé",
