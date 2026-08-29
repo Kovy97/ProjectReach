@@ -52,7 +52,7 @@ export function steamSetFromCsv(): Array<{ api: string; internalId: string; hidd
   return rows.slice(1).map((r) => {
     const m = /(ach_[a-z0-9_]+)/.exec(r[iTrig]!);
     let internalId = m![1]!;
-    if (internalId === "ach_total_level_2079") internalId = "ach_total_level_1980"; // CSV: „(count 1980)"
+    if (internalId === "ach_total_level_2079") internalId = "ach_total_level_1980"; // CSV: „(count 2178)", ID historisch
     return { api: r[iApi]!, internalId, hidden: r[iHidden] === "yes" };
   });
 }
@@ -69,7 +69,7 @@ describe("Achievements 1.2.0 — Katalog-Wächter", () => {
     expect(apis.size).toBe(69);
     for (const s of set) expect(s.api.length, s.api).toBeLessThanOrEqual(32);
     expect(byId.has("ach_total_level_2079"), "alte ID wurde laut CSV umbenannt").toBe(false);
-    expect(byId.get("ach_total_level_1980")!.condition.count).toBe(1980);
+    expect(byId.get("ach_total_level_1980")!.condition.count).toBe(2178); // 1.2.0: 22 Skills × 99 (ID bleibt, nie recyceln)
   });
 
   it("hidden-Flag stimmt mit dem Steam-Set überein", () => {

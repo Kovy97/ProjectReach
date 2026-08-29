@@ -61,10 +61,10 @@ MASTER_MAGIC,Master Mage,Reach level 99 in Magic.,no,ach_skill_magic_99,"Stab mi
 MASTER_VITALITY,Master of Vitality,Reach level 99 in Vitality.,no,ach_skill_vitality_99,"Herz aus Eisen, goldener Meisterrahmen"
 MASTER_WARDING,Master Warder,Reach level 99 in Warding.,no,ach_skill_warding_99,"Schimmernde Bannkuppel, goldener Meisterrahmen"
 MASTER_SLAYER,Master Slayer,Reach level 99 in Slayer.,no,"neu: ach_skill_slayer_99 (skill_level, target slayer, count 99)","Slayer-Helm mit Turmsilhouette, goldener Meisterrahmen"
-BEASTMASTER,Beastmaster,Own all 21 companions.,no,ach_pets_all,Kreis aus 21 kleinen Tiersilhouetten
+BEASTMASTER,Beastmaster,Own all 23 companions.,no,ach_pets_all,Kreis aus 21 kleinen Tiersilhouetten
 THE_WHOLE_BESTIARY,The Whole Bestiary,Defeat every creature in the bestiary at least once.,no,"neu: ach_bestiary_all (monsters_discovered, count 110)",Aufgeschlagenes Bestiarium mit Monsterschädeln
 TROPHY_HALL,Trophy Hall,Claim the unique trophy of every Champion of the Reach.,no,"neu: ach_elite_uniques_all (elite_uniques, count 28)","Wand mit 28 Trophäenköpfen, mittig ein rotes Glühen"
-TRUE_COMPLETIONIST,True Completionist,"Reach the maximum total level of 1,980.",no,ach_total_level_2079 (count 1980),Goldener Pokal mit 20 Skill-Symbolen im Kranz
+TRUE_COMPLETIONIST,True Completionist,"Reach the maximum total level of 2,178.",no,ach_total_level_2079 (count 2178),Goldener Pokal mit 22 Skill-Symbolen im Kranz
 ASH_TO_ASH,Ash to Ash,Fall in battle for the first time.,yes,"neu: ach_deaths_1 (deaths, count 1)",Erloschene Fackel in Asche
 THE_NINTH_WARDEN,The Ninth Warden,Defeat the Ninth Warden.,yes,"neu: ach_elite_idol_warden (elite_kills, target elite_idol_warden, count 1)","Neun Wächtermasken, die neunte zerbrochen"
 A_HUNDRED_HOURS,A Hundred Hours in the Reach,Play actively for 100 hours.,yes,"neu: ach_play_hours_100 (play_hours, count 100)",Sanduhr mit Asche statt Sand
