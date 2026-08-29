@@ -30,6 +30,17 @@ Ein Hinweis zu Welle 5: das sind bewusst KEINE Schmuckstuecke im ueblichen Sinn.
 statt Prunk, schlicht, benutzt, mit Spuren der Arbeit, kein Edelstein im Vordergrund. Ein Ring, den
 ein Bergmann traegt, nicht einer, den er verkauft.
 
+PROMPTS LIEGEN FERTIG
+Damit du nicht nochmal formulieren musst, habe ich alle 27 verbleibenden Motive als fertige
+Prompts geschrieben, im gleichen Aufbau wie deine PROMPTS-WELLE-2.md (die hat ja gut funktioniert):
+
+  CODEX/work/2026-08-29-schmuck-rework/PROMPTS-WELLE-3-BIS-5.md
+
+Je Welle ein eigener Serienkern, eine Fassungsregel und ein eigener Negativblock, dazu ein Prompt
+je Stueck mit ID und Stufe. Wenn dir eine Formulierung nicht passt oder du ein besseres Motiv
+siehst: aendere es, du bist die Designerin. Bindend sind nur die Bildeigenschaften und die
+Fassungsregel je Reihe.
+
 WIE ES WEITERGEHT
 Mach bitte mit Welle 3 (Magie, 10 Stueck) weiter, danach 4a, 4b und 5. Gleiche Bildeigenschaften
 wie Welle 2. Bei Magie ist die wichtigste Leitplanke: KEIN Gluehen, auch wenn es thematisch
