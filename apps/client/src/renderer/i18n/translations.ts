@@ -1121,6 +1121,9 @@ const en = {
     // Task #220: Mitigations-Aufschlüsselung (nur wenn mitigated > 0) — zeigt rawDamage/mitigated/amount.
     "combat.youHitMitigated": "You hit for {amount} ({raw} − {mitigated} / Enemy armor)",
     "combat.critMitigated": "Critical hit! {amount} damage ({raw} − {mitigated} / Enemy armor)",
+    // Schock-Überspringen (review-1.2.0 P2, 29.08.2026): eigene Zeile für den Bonus-Treffer statt
+    // eines zweiten "You hit for X" — hitKind "shockArc", by "player" always (s. combat.ts).
+    "combat.log.shockArc": "Arc: {name} for {amount}",
     "combat.youMiss": "You miss",
     "combat.enemyMisses": "{name} misses",
     // E+-Paket (battle-040-dramaturgie §E+): Leder-Dodge unterscheidbar vom Miss. Der frühere
@@ -1137,6 +1140,9 @@ const en = {
     // für einen teilweise geschluckten Treffer, plus das Floater-Label über der Gegnerfigur.
     "combat.log.wardAbsorbed": "Absorbed! −{amount}",
     "combat.log.wardAbsorbedSuffix": "(+{amount} absorbed)",
+    // Lichtsegen (Aether, review-1.2.0 P2, 29.08.2026): leiser Zusatz an der eigenen Treffer-Zeile,
+    // wenn `wardRestored` > 0 (Muster wardAbsorbedSuffix) — kein eigenes Status-Ereignis.
+    "combat.log.lightblessing": "Lightblessing: +{amount} ward",
     "combat.floater.wardAbsorbed": "Absorbed",
     // Task #220: Klartext-Label für event.source bei lifesteal/kill/effect/ward (Trank/Food nutzen
     // stattdessen den lokalisierten Item-Namen, s. healSourceLabel in CombatPage.tsx).
@@ -1693,6 +1699,7 @@ const en = {
     "hunting.catchChance": "Catch chance {pct}%",
     "hunting.remaining": "{time} left",
     "hunting.autoRebait": "Auto-rebait",
+    "hunting.autoRebait.waitingHint": "Turning Auto off empties the waiting trap.",
     "hunting.lastCatch": "Last catch",
     "hunting.missed": "Came back empty-handed.",
     "hunting.setTrap": "Set Trap",
@@ -1739,6 +1746,7 @@ const en = {
     "hunting.head.catchesLabel": "Catches",
     "hunting.badge.running": "Running",
     "hunting.badge.waiting": "Catch waiting",
+    "hunting.badge.waitingBait": "Waiting for {bait}",
     "hunting.badge.empty": "Empty",
     "hunting.card.pickZone": "Choose a ground",
     "hunting.noCatchYet": "No catch yet",
@@ -3603,6 +3611,7 @@ const de: Record<keyof typeof en, string> = {
     "combat.crit": "Kritischer Treffer! {amount} Schaden",
     "combat.youHitMitigated": "Du triffst für {amount} ({raw} − {mitigated} / Gegner-Rüstung)",
     "combat.critMitigated": "Kritischer Treffer! {amount} Schaden ({raw} − {mitigated} / Gegner-Rüstung)",
+    "combat.log.shockArc": "Überspringen: {name} für {amount}",
     "combat.youMiss": "Du verfehlst",
     "combat.enemyMisses": "{name} verfehlt",
     // E+-Paket (battle-040-dramaturgie §E+): Leder-Dodge unterscheidbar vom Miss. Der frühere
@@ -3616,6 +3625,7 @@ const de: Record<keyof typeof en, string> = {
     "combat.log.block": "Geblockt! −{amount}",
     "combat.log.wardAbsorbed": "Absorbiert! −{amount}",
     "combat.log.wardAbsorbedSuffix": "(+{amount} absorbiert)",
+    "combat.log.lightblessing": "Lichtsegen: +{amount} Ward",
     "combat.floater.wardAbsorbed": "Absorbiert",
     "combat.healSource.lifesteal": "Lebensraub",
     "combat.healSource.meleeLifesteal": "Nahkampf",
@@ -4136,6 +4146,7 @@ const de: Record<keyof typeof en, string> = {
     "hunting.catchChance": "Fangchance {pct}%",
     "hunting.remaining": "Noch {time}",
     "hunting.autoRebait": "Auto-Erneuern",
+    "hunting.autoRebait.waitingHint": "Auto aus leert die wartende Falle.",
     "hunting.lastCatch": "Letzter Fang",
     "hunting.missed": "Leer ausgegangen.",
     "hunting.setTrap": "Falle stellen",
@@ -4182,6 +4193,7 @@ const de: Record<keyof typeof en, string> = {
     "hunting.head.catchesLabel": "Fänge",
     "hunting.badge.running": "Läuft",
     "hunting.badge.waiting": "Fang wartet",
+    "hunting.badge.waitingBait": "Wartet auf Köder: {bait}",
     "hunting.badge.empty": "Leer",
     "hunting.card.pickZone": "Gebiet wählen",
     "hunting.noCatchYet": "Noch kein Fang",

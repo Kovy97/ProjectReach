@@ -583,6 +583,12 @@ function eventText(
     case "gold":
       return t("combat.logGold").replace("{gold}", String(e.amount));
     case "hit": {
+      // Schock-Überspringen (review-1.2.0 P2, 29.08.2026): der Bonus-Treffer bekommt eine eigene
+      // Zeile statt eines zweiten „Du triffst" — kein Mitigations-/Ward-Absorb-Zweig, der Bogen
+      // umgeht den Gegner-Ward per Definition (s. combat.ts).
+      if (e.by === "player" && e.hitKind === "shockArc") {
+        return t("combat.log.shockArc").replace("{name}", monsterName).replace("{amount}", String(e.amount));
+      }
       // Chef-Fix nach Spieler-Report "Hollow Choir: I miss 9/10" (voll absorbierte Treffer sahen
       // wie Misses aus): ein vom Gegner-Ward voll geschluckter Treffer (amount 0) zeigt statt der
       // nackten „0" ein Schild-Ereignis. Der teilweise absorbierte Fall (amount > 0) hängt seinen
@@ -2854,6 +2860,25 @@ function Battle({
     return stage.play(`impact_${theme}`, { from: anchor.center, to: anchor.center, dir, crit, box: anchor.box, feet: anchor.feet });
   };
 
+  /** Schock-Überspringen (review-1.2.0 P2, 29.08.2026): eigenes kleines Rezept (`shock_arc`,
+   *  fxParticleLibrary.ts) für den Bonus-Treffer statt der vollen Geschoss-/Einschlag-Kaskade —
+   *  ein kurzer Blitzbogen direkt von der angreifenden zur getroffenen Seite, ohne `onArrive`-
+   *  Folgeschritt (kein Blut/Slash danach, s. Aufrufstelle). `target` ist die GETROFFENE Seite
+   *  (immer "enemy", da die Engine `hitKind:"shockArc"` nur bei `by:"player"` loggt, s.
+   *  combat.ts) — der Ausgangsanker ist die jeweils andere Seite. `false` = kein Rezept/Anker.
+   *  Bewusst KEIN Sprite-Rückfall: ohne dieses Rezept passiert einfach nichts (kein zweites
+   *  volles Geschoss ist der Punkt, s. Chef-Auftrag). */
+  const playParticleShockArc = (target: "player" | "enemy"): boolean => {
+    const stage = particleStageRef.current;
+    if (!stage || !hasParticleRecipe("shock_arc")) return false;
+    const attacker: "player" | "enemy" = target === "enemy" ? "player" : "enemy";
+    const fromAnchor = particleAnchor(attacker);
+    const toAnchor = particleAnchor(target);
+    if (!fromAnchor || !toAnchor) return false;
+    const dir: 1 | -1 = target === "enemy" ? 1 : -1;
+    return stage.play("shock_arc", { from: fromAnchor.center, to: toAnchor.center, dir, box: toAnchor.box, feet: toAnchor.feet });
+  };
+
   /** Nahkampf-Gegenstück zu `playSlashFx` — kein Geschoss, Wirkung sitzt direkt am Ziel; `attacker`
    *  bestimmt den Start-Anker (Hand-Höhe) für den Luftzug/die Richtung, `target` den Trefferpunkt.
    *  `false` = kein Rezept für `slash_<familie>`/Anker fehlt, Aufrufer fällt auf `playSlashFx`
@@ -3046,7 +3071,12 @@ function Battle({
         // anders als die sanftere `spriteFxLevel` unten).
         if (crit) triggerArenaShake();
 
-        if (spriteFxLevel !== "off") {
+        if (e.hitKind === "shockArc") {
+          // Schock-Überspringen (review-1.2.0 P2, 29.08.2026): der Bonus-Treffer bekommt NICHT
+          // die volle Geschoss-/Slash-/Blut-Kaskade unten (läse sich wie ein zweites "Du triffst")
+          // — nur der kurze Blitzbogen des eigenen `shock_arc`-Rezepts, wenn Partikel aktiv sind.
+          if (spriteFxLevel !== "off") playParticleShockArc(target);
+        } else if (spriteFxLevel !== "off") {
           const allowMissileAndBlood = spriteFxLevel === "full";
           const bloodVariant = bloodVariantFor(target === "enemy" ? monster : undefined);
 
@@ -3572,11 +3602,19 @@ function Battle({
         (e.kind === "hit" || e.kind === "crit") && e.by === "player" && e.amount > 0 && (e.absorbed ?? 0) > 0
           ? t("combat.log.wardAbsorbedSuffix").replace("{amount}", String(e.absorbed))
           : null;
+      // Lichtsegen (Aether, review-1.2.0 P2, 29.08.2026): leiser Zusatz „Lichtsegen: +X Ward" an
+      // der eigenen Treffer-Zeile (Muster wardAbsorbedSuffix) — nur wenn `wardRestored` > 0 gesetzt
+      // ist (voller Ward/kein Stoff-Pool: Feld fehlt, s. combat.ts). Kein Status-Ereignis/-Partikel.
+      const lightblessingSuffix =
+        (e.kind === "hit" || e.kind === "crit") && e.by === "player" && (e.wardRestored ?? 0) > 0
+          ? t("combat.log.lightblessing").replace("{amount}", formatDamage(e.wardRestored!))
+          : null;
       return (
         <div key={e.seq} className={`log-line ${e.kind} ${e.by}${zeroCls}${statusCls}`}>
           {logIcon && <span className="log-line-icon">{logIcon}</span>}
           {eventText(e, monsterName, t, tr)}
           {wardAbsorbedSuffix && <span className="log-line-ward-absorbed"> {wardAbsorbedSuffix}</span>}
+          {lightblessingSuffix && <span className="log-line-ward-restored"> {lightblessingSuffix}</span>}
         </div>
       );
     });

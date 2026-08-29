@@ -133,6 +133,12 @@ describe("fxParticleLibrary — vollständige Abdeckung (Chef-Wunsch 28.08.2026:
     expect(hasRecipe("status_frozen")).toBe(true);
   });
 
+  // Schock-Überspringen (review-1.2.0 P2, 29.08.2026): eigenes kleines Rezept für den Bonus-Treffer
+  // statt der vollen Geschoss-/Einschlag-Kaskade (kein zweites volles Geschoss).
+  it("Schock-Überspringen hat ein eigenes Blitzbogen-Rezept", () => {
+    expect(hasRecipe("shock_arc")).toBe(true);
+  });
+
   it("Feuer-Geschoss hat drei Varianten plus eine separate Crit-Variante (Serie exakt portiert)", () => {
     const lastVariant = new Map<string, number>();
     const seen = new Set<number>();

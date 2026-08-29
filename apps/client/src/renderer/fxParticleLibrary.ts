@@ -637,6 +637,45 @@ const shockImpactAfterglow: RecipeFn = (ctx) => {
 registerRecipe("missile_shock", [shockMissileChain, shockMissileOrb, shockMissileRain]);
 registerRecipe("impact_shock", [shockImpactSparkStar, shockImpactGroundBolt, shockImpactAfterglow]);
 
+/** Schock-Überspringen (review-1.2.0 P2, 29.08.2026): eigenes kleines Rezept für den Bonus-Treffer
+ *  einer Schock-Waffe — bewusst KEIN zweiter voller Geschoss-/Einschlag-Durchlauf (Chef-Auftrag
+ *  „kein zweites volles Geschoss"), nur ein kurzer Blitzbogen von Angreifer zu Ziel (Muster
+ *  `shockMissileChain`/`shockImpactGroundBolt`, aber ohne Ladephase und ohne separaten Einschlags-
+ *  Schritt) plus ein kleiner Funkenausbruch am Ziel. CombatPage ruft dieses Rezept direkt über
+ *  `playParticleShockArc` auf, unabhängig von `missile_<thema>`/`impact_<thema>`. */
+const shockArcBolt: RecipeFn = (ctx) => {
+  const { from, to, api } = ctx;
+  const holdMs = 220;
+  let age = 0;
+  let segs: BoltSegments | null = null;
+  let lastGen = -1000;
+  api.flash(to, 50, "rgba(246,231,161,", 140);
+  const n = api.burst(14);
+  for (let i = 0; i < n; i++) {
+    const a = api.rand(-Math.PI, 0);
+    api.spark(to.x, to.y, Math.cos(a) * api.rand(50, 160), Math.sin(a) * api.rand(50, 160), api.rand(140, 300), 1.5, boltColor, 260);
+  }
+  const effect: Effect = {
+    update(dt) {
+      age += dt;
+      if (age - lastGen > 40) {
+        segs = { pts: api.boltPath(from, to, 40), branches: [] };
+        lastGen = age;
+      }
+    },
+    draw(c) {
+      if (!segs) return;
+      const u = age / holdMs;
+      const a = u < 0.6 ? 1 : Math.max(0, 1 - (u - 0.6) / 0.4);
+      api.drawBolt(c, segs.pts, segs.branches, 0.55, a, SHOCK_TH);
+    },
+    alive: () => age < holdMs,
+  };
+  api.addEffect(effect);
+};
+
+registerRecipe("shock_arc", [shockArcBolt]);
+
 // =================================================================================================
 // FROST
 // =================================================================================================

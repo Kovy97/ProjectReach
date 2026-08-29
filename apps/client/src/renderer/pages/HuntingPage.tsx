@@ -30,6 +30,7 @@ import {
   huntCatchChance,
   huntSetReason,
   huntTrapSlots,
+  huntTrapWaiting,
   huntZoneBaitId,
   huntZoneDef,
   huntableMonsters,
@@ -180,16 +181,16 @@ function nonTrappableReasonKey(m: MonsterDef): string {
   return "hunting.picker.reason.boss";
 }
 
-/** Status-Badge einer gestellten/leeren Falle (Layout-Vorgabe #2, Redesign Runde 2): "running" =
- *  Falle läuft (Gebiet gesetzt), "waiting" = kein Gebiet mehr, aber ein frischer Fang liegt vor
- *  (Auto-Erneuern lief ohne Köder/Auto aus), "empty" = kein Gebiet und nichts zu zeigen. Gesperrte
- *  Plätze haben keinen dieser drei Zustände (eigener Zweig in `TrapCard`). */
+/** Status-Badge einer gestellten/leeren Falle (Layout-Vorgabe #2, Redesign Runde 2, Bedeutung von
+ *  "waiting" korrigiert review-1.2.0 P2 29.08.2026): "running" = Falle läuft (Gebiet gesetzt,
+ *  Restzeit > 0), "waiting" = Gebiet bleibt gesetzt, aber der Köder-Vorrat der Zone fehlte beim
+ *  Fensterbeginn (`huntTrapWaiting` — eine LAUFENDE Falle hat immer remainingMs ≥ 1, das alte
+ *  "fällig, noch nicht getickt" gibt es nicht mehr), "empty" = kein Gebiet und nichts zu zeigen.
+ *  Gesperrte Plätze haben keinen dieser drei Zustände (eigener Zweig in `TrapCard`). */
 type TrapBadgeState = "running" | "waiting" | "empty";
 function trapBadgeState(trap: HuntTrap): TrapBadgeState {
-  // CEO 28.08.2026: ohne Gebiet wartet nichts (Beute liegt bereits im Inventar), also "Leer" — der letzte Fang
-  // steht weiter in der Zeile "Letzter Fang". "Fang wartet" nur fuer eine faellige, noch nicht getickte Falle.
   if (trap.zoneId === null) return "empty";
-  return trap.remainingMs > 0 ? "running" : "waiting";
+  return huntTrapWaiting(trap) ? "waiting" : "running";
 }
 
 /** Letzter Fang eines Platzes: Beute-Chips + Gold, „leer ausgegangen", oder „Noch kein Fang"
@@ -727,8 +728,11 @@ function TrapCard({
   const zoneName = zoneMeta ? tr(zoneMeta.name) : (trap.zoneId ?? "");
   const bg = trap.zoneId ? getZoneBackgroundCard(trap.zoneId) : null;
 
+  // Wartet auf Köder (huntTrapWaiting, review-1.2.0 P2 29.08.2026): Fortschrittsbalken bleibt LEER
+  // statt fälschlich voll (1 − 0/trapMs === 1) — es läuft gerade nichts, bis wieder Köder da ist.
+  const waiting = active && huntTrapWaiting(trap);
   const pct =
-    active && zoneDef && zoneDef.trapMs > 0
+    active && zoneDef && zoneDef.trapMs > 0 && !waiting
       ? Math.min(1, Math.max(0, 1 - trap.remainingMs / zoneDef.trapMs))
       : 0;
   const chance = trap.zoneId ? huntCatchChance(state, content, trap.zoneId) : 0;
@@ -793,7 +797,9 @@ function TrapCard({
               {t("hunting.head.nextSlotValue").replace("{n}", String(unlockLevel))}
             </span>
           ) : (
-            <span className={`hunt-trap-badge hunt-trap-badge--${badge}`}>{t(`hunting.badge.${badge}`)}</span>
+            <span className={`hunt-trap-badge hunt-trap-badge--${badge}`}>
+              {badge === "waiting" ? t("hunting.badge.waitingBait").replace("{bait}", cardBaitName) : t(`hunting.badge.${badge}`)}
+            </span>
           )}
           {active && cardBaitId && (
             <span
@@ -842,9 +848,11 @@ function TrapCard({
                   <div className="bar tall">
                     <div className="bar-fill" style={{ transform: `scaleX(${pct})` }} />
                   </div>
-                  <span className="hunt-trap-remaining muted">
-                    {t("hunting.remaining").replace("{time}", formatMs(trap.remainingMs))}
-                  </span>
+                  {!waiting && (
+                    <span className="hunt-trap-remaining muted">
+                      {t("hunting.remaining").replace("{time}", formatMs(trap.remainingMs))}
+                    </span>
+                  )}
                 </div>
                 <span className="hunt-trap-chance">
                   {t("hunting.catchChance").replace("{pct}", String(Math.round(chance * 100)))}
@@ -872,7 +880,10 @@ function TrapCard({
               <button
                 type="button"
                 className={`btn-iron btn-iron--sm hunt-trap-auto${trap.autoRebait ? " is-active" : ""}`}
-                title={t("hunting.autoRebait")}
+                // Wartet auf Köder + Auto noch an: dieser Klick schaltet Auto ab UND leert damit die
+                // Falle (Engine `setHuntAutoRebait` → `huntTrapWaiting` → `clearHuntTrap`, s.
+                // hunting.ts) — eigener Hinweistext statt des generischen Auto-Labels.
+                title={waiting && trap.autoRebait ? t("hunting.autoRebait.waitingHint") : t("hunting.autoRebait")}
                 onClick={() => setHuntAutoRebait(state, slot, !trap.autoRebait)}
               >
                 {t("hunting.autoChip")}

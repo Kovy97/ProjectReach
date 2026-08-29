@@ -12,6 +12,7 @@ export {
   huntCatchChance,
   huntSetReason,
   huntTrapSlots,
+  huntTrapWaiting,
   huntZoneDef,
   huntableMonsters,
   setHuntAutoRebait,

@@ -310,7 +310,15 @@
 }
 
 .hunt-trap-badge--running { color: #a8d9a8; border-color: rgba(111, 200, 111, 0.45); }
-.hunt-trap-badge--waiting { color: var(--gold); border-color: rgba(216, 192, 106, 0.5); }
+/* „Wartet auf Köder: <Sorte>" (review-1.2.0 P2, 29.08.2026) kann deutlich länger sein als „Läuft"/
+   „Leer" — darf umbrechen statt am Kartenrand abzuschneiden (Größen-Floor: nie clippen). */
+.hunt-trap-badge--waiting {
+  color: var(--gold);
+  border-color: rgba(216, 192, 106, 0.5);
+  white-space: normal;
+  text-align: right;
+  max-width: 170px;
+}
 .hunt-trap-badge--empty   { color: var(--muted); }
 .hunt-trap-badge--locked  { color: var(--muted); }
 
