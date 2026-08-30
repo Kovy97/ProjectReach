@@ -1,0 +1,91 @@
+UPLOAD FERTIG
+=============
+
+Grim Reach 1.2.1 liegt im Depot.
+
+  BuildID     25019798   (ersetzt 25010710 = 1.2.0 und alle davor)
+  Zeit        30.08.2026, 12:26
+  Depot       4915451 (App 4915450)
+  Paket       apps/client/release/win-unpacked, Exe-Version 1.2.1.0
+  setlive     LEER - der Build ist NICHT live, das schaltest du in Steamworks
+
+Verifiziert ueber steam/output/app_build_4915450.log:
+"Successfully finished AppID 4915450 build (BuildID 25019798)."
+
+
+WAS DU NOCH TUN MUSST
+---------------------
+1. Steamworks -> SteamPipe -> Builds -> Build 25019798 -> Branch-Dropdown auf "default" -> live setzen.
+2. Patchnotes als Steam-Post veroeffentlichen. Text liegt fertig (nur Englisch, wie gewuenscht):
+   G:\GameDev\design\steam-post-1.2.1.txt
+3. Anwendung -> Veroeffentlichen: "Auf Steam veroeffentlichen".
+
+
+WAS IN 1.2.1 DRIN IST
+---------------------
+Schmuck-Rework (der grosse Block)
+  * 41 neue Ringe und Amulette. Stil-Deckung von 31 Nah / 10 Magie / 1 Fern auf 38 / 24 / 17.
+    Fernkampf hat damit erstmals eigene Schmuckstuecke auf jeder Stufe, statt eines einzigen Stuecks.
+  * Komplette Fernkampf-Reihe (7 Ringe, 7 Amulette mit Rezepten), 10 Magie-Stuecke, 5 Nahkampf-Amulette,
+    8 Fundstuecke mit Sondereffekten, eine Skilling-Linie, 3 neue Sets.
+  * Alle 41 mit neuen Bildern von Mira, auf Hausqualitaet q92.
+  * Balance: Der Spieler-Report "Diamond Ring hat 7 Attribute, Grave Warden Band viel weniger" war ein
+    echter Fehler, kein Anzeigeproblem. Ring-Leiter zurueck auf die Kurve, 13 Richtungskonflikte behoben.
+  * Glueck trug zu viel: Anteil von 20,6 auf 12,6 Prozent, Gesamtstaerke je Stueck unveraendert.
+  * Craft-Ringe tragen jetzt Ruestung/Ausweichen/Ward nach der Ruestungs-Trinitaet.
+
+Item-Karte (mehrere Spieler-Reports)
+  * Die Karte misst sich am Inhalt. Vorher nahm sie fest die halbe Bildschirmbreite, egal wie wenig
+    darauf stand (gemessen: 934 px bei 1920 und 657 px bei 1366, identisch fuer JEDES Stueck).
+  * Die Suffix-Spalte wurde abgeschnitten. Ursache lag eine Ebene tiefer: Bild- und Datenspalte hingen
+    ueber fr-Anteile in einem festen Groessenverhaeltnis (gemessen 386/556 px = exakt 0,82/1,18), das
+    Bild wuchs also proportional mit und nahm rechts den Platz weg.
+  * Signatur-Effekte des Grundgegenstands (z.B. Lebensraub auf Champion-Drops) standen NIRGENDS auf der
+    Karte - die Zeile lag faelschlich in der Suffix-Gruppe. Betraf greytooth_mantle, nekro_reaperblade
+    und doomknight_cinderblade.
+  * Langer Effekttext und die Preiszeile liefen ueber den Rahmen hinaus.
+  * Kleine Aufloesungen: Schrift skaliert 80-100 Prozent, echte Silbentrennung. Ab 1600 pixelgleich.
+  * Zweihandwaffen wiederholen nicht mehr, dass sie die Nebenhand ersetzen.
+
+Steam-Deck-Blocker (Spielerreport: "cannot exit it and play")
+  * Der Update-Hinweis war so hoch, dass sein Schliessen-Knopf UNTER dem Bildschirmrand lag - der
+    Spieler kam gar nicht ins Spiel. Der Hinweis ist jetzt eine einzige Zeile, die auf Steam verweist,
+    und seine Hoehe ist gedeckelt. Auf 1280x800 in DE/RU/ZH nachgemessen.
+  * Ab jetzt gilt generell: im Spiel nur der kurze Hinweis, Patchnotes leben auf Steam.
+    Der Update-Titel heisst darum nur noch "Update <Version>" ohne Patchnamen.
+
+Weitere Spieler- und Chef-Reports
+  * Grauzahn-Mantel war der einzige legendaere Umhang ohne ein einziges Attribut - selbst ein
+    common-Fetzen fuer 50 Gold traegt con 3. Jetzt str 5, con 5, dex 2 neben seinen 3 % Lebensraub,
+    bewusst unter den Endgame-Umhaengen einsortiert (die tragen 22 Punkte, er 12).
+  * 16 Magiewaffen-Rezepte verlangten Materialien fremder Elemente (Giftstab wollte Frost-Essenz).
+  * Begleiter schiessen ihr Element: Pyreling und Schlackenteufel feuern Feuer statt grauem Blitz.
+  * Item-Wiki zeigt bei Pflanzen, woher das Saatgut kommt.
+
+Komfort
+  * Inventar und Bank nach Typ sortierbar (Waffen, Ruestung, Werkzeuge, Essen, Traenke, Materialien).
+  * Dev-Zeitraffer 1x bis 100x - nur im Dev-Build, im ausgelieferten Spiel ein No-op.
+
+
+SAVE-KOMPATIBILITAET
+--------------------
+SAVE_VERSION bleibt 86, es gibt KEINE Migration. Bestehende Spielstaende laden unveraendert weiter.
+Kompat-Vault gruen: 42 Tests, jede je ausgelieferte Save-Version laedt verlustfrei und ueberlebt den
+vollen 8h-Offline-Cap.
+
+
+GATES (alle gruen vor dem Upload)
+---------------------------------
+  Content 302, Engine 1649, Persistence 421, Client 226 Tests
+  Typecheck 5/5 Pakete, Build gruen
+  Messlaeufe der Item-Karte bei 1920 und 1366 ueber acht Stuecke, mit und ohne Suffix:
+  nichts beschnitten, nichts ueberlappt, nichts ueber dem Rand
+
+
+NICHT ENTHALTEN (war fuer 1.2.1 angedacht, verschoben)
+------------------------------------------------------
+  * Schriftumschaltung (dein Wunsch vom 29.08.) - Aufwand gering, Hausschrift haengt an zwei
+    CSS-Variablen. Vorschlag: 1.2.2.
+  * Auto-Flucht - Spec und Ankuendigungstexte liegen fertig in design/offen-1.2.1.md, Bau war am
+    29.08. abgebrochen worden.
+  * Dual Wield und Schildhand-Items - ohnehin als eigenes Update geplant.
