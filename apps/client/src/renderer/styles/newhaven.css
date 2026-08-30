@@ -1869,7 +1869,14 @@
 
 .nh-grid > .nh-card {
   box-sizing: border-box;
-  height: 640px;
+  /* Chef-Report 30.08.2026 (Listenansicht: Container zeigen nicht alles): `height` stand hier als
+     DEFINITE Hoehe und war damit ein harter Deckel. Die spaetere "Action-Card V2"-Regel weiter unten
+     hat `height` bewusst aus IHREM Block entfernt (s. Clip-Audit-Fix G001 dort) und setzt nur noch
+     einen Boden - sie ueberschreibt diese Zeile aber nicht, weil sie die Eigenschaft gar nicht mehr
+     nennt. Der dokumentierte Fix war dadurch nie wirksam: gemessen 660 px Kartenhoehe bei 838 px
+     Inhalt, "Bauen" und "Einreihen" lagen bei 747 bzw. 792 px und wurden stumm weggeschnitten - in
+     der Listenansicht liess sich also gar nicht bauen. Nur noch `min-height`, damit die Karte wie
+     vorgesehen mitwaechst (Chef-Regel: wachsen/umbrechen statt abschneiden). */
   min-height: 640px;
   display: grid;
   grid-template-rows: 145px 38px 40px 92px minmax(0, 1fr);
@@ -1893,7 +1900,7 @@
 }
 
 .nh-grid > .nh-card.is-refinery {
-  height: 760px;
+  /* Gleicher Deckel wie oben, gleiche Begruendung - die Veredelungskarte traegt eine Zeile mehr. */
   min-height: 760px;
   grid-template-rows: 145px 38px 40px 92px 200px minmax(148px, 1fr);
 }
@@ -1927,8 +1934,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  /* Chef-Report 30.08.2026: Bei vier Karten pro Zeile (<=1400px) sind die Karten ~235px schmal, und
+     laengere Gebaeudenamen passten nicht in zwei Zeilen - gemessen RU 1366: "Dozornaja Baschnja"
+     wurde abgeschnitten und las sich als "Dozor... Baschnja". Die Kopfzeile der Karte ist ohnehin
+     eine `auto`-Zeile, eine dritte Zeile kostet also nur dort Platz, wo der Name sie braucht.
+     Chef-Regel: wachsen/umbrechen statt abschneiden. */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  /* Der Name teilt sich die Kopfzeile mit dem Status-Abzeichen ("nicht gebaut"), es bleiben also nur
+     rund 140px. Ein langes Einzelwort wie das russische "Dozornaja" passt da in KEINE Zeilenzahl und
+     wurde weggeschnitten. `break-word` erlaubt dem Wort den Notausstieg, `hyphens: auto` macht daraus
+     eine echte Silbentrennung statt eines harten Bruchs - dieselbe Loesung wie auf der Item-Karte. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* Clip-Audit-Fix G001 (1.0.1), zweiter Deckel: `max-height: 40px` stand hier NOCH einmal und hat
@@ -2158,7 +2176,7 @@
     auto
     auto
     clamp(100px, 27cqw, 118px)
-    minmax(360px, auto);
+    minmax(200px, auto);
   gap: clamp(7px, 2.2cqw, 11px);
   padding: clamp(8px, 2.4cqw, 12px);
   border-width: clamp(6px, 3cqw, 8px);
