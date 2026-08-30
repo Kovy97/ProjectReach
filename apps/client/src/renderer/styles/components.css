@@ -2807,7 +2807,7 @@ body .item-cell.rarity-godly {
      liegt darum auf 860 px (breiteste gemessene Stat-Spalten 485 + 210 plus Bild und Rahmen) statt
      auf den frueheren fixen 934 px der halben Bildschirmbreite. */
   min-width: min(620px, calc(100vw - 24px));
-  max-width: min(980px, calc(100vw - 24px));
+  max-width: min(1040px, calc(100vw - 24px));
 }
 /* Chef-Report 30.08.2026, Messbefund: `minmax(max-content, …)` liess die Datenspalte ihre
    UNUMGEBROCHENE Inhaltsbreite fordern - gemessen 1481 px in einem 874 px breiten Raster. Der
@@ -2815,7 +2815,13 @@ body .item-cell.rarity-godly {
    Rahmen abgeschnitten ("dealing 4 da", der Preis rechts ausserhalb). `minmax(0, …)` bindet die
    Spalte an den vorhandenen Platz; zu langer Text bricht wieder um, statt auszubrechen. */
 #root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-main {
-  grid-template-columns: minmax(250px, 0.82fr) minmax(0, 1.18fr);
+  /* Messbefund 30.08.2026 (Chef-Bilder: Suffix-Spalte abgeschnitten): `fr`-Anteile erzwingen in
+     einer inhaltsbemessenen Karte ein festes GROESSENVERHAELTNIS zwischen Bild und Daten. Gemessen
+     "386,453px 556,125px" - exakt 0,82/1,18: die Bildspalte wuchs proportional mit den Daten mit,
+     obwohl das Bild nur rund 250 px braucht. Rund 136 px gingen so verloren, die rechts bei der
+     Suffix-Spalte fehlten (kausal geprueft: feste Bildspalte senkt die Karte von 1037 auf 900).
+     Das Bild bekommt darum eine eigene Spanne, die Datenspalte misst sich am Inhalt. */
+  grid-template-columns: minmax(190px, 260px) minmax(min-content, max-content);
 }
 #root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-main > * {
   min-width: 0;
