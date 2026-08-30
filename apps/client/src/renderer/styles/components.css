@@ -1581,8 +1581,20 @@ body .item-cell.rarity-godly {
 }
 
 .item-tooltip.itip-panel .it-actions {
-  width: min(520px, calc(100% - 44px));
+  /* Spieler-Report 30.08.2026 (RU, Ergiebigkeits-/Ernte-Tonikum "cards still appear wide"):
+     Die Leiste war auf 520px gedeckelt, obwohl die Karte 779px breit ist. Flex-Kinder schrumpfen
+     nicht unter ihre Wortbreite, also liefen die laengeren russischen Beschriftungen ueber den
+     Kartenrand hinaus statt den vorhandenen Platz zu nutzen - gemessen "Продать" 62px drueber,
+     vier Knoepfe brauchen dort 688px gegen 520px Leiste (EN passt mit "Use/Charge up/Sell").
+     Der Deckel liegt jetzt bei 720px und die Leiste darf umbrechen, falls eine Sprache noch
+     laenger baut. `min-width: 0` erlaubt den Knoepfen zusaetzlich, ihren Text umbrechen zu lassen. */
+  width: min(720px, calc(100% - 44px));
   margin: 13px auto 0;
+  flex-wrap: wrap;
+}
+
+.item-tooltip.itip-panel .it-actions .it-action-btn {
+  min-width: 0;
 }
 
 .item-tooltip.itip-panel .it-hint {

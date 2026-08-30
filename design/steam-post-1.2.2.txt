@@ -1,0 +1,38 @@
+Grim Reach 1.2.2 - New Haven List View & Fixes
+
+Hunters,
+
+a small patch, and nearly all of it comes from your reports. The New Haven list view has been rebuilt
+from the ground up, the master rings finally carry stats worthy of a level 99 reward, and the dungeon
+loot counter now tells the truth. Saves stay compatible as always.
+
+NEW HAVEN
+
+- The list view has been rebuilt. It is now a proper building register: a scrollable list on the left
+  with large artwork, rank and actions, and a full detail panel on the right showing the building,
+  its effects, all four materials plus gold, and a single clear action. Building slots in the queue
+  stay visible instead of appearing only when occupied.
+- Refineries and the smokehouse now share one work window with mastered recipes, input, output, rate
+  per cycle and how many cycles your supplies cover.
+- On narrow resolutions the entries fold into two rows instead of running off the screen.
+- The map view and its building popup are unchanged.
+
+FIXES
+
+- Dungeon loot counter: the combat screen showed "0/6" in a dungeon no matter how much you had
+  actually looted, and drop icons stayed as black silhouettes. Dungeon enemies carry a variant id,
+  and while the kill correctly recorded the drop under the base monster, the display looked it up
+  under the variant id and always came back empty. It never showed outside dungeons because there
+  both ids are the same. Your existing discoveries appear correctly from now on, no re-farming
+  needed.
+- Master rings: a player pointed out that the legendary Blademaster's Ring (Attack 99, 50,000 gold)
+  granted less Strength than a Ruby Ring crafted at level 34. That was true for every master ring:
+  they sat at 3 to 5 attribute points while the crafting ladder had been raised to 17. All 23 have
+  been recalibrated. They deliberately stay behind the endgame rings, they are a mark of a 99, not
+  a replacement for Godgem Ring or the Signet of the Ninth Warden: combat rings 12 points, skilling
+  rings 9 alongside their master perk, and the Ring of Completion 16.
+- Item card in Russian: the button row was capped at a fixed width, so the longer Russian labels ran
+  past the card edge and "Sell" was cut off. Reported on the Bounty and Harvest Tonic cards. The row
+  now uses the space the card actually has and wraps if a language needs even more.
+
+Thanks for the reports. Almost every line above started as one.

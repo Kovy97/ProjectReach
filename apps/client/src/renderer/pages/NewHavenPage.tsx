@@ -50,6 +50,7 @@ import {
   CAMP_TOWNHALL_ID,
   CAMP_MAP_VISUAL_SCALE_MAX_PERCENT,
   CAMP_MAP_VISUAL_SCALE_MIN_PERCENT,
+  CAMP_BUILD_QUEUE_MAX,
   CAMP_MAX_BUILDING_LEVEL,
   TICK_MS,
   campFootprint,
@@ -504,6 +505,191 @@ function RefinePanel({
   );
 }
 
+// codex:2026-08-30T23:42:00+02:00 — Freigegebenes Veredelungsmodal für Schmelzofen und
+// Räucherhaus. Sämtliche Spielwerte und Verben bleiben bei den bestehenden Engine-Helfern; nur
+// die Auswahl vor dem Übernehmen ist flüchtiger UI-State.
+function RefineModal({
+  def,
+  level,
+  state,
+  onDirty,
+  onClose,
+  onManage,
+}: {
+  def: CampBuildingDef;
+  level: number;
+  state: GameState;
+  onDirty: () => void;
+  onClose: () => void;
+  onManage?: () => void;
+}): JSX.Element {
+  const { t, tr } = useI18n();
+  const recipes = availableRefineRecipes(state, content, def.id);
+  const slot = state.camp?.refine?.[def.id] ?? null;
+  const initialRecipeId = slot?.recipeId ?? recipes[0]?.id ?? "";
+  const [selectedId, setSelectedId] = useState(initialRecipeId);
+  const [error, setError] = useState<string | null>(null);
+  const selected = recipes.find((action) => action.id === selectedId) ?? recipes[0] ?? null;
+  const selectedIsActive = selected != null && slot?.recipeId === selected.id;
+  const kind = refineKindOf(content, def.id);
+  const rate = kind ? refineRatePerHour(state, content, kind) : 0;
+  const progress = selectedIsActive ? campRefineProgress(state, content, def.id) : 0;
+  const output = selected?.loot[0] ?? null;
+  const inputs = selected?.inputs ?? [];
+  const inputRows = inputs.map((input) => ({
+    ...input,
+    have: itemCount(state.inventory, input.itemId) + bankCount(state, input.itemId),
+  }));
+  const supplyCycles = inputRows.length > 0
+    ? Math.min(...inputRows.map((input) => Math.floor(input.have / Math.max(1, input.qty))))
+    : 0;
+  const stalled = selectedIsActive && inputRows.some((input) => input.have < input.qty);
+
+  useEffect(() => registerEscCloser("modal", onClose), [onClose]);
+
+  function applyRecipe(recipeId: string | null): void {
+    const reason = setCampRefineRecipe(state, content, def.id, recipeId);
+    if (reason !== "ok") {
+      setError(t(`newhaven.refineReason.${reason}`));
+      return;
+    }
+    setError(null);
+    onDirty();
+  }
+
+  return (
+    <div className="modal-overlay nh-refinery-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="nh-refinery-title">
+      <section className="modal nh-refinery-modal" onClick={(event) => event.stopPropagation()}>
+        <button type="button" className="modal-close nh-popup-close" onClick={onClose} aria-label={t("common.close")} />
+
+        <header className="nh-refinery-head">
+          <div className="nh-refinery-emblem" aria-hidden="true"><BuildingArt def={def} level={level} /></div>
+          <div className="nh-refinery-heading">
+            <span>{t("newhaven.refine.title")} · New Haven</span>
+            <h2 id="nh-refinery-title">{tr(def.name)}</h2>
+            {def.description && <p>{tr(def.description)}</p>}
+          </div>
+          <div className="nh-refinery-rank">
+            <strong>{t("newhaven.level.label").replace("{n}", roman(level))}</strong>
+            <b>{t("newhaven.refine.rate").replace("{n}", formatNum(rate))}</b>
+            <small>{t("newhaven.refine.onlineOffline")}</small>
+          </div>
+        </header>
+
+        <div className="nh-refinery-workspace">
+          <aside className="nh-refinery-register">
+            <header>
+              <span>{t("newhaven.refine.recipes")}</span>
+              <small>{formatNum(recipes.length)}</small>
+            </header>
+            <div className="nh-refinery-recipes" role="listbox" aria-label={t("newhaven.refine.recipes")}>
+              {recipes.length === 0 ? (
+                <p className="muted nh-recipe-empty">{t("newhaven.refine.empty")}</p>
+              ) : recipes.map((action) => {
+                const actionOutput = action.loot[0];
+                const active = slot?.recipeId === action.id;
+                return (
+                  <button
+                    key={action.id}
+                    type="button"
+                    role="option"
+                    aria-selected={selected?.id === action.id}
+                    className={`nh-refinery-recipe${selected?.id === action.id ? " is-selected" : ""}${active ? " is-active" : ""}`}
+                    onClick={() => { setSelectedId(action.id); setError(null); }}
+                  >
+                    <span className="nh-refinery-recipe-art">
+                      {actionOutput && getItemImage(actionOutput.itemId) ? (
+                        <img src={getItemImage(actionOutput.itemId)!} alt="" loading="lazy" decoding="async" />
+                      ) : null}
+                    </span>
+                    <span className="nh-refinery-recipe-copy">
+                      <strong>{tr(action.name)}</strong>
+                      <span>
+                        {(action.inputs ?? []).map((input) => {
+                          const have = itemCount(state.inventory, input.itemId) + bankCount(state, input.itemId);
+                          const image = getItemImage(input.itemId);
+                          return (
+                            <i key={input.itemId} className={have < input.qty ? "is-lacking" : ""}>
+                              {image ? <img src={image} alt="" loading="lazy" decoding="async" /> : null}
+                              {formatNum(have)}/{formatNum(input.qty)}
+                            </i>
+                          );
+                        })}
+                      </span>
+                    </span>
+                    {active && <em>{t("newhaven.refine.active")}</em>}
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          <article className="nh-refinery-process">
+            <header className="nh-refinery-process-head">
+              <div>
+                <span>{selectedIsActive ? t("newhaven.refine.active") : t("newhaven.refine.preview")}</span>
+                <h3>{selected ? tr(selected.name) : t("newhaven.refine.none")}</h3>
+              </div>
+              <span className={`nh-refinery-state${selectedIsActive ? " is-running" : ""}`}>
+                <i />{selectedIsActive ? t("newhaven.refine.active") : t("newhaven.refine.preview")}
+              </span>
+            </header>
+
+            {selected && output ? (
+              <>
+                <section className="nh-refinery-flow">
+                  <div className="nh-refinery-inputs">
+                    {inputRows.map((input) => (
+                      <div key={input.itemId} className={`nh-refinery-material${input.have < input.qty ? " is-lacking" : ""}`}>
+                        {getItemImage(input.itemId) ? <img src={getItemImage(input.itemId)!} alt="" /> : null}
+                        <span><small>{t("newhaven.refine.input")}</small><strong>{formatNum(input.qty)} × {tr(content.items[input.itemId]?.name ?? { en: input.itemId, de: input.itemId })}</strong><b>{formatNum(input.have)}</b></span>
+                      </div>
+                    ))}
+                  </div>
+                  <span className="nh-refinery-arrow" aria-hidden="true">›</span>
+                  <div className="nh-refinery-core" aria-hidden="true"><BuildingArt def={def} level={level} /></div>
+                  <span className="nh-refinery-arrow" aria-hidden="true">›</span>
+                  <div className="nh-refinery-material is-output">
+                    {getItemImage(output.itemId) ? <img src={getItemImage(output.itemId)!} alt="" /> : null}
+                    <span><small>{t("newhaven.refine.output")}</small><strong>{formatNum(output.min)} × {tr(content.items[output.itemId]?.name ?? { en: output.itemId, de: output.itemId })}</strong><b>{t("newhaven.refine.perCycle")}</b></span>
+                  </div>
+                </section>
+
+                <section className="nh-refinery-cycle">
+                  <div><span>{t("newhaven.refine.next")}</span><strong>{Math.round(progress * 100)}%</strong></div>
+                  <div className="bar tall"><div className="bar-fill" style={{ transform: `scaleX(${progress})` }} /></div>
+                  <dl>
+                    <div><dt>{t("newhaven.refine.rateLabel")}</dt><dd>{t("newhaven.refine.rate").replace("{n}", formatNum(rate))}</dd></div>
+                    <div><dt>{t("newhaven.refine.producedLabel")}</dt><dd>{formatNum(slot?.produced ?? 0)}</dd></div>
+                    <div><dt>{t("newhaven.refine.supply")}</dt><dd>{formatNum(supplyCycles)} {t("newhaven.refine.cycles")}</dd></div>
+                  </dl>
+                </section>
+
+                <p className={`nh-refinery-note${stalled ? " is-stalled" : ""}`}>
+                  <b>{stalled ? "!" : "✓"}</b>
+                  <span>{stalled ? t("newhaven.refine.waitingForInput") : t("newhaven.refine.available")}</span>
+                </p>
+              </>
+            ) : <p className="muted nh-refinery-empty">{t("newhaven.refine.empty")}</p>}
+          </article>
+        </div>
+
+        <footer className="nh-refinery-actions">
+          <p>{t("newhaven.refine.noXp")}</p>
+          {error && <span className="nh-refine-error">{error}</span>}
+          <div>
+            {onManage && <button type="button" className="btn-iron" onClick={onManage}>{t("newhaven.refine.manage")}</button>}
+            <button type="button" className="btn-iron btn-iron--danger" disabled={!slot} onClick={() => applyRecipe(null)}>{t("newhaven.refine.stop")}</button>
+            <button type="button" className="btn-iron" disabled={!selected || selectedIsActive} onClick={() => selected && applyRecipe(selected.id)}>
+              {selectedIsActive ? t("newhaven.refine.active") : slot ? t("newhaven.refine.change") : t("newhaven.refine.choose")}
+            </button>
+          </div>
+        </footer>
+      </section>
+    </div>
+  );
+}
+
 // ── Gebäude-Karte ───────────────────────────────────────────────────────────────────────────────
 
 interface CardProps {
@@ -547,6 +733,9 @@ interface CardProps {
    * (nach dem Modal) vollständig erhalten, nur der Anlauf verschiebt sich um einen Klick.
    */
   onBuildOverride?: () => void;
+  /** codex:2026-08-30T23:42:00+02:00 — Im Verwaltungs-Rückweg eines Veredlers bleibt die Prozessbedienung im großen Modal und wird
+   *  nicht als zweite, kleine Kopie in die Gebäudekarte gesetzt. */
+  suppressRefine?: boolean;
   /** Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): NUR für die camp_tavern-Karte —
    *  „Betreten"-Knopf ab Stufe 1 (s. nh-card-function-slot unten). `setActivePageId` aus
    *  App.tsx, referenziell stabil (useState-Setter) — kostet den memo-Vergleich unten nichts. */
@@ -610,6 +799,7 @@ function BuildingCardImpl({
   onDirty,
   onRequestCancel,
   onBuildOverride,
+  suppressRefine = false,
   onNavigate,
 }: CardProps): JSX.Element {
   // Steam-Forum 27.08.2026 (L1GR): Kosten-Chips zeigen die STANDARD-Item-Karte (mit Wiki-Knopf).
@@ -805,8 +995,8 @@ function BuildingCardImpl({
 
       {/* codex:2026-07-31T23:42:00+02:00 — Die Funktionszone ist in jeder Listenkarte reserviert.
           Refineries dürfen darin intern scrollen; normale Gebäude behalten dieselbe Außenhöhe. */}
-      <div className={`nh-card-function-slot${isRefinery || isTavern ? "" : " is-empty"}`}>
-        {isRefinery && <RefinePanel def={def} level={level} state={state} onDirty={onDirty} />}
+      <div className={`nh-card-function-slot${(isRefinery && !suppressRefine) || isTavern ? "" : " is-empty"}`}>
+        {isRefinery && !suppressRefine && <RefinePanel def={def} level={level} state={state} onDirty={onDirty} />}
         {/* Taverne (1.2.0 „Alive", taverne-spec-technik.md §6): ab Stufe 1 „Betreten" statt der
             Veredelungs-Anlage — die Taverne ist keine Refinery, braucht aber denselben Sprung-Knopf-
             Slot. `def.id === CAMP_TAVERN_ID` ist die einzige Stelle dieser Datei, die die Taverne
@@ -845,9 +1035,10 @@ const BuildingCard = memo(BuildingCardImpl, (a, b) =>
   a.state === b.state &&
   a.debugFreeBuild === b.debugFreeBuild &&
   a.onDirty === b.onDirty &&
-  a.onRequestCancel === b.onRequestCancel &&
-  a.onBuildOverride === b.onBuildOverride &&
-  a.onNavigate === b.onNavigate &&
+    a.onRequestCancel === b.onRequestCancel &&
+    a.onBuildOverride === b.onBuildOverride &&
+    a.suppressRefine === b.suppressRefine &&
+    a.onNavigate === b.onNavigate &&
   tupleEquals(a.have, b.have),
 );
 
@@ -1009,6 +1200,7 @@ function BuildingPopup({
 }): JSX.Element | null {
   const { t, tr } = useI18n();
   const [confirmingDemolish, setConfirmingDemolish] = useState(false);
+  const [showManagement, setShowManagement] = useState(false);
   useEffect(() => registerEscCloser("modal", onClose), [onClose]);
 
   const def = BUILDINGS.find((b) => b.id === buildingId);
@@ -1017,6 +1209,22 @@ function BuildingPopup({
   const job = state.camp?.buildJob ?? null;
   const core = campCardCore(state, def, job, debugFreeBuild);
   const demolishReason = campDemolishReason(state, content, buildingId);
+
+  // codex:2026-08-30T23:42:00+02:00 — Ein bereits gebauter Veredler ist auf der Dorfkarte ein
+  // benutzbares Gebäude: der Klick öffnet direkt seine Arbeitsfläche. Bau-/Ausbauverwaltung bleibt
+  // vollständig in der Listenansicht; unbebaute Anlagen behalten hier weiterhin die Infokarte.
+  if (refineKindOf(content, buildingId) !== null && core.level >= 1 && !showManagement) {
+    return (
+      <RefineModal
+        def={def}
+        level={core.level}
+        state={state}
+        onDirty={onDirty}
+        onClose={onClose}
+        onManage={() => setShowManagement(true)}
+      />
+    );
+  }
 
   if (confirmingDemolish) {
     return (
@@ -1062,6 +1270,7 @@ function BuildingPopup({
           onDirty={onDirty}
           onRequestCancel={onRequestCancel}
           onBuildOverride={onBuildNew}
+          suppressRefine={showManagement}
           onNavigate={onNavigate}
         />
         {/* codex:2026-07-31T23:42:00+02:00 — Verschieben ist eine kostenlose Kartenaktion und
@@ -1799,9 +2008,12 @@ function CampMapView({
 function newHavenGate(s: GameState): string {
   const camp = s.camp;
   const job = camp?.buildJob ?? null;
+  // codex:2026-08-30T23:59:30+02:00 — Queue-Reihenfolge ist sichtbarer UI-Zustand. Ohne sie
+  // blieb der Selector bei Einreihen/Umsortieren wertgleich und die Planungsleiste konnte bis
+  // zum nächsten anderweitigen State-Wechsel den alten Stand zeigen.
   let sig = `${camp?.buildSeq ?? 0}|${
     job ? `${job.buildingId}:${job.targetLevel}:${Math.floor(job.remainingMs / 1000)}` : "-"
-  }|${s.character.gold}`;
+  }|q:${(camp?.buildQueue ?? []).join(",")}|${s.character.gold}`;
   const refine = camp?.refine;
   if (refine) {
     for (const id of Object.keys(refine).sort()) {
@@ -1827,12 +2039,17 @@ function BuildQueueStrip({
 }: {
   state: GameState;
   onDirty: () => void;
-}): JSX.Element | null {
+}): JSX.Element {
   const { t, tr } = useI18n();
   const queue = state.camp?.buildQueue ?? [];
-  if (queue.length === 0) return null;
-
-  const crewBusy = state.camp?.buildJob != null;
+  const activeJob = state.camp?.buildJob ?? null;
+  const crewBusy = activeJob != null;
+  // codex:2026-08-30T23:59:30+02:00 — Der Spieler denkt in einer Baufolge, nicht in zwei
+  // State-Feldern: Slot 1 zeigt den laufenden Auftrag, die restlichen sieben Slots den Plan.
+  // Die Engine-Queue bleibt unangetastet; ihre Indizes beginnen für die Bedienknöpfe weiterhin 0.
+  const plannedSlotCount = Math.max(0, CAMP_BUILD_QUEUE_MAX - (activeJob ? 1 : 0));
+  const visibleQueue = queue.slice(0, plannedSlotCount);
+  const occupiedSlots = (activeJob ? 1 : 0) + visibleQueue.length;
   // Grund des NAECHSTEN Anlaufs — nur interessant, solange der Bautrupp frei ist und trotzdem
   // nichts passiert. Arbeitet er, ist "crew_busy" die banale Antwort und braucht keine Zeile.
   const ersterGrund = !crewBusy && queue[0]
@@ -1840,10 +2057,36 @@ function BuildQueueStrip({
     : "ok";
 
   return (
-    <div className="nh-queue-strip">
-      <span className="nh-queue-strip-title">{t("newhaven.queue.title")}</span>
+    <div className={`nh-queue-strip${occupiedSlots === 0 ? " is-empty" : ""}`}>
+      <span className="nh-queue-strip-title">
+        {t("newhaven.queue.title")} <b>{occupiedSlots}/{CAMP_BUILD_QUEUE_MAX}</b>
+      </span>
       <ol className="nh-queue-list">
-        {queue.map((id, i) => {
+        {activeJob && (
+          <li className="nh-queue-item is-active">
+            <span className="nh-queue-pos" aria-hidden>1.</span>
+            <span className="nh-queue-name">
+              {(() => {
+                const def = BUILDINGS.find((building) => building.id === activeJob.buildingId) ?? null;
+                return `${def ? tr(def.name) : activeJob.buildingId} ${roman(activeJob.targetLevel)}`;
+              })()}
+            </span>
+            <span className="nh-queue-eta">{formatEta(activeJob.remainingMs, t)}</span>
+          </li>
+        )}
+        {/* codex:2026-08-30T23:59:30+02:00 — Freie Plätze bleiben sichtbar; bei laufendem Bau
+            sind es genau sieben Folgeplätze und ihre Positionsnummer beginnt deshalb bei 2. */}
+        {Array.from({ length: plannedSlotCount }, (_, i) => {
+          const id = visibleQueue[i];
+          const displayPosition = i + (activeJob ? 2 : 1);
+          if (!id) {
+            return (
+              <li key={`empty-${i}`} className="nh-queue-item is-empty">
+                <span className="nh-queue-pos" aria-hidden>{displayPosition}.</span>
+                <span className="nh-queue-name">{t("newhaven.queue.emptySlot")}</span>
+              </li>
+            );
+          }
           const def = BUILDINGS.find((b) => b.id === id) ?? null;
           // Zielstufe dieses Eintrags: aktueller Stand + laufender Auftrag + alles, was DAVOR in
           // der Warteschlange steht. Genau die Stufe, die dieser Eintrag bauen wird.
@@ -1853,7 +2096,7 @@ function BuildQueueStrip({
             queue.slice(0, i + 1).filter((q) => q === id).length;
           return (
             <li key={`${id}-${i}`} className="nh-queue-item">
-              <span className="nh-queue-pos" aria-hidden>{i + 1}.</span>
+              <span className="nh-queue-pos" aria-hidden>{displayPosition}.</span>
               <span className="nh-queue-name">
                 {def ? tr(def.name) : id} {roman(stufe)}
               </span>
@@ -1870,7 +2113,7 @@ function BuildQueueStrip({
                 <button
                   type="button"
                   className="nh-queue-mini"
-                  disabled={i === queue.length - 1}
+                  disabled={i === visibleQueue.length - 1}
                   title={t("newhaven.queue.moveDown")}
                   onClick={() => { moveCampQueueItem(state, i, i + 1); onDirty(); }}
                 >
@@ -1896,6 +2139,340 @@ function BuildQueueStrip({
   );
 }
 
+// codex:2026-08-30T22:18:00+02:00 — Die Listenansicht ist ab hier eine eigene Master-Detail-
+// Variante. Das bestehende `BuildingCard` bleibt exklusiv für die Karten-Popups erhalten, damit
+// deren Platzierungs-, Veredelungs- und spätere Gebäude-Modal-Abläufe nicht durch das neue Layout
+// verändert werden. Alle Zustände und Aktionen kommen weiterhin aus `campCardCore`/der Engine.
+function NewHavenListView({
+  state,
+  job,
+  hallName,
+  busyName,
+  debugFreeBuild,
+  onDirty,
+  onRequestCancel,
+}: {
+  state: GameState;
+  job: { buildingId: string; targetLevel: number; remainingMs: number } | null;
+  hallName: string;
+  busyName: string;
+  debugFreeBuild: boolean;
+  onDirty: () => void;
+  onRequestCancel: () => void;
+}): JSX.Element {
+  const { t, tr } = useI18n();
+  const tooltip = useItemTooltip();
+  const [selectedId, setSelectedId] = useState(BUILDINGS[0]?.id ?? "");
+  const [refineryId, setRefineryId] = useState<string | null>(null);
+  const selectedDef = BUILDINGS.find((def) => def.id === selectedId) ?? BUILDINGS[0] ?? null;
+
+  if (!selectedDef) return <div className="nh-list-shell" />;
+
+  const core = campCardCore(state, selectedDef, job, debugFreeBuild);
+  const selectedIsRefinery = refineKindOf(content, selectedDef.id) !== null;
+  const refineryDef = refineryId ? BUILDINGS.find((def) => def.id === refineryId) ?? null : null;
+  const building = core.jobRemainingMs >= 0;
+  const targetLevel = building ? core.jobTargetLevel : core.level + 1;
+  const maxed = targetLevel > Math.min(CAMP_MAX_BUILDING_LEVEL, selectedDef.levels.length);
+  const levelDef = maxed ? null : selectedDef.levels[targetLevel - 1] ?? null;
+  const current = boostOf(selectedDef, core.level);
+  const next = boostOf(selectedDef, targetLevel);
+  const questDef = levelDef?.requiresQuest
+    ? content.quests.find((quest) => quest.id === levelDef.requiresQuest)
+    : undefined;
+  const questName = questDef ? tr(questDef.name) : levelDef?.requiresQuest ?? "";
+  const buildPct = building && core.jobTotalMs > 0
+    ? Math.max(0, Math.min(1, 1 - core.jobRemainingMs / core.jobTotalMs))
+    : 0;
+  const buildSpeedCut = building
+    ? Math.max(0, Math.min(0.9, campBoost(state, content, "buildSpeed")))
+    : 0;
+  const primaryIsQueue = !building && levelDef != null && core.reason !== "ok" && core.queueReason === "ok";
+  const primaryDisabled = !building && (levelDef == null || (core.reason !== "ok" && !primaryIsQueue));
+  const primaryLabel = building
+    ? t("newhaven.build.cancel")
+    : levelDef == null
+      ? t("newhaven.reason.max_level")
+      : primaryIsQueue
+        ? t("newhaven.queue.add")
+        : core.level === 0
+          ? t("newhaven.build.new")
+          : t("newhaven.build.upgrade").replace("{n}", roman(targetLevel));
+  const primaryTone = building
+    ? "is-building"
+    : levelDef == null
+      ? "is-maxed"
+      : core.reason === "ok"
+        ? "is-buildable"
+        : primaryIsQueue
+          ? "is-queueable"
+          : "is-unavailable";
+
+  function runPrimaryAction(): void {
+    if (building) {
+      onRequestCancel();
+      return;
+    }
+    // Claude 30.08.2026 (Typecheck-Fix zu Miras Lieferung): Oben steht bereits ein Early Return
+    // fuer `!selectedDef`, aber `runPrimaryAction` ist eine FUNKTIONSDEKLARATION und damit
+    // gehoistet - TypeScript kann die Verengung nicht durchreichen, weil die Funktion theoretisch
+    // vor der Pruefung aufgerufen werden koennte. Der Guard ist zur Laufzeit redundant, aber noetig.
+    if (!selectedDef) return;
+    if (!levelDef) return;
+    if (core.reason === "ok") {
+      if (startCampBuild(state, content, selectedDef.id, { waiveCosts: debugFreeBuild }) === "ok") onDirty();
+      return;
+    }
+    if (primaryIsQueue && enqueueCampBuild(state, content, selectedDef.id) === "ok") onDirty();
+  }
+
+  return (
+    <section className="nh-list-shell">
+      <div className="nh-list-main">
+        <aside className="nh-list-register">
+          <div className="nh-list-register-scroll" role="list">
+            {BUILDINGS.map((def, index) => {
+              const rowCore = campCardCore(state, def, job, debugFreeBuild);
+              const rowBuilding = rowCore.jobRemainingMs >= 0;
+              const rowTargetLevel = rowBuilding ? rowCore.jobTargetLevel : rowCore.level + 1;
+              const rowMaxed = rowTargetLevel > Math.min(CAMP_MAX_BUILDING_LEVEL, def.levels.length);
+              const rowCanQueue = !rowBuilding && !rowMaxed && rowCore.reason !== "ok" && rowCore.queueReason === "ok";
+              const rowIsRefinery = refineKindOf(content, def.id) !== null;
+              const rowActionDisabled = rowBuilding || rowMaxed || (rowCore.reason !== "ok" && !rowCanQueue);
+              const rowActionLabel = rowBuilding
+                ? t("newhaven.build.inProgress").replace("{n}", roman(rowTargetLevel))
+                : rowMaxed
+                  ? t("newhaven.reason.max_level")
+                  : rowCanQueue
+                    ? t("newhaven.queue.add")
+                    : rowCore.level === 0
+                      ? t("newhaven.build.new")
+                      : t("newhaven.build.upgrade").replace("{n}", roman(rowTargetLevel));
+              const rowActionTone = rowBuilding
+                ? "is-building"
+                : rowMaxed
+                  ? "is-maxed"
+                  : rowCore.reason === "ok"
+                    ? "is-buildable"
+                    : rowCanQueue
+                      ? "is-queueable"
+                      : "is-unavailable";
+              const rowRank = rowMaxed
+                ? roman(rowCore.level)
+                : rowCore.level > 0
+                  ? `${roman(rowCore.level)} → ${roman(rowTargetLevel)}`
+                  : roman(rowTargetLevel);
+              const rowLevelDef = rowMaxed ? null : def.levels[rowTargetLevel - 1] ?? null;
+              const rowQuestDef = rowLevelDef?.requiresQuest
+                ? content.quests.find((quest) => quest.id === rowLevelDef.requiresQuest)
+                : undefined;
+              const rowReason = rowActionDisabled && !rowBuilding && !rowMaxed
+                ? reasonText(
+                    state,
+                    rowCore.reason,
+                    rowTargetLevel,
+                    hallName,
+                    busyName,
+                    rowQuestDef ? tr(rowQuestDef.name) : rowLevelDef?.requiresQuest ?? "",
+                    t,
+                  )
+                : "";
+
+              return (
+                <div
+                  key={def.id}
+                  role="listitem"
+                  tabIndex={0}
+                  aria-current={selectedDef.id === def.id ? "true" : undefined}
+                  className={`nh-list-row${selectedDef.id === def.id ? " is-selected" : ""}${rowBuilding ? " is-building" : ""}`}
+                  onClick={() => setSelectedId(def.id)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    setSelectedId(def.id);
+                  }}
+                >
+                  <span className="nh-list-row-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <div className="nh-list-row-art" aria-hidden="true"><BuildingArt def={def} level={rowCore.level} /></div>
+                  <span className="nh-list-row-copy">
+                    <span className="nh-list-row-name">{tr(def.name)}</span>
+                  </span>
+                  <span className="nh-list-row-rank">{rowRank}</span>
+                  {/* codex:2026-08-30T23:59:30+02:00 — Gebaute Veredelungsanlagen öffnen ihr
+                      Arbeitsmodal auch direkt aus dem Register. Bauaktion und Gebäudefunktion
+                      bleiben getrennte Knöpfe und verwenden dieselbe Funktion wie im Detail. */}
+                  <span className={`nh-list-row-actions${rowIsRefinery && rowCore.level >= 1 ? " has-function" : ""}`}>
+                    {rowIsRefinery && rowCore.level >= 1 && (
+                      <button
+                        type="button"
+                        className="btn-iron nh-list-row-function"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelectedId(def.id);
+                          setRefineryId(def.id);
+                        }}
+                      >
+                        {t("newhaven.refine.title")}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className={`btn-iron nh-list-row-action ${rowActionTone}`}
+                      disabled={rowActionDisabled}
+                      title={rowReason}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setSelectedId(def.id);
+                        if (rowCore.reason === "ok") {
+                          if (startCampBuild(state, content, def.id, { waiveCosts: debugFreeBuild }) === "ok") onDirty();
+                        } else if (rowCanQueue && enqueueCampBuild(state, content, def.id) === "ok") {
+                          onDirty();
+                        }
+                      }}
+                    >
+                      {rowActionLabel}
+                    </button>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </aside>
+
+        <section className="nh-list-detail" aria-live="polite">
+          <header className="nh-list-detail-head">
+            <h2>{tr(selectedDef.name)}</h2>
+            <span className="nh-list-detail-rank">
+              {maxed
+                ? t("newhaven.level.label").replace("{n}", roman(core.level))
+                : core.level > 0
+                  ? `${t("newhaven.level.label").replace("{n}", roman(core.level))} → ${roman(targetLevel)}`
+                  : t("newhaven.level.label").replace("{n}", roman(targetLevel))}
+            </span>
+          </header>
+
+          <div className="nh-list-detail-body">
+            <div className="nh-list-detail-art">
+              <BuildingArt def={selectedDef} level={core.level} />
+            </div>
+
+            <div className="nh-list-detail-info">
+              <div className="nh-list-effect-flow">
+                <div className="nh-list-effect-card">
+                  <span className="nh-list-section-label muted">{t("newhaven.effect.current")}</span>
+                  <strong>
+                    {current.kind && core.level > 0
+                      ? campBoostLine(current.kind, current.sum, t)
+                      : t("newhaven.effect.none")}
+                  </strong>
+                </div>
+                <span className="nh-list-effect-arrow" aria-hidden="true">⌄</span>
+                <div className="nh-list-effect-card is-next">
+                  <span className="nh-list-section-label muted">{t("newhaven.effect.next")}</span>
+                  <strong>{maxed || !next.kind ? t("newhaven.effect.max") : campBoostLine(next.kind, next.sum, t)}</strong>
+                </div>
+              </div>
+
+              {building ? (
+                <div className="nh-list-progress">
+                  <div className="nh-progress-label">
+                    <span>{t("newhaven.build.inProgress").replace("{n}", roman(targetLevel))}</span>
+                    <span className="muted">{formatEta(core.jobRemainingMs, t)}</span>
+                  </div>
+                  {buildSpeedCut > 0 && (
+                    <div className="nh-progress-speednote muted">
+                      <CampBoostNote kind="buildSpeed" value={buildSpeedCut} t={t} />
+                    </div>
+                  )}
+                  <div className="bar tall nh-progress-bar">
+                    <div className="bar-fill" style={{ transform: `scaleX(${buildPct})` }} />
+                  </div>
+                </div>
+              ) : levelDef ? (
+                <div className="nh-list-costs">
+                  <div className="nh-list-cost-head">
+                    <span className="nh-list-cost-title">{t("newhaven.cost.title")}</span>
+                    <span className={`nh-cost-gold${debugFreeBuild || state.character.gold >= levelDef.gold ? "" : " lacking"}`}>
+                      {GOLD_ICON_URL ? <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="nh-cost-gold-icon" /> : null}
+                      <b>{formatNum(levelDef.gold)}</b>
+                    </span>
+                  </div>
+                  <div className="nh-list-materials">
+                    {levelDef.items.map((cost, index) => {
+                      const owned = core.have[index] ?? 0;
+                      const item = content.items[cost.itemId];
+                      const img = getItemImage(cost.itemId);
+                      return (
+                        <button
+                          key={cost.itemId}
+                          type="button"
+                          className={`nh-list-material${debugFreeBuild || owned >= cost.qty ? "" : " lacking"}`}
+                          onMouseEnter={(event) => tooltip.show(cost.itemId, event.clientX, event.clientY, [])}
+                          onMouseLeave={() => tooltip.hide()}
+                          onClick={() => {
+                            tooltip.hide();
+                            openItemWikiModal(cost.itemId);
+                          }}
+                        >
+                          {img
+                            ? <img loading="lazy" decoding="async" src={img} alt="" className="pixelart" />
+                            : <span className="mat-emoji">{item?.icon ?? "▪"}</span>}
+                          <span><b>{formatNum(owned)}</b> / {formatNum(cost.qty)}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="nh-list-build-meta">
+                    <span>{t("newhaven.cost.time").replace("{time}", formatEta(levelDef.buildMs, t))}</span>
+                    {core.reason !== "ok" && (
+                      <span className="nh-list-reason">
+                        {reasonText(state, core.reason, targetLevel, hallName, busyName, questName, t)}
+                      </span>
+                    )}
+                  </div>
+                  {debugFreeBuild && <p className="nh-debug-free-note">{t("newhaven.debug.freeActive")}</p>}
+                </div>
+              ) : (
+                <p className="nh-maxed">{t("newhaven.reason.max_level")}</p>
+              )}
+            </div>
+          </div>
+
+          {/* codex:2026-08-30T23:42:00+02:00 — Veredelung ist eine Gebäudefunktion neben der
+              Ausbauaktion, kein Ersatz für sie. Die zweite Aktion erscheint nur bei gebauten
+              Anlagen; dadurch bleibt das bisherige Bau-/Queue-Verhalten vollständig erhalten. */}
+          <div className={`nh-list-detail-actions${selectedIsRefinery && core.level >= 1 ? " has-function" : ""}`}>
+            {selectedIsRefinery && core.level >= 1 && (
+              <button type="button" className="btn-iron nh-list-function" onClick={() => setRefineryId(selectedDef.id)}>
+                {t("newhaven.refine.title")}
+              </button>
+            )}
+            <button
+              type="button"
+              className={`btn-iron nh-list-primary ${primaryTone}${building ? " btn-iron--danger" : ""}`}
+              disabled={primaryDisabled}
+              onClick={runPrimaryAction}
+            >
+              {primaryLabel}
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <BuildQueueStrip state={state} onDirty={onDirty} />
+      {refineryDef && campBuildingLevel(state, refineryDef.id) >= 1 && (
+        <RefineModal
+          def={refineryDef}
+          level={campBuildingLevel(state, refineryDef.id)}
+          state={state}
+          onDirty={onDirty}
+          onClose={() => setRefineryId(null)}
+        />
+      )}
+    </section>
+  );
+}
+
 function NewHavenPageImpl({ onNavigate }: { onNavigate: (id: string) => void }): JSX.Element {
   useGameSelector(newHavenGate);
   const getState = useGetGameState();
@@ -1907,10 +2484,9 @@ function NewHavenPageImpl({ onNavigate }: { onNavigate: (id: string) => void }):
   const [debugLightPhase, setDebugLightPhase] = useState<CampLightPhase | null>(null);
   const lightPhase = debugLightPhase ?? ambientLightPhase;
 
-  // Karte | Liste (Task #371, Muster CharacterPage `midTab`: reiner UI-State, kein Save-Feld).
-  // Default „Karte" (Chef-Vorgabe „Kartenansicht als Standard") — das Grid bleibt vollständig
-  // funktionsfähig als zweite Ansicht, s. Datei-Kopf.
-  const [view, setView] = useState<"map" | "list">("map");
+  // codex:2026-08-30T23:58:00+02:00 — Chef-Nachentscheid: New Haven öffnet in der informativen
+  // Master-Detail-Liste. Die freie Karte bleibt unverändert als explizit anwählbare Zweitansicht.
+  const [view, setView] = useState<"map" | "list">("list");
   // codex:2026-07-31T19:00:03+02:00 — bewusst UI-lokal: Reload/Seiten-Remount setzt Debug zurück.
   const [debugFreeBuild, setDebugFreeBuild] = useState(false);
   // codex:2026-07-31T23:42:00+02:00 — flüchtiger, kostenloser Kartenmodus; Positionen bleiben
@@ -2059,39 +2635,34 @@ function NewHavenPageImpl({ onNavigate }: { onNavigate: (id: string) => void }):
         )}
       </div>
 
-      <BuildQueueStrip state={state} onDirty={onDirty} />
-
       {view === "map" ? (
-        <CampMapView
+        <>
+          <BuildQueueStrip state={state} onDirty={onDirty} />
+          <CampMapView
+            state={state}
+            lightPhase={lightPhase}
+            hallName={hallName}
+            busyName={busyName}
+            debugFreeBuild={debugFreeBuild}
+            moveMode={moveMode}
+            onMoveModeChange={setMoveMode}
+            onDirty={onDirty}
+            onRequestCancel={onRequestCancel}
+            onNavigate={onNavigate}
+          />
+        </>
+      ) : (
+        // codex:2026-08-30T22:18:00+02:00 — Liste nutzt den neuen Master-Detail-Aufbau; die
+        // Map rendert weiterhin ihre unveränderten `BuildingPopup`-Karten oberhalb dieses Zweigs.
+        <NewHavenListView
           state={state}
-          lightPhase={lightPhase}
+          job={job}
           hallName={hallName}
           busyName={busyName}
           debugFreeBuild={debugFreeBuild}
-          moveMode={moveMode}
-          onMoveModeChange={setMoveMode}
           onDirty={onDirty}
           onRequestCancel={onRequestCancel}
-          onNavigate={onNavigate}
         />
-      ) : (
-        <div className="nh-grid">
-          {BUILDINGS.map((def) => (
-            <BuildingCard
-              key={def.id}
-              def={def}
-              {...campCardCore(state, def, job, debugFreeBuild)}
-              gold={state.character.gold}
-              hallName={hallName}
-              busyName={busyName}
-              state={state}
-              debugFreeBuild={debugFreeBuild}
-              onDirty={onDirty}
-              onRequestCancel={onRequestCancel}
-              onNavigate={onNavigate}
-            />
-          ))}
-        </div>
       )}
 
       {confirmCancel && job && (

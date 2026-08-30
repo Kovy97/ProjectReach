@@ -7140,11 +7140,26 @@ export const content: ContentDB = {
     // Signatur-Effekte auf legendary/godly-Items). Für den Warlord's-Ring-Perk wurde die Whitelist
     // um `critDamage` erweitert (gleiches Muster: Signatur-Effekt NUR auf legendary/godly) — siehe
     // Kommentar dort.
+    // ═══ Meisterringe kalibriert (Spieler-Report 30.08.2026 + Chef-GO) ═══════════════════════
+    // Ein Spieler meldete, sein legendaerer Blademaster's Ring (Attack 99, 50.000 Gold) gebe weniger
+    // Staerke als ein Ruby Ring (Juwelierskunst 34, 640 Gold, common). Nachgemessen stimmte das fuer
+    // ALLE Meisterringe: sie lagen bei 3 bis 5 Attributpunkten, waehrend das Schmuck-Rework die
+    // Craft-Leiter auf 17 angehoben hat (godgem_ring @95) und der einzige andere legendaere Ring,
+    // ninth_wardens_signet, 25 traegt. Der Rework hatte die Meisterringe nur im Glueck-Pass
+    // beruehrt (reine Umverteilung), nie ihre Hoehe. Neue Bemessung:
+    // Chef-Vorgabe 30.08.: Meisterringe stehen BEWUSST HINTER den Endgame-Ringen - sie sind
+    // Prestige fuer eine 99, kein Ersatz fuer godgem_ring (17) oder ninth_wardens_signet (25).
+    // Sie liegen darum klar ueber dem Craft-Einstieg (ruby_ring 7, diamond_ring 10), aber darunter:
+    //   Kampfringe (ohne masterPerk):                             12 Punkte
+    //   Skilling-Ringe (mit masterPerk, der den Hauptwert traegt):  9 Punkte
+    //   Ring der Vollendung (alle 22 Skills auf 99):               16 Punkte
+    // Richtung je Ring beibehalten (Attack bleibt str-lastig, Magic int-lastig usw.); lck bewusst
+    // sparsam, damit der Glueck-Pass vom 29.08. (20,6 % -> 12,6 %) nicht wieder aufgeweicht wird.
     ring_master_attack: {
       id: "ring_master_attack", name: { en: "Blademaster's Ring", de: "Ring des Klingenmeisters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { attack: 99 }, value: 50000,
-      modifiers: { str: 3, dex: 2 }, armorPen: 0.02,
+      modifiers: { str: 7, dex: 3, con: 2 }, armorPen: 0.02,
       description: {
         en: "Earned by a blade that has found every gap in every guard. Grants 2% armor penetration.",
         de: "Erworben von einer Klinge, die jede Lücke in jeder Deckung fand. Gewährt 2 % Rüstungsdurchdringung.",
@@ -7181,7 +7196,7 @@ export const content: ContentDB = {
         tailoring: 99,
       },
       value: 100000,
-      modifiers: { str: 2, dex: 2, con: 2, int: 2, wis: 2, lck: 2 },
+      modifiers: { str: 3, dex: 3, con: 3, int: 3, wis: 2, lck: 2 },
       description: {
         en: "Worn only by those who have mastered all twenty-two disciplines. A quiet band of gold, granted, never bought.",
         de: "Getragen nur von jenen, die alle zweiundzwanzig Fertigkeiten gemeistert haben. Ein stiller Reif aus Gold, verliehen, niemals gekauft.",
@@ -7191,7 +7206,7 @@ export const content: ContentDB = {
       id: "ring_master_cooking", name: { en: "Soulchef's Ring", de: "Ring des Seelenkochs" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { cooking: 99 }, value: 50000,
-      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "alwaysSucceed", skill: "cooking", value: 1 },
+      modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "alwaysSucceed", skill: "cooking", value: 1 },
       description: {
         en: "Stained by every dish it has ever overseen. Meals prepared while worn never fail.",
         de: "Befleckt von jedem Gericht, das er je begleitet hat. Gerichte misslingen im Tragen nie.",
@@ -7201,7 +7216,7 @@ export const content: ContentDB = {
       id: "ring_master_defence", name: { en: "Bulwark Ring", de: "Ring des Bollwerks" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { defence: 99 }, value: 50000,
-      modifiers: { con: 4 }, blockChance: 0.02,
+      modifiers: { con: 8, str: 2, dex: 2 }, blockChance: 0.02,
       description: {
         en: "Has turned aside blows that would have felled lesser guards. Grants 2% block chance.",
         de: "Hat Schläge abgewehrt, die schwächere Wächter gefällt hätten. Gewährt 2 % Blockchance.",
@@ -7217,7 +7232,7 @@ export const content: ContentDB = {
       id: "ring_master_farming", name: { en: "Gravetender's Ring", de: "Ring des Grabgärtners" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { farming: 99 }, value: 50000,
-      modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "cropSpeed", skill: "farming", value: 0.08 },
+      modifiers: { con: 5, str: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "cropSpeed", skill: "farming", value: 0.08 },
       description: {
         en: "Smells of turned soil and patient seasons. Crop plots ripen 8% faster while worn.",
         de: "Riecht nach umgegrabener Erde und geduldigen Jahreszeiten. Beete reifen im Tragen 8 % schneller.",
@@ -7227,7 +7242,7 @@ export const content: ContentDB = {
       id: "ring_master_fishing", name: { en: "Voidangler's Ring", de: "Ring des Leerenanglers" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { fishing: 99 }, value: 50000,
-      modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "fishing", value: 0.05 },
+      modifiers: { con: 5, str: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "fishing", value: 0.05 },
       description: {
         en: "Smells faintly of deep water and older things. 5% chance to land a double catch.",
         de: "Riecht schwach nach Tiefsee und älteren Dingen. 5 % Chance auf doppelten Fang.",
@@ -7237,7 +7252,7 @@ export const content: ContentDB = {
       id: "ring_master_foraging", name: { en: "Wildgatherer's Ring", de: "Ring des Wildsammlers" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { foraging: 99 }, value: 50000,
-      modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "foraging", value: 0.05 },
+      modifiers: { con: 5, dex: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "foraging", value: 0.05 },
       description: {
         en: "Set with a sliver of every leaf it has ever brushed past. 5% chance to gather a double harvest.",
         de: "Gefasst mit einem Splitter jedes Blatts, das er je streifte. 5 % Chance auf doppelte Ernte.",
@@ -7247,7 +7262,7 @@ export const content: ContentDB = {
       id: "ring_master_herblore", name: { en: "Venombrewer's Ring", de: "Ring des Giftbrauers" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { herblore: 99 }, value: 50000,
-      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "buffDuration", skill: "herblore", value: 0.10 },
+      modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "buffDuration", skill: "herblore", value: 0.10 },
       description: {
         en: "Steeped in bitter fumes for longer than memory. Tonics and brews last 10% longer while worn.",
         de: "Länger als jede Erinnerung in bitteren Dämpfen gezogen. Tonika und Tränke wirken im Tragen 10 % länger.",
@@ -7267,7 +7282,7 @@ export const content: ContentDB = {
       id: "ring_master_hunting", name: { en: "Trapper's Ring", de: "Ring des Fallenstellers" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { hunting: 99 }, value: 50000,
-      modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "hunting", value: 0.05 },
+      modifiers: { con: 5, dex: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "hunting", value: 0.05 },
       description: {
         en: "Worn smooth by a thousand snares set and sprung. Every piece of loot from a catch has a 5% chance to come in double.",
         de: "Von tausend gestellten und zugeschnappten Schlingen glatt geschliffen. Jeder Beute-Eintrag eines Fangs fällt mit 5 % Chance doppelt.",
@@ -7277,7 +7292,7 @@ export const content: ContentDB = {
       id: "ring_master_jewelcrafting", name: { en: "Gemwright's Ring", de: "Ring des Steinschleifers" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { jewelcrafting: 99 }, value: 50000,
-      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "doubleYield", skill: "jewelcrafting", value: 0.05 },
+      modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "doubleYield", skill: "jewelcrafting", value: 0.05 },
       description: {
         en: "Catches the light like a thousand unset gems. 5% chance to cut a double gem.",
         de: "Fängt das Licht wie tausend ungefasste Edelsteine. 5 % Chance auf doppelten Schliff.",
@@ -7287,7 +7302,7 @@ export const content: ContentDB = {
       id: "ring_master_leatherworking", name: { en: "Tannermaster's Ring", de: "Ring des Gerbermeisters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { leatherworking: 99 }, value: 50000,
-      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "inputSaver", skill: "leatherworking", value: 0.05 },
+      modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "inputSaver", skill: "leatherworking", value: 0.05 },
       description: {
         en: "Carved by a master who wasted nothing. 5% chance the craft spares its materials.",
         de: "Geschnitzt von einem Meister, der nichts verschwendete. 5 % Chance, dass das Handwerk seine Materialien verschont.",
@@ -7297,7 +7312,7 @@ export const content: ContentDB = {
       id: "ring_master_magic", name: { en: "Archmage's Ring", de: "Ring des Erzmagiers" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { magic: 99 }, value: 50000,
-      modifiers: { int: 3, wis: 2 }, wardBreak: 0.03,
+      modifiers: { int: 7, wis: 3, con: 2 }, wardBreak: 0.03,
       description: {
         en: "Forged from the residue of a thousand shattered wards. Grants 3% ward break.",
         de: "Aus dem Rückstand tausend zerbrochener Schutzschilde geschmiedet. Gewährt 3 % Ward-Bruch.",
@@ -7307,7 +7322,7 @@ export const content: ContentDB = {
       id: "ring_master_mining", name: { en: "Deepbreaker's Ring", de: "Ring des Tiefenbrechers" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { mining: 99 }, value: 50000,
-      modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "mining", value: 0.05 },
+      modifiers: { con: 5, str: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "mining", value: 0.05 },
       description: {
         en: "Forged in the deepest seams, it remembers every vein it has touched. 5% chance to strike double ore.",
         de: "In den tiefsten Adern geschmiedet, erinnert er sich an jede Ader, die er berührt hat. 5 % Chance auf doppeltes Erz.",
@@ -7317,7 +7332,7 @@ export const content: ContentDB = {
       id: "ring_master_power", name: { en: "Warlord's Ring", de: "Ring des Kriegsherrn" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { power: 99 }, value: 50000,
-      modifiers: { str: 3, con: 2 }, bonus: { critDamage: 0.03 },
+      modifiers: { str: 7, con: 3, dex: 2 }, bonus: { critDamage: 0.03 },
       description: {
         en: "Carries the weight of a warlord's every finishing blow. Grants 3% critical damage.",
         de: "Trägt das Gewicht jedes entscheidenden Schlags eines Kriegsherrn. Gewährt 3 % Krit-Schaden.",
@@ -7327,7 +7342,7 @@ export const content: ContentDB = {
       id: "ring_master_ranged", name: { en: "Hawkeye Ring", de: "Ring des Falkenauges" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { ranged: 99 }, value: 50000,
-      modifiers: { dex: 4, lck: 1 }, precision: 0.02,
+      modifiers: { dex: 7, con: 3, lck: 2 }, precision: 0.02,
       description: {
         en: "Sharpens the eye until no dodge feels fast enough. Grants 2% precision.",
         de: "Schärft das Auge, bis kein Ausweichen mehr schnell genug scheint. Gewährt 2 % Präzision.",
@@ -7337,7 +7352,7 @@ export const content: ContentDB = {
       id: "ring_master_runecrafting", name: { en: "Runebinder's Ring", de: "Ring des Runenbinders" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { runecrafting: 99 }, value: 50000,
-      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "doubleYield", skill: "runecrafting", value: 0.05 },
+      modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "doubleYield", skill: "runecrafting", value: 0.05 },
       description: {
         en: "Humming faintly with bound arcane script. 5% chance to bind a double rune.",
         de: "Summt schwach von gebundener arkaner Schrift. 5 % Chance auf doppelte Rune.",
@@ -7347,7 +7362,7 @@ export const content: ContentDB = {
       id: "ring_master_slayer", name: { en: "Bountymaster's Ring", de: "Ring des Kopfgeldmeisters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { slayer: 99 }, value: 50000,
-      modifiers: { dex: 4, lck: 1 }, masterPerk: { kind: "slayerPoints", skill: "slayer", value: 0.10 },
+      modifiers: { dex: 5, con: 2, lck: 2 }, masterPerk: { kind: "slayerPoints", skill: "slayer", value: 0.10 },
       description: {
         en: "Marked with the tally of a thousand contracts. Earns 10% more Slayer points.",
         de: "Gezeichnet mit der Strichliste tausender Aufträge. Bringt 10 % mehr Slayer-Punkte.",
@@ -7357,7 +7372,7 @@ export const content: ContentDB = {
       id: "ring_master_smithing", name: { en: "Forgemaster's Ring", de: "Ring des Essenmeisters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { smithing: 99 }, value: 50000,
-      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "inputSaver", skill: "smithing", value: 0.05 },
+      modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "inputSaver", skill: "smithing", value: 0.05 },
       description: {
         en: "Scorched by a thousand forges, never once melted down. 5% chance the forge spares its materials.",
         de: "Von tausend Essen versengt, doch nie eingeschmolzen. 5 % Chance, dass die Schmiede ihre Materialien verschont.",
@@ -7371,7 +7386,7 @@ export const content: ContentDB = {
       id: "ring_master_tailoring", name: { en: "Needlemaster's Ring", de: "Ring des Nadelmeisters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { tailoring: 99 }, value: 50000,
-      modifiers: { int: 2, wis: 2 }, masterPerk: { kind: "inputSaver", skill: "tailoring", value: 0.05 },
+      modifiers: { int: 4, wis: 3, lck: 2 }, masterPerk: { kind: "inputSaver", skill: "tailoring", value: 0.05 },
       description: {
         en: "Threaded by a hand that never wasted a stitch. 5% chance the craft spares its materials.",
         de: "Gefädelt von einer Hand, die nie einen Stich verschwendete. 5 % Chance, dass das Schneidern seine Materialien verschont.",
@@ -7381,7 +7396,7 @@ export const content: ContentDB = {
       id: "ring_master_thieving", name: { en: "Shadowgrasp Ring", de: "Ring des Schattengriffs" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { thieving: 99 }, value: 50000,
-      modifiers: { dex: 4, lck: 1 }, masterPerk: { kind: "successBoost", skill: "thieving", value: 0.03 },
+      modifiers: { dex: 5, con: 2, lck: 2 }, masterPerk: { kind: "successBoost", skill: "thieving", value: 0.03 },
       description: {
         en: "Slips through fingers like smoke. Raises theft success by 3%.",
         de: "Gleitet wie Rauch durch die Finger. Erhöht die Diebstahl-Erfolgschance um 3 %.",
@@ -7391,7 +7406,7 @@ export const content: ContentDB = {
       id: "ring_master_vitality", name: { en: "Ring of the Unbroken", de: "Ring des Unbeugsamen" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { vitality: 99 }, value: 50000,
-      modifiers: { con: 4 }, bonus: { hpRegenPerSec: 0.2 },
+      modifiers: { con: 9, str: 2, dex: 1 }, bonus: { hpRegenPerSec: 0.2 },
       description: {
         en: "Has never once let its bearer fall for good. Grants 0.2 HP regeneration per second.",
         de: "Ließ seinen Träger nie endgültig fallen. Gewährt 0,2 HP-Regeneration pro Sekunde.",
@@ -7401,7 +7416,7 @@ export const content: ContentDB = {
       id: "ring_master_warding", name: { en: "Soulwarden's Ring", de: "Ring des Seelenwächters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { warding: 99 }, value: 50000,
-      modifiers: { wis: 3, con: 2 }, skillBoost: { warding: 5 },
+      modifiers: { wis: 7, con: 3, int: 2 }, skillBoost: { warding: 5 },
       description: {
         en: "Keeps silent vigil over the soul's own shield. Raises effective Warding by 5, strengthening ward regeneration.",
         de: "Hält stille Wacht über den Schutzschild der Seele. Erhöht die effektive Abwehr-Stufe um 5 und stärkt die Ward-Regeneration.",
@@ -7411,7 +7426,7 @@ export const content: ContentDB = {
       id: "ring_master_woodcutting", name: { en: "Grovewarden's Ring", de: "Ring des Hainhüters" },
       type: "equipment", stackable: false, slot: "ring1", icon: "💍", rarity: "legendary",
       requirements: { woodcutting: 99 }, value: 50000,
-      modifiers: { con: 3 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "woodcutting", value: 0.05 },
+      modifiers: { con: 5, str: 2, lck: 2 }, evasionRating: 4, masterPerk: { kind: "doubleYield", skill: "woodcutting", value: 0.05 },
       description: {
         en: "Carved from living bark by the first Grovewarden. Grants a 5% chance to fell double timber.",
         de: "Aus lebender Rinde vom ersten Hainhüter geschnitzt. Gewährt 5 % Chance auf doppeltes Holz.",

@@ -3095,3 +3095,959 @@
      (flex-start allein setzt beide Boxen bündig, wirkt ohne den Versatz leicht zu hoch). */
   margin-top: 1px;
 }
+
+/* codex:2026-08-30T22:18:00+02:00 — Master-Detail-Listenansicht nach dem freigegebenen Mockup.
+   Eigener Namensraum hält die alte Grid-Karte und vor allem `.nh-popup` vollständig unangetastet.
+   Alle Flächen, Rahmen und Texturen stammen aus dem bestehenden Ashen-Iron/New-Haven-Rezept. */
+.nh-list-shell {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--nh-map-gap, clamp(8px, 0.7vw, 14px));
+  min-width: 0;
+  min-height: 0;
+}
+
+.nh-list-main {
+  display: grid;
+  grid-template-columns: minmax(390px, 38%) minmax(0, 1fr);
+  gap: var(--nh-map-gap, clamp(8px, 0.7vw, 14px));
+  min-width: 0;
+  min-height: 0;
+}
+
+.nh-list-register,
+.nh-list-detail {
+  min-width: 0;
+  min-height: 0;
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+  /* codex:2026-08-30T23:59:45+02:00 — Die großen New-Haven-Flächen übernehmen exakt die
+     produktive Sidebar-Oberfläche. So bleibt zwischen Iron-Rahmen und Innenfläche ein klarer
+     Materialwechsel; die einzelnen Gebäudekarten behalten separat ihre Topbar-Textur. */
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
+    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+}
+
+.nh-list-register {
+  container: nh-register / inline-size;
+  overflow: hidden;
+}
+
+.nh-list-register-scroll {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: clamp(6px, 0.55vw, 10px);
+  scrollbar-gutter: stable;
+}
+
+.nh-list-row {
+  display: grid;
+  grid-template-columns: 24px clamp(92px, 7.2vw, 126px) minmax(0, 1fr) auto minmax(118px, auto);
+  align-items: center;
+  gap: clamp(6px, 0.55vw, 11px);
+  min-height: clamp(112px, 8.2vw, 146px);
+  margin-bottom: clamp(5px, 0.45vw, 8px);
+  padding: clamp(6px, 0.55vw, 10px);
+  /* codex:2026-08-30T23:59:30+02:00 — Exakt dieselbe produktive Iron-9-Slice-Familie wie
+     Sidebar-Navigation und der umgebende Gebäuderegister-Container; kein V3-Panelrahmen. */
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+  /* Exakt die Fläche der Content-Topbar (topbar.css `.content-header`), inklusive ihrer
+     Verdunkelung und 313-px-Kachelung. */
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.30), rgba(10, 12, 15, 0.30)),
+    url("../assets/bg_topbar.webp") top left / 313px repeat;
+  cursor: pointer;
+}
+
+.nh-list-row:last-child {
+  margin-bottom: 0;
+}
+
+.nh-list-row:hover,
+.nh-list-row:focus-visible,
+.nh-list-row.is-selected {
+  outline: none;
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)),
+    url("../assets/bg_topbar.webp") top left / 313px repeat;
+  filter: brightness(1.08);
+  box-shadow: inset 4px 0 0 var(--ds-gold, #d8b870), inset 0 0 18px rgba(209, 157, 75, 0.1);
+}
+
+.nh-list-row.is-building {
+  box-shadow: inset 0 0 20px rgba(216, 184, 112, 0.12);
+}
+
+.nh-list-row-index {
+  color: var(--ds-gold, #d8b870);
+  font-family: var(--font-head);
+  font-size: clamp(12px, 0.75vw, 15px);
+  text-align: center;
+}
+
+.nh-list-row-art {
+  align-self: stretch;
+  min-width: 0;
+  min-height: 92px;
+  overflow: hidden;
+  border: 1px solid rgba(156, 109, 53, 0.48);
+  background: rgba(3, 4, 5, 0.62);
+}
+
+.nh-list-row-art .nh-art {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: auto;
+  border: 0;
+  background: transparent;
+}
+
+.nh-list-row-art .nh-art-img,
+.nh-list-detail-art .nh-art-img {
+  width: 100%;
+  height: 100%;
+  transform: scale(var(--nh-art-scale, 1.65));
+  transform-origin: center var(--nh-art-origin, 72%);
+}
+
+.nh-list-row-art .nh-art-level {
+  display: none;
+}
+
+.nh-list-row-copy {
+  min-width: 0;
+}
+
+.nh-list-row-name {
+  display: block;
+  color: var(--ds-gold-bright, #f0dca0);
+  font-family: var(--font-head);
+  font-size: clamp(16px, 1.05vw, 22px);
+  line-height: 1.13;
+  overflow-wrap: anywhere;
+}
+
+.nh-list-row-rank {
+  color: var(--ds-gold-bright, #f0dca0);
+  font-family: var(--font-head);
+  font-size: clamp(18px, 1.2vw, 25px);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.nh-list-row-action {
+  min-width: 118px;
+  min-height: 44px;
+  padding: 6px 10px;
+  font-size: clamp(13px, 0.78vw, 16px);
+  line-height: 1.08;
+  white-space: normal;
+}
+
+/* codex:2026-08-30T23:59:30+02:00 — Ein gemeinsamer Aktionsslot hält Bauen/Planen und bei
+   Schmelze/Räucherhaus zusätzlich Veredeln nebeneinander, ohne die Rangspalte zu quetschen. */
+.nh-list-row-actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(118px, 1fr);
+  gap: 6px;
+  min-width: 0;
+}
+
+.nh-list-row-function {
+  min-width: 118px;
+  min-height: 44px;
+  padding: 6px 10px;
+  color: var(--ds-gold-bright, #f0dca0);
+  font-size: clamp(13px, 0.78vw, 16px);
+  line-height: 1.08;
+  white-space: normal;
+}
+
+.nh-list-detail {
+  container: nh-detail / inline-size;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(7px, 0.6vw, 12px);
+  padding: clamp(8px, 0.8vw, 15px);
+  overflow: hidden;
+}
+
+.nh-list-detail-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 2px 3px clamp(7px, 0.6vw, 11px);
+  border-bottom: 1px solid rgba(170, 119, 57, 0.55);
+}
+
+.nh-list-detail-head h2 {
+  min-width: 0;
+  margin: 0;
+  color: var(--ds-gold-bright, #f0dca0);
+  font-family: var(--font-head);
+  font-size: clamp(25px, 2vw, 43px);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.nh-list-detail-rank {
+  flex: 0 0 auto;
+  color: var(--ds-gold-bright, #f0dca0);
+  font-family: var(--font-head);
+  font-size: clamp(17px, 1.15vw, 25px);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.nh-list-detail-body {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(8px, 0.7vw, 14px);
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.nh-list-detail-art {
+  min-width: 0;
+  min-height: clamp(320px, 48vh, 650px);
+  overflow: hidden;
+  border: 1px solid rgba(170, 119, 57, 0.55);
+  background:
+    radial-gradient(ellipse at 50% 72%, rgba(151, 112, 65, 0.14), transparent 68%),
+    rgba(3, 4, 5, 0.66);
+}
+
+.nh-list-detail-art .nh-art {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  aspect-ratio: auto;
+  border: 0;
+  background: transparent;
+}
+
+.nh-list-detail-art .nh-art-img {
+  object-fit: contain;
+  object-position: center center;
+}
+
+.nh-list-detail-art .nh-art-level {
+  display: none;
+}
+
+.nh-list-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 0.75vw, 14px);
+  min-width: 0;
+  min-height: 0;
+}
+
+.nh-list-effect-flow,
+.nh-list-costs,
+.nh-list-progress {
+  min-width: 0;
+  border: 1px solid rgba(112, 91, 62, 0.52);
+  background: rgba(2, 3, 4, 0.56);
+}
+
+.nh-list-effect-flow {
+  display: grid;
+  grid-template-rows: minmax(90px, auto) auto minmax(90px, auto);
+}
+
+.nh-list-effect-card {
+  display: grid;
+  align-content: center;
+  gap: clamp(5px, 0.4vw, 8px);
+  min-width: 0;
+  padding: clamp(11px, 1vw, 18px);
+}
+
+.nh-list-effect-card.is-next strong {
+  color: #8fbf8f;
+}
+
+.nh-list-section-label {
+  font-size: clamp(12px, 0.75vw, 15px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nh-list-effect-card strong {
+  color: var(--ds-parch-ink, #e8d8b0);
+  font-family: var(--font-head);
+  font-size: clamp(17px, 1.12vw, 24px);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.nh-list-effect-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  color: var(--ds-gold, #d8b870);
+  border-top: 1px solid rgba(112, 91, 62, 0.42);
+  border-bottom: 1px solid rgba(112, 91, 62, 0.42);
+  font-family: var(--font-head);
+  font-size: 22px;
+}
+
+.nh-list-costs {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(7px, 0.6vw, 11px);
+  padding: clamp(8px, 0.75vw, 14px);
+}
+
+.nh-list-cost-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nh-list-cost-title {
+  color: var(--ds-gold-bright, #f0dca0);
+  font-family: var(--font-head);
+  font-size: clamp(17px, 1vw, 22px);
+}
+
+.nh-list-materials {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(6px, 0.5vw, 9px);
+}
+
+.nh-list-material {
+  display: grid;
+  grid-template-columns: clamp(42px, 3vw, 58px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(7px, 0.55vw, 11px);
+  min-width: 0;
+  min-height: clamp(64px, 4.5vw, 82px);
+  padding: clamp(5px, 0.45vw, 8px);
+  border: 1px solid rgba(112, 91, 62, 0.52);
+  background: rgba(8, 7, 6, 0.6);
+  color: #8fbf8f;
+  font-size: clamp(14px, 0.82vw, 17px);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nh-list-material:hover {
+  border-color: rgba(216, 184, 112, 0.68);
+}
+
+.nh-list-material.lacking {
+  color: var(--danger);
+}
+
+.nh-list-material img,
+.nh-list-material .mat-emoji {
+  width: clamp(42px, 3vw, 58px);
+  height: clamp(42px, 3vw, 58px);
+  object-fit: contain;
+}
+
+.nh-list-build-meta {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 14px;
+  padding-top: 2px;
+  color: var(--muted);
+  font-size: clamp(13px, 0.75vw, 16px);
+  line-height: 1.3;
+}
+
+.nh-list-reason {
+  color: #d8a05a;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.nh-list-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: clamp(12px, 1vw, 18px);
+}
+
+.nh-list-primary {
+  width: 100%;
+  min-height: clamp(48px, 3.2vw, 60px);
+  font-size: clamp(16px, 1vw, 21px);
+}
+
+.nh-list-shell > .nh-queue-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 14px;
+  min-width: 0;
+  margin: 0;
+  border: 7px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+  /* codex:2026-08-30T23:59:45+02:00 — Dasselbe Sidebar-Material wie Register und Detailansicht;
+     Queue-Karten selbst bleiben dunkler, damit die Baufolge darauf lesbar bleibt. */
+  background:
+    linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
+    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+}
+
+.nh-list-shell > .nh-queue-strip .nh-queue-list {
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.nh-list-shell > .nh-queue-strip .nh-queue-item {
+  flex: 0 0 auto;
+  min-width: clamp(150px, 11vw, 200px);
+  min-height: 40px;
+}
+
+/* codex:2026-08-30T23:58:00+02:00 — Sofort lesbare Bauzustände und ein vollständiges Queue-Dock.
+   Grün = jetzt ausführbar, Gold = planbar, Rot = aktuell blockiert, Stahl = läuft/maximal. */
+.nh-queue-strip-title b {
+  margin-left: 6px;
+  color: #d9c894;
+  font-size: 12px;
+}
+
+.nh-queue-item.is-empty {
+  border-style: dashed;
+  border-color: rgba(109, 113, 110, 0.4);
+  background: rgba(2, 3, 4, 0.34);
+}
+
+.nh-queue-item.is-empty .nh-queue-name {
+  color: #666d6b;
+  font-style: italic;
+}
+
+/* codex:2026-08-30T23:59:30+02:00 — Der laufende Bau ist Slot 1 der sichtbaren Baufolge.
+   Er ist bewusst nicht verschieb-/löschbar; Abbruch bleibt die bestehende Gebäudeaktion. */
+.nh-queue-item.is-active {
+  border-color: rgba(216, 184, 112, 0.72);
+  background: rgba(77, 55, 21, 0.34);
+  box-shadow: inset 0 0 12px rgba(216, 184, 112, 0.11);
+}
+
+.nh-queue-item.is-active .nh-queue-name {
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.nh-queue-eta {
+  color: #a9db92;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.nh-list-row-action.is-buildable,
+.nh-list-primary.is-buildable {
+  color: #a9db92 !important;
+  background:
+    linear-gradient(rgba(48, 92, 39, 0.32), rgba(12, 32, 15, 0.42)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+  box-shadow: inset 0 0 16px rgba(113, 188, 84, 0.16), 0 0 7px rgba(86, 155, 68, 0.12);
+}
+
+.nh-list-row-action.is-queueable,
+.nh-list-primary.is-queueable {
+  color: #ebcd75 !important;
+  background:
+    linear-gradient(rgba(119, 78, 27, 0.3), rgba(39, 26, 11, 0.44)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+  box-shadow: inset 0 0 14px rgba(205, 153, 69, 0.14);
+}
+
+.nh-list-row-action.is-unavailable:disabled,
+.nh-list-primary.is-unavailable:disabled {
+  opacity: 1;
+  color: #cf8377 !important;
+  filter: saturate(0.58) brightness(0.78);
+  background:
+    linear-gradient(rgba(91, 31, 27, 0.25), rgba(30, 11, 10, 0.4)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+  box-shadow: inset 0 0 13px rgba(168, 61, 51, 0.13);
+}
+
+.nh-list-row-action.is-building:disabled,
+.nh-list-row-action.is-maxed:disabled,
+.nh-list-primary.is-maxed:disabled {
+  opacity: 1;
+  color: #929b9d !important;
+  filter: saturate(0.58) brightness(0.83);
+  background:
+    linear-gradient(rgba(41, 51, 57, 0.28), rgba(12, 16, 18, 0.44)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+}
+
+.nh-list-shell > .nh-queue-strip .nh-queue-waiting {
+  grid-column: 1 / -1;
+}
+
+@container nh-register (max-width: 470px) {
+  .nh-list-row {
+    grid-template-columns: 22px clamp(88px, 27cqw, 116px) minmax(0, 1fr) auto;
+    grid-template-rows: minmax(84px, auto) auto;
+  }
+
+  .nh-list-row-actions {
+    grid-column: 2 / -1;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .nh-list-row-action,
+  .nh-list-row-function {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@container nh-detail (max-width: 590px) {
+  .nh-list-detail-body {
+    grid-template-columns: 1fr;
+    align-content: start;
+  }
+
+  .nh-list-detail-art {
+    min-height: clamp(280px, 38vh, 430px);
+  }
+}
+
+@media (max-width: 1180px) {
+  .nh-list-main {
+    grid-template-columns: minmax(350px, 40%) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .nh-list-shell {
+    min-height: 980px;
+  }
+
+  .nh-list-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(420px, 46vh) auto;
+  }
+
+  .nh-list-detail {
+    overflow: visible;
+  }
+
+  .nh-list-detail-body {
+    overflow: visible;
+  }
+
+  .nh-list-shell > .nh-queue-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .nh-list-shell > .nh-queue-strip .nh-queue-waiting {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .nh-list-detail-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .nh-list-detail-rank {
+    white-space: normal;
+  }
+
+  .nh-list-materials,
+  .nh-list-build-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .nh-list-reason {
+    text-align: left;
+  }
+}
+
+/* codex:2026-08-30T23:42:00+02:00 — Produktionsfassung des freigegebenen gemeinsamen
+   Arbeitsmodals für Schmelzofen und Räucherhaus. Ashen-Iron-Rahmen und vorhandene Oberflächen
+   werden wiederverwendet; die Rezeptliste scrollt unabhängig von der Prozessseite. */
+.nh-list-detail-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(7px, 0.6vw, 11px);
+  min-width: 0;
+}
+
+.nh-list-detail-actions.has-function {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nh-list-detail-actions > .btn-iron {
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(48px, 3.4vw, 62px);
+}
+
+.nh-list-function {
+  color: #9fd28c;
+}
+
+.modal-overlay.nh-refinery-overlay {
+  padding: clamp(10px, 2vh, 24px) clamp(10px, 2vw, 28px);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(2px);
+}
+
+.modal.nh-refinery-modal {
+  container: nh-refinery / inline-size;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(7px, 0.7vw, 12px);
+  width: min(94vw, 1460px);
+  max-width: min(94vw, 1460px);
+  height: min(92dvh, 900px);
+  max-height: min(92dvh, 900px);
+  min-height: min(680px, 92dvh);
+  padding: clamp(10px, 1vw, 17px);
+  border: clamp(8px, 0.75vw, 12px) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(clamp(9px, 0.85vw, 13px) * 2.125);
+  background:
+    radial-gradient(ellipse at 46% 0%, rgba(159, 101, 44, 0.13), transparent 46%),
+    linear-gradient(rgba(8, 9, 9, 0.72), rgba(3, 4, 5, 0.92)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+  overflow: hidden;
+}
+
+.nh-refinery-modal .nh-popup-close {
+  top: clamp(10px, 1cqw, 15px);
+  right: clamp(10px, 1cqw, 15px);
+}
+
+.nh-refinery-head {
+  display: grid;
+  grid-template-columns: clamp(110px, 10cqw, 155px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(10px, 1.2cqw, 20px);
+  min-width: 0;
+  min-height: clamp(105px, 10cqw, 145px);
+  padding: 2px clamp(48px, 5cqw, 72px) clamp(8px, 0.8cqw, 13px) 2px;
+  border-bottom: 1px solid rgba(170, 119, 57, 0.58);
+}
+
+.nh-refinery-emblem {
+  align-self: stretch;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(128, 100, 64, 0.56);
+  background: radial-gradient(ellipse at 50% 70%, rgba(157, 93, 43, 0.18), transparent 70%), rgba(2, 3, 4, 0.66);
+}
+
+.nh-refinery-emblem .nh-art,
+.nh-refinery-core .nh-art {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  aspect-ratio: auto;
+  background: transparent;
+}
+
+.nh-refinery-emblem .nh-art-img,
+.nh-refinery-core .nh-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(var(--nh-art-scale, 1.65));
+  transform-origin: center var(--nh-art-origin, 72%);
+}
+
+.nh-refinery-emblem .nh-art-level,
+.nh-refinery-core .nh-art-level {
+  display: none;
+}
+
+.nh-refinery-heading {
+  min-width: 0;
+}
+
+.nh-refinery-heading > span,
+.nh-refinery-process-head > div > span,
+.nh-refinery-material small,
+.nh-refinery-cycle dt {
+  color: #818784;
+  font-family: var(--font-body);
+  font-size: clamp(11px, 0.85cqw, 14px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.nh-refinery-heading h2 {
+  margin: 3px 0;
+  color: var(--ds-gold-bright, #f0dca0);
+  font-family: var(--font-head);
+  font-size: clamp(28px, 3.2cqw, 48px);
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.nh-refinery-heading p {
+  margin: 0;
+  color: #9a9b94;
+  font-size: clamp(13px, 1.05cqw, 17px);
+  line-height: 1.35;
+}
+
+.nh-refinery-rank {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  min-width: 155px;
+  padding-right: 4px;
+}
+
+.nh-refinery-rank strong,
+.nh-refinery-rank b {
+  color: #dfc574;
+  font-family: var(--font-head);
+}
+
+.nh-refinery-rank strong { font-size: clamp(17px, 1.5cqw, 24px); }
+.nh-refinery-rank b { font-size: clamp(16px, 1.25cqw, 21px); }
+.nh-refinery-rank small { color: #7d8380; font-size: clamp(11px, 0.8cqw, 13px); }
+
+.nh-refinery-workspace {
+  display: grid;
+  grid-template-columns: minmax(320px, 35%) minmax(0, 1fr);
+  gap: clamp(7px, 0.7cqw, 12px);
+  min-width: 0;
+  min-height: 0;
+}
+
+.nh-refinery-register,
+.nh-refinery-process {
+  min-width: 0;
+  min-height: 0;
+  border: clamp(5px, 0.45cqw, 7px) solid transparent;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 2.15 1.87 2.15 1.87;
+  background:
+    linear-gradient(rgba(15, 11, 8, 0.58), rgba(3, 4, 5, 0.78)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+}
+
+.nh-refinery-register {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: clamp(5px, 0.55cqw, 9px);
+}
+
+.nh-refinery-register > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 48px;
+  padding: 3px 7px 8px;
+  border-bottom: 1px solid rgba(170, 119, 57, 0.5);
+  color: #dfc574;
+  font-family: var(--font-head);
+  font-size: clamp(15px, 1.25cqw, 20px);
+}
+
+.nh-refinery-register > header small {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 30px;
+  border: 1px solid rgba(170, 119, 57, 0.62);
+  background: rgba(117, 72, 29, 0.16);
+  font-size: 13px;
+}
+
+.nh-refinery-recipes {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 7px 3px 3px;
+  scrollbar-gutter: stable;
+}
+
+.nh-refinery-recipe {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(54px, 5cqw, 72px) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: clamp(76px, 6.3cqw, 94px);
+  margin-bottom: 5px;
+  padding: 5px 8px;
+  border: 1px solid rgba(98, 83, 63, 0.55);
+  border-left: 3px solid transparent;
+  background: rgba(4, 5, 6, 0.7);
+  color: #d9d0b8;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nh-refinery-recipe:hover,
+.nh-refinery-recipe.is-selected {
+  border-color: rgba(179, 125, 61, 0.72);
+  border-left-color: #b56e33;
+  background: linear-gradient(90deg, rgba(123, 71, 29, 0.2), rgba(4, 5, 6, 0.72) 75%);
+}
+
+.nh-refinery-recipe-art {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.nh-refinery-recipe-art img { width: 100%; height: 100%; object-fit: contain; }
+.nh-refinery-recipe-copy { min-width: 0; display: grid; gap: 5px; }
+.nh-refinery-recipe-copy > strong { color: #dfcd94; font-size: clamp(14px, 1.15cqw, 18px); line-height: 1.12; overflow-wrap: anywhere; }
+.nh-refinery-recipe-copy > span { display: flex; flex-wrap: wrap; gap: 4px; }
+.nh-refinery-recipe-copy i { display: inline-flex; align-items: center; gap: 3px; padding: 2px 5px; border: 1px solid #424038; background: #090b0b; color: #9cc486; font: normal clamp(11px, 0.8cqw, 13px) var(--font-body); }
+.nh-refinery-recipe-copy i.is-lacking { color: #d17d70; border-color: rgba(184, 77, 64, 0.5); }
+.nh-refinery-recipe-copy i img { width: 21px; height: 21px; object-fit: contain; }
+.nh-refinery-recipe > em { position: absolute; top: 5px; right: 6px; color: #91c87a; font: normal 10px var(--font-body); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.nh-refinery-process {
+  display: grid;
+  grid-template-rows: auto minmax(150px, 1.1fr) minmax(136px, 0.9fr) auto;
+  gap: clamp(6px, 0.55cqw, 10px);
+  padding: clamp(8px, 0.75cqw, 13px);
+}
+
+.nh-refinery-process-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 2px 2px 8px;
+  border-bottom: 1px solid rgba(170, 119, 57, 0.5);
+}
+
+.nh-refinery-process-head h3 {
+  margin: 2px 0 0;
+  color: #e2d19f;
+  font-family: var(--font-head);
+  font-size: clamp(20px, 2cqw, 31px);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.nh-refinery-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border: 1px solid #50514b;
+  color: #858b88;
+  background: rgba(7, 8, 8, 0.75);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.nh-refinery-state i { width: 7px; height: 7px; border-radius: 50%; background: #717672; }
+.nh-refinery-state.is-running { border-color: rgba(112, 168, 88, 0.58); color: #98ca82; background: rgba(57, 92, 43, 0.16); }
+.nh-refinery-state.is-running i { background: #8bc174; box-shadow: 0 0 7px rgba(120, 183, 93, 0.46); }
+
+.nh-refinery-flow {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 28px minmax(125px, 0.9fr) 28px minmax(120px, 1fr);
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  border: 1px solid rgba(101, 85, 62, 0.52);
+  background: rgba(2, 3, 4, 0.55);
+}
+
+.nh-refinery-inputs { display: grid; align-content: center; gap: 6px; min-width: 0; }
+.nh-refinery-material { display: grid; grid-template-columns: clamp(42px, 4cqw, 60px) minmax(0, 1fr); align-items: center; gap: 7px; min-width: 0; padding: 5px 7px; border: 1px solid #454139; background: rgba(7, 8, 8, 0.78); }
+.nh-refinery-material.is-lacking { border-color: rgba(184, 77, 64, 0.58); }
+.nh-refinery-material.is-output { align-self: center; min-height: 90px; border-color: rgba(112, 168, 88, 0.48); background: linear-gradient(90deg, rgba(54, 88, 41, 0.14), rgba(7, 8, 8, 0.78)); }
+.nh-refinery-material > img { width: 100%; aspect-ratio: 1; object-fit: contain; }
+.nh-refinery-material > span { display: grid; gap: 2px; min-width: 0; }
+.nh-refinery-material strong { color: #d9cda9; font-size: clamp(12px, 1cqw, 16px); line-height: 1.1; overflow-wrap: anywhere; }
+.nh-refinery-material b { color: #91c87a; font-size: clamp(11px, 0.85cqw, 14px); }
+.nh-refinery-material.is-lacking b { color: #d17d70; }
+.nh-refinery-arrow { display: grid; place-items: center; color: #b77335; font-size: clamp(26px, 2.6cqw, 40px); }
+.nh-refinery-core { min-width: 0; min-height: 0; overflow: hidden; border: 1px solid rgba(174, 112, 53, 0.56); background: radial-gradient(ellipse at 50% 66%, rgba(157, 84, 36, 0.2), transparent 68%), rgba(3, 4, 5, 0.65); }
+
+.nh-refinery-cycle { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 7px; min-width: 0; padding: 9px 11px; border: 1px solid rgba(101, 85, 62, 0.52); background: rgba(2, 3, 4, 0.55); }
+.nh-refinery-cycle > div:first-child { display: flex; justify-content: space-between; gap: 10px; color: #b8aa84; }
+.nh-refinery-cycle > div:first-child strong { color: #dec574; }
+.nh-refinery-cycle dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0; }
+.nh-refinery-cycle dl > div { display: grid; align-content: center; gap: 3px; min-width: 0; padding: 6px 8px; border: 1px solid #3f3b33; background: #090b0b; }
+.nh-refinery-cycle dt, .nh-refinery-cycle dd { margin: 0; }
+.nh-refinery-cycle dd { color: #d8cba7; font-size: clamp(13px, 1.1cqw, 17px); overflow-wrap: anywhere; }
+
+.nh-refinery-note { display: flex; align-items: center; gap: 9px; min-width: 0; margin: 0; padding: 7px 10px; border-left: 3px solid #82b56b; background: rgba(55, 91, 43, 0.14); color: #a6c995; font-size: clamp(12px, 0.95cqw, 15px); }
+.nh-refinery-note > b { font-size: 19px; }
+.nh-refinery-note.is-stalled { border-left-color: #c36c5e; background: rgba(108, 39, 31, 0.16); color: #dc8a7c; }
+.nh-refinery-empty { align-self: center; justify-self: center; }
+
+.nh-refinery-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.nh-refinery-actions > p { margin: 0; color: #7f8582; font-size: clamp(11px, 0.85cqw, 14px); }
+.nh-refinery-actions > .nh-refine-error { grid-column: 1; }
+.nh-refinery-actions > div { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 7px; }
+.nh-refinery-actions .btn-iron { min-width: clamp(150px, 14cqw, 210px); min-height: 48px; }
+
+@media (max-width: 1100px) {
+  .modal.nh-refinery-modal { width: 97vw; max-width: 97vw; height: 95dvh; max-height: 95dvh; }
+  .nh-refinery-workspace { grid-template-columns: minmax(290px, 37%) minmax(0, 1fr); }
+  .nh-refinery-flow { grid-template-columns: minmax(104px, 1fr) 18px minmax(108px, 0.8fr) 18px minmax(104px, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .nh-list-detail-actions.has-function { grid-template-columns: 1fr; }
+  .modal.nh-refinery-modal { display: block; min-height: 0; overflow-y: auto; }
+  .nh-refinery-head { grid-template-columns: 95px minmax(0, 1fr); }
+  .nh-refinery-rank { grid-column: 1 / -1; grid-template-columns: repeat(3, auto); justify-content: start; align-items: center; min-width: 0; }
+  .nh-refinery-workspace { display: grid; grid-template-columns: 1fr; grid-template-rows: minmax(280px, 38vh) auto; margin-top: 8px; }
+  .nh-refinery-process { min-height: 610px; }
+  .nh-refinery-actions { margin-top: 8px; grid-template-columns: 1fr; }
+  .nh-refinery-actions > div { grid-column: 1; grid-row: auto; }
+}
+
+@media (max-width: 680px) {
+  .nh-refinery-head { grid-template-columns: 76px minmax(0, 1fr); padding-right: 42px; }
+  .nh-refinery-heading p { display: none; }
+  .nh-refinery-flow { grid-template-columns: 1fr; }
+  .nh-refinery-arrow { transform: rotate(90deg); min-height: 22px; }
+  .nh-refinery-core { min-height: 140px; }
+  .nh-refinery-process { min-height: 880px; }
+  .nh-refinery-cycle dl { grid-template-columns: 1fr; }
+  .nh-refinery-actions > div { display: grid; grid-template-columns: 1fr; }
+  .nh-refinery-actions .btn-iron { width: 100%; min-width: 0; }
+}
