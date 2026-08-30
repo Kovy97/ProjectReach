@@ -322,7 +322,7 @@ export const es: Record<string, string> = {
     "mail.letter.warden.firstUnique": "Encontraste ahí fuera algo que no aparece a menudo. He visto algunas piezas así a lo largo de los años, no muchas. Nunca salieron dos iguales, así que la tuya es única. La anoté en el libro. Guárdala bien.\nEl Guardián",
     "mail.letter.warden.twoHandedRanged": "Un arco necesita las dos manos, y siempre fue así. En algunas piezas antiguas estaba mal anotado, y el error fue nuestro, no tuyo. Ya lo he corregido. Tu mano del escudo está libre ahora, así que lo que llevabas ahí ha vuelto a tu morral.\nEl Guardián",
     "updateNotice.title": "Actualización {version}: Hilos, trampas y fuego arcano",
-    "updateNotice.intro": "Este parche cambia algunas cosas. Esto es lo que conviene saber.",
+    "updateNotice.intro": "El juego se ha actualizado. Encontrarás las notas del parche en la página de Steam.",
     "updateNotice.point1": "La Caza es una nueva profesión: coloca trampas, cébalas con niveles de cebo que ganas en Pesca, y sigue cada captura en el nuevo diario de caza.",
     "updateNotice.point2": "La Artesanía se dividió en dos oficios: Artesanía (cuero, arcos, cuerdas, escudos) y la nueva Sastrería (tejido, todas las túnicas de mago, todas las capas). Tu progreso anterior se repartió según lo que realmente fabricaste. Una palabra del desarrollador: lamento que esta división separe tu progreso — fue la mejor decisión para el juego, y prefería tomarla ahora que más tarde.",
     "updateNotice.point3": "Ahora puedes preparar tres kits de equipo con conjuntos completos. Un clic cambia entre ellos — útil para alternar entre combate cuerpo a cuerpo, a distancia y mágico.",

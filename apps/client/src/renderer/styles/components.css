@@ -2544,6 +2544,22 @@ body .item-cell.rarity-godly {
   grid-auto-flow: row;
 }
 
+/* Chef-Report 30.08.2026 (Bildbeleg "Moosgebundene Tritte"): Die Regel darueber reserviert die
+   ZWEITE Spalte fest fuer den Suffix - `minmax(250px, 1.04fr)`. Traegt das Stueck gar keinen
+   Suffix (der Normalfall bei Ruestung), blieb diese Spalte leer und kostete trotzdem die halbe
+   Karte: gemessen 409,875 px unbenutzt neben zwei Gruppen, die beide in Spalte 1 uebereinander
+   standen. Ohne Suffix gibt es deshalb auch keine Suffix-Spalte mehr; die Gruppen behalten ihre
+   Reihenfolge und die Spalte misst sich am Inhalt statt an einem 250-px-Boden. */
+#root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)):not(:has(.itip-suffix-group)) {
+  grid-template-columns: minmax(0, max-content);
+  grid-template-areas:
+    "attributes"
+    "defense"
+    "skill"
+    "misc"
+    "rune";
+}
+
 #root .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)) > .itip-attributes-group {
   grid-area: attributes !important;
   order: initial;
@@ -2624,7 +2640,11 @@ body .item-cell.rarity-godly {
   .itip-misc-group
 ) .itip-stat-row {
   display: grid;
-  grid-template-columns: 25px minmax(0, 1fr) max-content max-content;
+  /* Chef-Bild 30.08.2026 ("Strength1 ▲+1", "Constitution" beschnitten): Die Beschriftungsspur
+     durfte auf 0 schrumpfen, dadurch trug sie nichts zur Mindestbreite ihrer Gruppe bei - die
+     Gruppe wurde schmaler als ihre eigenen Zeilen und schnitt Beschriftungen ab. `min-content`
+     als Boden meldet die wirklich benoetigte Breite nach oben. */
+  grid-template-columns: 25px minmax(min-content, 1fr) max-content max-content;
   align-items: center;
   column-gap: 8px;
   width: 100%;
@@ -2761,18 +2781,64 @@ body .item-cell.rarity-godly {
    (die Eintopf-Karte lief sonst nach rechts aus dem Rahmen). */
 #root .item-tooltip.itip-panel.itip-panel.itip-panel {
   width: max-content;
-  min-width: min(860px, calc(100vw - 24px));
+  /* Chef-Report 30.08.2026 (Bildbelege Bluteisen-Axt, Moosgebundene Tritte, Dornenhexen-Stab):
+     `min-width: 860px` war ein HARTER Boden - die Karte war immer mindestens so breit, auch wenn
+     ihr Inhalt nur die halbe Breite brauchte. Der Rest wurde von den fr-Spalten aufgefuellt, die
+     ihre Werte per `space-between`-Raster an den rechten Rand schoben: genau die leere Flaeche
+     zwischen Beschriftung und Wert, die der Chef markiert hat. Der Boden ist jetzt deutlich
+     niedriger; `width: max-content` bestimmt die Breite wieder allein aus dem Inhalt. */
+  min-width: min(620px, calc(100vw - 24px));
   max-width: calc(100vw - 24px);
 }
-#root .itip-compare-wrap .item-tooltip.itip-panel.itip-panel.itip-panel {
+/* Chef-Report 30.08.2026 ("macht ueberhaupt keinen Sinn, dass es so viel Platz braucht"):
+   Diese Regel gab JEDER Karte fest die halbe Bildschirmbreite - gemessen 934 px bei 1920 und
+   657 px bei 1366, identisch fuer jedes Stueck, egal wie wenig darin stand. Gedacht war sie fuer
+   den Shift-Vergleich, bei dem zwei Karten nebeneinander passen muessen. Die Haelfte gilt jetzt
+   nur noch, wenn wirklich zwei Karten nebeneinander stehen; die einzelne Karte misst sich am
+   Inhalt. */
+#root .itip-compare-wrap:has(.itip-panel + .itip-panel) .item-tooltip.itip-panel.itip-panel.itip-panel {
   width: min(1160px, calc((100vw - 52px) / 2));
   max-width: calc((100vw - 52px) / 2);
 }
-#root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-main {
-  grid-template-columns: minmax(250px, 0.82fr) minmax(max-content, 1.18fr);
+#root .itip-compare-wrap:not(:has(.itip-panel + .itip-panel)) .item-tooltip.itip-panel.itip-panel.itip-panel {
+  width: max-content;
+  /* Messbefund 30.08.2026: Bei erzwungenen 560 px lief KEIN Element ueber - die Karte kann also
+     deutlich schmaler, `max-content` rechnet nur grundsaetzlich mit ungebrochenem Text. Der Deckel
+     liegt darum auf 860 px (breiteste gemessene Stat-Spalten 485 + 210 plus Bild und Rahmen) statt
+     auf den frueheren fixen 934 px der halben Bildschirmbreite. */
+  min-width: min(620px, calc(100vw - 24px));
+  max-width: min(980px, calc(100vw - 24px));
 }
+/* Chef-Report 30.08.2026, Messbefund: `minmax(max-content, …)` liess die Datenspalte ihre
+   UNUMGEBROCHENE Inhaltsbreite fordern - gemessen 1481 px in einem 874 px breiten Raster. Der
+   lange Effektsatz sprengte damit die Spalte, und Karte, Effektbox und Preiszeile wurden am
+   Rahmen abgeschnitten ("dealing 4 da", der Preis rechts ausserhalb). `minmax(0, …)` bindet die
+   Spalte an den vorhandenen Platz; zu langer Text bricht wieder um, statt auszubrechen. */
+#root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-main {
+  grid-template-columns: minmax(250px, 0.82fr) minmax(0, 1.18fr);
+}
+#root .item-tooltip.itip-panel.itip-panel.itip-panel .itip-warbanner-main > * {
+  min-width: 0;
+}
+/* Chef-Report 30.08.2026 (Bildbelege Bluteisen-Axt, Dornenhexen-Stab, Moosgebundene Tritte):
+   `1fr` als OBERE Grenze zwingt beide Spalten auf exakt DIESELBE Breite - die des breiteren
+   Inhalts. Gemessen: "409,875px 409,875px", "485,703px 485,703px". Die schmale Seite (ein Suffix
+   mit zwei kurzen Zeilen, oder gar nichts) bekam damit denselben Platz wie die volle Offensiv-
+   Tabelle, und ihre Werte wurden ans rechte Spaltenende geschoben: genau die leere Flaeche, die
+   der Chef markiert hat. `max-content` als Obergrenze laesst jede Spalte ihren EIGENEN Inhalt
+   messen; die Karte (width: max-content) schrumpft entsprechend mit. */
 #root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-record .itip-body {
-  grid-template-columns: repeat(2, minmax(max-content, 1fr));
+  /* Nachtrag 30.08.2026 (Chef-Bild "Armor Pen +" ohne Wert): `minmax(0, …)` erlaubt der Spalte,
+     unter ihren eigenen Bedarf zu schrumpfen - Werte und Vergleichspfeile wurden dann abgeschnitten
+     und Beschriftungen ueberlappten ("Strength1 ▲+1"). `min-content` als Boden haelt jede Spalte bei
+     der Breite, die ihre laengste Zeile wirklich braucht, laesst sie aber weiter am Inhalt messen. */
+  grid-template-columns: repeat(2, minmax(min-content, max-content));
+}
+/* Ohne Suffix UND ohne Offensiv-Gruppe (Normalfall bei Ruestung, Bildbeleg "Moosgebundene
+   Tritte") ist die zweite Spalte gar nicht belegt - sie darf dann auch nicht existieren.
+   Gleiche Selektorform wie oben, damit die Spezifitaet gegen den Zweispalten-Vertrag reicht. */
+#root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-record .itip-body:not(:has(.itip-offense-group)):not(:has(.itip-suffix-group)) {
+  grid-template-columns: minmax(min-content, max-content);
 }
 #root .item-tooltip.itip-panel.itip-panel.itip-panel:not(.itip-card--consumable):not(.itip-card--simple) .itip-warbanner-record .itip-body > :only-child {
   grid-column: 1 / -1;
@@ -2796,7 +2862,19 @@ body .item-cell.rarity-godly {
    beitrug. Die Liste deckt jetzt ALLE Fliesstext-Traeger der Karte ab, nicht nur die Effektzeilen. */
 #root .item-tooltip.itip-panel.itip-panel.itip-panel
   :is(.itip-effect-line, .itip-flavor, .itip-specialty, .itip-inst-affix-entry, .itip-tag, .itip-tool-hint, .itip-set-line, .itip-req-line, .itip-source) {
-  max-width: min(680px, calc(100vw - 140px));
+  /* Nachtrag 30.08.2026: Seit die Stat-Spalten sich am eigenen Inhalt messen (statt beide auf die
+     Breite der breiteren gezwungen zu werden), kann die Datenspalte SCHMALER sein als dieser
+     680px-Deckel - der Fliesstext ragte dann ueber den Kartenrand und wurde dort abgeschnitten
+     (Bildbeleg Dornenhexen-Stab: "dealing 4 da"). `100%` als dritter Deckel bindet ihn an die
+     tatsaechliche Spaltenbreite, egal wie schmal die Karte ausfaellt. */
+  /* `max-width` allein deckelt nur die DARSTELLUNG, nicht den Beitrag zur Inhaltsmessung: bei
+     `width: max-content` forderte der Fliesstext weiter seine volle ungebrochene Zeile und blies
+     die Karte auf den Deckel (gemessen 980 px bei jedem Stueck). `width: 0` + `min-width: 100%`
+     nimmt ihn aus der Messung heraus und laesst ihn die fertige Breite fuellen - wie breit die
+     Karte wird, entscheiden damit wirklich nur die Stat-Spalten. */
+  width: 0;
+  min-width: 100%;
+  max-width: min(680px, calc(100vw - 140px), 100%);
   white-space: normal;
   overflow-wrap: break-word;
 }

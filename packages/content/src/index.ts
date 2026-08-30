@@ -7568,7 +7568,16 @@ export const content: ContentDB = {
       // vom Konzept explizit gewollte "Passiv: Lifesteal"-Identität — §3.2 „Greytooth Mantle" —
       // tatsächlich wirksam bleibt) + maxHp ersatzlos gestrichen (kein legaler Ersatz nötig, lifesteal
       // bleibt der alleinige Effekt). Abweichung im Content-Bericht dokumentiert.
+      // Spieler-Report L1GR + Chef-GO 30.08.2026: Der Mantel war der EINZIGE legendaere Umhang ohne
+      // ein einziges Attribut - selbst ein "Tattered Field Cape" (common, 50 Gold) traegt con 3, und
+      // Umhaenge haben keine Ruestungswerte, Attribute sind ihre einzige Wirkung. Er wirkte darum
+      // leer, obwohl der Lebensraub laengst zaehlte. Einordnung (Elite-Unique von "Greytooth the
+      // Famished", Stufe 97, Wert 5500): Hunter's Cape superRare/1200 hat 9 Punkte, Void Shroud
+      // superRare/2800 hat 13, die Endgame-Legendaeren Palemourn/15000 und Void Titan's/28000 je 22.
+      // Bewusst am unteren Rand (Chef: "damit er nicht zu overpowered wird"): 12 Punkte, weil die
+      // Lebensraub-Signatur selbst schon Budget traegt. Profil Nahkampf, passend zum Wolf.
       bonus: { lifesteal: 0.03 },
+      modifiers: { str: 5, con: 5, dex: 2 },
       value: 5500, rarity: "legendary",
     },
     blackantler_warbow: {

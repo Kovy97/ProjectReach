@@ -44,17 +44,19 @@ const ELITE_SIGNATURE_CHANCE_DEFAULT = 0.2; // ELITE_UNIQUE_DROP_CHANCE_DEFAULT 
  *      kein Level-Feld, s. `ZoneDef`) — individuell gegen die #8-Tabelle verifiziert (Urteil dort:
  *      "gleich"/"dazwischen" gegen den korrekten Zonen-Anker, nicht gegen die hier gefundene, zu
  *      hohe Vergleichsstufe).
- *  (b) Reine Bonus-Signaturen ohne modifiers/skillBoost (z.B. `greytooth_mantle`: nur
- *      `bonus.lifesteal`) — `coreValue()` hat für Schmuck keine Umrechnung von Bonus-Prozent in
- *      Attributpunkte (keine belastbare Äquivalenz, keine im Katalog dokumentierte Rate); der
- *      Signatur-Bonus TRÄGT den Wert, den die Attributsumme hier nicht sieht.
+ *  (b) Reine Bonus-Signaturen ohne modifiers/skillBoost — `coreValue()` hat für Schmuck keine
+ *      Umrechnung von Bonus-Prozent in Attributpunkte (keine belastbare Äquivalenz, keine im
+ *      Katalog dokumentierte Rate); der Signatur-Bonus TRÄGT dann einen Wert, den die
+ *      Attributsumme hier nicht sieht. Aktuell greift der Fall NIRGENDS mehr: `greytooth_mantle`
+ *      war der einzige Vertreter und hat am 30.08.2026 (Spieler-Report L1GR, Chef-GO) echte
+ *      Attribute bekommen — er besteht die Prüfung seither regulär. Die Klausel bleibt als
+ *      Begründungsmuster stehen, falls wieder ein Stück rein über eine Signatur getragen wird.
  */
 const CRAFT_VALUE_EXEMPT = new Set<ItemId>([
   "briarbound_conduit", // #p8: Req bleibt, Zonen-Anker blackthorn (magic 52, "gleich" gg. adamantium_focus)
   "abyssal_tide_bow", // #p8: Req bleibt, Zonen-Anker coast (ranged 90, "gleich" gg. aetherium_longbow)
   "dreadfang_glaive", // #p8: Req bleibt, Zonen-Anker Turm F4 (attack 70, "dazwischen" gg. runite_spear)
   "abyssal_devourer_fang", // #p8: Req bleibt, Zonen-Anker Turm F5 (attack 90, "dazwischen" gg. titanium_dagger)
-  "greytooth_mantle", // reine bonus.lifesteal-Signatur ohne modifiers/skillBoost (s.o.)
   // Stil-Parität 4a (Chef-GO 26.08.2026, §4a A2): felmagician_rod ist ein Szepter — die einzige
   // "Craft-Familie" `weapon|scepter` hat nur zwei Einzelstücke im ganzen Katalog (frost_scepter@8,
   // stormcaller_rod@50, s. Kommentar "Szepter-Linie fehlte in Spec §3.3" bei den Scepter-Items).

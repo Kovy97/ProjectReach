@@ -560,6 +560,12 @@
   max-width: min(620px, 88vw);
   text-align: center;
   padding: 22px 26px 18px;
+  /* Spieler-Report Steam Deck (30.08.2026, 1280x800): der Hinweis war so hoch, dass der
+     Schliessen-Knopf UNTER dem Bildschirmrand lag - der Spieler kam nicht mehr ins Spiel.
+     Der Inhalt ist seither nur noch ein Satz, aber die Hoehengrenze bleibt als Netz: laenger
+     als der Bildschirm kann das Fenster nicht mehr werden, notfalls scrollt es. */
+  max-height: 88vh;
+  overflow-y: auto;
 }
 
 .update-notice-icon img {

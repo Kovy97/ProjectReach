@@ -464,6 +464,8 @@ const BONUS_COMPARE_KEYS: (keyof EquipBonus)[] = [
   "critChance",
   "critDamage",
   "attackIntervalMs",
+  // Spieler-Report 30.08.2026 (L1GR): fehlte hier, darum trug die Lebensraub-Zeile kein Vergleichs-Delta.
+  "lifesteal",
 ];
 
 /** Attribut-Modifier-Keys werden als `mod:<attr>` geführt, Skill-Boosts als `boost:<skillId>`. */
@@ -765,6 +767,15 @@ function OffenseGroup({
       const mine = b.critDamage + d;
       rows.push(<StatRow key="cd" icon={statIcon("icon_attribute_critdamage", "💥")} label={t("stat.critDamage")} value={`+${Math.round(mine * 100)}%`} tone={d !== 0 ? modTone : undefined} delta={deltaTagFor(deltaMap, "critDamage", mine, { percent: true })} />);
     }
+    // Spieler-Report 30.08.2026 (L1GR, "legendary signature effect not displayed"): `bonus.lifesteal`
+    // war das EINZIGE der 15 EquipBonus-Felder, das nur die SuffixGroup rendern konnte — der
+    // Signatur-Effekt des Grundgegenstands stand nirgends. Beim Grauzahn-Mantel ist Lebensraub der
+    // alleinige Wert (maxHp verbietet der Ruestungs-Guard), darum wirkte die Karte voellig leer.
+    if (b.lifesteal) {
+      const d = delta?.lifesteal ?? 0;
+      const mine = b.lifesteal + d;
+      rows.push(<StatRow key="ls" icon={statIcon("icon_attribute_hp", "🩸")} label={t("stat.lifesteal")} value={`+${Math.round(mine * 100)}%`} tone={d !== 0 ? modTone : undefined} delta={deltaTagFor(deltaMap, "lifesteal", mine, { percent: true })} />);
+    }
     if (b.attackIntervalMs) {
       const d = delta?.attackIntervalMs ?? 0;
       const base = b.attackIntervalMs;
@@ -795,9 +806,8 @@ function OffenseGroup({
   // Hinweis. Das Delta selbst bleibt bewusst NUR gegen die Mainhand (kein Extra-Vergleich gegen die
   // Offhand, s. Auftrag „nicht überkomplizieren"). Zeigt sich naturgemäß nie am angelegten Item
   // selbst (dessen Offhand ist beim Tragen einer 2H-Waffe immer leer).
-  if (item.twoHanded && state?.character.equipment.offhand) {
-    rows.push(<div key="2hoff" className="itip-tag itip-tool-hint">{t("itip.delta.twoHandReplacesOffhand")}</div>);
-  }
+  // Chef 30.08.2026: Der Satz "Ersetzt auch deine Nebenhand (Schild)" ist raus - die Kopfzeile
+  // sagt bereits "Zweihaendig", der Hinweis kostete nur eine Zeile und Kartenbreite.
 
   // Zauberfokus (Chef-GO 28.08.2026, bewusster Magier-Buff): Magiewaffen wachsen mit INT. Zeile 1
   // „+0,3 % Schaden je INT" (Item-Feld `spellFocus`), Zeile 2 nur mit geladenem Charakter: die

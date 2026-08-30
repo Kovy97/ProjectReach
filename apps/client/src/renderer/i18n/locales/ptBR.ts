@@ -320,7 +320,7 @@ export const ptBR: Record<string, string> = {
     "mail.letter.warden.firstUnique": "Você achou aí fora uma coisa que não aparece com frequência. Já vi algumas peças assim ao longo dos anos, não muitas. Nenhuma delas saiu igual à outra, então a sua é única. Anotei no livro. Guarda ela com cuidado.\nO Guardião",
     "mail.letter.warden.twoHandedRanged": "Um arco exige as duas mãos, e sempre exigiu. Em algumas peças antigas isso estava anotado errado, e a falha foi nossa, não sua. Já corrigi o registro. Sua mão de escudo está livre agora, então o que você carregava ali voltou para a sua mochila.\nO Guardião",
     "updateNotice.title": "Atualização {version}: Fios, armadilhas e fogo arcano",
-    "updateNotice.intro": "Este patch mudou algumas coisas. Vale saber o seguinte.",
+    "updateNotice.intro": "O jogo foi atualizado. As notas da atualização estão na página da Steam.",
     "updateNotice.point1": "Caça é uma nova profissão: monte armadilhas, isque-as com níveis de isca conquistados na Pesca, e acompanhe cada captura no novo diário de caça.",
     "updateNotice.point2": "O Artesanato foi dividido em duas profissões: Artesanato (couro, arcos, cordas, escudos) e a nova Alfaiataria (tecelagem, todos os mantos de mago, todas as capas). Seu progresso anterior foi dividido de acordo com o que você realmente fabricou. Uma palavra do desenvolvedor: sinto muito que essa divisão separe seu progresso — foi a melhor decisão para o jogo, e preferi tomá-la agora do que mais tarde.",
     "updateNotice.point3": "Agora você pode preparar três kits de equipamento com conjuntos completos. Um clique alterna entre eles — útil para trocar entre corpo a corpo, à distância e magia.",

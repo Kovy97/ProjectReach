@@ -92,13 +92,12 @@ export function UpdateNotice(): JSX.Element | null {
 
   // Die Punkte kommen als nummerierte Schlüssel; fehlt einer, hört die Liste dort auf. So braucht
   // ein künftiger Patch nur neue Texte, keinen Code.
-  const punkte: string[] = [];
-  for (let i = 1; i <= 8; i++) {
-    const key = `updateNotice.point${i}`;
-    const text = t(key);
-    if (!text || text === key) break;
-    punkte.push(text);
-  }
+  // Chef 30.08.2026: keine langen Patchnotes mehr im Spiel. Der Hinweis ist ab jetzt EIN Satz, der auf
+  // die Steam-Seite verweist — die `updateNotice.pointN`-Schluessel werden bewusst nicht mehr gelesen.
+  // Anlass war ein Steam-Deck-Report: die lange Liste schob den Schliessen-Knopf aus dem 800px-Bild,
+  // der Spieler kam nicht mehr ins Spiel. Gegen genau das schuetzt zusaetzlich die Hoehengrenze in
+  // modals.css (.update-notice-modal: max-height + overflow-y), damit der Knopf strukturell nie mehr
+  // ausserhalb des Bildschirms liegen kann.
 
   return createPortal(
     <div className="modal-overlay" role="dialog" aria-modal="true">
@@ -110,13 +109,6 @@ export function UpdateNotice(): JSX.Element | null {
           {t("updateNotice.title").replace("{version}", __APP_VERSION__)}
         </h2>
         <p className="update-notice-intro">{t("updateNotice.intro")}</p>
-        {punkte.length > 0 && (
-          <ul className="update-notice-list">
-            {punkte.map((p, i) => (
-              <li key={i}>{p}</li>
-            ))}
-          </ul>
-        )}
         {schildBetroffen && (
           <p className="update-notice-shield">{t("updateNotice.shield")}</p>
         )}
