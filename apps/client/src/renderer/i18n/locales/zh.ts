@@ -325,7 +325,7 @@ export const zh: Record<string, string> = {
     "mail.letter.brenna.firstChampion": "冠军解决了。这次我承认：干净利落。这封信里我给你捎了点小东西，路上用。别说我从没给过你什么东西。下一个也已经在外面某处游荡了，它的头我也要。\n布蕾娜",
     "mail.letter.warden.firstUnique": "你在外面找到了一件不常见的东西。这些年我见过几件这样的东西，但不多。没有两件是一模一样的，所以你这件独一无二。我已经记进书里了。好好收着。\n守望者",
     "mail.letter.warden.twoHandedRanged": "弓向来需要双手，从来如此。早年流传的一些弓被错记成单手，那是我们的疏忽，不是你的。我已经改正。你的盾手现在空了，原本拿在那里的东西已送回你的行囊。\n守望者",
-    "updateNotice.title": "更新 {version}：丝线、陷阱与魔火",
+    "updateNotice.title": "更新 {version}",
     "updateNotice.intro": "游戏已更新。补丁说明请见 Steam 页面。",
     "updateNotice.point1": "狩猎是一项新技能：布置陷阱，用通过钓鱼获得的诱饵等级装饵，并在新的狩猎日志中记录每一次捕获。",
     "updateNotice.point2": "制作被拆分为两项技能：制作（皮革、弓、弓弦、盾牌）和新的裁缝（织造、所有法师法袍、所有披风）。你之前的进度会按照你实际制作过的东西重新分配。开发者的一句话：很抱歉这次拆分打乱了你的进度——这对游戏整体是更好的决定，我宁愿现在做，也不想拖到以后。",

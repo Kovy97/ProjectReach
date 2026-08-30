@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.2.0 Threads, Traps & Spellfire (Jagen, Schneidern, Fasern, Magie-Rework, Partikel-Effekte, Kits)"
+	"desc"	"Grim Reach 1.2.1 (Schmuck-Rework 41 Stuecke, Item-Karten-Fixes, Steam-Deck-Blocker, Spieler-Reports)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""

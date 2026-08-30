@@ -1,0 +1,44 @@
+Grim Reach 1.2.1 - Jewellery Rework & Item Card Overhaul
+
+Hunters,
+
+this is a follow up to 1.2.0, and most of it comes straight from your reports. The big piece is jewellery: rings and amulets were built for melee almost exclusively, so ranged and magic characters had nothing worth wearing. That is fixed with 41 new pieces and a full pass over the existing ones. The second piece is the item card, which several of you called out as oversized and cut off. It has been rebuilt to size itself to what is actually on it. Saves stay compatible as always.
+
+NEW
+
+- 41 new rings and amulets. Style coverage goes from 31 melee, 10 magic and a single ranged piece to 38 melee, 24 magic and 17 ranged. A ranged character now has real jewellery choices at every stage of the game, and ranged jewellery is best in slot for a ranged build rather than an afterthought.
+- A complete ranged line: seven rings and seven amulets with their own recipes, from early leather and sinew bands up to feathered relics.
+- Ten magic pieces that carry their theme through material and carved rune rather than glow.
+- Five melee amulets and eight rare finds with special effects, plus a skilling line of tools shaped rings for gathering and crafting.
+- Three new jewellery sets.
+- Every one of the 41 pieces has newly painted art.
+
+BALANCE
+
+- The ring ladder is back on its curve. A player reported that a level 55 Diamond Ring carried seven attributes and two skills while the Grave Warden Band carried far less at a similar level. That turned out to be a real balance fault, not a display problem. Thirteen pieces pointed in the wrong direction for their slot and have been corrected.
+- Luck was doing too much of the work across jewellery. Its share drops from 20.6 % to 12.6 %, with the total power of each piece kept the same, so nothing you own gets weaker overall.
+- Crafted rings now carry armour, evasion or ward values in line with the armour trinity.
+- The Greytooth Mantle was the only legendary cape in the game without a single attribute, which made it look empty next to a common cape. It now carries Strength 5, Constitution 5 and Dexterity 2 alongside its 3 % lifesteal, placed deliberately below the endgame capes so it fits its level rather than overshooting it.
+- Sixteen crafted staves and wands asked for materials that did not match their element. A poison wand wanting frost essence and frost shards, for example. Every recipe now uses the materials of its own element, at the same material value as before.
+
+ITEM CARD
+
+- The card now sizes itself to its contents. It used to take a fixed half of your screen regardless of how little was on it, which left large empty areas and pushed values far from their labels.
+- The suffix column no longer gets cut off. On cards with a long offensive column, the artwork column was growing in fixed proportion with the data and eating the space the suffix needed.
+- Signature effects on the base item, such as the lifesteal on a Champion drop, now appear on the card. They were only ever shown when they came from a random suffix, so several legendary items looked like they did nothing.
+- Long effect text and the price line no longer run past the frame.
+- On smaller resolutions the card scales its text between 80 and 100 %, breaks lines properly and hyphenates instead of chopping words. At 1600 wide and above it is pixel identical to before.
+- Two handed weapons no longer repeat that they replace your off hand. The header already says two handed.
+
+FIXES
+
+- Steam Deck: the update notice was tall enough that its close button sat below the bottom of the screen, which left players unable to reach the game at all. The notice is now a single line pointing here for the patch notes, and its height is capped so this cannot happen again on any screen.
+- Companion abilities now carry their element. The Pyreling and the Slagfiend were firing a grey bolt instead of fire. Every companion ability now takes its theme from the status it applies.
+- The item wiki shows where a plant's seed comes from. Growing a plant listed Farming as its only source, with no hint where to get the seed in the first place.
+
+IMPROVEMENTS
+
+- Inventory and bank can be sorted by type, grouped the same way as the filter chips: weapons, armour, tools, food, potions and materials, alphabetically within each group.
+- The in game update notice is now a single short line. Full patch notes live here on Steam from now on.
+
+As always: if something feels off, tell me here or through the bug report button in the options. Thanks in particular to the players who sent screenshots of the broken item cards. Nearly every fix in this list started as one of those.
