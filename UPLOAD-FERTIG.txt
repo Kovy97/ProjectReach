@@ -1,28 +1,35 @@
 UPLOAD FERTIG
 =============
 
-Grim Reach 1.2.2 liegt im Depot.
+Grim Reach 1.2.3 liegt im Depot.
 
-  BuildID     25032454   (ersetzt 25026461 und 25019798 = 1.2.1)
-  Zeit        31.08.2026, 10:24
+  BuildID     25036037   (ersetzt 25032454/25026461 = 1.2.2 und 25019798 = 1.2.1)
+  Zeit        31.08.2026, 14:19
   Depot       4915451 (App 4915450)
-  Paket       apps/client/release/win-unpacked, Exe-Version 1.2.2.0
+  Paket       apps/client/release/win-unpacked, Exe-Version 1.2.3.0
   setlive     LEER - der Build ist NICHT live, das schaltest du in Steamworks
 
 Verifiziert ueber steam/output/app_build_4915450.log:
-"Successfully finished AppID 4915450 build (BuildID 25032454)."
+"Successfully finished AppID 4915450 build (BuildID 25036037)."
 
 
 WAS DU NOCH TUN MUSST
 ---------------------
-1. Steamworks -> SteamPipe -> Builds -> Build 25032454 -> Branch "default" -> live setzen.
+1. Steamworks -> SteamPipe -> Builds -> Build 25036037 -> Branch "default" -> live setzen.
 2. Steam-Post veroeffentlichen. Text liegt fertig (nur Englisch):
-   G:\GameDev\design\steam-post-1.2.2.txt
+   G:\GameDev\design\steam-post-1.2.3.txt
 3. Anwendung -> Veroeffentlichen.
 
 
-WAS IN 1.2.2 DRIN IST
+WAS IN 1.2.3 DRIN IST
 ---------------------
+WICHTIG: 1.2.2 lag im Depot, war aber nie live. 1.2.3 enthaelt daher ALLES aus 1.2.2 plus den
+Dev-Knopf. Fuer die Spieler ist es EIN Update — die Patchnotes decken alles ab.
+
+Nur fuer dich (nicht in den Patchnotes): Dev-Zeitraffer hat jetzt einen Knopf, der die
+"Waehrend du weg warst"-Buehne mit Demo-Daten in jedem Abschnitt oeffnet. Haengt hinter dem
+devToolsAllowed-Gate, existiert im ausgelieferten Spiel nicht.
+
 Schriftwahl (dein Auftrag 31.08.)
   * Vier Modi in den Anzeige-Einstellungen: Atmosphaere (Vorgabe, unveraendert), Buch (Georgia),
     Antiqua (Palatino), Klar (Segoe UI). Mit Erklaerzeile und Vorschau in der jeweiligen Schrift.
