@@ -82,7 +82,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, actionInputsOnHand, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -2134,6 +2134,19 @@ export function tailoringXpFromCraftLog(state: GameState, content: ContentDB): n
 }
 
 function migrateState(state: GameState, content: ContentDB): GameState {
+  // — Inventar einmalig geradeziehen (SAVE 87, Chef-Report 31.08.2026 mit Bildbeleg) —
+  //   Bis v86 legte jeder Fund sich in die ERSTE freie Luecke, und beim Verbrauchen blieb ein
+  //   leeres Fach zurueck. Ueber Wochen entsteht daraus ein Flickenteppich, den die alte Ansicht
+  //   nur versteckt hat: sie zeichnete die belegten Faecher zusammenhaengend und schob alle
+  //   Luecken ans Ende. Seit die Faecher an ihrer ECHTEN Position stehen, saehe der Spieler dieses
+  //   Chaos zum ersten Mal — beim Chef waren es 22 Stapel, verteilt ueber 40 Faecher.
+  //   Ein Spielstand soll nicht mit fremdem Durcheinander in das neue System starten, deshalb hier
+  //   EINMALIG (nur beim Sprung von < 87) aufraeumen. Danach gehoeren die Luecken dem Spieler:
+  //   wer sein Erz aus Fach 3 nimmt, behaelt Fach 3 leer.
+  if ((state.version ?? 0) < 87 && state.inventory && Array.isArray(state.inventory.slots)) {
+    compactInventory(state.inventory);
+  }
+
   // Equip-Slots: fehlende/umbenannte Slots auffüllen.
   const oldEquip = state.character.equipment as Record<string, ItemId | null>;
   const equip = {} as Record<EquipSlot, ItemId | null>;

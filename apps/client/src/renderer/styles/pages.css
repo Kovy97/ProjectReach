@@ -5593,3 +5593,26 @@ body.bank-dragging-noselect {
 
 /* Platz fuer die Notiz: die Zeile soll den Item-Namen nicht ueberlagern. */
 .toast:has(.toast-note) { padding-bottom: 38px; }
+
+/* Sortier-Knopf neben dem Sortier-Dropdown (Chef 31.08.2026): Sortieren ist eine einmalige Aktion,
+   keine Ansicht mehr — deshalb braucht die Auswahl einen Ausloeser statt sofort zu wirken. */
+.cs-inv-sortbtn {
+  margin-left: 6px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  color: #e8d8b0;
+  background: linear-gradient(rgba(52, 43, 31, 0.9), rgba(22, 18, 14, 0.95));
+  border: 1px solid rgba(205, 147, 74, 0.45);
+}
+
+.cs-inv-sortbtn:hover {
+  color: #f0dda0;
+  border-color: rgba(216, 192, 106, 0.8);
+}
+
+.cs-inv-sortbtn:focus-visible {
+  outline: 2px solid #d8c06a;
+  outline-offset: 2px;
+}

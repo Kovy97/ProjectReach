@@ -134,6 +134,52 @@ export function CharacterPage(): JSX.Element {
   const [dragItem, setDragItem] = useState<string | null>(null);
   // Quell-Slot beim Drag&Drop-Umsortieren im Inventar (originalIdx); null = kein Inventar-Drag.
   const [dragInvIdx, setDragInvIdx] = useState<number | null>(null);
+
+  /**
+   * Sortieren als einmalige AKTION (Chef 31.08.2026: „Sortieren soll ein einmaliges Verschieben
+   * der Items sein, kein Zustand").
+   *
+   * Vorher war die Sortierung eine Ansicht: Das Dropdown ordnete die Darstellung um, waehrend die
+   * echten Faecher unveraendert blieben — deshalb liess sich nur im Modus „Neueste" ziehen, in
+   * allen anderen nicht. Mit echten Faechern ergibt das keinen Sinn mehr. Jetzt ordnet der Knopf
+   * die Faecher WIRKLICH um; danach steht wieder alles frei zum Verschieben.
+   *
+   * Belegte Faecher rutschen dabei nach vorne, Luecken sammeln sich hinten — wer bewusst Abstaende
+   * gelassen hat, verliert sie, aber genau darum ist es ein Knopf und kein Automatismus.
+   */
+  const sortiereJetzt = (): void => {
+    const inv = state.inventory;
+    const belegt = inv.slots.filter((sl): sl is NonNullable<typeof sl> => sl !== null);
+    if (sortMode !== "newest") {
+      belegt.sort((a, b) => compareItemsBy(sortMode, a.itemId, b.itemId, content, tr));
+    }
+    for (let i = 0; i < inv.slots.length; i++) inv.slots[i] = i < belegt.length ? belegt[i]! : null;
+    setDragItem(null);
+    bumpCrate((n) => n + 1);
+  };
+
+  /**
+   * Ein leeres Inventarfach als Ablageziel. Bewusst EIN Helfer fuer beide Renderstellen: die
+   * Position eines Fachs und sein Verhalten beim Ablegen duerfen nie auseinanderlaufen — genau
+   * daran ist das Ziehen vorher gescheitert.
+   */
+  const leeresFach = (originalIdx: number): JSX.Element => (
+    <div
+      key={originalIdx}
+      className={`inv-slot${dragInvIdx !== null ? " inv-drop-target" : ""}`}
+      onDragOver={dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
+      onDrop={
+        dragInvIdx !== null
+          ? (e) => {
+              e.preventDefault();
+              moveInventorySlot(state.inventory, dragInvIdx, originalIdx);
+              setDragInvIdx(null);
+              setDragItem(null);
+            }
+          : undefined
+      }
+    />
+  );
   const [sortMode, setSortMode] = useState<SortMode>("newest");
   // Such-/Typ-Filter (Chef-Auftrag Suche/Filter/Sortierung 2026-07-09): NUR die Anzeige — dimmt
   // Nicht-Treffer, statt sie auszublenden (Inventar hat Slot-Semantik, Drag&Drop-Ziele müssen
@@ -325,13 +371,10 @@ export function CharacterPage(): JSX.Element {
   for (const { slot, originalIdx } of sortedSlots) {
     if (!slot && leereSichtbar.size < freieEinheiten) leereSichtbar.add(originalIdx);
   }
-  sortedSlots.sort((a, b) => {
-    if (sortMode === "newest") return a.originalIdx - b.originalIdx;
-    if (!a.slot) return 1;
-    if (!b.slot) return -1;
-    // Geteilte Sortier-Logik mit BankPage (kennt alle 8 Rarity-Tiers, nicht nur 5).
-    return compareItemsBy(sortMode, a.slot.itemId, b.slot.itemId, content, tr);
-  });
+  // Chef 31.08.2026: Die Anzeige folgt IMMER der echten Fachreihenfolge — Sortieren ist jetzt eine
+  // Aktion (`sortiereJetzt`), die die Faecher wirklich umordnet, keine Ansicht mehr. Damit ist auch
+  // das Verschieben in jedem Zustand erlaubt; vorher ging es nur im Modus „Neueste", was niemand
+  // erraten konnte.
 
 
   return (
@@ -561,6 +604,11 @@ export function CharacterPage(): JSX.Element {
               <option value="value">{t("char.sortValue")}</option>
               <option value="rarity">{t("char.sortRarity")}</option>
             </select>
+            {/* Chef 31.08.2026: Das Dropdown WAEHLT nur noch die Art, dieser Knopf FUEHRT AUS —
+                sonst wuerde jede Auswahl sofort die Faecher umwerfen. */}
+            <button type="button" className="cs-inv-sortbtn" onClick={sortiereJetzt}>
+              {t("char.sortApply")}
+            </button>
           </div>
         </div>
 
@@ -611,19 +659,27 @@ export function CharacterPage(): JSX.Element {
         {/* Inventory grid / list */}
         <div className={"cs-inv-grid"}>
           {sortedSlots.map(({ slot, originalIdx }, displayIdx) =>
-            slot ? (
+            !slot ? (
+              /* Chef-Report 31.08.2026: „ich dragge etwas auf einen leeren platz aber es huepft
+                 einfach auf einen anderen random platz". Ursache war, dass leere Faecher frueher
+                 GESAMMELT am Ende gerendert wurden (s. alter Kommentar unten) — das Kaestchen, auf
+                 das man zog, gehoerte also gar nicht zu dem Fach, dessen Index beim Ablegen benutzt
+                 wurde. Im Sortiermodus „Neueste", dem einzigen mit echten Positionen, stehen die
+                 Luecken jetzt genau dort, wo sie im Inventar wirklich sind. */
+              leeresFach(originalIdx)
+            ) : (
               /* Wrapper catches mousedown for selection without blocking ItemCell tooltip click.
                  Drag&Drop: Start merkt den Quell-Slot, Drop auf einen anderen Slot tauscht (Umsortieren). */
               <div
                 key={originalIdx}
-                className={`cs-inv-slot-wrap${sortMode === "newest" && dragInvIdx !== null && dragInvIdx !== originalIdx ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(slot.itemId) ? " invf-dim" : ""}`}
+                className={`cs-inv-slot-wrap${dragInvIdx !== null && dragInvIdx !== originalIdx ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(slot.itemId) ? " invf-dim" : ""}`}
                 /* Quell-Slot IMMER merken (für Equip-per-Drag / Quick-Sell von Instanzen); das
                    Umsortier-Drop selbst bleibt aber auf "newest" begrenzt (sonst falsche Slot-Zuordnung). */
                 onDragStart={() => setDragInvIdx(originalIdx)}
                 onDragEnd={() => { setDragInvIdx(null); setDragItem(null); }}
-                onDragOver={sortMode === "newest" && dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
+                onDragOver={dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
                 onDrop={
-                  sortMode === "newest" && dragInvIdx !== null
+                  dragInvIdx !== null
                     ? (e) => { e.preventDefault(); moveInventorySlot(state.inventory, dragInvIdx, originalIdx); setDragInvIdx(null); setDragItem(null); }
                     : undefined
                 }
@@ -650,7 +706,7 @@ export function CharacterPage(): JSX.Element {
                   );
                 })()}
               </div>
-            ) : null,
+            ),
           )}
           {/* Orphan-Basis-Item-Gruppen (Chef-Fix 2026-07-06, Bild #43): Basis-Items, die AUSSCHLIESSLICH
               als verzauberte Instanz existieren (kein schlichter Stack), werden DIREKT HINTER den
@@ -674,21 +730,11 @@ export function CharacterPage(): JSX.Element {
               />
             </div>
           ))}
-          {/* Leere Slots ZULETZT (nach befüllten Items + Orphans) → oben ein zusammenhängender Item-Block. */}
-          {sortedSlots.map(({ slot, originalIdx }, displayIdx) =>
-            !slot ? (!leereSichtbar.has(originalIdx) ? null : (
-              <div
-                key={originalIdx}
-                className={`inv-slot${sortMode === "newest" && dragInvIdx !== null ? " inv-drop-target" : ""}`}
-                onDragOver={sortMode === "newest" && dragInvIdx !== null ? (e) => e.preventDefault() : undefined}
-                onDrop={
-                  sortMode === "newest" && dragInvIdx !== null
-                    ? (e) => { e.preventDefault(); moveInventorySlot(state.inventory, dragInvIdx, originalIdx); setDragInvIdx(null); setDragItem(null); }
-                    : undefined
-                }
-              />
-            )) : null,
-          )}
+          {/* Nur noch bei aktiver Sortierung: dort ist die Position bedeutungslos (und Ziehen
+              gesperrt), deshalb bleiben die leeren Faecher hier als zusammenhaengender Block am
+              Ende. Im Modus „Neueste" stehen sie oben an ihrer echten Position. */}
+          {/* Der frueher hier stehende Zweitblock fuer leere Faecher entfaellt: sie werden
+              oben an ihrer echten Position gerendert, in jedem Sortierweg. */}
         </div>
 
         {/* Das Item-Detail-Panel ist raus (Chef 2026-07-09: „Diese Sektion kann raus aus dem Inv!") —

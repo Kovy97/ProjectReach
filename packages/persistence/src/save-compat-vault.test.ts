@@ -342,6 +342,16 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // LEERE Luecke stehen und rueckt NICHT nach. Genau das ist das gewuenschte OSRS-Verhalten und
     // der Grund fuer diese etwas umstaendliche Erwartung: Fachanzahl aus dem alten Save, Inhalt
     // aus dem neuen.
+    // v87 (Chef-Report 31.08.2026): Alt-Saves werden beim Laden EINMALIG geradegezogen — belegte
+    // Faecher nach vorne, Luecken nach hinten. Bis v86 landete jeder Fund in der ERSTEN Luecke und
+    // hinterliess beim Verbrauchen ein leeres Fach; die alte Ansicht hat das versteckt, seit die
+    // Faecher an ihrer echten Position stehen wuerde man das gewachsene Chaos sehen.
+    {
+      const belegt = erwartet.state.inventory.slots.filter((sl) => sl !== null);
+      for (let i = 0; i < erwartet.state.inventory.slots.length; i++) {
+        erwartet.state.inventory.slots[i] = i < belegt.length ? belegt[i]! : null;
+      }
+    }
     const bankVorher = Object.keys((JSON.parse(json) as { state: GameState }).state.bank ?? {}).sort();
     const bankNachher = result!.state.bank;
     erwartet.state.bankOrder = bankVorher.map((id) =>

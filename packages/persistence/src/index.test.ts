@@ -1706,8 +1706,13 @@ function withoutMasterCapes(): ContentDB {
     const json = serialize(s, 1000);
 
     const { state: loaded } = loadOk(json, content, 1000);
+    // SAVE 87 (Chef-Report 31.08.2026): Alt-Saves werden beim Laden EINMALIG geradegezogen — die
+    // Faecher stehen seither an ihrer echten Position, und ein v68-Save bringt gewachsene Luecken
+    // mit, die der Spieler sonst zum ersten Mal saehe. Die beiden Stapel liegen deshalb jetzt in
+    // Fach 0 und 1 statt 0 und 2; die Konsolidierung selbst (9999 + Rest) ist unveraendert.
     expect(loaded.inventory.slots[0]).toEqual({ itemId: "copper_ore", qty: 9999 });
-    expect(loaded.inventory.slots[2]).toEqual({ itemId: "copper_ore", qty: 8001 });
+    expect(loaded.inventory.slots[1]).toEqual({ itemId: "copper_ore", qty: 8001 });
+    expect(loaded.inventory.slots[2]).toBeNull();
     const again = loadOk(serialize(loaded, 2000), content, 2000).state;
     expect(again.inventory.slots).toEqual(loaded.inventory.slots);
   });

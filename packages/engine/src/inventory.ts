@@ -416,6 +416,31 @@ export function removeItem(inv: InventoryState, itemId: ItemId, qty: number): nu
  * `fromIdx` und `toIdx` — funktioniert für besetzt↔besetzt (Swap) wie besetzt↔leer (Verschieben).
  * No-op bei gleichen/ungültigen Indizes. Reine Umordnung; verändert keine Mengen/Items.
  */
+/**
+ * Raeumt das Inventar auf: alle belegten Faecher rutschen in ihrer bisherigen Reihenfolge nach
+ * vorne, die Luecken sammeln sich hinten. Aendert NICHTS am Bestand, nur an der Platzierung.
+ *
+ * Zwei Aufrufer:
+ *  1. Die Migration auf SAVE 87 (einmalig). Vorher legte jeder Fund sich in die ERSTE Luecke, und
+ *     beim Verbrauchen blieb ein leeres Fach zurueck — ueber Wochen entsteht ein Flickenteppich.
+ *     Die alte Ansicht hat den versteckt, indem sie belegte Faecher zusammenhaengend zeichnete;
+ *     seit die Faecher an ihrer echten Position stehen, saehe man ihn. Ein Spielstand soll aber
+ *     nicht mit fremdem Chaos in das neue System starten, deshalb einmal geradeziehen.
+ *  2. Der "Aufraeumen"-Knopf im Inventar, wenn der Spieler es spaeter selbst will.
+ *
+ * Danach gehoeren die Luecken dem Spieler: Wer sein Erz aus Fach 3 nimmt, behaelt Fach 3 leer.
+ */
+export function compactInventory(inv: InventoryState): boolean {
+  const belegt = inv.slots.filter((s) => s !== null);
+  let veraendert = false;
+  for (let i = 0; i < inv.slots.length; i++) {
+    const neuWert = i < belegt.length ? belegt[i]! : null;
+    if (inv.slots[i] !== neuWert) veraendert = true;
+    inv.slots[i] = neuWert;
+  }
+  return veraendert;
+}
+
 export function moveInventorySlot(inv: InventoryState, fromIdx: number, toIdx: number): boolean {
   const n = inv.slots.length;
   if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0 || fromIdx >= n || toIdx >= n) return false;
