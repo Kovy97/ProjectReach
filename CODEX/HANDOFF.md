@@ -2508,3 +2508,25 @@ die 37 transparenten 512er PNG/WebP-Dateien und verschiebt den Auftrag anschlie�
 - `codex:2026-08-26T21:05:00+02:00` bis `codex:2026-08-26T21:32:00+02:00` — Produktionsplan,
   Promptprotokoll, QA-Skript, Brief-Abnahme, Staging-README, QA, HANDOFF und WORKLOG. Die
   kommentarfreien PNGs sind hier über ihre exakten Zielpfade dokumentiert.
+
+## 2026-08-31 — RPG-Kampf-HUD auf isoliertem Branch
+
+<!-- codex:2026-08-31T19:24:00+02:00 -->
+
+- Branch: `combat-hud-rpg-widgets` in der isolierten Arbeitskopie
+  `CODEX/work/2026-08-31-combat-hud-runtime/repo/`; Claudes parallele Inventar-Arbeit im
+  Haupt-Worktree wurde nicht berührt.
+- `CombatPage.tsx`: waffenabhängige Kurzstatistik (Nahkampf/Fernkampf/Magie), echte ausklappbare
+  Vollstatistik ohne Levelwerte und kompakte Spieler-/Gegner-HUD-Bänder ergänzt.
+- `combat.css`: Arena-Außenrahmen verschlankt, HUD-Bänder responsiv gestaltet und HP/Ward/
+  Angriff rahmenlos als frei schwebende Leisten über den Figuren positioniert.
+- Typecheck `pnpm --filter @hearthforge/client typecheck`: bestanden.
+- Produktions-Build angestoßen; die Windows-Sandbox blockiert `esbuild` mit `spawn EPERM`, bevor
+  die Vite-Konfiguration geladen werden kann. Kein Code-Diagnosefehler.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-31T19:24:00+02:00` —
+  `apps/client/src/renderer/pages/CombatPage.tsx`
+- `codex:2026-08-31T19:24:00+02:00` —
+  `apps/client/src/renderer/styles/combat.css`

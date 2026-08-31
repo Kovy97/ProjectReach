@@ -6314,3 +6314,284 @@
   transform: translateY(1px);
   color: #f0a38c;
 }
+
+/* codex:2026-08-31T19:24:00+02:00 — Kampf-HUD „RPG Float" (Chef-Abnahme): leichter
+   Aussenrahmen, zwei schlanke Kontextbaender und rahmenlose Ressourcenleisten direkt ueber
+   den Figuren. Alles bleibt containerbasiert, damit eingeklappte Docks und kleine Fenster die
+   Baender nicht aus der Arena druecken. */
+.battle-arena {
+  border-width: 3px;
+  border-image-width: 9px;
+}
+
+.battle-arena-hud {
+  position: relative;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  flex: 0 0 auto;
+  gap: clamp(18px, 9vw, 180px);
+  min-height: 54px;
+  padding: 7px clamp(10px, 1.2vw, 22px) 5px;
+  pointer-events: none;
+}
+
+.battle-hud-ribbon {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  color: #c8c0ae;
+  border-block: 1px solid rgba(174, 133, 67, 0.52);
+  background:
+    linear-gradient(90deg, rgba(7, 8, 8, 0.94), rgba(22, 18, 13, 0.9) 62%, rgba(7, 8, 8, 0.94)),
+    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") repeat;
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.34);
+  pointer-events: auto;
+}
+
+.battle-hud-ribbon--player {
+  border-left: 3px solid rgba(206, 161, 70, 0.72);
+}
+
+.battle-hud-ribbon--enemy {
+  border-right: 3px solid rgba(206, 161, 70, 0.72);
+}
+
+.battle-hud-ribbon-summary {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
+}
+
+.battle-hud-metric {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1px;
+  padding: 4px clamp(8px, 1.1vw, 18px);
+  border-right: 1px solid rgba(154, 123, 72, 0.28);
+  font-family: var(--font-info);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.battle-hud-metric > span {
+  max-width: 100%;
+  overflow: hidden;
+  color: #908c83;
+  font-size: clamp(9px, 0.58vw, 12px);
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+
+.battle-hud-metric > strong {
+  color: #e0c779;
+  font-family: var(--font-head);
+  font-size: clamp(13px, 0.82vw, 17px);
+  font-weight: 700;
+}
+
+.battle-hud-metric--reserve > strong {
+  color: #8bd1df;
+}
+
+.battle-hud-ribbon-toggle {
+  flex: 0 0 auto;
+  min-width: clamp(70px, 5vw, 94px);
+  margin: 5px;
+  padding: 3px 8px;
+  border: 1px solid rgba(185, 144, 68, 0.4);
+  background: rgba(3, 4, 4, 0.72);
+  color: #d7c385;
+  font-family: var(--font-head);
+  font-size: clamp(10px, 0.62vw, 13px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.battle-hud-ribbon-toggle:hover,
+.battle-hud-ribbon.is-open .battle-hud-ribbon-toggle {
+  border-color: rgba(224, 188, 104, 0.72);
+  color: #f0d98e;
+  background: rgba(53, 37, 14, 0.72);
+}
+
+.battle-hud-ribbon-details {
+  position: absolute;
+  top: calc(100% + 5px);
+  z-index: 20;
+  width: min(720px, calc(200% + clamp(18px, 9vw, 180px)));
+  max-height: min(58vh, 520px);
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid rgba(190, 145, 70, 0.62);
+  background:
+    linear-gradient(rgba(8, 9, 9, 0.97), rgba(15, 11, 7, 0.98)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.68);
+}
+
+.battle-hud-ribbon--player .battle-hud-ribbon-details { left: 0; }
+.battle-hud-ribbon--enemy .battle-hud-ribbon-details { right: 0; }
+
+.battle-hud-stat-grid.stat-line {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+
+.battle-hud-stat-grid .stat-line-item-labeled {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 5px 7px;
+  border: 1px solid rgba(151, 113, 61, 0.28);
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.battle-hud-stat-grid .stat-line-item-label {
+  min-width: 0;
+  overflow: hidden;
+  color: #918d83;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.battle-hud-stat-grid .stat-line-item-value {
+  color: #ddc679;
+  font-family: var(--font-head);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.battle-hud-drop-summary {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.battle-hud-drop-summary .fighter-sub-drops {
+  flex-direction: row;
+  gap: 5px;
+  min-width: 0;
+  padding: 2px 6px;
+  border: 0;
+  background: transparent;
+}
+
+.battle-hud-drop-summary .fighter-sub-drops-grid {
+  flex-wrap: nowrap;
+  gap: 3px;
+}
+
+.battle-hud-drop-summary .fighter-sub-drops .drop-icon-img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Die Ressourcen schweben frei ueber dem jeweiligen Actor. Kein Iron-/Holzrahmen um den Block;
+   nur die Leisten selbst behalten eine duenne, funktionale Kontur. */
+.battle-main .fighter-nameplate {
+  position: absolute;
+  top: clamp(8px, 1.2vh, 16px);
+  left: 50%;
+  z-index: 5;
+  width: min(88%, 450px);
+  margin: 0;
+  padding: 0;
+  transform: translateX(-50%);
+  border: 0;
+  border-image: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.battle-main .fighter.enemy .fighter-nameplate {
+  box-shadow: none;
+}
+
+.battle-main .fighter-nameplate .fighter-header {
+  justify-content: center;
+  margin: 0 0 4px;
+  text-align: center;
+}
+
+.battle-main .fighter-nameplate .fighter-header-main {
+  flex: 0 1 auto;
+}
+
+.battle-main .fighter-nameplate .fighter-name {
+  justify-content: center;
+  color: #ead7a0;
+  font-size: clamp(14px, 1vw, 20px);
+  letter-spacing: 0.035em;
+  line-height: 1.05;
+  text-align: center;
+  text-shadow: 0 2px 4px #000, 0 0 8px rgba(0, 0, 0, 0.9);
+}
+
+.battle-main .fighter-nameplate .cbar {
+  height: 18px;
+  margin-top: 3px;
+  border: 1px solid rgba(11, 10, 8, 0.95);
+  border-image: none;
+  border-radius: 0;
+  background: rgba(2, 3, 3, 0.82);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.58);
+}
+
+.battle-main .fighter-nameplate .cbar-label {
+  font-size: clamp(10px, 0.66vw, 13px);
+  font-weight: 700;
+  text-shadow: 0 1px 2px #000;
+}
+
+.battle-main .fighter-nameplate .cbar-fill.timer {
+  background: linear-gradient(90deg, #8f6416, #e0b647 72%, #f1d878);
+}
+
+@media (max-width: 1200px) {
+  .battle-arena-hud {
+    gap: 12px;
+    padding-inline: 7px;
+  }
+
+  .battle-hud-metric {
+    padding-inline: 6px;
+  }
+
+  .battle-hud-ribbon-toggle {
+    min-width: 58px;
+    padding-inline: 4px;
+  }
+
+  .battle-hud-drop-summary .fighter-sub-drops-grid {
+    display: none;
+  }
+
+  .battle-hud-ribbon-details {
+    width: min(620px, calc(200% + 12px));
+  }
+}
+
+@media (max-height: 760px) {
+  .battle-arena-hud { min-height: 46px; padding-block: 4px 3px; }
+  .battle-main .fighter-nameplate { top: 5px; }
+  .battle-main .fighter-nameplate .cbar { height: 15px; margin-top: 2px; }
+  .battle-hud-ribbon-details { max-height: 48vh; }
+}

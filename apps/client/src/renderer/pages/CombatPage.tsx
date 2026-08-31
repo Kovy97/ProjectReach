@@ -1113,7 +1113,7 @@ function DropsBox({
 
 interface FighterProps {
   name: string;
-  sub: string;
+  sub?: string;
   /** Kompakter Zusatz rechts neben Name/Sub im `.fighter-header` (z.B. Drop-Anzeige beim Gegner). */
   subExtra?: JSX.Element;
   imgSrc: string | null;
@@ -1587,9 +1587,11 @@ function Fighter(props: FighterProps): JSX.Element {
                 </span>
               )}
             </div>
-            <div className="fighter-sub muted">
-              <span>{props.sub}</span>
-            </div>
+            {props.sub && (
+              <div className="fighter-sub muted">
+                <span>{props.sub}</span>
+              </div>
+            )}
           </div>
           {props.subExtra}
         </div>
@@ -1654,6 +1656,38 @@ function Fighter(props: FighterProps): JSX.Element {
         {detailsOpen && props.details && <div className="fighter-details">{props.details}</div>}
       </div>
     </div>
+  );
+}
+
+// codex:2026-08-31T19:24:00+02:00 — RPG-HUD-Band fuer die echte Kampfansicht: Die dauerhaft
+// sichtbaren Kernwerte bleiben kompakt, waehrend der vorhandene vollstaendige StatLine-Inhalt
+// in einem passenden Ashen-Iron-Dropdown aufklappt. Der Zustand ist absichtlich nur lokal und
+// beeinflusst weder Engine noch Savegame.
+function BattleHudRibbon({
+  side,
+  summary,
+  details,
+}: {
+  side: "player" | "enemy";
+  summary: JSX.Element;
+  details: JSX.Element;
+}): JSX.Element {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <section className={`battle-hud-ribbon battle-hud-ribbon--${side}${open ? " is-open" : ""}`}>
+      <div className="battle-hud-ribbon-summary">{summary}</div>
+      <button
+        type="button"
+        className="battle-hud-ribbon-toggle"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        {t("combat.details")} <span aria-hidden="true">{open ? "▴" : "▾"}</span>
+      </button>
+      {open && <div className="battle-hud-ribbon-details">{details}</div>}
+    </section>
   );
 }
 
@@ -1804,10 +1838,6 @@ function Battle({
   // bestehenden Stat-Zeile, kein eigener Kasten.
   const prognosis = combatPrognosis(stats, monster);
   const lvl = (id: string): number => levelFromXp(state.skills[id]?.xp ?? 0);
-  const meleeSub = t("combat.meleeSub")
-    .replace("{attack}", String(lvl("attack")))
-    .replace("{power}", String(lvl("power")))
-    .replace("{defence}", String(lvl("defence")));
   const enraged = !!(monster.enrage && cs.enemyHp / monster.maxHp <= monster.enrage.belowHpPct);
   // Verbleibende Zeit bis zum nächsten Schlag je Seite (für den Countdown-Text im Timer-Balken).
   const playerTimerRemainingSec = Math.max(0, (stats.attackIntervalMs - cs.playerTimerMs) / 1000);
@@ -3480,15 +3510,37 @@ function Battle({
   // keine Engine-Logik — Kampf-Werte selbst bleiben exakt dieselben, die auch die beiden <Fighter/>
   // weiter unten bekommen (s. "ARENA25D MOUNT SWITCH" JSX-Block).
   const arena25dActive = isArena25dActive(monster.zone ?? null, cs.dungeonId ?? null);
-  // Arena-Rework (Chef-GO 2026-07-11): die 8-teilige Stat-Zeile lebt jetzt hinter dem „Details"-
-  // Toggle der Nameplate (Fighter `details`-Prop) statt im Dauer-Layout; der hitChance-Eintrag
-  // wandert als Prognose-Chip fest in die Nameplate (Fighter `hitChance`-Prop).
+  // codex:2026-08-31T19:24:00+02:00 — Vollstaendige Kampfwerte fuer das neue HUD-Dropdown.
+  // Bewusst keine Level: Skill-Level gehoeren in die kompakte, waffenabhaengige Uebersicht;
+  // Details zeigen die daraus tatsaechlich abgeleiteten Kampfwerte.
+  const activeDamageLabel = t(
+    stats.style === "magic"
+      ? "stat.magicDamage"
+      : stats.style === "ranged"
+        ? "stat.rangedDamage"
+        : "stat.meleeDamage",
+  );
   const playerDetails = (
     <StatLine
-      className="fighter-stats"
+      className="fighter-stats battle-hud-stat-grid"
+      showLabels
       entries={[
-        { key: "atk", icon: statIcon("atk"), label: t("stat.meleeDamage"), value: formatStat(stats.meleeDamage) },
+        { key: "hp", icon: statIcon("hp"), label: t("stat.hp"), value: formatStat(stats.maxHp) },
+        { key: "atk", icon: statIcon("atk"), label: activeDamageLabel, value: formatStat(stats.attackDamage) },
+        {
+          key: "hitRange",
+          icon: statIcon("atk"),
+          label: t("stat.hitRange"),
+          value: `${formatStat(stats.minHit)}–${formatStat(stats.maxHit)}`,
+          className: "fighter-hitrange",
+        },
         { key: "def", icon: statIcon("def"), label: t("stat.defense"), value: formatStat(stats.defense) },
+        { key: "armor", icon: statIcon("def"), label: t("stat.armor"), value: formatStat(stats.armorRating) },
+        { key: "dodge", icon: statIcon("eva"), label: t("stat.dodge"), value: `${Math.round(stats.dodgeChance * 100)}%` },
+        { key: "block", icon: statIcon("def"), label: t("stat.block"), value: `${Math.round(stats.blockChance * 100)}%` },
+        { key: "ward", icon: statIcon("ward"), label: t("stat.wardPool"), value: formatStat(stats.maxWard) },
+        { key: "wardRegen", icon: statIcon("ward"), label: t("stat.wardRegen"), value: formatStat(stats.wardRegenPerSec) },
+        { key: "reserve", icon: statIcon("mana"), label: t("stat.maxMana"), value: formatStat(stats.maxMana) },
         { key: "acc", icon: statIcon("acc"), label: t("stat.accuracy"), value: formatStat(stats.accuracy) },
         { key: "eva", icon: statIcon("eva"), label: t("stat.evasion"), value: formatStat(stats.evasion) },
         {
@@ -3499,19 +3551,15 @@ function Battle({
         },
         { key: "critDamage", icon: "✦✦", label: t("stat.critDamage"), value: `${Math.round(stats.critDamage * 100)}%` },
         { key: "spd", icon: statIcon("spd"), label: t("stat.speed"), value: `${formatSeconds1(stats.attackIntervalMs / 1000)}s` },
-        {
-          key: "hitRange",
-          icon: statIcon("atk"),
-          label: t("stat.hitRange"),
-          value: `${formatStat(stats.minHit)}–${formatStat(stats.maxHit)}`,
-          className: "fighter-hitrange",
-        },
+        { key: "armorPen", icon: statIcon("atk"), label: t("stat.armorPen"), value: `${Math.round(stats.armorPen * 100)}%` },
+        { key: "precision", icon: statIcon("acc"), label: t("stat.precision"), value: `${Math.round(stats.precision * 100)}%` },
+        { key: "wardBreak", icon: statIcon("ward"), label: t("stat.wardBreak"), value: `${Math.round(stats.wardBreak * 100)}%` },
+        { key: "lifesteal", icon: statIcon("hp"), label: t("stat.lifesteal"), value: `${Math.round(stats.lifestealPct * 100)}%` },
+        { key: "hpRegen", icon: statIcon("hp"), label: t("stat.hpRegen"), value: formatStat(stats.hpRegenPerSec) },
+        { key: "hitChance", icon: statIcon("acc"), label: t("combat.prognosis.hitYou"), value: `${Math.round(prognosis.playerHit * 100)}%` },
       ]}
     />
   );
-  // Food/Potion-Quickbar in der Nameplate ENTFERNT (Chef Bild #68): redundant zur Loadout-Spalte
-  // links („Dass sehen wir ja eh links in der Leiste") — die Nameplate bleibt schlank.
-  const playerFooter = undefined;
   const dropCounts = seenDropCount(state, monster);
   // Fix #260c: eigener 2-zeiliger Citadel-Kasten (Label-Zeile + Icon-Grid-Zeile) statt einer
   // freien Inline-Reihe — konsistent zur Drop-Box auf der Monster-Auswahl-Karte. Chef-Fix
@@ -3522,15 +3570,57 @@ function Battle({
   ) : undefined;
   const enemyDetails = (
     <StatLine
-      className="fighter-stats"
+      className="fighter-stats battle-hud-stat-grid"
+      showLabels
       entries={[
+        { key: "hp", icon: statIcon("hp"), label: t("stat.hp"), value: formatStat(monster.maxHp) },
+        { key: "ward", icon: statIcon("ward"), label: t("stat.wardPool"), value: formatStat(monster.wardCapacity ?? 0) },
         { key: "atk", icon: statIcon("atk"), label: t("combat.dmg"), value: formatStat(monster.damage) },
         { key: "def", icon: statIcon("def"), label: t("stat.defense"), value: formatStat(monster.defense) },
         { key: "acc", icon: statIcon("acc"), label: t("stat.accuracy"), value: formatStat(monster.accuracy) },
         { key: "eva", icon: statIcon("eva"), label: t("stat.evasion"), value: formatStat(monster.evasion) },
         { key: "spd", icon: statIcon("spd"), label: t("stat.speed"), value: `${formatSeconds1(monster.attackIntervalMs / 1000)}s` },
+        { key: "hitChance", icon: statIcon("acc"), label: t("combat.prognosis.hitEnemy"), value: `${Math.round(prognosis.enemyHit * 100)}%` },
       ]}
     />
+  );
+
+  // codex:2026-08-31T19:24:00+02:00 — Die Kurzwerte folgen der ausgeruesteten Hauptwaffe
+  // (`stats.style`), nicht einer hart codierten Nahkampfzeile. Skill-Namen kommen aus dem Content
+  // und bleiben damit in allen vorhandenen Sprachen lokalisiert.
+  const playerHudSkillIds = stats.style === "magic"
+    ? ["magic", "warding"]
+    : stats.style === "ranged"
+      ? ["ranged", "defence"]
+      : ["attack", "power", "defence"];
+  const playerHudSummary = (
+    <>
+      {playerHudSkillIds.map((skillId) => (
+        <span className="battle-hud-metric" key={skillId}>
+          <span>{tr(content.skills[skillId]!.name)}</span>
+          <strong>{lvl(skillId)}</strong>
+        </span>
+      ))}
+      {stats.style === "magic" && (
+        <span className="battle-hud-metric battle-hud-metric--reserve">
+          <span>{t("combat.spellReserve")}</span>
+          <strong>{formatStat(stats.maxMana)}</strong>
+        </span>
+      )}
+    </>
+  );
+  const enemyHudSummary = (
+    <>
+      <span className="battle-hud-metric">
+        <span>{t("combat.level").replace("{n}", "").trim()}</span>
+        <strong>{monster.level}</strong>
+      </span>
+      <span className="battle-hud-metric">
+        <span>{t("combat.kills").replace("{n}", "").replace(":", "").trim()}</span>
+        <strong>{cs.kills}</strong>
+      </span>
+      {enemyDropsSub && <span className="battle-hud-drop-summary">{enemyDropsSub}</span>}
+    </>
   );
 
   // Battlescreen hat Vorrang; Fallback auf Zone-/Dungeon-Map-Hintergrundbild.
@@ -3818,6 +3908,13 @@ function Battle({
               {monsterName} · {t("combat.level").replace("{n}", String(monster.level))}
             </span>
           </header>
+          {/* codex:2026-08-31T19:24:00+02:00 — Abgenommenes RPG-HUD: zwei ruhige, leichte
+              Informationsbaender statt schwerer Karten. Details zeigen ausschliesslich echte
+              Kampfwerte; Namen und Ressourcen bleiben direkt ueber den Figuren. */}
+          <div className="battle-arena-hud">
+            <BattleHudRibbon side="player" summary={playerHudSummary} details={playerDetails} />
+            <BattleHudRibbon side="enemy" summary={enemyHudSummary} details={enemyDetails} />
+          </div>
           {/* ── ARENA25D MOUNT SWITCH (Task #330) — der EINE Umschaltpunkt außerhalb von
               components/arena25d/. `arena25dActive` false (Flag aus/anderer Zone/Dungeon/Prod-
               Build) ⇒ der komplette else-Zweig ist byte-identisch zur bisherigen 2D-Darstellung
@@ -3900,13 +3997,10 @@ function Battle({
             <div className="arena-side arena-side-player">
               <Fighter
                 name={c.name}
-                sub={meleeSub}
                 imgSrc={getPortrait(c.portrait)}
-                level={combatLevel(state)}
                 hpCur={c.hp}
                 hpMax={stats.maxHp}
                 hpKind="hp"
-                reserveMax={showReserve ? stats.maxMana : undefined}
                 wardCur={c.ward}
                 wardMax={stats.maxWard}
                 effects={cs.playerEffects}
@@ -3916,9 +4010,6 @@ function Battle({
                 floaters={floaters.filter((f) => f.target === "player")}
                 attackNonce={lunge.player}
                 isCasting={stats.style === "magic"}
-                footer={playerFooter}
-                details={playerDetails}
-                hitChance={{ icon: statIcon("atk"), label: t("combat.prognosis.hitYou"), pct: prognosis.playerHit }}
                 buffChips={<BuffChipsOverlay buffs={c.buffs} />}
                 hitNonce={hitFx.player.n}
                 hitCrit={hitFx.player.crit}
@@ -3963,8 +4054,6 @@ function Battle({
             <div className="arena-side arena-side-enemy enemy-cooldown-wrap">
               <Fighter
                 name={monsterName}
-                sub={`${t("combat.level").replace("{n}", String(monster.level))} · ${t("combat.kills").replace("{n}", String(cs.kills))}`}
-                subExtra={enemyDropsSub}
                 // Task #325 Vhazrak-Art-Fix: `monster` ist im Elite-Fall `eliteDisplayMonster`s
                 // Kopie mit der Basis-Mob-`id` (Kill-Credit-Konsistenz, s. dortiges JSDoc) — ein
                 // reines `getMonsterSrc(monster.id)` konnte sich also NIE auf eigene Elite-Kunst
@@ -3977,7 +4066,6 @@ function Battle({
                 // zurück, falls die Varianten-Grafik (noch) fehlt.
                 imgSrc={cs.eliteVariantId ? getEliteMonsterSrc(cs.eliteVariantId, monster.id) : getMonsterSrc(monster.id)}
                 enemy
-                level={monster.level}
                 hpCur={cs.enemyHp}
                 hpMax={monster.maxHp}
                 hpKind="enemy-hp"
@@ -3993,8 +4081,6 @@ function Battle({
                 timerRemainingSec={enemyTimerRemainingSec}
                 floaters={floaters.filter((f) => f.target === "enemy")}
                 attackNonce={lunge.enemy}
-                details={enemyDetails}
-                hitChance={{ icon: statIcon("def"), label: t("combat.prognosis.hitEnemy"), pct: prognosis.enemyHit }}
                 dimmed={inCooldown}
                 hitNonce={hitFx.enemy.n}
                 hitCrit={hitFx.enemy.crit}

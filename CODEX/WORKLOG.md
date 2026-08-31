@@ -1191,3 +1191,13 @@
 - Kontaktbögen auf dunkel, hell, grellrosa, in 48 px und neben `cured_leather_body` sowie
   `bronze_shortbow` erstellt und visuell abgenommen.
 - Brief Teil B bis D, Promptprotokoll, README und QA vervollständigt; keine Renderer-Integration.
+
+## 2026-08-31 — RPG-Kampf-HUD Runtime
+
+<!-- codex:2026-08-31T19:24:00+02:00 -->
+
+- Separaten Branch `combat-hud-rpg-widgets` in isolierter Repository-Kopie angelegt.
+- Abgenommenes Kampf-HUD in `CombatPage.tsx` und `combat.css` umgesetzt: dynamische
+  Waffenprofilwerte, Vollstatistik-Dropdowns ohne Level, zentrierte Namen sowie numerische
+  HP-/Ward-/Angriffsleisten frei über den Figuren.
+- Typecheck bestanden; Electron-Vite-Build ausschließlich durch Sandbox-`spawn EPERM` blockiert.
