@@ -17,6 +17,7 @@ import { getDevSpeed } from "../devSpeed";
 import type { CharacterCreation } from "@hearthforge/engine";
 import { deserialize, parseSummary, serialize } from "@hearthforge/persistence";
 import { content } from "@hearthforge/content";
+import { baueDemoOfflineSummary } from "../devOfflineDemo";
 import { readAllSlots, readSlot, readSlotBackups, removeSlot, writeSlot } from "../saves";
 import { buildOfflineTestSummary, fetchFixtureJson, getFixtureParam, getOfflineTestParam } from "./fixtureLoader";
 
@@ -99,6 +100,13 @@ interface GameControl {
   returnToMenu: () => Promise<void>;
   offlineSummary: OfflineSummaryUI | null;
   dismissOffline: () => void;
+  /**
+   * Dev-Werkzeug (Chef-Auftrag 31.08.2026): oeffnet die "Waehrend du weg warst"-Buehne mit
+   * Demo-Daten in JEDEM Abschnitt, damit man das Layout beurteilen kann, ohne acht Stunden
+   * offline zu gehen. Aufrufer ist ausschliesslich das Zeitraffer-Panel, das selbst hinter
+   * `devToolsAllowed` haengt — im ausgelieferten Spiel ruft das niemand.
+   */
+  zeigeDemoOffline: () => void;
   /**
    * Selbstheilungs-Hinweis (Task #288 D): gesetzt, wenn `loadGame` einen beschädigten Slot
    * aus einem lokalen Backup wiederhergestellt hat. `restoredFromMs` = Speicherzeitpunkt des
@@ -265,6 +273,12 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     setOfflineSummary(null);
     void saveGame();
   }, [saveGame]);
+
+  // Dev-Werkzeug, s. `zeigeDemoOffline` im Interface. Setzt nur den Anzeige-Zustand; der
+  // Spielstand bleibt unberuehrt, und "Einsammeln" raeumt die Karte wie gewohnt weg.
+  const zeigeDemoOffline = useCallback(() => {
+    setOfflineSummary(baueDemoOfflineSummary());
+  }, []);
 
   const exportSave = useCallback((): string | null => {
     const s = stateRef.current;
@@ -603,6 +617,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       returnToMenu,
       offlineSummary,
       dismissOffline,
+      zeigeDemoOffline,
       saveRecovery,
       dismissSaveRecovery,
       saveTick,
@@ -626,6 +641,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       returnToMenu,
       offlineSummary,
       dismissOffline,
+      zeigeDemoOffline,
       saveRecovery,
       dismissSaveRecovery,
       saveTick,

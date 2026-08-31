@@ -7,6 +7,7 @@ import {
   setDevSpeedAllowed,
   subscribeDevSpeed,
 } from "../devSpeed";
+import { useGameControl } from "../game/GameContext";
 
 /**
  * Zeitraffer-Bedienfeld für Entwickler (Chef 29.08.2026). Rendert `null`, solange der Dev-Modus
@@ -39,6 +40,8 @@ export function DevSpeedPanel(): JSX.Element | null {
     setDevSpeed(DEV_SPEED_STEPS[idx] ?? 1);
   }, []);
 
+  const { zeigeDemoOffline } = useGameControl();
+
   if (!allowed) return null;
 
   const idx = Math.max(0, DEV_SPEED_STEPS.indexOf(speed as (typeof DEV_SPEED_STEPS)[number]));
@@ -65,6 +68,13 @@ export function DevSpeedPanel(): JSX.Element | null {
         </button>
         {active && <span className="devspeed-warn">Nur Dev-Build</span>}
       </div>
+      {/* Chef-Auftrag 31.08.2026: Die Offline-Bühne zeigt je nach Abwesenheit ganz verschiedene
+          Abschnitte (Beute, Skills, Tod, Begleiter, Erfolge, New-Haven-Bauten, Veredelung,
+          Jagdfänge, 8h-Kappung). Im Spiel bekommt man die nie alle zusammen zu sehen — dieser
+          Knopf füllt jeden davon, s. renderer/devOfflineDemo.ts. */}
+      <button type="button" className="devspeed-demo" onClick={zeigeDemoOffline}>
+        „Während du weg warst" zeigen
+      </button>
     </div>
   );
 }

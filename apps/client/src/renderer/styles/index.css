@@ -112,3 +112,27 @@
 
 /* codex:2026-08-03T17:02:00+02:00 — Chef-Auswahl Gear-Dock 03 „Frontline Harness“. */
 @import "./frontline-harness-dock.css";
+
+/* Dev-Zeitraffer: Knopf für die Offline-Demo (Chef-Auftrag 31.08.2026). Bewusst schlicht und
+   klar vom Zurücksetzen-Knopf getrennt — das Panel ist ein Werkzeug, kein Spielelement. */
+.devspeed-demo {
+  width: 100%;
+  margin-top: 6px;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  color: #e8d8b0;
+  background: linear-gradient(rgba(52, 43, 31, 0.9), rgba(22, 18, 14, 0.95));
+  border: 1px solid rgba(205, 147, 74, 0.45);
+}
+
+.devspeed-demo:hover {
+  color: #f0dda0;
+  border-color: rgba(216, 192, 106, 0.8);
+}
+
+.devspeed-demo:focus-visible {
+  outline: 2px solid #d8c06a;
+  outline-offset: 2px;
+}
