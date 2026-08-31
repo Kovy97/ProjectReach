@@ -13,12 +13,20 @@ Verifiziert ueber steam/output/app_build_4915450.log:
 "Successfully finished AppID 4915450 build (BuildID 25036037)."
 
 
-WAS DU NOCH TUN MUSST
----------------------
-1. Steamworks -> SteamPipe -> Builds -> Build 25036037 -> Branch "default" -> live setzen.
-2. Steam-Post veroeffentlichen. Text liegt fertig (nur Englisch):
-   G:\GameDev\design\steam-post-1.2.3.txt
-3. Anwendung -> Veroeffentlichen.
+ACHTUNG: NICHT LIVE SCHALTEN (Stand 31.08., nach deiner Rueckmeldung)
+----------------------------------------------------------------------
+Du hattest 1.2.2 bereits released. Gegenueber 1.2.2 enthaelt dieser Build KEINE Aenderung, die
+ein Spieler sehen kann — dazugekommen ist nur ein Entwickler-Werkzeug (Knopf im Zeitraffer-Panel
+fuer die Offline-Buehne), das hinter dem devToolsAllowed-Gate haengt und im ausgelieferten Spiel
+nicht existiert. Nachgemessen: seit dem 1.2.2-Build wurden 5 Dateien geaendert, alle gehoeren zu
+diesem Knopf.
+
+Empfehlung: Build 25036037 im Depot liegen lassen, NICHT live schalten, keinen Steam-Post
+veroeffentlichen. 1.2.2 bleibt live. Der Dev-Knopf laeuft im Dev-Build aus dem Quellcode, dafuer
+war der Upload gar nicht noetig.
+
+Sobald echter Inhalt zusammenkommt (offen: Auto-Flucht, Elder-Bear-Namenshinweis an der
+Boss-Welle, Meisterring-Nachlese), wird daraus ein richtiges 1.2.3 mit eigenen Patchnotes.
 
 
 WAS IN 1.2.3 DRIN IST

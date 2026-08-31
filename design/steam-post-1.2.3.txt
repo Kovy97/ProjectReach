@@ -1,50 +1,13 @@
-Grim Reach 1.2.3 - Font Selection & New Haven List View
+ACHTUNG — DIESER POST SOLLTE NICHT VEROEFFENTLICHT WERDEN.
 
-Hunters,
+1.2.3 enthaelt gegenueber dem bereits veroeffentlichten 1.2.2 KEINE Aenderung, die ein Spieler
+sehen kann. Dazugekommen ist ausschliesslich ein Entwickler-Werkzeug (ein Knopf im Zeitraffer-
+Panel, der die "Waehrend du weg warst"-Buehne mit Demo-Daten oeffnet). Es haengt hinter dem
+devToolsAllowed-Gate und existiert im ausgelieferten Spiel nicht.
 
-a small patch, and nearly all of it comes from your reports. You can now pick the game's font, the
-New Haven list view has been rebuilt from the ground up, the master rings finally carry stats worthy
-of a level 99 reward, and the dungeon loot counter now tells the truth. Saves stay compatible as
-always.
+Ein Steam-Post ohne Inhalt kostet Aufmerksamkeit, die beim naechsten echten Update fehlt.
+Empfehlung: Build 25036037 NICHT live schalten, 1.2.2 bleibt live. Der Dev-Knopf ist im
+Dev-Build ohnehin sofort nutzbar, dafuer braucht es keinen Depot-Upload.
 
-FONT SELECTION
-
-- You can now choose the game's font. Options, under Display: Atmosphere (the house font, as
-  before), Book (a warm serif), Antiqua (an elegant serif with wider letterforms) and Clear (a plain
-  sans-serif, the most legible option). A preview line shows each one before you commit.
-- Every option works in all seven languages. The bundled display fonts cover Latin only, which is
-  why Russian and Chinese have always fallen back to system fonts; the selectable fonts were picked
-  because they cover Latin and Cyrillic, and each carries a CJK fallback.
-- The setting is stored per device, not in your save, so a smaller laptop can run a clearer font
-  without changing anything on your main screen.
-
-NEW HAVEN
-
-- The list view has been rebuilt. It is now a proper building register: a scrollable list on the left
-  with large artwork, rank and actions, and a full detail panel on the right showing the building,
-  its effects, all four materials plus gold, and a single clear action. Building slots in the queue
-  stay visible instead of appearing only when occupied.
-- Refineries and the smokehouse now share one work window with mastered recipes, input, output, rate
-  per cycle and how many cycles your supplies cover.
-- On narrow resolutions the entries fold into two rows instead of running off the screen.
-- The map view and its building popup are unchanged.
-
-FIXES
-
-- Dungeon loot counter: the combat screen showed "0/6" in a dungeon no matter how much you had
-  actually looted, and drop icons stayed as black silhouettes. Dungeon enemies carry a variant id,
-  and while the kill correctly recorded the drop under the base monster, the display looked it up
-  under the variant id and always came back empty. It never showed outside dungeons because there
-  both ids are the same. Your existing discoveries appear correctly from now on, no re-farming
-  needed.
-- Master rings: a player pointed out that the legendary Blademaster's Ring (Attack 99, 50,000 gold)
-  granted less Strength than a Ruby Ring crafted at level 34. That was true for every master ring:
-  they sat at 3 to 5 attribute points while the crafting ladder had been raised to 17. All 23 have
-  been recalibrated. They deliberately stay behind the endgame rings, they are a mark of a 99, not
-  a replacement for Godgem Ring or the Signet of the Ninth Warden: combat rings 12 points, skilling
-  rings 9 alongside their master perk, and the Ring of Completion 16.
-- Item card in Russian: the button row was capped at a fixed width, so the longer Russian labels ran
-  past the card edge and "Sell" was cut off. Reported on the Bounty and Harvest Tonic cards. The row
-  now uses the space the card actually has and wraps if a language needs even more.
-
-Thanks for the reports. Almost every line above started as one.
+Sobald echter Inhalt fuer 1.2.3 zusammenkommt (offen sind unter anderem Auto-Flucht und der
+Elder-Bear-Namenshinweis an der Boss-Welle), schreibe ich hier die richtigen Patchnotes.
