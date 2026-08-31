@@ -5,6 +5,7 @@ import {
   MAX_BANK_SLOTS_PURCHASED,
   effectiveBankCapacity,
   usedBankSlots,
+  syncBankOrder,
   type ContentDB,
   type GameState,
   type ItemId,
@@ -68,6 +69,7 @@ export function depositItem(state: GameState, content: ContentDB, itemId: ItemId
   if (move <= 0) return 0;
   removeItem(state.inventory, itemId, move);
   state.bank[itemId] = (state.bank[itemId] ?? 0) + move;
+  syncBankOrder(state); // Platzierung (SAVE 87) nachziehen: neues Item bekommt das erste freie Fach
   return move;
 }
 
@@ -119,6 +121,8 @@ export function withdrawItem(state: GameState, content: ContentDB, itemId: ItemI
   move = added;
   state.bank[itemId] = stored - move;
   if (state.bank[itemId]! <= 0) delete state.bank[itemId];
+  // Leergeraeumtes Fach bleibt LEER stehen (OSRS-Verhalten) — syncBankOrder nullt es, rueckt aber nichts nach.
+  syncBankOrder(state);
   return move;
 }
 

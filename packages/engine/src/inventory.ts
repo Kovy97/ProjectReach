@@ -126,9 +126,25 @@ export function addItem(
     }
   }
   // 2) Rest in neue, freie Slots (je bis zum Cap).
+  //
+  // Chef-Report 31.08.2026: "neue items kommen nicht an den naechsten Slot sondern irgendwo
+  // dazwischen - fuehlt sich nicht an wie ein Spiel Inventar." Vorher nahm die Suche IMMER die
+  // erste Luecke; wer sein Erz aus Fach 3 nahm, bekam den naechsten Fund dort hinein, waehrend
+  // die Reihe weiter hinten weiterlief. Neu: Beute haengt sich HINTEN an die belegte Reihe an.
+  // Erst wenn dahinter nichts mehr frei ist, fuellt sie die Luecken davor — sonst ginge sie bei
+  // fast vollem Inventar verloren, und der Ueberlauf ins Lager/Postfach wuerde faelschlich greifen.
+  let letzterBelegt = -1;
+  for (let i = inv.slots.length - 1; i >= 0; i--) {
+    if (inv.slots[i] !== null) { letzterBelegt = i; break; }
+  }
+  const naechsterFreier = (): number => {
+    for (let i = letzterBelegt + 1; i < inv.slots.length; i++) if (inv.slots[i] === null) return i;
+    return inv.slots.findIndex((s) => s === null); // Rueckfall: Luecke davor
+  };
   while (remaining > 0) {
-    const idx = inv.slots.findIndex((s) => s === null);
+    const idx = naechsterFreier();
     if (idx === -1) break;
+    if (idx > letzterBelegt) letzterBelegt = idx;
     const add = Math.min(cap, remaining);
     inv.slots[idx] = { itemId, qty: add };
     remaining -= add;

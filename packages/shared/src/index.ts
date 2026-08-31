@@ -681,7 +681,7 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     wird NICHT nachträglich erzeugt (Muster hunting). Content: 5 neue Erfolge ach_skill_tailoring_25..99,
 //     Meisterring ring_master_tailoring (inputSaver 5 %), ring_master_completion verlangt jetzt 22 Skills.
 //     Keine Item-ID-Renames, keine Kampfwerte.
-export const SAVE_VERSION = 86;
+export const SAVE_VERSION = 87;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -5734,6 +5734,58 @@ export function usedBankSlots(state: GameState): number {
   return n;
 }
 
+/**
+ * Hält `bankOrder` mit `bank` im Einklang (SAVE 87). Idempotent, zieht kein RNG.
+ *
+ * Drei Aufgaben, in dieser Reihenfolge:
+ *  1. Fächer leeren, deren Item gar nicht mehr in `bank` steht (oder auf Menge 0 gefallen ist).
+ *  2. Doppelte Einträge entfernen — dasselbe Item darf nur EIN Fach belegen.
+ *  3. Items aus `bank`, die noch kein Fach haben, ins erste freie Fach legen; ist keines frei,
+ *     wächst die Liste hinten. (Die Kapazitätsprüfung sitzt weiter in `bank.ts`, nicht hier —
+ *     diese Funktion repariert nur die Zuordnung und darf niemals Bestand verlieren.)
+ *
+ * Der Aufruf lohnt an den zentralen Stellen (nach dem Laden, nach Ein-/Auslagern, im Tick). Weil
+ * sie selbstheilend ist, muss KEINE der 54 Schreibstellen für `bank` die Reihenfolge selbst pflegen.
+ */
+export function syncBankOrder(state: GameState): void {
+  if (!Array.isArray(state.bankOrder)) state.bankOrder = [];
+  const order = state.bankOrder;
+  const hatMenge = (id: ItemId | null): boolean =>
+    typeof id === "string" && typeof state.bank[id] === "number" && (state.bank[id] as number) > 0;
+
+  const gesehen = new Set<ItemId>();
+  for (let i = 0; i < order.length; i++) {
+    const id = order[i] ?? null;
+    if (!hatMenge(id) || gesehen.has(id as ItemId)) order[i] = null;
+    else gesehen.add(id as ItemId);
+  }
+
+  for (const id of Object.keys(state.bank) as ItemId[]) {
+    if (!hatMenge(id) || gesehen.has(id)) continue;
+    const frei = order.indexOf(null);
+    if (frei >= 0) order[frei] = id;
+    else order.push(id);
+    gesehen.add(id);
+  }
+}
+
+/**
+ * Tauscht zwei Bankfächer (SAVE 87). Spiegel von `moveInventorySlot` — ausdrücklich auch mit
+ * leeren Fächern, damit ein Stapel auf Fach 65 gezogen werden kann, obwohl 64 leer ist. Das ist
+ * der Kern des OSRS-Verhaltens: die Position gehört dem Spieler, nicht der Sortierung.
+ */
+export function moveBankSlot(state: GameState, fromIdx: number, toIdx: number): boolean {
+  if (!Array.isArray(state.bankOrder)) return false;
+  const order = state.bankOrder;
+  if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0) return false;
+  // Ziel darf hinter dem bisherigen Ende liegen: dann waechst die Liste mit leeren Faechern.
+  while (order.length <= Math.max(fromIdx, toIdx)) order.push(null);
+  const tmp = order[fromIdx] ?? null;
+  order[fromIdx] = order[toIdx] ?? null;
+  order[toIdx] = tmp;
+  return true;
+}
+
 /** Lebenslange Spielstatistiken. */
 export interface PlayerStats {
   kills: number;
@@ -6131,6 +6183,27 @@ export interface GameState {
   mastery: Record<ActionId, SkillState>;
   /** Bank/Lager: unbegrenzte Stapel je Item-ID. Entlastet das platzbeschränkte Inventar. */
   bank: Record<ItemId, number>;
+  /**
+   * Bank-PLATZIERUNG (SAVE 87, Chef-Auftrag 31.08.2026 „wie OSRS"): Index = Bankfach, Wert = das
+   * Item, das dort liegt, `null` = leeres Fach. Die MENGEN stehen weiter in `bank` — dieses Feld
+   * trägt ausschließlich die Reihenfolge.
+   *
+   * WARUM ZWEI FELDER statt eines Slot-Arrays mit Mengen: `bank` wird an 54 Stellen in 13
+   * Engine-Dateien gelesen und geschrieben (Handwerk, Farm, Jagd, Quests, Veredelung, Shop,
+   * Taverne, Tick …). Ein Umbau auf `Array<{itemId, qty}>` hätte jede davon angefasst, mit
+   * entsprechendem Risiko für Spielstände. So bleibt die Mengen-Wahrheit unberührt, und die
+   * Platzierung kommt als eigene Ebene dazu.
+   *
+   * KONSISTENZ: `syncBankOrder(state)` hängt Items, die neu in `bank` auftauchen, an das erste
+   * freie Fach und leert Fächer, deren Item verschwunden ist. Die Funktion ist idempotent und
+   * heilt damit auch Schreibzugriffe, die die Reihenfolge nicht selbst pflegen — genau deshalb
+   * mussten die 54 Stellen nicht angefasst werden.
+   *
+   * LÜCKEN SIND GEWOLLT: Wer sein letztes Erz aus Fach 12 nimmt, behält ein leeres Fach 12; das
+   * Fach rutscht NICHT nach. Das ist der Unterschied zum bisherigen Verhalten, wo die Bank eine
+   * nach Namen sortierte Liste war und jedes Ein-/Auslagern alles verschoben hat.
+   */
+  bankOrder: Array<ItemId | null>;
   /**
    * Gekaufte ZUSÄTZLICHE Bank-Slots (Gold-Sink). Effektive Kapazität = `BASE_BANK_CAPACITY` + dies,
    * via `effectiveBankCapacity(state)`. Wird per `buyBankSlots` in Paketen (`BANK_SLOT_PACKAGE`)

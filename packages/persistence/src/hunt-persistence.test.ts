@@ -100,6 +100,11 @@ describe("Migration v84 → v85 (Jagen)", () => {
     erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026): Fänge je Art, Default {}
     erwartet.state.skills.tailoring = { xp: 0 }; // v86 Skill-Split Schneidern (28.08.2026): neues Konto, hier 0 (kein Handwerk-XP/Stoff im Craft-Log)
     delete (erwartet.state as unknown as { equipLoadouts?: unknown }).equipLoadouts;
+    // v87 Bank-Platzierung (Chef-Auftrag 31.08.2026 "wie OSRS"): `bankOrder` traegt die Faecher,
+    // die Mengen bleiben in `bank`. BEWUSST als LETZTE Erwartung, nach allen anderen Anpassungen —
+    // dieselbe Reihenfolge-Falle wie im Sanitize selbst: wer die Faecher zu frueh bildet, nimmt
+    // eine Bank, die spaeter noch bereinigt wird, und erwartet Items, die es dann nicht mehr gibt.
+    erwartet.state.bankOrder = Object.keys(erwartet.state.bank ?? {}).sort();
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -329,6 +334,11 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     erwartet.version = SAVE_VERSION;
     erwartet.state.version = SAVE_VERSION;
     erwartet.state.skills.tailoring = { xp: 0 };
+    // v87 Bank-Platzierung (Chef-Auftrag 31.08.2026 "wie OSRS"): `bankOrder` traegt die Faecher,
+    // die Mengen bleiben in `bank`. BEWUSST als LETZTE Erwartung, nach allen anderen Anpassungen —
+    // dieselbe Reihenfolge-Falle wie im Sanitize selbst: wer die Faecher zu frueh bildet, nimmt
+    // eine Bank, die spaeter noch bereinigt wird, und erwartet Items, die es dann nicht mehr gibt.
+    erwartet.state.bankOrder = Object.keys(erwartet.state.bank ?? {}).sort();
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

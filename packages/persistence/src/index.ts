@@ -47,6 +47,7 @@ import {
   LEGACY_BASE_INVENTORY_SLOTS,
   MASTER_CAPE_LEVEL,
   MAX_BANK_SLOTS_PURCHASED,
+  syncBankOrder,
   MAX_FARM_PLOTS,
   MAX_OFFLINE_MS,
   CAMP_MAX_OFFLINE_BONUS_MS,
@@ -922,6 +923,20 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     if (n > 0) bank[id as ItemId] = n;
   }
   state.bank = bank;
+
+  // — Bank-Platzierung (SAVE 87, Chef-Auftrag „wie OSRS"): `bankOrder` traegt NUR die Faecher,
+  //   die Mengen bleiben in `bank`. Alt-Saves (< 87) haben das Feld nicht: dann entsteht es hier
+  //   aus den vorhandenen Bank-Eintraegen in der Reihenfolge, die der Spieler zuletzt gesehen hat
+  //   (alphabetisch nach Id — dieselbe Ordnung, die die alte Bankansicht als Vorgabe hatte), damit
+  //   sich nach dem Update nichts verschiebt. `syncBankOrder` raeumt danach Unbekanntes weg,
+  //   entfernt Doppelte und haengt fehlende Items an; es verliert dabei nie Bestand.
+  if (!Array.isArray(state.bankOrder)) {
+    state.bankOrder = (Object.keys(bank) as ItemId[]).sort();
+  } else {
+    state.bankOrder = state.bankOrder.map((id) =>
+      typeof id === "string" && known(id as ItemId) ? (id as ItemId) : null,
+    );
+  }
 
   // — Bank-Ausbau: gekaufte Zusatz-Slots endlich, ≥ 0, ganzzahlig, ≤ Cap. Ein manipulierter Wert
   //   würde sonst die effektive Kapazität absurd aufblähen oder (NaN) computeStats/Deposit vergiften. —
@@ -2065,6 +2080,13 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   // — Ausrüstungs-Kits (SAVE_VERSION 85): Spiegel des AKTIVEN Kits = der fertig gehärtete Charakter.
   //   BEWUSST als allerletzter Schritt (nach Slot-/Instanz-/Zweihand-Härtung, Meisterring-Umzug,
   //   Cape-Nachreichung): nichts danach kann `character.equipment` noch ändern → Round-Trip-stabil. —
+  // — Bank-Platzierung (SAVE 87): ALLERLETZTER Bank-Schritt. Muss nach jeder Stelle laufen, die
+  //   `bank` noch anfasst (Story-Schluessel-Einzug, Instanz-Aufloesung, getragene Ausruestung) —
+  //   ein frueherer Aufruf machte den Round-Trip nicht-idempotent: der erste Load schrieb noch
+  //   `["paragon_key"]`, der zweite `[null]`, weil der Schluessel erst danach eingezogen wurde.
+  //   Selbstheilend: leert Faecher verschwundener Items, entfernt Doppelte, haengt Fehlende an. —
+  syncBankOrder(state);
+
   syncActiveKit(state);
 
   return state;
@@ -3673,6 +3695,13 @@ export function deserialize(
       },
     ];
   }
+
+  // — Bank-Platzierung (SAVE 87): ALLERLETZTER Schritt des Ladens. `sanitizeState` reicht nicht,
+  //   weil DANACH noch der Offline-Nachhol-Tick laeuft und dabei Bank-Bestand verbraucht (im
+  //   v85-Fixture die Koeder). Gemessen: Sync in sanitizeState ergab beim ersten Laden
+  //   `["bait_worm"]`, beim zweiten `[null]` — der Round-Trip war also nicht idempotent, und der
+  //   Kompat-Vault hat genau das aufgedeckt. Hier steht er nach allem, was `bank` anfasst. —
+  syncBankOrder(state);
 
   return { state, offlineMs, offlineTicks, offline };
 }

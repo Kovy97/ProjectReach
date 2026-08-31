@@ -182,7 +182,14 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
       s.skills[TAILORING_SKILL_ID]!.xp + s.skills[LEATHERWORKING_SKILL_ID]!.xp,
     ));
     expect(Object.keys(s.stats.craftedById).length).toBeGreaterThan(0);
-    // Sanitize-Fixpunkt: byte-genau derselbe Save.
-    expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(raw);
+    // Sanitize-Fixpunkt: byte-genau derselbe Save, bis auf das v87-Delta.
+    // v87 (Bank-Platzierung, Chef-Auftrag 31.08.2026 "wie OSRS"): Das Fixture ist v86, wird also
+    // eine Version hochgezogen und bekommt `bankOrder` — die Faecher aus den vorhandenen
+    // Bank-Eintraegen in alphabetischer Id-Reihenfolge. Die Mengen in `bank` bleiben unberuehrt.
+    const erwartet = JSON.parse(JSON.stringify(raw)) as typeof raw;
+    erwartet.version = SAVE_VERSION;
+    erwartet.state.version = SAVE_VERSION;
+    erwartet.state.bankOrder = Object.keys(erwartet.state.bank ?? {}).sort();
+    expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

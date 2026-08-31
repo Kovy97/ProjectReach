@@ -92,6 +92,8 @@ export function createGame(
     thievingRisk: DEFAULT_THIEVING_RISK,
     mastery: {},
     bank: {},
+    // Bank-Platzierung (SAVE 87): leer starten, `syncBankOrder` fuellt beim ersten Einlagern.
+    bankOrder: [],
     bankSlotsPurchased: 0,
     seenDrops: {},
     seenActionDrops: {},

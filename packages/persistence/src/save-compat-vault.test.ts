@@ -333,6 +333,20 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // („Alt-Save-Nachholung") gepinnt.
     const knownAch = new Set(content.achievements.map((a) => a.id));
     erwartet.state.achievements = erwartet.state.achievements.filter((id) => knownAch.has(id));
+    // v87 Bank-Platzierung (Chef-Auftrag 31.08.2026 "wie OSRS"): `bankOrder` traegt die Faecher,
+    // die Mengen bleiben in `bank`. BEWUSST als LETZTE Erwartung, nach allen anderen Anpassungen —
+    // dieselbe Reihenfolge-Falle wie im Sanitize selbst: wer die Faecher zu frueh bildet, nimmt
+    // eine Bank, die spaeter noch bereinigt wird, und erwartet Items, die es dann nicht mehr gibt.
+    // Die Faecher entstehen aus den Bank-Eintraegen des ALTEN Saves (alphabetisch). Faellt ein Item
+    // beim Laden aus der Bank — im v85-Fixture wandert `bait_worm` heraus —, bleibt sein Fach als
+    // LEERE Luecke stehen und rueckt NICHT nach. Genau das ist das gewuenschte OSRS-Verhalten und
+    // der Grund fuer diese etwas umstaendliche Erwartung: Fachanzahl aus dem alten Save, Inhalt
+    // aus dem neuen.
+    const bankVorher = Object.keys((JSON.parse(json) as { state: GameState }).state.bank ?? {}).sort();
+    const bankNachher = result!.state.bank;
+    erwartet.state.bankOrder = bankVorher.map((id) =>
+      typeof bankNachher[id as keyof typeof bankNachher] === "number" ? id : null,
+    );
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 
