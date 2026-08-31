@@ -102,6 +102,8 @@ const en = {
     "offline.combatStopped.stalemate": "Your fight ended: neither side could land a hit.",
     "offline.duration.cappedNote": "Progress is capped at {cap} — you were actually away {time}.",
     "offline.stage.subtitle": "Here's what you earned while you were gone.",
+    // codex:2026-08-31T01:31:00+02:00 — Kurzes Bilanzlabel für Variante 02 des Offline-Fensters.
+    "offline.stage.awayLabel": "Away",
     "offline.stage.totalXp": "Total XP",
     "offline.stage.achievementsLabel": "Achievements",
     "offline.stage.achievementsAndMore": "and {n} more",
@@ -2683,6 +2685,8 @@ const de: Record<keyof typeof en, string> = {
     "offline.combatStopped.stalemate": "Dein Kampf endete: keine Seite konnte treffen.",
     "offline.duration.cappedNote": "Der Fortschritt ist bei {cap} gedeckelt — du warst tatsächlich {time} fort.",
     "offline.stage.subtitle": "Das hast du in deiner Abwesenheit verdient.",
+    // codex:2026-08-31T01:31:00+02:00 — Kurzes Bilanzlabel für Variante 02 des Offline-Fensters.
+    "offline.stage.awayLabel": "Abwesend",
     "offline.stage.totalXp": "Gesamt-XP",
     "offline.stage.achievementsLabel": "Erfolge",
     "offline.stage.achievementsAndMore": "und {n} weitere",

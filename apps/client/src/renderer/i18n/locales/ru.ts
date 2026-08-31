@@ -75,6 +75,8 @@ export const ru: Record<string, string> = {
     "offline.combatStopped.stalemate": "Ваш бой окончен: ни одна сторона не смогла нанести удар.",
     "offline.duration.cappedNote": "Прогресс ограничен {cap} — на самом деле вас не было {time}.",
     "offline.stage.subtitle": "Вот что вы получили за время отсутствия.",
+    // codex:2026-08-31T01:31:00+02:00
+    "offline.stage.awayLabel": "Отсутствие",
     "offline.stage.totalXp": "Общий опыт",
     "offline.stage.achievementsLabel": "Достижения",
     "offline.stage.achievementsAndMore": "и ещё {n}",

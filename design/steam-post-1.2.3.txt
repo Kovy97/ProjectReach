@@ -1,13 +1,25 @@
-ACHTUNG — DIESER POST SOLLTE NICHT VEROEFFENTLICHT WERDEN.
+Grim Reach 1.2.3 - The Return Screen, Rebuilt
 
-1.2.3 enthaelt gegenueber dem bereits veroeffentlichten 1.2.2 KEINE Aenderung, die ein Spieler
-sehen kann. Dazugekommen ist ausschliesslich ein Entwickler-Werkzeug (ein Knopf im Zeitraffer-
-Panel, der die "Waehrend du weg warst"-Buehne mit Demo-Daten oeffnet). Es haengt hinter dem
-devToolsAllowed-Gate und existiert im ausgelieferten Spiel nicht.
+Hunters,
 
-Ein Steam-Post ohne Inhalt kostet Aufmerksamkeit, die beim naechsten echten Update fehlt.
-Empfehlung: Build 25036037 NICHT live schalten, 1.2.2 bleibt live. Der Dev-Knopf ist im
-Dev-Build ohnehin sofort nutzbar, dafuer braucht es keinen Depot-Upload.
+the screen you see when you come back after being away has been rebuilt from the ground up. It used
+to be a long column you scrolled through; now your loot is the centre of it, with everything else
+arranged around it. Saves stay compatible as always.
 
-Sobald echter Inhalt fuer 1.2.3 zusammenkommt (offen sind unter anderem Auto-Flucht und der
-Elder-Bear-Namenshinweis an der Boss-Welle), schreibe ich hier die richtigen Patchnotes.
+WHILE YOU WERE AWAY
+
+- The return screen is now a spread rather than a list. Your haul sits in the middle as the main
+  stage, with progress and settlement work flanking it as narrower registers.
+- Everything that happened while you were gone stays visible at once. Previously several events
+  competed for the same spot; a companion find, a death and a halted job can now all be read
+  together instead of one hiding the others.
+- Empty groups disappear cleanly instead of leaving a hole. If you were only away twenty minutes
+  and nothing but a little ore came in, the screen is short and says so.
+- The layout steps down from three columns to two and then one as the window gets narrower, so it
+  holds together on a laptop screen or in a small window.
+- Rare finds are still called out separately from ordinary materials, and the offline cap, your
+  New Haven cap bonus and the real time you were away are all still shown.
+
+Nothing about what you earn offline has changed. This is purely how it is presented.
+
+As always: if something looks off, tell me here or through the bug report button in the options.

@@ -13,51 +13,32 @@ Verifiziert ueber steam/output/app_build_4915450.log:
 "Successfully finished AppID 4915450 build (BuildID 25036037)."
 
 
-ACHTUNG: NICHT LIVE SCHALTEN (Stand 31.08., nach deiner Rueckmeldung)
-----------------------------------------------------------------------
-Du hattest 1.2.2 bereits released. Gegenueber 1.2.2 enthaelt dieser Build KEINE Aenderung, die
-ein Spieler sehen kann — dazugekommen ist nur ein Entwickler-Werkzeug (Knopf im Zeitraffer-Panel
-fuer die Offline-Buehne), das hinter dem devToolsAllowed-Gate haengt und im ausgelieferten Spiel
-nicht existiert. Nachgemessen: seit dem 1.2.2-Build wurden 5 Dateien geaendert, alle gehoeren zu
-diesem Knopf.
-
-Empfehlung: Build 25036037 im Depot liegen lassen, NICHT live schalten, keinen Steam-Post
-veroeffentlichen. 1.2.2 bleibt live. Der Dev-Knopf laeuft im Dev-Build aus dem Quellcode, dafuer
-war der Upload gar nicht noetig.
-
-Sobald echter Inhalt zusammenkommt (offen: Auto-Flucht, Elder-Bear-Namenshinweis an der
-Boss-Welle, Meisterring-Nachlese), wird daraus ein richtiges 1.2.3 mit eigenen Patchnotes.
+WAS DU NOCH TUN MUSST
+---------------------
+1. Steamworks -> SteamPipe -> Builds -> Build <neu> -> Branch "default" -> live setzen.
+2. Steam-Post veroeffentlichen. Text liegt fertig (nur Englisch):
+   G:\GameDev\design\steam-post-1.2.3.txt
+3. Anwendung -> Veroeffentlichen.
 
 
 WAS IN 1.2.3 DRIN IST
 ---------------------
-WICHTIG: 1.2.2 lag im Depot, war aber nie live. 1.2.3 enthaelt daher ALLES aus 1.2.2 plus den
-Dev-Knopf. Fuer die Spieler ist es EIN Update — die Patchnotes decken alles ab.
+Offline-Rueckkehr neu gestaltet (Umsetzung Mira, Variante 02 "Der Beutetisch" nach deiner Freigabe)
+  * Die Rueckkehr-Ansicht ist keine lange Spalte mehr, sondern eine Flaeche: Beute in der Mitte als
+    Hauptbuehne, Fortschritt und Siedlungsarbeit als schmalere Register daneben.
+  * Mehrere gleichzeitige Ereignisse bleiben sichtbar - Begleiterfund, Tod und Arbeitsstopp
+    konkurrierten vorher um denselben Platz, einer verdeckte die anderen.
+  * Leere Gruppen entfernen ihre Spalte, statt ein Loch zu lassen.
+  * Drei Spalten, bei schmalen Fenstern zwei, dann eine.
+  * offline-stage.css ist dabei um netto rund 600 Zeilen geschrumpft.
+  * Am Ertrag aendert sich NICHTS - reine Darstellung.
+  * Neuer Textschluessel in allen sieben Sprachen (diesmal von Mira vollstaendig geliefert).
 
-Nur fuer dich (nicht in den Patchnotes): Dev-Zeitraffer hat jetzt einen Knopf, der die
-"Waehrend du weg warst"-Buehne mit Demo-Daten in jedem Abschnitt oeffnet. Haengt hinter dem
-devToolsAllowed-Gate, existiert im ausgelieferten Spiel nicht.
+Nur fuer dich (nicht in den Patchnotes): Dev-Zeitraffer hat einen Knopf, der genau diese Buehne
+mit Demo-Daten in jedem Abschnitt oeffnet - damit laesst sich der Umbau ohne acht Stunden
+Abwesenheit begutachten. Haengt hinter devToolsAllowed, im ausgelieferten Spiel nicht vorhanden.
 
-Schriftwahl (dein Auftrag 31.08.)
-  * Vier Modi in den Anzeige-Einstellungen: Atmosphaere (Vorgabe, unveraendert), Buch (Georgia),
-    Antiqua (Palatino), Klar (Segoe UI). Mit Erklaerzeile und Vorschau in der jeweiligen Schrift.
-  * Jeder Modus traegt in ALLEN sieben Sprachen. Gemessen: keine unserer gebuendelten Schriften
-    kann Kyrillisch oder CJK - deshalb sind es Systemschriften, die Latein und Kyrillisch abdecken,
-    jede mit CJK-Rueckfall. Es kommt keine neue Schriftdatei ins Paket.
-  * Gespeichert pro Geraet (localStorage wie die Sprachwahl), NICHT im Spielstand - kein SAVE-Bump.
-  * Verifiziert in EN, RU und ZH: alle Modi greifen, Rueckkehr zur Vorgabe stellt den Ausgangsstand
-    exakt wieder her.
-
-New Haven, Listenansicht (Umsetzung von Mira, ihre erste eigene Implementierung)
-  * Gebaeuderegister: scrollbare Liste links mit grossem Motiv, Rang und Aktionen, Detailbereich
-    rechts mit Gebaeude, Wirkungen, vier Materialien plus Gold und genau einer Hauptaktion.
-  * Warteschlangen-Plaetze bleiben dauerhaft sichtbar.
-  * Veredelung und Raeucherkammer teilen sich ein Arbeitsfenster (beherrschte Rezepte, Ein-/Ausgang,
-    Rate je Durchlauf, Reichweite des Vorrats).
-  * Schmale Aufloesungen: zweizeilige Karten.
-  * Kartenansicht und ihr Popup unveraendert.
-  * Von mir ergaenzt: Typecheck-Guard und die 16 neuen Textschluessel in den fuenf Sprachen, die in
-    der Lieferung fehlten (es, fr, ptBR, ru, zh) - sonst haetten dort rohe Schluesselnamen gestanden.
+ALLES DARUNTER IST BEREITS MIT 1.2.2 LIVE - hier nur noch zur Nachlese:
 
 Dungeon-Beutezaehler (Spieler-Report)
   * Der Kampfschirm zeigte im Dungeon dauerhaft "0/6" und schwarze Silhouetten, egal wie viel schon

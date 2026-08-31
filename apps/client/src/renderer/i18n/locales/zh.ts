@@ -76,6 +76,8 @@ export const zh: Record<string, string> = {
     "offline.combatStopped.stalemate": "你的战斗结束了：双方都无法命中。",
     "offline.duration.cappedNote": "进度上限为 {cap}——你实际离开了 {time}。",
     "offline.stage.subtitle": "这是你离线期间获得的收获。",
+    // codex:2026-08-31T01:31:00+02:00
+    "offline.stage.awayLabel": "离线时长",
     "offline.stage.totalXp": "总经验值",
     "offline.stage.achievementsLabel": "成就",
     "offline.stage.achievementsAndMore": "还有 {n} 个",

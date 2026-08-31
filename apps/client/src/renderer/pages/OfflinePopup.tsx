@@ -13,6 +13,7 @@ import { getSkillIcon } from "../skillIcons";
 import { getUiIcon } from "../uiIcons";
 import { getMonsterSrc } from "../monsters";
 import { getPetSrc } from "../pets";
+import { getCampImage } from "../campArt";
 import { registerEscCloser } from "../util/escStack";
 import { playSfx } from "../util/audio";
 import { useAnimatedNumber } from "../util/useAnimatedNumber";
@@ -181,6 +182,10 @@ export function OfflinePopup({
   const o = offlineSummary;
   // Beute zuerst nach Seltenheit (hoch → niedrig), damit die goldenen Rahmen sofort ins Auge fallen.
   const items = Object.entries(o.items).sort((a, b) => rarityRank(b[0]) - rarityRank(a[0]));
+  // codex:2026-08-31T01:18:00+02:00 — Variante 02 „Der Beutetisch“ trennt seltene Funde von
+  // der Alltagsbeute. Die bestehende zentrale Seltenheitsrangfolge bleibt dabei maßgeblich.
+  const rareItems = items.filter(([id]) => rarityRank(id) >= RARE_RANK);
+  const commonItems = items.filter(([id]) => rarityRank(id) < RARE_RANK);
   // XP-Aufschlüsselung je Skill (meiste XP zuerst).
   const skillXp = Object.entries(o.skillXp ?? {}).sort((a, b) => b[1].xp - a[1].xp);
 
@@ -229,332 +234,142 @@ export function OfflinePopup({
   // ob dies ein "leere Rückkehr"-Aufruf ist (kein doppeltes Herleiten hier).
   const emptyReturn = o.emptyReturn ?? false;
 
+  // codex:2026-08-31T01:18:00+02:00 — Layoutmerkmale werden ausschließlich aus vorhandenen
+  // Summary-Daten abgeleitet. So verschwinden leere Spalten ohne künstliche Platzhalter.
+  const achievementIds = o.achievementIds ?? [];
+  const hasProgress = skillXp.length > 0 || achievementIds.length > 0;
+  const hasCampResults =
+    (o.campBuilds?.length ?? 0) > 0 ||
+    (o.campRefined?.length ?? 0) > 0 ||
+    (o.huntCatches?.length ?? 0) > 0;
+  const hasIncident =
+    (o.petDrops?.length ?? 0) > 0 || deaths > 0 || showStopHint || Boolean(lastStop);
+
   return (
     <div className="modal-overlay" onClick={dismissOffline}>
-      <div className="offline-stage" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+      {/* codex:2026-08-31T01:18:00+02:00 — Produktive Umsetzung des vom Chef gewählten
+          Mockups 02: feste Bilanz oben, Ereignisband, dreigeteilter Beutetisch und feste CTA. */}
+      <div
+        className="offline-stage"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="offline-stage-title"
+      >
         <div className="offline-stage-shine" aria-hidden="true" />
 
-        <header className="offline-stage-header">
-          <h2 className="offline-stage-title">{t("offline.title")}</h2>
-          <p className="offline-stage-subtitle">{t("offline.stage.subtitle")}</p>
-          <p className="offline-stage-duration">
-            {t("offline.duration").replace("{time}", formatPlaytime(o.ms))}
-          </p>
-          {isCapped && (
-            <p className="offline-stage-cap-note">
-              {t("offline.duration.cappedNote")
-                .replace("{cap}", formatPlaytime(o.ms))
-                .replace("{time}", formatPlaytime(realMs))}
-              {campOfflineBonus > 0 && (
-                <>
-                  {" "}
-                  <CampBoostNote kind="offlineCapMs" value={campOfflineBonus} t={t} />
-                </>
-              )}
-            </p>
+        <header className="ofs-summary-bar">
+          <div className="ofs-summary-heading">
+            <h2 id="offline-stage-title" className="offline-stage-title">{t("offline.title")}</h2>
+            <p className="offline-stage-subtitle">{t("offline.stage.subtitle")}</p>
+          </div>
+          <div className="ofs-summary-stat ofs-summary-stat--duration">
+            <strong>{formatPlaytime(o.ms)}</strong>
+            <span>{t("offline.stage.awayLabel")}</span>
+          </div>
+          {o.gold > 0 && (
+            <div className="ofs-summary-stat">
+              {GOLD_ICON_URL && <img src={GOLD_ICON_URL} alt="" className="ui-icon" />}
+              <strong>+{formatNum(Math.round(animatedGold))}</strong>
+              <span>{t("stats.gold")}</span>
+            </div>
+          )}
+          {o.xp > 0 && (
+            <div className="ofs-summary-stat">
+              {XP_ICON_URL && <img src={XP_ICON_URL} alt="" className="ui-icon" />}
+              <strong>+{formatNum(Math.round(animatedXp))}</strong>
+              <span>{t("offline.stage.totalXp")}</span>
+            </div>
+          )}
+          {(o.kills ?? 0) > 0 && (
+            <div className="ofs-summary-stat">
+              {getSidebarIcon("combat") && <img src={getSidebarIcon("combat")!} alt="" className="ui-icon" />}
+              <strong>{formatNum(Math.round(animatedKills))}</strong>
+              <span>{t("combat.session.killsShort")}</span>
+            </div>
+          )}
+          {(o.achievementsEarned ?? 0) > 0 && (
+            <div className="ofs-summary-stat">
+              {ACHIEVEMENT_ICON_URL && <img src={ACHIEVEMENT_ICON_URL} alt="" className="ui-icon" />}
+              <strong>{formatNum(Math.round(animatedAchievements))}</strong>
+              <span>{t("offline.stage.achievementsLabel")}</span>
+            </div>
           )}
         </header>
 
-        {/* Wächter-Bericht (Persönlichkeits-Paket „Das Reach führt Buch", §A) — Erzähler-Block,
-            klar vom tabellarischen Teil abgesetzt (Pergament-Ton, dezenter Cinzel-Akzent auf der
-            Kopfzeile). `frame` immer, darunter höchstens zwei Ereigniszeilen (pickWardenLines). */}
-        <section className="ofs-warden">
-          <p className="ofs-warden-frame">
-            {t("offline.warden.frame").replace("{time}", formatPlaytime(o.ms))}
-          </p>
-          {wardenLines.length > 0 && (
-            <div className="ofs-warden-lines">
-              {wardenLines.map((line) => (
-                <p key={line.key} className="ofs-warden-line">
-                  {applyWardenVars(t(line.key), line.vars)}
+        <section className={`ofs-event-ribbon${hasIncident ? " has-incident" : ""}`}>
+          <div className="ofs-warden">
+            <span className="ofs-warden-mark" aria-hidden="true">✥</span>
+            <div>
+              <p className="ofs-warden-frame">
+                {t("offline.warden.frame").replace("{time}", formatPlaytime(o.ms))}
+              </p>
+              <div className="ofs-warden-lines">
+                {wardenLines.map((line) => (
+                  <p key={line.key} className="ofs-warden-line">
+                    {applyWardenVars(t(line.key), line.vars)}
+                  </p>
+                ))}
+              </div>
+              {isCapped && (
+                <p className="offline-stage-cap-note">
+                  {t("offline.duration.cappedNote")
+                    .replace("{cap}", formatPlaytime(o.ms))
+                    .replace("{time}", formatPlaytime(realMs))}
+                  {campOfflineBonus > 0 && <><br /><CampBoostNote kind="offlineCapMs" value={campOfflineBonus} t={t} /></>}
                 </p>
-              ))}
+              )}
+            </div>
+          </div>
+
+          {hasIncident && (
+            <div className="ofs-incidents">
+              {o.petDrops?.map((petId, i) => {
+                const pet = content.pets[petId];
+                const src = getPetSrc(petId);
+                return (
+                  <div key={`${petId}-${i}`} className="ofs-incident ofs-incident--pet">
+                    <span className="ofs-incident-art">
+                      {src ? <img loading="lazy" decoding="async" src={src} alt="" /> : <span>{pet?.icon ?? "🐾"}</span>}
+                    </span>
+                    <span><strong>{t("offline.stage.petsTitle")}</strong><small>{pet ? tr(pet.name) : petId}</small></span>
+                  </div>
+                );
+              })}
+              {deaths > 0 && (
+                <div className="ofs-incident ofs-incident--danger">
+                  <span className="ofs-incident-art"><img src={diedMonsterArt ?? emblSkull} alt="" /></span>
+                  <span>
+                    <strong>{t("offline.died.title")}</strong>
+                    <small>{t("offline.died.body").replace("{monster}", diedMonsterName)}</small>
+                    {deaths > 1 && <small>{t("offline.died.count").replace("{count}", String(deaths))}</small>}
+                  </span>
+                </div>
+              )}
+              {showStopHint && combatStopReason && (
+                <div className="ofs-incident ofs-incident--warning">
+                  <span className="ofs-incident-art">{WARNING_ICON_URL && <img src={WARNING_ICON_URL} alt="" />}</span>
+                  <small>{t(`offline.combatStopped.${combatStopReason}`)}</small>
+                </div>
+              )}
+              {lastStop && (
+                <div className="ofs-incident ofs-incident--warning">
+                  <span className="ofs-incident-art">{WARNING_ICON_URL && <img src={WARNING_ICON_URL} alt="" />}</span>
+                  <small>
+                    {lastStopAction ? `${tr(lastStopAction.name)}: ` : ""}
+                    {t(lastStop.reason === "inventory_full" ? "skill.stoppedInventoryFull" : "skill.stoppedNoMaterials")}
+                  </small>
+                </div>
+              )}
             </div>
           )}
         </section>
 
-        {/* codex:2026-08-03T00:02:00+02:00 — Der variable Berichtskern liegt in einem eigenen
-            Fit-Bereich. Header, Wächterbericht und Einsammeln bleiben feste Anker; die Ergebnis-
-            gruppen können sich dazwischen mehrspaltig an die verfügbare Fensterhöhe anpassen. */}
         <div className="offline-stage-body">
-
-        {/* Welle EE (Fenn F1-Offline, "der Drop ist komplett stumm"): Pet-Drops während der
-            Abwesenheit sind der seltenste Fund im ganzen Spiel (1/60.000 bis 1/120.000) — bekommen
-            deshalb die prominenteste Karte der ganzen Bühne, direkt unter dem Header, vor Tod/Gold/
-            XP. `o.petDrops` fehlt/leer, wenn nichts droppte (Welle DD, kein Feld-Zwang). */}
-        {o.petDrops && o.petDrops.length > 0 && (
-          <section className="ofs-pets-section">
-            <h3 className="ofs-pets-title">{t("offline.stage.petsTitle")}</h3>
-            <div className="ofs-pets-grid">
-              {o.petDrops.map((petId, i) => {
-                const pet = content.pets[petId];
-                const src = getPetSrc(petId);
-                return (
-                  <div key={`${petId}-${i}`} className="ofs-pet-cell">
-                    <span className="ofs-pet-icon">
-                      {src ? (
-                        <img loading="lazy" decoding="async" src={src} alt="" className="pixelart" />
-                      ) : (
-                        <span className="ofs-pet-emoji">{pet?.icon ?? "🐾"}</span>
-                      )}
-                    </span>
-                    <span className="ofs-pet-name">{pet ? tr(pet.name) : petId}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {deaths > 0 && (
-          <div className="ofs-death">
-            <div className="ofs-death-icon">
-              <img
-                loading="lazy"
-                decoding="async"
-                src={diedMonsterArt ?? emblSkull}
-                alt=""
-                className="pixelart"
-              />
-            </div>
-            <div className="ofs-death-text">
-              <h3 className="ofs-death-title">{t("offline.died.title")}</h3>
-              <p className="ofs-death-body">
-                {t("offline.died.body").replace("{monster}", diedMonsterName)}
-              </p>
-              {deaths > 1 && (
-                <p className="ofs-death-count">
-                  {t("offline.died.count").replace("{count}", String(deaths))}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {showStopHint && combatStopReason && (
-          <div className="ofs-callout">
-            <span className="ofs-callout-icon" aria-hidden="true">
-              {WARNING_ICON_URL ? <img loading="lazy" decoding="async" src={WARNING_ICON_URL} alt="" className="ui-icon" /> : "⚠"}
-            </span>
-            <span>{t(`offline.combatStopped.${combatStopReason}`)}</span>
-          </div>
-        )}
-
-        {lastStop && (
-          <div className="ofs-callout">
-            <span className="ofs-callout-icon" aria-hidden="true">
-              {WARNING_ICON_URL ? <img loading="lazy" decoding="async" src={WARNING_ICON_URL} alt="" className="ui-icon" /> : "⚠"}
-            </span>
-            <span>
-              {lastStopAction ? `${tr(lastStopAction.name)}: ` : ""}
-              {t(
-                lastStop.reason === "inventory_full"
-                  ? "skill.stoppedInventoryFull"
-                  : "skill.stoppedNoMaterials",
-              )}
-            </span>
-          </div>
-        )}
-
-        {(o.gold > 0 || o.xp > 0 || (o.kills ?? 0) > 0 || (o.achievementsEarned ?? 0) > 0) && (
-          <div className="ofs-medallions">
-            {o.gold > 0 && (
-              <div className="ofs-medallion">
-                <span className="ofs-medallion-icon">
-                  {GOLD_ICON_URL
-                    ? <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />
-                    : "🪙"}
-                </span>
-                <span className="ofs-medallion-value">+{formatNum(Math.round(animatedGold))}</span>
-                <span className="ofs-medallion-label">{t("stats.gold")}</span>
-              </div>
-            )}
-            {o.xp > 0 && (
-              <div className="ofs-medallion">
-                <span className="ofs-medallion-icon">
-                  {XP_ICON_URL
-                    ? <img loading="lazy" decoding="async" src={XP_ICON_URL} alt="" className="ui-icon" />
-                    : "⭐"}
-                </span>
-                <span className="ofs-medallion-value">+{formatNum(Math.round(animatedXp))}</span>
-                <span className="ofs-medallion-label">{t("offline.stage.totalXp")}</span>
-              </div>
-            )}
-            {(o.kills ?? 0) > 0 && (
-              <div className="ofs-medallion">
-                <span className="ofs-medallion-icon">
-                  {getSidebarIcon("combat")
-                    ? <img loading="lazy" decoding="async" src={getSidebarIcon("combat")!} alt="" className="ui-icon" />
-                    : "⚔️"}
-                </span>
-                <span className="ofs-medallion-value">{formatNum(Math.round(animatedKills))}</span>
-                {/* killsShort = nacktes Wort („Kills") — combat.kills ist ein „{n}"-Template! */}
-                <span className="ofs-medallion-label">{t("combat.session.killsShort")}</span>
-              </div>
-            )}
-            {/* Welle KK (Fenn-Retest, "Offline verdiente Achievements sind lautlos"): Welle LL liefert
-                `OfflineSummary.achievementsEarned` (fehlt/0, wenn nichts verdient wurde) — dieselbe
-                Medaillon-Optik wie Gold/XP/Kills daneben. */}
-            {(o.achievementsEarned ?? 0) > 0 && (
-              <div className="ofs-medallion">
-                <span className="ofs-medallion-icon">
-                  {ACHIEVEMENT_ICON_URL
-                    ? <img loading="lazy" decoding="async" src={ACHIEVEMENT_ICON_URL} alt="" className="ui-icon" />
-                    : "🏆"}
-                </span>
-                <span className="ofs-medallion-value">{formatNum(Math.round(animatedAchievements))}</span>
-                <span className="ofs-medallion-label">{t("offline.stage.achievementsLabel")}</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Welle MM (Fenn+Pip R3-Fund, "Medaillon nennt nur die Zahl"): `OfflineSummary.achievementIds`
-            liegt bereits seit Welle LL bereit, wurde bisher aber nirgends gelesen — die ersten 3
-            Namen + „und N weitere", dieselbe Quelle wie der Toasts.tsx-Sammel-Toast
-            (content.achievements.find). Eigene Zeile UNTER den Medaillons statt im engen
-            Medaillon-Layout selbst (das ist auf kurze Werte ausgelegt, s. ofs-medallion-Geschwister). */}
-        {(o.achievementIds?.length ?? 0) > 0 && (
-          <p className="ofs-achievement-names muted">
-            {(() => {
-              const ids = o.achievementIds!;
-              const shown = ids.slice(0, 3).map((id) => {
-                const ach = content.achievements.find((a) => a.id === id);
-                return ach ? tr(ach.name) : id;
-              });
-              const extra = ids.length - shown.length;
-              return extra > 0
-                ? `${shown.join(", ")} ${t("offline.stage.achievementsAndMore").replace("{n}", String(extra))}`
-                : shown.join(", ");
-            })()}
-          </p>
-        )}
-
-        <div className="offline-stage-results">
-        {skillXp.length > 0 && (
-          <section className="ofs-section ofs-section--skills">
-            <h3 className="ofs-section-title">{t("offline.stage.skillsTitle")}</h3>
-            <div className="ofs-skills">
-              {skillXp.map(([id, g]) => {
-                const skill = content.skills[id];
-                // Kampf-Skills (Vitality/Defence/Attack …) haben ihr Icon in getSkillIcon,
-                // Sammel-/Verarbeitungs-Skills in getSidebarIcon → beide Quellen versuchen.
-                const icon = getSkillIcon(id) ?? getSidebarIcon(id);
-                return (
-                  <div key={id} className="ofs-skill-row">
-                    <span className="ofs-skill-icon">
-                      {icon && <img loading="lazy" decoding="async" src={icon} alt="" className="ui-icon" />}
-                    </span>
-                    <span className="ofs-skill-name">{skill ? tr(skill.name) : id}</span>
-                    <span className="ofs-skill-gain">
-                      <span className="ofs-skill-xp">+{formatNum(Math.floor(g.xp))} {t("offline.xpShort")}</span>
-                      {g.levels > 0 && (
-                        <span className="ofs-skill-lvl">+{g.levels} {t("offline.lvlShort")}</span>
-                      )}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* Das Lager (0.3.0, Task #361): was New Haven während der Abwesenheit erledigt hat.
-            Zwei Quellen aus `OfflineSummary`, beide fehlen ganz, wenn nichts passiert ist —
-            `campBuilds` (fertiggestellte Ausbaustufen) und `campRefined` (Ausstoß der
-            Veredelungs-Anlagen, `qty` = Stück). Gebäudenamen ausschließlich über den Katalog
-            (`content.campBuildings.find`), nie über ID-Literale. Bewusst im bestehenden
-            `.ofs-section`-Kachel-Layout, keine eigene Bühnen-Optik. */}
-        {(o.campBuilds?.length ?? 0) > 0 && (
-          <section className="ofs-section ofs-section--builds">
-            <h3 className="ofs-section-title">{t("offline.camp.buildsTitle")}</h3>
-            <div className="ofs-skills">
-              {o.campBuilds!.map((b, i) => {
-                const def = (content.campBuildings ?? []).find((d) => d.id === b.buildingId);
-                return (
-                  <div key={`${b.buildingId}-${b.level}-${i}`} className="ofs-skill-row">
-                    <span className="ofs-skill-name">{def ? tr(def.name) : b.buildingId}</span>
-                    <span className="ofs-skill-gain">
-                      <span className="ofs-skill-lvl">
-                        {t("offline.camp.buildLevel").replace("{n}", romanLevel(b.level))}
-                      </span>
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {(o.campRefined?.length ?? 0) > 0 && (
-          <section className="ofs-section ofs-section--refined">
-            <h3 className="ofs-section-title">{t("offline.camp.refinedTitle")}</h3>
-            <div className="ofs-loot-grid">
-              {o.campRefined!.map((r, i) => (
-                <div key={`${r.buildingId}-${r.itemId}-${i}`} className="ofs-loot-cell">
-                  <ItemCell itemId={r.itemId} qty={r.qty} className="ofs-loot-item" />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Jagen (1.2.0 „Fasern und Fallen", SAVE 85, design/handwerk-fasern-jagen/spec-technik.md
-            §4): „Jagd: Eber ×3, Ziege ×1" — je Monster ein Zeile, `OfflineSummary.huntCatches`.
-            Fehlt ganz, wenn im Offline-Fenster kein Fang gelang (Muster campBuilds/campRefined
-            oben). Items/Gold der Fänge stecken bereits in den regulären `items`/`gold`-Summen
-            unten — diese Zeile ist reine ZUORDNUNG (welches Tier), keine zweite Beute-Zählung. */}
-        {(o.huntCatches?.length ?? 0) > 0 && (
-          <section className="ofs-section ofs-section--hunt">
-            <h3 className="ofs-section-title">{t("offline.hunt.title")}</h3>
-            <div className="ofs-skills">
-              {o.huntCatches!.map((h, i) => {
-                const monster = content.monsters[h.monsterId];
-                const icon = getMonsterSrc(h.monsterId);
-                return (
-                  <div key={`${h.monsterId}-${i}`} className="ofs-skill-row">
-                    <span className="ofs-skill-icon">
-                      {icon && <img loading="lazy" decoding="async" src={icon} alt="" className="ui-icon" />}
-                    </span>
-                    <span className="ofs-skill-name">{monster ? tr(monster.name) : h.monsterId}</span>
-                    <span className="ofs-skill-gain">
-                      <span className="ofs-skill-lvl">×{h.count}</span>
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {items.length > 0 && (
-          <section className="ofs-section ofs-section--loot">
-            <h3 className="ofs-section-title">{t("offline.items")}</h3>
-            <div className="ofs-loot-grid">
-              {items.map(([id, qty]) => {
-                const isRare = rarityRank(id) >= RARE_RANK;
-                const item = content.items[id];
-                return (
-                  <div key={id} className={`ofs-loot-cell${isRare ? " is-rare" : ""}`}>
-                    <ItemCell itemId={id} qty={qty} className="ofs-loot-item" />
-                    {isRare && (
-                      <>
-                        <span className="ofs-loot-rare-tag">{t("offline.stage.rare")}</span>
-                        <span className="ofs-loot-rare-name">{item ? tr(item.name) : id}</span>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-        </div>
-
-        {emptyReturn && (
+          {emptyReturn ? (
           <div className="ofs-empty">
             <span className="ofs-empty-icon" aria-hidden="true">
-              {IDLE_ICON_URL ? <img loading="lazy" decoding="async" src={IDLE_ICON_URL} alt="" className="ui-icon" /> : "💤"}
+              {IDLE_ICON_URL && <img loading="lazy" decoding="async" src={IDLE_ICON_URL} alt="" className="ui-icon" />}
             </span>
             <p className="ofs-empty-text">{t("offline.empty.body")}</p>
             <button
@@ -568,10 +383,141 @@ export function OfflinePopup({
               {t("offline.empty.jumpBtn")}
             </button>
           </div>
-        )}
+          ) : (
+            <div className={`ofs-report-grid${hasProgress ? " has-progress" : ""}${items.length > 0 ? " has-loot" : ""}${hasCampResults ? " has-camp" : ""}`}>
+              {hasProgress && (
+                <aside className="ofs-report-column ofs-report-column--progress">
+                  {skillXp.length > 0 && (
+                    <section className="ofs-section">
+                      <h3 className="ofs-section-title">{t("offline.stage.skillsTitle")}</h3>
+                      <div className="ofs-skills">
+                        {skillXp.map(([id, g]) => {
+                          const skill = content.skills[id];
+                          const icon = getSkillIcon(id) ?? getSidebarIcon(id);
+                          return (
+                            <div key={id} className="ofs-skill-row">
+                              <span className="ofs-skill-icon">{icon && <img src={icon} alt="" />}</span>
+                              <span className="ofs-skill-name">{skill ? tr(skill.name) : id}</span>
+                              <span className="ofs-skill-gain">
+                                <span className="ofs-skill-xp">+{formatNum(Math.floor(g.xp))} {t("offline.xpShort")}</span>
+                                {g.levels > 0 && <span className="ofs-skill-lvl">+{g.levels} {t("offline.lvlShort")}</span>}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+                  {achievementIds.length > 0 && (
+                    <section className="ofs-section ofs-achievements">
+                      <h3 className="ofs-section-title">{t("offline.stage.achievementsLabel")}</h3>
+                      {achievementIds.slice(0, 3).map((id) => {
+                        const achievement = content.achievements.find((entry) => entry.id === id);
+                        return (
+                          <div key={id} className="ofs-achievement-row">
+                            {ACHIEVEMENT_ICON_URL && <img src={ACHIEVEMENT_ICON_URL} alt="" />}
+                            <strong>{achievement ? tr(achievement.name) : id}</strong>
+                          </div>
+                        );
+                      })}
+                      {achievementIds.length > 3 && (
+                        <p className="ofs-achievement-more">
+                          {t("offline.stage.achievementsAndMore").replace("{n}", String(achievementIds.length - 3))}
+                        </p>
+                      )}
+                    </section>
+                  )}
+                </aside>
+              )}
+
+              {items.length > 0 && (
+                <section className="ofs-report-column ofs-report-column--loot">
+                  <h3 className="ofs-column-title">{t("offline.items")}</h3>
+                  {commonItems.length > 0 && (
+                    <div className="ofs-loot-grid">
+                      {commonItems.map(([id, qty]) => (
+                        <div key={id} className="ofs-loot-cell">
+                          <ItemCell itemId={id} qty={qty} className="ofs-loot-item" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {rareItems.length > 0 && (
+                    <section className="ofs-rare-block">
+                      <h4>{t("offline.stage.rare")}</h4>
+                      <div className="ofs-loot-grid ofs-loot-grid--rare">
+                        {rareItems.map(([id, qty]) => {
+                          const item = content.items[id];
+                          return (
+                            <div key={id} className="ofs-loot-cell is-rare">
+                              <ItemCell itemId={id} qty={qty} className="ofs-loot-item" />
+                              <span className="ofs-loot-rare-name">{item ? tr(item.name) : id}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+                </section>
+              )}
+
+              {hasCampResults && (
+                <aside className="ofs-report-column ofs-report-column--camp">
+                  {(o.campBuilds?.length ?? 0) > 0 && (
+                    <section className="ofs-section">
+                      <h3 className="ofs-section-title">{t("offline.camp.buildsTitle")}</h3>
+                      <div className="ofs-skills">
+                        {o.campBuilds!.map((b, i) => {
+                          const def = (content.campBuildings ?? []).find((d) => d.id === b.buildingId);
+                          const art = getCampImage(b.buildingId, b.level);
+                          return (
+                            <div key={`${b.buildingId}-${b.level}-${i}`} className="ofs-skill-row ofs-camp-row">
+                              <span className="ofs-camp-art">{art && <img src={art} alt="" />}</span>
+                              <span className="ofs-skill-name">{def ? tr(def.name) : b.buildingId}</span>
+                              <span className="ofs-skill-lvl">{t("offline.camp.buildLevel").replace("{n}", romanLevel(b.level))}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+                  {(o.campRefined?.length ?? 0) > 0 && (
+                    <section className="ofs-section">
+                      <h3 className="ofs-section-title">{t("offline.camp.refinedTitle")}</h3>
+                      <div className="ofs-loot-grid ofs-loot-grid--small">
+                        {o.campRefined!.map((r, i) => (
+                          <div key={`${r.buildingId}-${r.itemId}-${i}`} className="ofs-loot-cell">
+                            <ItemCell itemId={r.itemId} qty={r.qty} className="ofs-loot-item" />
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                  {(o.huntCatches?.length ?? 0) > 0 && (
+                    <section className="ofs-section">
+                      <h3 className="ofs-section-title">{t("offline.hunt.title")}</h3>
+                      <div className="ofs-skills">
+                        {o.huntCatches!.map((h, i) => {
+                          const monster = content.monsters[h.monsterId];
+                          const icon = getMonsterSrc(h.monsterId);
+                          return (
+                            <div key={`${h.monsterId}-${i}`} className="ofs-skill-row">
+                              <span className="ofs-skill-icon">{icon && <img src={icon} alt="" />}</span>
+                              <span className="ofs-skill-name">{monster ? tr(monster.name) : h.monsterId}</span>
+                              <span className="ofs-skill-lvl">×{h.count}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+                </aside>
+              )}
+            </div>
+          )}
         </div>
 
-        <button className="btn-iron ofs-collect" onClick={dismissOffline}>
+        <button type="button" className="btn-iron ofs-collect" onClick={dismissOffline}>
           {t("offline.collect")}
         </button>
       </div>

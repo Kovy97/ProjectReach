@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Grim Reach – 02 Der Beutetisch</title>
+  <!-- codex:2026-08-31T00:42:00+02:00 — Interaktives Auswahlmockup, keine Runtime-Implementierung. -->
+  <style>
+    @font-face {
+      font-family: "Fell Chronicle";
+      src: url("../../../../apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2");
+    }
+
+    @font-face {
+      font-family: "Marcellus";
+      src: url("../../../../apps/client/src/renderer/fonts/MarcellusSC-Regular.ttf") format("truetype");
+    }
+
+    :root {
+      color-scheme: dark;
+      --gold: #d9b65e;
+      --gold-hi: #f0d590;
+      --text: #d6d2c6;
+      --muted: #8f918d;
+      --green: #8bc96c;
+      --red: #c86655;
+      --iron-frame: url("../../../../apps/client/src/renderer/assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+      --panel-frame: url("../../../../apps/client/src/renderer/assets/ui/gravewood/frames/frame-panel.webp");
+      --card-frame: url("../../../../apps/client/src/renderer/assets/ui/gravewood/frames/frame-card.webp");
+      --slot-frame: url("../../../../apps/client/src/renderer/assets/ui/gravewood/slots/slot-empty.webp");
+      --stone: url("../../../../apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-basalt.webp");
+      --slate: url("../../../../apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+      --leather: url("../../../../apps/client/src/renderer/assets/ui/gravewood/textures/texture-leather.webp");
+      --button: url("../../../../apps/client/src/renderer/assets/ui/gravewood/buttons/primary/primary-normal.webp");
+      --button-hover: url("../../../../apps/client/src/renderer/assets/ui/gravewood/buttons/primary/primary-hover.webp");
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body { width: 100%; min-height: 100%; margin: 0; }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--text);
+      font-family: Marcellus, Georgia, serif;
+      background:
+        linear-gradient(rgba(0, 0, 0, .72), rgba(0, 0, 0, .82)),
+        url("../../../../apps/client/ui-audit/shots-review-1.2.0/B07-offline-bericht.png") center / cover fixed;
+    }
+
+    button,
+    a { font: inherit; }
+
+    .workbench {
+      position: fixed;
+      z-index: 20;
+      top: 12px;
+      right: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      max-width: min(760px, 72vw);
+      padding: 7px;
+      border: 1px solid #5d4a2c;
+      background: rgba(4, 5, 6, .94);
+      box-shadow: 0 7px 22px #000;
+    }
+
+    .workbench button,
+    .workbench a {
+      min-height: 30px;
+      padding: 4px 10px;
+      border: 1px solid #5f5137;
+      color: #bdb6a2;
+      background: #141618;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .workbench button:hover,
+    .workbench button.active,
+    .workbench a:hover {
+      color: var(--gold-hi);
+      border-color: #a17c38;
+      background: #252016;
+    }
+
+    .viewport {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100vh;
+      padding: clamp(54px, 5vh, 72px) clamp(12px, 2vw, 34px) clamp(12px, 2vh, 24px);
+    }
+
+    /* codex:2026-08-31T00:42:00+02:00 — Das Mockup hält Kopf, Ereignis und Abschluss fest;
+       ausschließlich der datenreiche Berichtskern darf intern scrollen. */
+    .stage {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: clamp(7px, .7vw, 12px);
+      width: min(1540px, 96vw);
+      height: min(900px, calc(100vh - 76px));
+      min-height: 650px;
+      padding: clamp(16px, 1.35vw, 24px);
+      border: 10px solid transparent;
+      border-image: var(--iron-frame) 85 / 22px stretch;
+      background:
+        linear-gradient(rgba(4, 5, 6, .48), rgba(0, 0, 0, .72)),
+        var(--stone) center / 340px repeat;
+      box-shadow: 0 20px 60px #000, inset 0 0 52px rgba(0, 0, 0, .7);
+    }
+
+    .stage::before {
+      content: "02 — DER BEUTETISCH";
+      position: absolute;
+      top: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 300px;
+      padding: 7px 26px;
+      color: var(--gold-hi);
+      font-family: "Fell Chronicle", Georgia, serif;
+      font-size: 21px;
+      letter-spacing: .05em;
+      text-align: center;
+      border: 7px solid transparent;
+      border-image: var(--iron-frame) 85 / 16px stretch;
+      background: #090b0c;
+    }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.45fr) repeat(5, minmax(105px, .75fr));
+      min-height: 78px;
+      border: 7px solid transparent;
+      border-image: var(--iron-frame) 85 / 15px stretch;
+      background:
+        linear-gradient(rgba(5, 7, 8, .48), rgba(0, 0, 0, .64)),
+        var(--slate) center / 250px repeat;
+    }
+
+    .summary-title,
+    .summary-stat {
+      min-width: 0;
+      border-right: 1px solid rgba(121, 94, 49, .42);
+    }
+
+    .summary-title {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8px 18px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p { margin: 0; }
+
+    h1 {
+      color: var(--gold-hi);
+      font-family: "Fell Chronicle", Georgia, serif;
+      font-size: clamp(26px, 2vw, 38px);
+      font-weight: 400;
+      line-height: .95;
+      letter-spacing: .025em;
+    }
+
+    .summary-title small {
+      margin-top: 6px;
+      color: #a9a59b;
+      font-size: clamp(10px, .72vw, 13px);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .summary-stat {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      align-content: center;
+      column-gap: 5px;
+      padding: 8px 10px;
+    }
+
+    .summary-stat .icon {
+      grid-row: 1 / 3;
+      align-self: center;
+      color: var(--gold);
+      font-size: 26px;
+      text-align: center;
+    }
+
+    .summary-stat strong {
+      color: var(--gold-hi);
+      font-size: clamp(16px, 1.18vw, 23px);
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .summary-stat span:last-child {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .event-ribbon {
+      display: grid;
+      grid-template-columns: minmax(0, 1.75fr) minmax(300px, .8fr);
+      min-height: 92px;
+      border: 8px solid transparent;
+      border-image: var(--iron-frame) 85 / 18px stretch;
+      background:
+        linear-gradient(90deg, rgba(53, 30, 17, .42), rgba(14, 10, 8, .75)),
+        var(--leather) center / 320px repeat;
+    }
+
+    .warden-report,
+    .incident {
+      display: grid;
+      align-items: center;
+      min-width: 0;
+      padding: 10px 16px;
+    }
+
+    .warden-report {
+      grid-template-columns: 62px minmax(0, 1fr);
+      gap: 12px;
+      border-right: 1px solid rgba(166, 117, 51, .45);
+    }
+
+    .warden-mark {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border: 2px solid #8c6a32;
+      border-radius: 50%;
+      color: var(--gold);
+      font-size: 30px;
+      background: rgba(0, 0, 0, .48);
+    }
+
+    .event-kicker,
+    .incident strong {
+      color: var(--gold-hi);
+      font-family: "Fell Chronicle", Georgia, serif;
+      font-size: 17px;
+      letter-spacing: .045em;
+    }
+
+    .warden-report p,
+    .incident p {
+      margin-top: 4px;
+      color: #c9c2b4;
+      font-size: clamp(12px, .85vw, 15px);
+      line-height: 1.35;
+    }
+
+    .incident {
+      grid-template-columns: 62px minmax(0, 1fr);
+      gap: 12px;
+      transition: background .18s ease;
+    }
+
+    .incident img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 5px #000);
+    }
+
+    .incident.is-danger {
+      background: linear-gradient(90deg, rgba(90, 18, 12, .35), rgba(35, 5, 5, .14));
+    }
+
+    .incident.is-danger strong { color: #e37b68; }
+    .incident.is-quiet strong { color: #aaa89f; }
+
+    .report-body {
+      display: grid;
+      grid-template-columns: minmax(230px, .72fr) minmax(420px, 1.55fr) minmax(260px, .86fr);
+      gap: clamp(7px, .65vw, 12px);
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .column {
+      min-width: 0;
+      min-height: 0;
+      padding: 10px;
+      border: 7px solid transparent;
+      border-image: var(--iron-frame) 85 / 15px stretch;
+      background:
+        linear-gradient(rgba(5, 7, 8, .46), rgba(0, 0, 0, .72)),
+        var(--slate) center / 250px repeat;
+      overflow: auto;
+      scrollbar-color: #705629 #101214;
+      scrollbar-width: thin;
+    }
+
+    .column-title {
+      margin: -2px 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(162, 122, 52, .38);
+      color: var(--gold-hi);
+      font-family: "Fell Chronicle", Georgia, serif;
+      font-size: clamp(19px, 1.25vw, 25px);
+      font-weight: 400;
+      letter-spacing: .045em;
+      text-align: center;
+    }
+
+    .subhead {
+      margin: 8px 0 6px;
+      color: #aead9f;
+      font-size: 11px;
+      letter-spacing: .11em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .skill-list,
+    .haven-list,
+    .hunt-list {
+      display: grid;
+      gap: 5px;
+    }
+
+    .skill-row,
+    .haven-row,
+    .hunt-row {
+      display: grid;
+      align-items: center;
+      min-height: 48px;
+      padding: 5px 8px;
+      border: 1px solid rgba(119, 91, 49, .44);
+      background: rgba(12, 10, 8, .58);
+    }
+
+    .skill-row {
+      grid-template-columns: 35px minmax(0, 1fr) auto;
+      gap: 7px;
+    }
+
+    .skill-row img,
+    .hunt-row img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+    }
+
+    .skill-row strong,
+    .haven-row strong,
+    .hunt-row strong { color: #d8d2c4; font-size: 13px; }
+
+    .gain {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      color: var(--green);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .level-badge,
+    .qty-badge {
+      margin-top: 2px;
+      padding: 1px 5px;
+      border: 1px solid #8c6a2c;
+      color: var(--gold-hi);
+      background: rgba(80, 53, 13, .35);
+      font-size: 10px;
+    }
+
+    .achievement-list {
+      display: grid;
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .achievement {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      gap: 7px;
+      align-items: center;
+      min-height: 43px;
+      padding: 5px 8px;
+      border: 1px solid rgba(138, 103, 43, .45);
+      background: rgba(42, 29, 12, .42);
+    }
+
+    .achievement img { width: 28px; height: 28px; object-fit: contain; }
+    .achievement strong { display: block; color: var(--gold); font-size: 12px; }
+    .achievement small { color: #8f918d; font-size: 10px; }
+
+    .loot-column {
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr);
+      align-content: start;
+    }
+
+    .loot-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(50px, 1fr));
+      gap: clamp(5px, .45vw, 8px);
+    }
+
+    .loot-grid.rare {
+      grid-template-columns: repeat(4, minmax(78px, 1fr));
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .loot-slot {
+      position: relative;
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      min-width: 0;
+      border: 6px solid transparent;
+      border-image: var(--iron-frame) 85 / 12px stretch;
+      background: rgba(1, 2, 3, .74);
+    }
+
+    .loot-slot img {
+      width: 82%;
+      height: 82%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 4px #000);
+    }
+
+    .loot-slot b {
+      position: absolute;
+      right: 5px;
+      bottom: 3px;
+      color: white;
+      font-family: Georgia, serif;
+      font-size: clamp(11px, .84vw, 15px);
+      text-shadow: 1px 1px 2px #000, -1px -1px 2px #000;
+    }
+
+    .loot-slot.is-rare {
+      box-shadow: inset 0 0 18px rgba(162, 113, 255, .14), 0 0 0 1px #6f4a91;
+    }
+
+    .loot-slot.is-rare::after {
+      content: "SELTEN";
+      position: absolute;
+      top: 3px;
+      left: 4px;
+      color: #d6b4ff;
+      font-size: 8px;
+      letter-spacing: .08em;
+    }
+
+    .haven-row {
+      grid-template-columns: 58px minmax(0, 1fr) auto;
+      gap: 7px;
+    }
+
+    .haven-row img {
+      width: 56px;
+      height: 45px;
+      object-fit: contain;
+    }
+
+    .haven-row small,
+    .hunt-row small { color: var(--muted); font-size: 10px; }
+
+    .refined-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(50px, 1fr));
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .refined-grid .loot-slot { border-width: 5px; }
+
+    .hunt-row {
+      grid-template-columns: 35px minmax(0, 1fr) auto;
+      gap: 7px;
+    }
+
+    .collect {
+      width: min(620px, 65%);
+      min-height: 54px;
+      margin: 0 auto;
+      border: 9px solid transparent;
+      border-image: var(--iron-frame) 85 / 18px stretch;
+      color: #f1dfb0;
+      font-family: "Fell Chronicle", Georgia, serif;
+      font-size: clamp(23px, 1.7vw, 31px);
+      letter-spacing: .06em;
+      text-shadow: 0 2px 3px #000;
+      background:
+        linear-gradient(rgba(80, 15, 10, .42), rgba(25, 4, 4, .56)),
+        var(--button) center / 100% 100% stretch;
+      cursor: pointer;
+    }
+
+    .collect:hover {
+      filter: brightness(1.16);
+      background-image:
+        linear-gradient(rgba(100, 22, 13, .30), rgba(35, 5, 5, .45)),
+        var(--button-hover);
+    }
+
+    .empty-panel {
+      display: none;
+      grid-column: 1 / -1;
+      align-self: center;
+      justify-self: center;
+      width: min(660px, 92%);
+      padding: 28px;
+      border: 8px solid transparent;
+      border-image: var(--iron-frame) 85 / 18px stretch;
+      background: rgba(7, 8, 9, .78);
+      text-align: center;
+    }
+
+    .empty-panel strong {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--gold-hi);
+      font-family: "Fell Chronicle", Georgia, serif;
+      font-size: 28px;
+    }
+
+    .empty-panel button {
+      margin-top: 18px;
+      padding: 10px 22px;
+      border: 1px solid #8c6a32;
+      color: var(--gold-hi);
+      background: #17140e;
+      cursor: pointer;
+    }
+
+    body[data-scenario="empty"] .rich-only { display: none !important; }
+    body[data-scenario="empty"] .empty-panel { display: block; }
+    body[data-scenario="empty"] .report-body { display: grid; }
+    body[data-scenario="empty"] .collect { width: min(470px, 60%); }
+
+    body.compact .skill-row:nth-child(n + 4),
+    body.compact .loot-slot:nth-child(n + 13),
+    body.compact .hunt-row:nth-child(n + 4) { display: none; }
+
+    .toast {
+      position: fixed;
+      z-index: 40;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 20px);
+      padding: 10px 20px;
+      border: 1px solid #80652f;
+      color: var(--gold-hi);
+      background: #090b0c;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 1260px) {
+      .summary-bar { grid-template-columns: minmax(240px, 1.25fr) repeat(5, minmax(90px, .7fr)); }
+      .report-body { grid-template-columns: minmax(210px, .68fr) minmax(390px, 1.42fr) minmax(235px, .8fr); }
+      .loot-grid { grid-template-columns: repeat(6, minmax(48px, 1fr)); }
+      .loot-grid.rare { grid-template-columns: repeat(4, minmax(66px, 1fr)); }
+    }
+
+    @media (max-width: 980px) {
+      body { overflow: auto; }
+      .viewport { height: auto; min-height: 100vh; padding-top: 76px; }
+      .stage { height: auto; min-height: 900px; }
+      .summary-bar { grid-template-columns: repeat(3, 1fr); }
+      .summary-title { grid-column: 1 / -1; border-bottom: 1px solid rgba(121, 94, 49, .42); }
+      .event-ribbon { grid-template-columns: 1fr; }
+      .warden-report { border-right: 0; border-bottom: 1px solid rgba(166, 117, 51, .45); }
+      .report-body { grid-template-columns: 1fr; overflow: visible; }
+      .column { overflow: visible; }
+      .loot-column { order: -1; }
+      .collect { width: 100%; }
+    }
+  </style>
+</head>
+<body data-scenario="companion">
+  <nav class="workbench" aria-label="Mockup-Zustände">
+    <button type="button" data-scenario="companion" class="active">Begleiter</button>
+    <button type="button" data-scenario="death">Niederlage</button>
+    <button type="button" data-scenario="stalemate">Patt</button>
+    <button type="button" data-scenario="workstop">Arbeitsstopp</button>
+    <button type="button" data-scenario="empty">Leerrückkehr</button>
+    <button type="button" id="density">Kompakte Daten</button>
+    <a href="../02-beutetisch.png" target="_blank" rel="noreferrer">PNG-Entwurf</a>
+  </nav>
+
+  <main class="viewport">
+    <section class="stage" role="dialog" aria-modal="true" aria-labelledby="return-title">
+      <header class="summary-bar rich-summary">
+        <div class="summary-title">
+          <h1 id="return-title">Während du weg warst</h1>
+          <small>Das Reach führte weiter Buch.</small>
+        </div>
+        <div class="summary-stat"><span class="icon">⌛</span><strong>8H 0M</strong><span>Abwesend</span></div>
+        <div class="summary-stat rich-only"><span class="icon">●</span><strong>+43.971</strong><span>Gold</span></div>
+        <div class="summary-stat rich-only"><span class="icon">✦</span><strong>+81.430</strong><span>Gesamt-XP</span></div>
+        <div class="summary-stat rich-only"><span class="icon">☠</span><strong>214</strong><span>Kills</span></div>
+        <div class="summary-stat rich-only"><span class="icon">♛</span><strong>11</strong><span>Erfolge</span></div>
+      </header>
+
+      <section class="event-ribbon">
+        <div class="warden-report">
+          <span class="warden-mark" aria-hidden="true">✥</span>
+          <div>
+            <span class="event-kicker">Bericht des Wächters</span>
+            <p>Du warst 8H 0M fort. Die Beute stapelt sich. Sieh sie durch, bevor sie Staub ansetzt.</p>
+            <p><small>Fortschritt auf 8H begrenzt · tatsächlich 14H 32M · +2H durch New Haven</small></p>
+          </div>
+        </div>
+        <div class="incident" id="incident">
+          <img id="incident-image" src="../../../../apps/client/src/renderer/assets/pets/booted_tomcat.webp" alt="" />
+          <div><strong id="incident-title">Begleiter gefunden</strong><p id="incident-body">Felyx, der Fallensteller, ist deiner Spur bis nach Hause gefolgt.</p></div>
+        </div>
+      </section>
+
+      <div class="report-body">
+        <aside class="column rich-only">
+          <h2 class="column-title">Fortschritt</h2>
+          <p class="subhead">Trainierte Fertigkeiten</p>
+          <div class="skill-list">
+            <div class="skill-row"><img src="../../../../apps/client/src/renderer/assets/sidebar/sidebaricon_mining.webp" alt="" /><strong>Bergbau</strong><span class="gain">+37.981 XP <b class="level-badge">+2 LVL</b></span></div>
+            <div class="skill-row"><img src="../../../../apps/client/src/renderer/assets/sidebar/sidebaricon_hunting.webp" alt="" /><strong>Jagen</strong><span class="gain">+15.990 XP <b class="level-badge">+1 LVL</b></span></div>
+            <div class="skill-row"><img src="../../../../apps/client/src/renderer/assets/sidebar/sidebaricon_smithing.webp" alt="" /><strong>Schmieden</strong><span class="gain">+11.340 XP <b class="level-badge">+1 LVL</b></span></div>
+            <div class="skill-row"><img src="../../../../apps/client/src/renderer/assets/sidebar/sidebaricon_tailoring.webp" alt="" /><strong>Schneidern</strong><span class="gain">+8.420 XP</span></div>
+            <div class="skill-row"><img src="../../../../apps/client/src/renderer/assets/sidebar/sidebaricon_woodcutting.webp" alt="" /><strong>Holzfällen</strong><span class="gain">+7.699 XP</span></div>
+          </div>
+
+          <p class="subhead">Erreichte Erfolge</p>
+          <div class="achievement-list">
+            <div class="achievement"><img src="../../../../apps/client/src/renderer/assets/sidebar/sidebaricon_achievements.webp" alt="" /><span><strong>Bergbau-Geselle</strong><small>Stufe 40 erreicht</small></span></div>
+            <div class="achievement"><img src="../../../../apps/client/src/renderer/assets/sidebar/sidebaricon_achievements.webp" alt="" /><span><strong>Jägerglück</strong><small>und 9 weitere</small></span></div>
+          </div>
+        </aside>
+
+        <section class="column loot-column rich-only">
+          <h2 class="column-title">Beutetisch</h2>
+          <p class="subhead">Gewöhnliche Beute</p>
+          <div class="loot-grid">
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/adamantite_ore.webp" alt="" /><b>2340</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/rough_garnet.webp" alt="" /><b>33</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/raw_beef.webp" alt="" /><b>35</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/raw_salmon.webp" alt="" /><b>10</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/scarred_hide.webp" alt="" /><b>68</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/feather.webp" alt="" /><b>45</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/aether_essence.webp" alt="" /><b>5</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/raw_chicken.webp" alt="" /><b>10</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/iron_bar.webp" alt="" /><b>24</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/fang.webp" alt="" /><b>11</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/crude_bone.webp" alt="" /><b>21</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/ironvine.webp" alt="" /><b>16</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/spider_silk.webp" alt="" /><b>18</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/cloth_linen.webp" alt="" /><b>27</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/emberleaf.webp" alt="" /><b>12</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/vial_of_water.webp" alt="" /><b>9</b></span>
+          </div>
+          <p class="subhead">Seltene Beute</p>
+          <div class="loot-grid rare">
+            <span class="loot-slot is-rare"><img src="../../../../apps/client/src/renderer/assets/items/cooked_anglerfish.webp" alt="" /><b>1</b></span>
+            <span class="loot-slot is-rare"><img src="../../../../apps/client/src/renderer/assets/items/cooked_duskfin_carp.webp" alt="" /><b>1</b></span>
+            <span class="loot-slot is-rare"><img src="../../../../apps/client/src/renderer/assets/items/chronicle_chronicler_signet.webp" alt="" /><b>1</b></span>
+            <span class="loot-slot is-rare"><img src="../../../../apps/client/src/renderer/assets/items/rune_bounty.webp" alt="" /><b>1</b></span>
+          </div>
+        </section>
+
+        <aside class="column rich-only">
+          <h2 class="column-title">New Haven</h2>
+          <p class="subhead">Abgeschlossene Gebäude</p>
+          <div class="haven-list">
+            <div class="haven-row"><img src="../../../../apps/client/src/renderer/assets/camp/camp_townhall_2.webp" alt="" /><span><strong>Zentralhaus</strong><small>Ausbau abgeschlossen</small></span><b class="level-badge">STUFE II</b></div>
+            <div class="haven-row"><img src="../../../../apps/client/src/renderer/assets/camp/camp_watchtower_3.webp" alt="" /><span><strong>Wachturm</strong><small>Ausbau abgeschlossen</small></span><b class="level-badge">STUFE III</b></div>
+          </div>
+
+          <p class="subhead">Veredelte Waren</p>
+          <div class="refined-grid">
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/blacksteel_bar.webp" alt="" /><b>240</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/cooked_salmon.webp" alt="" /><b>88</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/iron_bar.webp" alt="" /><b>54</b></span>
+            <span class="loot-slot"><img src="../../../../apps/client/src/renderer/assets/items/hardened_leather.webp" alt="" /><b>31</b></span>
+          </div>
+
+          <p class="subhead">Jagd</p>
+          <div class="hunt-list">
+            <div class="hunt-row"><img src="../../../../apps/client/src/renderer/assets/items/raw_boar_loin.webp" alt="" /><strong>Wildschwein</strong><b class="qty-badge">×4</b></div>
+            <div class="hunt-row"><img src="../../../../apps/client/src/renderer/assets/items/raw_wolf_haunch.webp" alt="" /><strong>Moorwolf</strong><b class="qty-badge">×3</b></div>
+            <div class="hunt-row"><img src="../../../../apps/client/src/renderer/assets/items/raw_venison.webp" alt="" /><strong>Wildziege</strong><b class="qty-badge">×7</b></div>
+            <div class="hunt-row"><img src="../../../../apps/client/src/renderer/assets/items/goblin_ear.webp" alt="" /><strong>Goblin-Schlächter</strong><b class="qty-badge">×2</b></div>
+          </div>
+        </aside>
+
+        <section class="empty-panel">
+          <strong>Eine stille Rückkehr</strong>
+          <p>Nichts verdient – während deiner Abwesenheit lief keine Tätigkeit.</p>
+          <button type="button" id="last-skill">Zur letzten Fertigkeit</button>
+        </section>
+      </div>
+
+      <button type="button" class="collect" id="collect">Einsammeln</button>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status">Mockup-Aktion ausgelöst</div>
+
+  <script>
+    // codex:2026-08-31T00:42:00+02:00 — Zustandsumschalter deckt die produktiven Offline-Fälle ab,
+    // ohne Spielzustand oder Runtime-Code zu simulieren.
+    const assetRoot = "../../../../apps/client/src/renderer/assets";
+    const scenarios = {
+      companion: {
+        title: "Begleiter gefunden",
+        body: "Felyx, der Fallensteller, ist deiner Spur bis nach Hause gefolgt.",
+        image: `${assetRoot}/pets/booted_tomcat.webp`,
+        tone: "",
+      },
+      death: {
+        title: "Du wurdest besiegt",
+        body: "Das Grabklippen-Schemen hat deinen Kampf beendet. Dies geschah 2-mal.",
+        image: `${assetRoot}/monsters/gravecliff_specter.webp`,
+        tone: "is-danger",
+      },
+      stalemate: {
+        title: "Kampf abgebrochen",
+        body: "Keine Seite konnte treffen. Der Kampf wurde nach dem Patt beendet.",
+        image: `${assetRoot}/sidebar/sidebaricon_combat.webp`,
+        tone: "is-danger",
+      },
+      workstop: {
+        title: "Arbeit unterbrochen",
+        body: "Schmieden stoppte: Es waren nicht genügend Materialien vorhanden.",
+        image: `${assetRoot}/sidebar/sidebaricon_smithing.webp`,
+        tone: "is-danger",
+      },
+      empty: {
+        title: "Nichts zu berichten",
+        body: "Es blieb ruhig, solange du weg warst. Beklag dich nicht.",
+        image: `${assetRoot}/icons/icon_sys_idle.webp`,
+        tone: "is-quiet",
+      },
+    };
+
+    const incident = document.querySelector("#incident");
+    const incidentImage = document.querySelector("#incident-image");
+    const incidentTitle = document.querySelector("#incident-title");
+    const incidentBody = document.querySelector("#incident-body");
+    const toast = document.querySelector("#toast");
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add("show");
+      window.setTimeout(() => toast.classList.remove("show"), 1300);
+    }
+
+    document.querySelectorAll("[data-scenario]").forEach((button) => {
+      if (button === document.body) return;
+      button.addEventListener("click", () => {
+        const key = button.dataset.scenario;
+        const scenario = scenarios[key];
+        document.body.dataset.scenario = key;
+        document.querySelectorAll(".workbench [data-scenario]").forEach((entry) => entry.classList.toggle("active", entry === button));
+        incident.className = `incident ${scenario.tone}`;
+        incidentImage.src = scenario.image;
+        incidentTitle.textContent = scenario.title;
+        incidentBody.textContent = scenario.body;
+      });
+    });
+
+    document.querySelector("#density").addEventListener("click", (event) => {
+      document.body.classList.toggle("compact");
+      event.currentTarget.textContent = document.body.classList.contains("compact") ? "Volle Daten" : "Kompakte Daten";
+    });
+
+    document.querySelector("#collect").addEventListener("click", () => showToast("Mockup: Beute eingesammelt"));
+    document.querySelector("#last-skill").addEventListener("click", () => showToast("Mockup: Navigation zur letzten Fertigkeit"));
+  </script>
+</body>
+</html>

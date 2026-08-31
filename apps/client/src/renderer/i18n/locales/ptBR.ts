@@ -73,6 +73,8 @@ export const ptBR: Record<string, string> = {
     "offline.combatStopped.stalemate": "Sua luta terminou: nenhum dos lados conseguiu acertar um golpe.",
     "offline.duration.cappedNote": "O progresso é limitado a {cap} — na verdade você ficou fora {time}.",
     "offline.stage.subtitle": "Aqui está o que você ganhou enquanto esteve fora.",
+    // codex:2026-08-31T01:31:00+02:00
+    "offline.stage.awayLabel": "Ausente",
     "offline.stage.totalXp": "XP total",
     "offline.stage.achievementsLabel": "Conquistas",
     "offline.stage.achievementsAndMore": "e mais {n}",

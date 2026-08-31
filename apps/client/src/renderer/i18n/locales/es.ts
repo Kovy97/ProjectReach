@@ -75,6 +75,8 @@ export const es: Record<string, string> = {
     "offline.combatStopped.stalemate": "Tu combate terminó: ninguno de los dos pudo asestar un golpe.",
     "offline.duration.cappedNote": "El progreso está limitado a {cap} — en realidad estuviste fuera {time}.",
     "offline.stage.subtitle": "Esto es lo que ganaste durante tu ausencia.",
+    // codex:2026-08-31T01:31:00+02:00
+    "offline.stage.awayLabel": "Ausente",
     "offline.stage.totalXp": "XP total",
     "offline.stage.achievementsLabel": "Logros",
     "offline.stage.achievementsAndMore": "y {n} más",
