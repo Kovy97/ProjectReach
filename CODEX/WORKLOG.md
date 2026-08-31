@@ -1846,3 +1846,13 @@
 - Nahkampf-, Fernkampf- und Magieprofil im Mockup umschaltbar; Figurenname zentriert, Level aus den
   schwebenden Leisten entfernt und in die oberen Informationsbereiche verlegt.
 - README und QA-Vertrag aktualisiert; Prüfungen grün, Runtime unangetastet.
+
+## 2026-08-31 — RPG-Kampf-HUD Runtime
+
+<!-- codex:2026-08-31T19:24:00+02:00 -->
+
+- Separaten Branch `combat-hud-rpg-widgets` in isolierter Repository-Kopie angelegt.
+- Abgenommenes Kampf-HUD in `CombatPage.tsx` und `combat.css` umgesetzt: dynamische
+  Waffenprofilwerte, Vollstatistik-Dropdowns ohne Level, zentrierte Namen sowie numerische
+  HP-/Ward-/Angriffsleisten frei über den Figuren.
+- Typecheck bestanden; Electron-Vite-Build ausschließlich durch Sandbox-`spawn EPERM` blockiert.
