@@ -2508,3 +2508,1071 @@ die 37 transparenten 512er PNG/WebP-Dateien und verschiebt den Auftrag anschlie�
 - `codex:2026-08-26T21:05:00+02:00` bis `codex:2026-08-26T21:32:00+02:00` — Produktionsplan,
   Promptprotokoll, QA-Skript, Brief-Abnahme, Staging-README, QA, HANDOFF und WORKLOG. Die
   kommentarfreien PNGs sind hier über ihre exakten Zielpfade dokumentiert.
+
+## 2026-08-26 — Patchnote-Artwork 1.1.0
+
+<!-- codex:2026-08-26T22:02:00+02:00 -->
+
+- 1920 × 622 Titelbild und 800 × 450 Hauptkapsel unter
+  `CODEX/assets/patchnotes-1.1.0-2026-08-26/fertig/` fertiggestellt.
+- Thema: `Patch #2 · The Slayer's Ledger`; Warden-Auftragskammer mit schwerem Jägerregister,
+  versiegeltem Vertrag, Fangmarke, Jagdmesser und Jägerumhang.
+- Textlose Hintergrundquelle mit eingebautem ImageGen im Standardmodus erzeugt. Offizielles
+  Projektlogo sowie Version und Titel anschließend deterministisch in Projekt-Cinzel gesetzt.
+- Logo, Titelplatte und beide Textzeilen überdecken sich nicht; keine Dekorlinie kreuzt Text.
+- Zielmaße, RGB-Format und gemeinsamer Vorschaubogen geprüft; QA liegt unter `qa/`.
+- Keine Renderer-, Steam-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T21:48:00+02:00` bis `codex:2026-08-26T22:02:00+02:00` — Brief, Prompt,
+  deterministischer Artwork-Build, Textquellen, Staging-README, QA, HANDOFF und WORKLOG. Die
+  kommentarfreien PNGs sind hier mit exakten Zielpfaden dokumentiert.
+
+## 2026-08-26 — Human Character Roster, 60/60
+
+<!-- codex:2026-08-26T23:08:00+02:00 -->
+
+- Vollständiger Human-Roster unter
+  `CODEX/assets/human-character-roster-2026-08-26/fertig/` abgeliefert: 15 Kampfklassen und
+  15 Berufe, jeweils männlich und weiblich, insgesamt 60 exakte Content-IDs.
+- Alle Finals sind exakt 1086 × 1448 PNG RGBA. Der vollständig transparente Außenrand ist bei
+  60/60 Dateien bestätigt; gemessene Alphakanal-Motivhöhe 84,12–87,98 % bei Vertrag 84–92 %.
+- 30/30 Paare verwenden dieselbe sichtbare Waffen- beziehungsweise Werkzeugfamilie und dieselbe
+  Anzahl primärer Geräte. Mann und Frau bleiben jeweils klar unterschiedliche Personen.
+- 60/60 Ganzfiguren zeigen Kopf, Hände, komplette Ausrüstung und beide Stiefel und orientieren
+  Körper, Gesicht, Nase und Blick eindeutig nach Bildschirm-rechts.
+- Ranger-Langbögen zusätzlich auf funktionale Geometrie geprüft: durchgehender Stab, einzelne
+  Sehne an beiden Nocken, klare Griffzone, keine umgekehrten oder gebrochenen Wurfarme.
+- Produktion mit eingebautem ImageGen im Standardmodus; akzeptierte native Ausgaben in `raw/`.
+  Kein Chroma-Key, kein nachträgliches Freistellen. Ein ImageGen-Korrekturtest mit gemaltem
+  Schachbrett wurde verworfen und nicht in `raw/` oder `fertig/` übernommen.
+- Technische und visuelle Abnahme liegt unter
+  `CODEX/assets/human-character-roster-2026-08-26/qa/`; Identitätsmatrix und finales
+  Serien-Promptset unter `CODEX/work/2026-08-26-human-roster/`.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert. WebP-Konvertierung
+  und Produktionsintegration bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T20:44:00+02:00` bis `codex:2026-08-26T23:08:00+02:00` — Brief,
+  Identitätsmatrix, Pilot- und Vollpromptset, Staging-README, QA, HANDOFF und WORKLOG. Die
+  kommentarfreien PNGs sind durch den exakten Staging-Pfad oben und in `qa/qa.json` dokumentiert.
+
+## 2026-08-26 — Elf Character Creator Demo, 8/8
+
+<!-- codex:2026-08-26T23:57:41+02:00 -->
+
+- Neue Elfen-Demo unter `CODEX/assets/elf-character-demo-2026-08-26/fertig/`: Krieger,
+  Waldläufer, Juwelier und Verzauberer, jeweils männlich und weiblich.
+- Visuelle Linie: junge erwachsene, außergewöhnlich attraktive hochgeborene Elfen als
+  eigenständige Grim-Reach-Auslegung; lange spitze Ohren, elegante Proportionen, organische
+  Mondsilber-/Altgold-Konstruktion, keine kopierten Franchise-Wappen oder -Figuren.
+- Kampfklassen stehen klar kampfbereit nach Bildschirm-rechts. Berufsfiguren bleiben ruhiger,
+  blicken ebenfalls nach rechts und lesen über Werkzeug und Kleidung statt Kampfausrüstung.
+- Paare teilen exakt dieselbe Waffen-/Werkzeugfamilie: Schwert plus Blattschild, funktionaler
+  Langbogen plus Köcher, Juwelierhammer plus Steinschale und Lupe, leere Schriftrolle plus
+  Metall-Fokusnadel.
+- 8/8 Finals sind 1086 × 1448 PNG RGBA mit echtem Alpha, vollständig transparentem Außenrand
+  und 87,98 % Motivhöhe. Kontaktbögen und Messwerte liegen in
+  `CODEX/assets/elf-character-demo-2026-08-26/qa/`.
+- Native akzeptierte ImageGen-Ausgaben liegen unter `raw/`; RGB-Fehlversuche wurden verworfen.
+  Kein Chroma-Key und kein nachträgliches Freistellen.
+- IDs, Identitäten und Produktionsprompt sind unter
+  `CODEX/work/2026-08-26-elf-character-demo/` dokumentiert.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert. Konvertierung und
+  Einbau bleiben nach Chef-Freigabe bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-26T23:28:03+02:00` bis `codex:2026-08-26T23:57:41+02:00` — Brief,
+  Identitätsmatrix, Promptprotokoll, Staging-README, QA, HANDOFF und WORKLOG. Die kommentarfreien
+  PNGs sowie `qa/qa.json` sind hier mit ihren exakten Staging-Pfaden dokumentiert.
+
+## 2026-08-27 — Elf Character Roster, Pausenstand 24/60
+
+<!-- codex:2026-08-27T00:27:45+02:00 -->
+
+- Chef hat die Elfen-Demo zur vollständigen 60er-Serie freigegeben und stärkere, badassigere
+  männliche Varianten gewünscht.
+- Vollständige 30er-Identitäts- und Loadoutmatrix liegt unter
+  `CODEX/work/2026-08-27-elf-roster/`; Produktionsstand in `STATUS.md`.
+- Auf Chef-Wunsch bis morgen pausiert. Aktueller Stand: 24/60 Finals unter
+  `CODEX/assets/elf-character-roster-2026-08-27/fertig/`.
+- Enthalten sind 12 Paare: Krieger, Paladin, Berserker, Speerwächter, Todesritter, Slayer,
+  Waldläufer, Duellant, Schurke, Feuermagier, Juwelier und Verzauberer.
+- 24/24 Finals sind 1086 × 1448 PNG RGBA, 87,98 % Motivhöhe und besitzen einen vollständig
+  transparenten Außenrand. Raws liegen unter `raw/`, Pausenmesswerte und Kontaktbögen unter `qa/`.
+- Weiterarbeit startet bei Frostmagier; danach restliche Magiekämpfer, Runenritter und die
+  fehlenden 13 Berufs-Paare. Keine Renderer-Integration.
+- Die kommentarfreie Datei `qa/checkpoint-qa.json` ist über diesen Marker und den exakten Pfad
+  dokumentiert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T00:05:03+02:00` bis `codex:2026-08-27T00:27:45+02:00` — Vollbrief,
+  Roster, Promptset, Staging-README, Pausenstatus, QA, HANDOFF und WORKLOG.
+
+## 2026-08-27 — Elf Character Roster vollständig, 60/60
+
+<!-- codex:2026-08-27T09:36:13+02:00 -->
+
+- Vollständiger Elfen-Roster unter
+  `CODEX/assets/elf-character-roster-2026-08-27/fertig/` abgeliefert: 15 Kampfklassen und
+  15 Berufe, jeweils männlich und weiblich, insgesamt 60 exakt benannte PNGs.
+- Alle Finals sind 1086 × 1448 PNG RGBA. 60/60 Dateien besitzen einen vollständig transparenten
+  Außenrand, native weiche Teiltransparenz und 87,98 % gemessene Motivhöhe.
+- Kämpfer stehen einsatzbereit nach Bildschirm-rechts; Berufe lesen sich über ruhige
+  Arbeitshaltung und klar sichtbare Werkzeuge. Mann und Frau bleiben je Rolle unterschiedliche
+  Personen, teilen aber dieselbe Waffen- beziehungsweise Werkzeugfamilie.
+- Männliche Varianten sind gemäß Chefentscheid markanter und badassiger, ohne die junge,
+  attraktive hochgeborene Elfenlinie zu verlassen.
+- Produktion mit eingebautem ImageGen; akzeptierte native RGBA-Ausgaben liegen unter `raw/`.
+  Finals wurden nur alphaerhaltend getrimmt, proportional skaliert und zentriert. Kein Keying und
+  kein nachträgliches Freistellen.
+- Vollständige Messwerte und Kontaktbögen auf dunklem sowie grellrosa Prüfgrund liegen unter
+  `CODEX/assets/elf-character-roster-2026-08-27/qa/` (`full-qa.json`, `QA.md`,
+  `full-contact-dark.png`, `full-contact-magenta.png`).
+- Identitätsmatrix und eingesetztes Promptset liegen unter
+  `CODEX/work/2026-08-27-elf-roster/`. Keine Renderer-, Content-, Engine-, Save- oder
+  `.claude/**`-Datei verändert; Konvertierung und Integration bleiben bei Claude.
+- Chef-Korrektur `codex:2026-08-27T09:52:41+02:00`: `elf_spear_warden_m.png` mit tatsächlich
+  getragenem Schild und einhändigem Speer, `elf_shadow_mage_f.png` mit geradem Metallstab sowie
+  `elf_berserker_f.png` mit normaler zweihändiger Einblatt-Axt neu gegossen und ersetzt. Alle drei
+  erneut als RGBA 1086 × 1448 mit Nullalpha-Außenrand bestanden. Alte Fassungen liegen recoverbar
+  unter `qa/replaced-originals/`; fokussierte Kontaktbögen unter `qa/corrections-contact-*.png`.
+  Das genaue akzeptierte Promptset liegt in
+  `CODEX/work/2026-08-27-elf-roster/CORRECTIONS-2026-08-27.md`.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T09:36:13+02:00` bis `codex:2026-08-27T09:52:41+02:00` — Abschlussstatus,
+  Chef-Korrekturen, QA, HANDOFF und WORKLOG. Die
+  kommentarfreien PNGs und `qa/full-qa.json` sind über die exakten Staging-Pfade oben
+  dokumentiert.
+
+## 2026-08-27 — Steam Achievement Icons 67/67
+
+<!-- codex:2026-08-27T11:40:00+02:00 -->
+
+- Vollständiges eingefrorenes Steam-Set aus
+  `design/achievements-1.2.0/steam-set.csv` geliefert: 67 Farbfassungen und 67 daraus
+  entsättigte Graufassungen, insgesamt 134 deckende JPGs.
+- Finals liegen unter
+  `CODEX/assets/steam-achievement-icons-2026-08-27/fertig/`; Dateinamen sind exakt
+  `<api_name>.jpg` und `<api_name>_gray.jpg`.
+- Serienaufbau: 21 Kapitel auf dem offenen Chronikbuch, 20 echte Skill-Meister im
+  Bronze-Lorbeer und 26 Einzelmotive auf der gemeinsamen Ashen-Iron-Plakette.
+- Alle Finals sind 256 × 256 px. Vollständiger Dateisatz, Deckung und Maße bestanden;
+  alle Graufassungen besitzen pixelidentische R-/G-/B-Kanäle und stammen aus derselben
+  normalisierten Farbfassung.
+- Visuelle Zielgrößenabnahme unter
+  `CODEX/assets/steam-achievement-icons-2026-08-27/qa/contact-sheet-color-64.jpg` und
+  `contact-sheet-gray-64.jpg`; jedes eingelegte Icon ist exakt 64 × 64 px.
+- Produktion mit eingebautem ImageGen. Innerhalb des Sets dienten
+  `CH01_THE_FIRST_PAGE`, `MASTER_WOODCUTTING` und `BLOODED` als Bildreferenzanker.
+  Tatsächlich eingesetzte Prompts liegen in
+  `CODEX/work/2026-08-27-steam-achievement-icons/PROMPTS-FINAL.md`.
+- Keine Renderer-, Content-, Save-, i18n-, Steam-Backend- oder `.claude/**`-Datei verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T11:36:00+02:00` bis `codex:2026-08-27T11:40:00+02:00` —
+  reproduzierbarer Finalisierer, Brief B–D, Staging-README, QA, HANDOFF und WORKLOG.
+  Die kommentarfreien JPG-/PNG-Dateien und `qa/qa.json` sind über die exakten Pfade oben
+  dokumentiert.
+
+## 2026-08-27 — Ork-Demo blockiert, Tavernen-Szene geliefert
+
+<!-- codex:2026-08-27T12:15:00+02:00 -->
+
+- Für das spielbare Ork-Demo wurden sechs Rollen als männlich/weiblich-Paare konzipiert:
+  Krieger, Speerwächter, Schamane, Schmied, Bergarbeiter und Koch. Die zwölf erzeugten
+  Motive sind visuell vorhanden, aber **nicht produktionsfreigegeben**.
+- Direkte Pixelprüfung aller zwölf Ork-PNGs: RGB ohne Alpha (`channels: 3`,
+  `hasAlpha: false`) und gemaltes Schachbrett. Bildreferenzierter Reparaturversuch sowie
+  kontrollierter Neuguss ohne Referenz lieferten ebenfalls deckendes RGB. Gemäß Auftrag
+  wurde nicht gekeyt und nicht nachträglich freigestellt; `fertig/` bleibt leer.
+- Blocker und verworfene Quellen sind unter
+  `CODEX/assets/orc-character-demo-2026-08-27/qa/ALPHA-BLOCKER.md` beziehungsweise
+  `CODEX/work/2026-08-27-orc-character-demo/generated-source-map.json` dokumentiert.
+- Für die Taverne wurde der ausdrücklich deckende Teil fertiggestellt:
+  `CODEX/assets/taverne-gaeste-2026-08-27/fertig/tavern_interior.png`, PNG RGB,
+  exakt 1672 × 941. Szene enthält drei getrennte Tische, rechten Tresen, linke
+  Anschlagtafel, rückwärtigen Kamin, rechte Tür und vier freie Figurenbereiche.
+- Gäste-Fußpunkte und Objektanker liegen in `qa/scene-coordinates.json`; die visuelle
+  Prüffassung liegt in `qa/tavern_interior-anchors.png`, Erläuterungen in `qa/QA.md`.
+- Kein Gesamt-GO für den Tavernenauftrag: 38 Gäste-PNGs und beide transparenten Icons
+  bleiben wegen desselben Alpha-Blockers offen. Renderer und `.claude/**` wurden nicht verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T12:15:00+02:00` — Alpha-Blocker, Tavernen-Teillieferung,
+  Brief B–D, QA, HANDOFF und WORKLOG. Kommentarfreie PNG-/JSON-Artefakte sind über die
+  exakten Pfade oben dokumentiert.
+
+## 2026-08-27 — Ork Character Creator Roster vollständig, 60/60
+
+<!-- codex:2026-08-27T17:08:57+02:00 -->
+
+- Vollständiger spielbarer Ork-Roster unter
+  `CODEX/assets/orc-character-roster-2026-08-27/fertig/`: 15 Kampfklassen und 15 Berufe,
+  jeweils männlich und weiblich, insgesamt 60 exakt benannte PNGs.
+- Alle Finals sind 1086 × 1448 PNG RGBA. 60/60 besitzen einen vollständig transparenten
+  Außenrand, native weiche Teiltransparenz und 87,43–87,98 % Motivhöhe.
+- Männliche und weibliche Figur sind je Rolle eigenständige Personen, verwenden aber dieselbe
+  sichtbare Waffen- beziehungsweise Werkzeugfamilie. Alle Figuren orientieren Körper, Gesicht
+  und Blick nach Bildschirm-rechts.
+- Kritische Waffenlogik visuell gegengeprüft: Speerwächter führen Speer einhändig und Schild am
+  anderen Arm; Berserker verwenden normale Einblatt-Zweihandäxte; Rangerbögen haben einen
+  durchgehenden Bogenkörper und je eine an beiden Nocken angeschlossene Sehne; starre Stäbe und
+  Klingen bleiben gerade.
+- Produktion mit eingebautem ImageGen im Standardmodus. Akzeptierte native RGBA-Ausgaben liegen
+  unter `raw/`; Finals wurden nur alphaerhaltend getrimmt, proportional skaliert und zentriert.
+  Kein Keying und kein nachträgliches Freistellen.
+- Vollständige Messwerte und Kontaktbögen auf dunklem sowie grellrosa Grund liegen unter `qa/`.
+  Promptmatrix und Quellenzuordnung liegen unter
+  `CODEX/work/2026-08-27-orc-character-demo/` in `PROMPTS-FULL.json` und
+  `generated-final-map.json`.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert. Konvertierung und
+  Integration bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T17:08:57+02:00` — Vollbrief, Prompt- und Quellenmatrix,
+  Staging-README, QA, HANDOFF und WORKLOG. Die kommentarfreien PNGs sowie
+  `qa/full-qa.json` und `generated-final-map.json` sind über die exakten Pfade oben
+  dokumentiert.
+
+## 2026-08-27 — Goblin Character Creator, Dreier-Stilprobe
+
+<!-- codex:2026-08-27T17:35:31+02:00 -->
+
+- Drei einzelne spielbare Goblin-Testfiguren unter
+  `CODEX/assets/goblin-character-demo-2026-08-27/fertig/`: männlicher Krieger, weibliche
+  Waldläuferin und männlicher Waffenschmied.
+- Visuelle Linie: erwachsene freie Goblins, etwa 1,50 m, drahtig-kompakt, moos- bis olivgrüne
+  Haut, sehr große bewegliche Ohren mit Messingringen und kluge markante Gesichter. Bewusst klar
+  kleiner und leichter als Orks, ohne Comic-Minion- oder Kinderwirkung.
+- 3/3 Finals sind 1086 × 1448 PNG RGBA mit echtem weichem Alpha, vollständig transparentem
+  Außenrand und 87,43–87,57 % Motivhöhe.
+- Rangerbogen auf durchgehenden Bogenkörper und eine Sehne an beiden Nocken geprüft; Buckler ist
+  tatsächlich getragen, die Waffenschmied-Rohklinge gerade und vollständig.
+- Native ImageGen-Raws, technische Messwerte und Kontaktbögen auf dunklem sowie grellrosa Grund
+  liegen unter `raw/` und `qa/`. Produktionsprompts liegen unter
+  `CODEX/work/2026-08-27-goblin-character-demo/PROMPTS.md`.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T17:14:00+02:00` bis `codex:2026-08-27T17:35:31+02:00` — Brief,
+  Promptset, Quellenkarte, Staging-README, QA, HANDOFF und WORKLOG. Die kommentarfreien PNGs,
+  `qa/qa.json` und `generated-source-map.json` sind über die exakten Pfade oben dokumentiert.
+
+## 2026-08-27 — Goblin Character Creator Roster vollständig, 60/60
+
+<!-- codex:2026-08-27T19:36:00+02:00 -->
+
+- Vollständiger spielbarer Goblin-Roster unter
+  `CODEX/assets/goblin-character-roster-2026-08-27/fertig/`: 15 Kampfklassen und 15 Berufe,
+  jeweils männlich und weiblich, insgesamt 60 exakt benannte PNGs.
+- Alle Finals sind 1086 × 1448 PNG RGBA. 60/60 besitzen einen vollständig transparenten
+  Außenrand, native weiche Teiltransparenz und 87,43–87,78 % Motivhöhe.
+- Männliche und weibliche Figur sind je Rolle unterschiedliche erwachsene Personen, verwenden
+  aber dieselbe sichtbare Waffen- beziehungsweise Werkzeugfamilie. Alle Figuren orientieren
+  Körper, Gesicht und Blick nach Bildschirm-rechts.
+- Waffenlogik visuell gegengeprüft: Speerwächter führen Speer einhändig und Schild am anderen
+  Arm; Berserker verwenden Einblatt-Zweihandäxte; Rangerbögen haben einen durchgehenden
+  Bogenkörper und eine an beiden Nocken angeschlossene Sehne; starre Stäbe und Klingen sind gerade.
+- Akzeptierte native RGBA-Ausgaben liegen unter `raw/`; Finals wurden ausschließlich
+  alphaerhaltend zugeschnitten, proportional skaliert und zentriert. Kein Keying und kein
+  nachträgliches Freistellen.
+- Vollständige Messwerte und Kontaktbögen auf dunklem sowie grellrosa Grund liegen unter `qa/`.
+  Promptmatrix und Quellenzuordnung liegen unter
+  `CODEX/work/2026-08-27-goblin-roster/` in `PROMPTS-FULL.json` und
+  `generated-source-map.json`.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert. Konvertierung und
+  Integration bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T17:42:00+02:00` bis `codex:2026-08-27T19:36:00+02:00` — Vollbrief,
+  Roster, Prompt- und Quellenmatrix, alphaerhaltender Finalisierer, Staging-README, QA, HANDOFF
+  und WORKLOG. Die kommentarfreien PNGs sowie `qa/full-qa.json`,
+  `PROMPTS-FULL.json` und `generated-source-map.json` sind über die exakten Pfade oben
+  dokumentiert.
+
+## 2026-08-27 — Kampfeffekte Testlauf, 6/6
+
+<!-- codex:2026-08-27T20:27:00+02:00 -->
+
+- Sechs transparente Kampfeffekt-Assets unter
+  `CODEX/assets/kampfeffekte-testlauf-2026-08-27/fertig/`: arkanes Geschoss, arkaner
+  Einschlag, Feuereinschlag, Schwert-Slash, gedecktes rotes Blut und Begleiter-Biss.
+- Geschoss exakt 256 × 128; fünf Streifen exakt 768 × 256 mit drei 256er-Zellen für Beginn,
+  Höhepunkt und Ausklang.
+- 6/6 PNG RGBA, echtes Alpha, weiche Teiltransparenz und vollständig transparenter Außenrand.
+  Raws wurden nicht gekeyt; Finals wurden nur alphaerhaltend skaliert und je Zelle mit einem
+  transparenten Sicherheitsrand versehen.
+- Dunkler Kontaktbogen und Composite über dem 1536 × 1024 großen Ashfields-Battlescreen zeigen
+  alle Effekte bei nativer Zielgröße. Magie bleibt im hellen Himmel, physische Effekte bleiben
+  auf dem strukturierten Boden lesbar.
+- Alle sechs sind für die bereits freigegebene Welle 1 als Serienanker vorgesehen.
+- Keine Renderer- oder `.claude/**`-Datei verändert. WebP-Konvertierung, Einbau und Laufzeitprüfung
+  bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T20:04:00+02:00` bis `codex:2026-08-27T20:27:00+02:00` — finales
+  Promptprotokoll, Quellenkarte, alphaerhaltender Finalisierer, Staging-README, QA, HANDOFF und
+  WORKLOG. Kommentarfreie PNGs sowie `qa/qa.json` und `generated-source-map.json` sind über
+  die exakten Pfade oben dokumentiert.
+
+## 2026-08-27 — Kampfeffekte Welle 1, 33/33
+
+<!-- codex:2026-08-27T23:02:59+02:00 -->
+
+- Vollständige Welle unter `CODEX/assets/kampfeffekte-welle-1-2026-08-27/fertig/`: sieben
+  Magiethemen mit Geschoss und Einschlag, vier Waffen-Slashes, Pfeil plus Einschlag, drei
+  gedeckte Trefferstoffe, Block, Fehlschlag, sechs Begleiterangriffe und zwei Crit-Overlays.
+- 27 neue native RGBA-Motive erzeugt und die sechs bestandenen Testanker übernommen. Der
+  Test-Slash heißt serienkonform `fx_slash_cut.png`; sein Bildinhalt blieb unverändert.
+- Acht Geschosse exakt 256 × 128 und 25 Dreiphasen-Streifen exakt 768 × 256. 33/33 bestehen
+  PNG/RGBA, echtes Alpha, weiche Teiltransparenz, transparente Außenkante und Zellbelegung;
+  jede der 75 Streifenzellen enthält sichtbaren Inhalt.
+- Kein Keying und kein nachträgliches Freistellen. Neue Finals wurden nur alphaerhaltend
+  skaliert, in drei Zellen geteilt und mit transparentem Sicherheitsrand versehen.
+- Kontaktbögen auf dunklem Grund und über Ashfields visuell bestanden. Magiethemen, Bewegungen,
+  Rechtsrichtung, gedecktes Blut, Begleiterfamilien und Crit-Ringe bleiben bei Zielgröße lesbar.
+- Vollständige Messwerte: `CODEX/assets/kampfeffekte-welle-1-2026-08-27/qa/qa.json`.
+  Produktionsprotokoll: `CODEX/work/2026-08-27-kampfeffekte-welle-1/`.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert. WebP-
+  Konvertierung, Einbau, Gegner-Spiegelung und Runtime-Abnahme bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T22:57:50+02:00` bis `codex:2026-08-27T23:02:59+02:00` — Promptprotokoll,
+  Quellenkarte, alphaerhaltender Finalisierer, Brief B–D, Staging-README, QA, HANDOFF und
+  WORKLOG. Die kommentarfreien PNGs sowie `qa/qa.json` und `generated-source-map.json` sind
+  über die exakten Pfade oben dokumentiert.
+
+## 2026-08-27 — Fasern, Stoff und Jagen, 26/26
+
+<!-- codex:2026-08-27T23:41:00+02:00 -->
+
+- Vollständige Lieferung unter `CODEX/assets/fasern-jagen-2026-08-27/fertig/`: 19 Item-Icons,
+  fünf Foraging-Karten, eine Köder-graben-Aktionskarte und ein Jagen-Sidebar-Icon.
+- 20 Freisteller besitzen natives RGBA-Alpha, weiche Teiltransparenz und einen vollständig
+  transparenten Außenrand. Kein Keying und kein nachträgliches Freistellen.
+- Items exakt 640 × 640, Foraging-Karten exakt 1672 × 941 deckend, Aktionskarte exakt
+  1254 × 1254 deckend, Sidebar-Plakette exakt 1254 × 1254 RGBA.
+- Fasern, Saaten und Stoffe bilden dieselbe fünfstufige Farbleiter. Die drei Fallenbilder sind
+  als leer, gestellt und zugeschnappt lesbar; sie stammen aus einem gemeinsamen nativen
+  RGBA-Guss und teilen dasselbe Chassis, Seil, Perspektive und Licht. Kein Blut oder Tierkörper.
+- Akzeptierte Raws, Messwerte, Quellenkarte und Kontaktbögen liegen neben den Finals in `raw/`
+  und `qa/`. Produktionsweg und Promptzusätze stehen in
+  `CODEX/work/2026-08-27-fasern-jagen-assets/PRODUCTION.md`.
+- Keine Renderer-, Content-, Engine-, Save- oder `.claude/**`-Datei verändert. Konvertierung,
+  Einbau und Runtime-Abnahme bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-27T23:36:00+02:00` bis `codex:2026-08-27T23:41:00+02:00` —
+  alphaerhaltender Finalisierer, Brief B–D, Produktionsnotiz, Staging-README, QA, HANDOFF und
+  WORKLOG. Die kommentarfreien PNGs sowie `qa/qa.json` und `qa/source-map.json` sind über die
+  exakten Pfade oben dokumentiert.
+
+## 2026-08-28 — Korrektur Fasern/Jagen, 2 ersetzt und 1 gestrichen
+
+<!-- codex:2026-08-28T00:47:00+02:00 -->
+
+- `CODEX/assets/fasern-jagen-2026-08-27/fertig/sidebaricon_hunting.png` neu: freistehende
+  Eisenschlinge mit Seilrolle, 1254 × 1254 PNG RGBA, ohne Plakette, Rahmen oder Hintergrund.
+- `CODEX/assets/fasern-jagen-2026-08-27/fertig/bait_worm.png` neu: kleines verschnürtes Bündel
+  aus drei dunklen Regenwürmern, 640 × 640 PNG RGBA, ohne Eimer, Topf oder Boden.
+- Beide Finals besitzen natives Alpha, weiche Teiltransparenz, `alpha_extrema = 0–255` und
+  `edge_alpha_max = 0`; es wurde weder gekeyt noch nachträglich freigestellt.
+- `dig_bait.png` wurde gemäß Chef-/Claude-Korrektur ersatzlos aus der aktiven Lieferung genommen.
+  Die frühere Szene bleibt nachvollziehbar unter
+  `CODEX/assets/fasern-jagen-2026-08-27/qa/rejected-dig-bait-scene/` archiviert.
+- Bestandssichtprüfung: Jagd-Icon neben `sidebaricon_fishing.webp` und
+  `sidebaricon_farming.webp`; Köder neben `spider_silk.webp` und `ashroot.webp`. Die beiden
+  Kontaktbögen enthalten zusätzlich eine 48-px-Darstellung.
+- Aktive Lieferung jetzt 25 Dateien. Die alten Plaketten- und Eimerfassungen liegen recoverable
+  unter `qa/replaced-2026-08-28/`. Renderer, Content und `.claude/**` blieben unangetastet.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T00:33:00+02:00` bis `codex:2026-08-28T00:47:00+02:00` —
+  Korrektur-Finalisierer, kanonischer Serien-Finalisierer, Messwerte, Kontaktbögen,
+  Staging-README, QA, Brief, Produktionsnotiz, HANDOFF und WORKLOG. Kommentarfreie PNGs sowie
+  `qa/qa.json`, `qa/source-map.json` und `qa/correction-2026-08-28.json` sind über die exakten
+  Pfade dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Meisterring Jagen, Prompt 27
+
+<!-- codex:2026-08-28T01:22:00+02:00 -->
+
+- Neues Final: `CODEX/assets/fasern-jagen-2026-08-27/fertig/ring_master_hunting.png`, exakt
+  640 × 640 PNG RGBA. Akzeptiertes natives Raw liegt unter dem gleichen Namen in `raw/`.
+- Motiv: massiver dunkelpatinierter Eisenring mit Schlingen-Kabelstruktur, kleinem gefasstem
+  Amber und einzelnem Fang. Amber-Highlight bleibt vollständig im Stein; keine Aura, Partikel,
+  Bodenfläche, Schlagschatten, Plakette oder Rahmen.
+- Technik: Alphaextrema 0–255, `edge_alpha_max = 0`, 155.904 Teiltransparenzpixel,
+  sichtbare Motivfläche 76,09 % Breite × 84,22 % Höhe. Kein Keying und kein nachträgliches
+  Freistellen.
+- Stilabgleich und QA: `qa/contact-master-ring.png` zeigt den neuen Ring neben
+  `ring_master_fishing.webp` und `ring_master_foraging.webp`, jeweils zusätzlich bei 48 px;
+  `qa/contact-master-ring-alpha-magenta.png` ist der Alphakanten-Test.
+- Zwei vorausgehende RGB-Ausgaben mit gemaltem Schachbrett wurden erkannt und verworfen. Nur der
+  dritte, nativ transparente Wurf wurde in die Lieferung übernommen.
+- Aktiver Lieferumfang damit 26 Dateien. Renderer, Content und `.claude/**` blieben unangetastet;
+  Konvertierung und Einbau bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T01:14:00+02:00` bis `codex:2026-08-28T01:22:00+02:00` — Ring-Finalisierer,
+  kanonischer Serien-Finalisierer, QA-Berichte, Staging-README, Brief, Produktionsnotiz, HANDOFF
+  und WORKLOG. Die kommentarfreie PNG sowie aktualisierte JSON-Berichte sind über die exakten
+  Pfade dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Designmockup Jagen-Skillseite
+
+<!-- codex:2026-08-28T18:02:00+02:00 -->
+
+- Hochauflösendes reines Bildmockup unter
+  `CODEX/work/2026-08-28-hunting-skill-mockup/hunting-skill-mockup.png`, deckend 1672 × 941 px.
+- Empfehlung „Jagdtafel“: Kopfzeile für Skill/XP/Köder, links sechs Fallenplätze als 2×3-Raster,
+  rechts dauerhaft sichtbares Jagdbuch. Damit bleiben Steuerung und Nachschlagewissen ohne
+  Scrollwechsel gemeinsam sichtbar.
+- Mockup enthält aktive, gefangene, leere und gesperrte Fallen, Auto-Erneuern, Fangchance,
+  Zeitbalken, letzten Fang, Drops sowie korrekte Ashfields-Beispiele aus dem Konzept.
+- ImageGen-Grundentwurf wurde in zwei gezielten Durchgängen auf korrekten Aktivzähler,
+  zulässige Beutetiere, automatische Loot-Vergabe und sichtbaren `AUTO`-Schalter korrigiert.
+- Designbegründung und mögliche spätere Layoutabbildung stehen in `DESIGN.md`; vollständiger
+  finaler Prompt und Referenzpfade in `PROMPT.md`. Kein HTML und keine Renderer-Datei verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T18:02:00+02:00` — Designnotiz, Promptprotokoll, HANDOFF und WORKLOG.
+  Das kommentarfreie PNG ist über den exakten Pfad dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Asset-Fehler-Audit: Items, Monster und Companions
+
+<!-- codex:2026-08-28T19:25:00+02:00 -->
+
+- Read-only Vollprüfung von 1.357/1.357 Renderer-Bildern: 1.208 Items, 128 Monster und
+  21 Companions. Ergebnis und vollständige Dateilisten liegen unter
+  `CODEX/work/2026-08-28-asset-fehler-audit/REPORT.md` und `qa/`.
+- 89 bestätigte Austauschdateien: 65 Items, 24 Monster, 0 Companions. Darunter 66 Dateien
+  mit einer dominanten farbigen Chroma-/Matte-Ebene unter dem Alpha, außerdem 20 am Canvas
+  abgeschnittene Schmuckmotive, zwei gemalte Bodenreste und ein blockiger Atemeffekt.
+- 16 zusätzliche Weißsaum-Kandidaten mit Rauch, Eis, Geisterstoff oder hellen Effektkanten
+  separat vorgemerkt. Sie wurden bewusst nicht blind als Fehler klassifiziert, weil bei einigen
+  Motiven gewolltes Leuchten möglich ist; die Belegbögen zeigen sie auf dunklem Spielgrund.
+- Die Prüfung ging über Randpixel hinaus: RGB unter vollständig transparenten Pixeln,
+  Teiltransparenz bis 28 px in die Silhouette, Skalierungsrisiken an Fell/Federn/Rauch/Stoff,
+  Komposition auf mehreren Hintergründen, Bodenreste, Maskenblöcke, Clipping und Auflösung.
+- `qa/asset-audit-results.csv` enthält einen Status für alle 1.357 Dateien;
+  `qa/confirmed-defects.csv`, `qa/white-matte-watchlist.csv` und
+  `qa/legacy-low-resolution.csv` sind die Arbeitslisten. Fokussierte visuelle Belege stehen in
+  `qa/final-contacts/`, vollständige Kontaktbögen in `qa/contacts/`.
+- Keine Produktions-, Renderer- oder `.claude/**`-Datei wurde durch diesen Audit verändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T18:19:00+02:00` bis `codex:2026-08-28T19:25:00+02:00` — vier
+  reproduzierbare, read-only Analyse-/Kontaktbogen-Skripte sowie Bericht, CSV-Ausgaben,
+  HANDOFF und WORKLOG. Die kommentarfreien PNG-Kontaktbögen und CSV-/JSON-Berichte sind über
+  die exakten Pfade dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Köder/Feuer: technischer Alpha-Stopp
+
+<!-- codex:2026-08-28T19:16:25+02:00 -->
+
+- Beide neuen Briefs und alle vorgeschriebenen Bestandsreferenzen wurden vollständig geprüft.
+- Der eingebaute ImageGen-Weg lieferte für `bait_maggot` in zwei Neuwürfen und einer
+  Hintergrundextraktion jeweils ein deckendes RGB-PNG ohne Alphakanal und mit gemaltem
+  Schachbrett. Kein Ergebnis wurde als Final übernommen.
+- Gemäß der verbindlichen Alpha-Regel wurde vor Köder 2–4 und vor der Feuer-Welle gestoppt.
+  `CODEX/assets/koeder-stufen-2026-08-28/fertig/` ist leer; die erste verworfene Probe liegt
+  nur unter `qa/rejected-no-alpha/`. Es wurde nicht gekeyt oder nachträglich freigestellt.
+- Details stehen in `CODEX/work/2026-08-28-koeder-stufen/PRODUCTION.md`. Renderer, Content und
+  `.claude/**` blieben unangetastet.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T19:16:25+02:00` — Produktionsnotiz, HANDOFF und WORKLOG. Die
+  kommentarfreie verworfene PNG-Probe ist über den exakten QA-Pfad dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Köder-Stufen und Feuer-Welle 2 abgeschlossen
+
+<!-- codex:2026-08-28T20:01:41+02:00 -->
+
+- Der vorangehende Alpha-Stopp ist auf direkte Chef-Anweisung durch einen referenzfreien
+  ImageGen-Neuwurf aufgelöst worden; dieser lieferte wieder natives RGBA. Keine unzulässige
+  RGB-Probe wurde übernommen.
+- Köder vollständig unter `CODEX/assets/koeder-stufen-2026-08-28/fertig/`: vier exakte IDs,
+  640 × 640 PNG RGBA, Alphaextrema 0–255, transparenter Außenrand, weiche Kanten. Die Reihe
+  liest sich von Maden über Krebs und Tintenfisch bis zum schwach leuchtenden Glühköder.
+- Feuer vollständig unter `CODEX/assets/kampfeffekte-feuer-2026-08-28/fertig/`: vier
+  Fünf-Frame-Geschosse à 1280 × 128 und drei Drei-Frame-Einschläge à 768 × 256. Alle 29 Zellen
+  enthalten sichtbaren Inhalt, Außenränder sind transparent, Geschosse fliegen nach rechts.
+- Für jeden Feuerstreifen wurde genau ein natives RGBA-Basisbild erzeugt und daraus der ganze
+  Film deterministisch abgeleitet. Dadurch bleiben Kern, Silhouette und Lichtquelle stabil;
+  es gibt kein Neuwürfeln je Frame.
+- QA Köder: dunkler und grellrosa Kontaktbogen neben `bait_worm`, jeweils mit 48-px-Ansicht.
+  QA Feuer: Zeilenkontaktbögen, Magenta-Test, Welle-1-Familienvergleich, Ashfields-Vorschau und
+  sieben animierte GIFs. Vollständige Messwerte stehen jeweils in `qa/qa.json`.
+- Promptsets, Quellenkarten, Produktionspläne und Staging-READMEs sind vollständig. Renderer,
+  Content, Engine und `.claude/**` blieben unangetastet; Einbau bleibt bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T19:28:00+02:00` bis `codex:2026-08-28T20:01:41+02:00` —
+  alphaerhaltender Köder-Finalisierer, deterministischer Feuerstreifen-Finalisierer, Promptsets,
+  Quellenkarten, Briefs B–D, Staging-READMEs, HANDOFF und WORKLOG. Kommentarfreie PNGs, GIFs
+  und JSON-Berichte sind über die exakten Pfade dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Skill-Set Schneidern abgeschlossen
+
+<!-- codex:2026-08-28T20:55:00+02:00 -->
+
+- P1-Auftrag vollständig unter `CODEX/assets/schneidern-2026-08-28/fertig/`: Sidebar-Icon,
+  Skill-Kulisse, Skill-Karte, Meisterring sowie farbiges und graues Steam-Erfolgsbild.
+- Alle sechs Namen und Maße entsprechen dem Brief. Icon/Ring sind RGBA mit echtem Alpha und
+  transparentem Außenrand; Kulisse/Karte und beide JPGs sind deckend.
+- `tailoring.card.png` wurde aus derselben Werkstattszene abgeleitet, die Graufassung aus exakt
+  dem farbigen Steam-Motiv. Kein Chroma-Keying und keine RGB-basierte Freistellung.
+- Fünf Kontaktbögen vergleichen die Lieferung mit Leatherworking, Hunting, Fishing, Smithing
+  und dem bestehenden Steam-Set. Messwerte stehen in `qa/qa-report.json`.
+- Renderer, Content, Engine und `.claude/**` blieben unangetastet. Einbau und WebP-Konvertierung
+  bleiben bei Claude.
+- Der zuvor laufende Monster-Neuguss wurde auf CEO-/Claude-P1-Anweisung am gesicherten
+  Rohstand pausiert und nicht weiter abgenommen.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T20:49:06+02:00` bis `codex:2026-08-28T20:55:00+02:00` —
+  reproduzierbarer Finalisierer, Brief B–D, Staging-/QA-Dokumentation, HANDOFF und WORKLOG.
+  Kommentarfreie Bild- und JSON-Dateien sind über die exakten Pfade dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Monster-Neuguss abgeschlossen
+
+<!-- codex:2026-08-28T22:13:12+02:00 -->
+
+- Den nach Schneidern pausierten Monsterauftrag auf direkte Chef-Anweisung fortgesetzt und
+  38 bestätigte bzw. visuell auffällige Altmonster vollständig neu geliefert.
+- Finals unter `CODEX/assets/monster-neuguss-2026-08-28/fertig/`: 38 exakt benannte
+  1254 × 1254 PNGs, RGBA, Alphaextrema 0–255, Außenrand Alpha 0 und bereinigtes RGB unter
+  vollständig transparenten Pixeln.
+- Alle Monster sind als einzelne Ganzkörperfigur kampfbereit rechts positioniert und nach
+  links orientiert. Jede Renderer-Altdatei wurde vor bzw. nach der Erzeugung als Identitätsanker
+  gegen Palette, Anatomie, Ausrüstung und Silhouette geprüft.
+- Die erste Alt/Neu-Abnahme löste sechs gezielte Identitäts-Neugüsse aus: schwarze Hexe,
+  Küstenkrabbe, Küstenertrunkener, Schlacken-Hexer, Irrlicht und Leeren-Titan.
+- QA unter `CODEX/assets/monster-neuguss-2026-08-28/qa/`: JSON-Messbericht, zwei dunkle,
+  zwei grellrosa und sieben Alt/Neu-Kontaktbögen. Keine technischen Neon-Key-Flächen oder
+  weißen Matten in den abgenommenen Finals sichtbar.
+- Vier Korrekturen besitzen natives Alpha; die übrigen Motive wurden über eine vom Chef zuvor
+  freigegebene technische Grün-Zwischenstufe mit engem Farbkern, Kantenkorrektur und Despill
+  finalisiert. Verworfenes Identitätsmaterial bleibt separat erhalten und ist nicht zur
+  Integration bestimmt.
+- Renderer, Content, Engine und `.claude/**` blieben unangetastet. Integration und WebP-
+  Konvertierung bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T21:20:54+02:00` bis `codex:2026-08-28T22:13:12+02:00` —
+  reproduzierbarer Monster-Finalisierer, Kanten-/Innenraumkorrektur, native Overrides,
+  Brief, Staging-/QA-Dokumentation, HANDOFF und WORKLOG. Kommentarfreie PNGs, JPGs und der
+  JSON-Bericht sind über die exakten Pfade dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Esthar, Ossric und Skill-Pets abgeschlossen
+
+<!-- codex:2026-08-28T22:51:20+02:00 -->
+
+- Vier P1-Finals unter `CODEX/assets/esthar-und-pets-2026-08-28/fertig/`: `booted_tomcat.png`,
+  `esthar.png`, `elite_ossric.png`, `silkweaver.png`.
+- Alle vier exakt 1254 × 1254 PNG RGBA, Alphaextrema 0–255, vollständig transparenter
+  Außenrand, weiche Teiltransparenz und bereinigtes RGB unter Alpha 0.
+- Der Gestiefelte Kater hält Gesicht, Stirnstreifen, Augenfarbe, rosa Nase und ernsten Ausdruck
+  der Spieler-Katze; vollständige Armbrust, Schlinge, Fallenteile, Stiefel und Schwanz sind
+  innerhalb des Sicherheitsrands sichtbar.
+- Esthar bildet eine funktionsfähige Rippen-Doppelklinge in der Bestandsdiagonale; Legendärgrad
+  kommt aus Silhouette und Knochen-/Markmaterial, ohne Glühen, Aura, Partikel oder Nebel.
+- Seidenweber ist eine bleiche Nachtmotte mit sechs dünnen Beinen, vier Stoffbahnflügeln,
+  nadelartigen Fühlern und gespanntem Silberfaden; nur der Faden trägt einen schwachen Schimmer.
+- Ossric ist eng an `gravecliff_specter` gebunden, mit Knochenpanzer, rostroten Markfugen und
+  bleichen Augen; Kampfrichtung links, kein Frost. Elite-Serienabgleich erfolgte exakt gegen
+  `elite_ash_vulture` und `elite_high_roc`.
+- Vier Kontaktbögen zeigen jeweils die vorgeschriebenen Bestandsnachbarn sowie das Final auf
+  dunklem und grellrosa Grund. Messwerte: `qa/qa-report.json`; Promptprotokoll:
+  `CODEX/work/2026-08-28-esthar-und-skill-pets/PROMPTS-MIRA.md`.
+- Built-in ImageGen; kein CLI-Weg und kein Chroma-Keying. Renderer, Content, Engine und
+  `.claude/**` blieben unangetastet. WebP-q92-Konvertierung und Integration bleiben bei Claude.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T22:17:31+02:00` bis `codex:2026-08-28T22:51:20+02:00` — Brief B–D,
+  Quellen-/Promptprotokoll, alphaerhaltender Finalisierer, Staging-/QA-Dokumentation, HANDOFF
+  und WORKLOG. Kommentarfreie PNGs, JPGs und `qa/qa-report.json` sind über die exakten Pfade
+  dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Kater-Korrektur: stilisiert und nach rechts
+
+<!-- codex:2026-08-28T22:59:45+02:00 -->
+
+- `CODEX/assets/esthar-und-pets-2026-08-28/fertig/booted_tomcat.png` auf direkte Chef-
+  Korrektur vollständig ersetzt: sichtbar stilisierte Malweise, vereinfachte Fellgruppen,
+  ausdrucksstärkeres Gesicht und verschmitzte gespannte Kampfhaltung.
+- Richtungsüberschreibung: Figur steht links und zielt mit der vollständigen Armbrust nach
+  rechts. Fotoidentität bleibt über M-/Stirnstreifen, gelbgrüne Augen, rosa Nase und
+  silbergraues Fell erhalten.
+- Neues Final weiterhin 1254 × 1254 PNG RGBA, Alphaextrema 0–255, Außenrand Alpha 0,
+  Teiltransparenz an Fell/Whiskern/Sehne und kein sichtbarer Saum auf Magenta.
+- Die erste realistische Fassung ist recoverable unter
+  `CODEX/assets/esthar-und-pets-2026-08-28/qa/replaced-realistic-cat/`, aber ausdrücklich nicht
+  zu integrieren. Kontaktbogen, QA-Bericht und Promptprotokoll zeigen bereits die Neufassung.
+- Im Renderer liegt durch Claudes parallelen Einbau bereits `assets/pets/booted_tomcat.webp`;
+  Codex hat diese Datei nicht verändert. Claude muss ausschließlich diesen Kater aus dem neuen
+  Staging-Final erneut als WebP q92 übernehmen. Die anderen drei integrierten Assets bleiben
+  unverändert.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T22:59:45+02:00` — Chef-Korrektur in Brief, Promptprotokoll, Staging-/
+  QA-Dokumentation, HANDOFF und WORKLOG. Die neue kommentarfreie PNG, der aktualisierte
+  Kontaktbogen und `qa/qa-report.json` sind über die exakten Pfade dieses Eintrags dokumentiert.
+
+## 2026-08-28 — Kater-Korrektur 2: gritty Dark Fantasy
+
+<!-- codex:2026-08-28T23:05:36+02:00 -->
+
+- Das um 22:59 gelieferte Kater-Final war dem Chef zu cartoonig und wurde erneut vollständig
+  ersetzt. Verbindlich ist ausschließlich
+  `CODEX/assets/esthar-und-pets-2026-08-28/fertig/booted_tomcat.png` mit erwachsenen schlanken
+  Proportionen, rauer Malweise, tieferen Schatten und abgetragener dunkler Jägerausrüstung.
+- Der Kater steht weiterhin links, bewegt sich in verschmitzt-gespannter Kampfhaltung nach
+  rechts und zielt mit der Armbrust eindeutig zum rechten Bildrand.
+- Final: 1254 × 1254 PNG RGBA, Alphaextrema 0–255, Außenrand Alpha 0, natives Alpha und kein
+  Schachbrett/Farbsaum. Kontaktbogen und `qa/qa-report.json` sind aktualisiert.
+- Die cartoonige Ausschussfassung liegt recoverable unter
+  `CODEX/assets/esthar-und-pets-2026-08-28/qa/replaced-cartoony-cat/` und darf ebenso wenig
+  integriert werden wie die ältere realistische Fassung.
+- Renderer weiterhin unangetastet. Claude muss das bereits integrierte
+  `assets/pets/booted_tomcat.webp` erneut ausschließlich aus dem aktuellen Final ersetzen;
+  Esthar, Seidenweber und Ossric bleiben unverändert.
+
+## 2026-08-28 — Kater-Korrektur 3: Bärenfalle statt Armbrust
+
+<!-- codex:2026-08-28T23:10:28+02:00 -->
+
+- Verbindliches Final erneut ersetzt:
+  `CODEX/assets/esthar-und-pets-2026-08-28/fertig/booted_tomcat.png`.
+- Keine Armbrust und keine Schuhe mehr. Der Jagd-Begleiter schleudert eine offene funktionale
+  Bärenfalle an einer klar verbundenen, gespannten Eisenkette nach rechts; beide natürlichen
+  Katzenpfoten sind sichtbar.
+- Grimmdüstere Malweise, Fotoidentität und Links-nach-rechts-Kampfhaltung bleiben erhalten.
+  Final weiterhin 1254 × 1254 RGBA mit nativem Alpha, transparentem Außenrand und sauberem
+  Magenta-Test; Kontaktbogen und Messbericht wurden neu erzeugt.
+- Die vorherige gritty Armbrustfassung liegt nur noch unter
+  `CODEX/assets/esthar-und-pets-2026-08-28/qa/replaced-crossbow-cat/` und darf nicht integriert
+  werden. Claude ersetzt ausschließlich das bestehende `booted_tomcat.webp` aus dem aktuellen
+  Final; Renderer wurde von Codex nicht verändert.
+
+## 2026-08-28 — Status-Icon Entzug abgeschlossen
+
+<!-- codex:2026-08-28T23:30:33+02:00 -->
+
+- Neues P2-Final:
+  `CODEX/assets/status-icon-entzug-2026-08-28/fertig/icon_status_void.png`, exakt 1254 × 1254
+  PNG RGBA mit nativem Alpha, Alphaextrema 0–255 und vollständig transparentem Außenrand.
+- Motiv: dunkle geschlechtslose Kraftsilhouette mit schwarzem Brustsog; breite purpurschwarze
+  Bahnen laufen sichtbar nach innen, blasser Purpursaum bleibt der einzige Akzent.
+- Serienabgleich gegen `icon_status_burn/frost/shock/poison/bleed.webp`; Leere-Palette gegen
+  `fx/fx_impact_void.webp`. Der Sechser-Kontaktbogen liegt unter
+  `qa/contact-status-icons-six.png`, Alpha-/64-px-Test unter `qa/contact-alpha-and-64.png`.
+- Kein Rahmen, Text, Außenleuchten, Chroma-Key oder nachträgliches Freistellen. Vollständige
+  Messwerte: `qa/qa-report.json`.
+- Renderer und Monster-Neuguss blieben unangetastet. Claude übernimmt WebP und Auto-Discovery-
+  Integration über den exakten Dateinamen.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T23:27:20+02:00` bis `codex:2026-08-28T23:30:33+02:00` — Brief B–D,
+  Promptprotokoll, alphaerhaltender Finalisierer, Staging-/QA-Dokumentation, HANDOFF und WORKLOG.
+  Kommentarfreie PNGs und `qa/qa-report.json` sind über die exakten Pfade dokumentiert.
+
+## 2026-08-28 — Trübgewebe-Fünfer-Set abgeschlossen
+
+<!-- codex:2026-08-28T23:48:44+02:00 -->
+
+- Fünf neue P1-Finals unter `CODEX/assets/truebgewebe-set-2026-08-28/fertig/`:
+  `dimweave_hood.png`, `dimweave_robe.png`, `dimweave_leggings.png`, `dimweave_wraps.png` und
+  `dimweave_sandals.png`.
+- Alle exakt 1254 × 1254 PNG RGBA, Alphaextrema 0–255, Außenrand Alpha 0, natives Alpha und
+  bereinigtes RGB unter vollständig transparenten Pixeln.
+- Setkern: grobes dämmergraues Nesselgewebe mit zurückhaltendem Abendblau, ausgefranste Säume,
+  Reparaturnähte, stumpfe Lederkordeln, Holzknebel und je Teil eine dunkelblaue eingenähte
+  Zwielicht-Rune ohne Lichtwirkung.
+- Größen, Slotperspektiven, Licht von oben links und Malgrad gegen das komplette Lehrlings-Set
+  geprüft; Frost-Roben nur als höhere Verarbeitungsgrenze. Alte `dimweave_*.webp` wurden nicht
+  als Bildvorlage verwendet und nicht verändert.
+- QA: `qa/contact-dimweave-vs-apprentice.png`, `qa/contact-alpha-dark-magenta.png`,
+  `qa/contact-64px.png` und `qa/qa-report.json`. Promptset liegt unter
+  `CODEX/work/2026-08-28-truebgewebe-set/PROMPTS-MIRA.md`.
+- Renderer, Content und `.claude/**` unangetastet. Claude übernimmt WebP q92, Austausch der
+  drei Altbilder und Integration der zwei neuen IDs.
+
+### Codex-Code-Marker
+
+- `codex:2026-08-28T23:41:03+02:00` bis `codex:2026-08-28T23:48:44+02:00` — Brief B–D,
+  Promptprotokoll, Serien-Finalisierer, Staging-/QA-Dokumentation, HANDOFF und WORKLOG.
+  Kommentarfreie PNGs und `qa/qa-report.json` sind über die exakten Pfade dokumentiert.
+
+## 2026-08-28 — Trübgewebe-Robe ohne Kapuze korrigiert
+
+<!-- codex:2026-08-28T23:56:07+02:00 -->
+
+- `CODEX/assets/truebgewebe-set-2026-08-28/fertig/dimweave_robe.png` auf direkte Chef-
+  Korrektur vollständig ersetzt. Die verbindliche Robe besitzt nun einen offenen flachen
+  V-Ausschnitt und keinen Hood-, Gugel- oder Kopfslot-Anteil.
+- Material, Abendblau-Palette, weite Ärmel, ausgefranster Lagenrock, Kordel/Holzknebel und
+  unbeleuchtete Brust-Rune bleiben in der Serie unverändert.
+- Neues Final: 1254 × 1254 PNG RGBA, natives Alpha, Alphaextrema 0–255, Außenrand Alpha 0 und
+  RGB unter vollständig transparentem Alpha 0. Sämtliche Kontaktbögen und Messwerte aktualisiert.
+- Die verworfene Kapuzenrobe liegt nur unter `qa/replaced-hooded-robe/`; Claude verwendet
+  ausschließlich das aktuelle Final. Renderer und die anderen vier Set-Teile blieben
+  unangetastet.
+
+## 2026-08-29 — Steam-Store-Copy V2 auf aktuellen Umfang gebracht
+
+<!-- codex:2026-08-29T00:30:06+02:00 -->
+
+- Einfügungsfertige Kurz- und Langbeschreibungen in sieben Store-Sprachen liegen unter
+  `CODEX/work/2026-08-29-steam-store-copy/STORE-COPY-V2-ALL-LANGUAGES.txt`.
+- Die neue Copy erklärt erstmals den aktuellen Kern vollständig: 22 Fertigkeiten einschließlich
+  Jagen und Schneidern, 23 Begleiter, drei Kampfstile und Item-Builds, Welt-/Champion-System,
+  Charakterwahl, New Haven sowie Warteschlangen- und Offline-Komfort.
+- Verwendete Ist-Zahlen und Release-Abgrenzung stehen in
+  `CODEX/work/2026-08-29-steam-store-copy/CURRENT-FACTS.md`. Die vorbereitete, aber aktuell über
+  `TAVERN_ENABLED = false` deaktivierte Taverne wurde bewusst nicht als Store-Versprechen genannt.
+- Alle sieben Kurzbeschreibungen liegen unter 300 Zeichen. Veraltete Early-Access-Aussagen und
+  die alten Angaben 20 Fertigkeiten/28 Champions wurden entfernt.
+- Drei bestehende Store-Panels sind für diese Copy nicht mehr freigegeben:
+  `panel_numbers.png`, `panel_worldfightsback.png` und `panel_skills.png`. Nur
+  `panel_promise.png` ist inhaltlich noch aktuell. Steam selbst wurde nicht verändert.
+
+## 2026-08-29 — Sieben neue Steam-Store-Panels im Ashen-Iron-Stil
+
+<!-- codex:2026-08-29T00:51:52+02:00 -->
+
+- Universelles textloses Set: `CODEX/assets/steam-store-elements-2026-08-29/fertig/`.
+- Optionale englische Fassung: `CODEX/assets/steam-store-elements-2026-08-29/english-text/`.
+- Sieben Motive erzählen Welt, Fertigkeiten, Builds, Begleiter, spielbare Völker, New Haven und
+  das faire Spieltempo. Alle sind 1170 × 570, deckend und visuell im neuen Hauptmenü-Stil.
+- Das universelle Set ist mit 6,17 MiB für die sieben lokalisierten Store-Seiten empfohlen; die
+  Überschriften bleiben dadurch übersetzbarer Rich Text statt eingebrannter Bildtext.
+- Kontaktbögen: `qa/contact-sheet-universal.jpg` und `qa/contact-sheet-english.jpg`; Messwerte,
+  Alt-Texte und Einbaupositionen stehen in `qa/QA-REPORT.md` und Paket-`HANDOFF.md`.
+- Ein Logo-Freistellversuch des eingebauten ImageGen-Werkzeugs erzeugte nur ein gemaltes
+  Schachbrett ohne Alpha. Er wurde verworfen, nicht gekeyt und ist in keinem Final enthalten.
+- Alte Store-Panels, Steamworks, Renderer, Content und `.claude/**` blieben unangetastet.
+
+## 2026-08-29 — Store-Panel-Arbeit an Claude zurückgegeben
+
+<!-- codex:2026-08-29T01:06:33+02:00 -->
+
+- Direkte Chef-Korrektur: Die szenischen Banner unter
+  `CODEX/assets/steam-store-elements-2026-08-29/` entsprachen nicht den gemeinten grafischen
+  Infotafeln und sind zurückgezogen.
+- Der anschließende Infografik-Entwurf unter
+  `CODEX/assets/steam-description-infographics-2026-08-29/` wurde wegen des Panel-/Frame-Aufbaus
+  ebenfalls abgelehnt. Gewünscht ist der Steel Frame mit vollständig freiem Außenraum.
+- Beide Ordner tragen `DO-NOT-USE.md`. Nichts davon in Steamworks übernehmen. Claude erstellt
+  die Panels auf direkte Chef-Anweisung neu.
+
+## 2026-08-29 — Steam-Erfolg MASTER_HUNTING fertig
+
+<!-- codex:2026-08-29T01:06:33+02:00 -->
+
+- Finals: `CODEX/assets/steam-master-hunting-2026-08-29/fertig/MASTER_HUNTING.jpg` und
+  `MASTER_HUNTING_gray.jpg`.
+- Beide exakt 256 × 256, deckendes RGB JPEG, korrekt benannt. Gray wurde direkt aus dem
+  akzeptierten Farbfinal abgeleitet.
+- Motiv: plausible Eisenschlinge im goldenen Meisterrahmen und Lorbeerkranz, Ködertopf dahinter,
+  gebundenes Wurmbündel im Vordergrund; kein Text, Glow, Blut oder Gore.
+- Serienvergleich mit MASTER_LEATHERWORKING und MASTER_TAILORING:
+  `qa/contact-master-hunting.jpg`; zusätzlicher echter 64-px-Test:
+  `qa/contact-master-hunting-64px.png`; Messwerte und SHA-256 in `qa/qa-report.json`.
+- Renderer, Content, Steamworks und `.claude/**` unangetastet. Die zwei JPGs gehen direkt an den
+  Chef für Steamworks.
+
+## 2026-08-29 — Patchnotes-Artwork 1.2.0 fertig
+
+<!-- codex:2026-08-29T08:01:13+02:00 -->
+
+- Finals: `CODEX/assets/patchnotes-1.2.0-2026-08-29/fertig/`.
+- Titelbild `grim_reach_1.2.0_title_1920x622.png` und Hauptkapsel
+  `grim_reach_1.2.0_main_capsule_800x450.png`, beide deckend und exakt im Zielformat.
+- Motivwelt: Jagdfalle/Köder, fünf Stoffstufen/Schneiderwerkzeug und kontrolliertes Spellfire
+  in einer gemeinsamen düsteren Werkstattszene.
+- Exakter Satz: `UPDATE 1.2.0` und `THREADS, TRAPS & SPELLFIRE`; Titel vollständig unter dem
+  Grim-Reach-Logo, ohne rote Linie oder Dekoration durch die Buchstaben.
+- Gemeinsame Vorschau: `qa/preview-target-sizes.png`; technische Daten und Hashes: `qa/qa.json`.
+- Keine Produktions-, Renderer- oder Store-Datei verändert.
+
+## 2026-08-29 — Schmuck-Rework, Welle 2 vollständig
+
+<!-- codex:2026-08-29T16:19:58+02:00 -->
+
+- 14/14 P1-Fernkampf-Schmuckbilder geliefert unter
+  `CODEX/assets/schmuck-rework-2026-08-29/fertig/`.
+- Sieben Ringe und sieben Amulette folgen der bindenden Fassungsregel: Leder, Sehne, Feder und
+  Knochen statt eines dominanten Metallbandes; Steine stufen die Reihe von Saphir bis Göttergemme.
+- Alle Finals exakt 640 × 640 WebP, vier Kanäle, Alpha 0–255 und vollständig transparenter
+  Außenrand. Kein Glühen, Schimmer, Partikel, Boden oder Schlagschatten.
+- Kontaktbögen auf Dunkelgrund, Magenta und bei echten 60 px liegen unter `qa/`; vollständige
+  Messwerte und SHA-256 in `qa/qa-wave-2.json`.
+- Raws, Prompt-Set, Paket-HANDOFF und QA-Bericht sind dokumentiert. Renderer und bestehende
+  Schmuckbilder blieben unangetastet.
+- P2 wartet auf finale IDs. Zusätzlich vor P2 klären: Die im Brief aufgeführten Wellen ergeben
+  37 Stück (`14 + 10 + 5 + 8`), während Titel und Auftrag 41 nennen.
+
+## 2026-08-29 — Schmuck-Rework vollständig, Wellen 3 bis 5
+
+<!-- codex:2026-08-29T17:42:00+02:00 -->
+
+- Nach aktualisiertem Brief und finalen IDs die verbleibenden 27 Motive geliefert; damit liegen
+  alle 41/41 Schmuckbilder unter `CODEX/assets/schmuck-rework-2026-08-29/fertig/`.
+- Welle 3: 10 Magiestücke ohne Glühen; Wirkung ausschließlich über Runen, Stoff, Essenz und
+  Material. Welle 4a: 5 schwere Nahkampf-Amulette. Welle 4b: 8 eigenständige Fundstücke.
+  Welle 5: 4 schlichte, benutzte Arbeitsstücke ohne Edelsteinprunk.
+- Die 27 neuen Finals sind exakt 640 × 640 WebP q92 mit vier Kanälen, Alpha 0–255 und
+  vollständig transparentem Außenrand. Welle 2 blieb nach Claudes Integration unverändert.
+- Kontaktbögen je Welle auf Dunkelgrund, Magenta und bei echten 60 px sowie Messwerte und
+  SHA-256 liegen unter `qa/`. Paket-HANDOFF und QA-Bericht sind aktualisiert.
+- Renderer, Content-Katalog und `.claude/**` blieben unangetastet; Integration bleibt bei Claude.
+<!-- codex:2026-08-30T16:25:00+02:00 -->
+## 2026-08-30 – New Haven Listen- und Karten-Mockups
+
+- Zehn reine Design-Mockups erstellt: fünf für die Listenansicht und fünf für die Kartenansicht.
+- Ablage: `CODEX/assets/newhaven-design-mockups-2026-08-30/fertig/`.
+- Vergleichsbögen: `CODEX/assets/newhaven-design-mockups-2026-08-30/qa/contact-list-5-variants.png` und `contact-map-5-variants.png`.
+- Varianten und Zustandsabdeckung sind in `CODEX/assets/newhaven-design-mockups-2026-08-30/HANDOFF.md` beschrieben.
+- Kein HTML, keine CSS-/TSX-Änderung und keine Renderer-Integration; Auswahl durch den Chef steht aus.
+<!-- codex:2026-08-30T16:56:00+02:00 -->
+## 2026-08-30 – New Haven Master–Detail HTML-Mockup
+
+- Auf direkte Chef-Auswahl Listenvariante 04 als eigenständigen interaktiven Prototyp umgesetzt:
+  `CODEX/outbox/2026-08-30-newhaven-master-detail-html/index.html`.
+- Linkes Gebäuderegister ist bewusst scrollbar; bei 1080p bleiben ungefähr acht großzügige Zeilen sichtbar. Jede Zeile zeigt Bild, Namen, Rang, Status und – sofern möglich – eine direkte Aufwerten-/Errichten-Aktion.
+- Rechte Detailkarte reagiert auf die Auswahl und zeigt Bestandsillustration, Beschreibung, aktuelle/nächste Wirkung, Gold plus vier Materialkosten, Bauzeit beziehungsweise Sperrgrund und kontextabhängige Aktionen.
+- Permanente Drei-Platz-Warteschlange unten mit Fortschritt und Abbrechen-Simulation; außerdem Suche, Aktionsfilter, Betreten- und Fertigstellen-Simulation.
+- Nur kopierte Runtime-Bestandsassets im lokalen Mockup-Paket; Renderer, Content, Engine und `.claude/**` unverändert.
+- Statische QA und JavaScript-Syntaxprüfung bestanden: 27 referenzierte Assets, 0 fehlend. Browser-Plugin war in dieser Sitzung ohne verfügbaren Browser, daher keine Browser-Screenshot-QA.
+<!-- codex:2026-08-30T17:24:00+02:00 -->
+## 2026-08-30 – New Haven HTML, Responsive Großformat-Iteration
+
+- Chef-Feedback „Gebäude und Schriften zu klein, alles dynamisch“ im bestehenden Outbox-Paket umgesetzt.
+- Root-Typografie skaliert nun viewportabhängig; Register, Detailkarte und Queue nutzen zusätzliche Container-Skalierung. Starre Desktop-Geometrie wurde durch `clamp()`, `rem`, `vw/vh`, `cqw` und flexible Grid-Zeilen ersetzt.
+- Linkes Register zeigt absichtlich etwa fünf große Zeilen und scrollt. Numerischer Vertrag: Gebäudeillustrationen 72 px bei 1280×720, 108 px bei 1920×1080 und 128 px bei 2560×1440; Detailtitel 27/41/58 px.
+- Arbeitsfläche bleibt in fünf geprüften Viewports zwischen 475 und 991 px hoch; Detailbereich zwischen 622 und 1324 px breit.
+- Kleingedruckte Status-, Material- und Queue-Texte besitzen jetzt mindestens 12 px; zentrale Texte beginnen bei 14–16 px. Damit schrumpfen unter 1600 px nicht mehr einzelne Nebenlabels unter die Lesbarkeitsschwelle.
+- `qa-static.cjs`, `qa-responsive-contract.cjs` und JavaScript-Syntaxprüfung bestanden. Ein echter Chromium-Headless-Render wurde über Playwright, Headless Shell und Chrome for Testing versucht, aber die verwaltete Sandbox verweigert den erforderlichen Mojo-IPC. Kein Produktionscode berührt.
+
+<!-- codex:2026-08-30T18:10:00+02:00 -->
+## 2026-08-30 – New Haven HTML, Screenshot-Korrektur 2
+
+- Direktes Chef-Livefeedback umgesetzt: `II → III` bleibt nun horizontal; die bereits vergrößerten Listenmotive bleiben erhalten.
+- Die lokalen Mockup-Kopien der 14 Camp-Gebäude liegen eng zugeschnitten unter `assets/buildings/`, damit die großen transparenten 1536er Sicherheitsflächen die Motive nicht mehr klein rechnen. Produktions-WebPs blieben unangetastet.
+- Gebäude in der Detailbühne nutzen jetzt proportionale Maximalmaße statt gleichzeitiger fester Breite/Höhe; dadurch bleibt die gesamte Silhouette sichtbar.
+- Kostenbereich und Materialchips haben explizite Min-/Overflow-Grenzen und Text-Ellipsis als letzte Sicherung.
+- Die Queue-Zeile wurde auf dynamische 7,5–8,8 rem angehoben; Kartenbilder nutzen proportionale Maximalmaße, alle Karten bleiben innerhalb des Stahlrahmens.
+- QA grün: `node --check app.js`, 27 Assetreferenzen/0 fehlend sowie Responsive-Vertrag für 1280×720 bis 2560×1440. Echter Browser-Render bleibt in der Sandbox technisch blockiert; die Chef-Screenshots dienten als visuelle Prüfbasis.
+- Integration in React/Renderer bleibt ausdrücklich offen und bei Claude; geändert wurde nur `CODEX/outbox/2026-08-30-newhaven-master-detail-html/` plus diese Übergabe.
+
+<!-- codex:2026-08-30T19:03:00+02:00 -->
+## 2026-08-30 – New Haven HTML, Chef-Detailhierarchie
+
+- Rechte Detailkarte gemäß Chef-Markierung neu strukturiert: links eine durchgehend große, vollständig eingepasste Gebäudeillustration; rechts ein eigener Container nur für aktuellen/nächsten Effekt, vier Materialkosten, Gold, Bauzeit und Voraussetzungen.
+- Flairbeschreibung, Statusplakette und der dadurch doppelte obere Aufwerten-Knopf vollständig entfernt. Die untere Aktionsleiste ist nun die einzige Aktionsquelle.
+- Sämtliche `Betreten`-Zustände, Datenfelder, Buttons und Simulationen entfernt; Schmelzhütte und Taverne sind regulär aufwertbare Stufe-II-Gebäude.
+- Effektvergleich nutzt eine benannte Container Query: unter 26 rem vertikal, ab 26 rem horizontal. Dadurch werden breite Detailflächen ausgefüllt, ohne schmale Viewports zu überladen.
+- `render-qa.cjs` prüft bei verfügbarer Chromium-Umgebung zusätzlich Bildgröße, Rangumbruch, Detail-/Kosten-/Queue-Overflow und Abwesenheit von Betreten-Aktionen. Aktuell verhindern Browser-Runtime und Windows-Mojo-IPC den echten Headless-Start; Chef-Screenshots plus numerischer Fünf-Viewport-Vertrag dienen als aktuelle Abnahmebasis.
+- QA grün: 27 Assetreferenzen/0 fehlend, 14 Gebäude, eine Upgrade-Aktionsquelle, kein Flairpanel, keine Betreten-Aktion, adaptive Effekte sowie JS-Syntax. Renderer/Produktionscode unangetastet.
+
+<!-- codex:2026-08-30T19:28:00+02:00 -->
+## 2026-08-30 – New Haven HTML, Kleinstauflösungs-Korrektur
+
+- Chef-Gesamtscreenshot bei 1040 × 958 bestätigt die neue Detailhierarchie, vollständige Gebäudeansicht, Kosten und Queue; einzig das linke Register war in der alten Fünfspaltenzeile sichtbar gequetscht und erzeugte horizontalen Scroll.
+- Unter 30 rem tatsächlicher Registerbreite wechselt jede Gebäudezeile nun per Container Query auf zwei Zeilen: Index/Bild/Name/Rang oben, eine über Name plus Rang gespannte Aktion darunter.
+- Gebäude bleiben bei rund 69 px sichtbar; Kartenhöhe steigt bewusst auf 7,2 rem und das Register scrollt nur vertikal. `overflow-x: hidden` verhindert die falsche horizontale Scrollachse.
+- Responsive-Vertrag um 1040×958 und 1024×768 erweitert; beide ergeben Zweizeilenkarten, mindestens 489 px Detailbreite und vier bis fünf sichtbare Registereinträge.
+- Statische QA und JS-Syntax grün. Produktionscode weiterhin unangetastet; letzte Sichtbestätigung der schmalen Registerkarte steht aus.
+<!-- codex:2026-08-30T22:18:00+02:00 -->
+## 2026-08-30 – New Haven Master-Detail-Liste produktiv umgesetzt
+
+- Die bisherige Kartenwand der Listenansicht in `apps/client/src/renderer/pages/NewHavenPage.tsx`
+  durch eine isolierte Master-Detail-Variante ersetzt: scrollbareres Gebäuderegister links, große
+  Auswahlansicht rechts und Bauwarteschlange am unteren Rand.
+- Bestehende Engine-Prädikate und Verben (`campCardCore`, Start, Einreihen, Abbruch) bleiben die
+  einzige Zustands- und Aktionsquelle; keine Spielrechnung wurde in die UI kopiert.
+- Vier Materialkosten plus Gold, lange Namen und schmale Container wachsen beziehungsweise brechen
+  um. Die Gebäudegrafik bleibt groß und verwendet weiterhin die gemessene `getCampCardFit`-Tabelle.
+- Kartenansicht und `BuildingPopup` blieben unangetastet. Taverne ist weiterhin release-gated;
+  Benutzungsmodale für Schmelze/Räucherkammer folgen in einem getrennten Auftrag.
+- Vollständige Übergabe und statische Prüfliste:
+  `CODEX/work/2026-08-30-newhaven-listenkarte/LIEFERUNG.md`.
+- Keine Git-Befehle, Live-Starts, Typechecks, Tests oder Builds ausgeführt; diese Prüfung liegt laut
+  Implementierungsguide bei Claude.
+
+<!-- codex:2026-08-30T23:04:00+02:00 -->
+## 2026-08-30 – New Haven Veredelungsmodal als HTML-Prototyp
+
+- Gemeinsames, interaktives Arbeitsmodal für Schmelzofen und Räucherhaus unter
+  `CODEX/outbox/2026-08-30-newhaven-refinery-modal-html/` erstellt.
+- Linkes Rezeptregister und rechte Prozessansicht bilden die bestehende Ein-Rezept-Logik mit
+  exakten Eingängen, deterministischem Ausgang, Rate, Fortschritt, Materialvorrat und Stop/Start ab.
+- Keine Mengenwahl, Prozesswarteschlange, XP, Zufallschance, Flairaktion oder erfundene
+  Produktlogik ergänzt. Demo-Umschaltung und Zahlen bleiben ausschließlich im Prototyp.
+- Lokale Ashen-Iron-Rahmen, Texturen, Camp-Gebäude und Itembilder wiederverwendet; keine neuen
+  Rasterassets und keine Produktionsdateien verändert.
+- JS-Syntax und statische Referenz-/CSS-QA bestanden. Visuelle Browser-Abnahme blieb offen, da
+  in dieser Sitzung kein Browser verfügbar war. Details stehen im Paket-`HANDOFF.md`.
+
+<!-- codex:2026-08-30T23:42:00+02:00 -->
+## 2026-08-30 – New Haven Veredelungsmodal produktiv umgesetzt
+
+- Freigegebenen HTML-Entwurf als gemeinsames Runtime-Modal für Schmelzofen und Räucherhaus in
+  `apps/client/src/renderer/pages/NewHavenPage.tsx` und `styles/newhaven.css` umgesetzt.
+- Listenansicht besitzt nun eine separate Veredelungsaktion neben dem unveränderten Ausbauknopf;
+  gebaute Anlagen öffnen auf der Karte direkt das Arbeitsmodal.
+- Kartenmodal bietet `Gebäude verwalten` als Rückweg zur bestehenden Info-/Ausbaukarte, sodass
+  Ausbau, Verschieben und Abriss erhalten bleiben. Ungebaute Anlagen nutzen weiter die Baukarte.
+- Rezepte, aktiver Slot, Rate, Fortschritt, Produktion und Materialzustand stammen ausschließlich
+  aus den bestehenden Engine-/State-Helfern; Start/Wechsel/Stop laufen über `setCampRefineRecipe`.
+- 15 neue EN/DE-UI-Schlüssel ergänzt. Andere Locales verwenden den bestehenden EN-Fallback.
+- Statische QA grün: TSX ohne Parserfehler, Textparität 15/15, CSS 555/555, beide Öffnungswege.
+- Keine Git-Befehle, Live-Starts, Typechecks, Tests oder Builds gemäß Implementierungsleitfaden.
+  Detailübergabe: `CODEX/work/2026-08-30-newhaven-refinery-modal/LIEFERUNG.md`.
+
+<!-- codex:2026-08-30T23:58:00+02:00 -->
+## 2026-08-30 – New Haven Listenpolitur nach Chef-Feedback
+
+- Defaultansicht von Karte auf Liste umgestellt; Karte bleibt als Tab vollständig erhalten.
+- Register, Detailfläche und Queue auf Ash-Stone umgestellt, Einträge auf Cold-Slate; die bisherige
+  Umber-Cloth-Fläche ist aus der neuen Listenansicht entfernt.
+- Jeder Gebäudeeintrag trägt nun den vorhandenen Gravewood-Iron-`panel-frame.webp` als 9-Slice.
+- Listen- und Detail-Bauknöpfe kodieren den echten bestehenden Zustand: Grün direkt baubar,
+  Gold einreihbar, Rot blockiert, Stahlgrau laufend/maximal. Keine Bauregel wurde dupliziert.
+- `BuildQueueStrip` bleibt auch leer sichtbar und zeichnet alle acht `CAMP_BUILD_QUEUE_MAX`-Slots;
+  belegte Slots behalten Verschieben/Entfernen und den bestehenden Wartegrund.
+- Statische QA grün: TSX parserklar, Default Liste, Queue 8/8, EN/DE-Leertext, Texturen,
+  Iron-Frame, vier Buttonzustände, CSS 562/562.
+- Detailübergabe: `CODEX/work/2026-08-30-newhaven-list-polish/LIEFERUNG.md`.
+# codex:2026-08-30T23:59:30+02:00 — New Haven: Kartenrahmen, Baufolge, Direkt-Veredelung
+
+- Chef-Korrektur in `apps/client/src/renderer/pages/NewHavenPage.tsx` und
+  `apps/client/src/renderer/styles/newhaven.css` umgesetzt.
+- Gebäudelisteneinträge: produktiver `nav-bronze-lipped-iron-9slice.webp` statt V3-Panelrahmen;
+  Hintergrund exakt wie `.content-header` mit `bg_topbar.webp`.
+- Bauleiste vereint den aktiven `camp.buildJob` als Slot 1 mit sieben nachfolgenden
+  `camp.buildQueue`-Plätzen; Restzeit sichtbar, aktiver Eintrag nicht umsortierbar. Queue-Reihenfolge
+  ist im `newHavenGate` enthalten und rendert daher zuverlässig nach.
+- Gebaute Veredelungsanlagen besitzen im Register einen zweiten Button, der das bestehende
+  `RefineModal` öffnet.
+- Statische QA:
+  `node CODEX/work/2026-08-30-newhaven-list-polish/qa-static.cjs` → grün, TSX parserklar,
+  CSS-Klammern 568/568.
+- Keine Engine-/Save-/Content-Änderung. Keine Git-Aktion, kein Live-Start, kein Typecheck/Test/Build
+  gemäß `IMPLEMENTIERUNG-GUIDE.md`; diese Abnahme bleibt beim UI-Owner Claude.
+# codex:2026-08-30T23:59:45+02:00 — New Haven: Sidebar-Fläche auf Großcontainern
+
+- `apps/client/src/renderer/styles/newhaven.css`: Gebäuderegister links, Detailansicht rechts und
+  Queue unten verwenden nun exakt die produktive Sidebar-Oberfläche (`bg_sidebar.webp`, Overlay
+  rgba(10,12,15,.25), 313 px gekachelt).
+- Einzelne Gebäudezeilen bleiben bewusst auf `bg_topbar.webp`; dadurch verschmelzen Kartenfläche
+  und umgebender Iron-Rahmen nicht mehr mit einem einheitlich grauen Untergrund.
+- Statische QA grün: Großflächen exklusiv Sidebar-Textur, Karten exklusiv Topbar-Textur, CSS
+  568/568.
+# codex:2026-08-31T00:20:00+02:00 — Fünf Offline-Rückkehr-Designstudien
+
+- Den vollständigen Anzeigevertrag von `OfflinePopup.tsx` inventarisiert: Cap/Wächter, Begleiter,
+  Tod/Patt/Arbeitsstopp, vier Summen, Erfolge, Skills, New Haven, Veredelung, Jagd, Loot und
+  Leerrückkehr.
+- Fünf neue 16:9-PNG-Mockups liegen unter
+  `CODEX/work/2026-08-31-offline-return-mockups/`; keine Runtime-/HTML-Datei wurde geändert.
+- Richtungen: Wächterchronik, Beutetisch, Spuren der Nacht, Quartiermeister-Akte, Aschewaage.
+- Erzeugt über das eingebaute ImageGen-Werkzeug mit den zwei aktuellen Offline-Screenshots als
+  Stil-/Produktreferenzen. Promptkern und Designbegründungen stehen in `README.md`.
+- Statische Bildprüfung: `node CODEX/work/2026-08-31-offline-return-mockups/QA.cjs`.
+
+<!-- codex:2026-08-31T01:43:00+02:00 -->
+## 2026-08-31 – Offline-Rückkehr „Der Beutetisch“ produktiv umgesetzt
+
+- Chef-Freigabe für Mockup 02 in `apps/client/src/renderer/pages/OfflinePopup.tsx` und
+  `apps/client/src/renderer/styles/offline-stage.css` umgesetzt.
+- Neue Hierarchie: responsive Bilanzleiste, Wächter-/Ereignisband, Fortschritt links, große
+  Beutefläche in der Mitte sowie New Haven/Jagd rechts; nur datenreiche Spalten scrollen.
+- Begleiter, Tod, Patt und Arbeitsstopp bleiben auch gleichzeitig sichtbar. Leere Gruppen entfernen
+  ihre Spalte dynamisch; Leerrückkehr und Sprung zur letzten Fertigkeit bleiben erhalten.
+- Gebäudefertigstellungen verwenden über `getCampImage` die produktiven Camp-Grafiken. Seltene
+  Beute bleibt über die zentrale Rarity-Rangfolge getrennt; keine Engine-/Save-Änderung.
+- Neuer kurzer Bilanztext `offline.stage.awayLabel` in EN/DE/ES/FR/PT-BR/RU/ZH ergänzt.
+- QA: `runtime-qa.cjs`, HTML-QA, `git diff --check` und Client-Typecheck grün.
+- Build und Vitest konnten in der verwalteten Windows-Sitzung nicht anlaufen: beide scheitern vor
+  Codeausführung an `spawn EPERM` (esbuild beziehungsweise tinypool). Kein TypeScript-Fehler.
+
+<!-- codex:2026-08-31T17:12:00+02:00 -->
+## 2026-08-31 – Fünf RPG-Kampfwidget-Designmockups
+
+- Auf direkte Chef-Anweisung fünf visuelle Alternativen für den aktuellen Kampfscreen erstellt.
+- Alle Varianten entfernen die großen unteren Statkarten und setzen kompakte frei schwebende
+  HP-/Schutz-/Aktionsleisten oberhalb von Spieler und Gegner.
+- Die Konzepte unterscheiden sich bewusst in der Ablage der Sekundärinformationen: eingeklappte
+  Randlaschen, seitliche Taktikschienen, obere Ledger, Rahmeneinlassungen oder ein geschlossenes
+  Combat Ledger.
+- Ablage: `CODEX/work/2026-08-31-combat-widget-mockups/`; Designvergleich und Empfehlung in
+  `README.md`, statische PNG-Prüfung in `QA.cjs`.
+- Erzeugung als fünf einzelne UI-Overlay-Edits mit dem eingebauten ImageGen-Werkzeug auf Basis des
+  vom Chef gelieferten Ist-Screens. Keine Runtime-, Renderer-, Engine- oder `.claude/**`-Datei geändert.
+
+<!-- codex:2026-08-31T17:39:00+02:00 -->
+## 2026-08-31 – Kampf-HUD 03 als HTML-Mockup
+
+- Chef-Auswahl 03 „Hunt Target“ als eigenständigen responsiven Prototyp unter
+  `CODEX/outbox/2026-08-31-combat-hud-hunt-target-html/` umgesetzt.
+- Schwebende Spieler-/Gegnerleisten zeigen jetzt drei klar getrennte Reihen: rote HP und blaue Ward
+  jeweils mit Ist-/Maximalwert sowie darunter eine gelbe Angriffsleiste mit Timer in der Füllung.
+- Große Bodenkarten bleiben entfernt. ATK/POW/DEF/Reserve und Gegner-/Dropdaten sitzen in zwei flachen
+  oberen Ledgers; Details sind als kleine ausklappbare Sekundärtafeln vorhanden.
+- Mockup verwendet ausschließlich lokale unveränderte Kopien der produktiven Borderlands-, Warlock-,
+  Pyreling-, Felmagier- und Gravewood-Assets. Runtime und `.claude/**` blieben unangetastet.
+- Interaktive Vorschau simuliert Treffer, Wardbruch, Reset und Angriffstimer. `node --check`,
+  `qa-static.cjs` und `git diff --check` grün. Echte Browser-Sichtprüfung offen, da in dieser Sitzung
+  keine Browserinstanz verfügbar war.
+
+<!-- codex:2026-08-31T17:55:00+02:00 -->
+### Kampf-HUD HTML – Rahmenkorrektur nach Chef-Screenshot
+
+- Äußeren Kampfbühnenrahmen auf eine schmale 3–6-px-Fassung reduziert.
+- Iron Frame um beide schwebenden Figurenleisten vollständig entfernt; Name, Level sowie HP-, Ward-
+  und Angriffsleiste stehen jetzt frei über der Szene.
+- Drei leere Statuskästchen je Figur entfernt. Sie waren als künftige Effektplätze gedacht, lasen sich
+  im Normalzustand jedoch wie defekte Slots; aktive Effekte sollen später nur bei Bedarf erscheinen.
+- Statische QA, JS-Syntax und Diffprüfung erneut grün.
+
+<!-- codex:2026-08-31T18:18:00+02:00 -->
+### Kampf-HUD HTML – Waffenprofil und Namenshierarchie
+
+- Starre Spielerwerte im oberen Band durch ein waffenabhängiges Profil ersetzt. Interaktive Demo:
+  Nahkampf zeigt Angriff/Kraft/Verteidigung, Fernkampf zeigt Fernkampf/Verteidigung, Magie zeigt
+  Magie/Warding plus Spell Reserve.
+- Oberes Spieler- und Gegnerband von der wiederholten Topbar-Textur auf leichte, halbtransparente
+  Eisenbänder mit einzelnen Wertsegmenten umgestellt.
+- Stufenplaketten aus beiden schwebenden Figurenleisten entfernt; Namen stehen nun mittig über HP.
+  Spieler-Stufe steht im Waffenprofil, Gegner-Stufe im Gegnerband.
+- Runtime-Hinweis: Die spätere Auswahl muss automatisch aus der ausgerüsteten Hauptwaffe kommen;
+  die Umschalter sind ausschließlich Mockup-Demonstration. QA und Syntaxprüfung grün.
