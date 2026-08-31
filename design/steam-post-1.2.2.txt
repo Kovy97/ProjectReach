@@ -2,9 +2,21 @@ Grim Reach 1.2.2 - New Haven List View & Fixes
 
 Hunters,
 
-a small patch, and nearly all of it comes from your reports. The New Haven list view has been rebuilt
-from the ground up, the master rings finally carry stats worthy of a level 99 reward, and the dungeon
-loot counter now tells the truth. Saves stay compatible as always.
+a small patch, and nearly all of it comes from your reports. You can now pick the game's font, the
+New Haven list view has been rebuilt from the ground up, the master rings finally carry stats worthy
+of a level 99 reward, and the dungeon loot counter now tells the truth. Saves stay compatible as
+always.
+
+FONT SELECTION
+
+- You can now choose the game's font. Options, under Display: Atmosphere (the house font, as
+  before), Book (a warm serif), Antiqua (an elegant serif with wider letterforms) and Clear (a plain
+  sans-serif, the most legible option). A preview line shows each one before you commit.
+- Every option works in all seven languages. The bundled display fonts cover Latin only, which is
+  why Russian and Chinese have always fallen back to system fonts; the selectable fonts were picked
+  because they cover Latin and Cyrillic, and each carries a CJK fallback.
+- The setting is stored per device, not in your save, so a smaller laptop can run a clearer font
+  without changing anything on your main screen.
 
 NEW HAVEN
 

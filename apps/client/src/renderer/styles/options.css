@@ -502,3 +502,31 @@
   filter: grayscale(1) brightness(0.7);
   opacity: 0.7;
 }
+
+/* ─── Schriftwahl (Chef-Auftrag 31.08.2026) ──────────────────────────────────────────────────
+   Segment-Knoepfe wie bei den Kampfeffekten, darunter eine Erklaerzeile und eine Vorschau, die
+   den Beispielsatz bereits in der gewaehlten Schrift zeigt — sonst muesste man raten, wie sich
+   die Wahl anfuehlt. Die Vorschau traegt bewusst KEINE feste Schriftfamilie im CSS: sie kommt
+   als Inline-Style aus FONT_PREVIEW_STACK, damit Stack und Vorschau nie auseinanderlaufen. */
+.opz-font-wahl {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.opz-font-note {
+  margin: 0;
+  font-size: 12px;
+  text-align: right;
+  max-width: 34ch;
+}
+
+.opz-font-preview {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.35;
+  text-align: right;
+  color: var(--ds-parch-ink, #e8d8b0);
+  max-width: 34ch;
+}

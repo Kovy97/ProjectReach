@@ -104,6 +104,39 @@
   --font-info: "Grim Reach Numerals", "Microsoft YaHei", "Noto Serif CJK SC", "STSong", "SimSun", serif;
 }
 
+/* ─── Schriftwahl (Chef-Auftrag 31.08.2026, 1.2.2) ────────────────────────────────────────────
+   Spieler koennen die Hausschrift umstellen; gesteuert ueber `data-font` am Wurzelelement
+   (renderer/fontChoice.ts, gespeichert im localStorage wie die Sprachwahl — kein SAVE-Bump).
+
+   WARUM DIESE SCHRIFTEN: Jeder Modus muss in allen sieben Sprachen tragen. Mit fontTools gemessen
+   kann KEINE unserer gebuendelten Schriften Kyrillisch oder CJK (darum die :lang-Stacks oben).
+   Die Auswahl besteht deshalb aus Systemschriften, die Latein UND Kyrillisch abdecken — gemessen
+   georgia.ttf, pala.ttf, segoeui.ttf, times.ttf: alle "Kyrillisch: ja" — jeweils mit
+   "Microsoft YaHei" als CJK-Rueckfall (gemessen: Latein, Kyrillisch und CJK). So braucht kein
+   Modus eine eigene Sprach-Sonderregel.
+
+   REIHENFOLGE: Diese Bloecke stehen bewusst NACH den :lang()-Regeln. Beide haben dieselbe
+   Spezifitaet (0,2,0), also gewinnt der spaetere — sonst haette die Sprachregel die Wahl des
+   Spielers wieder ausgehebelt. Die Vorgabe "Atmosphaere" setzt gar kein Attribut und laesst die
+   Regeln oben unveraendert greifen.
+   "Grim Reach Numerals" bleibt in jedem Stack vorn: die Familie deckt nur Ziffern und
+   Rechenzeichen ab und haelt die Zahlenkolonnen ueber alle Modi hinweg gleich. */
+
+:root[data-font="book"] {
+  --font-head: "Grim Reach Numerals", Georgia, "Microsoft YaHei", "Noto Serif CJK SC", "Times New Roman", serif;
+  --font-info: "Grim Reach Numerals", Georgia, "Microsoft YaHei", "Noto Serif CJK SC", "Times New Roman", serif;
+}
+
+:root[data-font="antiqua"] {
+  --font-head: "Grim Reach Numerals", "Palatino Linotype", "Book Antiqua", Palatino, "Microsoft YaHei", "Noto Serif CJK SC", serif;
+  --font-info: "Grim Reach Numerals", "Palatino Linotype", "Book Antiqua", Palatino, "Microsoft YaHei", "Noto Serif CJK SC", serif;
+}
+
+:root[data-font="clear"] {
+  --font-head: "Grim Reach Numerals", "Segoe UI", Tahoma, Verdana, "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --font-info: "Grim Reach Numerals", "Segoe UI", Tahoma, Verdana, "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }

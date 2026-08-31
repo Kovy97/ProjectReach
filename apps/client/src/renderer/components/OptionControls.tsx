@@ -37,6 +37,15 @@ import {
   setWindowMode,
   windowModePref,
 } from "../util/display";
+import {
+  FONT_CHOICES,
+  FONT_LABEL_KEY,
+  FONT_NOTE_KEY,
+  FONT_PREVIEW_STACK,
+  ladeFontChoice,
+  setzeFontChoice,
+} from "../fontChoice";
+import type { FontChoice } from "../fontChoice";
 import "../styles/options.css";
 
 /** Eisenrahmen-Knopf einer Segment-/Umschalter-/Auswahl-Reihe (Chef-Entscheid 25.08.2026:
@@ -171,6 +180,9 @@ export function DisplayAudioPrefs(): JSX.Element {
   // Start-Fenstermodus (Chef-Auftrag 2026-07-23): eigenständig vom Live-Vollbild-Toggle oben —
   // bestimmt das Fenster beim NÄCHSTEN Programmstart (s. util/display.ts-Doku).
   const [windowMode, setWindowModeState] = useState<WindowMode>(windowModePref());
+  // Schriftwahl (Chef 31.08.2026): reine Anzeige-Einstellung im localStorage, kein SAVE-Bump —
+  // dieselbe Mechanik wie die Sprachwahl. Begruendung in renderer/fontChoice.ts.
+  const [font, setFontState] = useState<FontChoice>(ladeFontChoice);
 
   // Tatsächlichen Fensterzustand beim Öffnen abgleichen + live aktualisieren (z. B. nach F11).
   useEffect(() => {
@@ -197,6 +209,7 @@ export function DisplayAudioPrefs(): JSX.Element {
   const changeAchievementVol = (v: number): void => { setAchievementVolume(v); setAchievementVolState(v); };
   const toggleTooltipPopup = (): void => { const next = !tooltipPopup; setTooltipImagePopupEnabled(next); setTooltipPopupState(next); };
   const changeCombatFx = (level: CombatFxLevel): void => { setCombatFxLevel(level); setCombatFxState(level); };
+  const changeFont = (wahl: FontChoice): void => { setzeFontChoice(wahl); setFontState(wahl); };
 
   return (
     <>
@@ -245,6 +258,26 @@ export function DisplayAudioPrefs(): JSX.Element {
             <button className={optBtnCls(combatFx === "off")} onClick={() => changeCombatFx("off")}>
               {t("options.combatFxOff")}
             </button>
+          </div>
+        </OptRow>
+
+        {/* Schriftwahl (Chef-Auftrag 31.08.2026): Die Hausschrift wurde als schwer lesbar
+            bemaengelt. Alle Modi tragen in allen sieben Sprachen — die waehlbaren Schriften
+            decken Latein und Kyrillisch ab und haben einen CJK-Rueckfall (Messwerte und
+            Begruendung in renderer/fontChoice.ts sowie styles/base.css). */}
+        <OptRow label={t("options.font")} hint={t("options.fontHint")}>
+          <div className="opz-font-wahl">
+            <div className="opz-segment">
+              {FONT_CHOICES.map((wahl) => (
+                <button key={wahl} className={optBtnCls(font === wahl)} onClick={() => changeFont(wahl)}>
+                  {t(FONT_LABEL_KEY[wahl])}
+                </button>
+              ))}
+            </div>
+            <p className="opz-font-note muted">{t(FONT_NOTE_KEY[font])}</p>
+            <p className="opz-font-preview" style={{ fontFamily: FONT_PREVIEW_STACK[font] }}>
+              {t("options.fontPreview")}
+            </p>
           </div>
         </OptRow>
       </OptSection>
