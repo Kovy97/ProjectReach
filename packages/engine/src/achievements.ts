@@ -1,5 +1,6 @@
 import type { AchievementCondition, ContentDB, GameState, ItemId } from "@hearthforge/shared";
-import { AP_MILESTONE_STEP_PCT, MASTERY_MAX_LEVEL, apMilestoneTokens, earnedAP, totalAP } from "@hearthforge/shared";
+import {
+  DUNGEON_VARIANT_PREFIX, AP_MILESTONE_STEP_PCT, MASTERY_MAX_LEVEL, apMilestoneTokens, earnedAP, totalAP } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 
 /**
@@ -70,19 +71,29 @@ function totalDungeonsCleared(state: GameState): number {
 /** Paragonturm-ID: hat eine eigene Etagen-Leiter (`paragon_floor`) und zählt NICHT als Dungeon. */
 const PARAGON_TOWER_ID = "paragon_tower";
 
-/** Anzahl Content-Monster mit mindestens einem Kill (Bestiarium-Vollständigkeit). */
+/**
+ * Anzahl Content-Monster mit mindestens einem Kill (Bestiarium-Vollständigkeit).
+ *
+ * OHNE die `dg_`-Dungeon-Varianten — genau wie die Bestiarium-Seite selbst, die sie seit dem
+ * Dungeon-Rework herausfiltert (BestiaryPage.tsx). Ihre Kills laufen auf die Basis-Id
+ * (`killCreditMonsterId`), ihr eigener Zähler bleibt also ewig 0. Solange sie hier mitzählten,
+ * konnte „Das ganze Bestiarium" (Ziel: alle 110 Einträge) nie über 105 kommen — derselbe
+ * Id-Bruch wie beim Zonen-Bestiarium unten.
+ */
 function monstersDiscovered(state: GameState, content?: ContentDB): number {
   if (!content) return 0;
   let n = 0;
   for (const id of Object.keys(content.monsters)) {
+    if (id.startsWith(DUNGEON_VARIANT_PREFIX)) continue;
     if ((state.monsterKills[id] ?? 0) >= 1) n++;
   }
   return n;
 }
 
 /**
- * Zonen-Bestiarium: KLEINSTER Kill-Stand über alle Content-Monster der Zone (inkl. Nur-Dungeon-
- * Wesen der Zone). count 1 = „jedes Wesen besiegt", count 100 = „Zone gemeistert". Zone ohne
+ * Zonen-Bestiarium: KLEINSTER Kill-Stand über alle Content-Monster der Zone — inkl. der
+ * Nur-Dungeon-Wesen mit eigener Id, aber OHNE die `dg_`-Varianten (Begründung im Rumpf).
+ * count 1 = „jedes Wesen besiegt", count 100 = „Zone gemeistert". Zone ohne
  * Monster (oder unbekannt) → 0, damit ein Tippfehler nie einen Gratis-Unlock erzeugt.
  */
 function zoneBestiaryMin(state: GameState, zoneId: string, content?: ContentDB): number {
@@ -90,6 +101,21 @@ function zoneBestiaryMin(state: GameState, zoneId: string, content?: ContentDB):
   let min = Number.POSITIVE_INFINITY;
   for (const m of Object.values(content.monsters)) {
     if (m.zone !== zoneId) continue;
+    // Spieler-Report 31.08.2026 (FR, 1.2.3): „Crypt achievement is bugged ... I have defeated all
+    // the crypt monsters more than 100 times, but my tracker remains stuck at 0/1 and 0/100."
+    //
+    // Die Zone `crypt` fuehrt fuenf Dungeon-Varianten (`dg_skeleton_*`) als eigene Monster mit
+    // `zone: "crypt"`. Kills darauf werden aber bewusst unter der BASIS-Id verbucht
+    // (combat.ts `killCreditMonsterId` schneidet `dg_` ab, damit Varianten-Beute im Bestiarium des
+    // Grundmonsters landet) — `monsterKills["dg_skeleton_warrior"]` bleibt also fuer immer 0.
+    // Da dieser Erfolg das MINIMUM ueber alle Zonen-Monster nimmt, war er unerfuellbar, egal wie
+    // oft der Spieler die Krypta geraeumt hat. Betroffen war genau eine Zone: crypt (geprueft ueber
+    // alle zehn Zonen), was zur Meldung passt, dass alle anderen Erfolge sauber zaehlen.
+    //
+    // Dungeon-Varianten sind skalierte Kopien desselben Wesens, keine eigene Kreatur der Zone —
+    // sie gehoeren hier also ohnehin nicht in die Zaehlung. Derselbe Id-Bruch traf am selben Tag
+    // schon den Beutezaehler im Dungeon (s. drops.ts).
+    if (m.id.startsWith(DUNGEON_VARIANT_PREFIX)) continue;
     min = Math.min(min, state.monsterKills[m.id] ?? 0);
   }
   return Number.isFinite(min) ? min : 0;

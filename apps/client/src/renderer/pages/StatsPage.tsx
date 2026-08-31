@@ -86,8 +86,12 @@ export function StatsPage(): JSX.Element {
   const achievements = content.achievements;
   const unlockedCount = achievements.filter((a) => unlocked.has(a.id)).length;
 
-  const monsterTotal = Object.keys(content.monsters).length;
-  const monsterDiscovered = Object.values(content.monsters).filter(
+  // Ohne die `dg_`-Dungeon-Varianten — dieselbe Menge, die auch das Bestiarium zeigt und der
+  // Erfolg „Das ganze Bestiarium" zählt. Ihre Kills laufen auf die Basis-Id, ihr eigener Zähler
+  // bleibt 0; mitgezählt hätten sie diese Statistik bei 105/110 festgenagelt.
+  const bestiarMonster = Object.values(content.monsters).filter((m) => !m.id.startsWith("dg_"));
+  const monsterTotal = bestiarMonster.length;
+  const monsterDiscovered = bestiarMonster.filter(
     (m) => (state.monsterKills[m.id] ?? 0) > 0,
   ).length;
 

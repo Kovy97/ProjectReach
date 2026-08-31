@@ -319,7 +319,10 @@ describe("achievements", () => {
     const maxItems = Object.keys(content.items).length;
     const maxQuests = content.quests.length;
     // Achievements 1.2.0: Content-Obergrenzen der neuen Typen (Audit § 2.5).
-    const maxMonsters = Object.keys(content.monsters).length;
+    // ERREICHBARES Maximum, nicht die Katalogzahl: `dg_`-Dungeon-Varianten verbuchen ihre Kills
+    // auf der Basis-Id und können selbst nie über 0 kommen. Mit der Katalogzahl (110) ließ dieser
+    // Deckel den Erfolg „Das ganze Bestiarium" mit einem unerfüllbaren Ziel durch.
+    const maxMonsters = Object.keys(content.monsters).filter((id) => !id.startsWith("dg_")).length;
     const maxDungeonsDistinct = content.dungeons.filter((d) => d.id !== "paragon_tower").length;
     const maxSlayerFloor = Math.max(...Object.values(content.monsters).map((m) => m.slayerFloor ?? 0));
     const maxElites = Object.keys(content.elites ?? {}).length;
