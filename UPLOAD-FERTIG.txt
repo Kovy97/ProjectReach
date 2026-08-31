@@ -3,19 +3,19 @@ UPLOAD FERTIG
 
 Grim Reach 1.2.2 liegt im Depot.
 
-  BuildID     25026461   (ersetzt 25019798 = 1.2.1 und alle davor)
-  Zeit        31.08.2026, 00:19
+  BuildID     25032454   (ersetzt 25026461 und 25019798 = 1.2.1)
+  Zeit        31.08.2026, 10:24
   Depot       4915451 (App 4915450)
   Paket       apps/client/release/win-unpacked, Exe-Version 1.2.2.0
   setlive     LEER - der Build ist NICHT live, das schaltest du in Steamworks
 
 Verifiziert ueber steam/output/app_build_4915450.log:
-"Successfully finished AppID 4915450 build (BuildID 25026461)."
+"Successfully finished AppID 4915450 build (BuildID 25032454)."
 
 
 WAS DU NOCH TUN MUSST
 ---------------------
-1. Steamworks -> SteamPipe -> Builds -> Build 25026461 -> Branch "default" -> live setzen.
+1. Steamworks -> SteamPipe -> Builds -> Build 25032454 -> Branch "default" -> live setzen.
 2. Steam-Post veroeffentlichen. Text liegt fertig (nur Englisch):
    G:\GameDev\design\steam-post-1.2.2.txt
 3. Anwendung -> Veroeffentlichen.
@@ -23,6 +23,16 @@ WAS DU NOCH TUN MUSST
 
 WAS IN 1.2.2 DRIN IST
 ---------------------
+Schriftwahl (dein Auftrag 31.08.)
+  * Vier Modi in den Anzeige-Einstellungen: Atmosphaere (Vorgabe, unveraendert), Buch (Georgia),
+    Antiqua (Palatino), Klar (Segoe UI). Mit Erklaerzeile und Vorschau in der jeweiligen Schrift.
+  * Jeder Modus traegt in ALLEN sieben Sprachen. Gemessen: keine unserer gebuendelten Schriften
+    kann Kyrillisch oder CJK - deshalb sind es Systemschriften, die Latein und Kyrillisch abdecken,
+    jede mit CJK-Rueckfall. Es kommt keine neue Schriftdatei ins Paket.
+  * Gespeichert pro Geraet (localStorage wie die Sprachwahl), NICHT im Spielstand - kein SAVE-Bump.
+  * Verifiziert in EN, RU und ZH: alle Modi greifen, Rueckkehr zur Vorgabe stellt den Ausgangsstand
+    exakt wieder her.
+
 New Haven, Listenansicht (Umsetzung von Mira, ihre erste eigene Implementierung)
   * Gebaeuderegister: scrollbare Liste links mit grossem Motiv, Rang und Aktionen, Detailbereich
     rechts mit Gebaeude, Wirkungen, vier Materialien plus Gold und genau einer Hauptaktion.
