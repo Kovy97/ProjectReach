@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.2.2 (New-Haven-Listenansicht neu, Meisterringe kalibriert, Dungeon-Beutezaehler, RU-Knopfleiste)"
+	"desc"	"Grim Reach 1.2.3 (Schriftwahl, New-Haven-Listenansicht, Meisterringe, Dungeon-Beutezaehler)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""
