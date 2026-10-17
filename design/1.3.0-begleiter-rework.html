@@ -1,0 +1,186 @@
+<title>Begleiter-Rework 1.3.0</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: ein ruhiges Dossier auf Basalt — Kopf, Befund, Regeln, Liste aller 23 Begleiter, Umsetzung, Entscheidungen. */
+:root {
+  color-scheme: dark;
+  --bg: #121315;
+  --panel: #1b1d20;
+  --panel-2: #22252a;
+  --line: #34383e;
+  --text: #ddd6c8;
+  --muted: #9a9488;
+  --gold: #d6b86c;
+  --gold-dim: #8c7442;
+  --ctl: #7fa6c9;    /* Kontrolle */
+  --def: #8fbf86;    /* Schutz */
+  --dmg: #d98a6a;    /* Schaden */
+  --loot: #d6b86c;   /* Beute */
+  --sup: #b59ad6;    /* Unterstützung */
+  --warn: #e0a15a;
+  --bad: #d7766b;
+  --ok: #8fbf86;
+  --f-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --f-body: "Alegreya", Georgia, "Times New Roman", serif;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; color: var(--gold); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(28px, 4.2vw, 44px); letter-spacing: .02em; }
+h2 { font-size: clamp(20px, 2.4vw, 26px); letter-spacing: .03em; margin-bottom: 14px; }
+h3 { font-size: 17px; letter-spacing: .04em; color: var(--text); }
+p { margin: 0 0 12px; max-width: 70ch; }
+.eyebrow { font-family: var(--f-display); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 10px; }
+header { border-bottom: 1px solid var(--line); padding-bottom: 26px; margin-bottom: 34px; }
+header .lead { font-size: 19px; color: var(--text); margin-top: 14px; }
+section { margin-bottom: 44px; }
+.muted { color: var(--muted); }
+.grid { display: grid; gap: 14px; }
+.g4 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.card { background: var(--panel); border: 1px solid var(--line); padding: 16px 18px; min-width: 0; }
+.card .big { font-family: var(--f-display); font-size: 30px; color: var(--gold); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.card p { font-size: 16px; margin: 6px 0 0; }
+.rule { border-left: 3px solid var(--gold-dim); }
+.chip { display: inline-block; font-family: var(--f-display); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border: 1px solid currentColor; white-space: nowrap; }
+.r-ctl { color: var(--ctl); } .r-def { color: var(--def); } .r-dmg { color: var(--dmg); } .r-loot { color: var(--loot); } .r-sup { color: var(--sup); }
+.v-strong { color: var(--bad); } .v-weak { color: var(--warn); } .v-dup { color: var(--muted); } .v-ok { color: var(--ok); }
+.roles { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 6px 0 4px; }
+.roles span { font-size: 15px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 980px; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--f-display); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-dim); background: var(--panel-2); position: sticky; top: 0; }
+td .name { font-weight: 600; color: var(--text); display: block; }
+td .src { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+td .old { color: var(--muted); }
+td .new { color: var(--text); }
+td .new b { color: var(--gold); font-weight: 600; }
+tr.group td { background: var(--panel-2); font-family: var(--f-display); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.echo { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.calc { font-variant-numeric: tabular-nums; }
+ol.dec { padding-left: 22px; margin: 0; }
+ol.dec li { margin-bottom: 12px; max-width: 75ch; }
+ol.dec li b { color: var(--gold); }
+.foot { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 520px) { body { font-size: 16px; } .card .big { font-size: 26px; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Grim Reach 1.3.0 · Plan zur Abnahme</div>
+  <h1>Begleiter-Rework</h1>
+  <p class="lead">Jeder Begleiter bekommt eine eigene Signatur und eine klare Rolle im Kampf. Das Sammeln zahlt sich endlich aus, und das neue Jagdbuch verkürzt die Jagd nach ihnen spürbar.</p>
+</header>
+
+<section>
+  <h2>Was heute nicht funktioniert</h2>
+  <div class="grid g4">
+    <div class="card"><div class="big">1 von 23</div><p>Nur der ausgerüstete Begleiter wirkt, mit Fertigkeit und Kampf-Fähigkeit. Die anderen 22 liegen nutzlos im Stall.</p></div>
+    <div class="card"><div class="big">3–5&nbsp;%</div><p>Fast jeder Fertigkeits-Effekt ist „etwas mehr in einem Skill“. Das fühlt sich nach Zahl an, nicht nach Begleiter.</p></div>
+    <div class="card"><div class="big">6 Dopplungen</div><p>Viermal Doppelfund, zweimal identische Treffer-Schwächung, zweimal Brand, zweimal Blutung, zweimal Zauberreserve, zweimal Betäubung.</p></div>
+    <div class="card"><div class="big">~43&nbsp;h</div><p>Ø Wartezeit für einen 1/60.000-Begleiter, jeder Zwanzigste wartet über 130&nbsp;h. Das Jagdbuch halbiert das und deckelt Pech.</p></div>
+  </div>
+  <p class="muted" style="margin-top:14px">Ausreißer: Aschbauch (Kochen) heilt im Kampf 10&nbsp;% alle 5&nbsp;s, Frostgroll betäubt 1,1&nbsp;s alle 5,5&nbsp;s, Düsterratte stiehlt in 40&nbsp;% der Fälle Beute. Dagegen kaum spürbar: Federwürgers Mehrfachtreffer (3&nbsp;%) und Welklings verzögertes Gift (1,8&nbsp;%). Der seltenste Begleiter (Chitinpanzer, 1/105.000) hat einen der schwächsten Effekte.</p>
+</section>
+
+<section>
+  <h2>Die neuen Regeln</h2>
+  <div class="grid g3">
+    <div class="card rule"><h3>1 · Eine Signatur pro Begleiter</h3><p>Kein Effekt kommt doppelt vor. Fertigkeits-Effekte bringen etwas <i>mit</i> (ein Edelstein beim Bergbau, ein höherer Fisch, ein Suffix beim Schmieden), statt nur Prozent zu addieren.</p></div>
+    <div class="card rule"><h3>2 · Fünf Rollen im Kampf</h3><p>Jede Kampf-Fähigkeit hat genau eine Rolle mit einem festen Stärke-Band. So gibt es keinen „besten“ Begleiter mehr, sondern den passenden.</p>
+      <div class="roles"><span class="chip r-ctl">Kontrolle</span><span class="chip r-def">Schutz</span><span class="chip r-dmg">Schaden</span><span class="chip r-loot">Beute</span><span class="chip r-sup">Unterstützung</span></div></div>
+    <div class="card rule"><h3>3 · Echo: Sammeln zählt</h3><p>Jeder Begleiter, den du besitzt, gibt <b>25&nbsp;%</b> seines Fertigkeits-Effekts dauerhaft, auch wenn er nicht ausgerüstet ist. Der ausgerüstete wirkt voll, samt Kampf-Fähigkeit.</p></div>
+    <div class="card rule"><h3>4 · Jagdbuch-Anbindung</h3><p>Fährtenkunde (+100&nbsp;% Chance) und Pech-Schutz (garantiert nach 2&nbsp;× Erwartungswert) gelten für alle Begleiter. Die Begleiter-Seite zeigt beides an.</p></div>
+    <div class="card rule"><h3>5 · Ehrliche Anzeige</h3><p>Jede Begleiter-Karte zeigt Rolle, erwartete Spielzeit bis zum Fund und den Pech-Schutz-Balken. Spieler sehen, worauf sie hinarbeiten.</p></div>
+    <div class="card rule"><h3>6 · Bestehendes bleibt</h3><p>Alle IDs, Bilder und Besitzstände bleiben. Wer einen Begleiter hat, behält ihn. Es ändern sich nur die Effekte, die Ausreißer werden in den Patchnotes erklärt.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Alle 23 Begleiter</h2>
+  <p class="muted">Zahlen sind Zielwerte; der Balance-Agent kalibriert sie nach deinem GO gegen die Rollen-Bänder.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:15%">Begleiter</th><th style="width:22%">Heute</th><th style="width:11%">Urteil</th><th style="width:26%">Neu: Fertigkeit</th><th style="width:26%">Neu: Kampf</th></tr></thead>
+    <tbody>
+      <tr class="group"><td colspan="5">Sammeln</td></tr>
+      <tr><td><span class="name">Faulrinde</span><span class="src">Holzfällen · 1/60.000</span></td><td class="old">5&nbsp;% Sofort-Aktion · Betäubung 0,6&nbsp;s alle 5&nbsp;s</td><td><span class="chip v-ok">ok, generisch</span></td><td class="new"><b>Wurzelgespür:</b> 6&nbsp;% Chance auf ein Vogelnest oder Saatgut beim Fällen</td><td class="new"><span class="chip r-ctl">Kontrolle</span> <b>Wurzelschlinge:</b> 0,8&nbsp;s Betäubung alle 6&nbsp;s</td></tr>
+      <tr><td><span class="name">Felsschlund</span><span class="src">Bergbau · 1/60.000</span></td><td class="old">5&nbsp;% Doppelfund · Biss alle 4&nbsp;s</td><td><span class="chip v-dup">doppelt</span></td><td class="new"><b>Ader-Witterung:</b> 5&nbsp;% Chance auf einen Edelstein passender Stufe</td><td class="new"><span class="chip r-dmg">Schaden</span> <b>Felsbiss:</b> wie heute</td></tr>
+      <tr><td><span class="name">Kiemenfäule</span><span class="src">Angeln · 1/60.000</span></td><td class="old">5&nbsp;% Doppelfund · Biss alle 5&nbsp;s</td><td><span class="chip v-dup">doppelt</span></td><td class="new"><b>Tiefenzug:</b> 5&nbsp;% Chance auf den nächsthöheren Fisch bis zur eigenen Stufe</td><td class="new"><span class="chip r-dmg">Schaden</span> <b>Sog:</b> zieht 5&nbsp;% der aktuellen Gegner-LP ab, stark gegen Bosse</td></tr>
+      <tr><td><span class="name">Welkling</span><span class="src">Anbau · 1/4.000</span></td><td class="old">4,5&nbsp;% Mehrertrag · Gift 1,8&nbsp;% verzögert</td><td><span class="chip v-weak">zu schwach</span></td><td class="new"><b>Fäulnisdünger:</b> Beete wachsen 8&nbsp;% schneller</td><td class="new"><span class="chip r-dmg">Schaden</span> <b>Fäulnisblüte:</b> Gift stapelt bis 5&nbsp;× (Elementar-Regeln)</td></tr>
+      <tr><td><span class="name">Sporenwicht</span><span class="src">Sammeln · 1/60.000</span></td><td class="old">5&nbsp;% Doppelfund · Treffer −35&nbsp;%</td><td><span class="chip v-dup">doppelt</span></td><td class="new"><b>Sporenfund:</b> 5&nbsp;% Chance auf ein Kraut höherer Stufe</td><td class="new"><span class="chip r-ctl">Kontrolle</span> <b>Sporenwolke:</b> Gegner trifft 3&nbsp;s lang 35&nbsp;% schlechter</td></tr>
+      <tr><td><span class="name">Düsterratte</span><span class="src">Diebeskunst · 1/60.000</span></td><td class="old">+3&nbsp;% Erfolg · stiehlt Beute 40&nbsp;%</td><td><span class="chip v-strong">Kampf zu stark</span></td><td class="new"><b>Leise Pfoten:</b> +4&nbsp;% Erfolg, Fehlschläge betäuben halb so lang</td><td class="new"><span class="chip r-loot">Beute</span> <b>Langfinger:</b> stiehlt Beute 25&nbsp;%</td></tr>
+      <tr><td><span class="name">Leon, der Gefürchtete</span><span class="src">Jagen · 1/8.000</span></td><td class="old">5&nbsp;% Doppelwurf · Blutung 3&nbsp;%</td><td><span class="chip v-dup">Kampf doppelt</span></td><td class="new">bleibt (Doppelwurf)</td><td class="new"><span class="chip r-ctl">Kontrolle</span> <b>Gestiefelter Hieb:</b> Krit-Prankenhieb, danach greift der Gegner 3&nbsp;s lang 20&nbsp;% langsamer an</td></tr>
+
+      <tr class="group"><td colspan="5">Handwerk</td></tr>
+      <tr><td><span class="name">Schlackenscheusal</span><span class="src">Schmieden · 1/60.000</span></td><td class="old">5&nbsp;% Material zurück · Brand 2,7&nbsp;%</td><td><span class="chip v-dup">doppelt</span></td><td class="new"><b>Glutsegen:</b> +5&nbsp;% Chance auf einen Zufalls-Suffix beim Schmieden</td><td class="new"><span class="chip r-dmg">Schaden</span> <b>Schlackenspritzer:</b> Brand, der Glut-Stapel aufbaut</td></tr>
+      <tr><td><span class="name">Aschbauch</span><span class="src">Kochen · 1/60.000</span></td><td class="old">4&nbsp;% perfektes Gericht · heilt 10&nbsp;% alle 5&nbsp;s</td><td><span class="chip v-strong">Kampf viel zu stark</span></td><td class="new"><b>Feinschmecker:</b> Gerichte heilen 15&nbsp;% mehr</td><td class="new"><span class="chip r-def">Schutz</span> <b>Notration:</b> einmal pro 20&nbsp;s 15&nbsp;% Heilung, wenn unter 40&nbsp;% LP</td></tr>
+      <tr><td><span class="name">Federwürger</span><span class="src">Handwerk · 1/60.000</span></td><td class="old">5&nbsp;% Doppelfund · Mehrfachtreffer 3&nbsp;%</td><td><span class="chip v-weak">zu schwach</span></td><td class="new"><b>Doppelnaht:</b> 5&nbsp;% Chance auf ein zweites Stück</td><td class="new"><span class="chip r-dmg">Schaden</span> <b>Federhagel:</b> drei Schnelltreffer zu je 5&nbsp;% alle 4,5&nbsp;s</td></tr>
+      <tr><td><span class="name">Schindling</span><span class="src">Handwerk · 1/60.000</span></td><td class="old">4&nbsp;% Mehrertrag · Rüstung −20&nbsp;%</td><td><span class="chip v-ok">ok</span></td><td class="new"><b>Gerberhand:</b> +8&nbsp;% EP bei Leder-Vorstufen</td><td class="new"><span class="chip r-sup">Unterstützung</span> <b>Häuten:</b> Rüstung −20&nbsp;% (wie heute)</td></tr>
+      <tr><td><span class="name">Seidenweber</span><span class="src">Schneidern · 1/60.000</span></td><td class="old">5&nbsp;% Material zurück · Treffer −35&nbsp;%</td><td><span class="chip v-dup">Kampf doppelt</span></td><td class="new">bleibt (Material zurück)</td><td class="new"><span class="chip r-def">Schutz</span> <b>Rettungsfaden:</b> fängt einmal pro Kampf einen tödlichen Treffer auf 1&nbsp;LP ab</td></tr>
+      <tr><td><span class="name">Edelsteinwicht</span><span class="src">Juwelierskunst · 1/60.000</span></td><td class="old">5&nbsp;% lupenreiner Stein · sicherer Krit</td><td><span class="chip v-ok">ok, eigenständig</span></td><td class="new">bleibt</td><td class="new"><span class="chip r-dmg">Schaden</span> bleibt</td></tr>
+      <tr><td><span class="name">Glyphenschlund</span><span class="src">Runenkunst · 1/80.000</span></td><td class="old">4,5&nbsp;% Bonusrunen · Ward +10&nbsp;% alle 5&nbsp;s</td><td><span class="chip v-ok">ok</span></td><td class="new">bleibt</td><td class="new"><span class="chip r-sup">Unterstützung</span> bleibt</td></tr>
+      <tr><td><span class="name">Pergamotte</span><span class="src">Runenkunst · 1/80.000</span></td><td class="old">+5&nbsp;% Verkaufspreis · Schild 10&nbsp;%</td><td><span class="chip v-weak">passt nicht</span></td><td class="new"><b>Archivar:</b> +6&nbsp;% EP in Runenkunst</td><td class="new"><span class="chip r-def">Schutz</span> <b>Pergamentschild:</b> wie heute</td></tr>
+      <tr><td><span class="name">Schierling</span><span class="src">Kräuterkunde · 1/60.000</span></td><td class="old">5&nbsp;% Zutaten bleiben · Gift 3,3&nbsp;%</td><td><span class="chip v-dup">Kampf doppelt</span></td><td class="new">bleibt</td><td class="new"><span class="chip r-ctl">Kontrolle</span> <b>Lähmgift:</b> Gift, das den Gegner-Angriff um 10&nbsp;% verlangsamt</td></tr>
+
+      <tr class="group"><td colspan="5">Kampf</td></tr>
+      <tr><td><span class="name">Blutbracke</span><span class="src">Fernkampf · 1/80.000</span></td><td class="old">1,5&nbsp;% Lebensraub · Blutung 3&nbsp;%</td><td><span class="chip v-dup">doppelt</span></td><td class="new"><b>Blutspur:</b> 2&nbsp;% Lebensraub</td><td class="new"><span class="chip r-dmg">Schaden</span> <b>Reißen:</b> Blutung tickt doppelt gegen Gegner unter 50&nbsp;% LP</td></tr>
+      <tr><td><span class="name">Aasschwinge</span><span class="src">Fernkampf · 1/90.000</span></td><td class="old">5&nbsp;% doppelte Beute · Rüstungsdurchschlag 9&nbsp;%</td><td><span class="chip v-strong">Beute stark</span></td><td class="new"><b>Aasfund:</b> 5&nbsp;% doppelte Beute, ohne Champion-Unikate und Begleiter</td><td class="new"><span class="chip r-loot">Beute</span> bleibt</td></tr>
+      <tr><td><span class="name">Eisenschlund</span><span class="src">Nahkampf · 1/75.000</span></td><td class="old">+2 Wucht · Angriff 0,6&nbsp;s verzögert</td><td><span class="chip v-ok">ok, blass</span></td><td class="new"><b>Eisenkiefer:</b> +3&nbsp;% Nahkampfschaden</td><td class="new"><span class="chip r-ctl">Kontrolle</span> bleibt</td></tr>
+      <tr><td><span class="name">Chitinpanzer</span><span class="src">Nahkampf · 1/105.000</span></td><td class="old">−3&nbsp;% Schaden · blockt alle 10&nbsp;s</td><td><span class="chip v-weak">zu schwach für die Seltenheit</span></td><td class="new"><b>Panzerhaut:</b> −5&nbsp;% erlittener Schaden</td><td class="new"><span class="chip r-def">Schutz</span> <b>Schildwall:</b> blockt alle 8&nbsp;s</td></tr>
+      <tr><td><span class="name">Scheiterling</span><span class="src">Magie · 1/85.000</span></td><td class="old">+5&nbsp;% Zauberreserve · Brand 3&nbsp;%</td><td><span class="chip v-dup">doppelt</span></td><td class="new">bleibt</td><td class="new"><span class="chip r-dmg">Schaden</span> <b>Funkenregen:</b> zündet alle 6&nbsp;s die Glut-Stapel des Gegners</td></tr>
+      <tr><td><span class="name">Frostgroll</span><span class="src">Magie · 1/90.000</span></td><td class="old">+4&nbsp;% Zauberreserve · Betäubung 1,1&nbsp;s alle 5,5&nbsp;s</td><td><span class="chip v-strong">Kampf zu stark</span></td><td class="new"><b>Kältepanzer:</b> +8&nbsp;% Ward-Kapazität</td><td class="new"><span class="chip r-ctl">Kontrolle</span> <b>Frostbiss:</b> Frost-Stapel nach Elementar-Regeln, der dritte friert ein</td></tr>
+      <tr><td><span class="name">Beinzehrer</span><span class="src">Magie · 1/75.000</span></td><td class="old">3&nbsp;% Heilung pro Kill · Lebensraub-Stoß 7&nbsp;%</td><td><span class="chip v-ok">ok</span></td><td class="new">bleibt</td><td class="new"><span class="chip r-def">Schutz</span> bleibt</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Echo: warum Sammeln jetzt zählt</h2>
+  <div class="echo">
+    <div class="card"><h3>So funktioniert es</h3><p>Ausgerüstet: voller Fertigkeits-Effekt plus Kampf-Fähigkeit. Im Besitz: 25&nbsp;% des Fertigkeits-Effekts, ohne Kampf-Fähigkeit. Kein Umrüsten mehr, nur weil man den Skill wechselt.</p></div>
+    <div class="card calc"><h3>Beispiel Bergbau</h3><p>Felsschlund im Besitz, Eisenschlund ausgerüstet: 1,25&nbsp;% Chance auf einen Edelstein beim Bergbau, dazu Eisenschlunds volle Kampf-Wirkung. Felsschlund ausgerüstet: 5&nbsp;%.</p></div>
+    <div class="card"><h3>Kein Save-Umbau</h3><p>Echo rechnet sich aus den vorhandenen Besitzdaten. Es gibt kein neues gespeichertes Feld und keine Migration. Der Pech-Schutz-Zähler kommt mit dem Jagdbuch.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Umsetzung</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Engine</h3><p>Rund 12 neue Effektarten (Fund-Effekte, Glut-Zündung, Rettungsfaden, Sog, Notration). Rollen-Bänder als Balance-Pins. Echo in die Fertigkeits-Berechnung.</p></div>
+    <div class="card"><h3>Content und Texte</h3><p>23 Begleiter neu beschrieben, alle 7 Sprachen. Patchnotes erklären die vier Abschwächungen offen.</p></div>
+    <div class="card"><h3>Oberfläche</h3><p>Begleiter-Seite: Rollen-Abzeichen, Echo-Hinweis, erwartete Spielzeit, Pech-Schutz-Balken. Keine neuen Bilder nötig, höchstens fünf Rollen-Symbole.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Entscheidungen für dich</h2>
+  <ol class="dec">
+    <li><b>Echo-Stärke:</b> 25&nbsp;% wie vorgeschlagen? Alternativ 15&nbsp;% (vorsichtig) oder 35&nbsp;% (Sammeln stark belohnt).</li>
+    <li><b>Abschwächungen:</b> Aschbauch, Frostgroll, Düsterratte und Aasschwinge werden schwächer bzw. eingegrenzt. Einverstanden, mit offener Erklärung in den Patchnotes?</li>
+    <li><b>Zweiter Begleiter-Platz:</b> als teuerster Knoten im Jagdbuch (zwei ausgerüstete Begleiter im Kampf)? Sehr begehrenswert, verschiebt aber die Kampf-Balance spürbar.</li>
+    <li><b>Seltenster Begleiter:</b> Chitinpanzer von 1/105.000 auf 1/80.000 angleichen, oder die Seltenheit lassen und nur stärken?</li>
+  </ol>
+</section>
+
+<div class="foot">Stand 17.10.2026 · Datenbasis: Begleiter-Katalog im Test-Branch, Effekte und Chancen direkt aus dem Content gelesen. Die Zielwerte kalibriert der Balance-Agent nach deinem GO.</div>
+</div>
