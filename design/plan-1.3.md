@@ -147,3 +147,7 @@ einzeln abgenommen.
 - Slayer-Seite bleibt ohne große Brenna-Porträtspalte.
 - Gold im Laden bleibt doppelt (Statusleiste + Laden-Kopf).
 - Abnahme 1.3.0 im Testspiel: steht aus (Chef testet noch).
+- Abends 17.10. (Fragen nach UI-Runde 2b und Wandprüfung): Schildwall des Chitinpanzers 9 → 12 s; Slayer-Baum heißt
+  DE „Jägerkodex“ (EN bleibt „Slayer's Book“); Gegnerkarten-Bild bleibt `cover` im Artwork-Fenster + `bottom center`
+  (Festlegung 25.07. bestätigt); Begleiter-Dossier ru 1366: bleibt scrollbar, Schrift bleibt groß.
+- Meisterschaft: Untergrenze 60 XP je Sekunde Basisdauer ab Stufe 50 (Spieler-Review „945 h“).

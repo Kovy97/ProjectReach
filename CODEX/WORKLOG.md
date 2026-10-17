@@ -1,5 +1,13 @@
 # Codex-Arbeitslog
 
+## 2026-10-17 nachts — Claude: Chef-Entscheide umgesetzt
+
+<!-- claude:2026-10-17T21:45:00+02:00 -->
+
+Chef 17.10.: Schildwall 12 s, DE „Jägerkodex“, Gegnerkarten-Formel bleibt (cover im Fenster + bottom center; meine
+Rückfrage hatte sie aus einer falschen Memory-Kurzzeile als „100 % auto“ dargestellt, korrigiert und neu bestätigt),
+ru-Begleiter-Dossier bleibt. Commit `8596bdc`. Engine 1751, Content 310, Client 259, Build grün. Offen: nur Chef-Abnahme Ü2.
+
 ## 2026-10-17 spätabends — Claude: UI-Runde 2b, J4-Anzeige, Apply 6, Wandprüfung
 
 <!-- claude:2026-10-17T21:10:00+02:00 -->
