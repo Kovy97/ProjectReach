@@ -4,7 +4,7 @@ import { content } from "@hearthforge/content";
 import { createGame, transferInventoryItemsToSave } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
-describe("Cross-Save-Rabenfracht Persistenz (SAVE 88)", () => {
+describe("Cross-Save-Rabenfracht Persistenz (SAVE 87)", () => {
   it("erhält Transfer-Absender, Stapel und Instanzen über einen Roundtrip", () => {
     const source = createGame({ name: "Mira Ashfall" }, content, 1);
     const target = createGame({ name: "Woksel" }, content, 2);
@@ -40,5 +40,20 @@ describe("Cross-Save-Rabenfracht Persistenz (SAVE 88)", () => {
       { id: "mail_ok", kind: "transfer", createdSeq: 2, items: [{ itemId: "iron_bar", qty: 2 }], instances: [], fromSaveName: "Nebelwacht" },
     ]);
     expect(loaded!.state.mailSeq).toBe(3);
+  });
+
+  it("ein Testspielstand mit version 88 (nie live) laedt weiter und wird auf 87 gezogen", () => {
+    // claude:2026-10-17T21:00:00+02:00
+    const target = createGame({ name: "Ziel" }, content, 2);
+    (target as unknown as { mailbox: unknown[] }).mailbox = [
+      { id: "mail_ok", kind: "transfer", createdSeq: 0, items: [{ itemId: "iron_bar", qty: 2 }], instances: [], fromSaveName: "Quelle" },
+    ];
+    const savedAt = 1_700_000_000_000;
+    const env = JSON.parse(serialize(target, savedAt)) as { state: { version: number } };
+    env.state.version = 88;
+    const loaded = deserialize(JSON.stringify(env), content, savedAt);
+    expect(loaded).not.toBeNull();
+    expect(loaded!.state.version).toBe(87);
+    expect(loaded!.state.mailbox).toHaveLength(1);
   });
 });

@@ -359,6 +359,7 @@ export const es: Record<string, string> = {
     "mail.transfer.error.empty": "El paquete está vacío.",
     "mail.transfer.error.too_many": "El paquete contiene más de ocho posiciones.",
     "mail.transfer.error.invalid_source": "El inventario de origen ha cambiado. Revisa el paquete.",
+    "mail.transfer.error.not_transferable": "Las llaves, los anillos maestros y los objetos de misión no se pueden enviar a otra partida.",
     "mail.transfer.error.invalid_target": "No se pudo cargar con seguridad la partida destinataria.",
     "mail.transfer.error.no_active_save": "No se encontró una partida remitente activa.",
     "mail.transfer.error.target_missing": "La partida destinataria ya no existe.",
@@ -909,6 +910,8 @@ export const es: Record<string, string> = {
     "combat.zone.freshTracks.badge": "Huellas",
     "combat.zone.freshTracks.tooltip": "Huellas frescas. Pronto algo grande rondará por aquí.",
     "combat.level": "Nivel {n}",
+    "combat.hud.level": "Nivel",
+    "combat.hud.kills": "Muertes",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
     "combat.stillFighting": "Sigues luchando contra: {name}",

@@ -1118,23 +1118,11 @@ function DropsBox({
 
 interface FighterProps {
   name: string;
-  sub?: string;
-  /** Kompakter Zusatz rechts neben Name/Sub im `.fighter-header` (z.B. Drop-Anzeige beim Gegner). */
-  subExtra?: JSX.Element;
   imgSrc: string | null;
   enemy?: boolean;
-  /** Combat level shown in the Citadel level_holder badge. */
-  level?: number;
   hpCur: number;
   hpMax: number;
   hpKind: string;
-  /**
-   * Zauberreserve (28.08.2026, löst den früheren depletierbaren Mana-Balken ab): reiner Kapazitäts-
-   * wert (`stats.maxMana`), wird nicht mehr verbraucht — nur gesetzt für die Spieler-Seite, wenn
-   * `showReserve` zutrifft (Magie-Stil ODER Ausrüstungs-Bonus über dem Basiswert). Gerendert als
-   * Zahl neben dem Ward-Balken, NICHT als Balken (kein "leer/voll" mehr, s. `showReserve`-JSDoc).
-   */
-  reserveMax?: number;
   /**
    * Stoff-Ward-Pool (Rüstungs-Trinität Spec §8). Balken nur gerendert wenn `wardMax > 0`
    * (Magier/Stoff-Träger) — Melee/Ranged (Platte/Leder) zeigen KEINE dritte Leiste.
@@ -1159,7 +1147,6 @@ interface FighterProps {
   attackNonce?: number;
   /** When true, player attacks use the arcane cast animation instead of the physical lunge. */
   isCasting?: boolean;
-  footer?: JSX.Element;
   /** Optional battle-sprite overlay shown next to the fighter figure (used for equipped pet). */
   companionSprite?: JSX.Element;
   /**
@@ -1168,17 +1155,6 @@ interface FighterProps {
    * Layout-Zeile (ActiveBuffsBar), die das Porträt kleingedrückt hat. Nur Spieler-Seite gesetzt.
    */
   buffChips?: JSX.Element;
-  /**
-   * Arena-Rework: die 8-teilige Stat-Zeile (StatLine) lebt nicht mehr im Dauer-Layout, sondern
-   * hinter einem kleinen „Details"-Toggle an der Nameplate (Session-State, useState in Fighter).
-   */
-  details?: JSX.Element;
-  /**
-   * Arena-Rework: Prognose-Prozent (Task #305 hitChance-Eintrag) als kompakter Chip in der
-   * Nameplate-Meta-Zeile statt als StatLine-Eintrag — Spieler ⚔ eigene Treffchance, Gegner 🛡
-   * gegnerische Treffchance.
-   */
-  hitChance?: { icon: React.ReactNode; label: string; pct: number };
   /** Kill-Cooldown aktiv (nur Gegner-Seite): sanft blurren + abdunkeln, der neue Gegner
    *  steht zwar schon da, kämpft aber noch nicht (siehe KillSummaryCard). */
   dimmed?: boolean;
@@ -1296,10 +1272,10 @@ function BuffChipsOverlay({ buffs }: { buffs: ActiveBuff[] }): JSX.Element | nul
   );
 }
 
+// claude:2026-10-17T21:00:00+02:00 Ungenutzte Props (sub, subExtra, level, reserveMax, footer, details, hitChance) entfernt;
+// Spieler-Kurzwerte laufen ueber das HUD-Band (BattleHudRibbon).
 function Fighter(props: FighterProps): JSX.Element {
   const { t } = useI18n();
-  // Zauberreserve (28.08.2026): reine Kapazitätszahl, kein Balken mehr (Mana verbraucht sich nicht).
-  const showReserve = props.reserveMax !== undefined && props.reserveMax > 0;
   // Ward (Stoff-Klassenschicht, Spec §8): dritte Leiste NUR bei maxWard > 0 (Magier/Stoff-Träger).
   // Platte/Leder liefern wardMax===0 → gar keine Leiste (kein leerer Slot, kein Layout-Sprung).
   const showWard = props.wardMax !== undefined && props.wardMax > 0;
@@ -1313,8 +1289,6 @@ function Fighter(props: FighterProps): JSX.Element {
   // Kampf-Juice §1b: dritter Wrapper NUR für den Scale-Punch/Weißblitz am Getroffenen — artRef
   // trägt bereits den Recoil-translateX, figureRef die Lunge (dieselbe Kollisions-Trennung).
   const punchRef = useRef<HTMLDivElement | null>(null);
-  // Arena-Rework: Stat-Zeile hinter „Details"-Toggle (Session-Zustand reicht, kein Persistieren).
-  const [detailsOpen, setDetailsOpen] = useState(false);
 
   // Kampf-Effekte-Stufe: "full" erlaubt Bewegung (Lunge/Cast/Recoil/Sacken), "reduced" nur Flash-/
   // Farbeffekte, "off" nichts Neues. Default "full" falls kein Wert durchgereicht wurde.
@@ -1576,9 +1550,6 @@ function Fighter(props: FighterProps): JSX.Element {
           <div className="fighter-header-main">
             <div className="fighter-name">
               {props.name}
-              {props.level !== undefined && (
-                <span className="fighter-level-badge">{props.level}</span>
-              )}
               {props.regen ? (
                 <span className="trait-badge" title={props.regenLabel}>
                   {REGEN_ICON_URL
@@ -1592,13 +1563,7 @@ function Fighter(props: FighterProps): JSX.Element {
                 </span>
               )}
             </div>
-            {props.sub && (
-              <div className="fighter-sub muted">
-                <span>{props.sub}</span>
-              </div>
-            )}
           </div>
-          {props.subExtra}
         </div>
         <Bar
           pct={(props.hpCur / props.hpMax) * 100}
@@ -1624,14 +1589,6 @@ function Fighter(props: FighterProps): JSX.Element {
             }
           />
         )}
-        {/* Zauberreserve (28.08.2026): keine Ressource mehr, die sich verbraucht — reine
-            Kapazitätszahl neben dem Ward-Balken statt eines eigenen (irreführenden) Balkens. */}
-        {showReserve && (
-          <div className="fighter-reserve-row">
-            <span className="fighter-reserve-label">{statIcon("mana")} {t("combat.spellReserve")}</span>
-            <span className="fighter-reserve-val">{formatStat(props.reserveMax ?? 0)}</span>
-          </div>
-        )}
         {/* Schwung-Timer: läuft mit ~10Hz-Renderrhythmus glatt runter (0,1s-Schritte passen exakt
             auf die eine Nachkommastelle) — kein zusätzliches rAF-Interpolations-Gerüst nötig. */}
         <Bar
@@ -1639,26 +1596,6 @@ function Fighter(props: FighterProps): JSX.Element {
           kind="timer"
           label={`${formatSeconds1(Math.max(0, props.timerRemainingSec))}s`}
         />
-        {(props.hitChance || props.details || props.footer) && (
-          <div className="fighter-meta-row">
-            {props.hitChance && (
-              <span className="fighter-prognosis" title={props.hitChance.label}>
-                {props.hitChance.icon} {Math.round(props.hitChance.pct * 100)}%
-              </span>
-            )}
-            {props.footer}
-            {props.details && (
-              <button
-                type="button"
-                className={`fighter-details-toggle${detailsOpen ? " open" : ""}`}
-                onClick={() => setDetailsOpen((o) => !o)}
-              >
-                {t("combat.details")} <span aria-hidden="true">{detailsOpen ? "▾" : "▸"}</span>
-              </button>
-            )}
-          </div>
-        )}
-        {detailsOpen && props.details && <div className="fighter-details">{props.details}</div>}
       </div>
     </div>
   );
@@ -3614,14 +3551,15 @@ function Battle({
       )}
     </>
   );
+  // claude:2026-10-17T21:00:00+02:00 Eigene Kurzbeschriftungen (combat.hud.*) statt abgeschnittener Fertigtexte.
   const enemyHudSummary = (
     <>
       <span className="battle-hud-metric">
-        <span>{t("combat.level").replace("{n}", "").trim()}</span>
+        <span>{t("combat.hud.level")}</span>
         <strong>{monster.level}</strong>
       </span>
       <span className="battle-hud-metric">
-        <span>{t("combat.kills").replace("{n}", "").replace(":", "").trim()}</span>
+        <span>{t("combat.hud.kills")}</span>
         <strong>{cs.kills}</strong>
       </span>
       {enemyDropsSub && <span className="battle-hud-drop-summary">{enemyDropsSub}</span>}

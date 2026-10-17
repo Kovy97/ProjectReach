@@ -1559,7 +1559,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   // — Instanz-ID-Zähler: endlich & ≥ 0 (deterministische ID-Vergabe darf nie NaN/negativ werden). —
   state.nextInstanceSeq = Math.floor(finiteNonNeg(state.nextInstanceSeq, 0));
 
-  // — Postfach/Mailbox (SAVE_VERSION 71, plus `letter` in 72 und `transfer` in 88;
+  // — Postfach/Mailbox (SAVE_VERSION 71, plus `letter` in 72 und `transfer` in 87 (ehem. 88);
   //   codex:2026-08-31T23:08:00+02:00):
   //   jede Mail härten. DREI bekannte Sorten, ALLE über dieselben `items`/`instances`-Felder (echtes
   //   Discriminated Union, s. shared `MailMessage` — ein Brief ist strukturell eine Überlauf-Mail
@@ -1619,7 +1619,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         continue;
       }
 
-      // codex:2026-08-31T22:04:00+02:00 — SAVE 88: reine Cross-Save-Fracht ohne Freitext/Gold.
+      // codex:2026-08-31T22:04:00+02:00 — SAVE 87 (ehem. 88): reine Cross-Save-Fracht ohne Freitext/Gold.
       if (m.kind === "transfer") {
         const fromSaveName = m.fromSaveName;
         if (typeof fromSaveName !== "string" || fromSaveName.trim().length === 0) continue;

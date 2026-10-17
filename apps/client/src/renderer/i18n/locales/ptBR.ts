@@ -357,6 +357,7 @@ export const ptBR: Record<string, string> = {
     "mail.transfer.error.empty": "O pacote está vazio.",
     "mail.transfer.error.too_many": "O pacote contém mais de oito posições.",
     "mail.transfer.error.invalid_source": "O inventário de origem mudou. Revise o pacote.",
+    "mail.transfer.error.not_transferable": "Chaves, anéis mestres e itens de missão não podem ser enviados para outro save.",
     "mail.transfer.error.invalid_target": "O jogo salvo do destinatário não pôde ser carregado com segurança.",
     "mail.transfer.error.no_active_save": "Nenhum jogo salvo remetente ativo foi encontrado.",
     "mail.transfer.error.target_missing": "O jogo salvo do destinatário não existe mais.",
@@ -907,6 +908,8 @@ export const ptBR: Record<string, string> = {
     "combat.zone.freshTracks.badge": "Rastros",
     "combat.zone.freshTracks.tooltip": "Rastros frescos. Algo grande vai rondar por aqui em breve.",
     "combat.level": "Nível {n}",
+    "combat.hud.level": "Nível",
+    "combat.hud.kills": "Abates",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
     "combat.stillFighting": "Ainda lutando contra: {name}",

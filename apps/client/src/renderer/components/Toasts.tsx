@@ -805,8 +805,13 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
       if (!itemId || qty <= 0) return;
       if (!RARE.has(content.items[itemId]?.rarity ?? "")) return;
       rares[itemId] = (rares[itemId] ?? 0) + qty;
-      craftedRares[itemId] = state.stats.craftedById[itemId] ?? 0;
     };
+    // claude:2026-10-17T21:00:00+02:00 Herstellungszaehler fuer ALLE seltenen Items, nicht nur fuer
+    // gerade besessene: sonst fehlte der Vorher-Wert eines neu hinzukommenden Items (undefined -> 0)
+    // und echte Beute eines schon einmal gecrafteten Items wurde als „Crafting" unterdrueckt.
+    for (const [id, n] of Object.entries(state.stats.craftedById)) {
+      if (RARE.has(content.items[id]?.rarity ?? "")) craftedRares[id] = n;
+    }
     for (const slot of state.inventory.slots) if (slot) addRare(slot.itemId, slot.qty);
     for (const inst of state.inventory.instances) addRare(inst.baseItemId, 1);
     // Fix-Welle CC (Riko, Befund 1): NUR `equipment` durchzählen, NICHT zusätzlich

@@ -39,15 +39,36 @@ describe("Bankfaecher: Platzierung gehoert dem Spieler", () => {
     expect(s.bankOrder[2]).toBe("raw_hide");
   });
 
-  it("die naechste neue Art fuellt genau diese Luecke", () => {
+  it("die naechste neue Art haengt HINTEN an, die Luecke bleibt stehen", () => {
     const s = spiel();
     einlagern(s, "copper_ore", 1);
     einlagern(s, "oak_log", 1);
     einlagern(s, "raw_hide", 1);
     withdrawItem(s, content, "oak_log", 1);
     einlagern(s, "coal", 1);
+    expect(s.bankOrder[1]).toBeNull();
+    expect(s.bankOrder[3]).toBe("coal");
+  });
+
+  it("ohne Platz hinten (Kapazitaet) fuellt die neue Art die Luecke davor", () => {
+    const s = spiel();
+    s.bankOrder = ["copper_ore", null, "raw_hide"];
+    s.bank.copper_ore = 1;
+    s.bank.raw_hide = 1;
+    s.bank.coal = 1;
+    syncBankOrder(s, 3);
     expect(s.bankOrder[1]).toBe("coal");
-    expect(s.bankOrder[2]).toBe("raw_hide");
+  });
+
+  it("ein Fach mit nur verzauberter Instanz (Menge 0) bleibt belegt", () => {
+    const s = spiel();
+    s.bankInstances.push({ instanceId: "inst_t1", baseItemId: "rusty_sword", affixes: [] });
+    syncBankOrder(s);
+    expect(s.bankOrder).toContain("rusty_sword");
+    moveBankSlot(s, s.bankOrder.indexOf("rusty_sword"), 40);
+    syncBankOrder(s);
+    expect(s.bankOrder[40]).toBe("rusty_sword");
+    expect(s.bankOrder.filter((i) => i === "rusty_sword")).toHaveLength(1);
   });
 
   it("ein Stapel laesst sich auf ein weit hinten liegendes leeres Fach ziehen", () => {

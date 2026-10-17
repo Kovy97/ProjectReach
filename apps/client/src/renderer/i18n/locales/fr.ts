@@ -363,6 +363,7 @@ export const fr: Record<string, string> = {
     "mail.transfer.error.empty": "Le colis est vide.",
     "mail.transfer.error.too_many": "Le colis contient plus de huit positions.",
     "mail.transfer.error.invalid_source": "L'inventaire source a changé. Vérifie le colis.",
+    "mail.transfer.error.not_transferable": "Les clés, les anneaux de maître et les objets de quête ne peuvent pas être envoyés vers une autre sauvegarde.",
     "mail.transfer.error.invalid_target": "La sauvegarde destinataire n'a pas pu être chargée en sécurité.",
     "mail.transfer.error.no_active_save": "Aucune sauvegarde expéditrice active n'a été trouvée.",
     "mail.transfer.error.target_missing": "La sauvegarde destinataire n'existe plus.",
@@ -923,6 +924,8 @@ export const fr: Record<string, string> = {
     "combat.zone.freshTracks.badge": "Traces",
     "combat.zone.freshTracks.tooltip": "Traces fraîches. Quelque chose de gros va bientôt rôder par ici.",
     "combat.level": "Niveau {n}",
+    "combat.hud.level": "Niveau",
+    "combat.hud.kills": "Éliminations",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
     "combat.stillFighting": "Combat en cours : {name}",

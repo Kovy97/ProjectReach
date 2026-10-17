@@ -362,6 +362,7 @@ export const ru: Record<string, string> = {
     "mail.transfer.error.empty": "Посылка пуста.",
     "mail.transfer.error.too_many": "В посылке больше восьми позиций.",
     "mail.transfer.error.invalid_source": "Исходный инвентарь изменился. Проверьте посылку.",
+    "mail.transfer.error.not_transferable": "Ключи, кольца мастера и квестовые предметы нельзя отправить в другое сохранение.",
     "mail.transfer.error.invalid_target": "Не удалось безопасно загрузить сохранение получателя.",
     "mail.transfer.error.no_active_save": "Активное сохранение отправителя не найдено.",
     "mail.transfer.error.target_missing": "Сохранение получателя больше не существует.",
@@ -921,6 +922,8 @@ export const ru: Record<string, string> = {
     "combat.zone.freshTracks.badge": "Следы",
     "combat.zone.freshTracks.tooltip": "Свежие следы. Скоро здесь будет рыскать что-то крупное.",
     "combat.level": "Уровень {n}",
+    "combat.hud.level": "Уровень",
+    "combat.hud.kills": "Убийства",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
     "combat.stillFighting": "Бой продолжается: {name}",

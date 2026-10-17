@@ -1,6 +1,6 @@
 import { content } from "@hearthforge/content";
 import { masteryLevel } from "@hearthforge/engine";
-import { MASTERY_MAX_LEVEL } from "@hearthforge/shared";
+import { MASTERY_MAX_LEVEL, isDungeonVariantId } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { formatNum, formatPlaytime } from "../util/format";
@@ -89,7 +89,7 @@ export function StatsPage(): JSX.Element {
   // Ohne die `dg_`-Dungeon-Varianten — dieselbe Menge, die auch das Bestiarium zeigt und der
   // Erfolg „Das ganze Bestiarium" zählt. Ihre Kills laufen auf die Basis-Id, ihr eigener Zähler
   // bleibt 0; mitgezählt hätten sie diese Statistik bei 105/110 festgenagelt.
-  const bestiarMonster = Object.values(content.monsters).filter((m) => !m.id.startsWith("dg_"));
+  const bestiarMonster = Object.values(content.monsters).filter((m) => !isDungeonVariantId(m.id)); // claude:2026-10-17T21:00:00+02:00
   const monsterTotal = bestiarMonster.length;
   const monsterDiscovered = bestiarMonster.filter(
     (m) => (state.monsterKills[m.id] ?? 0) > 0,

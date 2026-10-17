@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { content } from "@hearthforge/content";
-import { getItemRarity } from "@hearthforge/shared";
+import { BUYBACK_BANNED_ITEM_IDS, getItemRarity } from "@hearthforge/shared";
 import { getItemImage, rarityClass, rarityRank, FILTER_CATEGORIES, filterCategoryOf, itemMatchesSearch, type FilterCategory } from "../items";
 import { useI18n } from "../i18n";
 import { getUiIcon } from "../uiIcons";
@@ -35,13 +35,14 @@ import { openItemWikiModal } from "./ItemWikiModal";
 
 /**
  * Grundreihenfolge: Seltenheit aufsteigend, bei Gleichstand nach Wert, dann Id — bewusst NICHT
- * alphabetisch. Ein alphabetischer Katalog würde bei einem maskierten Eintrag seine Position im
- * Alphabet verraten („fängt mit A bis C an"), obwohl der Name verdeckt bleibt. Nach Seltenheit
- * liest sich die Liste außerdem wie ein echtes Nachschlagewerk: das einfache Zeug zuerst, die
- * großen Stücke zum Schluss.
+ * alphabetisch. Nach Seltenheit liest sich die Liste wie ein echtes Nachschlagewerk: das einfache
+ * Zeug zuerst, die großen Stücke zum Schluss.
  */
+// claude:2026-10-17T21:00:00+02:00 Schluessel und Altlasten (BUYBACK_BANNED_ITEM_IDS: paragon_key plus die
+// abgeschafften Story-Schluessel) gehoeren nicht in ein Nachschlagewerk; Kriterium kommt aus shared.
 const KATALOG: string[] = Object.values(content.items)
   .map((item) => item.id)
+  .filter((id) => !BUYBACK_BANNED_ITEM_IDS.has(id))
   .sort((a, b) => {
     const ra = rarityRank(getItemRarity(content.items[a]!));
     const rb = rarityRank(getItemRarity(content.items[b]!));

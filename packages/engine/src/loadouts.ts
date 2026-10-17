@@ -7,7 +7,7 @@ import type {
   ItemId,
   ItemInstance,
 } from "@hearthforge/shared";
-import { EQUIP_KIT_COUNT, EQUIP_SLOTS, KIT_SLOTS, emptyEquipKit, isToolSlot } from "@hearthforge/shared";
+import { EQUIP_KIT_COUNT, KIT_SLOTS, TOOL_SLOTS, emptyEquipKit } from "@hearthforge/shared";
 import { computeStats } from "./character";
 
 export { EQUIP_KIT_COUNT } from "@hearthforge/shared";
@@ -142,8 +142,7 @@ export function switchEquipKit(state: GameState, content: ContentDB, index: numb
   // schreiben die aktuell getragenen Werkzeuge samt Instanz einfach in das neue Record zurueck.
   // Bewusst NACH dem snapshotKit und VOR dem Zuweisen — so gibt es keinen Moment, in dem der
   // Charakter ohne Werkzeuge dasteht, und die Werkzeug-Instanz (verzauberte Axt) reist mit.
-  for (const slot of EQUIP_SLOTS) {
-    if (!isToolSlot(slot)) continue;
+  for (const slot of TOOL_SLOTS) { // claude:2026-10-17T21:00:00+02:00
     next.equipment[slot] = state.character.equipment[slot] ?? null;
     const inst = state.character.equippedInstances[slot];
     if (inst) next.equippedInstances[slot] = inst;

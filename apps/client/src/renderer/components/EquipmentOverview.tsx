@@ -292,7 +292,7 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
                         // z.B. Äxte); sonst der generische equipItem (Axt → Mainhand per item.slot).
                         if (dragItem) {
                           const res = toolSlot
-                            ? equipTool(state, content, dragItem)
+                            ? equipTool(state, content, dragItem, slot) // claude:2026-10-17T21:00:00+02:00 Ziel-Slot respektieren
                             : equipItem(state, content, dragItem);
                           if (equipSucceeded(res)) playSfx("equip");
                           else reportEquipFailure(state, content);

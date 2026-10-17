@@ -333,4 +333,27 @@ describe("equipment", () => {
       expect(s.inventory.slots.length).toBe(22); // Array-Länge unverändert (kein Sanitize hier)
     });
   });
+
+describe("equipTool: Zielwahl (claude:2026-10-17T21:00:00+02:00)", () => {
+  it("ersetzt bei vollen Slots zuerst das Werkzeug desselben Berufs", () => {
+    const s = createGame({ name: "T" }, content, 1);
+    s.character.equipment.tool1 = "bronze_pickaxe";
+    s.character.equipment.tool2 = "copper_axe";
+    s.character.equipment.tool3 = "bronze_pickaxe";
+    s.character.equipment.tool4 = "bronze_pickaxe";
+    // zweites Holzfaeller-Werkzeug taucht auf: tool2 (Axt) wird ersetzt, nicht tool1
+    addItem(s.inventory, content, "copper_axe", 1);
+    expect(equipTool(s, content, "copper_axe").ok).toBe(true);
+    expect(s.character.equipment.tool1).toBe("bronze_pickaxe");
+    expect(s.character.equipment.tool2).toBe("copper_axe");
+  });
+
+  it("respektiert einen ausdruecklich genannten Zielslot", () => {
+    const s = createGame({ name: "T" }, content, 1);
+    addItem(s.inventory, content, "bronze_pickaxe", 1);
+    expect(equipTool(s, content, "bronze_pickaxe", "tool3").ok).toBe(true);
+    expect(s.character.equipment.tool3).toBe("bronze_pickaxe");
+    expect(s.character.equipment.tool1).toBeNull();
+  });
+});
 });

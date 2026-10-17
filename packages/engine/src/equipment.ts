@@ -145,13 +145,28 @@ export function equipItem(state: GameState, content: ContentDB, itemId: ItemId):
  * Inventar. Exportiert, damit die UI beim Drop auf einen Werkzeug-Slot gezielt hierher routet — der
  * generische `equipItem` schickt eine Axt weiterhin per `item.slot` in die Mainhand.
  */
-export function equipTool(state: GameState, content: ContentDB, itemId: ItemId): EquipResult {
+export function equipTool(
+  state: GameState,
+  content: ContentDB,
+  itemId: ItemId,
+  targetSlot?: EquipSlot,
+): EquipResult {
   const item = content.items[itemId];
   if (!item || !item.tool) return { ok: false, reason: "Nicht ausrüstbar" };
   if (!meetsRequirements(state, item)) {
     return { ok: false, reason: "Skill-Anforderung nicht erfüllt" };
   }
-  const target: EquipSlot = TOOL_SLOTS.find((s) => !state.character.equipment[s]) ?? "tool1";
+  // claude:2026-10-17T21:00:00+02:00 Zielwahl: ausdruecklich genannter Werkzeug-Slot > erster freier Slot >
+  // bei vollen Slots zuerst das Werkzeug DESSELBEN Berufs ersetzen > tool1.
+  const explicit = targetSlot && (TOOL_SLOTS as readonly string[]).includes(targetSlot) ? targetSlot : null;
+  const target: EquipSlot =
+    explicit ??
+    TOOL_SLOTS.find((s) => !state.character.equipment[s]) ??
+    TOOL_SLOTS.find((s) => {
+      const worn = state.character.equipment[s];
+      return !!worn && content.items[worn]?.tool?.skill === item.tool!.skill;
+    }) ??
+    "tool1";
   // DATENVERLUST-SCHUTZ: ist der Ziel-Werkzeug-Slot mit einem PLAIN Werkzeug belegt, muss es zurück in
   // einen freien Inventar-Slot — eine (theoretisch mögliche) verzauberte Instanz braucht keinen
   // (Muster equipItem, Chef-Bugfix „22/20").

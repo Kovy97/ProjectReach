@@ -1,6 +1,6 @@
 import type { ActionId, ContentDB, GameState, ItemId } from "@hearthforge/shared";
 import {
-  syncBankOrder, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, thievingRiskMods } from "@hearthforge/shared";
+  syncBankOrder, effectiveBankCapacity, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, thievingRiskMods } from "@hearthforge/shared";
 
 const OUT_OF_COMBAT_WARD_REGEN_PCT = 0.05;
 import type { ActionDef } from "@hearthforge/shared";
@@ -726,7 +726,7 @@ export function advance(
     // sonst kein Fach und waere im neuen Fach-Raster der Bankseite unsichtbar, obwohl es da ist.
     // Selbstheilend und idempotent; hier am selben Choke-Point wie die Erfolge, also einmal pro
     // advance-Runde statt pro Tick.
-    syncBankOrder(state);
+    syncBankOrder(state, effectiveBankCapacity(state, content)); // claude:2026-10-17T21:00:00+02:00
 
     // Meilensteine prüfen (Gesamtlevel, Kills, gesammelte Items, Gold).
     checkAchievements(state, content);

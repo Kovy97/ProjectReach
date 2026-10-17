@@ -172,7 +172,7 @@ describe("Postfach/Mailbox (SAVE_VERSION 71)", () => {
 });
 
 // codex:2026-08-31T22:04:00+02:00 — Cross-Save-Fracht ist reine Engine-Mutation ohne I/O/Uhr.
-describe("Cross-Save-Itemtransfer (SAVE_VERSION 88)", () => {
+describe("Cross-Save-Itemtransfer (SAVE_VERSION 87)", () => {
   it("verschiebt einen Teilstapel und eine Instanz verlustfrei in eine eigene Transfer-Mail", () => {
     const source = createGame({ name: "Mira Ashfall" }, content, 1);
     const target = createGame({ name: "Woksel" }, content, 2);
@@ -210,6 +210,24 @@ describe("Cross-Save-Itemtransfer (SAVE_VERSION 88)", () => {
     ]);
     expect(target.mailSeq).toBe(1);
     expect(target.nextInstanceSeq).toBe(2);
+  });
+
+  it("sperrt Schluessel und Meisterringe: not_transferable und No-op", () => {
+    // claude:2026-10-17T21:00:00+02:00
+    for (const itemId of ["paragon_key", "crypt_key", "ring_master_mining"]) {
+      const source = createGame({ name: "Mira Ashfall" }, content, 1);
+      const target = createGame({ name: "Woksel" }, content, 2);
+      source.inventory.slots[0] = { itemId, qty: 1 };
+      source.inventory.slots[1] = { itemId: "iron_bar", qty: 3 };
+      const before = JSON.stringify(source);
+      const result = transferInventoryItemsToSave(source, target, content, "Nebelwacht", {
+        slots: [{ slotIndex: 1, itemId: "iron_bar", qty: 1 }, { slotIndex: 0, itemId, qty: 1 }],
+        instanceIds: [],
+      });
+      expect(result).toEqual({ ok: false, reason: "not_transferable" });
+      expect(JSON.stringify(source)).toBe(before);
+      expect(target.mailbox).toHaveLength(0);
+    }
   });
 
   it("ist bei veralteter Slot-Auswahl vollständig ein No-op", () => {

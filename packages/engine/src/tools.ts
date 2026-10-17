@@ -21,12 +21,8 @@ export function bestToolSpeed(state: GameState, content: ContentDB, skill: Skill
 
   for (const slot of state.inventory.slots) consider(slot?.itemId ?? null);
   for (const itemId of Object.values(state.character.equipment)) consider(itemId);
-  // Ausrüstungs-Kits (28.08.2026): ein Werkzeug in einem inaktiven Kit gehört dem Spieler genauso — es zählt,
-  // sonst müsste er zum Sammeln das Kit wechseln (CEO-Entscheid auf offenen Punkt des Kits-Agenten).
-  state.equipKits?.forEach((kit, i) => {
-    if (i === state.activeKit) return;
-    for (const itemId of Object.values(kit.equipment)) consider(itemId);
-  });
+  // claude:2026-10-17T21:00:00+02:00 Kit-Scan entfernt: Kits besitzen seit SAVE 87 keine Werkzeug-Slots mehr
+  // (Werkzeuge haengen am Charakter), ein Scan inaktiver Kits fand nie etwas.
 
   return best;
 }

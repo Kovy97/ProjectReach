@@ -221,13 +221,9 @@ export function BankPage(): JSX.Element {
   // belegte Fach: ein Spieler, der seinen Bestand weit hinten geparkt und danach Kapazitaet
   // VERLOREN hat (Lager-Gebaeude abgerissen), soll seine Sachen trotzdem sehen.
   //
-  // Der Nachtrag am Ende ist eine Verteidigungslinie: `syncBankOrder` haelt beides im Einklang,
-  // aber mehrere Engine-Pfade schreiben direkt in `state.bank` (Auto-Einlagern im Tick, Lager,
-  // Meisterweihe). Taucht dort etwas ohne Fach auf, haengen wir es sichtbar hinten an, statt es
-  // verschwinden zu lassen — unsichtbarer Bestand waere der schlimmste aller Fehler.
+  // Reine Instanz-Faecher (Menge 0, nur verzauberte Basis im Vault) fuehrt `syncBankOrder` selbst.
   const bankOrder = Array.isArray(state.bankOrder) ? state.bankOrder : [];
   const storedById = new Map(storedEntriesUnsorted.map((e) => [e.itemId, e] as const));
-  const platziert = new Set<string>();
   let letztesBelegte = -1;
   for (let i = 0; i < bankOrder.length; i++) {
     const id = bankOrder[i];
@@ -238,12 +234,9 @@ export function BankPage(): JSX.Element {
   for (let i = 0; i < fachAnzahl; i++) {
     const id = bankOrder[i] ?? null;
     const entry = id ? storedById.get(id) ?? null : null;
-    if (entry) platziert.add(entry.itemId);
     bankSlots.push({ idx: i, entry });
   }
-  for (const e of storedEntriesUnsorted) {
-    if (!platziert.has(e.itemId)) bankSlots.push({ idx: bankSlots.length, entry: e });
-  }
+  // claude:2026-10-17T21:00:00+02:00 Notbehelf entfernt: syncBankOrder vergibt jedem Eintrag ein Fach.
 
   /**
    * Sortieren als einmalige AKTION auf den Faechern, nicht als Ansicht (dieselbe Regel wie im
@@ -505,9 +498,9 @@ export function BankPage(): JSX.Element {
         const res = depositItemGroup(state, content, itemId);
         if (res.deposited === 0 && res.instancesMoved === 0) gameAlert("bank.noSlot");
         else if (einlagernAufFach && zielFach !== null && Array.isArray(state.bankOrder)) {
-          // Das neue Fach haengt die Engine hinten an — von dort auf das gewaehlte Fach tauschen.
-          // depositItemGroup traegt die Platzierung nicht selbst nach (das macht sonst erst der
-          // naechste Tick), deshalb hier sofort synchronisieren.
+          // claude:2026-10-17T21:00:00+02:00 Das neue Fach haengt die Engine hinten an (depositItem und
+          // depositInstance synchronisieren selbst) — von dort auf das gewaehlte Fach tauschen.
+          // Der Sync hier ist nur ein idempotenter Sicherheitsgurt.
           syncBankOrder(state);
           const neu = state.bankOrder.indexOf(itemId);
           if (neu >= 0 && neu !== zielFach) moveBankSlot(state, neu, zielFach);

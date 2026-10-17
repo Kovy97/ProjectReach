@@ -700,13 +700,12 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //         INAKTIVEN Kit stecken, werden herausgeholt — zuerst in einen freien Werkzeug-Slot des
 //         Charakters, sonst ins Inventar, sonst in die Bank bzw. den Gear-Vault (verzauberte
 //         Instanzen reisen mit Affixen). Es geht NICHTS verloren (Save-Kompat-Gesetz).
-// codex:2026-08-31T22:04:00+02:00
-// v88 (Cross-Save-Rabenfracht, Chef-GO 31.08.2026): `MailMessage.kind === "transfer"` speichert
-//     reine Itemsendungen zwischen lokalen Spielständen. Der Absender ist nur der Spielstandname;
-//     Betreff, Freitext und Gold gehören ausdrücklich nicht zu diesem System. Bestehende Saves
-//     benötigen kein neues GameState-Feld; der Versionssprung dokumentiert und härtet die neue
-//     persistierte Union-Variante im Mailbox-Sanitize.
-export const SAVE_VERSION = 88;
+//     (e) CROSS-SAVE-RABENFRACHT (Chef-GO 31.08.2026): `MailMessage.kind === "transfer"` speichert reine
+//         Itemsendungen zwischen lokalen Spielstaenden (Absender = Spielstandname; Betreff, Freitext und
+//         Gold gehoeren nicht dazu). Kein neues GameState-Feld; haertet die Union-Variante im Mailbox-Sanitize.
+//     (f) Ein Bankfach gilt auch mit nur verzauberter Instanz im Lager als belegt (syncBankOrder).
+//     (v88 war nie live und ist in v87 aufgegangen; Test-Saves mit version 88 laden weiter.)
+export const SAVE_VERSION = 87;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -3775,6 +3774,11 @@ export interface MonsterDef {
  */
 export const DUNGEON_VARIANT_PREFIX = "dg_";
 
+/** claude:2026-10-17T21:00:00+02:00 Gemeinsamer Filter: ist die Monster-ID eine Dungeon-Variante (`dg_…`)? */
+export function isDungeonVariantId(monsterId: string): boolean {
+  return monsterId.startsWith(DUNGEON_VARIANT_PREFIX);
+}
+
 /** Eine Kampf-Zone (Region) — gruppiert Gegner im Bestiarium und in der Auswahl. */
 export interface ZoneDef {
   id: string;
@@ -4336,6 +4340,16 @@ export const BUYBACK_BANNED_ITEM_IDS: ReadonlySet<ItemId> = new Set<ItemId>([
   PARAGON_KEY_ITEM_ID,
   ...LEGACY_DUNGEON_KEY_ITEM_IDS,
 ]);
+
+/**
+ * claude:2026-10-17T21:00:00+02:00 Sperrliste fuer die Cross-Save-Rabenfracht: Dungeon-Schluessel
+ * (aktiv und Altlast), Meisterringe (`ring_master_*`, Verleihung haengt am Spielstand) und
+ * Quest-Items duerfen den Spielstand nicht verlassen. Ein Quest-Item-Flag gibt es im Datenmodell
+ * (noch) nicht; kommt eines, hier ergaenzen. EINE Quelle fuer Engine-Pruefung und UI.
+ */
+export function isCrossSaveTransferBlocked(itemId: ItemId): boolean {
+  return BUYBACK_BANNED_ITEM_IDS.has(itemId) || itemId.startsWith("ring_master_");
+}
 
 /**
  * Persistierter Paragonturm-Fortschritt (`GameState.paragon`, SAVE_VERSION 61 — Spec-§7-Shape).
@@ -5817,30 +5831,47 @@ export function usedBankSlots(state: GameState): number {
  * Drei Aufgaben, in dieser Reihenfolge:
  *  1. Fächer leeren, deren Item gar nicht mehr in `bank` steht (oder auf Menge 0 gefallen ist).
  *  2. Doppelte Einträge entfernen — dasselbe Item darf nur EIN Fach belegen.
- *  3. Items aus `bank`, die noch kein Fach haben, ins erste freie Fach legen; ist keines frei,
- *     wächst die Liste hinten. (Die Kapazitätsprüfung sitzt weiter in `bank.ts`, nicht hier —
+ *  3. Items ohne Fach hinten anhaengen (nach dem letzten belegten Fach, wie im Inventar); nur wenn
+ *     hinten keine Kapazitaet mehr ist (`capacity`), ins erste freie Fach davor. (Die Kapazitätsprüfung sitzt weiter in `bank.ts`, nicht hier —
  *     diese Funktion repariert nur die Zuordnung und darf niemals Bestand verlieren.)
  *
  * Der Aufruf lohnt an den zentralen Stellen (nach dem Laden, nach Ein-/Auslagern, im Tick). Weil
  * sie selbstheilend ist, muss KEINE der 54 Schreibstellen für `bank` die Reihenfolge selbst pflegen.
  */
-export function syncBankOrder(state: GameState): void {
+export function syncBankOrder(state: GameState, capacity?: number): void {
+  // claude:2026-10-17T21:00:00+02:00 Fach belegt = Menge > 0 ODER verzauberte Instanz der Basis im Lager;
+  // neue Items haengen HINTEN an (nach dem letzten belegten Fach), Luecken nur wenn hinten nichts frei ist.
   if (!Array.isArray(state.bankOrder)) state.bankOrder = [];
   const order = state.bankOrder;
-  const hatMenge = (id: ItemId | null): boolean =>
-    typeof id === "string" && typeof state.bank[id] === "number" && (state.bank[id] as number) > 0;
+  const instanzBasen = new Set<ItemId>();
+  if (Array.isArray(state.bankInstances)) {
+    for (const inst of state.bankInstances) {
+      if (inst && typeof inst.baseItemId === "string") instanzBasen.add(inst.baseItemId);
+    }
+  }
+  const belegt = (id: ItemId | null): boolean =>
+    typeof id === "string" &&
+    ((typeof state.bank[id] === "number" && (state.bank[id] as number) > 0) || instanzBasen.has(id));
 
   const gesehen = new Set<ItemId>();
   for (let i = 0; i < order.length; i++) {
     const id = order[i] ?? null;
-    if (!hatMenge(id) || gesehen.has(id as ItemId)) order[i] = null;
+    if (!belegt(id) || gesehen.has(id as ItemId)) order[i] = null;
     else gesehen.add(id as ItemId);
   }
 
-  for (const id of Object.keys(state.bank) as ItemId[]) {
-    if (!hatMenge(id) || gesehen.has(id)) continue;
-    const frei = order.indexOf(null);
+  const kandidaten = new Set<ItemId>();
+  for (const id of Object.keys(state.bank) as ItemId[]) kandidaten.add(id);
+  for (const id of instanzBasen) kandidaten.add(id);
+  for (const id of kandidaten) {
+    if (!belegt(id) || gesehen.has(id)) continue;
+    let letztes = -1;
+    for (let i = 0; i < order.length; i++) if (order[i]) letztes = i;
+    const hinten = letztes + 1;
+    const hintenPasst = typeof capacity !== "number" || hinten < capacity;
+    const frei = hintenPasst ? -1 : order.indexOf(null);
     if (frei >= 0) order[frei] = id;
+    else if (hinten < order.length) order[hinten] = id;
     else order.push(id);
     gesehen.add(id);
   }

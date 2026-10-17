@@ -363,6 +363,7 @@ export const zh: Record<string, string> = {
     "mail.transfer.error.empty": "包裹为空。",
     "mail.transfer.error.too_many": "包裹超过八个物品位置。",
     "mail.transfer.error.invalid_source": "来源背包已发生变化，请重新检查包裹。",
+    "mail.transfer.error.not_transferable": "钥匙、大师戒指和任务物品无法发送到其他存档。",
     "mail.transfer.error.invalid_target": "无法安全载入收件人存档。",
     "mail.transfer.error.no_active_save": "未找到当前寄件人存档。",
     "mail.transfer.error.target_missing": "收件人存档已不存在。",
@@ -922,6 +923,8 @@ export const zh: Record<string, string> = {
     "combat.zone.freshTracks.badge": "踪迹",
     "combat.zone.freshTracks.tooltip": "发现新鲜踪迹。用不了多久，这里就会有大家伙出没。",
     "combat.level": "等级 {n}",
+    "combat.hud.level": "等级",
+    "combat.hud.kills": "击杀",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
     "combat.stillFighting": "战斗仍在进行：{name}",

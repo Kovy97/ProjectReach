@@ -421,6 +421,7 @@ const en = {
     "mail.transfer.error.empty": "The parcel is empty.",
     "mail.transfer.error.too_many": "The parcel contains more than eight positions.",
     "mail.transfer.error.invalid_source": "The source inventory changed. Please review the parcel.",
+    "mail.transfer.error.not_transferable": "Keys, master rings and quest items cannot be sent to another save.",
     "mail.transfer.error.invalid_target": "The recipient save could not be loaded safely.",
     "mail.transfer.error.no_active_save": "No active sender save was found.",
     "mail.transfer.error.target_missing": "The recipient save no longer exists.",
@@ -1101,6 +1102,8 @@ const en = {
     "zone.progress.drops": "Drops {pct}%",
     "zone.progress.completeTitle": "Zone complete — every enemy defeated and every drop discovered.",
     "combat.level": "Level {n}",
+    "combat.hud.level": "Lvl",
+    "combat.hud.kills": "Kills",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
     "combat.stillFighting": "Still fighting: {name}",
@@ -3058,6 +3061,7 @@ const de: Record<keyof typeof en, string> = {
     "mail.transfer.error.empty": "Das Paket ist leer.",
     "mail.transfer.error.too_many": "Das Paket enthält mehr als acht Positionen.",
     "mail.transfer.error.invalid_source": "Das Quellinventar hat sich geändert. Bitte prüfe das Paket erneut.",
+    "mail.transfer.error.not_transferable": "Schlüssel, Meisterringe und Quest-Items lassen sich nicht an einen anderen Spielstand senden.",
     "mail.transfer.error.invalid_target": "Der Empfänger-Spielstand konnte nicht sicher geladen werden.",
     "mail.transfer.error.no_active_save": "Es wurde kein aktiver Absender-Spielstand gefunden.",
     "mail.transfer.error.target_missing": "Der Empfänger-Spielstand existiert nicht mehr.",
@@ -3704,6 +3708,8 @@ const de: Record<keyof typeof en, string> = {
     "zone.progress.drops": "Drops {pct}%",
     "zone.progress.completeTitle": "Zone abgeschlossen — alle Gegner bezwungen, alle Drops entdeckt.",
     "combat.level": "Stufe {n}",
+    "combat.hud.level": "Stufe",
+    "combat.hud.kills": "Kills",
     // Spieler-Report 1.0.2: waehrend eines laufenden Kampfes weitere Kaempfe einreihen —
     // die Gegnerliste ist jetzt ohne Abbruch erreichbar (CombatPage `enemyListInCombat`).
     "combat.stillFighting": "Kämpft weiter gegen: {name}",

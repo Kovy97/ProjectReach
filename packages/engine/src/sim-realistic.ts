@@ -969,6 +969,13 @@ export class RealisticPlayer {
         if (a) return { kind: "action", actionId: a.id, label: `Quest-Craft ${obj.target ?? ""}`.trim() };
         return this.blockGoal(t, `kein Weg, ${obj.target ?? "irgendein Item"} herzustellen (Rezept/Material fehlt)`);
       }
+      // claude:2026-10-17T21:00:00+02:00 Zieltyp dungeons_cleared: der Sim kennt keine Dungeon-Laeufe
+      // (Task-Arten: nur fight/action). Statt der generischen Meldung ein klarer, benannter Block.
+      case "dungeons_cleared":
+        return this.blockGoal(
+          t,
+          `Quest-Objective dungeons_cleared${obj.target ? ` (${obj.target})` : ""}: der Sim spielt keine Dungeon-Laeufe`,
+        );
       default:
         return this.blockGoal(t, `Quest-Objective-Typ ${obj.type} ist (noch) nicht automatisierbar`);
     }

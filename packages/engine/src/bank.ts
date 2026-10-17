@@ -69,7 +69,7 @@ export function depositItem(state: GameState, content: ContentDB, itemId: ItemId
   if (move <= 0) return 0;
   removeItem(state.inventory, itemId, move);
   state.bank[itemId] = (state.bank[itemId] ?? 0) + move;
-  syncBankOrder(state); // Platzierung (SAVE 87) nachziehen: neues Item bekommt das erste freie Fach
+  syncBankOrder(state, effectiveBankCapacity(state, content)); // claude:2026-10-17T21:00:00+02:00 Platzierung (SAVE 87): neues Item haengt hinten an
   return move;
 }
 
@@ -122,7 +122,7 @@ export function withdrawItem(state: GameState, content: ContentDB, itemId: ItemI
   state.bank[itemId] = stored - move;
   if (state.bank[itemId]! <= 0) delete state.bank[itemId];
   // Leergeraeumtes Fach bleibt LEER stehen (OSRS-Verhalten) — syncBankOrder nullt es, rueckt aber nichts nach.
-  syncBankOrder(state);
+  syncBankOrder(state, effectiveBankCapacity(state, content)); // claude:2026-10-17T21:00:00+02:00
   return move;
 }
 
@@ -140,6 +140,7 @@ export function depositInstance(state: GameState, instanceId: string): boolean {
   const inst = removeInstance(state.inventory, instanceId);
   if (!inst) return false;
   state.bankInstances.push(inst);
+  syncBankOrder(state); // claude:2026-10-17T21:00:00+02:00 reine Instanz-Basis bekommt ein Fach
   return true;
 }
 
@@ -182,6 +183,7 @@ export function withdrawInstance(state: GameState, instanceId: string): boolean 
   if (idx === -1) return false;
   addInstance(state.inventory, state.bankInstances[idx]!);
   state.bankInstances.splice(idx, 1);
+  syncBankOrder(state); // claude:2026-10-17T21:00:00+02:00
   return true;
 }
 

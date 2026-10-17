@@ -7,6 +7,8 @@ import type {
   MailLetterSender,
   MailMessage,
 } from "@hearthforge/shared";
+import { isCrossSaveTransferBlocked } from "@hearthforge/shared";
+import { mintInstanceId } from "./enchant";
 import { addInstance, addInstanceOrBank, addItem, addItemOrBank, markItemDiscovered, removeInstance } from "./inventory";
 
 /**
@@ -85,7 +87,7 @@ export interface CrossSaveTransferSelection {
 
 export type CrossSaveTransferResult =
   | { ok: true; stacks: number; units: number; mailId: string }
-  | { ok: false; reason: "same_save" | "empty" | "too_many" | "invalid_source" | "invalid_target" };
+  | { ok: false; reason: "same_save" | "empty" | "too_many" | "invalid_source" | "invalid_target" | "not_transferable" };
 
 /**
  * Verschiebt bis zu acht ausgewählte Inventarstapel/Instanzen atomar aus `source` in eine neue
@@ -140,6 +142,8 @@ export function transferInventoryItemsToSave(
     if (!held || held.instance || held.itemId !== request.itemId || !content.items[request.itemId]) {
       return { ok: false, reason: "invalid_source" };
     }
+    // claude:2026-10-17T21:00:00+02:00 Schluessel, Meisterringe, Quest-Items bleiben im Spielstand.
+    if (isCrossSaveTransferBlocked(request.itemId)) return { ok: false, reason: "not_transferable" };
     if (!Number.isInteger(qty) || qty <= 0 || qty > held.qty) {
       return { ok: false, reason: "invalid_source" };
     }
@@ -156,6 +160,7 @@ export function transferInventoryItemsToSave(
     }
     const inst = source.inventory.instances.find((candidate) => candidate.instanceId === instanceId);
     if (!inst || !content.items[inst.baseItemId]) return { ok: false, reason: "invalid_source" };
+    if (isCrossSaveTransferBlocked(inst.baseItemId)) return { ok: false, reason: "not_transferable" };
     seenInstances.add(instanceId);
     instances.push(inst);
     units += 1;
@@ -173,9 +178,8 @@ export function transferInventoryItemsToSave(
     if (moved) {
       // codex:2026-08-31T23:08:00+02:00 — ID-Domäne wechselt mit dem Save: Eigenschaften bleiben,
       // Identität wird aus dem monotonen Zähler des Empfängers neu geprägt (deterministisch).
-      const targetInstanceId = `inst_${target.nextInstanceSeq.toString(36)}`;
-      target.nextInstanceSeq += 1;
-      movedInstances.push({ ...moved, instanceId: targetInstanceId });
+      // claude:2026-10-17T21:00:00+02:00 ID-Vergabe ueber den gemeinsamen Zaehler (mintInstanceId).
+      movedInstances.push({ ...moved, instanceId: mintInstanceId(target) });
     }
   }
 

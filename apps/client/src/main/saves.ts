@@ -1,5 +1,5 @@
 import { app, ipcMain, shell } from "electron";
-import { mkdir, readFile, rm } from "node:fs/promises";
+import { mkdir, readFile, rename, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { MAX_SAVE_SLOTS, SAVE_VERSION } from "@hearthforge/shared";
 import {
@@ -82,14 +82,31 @@ async function recoverSavePairJournal(): Promise<void> {
   } catch {
     return;
   }
-  const parsed = JSON.parse(raw) as Partial<SavePairJournal>;
-  if (parsed.version !== 1 || !parsed.first || !parsed.second) {
-    throw new Error("Ungültiges Save-Paar-Journal.");
-  }
-  const firstId = assertSlotId(parsed.first.id);
-  const secondId = assertSlotId(parsed.second.id);
-  if (firstId === secondId || typeof parsed.first.json !== "string" || typeof parsed.second.json !== "string") {
-    throw new Error("Ungültiger Save-Paar-Inhalt.");
+  // claude:2026-10-17T21:00:00+02:00 Ein defektes/ungueltiges Journal darf nicht jeden Save-Zugriff
+  // sperren: beiseite legen (`.broken-<zeit>`), protokollieren, normal weiterarbeiten. Nur ein
+  // gueltiges Journal, dessen Commit scheitert (z. B. Platte voll), bleibt ein echter Fehler.
+  let parsed: SavePairJournal;
+  let firstId: number;
+  let secondId: number;
+  try {
+    const p = JSON.parse(raw) as Partial<SavePairJournal>;
+    if (!p || p.version !== 1 || !p.first || !p.second) throw new Error("Ungültiges Save-Paar-Journal.");
+    firstId = assertSlotId(p.first.id);
+    secondId = assertSlotId(p.second.id);
+    if (firstId === secondId || typeof p.first.json !== "string" || typeof p.second.json !== "string") {
+      throw new Error("Ungültiger Save-Paar-Inhalt.");
+    }
+    parsed = p as SavePairJournal;
+  } catch (err) {
+    const broken = `${pairJournalPath()}.broken-${Date.now()}`;
+    console.error(`[saves] Defektes Save-Paar-Journal, verschoben nach ${broken}:`, err);
+    try {
+      await rename(pairJournalPath(), broken);
+    } catch (renameErr) {
+      console.error("[saves] Defektes Journal konnte nicht umbenannt werden:", renameErr);
+      await rm(pairJournalPath(), { force: true }).catch(() => undefined);
+    }
+    return;
   }
   await mkdir(savesDir(), { recursive: true });
   // Commit statt Rollback: beide Nachher-Zustände sind vollständig vorbereitet und idempotent.

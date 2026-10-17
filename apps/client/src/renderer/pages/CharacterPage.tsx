@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type KeyboardEvent, useEffect } from "react";
+import { Fragment, useRef, useState, type CSSProperties, type ReactElement, type KeyboardEvent, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { getUiIcon } from "../uiIcons";
 import { content } from "@hearthforge/content";
@@ -378,6 +378,29 @@ export function CharacterPage(): JSX.Element {
   // erraten konnte.
 
 
+  // claude:2026-10-17T21:00:00+02:00 Rein verzauberte Basis-Items (Orphans) stehen direkt HINTER dem
+  // letzten befuellten Fach und damit VOR den Leerfaechern (Chef-Fix 2026-07-06, Bild #43). Items mit
+  // Grundversion tragen den Stern schon an ihrem Slot (kein Doppel-Eintrag).
+  const orphanZellen = (): ReactElement[] =>
+    orphanInstanceGroups.map(([itemId, group]) => (
+    <div
+      key={`orphan-${itemId}`}
+      className={`cs-inv-slot-wrap${invFilterActive && !itemMatchesInvFilter(itemId) ? " invf-dim" : ""}`}
+    >
+      <VariantContainerCell
+        itemId={itemId}
+        instances={group}
+        plainActions={invActions(itemId)}
+        variantActionsFor={pouchVariantActions}
+        className="inv-slot filled"
+        newBadge={isNewItemBadge(itemId)}
+        onNewBadgeSeen={() => markNewItemBadgeSeen(state, itemId)}
+      />
+    </div>
+  ));
+  let letztesBefuellt = -1;
+  sortedSlots.forEach(({ slot }, i) => { if (slot) letztesBefuellt = i; });
+
   // claude:2026-10-17T12:20:00+02:00 — `.cs-layout` ist Container-Query-Wurzel (Spalten nach
   // PANELbreite, character.css); das Spaltenraster sitzt deshalb eine Ebene tiefer in `.cs-grid`.
   return (
@@ -662,20 +685,21 @@ export function CharacterPage(): JSX.Element {
 
         {/* Inventory grid / list */}
         <div className={"cs-inv-grid"}>
+          {letztesBefuellt < 0 && orphanZellen()}
           {sortedSlots.map(({ slot, originalIdx }, displayIdx) =>
             !slot ? (
               /* Chef-Report 31.08.2026: „ich dragge etwas auf einen leeren platz aber es huepft
                  einfach auf einen anderen random platz". Ursache war, dass leere Faecher frueher
                  GESAMMELT am Ende gerendert wurden (s. alter Kommentar unten) — das Kaestchen, auf
                  das man zog, gehoerte also gar nicht zu dem Fach, dessen Index beim Ablegen benutzt
-                 wurde. Im Sortiermodus „Neueste", dem einzigen mit echten Positionen, stehen die
-                 Luecken jetzt genau dort, wo sie im Inventar wirklich sind. */
-              leeresFach(originalIdx)
+                 wurde. Die Luecken stehen genau dort, wo sie im Inventar wirklich sind; sichtbar sind nur
+                 so viele, wie Kapazitaetseinheiten frei sind (`leereSichtbar`). */
+              leereSichtbar.has(originalIdx) ? leeresFach(originalIdx) : null
             ) : (
               /* Wrapper catches mousedown for selection without blocking ItemCell tooltip click.
                  Drag&Drop: Start merkt den Quell-Slot, Drop auf einen anderen Slot tauscht (Umsortieren). */
+              <Fragment key={originalIdx}>
               <div
-                key={originalIdx}
                 className={`cs-inv-slot-wrap${dragInvIdx !== null && dragInvIdx !== originalIdx ? " inv-drop-target" : ""}${invFilterActive && !itemMatchesInvFilter(slot.itemId) ? " invf-dim" : ""}`}
                 /* Quell-Slot IMMER merken (für Equip-per-Drag / Quick-Sell von Instanzen); das
                    Umsortier-Drop selbst bleibt aber auf "newest" begrenzt (sonst falsche Slot-Zuordnung). */
@@ -710,35 +734,10 @@ export function CharacterPage(): JSX.Element {
                   );
                 })()}
               </div>
+              {displayIdx === letztesBefuellt && orphanZellen()}
+              </Fragment>
             ),
           )}
-          {/* Orphan-Basis-Item-Gruppen (Chef-Fix 2026-07-06, Bild #43): Basis-Items, die AUSSCHLIESSLICH
-              als verzauberte Instanz existieren (kein schlichter Stack), werden DIREKT HINTER den
-              befüllten Items eingereiht — VOR den leeren Slots (die weiter unten zuletzt kommen).
-              Vorher hingen sie NACH allen 76 Slots → sie landeten unter dem leeren Gitter und wirkten
-              wie eine „separate Tasche". Items mit Grundversion UND Varianten tragen den Stern bereits
-              am befüllten Slot oben (kein Doppel-Eintrag hier). */}
-          {orphanInstanceGroups.map(([itemId, group]) => (
-            <div
-              key={`orphan-${itemId}`}
-              className={`cs-inv-slot-wrap${invFilterActive && !itemMatchesInvFilter(itemId) ? " invf-dim" : ""}`}
-            >
-              <VariantContainerCell
-                itemId={itemId}
-                instances={group}
-                plainActions={invActions(itemId)}
-                variantActionsFor={pouchVariantActions}
-                className="inv-slot filled"
-                newBadge={isNewItemBadge(itemId)}
-                onNewBadgeSeen={() => markNewItemBadgeSeen(state, itemId)}
-              />
-            </div>
-          ))}
-          {/* Nur noch bei aktiver Sortierung: dort ist die Position bedeutungslos (und Ziehen
-              gesperrt), deshalb bleiben die leeren Faecher hier als zusammenhaengender Block am
-              Ende. Im Modus „Neueste" stehen sie oben an ihrer echten Position. */}
-          {/* Der frueher hier stehende Zweitblock fuer leere Faecher entfaellt: sie werden
-              oben an ihrer echten Position gerendert, in jedem Sortierweg. */}
         </div>
 
         {/* Das Item-Detail-Panel ist raus (Chef 2026-07-09: „Diese Sektion kann raus aus dem Inv!") —
