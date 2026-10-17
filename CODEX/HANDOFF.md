@@ -1,5 +1,15 @@
 # Übergabe — Codex-Projektleitung
 
+### 17.10.2026 — Claude: 1.3.0 umgesetzt
+
+<!-- claude:2026-10-17T23:30:00+02:00 -->
+
+**17.10.2026 spät: 1.3.0 „Die Götzenhalle erwacht“ inhaltlich fertig auf `test-ui-fundament` (Version 1.3.0, SAVE 87, kein Upload).**
+Auftrag `design/1.3.0-goal.md`: E1–E6, K1–K4, Ü1 (1.2.4-Fixes, SAVE 87/88 zusammengelegt), Ü3 (Übersetzungen),
+Kompat-Archiv v87, Asset-Liste `design/1.3.0-assets.md` (51 Assets), Patchnotes + `design/steam-post-1.3.0.txt`.
+Geprüft: Typecheck 5/5, Engine 1707, Content 310, Persistence 432 inkl. Vault, Client 241, Build grün, Clip-Audit de/ru Kernszenen 0 Funde.
+Offen: Chef-Abnahme im Testspiel (Ü2), Bilder (Platzhalter bis Asset-Lieferung), Upload nur auf Chef-GO.
+
 <!-- claude:2026-10-17T16:40:00+02:00 -->
 
 ### 17.10.2026 — Claude: UI-Fundament auf Test-Branch `test-ui-fundament` (Chef-Auftrag)
