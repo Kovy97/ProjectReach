@@ -468,9 +468,11 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // jeder Ring-Slot nimmt aber ZUSÄTZLICH an der Rune-Stapelung teil (s. Kommentar A5 oben) — der
     // Sprung ist deshalb ein Vielfaches des reinen Basiswerts, nicht 1:1. CL 30 (alle Reqs >30)
     // unverändert: 730.8→947.64→1346.64 (CL60), 1209.5→1558.32→1987.32 (CL90).
-    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(818.06, 1);
-    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(1346.64, 1);
-    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(1987.32, 1);
+    // claude:2026-10-17T20:50:00+02:00 — Begleiter-Rework Apply 6: BiS besitzt alle Begleiter, das Echo
+    // (+1,5 % Ward aus dem Global-Passiv) hebt den Pool 818.06→830.33 / 1346.64→1366.84 / 1987.32→2017.13.
+    expect(computeStats(bis("magic", 30, "ward").state, content).maxWard).toBeCloseTo(830.33, 1);
+    expect(computeStats(bis("magic", 60, "ward").state, content).maxWard).toBeCloseTo(1366.84, 1);
+    expect(computeStats(bis("magic", 90, "ward").state, content).maxWard).toBeCloseTo(2017.13, 1);
   });
 
   it("Buff-Exklusivitäts-Inventur (#303 L3): alle Tempo-/Krit-Tonika sind 'offense' ⇒ aktiv max. −750 ms / +0.20 crit", () => {
@@ -856,12 +858,15 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
       // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: Eisenschlund „Eisenkiefer" (+3 % Nahkampfschaden) ersetzt
       // skillBoost +2 Power im Melee-„damage"-Build ⇒ idol_warden 57.76→56.145 s, last_idol 193.68→188.275 s
       // (Boss→Spieler unverändert).
-      ["melee", "idol_warden", 56.145, 20.76],
-      ["melee", "last_idol", 188.275, 14.70],
-      ["ranged", "idol_warden", 73.03, 19.6],
-      ["ranged", "last_idol", 241.29, 13.5],
-      ["magic", "idol_warden", 52.69, 30.00],
-      ["magic", "last_idol", 176.98, 32.32],
+      // claude:2026-10-17T20:50:00+02:00 — Apply 6 (alle Begleiter besessen, Echo 25 %): Spieler-TTK unverändert,
+      // Boss→Spieler +1,2–2,4 % aus den Echo-Schutzanteilen (Schadensred./Ward/Kill-Heilung), z. B. idol_warden
+      // melee 20.76→21.02, magic 30.00→30.72.
+      ["melee", "idol_warden", 56.145, 21.02],
+      ["melee", "last_idol", 188.275, 14.89],
+      ["ranged", "idol_warden", 73.03, 19.83],
+      ["ranged", "last_idol", 241.29, 13.68],
+      ["magic", "idol_warden", 52.69, 30.72],
+      ["magic", "last_idol", 176.98, 33.09],
     ];
     for (const [style, monsterId, playerS, enemyS] of pins) {
       const ttk = expectedTtk(style, monsterId);

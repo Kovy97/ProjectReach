@@ -27,7 +27,7 @@ import { createGame } from "./state";
 import { grantAllZones } from "./test-helpers";
 import { xpForLevel } from "./leveling";
 import { affixHasActiveEffect, trinityGatePasses } from "./enchant";
-import { grantPet, equipPet } from "./pets";
+import { grantPet, equipPet, equipSecondPet } from "./pets";
 
 /**
  * Balance-Envelope-Helfer (BiS-Red-Team-Suite, Chef-GO 2026-07-09).
@@ -289,6 +289,8 @@ export interface BisBuild {
   buffIds: ItemId[];
   /** Aktives Pet (null = keins zahlt auf die Ziel-Stat ein). */
   petId: PetId | null;
+  /** claude:2026-10-17T20:45:00+02:00 — Zweiter Platz (nur wenn das Talent bei diesem Level wirkt). */
+  petId2: PetId | null;
   /**
    * Basis-Intervall der gewählten Waffe in ms: Range-Form = absolutes `attackIntervalMs`
    * (Default 3000), Legacy = 3000 + bonus-Delta — Bezugsgröße für die Haste-Ratio-Pins.
@@ -513,13 +515,22 @@ export function buildBisCharacter(
   }
 
   // ── 5) Pet: bestes Passiv der Ziel-Stat (0-Score ⇒ kein Pet) ─────────────
+  // claude:2026-10-17T20:45:00+02:00 — Begleiter-Rework Apply 6 (design/1.3.0-begleiter-werte.md): BiS besitzt
+  // ALLE Begleiter (Echo 25 % ist legal und gehört zur Theorie-Obergrenze) und belegt den zweiten Platz
+  // (Jagdbuch „Zweites Halsband“) mit dem zweitbesten Passiv. Der Platz wirkt nur, wenn der Baum bei
+  // diesem Level offen ist (Slayer 85) — also erst auf den CL-90/99-Zeilen, wie im echten Spiel.
   const pets = Object.values(content.pets ?? {});
+  for (const p of pets) grantPet(state, p.id);
+  state.talents = { ...(state.talents ?? {}), slayer: { ...(state.talents?.slayer ?? {}), collar: 1 } };
   const bestPet = argmax(pets, (p: PetDef) => petScore(target, p, style), (p) => p.id);
   let petId: PetId | null = null;
+  let petId2: PetId | null = null;
   if (bestPet && petScore(target, bestPet, style) > 0) {
-    grantPet(state, bestPet.id);
     equipPet(state, bestPet.id);
     petId = bestPet.id;
+    const rest = pets.filter((p) => p.id !== bestPet.id);
+    const second = argmax(rest, (p: PetDef) => petScore(target, p, style), (p) => p.id);
+    if (second && petScore(target, second, style) > 0 && equipSecondPet(state, content, second.id)) petId2 = second.id;
   }
 
   // Haste-Worst-Case: Fernkampf hat als einziger Stil eine Tempo-Stance (<1). Andere Stile
@@ -535,6 +546,7 @@ export function buildBisCharacter(
     affixBySlot,
     buffIds,
     petId,
+    petId2,
     weaponBaseIntervalMs,
   };
 }
