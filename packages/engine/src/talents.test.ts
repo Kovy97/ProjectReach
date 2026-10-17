@@ -14,7 +14,7 @@ import {
   secondPet,
   tryPetDrop,
 } from "./pets";
-import { recordKillForSlayer } from "./slayer";
+import { recordKillForSlayer, slayerTaskPointsPayout } from "./slayer";
 import { combatStep, startCombat } from "./combat";
 import { familyBestiaryComplete } from "./drops";
 
@@ -173,6 +173,8 @@ describe("J4 Jagdtempo: +10/20/30 % Slayer-Punkte je Auftrag", () => {
       const s = game();
       if (rank > 0) ranks(s, { pace: rank });
       s.slayerTask = { masterId: "m", monsterId: "chicken", isTower: false, required: 1, progress: 0, xpReward: 0, pointReward: 1000 };
+      // claude:2026-10-17T20:30:00+02:00 — Zettel/Toast lesen dieselbe Zahl wie die Gutschrift.
+      expect(slayerTaskPointsPayout(s, content, 1000)).toBe(want);
       const before = s.slayerPoints;
       expect(recordKillForSlayer(s, content, "chicken")).toBe(true);
       expect(s.slayerPoints - before).toBe(want);

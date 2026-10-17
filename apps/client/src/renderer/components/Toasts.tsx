@@ -1,7 +1,7 @@
 import type { GameState } from "@hearthforge/shared";
 import { useEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
-import { computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason } from "@hearthforge/engine";
+import { computeStats, isEliteZoneHuntable, levelFromXp, masteryPoolCapacity, queueBlockReason, slayerTaskPointsPayout } from "@hearthforge/engine";
 import type { AchievementDef, SkillId } from "@hearthforge/shared";
 import { achievementPoints, MASTERY_POOL_CHECKPOINTS, ELITE_UNIQUE_DROP_CHANCE_DEFAULT, TAVERN_ENABLED } from "@hearthforge/shared";
 import { useGameControl, useGameState } from "../game/GameContext";
@@ -905,7 +905,8 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     // Slayer task completion counter and current task reward snapshot.
     const slayerTasksCompleted = (state.slayerTasksCompleted as number) ?? 0;
     const prevSlayerTaskReward = state.slayerTask
-      ? { xpReward: state.slayerTask.xpReward, pointReward: state.slayerTask.pointReward }
+      // claude:2026-10-17T20:30:00+02:00 — Toast meldet die echte Gutschrift inkl. Boni (wie die Engine).
+      ? { xpReward: state.slayerTask.xpReward, pointReward: slayerTaskPointsPayout(state, content, state.slayerTask.pointReward) }
       : null;
 
     // Paragonturm (§7, Welle P2): Checkpoint/Rekord — `?? 0` rein defensiv (state.paragon ist seit

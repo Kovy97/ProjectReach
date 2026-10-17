@@ -12,6 +12,7 @@ import {
   enqueueFightAtFront,
   getActiveTask,
   getAvailableMasters,
+  slayerTaskPointsPayout,
   itemCount,
   levelFromXp,
   skipTask,
@@ -85,6 +86,9 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
   // rohe `task.pointReward`, ohne dass der New-Haven-Anteil irgendwo auftauchte. Derselbe
   // Engine-Lesehook wie der tatsächliche Auszahlungs-Pfad, keine zweite Bonus-Mathe.
   const slayerCampBonus = Math.max(0, campBoost(state, content, "slayerPoints"));
+  // claude:2026-10-17T20:30:00+02:00 — Zettel zeigt die echte Gutschrift (Meisterring, Trophäenwand, Jagdbuch
+  // „Jagdtempo“) aus derselben Engine-Funktion wie der Abschluss, nicht den rohen pointReward.
+  const taskPointsPayout = state.slayerTask ? slayerTaskPointsPayout(state, content, state.slayerTask.pointReward) : 0;
 
   // ── Masters ──────────────────────────────────────────────────────
   const allMasters = content.slayerMasters ?? [];
@@ -408,11 +412,11 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                     className="slayer-task-reward-chip slayer-task-reward-chip--pts"
                     content={<div className="ct-tip-desc"><CampBoostNote kind="slayerPoints" value={slayerCampBonus} t={t} /></div>}
                   >
-                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(task.pointReward))}
+                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(taskPointsPayout))}
                   </HoverTip>
                 ) : (
                   <span className="slayer-task-reward-chip slayer-task-reward-chip--pts">
-                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(task.pointReward))}
+                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(taskPointsPayout))}
                   </span>
                 )}
                 {streakChip}

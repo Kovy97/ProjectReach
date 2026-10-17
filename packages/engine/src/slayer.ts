@@ -256,6 +256,34 @@ export function worldTaskMonsters(state: GameState, content: ContentDB): Monster
 }
 
 /**
+ * claude:2026-10-17T20:30:00+02:00 — Tatsächliche Slayer-Punkte-Gutschrift für einen Auftrag mit dem beim
+ * Assign fixierten `pointReward`. EINE Quelle für den Abschluss (`recordKillForSlayer`), den Auftragszettel und
+ * den Abschluss-Toast (Rest aus dem Jagdbuch-Paket: der J4-Bonus „Jagdtempo“ stand nicht auf dem Zettel).
+ *
+ * Meisterweihe (masterPerk `slayerPoints`, capes.ts — Bountymaster-Cape, Konzept: +10 %
+ * Slayer-Punkte): multiplikativ auf den pointReward, kaufmännisch gerundet. Ohne Träger EXAKT der
+ * alte Pfad (kein round auf dem ganzzahligen Reward).
+ *
+ * Trophäenwand (Das Lager, `slayerPoints` ≤ 0.30 — encampment-balance.md §6): ADDITIV im
+ * SELBEN Ausdruck (EINE Rundung, wie vom Balance-Doc gefordert), Gesamt-Multiplikator hart auf
+ * `SLAYER_POINTS_TOTAL_BONUS_CAP` (×1.5) geklemmt — heute erreichbar sind ×1.40, die Klemme
+ * schützt vor künftigen Quellen. Ohne Lager exakt der Alt-Pfad (campBoost 0).
+ *
+ * Talent `slayerPointsMult` (Jagdbuch „Jagdtempo“): +Anteil auf die Gutschrift NACH Etagen-Zuschlag
+ * (steckt in pointReward) und Meisterring/Trophäenwand; eigener Faktor außerhalb der ×1.5-Klemme.
+ * Ohne Talent exakt der Alt-Pfad.
+ */
+export function slayerTaskPointsPayout(state: GameState, content: ContentDB, pointReward: number): number {
+  const pointsBonus = Math.min(
+    SLAYER_POINTS_TOTAL_BONUS_CAP,
+    masterSlayerPointsBonus(state, content) + Math.max(0, campBoost(state, content, "slayerPoints")),
+  );
+  const credited = pointsBonus > 0 ? Math.round(pointReward * (1 + pointsBonus)) : pointReward;
+  const pace = Math.max(0, talentEffect(state, content, "slayerPointsMult"));
+  return pace > 0 ? Math.round(credited * (1 + pace)) : credited;
+}
+
+/**
  * Punkte-Skalierung nach Task-Größe (Welle GG/slayer-vesna V1): pointReward skaliert SANFT linear
  * um den Mittelwert der Master-Spanne statt flach `basePoints` —
  *   scale = 0.5 + 0.5 · (required / mid)   mit   mid = (taskAmount.min + taskAmount.max) / 2
@@ -464,25 +492,9 @@ export function recordKillForSlayer(
   task.progress++;
   if (task.progress >= task.required) {
     grantSlayerXp(state, task.xpReward); // Abschluss-Bonus zusätzlich
-    // Meisterweihe (masterPerk `slayerPoints`, capes.ts — Bountymaster-Cape, Konzept: +10 %
-    // Slayer-Punkte): multiplikativ auf den beim Assign fixierten pointReward, kaufmännisch
-    // gerundet. Ohne Träger EXAKT der alte Pfad (kein round auf dem ganzzahligen Reward) →
-    // Punktestand bit-identisch zu vorher.
-    //
-    // Trophäenwand (Das Lager, `slayerPoints` ≤ 0.30 — encampment-balance.md §6): ADDITIV im
-    // SELBEN Ausdruck (EINE Rundung, wie vom Balance-Doc gefordert), Gesamt-Multiplikator hart auf
-    // `SLAYER_POINTS_TOTAL_BONUS_CAP` (×1.5) geklemmt — heute erreichbar sind ×1.40, die Klemme
-    // schützt vor künftigen Quellen. Ohne Lager exakt der Alt-Pfad (campBoost 0).
-    const pointsBonus = Math.min(
-      SLAYER_POINTS_TOTAL_BONUS_CAP,
-      masterSlayerPointsBonus(state, content) + Math.max(0, campBoost(state, content, "slayerPoints")),
-    );
-    const credited = pointsBonus > 0 ? Math.round(task.pointReward * (1 + pointsBonus)) : task.pointReward;
-    // claude:2026-10-18T00:30:00+02:00 — Talent `slayerPointsMult` (Jagdbuch „Jagdtempo“): +Anteil auf
-    // die Gutschrift NACH Etagen-Zuschlag (steckt in pointReward) und Meisterring/Trophäenwand; eigener
-    // Faktor außerhalb der ×1.5-Klemme. Ohne Talent exakt der Alt-Pfad.
-    const pace = Math.max(0, talentEffect(state, content, "slayerPointsMult"));
-    state.slayerPoints += pace > 0 ? Math.round(credited * (1 + pace)) : credited;
+    // claude:2026-10-17T20:30:00+02:00 — Gutschrift über slayerTaskPointsPayout (EINE Quelle für Engine,
+    // Auftragszettel und Abschluss-Toast; vorher zeigte die UI nur den rohen pointReward). Bit-identisch.
+    state.slayerPoints += slayerTaskPointsPayout(state, content, task.pointReward);
     state.slayerTasksCompleted++;
     state.slayerTask = null;
     // Task-Streak (Welle GG/slayer-vesna V2, SAVE 66): jeder Abschluss +1. Jeder
