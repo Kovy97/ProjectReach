@@ -2,10 +2,34 @@ Grim Reach 1.3.0 - The Idol Hall Awakens
 
 Hunters,
 
-Drazhan withdrew, but his hall never stopped working. This update opens the Idol Hall, continues
-the Ash Chronicle, and raises the ceiling of the endgame across the board. It also brings everything
-that was waiting in the wings: real bank slots, a Wiki of every item, a new combat HUD and a
-cleaner interface. Saves stay compatible as always.
+Drazhan withdrew, but his hall never stopped working. This update brings the Slayer's Book, a
+talent tree for your hunt, and reworks every pet. It opens the Idol Hall, continues the Ash
+Chronicle and raises the ceiling of the endgame across the board. It also brings everything that
+was waiting in the wings: real bank slots, a Wiki of every item, a new combat HUD and a cleaner
+interface. Saves stay compatible as always.
+
+THE SLAYER'S BOOK
+
+- From Slayer 85 you spend Slayer points in the Slayer's Book, a talent tree of permanent account
+  upgrades.
+- Tracking doubles your pet chance over five ranks. On the Trail guarantees a pet once you have gone
+  twice the expected time without it.
+- More rare drops from task monsters, more Slayer points per task, and bonus damage against
+  families whose bestiary you have completed.
+- The final node, Second Collar, opens a second pet slot for skill effects.
+
+PETS, REWORKED
+
+- All 23 pets now have a signature effect instead of "a few percent more". Cragmaw finds gems while
+  mining, Gillrot pulls better fish, Gemwraith sometimes cuts a grade higher, Slagfiend adds
+  suffixes when smithing.
+- In combat every pet has a clear role: control, protection, damage, loot or support.
+- Echo: every pet you own grants a quarter of its skill effect, even when it isn't equipped.
+- Carapace is now as common as the other combat pets (1/80,000) and stronger.
+- Seven pets were too strong and have been toned down: Ashgut's healing, Hoarspite's stun,
+  Gloomrat's theft, Carrionwing's double loot (no longer on champion uniques and pets), and the
+  ward, shield and lifesteal of Glyphmaw, Vellumoth and Charnel, which made mages nearly
+  untouchable. No pet grants bonus XP any more.
 
 THE IDOL HALL IS OPEN
 
