@@ -1,5 +1,18 @@
 # Codex-Arbeitslog
 
+## 2026-10-18 — Claude: UI-Fundament Runde 2 (Struktur, Ebenenversatz)
+
+<!-- claude:2026-10-18T13:00:00+02:00 -->
+
+Chef: „Layer-Probleme bei jedem Container im Slayer-Auftrag, UI überall sauberer strukturieren.“ Ursache: Rahmen mit
+transparenter Innenkante (`panel-frame.webp`), Verlauf nur auf der padding-box ⇒ heller Ring im Rahmenstreifen. Fix
+`background-origin/clip: border-box`; dazu höchstens drei Rahmenebenen, eine Rahmenfamilie je Ebene/Seite, Slayer mit
+Reitern Shop | Jagdbuch. Vier ui-dev-Agenten nach `design/ui-fundament/BRIEF-2-struktur.md`, Commit `3dd1bd1`.
+Geprüft: Typecheck, Client 259/259, Build, Renders de 1366/1920 + ru 1366 (Bilder `apps/client/ui-audit/shots-struktur-a..d`).
+Offen: Aufgaben-Marken-Shop „Nicht genug Marken“ läuft in ru über die Karte (alt); Begleiter-Echo in ru 1366 angeschnitten;
+Namensdoppelung „Jagdbuch“ (Slayer-Baum vs. Jagen) wartet auf Chef; Gegnerkarten-Bildformel im Code `cover` statt der
+in der Erinnerung notierten `100% auto` (nicht angefasst).
+
 ## 2026-10-18 — Claude: Jagdbuch + Begleiter-Rework (1.3.0-Kern)
 
 <!-- claude:2026-10-18T03:00:00+02:00 -->
