@@ -122,6 +122,9 @@ export function TopBar({ activePageId, onNavigate }: TopBarProps): JSX.Element {
           aria-label={t("encyclopedia.openAria")}
           data-guide-id="topbar.encyclopedia"
         >
+          {/* claude:2026-10-17T17:30:00+02:00 — Chef 17.10.: „?“ war zu unscheinbar, der Knopf heißt
+              jetzt „Wiki“ und folgt den Dichtestufen der Reiter; nur in der Symbol-Stufe bleibt „?“. */}
+          <span className="topbar-label topbar-help-label">{t("topbar.wiki")}</span>
           <span className="topbar-help-glyph" aria-hidden="true">?</span>
         </button>
       </span>

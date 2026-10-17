@@ -772,6 +772,7 @@ export const es: Record<string, string> = {
     "bank.sortFiltered": "Quita el filtro primero: se ordenan todas las casillas, no solo las visibles.",
     "encyclopedia.kicker": "Enciclopedia",
     "encyclopedia.openAria": "Abrir la enciclopedia",
+    "topbar.wiki": "Wiki",
     "encyclopedia.searchPlaceholder": "Busca un objeto…",
     "encyclopedia.resultCount": "{n} de {total} objetos",
     "encyclopedia.categoriesAria": "Categorías",

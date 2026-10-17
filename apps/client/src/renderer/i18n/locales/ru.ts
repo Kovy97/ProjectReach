@@ -782,6 +782,7 @@ export const ru: Record<string, string> = {
     "bank.sortFiltered": "Сначала очисти фильтр: сортировка меняет все ячейки, а не только видимые.",
     "encyclopedia.kicker": "Энциклопедия",
     "encyclopedia.openAria": "Открыть энциклопедию",
+    "topbar.wiki": "Вики",
     "encyclopedia.searchPlaceholder": "Найти предмет…",
     "encyclopedia.resultCount": "{n} из {total} предметов",
     "encyclopedia.categoriesAria": "Категории",

@@ -46,13 +46,15 @@ export const SHOP_TOUR_STEPS: AreaTourStepDef[] = [
   { guideId: null, textKey: "onboarding.tour.shop.intro" },
   { guideId: "shop.tabs", textKey: "onboarding.tour.shop.tabs" },
   { guideId: "shop.upgrades", textKey: "onboarding.tour.shop.upgrades" },
+  // claude:2026-10-17T17:40:00+02:00 — Bank-Ausbau ist in den Laden umgezogen (Chef 17.10.); der Schritt
+  // zeigt jetzt auf die Karte bei den Aufwertungen, Text („Kauf hier mit Gold weitere Bank-Slots“) passt weiter.
+  { guideId: "bank.slotPurchase", textKey: "onboarding.tour.bank.slotPurchase" },
 ];
 
-/** Bank-Tour: Einlagern/Entnehmen (beide Spalten in einem Schritt) + Slot-Kauf. */
+/** Bank-Tour: Einlagern/Entnehmen (beide Spalten in einem Schritt). Slot-Kauf liegt im Laden. */
 export const BANK_TOUR_STEPS: AreaTourStepDef[] = [
   { guideId: null, textKey: "onboarding.tour.bank.intro" },
   { guideId: "bank.columns", textKey: "onboarding.tour.bank.columns" },
-  { guideId: "bank.slotPurchase", textKey: "onboarding.tour.bank.slotPurchase" },
 ];
 
 /**

@@ -109,8 +109,14 @@
 #root .layout--reforged .topbar-icon { display: none; }
 /* Claim-Punkt sitzt auf der Rahmenecke statt über der Beschriftung („Aufga●en"). */
 #root .layout--reforged .topbar-claim-dot { top: -3px; right: -3px; }
-#root .layout--reforged .topbar-item.topbar-help-btn { padding: 2px 8px; }
-#root .layout--reforged .topbar-help-glyph { font-size: clamp(18px, calc(22px * var(--tb-k)), 32px); }
+#root .layout--reforged .topbar-item.topbar-help-btn { padding: 2px 12px; }
+/* claude:2026-10-17T17:30:00+02:00 — „Wiki“ als Beschriftung (Chef 17.10.); das „?“ erscheint nur
+   noch in der Symbol-Stufe, wo alle Reiter ihre Beschriftung abgeben. */
+#root .layout--reforged .topbar-help-glyph {
+  display: none;
+  font-size: clamp(18px, calc(22px * var(--tb-k)), 32px);
+}
+#root .layout--reforged .topbar[data-density="icons"] .topbar-help-glyph { display: block; }
 
 /* Kompakt: gemischte Schreibung, kleinere Schrift, engere Fassung (EN/DE/ES/PT/FR bei 1366 px
    mit offener Warteschlange). Eng: noch eine Stufe kleiner — damit passt auch Russisch dort. */

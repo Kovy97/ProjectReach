@@ -770,6 +770,7 @@ export const ptBR: Record<string, string> = {
     "bank.sortFiltered": "Limpe o filtro primeiro: a ordenação move todas as casas, não só as visíveis.",
     "encyclopedia.kicker": "Enciclopédia",
     "encyclopedia.openAria": "Abrir a enciclopédia",
+    "topbar.wiki": "Wiki",
     "encyclopedia.searchPlaceholder": "Procurar um item…",
     "encyclopedia.resultCount": "{n} de {total} itens",
     "encyclopedia.categoriesAria": "Categorias",

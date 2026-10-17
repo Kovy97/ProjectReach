@@ -4,7 +4,6 @@ import { content } from "@hearthforge/content";
 import {
   bankList,
   bankSlotsUsed,
-  buyBankSlots,
   campBoost,
   canDeposit,
   depositAll,
@@ -18,18 +17,16 @@ import {
   hasInstanceRoom,
   isBankFull,
   itemCount,
-  nextBankSlotCost,
   withdrawInstance,
   withdrawItem,
   withdrawItemGroup,
 } from "@hearthforge/engine";
-import { BANK_SLOT_PACKAGE, effectiveBankCapacity, moveBankSlot } from "@hearthforge/shared";
+import { effectiveBankCapacity, moveBankSlot } from "@hearthforge/shared";
 import type { ItemInstance } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { playSfx } from "../util/audio";
 import { equipSucceeded, reportEquipFailure } from "../util/equipFeedback";
-import { formatNum } from "../util/format";
 import { CampBoostNote } from "../components/CampBoostNote";
 import { HoverTip } from "../components/CitadelTip";
 import type { ItemAction } from "../components/ItemTooltip";
@@ -56,13 +53,6 @@ import {
 import { getBankFilterCat, getBankSort, setBankFilterCat, setBankSort } from "../util/uiPrefs";
 import { getSidebarIcon } from "../sidebarIcons";
 import { registerEscCloser } from "../util/escStack";
-
-function GoldIcon(): JSX.Element {
-  const src = getUiIcon("icon_goldcoin");
-  return src
-    ? <img loading="lazy" decoding="async" src={src} alt="" className="shop-price-icon" />
-    : <span>🪙</span>;
-}
 
 /** Spalten-Überschrift im OptSection-/StatsPage-Muster: Icon-Medaillon + Cinzel-Gold-Titel
     (Citadel-Konsistenz-Welle, Chef-GO 2026-07-09 — ersetzt den nackten `<h3>`). */
@@ -213,9 +203,6 @@ export function BankPage(): JSX.Element {
   // unsichtbar in der Summe — derselbe Engine-Lesehook, den `effectiveBankCapacity` selbst intern
   // aufruft (`campBoostSum(state.camp, content.campBuildings, "bankSlots")`), keine zweite Summe.
   const bankCampSlots = Math.max(0, campBoost(state, content, "bankSlots"));
-
-  const cost = nextBankSlotCost(state);
-  const canAfford = cost !== null && state.character.gold >= cost;
 
   // Leere Slots bis zur jeweiligen Kapazität (wie das echte Inventar bzw. die Bank) — NUR wenn
   // kein Filter aktiv ist. Bei aktivem Filter/Suche würde "Kapazität minus Treffer" einen Wall
@@ -559,27 +546,8 @@ export function BankPage(): JSX.Element {
           </span>
         </div>
 
-        <div className="shop-upgrade-card" data-guide-id="bank.slotPurchase">
-          <span className="shop-upgrade-text">
-            <span className="shop-upgrade-icon-medal" aria-hidden="true">
-              {getSidebarIcon("bank")
-                ? <img loading="lazy" decoding="async" src={getSidebarIcon("bank")!} alt="" />
-                : <span>🏦</span>}
-            </span>
-            {t("bank.expandTitle")}
-          </span>
-          <button
-            className="shop-citadel-btn"
-            disabled={cost === null || !canAfford}
-            onClick={() => { buyBankSlots(state); }}
-          >
-            {cost === null
-              ? t("bank.buySlotsMax")
-              : <>{t("bank.buySlots").replace("{n}", String(BANK_SLOT_PACKAGE))}{" "}<GoldIcon />{" "}{formatNum(cost)}</>
-            }
-          </button>
-        </div>
-
+        {/* claude:2026-10-17T17:40:00+02:00 — Chef 17.10.: Der Bank-Ausbau ist in den Laden umgezogen
+            (Aufwertungen, neben dem Inventar-Upgrade). */}
         <div className="bank-notes">
           {full && <p className="bank-full-note">{t("bank.full")}</p>}
           <p className="bank-hint muted">{t("bank.shiftHint")}</p>

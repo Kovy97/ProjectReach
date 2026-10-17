@@ -783,6 +783,7 @@ export const fr: Record<string, string> = {
     "bank.sortFiltered": "Vide d'abord le filtre : le tri réorganise toutes les cases, pas seulement celles que tu vois.",
     "encyclopedia.kicker": "Encyclopédie",
     "encyclopedia.openAria": "Ouvrir l'encyclopédie",
+    "topbar.wiki": "Wiki",
     "encyclopedia.searchPlaceholder": "Chercher un objet…",
     "encyclopedia.resultCount": "{n} objets sur {total}",
     "encyclopedia.categoriesAria": "Catégories",

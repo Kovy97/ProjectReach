@@ -904,6 +904,7 @@ const en = {
     // Enzyklopaedie (Chef-Auftrag 31.08.2026): Nachschlagewerk hinter dem Fragezeichen der Top Bar.
     "encyclopedia.kicker": "Encyclopedia",
     "encyclopedia.openAria": "Open the encyclopedia",
+    "topbar.wiki": "Wiki",
     "encyclopedia.searchPlaceholder": "Search for an item…",
     "encyclopedia.resultCount": "{n} of {total} items",
     "encyclopedia.categoriesAria": "Categories",
@@ -3522,6 +3523,7 @@ const de: Record<keyof typeof en, string> = {
     // Enzyklopaedie (Chef-Auftrag 31.08.2026): Nachschlagewerk hinter dem Fragezeichen der Top Bar.
     "encyclopedia.kicker": "Enzyklopädie",
     "encyclopedia.openAria": "Enzyklopädie öffnen",
+    "topbar.wiki": "Wiki",
     "encyclopedia.searchPlaceholder": "Nach einem Gegenstand suchen…",
     "encyclopedia.resultCount": "{n} von {total} Gegenständen",
     "encyclopedia.categoriesAria": "Kategorien",

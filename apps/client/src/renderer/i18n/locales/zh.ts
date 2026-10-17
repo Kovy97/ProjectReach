@@ -783,6 +783,7 @@ export const zh: Record<string, string> = {
     "bank.sortFiltered": "请先清空筛选：排序会重排所有格子，不只是看得见的。",
     "encyclopedia.kicker": "百科全书",
     "encyclopedia.openAria": "打开百科全书",
+    "topbar.wiki": "百科",
     "encyclopedia.searchPlaceholder": "搜索物品…",
     "encyclopedia.resultCount": "{total} 件物品中的 {n} 件",
     "encyclopedia.categoriesAria": "分类",

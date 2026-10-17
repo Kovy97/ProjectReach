@@ -4,6 +4,7 @@ import {
   autoEatUpgradeCost,
   buyAutoEatUpgrade,
   buyBack,
+  buyBankSlots,
   buyItem,
   buyMasterRing,
   buySlotUpgrade,
@@ -13,13 +14,14 @@ import {
   groupInstancesByBase,
   itemCount,
   masterRingShopEntries,
+  nextBankSlotCost,
   sellInstance,
   sellBaseWithVariants,
   sellItem,
   sellStack,
   slotUpgradeCost,
 } from "@hearthforge/engine";
-import { AUTO_EAT_MAX_TIER, AUTO_EAT_TIERS, SLOT_UPGRADE_AMOUNT } from "@hearthforge/shared";
+import { AUTO_EAT_MAX_TIER, AUTO_EAT_TIERS, BANK_SLOT_PACKAGE, SLOT_UPGRADE_AMOUNT } from "@hearthforge/shared";
 import type { ItemInstance, ShopEntry } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -43,6 +45,7 @@ import { SHOP_TOUR_STEPS } from "../areaTourSteps";
 import { registerEscCloser } from "../util/escStack";
 import { getPortrait } from "../portraits";
 import { getUiIcon } from "../uiIcons";
+import { getSidebarIcon } from "../sidebarIcons";
 import { getItemImage, rarityClass } from "../items";
 import { formatNum } from "../util/format";
 import { CampBoostNote } from "../components/CampBoostNote";
@@ -118,6 +121,15 @@ function BagIcon({ size = 22 }: { size?: number }): JSX.Element {
   return src
     ? <img loading="lazy" decoding="async" src={src} alt="" className="shopv2-upgrade-icon" style={{ width: size, height: size }} />
     : <span>🎒</span>;
+}
+
+// claude:2026-10-17T17:40:00+02:00 — Bank-Ausbau steht jetzt hier bei den Aufwertungen (Chef 17.10.);
+// dasselbe Symbol wie der Bank-Eintrag in der Navigation.
+function BankIcon({ size = 22 }: { size?: number }): JSX.Element {
+  const src = getSidebarIcon("bank");
+  return src
+    ? <img loading="lazy" decoding="async" src={src} alt="" className="shopv2-upgrade-icon" style={{ width: size, height: size }} />
+    : <span>🏦</span>;
 }
 
 function AutoEatIcon({ size = 22 }: { size?: number }): JSX.Element {
@@ -355,6 +367,7 @@ function BuyTab(): JSX.Element {
   const autoEatTier = state.character.autoEatTier ?? 0;
   const autoEatCost = autoEatUpgradeCost(state);
   const autoEatNext = autoEatCost !== null ? AUTO_EAT_TIERS[autoEatTier + 1] : null;
+  const bankCost = nextBankSlotCost(state);
   const [activeCat, setActiveCat] = useState<BuyFilter>("all");
   // codex:2026-08-01T19:42:00+02:00 — Auswahlzustand für den festen rechten Mux'-Tresen.
   const [selectedBuyId, setSelectedBuyId] = useState<string | null>(content.shop[0]?.itemId ?? null);
@@ -453,6 +466,25 @@ function BuyTab(): JSX.Element {
                   onClick={() => buyAutoEatUpgrade(state)}
                 >
                   {autoEatCost === null ? `★ ${autoEatTier}` : <>{autoEatCost} <GoldIcon /></>}
+                </button>
+              </div>
+
+              {/* claude:2026-10-17T17:40:00+02:00 — Chef 17.10.: Bank-Ausbau vom Lager hierher, neben das
+                  Inventar-Upgrade. Gleiche Engine-Funktion und Preisleiter wie zuvor auf der Bankseite;
+                  der Tour-Schritt „bank.slotPurchase“ zeigt jetzt auf diese Karte (areaTourSteps.ts). */}
+              <div className="shopv2-upgrade-card" data-guide-id="bank.slotPurchase">
+                <span className="shopv2-upgrade-text">
+                  <BankIcon />{" "}
+                  {bankCost !== null
+                    ? `${t("bank.expandTitle")} (+${BANK_SLOT_PACKAGE})`
+                    : t("bank.buySlotsMax")}
+                </span>
+                <button
+                  className="ds-button shopv2-upgrade-btn"
+                  disabled={bankCost === null || gold < bankCost}
+                  onClick={() => buyBankSlots(state)}
+                >
+                  {bankCost === null ? "★" : <>{formatNum(bankCost)} <GoldIcon /></>}
                 </button>
               </div>
             </div>

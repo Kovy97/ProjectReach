@@ -4648,50 +4648,6 @@ body.bank-dragging-noselect {
   background: linear-gradient(to right, rgba(216, 192, 106, 0.35), transparent);
 }
 
-/* Upgrade cards — NUR in BankPage.tsx verwendet (grep-geprüft), sicher hier anzupassen ohne
-   Shop/Slayer zu berühren. Citadel-Konsistenz-Welle: war eine generische abgerundete rgba-Box,
-   jetzt ein Holzrahmen-Streifen im selben Sprachgebrauch wie .bank-head/.status-legend.
-   Task #316 (B3): padding auf die --ds-gap-Skala umgestellt (war 11px 16px, identisch zu
-   .bank-head vor dessen eigener Umstellung — beide bleiben dadurch weiter im Gleichschritt). */
-.shop-upgrade-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: var(--ds-gap) var(--ds-gap-lg);
-  background: linear-gradient(rgba(10, 12, 15, 0.42), rgba(10, 12, 15, 0.48)), url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
-  border-radius: 0;
-}
-
-.shop-upgrade-text {
-  font-size: 15px;
-  color: var(--accent-2);
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.shop-upgrade-icon { object-fit: contain; flex-shrink: 0; }
-
-/* Icon-Medaillon vor dem "Lager erweitern"-Text (Chef-Wunsch "Button-Muster hübscher"). */
-.shop-upgrade-icon-medal {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.05), rgba(10, 8, 6, 0.85) 74%);
-  border: 2px solid rgba(216, 192, 106, 0.42);
-}
-.shop-upgrade-icon-medal img { width: 18px; height: 18px; object-fit: contain; }
-
 /* Buy item grid — genau 4 Spalten, scrollbarer Bereich.
    Sweep 5, Finding 8: "repeat(4, 1fr)" gab jedem Track eine implizite min-width:auto (=
    Content-Breite der 2×2-Preis-Buttons, die nicht schrumpfen können) — Karten wurden dadurch
@@ -5163,13 +5119,6 @@ body.bank-dragging-noselect {
 }
 
 /* Größere Buttons (Chef): Upgrade-Kauf-Buttons + Verkaufs-Mengen-Buttons */
-.shop-upgrade-card .shop-citadel-btn {
-  min-width: 118px;
-  min-height: 46px;
-  padding: 11px 18px;
-  font-size: 18px;
-}
-.shop-upgrade-card .shop-price-icon { width: 22px; height: 22px; }
 .shop-sell-actions .shop-citadel-btn--sm {
   min-width: 58px;
   min-height: 40px;
@@ -5237,42 +5186,42 @@ body.bank-dragging-noselect {
 
 .bank-ledger {
   flex: 1 1 auto;
+  /* claude:2026-10-17T17:10:00+02:00 — Chef-Report „Bank-Bereich nicht scrollbar“: ohne min-height:0
+     wuchs das Raster als Flex-Kind auf seine volle Inhaltshöhe, die Lagerlisten bekamen nie eine
+     Begrenzung und scrollten deshalb nicht in sich. Jetzt gilt wieder der Ledger-Vertrag: Kopf bleibt,
+     die Listen scrollen intern; nur unter der 260-px-Mindesthöhe scrollt die Seite. */
+  min-height: 0;
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(200px, 0.7fr) auto;
+  /* claude:2026-10-17T17:40:00+02:00 — ohne „expand“: der Bank-Ausbau steht jetzt im Laden. */
+  grid-template-columns: minmax(260px, 1fr) minmax(200px, 0.7fr);
   grid-template-rows: auto auto auto minmax(260px, 1fr);
   grid-template-areas:
-    "npc    head   expand"
-    "filter filter filter"
-    "notes  notes  notes"
-    "cols   cols   cols";
+    "npc    head"
+    "filter filter"
+    "notes  notes"
+    "cols   cols";
   gap: clamp(8px, 0.7vw, 14px);
 }
 
 .bank-ledger > .npc-greeting { grid-area: npc; }
 .bank-ledger > .bank-head { grid-area: head; }
-.bank-ledger > .shop-upgrade-card { grid-area: expand; }
 .bank-ledger > .bank-filter-row { grid-area: filter; }
 .bank-ledger > .bank-notes { grid-area: notes; }
 .bank-ledger > .bank-columns { grid-area: cols; }
 
 @container bank (max-width: 899px) {
   .bank-ledger {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto auto auto minmax(260px, 1fr);
-    grid-template-areas:
-      "npc    npc"
-      "head   expand"
-      "filter filter"
-      "notes  notes"
-      "cols   cols";
+    grid-template-areas: "npc" "head" "filter" "notes" "cols";
   }
 }
 
 @container bank (max-width: 599px) {
   .bank-ledger {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto auto auto auto minmax(260px, 1fr);
-    grid-template-areas: "npc" "head" "expand" "filter" "notes" "cols";
+    grid-template-rows: auto auto auto auto minmax(260px, 1fr);
+    grid-template-areas: "npc" "head" "filter" "notes" "cols";
   }
 }
 
@@ -5374,31 +5323,6 @@ body.bank-dragging-noselect {
 .bank-page .bank-sort-inline {
   padding: 0;
   margin-left: auto;
-}
-
-.bank-page .shop-upgrade-card {
-  min-width: 0;
-  margin: 0;
-  padding: 6px 8px;
-  border-width: 7px;
-  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 7px stretch;
-  background:
-    linear-gradient(rgba(25, 17, 10, 0.7), rgba(15, 12, 9, 0.82)),
-    url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 256px 256px repeat;
-}
-
-.bank-page .shop-upgrade-text {
-  min-width: 0;
-  font-size: clamp(12px, 0.8vw, 15px);
-  line-height: 1.15;
-}
-
-.bank-page .shop-upgrade-card .shop-citadel-btn {
-  min-width: 0;
-  min-height: 38px;
-  padding: 7px 12px;
-  font-size: clamp(13px, 0.84vw, 16px);
-  white-space: nowrap;
 }
 
 /* claude:2026-10-17T12:05:00+02:00 — Voll-Hinweis und Shift-Tipp teilen sich eine Zeile, wenn Platz ist. */
@@ -5615,20 +5539,6 @@ body.bank-dragging-noselect {
   .bank-page .invf-chip-label,
   .bank-page .invf-chip-count {
     display: none;
-  }
-
-  .bank-page .shop-upgrade-card {
-    padding: 4px 6px;
-  }
-
-  .bank-page .shop-upgrade-text {
-    font-size: clamp(12px, 0.68vw, 14px);
-  }
-
-  .bank-page .shop-upgrade-card .shop-citadel-btn {
-    min-height: 30px;
-    padding: 5px 10px;
-    font-size: clamp(12px, 0.7vw, 14px);
   }
 
   .bank-page .bank-full-note,
