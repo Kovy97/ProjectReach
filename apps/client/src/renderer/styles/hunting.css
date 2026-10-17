@@ -1500,3 +1500,42 @@ button.hzp-loot-chip-icon:hover {
   .hunt-trap-art { max-height: 96px; }
   .hunt-trap-art img { max-height: 84px; }
 }
+
+/* ═══ UI-Fundament Runde 2 (R1/R2/R3) ═══════════════════════════════════════════════════
+   claude:2026-10-18T12:20:00+02:00
+   R1: Alle Eisenflaechen dieser Seite malen Textur + Verlauf ueber die ganze Box (vorher nur
+       padding-box: der 8-px-Rahmenstreifen zeigte rohen Untergrund = heller Ring).
+   R2: Kopfzeile -> Kennzahl-Kachel -> Knopf waren drei Eisenrahmen ineinander. Die Kacheln in
+       der Kopfzeile sind jetzt flache Basaltflaechen mit Goldlinie (Textur bleibt), der Knopf
+       "Koeder graben" bleibt als einziger Rahmen auf der Ebene darunter.
+   R3: Das Jagdbuch-Akkordeon war als einzige Sektion Holz; jetzt Eisen wie Kopf, Fallen, Gebiete. */
+.hunt-page :is(.hunt-head, .hunt-trap-card, .hunt-head-stat, .hbk-zone, .hbk-search, .hzp-stat) {
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.hunt-page .hunt-head .hunt-head-stat {
+  border: 1px solid rgba(216, 184, 112, 0.18);
+  border-image: none;
+  padding: 6px 12px;
+}
+
+.hunt-page .category-header {
+  border: 8px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+  background:
+    linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.hunt-page .category-header:hover {
+  background:
+    linear-gradient(rgba(60, 46, 26, 0.2), rgba(4, 4, 4, 0.44)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  background-origin: border-box;
+  background-clip: border-box;
+}

@@ -42,3 +42,31 @@
 @media (prefers-reduced-motion: reduce) {
   .ms2-almost-sweep { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   claude:2026-10-18T11:30:00+02:00 — Struktur-Runde 2 (Übersteuerung von skills.css, das diese Seite
+   nicht besitzt; höhere Spezifität über `.ms2-page`).
+   R1: Hintergrund-Schichten über die ganze Box, kein heller Ring im Rahmenstreifen.
+   R2: Rarity-Abzeichen im Skill-Kopf ist kein eigener Holzrahmen mehr (Sektion > Abzeichen > Kopf
+       hatte drei Holzrahmen ineinander); jetzt Flächenton + 1-px-Linie in Rarity-Farbe.
+   R5: Sektionsabstände aus dem Raster (Kopfsektion und Skill-Blöcke gleich).
+   ═══════════════════════════════════════════════════════════ */
+.ms2-page { gap: var(--sp-3); }
+.ms2-page .ms2-skills { gap: var(--sp-3); }
+
+.ms2-page .ms2-tabs,
+.ms2-page .ms2-skill-block {
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.ms2-page .ms2-skill-badge {
+  border: 1px solid rgba(216, 192, 106, 0.3);
+  border-image: none;
+  padding: 3px 10px;
+}
+.ms2-page .ms2-skill-badge.ms2-rarity--common    { border-color: #454d54; }
+.ms2-page .ms2-skill-badge.ms2-rarity--uncommon  { border-color: rgba(91, 143, 214, 0.5); }
+.ms2-page .ms2-skill-badge.ms2-rarity--rare      { border-color: rgba(216, 192, 106, 0.5); }
+.ms2-page .ms2-skill-badge.ms2-rarity--epic      { border-color: rgba(170, 80, 200, 0.5); }
+.ms2-page .ms2-skill-badge.ms2-rarity--legendary { border-color: rgba(217, 138, 74, 0.55); }

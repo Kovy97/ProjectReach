@@ -6655,3 +6655,42 @@
   .battle-main .fighter-nameplate .cbar { height: 15px; margin-top: 2px; }
   .battle-hud-ribbon-details { max-height: 48vh; }
 }
+
+/* ═══ UI-Fundament Runde 2 (R1/R2/R3) ═══════════════════════════════════════════════════
+   claude:2026-10-18T12:40:00+02:00
+   R1: Flaechen mit Eisen-/Holzrahmen malen Textur und Verlauf ueber die ganze Box.
+       Bewusst NICHT .zone-card/.monster-card-artwork: deren Bild-Formel (Chef, endgueltig) bleibt
+       unveraendert, der Holzrahmen ist dort deckend (Zoom x6 geprueft, kein Ring).
+   R2: Die Dock-Karte "Buffs" und die Monsterkarte trugen Holz-Plaketten (Buff-Chip, Kein-XP,
+       Stufe, Eigenschaft) innerhalb eines Rahmens, der selbst in einem Rahmen sitzt: Plaketten
+       jetzt flach (1-px-Goldlinie, Textur bleibt).
+   R3: Rueckkehr-Knopf der Gebietsansicht war ein Holzknopf zwischen Eisenknoepfen: jetzt Eisen. */
+#root :is(.combat-select, .combat-loadout, .cl-gear-doll, .cs-stats-scroll, .cl-section,
+          .battle, .battle-arena, .battle-log-panel, .monster-card) {
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root :is(.active-buff-chip, .monster-card-xp-badge, .monster-card-level-badge, .mc-trait-badge) {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgba(216, 184, 112, 0.3);
+  border-image: none;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .combat-page .zone-back {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(4px * 2.125);
+  background-color: #111315;
+  background-image:
+    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}

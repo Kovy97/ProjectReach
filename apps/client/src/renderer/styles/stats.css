@@ -17,7 +17,7 @@
   container: stx / inline-size;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--sp-4); /* claude:2026-10-18T11:30:00+02:00 — R5: ein Sektionsabstand (vorher 18 px) */
   max-width: 1360px;
   margin: 0 auto;
 }
@@ -25,7 +25,7 @@
 .stx-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: var(--sp-4);
   align-items: start;
 }
 
@@ -41,6 +41,9 @@
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   border-radius: 0;
   padding: 18px 20px;
+  /* claude:2026-10-18T11:30:00+02:00 — R1: Hintergrund über die ganze Box, kein heller Ring im Rahmenstreifen. */
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .stx-section--wide {

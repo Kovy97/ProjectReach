@@ -551,3 +551,49 @@
 /* Zonen-Gate-CSS (CombatPage-Zonenkarten, gesperrt via requiresQuest) lebt in combat.css,
    direkt neben den bestehenden .zone-card/.dungeon-locked-Regeln (globaler Import via
    styles/index.css — CombatPage bindet chronicle.css NICHT extra ein). */
+
+/* ═══ Struktur Runde 2 (Chef 18.10.2026) ═══════════════════════════════════════════════════════════
+   claude:2026-10-18T11:45:00+02:00 — R2/R3: Bühne, Archiv und Auftragsdetail liegen schon in der
+   Gravewood-Sektion (.quests-content, quests.css) und tragen keinen eigenen Rahmen mehr (vorher Eisen
+   in Eisen in Eisen). Ziele-Zeile = Karte (card-frame). Zustand „fertig" über Randstreifen/Fläche, nicht
+   über inset-Linie am Rahmen (R1). Steht hier, weil chronicle.css nach quests.css lädt. */
+.quests-contract-wall .chronicle-stage {
+  border: 0;
+  border-left: 3px solid rgba(183, 135, 69, 0.58);
+  border-image: none;
+  background: none;
+  box-shadow: none;
+}
+.quests-contract-wall .chronicle-stage--done {
+  border-left-color: rgba(112, 178, 119, 0.72);
+  box-shadow: none;
+}
+.quests-contract-wall .chronicle-obj {
+  border: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
+  background-color: #0b0f11;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+.quests-contract-wall .chronicle-obj--done {
+  background-image:
+    linear-gradient(rgba(22, 49, 29, 0.5), rgba(6, 10, 8, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+}
+.quests-contract-wall .chronicle-stage-npc .npc-bubble {
+  border: 0;
+  border-left: 1px solid rgba(216, 192, 106, 0.18);
+  border-radius: 0;
+  background: rgba(5, 8, 10, 0.4);
+}
+.quests-contract-wall .chronicle-history {
+  border: 0;
+  border-image: none;
+  background: none;
+  border-left: 1px solid rgba(216, 192, 106, 0.18);
+}

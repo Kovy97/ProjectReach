@@ -99,6 +99,8 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
   // JSDoc). Inline statt globaler Toast — Toasts.tsx ist ein reiner Snapshot-Diff-Beobachter ohne
   // Fire-and-forget-API für Einzel-Events von hier aus. Auto-Clear nach 4s (Muster Toasts.tsx
   // TOAST_MS), oder sofort beim nächsten Kauf-Versuch desselben Items.
+  // claude:2026-10-18T11:30:00+02:00 — Belohnungs-Shop und Jagdbuch als Reiter einer Fläche statt zwei langer Panels untereinander.
+  const [lowerTab, setLowerTab] = useState<"shop" | "book">("shop");
   const [shopError, setShopError] = useState<{ itemId: string; reason: SlayerShopReason } | null>(null);
 
   function handleBuyShopItem(itemId: string): void {
@@ -534,11 +536,41 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
       {/* Kopfgeld-Brett (Jagd-Paket Task 1) lebt seit Spieler-Feedback 0.2.2 Punkt 3 im schwebenden
           Elite-Mini-Fenster (components/EliteMiniWindow.tsx, app-weit in App.tsx gemountet). */}
 
-      {/* ── Reward Shop ───────────────────────────────────────────── */}
-      {/* Chef-Fund 26.08.2026: eigene Basalt-Fläche (slayer-shop-panel, s. slayer.css). */}
+      {/* ── Reward Shop + Jagdbuch ────────────────────────────────────
+          claude:2026-10-18T11:30:00+02:00 — Eine Basalt-Fläche mit Reiterleiste (R2/R3): Karten Gravewood,
+          Knöpfe Eisen. Jagdbuch (Talentbaum, 1.3.0 Säule 0) nur als Reiter, wenn es existiert. */}
       <div className="shop-panel slayer-shop-panel">
-        <SectionHead title={t("slayer.tab.shop")} />
-        {(!content.slayerShop || content.slayerShop.length === 0) ? (
+        {slayerBook ? (
+          <div className="slayer-lower-tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={lowerTab === "shop"}
+              className={`slayer-lower-tab${lowerTab === "shop" ? " is-active" : ""}`}
+              onClick={() => setLowerTab("shop")}
+            >
+              {t("slayer.tab.shop")}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={lowerTab === "book"}
+              className={`slayer-lower-tab${lowerTab === "book" ? " is-active" : ""}`}
+              onClick={() => setLowerTab("book")}
+            >
+              {tr(slayerBook.name)}
+            </button>
+          </div>
+        ) : (
+          <SectionHead title={t("slayer.tab.shop")} />
+        )}
+        {slayerBook && lowerTab === "book" ? (
+          <TalentTree
+            treeId={slayerBook.id}
+            lockedHint={t("slayer.book.locked").replace("{n}", String(slayerBook.unlock.level))}
+            currencyIcon={<SlayerPtIcon />}
+          />
+        ) : (!content.slayerShop || content.slayerShop.length === 0) ? (
           <p className="muted slayer-rewards-empty">{t("slayer.shop.empty")}</p>
         ) : (
           // claude:2026-10-17T19:40:00+02:00 — Kompakte Angebotszeilen (Bild | Name, Stufe | Preis)
@@ -612,20 +644,6 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
           </div>
         )}
       </div>
-
-      {/* ── Jagdbuch (Talentbaum) ─────────────────────────────────────
-          claude:2026-10-18T00:30:00+02:00 — 1.3.0 Säule 0 (Chef 17.10.): Slayer-Punkte in dauerhafte
-          Account-Upgrades. Generische Komponente (TalentTree), unter Slayer 85 gesperrt mit Hinweis. */}
-      {slayerBook && (
-        <div className="shop-panel slayer-talent-panel">
-          <SectionHead title={tr(slayerBook.name)} />
-          <TalentTree
-            treeId={slayerBook.id}
-            lockedHint={t("slayer.book.locked").replace("{n}", String(slayerBook.unlock.level))}
-            currencyIcon={<SlayerPtIcon />}
-          />
-        </div>
-      )}
     </div>
   );
 }

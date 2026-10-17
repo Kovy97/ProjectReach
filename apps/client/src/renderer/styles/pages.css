@@ -3254,7 +3254,7 @@ body.bank-dragging-noselect {
 
 .pet-field-header {
   flex: 0 0 auto;
-  padding: clamp(8px, 0.55vw, 14px) clamp(12px, 0.8vw, 20px);
+  padding: clamp(4px, 0.4vw, 12px) clamp(12px, 0.8vw, 20px);
 }
 
 /* claude:2026-10-17T12:30:00+02:00 — flacherer Kopf (Mindesthöhe nur noch so hoch wie die Begleiter-Anzeige). */
@@ -3613,8 +3613,8 @@ body.bank-dragging-noselect {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(181, 137, 75, 0.48);
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(181, 137, 75, 0.18);
 }
 
 .pet-field-dossier-head h3 {
@@ -3636,52 +3636,60 @@ body.bank-dragging-noselect {
 }
 
 .pet-field-description {
-  margin: clamp(14px, 1vw, 22px) 0;
+  margin: clamp(8px, 0.7vw, 16px) 0;
   color: #aeb7ba;
   font-size: clamp(14px, 0.92vw, 18px);
   line-height: 1.6;
 }
 
+/* claude:2026-10-18T12:00:00+02:00 — R2: Passiv/Aktiv/Echo waren drei eigene Eisenrahmen (Rahmen in Rahmen
+   im Detail-Panel). Jetzt EINE Karte (flacher Schieferton, 1-px-Goldkante, Textur bleibt) mit Zeilen, die
+   durch 1-px-Trennlinien (Gold ~18 %) getrennt sind. Kein border-image, daher kein Ebenenversatz (R1). */
+/* claude:2026-10-18T12:00:00+02:00 — Subgrid: alle Zeilen teilen dieselbe Beschriftungsspalte (gemeinsame Achse, R5). */
 .pet-field-effects {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0;
   margin-top: 4px;
+  border: 1px solid rgba(181, 137, 75, 0.34);
+  background:
+    linear-gradient(rgba(10, 13, 14, 0.74), rgba(7, 9, 10, 0.88)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
 }
 
 .pet-field-effects .pet-effect-rows {
-  gap: 10px;
+  gap: 0;
 }
 
 .pet-field-effects .pet-effect-row {
   display: grid;
-  /* Chef-Review 29.08.2026 (Screenshot ~1216px, „dünne Doppellinien mit Eckartefakten"): die
-     Zeile trug eine eigene `fill / … stretch`-Variante des 9-Slice-Rahmens statt des im ganzen
-     Spiel verwendeten `85 / 2.125 round` (s. hunt-head/hunt-head-stat in hunting.css) — `stretch`
-     zerrt die Eckengrafik non-uniform, `fill` legt zusätzlich die Mittelkachel unter unseren
-     eigenen `background` (Doppel-Textur). `round` kachelt ganzzahlig, keine Verzerrung.
-     Beschriftungsspalte jetzt `max-content` (passt sich exakt der längsten Übersetzung an, z.B.
-     RU „Активный (в бою)"), nie schmaler als der Text → kein erzwungener Umbruch/Quetschen mehr;
-     die Wertspalte bleibt `minmax(0, 1fr)` und darf umbrechen (`min-width:0` unten). */
-  grid-template-columns: max-content minmax(0, 1fr);
+  /* Beschriftungsspalte `max-content` (längste Übersetzung, z.B. RU „Активный (в бою)"), Wertspalte
+     `minmax(0, 1fr)` darf umbrechen. */
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: stretch;
   gap: 0;
-  min-height: clamp(64px, 4.8vw, 82px);
-  border: 8px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
-  background:
-    linear-gradient(rgba(10, 13, 14, 0.74), rgba(7, 9, 10, 0.88)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  min-height: 0;
+  border: 0;
+  background: none;
+}
+
+.pet-field-effects > p {
+  grid-column: 1 / -1;
+}
+
+.pet-field-effects .pet-effect-row + .pet-effect-row {
+  border-top: 1px solid rgba(181, 137, 75, 0.18);
 }
 
 .pet-field-effects .pet-effect-tag {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 14px;
+  padding: 6px 10px;
   border: 0;
-  border-right: 1px solid rgba(167, 123, 67, 0.43);
-  background: rgba(17, 21, 21, 0.72);
+  border-right: 1px solid rgba(181, 137, 75, 0.18);
+  background: rgba(17, 21, 21, 0.5);
   font-family: var(--font-info);
   font-size: clamp(12px, 0.65vw, 13px);
   text-align: center;
@@ -3697,9 +3705,9 @@ body.bank-dragging-noselect {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
-  padding: 10px 14px;
+  padding: 7px 12px;
   color: #ddd1a4;
   font-size: clamp(13px, 0.84vw, 17px);
   line-height: 1.35;
@@ -3735,7 +3743,7 @@ body.bank-dragging-noselect {
 
 .pet-field-actions {
   margin-top: auto;
-  padding-top: clamp(16px, 1.2vw, 26px);
+  padding-top: clamp(10px, 0.8vw, 20px);
 }
 
 .pet-field-journal .pet-card-btn {
@@ -3786,8 +3794,9 @@ body.bank-dragging-noselect {
     grid-template-columns: clamp(280px, 26cqi, 310px) minmax(0, 1fr);
   }
 
+  /* claude:2026-10-18T12:00:00+02:00 — schmalere Bühne, damit das Dossier (inkl. Echo-Zeile) ohne Scrollen passt. */
   .pet-field-detail {
-    grid-template-columns: minmax(250px, 0.82fr) minmax(320px, 1.18fr);
+    grid-template-columns: minmax(180px, 0.5fr) minmax(340px, 1.5fr);
   }
 
   .pet-field-active-effect {
@@ -5379,6 +5388,17 @@ body.bank-dragging-noselect {
   background:
     linear-gradient(rgba(16, 12, 8, 0.68), rgba(8, 9, 10, 0.82)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+
+/* claude:2026-10-18T12:00:00+02:00 — R1: panel-frame.webp / card-frame.webp haben eine transparente
+   Innenkante; der Verlauf lag nur auf der padding-box, im Rahmenstreifen schimmerte roher Basalt als
+   heller Ring (Ebenenversatz). Hintergrund jetzt über die ganze Box (Vorbild bestiary.css). */
+.bank-page .bank-head,
+.bank-page .bank-filter-row,
+.bank-page .bank-ledger-panel,
+.bank-page .bank-ledger-panel--storage {
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 /* claude:2026-10-17T12:05:00+02:00 — Spaltenkopf darf umbrechen: Titel links, Knöpfe rücken in die

@@ -569,14 +569,17 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
    claude:2026-10-17T20:30:00+02:00 — Neu gegliedert (Chef 17.10.): Warengruppen als Leiste oben,
    darunter Warenraster | Kaufentscheidung rechts; Verkaufen spiegelt das (Inventar | Tresen).
    Nur Warenbestand bzw. Inventar scrollen. */
-#root .shopv2-body {
-  padding: 12px;
-  gap: 0;
-  background-color: #0a0d0f;
-  background-image:
-    linear-gradient(rgba(6, 9, 11, 0.76), rgba(6, 9, 11, 0.76)),
-    var(--gw-texture-basalt, url("../assets/ui/gravewood/v3/textures/texture-basalt.webp")) !important;
-  background-size: auto, 384px 384px !important;
+/* claude:2026-10-18T12:00:00+02:00 — Struktur Runde 2: die Arbeitsfläche trägt keinen eigenen Rahmen mehr
+   (`ds-frame`-Holz-Ornament um zwei weitere Gravewood-Tafeln = Rahmen in Rahmen, Ebenenversatz). Die
+   Sektionen darin (Waren/Inventar, Tresen) sind die Tafeln; Warengruppen-Leiste und Kopf liegen frei auf
+   der Seite wie bei Slayer. */
+#root .shopv2-body.ds-frame {
+  padding: 0;
+  gap: var(--sp-3);
+  border: 0;
+  border-image: none;
+  background: none;
+  box-shadow: none;
 }
 
 /* codex:2026-08-01T20:18:00+02:00 — Geschlossene Viewport-Höhenkette für den Shop.
@@ -648,7 +651,6 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 #root .shopv2-buy-scroll { grid-area: wares; }
 #root .shopv2-buy-counter { grid-area: counter; }
 
-#root .shopv2-category-rail,
 #root .shopv2-buy-counter,
 #root .shopv2-sell-aside {
   min-width: 0;
@@ -667,8 +669,10 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   background-clip: border-box;
 }
 
+/* claude:2026-10-18T12:00:00+02:00 — R2: Leiste ist reine Bedienzeile (Chips tragen den Rahmen), keine Tafel. */
 #root .shopv2-category-rail {
-  padding: var(--sp-2);
+  min-width: 0;
+  padding: 0;
 }
 
 #root .shopv2-counter > .shopv2-section-head,
@@ -1068,4 +1072,59 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   #root .shopv2-counter-quantity .qty-picker-presets {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
+
+/* ═══ Struktur Runde 2 (Chef 18.10.2026) ═══════════════════════════════════════════════════════════
+   claude:2026-10-18T12:00:00+02:00 — R3: Tafeln (Waren/Inventar, Tresen) = EIN Rezept (Gravewood panel-frame
+   auf Basalt; der Tresen war Schiefer). Karten = Gravewood card-frame (Warenkarte war Holz-Rahmen,
+   Aufwertung/Rückkauf flache 1-px-Kästen). Bildfeld in der Warenkarte und Saldo-Kasten im Tresen
+   verlieren ihren Rahmen (R2: keine gerahmten Unterboxen), Trennung per Hairline/Fläche. R1: alle
+   Schichten border-box; Seltenheit als Farbwolke statt inset-Ring am Kartenrahmen. */
+#root .shopv2-buy-counter,
+#root .shopv2-sell-aside {
+  background-image:
+    linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)),
+    var(--gw-texture-basalt, url("../assets/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 320px 320px;
+}
+
+#root :is(.shopv2-card, .shopv2-upgrade-card, .shopv2-buyback-row, .shopv2-counter-item) {
+  border: 6px solid transparent;
+  border-image: var(--gw-v3-frame-card, url("../assets/ui/gravewood/v3/frames/card-frame.webp")) 48 / 6px;
+  border-radius: 0;
+  background-color: #0b0f11;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
+    var(--gw-texture-cold-slate, url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .shopv2-card:hover,
+#root .shopv2-card:focus-visible {
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.54);
+}
+
+#root .shopv2-card-image-area {
+  border: 0;
+  box-shadow: none;
+  background: radial-gradient(ellipse at 50% 45%, rgba(137, 107, 68, 0.2), transparent 68%);
+}
+#root .shopv2-card.rarity-magic .shopv2-card-image-area     { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-magic) 55%, transparent), transparent 72%); }
+#root .shopv2-card.rarity-rare .shopv2-card-image-area      { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-rare) 55%, transparent), transparent 72%); }
+#root .shopv2-card.rarity-superRare .shopv2-card-image-area { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-superRare) 55%, transparent), transparent 72%); }
+#root .shopv2-card.rarity-epic .shopv2-card-image-area      { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-epic) 55%, transparent), transparent 72%); }
+#root .shopv2-card.rarity-legendary .shopv2-card-image-area { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-legendary) 55%, transparent), transparent 72%); }
+#root .shopv2-card.rarity-godly .shopv2-card-image-area     { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--rar-godly) 55%, transparent), transparent 72%); }
+#root .shopv2-card[class*="rarity-"] { box-shadow: none; }
+#root .shopv2-card.selected { box-shadow: var(--rg-2) #cda85d, var(--sh-3); }
+
+#root .shopv2-counter-ledger {
+  padding: var(--sp-2) 0;
+  border: 0;
+  border-top: 1px solid rgba(216, 192, 106, 0.18);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+  background: none;
 }

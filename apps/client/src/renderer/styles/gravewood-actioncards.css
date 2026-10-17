@@ -601,3 +601,65 @@
     font-size: clamp(13px, 4.2cqw, 18px) !important;
   }
 }
+
+/* ═══ UI-Fundament Runde 2 (R1/R2/R3) ═══════════════════════════════════════════════════
+   claude:2026-10-18T12:00:00+02:00 — Aktionskarte hatte Holzrahmen (14 px) -> gerahmte Kacheln,
+   Produces, Rack, Status, Mastery -> Mastery-Leiste mit eigenem Rahmen: 3 bis 4 Rahmenebenen,
+   dazu Hintergrundschichten nur auf der padding-box (Ringversatz am Rand).
+   Jetzt: Karte = EIN Rahmen (Holz), Innenzonen = flache Flaechen mit 1-px-Goldlinie (Textur
+   bleibt), einzige Bedienelemente mit Rahmen = Eisenknoepfe (qty). R1: border-box-Hintergrund. */
+#root :is(.skillcard, .plot-card, .farm-catalogue-card, .farm-info-bar, .category-header,
+          .skilloverview-page .panel, .skilloverview-card, .skillcard-lvl, .skillcard-invcount) {
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .skillcard :is(.skillcard-tile, .skillcard-output-zone :is(.skillcard-loot, .skillcard-produces),
+    .skillcard-resource-rack .mat-chip, .skillcard-resource-empty, .skillcard-state-slot, .skillcard-mastery) {
+  border: 1px solid rgba(216, 184, 112, 0.18) !important;
+  border-image: none !important;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+/* Mastery: die Leiste ist der Rahmen, die Huelle darum entfaellt (vorher Rahmen um Rahmen). */
+#root .skillcard .skillcard-mastery {
+  border: 0 !important;
+  background: none !important;
+}
+
+/* Banner-Plaketten (Stufe, Inventar) liegen auf dem Bild: flach statt Holzrahmen auf Holzrahmen. */
+#root .skillcard :is(.skillcard-lvl, .skillcard-invcount) {
+  border: 1px solid rgba(216, 184, 112, 0.35);
+  border-image: none;
+}
+
+/* Rezeptsuche: ein Eisenrahmen aussen, das Feld darin nur eingelassen (vorher Eisen in Eisen). */
+#root .skill-search-bar .invf-search {
+  border: 1px solid rgba(216, 184, 112, 0.18);
+  border-image: none;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+/* claude:2026-10-18T12:05:00+02:00 — R2/R3 Anbau: Bedienelemente im Beet und in der Info-Leiste
+   waren Holzrahmen innerhalb der Holzkarte; Knoepfe tragen jetzt wie ueberall den Eisenrahmen. */
+#root .farm-page .skillcard-cta {
+  border-style: solid;
+  border-color: transparent;
+  border-width: 4px;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(4px * 2.125);
+  background-color: #111315;
+  background-image:
+    linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
+    var(--gw-action-canvas);
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+#root .farm-page .skillcard-cta.stop {
+  background-image:
+    linear-gradient(rgba(60, 16, 10, 0.34), rgba(20, 5, 4, 0.5)),
+    var(--gw-action-canvas);
+}

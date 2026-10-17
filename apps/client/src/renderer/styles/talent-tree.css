@@ -42,22 +42,19 @@
   }
 }
 
+/* claude:2026-10-18T11:30:00+02:00 — R2: Ast ist keine gerahmte Box mehr (Panel > Ast > Karte > Knopf waren vier
+   Ebenen). Struktur nur über Titel + Trennlinie; Karten tragen den einzigen Rahmen. */
 .talent-branch {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: var(--sp-2);
-  background:
-    linear-gradient(rgba(6, 9, 11, 0.35), rgba(4, 6, 8, 0.55)),
-    url("../assets/ui/gravewood/textures/texture-gravewood.webp") repeat;
-  background-size: auto, 256px 256px;
-  border: 1px solid rgba(155, 112, 62, 0.32);
+  padding: 0;
 }
 
 .talent-branch-title {
   margin: 0 0 var(--sp-2);
   padding-bottom: var(--sp-1);
-  border-bottom: 1px solid rgba(155, 112, 62, 0.4);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
   font-family: var(--font-head);
   font-size: var(--fs-sm);
   letter-spacing: 1px;
@@ -89,6 +86,8 @@
   background: linear-gradient(#c08a4a, #8a5a2b);
 }
 
+/* claude:2026-10-18T11:30:00+02:00 — R1/R3: Gravewood-Kartenrahmen wie die Slayer-Shop-Karten (eine Familie
+   je Ebene), alle Schichten über die ganze Box; Zustand „verfügbar" per Fläche statt inset-Linie (R1). */
 .talent-node {
   position: relative;
   display: flex;
@@ -98,29 +97,29 @@
   padding: var(--sp-2) var(--sp-3);
   border-style: solid;
   border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  background:
-    linear-gradient(rgba(18, 12, 7, 0.58), rgba(8, 5, 3, 0.74)),
-    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
-  background-size: auto, 280px 280px;
+  border-width: 6px;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
+  background-color: #0b0f11;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .talent-node.is-locked {
   filter: brightness(0.62) saturate(0.7);
 }
 .talent-node.is-available {
-  box-shadow: inset 0 0 0 1px rgba(214, 160, 82, 0.55);
+  background-image:
+    linear-gradient(rgba(70, 46, 14, 0.38), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
 }
 .talent-node.is-maxed {
-  background:
-    linear-gradient(rgba(60, 42, 14, 0.42), rgba(14, 9, 4, 0.78)),
-    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
-  background-size: auto, 280px 280px;
+  background-image:
+    linear-gradient(rgba(60, 42, 14, 0.42), rgba(14, 9, 4, 0.6)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
 }
 
 .talent-node-head {

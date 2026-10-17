@@ -2820,3 +2820,29 @@ button.skilloverview-card {
 .plot-crop-fallback--ready {
   filter: drop-shadow(0 0 10px rgba(111, 200, 111, 0.65));
 }
+
+/* ═══ UI-Fundament Runde 2 — Fertigkeiten-Uebersicht und Anbau ═══════════════════════════
+   claude:2026-10-18T12:10:00+02:00 — Uebersicht: Panel (Holz) -> Karte (Holz) -> Symbolkasten,
+   Stufenplakette und Leiste je mit eigenem Holzrahmen = 4 Ebenen. Jetzt Panel -> Karte, innen
+   nur flache Flaechen mit 1-px-Goldlinie (Textur und Karten-Rahmen bleiben). */
+.skilloverview-page .skilloverview-card :is(.skilloverview-icon-wrap, .skilloverview-level) {
+  border: 1px solid rgba(216, 184, 112, 0.22);
+  border-image: none;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+/* Kopfzeile wie .slayer-head: Titel links, Kennzahl rechts, mittig auf einer Achse (R4). */
+.skilloverview-head {
+  align-items: center;
+  gap: var(--sp-3) var(--sp-4);
+}
+
+/* Anbau: die Info-Leiste ist Teil der Sektion, kein eigener Kasten neben dem Sektionsrahmen. */
+.farm-page .farm-info-bar {
+  border: 0;
+  border-image: none;
+  border-top: 1px solid rgba(216, 184, 112, 0.18);
+  border-bottom: 1px solid rgba(216, 184, 112, 0.18);
+  background-origin: border-box;
+}

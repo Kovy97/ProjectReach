@@ -8,7 +8,8 @@
   --achv-ledger-cloth: url("../assets/ui/gravewood/textures/texture-umber-cloth.webp");
   --achv-ledger-stone: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   container: achv / inline-size;
-  gap: clamp(8px, 0.7vw, 12px);
+  /* claude:2026-10-18T11:30:00+02:00 — R5: Sektionsabstand aus dem Raster. */
+  gap: var(--sp-3);
   height: 100%;
   min-height: 0;
 }
@@ -41,6 +42,9 @@
     radial-gradient(ellipse 72% 180% at 10% 10%, rgba(187, 120, 48, 0.12), transparent 62%),
     linear-gradient(rgba(9, 10, 11, 0.58), rgba(7, 8, 9, 0.76)),
     var(--achv-ledger-cloth) center / 280px 280px repeat;
+  /* claude:2026-10-18T11:30:00+02:00 — R1: Flächen-Schichten über die ganze Box inkl. Rahmenstreifen (kein heller Ring/Versatz). */
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .achv-page--warden .achv-hero-emblem {
@@ -126,6 +130,9 @@
     linear-gradient(rgba(6, 7, 8, 0.82), rgba(9, 8, 7, 0.88)),
     var(--achv-ledger-cloth) center / 280px 280px repeat;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48);
+  /* claude:2026-10-18T11:30:00+02:00 — R1 */
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .achv-ledger-rail,
@@ -318,7 +325,7 @@
 .achv-ledger-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--sp-1);
   min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
@@ -333,9 +340,13 @@
   gap: 10px;
   width: 100%;
   min-height: 112px;
-  padding: 10px 12px;
-  border-width: 7px;
-  border-image: var(--achv-ledger-frame) 28 / 7px;
+  padding: 10px 14px;
+  /* claude:2026-10-18T11:30:00+02:00 — R2/R6: Eintragszeilen ohne eigenen Eisenrahmen (Shell-Rahmen >
+     Karten-Rahmen >  Abzeichen waren drei Rahmenebenen, aneinanderstoßende Rahmen erzeugten doppelte
+     Linien). Textur/Tönung bleiben; Trennung über 1-px-Bronzelinie, Auswahl über den Seitenbalken. */
+  border: 0;
+  border-image: none;
+  border-bottom: 1px solid rgba(183, 128, 61, 0.34);
   background:
     linear-gradient(90deg, rgba(25, 22, 19, 0.88), rgba(7, 8, 9, 0.86)),
     var(--achv-ledger-cloth) center / 240px 240px repeat;
@@ -346,6 +357,9 @@
   cursor: pointer;
   contain-intrinsic-size: 100% 112px;
   transition: filter 0.12s, box-shadow 0.12s, background-color 0.12s;
+  /* claude:2026-10-18T11:30:00+02:00 — R1: auch die Hintergrund-Überschreibungen unten (unlocked) erben das über `background-origin`. */
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .achv-page--warden .achv-card:hover {
@@ -359,6 +373,8 @@
   background:
     linear-gradient(90deg, rgba(82, 57, 25, 0.36), rgba(8, 9, 10, 0.86) 58%),
     var(--achv-ledger-cloth) center / 240px 240px repeat;
+  background-origin: border-box; /* claude:2026-10-18T11:30:00+02:00 — R1: Shorthand setzt origin zurück */
+  background-clip: border-box;
 }
 
 .achv-page--warden .achv-card--selected {
@@ -451,6 +467,9 @@
     radial-gradient(circle at 50% 10%, rgba(154, 100, 39, 0.16), transparent 34%),
     linear-gradient(rgba(7, 8, 9, 0.82), rgba(10, 9, 8, 0.9)),
     var(--achv-ledger-stone) center / 300px 300px repeat;
+  /* claude:2026-10-18T11:30:00+02:00 — R1 */
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .achv-ledger-detail-emblem {

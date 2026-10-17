@@ -27,11 +27,25 @@
    ═══════════════════════════════════════════════════════════ */
 
 /* ─── Kopfleiste: ruhiger Einstieg, kein Band ─── */
+/* claude:2026-10-18T11:30:00+02:00 — R1/R3: Kopfsektion nutzt dasselbe Gravewood-Rezept wie die Zonen-Sektionen (vorher flacher
+   1px-Kasten + gerahmte Legende darin = Rahmen im Rahmen); Hintergrund über die ganze Box (border-box). */
 .bjw-head {
-  padding: 18px 22px;
-  margin-bottom: 18px;
-  background: linear-gradient(180deg, rgba(20, 22, 26, 0.9), rgba(11, 12, 14, 0.65));
-  border: 1px solid var(--border);
+  padding: clamp(16px, 1.4vw, 24px);
+  margin-bottom: var(--sp-4);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 16px;
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 16px;
+  background-color: #0d0f11;
+  background-image:
+    radial-gradient(ellipse at 14% 0%, rgba(141, 78, 31, 0.16), transparent 54%),
+    linear-gradient(rgba(6, 9, 11, 0.2), rgba(3, 5, 6, 0.5)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 224px 224px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .bjw-head-row {
@@ -62,10 +76,10 @@
   gap: 10px;
 }
 
+/* claude:2026-10-18T11:30:00+02:00 — R2: Siegel ohne eigene Linie, nur Flächenton. */
 .bjw-seal {
   padding: 7px 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
   text-align: center;
   font-size: 11px;
   color: var(--muted);
@@ -123,14 +137,22 @@
 
 /* Status-Legende (Bestand, `.status-legend*` in pages.css unverändert, bereits ≥15px lesbar):
    erzwingt nur den Umbruch auf eine eigene Zeile innerhalb der neuen Kopf-Controls-Reihe. */
+/* claude:2026-10-18T11:30:00+02:00 — R2: Legende ist keine eigene gerahmte Box mehr (Holzrahmen in Gravewood-Rahmen), sondern
+   ein Abschnitt der Kopfsektion mit 1-px-Goldtrennlinie. */
 .bjw-controls .status-legend {
   flex-basis: 100%;
+  margin-top: 4px;
+  padding: var(--sp-3) 0 0;
+  background: none;
+  border: 0;
+  border-image: none;
+  border-top: 1px solid rgba(216, 192, 106, 0.18);
 }
 
 /* ─── Zonen-Sektion: Panel-Frame + Basalt (Optionen/Slayer-Rezept) statt Vollbild-Kulisse ─── */
 .bjw-zone {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-4);
   padding: clamp(16px, 1.4vw, 24px);
   border-style: solid;
   border-color: transparent;
@@ -241,6 +263,9 @@
     linear-gradient(rgba(18, 12, 7, 0.5), rgba(8, 5, 3, 0.7)),
     url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
   background-size: auto, 280px 280px;
+  /* claude:2026-10-18T11:30:00+02:00 — R1: Leder/Abdunklung über die ganze Box, kein Versatz im Rahmenstreifen. */
+  background-origin: border-box;
+  background-clip: border-box;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
   content-visibility: auto;
   contain-intrinsic-size: auto 460px;
@@ -390,19 +415,21 @@
 .bjw-stat-table {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0;
   margin: 4px 0 2px;
 }
 
+/* claude:2026-10-18T11:30:00+02:00 — R2: Kennzahl-Zeilen ohne eigene Rahmen (vorher 4. Rahmenebene), Trennung über
+   1-px-Goldlinie; Zeilen sitzen bündig auf der Kartenachse. */
 .bjw-stat-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 4px 9px;
-  background: rgba(0, 0, 0, 0.22);
-  border: 1px solid var(--border);
+  padding: 4px 4px;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.14);
 }
+.bjw-stat-row:last-child { border-bottom: 0; }
 
 /* claude:2026-10-17T13:45:00+02:00 — Statlabel bricht an Wortgrenzen um (RU „Показатель уклонения“),
    der Wert bleibt einzeilig rechts. */
@@ -503,19 +530,24 @@
 .bjw-loot-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
 }
 
+/* claude:2026-10-18T11:30:00+02:00 — R2: Beute-Zeile ohne Vollrahmen (vorher 4. Ebene .bjw-zone > .bjw-card > .bjw-loot > Zeile).
+   Trennlinie unten; die Seltenheit zeigt ein 3-px-Streifen links statt eines Rahmens. */
 .bjw-loot-row {
   display: flex;
   align-items: center;
   gap: 8px;
   min-height: 42px;
   padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.12);
   cursor: pointer;
 }
+.bjw-loot-list > .bjw-loot-row:last-child { border-bottom-color: transparent; }
 
 .bjw-loot-row.undiscovered {
   cursor: default;
@@ -523,27 +555,19 @@
 }
 
 .bjw-loot-row:not(.undiscovered):hover {
-  border-color: var(--accent-2);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 6px rgba(154, 128, 96, 0.28);
+  background: rgba(255, 255, 255, 0.07);
 }
 
-/* Rarity nur als Zellenrahmen (`rarityClass`, items.ts — dieselbe Klasse/Farbformel wie
+/* Rarity nur als Streifen links (`rarityClass`, items.ts — dieselbe Klasse/Farbformel wie
    `ItemCell`/components.css `.item-cell.rarity-*`), hier auf die eigene `.bjw-loot-row` statt auf
    `.item-cell` selbst angewendet (kein ItemCell-Reuse nötig — die Zeile braucht eigenes
    Klick-/Layout-Verhalten, s. LootRow in BestiaryPage.tsx). */
-.bjw-loot-row.rarity-magic { border-color: var(--rar-magic); }
-.bjw-loot-row.rarity-rare { border-color: var(--rar-rare); }
-.bjw-loot-row.rarity-superRare { border-color: var(--rar-superRare); }
-.bjw-loot-row.rarity-epic { border-color: var(--rar-epic); }
-.bjw-loot-row.rarity-legendary {
-  border-color: var(--rar-legendary);
-  box-shadow: 0 0 6px rgba(224, 144, 42, 0.28);
-}
-.bjw-loot-row.rarity-godly {
-  border-color: var(--rar-godly);
-  box-shadow: 0 0 7px rgba(255, 215, 0, 0.32);
-}
+.bjw-loot-row.rarity-magic { border-left-color: var(--rar-magic); }
+.bjw-loot-row.rarity-rare { border-left-color: var(--rar-rare); }
+.bjw-loot-row.rarity-superRare { border-left-color: var(--rar-superRare); }
+.bjw-loot-row.rarity-epic { border-left-color: var(--rar-epic); }
+.bjw-loot-row.rarity-legendary { border-left-color: var(--rar-legendary); }
+.bjw-loot-row.rarity-godly { border-left-color: var(--rar-godly); }
 
 .bjw-loot-icon {
   position: relative;
@@ -674,4 +698,13 @@
    Verkleinerungsregel mehr nötig ist. */
 .bjw-card .codex-card-zonehint {
   text-align: center;
+}
+
+/* claude:2026-10-18T11:30:00+02:00 — Champion-Kodex: `.codex-stat` (pages.css, 1-px-Kasten je Zelle) auf der Bestiarium-Karte
+   ohne Kasten, Trennung über Linie unten; Übersteuerung hier mit höherer Spezifität. */
+.bjw-card .codex-stat {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(216, 192, 106, 0.14);
+  padding: 4px 4px;
 }

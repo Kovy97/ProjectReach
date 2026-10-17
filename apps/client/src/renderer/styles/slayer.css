@@ -351,6 +351,11 @@
   background-position: center, center, 0 0;
   background-size: auto, auto, 256px 256px;
   background-repeat: no-repeat, no-repeat, repeat;
+  /* claude:2026-10-18T10:30:00+02:00 — Chef 18.10. „Layer-Probleme bei jedem Container": Der Verlauf
+     lag nur auf der padding-box, der 11-px-Rahmenstreifen zeigte rohen Basalt ⇒ heller Ring wie eine
+     verrutschte zweite Ebene. Alle Schichten über die ganze Box (wie bestiary.css/options.css). */
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 /* ─── Auftragszettel: Bild | Ziel | Aktionen ───────────────────────────────
@@ -373,15 +378,14 @@
   aspect-ratio: 1 / 1;
   border-style: solid;
   border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
+  /* claude:2026-10-18T11:30:00+02:00 — R3: Gravewood-Kartenrahmen statt Holz; Schichten über die ganze Box. */
+  border-width: 6px;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
   background:
     radial-gradient(ellipse at 50% 60%, rgba(137, 107, 68, 0.18), transparent 65%),
-    var(--ds-metal-2, #140e0a);
+    #0b0f11;
+  background-origin: border-box;
+  background-clip: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -498,7 +502,8 @@
   gap: var(--sp-3);
 }
 
-/* Leder-Fläche + Holz-Eckrahmen der Karte bleiben (Chef 26.08.: „kein Holz" als Fläche). */
+/* claude:2026-10-18T11:30:00+02:00 — R3: Karte im Gravewood-Kartenrahmen (gleiche Familie wie die Basalt-Sektion),
+   statt Holzrahmen + Leder. Alle Schichten über die ganze Box (R1). */
 .slayer-shop-card {
   position: relative;
   display: grid;
@@ -509,19 +514,18 @@
   column-gap: var(--sp-3);
   row-gap: var(--sp-1);
   min-width: 0;
-  padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
   border-style: solid;
   border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  background:
-    linear-gradient(rgba(18, 12, 7, 0.58), rgba(8, 5, 3, 0.74)),
-    url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
-  background-size: auto, 280px 280px;
+  border-width: 6px;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
+  background-color: #0b0f11;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 .slayer-page .slayer-shop-card.slayer-card-locked {
@@ -655,3 +659,42 @@
 .slayer-page .slayer-shop-card .slayer-shop-cell.rarity-epic      { background: radial-gradient(circle at 50% 45%, rgba(176, 127, 216, 0.62), transparent 72%); }
 .slayer-page .slayer-shop-card .slayer-shop-cell.rarity-legendary { background: radial-gradient(circle at 50% 45%, rgba(224, 144, 42, 0.62), transparent 72%); }
 .slayer-page .slayer-shop-card .slayer-shop-cell.rarity-godly     { background: radial-gradient(circle at 50% 45%, rgba(255, 215, 0, 0.62), transparent 72%); }
+
+/* ─── Reiter Belohnungs-Shop | Jagdbuch ─────────────────────────────────────
+   claude:2026-10-18T11:30:00+02:00 — Bedienelemente (Eisenrahmen, Rezept wie die Aufgaben-Reiter), sitzen in
+   der Basalt-Sektion; kein eigener Streifen darum. */
+.slayer-lower-tabs {
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+}
+.slayer-lower-tab {
+  flex: 1 1 0;
+  max-width: 320px;
+  min-height: 44px;
+  padding: 5px var(--sp-4);
+  border: 10px solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+  background:
+    linear-gradient(rgba(14, 17, 18, 0.86), rgba(7, 9, 10, 0.94)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  color: #a9b1b2;
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.slayer-lower-tab:hover {
+  color: var(--gold, #d8c06a);
+  filter: brightness(1.08);
+}
+.slayer-lower-tab.is-active {
+  background:
+    linear-gradient(rgba(75, 53, 25, 0.69), rgba(18, 16, 13, 0.92)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  color: var(--ds-gold-bright, #f0dca0);
+}

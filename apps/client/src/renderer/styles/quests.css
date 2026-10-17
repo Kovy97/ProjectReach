@@ -1004,23 +1004,6 @@
   min-height: 0;
 }
 
-.quests-contract-wall .npc-greeting-head {
-  border: clamp(8px, 0.58vw, 12px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
-  background:
-    linear-gradient(rgba(12, 15, 16, 0.76), rgba(5, 7, 8, 0.92)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
-}
-
-.quests-contract-wall .npc-bubble {
-  border: 7px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
-  border-radius: 0;
-  background:
-    linear-gradient(rgba(20, 16, 12, 0.78), rgba(7, 9, 10, 0.92)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
-}
-
 .quests-contract-wall .npc-bubble--tail-left::before,
 .quests-contract-wall .npc-bubble--tail-left::after {
   content: none;
@@ -1041,15 +1024,6 @@
 .quests-contract-wall .quests-header .quest-token-badge--lg .quest-token-badge-icon-img {
   width: 44px;
   height: 44px;
-}
-
-.quests-contract-wall .quest-token-badge {
-  min-width: clamp(150px, 11vw, 210px);
-  border: clamp(8px, 0.56vw, 12px) solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
-  background:
-    linear-gradient(rgba(12, 15, 16, 0.8), rgba(6, 8, 9, 0.93)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
 }
 
 .quests-contract-wall .quests-tabs {
@@ -1380,4 +1354,86 @@
   .quests-contract-wall .quests-content--daily .quests-list {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* ═══ Struktur Runde 2 (Chef 18.10.2026) ═══════════════════════════════════════════════════════════
+   claude:2026-10-18T11:45:00+02:00 — R2/R3: EINE Rahmenfamilie je Ebene. Sektion = Gravewood panel-frame
+   (wie Slayer und Laden), Karte = Gravewood card-frame, Bedienelement = Eisen (Reiter, Einlösen).
+   Vorher: Holz-Ornamentrahmen > Eisen-Panel > Eisen-Karte > Eisen-Unterbox > Eisen-Knopf. Entfernt wurden
+   die Rahmen um Kopfzeile, Meisterliste, Detailbühne, Chronik-Archiv, Ziele-Zeile und Belohnungslager;
+   die Sektion selbst bleibt der einzige Rahmen, Unterteilung per Trennlinie/Abstand. R1: alle
+   Hintergrundschichten auf border-box. */
+.quests-contract-wall .quests-command-header {
+  /* R4: wie .slayer-head / .shopv2-head, Begrüßung links, Marken rechts, ohne eigene Tafel. */
+  border: 0;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  gap: var(--sp-4);
+}
+.quests-contract-wall .quests-command-header > .npc-greeting {
+  min-height: 72px;
+}
+.quests-contract-wall .quests-header {
+  padding: 0;
+  border-left: 0;
+}
+
+.quests-contract-wall .quests-content {
+  border: 11px solid transparent;
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 11px;
+  padding: var(--sp-3);
+  background-color: #0d1114;
+  background-image:
+    linear-gradient(rgba(6, 9, 11, 0.4), rgba(4, 6, 8, 0.6)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: none;
+}
+
+/* Karten */
+.quests-contract-wall :is(.quest-strand, .quest-card, .quest-shop-offer) {
+  border: 6px solid transparent;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
+  background-color: #0b0f11;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+/* Erledigt-Streifen als Fläche statt inset-Linie neben dem Bilderrahmen (R1). */
+.quests-contract-wall .quest-card--completed {
+  box-shadow: none;
+  background-image:
+    linear-gradient(rgba(22, 49, 29, 0.42), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+}
+
+/* Unterflächen ohne eigenen Rahmen (liegen schon in der Sektion) */
+.quests-contract-wall :is(.quest-master, .quest-shop-panel, .quest-detail) {
+  border: 0;
+  border-image: none;
+  background: none;
+  box-shadow: none;
+}
+.quests-contract-wall .quest-master,
+.quests-contract-wall .quest-shop-panel {
+  padding: var(--sp-2);
+}
+
+/* Marken-Zähler: gleiches Kopf-Chip-Rezept wie .slayer-balance / .shopv2-balance (Holzrahmen, dunkler Grund). */
+.quests-contract-wall .quests-header .quest-token-badge {
+  border: var(--frame-w) solid transparent;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 stretch;
+  background:
+    linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)),
+    url("../assets/bg_black.webp") repeat;
+  background-origin: border-box;
+  background-clip: border-box;
 }
