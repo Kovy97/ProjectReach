@@ -1,6 +1,6 @@
 import type { ActionId, ContentDB, GameState, ItemId } from "@hearthforge/shared";
 import {
-  syncBankOrder, effectiveBankCapacity, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, thievingRiskMods } from "@hearthforge/shared";
+  syncBankOrder, effectiveBankCapacity, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, masteryXpPerCompletion, thievingRiskMods } from "@hearthforge/shared";
 
 const OUT_OF_COMBAT_WARD_REGEN_PCT = 0.05;
 import type { ActionDef } from "@hearthforge/shared";
@@ -210,7 +210,9 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
     + masterDoubleYieldBonus(state, content, action.skill)
     + gatherPoolPreserveAsDouble;
   const mastery = (state.mastery[action.id] ??= { xp: 0 });
-  mastery.xp += action.xp;
+  // claude:2026-10-17T19:50:00+02:00 — Mastery-Untergrenze nach Basis-Dauer ab Mastery 50 (shared masteryXpPerCompletion):
+  // reine Arithmetik, kein RNG-Draw ⇒ offline==online unberührt.
+  mastery.xp += masteryXpPerCompletion(action, levelFromXp(mastery.xp));
 
   if (action.gold) {
     // Gold-Beute zuerst würfeln (RNG-stabil), dann mit dem Risiko-Multiplikator skalieren.

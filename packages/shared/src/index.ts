@@ -7210,6 +7210,27 @@ export function defaultSettings(): GameSettings {
 
 /** Mastery: gemeinsame Level-Kurve mit Fertigkeiten; höchstes Level. */
 export const MASTERY_MAX_LEVEL = 99;
+
+// claude:2026-10-17T19:50:00+02:00 — Chef-GO 17.10. (Spieler-Review „945 Stunden Holz-Meisterschaft
+// 78→99"): Mastery-XP je Abschluss war exakt `action.xp` auf der 13-Mio-Kurve ⇒ billige Aktionen
+// (Normaler Baum 4 XP) brauchten >1.000 h bis 99, 523 von 861 Aktionen >100 h. Untergrenze nach
+// BASIS-Dauer, aber erst AB Mastery 50 (Chef-Wahl): der Skill-Pool füllt sich aus derselben XP und
+// wäre mit Untergrenze ab Stufe 1 für neue Spieler in Minuten voll ⇒ Frühspiel und Pool bleiben exakt
+// wie vorher, nur die lange Strecke wird kürzer (Normaler Baum 78→99 ~23 h statt ~950 h, längste
+// Aktion 1→99 ~72 h statt bis 3.933 h). Kein neues Save-Feld; vorhandene Mastery-XP bleibt.
+/** Mindest-Mastery-XP je Sekunde BASIS-Aktionsdauer (Werkzeug/Tempo ändern den Wert je Abschluss nicht). */
+export const MASTERY_XP_FLOOR_PER_SEC = 60;
+/** Ab diesem Mastery-Level greift die Dauer-Untergrenze (darunter exakt `action.xp` wie bisher). */
+export const MASTERY_XP_FLOOR_FROM_LEVEL = 50;
+
+/**
+ * Mastery-XP, die EIN Abschluss einer Aktion beim aktuellen Mastery-Level (VOR dem Abschluss) gibt:
+ * unter Level 50 `action.xp`, ab 50 mindestens die Dauer-Untergrenze.
+ */
+export function masteryXpPerCompletion(action: { xp: number; durationMs: number }, masteryLevel: number): number {
+  if (masteryLevel < MASTERY_XP_FLOOR_FROM_LEVEL) return action.xp;
+  return Math.max(action.xp, Math.round((MASTERY_XP_FLOOR_PER_SEC * action.durationMs) / 1000));
+}
 /** Chance auf doppelten Ertrag pro Mastery-Level (linear bis zur Kappe). */
 export const MASTERY_DOUBLE_PER_LEVEL = 0.005;
 /** Obergrenze der Doppel-Ertrag-Chance (bei Mastery 99 ≈ 49 %). */

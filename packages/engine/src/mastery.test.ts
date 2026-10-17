@@ -4,6 +4,7 @@ import {
   masteryDoubleChance,
   masteryPreserveChance,
   masterySpeedMult,
+  masteryXpPerCompletion,
   poolCheckpointBonus,
 } from "@hearthforge/shared";
 import { createGame } from "./state";
@@ -29,10 +30,36 @@ describe("mastery system", () => {
     const m = s.mastery.cut_normal_tree;
     expect(m, "keine Mastery-XP angesammelt").toBeDefined();
     expect(m!.xp).toBeGreaterThan(0);
-    // Mastery-XP = Abschlüsse × action.xp = Skill-XP-Zuwachs (oberhalb L40, ohne Lift).
+    // Mastery-XP = Abschlüsse × action.xp = Skill-XP-Zuwachs (oberhalb L40, ohne Lift; Mastery < 50).
     expect(m!.xp).toBe((s.skills.woodcutting?.xp ?? 0) - before);
     // Andere Aktionen bleiben unberührt.
     expect(s.mastery.mine_copper).toBeUndefined();
+  });
+
+  it("Mastery-XP je Abschluss: Dauer-Untergrenze ab Mastery 50, teure Aktionen unverändert", () => {
+    // claude:2026-10-17T19:50:00+02:00 — Chef-GO 17.10. (Review „945 h Holz-Meisterschaft 78→99").
+    const tree = content.actions.cut_normal_tree!;
+    expect(masteryXpPerCompletion(tree, 49)).toBe(tree.xp); // Frühspiel/Pool wie bisher
+    expect(masteryXpPerCompletion(tree, 50)).toBe(168); // 60 XP × 2,8 s
+    const god = content.actions.cut_godwood_tree!;
+    expect(masteryXpPerCompletion(god, 80)).toBe(god.xp);
+    // Keine Aktion braucht für Mastery 50→99 bei Basisdauer mehr als ~60 h (vorher bis ~3.900 h).
+    for (const a of Object.values(content.actions)) {
+      const hours = ((xpForLevel(99) - xpForLevel(50)) / masteryXpPerCompletion(a, 50)) * a.durationMs / 3_600_000;
+      expect(hours, a.id).toBeLessThan(61);
+    }
+  });
+
+  it("Engine vergibt ab Mastery 50 die Untergrenze je Abschluss", () => {
+    const s = createGame({ name: "X" }, content, 1);
+    s.skills.woodcutting = { xp: xpForLevel(45) };
+    s.mastery.cut_normal_tree = { xp: xpForLevel(78) };
+    const before = s.skills.woodcutting.xp;
+    setActiveAction(s, content, "cut_normal_tree");
+    advance(s, content, 60_000);
+    const completions = (s.skills.woodcutting.xp - before) / content.actions.cut_normal_tree!.xp;
+    expect(completions).toBeGreaterThan(0);
+    expect(s.mastery.cut_normal_tree!.xp - xpForLevel(78)).toBe(completions * 168);
   });
 
   it("Doppel-Ertrag-Chance: Level 1 = 0, steigt linear, gekappt bei 50%", () => {

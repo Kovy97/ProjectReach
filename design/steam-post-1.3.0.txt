@@ -54,6 +54,9 @@ A HIGHER ENDGAME
 
 QUALITY OF LIFE
 
+- Mastery no longer takes forever on cheap actions. From mastery level 50, every action earns at
+  least 60 mastery XP per second of its base time, so the Normal Tree goes from 78 to 99 in about
+  23 hours instead of 950. Nothing changes below level 50 or in the mastery pool.
 - Ward Leech now shows in the combat log.
 - Item cards tell you when an effect doesn't stack. Only the strongest source counts, except for
   the on-kill heal, ward and recovery bonuses, which add up.

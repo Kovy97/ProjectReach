@@ -12,7 +12,7 @@ import {
   masterySpeedFor,
   xpForLevel,
 } from "@hearthforge/engine";
-import { MASTERY_MAX_LEVEL, MASTERY_POOL_CHECKPOINTS } from "@hearthforge/shared";
+import { MASTERY_MAX_LEVEL, MASTERY_POOL_CHECKPOINTS, masteryXpPerCompletion } from "@hearthforge/shared";
 import type { ActionDef, LocalizedString, SkillId } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -138,7 +138,8 @@ function MasteryActionRow({ action }: { action: ActionDef }): JSX.Element {
     if (state.activeActionId === action.id) {
       const rate = computeActionRate(state, content, action);
       const masteryXpPerHour = rate.successChance > 0 && rate.avgDurationMs > 0
-        ? rate.successChance * (3_600_000 / rate.avgDurationMs) * action.xp
+        // claude:2026-10-17T19:50:00+02:00 — ETA mit derselben Mastery-XP je Abschluss wie die Engine (Untergrenze ab 50).
+        ? rate.successChance * (3_600_000 / rate.avgDurationMs) * masteryXpPerCompletion(action, lvl)
         : 0;
       etaLine = masteryXpPerHour > 0
         ? t("skill.eta.levelIn")
@@ -255,7 +256,8 @@ function SkillBlock({
     if (activeAction && activeAction.skill === skillId) {
       const rate = computeActionRate(state, content, activeAction);
       const masteryXpPerHour = rate.successChance > 0 && rate.avgDurationMs > 0
-        ? rate.successChance * (3_600_000 / rate.avgDurationMs) * activeAction.xp
+        // claude:2026-10-17T19:50:00+02:00 — Pool-ETA mit der Engine-Mastery-XP je Abschluss (Untergrenze ab 50).
+        ? rate.successChance * (3_600_000 / rate.avgDurationMs) * masteryXpPerCompletion(activeAction, masteryLevel(state, activeAction.id))
         : 0;
       if (masteryXpPerHour > 0) etaText = formatEta((remainingXp / masteryXpPerHour) * 3_600_000, t);
     }
