@@ -2208,22 +2208,22 @@ export type WeaponType =
  * Werte spiegeln die tatsächlichen Stat-Tendenzen wider (kein Marketing-Text).
  */
 export const WEAPON_TYPE_SPECIALTY: Record<WeaponType, LocalizedString> = {
-  dagger:     { en: "Fast · High Crit · Precision",   de: "Schnell · Hohe Krit · Präzision" },
-  sword:      { en: "Balanced",                       de: "Ausgewogen" },
-  scimitar:   { en: "Fast · Crit · Precision",        de: "Schnell · Krit · Präzision" },
-  mace:       { en: "One-Handed · Armor Penetration", de: "Einhändig · Rüstungsdurchdringung" },
-  axe:        { en: "Versatile · Woodcutting",        de: "Vielseitig · Holzfällen" },
-  battleaxe:  { en: "High Crit Damage · Medium Speed", de: "Hoher Krit-Schaden · Mittelschnell" },
-  spear:      { en: "Two-Handed · Fastest · Precision", de: "Zweihändig · Schnellste · Präzision" },
-  greataxe:   { en: "Two-Handed · High Strength, Slow", de: "Zweihändig · Hohe Stärke, Langsam" },
-  greatsword: { en: "Two-Handed · Balanced, Fastest Heavy", de: "Zweihändig · Ausgewogen, Schnellste Schwere" },
-  maul:       { en: "Two-Handed · Max Impact · Armor Pen", de: "Zweihändig · Max. Impact · Rüstungsbruch" },
-  shortbow:   { en: "Fast Shots · Precision",         de: "Schnelle Schüsse · Präzision" },
-  longbow:    { en: "Range · High Precision",         de: "Reichweite · Hohe Präzision" },
-  staff:      { en: "Two-Handed · Magic · Ward Break", de: "Zweihändig · Magie · Ward-Bruch" },
-  wand:       { en: "Fast · Ward Break · Frost/Shock", de: "Schnell · Ward-Bruch · Frost/Schock" },
-  focus:      { en: "Offhand · +Spell Reserve",       de: "Nebenhand · +Zauberreserve" },
-  scepter:    { en: "One-Handed Magic · Ward Break",  de: "Einhändige Magie · Ward-Bruch" },
+  dagger:     { en: "Fast · High Crit · Precision",   de: "Schnell · Hohe Krit · Präzision", es: "Rápida · Crítico alto · Precisión", fr: "Rapide · Crit élevé · Précision", "pt-BR": "Rápida · Crítico alto · Precisão", ru: "Быстрый · Высокий крит · Точность", zh: "迅捷 · 高暴击 · 精准" },
+  sword:      { en: "Balanced",                       de: "Ausgewogen", es: "Equilibrada", fr: "Équilibrée", "pt-BR": "Equilibrada", ru: "Сбалансированный", zh: "均衡" },
+  scimitar:   { en: "Fast · Crit · Precision",        de: "Schnell · Krit · Präzision", es: "Rápida · Crítico · Precisión", fr: "Rapide · Crit · Précision", "pt-BR": "Rápida · Crítico · Precisão", ru: "Быстрый · Крит · Точность", zh: "迅捷 · 暴击 · 精准" },
+  mace:       { en: "One-Handed · Armor Penetration", de: "Einhändig · Rüstungsdurchdringung", es: "A una mano · Penetración de armadura", fr: "Une main · Perforation d'armure", "pt-BR": "Uma mão · Penetração de armadura", ru: "Одноручный · Пробитие брони", zh: "单手 · 破甲" },
+  axe:        { en: "Versatile · Woodcutting",        de: "Vielseitig · Holzfällen", es: "Versátil · Tala", fr: "Polyvalente · Bûcheronnage", "pt-BR": "Versátil · Lenhador", ru: "Универсальный · Древорубство", zh: "多用途 · 伐木" },
+  battleaxe:  { en: "High Crit Damage · Medium Speed", de: "Hoher Krit-Schaden · Mittelschnell", es: "Daño crítico alto · Velocidad media", fr: "Gros dégâts critiques · Vitesse moyenne", "pt-BR": "Dano crítico alto · Velocidade média", ru: "Высокий крит. урон · Средняя скорость", zh: "高暴击伤害 · 中速" },
+  spear:      { en: "Two-Handed · Fastest · Precision", de: "Zweihändig · Schnellste · Präzision", es: "A dos manos · La más rápida · Precisión", fr: "Deux mains · La plus rapide · Précision", "pt-BR": "Duas mãos · A mais rápida · Precisão", ru: "Двуручный · Самый быстрый · Точность", zh: "双手 · 最快 · 精准" },
+  greataxe:   { en: "Two-Handed · High Strength, Slow", de: "Zweihändig · Hohe Stärke, Langsam", es: "A dos manos · Mucha fuerza, lenta", fr: "Deux mains · Grande force, lente", "pt-BR": "Duas mãos · Muita força, lenta", ru: "Двуручный · Много силы, медленный", zh: "双手 · 高力量，缓慢" },
+  greatsword: { en: "Two-Handed · Balanced, Fastest Heavy", de: "Zweihändig · Ausgewogen, Schnellste Schwere", es: "A dos manos · Equilibrada, la pesada más rápida", fr: "Deux mains · Équilibrée, la plus rapide des lourdes", "pt-BR": "Duas mãos · Equilibrada, a pesada mais rápida", ru: "Двуручный · Сбалансированный, самый быстрый из тяжёлых", zh: "双手 · 均衡，重型中最快" },
+  maul:       { en: "Two-Handed · Max Impact · Armor Pen", de: "Zweihändig · Max. Impact · Rüstungsbruch", es: "A dos manos · Impacto máximo · Penetración de armadura", fr: "Deux mains · Impact maximal · Perforation d'armure", "pt-BR": "Duas mãos · Impacto máximo · Penetração de armadura", ru: "Двуручный · Максимальный удар · Пробитие брони", zh: "双手 · 极限冲击 · 破甲" },
+  shortbow:   { en: "Fast Shots · Precision",         de: "Schnelle Schüsse · Präzision", es: "Disparos rápidos · Precisión", fr: "Tirs rapides · Précision", "pt-BR": "Disparos rápidos · Precisão", ru: "Быстрые выстрелы · Точность", zh: "快速射击 · 精准" },
+  longbow:    { en: "Range · High Precision",         de: "Reichweite · Hohe Präzision", es: "Alcance · Gran precisión", fr: "Portée · Grande précision", "pt-BR": "Alcance · Alta precisão", ru: "Дальность · Высокая точность", zh: "射程 · 高精准" },
+  staff:      { en: "Two-Handed · Magic · Ward Break", de: "Zweihändig · Magie · Ward-Bruch", es: "A dos manos · Magia · Ruptura de guarda", fr: "Deux mains · Magie · Brise-barrière", "pt-BR": "Duas mãos · Magia · Quebra de guarda", ru: "Двуручный · Магия · Пробой оберега", zh: "双手 · 魔法 · 破结界" },
+  wand:       { en: "Fast · Ward Break · Frost/Shock", de: "Schnell · Ward-Bruch · Frost/Schock", es: "Rápida · Ruptura de guarda · Escarcha/Descarga", fr: "Rapide · Brise-barrière · Givre/Foudre", "pt-BR": "Rápida · Quebra de guarda · Gelo/Choque", ru: "Быстрый · Пробой оберега · Холод/Шок", zh: "迅捷 · 破结界 · 冰霜/电击" },
+  focus:      { en: "Offhand · +Spell Reserve",       de: "Nebenhand · +Zauberreserve", es: "Mano secundaria · +Reserva de hechizos", fr: "Main secondaire · +Réserve de sorts", "pt-BR": "Mão secundária · +Reserva de feitiços", ru: "Вторая рука · +Запас заклинаний", zh: "副手 · +法术储备" },
+  scepter:    { en: "One-Handed Magic · Ward Break",  de: "Einhändige Magie · Ward-Bruch", es: "Magia a una mano · Ruptura de guarda", fr: "Magie à une main · Brise-barrière", "pt-BR": "Magia de uma mão · Quebra de guarda", ru: "Одноручная магия · Пробой оберега", zh: "单手魔法 · 破结界" },
 };
 
 /** Flache Boni eines Ausrüstungsstücks auf abgeleitete Werte. */

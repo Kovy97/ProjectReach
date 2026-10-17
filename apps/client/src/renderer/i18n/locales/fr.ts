@@ -716,7 +716,7 @@ export const fr: Record<string, string> = {
     "itip.attackSpeed": "Vitesse d'attaque",
     "itip.weaponDamage": "Dégâts",
     "itip.tempo": "Vitesse",
-    "itip.tempoEffective": "Effective",
+    "itip.tempoEffective": "Effectif",
     // codex:2026-08-01T13:28:00+02:00 — Abréviation statistique stable et compacte.
     "itip.dps": "DPS",
     "itip.buff": "Bonus temporaire",
@@ -735,7 +735,7 @@ export const fr: Record<string, string> = {
     "itip.buffReplace.attribute": "Remplace votre bonus d'attribut actif.",
     "itip.buffReplace.food": "Remplace votre bonus alimentaire actif.",
     "itip.buffReplace.utility": "Remplace votre bonus de récolte actif.",
-    "itip.group.offense": "Offense",
+    "itip.group.offense": "Attaque",
     "itip.group.defense": "Défense",
     "itip.group.attributes": "Attributs",
     "itip.group.skill": "Compétence",
