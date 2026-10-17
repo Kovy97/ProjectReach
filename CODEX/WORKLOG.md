@@ -1,5 +1,21 @@
 # Codex-Arbeitslog
 
+## 2026-10-17 abends — Claude: Meisterschafts-Untergrenze + Ring-Vollprüfung
+
+<!-- claude:2026-10-17T20:00:00+02:00 -->
+
+Spieler-Review (Chef 17.10.): „945 Stunden, um die Holz-Meisterschaft von 78 auf 99 zu bringen.“ Nachgerechnet: stimmt
+(Normaler Baum, 4 XP je Abschluss auf der 13-Mio-Kurve; 523 von 861 Aktionen brauchten >100 h bis 99, Spitze 3.933 h).
+Chef-GO: Untergrenze 60 Mastery-XP je Sekunde Basisdauer, **erst ab Mastery 50** (ab 1 hätte der Skill-Pool sich für
+neue Spieler in Minuten gefüllt). `shared` `MASTERY_XP_FLOOR_PER_SEC`/`MASTERY_XP_FLOOR_FROM_LEVEL`/
+`masteryXpPerCompletion`, `engine/tick.ts` Mastery-Vergabe, `MasteryPage.tsx` beide ETAs. Kein Save-Feld. Commit `fe67a0b`.
+Geprüft: Engine 1751/1751, Client 259/259, Typecheck shared/engine/client, Build. Patchnotes + Steam-Post ergänzt.
+
+Ring-Vollprüfung (Chef-Frage „nur Slayer oder alle?“): automatische Probe über alle 31 Seiten (Seitenleiste + Kopfleiste),
+77 gerahmte Bauteile, Helligkeit Rahmenstreifen vs. Fläche, Ist gegen border-box-Variante. Kein sichtbarer Ring mehr;
+9 messbare Restdifferenzen in ×3-Zoom unsichtbar. Struktur-Runde 2 fehlt noch auf Charakter, New Haven, Verzaubern,
+Optionen, Post, Wiki, Fertigkeitsübersicht. Proben: Scratchpad `probe-all-rings.mjs`, `probe-ring-pixels.mjs`.
+
 ## 2026-10-18 — Claude: UI-Fundament Runde 2 (Struktur, Ebenenversatz)
 
 <!-- claude:2026-10-18T13:00:00+02:00 -->
