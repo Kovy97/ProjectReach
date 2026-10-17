@@ -122,9 +122,10 @@ describe("Balance-Envelope §1: Existenz-Guards", () => {
     const brew = content.items.slayer_war_brew?.buff?.bonus;
     expect(brew?.attackIntervalMs).toBeLessThan(0);
     expect(brew?.critChance).toBeGreaterThan(0);
-    // Globale Kampf-Pet-Passiva (lifesteal/damageReduction/sellBonus) existieren im Katalog.
+    // Globale Kampf-Pet-Passiva existieren im Katalog. claude:2026-10-18T02:00:00+02:00 — 1.3.0: das sellBonus-Pet entfällt
+    // (Pergamotte trägt jetzt „Archivar"), dafür Stilschaden/Essensheilung/Ward-Kapazität.
     const kinds = new Set(Object.values(content.pets ?? {}).map((p) => p.skillEffect?.kind));
-    for (const kind of ["lifesteal", "damageReduction", "sellBonus"]) {
+    for (const kind of ["lifesteal", "damageReduction", "styleDamage", "foodHealBonus", "wardCapacityPct"]) {
       expect(kinds, `Pet-Passiv ${kind}`).toContain(kind);
     }
   });
@@ -408,8 +409,9 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // 552.07 → 533.41 bei CL90. Block/Mitigation an dieser Stufe unveraendert (0.47 exakt).
     const t90 = computeStats(bis("melee", 90, "tank").state, content);
     expect(t90.armorRating).toBeCloseTo(533.41, 2);
-    // Pet-Schadensreduktion obendrauf (multiplikativ NACH Armor/Ward/Block): heute max. 3 %.
-    expect(t90.damageReduction).toBeCloseTo(0.03, 5);
+    // Pet-Schadensreduktion obendrauf (multiplikativ NACH Armor/Ward/Block). claude:2026-10-18T02:00:00+02:00 — 1.3.0
+    // Chitinpanzer „Panzerhaut" 3 % → 5 % (Werte-Datei Apply 6).
+    expect(t90.damageReduction).toBeCloseTo(0.05, 5);
   });
 
   it("Lifesteal-Schiene: max. 9,5 % (Melee-Waffe 5 % + gorehound 1,5 % + greytooth_mantle 3 %) ab CL 60; sonst 4,5 %", () => {
@@ -420,11 +422,12 @@ describe("Balance-Envelope §4: gepinnte Worst-Case-Werte (Stat × Stufe)", () =
     // (bonus.lifesteal 0.05, einzige Waffen-Lifesteal-Whitelist neben doomknight_cinderblade) bekommt
     // Requirement attack 40→70 (nächstes Craft-Tier der Zone) und ist damit ab CL 70 statt CL 40
     // legal — bei CL 60 fällt die Schiene auf 4,5 % zurück (0,095→0,045), CL 90 unverändert (0,095).
-    expect(computeStats(bis("melee", 30, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
-    expect(computeStats(bis("melee", 60, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
-    expect(computeStats(bis("melee", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.095, 5);
-    expect(computeStats(bis("ranged", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
-    expect(computeStats(bis("magic", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.045, 5);
+    // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Blutbracke „Blutspur" 1,5 % → 2 % ⇒ Schiene 4,5 → 5 % bzw. 9,5 → 10 % (Werte-Datei Apply 6).
+    expect(computeStats(bis("melee", 30, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.05, 5);
+    expect(computeStats(bis("melee", 60, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.05, 5);
+    expect(computeStats(bis("melee", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.1, 5);
+    expect(computeStats(bis("ranged", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.05, 5);
+    expect(computeStats(bis("magic", 90, "lifesteal").state, content).lifestealPct).toBeCloseTo(0.05, 5);
   });
 
   it("Ward-Schiene: BiS-Pool 583 / 777 / 1179,5 (CL 30/60/90) — der Beobachtungs-Pin des Stoff-EHP", () => {
@@ -850,8 +853,11 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // gemessen: idol_warden 53.45→52.69 s (Boss→Spieler 30.42→30.00), last_idol 179.58→176.98 s
     // (Boss→Spieler 32.77→32.32).
     const pins: Array<[WeaponStyle, string, number, number]> = [
-      ["melee", "idol_warden", 57.76, 20.76],
-      ["melee", "last_idol", 193.68, 14.70],
+      // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: Eisenschlund „Eisenkiefer" (+3 % Nahkampfschaden) ersetzt
+      // skillBoost +2 Power im Melee-„damage"-Build ⇒ idol_warden 57.76→56.145 s, last_idol 193.68→188.275 s
+      // (Boss→Spieler unverändert).
+      ["melee", "idol_warden", 56.145, 20.76],
+      ["melee", "last_idol", 188.275, 14.70],
       ["ranged", "idol_warden", 73.03, 19.6],
       ["ranged", "last_idol", 241.29, 13.5],
       ["magic", "idol_warden", 52.69, 30.00],
@@ -876,7 +882,8 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     expect(bis("ranged", 99, "damage").kit.mainhand).toBe("crownless_warbow");
     expect(bis("magic", 99, "damage").kit.mainhand).toBe("crownless_stave");
     const pins: Array<[WeaponStyle, number, number]> = [
-      ["melee", 254.69, 151.09],
+      // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Eisenkiefer +3 % Nahkampfschaden (statt +2 Power) ⇒ 254.69→247.57 / 151.09→146.86 s.
+      ["melee", 247.57, 146.86],
       ["ranged", 343.58, 204.19],
       ["magic", 236.29, 137.07],
     ];
@@ -885,8 +892,9 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
       expect(expectedTtk(style, "last_idol", 99).player, `CL 99 ${style} → last_idol`).toBeCloseTo(lastIdolS, 1);
     }
     const melee = expectedTtk("melee", "drazhan", 99).player;
-    expect(melee / expectedTtk("ranged", "drazhan", 99).player, "Parität Fernkampf/Nahkampf").toBeCloseTo(0.74, 2);
-    expect(melee / expectedTtk("magic", "drazhan", 99).player, "Parität Magie/Nahkampf").toBeCloseTo(1.08, 2);
+    // claude:2026-10-18T02:00:00+02:00 — 1.3.0: der stärkere Nahkampf-Begleiter verschiebt die Verhältnisse 0,74→0,72 / 1,08→1,05.
+    expect(melee / expectedTtk("ranged", "drazhan", 99).player, "Parität Fernkampf/Nahkampf").toBeCloseTo(0.72, 2);
+    expect(melee / expectedTtk("magic", "drazhan", 99).player, "Parität Magie/Nahkampf").toBeCloseTo(1.05, 2);
   });
 
   it("MIN_HIT_CHANCE-Boden: selbst gegen den BiS-Evasion-Build fällt die Contest-Chance nie unter 10 %", () => {
@@ -1065,7 +1073,9 @@ describe("Balance-Envelope §7: Shop-Ökonomie", () => {
           : 0,
       ),
     );
-    expect(maxSellBonus).toBeCloseTo(0.05, 5); // vellumoth „Appraiser's Eye" (Detektor)
+    // claude:2026-10-18T02:00:00+02:00 — 1.3.0: kein Begleiter trägt mehr sellBonus (Pergamotte → „Archivar"); die Schleife
+    // bleibt als Wächter, falls das Kind je zurückkehrt.
+    expect(maxSellBonus).toBe(0);
     expect(content.shop.length).toBeGreaterThan(0);
     for (const entry of content.shop) {
       const item = content.items[entry.itemId];

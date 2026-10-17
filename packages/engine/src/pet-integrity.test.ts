@@ -51,17 +51,24 @@ const ALL_SKILL_KINDS: PetSkillEffectKind[] = [
   // 1.2.0 „Fasern und Fallen" (Chef 28.08.2026): Jagen-Begleiter Leon — Chance je Fang auf zehn statt fünf
   // Beute-Durchläufe (hunting.ts grantCatch); das frühere Kind huntCatchChance ist gestrichen.
   "huntDoubleRolls",
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework
+  "bonusFind", "tierUp", "growSpeed", "thievingFinesse", "craftSuffixChance", "foodHealBonus",
+  "styleDamage", "wardCapacityPct", "prepSpeed",
 ];
 const ALL_ABILITY_KINDS: PetAbilityKind[] = [
   "stun", "burstDamage", "onHitStatus", "delayedDot", "accuracyDownEnemy", "stealDrop", "heal",
   "shield", "armorRend", "guaranteedCrit", "wardRestore", "lifestealBurst", "enemyAttackDelay",
   "blockNextEnemyHit", "armorPierceHit", "multiHit",
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework
+  "currentHpStrike", "crippleStrike", "cripplingPoison", "emberBrand", "emberDetonate", "executeBleed",
+  "frostBite", "emergencyHeal", "deathSave",
 ];
 /** Status-bringende Kinds müssen ein gültiges `status` tragen. */
 const STATUS_KINDS = new Set<PetAbilityKind>(["onHitStatus", "delayedDot"]);
 /** Globale (skill-freie) Passiv-Kinds — Gegenstück zu SKILL_SCOPED_PET_KINDS. */
 const GLOBAL_SKILL_KINDS: PetSkillEffectKind[] = [
   "spellReserve", "lifesteal", "damageReduction", "doubleLoot", "killHeal", "sellBonus",
+  "foodHealBonus", "styleDamage", "wardCapacityPct", // claude:2026-10-18T02:00:00+02:00 — 1.3.0
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -171,18 +178,94 @@ describe("pet integrity: Content-Guards (Skill-Passiv + getriggerte Ability)", (
     }
   });
 
-  it("die 6 Beispiel-Pets tragen ihre vorgesehene live-Ability", () => {
-    const expected: Record<string, PetAbilityKind> = {
-      rotbark: "stun",
-      cragmaw: "burstDamage",
-      gloomrat: "stealDrop",
-      slagfiend: "onHitStatus",
-      ashgut: "heal",
-      vellumoth: "shield",
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: Tabelle 2a/2b der Werte-Datei als Pin (ersetzt „die 6
+  // Beispiel-Pets"). Jede Abweichung braucht eine neue Kalibrierung (design/1.3.0-begleiter-werte.md).
+  it("1.3.0-Pin: alle 23 Begleiter tragen Fertigkeit, Kampf-Fähigkeit und Rolle laut Werte-Datei", () => {
+    type Pin = [PetSkillEffectKind, string | undefined, number, PetAbilityKind, number, number | undefined, string];
+    const PIN: Record<string, Pin> = {
+      rotbark: ["bonusFind", "woodcutting", 0.06, "stun", 6000, 900, "control"],
+      cragmaw: ["bonusFind", "mining", 0.05, "burstDamage", 4000, 0.08, "damage"],
+      gillrot: ["tierUp", "fishing", 0.05, "currentHpStrike", 4000, 0.16, "damage"],
+      witherling: ["growSpeed", "farming", 0.06, "delayedDot", 5000, 0.0065, "damage"],
+      sporewretch: ["tierUp", "foraging", 0.05, "accuracyDownEnemy", 6000, 0.35, "control"],
+      gloomrat: ["thievingFinesse", "thieving", 0.04, "stealDrop", 6000, 0.25, "loot"],
+      booted_tomcat: ["huntDoubleRolls", "hunting", 0.05, "crippleStrike", 6000, 0.05, "control"],
+      slagfiend: ["craftSuffixChance", "smithing", 0.05, "emberBrand", 4000, 0.012, "damage"],
+      ashgut: ["foodHealBonus", undefined, 0.1, "emergencyHeal", 20000, 0.15, "protection"],
+      quillshrike: ["doubleDrop", "leatherworking", 0.05, "multiHit", 4500, 0.03, "damage"],
+      flayling: ["prepSpeed", "leatherworking", 0.06, "armorRend", 5000, 0.2, "support"],
+      silkweaver: ["refundMaterial", "tailoring", 0.05, "deathSave", 60000, undefined, "protection"],
+      gemwraith: ["tierUp", "jewelcrafting", 0.05, "guaranteedCrit", 4500, 0.09, "damage"],
+      glyphmaw: ["bonusRunes", "runecrafting", 0.045, "wardRestore", 5000, 0.04, "support"],
+      vellumoth: ["tierUp", "runecrafting", 0.05, "shield", 12000, 0.1, "protection"],
+      hemlock: ["potionPreserve", "herblore", 0.05, "cripplingPoison", 5000, 0.0133, "control"],
+      gorehound: ["lifesteal", undefined, 0.02, "executeBleed", 4500, 0.02, "damage"],
+      carrionwing: ["doubleLoot", undefined, 0.05, "armorPierceHit", 4500, 0.09, "damage"],
+      ironmaw: ["styleDamage", undefined, 0.03, "enemyAttackDelay", 5000, 750, "control"],
+      carapace: ["damageReduction", undefined, 0.05, "blockNextEnemyHit", 9000, undefined, "protection"],
+      pyreling: ["spellReserve", undefined, 0.05, "emberDetonate", 6000, 0.035, "damage"],
+      hoarspite: ["wardCapacityPct", undefined, 0.06, "frostBite", 8000, 500, "control"],
+      charnel: ["killHeal", undefined, 0.03, "lifestealBurst", 5000, 0.035, "protection"],
     };
-    for (const [id, kind] of Object.entries(expected)) {
-      expect(pets[id]?.combatAbility.kind, `Pet ${id}: erwartete Ability ${kind}`).toBe(kind);
+    expect(Object.keys(pets).sort()).toEqual(Object.keys(PIN).sort());
+    for (const [id, [sKind, sSkill, sValue, aKind, interval, aValue, role]] of Object.entries(PIN)) {
+      const pet = pets[id]!;
+      expect(pet.skillEffect.kind, `${id}: Fertigkeit`).toBe(sKind);
+      expect(pet.skillEffect.skill, `${id}: Fertigkeits-Skill`).toBe(sSkill);
+      expect(pet.skillEffect.value, `${id}: Fertigkeits-Wert`).toBe(sValue);
+      expect(pet.combatAbility.kind, `${id}: Kampf-Fähigkeit`).toBe(aKind);
+      expect(pet.combatAbility.intervalMs, `${id}: Intervall`).toBe(interval);
+      expect(pet.combatAbility.value, `${id}: Fähigkeits-Wert`).toBe(aValue);
+      expect(pet.role, `${id}: Rolle`).toBe(role);
+      // Jede Fertigkeit trägt einen Signatur-Namen (en+de).
+      const sn = pet.skillEffect.name;
+      expect(typeof sn === "object" && !!sn.en && !!(sn as { de?: string }).de, `${id}: skillEffect.name en/de`).toBe(true);
     }
+    // Zusatzfelder (Werte-Datei §2c).
+    expect(pets.rotbark!.skillEffect.pool).toBe("rootFind");
+    expect(pets.cragmaw!.skillEffect.pool).toBe("veinGem");
+    expect(pets.gillrot!.skillEffect.ladder).toBe("fish");
+    expect(pets.sporewretch!.skillEffect.ladder).toBe("forage");
+    expect(pets.gemwraith!.skillEffect.ladder).toBe("gemCut");
+    expect(pets.vellumoth!.skillEffect.ladder).toBe("runes");
+    expect(pets.gloomrat!.skillEffect.stunMult).toBe(0.5);
+    expect(pets.ironmaw!.skillEffect.style).toBe("melee");
+    expect(pets.witherling!.combatAbility.status).toBe("poison");
+    expect(pets.slagfiend!.combatAbility.durationMs).toBe(5000);
+    expect(pets.pyreling!.combatAbility.burnValue).toBe(0.006);
+    // Chef 17.10.2026: Chitinpanzer 1/105.000 → 1/80.000.
+    expect(pets.carapace!.dropChance).toBeCloseTo(1 / 80000, 12);
+  });
+
+  it("1.3.0-Rollen-Bänder (Referenzkampf R der Werte-Datei §0/§1): direkte Schadens-Pets ≈ 1,8–2,2 %/s, Kontroll-Pets 13–17 %", () => {
+    // Schaden: Sofortschaden-Kinds (value × maxHp je Takt) → %/s. Kontrolle: verhinderte Gegner-Angriffe
+    // in R (Gegner-Intervall 3,0 s): stun/delay = ms / Takt; Treffer-Malus linear (≤ value × Fenster/Takt).
+    const ENEMY_INTERVAL_MS = 3000;
+    const dmg = (id: string, hits = 1) => {
+      const ab = pets[id]!.combatAbility;
+      return ((ab.value ?? 0) * hits) / (ab.intervalMs / 1000);
+    };
+    for (const id of ["cragmaw", "gemwraith", "carrionwing"]) {
+      expect(dmg(id), `${id}: Schadens-Band`).toBeGreaterThanOrEqual(0.018);
+      expect(dmg(id), `${id}: Schadens-Band`).toBeLessThanOrEqual(0.022);
+    }
+    expect(dmg("quillshrike", 3), "quillshrike: Schadens-Band").toBeCloseTo(0.02, 3);
+    // Sog: 16 % der AKTUELLEN LP, Ø-LP 50 % ⇒ Ø 2,0 %/s.
+    expect(dmg("gillrot") * 0.5).toBeCloseTo(0.02, 3);
+    const ctl = (id: string) => (pets[id]!.combatAbility.value ?? 0) / pets[id]!.combatAbility.intervalMs;
+    for (const id of ["rotbark", "ironmaw"]) {
+      expect(ctl(id), `${id}: Kontroll-Band`).toBeCloseTo(0.15, 3);
+    }
+    const acc = pets.sporewretch!.combatAbility;
+    expect(((acc.value ?? 0) * 3000) / acc.intervalMs, "sporewretch: ≤ 17,5 %").toBeLessThanOrEqual(0.175);
+    // Frostbiss: Frost-Slow vernachlässigt; jeder 3. Biss friert ⇒ 1 Angriff je 24 s ≈ 12,5 % (+ Frost ≈ 2,5 %).
+    const fb = pets.hoarspite!.combatAbility;
+    expect(ENEMY_INTERVAL_MS / (fb.intervalMs * 3)).toBeCloseTo(0.125, 3);
+    // Schutz: Schild/Block/Notration/Rettungsfaden ≤ 60 % maxHp/min.
+    expect((pets.vellumoth!.combatAbility.value ?? 0) * (60000 / pets.vellumoth!.combatAbility.intervalMs)).toBeLessThanOrEqual(0.6);
+    expect((pets.ashgut!.combatAbility.value ?? 0) * (60000 / pets.ashgut!.combatAbility.intervalMs)).toBeLessThanOrEqual(0.6);
+    // Schildwall: ein geblockter R-Treffer (7,5 % maxHp) je 9 s ⇒ 50 %/min.
+    expect(0.075 * (60000 / pets.carapace!.combatAbility.intervalMs)).toBeCloseTo(0.5, 3);
   });
 
   it("skill-gebundene skillEffect-Kinds haben einen gültigen Skill; globale Kinds sind skill-frei", () => {
@@ -336,19 +419,22 @@ describe("pet XP-Verbot (#276): kein Pet-Passiv mit XP-Wirkung — dauerhaft", (
 });
 
 describe("pet Caps (#276 §5.3): Passiv-Budget ≤5 % (Bruch), skillBoost-Sonderfall, DoT-Caps", () => {
-  it("alle Bruch-Caps ≤ 0.05; PET_WHOLE_LEVEL_KINDS (skillBoost) = GANZE Level ≤ 2", () => {
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 (Werte-Datei §2c): „alle Bruch-Caps ≤ 0,05" ersetzt durch Fertigkeit ≤ 0,10;
+  // die Kampf-Fähigkeiten pinnt der Rollen-Band-Test oben.
+  it("alle Bruch-Caps der Fertigkeiten ≤ 0.10; PET_WHOLE_LEVEL_KINDS (skillBoost) = GANZE Level ≤ 2", () => {
     for (const [kind, cap] of Object.entries(PET_SKILL_EFFECT_CAP)) {
       if ((PET_WHOLE_LEVEL_KINDS as string[]).includes(kind)) {
         expect(Number.isInteger(cap), `Cap ${kind}: ganze Level erwartet`).toBe(true);
         expect(cap, `Cap ${kind}: max +2 Level (Spec §5.3)`).toBeLessThanOrEqual(2);
       } else {
-        expect(cap, `Cap ${kind}: Passiv-Budget ≤ 5 % (Spec §2)`).toBeLessThanOrEqual(0.05);
+        expect(cap, `Cap ${kind}: Fertigkeit ≤ 10 % (1.3.0 §2c)`).toBeLessThanOrEqual(0.1);
         expect(cap, `Cap ${kind}: > 0`).toBeGreaterThan(0);
       }
     }
     expect(PET_SKILL_EFFECT_CAP.skillBoost).toBe(2);
     expect(PET_SKILL_EFFECT_CAP.lifesteal).toBe(0.02);
-    expect(PET_SKILL_EFFECT_CAP.damageReduction).toBe(0.04);
+    expect(PET_SKILL_EFFECT_CAP.damageReduction).toBe(0.05);
+    expect(PET_SKILL_EFFECT_CAP.foodHealBonus).toBe(0.1);
   });
 
   it("DoT-Ability-Caps tragen die neue %-Semantik (Bruch enemy.maxHp/s, Spec §5.1)", () => {
@@ -452,27 +538,28 @@ describe("pet skillEffect: angewandt (nicht defined-but-never-applied)", () => {
     return createGame({ name: "PetTester" }, content, 12345);
   }
 
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Träger der Alt-Kinds gewechselt (rotbark/cragmaw/slagfiend tragen jetzt
+  // Signatur-Fertigkeiten). instantAction lebt nur noch als legale Taxonomie ⇒ Test-Pet.
   it("instantAction-Pet erhöht den Doppelertrag-Bonus nur für seinen Skill", () => {
-    const s = freshGame();
-    grantPet(s, "rotbark"); // instantAction woodcutting 0.05
-    equipPet(s, "rotbark");
-    expect(petInstantActionChance(s, content, "woodcutting")).toBeCloseTo(0.05, 5);
-    expect(petInstantActionChance(s, content, "mining")).toBe(0);
+    const c = withSkillEffect({ kind: "instantAction", skill: "woodcutting", value: 0.05 });
+    const s = gameWith(c);
+    expect(petInstantActionChance(s, c, "woodcutting")).toBeCloseTo(0.05, 5);
+    expect(petInstantActionChance(s, c, "mining")).toBe(0);
   });
 
   it("doubleDrop/gatherYield-Familie erhöht den Doppelertrag-Bonus nur für seinen Skill", () => {
     const s = freshGame();
-    grantPet(s, "cragmaw"); // doubleDrop mining 0.05
-    equipPet(s, "cragmaw");
-    expect(petDoubleYieldBonus(s, content, "mining")).toBeCloseTo(0.05, 5);
+    grantPet(s, "quillshrike"); // doubleDrop leatherworking 0.05
+    equipPet(s, "quillshrike");
+    expect(petDoubleYieldBonus(s, content, "leatherworking")).toBeCloseTo(0.05, 5);
     expect(petDoubleYieldBonus(s, content, "woodcutting")).toBe(0);
   });
 
   it("refundMaterial-Familie erhöht den Preserve-Bonus nur für seinen Skill", () => {
     const s = freshGame();
-    grantPet(s, "slagfiend"); // refundMaterial smithing 0.05
-    equipPet(s, "slagfiend");
-    expect(petPreserveBonus(s, content, "smithing")).toBeCloseTo(0.05, 5);
+    grantPet(s, "silkweaver"); // refundMaterial tailoring 0.05
+    equipPet(s, "silkweaver");
+    expect(petPreserveBonus(s, content, "tailoring")).toBeCloseTo(0.05, 5);
     expect(petPreserveBonus(s, content, "cooking")).toBe(0);
   });
 
@@ -488,8 +575,8 @@ describe("pet skillEffect: angewandt (nicht defined-but-never-applied)", () => {
 
   it("nicht besessenes/ausgerüstetes Pet wirkt nicht", () => {
     const s = freshGame();
-    s.character.companionPetId = "rotbark";
-    expect(petInstantActionChance(s, content, "woodcutting")).toBe(0);
+    s.character.companionPetId = "quillshrike";
+    expect(petDoubleYieldBonus(s, content, "leatherworking")).toBe(0);
   });
 });
 
@@ -510,13 +597,13 @@ describe("pet combatAbility: Lese-API für combat-dev", () => {
     expect(petThievingBonus(s, content, "thieving")).toBe(0);
   });
 
-  it("status-bringende Ability trägt status durch (slagfiend → burn)", () => {
+  it("status-bringende Ability trägt status durch (witherling → poison)", () => {
     const s = freshGame();
-    grantPet(s, "slagfiend"); // combatAbility onHitStatus(burn)
-    equipPet(s, "slagfiend");
+    grantPet(s, "witherling"); // combatAbility delayedDot(poison) — claude:2026-10-18T02:00:00+02:00: slagfiend trägt jetzt emberBrand
+    equipPet(s, "witherling");
     const ab = petCombatAbility(s, content);
-    expect(ab?.kind).toBe("onHitStatus");
-    expect(ab?.status).toBe("burn");
+    expect(ab?.kind).toBe("delayedDot");
+    expect(ab?.status).toBe("poison");
   });
 
   it("ohne aktives Pet ist die Ability-API null", () => {
@@ -691,6 +778,17 @@ describe("Pet-Ability-Lokalisierung (Loc-Pass 2026-07-09)", () => {
       const name = p.combatAbility.name as Record<string, string | undefined>;
       for (const loc of locales) {
         expect(name[loc], `${p.id}.combatAbility.name fehlt in "${loc}"`).toBeTruthy();
+      }
+    }
+  });
+
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0: auch der Signatur-Name der Fertigkeit liegt in allen 7 Sprachen vor.
+  it("jeder Fertigkeits-Name (skillEffect.name) liegt in allen 7 Sprachen vor", () => {
+    const locales = ["en", "de", "es", "fr", "pt-BR", "ru", "zh"] as const;
+    for (const p of Object.values(content.pets)) {
+      const name = (p.skillEffect.name ?? {}) as Record<string, string | undefined>;
+      for (const loc of locales) {
+        expect(name[loc], `${p.id}.skillEffect.name fehlt in "${loc}"`).toBeTruthy();
       }
     }
   });

@@ -138,7 +138,12 @@ describe("#276 §5.2 — stealDrop-Bindung (Rare-Drop-Schutz)", () => {
     const s = withCompanion(local, 13);
     startCombat(s, local, "chicken");
     s.combat.enemyHp = 1_000_000;
-    for (let i = 0; i < 350; i++) combatStep(s, local);
+    // claude:2026-10-18T02:00:00+02:00 — 1.3.0: höchstens EIN Erfolg je Begegnung; der Test simuliert je Tick eine frische
+    // Begegnung (Sperre zurück), damit die Bindung über mehrere Diebstähle geprüft wird.
+    for (let i = 0; i < 350; i++) {
+      s.combat.petAbility.stolenThisEncounter = false;
+      combatStep(s, local);
+    }
     const steals = s.combat.log.filter((e) => e.kind === "petAbility" && e.ability === "stealDrop");
     expect(steals.length).toBeGreaterThanOrEqual(5); // Ability feuerte mehrfach
     // Kein einziger Steal des Chase-Items; ausschließlich das Common, immer mit min-Menge (2).

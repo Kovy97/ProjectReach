@@ -20148,35 +20148,31 @@ export const content: ContentDB = {
   ],
 
   // ── Begleiter-Pets (Pet-/Companion-System, ZWEI-EFFEKT-MODELL) ─────────────
-  // Vollständiger Roster: 21 Pets, eins pro Skill. JEDES Pet hat ZWEI Effekte:
-  //  - skillEffect  (wirkt im Herkunfts-Skill; tick.ts/computeStats),
-  //  - combatAbility (getriggerte Kampf-Aktion; combat-dev löst sie alle intervalMs aus, trägt
-  //    seit #276 ein PFLICHT-Anzeigename `name: {en,de}` fürs Combat-Log/Pet-Card).
-  // #276 Pet-Redesign (design/pet-redesign-spec.md, 2026-07): Werte/Namen exakt nach Spec §3.
-  // Sechs Ex-skillXp-Passive (verbotenes XP-Kind) sind auf neue Ökonomie-/Kampf-Utility-Passive
-  // umgestellt (Spec §4.2). DoT-Kinds (onHitStatus/delayedDot) nutzen die neue %-Semantik: value =
-  // Bruch enemy.maxHp PRO SEKUNDE Status-Laufzeit (Spec §5.1). Werte gedeckelt (PET_ABILITY_CAP /
-  // PET_SKILL_EFFECT_CAP), nur 1 Pet aktiv, kein Stacking. source.kind "skill" → Drop pro Aktion
-  // des Skills; "combat" → Drop pro Monster-Kill. dropChance im Band 1/60k–1/120k (pures RNG);
-  // Ausnahme witherling/farming 1/15k (s. Kommentar dort — Farming ist aktionsarm, braucht höhere
-  // Rate). Grimm-Fantasy-Namen, id = lowercase.
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework (Chef-GO 17.10.2026): Werte verbatim aus
+  // design/1.3.0-begleiter-werte.md §2a/§2b inkl. „Chef-Entscheide" (Schutz-Trio gedämpft, Aasschwinge =
+  // Schaden, keine EP-Boni). Jedes Pet trägt eine Signatur-Fertigkeit (`skillEffect`, mit Namen), eine
+  // Kampf-Fähigkeit (`combatAbility`) und seine Kampf-Rolle (`role`, Rollen-Abzeichen). Echo: jeder
+  // besessene, nicht ausgerüstete Begleiter wirkt mit 25 % seiner Fertigkeit (engine/pets.ts). IDs,
+  // Bilder und Drop-Chancen bleiben, einzige Ausnahme Chitinpanzer 1/105.000 → 1/80.000.
+  // DoT-Kinds: value = Bruch enemy.maxHp PRO SEKUNDE (#276 §5.1). Werte gedeckelt (PET_ABILITY_CAP /
+  // PET_SKILL_EFFECT_CAP). source.kind "skill" → Drop pro Aktion des Skills; "combat" → Drop pro Kill.
   pets: {
     // ── Sammel-/Gather-Skills ────────────────────────────────────────────────
     rotbark: {
       id: "rotbark",
       name: { en: "Rotbark", de: "Faulrinde" },
       description: {
-        en: "A bark-rotted thing that hunches between root and rot. It collapses timber with a single gnawing bite — and in a fight drags enemy limbs to a crawl.",
-        de: "Ein rindenfauliges Wesen, das zwischen Wurzel und Verwesung kauert. Es fällt Holz mit einem einzigen nagenden Biss — und schleppt im Kampf Gliedmaßen zum Kriechen.",
+        en: "A bark-rotted thing that hunches between root and rot. Wherever it digs at the foot of a felled tree, something turns up: a bird's nest, a handful of seed. In a fight it lets its roots snake out and hold the enemy fast.",
+        de: "Ein rindenfauliges Wesen, das zwischen Wurzel und Verwesung kauert. Wo es am Fuß eines gefällten Baums scharrt, kommt etwas zum Vorschein: ein Vogelnest, eine Handvoll Saat. Im Kampf lässt es seine Wurzeln ausschlagen und hält den Gegner fest.",
       },
-      skillEffect: { kind: "instantAction", skill: "woodcutting", value: 0.05 },
-      // #276 §3: Root Snare → kurzer Gegner-Stun.
+      skillEffect: { kind: "bonusFind", skill: "woodcutting", pool: "rootFind", value: 0.06, name: { en: "Root Sense", de: "Wurzelgespür" } },
       combatAbility: {
         kind: "stun",
         name: { en: "Root Snare", de: "Wurzelschlinge" },
-        intervalMs: 5000,
-        value: 600,
+        intervalMs: 6000,
+        value: 900,
       },
+      role: "control",
       source: { kind: "skill", skill: "woodcutting" },
       // balance-fix 2026-07 (Sweep4 P2): 1/100000 → 1/60000 (~30% missed pet by 99 → most players get it)
       dropChance: 1 / 60000,
@@ -20187,17 +20183,17 @@ export const content: ContentDB = {
       id: "cragmaw",
       name: { en: "Cragmaw", de: "Felsschlund" },
       description: {
-        en: "A blind, stone-jawed burrower that cracks ore in pairs — veins split at the seam. Its layered hide drinks blows in combat with the indifference of mountain granite.",
-        de: "Ein blinder Gesteinsschlund, der Erz im Doppelpack zerbricht — Adern spalten sich an der Naht. Seine geschichtete Panzerhaut schluckt Schläge mit der Gleichgültigkeit von Berggranit.",
+        en: "A blind, stone-jawed burrower that smells a gem in the rock long before the pick reaches it. In battle it snaps its granite jaws shut on whatever stands in front of it.",
+        de: "Ein blinder Gesteinsschlund, der einen Edelstein im Fels wittert, lange bevor die Spitzhacke ihn erreicht. Im Kampf schnappt er mit seinen Granitkiefern nach allem, was vor ihm steht.",
       },
-      skillEffect: { kind: "doubleDrop", skill: "mining", value: 0.05 },
-      // #276 §3: Boulder Toss → schleudert Felsbrocken, Burst-Bonusschaden.
+      skillEffect: { kind: "bonusFind", skill: "mining", pool: "veinGem", value: 0.05, name: { en: "Vein Scent", de: "Ader-Witterung" } },
       combatAbility: {
         kind: "burstDamage",
-        name: { en: "Boulder Toss", de: "Felswurf" },
+        name: { en: "Rock Bite", de: "Felsbiss" },
         intervalMs: 4000,
         value: 0.08,
       },
+      role: "damage",
       source: { kind: "skill", skill: "mining" },
       // balance-fix 2026-07 (Sweep4 P2): 1/95000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20208,19 +20204,17 @@ export const content: ContentDB = {
       id: "gillrot",
       name: { en: "Gillrot", de: "Kiemenfäule" },
       description: {
-        // balance-fix 2026-07 (#276 B6): Schlusssatz an die tatsächliche Ability (Hook & Tear,
-        // burstDamage) angepasst — der alte Heal-Flavor passte nicht zur Wirkung.
-        en: "A pallid thing that drags itself between worlds. It surfaces twice the catch from black water — and in a fight it hooks deep and tears something loose.",
-        de: "Ein fahles Wesen, das sich zwischen Welten schleppt. Es holt den doppelten Fang aus dunklem Wasser — und im Kampf hakt es sich tief ein und reißt etwas los.",
+        en: "A pallid thing that drags itself between worlds. It pulls from black water what lives deeper than your line should reach. In a fight it drags at the enemy like an undertow, and the more life is left in its prey, the harder it pulls.",
+        de: "Ein fahles Wesen, das sich zwischen Welten schleppt. Es holt aus dunklem Wasser, was tiefer lebt, als deine Leine reichen sollte. Im Kampf zerrt es am Gegner wie ein Sog, und je mehr Leben in der Beute steckt, desto härter zieht es.",
       },
-      skillEffect: { kind: "doubleDrop", skill: "fishing", value: 0.05 },
-      // #276 §3: Hook & Tear, value 0.07 → 0.10 (war unter Budget, B2).
+      skillEffect: { kind: "tierUp", skill: "fishing", ladder: "fish", value: 0.05, name: { en: "Deep Pull", de: "Tiefenzug" } },
       combatAbility: {
-        kind: "burstDamage",
-        name: { en: "Hook & Tear", de: "Haken & Riss" },
-        intervalMs: 5000,
-        value: 0.10,
+        kind: "currentHpStrike",
+        name: { en: "Undertow", de: "Sog" },
+        intervalMs: 4000,
+        value: 0.16,
       },
+      role: "damage",
       source: { kind: "skill", skill: "fishing" },
       // balance-fix 2026-07 (Sweep4 P2): 1/110000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20231,22 +20225,21 @@ export const content: ContentDB = {
       id: "witherling",
       name: { en: "Witherling", de: "Welkling" },
       description: {
-        en: "Born of soil that should have been left fallow. It bloats your harvest with unnatural vigour — and in combat weeps a greenish bile that lingers long after the blow.",
-        de: "Entstammt dem Boden, der besser brachgelegen hätte. Es bläht deine Ernte mit unnatürlichem Gedeihen — und vergießt im Kampf eine grünliche Galle, die lange nach dem Schlag verweilt.",
+        en: "Born of soil that should have been left fallow. Its rot feeds your beds, and everything in them ripens sooner than it should. In combat it weeps a greenish bile that gathers in the wound with every bloom.",
+        de: "Entstammt dem Boden, der besser brachgelegen hätte. Seine Fäulnis düngt deine Beete, und alles darin reift früher, als es sollte. Im Kampf vergießt es eine grünliche Galle, die sich mit jeder Blüte tiefer in der Wunde sammelt.",
       },
-      skillEffect: { kind: "gatherYield", skill: "farming", value: 0.045 },
-      // #276 §5.1: value ist jetzt Bruch enemy.maxHp/s (war 0.7 flat/s, wirkungslos am Endgame).
+      skillEffect: { kind: "growSpeed", skill: "farming", value: 0.06, name: { en: "Rot Mulch", de: "Fäulnisdünger" } },
+      // 6000 ms Giftdauer > 5000 ms Takt ⇒ das Gift stapelt bis POISON_MAX_STACKS (Langkampf-Begleiter, Werte §6.5).
       combatAbility: {
         kind: "delayedDot",
         name: { en: "Blight Bloom", de: "Fäulnisblüte" },
-        intervalMs: 5500,
+        intervalMs: 5000,
         status: "poison",
-        value: 0.018,
+        value: 0.0065,
       },
+      role: "damage",
       source: { kind: "skill", skill: "farming" },
-      // balance-fix 2026-07 (Sweep4 P2): 1/105000 → 1/15000. Farming is passive/harvest-sparse
-      // (~1500 harvests over a full 1-99 grind vs ~100k+ actions for active gather skills), so it
-      // needs a far steeper rate to reach a comparable P(≥1 by 99) (~1.5% → ~10%).
+      // balance-fix 2026-07 (Sweep4 P2): 1/105000 → 1/15000. Farming is passive/harvest-sparse.
       // 1.2.0 (Chef 29.08.2026, GO): 1/15000 → 1/4000, damit P(≥1 bis 99) über ~1 500 Ernten bei ~30 % liegt.
       dropChance: 1 / 4000,
       icon: "🌾",
@@ -20256,18 +20249,17 @@ export const content: ContentDB = {
       id: "sporewretch",
       name: { en: "Sporewretch", de: "Sporenwicht" },
       description: {
-        en: "A hunched, mold-heavy thing that shakes loose double bounties from undergrowth. In a fight it exhales a brown cloud that makes every enemy swing wide and stupid.",
-        de: "Ein gebeugtes, schimmelbeladenes Wesen, das doppelte Erträge aus dem Unterholz schüttelt. Im Kampf atmet es eine braune Wolke aus, die jeden Feindschlag weit und töricht werden lässt.",
+        en: "A hunched, mold-heavy thing that knows where the rarer growth hides beneath the common. In a fight it exhales a brown cloud that makes every enemy swing wide and stupid.",
+        de: "Ein gebeugtes, schimmelbeladenes Wesen, das weiß, wo unter dem Gewöhnlichen das Seltenere wächst. Im Kampf atmet es eine braune Wolke aus, die jeden Feindschlag weit und töricht werden lässt.",
       },
-      skillEffect: { kind: "doubleDrop", skill: "foraging", value: 0.05 },
-      // #276 §3: Kind-Wechsel onHitStatus(poison) → accuracyDownEnemy (Spore Cloud) — der
-      // Beschreibungstext ("swing wide and stupid") passt danach sogar besser (Spec B6).
+      skillEffect: { kind: "tierUp", skill: "foraging", ladder: "forage", value: 0.05, name: { en: "Spore Find", de: "Sporenfund" } },
       combatAbility: {
         kind: "accuracyDownEnemy",
         name: { en: "Spore Cloud", de: "Sporenwolke" },
-        intervalMs: 5500,
+        intervalMs: 6000,
         value: 0.35,
       },
+      role: "control",
       source: { kind: "skill", skill: "foraging" },
       // balance-fix 2026-07 (Sweep4 P2): 1/120000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20278,18 +20270,18 @@ export const content: ContentDB = {
       id: "gloomrat",
       name: { en: "Gloomrat", de: "Düsterratte" },
       description: {
-        en: "Grease-slick and shadow-shaped, it fits through gaps that should not exist. It turns your hands to ghost-touch — and robs its combat quarry of loose coin mid-bite.",
-        de: "Fettglatt und schattengeformt, passt es durch Lücken, die nicht sein sollten. Es macht deine Hände zur Geisterberührung — und beraubt sein Kampfopfer im Biss um loses Münzgeld.",
+        en: "Grease-slick and shadow-shaped, it fits through gaps that should not exist. It teaches your hands to move softly, and when a theft goes wrong you shake off the blow sooner. In battle it slips into the enemy's pockets once and takes what it finds.",
+        de: "Fettglatt und schattengeformt, passt es durch Lücken, die nicht sein sollten. Es lehrt deine Hände, leise zu sein, und geht ein Diebstahl schief, schüttelst du den Schlag schneller ab. Im Kampf schlüpft es einmal in die Taschen des Gegners und nimmt, was es findet.",
       },
-      skillEffect: { kind: "thievingSuccess", skill: "thieving", value: 0.03 },
-      // #276 §3+§5.2 (Anker-Pet): Pilfer, klaut ein Item aus dem Monster-Loot-Table — jetzt mit
-      // Rare-Drop-Bindung (nur chance≥0.05, qty=roll.min, siehe firePetAbility/combat.ts).
+      skillEffect: { kind: "thievingFinesse", skill: "thieving", value: 0.04, stunMult: 0.5, name: { en: "Soft Paws", de: "Leise Pfoten" } },
+      // Chef 17.10.2026: 40 % → 25 %, höchstens ein Erfolg je Begegnung (Rare-Drop-Bindung bleibt).
       combatAbility: {
         kind: "stealDrop",
-        name: { en: "Pilfer", de: "Diebesgriff" },
+        name: { en: "Light Fingers", de: "Langfinger" },
         intervalMs: 6000,
-        value: 0.40,
+        value: 0.25,
       },
+      role: "loot",
       source: { kind: "skill", skill: "thieving" },
       // balance-fix 2026-07 (#276 §6): 1/90000 → 1/60000 (Sweep4-P2-Nachzügler angeglichen)
       dropChance: 1 / 60000,
@@ -20301,18 +20293,18 @@ export const content: ContentDB = {
       id: "slagfiend",
       name: { en: "Slagfiend", de: "Schlackenscheusal" },
       description: {
-        en: "Forged from the leavings of a thousand ruined casts. It nudges spent ingots back into the pile before the furnace can claim them — and in battle, its touch scorches iron and flesh alike.",
-        de: "Geschmiedet aus den Überresten tausend misslungener Güsse. Es schiebt verbrauchte Barren zurück ins Lager, bevor der Ofen sie fordert — und im Kampf versengt seine Berührung Eisen wie Fleisch.",
+        en: "Forged from the leavings of a thousand ruined casts. Its heat settles into the steel you shape, and now and then a piece leaves the anvil with a name of its own. In battle it spits molten slag, and every ember already burning makes the next one hotter.",
+        de: "Geschmiedet aus den Überresten tausend misslungener Güsse. Seine Glut legt sich in den Stahl, den du formst, und hin und wieder verlässt ein Stück den Amboss mit einem eigenen Namen. Im Kampf spuckt es flüssige Schlacke, und jede Glut, die schon brennt, macht die nächste heißer.",
       },
-      skillEffect: { kind: "refundMaterial", skill: "smithing", value: 0.05 },
-      // #276 §3+§5.1: Forge Brand, value ist jetzt Bruch enemy.maxHp/s (war 0.6 flat/s).
+      skillEffect: { kind: "craftSuffixChance", skill: "smithing", value: 0.05, name: { en: "Ember Blessing", de: "Glutsegen" } },
       combatAbility: {
-        kind: "onHitStatus",
-        name: { en: "Forge Brand", de: "Schmiedebrand" },
+        kind: "emberBrand",
+        name: { en: "Slag Spatter", de: "Schlackenspritzer" },
         intervalMs: 4000,
-        status: "burn",
-        value: 0.027,
+        value: 0.012,
+        durationMs: 5000,
       },
+      role: "damage",
       source: { kind: "skill", skill: "smithing" },
       // balance-fix 2026-07 (Sweep4 P2): 1/85000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20323,17 +20315,18 @@ export const content: ContentDB = {
       id: "ashgut",
       name: { en: "Ashgut", de: "Aschbauch" },
       description: {
-        en: "A swollen, soot-lined thing that breathes in the smoke you cook through. It steadies the flame so nothing chars — and when your health dips, it pushes a little more nourishment into every mouthful.",
-        de: "Ein geschwollenes, rußgesäumtes Wesen, das den Rauch einatmet, den du durchkochst. Es beruhigt die Flamme, damit nichts verkohlt — und wenn deine Gesundheit sinkt, presst es ein wenig mehr Nahrung in jeden Bissen.",
+        en: "A swollen, soot-lined thing that breathes in the smoke of every meal. It makes each dish you eat go further. When your strength runs low in a fight, it presses a hidden ration into your hands.",
+        de: "Ein geschwollenes, rußgesäumtes Wesen, das den Rauch jeder Mahlzeit einatmet. Es lässt jedes Gericht, das du isst, weiter reichen. Wird es im Kampf eng, drückt es dir eine versteckte Ration in die Hand.",
       },
-      skillEffect: { kind: "perfectCook", skill: "cooking", value: 0.04 },
-      // #276 §3: Gorge → verschlingt einen Brocken, heilt den Spieler kräftig.
+      skillEffect: { kind: "foodHealBonus", value: 0.1, name: { en: "Gourmand", de: "Feinschmecker" } },
+      // Chef 17.10.2026: Dauerheilung → Notration (Geladen-Muster, löst unter 40 % LP aus, Abklingzeit 20 s).
       combatAbility: {
-        kind: "heal",
-        name: { en: "Gorge", de: "Verschlingen" },
-        intervalMs: 5000,
-        value: 0.1,
+        kind: "emergencyHeal",
+        name: { en: "Emergency Ration", de: "Notration" },
+        intervalMs: 20000,
+        value: 0.15,
       },
+      role: "protection",
       source: { kind: "skill", skill: "cooking" },
       // balance-fix 2026-07 (Sweep4 P2): 1/100000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20344,20 +20337,17 @@ export const content: ContentDB = {
       id: "quillshrike",
       name: { en: "Quillshrike", de: "Federwürger" },
       description: {
-        en: "A hollow-boned predator that impales its kills on its own quills. At the tanning rack it coaxes extra material from every hide — and in combat it looses a volley of them, striking again before the first has settled.",
-        de: "Ein hohlknochiger Räuber, der seine Beute auf seinen eigenen Kielen aufspießt. Am Gerbrahmen entlockt es jeder Haut zusätzliches Material — und im Kampf schickt es eine Salve davon los, die erneut trifft, bevor der erste Kiel liegt.",
+        en: "A hollow-boned predator that impales its kills on its own quills. At the tanning rack it pins a second piece where you cut one. In combat it looses a hail of quills, striking again before the first has settled.",
+        de: "Ein hohlknochiger Räuber, der seine Beute auf seinen eigenen Kielen aufspießt. Am Gerbrahmen steckt es ein zweites Stück fest, wo du eines zuschneidest. Im Kampf schickt es einen Hagel von Kielen los, der erneut trifft, bevor der erste liegt.",
       },
-      // Task #286 Stage B: bonusAmmo (fletching-scoped) war seit Ammo-Removal ein No-op — ersetzt
-      // durch doubleDrop auf sein neues Herkunfts-Gebiet leatherworking (fletching ist dort
-      // aufgegangen), gleicher Cap/Value (0.05) wie zuvor.
-      skillEffect: { kind: "doubleDrop", skill: "leatherworking", value: 0.05 },
-      // #276 §3: Quill Volley, value 0.04 → 0.03 (war leicht über Budget, 3×4%→3×3%).
+      skillEffect: { kind: "doubleDrop", skill: "leatherworking", value: 0.05, name: { en: "Double Stitch", de: "Doppelnaht" } },
       combatAbility: {
         kind: "multiHit",
-        name: { en: "Quill Volley", de: "Kielsalve" },
+        name: { en: "Quill Hail", de: "Federhagel" },
         intervalMs: 4500,
         value: 0.03,
       },
+      role: "damage",
       source: { kind: "skill", skill: "leatherworking" },
       // balance-fix 2026-07 (Sweep4 P2): 1/115000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20368,16 +20358,18 @@ export const content: ContentDB = {
       id: "flayling",
       name: { en: "Flayling", de: "Schindling" },
       description: {
-        en: "It wears its own hide inside out and does not seem to mind. At the tanning rack it coaxes more leather from every hide — and in combat it finds the gap in every armour and peels it back.",
-        de: "Es trägt seine eigene Haut nach außen gekehrt und scheint das nicht zu stören. Am Gerbrahmen lockt es mehr Leder aus jeder Haut — und im Kampf findet es die Lücke in jeder Rüstung und reißt sie auf.",
+        en: "It wears its own hide inside out and does not seem to mind. Hides and cords pass through its hands faster than through yours. In combat it finds the gap in every armour and peels it back.",
+        de: "Es trägt seine eigene Haut nach außen gekehrt und scheint das nicht zu stören. Häute und Kordeln gehen ihm schneller durch die Hände als dir. Im Kampf findet es die Lücke in jeder Rüstung und reißt sie auf.",
       },
-      skillEffect: { kind: "gatherYield", skill: "leatherworking", value: 0.04 },
+      // Chef 17.10.2026: keine EP-Boni ⇒ Ersatz „Leder-Vorstufen 6 % schneller" (prepSpeed).
+      skillEffect: { kind: "prepSpeed", skill: "leatherworking", value: 0.06, name: { en: "Tanner's Hand", de: "Gerberhand" } },
       combatAbility: {
         kind: "armorRend",
         name: { en: "Flay", de: "Häuten" },
         intervalMs: 5000,
         value: 0.20,
       },
+      role: "support",
       source: { kind: "skill", skill: "leatherworking" },
       // balance-fix 2026-07 (Sweep4 P2): 1/95000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20388,17 +20380,17 @@ export const content: ContentDB = {
       id: "gemwraith",
       name: { en: "Gemwraith", de: "Edelsteinwicht" },
       description: {
-        en: "A hollow shape that has filled itself with stolen facets. It bleeds light from a dozen cuts — and at the cutting table it sometimes coaxes a second gem from the very same stone. In battle that precision becomes something crueller.",
-        de: "Eine hohle Gestalt, die sich mit gestohlenen Facetten gefüllt hat. Sie blutet Licht aus einem Dutzend Schnitten — und am Schleiftisch entlockt sie demselben Stein manchmal einen zweiten Edelstein. Im Kampf wird diese Präzision zu etwas Grausamerem.",
+        en: "A hollow shape that has filled itself with stolen facets. At the cutting table it guides your hand, and now and then a stone comes out a grade finer than it went in. In battle that precision becomes something crueller.",
+        de: "Eine hohle Gestalt, die sich mit gestohlenen Facetten gefüllt hat. Am Schleiftisch führt sie deine Hand, und manchmal kommt ein Stein eine Stufe edler heraus, als er hineinging. Im Kampf wird diese Präzision zu etwas Grausamerem.",
       },
-      skillEffect: { kind: "flawlessGem", skill: "jewelcrafting", value: 0.05 },
-      // #276 §3: Prismatic Lance, value 0.10 → 0.09 (leicht über Budget).
+      skillEffect: { kind: "tierUp", skill: "jewelcrafting", ladder: "gemCut", value: 0.05, name: { en: "Master Cut", de: "Meisterschliff" } },
       combatAbility: {
         kind: "guaranteedCrit",
         name: { en: "Prismatic Lance", de: "Prismenlanze" },
         intervalMs: 4500,
         value: 0.09,
       },
+      role: "damage",
       source: { kind: "skill", skill: "jewelcrafting" },
       // balance-fix 2026-07 (Sweep4 P2): 1/110000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20409,18 +20401,18 @@ export const content: ContentDB = {
       id: "glyphmaw",
       name: { en: "Glyphmaw", de: "Glyphenschlund" },
       description: {
-        en: "It swallows runes whole and regurgitates more than it consumed. The throat-glow never fades. In combat it gorges on runes and spits the surplus into your ward, like a leech with a hunger for wards rather than blood.",
-        de: "Es schluckt Runen ganz und speit mehr aus, als es verschluckt hat. Das Schlundleuchten erlischt nie. Im Kampf frisst es Runen und speit den Überschuss in deinen Ward, wie ein Blutegel mit Hunger nach Ward statt Blut.",
+        en: "It swallows runes whole and regurgitates more than it consumed. The throat-glow never fades. In combat it spits the surplus into your ward, a little at a time.",
+        de: "Es schluckt Runen ganz und speit mehr aus, als es verschluckt hat. Das Schlundleuchten erlischt nie. Im Kampf speit es den Überschuss in deinen Ward, Stück für Stück.",
       },
-      skillEffect: { kind: "bonusRunes", skill: "runecrafting", value: 0.045 },
+      skillEffect: { kind: "bonusRunes", skill: "runecrafting", value: 0.045, name: { en: "Rune Hunger", de: "Runenhunger" } },
+      // Chef 17.10.2026 (Schutz-Trio gedämpft): Gutschrift 4 % der maxHp statt 10 % maxWard.
       combatAbility: {
-        // Zauberreserve (Chef-GO 28.08.2026, Spec §4): manaRestore 30 % maxMana → wardRestore 10 % maxWard
-        // alle 5 s (≈ 2 % Pool/s, Budget #276 §3 wie ashgut-heal; Cap PET_ABILITY_CAP.wardRestore 0.15).
         kind: "wardRestore",
         name: { en: "Rune Feast", de: "Runenfraß" },
         intervalMs: 5000,
-        value: 0.10,
+        value: 0.04,
       },
+      role: "support",
       source: { kind: "skill", skill: "runecrafting" },
       // balance-fix 2026-07 (#276 §6): 1/120000 → 1/80000 (teilt sich runecrafting mit vellumoth, B5)
       dropChance: 1 / 80000,
@@ -20431,18 +20423,17 @@ export const content: ContentDB = {
       id: "hemlock",
       name: { en: "Hemlock", de: "Schierling" },
       description: {
-        en: "A root-bound familiar pickled in its own secretions. It lingers at your side and breathes a faint numbing mist — sparing potions and making every toxin you deal seep deeper and linger longer.",
-        de: "Ein wurzelgebundener Vertrauter, eingelegt in seinen eigenen Sekreten. Er verweilt an deiner Seite und atmet einen schwachen betäubenden Nebel — schont Tränke und lässt jeden Giftstoff, den du austeilst, tiefer eindringen und länger anhalten.",
+        en: "A root-bound familiar pickled in its own secretions. It measures every dose, so your potions often leave their ingredients unspent. In a fight it lames the enemy with a venom that makes every swing come slower.",
+        de: "Ein wurzelgebundener Vertrauter, eingelegt in seinen eigenen Sekreten. Er bemisst jede Dosis, sodass deine Tränke ihre Zutaten oft übrig lassen. Im Kampf lähmt er den Gegner mit einem Gift, das jeden Hieb langsamer kommen lässt.",
       },
-      skillEffect: { kind: "potionPreserve", skill: "herblore", value: 0.05 },
-      // #276 §3+§5.1: Venom Phial, value ist jetzt Bruch enemy.maxHp/s (war 0.8 flat/s).
+      skillEffect: { kind: "potionPreserve", skill: "herblore", value: 0.05, name: { en: "Measured Dose", de: "Bedachte Dosis" } },
       combatAbility: {
-        kind: "onHitStatus",
-        name: { en: "Venom Phial", de: "Giftphiole" },
+        kind: "cripplingPoison",
+        name: { en: "Numbing Venom", de: "Lähmgift" },
         intervalMs: 5000,
-        status: "poison",
-        value: 0.033,
+        value: 0.0133,
       },
+      role: "control",
       source: { kind: "skill", skill: "herblore" },
       // balance-fix 2026-07 (Sweep4 P2): 1/100000 → 1/60000 (skilling-pet-rate pass)
       dropChance: 1 / 60000,
@@ -20453,20 +20444,19 @@ export const content: ContentDB = {
       id: "vellumoth",
       name: { en: "Vellumoth", de: "Pergamotte" },
       description: {
-        // balance-fix 2026-07 (#276 §4.2): Passiv skillXp (verboten) → sellBonus (Appraiser's Eye).
-        // Schlusssatz spiegelt jetzt Verkaufs-Gespür statt Lore-Training.
-        en: "Its wings are dried vellum scraped thin enough to hold marginalia. It reads over your shoulder at the market stall, murmuring a truer price into your ear before every sale — and in battle it beats a faint sigil-ward into existence between your skin and the blade.",
-        de: "Seine Flügel sind getrocknetes Pergament, dünn genug für Randnotizen geschabt. Es liest dir am Marktstand über die Schulter und flüstert vor jedem Verkauf einen ehrlicheren Preis ins Ohr — und im Kampf schlägt es ein schwaches Siegel-Schirmmal zwischen deine Haut und die Klinge.",
+        en: "Its wings are dried vellum scraped thin enough to hold marginalia. It reads the old formulas over your shoulder, and sometimes a rune binds a grade higher than you meant. In battle it beats a faint sigil-ward between your skin and the blade.",
+        de: "Seine Flügel sind getrocknetes Pergament, dünn genug für Randnotizen geschabt. Es liest dir die alten Formeln über die Schulter, und manchmal bindet eine Rune eine Stufe höher, als du wolltest. Im Kampf schlägt es ein schwaches Siegel-Schirmmal zwischen deine Haut und die Klinge.",
       },
-      // #276 §4.2: Appraiser's Eye / Kennerblick — Ersatz des verbotenen skillXp-Passivs.
-      skillEffect: { kind: "sellBonus", value: 0.05 },
-      // #276 §3: Sigil Ward → entrollt eine Schutzschriftrolle, kurzer Absorb-Schild.
+      // Chef 17.10.2026: keine EP-Boni ⇒ Ersatz „5 % Stufensprung beim Runenbinden" (tierUp runes).
+      skillEffect: { kind: "tierUp", skill: "runecrafting", ladder: "runes", value: 0.05, name: { en: "Archivist", de: "Archivar" } },
+      // Chef 17.10.2026 (Schutz-Trio gedämpft): Takt 6000 → 12000 ms.
       combatAbility: {
         kind: "shield",
-        name: { en: "Sigil Ward", de: "Siegelschirm" },
-        intervalMs: 6000,
+        name: { en: "Vellum Shield", de: "Pergamentschild" },
+        intervalMs: 12000,
         value: 0.1,
       },
+      role: "protection",
       source: { kind: "skill", skill: "runecrafting" },
       // balance-fix 2026-07 (#276 §6): 1/90000 → 1/80000 (teilt sich runecrafting mit glyphmaw, B5)
       dropChance: 1 / 80000,
@@ -20478,20 +20468,17 @@ export const content: ContentDB = {
       id: "gorehound",
       name: { en: "Gorehound", de: "Blutbracke" },
       description: {
-        // balance-fix 2026-07 (#276 §4.2): Passiv skillXp (verboten) → lifesteal (Blood Tithe).
-        en: "A battle-bred thing that lives at the edge of the kill. A tithe of every wound you open flows back to you, thin but real — and its own strikes score deep enough to bleed long after the blow lands.",
-        de: "Ein kampfgezüchtetes Wesen, das am Rand des Todes lebt. Ein Zehnt jeder Wunde, die du schlägst, fließt dünn, aber spürbar zu dir zurück — und seine eigenen Hiebe reißen tief genug, um lange nach dem Schlag zu bluten.",
+        en: "A battle-bred thing that lives at the edge of the kill. It follows the blood trail of every wound you open and brings a share of it back to you. Its own bite tears deeper the weaker its prey becomes.",
+        de: "Ein kampfgezüchtetes Wesen, das am Rand des Todes lebt. Es folgt der Blutspur jeder Wunde, die du schlägst, und bringt dir einen Teil davon zurück. Sein eigener Biss reißt umso tiefer, je schwächer die Beute wird.",
       },
-      // #276 §4.2: Blood Tithe / Blutzehnt — Ersatz des verbotenen skillXp-Passivs.
-      skillEffect: { kind: "lifesteal", value: 0.015 },
-      // #276 §3+§5.1: Maul, value ist jetzt Bruch enemy.maxHp/s (war 0.9 flat/s).
+      skillEffect: { kind: "lifesteal", value: 0.02, name: { en: "Blood Trail", de: "Blutspur" } },
       combatAbility: {
-        kind: "onHitStatus",
-        name: { en: "Maul", de: "Zerfleischen" },
+        kind: "executeBleed",
+        name: { en: "Rend", de: "Reißen" },
         intervalMs: 4500,
-        status: "bleed",
-        value: 0.030,
+        value: 0.020,
       },
+      role: "damage",
       source: { kind: "combat", style: "ranged" },
       dropChance: 1 / 80000,
       icon: "🩸",
@@ -20501,19 +20488,17 @@ export const content: ContentDB = {
       id: "ironmaw",
       name: { en: "Ironmaw", de: "Eisenschlund" },
       description: {
-        // balance-fix 2026-07 (#276 §4.2): Passiv skillXp (verboten) → skillBoost power +2.
-        en: "Jaws like a bear-trap, neck like a siege-block. Standing at your side, it lends its raw brawn straight into your arms — and in a fight it rams the ground so hard the enemy's next blow comes late.",
-        de: "Kiefer wie eine Bärenfalle, Nacken wie ein Belagerungsblock. An deiner Seite leiht es seine rohe Kraft direkt in deine Arme — und im Kampf rammt es den Boden so hart, dass der nächste Schlag des Gegners zu spät kommt.",
+        en: "Jaws like a bear-trap, neck like a siege-block. Standing at your side, it puts a little of its bite into every blow you swing. In a fight it rams the ground so hard the enemy's next strike comes late.",
+        de: "Kiefer wie eine Bärenfalle, Nacken wie ein Belagerungsblock. An deiner Seite legt es etwas von seinem Biss in jeden Hieb, den du führst. Im Kampf rammt es den Boden so hart, dass der nächste Schlag des Gegners zu spät kommt.",
       },
-      // #276 §4.2: Bonecrusher / Knochenbrecher — Ersatz des verbotenen skillXp-Passivs (+2 GANZE
-      // Power-Level, nur Kampfformeln, wie ein Gear-Boost — kein XP, schaltet nichts frei).
-      skillEffect: { kind: "skillBoost", skill: "power", value: 2 },
+      skillEffect: { kind: "styleDamage", style: "melee", value: 0.03, name: { en: "Iron Jaw", de: "Eisenkiefer" } },
       combatAbility: {
         kind: "enemyAttackDelay",
         name: { en: "Body Slam", de: "Rammstoß" },
         intervalMs: 5000,
-        value: 600,
+        value: 750,
       },
+      role: "control",
       source: { kind: "combat", style: "melee" },
       dropChance: 1 / 75000,
       icon: "⚔️",
@@ -20523,22 +20508,19 @@ export const content: ContentDB = {
       id: "carapace",
       name: { en: "Carapace", de: "Chitinpanzer" },
       description: {
-        // balance-fix 2026-07 (#276 §4.2): Passiv skillXp (verboten) → damageReduction 3 %; der
-        // alte "rebounds to the one who threw it"-Reflect-Flavor war ohnehin nie die Wirkung.
-        en: "An ancient, shell-plated thing that has outlasted every blade aimed at it. Standing near it, some of that patience settles into your own hide, blunting every blow before it lands — and every so often it plants itself fully between you and the strike, and nothing gets through at all.",
-        de: "Ein altes, panzerbeplattetes Wesen, das jede auf es gerichtete Klinge überlebt hat. In seiner Nähe legt sich etwas von dieser Geduld auf deine eigene Haut und dämpft jeden Schlag, bevor er trifft — und hin und wieder stellt es sich vollständig zwischen dich und den Hieb, und nichts kommt durch.",
+        en: "An ancient, shell-plated thing that has outlasted every blade aimed at it. Near it, some of that patience settles into your own hide and blunts every blow. Every so often it plants itself fully between you and the strike, and nothing gets through at all.",
+        de: "Ein altes, panzerbeplattetes Wesen, das jede auf es gerichtete Klinge überlebt hat. In seiner Nähe legt sich etwas von dieser Geduld auf deine Haut und dämpft jeden Schlag. Hin und wieder stellt es sich ganz zwischen dich und den Hieb, und nichts kommt durch.",
       },
-      // #276 §4.2: Stoneshell / Steinpanzer — Ersatz des verbotenen skillXp-Passivs.
-      skillEffect: { kind: "damageReduction", value: 0.03 },
-      // #276 §3 (B4): Bulwark, Intervall 6000 → 10000 ms (war stärkstes Defensiv-Pet, ~40-60 %
-      // Mitigation gegen 2.4-3.7s Gegner-Angriffsintervalle — jetzt ~24-37 %).
+      skillEffect: { kind: "damageReduction", value: 0.05, name: { en: "Shell Hide", de: "Panzerhaut" } },
       combatAbility: {
         kind: "blockNextEnemyHit",
-        name: { en: "Bulwark", de: "Bollwerk" },
-        intervalMs: 10000,
+        name: { en: "Shield Wall", de: "Schildwall" },
+        intervalMs: 9000,
       },
+      role: "protection",
       source: { kind: "combat", style: "melee" },
-      dropChance: 1 / 105000,
+      // Chef 17.10.2026: 1/105000 → 1/80000 (angeglichen und gestärkt).
+      dropChance: 1 / 80000,
       icon: "🛡️",
       art: "pets/carapace.png",
     },
@@ -20546,19 +20528,18 @@ export const content: ContentDB = {
       id: "carrionwing",
       name: { en: "Carrionwing", de: "Aasschwinge" },
       description: {
-        // balance-fix 2026-07 (#276 §4.2): Passiv skillXp (verboten) → doubleLoot (Scavenger).
-        en: "It circles every fight before landing. Feathers the colour of old rot, talons built for hanging on. Its scavenger's eye picks over a kill twice before it's satisfied, some nights doubling what you carry home — then it folds its wings and drops, a dive that punches clean through armour.",
-        de: "Es kreist jeden Kampf aus, bevor es landet. Federn in der Farbe alten Verfalls, Krallen zum Festhalten gebaut. Sein Aasfresser-Blick durchsucht jeden Kill zweimal, ehe er zufrieden ist, und verdoppelt manche Nacht deine Beute — dann legt es die Flügel an und stürzt sich hinab, ein Sturzflug, der glatt durch jede Rüstung schlägt.",
+        en: "It circles every fight before landing. Its scavenger's eye picks over a kill twice, and some nights you carry home double, though it leaves a champion's prize alone. Then it folds its wings and drops in a dive that punches clean through armour.",
+        de: "Es kreist jeden Kampf aus, bevor es landet. Sein Aasfresser-Blick durchsucht jeden Kill zweimal, und manche Nacht trägst du doppelt heim, nur die Beute eines Champions rührt es nicht an. Dann legt es die Flügel an und stürzt sich in einem Sturzflug hinab, der glatt durch jede Rüstung schlägt.",
       },
-      // #276 §4.2: Scavenger / Aasfresser — Ersatz des verbotenen skillXp-Passivs.
-      skillEffect: { kind: "doubleLoot", value: 0.05 },
-      // #276 §3: Death Dive, value 0.10 → 0.09 (leicht über Budget).
+      // Chef 17.10.2026: Zweitwurf ohne Champion-Unikate (combat.ts); Rollen-Abzeichen „Schaden".
+      skillEffect: { kind: "doubleLoot", value: 0.05, name: { en: "Carrion Find", de: "Aasfund" } },
       combatAbility: {
         kind: "armorPierceHit",
         name: { en: "Death Dive", de: "Sturzflug" },
         intervalMs: 4500,
         value: 0.09,
       },
+      role: "damage",
       source: { kind: "combat", style: "ranged" },
       dropChance: 1 / 90000,
       icon: "🐦‍⬛",
@@ -20568,18 +20549,18 @@ export const content: ContentDB = {
       id: "pyreling",
       name: { en: "Pyreling", de: "Scheiterling" },
       description: {
-        en: "Something was burned alive and refused to scatter. It orbits you in a slow heat-smear and bleeds warmth into your spell reserve without being asked — then reaches through every strike you land to leave a coal behind.",
-        de: "Etwas wurde lebendig verbrannt und weigerte sich zu zerstieben. Es kreist in einem langsamen Wärmeschimmer um dich und speist Wärme in deine Zauberreserve, ohne gefragt zu werden — dann greift es durch jeden deiner Schläge und hinterlässt eine Glut.",
+        en: "Something was burned alive and refused to scatter. It bleeds warmth into your spell reserve without being asked. In battle it fans every ember on the enemy into one bright burst.",
+        de: "Etwas wurde lebendig verbrannt und weigerte sich zu zerstieben. Es speist Wärme in deine Zauberreserve, ohne gefragt zu werden. Im Kampf facht es jede Glut am Gegner zu einem einzigen grellen Ausbruch an.",
       },
-      skillEffect: { kind: "spellReserve", value: 0.05 }, // Zauberreserve 28.08.2026: war manaRegen 5 % → +5 % Zauberreserve
-      // #276 §3+§5.1: Flame Nova, value ist jetzt Bruch enemy.maxHp/s (war 1.0 flat/s).
+      skillEffect: { kind: "spellReserve", value: 0.05, name: { en: "Ember Hoard", de: "Glimmvorrat" } },
       combatAbility: {
-        kind: "onHitStatus",
-        name: { en: "Flame Nova", de: "Flammennova" },
-        intervalMs: 4500,
-        status: "burn",
-        value: 0.030,
+        kind: "emberDetonate",
+        name: { en: "Spark Rain", de: "Funkenregen" },
+        intervalMs: 6000,
+        value: 0.035,
+        burnValue: 0.006,
       },
+      role: "damage",
       source: { kind: "combat", style: "magic" },
       dropChance: 1 / 85000,
       icon: "🔮",
@@ -20589,17 +20570,18 @@ export const content: ContentDB = {
       id: "hoarspite",
       name: { en: "Hoarspite", de: "Frostgroll" },
       description: {
-        en: "Pure spite condensed into winter. It holds a grudge against warmth and vents it slowly into your spell reserve — then exhales that grudge onto your enemies as a rime that stiffens joints and slows the kill.",
-        de: "Purer Groll zu Winter verdichtet. Es hegt einen Groll gegen Wärme und leitet ihn langsam in deine Zauberreserve — dann haucht es diesen Groll auf deine Feinde als Reif, der Gelenke versteift und den Tod verlangsamt.",
+        en: "Pure spite condensed into winter. It wraps your ward in a crust of rime that holds a little more. In a fight it bites with frost, and every third bite leaves the enemy frozen in place.",
+        de: "Purer Groll zu Winter verdichtet. Es legt eine Kruste aus Reif um deinen Ward, die ein wenig mehr hält. Im Kampf beißt es mit Frost, und jeder dritte Biss lässt den Gegner erstarren.",
       },
-      skillEffect: { kind: "spellReserve", value: 0.04 }, // Zauberreserve 28.08.2026: war manaRegen 4 % → +4 % Zauberreserve
-      // #276 §3: Grave Frost, value 1200 → 1100 ms.
+      // Chef 17.10.2026: Betäubung → Frostbiss nach Elementar-Regeln; Ausgleich +6 % Ward.
+      skillEffect: { kind: "wardCapacityPct", value: 0.06, name: { en: "Frost Mantle", de: "Kältepanzer" } },
       combatAbility: {
-        kind: "stun",
-        name: { en: "Grave Frost", de: "Grabfrost" },
-        intervalMs: 5500,
-        value: 1100,
+        kind: "frostBite",
+        name: { en: "Frost Bite", de: "Frostbiss" },
+        intervalMs: 8000,
+        value: 500,
       },
+      role: "control",
       source: { kind: "combat", style: "magic" },
       dropChance: 1 / 90000,
       icon: "❄️",
@@ -20609,20 +20591,18 @@ export const content: ContentDB = {
       id: "charnel",
       name: { en: "Charnel", de: "Beinzehrer" },
       description: {
-        // balance-fix 2026-07 (#276 §4.2): Passiv skillXp (verboten) → killHeal 3 %/Kill; Text
-        // trennt jetzt klar den Passiv-Trigger (Kill) vom Aktiv-Burst (Mitte des Kampfs).
-        en: "Born of a mass grave that forgot how to stay still. Every kill you land feeds it a mouthful — and it presses a little vitality back into your chest for the trouble. Mid-fight it feasts properly: a burst that tears at the enemy and fills you back up in the same bite.",
-        de: "Aus einem Massengrab geboren, das vergessen hat stillzuhalten. Jeder Kill, den du landest, füttert es mit einem Bissen — und es drückt dir dafür ein wenig Vitalität in die Brust zurück. Mitten im Kampf hält es ein richtiges Mahl: ein Ausbruch, der den Gegner reißt und dich im selben Biss auffüllt.",
+        en: "Born of a mass grave that forgot how to stay still. Every kill you land feeds it a mouthful, and it presses a little vitality back into your chest. Mid-fight it feasts properly, tearing at the enemy and filling you back up in the same bite.",
+        de: "Aus einem Massengrab geboren, das vergessen hat stillzuhalten. Jeder Kill, den du landest, füttert es mit einem Bissen, und es drückt dir ein wenig Vitalität in die Brust zurück. Mitten im Kampf hält es ein richtiges Mahl, reißt am Gegner und füllt dich im selben Biss wieder auf.",
       },
-      // #276 §4.2: Corpsefeeder / Leichenzehrer — Ersatz des verbotenen skillXp-Passivs.
-      skillEffect: { kind: "killHeal", value: 0.03 },
-      // #276 §3: Feast of the Fallen, value 0.09 → 0.07 (Hybrid-Split-Budget, war leicht über).
+      skillEffect: { kind: "killHeal", value: 0.03, name: { en: "Corpsefeeder", de: "Leichenzehrer" } },
+      // Chef 17.10.2026 (Schutz-Trio gedämpft): 0.07 → 0.035.
       combatAbility: {
         kind: "lifestealBurst",
         name: { en: "Feast of the Fallen", de: "Mahl der Gefallenen" },
         intervalMs: 5000,
-        value: 0.07,
+        value: 0.035,
       },
+      role: "protection",
       source: { kind: "combat", style: "magic" },
       dropChance: 1 / 75000,
       icon: "💀",
@@ -20633,29 +20613,21 @@ export const content: ContentDB = {
       id: "booted_tomcat",
       name: { en: "Leon, the Feared", de: "Leon, der Gefürchtete" }, // Chef 29.08.2026: war Felyx (Community-Pet), ID bleibt booted_tomcat
       description: {
-        en: "A grey-and-silver tabby tom with yellow-green eyes who walks upright in boots and a leather harness, hunting with snare and crossbow. At the traps he empties the snare twice when luck is on his side, and a catch leaves ten loot rolls instead of five. In a fight he throws his bear trap: it snaps shut, and the target bleeds.",
-        de: "Ein grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und Armbrust jagt. An den Fallen leert er die Schlinge mit etwas Glück zweimal, und ein Fang lässt zehn Beute-Würfe da statt fünf. Im Kampf wirft er seine Bärenfalle: Sie schnappt zu, und das Ziel blutet.",
+        en: "A grey-and-silver tabby tom with yellow-green eyes who walks upright in boots and a leather harness, hunting with snare and crossbow. At the traps he empties the snare twice when luck is on his side, and a catch leaves ten loot rolls instead of five. In a fight he lands a booted kick that leaves the enemy limping.",
+        de: "Ein grau-silbern getigerter Kater mit gelbgrünen Augen, der aufrecht in Stiefeln und Lederharnisch geht und mit Schlinge und Armbrust jagt. An den Fallen leert er die Schlinge mit etwas Glück zweimal, und ein Fang lässt zehn Beute-Würfe da statt fünf. Im Kampf landet er einen Stiefeltritt, nach dem der Gegner hinkt.",
       },
-      // Chef 28.08.2026 (zweiter Umbau): Kind huntDoubleRolls (shared) — mit 5 % Chance je Fang liefert der Fang
-      // HUNT_LOOT_ROLLS × 2 Beute-Durchläufe (engine/hunting.ts grantCatch, RNG-Schritt 4, ein Zug nur mit
-      // aktivem Leon). Das frühere Kind huntCatchChance (+3 pp Fangchance) ist gestrichen. Jagen läuft nicht
-      // über Aktionen, darum kein doubleDrop.
-      skillEffect: { kind: "huntDoubleRolls", skill: "hunting", value: 0.05 },
-      // Chef 28.08.2026: „Bärenfalle" statt Schlingenfalle-Stun — onHitStatus bleed (Muster gorehound „Maul",
-      // #276 §3+§5.1 Budget: 3,0 % enemy.maxHp/s über 3 s alle 4,5 s = 2,00 %/s, Cap 0,04).
+      // Chef 28.08.2026 (zweiter Umbau): huntDoubleRolls — 5 % je Fang auf HUNT_LOOT_ROLLS × 2 (hunting.ts).
+      skillEffect: { kind: "huntDoubleRolls", skill: "hunting", value: 0.05, name: { en: "Double Haul", de: "Doppelwurf" } },
       combatAbility: {
-        kind: "onHitStatus",
-        name: { en: "Bear Trap", de: "Bärenfalle" },
-        intervalMs: 4500,
-        status: "bleed",
-        value: 0.030,
+        kind: "crippleStrike",
+        name: { en: "Booted Strike", de: "Gestiefelter Hieb" },
+        intervalMs: 6000,
+        value: 0.05,
       },
+      role: "control",
       // Drop je FANG (engine/hunting.ts grantCatch, Schritt 6 der RNG-Reihenfolge), nicht je Aktion.
       source: { kind: "skill", skill: "hunting" },
-      // Jagen ist fang-arm wie Farming ernte-arm (Muster witherling 1/15000): 5–60 min je Falle, XP je Fang
-      // = 5× Monster-XP (Hochland ~20k), Stufe 99 = 13,0 M XP ⇒ ~1 000–2 500 Fänge über einen vollen
-      // 1→99-Grind ⇒ P(≥1 bis 99) ≈ 7–15 % bei 1/15000 (Ausnahme vom ≤1/50000-Band im pet-integrity-Guard).
-      // 1.2.0 (Chef 29.08.2026, GO): 1/8000 statt 1/15000 ⇒ P(≥1 bis 99) ≈ 12–27 % über 1 000–2 500 Fänge.
+      // 1.2.0 (Chef 29.08.2026, GO): 1/8000 ⇒ P(≥1 bis 99) ≈ 12–27 % über 1 000–2 500 Fänge.
       dropChance: 1 / 8000,
       icon: "🐈",
       art: "pets/booted_tomcat.png",
@@ -20664,24 +20636,49 @@ export const content: ContentDB = {
       id: "silkweaver",
       name: { en: "Silkweaver", de: "Seidenweber" },
       description: {
-        en: "A pale night-moth on spindle-thin legs that never stops spinning. At the loom it winds spent thread back onto the bobbin before the cloth can claim it — and in a fight it drapes a veil of silk over the enemy's eyes so their blows land wide.",
-        de: "Eine bleiche Nachtmotte auf spindeldürren Beinen, die nie aufhört zu spinnen. Am Webstuhl wickelt sie verbrauchten Faden zurück auf die Spule, bevor der Stoff ihn fordert — und im Kampf legt sie einen Seidenschleier über die Augen des Gegners, sodass seine Schläge ins Leere gehen.",
+        en: "A pale night-moth on spindle-thin legs that never stops spinning. At the loom it winds spent thread back onto the bobbin before the cloth can claim it. When a blow should end you, it has already spun a thread that holds.",
+        de: "Eine bleiche Nachtmotte auf spindeldürren Beinen, die nie aufhört zu spinnen. Am Webstuhl wickelt sie verbrauchten Faden zurück auf die Spule, bevor der Stoff ihn fordert. Soll dich ein Schlag fällen, hat sie längst einen Faden gesponnen, der hält.",
       },
-      // Muster slagfiend: refundMaterial 5 % auf den Herkunfts-Skill (tick.ts preserveChance).
-      skillEffect: { kind: "refundMaterial", skill: "tailoring", value: 0.05 },
-      // #276 §3 Budget: accuracyDownEnemy 0,35 / 5,5 s (Muster sporewretch „Sporenwolke", ≈ −19 % Gegner-Treffer).
+      skillEffect: { kind: "refundMaterial", skill: "tailoring", value: 0.05, name: { en: "Spare Thread", de: "Fadenrest" } },
+      // Rettungsfaden: Geladen-Muster, Abklingzeit 60 s (Werte-Datei §2b).
       combatAbility: {
-        kind: "accuracyDownEnemy",
-        name: { en: "Silk Veil", de: "Seidenschleier" },
-        intervalMs: 5500,
-        value: 0.35,
+        kind: "deathSave",
+        name: { en: "Lifeline Thread", de: "Rettungsfaden" },
+        intervalMs: 60000,
       },
+      role: "protection",
       // Schneidern läuft über normale Rezepte (Aktions-Pfad tick.ts completeAction → tryPetDrop).
       source: { kind: "skill", skill: "tailoring" },
       dropChance: 1 / 60000, // Craft-Skill-Band (skilling-pet-rate pass, Muster slagfiend/quillshrike)
       icon: "🦋",
       art: "pets/silkweaver.png",
     },
+  },
+
+  // claude:2026-10-18T02:00:00+02:00 — Stufen-Leitern der Begleiter-Fertigkeit `tierUp` (1.3.0, Werte-Datei
+  // §2c): je Leiter VORHANDENE Items, sortiert nach `levelRequired` ihrer Quell-Aktion (Haupt-Output).
+  // fish = alle catch_*-Fische; forage = je Material-Familie der Sammel-Kategorien (Kräuter, Pilze,
+  // Essenzen, Pigmente; Fasern/Sonstiges ohne Leiter); gemCut = geschliffene Edelsteine; runes = gebundene Runen.
+  petTierLadders: {
+    fish: [
+      [
+        "raw_shrimp", "raw_murk_perch", "raw_trout", "raw_cod", "raw_ghostfin_pike", "raw_shadowcarp",
+        "raw_ironscale_bass", "raw_salmon", "raw_duskfin_carp", "raw_lobster", "raw_crypteel",
+        "raw_bloodfang_eel", "raw_anglerfish", "raw_wraithscale", "raw_ashpike", "raw_voidray",
+        "raw_dirgefin", "raw_abyssal_crawler", "raw_ashen_sturgeon", "raw_soulfish", "raw_idolscale",
+      ],
+    ],
+    forage: [
+      [
+        "graywort", "herb_marshroot", "frostvine", "herb_bloodthistle", "witchgrass", "emberleaf",
+        "herb_gravemoss", "rimecap", "herb_nightbloom", "gloomspore", "herb_godsbreath", "voidbloom", "grave_lily",
+      ],
+      ["fungus_soot", "fungus_pale", "fungus_grave", "fungus_void", "fungus_god"],
+      ["dim_essence", "essence_ash", "essence_mire", "essence_grave", "essence_void", "essence_divine"],
+      ["pigment_umber", "pigment_verdant", "pigment_violet", "pigment_radiant"],
+    ],
+    gemCut: [["garnet", "sapphire", "ruby", "bloodstone", "diamond", "onyx", "voidstone", "godgem"]],
+    runes: [["force_rune", "frost_rune", "fire_rune", "shade_rune", "shock_rune", "aether_rune", "void_rune"]],
   },
 
   // ── Farming-Plots: Crop-Katalog (Phase 2, content-dev) ──────────────────────────────────

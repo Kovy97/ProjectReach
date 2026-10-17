@@ -175,6 +175,16 @@ const PET_ABILITY_IMAGE: Record<PetAbilityKind, PetFxImage> = {
   stealDrop: "pilfer",
   guaranteedCrit: "critstar",
   armorPierceHit: "critstar",
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: neue Kinds auf die bestehende Bildfamilie.
+  currentHpStrike: "bite",
+  crippleStrike: "critstar",
+  cripplingPoison: "bolt",
+  emberBrand: "bolt",
+  emberDetonate: "critstar",
+  executeBleed: "bolt",
+  frostBite: "mark",
+  emergencyHeal: "ward",
+  deathSave: "ward",
 };
 
 /** Begleiter-Bildfamilie aus `combatAbility.kind` (Familie D, alle 16 Kinds gemappt). */
@@ -225,6 +235,15 @@ const PET_ID_THEME: Partial<Record<PetId, PetFxTheme>> = {
   charnel: "void",
 };
 
+/** claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: die neuen Kinds tragen ihr Element im Kind statt im `status`-Feld. */
+const PET_KIND_THEME: Partial<Record<PetDef["combatAbility"]["kind"], PetFxTheme>> = {
+  emberBrand: "fire",
+  emberDetonate: "fire",
+  cripplingPoison: "poison",
+  executeBleed: "bleed",
+  frostBite: "frost",
+};
+
 /** Partikel-Thema eines Begleiters (Familie D), oder `null` = heutiges neutrales Aussehen. */
 export function petFxThemeFor(pet: Pick<PetDef, "id" | "combatAbility">): PetFxTheme | null {
   const status = pet.combatAbility.status;
@@ -232,5 +251,5 @@ export function petFxThemeFor(pet: Pick<PetDef, "id" | "combatAbility">): PetFxT
     const theme = PET_STATUS_THEME[status];
     if (theme) return theme;
   }
-  return PET_ID_THEME[pet.id] ?? null;
+  return PET_KIND_THEME[pet.combatAbility.kind] ?? PET_ID_THEME[pet.id] ?? null;
 }

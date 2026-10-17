@@ -3,7 +3,8 @@ import { consumableHeal } from "@hearthforge/shared";
 import { computeStats } from "./character";
 import { itemCount, removeItem } from "./inventory";
 import { masterBuffDurationMult } from "./capes";
-import { consumeBlocked, noteConsumeCooldown } from "./consume-gate";
+import { consumeBlocked, isHealPotion, noteConsumeCooldown } from "./consume-gate";
+import { petFoodHealMult } from "./pets";
 import { rerollTask } from "./slayer";
 import { openBlackMarketCrate } from "./tavern";
 
@@ -184,7 +185,12 @@ function consumeInternal(state: GameState, content: ContentDB, itemId: ItemId, s
     const max = computeStats(state, content).maxHp;
     // Zentraler Heilbetrag (Hybrid, Balance-Kette Schritt 4): max(healAmount, round(maxHp·healPct))
     // — flat = Früh-/Mid-Boden & Tier-Leiter, pct = End-Game-Floor. EINE Quelle: consumableHeal (shared).
-    state.character.hp = Math.min(max, state.character.hp + consumableHeal(item, max));
+    // claude:2026-10-18T02:00:00+02:00 — Aschbauch „Feinschmecker" (foodHealBonus, 1.3.0): ESSEN heilt × (1 + Anteil),
+    // Tränke nicht. Ohne Begleiter Faktor 1 ⇒ exakt der Alt-Wert.
+    const foodMult = isHealPotion(content, itemId) ? 1 : petFoodHealMult(state, content);
+    const baseHeal = consumableHeal(item, max);
+    const heal = foodMult !== 1 ? Math.round(baseHeal * foodMult) : baseHeal;
+    state.character.hp = Math.min(max, state.character.hp + heal);
   }
   if (cures) {
     state.combat.playerEffects = state.combat.playerEffects.filter((e) => e.type !== "poison");

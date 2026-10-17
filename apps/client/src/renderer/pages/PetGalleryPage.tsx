@@ -6,11 +6,12 @@ import {
   equipSecondPet,
   ownedPetCount,
   ownsPet,
+  petEchoActive,
   petPityProgress,
   secondPetSlotUnlocked,
 } from "@hearthforge/engine";
 import type { PetDef, PetSkillEffect } from "@hearthforge/shared";
-import { PET_WHOLE_LEVEL_KINDS } from "@hearthforge/shared";
+import { PET_ECHO_FACTOR, PET_WHOLE_LEVEL_KINDS } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getPetSrc, PET_ZONE_ID } from "../pets";
@@ -52,7 +53,8 @@ export function PetEffectRows({ pet, t, tr }: { pet: PetDef; t: TFn; tr: TrFn })
   const sPct = skillEffectValueLabel(se, t);
   const skill = se.skill ? content.skills[se.skill] : undefined;
   const sname = skill ? tr(skill.name) : (se.skill ?? "");
-  const skillKindLabel = t(`pet.effect.skill.${se.kind}`);
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Signatur-Name der Fertigkeit (z. B. „Wurzelgespür") vor dem Kind-Label.
+  const skillKindLabel = se.name ? tr(se.name) : t(`pet.effect.skill.${se.kind}`);
   const skillLine = se.skill ? `${skillKindLabel}${sPct} (${sname})` : `${skillKindLabel}${sPct}`;
 
   const ce = pet.combatAbility;
@@ -82,13 +84,32 @@ export function PetEffectRows({ pet, t, tr }: { pet: PetDef; t: TFn; tr: TrFn })
 function effectSummary(pet: PetDef, t: TFn, tr: TrFn): string {
   const se = pet.skillEffect;
   const sPct = skillEffectValueLabel(se, t);
-  const skillKindLabel = t(`pet.effect.skill.${se.kind}`);
+  const skillKindLabel = se.name ? tr(se.name) : t(`pet.effect.skill.${se.kind}`); // claude:2026-10-18T02:00:00+02:00
 
   // #276 Schritt 4: Ability-Anzeigename statt des rohen Kind-Labels (konsistent zu PetEffectRows).
   const abilityName = tr(pet.combatAbility.name);
 
   return `${t("pet.effect.passive")}: ${skillKindLabel}${sPct} · ${t("pet.effect.active")}: ${abilityName}`;
 }
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Rollen-Abzeichen (1.3.0, fünf Kampf-Rollen): Farbe + Text, beschreibt immer die
+ * Kampf-Fähigkeit. Auch für noch fehlende Begleiter sichtbar (die Rolle verrät keine Zahlen).
+ */
+function RoleBadge({ pet, t, compact }: { pet: PetDef; t: TFn; compact?: boolean }): JSX.Element | null {
+  if (!pet.role) return null;
+  return (
+    <span
+      className={`pet-role-badge pet-role-${pet.role}${compact ? " is-compact" : ""}`}
+      title={t("companions.role.hint")}
+    >
+      {t(`companions.role.${pet.role}`)}
+    </span>
+  );
+}
+
+/** Echo-Anteil als Prozent-Text (25). */
+const ECHO_PCT = formatPct1(PET_ECHO_FACTOR);
 
 export function PetGalleryPage(): JSX.Element {
   const state = useGameState();
@@ -154,6 +175,9 @@ export function PetGalleryPage(): JSX.Element {
   const selectedBg = getZoneBackgroundCard(PET_ZONE_ID[selectedPet.id]);
   const selectedSecond = secondId === selectedPet.id;
   const pity = petPityProgress(state, content, selectedPet);
+  // claude:2026-10-18T02:00:00+02:00 — Echo: wirkt der ausgewählte Begleiter gerade mit 25 %? Und wie viele insgesamt?
+  const selectedEcho = selectedOwned && petEchoActive(state, content, selectedPet.id);
+  const echoCount = allPets.filter((pet) => petEchoActive(state, content, pet.id)).length;
 
   return (
     <div className="pet-gallery-page pet-field-journal">
@@ -187,6 +211,12 @@ export function PetGalleryPage(): JSX.Element {
                 <span className="pet-slot-none">{t("companions.slot.none")}</span>
               )}
             </div>
+            {/* claude:2026-10-18T02:00:00+02:00 — Echo-Zusammenfassung: wie viele Begleiter gerade mit 25 % wirken. */}
+            {echoCount > 0 && (
+              <div className="pet-field-echo-summary" title={t("companions.echo.hint").replace("{pct}", ECHO_PCT)}>
+                {t("companions.echo.summary").replace("{n}", String(echoCount)).replace("{pct}", ECHO_PCT)}
+              </div>
+            )}
             {slot2Unlocked && (
               <div className="pet-field-active">
                 <span className="pet-slot-label">{t("companions.slot2.label")}</span>
@@ -243,6 +273,7 @@ export function PetGalleryPage(): JSX.Element {
                   </span>
                   <span className="pet-field-entry-copy">
                     <strong>{has ? tr(pet.name) : "???"}</strong>
+                    <RoleBadge pet={pet} t={tFn} compact />
                     <small>{sourceLabel(pet)}</small>
                     {/* claude:2026-10-17T13:00:00+02:00 — geschützte Leerzeichen: „1 / 60.000“ bricht nie mitten in der Quote. */}
                     {/* claude:2026-10-18T00:30:00+02:00 — fehlende Begleiter: effektive Chance inkl. Jagdbuch. */}
@@ -282,6 +313,7 @@ export function PetGalleryPage(): JSX.Element {
               <div>
                 <span className="pet-field-kicker">{sourceLabel(selectedPet)}</span>
                 <h3>{selectedOwned ? tr(selectedPet.name) : "???"}</h3>
+                <RoleBadge pet={selectedPet} t={tFn} />
               </div>
               <span className="pet-field-drop">
                 {t("companions.dropChance").replace("{pct}", chanceFor(selectedPet).text)}
@@ -338,11 +370,29 @@ export function PetGalleryPage(): JSX.Element {
                       <small className="pet-field-effects-hint">{t("pet.ability.autoHint")}</small>
                     </span>
                   </div>
+                  {/* claude:2026-10-18T02:00:00+02:00 — Echo-Hinweis (1.3.0): aktuell wirksam ja/nein + der 25-%-Wert. */}
+                  <div
+                    className={`pet-effect-row pet-effect-row-echo${selectedEcho ? " is-active" : " is-idle"}`}
+                    title={t("companions.echo.hint").replace("{pct}", ECHO_PCT)}
+                  >
+                    <span className="pet-effect-tag pet-effect-tag-echo">{t("companions.echo.title")}</span>
+                    <span className="pet-effect-value">
+                      <small className="pet-field-echo-state">
+                        {selectedEcho
+                          ? t("companions.echo.active").replace("{pct}", ECHO_PCT)
+                          : t("companions.echo.idle")}
+                      </small>
+                      <span>{passiveText(selectedPet, tFn, tr, PET_ECHO_FACTOR)}</span>
+                    </span>
+                  </div>
                 </>
               ) : (
-                <div className="pet-effect-row pet-effect-row-unknown">
-                  <span className="pet-field-effects-unknown-text">{t("pet.effect.unknownHint")}</span>
-                </div>
+                <>
+                  <div className="pet-effect-row pet-effect-row-unknown">
+                    <span className="pet-field-effects-unknown-text">{t("pet.effect.unknownHint")}</span>
+                  </div>
+                  <p className="pet-field-echo-locked">{t("companions.echo.locked").replace("{pct}", ECHO_PCT)}</p>
+                </>
               )}
             </div>
 

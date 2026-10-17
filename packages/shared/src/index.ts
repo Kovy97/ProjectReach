@@ -2395,6 +2395,19 @@ export type PetId = string;
  * | killHeal        | heilt % player.maxHp bei jedem Monster-Kill      | combat.ts Kill-Pfad (`petKillHealFraction`)     |
  * | sellBonus       | +% Gold beim Item-Verkauf (Shop-Sell-Pfad)       | shop.ts `effectiveSellPrice` (`petSellBonus`)   |
  * | huntDoubleRolls | Chance je FANG beim Jagen, dass der Fang HUNT_LOOT_ROLLS × 2 (zehn statt fünf) Beute-Durchläufe liefert (skill-gebunden auf `hunting`; ein eigener RNG-Zug vor den Beute-Würfen, nur mit aktivem Pet) | hunting.ts `grantCatch` (`petHuntDoubleRollsChance`) |
+ * | bonusFind       | 1.3.0: Chance je Abschluss auf ein Zusatz-Item (Menge 1) aus `pool` (rootFind/veinGem) | tick.ts `completeAction` (`petBonusFind`) |
+ * | tierUp          | 1.3.0: Chance, dass der Haupt-Output (loot[0]) durch den nächsten Eintrag seiner Leiter (`ladder`, ContentDB.petTierLadders) ersetzt wird, nur wenn dessen Quell-Aktion freigeschaltet ist | tick.ts `completeAction` (`petTierUp`) |
+ * | growSpeed       | 1.3.0: Beete reifen um den Anteil schneller (additiv zum Meister-Ring) | farming.ts `effectiveGrowMs` (`petGrowSpeed`) |
+ * | thievingFinesse | 1.3.0: +Erfolgschance (additiv, 0.95-Deckel bleibt) UND Betäubung bei Fehlschlag × `stunMult` | tick.ts `completeAction` (`petThievingBonus`/`petThievingStunMult`) |
+ * | craftSuffixChance | 1.3.0: +Pp auf die Suffix-Chance von Ausrüstungs-Outputs des Skills (Deckel 1) | tick.ts `completeAction` (`petCraftSuffixBonus`) |
+ * | foodHealBonus   | 1.3.0: Essen (nicht Tränke) heilt × (1 + Anteil) (global) | combat.ts `tryAutoEat`, consumable.ts (`petFoodHealMult`) |
+ * | styleDamage     | 1.3.0: Schaden des Stils `style` × (1 + Anteil) (global, stil-gebunden) | character.ts `computeStats` (`petStyleDamage`) |
+ * | wardCapacityPct | 1.3.0: maxWard × (1 + Anteil); ohne Stoff-Pool wirkungslos (global) | character.ts `computeStats` (`petWardCapacityPct`) |
+ * | prepSpeed       | 1.3.0: Aktionen des Skills, deren Haupt-Output KEINE Ausrüstung ist (Vorstufen), laufen um den Anteil schneller | tick.ts `effectiveActionDurationMs` (`petPrepSpeed`) |
+ *
+ * ECHO (1.3.0, Chef 17.10.2026): jeder besessene, NICHT ausgerüstete Begleiter wirkt mit `PET_ECHO_FACTOR`
+ * (25 %) seines skillEffect. Je (Kind, Skill bzw. Stil) zählt der GRÖSSTE Einzelwert aus Platz 1 (100 %),
+ * Platz 2 (100 %) und Echo (25 %), keine Summe (engine/pets.ts `bestOfKind`).
  *
  * Mehrere Kinds docken funktional an dieselbe Mechanik an (doubleDrop/gatherYield/
  * flawlessGem/bonusRunes → Doppelertrag-Chance; refundMaterial/perfectCook/
@@ -2427,7 +2440,18 @@ export type PetSkillEffectKind =
   //    liefert ein Fang zehn statt fünf Beute-Würfe (hunting.ts läuft NICHT über den Aktions-Pfad, darum ein
   //    eigenes, skill-gebundenes Kind statt doubleDrop). Das frühere Kind `huntCatchChance` (+pp Fangchance)
   //    ist ersatzlos gestrichen (Chef 28.08.2026, zweiter Umbau). ──
-  | "huntDoubleRolls";
+  | "huntDoubleRolls"
+  // ── claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework (design/1.3.0-begleiter-werte.md §2c):
+  //    Signatur-Fertigkeiten. Fund-/Stufen-Effekte bringen ein VORHANDENES Item mit, statt nur % zu addieren. ──
+  | "bonusFind"
+  | "tierUp"
+  | "growSpeed"
+  | "thievingFinesse"
+  | "craftSuffixChance"
+  | "foodHealBonus"
+  | "styleDamage"
+  | "wardCapacityPct"
+  | "prepSpeed";
 
 // RemovedPetSkillEffectKind („skillXp"): GELÖSCHT (#276 Schritt 3 erledigt) — Content ist auf die
 // neuen Passive umgestellt, XP-Kinds sind per Guard-Test dauerhaft verboten. Alt-Saves unberührt
@@ -2463,6 +2487,17 @@ export type PetSkillEffectKind =
  * | blockNextEnemyHit | blockt den nächsten Gegner-Treffer komplett          | (ungenutzt; one-shot)           |
  * | armorPierceHit    | Sofortschaden, ignoriert Gegner-Defense              | Bruch der enemy.maxHp           |
  * | multiHit          | mehrere schnelle Sofort-Treffer                      | Bruch der enemy.maxHp je Treffer|
+ * | currentHpStrike   | Sofortschaden aus den AKTUELLEN Gegner-LP (1.3.0)    | Bruch der aktuellen enemyHp     |
+ * | crippleStrike     | Krit-Treffer, danach greift der Gegner PET_CRIPPLE_SLOW_MS lang PET_CRIPPLE_SLOW_PCT langsamer an | Bruch der enemy.maxHp |
+ * | cripplingPoison   | Gift; solange der Gegner vergiftet ist, greift er PET_POISON_SLOW_PCT langsamer an | Bruch enemy.maxHp/s |
+ * | emberBrand        | Brand (`durationMs`), Ticks × (1 + PET_EMBER_BRAND_STACK_BONUS × (Glut-Stapel − 1)) | Bruch enemy.maxHp/s |
+ * | emberDetonate     | legt Brand (`burnValue`) an, zündet dann alle Glut-Stapel | Bruch enemy.maxHp je Stapel |
+ * | executeBleed      | Blutung; Ticks × PET_EXECUTE_BLEED_MULT unter PET_EXECUTE_BLEED_BELOW Gegner-LP | Bruch enemy.maxHp/s |
+ * | frostBite         | Frost; jeder PET_FROSTBITE_FREEZE_EVERY-te Biss friert ein | Frost-Dauer in ms   |
+ * | emergencyHeal     | Geladen-Muster: Heilung, sobald LP < PET_EMERGENCY_HEAL_BELOW; Abklingzeit = intervalMs | Bruch der maxHp |
+ * | deathSave         | Geladen-Muster: ein tödlicher Gegner-Treffer lässt 1 LP; Abklingzeit = intervalMs | (ungenutzt) |
+ *
+ * 1.3.0: `wardRestore` schreibt value × player.maxHp gut (gedeckelt bei maxWard), nicht mehr × maxWard.
  */
 export type PetAbilityKind =
   | "stun"
@@ -2480,7 +2515,17 @@ export type PetAbilityKind =
   | "enemyAttackDelay"
   | "blockNextEnemyHit"
   | "armorPierceHit"
-  | "multiHit";
+  | "multiHit"
+  // ── claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework (design/1.3.0-begleiter-werte.md §2c) ──
+  | "currentHpStrike"
+  | "crippleStrike"
+  | "cripplingPoison"
+  | "emberBrand"
+  | "emberDetonate"
+  | "executeBleed"
+  | "frostBite"
+  | "emergencyHeal"
+  | "deathSave";
 
 /**
  * Skill-Effekt-Arten, die NUR einen einzelnen Skill betreffen (brauchen `skillEffect.skill`).
@@ -2502,6 +2547,13 @@ export const SKILL_SCOPED_PET_KINDS: PetSkillEffectKind[] = [
   "potionPreserve",
   "skillBoost",
   "huntDoubleRolls",
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: skill-gebundene Signatur-Fertigkeiten.
+  "bonusFind",
+  "tierUp",
+  "growSpeed",
+  "thievingFinesse",
+  "craftSuffixChance",
+  "prepSpeed",
 ];
 
 /**
@@ -2532,12 +2584,64 @@ export const PET_SKILL_EFFECT_CAP: Record<PetSkillEffectKind, number> = {
   // ── #276 Pet-Redesign (Spec §5.3) ──
   lifesteal: 0.02, // Bruch: +2 % Lebensraub max (Gear-Quellen ~10 % — Pet bleibt Komfort)
   skillBoost: 2, // GANZE Level (nicht Bruch!) — von der ≤5-%-Guard-Prüfung ausgenommen
-  damageReduction: 0.04, // Bruch: multiplikative Schadensreduktion, deutlich unter einem Rüstungs-Tier
+  damageReduction: 0.05, // claude:2026-10-18T02:00:00+02:00 — 1.3.0: 0.04 → 0.05 (Chitinpanzer „Panzerhaut", Werte-Datei §2c)
   doubleLoot: 0.05, // Chance je Kill (Ökonomie-Spiegel des gemwraith-5-%-Referenzlevels)
   killHeal: 0.05, // Bruch player.maxHp je Kill (reines Food-Sparen im Grind)
   sellBonus: 0.05, // Bruch: +5 % Verkaufs-Gold max
   huntDoubleRolls: 0.05, // Chance je Fang auf HUNT_LOOT_ROLLS × 2 Beute-Durchläufe (Ökonomie-Spiegel von doubleLoot, 5 % Referenzlevel)
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework, Deckel aus design/1.3.0-begleiter-werte.md §2c.
+  bonusFind: 0.06,
+  tierUp: 0.05,
+  growSpeed: 0.06,
+  thievingFinesse: 0.04,
+  craftSuffixChance: 0.05,
+  foodHealBonus: 0.1,
+  styleDamage: 0.03,
+  wardCapacityPct: 0.06,
+  prepSpeed: 0.06, // Schindling „Gerberhand" (Chef 17.10.: Ersatz ohne EP)
 };
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Echo (1.3.0, Chef 17.10.2026): Anteil des skillEffect, mit dem jeder besessene, NICHT
+ * ausgerüstete Begleiter dauerhaft wirkt (keine Kampf-Fähigkeit). Rechnet sich aus `character.ownedPets`,
+ * kein Save-Feld.
+ */
+export const PET_ECHO_FACTOR = 0.25;
+
+/** claude:2026-10-18T02:00:00+02:00 — Fund-Pools von `bonusFind` (siehe engine/pets.ts `petBonusFindItem`). */
+export type PetFindPool = "rootFind" | "veinGem";
+
+/** claude:2026-10-18T02:00:00+02:00 — Anteil Saat (sonst Vogelnest) beim Fund-Pool `rootFind`. */
+export const PET_ROOTFIND_SEED_SHARE = 2 / 3;
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Kampf-Rolle eines Begleiters (Rollen-Abzeichen der Begleiter-Seite, 1.3.0). Beschreibt
+ * IMMER die Kampf-Fähigkeit (Chef 17.10.: Aasschwinge = „damage").
+ */
+export type PetRole = "control" | "protection" | "damage" | "loot" | "support";
+export const PET_ROLES: PetRole[] = ["control", "protection", "damage", "loot", "support"];
+
+// claude:2026-10-18T02:00:00+02:00 — Konstanten der 1.3.0-Kampf-Fähigkeiten (design/1.3.0-begleiter-werte.md §2c).
+/** Glut-Stapel am Gegner (je Brand-Anwendung von Spielerseite +1, Reset bei Brand-Ende/Gegnerwechsel). */
+export const EMBER_MAX_STACKS = 5;
+/** emberBrand: Brand-Ticks × (1 + Wert × (Stapel − 1)), solange das Brand-Pet aktiv ist. */
+export const PET_EMBER_BRAND_STACK_BONUS = 0.1;
+/** emberBrand: Brand-Dauer, wenn `combatAbility.durationMs` fehlt. */
+export const PET_EMBER_BRAND_MS = 5000;
+/** emberDetonate: Dauer des vor der Zündung gelegten Brands. */
+export const PET_EMBER_DETONATE_BURN_MS = 6500;
+/** crippleStrike: Gegner-Angriffstempo −Anteil für die Dauer. */
+export const PET_CRIPPLE_SLOW_PCT = 0.25;
+export const PET_CRIPPLE_SLOW_MS = 3000;
+/** cripplingPoison: Gegner-Angriffstempo −Anteil, solange er vergiftet ist (jede Quelle). */
+export const PET_POISON_SLOW_PCT = 0.2;
+/** executeBleed: Blutungs-Ticks × Faktor, solange enemyHp < Schwelle × maxHp. */
+export const PET_EXECUTE_BLEED_BELOW = 0.5;
+export const PET_EXECUTE_BLEED_MULT = 2;
+/** frostBite: jeder n-te Biss friert ein (sofern keine Einfrier-Immunität läuft). */
+export const PET_FROSTBITE_FREEZE_EVERY = 3;
+/** emergencyHeal: löst aus, sobald LP unter diesem Anteil liegen. */
+export const PET_EMERGENCY_HEAL_BELOW = 0.4;
 
 /**
  * Maximaler erlaubter `value` je Pet-Ability-Art. Die Einheit folgt der `value`-Semantik
@@ -2558,12 +2662,22 @@ export const PET_ABILITY_CAP: Record<PetAbilityKind, number> = {
   shield: 0.15, // Bruch maxHp
   armorRend: 0.3, // Bruch Zusatzschaden
   guaranteedCrit: 0.15, // Bruch enemy.maxHp
-  wardRestore: 0.15, // Bruch maxWard — Ward-Spiegel von shield/heal (Budget #276 §3: ≤ 2 % Pool/s Sustain)
+  wardRestore: 0.06, // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Bruch player.maxHp (war Bruch maxWard, Deckel 0.15)
   lifestealBurst: 0.12, // Bruch enemy.maxHp
   enemyAttackDelay: 2000, // ms
   blockNextEnemyHit: 1, // one-shot (value ungenutzt)
   armorPierceHit: 0.15, // Bruch enemy.maxHp
   multiHit: 0.06, // Bruch enemy.maxHp je Treffer
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework (design/1.3.0-begleiter-werte.md §2c).
+  currentHpStrike: 0.2, // Bruch der aktuellen enemyHp
+  crippleStrike: 0.06, // Bruch enemy.maxHp
+  cripplingPoison: 0.02, // Bruch enemy.maxHp/s
+  emberBrand: 0.02, // Bruch enemy.maxHp/s
+  emberDetonate: 0.05, // Bruch enemy.maxHp je Glut-Stapel
+  executeBleed: 0.03, // Bruch enemy.maxHp/s
+  frostBite: 1000, // ms Frost
+  emergencyHeal: 0.15, // Bruch maxHp
+  deathSave: 1, // one-shot (value ungenutzt)
 };
 
 /** Mindest-/Default-Intervall einer Pet-Ability (ms). Guard erzwingt intervalMs > 0. */
@@ -2613,6 +2727,17 @@ export interface PetSkillEffect {
   skill?: SkillId;
   /** Magnitude als Bruch (0.05 = 5 %) — AUSNAHME `skillBoost`: GANZE Level (max 2). */
   value?: number;
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: Zusatzfelder der Signatur-Fertigkeiten.
+  /** Signatur-Name der Fertigkeit (z. B. „Wurzelgespür"), en+de; weitere Sprachen via Overlay. */
+  name?: LocalizedString;
+  /** NUR `bonusFind`: Fund-Pool. */
+  pool?: PetFindPool;
+  /** NUR `tierUp`: Schlüssel in `ContentDB.petTierLadders`. */
+  ladder?: string;
+  /** NUR `thievingFinesse`: Faktor auf die Betäubungsdauer bei Fehlschlag (0.5 = halb so lang). */
+  stunMult?: number;
+  /** NUR `styleDamage`: betroffener Kampfstil. */
+  style?: WeaponStyle;
 }
 
 /**
@@ -2633,6 +2758,10 @@ export interface PetCombatAbility {
   status?: StatusType;
   /** Magnitude — Bedeutung je Kind (siehe `PetAbilityKind`-Tabelle), gedeckelt via `PET_ABILITY_CAP`. */
   value?: number;
+  /** claude:2026-10-18T02:00:00+02:00 — NUR `emberBrand`: Brand-Dauer in ms (Default PET_EMBER_BRAND_MS). */
+  durationMs?: number;
+  /** claude:2026-10-18T02:00:00+02:00 — NUR `emberDetonate`: Brand-Magnitude (Bruch enemy.maxHp/s) vor der Zündung. */
+  burnValue?: number;
 }
 
 export interface PetDef {
@@ -2643,6 +2772,8 @@ export interface PetDef {
   skillEffect: PetSkillEffect;
   /** Getriggerte Combat-Ability (wirkt im Kampf alle `intervalMs`; combat-dev wendet sie an). */
   combatAbility: PetCombatAbility;
+  /** claude:2026-10-18T02:00:00+02:00 — Kampf-Rolle (Rollen-Abzeichen, 1.3.0). Guard: Pflicht im echten Content. */
+  role?: PetRole;
   /**
    * Welche Quelle das Pet droppt. `skill` = ein Skilling-Skill (Drop pro Aktions-
    * Abschluss dieses Skills). `combat` = Monster-Kills IM PASSENDEN STIL (combat-dev wirft nur
@@ -5158,6 +5289,12 @@ export interface ContentDB {
    */
   pets: Record<PetId, PetDef>;
   /**
+   * claude:2026-10-18T02:00:00+02:00 — Stufen-Leitern der Begleiter-Fertigkeit `tierUp` (1.3.0): Schlüssel =
+   * `PetSkillEffect.ladder`, Wert = eine oder mehrere Leitern (ItemIds, nach `levelRequired` der
+   * Quell-Aktion sortiert). Nur VORHANDENE Items. Optional (Test-Fixtures ohne Leitern ⇒ kein Effekt).
+   */
+  petTierLadders?: Record<string, ItemId[][]>;
+  /**
    * Anbaubare Crops (passives Plot-/Farming-System). Key = Crop-ID (≙ `FarmPlot.cropId`).
    * OPTIONAL: content-dev füllt den Katalog in Phase 2 — bis dahin behandelt die Engine ein
    * fehlendes/leeres `crops` defensiv (keine Reife, kein RNG-Zug) → bestehende Saves/Tests unberührt.
@@ -5684,6 +5821,12 @@ export interface ElementalSideCounters {
   shockDelayMs: number;
   /** poison: aktive Gift-Stapel (1..POISON_MAX_STACKS; 0 = kein Gift). */
   poisonStacks: number;
+  /**
+   * claude:2026-10-18T02:00:00+02:00 — burn: Glut-Stapel (0..EMBER_MAX_STACKS, 1.3.0), nur Gegner-Seite: +1 je
+   * Brand-Anwendung von Spielerseite, 0 bei Brand-Ende/Gegnerwechsel. Ohne Eigenwirkung; nur
+   * Schlackenscheusal (emberBrand) und Scheiterling (emberDetonate) lesen sie. Optional (fehlend = 0).
+   */
+  emberStacks?: number;
 }
 
 /** Elementar-Zähler beider Seiten (siehe `CombatState.elemental`). */
@@ -5694,7 +5837,7 @@ export interface ElementalCounters {
 
 /** Frische (leere) Elementar-Zähler einer Seite. */
 export function createElementalSideCounters(): ElementalSideCounters {
-  return { frostStacks: 0, freezeImmunityMs: 0, frozen: false, shockDelayMs: 0, poisonStacks: 0 };
+  return { frostStacks: 0, freezeImmunityMs: 0, frozen: false, shockDelayMs: 0, poisonStacks: 0, emberStacks: 0 };
 }
 
 /** Frische (leere) Elementar-Zähler beider Seiten. */
@@ -5792,6 +5935,17 @@ export interface PetAbilityRuntime {
   /** `armorRend`: Restzeit (ms) + Magnitude (Bruch), um die der Gegner mehr Schaden nimmt. */
   enemyVulnMs: number;
   enemyVulnPct: number;
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: OPTIONALE Laufzeitfelder (fehlend = 0/false, daher
+  // kein Save-Bump; Alt-Saves und frische Läufe verhalten sich identisch).
+  /** `crippleStrike`: Restzeit (ms) + Anteil, um den der Gegner langsamer angreift. */
+  enemySlowMs?: number;
+  enemySlowPct?: number;
+  /** `frostBite`: Bisse seit dem letzten Einfrieren (Reset je Begegnung). */
+  frostBites?: number;
+  /** `stealDrop`: in dieser Begegnung bereits erfolgreich gestohlen (Reset je Begegnung). */
+  stolenThisEncounter?: boolean;
+  /** `emergencyHeal`/`deathSave` (Geladen-Muster): Rest-Abklingzeit in ms; 0/fehlend = geladen. */
+  chargeMs?: number;
 }
 
 /** Frischer (leerer) Pet-Ability-Laufzeitzustand. */

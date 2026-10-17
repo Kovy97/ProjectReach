@@ -131,7 +131,7 @@ describe("petFxImageFor / petFxTargetSide — Familie D (alle 16 PetAbilityKind-
   const allKinds = Object.keys(PET_ABILITY_CAP) as PetAbilityKind[];
 
   it("deckt jeden PetAbilityKind mit einer der sechs Bildfamilien ab", () => {
-    expect(allKinds.length).toBe(16);
+    expect(allKinds.length).toBe(25); // claude:2026-10-18T02:00:00+02:00 — 1.3.0: +9 Kinds (Begleiter-Rework)
     const valid: PetFxImage[] = ["bite", "bolt", "ward", "mark", "pilfer", "critstar"];
     for (const kind of allKinds) {
       expect(valid).toContain(petFxImageFor(kind));
@@ -174,12 +174,12 @@ describe("petFxImageFor / petFxTargetSide — Familie D (alle 16 PetAbilityKind-
 describe("petFxThemeFor — Begleiter-Partikel-Thema (Familie D, Chef-Auftrag 29.08.2026)", () => {
   it("leitet das Thema der sechs Begleiter mit status-Feld über die Elementleiter ab", () => {
     const cases: Array<[string, PetFxTheme]> = [
-      ["pyreling", "fire"], // Flame Nova, burn
-      ["slagfiend", "fire"], // Forge Brand, burn
+      // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Element über status ODER das neue Kind (emberBrand/emberDetonate/…).
+      ["pyreling", "fire"], // Funkenregen, emberDetonate
+      ["slagfiend", "fire"], // Schlackenspritzer, emberBrand
       ["witherling", "poison"], // Blight Bloom, poison (delayedDot)
-      ["hemlock", "poison"], // Venom Phial, poison
-      ["gorehound", "bleed"], // Maul, bleed — kein Element
-      ["booted_tomcat", "bleed"], // Bear Trap, bleed — kein Element
+      ["hemlock", "poison"], // Lähmgift, cripplingPoison
+      ["gorehound", "bleed"], // Reißen, executeBleed
     ];
     for (const [id, theme] of cases) {
       const pet = content.pets[id];

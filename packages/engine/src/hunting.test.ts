@@ -643,7 +643,7 @@ describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
   it("Passiv huntDoubleRolls: Content 5 % auf hunting (Cap 0,05); die Fangchance bleibt OHNE Begleiter-Bonus; fremde Pets 0", () => {
     const c = testContent();
     const s = game(c);
-    expect(content.pets?.booted_tomcat?.skillEffect).toEqual({ kind: "huntDoubleRolls", skill: "hunting", value: 0.05 });
+    expect(content.pets?.booted_tomcat?.skillEffect).toMatchObject({ kind: "huntDoubleRolls", skill: "hunting", value: 0.05 });
     expect(PET_SKILL_EFFECT_CAP.huntDoubleRolls).toBe(0.05);
     expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBe(0); // kein Pet
     grantPet(s, "booted_tomcat"); // erstes Pet rüstet sich selbst aus
@@ -656,14 +656,15 @@ describe("Jagen — Begleiter (booted_tomcat, 1.2.0)", () => {
     setLevel(s, 99);
     expect(huntCatchChance(s, c, "pastures")).toBe(HUNT_CATCH_CAP);
     expect(huntCatchChance(s, c, "nirgendwo")).toBe(0);
-    // Ein Pet eines anderen Skills (rotbark, woodcutting) liefert kein Jagen-Glück.
+    // claude:2026-10-18T02:00:00+02:00 — Echo (1.3.0): ein anderes Pet (rotbark) ausgerüstet ⇒ der besessene Leon wirkt
+    // nur noch mit 25 % (0,0125); rotbark selbst liefert kein Jagen-Glück.
     setLevel(s, 1);
     grantPet(s, "rotbark");
     expect(equipPet(s, "rotbark")).toBe(true);
-    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBe(0);
-    // Abgelegt ⇒ 0.
+    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBeCloseTo(0.0125, 10);
+    // Abgelegt ⇒ weiterhin nur das Echo.
     expect(equipPet(s, null)).toBe(true);
-    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBe(0);
+    expect(petHuntDoubleRollsChance(s, c, HUNTING_SKILL_ID)).toBeCloseTo(0.0125, 10);
   });
 
   it("huntDoubleRolls: EIN Zug (Schritt 4) nur mit aktivem Leon — Treffer ⇒ 10 Beute-Durchläufe, sonst 5; Gold bleibt ×5 (exakte RNG-Züge)", () => {

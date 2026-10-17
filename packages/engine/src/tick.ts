@@ -26,10 +26,17 @@ import { tickHuntTraps, type HuntCatchTally } from "./hunting";
 import { tryCraftSuffix } from "./suffix";
 import { markActionDropSeen } from "./drops";
 import {
+  petBonusFind,
+  petCraftSuffixBonus,
   petDoubleYieldBonus,
   petInstantActionChance,
+  petPrepSpeed,
   petPreserveBonus,
   petThievingBonus,
+  petThievingStunMult,
+  petTierUp,
+  petTierUpTarget,
+  rollPetBonusFind,
   tryPetDrop,
 } from "./pets";
 import {
@@ -134,10 +141,13 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
       // Meisterweihe (masterPerk `stunReduction`, capes.ts): −20 % Betäubung des Shadowgrasp-Capes —
       // multiplikativ auf die risiko-modifizierte Stun-Dauer. Faktor exakt 1 ohne Träger (das
       // bestehende Math.round bleibt die einzige Rundung → Alt-Verhalten bit-identisch).
+      // claude:2026-10-18T02:00:00+02:00 — Düsterratte „Leise Pfoten" (thievingFinesse): Betäubung × stunMult
+      // (Echo: × 0.875). Exakt 1 ohne passenden Begleiter ⇒ bit-identisch.
       state.stunMs = Math.round(
         (action.stunMs ?? DEFAULT_STUN_MS)
           * (risk?.stunMult ?? 1)
-          * (1 - masterStunReduction(state, content, action.skill)),
+          * (1 - masterStunReduction(state, content, action.skill))
+          * petThievingStunMult(state, content, action.skill),
       );
       return;
     }
@@ -235,9 +245,23 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
   // 2026-07-21). Jetzt ein TEMPO-Bonus auf Sammel-Aktionen (mehr Abschlüsse/Zeit statt mehr Menge/
   // Abschluss) — s. `effectiveActionDurationMs` unten. Hier bleibt daher NUR noch rareDrop übrig.
 
+  // claude:2026-10-18T02:00:00+02:00 — Begleiter-Stufensprung `tierUp` (1.3.0): gilt nur dem Haupt-Output (loot[0]).
+  // Der Wurf fällt VOR dem Doppelertrag-Wurf und NUR, wenn ein Begleiter wirkt UND ein freigeschaltetes
+  // Ziel existiert (pet-lose States und oberste Stufen ziehen keinen RNG). Doppelertrag verdoppelt danach
+  // das ersetzte Item.
+  const tierUp = petTierUp(state, content, action.skill);
+  const skillLevelNow = tierUp ? levelFromXp(state.skills[action.skill]?.xp ?? 0) : 0;
+  let isMainRoll = true;
   for (const roll of action.loot) {
+    const mainRoll = isMainRoll;
+    isMainRoll = false;
     if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult)) {
       let qty = nextInt(state.rng, roll.min, roll.max);
+      let itemId = roll.itemId;
+      if (mainRoll && tierUp) {
+        const target = petTierUpTarget(content, action.skill, tierUp.ladder, itemId, skillLevelNow);
+        if (target && nextFloat(state.rng) < tierUp.chance) itemId = target;
+      }
       if (bonusChance > 0 && nextFloat(state.rng) <= bonusChance) qty *= 2; // Mastery-Doppelertrag
       // Thieving-Risiko skaliert die Beute-Menge; nie unter 1, wenn der Roll überhaupt traf.
       if (rewardMult !== 1) qty = Math.max(1, Math.round(qty * rewardMult));
@@ -249,10 +273,16 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
       // wird EIN Exemplar zur Instanz (über intakeInstance ins Inventar, Auto-Salvage-fähig) → es
       // zählt nicht zusätzlich als Stack.
       let instanceMade = 0;
-      const suffixChance = roll.suffixChance ?? action.suffixChance ?? DEFAULT_CRAFT_SUFFIX_CHANCE;
+      let suffixChance = roll.suffixChance ?? action.suffixChance ?? DEFAULT_CRAFT_SUFFIX_CHANCE;
+      // claude:2026-10-18T02:00:00+02:00 — Schlackenscheusal „Glutsegen" (craftSuffixChance): +Pp auf eine bereits
+      // scharfe Suffix-Chance (> 0), Deckel 1. Ändert nur die Schwelle, nie die Zahl der Würfe.
+      if (isCraft && suffixChance > 0) {
+        const petSuffix = petCraftSuffixBonus(state, content, action.skill);
+        if (petSuffix > 0) suffixChance = Math.min(1, suffixChance + petSuffix);
+      }
       if (isCraft && qty > 0 && suffixChance > 0) {
         const ilvl = levelFromXp(state.skills[action.skill]?.xp ?? 0);
-        const res = tryCraftSuffix(state, content, roll.itemId, ilvl, suffixChance);
+        const res = tryCraftSuffix(state, content, itemId, ilvl, suffixChance);
         if (res) {
           qty -= 1;
           instanceMade = 1;
@@ -261,21 +291,22 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
       // Überlauf-Pfad (SAVE 71): grantLoot legt in Inventar → (Auto-Bank) Lager → Postfach ab —
       // NICHTS geht verloren, die Aktion muss nicht stoppen. Da grantLoot die gesamte `qty` unterbringt,
       // ist der Zugewinn genau `qty` (+ eine ggf. erzeugte Suffix-Instanz).
-      grantLoot(state, content, roll.itemId, qty);
+      grantLoot(state, content, itemId, qty);
       const gained = qty + instanceMade;
       // Aktions-Collection-Log: jeden tatsächlich erhaltenen Drop als entdeckt markieren (Spiegel
       // des Monster-Kill-Pfads). Für ALLE Aktionen aufzeichnen — die „???"-Maskierung ist reine
       // UI-Sache (später foraging-spezifisch). Idempotent; verbraucht kein RNG.
-      if (gained > 0) markActionDropSeen(state, action.id, roll.itemId);
+      // claude:2026-10-18T02:00:00+02:00 — ein Stufensprung-Fund gehört nicht in die Drop-Liste DIESER Aktion.
+      if (gained > 0 && itemId === roll.itemId) markActionDropSeen(state, action.id, roll.itemId);
       state.stats.itemsGathered += gained;
       // Taverne (SAVE 84): jedes frisch ERZEUGTE Stück je Item-ID — Baseline-Zähler der "produce"-
       // Aufgaben (neben itemsGathered, das auch Loot/Belohnungen zählt). Kein RNG, online == offline.
       if (gained > 0) {
-        (state.stats.producedById ??= {})[roll.itemId] = (state.stats.producedById[roll.itemId] ?? 0) + gained;
+        (state.stats.producedById ??= {})[itemId] = (state.stats.producedById[itemId] ?? 0) + gained;
       }
       if (isCraft && gained > 0) {
         state.stats.itemsCrafted += gained;
-        state.stats.craftedById[roll.itemId] = (state.stats.craftedById[roll.itemId] ?? 0) + gained;
+        state.stats.craftedById[itemId] = (state.stats.craftedById[itemId] ?? 0) + gained;
       }
     }
   }
@@ -285,6 +316,20 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
   // ein noch nicht besessenes Pet existiert → für Content ohne passendes Pet bleibt die
   // RNG-Sequenz bit-identisch (bestehende Determinismus-Fixtures unberührt).
   tryPetDrop(state, content, { kind: "skill", skill: action.skill });
+
+  // claude:2026-10-18T02:00:00+02:00 — Begleiter-Fund `bonusFind` (1.3.0, Faulrinde „Wurzelgespür", Felsschlund
+  // „Ader-Witterung"): ans ENDE der Wurf-Reihenfolge gehängt. RNG nur, wenn ein Begleiter wirkt UND der
+  // Fund-Pool für diese Aktion nicht leer ist ⇒ pet-lose States bleiben bit-identisch. Menge 1, über den
+  // Überlauf-Pfad (grantLoot) — nichts geht verloren.
+  const find = petBonusFind(state, content, action);
+  if (find) {
+    const found = rollPetBonusFind(state, find);
+    if (found) {
+      grantLoot(state, content, found, 1);
+      state.stats.itemsGathered += 1;
+      (state.stats.producedById ??= {})[found] = (state.stats.producedById[found] ?? 0) + 1;
+    }
+  }
 }
 
 /**
@@ -341,6 +386,10 @@ export function effectiveActionDurationMs(
     isCraft ? blessingMult(nowMs, "craftSpeed") : blessingMult(nowMs, "gather"),
     campShrineBonus(state, content),
   );
+  // claude:2026-10-18T02:00:00+02:00 — Schindling „Gerberhand" (prepSpeed, 1.3.0): Vorstufen-Aktionen (Haupt-Output
+  // = Material) laufen schneller. Exakt 1 ohne passenden Begleiter ⇒ bit-identisch.
+  const prepCut = petPrepSpeed(state, content, action);
+  const prepMult = prepCut > 0 ? 1 - prepCut : 1;
   return Math.max(
     1,
     Math.round(
@@ -348,7 +397,8 @@ export function effectiveActionDurationMs(
         bestToolSpeed(state, content, action.skill) *
         masterySpeed *
         poolSpeed *
-        campSpeedMult(state, content, action)) /
+        campSpeedMult(state, content, action) *
+        prepMult) /
         speedMult,
     ),
   );

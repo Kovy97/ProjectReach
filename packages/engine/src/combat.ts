@@ -91,6 +91,18 @@ import {
   createElementalCounters,
   createElementalSideCounters,
   TALENT_RARE_DROP_MAX_BASE_CHANCE,
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework (Kampf-Fähigkeiten, Glut-Stapel).
+  EMBER_MAX_STACKS,
+  PET_CRIPPLE_SLOW_MS,
+  PET_CRIPPLE_SLOW_PCT,
+  PET_EMBER_BRAND_MS,
+  PET_EMBER_BRAND_STACK_BONUS,
+  PET_EMBER_DETONATE_BURN_MS,
+  PET_EMERGENCY_HEAL_BELOW,
+  PET_EXECUTE_BLEED_BELOW,
+  PET_EXECUTE_BLEED_MULT,
+  PET_FROSTBITE_FREEZE_EVERY,
+  PET_POISON_SLOW_PCT,
 } from "@hearthforge/shared";
 import { nextFloat, nextInt } from "./rng";
 import { blessingChance, blessingMult, shrineAmplifiedMult } from "./blessing";
@@ -115,6 +127,7 @@ import {
   type ActivePetAbility,
   petCombatAbility,
   petDoubleLootChance,
+  petFoodHealMult,
   petKillHealFraction,
   tryPetDrop,
 } from "./pets";
@@ -191,7 +204,9 @@ function tryAutoEat(state: GameState, content: ContentDB, maxHp: number): void {
   // autoEatHealMult(tier) bleibt separater Multiplikator (aktuell 1.0 auf allen Stufen).
   const baseHeal = consumableHeal(foodItem, maxHp);
   if (baseHeal <= 0) return;
-  const heal = Math.round(baseHeal * autoEatHealMult(tier));
+  // claude:2026-10-18T02:00:00+02:00 — Aschbauch „Feinschmecker" (foodHealBonus, 1.3.0): Essen heilt × (1 + Anteil).
+  // Auto-Eat fasst nie Heiltränke an (findNextFood/selectFood); ohne Begleiter Faktor 1 ⇒ bit-identisch.
+  const heal = Math.round(baseHeal * autoEatHealMult(tier) * petFoodHealMult(state, content));
   removeItem(state.inventory, foodId, 1);
   state.combat.autoEatCooldownMs = AUTO_EAT_COOLDOWN_MS;
   state.character.hp = Math.min(maxHp, state.character.hp + heal);
@@ -366,6 +381,12 @@ function resetEnemyPetDebuffs(cs: CombatState): void {
   cs.petAbility.enemyAccDownPct = 0;
   cs.petAbility.enemyVulnMs = 0;
   cs.petAbility.enemyVulnPct = 0;
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Tempo-Malus, Frostbiss-Zähler und Diebstahl-Sperre gelten je Begegnung.
+  // Die Abklingzeit der Geladen-Fähigkeiten (chargeMs) läuft über Respawns weiter (Kontinuität).
+  cs.petAbility.enemySlowMs = 0;
+  cs.petAbility.enemySlowPct = 0;
+  cs.petAbility.frostBites = 0;
+  cs.petAbility.stolenThisEncounter = false;
 }
 
 function pushLog(cs: CombatState, event: Omit<CombatEvent, "seq">): void {
@@ -756,6 +777,13 @@ function onStatusApplied(cs: CombatState, side: Side, type: StatusType, isNew: b
     return;
   }
   if (isNew) pushLog(cs, { by, kind: "status", amount: 0, status: type });
+  // claude:2026-10-18T02:00:00+02:00 — Glut-Stapel (1.3.0): jede Brand-Anwendung von Spielerseite (Waffe, Verzauberung,
+  // Begleiter) legt einen Stapel auf den GEGNER, bis EMBER_MAX_STACKS. Ohne Eigenwirkung (Glut bleibt
+  // flach BURN_VULNERABILITY); nur emberBrand/emberDetonate lesen die Stapel. Kein RNG.
+  if (type === "burn" && side === "enemy") {
+    const c = sideCounters(cs, side);
+    c.emberStacks = Math.min(EMBER_MAX_STACKS, (c.emberStacks ?? 0) + 1);
+  }
   if (type === "frost") {
     const c = sideCounters(cs, side);
     if (c.freezeImmunityMs > 0) return; // immun: Anwendungen zählen nicht
@@ -781,6 +809,7 @@ function tickElementalSide(cs: CombatState, side: Side, effects: StatusEffect[])
   if (c.freezeImmunityMs > 0) c.freezeImmunityMs = Math.max(0, c.freezeImmunityMs - TICK_MS);
   if (!hasStatus(effects, "frost")) c.frostStacks = 0;
   if (!hasStatus(effects, "poison")) c.poisonStacks = 0;
+  if (!hasStatus(effects, "burn") && c.emberStacks) c.emberStacks = 0; // claude:2026-10-18T02:00:00+02:00 — Glut-Stapel enden mit dem Brand
 }
 
 /** Aktive Gift-Stapel einer Seite (≥ 1, solange Gift liegt — ein Alt-Save ohne Zähler zählt als 1 Stapel). */
@@ -1055,6 +1084,17 @@ const DUNGEON_VARIANT_PREFIX = "dg_";
  * Deterministisch, kein RNG. Exportiert für Guards + als eine Quelle der Wahrheit (UI-Art-Alias
  * der ui-dev-Welle spiegelt dasselbe Muster in monsters.ts).
  */
+/** claude:2026-10-18T02:00:00+02:00 — Item-IDs aller Champion-Unikate (Elite-Varianten), je Content gecacht. */
+const championUniqueCache = new WeakMap<ContentDB, Set<ItemId>>();
+function championUniqueIds(content: ContentDB): Set<ItemId> {
+  let set = championUniqueCache.get(content);
+  if (!set) {
+    set = new Set(Object.values(content.elites ?? {}).map((e) => e.uniqueItemId));
+    championUniqueCache.set(content, set);
+  }
+  return set;
+}
+
 export function killCreditMonsterId(content: ContentDB, monsterId: MonsterId): MonsterId {
   if (!monsterId.startsWith(DUNGEON_VARIANT_PREFIX)) return monsterId;
   const baseId = monsterId.slice(DUNGEON_VARIANT_PREFIX.length);
@@ -1155,8 +1195,13 @@ function onEnemyDefeated(
   // geklemmt). NUR hier, in der regulaeren Kill-Tabelle: rollDungeonLootTable und der Elite-Unique-
   // Wurf (elites.ts, eliteRng) lesen den Faktor bewusst nicht (§9 Frage 4, Option A).
   const lootChanceMult = lootChanceEffectMult(fx);
-  const rollLootTable = (): void => {
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 (Chef 17.10.): der Aasschwinge-Zweitwurf überspringt Champion-Unikate
+  // (Elite-`uniqueItemId`), damit diese Funde besonders bleiben. Begleiter/Dungeon-Token laufen ohnehin
+  // über eigene Würfe. Übersprungene Einträge ziehen keinen RNG.
+  const rollLootTable = (skipChampionUniques = false): void => {
+    const uniques = skipChampionUniques ? championUniqueIds(content) : null;
     for (const roll of monster.loot) {
+      if (uniques?.has(roll.itemId)) continue;
       // claude:2026-10-18T00:30:00+02:00 — Jagdbuch „Beute“: nur seltene Einträge (Basis ≤ 1/500) des
       // Auftragsmonsters; derselbe Draw, nur die Schwelle wächst (Champion-Unikate/Begleiter laufen
       // über eigene Würfe und bleiben unberührt). Ohne Talent ×1 ⇒ bit-identisch.
@@ -1211,7 +1256,7 @@ function onEnemyDefeated(
   const doubleLootChance = petDoubleLootChance(state, content);
   if (doubleLootChance > 0 && nextFloat(state.rng) < doubleLootChance) {
     gold += rollKillGold();
-    rollLootTable();
+    rollLootTable(true);
   }
 
   // — Blutmond (Task #337, Samstags-Segen §doubleLootChance, Chef-Design „15% Chance for double
@@ -1751,9 +1796,21 @@ function tickEnemyEffects(
   state: GameState,
   fx: SpecialEffects,
   monster?: MonsterDef,
+  petKind?: ActivePetAbility["kind"],
 ): { frost: boolean } {
   const cs = state.combat;
   let frost = false;
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-DoT-Modifikatoren (nur solange das Pet in Platz 1 aktiv ist):
+  // Schlackenscheusal (emberBrand): Brand-Ticks × (1 + 0.10 × (Glut-Stapel − 1));
+  // Blutbracke (executeBleed): Blutungs-Ticks × 2 unter 50 % Gegner-LP. Ohne Pet Faktor 1 (bit-identisch).
+  const burnPetMult =
+    petKind === "emberBrand"
+      ? 1 + PET_EMBER_BRAND_STACK_BONUS * Math.max(0, (cs.elemental?.enemy.emberStacks ?? 0) - 1)
+      : 1;
+  const bleedPetMult =
+    petKind === "executeBleed" && monster && cs.enemyHp < PET_EXECUTE_BLEED_BELOW * monster.maxHp
+      ? PET_EXECUTE_BLEED_MULT
+      : 1;
   // Elementar-Effekte: Glut (brennendes Ziel ×(1+BURN_VULNERABILITY) auf JEDEN DoT-Tick, auch den Brand
   // selbst) und Gift-Stapel (Schaden × Stapel). Ohne Brand/Gift Faktor 1 bzw. Stapel 1 ⇒ bit-identisch.
   const vuln = burnVulnMult(cs.enemyEffects);
@@ -1769,7 +1826,8 @@ function tickEnemyEffects(
   for (const e of cs.enemyEffects) {
     let perSec = e.magnitude;
     if (e.type === "poison" || e.type === "burn" || e.type === "bleed") {
-      perSec = e.magnitude * (e.type === "poison" ? poisonStacks : 1) * vuln;
+      const petMult = e.type === "burn" ? burnPetMult : e.type === "bleed" ? bleedPetMult : 1;
+      perSec = e.magnitude * (e.type === "poison" ? poisonStacks : 1) * vuln * petMult;
       cs.enemyHp -= perSec * dotMult * statusVsWardMult * (TICK_MS / 1000);
     } else if (e.type === "frost") frost = true;
     // shock/void: keine Tick-Wirkung — Verzögerung passiert bei der Anwendung, Entzug ist ein
@@ -2473,13 +2531,15 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   // die neue `enemyHp` weiterrechnen (Pet-Schaden aus altem maxHp, alte Angriffswerte/enrage/bane).
   // Heute unerreichbar (cooldownOnKill summiert seit 29.08.2026 über die Slots: Bogen 2000 ms +
   // Handschuhe 2000 ms = 4000 ms < KILL_COOLDOWN_MS), aber ein Content-/Tuning-Drop macht den Pfad scharf. Der Normalkampf-Respawn behält dieselbe monsterId → weiter erlaubt.
-  const status = tickEnemyEffects(state, fx, monster);
+  // claude:2026-10-18T02:00:00+02:00 — das aktive Pet-Kind einmal je Tick (Brand-/Blutungs-Modifikatoren, Gegner-Tempo).
+  const activePetKind = petCombatAbility(state, content)?.kind;
+  const status = tickEnemyEffects(state, fx, monster, activePetKind);
   if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
 
   // Getriggerte Pet-Ability (eigener Intervall-Timer, unabhängig vom Spieler-Angriff).
   // Tickt die timed Pet-Debuffs herunter und löst bei Fälligkeit die Ability aus.
-  tickPetAbility(state, content, monster, fx);
+  tickPetAbility(state, content, monster, fx, stats);
   if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
 
@@ -2526,7 +2586,15 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   // Gleicher Intervall-Guard wie beim Spieler.
   const enemyInterval = safeInterval(monster.attackIntervalMs);
   const enemyStunned = cs.petAbility.enemyStunMs > 0;
-  cs.enemyTimerMs += TICK_MS * (enemyStunned ? 0 : status.frost ? 1 - FROST_SLOW : 1);
+  // claude:2026-10-18T02:00:00+02:00 — Gegner-Tempo-Malus der Begleiter (1.3.0), multiplikativ zu Frost: Leon
+  // (crippleStrike, Fenster enemySlowMs) bzw. Schierling (cripplingPoison, solange Gift liegt).
+  // Ohne Malus Faktor 1 ⇒ bit-identisch.
+  const petSlow = Math.max(
+    (cs.petAbility.enemySlowMs ?? 0) > 0 ? (cs.petAbility.enemySlowPct ?? 0) : 0,
+    activePetKind === "cripplingPoison" && hasStatus(cs.enemyEffects, "poison") ? PET_POISON_SLOW_PCT : 0,
+  );
+  cs.enemyTimerMs +=
+    TICK_MS * (enemyStunned ? 0 : status.frost ? 1 - FROST_SLOW : 1) * (petSlow > 0 ? 1 - petSlow : 1);
   if (!enemyStunned && cs.enemyTimerMs >= enemyInterval) {
     cs.enemyTimerMs -= enemyInterval;
     // Elementar-Effekte (Symmetrie zum Spieler-Zweig): Schock-Kette endet mit dem fälligen Angriff;
@@ -2647,6 +2715,25 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           if (stats.damageReduction > 0 && hpDamage > 0) {
             hpDamage = Math.max(1, Math.round(hpDamage * (1 - stats.damageReduction)));
           }
+          // claude:2026-10-18T02:00:00+02:00 — Seidenweber „Rettungsfaden" (deathSave, 1.3.0, Geladen-Muster): ein
+          // gelandeter Treffer, der die LP auf ≤ 0 senken würde (nach Block/Schild/Ward/Reduktion), lässt
+          // 1 LP; danach Abklingzeit = intervalMs. Kein RNG.
+          if (hpDamage > 0 && state.character.hp - hpDamage <= 0 && activePetKind === "deathSave") {
+            const pa = cs.petAbility;
+            const ab = petCombatAbility(state, content);
+            if (ab && (pa.chargeMs ?? 0) <= 0 && state.character.hp > 1) {
+              const saved = hpDamage - (state.character.hp - 1);
+              hpDamage = state.character.hp - 1;
+              pa.chargeMs = ab.intervalMs;
+              pushLog(cs, {
+                by: "player",
+                kind: "petAbility",
+                amount: Math.round(saved),
+                petId: state.character.companionPetId ?? undefined,
+                ability: "deathSave",
+              });
+            }
+          }
           state.character.hp -= hpDamage;
           // OSRS-Fix (Task #197): Getroffen-werden gibt KEINE Defence-/magic_def-XP mehr. Verteidigung
           // trainiert nur durchs Kämpfen in der Defensiv-Stance — der ausgeteilte Schaden routet dort
@@ -2714,12 +2801,14 @@ function tickPetAbility(
   content: ContentDB,
   monster: MonsterDef,
   fx: SpecialEffects,
+  stats: DerivedStats,
 ): void {
   const pa = state.combat.petAbility;
   // Timed Debuffs herunterzählen (laufen auch ohne aktives Pet ab, falls noch aktiv).
   if (pa.enemyStunMs > 0) pa.enemyStunMs = Math.max(0, pa.enemyStunMs - TICK_MS);
   if (pa.enemyAccDownMs > 0) pa.enemyAccDownMs = Math.max(0, pa.enemyAccDownMs - TICK_MS);
   if (pa.enemyVulnMs > 0) pa.enemyVulnMs = Math.max(0, pa.enemyVulnMs - TICK_MS);
+  if ((pa.enemySlowMs ?? 0) > 0) pa.enemySlowMs = Math.max(0, (pa.enemySlowMs ?? 0) - TICK_MS); // claude:2026-10-18T02:00:00+02:00
 
   const ability = petCombatAbility(state, content);
   if (!ability) {
@@ -2729,6 +2818,24 @@ function tickPetAbility(
   // packLeader (Rudelführer, §2.1): die Pet-Ability lädt um +Anteil schneller (Timer läuft
   // beschleunigt — deterministisch, kein RNG; +25 % ⇒ Trigger ~alle intervalMs/1.25).
   const speed = fx.packLeader ? 1 + Math.max(0, fx.packLeader.magnitude) : 1;
+  // claude:2026-10-18T02:00:00+02:00 — Geladen-Muster (1.3.0, Aschbauch „Notration", Seidenweber „Rettungsfaden"):
+  // statt eines Intervall-Takts zählt eine Abklingzeit (chargeMs) herunter und bleibt bei 0 „geladen".
+  // Bei Kampfbeginn geladen (frische Runtime ohne chargeMs). Notration feuert, sobald geladen UND die
+  // LP unter PET_EMERGENCY_HEAL_BELOW liegen; Rettungsfaden löst im Gegner-Treffer-Pfad aus.
+  if (ability.kind === "emergencyHeal" || ability.kind === "deathSave") {
+    pa.timerMs = 0;
+    if ((pa.chargeMs ?? 0) > 0) pa.chargeMs = Math.max(0, (pa.chargeMs ?? 0) - TICK_MS * speed);
+    if (
+      ability.kind === "emergencyHeal" &&
+      (pa.chargeMs ?? 0) <= 0 &&
+      state.character.hp > 0 &&
+      state.character.hp < PET_EMERGENCY_HEAL_BELOW * stats.maxHp
+    ) {
+      pa.chargeMs = ability.intervalMs;
+      firePetAbility(state, content, monster, ability);
+    }
+    return;
+  }
   pa.timerMs += TICK_MS * speed;
   if (pa.timerMs < ability.intervalMs) return;
   pa.timerMs -= ability.intervalMs;
@@ -2797,14 +2904,16 @@ function firePetAbility(
     case "blockNextEnemyHit":
       pa.blockNextHit = true;
       break;
-    case "wardRestore":
-      // Zauberreserve 28.08.2026 (ersetzt manaRestore, glyphmaw „Runenfraß"): füllt den Ward-Pool um
-      // einen Bruch von maxWard (Muster shield/heal). Ohne Stoff-Pool (maxWard 0) ein No-op (Log 0).
+    case "wardRestore": {
+      // claude:2026-10-18T02:00:00+02:00 — 1.3.0 (Chef 17.10., Schutz-Band): Gutschrift = value × player.maxHp
+      // (vorher × maxWard), gedeckelt bei maxWard. Ohne Stoff-Pool (maxWard 0) ein No-op (Log 0).
       if (stats.maxWard > 0) {
-        state.character.ward = Math.min(stats.maxWard, state.character.ward + stats.maxWard * value);
+        const before = state.character.ward;
+        state.character.ward = Math.min(stats.maxWard, before + stats.maxHp * value);
+        amount = Math.round(state.character.ward - before);
       }
-      amount = Math.round(stats.maxWard * value);
       break;
+    }
     case "accuracyDownEnemy":
       pa.enemyAccDownMs = PET_ABILITY_DEBUFF_MS;
       pa.enemyAccDownPct = value;
@@ -2830,7 +2939,87 @@ function firePetAbility(
       amount = magnitude; // Log zeigt die tatsächliche Schadens-Magnitude/s (0 bei frost)
       break;
     }
+    // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: neue Kampf-Fähigkeiten (design/1.3.0-begleiter-werte.md §2c).
+    case "currentHpStrike": {
+      // Kiemenfäule „Sog": Anteil der AKTUELLEN Gegner-LP (stark gegen volle Bosse), inkl. armorRend/Glut.
+      const vuln = pa.enemyVulnMs > 0 ? 1 + pa.enemyVulnPct : 1;
+      const dmg = Math.max(1, Math.round(Math.max(0, cs.enemyHp) * value * vuln * burnVulnMult(cs.enemyEffects)));
+      cs.enemyHp -= dmg;
+      amount = dmg;
+      break;
+    }
+    case "crippleStrike":
+      // Leon „Gestiefelter Hieb": Krit-Treffer (wie guaranteedCrit), danach greift der Gegner langsamer an.
+      amount = petDamageEnemy(state, value, monster);
+      pa.enemySlowMs = Math.max(pa.enemySlowMs ?? 0, PET_CRIPPLE_SLOW_MS);
+      pa.enemySlowPct = Math.max(pa.enemySlowPct ?? 0, PET_CRIPPLE_SLOW_PCT);
+      break;
+    case "cripplingPoison":
+    case "executeBleed":
+    case "emberBrand": {
+      // Schierling „Lähmgift" (Gift), Blutbracke „Reißen" (Blutung), Schlackenscheusal
+      // „Schlackenspritzer" (Brand). Die Zusatzwirkung (Tempo, ×2 unter 50 %, Glut-Stapel) wirkt in
+      // combatStep/tickEnemyEffects, solange das Pet aktiv ist.
+      const type = ability.kind === "cripplingPoison" ? "poison" : ability.kind === "executeBleed" ? "bleed" : "burn";
+      const magnitude = petDotMagnitude(monster.maxHp, value);
+      applyEnemyStatus(state, monster, {
+        type,
+        magnitude,
+        durationMs: ability.kind === "emberBrand" ? (ability.durationMs ?? PET_EMBER_BRAND_MS) : PET_ABILITY_STATUS_MS,
+      });
+      amount = magnitude;
+      break;
+    }
+    case "emberDetonate": {
+      // Scheiterling „Funkenregen": legt zuerst Brand an (zählt als Stapel), zündet dann ALLE Glut-Stapel
+      // als Sofortschaden (Stapel × value × maxHp, inkl. Glut) und setzt sie auf 0; der Brand bleibt.
+      if (ability.burnValue && ability.burnValue > 0) {
+        applyEnemyStatus(state, monster, {
+          type: "burn",
+          magnitude: petDotMagnitude(monster.maxHp, ability.burnValue),
+          durationMs: PET_EMBER_DETONATE_BURN_MS,
+        });
+      }
+      const ec = sideCounters(cs, "enemy");
+      const stacks = ec.emberStacks ?? 0;
+      if (stacks > 0) {
+        amount = petDamageEnemy(state, stacks * value, monster);
+        ec.emberStacks = 0;
+      }
+      break;
+    }
+    case "frostBite": {
+      // Frostgroll „Frostbiss": Frost für value ms (normale Elementar-Zählung bleibt). Jeder
+      // PET_FROSTBITE_FREEZE_EVERY-te Biss friert ein, sofern keine Einfrier-Immunität läuft; sonst bleibt
+      // der Zähler kurz davor stehen. Frost-immune Gegner: kein Biss-Zähler.
+      if (monsterResists(monster, "frost")) break;
+      applyEnemyStatus(state, monster, { type: "frost", magnitude: 0, durationMs: value });
+      pa.frostBites = (pa.frostBites ?? 0) + 1;
+      if (pa.frostBites >= PET_FROSTBITE_FREEZE_EVERY) {
+        const ec = sideCounters(cs, "enemy");
+        if (ec.freezeImmunityMs <= 0) {
+          ec.frozen = true;
+          ec.freezeImmunityMs = FREEZE_IMMUNITY_MS;
+          ec.frostStacks = 0;
+          pa.frostBites = 0;
+        } else {
+          pa.frostBites = PET_FROSTBITE_FREEZE_EVERY - 1;
+        }
+      }
+      amount = Math.round(value);
+      break;
+    }
+    case "emergencyHeal":
+      // Aschbauch „Notration": ausgelöst von tickPetAbility (geladen + LP unter der Schwelle).
+      amount = Math.round(stats.maxHp * value);
+      healPlayer(state, stats.maxHp, amount, "effect");
+      break;
+    case "deathSave":
+      // Seidenweber „Rettungsfaden": löst im Gegner-Treffer-Pfad aus (combatStep), nie über den Takt.
+      return;
     case "stealDrop": {
+      // claude:2026-10-18T02:00:00+02:00 — 1.3.0 (Chef 17.10.): höchstens EIN Erfolg je Begegnung; danach kein Versuch (kein Wurf).
+      if (pa.stolenThisEncounter) return;
       // Anker-Ability: klaut ein Item aus dem Loot-Table des aktuellen Monsters.
       // #276 §5.2 (Rare-Drop-Schutz, PFLICHT): NUR Commons mit chance ≥ PET_STEAL_MIN_LOOT_CHANCE
       // (5 %) sind stehlbar — Chase-Equipment (1/350–1/500, teils mit Suffix) und Keys sind
@@ -2849,6 +3038,7 @@ function firePetAbility(
       grantLoot(state, content, roll.itemId, qty);
       state.stats.itemsGathered += qty;
       markDropSeen(state, monster.id, roll.itemId);
+      pa.stolenThisEncounter = true; // claude:2026-10-18T02:00:00+02:00
       pushLog(cs, {
         by: "player",
         kind: "petAbility",

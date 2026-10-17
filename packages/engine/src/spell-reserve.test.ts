@@ -411,14 +411,16 @@ describe("Zauberreserve §4: Alt-Werte umgedeutet (Content + Kinds)", () => {
     const tonic = content.items["tonic_arcane_surge"]!;
     expect(tonic.buff?.bonus).toEqual({ maxMana: 100 });
     expect(tonic.buff?.durationMs).toBe(90_000);
-    expect(content.pets["pyreling"]!.skillEffect).toEqual({ kind: "spellReserve", value: 0.05 });
-    expect(content.pets["hoarspite"]!.skillEffect).toEqual({ kind: "spellReserve", value: 0.04 });
+    expect(content.pets["pyreling"]!.skillEffect).toMatchObject({ kind: "spellReserve", value: 0.05 });
+    // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Frostgroll trägt jetzt „Kältepanzer" (+6 % Ward-Kapazität) statt Zauberreserve.
+    expect(content.pets["hoarspite"]!.skillEffect).toMatchObject({ kind: "wardCapacityPct", value: 0.06 });
   });
 
-  it("glyphmaw: Runenfraß füllt jetzt den Ward (wardRestore 10 % maxWard alle 5 s, unter dem Cap) — und feuert im Kampf", () => {
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 (Chef 17.10., Schutz-Band): Gutschrift 4 % der maxHp statt 10 % maxWard.
+  it("glyphmaw: Runenfraß füllt jetzt den Ward (wardRestore 4 % der maxHp alle 5 s, unter dem Cap) — und feuert im Kampf", () => {
     const glyph = content.pets["glyphmaw"]!;
     expect(glyph.combatAbility.kind).toBe("wardRestore");
-    expect(glyph.combatAbility.value).toBe(0.1);
+    expect(glyph.combatAbility.value).toBe(0.04);
     expect(glyph.combatAbility.value).toBeLessThanOrEqual(PET_ABILITY_CAP.wardRestore);
     const c = withAll([STAFF, robe("sr_robe", 1000)], [DUMMY]);
     const s = mage(c, { int: 10, wis: 5 }, 9);
@@ -435,9 +437,9 @@ describe("Zauberreserve §4: Alt-Werte umgedeutet (Content + Kinds)", () => {
     }
     const fired = s.combat.log.filter((e) => e.kind === "petAbility" && e.ability === "wardRestore");
     expect(fired.length).toBeGreaterThanOrEqual(1);
-    expect(fired[0]!.amount).toBe(Math.round(0.1 * st.maxWard));
-    expect(s.character.ward).toBeGreaterThanOrEqual(0.1 * st.maxWard);
-    expect(s.character.ward).toBeLessThan(0.1 * st.maxWard * fired.length + 2 + st.wardRegenPerSec * 5.2);
+    expect(fired[0]!.amount).toBe(Math.round(0.04 * st.maxHp));
+    expect(s.character.ward).toBeGreaterThanOrEqual(0.04 * st.maxHp);
+    expect(s.character.ward).toBeLessThan(0.04 * st.maxHp * fired.length + 2 + st.wardRegenPerSec * 5.2);
   });
 });
 

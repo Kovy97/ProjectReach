@@ -1,17 +1,26 @@
 import type {
+  ActionDef,
   BoostableCombatSkillId,
   ContentDB,
   GameState,
+  ItemId,
   PetAbilityKind,
   PetCombatAbility,
   PetDef,
+  PetFindPool,
   PetId,
   PetSkillEffect,
   PetSkillEffectKind,
   SkillId,
   WeaponStyle,
 } from "@hearthforge/shared";
-import { PET_ABILITY_CAP, PET_ABILITY_MIN_INTERVAL_MS, PET_SKILL_EFFECT_CAP } from "@hearthforge/shared";
+import {
+  PET_ABILITY_CAP,
+  PET_ABILITY_MIN_INTERVAL_MS,
+  PET_ECHO_FACTOR,
+  PET_ROOTFIND_SEED_SHARE,
+  PET_SKILL_EFFECT_CAP,
+} from "@hearthforge/shared";
 import { nextFloat } from "./rng";
 import { talentEffect } from "./talents";
 
@@ -23,20 +32,19 @@ import { talentEffect } from "./talents";
  *  - `combatAbility` — getriggerte Kampf-Aktion (combat-dev löst sie via `petCombatAbility` aus).
  *
  * Pets sind eigene `PetDef`-Daten (KEIN Gear-Item, kein EquipSlot). Platz 1 (`character.companionPetId`)
- * wirkt voll; Platz 2 (`companionPetId2`, Talent `secondPetSlot`) nur mit dem skillEffect — gleiche
- * Effektart stapelt nicht (Maximum). Besessene Pets liegen als Set in `character.ownedPets`.
+ * wirkt voll; Platz 2 (`companionPetId2`, Talent `secondPetSlot`) nur mit dem skillEffect.
+ * claude:2026-10-18T02:00:00+02:00 — ECHO (1.3.0, Chef 17.10.2026): jeder besessene, NICHT ausgerüstete
+ * Begleiter wirkt mit `PET_ECHO_FACTOR` (25 %) seines skillEffect, nie mit seiner Kampf-Fähigkeit. Je
+ * (Kind, Skill bzw. Stil) zählt der GRÖSSTE Einzelwert aus {Platz 1, Platz 2, Echo je Begleiter}, keine
+ * Summe (`bestOfKind`). Ein ausgerüsteter Begleiter wirkt also nie mit 125 %. Besessene Pets liegen als
+ * Set in `character.ownedPets`; Echo rechnet sich allein daraus (kein Save-Feld).
  *
- * Die Skill-Helfer (`petDoubleYieldBonus`, `petPreserveBonus`, `petThievingBonus`,
- * `petInstantActionChance`, `petSpellReserveMult`, `petLifesteal`, `petSkillBoost`,
- * `petDamageReduction`, `petSellBonus`, `petHuntDoubleRollsChance`) ruft tick.ts/computeStats/shop.ts/
- * hunting.ts an genau definierten Stellen ab; `petDoubleLootChance`/`petKillHealFraction`
- * konsumiert combat-dev im Kill-Pfad.
- * Die Combat-Seite konsumiert sonst NUR `petCombatAbility(state, content)` (reine Lese-API);
- * die getriggerte Anwendung im Fight (Intervall-Timer + Effekt-Dispatch) macht combat-dev in
- * `combat.ts`. Hier wird KEINE Pet-Logik dupliziert.
+ * Die Skill-Helfer ruft tick.ts/farming.ts/hunting.ts/computeStats/shop.ts/consumable.ts an genau
+ * definierten Stellen ab; `petDoubleLootChance`/`petKillHealFraction`/`petFoodHealMult` konsumiert
+ * zusätzlich der Kampf-Pfad. Die Combat-Seite liest die Kampf-Fähigkeit NUR über
+ * `petCombatAbility(state, content)` (reine Lese-API, nur Platz 1).
  *
- * XP-VERBOT (#276): Pet-Passive mit XP-Wirkung sind ABGESCHAFFT (Chef-Vorgabe). Das Legacy-Kind
- * `skillXp` wird bis zum Content-Apply (Schritt 3) geduldet, aber hier AUSGEFILTERT (No-op).
+ * XP-VERBOT (#276): Pet-Passive mit XP-Wirkung sind ABGESCHAFFT (Chef-Vorgabe, Guard pet-integrity).
  */
 
 /** Liefert das aktive Pet (ausgerüstet UND besessen) oder null. */
@@ -65,29 +73,118 @@ export function secondPetSlotUnlocked(state: GameState, content: ContentDB): boo
   return talentEffect(state, content, "secondPetSlot") > 0;
 }
 
-/** Skill-Effekte beider Plätze (Platz 1 zuerst). (#276: Content ist vollständig auf die neue
- *  Taxonomie umgestellt; der frühere Legacy-skillXp-Filter ist mit dem Typ gestorben.) */
-function activeSkillEffects(state: GameState, content: ContentDB): PetSkillEffect[] {
-  const out: PetSkillEffect[] = [];
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Wirkt der besessene Begleiter `petId` gerade als Echo (besessen,
+ * weder in Platz 1 noch wirksam in Platz 2)? Für die Begleiter-Seite (Echo-Hinweis).
+ */
+export function petEchoActive(state: GameState, content: ContentDB, petId: PetId): boolean {
+  if (!state.character.ownedPets[petId] || !content.pets?.[petId]) return false;
+  if (equippedPet(state, content)?.id === petId) return false;
+  if (secondPet(state, content)?.id === petId) return false;
+  return true;
+}
+
+/** Ein Skill-Effekt samt Gewicht (1 = Platz 1/2, PET_ECHO_FACTOR = Echo). */
+interface WeightedEffect {
+  eff: PetSkillEffect;
+  weight: number;
+}
+
+/** Memo der wirksamen Effekte je Content + Besitz-Set (siehe `weightedEffects`). */
+interface WeightedEffectTable {
+  firstId: PetId | null;
+  secondId: PetId | null;
+  ownedCount: number;
+  entries: WeightedEffect[];
+}
+const weightedEffectCache = new WeakMap<ContentDB, WeakMap<object, WeightedEffectTable>>();
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Alle wirksamen skillEffects: Platz 1 und Platz 2 mit Gewicht 1,
+ * danach jeder übrige besessene Begleiter mit `PET_ECHO_FACTOR` (Echo). computeStats/tick rufen die
+ * Helfer je Tick mehrfach, darum gemerkt je Content + `ownedPets`-Objekt und invalidiert über Platz 1,
+ * Platz 2 und die Besitz-Anzahl (Besitz wächst nur: grantPet fügt hinzu, nichts entfernt einzeln).
+ * Rein lesend, kein RNG; die Reihenfolge ist für die Max-Aggregation egal.
+ */
+function weightedEffects(state: GameState, content: ContentDB): readonly WeightedEffect[] {
   const first = equippedPet(state, content);
-  if (first) out.push(first.skillEffect);
   const second = secondPet(state, content);
-  if (second) out.push(second.skillEffect);
-  return out;
+  const owned = state.character.ownedPets;
+  let ownedCount = 0;
+  for (const id in owned) if (owned[id]) ownedCount++;
+  const firstId = first?.id ?? null;
+  const secondId = second?.id ?? null;
+  let byOwned = weightedEffectCache.get(content);
+  if (!byOwned) {
+    byOwned = new WeakMap();
+    weightedEffectCache.set(content, byOwned);
+  }
+  const hit = byOwned.get(owned);
+  if (hit && hit.firstId === firstId && hit.secondId === secondId && hit.ownedCount === ownedCount) {
+    return hit.entries;
+  }
+  const entries: WeightedEffect[] = [];
+  if (first) entries.push({ eff: first.skillEffect, weight: 1 });
+  if (second) entries.push({ eff: second.skillEffect, weight: 1 });
+  const pets = content.pets;
+  if (pets) {
+    for (const id in owned) {
+      if (!owned[id] || id === firstId || id === secondId) continue;
+      const pet = pets[id];
+      if (pet) entries.push({ eff: pet.skillEffect, weight: PET_ECHO_FACTOR });
+    }
+  }
+  byOwned.set(owned, { firstId, secondId, ownedCount, entries });
+  return entries;
+}
+
+/** Ruft `visit` für jeden wirksamen skillEffect auf (siehe `weightedEffects`). */
+function forEachWeightedEffect(
+  state: GameState,
+  content: ContentDB,
+  visit: (w: WeightedEffect) => void,
+): void {
+  const entries = weightedEffects(state, content);
+  for (let i = 0; i < entries.length; i++) visit(entries[i]!);
+}
+
+/** Passt ein Effekt zum Skill-Filter? `skill` gesetzt ⇒ nur skill-freie oder auf diesen Skill gemünzte Effekte. */
+function skillMatches(eff: PetSkillEffect, skill: SkillId | undefined): boolean {
+  return skill === undefined || eff.skill === undefined || eff.skill === skill;
 }
 
 /**
- * claude:2026-10-18T00:30:00+02:00 — Wert EINER Effektart über beide Plätze: gleiche Art stapelt nicht,
- * es zählt der stärkere (Maximum). `skill` gesetzt ⇒ nur skill-freie oder auf diesen Skill gemünzte
- * Effekte (Effekte verschiedener Skills treffen also nie im selben Aufruf zusammen).
+ * Wert EINER Effektart über Platz 1, Platz 2 und Echo: gleiche Art stapelt nicht, es zählt der stärkere
+ * (Maximum aus gedeckeltem Wert × Gewicht). `skill` gesetzt ⇒ nur skill-freie oder auf diesen Skill
+ * gemünzte Effekte (Effekte verschiedener Skills treffen also nie im selben Aufruf zusammen).
  */
-function bestOfKind(effects: PetSkillEffect[], kind: PetSkillEffectKind, skill?: SkillId): number {
+function bestOfKind(state: GameState, content: ContentDB, kind: PetSkillEffectKind, skill?: SkillId): number {
   let best = 0;
-  for (const eff of effects) {
-    if (eff.kind !== kind) continue;
-    if (skill !== undefined && eff.skill !== undefined && eff.skill !== skill) continue;
-    best = Math.max(best, capSkill(kind, eff.value ?? 0));
-  }
+  forEachWeightedEffect(state, content, ({ eff, weight }) => {
+    if (eff.kind !== kind || !skillMatches(eff, skill)) return;
+    best = Math.max(best, capSkill(kind, eff.value ?? 0) * weight);
+  });
+  return best;
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Wie `bestOfKind`, liefert aber zusätzlich den gewinnenden Effekt
+ * (für Kinds mit Zusatzfeldern: pool/ladder/style). `accept` filtert weiter (z. B. Stil). null ohne Treffer.
+ */
+function bestEffectOfKind(
+  state: GameState,
+  content: ContentDB,
+  kind: PetSkillEffectKind,
+  skill: SkillId | undefined,
+  accept?: (eff: PetSkillEffect) => boolean,
+): { eff: PetSkillEffect; value: number } | null {
+  let best: { eff: PetSkillEffect; value: number } | null = null;
+  forEachWeightedEffect(state, content, ({ eff, weight }) => {
+    if (eff.kind !== kind || !skillMatches(eff, skill)) return;
+    if (accept && !accept(eff)) return;
+    const value = capSkill(kind, eff.value ?? 0) * weight;
+    if (value > 0 && (best === null || value > best.value)) best = { eff, value };
+  });
   return best;
 }
 
@@ -109,9 +206,8 @@ function capAbility(kind: PetAbilityKind, value: number): number {
 }
 
 /**
- * Magnitude des aktiven Skill-Effekts, falls sein Kind in `kinds` liegt UND (für
- * skill-gebundene Kinds) auf `skill` gemünzt ist; sonst 0. `spellReserve` ist global
- * und ignoriert den Skill-Filter (über `skillFiltered: false`).
+ * Summe über `kinds` (je Art das Maximum aus Platz 1/2/Echo, verschiedene Arten addieren), gefiltert
+ * auf `skill`.
  */
 function skillScopedValue(
   state: GameState,
@@ -119,11 +215,8 @@ function skillScopedValue(
   kinds: PetSkillEffectKind[],
   skill: SkillId,
 ): number {
-  const effects = activeSkillEffects(state, content);
-  if (effects.length === 0) return 0;
-  // claude:2026-10-18T00:30:00+02:00 — je Art das Maximum beider Plätze, verschiedene Arten addieren.
   let sum = 0;
-  for (const kind of kinds) sum += bestOfKind(effects, kind, skill);
+  for (const kind of kinds) sum += bestOfKind(state, content, kind, skill);
   return sum;
 }
 
@@ -131,24 +224,17 @@ function skillScopedValue(
 
 /**
  * Additive Chance (0..0.05), eine Skilling-Aktion sofort abzuschließen (instantAction).
- * tick.ts behandelt einen Treffer wie einen extra Aktions-Abschluss. Nur für den
- * Herkunfts-Skill des Pets.
+ * tick.ts behandelt einen Treffer wie einen extra Aktions-Abschluss. Seit 1.3.0 trägt kein
+ * Begleiter mehr dieses Kind (bleibt als legale Taxonomie bestehen).
  */
 export function petInstantActionChance(state: GameState, content: ContentDB, skill: SkillId): number {
   return skillScopedValue(state, content, ["instantAction"], skill);
 }
 
-// petSkillXpMult: GELÖSCHT (#276) — XP-Pets sind abgeschafft (Chef-Verbot); die letzte
-// Call-Site in combat.ts wurde in Schritt 2 entfernt.
-
 /**
- * Additiver Doppelertrag-Chancen-Bonus (0..0.05) für einen Skill. Aggregiert alle
- * Skill-Kinds, die funktional die Doppelertrag-Chance erhöhen (doubleDrop, gatherYield,
- * flawlessGem, bonusRunes).
- *
- * `bonusAmmo` ist seit dem Ammo-Removal (#286) ein NO-OP und hier BEWUSST AUSGEFILTERT
- * (bewährtes Muster, wie früher das Legacy-`skillXp`-Kind): das Kind ist fletching-scoped und
- * stirbt mit Fletching in Stage B — content-dev ersetzt dort das Passiv des Träger-Pets.
+ * Additiver Doppelertrag-Chancen-Bonus für einen Skill. Aggregiert alle Skill-Kinds, die funktional
+ * die Doppelertrag-Chance erhöhen (doubleDrop, gatherYield, flawlessGem, bonusRunes).
+ * `bonusAmmo` ist seit dem Ammo-Removal (#286) ein NO-OP und hier BEWUSST AUSGEFILTERT.
  */
 export function petDoubleYieldBonus(state: GameState, content: ContentDB, skill: SkillId): number {
   return skillScopedValue(
@@ -160,108 +246,327 @@ export function petDoubleYieldBonus(state: GameState, content: ContentDB, skill:
 }
 
 /**
- * Additiver Material-Preservation-Bonus (0..0.05) für einen Skill. Aggregiert alle
- * Skill-Kinds, die funktional Material erstatten (refundMaterial, perfectCook, potionPreserve).
+ * Additiver Material-Preservation-Bonus für einen Skill. Aggregiert alle Skill-Kinds, die
+ * funktional Material erstatten (refundMaterial, perfectCook, potionPreserve).
  */
 export function petPreserveBonus(state: GameState, content: ContentDB, skill: SkillId): number {
   return skillScopedValue(state, content, ["refundMaterial", "perfectCook", "potionPreserve"], skill);
 }
 
-/** Additiver Thieving-Erfolgs-Bonus (0..0.03) für einen Skill. Cap 0.95 bleibt (actionSuccessChance). */
+/**
+ * Additiver Thieving-Erfolgs-Bonus für einen Skill. Cap 0.95 bleibt (actionSuccessChance).
+ * claude:2026-10-18T02:00:00+02:00 — 1.3.0: zählt auch den Erfolgs-Anteil von `thievingFinesse`.
+ */
 export function petThievingBonus(state: GameState, content: ContentDB, skill: SkillId): number {
-  return skillScopedValue(state, content, ["thievingSuccess"], skill);
+  return skillScopedValue(state, content, ["thievingSuccess", "thievingFinesse"], skill);
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Faktor (≤ 1) auf die Betäubungsdauer nach einem Fehlschlag durch
+ * `thievingFinesse` (Düsterratte „Leise Pfoten": stunMult 0.5). Echo skaliert die ERSPARNIS:
+ * 1 − (1 − stunMult) × Gewicht (Echo: 1 − 0.5 × 0.25 = 0.875). Exakt 1 ohne passenden Begleiter.
+ */
+export function petThievingStunMult(state: GameState, content: ContentDB, skill: SkillId): number {
+  let saving = 0;
+  forEachWeightedEffect(state, content, ({ eff, weight }) => {
+    if (eff.kind !== "thievingFinesse" || !skillMatches(eff, skill)) return;
+    if ((eff.value ?? 0) <= 0) return; // ein Fehl-Content ohne Wert schaltet auch die Betäubungs-Hälfte nicht frei
+    const mult = Math.max(0, Math.min(1, eff.stunMult ?? 1));
+    saving = Math.max(saving, (1 - mult) * weight);
+  });
+  return 1 - saving;
 }
 
 /**
  * Chance (0..0.05) je FANG, dass der Fang HUNT_LOOT_ROLLS_DOUBLED (zehn statt fünf) Beute-Durchläufe
- * liefert (1.2.0 „Fasern und Fallen", Chef 28.08.2026: Leon/booted_tomcat auf `hunting`).
- * hunting.ts `grantCatch` zieht den Erfolgs-nextFloat NUR, wenn diese Chance > 0 ist (Muster
- * petDoubleLootChance/tryPetDrop) — ohne passendes Pet bleibt die RNG-Sequenz bit-identisch.
- * Rein lesend, kein RNG.
+ * liefert (Leon/booted_tomcat auf `hunting`). hunting.ts `grantCatch` zieht den Erfolgs-nextFloat NUR,
+ * wenn diese Chance > 0 ist. Rein lesend, kein RNG.
  */
 export function petHuntDoubleRollsChance(state: GameState, content: ContentDB, skill: SkillId): number {
   return skillScopedValue(state, content, ["huntDoubleRolls"], skill);
 }
 
-// ── Globale Effekte (computeStats / shop.ts / combat-dev-Kill-Pfad) ─────────
-
 /**
- * Wert des aktiven Skill-Effekts, falls sein Kind exakt `kind` ist (skill-freie/globale Kinds).
- * Über `capSkill` geklemmt; 0 ohne passendes Pet. Gemeinsamer Pfad aller globalen Helfer.
+ * claude:2026-10-18T02:00:00+02:00 — Suffix-Chancen-Bonus (Pp, 0..0.05) auf Ausrüstungs-Outputs eines
+ * Skills (Schlackenscheusal „Glutsegen", smithing). tick.ts addiert ihn auf die aufgelöste Suffix-Chance,
+ * wenn diese > 0 ist, Deckel 1. Kein RNG (die Zahl der Würfe bleibt gleich).
  */
-function globalValue(state: GameState, content: ContentDB, kind: PetSkillEffectKind): number {
-  return bestOfKind(activeSkillEffects(state, content), kind); // claude:2026-10-18T00:30:00+02:00 — beide Plätze, Maximum
+export function petCraftSuffixBonus(state: GameState, content: ContentDB, skill: SkillId): number {
+  return bestOfKind(state, content, "craftSuffixChance", skill);
 }
 
 /**
- * Zauberreserve-Multiplikator (≥1) durch ein spellReserve-Pet (Zauberreserve, Chef-GO 28.08.2026:
- * ersetzt den früheren manaRegen-Multiplikator — es gibt keine Mana-Regeneration mehr). Für computeStats
- * (multipliziert maxMana NACH allen additiven Boni).
+ * claude:2026-10-18T02:00:00+02:00 — Reifezeit-Anteil (0..0.06) für Farming (Welkling „Fäulnisdünger").
+ * farming.ts `effectiveGrowMs` addiert ihn zum Meister-Ring-Bonus.
+ */
+export function petGrowSpeed(state: GameState, content: ContentDB): number {
+  return bestOfKind(state, content, "growSpeed", "farming");
+}
+
+/** claude:2026-10-18T02:00:00+02:00 — Ist der Haupt-Output einer Aktion eine Vorstufe (Material, keine Ausrüstung/kein Werkzeug)? */
+function isPrepAction(content: ContentDB, action: ActionDef): boolean {
+  const main = action.loot[0]?.itemId;
+  if (!main) return false;
+  return content.items[main]?.type === "material";
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Tempo-Anteil (0..0.06) für Vorstufen-Aktionen eines Skills
+ * (Schindling „Gerberhand", leatherworking): Aktionen, deren Haupt-Output KEINE Ausrüstung ist (Gerben,
+ * Kordeln), laufen um den Anteil schneller. 0 für Ausrüstungs-Rezepte. tick.ts `effectiveActionDurationMs`.
+ */
+export function petPrepSpeed(state: GameState, content: ContentDB, action: ActionDef): number {
+  const v = bestOfKind(state, content, "prepSpeed", action.skill);
+  if (v <= 0) return 0;
+  return isPrepAction(content, action) ? v : 0;
+}
+
+// ── 1.3.0 Fund-/Stufen-Effekte (tick.ts completeAction) ─────────────────────
+
+/** Item-Wert (Gleichstand-Brecher bei veinGem). */
+function itemValue(content: ContentDB, id: ItemId): number {
+  return content.items[id]?.value ?? 0;
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Saat der Crop mit dem höchsten `levelRequired` ≤ `level` (Faulrinde
+ * „Wurzelgespür"). Nur Saaten, die als Item existieren. null ohne passende Crop.
+ */
+function rootFindSeed(content: ContentDB, level: number): ItemId | null {
+  let best: { seed: ItemId; lvl: number } | null = null;
+  const crops = content.crops ?? {};
+  for (const id of Object.keys(crops)) {
+    const crop = crops[id];
+    if (!crop || !content.items[crop.seedItem]) continue;
+    const lvl = crop.levelRequired ?? 1;
+    if (lvl > level) continue;
+    if (best === null || lvl > best.lvl) best = { seed: crop.seedItem, lvl };
+  }
+  return best?.seed ?? null;
+}
+
+/** Vogelnest (vorhandenes Item, Faulrinde „Wurzelgespür"). */
+const BIRDS_NEST_ID = "birds_nest";
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — `veinGem` (Felsschlund „Ader-Witterung"): das `rough_*` mit der
+ * KLEINSTEN Chance in der Loot-Tabelle der Aktion (Gleichstand: höchster Item-Wert); null ohne `rough_*`.
+ */
+function veinGemItem(content: ContentDB, action: ActionDef): ItemId | null {
+  let best: { id: ItemId; chance: number; value: number } | null = null;
+  for (const roll of action.loot) {
+    if (!roll.itemId.startsWith("rough_") || !content.items[roll.itemId]) continue;
+    const value = itemValue(content, roll.itemId);
+    if (
+      best === null ||
+      roll.chance < best.chance ||
+      (roll.chance === best.chance && value > best.value)
+    ) {
+      best = { id: roll.itemId, chance: roll.chance, value };
+    }
+  }
+  return best?.id ?? null;
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Fund-Effekt `bonusFind` für eine abgeschlossene Aktion: liefert
+ * Chance + die Kandidaten (Fund-Pool), oder null, wenn kein passender Begleiter wirkt bzw. der Pool für
+ * diese Aktion leer ist (dann zieht tick.ts KEINEN Wurf). Nur Sammel-Aktionen (ohne `inputs`).
+ *  - rootFind: Anteil PET_ROOTFIND_SEED_SHARE Saat (höchste Crop ≤ Aktions-Level), sonst Vogelnest.
+ *  - veinGem : das seltenste `rough_*` der Loot-Tabelle.
+ */
+export function petBonusFind(
+  state: GameState,
+  content: ContentDB,
+  action: ActionDef,
+): { chance: number; pool: PetFindPool; primary: ItemId | null; secondary: ItemId | null } | null {
+  if (action.inputs && action.inputs.length > 0) return null;
+  const best = bestEffectOfKind(state, content, "bonusFind", action.skill);
+  if (!best || !best.eff.pool) return null;
+  const pool = best.eff.pool;
+  if (pool === "veinGem") {
+    const gem = veinGemItem(content, action);
+    return gem ? { chance: best.value, pool, primary: gem, secondary: null } : null;
+  }
+  // rootFind
+  const seed = rootFindSeed(content, action.levelRequired ?? 1);
+  const nest = content.items[BIRDS_NEST_ID] ? BIRDS_NEST_ID : null;
+  if (!seed && !nest) return null;
+  return { chance: best.value, pool, primary: seed, secondary: nest };
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Würfelt den Fund (RNG-Reihenfolge: Erfolgs-Wurf, bei rootFind mit
+ * zwei Kandidaten ein zweiter Wurf für die Auswahl). Liefert das gefundene Item oder null. Der Aufrufer
+ * zieht das NUR, wenn `petBonusFind` nicht null ist.
+ */
+export function rollPetBonusFind(
+  state: GameState,
+  find: { chance: number; pool: PetFindPool; primary: ItemId | null; secondary: ItemId | null },
+): ItemId | null {
+  if (nextFloat(state.rng) >= find.chance) return null;
+  if (find.primary && find.secondary) {
+    return nextFloat(state.rng) < PET_ROOTFIND_SEED_SHARE ? find.primary : find.secondary;
+  }
+  return find.primary ?? find.secondary;
+}
+
+/** Cache: je Content und Skill das kleinste `levelRequired` der Aktionen, deren Haupt-Output (loot[0]) das Item ist. */
+const sourceLevelCache = new WeakMap<ContentDB, Map<SkillId, Map<ItemId, number>>>();
+
+function mainOutputSourceLevel(content: ContentDB, skill: SkillId, itemId: ItemId): number | null {
+  let bySkill = sourceLevelCache.get(content);
+  if (!bySkill) {
+    bySkill = new Map();
+    sourceLevelCache.set(content, bySkill);
+  }
+  let byItem = bySkill.get(skill);
+  if (!byItem) {
+    byItem = new Map();
+    for (const id of Object.keys(content.actions)) {
+      const a = content.actions[id];
+      if (!a || a.skill !== skill) continue;
+      const main = a.loot[0]?.itemId;
+      if (!main) continue;
+      const lvl = a.levelRequired ?? 1;
+      const prev = byItem.get(main);
+      if (prev === undefined || lvl < prev) byItem.set(main, lvl);
+    }
+    bySkill.set(skill, byItem);
+  }
+  return byItem.get(itemId) ?? null;
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Ziel des Stufensprungs `tierUp` für den Haupt-Output `itemId` einer
+ * Aktion des Skills: der nächste Eintrag seiner Leiter, sofern dessen Quell-Aktion (gleicher Skill, Item
+ * als Haupt-Output) `levelRequired` ≤ `skillLevel` hat. null = kein Effekt (oberste Stufe, nicht in einer
+ * Leiter, Stufe noch gesperrt oder keine Leitern im Content).
+ */
+export function petTierUpTarget(
+  content: ContentDB,
+  skill: SkillId,
+  ladderKey: string,
+  itemId: ItemId,
+  skillLevel: number,
+): ItemId | null {
+  const ladders = content.petTierLadders?.[ladderKey];
+  if (!ladders) return null;
+  for (const ladder of ladders) {
+    const i = ladder.indexOf(itemId);
+    if (i < 0) continue;
+    const next = ladder[i + 1];
+    if (!next || !content.items[next]) return null;
+    const lvl = mainOutputSourceLevel(content, skill, next);
+    return lvl !== null && lvl <= skillLevel ? next : null;
+  }
+  return null;
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Stufensprung `tierUp` (Kiemenfäule „Tiefenzug", Sporenwicht
+ * „Sporenfund", Edelsteinwicht „Meisterschliff", Pergamotte „Archivar"): Chance + Leiter des stärksten
+ * passenden Effekts für den Skill, oder null.
+ */
+export function petTierUp(
+  state: GameState,
+  content: ContentDB,
+  skill: SkillId,
+): { chance: number; ladder: string } | null {
+  const best = bestEffectOfKind(state, content, "tierUp", skill, (eff) => !!eff.ladder);
+  return best && best.eff.ladder ? { chance: best.value, ladder: best.eff.ladder } : null;
+}
+
+// ── Globale Effekte (computeStats / shop.ts / Kampf-Pfad) ───────────────────
+
+/** Wert der stärksten globalen Effektart `kind` über Platz 1/2/Echo; 0 ohne passendes Pet. */
+function globalValue(state: GameState, content: ContentDB, kind: PetSkillEffectKind): number {
+  return bestOfKind(state, content, kind);
+}
+
+/**
+ * Zauberreserve-Multiplikator (≥1) durch ein spellReserve-Pet. Für computeStats (multipliziert maxMana
+ * NACH allen additiven Boni).
  */
 export function petSpellReserveMult(state: GameState, content: ContentDB): number {
   return 1 + globalValue(state, content, "spellReserve");
 }
 
-// ── #276 Pet-Redesign: die 6 neuen Passiv-Kinds (Spec §4.2/§5.3) ────────────
-
-/**
- * Additiver Lebensraub-Anteil (0..0.02) durch ein lifesteal-Pet (gorehound „Blood Tithe").
- * computeStats addiert ihn in den bestehenden lifesteal-Aggregat (`lifestealPct`).
- */
+/** Additiver Lebensraub-Anteil (0..0.02) durch ein lifesteal-Pet (Blutbracke „Blutspur"). */
 export function petLifesteal(state: GameState, content: ContentDB): number {
   return globalValue(state, content, "lifesteal");
 }
 
 /**
- * GANZE effektive Bonus-Level (0..2) für EINEN boostbaren Kampf-Skill durch ein skillBoost-Pet
- * (ironmaw „Bonecrusher": power +2). computeStats addiert sie in den bestehenden Skill-Boost-
- * Aggregat — NUR Kampfformeln, wie Gear-Boosts: schaltet nichts frei, kein XP-Effekt,
- * Requirements/combatLevel lesen weiter das Basis-Level. `floor` gegen Fehl-Content (keine
- * halben Level).
+ * GANZE effektive Bonus-Level (0..2) für EINEN boostbaren Kampf-Skill durch ein skillBoost-Pet. Seit
+ * 1.3.0 trägt kein Begleiter mehr dieses Kind (Eisenschlund → `styleDamage`); bleibt legal. `floor`
+ * gegen Fehl-Content und Echo-Bruchteile (keine halben Level).
  */
 export function petSkillBoost(state: GameState, content: ContentDB, skill: BoostableCombatSkillId): number {
-  // claude:2026-10-18T00:30:00+02:00 — beide Plätze; skillBoost braucht einen exakt passenden Skill.
   let best = 0;
-  for (const eff of activeSkillEffects(state, content)) {
-    if (eff.kind !== "skillBoost" || eff.skill !== skill) continue;
-    best = Math.max(best, Math.floor(capSkill("skillBoost", eff.value ?? 0)));
-  }
+  forEachWeightedEffect(state, content, ({ eff, weight }) => {
+    if (eff.kind !== "skillBoost" || eff.skill !== skill) return;
+    best = Math.max(best, Math.floor(capSkill("skillBoost", eff.value ?? 0) * weight));
+  });
   return best;
 }
 
 /**
- * Multiplikative Schadensreduktion (0..0.04) durch ein damageReduction-Pet (carapace
- * „Stoneshell"). computeStats legt sie als `DerivedStats.damageReduction` ab; combat-dev
- * (Schritt 2) wendet sie in der Gegner→Spieler-Pipeline NACH Armor/Ward/Block an.
+ * Multiplikative Schadensreduktion (0..0.05) durch ein damageReduction-Pet (Chitinpanzer „Panzerhaut").
+ * computeStats legt sie als `DerivedStats.damageReduction` ab; combat.ts wendet sie NACH Armor/Ward/Block an.
  */
 export function petDamageReduction(state: GameState, content: ContentDB): number {
   return globalValue(state, content, "damageReduction");
 }
 
 /**
- * Chance (0..0.05) je Monster-Kill, den kompletten Loot- UND Gold-Wurf ein zweites Mal
- * auszuführen (carrionwing „Scavenger"). combat-dev konsumiert das im Kill-Pfad (nach Loot/Gold,
- * vor `tryPetDrop`): keine Rekursion, kein zweiter doubleLoot-/Pet-Wurf, keine Dungeon-Token.
- * RNG-Disziplin: den Erfolgs-nextFloat NUR ziehen, wenn diese Chance > 0 ist (Muster tryPetDrop).
+ * Chance (0..0.05) je Monster-Kill, den Loot- UND Gold-Wurf ein zweites Mal auszuführen (Aasschwinge
+ * „Aasfund"). combat.ts: kein zweiter Pet-Wurf, keine Dungeon-Token, seit 1.3.0 ohne Champion-Unikate.
  */
 export function petDoubleLootChance(state: GameState, content: ContentDB): number {
   return globalValue(state, content, "doubleLoot");
 }
 
-/**
- * Heil-Anteil (0..0.05, Bruch player.maxHp) bei jedem Monster-Kill (charnel „Corpsefeeder").
- * combat-dev: `healPlayer(…, maxHp × Wert, "effect")` im Kill-Pfad.
- */
+/** Heil-Anteil (0..0.05, Bruch player.maxHp) bei jedem Monster-Kill (Beinzehrer). */
 export function petKillHealFraction(state: GameState, content: ContentDB): number {
   return globalValue(state, content, "killHeal");
 }
 
-/**
- * Verkaufs-Gold-Bonus (0..0.05) durch ein sellBonus-Pet (vellumoth „Appraiser's Eye").
- * shop.ts wendet ihn in `effectiveSellPrice` an (×(1+Wert), runden wie bisher, min 1).
- */
+/** Verkaufs-Gold-Bonus (0..0.05) durch ein sellBonus-Pet. Seit 1.3.0 ohne Träger (bleibt legal). */
 export function petSellBonus(state: GameState, content: ContentDB): number {
   return globalValue(state, content, "sellBonus");
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Multiplikator (≥ 1) auf die Heilung von ESSEN (nicht Tränken) durch
+ * `foodHealBonus` (Aschbauch „Feinschmecker"). Exakt 1 ohne passenden Begleiter.
+ */
+export function petFoodHealMult(state: GameState, content: ContentDB): number {
+  return 1 + globalValue(state, content, "foodHealBonus");
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Schadens-Anteil (0..0.03) für den Kampfstil `style` durch
+ * `styleDamage` (Eisenschlund „Eisenkiefer", melee). computeStats multipliziert die Schadensspanne.
+ */
+export function petStyleDamage(state: GameState, content: ContentDB, style: WeaponStyle): number {
+  return bestEffectOfKind(state, content, "styleDamage", undefined, (eff) => eff.style === style)?.value ?? 0;
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Ward-Kapazitäts-Anteil (0..0.06) durch `wardCapacityPct`
+ * (Frostgroll „Kältepanzer"). computeStats: maxWard × (1 + Anteil); ohne Stoff-Pool wirkungslos.
+ */
+export function petWardCapacityPct(state: GameState, content: ContentDB): number {
+  return globalValue(state, content, "wardCapacityPct");
+}
+
+/**
+ * claude:2026-10-18T02:00:00+02:00 — Echo-Wert eines Begleiters für die Anzeige: sein gedeckelter
+ * skillEffect-Wert × PET_ECHO_FACTOR (0 bei Kinds ohne Bruch-Wert).
+ */
+export function petEchoValue(pet: PetDef): number {
+  return capSkill(pet.skillEffect.kind, pet.skillEffect.value ?? 0) * PET_ECHO_FACTOR;
 }
 
 // ── Combat-Ability-API (combat-dev konsumiert NUR das) ──────────────────────
@@ -275,6 +580,10 @@ export interface ActivePetAbility {
   value: number;
   /** Nur für `onHitStatus`/`delayedDot`: zu legender Status. */
   status?: PetCombatAbility["status"];
+  /** claude:2026-10-18T02:00:00+02:00 — Nur `emberBrand`: Brand-Dauer (ms, > 0), sonst undefined. */
+  durationMs?: number;
+  /** claude:2026-10-18T02:00:00+02:00 — Nur `emberDetonate`: Brand-Magnitude vor der Zündung (gedeckelt wie emberBrand). */
+  burnValue?: number;
 }
 
 /**
@@ -296,6 +605,11 @@ export function petCombatAbility(state: GameState, content: ContentDB): ActivePe
     value: capAbility(ab.kind, ab.value ?? 0),
   };
   if ((ab.kind === "onHitStatus" || ab.kind === "delayedDot") && ab.status) out.status = ab.status;
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Zusatzfelder defensiv übernehmen (endlich, > 0, gedeckelt).
+  if (ab.kind === "emberBrand" && Number.isFinite(ab.durationMs) && (ab.durationMs ?? 0) > 0) {
+    out.durationMs = ab.durationMs;
+  }
+  if (ab.kind === "emberDetonate") out.burnValue = capAbility("emberBrand", ab.burnValue ?? 0);
   return out;
 }
 

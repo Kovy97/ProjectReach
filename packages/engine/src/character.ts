@@ -60,7 +60,15 @@ import {
 } from "@hearthforge/shared";
 import { emptyAttributeRecord } from "./attributes";
 import { levelFromXp } from "./leveling";
-import { petDamageReduction, petLifesteal, petSkillBoost, petSpellReserveMult, secondPet } from "./pets";
+import {
+  petDamageReduction,
+  petLifesteal,
+  petSkillBoost,
+  petSpellReserveMult,
+  petStyleDamage,
+  petWardCapacityPct,
+  secondPet,
+} from "./pets";
 
 function clamp(value: number, min: number, max: number): number {
   // NaN-/Infinity-fest: ein nicht-endlicher Wert (z.B. aus einem manipulierten Save, der
@@ -561,7 +569,11 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   const blockChance = mainhandTwoHanded ? 0 : Math.min(BLOCK_CAP, eq.blockChance); // Schild nur bei 1H
   // Armor-Iteration 2 §2: WARD_CORE_PER_INT=0 ⇒ maxWard = Σ wardCapacity (Ward NUR aus Stoffgear,
   // kein INT-Kern mehr). Der Term bleibt konstanten-getrieben (WARD_CORE_PER_INT·int = 0).
-  const maxWard = WARD_CORE_PER_INT * attr.int + eq.wardCapacity; // Stoff-Absorptionspool
+  // claude:2026-10-18T02:00:00+02:00 — Frostgroll „Kältepanzer" (wardCapacityPct, 1.3.0): maxWard × (1 + Anteil);
+  // ohne Stoff-Pool (0) wirkungslos, ohne Begleiter exakt der Alt-Wert.
+  const wardPetPct = petWardCapacityPct(state, content);
+  const maxWardBase = WARD_CORE_PER_INT * attr.int + eq.wardCapacity; // Stoff-Absorptionspool
+  const maxWard = wardPetPct > 0 ? maxWardBase * (1 + wardPetPct) : maxWardBase;
 
   // Zauberreserve (Chef-GO 28.08.2026, design/zauberreserve-weisheit.md): Feldname bleibt `maxMana`,
   // Bedeutung ist ein statischer Wert wie Rüstung (kein Verbrauch mehr). Chef 29.08.2026: die Reserve
@@ -654,6 +666,13 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
   if (style === "magic" && c.magicStance !== "defensive" && reserveDamageBonus > 0) {
     attackDamageMin *= 1 + reserveDamageBonus;
     attackDamageMax *= 1 + reserveDamageBonus;
+  }
+  // claude:2026-10-18T02:00:00+02:00 — Eisenschlund „Eisenkiefer" (styleDamage, 1.3.0): Schaden des passenden Stils
+  // × (1 + Anteil). Ersetzt den früheren skillBoost +2 Power. 0 ohne Begleiter ⇒ bit-identisch.
+  const petStyleDmg = petStyleDamage(state, content, style);
+  if (petStyleDmg > 0) {
+    attackDamageMin *= 1 + petStyleDmg;
+    attackDamageMax *= 1 + petStyleDmg;
   }
   // Mittel der Spanne = einzige Budget-/Anzeige-Quelle (Legacy: ≈ alter Flat, Abweichung < 0,002 %).
   const attackDamage = (attackDamageMin + attackDamageMax) / 2;

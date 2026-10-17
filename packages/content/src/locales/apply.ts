@@ -79,6 +79,9 @@ function forEachLocalizableField(
     // Pet-Redesign #276: der Kampf-Fähigkeits-Name ist ein Pflicht-LocalizedString EINE Ebene
     // tiefer — als Punkt-Pfad besucht (Key: "pets:<id>:combatAbility.name", s. resolveHost).
     if (p.combatAbility) visit(p, "combatAbility.name", "pets", p.id);
+    // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: Signatur-Name der Fertigkeit
+    // (Key: "pets:<id>:skillEffect.name"), optional — nur besuchen, wenn gesetzt.
+    if (p.skillEffect?.name) visit(p, "skillEffect.name", "pets", p.id);
   }
   if (db.crops) for (const c of Object.values(db.crops)) visit(c, "name", "crops", c.id);
   if (db.slayerMasters) {

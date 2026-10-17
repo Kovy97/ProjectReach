@@ -245,6 +245,9 @@ function petScore(target: BisTarget, pet: PetDef, style: WeaponStyle): number {
   if (!eff) return 0;
   if (target === "lifesteal" && eff.kind === "lifesteal") return (eff.value ?? 0) * 1000;
   if (target === "tank" && eff.kind === "damageReduction") return (eff.value ?? 0) * 1000;
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0: Eisenschlund „Eisenkiefer" (styleDamage, +3 % Schaden des Stils) ersetzt den
+  // früheren skillBoost +2 Power; nur der passende Stil zahlt auf den Schaden ein.
+  if (target === "damage" && eff.kind === "styleDamage") return eff.style === style ? (eff.value ?? 0) * 100 : 0;
   if (target === "damage" && eff.kind === "skillBoost") {
     // Nur der Boost des STIL-Offense-/Damage-Skills zahlt auf den Schaden ein.
     const relevant =

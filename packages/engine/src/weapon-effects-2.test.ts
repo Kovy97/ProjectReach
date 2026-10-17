@@ -678,7 +678,10 @@ describe("Effekt-Familie: Ressourcen & Sustain (§2.1)", () => {
   });
 
   it("packLeader: die Pet-Ability lädt +25 % schneller (Timer-Vergleich, deterministisch)", () => {
-    const petId = Object.keys(content.pets).sort()[0]!;
+    // claude:2026-10-18T02:00:00+02:00 — Geladen-Begleiter (emergencyHeal/deathSave, 1.3.0) haben keinen Takt-Timer ⇒ ausgenommen.
+    const petId = Object.keys(content.pets)
+      .sort()
+      .find((id) => !["emergencyHeal", "deathSave"].includes(content.pets[id]!.combatAbility.kind))!;
     const run = (effects: WeaponEffect[]): number => {
       const c = withContent([meleeWeapon(effects)]);
       const s = newFight(c, "fx_weapon");

@@ -5,7 +5,7 @@ import { nextInt } from "./rng";
 import { addItemOrBank, itemCount } from "./inventory";
 import { bankCount } from "./bank";
 import { buffGatherXpMult } from "./consumable";
-import { tryPetDrop } from "./pets";
+import { petGrowSpeed, tryPetDrop } from "./pets";
 import { masterCropSpeedBonus } from "./capes";
 import { campBoost } from "./camp";
 
@@ -160,7 +160,9 @@ function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: Fa
  * Ohne gebauten Saatgarten exakt 1 ⇒ der 0-Fall unten bleibt der unveränderte Alt-Pfad.
  */
 export function effectiveGrowMs(state: GameState, content: ContentDB, c: CropDef): number {
-  const bonus = masterCropSpeedBonus(state, content);
+  // claude:2026-10-18T02:00:00+02:00 — Welkling „Fäulnisdünger" (growSpeed, 1.3.0): ADDITIV zum
+  // Meister-Ring-Bonus, danach × (1 − Lager). 0 ohne Begleiter ⇒ der Alt-Pfad bleibt bit-identisch.
+  const bonus = masterCropSpeedBonus(state, content) + petGrowSpeed(state, content);
   const campCut = Math.min(CAMP_SPEED_CUT_CAP, Math.max(0, campBoost(state, content, "farmingSpeed")));
   if (bonus <= 0 && campCut <= 0) return c.growMs;
   return Math.max(1, Math.round(c.growMs * (1 - bonus) * (1 - campCut)));

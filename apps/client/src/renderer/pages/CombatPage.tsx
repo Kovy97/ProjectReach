@@ -927,6 +927,16 @@ const PET_ABILITY_BUCKET: Record<PetAbilityKind, PetFxBucket> = {
   blockNextEnemyHit: "support",
   armorPierceHit: "damage",
   multiHit: "damage",
+  // claude:2026-10-18T02:00:00+02:00 — 1.3.0 Begleiter-Rework: neue Kinds auf die vier Farb-Buckets.
+  currentHpStrike: "damage",
+  crippleStrike: "damage",
+  cripplingPoison: "control",
+  emberBrand: "control",
+  emberDetonate: "damage",
+  executeBleed: "control",
+  frostBite: "control",
+  emergencyHeal: "heal",
+  deathSave: "support",
 };
 
 // ─── Kampfeffekte Welle 1 (design/combat-fx/konzept-kampfeffekte.md) ────────────────────────────
