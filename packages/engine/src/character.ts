@@ -110,10 +110,18 @@ export interface CharacterCreation {
    * Charaktererstellung (Renderer) setzt es; Tests/Sim lassen es weg. Lebt nur als Build-Input.
    */
   starterKit?: boolean;
+  /**
+   * claude:2026-10-17T23:30:00+02:00 — Übernommener Erstellungszeitpunkt (Prestige-Aufstieg, engine/prestige.ts):
+   * gesetzt ⇒ createCharacter liest KEINE Uhr (die Engine bleibt im Aufstiegspfad frei von Date.now).
+   * Fehlt ⇒ unverändert `Date.now()` wie bei jeder echten Neuerstellung.
+   */
+  createdAt?: number;
 }
 
 /** Baut einen frischen Charakter. HP & totalLevel werden in createGame finalisiert. */
-export function createCharacter(input: CharacterCreation, now: number = Date.now()): CharacterState {
+// claude:2026-10-17T23:30:00+02:00 — `now` optional + `input.createdAt` zuerst: Date.now() wird nur noch
+// ausgewertet, wenn weder Aufrufer noch Creation einen Zeitpunkt liefern (bisheriges Verhalten sonst identisch).
+export function createCharacter(input: CharacterCreation, now?: number): CharacterState {
   const baseAttributes = emptyAttributeRecord(BASE_ATTRIBUTE_VALUE);
   for (const id of ATTRIBUTE_IDS) {
     // Seed-Punkte zählen 1:1 (ganzzahlige Attributskala, Itemization 2.0 §1).
@@ -127,7 +135,7 @@ export function createCharacter(input: CharacterCreation, now: number = Date.now
     name: input.name.trim() || "Held",
     portraitId: input.portraitId ?? null,
     portrait: input.portrait ?? DEFAULT_PORTRAIT,
-    createdAt: now,
+    createdAt: input.createdAt ?? now ?? Date.now(),
     baseAttributes,
     totalLevel: 0,
     combatStyle: "attack",

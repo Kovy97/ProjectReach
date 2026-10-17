@@ -709,7 +709,13 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //         live, daher kein Bump): `talents` ({}), `petPity` ({}) und `character.companionPetId2`
 //         (null) defaultet sanitizeState für JEDE Version. Unbekannte Bäume/Knoten fallen weg, Ränge
 //         auf maxRank gekappt, Pity nur für bekannte, nicht besessene Begleiter.
-export const SAVE_VERSION = 87;
+//   88 — claude:2026-10-17T23:30:00+02:00 — PRESTIGE-FUNDAMENT (1.3, Welle B1, design/1.3-prestige-konzept.md
+//        „Chef-Entscheide 17.10.2026 abends"; interne IDs bewusst neutral, Spielername folgt von lore-dev):
+//        neues Feld `prestige: PrestigeState` (`count`, `points` = Guthaben, `pointsSpent`, `history`).
+//        migrateState setzt es für < 88 auf `defaultPrestigeState()`; sanitizeState härtet es für JEDE Version
+//        (auch alte Test-Saves, die schon einmal „88" trugen, als v88 noch in v87 aufging). Neue
+//        `TalentCurrency "prestigePoints"` (Saldo = `prestige.points`). Kein Item-Rename, keine ID-Änderung.
+export const SAVE_VERSION = 88;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -4286,8 +4292,11 @@ export const TALENT_EFFECT_FORMAT: Readonly<Record<TalentEffectKind, "pct" | "mu
 /** `slayerTaskRareMult` wirkt nur auf Loot-Einträge mit Basis-Chance ≤ 1/500 (Chef 17.10.). */
 export const TALENT_RARE_DROP_MAX_BASE_CHANCE = 1 / 500;
 
-/** Währung eines Talentbaums. Heute nur Slayer-Punkte (`GameState.slayerPoints`). */
-export type TalentCurrency = "slayerPoints";
+/**
+ * Währung eines Talentbaums: Slayer-Punkte (`GameState.slayerPoints`) oder — claude:2026-10-17T23:30:00+02:00,
+ * SAVE 88 — Prestige-Punkte (`GameState.prestige.points`, Baum-ID `PRESTIGE_TALENT_TREE_ID`).
+ */
+export type TalentCurrency = "slayerPoints" | "prestigePoints";
 
 export interface TalentNodeDef {
   id: string;
@@ -6340,6 +6349,82 @@ export interface QueueSkip {
   actionId?: ActionId;
 }
 
+// ───────────────────────────────────────────────────────────────────────────
+// claude:2026-10-17T23:30:00+02:00 — PRESTIGE (1.3, Welle B1, SAVE 88; design/1.3-prestige-konzept.md).
+// Interne IDs neutral (Chef-Entscheid 4): Feld `prestige`, Währung `prestigePoints`, Baum `prestige` —
+// der spätere Spielername (lore-dev) braucht so keine Save-Migration. Logik: engine/prestige.ts.
+// Alle Zahlen sind benannte Konstanten, damit der balance-designer sie ohne Logikänderung tauscht.
+// ───────────────────────────────────────────────────────────────────────────
+
+/** Talentbaum-ID des Prestige-Baums (Content-Baum folgt in Welle B2/C). */
+export const PRESTIGE_TALENT_TREE_ID = "prestige";
+/** Freischaltung: so viele Fertigkeiten müssen auf `PRESTIGE_SKILL_LEVEL` stehen (Chef-Entscheid 1). */
+export const PRESTIGE_REQUIRED_99 = 4;
+/** Stufe, ab der eine Fertigkeit für Freischaltung und Punkte als „gemeistert" zählt. */
+export const PRESTIGE_SKILL_LEVEL = 99;
+/** Freischaltung: diese Chronik-Quest muss eingelöst sein (Ende Band 1, Chef-Entscheid 1). */
+export const PRESTIGE_UNLOCK_QUEST_ID = "chronicle_21";
+/** Punkte je Fertigkeit auf `PRESTIGE_SKILL_LEVEL` (Konzept-Skizze: 10). */
+export const PRESTIGE_POINTS_PER_99 = 10;
+/** Gesamtstufen-Bonus: erst oberhalb dieser Gesamtstufe … */
+export const PRESTIGE_TOTAL_LEVEL_THRESHOLD = 1000;
+/** … je volle so viele Gesamtstufen … */
+export const PRESTIGE_TOTAL_LEVEL_STEP = 25;
+/** … so viele Punkte. */
+export const PRESTIGE_POINTS_PER_TOTAL_LEVEL_STEP = 1;
+/** Chronik-Bonus: eingelöste Kapitel ab dieser Nummer (Band 2) zählen … */
+export const PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER = 22;
+/** … je Kapitel so viele Punkte. */
+export const PRESTIGE_POINTS_PER_LATE_CHAPTER = 2;
+/** Paragon-Bonus: je volle so viele Bestetagen (dieses Durchgangs) … */
+export const PRESTIGE_PARAGON_FLOOR_STEP = 10;
+/** … so viele Punkte. */
+export const PRESTIGE_POINTS_PER_PARAGON_STEP = 1;
+/** Sanitize-Deckel der Historie (Schutz gegen aufgeblähte/manipulierte Saves). */
+export const PRESTIGE_HISTORY_MAX = 1000;
+
+/**
+ * Ein abgeschlossener Aufstieg (Historie). Bewusst OHNE Echtzeit-Stempel — die Engine erzeugt keine Uhrzeit;
+ * `activePlayMs` ist die deterministische Spielzeit-Summe des Spielstands zum Zeitpunkt des Aufstiegs.
+ */
+export interface PrestigeRecord {
+  /** Nummer dieses Aufstiegs (1 = erster). */
+  count: number;
+  /** In diesem Aufstieg gutgeschriebene Punkte. */
+  points: number;
+  /** Gesamtstufe unmittelbar vor dem Aufstieg. */
+  totalLevel: number;
+  /** Fertigkeiten auf `PRESTIGE_SKILL_LEVEL` unmittelbar vor dem Aufstieg. */
+  skills99: number;
+  /** `GameState.activePlayMs` zum Zeitpunkt des Aufstiegs (Lebenszeit, nicht je Durchgang). */
+  activePlayMs: number;
+}
+
+/** Persistierter Prestige-Zustand (`GameState.prestige`, SAVE 88). Überlebt jeden Aufstieg. */
+export interface PrestigeState {
+  /** Zahl der Aufstiege (0 = erster Durchgang). */
+  count: number;
+  /** Guthaben (Talent-Währung `prestigePoints`). */
+  points: number;
+  /** Lebenszeit-Summe ausgegebener Punkte. Verdient insgesamt = points + pointsSpent. */
+  pointsSpent: number;
+  history: PrestigeRecord[];
+}
+
+/** Frischer Prestige-Zustand (createGame + Migration v87 → v88). */
+export function defaultPrestigeState(): PrestigeState {
+  return { count: 0, points: 0, pointsSpent: 0, history: [] };
+}
+
+/**
+ * Kapitelnummer einer Chronik-Quest-ID (`chronicle_07` → 7), sonst null. Reiner String-Helfer (kein Content),
+ * Quelle für den Chronik-Bonus der Prestige-Punkte.
+ */
+export function chronicleChapterNumber(questId: string): number | null {
+  const m = /^chronicle_(\d+)$/.exec(questId);
+  return m ? Number(m[1]) : null;
+}
+
 export interface GameState {
   version: number;
   rng: RngState;
@@ -6856,6 +6941,12 @@ export interface GameState {
   huntTraps: HuntTrap[];
   /** Monoton steigende Fang-Nummer (Breadcrumb `HuntTrap.lastCatch.seq`, Toast-Dedupe). */
   huntCatchSeq: number;
+  /**
+   * claude:2026-10-17T23:30:00+02:00 — Prestige (SAVE 88): Aufstiege, Punkte-Guthaben/-Ausgaben, Historie.
+   * Verben ausschließlich über engine/prestige.ts (`ascend`) bzw. engine/talents.ts (Ausgeben). Jedes neue
+   * GameState-Feld MUSS in engine/prestige.ts als KEEP oder RESET eingestuft werden (Wächtertest).
+   */
+  prestige: PrestigeState;
 }
 
 // ───────────────────────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   atomicWriteFile,
   backupBeforeWrite,
+  backupPreAscend,
   backupPreDelete,
   backupPreMigration,
   cleanupTmpFiles,
@@ -14,6 +15,7 @@ import {
   listBackups,
   parseEnvelope,
   parseRollingStamp,
+  PRE_ASCEND_KEEP,
   PRE_MIGRATION_KEEP,
   ROLLING_KEEP,
   ROLLING_MIN_INTERVAL_MS,
@@ -217,6 +219,31 @@ describe("backupPreDelete (Paket B)", () => {
   it("leerer Slot → false, kein Backup", async () => {
     expect(await backupPreDelete(paths, 3, T0)).toBe(false);
     expect(await backupNames(3)).toEqual([]);
+  });
+});
+
+// claude:2026-10-17T23:30:00+02:00 — Prestige-Aufstieg (SAVE 88, Welle B1): Sicherung vor dem Aufstieg.
+describe("backupPreAscend (Prestige, SAVE 88)", () => {
+  it("sichert den Bestand byte-genau, ungedrosselt, Retention 3", async () => {
+    const json = makeSave({ version: 88, name: "Asche", elapsedMs: 5_000 });
+    await writeSlotFile(1, json);
+    expect(await backupPreAscend(paths, 1, T0)).toBe("pre-ascend");
+    const name = `pre-ascend-${formatTimestamp(T0)}.json`;
+    expect(await backupNames(1)).toContain(name);
+    expect(await readFile(join(paths.backupsDir, "slot-1", name), "utf8")).toBe(json);
+    // Ungedrosselt: jede Sekunde ein eigener Stand; nur die jüngsten PRE_ASCEND_KEEP bleiben.
+    for (let i = 1; i <= 4; i++) expect(await backupPreAscend(paths, 1, T0 + i * 1_000)).toBe("pre-ascend");
+    const kept = (await backupNames(1)).filter((n) => n.startsWith("pre-ascend-"));
+    expect(kept).toHaveLength(PRE_ASCEND_KEEP);
+    expect(kept).not.toContain(name);
+    expect(kept).toContain(`pre-ascend-${formatTimestamp(T0 + 4_000)}.json`);
+  });
+
+  it("leerer Slot → no-existing; korrupter Bestand → skipped-corrupt, ohne Datei", async () => {
+    expect(await backupPreAscend(paths, 2, T0)).toBe("no-existing");
+    await writeSlotFile(2, "{ kaputt");
+    expect(await backupPreAscend(paths, 2, T0)).toBe("skipped-corrupt");
+    expect((await backupNames(2)).filter((n) => n.startsWith("pre-ascend-"))).toEqual([]);
   });
 });
 

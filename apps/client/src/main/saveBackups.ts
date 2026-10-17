@@ -25,7 +25,9 @@ import { join } from "node:path";
  *           ├── daily-YYYYMMDD.json            (1/Tag, letzte 3)
  *           ├── pre-migration-vNN.json         (1 je Versionssprung, letzte 3)
  *           ├── pre-overwrite-YYYYMMDD-HHMMSS.json (immer, letzte 3)
- *           └── pre-delete-YYYYMMDD-HHMMSS.json    (immer, letzte 3)
+ *           ├── pre-delete-YYYYMMDD-HHMMSS.json    (immer, letzte 3)
+ *           └── pre-ascend-YYYYMMDD-HHMMSS.json    (vor jedem Prestige-Aufstieg, letzte 3;
+ *                                                   claude:2026-10-17T23:30:00+02:00, SAVE 88)
  *
  * Speicherbedarf worst case: 17 Dateien × ~12 KB × 5 Slots ≈ 1 MB (Plan §1.4, Auflage < 1,5 MB).
  */
@@ -43,6 +45,8 @@ export const DAILY_KEEP = 3;
 export const PRE_MIGRATION_KEEP = 3;
 export const PRE_OVERWRITE_KEEP = 3;
 export const PRE_DELETE_KEEP = 3;
+/** claude:2026-10-17T23:30:00+02:00 — Prestige-Aufstieg (SAVE 88): die letzten drei Vor-Aufstiegs-Stände. */
+export const PRE_ASCEND_KEEP = 3;
 /** Rolling-Drossel: sonst rotiert der 30-s-Autosave die Historie in 2,5 Minuten weg. */
 export const ROLLING_MIN_INTERVAL_MS = 15 * 60_000;
 
@@ -372,6 +376,44 @@ export async function backupPreDelete(
   await copyFile(src, join(dir, `pre-delete-${formatTimestamp(now)}.json`));
   await pruneByName(dir, "pre-delete-", PRE_DELETE_KEEP);
   return true;
+}
+
+/** Ergebnis von backupPreAscend. Nur `"pre-ascend"` heißt: Sicherung liegt vor, der Aufstieg darf laufen. */
+export type PreAscendBackupResult =
+  | "pre-ascend" // Bestand kopiert
+  | "no-existing" // Slot-Datei fehlt
+  | "skipped-corrupt"; // Bestand nicht parsebar → keine Sicherung (Aufrufer bricht den Aufstieg ab)
+
+/**
+ * claude:2026-10-17T23:30:00+02:00 — Snapshot VOR einem Prestige-Aufstieg (SAVE 88, 1.3 Welle B1; Muster
+ * backupPreDelete): immer und ungedrosselt, rohe Bytes per copyFile, Retention `PRE_ASCEND_KEEP`.
+ * Der Aufstieg setzt Skills, Ausrüstung, Bank und Gold zurück und ist im Spiel nicht umkehrbar — diese Datei
+ * ist der Weg zurück. Anders als beim Löschen wird ein KORRUPTER Bestand NICHT gesichert (er würde gute
+ * Vor-Aufstiegs-Stände aus der Retention drängen); der Aufrufer darf dann nicht aufsteigen.
+ *
+ * Vertrag für den Aufrufer (Welle D, saves.ts + Preload + GameContext): (1) aktuellen State per
+ * `saves:write` speichern und abwarten, (2) diese Funktion unter demselben Slot-Lock aufrufen, (3) nur bei
+ * `"pre-ascend"` die Engine-Funktion `ascend` ausführen und den Neustand sofort speichern.
+ */
+export async function backupPreAscend(
+  paths: BackupPaths,
+  slotId: number,
+  now: number = Date.now(),
+): Promise<PreAscendBackupResult> {
+  const src = join(paths.savesDir, slotFileName(slotId));
+  let existing: string;
+  try {
+    existing = await readFile(src, "utf8");
+  } catch {
+    return "no-existing";
+  }
+  if (!parseEnvelope(existing)) return "skipped-corrupt";
+  const dir = slotBackupDir(paths, slotId);
+  await mkdir(dir, { recursive: true });
+  await ensureBackupsReadme(paths.backupsDir);
+  await copyFile(src, join(dir, `pre-ascend-${formatTimestamp(now)}.json`));
+  await pruneByName(dir, "pre-ascend-", PRE_ASCEND_KEEP);
+  return "pre-ascend";
 }
 
 /**

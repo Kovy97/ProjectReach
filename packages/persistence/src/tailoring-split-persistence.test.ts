@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ActionDef, ContentDB, GameState } from "@hearthforge/shared";
-import { LEATHERWORKING_SKILL_ID, SAVE_VERSION, TAILORING_SKILL_ID } from "@hearthforge/shared";
+import { LEATHERWORKING_SKILL_ID, SAVE_VERSION, TAILORING_SKILL_ID, defaultPrestigeState } from "@hearthforge/shared";
 import { createGame, levelFromXp, xpForLevel } from "@hearthforge/engine";
 import { deserialize, serialize, tailoringXpFromCraftLog } from "./index";
 
@@ -197,6 +197,8 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
     Object.assign(erwartet.state, { talents: {}, petPity: {} });
     erwartet.state.character.companionPetId2 = null;
+    // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige-Fundament): Default-Zustand für den Alt-Save.
+    erwartet.state.prestige = defaultPrestigeState();
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

@@ -6,7 +6,7 @@ import type {
   TalentNodeDef,
   TalentTreeDef,
 } from "@hearthforge/shared";
-import { TALENT_EFFECT_AGGREGATION } from "@hearthforge/shared";
+import { TALENT_EFFECT_AGGREGATION, defaultPrestigeState } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -41,6 +41,10 @@ export function talentCurrencyBalance(state: GameState, currency: TalentCurrency
   switch (currency) {
     case "slayerPoints":
       return state.slayerPoints;
+    // claude:2026-10-17T23:30:00+02:00 — Prestige-Punkte (SAVE 88): Saldo = prestige.points; defensiv 0
+    // für handgebaute Alt-/Test-States ohne das Feld (Load-Pfad defaultet es über sanitizeState).
+    case "prestigePoints":
+      return state.prestige?.points ?? 0;
   }
 }
 
@@ -49,6 +53,14 @@ function spendTalentCurrency(state: GameState, currency: TalentCurrency, amount:
     case "slayerPoints":
       state.slayerPoints -= amount;
       return;
+    // claude:2026-10-17T23:30:00+02:00 — Ausgeben senkt das Guthaben und zählt die Lebenszeit-Ausgaben hoch
+    // (verdient insgesamt = points + pointsSpent). Nur über buyTalent erreichbar (Guthaben vorab geprüft).
+    case "prestigePoints": {
+      const p = (state.prestige ??= defaultPrestigeState());
+      p.points -= amount;
+      p.pointsSpent += amount;
+      return;
+    }
   }
 }
 

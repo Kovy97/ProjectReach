@@ -23,6 +23,7 @@ export * from "./drops";
 export * from "./quests";
 export * from "./pets";
 export * from "./talents";
+export * from "./prestige"; // claude:2026-10-17T23:30:00+02:00 — Prestige-Fundament (SAVE 88)
 export * from "./capes";
 export * from "./farming";
 export * from "./hunting";

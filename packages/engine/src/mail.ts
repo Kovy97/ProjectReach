@@ -10,6 +10,24 @@ import type {
 import { isCrossSaveTransferBlocked } from "@hearthforge/shared";
 import { mintInstanceId } from "./enchant";
 import { addInstance, addInstanceOrBank, addItem, addItemOrBank, markItemDiscovered, removeInstance } from "./inventory";
+import { prestigeFreightLocked } from "./prestige";
+
+/**
+ * claude:2026-10-17T23:30:00+02:00 — Stabiler Sperr-Code beim Einlösen (Muster TalentBuyReason; die UI rendert
+ * später `t("mail.blocked." + code)`, Welle D):
+ *  - `prestige_locked`  Rabenfracht (`kind: "transfer"`) im Durchgang nach einem Prestige-Aufstieg, solange
+ *                       noch nicht wieder `PRESTIGE_REQUIRED_99` Fertigkeiten auf 99 stehen (Chef-Entscheid 3).
+ */
+export type MailCollectBlockReason = "prestige_locked";
+
+/**
+ * Darf diese Mail gerade eingelöst werden? null = ja, sonst der Sperr-Code. Gesperrte Mails bleiben
+ * unverändert liegen (nichts wird gelöscht) und öffnen sich, sobald die Bedingung erfüllt ist. Rein lesend.
+ */
+export function mailCollectBlocked(state: GameState, content: ContentDB, mail: MailMessage): MailCollectBlockReason | null {
+  if (mail.kind === "transfer" && prestigeFreightLocked(state, content)) return "prestige_locked";
+  return null;
+}
 
 /**
  * Postfach / Mailbox (SAVE_VERSION 71): Überlauf-Puffer für vollen Inventar (WoW-artig).
@@ -85,9 +103,14 @@ export interface CrossSaveTransferSelection {
   instanceIds: string[];
 }
 
+// claude:2026-10-17T23:30:00+02:00 — `prestige_locked`: das ZIEL steht im Durchgang nach einem Aufstieg
+// und darf (noch) keine Fracht empfangen (Chef-Entscheid 3); die Quelle darf immer versenden.
 export type CrossSaveTransferResult =
   | { ok: true; stacks: number; units: number; mailId: string }
-  | { ok: false; reason: "same_save" | "empty" | "too_many" | "invalid_source" | "invalid_target" | "not_transferable" };
+  | {
+      ok: false;
+      reason: "same_save" | "empty" | "too_many" | "invalid_source" | "invalid_target" | "not_transferable" | "prestige_locked";
+    };
 
 /**
  * Verschiebt bis zu acht ausgewählte Inventarstapel/Instanzen atomar aus `source` in eine neue
@@ -119,6 +142,9 @@ export function transferInventoryItemsToSave(
   ) {
     return { ok: false, reason: "invalid_target" };
   }
+  // claude:2026-10-17T23:30:00+02:00 — Rabenfracht-Sperre: Empfang gesperrt, Versand (source) unberührt.
+  // Vor jeder Mutation geprüft ⇒ Fehlschlag bleibt ein No-op für beide Spielstände.
+  if (prestigeFreightLocked(target, content)) return { ok: false, reason: "prestige_locked" };
 
   const slots = Array.isArray(selection.slots) ? selection.slots : [];
   const instanceIds = Array.isArray(selection.instanceIds) ? selection.instanceIds : [];
@@ -251,11 +277,15 @@ export function collectMail(
   state: GameState,
   content: ContentDB,
   mailId: string,
-): { collected: number; partial: boolean } {
+): { collected: number; partial: boolean; blocked?: MailCollectBlockReason } {
   const mailbox = (state.mailbox ??= []);
   const idx = mailbox.findIndex((m) => m.id === mailId);
   if (idx === -1) return { collected: 0, partial: false };
   const mail = mailbox[idx]!;
+  // claude:2026-10-17T23:30:00+02:00 — gesperrte Mail (Rabenfracht nach Aufstieg): nichts bewegen, nichts
+  // löschen; `partial` bleibt false (der Grund ist kein voller Rucksack), der Code steht in `blocked`.
+  const blocked = mailCollectBlocked(state, content, mail);
+  if (blocked) return { collected: 0, partial: false, blocked };
   let collected = 0;
 
   // Instanzen zuerst (unbegrenzte Instanz-Tasche → immer erfolgreich).
@@ -296,17 +326,21 @@ export function collectMail(
 export function collectAllMail(
   state: GameState,
   content: ContentDB,
-): { collected: number; partial: boolean } {
+): { collected: number; partial: boolean; blocked?: MailCollectBlockReason } {
   const mailbox = (state.mailbox ??= []);
   let collected = 0;
   let partial = false;
+  // claude:2026-10-17T23:30:00+02:00 — gesperrte Mails werden übersprungen (bleiben liegen); der erste
+  // Sperr-Code wird gemeldet, damit die UI einen Hinweis statt „Inventar voll" zeigen kann.
+  let blocked: MailCollectBlockReason | undefined;
   // IDs vorab kopieren — collectMail mutiert das Array (entfernt geleerte Mails).
   for (const id of mailbox.map((m) => m.id)) {
     const r = collectMail(state, content, id);
     collected += r.collected;
     if (r.partial) partial = true;
+    if (r.blocked && !blocked) blocked = r.blocked;
   }
-  return { collected, partial };
+  return blocked ? { collected, partial, blocked } : { collected, partial };
 }
 
 /**

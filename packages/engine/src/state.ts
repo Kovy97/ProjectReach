@@ -1,5 +1,5 @@
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultEquipKits, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
+import { BASE_INVENTORY_SLOTS, DEFAULT_THIEVING_RISK, SAVE_VERSION, defaultCampState, defaultEquipKits, defaultFarmPlots, defaultTavernState, defaultHuntTraps, defaultParagonState, defaultPrestigeState, defaultQuestState, defaultSettings, newGameOnboarding } from "@hearthforge/shared";
 import { createRng } from "./rng";
 import { syncActiveKit } from "./loadouts";
 import { addItem, createInventory, discoverPossessedItems } from "./inventory";
@@ -166,6 +166,9 @@ export function createGame(
     // Jagen (SAVE 85): sechs leere Fallenplätze, Fang-Nummer 0.
     huntTraps: defaultHuntTraps(),
     huntCatchSeq: 0,
+    // claude:2026-10-17T23:30:00+02:00 — Prestige (SAVE 88): erster Durchgang, keine Punkte, keine Historie.
+    // engine/prestige.ts `ascend` überschreibt das Feld im Neustand mit dem fortgeschriebenen Zustand.
+    prestige: defaultPrestigeState(),
   };
 
   // Start-Ausrüstung an den gewählten Stil koppeln und sofort ausrüsten, damit der

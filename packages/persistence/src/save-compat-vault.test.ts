@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { TOOL_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
+import { TOOL_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
 import { computeStats } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -106,6 +106,12 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  * `v87-synthetic-1.3.0.json` ist SYNTHETISCH (createGame + serialize): Bankfächer MIT Lücken (`bankOrder`),
  * belegter vierter Werkzeug-Slot `tool4`, Rabenfracht-Sendung (`kind: "transfer"`) und Kills auf neue
  * Götzenhallen-Wesen. Beim 1.3.0-Release durch einen echten Spielstand ergänzen.
+ *
+ * claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige-Fundament, 1.3 Welle B1): neues Feld `prestige`
+ * (Default für jeden Alt-Save). `v88-synthetic-1.3.0.json` ist SYNTHETISCH und über die REALE KETTE gepinnt:
+ * v87-Fixture → 5×99 + Kapitel 21/22 + Begleiter/Jagdbuch/Meisterschaft → `ascend` → etwas Fortschritt im
+ * zweiten Durchgang → serialize (Fixpunkt). Trägt damit `prestige.count = 1` samt Historie, Quest-Laufanker in
+ * `quests.repeatBaseline` und die gesperrte Rabenfracht. Die Detailprüfungen stehen in prestige-persistence.test.ts.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
@@ -388,6 +394,8 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
     Object.assign(erwartet.state, { talents: {}, petPity: {} });
     erwartet.state.character.companionPetId2 = null;
+    // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige-Fundament): erster Durchgang, nichts zu rekonstruieren.
+    erwartet.state.prestige = defaultPrestigeState();
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 

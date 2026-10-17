@@ -1,6 +1,7 @@
 // codex:2026-08-31T22:04:00+02:00
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
+import { SAVE_VERSION } from "@hearthforge/shared";
 import { createGame, transferInventoryItemsToSave } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -42,7 +43,9 @@ describe("Cross-Save-Rabenfracht Persistenz (SAVE 87)", () => {
     expect(loaded!.state.mailSeq).toBe(3);
   });
 
-  it("ein Testspielstand mit version 88 (nie live) laedt weiter und wird auf 87 gezogen", () => {
+  // claude:2026-10-17T23:30:00+02:00 — seit SAVE 88 (Prestige) ist 88 wieder die aktuelle Version: der alte
+  // Testspielstand laedt weiter, bleibt auf SAVE_VERSION und bekommt den Prestige-Default (prestige-persistence).
+  it("ein Testspielstand mit version 88 (aus der Zeit, als v88 in v87 aufging) laedt weiter", () => {
     // claude:2026-10-17T21:00:00+02:00
     const target = createGame({ name: "Ziel" }, content, 2);
     (target as unknown as { mailbox: unknown[] }).mailbox = [
@@ -53,7 +56,7 @@ describe("Cross-Save-Rabenfracht Persistenz (SAVE 87)", () => {
     env.state.version = 88;
     const loaded = deserialize(JSON.stringify(env), content, savedAt);
     expect(loaded).not.toBeNull();
-    expect(loaded!.state.version).toBe(87);
+    expect(loaded!.state.version).toBe(SAVE_VERSION);
     expect(loaded!.state.mailbox).toHaveLength(1);
   });
 });

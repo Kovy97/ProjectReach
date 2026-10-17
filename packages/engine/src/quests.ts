@@ -100,8 +100,67 @@ function isRepeatable(quest: QuestDef): boolean {
 
 /** Baseline-Offset eines Objective-Index für eine (ggf. wiederholbare) Quest. */
 function baselineFor(state: GameState, quest: QuestDef, objIndex: number): number {
-  if (!isRepeatable(quest)) return 0;
+  // claude:2026-10-17T23:30:00+02:00 — Prestige-Laufanker (SAVE 88): nach einem Aufstieg messen auch
+  // EINMALIGE Quests ab dem Zählerstand beim Aufstieg (`ascend` schreibt ihn über questRunBaselines in
+  // repeatBaseline), weil Bestiarium/Statistiken den Aufstieg überleben — sonst wären Chronik und
+  // Nebenquests im neuen Durchgang sofort erfüllt. Ohne Aufstieg (count 0) exakt der alte Pfad (0).
+  if (!isRepeatable(quest)) {
+    if ((state.prestige?.count ?? 0) <= 0) return 0;
+    return state.quests.repeatBaseline[quest.id]?.[objIndex] ?? 0;
+  }
   return state.quests.repeatBaseline[quest.id]?.[objIndex] ?? 0;
+}
+
+/**
+ * claude:2026-10-17T23:30:00+02:00 — Welche Objective-Arten lesen einen Zähler, der einen Prestige-Aufstieg
+ * ÜBERLEBT (Lebenszeit: monsterKills, stats, dungeonsCleared) und deshalb einen Laufanker braucht? Die
+ * reach_*-Arten lesen zurückgesetzten Zustand (Skills, Gesamtstufe, Paragon) und brauchen keinen.
+ * Bewusst ein vollständiger Record: eine neue Objective-Art bricht hier den Typecheck, bis sie eingestuft ist.
+ */
+const PRESTIGE_RUN_ANCHORED: Readonly<Record<QuestObjectiveType, boolean>> = {
+  kill_monster: true,
+  kill_total: true,
+  reach_skill_level: false,
+  reach_total_level: false,
+  gather_items: true,
+  craft_items: true,
+  reach_paragon_floor: false,
+  dungeons_cleared: true,
+};
+
+/**
+ * Laufanker für einen Prestige-Neustand: je Quest und Objective (nur Lebenszeit-Zähler, s.
+ * PRESTIGE_RUN_ANCHORED) der aktuelle rohe Zählerstand, Einträge mit 0 entfallen. engine/prestige.ts legt
+ * das Ergebnis als `quests.repeatBaseline` des frischen Quest-Zustands ab. Rein, kein RNG.
+ */
+export function questRunBaselines(state: GameState, content: ContentDB): Record<string, Record<number, number>> {
+  const out: Record<string, Record<number, number>> = {};
+  for (const quest of content.quests) {
+    let entry: Record<number, number> | null = null;
+    quest.objectives.forEach((o, i) => {
+      if (!PRESTIGE_RUN_ANCHORED[o.type]) return;
+      const v = rawProgress(state, content, o);
+      if (v > 0) (entry ??= {})[i] = v;
+    });
+    if (entry) out[quest.id] = entry;
+  }
+  return out;
+}
+
+/**
+ * claude:2026-10-17T23:30:00+02:00 — Fortschritt eines Objectives INKLUSIVE Baseline (Wiederholung, Daily,
+ * Prestige-Laufanker). Für die UI gedacht (Welle D): `objectiveProgress(state, content, obj)` ohne Baseline
+ * zeigt nach einem Aufstieg den Lebenszeit-Zähler, der Status rechnet aber ab dem Anker.
+ */
+export function questObjectiveProgress(
+  state: GameState,
+  content: ContentDB,
+  quest: QuestDef,
+  objIndex: number,
+): number {
+  const obj = quest.objectives[objIndex];
+  if (!obj) return 0;
+  return objectiveProgress(state, content, obj, baselineFor(state, quest, objIndex));
 }
 
 /** Ein Objective gilt als erfüllt, wenn sein (Baseline-bereinigter) Zähler den Zielwert erreicht. */

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, HuntTrap, HuntZoneDef, ItemDef } from "@hearthforge/shared";
-import { TOOL_SLOTS, BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
+import { TOOL_SLOTS, BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultPrestigeState, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
 import { addItem, advance, createGame, huntBaitCount, huntTrapWaiting, setHuntTrap, xpForLevel } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -124,6 +124,7 @@ describe("Migration v84 → v85 (Jagen)", () => {
     // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
     Object.assign(erwartet.state, { talents: {}, petPity: {} });
     erwartet.state.character.companionPetId2 = null;
+    erwartet.state.prestige = defaultPrestigeState(); // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige)
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -365,6 +366,7 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
     Object.assign(erwartet.state, { talents: {}, petPity: {} });
     erwartet.state.character.companionPetId2 = null;
+    erwartet.state.prestige = defaultPrestigeState(); // claude:2026-10-17T23:30:00+02:00 — SAVE 88 (Prestige)
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

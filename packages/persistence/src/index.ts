@@ -75,6 +75,8 @@ import {
   TAVERN_SEATS,
   defaultDailyState,
   defaultParagonState,
+  defaultPrestigeState,
+  PRESTIGE_HISTORY_MAX,
   defaultQuestState,
   defaultSettings,
   emptyFarmPlot,
@@ -1067,6 +1069,43 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     ) {
       state.character.companionPetId2 = null;
     }
+  }
+
+  // — Prestige (SAVE 88) —
+  //   claude:2026-10-17T23:30:00+02:00 — fehlend/kaputt ⇒ Default; Zähler ganzzahlig ≥ 0; Historie nur aus
+  //   vollständig gültigen Einträgen (je Feld ganzzahlig ≥ 0, count ≥ 1), gedeckelt auf PRESTIGE_HISTORY_MAX
+  //   (die jüngsten bleiben). Invariante: count ≥ Historienlänge (jeder Aufstieg schreibt genau einen Eintrag).
+  //   Idempotent: ein gültiger Zustand bleibt byte-gleich.
+  {
+    const raw = state.prestige as unknown;
+    const clean = defaultPrestigeState();
+    if (raw && typeof raw === "object") {
+      const r = raw as Record<string, unknown>;
+      clean.count = finiteIntNonNeg(r.count, Number.MAX_SAFE_INTEGER, 0);
+      clean.points = finiteIntNonNeg(r.points, Number.MAX_SAFE_INTEGER, 0);
+      clean.pointsSpent = finiteIntNonNeg(r.pointsSpent, Number.MAX_SAFE_INTEGER, 0);
+      if (Array.isArray(r.history)) {
+        for (const e of r.history) {
+          if (!e || typeof e !== "object") continue;
+          const rec = e as Record<string, unknown>;
+          const isInt = (v: unknown): v is number => typeof v === "number" && Number.isSafeInteger(v) && v >= 0;
+          if (!isInt(rec.count) || rec.count < 1) continue;
+          if (!isInt(rec.points) || !isInt(rec.totalLevel) || !isInt(rec.skills99) || !isInt(rec.activePlayMs)) continue;
+          clean.history.push({
+            count: rec.count,
+            points: rec.points,
+            totalLevel: rec.totalLevel,
+            skills99: rec.skills99,
+            activePlayMs: rec.activePlayMs,
+          });
+        }
+        if (clean.history.length > PRESTIGE_HISTORY_MAX) {
+          clean.history = clean.history.slice(clean.history.length - PRESTIGE_HISTORY_MAX);
+        }
+      }
+      clean.count = Math.max(clean.count, clean.history.length);
+    }
+    state.prestige = clean;
   }
 
   // — Aktive Aktion: gegen entfernte/unbekannte Aktionen nullen (defensiv, idempotent). content.actions
@@ -3538,6 +3577,14 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     const moved = Math.min(lwXp, tailoringXpFromCraftLog(state, content));
     state.skills[TAILORING_SKILL_ID] = { xp: prior + moved };
     if (lw) lw.xp = lwXp - moved;
+  }
+
+  // ── Prestige-Fundament (SAVE_VERSION 87 → 88, 1.3 Welle B1) ──────────────────────────────────────
+  // claude:2026-10-17T23:30:00+02:00 — neues Feld `prestige`: jeder Alt-Save steht im ersten Durchgang
+  // (count 0, keine Punkte, keine Historie). Rückwirkend gibt es nichts zu rekonstruieren. Die Härtung
+  // für JEDE Version (auch alte Test-Saves, die schon „88" trugen) übernimmt sanitizeState.
+  if ((state.version ?? 0) < 88) {
+    state.prestige = defaultPrestigeState();
   }
 
   // State auf die aktuelle Version heben (macht versions-abhängige Migrationen idempotent).
