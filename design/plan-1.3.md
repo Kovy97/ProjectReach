@@ -142,11 +142,50 @@ Hinweis: Codex' Interface Reforged und die 56 ersetzten Bilder (beide 09./10.09.
 1.2.4. Das Interface wird ohnehin im UI-Fundament überarbeitet; die Bilder hat der Chef am 10.09.
 einzeln abgenommen.
 
+## Vorschläge Runde 2 für 1.3 (Claude, 17.10. abends, nicht entschieden)
+
+<!-- claude:2026-10-17T22:00:00+02:00 -->
+
+Chef nach der Abnahme: „mehr Vorschläge für 1.3!“. Grundlage: Ist-Stand Content (offene Monster je Zone, Dungeons),
+Brainstorm-Kandidaten oben, Spieler-Review „945 h Meisterschaft“, Talentbaum-System (heute nur ein Baum, Währung nur
+Slayer-Punkte, `TalentCurrency` ist der Erweiterungspunkt).
+
+**Inhalt**
+1. **Dungeons für Gezeitenuntiefen und Schlackengrube.** Beide Zonen haben keinen Dungeon (Küste 5 Monster L120–155,
+   Schlackengrube 8 Monster L155–200). Je 3–4 Wellen + Boss + eigene Chase-Beute, Quest-Gate statt Level-Lock.
+   Aufwand mittel, kein Save-Bump, Assets: 2 Bosse + 2 Kulissen.
+2. **Späte Zonen auffüllen.** Wildwald 4, Küste 5, Hochland 6 offene Monster (andere Zonen 7–10). Je +2–3 Monster mit
+   Bestiarium und Beute. Aufwand mittel, kein Save-Bump, Assets: ~7 Kreaturen.
+3. **Götzennacht.** Kalender-Ereignis wie die Segen (kein Save): in der Götzenhalle stärkere Gegner mit besserer Beute,
+   eigene Atmosphäre. Passt zur Schlagzeile „erwacht“. Aufwand klein.
+4. **Lore-Fundstücke der Götzenhalle.** Seiten, die Hallen-Monster selten fallen lassen, sammelbar im Wiki/Bestiarium,
+   erzählen Band 2 weiter. Aufwand mittel (Texte ×7), Save: Fund-Liste.
+
+**Systeme**
+5. **Meisterschafts-Kodex (zweiter Talentbaum).** Antwort auf das Review: Meisterschaft ab 99 und voller Pool bringen
+   heute nichts mehr. Überschuss-Meisterschafts-XP wird Währung für einen Kodex mit Skilling-Knoten (Tempo, Doppelertrag,
+   Pool-Boni je Beruf). Nutzt das Talentsystem; neue `TalentCurrency`, Save-Feld für Ausgegebenes (Migration).
+   Aufwand mittel bis groß.
+6. **Begleiter-Sammelbuch.** Mit dem Echo lohnt sich jeder besessene Begleiter. Sammelstufen (5/10/15/23) mit Titeln und
+   internen Erfolgen, keine Werte-Boni (Balance bleibt). Aufwand klein, Save: nein (aus Besitz ableitbar).
+
+**Komfort**
+7. **Warteschlangen-Vorlagen.** Eine laufende Warteschlange als Vorlage speichern und später mit einem Klick laden.
+   Aufwand klein bis mittel, Save-Feld.
+8. **Erste Stunde polieren.** Verkaufslage: die ersten Spielstunden entscheiden über Erstattungen. Einmal per Sim messen
+   (Zeit bis erste Ausrüstung, erster Dungeon, erstes Begleiter-Erlebnis), Engstellen glätten. Kein großes Tutorial
+   (das bleibt der finale Meilenstein). Aufwand klein bis mittel.
+
+**Kleinkram** (aus `design/offen-1.2.1.md` §2): toter Pause-Block in der Warteschlange, `NEW_HAVEN_RISES` auf der Decke (Stand vor Umsetzung prüfen).
+
+Empfehlung Claude: 1 + 3 + 5 als Schlagzeilen-Erweiterung („Die Götzenhalle erwacht“ plus Antwort auf das Review),
+6 und 7 als günstige Beigaben.
+
 ## Chef-Entscheide 17.10. (Ü2, Rest)
 
 - Slayer-Seite bleibt ohne große Brenna-Porträtspalte.
 - Gold im Laden bleibt doppelt (Statusleiste + Laden-Kopf).
-- Abnahme 1.3.0 im Testspiel: steht aus (Chef testet noch).
+- Abnahme 1.3.0 im Testspiel: **erteilt 17.10. abends** („Ja ist okay, aber wir sind noch nicht fertig, mehr Vorschläge für 1.3!“).
 - Abends 17.10. (Fragen nach UI-Runde 2b und Wandprüfung): Schildwall des Chitinpanzers 9 → 12 s; Slayer-Baum heißt
   DE „Jägerkodex“ (EN bleibt „Slayer's Book“); Gegnerkarten-Bild bleibt `cover` im Artwork-Fenster + `bottom center`
   (Festlegung 25.07. bestätigt); Begleiter-Dossier ru 1366: bleibt scrollbar, Schrift bleibt groß.
