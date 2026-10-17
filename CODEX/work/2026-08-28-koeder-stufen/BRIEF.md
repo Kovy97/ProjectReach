@@ -33,4 +33,36 @@
 
 # Teil B – Produktionsplan (Mira)
 
-<!-- codex: hier eintragen -->
+<!-- codex:2026-08-28T20:00:03+02:00 -->
+
+1. `bait_worm`, `spider_silk` und `ashroot` auf Perspektive, Maßstab, Licht und Freistellung
+   prüfen.
+2. Je Köder genau ein natives RGBA-Raw mit identischem Serienkern erzeugen; technische
+   Fehlwürfe vor der Serie verwerfen.
+3. Sichtbare Silhouette alphaerhaltend auf den Maßstab des Wurmköders normalisieren und als
+   640 × 640 PNG unter exakter Content-ID ablegen.
+4. Alpha, Außenrand, Maße, Teiltransparenz und 48-px-Lesbarkeit automatisiert prüfen; Reihe auf
+   dunklem und grellrosa Grund neben dem Wurmköder abnehmen.
+
+# Teil C – Produktion
+
+<!-- codex:2026-08-28T20:00:03+02:00 -->
+
+- Eingebautes ImageGen verwendet. Nach drei technisch unzulässigen RGB-Versuchen wurde auf
+  direkte Chef-Anweisung erneut probiert; der referenzfreie Neuwurf lieferte stabiles natives
+  RGBA und wurde für alle vier Finals verwendet.
+- Kein Keying, keine Hintergrundentfernung und kein Despill an akzeptierten Dateien.
+- Raws unter `CODEX/assets/koeder-stufen-2026-08-28/raw/`, Finals unter `fertig/`.
+- Finalisierung reproduzierbar über `finalize_baits.py`; Promptprotokoll in `PROMPTS-FINAL.md`.
+
+# Teil D – QA und Abnahme
+
+<!-- codex:2026-08-28T20:00:03+02:00 -->
+
+- 4/4 Dateinamen exakt, 4/4 PNG RGBA, 4/4 exakt 640 × 640.
+- Alphaextrema überall 0–255, `edge_alpha_max = 0`, weiche Teiltransparenz vorhanden.
+- Sichtbare Kantenfüllung 66,9–72,7 % und damit in der Größenfamilie von `bait_worm`.
+- Reihe liest sich stufig: schlichtes Blatt/Maden → gesalzenes Krebsbündel → dunkles
+  Tintenfischbündel → gebundener Glühköder; nur die letzte Stufe leuchtet schwach und körpernah.
+- Kontaktbögen: `qa/contact-baits-dark.png` und `qa/contact-baits-alpha-magenta.png`.
+- Messwerte: `qa/qa.json`. Renderer und Content nicht verändert.

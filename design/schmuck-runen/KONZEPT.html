@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Schmuck-Runen I–III — Konzept für 1.2.5</title>
+<style>
+  @font-face { font-family: "IM Fell English SC"; src: url("../../apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Cinzel"; src: url("../../apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype"); font-display: swap; }
+
+  :root {
+    --gold: #d8c06a;
+    --text: #ccd5db;
+    --muted: #79848c;
+    --border: #333c44;
+    --head: "IM Fell English SC", Georgia, "Times New Roman", serif;
+    --kicker: "Cinzel", Georgia, serif;
+    --t1: #c8c8c8;
+    --t2: #3cb043;
+    --t3: #5b8fd6;
+    --t4: #e0902a;
+    --warn: #c84a3a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0 0 80px;
+    color: var(--text);
+    font-family: var(--head);
+    font-size: 16px;
+    line-height: 1.62;
+    background:
+      linear-gradient(rgba(6, 7, 8, 0.86), rgba(8, 8, 8, 0.9)),
+      url("../../apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px repeat;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  header.top {
+    margin-bottom: 34px;
+    padding: 40px 24px 26px;
+    text-align: center;
+    border-bottom: 1px solid rgba(183, 128, 61, 0.38);
+    background:
+      linear-gradient(rgba(10, 12, 15, 0.3), rgba(10, 12, 15, 0.55)),
+      url("../../apps/client/src/renderer/assets/bg_topbar.webp") top left / 313px repeat;
+  }
+
+  h1 {
+    margin: 0 0 6px;
+    font-family: var(--kicker);
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .sub { margin: 0; color: var(--muted); font-size: 15px; }
+
+  h2 {
+    margin: 46px 0 14px;
+    font-family: var(--kicker);
+    font-size: 19px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid rgba(183, 128, 61, 0.3);
+    padding-bottom: 7px;
+  }
+
+  h3 { margin: 26px 0 8px; font-size: 17px; color: #e8dfc4; }
+
+  p { margin: 0 0 14px; }
+  .lead { font-size: 17px; color: #dfe6ea; }
+  strong { color: #f0e6c8; }
+  em { color: var(--gold); font-style: normal; }
+
+  .box {
+    margin: 18px 0 26px;
+    padding: 16px 20px;
+    border-style: solid;
+    border-width: 5px;
+    border-image: url("../../apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+    background:
+      linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)),
+      url("../../apps/client/src/renderer/assets/bg_black.webp") repeat;
+  }
+
+  .box p:last-child { margin-bottom: 0; }
+  .box.korrektur { border-image-source: none; border: 1px solid rgba(200, 74, 58, 0.5); }
+  .box.korrektur h3 { margin-top: 0; color: #e8a99f; }
+
+  .scroll { overflow-x: auto; margin: 0 0 22px; }
+  table { width: 100%; min-width: 700px; border-collapse: collapse; font-size: 15px; }
+
+  th, td {
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(173, 124, 64, 0.2);
+    vertical-align: top;
+  }
+
+  th {
+    font-family: var(--kicker);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr:hover td { background: rgba(119, 78, 34, 0.12); }
+
+  .tier { font-family: var(--kicker); font-weight: 700; white-space: nowrap; }
+  .tier.t1 { color: var(--t1); }
+  .tier.t2 { color: var(--t2); }
+  .tier.t3 { color: var(--t3); }
+  .tier.t4 { color: var(--t4); }
+
+  .ja { color: #7ec98a; }
+  .nein { color: #c8837a; }
+
+  .lines { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; margin: 22px 0 10px; }
+
+  .line {
+    padding: 16px 18px;
+    border-style: solid;
+    border-width: 5px;
+    border-image: url("../../apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+    background:
+      linear-gradient(rgba(14, 9, 4, 0.5), rgba(14, 9, 4, 0.5)),
+      url("../../apps/client/src/renderer/assets/bg_black.webp") repeat;
+  }
+
+  .line h4 {
+    margin: 0 0 2px;
+    font-family: var(--kicker);
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .line .eff { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+  .line .was { margin: 0 0 10px; font-size: 14px; }
+  .line ul { margin: 0; padding-left: 18px; font-size: 14px; }
+  .line li { margin-bottom: 3px; }
+
+  ol.q { padding-left: 22px; }
+  ol.q li { margin-bottom: 13px; }
+
+  code {
+    padding: 1px 5px;
+    background: rgba(5, 6, 7, 0.8);
+    border: 1px solid rgba(178, 127, 62, 0.32);
+    color: #e2c98a;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13px;
+  }
+
+  footer { margin-top: 46px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>Schmuck-Runen I–III</h1>
+  <p class="sub">Zweiter Entwurf · Ringe, Amulette, Umhänge · Zielversion 1.2.5</p>
+</header>
+
+<div class="wrap">
+
+<h2>0. Eine Zahl vorweg</h2>
+
+<div class="box korrektur">
+  <h3>Runen-Effekte stapeln nicht</h3>
+  <p>
+    Ich habe im Code nachgesehen, bevor ich neu entworfen habe: <code>collectSpecialEffects</code>
+    (combat.ts) läuft über alle Ausrüstungs-Plätze und behält je Effektart <strong>nur die
+    stärkste</strong> Ausprägung — <code>else if (!existing || e.magnitude &gt; existing.magnitude)</code>.
+    Vier Ringe mit je +10 % Beutechance ergeben also <strong>+10 %, nicht +40 %</strong>.
+  </p>
+  <p>
+    Additiv summiert werden ausschließlich drei Kill-Rückflüsse (<code>healOnKill</code>,
+    <code>wardOnKill</code>, <code>cooldownOnKill</code>) — das steht in <code>ADDITIVE_KILL_FLATS</code>
+    und ist bewusst so gebaut. Zusätzlich sind Beutechance und Kampf-XP hart gedeckelt:
+    <code>LOOT_CHANCE_BONUS_CAP</code> und <code>COMBAT_XP_BONUS_CAP</code> stehen beide bei
+    <strong>20 %</strong>, egal was jemand anlegt.
+  </p>
+  <p>
+    Die 60 % gibt es also nicht. <strong>Deine Entscheidung ändert das trotzdem nicht:</strong> Ob
+    Schmuck überhaupt auf Ertrag spielen soll, ist Geschmack und nicht Mathematik, und dein Nein
+    dazu steht. Dieser Entwurf lässt Beutechance, Kampf-XP und den Fünf-Treffer-Zähler komplett
+    weg.
+  </p>
+</div>
+
+<h2>1. Die neue Idee: Schmuck beantwortet eine Lage</h2>
+
+<p class="lead">
+  Waffen machen Schaden. Rüstung hält aus. Schmuck sollte nicht „mehr von allem" sein, sondern die
+  Antwort auf eine <em>bestimmte Situation</em>.
+</p>
+
+<p>
+  Das löst das Stapel-Problem an der Wurzel, statt es zu bepreisen: Ein Effekt, der nur unter einer
+  Bedingung feuert, kann nie zu einem stillen Dauer-Multiplikator werden. Er ist stark genau dann,
+  wenn du ihn brauchst, und wertlos, wenn nicht. Und er macht das Anlegen eines Rings zu einer
+  <strong>Entscheidung</strong> statt zu einem Häkchen.
+</p>
+
+<p>
+  Dazu kommt, dass es jetzt zusammenpasst: Mit 1.2.4 wechselt man Ausrüstungs-Kits direkt aus dem
+  Kampfbildschirm. Situativer Schmuck gibt diesen Kits ihren Sinn — ein Farm-Kit, ein Boss-Kit, ein
+  Kit für den Gegner, der zu stark ist. Bisher unterscheiden sich Kits fast nur durch die Waffe.
+</p>
+
+<h2>2. Drei Linien</h2>
+
+<div class="lines">
+  <div class="line">
+    <h4>Der Aufschlag</h4>
+    <p class="eff"><code>firstStrike</code> — bereits im Kampf verdrahtet</p>
+    <p class="was">Der <strong>erste Schlag jedes Kampfes</strong> trifft härter. Danach nichts mehr.</p>
+    <ul>
+      <li>I &nbsp;+25 % auf den ersten Treffer</li>
+      <li>II &nbsp;+40 %</li>
+      <li>III &nbsp;+60 %</li>
+    </ul>
+  </div>
+  <div class="line">
+    <h4>Der Atem</h4>
+    <p class="eff"><code>healOnKill</code> — bereits im Kampf verdrahtet</p>
+    <p class="was">Jeder Kill gibt <strong>Leben zurück</strong>. Spart Nahrung statt Schaden zu machen.</p>
+    <ul>
+      <li>I &nbsp;2 Leben je Kill</li>
+      <li>II &nbsp;5 Leben</li>
+      <li>III &nbsp;9 Leben</li>
+    </ul>
+  </div>
+  <div class="line">
+    <h4>Der Trotz</h4>
+    <p class="eff"><code>giantSlayer</code> — bereits im Kampf verdrahtet</p>
+    <p class="was">Mehr Schaden gegen Gegner <strong>über deiner Kampfstufe</strong>. Sonst gar nichts.</p>
+    <ul>
+      <li>I &nbsp;+6 %</li>
+      <li>II &nbsp;+10 %</li>
+      <li>III &nbsp;+15 %</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Warum genau diese drei</h3>
+
+<p>
+  <strong>Der Aufschlag</strong> ist für ein Idle-Spiel gemacht. Du führst tausende kurze Kämpfe;
+  ein stärkerer Eröffnungsschlag verkürzt jeden einzelnen davon spürbar, ohne je ein
+  Dauer-Multiplikator zu werden — es bleibt <em>ein</em> Treffer pro Kampf, egal wie viel Schmuck
+  du trägst. Gegen einen Boss mit 40 Runden ist er fast wertlos, gegen Trash-Gegner deutlich. Das
+  ist genau die Art Kompromiss, die eine Ausrüstungsentscheidung interessant macht.
+</p>
+
+<p>
+  <strong>Der Atem</strong> ist die einzige Linie, die absichtlich stapelt — die Engine summiert
+  Kill-Rückflüsse ausdrücklich. Vier Teile auf Stufe III wären 36 Leben je Kill. Das klingt viel,
+  ist aber kein Schaden und keine Beute: Es senkt deinen Nahrungsverbrauch und lässt dich in einer
+  Zone bleiben, die dich sonst langsam auffrisst. Ein Ertrags-Multiplikator ist das nicht, und
+  gegen einen Gegner, der dich in drei Schlägen tötet, hilft es gar nicht.
+</p>
+
+<p>
+  <strong>Der Trotz</strong> ist das direkte Gegenmittel gegen die Undergeared-Wände, um die dieses
+  Spiel gebaut ist. Er feuert ausschließlich gegen Gegner über deiner Kampfstufe, ist beim Farmen
+  in der eigenen Zone also exakt null wert. Wer eine Stufe zu früh angreifen will, kann es mit
+  einem Ring erkaufen, statt zu warten.
+</p>
+
+<h3>Was ich bewusst NICHT genommen habe</h3>
+
+<div class="scroll">
+<table>
+  <thead>
+    <tr><th>Effekt</th><th>Was er täte</th><th>Urteil</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>lootChance</code></td><td>Mehr Beute je Kill</td><td class="nein">Ertrags-Multiplikator, von dir abgelehnt</td></tr>
+    <tr><td><code>combatXp</code></td><td>Mehr Kampf-XP</td><td class="nein">Ertrags-Multiplikator, von dir abgelehnt</td></tr>
+    <tr><td><code>everyNth</code></td><td>Jeder fünfte Treffer stärker</td><td class="nein">Von dir abgelehnt; zählt zudem unsichtbar mit</td></tr>
+    <tr><td><code>execute</code></td><td>Mehr Schaden unter 20 % Gegner-Leben</td><td>Gute Reserve. Überschneidet sich thematisch mit dem Aufschlag (beide verkürzen kurze Kämpfe), deshalb nur eines von beiden.</td></tr>
+    <tr><td><code>desperation</code></td><td>Mehr Schaden unter 30 % eigenem Leben</td><td>Reizvoll, aber es belohnt Zustände, die in einem Idle-Spiel meist zum Tod führen. Eher Waffen-Thema.</td></tr>
+    <tr><td><code>vengeance</code></td><td>Mehr Schaden, nachdem man getroffen wurde</td><td>Fast immer aktiv, also faktisch ein Dauer-Multiplikator. Genau das, was wir nicht wollen.</td></tr>
+    <tr><td><code>momentum</code></td><td>Baut sich über den Kampf auf</td><td>Gegenteil vom Aufschlag; wäre die Alternative, falls dir lange Kämpfe wichtiger sind als kurze.</td></tr>
+    <tr><td><code>antiRegen</code></td><td>Gegen Gegner, die sich heilen</td><td>Sehr saubere Situations-Rune, aber betrifft zu wenige Gegner für eine ganze Linie. Guter Kandidat für ein einzelnes Stufe-IV-Stück.</td></tr>
+    <tr><td><code>thorns</code></td><td>Schaden zurück an den Angreifer</td><td>Gehört auf Rüstung, nicht auf Schmuck. Ist dort bereits als „Antwortend" vergeben.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>3. Stufen, Kosten, Zutaten</h2>
+
+<p>
+  Alles folgt der bestehenden Runen-Leiter (Ägis und Wardung als Maßstab), damit sich die neuen
+  Runen an denselben Stellen der Runenkunst einfügen wie die Verteidigungsrunen.
+</p>
+
+<div class="scroll">
+<table>
+  <thead>
+    <tr><th>Rune</th><th>Stufe</th><th>Runenkunst</th><th>Wirkung</th><th>Zutaten</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Rune des Aufschlags I</td><td class="tier t1">I</td><td class="num">18</td><td>erster Treffer +25 %</td><td>2× Aschenessenz, 2× Umbra-Pigment, 2× Bleiches Schilf</td></tr>
+    <tr><td>Rune des Atems I</td><td class="tier t1">I</td><td class="num">20</td><td>2 Leben je Kill</td><td>2× Aschenessenz, 2× Umbra-Pigment, 2× Bleiches Schilf</td></tr>
+    <tr><td>Rune des Trotzes I</td><td class="tier t1">I</td><td class="num">22</td><td>+6 % gegen Stärkere</td><td>2× Aschenessenz, 3× Umbra-Pigment, 2× Bleiches Schilf</td></tr>
+
+    <tr><td>Rune des Aufschlags II</td><td class="tier t2">II</td><td class="num">44</td><td>erster Treffer +40 %</td><td>2× Grabessenz, 2× Grünes Pigment, 2× Eisenschilf</td></tr>
+    <tr><td>Rune des Atems II</td><td class="tier t2">II</td><td class="num">46</td><td>5 Leben je Kill</td><td>2× Grabessenz, 2× Grünes Pigment, 2× Eisenschilf</td></tr>
+    <tr><td>Rune des Trotzes II</td><td class="tier t2">II</td><td class="num">48</td><td>+10 % gegen Stärkere</td><td>2× Grabessenz, 3× Grünes Pigment, 2× Eisenschilf</td></tr>
+
+    <tr><td>Rune des Aufschlags III</td><td class="tier t3">III</td><td class="num">66</td><td>erster Treffer +60 %</td><td>2× Leerenessenz, 2× Strahlendes Pigment, 1× Leerenschilf</td></tr>
+    <tr><td>Rune des Atems III</td><td class="tier t3">III</td><td class="num">68</td><td>9 Leben je Kill</td><td>2× Leerenessenz, 2× Strahlendes Pigment, 1× Leerenschilf</td></tr>
+    <tr><td>Rune des Trotzes III</td><td class="tier t3">III</td><td class="num">70</td><td>+15 % gegen Stärkere</td><td>2× Leerenessenz, 3× Strahlendes Pigment, 2× Leerenschilf</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>4. Der Nerf für Stufe IV</h2>
+
+<p>
+  Du willst die vorhandene Stufe-IV-Rune schwächer. Die betroffenen drei sind Nachlese
+  (+10 % Beutechance), Chronik (+10 % Kampf-XP) und Gezählt (jeder fünfte Treffer +50 %) — genau
+  die Achsen, die du gerade abgelehnt hast. Kopfgeld und Rastlos bleiben unangetastet.
+</p>
+
+<div class="scroll">
+<table>
+  <thead>
+    <tr><th>Weg</th><th>Was passiert</th><th>Für den Spieler</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>A — Zahlen senken</strong></td>
+      <td>Nachlese 10 % → 5 %, Chronik 10 % → 5 %, Gezählt 50 % → 30 %.</td>
+      <td>Wer sie besitzt, behält sie, sie wirken nur schwächer. Kleinster Eingriff, aber die
+        abgelehnten Achsen bleiben im Spiel.</td>
+    </tr>
+    <tr>
+      <td><strong>B — Umwidmen</strong> <em>(Empfehlung)</em></td>
+      <td>Die drei Runen behalten Namen, Id und Bild, bekommen aber neue Effekte im Geist dieses
+        Entwurfs: Nachlese → <code>antiRegen</code> (gegen Gegner, die sich heilen), Chronik →
+        <code>execute</code> (mehr Schaden unter 20 % Gegner-Leben), Gezählt →
+        <code>firstStrike</code> auf Stufe IV (+100 % auf den ersten Treffer).</td>
+      <td>Ein echter Eingriff: Wer sie besitzt, hat plötzlich etwas anderes am Ring. Dafür ist
+        Schmuck danach durchgehend aus einem Guss, von Stufe I bis IV.</td>
+    </tr>
+    <tr>
+      <td><strong>C — Ganz raus</strong></td>
+      <td>Die drei Runen fallen aus dem Katalog.</td>
+      <td><strong>Nicht empfohlen.</strong> Verstößt gegen unsere eigene Regel, dass nichts aus
+        einem Spielstand verschwindet. Bereits gesockelte Runen wären totes Gewicht.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Ehrlich dazu gesagt: Bei Weg B verlieren Spieler, die sich eine dieser Runen auf Runenkunst 88+
+  erarbeitet haben, das, wofür sie sie gebaut haben. Das lässt sich abfedern, indem der Patch die
+  Umwidmung deutlich in den Notes nennt und die betroffenen Runen einmalig ohne Materialverlust
+  umtauschbar macht. Wenn dir das zu viel Aufwand ist, ist Weg A der sichere.
+</p>
+
+<h2>5. Was gebaut werden müsste</h2>
+
+<div class="scroll">
+<table>
+  <thead>
+    <tr><th>Ort</th><th>Änderung</th><th>Umfang</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Content — Affixe</td><td>Drei neue Affixe mit gefüllten Stufen I–III (Aufschlag, Atem, Trotz), <code>appliesTo: ["jewelry"]</code>.</td><td class="num">3</td></tr>
+    <tr><td>Content — Items</td><td>Neun Runen nach dem Muster <code>rune_aegis_i/ii/iii</code>.</td><td class="num">9</td></tr>
+    <tr><td>Content — Rezepte</td><td>Neun Runenkunst-Aktionen nach dem Muster <code>craft_rune_aegis_i</code>.</td><td class="num">9</td></tr>
+    <tr><td>Bilder</td><td>Neun Runen-Icons, drei Motive in je drei Ausführungen.</td><td class="num">Mira</td></tr>
+    <tr><td>Engine</td><td><strong>Nichts.</strong> <code>firstStrike</code>, <code>healOnKill</code> und <code>giantSlayer</code> sind bereits ausgewertet.</td><td class="num">—</td></tr>
+    <tr><td>Spielstand</td><td><strong>Nichts.</strong> Kein neues Feld, kein Versionssprung, keine Migration.</td><td class="num">—</td></tr>
+    <tr><td>Sprachen</td><td>Neun Item-Namen, neun Rezeptnamen, drei Affix-Präfixe in sieben Sprachen.</td><td class="num">7</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>6. Offene Entscheidungen</h2>
+
+<ol class="q">
+  <li><strong>Sind die drei Linien die richtigen?</strong> Aufschlag und Trotz sind Kampfcharakter,
+    der Atem ist Ausdauer. Wenn dir eine davon nicht gefällt, stehen in der Tabelle oben die
+    Reserven mit Begründung — <code>execute</code> und <code>momentum</code> sind die stärksten
+    Ersatzkandidaten.</li>
+  <li><strong>Weg A oder B beim Stufe-IV-Nerf?</strong> A ist sicher, B ist stimmig. Ich empfehle B
+    mit einer klaren Ansage in den Patchnotes.</li>
+  <li><strong>Soll der Atem wirklich stapeln dürfen?</strong> Er ist die einzige Linie, bei der die
+    Engine addiert. Vier Teile auf Stufe III wären 36 Leben je Kill. Falls dir das zu viel ist,
+    nehmen wir statt <code>healOnKill</code> den <code>wardOnKill</code> — der ist durch die
+    Ward-Kapazität von selbst gedeckelt.</li>
+  <li><strong>Woher kommen die Runen?</strong> Vorschlag ist reines Handwerk wie bei allen anderen.
+    Alternativ fallen die Stufe-I-Runen als seltene Beute, damit man sie sieht, bevor man
+    Runenkunst 18 hat.</li>
+</ol>
+
+<footer>
+  Zweiter Entwurf, noch nichts gebaut. Zielversion 1.2.5 — 1.2.4 geht zuerst raus.
+</footer>
+
+</div>
+</body>
+</html>

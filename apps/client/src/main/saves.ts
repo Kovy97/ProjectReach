@@ -57,6 +57,47 @@ function withSlotLock<T>(id: number, task: () => Promise<T>): Promise<T> {
   return run;
 }
 
+// codex:2026-08-31T22:04:00+02:00 — journalgeschützter Zwei-Slot-Commit für Cross-Save-Fracht.
+interface SavePairJournal {
+  version: 1;
+  first: { id: number; json: string };
+  second: { id: number; json: string };
+}
+
+function pairJournalPath(): string {
+  // Außerhalb `saves/*.json`: Steam Cloud darf den kurzlebigen Transaktionszustand nie syncen.
+  return join(app.getPath("userData"), "save-pair-transaction.dat");
+}
+
+function withSlotPairLock<T>(firstId: number, secondId: number, task: () => Promise<T>): Promise<T> {
+  if (firstId === secondId) throw new Error("Quell- und Zielslot müssen verschieden sein.");
+  const [low, high] = firstId < secondId ? [firstId, secondId] : [secondId, firstId];
+  return withSlotLock(low, () => withSlotLock(high, task));
+}
+
+async function recoverSavePairJournal(): Promise<void> {
+  let raw: string;
+  try {
+    raw = await readFile(pairJournalPath(), "utf8");
+  } catch {
+    return;
+  }
+  const parsed = JSON.parse(raw) as Partial<SavePairJournal>;
+  if (parsed.version !== 1 || !parsed.first || !parsed.second) {
+    throw new Error("Ungültiges Save-Paar-Journal.");
+  }
+  const firstId = assertSlotId(parsed.first.id);
+  const secondId = assertSlotId(parsed.second.id);
+  if (firstId === secondId || typeof parsed.first.json !== "string" || typeof parsed.second.json !== "string") {
+    throw new Error("Ungültiger Save-Paar-Inhalt.");
+  }
+  await mkdir(savesDir(), { recursive: true });
+  // Commit statt Rollback: beide Nachher-Zustände sind vollständig vorbereitet und idempotent.
+  await atomicWriteFile(slotPath(firstId), parsed.first.json);
+  await atomicWriteFile(slotPath(secondId), parsed.second.json);
+  await rm(pairJournalPath(), { force: true });
+}
+
 async function readSlot(id: number): Promise<string | null> {
   let json: string;
   try {
@@ -83,17 +124,34 @@ async function readSlot(id: number): Promise<string | null> {
 export function registerSaveHandlers(): void {
   // Verwaiste tmp-Dateien eines Crashs zwischen write und rename aufräumen (Plan §2).
   void cleanupTmpFiles(savesDir());
+  // Ein Crash zwischen den zwei atomaren Slot-Renames hinterlässt das Journal. Vor JEDEM Save-
+  // Zugriff wird der vorbereitete Commit zu Ende geführt; dadurch gibt es weder Duplikat noch Verlust.
+  // codex:2026-08-31T22:52:00+02:00 — Recovery-Fehler werden synchron beim nächsten IPC-Aufruf
+  // zurückgegeben, statt als unbehandelte Promise-Rejection den Main-Prozess zu belasten.
+  let recoveryFailure: unknown = null;
+  const recoveryReady = recoverSavePairJournal().catch((error: unknown) => {
+    recoveryFailure = error;
+  });
+  const awaitRecovery = async (): Promise<void> => {
+    await recoveryReady;
+    if (recoveryFailure) throw recoveryFailure;
+  };
 
   ipcMain.handle("saves:readAll", async () => {
+    await awaitRecovery();
     const out: Array<string | null> = [];
     for (let i = 0; i < MAX_SAVE_SLOTS; i++) out.push(await readSlot(i));
     return out;
   });
 
-  ipcMain.handle("saves:read", (_event, id: number) => readSlot(id));
+  ipcMain.handle("saves:read", async (_event, id: number) => {
+    await awaitRecovery();
+    return readSlot(id);
+  });
 
-  ipcMain.handle("saves:write", (_event, id: number, json: string) =>
-    withSlotLock(assertSlotId(id), async () => {
+  ipcMain.handle("saves:write", async (_event, id: number, json: string) => {
+    await awaitRecovery();
+    return withSlotLock(assertSlotId(id), async () => {
       const target = slotPath(id);
       await mkdir(savesDir(), { recursive: true });
       // Backup der ALTEN Datei (rolling/daily gedrosselt bzw. pre-overwrite ungedrosselt) —
@@ -106,11 +164,55 @@ export function registerSaveHandlers(): void {
       }
       // Paket A — atomar: tmp (`slot-N.json.tmp`, matcht das Cloud-Pattern nie) + fsync + rename.
       await atomicWriteFile(target, json);
-    }),
+    });
+  });
+
+  ipcMain.handle(
+    "saves:writePair",
+    async (_event, firstIdRaw: number, firstJson: string, secondIdRaw: number, secondJson: string) => {
+      await awaitRecovery();
+      const firstId = assertSlotId(firstIdRaw);
+      const secondId = assertSlotId(secondIdRaw);
+      if (typeof firstJson !== "string" || typeof secondJson !== "string") throw new Error("Ungültige Save-Daten.");
+      return withSlotPairLock(firstId, secondId, async () => {
+        await mkdir(savesDir(), { recursive: true });
+        try {
+          await backupBeforeWrite(backupPaths(), firstId, firstJson);
+          await backupBeforeWrite(backupPaths(), secondId, secondJson);
+        } catch (err) {
+          // Wie beim Einzel-Write bleibt Backup best-effort; der eigentliche sichere Commit hat Vorrang.
+          console.error("[saves] Backup vor Save-Paar-Transfer fehlgeschlagen:", err);
+        }
+        const journal: SavePairJournal = {
+          version: 1,
+          first: { id: firstId, json: firstJson },
+          second: { id: secondId, json: secondJson },
+        };
+        await atomicWriteFile(pairJournalPath(), JSON.stringify(journal));
+        // Ab hier ist Commit garantiert: bei einem Fehler/Crash vollendet recoverSavePairJournal
+        // exakt dieselben Nachher-Zustände idempotent.
+        try {
+          await atomicWriteFile(slotPath(firstId), firstJson);
+          await atomicWriteFile(slotPath(secondId), secondJson);
+          await rm(pairJournalPath(), { force: true });
+        } catch (err) {
+          try {
+            await recoverSavePairJournal();
+          } catch (recoveryError) {
+            console.error("[saves] Save-Paar-Recovery fehlgeschlagen:", recoveryError);
+            // codex:2026-08-31T22:58:00+02:00 — nach fehlgeschlagener Commit-Recovery werden alle
+            // weiteren Save-Verben gesperrt; sonst könnte ein späteres Autosave das Journal überholen.
+            recoveryFailure = recoveryError;
+            throw err;
+          }
+        }
+      });
+    },
   );
 
-  ipcMain.handle("saves:remove", (_event, id: number) =>
-    withSlotLock(assertSlotId(id), async () => {
+  ipcMain.handle("saves:remove", async (_event, id: number) => {
+    await awaitRecovery();
+    return withSlotLock(assertSlotId(id), async () => {
       // Pre-Delete-Snapshot IMMER (ungedrosselt) — versehentliches Löschen ist rückholbar.
       try {
         await backupPreDelete(backupPaths(), id);
@@ -118,8 +220,8 @@ export function registerSaveHandlers(): void {
         console.error(`[saves] Pre-Delete-Backup für Slot ${id} fehlgeschlagen:`, err);
       }
       await rm(slotPath(id), { force: true });
-    }),
-  );
+    });
+  });
 
   // Paket D — Selbstheilung: Backup-Liste eines Slots (neueste zuerst, roher Inhalt). Der
   // Renderer probiert sie bei kaputtem Slot der Reihe nach mit deserialize (GameContext).

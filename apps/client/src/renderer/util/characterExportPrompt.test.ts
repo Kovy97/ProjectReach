@@ -41,7 +41,7 @@ describe("buildCharacterExportPrompt", () => {
   it("enthält alle Ausrüstungsplätze außer Werkzeugen (Chef 28.08.2026)", () => {
     const content = fixtureContent();
     const prompt = buildCharacterExportPrompt(fixtureInput(), content);
-    expect(EQUIP_SLOTS.length).toBe(14);
+    expect(EQUIP_SLOTS.length).toBe(15); // 11 Ausrüstung + 4 Werkzeuge (tool4 seit SAVE 87)
     for (const slot of EQUIP_SLOTS) {
       if (slot.startsWith("tool")) {
         expect(prompt).not.toContain(`EN item_${slot}`);

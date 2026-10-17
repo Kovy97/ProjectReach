@@ -87,6 +87,12 @@ export function objectiveLabel(
   tr: (v: LocalizedString) => string,
 ): string {
   switch (obj.type) {
+    case "dungeons_cleared": {
+      // Boss-Kapitel, deren Endgegner keine eigene Id hat (Krypta) — gezaehlt wird der geraeumte
+      // Dungeon, nicht der Kill. Name aus dem Katalog, damit die Vertragswand den Ort nennt.
+      const dungeon = obj.target ? content.dungeons.find((d) => d.id === obj.target) : undefined;
+      return t("quests.obj.clearDungeon").replace("{name}", dungeon ? tr(dungeon.name) : (obj.target ?? ""));
+    }
     case "reach_paragon_floor":
       // Aschechronik Kapitel 21 (ceo-run-2026-07-13 Welle E): count = die zu erreichende Etage
       // (state.paragon.best, gelesen von objectiveProgress). Kein separates target-Feld.
@@ -590,14 +596,21 @@ function RewardsShopPanel({
  *  _19/_20) sind in ihrer `monster.zone` gar nicht kämpfbar — sie leben ausschließlich als
  *  Dungeon-Welle. Für die zeigt diese Zeile jetzt den DUNGEON-Namen (`monsterHomeDungeon`,
  *  util/chronicle.ts, geteilt mit der analogen Auflösung in BestiaryPage). Nicht-dungeonOnly-Ziele
- *  (z. B. chronicle_11 → skeleton_nekro, bewusst offene Zweitquelle in der Krypta) bleiben
- *  unverändert bei der Zonen-Anzeige. */
+ *  bleiben unverändert bei der Zonen-Anzeige.
+ *  Richtigstellung 31.08.2026: Hier stand, chronicle_11 ziele „bewusst" auf die offene
+ *  Zweitquelle `skeleton_nekro` in der Krypta. Das war keine Absicht, sondern der Grund, warum
+ *  sich das Boss-Kapitel von selbst erledigte (Chef-Report). Es zählt jetzt geräumte Durchgänge
+ *  des Dungeons (`dungeons_cleared`), s. content chronicle_11. */
 function objectiveLocation(
   obj: QuestObjective,
   t: (k: string) => string,
   tr: (v: LocalizedString) => string,
 ): string | null {
   if (obj.type === "reach_paragon_floor") return t("paragon.sectionTitle");
+  if (obj.type === "dungeons_cleared") {
+    const dungeon = obj.target ? content.dungeons.find((d) => d.id === obj.target) : undefined;
+    return dungeon ? tr(dungeon.name) : null;
+  }
   if (obj.type === "kill_monster") {
     const id = obj.targets?.[0] ?? obj.target;
     const monster = id ? content.monsters[id] : undefined;

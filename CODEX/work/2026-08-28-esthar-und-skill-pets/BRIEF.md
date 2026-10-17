@@ -58,9 +58,11 @@
   Teil des Designs und wird nicht übernommen.
 - Seidenweber: dieselben drei Pet-Nachbarn; Motte bleibt biologisch lesbar und erhält nur am
   gespannten Silberfaden einen schwachen Schimmer.
-- Ossric: Elite-Maßstab zunächst über `elite_ash_vulture.webp` und `elite_high_roc.webp`;
-  Anatomie und Identität werden erst durch die angekündigte konkrete Hochland-Basisdatei
-  festgelegt. Ohne diese Referenz kein Neuwurf.
+- <!-- codex:2026-08-28T22:45:21+02:00 --> Ossric: Der um 22:40 ergänzte bindende
+  Content-Nachtrag legt `gravecliff_specter.webp` als Basisform fest. Zusätzlich dienen
+  `elite_ash_vulture.webp` und `elite_high_roc.webp` nur für Champion-Maßstab und
+  Elite-Detailgrad; Anatomie, Kapuze, Klauen und geisterhafte Schleppenform kommen vom
+  Grabklippen-Schemen.
 
 # Teil D – Abnahme und Übergabe (Mira)
 
@@ -74,3 +76,29 @@
 - QA-Kontaktbögen auf dunklem und grellrosa Grund sowie je Motiv neben zwei bis drei
   Bestandsnachbarn; maschinenlesbarer Messbericht und Quellenkarte.
 - Abschließend HANDOFF und WORKLOG; keine Renderer- oder Content-Integration.
+
+## Chef-Korrektur — Gestiefelter Kater
+
+<!-- codex:2026-08-28T22:59:45+02:00 -->
+
+Die erste technisch bestandene Fassung war zu fotorealistisch und ist verworfen. Verbindlich
+ist nach der zweiten direkten Chef-Korrektur eine düstere, raue und malerische Dark-Fantasy-
+Fassung mit erwachsenen, schlanken Khajiit-Proportionen. Die zwischenzeitliche cartoonige
+Fassung mit übergroßem Kopf und Pfoten ist ebenfalls verworfen. Direkte Richtungsüberschreibung:
+Der Kater steht links und zielt/greift von links nach rechts an. Fotoidentität bleibt über
+Stirnstreifen, gelbgrüne Augen, rosa Nase und silbergraues Tigerfell erhalten.
+
+<!-- codex:2026-08-28T23:05:36+02:00 -->
+
+Stilziel der verbindlichen Fassung: tiefe Schatten, entsättigte Palette, abgetragenes fast
+schwarzes Leder, zerrissene Stoffkanten, rauer Pinselgrad und eine scharfkantige Silhouette;
+weder fotorealistisch noch niedlich/cartoonhaft.
+
+### Chef-Korrektur — Jagdwaffe und Pfoten
+
+<!-- codex:2026-08-28T23:10:28+02:00 -->
+
+Die Armbrust entfällt vollständig. Der Kater wirft als eindeutig lesbarer Jagd-Begleiter eine
+geöffnete funktionale Bärenfalle an einer durchgehend befestigten Eisenkette nach rechts. Eine
+Hand führt die Kette, die andere hat die Falle gerade freigegeben. Keine Schuhe oder Stiefel;
+beide natürlichen Katzenpfoten mit Fell, Zehen und Krallen bleiben sichtbar.

@@ -280,6 +280,43 @@
 
 /* Wrapper-Zelle, auf der der Pointer-Drag beginnt (`cs-inv-slot-wrap` liefert Größe/Position
    bereits mit) — touch-action:none verhindert, dass ein Touch-Drag stattdessen die Seite scrollt. */
+/* Leeres Bankfach (SAVE 87, Chef-Auftrag „wie OSRS"): traegt dieselbe Optik wie ein leerer
+   Inventar-Slot, ist aber ein echtes Ablegeziel — ein Stapel darf auf Fach 65, auch wenn 64 und
+   alles davor leer ist. Beim Ziehen hebt es sich leicht ab, damit man sieht, wohin man zielt. */
+.bank-empty-slot {
+  touch-action: none;
+}
+
+/* Waehrend eines Zugs zeichnen sich ALLE freien Faecher dezent ab — man sieht sofort, wohin man
+   ueberhaupt ablegen kann. */
+body.bank-dragging-noselect .bank-empty-slot {
+  box-shadow: inset 0 0 0 1px rgba(216, 192, 106, 0.35);
+}
+
+/* Das Fach UNTER dem Zeiger, per Klasse aus dem Ziehen heraus gesetzt (CSS `:hover` ist bei
+   gedrueckter Taste nicht verlaesslich). Gilt fuer leere wie belegte Faecher — auf ein belegtes
+   gezogen tauschen die beiden ihren Platz, auch das soll man vorher sehen. */
+.bank-slot--drop {
+  position: relative;
+  box-shadow:
+    inset 0 0 0 2px rgba(216, 192, 106, 0.9),
+    0 0 14px rgba(216, 179, 90, 0.4) !important;
+  background-color: rgba(216, 192, 106, 0.1);
+}
+
+/* Das Herkunfts-Fach bleibt sichtbar, aber gedaempft — sonst weiss man beim Ablegen nicht mehr,
+   woher das Stueck kam. */
+.bank-slot--source {
+  opacity: 0.35;
+}
+
+/* Der Sortierknopf ist gesperrt, solange ein Filter laeuft — sortiert wuerden ALLE Faecher, nicht
+   nur die sichtbaren. Der Titel-Tooltip erklaert es, hier nur die Optik dazu. */
+.cs-inv-sortbtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .bank-drag-cell {
   touch-action: none;
 }
@@ -297,7 +334,14 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  opacity: 0.82;
+  /* Chef-Fund 31.08.2026 („man sieht gar nicht was man dragged"): Der Geist war mit 0,82 Deckkraft
+     und einem reinen Schlagschatten auf dem dunklen Lager-Hintergrund kaum auszumachen. Jetzt fast
+     deckend, auf eigenem dunklem Grund mit Goldkante — er soll ueber jedem Fach lesbar sein. */
+  opacity: 0.95;
+  background: rgba(9, 10, 12, 0.82);
+  box-shadow:
+    inset 0 0 0 1px rgba(216, 192, 106, 0.7),
+    0 6px 16px rgba(0, 0, 0, 0.7);
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
   font-size: 34px;
 }

@@ -192,16 +192,43 @@ describe("Ausrüsten/Ablegen wirkt IMMER auf das aktive Kit; Werkzeuge tauschen 
     expect(s.equipKits[1]!.equipment.offhand).toBeNull();
   });
 
-  it("Werkzeug-Slots gehören zum Kit (ganzes Set tauscht — keine LOADOUT_SLOTS-Ausnahme mehr)", () => {
+  /**
+   * Werkzeuge gehören seit SAVE 87 NICHT mehr zum Kit (Chef-Entscheid 31.08.2026 nach
+   * Spieler-Vorschlag „I don't think that we need 3 sets of the same tools"). Vorher tauschte der
+   * Kit-Wechsel sie mit — wer weiter abbauen wollte, musste dieselbe Spitzhacke dreimal besitzen.
+   */
+  it("Werkzeuge bleiben beim Kit-Wechsel am Charakter liegen", () => {
     const s = makeState();
     addItem(s.inventory, content, "bronze_pickaxe", 1);
     expect(equipTool(s, content, "bronze_pickaxe").ok).toBe(true);
     expect(switchEquipKit(s, content, 1)).toBe("ok");
-    expect(s.character.equipment.tool1).toBeNull();
-    expect(s.equipKits[0]!.equipment.tool1).toBe("bronze_pickaxe");
+    // Die Spitzhacke reist NICHT ins Kit — sie bleibt getragen.
+    expect(s.character.equipment.tool1).toBe("bronze_pickaxe");
+    expect(s.equipKits[0]!.equipment.tool1).toBeNull();
     expect(itemCount(s.inventory, "bronze_pickaxe")).toBe(0);
     expect(switchEquipKit(s, content, 0)).toBe("ok");
     expect(s.character.equipment.tool1).toBe("bronze_pickaxe");
+    expect(s.equipKits[1]!.equipment.tool1).toBeNull();
+  });
+
+  it("eine VERZAUBERTE Axt überlebt den Kit-Wechsel mitsamt Affixen", () => {
+    const s = makeState();
+    const inst = { instanceId: "inst_axe", baseItemId: "copper_axe" as const, affixes: [] };
+    s.character.equipment.tool2 = inst.baseItemId;
+    s.character.equippedInstances.tool2 = inst;
+    expect(switchEquipKit(s, content, 1)).toBe("ok");
+    expect(s.character.equipment.tool2).toBe("copper_axe");
+    expect(s.character.equippedInstances.tool2).toBe(inst);
+    expect(s.equipKits[0]!.equippedInstances.tool2).toBeUndefined();
+  });
+
+  it("kitSummary zählt Werkzeuge nicht mit (sie gehören keinem Kit)", () => {
+    const s = makeState();
+    const vorher = kitSummary(s, 0).pieces; // Startwaffe zählt, die Zahl ist nicht 0
+    addItem(s.inventory, content, "bronze_pickaxe", 1);
+    expect(equipTool(s, content, "bronze_pickaxe").ok).toBe(true);
+    expect(kitSummary(s, 0).pieces).toBe(vorher);
+    expect(kitSummary(s, 0).equipment.tool1).toBeNull();
   });
 });
 

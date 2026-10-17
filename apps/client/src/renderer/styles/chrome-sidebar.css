@@ -1,0 +1,596 @@
+/* codex:2026-09-10T10:23:09+02:00 — Reforged sidebar, deliberately scoped to the new
+   application chrome. The historical sidebar/navigation cascade stays unchanged elsewhere.
+   Shared frame/surface tokens are supplied by chrome.css. */
+#root .layout--reforged .sidebar {
+  --sb-vscale: 1;
+  --sb-scale-eff: 1;
+  --chrome-sidebar-name-size: 19px;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: 4px 0 4px;
+  border: 0;
+  /* codex:2026-09-10T11:12:00+02:00 — Sichtbare Gravewood-Struktur wie die Spielnavigation im Bestand. */
+  background: var(--chrome-nav-shell) !important;
+}
+
+#root .layout--reforged .sidebar::before {
+  border: 5px solid transparent;
+  border-image: var(--chrome-frame) 96 / 11px / 0 stretch !important;
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — The scroll track sits inside the shell, away from
+   both its decorative frame and resize handle. Rows never shrink with viewport height. */
+#root .layout--reforged .sidebar .sb-nav {
+  flex: 1 1 0;
+  min-height: 48px;
+  /* codex:2026-09-10T11:12:00+02:00 — Symmetrische Ränder inklusive Scrollgutter halten das Register in der Sidebar-Mitte. */
+  margin: 0 6px;
+  padding: 6px 2px;
+  gap: 5px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
+  scrollbar-color: #8c7953 #151411;
+  overscroll-behavior: contain;
+}
+
+#root .layout--reforged .sidebar .sb-nav::-webkit-scrollbar,
+#root .layout--reforged .sidebar .sb-footer-actions::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — The old 10px scrollbar endcaps cannot fit a 6px
+   track; a quiet, high-contrast thumb keeps overflow discoverable inside the frame. */
+#root .layout--reforged .sidebar :is(.sb-nav, .sb-footer-actions)::-webkit-scrollbar-thumb {
+  border: 1px solid #151411;
+  border-image: none !important;
+  background: #8c7953 !important;
+}
+
+#root .layout--reforged .sidebar :is(.sb-nav, .sb-footer-actions)::-webkit-scrollbar-track {
+  background: #151411 !important;
+}
+
+#root .layout--reforged .sidebar .sb-nav::after {
+  content: none;
+  display: none;
+}
+
+/* codex:2026-09-10T11:12:00+02:00 — Kräftige 58px-Spielbuttons mit sichtbarer geschmiedeter Fassung.
+   Höhe bleibt unabhängig von der Fensterhöhe; die Navigation scrollt statt klein zu schrumpfen. */
+#root .layout--reforged .sidebar :is(.sb-skill-btn, .sb-combat-toggle) {
+  box-sizing: border-box;
+  position: relative;
+  flex-shrink: 0;
+  min-width: 0;
+  min-height: 58px !important;
+  height: 58px;
+  padding: 4px 5px !important;
+  border: 6px solid transparent !important;
+  border-image: var(--chrome-frame) 96 / 13px 12px / 0 stretch !important;
+  background: var(--chrome-nav-surface) !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  background-blend-mode: normal !important;
+  color: #e4cc83;
+  box-shadow: inset 0 0 12px #0007, 0 3px 5px #0008 !important;
+  transform: none !important;
+  filter: none !important;
+  text-shadow: 0 1px 1px #000;
+  transition: box-shadow 120ms ease, color 120ms ease !important;
+}
+
+#root .layout--reforged .sidebar .sb-skill-btn {
+  display: grid;
+  /* codex:2026-09-10T11:12:00+02:00 — Gleich breite äußere Spalten zentrieren den Namen wirklich, auch ohne Level. */
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  align-items: center;
+  column-gap: 4px;
+  text-align: center;
+  overflow: visible;
+}
+
+#root .layout--reforged .sidebar .sb-skill-btn--has-level {
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+}
+
+#root .layout--reforged .sidebar .sb-skill-name {
+  position: static;
+  inset: auto;
+  display: block;
+  grid-column: 2;
+  min-width: 0;
+  width: auto;
+  padding: 0 !important;
+  font-family: var(--font-head);
+  font-size: var(--chrome-sidebar-name-size) !important;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: center;
+  white-space: nowrap;
+  overflow: visible;
+  overflow-wrap: normal;
+  hyphens: none;
+  color: #e4cc83;
+  text-shadow: 0 2px 2px #000, 0 0 5px #000;
+}
+
+/* codex:2026-09-10T11:18:00+02:00 — Schriftuntergrenze statt mikroskopischer RU-Menüs;
+   längere Namen dürfen ihre Zeile vergrößern, kein Clipping/Line-Clamp. */
+#root .layout--reforged .sidebar.sb-wrap-labels .sb-skill-name {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#root .layout--reforged .sidebar.sb-wrap-labels .sb-skill-btn {
+  height: auto;
+}
+
+#root .layout--reforged .sidebar .sb-skill-icon-wrap {
+  position: relative;
+  inset: auto !important;
+  grid-column: 1;
+  grid-row: 1;
+  width: 32px !important;
+  height: 32px;
+  overflow: visible !important;
+  opacity: 1;
+  filter: none;
+}
+
+#root .layout--reforged .sidebar .sb-skill-icon-img {
+  width: 32px !important;
+  height: 32px !important;
+  object-fit: contain;
+}
+
+#root .layout--reforged .sidebar .sb-skill-icon-fallback {
+  font-size: 23px;
+}
+
+#root .layout--reforged .sidebar .sb-skill-level {
+  position: static;
+  inset: auto;
+  display: block;
+  grid-column: 3;
+  min-width: 0;
+  font-family: var(--font-info, var(--font-head)) !important;
+  font-size: 12px !important;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  transform: none;
+  color: #c9b985;
+  text-shadow: 0 1px 1px #000;
+}
+
+/* codex:2026-09-10T11:12:00+02:00 — Warme Fassung statt linker App-Auswahlleiste; Aktivitätszeichen bleibt unabhängig. */
+#root .layout--reforged .sidebar .sb-skill-btn.active::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  inset: auto 10px 2px;
+  width: auto;
+  height: 1px;
+  border: 0;
+  border-image: none;
+  background: linear-gradient(90deg, transparent, #ebc774, transparent) !important;
+  opacity: 1 !important;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#root .layout--reforged .sidebar .sb-skill-btn.active {
+  background: var(--chrome-nav-selected) !important;
+  box-shadow: inset 0 0 18px #b37c292b, 0 0 6px #aa753424, 0 3px 5px #0008 !important;
+}
+
+#root .layout--reforged .sidebar .sb-skill-btn.active .sb-skill-name,
+#root .layout--reforged .sidebar .sb-skill-mastered,
+#root .layout--reforged .sidebar .sb-combat-level.sb-skill-mastered {
+  color: var(--chrome-gold);
+}
+
+#root .layout--reforged .sidebar .sb-skill-btn:hover .sb-skill-name {
+  color: #ffe7aa;
+  text-shadow: 0 2px 2px #000, 0 0 7px #b88d4240;
+}
+
+#root .layout--reforged .sidebar :is(.sb-skill-btn, .sb-combat-toggle):hover {
+  box-shadow: inset 0 0 15px #b9832b26, 0 0 7px #ba8a4538, 0 3px 5px #0008 !important;
+}
+
+#root .layout--reforged .sidebar .sb-running-pip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 23px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid #e3bd75;
+  border-radius: 50%;
+  background: #2c2113;
+  color: #f0ce86;
+  font: 8px/1 sans-serif;
+  box-shadow: 0 0 7px #e4b35966;
+  animation: none;
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — Combat remains separately expandable. Its detail
+   rows use two text lines instead of colliding name, XP bar and boosted-level badges. */
+#root .layout--reforged .sidebar .sb-combat-section {
+  flex: 0 0 auto;
+  min-width: 0;
+  gap: 3px;
+}
+
+#root .layout--reforged .sidebar .sb-combat-btn-row {
+  /* codex:2026-09-10T11:18:00+02:00 — Expander im rechten Randbereich, nicht als Spalte neben dem Hauptbutton. */
+  display: block;
+  position: relative;
+  min-width: 0;
+}
+
+#root .layout--reforged .sidebar .sb-combat-btn-row .sb-skill-btn { width: 100%; }
+#root .layout--reforged .sidebar .sb-combat-lvl-badge {
+  align-self: start;
+  margin-top: -2px;
+}
+
+#root .layout--reforged .sidebar .sb-combat-toggle {
+  /* codex:2026-09-10T11:18:00+02:00 — Eigener bedienbarer Pfeil unter dem Kampflvl, keine verschobene Titelachse. */
+  display: flex;
+  position: absolute;
+  right: 9px;
+  bottom: 5px;
+  width: 24px !important;
+  height: 24px;
+  min-height: 24px !important;
+  border: 0 !important;
+  border-image: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#root .layout--reforged .sidebar .sb-combat-toggle-chevron {
+  font-size: 15px;
+  color: var(--chrome-muted);
+  filter: none;
+}
+
+#root .layout--reforged .sidebar .sb-combat-toggle.open .sb-combat-toggle-chevron {
+  color: var(--chrome-gold);
+}
+
+#root .layout--reforged .sidebar .sb-combat-subskills {
+  display: block;
+  min-width: 0;
+  margin: 0 2px;
+  padding: 2px 5px;
+  border-left: 1px solid #a28a565c;
+  border-radius: 0;
+  background: #0b0d0ddd;
+}
+
+#root .layout--reforged .sidebar .sb-combat-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 2px 6px;
+  padding: 6px 0;
+  min-width: 0;
+}
+
+#root .layout--reforged .sidebar .sb-combat-icon-wrap {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: none;
+}
+
+#root .layout--reforged .sidebar .sb-combat-icon-img {
+  width: 24px;
+  height: 24px;
+}
+
+#root .layout--reforged .sidebar .sb-combat-name {
+  display: block;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  width: auto;
+  font-size: 13px;
+  line-height: 1.15;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  color: var(--chrome-text);
+}
+
+#root .layout--reforged .sidebar .sb-combat-level {
+  display: block;
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 12px;
+  text-align: left;
+  color: var(--chrome-muted);
+}
+
+#root .layout--reforged .sidebar .sb-combat-bar {
+  display: block;
+  grid-column: 2;
+  grid-row: 3;
+  min-width: 0;
+  width: 100%;
+  margin-top: 2px;
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — Blessing art has bounded visual weight, while the
+   translated effect remains real in-flow text. Long names cannot fall outside a fixed card. */
+#root .layout--reforged .sidebar .sb-blessing {
+  margin: 0 5px;
+  border: 0;
+  box-shadow: none;
+}
+
+#root .layout--reforged .sidebar .sb-blessing-card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: auto;
+  min-height: clamp(104px, 16vh, 148px);
+  max-height: none;
+  padding: 36px 6px 7px;
+  border: 3px solid transparent;
+  border-image: var(--chrome-frame) 96 / 6px / 0 stretch;
+  overflow: visible;
+}
+
+#root .layout--reforged .sidebar .sb-blessing-textbox {
+  position: static;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  padding: 5px 3px;
+  gap: 3px;
+  background: #080909b8;
+}
+
+#root .layout--reforged .sidebar .sb-blessing-name {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  color: var(--chrome-gold);
+}
+
+#root .layout--reforged .sidebar .sb-blessing-effect {
+  font-size: 13px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  color: var(--chrome-text);
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — The footer reserves its actual height. Opening it
+   shrinks the scrollable nav instead of covering the last destinations; long actions scroll. */
+#root .layout--reforged .sidebar .sb-footer {
+  position: relative;
+  inset: auto;
+  flex: 0 0 auto;
+  width: auto;
+  margin: 0 8px;
+  padding: 0;
+  pointer-events: auto;
+}
+
+#root .layout--reforged .sidebar .sb-footer-drawer-tab {
+  box-sizing: border-box;
+  width: min(78%, 220px);
+  min-height: 34px;
+  padding: 4px 8px;
+  border: 3px solid transparent;
+  border-image: var(--chrome-frame) 96 / 7px / 0 stretch;
+  background: var(--chrome-surface) !important;
+  color: var(--chrome-text);
+  font-size: 14px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+#root .layout--reforged .sidebar .sb-footer.is-open .sb-footer-actions {
+  box-sizing: border-box;
+  height: auto;
+  max-height: min(290px, calc(44vh - 42px));
+  padding: 6px 3px;
+  gap: 3px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #8c7953 #151411;
+  border: 3px solid transparent;
+  border-image: var(--chrome-frame) 96 / 6px / 0 stretch;
+  background: var(--chrome-shell) !important;
+  transition: opacity 120ms ease;
+}
+
+#root .layout--reforged .sidebar :is(.sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit) {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  gap: 6px;
+  min-height: 40px;
+  padding: 5px 6px;
+  /* codex:2026-09-10T10:43:00+02:00 — Legacy-Footerframes sind important; derselbe Iron-Vertrag muss hier gewinnen. */
+  border: 3px solid transparent !important;
+  border-image: var(--chrome-frame) 96 / 6px / 0 stretch !important;
+  background: var(--chrome-surface) !important;
+  color: var(--chrome-text);
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 1;
+  box-shadow: none;
+  transform: none;
+  filter: none;
+}
+
+/* codex:2026-09-10T10:43:00+02:00 — Auch das Menülabel ab exakt150px wieder anzeigen, Rail erst darunter. */
+#root .layout--reforged .sidebar .sb-footer-label,
+#root .layout--reforged .sidebar .sb-footer-drawer-label {
+  display: block;
+  min-width: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+#root .layout--reforged .sidebar .sb-footer-emblem-img {
+  width: 22px;
+  height: 22px;
+}
+
+#root .layout--reforged .sidebar .sb-footer-mail {
+  padding-right: 22px;
+}
+
+#root .layout--reforged .sidebar .sb-footer-quit:hover {
+  color: #edb19b;
+}
+
+#root .layout--reforged .sidebar .sb-footer [aria-current="page"] {
+  color: var(--chrome-gold);
+  box-shadow: inset 3px 0 var(--chrome-gold);
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — Visible inset focus survives historical outline resets
+   and cannot be clipped by the sidebar scroll container. The resize handle is focusable too. */
+#root .layout--reforged .sidebar :is(button, .sb-combat-row, .sb-blessing, .sb-resize-handle):focus-visible {
+  outline: 2px solid var(--chrome-gold) !important;
+  outline-offset: -2px !important;
+}
+
+#root .layout--reforged .sidebar .sb-resize-handle {
+  width: 7px;
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — Names outrank secondary levels in compact mode.
+   Rail starts strictly below 150px; the shared name fit still operates at 150px and above. */
+@container sidebar (max-width: 200px) {
+  #root .layout--reforged .sidebar .sb-skill-btn {
+    /* codex:2026-09-10T11:18:00+02:00 — Bei schmaler Sidebar erhält der Name die volle Breite unter dem Icon. */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 28px auto;
+    justify-items: center;
+    row-gap: 4px;
+    height: auto;
+    min-height: 78px !important;
+    padding-inline: 3px !important;
+  }
+
+  #root .layout--reforged .sidebar .sb-skill-name {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+  }
+  #root .layout--reforged .sidebar .sb-combat-toggle { top: 8px; bottom: auto; }
+
+  #root .layout--reforged .sidebar .sb-skill-level {
+    display: none;
+  }
+
+  #root .layout--reforged .sidebar .sb-skill-icon-wrap,
+  #root .layout--reforged .sidebar .sb-skill-icon-img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+@container sidebar (width < 150px) {
+  #root .layout--reforged .sidebar :is(.sb-skill-name, .sb-skill-level, .sb-blessing-textbox, .sb-footer-label, .sb-footer-drawer-label, .sb-combat-name, .sb-combat-bar, .sb-combat-level) {
+    display: none;
+  }
+
+  #root .layout--reforged .sidebar .sb-skill-btn {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    justify-items: center;
+    min-height: 58px !important;
+    padding-inline: 0 !important;
+  }
+
+  #root .layout--reforged .sidebar .sb-skill-icon-wrap,
+  #root .layout--reforged .sidebar .sb-skill-icon-img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  #root .layout--reforged .sidebar .sb-combat-btn-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #root .layout--reforged .sidebar .sb-combat-btn-row .sb-skill-btn {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  #root .layout--reforged .sidebar .sb-combat-toggle {
+    position: static;
+    flex: 0 0 24px;
+    min-height: 24px !important;
+    height: 24px;
+    width: 100% !important;
+  }
+
+  #root .layout--reforged .sidebar .sb-combat-row {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    min-height: 30px;
+  }
+
+  #root .layout--reforged .sidebar .sb-blessing-card {
+    min-height: 64px;
+    height: 80px;
+    padding: 0;
+  }
+
+  #root .layout--reforged .sidebar .sb-footer-drawer-tab {
+    width: 100%;
+    padding-inline: 0;
+  }
+
+  #root .layout--reforged .sidebar .sb-footer-actions > button {
+    justify-content: center;
+    gap: 0;
+    padding-inline: 0;
+  }
+
+  #root .layout--reforged .sidebar .sb-running-pip {
+    left: calc(50% + 4px);
+  }
+}
+
+/* codex:2026-09-10T10:23:09+02:00 — At short heights reduce decorative image room only,
+   not navigation type/targets. Animation is never required for state or discoverability. */
+@media (max-height: 650px) {
+  #root .layout--reforged .sidebar .sb-blessing-card {
+    min-height: 80px;
+    padding-top: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .layout--reforged .sidebar :is(.sb-skill-btn, .sb-combat-toggle, .sb-footer-actions, .sb-footer-drawer-chevron, .sb-combat-bar-fill) {
+    transition: none !important;
+  }
+}

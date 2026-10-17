@@ -7,7 +7,7 @@ import type {
   MailLetterSender,
   MailMessage,
 } from "@hearthforge/shared";
-import { addInstance, addInstanceOrBank, addItem, addItemOrBank, markItemDiscovered } from "./inventory";
+import { addInstance, addInstanceOrBank, addItem, addItemOrBank, markItemDiscovered, removeInstance } from "./inventory";
 
 /**
  * Postfach / Mailbox (SAVE_VERSION 71): Überlauf-Puffer für vollen Inventar (WoW-artig).
@@ -73,6 +73,122 @@ export function sendLetter(
     from,
     textKey,
   });
+}
+
+// codex:2026-08-31T22:04:00+02:00 — deterministischer Kern für reine Itemsendungen zwischen Saves.
+export interface CrossSaveTransferSelection {
+  /** Exakter Quellslot samt erwarteter Item-ID und zu versendender Menge. */
+  slots: Array<{ slotIndex: number; itemId: ItemId; qty: number }>;
+  /** Eindeutige IDs ausgewählter verzauberter/gesuffixter Instanzen. */
+  instanceIds: string[];
+}
+
+export type CrossSaveTransferResult =
+  | { ok: true; stacks: number; units: number; mailId: string }
+  | { ok: false; reason: "same_save" | "empty" | "too_many" | "invalid_source" | "invalid_target" };
+
+/**
+ * Verschiebt bis zu acht ausgewählte Inventarstapel/Instanzen atomar aus `source` in eine neue
+ * `kind:"transfer"`-Mail von `target`. Die Funktion macht KEIN I/O; der Client persistiert beide
+ * bereits vollständig mutierten Zustände anschließend als ein journalgeschütztes Slot-Paar.
+ *
+ * Alle Quellen werden vor der ersten Mutation validiert. Dadurch ist ein Fehler garantiert ein
+ * No-op und ein Erfolg kann nach der Validierung nicht mehr halb fertig abbrechen. Leere Slots
+ * bleiben bewusst leer (SAVE 87: Spielerplatzierung ist Zustand). Instanzen behalten Affixe und
+ * Suffixe unverändert, erhalten im ZIEL aber eine neue deterministische ID — Instanz-IDs sind nur
+ * innerhalb eines Saves eindeutig und könnten sonst mit dessen `inst_0` kollidieren. Kein RNG,
+ * keine Uhr, keine Offline-Simulation.
+ */
+export function transferInventoryItemsToSave(
+  source: GameState,
+  target: GameState,
+  content: ContentDB,
+  fromSaveName: string,
+  selection: CrossSaveTransferSelection,
+): CrossSaveTransferResult {
+  if (source === target) return { ok: false, reason: "same_save" };
+  const sender = fromSaveName.trim().slice(0, 64);
+  if (
+    !sender
+    || !target?.character
+    || !Array.isArray(target.mailbox)
+    || !Number.isSafeInteger(target.nextInstanceSeq)
+    || target.nextInstanceSeq < 0
+  ) {
+    return { ok: false, reason: "invalid_target" };
+  }
+
+  const slots = Array.isArray(selection.slots) ? selection.slots : [];
+  const instanceIds = Array.isArray(selection.instanceIds) ? selection.instanceIds : [];
+  // codex:2026-08-31T23:58:00+02:00 — Paketplätze zählen logische Plain-Item-Stapel, nicht
+  // physische Quellslots. Mehrere Teilstapel derselben Item-ID werden in der Zielmail ohnehin
+  // zusammengeführt und müssen daher gemeinsam genau einen der acht Plätze belegen.
+  const stackCount = new Set(slots.map((slot) => slot.itemId)).size + instanceIds.length;
+  if (stackCount === 0) return { ok: false, reason: "empty" };
+  if (stackCount > 8) return { ok: false, reason: "too_many" };
+
+  const seenSlots = new Set<number>();
+  const stackItems = new Map<ItemId, number>();
+  let units = 0;
+  for (const request of slots) {
+    const index = request.slotIndex;
+    const qty = request.qty;
+    if (!Number.isInteger(index) || index < 0 || index >= source.inventory.slots.length || seenSlots.has(index)) {
+      return { ok: false, reason: "invalid_source" };
+    }
+    const held = source.inventory.slots[index];
+    if (!held || held.instance || held.itemId !== request.itemId || !content.items[request.itemId]) {
+      return { ok: false, reason: "invalid_source" };
+    }
+    if (!Number.isInteger(qty) || qty <= 0 || qty > held.qty) {
+      return { ok: false, reason: "invalid_source" };
+    }
+    seenSlots.add(index);
+    stackItems.set(request.itemId, (stackItems.get(request.itemId) ?? 0) + qty);
+    units += qty;
+  }
+
+  const seenInstances = new Set<string>();
+  const instances: ItemInstance[] = [];
+  for (const instanceId of instanceIds) {
+    if (typeof instanceId !== "string" || !instanceId || seenInstances.has(instanceId)) {
+      return { ok: false, reason: "invalid_source" };
+    }
+    const inst = source.inventory.instances.find((candidate) => candidate.instanceId === instanceId);
+    if (!inst || !content.items[inst.baseItemId]) return { ok: false, reason: "invalid_source" };
+    seenInstances.add(instanceId);
+    instances.push(inst);
+    units += 1;
+  }
+
+  // Erst NACH vollständiger Vorprüfung mutieren: ab hier kann kein validierbarer Fehler mehr auftreten.
+  for (const request of slots) {
+    const held = source.inventory.slots[request.slotIndex]!;
+    held.qty -= request.qty;
+    if (held.qty === 0) source.inventory.slots[request.slotIndex] = null;
+  }
+  const movedInstances: ItemInstance[] = [];
+  for (const instanceId of instanceIds) {
+    const moved = removeInstance(source.inventory, instanceId);
+    if (moved) {
+      // codex:2026-08-31T23:08:00+02:00 — ID-Domäne wechselt mit dem Save: Eigenschaften bleiben,
+      // Identität wird aus dem monotonen Zähler des Empfängers neu geprägt (deterministisch).
+      const targetInstanceId = `inst_${target.nextInstanceSeq.toString(36)}`;
+      target.nextInstanceSeq += 1;
+      movedInstances.push({ ...moved, instanceId: targetInstanceId });
+    }
+  }
+
+  const { id, seq } = mintMailSeq(target);
+  target.mailbox.push({
+    id,
+    kind: "transfer",
+    createdSeq: seq,
+    items: [...stackItems.entries()].map(([itemId, qty]) => ({ itemId, qty })),
+    instances: movedInstances,
+    fromSaveName: sender,
+  });
+  return { ok: true, stacks: stackCount, units, mailId: id };
 }
 
 /**

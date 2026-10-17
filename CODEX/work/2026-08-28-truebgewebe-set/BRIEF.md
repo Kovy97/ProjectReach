@@ -34,4 +34,54 @@ Alle fünf aus demselben Licht (oben links), gleicher Materialmaßstab, sodass d
 
 # Teil B – Produktionsplan (Mira)
 
-<!-- codex: hier eintragen -->
+<!-- codex:2026-08-28T23:41:03+02:00 -->
+
+1. Alle fünf Lehrlings-Slots und die Frost-Roben als Obergrenze visuell sowie technisch prüfen.
+   Alte `dimweave_*` weder laden noch als Promptreferenz verwenden.
+2. Einen verbindlichen Serienkern für Material, Palette, Licht und Detailgrad setzen; danach
+   jeden Slot einzeln mit seinem Bestandswinkel erzeugen. Ein nativer Alpha-Wurf pro Final,
+   keine gemalte Matte und kein Keying.
+3. Je Teil prüfen: grobe Nesselstruktur, Dämmergrau/Abendblau, ausgefranste Kante, Lederkordel
+   oder Holzknebel und genau eine dunkelblau eingenähte Zwielicht-Rune ohne Lichtwirkung.
+4. Akzeptierte Raws alphaerhaltend auf 1254² mit einheitlichem Sicherheitsrand normalisieren.
+   Exakte Namen, Alpha, Außenrand, verstecktes RGB und Motivbox automatisch messen.
+5. Zweizeiligen Kontaktbogen erstellen: oben alle fünf Dimweave-Teile, darunter das komplette
+   Lehrlings-Set in derselben Slot-Reihenfolge. Zusätzlich Alpha-/Magenta-Test und 64-px-Reihe.
+6. HANDOFF und WORKLOG abschließen; Renderer, Content und alte Dimweave-Dateien unangetastet
+   lassen.
+
+# Teil C – Quellen und Promptauflösung (Mira)
+
+<!-- codex:2026-08-28T23:41:03+02:00 -->
+
+- Primärer Serienanker: `apprentice_robe_hat`, `apprentice_robe_body`,
+  `apprentice_robe_legs`, `apprentice_mitts`, `apprentice_slippers`; Maßstab, Slotwinkel,
+  Licht von oben links und freistehende Produktdarstellung werden übernommen.
+- Obergrenze: Frost-Kapuze, -Robe, -Beinkleid und -Handbinden zeigen die deutlich höhere
+  Verarbeitungsstufe. Trübgewebe erhält weder Fell, Metallornament, Edelstein noch Eiseffekt.
+- Gemeinsamer Serienkern: grob sichtbare Nesselbindung, aschiges Dämmergrau mit sehr
+  zurückhaltendem Abendblau, stumpfes braunes Leder, helle Holzknöpfe/-knebel, handgenähte
+  Reparaturen und unregelmäßig ausgefranste Säume.
+- Magische Lesbarkeit: genau eine einfache Zwielicht-Rune pro Teil, als dunkelblaue Naht im
+  Stoff. Sie reflektiert kein Licht und erzeugt weder Aura noch Partikel.
+
+# Teil D – Abnahme und Übergabe (Mira)
+
+<!-- codex:2026-08-28T23:41:03+02:00 -->
+
+- Fünf exakt benannte 1254 × 1254 PNG-RGBA-Finals unter
+  `CODEX/assets/truebgewebe-set-2026-08-28/fertig/`, echtes Alpha und Außenrand Alpha 0.
+- Jedes Teil ist ohne Figur, Hand, Fuß, Ständer, Boden, Rahmen, Text oder Schlagschatten als
+  einzelnes Slotobjekt freigestellt.
+- Alle fünf lesen über Nesselstruktur, Palette, Kordeln, Holzknebel und Runennaht als ein Set;
+  ärmer als Lehrling in der Verarbeitung, aber eindeutig magisch.
+- QA: zweizeiliger Setvergleich, Dunkel-/Magenta-Kantenprüfung, 64-px-Reihe und maschinenlesbare
+  Messwerte. Anschließend Übergabe an Claude, keine Integration durch Codex.
+
+## Chef-Korrektur — Robe ohne Kapuze
+
+<!-- codex:2026-08-28T23:56:07+02:00 -->
+
+`dimweave_robe` ist ausschließlich der Körperslot und darf keine Kapuze, Gugel oder sonstiges
+Kopfteil enthalten. Verbindliche Neufassung mit flachem, offenem V-Ausschnitt und niedrigem
+ausgefranstem Stoffkragen; die separate `dimweave_hood` bleibt der einzige Kopfslot.

@@ -7,7 +7,7 @@ import type {
   ItemId,
   ItemInstance,
 } from "@hearthforge/shared";
-import { EQUIP_KIT_COUNT, EQUIP_SLOTS, emptyEquipKit } from "@hearthforge/shared";
+import { EQUIP_KIT_COUNT, EQUIP_SLOTS, KIT_SLOTS, emptyEquipKit, isToolSlot } from "@hearthforge/shared";
 import { computeStats } from "./character";
 
 export { EQUIP_KIT_COUNT } from "@hearthforge/shared";
@@ -34,8 +34,12 @@ export { EQUIP_KIT_COUNT } from "@hearthforge/shared";
  *  • Stats: computeStats fingerprintet Slot-Belegung + Instanzen des Charakters, der Wechsel
  *    invalidiert den Cache also von selbst. hp/mana/ward werden nach dem Wechsel VOLL aufgefuellt
  *    (Chef 28.08.2026: kein Nachregenerieren nach dem Umziehen; Wechsel nur ausserhalb des Kampfes).
- *  • Alle EQUIP_SLOTS inkl. tool1..tool3 (ganzes Set tauscht — die alte LOADOUT_SLOTS-Ausnahme für
- *    Werkzeuge diente nur dem Inventar-Churn, den es nicht mehr gibt).
+ *  • WERKZEUGE GEHÖREN NICHT ZUM KIT (SAVE 87, Chef-Entscheid 31.08.2026 nach Spieler-Vorschlag
+ *    „I don't think that we need 3 sets of the same tools"): ein Kit besitzt nur die `KIT_SLOTS`
+ *    (alles außer tool1..tool4). Werkzeuge hängen am CHARAKTER und bleiben beim Wechsel einfach
+ *    liegen — niemand soll dieselbe Spitzhacke dreimal besitzen müssen, um sie nach dem Umziehen
+ *    noch zu haben. Das ist die Regel, mit der schon die v75-Loadouts arbeiteten; der v85-Umbau
+ *    hatte die Werkzeuge versehentlich mit hineingezogen.
  *  • DETERMINISTISCH & RNG-frei: reine Spieler-Aktion (kein Tick-Pfad), zieht nie am RNG-Strom.
  */
 
@@ -76,7 +80,10 @@ function snapshotKit(
   const eq = equipment ?? {};
   const inst = instances ?? {};
   const kit = emptyEquipKit();
-  for (const slot of EQUIP_SLOTS) {
+  // NUR die KIT_SLOTS: Werkzeug-Slots bleiben im Kit immer leer (SAVE 87). Wichtig, dass der Filter
+  // HIER sitzt und nicht erst beim Umschalten — snapshotKit ist der einzige Weg, auf dem etwas in
+  // ein Kit gelangt (Spiegel-Schreiben, Lese-Sicht, Wechsel), also kann so kein Werkzeug hineinlecken.
+  for (const slot of KIT_SLOTS) {
     kit.equipment[slot] = eq[slot] ?? null;
     const i = inst[slot];
     if (i && typeof i === "object") kit.equippedInstances[slot] = cloneInstance(i);
@@ -112,7 +119,7 @@ export function kitSummary(state: GameState, index: number): KitSummary {
     source = kit ? snapshotKit(kit.equipment, kit.equippedInstances) : emptyEquipKit();
   }
   let pieces = 0;
-  for (const slot of EQUIP_SLOTS) if (source.equipment[slot]) pieces++;
+  for (const slot of KIT_SLOTS) if (source.equipment[slot]) pieces++;
   return { pieces, equipment: source.equipment, instances: source.equippedInstances };
 }
 
@@ -131,6 +138,16 @@ export function switchEquipKit(state: GameState, content: ContentDB, index: numb
   syncActiveKit(state);
   const target = state.equipKits[index] ?? emptyEquipKit();
   const next = snapshotKit(target.equipment, target.equippedInstances);
+  // WERKZEUGE BLEIBEN LIEGEN (SAVE 87): `next` traegt auf den Werkzeug-Slots per Bauart null; wir
+  // schreiben die aktuell getragenen Werkzeuge samt Instanz einfach in das neue Record zurueck.
+  // Bewusst NACH dem snapshotKit und VOR dem Zuweisen — so gibt es keinen Moment, in dem der
+  // Charakter ohne Werkzeuge dasteht, und die Werkzeug-Instanz (verzauberte Axt) reist mit.
+  for (const slot of EQUIP_SLOTS) {
+    if (!isToolSlot(slot)) continue;
+    next.equipment[slot] = state.character.equipment[slot] ?? null;
+    const inst = state.character.equippedInstances[slot];
+    if (inst) next.equippedInstances[slot] = inst;
+  }
   state.character.equipment = next.equipment;
   state.character.equippedInstances = next.equippedInstances;
   state.activeKit = index;

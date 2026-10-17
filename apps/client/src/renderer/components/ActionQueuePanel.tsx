@@ -22,6 +22,8 @@ import { getQueuePanelCollapsed, setQueuePanelCollapsed } from "../util/uiPrefs"
 import { formatClockTime, formatPlaytime } from "../util/format";
 import { computeQueueLevels, projectActionLevel, type QueueLevelEntry } from "../util/queueLevels";
 import { computeQueueTiming, type QueueTimingEntry } from "../util/queueTiming";
+// codex:2026-09-10T10:35:24+02:00 — Share variable-height drop geometry between marker/snap.
+import { queueDropTop } from "../util/queueDrag";
 import { HoverTip } from "./CitadelTip";
 
 // Mira-Set 2026-08-03 (Gap-Sweep Priorität A) — geschlossenes Action-Queue-Micro-Icon-Set löst
@@ -401,6 +403,8 @@ export function ActionQueuePanel(): JSX.Element {
     pointerId: number;
     lastClientY: number;
   }
+  // codex:2026-09-10T10:21:18+02:00 — Der gesamte Panelinhalt ist der Scroll-/Drag-Koordinatenraum;
+  // lange Hinweise können die Warteliste so nicht aus einem nicht scrollbaren Body verdrängen.
   const listRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const indicatorRef = useRef<HTMLDivElement>(null);
@@ -431,7 +435,8 @@ export function ActionQueuePanel(): JSX.Element {
         indicator.style.opacity = "0";
       } else {
         indicator.style.opacity = "1";
-        indicator.style.transform = `translateY(${meta.rowTops[meta.overVi]}px)`;
+        // codex:2026-09-10T10:35:24+02:00 — Account for source/target height differences.
+        indicator.style.transform = `translateY(${queueDropTop(meta)}px)`;
       }
     }
   }
@@ -538,7 +543,8 @@ export function ActionQueuePanel(): JSX.Element {
       // Reihenfolge (frische Elemente ohne transform); das Timeout unten ist nur ein
       // Sicherheitsnetz, falls aus irgendeinem Grund kein Tick nachrendert (z.B. Pause im Hintergrund).
       rowEl.style.transition = "transform 0.12s ease";
-      rowEl.style.transform = `translateY(${meta.rowTops[meta.overVi]! - meta.rowTops[meta.fromVi]!}px)`;
+      // codex:2026-09-10T10:35:24+02:00 — Snap to the same actual slot as the drop marker.
+      rowEl.style.transform = `translateY(${queueDropTop(meta) - meta.rowTops[meta.fromVi]!}px)`;
       const fromReal = meta.fromVi + foldedCount;
       const toReal = meta.overVi + foldedCount;
       // Guard: nur zurücksetzen, wenn bis dahin NICHT längst ein neuer Drag begonnen hat (sonst
@@ -715,7 +721,9 @@ export function ActionQueuePanel(): JSX.Element {
       )}
 
       {!collapsed && (
-        <div className="queue-panel-body">
+        // codex:2026-09-10T10:21:18+02:00 — Ein Scrollviewport für Kopf, Status und Liste; der
+        // feste Aufklapper bleibt außerhalb. DnD nutzt weiterhin denselben Scrollref.
+        <div className="queue-panel-body" ref={listRef}>
           <div className="queue-panel-header">
             {QUEUE_ICON_URL ? (
               <img loading="lazy" decoding="async" src={QUEUE_ICON_URL} alt="" className="queue-panel-header-icon" />
@@ -812,7 +820,23 @@ export function ActionQueuePanel(): JSX.Element {
           )}
 
           <div className="queue-panel-active">
-            <span className="queue-panel-section-label muted">{t("queue.nowRunning")}</span>
+            {/* codex:2026-09-10T10:21:18+02:00 — Sichtbare Tastatur-/Mausalternative zum
+                bestehenden Rechtsklick. Keine neue Stop-Semantik und kein zusätzlicher Save-State. */}
+            <div className="queue-panel-section-head">
+              <span className="queue-panel-section-label muted">{t("queue.nowRunning")}</span>
+              {(queueFight || queueDungeon || activeAction) && (
+                <button
+                  type="button"
+                  className="queue-panel-stop"
+                  onClick={() => {
+                    if (queueFight || queueDungeon) stopCombat(state);
+                    else setActiveAction(state, content, null);
+                  }}
+                >
+                  {t("skill.stop")}
+                </button>
+              )}
+            </div>
             {queueFight ? (
               <HoverTip
                 as="div"
@@ -955,7 +979,9 @@ export function ActionQueuePanel(): JSX.Element {
             {visibleQueue.length === 0 ? (
               <div className="queue-panel-empty muted">{t("queue.emptyHint")}</div>
             ) : (
-              <div className="queue-panel-list" ref={listRef}>
+              // codex:2026-09-10T10:21:18+02:00 — Die Liste bleibt Drag-Struktur; Scrollen und
+              // absolute Drop-Geometrie gehören jetzt zum übergeordneten queue-panel-body.
+              <div className="queue-panel-list">
                 {/* Drop-Ziel-Linie (Drag&Drop-Umsortierung, Punkt 2) — ein einziges Element,
                     per `transform` an den aktuellen Ziel-Slot verschoben (s. applyRowShifts
                     oben), sonst unsichtbar (opacity:0). */}
@@ -1061,15 +1087,21 @@ export function ActionQueuePanel(): JSX.Element {
                                 ? entry.target === null ? "∞" : `×${entry.target}`
                                 : entry.target === null ? t("skill.qty.all") : `×${entry.target}`}
                             </span>
-                            {rowMatDot && (
-                              <span className={`queue-row-matdot queue-row-matdot--${rowMatDot}`} aria-hidden="true">●</span>
-                            )}
                             {rowDuration && (
                               <span className={`queue-row-duration${rowDuration.warn ? " queue-row-duration--warn" : ""}`}>
                                 {rowDuration.text}
                               </span>
                             )}
                           </span>
+                          {/* codex:2026-09-10T10:21:18+02:00 — Materialprognose zusätzlich als
+                              Text + unterschiedliche Form, nicht mehr nur gelb/rot. Die ausführliche
+                              Erklärung im vorhandenen Tooltip bleibt unverändert. */}
+                          {rowMatDot && (
+                            <span className={`queue-row-material queue-row-material--${rowMatDot}`}>
+                              <span className="queue-row-material-symbol" aria-hidden="true">{rowMatDot === "will_have" ? "↳" : "!"}</span>
+                              {t(rowMatDot === "will_have" ? "queue.row.materialExpected" : "queue.row.materialMissing")}
+                            </span>
+                          )}
                           {/* Chef 25.08.2026: Level-Zeile UNTER Menge/Dauer — nur bei endlichem Ziel
                               und wenn sich das Skill-Level dadurch tatsächlich ändert (s. QueueLevelRow). */}
                           {rowLevel && <QueueLevelRow entry={rowLevel} />}

@@ -681,7 +681,32 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //     wird NICHT nachträglich erzeugt (Muster hunting). Content: 5 neue Erfolge ach_skill_tailoring_25..99,
 //     Meisterring ring_master_tailoring (inputSaver 5 %), ring_master_completion verlangt jetzt 22 Skills.
 //     Keine Item-ID-Renames, keine Kampfwerte.
-export const SAVE_VERSION = 87;
+// v87 (1.2.4 „Inventar, Bank und Werkzeuge", Chef-Auftraege 31.08.2026 — UNVEROEFFENTLICHT):
+//     (a) BANK-PLATZIERUNG „wie OSRS": neues Feld `bankOrder: (ItemId | null)[]` — Index = Bankfach,
+//         Wert = das Item darin. Die MENGEN bleiben unveraendert in `bank`; `bankOrder` traegt nur die
+//         Platzierung, `syncBankOrder` haelt beides selbstheilend im Einklang. Alt-Saves bekommen ihre
+//         bisherige (sortierte) Reihenfolge als Startbelegung.
+//     (b) INVENTAR-PLATZIERUNG: Fund haengt hinten an die belegte Reihe an statt in die erste Luecke
+//         zu springen; Sortieren ist eine einmalige AKTION statt eines Ansichtsmodus. Alt-Saves werden
+//         EINMALIG geradegezogen (`compactInventory`, nur beim Sprung von < 87) — danach gehoeren die
+//         Luecken dem Spieler.
+//     (c) VIERTER WERKZEUG-SLOT `tool4`: `EQUIP_SLOTS` erweitert (Muster tool3/v72), Alt-Saves fuellt
+//         migrateState generisch auf null. Es gibt vier Werkzeug-Berufe und hatte nur drei Plaetze.
+//         KEIN Tempo-Gewinn: `bestToolSpeed` scannt ohnehin Equipment UND Inventar.
+//     (d) WERKZEUGE VERLASSEN DIE KITS: ein Kit besitzt ab jetzt nur noch `KIT_SLOTS` (alles ausser
+//         den vier Werkzeug-Slots). Werkzeuge haengen am Charakter und ueberleben jeden Kit-Wechsel —
+//         niemand soll dieselbe Spitzhacke dreimal besitzen muessen. sanitizeState erzwingt, dass
+//         Kit-Werkzeug-Slots null sind. MIGRATION (ungegatet, idempotent): Werkzeuge, die in einem
+//         INAKTIVEN Kit stecken, werden herausgeholt — zuerst in einen freien Werkzeug-Slot des
+//         Charakters, sonst ins Inventar, sonst in die Bank bzw. den Gear-Vault (verzauberte
+//         Instanzen reisen mit Affixen). Es geht NICHTS verloren (Save-Kompat-Gesetz).
+// codex:2026-08-31T22:04:00+02:00
+// v88 (Cross-Save-Rabenfracht, Chef-GO 31.08.2026): `MailMessage.kind === "transfer"` speichert
+//     reine Itemsendungen zwischen lokalen Spielständen. Der Absender ist nur der Spielstandname;
+//     Betreff, Freitext und Gold gehören ausdrücklich nicht zu diesem System. Bestehende Saves
+//     benötigen kein neues GameState-Feld; der Versionssprung dokumentiert und härtet die neue
+//     persistierte Union-Variante im Mailbox-Sanitize.
+export const SAVE_VERSION = 88;
 
 /**
  * Vorgaben für den Mengen-Craft auf Ersteller-/Crafting-Karten (1 / 25 / 50). „∞/Alle" ist die
@@ -2044,11 +2069,44 @@ export const EQUIP_SLOTS = [
   "tool1",
   "tool2",
   "tool3",
+  // Vierter Werkzeug-Slot (SAVE 87, Spieler-Vorschlag + Chef-GO 31.08.2026): Das Spiel kennt
+  // GENAU VIER Werkzeug-Berufe (Bergbau, Holzfaellen, Angeln, Sammeln), hatte aber nur drei
+  // Plaetze — eines musste immer lose im Inventar mitreisen. `bestToolSpeed` (engine/tools.ts)
+  // scannt Equipment UND Inventar, ein viertes Werkzeug wirkt also exakt wie vorher; das hier ist
+  // reine Ordnung, kein Tempo-Gewinn. Alt-Saves fuellt migrateState generisch aus EQUIP_SLOTS.
+  "tool4",
 ] as const;
 
 // Hinweis: der frühere "ammo"-Köcher-Slot ist mit dem Ammo-Removal (#286, SAVE_VERSION 57)
 // restlos entfernt — Alt-Saves migriert v57 (Köcher verfällt gegen Gold-Gutschrift).
 export type EquipSlot = (typeof EQUIP_SLOTS)[number];
+
+/**
+ * Die Werkzeug-Slots — EINE Quelle fuer alle, die sie brauchen (engine `equipTool`, die
+ * Slot-Whitelist im Sanitize, der Tooltip, die Ausruestungspuppe). Vorher stand die Liste an vier
+ * Stellen als Literal `["tool1","tool2","tool3"]`; beim Anbau des vierten Slots waere garantiert
+ * eine davon vergessen worden — genau so ist beim dritten Slot schon einmal jedes Laden eine
+ * Dual-Use-Axt still in die Bank „gerettet" worden.
+ */
+export const TOOL_SLOTS = ["tool1", "tool2", "tool3", "tool4"] as const;
+export type ToolSlot = (typeof TOOL_SLOTS)[number];
+
+/** Ist dieser Slot ein Werkzeug-Slot? */
+export function isToolSlot(slot: EquipSlot): slot is ToolSlot {
+  return (TOOL_SLOTS as readonly EquipSlot[]).includes(slot);
+}
+
+/**
+ * Die Slots, die ein Ausruestungs-KIT besitzt und beim Wechsel tauscht: alles AUSSER den
+ * Werkzeugen (SAVE 87, Chef-Entscheid 31.08.2026 nach Spieler-Vorschlag „I don't think that we
+ * need 3 sets of the same tools").
+ *
+ * Werkzeuge sind Skill-Ausruestung, kein Kampfstil-Wechselgut — genau die Begruendung, mit der
+ * schon die v75-Loadouts sie aussparten (§492 oben). Der v85-Kit-Umbau nahm sie versehentlich mit
+ * hinein, wodurch man jede Spitzhacke dreifach besitzen musste, um sie nach jedem Kit-Wechsel noch
+ * zu haben. Werkzeuge haengen jetzt am CHARAKTER und ueberleben jeden Wechsel.
+ */
+export const KIT_SLOTS: readonly EquipSlot[] = EQUIP_SLOTS.filter((slot) => !isToolSlot(slot));
 
 // ── Ausrüstungs-Kits 1/2/3 (SAVE_VERSION 85 — unveröffentlicht; Chef-Entscheid 28.08.2026) ────
 /** Anzahl der Kits — FIX 3 (je Kampfstil eines; bewusst nicht konfigurierbar). */
@@ -2063,8 +2121,9 @@ export type EquipKitIndex = 0 | 1 | 2;
  * VORLAGEN (Snapshots aus itemId/instanceId, die beim Anlegen aus Inventar/Bank bedient wurden):
  * ein Kit trägt seine Teile selbst, ein Wechsel (engine/loadouts.ts `switchEquipKit`) tauscht das
  * GANZE Set — verbraucht nichts, verschiebt nichts ins Inventar, nur außerhalb des Kampfes.
- * Alle EQUIP_SLOTS inkl. tool1..tool3 (ganzes Set tauscht; die alte LOADOUT_SLOTS-Ausnahme für
- * Werkzeuge entfällt — es gibt keinen Inventar-Churn mehr, den sie verhindern müsste).
+ * Ein Kit besitzt die KIT_SLOTS — alles außer den Werkzeugen (SAVE 87). Werkzeuge hängen am
+ * Charakter und überleben jeden Kit-Wechsel; ein Kit-Eintrag auf einem Werkzeug-Slot ist immer
+ * null (sanitizeState erzwingt das, die Migration rettet Alt-Werkzeuge aus inaktiven Kits heraus).
  * Invarianten je Kit (sanitizeState): `equippedInstances[slot]` existiert nur, wenn
  * `equipment[slot] === equippedInstances[slot].baseItemId`; Zweihandwaffe im Mainhand ⇒ Offhand leer.
  */
@@ -2101,6 +2160,7 @@ export const EQUIP_SLOT_LABELS: Record<EquipSlot, LocalizedString> = {
   tool1: { en: "Tool", de: "Werkzeug", es: "Herramienta", fr: "Outil", "pt-BR": "Ferramenta", ru: "Инструмент", zh: "工具" },
   tool2: { en: "Tool", de: "Werkzeug", es: "Herramienta", fr: "Outil", "pt-BR": "Ferramenta", ru: "Инструмент", zh: "工具" },
   tool3: { en: "Tool", de: "Werkzeug", es: "Herramienta", fr: "Outil", "pt-BR": "Ferramenta", ru: "Инструмент", zh: "工具" },
+  tool4: { en: "Tool", de: "Werkzeug", es: "Herramienta", fr: "Outil", "pt-BR": "Ferramenta", ru: "Инструмент", zh: "工具" },
 };
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -3130,7 +3190,7 @@ export interface MailMessageBase {
 }
 
 /**
- * Eine Postfach-Nachricht — echtes Discriminated Union über `kind`, ZWEI Sorten:
+ * Eine Postfach-Nachricht — echtes Discriminated Union über `kind`, DREI Sorten:
  *  - `kind: "overflow"` — das EINE stehende Überlauf-Objekt, in dem Loot/Craft-Output gesammelt
  *    wird, wenn Inventar (und, bei Auto-Bank, das Lager) keinen Platz mehr hat. Stackbarer Loot
  *    liegt gestapelt in `items` (per itemId), nicht stapelbare Unikate (verzaubert/gesuffixt) als
@@ -3146,7 +3206,10 @@ export interface MailMessageBase {
  *    `items`/`instances`, z. B. der Wächter-Brief) wird NIEMALS wegen „leerem Inhalt" verworfen
  *    (anders als eine leere Überlauf-Mail) — der Brieftext selbst ist der Inhalt, unabhängig vom
  *    Geschenk (`engine/mail.ts sendLetter`/persistence-Sanitize kennen diese Ausnahme).
- * `id`/`createdSeq` werden für BEIDE Sorten deterministisch aus `GameState.mailSeq` vergeben (KEIN
+ *  - `kind: "transfer"` (SAVE 88, codex:2026-08-31T23:08:00+02:00) — reine Itemfracht eines anderen lokalen Spielstands, ohne
+ *    Freitext oder Gold. `fromSaveName` ist nur der sichtbare Absender; Instanz-IDs werden beim
+ *    Versand im Ziel neu geprägt, weil ihre Eindeutigkeit save-lokal ist.
+ * `id`/`createdSeq` werden für ALLE Sorten deterministisch aus `GameState.mailSeq` vergeben (KEIN
  * Date.now/Math.random — sonst bricht der Offline==Online-Determinismus). „Gelesen"/Zustellung
  * folgt für BEIDE Sorten demselben Collect-Mechanismus (`collectMail`/`collectAllMail`,
  * engine/mail.ts) — kein separates read-Flag: eine Mail verschwindet, sobald ihr gesamter Inhalt
@@ -3154,7 +3217,9 @@ export interface MailMessageBase {
  */
 export type MailMessage =
   | (MailMessageBase & { kind: "overflow" })
-  | (MailMessageBase & { kind: "letter"; from: MailLetterSender; textKey: string });
+  | (MailMessageBase & { kind: "letter"; from: MailLetterSender; textKey: string })
+  // codex:2026-08-31T22:04:00+02:00 — reine Fracht, bewusst ohne Nachricht/Betreff/Gold.
+  | (MailMessageBase & { kind: "transfer"; fromSaveName: string });
 
 /**
  * Verknüpft ein Runen-Item mit dem Affix + Tier, den es am Verzauberungstisch anbringt.
@@ -4680,7 +4745,16 @@ export type QuestObjectiveType =
   | "reach_total_level"
   | "gather_items"
   | "craft_items"
-  | "reach_paragon_floor";
+  | "reach_paragon_floor"
+  /**
+   * Abgeschlossene Durchgänge eines Dungeons (`state.dungeonsCleared[target]`, gezählt in
+   * combat.ts beim Räumen). Gebraucht für Boss-Kapitel, deren Endgegner KEINE eigene Id hat:
+   * Die Krypta führt ihren Nekromantenfürsten als `dg_skeleton_nekro`, dessen Kills aber auf die
+   * Basis-Id `skeleton_nekro` laufen — und die roamt auch offen in der Zone. Über Kills war
+   * „töte den Dungeon-Boss" dort schlicht nicht ausdrückbar (Chef-Report 31.08.2026: Kapitel 11
+   * erledigte sich von selbst). Der Dungeon-Zähler kennt diese Zweideutigkeit nicht.
+   */
+  | "dungeons_cleared";
 
 /** Alle gültigen Objective-Typen (für Validierung & UI). */
 export const QUEST_OBJECTIVE_TYPES: QuestObjectiveType[] = [
@@ -4691,6 +4765,7 @@ export const QUEST_OBJECTIVE_TYPES: QuestObjectiveType[] = [
   "gather_items",
   "craft_items",
   "reach_paragon_floor",
+  "dungeons_cleared",
 ];
 
 export interface QuestObjective {

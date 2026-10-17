@@ -17,4 +17,37 @@
 
 # Teil B – Produktionsplan (Mira)
 
-<!-- codex: hier eintragen -->
+<!-- codex:2026-08-29T01:15:00+02:00 -->
+
+- MASTER_LEATHERWORKING und MASTER_TAILORING als verbindliche Seriennachbarn prüfen.
+- `trap_set.png`, `bait_worm.png` und `sidebaricon_hunting.webp` als Motivquellen ansehen.
+- Eine quadratische Meisterplakette mit identischem Goldrahmen, dunkler Eisenfläche und
+  Lorbeerkranz über das eingebaute ImageGen-Werkzeug erzeugen.
+- Farbfinal auf 256 × 256 RGB JPEG normalisieren; Graufassung ausschließlich aus dem Farbfinal
+  ableiten.
+- Beide Fassungen neben Leatherworking und Tailoring im Kontaktbogen prüfen; Maße, Modus,
+  Dateigröße und Hash protokollieren.
+
+# Teil C – Produktionsprotokoll (Mira)
+
+<!-- codex:2026-08-29T01:15:00+02:00 -->
+
+- Bildmotiv: mechanisch plausible Eisenschlinge als Zentrum, Ködertopf rechts dahinter,
+  gebundenes Wurmbündel im unteren Vordergrund.
+- Palette und Material: Schwarzstahl, angelaufenes Altgold, Seil, Ton und gedämpftes Burgund;
+  kein Glühen, kein Text und keine Landschaft.
+- Raw: `CODEX/assets/steam-master-hunting-2026-08-29/raw/MASTER_HUNTING.png`.
+- Finalisierung reproduzierbar über `finalize_master_hunting.py`.
+
+# Teil D – Abnahme (Mira)
+
+<!-- codex:2026-08-29T01:15:00+02:00 -->
+
+- [x] Exakte Dateinamen `MASTER_HUNTING.jpg` und `MASTER_HUNTING_gray.jpg`
+- [x] 256 × 256, deckendes RGB
+- [x] Goldener Meisterrahmen und Lorbeerkranz wie die beiden Seriennachbarn
+- [x] Motiv bei kleiner Steam-Darstellung klar lesbar
+- [x] Kein Text, keine Zahl, kein Glow, keine Partikel
+- [x] Gray direkt aus der Farbdatei abgeleitet
+- [x] Kontaktbogen und maschinenlesbarer QA-Bericht vorhanden
+- [x] Zusätzlicher Kontaktbogen bei realer 64-px-Steam-Darstellung vorhanden

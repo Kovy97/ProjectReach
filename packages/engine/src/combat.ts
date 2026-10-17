@@ -2163,7 +2163,19 @@ function strikeEnemy(
   // Nur wenn der Gegner den Haupttreffer überlebt hat. Log: eigenes Merkmal `hitKind: "shockArc"`
   // (review-1.2.0 P2, 29.08.2026 — vorher ein nacktes "hit", das im Renderer als zweites „Du triffst"
   // mit vollem zweiten Geschoss lief); `kind` bleibt "hit", damit Floater/Filter/Alt-Clients weiterlaufen.
-  if (result.crit && appliesEffect && cs.enemyHp > 0 && preWardDamage > 0 && weaponHasShock(state, content)) {
+  // Spieler-Report 31.08.2026: „For characters that ignore status effects, Shock works, but Ice and
+  // Poison don't." Genau so war es: JEDE andere Elementar-Wirkung laeuft ueber `applyEnemyStatus`
+  // und damit durch `monsterResists`. Der Schock-Bogen zieht dem Gegner aber direkt Lebenspunkte ab
+  // und fragte nur, ob die WAFFE Schock traegt — nie, ob das Ziel dagegen immun ist. Ein Gegner mit
+  // Schock-Immunitaet bekam den Bogen bei jedem Krit trotzdem ab.
+  if (
+    result.crit &&
+    appliesEffect &&
+    cs.enemyHp > 0 &&
+    preWardDamage > 0 &&
+    weaponHasShock(state, content) &&
+    !monsterResists(monster, "shock")
+  ) {
     const arc = Math.max(1, Math.round(preWardDamage * SHOCK_ARC_FRACTION));
     cs.enemyHp -= arc;
     pushLog(cs, { by: "player", kind: "hit", amount: arc, hitKind: "shockArc" });

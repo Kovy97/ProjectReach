@@ -202,6 +202,9 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     levels: Record<string, number>;
     total: number;
     rares: Record<string, number>;
+    /** Chef-Entscheid 31.08.2026: Handwerks-Zaehler der raren Items im VORHERIGEN Diff-Tick —
+     *  daran erkennt der Rare-Toast, dass ein Zuwachs aus der Werkbank kam und nicht aus Beute. */
+    craftedRares: Record<string, number>;
     achievements: Set<string>;
     weaponStyle: string;
     fenceCount: number;
@@ -792,10 +795,17 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
     // verschiebt nur zwischen den Töpfen → Netto-Null → kein irreführender „Rare Find!"-Toast mehr.
     // Nur ECHTER Neuerwerb (Drop, Crafting, Quest/Token-Shop) erhöht die Summe.
     const rares: Record<string, number> = {};
+    /**
+     * Wie oft der Spieler jedes rare+ Item BISHER SELBST HERGESTELLT hat (`stats.craftedById`,
+     * gepflegt von der Engine bei jedem Craft). Nur fuer die raren Ids erhoben, nicht fuer den
+     * ganzen Katalog — der Vergleich lebt genau einen Diff-Tick.
+     */
+    const craftedRares: Record<string, number> = {};
     const addRare = (itemId: string | null | undefined, qty: number): void => {
       if (!itemId || qty <= 0) return;
       if (!RARE.has(content.items[itemId]?.rarity ?? "")) return;
       rares[itemId] = (rares[itemId] ?? 0) + qty;
+      craftedRares[itemId] = state.stats.craftedById[itemId] ?? 0;
     };
     for (const slot of state.inventory.slots) if (slot) addRare(slot.itemId, slot.qty);
     for (const inst of state.inventory.instances) addRare(inst.baseItemId, 1);
@@ -1037,7 +1047,20 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
         const before = prev.rares[itemId] ?? 0;
         // Welle KK (Riko N1): deterministischer Output der GERADE laufenden Craft-Aktion ist keine
         // Überraschung — der Spieler weiß vorher, was er bekommt (s. activeCraftOutputs oben).
-        if (qty > before && !activeCraftOutputs.has(itemId)) {
+        // Chef-Entscheid 31.08.2026: „keine Rarity-Popups mehr von gecrafteten Items, nur wenn sie
+        // enchanted werden / also mit Suffix, oder wenn es richtiger Loot ist."
+        //
+        // Die alte Schranke (`activeCraftOutputs`) sperrte nur die deterministischen Ausgaben der
+        // GERADE laufenden Aktion. Alles andere rutschte durch: ein Rezept mit Zufallsausgabe, ein
+        // Stapel, dessen Aktion im selben Tick endete, ein Nachzuegler-Tick nach dem Batch. Der
+        // Handwerks-Zaehler der Engine ist die ehrliche Quelle — steigt er fuer dieses Item, kam der
+        // Zuwachs aus der Werkbank, egal ueber welchen Weg.
+        //
+        // Wichtig: Das sperrt NUR dieses Stueck, nicht das Item. Wer dasselbe Schwert spaeter als
+        // Beute findet, bekommt seinen Moment. Und ein gerollter Suffix feiert weiterhin ueber den
+        // eigenen Enchant-Pfad weiter unten — genau die Ausnahme, die der Chef genannt hat.
+        const geradeGecraftet = (state.stats.craftedById[itemId] ?? 0) > (prev.craftedRares[itemId] ?? 0);
+        if (qty > before && !activeCraftOutputs.has(itemId) && !geradeGecraftet) {
           const item = content.items[itemId];
           // Chef 27.08.2026: „unten rechts im Popup bei rare und mythical drops soll die Droprate
           // dranstehen" — Tabellenchance des gerade bekämpften Monsters, sonst die beste Quelle
@@ -1321,6 +1344,7 @@ export function Toasts({ activePageId }: { activePageId: string }): JSX.Element 
       levels,
       total,
       rares,
+      craftedRares,
       achievements,
       weaponStyle,
       fenceCount,

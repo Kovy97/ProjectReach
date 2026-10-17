@@ -1,0 +1,529 @@
+/* codex:2026-09-10T10:21:18+02:00 — Interface Reforged: ein tragender Eisenrahmen,
+   ruhige Auftragszeilen und ein einziger Scrollviewport. Nur der beauftragte Layout-Scope;
+   Engine-Zustände, echte Bilder, Nummerierung und Pointer-Drag bleiben unverändert. */
+#root .layout--reforged .queue-panel {
+  width: clamp(300px, 19vw, 344px);
+  min-width: clamp(300px, 19vw, 344px);
+  min-height: 0;
+  background: var(--chrome-shell);
+  color: var(--chrome-text);
+  border: 0;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Nur die Dockschale trägt den vollen Bestandsrahmen. */
+#root .layout--reforged .queue-panel::before {
+  border-width: 5px;
+  border-image: var(--chrome-frame) 96 / 10px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Die 44px-Rail bleibt ein vollwertiger Anzeigezustand. */
+#root .layout--reforged .queue-panel--collapsed {
+  width: 44px;
+  min-width: 44px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Der feste Aufklapper ist eine schmale Griffleiste,
+   kein eigener ornamental gerahmter Titel. Warnzustands-Glows aus dem Bestand bleiben bestehen. */
+#root .layout--reforged .queue-panel-toggle {
+  height: 30px;
+  min-height: 30px;
+  border: 0;
+  border-image: none;
+  border-bottom: 1px solid rgba(168, 131, 76, 0.24);
+  background: rgba(8, 10, 10, 0.6);
+  color: var(--chrome-muted);
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Ein Body-Scroll statt konkurrierender, kollabierender
+   Scrollbereiche. position:relative ist der gemeinsame offsetParent für DnD-Zeilen/-Indikator. */
+#root .layout--reforged .queue-panel-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  padding: 16px 12px 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Schrift statt Titel-im-Rahmen; der Inhalt hat Vorrang. */
+#root .layout--reforged .queue-panel-header {
+  min-height: 0;
+  margin: 0;
+  padding: 0 2px 10px;
+  border: 0;
+  border-image: none;
+  border-bottom: 1px solid rgba(168, 131, 76, 0.25);
+  background: none;
+  box-shadow: none;
+  gap: 9px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Titel darf in allen sieben Sprachen an Wörtern umbrechen. */
+#root .layout--reforged .queue-panel-title {
+  min-width: 0;
+  font-size: 17px;
+  line-height: 1.2;
+  letter-spacing: 0.015em;
+  color: var(--chrome-text);
+  overflow-wrap: normal;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Kleine echte Bestandsikone statt zusätzlichem Emblem. */
+#root .layout--reforged .queue-panel-header-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0.82;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Dauer mit stabilen Zahlen; Endzeit als zweite Informationsstufe. */
+#root .layout--reforged .queue-panel-total {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+  padding: 0 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Funktionsschrift bleibt lesbar und unversaliert. */
+#root .layout--reforged .queue-panel-total-label,
+#root .layout--reforged .queue-panel-total-eta,
+#root .layout--reforged .queue-panel-section-label {
+  font-family: var(--font-info);
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 600;
+  font-variant: normal;
+  text-transform: none;
+  letter-spacing: 0.025em;
+  color: var(--chrome-muted);
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Der Zeitwert erhält mehr Gewicht als seine Beschriftung. */
+#root .layout--reforged .queue-panel-total-value {
+  font-size: 17px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--chrome-gold);
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Unendlichkeit bleibt semantisch als Hinweis eingefärbt. */
+#root .layout--reforged .queue-panel-total-value--infinite {
+  color: #d9b985;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Keine feste Resthöhe: auch lange Warnungen/Listen
+   vergrößern den EINEN scrollenden Body statt folgende Inhalte zu verdrängen. */
+#root .layout--reforged .queue-panel-active,
+#root .layout--reforged .queue-panel-list-wrap {
+  flex: 0 0 auto;
+  min-width: 0;
+  gap: 8px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Klare Abschnittsköpfe mit Platz für echte Textbuttons. */
+#root .layout--reforged .queue-panel-section-head,
+#root .layout--reforged .queue-panel-list-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 10px;
+  min-width: 0;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Die Kette ist Orientierung, nicht eine zusätzliche
+   Medaillonspalte. Statischer Listencontainer erhält den Body als DnD-offsetParent. */
+#root .layout--reforged .queue-panel-list {
+  position: static;
+  flex: 0 0 auto;
+  gap: 0;
+  padding: 0;
+  min-height: auto;
+  overflow: visible;
+  /* codex:2026-09-10T10:38:00+02:00 — Feine Ablaufmarkierung ohne neuen containing block für DnD. */
+  background: repeating-linear-gradient(180deg, #aa92663b 0 3px, transparent 3px 7px) 10px 8px / 1px calc(100% - 16px) no-repeat;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Die frühere lange Dekorkette darf weder Textbreite
+   belegen noch beim Scrollen einen falschen Fortschritt suggerieren. */
+#root .layout--reforged .queue-panel-list::before {
+  content: none;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Bewusstes Zweizeilenraster: Icon/Name und Daten oben,
+   Bedienung unten rechts. Keine Zufallsumbrüche neben vier Mikrotasten. */
+#root .layout--reforged .queue-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  align-content: start;
+  column-gap: 7px;
+  row-gap: 8px;
+  flex-shrink: 0;
+  min-width: 0;
+  min-height: 0;
+  padding: 12px 2px;
+  border: 0;
+  border-image: none;
+  border-bottom: 1px solid rgba(158, 144, 115, 0.17);
+  background: transparent;
+  box-shadow: none;
+  will-change: auto;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Kleine laufende Nummer statt bronzenem Medaillon. */
+#root .layout--reforged .queue-panel-list .queue-row-index {
+  position: static;
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  padding-top: 5px;
+  transform: none;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--chrome-muted);
+  font-family: var(--font-info);
+  font-size: 11px;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Name erhält die vollständige Breite oberhalb der Controls. */
+#root .layout--reforged .queue-row-body {
+  grid-column: 2;
+  min-width: 0;
+  gap: 9px;
+  align-items: flex-start;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Kein min-content-Kollaps; Namen umbrechen an Wörtern,
+   nötiger horizontaler Raum stammt aus entfernten Innenrahmen statt Schriftverkleinerung. */
+#root .layout--reforged .queue-row-text {
+  flex: 1 1 0;
+  min-width: 0;
+  gap: 4px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Bestandsbilder in lesbarer Größe, ohne eigenen Schmuckrahmen. */
+#root .layout--reforged .queue-row-icon-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Operative Namen bleiben deutlich und ohne Kapitälchen. */
+#root .layout--reforged .queue-row-name {
+  font-family: var(--font-info);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.35;
+  color: var(--chrome-text);
+  white-space: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Lange Dauer-/Mengenwerte dürfen in eine neue Metazeile. */
+#root .layout--reforged .queue-row-meta {
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Gemeinsame ruhige Sekundärtypografie statt vier Hierarchien. */
+#root .layout--reforged .queue-row-target,
+#root .layout--reforged .queue-row-duration,
+#root .layout--reforged .queue-row-level,
+#root .layout--reforged .queue-row-material {
+  font-family: var(--font-info);
+  font-size: 12px;
+  font-variant: normal;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.4;
+  color: var(--chrome-muted);
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Menge und projiziertes Endlevel sind die relevanten Werte. */
+#root .layout--reforged .queue-row-target,
+#root .layout--reforged .queue-row-level-to {
+  color: var(--chrome-gold);
+  font-weight: 700;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Materialhinweise haben Text + Form; Farbe ist Zusatzsignal. */
+#root .layout--reforged .queue-row-material {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  color: #cfb47d;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Fehlendes Material ist von später geliefertem unterscheidbar. */
+#root .layout--reforged .queue-row-material--missing {
+  color: #d69c87;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Kurzes Formsignal bleibt neben jeder Übersetzung sichtbar. */
+#root .layout--reforged .queue-row-material-symbol {
+  flex-shrink: 0;
+  min-width: 10px;
+  font-weight: 700;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Bestandswarnung für erreichbare Teilmenge beibehalten. */
+#root .layout--reforged .queue-row-duration--warn {
+  color: #d9b985;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Größere, immer sichtbare Tasten in eigener Bedienzeile. */
+#root .layout--reforged .queue-row-actions {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+  width: 100%;
+  margin-left: 0;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Ein schlichtes Control-Material statt vier dicker 9-Slices. */
+#root .layout--reforged .queue-row-btn {
+  width: 30px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(163, 143, 105, 0.3);
+  border-image: none;
+  border-radius: 2px;
+  background: rgba(16, 19, 19, 0.75);
+  color: var(--chrome-muted);
+  box-shadow: none;
+  font-size: 14px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Bestands-Mikroicons passend zu den größeren Trefferflächen. */
+#root .layout--reforged .queue-row-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Primäraktion und destruktive Nachbaraktion bleiben getrennt. */
+#root .layout--reforged .queue-row-btn--start {
+  border-color: rgba(191, 156, 88, 0.55);
+  color: var(--chrome-gold);
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Keine Glühfläche pro Hover; lesbares Kontaktfeedback. */
+#root .layout--reforged .queue-row-btn:hover:not(:disabled) {
+  border-color: var(--chrome-gold);
+  background: #272820;
+  box-shadow: none;
+  color: var(--chrome-text);
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Entfernen ist eine eigene, nicht versehentlich goldene Aktion. */
+#root .layout--reforged .queue-row-remove:hover:not(:disabled) {
+  border-color: #ce8c76;
+  color: #e6ad98;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Laufendes ist die einzige hervorgehobene Auftragsfläche. */
+#root .layout--reforged .queue-panel-active .queue-row {
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 6px 10px;
+  padding: 12px 10px;
+  border: 0;
+  border-image: none;
+  border-left: 2px solid #b99350;
+  background: linear-gradient(90deg, rgba(111, 78, 36, 0.27), rgba(23, 23, 19, 0.5));
+  box-shadow: none;
+  min-height: 0;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Restziel/Lauffortschritt erhalten ihre eigene breite Zeile. */
+#root .layout--reforged .queue-panel-active .queue-row > .queue-row-target {
+  grid-column: 2;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Aktive Namen wirken deutlicher, nicht nur heller. */
+#root .layout--reforged .queue-panel-active .queue-row-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e9dcc0;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Textaktionen bleiben lesbar, umbrechbar und fokussierbar. */
+#root .layout--reforged .queue-panel-stop,
+#root .layout--reforged .queue-panel-clear,
+#root .layout--reforged .queue-panel-resume-btn,
+#root .layout--reforged .queue-panel-blocked-btn {
+  min-height: 28px;
+  padding: 4px 8px;
+  max-width: 100%;
+  border: 1px solid rgba(160, 135, 94, 0.32);
+  border-image: none;
+  border-radius: 2px;
+  background: rgba(13, 16, 16, 0.74);
+  box-shadow: none;
+  font-family: var(--font-info);
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 600;
+  font-variant: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: normal;
+  color: var(--chrome-gold);
+  cursor: pointer;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Stoppen/Leeren dezent warnend statt konkurrierendem Gold. */
+#root .layout--reforged .queue-panel-stop,
+#root .layout--reforged .queue-panel-clear {
+  color: #d3ad99;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Stop-Affordanz als kleines, code-natives Quadrat. */
+#root .layout--reforged .queue-panel-stop::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  background: currentColor;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Kompakte Warnflächen ohne zweiten starken Außenrahmen. */
+#root .layout--reforged .queue-panel-paused,
+#root .layout--reforged .queue-panel-blocked,
+#root .layout--reforged .queue-panel-skip,
+#root .layout--reforged .queue-panel-stopped {
+  padding: 8px 9px;
+  border: 0;
+  border-image: none;
+  border-left: 2px solid #a88955;
+  background: rgba(82, 61, 33, 0.14);
+  box-shadow: none;
+  font-style: normal;
+  font-family: var(--font-info);
+  font-size: 12px;
+  line-height: 1.45;
+  text-transform: none;
+  color: #d8bd8a;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Auch die historische Pause darf bei langen Texten umbrechen. */
+#root .layout--reforged .queue-panel-paused {
+  flex-wrap: wrap;
+  border-left-color: #bc8571;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Warntext erbt eine gemeinsame lesbare Mindestgröße. */
+#root .layout--reforged .queue-panel-paused-badge,
+#root .layout--reforged .queue-panel-blocked-text,
+#root .layout--reforged .queue-panel-active-empty,
+#root .layout--reforged .queue-panel-empty {
+  font-family: var(--font-info);
+  font-size: 12px;
+  font-weight: 500;
+  font-variant: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Quittierung bleibt bei langen Meldungen bequem erreichbar. */
+#root .layout--reforged .queue-panel-skip-dismiss {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  opacity: 0.85;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Drag hebt nur die tatsächlich gezogene Zeile ab. */
+#root .layout--reforged .queue-row--dragging {
+  z-index: 5;
+  background: #20221d;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.55);
+  will-change: transform;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Drop-Indikator teilt den scrollenden Body-Koordinatenraum. */
+#root .layout--reforged .queue-drop-indicator {
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--chrome-gold);
+  box-shadow: none;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Kollabierte Rail ohne Holzrahmen-im-Eisenrahmen. */
+#root .layout--reforged .queue-rail {
+  gap: 12px;
+  padding: 12px 4px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Kleine Icons bleiben sichtbare Slots, ohne schwere 9-Slices. */
+#root .layout--reforged .queue-rail-icon-box {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(158, 143, 115, 0.25);
+  border-image: none;
+  background: rgba(11, 14, 14, 0.8);
+  box-shadow: none;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Echte Bestandsbilder füllen den vorhandenen Rail-Slot. */
+#root .layout--reforged .queue-rail-icon-box .queue-row-icon-img {
+  width: 24px;
+  height: 24px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Aktive Rail-Zeile wird über Kante + Fläche markiert. */
+#root .layout--reforged .queue-rail-item--active .queue-rail-icon-box {
+  border-color: #b99350;
+  background: rgba(96, 70, 35, 0.3);
+  box-shadow: none;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Mengen bleiben im 44px-Rail sichtbar und umbrechbar. */
+#root .layout--reforged .queue-rail-badge {
+  max-width: 36px;
+  font-family: var(--font-info);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Tastaturfokus darf nicht vom neuen ruhigen Stil verschwinden. */
+#root .layout--reforged .queue-panel button:focus-visible,
+#root .layout--reforged .queue-panel [tabindex]:focus-visible {
+  outline: 2px solid var(--chrome-gold);
+  outline-offset: 2px;
+}
+
+/* codex:2026-09-10T10:21:18+02:00 — Reduced Motion gilt auch für die bestehende Drop-Animation. */
+@media (prefers-reduced-motion: reduce) {
+  #root .layout--reforged .queue-panel button,
+  #root .layout--reforged .queue-row {
+    transition: none !important;
+  }
+}

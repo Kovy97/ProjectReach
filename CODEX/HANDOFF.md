@@ -1,4 +1,456 @@
-# Übergabe an Claude
+# Übergabe — Codex-Projektleitung
+
+<!-- codex:2026-09-10T11:34:00+02:00 -->
+
+### 1.3 — Navigationskorrektur, Skalierungsbericht und erlaubter Electron-Test
+
+Chefkritik an steriler/zu kleiner/linksbuendiger Navigation im Quellcode adressiert:
+58px Sidebarbuttons,32px Icons, symmetrische Ränder/Gutter, echte Namenszentrierung
+inklusive Kampfbutton. 19px Ziel,14px Schriftuntergrenze mit dynamischem Umbruch statt
+Mikroschrift; kompakter Icon-über-Text-Zustand150–200px, darunter Iconrail. Topbar56–76px,
+Schrift16–22px, sichtbarer Bestands-Ironframe, warme Goldtexte/Materialien/Interaktionen.
+Keine neue Bildproduktion oder Änderung von Queue-Datenskin, Saves oder Engine.
+Revier: Renderer `styles/chrome.css`, `styles/chrome-sidebar.css`, `components/Sidebar.tsx`;
+Arbeitsfixture `CODEX/work/2026-09-10-interface-reforged/fixture.js` entsprechend angepasst.
+
+Seitenweite Analyse read-only mit drei getrennten Fachprüfungen abgeschlossen:
+`CODEX/notes/2026-09-10-ui-skalierung-ru-analyse.md`. Alle aktiven Routen/Templates,
+wichtige Modale, vier Schriftoptionen und RU-Verträge statisch untersucht. Sechs
+P1-Spaltenkonflikte, weitere Text-/Höhen-/Kaskadenrisiken, Abnahmematrix und Folgeplan.
+Kein pauschales „alle Seiten getestet“: keine frischen Render. Kein Folgeumbau freigegeben.
+
+Bestanden: finaler Client-Typecheck,188 scoped Regeln/6 Material-URLs/35 Sprachwerte,
+20 reine Dragassertions,960 statische Fixturevarianten/16 Pfadablehnungen/110 Ressourcen.
+Unabhängiger abschließender Quellenreview ohne weiteren bestätigten P1/P2-Navigationsbefund.
+Build erneut `esbuild spawn EPERM`; Vitest-Workerstatus aus früherer Übergabe weiter offen.
+
+**Neue Chefautorität:** direkte Electron-Inspektion erlaubt (keine pauschale Freigabe
+für echte Saves/Steam-Schreibvorgänge). QA-Helfer `work/2026-09-10-interface-reforged/qa/inspect-electron.cjs`
+setzt vor Appimport leeres Profil und Steam0; kein Save-Laden, keine UI-Klicks.
+Direkte EXE `apps/client/node_modules/electron/dist/electron.exe --version` erfolgreich32.3.3.
+Echter App-Versuch: Mainstart erreicht, dann FATAL platform_channel/Zugriff verweigert0x5,
+kein Screenshot. Shell-Exit0 darf nicht als App-Erfolg gewertet werden. Testprofil
+`CODEX/work/2026-09-10-interface-reforged/qa/electron-inspection-dUznFb/` bleibt erhalten;
+keine echten Profildaten/Secrets gelesen. Keine Securityflags/Erweiterung der Rechte.
+Rendererbundle vom01.09.2026; aktuelle UI benötigt ohnehin erfolgreichen frischen Build.
+Browserverbindung ist nicht zum Spielen nötig; bisherige Aussage dazu korrigiert.
+
+Nächster Schritt: aktuelle UI in zulässiger ausführbarer Umgebung visuell abnehmen;
+seitenweite Layoutwelle danach gesondert beauftragen. Implementation-Nachtrag enthält
+Details; ältere Werte/Startverbote darunter sind für diesen Prüfauftrag überholt.
+Branch1.3, keine Commits/Pushes/Paket- oder Saveversionsänderung, Fremddiffs erhalten.
+
+<!-- codex:2026-09-10T10:40:00+02:00 -->
+
+### 1.3 — Sidebar/Topbar/Action Queue umgesetzt, visuelle Abnahme offen
+
+Chef-GO zur vorausgehenden Analyse ausgeführt. Gemeinsamer scoped Shell-Skin mit kompakten
+Bestands-Ironframes, Gravewood-Schalen und ruhigen Basaltflächen; keine neuen/ersetzten Bilder.
+Sidebar linksbündiges Raster mit echten Namen/Levels, separatem Aktivitätszeichen und
+Tastatur-Resize; Topbar containerabhängiger Reflow statt Mikroschrift, Status/XP eindeutig;
+Queue flache Folgezeilen, ein Body-Scroll, größere Bedienung, Stop und explizite Materialzustände.
+Unterschiedlich hohe Queuezeilen rasten durch neuen reinen Helper korrekt ein.
+Fünf neue Keys × sieben Sprachen. Alte Handler/Engine/Saveverträge weiterverwendet.
+
+Details, genaue Pfade und offene Abnahmematrix:
+`CODEX/work/2026-09-10-interface-reforged/IMPLEMENTATION.md`.
+Dort isolierte DOM/CSS-Fixture mit echten Bestandsressourcen, fiktiven Daten und eng begrenztem
+Loopbackserver; kein Server automatisch gestartet und keine echte App/Spielstände angefasst.
+
+**Bestanden:** Client-Typecheck nach Integration; 182 scoped CSS-Regeln/3 Material-URLs,
+35 Sprachwerte, TSX-Syntax/Integrationsverträge; 20 direkte Assertions der Drag-Geometrie;
+960 statische Fixturevarianten, 16 abgewiesene Pfade, 110 Ressourcen ohne Fehlreferenz;
+scoped `git diff --check`. Unabhängige Quellenreviews und Root-Korrekturen der Legacy-Kaskade.
+**Offen/blockiert:** Build vor Kompilierung (`esbuild spawn EPERM`); gezielter Vitest-Lauf
+vor Tests (`Worker spawn EPERM`, 0 ausgeführt); sechs neue Drag-Vitestfälle noch ungetestet
+im Runner. Browser-Skill: „No browser is available“, Liste `[]`. Kein visueller oder
+React-/Pointerinteraktionsnachweis. Bei verfügbarem Browser/Prozessstart diese Gates nachholen.
+
+Branch `1.3` vor/nach Arbeit geprüft. Vorhandene Diffs einschließlich Enzyklopädie in App/TopBar
+erhalten; keine Git-Schreiboperation/Commit/Push, kein Release oder Paket-/Saveversionsbump.
+Frühere 56 Asset-Ersetzungen unverändert. Alle neuen Logikstellen mit codex-Markern.
+
+<!-- codex:2026-09-10T10:15:22+02:00 -->
+
+### Interface-Analyse — Sidebar, Topbar, Action Queue; keine Umsetzung
+
+Chef fragt nach grafischem Verbesserungspotenzial. Bericht:
+`CODEX/notes/2026-09-10-interface-analyse.md`.
+Root hat aktive Rahmen/Texturen, Sidebar/Navigation und vorhandene QA-Bilder angesehen;
+read-only UI-Fachagent hat Topbar/Queue, Daten-/Interaktionsfälle und wirksame Overrides
+geprüft. Stand Branch `1.3`, vorhandene Diffs erhalten. Keine Runtime-/Assetänderung.
+
+Empfehlung: Ashen Iron erhalten, aber kleinere Navigationsrahmen, klare Text-/Zustands-
+hierarchie, containerabhängige Topbar und flachere Queueeinträge. Codebeleg für Breiten-
+konflikt mit offenem Dock/Slayer und für sehr kleine Tab-/Sidebar-Fonts; kein frischer
+Browserbeweis. Vorhandene Screenshots 25.–27.08. sind ausdrücklich historische Anschauung;
+alter Queue-Wortstapelfehler inzwischen adressiert, aktuelles `?` dort noch nicht enthalten.
+Generatorhistorie nicht behauptet. Neue Bilder optional nach Layoutabnahme, kein Neuguss
+oder Designentscheid automatisch freigegeben. Kein Live-/Electron-/Savezugriff oder Build.
+Assetintegration darunter bleibt unverändert; ihr umgebungsblockierter Build bleibt offen.
+
+<!-- codex:2026-09-10T09:46:12+02:00 -->
+
+### 1.3 — erste beauftragte Änderung: 56 freigegebene Assets integriert
+
+Chef hat den Branch lokal auf `1.3` gewechselt, vor/nach Einbau überprüft. Die abgenommenen
+56 PNGs als 56 bestehende WebPs installiert: 30 Items, 20 Monster, hoarspite, beide Slayer-
+Consumer, 3 Camp-Tagesoverlays. Keine neuen IDs, Loader-/CSS-/Logikänderungen oder Watch-Fälle.
+Exakt 56 Runtime-Asset-Diffs, keine weiteren/unversionierten Runtime-Assets; umfangreiche
+vorhandene Fremdänderungen erhalten. Keine Git-Mutationen, kein Commit/Push oder Release.
+
+Bericht: `CODEX/work/2026-09-09-ausbesserungswelle/INTEGRATION-1.3.md`.
+Lieferbasis: `CODEX/assets/ausbesserungswelle-2026-09-09/integration-1.3/` mit
+`before/` (56 bytegenaue Originale), `webp/` (56 installierte Ausgaben), `manifest.json`
+(komplette ID-/Pfad-/SHA-/Maßzuordnung) und `qa/` (6 Vergleichsbögen, Mess-/Buildbericht).
+Review-/Raw-/Referenzmaster unverändert. q92/Alpha100; acht ganze Leinwände proportional
+auf bestehende Maße skaliert, kein Trimmen, Spiegeln, Keying oder Umpositionieren.
+Alpha beim Kodieren 56/56 pixelgenau gegen erwartetes PNG, Slayer byteidentisch.
+Bilddateien +9.367.780 Bytes (~8,93 MiB); kein gemessenes Paket-/Downloaddelta.
+
+Asset-Gate und unabhängiger read-only Kontrolleur nach Einbau: 56/56 Runtimehashes,
+Backups, Review-/Raw-Master, Maße, Alpha und Scope bestanden. Zusätzlich visuelle
+Konvertierungsstichproben und besonders Mire-Wisp-Nebel/Hoarspite/Raw-Wraithscale auf
+Hell/Dunkel geprüft. Keine neue Stilabnahme oder perfekte Pixelkopie behauptet.
+**Headless Client-Build versucht, nicht bestanden:** `pnpm --filter @hearthforge/client build`
+Exit1, `esbuild: spawn EPERM` beim Konfigurationsladen, vor Kompilierung. Keine Umgehung;
+bei erlaubtem Prozessstart wiederholen. Kein Browser-/Electron-Start, keine echten Saves.
+Kein Runtime-Code geändert, kein Paket-/Saveversionsbump oder Engine-/Save-Testlauf.
+
+Camp-Tag/Nacht und Slot-Grenze: nur abgenommene Tagesfassungen ersetzt. Die drei Nacht-
+bilder bleiben unverändert. `camp_slot_empty_day` wird derzeit von keinem aktiven Consumer
+verwendet; der Austausch schaltet keine neue UI frei. Camp-Savekalibrierungen/CSS unberührt.
+
+Reproduzierbare Prüfungen: markierter `work/2026-09-09-ausbesserungswelle/integrate-1.3.mjs`
+mit separater Vorbereitung, Hash-Gate/Backup vor Installation, wiederaufnehmbarem Einbau
+und `verify()`. Alte Reviewvalidatoren nicht erneut gegen inzwischen ersetzte Quellen
+laufen lassen; alte Reviewmessungen bleiben historische Belege. Galerie trägt jetzt einen
+aktuellen Integrationshinweis, individuelle alte Reviewtexte bleiben ausdrücklich historisch.
+
+Kommentarlose Dateien mit diesem Begleitmarker, exakte Pfade:
+`CODEX/work/2026-09-09-ausbesserungswelle/manifest.json` → Phase `integrated_on_1.3`;
+`CODEX/assets/ausbesserungswelle-2026-09-09/integration-1.3/manifest.json`;
+`CODEX/assets/ausbesserungswelle-2026-09-09/integration-1.3/qa/verification.json`;
+`CODEX/assets/ausbesserungswelle-2026-09-09/integration-1.3/qa/build.json`.
+Binärdatei-Zuordnung vollständig im genannten Integrationsmanifest. Kein offener
+Generierungs-/Reviewauftrag; einzig der umgebungsblockierte Buildnachweis bleibt offen.
+
+<!-- codex:2026-09-10T09:26:52+02:00 -->
+
+### Chef-Abnahme und1.3-Auftrag — Git-Schreibzugriff blockiert
+
+Alle56 Reviewbilder angenommen, Integration als erste Änderung auf neuem Branch1.3
+ausdrücklich beauftragt. Reguläres `git switch -c 1.3` gescheitert: Permission denied für
+`.git/refs/heads/1.3.lock`. `.git` ist in dieser Sitzung nur lesbar. Kein Workaround,
+kein Commit/Staging/Push und insbesondere keine Integration auf dem alten Branch.
+Nachkontrolle: weiter `1.2.4CL`, Branch1.3 fehlt, keine Assetdiffs. Vorhandene umfangreiche
+fremde Diffs erhalten. Chef muss den Branch lokal anlegen; danach die genehmigte Integration
+fortsetzen. Checkpoint: `CODEX/work/2026-09-09-ausbesserungswelle/INTEGRATION-1.3.md`.
+Vorbereitend Asset-Integrator/Kontrolleur-Regeln gelesen und lesende Loaderrecherche delegiert;
+keine Konvertierung oder Build ausgeführt. Keine neue Bildproduktion nötig.
+
+<!-- codex:2026-09-10T09:18:36+02:00 -->
+
+### Nachbesserungen abgeschlossen — 56 native Reviewmaster, kein Einbau
+
+Chef-Wiederaufnahme ausgeführt. Die15 zuvor markierten Motive mit37 echten Bildaufrufen
+nachgebessert (36 nativeRGBA, ein RGB-Referenz-Edit verworfen). Drei vorhandene Bild-Agenten
+parallel eingesetzt, Root mit Camp und Gegenprüfung. Beste Versuche bewusst ausgewählt,
+nicht immer die neuesten. Endstand56/56 Reviewkandidaten, keine offenen Nacharbeitsflags.
+
+Einstieg: `CODEX/assets/ausbesserungswelle-2026-09-09/REVIEW.html`.
+Einzelbilder darunter `review/`; vollständiger Endbericht mit Auswahlgründen und15er-Tabelle:
+`CODEX/assets/ausbesserungswelle-2026-09-09/status/revision-2026-09-10-root.md`.
+Agentenberichte bleiben erhalten, auch zunächst strengere Urteile zu Pyrebound/Hoarspite
+und der zwischenzeitliche Site04-Status; der Root-Bericht und Einzelstatus sind aktueller.
+
+**Nachweis:** gesamte Galerie neu gebaut; `validate({requireComplete:true})` bestanden.
+56/56 Runtimequellen unverändert,56 Referenzkopien hashgleich,56 vollständige Einzelprompts,
+fünf disjunkte Lose,56 nativeRGBA-Reviewmaster hashgleich mit Raw UND Generatororiginal,
+424 gültige Galerielinks. Kein Randpixel Alpha>16; vereinzelte Alpha1-Reste unbereinigt belassen.
+Syntax der drei QA-Helfer und des Inline-Galeriescripts geprüft. Kein Browser-Render-Test,
+kein Live-/Electron-Start, keine Spielstände, kein Typecheck/Build nötig für diese Stagingarbeit.
+Terminal anfangs blockiert, später regulär verfügbar: Gitstatus/Branch/Dokument-Diffstat geprüft.
+Branch `1.2.4CL`, bestehende fremde Diffs erhalten; kein Commit/Staging.
+
+**Grenzen:** acht unveränderte native Pixelmaßabweichungen bleiben: Camp3×1536→1254,
+choirbound_relic1024→1254, godgem_amulet640→1254, gravesteel_gravemark512→1254,
+raw_wraithscale640→1254, voidhusk_deadeye1024→1254. Motivunterschiede in jeder Reviewkarte,
+insbesondere Hoarspite-Schweif, Schmuckdetails und leichtes Camp-Framing. Das ist eine
+Near-copy-Auswahl zur Chef-Review, keine Pixelidentität oder Produktabnahme.
+Die optionale Frage zur lokalen Camp-Normalisierung blieb unbeantwortet; niemals vorausgesetzt.
+Framing stattdessen mit weiteren nativen Neugüssen verbessert. Keine lokale Bildskalierung,
+kein Keying/Despill/Freistellen, keine Originale gelöscht, keine Runtimeintegration.
+
+Geänderte Helfer im Workordner: `production.mjs` archiviert Metadaten je Versuch und bietet
+byteerhaltende Variantenauswahl; `validate.mjs` hat einen strikten vollständigen Review-Gate.
+Beide kommentiert. Kommentarlose Phasenänderung mit diesem Begleitmarker:
+`CODEX/work/2026-09-09-ausbesserungswelle/manifest.json` →
+`review_ready_with_documented_differences`.
+Erzeugte Messdaten: `CODEX/assets/ausbesserungswelle-2026-09-09/qa/validation.json` und
+`CODEX/assets/ausbesserungswelle-2026-09-09/qa/review-status.json`; letzteres enthält die
+exakten Pfade sämtlicher139 Raw-Versuche sowie56 Einzelstatus/Reviewpfade. Neue Versuch-Metadaten
+liegen neben dem jeweils dort genannten Raw-Pfad als `attempt-NN.json`, erzeugt durch den
+markierten Helfer. BRIEF/PRODUKTIONSSTATUS/CURRENT/WORKLOG auf den belegten Stand aktualisiert.
+
+Nächster Schritt: Chef sieht die Galerie durch. Kein weiterer Agent aktiv, kein automatischer
+Produkt-Einbau und keine neue Generation ohne neues Feedback erforderlich.
+
+<!-- codex:2026-09-10T00:39:20+02:00 -->
+
+### Chef-Pause — alle Vorschläge gespeichert, Abschluss-QA noch offen
+
+56/56 PNG-Reviewpfade vorhanden, native Generatorbytes (55 Motive und Slayer-Alias).
+Aktuelle Einzelstatus:41 review_candidate,15 needs_revision,0 pending. Acht native
+Pixelmaße abweichend. Alle fünf Lose bearbeitet; keine aktiven Bild-Agenten mehr.
+Letzte Korrekturen tatsächlich erzeugt und individuell gesichtet. Root- und unabhängige
+Gegenprüfungen liegen in `status/cross-review-root.md` und `status/cross-review-job02.md`
+unter `CODEX/assets/ausbesserungswelle-2026-09-09/`.
+
+Der final laufende Galerie-/Validierungsaufruf wurde auf Chef-Wunsch unterbrochen;
+kein abschließender Gesamtnachweis behauptet. Keine Runtimeintegration oder lokale
+Kantenreparatur. Keine Fortsetzung vor neuer Chef-Anweisung. Wiederaufnahmepunkt:
+`CODEX/work/2026-09-09-ausbesserungswelle/PAUSE-2026-09-10.md`.
+
+Kommentarlose Phasenänderung:
+`CODEX/work/2026-09-09-ausbesserungswelle/manifest.json` →
+`paused_by_user_review_qa_pending`. Begleitmarker im Pausenblatt.
+Weitere material geänderte QA-Helfer: `production.mjs` (Randdeckkraftschwellen),
+`review.mjs` (Kandidaten/Nacharbeit klar getrennt, Nacharbeitsfilter), beide im selben
+Workordner und mit codex-Markern. Einzelstatus-JSON und QA-Messdaten unter dem genannten
+Stagingpfad sind durch die markierten Produktionshelfer und jeweiligen Losberichte belegt.
+
+<!-- codex:2026-09-09T23:29:00+02:00 -->
+
+### Produktionsfortsetzung — reiner Neuguss liefert natives Alpha
+
+Kommentarlose Phasenänderung: `CODEX/work/2026-09-09-ausbesserungswelle/manifest.json`,
+`phase=production_running_standalone_native_alpha`; Begleitmarker in BRIEF/PRODUKTIONSSTATUS.
+
+Die Alpha-Blockade des bisherigen Referenz-Edits ist für den reinen Neuguss überwunden:
+`carrion_talisman` als Standalone-Generierung ohne beide Bildreferenz-Argumente zweimal
+RGBA 1254²; Referenz-PNG-Edit unmittelbar davor erneut RGB/Karo. Der Agent hat natives
+Alpha auch an `abyssal_feast` bestätigt. Ursache innerhalb des Werkzeugs bleibt unbelegt.
+Vorlage und Nachbarn werden vor jedem Aufruf angesehen, exakte Formen in Text übertragen.
+`PRODUCTION-AGENT.md` wurde entsprechend ergänzt; fünf Lose bleiben die Produktionseinheiten.
+Drei Agenten laufen mit Los01,02,03, Root besitzt carrion_talisman; Los04/05 folgen.
+
+Talisman attempt03: vier Federn, benutztes Alpha, auf drei Gründen kein sichtbarer Saum.
+Nähe statt exakter Kopie: Pendelanordnung/Schädelansicht weichen noch ab, im Einzelstatus
+explizit benannt. Außenrand hat 32 Pixel mit Alpha1 (unsichtbare Restquantisierung), keine
+beschnittene Silhouette; unveränderte Generatorbytes bewahrt. Keine Integrationsfreigabe.
+Rohprompt-Protokolle liegen bei den Versuchen. Galerie-Helfer zählt jetzt auch frühere
+abgewiesene Versuche von inzwischen erfolgreichen IDs korrekt (`review.mjs`, codex-Marker).
+Aktuelle Zähler ausschließlich aus `qa/review-status.json` nach Galerie-Neubau übernehmen.
+
+<!-- codex:2026-09-09T23:16:34+02:00 -->
+
+### Gegenprüfung — frühere Generatorausgabe hat nachweislich Alpha
+
+Chefeinwand bestätigt, nicht nur anhand früherer Abnahme: `bait_worm` aus der alten
+`qa/source-map.json` bis zur unveränderten Generator-PNG zurückverfolgt und gemessen.
+Diese alte Ausgabe ist RGBA 1254² mit 1.235.711 vollständig transparenten Pixeln und
+weichem Alpha. Die aktuelle Geier-Tooldatei ist dagegen RGB 1254² ohne transparente Pixel.
+Alte Finaldateien `bait_worm.png` und `rune_bounty.png` ebenfalls mit echtem Alpha bestätigt.
+Beleg: `CODEX/work/2026-09-09-ausbesserungswelle/ALPHA-ALT-NEU.md`.
+Kein Beleg für die konkrete Ursache (Modell, Tool-Weiterleitung oder Ausgabeverarbeitung),
+keine Behauptung, dass eingebautes Imagegen grundsätzlich kein Alpha kann. Der fehlende
+API-Key erklärt diesen Unterschied nicht. Keine neuen Generierungen oder Assetänderungen.
+
+<!-- codex:2026-09-09T23:10:49+02:00 -->
+
+### Neuester Nachtrag — zwei neue eingebaute Bildaufrufe, kein API-Fallback
+
+Chef verlangt ausdrücklich den eingebauten Weg ohne API-Key. Die untenstehende
+CLI-Vorbereitung ist damit überholt und keine offene Aufgabe des Chefs.
+`elite_ash_vulture` mit Original-WebP und kurzem Prompt neu erzeugt (attempt-03),
+anschließend aus dieser PNG im Bildwerkzeug eine reine Hintergrundkorrektur angefordert
+(attempt-04). Beide tatsächlichen Ausgaben: 1254², RGB, kein Alpha, null transparente Pixel;
+eingebranntes Karo visuell bestätigt. Variante 4 außerdem wärmer/brauner als das Original.
+Keine Umwandlung, kein Keying, keine Aufnahme in review/ und kein Runtimeeingriff.
+
+Stand: **zehn Rohbilder, weiterhin 0/56 brauchbare Reviewdateien**. Rohdaten unter
+`CODEX/assets/ausbesserungswelle-2026-09-09/raw/monsters/elite_ash_vulture/`.
+Exakte Prompts, Eingaben, Tool-Ausgaben und Grenzen im Workordner `RETRY-2026-09-09.md`.
+Galerien erneuert; Validierung: 56 Prompts/Quellen/Referenzen, fünf Lose, 134 gültige Links.
+Kommentarlose aktualisierte Messdaten im Staging:
+`status/monsters__elite_ash_vulture.json`, `qa/review-status.json`, `qa/validation.json`.
+Der Bildauftrag ist nicht fertig; vorhandene Arbeitslose bleiben erhalten.
+
+<!-- codex:2026-09-09T22:56:25+02:00 -->
+
+### Historie — Native-Alpha-Fallback vorbereitet, inzwischen vom Chef verworfen
+
+Chef hat die Vorbereitung eines alternativen Erzeugungswegs bestätigt. Imagegen-Skill und
+OpenAI Docs gelesen, gebündelte CLI unverändert geprüft. Zwei **Dry-Runs**, keine API-Aufrufe:
+`gpt-image-1.5` und `gpt-image-2.5-sunburst`, Referenz-Edit mit transparent/PNG/high/1024²/n=1.
+Aktuelle offizielle Doku unterstützt Image 2.5 mit nativer Transparenz; Empfehlung Sunburst
+für einen gezielten Test, **Modell-/Kostenfreigabe noch offen**. Skill-Default Image 2 bleibt
+für diesen Alphafall ungeeignet; keine stille Modellumschaltung vorgenommen.
+
+Lokale Blocker: `OPENAI_API_KEY` fehlt (Prozess/User/Machine nur Boolean geprüft), Python-SDK
+`openai` fehlt; Python 3.12.10/uv/Pillow vorhanden. Keine Installation, keine Auth-/Netzwerkprobe,
+keine Secretdateien gelesen. Nutzer muss den Schlüssel lokal setzen, niemals im Chat schicken.
+Vorbereitung: `CODEX/work/2026-09-09-ausbesserungswelle/FALLBACK-CLI.md`.
+Kommentarlose neue Daten: `fallback/gpt-image-1.5-dry-run.json` und
+`fallback/gpt-image-2.5-sunburst-dry-run.json` relativ zu diesem Workordner; Marker in Begleit-MD.
+Bildlieferstand unverändert 0/56. Erst Einzeltest mit Alpha-/Motiv-QA, danach Serie.
+
+<!-- codex:2026-09-09T22:38:00+02:00 -->
+
+## Aktueller Chefauftrag — Prompts fertig, Bildproduktion an Alpha blockiert
+
+Nach dem Audit hat der Chef die Neugenerierung aller **56 bestätigten Dateien** für Review
+freigegeben: erst jedes Motiv analysieren und vollständig prompten, dann fünf Bild-Agenten.
+Vorproduktion abgeschlossen: `CODEX/work/2026-09-09-ausbesserungswelle/` enthält BRIEF,
+56 Einzelprompts, PROMPTS.md, Manifest, fünf disjunkte Jobs und bestandenes PROMPT-GATE.md.
+55 verschiedene Motive: beide Slayerpfade sind identisch und erhalten denselben neuen Master.
+44 Watch-Fälle bleiben ausdrücklich außerhalb der Produktion.
+
+<!-- codex:2026-09-09T22:48:35+02:00 -->
+
+Staging: `CODEX/assets/ausbesserungswelle-2026-09-09/` mit references, raw, review, qa, status.
+Alle fünf Produktionsagenten wurden versetzt eingesetzt und haben echte Bildaufrufe gemacht.
+**0/56 brauchbare Reviewdateien:** acht Generatorausgaben für fünf Motive kamen als RGB ohne
+Alpha und mit eingebranntem Karo zurück. Drei gezielte Neuversuche sowie zwei einfachere
+Primärreferenz-Gegenproben bestätigten den Fehler. Restproduktion gestoppt, keine CLI/API,
+kein Keying und keine Runtimeintegration. Der Auftrag ist ausdrücklich **nicht fertig**.
+
+Einstieg: `PRODUKTIONSSTATUS.md` im Workordner. Staging `REVIEW.html` zeigt den tatsächlichen
+56er-Auftragsstand; `qa/ABGEWIESENE-VERSUCHE.html` zeigt acht ungeeignete Rohbilder getrennt.
+`qa/validation.json`: 56 vollständige Prompts, fünf disjunkte Lose, 130 gültige Galerieziele,
+56/56 Quellen unverändert, 56/56 Referenzen hashgleich. Kein Browser-/Runtime-Test nötig.
+Fortsetzung erfordert einen funktionierenden Native-Alpha-Erzeugungsweg; für eine andere
+CLI/API-Route vorher ausdrückliche Chef-Freigabe. Bestehende Prompts/Jobs bleiben startbereit.
+`production.mjs` sichert Generatorbytes unverändert; `review.mjs`/`validate.mjs` bauen und
+prüfen ausschließlich Dokumentation/Diagnose. Die frühere Auditlieferung folgt darunter.
+
+<!-- codex:2026-09-09T21:58:00+02:00 -->
+
+## Aktuelle Lieferung — Asset-Fehleraudit am 09.09.2026
+
+Chefauftrag: Monster-, Item- und ähnliche Bilder auf sichtbare Chroma-/Hintergrundreste
+untersuchen und für eine spätere große Ausbesserungswelle dokumentieren. **Keine Reparatur
+oder Produktion beauftragt und keine Runtime-Assets verändert.**
+
+- **2.069 WebPs** aus elf Renderer-Assetordnern auf **92 Hell-/Dunkel-Bögen** tatsächlich
+  gesichtet; **126 unterschiedliche Dateien** zusätzlich im Detail. Kein PNG in diesen
+  Zielordnern, obwohl der Scan beide Formate berücksichtigt. Archiv-/Staging-Master ausgeschlossen.
+- **56 bestätigte Fehler:** 48 Chroma-Reste, 4 Matten-/Reststrukturfehler, 4 andere sichtbare
+  Fehler (2 Alpha-Innenfehler, 2 Bodenplatten). Betroffen: 30 Items, 20 Monsterdateien,
+  1 Pet, 2 Slayer-Iconpfade und 3 Bauplatzdateien. **44 Verdachtsfälle separat**, keine Austauschfreigabe.
+- Eindeutige neue Zusatzbefunde: `pets/hoarspite.webp` mit eingebranntem Schachbrett im Frostnebel,
+  `elite_ash_vulture` mit weißen Federresten, zwei Slayer-Symbolpfade mit Grün,
+  `godgem_amulet`/`gravesteel_gravemark` mit verlorenem Motivinneren.
+- Prioritätenvorschlag: 30 P1, 26 P2, 44 P3/Intentprüfung. Quelle, Fundstelle,
+  Unsicherheit und Detailbeleg pro Eintrag dokumentiert.
+
+### Lieferung und Einstieg
+
+Alles unter `CODEX/work/2026-09-09-asset-fehler-audit/`:
+
+- `REPORT.md`: Ergebnis, alle 100 Einzelbefunde, Grenzen, Prioritäten und Kontaktbogenindex.
+- `GALERIE.html`: durchsuchbare Bildübersicht, initial nur bestätigte Fehler; klickbare Detailbelege.
+- `BESTAETIGTE-FEHLER.csv`, `VERDACHTSFAELLE.csv`: getrennte Arbeitslisten.
+- `ALLE-ASSETS.csv`: alle 2.069 Quellen mit Sichtungstiefe, SHA-256 und Status.
+- `ALTABGLEICH.csv`: heutige Neubewertung der 89 historischen Austauschmarkierungen.
+- `qa/contacts/`, `qa/details/`, `qa/findings/`: korrekt alpha-komponierte Diagnosebilder,
+  nicht zur Integration geeignet. `review/reference.md`: historische Quellen und Loaderabgleich.
+- `audit.py`, `proofs.mjs`, `make_report.py`, `validate_report.mjs`: wiederverwendbare
+  Diagnose-/Reportwerkzeuge. Kein Massen-Keying, keine Änderung der Originalpixel.
+
+### Verifikation und Grenzen
+
+- **2.069/2.069 SHA-256 unverändert**, keine fehlenden oder hinzugekommenen Quellen seit Scan;
+  `qa/source-verification.json`. Keine Decodefehler.
+- Reportbau prüft Zählung, eindeutige Pfade, vollständige 92-Bogen-Abdeckung und vorhandene
+  Detailbelege; alle 100 Befunde haben eine dokumentierte Einzelprüfung.
+- `qa/report-validation.json`: 246 lokale Galerieziele gültig, 100 Karten,
+  sieben Filterfälle bestanden (DOM-Testmodell, keine tatsächliche Browser-/Layoutprüfung).
+- Unabhängige Abschlussprüfung bestanden: Report/CSV/Galerie konsistent, keine Duplikate
+  oder fehlenden Belegpfade; alle 35 Kreaturenbefunde und 47 dortigen Detailprüfungen korrekt übernommen.
+- Nicht jede Quelldatei wurde bei 1:1 vollständig betrachtet; `contact_clear` ist keine
+  Fehlerfreiheitsgarantie. Verdächtiger Rauch, weißes Fell und farbiges Material nicht
+  automatisch als Chroma gewertet. Keine Live-/Electron-/Saveprüfung nötig oder ausgeführt.
+- Der alte Audit leitete Austausch zu pauschal aus RGB unter Alpha 0 und angeschnittenen
+  Schmuckketten ab. Unsichtbares RGB ist kein sichtbarer Defekt; oben angeschnittene Ketten
+  sind gemäß jüngerem Schmuckbrief teilweise gewollt. Historische Listen bleiben erhalten.
+- Alte Monster-Neugüsse im Staging sind keine nachgewiesene heutige Integration/Freigabe.
+  Maßgeblich sind die jetzt geprüften Rendererdateien. Kein automatischer Produktionsstart.
+
+Marker: `codex:2026-09-09T21:30:55+02:00`, `21:51:00`, `21:55:00`, `21:58:00`
+(jeweils 09.09.2026, +02:00) direkt in Diagnosecode/Begleitdokumenten.
+Kommentararme Ausgaben mit exaktem Pfad relativ zum oben genannten Auditordner:
+`BESTAETIGTE-FEHLER.csv`, `VERDACHTSFAELLE.csv`, `ALLE-ASSETS.csv`, `ALTABGLEICH.csv`,
+`qa/metrics.csv`, `qa/manifest.json`, `qa/contact-index.json`, `qa/contact-index-camp.json`,
+`qa/source-verification.json`, `qa/summary.json`, `qa/findings.json`, `qa/report-validation.json`,
+`review/items-a.json`, `review/items-b.json`, `review/creatures.json`, `review/extras.json`.
+JSON trägt zusätzlich ein `codex`-Metadatum. Branch, Spielcode, reale Saves und .claude unverändert;
+kein Commit, Push, Merge oder Release.
+
+---
+
+<!-- codex:2026-09-09T20:12:15+02:00 -->
+
+## Vorherige Lieferung — Übernahme am 09.09.2026
+
+Chef hat Codex als technische Projektleitung eingesetzt. Organisatorische Grundlage und
+Fachrollen sind angelegt; keine Gameplay-, Content-, Save- oder Assetänderung in diesem Auftrag.
+Nächste Produktarbeit kommt aus dem nächsten Chefauftrag. Die früheren Aufträge unten sind
+historische Übergaben, nicht automatisch aktive Aufgaben.
+
+### Lieferung
+
+- `AGENTS.md`: Chef → Codex-Leitung → Fachrollen, gezielte Delegation und Hot-File-Regeln.
+- `CODEX/PERSONA.md`, `RULES.md`, `PROJECT.md`, `CURRENT.md`, `README.md`:
+  Führungswechsel, aktuelle Landkarte/Snapshot und erhaltene Sicherheits-/Save-/Artregeln.
+- `CODEX/agents/`: Lead und zehn Fachprofile (UI, Logic, Combat, Content, Platform,
+  Balance, Lore, Art-Director/Mira, Asset-Integrator, Kontrolleur).
+- `CODEX/agents/native/*.toml`: zehn versionierbare native Adapter, Modell/Reasoning nicht gepinnt.
+- `CODEX/templates/ASSET-BRIEF.md`: aktive Vorlage auf Chef/Codex/QA umgestellt;
+  keine Claude-Abnahme mehr und Blickrichtung am tatsächlichen Consumer.
+- `CODEX/tools/validate-agent-setup.py`: wiederholbarer statischer Struktur-/TOML-/Linkcheck.
+- `CODEX/notes/2026-09-09-projektuebernahme.md`: Befunde, Quellen, Grenzen und technische Risiken.
+- `START-CODEX.bat`: Einstieg zeigt neue Hauptrolle statt Designarbeiter unter Claude.
+- `CODEX/archive/2026-09-09-lead-transition/`: alte Grundlagen und Assetvorlage erhalten.
+
+### Verifikation und Grenzen
+
+- `pnpm typecheck`: **5/5 bestanden**, davon ein Cachetreffer und vier neu ausgeführt.
+- Save-Vault: erster pnpm-exec-Aufruf löste vitest nicht auf. Direkter Aufruf der vorhandenen
+  lokalen `vitest.cmd` startete Vitest 2.1.9, scheiterte aber vor Test-Sammlung am Workerstart
+  mit `spawn EPERM`. **Null Tests ausgeführt; keine Save-Kompatibilitätsfreigabe.**
+- `python CODEX/tools/validate-agent-setup.py`: bestanden (zehn Profile plus Lead,
+  zehn gültige TOML, Profilverweise und Links). Statische Prüfung, keine native Discovery.
+- Eigenes Dateidiff auf Whitespace geprüft. Keine vollständige Gameplay-Suite, Simulation,
+  Runtime-Build oder visuelle Spielabnahme in diesem Organisationsauftrag.
+- Unabhängiger Kontrolleur-Durchgang als instruierter Worker: Profile/Grundlagen konsistent;
+  veraltete Asset-Abnahmevorlage als P2 gefunden und korrigiert. **Nachcheck unauffällig**,
+  alle gemeldeten Punkte geschlossen; ebenfalls nur statischer Organisations-/Konfigurationscheck.
+- `.codex/agents/` ist in dieser Sitzung schreibgeschützt. Ein Schreibversuch wurde abgewiesen.
+  **Native Adapter sind vorbereitet, nicht installiert.** Sofort nutzbar sind Profile/Routing
+  über AGENTS und explizite Fachaufträge. Native Installation später mit berechtigtem Zugriff.
+- `.claude/**`, bestehende Produktdiffs, Branch, Runtime-Assets und reale Saves unverändert.
+  Kein Commit, Push, Merge oder Release.
+
+### Technischer Stand / nächster Prüfschritt
+
+Branch `1.2.4CL`, HEAD `053d4c9`, Manifestversion 1.2.3, SAVE_VERSION 88.
+Vor betroffenen Codeänderungen den Testausführungsblocker beheben bzw. in einer berechtigten
+Prüfumgebung testen; nicht aus dem Typecheck Releasefähigkeit ableiten.
+Die aktuelle Sitzung hat die portable Rollenübergabe benutzt, keinen nativ registrierten Agenten.
+
+Marker dieser Lieferung: `codex:2026-09-09T20:12:15+02:00`.
+Kein kommentararmes Datenformat geändert; TOML/Batch/Python tragen gültige Kommentare.
+
+---
+
+## Historisches Übergabearchiv bis 31.08.2026
+
+Die folgenden Texte bleiben als Verlauf erhalten. Ihre damaligen Aussagen „aktuell“,
+„an Claude“ und Freigabe-/Releasezustände sind **historisch**, nicht heutige Arbeitsanweisungen.
+
+# Frühere Übergabe an Claude
 
 ## Aktueller Status
 
@@ -3598,3 +4050,153 @@ die 37 transparenten 512er PNG/WebP-Dateien und verschiebt den Auftrag anschlie�
   `apps/client/src/renderer/pages/CombatPage.tsx`
 - `codex:2026-08-31T19:24:00+02:00` —
   `apps/client/src/renderer/styles/combat.css`
+
+## 2026-08-31 — HTML-Studien: Post an andere Spielstände
+
+<!-- codex:2026-08-31T20:24:00+02:00 -->
+
+- Fünf interaktive, noch nicht produktiv integrierte Versandmodal-Varianten liegen unter
+  `CODEX/outbox/2026-08-31-cross-save-mail-modal-html/`.
+- Abgedeckt sind Spielstand-Dropdown, eindeutige Quelle/Ziel-Route, Betreff und Nachricht,
+  Item-/Gold-Anhänge, letzte Versandprüfung, Erfolg und der Leerzustand ohne weiteren Save.
+- Bestandsabgleich erfolgte gegen `MailPage.tsx`, `mail.css` und vorhandene Gravewood-/Mail-/Item-
+  Assets. Es wurden keine Runtime-, Engine-, Persistenz- oder i18n-Dateien geändert.
+- Designerinnen-Empfehlung zur ersten Prüfung: **02 Kurierakte**; sie verbindet die klarste
+  Empfängerroute mit einer kompakten Frachtprüfung. **03 Siegelgang** ist die sicherste Alternative
+  für wertvolle Transfers.
+- Statische QA: `node qa-static.cjs` bestanden (5 Varianten, 10 lokale Referenzen, keine fehlenden
+  Assets, Dropdown-/Anhang-/Bestätigungs-/Erfolgs-/Leerzustände vorhanden). Eine Browserinstanz war
+  in dieser Sitzung nicht verfügbar; die Sichtprüfung bleibt daher beim nächsten Owner offen.
+
+### Chef-Korrektur: ausschließlich Gegenstandsversand
+
+<!-- codex:2026-08-31T21:12:00+02:00 -->
+
+- Die erste Brief-/Nachrichtenfassung wurde vollständig ersetzt. Alle fünf Varianten sind nun reine
+  Itemtransfer-Oberflächen ohne Betreff, Nachrichtentext oder Goldversand.
+- Neue Kerninteraktion: Ziel-Spielstand wählen, Itemstapel im aktuellen Inventar markieren, Paket
+  und Einheiten prüfen, irreversible Verschiebung bestätigen und Zustellung abschließen.
+- Statische QA erneut bestanden: fünf Varianten, 14 lokale Referenzen, keine fehlenden Assets und
+  nachweislich keine verbliebenen Brief-/Goldfelder.
+
+<!-- codex:2026-08-31T21:36:00+02:00 -->
+
+- Chef-Feintuning: Das Itemtransfer-Modal nutzt nun die volle verfügbare Fenster-/Stage-Höhe mit
+  nur 10 px Sicherheitsabstand oben und unten; bei kleinen Viewports 6 px. Die mittlere
+  Inventar-/Paket-Arbeitsfläche übernimmt den zusätzlichen Raum dynamisch.
+
+<!-- codex:2026-08-31T21:48:00+02:00 -->
+
+- Höhenkorrektur nach Chefprüfung: Nicht nur das Modal, sondern die komplette Mockup-Schale ist
+  jetzt fest an `100vh` gebunden. Die Stage nutzt eine definite `minmax(0, 1fr)`-Zeile; das Modal
+  liegt mit 4 px Rand über deren voller Höhe. Damit bleibt kein ungenutzter Viewport-Rest mehr.
+
+## 2026-08-31 — Cross-Save-Itemtransfer Variante 04 produktiv umgesetzt
+
+<!-- codex:2026-08-31T23:18:00+02:00 -->
+
+- Chefwahl **04 „Zwei Lager“** ist produktiv an die Postseite gebunden. Das vollhohe Modal zeigt
+  links die echten Inventarslots des aktiven Spielstands (einschließlich bewusst leerer Plätze),
+  rechts ein Paket mit höchstens acht Positionen, Teilmengen für Stapel, echte verzauberte
+  Einzelstücke, Ziel-Spielstand-Auswahl, Frachtbrief, verbindliche Bestätigung sowie Erfolg- und
+  Fehlerzustände. Ausgerüstete Teile und Bankbestand werden bewusst nicht angeboten.
+- Die Postseite zeigt den Einstieg auch im Leerzustand. Eingehende `kind:"transfer"`-Mails nennen
+  den echten Absender-Spielstand und verwenden die bestehende Abholmechanik für Anhänge.
+- Persistenzvertrag auf **SAVE_VERSION 88** erweitert. Der Engine-Kern validiert alle Quellen vor
+  der ersten Mutation. Übertragene Instanzen behalten Affixe/Suffixe, werden im Empfängersave aber
+  über dessen monotonen Zähler neu identifiziert, damit gleichnamige save-lokale `inst_*`-IDs nie
+  kollidieren.
+- Quelle und Ziel werden in Electron mit einem journalgeschützten `saves:writePair`-Commit
+  geschrieben. Ein Crash zwischen beiden atomaren Slot-Writes wird vor dem nächsten Save-Zugriff
+  zu Ende committed; bei fehlgeschlagener Recovery bleiben weitere Save-Verben gesperrt. Der
+  Live-Tick und Autosave ruhen nur während dieses kurzen Commits, aufgelaufene Simulationszeit wird
+  danach angewandt. Der Web-Fallback rollt beide localStorage-Werte bei einem Schreibfehler zurück.
+- UI-Texte vollständig in EN, DE, ES, FR, pt-BR, RU und ZH ergänzt (je Sprache 41 Transfer-Keys).
+
+### Betroffene Dateien
+
+- UI: `apps/client/src/renderer/components/CrossSaveTransferModal.tsx`,
+  `pages/MailPage.tsx`, `styles/mail-transfer.css`, `styles/mail.css`
+- Renderer/IPC: `renderer/game/GameContext.tsx`, `renderer/saves.ts`, `preload/index.ts`,
+  `main/saves.ts`, `vite-env.d.ts`
+- Engine/Save: `packages/engine/src/mail.ts`, `packages/shared/src/index.ts`,
+  `packages/persistence/src/index.ts`
+- Tests: `packages/engine/src/mail.test.ts`,
+  `packages/persistence/src/cross-save-transfer-persistence.test.ts`
+- i18n: `renderer/i18n/translations.ts` und alle fünf Locale-Overlays.
+
+### Verifikation und nächster Owner
+
+- `pnpm typecheck`: **bestanden**, 5/5 Pakete.
+- `git diff --check`: **bestanden** (nur bestehende CRLF-Hinweise).
+- Engine- und Persistenztests sind ergänzt. Vitest konnte sie in der verwalteten Windows-Sitzung
+  nicht sammeln, weil Vite intern einen Kindprozess startet und Windows mit `spawn EPERM` blockiert.
+  Derselbe Umgebungsblocker stoppt `electron-vite build` bereits beim Config-Bundling; kein
+  Code-/Testfehler wurde ausgegeben.
+- Kein Live-/Electron-Start gemäß Projektregel. Claude/UI-Owner sollte einmal im echten Client zwei
+  lokale Saves mit Teilstapel und verzaubertem Unikat gegeneinander testen und danach den normalen
+  CI-Test-/Buildlauf ausführen.
+
+### Chefkorrektur: deutlich schlankere Iron Frames
+
+<!-- codex:2026-08-31T23:41:00+02:00 -->
+
+- `apps/client/src/renderer/styles/mail-transfer.css`: Der erste Stand hatte neben zu großen
+  Rahmenbasen auch den falschen 9-Slice-Schnitt `28`. Auf den produktiven Iron-Frame-Vertrag
+  `85` korrigiert; Hauptmodal jetzt 4 px, beide Lager 3 px und Bestätigungsdialog 4 px Basis.
+- Außenabstand, Lagersteg sowie Route-/Footer-Padding ebenfalls verdichtet. Dadurch wird der
+  eingesparte Rahmenraum vollständig den Inventar- und Paketflächen zugeschlagen.
+- `pnpm --filter @hearthforge/client typecheck`: bestanden.
+
+## 2026-08-31 — Kampf-HUD bei schmalen Arenen lesbar
+
+<!-- codex:2026-08-31T23:59:00+02:00 -->
+
+- `apps/client/src/renderer/styles/combat.css`: Die beiden oberen Detailbänder reagieren jetzt auf
+  die **tatsächliche Arenabreite** nach geöffnetem Loadout-/Record-Dock. Unter 980 px stehen
+  Spieler- und Gegnerband vollbreit untereinander statt unleserlich in zwei gequetschten Spalten.
+- Der alte Breakpoint, der unter 1200 px die Loot-Icons vollständig ausblendete, ist entfernt.
+  Loot bleibt sichtbar; unter 620 px erhält er im Gegnerband eine eigene umbrechende Unterzeile.
+- Client-Typecheck und `git diff --check` bestanden. `electron-vite build` bleibt in der verwalteten
+  Windows-Sitzung beim Config-Laden am bekannten Umgebungsfehler `spawn EPERM` hängen.
+
+### Nachkorrektur: Plain-Items im Mail-Inventar logisch stapeln
+
+<!-- codex:2026-08-31T23:58:00+02:00 -->
+
+- `CrossSaveTransferModal.tsx` gruppiert gleiche unverzauberte Item-IDs nun zu genau einem
+  sichtbaren Stapel; nur echte verzauberte Instanzen bleiben einzeln. Eine gewählte Gesamtmenge
+  wird beim Versand deterministisch über vorhandene physische Teilstapel verteilt.
+- `packages/engine/src/mail.ts` zählt für die Acht-Platz-Grenze entsprechend verschiedene Plain-
+  Item-IDs statt physischer Quellslots. `mail.test.ts` deckt Zusammenfassung und Grenzfall ab.
+- Root-Typecheck: 5/5 bestanden. Der gezielte Vitest-Lauf wurde vor Test-Sammlung erneut durch den
+  bekannten Windows-Umgebungsfehler `spawn EPERM` blockiert.
+
+## 2026-08-31 — Farming-Skillseite, fünf visuelle Mockups
+
+<!-- codex:2026-08-31T23:05:00+02:00 -->
+
+- Fünf noch nicht implementierte Designrichtungen liegen unter
+  `CODEX/work/2026-08-31-farming-skill-mockups/`.
+- Alle Varianten wurden gegen die aktuelle `FarmPage.tsx`, Crop-Daten, Saatlogik und vorhandenen
+  Farming-Assets konzipiert. Abgedeckt sind neun Beete, sämtliche Plot-Zustände, Auto-Nachpflanzen,
+  Folgesorten, Saatmangel, globale Aktionen, manuelles Einsammeln, Saatgartenbonus und der auf mehr
+  als 30 Sorten skalierbare Katalog.
+- Bilder: fünf PNG, jeweils 1672 × 941, RGB. Keine Runtime-Dateien geändert.
+- Mira-Empfehlung: Variante **05 Saat- und Bodenregister** für maximale Zukunftssicherheit;
+  Variante **02 Feldbuch** als responsive und besonders lesbare Alternative.
+
+### Chefwahl 01 als interaktives HTML-Mockup
+
+<!-- codex:2026-08-31T23:31:00+02:00 -->
+
+- `CODEX/work/2026-08-31-farming-skill-mockups/index.html` setzt **01 Neun Äcker** mit den
+  vorhandenen Farming-, Sidebar-, Font-, Rahmen- und Texturassets um.
+- Neun Beetkarten, alle relevanten Farming-Zustände, Auto-Nachpflanzen, Pflanzen, Ernten,
+  Einsammeln, Einzel-/Global-Folgesorten und ein tierfilterbarer Sortenkatalog sind interaktiv.
+- Unter 1220 px wird der Katalog zum Drawer; zusätzliche Breiten- und Höhenbreakpoints schützen
+  Beetgröße und Lesbarkeit bei 1366×768.
+- Keine Runtime-Datei geändert. Statische QA bestanden: neun Beete, 21 lokale Referenzen,
+  CSS-Struktur 184/184, JavaScript parserfehlerfrei. Die Browser-Testfunktion war in dieser Sitzung
+  nicht verfügbar; visuelle Browser-Screenshots bleiben deshalb offen.
+- Codex-Marker `codex:2026-08-31T23:20:00+02:00` in HTML, CSS-/JS-Arbeitsblöcken und QA.

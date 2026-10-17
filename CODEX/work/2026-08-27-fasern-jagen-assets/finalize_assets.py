@@ -1,4 +1,4 @@
-# codex:2026-08-27T23:36:00+02:00
+# codex:2026-08-28T01:18:00+02:00
 """Normalize the accepted native ImageGen outputs and build the handoff QA package."""
 
 from __future__ import annotations
@@ -31,21 +31,22 @@ SOURCES = {
     "cloth_thornlinen": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-cd232557-ac73-4723-b506-c93a40a84241.png",
     "cloth_ghostweave": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-db097096-6fd9-44f6-889e-337e0085972c.png",
     "cloth_starweave": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-73b9953d-e06b-4bd9-b67d-37d73ae825bf.png",
-    "bait_worm": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-48c99ff5-9877-4345-8c3a-0c222da161e2.png",
-    "trap_empty": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-7504c095-9ab9-419a-85b9-a96950e4dc2c.png",
-    "trap_set": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-f72c76f2-d17c-4e9c-9dc6-fca0082e1c2d.png",
-    "trap_caught": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-73a906ef-ab35-4a23-b444-25377a047fa5.png",
+    "bait_worm": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-8257cdb7-75bb-4bc2-b0f1-c2b0edd5ad4d.png",
+    "trap_empty": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-d0f533fe-03bb-4bca-aef2-7fb594e2f406.png",
+    "trap_set": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-d0f533fe-03bb-4bca-aef2-7fb594e2f406.png",
+    "trap_caught": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-d0f533fe-03bb-4bca-aef2-7fb594e2f406.png",
     "forage_nettle": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-53ca73fa-ff52-41c2-874f-bfd8e02f9caf.png",
     "forage_flax": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-f72265aa-4134-4eea-8bdb-a4632752f925.png",
     "forage_thornhemp": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-be7161ae-2652-49ab-8e8f-6fbca19c83ea.png",
     "forage_ghostsilk": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-1aeaefed-80b0-4d55-9ab6-0fc96897884e.png",
     "forage_starflax": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-3699c63c-5f2d-4885-ab1c-153738da27d5.png",
-    "dig_bait": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-fc5a5ae8-cac3-41bf-8e54-999a6b76955d.png",
-    "sidebaricon_hunting": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-99deb73b-570d-480f-bae4-348eeb4c373e.png",
+    "sidebaricon_hunting": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-97019858-a10f-4d0f-9543-84c785ace644.png",
+    "ring_master_hunting": r"C:\Users\MSchu\.codex\generated_images\01a02f40-1bd9-7802-8352-58082679c45b\exec-81f228cf-17b4-4862-97be-3378988f3591.png",
 }
 
 ITEM_IDS = list(SOURCES)[:19]
 CARD_IDS = list(SOURCES)[19:24]
+TRAP_IDS = ["trap_empty", "trap_set", "trap_caught"]
 
 
 def alpha_fit(source: Path, size: tuple[int, int], coverage: float) -> Image.Image:
@@ -61,6 +62,24 @@ def alpha_fit(source: Path, size: tuple[int, int], coverage: float) -> Image.Ima
     x = (size[0] - cropped.width) // 2
     y = (size[1] - cropped.height) // 2
     canvas.alpha_composite(cropped, (x, y))
+    return canvas
+
+
+def trap_cell_fit(source: Path, index: int) -> Image.Image:
+    """Take one native-alpha cell from the shared three-state trap strip."""
+    strip = Image.open(source).convert("RGBA")
+    cell_width = strip.width // 3
+    left = index * cell_width
+    right = strip.width if index == 2 else left + cell_width
+    cell = strip.crop((left, 0, right, strip.height))
+    alpha = cell.getchannel("A")
+    bbox = alpha.getbbox()
+    if not bbox or alpha.getextrema()[0] != 0:
+        raise ValueError(f"Native alpha missing in trap cell {index}")
+    cropped = cell.crop(bbox)
+    cropped.thumbnail((550, 550), Image.Resampling.LANCZOS)
+    canvas = Image.new("RGBA", (640, 640), (0, 0, 0, 0))
+    canvas.alpha_composite(cropped, ((640 - cropped.width) // 2, (640 - cropped.height) // 2))
     return canvas
 
 
@@ -118,7 +137,7 @@ def card_contact() -> None:
     width, height, label = 560, 315, 28
     canvas = Image.new("RGB", (width * 2, (height + label) * 3), (20, 18, 17))
     draw = ImageDraw.Draw(canvas)
-    ids = CARD_IDS + ["dig_bait"]
+    ids = CARD_IDS
     for index, asset_id in enumerate(ids):
         image = Image.open(FINAL / f"{asset_id}.png").convert("RGB")
         image.thumbnail((width - 12, height - 12), Image.Resampling.LANCZOS)
@@ -134,25 +153,37 @@ def main() -> None:
     for directory in (RAW, FINAL, QA):
         directory.mkdir(parents=True, exist_ok=True)
 
+    for obsolete in ("trap_empty.png", "trap_set.png", "trap_caught.png"):
+        path = RAW / obsolete
+        if path.exists():
+            path.unlink()
+    trap_strip = Path(SOURCES["trap_empty"])
+    shutil.copy2(trap_strip, RAW / "trap_states_strip.png")
+
     report: dict[str, object] = {"asset_count": len(SOURCES), "assets": {}}
     for asset_id, source_text in SOURCES.items():
         source = Path(source_text)
-        shutil.copy2(source, RAW / f"{asset_id}.png")
-        if asset_id in ITEM_IDS:
+        if asset_id not in TRAP_IDS:
+            shutil.copy2(source, RAW / f"{asset_id}.png")
+        if asset_id in TRAP_IDS:
+            final = trap_cell_fit(source, TRAP_IDS.index(asset_id))
+        elif asset_id == "bait_worm":
+            final = alpha_fit(source, (640, 640), 0.76)
+        elif asset_id in ITEM_IDS:
             final = alpha_fit(source, (640, 640), 0.86)
         elif asset_id in CARD_IDS:
             final = opaque_fit(source, (1672, 941))
-        elif asset_id == "dig_bait":
-            final = opaque_fit(source, (1254, 1254))
+        elif asset_id == "ring_master_hunting":
+            final = alpha_fit(source, (640, 640), 0.86)
         else:
-            final = alpha_fit(source, (1254, 1254), 0.88)
+            final = alpha_fit(source, (1254, 1254), 0.84)
         destination = FINAL / f"{asset_id}.png"
         final.save(destination, optimize=True)
         entry: dict[str, object] = {
             "filename": destination.name,
             "mode": final.mode,
             "size": list(final.size),
-            "source": str(source),
+            "source": f"{source}#cell={TRAP_IDS.index(asset_id)}" if asset_id in TRAP_IDS else str(source),
         }
         if final.mode == "RGBA":
             entry.update(alpha_metrics(final))
@@ -166,7 +197,11 @@ def main() -> None:
     contact_sheet(["sidebaricon_hunting"], QA / "contact-sidebar-magenta.png", (255, 0, 170), columns=1)
     card_contact()
     (QA / "qa.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
-    (QA / "source-map.json").write_text(json.dumps(SOURCES, indent=2), encoding="utf-8")
+    source_map = {
+        asset_id: (f"{source}#cell={TRAP_IDS.index(asset_id)}" if asset_id in TRAP_IDS else source)
+        for asset_id, source in SOURCES.items()
+    }
+    (QA / "source-map.json").write_text(json.dumps(source_map, indent=2), encoding="utf-8")
     print(f"Built {len(SOURCES)} final assets in {FINAL}")
 
 

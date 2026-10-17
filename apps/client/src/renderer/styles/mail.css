@@ -12,6 +12,32 @@
   height: 100%;
 }
 
+/* codex:2026-08-31T22:38:00+02:00 — permanenter Einstieg in die Cross-Save-Fracht; bleibt auch
+   bei leerem Postfach sichtbar und trennt Empfang (darunter) klar von Versand (Aktion rechts). */
+.mail-page-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 12px;
+  border: 1px solid rgba(130, 101, 60, 0.48);
+  background:
+    linear-gradient(90deg, rgba(47, 34, 21, 0.46), rgba(7, 9, 10, 0.86)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 420px repeat;
+}
+
+.mail-page-actions > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mail-page-actions-note {
+  color: #8c867c;
+  font-size: 12px;
+}
+
 /* ─── Teil-Abhol-Hinweis (Chef-Vorgabe: „Inventar voll — Rest bleibt im Postfach") ───────────
    Gleiche Optik wie .quest-shop-notice (quests.css) — eine dezente Warn-Zeile, kein globaler
    Toast nötig (die Seite lebt lange genug, dass ein Inline-Hinweis reicht). */
@@ -85,6 +111,14 @@
 .mail-row--active {
   background: rgba(216, 192, 106, 0.14);
   border-left-color: var(--gold, #d8c06a);
+}
+
+.mail-row--transfer {
+  border-right-color: rgba(184, 135, 63, 0.42);
+}
+
+.mail-row--transfer .mail-row-icon-img {
+  filter: sepia(0.45) saturate(1.3) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.65));
 }
 
 .mail-row-icon {
@@ -267,5 +301,10 @@
   }
   .mail-list {
     max-height: 40vh;
+  }
+
+  .mail-page-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

@@ -41,6 +41,8 @@ import {
   ELITE_WINDOW_MS,
   EQUIP_KIT_COUNT,
   EQUIP_SLOTS,
+  TOOL_SLOTS,
+  isToolSlot,
   KILL_COOLDOWN_MS,
   defaultEquipKits,
   emptyEquipKit,
@@ -501,7 +503,8 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   //  • ring2 für Items mit slot "ring1": Ringe deklarieren kanonisch ring1, equipItem/equipInstance
   //    weichen auf ring2 aus. Der alte Check (`item.slot !== slot` ⇒ nullen) hat einen legitim in
   //    ring2 getragenen Ring bei JEDEM Laden still vernichtet — P1-Datenverlust (ui-audit-Fund);
-  //  • tool1/tool2/tool3 für Werkzeuge: `equipTool` (engine/equipment.ts) rüstet JEDES Item mit einem
+  //  • die Werkzeug-Slots (TOOL_SLOTS, seit SAVE 87 vier statt drei — EINE Liste aus shared, damit
+  //    hier nie einer fehlt) für Werkzeuge: `equipTool` (engine/equipment.ts) rüstet JEDES Item mit einem
   //    `tool`-Feld in einen freien Werkzeug-Slot aus — reine Werkzeuge (type "tool", KEIN slot-Feld)
   //    UND Dual-Use-Waffen (type "equipment", z.B. Äxte — Chef 2026-07-21). Der Check muss deshalb
   //    `!!item.tool` prüfen, NICHT `item.type === "tool"`: Ein `type==="tool"`-Check ließ Dual-Use-
@@ -520,7 +523,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     if (!item) return false;
     if (item.slot === slot) return true;
     if (slot === "ring2" && item.slot === "ring1") return true;
-    if ((slot === "tool1" || slot === "tool2" || slot === "tool3") && !!item.tool) return true;
+    if (isToolSlot(slot) && !!item.tool) return true;
     return false;
   };
   const rawEqInst =
@@ -652,7 +655,12 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         if (typeof id !== "string" || !known(id)) continue;
         const inst = sanitizeInstance(instRec[slot], content);
         const modInst = inst && inst.baseItemId === id && (inst.affixes.length > 0 || inst.suffix) ? inst : null;
-        if (!slotAccepts(slot, id)) {
+        // WERKZEUGE GEHÖREN NICHT INS KIT (SAVE 87): sie hängen am Charakter und überleben jeden
+        // Wechsel. Regulär hat `migrateState` sie längst herausgeholt (in freie Werkzeug-Slots,
+        // sonst per Grant-Pfad) — dieser Zweig ist das Sicherheitsnetz für alles, was danach noch
+        // eines in ein Kit schreiben könnte. Er RETTET wie bei einem slot-fremden Teil, statt zu
+        // löschen: ein Werkzeug ist Besitz (Kompat-Gesetz).
+        if (isToolSlot(slot) || !slotAccepts(slot, id)) {
           if (modInst) state.bankInstances.push(modInst);
           else state.bank[id] = finiteNonNeg(state.bank[id], 0) + 1;
           continue;
@@ -1551,8 +1559,9 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
   // — Instanz-ID-Zähler: endlich & ≥ 0 (deterministische ID-Vergabe darf nie NaN/negativ werden). —
   state.nextInstanceSeq = Math.floor(finiteNonNeg(state.nextInstanceSeq, 0));
 
-  // — Postfach/Mailbox (SAVE_VERSION 71, um `kind:"letter"` erweitert SAVE_VERSION 72 „Jagd-Paket" L):
-  //   jede Mail härten. ZWEI bekannte Sorten, BEIDE über dieselben `items`/`instances`-Felder (echtes
+  // — Postfach/Mailbox (SAVE_VERSION 71, plus `letter` in 72 und `transfer` in 88;
+  //   codex:2026-08-31T23:08:00+02:00):
+  //   jede Mail härten. DREI bekannte Sorten, ALLE über dieselben `items`/`instances`-Felder (echtes
   //   Discriminated Union, s. shared `MailMessage` — ein Brief ist strukturell eine Überlauf-Mail
   //   plus `from`+`textKey`, KEIN separates `attachments`-Feld) — unbekannte Sorten/kaputte Einträge
   //   raus (Muster actionQueue). `items` per bekannter itemId gestapelt (positive endliche
@@ -1607,6 +1616,23 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
           continue;
         }
         cleanMail.push({ id: m.id, kind: "letter", createdSeq, items, instances, from, textKey });
+        continue;
+      }
+
+      // codex:2026-08-31T22:04:00+02:00 — SAVE 88: reine Cross-Save-Fracht ohne Freitext/Gold.
+      if (m.kind === "transfer") {
+        const fromSaveName = m.fromSaveName;
+        if (typeof fromSaveName !== "string" || fromSaveName.trim().length === 0) continue;
+        // Eine leere Transfer-Mail ist kein Brief und trägt keinerlei Inhalt → verwerfen wie Overflow.
+        if (items.length === 0 && instances.length === 0) continue;
+        cleanMail.push({
+          id: m.id,
+          kind: "transfer",
+          createdSeq,
+          items,
+          instances,
+          fromSaveName: fromSaveName.trim().slice(0, 64),
+        });
       }
       // unbekannte Mail-Sorte → raus (Muster actionQueue)
     }
@@ -3395,6 +3421,58 @@ function migrateState(state: GameState, content: ContentDB): GameState {
     syncActiveKit(state);
   }
   delete (state as { equipLoadouts?: unknown }).equipLoadouts;
+
+  // ── Werkzeuge verlassen die Kits (SAVE_VERSION 87, Chef-Entscheid 31.08.2026) ──────────────────
+  // Spieler-Vorschlag: „I don't think that we need 3 sets of the same tools, so it will be better to
+  // not swap tool slots while swapping between equipment kits." Seit v85 besaß jedes Kit seine
+  // eigenen Werkzeuge — wer nach dem Kit-Wechsel weiter abbauen wollte, musste dieselbe Spitzhacke
+  // dreimal besitzen. Ab jetzt hängen Werkzeuge am CHARAKTER (KIT_SLOTS in shared, snapshotKit in
+  // engine/loadouts.ts) und bleiben beim Wechsel einfach liegen.
+  //
+  // Diese Migration holt heraus, was in einem INAKTIVEN Kit steckengeblieben ist. Reihenfolge, vom
+  // Nützlichsten zum Sichersten:
+  //   1. In einen FREIEN Werkzeug-Slot des Charakters — der Normalfall. Wer drei Kits mit je
+  //      Spitzhacke/Axt/Angel hatte, trägt sie danach schlicht alle vier gleichzeitig, und der neue
+  //      vierte Slot nimmt genau das auf, was vorher nicht passte.
+  //   2. Sonst über den Grant-Pfad (Inventar → Bank → Post) — verlustfrei, wie bei jeder anderen
+  //      Rückgabe. Verzauberte Werkzeuge reisen als Instanz mit Affixen und Suffix.
+  // Es geht NICHTS verloren (Save-Kompat-Gesetz). Bewusst UNGEGATET statt an `< 87` gehängt: der
+  // Lauf ist von Natur aus idempotent (danach trägt kein Kit mehr ein Werkzeug) und heilt so auch
+  // Dev-Saves, die in der Umbauphase entstanden sind. Das aktive Kit wird ausgelassen — sein
+  // Spiegel wird ohnehin am Ende von sanitizeState frisch aus dem Charakter geschrieben.
+  // RNG-frei.
+  if (Array.isArray(state.equipKits)) {
+    const equip = state.character.equipment;
+    const eqInstances = state.character.equippedInstances;
+    const freierWerkzeugSlot = (): EquipSlot | null =>
+      TOOL_SLOTS.find((slot) => !equip[slot]) ?? null;
+
+    for (let i = 0; i < state.equipKits.length; i++) {
+      if (i === state.activeKit) continue;
+      const kit = state.equipKits[i];
+      if (!kit || typeof kit !== "object") continue;
+      const kitEq = kit.equipment as Record<string, ItemId | null> | undefined;
+      const kitInst = kit.equippedInstances as Record<string, ItemInstance | undefined> | undefined;
+      if (!kitEq || typeof kitEq !== "object") continue;
+
+      for (const slot of TOOL_SLOTS) {
+        const id = kitEq[slot];
+        if (typeof id !== "string" || !id) continue;
+        const inst = kitInst?.[slot];
+        const ziel = freierWerkzeugSlot();
+        if (ziel) {
+          equip[ziel] = id;
+          if (inst) eqInstances[ziel] = inst;
+        } else if (inst) {
+          grantLootInstance(state, content, inst);
+        } else {
+          grantLoot(state, content, id, 1);
+        }
+        kitEq[slot] = null;
+        if (kitInst) delete kitInst[slot];
+      }
+    }
+  }
 
   // ── Skill-Split „Schneidern" (SAVE_VERSION 85 → 86, Chef-Entscheid 28.08.2026) ──────────────────
   // Der Skill `leatherworking` (Handwerk) gibt alles aus Stoff an den neuen Skill `tailoring` ab. Die

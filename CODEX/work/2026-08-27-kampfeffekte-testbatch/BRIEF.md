@@ -21,10 +21,31 @@
 **Woran Claude Erfolg erkennt:** 6 Dateien mit exakten Namen und Maßen, Alpha-Prüfung bestanden, die drei Felder eines Streifens lesen sich als EIN Effekt in drei Momenten (gleiche Position, gleiche Farbwelt), Kontaktbogen über dem Battlescreen zeigt Lesbarkeit bei 256 px.
 
 # Teil B – Produktionsplan (Mira)
-_(füllt Mira)_
+<!-- codex:2026-08-27T20:27:00+02:00 -->
+
+- Sechs eigenständige native RGBA-Motive mit eingebautem ImageGen erzeugen.
+- Streifen im Rohformat als exakt drei gleich breite Quadratzellen erzeugen.
+- Raws unverändert sichern; finale Zellen alphaerhaltend auf 240 × 240 skalieren und mit acht
+  transparenten Pixeln Innenrand in 256 × 256 setzen.
+- Geschoss proportional auf 256 × 128 skalieren.
+- Alpha, Maße, Außenränder und jede einzelne Zelle messen.
+- Kontaktbogen bei nativer Anzeigegröße auf dunklem Grund und über `ashfields.webp` prüfen.
 
 # Teil C – QA-Protokoll (Mira)
-_(füllt Mira)_
+<!-- codex:2026-08-27T20:27:00+02:00 -->
+
+- 6/6 PNG RGBA mit echtem Alpha und exakten Maßen.
+- 5/5 Streifen enthalten drei sichtbare Zellen mit transparentem Sicherheitsrand.
+- Geschossrichtung, Zustandsfolge, Mittelpunktstabilität und Lesbarkeit visuell geprüft.
+- Blut gedeckt und ohne Gore; keine Assets enthalten Boden, Schatten oder deckenden Hintergrund.
+- Beide Pflicht-Kontaktbögen bestanden. Detailwerte unter
+  `CODEX/assets/kampfeffekte-testlauf-2026-08-27/qa/qa.json`.
 
 # Teil D – Übergabe (Mira)
-_(füllt Mira)_
+<!-- codex:2026-08-27T20:27:00+02:00 -->
+
+- Finals: `CODEX/assets/kampfeffekte-testlauf-2026-08-27/fertig/`
+- Native Raws: `CODEX/assets/kampfeffekte-testlauf-2026-08-27/raw/`
+- QA: `CODEX/assets/kampfeffekte-testlauf-2026-08-27/qa/`
+- Produktionsprompts und Quellenkarte liegen neben diesem Brief.
+- Keine Renderer-Datei verändert; Einbau und Laufzeitprüfung bleiben bei Claude.

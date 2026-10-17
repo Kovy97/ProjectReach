@@ -12,6 +12,7 @@ import {
   grantLootInstance,
   hasMail,
   mailItemCount,
+  transferInventoryItemsToSave,
 } from "./mail";
 
 /** Frischer Spielstand mit VOLLEM Inventar und Auto-Bank AUS → jeder Fremd-Loot muss ins Postfach. */
@@ -167,5 +168,91 @@ describe("Postfach/Mailbox (SAVE_VERSION 71)", () => {
     expect(live[0]!.id).toBe("mail_0");
     expect(live[0]!.createdSeq).toBe(0);
     expect(mailItemCount({ mailbox: live } as never)).toBeGreaterThan(0);
+  });
+});
+
+// codex:2026-08-31T22:04:00+02:00 — Cross-Save-Fracht ist reine Engine-Mutation ohne I/O/Uhr.
+describe("Cross-Save-Itemtransfer (SAVE_VERSION 88)", () => {
+  it("verschiebt einen Teilstapel und eine Instanz verlustfrei in eine eigene Transfer-Mail", () => {
+    const source = createGame({ name: "Mira Ashfall" }, content, 1);
+    const target = createGame({ name: "Woksel" }, content, 2);
+    target.inventory.instances.push({
+      instanceId: "inst_0",
+      baseItemId: "steel_sword",
+      affixes: [{ affixId: "affix_keen", tier: 1 }],
+    });
+    target.nextInstanceSeq = 1;
+    source.inventory.slots[0] = { itemId: "iron_bar", qty: 15 };
+    const inst: ItemInstance = {
+      instanceId: "inst_cross_save",
+      baseItemId: "steel_sword",
+      affixes: [{ affixId: "affix_keen", tier: 1 }],
+    };
+    source.inventory.instances.push(inst);
+
+    const result = transferInventoryItemsToSave(source, target, content, "Nebelwacht", {
+      slots: [{ slotIndex: 0, itemId: "iron_bar", qty: 6 }],
+      instanceIds: [inst.instanceId],
+    });
+
+    expect(result).toMatchObject({ ok: true, stacks: 2, units: 7 });
+    expect(source.inventory.slots[0]).toEqual({ itemId: "iron_bar", qty: 9 });
+    expect(source.inventory.instances).toHaveLength(0);
+    expect(target.mailbox).toEqual([
+      {
+        id: "mail_0",
+        kind: "transfer",
+        createdSeq: 0,
+        fromSaveName: "Nebelwacht",
+        items: [{ itemId: "iron_bar", qty: 6 }],
+        instances: [{ ...inst, instanceId: "inst_1" }],
+      },
+    ]);
+    expect(target.mailSeq).toBe(1);
+    expect(target.nextInstanceSeq).toBe(2);
+  });
+
+  it("ist bei veralteter Slot-Auswahl vollständig ein No-op", () => {
+    const source = createGame({ name: "Quelle" }, content, 1);
+    const target = createGame({ name: "Ziel" }, content, 2);
+    source.inventory.slots[0] = { itemId: "iron_bar", qty: 4 };
+
+    const result = transferInventoryItemsToSave(source, target, content, "Quelle", {
+      slots: [{ slotIndex: 0, itemId: "iron_bar", qty: 5 }],
+      instanceIds: [],
+    });
+
+    expect(result).toEqual({ ok: false, reason: "invalid_source" });
+    expect(source.inventory.slots[0]).toEqual({ itemId: "iron_bar", qty: 4 });
+    expect(target.mailbox).toEqual([]);
+    expect(target.mailSeq).toBe(0);
+  });
+
+  // codex:2026-08-31T23:58:00+02:00 — Physische Teilstapel derselben Item-ID sind ein logischer
+  // Paketplatz; acht verschiedene IDs bleiben die harte Paketgrenze.
+  it("fasst physische Teilstapel derselben Item-ID zu einem Paketplatz zusammen", () => {
+    const source = createGame({ name: "Quelle" }, content, 1);
+    const target = createGame({ name: "Ziel" }, content, 2);
+    for (let index = 0; index < 9; index += 1) source.inventory.slots[index] = { itemId: "iron_bar", qty: 1 };
+    const slots = Array.from({ length: 9 }, (_, slotIndex) => ({ slotIndex, itemId: "iron_bar", qty: 1 }));
+    const result = transferInventoryItemsToSave(source, target, content, "Quelle", { slots, instanceIds: [] });
+    expect(result).toMatchObject({ ok: true, stacks: 1, units: 9 });
+    expect(source.inventory.slots.slice(0, 9).every((slot) => slot === null)).toBe(true);
+    expect(target.mailbox[0]!.items).toEqual([{ itemId: "iron_bar", qty: 9 }]);
+  });
+
+  it("weist mehr als acht verschiedene Paketplätze ohne Mutation zurück", () => {
+    const source = createGame({ name: "Quelle" }, content, 1);
+    const target = createGame({ name: "Ziel" }, content, 2);
+    const itemIds = [
+      "iron_bar", "copper_ore", "tin_ore", "normal_log", "oak_log",
+      "bronze_bar", "raw_shrimp", "raw_trout", "raw_cod",
+    ];
+    itemIds.forEach((itemId, index) => { source.inventory.slots[index] = { itemId, qty: 1 }; });
+    const slots = itemIds.map((itemId, slotIndex) => ({ slotIndex, itemId, qty: 1 }));
+    const result = transferInventoryItemsToSave(source, target, content, "Quelle", { slots, instanceIds: [] });
+    expect(result).toEqual({ ok: false, reason: "too_many" });
+    expect(source.inventory.slots.slice(0, 9).every((slot) => slot?.qty === 1)).toBe(true);
+    expect(target.mailbox).toEqual([]);
   });
 });

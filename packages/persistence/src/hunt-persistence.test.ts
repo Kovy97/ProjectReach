@@ -3,9 +3,21 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, HuntTrap, HuntZoneDef, ItemDef } from "@hearthforge/shared";
-import { BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
+import { TOOL_SLOTS, BAIT_ITEM_ID, HUNT_FIRST_CATCH_MULT, huntCatchXp, HUNTING_SKILL_ID, HUNT_TRAP_SLOTS, SAVE_VERSION, defaultHuntTraps, emptyEquipKit, emptyHuntTrap } from "@hearthforge/shared";
 import { addItem, advance, createGame, huntBaitCount, huntTrapWaiting, setHuntTrap, xpForLevel } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
+
+/**
+ * Der Kit-0-Spiegel gegen die getragene Ausruestung — OHNE die Werkzeug-Slots. Seit SAVE 87
+ * gehoeren Werkzeuge keinem Kit mehr (Chef-Entscheid 31.08.2026): sie haengen am Charakter und
+ * bleiben beim Wechsel liegen, der Spiegel traegt dort also immer null.
+ */
+function ohneWerkzeuge<T extends object>(equipment: T): T {
+  const kopie = { ...equipment } as T;
+  for (const slot of TOOL_SLOTS) (kopie as Record<string, unknown>)[slot] = null;
+  return kopie;
+}
+
 
 /**
  * Jagen (SAVE_VERSION 85, design/handwerk-fasern-jagen/spec-technik.md §3/§5): Migration v84 → v85
@@ -91,8 +103,12 @@ describe("Migration v84 → v85 (Jagen)", () => {
     erwartet.state.stats.huntCatches = 0;
     // v85-Nachtrag (Ausrüstungs-Kits, Chef-Entscheid 28.08.2026): Vorlagen `[null, null, null]` → Kit 0 =
     // getragene Ausrüstung, Kits 1/2 leer, Kit 0 aktiv; `equipLoadouts` verschwindet aus dem State.
+    // v87 (vierter Werkzeug-Slot): migrateState baut den Equipment-Record generisch aus EQUIP_SLOTS
+    // neu — `tool4` kommt als null dazu. VOR dem Kit-Spiegel, der aus diesem Record entsteht.
+    erwartet.state.character.equipment.tool4 = null;
     erwartet.state.equipKits = [
-      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      // v87: der Spiegel traegt keine Werkzeuge mehr (sie gehoeren keinem Kit).
+      { equipment: ohneWerkzeuge({ ...erwartet.state.character.equipment }), equippedInstances: { ...erwartet.state.character.equippedInstances } },
       emptyEquipKit(),
       emptyEquipKit(),
     ];
@@ -334,6 +350,10 @@ describe("v85-Fixture: Round-Trip mit Jagd-Stand", () => {
     erwartet.version = SAVE_VERSION;
     erwartet.state.version = SAVE_VERSION;
     erwartet.state.skills.tailoring = { xp: 0 };
+    // v87 (vierter Werkzeug-Slot): migrateState baut den Equipment-Record generisch aus EQUIP_SLOTS
+    // neu — `tool4` kommt als null dazu, im Charakter wie in jedem Kit-Spiegel.
+    erwartet.state.character.equipment.tool4 = null;
+    for (const kit of erwartet.state.equipKits) kit.equipment.tool4 = null;
     // v87 Bank-Platzierung (Chef-Auftrag 31.08.2026 "wie OSRS"): `bankOrder` traegt die Faecher,
     // die Mengen bleiben in `bank`. BEWUSST als LETZTE Erwartung, nach allen anderen Anpassungen —
     // dieselbe Reihenfolge-Falle wie im Sanitize selbst: wer die Faecher zu frueh bildet, nimmt

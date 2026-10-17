@@ -69,6 +69,12 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
   { id: "topbar.character", guideId: "topbar.character", textKey: "onboarding.guide.topbar.character", requireAction: true },
   { id: "topbar.companions", guideId: "topbar.companions", textKey: "onboarding.guide.topbar.companions", requireAction: true },
   { id: "topbar.achievements", guideId: "topbar.achievements", textKey: "onboarding.guide.topbar.achievements", requireAction: true },
+  // Enzyklopaedie (1.2.4, Chef-Auftrag 31.08.2026): steht ganz rechts in der Leiste, also auch
+  // hier als letzter Topbar-Schritt. Bewusst OHNE `requireAction` — alle anderen Schritte lassen
+  // den Spieler auf eine SEITE wechseln, der Guide bleibt dabei sichtbar. Das Fragezeichen oeffnet
+  // dagegen ein fast bildschirmgrosses Modal; ein Klick-Zwang haette den Guide darunter begraben.
+  // Der Spotlight zeigt trotzdem genau auf den Knopf, der Text erklaert ihn.
+  { id: "topbar.encyclopedia", guideId: "topbar.encyclopedia", textKey: "onboarding.guide.topbar.encyclopedia" },
 
   // ── Sidebar: Skills-Overview (Task #274 — von der Top Bar hierher verschoben, jetzt ganz oben
   // über Combat) + alle 13 Sammel-/Handwerks-Skills (Reihenfolge wie navigation.ts) ────────────

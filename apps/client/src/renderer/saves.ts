@@ -24,6 +24,35 @@ export async function writeSlot(id: number, json: string): Promise<void> {
   localStorage.setItem(lsKey(id), json);
 }
 
+/**
+ * codex:2026-08-31T22:04:00+02:00 — persistiert Quell- und Zielsave gemeinsam. Electron nutzt
+ * ein Crash-Recovery-Journal; der Web-Fallback stellt bei einem zweiten Schreibfehler beide
+ * vorherigen localStorage-Werte wieder her.
+ */
+export async function writeSlotPair(
+  firstId: number,
+  firstJson: string,
+  secondId: number,
+  secondJson: string,
+): Promise<void> {
+  if (firstId === secondId) throw new Error("Quell- und Zielslot müssen verschieden sein.");
+  if (bridge?.writePair) return bridge.writePair(firstId, firstJson, secondId, secondJson);
+  const firstKey = lsKey(firstId);
+  const secondKey = lsKey(secondId);
+  const beforeFirst = localStorage.getItem(firstKey);
+  const beforeSecond = localStorage.getItem(secondKey);
+  try {
+    localStorage.setItem(firstKey, firstJson);
+    localStorage.setItem(secondKey, secondJson);
+  } catch (error) {
+    if (beforeFirst === null) localStorage.removeItem(firstKey);
+    else localStorage.setItem(firstKey, beforeFirst);
+    if (beforeSecond === null) localStorage.removeItem(secondKey);
+    else localStorage.setItem(secondKey, beforeSecond);
+    throw error;
+  }
+}
+
 export async function removeSlot(id: number): Promise<void> {
   if (bridge) return bridge.remove(id);
   localStorage.removeItem(lsKey(id));

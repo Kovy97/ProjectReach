@@ -6,6 +6,7 @@ import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getPortrait } from "../portraits";
 import { ItemCell } from "../components/ItemCell";
+import { CrossSaveTransferModal } from "../components/CrossSaveTransferModal";
 import emblWaxseal from "../assets/ui/emblem_waxseal.svg";
 // Mira-Set 2026-08-03 (Gap-Sweep Priorität A) — löst das ✉-Zeichen ab (Nicht-Brief-Zeilen +
 // leeres Postfach); direkter Modul-Import wie emblWaxseal oben, gleiches Hausmuster dieser Datei.
@@ -14,8 +15,9 @@ import "../styles/mail.css";
 
 /**
  * Postfach/Mailbox-UI (WoW-artig, s. packages/engine/src/mail.ts): zeigt `state.mailbox`
- * (bislang höchstens EINE stehende `kind:"overflow"`-Mail, s. dortiges JSDoc — plus, Jagd-Paket
- * Task 4, gelegentliche `kind:"letter"`-Briefe von Brenna/dem Wächter) als anklickbare Liste
+ * (höchstens EINE stehende `kind:"overflow"`-Mail, Jagd-Paket-`letter` von Brenna/dem Wächter und
+ * seit SAVE 88 `transfer`-Fracht anderer lokaler Spielstände; codex:2026-08-31T23:22:00+02:00)
+ * als anklickbare Liste
  * links + geöffnete Nachricht mit Anhänge-Grid rechts. Bewusst generisch über MEHRERE Mails
  * gebaut (nicht auf "genau 1" hartkodiert) — die Engine reserviert sich das Recht auf weitere
  * `kind`s, ohne dass diese Seite dafür umgebaut werden müsste.
@@ -39,6 +41,9 @@ function mailSubject(mail: MailMessage, t: (k: string) => string): string {
   switch (mail.kind) {
     case "letter":
       return t("mail.subject.letter").replace("{name}", mailSenderName(mail.from, t));
+    // codex:2026-08-31T22:38:00+02:00 — Cross-Save-Fracht zeigt den echten Absendersave.
+    case "transfer":
+      return t("mail.subject.transfer").replace("{name}", mail.fromSaveName);
     case "overflow":
     default:
       return t("mail.subject.overflow");
@@ -67,7 +72,7 @@ function MailRow({
   return (
     <button
       type="button"
-      className={`mail-row${active ? " mail-row--active" : ""}${mail.kind === "letter" ? " mail-row--letter" : ""}`}
+      className={`mail-row${active ? " mail-row--active" : ""}${mail.kind === "letter" ? " mail-row--letter" : ""}${mail.kind === "transfer" ? " mail-row--transfer" : ""}`}
       onClick={onClick}
     >
       {/* Wachssiegel-Optik für Briefe (Jagd-Paket Task 4) statt des generischen Umschlags. */}
@@ -183,6 +188,7 @@ export function MailPage(): JSX.Element {
   const { t } = useI18n();
   const mailbox = state.mailbox ?? [];
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [transferOpen, setTransferOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const noticeTimerRef = useRef<number | null>(null);
 
@@ -197,62 +203,70 @@ export function MailPage(): JSX.Element {
     noticeTimerRef.current = window.setTimeout(() => setNotice(null), 4000);
   };
 
-  if (mailbox.length === 0) {
-    return (
-      <div className="mail-page">
-        <div className="mail-empty">
+  // codex:2026-08-31T22:38:00+02:00 — Versand ist auch bei leerem Postfach erreichbar; der alte
+  // Early-Return hätte das wichtigste neue Verb ausgerechnet im normalen Leerzustand versteckt.
+  return (
+    <div className="mail-page">
+      {notice && <div className="mail-notice" role="status">{notice}</div>}
+      <div className="mail-page-actions">
+        <div>
+          <span className="mail-list-title">{t("mail.list.title")}</span>
+          <span className="mail-page-actions-note">{t("mail.transfer.pageNote")}</span>
+        </div>
+        <button type="button" className="shop-citadel-btn" onClick={() => setTransferOpen(true)}>
+          {t("mail.transfer.open")}
+        </button>
+      </div>
+      {mailbox.length === 0 ? (
+        <div className="mail-empty shop-panel">
           <span className="mail-empty-icon" aria-hidden="true">
             <img src={iconMail} alt="" className="ui-icon" />
           </span>
           <p className="muted">{t("mail.empty")}</p>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mail-page">
-      {notice && <div className="mail-notice" role="status">{notice}</div>}
-      <div className="mail-layout">
-        <aside className="mail-list shop-panel">
-          <div className="mail-list-head">
-            <span className="mail-list-title">{t("mail.list.title")}</span>
-            <button
-              type="button"
-              className="shop-citadel-btn shop-citadel-btn--sm"
-              onClick={() => {
-                const res = collectAllMail(state, content);
-                if (res.partial) flashPartialNotice();
-              }}
-            >
-              {t("mail.collectAll")}
-            </button>
-          </div>
-          <div className="mail-list-rows">
-            {mailbox.map((mail) => (
-              <MailRow
-                key={mail.id}
-                mail={mail}
-                active={mail.id === selected?.id}
-                onClick={() => setSelectedId(mail.id)}
+      ) : (
+        <div className="mail-layout">
+          <aside className="mail-list shop-panel">
+            <div className="mail-list-head">
+              <span className="mail-list-title">{t("mail.list.title")}</span>
+              <button
+                type="button"
+                className="shop-citadel-btn shop-citadel-btn--sm"
+                onClick={() => {
+                  const res = collectAllMail(state, content);
+                  if (res.partial) flashPartialNotice();
+                }}
+              >
+                {t("mail.collectAll")}
+              </button>
+            </div>
+            <div className="mail-list-rows">
+              {mailbox.map((mail) => (
+                <MailRow
+                  key={mail.id}
+                  mail={mail}
+                  active={mail.id === selected?.id}
+                  onClick={() => setSelectedId(mail.id)}
+                  t={t}
+                />
+              ))}
+            </div>
+          </aside>
+          <section className="mail-detail">
+            {selected && (
+              <MailDetail
+                mail={selected}
                 t={t}
+                onCollect={() => {
+                  const res = collectMail(state, content, selected.id);
+                  if (res.partial) flashPartialNotice();
+                }}
               />
-            ))}
-          </div>
-        </aside>
-        <section className="mail-detail">
-          {selected && (
-            <MailDetail
-              mail={selected}
-              t={t}
-              onCollect={() => {
-                const res = collectMail(state, content, selected.id);
-                if (res.partial) flashPartialNotice();
-              }}
-            />
-          )}
-        </section>
-      </div>
+            )}
+          </section>
+        </div>
+      )}
+      {transferOpen && <CrossSaveTransferModal onClose={() => setTransferOpen(false)} />}
     </div>
   );
 }

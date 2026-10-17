@@ -1,4 +1,5 @@
 import type { ContentDB, EquipSlot, GameState, ItemDef, ItemId } from "@hearthforge/shared";
+import { TOOL_SLOTS } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { addInstance, addItem, freeSlots, getInstance, isFull, removeInstance, removeItem, hasInstanceRoom, usedCapacityUnits, effectiveCapacity } from "./inventory";
 
@@ -128,14 +129,14 @@ export function equipItem(state: GameState, content: ContentDB, itemId: ItemId):
   return { ok: true };
 }
 
-/**
- * Werkzeug-Slots in Vorzugsreihenfolge (erster freier wird belegt, sonst tool1 ersetzt).
- * Dritter Slot `tool3` (Spieler-Feedback „komisch, 2 ausgerüstet + 1 im Inventar", SAVE_VERSION 72
- * NACHTRAG): reines Ordnungs-Feature — `bestToolSpeed` (tools.ts) scannt ohnehin generisch das
- * GESAMTE Equipment-Record UND das Inventar, ein drittes ausgerüstetes Werkzeug wirkt also exakt
- * wie eines lose im Inventar (keine Tempo-Verdopplung).
+/*
+ * Werkzeug-Slots in Vorzugsreihenfolge (erster freier wird belegt, sonst tool1 ersetzt) — die Liste
+ * kommt seit SAVE 87 aus shared (`TOOL_SLOTS`), damit Engine, Sanitize-Whitelist, Tooltip und
+ * Ausrüstungspuppe nie auseinanderlaufen. Vierter Slot `tool4` (Spieler-Vorschlag, Chef-GO
+ * 31.08.2026): es gibt vier Werkzeug-Berufe, es gab aber nur drei Plätze. Reines Ordnungs-Feature —
+ * `bestToolSpeed` (tools.ts) scannt ohnehin das GESAMTE Equipment-Record UND das Inventar, ein
+ * zusätzliches ausgerüstetes Werkzeug wirkt exakt wie eines lose im Inventar (keine Tempo-Verdopplung).
  */
-const TOOL_SLOTS: EquipSlot[] = ["tool1", "tool2", "tool3"];
 
 /**
  * Rüstet ein Werkzeug in einen freien Werkzeug-Slot aus. Akzeptiert reine Werkzeuge (type "tool")

@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { content } from "@hearthforge/content";
 import { computeStats, meetsRequirements, spellFocusMult } from "@hearthforge/engine";
 import type { AffixDef, ContentDB, EquipBonus, EquipSlot, ItemDef, ItemInstance, LocalizedString } from "@hearthforge/shared";
-import { ATTRIBUTES, EQUIP_SLOT_LABELS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
+import { ATTRIBUTES, EQUIP_SLOT_LABELS, TOOL_SLOTS, WEAPON_TYPE_SPECIALTY, effectiveWeaponEffects, isStatusEffectType, enchantSlotsFor, getItemRarity, RARITY_LABEL, instanceDisplayName, instanceBonusDelta, DEFENSE_MITIGATION_K, DEFENSE_MITIGATION_MAX, consumableHeal, TEMPO_REDUCTION_CAP } from "@hearthforge/shared";
 import { isEnchantable, runeFitsHint, runeTargetLabel } from "../runeTargets";
 import { useGameStateMaybe } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -1872,11 +1872,12 @@ export function ItemTooltipOverlay(): JSX.Element | null {
       (!!eqInst && eqInst === payload.instance) || (!eqInst && !payload.instance && !!id && id === payload.itemId);
 
     if (item.type === "tool" && item.tool) {
-      // Werkzeuge (kein `item.slot`, TOOL_SLOTS füllt tool1/tool2/tool3 unabhängig vom Skill —
-      // equipment.ts) SKILL-GEFILTERT vergleichen: ein neuer Fischerstab vergleicht nur gegen einen
-      // bereits angelegten ANGELN-Stab, nie gegen eine Axt im anderen Werkzeug-Slot.
-      const toolSlots: EquipSlot[] = ["tool1", "tool2", "tool3"];
-      const candidates = toolSlots
+      // Werkzeuge (kein `item.slot`, `equipTool` fuellt die Werkzeug-Slots unabhaengig vom Skill)
+      // SKILL-GEFILTERT vergleichen: ein neuer Fischerstab vergleicht nur gegen einen bereits
+      // angelegten ANGELN-Stab, nie gegen eine Axt im anderen Werkzeug-Slot. Die Slot-Liste kommt
+      // aus shared (seit SAVE 87 vier Stueck) — hier stand sie frueher als eigenes Literal, das
+      // beim Anbau des vierten Slots stillschweigend veraltet waere.
+      const candidates = (TOOL_SLOTS as readonly EquipSlot[])
         .map((slot) => ({ slot, id: eq[slot], inst: insts?.[slot] }))
         .filter((c): c is { slot: EquipSlot; id: string; inst: ItemInstance | undefined } =>
           !!c.id && content.items[c.id]?.tool?.skill === item.tool!.skill,
@@ -1892,7 +1893,7 @@ export function ItemTooltipOverlay(): JSX.Element | null {
           hasCompareTarget = true;
           compareItem = content.items[worst.id];
           compareInst = worst.inst;
-        } else if (!eq.tool1 || !eq.tool2 || !eq.tool3) {
+        } else if ((TOOL_SLOTS as readonly EquipSlot[]).some((slot) => !eq[slot])) {
           // Kein Werkzeug dieses Skills angelegt, aber mindestens ein Werkzeug-Slot ist frei.
           slotFreeHint = true;
         }

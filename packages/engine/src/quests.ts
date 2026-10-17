@@ -59,6 +59,10 @@ function rawProgress(state: GameState, _content: ContentDB, obj: QuestObjective)
     case "craft_items":
       // target gesetzt = bestimmte Item-ID, leer = beliebiges geschmiedetes Item.
       return obj.target ? (state.stats.craftedById[obj.target] ?? 0) : state.stats.itemsCrafted;
+    case "dungeons_cleared":
+      // Abgeschlossene Durchgänge des Ziel-Dungeons. Monoton (combat.ts zählt beim Räumen hoch),
+      // also derselbe „lebenslang"-Charakter wie alle anderen Zähler hier.
+      return obj.target ? (state.dungeonsCleared[obj.target] ?? 0) : 0;
     case "reach_paragon_floor":
       // Paragonturm-Etagen-Höchststand (Aschechronik Kapitel 21, ceo-run-2026-07-13):
       // `state.paragon.best` = höchste jemals ABGESCHLOSSENE Etage, strikt monoton — der

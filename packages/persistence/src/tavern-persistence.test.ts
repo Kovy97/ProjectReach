@@ -3,9 +3,21 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { ContentDB, GameState } from "@hearthforge/shared";
-import { CAMP_TAVERN_ID, SAVE_VERSION, TAVERN_SEATS, defaultHuntTraps, defaultTavernState, emptyEquipKit } from "@hearthforge/shared";
+import { TOOL_SLOTS, CAMP_TAVERN_ID, SAVE_VERSION, TAVERN_SEATS, defaultHuntTraps, defaultTavernState, emptyEquipKit } from "@hearthforge/shared";
 import { createGame, tavernRefresh, acceptTavernTask, xpForLevel, syncProgression } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
+
+/**
+ * Der Kit-0-Spiegel gegen die getragene Ausruestung — OHNE die Werkzeug-Slots. Seit SAVE 87
+ * gehoeren Werkzeuge keinem Kit mehr (Chef-Entscheid 31.08.2026): sie haengen am Charakter und
+ * bleiben beim Wechsel liegen, der Spiegel traegt dort also immer null.
+ */
+function ohneWerkzeuge<T extends object>(equipment: T): T {
+  const kopie = { ...equipment } as T;
+  for (const slot of TOOL_SLOTS) (kopie as Record<string, unknown>)[slot] = null;
+  return kopie;
+}
+
 
 /**
  * Taverne (SAVE_VERSION 84, design/1.2.0-alive/taverne-spec-technik.md §2): Migration v83 → v84
@@ -86,8 +98,12 @@ describe("Migration v83 → v84 (Taverne)", () => {
     erwartet.state.stats.huntCatches = 0;
     // v85-Nachtrag (Ausrüstungs-Kits, Chef-Entscheid 28.08.2026): Vorlagen `[null, null, null]` → Kit 0 =
     // getragene Ausrüstung, Kits 1/2 leer, Kit 0 aktiv; `equipLoadouts` verschwindet aus dem State.
+    // v87 (vierter Werkzeug-Slot): migrateState baut den Equipment-Record generisch aus EQUIP_SLOTS
+    // neu — `tool4` kommt als null dazu. VOR dem Kit-Spiegel, der aus diesem Record entsteht.
+    erwartet.state.character.equipment.tool4 = null;
     erwartet.state.equipKits = [
-      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      // v87: der Spiegel traegt keine Werkzeuge mehr (sie gehoeren keinem Kit).
+      { equipment: ohneWerkzeuge({ ...erwartet.state.character.equipment }), equippedInstances: { ...erwartet.state.character.equippedInstances } },
       emptyEquipKit(),
       emptyEquipKit(),
     ];
@@ -316,8 +332,12 @@ describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
     erwartet.state.stats.huntCatches = 0;
     // v85-Nachtrag (Ausrüstungs-Kits, Chef-Entscheid 28.08.2026): Vorlagen `[null, null, null]` → Kit 0 =
     // getragene Ausrüstung, Kits 1/2 leer, Kit 0 aktiv; `equipLoadouts` verschwindet aus dem State.
+    // v87 (vierter Werkzeug-Slot): migrateState baut den Equipment-Record generisch aus EQUIP_SLOTS
+    // neu — `tool4` kommt als null dazu. VOR dem Kit-Spiegel, der aus diesem Record entsteht.
+    erwartet.state.character.equipment.tool4 = null;
     erwartet.state.equipKits = [
-      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      // v87: der Spiegel traegt keine Werkzeuge mehr (sie gehoeren keinem Kit).
+      { equipment: ohneWerkzeuge({ ...erwartet.state.character.equipment }), equippedInstances: { ...erwartet.state.character.equippedInstances } },
       emptyEquipKit(),
       emptyEquipKit(),
     ];

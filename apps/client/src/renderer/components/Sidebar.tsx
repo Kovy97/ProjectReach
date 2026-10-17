@@ -116,93 +116,61 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
     };
   }, []);
 
-  // Chef-Entscheid 24.08.: Beschriftungen bleiben EINZEILIG und fuellen die verfuegbare
-  // Breite aus — die Schrift schrumpft, wenn das Wort sonst nicht passt, und WAECHST, wenn
-  // Platz frei ist (Boden 9px, Decke 19px bzw. 44 % der Knopfhoehe, s. sidebar.css).
-  //
-  // Das Wachsen kam als zweiter Chef-Fund dazu: "wir haben noch sehr viel Platz nach links und
-  // rechts, aber trotzdem ist die Schrift unnoetig klein skaliert". Gemessen stimmte das —
-  // JEDE Beschriftung stand am 9px-Boden, obwohl der Text nur 36-85 von 106 verfuegbaren
-  // Pixeln brauchte. Ursache: die CSS-Groesse haengt an `--sb-vscale`, also an der HOEHEN-
-  // Stauchung der Leiste (bei 1080p 0,72), nicht an der freien Breite. Eine Anpassung, die
-  // nur schrumpfen kann, konnte das nie ausgleichen.
-  // Anlass war ein Chef-Fund: bei schmal gezogener Sidebar stand da "WOODCUTTI" / "NG", und die
-  // Level-Anzeige legte sich zusaetzlich ueber die zweite Zeile.
-  //
-  // Warum in JS und nicht in CSS: die noetige Groesse haengt an der TEXTLAENGE. CSS kann Text
-  // nicht nach seinem eigenen Inhalt skalieren, also wird je Beschriftung gemessen.
-  //
-  // Zwei Feinheiten, die beide schon einmal falsch waren:
-  //  - Erst ALLE Faktoren zuruecksetzen, dann messen. Sonst misst man gegen die letzte
-  //    Verkleinerung und der Faktor summiert sich bei jedem Ziehen weiter herunter.
-  //  - Gemessen wird per Range, nicht ueber scrollWidth: `.sb-skill-name` ist ein zentrierter
-  //    Flex-Container, dessen Inhalt bei Ueberlauf auf BEIDEN Seiten heraussteht — scrollWidth
-  //    erfasst davon nur eine Seite und meldet zu wenig.
+  // codex:2026-09-10T11:18:00+02:00 — Zentrierte Spielbeschriftung: 19px Ziel, echte 14px-Untergrenze.
+  // Reicht der reale Textslot nicht, dürfen Namen umbrechen statt alle Einträge auf Mikroschrift zu setzen.
   const fitFrame = useRef(0);
   const fitNames = (): void => {
     const el = asideRef.current;
     if (!el) return;
     cancelAnimationFrame(fitFrame.current);
     fitFrame.current = requestAnimationFrame(() => {
-      const namen = Array.from(el.querySelectorAll<HTMLElement>(".sb-skill-name"));
-      for (const n of namen) n.style.removeProperty("--sb-name-fit");
-      const bereich = document.createRange();
-
-      // Erst messen, dann EINE gemeinsame Groesse bestimmen. Ein erster Anlauf hat je
-      // Beschriftung einzeln skaliert — dabei stand "MINING" doppelt so gross da wie
-      // "JEWELCRAFTING", und die Liste sah ungepflegt aus. In einer Navigationsleiste zaehlt
-      // Einheitlichkeit mehr als der letzte Punkt Schriftgroesse.
-      let faktor = Infinity;
-      let obergrenze = 19;
-      const gemessen: { n: HTMLElement; basis: number }[] = [];
-
-      for (const n of namen) {
-        const knopf = n.parentElement;
-        const stil = getComputedStyle(n);
-        const basis = parseFloat(stil.fontSize) || 9;
-        bereich.selectNodeContents(n);
-        const noetig = bereich.getBoundingClientRect().width;
-        if (noetig <= 0 || !knopf) continue;
-
-        // Der freie Platz wird aus der ECHTEN Geometrie bestimmt, nicht aus dem CSS-Innenabstand:
-        // Eintraege ohne Level-Anzeige (Fertigkeits-Uebersicht, New Haven, Verzauberung,
-        // Statistik) reservierten sonst weiter eine Abzeichen-Zone, die es gar nicht gibt —
-        // gemessen 39 px verschenkte Breite je Eintrag, ausgerechnet bei den laengsten Namen.
-        const kb = knopf.getBoundingClientRect();
-        const symbol = knopf.querySelector<HTMLElement>(".sb-skill-icon-wrap");
-        const level = knopf.querySelector<HTMLElement>(".sb-skill-level");
-        const links = symbol ? symbol.getBoundingClientRect().right - kb.left : 0;
-        const rechts =
-          level && getComputedStyle(level).display !== "none"
-            ? kb.right - level.getBoundingClientRect().left
-            : 0;
-        const luft = 6; // Mindestabstand zu Symbol und Abzeichen
-        const platz = kb.width - links - rechts - 2 * luft;
-        if (platz <= 0) continue;
-
-        faktor = Math.min(faktor, platz / noetig);
-        // Nach oben begrenzt die Zeilenhoehe, nicht die Breite: die Schrift darf den Knopf
-        // nicht sprengen. 44 % der Knopfhoehe laesst ueber und unter der Versalhoehe Luft.
-        obergrenze = Math.min(obergrenze, kb.height * 0.44);
-        gemessen.push({ n, basis });
+      el.classList.remove("sb-wrap-labels");
+      el.style.setProperty("--chrome-sidebar-name-size", "19px");
+      const range = document.createRange();
+      let size = 19;
+      for (const name of el.querySelectorAll<HTMLElement>(".sb-skill-name")) {
+        if (name.clientWidth <= 0) continue;
+        range.selectNodeContents(name);
+        const textWidth = range.getBoundingClientRect().width;
+        if (textWidth > 0) size = Math.min(size, 19 * Math.max(0, name.clientWidth - 1) / textWidth);
       }
-
-      if (gemessen.length > 0 && Number.isFinite(faktor)) {
-        for (const { n, basis } of gemessen) {
-          const gewuenscht = Math.max(9, Math.min(obergrenze, basis * faktor));
-          const f = gewuenscht / basis;
-          if (Math.abs(f - 1) > 0.01) n.style.setProperty("--sb-name-fit", String(f));
-        }
-      }
-      bereich.detach();
+      // codex:2026-09-10T11:18:00+02:00 — Gegen ungebremstes Schrumpfen bei langen RU-Namen;
+      // Messung immer einzeilig, erst danach den nötigen Umbruchzustand anwenden.
+      el.classList.toggle("sb-wrap-labels", size < 14);
+      el.style.setProperty("--chrome-sidebar-name-size", `${Math.max(14, Math.floor(size * 10) / 10)}px`);
+      range.detach();
+      checkNavScrollable();
     });
   };
+
+  // codex:2026-09-10T10:23:09+02:00 — Width, font loading/player font choice and drawer
+  // height changes invalidate geometry even without a React render. Cancel pending work on exit.
+  useEffect(() => {
+    const el = asideRef.current;
+    if (!el) return;
+    const resize = new ResizeObserver(fitNames);
+    resize.observe(el);
+    if (navRef.current) resize.observe(navRef.current);
+    const fonts = new MutationObserver(fitNames);
+    fonts.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style", "lang", "data-font"] });
+    document.fonts.addEventListener("loadingdone", fitNames);
+    fitNames();
+    return () => {
+      resize.disconnect();
+      fonts.disconnect();
+      document.fonts.removeEventListener("loadingdone", fitNames);
+      cancelAnimationFrame(fitFrame.current);
+    };
+  }, []);
 
   const applySidebarWidth = (px: number): void => {
     const el = asideRef.current;
     if (!el) return;
     el.style.width = `${px}px`;
     el.style.setProperty("--sb-scale", String(px / SIDEBAR_WIDTH_DEFAULT));
+    // codex:2026-09-10T10:23:09+02:00 — Keep the keyboard separator value in sync without
+    // rerendering the whole navigation during pointer dragging.
+    handleRef.current?.setAttribute("aria-valuenow", String(px));
     fitNames();
   };
 
@@ -253,6 +221,22 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
     setSidebarWidth(SIDEBAR_WIDTH_DEFAULT);
   };
 
+  // codex:2026-09-10T10:23:09+02:00 — Arrow keys resize, Home/End select the supported bounds.
+  const handleResizeKey = (e: React.KeyboardEvent<HTMLDivElement>): void => {
+    const widths: Record<string, number> = {
+      ArrowLeft: widthRef.current - (e.shiftKey ? 32 : 8),
+      ArrowRight: widthRef.current + (e.shiftKey ? 32 : 8),
+      Home: SIDEBAR_WIDTH_MIN,
+      End: SIDEBAR_WIDTH_MAX,
+    };
+    if (!(e.key in widths)) return;
+    e.preventDefault();
+    const next = Math.max(SIDEBAR_WIDTH_MIN, Math.min(SIDEBAR_WIDTH_MAX, widths[e.key] ?? widthRef.current));
+    widthRef.current = next;
+    applySidebarWidth(next);
+    setSidebarWidth(next);
+  };
+
   return (
     <aside className="sidebar" ref={asideRef}>
 
@@ -282,13 +266,16 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
               <div key={page.id} className="sb-combat-section">
                 <div className="sb-combat-btn-row">
                   <button
-                    className={`sb-skill-btn ds-button${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}`}
+                    /* codex:2026-09-10T10:23:09+02:00 — Grid level column and accessible
+                       selection/running labels also survive icon-only navigation. */
+                    className={`sb-skill-btn sb-skill-btn--has-level ds-button${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}`}
                     onClick={() => onNavigate(page.id)}
+                    aria-current={isActive ? "page" : undefined}
+                    aria-label={`${t(page.label)}. ${t("sidebar.combatLevel")} ${combatLvl}${isRunning ? `. ${t("sidebar.activityRunning").replace("{skill}", t(page.label))}` : ""}`}
                     data-guide-id={`sidebar.${page.id}`}
-                    /* Task #291: Icon-Rail-Kollaps blendet den Namen aus — der title-Tooltip
-                       (bestehender Label-String, keine neuen i18n-Keys) übernimmt dann die
-                       Namensanzeige beim Hover. */
-                    title={t(page.label)}
+                    /* codex:2026-09-10T10:23:09+02:00 — Compact-mode hover retains the
+                       full destination and level without reserving another visual column. */
+                    title={`${t(page.label)} · ${t("sidebar.combatLevel")} ${combatLvl}`}
                   >
                     {isRunning && <RunningPip label={t("sidebar.activityRunning").replace("{skill}", t(page.label))} />}
                     <span className="sb-skill-icon-wrap">
@@ -303,8 +290,12 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
                   <button
                     className={`sb-combat-toggle ds-button${combatOpen ? " open" : ""}`}
                     onClick={() => setCombatOpen((o) => !o)}
-                    aria-label={combatOpen ? "Collapse combat skills" : "Expand combat skills"}
+                    /* codex:2026-09-10T10:23:09+02:00 — Localized expansion remains a
+                       separate keyboard/pointer target, including the compact rail. */
+                    aria-label={t(combatOpen ? "sidebar.collapseCombatSkills" : "sidebar.expandCombatSkills")}
+                    title={t(combatOpen ? "sidebar.collapseCombatSkills" : "sidebar.expandCombatSkills")}
                     aria-expanded={combatOpen}
+                    aria-controls={combatOpen ? "sidebar-combat-skills" : undefined}
                   >
                     <span className="sb-combat-toggle-chevron" aria-hidden="true">
                       {combatOpen ? "▾" : "▸"}
@@ -326,11 +317,15 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
           return (
             <button
               key={page.id}
-              className={`sb-skill-btn ds-button${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}`}
+              /* codex:2026-09-10T10:23:09+02:00 — Level-less destinations reclaim their
+                 entire name slot; accessible labels retain levels/activity in compact mode. */
+              className={`sb-skill-btn ds-button${skillLevel !== null ? " sb-skill-btn--has-level" : ""}${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}`}
               onClick={() => onNavigate(page.id)}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={`${t(page.label)}${skillLevel !== null ? `. ${t("sidebar.level")} ${skillLevel}/99` : ""}${isRunning ? `. ${t("sidebar.activityRunning").replace("{skill}", t(page.label))}` : ""}`}
               data-guide-id={`sidebar.${page.id}`}
-              /* Task #291: title-Tooltip für den Icon-Rail-Kollaps, s. Kommentar oben. */
-              title={t(page.label)}
+              /* codex:2026-09-10T10:23:09+02:00 — Levels stay available on hover below 200px. */
+              title={`${t(page.label)}${skillLevel !== null ? ` · ${t("sidebar.level")} ${skillLevel}/99` : ""}`}
             >
               {isRunning && <RunningPip label={t("sidebar.activityRunning").replace("{skill}", t(page.label))} />}
 
@@ -360,7 +355,8 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
           am Footer-Button, s. SidebarFooter unten. Perf-Welle Block A: `mailItemCount` liefert
           bereits ein Primitive (number) — SidebarFooter holt sich das jetzt selbst per
           `useGameSelector` statt es hier (bei jedem Sidebar-Render) vorzuberechnen. */}
-      <SidebarFooter onNavigate={onNavigate} />
+      {/* codex:2026-09-10T10:23:09+02:00 — Footer page destinations share aria-current. */}
+      <SidebarFooter onNavigate={onNavigate} activePageId={activePageId} />
 
       {/* Task #291 (Chef-Feature): Drag-Handle am rechten Rand — Ziehen ändert die Breite
           stufenlos (64–420px), Doppelklick resettet auf den Default (240px). */}
@@ -369,8 +365,16 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
         className="sb-resize-handle"
         onMouseDown={handleResizeStart}
         onDoubleClick={handleResizeReset}
+        /* codex:2026-09-10T10:23:09+02:00 — Expose the existing resize range to keyboard/AT. */
+        onKeyDown={handleResizeKey}
+        tabIndex={0}
         role="separator"
         aria-orientation="vertical"
+        aria-label={t("sidebar.resizeLabel")}
+        aria-valuemin={SIDEBAR_WIDTH_MIN}
+        aria-valuemax={SIDEBAR_WIDTH_MAX}
+        aria-valuenow={widthRef.current}
+        title={t("combat.resizeHint")}
         /* Versions-Tour-Ziel (Chef-Auftrag 2026-07-21, FeatureTourGuide.tsx): eigener
            "feature." Namespace, kollidiert nicht mit dem Haupt-Guide (topbar./sidebar.). */
         data-guide-id="feature.sidebarResize"
@@ -393,7 +397,8 @@ function CombatSubskillsPanel(): JSX.Element {
   const { tr } = useI18n();
   const stats = computeStats(state, content);
   return (
-    <div className="sb-combat-subskills">
+    // codex:2026-09-10T10:23:09+02:00 — Stable control target for the combat expander.
+    <div className="sb-combat-subskills" id="sidebar-combat-skills">
       {COMBAT_SKILL_IDS.map((id) => {
         const skill = content.skills[id];
         const xp = state.skills[id]?.xp ?? 0;
@@ -406,7 +411,9 @@ function CombatSubskillsPanel(): JSX.Element {
           ? ((xp - xpThis) / (xpNext - xpThis)) * 100
           : 100;
         return (
-          <div key={id} className="sb-combat-row">
+          // codex:2026-09-10T10:23:09+02:00 — Compact rows retain translated names/levels
+          // on focus/hover, including the existing equipment boost distinction.
+          <div key={id} className="sb-combat-row" tabIndex={0} title={`${skill ? tr(skill.name) : id}: ${lvl}/99${boost > 0 ? ` (${lvl + boost})` : ""}`} aria-label={`${skill ? tr(skill.name) : id}: ${lvl}/99${boost > 0 ? ` (${lvl + boost})` : ""}`}>
             <div className="sb-combat-icon-wrap">
               {icon
                 ? <img loading="lazy" decoding="async" src={icon} alt="" className="sb-combat-icon-img" />
@@ -436,24 +443,29 @@ function CombatSubskillsPanel(): JSX.Element {
 }
 
 /**
- * Dezenter Glut-Punkt für den "läuft gerade"-Indikator (Spieler-Feedback 0.2.2 Punkt 1) — reines
- * CSS-Glühen (`.sb-running-pip`, sidebar.css), der Tooltip-Text kommt vom Aufrufer. `focusable=false`
+ * codex:2026-09-10T10:23:09+02:00 — Static play marker for the running activity; the label
+ * comes from the caller and also appears in the parent button's accessible name. `focusable=false`
  * (Muster `zone-card-elite-badge`, CombatPage.tsx): sitzt bereits INNERHALB eines fokussierbaren
  * `<button>`, ein eigener Tab-Stopp wäre doppelt gemoppelt.
  */
 function RunningPip({ label }: { label: string }): JSX.Element {
   return (
     <HoverTip as="span" focusable={false} className="sb-running-pip" content={<span className="ct-tip-desc">{label}</span>}>
-      {null}
+      {/* codex:2026-09-10T10:23:09+02:00 — A static play shape distinguishes activity from
+          the selected-page edge without a permanent glowing/pulsing decoration. */}
+      <span aria-hidden="true">▶</span>
     </HoverTip>
   );
 }
 
 interface SidebarFooterProps {
   onNavigate: (id: string) => void;
+  // codex:2026-09-10T10:23:09+02:00 — Match footer destinations to the current page.
+  activePageId: string;
 }
 
-function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
+// codex:2026-09-10T10:23:09+02:00 — Current-page information is presentation only.
+function SidebarFooter({ onNavigate, activePageId }: SidebarFooterProps): JSX.Element {
   const { saveGame, returnToMenu, saveTick } = useGameControl();
   const { t } = useI18n();
   // Wartende Einheiten im Postfach (Item-qty + Instanzen) — treibt den dezenten Zahlen-Badge am
@@ -463,8 +475,8 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
   const mailCount = useGameSelector((s) => mailItemCount(s));
   const [saved, setSaved] = useState(false);
   const [quitConfirmOpen, setQuitConfirmOpen] = useState(false);
-  // codex:2026-08-01T10:42:00+02:00 — Hover/Fokus öffnet den Drawer rein per CSS; ein Klick auf
-  // die Lasche kann ihn zusätzlich für Touch-/Tastaturnutzung festhalten.
+  // codex:2026-09-10T10:23:09+02:00 — Only activating the tab toggles the system drawer;
+  // hover/focus alone never exposes destructive actions.
   const [drawerPinned, setDrawerPinned] = useState(false);
 
   // Autosave-Vertrauens-Häkchen (Chef-GO): `saveTick` steigt sowohl beim periodischen Autosave
@@ -497,6 +509,9 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
         className="sb-footer-drawer-tab"
         aria-expanded={drawerPinned}
         aria-controls="sidebar-system-actions"
+        /* codex:2026-09-10T10:23:09+02:00 — The rail hides text, never its accessible name. */
+        aria-label={t("sidebar.drawerMenu")}
+        title={t("sidebar.drawerMenu")}
         onClick={() => setDrawerPinned((open) => !open)}
       >
         <span className="sb-footer-drawer-label">{t("sidebar.drawerMenu")}</span>
@@ -510,12 +525,14 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
           Chef-GO Autosave-Häkchen: ".just-saved" spielt einen kurzen Fade-out der Label-Farbe/
           -Opazität ab (sidebar.css), synchron zum 1,5s-Fenster oben — sowohl beim manuellen Klick
           als auch beim periodischen Autosave (beide teilen sich `saveTick`, s. useEffect oben). */}
-      <button className={`sb-footer-save${saved ? " just-saved" : ""}`} onClick={() => void saveGame()} title={saved ? t("sidebar.saved") : t("sidebar.save")}>
+      {/* codex:2026-09-10T10:23:09+02:00 — All icon-only system actions retain their labels. */}
+      <button className={`sb-footer-save${saved ? " just-saved" : ""}`} onClick={() => void saveGame()} title={saved ? t("sidebar.saved") : t("sidebar.save")} aria-label={saved ? t("sidebar.saved") : t("sidebar.save")}>
         <img loading="lazy" decoding="async" src={emblWaxseal} alt="" className="sb-footer-emblem-img" />
         <span className="sb-footer-label">{saved ? t("sidebar.saved") : t("sidebar.save")}</span>
       </button>
       {/* emblem_compass.svg (28×28 px, transparent, gold) */}
-      <button className="sb-footer-menu" onClick={() => void returnToMenu()} title={t("sidebar.mainMenu")}>
+      {/* codex:2026-09-10T10:23:09+02:00 — Accessible label in the narrow rail. */}
+      <button className="sb-footer-menu" onClick={() => void returnToMenu()} title={t("sidebar.mainMenu")} aria-label={t("sidebar.mainMenu")}>
         <img loading="lazy" decoding="async" src={emblCompass} alt="" className="sb-footer-emblem-img" />
         <span className="sb-footer-label">{t("sidebar.mainMenu")}</span>
       </button>
@@ -524,7 +541,8 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
           Seit 2026-08-03 echtes Icon aus Miras Micro-Set statt des ✉-Emoji-Fallbacks — gleiche
           28×28-Emblem-Box wie die Nachbarn. Der dezente Zahlen-Badge zeigt `mailItemCount` nur,
           wenn Post wartet (> 0) — wie ungelesene Post im Postfach. */}
-      <button className="sb-footer-mail" onClick={() => onNavigate("mail")} data-guide-id="sidebar.mail" title={t("nav.mail")}>
+      {/* codex:2026-09-10T10:23:09+02:00 — Keep selection/mail count available to assistive tech. */}
+      <button className="sb-footer-mail" onClick={() => onNavigate("mail")} data-guide-id="sidebar.mail" title={t("nav.mail")} aria-label={`${t("nav.mail")}${mailCount > 0 ? ` (${mailCount})` : ""}`} aria-current={activePageId === "mail" ? "page" : undefined}>
         <img loading="lazy" decoding="async" src={iconSysMail} alt="" className="sb-footer-emblem-img" />
         <span className="sb-footer-label">{t("nav.mail")}</span>
         {mailCount > 0 && (
@@ -540,12 +558,16 @@ function SidebarFooter({ onNavigate }: SidebarFooterProps): JSX.Element {
         onClick={() => onNavigate("options")}
         data-guide-id="sidebar.options"
         title={t("nav.options")}
+        /* codex:2026-09-10T10:23:09+02:00 — Accessible rail label and selected destination. */
+        aria-label={t("nav.options")}
+        aria-current={activePageId === "options" ? "page" : undefined}
       >
         <img loading="lazy" decoding="async" src={emblGear} alt="" className="sb-footer-emblem-img" />
         <span className="sb-footer-label">{t("nav.options")}</span>
       </button>
       {/* Chef-Wunsch: „Spiel verlassen" — beendet die App komplett (Electron-IPC via preload). */}
-      <button className="sb-footer-quit" onClick={() => setQuitConfirmOpen(true)} title={t("sidebar.quitGame")}>
+      {/* codex:2026-09-10T10:23:09+02:00 — Accessible label in the narrow rail. */}
+      <button className="sb-footer-quit" onClick={() => setQuitConfirmOpen(true)} title={t("sidebar.quitGame")} aria-label={t("sidebar.quitGame")}>
         <img loading="lazy" decoding="async" src={emblSkull} alt="" className="sb-footer-emblem-img" />
         <span className="sb-footer-label">{t("sidebar.quitGame")}</span>
       </button>

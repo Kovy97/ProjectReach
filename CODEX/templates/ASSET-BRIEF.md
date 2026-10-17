@@ -1,7 +1,9 @@
-# Asset-Brief — Chef/Claude → Codex
+# Asset-Brief — Chef / Codex-Lead → Design und QA
+
+<!-- codex:2026-09-09T20:12:15+02:00 -->
 
 > **Zweck:** Verbindliche Übergabe für einzelne Assets oder ganze Batches.  
-> **Rollen:** Chef oder Claude liefern Produktziel, Ideen und feste Leitplanken. Codex verantwortet Art Direction, Produktionsauflösung, Generierung und Asset-QA. Der Chef behält die finale Produktentscheidung; Claude entscheidet im übertragenen CEO-Rahmen.  
+> **Rollen:** Der Chef liefert Produktziel und feste Leitplanken. Codex-Lead konkretisiert den erteilten Auftrag. Art-Director/Mira verantwortet Designauflösung und Produktion; die technische Gegenprüfung übernimmt eine getrennte Fachrolle, wenn verfügbar. Der Chef behält die finale Produktentscheidung. Integration nur bei vorhandener Freigabe.
 > **Benutzung:** Dokument kopieren nach `CODEX/work/YYYY-MM-DD-auftrag/BRIEF.md`. Keine Zeile löschen; Unzutreffendes mit `entfällt` markieren.
 >
 > **Keine Zugangshürde:** Ein freier Chat-Auftrag, eine Skizze oder eine Bildreferenz genügt. Codex überträgt vorhandene Angaben selbst in die Vorlage, markiert Annahmen und fragt nur nach, wenn eine fehlende echte Produktentscheidung das Ergebnis wesentlich verändern würde.
@@ -12,16 +14,16 @@
 
 # Teil A – Auftraggeber-Briefing
 
-**Wird von Chef oder Claude ausgefüllt – oder von Codex aus ihrer freien Anweisung übertragen.** Kurze, eindeutige Antworten reichen. Alles, was nicht ausdrücklich fixiert wird, darf Codex als Designer sinnvoll entscheiden.
+**Wird vom Chef ausgefüllt oder von Codex-Lead aus dessen freiem Auftrag übertragen.** Kurze, eindeutige Antworten reichen. Gestalterische Details darf Codex im erteilten Umfang entscheiden; Produkt-/Kanon-/Scopeentscheidungen bleiben beim Chef.
 
 ## A1. Auftrag
 
 | Feld | Entscheidung |
 |---|---|
 | Arbeitstitel | `[kurzer eindeutiger Name]` |
-| Auftraggeber | `[Chef / Claude / gemeinsame Entscheidung]` |
+| Auftraggeber | `[Chef / Codex-Lead im benannten Chefauftrag]` |
 | Projekt | `[Grim Reach / Kreidestadt / anderes]` |
-| Zielversion oder Meilenstein | `[z. B. Grim Reach 0.3.0]` |
+| Zielversion oder Meilenstein | `[aktuelle freigegebene Zielversion / kein Releasebezug]` |
 | Priorität | `[P0 Release-Gate / P1 wichtig / P2 normal / P3 optional]` |
 | Termin | `[Datum + Uhrzeit / kein fester Termin]` |
 | Status | `[Entwurf / zur Produktion freigegeben / Ersatz bestehender Assets]` |
@@ -37,7 +39,7 @@
 **Was muss der Spieler innerhalb der ersten Sekunde erkennen oder fühlen?**  
 `[z. B. Gebäudefunktion, Seltenheit, Bedrohung, Belohnung, Fraktion, Upgrade]`
 
-**Woran erkennt Claude, dass der Auftrag erfolgreich ist?**  
+**Woran erkennen Chef und prüfende Fachrolle, dass der Auftrag erfolgreich ist?**
 `[messbare oder sichtbare Abnahmekriterien]`
 
 ## A3. Lieferumfang
@@ -61,6 +63,7 @@ Nur Dinge eintragen, die Codex **nicht** gestalterisch ändern darf.
 | Stilbindung | `[bestehender Look oder konkrete Referenz]` |
 | Farb-/Fraktionscode | `[fixe Farben/Symbole oder frei]` |
 | Perspektive / Ansicht | `[fix oder Codex entscheidet]` |
+| Blick-/Flugrichtung | `[am tatsächlichen Consumer und Bestandsnachbarn prüfen; Spieler/Pets/Gegner nicht pauschal gleichrichten]` |
 | Text im Bild | `[kein Text / exakter Text / lokalisierbar]` |
 | Gewalt-/Horrorgrenze | `[zulässig / vermeiden]` |
 | Bestehendes Asset | `[behalten / ersetzen / weiterentwickeln]` |
@@ -87,7 +90,7 @@ Nur Dinge eintragen, die Codex **nicht** gestalterisch ändern darf.
 | Technische Quelle | `[Loader, README, Content-ID-Liste]` |  |  |
 
 **Referenzrang bei Widerspruch:**  
-`[welche Quelle gewinnt? Standard: aktuelle Chef-Entscheidung > bindendes Design-Doc > bestehende Art Direction > ältere Assets]`
+`[Quellenrang nach AGENTS/RULES. Bei UI-Assets zuerst Zielbestand prüfen; widersprechende alte Brief-/Promptvorgaben melden, nicht automatisch übernehmen. Eine ausdrückliche aktuelle Chef-Stiländerung bleibt maßgeblich.]`
 
 ## A7. Technische Leitplanken
 
@@ -120,7 +123,7 @@ Der Auftraggeber trägt bekannte Werte ein; bei freien Anweisungen überträgt C
 
 ## A9. Abnahme und Entscheidungsgrenzen
 
-**Muss Chef oder Claude vor der finalen Generierung ein Konzept freigeben?**  
+**Muss der Chef vor der finalen Generierung ein Konzept freigeben?**
 `[ja/nein]`
 
 **Darf Codex technisch notwendige Korrekturen ohne Rückfrage durchführen?**  
@@ -136,7 +139,7 @@ Der Auftraggeber trägt bekannte Werte ein; bei freien Anweisungen überträgt C
 
 # Teil B – Designauflösung
 
-**Wird von Codex vor der Produktion ausgefüllt.** Codex löst das CEO-Briefing fachlich auf, ohne die Produktentscheidungen umzudeuten.
+**Wird von Art-Director/Mira vor der Produktion ausgefüllt.** Codex löst den Auftrag fachlich auf, ohne die Produktentscheidungen umzudeuten.
 
 ## B1. Verständnis des Auftrags
 
@@ -226,15 +229,16 @@ Variantennummern.
 
 ## B5. Prüfplan vor Produktion
 
-- [ ] CEO-Pflichtfelder ausreichend
+- [ ] Auftrag und Pflichtfelder ausreichend
 - [ ] `design/asset-anforderungen.md` vollständig gelesen
 - [ ] relevante Design-/Lore-Dokumente gelesen
 - [ ] Ziel-Loader und Namensschema geprüft
 - [ ] exakte Content-ID und finaler Dateiname vor Generierung bestätigt
 - [ ] bei Freistellern ein echter nativer Alpha-Produktionsweg bestätigt; kein Keying eingeplant
 - [ ] bestehende Assets in echter Zielgröße betrachtet
+- [ ] zwei bis drei Bestandsnachbarn des Zielordners wirklich angesehen und dokumentiert
 - [ ] Rechte-/Lizenzlage der Referenzen klar
-- [ ] Konflikte mit Claudes Revier oder laufender Arbeit ausgeschlossen
+- [ ] Konflikte mit zugewiesenen Fachrevieren oder laufender Arbeit ausgeschlossen
 - [ ] Freigabe-Gate aus A9 erfüllt
 
 ---
@@ -262,14 +266,15 @@ Variantennummern.
 - [ ] Auflösungsuntergrenze aus `design/asset-anforderungen.md` erreicht
 - [ ] Dateiname entspricht exakt der Content-ID
 - [ ] Ausrüstung besitzt kein Schimmern, Glühen oder Leuchten; Ausnahme nur freigegebene Runen/Tränke
-- [ ] Kreatur/Charakter blickt nach links, sofern der Auftrag nichts anderes festlegt
+- [ ] Blick-/Flugrichtung entspricht dem tatsächlichen Consumer und der Festlegung in A4
+- [ ] Kontaktbogen mit mindestens zwei Bestandsnachbarn; Silhouette auch auf hell/dunkel geprüft
 - [ ] Farb- und Helligkeitswerte passen zum echten UI-Kontext
 - [ ] Upgrade-/Seltenheits-/Fraktionsunterschiede sind klar, aber systemtreu
 - [ ] Reduced-size-Preview und mindestens eine echte UI-Einbettung geprüft
 
 ## C3. Technische QA
 
-- [ ] Dateinamen entsprechen exakt den IDs; Kleinbuchstaben/Unterstriche, keine `final`-/`v2`-/Variantenanhänge
+- [ ] Dateinamen entsprechen exakt bestätigten IDs/Loadervertrag einschließlich Groß-/Kleinschreibung; keine ungeplanten `final`-/`v2`-/Variantenanhänge
 - [ ] Maße, Format und Farbraum korrekt
 - [ ] Freisteller sind PNG/WebP mit echtem Alpha; kein JPG und keine nachträgliche Key-Matte
 - [ ] Dateigröße im Zielrahmen
@@ -293,14 +298,14 @@ Variantennummern.
 **Codex-Empfehlung:**  
 `[freigeben / Variante X wählen / gezielte Korrektur]`
 
-**Empfohlener Claude-Owner für Gegenprüfung:**  
+**Zuständige Codex-Fachrolle für Gegenprüfung:**
 `[asset-integrator / ui-dev / lore-dev / content-dev / kontrolleur / anderer]`
 
 ---
 
 # Teil D – Abnahme
 
-**Wird vom Chef oder von Claude im Rahmen seiner übertragenen Entscheidungsbefugnis ausgefüllt.**
+**Produkt-/Stilabnahme durch den Chef; technische Abnahme durch Codex-Lead auf Basis der QA.** Eine bereits im Auftrag erteilte Produktions-/Integrationsfreigabe darf übernommen werden. Keine neue Produktfreigabe durch Selbstabnahme erfinden.
 
 **Entscheidung:**  
 `[GO / GO mit kleinen Korrekturen / neue Variante / abgelehnt]`
@@ -318,4 +323,4 @@ Variantennummern.
 `[Version / Task / Patchnote]`
 
 **Abnahme durch / Datum:**  
-`[Claude / Chef, YYYY-MM-DD]`
+`[Chef: Produktfreigabe / Codex-Lead: technische QA, YYYY-MM-DD, Beleg]`

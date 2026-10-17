@@ -1,0 +1,68 @@
+Grim Reach 1.2.4 - Your Slots, Your Order
+
+Hunters,
+
+this one is about giving you back control over where your things sit, and about a few counters that
+were quietly impossible to finish. Saves stay compatible as always.
+
+BANK AND INVENTORY ARE REAL SLOT GRIDS
+
+- A slot belongs to you now. Take a stack out and the empty space stays exactly where it was.
+  Nothing shuffles up behind it.
+- You can drag a stack onto slot 40 even when 39 and everything before it is empty. Only the
+  placement moves; the contents never change.
+- New loot lands after the last occupied slot instead of dropping into the first gap it finds.
+  Gaps in front are used only when there is nothing free behind, so a full pack never loses a find.
+- Sorting is a button, not a mode. Pick how you want it sorted, then press Sort. Between presses,
+  everything stays where you put it. It is disabled while a filter is active, because sorting
+  rearranges every slot and not just the ones you can see.
+- Dragging in the bank now shows you what you are doing: the piece hangs at the cursor, the slot
+  under it is ringed in gold, and the slot it came from dims until you let go.
+- Your existing bank is straightened out once when you load, so you start the new system tidy
+  rather than inheriting weeks of accumulated mess. After that, the gaps are yours.
+
+FOUR TOOL SLOTS, AND TOOLS STAY PUT
+
+- There is a fourth tool slot. The game has four gathering professions and only ever had three
+  places, so one tool always had to ride along in your pack. The four now frame your head on the
+  character sheet, two on each side. Speed is unchanged: a carried tool always counted the same as
+  an equipped one.
+- Tools no longer belong to an equipment kit. They hang on your character and stay put when you
+  switch kits, so nobody has to own the same pickaxe three times over. Anything currently sitting
+  in an inactive kit is pulled out when you load: into a free tool slot first, otherwise into your
+  pack or bank. Nothing is lost, enchanted tools included.
+- Equipment kits can be switched from the gear panel on the enemy select screen, so you no longer
+  have to walk over to the character sheet to change loadout before a fight.
+
+A NEW ENCYCLOPEDIA
+
+- The large question mark at the right end of the top bar opens an encyclopedia of every item in
+  the game, sorted into the same categories your bank and pack already use, with a search box.
+- Nothing in it is locked. Look a piece up long before you own it. One click opens its full wiki
+  entry with sources and recipes, and closing that puts you back exactly where you were, search
+  text and all.
+- It is part of the guided tour for new players.
+
+COMBAT SCREEN
+
+- The fight screen has a reworked heads-up display: a short weapon-appropriate stat line for melee,
+  ranged and magic, a full stat sheet you can fold out, and slimmer bands for you and your enemy.
+  Health, ward and attack now float freely above the figures instead of sitting in heavy frames.
+
+FIXES
+
+- The Crypt bestiary achievements were impossible to earn. The zone counts five skeleton variants
+  that only exist inside the dungeon, and kills on those are credited to the base creature by
+  design, so their own counters could never leave zero. Since the achievement takes the lowest
+  count in the zone, it was stuck at 0 no matter how long you farmed. Both Crypt achievements now
+  ignore those variants, and any save that already has the kills will unlock them on the first tick
+  after updating. Only the Crypt was affected.
+- "The Whole Bestiary" had the same problem from the other side: it asked for 110 creatures while
+  the bestiary itself lists 105, because those same five variants can never register. It now asks
+  for the number you can actually reach, and the statistics page counts the same set.
+- Chapter 11 of the chronicle, "The Lord of the Depths", completed itself. It asked you to kill a
+  creature that also roams the open Crypt, so farming skeletons for chapter 10 finished the boss
+  chapter before you had ever entered the dungeon. It now asks you to clear the Depths of the Crypt.
+  Chapters you have already claimed stay claimed.
+
+As always: if something looks off, tell me here or through the bug report button in the options.

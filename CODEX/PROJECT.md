@@ -1,113 +1,70 @@
-# Projektanalyse
+# Grim Reach — technische Landkarte
+
+<!-- codex:2026-09-09T20:12:15+02:00 -->
+Architektur am 09.09.2026 gegen Paketdateien, Exporte und zentrale Verträge geprüft.
+Versions-/Prüfstand steht in CURRENT; hier keine Releasefreigabe.
 
 ## Produkt
 
-Das aktive Root-Projekt ist **Grim Reach** von Heartforge Studio: ein umfangreiches Dark-Fantasy-Idle-RPG für Steam mit Electron-Desktopclient. Historische Arbeitsnamen und technische Paketnamen lauten noch „Hearthforge Idle“ beziehungsweise `@hearthforge/*`; neuere Build-, Design- und Release-Dateien führen den Produktnamen Grim Reach.
+Veröffentlichtes Dark-Fantasy-Idle-RPG mit sichtbarem Auto-Kampf, drei Kampfstilen,
+Skill-/Handwerksfortschritt, Offline-Erträgen, Instanzloot, Pets, Slayer, Dungeons,
+Chronik/Quests und New Haven. Taverne ist im Code vorhanden, aber derzeit per
+`TAVERN_ENABLED = false` deaktiviert. Vorhandener Code ist nicht gleich freigegebenes Feature.
 
-Die spielerische Basis folgt dem Skill-/Aktions-/Offline-Fortschrittsmodell des Idle-RPG-Genres. Die eigene Identität wird über eine lebendige, feindselige Welt, individuelles Loot/Item-Instanzen, die Aschechronik, sichtbare Kämpfe, Elites, Dungeons, Paragon, Slayer, Verzauberung und die düstere Welt „The Reach“ aufgebaut.
+`passion-project/**` (Kreidestadt) ist separat. Historische Paketnamen
+`@hearthforge/*` bleiben bestehen.
 
-Das visuelle System wird intern als **Ashen Iron** beschrieben: dunkle Fantasy, raues Eisen, Stein, Holz und Leder, gedämpfte Flächen mit Gold-/Kupferakzenten, kompakte spielnahe Informationsdichte und gezielte Belohnungsinszenierung.
+## Architektur und Zuständigkeit
 
-## Architektur
+| Bereich | Zentrale Einstiege | Fachrolle |
+| --- | --- | --- |
+| Gemeinsame Verträge | `packages/shared/src/index.ts`: GameState, IDs, Locale, SAVE_VERSION, TICK_MS | logic-dev |
+| Spielmechanik | `packages/engine/src/index.ts`, `tick.ts`, `state.ts`, `character.ts` | logic-dev |
+| Kampf | `packages/engine/src/combat.ts`, Kampf-/Status-/Stiltests | combat-dev |
+| Datenkatalog | `packages/content/src/index.ts`, `locales/` | content-dev |
+| Save-Kompatibilität | `packages/persistence/src/index.ts`, `fixtures/save-compat/` | logic-dev |
+| UI und Game-Adapter | `apps/client/src/renderer/App.tsx`, `game/GameContext.tsx`, `pages/` | ui-dev |
+| Windows/IPC/Steam/Savedateien | `apps/client/src/main/`, `preload/`, `renderer/saves.ts` | platform-dev |
+| Bildbestand/Loader | `apps/client/src/renderer/assets/`, Consumer/Resolver im Renderer | asset-integrator + ui-dev |
+| Balance, Kanon, Gestaltung | jeweils relevante Quellen unter `design/`, `CODEX/work/` | balance-designer, lore-dev, art-director |
 
-Das Repository ist ein pnpm-/Turborepo-Monorepo:
+Engine nimmt Content als Parameter; keine Runtime-Abhängigkeit auf den konkreten Katalog.
+Live- und Offline-Fortschritt laufen durch `advance` mit 100-ms-Ticks und serialisiertem RNG.
+Plattform-I/O gehört nicht in die Engine. `computeStats` bündelt abgeleitete Werte.
+Inventar und Bank besitzen aktuelle Slot-/Platzierungslogik; die alte Claude-Beschreibung
+„Bank = Record<ItemId, number>“ ist kein gültiger Vertrag mehr.
 
-- `packages/shared/` — gemeinsame Typen, Konstanten, `GameState`, Save-Version
-- `packages/content/` — datengetriebener Inhaltskatalog; sehr großes zentrales `src/index.ts` plus Sprach-Overlays
-- `packages/engine/` — reine deterministische TypeScript-Engine, Tick-Loop, Kampf, Skills, Inventar, Quests, Lager/New Haven, Simulationen und umfangreiche Tests
-- `packages/persistence/` — Save/Load, Migrationen, Offline-Berechnung und Kompatibilitäts-Vault
-- `apps/client/` — React-/Electron-Client, Steam-/Windows-Paketierung und UI-Audit-Harness
-- `design/` — bindende Spezifikationen, Balance, Lore, Releaseplanung, Audits und Prompt-Batches
-- `steam/` — SteamPipe-Konfiguration und Depot-Unterlagen
-- `tools/` — Asset-Browser und Asset-/Content-Hilfen
-- `newGPTAssets/` — neuere Prompt- und Asset-Batches
-- `passion-project/` — separates GDD „Kreidestadt“, derzeit Planung, Unity 6 LTS; nicht Teil von Grim Reach
-- `SDK/` — Steamworks SDK; Drittanbieter-/Vendorbereich, nicht beiläufig bearbeiten
+## Toolchain und Prüfwege
 
-## Zentrale technische Prinzipien
+- pnpm-Workspace: `packages/*` und `apps/*`, fünf Pakete über Turborepo.
+- Root-Paket pinnt pnpm 9.15.9 und Node >=20.
+- TypeScript, React 18, Electron 32, Vite 5/electron-vite 2, Vitest 2 laut Paketmanifesten.
+  Installierte Versionen/Verfügbarkeit vor einer Änderung separat prüfen.
+- `pnpm typecheck`: alle fünf Pakete.
+- `pnpm --filter @hearthforge/engine test -- <testdatei>`: gezielter Engine-Test.
+- `pnpm --filter @hearthforge/persistence test -- src/save-compat-vault.test.ts`: Save-Vault.
+- `pnpm --filter @hearthforge/client build`: headless Build, kein App-Start.
+- `apps/client/ui-audit/`: Fixture-/Browser-Prüfwerkzeuge; Isolation vor Ausführung prüfen.
+- Vollsuite/Simulationen gezielt planen; nicht jede kleine Aufgabe mit Langläufen belasten.
 
-- Engine und UI sind strikt getrennt.
-- Die Engine ist deterministisch und serialisierbar; derselbe Tick-Pfad trägt Online- und Offline-Fortschritt.
-- Save-Kompatibilität wird über versionierte Migrationen und Vault-Fixtures geschützt.
-- Content ist datengetrieben, aber der zentrale Katalog ist ein konfliktanfälliges Hot File.
-- React rendert tickgetrieben; Selector-/Performance-Disziplin ist wichtig.
-- UI-Texte und Content-Overlays existieren in sieben Sprachen: Englisch, Deutsch, Spanisch, Französisch, brasilianisches Portugiesisch, Russisch und Chinesisch.
-- Tests und Builds erfolgen headless. Zusätzlich existiert ein großer Playwright-/Screenshot-gestützter UI-Audit-Bereich.
+## UI und Inhalte
 
-## Größenordnung beim Analyse-Snapshot 2026-07-30
+Sieben Locales: en, de, zh, ru, es, pt-BR, fr. UI: `renderer/i18n/`; Content:
+`packages/content/src/locales/`; Begriffe: `design/i18n-glossary.md`.
+Spieltexte nicht in UI-Code hart codieren.
 
-- 8 spezialisierte Claude-Agentenrollen
-- 132 Engine-Testdateien und 14 Persistenz-Testdateien
-- 26 React-Seiten
-- über 1.100 Item-Bilddateien, 125 Monsterbilder, 21 Petbilder und 57 Porträts im Renderer
-- ein rund 1,3 MB großer zentraler Content-Katalog
+Ashen Iron und Bestandskomponenten sind maßgeblich. Rahmen, Slice-Werte und Hintergründe
+am aktuellen Consumer prüfen. Die alte PROJECT-Aussage, Gravewood werde global zuletzt
+importiert, ist nicht mehr zuverlässig und wurde entfernt.
+Item-/Monster-/Petbilder werden vielfach per `import.meta.glob` und exakter ID aufgelöst;
+zulässige Formate/Fallbacks immer am jeweiligen Loader prüfen.
 
-Diese Zahlen dienen nur zur Einordnung und müssen bei Bedarf neu gezählt werden.
+## Quellen gezielt finden
 
-## Aktive Produktlinie
-
-Der derzeit bindende Zielrahmen ist `design/0.3.0-zielsetzung.md`: Update **0.3.0 „New Haven“**. Headline ist ein 2D-Karteninterface für das Lager mit 15 Gebäuden und je drei Ausbaustufen, deterministischen/offlinefähigen Bauzeiten, permanenten Nicht-Kampf-Boosts, Veredelung, Save-Migration und vollständiger i18n.
-
-Für laufende Arbeit sind die jeweils neuesten bindend markierten Dokumente maßgeblich. Besonders relevante Quellen:
-
-- `design/0.3.0-zielsetzung.md`
-- `design/identity-strategy.md`
-- `design/encampment-konzept.md`
-- `design/encampment-balance.md`
-- `design/lore/encampment-lore.md`
-- `design/update-backlog.md`
-- `design/lore/weltlore-grim-reach.md`
-- `design/lore/aschechronik-spec.md`
-- `.claude/agents/*.md`
-
-## Asset-Pipeline
-
-Viele Renderer-Assets werden über `import.meta.glob` automatisch an Content-IDs gebunden. Allgemeine Regel: Dateiname entspricht exakt der ID. Relevante Ziele liegen unter `apps/client/src/renderer/assets/**`.
-
-<!-- codex:2026-08-23T18:21:18+02:00 -->
-Für jede neue Bildlieferung gilt zusätzlich verbindlich `design/asset-anforderungen.md`. Runtime-
-Freisteller benötigen bereits aus der Erzeugung echtes Alpha; Chroma-Key, Schachbrettdarstellung und
-nachträgliches Ausschneiden sind kein zulässiger Grim-Reach-Produktionsweg mehr. Vor Generierung und
-Lieferung muss die exakte Content-ID als Dateiname feststehen.
-
-Beispiele:
-
-- Items: `assets/items/<itemId>.(webp|png)`
-- Monster: `assets/monsters/<monsterId>.(webp|png)`
-- New-Haven-Gebäude: `assets/camp/<buildingId>_<stufe>.(webp|png)`
-
-Vor jeder Integration die aktuelle Loader-Datei und die Ziel-README lesen; Formate und Fallbacks haben sich im Projekt bereits weiterentwickelt. Historische Claude-Dokumente nennen teilweise noch ausschließlich PNG, der aktuelle Bestand verwendet überwiegend WebP.
-
-## Produktive UI-Theme-Schicht
-
-Seit dem Chef-GO vom 2026-07-30 ist **Gravewood & Bronze** die produktive Art-Direction des Renderers:
-
-- Runtime-Assets: `apps/client/src/renderer/assets/ui/gravewood/`
-- globale Theme-Bindung: `apps/client/src/renderer/styles/gravewood-theme.css`
-- Importpunkt: letzter Import in `apps/client/src/renderer/styles/index.css`
-- Hauptaktionen: Gravewood Button 1
-- Gefahr/Abbruch/Verkauf: alternative Buttonfamilie
-- Icon-Controls: quadratische Buttonfamilie
-- Navigation: eigene Tabs mit aktivem Bronze-Hebel
-- außerdem zentral: Frames, fünf Oberflächentexturen, Slots, Balken, Scrollbars, Tooltips, Badges, Divider und Cursorzustände
-
-Die Schicht überschreibt bewusst nur Darstellung und Interaktionsbewegung. Komponentenstruktur, Game-State, Handler und i18n bleiben Eigentum der bestehenden Claude-Architektur.
-
-Seit der V2-Korrektur gelten für alle neu erzeugten skalierbaren UI-Assets zusätzlich diese festen Designinvarianten:
-
-- keine Nieten, Symbole, Bänder oder einmaligen Materialdetails in 9-Slice-Stretchzonen
-- Schmuck ausschließlich sparsam in den unverzerrten Ecken
-- ruhige, niedrig detaillierte Button-Mitten für kleine Laufzeitgrößen
-- bei horizontalen Buttons exakt 2 px transparenter Rand oben und unten
-- lange Scrollbar-Tracks als wiederholbare Textur; Handles ausschließlich per 9-Slice
-
-## Bekannte Stolperstellen
-
-- `README.md` ist als Architektur-Einstieg nützlich, aber beim Namen und Entwicklungsstand veraltet.
-- Technische Namen `hearthforge` nicht beiläufig umbenennen; das wäre eine koordinierte Migration.
-- Grim Reach und Kreidestadt sind getrennte Produkte.
-- Bindend markierte Chef-/Claude-Dokumente nicht stillschweigend umdeuten.
-- Asset-Dateien können allein durch ihren Namen automatisch live gebunden werden.
-- Neue State-Felder ohne Migration gefährden Bestands-Saves.
-- UI kann trotz Typecheck/Build zur Laufzeit crashen, wenn Game-State-Hooks außerhalb des Playing-Layouts gemountet werden.
-- Performance und Reduced-Motion sind feste Bestandteile der UI-Qualität.
+- Jüngere Branch-Themen: `design/steam-post-1.2.4.txt` (Ankündigungstext, keine Freigabe).
+- Frühere Rückkehransicht: `design/steam-post-1.2.3.txt`.
+- Offene/verschobene Ideen: `design/offen-1.2.1.md` (historisch, gegen Code prüfen).
+- Save-Gesetz: Vault-Tests und Migrationskette; historische Begründung in
+  `.claude/memory-backup/save-compat-law.md`.
+- Assets: `design/asset-anforderungen.md`, konkrete Briefs und die Konfliktregel in RULES.
+- Kanon: `design/lore/`; frühere Rollen in `.claude/agents/` nur als Wissensarchiv.

@@ -98,6 +98,7 @@ import { consumeMonsterJumpTarget, getMonsterJumpNav, subscribeMonsterJump } fro
 import { useItemTooltip } from "../components/ItemTooltip";
 import { CitadelTip, HoverTip, useCitadelTip } from "../components/CitadelTip";
 import { CombatStatsPanelGrouped, EquipmentDoll } from "../components/EquipmentOverview";
+import { EquipKitBar } from "../components/EquipKitBar";
 import { ItemCell } from "../components/ItemCell";
 import { skillBoostFor, SkillLevelText } from "../components/SkillLevel";
 import { StatLine } from "../components/StatLine";
@@ -4493,7 +4494,16 @@ function MonsterCard({
                 </span>
               )}
               {hasResist && (
-                <span className="mc-trait-badge" title={t("combat.immuneHint")}>
+                /* Der Tooltip nennt die Effekte jetzt beim Namen. Vorher stand dort nur „Dieser
+                   Gegner ignoriert diese Statuseffekte" — WELCHE, verriet er nie, und ein Spieler
+                   las das Abzeichen verstaendlicherweise als „ignoriert alles". Genau daraus kam
+                   die Rueckmeldung vom 31.08.2026, Schock wirke bei einem immunen Gegner trotzdem
+                   (dort war es zusaetzlich ein echter Fehler, s. combat.ts Schock-Bogen). Die
+                   Status-Namen sind bereits in allen sieben Sprachen da. */
+                <span
+                  className="mc-trait-badge"
+                  title={`${t("combat.immuneHint")} ${(m.resist ?? []).map((r) => t(`status.${r}`)).join(", ")}`}
+                >
                   {IMMUNE_ICON_URL
                     ? <img loading="lazy" decoding="async" src={IMMUNE_ICON_URL} alt="" className="ui-icon trait-badge-icon" />
                     : "🚫"}
@@ -6353,6 +6363,15 @@ function CombatLoadoutBar({
       <div className="cl-dock-body">
         {activeTab === "gear" && (
           <div className="cl-dock-pane cl-dock-pane-gear" role="tabpanel">
+            {/* Kit-Wechsel im linken Vorbereitungs-Container (Chef-Auftrag 31.08.2026 nach
+                Spieler-Vorschlag „it will be a good QoL to have ability to swap between equipment
+                kits in the Gear tab of the choose enemy screen"). Bewusst hier oben in der
+                Ausruestungs-Seite und nicht in einer eigenen Reihe: Kits SIND Ausruestung, der
+                Platz ueber der Puppe ist derselbe wie auf dem Charakterbogen (Wiedererkennung),
+                und auf 1366x768 kostet die Leiste keine zusaetzliche Zeile.
+                Dieselbe Komponente wie dort — Umschalten bleibt im Kampf gesperrt, die Knoepfe
+                zeigen das selbst an (switchEquipKit meldet „in_combat"). */}
+            <EquipKitBar />
             <div className="cl-gear-doll"><EquipmentDoll /></div>
             <CombatStatsPanelGrouped />
             <div className="cl-section cl-section-buffs">

@@ -1,0 +1,327 @@
+/* codex:2026-09-10T10:35:00+02:00 — Reforged Shell: echter Bestands-Ironframe,
+   gedämpfte Materialien, lesbare Informationen. Keine Seiten-/Modal-Neugestaltung. */
+#root .layout--reforged {
+  --chrome-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --chrome-shell: linear-gradient(rgba(16, 13, 11, .55), rgba(12, 12, 11, .75)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 256px repeat;
+  --chrome-surface: linear-gradient(rgba(11, 15, 17, .73), rgba(11, 14, 15, .85)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px repeat;
+  --chrome-text: #ded6c6;
+  --chrome-muted: #a7a89e;
+  --chrome-gold: #d8c06a;
+  /* codex:2026-09-10T11:12:00+02:00 — Chefkorrektur: Navigation trägt wieder sichtbares Material und warmes Licht, nicht die flache Datenfläche. */
+  --chrome-nav-shell: linear-gradient(rgba(15, 10, 7, .18), rgba(8, 7, 6, .36)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 320px repeat;
+  --chrome-nav-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px repeat;
+  --chrome-nav-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px repeat;
+}
+
+/* codex:2026-09-10T10:35:00+02:00 — Maßgeblich ist der Platz ZWISCHEN Sidebar/Queue,
+   nicht die Fensterbreite. Die aktuelle Sidebar-Breite und eingeklappte Queue wirken sofort. */
+#root .layout--reforged > .content {
+  min-width: 0;
+}
+
+/* codex:2026-09-10T10:35:00+02:00 — Höhenregler beeinflusst Dichte ohne Schrift ins Unlesbare zu skalieren. */
+#root .layout--reforged .topbar-area {
+  /* codex:2026-09-10T10:39:00+02:00 — Nur den Header kapseln: Seitenmodale dürfen keinen neuen fixed-containing-block bekommen. */
+  container: game-content / inline-size;
+  --chrome-type: clamp(13px, calc(13px * var(--tb-scale)), 17px);
+  min-width: 0;
+  padding-bottom: 5px;
+  background: var(--chrome-nav-shell);
+}
+
+/* codex:2026-09-10T10:35:00+02:00 — Acht Text-Reiter bleiben in ihrer Reihenfolge; Hilfe hat eine eigene Spalte. */
+#root .layout--reforged .topbar {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr)) 44px;
+  align-items: stretch;
+  height: auto;
+  min-width: 0;
+  gap: 6px;
+  padding: 8px 10px;
+  overflow: visible;
+  background: none !important;
+  border: 0;
+}
+#root .layout--reforged .topbar-entry {
+  display: flex;
+  width: auto !important;
+  min-width: 0 !important;
+  container-type: normal;
+}
+#root .layout--reforged .topbar-divider { display: none; }
+#root .layout--reforged .topbar-item,
+#root .layout--reforged .topbar-item:hover,
+#root .layout--reforged .topbar-item.active {
+  --gw-nav-frame: var(--chrome-frame);
+  width: 100%;
+  min-width: 0 !important;
+  /* codex:2026-09-10T11:12:00+02:00 — Spielreiter statt Mikrotasten; der vorhandene Höhenregler bleibt wirksam. */
+  min-height: clamp(56px, calc(52px * var(--tb-scale)), 76px) !important;
+  height: auto;
+  padding: 8px 10px !important;
+  border: 6px solid transparent !important;
+  border-image: var(--chrome-frame) 96 / 13px 12px !important;
+  background: var(--chrome-nav-surface) !important;
+  color: #e4cc83;
+  box-shadow: inset 0 0 14px #0008, 0 3px 5px #0008 !important;
+  filter: none;
+  transform: none;
+}
+#root .layout--reforged .topbar-item:not(:disabled):hover {
+  color: #ffe5a2;
+  box-shadow: inset 0 0 14px #b9832b26, 0 0 7px #ba8a4538, 0 3px 5px #0008 !important;
+}
+#root .layout--reforged .topbar-item.active {
+  color: #ffe29b;
+  background: var(--chrome-nav-selected) !important;
+  box-shadow: inset 0 -2px #d1a24f, inset 0 0 18px #b37c292b, 0 3px 6px #0009 !important;
+}
+#root .layout--reforged .topbar-item:focus-visible {
+  outline: 2px solid var(--chrome-gold);
+  outline-offset: -4px;
+}
+#root .layout--reforged .topbar-label {
+  display: block !important;
+  font-family: var(--font-head);
+  /* codex:2026-09-10T11:12:00+02:00 — Größere goldene Spieltypografie; Statusdaten behalten ihre eigene ruhigere Schriftgröße. */
+  font-size: clamp(16px, calc(16px * var(--tb-scale)), 22px) !important;
+  line-height: 1.25;
+  color: inherit;
+  letter-spacing: .025em;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 2px #000, 0 0 6px #000;
+}
+#root .layout--reforged .topbar-entry.topbar-entry--help { min-width: 0 !important; }
+#root .layout--reforged .topbar-item.topbar-help-btn { min-width: 0 !important; padding: 4px !important; }
+#root .layout--reforged .topbar-help-glyph { font-size: 24px; }
+
+/* codex:2026-09-10T10:35:00+02:00 — Ein flacher Statusrahmen statt Rahmen in Rahmen.
+   Explizite Quiet-Citadel-Spezifität verdrängt dessen vier starre Mindestspalten. */
+#root .layout--reforged .content-header--quiet-citadel {
+  min-height: 0;
+  margin: 0 8px;
+  padding: 8px;
+  border: 4px solid transparent;
+  border-image: var(--chrome-frame) 96 / 8px;
+  background: var(--chrome-surface);
+  box-shadow: none;
+  color: var(--chrome-text);
+}
+#root .layout--reforged .content-header--quiet-citadel::before { content: none; }
+#root .layout--reforged .content-header--quiet-citadel .content-header-row,
+#root .layout--reforged .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) {
+  display: grid;
+  grid-template-columns: minmax(150px, .8fr) minmax(0, 2.2fr) minmax(160px, .9fr);
+  grid-template-rows: auto;
+  align-items: center;
+  gap: 8px 16px;
+  min-height: 0;
+  padding: 0;
+}
+#root .layout--reforged .content-header--quiet-citadel .game-stats { display: contents; }
+#root .layout--reforged .content-header--quiet-citadel .header-charinfo {
+  display: flex;
+  grid-area: 1 / 1 / 3 / 2;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  gap: 6px;
+  padding: 4px 12px 4px 0;
+  background: none;
+  border: 0;
+  border-right: 1px solid rgba(168, 131, 76, .25);
+}
+#root .layout--reforged .content-header--quiet-citadel .header-charinfo-name {
+  color: var(--chrome-text);
+  font-family: var(--font-head);
+  font-size: clamp(17px, calc(16px * var(--tb-scale)), 22px);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#root .layout--reforged .content-header--quiet-citadel .header-charinfo-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+#root .layout--reforged .content-header--quiet-citadel .header-charinfo-stat {
+  display: flex;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--chrome-muted);
+}
+#root .layout--reforged .content-header--quiet-citadel .header-charinfo-stat b { color: var(--chrome-text); }
+#root .layout--reforged .content-header--quiet-citadel .gamestats-row--activity {
+  grid-area: 1 / 2 / 3 / 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+#root .layout--reforged .content-header--quiet-citadel .activity {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 4px 8px;
+  font-size: var(--chrome-type);
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#root .layout--reforged .content-header--quiet-citadel .activity .muted { font-size: inherit; color: var(--chrome-muted); }
+/* codex:2026-09-10T10:43:00+02:00 — Kind-Flexitem muss den Umbruch ebenfalls erlauben. */
+#root .layout--reforged .content-header--quiet-citadel .activity-name {
+  color: var(--chrome-text);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  flex-shrink: 1;
+  max-width: 100%;
+}
+#root .layout--reforged .content-header--quiet-citadel .activity-stopped { color: #e0aa7a; }
+#root .layout--reforged .content-header--quiet-citadel .gamestats-row--meta,
+#root .layout--reforged .content-header--quiet-citadel .game-stats--has-slayer .gamestats-row--meta {
+  grid-area: 1 / 3 / 2 / 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 12px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+#root .layout--reforged .content-header--quiet-citadel .gamestats-pipe { display: none; }
+#root .layout--reforged .content-header--quiet-citadel .slots-display,
+#root .layout--reforged .content-header--quiet-citadel .gold-display {
+  font-size: var(--chrome-type);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+#root .layout--reforged .content-header--quiet-citadel .slots-display { color: var(--chrome-text); }
+/* codex:2026-09-10T10:43:00+02:00 — Runtime-Klassen full/over erhalten ihre Warnpriorität. */
+#root .layout--reforged .content-header--quiet-citadel .slots-display.full { color: #e6c076; }
+#root .layout--reforged .content-header--quiet-citadel .slots-display.over { color: #ef998c; }
+#root .layout--reforged .content-header--quiet-citadel .gamestats-row--slayer {
+  grid-area: 2 / 3 / 3 / 4;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+}
+#root .layout--reforged .content-header--quiet-citadel .gamestats-slayer-chip {
+  justify-content: flex-end;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--chrome-muted);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#root .layout--reforged .content-header--quiet-citadel .gamestats-stop-btn {
+  min-height: 30px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+/* codex:2026-09-10T10:35:00+02:00 — Beschriftung liegt ÜBER dem 6px-Fortschritt,
+   Raten dürfen umbrechen. Unveränderte Compositor-Füllung und Level-Up-FX bleiben erhalten. */
+#root .layout--reforged .content-header--quiet-citadel .gamestats-activity-bars { gap: 8px; min-width: 0; }
+#root .layout--reforged .content-header--quiet-citadel .tb-bar {
+  height: auto;
+  min-height: 25px;
+  padding: 0 0 9px;
+  overflow: visible;
+  background: none;
+  border: 0;
+}
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-frame-row { display: none; }
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-track-bg,
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-fill,
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-gloss {
+  inset: auto 0 0;
+  height: 6px;
+  border-radius: 1px;
+}
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-track-bg {
+  background: #111516;
+  box-shadow: inset 0 0 0 1px rgba(176, 166, 134, .2);
+}
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-labels {
+  position: relative;
+  inset: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2px 12px;
+  padding: 0;
+  color: var(--chrome-text);
+  font-size: 13px;
+  line-height: 1.4;
+  text-transform: none;
+  pointer-events: none;
+}
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-label-center,
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-label-right {
+  position: static;
+  inset: auto;
+  transform: none;
+  min-width: 0;
+  max-width: 100%;
+  font-size: inherit;
+  line-height: inherit;
+  text-align: left;
+  white-space: normal;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  text-overflow: clip;
+}
+#root .layout--reforged .content-header--quiet-citadel .tb-bar-label-right { color: var(--chrome-muted); }
+
+/* codex:2026-09-10T10:35:00+02:00 — Reflow statt Verkleinerung: 1366px mit beiden Docks
+   hat nur ~826px Inhaltsbreite. Selbst bei schmalerem Container bleibt jede Information erreichbar. */
+@container game-content (max-width: 1100px) {
+  #root .layout--reforged .topbar { grid-template-columns: repeat(4, minmax(0, 1fr)) 44px; }
+  #root .layout--reforged .topbar-entry--help { grid-area: 1 / 5 / 3 / 6; }
+  #root .layout--reforged .content-header--quiet-citadel .content-header-row,
+  #root .layout--reforged .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 12px;
+  }
+  #root .layout--reforged .content-header--quiet-citadel .header-charinfo { grid-area: 1 / 1 / 2 / 2; border: 0; padding: 0; }
+  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--meta,
+  #root .layout--reforged .content-header--quiet-citadel .game-stats--has-slayer .gamestats-row--meta { grid-area: 1 / 2 / 2 / 3; }
+  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--activity { grid-area: 2 / 1 / 3 / 3; }
+  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--slayer { grid-area: 3 / 1 / 4 / 3; }
+  #root .layout--reforged .content-header--quiet-citadel .gamestats-slayer-chip { justify-content: flex-start; }
+}
+@container game-content (max-width: 580px) {
+  #root .layout--reforged .topbar { grid-template-columns: repeat(2, minmax(0, 1fr)) 38px; gap: 4px; padding: 4px; }
+  #root .layout--reforged .topbar-entry--help { grid-area: 1 / 3 / 5 / 4; }
+  #root .layout--reforged .content-header--quiet-citadel { margin: 0 4px; padding: 8px; }
+  #root .layout--reforged .content-header--quiet-citadel .content-header-row,
+  #root .layout--reforged .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) { grid-template-columns: minmax(0, 1fr); }
+  #root .layout--reforged .content-header--quiet-citadel .header-charinfo { grid-area: 1 / 1; }
+  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--meta,
+  #root .layout--reforged .content-header--quiet-citadel .game-stats--has-slayer .gamestats-row--meta { grid-area: 2 / 1; justify-content: flex-start; }
+  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--activity { grid-area: 3 / 1; }
+  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--slayer { grid-area: 4 / 1; }
+}
+
+/* codex:2026-09-10T10:35:00+02:00 — Bei sehr wenig Höhe alle Headerinfos scrollbar halten,
+   statt die Spielseite ganz zu verdrängen. Kein versteckter Loot/Status. */
+@media (max-height: 760px) {
+  #root .layout--reforged .topbar-area { max-height: 48vh; overflow-y: auto; scrollbar-gutter: stable; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .layout--reforged .topbar-item { transition: none; }
+}

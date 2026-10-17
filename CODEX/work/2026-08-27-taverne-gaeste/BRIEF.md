@@ -25,10 +25,34 @@
 **Woran erkennt Claude Erfolg:** 38 + 3 Dateien mit exakten Namen, Alpha-Prüfung bestanden, Kontaktbogen zeigt 19 klar unterscheidbare Personen, Gesichtskarte und Figur je Gast eindeutig dieselbe Person, Szene mit vier lesbaren freien Plätzen und Koordinatenblatt.
 
 # Teil B – Produktionsplan (Mira)
-_(füllt Mira)_
+
+1. Szene im Ashen-Iron-Tageslook erzeugen und auf 1672 × 941 normieren.
+2. Vier Gäste-Fußpunkte sowie Tresen, Tafel, Kamin und Tür als Pixelkoordinaten festlegen.
+3. Halvard zuerst als Idle-Figur erzeugen und Alpha technisch prüfen; erst nach bestandenem Alpha-Test
+   Gesichtskarte und restliche Gäste im selben Serienguss erzeugen.
+4. Icons zuletzt erzeugen, Kontaktbögen und vollständige technische QA schreiben.
+
+Die eingebaute Erzeugung lieferte beim vorgeschalteten Ork-Demo-Test durchgehend RGB statt nativem
+Alpha. Deshalb wurde Schritt 3 vor weiterer Serienproduktion gestoppt. Die deckende Szene konnte
+regelkonform fertiggestellt werden.
 
 # Teil C – QA-Protokoll (Mira)
-_(füllt Mira)_
+
+**Teilstatus:** Szene PASS, Alpha-Serie BLOCKIERT.
+
+- `tavern_interior.png`: PNG, 1672 × 941, RGB/deckend, PASS.
+- Szene enthält drei Tische, Tresen, Anschlagtafel, Kamin und Tür; keine Personen und keinen Text, PASS.
+- Vier getrennte Fußpunkte und vier Objektanker dokumentiert, PASS.
+- Transparenz-Pipeline: getestete Ausgaben `channels: 3`, `hasAlpha: false`; Pflichtregel nicht erfüllbar,
+  daher keine Gäste- oder transparenten Icon-Dateien in `fertig/`.
+- Details: `CODEX/assets/taverne-gaeste-2026-08-27/qa/QA.md`.
 
 # Teil D – Übergabe (Mira)
-_(füllt Mira)_
+
+**Teillieferung / kein Gesamt-GO.**
+
+- Produktionsfertig: `CODEX/assets/taverne-gaeste-2026-08-27/fertig/tavern_interior.png`.
+- QA: `qa/tavern_interior-anchors.png`, `qa/scene-coordinates.json`, `qa/QA.md`.
+- Nicht geliefert: 38 Gäste-PNGs, `icon_tavern.png`, `building_tavern.png`.
+- Renderer wurde nicht verändert.
+- Fortsetzung erst mit verlässlich nativem Alpha oder nach ausdrücklicher Änderung der Vorgabe.

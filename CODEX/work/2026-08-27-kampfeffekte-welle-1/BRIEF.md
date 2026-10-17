@@ -24,10 +24,53 @@
 **Woran Claude Erfolg erkennt:** exakte Dateinamen und Maße, Alpha-Prüfung bestanden, die drei Felder eines Streifens lesen sich als EIN Effekt in drei Momenten, die sieben Themen sind auf dem Kontaktbogen auf einen Blick unterscheidbar, Blut bleibt gedeckt.
 
 # Teil B – Produktionsplan (Mira)
-_(füllt Mira)_
+
+<!-- codex:2026-08-27T23:02:59+02:00 -->
+
+1. Die sechs technisch und visuell bestandenen Testlauf-Dateien als Serienanker übernehmen;
+   `fx_slash_sword.png` dabei unter der von der Serie geforderten ID `fx_slash_cut.png` führen.
+2. Die 27 neuen Motive einzeln mit nativem RGBA-Alpha erzeugen, gegliedert nach Magie,
+   Waffen/Pfeil, Trefferreaktionen, Begleiter und Crit.
+3. Geschosse alphaerhaltend auf 256 × 128 setzen. Jeden Dreiphasen-Rohstreifen in seine drei
+   Quellzellen teilen, jede Zelle alphaerhaltend auf 240 × 240 skalieren und mit acht Pixeln
+   transparentem Sicherheitsrand in eine 256er-Zelle setzen.
+4. Exakte IDs, PNG/RGBA, Maße, transparenten Außenrand, weiche Teiltransparenz und sichtbaren
+   Inhalt in jeder der drei Zellen automatisiert prüfen.
+5. Alle 33 Dateien bei nativer Effektgröße auf dunklem Grund und über dem
+   Ashfields-Battlescreen gemeinsam visuell abnehmen.
 
 # Teil C – QA-Protokoll (Mira)
-_(füllt Mira)_
+
+<!-- codex:2026-08-27T23:02:59+02:00 -->
+
+- **Technik:** 33/33 bestanden. Acht Geschosse sind exakt 256 × 128; 25 Dreiphasen-Streifen
+  sind exakt 768 × 256. Alle Finals sind PNG RGBA mit echtem Alpha, weicher Teiltransparenz
+  und vollständig transparentem Außenrand. Jede der 75 Streifenzellen enthält sichtbaren
+  Effektinhalt.
+- **Produktion:** kein Chroma-Key, kein nachträgliches Freistellen. Die Normalisierung änderte
+  nur Größe, Zellteilung und transparentes Padding.
+- **Magielesbarkeit:** Arkan, Feuer, Frost, Blitz, Gift, Leere und Aether sind auf beiden
+  Kontaktbögen durch Form und Einzelakzent klar getrennt; sämtliche Geschosse zeigen nach rechts.
+- **Bewegung:** Beginn, Höhepunkt und Ausklang sind in den Streifen unterscheidbar. Slash-Cut und
+  Heavy laufen diagonal, Thrust horizontal nach rechts; der Pfeil ist mechanisch gerade und
+  eindeutig rechtsgerichtet.
+- **Inhalt:** rotes Blut, Ichor und Knochenstaub bleiben kurz, gedeckt und ungorig. Block,
+  Fehlschlag, sechs Begleiterfamilien und beide Crit-Ringe bleiben bei 256 px erkennbar.
+- **Sichtprüfung:** `qa/contact-dark.png` und `qa/contact-ashfields.png` vollständig geprüft.
+  Die Effekte bleiben sowohl im hellen Himmel als auch auf dem dunklen, strukturierten Boden
+  des Battlescreens lesbar.
+- Vollständige Einzelmesswerte: `CODEX/assets/kampfeffekte-welle-1-2026-08-27/qa/qa.json`.
 
 # Teil D – Übergabe (Mira)
-_(füllt Mira)_
+
+<!-- codex:2026-08-27T23:02:59+02:00 -->
+
+- **Finals:** `CODEX/assets/kampfeffekte-welle-1-2026-08-27/fertig/` — 33 exakt benannte PNGs.
+- **Raws:** `CODEX/assets/kampfeffekte-welle-1-2026-08-27/raw/` — 33 native
+  Erzeugungsausgaben; die sechs Testanker sind bewusst nachvollziehbar dupliziert.
+- **QA:** `CODEX/assets/kampfeffekte-welle-1-2026-08-27/qa/` — Maschinenbericht,
+  Kontaktbogen dunkel, Kontaktbogen Ashfields und handliche Vorschauen.
+- **Reproduktion:** `generated-source-map.json`, `PROMPTS-FINAL.md` und
+  `prepare-and-qa.py` liegen neben diesem Brief.
+- Renderer, Content, Engine, Save-Daten und `.claude/**` wurden nicht verändert. WebP-
+  Konvertierung, Einbau, Gegnerspiegelung und Laufzeitprüfung bleiben bei Claude.

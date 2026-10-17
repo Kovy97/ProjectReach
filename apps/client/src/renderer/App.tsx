@@ -21,6 +21,7 @@ import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
 import { closeItemTooltip, ItemTooltipOverlay } from "./components/ItemTooltip";
 import { ItemWikiModalOverlay } from "./components/ItemWikiModal";
+import { EncyclopediaModalOverlay } from "./components/EncyclopediaModal";
 import { GameAlerts } from "./components/GameAlert";
 import { QueueAmountModalHost } from "./components/QueueAmountModal";
 import { UpdateNotice } from "./components/UpdateNotice";
@@ -178,7 +179,9 @@ function SegmentedBar({
 }): JSX.Element {
   const pct = Math.min(100, Math.max(0, progressPct));
   return (
-    <div className={`tb-bar tb-bar--${variant}${empty ? " tb-bar--empty" : ""}`} title={title}>
+    // codex:2026-09-10T10:35:00+02:00 — Fortschritt bleibt auch ohne die dekorativen Segmente zugänglich.
+    <div className={`tb-bar tb-bar--${variant}${empty ? " tb-bar--empty" : ""}`} title={title}
+      role="progressbar" aria-label={title ?? centerLabel} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
       <div className="tb-bar-track-bg" />
       {/* codex:2026-07-31T00:32:37+02:00 — scaleX bleibt auf der Compositor-Spur;
           clip-path musste bei jedem 10-Hz-Update eine fast bildschirmbreite Fläche neu painten. */}
@@ -231,8 +234,9 @@ function ActionProgressBar(): JSX.Element {
   const xpPerHour = rate ? Math.round(rate.xpPerHour) : 0;
   const primaryLoot = rate?.primaryItemPerHour;
 
+  // codex:2026-09-10T10:35:00+02:00 — Der Aktionsname steht darüber; die Leiste ergänzt den Fortschritt.
   const centerLabel = action
-    ? `${t("skill.doing")} · ${tr(action.name)}`
+    ? `${t("skill.doing")} · ${Math.floor(progressPct)}%`
     : inCombat
       ? t("topbar.bar.inCombat")
       : t("header.idle");
@@ -249,7 +253,7 @@ function ActionProgressBar(): JSX.Element {
       centerLabel={centerLabel}
       rightLabel={rightLabel}
       empty={!action}
-      title={rightLabel ? `${centerLabel} — ${rightLabel}` : centerLabel}
+      title={action ? `${tr(action.name)} — ${centerLabel}${rightLabel ? ` — ${rightLabel}` : ""}` : centerLabel}
     />
   );
 }
@@ -352,30 +356,26 @@ function resolveTrackedSkillId(state: GameState, viewedSkillId?: SkillId | null)
  *  Kampf bleibt sie weiterhin so lebendig wie zuvor (skillXp ändert sich dort laufend). */
 function LevelXpBar({ viewedSkillId }: { viewedSkillId?: SkillId | null }): JSX.Element {
   const getState = useGetGameState();
-  const [skillId, skillXp, gatedActiveActionId, gatedInCombat] = useGameSelector((s) => {
+  // codex:2026-09-10T10:35:00+02:00 — Kampf bleibt Teil des Render-Gates; der aufgelöste Skill liefert seinen eigenen Namen.
+  const [skillId, skillXp, gatedActiveActionId] = useGameSelector((s) => {
     const id = resolveTrackedSkillId(s, viewedSkillId);
     return [id, id ? s.skills[id]?.xp ?? 0 : 0, s.activeActionId, s.combat.monsterId != null] as const;
   }, tupleEquals);
   const state = getState()!;
   const { t, tr } = useI18n();
   const action = gatedActiveActionId ? content.actions[gatedActiveActionId] : undefined;
-  const combatSkillId: SkillId | null = gatedInCombat
-    ? (activeStanceMods(computeStats(state, content).style, state.character).xpSkill as SkillId)
-    : null;
   const level = skillId ? levelFromXp(skillXp) : 0;
   const xpStart = skillId ? xpForLevel(level) : 0;
   const xpEnd = skillId ? xpForLevel(level + 1) : 1;
   const progressPct = skillId && xpEnd > xpStart
     ? Math.min(100, Math.max(0, ((skillXp - xpStart) / (xpEnd - xpStart)) * 100))
     : 0;
-  // Chef: rechts neben Lv+% auch die numerischen XP-Werte im aktuellen Level (aktuelle-XP / XP-bis-Levelup).
-  // Im Kampf-Fall den Skill-Namen voranstellen — auf Skill-Seiten liefert die Seite den Kontext,
-  // im Kampf wüsste der Spieler sonst nicht, WELCHER Kampf-Skill gerade trackt.
-  const combatPrefix = skillId && skillId === combatSkillId && !viewedSkillId && !action
+  // codex:2026-09-10T10:35:00+02:00 — Betrachteter Skill kann von der laufenden Aktion abweichen: immer benennen.
+  const trackedSkillPrefix = skillId
     ? `${tr(content.skills[skillId]?.name ?? { en: skillId })} · `
     : "";
   const centerLabel = skillId
-    ? `${combatPrefix}${t("skill.level").replace("{n}", String(level))} · ${Math.floor(progressPct)}% · ${formatNum(skillXp - xpStart)} / ${formatNum(xpEnd - xpStart)}`
+    ? `${trackedSkillPrefix}${t("skill.level").replace("{n}", String(level))} · ${Math.floor(progressPct)}% · ${formatNum(skillXp - xpStart)} / ${formatNum(xpEnd - xpStart)}`
     : t("topbar.bar.noActiveSkill");
 
   // ETA bis zum nächsten Level (Chef-Auftrag): NUR wenn eine Aktion GENAU dieses Skills läuft —
@@ -968,7 +968,8 @@ function MainLayout(): JSX.Element {
   };
 
   return (
-    <div className="layout">
+    // codex:2026-09-10T10:35:00+02:00 — Lokaler Shell-Scope; andere Panels/Modale behalten ihren Bestandsstil.
+    <div className="layout layout--reforged">
       <Sidebar activePageId={activePageId} onNavigate={setActivePageId} />
       <main className="content">
         <div className="topbar-area" ref={topBarAreaRef}>
@@ -1163,6 +1164,10 @@ export function App(): JSX.Element {
         <Root />
         <ItemTooltipOverlay />
         <ItemWikiModalOverlay />
+        {/* Enzyklopaedie: liegt UNTER dem Item-Wiki (Reihenfolge egal, beide sind eigene Overlays
+            mit eigenem z-index) und bleibt offen, waehrend das Wiki darueber liegt — Escape
+            schliesst zuerst das Wiki, die Suche darunter steht unveraendert wieder da. */}
+        <EncyclopediaModalOverlay />
       </GameProvider>
       {/* Chef-Kurswechsel 26.08.2026: MUSS außerhalb von <Root/>s Screen-Switch liegen, damit die
           Überblendung einen Screen-Wechsel (Menü → Spiel) übersteht statt selbst mit zu

@@ -1944,8 +1944,12 @@
 /* Werkzeug-Slots: links & rechts neben dem Helm (nutzen die freien Eck-Zellen, kein Extra-Panel).
    3. Werkzeug-Slot (Spieler-Feedback, Chef-GO 0.2.0) hängt sich direkt unter tool1 — nutzt die
    bislang leere Zelle rechts neben dem Amulett, keine neue Reihe/Spalte, kein Resize-Risiko. */
+/* Werkzeuge rahmen den Kopf ein: zwei links, zwei rechts (Chef-Vorgabe 31.08.2026). Der vierte
+   Platz (tool4) setzt sich in die bis dahin leere Zelle links unter tool2 — dadurch steht die
+   Werkzeug-Gruppe symmetrisch und die Puppe braucht keine zusaetzliche Zeile. */
 .cs-slot.tool2    { grid-column: 1; grid-row: 1; }
 .cs-slot.tool1    { grid-column: 3; grid-row: 1; }
+.cs-slot.tool4    { grid-column: 1; grid-row: 2; }
 .cs-slot.tool3    { grid-column: 3; grid-row: 2; }
 .cs-slot.amulet   { grid-column: 2; grid-row: 2; }
 .cs-slot.offhand  { grid-column: 1; grid-row: 3; }

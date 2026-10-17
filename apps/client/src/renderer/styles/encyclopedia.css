@@ -1,0 +1,352 @@
+/* ══════════════════════════════════════════════════════════════════════════════════════════
+   ENZYKLOPÄDIE (Chef-Auftrag 31.08.2026; Konzept + Mockup in design/enzyklopaedie/)
+
+   Das Nachschlagewerk hinter dem großen Fragezeichen rechts in der Top Bar: Kategorien links,
+   Suche oben, Item-Karten rechts. Eigener `encp-*`-Namespace.
+
+   NICHTS hier ist neu erfunden — jede Regel hat ein Vorbild im Bestand, damit die Seite sich wie
+   der Rest des Spiels anfühlt:
+     • Modal-Geometrie   → `.modal.iwk-modal` (item-wiki.css), vom Chef bereits abgenommen
+     • Titelleiste       → `.iwk-titlebar` (drei Flex-Spalten, Kicker mittig)
+     • Suchzeile         → `.achv-ledger-search` (Erfolge-Ledger)
+     • Kategorie-Register→ `.achv-ledger-rail` / `.achv-ledger-cat`
+     • Item-Karte        → `.shopv2-card` (Holz-9-Slice), Seltenheit als dünner Innenring
+   Das Modal liegt wie das Item-Wiki im Portal außerhalb von `#root` — alle Regeln bleiben deshalb
+   bewusst OHNE `#root`-Präfix.
+   ══════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* Die Enzyklopaedie liegt bewusst EINE Stufe TIEFER als die uebrigen Overlays.
+   `modals.css` gibt jedem `.modal-overlay` z-index 200 — bei Gleichstand gewinnt das spaetere
+   DOM-Element, und die Enzyklopaedie ist in App.tsx nach dem Item-Wiki montiert. Ergebnis: der
+   Klick auf eine Karte oeffnete das Wiki HINTER der Enzyklopaedie, es war schlicht nicht zu sehen
+   (Chef-Fund 31.08.2026).
+
+   Bewusst hier als Zahl statt ueber die Mountreihenfolge in App.tsx geloest: Die Enzyklopaedie ist
+   immer die UNTERSTE Schicht dieses Paares — sie oeffnet das Wiki, nie umgekehrt. Das steht damit
+   an der Stelle, an der es gilt, und ueberlebt jedes Umsortieren der Overlay-Zeilen. */
+.modal-overlay.encp-overlay {
+  z-index: 199;
+}
+
+/* `.modal.encp-modal` (ZWEI Klassen) wie beim Item-Wiki: `modals.css` setzt generisch
+   `.modal { max-width: 480px }` und lädt vorher — die zweite Klasse macht die Kaskade robust. */
+.modal.encp-modal {
+  width: min(1440px, calc(100vw - 32px));
+  max-width: min(1440px, calc(100vw - 32px));
+  /* Bindend: passt bei 1366×768 / 1600×900 / 1920×1080 immer ohne Überlauf. Der Rahmen selbst
+     scrollt nie — nur Register und Kartenraster scrollen intern. */
+  max-height: calc(100vh - 32px);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Der Citadel-Schließer sitzt IN der Titelleiste (Flex-Endspalte), nicht absolut in der Ecke —
+   sonst verlöre die Leiste ihre dritte Spalte und der Kicker säße nicht mehr mittig. */
+.modal.encp-modal .modal-close {
+  position: static;
+}
+
+/* ─── Titelleiste ─────────────────────────────────────────────────────────────────────────── */
+.encp-titlebar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.encp-titlebar-side {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.encp-titlebar-side--end {
+  justify-content: flex-end;
+}
+
+.encp-kicker {
+  flex: 0 0 auto;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: clamp(18px, 1.6vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* ─── Suchzeile ───────────────────────────────────────────────────────────────────────────── */
+.encp-search-row {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 24px;
+  padding: 9px 12px;
+  border: 1px solid rgba(178, 127, 62, 0.42);
+  background: rgba(5, 6, 7, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.encp-search-row img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+.encp-search-row input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-head);
+  font-size: 15px;
+}
+
+.encp-search-row input::placeholder {
+  color: var(--muted);
+}
+
+.encp-result-count {
+  color: #8f9ba2;
+  font-family: var(--font-info);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ─── Bühne: Register + Raster ────────────────────────────────────────────────────────────── */
+.encp-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: clamp(150px, 13vw, 226px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.encp-rail {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 8px;
+  overflow-y: auto;
+  border-right: 1px solid rgba(183, 128, 61, 0.38);
+  background:
+    linear-gradient(90deg, rgba(38, 26, 17, 0.76), rgba(9, 10, 11, 0.82)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 256px repeat;
+}
+
+.encp-cat {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 7px;
+  border: 0;
+  border-bottom: 1px solid rgba(173, 124, 64, 0.16);
+  background: transparent;
+  color: #a9b1b6;
+  font-family: var(--font-head);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  /* RU und DE tragen die langen Kategorienamen („Материалы", „Materialien") — die Zeile darf
+     umbrechen und trennen, statt zu clippen oder die Spalte zu sprengen. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.encp-cat:hover {
+  color: var(--text);
+  background: linear-gradient(90deg, rgba(119, 78, 34, 0.16), transparent);
+}
+
+.encp-cat.is-active {
+  color: var(--gold);
+  background: linear-gradient(90deg, rgba(151, 96, 35, 0.3), rgba(35, 24, 16, 0.08));
+  box-shadow: inset 3px 0 rgba(221, 174, 76, 0.74);
+}
+
+.encp-cat-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  font-size: 15px;
+}
+
+.encp-cat-count {
+  color: #87939a;
+  font-family: var(--font-info);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.encp-cat.is-active .encp-cat-count {
+  color: #d6bd78;
+}
+
+.encp-grid-wrap {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 20px;
+  background:
+    linear-gradient(rgba(6, 7, 8, 0.7), rgba(8, 8, 8, 0.78)),
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px repeat;
+}
+
+.encp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 12px;
+}
+
+/* ─── Item-Karte ──────────────────────────────────────────────────────────────────────────── */
+.encp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  /* Der Katalog ist mehrere hundert Einträge groß. `content-visibility` spart Layout und Paint für
+     alles außerhalb des Sichtfelds — dasselbe Mittel wie in bestiary.css/achievements.css, kein
+     Virtualisierungs-Paket nötig. */
+  content-visibility: auto;
+  contain-intrinsic-size: 160px;
+  border-style: solid;
+  border-width: 5px;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  background:
+    linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)),
+    url("../assets/bg_black.webp") repeat;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.encp-card:hover {
+  filter: brightness(1.08);
+}
+
+/* Seltenheit als dünner INNENRING, kein Schimmer — Ausrüstung glüht in diesem Spiel nie. */
+.encp-card.rarity-rare { box-shadow: inset 0 0 0 2px var(--rar-rare); }
+.encp-card.rarity-superRare { box-shadow: inset 0 0 0 2px var(--rar-superRare); }
+.encp-card.rarity-magic { box-shadow: inset 0 0 0 2px var(--rar-magic); }
+.encp-card.rarity-epic { box-shadow: inset 0 0 0 2px var(--rar-epic); }
+.encp-card.rarity-legendary { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
+.encp-card.rarity-godly { box-shadow: inset 0 0 0 2px var(--rar-godly); }
+
+.encp-card-img-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 76px;
+}
+
+.encp-card-img-area img {
+  max-width: 68px;
+  max-height: 68px;
+  object-fit: contain;
+}
+
+.encp-card-emoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.encp-card-name {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.25;
+  /* Feste Mindesthöhe für zwei Zeilen: die Karten stehen dadurch in einer sauberen Reihe, egal ob
+     ein Name einzeilig ist („Kohle") oder zweizeilig („Adamantium-Plattenrüstung"). */
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.encp-card.rarity-rare .encp-card-name { color: var(--rar-rare); }
+.encp-card.rarity-superRare .encp-card-name { color: var(--rar-superRare); }
+.encp-card.rarity-magic .encp-card-name { color: var(--rar-magic); }
+.encp-card.rarity-epic .encp-card-name { color: var(--rar-epic); }
+.encp-card.rarity-legendary .encp-card-name { color: var(--rar-legendary); }
+.encp-card.rarity-godly .encp-card-name { color: var(--rar-godly); }
+
+/* ─── Kein Treffer ────────────────────────────────────────────────────────────────────────── */
+.encp-empty {
+  grid-column: 1 / -1;
+  padding: 46px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ─── Der Einstieg in der Top Bar ─────────────────────────────────────────────────────────────
+   Der Knopf ERBT `.topbar-item` — Rahmen, Hover, Druckzustand, alles. Hier steht nur, was ihn von
+   einem Text-Reiter unterscheidet: er traegt ein einzelnes grosses Zeichen statt einer
+   Beschriftung, ist deshalb schmal und teilt sich die Reiterbreite NICHT mit den anderen.
+
+   Warum `#root` und `!important`: `gravewood-navigation.css` zwingt jeden `.topbar-entry` per
+   `flex: 1 1 0 !important; width: 0; min-width: 0 !important` in die Gleichverteilung und laedt
+   NACH dieser Datei. Ohne dieselben Mittel bekaeme das Fragezeichen eine volle Reiterbreite — und
+   genau das hat beim ersten Versuch „Meisterschaft" bei 1366px auf zwei Zeilen gedrueckt.
+
+   Vorgeschichte, damit sie niemand wiederholt: davor war das ein eigener Knopf mit nachgebautem
+   Rahmen NEBEN der Leiste. Er skalierte nicht mit `--tb-scale` mit und sass sichtbar ausserhalb
+   des Holzrahmens — er sah schlicht kaputt aus. Den Bestand benutzen, nicht nachbauen.
+
+   Der kleine „?" im Item-Tooltip wurde laut Spieler-Rueckmeldung kaum gefunden; dieser hier ist
+   deshalb bewusst gross und steht an der auffaelligsten Stelle des Fensters. */
+#root .topbar-entry.topbar-entry--help {
+  flex: 0 0 auto !important;
+  width: auto;
+  min-width: calc(30px * var(--tb-scale)) !important;
+}
+
+#root .topbar-item.topbar-help-btn,
+#root .topbar-item.topbar-help-btn:hover,
+#root .topbar-item.topbar-help-btn:active {
+  width: auto;
+  min-width: calc(34px * var(--tb-scale)) !important;
+  padding-inline: clamp(4px, 1cqw, 9px) !important;
+  color: var(--gold);
+}
+
+#root .topbar-item.topbar-help-btn:hover,
+#root .topbar-item.topbar-help-btn:focus-visible {
+  color: #fff;
+}
+
+.topbar-help-glyph {
+  font-family: var(--font-head);
+  font-weight: 700;
+  /* Deutlich groesser als eine Reiter-Beschriftung — es ist ein Symbol, kein Wort. */
+  font-size: calc(clamp(20px, 1.9vw, 28px) * var(--tb-scale));
+  line-height: 1;
+}

@@ -3,9 +3,24 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { SAVE_VERSION, defaultHuntTraps, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
+import { TOOL_SLOTS, SAVE_VERSION, defaultHuntTraps, defaultTavernState, eliteZoneCooldownBand, emptyEquipKit } from "@hearthforge/shared";
 import { computeStats } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
+
+/**
+ * Der Spiegel von Kit 0 gegen die getragene Ausruestung — OHNE die Werkzeug-Slots.
+ *
+ * Seit SAVE 87 (Chef-Entscheid 31.08.2026) gehoeren Werkzeuge keinem Kit mehr: sie haengen am
+ * Charakter und bleiben beim Kit-Wechsel liegen. Der Spiegel traegt auf den Werkzeug-Slots also
+ * immer null, waehrend der Charakter sein Werkzeug behaelt — genau das ist der Zweck der
+ * Aenderung, und genau das pruefen die Aufrufer zusaetzlich.
+ */
+function ohneWerkzeuge<T extends object>(equipment: T): T {
+  const kopie = { ...equipment } as T;
+  for (const slot of TOOL_SLOTS) (kopie as Record<string, unknown>)[slot] = null;
+  return kopie;
+}
+
 
 /**
  * SAVE-KOMPAT-VAULT (Chef-Gesetz, 2026-07-08): „Sobald wir produktiv sind, müssen Saves IMMER
@@ -288,7 +303,9 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     // überführen), Kit 0 aktiv; das Alt-Feld `equipLoadouts` ist aus dem State verschwunden.
     expect(result!.state.activeKit).toBe(0);
     expect(result!.state.equipKits).toHaveLength(3);
-    expect(result!.state.equipKits[0]!.equipment).toEqual(raw.state.character.equipment);
+    expect(result!.state.equipKits[0]!.equipment).toEqual(ohneWerkzeuge(raw.state.character.equipment));
+    // Das Werkzeug selbst bleibt dabei GETRAGEN — es wandert nicht ins Kit und geht nicht verloren.
+    expect(result!.state.character.equipment.tool1).toBe(raw.state.character.equipment.tool1);
     expect(result!.state.equipKits[1]).toEqual(emptyEquipKit());
     expect(result!.state.equipKits[2]).toEqual(emptyEquipKit());
     expect((result!.state as unknown as { equipLoadouts?: unknown }).equipLoadouts).toBeUndefined();
@@ -316,8 +333,14 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     erwartet.state.huntCatchSeq = 0;
     erwartet.state.stats.huntCatches = 0;
     erwartet.state.stats.huntCatchesById = {}; // Jagen-XP nach Monster (28.08.2026)
+    // v87 (vierter Werkzeug-Slot, Chef-GO 31.08.2026): migrateState baut den Equipment-Record
+    // generisch aus EQUIP_SLOTS neu — `tool4` kommt als null dazu. BEWUSST hier, VOR dem Bilden
+    // des Kit-0-Spiegels: der Spiegel wird aus genau diesem Record abgeleitet.
+    erwartet.state.character.equipment.tool4 = null;
     erwartet.state.equipKits = [
-      { equipment: { ...erwartet.state.character.equipment }, equippedInstances: { ...erwartet.state.character.equippedInstances } },
+      // v87: Der Spiegel traegt die Werkzeuge NICHT mehr (sie gehoeren keinem Kit) — getragen
+      // bleiben sie trotzdem, das prueft die Zeile oben bei equipKits[0].
+      { equipment: ohneWerkzeuge({ ...erwartet.state.character.equipment }), equippedInstances: { ...erwartet.state.character.equippedInstances } },
       emptyEquipKit(),
       emptyEquipKit(),
     ];
@@ -496,7 +519,7 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     //      Befüllte Vorlagen → Kits sichert equip-kits-persistence.test.ts.
     expect(Array.isArray((raw.state as unknown as { equipLoadouts?: unknown }).equipLoadouts)).toBe(true);
     expect(s.activeKit).toBe(0);
-    expect(s.equipKits[0]!.equipment).toEqual(s.character.equipment);
+    expect(s.equipKits[0]!.equipment).toEqual(ohneWerkzeuge(s.character.equipment));
     expect(s.equipKits[0]!.equipment.ring1).toBe(ring1);
     expect(s.equipKits[1]).toEqual(emptyEquipKit());
     expect(s.equipKits[2]).toEqual(emptyEquipKit());

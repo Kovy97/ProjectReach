@@ -6322,6 +6322,10 @@
 .battle-arena {
   border-width: 3px;
   border-image-width: 9px;
+  /* codex:2026-08-31T23:59:00+02:00 — Responsive HUD-Regeln messen die echte Arenabreite
+     nach Loadout-/Record-Dock, nicht bloß die Fensterbreite. */
+  container-type: inline-size;
+  container-name: battle-arena;
 }
 
 .battle-arena-hud {
@@ -6580,12 +6584,87 @@
     padding-inline: 4px;
   }
 
+  .battle-hud-ribbon-details {
+    width: min(620px, calc(200% + 12px));
+  }
+}
+
+/* codex:2026-08-31T23:59:00+02:00 — Unterhalb der brauchbaren Zwei-Spalten-Breite werden die
+   Kontextbänder nicht zusammengestaucht, sondern als zwei vollbreite RPG-Zeilen angeordnet.
+   Der Loot bleibt dauerhaft sichtbar; nur die räumliche Hierarchie ändert sich. */
+@container battle-arena (max-width: 980px) {
+  .battle-arena-hud {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    min-height: 0;
+    padding: 5px 7px 4px;
+  }
+
+  .battle-hud-ribbon {
+    min-height: 42px;
+  }
+
+  .battle-hud-ribbon-summary {
+    justify-content: stretch;
+    overflow: visible;
+  }
+
+  .battle-hud-metric {
+    flex: 1 1 0;
+    padding-inline: 10px;
+  }
+
+  .battle-hud-drop-summary {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+
   .battle-hud-drop-summary .fighter-sub-drops-grid {
-    display: none;
+    display: flex;
+  }
+
+  .battle-hud-ribbon-toggle {
+    min-width: 78px;
+    padding-inline: 7px;
   }
 
   .battle-hud-ribbon-details {
-    width: min(620px, calc(200% + 12px));
+    width: min(720px, 100%);
+  }
+}
+
+@container battle-arena (max-width: 620px) {
+  .battle-hud-ribbon-summary {
+    flex-wrap: wrap;
+  }
+
+  .battle-hud-metric {
+    min-width: 68px;
+    padding-inline: 5px;
+  }
+
+  .battle-hud-ribbon--enemy .battle-hud-drop-summary {
+    flex: 1 0 100%;
+    justify-content: center;
+    min-height: 25px;
+    border-top: 1px solid rgba(154, 123, 72, 0.22);
+  }
+
+  .battle-hud-drop-summary .fighter-sub-drops {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .battle-hud-drop-summary .fighter-sub-drops-grid {
+    flex-wrap: wrap;
+  }
+
+  .battle-hud-ribbon-toggle {
+    min-width: 72px;
+  }
+
+  .battle-hud-ribbon-details {
+    max-height: 52vh;
   }
 }
 

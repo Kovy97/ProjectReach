@@ -38,6 +38,8 @@ interface SavesBridge {
   readAll(): Promise<Array<string | null>>;
   read(slotId: number): Promise<string | null>;
   write(slotId: number, json: string): Promise<void>;
+  /** Schreibt zwei verschiedene Slots als journalgeschützten Cross-Save-Commit. */
+  writePair(firstSlotId: number, firstJson: string, secondSlotId: number, secondJson: string): Promise<void>;
   remove(slotId: number): Promise<void>;
   /** Backups eines Slots, neueste zuerst (Selbstheilung bei kaputtem Slot, Task #288 D). */
   readBackups(slotId: number): Promise<SaveBackupEntry[]>;

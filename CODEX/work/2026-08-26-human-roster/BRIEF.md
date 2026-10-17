@@ -42,8 +42,11 @@ Serienweite Kontrolle:
 
 ## D. Ablauf
 
-1. Vollständige 60-ID-/Identitätsmatrix sperren.
-2. Pilot: Warrior, Fire Mage und Rogue, jeweils männlich/weiblich.
-3. Alpha, UI-Größe, Klassenlesbarkeit und Gesichtsabstand prüfen.
-4. Nach Richtungsabnahme die verbleibenden 54 Figuren gruppenweise erzeugen.
-5. Erst nach finaler Gegenprüfung WebP-Konvertierung und Renderer-Integration durch Claude.
+<!-- codex:2026-08-26T23:03:00+02:00 -->
+1. Vollständige 60-ID-/Identitätsmatrix gesperrt — erledigt.
+2. Pilot Warrior, Fire Mage und Rogue, jeweils männlich/weiblich — erledigt und abgenommen.
+3. Alpha, UI-Größe, Klassenlesbarkeit und Gesichtsabstand — erledigt.
+4. Verbleibende 54 Figuren gruppenweise erzeugt — erledigt.
+5. Finale Gegenprüfung: 60/60 RGBA, 1086 × 1448, transparenter Außenrand,
+   84,12–87,98 % Motivhöhe, 30/30 Paar-Loadouts und 60/60 Rechtsorientierung — bestanden.
+6. WebP-Konvertierung und Renderer-Integration bleiben ausdrücklich bei Claude.

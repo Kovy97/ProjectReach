@@ -23,6 +23,9 @@ contextBridge.exposeInMainWorld("hearthforge", {
     read: (slotId: number): Promise<string | null> => ipcRenderer.invoke("saves:read", slotId),
     write: (slotId: number, json: string): Promise<void> =>
       ipcRenderer.invoke("saves:write", slotId, json),
+    // codex:2026-08-31T22:04:00+02:00 — ein journalgeschützter Commit für Quelle + Ziel.
+    writePair: (firstSlotId: number, firstJson: string, secondSlotId: number, secondJson: string): Promise<void> =>
+      ipcRenderer.invoke("saves:writePair", firstSlotId, firstJson, secondSlotId, secondJson),
     remove: (slotId: number): Promise<void> => ipcRenderer.invoke("saves:remove", slotId),
     /** Selbstheilung (Task #288 D): Backups eines Slots, neueste zuerst, roher JSON-Inhalt. */
     readBackups: (slotId: number): Promise<SaveBackupEntry[]> =>

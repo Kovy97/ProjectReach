@@ -3,6 +3,7 @@ import { getSidebarIcon } from "../sidebarIcons";
 import { useI18n } from "../i18n";
 import { useGameSelector } from "../game/GameContext";
 import { hasClaimableQuest } from "../pages/QuestsPage";
+import { openEncyclopediaModal } from "./EncyclopediaModal";
 
 interface TopBarProps {
   activePageId: string;
@@ -33,6 +34,8 @@ export function TopBar({ activePageId, onNavigate }: TopBarProps): JSX.Element {
               onClick={() => onNavigate(page.id)}
               title={t(page.label)}
               data-guide-id={`topbar.${page.id}`}
+              // codex:2026-09-10T10:35:00+02:00 — Auswahl ist neben Farbe/Unterstrich auch semantisch erkennbar.
+              aria-current={page.id === activePageId ? "page" : undefined}
             >
               <span className="topbar-icon" aria-hidden="true">
                 {iconSrc
@@ -54,6 +57,26 @@ export function TopBar({ activePageId, onNavigate }: TopBarProps): JSX.Element {
           </span>
         );
       })}
+      {/* Enzyklopaedie (Chef-Auftrag 31.08.2026): grosses Fragezeichen ganz rechts, direkt neben
+          den Erfolgen. Bewusst gross und an der auffaelligsten Stelle des Fensters — der kleine
+          „?" im Item-Tooltip wurde laut Spieler-Rueckmeldung kaum gefunden.
+
+          Aufbau exakt wie jeder andere Reiter (`.topbar-entry` + `.topbar-item`), damit er
+          dieselbe Rahmen-, Hover- und Druck-Optik erbt statt sie nachzubauen. Er steht bewusst IN der
+          Reihe: ein eigener Knopf ausserhalb sass sichtbar neben dem Holzrahmen der Leiste und
+          wirkte wie hineingerutscht. */}
+      <span className="topbar-entry topbar-entry--help">
+        <button
+          type="button"
+          className="topbar-item topbar-help-btn"
+          onClick={openEncyclopediaModal}
+          title={t("encyclopedia.openAria")}
+          aria-label={t("encyclopedia.openAria")}
+          data-guide-id="topbar.encyclopedia"
+        >
+          <span className="topbar-help-glyph" aria-hidden="true">?</span>
+        </button>
+      </span>
     </nav>
   );
 }

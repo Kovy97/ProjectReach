@@ -235,6 +235,9 @@ describe("equipment", () => {
       s.character.equippedInstances.tool1 = inst;
       s.character.equipment.tool2 = "crude_fishing_rod";
       s.character.equipment.tool3 = "crude_sickle";
+      // Seit SAVE 87 gibt es einen VIERTEN Werkzeug-Slot. Er muss hier mit belegt sein, sonst
+      // weicht equipTool auf ihn aus und dieser Test prüfte nicht mehr die Verdrängung von tool1.
+      s.character.equipment.tool4 = "copper_axe";
       for (let i = 0; i < s.inventory.slots.length; i++) {
         s.inventory.slots[i] = { itemId: "oak_log", qty: 9999 };
       }

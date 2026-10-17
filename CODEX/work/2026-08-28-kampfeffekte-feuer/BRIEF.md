@@ -45,4 +45,39 @@
 
 # Teil B – Produktionsplan (Mira)
 
-<!-- codex: hier eintragen -->
+<!-- codex:2026-08-28T20:00:03+02:00 -->
+
+1. Welle-1-Feuer, Frost und Arkan sowie Ashfields visuell auf Palette, Maßstab und Lesbarkeit
+   prüfen.
+2. Je finalem Streifen genau einen nativen RGBA-Basiseffekt erzeugen; keine einzeln neu
+   gewürfelten Frames.
+3. Aus jedem Basisbild die Phasen deterministisch um denselben Kern/Mittelpunkt ableiten:
+   Skalierung, Helligkeit und Alpha staffeln, ohne Keying oder neue Bildelemente.
+4. Finale Streifen auf exakte Zellen zusammensetzen, Zellinhalt und transparenten Sicherheitsrand
+   messen, 60-ms-Vorschauen und verlangte Kontaktbögen erzeugen.
+
+# Teil C – Produktion
+
+<!-- codex:2026-08-28T20:00:03+02:00 -->
+
+- Sieben native RGBA-Basisbilder mit eingebautem ImageGen erzeugt: vier Geschosse und drei
+  Einschläge. Kein Schachbrett, kein Key, kein Boden.
+- Geschossphasen aus demselben Basisbild um Kernanker 160/64 abgeleitet; Einschlagphasen aus
+  demselben Basisbild um Mittelpunkt 128/128. Dadurch bleiben Kern, Silhouette und Lichtquelle
+  über den Film identisch.
+- Finale 5er- beziehungsweise 3er-Streifen reproduzierbar über `prepare_and_qa.py` gebaut.
+  Promptset in `PROMPTS-FINAL.md`, Quellenkarte in `qa/source-map.json`.
+
+# Teil D – QA und Abnahme
+
+<!-- codex:2026-08-28T20:00:03+02:00 -->
+
+- 7/7 Dateinamen exakt, 7/7 PNG RGBA. Vier Geschosse exakt 1280 × 128, drei Einschläge exakt
+  768 × 256.
+- Alphaextrema überall 0–255, `edge_alpha_max = 0`; jedes der 29 Felder enthält sichtbaren
+  Inhalt und hält mindestens acht Pixel Sicherheitsrand.
+- Alle Geschosse fliegen nach rechts, Schweife liegen links; v1, Lanze, Schwarm und Crit sind
+  sofort unterscheidbar. Crit ist größer und dichter, nicht nur heller.
+- Kontaktbögen auf Dunkel und Magenta, direkter Welle-1-Familienvergleich, Ashfields-Vorschau
+  sowie sieben animierte QA-GIFs unter `qa/` vorhanden.
+- Vollständige Zellmesswerte in `qa/qa.json`. Renderer nicht verändert.

@@ -15874,7 +15874,12 @@ export const content: ContentDB = {
       level: 96, maxHp: 120, damage: 49, accuracy: 13, evasion: 2, defense: 78, defenseType: "armor", // Combat-Feel v2 #4: def 50→78 (armorPen-Crossover-Sichtbarkeit); #0: dmg 33→49 (naked Zufluss 3.39%→5.04%/s)
       attackIntervalMs: 3000, xp: 2300, gold: 0,
       regen: 0.8,
-      resist: ["burn", "frost", "poison", "bleed"],
+      // Spieler-Report 31.08.2026 („Shock works, but Ice and Poison don't"): Diese Liste ist die
+      // einzige im Katalog, die ALLE damals bekannten Statuseffekte abdeckt — sie meint erkennbar
+      // „ignoriert Statuseffekte". Geschrieben wurde sie aber, bevor es `shock` und `void` gab
+      // (Elementar-Effekte, 28.08.2026), und wuchs nicht mit. Der Abgrundverschlinger war deshalb
+      // ausgerechnet gegen die zwei neuesten Elemente verwundbar. Jetzt vollstaendig.
+      resist: ["burn", "frost", "poison", "bleed", "shock", "void"],
       enrage: { belowHpPct: 0.25, damageMult: 2.0 },
       loot: [
         { itemId: "abyssal_core", chance: 0.08, min: 1, max: 1 },
@@ -17961,7 +17966,20 @@ export const content: ContentDB = {
         en: "He who broke the seal was no intruder. By every sign, he was the Order's last castellan, grown tired of waiting. Or whispered tired: the voice that talked him out of his vigil may not have been his own. You struck off the hand that broke the seal. I write it as a victory because it is one, and I write beside it that it does not feel like one — not to you, not to me. You cannot put down a warden who was left alone too long without inheriting the question: who left him alone, and who spoke to him when no one else still did? The file stays open. It is used to that.",
         de: "Der das Siegel brach, war kein Eindringling. Nach allem, was die Zeichen sagen, war er der letzte Kastellan des Ordens, des Wartens müde. Oder müde geflüstert: Die Stimme, die ihm das Warten austrieb, war womöglich nicht seine eigene. Du hast die Hand abgeschlagen, die das Siegel brach. Ich schreibe es als Sieg, weil es einer ist, und ich schreibe dazu, dass es sich nicht wie einer anfühlt — für dich nicht, für mich nicht. Man richtet keinen Wächter, der zu lange allein gelassen wurde, ohne die Frage zu erben: Wer ließ ihn allein, und wer sprach mit ihm, als sonst niemand mehr sprach? Die Akte bleibt offen. Sie ist es gewohnt.",
       },
-      objectives: [{ type: "kill_monster", target: "skeleton_nekro", count: 1 }],
+      // Spieler-Report (Chef, 31.08.2026): „danach kam die Quest fuer den Dungeon-Endboss und die
+      // wurde einfach erledigt, obwohl ich den nie gemacht habe."
+      //
+      // Das Kapitel zielte auf `skeleton_nekro` — und genau die Kreatur roamt auch OFFEN in der
+      // Krypta. Der eigentliche Endboss ist die Dungeon-Variante `dg_skeleton_nekro`, deren Kills
+      // aber bewusst auf die Basis-Id verbucht werden (killCreditMonsterId). Ueber einen Kill-Zaehler
+      // liess sich „toete den Fuersten der Tiefe" hier also gar nicht ausdruecken: wer im Gebiet
+      // Skelette farmt (Kapitel 10 verlangt vierzig davon), hatte das Boss-Kapitel erfuellt, bevor er
+      // den Dungeon je betreten hat. Jedes andere Boss-Kapitel hat einen eigenen `dungeonOnly`-Gegner
+      // mit eigener Id und war deshalb nie betroffen — nur die Krypta teilt sich Basis und Boss.
+      //
+      // Der Dungeon-Zaehler kennt diese Zweideutigkeit nicht: er steigt ausschliesslich beim
+      // tatsaechlichen Raeumen (combat.ts). Bereits ABGEHOLTE Kapitel bleiben abgeholt.
+      objectives: [{ type: "dungeons_cleared", target: "crypt_depths", count: 1 }],
       rewards: { gold: 4000 },
       tokenReward: 3,
       requires: ["chronicle_10"],

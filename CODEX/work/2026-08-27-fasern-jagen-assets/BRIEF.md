@@ -1,4 +1,4 @@
-# Asset-Brief — Fasern, Stoff und Jagen (27 Dateien)
+# Asset-Brief — Fasern, Stoff und Jagen (Originalscope 27; aktiver Scope 26)
 
 > **Auftrag:** Chef → Mira, vorbereitet von Claude am 27.08.2026 (Chef-Entscheide J1–J7). Vorlage `CODEX/templates/ASSET-BRIEF.md`.
 > **Prompts:** `PROMPTS.md`. **Konzept:** `design/handwerk-fasern-jagen/konzept.md`, Technik `spec-technik.md`.
@@ -16,7 +16,7 @@
 | Lieferung | `CODEX/assets/fasern-jagen-2026-08-27/fertig/` (+ raw/, qa/ mit Kontaktbogen), danach HANDOFF/WORKLOG; gern in Teilen (Items zuerst, dann Karten) |
 | Nicht anfassen | Renderer; Einbau macht Claude (Items WebP q92, Karten q85) |
 
-**Woran Claude Erfolg erkennt:** 27 Dateien mit exakten Namen und Maßen, Alpha-Prüfung der 21 Freisteller bestanden, Kontaktbogen zeigt die fünf Stufen als klare Farbleiter, die drei Fallen-Zustände sind dieselbe Falle.
+**Historischer Ursprungsstand:** 27 Dateien mit exakten Namen und Maßen, Alpha-Prüfung der 21 Freisteller bestanden, Kontaktbogen zeigt die fünf Stufen als klare Farbleiter, die drei Fallen-Zustände sind dieselbe Falle. Der bindende Korrekturstand vom 28.08. steht am Ende dieses Dokuments.
 
 # Teil B – Produktionsplan (Mira)
 
@@ -60,3 +60,36 @@
 - Produktionsnotiz: `CODEX/work/2026-08-27-fasern-jagen-assets/PRODUCTION.md`
 - Renderer, Content, Engine, Saves und `.claude/**` blieben unangetastet. WebP-Konvertierung,
   Einbau und Runtime-Abnahme übernimmt Claude.
+
+## Korrektur vom 28.08.2026
+
+<!-- codex:2026-08-28T00:45:00+02:00 -->
+
+- Der Bestand widersprach dem ursprünglichen Plaketten- und Aktionskarten-Briefing. Gemäß der
+  neuen UI-Regel gewinnt der Ist-Zustand im Zielordner.
+- `sidebaricon_hunting.png` wurde nach direktem Vergleich mit `sidebaricon_fishing.webp`,
+  `sidebaricon_bank.webp` und `sidebaricon_farming.webp` als freistehende Jagdschlinge ohne
+  Plakette oder Rahmen neu erzeugt.
+- `bait_worm.png` wurde als kleines Dreierbündel dunkler Regenwürmer ohne Behälter neu erzeugt
+  und bei 48 px neben zwei bestehenden Material-Icons geprüft.
+- `dig_bait.png` ist ersatzlos gestrichen und nur noch als verworfene Altlieferung im QA-Archiv
+  erhalten. Die aktive Lieferung umfasst jetzt 25 Dateien.
+- Der Meisterring Jagen war nicht Teil dieses Korrekturlaufs und wurde anschließend als
+  separater Nachtrag geliefert; siehe folgenden Abschlussvermerk.
+- Beide neuen Freisteller sind natives RGBA, wurden nicht gekeyt und haben einen vollständig
+  transparenten Außenrand. Renderer und `.claude/**` blieben unangetastet.
+
+## Nachtrag Meisterring Jagen vom 28.08.2026
+
+<!-- codex:2026-08-28T01:20:00+02:00 -->
+
+- `ring_master_hunting.png` gemäß Prompt 27 als 640 × 640 PNG RGBA fertiggestellt.
+- Stilabgleich erfolgte vor der Produktion gegen `ring_master_fishing.webp` und
+  `ring_master_foraging.webp`: massive Ringansicht, Dreiviertelperspektive, dunkle Patina,
+  dichtes Materialrelief und Licht von oben links wurden übernommen.
+- Jagdlesart: Schlingen-Kabelstruktur, kleiner gefasster Amber und ein einzelner Fang. Der
+  Amber trägt nur ein eingeschlossenes warmes Highlight; keine Aura und kein Außenleuchten.
+- Zwei technisch ungeeignete RGB-Würfe mit gemaltem Schachbrett wurden verworfen. Geliefert wird
+  ausschließlich der anschließend frisch erzeugte native RGBA-Wurf mit transparentem Außenrand.
+- Abnahme: `qa/contact-master-ring.png` mit beiden Bestandsringen und 48-px-Ansicht sowie
+  `qa/contact-master-ring-alpha-magenta.png`. Renderer und `.claude/**` blieben unangetastet.

@@ -12,13 +12,14 @@ import {
 import type { ReactNode } from "react";
 import type { GameState, OfflineSummary, SaveSlot } from "@hearthforge/shared";
 import { MAX_OFFLINE_MS } from "@hearthforge/shared";
-import { advance, createGame } from "@hearthforge/engine";
+import { advance, createGame, transferInventoryItemsToSave } from "@hearthforge/engine";
+import type { CrossSaveTransferResult, CrossSaveTransferSelection } from "@hearthforge/engine";
 import { getDevSpeed } from "../devSpeed";
 import type { CharacterCreation } from "@hearthforge/engine";
 import { deserialize, parseSummary, serialize } from "@hearthforge/persistence";
 import { content } from "@hearthforge/content";
 import { baueDemoOfflineSummary } from "../devOfflineDemo";
-import { readAllSlots, readSlot, readSlotBackups, removeSlot, writeSlot } from "../saves";
+import { readAllSlots, readSlot, readSlotBackups, removeSlot, writeSlot, writeSlotPair } from "../saves";
 import { buildOfflineTestSummary, fetchFixtureJson, getFixtureParam, getOfflineTestParam } from "./fixtureLoader";
 
 export type Screen = "menu" | "creating" | "playing";
@@ -86,12 +87,19 @@ function parseSavedAt(json: string): number | null {
 interface GameControl {
   screen: Screen;
   slots: SaveSlot[];
+  /** Aktiver lokaler Slot; nötig, um ihn aus der Cross-Save-Empfängerliste auszuschließen. */
+  activeSlotId: number | null;
   refreshSlots: () => Promise<void>;
   startNewGame: (slotId: number) => void;
   cancelCreation: () => void;
   createCharacter: (input: CharacterCreation) => Promise<void>;
   loadGame: (slotId: number) => Promise<void>;
   saveGame: () => Promise<void>;
+  /** Reiner Itemtransfer in das Postfach eines anderen lokalen Spielstands. */
+  sendItemsToSlot: (
+    targetSlotId: number,
+    selection: CrossSaveTransferSelection,
+  ) => Promise<CrossSaveTransferResult | { ok: false; reason: "no_active_save" | "target_missing" | "target_invalid" | "write_failed" }>;
   /** Serialisiert den aktuellen Spielstand als JSON-String (für Backup/Export). */
   exportSave: () => string | null;
   /** Lädt einen exportierten JSON-String in den aktiven Slot (überschreibt). */
@@ -203,9 +211,11 @@ const EMPTY_RETURN_MS = 60 * 60 * 1000;
 export function GameProvider({ children }: { children: ReactNode }): JSX.Element {
   const stateRef = useRef<GameState | null>(null);
   const activeSlotRef = useRef<number | null>(null);
+  const transferBusyRef = useRef(false);
   const pendingSlotRef = useRef<number | null>(null);
   const [screen, setScreen] = useState<Screen>("menu");
   const [slots, setSlots] = useState<SaveSlot[]>([]);
+  const [activeSlotId, setActiveSlotId] = useState<number | null>(null);
   const [tick, setTick] = useState(0);
   const [offlineSummary, setOfflineSummary] = useState<OfflineSummaryUI | null>(null);
   const [saveRecovery, setSaveRecovery] = useState<{ restoredFromMs: number } | null>(null);
@@ -251,6 +261,8 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
   }, []);
 
   const saveGame = useCallback(async () => {
+    // codex:2026-08-31T22:04:00+02:00 — kein altes Autosave über einen laufenden Paar-Commit legen.
+    if (transferBusyRef.current) return;
     const s = stateRef.current;
     const slot = activeSlotRef.current;
     if (s && slot !== null) {
@@ -261,6 +273,59 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     // callback), see GameControl.saveTick doc.
     setSaveTick((t) => t + 1);
   }, []);
+
+  // codex:2026-08-31T22:04:00+02:00 — Echtdaten-Transfer: Ziel ohne Offline-Tick laden, beide
+  // Zustände klonen/mutieren und erst NACH journalgeschütztem Paar-Commit live übernehmen.
+  const sendItemsToSlot = useCallback(async (
+    targetSlotId: number,
+    selection: CrossSaveTransferSelection,
+  ): Promise<CrossSaveTransferResult | { ok: false; reason: "no_active_save" | "target_missing" | "target_invalid" | "write_failed" }> => {
+    const source = stateRef.current;
+    const sourceSlotId = activeSlotRef.current;
+    if (!source || sourceSlotId === null) return { ok: false, reason: "no_active_save" };
+    if (sourceSlotId === targetSlotId) return { ok: false, reason: "same_save" };
+    if (transferBusyRef.current) return { ok: false, reason: "write_failed" };
+    transferBusyRef.current = true;
+    try {
+      const targetJson = await readSlot(targetSlotId);
+      if (!targetJson) return { ok: false, reason: "target_missing" };
+      const targetSavedAt = parseSavedAt(targetJson) ?? parseSummary(targetJson)?.savedAt;
+      if (targetSavedAt === null || targetSavedAt === undefined) return { ok: false, reason: "target_invalid" };
+      // now === savedAt: Migration + Sanitize ja, aber KEIN heimlicher Offline-Catch-up im Zielsave.
+      const loadedTarget = deserialize(targetJson, content, targetSavedAt);
+      if (!loadedTarget) return { ok: false, reason: "target_invalid" };
+
+      const nextSource = structuredClone(source);
+      const nextTarget = structuredClone(loadedTarget.state);
+      const moved = transferInventoryItemsToSave(
+        nextSource,
+        nextTarget,
+        content,
+        source.character.name,
+        selection,
+      );
+      if (!moved.ok) return moved;
+
+      const sourceJson = serialize(nextSource);
+      // Ziel behält seinen alten savedAt: beim nächsten echten Laden wird die gesamte Abwesenheit
+      // weiterhin einmalig nachgeholt; der Itemtransfer selbst erzeugt keine Spielzeit.
+      const nextTargetJson = serialize(nextTarget, targetSavedAt);
+      await writeSlotPair(sourceSlotId, sourceJson, targetSlotId, nextTargetJson);
+
+      stateRef.current = nextSource;
+      setDebugHook(nextSource);
+      setTick((tickValue) => tickValue + 1);
+      notifyTick();
+      setSaveTick((tickValue) => tickValue + 1);
+      await refreshSlots();
+      return moved;
+    } catch (error) {
+      console.error("Cross-Save-Itemtransfer fehlgeschlagen:", error);
+      return { ok: false, reason: "write_failed" };
+    } finally {
+      transferBusyRef.current = false;
+    }
+  }, [notifyTick, refreshSlots]);
 
   // dismissOffline schreibt seit Sweep 2 (T10) einen Save-Checkpoint (s. loadGame-Doc weiter
   // unten für den zweiten Checkpoint direkt nach dem Laden) — deshalb erst NACH saveGame
@@ -331,6 +396,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     stateRef.current = s;
     setDebugHook(s);
     activeSlotRef.current = slot;
+    setActiveSlotId(slot);
     pendingSlotRef.current = null;
     await writeSlot(slot, serialize(s));
     // Neuer Charakter ⇒ Spotlight-Guide zeigt sich automatisch: `createGame` setzt
@@ -398,6 +464,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     stateRef.current = state;
     setDebugHook(state);
     activeSlotRef.current = slotId;
+    setActiveSlotId(slotId);
     // Popup-Öffnungs-Gate: bisher NUR "nennenswerte Abwesenheit (> 1 Min) UND tatsächlicher
     // Ertrag" — eine lange Abwesenheit OHNE jeden Ertrag (nichts lief) blieb dadurch komplett
     // stumm, obwohl das genau der Fall ist, den der Spieler am ehesten als Bug liest ("wo ist mein
@@ -457,6 +524,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     await saveGame();
     stateRef.current = null;
     activeSlotRef.current = null;
+    setActiveSlotId(null);
     setScreen("menu");
     setTick((t) => t + 1);
     notifyTick(); // Perf-Welle Block A: s. importSave-Kommentar.
@@ -493,6 +561,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       if (!result || cancelled) return;
       stateRef.current = result.state;
       activeSlotRef.current = null;
+      setActiveSlotId(null);
       // UI-Audit-Debug-Hook: s. `setDebugHook`-JSDoc oben. Referenz bleibt über Tick-Mutationen
       // stabil (derselbe State-Objekt-Zeiger wird nur mutiert, nie ersetzt) — ein einmaliges
       // Setzen hier reicht.
@@ -548,7 +617,10 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       last = now;
       if (stateRef.current) {
         simulationAccumulatorMs = Math.min(simulationAccumulatorMs + dt, MAX_OFFLINE_MS);
-        if (simulationAccumulatorMs >= SIMULATION_INTERVAL_MS) {
+        // codex:2026-08-31T23:03:00+02:00 — während des Zwei-Slot-Commits bleibt der Quellsave
+        // unverändert. Die verstrichene Sim-Zeit wird nur aufgestaut und direkt danach auf den
+        // erfolgreich übernommenen Zustand angewandt; so kann der Commit keine Live-Ticks verlieren.
+        if (!transferBusyRef.current && simulationAccumulatorMs >= SIMULATION_INTERVAL_MS) {
           // Blessings of the Reach (engine/src/tick.ts `advance` JSDoc): der Live-Loop soll das reale
           // Kalender-„jetzt" (Epoch-ms) übergeben, NICHT den rAF-Parameter `now` — der ist ein
           // DOMHighResTimeStamp relativ zum Navigations-Zeitpunkt (performance.now()-Basis), kein
@@ -605,12 +677,14 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     () => ({
       screen,
       slots,
+      activeSlotId,
       refreshSlots,
       startNewGame,
       cancelCreation,
       createCharacter,
       loadGame,
       saveGame,
+      sendItemsToSlot,
       exportSave,
       importSave,
       deleteSlot,
@@ -629,12 +703,14 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     [
       screen,
       slots,
+      activeSlotId,
       refreshSlots,
       startNewGame,
       cancelCreation,
       createCharacter,
       loadGame,
       saveGame,
+      sendItemsToSlot,
       exportSave,
       importSave,
       deleteSlot,

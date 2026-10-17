@@ -1,23 +1,27 @@
-# CODEX-Arbeitsplatz
+# Grim Reach — Codex-Projektleitung
 
-Dieser Ordner ist Codex' abgegrenzter Studio-Arbeitsbereich für Grim Reach. Er ergänzt Claudes bestehende Struktur, ersetzt sie aber nicht.
+<!-- codex:2026-09-09T20:12:15+02:00 -->
+Seit Chefauftrag vom 09.09.2026 ist Codex zentraler technischer Ansprechpartner.
+Du kannst normale Arbeitsaufträge stellen; Codex ordnet Fachrollen zu, setzt um und prüft.
 
-## Aufbau
+## Einstieg
 
-- `RULES.md` — Rolle, Grenzen und Arbeitsweise
-- `PERSONA.md` — Aussehen, Stimme und Charakter der Mitarbeiterin Mira Falk
-- `PROJECT.md` — stabile Projektanalyse und technische Landkarte
-- `CURRENT.md` — zeitgebundener Projekt-Snapshot; vor Nutzung aktualisieren
-- `HANDOFF.md` — aktuelle Übergabe an Claude
-- `WORKLOG.md` — knapper, fortlaufender Arbeitsnachweis
-- `notes/` — interne Analysen und Recherche-Notizen
-- `work/` — laufende Entwürfe
-- `assets/` — Asset-Staging, noch nicht automatisch im Spiel eingebunden
-- `outbox/` — abgeschlossene, von Claude abholbare Lieferpakete
-- `templates/ASSET-BRIEF.md` — definitive Übergabevorlage Chef/Claude → Codex für Asset-Aufträge
+- [Projektanweisung](../AGENTS.md): Führung, Schutzregeln und Delegation.
+- [Projektlandkarte](PROJECT.md), [aktueller Stand](CURRENT.md), [Arbeitsregeln](RULES.md).
+- [Fachagenten](agents/README.md): Rollen, Reviere und Verwendung.
+- [Handoff](HANDOFF.md): aktueller Prüfstand oben, alte Übergaben darunter.
+- [Übernahmeanalyse](notes/2026-09-09-projektuebernahme.md): Befunde und Grenzen.
 
-## Start
+## Ablage
 
-Am zuverlässigsten aus dem Projektroot über `START-CODEX.bat`. Der Launcher wechselt nach `G:\GameDev`, prüft `AGENTS.md` und `CODEX/RULES.md` und startet dann Codex.
+`work/`: Entwürfe/Aufträge. `notes/`: Analysen. `assets/`: noch nicht automatisch
+integrierte Bilder. `outbox/`: Lieferpakete. `templates/`: Brief-/Arbeitsvorlagen.
+`WORKLOG.md`: fortlaufender Nachweis. `archive/`: frühere Grundlagen, keine aktiven Aufträge.
 
-Die eigentliche dauerhafte Projektrolle steht in der Root-Datei `AGENTS.md`, damit auch ein normal in diesem Ordner gestarteter Codex sie erhält.
+`.claude/**` bleibt unangetastet. Die frühere Mira-Rolle ist als Designfachrolle erhalten.
+Native Agentvorlagen sind zusätzlich versionierbar unter `agents/native/` abgelegt,
+da `.codex/` lokal ignoriert und in dieser Sitzung schreibgeschützt ist.
+
+Neue Sitzungen im Root erhalten `AGENTS.md`; der vorhandene `START-CODEX.bat` bleibt
+ein optionaler Einstieg. Für automatisch entdeckte native Rollen ist zusätzlich die
+Installation laut Agenten-README in einer dafür berechtigten Sitzung erforderlich.

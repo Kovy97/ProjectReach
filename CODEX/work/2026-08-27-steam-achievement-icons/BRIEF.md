@@ -22,10 +22,53 @@
 **Woran erkennt Claude Erfolg:** 67 × 2 Dateien mit exakten API-Namen, bei 64 px unterscheidbar, Serien einheitlich.
 
 # Teil B – Produktionsplan (Mira)
-_(füllt Mira)_
+
+<!-- codex:2026-08-27T11:40:00+02:00 -->
+
+- Die eingefrorenen 67 API-Namen werden direkt aus
+  `design/achievements-1.2.0/steam-set.csv` übernommen; Dateinamen werden nicht aus Anzeigenamen
+  abgeleitet.
+- Drei visuelle Anker definieren den Guss: `CH01_THE_FIRST_PAGE` für die 21 Kapitel,
+  `MASTER_WOODCUTTING` für die 20 echten Skill-Meister und `BLOODED` für die 26
+  Einzelmotive. `CHAMPIONS_BANE` und `MASTER_OF_TRADES` bleiben trotz Präfix Einzelmotive.
+- Farbmotive entstehen mit dem eingebauten ImageGen-Werkzeug als hochauflösende
+  Arbeitsfassungen. Die drei Anker werden innerhalb des Sets als Bildreferenzen für
+  Plakettenbau, Material, Licht und Malgrad verwendet.
+- Finals werden rein mechanisch auf 256 × 256 px normalisiert, deckend als JPG ausgegeben und
+  ohne zweite Erzeugung entsättigt. Keine Renderer- oder Steam-Integration.
+- Eigentliche Lesbarkeitsabnahme erfolgt auf Kontaktbögen, in denen jedes Icon exakt 64 × 64 px
+  groß ist.
 
 # Teil C – QA-Protokoll (Mira)
-_(füllt Mira)_
+
+<!-- codex:2026-08-27T11:40:00+02:00 -->
+
+- **PASS:** 67/67 Content-IDs und 134/134 erwartete JPG-Dateien vorhanden.
+- **PASS:** Jede Datei ist 256 × 256 px, JPEG und vollständig deckend; kein Alpha.
+- **PASS:** Exakter Dateisatz `<api_name>.jpg` plus `<api_name>_gray.jpg`, ohne fehlende oder
+  unerwartete Namen.
+- **PASS:** Jede Graufassung wurde aus derselben normalisierten Farbfassung abgeleitet.
+  Pixelprüfung bestätigt für alle 67 Dateien identische R-, G- und B-Kanäle.
+- **PASS:** Kontaktbögen Farbe und Graustufen verwenden die Steam-Zielgröße 64 × 64 px.
+  Serienkennung, grobe Silhouetten und zentrale Motive wurden dort visuell geprüft.
+- **PASS:** Keine sichtbaren Buchstaben, Zahlen, Wasserzeichen, Partikeleffekte oder leuchtenden
+  Auren. Gold wird als Materialakzent geführt.
+- Maschinenlesbares Protokoll:
+  `CODEX/assets/steam-achievement-icons-2026-08-27/qa/qa.json`.
 
 # Teil D – Übergabe (Mira)
-_(füllt Mira)_
+
+<!-- codex:2026-08-27T11:40:00+02:00 -->
+
+- **GO für Claudes Gegenprüfung.**
+- Finale 134 Steam-JPGs:
+  `CODEX/assets/steam-achievement-icons-2026-08-27/fertig/`.
+- Hochauflösende akzeptierte Arbeitsfassungen:
+  `CODEX/assets/steam-achievement-icons-2026-08-27/raw/`.
+- Kontaktbögen und QA:
+  `CODEX/assets/steam-achievement-icons-2026-08-27/qa/`.
+- Tatsächlich eingesetzte Produktionsprompts:
+  `CODEX/work/2026-08-27-steam-achievement-icons/PROMPTS-FINAL.md`.
+- Reproduzierbarer mechanischer Finalisierer:
+  `CODEX/work/2026-08-27-steam-achievement-icons/build-final.mjs`.
+- Nichts in Renderer oder Steam-Backend kopiert.

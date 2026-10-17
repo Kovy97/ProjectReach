@@ -189,6 +189,10 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     const erwartet = JSON.parse(JSON.stringify(raw)) as typeof raw;
     erwartet.version = SAVE_VERSION;
     erwartet.state.version = SAVE_VERSION;
+    // v87 (vierter Werkzeug-Slot): migrateState baut den Equipment-Record generisch aus EQUIP_SLOTS
+    // neu — `tool4` kommt als null dazu, im Charakter wie in jedem Kit-Spiegel.
+    erwartet.state.character.equipment.tool4 = null;
+    for (const kit of erwartet.state.equipKits) kit.equipment.tool4 = null;
     erwartet.state.bankOrder = Object.keys(erwartet.state.bank ?? {}).sort();
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });

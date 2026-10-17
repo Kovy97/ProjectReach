@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enzyklopädie — Mockup</title>
+<style>
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ECHTE SPIEL-SCHRIFTEN (apps/client/src/renderer/fonts/) — dieselben zwei
+   Dateien, die base.css für --font-head lädt. "Cinzel" traegt nur noch die
+   ALL-CAPS-Kicker/Ziffern, "IM Fell English SC" ist seit 1.1.0 die aktuelle
+   Haupt-Buchstabenschrift (siehe base.css Zeile 90) — NICHT mehr "Cinzel" pur,
+   wie ein älterer Code-Kommentar an anderer Stelle noch nahelegt.
+   ═══════════════════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: "IM Fell English SC";
+  src: url("../../apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cinzel";
+  src: url("../../apps/client/src/renderer/fonts/Cinzel-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* ── Ashen-Iron-Design-Tokens, 1:1 aus apps/client/src/renderer/styles/base.css
+      (:root, Zeilen 58–92) + Rarity-Palette aus styles/components.css (Zeile ~95–106).
+      Keine neuen Farben erfunden. ── */
+:root {
+  --bg: #14161a;
+  --bg-deep: #0d0f12;
+  --panel: #1e2329;
+  --panel-hover: #262d34;
+  --slot: #0f1216;
+  --border: #333c44;
+  --border-bright: #4d5963;
+  --text: #ccd5db;
+  --muted: #79848c;
+  --accent: #9a8060;
+  --accent-2: #b39468;
+  --accent-dim: #5a4a30;
+  --danger: #a85a52;
+  --gold: #d8c06a;
+  --radius: 4px;
+  --glow: 0 0 12px rgba(216, 184, 112, 0.32);
+  --font-head: "IM Fell English SC", Georgia, "Times New Roman", serif;
+  --font-kicker: "Cinzel", "IM Fell English SC", Georgia, serif;
+
+  /* Rarity-Palette (components.css) */
+  --rar-poor: #555555;
+  --rar-common: #c8c8c8;
+  --rar-magic: #4a6d99;
+  --rar-rare: #3cb043;
+  --rar-superRare: #5b8fd6;
+  --rar-epic: #b07fd8;
+  --rar-legendary: #e0902a;
+  --rar-godly: #ffd700;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: #0a0b0d;
+  color: var(--text);
+  font-family: var(--font-head), Georgia, serif;
+  font-size: 15px;
+}
+img { max-width: 100%; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STUDIO-WERKZEUGLEISTE — bewusst neutral/grau, kein Diegese-Element
+   (dasselbe Prinzip wie design/mockups/*/chrome.css: Werkzeug, nicht Spiel-UI).
+   ═══════════════════════════════════════════════════════════════════════ */
+#chrome {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  padding: 10px 18px;
+  background: #17181b;
+  border-bottom: 1px solid #35383e;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  color: #b8bcc4;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+#chrome h1 {
+  margin: 0 24px 0 0;
+  font-size: 14px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #e8e4d8;
+  white-space: nowrap;
+}
+#chrome h1 small { display: block; font-weight: 400; color: #82868f; font-size: 11px; }
+.chrome-group { display: flex; align-items: center; gap: 6px; }
+.chrome-group-label {
+  color: #6f737b; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 2px;
+}
+.chrome-btn {
+  padding: 5px 10px;
+  background: #202226;
+  border: 1px solid #40444c;
+  border-radius: 3px;
+  color: #c6cad2;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.chrome-btn:hover { background: #2a2d32; border-color: #565b64; }
+.chrome-btn.active {
+  background: rgba(216, 192, 106, 0.16);
+  border-color: #d8c06a;
+  color: #f0dca0;
+}
+.chrome-note {
+  margin-left: auto;
+  color: #7d828a;
+  font-size: 11.5px;
+  max-width: 360px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BÜHNE — enthält das skalierte "Spielfenster" (angedeuteter Hintergrund
+   + das eigentliche Modal). Die Skalierung passt das Fenster in den
+   verfügbaren Browser-Viewport, OHNE das Layout selbst zu verändern — der
+   Reviewer sieht die Auflösung 1:1, unabhängig von der eigenen Fenstergröße.
+   ═══════════════════════════════════════════════════════════════════════ */
+#stageWrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 22px;
+  overflow: auto;
+}
+.game-window {
+  position: relative;
+  transform-origin: top left;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  background: #0d0f12;
+  /* Macht das simulierte Fenster zum Referenzrahmen für cqw/cqh unten — im echten Spiel ist
+     100vw/100vh die Electron-Fensterhöhe selbst; hier muss es die SIMULIERTE Auflösung sein,
+     nicht der tatsächliche Browser-Viewport des Reviewers (der das Mockup ja auf jeder eigenen
+     Fenstergröße öffnet). Ohne dies würde der Auflösungs-Umschalter oben nichts an der
+     Modal-Größe ändern — genau das, was hier getestet werden soll. */
+  container-type: size;
+  container-name: gamewin;
+}
+
+/* ─── Angedeuteter Spielhintergrund: echte Sidebar-/Topbar-Texturen, stark
+       vereinfacht (kein vollständiger Seitenaufbau — "angedeutet", s. Auftrag). ─── */
+.fake-sidebar {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 78px;
+  background:
+    linear-gradient(rgba(10,12,15,0.35), rgba(10,12,15,0.35)),
+    url("../../apps/client/src/renderer/assets/bg_sidebar.webp") top left / 313px repeat;
+  border-right: 1px solid #333c44;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 18px;
+}
+.fake-sidebar .fs-dot {
+  width: 40px; height: 40px; border-radius: 3px;
+  background: rgba(216,192,106,0.08);
+  border: 1px solid rgba(216,192,106,0.22);
+}
+.fake-body {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 78px;
+  background:
+    linear-gradient(rgba(6,7,9,0.55), rgba(6,7,9,0.72)),
+    url("../../apps/client/src/renderer/assets/bg_grey.webp") center / 260px repeat;
+  filter: saturate(0.7);
+}
+
+/* Fake-Topbar: reale Klassen/Assets aus topbar.css nachgebaut, gekürzt auf
+   die für den Auftrag relevanten Knöpfe (…Bank · Erfolge, dann NEU: "?"). */
+.fake-topbar-area { position: relative; z-index: 1; }
+.fake-topbar {
+  display: flex;
+  align-items: stretch;
+  height: 58px;
+  background:
+    linear-gradient(rgba(10,12,15,0.25), rgba(10,12,15,0.25)),
+    url("../../apps/client/src/renderer/assets/bg_sidebar.webp") top left / 313px repeat;
+  border-bottom: 1px solid #333c44;
+}
+.fake-topbar-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.fake-topbar-nav::-webkit-scrollbar { display: none; }
+.ft-item {
+  flex: 1 0 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  margin: 6px 3px;
+  padding: 4px 8px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../../apps/client/src/renderer/assets/ui/buttons/button_new.webp") 90 150 90 150 fill / 13px;
+  color: var(--gold);
+  font-family: var(--font-kicker);
+  font-weight: 700;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: center;
+  white-space: nowrap;
+  cursor: default;
+}
+.ft-item.active { border-image-source: url("../../apps/client/src/renderer/assets/ui/buttons/button_new_pressed.webp"); }
+/* NEU — der Einstiegspunkt aus diesem Auftrag: nicht Teil der scrollenden Nav-
+   Reihe (topbar-row-Umbau, s. KONZEPT.md §3), bleibt am rechten Rand fixiert. */
+.topbar-help-btn {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  margin: 6px 8px 6px 4px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../../apps/client/src/renderer/assets/ui/buttons/button_new.webp") 90 150 90 150 fill / 13px;
+  color: var(--gold);
+  font-family: var(--font-kicker);
+  font-weight: 700;
+  font-size: 26px;
+  cursor: pointer;
+  transition: filter 0.12s, transform 0.12s;
+}
+.topbar-help-btn:hover { filter: brightness(1.25); transform: translateY(-1px); }
+.topbar-help-btn.is-pulsing {
+  animation: encp-help-pulse 2.2s ease-in-out infinite;
+}
+@keyframes encp-help-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(216,192,106,0.45); }
+  50%      { box-shadow: 0 0 14px 4px rgba(216,192,106,0.55); }
+}
+.fake-header {
+  height: 30px;
+  background:
+    linear-gradient(rgba(10,12,15,0.30), rgba(10,12,15,0.30)),
+    url("../../apps/client/src/renderer/assets/bg_topbar.webp") top left / 313px repeat;
+  border-bottom: 1px solid #3a3020;
+}
+
+/* Anmerkung-Sprechblase — zeigt vom "?"-Knopf auf die reale Einfügestelle. */
+.callout {
+  position: absolute;
+  /* Über dem Modal-Overlay (z-index:200) — reine Regie-Anmerkung, soll auch bei geöffnetem Modal
+     lesbar bleiben, unabhängig davon, ob der reale Knopf gerade vom dunklen Backdrop verdeckt ist. */
+  z-index: 260;
+  max-width: 210px;
+  padding: 8px 10px;
+  background: #17181b;
+  border: 1px solid #d8c06a;
+  border-radius: 3px;
+  color: #e8d488;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+.callout::after {
+  content: "";
+  position: absolute;
+  top: -7px; right: 26px;
+  border: 7px solid transparent;
+  border-bottom-color: #d8c06a;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODAL-GRUNDGERÜST — 1:1 aus styles/modals.css (.modal-overlay/.modal) +
+   styles/item-wiki.css (.modal.iwk-modal Größenformel, dort vom Chef als
+   "bindend, passt bei 1366×768/1600×900/1920×1080 immer" abgenommen).
+   ═══════════════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.modal-overlay[hidden] { display: none; }
+.modal {
+  position: relative;
+  isolation: isolate;
+  border-style: solid;
+  border-width: 10px;
+  border-image: url("../../apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(10,12,15,0.55), rgba(10,12,15,0.55)),
+    url("../../apps/client/src/renderer/assets/bg_black.webp") repeat;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.78);
+}
+.modal-close {
+  width: 25px; height: 25px;
+  background: url("../../apps/client/src/renderer/assets/ui/citadel/standalone-close-button/close_n.webp") center / contain no-repeat;
+  border: none; outline: none; cursor: pointer; padding: 0; flex-shrink: 0;
+}
+.modal-close:hover { background-image: url("../../apps/client/src/renderer/assets/ui/citadel/standalone-close-button/close_h.webp"); }
+
+/* ─── .encp-modal: dieselbe Größenformel wie .modal.iwk-modal (item-wiki.css:14), nur mit
+      cqw/cqh statt vw/vh (s. .game-window-Kommentar oben) — im echten Spiel wären das echte
+      Viewport-Einheiten, hier müssen sie sich auf die SIMULIERTE Fenstergröße beziehen. ─── */
+.encp-modal {
+  width: min(1440px, calc(100cqw - 32px));
+  max-width: min(1440px, calc(100cqw - 32px));
+  max-height: calc(100cqh - 32px);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.encp-titlebar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.encp-titlebar-side { flex: 1 1 0; min-width: 0; display: flex; align-items: center; }
+.encp-titlebar-side--end { justify-content: flex-end; }
+.encp-kicker {
+  flex: 0 0 auto;
+  text-align: center;
+  font-family: var(--font-kicker);
+  font-size: clamp(18px, 1.6vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* ─── Suchzeile — Vorbild .achv-ledger-search (warden-ledger-achievements.css:232) ─── */
+.encp-search-row {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 22px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 24px;
+  padding: 9px 12px;
+  border: 1px solid rgba(178, 127, 62, 0.42);
+  background: rgba(5,6,7,0.86);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.025);
+}
+.encp-search-row img { width: 20px; height: 20px; object-fit: contain; opacity: 0.85; }
+.encp-search-row input {
+  min-width: 0; border: 0; outline: 0; background: transparent;
+  color: var(--text); font-family: var(--font-head); font-size: 15px;
+}
+.encp-search-row input::placeholder { color: var(--muted); }
+.encp-result-count {
+  color: #8f9ba2; font-family: Arial, sans-serif; font-size: 11px;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ─── Stage: Register + Raster — Vorbild .achv-ledger-shell (2 statt 3 Spalten, s. KONZEPT.md §4) ─── */
+.encp-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: clamp(180px, 13vw, 226px) minmax(0, 1fr);
+  overflow: hidden;
+}
+.encp-rail {
+  min-width: 0; min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 8px;
+  overflow-y: auto;
+  border-right: 1px solid rgba(183, 128, 61, 0.38);
+  background:
+    linear-gradient(90deg, rgba(38,26,17,0.76), rgba(9,10,11,0.82)),
+    url("../../apps/client/src/renderer/assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 256px repeat;
+}
+.encp-cat {
+  display: grid;
+  grid-template-columns: 24px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 6px 7px;
+  border: 0;
+  border-bottom: 1px solid rgba(173, 124, 64, 0.16);
+  background: transparent;
+  color: #a9b1b6;
+  font-family: var(--font-head);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.encp-cat:hover { color: var(--text); background: linear-gradient(90deg, rgba(119,78,34,0.16), transparent); }
+.encp-cat.is-active {
+  color: var(--gold);
+  background: linear-gradient(90deg, rgba(151,96,35,0.3), rgba(35,24,16,0.08));
+  box-shadow: inset 3px 0 rgba(221,174,76,0.74);
+}
+.encp-cat-icon { display: grid; place-items: center; width: 20px; height: 20px; font-size: 15px; }
+.encp-cat-count {
+  color: #87939a; font-family: Arial, sans-serif; font-size: 10px;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.encp-cat.is-active .encp-cat-count { color: #d6bd78; }
+
+.encp-grid-wrap {
+  min-width: 0; min-height: 0;
+  overflow-y: auto;
+  padding: 16px 20px;
+  background:
+    linear-gradient(rgba(6,7,8,0.7), rgba(8,8,8,0.78)),
+    url("../../apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px repeat;
+}
+.encp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 12px;
+}
+
+/* ─── Item-Karte — Vorbild .shopv2-card (shop.css:340), Rarity-Innen-Ring statt Glow ─── */
+.encp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  content-visibility: auto;
+  contain-intrinsic-size: 160px;
+  border-style: solid;
+  border-width: 5px;
+  border-image: url("../../apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  background: linear-gradient(rgba(14,9,4,0.55), rgba(14,9,4,0.55)), url("../../apps/client/src/renderer/assets/bg_black.webp") repeat;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.encp-card:hover { filter: brightness(1.08); }
+.encp-card.rarity-common     { box-shadow: none; }
+.encp-card.rarity-rare       { box-shadow: inset 0 0 0 2px var(--rar-rare); }
+.encp-card.rarity-superRare  { box-shadow: inset 0 0 0 2px var(--rar-superRare); }
+.encp-card.rarity-epic       { box-shadow: inset 0 0 0 2px var(--rar-epic); }
+.encp-card.rarity-legendary  { box-shadow: inset 0 0 0 2px var(--rar-legendary); }
+.encp-card-img-area { display: flex; align-items: center; justify-content: center; width: 100%; height: 76px; }
+.encp-card-img-area img { max-width: 68px; max-height: 68px; object-fit: contain; }
+.encp-card-name {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.25;
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.encp-card.rarity-rare .encp-card-name      { color: var(--rar-rare); }
+.encp-card.rarity-superRare .encp-card-name { color: var(--rar-superRare); }
+.encp-card.rarity-epic .encp-card-name      { color: var(--rar-epic); }
+.encp-card.rarity-legendary .encp-card-name { color: var(--rar-legendary); }
+
+/* ─── Unentdeckt: Silhouette + "?"-Maskierung — Vorbild BestiaryPage.tsx LootRow "mysteryFace" ─── */
+.encp-card.is-undiscovered { cursor: default; }
+.encp-card.is-undiscovered .encp-card-img-area img {
+  filter: brightness(0) saturate(0);
+  opacity: 0.4;
+}
+.encp-card-mystery-mark {
+  position: absolute;
+  top: 44%; left: 50%; transform: translate(-50%, -50%);
+  font-family: var(--font-kicker);
+  font-size: 30px;
+  font-weight: 700;
+  color: rgba(216, 213, 200, 0.55);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  pointer-events: none;
+}
+.encp-card.is-undiscovered .encp-card-name { color: var(--muted); }
+.encp-card-hint {
+  position: absolute;
+  left: 50%; bottom: 100%;
+  transform: translate(-50%, -6px);
+  width: 168px;
+  padding: 7px 9px;
+  background: #17181b;
+  border: 1px solid rgba(216,192,106,0.55);
+  color: #cdd3d8;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  z-index: 4;
+}
+.encp-card-hint[hidden] { display: none; }
+
+/* ─── Leer-/Kein-Treffer-Zustand ─── */
+.encp-empty {
+  grid-column: 1 / -1;
+  padding: 46px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Standard-Knöpfe — 1:1 .btn-iron (design-system.css:520), kleine Variante .btn-iron--sm */
+.btn-iron {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 38px; min-width: 120px;
+  padding: 6px 16px;
+  border: 8px solid transparent;
+  border-image: url("../../apps/client/src/renderer/assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 17px;
+  background-color: #111315;
+  background-image:
+    linear-gradient(rgba(38,24,13,0.16), rgba(3,5,6,0.42)),
+    url("../../apps/client/src/renderer/assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  color: #ead8a0;
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px #000;
+  cursor: pointer;
+  transition: filter 0.12s, color 0.12s;
+}
+.btn-iron:hover { filter: brightness(1.15); color: #fff1bd; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   WIKI-STACK-DEMO — trimmt ItemWikiModal.tsx auf das Nötigste, um das
+   Stacking-Verhalten (KONZEPT.md §3) zu zeigen. KEIN Anspruch, das reale
+   Modal pixelgenau zu reproduzieren — die echten Panels (Quellen/Verwendet
+   für/Kernwerte-Kacheln) leben ausschließlich in ItemWikiModal.tsx.
+   ═══════════════════════════════════════════════════════════════════════ */
+.iwk-demo-modal {
+  width: min(880px, calc(100cqw - 80px));
+  max-height: calc(100cqh - 80px);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.iwk-demo-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px 12px; border-bottom: 1px solid var(--border);
+}
+.iwk-demo-back {
+  color: var(--muted); font-family: "Segoe UI", system-ui, sans-serif; font-size: 11.5px;
+}
+.iwk-demo-body { padding: 20px 26px 26px; overflow-y: auto; text-align: center; }
+.iwk-demo-hero { width: 108px; height: 108px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; }
+.iwk-demo-hero img { max-width: 96px; max-height: 96px; object-fit: contain; }
+.iwk-demo-kicker { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.iwk-demo-name { font-family: var(--font-kicker); font-size: 26px; font-weight: 700; margin: 0 0 14px; }
+.iwk-demo-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 18px; }
+.iwk-demo-fact {
+  display: flex; flex-direction: column; gap: 2px; padding: 7px 12px;
+  background: rgba(0,0,0,0.35); border: 1px solid var(--border); min-width: 96px;
+}
+.iwk-demo-fact-label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.iwk-demo-fact-value { font-family: var(--font-head); font-size: 16px; color: var(--gold); font-weight: 700; }
+.iwk-demo-note {
+  margin-top: 18px; padding: 10px 14px; text-align: left;
+  border: 1px dashed rgba(216,192,106,0.55); background: rgba(216,192,106,0.06);
+  font-family: "Segoe UI", system-ui, sans-serif; font-size: 12px; color: #d8c99a; line-height: 1.5;
+}
+
+/* ── Responsive Vorwärts-Absicherung (KONZEPT.md §9) — bei diesen zwei
+      Zielauflösungen nie aktiv, nur dokumentiert. ── */
+@media (max-width: 1023px) {
+  .encp-stage { grid-template-columns: 1fr; grid-template-rows: auto minmax(0,1fr); }
+  .encp-rail { flex-direction: row; flex-wrap: wrap; overflow-y: visible; border-right: 0; border-bottom: 1px solid rgba(183,128,61,0.38); }
+  .encp-cat { width: auto; flex: 1 1 auto; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="chrome">
+  <h1>Enzyklopädie <small>Mockup — kein Build, keine Spiellogik. Werkzeugleiste ist NICHT Teil des Spiel-UI.</small></h1>
+
+  <div class="chrome-group">
+    <span class="chrome-group-label">Auflösung</span>
+    <button class="chrome-btn" data-res="1366x768">1366×768</button>
+    <button class="chrome-btn" data-res="1600x900">1600×900</button>
+    <button class="chrome-btn" data-res="1920x1080">1920×1080</button>
+  </div>
+
+  <div class="chrome-group">
+    <span class="chrome-group-label">Sprache</span>
+    <button class="chrome-btn" data-lang="de">DE</button>
+    <button class="chrome-btn" data-lang="en">EN</button>
+    <button class="chrome-btn" data-lang="ru">RU</button>
+  </div>
+
+  <div class="chrome-group">
+    <span class="chrome-group-label">Zustand</span>
+    <button class="chrome-btn" data-state="normal">Normal</button>
+    <button class="chrome-btn" data-state="noresult">Kein Treffer</button>
+    <button class="chrome-btn" data-state="undiscovered">Unentdecktes Item</button>
+    <button class="chrome-btn" data-state="wiki">Wiki-Sprung (Stacking)</button>
+  </div>
+
+  <div class="chrome-note" id="chromeNote"></div>
+</div>
+
+<div id="stageWrap">
+  <div class="game-window" id="gameWindow">
+
+    <div class="fake-sidebar">
+      <div class="fs-dot"></div><div class="fs-dot"></div><div class="fs-dot"></div>
+      <div class="fs-dot"></div><div class="fs-dot"></div>
+    </div>
+
+    <div class="fake-body">
+      <div class="fake-topbar-area">
+        <div class="fake-topbar">
+          <div class="fake-topbar-nav">
+            <div class="ft-item" data-i18n="tb.bestiary"></div>
+            <div class="ft-item" data-i18n="tb.quests"></div>
+            <div class="ft-item" data-i18n="tb.mastery"></div>
+            <div class="ft-item" data-i18n="tb.character"></div>
+            <div class="ft-item" data-i18n="tb.companions"></div>
+            <div class="ft-item" data-i18n="tb.shop"></div>
+            <div class="ft-item" data-i18n="tb.bank"></div>
+            <div class="ft-item active" data-i18n="tb.achievements"></div>
+          </div>
+          <button type="button" class="topbar-help-btn is-pulsing" id="helpBtn" title="Enzyklopädie öffnen">?</button>
+        </div>
+        <div class="fake-header"></div>
+      </div>
+
+      <div class="callout" id="calloutBox" style="top:72px; right:14px;">
+        Einfügestelle: <b>TopBar.tsx</b>, rechts neben „Achievements" (letzter Eintrag in
+        <code>topBarPages</code>) — fix am rechten Rand, scrollt nicht mit der Nav-Reihe weg.
+        Siehe KONZEPT.md §3.
+      </div>
+
+      <!-- ─── Enzyklopädie-Modal ─── -->
+      <div class="modal-overlay" id="encpOverlay">
+        <div class="modal encp-modal">
+          <header class="encp-titlebar">
+            <div class="encp-titlebar-side"></div>
+            <div class="encp-kicker" data-i18n="encp.kicker"></div>
+            <div class="encp-titlebar-side encp-titlebar-side--end">
+              <button class="modal-close" id="closeEncp" aria-label="Schließen"></button>
+            </div>
+          </header>
+
+          <div class="encp-search-row">
+            <img src="../../apps/client/src/renderer/assets/icons/icon_ach_search.webp" alt="" />
+            <input type="search" id="searchInput" data-i18n-placeholder="encp.searchPlaceholder" />
+            <span class="encp-result-count" id="resultCount"></span>
+          </div>
+
+          <div class="encp-stage">
+            <nav class="encp-rail" id="railList"></nav>
+            <div class="encp-grid-wrap">
+              <div class="encp-grid" id="cardGrid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Wiki-Stack-Demo: legt sich ÜBER die Enzyklopädie, die dahinter gemountet bleibt ─── -->
+      <div class="modal-overlay" id="wikiOverlay" hidden>
+        <div class="modal iwk-demo-modal">
+          <div class="iwk-demo-head">
+            <span class="iwk-demo-back" data-i18n="wiki.backHint"></span>
+            <div class="encp-kicker" data-i18n="wiki.kicker" style="font-size:16px;"></div>
+            <button class="modal-close" id="closeWiki" aria-label="Schließen"></button>
+          </div>
+          <div class="iwk-demo-body">
+            <div class="iwk-demo-hero">
+              <img src="../../apps/client/src/renderer/assets/items/adamantium_platebody.webp" alt="" />
+            </div>
+            <div class="iwk-demo-kicker" data-i18n="wiki.itemKicker"></div>
+            <h2 class="iwk-demo-name" style="color: var(--rar-superRare);" data-i18n="wiki.itemName"></h2>
+            <div class="iwk-demo-facts">
+              <div class="iwk-demo-fact">
+                <span class="iwk-demo-fact-label" data-i18n="wiki.fact.armor"></span>
+                <span class="iwk-demo-fact-value">23.98</span>
+              </div>
+              <div class="iwk-demo-fact">
+                <span class="iwk-demo-fact-label" data-i18n="wiki.fact.req"></span>
+                <span class="iwk-demo-fact-value" data-i18n="wiki.fact.reqval"></span>
+              </div>
+              <div class="iwk-demo-fact">
+                <span class="iwk-demo-fact-label" data-i18n="wiki.fact.value"></span>
+                <span class="iwk-demo-fact-value">1500</span>
+              </div>
+            </div>
+            <div class="iwk-demo-note" data-i18n="wiki.note"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   BEISPIEL-ITEMLISTE — 18 echte Items aus packages/content/src/index.ts
+   (ID, Name DE/EN/RU, Rarity, Bild-Datei — alle geprüft vorhanden unter
+   apps/client/src/renderer/assets/items/<id>.webp). Kein Build, keine
+   echte Content-Anbindung — reine Demo-Daten für dieses Mockup.
+   ═══════════════════════════════════════════════════════════════════════ */
+const ITEMS = [
+  { id:"bronze_sword", cat:"weapons", rarity:"common",
+    name:{ de:"Bronze-Schwert", en:"Bronze Sword", ru:"Меч из бронзы" }, discovered:true },
+  { id:"copper_sword", cat:"weapons", rarity:"common",
+    name:{ de:"Kupfer-Schwert", en:"Copper Sword", ru:"Меч из меди" }, discovered:true },
+  { id:"steel_sword", cat:"weapons", rarity:"rare",
+    name:{ de:"Stahl-Schwert", en:"Steel Sword", ru:"Меч из стали" }, discovered:true },
+  { id:"mithril_sword", cat:"weapons", rarity:"superRare",
+    name:{ de:"Mithril-Schwert", en:"Mithril Sword", ru:"Меч из мифрила" }, discovered:true },
+  { id:"adamantium_sword", cat:"weapons", rarity:"superRare",
+    name:{ de:"Adamantium-Schwert", en:"Adamantium Sword", ru:"Меч из адамантия" }, discovered:true },
+  { id:"abyssal_tide_bow", cat:"weapons", rarity:"epic",
+    name:{ de:"Abyssaler Gezeitenbogen", en:"Abyssal Tide Bow", ru:"Лук бездонного прилива" }, discovered:true },
+  { id:"leather_body", cat:"armor", rarity:"common",
+    name:{ de:"Lederwams", en:"Leather Body", ru:"Доспех из кожи" }, discovered:true },
+  { id:"adamantium_platebody", cat:"armor", rarity:"superRare",
+    name:{ de:"Adamantium-Plattenrüstung", en:"Adamantium Platebody", ru:"Латный нагрудник из адамантия" }, discovered:true },
+  { id:"abyssal_signet", cat:"armor", rarity:"epic",
+    name:{ de:"Abyssaler Siegelring", en:"Abyssal Signet", ru:"Бездонная печатка" }, discovered:false },
+  { id:"iron_pickaxe", cat:"tools", rarity:"common",
+    name:{ de:"Eisen-Spitzhacke", en:"Iron Pickaxe", ru:"Кирка из железа" }, discovered:true },
+  { id:"cooked_trout", cat:"food", rarity:"common",
+    name:{ de:"Gebratene Forelle", en:"Cooked Trout", ru:"Жареная форель" }, discovered:true },
+  { id:"potion_heal", cat:"potions", rarity:"common",
+    name:{ de:"Heiltrank", en:"Healing Potion", ru:"Лечебное зелье" }, discovered:true },
+  { id:"potion_greater_heal", cat:"potions", rarity:"common",
+    name:{ de:"Großer Heiltrank", en:"Greater Healing Potion", ru:"Сильное лечебное зелье" }, discovered:true },
+  { id:"iron_bar", cat:"materials", rarity:"common",
+    name:{ de:"Eisenbarren", en:"Iron Bar", ru:"Слиток из железа" }, discovered:true },
+  { id:"oak_log", cat:"materials", rarity:"common",
+    name:{ de:"Eichenholz", en:"Oak Log", ru:"Бревно из дуба" }, discovered:true },
+  { id:"adamantite_ore", cat:"materials", rarity:"common",
+    name:{ de:"Adamantiterz", en:"Adamantite Ore", ru:"Руда из адамантита" }, discovered:true },
+  { id:"abyssal_core", cat:"materials", rarity:"superRare",
+    name:{ de:"Abyssaler Kern", en:"Abyssal Core", ru:"Бездонное ядро" }, discovered:false },
+  { id:"idol_heart", cat:"materials", rarity:"legendary",
+    name:{ de:"Herz des Götzen", en:"Heart of the Idol", ru:"Сердце Идола" }, discovered:false },
+];
+
+const CATS = ["all","weapons","armor","tools","food","potions","materials"];
+const CAT_ICON = { all:"◆", weapons:"⚔", armor:"🛡", tools:"⛏", food:"🍖", potions:"🧪", materials:"⛓" };
+
+/* i18n — reale Schlüssel/Übersetzungen, wo sie schon existieren (inv.filter.*,
+   nav.*), Rest sind die in KONZEPT.md §11 vorgeschlagenen encyclopedia.*-Schlüssel. */
+const I18N = {
+  de: {
+    "tb.bestiary":"BESTIARIUM","tb.quests":"QUESTS","tb.mastery":"MEISTERSCHAFT",
+    "tb.character":"CHARAKTER","tb.companions":"GEFÄHRTEN","tb.shop":"LADEN","tb.bank":"BANK",
+    "tb.achievements":"ERFOLGE",
+    "encp.kicker":"ENZYKLOPÄDIE",
+    "encp.searchPlaceholder":"Item suchen…",
+    "encp.noResults":"Kein Eintrag gefunden. Versuch einen anderen Suchbegriff.",
+    "encp.clearSearch":"Suche leeren",
+    "encp.undiscovered":"Noch nicht entdeckt.",
+    "cat.all":"Alle","cat.weapons":"Waffen","cat.armor":"Rüstung","cat.tools":"Werkzeuge",
+    "cat.food":"Nahrung","cat.potions":"Tränke","cat.materials":"Materialien",
+    "wiki.backHint":"↩ schließt nur dieses Fenster","wiki.kicker":"ITEM-WIKI",
+    "wiki.itemKicker":"Brust · Sehr Selten","wiki.fact.armor":"Rüstungswert","wiki.fact.req":"Erfordert",
+    "wiki.fact.reqval":"Verteidigung 50","wiki.fact.value":"Wert",
+    "wiki.note":"Vereinfachte Vorschau — das echte Item-Wiki-Modal (ItemWikiModal.tsx) zeigt zusätzlich Quellen, Verwendungen und alle Kernwerte. Diese Demo zeigt nur das STACKING-Verhalten: Escape/✕ schließt ausschließlich dieses Fenster, die Enzyklopädie dahinter bleibt unverändert (Suchtext, Kategorie, Scrollposition) — siehe KONZEPT.md §3."
+  },
+  en: {
+    "tb.bestiary":"BESTIARY","tb.quests":"QUESTS","tb.mastery":"MASTERY",
+    "tb.character":"CHARACTER","tb.companions":"COMPANIONS","tb.shop":"SHOP","tb.bank":"BANK",
+    "tb.achievements":"ACHIEVEMENTS",
+    "encp.kicker":"ENCYCLOPEDIA",
+    "encp.searchPlaceholder":"Search item…",
+    "encp.noResults":"No entry found. Try a different search term.",
+    "encp.clearSearch":"Clear search",
+    "encp.undiscovered":"Not discovered yet.",
+    "cat.all":"All","cat.weapons":"Weapons","cat.armor":"Armor","cat.tools":"Tools",
+    "cat.food":"Food","cat.potions":"Potions","cat.materials":"Materials",
+    "wiki.backHint":"↩ closes only this window","wiki.kicker":"ITEM WIKI",
+    "wiki.itemKicker":"Chest · Super Rare","wiki.fact.armor":"Armor Rating","wiki.fact.req":"Requires",
+    "wiki.fact.reqval":"Defence 50","wiki.fact.value":"Value",
+    "wiki.note":"Simplified preview — the real Item Wiki Modal (ItemWikiModal.tsx) additionally shows sources, uses and every core stat. This demo only shows the STACKING behaviour: Escape/✕ closes only this window, the Encyclopedia behind it is unchanged (search text, category, scroll position) — see KONZEPT.md §3."
+  },
+  ru: {
+    "tb.bestiary":"БЕСТИАРИЙ","tb.quests":"ЗАДАНИЯ","tb.mastery":"МАСТЕРСТВО",
+    "tb.character":"ПЕРСОНАЖ","tb.companions":"СПУТНИКИ","tb.shop":"ЛАВКА","tb.bank":"БАНК",
+    "tb.achievements":"ДОСТИЖЕНИЯ",
+    "encp.kicker":"ЭНЦИКЛОПЕДИЯ",
+    "encp.searchPlaceholder":"Поиск предмета…",
+    "encp.noResults":"Ничего не найдено. Попробуйте другой запрос.",
+    "encp.clearSearch":"Очистить поиск",
+    "encp.undiscovered":"Ещё не открыто.",
+    "cat.all":"Все","cat.weapons":"Оружие","cat.armor":"Броня","cat.tools":"Инструменты",
+    "cat.food":"Еда","cat.potions":"Зелья","cat.materials":"Материалы",
+    "wiki.backHint":"↩ закрывает только это окно","wiki.kicker":"ВИКИ ПРЕДМЕТА",
+    "wiki.itemKicker":"Грудь · Очень редкое","wiki.fact.armor":"Показатель брони","wiki.fact.req":"Требует",
+    "wiki.fact.reqval":"Защита 50","wiki.fact.value":"Стоимость",
+    "wiki.note":"Упрощённый предпросмотр — настоящее окно вики предмета (ItemWikiModal.tsx) дополнительно показывает источники, применение и все базовые характеристики. Здесь демонстрируется только поведение НАЛОЖЕНИЯ ОКОН: Escape/✕ закрывает только это окно, энциклопедия под ним не меняется (текст поиска, категория, позиция прокрутки) — см. KONZEPT.md §3."
+  }
+};
+
+let lang = "de";
+let res = "1366x768";
+let state = "normal";
+let search = "";
+let activeCat = "all";
+
+function t(key) { return (I18N[lang] && I18N[lang][key]) || I18N.de[key] || key; }
+
+function itemName(item) { return item.name[lang] || item.name.de; }
+
+function categoryOf(id) {
+  const it = ITEMS.find(i => i.id === id);
+  return it ? it.cat : null;
+}
+
+function matches(item, q) {
+  if (!q) return true;
+  const query = q.trim().toLowerCase();
+  if (!query) return true;
+  return item.id.toLowerCase().includes(query) || itemName(item).toLowerCase().includes(query)
+    || Object.values(item.name).some(n => n.toLowerCase().includes(query));
+}
+
+function renderRail(filteredForCounts) {
+  const rail = document.getElementById("railList");
+  rail.innerHTML = "";
+  CATS.forEach(cat => {
+    const count = filteredForCounts.filter(i => cat === "all" || i.cat === cat).length;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "encp-cat" + (activeCat === cat ? " is-active" : "");
+    btn.innerHTML =
+      '<span class="encp-cat-icon">' + CAT_ICON[cat] + '</span>' +
+      '<span>' + t("cat." + cat) + '</span>' +
+      '<span class="encp-cat-count">' + count + '</span>';
+    btn.addEventListener("click", () => { activeCat = cat; render(); });
+    rail.appendChild(btn);
+  });
+}
+
+function cardHtml(item) {
+  const name = item.discovered ? itemName(item) : "???";
+  const rarityClass = item.discovered ? ("rarity-" + item.rarity) : "";
+  const imgSrc = "../../apps/client/src/renderer/assets/items/" + item.id + ".webp";
+  const mystery = item.discovered ? "" : '<span class="encp-card-mystery-mark" aria-hidden="true">?</span>';
+  const hint = item.discovered ? "" :
+    '<div class="encp-card-hint" hidden>' + t("encp.undiscovered") + '</div>';
+  return (
+    '<div class="encp-card ' + rarityClass + (item.discovered ? "" : " is-undiscovered") + '" data-id="' + item.id + '" data-discovered="' + item.discovered + '">' +
+      hint +
+      '<div class="encp-card-img-area"><img loading="lazy" decoding="async" src="' + imgSrc + '" alt="" />' + mystery + '</div>' +
+      '<div class="encp-card-name">' + name + '</div>' +
+    '</div>'
+  );
+}
+
+function render() {
+  document.documentElement.setAttribute("lang", lang);
+
+  // Kicker/Suche/Platzhalter
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.getAttribute("data-i18n")); });
+  const searchInput = document.getElementById("searchInput");
+  searchInput.placeholder = t("encp.searchPlaceholder");
+
+  let q = search;
+  if (state === "noresult") q = "xkjq99";
+  searchInput.value = state === "noresult" ? "xkjq99" : search;
+
+  const byCat = ITEMS.filter(i => activeCat === "all" || i.cat === activeCat);
+  const filtered = byCat.filter(i => matches(i, q));
+
+  // Register-Zählung bezieht sich auf die SUCHE (nicht auf activeCat) — s. KONZEPT.md §4/§6.
+  const forCounts = ITEMS.filter(i => matches(i, q));
+  renderRail(forCounts);
+
+  const grid = document.getElementById("cardGrid");
+  const countEl = document.getElementById("resultCount");
+
+  if (filtered.length === 0) {
+    grid.innerHTML =
+      '<div class="encp-empty">' +
+        '<span>' + t("encp.noResults") + '</span>' +
+        '<button class="btn-iron" id="clearSearchBtn">' + t("encp.clearSearch") + '</button>' +
+      '</div>';
+    const btn = document.getElementById("clearSearchBtn");
+    if (btn) btn.addEventListener("click", () => { search=""; state="normal"; render(); });
+  } else {
+    grid.innerHTML = filtered.map(cardHtml).join("");
+    grid.querySelectorAll(".encp-card").forEach(el => {
+      el.addEventListener("click", () => {
+        const discovered = el.getAttribute("data-discovered") === "true";
+        if (!discovered) {
+          const hint = el.querySelector(".encp-card-hint");
+          if (hint) { hint.hidden = !hint.hidden; setTimeout(() => { hint.hidden = true; }, 2200); }
+          return;
+        }
+        openWiki();
+      });
+    });
+  }
+  countEl.textContent = filtered.length + " / " + byCat.length;
+
+  // Zustand "Unentdecktes Item": Hinweis-Sprechblase auf abyssal_signet dauerhaft zeigen + Karte hervorheben
+  if (state === "undiscovered") {
+    activeCat = "armor";
+    const byCat2 = ITEMS.filter(i => i.cat === "armor");
+    const forCounts2 = ITEMS.filter(i => matches(i, ""));
+    renderRail(forCounts2);
+    grid.innerHTML = byCat2.map(cardHtml).join("");
+    grid.querySelectorAll(".encp-card").forEach(el => {
+      const id = el.getAttribute("data-id");
+      if (id === "abyssal_signet") {
+        el.style.outline = "2px dashed rgba(216,192,106,0.85)";
+        el.style.outlineOffset = "3px";
+        const hint = el.querySelector(".encp-card-hint");
+        if (hint) hint.hidden = false;
+      }
+      el.addEventListener("click", () => {
+        const discovered = el.getAttribute("data-discovered") === "true";
+        if (discovered) openWiki();
+      });
+    });
+    countEl.textContent = byCat2.length + " / " + byCat2.length;
+  }
+
+  document.getElementById("wikiOverlay").hidden = (state !== "wiki");
+}
+
+function openWiki() {
+  document.getElementById("wikiOverlay").hidden = false;
+}
+function closeWiki() {
+  document.getElementById("wikiOverlay").hidden = true;
+  if (state === "wiki") state = "normal";
+  syncStateButtons();
+}
+
+document.getElementById("closeWiki").addEventListener("click", closeWiki);
+document.getElementById("wikiOverlay").addEventListener("click", (e) => { if (e.target.id === "wikiOverlay") closeWiki(); });
+
+document.getElementById("closeEncp").addEventListener("click", () => {
+  document.getElementById("encpOverlay").style.visibility = "hidden";
+  setTimeout(() => { document.getElementById("encpOverlay").style.visibility = "visible"; }, 900);
+});
+
+document.getElementById("helpBtn").addEventListener("click", () => {
+  document.getElementById("helpBtn").classList.remove("is-pulsing");
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  search = e.target.value;
+  if (state === "noresult" && search !== "xkjq99") state = "normal";
+  render();
+});
+
+function syncStateButtons() {
+  document.querySelectorAll("[data-state]").forEach(b => b.classList.toggle("active", b.dataset.state === state));
+}
+
+document.querySelectorAll("[data-res]").forEach(btn => {
+  btn.addEventListener("click", () => { res = btn.dataset.res; syncChrome(); fitGameWindow(); });
+});
+document.querySelectorAll("[data-lang]").forEach(btn => {
+  btn.addEventListener("click", () => { lang = btn.dataset.lang; syncChrome(); render(); });
+});
+document.querySelectorAll("[data-state]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state = btn.dataset.state;
+    if (state !== "wiki") document.getElementById("wikiOverlay").hidden = true;
+    if (state === "normal" || state === "undiscovered" || state === "wiki") { search = ""; activeCat = "all"; }
+    syncChrome();
+    render();
+  });
+});
+
+function syncChrome() {
+  document.querySelectorAll("[data-res]").forEach(b => b.classList.toggle("active", b.dataset.res === res));
+  document.querySelectorAll("[data-lang]").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+  syncStateButtons();
+  const notes = {
+    normal: "Frisch geöffnet: Kategorie „Alle“, kein Suchtext, gemischt entdeckt/unentdeckt.",
+    noresult: "Suchfeld enthält bewusst einen Nonsens-Begriff, um den Kein-Treffer-Zustand zu zeigen.",
+    undiscovered: "Fokus auf „Abyssaler Siegelring“ (Rüstung) — noch nie besessen, Silhouette + „?“-Maskierung.",
+    wiki: "Klick auf eine entdeckte Karte öffnet das Item-Wiki gestapelt darüber (Demo unten: Adamantium-Plattenrüstung)."
+  };
+  document.getElementById("chromeNote").textContent = notes[state] || "";
+}
+
+function fitGameWindow() {
+  const [w, h] = res.split("x").map(Number);
+  const gw = document.getElementById("gameWindow");
+  gw.style.width = w + "px";
+  gw.style.height = h + "px";
+  gw.style.transform = "scale(1)";
+  const wrap = document.getElementById("stageWrap");
+  const availW = wrap.clientWidth - 44;
+  const availH = window.innerHeight - document.getElementById("chrome").offsetHeight - 44;
+  const scale = Math.min(1, availW / w, availH / h);
+  gw.style.transform = "scale(" + scale + ")";
+  wrap.style.height = (h * scale + 30) + "px";
+}
+
+window.addEventListener("resize", fitGameWindow);
+
+syncChrome();
+render();
+fitGameWindow();
+</script>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 import type { ActionId, ContentDB, GameState, ItemId } from "@hearthforge/shared";
-import { CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, thievingRiskMods } from "@hearthforge/shared";
+import {
+  syncBankOrder, CAMP_SKILL_SPEED_KIND, CAMP_SPEED_CUT_CAP, DEFAULT_CRAFT_SUFFIX_CHANCE, DEFAULT_STUN_MS, OUT_OF_COMBAT_HP_REGEN_PCT, TICK_MS, actionSuccessChance, masteryDoubleChance, masteryPreserveChance, masterySpeedMult, thievingRiskMods } from "@hearthforge/shared";
 
 const OUT_OF_COMBAT_WARD_REGEN_PCT = 0.05;
 import type { ActionDef } from "@hearthforge/shared";
@@ -718,6 +719,14 @@ export function advance(
     // Mana-/HP-Regeneration läuft NICHT mehr hier: sie tickt in `step` (Idle) bzw. combatStep
     // (Kampf) PRO TICK über tickPlayerRegen — Sweep6 T7-F2 (der frühere 1×-pro-advance-Pfad mit
     // END-Stats unterschlug die Heilung von Buffs, die im Offline-Fenster abliefen).
+
+    // Bank-Platzierung nachziehen (SAVE 87). `bank.ts` ruft das beim Ein-/Auslagern selbst, aber
+    // mehrere andere Pfade schreiben DIREKT in `state.bank` — Auto-Einlagern bei vollem Inventar
+    // (`addItemOrBank`), der Lager-Verbrauch, die Meisterweihe. Ein so entstandenes Item haette
+    // sonst kein Fach und waere im neuen Fach-Raster der Bankseite unsichtbar, obwohl es da ist.
+    // Selbstheilend und idempotent; hier am selben Choke-Point wie die Erfolge, also einmal pro
+    // advance-Runde statt pro Tick.
+    syncBankOrder(state);
 
     // Meilensteine prüfen (Gesamtlevel, Kills, gesammelte Items, Gold).
     checkAchievements(state, content);

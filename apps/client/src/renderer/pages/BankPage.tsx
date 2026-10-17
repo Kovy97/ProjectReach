@@ -23,7 +23,7 @@ import {
   withdrawItem,
   withdrawItemGroup,
 } from "@hearthforge/engine";
-import { BANK_SLOT_PACKAGE, effectiveBankCapacity } from "@hearthforge/shared";
+import { BANK_SLOT_PACKAGE, effectiveBankCapacity, moveBankSlot } from "@hearthforge/shared";
 import type { ItemInstance } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -200,8 +200,12 @@ export function BankPage(): JSX.Element {
     return [...entries].sort((a, b) => compareItemsBy(sortMode, a.itemId, b.itemId, content, tr));
   };
 
-  const depositable = sortEntries(depositEntriesUnsorted.filter(matchesFilter));
-  const stored = sortEntries(storedEntriesUnsorted.filter(matchesFilter));
+  // Das Inventar links steht IMMER in seiner echten Fachreihenfolge (`owned` wird beim Durchlaufen
+  // von `inventory.slots` gefuellt, die Map behaelt die Einfuegereihenfolge). Es hat eigene
+  // Positionen, die dem Spieler gehoeren — die duerfen hier nicht anders aussehen als auf dem
+  // Charakterbogen. Der Sortierknopf unten wirkt deshalb ausschliesslich auf die BANKFAECHER.
+  const depositable = depositEntriesUnsorted.filter(matchesFilter);
+  const stored = storedEntriesUnsorted.filter(matchesFilter);
   const used = bankSlotsUsed(state);
   const full = isBankFull(state, content);
   const bankCap = effectiveBankCapacity(state, content); // Basis + gekaufte Slots + Lager-Erdgewölbe
@@ -220,7 +224,65 @@ export function BankPage(): JSX.Element {
   // davon unberührt (immer `used`, nie gefiltert).
   const invCap = effectiveCapacity(state.inventory, content);
   const invEmptyCount = filterActive ? 0 : Math.max(0, invCap - depositable.length);
-  const bankEmptyCount = filterActive ? 0 : Math.max(0, bankCap - stored.length);
+
+  // ── Bankfaecher (SAVE 87, Chef-Auftrag „wie OSRS") ────────────────────────────────────────
+  // `state.bankOrder` ist die Wahrheit ueber die PLATZIERUNG, `state.bank` ueber die MENGEN.
+  // Ein Fach behaelt sein Item, auch wenn davor Luecken stehen — genau das war der Auftrag:
+  // „ein item was ich in Slot 65 reinziehe soll da auch reinkoennen wenn 64 und die davor leer sind".
+  //
+  // Die Liste ist mindestens so lang wie die Kapazitaet und mindestens so lang wie das letzte
+  // belegte Fach: ein Spieler, der seinen Bestand weit hinten geparkt und danach Kapazitaet
+  // VERLOREN hat (Lager-Gebaeude abgerissen), soll seine Sachen trotzdem sehen.
+  //
+  // Der Nachtrag am Ende ist eine Verteidigungslinie: `syncBankOrder` haelt beides im Einklang,
+  // aber mehrere Engine-Pfade schreiben direkt in `state.bank` (Auto-Einlagern im Tick, Lager,
+  // Meisterweihe). Taucht dort etwas ohne Fach auf, haengen wir es sichtbar hinten an, statt es
+  // verschwinden zu lassen — unsichtbarer Bestand waere der schlimmste aller Fehler.
+  const bankOrder = Array.isArray(state.bankOrder) ? state.bankOrder : [];
+  const storedById = new Map(storedEntriesUnsorted.map((e) => [e.itemId, e] as const));
+  const platziert = new Set<string>();
+  let letztesBelegte = -1;
+  for (let i = 0; i < bankOrder.length; i++) {
+    const id = bankOrder[i];
+    if (id && storedById.has(id)) letztesBelegte = i;
+  }
+  const fachAnzahl = Math.max(bankCap, letztesBelegte + 1);
+  const bankSlots: Array<{ idx: number; entry: BankEntry | null }> = [];
+  for (let i = 0; i < fachAnzahl; i++) {
+    const id = bankOrder[i] ?? null;
+    const entry = id ? storedById.get(id) ?? null : null;
+    if (entry) platziert.add(entry.itemId);
+    bankSlots.push({ idx: i, entry });
+  }
+  for (const e of storedEntriesUnsorted) {
+    if (!platziert.has(e.itemId)) bankSlots.push({ idx: bankSlots.length, entry: e });
+  }
+
+  /**
+   * Sortieren als einmalige AKTION auf den Faechern, nicht als Ansicht (dieselbe Regel wie im
+   * Charakter-Inventar, Chef 31.08.2026: „Sortieren soll ein einmaliges Verschieben der Items
+   * sein, kein Zustand"). Belegte Faecher ruecken dabei nach vorne, Luecken sammeln sich hinten —
+   * wer bewusst Abstaende gelassen hat, verliert sie, und genau darum ist es ein Knopf.
+   */
+  const sortiereBank = (): void => {
+    const belegt = bankSlots
+      .map((f) => f.entry?.itemId)
+      .filter((id): id is string => !!id);
+    if (sortMode === "qty") {
+      belegt.sort(
+        (a, b) =>
+          (storedById.get(b)?.qty ?? 0) - (storedById.get(a)?.qty ?? 0) ||
+          compareItemsBy("name", a, b, content, tr),
+      );
+    } else if (sortMode !== "newest") {
+      belegt.sort((a, b) => compareItemsBy(sortMode, a, b, content, tr));
+    }
+    const neu: Array<string | null> = [];
+    for (let i = 0; i < Math.max(fachAnzahl, belegt.length); i++) {
+      neu.push(i < belegt.length ? belegt[i]! : null);
+    }
+    state.bankOrder = neu;
+  };
 
   // Chip-Zähler: Vereinigung beider Spalten (Item-Art einmal gezählt, egal ob im Inventar,
   // in der Bank oder in beiden — reine Navigationshilfe, keine Bestandsanzeige).
@@ -280,10 +342,36 @@ export function BankPage(): JSX.Element {
     return null;
   };
 
-  function beginBankDrag(itemId: string, from: BankZone, e: ReactPointerEvent<HTMLElement>): void {
+  /**
+   * Fach-Index unter dem Zeiger (SAVE 87). Gelesen aus dem DOM statt aus einer gefuehrten Liste:
+   * das Raster ist ein CSS-Grid mit umbrechenden Spalten, seine Geometrie kennt nur der Browser.
+   * `elementsFromPoint` statt `elementFromPoint`, weil der Ziehschatten unter dem Zeiger klebt und
+   * sonst jeden Treffer schlucken wuerde.
+   */
+  const bankSlotAtPoint = (x: number, y: number): number | null => {
+    for (const el of document.elementsFromPoint(x, y)) {
+      const fach = (el as HTMLElement).closest?.("[data-bank-slot]");
+      if (fach) {
+        const idx = Number((fach as HTMLElement).dataset.bankSlot);
+        if (Number.isInteger(idx)) return idx;
+      }
+    }
+    return null;
+  };
+
+  function beginBankDrag(
+    itemId: string,
+    from: BankZone,
+    e: ReactPointerEvent<HTMLElement>,
+    fromSlot?: number,
+  ): void {
     if (e.button !== 0 || dragActiveRef.current) return;
     const startX = e.clientX;
     const startY = e.clientY;
+
+    // Das Herkunfts-Fach wird waehrend des Zugs gedaempft — so sieht man auf einen Blick, WOHER
+    // das Stueck kommt, nicht nur, was am Zeiger klebt.
+    const quellEl = e.currentTarget as HTMLElement | null;
 
     const ghostEl = document.createElement("div");
     ghostEl.className = "item-drag-ghost";
@@ -303,6 +391,22 @@ export function BankPage(): JSX.Element {
 
     let moved = false;
     let overZone: BankZone | null = null;
+    // Sichtbare Rueckmeldung beim Umsortieren (Chef-Fund 31.08.2026: „man sieht gar nicht was man
+    // dragged und dropped"). Die Spalten-Hervorhebung darunter greift nur beim Ein-/Auslagern —
+    // innerhalb der Bank bleibt `overZone` null, es gab also gar keine Rueckmeldung. Bewusst per
+    // Klasse aus dem Ziehen heraus gesetzt und NICHT ueber CSS `:hover`: waehrend eine Maustaste
+    // gedrueckt ist, ist Hover nicht verlaesslich.
+    let zielEl: HTMLElement | null = null;
+    const setzeZiel = (el: HTMLElement | null): void => {
+      if (zielEl === el) return;
+      zielEl?.classList.remove("bank-slot--drop");
+      zielEl = el;
+      zielEl?.classList.add("bank-slot--drop");
+    };
+    // Umsortieren nur, wenn das Fach bekannt ist UND kein Filter laeuft: unter einem Filter ist die
+    // Anzeige-Position nicht die echte, ein Zug landete sonst am falschen Fach.
+    const umsortieren = from === "bank" && fromSlot !== undefined && !filterActive;
+    let zielFach: number | null = null;
 
     const positionGhost = (x: number, y: number): void => {
       ghostEl.style.transform = `translate(${x + 16}px, ${y + 18}px)`;
@@ -314,6 +418,8 @@ export function BankPage(): JSX.Element {
       window.removeEventListener("pointercancel", onCancel);
       window.removeEventListener("keydown", onKey);
       ghostEl.remove();
+      setzeZiel(null);
+      quellEl?.classList.remove("bank-slot--source");
       document.body.classList.remove("bank-dragging-noselect");
       setZoneHighlight(itemId, null);
       dragActiveRef.current = false;
@@ -325,11 +431,21 @@ export function BankPage(): JSX.Element {
         moved = true;
         dragActiveRef.current = true;
         ghostEl.style.display = "";
+        quellEl?.classList.add("bank-slot--source");
         document.body.classList.add("bank-dragging-noselect");
       }
       positionGhost(ev.clientX, ev.clientY);
       const zone = zoneAtPoint(ev.clientX, ev.clientY);
-      const targetZone = zone !== null && zone !== from ? zone : null; // nur die JEWEILS ANDERE Spalte ist gültig
+      // Innerhalb der Bank ist das Ziehen ein UMSORTIEREN (SAVE 87), zwischen den Spalten ein
+      // Ein-/Auslagern. Beides laeuft ueber denselben Zug, nur das Ziel unterscheidet sich.
+      zielFach =
+        umsortieren && zone === "bank" ? bankSlotAtPoint(ev.clientX, ev.clientY) : null;
+      setzeZiel(
+        zielFach !== null && zielFach !== fromSlot
+          ? document.querySelector<HTMLElement>(`[data-bank-slot="${zielFach}"]`)
+          : null,
+      );
+      const targetZone = zone !== null && zone !== from ? zone : null;
       if (targetZone !== overZone) {
         overZone = targetZone;
         setZoneHighlight(itemId, overZone);
@@ -338,7 +454,14 @@ export function BankPage(): JSX.Element {
 
     const finish = (commit: boolean): void => {
       cleanup();
-      if (!commit || !moved || !overZone) return;
+      if (!commit || !moved) return;
+      // Umsortieren zuerst pruefen: es passiert INNERHALB der Bank, `overZone` bleibt dabei null
+      // (die eigene Spalte ist kein gueltiges Ein-/Auslager-Ziel).
+      if (umsortieren && zielFach !== null && zielFach !== fromSlot) {
+        if (moveBankSlot(state, fromSlot!, zielFach)) playSfx("click");
+        return;
+      }
+      if (!overZone) return;
       if (overZone === "bank") {
         const res = depositItemGroup(state, content, itemId);
         if (res.deposited === 0 && res.instancesMoved === 0) gameAlert("bank.noSlot");
@@ -433,6 +556,18 @@ export function BankPage(): JSX.Element {
                 </option>
               ))}
             </select>
+            {/* Das Dropdown WAEHLT nur die Art, dieser Knopf FUEHRT AUS — sonst wuerde jede
+                Auswahl sofort die Faecher umwerfen. Bei aktivem Filter gesperrt: was man dann
+                saehe, waere nur ein Ausschnitt, das Sortieren wuerde aber ALLE Faecher umbauen. */}
+            <button
+              type="button"
+              className="cs-inv-sortbtn"
+              onClick={sortiereBank}
+              disabled={filterActive}
+              title={filterActive ? t("bank.sortFiltered") : t("char.sortApply")}
+            >
+              {t("char.sortApply")}
+            </button>
           </span>
         </div>
 
@@ -586,7 +721,26 @@ export function BankPage(): JSX.Element {
             {stored.length === 0 && storedEntriesUnsorted.length > 0 && (
               <p className="invf-empty-note">{t("inv.filter.noMatches")}</p>
             )}
-            {stored.map(({ itemId, qty, instances }) => {
+            {/* Zwei Ansichten aus EINER Quelle: ohne Filter die echten Faecher (mit Luecken an
+                ihrer Stelle, verschiebbar), mit Filter die zusammengeschobene Trefferliste. Ein
+                Fach-Raster waere unter einem Filter irrefuehrend — man saehe Luecken, wo in
+                Wahrheit nur ausgeblendete Items liegen, und ein Verschieben landete am falschen
+                Fach, weil die Anzeige-Position nicht mehr die echte ist. Deshalb ist das Ziehen
+                dort auch aus (s. `filterActive` in `beginBankDrag`). */}
+            {(filterActive
+              ? stored.map((entry, i) => ({ idx: i, entry }))
+              : bankSlots
+            ).map(({ idx, entry }) => {
+              if (!entry) {
+                return (
+                  <div
+                    key={`bank-slot-${idx}`}
+                    className="inv-slot bank-empty-slot"
+                    data-bank-slot={idx}
+                  />
+                );
+              }
+              const { itemId, qty, instances } = entry;
               // Ausrüsten direkt aus dem Lager (Chef-Vorgabe „Bank = Entnehmen/Ausrüsten"): erst
               // in die Inventar-Tasche entnehmen (withdrawInstance, immer erfolgreich — unbegrenzte
               // Tasche), dann sofort dort ausrüsten (equipInstance). Nur angeboten, wenn die Basis
@@ -631,7 +785,8 @@ export function BankPage(): JSX.Element {
                 <div
                   key={itemId}
                   className="cs-inv-slot-wrap bank-drag-cell"
-                  onPointerDown={(e) => beginBankDrag(itemId, "bank", e)}
+                  data-bank-slot={idx}
+                  onPointerDown={(e) => beginBankDrag(itemId, "bank", e, idx)}
                 >
                   <VariantContainerCell
                     itemId={itemId}
@@ -680,9 +835,6 @@ export function BankPage(): JSX.Element {
                 </div>
               );
             })}
-            {Array.from({ length: bankEmptyCount }, (_, i) => (
-              <div key={`bank-empty-${i}`} className="inv-slot" />
-            ))}
           </div>
         </section>
       </div>

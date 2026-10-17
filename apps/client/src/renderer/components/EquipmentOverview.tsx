@@ -11,6 +11,7 @@ import {
   DODGE_CAP,
   EQUIP_SLOT_LABELS,
   TEMPO_REDUCTION_CAP,
+  isToolSlot,
 } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -124,10 +125,13 @@ export const COMBAT_STAT_ICON: Record<string, string | null> = {
 
 /** Paperdoll-Slot-Reihenfolge (matcht das CSS-Grid `.cs-slot.<slot>` in character.css). */
 export const DOLL_SLOTS: EquipSlot[] = [
-  "tool2", // links neben dem Helm
+  // Werkzeuge rahmen den Kopf ein: zwei links, zwei rechts (Chef-Vorgabe 31.08.2026). Die vier
+  // Plaetze entsprechen den vier Werkzeug-Berufen — Bergbau, Holzfaellen, Angeln, Sammeln.
+  "tool2", // links oben
   "helmet",
-  "tool1", // rechts neben dem Helm
-  "tool3", // dritter Werkzeug-Slot (Spieler-Feedback, Chef-GO 0.2.0): unter tool1, freie Grid-Zelle
+  "tool1", // rechts oben
+  "tool4", // links unten (SAVE 87)
+  "tool3", // rechts unten
   "amulet",
   "offhand",
   "body",
@@ -226,7 +230,7 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
           {DOLL_SLOTS.map((slot) => {
             const itemId = c.equipment[slot];
             const draggedItem = interactive && dragItem ? content.items[dragItem] : null;
-            const isToolSlot = slot === "tool1" || slot === "tool2" || slot === "tool3";
+            const toolSlot = isToolSlot(slot);
             const isRingSlot = slot === "ring1" || slot === "ring2";
             // Chef-Fund 19.07.: Ringe deklarieren kanonisch slot "ring1", dürfen aber BEIDE
             // Ring-Slots belegen (equipItem leitet intern auf ring2 um). Der Drop-Gültigkeits-
@@ -235,7 +239,7 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
             // Werkzeug-Slot akzeptiert reine Werkzeuge UND dual-use-Items mit `tool`-Feld (z.B. Äxte:
             // Waffe in Mainhand ODER Holzfäll-Werkzeug im Slot — Chef 2026-07-21).
             const valid = interactive && !!draggedItem &&
-              (isToolSlot ? (draggedItem.type === "tool" || !!draggedItem.tool)
+              (toolSlot ? (draggedItem.type === "tool" || !!draggedItem.tool)
                : isRingSlot ? draggedItem.slot === "ring1"
                : draggedItem.slot === slot);
 
@@ -252,7 +256,7 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
                         // Werkzeug-Slot: gezielt equipTool (nimmt auch dual-use-Items mit tool-Feld,
                         // z.B. Äxte); sonst der generische equipItem (Axt → Mainhand per item.slot).
                         if (dragItem) {
-                          const res = isToolSlot
+                          const res = toolSlot
                             ? equipTool(state, content, dragItem)
                             : equipItem(state, content, dragItem);
                           if (equipSucceeded(res)) playSfx("equip");
