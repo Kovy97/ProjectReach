@@ -15532,6 +15532,172 @@ export const content: ContentDB = {
         { itemId: "crownless_blade", chance: 0.0025, min: 1, max: 1 },
       ],
     },
+    // ═══════════════════════════════════════════════════════════════════
+    // ZONE: Die Götzenhalle, OFFEN (1.3.0 E1 „Die Götzenhalle erwacht", Lvl 244–266)
+    // codex:2026-10-17T14:20:00+02:00 — sieben frei bekämpfbare Wesen nach design/lore/band2-auftakt-
+    // 1.3.0.md §3/§5.7 (Reihenfolge = aufsteigende Stärke). Stärke zwischen Leeren-Titan (L242, Hochland)
+    // und den Sanktum-Wellen: HP/Schaden/Genauigkeit liegen im Band void_titan … scale_skarn, je Typ
+    // eine Trinity-Mischung (Rüstung/Ausweichen/Ward), Level ≥ 150 ⇒ der Genauigkeits-Zuschlag
+    // MONSTER_ACC_PER_LEVEL greift automatisch. XP im Welt-Verhältnis (~3–3,7 XP je HP). Beute nur aus
+    // dem Bestand (Götzen-Materialien + die Götzen-Legendaries als seltene Zweitquelle im Hochland-
+    // Takt 0,02–0,03 %), KEINE Waffen (die kommen mit E5). Die Sanktum-Wesen (idol_warden & Co.)
+    // bleiben dungeonOnly; die Champions der Halle hängen jetzt an idol_husk/idol_priest (s. elites).
+    // Bilder fehlen noch (Fallback: kein Monsterbild), Einträge in design/1.3.0-assets-sammlung.md.
+    // ═══════════════════════════════════════════════════════════════════
+    idol_husk: {
+      id: "idol_husk", family: "construct", zone: "idolhall",
+      name: { en: "Idol Husk", de: "Götzenhülse" },
+      level: 244, maxHp: 2100, damage: 148, accuracy: 24, evasion: 4, defense: 140, defenseType: "armor", attackIntervalMs: 3400,
+      resist: ["poison"],
+      regen: 0.3, xp: 6300, gold: 0,
+      loot: [
+        { itemId: "godiron_ore", chance: 0.3, min: 1, max: 2 },
+        { itemId: "idol_shard", chance: 0.25, min: 1, max: 1 },
+        { itemId: "void_essence", chance: 0.12, min: 1, max: 1 },
+        { itemId: "idolstep_sabatons", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    skarn_whelp: {
+      id: "skarn_whelp", family: "dragonkin", zone: "idolhall",
+      name: { en: "Skarn Whelp", de: "Skarnbrut" },
+      level: 247, maxHp: 1500, damage: 150, accuracy: 24, evasion: 68, defense: 125, defenseType: "evasion", attackIntervalMs: 2600,
+      inflict: { type: "bleed", chance: 0.3, magnitude: 1, durationMs: 5000 },
+      regen: 0.4, xp: 6600, gold: 0,
+      loot: [
+        { itemId: "scaled_leather", chance: 0.4, min: 1, max: 2 },
+        { itemId: "raw_dragonhide", chance: 0.18, min: 1, max: 1 },
+        { itemId: "wyvern_scale", chance: 0.15, min: 1, max: 1 },
+        { itemId: "aetherweave_leggings", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    forsaken_servant: {
+      id: "forsaken_servant", family: "demon", zone: "idolhall",
+      name: { en: "Forsaken Servant", de: "Verlassener Diener" },
+      level: 250, maxHp: 800, damage: 156, accuracy: 24, evasion: 6, defense: 126, defenseType: "ward", wardCapacity: 1250, attackIntervalMs: 2800,
+      resist: ["burn"],
+      inflict: { type: "burn", chance: 0.3, magnitude: 1, durationMs: 6000 },
+      xp: 7400, gold: 0,
+      loot: [
+        { itemId: "forge_ember", chance: 0.4, min: 1, max: 2 },
+        { itemId: "void_essence", chance: 0.2, min: 1, max: 1 },
+        { itemId: "soulopal", chance: 0.08, min: 1, max: 1 },
+        { itemId: "voidtouched_gauntlets", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    idol_priest: {
+      id: "idol_priest", family: "humanoid", zone: "idolhall",
+      name: { en: "Idol Priest", de: "Götzenpriester" },
+      level: 253, maxHp: 850, damage: 160, accuracy: 25, evasion: 5, defense: 128, defenseType: "ward", wardCapacity: 1400, attackIntervalMs: 3000,
+      inflict: { type: "poison", chance: 0.3, magnitude: 1, durationMs: 6000 },
+      xp: 8000, gold: 0,
+      loot: [
+        { itemId: "aether_rune", chance: 0.3, min: 1, max: 3 },
+        { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
+        { itemId: "idol_shard", chance: 0.2, min: 1, max: 1 },
+        { itemId: "idolbound_signet", chance: 0.00015, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    prayer_eater: {
+      id: "prayer_eater", family: "undead", zone: "idolhall",
+      name: { en: "Prayer Eater", de: "Gebetsfresser" },
+      level: 257, maxHp: 2900, damage: 160, accuracy: 25, evasion: 3, defense: 135, defenseType: "armor", attackIntervalMs: 3600,
+      resist: ["poison", "bleed"],
+      regen: 0.8, xp: 9200, gold: 0,
+      loot: [
+        { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
+        { itemId: "soulopal", chance: 0.15, min: 1, max: 1 },
+        { itemId: "raw_shadowhide", chance: 0.15, min: 1, max: 1 },
+        { itemId: "idol_shroud", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    wreath_bearer: {
+      id: "wreath_bearer", family: "construct", zone: "idolhall",
+      name: { en: "Wreath Bearer", de: "Kranzträger" },
+      level: 261, maxHp: 2700, damage: 170, accuracy: 25, evasion: 5, defense: 160, defenseType: "armor", attackIntervalMs: 3200,
+      resist: ["poison"],
+      inflict: { type: "shock", chance: 0.25, magnitude: 0.3, durationMs: 4000 },
+      xp: 9800, gold: 0,
+      loot: [
+        { itemId: "idol_shard", chance: 0.3, min: 1, max: 2 },
+        { itemId: "godiron_bar", chance: 0.12, min: 1, max: 1 },
+        { itemId: "onyx", chance: 0.05, min: 1, max: 1 },
+        { itemId: "idol_crown", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    siege_idol: {
+      id: "siege_idol", family: "construct", zone: "idolhall",
+      name: { en: "Siege Idol", de: "Belagerungsgötze" },
+      level: 266, maxHp: 3400, damage: 185, accuracy: 26, evasion: 2, defense: 165, defenseType: "armor", attackIntervalMs: 4000,
+      resist: ["poison", "bleed"],
+      enrage: { belowHpPct: 0.3, damageMult: 1.5 },
+      regen: 0.5, xp: 12500, gold: 0,
+      loot: [
+        { itemId: "godiron_ore", chance: 0.4, min: 1, max: 3 },
+        { itemId: "godiron_bar", chance: 0.15, min: 1, max: 2 },
+        { itemId: "onyx", chance: 0.08, min: 1, max: 1 },
+        { itemId: "idol_shard", chance: 0.35, min: 1, max: 2 },
+        { itemId: "idolstep_sabatons", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idol_aegis", chance: 0.00003, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+
+    // ── Die Getilgte Kapelle (expunged_chapel, 1.3.0 E2) — Wellen + Kapitel-Boss ──────────
+    // codex:2026-10-17T14:20:00+02:00 — dg_-Zwillinge nach Krypta-Muster (Art/Name der Basis über
+    // den dg_-Alias, ×1,35 HP/Ward, ×1,10 Schaden, XP mit dem HP-Mult, Beute = Basis). Kill-Credit
+    // läuft über killCreditMonsterId auf die Basis-Id (Kapitel 24/25 zählen die Wellen also mit,
+    // beide Basen laufen ohnehin offen herum). Der Tilger ist dungeonOnly mit eigener Id: Kapitel 27
+    // zählt trotzdem NUR über dungeons_cleared (Lehre Kap. 11).
+    dg_wreath_bearer: {
+      id: "dg_wreath_bearer", family: "construct", zone: "idolhall",
+      name: { en: "Wreath Bearer", de: "Kranzträger" },
+      dungeonOnly: true,
+      level: 261, maxHp: 3645, damage: 187, accuracy: 25, evasion: 5, defense: 160, defenseType: "armor", attackIntervalMs: 3200,
+      resist: ["poison"],
+      inflict: { type: "shock", chance: 0.25, magnitude: 0.3, durationMs: 4000 },
+      xp: 13230, gold: 0,
+      loot: [
+        { itemId: "idol_shard", chance: 0.3, min: 1, max: 2 },
+        { itemId: "godiron_bar", chance: 0.12, min: 1, max: 1 },
+        { itemId: "onyx", chance: 0.05, min: 1, max: 1 },
+        { itemId: "idol_crown", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    dg_prayer_eater: {
+      id: "dg_prayer_eater", family: "undead", zone: "idolhall",
+      name: { en: "Prayer Eater", de: "Gebetsfresser" },
+      dungeonOnly: true,
+      level: 257, maxHp: 3915, damage: 176, accuracy: 25, evasion: 3, defense: 135, defenseType: "armor", attackIntervalMs: 3600,
+      resist: ["poison", "bleed"],
+      regen: 0.8, xp: 12420, gold: 0,
+      loot: [
+        { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
+        { itemId: "soulopal", chance: 0.15, min: 1, max: 1 },
+        { itemId: "raw_shadowhide", chance: 0.15, min: 1, max: 1 },
+        { itemId: "idol_shroud", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
+    // Der Tilger: „über dem Letzten Götzen, in Drazhans Klasse, nicht darüber" (Lore §3). Werte zwischen
+    // last_idol (L295, 5725 HP, 234 Schaden) und drazhan (L310, 8700 HP, 262 Schaden, regen 1,4).
+    // Beute-Rahmung „was er herausschnitt": Götzen-Materialien + Götzen-Godlies als Lauf-Lotterie.
+    the_expunger: {
+      id: "the_expunger", family: "undead", zone: "idolhall",
+      name: { en: "The Expunger", de: "Der Tilger" },
+      dungeonOnly: true,
+      level: 303, maxHp: 7400, damage: 248, accuracy: 28, evasion: 8, defense: 165, defenseType: "armor", attackIntervalMs: 3600,
+      resist: ["poison", "frost"],
+      regen: 1.2,
+      inflict: { type: "bleed", chance: 0.3, magnitude: 1.3, durationMs: 6000 },
+      enrage: { belowHpPct: 0.2, damageMult: 1.3 },
+      xp: 75000, gold: 0,
+      loot: [
+        { itemId: "aether_rune", chance: 0.8, min: 3, max: 6 },
+        { itemId: "idol_shard", chance: 0.8, min: 2, max: 4 },
+        { itemId: "aether_essence", chance: 0.6, min: 2, max: 4 },
+        { itemId: "onyx", chance: 0.5, min: 1, max: 2 },
+        { itemId: "soulopal", chance: 0.4, min: 1, max: 2 },
+        { itemId: "eye_of_the_idol", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+    },
 
     // ═══════════════════════════════════════════════════════════════════
     // ZONE: Offenwelt-Endgame-Monster L87–L110 (QA-Run3 Fix A)
@@ -16534,6 +16700,8 @@ export const content: ContentDB = {
     { id: "ach_boss_charred_doomknight", name: { en: "Ashes to Embers", de: "Aus Asche wird Glut" }, description: { en: "Defeat the Charred Doomknight.", de: "Besiege: Verkohlter Schicksalsritter." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "charred_doomknight", count: 1 } },
     { id: "ach_boss_void_titan", name: { en: "Titan Toppled", de: "Titan gestürzt" }, description: { en: "Defeat the Void Titan.", de: "Besiege: Leeren-Titan." }, category: "combat", rarity: "epic", condition: { type: "monster_kills", target: "void_titan", count: 1 } },
     { id: "ach_boss_drazhan", name: { en: "The Crownless Falls", de: "Der Kronlose fällt" }, description: { en: "Defeat the Drazhan the Crownless.", de: "Besiege: Drazhan der Kronlose." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "drazhan", count: 1 } },
+    // codex:2026-10-17T14:50:00+02:00 — 1.3.0 E2: Kapitel-Boss der Getilgten Kapelle (Lore §5.8).
+    { id: "ach_boss_the_expunger", name: { en: "The Cut Ends", de: "Der Schnitt endet" }, description: { en: "Defeat the Expunger.", de: "Besiege den Tilger." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "the_expunger", count: 1 } },
     { id: "ach_boss_abyssal_devourer", name: { en: "Throne of the Abyss", de: "Thron des Abgrunds" }, description: { en: "Defeat the Abyssal Devourer.", de: "Besiege: Abyssaler Verschlinger." }, category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "abyssal_devourer", count: 1 } },
     { id: "ach_godly_drop", name: { en: "Fortune's Chosen", de: "Auserwählter des Schicksals" }, description: { en: "Defeat the Last Idol 5 times. Only those who face death repeatedly ever hold a divine relic.", de: "Besiege den Letzten Götzen 5 Mal. Nur wer dem Tod immer wieder gegenübersteht, hält ein göttliches Relikt in den Händen." }, icon: "⚡", category: "combat", rarity: "legendary", condition: { type: "monster_kills", target: "last_idol", count: 5 } },
 
@@ -16565,6 +16733,10 @@ export const content: ContentDB = {
     { id: "ach_dungeon_behind_the_throne_1", name: { en: "Throne Breaker - First Clear", de: "Thronbrecher - Erster Durchgang" }, description: { en: "Clear Behind the Throne once.", de: "Schließe Hinter dem Thron einmal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 1 } },
     { id: "ach_dungeon_behind_the_throne_10", name: { en: "Throne Breaker - Veteran", de: "Thronbrecher - Veteran" }, description: { en: "Clear Behind the Throne 10 times.", de: "Schließe Hinter dem Thron 10-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 10 } },
     { id: "ach_dungeon_behind_the_throne_50", name: { en: "Throne Breaker - Legend", de: "Thronbrecher - Legende" }, description: { en: "Clear Behind the Throne 50 times.", de: "Schließe Hinter dem Thron 50-mal ab." }, category: "combat", rarity: "legendary", condition: { type: "dungeons_cleared", target: "behind_the_throne", count: 50 } },
+    // codex:2026-10-17T14:50:00+02:00 — 1.3.0 E2: Leiter der Getilgten Kapelle (Pflicht je Dungeon, achievements-1-2-0.test.ts).
+    { id: "ach_dungeon_expunged_chapel_1", name: { en: "Expunger's End - First Clear", de: "Tilgers Ende - Erster Durchgang" }, description: { en: "Clear the Expunged Chapel once.", de: "Schließe die Getilgte Kapelle einmal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 1 } },
+    { id: "ach_dungeon_expunged_chapel_10", name: { en: "Expunger's End - Veteran", de: "Tilgers Ende - Veteran" }, description: { en: "Clear the Expunged Chapel 10 times.", de: "Schließe die Getilgte Kapelle 10-mal ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 10 } },
+    { id: "ach_dungeon_expunged_chapel_50", name: { en: "Expunger's End - Legend", de: "Tilgers Ende - Legende" }, description: { en: "Clear the Expunged Chapel 50 times.", de: "Schließe die Getilgte Kapelle 50-mal ab." }, category: "combat", rarity: "legendary", condition: { type: "dungeons_cleared", target: "expunged_chapel", count: 50 } },
     { id: "ach_dungeons_total_5", name: { en: "Dungeon Runner", de: "Verlies-Läufer" }, description: { en: "Complete 5 dungeon runs.", de: "Schließe 5 Verliese ab." }, category: "combat", rarity: "uncommon", condition: { type: "dungeons_cleared", count: 5 } },
     { id: "ach_dungeons_total_25", name: { en: "Dungeon Veteran", de: "Verlies-Veteran" }, description: { en: "Complete 25 dungeon runs.", de: "Schließe 25 Verliese ab." }, category: "combat", rarity: "rare", condition: { type: "dungeons_cleared", count: 25 } },
     { id: "ach_dungeons_total_100", name: { en: "Dungeon Legend", de: "Verlies-Legende" }, description: { en: "Complete 100 dungeon runs.", de: "Schließe 100 Verliese ab." }, category: "combat", rarity: "epic", condition: { type: "dungeons_cleared", count: 100 } },
@@ -16613,10 +16785,11 @@ export const content: ContentDB = {
     // -- Exploration: Bestiarium gesamt (Steam: THE_WHOLE_BESTIARY = ach_bestiary_all) --
     { id: "ach_bestiary_25", name: { en: "Field Notes", de: "Feldnotizen" }, description: { en: "Defeat 25 different creatures.", de: "Besiege 25 verschiedene Wesen." }, icon: "📓", category: "exploration", rarity: "rare", condition: { type: "monsters_discovered", count: 25 } },
     { id: "ach_bestiary_50", name: { en: "Half the Bestiary", de: "Halbes Bestiarium" }, description: { en: "Defeat 50 different creatures.", de: "Besiege 50 verschiedene Wesen." }, icon: "📓", category: "exploration", rarity: "rare", condition: { type: "monsters_discovered", count: 50 } },
+    // codex:2026-10-17T14:50:00+02:00 — 118 → 126: 1.3.0 E1/E2 bringt 7 offene Götzenhallen-Wesen + den Tilger (dg_-Wellen zählen nicht).
     // codex:2026-10-17T12:40:00+02:00 — 105 → 118: die 13 Turm-Spiegel der Etagen 6–8 (1.3.0 E3) sind
     // eigene Bestiarium-Einträge; zone-bestiary-dungeon-variants.test.ts verlangt count = sichtbare Wesen.
     // Folge: der Steam-Erfolg THE_WHOLE_BESTIARY braucht jetzt Slayer 95 (Etage 8). Bereits freigeschaltet bleibt freigeschaltet.
-    { id: "ach_bestiary_all", name: { en: "The Whole Bestiary", de: "Das ganze Bestiarium" }, description: { en: "Defeat every creature in the bestiary at least once.", de: "Besiege jedes Wesen im Bestiarium mindestens einmal." }, icon: "📕", category: "exploration", rarity: "legendary", condition: { type: "monsters_discovered", count: 118 } },
+    { id: "ach_bestiary_all", name: { en: "The Whole Bestiary", de: "Das ganze Bestiarium" }, description: { en: "Defeat every creature in the bestiary at least once.", de: "Besiege jedes Wesen im Bestiarium mindestens einmal." }, icon: "📕", category: "exploration", rarity: "legendary", condition: { type: "monsters_discovered", count: 126 } },
 
     // -- Exploration: Slayer-Turm-Etagen (Name = Etagenname; Steam: THE_ABYSSAL_THRONE = ach_slayer_floor_5) --
     { id: "ach_slayer_floor_1", name: { en: "The Plague Chambers", de: "Die Pestkammern" }, description: { en: "Slay a creature on floor 1 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 1 des Slayer-Turms." }, category: "exploration", rarity: "common", condition: { type: "slayer_floor", count: 1 } },
@@ -16658,6 +16831,13 @@ export const content: ContentDB = {
     { id: "ach_chapter_19", name: { en: "The Judgement", de: "Das Gericht" }, description: { en: "Finish Chronicle chapter 19: The Judgement.", de: "Schließe Chronik-Kapitel 19 ab: Das Gericht." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_19", count: 1 } },
     { id: "ach_chapter_20", name: { en: "The True Culprit", de: "Der wahre Verursacher" }, description: { en: "Turn the final page of the Chronicle.", de: "Schlage die letzte Seite der Chronik auf." }, icon: "📖", category: "quests", rarity: "legendary", hidden: true, condition: { type: "quests_completed", target: "chronicle_20", count: 1 } },
     { id: "ach_chapter_21", name: { en: "Epilogue: The Second Volume", de: "Epilog: Der zweite Band" }, description: { en: "Open the Second Volume.", de: "Öffne den zweiten Band." }, icon: "📖", category: "quests", rarity: "legendary", hidden: true, condition: { type: "quests_completed", target: "chronicle_21", count: 1 } },
+    // codex:2026-10-17T14:50:00+02:00 — 1.3.0 E2: Band 2 „Götterkriege", Kapitel 22–27 (intern, kein Steam). Kapitel 27 nach Lore §5.8.
+    { id: "ach_chapter_22", name: { en: "The Empty Hall", de: "Die leere Halle" }, description: { en: "Finish Chronicle chapter 22: The Empty Hall.", de: "Schließe Chronik-Kapitel 22 ab: Die leere Halle." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_22", count: 1 } },
+    { id: "ach_chapter_23", name: { en: "The Consecration", de: "Die Weihe" }, description: { en: "Finish Chronicle chapter 23: The Consecration.", de: "Schließe Chronik-Kapitel 23 ab: Die Weihe." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_23", count: 1 } },
+    { id: "ach_chapter_24", name: { en: "What the Idols Drank", de: "Was die Götzen tranken" }, description: { en: "Finish Chronicle chapter 24: What the Idols Drank.", de: "Schließe Chronik-Kapitel 24 ab: Was die Götzen tranken." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_24", count: 1 } },
+    { id: "ach_chapter_25", name: { en: "The Wreaths", de: "Die Kränze" }, description: { en: "Finish Chronicle chapter 25: The Wreaths.", de: "Schließe Chronik-Kapitel 25 ab: Die Kränze." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_25", count: 1 } },
+    { id: "ach_chapter_26", name: { en: "Siege-Works", de: "Belagerungswerke" }, description: { en: "Finish Chronicle chapter 26: Siege-Works.", de: "Schließe Chronik-Kapitel 26 ab: Belagerungswerke." }, icon: "📖", category: "quests", rarity: "epic", condition: { type: "quests_completed", target: "chronicle_26", count: 1 } },
+    { id: "ach_chapter_27", name: { en: "Kept Forgotten", de: "Vergessen gehalten" }, description: { en: "Finish the first chapter of the God Wars.", de: "Schließe das erste Kapitel der Götterkriege ab." }, icon: "📖", category: "quests", rarity: "legendary", condition: { type: "quests_completed", target: "chronicle_27", count: 1 } },
 
     // -- Quests: Aufträge gesamt + Tages-Serie (unverändert) --
     { id: "ach_quests_1", name: { en: "Questling", de: "Auftragsanfänger" }, description: { en: "Complete 1 quest.", de: "Schließe 1 Auftrag ab." }, icon: "📜", category: "quests", rarity: "common", condition: { type: "quests_completed", count: 1 } },
@@ -16702,7 +16882,7 @@ export const content: ContentDB = {
     { id: "ach_elite_kills_100", name: { en: "Champion Slayer", de: "Championsschlächter" }, description: { en: "Defeat 100 Champions of the Reach.", de: "Besiege 100 Champions des Reach." }, icon: "👑", category: "collection", rarity: "epic", condition: { type: "elite_kills", count: 100 } },
     { id: "ach_elite_variants_all", name: { en: "Every Champion", de: "Alle Champions" }, description: { en: "Defeat each of the 29 Champions of the Reach at least once.", de: "Besiege jeden der 29 Champions des Reach mindestens einmal." }, icon: "👑", category: "collection", rarity: "epic", condition: { type: "elite_variants", count: 29 } }, // 1.2.0 (Chef 28.08.2026): 28→29 mit elite_ossric (Hochland)
     { id: "ach_elite_uniques_1", name: { en: "First Trophy", de: "Erste Trophäe" }, description: { en: "Claim the unique trophy of a Champion.", de: "Erbeute die einzigartige Trophäe eines Champions." }, icon: "🏆", category: "collection", rarity: "rare", condition: { type: "elite_uniques", count: 1 } },
-    { id: "ach_elite_uniques_all", name: { en: "Trophy Hall", de: "Trophäenhalle" }, description: { en: "Claim the unique trophy of every Champion of the Reach.", de: "Erbeute die einzigartige Trophäe jedes Champions des Reach." }, icon: "🏆", category: "collection", rarity: "legendary", condition: { type: "elite_uniques", count: 27 } }, // Pruefbericht 29.08.2026: 29 Champions existieren, aber nur 27 sind JAGDBAR — elite_idol_warden und elite_idol_wraith sitzen auf dungeonOnly-Basen in der reinen Dungeon-Zone idolhall (isEliteVariantHuntable, engine/elites.ts), ihre Trophaeen sind unerreichbar. Mit 29 waere der Erfolg (und der Steam-Erfolg TROPHY_HALL) dauerhaft 0 %. Wird die Goetzenhalle je als Kampfzone geoeffnet: zurueck auf 29.
+    { id: "ach_elite_uniques_all", name: { en: "Trophy Hall", de: "Trophäenhalle" }, description: { en: "Claim the unique trophy of every Champion of the Reach.", de: "Erbeute die einzigartige Trophäe jedes Champions des Reach." }, icon: "🏆", category: "collection", rarity: "legendary", condition: { type: "elite_uniques", count: 29 } }, // codex:2026-10-17T14:30:00+02:00 — 1.3.0 E1: zurück auf 29. Die Götzenhalle ist offen, beide Halle-Champions hängen an offenen Basen (idol_husk/idol_priest) und sind jagbar. (Pruefbericht 29.08.2026 hatte 27 gesetzt, solange sie unerreichbar waren.)
     { id: "ach_elite_idol_warden", name: { en: "The Ninth Warden", de: "Der neunte Wächter" }, description: { en: "Defeat the Ninth Warden.", de: "Besiege den neunten Wächter." }, icon: "🎭", category: "collection", rarity: "epic", hidden: true, condition: { type: "elite_kills", target: "elite_idol_warden", count: 1 } },
 
     // -- Collection: Runen entdeckt (neu) --
@@ -16908,6 +17088,44 @@ export const content: ContentDB = {
       // machbaren Boss (s. Drazhan-Stat-Nachtrag oben) wäre 20000 Gold/Clear ein ~110k-Gold/h-
       // Farm-Loop gewesen.
       gold: 8000,
+    },
+    {
+      // codex:2026-10-17T14:40:00+02:00 — 1.3.0 E2: Die Getilgte Kapelle (design/lore/band2-auftakt-
+      // 1.3.0.md §5.8). Mini-Dungeon nach Muster idol_sanctum/behind_the_throne: zwei Vorwellen als
+      // dg_-Zwillinge (Prozession = Kranzträger, Lücke = Gebetsfresser), Truhe vor dem Boss, Boss
+      // the_expunger (dungeonOnly). Kapitel 26 schaltet frei, Kapitel 27 zählt NUR dungeons_cleared.
+      // Empfehlung 99 (≥ behind_the_throne 95, Leiter monoton, progression-band.test.ts). Loot-
+      // Rahmung „was er herausschnitt": Götzenherz + Götzen-Godlies, keine Kronen-Items (Chef-
+      // Entscheid 17.10.: Band-2-Auftakt ohne Kronen-Bezug). Rollt zusätzlich zum Boss-Kill-Loot.
+      id: "expunged_chapel",
+      name: { en: "The Expunged Chapel", de: "Die Getilgte Kapelle" },
+      zone: "idolhall",
+      requiredLevel: 99,
+      requiresQuest: "chronicle_26",
+      encounters: ["dg_wreath_bearer", "dg_prayer_eater", "the_expunger"],
+      waveMeta: [
+        { name: { en: "The Procession", de: "Die Prozession" }, kind: "elite" },
+        { name: { en: "The Gap", de: "Die Lücke" }, kind: "elite" },
+        { name: { en: "The Expunger", de: "Der Tilger" }, kind: "boss" },
+      ],
+      chest: {
+        loot: [
+          { itemId: "idol_shard", chance: 1.0, min: 2, max: 4 },
+          { itemId: "aether_rune", chance: 0.6, min: 2, max: 4 },
+          { itemId: "godiron_bar", chance: 0.6, min: 1, max: 2 },
+        ],
+      },
+      loot: [
+        { itemId: "idol_heart", chance: 1.0, min: 1, max: 1 },
+        { itemId: "godiron_bar", chance: 0.8, min: 2, max: 4 },
+        { itemId: "onyx", chance: 0.5, min: 1, max: 2 },
+        { itemId: "soulopal", chance: 0.5, min: 1, max: 2 },
+        { itemId: "idol_aegis", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "last_idol_mantle", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "eye_of_the_idol", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 },
+      ],
+      xp: 26000,
+      gold: 9000,
     },
     {
       // Endgame-Re-Tiering (Chef-GO 2026-07-10): Gate 20→55 — Dungeons sind Endgame-Content,
@@ -17120,13 +17338,15 @@ export const content: ContentDB = {
       // codex:2026-10-17T12:45:00+02:00 — 1.3.0 E4: drei Stufen über Etage 20 (Chef-Vorschlag 30/50/100).
       // Jede Stufe rollt ZUSÄTZLICH zu allen darunter (paragon.ts rollParagonChest) und trägt die
       // Chase-Leiter eine Stufe höher (Rare-Drop-Regel): E20 = Götzen-Legendaries der Sanktum-Truhe,
-      // E30 = Godlies des Letzten Götzen, E50 = Drazhans Godlies + Götzen-Ägide/-Mantel, E100 = alle
+      // E25 = Godlies des Letzten Götzen, E50 = Drazhans Godlies + Götzen-Ägide/-Mantel, E100 = alle
       // Spitzen-Godlies mit spürbarer Chance. Nur Bestands-Items (keine neuen Bilder, Wiring-Audit
       // kennt die Paragon-Truhe nicht als Quelle). Einordnung: mit der heutigen Formel (HP ×1,12 je
-      // Etage) bricht selbst der BiS-Tank bei E25 (design/balance-paragon-calibration.md) — E30+
-      // ist Prestige-Horizont, kein Farm-Pfad; die Chancen sind darauf und nicht auf Massen-Clears getunt.
+      // Etage) schafft der BiS-Tank E20 sicher und bricht bei E25 (design/balance-paragon-
+      // calibration.md). codex:2026-10-17T14:05:00+02:00 — erste Stufe 30 → 25 vorgezogen
+      // (Koordinator): E25 ist die erste Boss-Etage hinter der E20-Truhe und damit die erreichbare
+      // Kante; 50/100 bleiben Prestige-Horizont, kein Farm-Pfad.
       {
-        minFloor: 30,
+        minFloor: 25,
         loot: [
           { itemId: "idol_shard", chance: 1.0, min: 2, max: 4 },
           { itemId: "idol_heart", chance: 0.25, min: 1, max: 1 },
@@ -18518,6 +18738,115 @@ export const content: ContentDB = {
       rewards: { gold: 10000 },
       tokenReward: 5,
       requires: ["chronicle_20"],
+    },
+    // ── Aschechronik Band 2 „Götterkriege", Auftakt (1.3.0 E2) ─────────────────────────────
+    // codex:2026-10-17T14:45:00+02:00 — Kapitel 22–27 nach design/lore/band2-auftakt-1.3.0.md (§2
+    // Kapitelliste, §5 finale Texte DE/EN, Chef-GO 17.10.; Kapitel 25 ohne Kronen-Bezug). Kette linear
+    // ab chronicle_21 (Epilog bleibt unverändert davor, bereits abgeholte Kapitel bleiben abgeholt).
+    // Ziele 22–26 über die offenen Götzenhallen-Wesen (Mengen nach Kill-Zeit ~1 h je Kapitel mit
+    // Kapitel-20-Gear), Kapitel 27 zählt NUR über dungeons_cleared (Lehre Kap. 11), Kapitel 26
+    // schaltet die Getilgte Kapelle frei. Belohnungen staffeln Gold/Token über Kapitel 20 (25k/5).
+    {
+      id: "chronicle_22",
+      name: { en: "The Empty Hall", de: "Die leere Halle" },
+      description: {
+        en: "Enter the open Idol Hall and bring down Idol Husks and Skarn Whelps: the second volume does not begin in the tower.",
+        de: "Betritt die offene Götzenhalle und bezwinge Götzenhülsen und Skarnbrut: Der zweite Band beginnt nicht im Turm.",
+      },
+      loreText: {
+        en: "I had settled in for floors. Then word came from the Hall, and it came on foot: Drazhan's husks still walk their rounds, because nobody told them the master is gone. A work knows nothing of retreat. It knows only its path. In the rubble of the Sanctum the Skarn's brood has nested by now, and a nest is the surest sign that a place is no longer guarded. You went in as if the Hall were a region like any other, and that is exactly what it is now: a region. I open the second volume at the first page that is not a floor. The pen does not hesitate. It has written in the Hall before.",
+        de: "Ich hatte mich auf Etagen eingerichtet. Dann kam die Nachricht aus der Halle, und sie kam zu Fuß: Drazhans Hülsen gehen noch immer ihre Runden, weil niemand ihnen gesagt hat, dass der Meister fort ist. Ein Werk weiß nichts vom Rückzug. Es weiß nur seine Bahn. In den Trümmern des Sanktums nistet inzwischen die Brut des Skarn, und ein Nest ist das sicherste Zeichen, dass ein Ort nicht mehr bewacht wird. Du bist hineingegangen, als wäre die Halle ein Gebiet wie jedes andere, und genau das ist sie jetzt: ein Gebiet. Ich schlage den zweiten Band an der ersten Seite auf, die keine Etage ist. Die Feder zögert nicht. Sie hat in der Halle schon einmal geschrieben.",
+      },
+      objectives: [
+        { type: "kill_monster", target: "idol_husk", count: 20 },
+        { type: "kill_monster", target: "skarn_whelp", count: 12 },
+      ],
+      rewards: { gold: 26000, items: [{ id: "idol_shard", qty: 3 }] },
+      tokenReward: 3,
+      requires: ["chronicle_21"],
+    },
+    {
+      id: "chronicle_23",
+      name: { en: "The Consecration", de: "Die Weihe" },
+      description: {
+        en: "Confront the Idol Priests and their forsaken servants in the galleries of the Hall: the consecration has to stop.",
+        de: "Stelle die Götzenpriester und ihre verlassenen Diener in den Galerien der Halle: Die Weihe muss aufhören.",
+      },
+      loreText: {
+        en: "I was the only one who refused to consecrate the new images. The others never left. They stand in the galleries in masks without eyes, swinging their censers, consecrating whatever they find, and whatever they consecrate drinks. Behind them the servants the Stranger left behind: sparks of his fire on chains nobody holds any more. They follow the priests because there is no one else left to follow. I wrote their prayers down; that is my way of listening. They name no god. They do not name Drazhan. They pray into a gap, neatly and with practice, and the gap has a shape. I do not know the shape. That troubles me more than any name would.",
+        de: "Ich war der Einzige, der sich weigerte, die neuen Bildnisse zu weihen. Die anderen sind nie gegangen. Sie stehen in den Galerien mit Masken ohne Augen, schwenken ihre Gefäße und weihen, was sie finden, und was sie weihen, trinkt. Hinter ihnen die Diener, die der Fremde zurückließ: Funken seines Feuers an Ketten, die niemand mehr hält. Sie folgen den Priestern, weil sonst niemand da ist, dem sie folgen könnten. Ich habe ihre Gebete mitgeschrieben, das ist meine Art zuzuhören. Sie nennen keinen Gott. Sie nennen nicht Drazhan. Sie beten in eine Lücke hinein, sauber und geübt, und die Lücke hat eine Form. Ich kenne die Form nicht. Das beunruhigt mich mehr als jeder Name.",
+      },
+      objectives: [
+        { type: "kill_monster", target: "idol_priest", count: 12 },
+        { type: "kill_monster", target: "forsaken_servant", count: 12 },
+      ],
+      rewards: { gold: 27000, items: [{ id: "soulopal", qty: 3 }] },
+      tokenReward: 3,
+      requires: ["chronicle_22"],
+    },
+    {
+      id: "chronicle_24",
+      name: { en: "What the Idols Drank", de: "Was die Götzen tranken" },
+      description: {
+        en: "Hunt the Prayer Eaters in the lower galleries: the harvest nobody collected is walking.",
+        de: "Jage die Gebetsfresser in den unteren Galerien: Die Ernte, die niemand abholte, geht um.",
+      },
+      loreText: {
+        en: "In the Ashfields I taught you the core lesson: nothing the idols drank ever reached the gods. I left out the addendum then, because I did not know it. Nothing was lost. Drazhan harvested what flowed to him, but a commander in retreat leaves the barns standing. In the lower galleries, what was never collected now walks: prayers that have taken shape, sated, heavy, full of strangers' voices. A Prayer Eater does not speak. It repeats. I heard a plea for rain older than I am, and I am old. You silenced them, every one you found. It was mercy, not victory. The Chronicle records both.",
+        de: "In den Aschfeldern habe ich dir die Kernlektion beigebracht: Nichts, was die Götzen tranken, kam je bei den Göttern an. Den Nachsatz habe ich damals weggelassen, weil ich ihn nicht kannte. Nichts ging verloren. Drazhan erntete, was ihm zufloss, aber ein Feldherr auf dem Rückzug lässt die Scheunen stehen. In den unteren Galerien geht jetzt um, was nie abgeholt wurde: Gebete, die Gestalt angenommen haben, satt, schwer, voller fremder Stimmen. Ein Gebetsfresser spricht nicht. Er wiederholt. Ich habe eine Bitte um Regen gehört, die älter ist als ich, und ich bin alt. Du hast sie zum Schweigen gebracht, alle, die du gefunden hast. Es war Gnade, nicht Sieg. Die Chronik vermerkt beides.",
+      },
+      objectives: [{ type: "kill_monster", target: "prayer_eater", count: 15 }],
+      rewards: { gold: 28000, items: [{ id: "godiron_bar", qty: 3 }] },
+      tokenReward: 3,
+      requires: ["chronicle_23"],
+    },
+    {
+      id: "chronicle_25",
+      name: { en: "The Wreaths", de: "Die Kränze" },
+      description: {
+        en: "Break the Wreath Bearers in the long hall: the Stranger's first works are still walking.",
+        de: "Zerschlage die Kranzträger in der langen Halle: Die ersten Werke des Fremden gehen noch.",
+      },
+      loreText: {
+        en: "I watched them cast, in the Slag Pit, back when I still believed warning was a profession. The first wreaths of god-iron, guided by hands that were not human. Here they are again. The Wreath Bearers walk in procession through the long hall, shoulder to shoulder, carrying what was set upon them as if the procession were not yet over. Nobody told them where they are going. It was never settled. You stepped into their path, and they fell the way works fall: without complaint, with a great deal of noise. I studied the casting seams on the shards until my hand was steady. Seams are removed when a work is finished. These were never finished. That relieves me in a way I would rather not explain.",
+        de: "Ich sah sie gießen, in der Schlackengrube, als ich noch glaubte, Warnen sei ein Beruf. Die ersten Kränze aus Götzeneisen, von Händen geführt, die keine menschlichen waren. Hier sind sie wieder. Die Kranzträger gehen in Prozession durch die lange Halle, Schulter an Schulter, und tragen, was man ihnen aufsetzte, als wäre die Prozession noch nicht vorbei. Niemand hat ihnen gesagt, wohin sie gehen. Es stand auch nie fest. Du bist ihnen in den Weg getreten, und sie sind gefallen, wie Werke fallen: ohne Klage, mit viel Lärm. Ich habe die Gussgrate an den Scherben betrachtet, bis die Hand ruhig war. Man entfernt Grate, wenn ein Werk fertig ist. Diese hier wurden nie fertig. Das erleichtert mich auf eine Art, die ich nicht erklären will.",
+      },
+      objectives: [{ type: "kill_monster", target: "wreath_bearer", count: 15 }],
+      rewards: { gold: 30000, items: [{ id: "onyx", qty: 2 }] },
+      tokenReward: 3,
+      requires: ["chronicle_24"],
+    },
+    {
+      id: "chronicle_26",
+      name: { en: "Siege-Works", de: "Belagerungswerke" },
+      description: {
+        en: "Fell the Siege Idols before the chiselled door: beyond it lies the Expunged Chapel.",
+        de: "Fälle die Belagerungsgötzen vor der ausgemeißelten Tür: Dahinter liegt die Getilgte Kapelle.",
+      },
+      loreText: {
+        en: "The idols were his siege-works against heaven. I wrote the sentence down when Drazhan said it, and only today understood that he meant it literally. At the end of the Hall they stand in a row, bent toward the sky, their arms recast as throwing-arms, unfinished and masterless. What they were meant to strike keeps its silence. I would rather nobody finished them. You felled them one after another, and when the last one lay down, the wall behind them was clear. A door on no plan of the Hall, and I have the plans. Beyond it a wing in which every inscription has been chiselled out, cleanly, line by line. Someone has been working here. I do not think he is finished.",
+        de: "Die Götzen waren seine Belagerungswerke gegen den Himmel. Ich habe den Satz geschrieben, als Drazhan ihn sagte, und erst heute verstanden, dass er wörtlich gemeint war. Am Ende der Halle stehen sie in Reihe, zum Himmel gebeugt, die Arme zu Wurfarmen umgegossen, unfertig und ohne Meister. Was sie treffen sollten, schweigt weiter. Ich ziehe es vor, dass niemand sie fertigstellt. Du hast sie gefällt, eines nach dem anderen, und als das letzte lag, war die Wand dahinter frei. Eine Tür, auf keinem Plan der Halle, und ich habe die Pläne. Dahinter ein Flügel, in dem jede Inschrift ausgemeißelt ist, sauber, Zeile um Zeile. Jemand hat hier gearbeitet. Ich glaube nicht, dass er fertig ist.",
+      },
+      objectives: [{ type: "kill_monster", target: "siege_idol", count: 10 }],
+      rewards: { gold: 32000, items: [{ id: "idol_shard", qty: 4 }, { id: "godiron_bar", qty: 3 }] },
+      tokenReward: 4,
+      requires: ["chronicle_25"],
+    },
+    {
+      id: "chronicle_27",
+      name: { en: "The Expunger", de: "Der Tilger" },
+      description: {
+        en: "Clear the Expunged Chapel and bring down the Expunger: what cut the scriptures is still at work.",
+        de: "Räume die Getilgte Kapelle und bezwinge den Tilger: Was die Schriften beschnitt, arbeitet noch.",
+      },
+      loreText: {
+        en: "The procession at the entrance, the gap behind it, and at the end of the chapel: him. He did not look up when you came. He was chiselling. The Expunger is the hand that cut the Seventh's name from the scriptures, and it did not stop cutting, because a name can come back if you let it. You felled him, and his work stayed where it was: walls full of gaps, all of the same shape. I traced one with my hand. It fits the gap the priests pray into. I write this plainly, because I cannot write it any other way: the Seventh was not forgotten. He is kept forgotten. Who wants that is in no book I own — not yet. The God Wars do not begin with gods. They begin with what someone wanted expunged.",
+        de: "Die Prozession am Eingang, die Lücke dahinter, und am Ende der Kapelle: er. Er hat nicht aufgesehen, als du kamst. Er meißelte. Der Tilger ist die Hand, die den Namen des Siebten aus den Schriften schnitt, und sie hat beim Schneiden nicht aufgehört, weil ein Name wiederkommen könnte, wenn man ihn lässt. Du hast ihn gefällt, und seine Arbeit blieb stehen: Wände voller Lücken, alle in derselben Form. Ich habe eine davon mit der Hand nachgefahren. Sie passt zu der Lücke, in die die Priester beten. Ich schreibe es nüchtern, weil ich es nicht anders kann: Der Siebte wurde nicht vergessen. Er wird vergessen gehalten. Wer das will, steht in keinem Buch, das ich besitze — noch nicht. Die Götterkriege fangen nicht mit Göttern an. Sie fangen mit dem an, was jemand getilgt haben wollte.",
+      },
+      objectives: [{ type: "dungeons_cleared", target: "expunged_chapel", count: 1 }],
+      rewards: { gold: 35000, items: [{ id: "idol_heart", qty: 1 }, { id: "onyx", qty: 2 }] },
+      tokenReward: 5,
+      requires: ["chronicle_26"],
     },
 
     // ── DAILY-POOL (content-dev, 2026-06-25): 50 Quests über alle 5 Schwierigkeiten ──
@@ -20575,13 +20904,13 @@ export const content: ContentDB = {
     { itemId: "abyssal_core",     cost: 70,  slayerLevelRequired: 80 },
     // ── Etage 6–8: Punkte-Uniques (1.3.0 E3) ────────────────────────────────────
     // codex:2026-10-17T12:20:00+02:00 — Langzeit-Sparziele über dem Helm, je Etagen-Gate eins.
-    // Preise bewusst unter dem Spec-Vorschlag 1.500/2.500/4.000 (design/slayer-tower-rework-
-    // balance.md §4.4, kalkuliert mit 35–40 Pkt/h): Aufträge auf Etage 6–8 dauern pro Kill
-    // 10–40× länger als auf Etage 5, die Punkte je Auftrag bleiben flach — das Endgame-Einkommen
-    // sinkt. Nachmessen, sobald die Punkte-Skalierung (logic-dev) entschieden ist.
-    { itemId: "slayer_turnkey_ring",       cost: 1000, slayerLevelRequired: 85 },
-    { itemId: "slayer_predecessor_mantle", cost: 1500, slayerLevelRequired: 90 },
-    { itemId: "slayer_guest_right",        cost: 2200, slayerLevelRequired: 95 },
+    // codex:2026-10-17T14:05:00+02:00 — Preise jetzt wie der Spec-Vorschlag 1.500/2.500/4.000
+    // (design/slayer-tower-rework-balance.md §4.4, kalkuliert mit 35–40 Pkt/h ≈ 40/67/110 h): seit
+    // dem Endgame-Zuschlag (engine/slayer.ts TOWER_FLOOR_POINTS_MULT) zahlt ein Etage-6–8-Auftrag
+    // pro Stunde etwa so viel wie einer auf Etage 5, der Rabatt aus der ersten E3-Fassung entfällt.
+    { itemId: "slayer_turnkey_ring",       cost: 1500, slayerLevelRequired: 85 },
+    { itemId: "slayer_predecessor_mantle", cost: 2500, slayerLevelRequired: 90 },
+    { itemId: "slayer_guest_right",        cost: 4000, slayerLevelRequired: 95 },
     // ── Tränke (wiederkehrende Senke) ────────────────────────────────────────
     // Keine maxPurchases → unbegrenzt kaufbar. Stufenleiter 12→28→110 Pkt (war 50→120→500, ÷~4,3),
     // klar differenziert (echte Buff-Werte, s. Item-Defs — P3-3 Text-Fix):
@@ -21737,13 +22066,21 @@ export const content: ContentDB = {
       ],
     },
 
-    // ── The Idol Hall — Sonderfall (Templates idol_warden/aether_wraith, last_idol/drazhan tabu,
-    //    Chef-Ausnahme-GO §7 P1: die dungeonOnly-Basis dient nur als Stat-Vorlage, `startEliteCombat`
-    //    startet nie über die Basis-Id, das dungeonOnly-Gate der Templates greift also nicht) ──────
+    // ── The Idol Hall (last_idol/drazhan tabu) ──────────────────────────────────────────────────
+    // codex:2026-10-17T14:30:00+02:00 — 1.3.0 E1: Basis von den dungeonOnly-Vorlagen idol_warden/
+    // aether_wraith auf die neuen OFFENEN Wesen idol_husk (Konstrukt, Rüstung) und idol_priest
+    // (Ward-Caster) umgehängt. Damit sind beide Champions jagbar (isEliteVariantHuntable), ohne
+    // idol_warden/aether_wraith offen zu machen: Elite-Kills kreditieren auf die Basis-Id, und auf
+    // idol_warden/aether_wraith zählen die Meister-Dailies daily_ma_kill_idol_warden_15/
+    // _aether_wraith_10 (Lehre Kap. 11: kein Ziel verschenken). Eigene Elite-Art liegt vor
+    // (elite_idol_warden/_wraith.webp), das Bild ändert sich also nicht. Multiplikatoren so
+    // nachgezogen, dass die absoluten Werte grob gleich bleiben: Neunter Wächter vorher
+    // 4281 HP/200 Schaden, jetzt 4200/200; Hohlschleier vorher 1488+3308 Ward/216, jetzt
+    // 1785+2940/216 (wardCapacity-Mult = hp-Mult, elite-balance-spec §0).
     elite_idol_warden: {
-      id: "elite_idol_warden", zone: "idolhall", baseMonsterId: "idol_warden",
+      id: "elite_idol_warden", zone: "idolhall", baseMonsterId: "idol_husk",
       name: { en: "The Ninth Warden", de: "Der Neunte Wächter" },
-      statMults: { hp: 2.2, damage: 1.3 }, xpMult: 2.75,
+      statMults: { hp: 2.0, damage: 1.35 }, xpMult: 2.5,
       uniqueItemId: "ninth_wardens_signet",
       extraLoot: [
         { itemId: "idol_shard", chance: 0.4, min: 4, max: 8 },
@@ -21755,10 +22092,11 @@ export const content: ContentDB = {
       ],
     },
     elite_idol_wraith: {
-      id: "elite_idol_wraith", zone: "idolhall", baseMonsterId: "aether_wraith",
+      id: "elite_idol_wraith", zone: "idolhall", baseMonsterId: "idol_priest",
       name: { en: "Hollowveil the Forgotten", de: "Hohlschleier der Vergessene" },
-      // Schleier (Caster, elite-balance-spec.md §1.10): wardCapacity = hp-Mult (§0; 1654×2,0=3308 exakt).
-      statMults: { hp: 2.0, damage: 1.25, wardCapacity: 2.0 }, xpMult: 2.5,
+      // Schleier (Caster, elite-balance-spec.md §1.10): wardCapacity = hp-Mult (§0). Seit 1.3.0 E1 auf
+      // idol_priest (850 HP + 1400 Ward): ×2,1 ⇒ 1785 + 2940 Ward, Schaden ×1,35 ⇒ 216 wie zuvor.
+      statMults: { hp: 2.1, damage: 1.35, wardCapacity: 2.1 }, xpMult: 2.6,
       uniqueItemId: "hollowveil_locket",
       extraLoot: [
         { itemId: "aether_rune", chance: 0.4, min: 4, max: 12 },

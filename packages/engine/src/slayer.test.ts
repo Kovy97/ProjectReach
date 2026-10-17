@@ -22,6 +22,8 @@ import {
   slayerRequirementMet,
   spendSlayerPoints,
   stretchLevelWindow,
+  TOWER_FLOOR_POINTS_MULT,
+  towerTaskPointsMult,
   unlockedTowerFloors,
   worldTaskMonsters,
 } from "./slayer";
@@ -1059,5 +1061,34 @@ describe("slayer — rerollTask (Auftragsmarke, Chef-GO 26.08.2026)", () => {
     assignTask(c, tc, "warden");
     expect(c.slayerTask).toEqual(a.slayerTask);
     expect(c.rng.state).toBe(a.rng.state);
+  });
+});
+
+// codex:2026-10-17T14:00:00+02:00 — 1.3.0 E3-Nachbesserung: Endgame-Zuschlag der Turm-Etagen 6–8.
+describe("Slayer-Punkte: Endgame-Zuschlag Etage 6–8", () => {
+  it("Etage 1–5 und Welt-Aufträge bleiben ×1, Etage 6–8 tragen den Tabellen-Faktor", () => {
+    expect(towerTaskPointsMult(content, "abyssal_devourer", true)).toBe(1);
+    expect(towerTaskPointsMult(content, "tower_charred_doomknight", false)).toBe(1);
+    for (const f of [6, 7, 8]) {
+      const floor = content.slayerTower?.find((x) => x.floor === f);
+      expect(floor, `Etage ${f} fehlt`).toBeDefined();
+      for (const id of floor!.monsters) expect(towerTaskPointsMult(content, id, true), id).toBe(TOWER_FLOOR_POINTS_MULT[f]);
+    }
+  });
+
+  it("assignTask fixiert den Zuschlag im pointReward (Kampflevel 99, Slayer 95)", () => {
+    let seen = 0;
+    for (let seed = 1; seed <= 80 && seen < 3; seed++) {
+      const s = createGame({ name: "E" }, content, seed);
+      for (const id of ["attack", "power", "defence", "vitality", "ranged", "magic", "warding"]) s.skills[id] = { xp: xpForLevel(99) };
+      s.skills.slayer = { xp: xpForLevel(95) };
+      const task = assignTask(s, content, "brenna_ashwick");
+      const floor = task && task.isTower ? content.monsters[task.monsterId]?.slayerFloor : undefined;
+      if (!task || floor == null || floor < 6) continue;
+      const master = content.slayerMasters!.find((m) => m.id === "brenna_ashwick")!;
+      expect(task.pointReward).toBe(Math.round(scaledTaskPoints(master, task.required) * TOWER_FLOOR_POINTS_MULT[floor]!));
+      seen++;
+    }
+    expect(seen).toBeGreaterThan(0);
   });
 });

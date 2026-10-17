@@ -152,7 +152,9 @@ const ZONE_MIN_BELOW_R = 20;
  * Band) in R hinein — ohne eigenes Weltmonster-Band gibt es dafür aber gar keine Zonen-Assertion,
  * die dadurch fehlschlagen könnte. Bewusst dokumentierte Toleranz, kein Fehler.
  */
-const ZONES_WITHOUT_WORLD_BAND = new Set(["idolhall"]);
+// codex:2026-10-17T14:55:00+02:00 — 1.3.0 E1: die Götzenhalle hat jetzt offene Wesen (L244–266) und
+// trägt damit ein eigenes Band; die Ausnahme entfällt (die Liste bleibt als Mechanik für künftige Fälle).
+const ZONES_WITHOUT_WORLD_BAND = new Set<string>([]);
 
 describe("Guard A — Unlock-Band-Monotonie (Quest-Progressions-Fix-Paket, 2026-07-23)", () => {
   it("jede Zonen-Gate hält ihr Level-Band relativ zur eigenen Freischalt-Voraussetzung R", () => {

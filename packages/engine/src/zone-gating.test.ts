@@ -228,6 +228,8 @@ describe("Aschechronik: Dungeon-Gate-Mapping (Welle K, gepinnt)", () => {
     wyvern_lair: "chronicle_17",
     idol_sanctum: "chronicle_18",
     behind_the_throne: "chronicle_19",
+    // codex:2026-10-17T14:55:00+02:00 — 1.3.0 E2: Getilgte Kapelle, frei mit Kapitel 26 (Boss-Kapitel 27).
+    expunged_chapel: "chronicle_26",
     paragon_tower: undefined,
   };
 
@@ -275,7 +277,8 @@ describe("Aschechronik: Dungeon-Gate-Mapping (Welle K, gepinnt)", () => {
  * Kette noch nicht erreichbar ist.
  */
 describe("Aschechronik: Deadlock-Guard (Welle D2, Welle K)", () => {
-  const CHAPTER_IDS = Array.from({ length: 21 }, (_, i) => `chronicle_${String(i + 1).padStart(2, "0")}`);
+  // codex:2026-10-17T14:55:00+02:00 — 1.3.0 E2: Band-2-Auftakt, Kette jetzt bis chronicle_27.
+  const CHAPTER_IDS = Array.from({ length: 27 }, (_, i) => `chronicle_${String(i + 1).padStart(2, "0")}`);
 
   // Heimat-Dungeon je dungeonOnly-Monster: über die encounters-Arrays aufgelöst (dg_-Präfix wie
   // killCreditMonsterId gestrippt), damit last_idol/drazhan & Co. auf ihren echten Dungeon zeigen.

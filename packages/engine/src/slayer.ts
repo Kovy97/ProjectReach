@@ -270,6 +270,26 @@ export function scaledTaskPoints(master: SlayerMasterDef, required: number): num
 }
 
 /**
+ * codex:2026-10-17T14:00:00+02:00 — Endgame-Zuschlag der Turm-Etagen 6–8 (1.3.0 E3-Nachbesserung,
+ * Koordinator: „Punkte-Einkommen pro Stunde etwa wie Etage 5"). Die Punkte je Auftrag hängen nur an
+ * der Auftragsgröße (scaledTaskPoints), ein Kill dauert auf Etage 6–8 aber ein Vielfaches: gemessen
+ * mit dem Kapitel-20-Craft-Loadout (paragon-corridor.test.ts, Nahkampf/Magie gemittelt) Etage 5
+ * ≈ 9 s/Kill, Etage 6 ≈ 107 s, Etage 7 ≈ 201 s, Etage 8 ≈ 230 s. Der Faktor gleicht genau dieses
+ * Verhältnis aus (gerundet). Etagen ohne Eintrag (1–5) und Welt-Aufträge bleiben ×1, also
+ * bit-identisch zum Altstand. Kein Content-Feld, weil SlayerTowerFloor (shared) keins trägt; wandert
+ * bei Bedarf als `pointsMult` in die Etagen-Daten (logic-dev). Reine Vergabe-Logik, kein neuer State:
+ * der Faktor steckt im beim Assign fixierten `pointReward` (laufende Aufträge bleiben unberührt).
+ */
+export const TOWER_FLOOR_POINTS_MULT: Readonly<Record<number, number>> = { 6: 12, 7: 22, 8: 25 };
+
+/** Punkte-Faktor eines Auftrags: Turm-Etagen laut Tabelle oben, sonst 1. Rein, kein RNG. */
+export function towerTaskPointsMult(content: ContentDB, monsterId: MonsterId, isTower: boolean): number {
+  if (!isTower) return 1;
+  const floor = content.monsters[monsterId]?.slayerFloor;
+  return (floor != null ? TOWER_FLOOR_POINTS_MULT[floor] : undefined) ?? 1;
+}
+
+/**
  * Vergibt einen neuen Slayer-Task beim gegebenen Master. Nur wenn aktuell KEIN Task aktiv ist und
  * der Master freigeschaltet ist; sonst null. Deterministisch über state.rng (rückt RNG vor).
  *
@@ -398,7 +418,8 @@ export function assignTask(
     progress: 0,
     xpReward,
     // V1 (Welle GG): Punkte skalieren sanft mit der Task-Größe (am Spannen-Mittel = basePoints).
-    pointReward: scaledTaskPoints(master, required),
+    // codex:2026-10-17T14:00:00+02:00 — ×Endgame-Zuschlag Etage 6–8 (towerTaskPointsMult, sonst ×1).
+    pointReward: Math.max(1, Math.round(scaledTaskPoints(master, required) * towerTaskPointsMult(content, monsterId, isTower))),
   };
   state.slayerTask = task;
   return task;

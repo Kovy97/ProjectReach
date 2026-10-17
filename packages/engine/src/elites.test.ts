@@ -474,6 +474,19 @@ describe("Elite-/World-Spawns — Struktur-Helfer (pure)", () => {
 });
 
 describe("Elite-/World-Spawns — Zugangs-Gate (Spieler-Report 1.0.0 „The Ninth Warden“)", () => {
+  // codex:2026-10-17T14:35:00+02:00 — 1.3.0 E1: die Götzenhalle ist offen, beide Halle-Champions
+  // hängen jetzt an offenen Basen (idol_husk/idol_priest) und sind jagbar. Der Mechanik-Guard
+  // („dungeonOnly-Basis ⇒ unjagbar, unjagbare Zone zieht keinen Wurf") bleibt erhalten und läuft
+  // gegen LEGACY_IDOL_CONTENT: dieselbe Content-Sicht mit den alten dungeonOnly-Basen von 1.0–1.2.
+  const LEGACY_IDOL_CONTENT: ContentDB = {
+    ...content,
+    elites: {
+      ...content.elites,
+      elite_idol_warden: { ...content.elites!.elite_idol_warden!, baseMonsterId: "idol_warden" },
+      elite_idol_wraith: { ...content.elites!.elite_idol_wraith!, baseMonsterId: "aether_wraith" },
+    },
+  };
+
   /**
    * Spieler-Report Steam-Forum 1.0.0: „so i get a pop up for a elite enemy called The Ninth Warden?
    * apparently its located in The Idol Hall i do not see how to gain access to that“. Das Zonen-Gate
@@ -499,32 +512,48 @@ describe("Elite-/World-Spawns — Zugangs-Gate (Spieler-Report 1.0.0 „The Nint
     expect(s.lastEliteSpawn!.zoneId).toBe("pastures");
   });
 
-  it("REAL-CONTENT: selbst mit ALLEN Zonen freigeschaltet spawnt `idolhall` nie (dungeonOnly-Basen)", () => {
-    const s = grantAllZones(createGame({ name: "Alles offen" }, content, 12), content);
+  it("LEGACY-Basen: mit dungeonOnly-Vorlagen spawnt `idolhall` selbst bei ALLEN offenen Zonen nie", () => {
+    const c = LEGACY_IDOL_CONTENT;
+    const s = grantAllZones(createGame({ name: "Alles offen" }, c, 12), c);
     for (const zoneId of Object.keys(s.eliteZones)) s.eliteZones[zoneId] = { cooldownMs: TICK_MS };
 
-    step(s, content, false);
+    step(s, c, false);
 
-    for (const zone of content.zones) {
+    for (const zone of c.zones) {
       const entry = s.eliteZones[zone.id]!;
-      const spawnbar = huntableEliteVariantsForZone(content, zone.id).length > 0;
+      const spawnbar = huntableEliteVariantsForZone(c, zone.id).length > 0;
       expect("variantId" in entry, `${zone.id}: Aktiv-Zustand erwartet=${spawnbar}`).toBe(spawnbar);
     }
-    // Die beiden Idol-Hall-Varianten EXISTIEREN weiterhin im Content (Bestiarium/Wiki), sind aber
-    // nicht jagdbar — genau diese Trennung hält `eliteVariantsForZone` (voll) vs.
+    // Die beiden Idol-Hall-Varianten EXISTIEREN weiterhin (Bestiarium/Wiki), sind mit dungeonOnly-
+    // Basen aber nicht jagdbar — genau diese Trennung hält `eliteVariantsForZone` (voll) vs.
     // `huntableEliteVariantsForZone` (Spawn-Auswahl) auseinander.
-    expect(eliteVariantsForZone(content, "idolhall").map((v) => v.id)).toEqual([
+    expect(eliteVariantsForZone(c, "idolhall").map((v) => v.id)).toEqual([
       "elite_idol_warden",
       "elite_idol_wraith",
     ]);
-    expect(huntableEliteVariantsForZone(content, "idolhall")).toEqual([]);
-    expect(isEliteZoneHuntable(s, content, "idolhall")).toBe(false);
+    expect(huntableEliteVariantsForZone(c, "idolhall")).toEqual([]);
+    expect(isEliteZoneHuntable(s, c, "idolhall")).toBe(false);
     expect("variantId" in s.eliteZones.idolhall!).toBe(false);
+  });
+
+  it("REAL-CONTENT (1.3.0 E1): beide Halle-Champions sind jagbar, ihre Basen laufen offen herum", () => {
+    expect(huntableEliteVariantsForZone(content, "idolhall").map((v) => v.id)).toEqual([
+      "elite_idol_warden",
+      "elite_idol_wraith",
+    ]);
+    for (const v of huntableEliteVariantsForZone(content, "idolhall")) {
+      const base = content.monsters[v.baseMonsterId]!;
+      expect(base.zone, v.id).toBe("idolhall");
+      expect(base.dungeonOnly, v.id).not.toBe(true);
+    }
+    const s = grantAllZones(createGame({ name: "Halle offen" }, content, 12), content);
+    expect(isEliteZoneHuntable(s, content, "idolhall")).toBe(true);
   });
 
   it("isEliteVariantHuntable: dungeonOnly-Basis unjagdbar, offene Basis jagdbar, unbekannte Basis unjagdbar", () => {
     const elites = content.elites!;
-    expect(isEliteVariantHuntable(content, elites.elite_idol_warden!)).toBe(false); // idol_warden = dungeonOnly
+    expect(isEliteVariantHuntable(LEGACY_IDOL_CONTENT, LEGACY_IDOL_CONTENT.elites!.elite_idol_warden!)).toBe(false); // idol_warden = dungeonOnly
+    expect(isEliteVariantHuntable(content, elites.elite_idol_warden!)).toBe(true); // 1.3.0: Basis idol_husk (offen)
     expect(isEliteVariantHuntable(content, elites.elite_pastures_boar!)).toBe(true);
     expect(
       isEliteVariantHuntable(content, { ...elites.elite_pastures_boar!, baseMonsterId: "does_not_exist" }),
@@ -535,15 +564,16 @@ describe("Elite-/World-Spawns — Zugangs-Gate (Spieler-Report 1.0.0 „The Nint
     // Zwei identische Spielstände (gleicher Seed) — einer hat `idolhall` per Bestandsschutz-Grant
     // offen, der andere nicht. Beide lassen die Zone sofort fällig werden. Der Elite-Strom MUSS
     // danach bit-identisch sein: eine unjagdbare Zone zieht keinen Wurf, genau wie eine gesperrte.
-    const locked = createGame({ name: "Zu" }, content, 4242);
-    const granted = createGame({ name: "Zu" }, content, 4242);
+    const c = LEGACY_IDOL_CONTENT;
+    const locked = createGame({ name: "Zu" }, c, 4242);
+    const granted = createGame({ name: "Zu" }, c, 4242);
     granted.legacyZoneGrants.idolhall = true;
     locked.eliteZones.idolhall = { cooldownMs: TICK_MS };
     granted.eliteZones.idolhall = { cooldownMs: TICK_MS };
 
     for (let i = 0; i < 200; i++) {
-      step(locked, content, false);
-      step(granted, content, false);
+      step(locked, c, false);
+      step(granted, c, false);
     }
 
     expect(granted.eliteRng).toEqual(locked.eliteRng); // KEIN einziger zusätzlicher Zug
@@ -570,11 +600,12 @@ describe("Elite-/World-Spawns — Zugangs-Gate (Spieler-Report 1.0.0 „The Nint
   });
 
   it("startEliteCombat verweigert eine unjagdbare Variante (Alt-Save-Eintrag) — ohne RNG-Zug", () => {
-    const s = grantAllZones(createGame({ name: "AltSave" }, content, 13), content);
+    const c = LEGACY_IDOL_CONTENT;
+    const s = grantAllZones(createGame({ name: "AltSave" }, c, 13), c);
     s.eliteZones.idolhall = { variantId: "elite_idol_warden", remainingMs: ELITE_WINDOW_MS };
     const rngBefore = s.eliteRng.state;
 
-    expect(startEliteCombat(s, content, "idolhall")).toBe(false);
+    expect(startEliteCombat(s, c, "idolhall")).toBe(false);
     expect(s.combat.monsterId).toBeNull();
     expect(s.eliteRng.state).toBe(rngBefore);
   });

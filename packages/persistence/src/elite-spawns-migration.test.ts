@@ -23,9 +23,9 @@ import { deserialize, serialize } from "./index";
  */
 
 /** Fester Zeitstempel für serialize UND deserialize — kein Offline-Catch-up-Tick im Test. */
-function roundTrip(s: GameState): GameState {
+function roundTrip(s: GameState, db: typeof content = content): GameState {
   const now = 1_000_000;
-  const r = deserialize(serialize(s, now), content, now);
+  const r = deserialize(serialize(s, now), db, now);
   expect(r).not.toBeNull();
   return r!.state;
 }
@@ -178,22 +178,43 @@ describe("Elite-/World-Spawns-Persistenz (SAVE 72)", () => {
    * AKTIVEN Elite in `idolhall` tragen — einer Zone, die ausschließlich aus dungeonOnly-Monstern
    * besteht und deshalb gar keine Zonen-Karte hat: der Champion war dort nie erreichbar.
    */
+  // claude:2026-10-17T22:20:00+02:00 — Seit 1.3.0 ist die Götzenhalle ein offenes Gebiet (Champions an
+  // `idol_husk`/`idol_priest`). Die Invariante selbst bleibt gültig und wird gegen einen Katalog geprüft,
+  // in dem die Halle wieder unerreichbar ist (Champion-Basis = dungeonOnly-Wesen wie bis 1.2.x).
+  const UNREACHABLE_HALL: typeof content = {
+    ...content,
+    elites: Object.fromEntries(
+      Object.entries(content.elites ?? {}).map(([id, v]) => [
+        id,
+        v.zone === "idolhall" ? { ...v, baseMonsterId: "idol_warden" } : v,
+      ]),
+    ),
+  };
+
   it("Load-Invariante 1.0.1: aktiver Elite in einer UNERREICHBAREN Zone → Ruhe (cooldownMs 0) + Breadcrumb fällt", () => {
-    const s = createGame({ name: "AltSave" }, content, 42);
+    const s = createGame({ name: "AltSave" }, UNREACHABLE_HALL, 42);
     for (const z of content.zones) s.legacyZoneGrants[z.id] = true; // Zone gilt als freigeschaltet
     s.eliteZones.idolhall = { variantId: "elite_idol_warden", remainingMs: 400_000 };
     s.eliteSpawnSeq = 7;
     s.lastEliteSpawn = { zoneId: "idolhall", variantId: "elite_idol_warden", seq: 7 };
 
-    const loaded = roundTrip(s);
+    const loaded = roundTrip(s, UNREACHABLE_HALL);
     expect(loaded.eliteZones.idolhall).toEqual({ cooldownMs: 0 });
     expect(loaded.lastEliteSpawn, "kein irreführender Toast beim Laden").toBeNull();
     expect(loaded.eliteSpawnSeq, "Seq-Monotonie: NIE gesenkt").toBe(7);
 
-    const again = roundTrip(loaded); // idempotent
+    const again = roundTrip(loaded, UNREACHABLE_HALL); // idempotent
     expect(again.eliteZones.idolhall).toEqual({ cooldownMs: 0 });
     expect(again.lastEliteSpawn).toBeNull();
     expect(again.eliteSpawnSeq).toBe(7);
+  });
+
+  it("1.3.0: aktiver Elite in der jetzt OFFENEN Götzenhalle bleibt beim Laden erhalten", () => {
+    const s = createGame({ name: "Halle" }, content, 42);
+    for (const z of content.zones) s.legacyZoneGrants[z.id] = true;
+    s.eliteZones.idolhall = { variantId: "elite_idol_warden", remainingMs: 400_000 };
+    const loaded = roundTrip(s);
+    expect(loaded.eliteZones.idolhall).toEqual({ variantId: "elite_idol_warden", remainingMs: 400_000 });
   });
 
   it("Load-Invariante 1.0.1: aktiver Elite in einer GESPERRTEN Zone fällt ebenfalls (Save-Edit/Alt-Save)", () => {
