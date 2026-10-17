@@ -143,11 +143,8 @@ export function PetGalleryPage(): JSX.Element {
             <h2>{t("companions.title")}</h2>
           </div>
           <div className="pet-field-head-meta">
-            <span className="pet-gallery-counter">
-              {t("companions.counter")
-                .replace("{owned}", String(owned))
-                .replace("{total}", String(total))}
-            </span>
+            {/* claude:2026-10-17T12:30:00+02:00 — Fundzähler stand doppelt (hier + Kopf des Fundindex
+                „Begleiter wählen · 7 / 23“); er bleibt nur am Index, der Kopf wird flacher. */}
             <div className="pet-field-active">
               <span className="pet-slot-label">{t("companions.slot.label")}</span>
               {activePet ? (
@@ -202,9 +199,10 @@ export function PetGalleryPage(): JSX.Element {
                   <span className="pet-field-entry-copy">
                     <strong>{has ? tr(pet.name) : "???"}</strong>
                     <small>{sourceLabel(pet)}</small>
+                    {/* claude:2026-10-17T13:00:00+02:00 — geschützte Leerzeichen: „1 / 60.000“ bricht nie mitten in der Quote. */}
                     <small>{t("companions.dropChance").replace(
                       "{pct}",
-                      `1 / ${formatNum(Math.round(1 / pet.dropChance))}`,
+                      `1\u00a0/\u00a0${formatNum(Math.round(1 / pet.dropChance))}`,
                     )}</small>
                   </span>
                   {isEquipped && <span className="pet-field-entry-mark">{t("companions.equipped")}</span>}

@@ -1781,6 +1781,22 @@ export function ItemTooltipOverlay(): JSX.Element | null {
   // Hovers durchlassen. Gate NUR für den `AreaTourGuide`-Mount weiter unten (Bugfund im eigenen
   // Testlauf, s. dortiger JSDoc), sonst überall unbenutzt.
   const [positionedFor, setPositionedFor] = useState<TooltipPayload | null>(null);
+  // claude:2026-10-17T13:35:00+02:00 — Nachmessen, wenn sich Fenster oder Karte nach dem Öffnen
+  // ändern (gepinnte Karte + Fenster verkleinert, nachladendes Bild, Shift-Vergleich klappt um).
+  // Vorher wurde nur bei neuer Payload/Shift geklammert — die Karte konnte aus dem Fenster ragen.
+  const [measureTick, setMeasureTick] = useState(0);
+  useEffect(() => {
+    if (!payload) return;
+    const bump = (): void => setMeasureTick((n) => n + 1);
+    window.addEventListener("resize", bump);
+    const el = ref.current;
+    const ro = el && typeof ResizeObserver !== "undefined" ? new ResizeObserver(bump) : null;
+    if (el && ro) ro.observe(el);
+    return () => {
+      window.removeEventListener("resize", bump);
+      ro?.disconnect();
+    };
+  }, [payload]);
 
   // Position am Viewport-Rand clampen, sobald die echte Größe bekannt ist (inkl. Vergleichskarte).
   useLayoutEffect(() => {
@@ -1823,9 +1839,9 @@ export function ItemTooltipOverlay(): JSX.Element | null {
       else left = Math.min(window.innerWidth - w - margin, payload.x + cursorW + 4);
     }
 
-    setPos({ left, top });
+    setPos((prev) => (prev.left === left && prev.top === top ? prev : { left, top }));
     setPositionedFor(payload);
-  }, [payload, shift]);
+  }, [payload, shift, measureTick]);
 
   // Gepinntes Tooltip via Esc / Klick außerhalb schließen. Escape läuft über die zentrale
   // Prioritäts-Registry (util/escStack.ts, Chef-GO Hotkeys) statt eines eigenen `keydown`-

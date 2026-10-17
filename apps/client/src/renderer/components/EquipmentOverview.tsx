@@ -1,5 +1,5 @@
 import { gameAlert } from "../components/GameAlert";
-import { type CSSProperties } from "react";
+import { type CSSProperties, type RefObject, useLayoutEffect, useRef, useState } from "react";
 import { content } from "@hearthforge/content";
 import { activeSets, computeStats, equipItem, equipTool, unequipItem } from "@hearthforge/engine";
 import type { EquipSlot, LocalizedString, SetDef } from "@hearthforge/shared";
@@ -146,6 +146,40 @@ export const DOLL_SLOTS: EquipSlot[] = [
 
 type AttrMeta = (typeof ATTRIBUTES)[number];
 
+/**
+ * claude:2026-10-17T12:45:00+02:00 — Leere-Slot-Beschriftung ohne Wortbruch. Vorher brach ein
+ * zu langes Wort roh mitten im Wort („ИН/СТРУ/МЕНТ", Electron hat kein russisches
+ * Silbentrennwörterbuch). Jetzt misst die Puppe ihre Slotbreite; ein Etikett erscheint nur, wenn
+ * sein längstes Wort bei 12 px (--fs-xs) in den Slot passt. Sonst bleibt der Slot leer und nennt
+ * seinen Zweck per Hover-Tooltip — dieselbe Beschriftung, kein neuer Text.
+ * ~9.5 px je Großbuchstabe (Kapitälchen, 12 px, 0.6 px Laufweite) + 10 px Innenabstand.
+ */
+const SLOT_LABEL_CHAR_PX = 9.5;
+const SLOT_LABEL_PAD_PX = 10;
+
+function longestWordLength(label: string): number {
+  return label.split(/\s+/).reduce((max, word) => Math.max(max, [...word].length), 0);
+}
+
+/** Wie viele Zeichen eines Wortes passen bei der aktuellen Slotbreite in eine Zeile. */
+function useSlotLabelCapacity(): [RefObject<HTMLDivElement>, number] {
+  const ref = useRef<HTMLDivElement>(null);
+  const [capacity, setCapacity] = useState(Number.POSITIVE_INFINITY);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const measure = (): void => {
+      const slotW = el.getBoundingClientRect().width / 3; // 3 Spalten (s. .cs-doll in character.css)
+      setCapacity(Math.floor((slotW - SLOT_LABEL_PAD_PX) / SLOT_LABEL_CHAR_PX));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, capacity];
+}
+
 /** Reines 3×2-Attribut-Kartenraster (STR/DEX/CON/INT/WIS/LCK). Hover/Fokus zeigt ein
  *  Erklär-Tooltip (Chef 2026-07-20: Spieler wusste nicht, was Attribute tun) — glowloses `.ct-tip`
  *  aus components/CitadelTip.tsx MIT dem `glow`-Modifier: der Glow-Ring bleibt exklusiv den
@@ -219,6 +253,7 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
   const c = state.character;
   // codex:2026-07-31T00:32:37+02:00 — Die Paperdoll zeigt ausschließlich Equipment.
   // Der frühere computeStats-Aufruf war unbenutzt und lief trotzdem bei jedem 10-Hz-Render.
+  const [dollRef, labelCapacity] = useSlotLabelCapacity();
 
   return (
     <>
@@ -226,7 +261,7 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
         {/* Silhouette-Hintergrund ist optional (asset noch nicht geliefert, s. CharacterPage) —
             hier bewusst nur der neutrale Platzhalter-Kreis, kein zweiter import.meta.glob-Hook. */}
         <div className="cs-doll-silhouette-ph" aria-hidden="true" />
-        <div className="cs-doll">
+        <div className="cs-doll" ref={dollRef}>
           {DOLL_SLOTS.map((slot) => {
             const itemId = c.equipment[slot];
             const draggedItem = interactive && dragItem ? content.items[dragItem] : null;
@@ -281,7 +316,18 @@ export function EquipmentDoll({ interactive = false, dragItem = null, onDragItem
                     }
                   />
                 ) : (
-                  <span className="cs-slot-empty-label">{tr(EQUIP_SLOT_LABELS[slot])}</span>
+                  // claude:2026-10-17T12:45:00+02:00 — s. useSlotLabelCapacity: Etikett nur, wenn
+                  // es ohne Wortbruch passt; der Hover-Tooltip nennt den Slot immer.
+                  <HoverTip
+                    as="span"
+                    focusable={false}
+                    className="cs-slot-empty-hit"
+                    content={<span className="ct-tip-desc">{tr(EQUIP_SLOT_LABELS[slot])}</span>}
+                  >
+                    {longestWordLength(tr(EQUIP_SLOT_LABELS[slot])) <= labelCapacity && (
+                      <span className="cs-slot-empty-label">{tr(EQUIP_SLOT_LABELS[slot])}</span>
+                    )}
+                  </HoverTip>
                 )}
               </div>
             );

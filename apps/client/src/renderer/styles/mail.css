@@ -5,20 +5,32 @@
    Grid-CSS — hier nur das Seiten-Layout + mail-spezifische Zeilen.
    ═══════════════════════════════════════════════════════════ */
 
+/* claude:2026-10-17T13:10:00+02:00 — Query-Container „mail“ (das Versand-Modal ist portaliert) und
+   echte Höhenkette statt `76vh`: Liste und Nachricht scrollen innerhalb der Resthöhe unter dem
+   Versandkopf. Unter 280 px Resthöhe scrollt `.content-body` die Seite. */
+.page-transition:has(> .mail-page) {
+  height: 100%;
+  min-height: 0;
+}
+
 .mail-page {
+  container: mail / inline-size;
   display: flex;
   flex-direction: column;
   gap: 10px;
   height: 100%;
+  min-height: 0;
 }
 
 /* codex:2026-08-31T22:38:00+02:00 — permanenter Einstieg in die Cross-Save-Fracht; bleibt auch
    bei leerem Postfach sichtbar und trennt Empfang (darunter) klar von Versand (Aktion rechts). */
 .mail-page-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 8px 14px;
+  flex-shrink: 0;
   padding: 9px 12px;
   border: 1px solid rgba(130, 101, 60, 0.48);
   background:
@@ -30,12 +42,13 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1 1 260px;
   min-width: 0;
 }
 
 .mail-page-actions-note {
   color: #8c867c;
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 /* ─── Teil-Abhol-Hinweis (Chef-Vorgabe: „Inventar voll — Rest bleibt im Postfach") ───────────
@@ -53,17 +66,21 @@
 
 .mail-layout {
   display: grid;
-  grid-template-columns: minmax(240px, 320px) 1fr;
+  grid-template-columns: clamp(240px, 30cqi, 320px) minmax(0, 1fr);
   gap: 16px;
   align-items: start;
-  min-height: 0;
-  flex: 1;
+  min-height: 280px;
+  flex: 1 1 auto;
 }
 
 /* ─── Liste (links) ───────────────────────────────────────────── */
 .mail-list {
   min-width: 0;
-  max-height: 76vh;
+  max-height: 100%;
+}
+
+.mail-list-rows {
+  min-height: 0;
 }
 
 .mail-list-head {
@@ -143,26 +160,29 @@
   min-width: 0;
 }
 
+/* claude:2026-10-17T13:10:00+02:00 — Betreff bricht an Wortgrenzen statt mit „…“ zu enden. */
 .mail-row-subject {
   font-family: var(--font-head);
-  font-size: 14.5px;
+  font-size: var(--fs-md);
+  line-height: 1.25;
   color: var(--ds-parch-ink, #e8d8b0);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .mail-row--active .mail-row-subject {
   color: var(--ds-gold-bright, #f0dca0);
 }
 
-.mail-row-meta {
-  font-size: 12px;
+/* claude:2026-10-17T13:10:00+02:00 — Selektor schlägt die globale `.muted`-Größe (19 px, lädt später):
+   die Meta-Zeile war so groß wie der Betreff. */
+.mail-row .mail-row-meta {
+  font-size: var(--fs-sm);
 }
 
 /* ─── Geöffnete Nachricht (rechts) ────────────────────────────── */
 .mail-detail {
   min-width: 0;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .mail-detail-panel {
@@ -191,8 +211,8 @@
   color: var(--accent);
 }
 
-.mail-detail-meta {
-  font-size: 13px;
+.mail-detail-head .mail-detail-meta {
+  font-size: var(--fs-md);
 }
 
 .mail-attachments-label {
@@ -295,16 +315,18 @@
 }
 
 /* ─── Responsiv: schmal → gestapelt statt Zwei-Spalten ─────────── */
-@media (max-width: 900px) {
+/* claude:2026-10-17T13:10:00+02:00 — nach Panelbreite (@container mail) statt Fenster (900 px). */
+@container mail (max-width: 619px) {
   .mail-layout {
     grid-template-columns: 1fr;
+    flex: 0 0 auto;
   }
+
   .mail-list {
     max-height: 40vh;
   }
 
-  .mail-page-actions {
-    align-items: stretch;
-    flex-direction: column;
+  .mail-detail {
+    max-height: none;
   }
 }

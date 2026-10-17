@@ -15,7 +15,7 @@
    win on a real tie; see interaction.css header comment. */
 @import "./interaction.css";
 
-/* 3. Top navigation bar, content-header, content-body, game-stats */
+/* 3. Kopfbereich-Bausteine (Höhenregler, Claim-Punkt, Level-Burst) + content-body; Reiter/Statusleiste: chrome.css */
 @import "./topbar.css";
 
 /* 4. Sidebar (legacy + new sb-* redesign) */

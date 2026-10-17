@@ -1,5 +1,12 @@
 # Aktueller Projektstand
 
+<!-- claude:2026-10-17T16:40:00+02:00 -->
+
+**17.10.2026: Chef arbeitet mit Claude. Aktiver Branch `test-ui-fundament` (Test, nicht gemergt).**
+UI-Fundament umgesetzt und geprüft (Details HANDOFF oben). 1.3 ist offen; Sammelliste und
+Chef-Entscheide in `design/plan-1.3.md` (1.2.4 geht in 1.3.0 auf, kein Hotfix, Dual Wield auf Eis,
+Taverne/„Alive“ nur Test). Version weiter 1.2.3 im Manifest, SAVE 88 unveröffentlicht.
+
 <!-- codex:2026-09-10T11:34:00+02:00 -->
 
 **Branch `1.3`: Navigation nach Chefkritik nachgebessert; seitenweite Skalierungsanalyse fertig.**

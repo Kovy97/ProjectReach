@@ -1,5 +1,22 @@
 # Übergabe — Codex-Projektleitung
 
+<!-- claude:2026-10-17T16:40:00+02:00 -->
+
+### 17.10.2026 — Claude: UI-Fundament auf Test-Branch `test-ui-fundament` (Chef-Auftrag)
+
+Chef arbeitet am 17.10. mit Claude. Branch `test-ui-fundament` von `1.3`; Basis-Commit `373236a`
+sichert den bis 10.09. uncommitteten Stand (1.2.4-Rest + Codex 09./10.09.) unverändert.
+Auftrag `design/ui-fundament/BRIEF.md`, vier Agenten (Shell / Kampf+Charakter / Lager+Meta /
+Skills+Welt) mit getrennten Dateirevieren, danach Integration durch Claude.
+Chef-Vorgaben 17.10.: nicht steril (Texturen/Rahmen bleiben), Slayer-Kopf bleibt, Warteschlangen-
+Material (Warchain) wieder an, kompakte Reiterstufen ok, Stopp-Knopf Claude-Entscheid.
+Ergebnis: Kopf 339 → ≈125 px bei 1366×768, Layouts nach Panelbreite (Container Queries), keine
+Wortbrüche, 0 Layout-Funde im Clip-Audit (49 Szenen × de/ru/en × 1360/1366/1920; einzige Funde =
+bewusst überlagernde Item-Karte). Nur Renderer, kein Engine-/Save-/Content-Code.
+Geprüft: Typecheck 5/5, Client-Vitest 241/241, Produktions-Build grün. Ward-Leech-/Krypta-Befunde
+und 1.3-Sammelliste in `design/plan-1.3.md` (Chef: 1.2.4 geht in 1.3.0 auf, kein Hotfix, alle
+1.2.4-Punkte werden überarbeitet). Teststart nur im isolierten Profil (Steam aus), echte Saves unberührt.
+
 <!-- codex:2026-09-10T11:34:00+02:00 -->
 
 ### 1.3 — Navigationskorrektur, Skalierungsbericht und erlaubter Electron-Test

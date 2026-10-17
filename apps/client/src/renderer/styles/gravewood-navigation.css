@@ -1,4 +1,7 @@
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
+/* claude:2026-10-17T12:25:00+02:00 — UI-Fundament: alle .topbar*-Regeln dieser Datei entfernt. Die
+   Reiterleiste steht vollständig in chrome.css; die hier gestapelten !important-Generationen
+   (Holz, Leder, Schiefer, Basalt, Bronze-Eisen) wurden dort ohnehin überschrieben. */
 /*
  * Gravewood Navigation — kontrollierte, ausschließlich lokale V3-Bindung.
  * Keine Panel-, Modal-, Slot-, Seiten- oder Welt-Hintergründe werden hier erfasst.
@@ -10,9 +13,9 @@
 }
 
 /* codex:2026-07-30T23:05:56+02:00 — Sidebar und Topbar teilen exakt dieselbe statische Frame-/Surface-Geometrie. */
-#root :is(.sb-skill-btn, .topbar-item),
-#root :is(.sb-skill-btn, .topbar-item):hover,
-#root :is(.sb-skill-btn, .topbar-item).active {
+#root .sb-skill-btn,
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn.active {
   border-style: solid;
   border-color: transparent;
   border-width: 4px 8px;
@@ -31,12 +34,12 @@
 }
 
 /* codex:2026-07-30T23:05:56+02:00 — Zustände wechseln nur Licht und Bewegung; Textur und Rahmen bleiben ortsfest. */
-#root :is(.sb-skill-btn, .topbar-item):not(:disabled):hover {
+#root .sb-skill-btn:not(:disabled):hover {
   border-image-source: var(--gw-nav-frame);
   filter: brightness(1.09) saturate(1.03);
 }
 
-#root :is(.sb-skill-btn, .topbar-item).active {
+#root .sb-skill-btn.active {
   border-image-source: var(--gw-nav-frame) !important;
   background-image:
     linear-gradient(rgba(91, 58, 22, 0.3), rgba(54, 31, 13, 0.34)),
@@ -49,7 +52,7 @@
     0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-#root :is(.sb-skill-btn, .topbar-item):not(:disabled):active {
+#root .sb-skill-btn:not(:disabled):active {
   border-image-source: var(--gw-nav-frame);
   filter: brightness(0.9) saturate(0.94);
 }
@@ -108,19 +111,10 @@
   transform: translateY(1px) scale(0.985);
 }
 
-@media (max-width: 1024px) {
-  /* codex:2026-07-30T23:05:56+02:00 — Kompakte Topbar behält den V3-Rahmen ohne vertikales Clipping. */
-  #root .topbar-item {
-    border-width: 4px 9px;
-    border-image-width: 4px 9px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   /* codex:2026-07-30T23:05:56+02:00 — Systemwunsch reduziert Navigation auf reine Lichtzustände. */
   #root :is(
     .sb-skill-btn,
-    .topbar-item,
     .sb-footer-save,
     .sb-footer-menu,
     .sb-footer-mail,
@@ -154,16 +148,6 @@
 
 #root .sb-skill-btn:active {
   transform: translateY(1px) !important;
-}
-
-/* codex:2026-07-30T23:19:21+02:00 — Aktive Topbar-Navigation ohne rechteckige Innenauswahl. */
-#root .topbar-item.active {
-  background-image: var(--gw-nav-surface) !important;
-  background-size: 256px 256px !important;
-  background-repeat: repeat !important;
-  box-shadow:
-    inset 0 -2px 0 rgba(213, 157, 77, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* codex:2026-07-31T20:21:01+02:00 — Sidebar nutzt den vom Chef gewählten Ironwood-Bastion-Standardrahmen mit unveränderter 28-px-Slice-Geometrie. */
@@ -231,30 +215,6 @@
   bottom: calc(6px * var(--sb-scale-eff)) !important;
 }
 
-/* codex:2026-07-31T20:21:01+02:00 — Topbar übernimmt denselben Ironwood-Bastion-Rahmen in flacherer Geometrie. */
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item.active {
-  --gw-nav-frame: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-gravewood.webp");
-  border-width: 4px 6px !important;
-  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
-  border-radius: 0 !important;
-  background-image: var(--gw-nav-surface) !important;
-  background-size: 256px 256px !important;
-  background-repeat: repeat !important;
-}
-
-/* codex:2026-07-30T23:59:10+02:00 — Auch die Topbar bleibt beim Hover geometrisch und rasterseitig stabil; nur Rahmenlicht und Inhalt reagieren. */
-#root .topbar-item:hover {
-  filter: none !important;
-  transform: none !important;
-  border-image-source: var(--gw-nav-frame) !important;
-  box-shadow:
-    inset 0 0 0 1px rgba(224, 169, 91, 0.2),
-    0 0 7px rgba(167, 111, 47, 0.16) !important;
-}
-
 /* codex:2026-07-31T21:30:08+02:00 — finale Navigation: mittelgrober, gekachelter Basalt liegt
    unabhängig unter dem Ironwood-Rahmen. Alle Zustände teilen exakt dieselbe Rastergeometrie. */
 #root :is(
@@ -263,12 +223,11 @@
   .sb-footer-menu,
   .sb-footer-mail,
   .sb-footer-options,
-  .sb-footer-quit,
-  .topbar-item
+  .sb-footer-quit
 ),
-#root :is(.sb-skill-btn, .topbar-item):hover,
-#root :is(.sb-skill-btn, .topbar-item):active,
-#root :is(.sb-skill-btn, .topbar-item).active {
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
   --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   background-color: #111416 !important;
   background-image:
@@ -316,26 +275,6 @@
   opacity: 0 !important;
   background: none !important;
   box-shadow: none !important;
-}
-
-/* codex:2026-07-31T21:30:08+02:00 — Topbar erhält dieselbe Steinfliese; Hover/Active wechseln nur
-   Licht, niemals Rahmenquelle, Texturmaß oder Innen-Selector. */
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  transform: none !important;
-  translate: none !important;
-  scale: none !important;
-  filter: none !important;
-  border-image-source: var(--gw-nav-frame) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.32) !important;
-}
-
-#root .topbar-item:hover {
-  box-shadow:
-    0 0 7px rgba(175, 126, 62, 0.18),
-    0 2px 4px rgba(0, 0, 0, 0.32) !important;
 }
 
 /* codex:2026-07-31T21:52:00+02:00 — Sidebarzustände teilen wirklich dieselbe Pixelgeometrie.
@@ -431,24 +370,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.34) !important;
 }
 
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  --gw-nav-surface: url("../assets/ui/gravewood/textures/texture-leather.webp");
-  border-width: 5px 7px !important;
-  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
-  background-color: #15100d !important;
-  background-image:
-    linear-gradient(rgba(24, 16, 11, 0.18), rgba(8, 6, 5, 0.42)),
-    var(--gw-nav-surface) !important;
-  background-position: center, 0 0 !important;
-  background-size: auto, 256px 256px !important;
-  background-repeat: no-repeat, repeat !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.32) !important;
-}
-
 /* codex:2026-07-31T22:08:00+02:00 — Footeraktionen erhalten als Gegenmaterial oxblood-getönten
    Stein. Die rötlich-schwarze Fläche hebt sich sichtbar vom braunen Ironwood-Rahmen ab. */
 #root :is(
@@ -487,16 +408,15 @@
    Außenlippe mehr. Flächen dürfen wieder bis unter das Chrome laufen, ohne außen sichtbar zu werden. */
 #root :is(
   .sb-skill-btn,
-  .topbar-item,
   .sb-footer-save,
   .sb-footer-menu,
   .sb-footer-mail,
   .sb-footer-options,
   .sb-footer-quit
 ),
-#root :is(.sb-skill-btn, .topbar-item):hover,
-#root :is(.sb-skill-btn, .topbar-item):active,
-#root :is(.sb-skill-btn, .topbar-item).active {
+#root .sb-skill-btn:hover,
+#root .sb-skill-btn:active,
+#root .sb-skill-btn.active {
   background-origin: border-box !important;
   background-clip: border-box !important;
 }
@@ -532,24 +452,6 @@
   background-repeat: no-repeat, repeat !important;
 }
 
-/* codex:2026-07-31T23:59:45+02:00 — finale Kaskadenposition: Die skalierende Topbar-Geometrie
-   bleibt aus dem vorherigen Block erhalten, nur ihr braunes Holzmaterial wird danach ersetzt. */
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
-  background-color: #151a1d !important;
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(155, 117, 66, 0.09), transparent 66%),
-    linear-gradient(rgba(9, 13, 16, 0.18), rgba(3, 6, 8, 0.38)),
-    var(--gw-nav-surface) !important;
-  background-position: center, center, 0 0 !important;
-  background-size: auto, auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
-  background-repeat: no-repeat, no-repeat, repeat !important;
-}
-
 /* codex:2026-07-31T23:59:30+02:00 — Braunes Holz verlässt die Hauptnavigation. Kühler Schiefer
    gibt den warmen Ironwood-Rahmen optisch frei; die fünf Footeraktionen erhalten stattdessen eine
    hellere rauchige Bronze-/Oxblood-Fläche und versinken nicht länger im Schwarz. */
@@ -557,12 +459,7 @@
 #root .sb-skill-btn:hover,
 #root .sb-skill-btn:focus-visible,
 #root .sb-skill-btn:active,
-#root .sb-skill-btn.active,
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
+#root .sb-skill-btn.active {
   --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
   background-color: #151a1d !important;
   background-image:
@@ -628,57 +525,9 @@
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.95);
 }
 
-/* 1.0-Fixrunde FIX 6 (Chef-Sweep): 78px rechte Reserve war deutlich mehr, als die
-   Levelanzeige ("right: 13px" oben, Inhalt z.B. "24/99") tatsächlich braucht — bei
-   --sb-scale-eff:1 (unkomprimierte Höhe, z.B. 2560×1440) blieb dadurch kaum Platz für lange
-   EN-Labels ("Jewelcrafting", "Runecrafting" …), s. sidebar.css `.sb-skill-name`-Kommentar für
-   den vollen Befund. Auf 64px getrimmt (weiterhin sauberer Abstand zur Levelanzeige) — die
-   linke Icon-Reserve (58px) bleibt unangetastet, da sie das Icon exakt streift. */
-#root .sb-skill-btn .sb-skill-name {
-  padding-right: calc(58px * var(--sb-scale-eff, 1)) !important;
-  padding-left: calc(58px * var(--sb-scale-eff, 1)) !important;
-}
-
-/* 1.1.0, Chef-Entscheid 24.08. — schmale Leiste: der NAME hat Vorrang.
-   Die Beschriftung bleibt einzeilig und schrumpft (sidebar.css `.sb-skill-name`), aber unter
-   ~200px Leistenbreite reicht auch der 9px-Boden nicht mehr gegen die beidseitige Reservierung
-   von je 58px. Darum weicht hier die Nebeninformation: das Level-Abzeichen ist ausgeblendet
-   (sidebar.css, gleicher Container-Block), also braucht es rechts keine Abzeichen-Zone mehr,
-   und links genuegt die Breite, die das Symbol wirklich belegt (`clamp(26px, 34px*scale, 58px)`
-   plus 8px Versatz) statt der vollen 58px-Reserve.
-   Diese Stufe steht bewusst HIER und nicht in sidebar.css: die Regel darueber gewinnt mit
-   !important und `#root`-Spezifitaet gegen alles, was sidebar.css spaeter setzt. Gemessen mit
-   ui-audit/sidebar-einzeilig-verify.mjs. */
-@container sidebar (max-width: 200px) {
-  #root .sb-skill-btn .sb-skill-name {
-    padding-right: calc(10px * var(--sb-scale-eff, 1)) !important;
-    padding-left: calc(38px * var(--sb-scale-eff, 1)) !important;
-  }
-  /* Der Kampf-Knopf traegt weiter oben eine eigene !important-Regel mit hoeherer Spezifitaet
-     (#root .sb-combat-btn-row ...). Ohne diese Zeile behielte ausgerechnet er seine
-     Abzeichen-Reserve, obwohl das Abzeichen hier ausgeblendet ist — gemessen: "Combat" lief
-     als einziges kurzes Label ueber. */
-  #root .sb-combat-btn-row .sb-skill-btn .sb-skill-name {
-    padding-right: calc(10px * var(--sb-scale-eff, 1)) !important;
-  }
-}
-
-/* 1.0.1: Die Kampf-Zeile teilt sich ihre Breite mit dem Aufklapp-Pfeil (`.sb-combat-toggle`),
-   ihr Knopf ist also schmaler als alle anderen — mit derselben 58px-Reserve rechts blieb für
-   „KAMPF" kein Platz und das Wort wurde mitten durchgebrochen („KAM/PF"). Die Reserve rechts darf
-   hier kleiner sein: dort steht nur das Kampflevel („96", `.sb-combat-lvl-badge`), nicht die
-   Fortschrittsangabe der Fertigkeiten („97/99"). Links bleibt die Icon-Reserve unangetastet. */
-#root .sb-combat-btn-row .sb-skill-btn .sb-skill-name {
-  padding-right: calc(34px * var(--sb-scale-eff, 1)) !important;
-}
-
-/* codex:2026-08-01T09:30:10+02:00 — Die Topbar ist selbst nur noch Layoutschale. Der vom Chef
-   markierte umlaufende Holzrahmen entfällt; die einzelnen Iron-Tabs tragen das gesamte Chrome. */
-#root .topbar::before {
-  content: none !important;
-  display: none !important;
-  border-image: none !important;
-}
+/* claude:2026-10-17T12:45:00+02:00 — Die Namens-Reserven (.sb-skill-name padding-*, 58/38/34 px,
+   je !important) sind entfernt: chrome-sidebar.css setzt Icon | Name | Level als Raster, der Name
+   braucht keine Polsterzonen mehr. */
 
 /* codex:2026-08-01T09:30:10+02:00 — `.ds-button` brachte zusätzlich zum neuen Eisenrand noch
    seinen alten Holzrahmen als Pseudoelement mit. Beim Kampfausklapper wird dieses Doppel-Chrome
@@ -687,48 +536,6 @@
   content: none !important;
   display: none !important;
   border-image: none !important;
-}
-
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  --gw-nav-frame-v: clamp(5px, calc(8px * var(--tb-scale, 1)), 14px);
-  --gw-nav-frame-h: clamp(8px, calc(12px * var(--tb-scale, 1)), 20px);
-  --gw-nav-tile-size: clamp(176px, calc(256px * var(--tb-scale, 1)), 352px);
-  --gw-nav-surface: url("../assets/bg_tileable_wood.webp");
-  border-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
-  border-image-source: var(--gw-nav-frame) !important;
-  border-image-slice: 28 !important;
-  border-image-width: 2.15 1.87 2.15 1.87 !important;
-  border-image-outset: 0 !important;
-  border-image-repeat: stretch !important;
-  background-color: #100b08 !important;
-  background-image:
-    linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)),
-    var(--gw-nav-surface) !important;
-  background-position: center, 0 0 !important;
-  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
-  background-repeat: no-repeat, repeat !important;
-}
-
-/* codex:2026-07-31T23:59:50+02:00 — Materialoverride bewusst nach dem letzten skalierenden
-   Topbar-Rahmenblock; nur so kann kein älterer Holzwert die kühle Schieferfläche zurücksetzen. */
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
-  background-color: #151a1d !important;
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(155, 117, 66, 0.09), transparent 66%),
-    linear-gradient(rgba(9, 13, 16, 0.18), rgba(3, 6, 8, 0.38)),
-    var(--gw-nav-surface) !important;
-  background-position: center, center, 0 0 !important;
-  background-size: auto, auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
-  background-repeat: no-repeat, no-repeat, repeat !important;
 }
 
 /* codex:2026-08-01T08:25:32+02:00 — Chef-Auswahl 02 „Bronze-Lipped Iron“ als echte
@@ -742,24 +549,6 @@
   --gw-nav-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
   --gw-nav-frame-width: clamp(9px, calc(14px * var(--sb-scale-eff, 1)), 20px);
   border-width: var(--gw-nav-frame-width) !important;
-  border-image-source: var(--gw-nav-frame) !important;
-  border-image-slice: 96 !important;
-  border-image-width: 2.15 1.87 2.15 1.87 !important;
-  border-image-outset: 0 !important;
-  border-image-repeat: repeat !important;
-}
-
-/* codex:2026-08-01T08:25:32+02:00 — Die flachere Topbar nutzt dieselbe Framefamilie
-   mit eigener skalierender Vertikal-/Horizontalstärke und identischer Slice-Geometrie. */
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  --gw-nav-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
-  --gw-nav-frame-v: clamp(7px, calc(11px * var(--tb-scale, 1)), 16px);
-  --gw-nav-frame-h: clamp(10px, calc(15px * var(--tb-scale, 1)), 22px);
-  border-width: var(--gw-nav-frame-v) var(--gw-nav-frame-h) !important;
   border-image-source: var(--gw-nav-frame) !important;
   border-image-slice: 96 !important;
   border-image-width: 2.15 1.87 2.15 1.87 !important;
@@ -806,44 +595,13 @@
   object-fit: contain;
 }
 
-#root .sb-skill-name {
-  padding-inline: calc(56px * var(--sb-scale-eff, 1)) !important;
-  line-height: 1.15;
-}
-
-/* codex:2026-08-01T08:48:51+02:00 — Topbar-Tabs füllen die vorhandene Barhöhe, während der
-   schmalere Layout-Rand mehr Beschriftungsraum lässt. Das sichtbare Chrome behält seine Stärke. */
-#root .topbar-entry {
-  align-self: stretch;
-}
-
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  --gw-nav-frame-layout-v: clamp(4px, calc(6px * var(--tb-scale, 1)), 9px);
-  --gw-nav-frame-layout-h: clamp(6px, calc(9px * var(--tb-scale, 1)), 13px);
-  height: 100%;
-  min-height: 0 !important;
-  padding: 0 calc(8px * var(--tb-scale, 1)) !important;
-  border-width: var(--gw-nav-frame-layout-v) var(--gw-nav-frame-layout-h) !important;
-  border-image-width: 2.15 1.87 2.15 1.87 !important;
-  line-height: 1.18;
-}
-
 /* codex:2026-08-01T08:48:51+02:00 — Fast schwarzer, nahtloser Basalt ersetzt das helle
    Teppichgrau. Eine schwache warme Reflexion verbindet die Fläche mit der Bronzelippe. */
 #root .sb-skill-btn,
 #root .sb-skill-btn:hover,
 #root .sb-skill-btn:focus-visible,
 #root .sb-skill-btn:active,
-#root .sb-skill-btn.active,
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
+#root .sb-skill-btn.active {
   --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   background-color: #101315 !important;
   background-image:
@@ -867,23 +625,9 @@
   background-repeat: no-repeat, repeat;
 }
 
-/* codex:2026-08-01T12:18:00+02:00 — Die komplette Topbar-Schale nutzt nun dieselbe warme,
-   ruhige Gravewood-Fläche wie die Sidebar; das alte schwarze Rosenmuster bleibt nirgends hinter
-   den einzelnen Navigationstabs sichtbar. */
-#root .topbar {
-  background-color: #100b08 !important;
-  background-image:
-    linear-gradient(rgba(7, 7, 8, 0.22), rgba(3, 3, 4, 0.42)),
-    url("../assets/ui/gravewood/textures/texture-gravewood.webp") !important;
-  background-position: center, 0 0 !important;
-  background-size: auto, 320px 320px !important;
-  background-repeat: no-repeat, repeat !important;
-}
-
 /* codex:2026-08-01T09:08:19+02:00 — Nahtbereinigtes Runtime-Derivat nur für die sichtbaren
    Navigationsschalen: Die 28-px-Ecken schließen nun direkt an die geraden Holzleisten an. */
-#root .sidebar::before,
-#root .topbar::before {
+#root .sidebar::before {
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") !important;
 }
 
@@ -930,14 +674,6 @@
   filter: drop-shadow(0 1px 1px #000);
 }
 
-/* codex:2026-08-01T09:08:19+02:00 — Vertikale Innenluft hält die kräftigen Topbar-Ecken
-   von Fensterkante und Statusleiste fern, ohne die gesamte Leistenhöhe aufzublähen. */
-#root .topbar {
-  box-sizing: border-box;
-  padding-top: clamp(3px, calc(4px * var(--tb-scale, 1)), 6px);
-  padding-bottom: clamp(3px, calc(4px * var(--tb-scale, 1)), 6px);
-}
-
 /* codex:2026-08-01T09:08:19+02:00 — Die fünf Systemaktionen bleiben warm, werden aber auf
    tiefes, fast verkohltes Leder abgedunkelt, damit Text und Icons nicht im hellen Braun ertrinken. */
 #root :is(
@@ -971,75 +707,4 @@
   background-size: auto, auto, 224px 224px !important;
   background-repeat: no-repeat, no-repeat, repeat !important;
   background-blend-mode: normal !important;
-}
-
-/* codex:2026-08-01T13:28:00+02:00 — Topbar-Zellen teilen die verfügbare Breite strikt gleich.
-   Die Beschriftung skaliert relativ zu ihrer eigenen Zelle; Textinhalt darf nie mehr die
-   Buttonbreite bestimmen. Ein skalierender Zwischenraum trennt die Eisenrahmen sauber, ohne die
-   Gleichverteilung aufzubrechen. Die Oberfläche bleibt dieselbe Basaltfamilie der Sidebar. */
-#root .topbar {
-  display: flex;
-  gap: clamp(3px, 0.32vw, 8px);
-  padding-inline: clamp(2px, 0.18vw, 5px);
-  overflow-x: hidden;
-}
-
-#root .topbar-entry {
-  flex: 1 1 0 !important;
-  width: 0;
-  min-width: 0 !important;
-  container-type: inline-size;
-}
-
-#root .topbar-divider {
-  display: none !important;
-}
-
-#root .topbar-item,
-#root .topbar-item:hover,
-#root .topbar-item:focus-visible,
-#root .topbar-item:active,
-#root .topbar-item.active {
-  --gw-nav-surface: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
-  width: 100%;
-  min-width: 0 !important;
-  max-width: none;
-  flex: 1 1 auto;
-  padding-inline: clamp(4px, 4cqw, 12px) !important;
-  background-color: #101315 !important;
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.11), transparent 72%),
-    linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.32)),
-    var(--gw-nav-surface) !important;
-  background-position: center, center, 0 0 !important;
-  background-size: auto, auto, 192px 192px !important;
-  background-repeat: no-repeat, no-repeat, repeat !important;
-}
-
-#root .topbar-label {
-  display: block !important;
-  width: 100%;
-  min-width: 0;
-  /* Clip-Audit G006 (1.0.1): bei knappen Tab-Breiten (1366×768, 8 gleich breite Tabs) reichte die
-     Breite für lange Labels wie "MEISTERSCHAFT" nicht — vorher white-space:nowrap +
-     text-overflow:clip schnitt hart ab (kein Ellipsis, buchstäblich fehlende Buchstaben). Der
-     Button hat auf der Höhen-Achse reichlich Luft (Icon ist ausgeblendet, .topbar ist
-     50–64px×--tb-scale hoch, s. topbar.css), darum jetzt: Umbruch auf 2 Zeilen statt Kappung.
-     Kurze Labels bleiben einzeilig (sie brechen nicht, weil sie in die Breite passen). */
-  overflow: visible;
-  font-size: clamp(7px, 8.5cqw, 22px) !important;
-  line-height: 1.08;
-  white-space: normal;
-  overflow-wrap: break-word;
-  text-overflow: clip;
-}
-
-/* Politur zu G006: bei 1366×768 (8 gleich breite Tabs) ist "MEISTERSCHAFT" ohne Letter-Spacing
-   mit ~99px knapp UNTER den ~100px verfügbarer Breite — nur das übliche 0.4px Letter-Spacing
-   (topbar.css .topbar-label, Sidebar-Cinzel-Optik) drückte es über die Kante in den 2-Zeilen-
-   Umbruch oben. Schwellwert NUR für sehr schmale Tab-Container: bei allen breiteren
-   Auflösungen bleibt das Letter-Spacing unangetastet bei 0.4px — betrifft real nur die kleinste
-   unterstützte Fensterbreite und lässt dort wieder alle Tab-Labels einzeilig wie zuvor. */
-@container (max-width: 160px) {
-  #root .topbar-label { letter-spacing: 0; }
 }

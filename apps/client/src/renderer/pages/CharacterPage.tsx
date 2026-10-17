@@ -1,4 +1,5 @@
 import { useRef, useState, type CSSProperties, type KeyboardEvent, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { getUiIcon } from "../uiIcons";
 import { content } from "@hearthforge/content";
 import {
@@ -377,8 +378,11 @@ export function CharacterPage(): JSX.Element {
   // erraten konnte.
 
 
+  // claude:2026-10-17T12:20:00+02:00 — `.cs-layout` ist Container-Query-Wurzel (Spalten nach
+  // PANELbreite, character.css); das Spaltenraster sitzt deshalb eine Ebene tiefer in `.cs-grid`.
   return (
     <div className="cs-layout">
+      <div className="cs-grid">
 
       {/* ═══════════════════════════════════════════════════════════
           LINKE SPALTE — CHARACTER
@@ -741,8 +745,11 @@ export function CharacterPage(): JSX.Element {
             Tooltip-Deltas (#307) + Item-Wiki (#308) decken Inspektion vollständig ab; löst zugleich
             den 55-px-1080p-Überlauf der Seite. */}
       </div>
+      </div>
 
-      {portraitPickerOpen && (
+      {/* claude:2026-10-17T12:20:00+02:00 — Portal: das Containment von `.cs-layout` würde das
+          fixed-Overlay sonst an die Seite statt ans Fenster binden (CrateOpenModal portalt selbst). */}
+      {portraitPickerOpen && createPortal(
         <PortraitPickerModal
           currentId={c.portrait}
           title={t("char.portrait.change")}
@@ -755,7 +762,8 @@ export function CharacterPage(): JSX.Element {
             setPortraitPickerOpen(false);
           }}
           onCancel={() => setPortraitPickerOpen(false)}
-        />
+        />,
+        document.body,
       )}
       {crateItemId && (
         <CrateOpenModal

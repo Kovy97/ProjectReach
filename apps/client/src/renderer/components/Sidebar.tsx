@@ -97,6 +97,9 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
   // wenn tatsächlich mehr Inhalt folgt (scrollHeight > clientHeight) — bei 1920×1080/1017 bleibt
   // die Liste unverändert, weil dort nichts überläuft.
   const [navScrollable, setNavScrollable] = useState(false);
+  // claude:2026-10-17T13:00:00+02:00 — Gegenstück oben: Einträge, die unter das Segensbanner
+  // gescrollt sind, blenden aus statt hart angeschnitten zu werden (chrome-sidebar.css).
+  const [navScrolled, setNavScrolled] = useState(false);
   const checkNavScrollable = (): void => {
     const el = navRef.current;
     if (!el) return;
@@ -104,6 +107,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
     // (Chef 25.08.2026: er blieb sonst dauerhaft stehen).
     const rest = el.scrollHeight - el.clientHeight - el.scrollTop;
     setNavScrollable(rest > 2);
+    setNavScrolled(el.scrollTop > 2);
   };
   useLayoutEffect(checkNavScrollable);
   useEffect(() => {
@@ -116,28 +120,63 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
     };
   }, []);
 
-  // codex:2026-09-10T11:18:00+02:00 — Zentrierte Spielbeschriftung: 19px Ziel, echte 14px-Untergrenze.
-  // Reicht der reale Textslot nicht, dürfen Namen umbrechen statt alle Einträge auf Mikroschrift zu setzen.
+  // codex:2026-09-10T11:18:00+02:00 — Zentrierte Spielbeschriftung: 19px Ziel.
+  // claude:2026-10-17T13:00:00+02:00 — UI-Fundament: Namen brechen NUR an Wortgrenzen um (CSS),
+  // gemessen wird darum das LÄNGSTE WORT je Name statt der ganzen Zeile. Eine gemeinsame Größe für
+  // alle Einträge, so groß, dass jedes Einzelwort in seinen Slot passt — Boden 15 px (--fs-md).
+  // Vorher: ganze Zeile gemessen, unter 14 px auf `overflow-wrap: anywhere` umgeschaltet — daher
+  // „Собирательст/во". Passt ein einzelnes Wort selbst bei 15 px nicht, gibt nur dieser Knopf
+  // seine Levelspalte ab (Level in die Ecke, `data-wide-name` — ein Attribut, das React beim
+  // Neuzeichnen nicht überschreibt, anders als className); erst wenn auch das nicht
+  // reicht (sehr schmal gezogene Leiste), wird nur dieser Name kleiner (bis 12 px).
   const fitFrame = useRef(0);
   const fitNames = (): void => {
     const el = asideRef.current;
     if (!el) return;
     cancelAnimationFrame(fitFrame.current);
     fitFrame.current = requestAnimationFrame(() => {
-      el.classList.remove("sb-wrap-labels");
-      el.style.setProperty("--chrome-sidebar-name-size", "19px");
-      const range = document.createRange();
-      let size = 19;
-      for (const name of el.querySelectorAll<HTMLElement>(".sb-skill-name")) {
-        if (name.clientWidth <= 0) continue;
-        range.selectNodeContents(name);
-        const textWidth = range.getBoundingClientRect().width;
-        if (textWidth > 0) size = Math.min(size, 19 * Math.max(0, name.clientWidth - 1) / textWidth);
+      const TARGET = 19;
+      const FLOOR = 15;
+      const MIN_SINGLE = 12;
+      el.style.setProperty("--chrome-sidebar-name-size", `${TARGET}px`);
+      const names = Array.from(el.querySelectorAll<HTMLElement>(".sb-skill-name"));
+      for (const name of names) {
+        name.style.removeProperty("font-size");
+        delete name.parentElement?.dataset.wideName;
       }
-      // codex:2026-09-10T11:18:00+02:00 — Gegen ungebremstes Schrumpfen bei langen RU-Namen;
-      // Messung immer einzeilig, erst danach den nötigen Umbruchzustand anwenden.
-      el.classList.toggle("sb-wrap-labels", size < 14);
-      el.style.setProperty("--chrome-sidebar-name-size", `${Math.max(14, Math.floor(size * 10) / 10)}px`);
+      const range = document.createRange();
+      // Benötigte Größe: aktuelle Größe × Slotbreite / Breite des längsten Wortes.
+      const need = (name: HTMLElement): number | null => {
+        const slot = name.clientWidth;
+        const text = name.firstChild;
+        if (slot <= 0 || !text || text.nodeType !== Node.TEXT_NODE) return null;
+        let widest = 0;
+        for (const m of (text.nodeValue ?? "").matchAll(/\S+/g)) {
+          range.setStart(text, m.index ?? 0);
+          range.setEnd(text, (m.index ?? 0) + m[0].length);
+          widest = Math.max(widest, range.getBoundingClientRect().width);
+        }
+        const size = parseFloat(getComputedStyle(name).fontSize) || TARGET;
+        return widest > 0 ? size * Math.max(0, slot - 1) / widest : null;
+      };
+      const needs: { name: HTMLElement; size: number }[] = [];
+      for (const name of names) {
+        const size = need(name);
+        if (size !== null) needs.push({ name, size });
+      }
+      // Gemeinsame Größe nur aus Namen, die bei >= 15 px in ihre Spalte passen — die übrigen
+      // bekommen gleich die breitere Spalte und ziehen nicht alle anderen mit herunter.
+      const shared = Math.max(FLOOR, Math.min(TARGET, ...needs.filter((n) => n.size >= FLOOR).map((n) => n.size)));
+      el.style.setProperty("--chrome-sidebar-name-size", `${Math.floor(shared * 10) / 10}px`);
+      for (const n of needs) {
+        if (n.size >= shared) continue;
+        const btn = n.name.parentElement;
+        if (btn?.querySelector(".sb-skill-level")) {
+          btn.dataset.wideName = "1";
+          n.size = need(n.name) ?? n.size; // in der neuen, breiteren Spalte nachmessen
+        }
+        if (n.size < shared) n.name.style.fontSize = `${Math.max(MIN_SINGLE, Math.floor(n.size * 10) / 10)}px`;
+      }
       range.detach();
       checkNavScrollable();
     });
@@ -254,7 +293,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
          (title_<id>.png, s. titleImages.ts) — nicht übersetzbar. Jetzt
          lokalisierbarer Text (.sb-skill-name), per CSS auf dieselbe Optik
          getrimmt (Cinzel, uppercase, Gold). */}
-      <nav className={`sb-nav${navScrollable ? " sb-nav--scrollable" : ""}`} ref={navRef}>
+      <nav className={`sb-nav${navScrollable ? " sb-nav--scrollable" : ""}${navScrolled ? " sb-nav--scrolled" : ""}`} ref={navRef}>
         {pages.map((page, pageIdx) => {
           const iconSrc = getSidebarIcon(page.id);
           const isActive = page.id === activePageId;

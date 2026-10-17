@@ -1498,7 +1498,7 @@
   width: 100%;
   min-width: 0;
   text-align: center;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 
 .nh-popup .nh-effect-value {
@@ -2348,7 +2348,7 @@
   font-weight: 700;
   line-height: 1.28;
   text-align: center;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 
 .nh-effect-value--next {
@@ -2739,7 +2739,10 @@
      gerissen — sie wäre in Spalte 4 gelandet, mit toter Leerfläche rechts danach. Flexbox macht
      die Spaltenzahl irrelevant: jeder Knopf bleibt `auto`-breit, `.nh-capacity` allein bekommt
      unten `flex: 1 1 auto` und füllt IMMER den Rest, egal wie viele Geschwister davor stehen. */
+  /* claude:2026-10-17T13:00:00+02:00 — Umbruch immer erlaubt (nicht erst ab 1180px Fenster): bei
+     1366 RU wurden „ПЕРЕМЕСТИТЬ" und die Kapazität sonst abgeschnitten. */
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   gap: clamp(5px, 0.45vw, 9px);
   min-height: clamp(42px, 3.2vw, 54px);
@@ -2757,9 +2760,10 @@
   gap: 5px;
 }
 
+/* claude:2026-10-17T13:10:00+02:00 — kein min-height:100% mehr: bei umbrechender Leiste zog das
+   jede Zeile auf die volle Leistenhöhe und schnitt die Kapazitätszeile ab; stretch genügt. */
 .nh-view-controls .nh-view-tab {
   min-width: 0;
-  min-height: 100%;
   padding: 6px clamp(10px, 1vw, 18px);
   border: 5px solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125);
@@ -2786,19 +2790,19 @@
 .nh-capacity {
   /* Fix 1: nimmt den kompletten Rest der Zeile ein (statt einer festen `1fr`-Grid-Spur), egal ob
      davor 2 (Prod) oder 4 (Dev) Werkzeugschalter stehen — s. `.nh-view-controls`. */
-  flex: 1 1 auto;
+  /* claude:2026-10-17T13:00:00+02:00 — schrumpft nicht unter ihren Text (vorher links gekappt:
+     „местимость зданий"), sondern rutscht als Ganzes in die nächste Zeile. */
+  flex: 1 0 auto;
   align-self: stretch;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-width: 0;
   margin-left: 0;
   padding: 5px clamp(10px, 1vw, 18px);
   border: 1px solid rgba(170, 119, 57, 0.55);
   background: rgba(3, 4, 5, 0.62);
   font-size: clamp(12px, 0.75vw, 15px);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nh-map-layout {
@@ -3003,13 +3007,6 @@
 }
 
 @media (max-width: 1180px) {
-  .nh-view-controls {
-    /* Fix 1: bei wenig Breite bricht die Kapazität in eine eigene Zeile um — `flex-wrap` statt
-       fester Spaltenzahl übernimmt das unabhängig davon, ob 2 (Prod) oder 4 (Dev)
-       Werkzeugschalter neben der Karten-/Listenwahl stehen. */
-    flex-wrap: wrap;
-  }
-
   .nh-view-tabbar {
     flex: 1 1 200px;
   }
@@ -3108,9 +3105,12 @@
   min-height: 0;
 }
 
+/* claude:2026-10-17T13:00:00+02:00 — Register 38 %, mindestens 340px, bei schmaler Seite höchstens
+   46 % — vorher feste 390px bis zum 1180px-Fensterschritt, die das Detail zerquetschten. Kein
+   Container auf Shell/Seite: die RefineModal ist ein nicht portaliertes fixed-Overlay. */
 .nh-list-main {
   display: grid;
-  grid-template-columns: minmax(390px, 38%) minmax(0, 1fr);
+  grid-template-columns: minmax(min(340px, 46%), 38%) minmax(0, 1fr);
   gap: var(--nh-map-gap, clamp(8px, 0.7vw, 14px));
   min-width: 0;
   min-height: 0;
@@ -3164,7 +3164,9 @@
   gap: clamp(6px, 0.55vw, 11px);
   min-height: clamp(112px, 8.2vw, 146px);
   margin-bottom: clamp(5px, 0.45vw, 8px);
-  padding: clamp(6px, 0.55vw, 10px);
+  /* claude:2026-10-17T13:40:00+02:00 — seitlich 13px: der Iron-Rahmen zeichnet 19px breit
+     (7px Rand + Innenabstand), bisher lag er über der rechten Kante des Aktionsknopfs. */
+  padding: clamp(6px, 0.55vw, 10px) 13px;
   /* codex:2026-08-30T23:59:30+02:00 — Exakt dieselbe produktive Iron-9-Slice-Familie wie
      Sidebar-Navigation und der umgebende Gebäuderegister-Container; kein V3-Panelrahmen. */
   border: 7px solid transparent;
@@ -3258,7 +3260,9 @@
   white-space: nowrap;
 }
 
-.nh-list-row-action {
+/* claude:2026-10-17T14:00:00+02:00 — Zeilen-Präfix: `.btn-iron` (min-width 160px) gewann sonst die
+   Kaskade, der Knopf ragte bis 1920px über den Rahmen der Registerzeile hinaus. */
+.nh-list-row .nh-list-row-action {
   /* Darf mitschrumpfen (Chef 31.08.2026): lieber ein schmalerer Knopf als ein zerbrochener Name.
      Der Text im Knopf bricht ohnehin um (`white-space: normal`). */
   min-width: 0;
@@ -3279,7 +3283,7 @@
   min-width: 0;
 }
 
-.nh-list-row-function {
+.nh-list-row .nh-list-row-function {
   min-width: 0;
   min-height: 44px;
   padding: 6px 10px;
@@ -3315,7 +3319,7 @@
   font-family: var(--font-head);
   font-size: clamp(25px, 2vw, 43px);
   line-height: 1.05;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 
 .nh-list-detail-rank {
@@ -3408,7 +3412,7 @@
   font-family: var(--font-head);
   font-size: clamp(17px, 1.12vw, 24px);
   line-height: 1.2;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 
 .nh-list-effect-arrow {
@@ -3494,7 +3498,7 @@
 .nh-list-reason {
   color: #d8a05a;
   text-align: right;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 
 .nh-list-progress {
@@ -3632,8 +3636,8 @@
     min-width: 0;
   }
 
-  .nh-list-row-action,
-  .nh-list-row-function {
+  .nh-list-row .nh-list-row-action,
+  .nh-list-row .nh-list-row-function {
     width: 100%;
     min-width: 0;
   }
@@ -3650,11 +3654,6 @@
   }
 }
 
-@media (max-width: 1180px) {
-  .nh-list-main {
-    grid-template-columns: minmax(350px, 40%) minmax(0, 1fr);
-  }
-}
 
 @media (max-width: 900px) {
   .nh-list-shell {
@@ -3824,7 +3823,7 @@
   font-family: var(--font-head);
   font-size: clamp(28px, 3.2cqw, 48px);
   line-height: 1;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 
 .nh-refinery-heading p {
@@ -3942,7 +3941,7 @@
 
 .nh-refinery-recipe-art img { width: 100%; height: 100%; object-fit: contain; }
 .nh-refinery-recipe-copy { min-width: 0; display: grid; gap: 5px; }
-.nh-refinery-recipe-copy > strong { color: #dfcd94; font-size: clamp(14px, 1.15cqw, 18px); line-height: 1.12; overflow-wrap: anywhere; }
+.nh-refinery-recipe-copy > strong { color: #dfcd94; font-size: clamp(14px, 1.15cqw, 18px); line-height: 1.12; overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */ }
 .nh-refinery-recipe-copy > span { display: flex; flex-wrap: wrap; gap: 4px; }
 .nh-refinery-recipe-copy i { display: inline-flex; align-items: center; gap: 3px; padding: 2px 5px; border: 1px solid #424038; background: #090b0b; color: #9cc486; font: normal clamp(11px, 0.8cqw, 13px) var(--font-body); }
 .nh-refinery-recipe-copy i.is-lacking { color: #d17d70; border-color: rgba(184, 77, 64, 0.5); }
@@ -3972,7 +3971,7 @@
   font-family: var(--font-head);
   font-size: clamp(20px, 2cqw, 31px);
   line-height: 1.05;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 
 .nh-refinery-state {
@@ -4010,7 +4009,7 @@
 .nh-refinery-material.is-output { align-self: center; min-height: 90px; border-color: rgba(112, 168, 88, 0.48); background: linear-gradient(90deg, rgba(54, 88, 41, 0.14), rgba(7, 8, 8, 0.78)); }
 .nh-refinery-material > img { width: 100%; aspect-ratio: 1; object-fit: contain; }
 .nh-refinery-material > span { display: grid; gap: 2px; min-width: 0; }
-.nh-refinery-material strong { color: #d9cda9; font-size: clamp(12px, 1cqw, 16px); line-height: 1.1; overflow-wrap: anywhere; }
+.nh-refinery-material strong { color: #d9cda9; font-size: clamp(12px, 1cqw, 16px); line-height: 1.1; overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */ }
 .nh-refinery-material b { color: #91c87a; font-size: clamp(11px, 0.85cqw, 14px); }
 .nh-refinery-material.is-lacking b { color: #d17d70; }
 .nh-refinery-arrow { display: grid; place-items: center; color: #b77335; font-size: clamp(26px, 2.6cqw, 40px); }
@@ -4022,7 +4021,7 @@
 .nh-refinery-cycle dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0; }
 .nh-refinery-cycle dl > div { display: grid; align-content: center; gap: 3px; min-width: 0; padding: 6px 8px; border: 1px solid #3f3b33; background: #090b0b; }
 .nh-refinery-cycle dt, .nh-refinery-cycle dd { margin: 0; }
-.nh-refinery-cycle dd { color: #d8cba7; font-size: clamp(13px, 1.1cqw, 17px); overflow-wrap: anywhere; }
+.nh-refinery-cycle dd { color: #d8cba7; font-size: clamp(13px, 1.1cqw, 17px); overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */ }
 
 .nh-refinery-note { display: flex; align-items: center; gap: 9px; min-width: 0; margin: 0; padding: 7px 10px; border-left: 3px solid #82b56b; background: rgba(55, 91, 43, 0.14); color: #a6c995; font-size: clamp(12px, 0.95cqw, 15px); }
 .nh-refinery-note > b { font-size: 19px; }

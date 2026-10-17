@@ -80,7 +80,9 @@ function fightMonsterName(monsterId: string, tr: (loc: LocalizedString) => strin
 function DungeonQueueIcon({ dungeonId }: { dungeonId: string }): JSX.Element {
   const src = getDungeonBackgroundCard(dungeonId);
   return src ? (
-    <img loading="lazy" decoding="async" src={src} alt="" className="queue-row-icon-img pixelart" />
+    // claude:2026-10-17T13:40:00+02:00 — Querformat-Kulisse füllt den quadratischen Slot
+    // (cover, chrome-queue.css) statt als 32×8-px-Streifen zu erscheinen.
+    <img loading="lazy" decoding="async" src={src} alt="" className="queue-row-icon-img queue-row-icon-img--scene pixelart" />
   ) : (
     <span className="queue-row-icon-emoji">⚔</span>
   );

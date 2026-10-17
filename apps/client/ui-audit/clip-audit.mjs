@@ -838,7 +838,8 @@ function inPageScaleProbe() {
       sidebar: cs(".sidebar"),
       topbar: cs(".topbar"),
       content: cs(".content"),
-      contentHeader: cs(".content-header"),
+      // claude:2026-10-17T14:00:00+02:00 — UI-Fundament: Das Statusfeld ist jetzt die `.hs-strip`-Leiste; `.content-header` als Rückfall für ältere Stände.
+      contentHeader: cs(".hs-strip") ?? cs(".content-header"),
     },
     fontSizes: {
       count: sizes.length,

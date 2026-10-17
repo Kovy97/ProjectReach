@@ -862,8 +862,20 @@
      Holzrahmens noch etwas Stein") → TRANSPARENT: der App-Body (base.css, jetzt Holz) scheint
      durch — nahtlos per Konstruktion, auch bei künftigen Textur-Wechseln. */
   background: transparent;
+  height: 100%;
+  /* claude:2026-10-17T12:25:00+02:00 — Spaltenzahl nach PANELbreite (Sidebar/Queue offen),
+     nicht nach Fenster: 3 Spalten ab 1240 px, darunter Puppe | Inventar mit Charakter-Band darunter,
+     unter 900 px eine Spalte (Puppe → Inventar → Band). */
+  container: cs-page / inline-size;
+}
+
+/* claude:2026-10-17T12:25:00+02:00 — Das eigentliche Spaltenraster (früher direkt auf
+   `.cs-layout`). Die linke Spalte hat einen Boden, damit Attributnamen ab 12 px in eine Zeile
+   passen; schmalere Panels wechseln vorher auf das Zwei-Spalten-Layout (s. @container unten). */
+.cs-grid {
   display: grid;
-  grid-template-columns: 1fr 1.15fr 1.55fr;
+  grid-template-columns: minmax(340px, 1.12fr) minmax(0, 1.2fr) minmax(0, 1.5fr);
+  grid-template-rows: minmax(0, 1fr);
   height: 100%;
   gap: 6px;
   padding: 6px;
@@ -887,9 +899,13 @@
 }
 /* Task #340: das einzige verbleibende Kind (`.cs-col-tabpanel`) füllt den ganzen Stack — die
    früheren 2.1/1-Flex-Verhältnisse für die zwei alten Geschwister-Container sind hinfällig, s.
-   `.cs-tabbar`/`.cs-tabpanel-content`-Block am Dateiende. */
+   `.cs-tabbar`/`.cs-tabpanel-content`-Block am Dateiende.
+   claude:2026-10-17T12:55:00+02:00 — Größen-Container (Breite UND Höhe kommen von außen: Grid-
+   Zeile → Stack → flex 1): im Querformat wandert die Kit-Leiste neben die Puppe (s. @container
+   cs-mid am Dateiende), statt ihr oben die Höhe zu nehmen. */
 .cs-col-mid-stack > .cs-col-tabpanel {
   flex: 1 1 0;
+  container: cs-mid / size;
 }
 /* Stats-Panel: dunklerer, kühl getönter Hintergrund (anders als bg_black) →
    weiße Texte + 2×-Icons knallen besser. Holz-ds-frame-Rahmen bleibt.
@@ -1194,7 +1210,7 @@
 /* Kosmetik-Sweep T9 (2026-07-12): Wrapper um Vitals+Buffs+Attribute (CharacterPage.tsx) —
    `display:contents` macht ihn bei >=901px für den Layout-Baum unsichtbar (Kinder verhalten sich
    wie direkte .cs-col-left-Kinder, bestehendes Aussehen bleibt bit-identisch). Erst die
-   @media(max-width:900px)-Regel weiter unten schaltet ihn auf einen echten flex-column-Block um,
+   @container cs-page (max-width:1239px)-Regel weiter unten schaltet ihn auf einen echten flex-column-Block um,
    der neben dem Porträt seine eigene Spalte bildet — s. dortigen Kommentar für den Bug, den das behebt. */
 .cs-col-left-info {
   display: contents;
@@ -1418,17 +1434,18 @@
   z-index: 1;
   width: 100%;
   font-family: var(--font-head);
-  font-size: clamp(9px, 1vh, 11px);
+  /* claude:2026-10-17T14:15:00+02:00 — 12 px (--fs-xs) statt 9–11 px, und KEIN Umbruch im Wort
+     mehr (vorher break-word + hyphens: „ЛОВ-КОСТЬ", „ТЕЛОСЛО-ЖЕНИЕ"). Die Kartenbreite dafür
+     sichert das Spaltenraster der Charakterseite (character.css, @container cs-page). */
+  font-size: var(--fs-xs);
   line-height: 1.08;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   color: #f4e8ca;
   text-shadow: 0 1px 3px rgba(0,0,0,0.85);
   white-space: normal;
-  overflow-wrap: break-word;
-  /* Sweep-Fund T5/T6: „KONSTITUTIO/N" brach ohne Trennzeichen — echte Silbentrennung
-     (html[lang] vom I18nProvider) macht daraus „KONSTITU-TION". */
-  hyphens: auto;
+  overflow-wrap: normal;
+  hyphens: manual;
 }
 
 /* Chef-Nachtrag 2026-07-21: Name-Schrift skaliert im großen Character-Panel mit der Kartengröße
@@ -1451,8 +1468,10 @@
    0 Umbrüche bei jedem Attributnamen. `hyphens:auto` an der Basisregel bleibt als Sicherheitsnetz
    für etwaige künftige längere Übersetzungen bestehen. */
 :where(.cs-col-left) .cs-attr-card-name {
-  font-size: clamp(9px, 9cqi, 22px);
-  letter-spacing: 0.1px;
+  /* claude:2026-10-17T13:05:00+02:00 — Boden 12 px (--fs-xs) statt 9 px. Die Kartenbreite dafür
+     sichern Spaltenverhältnis und das 2×3-Raster bei schmaler Charakterspalte (@container cs-page). */
+  font-size: clamp(var(--fs-xs), 9cqi, 22px);
+  letter-spacing: 0;
 }
 
 /* Zahl mittig im Rest-Raum, GROSS, in Attribut-Farbe. */
@@ -1564,8 +1583,9 @@
 }
 
 .cs-stat-label {
-  /* Sweep6-W2: VERTEIDIGUNG/GENAUIGKEIT clippten bei endgame — kleiner+enger statt „…". */
-  font-size: clamp(10px, 1.1vh, 12px);
+  /* Sweep6-W2: VERTEIDIGUNG/GENAUIGKEIT clippten bei endgame — kleiner+enger statt „…".
+     claude:2026-10-17T13:50:00+02:00 — Boden 12 px (--fs-xs) statt 10 px. */
+  font-size: clamp(var(--fs-xs), 1.1vh, 13px);
   /* Task #336 (Mess-Befund 1920×1080): geerbte Body-line-height (1.45, s. base.css) machte die
      Zeilen-Box ~45% höher als die Schrift selbst — bei vielen Zeilen (Block/Ward/ArmorPen/
      Precision/WardBreak alle bedingt sichtbar, s. CombatStatsPanel) blieb der cqmin-skalierten
@@ -1578,6 +1598,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+  /* claude:2026-10-17T14:40:00+02:00 — Beschriftung füllt die Zeile und steht direkt am Icon;
+     vorher verteilte space-between Icon/Label/Wert und das Label schwamm in der Zeilenmitte. */
+  flex: 1 1 auto;
 }
 
 .cs-stat-val {
@@ -1639,7 +1662,8 @@
    dieselbe cqw-Deckelung: 8px weniger Icon-Breite geben der Label-Box direkt 8px mehr Raum, ohne
    die Zahl selbst zu verkleinern. */
 .cs-col-stats .cs-stat-label {
-  font-size: clamp(10px, min(55cqmin, 7cqw), 19px);
+  /* claude:2026-10-17T13:50:00+02:00 — Boden 12 px (--fs-xs) statt 10 px. */
+  font-size: clamp(var(--fs-xs), min(55cqmin, 7cqw), 19px);
 }
 .cs-col-stats .cs-stat-val {
   font-size: clamp(11px, min(60cqmin, 8cqw), 21px);
@@ -1870,40 +1894,17 @@
 }
 
 /* Leerer Equip-Slot: leicht transparentes Text-Label statt Slot-Typ-Silhouette (Chef) — zeigt
-   zentriert, was in den Slot gehört ("Helm", "Ring", …), Cinzel small-caps, dezent, kein
-   Umbruch-Chaos bei langen Wörtern (kleiner/clamp-Font + freies Wrapping statt Overflow).
-   Brightened leicht bei Hover für Feedback.
-   1.0.1-Fix (Clip-Audit, 2026-08-23): war `clamp(9px, 1.3vw, 12px)` — 1.3vw liegt bei JEDER
-   Fensterbreite ≥924px über dem 12px-Deckel, der Font war also faktisch immer starr 12px,
-   VÖLLIG unabhängig von der tatsächlichen (durch die Doll-Grid-Zelle bestimmten) Slotgröße
-   (Versuch, den Slot per `container-type:inline-size` zum Query-Container zu machen und mit
-   `cqw` zu skalieren, verworfen: kollidierte mit dem `aspect-ratio:1/1`-Grid-Sizing der Zelle,
-   der Slot kollabierte dabei auf ~10px). Bei knappem Platz blieb der Slot kleiner, als 12px für
-   ein 2-zeiliges Wort wie „Werkzeug" brauchen — abgeschnitten (u.a. sichtbar geworden, seit die
-   Loadout-Leiste oben bei Platzmangel umbricht, s. .eq-loadout-bar-Kommentar, und der Doll
-   dadurch etwas weniger Höhe hat). Deckel von 12px auf 10px gesenkt, Floor von 9px auf 8px —
-   schafft in der beobachteten knappsten Zelle (43×43px, 1366×768) wieder sichtbar Luft
-   (10px×1.25 Zeilenhöhe × 2 Zeilen = 25px vs. ~33px Innenraum nach Padding).
-   1.0.1-Fix-Nachtrag (Clip-Audit-Nachpruefung, 2026-08-23): reichte fuer die meisten Woerter,
-   nicht aber fuer ein 10-Zeichen-Wort OHNE Leerstelle wie ru „Инструмент" (bricht ohne
-   `hyphens` roh mitten im Wort, teils auf 3 Zeilen) — 8px war bereits der bewusste Floor
-   (Schrift verkleinern ist die letzte Wahl, nicht die erste). Statt weiter zu schrumpfen:
-   `overflow: hidden` -> `visible`. Das Label ist rein dekorativ (`pointer-events: none`,
-   liegt nur im LEEREN Slot — ein belegter Slot zeigt stattdessen `.slot-item` darüber), ein
-   paar Pixel Ueberstand in die Griff-Lücke zwischen den Doll-Zellen sind unauffällig,
-   verlorene Buchstaben nicht.
-   Nachpruefung des Nachtrags: `overflow:visible` allein reichte nicht — ein benachbarter Slot
-   deckte die ueberstehende letzte Zeile weiterhin ab ("ueberdeckt" statt "abgeschnitten" — für
-   den Spieler derselbe Textverlust, aber die deutlich schlimmere Variante ist vom Tisch).
-   Nachgemessen: weder `hyphens: auto` (kein greifendes Russisch-Silbentrennwörterbuch, bricht
-   weiter roh über `word-break: break-word`) noch `z-index: 2` noch ein testweise auf 2px
-   reduziertes Padding (39px-Zelle bricht bei „Инструмент" trotzdem in 4 Rohfragmente, gleiche
-   Zeilenzahl) verändern die gemessenen 4,2px — das Wort ist in einer 39×39px-Kachel schlicht zu
-   lang, unabhängig vom letzten Feinschliff. Padding bewusst NICHT dauerhaft verkleinert (hätte
-   allen anderen, bereits passenden Slot-Labels unnötig Luft genommen für einen Fall, den es
-   nicht löst). `overflow: visible` + `z-index: 2` bleiben als bestmögliche Milderung stehen;
-   der Rest ist ein Copy-/Grid-Thema (kürzeres Wort oder größere Zelle), nicht mehr CSS-Fläche —
-   an den Chef zurückgemeldet. */
+   zentriert, was in den Slot gehört ("Helm", "Ring", …), Kapitälchen, dezent.
+   claude:2026-10-17T12:45:00+02:00 — Neu aufgesetzt: feste 12 px (--fs-xs) und Umbruch NUR an
+   Wortgrenzen. Ob ein Etikett überhaupt erscheint, entscheidet EquipmentDoll anhand der
+   gemessenen Slotbreite (useSlotLabelCapacity) — ein Wort, das nicht passt, wird nicht mehr roh
+   zerbrochen („ИН/СТРУ/МЕНТ", Clip-Audit G002), der Slot nennt sich dann per Hover-Tooltip.
+   Die frühere Kette 8–10 px + break-word + overflow:visible ist damit überflüssig. */
+.cs-slot-empty-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
 .cs-slot-empty-label {
   position: absolute;
   inset: 0;
@@ -1913,21 +1914,19 @@
   text-align: center;
   font-family: var(--font-head);
   font-variant: small-caps;
-  font-size: clamp(8px, 1.3vw, 10px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--muted);
   opacity: 0.35;
   white-space: normal;
-  word-break: break-word;
-  hyphens: auto;
-  overflow: visible;
-  max-width: 100%;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
   padding: 5px;
-  line-height: 1.25;
+  line-height: 1.2;
   pointer-events: none;
   transition: opacity 0.12s ease;
-  z-index: 2;
 }
 .cs-slot:hover .cs-slot-empty-label {
   opacity: 0.75;
@@ -2068,6 +2067,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  /* claude:2026-10-17T13:20:00+02:00 — bei schmaler Inventarspalte rutscht die Sortierung in eine
+     zweite Zeile, statt die Chips zu quetschen und „Сортировка:"/„Новейшие" anzuschneiden. */
+  flex-wrap: wrap;
+  row-gap: 6px;
   padding: 7px 14px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -2082,7 +2085,9 @@
   container-type: inline-size;
   display: flex;
   align-items: center;
-  flex: 1 1 auto;
+  /* claude:2026-10-17T13:20:00+02:00 — echte Basisbreite: mit `auto` zählte der Container
+     (inline-size-Containment) als 0 px breit und erzwang nie den Umbruch der Zeile. */
+  flex: 1 1 250px;
   min-width: 0;
 }
 
@@ -2091,6 +2096,15 @@
   align-items: center;
   gap: 6px;
   flex: 0 0 auto;
+  margin-left: auto;
+  /* claude:2026-10-17T16:20:00+02:00 — Auch die eigene Zeile reicht im RU bei offener Queue nicht
+     für „Сортировка: [Новейшие] [Сортировать]“: die Gruppe bricht dann selbst um, statt den
+     Knopf rechts abzuschneiden. */
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 6px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Kategorie-Chips (ItemFilterChips, compact = icon-only) innerhalb der Toolbar: fluide Größe
@@ -2551,131 +2565,70 @@
 .rarity-epic-text    { color: #c080e0; }
 .rarity-legendary-text { color: #e0802a; }
 
-@media (max-width: 1100px) {
-  .cs-layout {
-    grid-template-columns: 1fr 1.15fr 1.55fr;
-  }
-}
-
-@media (max-width: 900px) {
-  .cs-layout {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr;
+/* claude:2026-10-17T15:10:00+02:00 — Mittlere Panels (1366/1360 px, Queue zu): Zum Ausrüsten
+   müssen Puppe und Inventar GLEICHZEITIG sichtbar sein (Ziehen/Klicken). Darum oben Puppe mit
+   Kit-Leiste | Inventar über die volle sichtbare Höhe; Porträt, HP/Ward, Buff und Attribute
+   liegen darunter quer als Band (die Kante schaut unten herein, die Seite scrollt in `.cs-grid`).
+   Ersetzt die alten Fenster-Breakpoints (1100/900/600 px), die beim Mindestfenster 1360 px nie
+   griffen. Das Band-Layout der Charakterspalte gilt auch für die Ein-Spalten-Stufe darunter. */
+@container cs-page (max-width: 1239px) {
+  .cs-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: max(440px, 100% - 48px) max-content;
+    overflow-x: hidden;
     overflow-y: auto;
   }
+  .cs-grid > .cs-col-mid-stack { grid-column: 1; grid-row: 1; }
+  .cs-grid > .cs-col-right { grid-column: 2; grid-row: 1; }
+  /* Zeile `max-content`, nicht `auto`: bei fester Rasterhöhe bekämen auto-Zeilen nur den Rest. */
+  .cs-grid > .cs-col-left { grid-column: 1 / -1; grid-row: 2; }
+
   .cs-col-left {
-    grid-column: 1 / -1;
-    max-height: 52vh;
-    flex-direction: row;
-    overflow: hidden;
+    flex-flow: row wrap;
+    align-items: stretch;
   }
-  .cs-portrait-wrap {
-    flex: 0 0 180px;
+  .cs-col-left > .cs-panel-header {
+    flex: 0 0 100%;
+  }
+  .cs-col-left > .cs-portrait-wrap {
+    flex: 0 0 clamp(170px, 34%, 240px);
     max-height: none;
-    aspect-ratio: unset;
   }
-  /* Kosmetik-Sweep T9: erst HIER (Zeilen-Layout der Spalte) wird der Wrapper zu einem echten
-     flex-column-Block — Vitals/Buffs/Attribute stapeln sich darin normal untereinander, statt als
-     gleichrangige Row-Geschwister neben dem Porträt um dieselbe Breite zu konkurrieren (der
-     eigentliche Bug: Buff-Namen quetschten auf ~3 Zeichen, Attribute wurden vom `overflow:hidden`
-     der Spalte teils ganz abgeschnitten). `overflow-y:auto` NUR auf diesem neuen, kleineren
-     Unter-Container (nicht auf .cs-col-left selbst — das bleibt bewusst scroll-frei, s. historischer
-     Kommentar bei .cs-attr-section) — passt der Inhalt bei sehr flachen Fenstern trotzdem nicht in
-     52vh, scrollt er hier statt unsichtbar abgeschnitten zu werden. */
+  /* Erst hier wird der Wrapper zur echten Spalte neben dem Porträt (sonst display:contents). */
   .cs-col-left-info {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 1 1 0;
     min-width: 0;
-    min-height: 0;
-    overflow-y: auto;
-  }
-  .cs-vitals {
-    flex-shrink: 0;
-  }
-  .cs-buffs {
-    flex-shrink: 0;
-  }
-  .cs-stats-scroll {
-    flex: 1;
-  }
-  .cs-col-mid {
-    grid-column: 1;
-    grid-row: 2;
-  }
-  .cs-col-right {
-    grid-column: 2;
-    grid-row: 2;
   }
 }
 
-@media (max-width: 600px) {
-  .cs-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: none;
-    overflow-y: auto;
+/* claude:2026-10-17T15:10:00+02:00 — Sehr schmale Panels: eine Spalte in der Reihenfolge
+   Puppe → Inventar → Charakter-Band. claude:2026-10-17T16:10:00+02:00 — Schwelle 900 → 700 px:
+   bei 1360/1366 px mit offener Queue (Panel ≈ 750 px) bleiben Puppe und Inventar nebeneinander,
+   statt dass das Inventar unter die Sichtkante rutscht (Ausrüsten braucht beides). Die Puppenzeile ist bewusst
+   niedriger als die Sichthöhe, damit der Inventar-Kopf direkt darunter mit im Bild steht. */
+@container cs-page (max-width: 699px) {
+  .cs-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: clamp(400px, 62%, 540px) max-content max-content;
   }
-  .cs-col-left {
-    grid-column: 1;
-    flex-direction: column;
-    max-height: none;
-    height: auto;
+  .cs-grid > .cs-col-right { grid-column: 1; grid-row: 2; }
+  .cs-grid > .cs-col-left { grid-column: 1; grid-row: 3; }
+  /* Inventar wächst hier mit seinem Inhalt, die Seite scrollt — kein Scroller im Scroller. */
+  .cs-grid > .cs-col-right .cs-inv-grid {
+    flex: none;
+    overflow: visible;
   }
-  .cs-portrait-wrap {
-    flex: unset;
-    aspect-ratio: 3 / 4;
-    max-height: 48vw;
-  }
-  .cs-col-mid,
-  .cs-col-right {
-    grid-column: 1;
-    grid-row: unset;
-  }
-  .cs-inv-grid {
-    max-height: 40vh;
-  }
-  .cs-detail-panel {
-    max-height: none;
-  }
+}
 
-  /* Chef-Bugfix 2026-07-24 (Char-Screen bei schmalem Panel ~370px, Screenshot): die
-     "Fläche-füllen"-Kette .cs-stats-scroll (flex column) → .cs-combat-grid (flex:1 1 auto,
-     grid-template-rows: minmax(0,1fr)) → .cs-combat-col → .cs-stat-row (flex:1 1 0,
-     .cs-col-stats .cs-stat-row erzwingt zusätzlich container-type:size für die cqmin-
-     Skalierung, s. dortigen Kommentar weiter oben) braucht eine DEFINITE Höhe von ganz oben.
-     Genau HIER (@media max-width:600px) verliert .cs-layout aber sein explizites
-     grid-template-rows (s.o. — overflow-y:auto übernimmt), die linke Spalte wird height:auto —
-     ohne definite Höhenkette kollabiert container-type:size unvorhersehbar (cqmin bezieht sich
-     auf eine unbestimmte Größe): die Kampfwerte-Zeilen liefen über ihre eigene (kollabierte) Box
-     nach unten hinaus, und die "SET BONUS"-Überschrift/-Zeilen darunter schienen dahinter
-     "durch" statt sauber darunter zu fließen ("Crit damage 163%" drückte in die Wertspalte).
-     Fix: in diesem schmalen Layout auf reinen Content-Fluss zurückfallen — kein Höhen-Stretch,
-     keine Container-Size-Query mehr; Schriftgrößen/Abstände fallen auf dieselben vh-basierten
-     Minimalgrößen zurück, die die Basisregeln (s. .cs-stat-row/.cs-stat-label/.cs-stat-val/
-     .cs-stat-icon weiter oben) ohnehin als unteren Rand definieren — stapelt garantiert sauber
-     statt zu überlappen, bei JEDER Breite ab hier abwärts (~340px bis 600px). */
-  .cs-col-stats .cs-stats-scroll {
-    display: block;
-  }
-  .cs-col-stats .cs-combat-grid {
-    flex: none;
-    grid-template-rows: none;
-  }
-  .cs-col-stats .cs-stat-row {
-    flex: none;
-    container-type: normal;
-    gap: 6px;
-    padding: clamp(1px, 0.35vh, 4px) 0;
-  }
-  .cs-col-stats .cs-stat-label {
-    font-size: clamp(10px, 1.1vh, 12px);
-  }
-  .cs-col-stats .cs-stat-val {
-    font-size: clamp(11px, 1.3vh, 14px);
-  }
-  .cs-col-stats .cs-stat-icon {
-    width: clamp(12px, 1.6vh, 18px);
-    height: clamp(12px, 1.6vh, 18px);
+/* claude:2026-10-17T13:05:00+02:00 — Drei Spalten bei knapper Panelbreite (z. B. 1600×900): die
+   Charakterspalte ist dann ~340–400 px schmal, drei Attributkarten nebeneinander hätten keine
+   12-px-Namen in einer Zeile getragen („KONSTITUTION"/„ТЕЛОСЛОЖЕНИЕ"). Zwei Karten je Reihe. */
+@container cs-page (min-width: 1240px) and (max-width: 1499px) {
+  .cs-col-left .cs-attr-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, 1fr);
   }
 }
 
@@ -2732,7 +2685,8 @@
     border-width: 4px;
   }
   .vital-head {
-    font-size: 10px;
+    /* claude:2026-10-17T14:15:00+02:00 — 12 px (--fs-xs) statt 10 px. */
+    font-size: var(--fs-xs);
     margin-bottom: 1px;
   }
   .cs-buffs {
@@ -2920,60 +2874,6 @@
   margin-top: 4px;
 }
 
-@media (max-width: 600px) {
-  /* Schmales Layout (Task #340-Nachtrag, analog zum bestehenden @600px-Fallback bei
-     `.cs-col-stats .cs-stats-scroll` weiter oben): die flex-grow-Verteilung unter den drei
-     Stat-Gruppen braucht wie dort eine definite Höhenkette von oben — bei Content-Flow ohne
-     `.cs-layout`-Grid-Zeilenhöhe (s. dortigen Kommentar) fällt sie auf reinen Block-Fluss
-     zurück, statt mit kollabierter/unvorhersehbarer Höhe zu überlappen. */
-  .cs-tab-stat-group {
-    flex: none;
-  }
-  /* Bei ~500px teilt sich `.cs-tab-stat-group` die knapp 60-90px breite Mittelspalte mit
-     Charakter- UND Inventar-Spalte (s. `.cs-layout`-3-Spalten-Kompression @600px) — die
-     Basisregel `.cs-combat-grid` hat IMMER 2 Spalten, das drückt jede Zahl/jedes Label auf
-     ~25-30px runter (unlesbar). Hier wie die ohnehin schon 1-spaltige Tempo&Krit-Gruppe: eine
-     Spalte statt zwei (Label+Wert bekommen die volle Breite, dafür mehr Zeilen untereinander). */
-  .cs-tab-stat-group .cs-combat-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  /* Mess-Befund (Task #340, Playwright @500px): `.cs-layout` wird hier einspaltig mit
-     `grid-template-rows: none` (Basisregel oben) — jede der 3 Spalten bekommt eine AUTO-Zeile,
-     deren Höhe aus dem intrinsischen Content der Spalte folgt. `.cs-col-tabpanel`/
-     `.cs-tabpanel-content` haben aber `flex-basis:0` + `min-height:0` (nötig für die Fläche-
-     füllen-Kette bei >600px, s. Basisregeln oben) — OHNE eine von außen kommende definite Höhe
-     trägt ein flex-basis:0-Kind NICHTS zur intrinsischen Höhe seines (auto-hohen) Elternteils
-     bei, die ganze Kette kollabiert auf ~0 (nur die Tab-Lasche blieb sichtbar, Puppe/Stat-
-     Zeilen 0px hoch, Stats-Tab-Button dadurch sogar unklickbar). `.cs-col-left` umgeht dasselbe
-     Problem bei dieser Breite bereits über `max-height` statt Flex-Fill (s. @media 900px oben) —
-     hier dieselbe Idee: fester Mindestraum statt Flex-Fill, Rest übernimmt der Scroll von
-     `.cs-layout` (overflow-y:auto, Basisregel @600px oben). Mess-Befund (2. Runde): `overflow:
-     hidden` auf `.cs-col-mid-stack`/`.cs-col-tabpanel` selbst (Basisregeln oben) setzt deren
-     AUTOMATISCHE Content-Mindestgröße auf 0 (CSS-Spec-Verhalten von `overflow:hidden`) — ein
-     `min-height` NUR auf dem tief verschachtelten `.cs-tabpanel-content` trägt dadurch NICHT zur
-     Grid-Zeilenhöhe bei, `.cs-layout` komprimiert die (auto-hohe) Mittelzeile zugunsten von
-     `.cs-col-left`/`.cs-col-right` fast auf 0. Der Boden muss deshalb explizit auf dem
-     GRID-ITEM selbst sitzen (`.cs-col-mid-stack`), nicht nur auf einem seiner Kinder.
-     WICHTIG (3. Runde, Mess-Befund): `.cs-layout`s Gesamthöhe ist hier FEST (kein eigenes
-     Scroll-Wachstum trotz `overflow-y:auto` — CSS-Grid komprimiert `auto`-Zeilen auf die
-     Elternhöhe, statt sie überlaufen zu lassen) — ein GROSSZÜGIGER Mindestwert (getestet: 60vh)
-     kippt die Kompression nur um UND quetscht dafür `.cs-col-left`/`.cs-col-right` fast auf 0
-     (Zero-Sum zwischen den 3 Grid-Zeilen). Ein vorbestehendes, nicht in diesem Task behobenes
-     Struktur-Limit von `.cs-layout` bei Extrem-Breiten — bewusst NUR ein MODERATER Boden (reicht
-     für Tab-Lasche + sichtbaren Rand des Inhalts, klickbar), der die Geschwisterspalten nicht
-     stärker verdrängt als vor dem Tab-Umbau. */
-  .cs-col-mid-stack {
-    min-height: 220px;
-  }
-  .cs-col-mid-stack > .cs-col-tabpanel {
-    flex: none;
-  }
-  .cs-tabpanel-content {
-    flex: none;
-  }
-}
-
 /* ════════════════════════════════════════════════════════════════════════════
    AUSRÜSTUNGS-KITS 1/2/3 (Chef-Entscheid 28.08.2026 — löst den alten #349-Loadout-Block ab:
    Speichern/Anlegen ist ersatzlos raus, jedes Kit TRÄGT seine Items direkt).
@@ -3007,7 +2907,52 @@
 }
 
 .eq-kit-btn {
-  min-width: 92px;
+  /* claude:2026-10-17T12:55:00+02:00 — schmalerer Innenabstand: drei Kits passen in die
+     Ausrüstungsspalte in EINER Reihe (RU „Комплект 1" brach die Leiste sonst zweizeilig). */
+  min-width: 72px;
+  padding-inline: 10px;
+}
+
+/* claude:2026-10-17T12:55:00+02:00 — Querformat-Ausrüstung (z. B. 1366×768, Charakter +
+   Ausrüstung nebeneinander): Die Puppe ist hochkant (1:2) und wird von der Höhe begrenzt — links
+   und rechts von ihr bleibt Fläche frei. Dort steht jetzt die Kit-Leiste als Säule, die Puppe
+   bekommt die volle Höhe. Hochformat (1920×1080) bleibt beim Stapel Kits über Puppe. */
+/* claude:2026-10-17T15:10:00+02:00 — Schwelle 4:5 statt 1:1: auch die halbe Panelbreite neben dem
+   Inventar (≈ 500 × 550 px) hat Platz für die Kit-Säule plus volle Puppenhöhe. */
+@container cs-mid (min-aspect-ratio: 4 / 5) {
+  .cs-col-mid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      "kits doll"
+      "export doll"
+      ". doll";
+    column-gap: 8px;
+  }
+  .cs-col-mid > .eq-kit-bar {
+    grid-area: kits;
+    align-items: stretch;
+    padding-top: 14px;
+  }
+  .cs-col-mid > .cs-export-row {
+    grid-area: export;
+  }
+  .cs-col-mid > .cs-doll-wrap {
+    grid-area: doll;
+    min-height: 0;
+  }
+  .cs-col-mid .eq-kit-row {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+  .cs-col-mid .eq-kit-tipwrap > .eq-kit-btn {
+    width: 100%;
+  }
+  .cs-col-mid .eq-kit-hint {
+    max-width: 16ch;
+  }
 }
 
 /* Prompt-Extractor (Chef-Auftrag 28.08.2026): "Charakter exportieren", direkt unter der Kit-Leiste,

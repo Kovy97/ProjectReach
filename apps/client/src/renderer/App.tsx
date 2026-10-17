@@ -148,75 +148,45 @@ function PageContent({
 }
 
 const HOUR_MS = 3_600_000;
-/** Anzahl der WoW-Stil-Segmente je Leiste (Chef-Vorgabe: 10, NICHT die 20 aus echtem WoW). */
-const SEGMENT_COUNT = 10;
 
 /**
- * Fortschritts-Leiste mit WoW-Stil-Segmentierung (Chef 2026-07-04, 3. Korrektur — Feinschliff):
- * die 10-Fenster-Unterteilung ist eine rein OPTISCHE Rahmen-Auflage, der Füllstand selbst ist
- * EINE durchgehende Schicht (`.tb-bar-fill`, Breite = Gesamtfortschritt %), die glatt über die
- * volle Breite gleitet — KEIN per-Segment-Nachladen (das war die vorherige Iteration). Vier
- * deckungsgleiche Ebenen (siehe topbar.css .tb-bar*): 1) leerer Track, 2) die eine durchgehende
- * Füllung, 3) ein durchgehender Glanz-Overlay, 4) 10 Rahmen-„Fenster" (transparent, nur der
- * Holzrahmen ist opak) — teilt die Füllung optisch in 10 Fächer, ohne sie zu unterbrechen.
- * `centerLabel` liegt (wie die Level-Leiste) IMMER mittig über der ganzen Reihe; `rightLabel`
- * ist optional zusätzlich rechtsbündig (XP/h · Einheiten/h der Aktions-Leiste).
+ * claude:2026-10-17T11:30:00+02:00 — UI-Fundament: schmale Statusleiste der Kopfzeile. Text steht
+ * DANEBEN/DARÜBER (s. Aufrufer), die Leiste trägt nur noch den Fortschritt. Material bleibt: der
+ * Track ist die Gravewood-Textur mit Bronzekante, die 10 Fächer kommen als Strichraster aus CSS
+ * (`.hs-bar::after`), Füllung und Glanz wie bisher. Vorher stand Beschriftung IN der Leiste und
+ * wurde bei schmalem Kopf abgeschnitten bzw. als eigene Zeile verdoppelt („Untätig / Untätig").
  */
-function SegmentedBar({
-  variant,
-  progressPct,
-  centerLabel,
-  rightLabel,
-  empty,
-  title,
-}: {
-  variant: "action" | "level";
-  progressPct: number;
-  centerLabel: string;
-  rightLabel?: string;
-  empty?: boolean;
-  title?: string;
-}): JSX.Element {
+function StatusBar({ variant, progressPct, title }: { variant: "action" | "level"; progressPct: number; title: string }): JSX.Element {
   const pct = Math.min(100, Math.max(0, progressPct));
   return (
-    // codex:2026-09-10T10:35:00+02:00 — Fortschritt bleibt auch ohne die dekorativen Segmente zugänglich.
-    <div className={`tb-bar tb-bar--${variant}${empty ? " tb-bar--empty" : ""}`} title={title}
-      role="progressbar" aria-label={title ?? centerLabel} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
-      <div className="tb-bar-track-bg" />
+    <div className={`hs-bar hs-bar--${variant}`} title={title}
+      role="progressbar" aria-label={title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}>
       {/* codex:2026-07-31T00:32:37+02:00 — scaleX bleibt auf der Compositor-Spur;
           clip-path musste bei jedem 10-Hz-Update eine fast bildschirmbreite Fläche neu painten. */}
-      <div className="tb-bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
-      <div className="tb-bar-gloss" />
-      <div className="tb-bar-frame-row" aria-hidden="true">
-        {Array.from({ length: SEGMENT_COUNT }, (_, i) => (
-          <div key={i} className="tb-bar-frame-seg" />
-        ))}
-      </div>
-      <div className="tb-bar-labels">
-        <span className="tb-bar-label-center">{centerLabel}</span>
-        {rightLabel && <span className="tb-bar-label-right">{rightLabel}</span>}
-      </div>
+      <div className="hs-bar-fill" style={{ transform: `scaleX(${pct / 100})` }} />
+      <div className="hs-bar-gloss" />
     </div>
   );
 }
 
-/** Aktions-Fortschritts-Leiste (gelb/gold) — Fortschritt der gerade laufenden Aktion, zentriertes
- *  „IN PROGRESS · <Aktion>"-Label + rechtsbündiges XP/h · Einheiten/h. Idle/Kampf → dezent leer.
+/** Aktions-Fortschritt der laufenden Aktion: Prozent + XP/h · Einheiten/h als Nebenzeile und die
+ *  goldene Leiste. Ohne laufende Aktion (Leerlauf/Kampf/Gestoppt) rendert sie NICHTS — die
+ *  Aktivitätszeile darüber sagt den Zustand bereits einmal (claude:2026-10-17T11:30:00+02:00,
+ *  vorher stand „Untätig"/„Im Kampf" ein zweites Mal in einer leeren Leiste).
  *  Perf-Welle Block A (2026-07-22): `useGameSelector` gated den Re-Render auf die drei Primitives,
  *  die den kompletten sichtbaren Zustand bestimmen (Aktion, Fortschritt, Kampf-Flag) — der volle
  *  State für die abgeleiteten Raten (`computeActionRate`/`effectiveActionDurationMs`, brauchen
  *  Mastery/Werkzeuge/Buffs aus dem gesamten State) kommt danach über `useGetGameState()`, läuft
  *  also nur noch so oft wie dieser jetzt gedrosselte Render selbst — auf Seiten ohne laufende
  *  Aktion/Kampf (der Audit-Fall "Mail-Seite idle") rendert diese Leiste gar nicht mehr pro Tick. */
-function ActionProgressBar(): JSX.Element {
+function ActionProgressBar(): JSX.Element | null {
   const getState = useGetGameState();
-  const [activeActionId, actionProgressMs, inCombatGate] = useGameSelector(
+  const [activeActionId, actionProgressMs] = useGameSelector(
     (s) => [s.activeActionId, s.actionProgressMs, s.combat.monsterId != null] as const,
     tupleEquals,
   );
   const state = getState()!;
   const { t, tr } = useI18n();
-  const inCombat = inCombatGate;
   const action = activeActionId ? content.actions[activeActionId] : undefined;
   // Effektive (nicht Basis-)Dauer: Mastery/Werkzeuge machen Aktionen schneller, die Engine schließt
   // exakt hierbei ab (tick.ts effectiveActionDurationMs) — Progress-Fill UND die Raten müssen
@@ -234,27 +204,22 @@ function ActionProgressBar(): JSX.Element {
   const xpPerHour = rate ? Math.round(rate.xpPerHour) : 0;
   const primaryLoot = rate?.primaryItemPerHour;
 
-  // codex:2026-09-10T10:35:00+02:00 — Der Aktionsname steht darüber; die Leiste ergänzt den Fortschritt.
-  const centerLabel = action
-    ? `${t("skill.doing")} · ${Math.floor(progressPct)}%`
-    : inCombat
-      ? t("topbar.bar.inCombat")
-      : t("header.idle");
-  const rightLabel = action
-    ? primaryLoot
-      ? `${t("skill.xpRate").replace("{n}", formatNum(xpPerHour))} · ${t("skill.itemRate").replace("{n}", formatNum(primaryLoot.perHour))}`
-      : t("skill.xpRate").replace("{n}", formatNum(xpPerHour))
-    : undefined;
+  if (!action) return null;
+  // claude:2026-10-17T11:30:00+02:00 — Der Aktionsname steht in der Aktivitätszeile; hier nur
+  // Prozent und Raten (rechtsbündig in derselben Zeile) plus die Leiste darunter.
+  const pctLabel = `${Math.floor(progressPct)}%`;
+  const rateLabel = primaryLoot
+    ? `${t("skill.xpRate").replace("{n}", formatNum(xpPerHour))} · ${t("skill.itemRate").replace("{n}", formatNum(primaryLoot.perHour))}`
+    : t("skill.xpRate").replace("{n}", formatNum(xpPerHour));
 
   return (
-    <SegmentedBar
-      variant="action"
-      progressPct={progressPct}
-      centerLabel={centerLabel}
-      rightLabel={rightLabel}
-      empty={!action}
-      title={action ? `${tr(action.name)} — ${centerLabel}${rightLabel ? ` — ${rightLabel}` : ""}` : centerLabel}
-    />
+    <>
+      <span className="hs-meta hs-act-meta">
+        <span className="hs-act-pct">{pctLabel}</span>
+        <span className="hs-act-rate"> · {rateLabel}</span>
+      </span>
+      <StatusBar variant="action" progressPct={progressPct} title={`${tr(action.name)} — ${pctLabel} — ${rateLabel}`} />
+    </>
   );
 }
 
@@ -354,7 +319,7 @@ function resolveTrackedSkillId(state: GameState, viewedSkillId?: SkillId | null)
  *  inCombat] — der IDLE-Fall (keine Aktion, kein Kampf, keine betrachtete Skill-Seite) hält
  *  `skillId=null` konstant → kein Re-Render pro Tick mehr (vorher 10Hz via `useGameState`). Im
  *  Kampf bleibt sie weiterhin so lebendig wie zuvor (skillXp ändert sich dort laufend). */
-function LevelXpBar({ viewedSkillId }: { viewedSkillId?: SkillId | null }): JSX.Element {
+function LevelXpBar({ viewedSkillId }: { viewedSkillId?: SkillId | null }): JSX.Element | null {
   const getState = useGetGameState();
   // codex:2026-09-10T10:35:00+02:00 — Kampf bleibt Teil des Render-Gates; der aufgelöste Skill liefert seinen eigenen Namen.
   const [skillId, skillXp, gatedActiveActionId] = useGameSelector((s) => {
@@ -371,12 +336,12 @@ function LevelXpBar({ viewedSkillId }: { viewedSkillId?: SkillId | null }): JSX.
     ? Math.min(100, Math.max(0, ((skillXp - xpStart) / (xpEnd - xpStart)) * 100))
     : 0;
   // codex:2026-09-10T10:35:00+02:00 — Betrachteter Skill kann von der laufenden Aktion abweichen: immer benennen.
-  const trackedSkillPrefix = skillId
-    ? `${tr(content.skills[skillId]?.name ?? { en: skillId })} · `
-    : "";
-  const centerLabel = skillId
-    ? `${trackedSkillPrefix}${t("skill.level").replace("{n}", String(level))} · ${Math.floor(progressPct)}% · ${formatNum(skillXp - xpStart)} / ${formatNum(xpEnd - xpStart)}`
-    : t("topbar.bar.noActiveSkill");
+  // claude:2026-10-17T11:30:00+02:00 — Teile getrennt, damit ein schmaler Kopf die XP-Zahlen
+  // ausblenden kann (bleiben im Tooltip), statt den Satz mitten im Wort umzubrechen.
+  const skillName = skillId ? tr(content.skills[skillId]?.name ?? { en: skillId }) : "";
+  const levelPart = `${t("skill.level").replace("{n}", String(level))} · ${Math.floor(progressPct)}%`;
+  const xpPart = `${formatNum(skillXp - xpStart)} / ${formatNum(xpEnd - xpStart)}`;
+  const centerLabel = `${skillName} · ${levelPart} · ${xpPart}`;
 
   // ETA bis zum nächsten Level (Chef-Auftrag): NUR wenn eine Aktion GENAU dieses Skills läuft —
   // Kampf-XP (combatSkillId) hat keine „Aktion" (kein content.actions-Eintrag) und bleibt bewusst
@@ -432,17 +397,23 @@ function LevelXpBar({ viewedSkillId }: { viewedSkillId?: SkillId | null }): JSX.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // claude:2026-10-17T11:30:00+02:00 — Ohne verfolgten Skill keine Zelle mehr: „Keine aktive
+  // Fertigkeit" war im Leerlauf die dritte Zeile, die nur wiederholte, dass nichts läuft.
+  if (!skillId) return null;
+  const fullTitle = etaLabel ? `${centerLabel} — ${etaLabel}` : centerLabel;
+
   return (
-    <div className="tb-bar-wrap">
-      <SegmentedBar
-        variant="level"
-        progressPct={progressPct}
-        centerLabel={centerLabel}
-        rightLabel={etaLabel}
-        empty={!skillId}
-        title={etaLabel ? `${centerLabel} — ${etaLabel}` : centerLabel}
-      />
-      {burst.nonce > 0 && <LevelUpBurst nonce={burst.nonce} motion={burst.motion} />}
+    <div className="hs-cell hs-xp" title={fullTitle}>
+      <span className="hs-line hs-xp-text">
+        <span className="hs-xp-skill">{skillName}</span>
+        <span className="hs-xp-level"> · {levelPart}</span>
+        <span className="hs-xp-nums"> · {xpPart}</span>
+      </span>
+      {etaLabel && <span className="hs-meta hs-xp-eta">{etaLabel}</span>}
+      <div className="hs-bar-wrap">
+        <StatusBar variant="level" progressPct={progressPct} title={fullTitle} />
+        {burst.nonce > 0 && <LevelUpBurst nonce={burst.nonce} motion={burst.motion} />}
+      </div>
     </div>
   );
 }
@@ -466,20 +437,24 @@ function HeaderCharacterInfo(): JSX.Element {
   const { t } = useI18n();
 
   return (
-    <div className="header-charinfo">
-      <span className="header-charinfo-name">{name}</span>
-      <span className="header-charinfo-stats">
-        <span className="header-charinfo-stat header-charinfo-stat--combat">
+    // claude:2026-10-17T11:30:00+02:00 — Zelle der kompakten Statusleiste (hs-*); breit zweizeilig,
+    // schmal einzeilig (Name · Kampf-Lv · Ges.-Lv), gesteuert per Container-Query in chrome.css.
+    <div className="hs-cell hs-id">
+      <span className="hs-name">{name}</span>
+      <span className="hs-levels">
+        {/* Beschriftung als eigener Span: wird es eng (schmaler Kopf + Slayer-Auftrag), bleiben
+            Symbol + Zahl stehen und der Text wandert in den Tooltip. */}
+        <span className="hs-level hs-level--combat" title={`${t("sidebar.combatLevel")} ${combatLvl}`}>
           {CHARINFO_COMBAT_ICON_URL
             ? <img loading="lazy" decoding="async" src={CHARINFO_COMBAT_ICON_URL} alt="" className="ui-icon" />
             : "⚔"}{" "}
-          {t("sidebar.combatLevel")} <b>{combatLvl}</b>
+          <span className="hs-level-label">{t("sidebar.combatLevel")}</span> <b>{combatLvl}</b>
         </span>
-        <span className="header-charinfo-stat header-charinfo-stat--total">
+        <span className="hs-level hs-level--total" title={`${t("sidebar.totalLevel")} ${totalLvl}`}>
           {CHARINFO_TOTAL_ICON_URL
             ? <img loading="lazy" decoding="async" src={CHARINFO_TOTAL_ICON_URL} alt="" className="ui-icon" />
             : "★"}{" "}
-          {t("sidebar.totalLevel")} <b>{totalLvl}</b>
+          <span className="hs-level-label">{t("sidebar.totalLevel")}</span> <b>{totalLvl}</b>
         </span>
       </span>
     </div>
@@ -493,19 +468,23 @@ function HeaderCharacterInfo(): JSX.Element {
  * im Kampf bleibt es weiterhin so lebendig wie zuvor (HP ist Teil des Tupels), aber auf Seiten ohne
  * laufende Aktivität (der Audit-Fall "Mail-Seite idle") rendert diese Kopfzeile nicht mehr blind bei
  * jedem 10-Hz-Tick.
- * Chef-Auftrag 25.08.2026: der Doing-Kasten nimmt jetzt zusätzlich die beiden Segment-Leisten
- * (Aktion + Skill-Level-XP) auf — `progressBars` reicht MainLayout die dort schon instanziierten,
- * EIGENSTÄNDIG perf-gegateten `<ActionProgressBar/>`/`<LevelXpBar/>` durch, statt sie hier neu zu
- * bauen. `actionProgressMs` fliegt daher aus DIESEM Selector-Tupel — der einzige bisherige
- * Verbraucher war der jetzt entfernte Mini-Balken neben "Doing: X" (die echte Leiste hat ihr
- * eigenes Gate, s. ActionProgressBar oben).
+ * Chef-Auftrag 25.08.2026 / claude:2026-10-17T11:30:00+02:00: die Aktivitätszelle nimmt die
+ * EIGENSTÄNDIG perf-gegatete `<ActionProgressBar/>` als `actionBar` auf, statt sie hier neu zu
+ * bauen; die XP-Zelle (`<LevelXpBar/>`) ist ein eigenes Kind der Statusleiste. `actionProgressMs`
+ * steht deshalb nicht in DIESEM Selector-Tupel.
  */
 function GameStats({
   onNavigate,
-  progressBars,
+  actionBar,
+  hideStop = false,
 }: {
   onNavigate?: (id: string) => void;
-  progressBars?: React.ReactNode;
+  /** claude:2026-10-17T11:30:00+02:00 — Prozent/Raten + Leiste der laufenden Aktion
+   *  (<ActionProgressBar/>, eigenes Perf-Gate), landet in der Aktivitätszelle. */
+  actionBar?: React.ReactNode;
+  /** claude:2026-10-17T15:10:00+02:00 — Chef 17.10. („überlasse ich dir"): Auf der Kampfseite
+   *  steht bereits „Kampf beenden" (Chef-Platzierung 25.08.); dort entfällt der zweite Knopf. */
+  hideStop?: boolean;
 }): JSX.Element {
   const getState = useGetGameState();
   const [
@@ -583,64 +562,64 @@ function GameStats({
         ? t("queue.dungeon.runShortInfinite").replace("{n}", String(runProgress.run))
         : t("queue.dungeon.runShort").replace("{n}", String(runProgress.run)).replace("{m}", String(runProgress.target))
       : "";
+    // claude:2026-10-17T11:30:00+02:00 — Kampf: Zeile 1 nennt Gegner/Dungeon, Zeile 2 trägt die
+    // beiden HP-Leisten an der Stelle, wo sonst der Aktionsfortschritt steht (gleiche Zellhöhe).
     activity = (
-      <span
-        className="activity activity-fighting"
-        onClick={goToFight}
-        role="button"
-        tabIndex={0}
-        title={t("header.jumpToFight")}
-      >
-        {queueDungeon ? (
-          <>
-            <span className="muted">{t("header.dungeon")}</span>{" "}
-            <span className="activity-name">{dungeonHeaderName}</span>
-            <span className="muted"> · {dungeonRunShort}</span>
-          </>
-        ) : (
-          <>
-            <span className="muted">{t("header.fighting")}</span>{" "}
-            <span className="activity-name">{monsterName}</span>
-          </>
-        )}
-        <span className="gamestats-hp-inline">
-          <span className="gamestats-hp-mini" title={playerHpTitle}>
-            <span className="gamestats-hp-mini-icon" aria-hidden="true">
-              {SHIELD_ICON_URL
-                ? <img loading="lazy" decoding="async" src={SHIELD_ICON_URL} alt="" className="ui-icon" />
-                : "🛡"}
-            </span>
-            <span className="gamestats-hpbar gamestats-hpbar--inline">
-              {/* Belohnungs-Juice-Welle #3 — HP-Nachlauf (s. combat.css .cbar-hp-trail für die
-                  ausführliche Erklärung des reinen CSS-Timing-Tricks; hier dieselbe Technik für
-                  die Mini-Leiste in der Kampf-Titelzeile). */}
-              <span className="gamestats-hpbar-trail" style={{ transform: `scaleX(${playerPct / 100})` }} />
-              <span className="gamestats-hpbar-fill gamestats-hpbar-fill--player" style={{ transform: `scaleX(${playerPct / 100})` }} />
-            </span>
+      <>
+        <span
+          className="hs-line hs-act-text hs-act-text--fight"
+          onClick={goToFight}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goToFight(); } }}
+          role="button"
+          tabIndex={0}
+          title={t("header.jumpToFight")}
+        >
+          {queueDungeon ? (
+            <>
+              <span className="hs-muted">{t("header.dungeon")}</span>{" "}
+              <span className="hs-act-name">{dungeonHeaderName}</span>
+              <span className="hs-muted"> · {dungeonRunShort}</span>
+            </>
+          ) : (
+            <>
+              <span className="hs-muted">{t("header.fighting")}</span>{" "}
+              <span className="hs-act-name">{monsterName}</span>
+            </>
+          )}
+        </span>
+        <span className="hs-hp" aria-hidden="true">
+          <span className="hs-hp-icon">
+            {SHIELD_ICON_URL
+              ? <img loading="lazy" decoding="async" src={SHIELD_ICON_URL} alt="" className="ui-icon" />
+              : "🛡"}
           </span>
-          <span className="gamestats-vs" aria-hidden="true">
+          <span className="hs-hp-bar" title={playerHpTitle}>
+            {/* Belohnungs-Juice-Welle #3 — HP-Nachlauf (s. combat.css .cbar-hp-trail für die
+                ausführliche Erklärung des reinen CSS-Timing-Tricks; hier dieselbe Technik für
+                die Mini-Leiste in der Kampf-Titelzeile). */}
+            <span className="hs-hp-trail" style={{ transform: `scaleX(${playerPct / 100})` }} />
+            <span className="hs-hp-fill hs-hp-fill--player" style={{ transform: `scaleX(${playerPct / 100})` }} />
+          </span>
+          <span className="hs-hp-icon hs-hp-vs">
             {COMBAT_VS_ICON_URL
               ? <img loading="lazy" decoding="async" src={COMBAT_VS_ICON_URL} alt="" className="ui-icon" />
               : "⚔"}
           </span>
-          <span className="gamestats-hp-mini" title={enemyHpTitle}>
-            <span className="gamestats-hpbar gamestats-hpbar--inline">
-              <span className="gamestats-hpbar-trail" style={{ transform: `scaleX(${enemyPct / 100})` }} />
-              <span className="gamestats-hpbar-fill gamestats-hpbar-fill--enemy" style={{ transform: `scaleX(${enemyPct / 100})` }} />
-            </span>
+          <span className="hs-hp-bar" title={enemyHpTitle}>
+            <span className="hs-hp-trail" style={{ transform: `scaleX(${enemyPct / 100})` }} />
+            <span className="hs-hp-fill hs-hp-fill--enemy" style={{ transform: `scaleX(${enemyPct / 100})` }} />
           </span>
         </span>
-      </span>
+      </>
     );
   } else if (activeActionId) {
     const a = content.actions[activeActionId];
-    // Chef-Auftrag 25.08.2026: der Mini-Fortschrittsbalken hier ist weg — die echte, große
-    // Aktions-Fortschrittsleiste (ActionProgressBar) sitzt jetzt direkt unter diesem Text im
-    // selben (jetzt breiteren) Doing-Kasten, s. `progressBars` in GameStats' Rückgabe unten.
+    // Chef-Auftrag 25.08.2026: der Mini-Fortschrittsbalken hier ist weg — die echte
+    // Aktions-Fortschrittsleiste (ActionProgressBar) sitzt direkt darunter in derselben Zelle.
     activity = (
-      <span className="activity">
-        <span className="muted">{t("header.doing")}</span>{" "}
-        <span className="activity-name">{a ? tr(a.name) : ""}</span>
+      <span className="hs-line hs-act-text">
+        <span className="hs-muted">{t("header.doing")}</span>{" "}
+        <span className="hs-act-name">{a ? tr(a.name) : ""}</span>
       </span>
     );
   } else if (lastStopActionId) {
@@ -650,13 +629,13 @@ function GameStats({
         ? t("skill.stoppedInventoryFull")
         : t("skill.stoppedNoMaterials");
     activity = (
-      <span className="activity activity-stopped" title={hint}>
-        ⚠ <span className="muted">{t("header.stopped")}</span>{" "}
-        <span className="activity-name">{a ? tr(a.name) : ""}</span>
+      <span className="hs-line hs-act-text hs-act-text--stopped" title={hint}>
+        ⚠ <span className="hs-muted">{t("header.stopped")}</span>{" "}
+        <span className="hs-act-name">{a ? tr(a.name) : ""}</span>
       </span>
     );
   } else {
-    activity = <span className="activity muted">{t("header.idle")}</span>;
+    activity = <span className="hs-line hs-act-text hs-muted">{t("header.idle")}</span>;
   }
 
   const invFull = used >= cap;
@@ -672,37 +651,38 @@ function GameStats({
   // formatNum() selbst rundet nicht, ein rohes Zwischen-Float wie "1.234,7" wäre unpassend für Gold.
   const animatedGold = useAnimatedNumber(gold, 400);
 
+  // claude:2026-10-17T11:30:00+02:00 — UI-Fundament: keine eigene Hülle mehr. Die Zellen (hs-act,
+  // hs-slayer, hs-eco, hs-stop) sind direkte Kinder der Statusleiste und werden dort per Grid-
+  // Bereichen angeordnet: breit eine Zeile, schmal zwei (chrome.css, @container game-content).
   return (
-    <div className={`game-stats${inCombat ? " game-stats--combat" : ""}${slayerMonsterId != null ? " game-stats--has-slayer" : ""}`}>
-      {/* Chef #233: Zeile 1 — die Aktivität (Kampf/Aktion/Gestoppt).
-          Chef-Auftrag 25.08.2026: darunter jetzt zusätzlich die beiden Segment-Leisten
-          (Aktion + Skill-Level-XP) — der Kasten wurde dafür breiter+zentriert (s. topbar.css
-          .content-header-row-Grid) und nimmt sie als eigene Zeile auf, statt sie wie vorher als
-          separaten, über die GANZE Kopfzeile absolut positionierten Block darunter zu zeigen. */}
-      <div className="gamestats-row gamestats-row--activity">
+    <>
+      <div className="hs-cell hs-act">
         {activity}
-        <div className="gamestats-activity-bars">{progressBars}</div>
+        {!inCombat && actionBar}
       </div>
-      {/* codex:2026-08-01T18:06:00+02:00 — Quiet Citadel fuehrt den aktiven Slayer-Vertrag als
-          eigenen Cluster zwischen Aktivitaet und Oekonomie. So konkurriert der lange Zieltext
-          nicht mehr mit Inventarslots und Gold um dieselbe schmale Flexzeile. */}
+      {/* codex:2026-08-01T18:06:00+02:00 — Slayer-Vertrag als eigener Cluster zwischen Aktivitaet
+          und Oekonomie, damit der lange Zieltext nicht mit Slots/Gold um eine Zeile konkurriert. */}
       {slayerMonsterId != null && (
-        <div className="gamestats-row gamestats-row--slayer">
-          <span className="gamestats-slayer-chip">
-            {slayerIconUrl
-              ? <img loading="lazy" decoding="async" src={slayerIconUrl} alt="" className="ui-icon" />
-              : "⚔"}{" "}
-            {t("header.slayerTask")
+        <div className="hs-cell hs-slayer">
+          <span className="hs-slayer-chip">
+          {slayerIconUrl
+            ? <img loading="lazy" decoding="async" src={slayerIconUrl} alt="" className="ui-icon" />
+            : "⚔"}{" "}
+          {(() => {
+            // claude:2026-10-17T12:40:00+02:00 — Der Gegnername bricht nie in sich um
+            // („Goblin-/Armbruster"); umbrechen darf nur der Satz an Wortgrenzen davor.
+            const [pre, post = ""] = t("header.slayerTask")
               .replace("{done}", String(slayerProgress))
               .replace("{total}", String(slayerRequired))
-              .replace("{monster}", slayerTaskMonName)}
+              .split("{monster}");
+            return <span>{pre}<span className="hs-nowrap">{slayerTaskMonName}</span>{post}</span>;
+          })()}
           </span>
         </div>
       )}
-      {/* Zeile 2 — Inventar/Gold/Stop-Button als eigener Oekonomie-Cluster. */}
-      <div className="gamestats-row gamestats-row--meta">
+      <div className="hs-cell hs-eco">
         <span
-          className={`slots-display${invOverCapacity ? " over" : invFull ? " full" : ""}`}
+          className={`hs-slots${invOverCapacity ? " over" : invFull ? " full" : ""}`}
           title={invOverCapacity ? t("inv.overCapacity.hint") : invFull ? t("header.bagsFull") : t("header.bags")}
         >
           {INVENTORY_ICON_URL
@@ -710,27 +690,26 @@ function GameStats({
             : "🎒"}{" "}
           {used}/{cap}
         </span>
-        <span className="gamestats-pipe" aria-hidden="true" />
-        <span className="gold-display">
+        <span className="hs-gold">
           {GOLD_ICON_URL
             ? <img loading="lazy" decoding="async" src={GOLD_ICON_URL} alt="" className="ui-icon" />
             : "🪙"}{" "}
           {formatNum(Math.round(animatedGold))}
         </span>
-        {inCombat && (
-          <>
-            <span className="gamestats-pipe" aria-hidden="true" />
-            <button
-              type="button"
-              className="gamestats-stop-btn"
-              onClick={() => stopCombat(state)}
-            >
-              {t("header.stopCombat")}
-            </button>
-          </>
-        )}
       </div>
-    </div>
+      {inCombat && !hideStop && (
+        // claude:2026-10-17T11:30:00+02:00 — Standard-Eisenknopf (Chef 26.08.: kein eigener Stil mehr).
+        // claude:2026-10-17T15:10:00+02:00 — Derselbe Text wie der Knopf auf der Kampfseite
+        // (DE stand hier „Kampf abbrechen", dort „Kampf beenden" für dieselbe Aktion).
+        <button
+          type="button"
+          className="hs-stop btn-iron btn-iron--sm btn-iron--danger"
+          onClick={() => stopCombat(state)}
+        >
+          {t("combat.flee")}
+        </button>
+      )}
+    </>
   );
 }
 
@@ -811,8 +790,6 @@ function MainLayout(): JSX.Element {
     }
     playSfx("pageOpen");
   }, [activePageId]);
-  // Real sidebar PNG for this page (exists for all skill pages + any page with an icon PNG)
-  const sidebarIconUrl = page ? getSidebarIcon(page.id) : null;
   // Auf einer Skill-Seite (Skill/Farming/Slayer) soll die Level-XP-Leiste unten in dieser Bar die
   // BETRACHTETE Fertigkeit zeigen statt nur die der aktiven Aktion (Chef-Wunsch: die Seiten-eigene
   // XP-Leiste wurde entfernt, die Title-Bar ist jetzt die einzige XP-Anzeige — auch im Idle).
@@ -974,61 +951,23 @@ function MainLayout(): JSX.Element {
       <main className="content">
         <div className="topbar-area" ref={topBarAreaRef}>
           <TopBar activePageId={activePageId} onNavigate={setActivePageId} />
-          {/* codex:2026-08-01T16:06:12+02:00 — Chef-GO: Info-Bar-Konzept 05 "Quiet Citadel"
-              produktiv auf die bestehenden, selektorgesteuerten Daten anwenden. */}
-          <header className="content-header content-header--quiet-citadel">
-            {/* Chef #233: eigener Row-Wrapper — der Skill-Titel wird absolut auf DIESE Box
-                zentriert (dead-center über die ganze Bar, unabhängig von links/rechts-Breite),
-                statt nur innerhalb einer Grid-Spalte.
-                Chef-Auftrag 25.08.2026: die zwei Segment-Leisten (Aktion + Skill-Level-XP) leben
-                jetzt NICHT mehr als eigener, über die GANZE Kopfzeile absolut positionierter Block
-                unter dieser Row (das war der vorherige Stand, „2. Korrektur"), sondern werden als
-                `progressBars` in den (jetzt breiteren, zentrierten) Doing-Kasten von GameStats
-                durchgereicht — beide Komponenten wandern dabei als GANZES samt ihrer eigenen
-                Perf-Gates (s. ActionProgressBar/LevelXpBar-JSDoc oben), nur ihr Render-ORT ändert
-                sich. */}
-            <div className="content-header-row">
-              <HeaderCharacterInfo />
-              <h1>
-                {page ? (
-                  <>
-                    {sidebarIconUrl ? (
-                      <img loading="lazy" decoding="async"
-                        src={sidebarIconUrl}
-                        alt=""
-                        className="content-header-icon pixelart"
-                      />
-                    ) : (
-                      <span>{page.icon}</span>
-                    )}
-                    {/* 7-Sprachen-Fundament (Task #252): war ein Titelbild (title_<id>.png,
-                        titleImages.ts) — nicht übersetzbar. Jetzt immer lokalisierbarer Text;
-                        `.content-header h1` liefert bereits dieselbe Optik (Cinzel, uppercase, Gold). */}
-                    <span>{t(page.label)}</span>
-                    {/* Chef 2026-07-03: dasselbe Icon rechts, horizontal gespiegelt (füllt die Bar). */}
-                    {sidebarIconUrl && (
-                      <img loading="lazy" decoding="async"
-                        src={sidebarIconUrl}
-                        alt=""
-                        aria-hidden="true"
-                        className="content-header-icon content-header-icon-right pixelart"
-                      />
-                    )}
-                  </>
-                ) : (
-                  t("app.title")
-                )}
-              </h1>
-              <GameStats
-                onNavigate={setActivePageId}
-                progressBars={
-                  <>
-                    <ActionProgressBar />
-                    <LevelXpBar viewedSkillId={viewedSkillId} />
-                  </>
-                }
-              />
-            </div>
+          {/* codex:2026-08-01T16:06:12+02:00 — Chef-GO: Info-Bar-Konzept 05 "Quiet Citadel".
+              claude:2026-10-17T11:30:00+02:00 — UI-Fundament: EINE kompakte Statusleiste (hs-*)
+              statt Name-Block + Aktivitätszeile + zwei beschrifteter Leisten untereinander:
+              Name · Kampf-Lv · Ges.-Lv | Aktivität mit Fortschritt | XP des verfolgten Skills |
+              Slayer | Inventar/Gold | Stop. Jede Information genau einmal; ActionProgressBar und
+              LevelXpBar behalten ihre eigenen Perf-Gates, nur ihr Ort ändert sich. */}
+          <header className="hs-strip">
+            {/* Seitenname nur für Assistenztechnik — sichtbar steht er bereits im aktiven Reiter
+                bzw. Sidebar-Eintrag. */}
+            <h1 className="hs-page-title">{page ? t(page.label) : t("app.title")}</h1>
+            <HeaderCharacterInfo />
+            <GameStats
+              onNavigate={setActivePageId}
+              actionBar={<ActionProgressBar />}
+              hideStop={activePageId === "combat"}
+            />
+            <LevelXpBar viewedSkillId={viewedSkillId} />
           </header>
           {/* Chef-Feature 2026-07-23: Drag-Handle an der Unterkante der TopBar — Ziehen ändert die
               Höhe stufenlos (114–256px), Doppelklick resettet auf den Default (168px). Liegt

@@ -1,5 +1,6 @@
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
+import { createPortal } from "react-dom";
 import { content } from "@hearthforge/content";
 import {
   autoEatUpgradeCost,
@@ -3903,11 +3904,10 @@ function Battle({
             `low-hp` = §6-Vignette (::after). Der FX-Layer (Funken/Beams/Ring/Flash) existiert
             NUR bei Stufe "full" — Abwesenheit im DOM ist der prüfbare reduziert/aus-Zustand. */}
         <div className={`battle-arena${backdropBg ? " has-backdrop" : ""} fx-${fxLevel}${lowHp ? " low-hp" : ""}`}>
+          {/* claude:2026-10-17T13:50:00+02:00 — Kopf nennt nur noch den Ort: „Gegner · Stufe N"
+              stand hier doppelt (Gegner-Namensschild über der Figur + „Stufe" im Gegner-Band). */}
           <header className="battle-fortress-context">
             <span className="battle-fortress-location">{battleLocation}</span>
-            <span className="battle-fortress-target">
-              {monsterName} · {t("combat.level").replace("{n}", String(monster.level))}
-            </span>
           </header>
           {/* codex:2026-08-31T19:24:00+02:00 — Abgenommenes RPG-HUD: zwei ruhige, leichte
               Informationsbaender statt schwerer Karten. Details zeigen ausschliesslich echte
@@ -4220,7 +4220,9 @@ function ZoneMapTokenModal({
 }): JSX.Element {
   const { t, tr } = useI18n();
   const src = getMonsterSrc(monster.id);
-  return (
+  // claude:2026-10-17T11:40:00+02:00 — Portal: `.combat-page` ist jetzt Container-Query-Wurzel
+  // (Layout-Containment), ein fixed-Overlay darin würde sich sonst an der Seite statt am Fenster ausrichten.
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="zonemap-token-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close ds-close-button" onClick={onClose} aria-label={t("combat.close")} />
@@ -4247,7 +4249,8 @@ function ZoneMapTokenModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -6680,12 +6683,16 @@ export function CombatPage(): JSX.Element {
   // nachzulegen. Rein lokal — sobald der Kampf endet, faellt die Seite ohnehin auf die Liste
   // zurueck, und der Merker wird zurueckgesetzt (s. Effekt unten).
   if (monster && !enemyListInCombat) {
+    // claude:2026-10-17T11:40:00+02:00 — Tour-Overlay (position:fixed) steht NEBEN statt in
+    // `.combat-page`: die Seite ist jetzt Container-Query-Wurzel, Containment würde das Overlay
+    // sonst an die Seite statt ans Fenster binden.
     return (
-      <div className="combat-page" ref={pageRef}>
+      <>
         {/* Bereichs-Erst-Tour (Chef-Auftrag Welle B, 2026-07-13): läuft nur beim allerersten
             Besuch dieser Seite, danach für immer aus (state.onboarding.toursSeen.combat) — auch
             wenn dieser erste Besuch mitten in einem laufenden Kampf landet (Alt-Save-Fall). */}
         <AreaTourGuide tourKey="combat" steps={COMBAT_TOUR_STEPS} />
+      <div className="combat-page" ref={pageRef}>
         <Battle
           monster={monster}
           dockCollapsed={dockCollapsed}
@@ -6695,12 +6702,14 @@ export function CombatPage(): JSX.Element {
           onShowEnemyList={() => setEnemyListInCombat(true)}
         />
       </div>
+      </>
     );
   }
 
   return (
+    <>
+    <AreaTourGuide tourKey="combat" steps={COMBAT_TOUR_STEPS} />
     <div className="combat-page" ref={pageRef}>
-      <AreaTourGuide tourKey="combat" steps={COMBAT_TOUR_STEPS} />
       {/* Der Rueckweg, wenn die Liste WAEHREND eines laufenden Kampfes offen ist (Spieler-Report
           1.0.2). Steht ueber der Liste, damit niemand glaubt, der Kampf sei vorbei. */}
       {monster && (
@@ -6725,5 +6734,6 @@ export function CombatPage(): JSX.Element {
         </div>
       </div>
     </div>
+    </>
   );
 }

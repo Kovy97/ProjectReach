@@ -22,6 +22,9 @@
     linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
   box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.52);
+  /* claude:2026-10-17T12:10:00+02:00 — Dock misst sich selbst: Tab-Raster und Schrift folgen der
+     echten Dockbreite (Zonenwahl, Kampf, gezogene Breite), nicht dem Fenster. */
+  container: fl-dock / inline-size;
 }
 
 /* codex:2026-08-03T17:02:00+02:00 — Kompakte Kopfleiste und gleichwertige Tabs: eingelassene
@@ -42,8 +45,10 @@
 }
 
 .combat-frontline-dock .cl-dock-tab {
-  min-height: clamp(42px, 4.2vh, 50px);
-  padding: 6px 3px;
+  /* claude:2026-10-17T12:10:00+02:00 — 2×2 statt 4 nebeneinander, solange das Dock schmal ist
+     (s. @container fl-dock unten): flacher je Tab, dafür ganze Wörter ab 12 px. */
+  min-height: 36px;
+  padding: 6px 6px;
   border-width: var(--frame-w);
   border-image-width: var(--frame-w);
   background:
@@ -51,9 +56,9 @@
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
   color: #9aa4a5;
   font-family: var(--font-info);
-  font-size: clamp(11px, 0.72vw, 16px);
+  font-size: clamp(var(--fs-xs), 3.6cqw, var(--fs-md));
   font-weight: 700;
-  letter-spacing: 0.055em;
+  letter-spacing: 0.03em;
   text-shadow: 0 1px 2px #000;
   transition: color 0.14s ease, filter 0.14s ease, box-shadow 0.14s ease;
 }
@@ -199,7 +204,8 @@
 .combat-frontline-dock .cl-dock-pane-gear .cs-stat-label,
 .combat-frontline-dock .cl-dock-pane-gear .cs-stat-val {
   font-family: var(--font-info);
-  font-size: clamp(11px, 0.68vw, 15px);
+  /* claude:2026-10-17T13:50:00+02:00 — Boden 12 px, Wachstum nach Dockbreite (cqw) statt Fenster. */
+  font-size: clamp(var(--fs-xs), 3.2cqw, var(--fs-md));
 }
 
 .combat-frontline-dock .cl-section-buffs {
@@ -409,8 +415,16 @@
 }
 
 /* codex:2026-08-03T17:02:00+02:00 — Auflösungsvertrag: Slots bleiben vollständig sichtbar;
-   nur Bühne und Typografie verdichten sich, bevor die äußere Combat-Seite stapelt. */
-@media (min-width: 2200px) {
+   nur Bühne und Typografie verdichten sich, bevor die äußere Combat-Seite stapelt.
+   claude:2026-10-17T12:10:00+02:00 — Stufen nach Dockbreite statt Fenster. Die Tabs stehen erst
+   ab 640 px Dock in einer Reihe (DE „Vorbereitung", FR „Compétences" brauchen ~120 px). */
+@container fl-dock (max-width: 639px) {
+  .combat-frontline-dock .cl-dock-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container fl-dock (min-width: 560px) {
   .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
     min-height: clamp(540px, 52vh, 700px);
   }
@@ -420,23 +434,7 @@
   }
 }
 
-@media (max-width: 1400px) {
-  .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
-    min-height: 410px;
-  }
-
-  .combat-frontline-dock .cl-dock-pane-gear .cs-doll {
-    transform: none;
-  }
-}
-
-@media (max-width: 1100px) {
-  .combat-frontline-dock .cl-dock-tab {
-    min-height: 40px;
-    font-size: 11px;
-    letter-spacing: 0.02em;
-  }
-
+@container fl-dock (max-width: 359px) {
   .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
     min-height: 380px;
   }

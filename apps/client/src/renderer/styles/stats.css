@@ -11,7 +11,10 @@
    Chef's named style references for this rework.
    ═══════════════════════════════════════════════════════════ */
 
+/* claude:2026-10-17T13:25:00+02:00 — Query-Container „stx“: Zweispaltigkeit nach Panelbreite statt
+   Fenster (980 px); Spalten mit Nullminimum, damit lange Zahlen/Labels nicht die Nachbarspalte drücken. */
 .stx-page {
+  container: stx / inline-size;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -21,13 +24,13 @@
 
 .stx-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   align-items: start;
 }
 
-@media (max-width: 980px) {
-  .stx-grid { grid-template-columns: 1fr; }
+@container stx (max-width: 759px) {
+  .stx-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 .stx-section {

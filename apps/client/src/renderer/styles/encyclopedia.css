@@ -130,7 +130,7 @@
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: clamp(150px, 13vw, 226px) minmax(0, 1fr);
+  grid-template-columns: clamp(184px, 14vw, 226px) minmax(0, 1fr);
   overflow: hidden;
 }
 
@@ -165,9 +165,9 @@
   text-align: left;
   cursor: pointer;
   /* RU und DE tragen die langen Kategorienamen („Материалы", „Materialien") — die Zeile darf
-     umbrechen und trennen, statt zu clippen oder die Spalte zu sprengen. */
-  overflow-wrap: anywhere;
-  hyphens: auto;
+     umbrechen, statt zu clippen oder die Spalte zu sprengen.
+     claude:2026-10-17T13:55:00+02:00 — nur noch an Wortgrenzen (break-word = Notanker), Register breiter. */
+  overflow-wrap: break-word;
 }
 
 .encp-cat:hover {
@@ -192,7 +192,7 @@
 .encp-cat-count {
   color: #87939a;
   font-family: var(--font-info);
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -213,7 +213,7 @@
 
 .encp-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
   gap: 12px;
 }
 
@@ -283,8 +283,12 @@
   min-height: 2.3em;
   display: flex;
   align-items: center;
-  overflow-wrap: anywhere;
+  /* claude:2026-10-17T13:55:00+02:00 — break-word statt anywhere: Umbruch an Wortgrenzen, DE trennt
+     Komposita per Silbentrennung, mitten im Wort nur als Notanker. */
+  overflow-wrap: break-word;
   hyphens: auto;
+  /* claude:2026-10-17T14:20:00+02:00 — nur lange Wörter (>= 10 Zeichen, je 5 pro Teil) trennen: kein „Лат-ные“. */
+  hyphenate-limit-chars: 10 5 5;
 }
 
 .encp-card.rarity-rare .encp-card-name { color: var(--rar-rare); }

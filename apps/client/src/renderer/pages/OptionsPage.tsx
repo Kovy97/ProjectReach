@@ -85,6 +85,8 @@ export function OptionsPage(): JSX.Element {
 
   return (
     <div className="opz-page">
+      {/* claude:2026-10-17T13:35:00+02:00 — Kopf und Fehler-melden-Banner teilen sich eine Zeile, wenn Platz ist. */}
+      <div className="opz-top">
       <header className="opz-header">
         <span className="opz-header-icon" aria-hidden="true"><img src={iconGear} alt="" className="opz-system-icon" /></span>
         <div className="opz-header-text">
@@ -106,6 +108,7 @@ export function OptionsPage(): JSX.Element {
             jeder andere Standard-Knopf (design-system.css `.btn-iron`). */}
         <span className="btn-iron bugreport-entry-cta" aria-hidden="true">{t("bugReport.entryCta")}</span>
       </button>
+      </div>
 
       <div className="opz-grid">
         {/* Anzeige + Audio: geteilt mit dem Hauptmenü-Panel (components/OptionControls). */}

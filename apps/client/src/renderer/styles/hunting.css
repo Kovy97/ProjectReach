@@ -180,22 +180,13 @@
 
 /* ─── Fallen-Raster (Layout #2, Runde 2): 3×2 bei voller Breite, Ziel: 6 Karten ohne Seiten-
    Scroll bei 1920×1080 (Chef-Vorgabe, Kartenhöhe ~300px). ─────────────────────────────────── */
+/* claude:2026-10-17T12:45:00+02:00 — Spaltenzahl nach tatsächlicher Rasterbreite (höchstens 3, je
+   ≥300px) statt nach Fensterbreite: vorher zwei Fallen nebeneinander auch dann, wenn Sidebar +
+   Warteschlange den Körper auf ~700px drückten. */
 .hunt-traps {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(300px, calc((100% - 32px) / 3))), 1fr));
   gap: 16px;
-}
-
-@media (max-width: 1499px) {
-  .hunt-traps {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 520px) {
-  .hunt-traps {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ─── Fallen-Karte — jetzt eine vollflächige Szene statt Karte-mit-Leerraum (Chef-Kritik Runde 2:
@@ -269,15 +260,20 @@
 }
 
 /* Oberes Cinzel-Band: „Falle N · Gebietsname" links, Status-Badge (+ Köder-Chip) rechts. */
+/* claude:2026-10-17T12:45:00+02:00 — Status rutscht unter den Gebietsnamen, wenn beide nicht
+   nebeneinander passen, statt den Namen zu verdrängen. */
 .hunt-trap-topband {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 8px;
+  gap: 4px 8px;
   padding: 6px 10px;
 }
 
 .hunt-trap-topband-name {
+  flex: 1 1 11em;
+  min-width: 0;
   font-family: var(--font-head);
   font-size: 15px;
   letter-spacing: 0.4px;
@@ -289,6 +285,7 @@
 
 .hunt-trap-topband-right {
   flex: 0 0 auto;
+  margin-left: auto;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

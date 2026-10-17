@@ -388,6 +388,8 @@ function BuyTab(): JSX.Element {
   return (
     // codex:2026-08-01T19:42:00+02:00 — Produktionsstruktur des freigegebenen „Mux' Counter“:
     // Navigation links, scrollbarer Warenbestand mittig, stabiler Handelstresen rechts.
+    // claude:2026-10-17T11:20:00+02:00 — .shopv2-pane ist der Query-Container (Panelbreite statt Fenster).
+    <div className="shopv2-pane">
     <div className="shopv2-buy-layout">
       <aside className="shopv2-category-rail">
         <SectionHead title={t("shop.counter.departments")} />
@@ -477,6 +479,7 @@ function BuyTab(): JSX.Element {
       <aside className="shopv2-buy-counter">
         <BuyCounter entry={activeCat === "upgrades" ? undefined : selectedEntry} />
       </aside>
+    </div>
     </div>
   );
 }
@@ -808,6 +811,8 @@ function SellTab(): JSX.Element {
 
   return (
     <>
+    {/* claude:2026-10-17T11:20:00+02:00 — Query-Container nur um das Layout; die fixed-Popups bleiben außerhalb. */}
+    <div className="shopv2-pane">
     <div className="shopv2-sell-layout">
       <div className="shopv2-sell-main">
         <div className="mshop-toolbar">
@@ -1009,6 +1014,7 @@ function SellTab(): JSX.Element {
         </div>
       </aside>
     </div>
+    </div>
 
     {massPopup?.type === "qty" && (
       <StackQtyPopup
@@ -1139,6 +1145,8 @@ export function ShopPage(): JSX.Element {
           Porträt — Mux der Abtrünnige, laut Lore-Bibel §3.5/§3.2 der Händler ("der Shop ist
           Mux' Plane"). Name-Label bleibt bewusst der bestehende rollenneutrale Titel
           ("The Merchant"/"Der Händler") — reine Bild-Verdrahtung, kein Text-Change. */}
+      {/* claude:2026-10-17T11:20:00+02:00 — Händlerkopf und Saldo/Reiter teilen sich eine Zeile, wenn Platz ist. */}
+      <div className="shopv2-head">
       <NpcGreeting
         portraitSrc={getPortrait("npc_mux")}
         name={t("npc.shop.name")}
@@ -1176,6 +1184,7 @@ export function ShopPage(): JSX.Element {
             ◂ ▸
           </span>
         </div>
+      </div>
       </div>
 
       <div className="shopv2-body ds-frame">

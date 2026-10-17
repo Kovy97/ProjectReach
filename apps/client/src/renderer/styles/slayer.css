@@ -7,9 +7,12 @@
 
 /* ─── Page wrapper ───────────────────────────────────────── */
 .slayer-page {
+  /* claude:2026-10-17T11:30:00+02:00 — Layout nach Seitenbreite statt Fensterbreite (Container
+     Query); kein fixed-Overlay in der Seite (Bestätigung inline, Tooltips portaliert). */
+  container: slayer-page / inline-size;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--sp-3);
 }
 
 /* ─── Master tabs — DS wooden-frame buttons ──────────────── */
@@ -82,16 +85,18 @@
 }
 
 /* ─── Dialog row: portrait (fixed) + task (flexible) ─────── */
+/* claude:2026-10-17T11:30:00+02:00 — Porträtspalte wächst mit der Seite (220–300px) und stapelt
+   erst, wenn die SEITE schmal ist; vorher hielt sie 300px bis zu einem 800px-Fenster. */
 .slayer-dialog-row {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 14px;
+  grid-template-columns: clamp(220px, 30%, 300px) minmax(0, 1fr);
+  gap: var(--sp-3);
   align-items: stretch;   /* both columns grow to equal height */
 }
 
-@media (max-width: 800px) {
+@container slayer-page (max-width: 620px) {
   .slayer-dialog-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -178,6 +183,9 @@
 
 /* Copper-toned speech bubble — stretches to fill remaining panel height */
 .slayer-speech-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
   width: 100%;
   flex: 1;
   background:
@@ -192,10 +200,13 @@
 }
 
 /* ─── Right: task + points column ───────────────────────── */
+/* claude:2026-10-17T11:30:00+02:00 — min-width:0, damit lange Monsternamen neben dem 80px-Bild
+   umbrechen statt die Spalte zu sprengen. */
 .slayer-task-col {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
 }
 
 /* ─── Slayer Points balance — full-width prominent counter ── */
@@ -319,6 +330,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
   padding-top: 4px;
 }
 
@@ -646,8 +658,8 @@
   font-weight: 700;
   line-height: 1.2;
   color: var(--text);
+  /* claude:2026-10-17T13:15:00+02:00 — word-break:break-word (≈ anywhere) entfernt: kein Bruch mitten im Wort. */
   overflow-wrap: break-word;
-  word-break: break-word;
 }
 
 /* Feste Fußzeile: Stufe links, Preis/Kaufen rechts — IMMER beide, ob gesperrt oder nicht

@@ -11,6 +11,8 @@
   --chrome-nav-shell: linear-gradient(rgba(15, 10, 7, .18), rgba(8, 7, 6, .36)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 320px repeat;
   --chrome-nav-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px repeat;
   --chrome-nav-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px repeat;
+  /* claude:2026-10-17T12:00:00+02:00 — Vertiefte Basalt-Mulde der Statuszellen (Quiet-Citadel-Material). */
+  --chrome-well: linear-gradient(rgba(58, 31, 19, .36), rgba(9, 12, 14, .72)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px repeat;
 }
 
 /* codex:2026-09-10T10:35:00+02:00 — Maßgeblich ist der Platz ZWISCHEN Sidebar/Queue,
@@ -19,309 +21,406 @@
   min-width: 0;
 }
 
-/* codex:2026-09-10T10:35:00+02:00 — Höhenregler beeinflusst Dichte ohne Schrift ins Unlesbare zu skalieren. */
+/* codex:2026-09-10T10:39:00+02:00 — Nur den Header kapseln: Seitenmodale dürfen keinen neuen fixed-containing-block bekommen.
+   claude:2026-10-17T12:00:00+02:00 — `--tb-k` = 1 beim Standard des Höhenreglers (168 px ⇒
+   --tb-scale 1.18). Alle Maße unten sind für diesen Standard gesetzt und folgen dem Regler. */
 #root .layout--reforged .topbar-area {
-  /* codex:2026-09-10T10:39:00+02:00 — Nur den Header kapseln: Seitenmodale dürfen keinen neuen fixed-containing-block bekommen. */
   container: game-content / inline-size;
-  --chrome-type: clamp(13px, calc(13px * var(--tb-scale)), 17px);
+  --tb-k: calc(var(--tb-scale, 1.18) / 1.18);
+  --hs-fs: clamp(var(--fs-sm), calc(var(--fs-md) * var(--tb-k)), var(--fs-xl));
+  --hs-fs-meta: clamp(var(--fs-xs), calc(var(--fs-sm) * var(--tb-k)), var(--fs-lg));
   min-width: 0;
-  padding-bottom: 5px;
+  padding-bottom: 4px;
   background: var(--chrome-nav-shell);
 }
 
-/* codex:2026-09-10T10:35:00+02:00 — Acht Text-Reiter bleiben in ihrer Reihenfolge; Hilfe hat eine eigene Spalte. */
+/* ═══ Reiterleiste ═════════════════════════════════════════════════════════════════════════
+   claude:2026-10-17T12:00:00+02:00 — UI-Fundament: acht Reiter + Hilfe in EINER Reihe. Die Reiter
+   behalten Eisenrahmen und Basalt (Chef 10.09.), werden aber nie schmaler als ihre Beschriftung
+   und brechen nie im Wort. Reicht die Reihe nicht, schaltet TopBar.tsx die Dichte um
+   (data-density: full → compact → tight → icons). Ersetzt die Zwei-Reihen-Variante (repeat(4) ab
+   1100 px) und die `overflow-wrap: anywhere`-Beschriftung („MEISTERSCHA/FT"). */
 #root .layout--reforged .topbar {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr)) 44px;
+  display: flex;
   align-items: stretch;
+  gap: 6px;
   height: auto;
   min-width: 0;
-  gap: 6px;
-  padding: 8px 10px;
-  overflow: visible;
-  background: none !important;
+  padding: 6px 8px 4px;
+  overflow: hidden;
+  background: none;
   border: 0;
 }
 #root .layout--reforged .topbar-entry {
   display: flex;
-  width: auto !important;
-  min-width: 0 !important;
-  container-type: normal;
+  flex: 1 1 0;
+  min-width: max-content;
 }
-#root .layout--reforged .topbar-divider { display: none; }
-#root .layout--reforged .topbar-item,
-#root .layout--reforged .topbar-item:hover,
-#root .layout--reforged .topbar-item.active {
-  --gw-nav-frame: var(--chrome-frame);
+#root .layout--reforged .topbar-entry.topbar-entry--help { flex: 0 0 auto; }
+#root .layout--reforged .topbar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   width: 100%;
-  min-width: 0 !important;
-  /* codex:2026-09-10T11:12:00+02:00 — Spielreiter statt Mikrotasten; der vorhandene Höhenregler bleibt wirksam. */
-  min-height: clamp(56px, calc(52px * var(--tb-scale)), 76px) !important;
-  height: auto;
-  padding: 8px 10px !important;
-  border: 6px solid transparent !important;
-  border-image: var(--chrome-frame) 96 / 13px 12px !important;
-  background: var(--chrome-nav-surface) !important;
+  min-width: max-content;
+  min-height: clamp(36px, calc(44px * var(--tb-k)), 64px);
+  padding: 2px 14px;
+  border: 6px solid transparent;
+  border-image: var(--chrome-frame) 96 / 13px 12px;
+  border-radius: 0;
+  background: var(--chrome-nav-surface);
   color: #e4cc83;
-  box-shadow: inset 0 0 14px #0008, 0 3px 5px #0008 !important;
+  font-family: var(--font-head);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: inset 0 0 14px #0008, 0 3px 5px #0008;
   filter: none;
   transform: none;
+  transition: box-shadow .12s, color .12s;
 }
 #root .layout--reforged .topbar-item:not(:disabled):hover {
   color: #ffe5a2;
-  box-shadow: inset 0 0 14px #b9832b26, 0 0 7px #ba8a4538, 0 3px 5px #0008 !important;
+  box-shadow: inset 0 0 14px #b9832b26, 0 0 7px #ba8a4538, 0 3px 5px #0008;
 }
 #root .layout--reforged .topbar-item.active {
   color: #ffe29b;
-  background: var(--chrome-nav-selected) !important;
-  box-shadow: inset 0 -2px #d1a24f, inset 0 0 18px #b37c292b, 0 3px 6px #0009 !important;
+  background: var(--chrome-nav-selected);
+  box-shadow: inset 0 -2px #d1a24f, inset 0 0 18px #b37c292b, 0 3px 6px #0009;
 }
 #root .layout--reforged .topbar-item:focus-visible {
   outline: 2px solid var(--chrome-gold);
   outline-offset: -4px;
 }
 #root .layout--reforged .topbar-label {
-  display: block !important;
+  display: block;
   font-family: var(--font-head);
-  /* codex:2026-09-10T11:12:00+02:00 — Größere goldene Spieltypografie; Statusdaten behalten ihre eigene ruhigere Schriftgröße. */
-  font-size: clamp(16px, calc(16px * var(--tb-scale)), 22px) !important;
-  line-height: 1.25;
+  font-size: clamp(var(--fs-md), calc(var(--fs-lg) * var(--tb-k)), var(--fs-2xl));
+  line-height: 1.2;
   color: inherit;
-  letter-spacing: .025em;
+  letter-spacing: .03em;
+  text-transform: uppercase;
   text-align: center;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
   text-shadow: 0 2px 2px #000, 0 0 6px #000;
 }
-#root .layout--reforged .topbar-entry.topbar-entry--help { min-width: 0 !important; }
-#root .layout--reforged .topbar-item.topbar-help-btn { min-width: 0 !important; padding: 4px !important; }
-#root .layout--reforged .topbar-help-glyph { font-size: 24px; }
+#root .layout--reforged .topbar-icon { display: none; }
+/* Claim-Punkt sitzt auf der Rahmenecke statt über der Beschriftung („Aufga●en"). */
+#root .layout--reforged .topbar-claim-dot { top: -3px; right: -3px; }
+#root .layout--reforged .topbar-item.topbar-help-btn { padding: 2px 8px; }
+#root .layout--reforged .topbar-help-glyph { font-size: clamp(18px, calc(22px * var(--tb-k)), 32px); }
 
-/* codex:2026-09-10T10:35:00+02:00 — Ein flacher Statusrahmen statt Rahmen in Rahmen.
-   Explizite Quiet-Citadel-Spezifität verdrängt dessen vier starre Mindestspalten. */
-#root .layout--reforged .content-header--quiet-citadel {
-  min-height: 0;
+/* Kompakt: gemischte Schreibung, kleinere Schrift, engere Fassung (EN/DE/ES/PT/FR bei 1366 px
+   mit offener Warteschlange). Eng: noch eine Stufe kleiner — damit passt auch Russisch dort. */
+#root .layout--reforged .topbar:is([data-density="compact"], [data-density="tight"]) .topbar-item {
+  min-height: clamp(34px, calc(40px * var(--tb-k)), 58px);
+  padding-inline: 8px;
+}
+#root .layout--reforged .topbar:is([data-density="compact"], [data-density="tight"]) .topbar-label {
+  font-size: clamp(var(--fs-sm), calc(var(--fs-md) * var(--tb-k)), var(--fs-lg));
+  letter-spacing: 0;
+  text-transform: none;
+}
+#root .layout--reforged .topbar[data-density="tight"] { gap: 4px; }
+#root .layout--reforged .topbar[data-density="tight"] .topbar-item { padding-inline: 4px; }
+#root .layout--reforged .topbar[data-density="tight"] .topbar-label {
+  font-size: clamp(var(--fs-sm), calc(var(--fs-sm) * var(--tb-k)), var(--fs-md));
+}
+/* Symbole: letzte Stufe für sehr schmale Inhaltsfläche (breit gezogene Sidebar + Warteschlange). */
+#root .layout--reforged .topbar[data-density="icons"] .topbar-item { padding-inline: 6px; }
+#root .layout--reforged .topbar[data-density="icons"] .topbar-label { display: none; }
+#root .layout--reforged .topbar[data-density="icons"] .topbar-icon { display: flex; }
+#root .layout--reforged .topbar-icon-img {
+  display: block;
+  width: clamp(22px, calc(28px * var(--tb-k)), 40px);
+  height: clamp(22px, calc(28px * var(--tb-k)), 40px);
+  object-fit: contain;
+}
+
+/* ═══ Statusleiste ═════════════════════════════════════════════════════════════════════════
+   claude:2026-10-17T12:00:00+02:00 — Eine kompakte Leiste statt drei gestapelter Zeilen
+   (App.tsx, hs-*): Name · Kampf-Lv · Ges.-Lv | Aktivität mit Fortschritt | XP des verfolgten
+   Skills | Slayer | Inventar/Gold | Stop. Eisenrahmen + Basalt der Leiste und die Basalt-Mulden
+   der Zellen bleiben (Chef 17.10.: Material bleibt). Breit: eine Zeile (Flex, Reihenfolge per
+   `order`, fehlende Zellen hinterlassen keine Lücke). Schmal: zwei Zeilen (s. Container-Query). */
+#root .layout--reforged .hs-strip {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-width: 0;
   margin: 0 8px;
-  padding: 8px;
+  padding: 3px 6px;
   border: 4px solid transparent;
   border-image: var(--chrome-frame) 96 / 8px;
   background: var(--chrome-surface);
-  box-shadow: none;
   color: var(--chrome-text);
+  font-family: var(--font-info);
+  font-size: var(--hs-fs);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+  line-height: 1.25;
 }
-#root .layout--reforged .content-header--quiet-citadel::before { content: none; }
-#root .layout--reforged .content-header--quiet-citadel .content-header-row,
-#root .layout--reforged .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) {
-  display: grid;
-  grid-template-columns: minmax(150px, .8fr) minmax(0, 2.2fr) minmax(160px, .9fr);
-  grid-template-rows: auto;
-  align-items: center;
-  gap: 8px 16px;
-  min-height: 0;
+/* Seitenname nur für Assistenztechnik. */
+#root .layout--reforged .hs-page-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
   padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
-#root .layout--reforged .content-header--quiet-citadel .game-stats { display: contents; }
-#root .layout--reforged .content-header--quiet-citadel .header-charinfo {
-  display: flex;
-  grid-area: 1 / 1 / 3 / 2;
-  min-width: 0;
-  min-height: 0;
-  max-width: none;
-  gap: 6px;
-  padding: 4px 12px 4px 0;
-  background: none;
-  border: 0;
-  border-right: 1px solid rgba(168, 131, 76, .25);
-}
-#root .layout--reforged .content-header--quiet-citadel .header-charinfo-name {
-  color: var(--chrome-text);
-  font-family: var(--font-head);
-  font-size: clamp(17px, calc(16px * var(--tb-scale)), 22px);
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-#root .layout--reforged .content-header--quiet-citadel .header-charinfo-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-}
-#root .layout--reforged .content-header--quiet-citadel .header-charinfo-stat {
-  display: flex;
-  font-size: 12px;
-  line-height: 1.5;
+#root .layout--reforged .hs-cell { min-width: 0; }
+#root .layout--reforged .hs-muted { color: var(--chrome-muted); }
+#root .layout--reforged .hs-nowrap { white-space: nowrap; }
+#root .layout--reforged .hs-meta {
+  font-size: var(--hs-fs-meta);
   color: var(--chrome-muted);
+  white-space: nowrap;
 }
-#root .layout--reforged .content-header--quiet-citadel .header-charinfo-stat b { color: var(--chrome-text); }
-#root .layout--reforged .content-header--quiet-citadel .gamestats-row--activity {
-  grid-area: 1 / 2 / 3 / 3;
+
+/* Identität */
+#root .layout--reforged .hs-id {
+  order: 1;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  gap: 8px;
-  padding: 0;
-  border: 0;
-  background: none;
-  box-shadow: none;
+  gap: 1px;
+  padding: 0 6px 0 4px;
 }
-#root .layout--reforged .content-header--quiet-citadel .activity {
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  min-width: 0;
-  gap: 4px 8px;
-  font-size: var(--chrome-type);
-  line-height: 1.4;
-  text-transform: none;
-  letter-spacing: 0;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-#root .layout--reforged .content-header--quiet-citadel .activity .muted { font-size: inherit; color: var(--chrome-muted); }
-/* codex:2026-09-10T10:43:00+02:00 — Kind-Flexitem muss den Umbruch ebenfalls erlauben. */
-#root .layout--reforged .content-header--quiet-citadel .activity-name {
+#root .layout--reforged .hs-name {
+  font-family: var(--font-head);
+  font-size: clamp(var(--fs-md), calc(var(--fs-lg) * var(--tb-k)), var(--fs-2xl));
+  line-height: 1.2;
   color: var(--chrome-text);
-  white-space: normal;
-  overflow-wrap: anywhere;
-  flex-shrink: 1;
-  max-width: 100%;
+  white-space: nowrap;
 }
-#root .layout--reforged .content-header--quiet-citadel .activity-stopped { color: #e0aa7a; }
-#root .layout--reforged .content-header--quiet-citadel .gamestats-row--meta,
-#root .layout--reforged .content-header--quiet-citadel .game-stats--has-slayer .gamestats-row--meta {
-  grid-area: 1 / 3 / 2 / 4;
+#root .layout--reforged .hs-levels {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px 12px;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-}
-#root .layout--reforged .content-header--quiet-citadel .gamestats-pipe { display: none; }
-#root .layout--reforged .content-header--quiet-citadel .slots-display,
-#root .layout--reforged .content-header--quiet-citadel .gold-display {
-  font-size: var(--chrome-type);
-  line-height: 1.4;
-  font-variant-numeric: tabular-nums;
-}
-#root .layout--reforged .content-header--quiet-citadel .slots-display { color: var(--chrome-text); }
-/* codex:2026-09-10T10:43:00+02:00 — Runtime-Klassen full/over erhalten ihre Warnpriorität. */
-#root .layout--reforged .content-header--quiet-citadel .slots-display.full { color: #e6c076; }
-#root .layout--reforged .content-header--quiet-citadel .slots-display.over { color: #ef998c; }
-#root .layout--reforged .content-header--quiet-citadel .gamestats-row--slayer {
-  grid-area: 2 / 3 / 3 / 4;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  overflow: visible;
-}
-#root .layout--reforged .content-header--quiet-citadel .gamestats-slayer-chip {
-  justify-content: flex-end;
-  font-size: 12px;
-  line-height: 1.5;
+  gap: 0 12px;
+  font-size: var(--hs-fs-meta);
   color: var(--chrome-muted);
-  white-space: normal;
-  overflow-wrap: anywhere;
 }
-#root .layout--reforged .content-header--quiet-citadel .gamestats-stop-btn {
-  min-height: 30px;
-  padding: 4px 8px;
-  font-size: 13px;
-}
+#root .layout--reforged .hs-level { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+#root .layout--reforged .hs-level b { color: var(--chrome-text); }
 
-/* codex:2026-09-10T10:35:00+02:00 — Beschriftung liegt ÜBER dem 6px-Fortschritt,
-   Raten dürfen umbrechen. Unveränderte Compositor-Füllung und Level-Up-FX bleiben erhalten. */
-#root .layout--reforged .content-header--quiet-citadel .gamestats-activity-bars { gap: 8px; min-width: 0; }
-#root .layout--reforged .content-header--quiet-citadel .tb-bar {
-  height: auto;
-  min-height: 25px;
-  padding: 0 0 9px;
-  overflow: visible;
-  background: none;
-  border: 0;
-}
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-frame-row { display: none; }
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-track-bg,
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-fill,
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-gloss {
-  inset: auto 0 0;
-  height: 6px;
-  border-radius: 1px;
-}
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-track-bg {
-  background: #111516;
-  box-shadow: inset 0 0 0 1px rgba(176, 166, 134, .2);
-}
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-labels {
-  position: relative;
-  inset: auto;
+/* Aktivität + XP: Basalt-Mulden, Zeile 1 Text | Nebeninfo, Zeile 2 Leiste. Jede Zelle ist ein
+   eigener Container, damit sie Nebeninfos nach IHRER Breite ausblendet (nie den Text bricht). */
+#root .layout--reforged :is(.hs-act, .hs-xp) {
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: baseline;
-  gap: 2px 12px;
-  padding: 0;
-  color: var(--chrome-text);
-  font-size: 13px;
-  line-height: 1.4;
-  text-transform: none;
-  pointer-events: none;
+  gap: 2px 10px;
+  min-height: 0;
+  padding: 2px 10px 4px;
+  border: 1px solid rgba(151, 106, 55, .55);
+  background: var(--chrome-well);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, .5);
 }
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-label-center,
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-label-right {
-  position: static;
-  inset: auto;
-  transform: none;
+#root .layout--reforged .hs-act { order: 2; flex: 1 1 0; }
+/* XP trägt Skillname + Level + ETA und braucht etwas mehr Raum als die Aktivität. */
+#root .layout--reforged .hs-xp { order: 3; flex: 1.25 1 0; }
+/* Zeile 1: Text links, Nebeninfo rechts. Reicht die Breite nicht für beides, rutscht die
+   Nebeninfo (ETA/Raten) rechtsbündig in eine eigene Zeile, statt den Text zu überdecken. */
+#root .layout--reforged .hs-line {
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: 100%;
-  font-size: inherit;
-  line-height: inherit;
-  text-align: left;
   white-space: normal;
-  text-transform: none;
-  overflow-wrap: anywhere;
-  overflow: visible;
-  text-overflow: clip;
+  overflow-wrap: normal;
 }
-#root .layout--reforged .content-header--quiet-citadel .tb-bar-label-right { color: var(--chrome-muted); }
+#root .layout--reforged :is(.hs-act-meta, .hs-xp-eta) { flex: 0 0 auto; margin-left: auto; text-align: right; }
+#root .layout--reforged :is(.hs-bar, .hs-bar-wrap, .hs-hp) { flex: 1 0 100%; align-self: center; }
+#root .layout--reforged .hs-act-name { color: var(--chrome-text); }
+#root .layout--reforged .hs-act-text--fight { cursor: pointer; }
+#root .layout--reforged .hs-act-text--fight:hover .hs-act-name,
+#root .layout--reforged .hs-act-text--fight:focus-visible .hs-act-name { color: var(--chrome-gold); }
+#root .layout--reforged .hs-act-text--stopped { color: #e0aa7a; cursor: help; }
+#root .layout--reforged .hs-xp-skill { color: #ead790; }
+#root .layout--reforged .hs-xp-level { white-space: nowrap; }
+#root .layout--reforged .hs-xp-nums { color: var(--chrome-muted); }
+#root .layout--reforged .hs-act-pct { color: var(--chrome-text); }
+/* Nebeninfos weichen nach der Breite IHRER Zelle (Tooltip/Titel behält sie): zuerst die
+   XP-Zahlen, dann die Raten. Der Haupttext bricht höchstens an Wortgrenzen. */
+@container (max-width: 560px) {
+  #root .layout--reforged .hs-xp-nums { display: none; }
+}
+@container (max-width: 400px) {
+  #root .layout--reforged .hs-act-rate { display: none; }
+}
 
-/* codex:2026-09-10T10:35:00+02:00 — Reflow statt Verkleinerung: 1366px mit beiden Docks
-   hat nur ~826px Inhaltsbreite. Selbst bei schmalerem Container bleibt jede Information erreichbar. */
+/* Fortschrittsleiste (StatusBar, App.tsx): Gravewood-Track mit Bronzekante, 10 Fächer. */
+#root .layout--reforged .hs-bar-wrap { position: relative; }
+#root .layout--reforged .hs-bar {
+  position: relative;
+  height: clamp(6px, calc(8px * var(--tb-k)), 12px);
+  overflow: hidden;
+  border: 1px solid rgba(150, 107, 55, .72);
+  border-radius: 2px;
+  background: #0b0c0e var(--gw-control-surface) left center / 256px repeat;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .82), 0 1px 0 rgba(218, 166, 89, .12);
+}
+#root .layout--reforged .hs-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0, transparent calc(10% - 1px), rgba(177, 129, 69, .38) calc(10% - 1px), rgba(177, 129, 69, .38) 10%);
+}
+#root .layout--reforged .hs-bar-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  will-change: transform;
+  transition: transform 80ms linear;
+  background: linear-gradient(90deg, #3e2c17, #9c6f2c 62%, #d5aa52);
+  box-shadow: inset 0 1px 0 rgba(255, 231, 172, .2);
+}
+#root .layout--reforged .hs-bar--action .hs-bar-fill { background: linear-gradient(90deg, #554019, #b3912e 60%, #ddc15a); }
+#root .layout--reforged .hs-bar--level .hs-bar-fill { background: linear-gradient(90deg, #2d2849, #58478d 60%, #8973c4); }
+#root .layout--reforged .hs-bar-gloss {
+  position: absolute;
+  inset: 0;
+  opacity: .72;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .14), transparent 48%, rgba(0, 0, 0, .18));
+}
+
+/* Kampf: zwei HP-Leisten an der Stelle der Aktionsleiste (gleiche Zellhöhe). */
+#root .layout--reforged .hs-hp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: clamp(10px, calc(12px * var(--tb-k)), 18px);
+}
+#root .layout--reforged .hs-hp-icon {
+  display: flex;
+  flex: none;
+  font-size: clamp(10px, calc(12px * var(--tb-k)), 18px);
+  line-height: 1;
+}
+#root .layout--reforged .hs-hp-vs { opacity: .8; }
+#root .layout--reforged .hs-hp-bar {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 24px;
+  height: clamp(6px, calc(8px * var(--tb-k)), 12px);
+  overflow: hidden;
+  border: 1px solid rgba(150, 107, 55, .6);
+  border-radius: 2px;
+  background: #0b0c0e;
+}
+#root .layout--reforged :is(.hs-hp-fill, .hs-hp-trail) {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+}
+#root .layout--reforged .hs-hp-fill { transition: transform .12s linear; }
+/* Belohnungs-Juice-Welle #3 — HP-Nachlauf (Timing-Trick wie combat.css .cbar-hp-trail). */
+#root .layout--reforged .hs-hp-trail {
+  background: linear-gradient(90deg, #e8c98a, #fff3d6);
+  transition: transform .7s ease-out .9s;
+}
+#root .layout--reforged .hs-hp-fill--player { background: linear-gradient(90deg, #3a7540, #5ab86b); }
+#root .layout--reforged .hs-hp-fill--enemy { background: linear-gradient(90deg, #7a3030, #c25548); }
+
+/* Slayer-Vertrag: eigene Mulde, Text bricht nur an Wortgrenzen (Gegnername nie, .hs-nowrap). */
+#root .layout--reforged .hs-slayer {
+  order: 4;
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: flex-end;
+  max-width: 340px;
+}
+#root .layout--reforged .hs-slayer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 2px 10px;
+  border: 1px solid rgba(151, 106, 55, .45);
+  background: var(--chrome-well);
+  font-size: var(--hs-fs-meta);
+  line-height: 1.2;
+  color: var(--chrome-gold);
+  white-space: normal;
+  overflow-wrap: normal;
+}
+
+/* Wirtschaft */
+#root .layout--reforged .hs-eco {
+  order: 5;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+#root .layout--reforged .hs-slots { color: var(--chrome-text); }
+/* codex:2026-09-10T10:43:00+02:00 — Runtime-Klassen full/over erhalten ihre Warnpriorität. */
+#root .layout--reforged .hs-slots.full { color: #e6c076; }
+#root .layout--reforged .hs-slots.over { color: #ef998c; }
+#root .layout--reforged .hs-gold { color: var(--chrome-gold); }
+
+/* Stop-Knopf: Standard-Eisenknopf, für die Leiste flacher gefasst. */
+#root .layout--reforged .hs-stop.btn-iron {
+  order: 6;
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0;
+  height: clamp(28px, calc(32px * var(--tb-k)), 44px);
+  padding: 0 12px;
+  border-width: 6px;
+  border-image-width: calc(6px * 2.125);
+  font-size: var(--hs-fs-meta);
+  white-space: nowrap;
+}
+
+/* Schmal (1366 px mit Sidebar + offener Warteschlange ≈ 826 px): zwei Zeilen.
+   Zeile 1 (nur Text, flach): Identität einzeilig · Slayer · Wirtschaft.
+   Zeile 2 (Mulden mit Leiste): Aktivität · XP · Stop — der Knopf ist dort nicht höher als die Mulden.
+   Das ::before-Element ist der Zeilenumbruch (Flex-Item mit voller Breite zwischen den Ordnungen). */
 @container game-content (max-width: 1100px) {
-  #root .layout--reforged .topbar { grid-template-columns: repeat(4, minmax(0, 1fr)) 44px; }
-  #root .layout--reforged .topbar-entry--help { grid-area: 1 / 5 / 3 / 6; }
-  #root .layout--reforged .content-header--quiet-citadel .content-header-row,
-  #root .layout--reforged .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 8px 12px;
+  #root .layout--reforged .hs-strip::before {
+    content: "";
+    order: 10;
+    flex: 0 0 100%;
+    height: 0;
   }
-  #root .layout--reforged .content-header--quiet-citadel .header-charinfo { grid-area: 1 / 1 / 2 / 2; border: 0; padding: 0; }
-  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--meta,
-  #root .layout--reforged .content-header--quiet-citadel .game-stats--has-slayer .gamestats-row--meta { grid-area: 1 / 2 / 2 / 3; }
-  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--activity { grid-area: 2 / 1 / 3 / 3; }
-  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--slayer { grid-area: 3 / 1 / 4 / 3; }
-  #root .layout--reforged .content-header--quiet-citadel .gamestats-slayer-chip { justify-content: flex-start; }
+  #root .layout--reforged .hs-id {
+    flex: 0 1 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 14px;
+  }
+  #root .layout--reforged .hs-name { font-size: var(--hs-fs); }
+  /* Slayer füllt die Restbreite von Zeile 1 (Basis 0, nie schmaler als der Gegnername), damit
+     Wirtschaft nicht in eine eigene Zeile rutscht; die Mulde selbst sitzt rechtsbündig. */
+  #root .layout--reforged .hs-slayer { order: 2; flex: 1 1 0; min-width: min-content; max-width: none; }
+  #root .layout--reforged .hs-strip:not(:has(.hs-slayer)) .hs-eco { margin-left: auto; }
+  /* Mit Slayer-Auftrag wird Zeile 1 knapp: Level nur als Symbol + Zahl (Text im Tooltip). */
+  #root .layout--reforged .hs-strip:has(.hs-slayer) .hs-level-label { display: none; }
+  #root .layout--reforged .hs-eco { order: 3; }
+  #root .layout--reforged .hs-act { order: 11; }
+  #root .layout--reforged .hs-xp { order: 12; }
+  #root .layout--reforged .hs-stop.btn-iron { order: 13; align-self: stretch; height: auto; }
 }
-@container game-content (max-width: 580px) {
-  #root .layout--reforged .topbar { grid-template-columns: repeat(2, minmax(0, 1fr)) 38px; gap: 4px; padding: 4px; }
-  #root .layout--reforged .topbar-entry--help { grid-area: 1 / 3 / 5 / 4; }
-  #root .layout--reforged .content-header--quiet-citadel { margin: 0 4px; padding: 8px; }
-  #root .layout--reforged .content-header--quiet-citadel .content-header-row,
-  #root .layout--reforged .content-header--quiet-citadel .content-header-row:has(.game-stats--has-slayer) { grid-template-columns: minmax(0, 1fr); }
-  #root .layout--reforged .content-header--quiet-citadel .header-charinfo { grid-area: 1 / 1; }
-  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--meta,
-  #root .layout--reforged .content-header--quiet-citadel .game-stats--has-slayer .gamestats-row--meta { grid-area: 2 / 1; justify-content: flex-start; }
-  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--activity { grid-area: 3 / 1; }
-  #root .layout--reforged .content-header--quiet-citadel .gamestats-row--slayer { grid-area: 4 / 1; }
+/* Sehr schmal: Aktivität und XP je eigene Zeile. */
+@container game-content (max-width: 600px) {
+  #root .layout--reforged :is(.hs-act, .hs-xp) { flex-basis: 100%; }
+  #root .layout--reforged .hs-slayer { max-width: none; }
+  #root .layout--reforged .topbar { gap: 4px; padding-inline: 4px; }
 }
 
-/* codex:2026-09-10T10:35:00+02:00 — Bei sehr wenig Höhe alle Headerinfos scrollbar halten,
-   statt die Spielseite ganz zu verdrängen. Kein versteckter Loot/Status. */
-@media (max-height: 760px) {
-  #root .layout--reforged .topbar-area { max-height: 48vh; overflow-y: auto; scrollbar-gutter: stable; }
-}
 @media (prefers-reduced-motion: reduce) {
   #root .layout--reforged .topbar-item { transition: none; }
+  #root .layout--reforged .hs-hp-trail { transition: none; }
 }

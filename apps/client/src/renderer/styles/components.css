@@ -60,6 +60,10 @@
 /* ─── Utility ───────────────────────────────────────────── */
 .muted {
   color: var(--muted);
+  /* claude:2026-10-17T16:00:00+02:00 — Bleibt bewusst global 19 px. Ein Versuch, die Regel auf
+     :where() zu entschärfen, ließ ~650 Texte (Bestiarium-Legende, Jagen, Anbau, Kampf-Dock) auf
+     11–16 px schrumpfen: technisch die „gemeinten" Klassengrößen, aber sichtbar schlechter lesbar
+     als der vom Chef abgenommene Stand (Vorgabe: UI eher größer). Zu große Stellen lokal lösen. */
   font-size: 19px;
 }
 
@@ -686,22 +690,8 @@ body .item-cell.rarity-godly {
   font-size: clamp(16px, 3.93cqw, 22px);
 }
 
-/* ─── Aktivitäts-Indikator ──────────────────────────────── */
-.activity {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 17px;
-}
-
-.activity-stopped {
-  color: #d9a86b;
-  cursor: help;
-}
-
-/* Chef-Auftrag 25.08.2026: `.activity-bar` (Mini-Fortschrittsbalken neben "Doing: X") entfernt —
-   redundant, seit die echte Aktions-Fortschrittsleiste direkt im Doing-Kasten sitzt (App.tsx
-   GameStats, topbar.css .gamestats-activity-bars). */
+/* claude:2026-10-17T15:30:00+02:00 — `.activity`/`.activity-stopped` gelöscht: keine Verwendung
+   mehr im Renderer (grep über alle .tsx/.ts, nur noch Kommentare in action-queue.css). */
 
 /* ═══════════════════════════════════════════════════════════════════════════
    ITEM TOOLTIP — "Path of Exile" redesign  (.itip-*)
@@ -2069,7 +2059,8 @@ body .item-cell.rarity-godly {
      die zusätzliche Zeilen klaglos aufnimmt — also umbrechen statt kürzen. Voller Name bleibt
      ohnehin zusätzlich im Hover-Tooltip erreichbar. */
   white-space: normal;
-  overflow-wrap: break-word;
+  /* claude:2026-10-17T14:15:00+02:00 — Umbruch nur an Wortgrenzen (vorher break-word). */
+  overflow-wrap: normal;
   max-width: 150px;
 }
 .active-buff-timer {
@@ -2084,7 +2075,8 @@ body .item-cell.rarity-godly {
 @media (max-height: 800px) {
   .active-buff-chip {
     gap: 4px;
-    font-size: 11px;
+    /* claude:2026-10-17T14:15:00+02:00 — 12 px (--fs-xs) statt 11 px. */
+    font-size: var(--fs-xs);
     padding: 2px 7px 2px 3px;
     border-width: 3px;
   }
@@ -2774,7 +2766,6 @@ body .item-cell.rarity-godly {
 
   #root .itip-compare-wrap .item-tooltip.itip-panel:not(.itip-card--simple):not(.itip-card--consumable) {
     flex-basis: auto;
-    width: min(1040px, calc(100vw - 40px));
   }
 }
 
@@ -2811,6 +2802,15 @@ body .item-cell.rarity-godly {
 #root .itip-compare-wrap:has(.itip-panel + .itip-panel) .item-tooltip.itip-panel.itip-panel.itip-panel {
   width: min(1160px, calc((100vw - 52px) / 2));
   max-width: calc((100vw - 52px) / 2);
+}
+/* claude:2026-10-17T13:30:00+02:00 — Gestapelter Vergleich (≤ 1100 px, s. oben): die Halbbreite
+   direkt darüber ist spezifischer als die alte Stapelregel und gewann auch untereinander — zwei
+   halbe Karten übereinander. Hier mit gleichem Selektor NACH ihr: volle verfügbare Breite. */
+@media (max-width: 1100px) {
+  #root .itip-compare-wrap:has(.itip-panel + .itip-panel) .item-tooltip.itip-panel.itip-panel.itip-panel {
+    width: min(1040px, calc(100vw - 40px));
+    max-width: calc(100vw - 24px);
+  }
 }
 #root .itip-compare-wrap:not(:has(.itip-panel + .itip-panel)) .item-tooltip.itip-panel.itip-panel.itip-panel {
   width: max-content;

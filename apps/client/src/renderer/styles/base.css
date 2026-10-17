@@ -89,6 +89,31 @@
      Hausschrift. Der Body und sämtliche Controls erben `--font-head`, daher gilt sie appweit. */
   --font-head: "Grim Reach Numerals", "IM Fell English SC", Georgia, "Times New Roman", serif;
   --font-info: "Grim Reach Numerals", "Cinzel", Georgia, "Times New Roman", serif;
+
+  /* claude:2026-10-17T10:30:00+02:00 — UI-Fundament (Test-Branch): EINE Schriftgroessen-Skala statt
+     52 einzelner px-Werte. Neue und ueberarbeitete Regeln nehmen nur noch diese Stufen.
+     --fs-2xs nur fuer Zahlen-Badges auf Icons, nie fuer Woerter. Fliesstext mindestens --fs-sm. */
+  --fs-2xs: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 15px;
+  --fs-lg: 17px;
+  --fs-xl: 20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 32px;
+  /* Abstands-Skala (4er-Raster). */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+}
+
+/* claude:2026-10-17T10:30:00+02:00 — Ueberschriften verteilen Zeilen gleichmaessig statt ein Wort
+   allein in die zweite Zeile zu schieben. Wirkt nur bei echtem Umbruch an Wortgrenzen. */
+:where(h1, h2, h3, h4) {
+  text-wrap: balance;
 }
 
 /* codex:2026-08-01T10:04:43+02:00 — IM Fell English SC besitzt kein vollständiges Kyrillisch/CJK.
@@ -234,8 +259,7 @@ h2,
 h3,
 .brand-name,
 .sheet-title,
-.menu-title,
-.content-header h1 {
+.menu-title {
   font-family: var(--font-head);
   letter-spacing: 0.5px;
 }

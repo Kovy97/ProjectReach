@@ -630,6 +630,8 @@
      Bindestrich (html[lang] wird vom I18nProvider gesetzt); break-word bleibt als Notanker. */
   overflow-wrap: break-word;
   hyphens: auto;
+  /* claude:2026-10-17T14:20:00+02:00 — nur lange Wörter (>= 10 Zeichen, je 5 pro Teil) trennen: kein „Лат-ные“. */
+  hyphenate-limit-chars: 10 5 5;
 }
 .achv-card--unlocked .achv-name { color: var(--gold); }
 

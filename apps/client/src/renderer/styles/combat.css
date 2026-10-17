@@ -212,6 +212,9 @@
      schwimmender Text wirkte. 1.7/1 gibt dem 3:2-Artwork oben spürbar mehr Luft, bleibt aber klar
      diesseits eines Portrait-Formats (das würde die Grid-Höhe explodieren lassen). */
   aspect-ratio: 1.7 / 1;
+  /* claude:2026-10-17T14:15:00+02:00 — sonst erzwingen min-height × Seitenverhältnis 323 px
+     Mindestbreite und die 2. Kartenspalte ragt bei schmalen Panels aus dem Rahmen. */
+  min-width: 0;
   padding: 14px 16px 16px;
   background-size: cover;
   background-position: center;
@@ -504,7 +507,9 @@
 
 .dungeon-loot-preview-label {
   font-family: var(--font-head);
-  font-size: 11px;
+  /* claude:2026-10-17T15:30:00+02:00 — 12 px (--fs-xs) statt 11 px: seit `.muted` seine 19 px nicht
+     mehr über Klassengrößen legt (components.css), greift diese Größe wirklich. */
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -525,7 +530,8 @@
    Zeile "Boss-Beute" fuer die Drops der Boss-Begegnungen des Dungeons, die bisher nur im
    Bestiarium standen (der Spieler suchte das Schwert auf der Dungeon-Karte). */
 .dungeon-loot-type {
-  font-size: 11px;
+  /* claude:2026-10-17T15:30:00+02:00 — 12 px (--fs-xs) statt 11 px (s. .dungeon-loot-preview-label). */
+  font-size: var(--fs-xs);
   letter-spacing: 0.02em;
   opacity: 0.85;
   white-space: nowrap;
@@ -770,7 +776,8 @@
 
 .paragon-chest-tiers-label {
   font-family: var(--font-head);
-  font-size: 11px;
+  /* claude:2026-10-17T15:30:00+02:00 — 12 px (--fs-xs) statt 11 px (s. .dungeon-loot-preview-label). */
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -1510,6 +1517,9 @@
   flex-direction: column;
   gap: 12px;
   height: 100%;
+  /* claude:2026-10-17T11:45:00+02:00 — Layout richtet sich nach der Kampf-Panelbreite (Sidebar/
+     Queue offen/zu), nicht nach dem Fenster. Fixed-Overlays (Tour, Map-Modal) liegen außerhalb. */
+  container: combat-page / inline-size;
 }
 
 .combat-page .battle,
@@ -1893,26 +1903,31 @@
      Kollaps-Regel unten überschreibt grid-template-columns komplett (1fr) und ignoriert die Vars
      dabei bewusst — ein während des Drags gesetzter Wert soll im schmalen Stapel-Layout nicht
      nachwirken. */
-  grid-template-columns: var(--battle-loadout-w, 250px) minmax(0, 1fr) var(--battle-log-w, 300px);
+  /* claude:2026-10-17T11:50:00+02:00 — Breiter Vertrag (Kampf-Panel ≥ 1240 px, s. @container
+     combat-page weiter unten für die schmaleren Stufen): Dock | Arena | Battle Record. Die Docks
+     folgen der gezogenen Breite (--battle-*-w), sind aber an die PANELBREITE gedeckelt (30/26 cqw),
+     damit der Arena immer ≥ ~44 % bleiben — vorher (22vw/18vw, min 360/300 px) konnte sie bei
+     offener Queue auf 0 schrumpfen. */
+  grid-template-columns:
+    clamp(360px, var(--battle-loadout-w, 360px), min(480px, 30cqw))
+    minmax(0, 1fr)
+    clamp(300px, var(--battle-log-w, 300px), min(520px, 26cqw));
   /* Chef 2026-07-11: die eine Zeile nimmt exakt die VERFÜGBARE Höhe (statt Inhaltshöhe) — in
      Kombination mit der gedeckelten Höhen-Kette (s. .page-transition:has unten) scrollt die
      Kampf-Seite selbst nie; zu hohe Spalten-Inhalte schrumpfen intern (Porträt flex:1) bzw.
-     scrollen in ihrem eigenen Container (Loadout, Log). Bei unbegrenztem Container (Kollaps-
-     Modus ≤1400px) verhält sich minmax(0,1fr) wie auto — dort scrollt die Seite normal. */
+     scrollen in ihrem eigenen Container (Loadout, Log). */
   grid-template-rows: minmax(0, 1fr);
-  gap: 12px;
+  gap: clamp(9px, 0.8cqw, 15px);
   align-items: stretch;
 }
 
 /* Höhen-Kette der Kampf-Seite deckeln: .content-body (Scroller) → .page-transition (hatte KEINE
    Höhe → .combat-page height:100% lief ins Leere, .battle wuchs mit dem Inhalt und die Seite
-   scrollte um die Differenz). Nur für die Kampf-Seite und nur im breiten 4-Spalten-Layout —
-   andere Seiten sollen weiterhin natürlich scrollen, und im Kollaps-Modus (≤1400px, Loadout als
-   eigene Zeile über den Fightern) braucht die Seite ihre Inhaltshöhe zurück. */
-@media (min-width: 1401px) {
-  .page-transition:has(> .combat-page) {
-    height: 100%;
-  }
+   scrollte um die Differenz).
+   claude:2026-10-17T11:45:00+02:00 — gilt jetzt bei JEDER Breite: schmale Kampf-Panels stapeln
+   nicht mehr über die ganze Seite, sondern scrollen intern in `.battle-main` (s. @container unten). */
+.page-transition:has(> .combat-page) {
+  height: 100%;
 }
 
 /* ─── ARENA (Arena-Rework, Chef-GO 2026-07-11) ────────────────
@@ -5128,33 +5143,6 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-/* Responsive: bei sehr schmalen Viewports umbrechen */
-@media (max-width: 720px) {
-  .combat-layout {
-    flex-direction: column;
-  }
-  .combat-sidebar {
-    width: 100%;
-    overflow-y: visible;
-  }
-  .combat-sidebar .combat-loadout {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .combat-sidebar .cl-section-equip,
-  .combat-sidebar .cl-section-skills,
-  .combat-sidebar .cl-section-stance,
-  .combat-sidebar .cl-section-food,
-  .combat-sidebar .cl-section-potion,
-  .combat-sidebar .cl-section-session {
-    width: auto;
-    flex: 1 1 280px;
-  }
-  .combat-sidebar .cl-skills {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
 /* ═══════════════════════════════════════════════════════════
    BATTLE-INTEGRIERTE LOADOUT-SPALTE (Chef-Layout-Wunsch 2026-07-02)
    In der aktiven Kampf-Ansicht ist das Loadout (Equipment/Skills/Focus/Food) keine separate
@@ -5206,58 +5194,6 @@
 /* Combat-Skills: 2 Spalten (wie in der Zonen-Auswahl-Sidebar) — passt besser in ~280px Breite. */
 .battle-loadout-col .cl-skills {
   grid-template-columns: repeat(2, 1fr);
-}
-
-/* Responsive Kollaps ≤1400px (Arena-Rework): Loadout wird eigene Zeile (bestehender Mechanismus),
-   darunter die Arena in voller Breite, das Log rutscht unter die Arena (ebenfalls volle Breite).
-   Die Arena bleibt auch hier EINE gemeinsame Szene; die Seite scrollt in diesem Modus normal
-   (die Höhen-Deckel-Kette gilt nur >1400px, s. .page-transition:has oben). */
-@media (max-width: 1400px) {
-  .battle-main {
-    grid-template-columns: 1fr;
-  }
-  /* Eigene Grid-Zeile ohne 1fr-Höhenvorgabe → die Arena braucht eine DEFINITE Höhe (nicht nur
-     min-height), damit die %-Höhen-Kette Stage→Szene→Figur-Bild weiter greift — sonst fiele
-     `height:100%` auf auto zurück und die Roh-PNGs der Figuren blähten die Zeile auf. */
-  .battle-arena {
-    height: 54vh;
-    min-height: 420px;
-  }
-  /* Log unter der Arena: gedeckelte Höhe, das Log scrollt intern (statt die Seite endlos zu
-     strecken — `.battle-log` hat flex:1 + overflow-y:auto und braucht eine gebundene Höhe). */
-  .battle-main .battle-log-panel {
-    grid-column: 1 / -1;
-    height: clamp(240px, 36vh, 460px);
-  }
-  .battle-loadout-col {
-    grid-column: 1 / -1;
-    height: auto;
-    /* Sicherheitsnetz: bei sehr geringer Fensterhöhe reicht evtl. nicht mal die umgebrochene
-       2-Spalten-Loadout-Reihe + die Fighter-Zeile darunter in den Viewport — dann scrollt NUR die
-       Loadout-Zeile intern, statt Fighter-Karten in der zweiten Grid-Zeile zu verdrängen. */
-    max-height: 45vh;
-    overflow-y: auto;
-  }
-  .battle-loadout-col .combat-loadout {
-    /* Umbruch-Modus: hier ist die Loadout-Reihe eine EIGENE Grid-Zeile — die braucht ihre
-       intrinsische Inhaltshöhe zurück (absolute Positionierung würde die Zeile auf 0 kollabieren). */
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-    height: auto;
-  }
-  .battle-loadout-col .cl-section-equip,
-  .battle-loadout-col .cl-section-skills,
-  .battle-loadout-col .cl-section-stance,
-  .battle-loadout-col .cl-section-food,
-  .battle-loadout-col .cl-section-potion,
-  .battle-loadout-col .cl-section-session {
-    width: auto;
-    flex: 1 1 240px;
-  }
-  .battle-loadout-col .cl-skills {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -5770,7 +5706,9 @@
    Vier-Tab-Dock für 1920×1080 bis Ultrawide. Die Tabs wechseln Inhalt, nie Containermaß. */
 .combat-layout {
   display: grid;
-  grid-template-columns: clamp(360px, 23vw, 470px) minmax(0, 1fr);
+  /* claude:2026-10-17T12:05:00+02:00 — Dockbreite aus der Kampf-Panelbreite (cqw von
+     `.combat-page`) statt aus dem Fenster; schmalere Stufen im @container-Block unten. */
+  grid-template-columns: clamp(360px, 28cqw, 470px) minmax(0, 1fr);
   gap: 12px;
   height: 100%;
   min-height: 0;
@@ -5953,13 +5891,11 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  /* ui-dev 2026-08-03 (QA K4): lange lokalisierte Tab-Labels ohne Umbruchpunkt (DE „AUSRÜSTUNG"/
-     „VORBEREITUNG", FR „PRÉPARATION" …) wurden bislang hart abgeschnitten statt umzubrechen —
-     weder base noch die Frontline-Harness-Reskin (frontline-harness-dock.css) trugen einen
-     Overflow-Vertrag; `min-height` ist hier (und dort) bewusst ein Boden, kein Deckel, wächst
-     also mit einer zweiten Zeile mit. Gleicher Vertrag wie der Achievements-Filter (QA K3). */
-  overflow-wrap: break-word;
-  hyphens: auto;
+  /* claude:2026-10-17T12:05:00+02:00 — Umbruch nur an Wortgrenzen (vorher break-word + hyphens:
+     „AUS-RÜS-TUNG"/„VORBE-REI-TUNG"). Platz schafft das 2×2-Raster bei schmalem Dock
+     (frontline-harness-dock.css, @container fl-dock). */
+  overflow-wrap: normal;
+  hyphens: manual;
   line-height: 1.15;
   text-align: center;
 }
@@ -5999,7 +5935,6 @@
 }
 
 .cl-dock-pane-gear .cs-doll-wrap { min-height: 420px; }
-.cl-dock-pane-gear .cs-doll { transform: scale(0.88); transform-origin: top center; }
 .cl-dock-pane-gear .cs-stats-scroll { overflow: visible; }
 .cl-dock-pane-gear .cs-tab-stats-scroll { gap: 8px; }
 /* codex:2026-08-02T17:30:00+02:00 — Combat-Dock hat im Gegensatz zum Character-Stats-Tab
@@ -6063,46 +5998,110 @@
 .battle-loadout-col .combat-frontline-dock { position: absolute; inset: 0; }
 .battle-loadout-col .cl-dock-body { padding-right: 10px; }
 
-@media (min-width: 2200px) {
-  .combat-layout { grid-template-columns: clamp(430px, 22vw, 600px) minmax(0, 1fr); }
-  .cl-dock-tab { min-height: 50px; font-size: clamp(15px, 0.65vw, 20px); }
-  .cl-dock-pane-gear .cs-doll { transform: none; }
+/* claude:2026-10-17T12:05:00+02:00 — Zonen-Übersicht: Dockbreite folgt der Kampf-Panelbreite
+   (vorher Fensterbreite 2200/1100 px). Tab-Schrift regelt jetzt der Dock-Container selbst
+   (frontline-harness-dock.css), die Puppe bleibt unskaliert — sie misst sich an ihrer Zelle. */
+@container combat-page (min-width: 1800px) {
+  .combat-layout { grid-template-columns: clamp(430px, 24cqw, 600px) minmax(0, 1fr); }
 }
-
-@media (max-width: 1100px) {
-  .combat-layout { grid-template-columns: 330px minmax(0, 1fr); }
-  .cl-dock-tab { font-size: 11px; letter-spacing: 0; }
-  .cl-dock-pane-gear .cs-doll { transform: scale(0.78); }
+@container combat-page (max-width: 1239px) {
+  .combat-layout { grid-template-columns: clamp(300px, 32cqw, 380px) minmax(0, 1fr); }
+}
+@container combat-page (max-width: 819px) {
+  .combat-layout { grid-template-columns: clamp(260px, 42cqw, 320px) minmax(0, 1fr); }
 }
 
 /* codex:2026-08-02T12:42:00+02:00 — Battle-Konzept 10 „Adaptive Fortress": proportionaler
    Frontline-Dock, breite Arena und echter Battle Record rechts. Es werden ausschließlich reale
-   HP-/Mana-/Ward-/Attack-Timer- und Log-Daten dargestellt; das Mockup-Stagger-/Speed-UI bleibt aus. */
-@media (min-width: 1401px) {
-  .battle-main {
-    grid-template-columns:
-      clamp(360px, var(--battle-loadout-w, 22vw), 620px)
-      minmax(0, 1fr)
-      clamp(300px, var(--battle-log-w, 18vw), 520px);
-    gap: clamp(9px, 0.7vw, 15px);
-  }
+   HP-/Mana-/Ward-/Attack-Timer- und Log-Daten dargestellt; das Mockup-Stagger-/Speed-UI bleibt aus.
+   Chef-Auftrag 2026-08-03: kollabierte Spalte wird zur festen 44px-Leiste, die Bühne gewinnt den
+   freien Platz (kompakte Klassen 0,2,0 schlagen die Basisregel, kein !important).
+   claude:2026-10-17T11:50:00+02:00 — Spaltenmaße wie die Basisregel `.battle-main` (Panelbreite
+   statt Fenster); die schmaleren Stufen stehen im @container-Block direkt darunter. */
+.battle-main.dock-collapsed {
+  grid-template-columns: 44px minmax(0, 1fr) clamp(300px, var(--battle-log-w, 300px), min(520px, 26cqw));
+}
+.battle-main.record-collapsed {
+  grid-template-columns: clamp(360px, var(--battle-loadout-w, 360px), min(480px, 30cqw)) minmax(0, 1fr) 44px;
+}
+.battle-main.dock-collapsed.record-collapsed {
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+}
 
-  /* Chef-Auftrag 2026-08-03: kollabierte Spalte wird zur festen 44px-Leiste, die Bühne
-     (minmax(0,1fr)) gewinnt den freien Platz. Kompakte Klassen (.dock-collapsed/.record-collapsed,
-     0,2,0) schlagen die Basisregel oben (0,1,0) unabhängig von der Regel-Reihenfolge, kein
-     !important nötig — unabhängige Zustände, daher auch der kombinierte Fall. Bewusst NUR ≥1401px:
-     darunter stapelt .battle-main ohnehin einspaltig (s. @media max-width:1400px weiter unten) —
-     dort gäbe es keine Spalte zu gewinnen, der Kollaps bleibt rein visuell (Griff bleibt bedienbar,
-     s. dortiger Kommentar). */
-  .battle-main.dock-collapsed {
-    grid-template-columns: 44px minmax(0, 1fr) clamp(300px, var(--battle-log-w, 18vw), 520px);
+/* claude:2026-10-17T11:50:00+02:00 — Gemeinsam für mittlere und schmale Kampf-Panels: reicht die
+   Höhe nicht, scrollt nur `.battle-main` (Zonen/Kampf-beenden bleiben oben stehen); die gezogene
+   Log-Höhe und die Breitengriffe des Records gehören zum breiten Spaltenlayout. */
+@container combat-page (max-width: 1239px) {
+  .battle-main {
+    overflow-y: auto;
+    overflow-x: hidden;
   }
+  .battle-main > .battle-log-panel {
+    height: auto;
+  }
+  .battle-log-resize,
+  .battle-log-resize-w,
+  .battle-log-resize-h {
+    display: none;
+  }
+}
+
+/* claude:2026-10-17T14:05:00+02:00 — Mittlere Kampf-Panels (1366×768, 1920 mit offener Queue):
+   Die Höhe ist hier knapper als die Breite. Darum bekommt die Arena die rechte Spalte über die
+   VOLLE Höhe, Dock und Battle Record teilen sich die linke Spalte übereinander (beide scrollen
+   intern). Ein eingeklapptes Panel wird zur flachen Leiste in dieser Spalte; sind beide
+   eingeklappt, schrumpft die Spalte auf die gewohnten 44 px. */
+@container combat-page (min-width: 820px) and (max-width: 1239px) {
+  .battle-main,
+  .battle-main.dock-collapsed,
   .battle-main.record-collapsed {
-    grid-template-columns: clamp(360px, var(--battle-loadout-w, 22vw), 620px) minmax(0, 1fr) 44px;
+    grid-template-columns: clamp(300px, var(--battle-loadout-w, 300px), 36cqw) minmax(0, 1fr);
+    grid-template-rows: minmax(240px, 1fr) clamp(200px, 42%, 380px);
   }
+  .battle-main.dock-collapsed { grid-template-rows: 44px minmax(0, 1fr); }
+  .battle-main.record-collapsed { grid-template-rows: minmax(0, 1fr) 44px; }
   .battle-main.dock-collapsed.record-collapsed {
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   }
+  .battle-main > .battle-arena { grid-column: 2; grid-row: 1 / -1; min-height: 400px; }
+  .battle-loadout-col { grid-column: 1; grid-row: 1; }
+  .battle-main > .battle-log-panel { grid-column: 1; grid-row: 2; }
+
+  /* Nur EIN Panel eingeklappt: sein Griff liegt quer in der Spalte. */
+  .battle-main.dock-collapsed:not(.record-collapsed) .combat-frontline-dock.cl-dock--collapsed {
+    width: auto;
+  }
+  .battle-main.dock-collapsed:not(.record-collapsed) .cl-dock-rail,
+  .battle-main.record-collapsed:not(.dock-collapsed) .battle-log-panel .cl-dock-rail {
+    flex-direction: row;
+    justify-content: center;
+    padding: 0 12px;
+  }
+  .battle-main.dock-collapsed:not(.record-collapsed) .cl-dock-rail::before {
+    display: none;
+  }
+  .battle-main.dock-collapsed:not(.record-collapsed) .cl-dock-rail-label,
+  .battle-main.record-collapsed:not(.dock-collapsed) .battle-log-panel .cl-dock-rail-label {
+    writing-mode: horizontal-tb;
+  }
+}
+
+/* claude:2026-10-17T11:50:00+02:00 — Schmale Kampf-Panels (Queue offen auf kleinen Fenstern):
+   Arena über die volle Breite oben, darunter Dock und Battle Record nebeneinander (Einklapp-
+   Leisten bleiben senkrechte 44-px-Säulen). */
+@container combat-page (max-width: 819px) {
+  .battle-main,
+  .battle-main.record-collapsed {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(320px, 3fr) minmax(300px, 2fr);
+  }
+  .battle-main.dock-collapsed { grid-template-columns: 44px minmax(0, 1fr); }
+  .battle-main.record-collapsed { grid-template-columns: minmax(0, 1fr) 44px; }
+  .battle-main.dock-collapsed.record-collapsed { grid-template-columns: 44px minmax(0, 1fr) 44px; }
+  .battle-main > .battle-arena { grid-column: 1 / -1; grid-row: 1; }
+  .battle-loadout-col { grid-column: 1; grid-row: 2; }
+  .battle-main > .battle-log-panel { grid-column: -2; grid-row: 2; }
 }
 
 .battle-loadout-col,
@@ -6198,15 +6197,6 @@
   letter-spacing: 0.045em;
 }
 
-.battle-fortress-target {
-  min-width: 0;
-  overflow: hidden;
-  color: #b7c0c2;
-  font-size: clamp(12px, 0.7vw, 16px);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .battle-arena-stage,
 .battle-arena > .a25-root {
   flex: 1 1 auto;
@@ -6259,13 +6249,10 @@
   .battle-log-tab { min-height: 34px; font-size: 14px; }
 }
 
-@media (max-width: 1400px) {
-  .battle-fortress-context { min-height: 38px; }
-  .battle-loadout-col .combat-frontline-dock {
-    position: static;
-    height: min(58vh, 680px);
-    flex-flow: column nowrap;
-  }
+/* claude:2026-10-17T11:50:00+02:00 — Dock bleibt in jeder Stufe absolut in seiner Zelle (die
+   Zeilenhöhe kommt aus dem Grid), nur der Arena-Kopf wird bei schmalen Panels flacher. */
+@container combat-page (max-width: 1239px) {
+  .battle-fortress-context { min-height: 36px; padding-block: 5px; }
 }
 
 /* codex:2026-08-02T17:30:00+02:00 — aktueller Kampf-beenden-CTA: Bronze-Lipped-Iron-Rahmen,
@@ -6389,7 +6376,9 @@
   max-width: 100%;
   overflow: hidden;
   color: #908c83;
-  font-size: clamp(9px, 0.58vw, 12px);
+  /* claude:2026-10-17T13:40:00+02:00 — Boden 12 px (--fs-xs, vorher 9 px), skaliert mit der
+     Arena (cqw des battle-arena-Containers) statt mit dem Fenster. */
+  font-size: clamp(var(--fs-xs), 1.2cqw, 13px);
   letter-spacing: 0.08em;
   text-overflow: ellipsis;
   text-transform: uppercase;
@@ -6398,7 +6387,7 @@
 .battle-hud-metric > strong {
   color: #e0c779;
   font-family: var(--font-head);
-  font-size: clamp(13px, 0.82vw, 17px);
+  font-size: clamp(var(--fs-sm), 1.6cqw, var(--fs-lg));
   font-weight: 700;
 }
 
@@ -6415,9 +6404,10 @@
   background: rgba(3, 4, 4, 0.72);
   color: #d7c385;
   font-family: var(--font-head);
-  font-size: clamp(10px, 0.62vw, 13px);
+  font-size: clamp(var(--fs-xs), 1.2cqw, 13px);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -6448,7 +6438,8 @@
 
 .battle-hud-stat-grid.stat-line {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  /* claude:2026-10-17T13:40:00+02:00 — breitere Mindestspalte für die 12-px-Beschriftung unten. */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 6px;
   margin: 0;
 }
@@ -6469,7 +6460,7 @@
   min-width: 0;
   overflow: hidden;
   color: #918d83;
-  font-size: 10px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.04em;
   text-overflow: ellipsis;
   text-transform: uppercase;
@@ -6569,26 +6560,6 @@
   background: linear-gradient(90deg, #8f6416, #e0b647 72%, #f1d878);
 }
 
-@media (max-width: 1200px) {
-  .battle-arena-hud {
-    gap: 12px;
-    padding-inline: 7px;
-  }
-
-  .battle-hud-metric {
-    padding-inline: 6px;
-  }
-
-  .battle-hud-ribbon-toggle {
-    min-width: 58px;
-    padding-inline: 4px;
-  }
-
-  .battle-hud-ribbon-details {
-    width: min(620px, calc(200% + 12px));
-  }
-}
-
 /* codex:2026-08-31T23:59:00+02:00 — Unterhalb der brauchbaren Zwei-Spalten-Breite werden die
    Kontextbänder nicht zusammengestaucht, sondern als zwei vollbreite RPG-Zeilen angeordnet.
    Der Loot bleibt dauerhaft sichtbar; nur die räumliche Hierarchie ändert sich. */
@@ -6600,8 +6571,12 @@
     padding: 5px 7px 4px;
   }
 
+  /* claude:2026-10-17T13:40:00+02:00 — gestapelte Bänder flacher: Beschriftung und Wert in EINER
+     Zeile („MAGIE 97") statt übereinander — beide Bänder samt Details bleiben, die Arena gewinnt
+     ~20 px Figurenhöhe je Band. (Der frühere Fenster-Block @media max-width:1200px ist entfallen;
+     er wirkte nur noch hier im gestapelten Fall und wurde von diesen Regeln überschrieben.) */
   .battle-hud-ribbon {
-    min-height: 42px;
+    min-height: 34px;
   }
 
   .battle-hud-ribbon-summary {
@@ -6610,8 +6585,13 @@
   }
 
   .battle-hud-metric {
-    flex: 1 1 0;
-    padding-inline: 10px;
+    /* Nie schmaler als „BESCHRIFTUNG Wert" (vorher 1 1 0: „УБИЙС…"); Restfläche teilen sie sich. */
+    flex: 1 0 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    padding: 3px 10px;
   }
 
   .battle-hud-drop-summary {
@@ -6625,6 +6605,7 @@
 
   .battle-hud-ribbon-toggle {
     min-width: 78px;
+    margin: 3px 4px;
     padding-inline: 7px;
   }
 

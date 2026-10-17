@@ -215,7 +215,8 @@
    3 Spalten, nie horizontales Scrollen. ─── */
 .bjw-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(260px, 22vw, 340px), 1fr));
+  /* claude:2026-10-17T13:45:00+02:00 — Kartenbreite aus der Seitenbreite (cqi) statt Fenster (vw). */
+  grid-template-columns: repeat(auto-fill, minmax(clamp(260px, 26cqi, 340px), 1fr));
   gap: 16px;
 }
 
@@ -403,14 +404,17 @@
   border: 1px solid var(--border);
 }
 
+/* claude:2026-10-17T13:45:00+02:00 — Statlabel bricht an Wortgrenzen um (RU „Показатель уклонения“),
+   der Wert bleibt einzeilig rechts. */
 .bjw-stat-label {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   font-family: var(--font-head);
   font-size: 15px;
+  line-height: 1.2;
   color: #cdbfa0;
-  white-space: nowrap;
 }
 
 .bjw-stat-label .ui-icon {
@@ -420,6 +424,7 @@
 }
 
 .bjw-stat-val {
+  flex-shrink: 0;
   font-size: 15px;
   font-weight: 700;
   color: #f0e4c4;
@@ -633,7 +638,7 @@
 }
 
 .bjw-loot-type {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.02em;
 }
 

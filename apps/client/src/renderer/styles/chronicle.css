@@ -389,9 +389,10 @@
 
 /* codex:2026-08-02T01:15:48+02:00 — Contract-Wall-Variante der Aschechronik und der rechten
    Auftragsbühne. Bronze-Lipped-Iron-Kartenrahmen; Archiv und Bühne scrollen unabhängig. */
+/* claude:2026-10-17T11:50:00+02:00 — keine 520px-Pflichtbreite mehr; Umbau per `@container quests` unten. */
 .quests-contract-wall .chronicle-tab {
   display: grid;
-  grid-template-columns: minmax(520px, 1.25fr) minmax(300px, 0.75fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
   grid-template-rows: auto minmax(0, 1fr);
   gap: clamp(9px, 0.72vw, 15px);
   overflow: hidden;
@@ -507,36 +508,43 @@
   height: 100%;
 }
 
-@media (min-width: 2500px) {
+/* claude:2026-10-17T11:50:00+02:00 — UI-Fundament: Chronik-Bühne nach SEITENbreite (Container `quests`,
+   gesetzt in quests.css auf `.quests-contract-wall`) statt der Fenster-Medias 2500/1180/900px. */
+@container quests (min-width: 1700px) {
   .quests-contract-wall .chronicle-tab {
-    grid-template-columns: minmax(900px, 1.45fr) minmax(520px, 0.55fr);
+    grid-template-columns: minmax(0, 1.45fr) minmax(520px, 0.55fr);
   }
 }
 
-@media (max-width: 1180px) {
-  .quests-contract-wall .chronicle-tab {
-    grid-template-columns: minmax(450px, 1fr) minmax(260px, 0.68fr);
-  }
-
+@container quests (max-width: 1100px) {
   .quests-contract-wall .chronicle-stage-npc .npc-greeting-head {
     width: 88px;
     height: 88px;
   }
 }
 
-@media (max-width: 900px) {
+@container quests (max-width: 980px) {
   .quests-contract-wall .chronicle-tab {
-    display: flex;
-    flex-direction: column;
-    overflow: visible;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.68fr);
   }
+}
 
-  .quests-contract-wall .chronicle-stage {
-    min-height: 560px;
+/* Gestapelt: Bühne oben (scrollt selbst), Archiv darunter mit eigener Maximalhöhe. */
+@container quests (max-width: 700px) {
+  .quests-contract-wall .chronicle-tab {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
   }
 
   .quests-contract-wall .chronicle-history {
-    max-height: 360px;
+    grid-column: 1;
+    grid-row: 3;
+    max-height: 180px;
+  }
+
+  .quests-contract-wall .chronicle-stage-npc .npc-greeting-head {
+    width: 72px;
+    height: 72px;
   }
 }
 

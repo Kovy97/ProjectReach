@@ -23,15 +23,25 @@
 #root .layout--reforged .sidebar .sb-nav {
   flex: 1 1 0;
   min-height: 48px;
-  /* codex:2026-09-10T11:12:00+02:00 — Symmetrische Ränder inklusive Scrollgutter halten das Register in der Sidebar-Mitte. */
-  margin: 0 6px;
+  /* codex:2026-09-10T11:12:00+02:00 — Symmetrische Ränder inklusive Scrollgutter halten das Register in der Sidebar-Mitte.
+     claude:2026-10-17T12:50:00+02:00 — Echte Scrollzone: Abstand zu Segensbanner und Menü-Lasche,
+     und Einträge blenden an der Kante aus, an der noch mehr folgt (Sidebar.tsx setzt
+     --scrolled/--scrollable). Vorher wurden sie hart angeschnitten und wirkten vom Banner bzw.
+     von der Lasche überdeckt. Ausblenden statt Abdunkeln: dahinter liegt die Gravewood-Schale. */
+  --sb-fade-top: 0px;
+  --sb-fade-bottom: 0px;
+  /* claude:2026-10-17T13:50:00+02:00 — Rinne nur rechts (6 px, s. ::-webkit-scrollbar), dafür
+     links 6 px mehr Rand: Register bleibt mittig, der Name gewinnt die zweite Rinne (≈ 10 px). */
+  margin: 4px 3px 6px 9px;
   padding: 6px 2px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--sb-fade-top), #000 calc(100% - var(--sb-fade-bottom)), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--sb-fade-top), #000 calc(100% - var(--sb-fade-bottom)), transparent 100%);
   gap: 5px;
   overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-gutter: stable both-edges;
-  scrollbar-width: thin;
-  scrollbar-color: #8c7953 #151411;
+  scrollbar-gutter: stable;
+  /* claude:2026-10-17T13:50:00+02:00 — kein `scrollbar-width`: Chromium ignoriert sonst die
+     6-px-::-webkit-scrollbar-Regel unten und zeichnet eine ~11 px breite Standardleiste. */
   overscroll-behavior: contain;
 }
 
@@ -56,6 +66,8 @@
   content: none;
   display: none;
 }
+#root .layout--reforged .sidebar .sb-nav.sb-nav--scrolled { --sb-fade-top: 22px; }
+#root .layout--reforged .sidebar .sb-nav.sb-nav--scrollable { --sb-fade-bottom: 26px; }
 
 /* codex:2026-09-10T11:12:00+02:00 — Kräftige 58px-Spielbuttons mit sichtbarer geschmiedeter Fassung.
    Höhe bleibt unabhängig von der Fensterhöhe; die Navigation scrollt statt klein zu schrumpfen. */
@@ -65,7 +77,9 @@
   flex-shrink: 0;
   min-width: 0;
   min-height: 58px !important;
-  height: 58px;
+  /* claude:2026-10-17T12:50:00+02:00 — 58 px Mindesthöhe (Chef 10.09.); zweizeilige Namen
+     (Umbruch nur an Wortgrenzen) dürfen den Knopf wachsen lassen. */
+  height: auto;
   padding: 4px 5px !important;
   border: 6px solid transparent !important;
   border-image: var(--chrome-frame) 96 / 13px 12px / 0 stretch !important;
@@ -94,7 +108,27 @@
 #root .layout--reforged .sidebar .sb-skill-btn--has-level {
   grid-template-columns: 32px minmax(0, 1fr) 32px;
 }
+/* claude:2026-10-17T13:50:00+02:00 — Passt ein einzelnes Wort selbst bei 15 px nicht neben
+   Symbol und Levelspalte (RU „Собирательство"), gibt nur DIESER Knopf die Levelspalte ab:
+   das Level rückt rechtsbündig unter den Namen (rechts unten wie im Bestand vor dem 10.09.),
+   der Name nimmt die Spalte (Sidebar.tsx setzt data-wide-name). Nie Umbruch mitten im Wort. */
+#root .layout--reforged .sidebar .sb-skill-btn[data-wide-name] {
+  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  row-gap: 1px;
+}
+#root .layout--reforged .sidebar .sb-skill-btn[data-wide-name] .sb-skill-icon-wrap { grid-row: 1 / 3; }
+#root .layout--reforged .sidebar .sb-skill-btn[data-wide-name] .sb-skill-name { grid-row: 1; }
+#root .layout--reforged .sidebar .sb-skill-btn[data-wide-name] .sb-skill-level {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+}
 
+/* claude:2026-10-17T12:50:00+02:00 — Name: ≈19 px (Chef 10.09.), Umbruch NUR an Wortgrenzen
+   (`overflow-wrap: normal`, keine Silbentrennung — Electron trennt Russisch ohnehin nicht).
+   Passt das längste Wort nicht, verkleinert Sidebar.tsx die Schrift bis --fs-md (15 px). */
 #root .layout--reforged .sidebar .sb-skill-name {
   position: static;
   inset: auto;
@@ -102,30 +136,21 @@
   grid-column: 2;
   min-width: 0;
   width: auto;
-  padding: 0 !important;
+  padding: 0;
   font-family: var(--font-head);
-  font-size: var(--chrome-sidebar-name-size) !important;
+  font-size: var(--chrome-sidebar-name-size);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.12;
   letter-spacing: 0;
   text-transform: none;
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
   overflow: visible;
   overflow-wrap: normal;
-  hyphens: none;
+  hyphens: manual;
   color: #e4cc83;
   text-shadow: 0 2px 2px #000, 0 0 5px #000;
-}
-
-/* codex:2026-09-10T11:18:00+02:00 — Schriftuntergrenze statt mikroskopischer RU-Menüs;
-   längere Namen dürfen ihre Zeile vergrößern, kein Clipping/Line-Clamp. */
-#root .layout--reforged .sidebar.sb-wrap-labels .sb-skill-name {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-#root .layout--reforged .sidebar.sb-wrap-labels .sb-skill-btn {
-  height: auto;
 }
 
 #root .layout--reforged .sidebar .sb-skill-icon-wrap {
@@ -307,7 +332,8 @@
   font-size: 13px;
   line-height: 1.15;
   white-space: normal;
-  overflow-wrap: anywhere;
+  /* claude:2026-10-17T12:50:00+02:00 — nur an Wortgrenzen umbrechen (war: anywhere). */
+  overflow-wrap: normal;
   overflow: visible;
   color: var(--chrome-text);
 }
@@ -366,14 +392,14 @@
   line-height: 1.2;
   letter-spacing: 0;
   text-transform: none;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal; /* claude:2026-10-17T12:50:00+02:00 — war: anywhere */
   color: var(--chrome-gold);
 }
 
 #root .layout--reforged .sidebar .sb-blessing-effect {
   font-size: 13px;
   line-height: 1.2;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal; /* claude:2026-10-17T12:50:00+02:00 — war: anywhere */
   color: var(--chrome-text);
 }
 
@@ -451,7 +477,7 @@
   display: block;
   min-width: 0;
   text-align: left;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal; /* claude:2026-10-17T12:50:00+02:00 — war: anywhere */
 }
 
 #root .layout--reforged .sidebar .sb-footer-emblem-img {

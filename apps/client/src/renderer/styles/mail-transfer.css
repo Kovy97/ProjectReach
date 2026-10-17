@@ -54,7 +54,7 @@
 .cst-review-card > span {
   display: block;
   color: #8e8170;
-  font-size: clamp(10px, 0.72vw, 12px);
+  font-size: var(--fs-xs);
   letter-spacing: 0.17em;
   text-transform: uppercase;
 }
@@ -479,6 +479,7 @@
 .cst-footer > div,
 .cst-review-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   flex: 0 0 auto;
 }
@@ -500,12 +501,16 @@
   cursor: default;
 }
 
+/* claude:2026-10-17T13:20:00+02:00 — Bestätigungsschritt bleibt bei niedriger Fensterhöhe erreichbar:
+   die Ebene scrollt, „safe center“ verhindert, dass ein höherer Kasten oben abgeschnitten wird. */
 .cst-review {
   position: absolute;
   inset: 0;
   z-index: 4;
   display: grid;
-  place-items: center;
+  justify-items: center;
+  align-items: safe center;
+  overflow-y: auto;
   padding: 24px;
   background: rgba(1, 2, 3, 0.82);
   backdrop-filter: blur(3px);

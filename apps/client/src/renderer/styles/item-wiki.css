@@ -276,20 +276,25 @@
   line-height: 1.28;
   color: var(--text);
   font-weight: 600;
-  overflow-wrap: anywhere;
+  /* claude:2026-10-17T13:55:00+02:00 — `break-word` statt `anywhere` (hier und in allen Wiki-Textregeln
+     unten): erst an Wortgrenzen umbrechen, mitten im Wort nur als Notanker, wenn ein einzelnes Wort
+     breiter als die ganze Zeile ist. `anywhere` machte jedes Zeichen zur Bruchstelle. */
+  overflow-wrap: break-word;
   /* Bei sehr schmaler Spalte (1366px-Fall) reicht reines Wortumbruch nicht mehr für ungebrochene
      deutsche Monster-Komposita ("Aschtyrann") — `hyphens:auto` (mit dem längst pro Sprache
      gesetzten `<html lang>`, s. i18n/index.tsx) trennt sauber an einer Silbengrenze statt mitten
-     im Wort; `overflow-wrap:anywhere` bleibt als Fallback für Sprachen ohne Trennmuster (zh/ru). */
+     im Wort. */
   -webkit-hyphens: auto;
   hyphens: auto;
+  /* claude:2026-10-17T14:20:00+02:00 — nur lange Wörter (>= 10 Zeichen, je 5 pro Teil) trennen: kein „Лат-ные“. */
+  hyphenate-limit-chars: 10 5 5;
 }
 
 .iwk-source-subline {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.35;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 /* Saatgut-Herkunft-Zeile der Anbau-Quelle (Chef-Auftrag 29.08.2026: "woher kriegt man das Saatgut")
@@ -299,7 +304,7 @@
   color: var(--muted);
   font-size: 12px;
   line-height: 1.35;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .iwk-seed-origin-label {
@@ -423,7 +428,7 @@
   font-size: clamp(21px, 2vw, 29px);
   font-weight: 700;
   line-height: 1.18;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .iwk-item-name.rarity-poor      { color: var(--rar-poor); }
@@ -507,7 +512,7 @@
   font-style: italic;
   line-height: 1.5;
   color: var(--muted);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 /* ─── Verwendet-für-Panel: Filter-Chips + 2-spaltiges Knoten-Raster (Mira-Mockup: "flow-uses") ── */
@@ -608,6 +613,8 @@
   color: var(--text);
   -webkit-hyphens: auto;
   hyphens: auto;
+  /* claude:2026-10-17T14:20:00+02:00 — nur lange Wörter (>= 10 Zeichen, je 5 pro Teil) trennen: kein „Лат-ные“. */
+  hyphenate-limit-chars: 10 5 5;
 }
 
 .iwk-use-node-qty {
@@ -652,7 +659,7 @@
 
 .iwk-ribbon-label {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -662,15 +669,17 @@
   font-size: 15px;
   color: var(--text);
   font-weight: 600;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   -webkit-hyphens: auto;
   hyphens: auto;
+  /* claude:2026-10-17T14:20:00+02:00 — nur lange Wörter (>= 10 Zeichen, je 5 pro Teil) trennen: kein „Лат-ные“. */
+  hyphenate-limit-chars: 10 5 5;
 }
 
 .iwk-ribbon-sub {
   color: var(--muted);
   font-size: 12px;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .iwk-ribbon-badge {

@@ -919,12 +919,12 @@
   color: var(--ds-gold-bright, #f0dca0);
 }
 
+/* claude:2026-10-17T13:55:00+02:00 — Auftragsname umbricht an Wortgrenzen statt Ellipse
+   (RU „Разносторонний искатель" verlor die letzten Buchstaben). */
 .quest-strand-row-name {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.25;
 }
 
 .quest-strand-row--claimed .quest-strand-row-name,
@@ -1000,25 +1000,8 @@
   padding: 40px 30px;
 }
 
-/* ─── Responsiv (Chef-Vorgabe): ≤1100px bricht auf gestapelt, Master wird aufklappbare Sektion ─── */
-@media (max-width: 1100px) {
-  .quest-contracts {
-    grid-template-columns: 1fr;
-  }
-  .quest-master-heading {
-    display: none;
-  }
-  .quest-master-toggle {
-    display: flex;
-  }
-  .quest-strand-list {
-    display: none;
-    max-height: 50vh;
-  }
-  .quest-master--open .quest-strand-list {
-    display: flex;
-  }
-}
+/* claude:2026-10-17T11:45:00+02:00 — Der frühere Fenster-Breakpoint (≤1100px gestapelt) lebt jetzt
+   als Container Query der Contract Wall (unten, `@container quests`): maßgeblich ist die Seite. */
 
 /* codex:2026-08-02T01:15:48+02:00 — Produktionslayout 03 „Contract Wall“.
    Große Tafeln verwenden den freigegebenen Ironwood-Bastion-Holzrahmen; innere Karten, Tabs und
@@ -1035,6 +1018,8 @@
 }
 
 .quests-contract-wall {
+  /* claude:2026-10-17T11:45:00+02:00 — Seitenbreite als Bezug; keine fixed-Overlays in der Seite. */
+  container: quests / inline-size;
   height: 100%;
   min-height: 0;
   gap: clamp(7px, 0.52vw, 11px);
@@ -1059,8 +1044,9 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   flex: 0 0 auto;
-  min-height: clamp(82px, 6.6vw, 112px);
-  padding: 4px clamp(9px, 0.72vw, 16px);
+  /* claude:2026-10-17T11:45:00+02:00 — Höhe aus dem Inhalt (64px-Medaillon) statt 82–112px Mindesthöhe. */
+  min-height: 0;
+  padding: var(--sp-1) clamp(9px, 0.72vw, 16px);
   background:
     linear-gradient(90deg, rgba(9, 12, 13, 0.91), rgba(29, 20, 12, 0.78)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
@@ -1075,15 +1061,18 @@
   box-shadow: none;
 }
 
+/* claude:2026-10-17T11:45:00+02:00 — Kompakte Seiten-Begrüßung (npc-greeting.css `--page`), Blase
+   füllt die Kopfzeile; Bronze-Rahmen und Tuchtextur bleiben. */
 .quests-contract-wall .quests-command-header > .npc-greeting .npc-greeting-head {
-  width: clamp(62px, 4.8vw, 88px);
-  height: clamp(62px, 4.8vw, 88px);
-  flex-basis: clamp(62px, 4.8vw, 88px);
+  width: 64px;
+  height: 64px;
+  flex-basis: 64px;
 }
 
 .quests-contract-wall .quests-command-header > .npc-greeting .npc-bubble {
-  max-width: min(68vw, 1120px);
-  min-height: 54px;
+  flex: 1 1 auto;
+  max-width: none;
+  min-height: 0;
 }
 
 .quests-contract-wall .npc-greeting-head {
@@ -1115,6 +1104,16 @@
   border-left: 1px solid rgba(161, 115, 61, 0.46);
 }
 
+/* claude:2026-10-17T11:45:00+02:00 — Tokenbestand bleibt prominent, aber auf Kopfzeilenhöhe. */
+.quests-contract-wall .quests-header .quest-token-badge--lg {
+  padding: var(--sp-1) var(--sp-4);
+}
+
+.quests-contract-wall .quests-header .quest-token-badge--lg .quest-token-badge-icon-img {
+  width: 44px;
+  height: 44px;
+}
+
 .quests-contract-wall .quest-token-badge {
   min-width: clamp(150px, 11vw, 210px);
   border: clamp(8px, 0.56vw, 12px) solid transparent;
@@ -1130,7 +1129,8 @@
   align-items: stretch;
   flex: 0 0 auto;
   gap: clamp(5px, 0.42vw, 9px);
-  min-height: clamp(50px, 3.8vw, 64px);
+  /* claude:2026-10-17T11:45:00+02:00 — flachere Reiterleiste (vorher 50–64px). */
+  min-height: clamp(44px, 3vw, 54px);
   padding: 3px 5px;
   overflow: hidden;
   background: rgba(4, 6, 7, 0.72);
@@ -1196,8 +1196,10 @@
 }
 
 /* Contract Wall: breite zweispaltige Auftragswand links, stabile Detailentscheidung rechts. */
+/* claude:2026-10-17T11:45:00+02:00 — keine 520+430px-Pflichtbreite mehr (sprengte die Seite bei
+   offener Warteschlange); Verhältnis bleibt, Umbau über `@container quests` unten. */
 .quests-contract-wall .quest-contracts {
-  grid-template-columns: minmax(520px, 1.16fr) minmax(430px, 0.84fr);
+  grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.84fr);
   gap: clamp(9px, 0.72vw, 15px);
   align-items: stretch;
   overflow: hidden;
@@ -1228,7 +1230,8 @@
 
 .quests-contract-wall .quest-strand-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* claude:2026-10-17T11:45:00+02:00 — Strangspalten nur, wenn die Liste breit genug ist (je ≥280px). */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   align-content: start;
   gap: 8px;
   flex: 1 1 auto;
@@ -1383,79 +1386,54 @@
   font-variant-numeric: tabular-nums;
 }
 
-@media (min-width: 2500px) {
+/* claude:2026-10-17T11:45:00+02:00 — UI-Fundament: alle Umbrüche der Contract Wall nach SEITENbreite
+   (Container `quests`) statt Fensterbreite. Ersetzt die Fenster-Medias 2500/1180/900px; die frühere
+   900px-Variante (ganze Seite scrollt) entfällt, weil auch die gestapelte Wand im festen Höhenvertrag
+   bleibt: Kopf und Reiter fest, nur die Arbeitsfläche scrollt. */
+@container quests (min-width: 1700px) {
   .quests-contract-wall .quests-content--daily .quests-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .quests-contract-wall .quest-contracts {
-    grid-template-columns: minmax(850px, 1.24fr) minmax(620px, 0.76fr);
+    grid-template-columns: minmax(0, 1.24fr) minmax(620px, 0.76fr);
   }
 }
 
-@media (max-width: 1180px) {
-  .quests-contract-wall .quests-command-header {
-    grid-template-columns: 1fr;
-  }
-
-  .quests-contract-wall .quests-header {
-    display: none;
-  }
-
+@container quests (max-width: 980px) {
   .quests-contract-wall .quests-tabs {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  /* Tages-Countdown bekommt eine eigene Zeile statt zu verschwinden. */
   .quests-contract-wall .daily-reset-countdown {
-    display: none;
-  }
-
-  .quests-contract-wall .quest-contracts {
-    grid-template-columns: minmax(360px, 0.9fr) minmax(420px, 1.1fr);
-  }
-
-  .quests-contract-wall .quest-strand-list {
-    display: flex;
-  }
-
-  .quests-contract-wall .quest-master-heading {
-    display: block;
-  }
-
-  .quests-contract-wall .quest-master-toggle {
-    display: none;
+    grid-column: 1 / -1;
+    justify-content: center;
   }
 }
 
-@media (max-width: 900px) {
-  #root .content-body:has(.quests-contract-wall),
-  #root .page-transition:has(> .quests-contract-wall) {
-    height: auto;
-    overflow: auto;
+/* Mittlere Seite: die Detailbühne (Wächter + Ziele) bekommt den größeren Anteil, die Strangliste
+   fällt auf eine Spalte zurück. */
+@container quests (max-width: 1100px) {
+  .quests-contract-wall .quest-contracts {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   }
+}
 
-  .quests-contract-wall {
-    height: auto;
-    overflow: visible;
-  }
-
+@container quests (max-width: 700px) {
   .quests-contract-wall .quests-tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    overflow: visible;
   }
 
-  .quests-contract-wall .quests-content {
-    min-height: 780px;
-    overflow: visible;
+  .quests-contract-wall .quest-token-badge {
+    min-width: 0;
   }
 
+  /* Gestapelt: Strangliste wird zur aufklappbaren Sektion (vorhandener Master-Umschalter),
+     die Detailbühne füllt den Rest und scrollt selbst. */
   .quests-contract-wall .quest-contracts {
-    grid-template-columns: 1fr;
-    overflow: visible;
-  }
-
-  .quests-contract-wall .quest-master {
-    max-height: 340px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   .quests-contract-wall .quest-master-heading {
@@ -1470,7 +1448,11 @@
     display: none;
   }
 
+  .quests-contract-wall .quest-master--open .quest-strand-list {
+    max-height: 260px;
+  }
+
   .quests-contract-wall .quests-content--daily .quests-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -210,7 +210,9 @@ export function MailPage(): JSX.Element {
       {notice && <div className="mail-notice" role="status">{notice}</div>}
       <div className="mail-page-actions">
         <div>
-          <span className="mail-list-title">{t("mail.list.title")}</span>
+          {/* claude:2026-10-17T13:10:00+02:00 — Titel nur ohne Liste; sonst stand „Postfach“ doppelt
+              (hier + Listenkopf direkt darunter). */}
+          {mailbox.length === 0 && <span className="mail-list-title">{t("mail.list.title")}</span>}
           <span className="mail-page-actions-note">{t("mail.transfer.pageNote")}</span>
         </div>
         <button type="button" className="shop-citadel-btn" onClick={() => setTransferOpen(true)}>

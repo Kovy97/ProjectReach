@@ -609,12 +609,15 @@
   color: var(--danger, #a85a52);
 }
 
+/* claude:2026-10-17T12:30:00+02:00 — kein nowrap mehr: „Можно изготовить: 12× · 340 на подходе"
+   lief in der festen Statusplatte (gravewood-actioncards.css) aus dem Rahmen. Umbruch nur an
+   Wortgrenzen; Größe/Zeilenhöhe der Platte regelt gravewood-actioncards.css. */
 .craftable {
   /* sitzt rechts neben den Mat-Chips in derselben Zeile, gleich hoch (Parent: align-items stretch). */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  white-space: nowrap;
+  text-align: center;
   padding: clamp(3px, 0.71cqw, 4px) clamp(8px, 2.5cqw, 14px);
   font-size: clamp(13px, 3.21cqw, 18px);
   font-weight: 700;
@@ -901,7 +904,9 @@
    Mastery Page v2
    ═══════════════════════════════════════════════════════════════════ */
 
+/* claude:2026-10-17T12:30:00+02:00 — Seitenbreite als Bezug für Kopf-/Zeilenumbrüche (kein fixed-Overlay). */
 .ms2-page {
+  container: mastery / inline-size;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1082,12 +1087,16 @@
   overflow: hidden;
 }
 
+/* claude:2026-10-17T12:30:00+02:00 — Kopf bricht um: Pool + Stufe rutschen in eine Folgezeile,
+   statt Leiste und Perks auf 60px zu quetschen (32px-Skillname bleibt). */
 .ms2-skill-hdr {
+  position: relative;
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
-  padding: 15px 20px;
+  gap: 10px 14px;
+  padding: 15px 44px 15px 20px;
   background: none;
   border: none;
   color: var(--text);
@@ -1173,23 +1182,22 @@
   flex-direction: column;
   align-items: stretch;
   gap: 2px;
-  flex: 1;
+  flex: 1 1 340px;
   min-width: 0;
 }
 
 .ms2-skill-pool-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 7px;
+  gap: 4px 7px;
   min-width: 0;
 }
 
+/* claude:2026-10-17T12:30:00+02:00 — nächster Checkpoint vollständig (vorher einzeilig gekürzt). */
 .ms2-pool-next {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .ms2-skill-pool-label {
@@ -1203,7 +1211,7 @@
 
 .ms2-pool-bar {
   position: relative;
-  flex: 1;
+  flex: 1 1 120px;
   height: 10px;
   background: url("../assets/ui/citadel/action-bar/xp_bar_empty.webp") repeat-x left center / auto 100%;
   border-style: solid;
@@ -1259,7 +1267,12 @@
   flex-shrink: 0;
 }
 
+/* claude:2026-10-17T13:45:00+02:00 — Chevron fest am rechten Rand, damit er beim Umbruch des
+   Kopfes nicht allein in eine eigene Zeile rutscht. */
 .ms2-chevron {
+  position: absolute;
+  top: calc(50% - 0.6em);
+  right: 18px;
   font-size: 14px;
   color: var(--muted);
   flex-shrink: 0;
@@ -1280,9 +1293,18 @@
 
 .ms2-action-row {
   display: grid;
-  grid-template-columns: minmax(160px, 1.4fr) auto minmax(90px, 1fr) auto;
+  grid-template-columns: minmax(0, 1.4fr) auto minmax(90px, 1fr) auto;
   align-items: center;
   gap: 14px;
+}
+
+/* claude:2026-10-17T12:30:00+02:00 — schmale Seite: Name + Rang oben, Leiste + Boni darunter
+   (Zweispalten-Raster, die vier Kinder fließen paarweise), statt Name auf ~160px zu kürzen. */
+@container mastery (max-width: 760px) {
+  .ms2-action-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 4px;
+  }
 }
 
 .ms2-action-row.ms2-maxed .ms2-action-lvl {
@@ -1290,12 +1312,12 @@
 }
 
 /* Schrift in den Kategorien ~doppelt so groß (Chef-Wunsch). */
+/* claude:2026-10-17T12:30:00+02:00 — Aktionsname vollständig, Umbruch an Wortgrenzen statt Ellipse. */
 .ms2-action-name {
+  min-width: 0;
   font-size: 28px;
   font-variant: small-caps;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.15;
 }
 
 .ms2-action-lvl {
@@ -1339,7 +1361,8 @@
 
 .ms2-action-perks {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   justify-content: flex-end;
   white-space: nowrap;
   font-size: 22px;
@@ -1855,7 +1878,7 @@ button.skilloverview-card {
   overflow: hidden;
   /* Selbst-Audit 2026-07-09: lange EINZELWÖRTER (Juwelierskunst…) clippten horizontal im
      2-Zeilen-Clamp — anywhere/hyphens lässt sie umbrechen statt stumm abzuschneiden. */
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
   hyphens: auto;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -2070,22 +2093,12 @@ button.skilloverview-card {
 }
 
 /* ─── Plot grid ─────────────────────────────────────────── */
+/* claude:2026-10-17T12:30:00+02:00 — Beetspalten nach tatsächlicher Fläche (höchstens 3, je ≥260px)
+   statt nach Fensterbreite (900/600px-Medias entfallen). */
 .farm-plots {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(260px, calc((100% - 32px) / 3))), 1fr));
   gap: 16px;
-}
-
-@media (max-width: 900px) {
-  .farm-plots {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .farm-plots {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ─── Plot card — wooden 9-slice frame + dark texture ────── */
@@ -2575,7 +2588,7 @@ button.skilloverview-card {
   flex: 1 1 auto;
   min-width: 0;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 .plot-next-clear {
   flex: 0 0 auto;
@@ -2598,7 +2611,7 @@ button.skilloverview-card {
   font-size: 13.5px;
   line-height: 1.35;
   color: #d8a24a;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* claude:2026-10-17T13:15:00+02:00 — war anywhere (Bruch mitten im Wort); jetzt nur Notbruch */
 }
 .plot-next-switch {
   margin-top: 0;
@@ -2675,11 +2688,14 @@ button.skilloverview-card {
 }
 
 /* ── Name + level badge on top ── */
+/* claude:2026-10-17T12:30:00+02:00 — Saatname umbricht; reicht die Breite nicht für Name + Stufe,
+   rutscht die Stufe in die nächste Zeile statt den Namen zu kürzen. */
 .farm-cat-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 4px 8px;
   padding: 10px 14px 8px;
   border-bottom: 1px solid var(--border);
   min-height: 48px;
@@ -2690,13 +2706,8 @@ button.skilloverview-card {
   font-size: 16px;
   color: #9a8060;
   line-height: 1.2;
-  flex: 1;
-  /* Sweep6-T9: hard-clip ohne Ellipsis → sauberes Kürzen (min-width:0 nötig,
-     sonst floort Flex die Content-Breite nie unter min-content). */
+  flex: 1 1 7em;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .farm-cat-lvl {

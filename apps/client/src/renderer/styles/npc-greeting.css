@@ -19,6 +19,57 @@
   animation: npc-greeting-in 200ms ease-out both;
 }
 
+/* claude:2026-10-17T11:20:00+02:00 — UI-Fundament: die Seiten-Begrüßung (NpcGreeting,
+   Modifier `--page`) kostete ≈110px Höhe auf jeder Seite. Jetzt 64px-Medaillon (Holzrahmen und
+   Textur bleiben), Name und Zeile in EINER Flusszeile; erst bei schmaler Blase bricht die Zeile
+   unter den Namen. Chronik-Bühne und Guide-Sprechblase tragen die Klasse nicht und bleiben groß. */
+.npc-greeting--page {
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+
+.npc-greeting--page .npc-greeting-head {
+  width: 64px;
+  height: 64px;
+  border-width: 5px;
+}
+
+.npc-greeting--page .npc-bubble {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  align-content: center;
+  column-gap: var(--sp-3);
+  row-gap: 2px;
+  max-width: 920px;
+  min-height: 0;
+  padding: 7px 16px;
+}
+
+.npc-greeting--page .npc-bubble-name {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+
+.npc-greeting--page .npc-bubble-text {
+  flex: 1 1 18em;
+  min-width: 0;
+  font-size: var(--fs-md);
+  line-height: 1.35;
+}
+
+.npc-greeting--page .npc-bubble--tail-left::before,
+.npc-greeting--page .npc-bubble--tail-left::after {
+  top: calc(50% - 8px);
+}
+
+.npc-greeting--page .npc-bubble--tail-left::after {
+  top: calc(50% - 7px);
+}
+
 @keyframes npc-greeting-in {
   from {
     opacity: 0;

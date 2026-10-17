@@ -495,7 +495,11 @@ export function BankPage(): JSX.Element {
       {/* codex:2026-08-01T18:37:00+02:00 — Vault-Ledger-Kopf: Voss und Kapazität teilen sich
           eine kompakte, responsive Kopfzeile, damit die eigentlichen Lagerlisten die verfügbare
           Seitenhöhe erhalten und die Bankseite keinen eigenen Seiten-Scroll benötigt. */}
-      <div className="bank-ledger-intro">
+      {/* claude:2026-10-17T12:05:00+02:00 — .bank-sheet ist der Query-Container („bank“), .bank-ledger
+          EIN Raster darin: Voss, Einleitung, Ausbau, Filterleiste, Hinweise und Spalten ordnen sich
+          nach der Panelbreite (pages.css). Tour/Modal bleiben außerhalb, weil sie position:fixed nutzen. */}
+      <div className="bank-sheet">
+      <div className="bank-ledger">
         <NpcGreeting
           portraitSrc={getPortrait("npc_voss")}
           name={t("npc.bank.name")}
@@ -508,33 +512,17 @@ export function BankPage(): JSX.Element {
               : null
           }
         />
+        {/* claude:2026-10-17T12:05:00+02:00 — Belegungszähler stand doppelt (hier + Lager-Spaltenkopf
+            mit identischem Tooltip); er bleibt nur am Lager-Spaltenkopf. */}
         <div className="bank-head">
           <span className="muted">{t("bank.intro")}</span>
-          <span className="bank-head-right">
-            {bankCampSlots > 0 ? (
-              <HoverTip
-                as="span"
-                content={<div className="ct-tip-desc"><CampBoostNote kind="bankSlots" value={bankCampSlots} t={t} /></div>}
-              >
-                <span className={`bank-count${full ? " full" : ""}`}>
-                  {t("bank.slots").replace("{used}", String(used)).replace("{max}", String(bankCap))}
-                </span>
-              </HoverTip>
-            ) : (
-              <span className={`bank-count${full ? " full" : ""}`}>
-                {t("bank.slots").replace("{used}", String(used)).replace("{max}", String(bankCap))}
-              </span>
-            )}
-          </span>
         </div>
-      </div>
 
       {/* ── Such-/Typ-Filter + Sortierung — EINE Kopfzeile für beide Spalten (1034 Items im Spiel,
           Endgame braucht Navigation). Reine Anzeige: filtert/sortiert nur die Darstellung, die
           Bank bleibt ein Record (kein State-Write). ── */}
       {/* codex:2026-08-01T18:37:00+02:00 — Vault-Ledger-Kommandoleiste: Suche/Filter/Sortierung
           und Kapazitätsausbau liegen in EINER flachen Zeile, statt vier Höhenblöcke zu verbrauchen. */}
-      <div className="bank-ledger-command">
         <div className="bank-filter-row">
           <ItemFilterBar
             search={search}
@@ -592,9 +580,10 @@ export function BankPage(): JSX.Element {
           </button>
         </div>
 
-        {full && <p className="bank-full-note">{t("bank.full")}</p>}
-        <p className="bank-hint muted">{t("bank.shiftHint")}</p>
-      </div>
+        <div className="bank-notes">
+          {full && <p className="bank-full-note">{t("bank.full")}</p>}
+          <p className="bank-hint muted">{t("bank.shiftHint")}</p>
+        </div>
 
       <div className="bank-columns" data-guide-id="bank.columns">
         {/* ── Inventar (links) — Slot-Raster, Einzahlen via Slot-Tooltip ── */}
@@ -837,6 +826,8 @@ export function BankPage(): JSX.Element {
             })}
           </div>
         </section>
+      </div>
+      </div>
       </div>
 
       {qtyModal && (

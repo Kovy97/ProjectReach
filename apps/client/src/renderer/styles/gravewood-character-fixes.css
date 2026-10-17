@@ -14,93 +14,82 @@
   flex: 1 1 0;
   min-height: 0;
   max-height: 100%;
-  border-width: 14px;
-  border-image-width: 14px;
 }
 
 #root .cs-tabbar {
   padding-top: 8px;
 }
 
-@media (min-width: 901px) {
-  /* codex:2026-07-30T23:48:41+02:00 — Equipment erhält mehr horizontale Luft, ohne das große Inventar unnötig zu beschneiden. */
-  #root .cs-layout {
-    grid-template-columns: 0.98fr 1.28fr 1.54fr;
-  }
-}
+/* codex:2026-07-30T23:48:41+02:00 — Equipment erhält mehr horizontale Luft, ohne das große Inventar unnötig zu beschneiden.
+   claude:2026-10-17T12:30:00+02:00 — Spaltenverhältnis steht jetzt direkt am Raster `.cs-grid`
+   (character.css, nach Panelbreite); der frühere Fenster-Breakpoint hier ist entfallen. */
 
 /* codex:2026-07-31T22:14:00+02:00 — Character, Equipment/Stats und Inventory bilden ein einziges
-   Drei-Spalten-Set. Alle drei sichtbaren Owner verwenden denselben 18-px-Ironwood-Rahmenvertrag. */
-#root .cs-layout > .cs-col-left,
+   Drei-Spalten-Set. Alle drei sichtbaren Owner verwenden denselben 18-px-Ironwood-Rahmenvertrag.
+   claude:2026-10-17T12:30:00+02:00 — Selektor folgt dem neuen Raster `.cs-grid`; Rahmen und
+   Material unverändert. Die `!important` sind entfallen: die #root-Kette (1,2,0) schlägt
+   `.ds-frame` und die character.css-Basisregeln ohnehin, und der frühere 14-px-Gegenspieler
+   für den Mittel-Owner steht nicht mehr in dieser Datei. */
+#root .cs-grid > .cs-col-left,
 #root .cs-col-mid-stack > .cs-col-tabpanel,
-#root .cs-layout > .cs-col-right {
+#root .cs-grid > .cs-col-right {
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
   border-style: solid;
   border-color: transparent;
-  border-width: 11px !important;
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") !important;
-  border-image-slice: 28 !important;
+  border-width: 11px;
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28;
   border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0 !important;
-  border-image-repeat: stretch !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-/* codex:2026-08-01T12:47:00+02:00 — Die übergroße Lederfläche im gemeinsamen Equipment-/Stats-
-   Owner wird durch ruhigen Schiefer ersetzt. Ein warmer Lichtsaum hält die Verbindung zu Rahmen
-   und Tabs, ohne Statwerte oder Slot-Silhouetten zu verschlucken. */
-#root .cs-col-mid-stack > .cs-col-tabpanel {
-  background-color: #111518 !important;
-  background-image:
-    radial-gradient(ellipse at 50% 14%, rgba(126, 79, 38, 0.12), transparent 58%),
-    linear-gradient(rgba(5, 8, 10, 0.28), rgba(5, 7, 9, 0.46)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") !important;
-  background-position: center, center, 0 0 !important;
-  background-size: auto, auto, 256px 256px !important;
-  background-repeat: no-repeat, no-repeat, repeat !important;
-  background-origin: border-box !important;
-  background-clip: border-box !important;
-}
-
-#root .cs-col-mid-stack > .cs-col-tabpanel {
-  flex: 1 1 0;
-  max-height: 100%;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* codex:2026-08-01T13:52:00+02:00 — Pro Character-Spalte existiert genau ein Background-Owner.
    Equipment/Stats teilen nun warmes, dicht gewebtes Umber-Canvas statt der tatsächlich zuletzt
-   gewinnenden Lederdatei. Die ruhige Kachel gibt Slots Halt, ohne selbst wie Ausrüstung zu wirken. */
+   gewinnenden Lederdatei. Die ruhige Kachel gibt Slots Halt, ohne selbst wie Ausrüstung zu wirken.
+   claude:2026-10-17T12:30:00+02:00 — der davor stehende, vollständig überschriebene Schiefer-Block
+   (codex 2026-08-01T12:47) ist gelöscht; sichtbar war immer nur dieses Umber-Canvas. */
 #root .cs-col-mid-stack > .cs-col-tabpanel {
-  background-color: #130e0a !important;
+  background-color: #130e0a;
   background-image:
     radial-gradient(ellipse at 50% 10%, rgba(151, 91, 40, 0.13), transparent 58%),
     linear-gradient(rgba(8, 5, 3, 0.28), rgba(4, 3, 2, 0.5)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") !important;
-  background-position: center, center, 0 0 !important;
-  background-size: auto, auto, 256px 256px !important;
-  background-repeat: no-repeat, no-repeat, repeat !important;
-  background-origin: border-box !important;
-  background-clip: border-box !important;
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 256px 256px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
 }
 
 #root .cs-col-mid-stack .cs-tabpanel-content,
 #root .cs-col-mid-stack .cs-col-mid,
 #root .cs-col-mid-stack .cs-col-stats {
-  background-color: transparent !important;
-  background-image: none !important;
+  background-color: transparent;
+  background-image: none;
 }
 
-#root .cs-layout > .cs-col-right {
-  background-color: #160f0a !important;
+#root .cs-grid > .cs-col-right {
+  background-color: #160f0a;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-    url("../assets/bagpack_background.webp") !important;
-  background-position: center, center !important;
-  background-size: 100% 100%, 100% 100% !important;
-  background-repeat: no-repeat !important;
-  background-origin: border-box !important;
-  background-clip: border-box !important;
+    url("../assets/bagpack_background.webp");
+  background-position: center, center;
+  background-size: 100% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+/* claude:2026-10-17T15:10:00+02:00 — Liegt das Inventar in der Ein-Spalten-Stufe quer über die
+   volle Breite (@container cs-page in character.css), würde die gestreckte Tasche verzerren: dort
+   füllt sie die Fläche proportional (cover) — dieselbe Tasche, nur unverzerrt. */
+@container cs-page (max-width: 699px) {
+  #root .cs-grid > .cs-col-right {
+    background-size: 100% 100%, cover;
+  }
 }

@@ -1,14 +1,16 @@
 /* codex:2026-08-03T19:02:00+02:00 — Chef-Auswahl 02 „Warden Ledger“: produktive, vollständig
    auf die Achievement-Seite begrenzte Layoutschicht. Engine- und Persistenzdaten bleiben unberührt. */
 
+/* claude:2026-10-17T12:50:00+02:00 — Seite ist Query-Container „achv“ (keine fixed-Elemente darin);
+   Spaltenbreiten und Umbruchstufen hängen an der Panelbreite statt am Fenster. */
 .achv-page--warden {
   --achv-ledger-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
   --achv-ledger-cloth: url("../assets/ui/gravewood/textures/texture-umber-cloth.webp");
   --achv-ledger-stone: url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
+  container: achv / inline-size;
   gap: clamp(8px, 0.7vw, 12px);
   height: 100%;
   min-height: 0;
-  overflow: hidden;
 }
 
 /* ui-dev 2026-08-03 (QA K2): `.achv-ledger-shell` rechnete bislang mit einer geschätzten
@@ -17,11 +19,9 @@
    passte nur zufällig zu einer bestimmten TopBar-Höhe) → bei 1920×1080 ragte die Arbeitsfläche
    unter die Falz. Fix: derselbe erprobte Höhen-Vertrag wie `.bank-page`/`.combat-page`
    (topbar.css .page-transition:has, pages.css .bank-page) — echte Pixelhöhe per Flex-Kette statt
-   vh-Schätzung, reagiert automatisch korrekt auf jede TopBar-Höhe und jede Auflösung. */
-.content-body:has(.achv-page--warden) {
-  overflow-y: hidden;
-}
-
+   vh-Schätzung, reagiert automatisch korrekt auf jede TopBar-Höhe und jede Auflösung.
+   claude:2026-10-17T12:50:00+02:00 — `.content-body` darf wieder scrollen: das Ledger hat eine
+   Mindesthöhe (380 px); ist das Fenster niedriger, scrollt die Seite statt die Spalten zu quetschen. */
 .page-transition:has(> .achv-page--warden) {
   height: 100%;
   min-height: 0;
@@ -65,11 +65,35 @@
 }
 
 .achv-page--warden .achv-hero-sub {
-  font-size: clamp(11px, 0.76vw, 13px);
+  font-size: clamp(12px, 0.76vw, 13px);
+}
+
+/* claude:2026-10-17T12:50:00+02:00 — Ring-Beschriftung neben den Ring statt darunter: flachere Bilanzleiste. */
+.achv-page--warden .achv-hero-ring {
+  flex-direction: row;
+  gap: 8px;
+}
+
+.achv-page--warden .achv-hero-ring-label {
+  max-width: 10em;
+  white-space: normal;
+  text-align: left;
+  font-size: var(--fs-xs);
+  line-height: 1.25;
+}
+
+.achv-page--warden .achv-hero-ap-label {
+  font-size: var(--fs-xs);
 }
 
 .achv-page--warden .achv-hero-bar-row {
   margin-top: 3px;
+}
+
+/* claude:2026-10-17T14:30:00+02:00 — schmalere Mindestbreite des Balkens, damit „107 / 321“ bei
+   schmalem Panel nicht über die Trennlinie der Bilanzleiste ragt. */
+.achv-page--warden .achv-hero-bar-track {
+  min-width: 80px;
 }
 
 .achv-page--warden .achv-hero-stats {
@@ -85,12 +109,14 @@
    virtualisierungsfreundliche Liste und permanentes Detailblatt teilen dieselbe Fensterhöhe. */
 .achv-ledger-shell {
   display: grid;
-  grid-template-columns: clamp(196px, 14vw, 244px) minmax(390px, 1fr) clamp(300px, 22vw, 382px);
+  /* claude:2026-10-17T12:50:00+02:00 — Spuren aus der Panelbreite (cqi); vorher 196+390+300 px
+     Mindestsumme ≈ 906 px bei 1366 px Fenster. Die Liste darf schrumpfen, Register/Detail haben Untergrenzen. */
+  grid-template-columns: clamp(214px, 19cqi, 260px) minmax(0, 1fr) clamp(270px, 25cqi, 382px);
   flex: 1 1 auto;
   /* ui-dev 2026-08-03 (QA K2): keine feste/vh-basierte Höhe mehr — der Flex-Elternvertrag oben
      (.achv-page--warden height:100%) liefert bereits die exakte verfügbare Pixelhöhe; die drei
      Spalten (Rail/Main/Detail) scrollen wie zuvor intern (eigenes overflow-y:auto je Spalte). */
-  min-height: 0;
+  min-height: 380px;
   overflow: hidden;
   border-style: solid;
   border-color: transparent;
@@ -123,28 +149,27 @@
     var(--achv-ledger-cloth) center / 256px 256px repeat;
 }
 
+/* claude:2026-10-17T12:50:00+02:00 — Filterknöpfe als umbrechende Reihe statt drei starrer Drittel:
+   ein langes Wort („Freigeschaltet“, „Открытые“) bekommt seine Breite, der Rest rückt in die
+   Folgezeile. Vorher Silbentrennung „FREIGE-SCHAL-TET“ bei 9–11 px. */
 .achv-ledger-filter-group {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(183, 128, 61, 0.26);
 }
 
 .achv-page--warden .achv-filter-btn {
+  flex: 1 1 auto;
   min-width: 0;
-  padding: 7px 4px;
+  padding: 7px 6px;
+  letter-spacing: 0.02em;
   border: 1px solid rgba(133, 97, 53, 0.35);
-  font-size: clamp(9px, 0.6vw, 11px);
-  /* ui-dev 2026-08-03 (QA K3): lange, spacelose Labels ohne natürlichen Umbruchpunkt
-     (DE „Freigeschaltet", RU „Открытые" etc.) liefen bislang über die 1fr-Spaltenbreite hinaus
-     ins Nachbarfeld (kein `white-space:nowrap` gesetzt, aber auch kein Umbruch-Vertrag — der
-     Browser kann ein einzelnes langes Wort ohne overflow-wrap nicht brechen). Gleicher Vertrag
-     wie die Ledger-Überschrift weiter unten (`hyphens: auto`, dort schon erprobt) + break-word
-     als Sicherheitsnetz, falls die Chromium-Silbentrennung für eine Sprache mal nicht greift. */
-  overflow-wrap: break-word;
-  hyphens: auto;
+  font-size: var(--fs-xs);
   line-height: 1.18;
   text-align: center;
+  white-space: nowrap;
 }
 
 .achv-ledger-categories {
@@ -166,7 +191,7 @@
   background: transparent;
   color: #a9b1b6;
   font-family: var(--font-head);
-  font-size: clamp(11px, 0.72vw, 13px);
+  font-size: clamp(12px, 0.72vw, 13px);
   text-align: left;
   cursor: pointer;
 }
@@ -198,7 +223,7 @@
 .achv-ledger-cat strong {
   color: #87939a;
   font-family: Arial, sans-serif;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -269,7 +294,7 @@
 }
 
 .achv-page--warden .achv-almost-title {
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .achv-page--warden .achv-almost-row {
@@ -287,7 +312,7 @@
 }
 
 .achv-page--warden .achv-almost-name {
-  font-size: clamp(10px, 0.68vw, 12px);
+  font-size: var(--fs-xs);
 }
 
 .achv-ledger-list {
@@ -372,7 +397,7 @@
 
 .achv-page--warden .achv-desc {
   margin: 0;
-  font-size: clamp(11px, 0.7vw, 13px);
+  font-size: clamp(12px, 0.7vw, 13px);
   line-height: 1.3;
   overflow: hidden;
   display: -webkit-box;
@@ -460,6 +485,8 @@
   line-height: 1.15;
   text-align: center;
   hyphens: auto;
+  /* claude:2026-10-17T14:20:00+02:00 — nur lange Wörter (>= 10 Zeichen, je 5 pro Teil) trennen: kein „Лат-ные“. */
+  hyphenate-limit-chars: 10 5 5;
 }
 
 .achv-ledger-detail-plaque > .achv-badge {
@@ -515,16 +542,10 @@
 }
 
 /* codex:2026-08-03T19:02:00+02:00 — Responsiver Vertrag: bei mittleren Breiten schrumpft das
-   Register; erst unter 1080 px wandert das Detailblatt unter die Liste statt abgeschnitten zu werden. */
-@media (max-width: 1320px) {
-  .achv-ledger-shell {
-    grid-template-columns: 190px minmax(360px, 1fr) 290px;
-  }
-
-  .achv-ledger-cat {
-    font-size: 11px;
-  }
-
+   Register; erst unter 1080 px wandert das Detailblatt unter die Liste statt abgeschnitten zu werden.
+   claude:2026-10-17T12:50:00+02:00 — Stufen an der Panelbreite (@container achv) statt am Fenster:
+   ≥ 860 px drei Spalten · 600–859 Register | Liste, Detailblatt darunter · < 600 alles untereinander. */
+@container achv (max-width: 1239px) {
   .achv-page--warden .achv-almost-row {
     grid-template-columns: 1fr;
   }
@@ -534,41 +555,27 @@
   }
 }
 
-@media (max-width: 1080px) {
-  /* ui-dev 2026-08-03 (QA K2 follow-up): unter dieser Breite verlässt `.achv-ledger-shell`
-     bewusst den festen Höhen-Vertrag zugunsten normalem Seiten-Scroll (s. Regeln unten) — die
-     neue `.achv-page--warden`/`.content-body`-Höhen-/Overflow-Kette von weiter oben muss hier
-     also mitkippen, sonst würde `overflow:hidden` den jetzt wieder wachsenden Inhalt abschneiden. */
-  .achv-page--warden {
-    height: auto;
-    overflow: visible;
-  }
-
-  .content-body:has(.achv-page--warden) {
-    overflow-y: auto;
-  }
-
+@container achv (max-width: 859px) {
   .achv-page--warden .achv-hero-sub,
   .achv-page--warden .achv-hero-ring-label {
     display: none;
   }
 
   .achv-ledger-shell {
-    grid-template-columns: 184px minmax(350px, 1fr);
-    height: auto;
-    min-height: 680px;
+    grid-template-columns: clamp(214px, 28cqi, 240px) minmax(0, 1fr);
+    grid-template-rows: minmax(360px, 1fr) auto;
+    flex: 0 0 auto;
     overflow: visible;
   }
 
   .achv-ledger-main,
   .achv-ledger-rail {
-    min-height: 680px;
-    max-height: 780px;
+    max-height: 640px;
   }
 
   .achv-ledger-detail {
     grid-column: 1 / -1;
-    max-height: 440px;
+    overflow: visible;
     border-top: 1px solid rgba(183, 128, 61, 0.38);
     border-left: 0;
   }
@@ -578,7 +585,7 @@
   }
 }
 
-@media (max-width: 720px) {
+@container achv (max-width: 599px) {
   .achv-page--warden .achv-hero {
     flex-wrap: wrap;
   }
@@ -610,7 +617,7 @@
   }
 
   .achv-ledger-main {
-    min-height: 620px;
+    min-height: 480px;
     max-height: none;
   }
 }

@@ -1,5 +1,14 @@
 # Codex-Arbeitslog
 
+## 2026-10-17 — Claude: UI-Fundament (Test-Branch), Spielerberichte, 1.3-Sammelliste
+
+<!-- claude:2026-10-17T16:40:00+02:00 -->
+
+- Bestandsaufnahme gerendert (de/en/ru, 1366×768 + 1920×1080); Befunde: Kopf 42 % Höhe, Wortbrüche, Fenster- statt Panel-Breakpoints, CSS-Override-Schichten.
+- Branch `test-ui-fundament`, Basis-Commit `373236a`; vier Agenten nach `design/ui-fundament/BRIEF.md`; Integration, Chef-Entscheide (Slayer-Kopf zurück, Stopp-Knopf, `.muted` 19 px bleibt, Charakter-Schwelle 700 px).
+- Prüfungen: Typecheck 5/5, Client-Vitest 241/241, Save-Vault 42/42, Build grün, Clip-Audit final 0 Layout-Funde.
+- Krypta-Erfolg: Fix `053d4c9` nie hochgeladen (letzter Upload 1.2.3 am 31.08. 14:19) — per Engine-Lauf mit Save 86 verifiziert. Ward Leech analysiert (stapelt nicht, stilles Log, `{pct}`). Beides in `design/plan-1.3.md`.
+
 ## 2026-09-10 — Navigation nach Chefkritik, RU-/Seitenanalyse, direkter Electron-Versuch
 
 <!-- codex:2026-09-10T11:34:00+02:00 -->

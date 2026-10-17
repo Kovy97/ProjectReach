@@ -79,84 +79,9 @@ body:active :is(input[type="button"], input[type="submit"], input[type="reset"])
   border-image-source: url("../assets/ui/gravewood/scrollbars/scrollbar-handle-pressed.webp") !important;
 }
 
-/* codex:2026-07-30T23:12:13+02:00 — ausschließlich die beiden Topbar-Fortschrittsleisten: höher, glatt und ohne Segmentverformung. */
-/* Chef-Auftrag 25.08.2026: war Platz-Reserve für die zwei Segment-Leisten UNTER der Row
-   (`#root .content-header-progress`, jetzt entfernt) — die Leisten stecken jetzt IM breiteren
-   Doing-Kasten (topbar.css .gamestats-row--activity), padding-bottom braucht daher nur noch
-   normalen Rand. Diese Deklaration gewinnt gegen topbar.css' eigene .content-header-Regel (exakt
-   gleiche Spezifität `#root .content-header...`, hier aber SPÄTER importiert) — beide synchron
-   halten, s. Kommentar dort. */
-#root .content-header {
-  padding-bottom: calc(9px * var(--tb-scale));
-  min-height: calc(60px * var(--tb-scale));
-}
-
-#root .tb-bar {
-  height: calc(16px * var(--tb-scale));
-  min-height: calc(16px * var(--tb-scale));
-  border: 1px solid rgba(150, 107, 55, 0.72);
-  border-image: none;
-  border-radius: 2px;
-  background-color: #0b0c0e;
-  background-image: var(--gw-control-surface);
-  background-position: left center;
-  background-size: 256px 256px;
-  background-repeat: repeat;
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.82),
-    0 1px 0 rgba(218, 166, 89, 0.12);
-}
-
-#root .tb-bar-track-bg {
-  background: transparent;
-}
-
-#root .tb-bar-fill {
-  top: 2px;
-  bottom: 2px;
-  border: 0;
-  border-image: none;
-  border-radius: 1px;
-  background: linear-gradient(90deg, #3e2c17, #9c6f2c 62%, #d5aa52);
-  /* codex:2026-07-31T00:32:37+02:00 — Transform statt permanent überlappender
-     clip-path-Paints; 80 ms beendet die Bewegung vor dem nächsten 10-Hz-Update. */
-  transform-origin: left center;
-  will-change: transform;
-  transition: transform 80ms linear;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 231, 172, 0.2),
-    0 0 4px rgba(183, 124, 44, 0.24);
-}
-
-#root .tb-bar--action .tb-bar-fill {
-  background: linear-gradient(90deg, #554019, #b3912e 60%, #ddc15a);
-  filter: none;
-}
-
-#root .tb-bar--level .tb-bar-fill {
-  background: linear-gradient(90deg, #2d2849, #58478d 60%, #8973c4);
-}
-
-#root .tb-bar-gloss {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 48%, rgba(0, 0, 0, 0.18));
-  opacity: 0.72;
-}
-
-#root .tb-bar-frame-row {
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0,
-    transparent calc(10% - 1px),
-    rgba(177, 129, 69, 0.38) calc(10% - 1px),
-    rgba(177, 129, 69, 0.38) 10%
-  );
-}
-
-#root .tb-bar-frame-seg {
-  border: 0;
-  border-image: none;
-  background: transparent;
-}
+/* claude:2026-10-17T12:20:00+02:00 — Die Topbar-Fortschrittsleisten (#root .tb-bar*) und die
+   .content-header-Reserve sind entfallen: ihre Nachfolger (.hs-bar, .hs-strip) stehen in chrome.css
+   und nutzen weiter --gw-control-surface von oben als Track-Material. */
 
 /* codex:2026-07-30T23:12:13+02:00 — Character-Equipment und Inventar verwenden leer wie belegt dieselbe fertige Slotgrafik. */
 #root :is(.inv-slot, .cs-slot, .cs-bag-slot) {
@@ -176,24 +101,4 @@ body:active :is(input[type="button"], input[type="submit"], input[type="reset"])
 #root :is(.inv-slot, .cs-slot, .cs-bag-slot) .item-cell[class*="rarity-"] {
   border: 0 !important;
   outline: 0 !important;
-}
-
-@media (max-width: 1024px) {
-  /* Chef-Auftrag 25.08.2026: kein Progressbereich mehr unter der Row zu reservieren (s.o.). */
-  #root .content-header {
-    padding-bottom: calc(8px * var(--tb-scale));
-    min-height: calc(52px * var(--tb-scale));
-  }
-
-  #root .tb-bar {
-    height: calc(13px * var(--tb-scale));
-    min-height: calc(13px * var(--tb-scale));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* codex:2026-07-30T23:12:13+02:00 — ruhiger Systemmodus ohne Fortschrittsinterpolation. */
-  #root .tb-bar-fill {
-    transition: none;
-  }
 }

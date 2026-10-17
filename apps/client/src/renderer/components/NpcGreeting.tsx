@@ -6,7 +6,7 @@ import "../styles/npc-greeting.css";
  * NPC-Begrüßungs-Baustein („Speaking Head", Chef-GO 2026-07-13): Kopf-Medaillon im
  * Holzrahmen + Sprechblase mit einer kurzen Flavor-Zeile, oben auf einer Seite —
  * die Welt soll bewohnt wirken. Reine Atmosphäre: keine Interaktion, kein Modal;
- * kostet bewusst ~80px Seitenhöhe, der Inhalt rückt darunter.
+ * kostet seit dem UI-Fundament (17.10.2026) nur noch ~64px Seitenhöhe, der Inhalt rückt darunter.
  *
  * Porträts sind vorerst PLATZHALTER (überall Brenna, s. Chef-Vorgabe) — Kopf, Name
  * und Texte kommen komplett über Props, der spätere Tausch pro NPC ist eine reine
@@ -55,16 +55,25 @@ export function NpcSpeechBubble({ name, tail = "left", children }: NpcSpeechBubb
   );
 }
 
+/**
+ * Begrüßungszeile eines NPCs: Zufallswert EINMAL pro Mount würfeln (stabil für die Seiten-
+ * Lebensdauer, auch über Sprachwechsel), Weltzustand-Zeile (§C/§D.4) sticht die Rotation.
+ * claude:2026-10-17T11:20:00+02:00 — als Hook herausgezogen, damit die Slayer-Seite dieselbe
+ * Zeile in Brennas vorhandener Sprechbox zeigen kann statt eines zweiten Brenna-Kopfes.
+ */
+export function useNpcGreetingLine(lines: string[], priorityLine?: string | null): string {
+  const [roll] = useState(() => Math.random());
+  const rotationText = lines.length > 0 ? lines[Math.min(Math.floor(roll * lines.length), lines.length - 1)] ?? "" : "";
+  return priorityLine || rotationText;
+}
+
 /** Kopf-Medaillon + Sprechblase; oben auf einer Seite einhängen (erstes Kind des Page-Wrappers). */
 export function NpcGreeting({ portraitSrc, name, lines, priorityLine }: NpcGreetingProps): JSX.Element {
-  // Zufallswert EINMAL pro Mount würfeln (deterministisch für die Seiten-Lebensdauer);
-  // der Index wird erst beim Rendern gebildet, damit ein Locale-Wechsel dieselbe Zeile behält.
-  const [roll] = useState(() => Math.random());
-  const rotationText = lines.length > 0 ? lines[Math.min(Math.floor(roll * lines.length), lines.length - 1)] : "";
-  // Weltzustand-Zeile (§C/§D.4) sticht die normale Rotation, wenn eine Bedingung greift.
-  const text = priorityLine || rotationText;
+  const text = useNpcGreetingLine(lines, priorityLine);
+  // claude:2026-10-17T11:20:00+02:00 — `--page` markiert die kompakte Seiten-Begrüßung (Name und
+  // Text in einer Zeile); Chronik-Bühne und Guide nutzen dieselben Bausteine ohne diese Klasse.
   return (
-    <div className="npc-greeting">
+    <div className="npc-greeting npc-greeting--page">
       <div className="npc-greeting-head" aria-hidden="true">
         {portraitSrc ? (
           <img loading="lazy" decoding="async" src={portraitSrc} alt="" className="npc-greeting-img" />
