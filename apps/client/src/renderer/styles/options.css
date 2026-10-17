@@ -547,3 +547,31 @@
   color: var(--ds-parch-ink, #e8d8b0);
   max-width: 34ch;
 }
+
+/* ─── claude:2026-10-17T21:20:00+02:00 — UI-Struktur Runde 2b: Optionen ───────────────────────────
+   R2: Seitenkopf und Sektionskopf trugen je einen gerahmten Kreis (3 px Rand + inset Schatten bzw.
+   2 px Rand) innerhalb des Panelrahmens = Rahmen in Rahmen. Jetzt nur noch 1-px-Goldlinie, der
+   Medaillon-Verlauf (Material) bleibt. R3: alle Kopfzeilen/Sektionen bleiben eine Familie
+   (Gravewood-Panelrahmen). R5: Kopfzeilen-Abstände über --sp-*. */
+.opz-header-icon {
+  border: 1px solid rgba(216, 184, 112, 0.28);
+  box-shadow: 0 0 14px rgba(216, 192, 106, 0.18);
+}
+
+.opz-section-icon {
+  border: 1px solid rgba(216, 184, 112, 0.22);
+}
+
+#root .opz-header {
+  gap: var(--sp-4);
+}
+
+#root .opz-section-head {
+  gap: var(--sp-3);
+}
+
+/* Tasten-Badges liegen in der Zeile: flache Fläche statt gerahmter Kachel mit Prägeschatten. */
+.opz-key {
+  border-color: rgba(216, 184, 112, 0.22);
+  box-shadow: none;
+}

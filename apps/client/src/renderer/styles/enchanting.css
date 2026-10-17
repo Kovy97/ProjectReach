@@ -282,12 +282,10 @@
   justify-content: center;
   border-style: solid;
   border-color: transparent;
-  border-width: 8px;
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
+  /* claude:2026-10-17T18:00:00+02:00 — Holz-9-Slice im Holzrahmen der Seite (Rahmen in Rahmen)
+     entfällt; Sockel = 1-px-Goldkante auf der dunklen Textur, Runenkreis bleibt. */
+  border-width: 1px;
+  border-color: rgba(216, 192, 106, 0.35);
   background: url("../assets/bg_black.webp") repeat;
   margin-top: 2px;
 }
@@ -714,7 +712,7 @@
   .ench-altar-socket {
     width: 96px;
     height: 96px;
-    border-width: 11px;
+    border-width: 1px; /* claude:2026-10-17T18:00:00+02:00 — s. Sockel-Regel oben */
     margin-top: 0;
   }
   .ench-altar-socket::before { inset: -22px; }

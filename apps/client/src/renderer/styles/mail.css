@@ -330,3 +330,29 @@
     max-height: none;
   }
 }
+
+/* ─── claude:2026-10-17T21:45:00+02:00 — UI-Struktur Runde 2b: Post ──────────────────────────────
+   R4: Kopfzeile wie `.slayer-head`: Titel links, Seitenaktion rechts, eine Zeile, --sp-Abstände.
+   R2: der Kopf war eine eigene 1-px-Rahmenbox über den Holz-Panels (Box neben Box); jetzt eine
+   Goldlinie 1 px (18 %) unter der Zeile, Basalt-Textur bleibt als Flächenton. R5: Abstände aus
+   dem Token-Raster (vorher 8/9/10/14/16 px). */
+.mail-page {
+  gap: var(--sp-3);
+}
+
+.mail-page-actions {
+  gap: var(--sp-3) var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  border: 0;
+  border-bottom: 1px solid rgba(216, 184, 112, 0.18);
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.mail-layout {
+  gap: var(--sp-4);
+}
+
+.mail-list-rows {
+  gap: var(--sp-2);
+}

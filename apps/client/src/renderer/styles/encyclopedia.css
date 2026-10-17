@@ -354,3 +354,16 @@
   font-size: calc(clamp(20px, 1.9vw, 28px) * var(--tb-scale));
   line-height: 1;
 }
+
+/* ─── claude:2026-10-17T21:30:00+02:00 — UI-Struktur Runde 2b: Enzyklopädie ──────────────────────
+   R1: Suchzeile trug 1-px-Rand PLUS inset 1-px-Schatten (zweite Linie innen), Karten-Hintergrund
+   deckte nur die padding-box des Holzrahmens. Seltenheits-Innenring der Karte bleibt bewusst
+   (Bedeutung, nicht Zierde). */
+.encp-search-row {
+  box-shadow: none;
+}
+
+.encp-card {
+  background-origin: border-box;
+  background-clip: border-box;
+}

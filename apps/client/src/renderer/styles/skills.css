@@ -2832,6 +2832,16 @@ button.skilloverview-card {
   background-clip: border-box;
 }
 
+/* claude:2026-10-17T21:10:00+02:00 — Runde 2b R1: inset box-shadow auf dem Holzrahmen der Karte
+   erzeugte eine zweite Linie knapp innerhalb des Rahmens; Hover nur noch als Außenglühen. */
+.skilloverview-card {
+  box-shadow: none;
+}
+
+.skilloverview-card.clickable:hover {
+  box-shadow: 0 0 14px rgba(216, 192, 106, 0.30);
+}
+
 /* Kopfzeile wie .slayer-head: Titel links, Kennzahl rechts, mittig auf einer Achse (R4). */
 .skilloverview-head {
   align-items: center;

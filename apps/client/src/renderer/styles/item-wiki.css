@@ -726,3 +726,28 @@
     flex-basis: 100%;
   }
 }
+
+/* ─── claude:2026-10-17T21:30:00+02:00 — UI-Struktur Runde 2b: Item-Wiki ─────────────────────────
+   R1: Eisenrahmen-Tafel hatte `inset box-shadow` + Hintergrund nur bis zur padding-box (Ring/Doppel-
+   kante am Rahmen). R2: die Quellen-/Verwendungs-Zeilen sind Karten in der Tafel; ihre inneren
+   Vignetten und der 1-px-Zweitring der aktiven Zeile (inset 0 0 0 1px zusätzlich zum Rand) fallen
+   weg, Auswahl = Goldrand + Tönung (+ 3-px-Goldkante als echter Rand). */
+.iwk-panel {
+  box-shadow: none;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.iwk-source-node,
+.iwk-use-node {
+  box-shadow: none;
+}
+
+.iwk-source-node.is-active {
+  box-shadow: none;
+  border-left: 3px solid var(--gold);
+}
+
+.iwk-use-node.is-active {
+  box-shadow: none;
+}

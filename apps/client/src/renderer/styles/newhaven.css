@@ -4069,3 +4069,70 @@
   .nh-refinery-actions > div { display: grid; grid-template-columns: 1fr; }
   .nh-refinery-actions .btn-iron { width: 100%; min-width: 0; }
 }
+
+/* ─── claude:2026-10-17T21:00:00+02:00 — UI-Struktur Runde 2b: New Haven ───────────────────────────
+   R1: alle Rahmenflächen decken ihre Hintergründe über die ganze Box (kein heller Ring im Rahmen).
+   R2: Kopfleiste ohne eigenen Eisenrahmen (Tabs sind die Eisen-Bedienelemente); Material-Kacheln
+       in der Kostenkarte ohne eigenen Rand (Karte in Karte); keine inset-Schatten auf Rahmen. */
+.nh-view-controls,
+.nh-view-controls .nh-view-tab,
+.nh-list-register,
+.nh-list-detail,
+.nh-list-row,
+.nh-list-shell > .nh-queue-strip,
+.nh-map-stage {
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+/* Kopfleiste: ein flacher dunkler Streifen mit Goldlinie statt Eisenrahmen um Eisenknöpfe. */
+.nh-view-controls {
+  border: 0;
+  border-image: none;
+  border-bottom: 1px solid rgba(216, 184, 112, 0.18);
+  padding: 0 var(--sp-2) var(--sp-2);
+  background: none;
+  gap: var(--sp-2);
+}
+
+.nh-view-controls .nh-view-tab.active,
+.nh-view-tab.active {
+  box-shadow: none;
+  filter: brightness(1.18);
+  color: var(--ds-gold-bright, #f0dca0);
+}
+
+.nh-list-row:hover,
+.nh-list-row:focus-visible,
+.nh-list-row.is-selected {
+  /* ausgewählt = Goldton in der Fläche + Außenglühen, keine innere Doppellinie */
+  background:
+    linear-gradient(rgba(216, 184, 112, 0.12), rgba(216, 184, 112, 0.12)),
+    linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)),
+    url("../assets/bg_topbar.webp") top left / 313px repeat;
+  box-shadow: 0 0 12px rgba(216, 184, 112, 0.22);
+}
+
+.nh-list-row.is-building {
+  box-shadow: 0 0 12px rgba(216, 184, 112, 0.16);
+}
+
+.nh-list-row-action.is-buildable,
+.nh-list-primary.is-buildable,
+.nh-list-row-action.is-queueable,
+.nh-list-primary.is-queueable,
+.nh-queue-item.is-active {
+  box-shadow: none;
+}
+
+/* Material-Kacheln liegen in der Kostenkarte: Flächenton + Trennlinie statt eigenem Vollrahmen. */
+.nh-list-material {
+  border: 0;
+  border-bottom: 1px solid rgba(216, 184, 112, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nh-list-material:hover {
+  background: rgba(216, 184, 112, 0.1);
+  border-bottom-color: rgba(216, 184, 112, 0.68);
+}

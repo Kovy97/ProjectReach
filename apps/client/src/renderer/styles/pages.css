@@ -5654,3 +5654,20 @@ body.bank-dragging-noselect {
   outline: 2px solid #d8c06a;
   outline-offset: 2px;
 }
+
+/* claude:2026-10-17T18:00:00+02:00 — Begleiter-Dossier, ru bei 1366×768: Passiv/Aktiv/Echo brauchen ~150 px mehr,
+   als das Dossier hat; es scrollte schon, aber ohne sichtbaren Hinweis wirkte die Echo-Zeile am unteren
+   Rand abgeschnitten. Jetzt: (a) das Scrollen ist sichtbar (dünne Goldleiste mit festem Platz, kein
+   Text springt beim Erscheinen), (b) bei niedrigen Fenstern etwas engere Abstände im Dossier, damit
+   mehr vom Echo-Block im ersten Blick steht. Schrift unverändert, kein Text gekürzt. */
+.pet-field-dossier {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(216, 192, 106, 0.55) rgba(8, 10, 11, 0.6);
+  scrollbar-gutter: stable;
+}
+@media (max-height: 820px) {
+  .pet-field-dossier-head { padding-bottom: 6px; }
+  .pet-field-description { margin: 6px 0; line-height: 1.45; }
+  .pet-field-effects .pet-effect-value { padding: 5px 12px; }
+  .pet-field-effects .pet-effect-tag { padding: 4px 10px; }
+}

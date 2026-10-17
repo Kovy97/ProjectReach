@@ -625,3 +625,27 @@
     min-width: 0;
   }
 }
+
+/* ─── claude:2026-10-17T21:40:00+02:00 — UI-Struktur Runde 2b: Post-Versandmodal ─────────────────
+   R1: Modalrahmen (Eisen) trug zusätzlich `inset box-shadow` 52 px (dunkler Ring an der Innenkante),
+   die Kopfkarten einen 1-px-Rand plus inset-Schatten. Beides weg, Rahmen/Texturen bleiben.
+   Gewählter Slot: Goldrand + Tönung, kein zusätzlicher Außenring neben dem Rand. */
+.cst-modal,
+.cst-ledger {
+  background-origin: border-box;
+  background-clip: border-box;
+}
+
+.cst-modal {
+  box-shadow: 0 22px 72px #000;
+}
+
+.cst-save-card,
+.cst-target-card {
+  box-shadow: none;
+}
+
+.cst-inventory-slot.is-selected {
+  box-shadow: none;
+  background-color: rgba(174, 111, 28, 0.22);
+}

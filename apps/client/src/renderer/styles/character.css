@@ -2994,3 +2994,51 @@
   filter: brightness(1.12);
 }
 .portrait-gallery-grid .portrait-thumb.active .portrait-thumb-name { color: #fff1bd; }
+
+/* ── claude:2026-10-17T18:00:00+02:00 — UI-Fundament Runde 2b, Struktur (R2/R3/R6) ──────────────
+   Die drei Spalten tragen den einen Holzrahmen. Darin lagen Portrait, Vitals, sechs Attribut-
+   Karten, Sortierung und Suche je NOCH EINMAL in Holz (plus Farbring als zweite Linie auf den
+   Attribut-Karten): Rahmen in Rahmen. Jetzt: Innenflächen = eine Linie (1 px Gold) auf der
+   bestehenden Textur, die Attribut-Karten tragen ihren Farbcode als genau diese eine Linie.
+   Texturen/Tönung bleiben, nur die Zweitrahmen entfallen. Bewusst auf .cs-col-left/.cs-col-right
+   begrenzt: .cs-attr-card/.cs-sort-select werden auch von Kampfseite (EquipmentOverview) und
+   Bank genutzt und bleiben dort unverändert. */
+.cs-col-left .cs-portrait-wrap {
+  /* Entfällt: 8-px-Holzrahmen im Holzrahmen. Bühne behält Szene + Vignette, Kante = 1 px Gold. */
+  border-width: 1px;
+  border-image: none;
+  border-color: rgba(216, 192, 106, 0.35);
+}
+
+.cs-col-left .cs-vitals {
+  /* Entfällt: 4-px-Holzrahmen um die Lebens-/Ward-Balken. Abgrenzung nur oben/unten per 1-px-Linie. */
+  border-width: 1px 0;
+  border-image: none;
+  border-style: solid;
+  border-color: rgba(216, 192, 106, 0.18);
+  padding: 8px 12px;
+  margin: 6px 0;
+}
+
+.cs-col-left .cs-attr-card {
+  /* Entfällt: 4-px-Holzrahmen + Innenring (box-shadow inset) = Doppellinie. Eine 1-px-Kante in
+     der Attributfarbe trägt den Farbcode. */
+  border-width: 1px;
+  border-image: none;
+  border-color: color-mix(in srgb, var(--attr-color, var(--gold)) 55%, transparent);
+  box-shadow: none;
+}
+.cs-col-left .cs-attr-card:hover {
+  /* Hover: Glut statt zweiter Innenlinie (die Kante ist jetzt selbst die Linie). */
+  border-color: var(--attr-color, var(--gold));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--attr-color, var(--gold)) 35%, transparent);
+}
+
+.cs-col-right .cs-sort-select,
+.cs-col-right .cs-inv-search {
+  /* Entfällt: Holz-9-Slice an Eingabefeldern im Holzrahmen der Inventarspalte. Eingabe = 1-px-Linie
+     auf der dunklen Textur (liest sich als eingelassen). */
+  border-width: 1px;
+  border-image: none;
+  border-color: rgba(216, 192, 106, 0.35);
+}

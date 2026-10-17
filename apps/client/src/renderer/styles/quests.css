@@ -591,13 +591,22 @@
 }
 
 /* Preis + (bei zu wenig Marken) Hinweis; der Hinweis bricht unter den Preis, nie mitten im Wort. */
+/* claude:2026-10-17T18:00:00+02:00 — ru „Недостаточно жетонов“ lief über die Karte: die Preisspalte
+   misst nur ~80 px (Bild 64 + Kaufen-Knopf), das längste Wort braucht mehr. Der Wrapper löst sich
+   auf (display:contents), Preis bleibt in seiner Zelle, der Hinweis bekommt eine eigene Zeile
+   über die ganze Breite neben dem Bild (Spalten 2–3) und bricht dort normal um. Kein Text gekürzt. */
 .quest-shop-offer-price {
-  grid-area: price;
+  display: contents;
+}
+.quest-shop-offer-cost { grid-area: price; justify-self: start; }
+.quest-shop-offer-hint {
+  grid-area: hint;
   min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 2px var(--sp-2);
+  overflow-wrap: break-word;
+}
+.quest-shop-offer:has(.quest-shop-offer-hint) {
+  grid-template-areas: "img name name" "img price buy" "img hint hint";
+  grid-template-rows: minmax(2.4em, auto) auto auto;
 }
 
 /* Token-Preis — violette Token-Farbwelt wie das Balance-Badge. */
