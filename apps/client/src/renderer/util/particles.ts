@@ -84,6 +84,10 @@ const ZONE_KEY_THEME_MAP: Record<string, ParticleThemeId> = {
   slayer_tower_3: "ember",
   slayer_tower_4: "void",
   slayer_tower_5: "void",
+  // claude:2026-10-17T22:00:00+02:00 — 1.3.0 Etage 6–8 (Unverzeichnete Zellen, Letzte Treppe, Erstes Dunkel).
+  slayer_tower_6: "dust",
+  slayer_tower_7: "void",
+  slayer_tower_8: "void",
 };
 
 /** Löst den Partikel-Theme für einen effektiven Hintergrund-Schlüssel auf, `null` = keine Partikel. */
