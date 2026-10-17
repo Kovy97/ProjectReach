@@ -10,6 +10,36 @@ Je Eintrag: eine kurze **spieler­taugliche** Zeile (fürs Steam-Post) + optiona
 
 ---
 
+## Unveröffentlicht — 1.3.0 „Die Götzenhalle erwacht" / EN „The Idol Hall Awakens"
+
+<!-- claude:2026-10-17T23:00:00+02:00 — Entwurf; enthält die nie veröffentlichten 1.2.4-Inhalte. -->
+
+**Die Götzenhalle ist offen:** DE: Die Götzenhalle ist jetzt ein offenes Kampfgebiet mit sieben neuen Wesen. Ihre beiden Champions, der Neunte Wächter und Hohlschleier, sind endlich jagbar. / EN: The Idol Hall is now an open hunting ground with seven new creatures, and its two champions, the Ninth Warden and Hollowveil, can finally be hunted.
+
+**Die Chronik geht weiter:** DE: Sechs neue Kapitel (22–27) führen durch die Halle bis in die Getilgte Kapelle, einen neuen Mini-Dungeon mit dem Tilger als Boss. / EN: Six new chronicle chapters (22–27) lead through the hall into the Expunged Chapel, a new mini-dungeon guarded by the Expunger.
+
+**Slayer-Turm Etage 6–8:** DE: Drei neue Etagen in Endgame-Stärke (Slayer 85/90/95), drei neue Belohnungen im Slayer-Shop. Aufträge dort zahlen entsprechend mehr Punkte. / EN: Three new endgame floors in the Slayer Tower (Slayer 85/90/95) and three new rewards in the Slayer shop; tasks there pay more points to match.
+
+**Paragon über Etage 20:** DE: Neue Truhenstufen ab Etage 25, 50 und 100. / EN: New Paragon chest tiers from floors 25, 50 and 100.
+
+**Waffen ab Stufe 95:** DE: 18 neue Fernkampf- und Magiewaffen, damit beide Stile oben so viel Auswahl haben wie der Nahkampf. Fünf bestehende seltene 99er-Waffen wurden angehoben und schlagen jetzt das Gefertigte. / EN: 18 new ranged and magic weapons at level 95+, so both styles get as many endgame options as melee. Five existing rare level-99 weapons were raised above their crafted counterparts.
+
+**Holzfällen und Angeln bis 99:** DE: Drei neue Bäume, vier neue Fische mit passenden Gerichten und zwei neue Angeln füllen die Lücke über Stufe 80. / EN: Three new trees, four new fish with matching dishes and two new rods fill the gap above level 80.
+
+**Komfort:** DE: Ward Leech steht jetzt im Kampfprotokoll. Item-Karten sagen, wenn ein Effekt nicht stapelt. Das Verzaubern warnt, wenn ein Effekt schon von einem anderen Teil kommt. Der Rückkehr-Bericht zählt übersprungene Warteschlangen-Einträge. / EN: Ward Leech now shows in the combat log, item cards tell you when an effect doesn't stack, enchanting warns about duplicate effects, and the return report counts skipped queue entries.
+
+**Bank, Inventar, Werkzeuge (aus 1.2.4):** DE: Bank und Inventar haben echte Fächer, die sich merken, wo etwas liegt; Stücke lassen sich auf jedes leere Fach ziehen, auch direkt aus dem Inventar, und die Liste scrollt beim Ziehen mit. Neue Beute hängt hinten an. Vierter Werkzeug-Slot; Werkzeuge gehören keinem Kit mehr. Lager-Ausbau jetzt im Laden. / EN: Bank and inventory have real slots that remember where things are; drag any stack onto any empty slot (also straight from your bags) and the list scrolls while you drag. New loot goes to the back. A fourth tool slot, tools no longer belong to kits, and bank upgrades are now sold in the shop.
+
+**Neu (aus 1.2.4):** DE: Wiki (Enzyklopädie aller Items) oben rechts, neues Kampf-HUD, neuer Rückkehr-Bildschirm, Rabenfracht zwischen eigenen Spielständen. / EN: A Wiki of every item (top right), a new combat HUD, a new return screen, and raven freight between your own saves.
+
+**Oberfläche:** DE: Kompakterer Kopfbereich mit mehr Platz für den Inhalt, Seiten ordnen sich nach der verfügbaren Breite, keine zerbrochenen Wörter mehr in allen Sprachen. Neu gegliedert: Slayer, Laden, Marken-Shop. Der Kampfstil steht jetzt sichtbar in der Seitenleiste. / EN: A slimmer header with more room for content, pages that adapt to the space available, and no more words split mid-word in any language. Reworked Slayer page, shop and token shop; your combat style is now shown in the sidebar.
+
+**Fehlerbehebungen:** DE: Krypta-Bestiarium-Erfolge sind erreichbar; „Das ganze Bestiarium" zählt nur erreichbare Wesen (jetzt 126); Kapitel 11 erledigt sich nicht mehr von selbst; Schock respektiert Immunitäten; der „{pct}"-Platzhalter ist weg; das Seltener-Fund-Fenster wird bei echter Beute nicht mehr unterdrückt; verzauberte Ausrüstung in der Bank bekommt ein Fach. / EN: Crypt bestiary achievements can be earned; "The Whole Bestiary" counts only reachable creatures (now 126); chapter 11 no longer completes itself; Shock respects immunities; the "{pct}" placeholder is gone; the rare-find popup no longer hides real loot; enchanted gear in the bank gets its own slot.
+
+*Dev-Notiz: SAVE 87 (v87+v88 aus 1.2.4 zusammengelegt, beide nie live), Kompat-Archiv v87 synthetisch. Arbeitsauftrag design/1.3.0-goal.md.*
+
+---
+
 ## 1.2.0 „Threads, Traps & Spellfire" / DE „Fäden, Fallen, Feuer" — HOCHGELADEN 2026-08-29 09:48 (Build 25007052, `setlive` leer, Chef schaltet live; Steam-Post EN/ZH/ES/RU in design/steam-post-1.2.0*.txt)
 
 **Steam-Erfolge scharf geschaltet (Chef-GO 29.08., 1.2.0 = Major-Update):** DE: Die 69 Steam-Erfolge werden jetzt wirklich an Steam gemeldet, neue beim Freischalten und bereits erspielte einmalig beim ersten Laden des Spielstands. / EN: The 69 Steam achievements now really reach Steam, new ones as you unlock them and everything you had already earned once you load your save.

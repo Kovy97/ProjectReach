@@ -1,0 +1,67 @@
+Grim Reach 1.3.0 - The Idol Hall Awakens
+
+Hunters,
+
+Drazhan withdrew, but his hall never stopped working. This update opens the Idol Hall, continues
+the Ash Chronicle, and raises the ceiling of the endgame across the board. It also brings everything
+that was waiting in the wings: real bank slots, a Wiki of every item, a new combat HUD and a
+cleaner interface. Saves stay compatible as always.
+
+THE IDOL HALL IS OPEN
+
+- The Idol Hall is now an open hunting ground with seven new creatures, between the Highlands and
+  the Sanctum in strength.
+- Its two champions, the Ninth Warden and Hollowveil, can finally be hunted.
+
+THE CHRONICLE CONTINUES
+
+- Six new chapters (22 to 27) lead through the hall and into the Expunged Chapel, a new
+  mini-dungeon. Something there is still at work on the walls.
+
+A HIGHER ENDGAME
+
+- Slayer Tower floors 6 to 8 at full endgame strength (Slayer 85, 90 and 95), with three new
+  rewards in the Slayer shop. Tasks on these floors pay more points to match.
+- New Paragon chest tiers from floors 25, 50 and 100.
+- 18 new ranged and magic weapons at level 95 and above, so both styles get as many endgame options
+  as melee. Five existing rare level-99 weapons were raised above their crafted counterparts.
+- Woodcutting and Fishing reach 99 properly: three new trees, four new fish with matching dishes,
+  and two new rods.
+
+QUALITY OF LIFE
+
+- Ward Leech now shows in the combat log.
+- Item cards tell you when an effect doesn't stack. Only the strongest source counts, except for
+  the on-kill heal, ward and recovery bonuses, which add up.
+- Enchanting warns you when the effect is already coming from another piece.
+- The return report counts how many queue entries were skipped while you were away.
+
+BANK, BAGS AND TOOLS
+
+- Bank and inventory have real slots that remember where things are. Drag any stack onto any empty
+  slot, also straight from your bags, and the list scrolls while you drag. New loot goes to the back.
+- A fourth tool slot. Tools no longer belong to equipment kits and stay with your character.
+- Bank upgrades are now sold in the shop, next to the inventory upgrade.
+- Raven freight: send items between your own save slots.
+
+INTERFACE
+
+- A Wiki of every item, top right.
+- A slimmer header with more room for the page, and pages that adapt to the space you actually
+  have. No more words split in half, in any language.
+- Reworked Slayer page, shop and token shop. Your combat style now sits in the sidebar, one click
+  from changing it.
+- A new combat HUD and a new return screen.
+
+FIXES
+
+- The Crypt bestiary achievements can be earned. Saves that already have the kills unlock them on
+  the first tick.
+- "The Whole Bestiary" counts only creatures you can actually reach (now 126).
+- Chapter 11 no longer completes itself before you enter the dungeon.
+- Shock now respects immunities.
+- The "{pct}" placeholder in effect descriptions is gone.
+- The rare-find popup no longer hides real loot after you have crafted the same item.
+- Enchanted gear in the bank gets its own slot.
+
+As always: if something looks off, tell me here or through the bug report button in the options.
