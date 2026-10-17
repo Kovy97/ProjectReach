@@ -1,5 +1,19 @@
 # Übergabe — Codex-Projektleitung
 
+### 18.10.2026 — Claude: Jagdbuch + Begleiter-Rework (1.3.0-Kern)
+
+<!-- claude:2026-10-18T03:00:00+02:00 -->
+
+**Kern-Feature 1.3.0 auf `test-ui-fundament`, kein Upload.** Jagdbuch = generisches Talentbaum-System
+(`packages/content/src/talents.ts`, `engine/talents.ts`, `TalentTree.tsx`), Baum `slayer` J1–J6 ab Slayer 85,
+Kosten ÷8 (Commit `a265ce6`). Begleiter-Rework nach `design/1.3.0-begleiter-werte.md`: 23 Signatur-Effekte,
+5 Kampf-Rollen, Echo 25 %, sieben Dämpfungen, Chitinpanzer 1/80.000 (Commit `88e5537`). Felder talents/petPity/
+companionPetId2 in v87, kein weiterer SAVE-Bump. Patchnotes + Steam-Post final (`a918979`).
+Geprüft: Typecheck 5/5, Engine 1749 (Balance-Sim 0 Auffälligkeiten), Persistence 436 inkl. Vault, Client 259,
+Content 310, Client-Build grün. Testspiel isoliert neu gestartet, echte Saves per SHA1 unverändert.
+Offen: Chef-Abnahme; Sim-Wandprüfung Defensiv-Kombi (Chitinpanzer + Aschbauch auf Platz 2); Echo-Hinweis bei 1366
+unter dem Falz; J4-Bonus nicht in der Auftragsnotiz; BiS-Builder rechnet mit einem Begleiter; Drazhan-Parität CL99 leicht verschoben (Fern/Nah 0,74→0,72, Magie/Nah 1,08→1,05).
+
 ### 17.10.2026 — Claude: 1.3.0 umgesetzt
 
 <!-- claude:2026-10-17T23:30:00+02:00 -->
