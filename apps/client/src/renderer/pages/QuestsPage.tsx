@@ -12,7 +12,7 @@ import {
   refreshDailyQuests,
 } from "@hearthforge/engine";
 import type { QuestStatus } from "@hearthforge/engine";
-import type { GameState, ItemDef, LocalizedString, QuestDef, QuestObjective, TokenShopOffer, TokenShopShelf } from "@hearthforge/shared";
+import type { GameState, ItemDef, LocalizedString, QuestDef, QuestObjective, TokenShopOffer } from "@hearthforge/shared";
 import { QUEST_DIFFICULTIES } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -313,21 +313,20 @@ function QuestTokenBadge({
 // ── Rewards Shop (Task #274/#284) — Offer-Karten + Kauf über buyTokenShopOffer ────────
 
 /**
- * Eine Offer-Karte im Belohnungs-Shop: Item-Bild (getItemImage, Emoji-Fallback), Bündelgröße,
- * Token-Preis und Kauf-Button. Bei zu wenig Tokens: Button disabled + Begründung als Hint-Zeile.
+ * Eine Angebotszeile im Belohnungs-Shop: Item-Bild (getItemImage, Emoji-Fallback) mit Bündelgröße,
+ * Name, Token-Preis und Kauf-Knopf. Bei zu wenig Tokens: Knopf gesperrt, Preis rot + Hinweis daneben.
+ * claude:2026-10-17T20:10:00+02:00 — Zeile statt 250-px-Karte (Bild | Name / Preis · Kaufen), gleiches
+ * Muster wie der Slayer-Belohnungs-Shop; Kauf-Knopf = Standard `.btn-iron--sm`.
  */
 function TokenShopOfferCard({
   offer,
   balance,
-  shelfLocked,
   onBuy,
   t,
   tr,
 }: {
   offer: TokenShopOffer;
   balance: number;
-  /** Regal-Gate (#p13) noch nicht erfüllt — Kauf-Button bleibt disabled, egal wie viele Tokens da sind. */
-  shelfLocked: boolean;
   onBuy: () => void;
   t: (k: string) => string;
   tr: (v: LocalizedString) => string;
@@ -335,7 +334,7 @@ function TokenShopOfferCard({
   const item: ItemDef | undefined = content.items[offer.itemId];
   const img = getItemImage(offer.itemId);
   const tokenSrc = TICKET_ICON_URL;
-  const affordable = balance >= offer.tokenCost && !shelfLocked;
+  const affordable = balance >= offer.tokenCost;
   // Chef (2026-07-08): Items im Token-Shop anklickbar — Klick auf Bild/Name pinnt das große
   // Item-Tooltip zur Inspektion (gleiches Muster wie ItemChip/PouchRow; Kauf bleibt beim Button).
   const tooltip = useItemTooltip();
@@ -375,111 +374,43 @@ function TokenShopOfferCard({
       >
         {item ? tr(item.name) : offer.itemId}
       </span>
-      <div className="quest-shop-offer-cost" title={t("quests.tokens.label")}>
-        {tokenSrc ? (
-          <img loading="lazy" decoding="async" src={tokenSrc} alt="" className="quest-reward-icon" />
-        ) : (
-          <span aria-hidden="true">🎟️</span>
+      <div className="quest-shop-offer-price">
+        <span className="quest-shop-offer-cost" title={t("quests.tokens.label")}>
+          {tokenSrc ? (
+            <img loading="lazy" decoding="async" src={tokenSrc} alt="" className="quest-reward-icon" />
+          ) : (
+            <span aria-hidden="true">🎟️</span>
+          )}
+          <span className="quest-shop-offer-cost-num">{offer.tokenCost}</span>
+        </span>
+        {!affordable && (
+          <span className="quest-shop-offer-hint muted">{t("quests.shop.notEnough")}</span>
         )}
-        <span className="quest-shop-offer-cost-num">{offer.tokenCost}</span>
       </div>
       <button
-        className="quest-claim-btn quest-shop-buy-btn"
+        className="btn-iron btn-iron--sm quest-shop-buy-btn"
         disabled={!affordable}
         onClick={onBuy}
-        title={shelfLocked ? t("quests.shop.shelfLocked") : affordable ? undefined : t("quests.shop.notEnough")}
+        title={affordable ? undefined : t("quests.shop.notEnough")}
       >
         {t("quests.shop.buy")}
       </button>
-      {/* Regal-Gate hat schon einen eigenen Hinweis im Shelf-Kopf (#p13) — hier nur der
-          Tokens-Hinweis, sonst doppelt sich die Aussage auf jeder einzelnen Karte. */}
-      {!affordable && !shelfLocked && (
-        <span className="quest-shop-offer-hint muted">{t("quests.shop.notEnough")}</span>
-      )}
     </div>
   );
 }
 
 /**
- * Ein Regal-Abschnitt im Belohnungs-Shop (#p13): Kopfzeile mit Regal-Name + Angebots-Zahl,
- * gesperrte Regale zusätzlich mit Schloss-Icon + Gate-Hinweis (dieselbe Formulierung wie am
- * Zonen-Gate, `combat.zoneGate.requires`). Offene Regale sind einklappbar (Muster
- * `quest-strand-head`/-caret weiter oben in dieser Datei); ein gesperrtes Regal bleibt IMMER
- * mit allen Angebots-Karten sichtbar (nie verstecken) — nur eingefärbt/disabled, kein Toggle.
- */
-function TokenShopShelfSection({
-  shelf,
-  offers,
-  balance,
-  open,
-  expanded,
-  onToggle,
-  onBuy,
-  t,
-  tr,
-}: {
-  shelf: TokenShopShelf;
-  offers: TokenShopOffer[];
-  balance: number;
-  open: boolean;
-  expanded: boolean;
-  onToggle: () => void;
-  onBuy: (offerId: string) => void;
-  t: (k: string) => string;
-  tr: (v: LocalizedString) => string;
-}): JSX.Element {
-  const gateQuest = shelf.requiresQuest ? content.quests.find((q) => q.id === shelf.requiresQuest) : undefined;
-  const gateHint = t("combat.zoneGate.requires").replace("{name}", gateQuest ? tr(gateQuest.name) : t("app.unknown"));
-  // Gesperrte Regale sind nie einklappbar (Angebots-Karten bleiben immer sichtbar) — nur offene
-  // Regale bekommen den Klapp-Header; der Show-State ist dafür schlicht `open ? expanded : true`.
-  const showOffers = open ? expanded : true;
-  return (
-    <div className={`quest-shelf${open ? "" : " quest-shelf--locked"}`}>
-      {open ? (
-        <button type="button" className="quest-shelf-head" onClick={onToggle} aria-expanded={expanded}>
-          <span className="quest-shelf-caret" aria-hidden="true">{expanded ? "▾" : "▸"}</span>
-          <span className="quest-shelf-name">{tr(shelf.name)}</span>
-          <span className="quest-shelf-count muted">{offers.length}</span>
-        </button>
-      ) : (
-        <div className="quest-shelf-head quest-shelf-head--static">
-          <span className="quest-shelf-lock" aria-hidden="true">🔒</span>
-          <span className="quest-shelf-name">{tr(shelf.name)}</span>
-          <span className="quest-shelf-count muted">{offers.length}</span>
-        </div>
-      )}
-      {!open && <p className="quest-shelf-gate-hint muted">{gateHint}</p>}
-      {showOffers && (
-        <div className="quest-shop-grid">
-          {offers.map((offer) => (
-            <TokenShopOfferCard
-              key={offer.id}
-              offer={offer}
-              balance={balance}
-              shelfLocked={!open}
-              onBuy={() => onBuy(offer.id)}
-              t={t}
-              tr={tr}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * Belohnungs-Shop-Tab (Task #284, Regale seit #p13): Citadel-Panel mit Token-Bestand + Angeboten
- * aus `content.tokenShop`, gruppiert nach `content.tokenShopShelves` (sortiert nach sortOrder;
- * Angebote ohne Treffer landen defensiv im ersten offenen Regal — Content-Vertrag „Angebote ohne
- * shelfId fallen ins offene Regal"). Kauf läuft über die Engine (`buyTokenShopOffer`: prüft zuerst
- * das Regal-Gate über `isShelfOpen`, dann Tokens, liefert das Bündel via addItemOrBank, kein
- * Teil-Verlust). Schlägt ein Kauf trotz offenem Regal + genug Tokens fehl, ist das ein
- * Platz-Problem (Inventar voll + Auto-Bank aus/Bank voll) → Inline-Hinweis statt Toast (es gibt
- * kein Toast-System). Regale: gesperrte bleiben sichtbar mit Gate-Hinweis (nie verstecken),
- * offene sind einklappbar — das zuletzt erreichte (höchste sortOrder unter den offenen) startet
- * aufgeklappt, ältere starten eingeklappt (bleiben aber jederzeit erreichbar). Der „Bald
- * verfügbar"-Platzhalter bleibt nur bei komplett leerem Content.
+ * Belohnungs-Shop-Tab (Task #284, Regale seit #p13): Angebote aus `content.tokenShop`, gruppiert nach
+ * `content.tokenShopShelves` (sortiert nach sortOrder; Angebote ohne Treffer landen defensiv im ersten
+ * offenen Regal — Content-Vertrag „Angebote ohne shelfId fallen ins offene Regal"). Kauf läuft über
+ * die Engine (`buyTokenShopOffer`: prüft Regal-Gate, dann Tokens, liefert via addItemOrBank). Schlägt
+ * ein Kauf trotz genug Tokens fehl, ist das ein Platz-Problem → Inline-Hinweis.
+ * Chef 25.08.2026 (Test 1.1.0): gesperrte Regale sind GAR NICHT einsehbar; ein Satz unten sagt nur,
+ * DASS mehr kommt.
+ * claude:2026-10-17T20:10:00+02:00 — Regale als Reiterleiste statt Akkordeon: das zuletzt erreichte
+ * Regal ist vorgewählt und steht damit sofort im Bild (vorher ganz unten, bei 1366×768 sah man nur
+ * zugeklappte Balken). Titel und zweiter Markenbestand entfallen — beides steht schon im Seitenkopf
+ * bzw. auf dem Reiter.
  */
 function RewardsShopPanel({
   t,
@@ -503,25 +434,23 @@ function RewardsShopPanel({
     (offersByShelf.get(key) ?? offersByShelf.set(key, []).get(key)!).push(offer);
   }
 
-  const openShelfIds = shelves.filter((s) => isShelfOpen(state, content, s.id)).map((s) => s.id);
-  // Höchste sortOrder unter den offenen Regalen = "aktuelles" Regal (shelves ist bereits aufsteigend
-  // sortiert, also einfach das letzte offene Element in dieser Reihenfolge).
-  const currentShelfId = openShelfIds[openShelfIds.length - 1];
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(currentShelfId ? [currentShelfId] : []));
-  const toggleShelf = (id: string): void => {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  // Sichtbar: nur offene Regale mit Ware (gesperrte bleiben verborgen, s. Chef 25.08.).
+  const openShelves = shelves.filter(
+    (s) => isShelfOpen(state, content, s.id) && (offersByShelf.get(s.id)?.length ?? 0) > 0,
+  );
+  // Höchste sortOrder unter den offenen Regalen = "aktuelles" Regal → Vorauswahl.
+  const currentShelfId = openShelves[openShelves.length - 1]?.id;
+  const [activeShelfId, setActiveShelfId] = useState<string | undefined>(currentShelfId);
+  const shownShelf = openShelves.find((s) => s.id === activeShelfId) ?? openShelves[openShelves.length - 1];
+  const shownOffers = shownShelf ? (offersByShelf.get(shownShelf.id) ?? []) : [];
+  const hasLockedShelves = shelves.some(
+    (sh) => !isShelfOpen(state, content, sh.id) && (offersByShelf.get(sh.id)?.length ?? 0) > 0,
+  );
 
   const buy = (offerId: string): void => {
     const res = buyTokenShopOffer(state, content, offerId);
-    // Regal-Gate/zu-wenig-Tokens blockieren den Button schon vorher (disabled) — schlägt der Kauf
-    // trotzdem fehl, ist es praktisch immer „kein Platz" (no_space); andere Reasons zeigen defensiv
-    // keinen Hinweis (State bleibt ohnehin unverändert, s. buyTokenShopOffer-Doku).
+    // Zu wenig Tokens blockiert der Knopf schon vorher — schlägt der Kauf trotzdem fehl, ist es
+    // praktisch immer „kein Platz" (no_space); andere Reasons zeigen defensiv keinen Hinweis.
     setSpaceNotice(res.reason === "no_space");
     setBump((b) => b + 1);
   };
@@ -530,10 +459,6 @@ function RewardsShopPanel({
 
   return (
     <div className="quest-shop-panel">
-      <div className="quest-shop-panel-head">
-        <span className="quest-shop-panel-title">{t("quests.shop.title")}</span>
-        <QuestTokenBadge t={t} balance={balance} />
-      </div>
       <p className="quest-shop-panel-desc muted">{t("quests.shop.subtitle")}</p>
       {spaceNotice && (
         <p className="quest-shop-notice" role="alert">{t("quests.shop.noSpace")}</p>
@@ -548,33 +473,45 @@ function RewardsShopPanel({
           </div>
         </div>
       ) : (
-        <div className="quest-shelf-list">
-          {/* Chef 25.08.2026 (Test 1.1.0): gesperrte Regale sind GAR NICHT einsehbar. Der erste
-              Entwurf zeigte sie ausgegraut mit "Erfordert Kapitel" — der Chef will die Ware erst
-              sehen, wenn sie erreichbar ist. Ein Satz unten sagt nur, DASS mehr kommt. */}
-          {shelves.map((shelf) => {
-            const offers = offersByShelf.get(shelf.id) ?? [];
-            if (offers.length === 0) return null;
-            if (!openShelfIds.includes(shelf.id)) return null;
-            return (
-              <TokenShopShelfSection
-                key={shelf.id}
-                shelf={shelf}
-                offers={offers}
-                balance={balance}
-                open={openShelfIds.includes(shelf.id)}
-                expanded={expanded.has(shelf.id)}
-                onToggle={() => toggleShelf(shelf.id)}
-                onBuy={buy}
-                t={t}
-                tr={tr}
-              />
-            );
-          })}
-          {shelves.some((sh) => !openShelfIds.includes(sh.id) && (offersByShelf.get(sh.id)?.length ?? 0) > 0) && (
-            <p className="quest-shelf-more muted">{t("quests.shop.moreShelves")}</p>
+        <>
+          {openShelves.length > 0 && (
+            <div className="quest-shelf-tabs" role="tablist">
+              {openShelves.map((shelf) => {
+                const active = shelf.id === shownShelf?.id;
+                return (
+                  <button
+                    key={shelf.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    className={`btn-iron btn-iron--sm quest-shelf-tab${active ? " is-active" : ""}`}
+                    onClick={() => setActiveShelfId(shelf.id)}
+                  >
+                    <span className="quest-shelf-name">{tr(shelf.name)}</span>
+                    <span className="quest-shelf-count">{offersByShelf.get(shelf.id)?.length ?? 0}</span>
+                  </button>
+                );
+              })}
+            </div>
           )}
-        </div>
+          <div className="quest-shelf-list">
+            <div className="quest-shop-grid">
+              {shownOffers.map((offer) => (
+                <TokenShopOfferCard
+                  key={offer.id}
+                  offer={offer}
+                  balance={balance}
+                  onBuy={() => buy(offer.id)}
+                  t={t}
+                  tr={tr}
+                />
+              ))}
+            </div>
+            {hasLockedShelves && (
+              <p className="quest-shelf-more muted">{t("quests.shop.moreShelves")}</p>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

@@ -174,10 +174,8 @@
 .shopv2-chiprow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
 }
 
 .shopv2-chip {
@@ -246,15 +244,6 @@
 .shopv2-chip-icon-img { width: 100%; height: 100%; object-fit: contain; }
 .shopv2-chip-icon-emoji { font-size: 18px; line-height: 1; }
 
-.shopv2-chip-count {
-  font-family: var(--font-head);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--muted);
-  background: rgba(255, 255, 255, 0.07);
-  border-radius: 8px;
-  padding: 1px 7px;
-}
 
 /* ─── Buy-Tab: scrollbarer Sektionsbereich ───────────────────────────────── */
 .shopv2-buy-scroll {
@@ -301,42 +290,47 @@
 }
 
 /* ─── Upgrades-Sektion (eigene Kategorie-Kachel, keine Ware) ─────────────── */
+/* claude:2026-10-17T20:30:00+02:00 — Mindestbreite 340 → 300 px: alle drei Aufwertungen in einer Zeile ab ≈ 930 px Raster;
+   darunter zwei Spalten statt zusammengequetschter Etiketten. */
 .shopv2-upgrade-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--sp-3);
 }
 
+/* claude:2026-10-17T21:00:00+02:00 — Karte bricht um (Text oben, Knopf darunter rechts), wenn der Text
+   neben dem Knopf keine 7em mehr hat; vorher lief RU-Text unter den Preis-Knopf. */
 .shopv2-upgrade-card {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 12px 16px;
+  gap: var(--sp-2) var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
   border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
   background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/bg_black.webp") repeat;
   border-radius: 4px;
 }
 
 .shopv2-upgrade-text {
+  flex: 1 1 7em;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 16px;
+  gap: var(--sp-2);
+  font-size: var(--fs-md);
   color: var(--text);
   line-height: 1.3;
 }
 
 .shopv2-upgrade-icon { object-fit: contain; flex-shrink: 0; }
 
-.shopv2-upgrade-btn { white-space: nowrap; }
-
-/* ─── Buy-Warengrid ───────────────────────────────────────────────────────── */
-.shopv2-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 14px;
+.shopv2-upgrade-btn {
+  flex-shrink: 0;
+  margin-left: auto;
+  white-space: nowrap;
 }
+
+/* ─── Buy-Warengrid: Regeln s. `#root .shopv2-shelves`/`.shopv2-grid` unten ───── */
 
 .shopv2-card {
   position: relative;
@@ -412,20 +406,23 @@
 }
 
 /* ─── Sell-Tab: Inventar-Grid (voller Container) + Detail-/Rückkauf-Spalte ── */
+/* claude:2026-10-17T20:30:00+02:00 — Verkaufen spiegelt Kaufen: Inventar | Handelstresen in denselben Spuren
+   (`--shop-counter-w`, s. #root .shopv2-buy-layout), damit der Reiterwechsel nichts verschiebt. */
 .shopv2-sell-layout {
   flex: 1;
   min-height: 0;
-  display: flex;
-  gap: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--shop-counter-w);
+  grid-template-rows: minmax(0, 1fr);
+  gap: var(--sp-3);
 }
 
 .shopv2-sell-main {
-  flex: 1 1 65%;
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
 /* Clip-Audit G008 (1.0.1): `<p class="shopv2-hint muted">` — beide Klassen setzen font-size mit
@@ -449,25 +446,24 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   border-radius: 4px;
 }
 
-/* claude:2026-10-17T11:20:00+02:00 — Breite nach Panel (cqi) statt Fenster; zu niedrig → die Spalte
-   scrollt, statt den Rückkauf-Hinweis abzuschneiden (Clip-Audit shop-tabs 1366). */
+/* claude:2026-10-17T11:20:00+02:00 — zu niedrig → die Spalte scrollt, statt den Rückkauf-Hinweis
+   abzuschneiden (Clip-Audit shop-tabs 1366).
+   claude:2026-10-17T20:30:00+02:00 — Rahmen/Fläche wie der Kauf-Tresen (s. #root-Block unten); die zwei flachen
+   1-px-Kästen darin (.shopv2-detail-box) entfallen, die Abschnitte trennt die Kopfzeilen-Linie. */
 .shopv2-sell-aside {
-  flex: 0 0 clamp(280px, 30cqi, 400px);
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--sp-4);
   overflow-y: auto;
 }
 
-.shopv2-detail-box {
-  border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
-  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/bg_black.webp") repeat;
-  border-radius: 4px;
-  padding: 14px;
+.shopv2-sell-detail-panel {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
 }
-
-.shopv2-sell-detail-panel { flex-shrink: 0; }
 
 .shopv2-sell-detail { display: flex; flex-direction: column; gap: 12px; }
 
@@ -483,11 +479,12 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   font-weight: 700;
 }
 
+/* claude:2026-10-17T21:20:00+02:00 — Fließtext statt Flex: im schmalen Tresen brach „im Besitz · 276 ◉ pro
+   Stück" sonst in drei nebeneinanderstehende Spalten. */
 .shopv2-sell-detail-meta {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
+  display: block;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
 }
 
 /* Task #314 B2: trägt jetzt das gemeinsame QuantityPicker-Widget (eigenes internes Layout, s.
@@ -497,28 +494,26 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 }
 
 .shopv2-buyback-panel {
-  flex: 1;
-  min-height: 112px;
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  overflow: hidden;
+  gap: var(--sp-3);
 }
 
 .shopv2-buyback-list {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding-right: 4px;
 }
 
+/* claude:2026-10-17T21:20:00+02:00 — Knopf rutscht unter den Namen, wenn die Zeile zu schmal ist (vorher
+   schob sich „Zurückkaufen" über lange Namen). Gilt auch für die Meisterring-Zeilen. */
 .shopv2-buyback-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px 10px;
   padding: 6px 8px;
   border: 1px solid var(--ds-border, rgba(50, 36, 20, 0.9));
   border-radius: 4px;
@@ -527,9 +522,10 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 
 .shopv2-buyback-icon { width: 48px; height: 48px; flex-shrink: 0; }
 
+.shopv2-buyback-row > .shop-citadel-btn { margin-left: auto; }
+
 .shopv2-buyback-info {
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 7em;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -549,13 +545,12 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   font-size: 12px;
 }
 
-/* ─── Meisterring-Sicherheitsnetz (Welle SS) — reuses the Buy-Back row look, plain flex list
-   (kein flex:1/overflow wie .shopv2-buyback-list, das ist der aside-Panel-Variante mit fester
-   Höhe vorbehalten; hier lebt die Sektion im normal fließenden .shopv2-buy-scroll). ────────── */
+/* ─── Meisterring-Sicherheitsnetz (Welle SS) — reuses the Buy-Back row look.
+   claude:2026-10-17T20:30:00+02:00 — sitzt jetzt im Warenraster unter den Aufwertungen (vorher in der Warengruppen-Spalte). */
 .shopv2-masterring-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: var(--sp-2);
 }
 
 /* claude:2026-10-17T11:20:00+02:00 — Query-Container je Reiter (Kaufen/Verkaufen). Sitzt bewusst
@@ -569,17 +564,11 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   flex-direction: column;
 }
 
-/* Schmales Panel: Verkaufsraster oben, Detail + Rückkauf nebeneinander darunter. */
-@container shopv2-pane (max-width: 759px) {
-  .shopv2-sell-layout { flex-direction: column; }
-  .shopv2-sell-aside { flex: 0 0 auto; flex-direction: row; overflow: visible; }
-  .shopv2-sell-aside .shopv2-detail-box { flex: 1; min-width: 0; }
-  .shopv2-sell-main { flex: 1 1 auto; min-height: 200px; }
-}
 
 /* codex:2026-08-01T19:42:00+02:00 — Freigegebenes Shop-Konzept 01 „Mux' Counter“.
-   Der drei-Zonen-Vertrag bleibt bei 1920×1080 und Ultrawide stabil: Kategorien links,
-   Warenraster mittig, Kaufentscheidung rechts. Nur der mittlere Warenbestand scrollt. */
+   claude:2026-10-17T20:30:00+02:00 — Neu gegliedert (Chef 17.10.): Warengruppen als Leiste oben,
+   darunter Warenraster | Kaufentscheidung rechts; Verkaufen spiegelt das (Inventar | Tresen).
+   Nur Warenbestand bzw. Inventar scrollen. */
 #root .shopv2-body {
   padding: 12px;
   gap: 0;
@@ -636,21 +625,32 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   flex: 1 0 auto;
 }
 
-/* claude:2026-10-17T11:20:00+02:00 — Spurbreiten aus der Panelbreite (cqi), nicht aus dem Fenster. */
+/* claude:2026-10-17T11:20:00+02:00 — Spurbreiten aus der Panelbreite (cqi), nicht aus dem Fenster.
+   claude:2026-10-17T20:30:00+02:00 — Warengruppen als Leiste über beiden Zonen (vorher eigene 260-px-Spalte für
+   7 Knöpfe); Tresenbreite als gemeinsame Variable für Kaufen und Verkaufen. */
+#root .shopv2-pane {
+  --shop-counter-w: clamp(280px, 28cqi, 360px);
+  --shop-tile-w: clamp(128px, 9cqi, 150px);
+}
+
 #root .shopv2-buy-layout {
   flex: 1;
   min-height: 0;
   display: grid;
-  /* Warengruppen-Spur so breit wie ihr längstes Etikett (max. 260 px): kein abgeschnittenes
-     "AUFWERTUNGEN"/"WARENGRUPPEN" mehr bei 1366 px. */
-  grid-template-columns: fit-content(260px) minmax(0, 1fr) clamp(300px, 26cqi, 390px);
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) var(--shop-counter-w);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "cats cats" "wares counter";
   gap: var(--sp-3);
   overflow: hidden;
 }
 
+#root .shopv2-category-rail { grid-area: cats; }
+#root .shopv2-buy-scroll { grid-area: wares; }
+#root .shopv2-buy-counter { grid-area: counter; }
+
 #root .shopv2-category-rail,
-#root .shopv2-buy-counter {
+#root .shopv2-buy-counter,
+#root .shopv2-sell-aside {
   min-width: 0;
   min-height: 0;
   border-style: solid;
@@ -668,39 +668,29 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 }
 
 #root .shopv2-category-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  overflow-y: auto;
+  padding: var(--sp-2);
 }
 
-#root .shopv2-category-rail > .shopv2-section-head,
-#root .shopv2-counter > .shopv2-section-head {
+#root .shopv2-counter > .shopv2-section-head,
+#root .shopv2-sell-aside .shopv2-section-head {
   min-height: 34px;
   padding-bottom: 7px;
   border-bottom: 1px solid rgba(171, 128, 65, 0.38);
 }
 
-#root .shopv2-category-rail .shopv2-section-title,
-#root .shopv2-counter .shopv2-section-title {
+#root .shopv2-counter .shopv2-section-title,
+#root .shopv2-sell-aside .shopv2-section-title {
   font-size: clamp(14px, 0.9vw, 17px);
 }
 
-#root .shopv2-chiprow {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  gap: 6px;
-  padding: 0;
-  border: 0;
-}
-
+/* claude:2026-10-17T20:45:00+02:00 — Leisten-Chips etwas enger (Abstand Icon/Text, Laufweite), damit
+   alle Warengruppen bei 1366 px in eine Zeile passen. */
 #root .shopv2-chip {
-  width: 100%;
-  min-height: 42px;
+  min-height: 38px;
   justify-content: flex-start;
-  padding: 7px 10px;
+  gap: 6px;
+  padding: 5px 10px 5px 6px;
+  letter-spacing: 0.2px;
   text-align: left;
   background-color: #111619;
   background-image:
@@ -733,12 +723,12 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 }
 
 #root .shopv2-chip-label {
-  flex: 1;
   min-width: 0;
   white-space: normal;
 }
 
-#root .shopv2-buy-scroll {
+#root .shopv2-buy-scroll,
+#root .shopv2-sell-main {
   min-height: 0;
   overflow-y: auto;
   display: flex;
@@ -762,20 +752,37 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
    Der echte Holz-/Eisen-9-Slice bleibt in beiden Zielauflösungen sichtbar; die warme,
    dunkle Gravewood-Fläche ersetzt die graue Schieferplatte. Das feste Zeilenraster hält
    Bild, Name und Preis unabhängig von Übersetzung und Spaltenbreite an derselben Position. */
+/* claude:2026-10-17T20:45:00+02:00 — Warengruppen als Regale nebeneinander (Flex-Umbruch): jede Gruppe
+   ist so breit wie ihre Kacheln, kleine Gruppen teilen sich eine Zeile, große brechen in sich um.
+   Kacheln kompakter (vorher 158–196 px breit, bis 226 px hoch) und fest breit (`--shop-tile-w`). */
+#root .shopv2-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--sp-5) var(--sp-6);
+}
+
+#root .shopv2-shelves > .shopv2-section {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
 #root .shopv2-grid {
-  grid-template-columns: repeat(auto-fill, minmax(clamp(158px, 13cqi, 196px), 1fr));
-  gap: clamp(10px, 0.72vw, 15px);
-  align-items: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
 }
 
 #root .shopv2-card {
+  flex: 0 0 var(--shop-tile-w);
+  width: var(--shop-tile-w);
   min-width: 0;
-  min-height: clamp(194px, 14.2vh, 226px);
   display: grid;
-  grid-template-rows: minmax(104px, 1fr) minmax(2.45em, auto) 24px;
+  grid-template-rows: 88px minmax(2.4em, auto) 22px;
   align-items: stretch;
-  gap: 5px;
-  padding: 11px 11px 10px;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
   cursor: pointer;
   border-style: solid;
   border-color: transparent;
@@ -815,7 +822,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 
 #root .shopv2-card-image-area {
   min-width: 0;
-  min-height: 104px;
+  min-height: 0;
   padding: 4px;
   border: 1px solid rgba(144, 105, 62, 0.46);
   background:
@@ -827,14 +834,13 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 #root .shopv2-card-image-area .shopv2-cell {
   width: 100%;
   height: 100%;
-  min-height: 96px;
 }
 
 #root .shopv2-card-image-area .shopv2-cell .item-cell-img {
-  width: min(82%, 112px);
-  height: min(82%, 112px);
-  max-width: 112px;
-  max-height: 112px;
+  width: 76px;
+  height: 76px;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
 }
 
@@ -843,7 +849,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   min-height: 2.45em;
   justify-content: center;
   /* claude:2026-10-17T11:20:00+02:00 — kein overflow-wrap:anywhere mehr: Namen brechen nur an Wortgrenzen. */
-  font-size: clamp(14px, 0.84vw, 17px);
+  font-size: var(--fs-md);
   line-height: 1.18;
   text-wrap: balance;
   text-shadow: 0 1px 2px #000;
@@ -857,9 +863,9 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   font-family: var(--font-number, var(--font-head));
   font-variant-numeric: tabular-nums;
   min-width: 0;
-  min-height: 24px;
+  min-height: 22px;
   justify-content: center;
-  font-size: clamp(14px, 0.78vw, 16px);
+  font-size: var(--fs-md);
   text-shadow: 0 1px 2px #000;
 }
 
@@ -877,10 +883,13 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   gap: 12px;
 }
 
+/* claude:2026-10-17T20:30:00+02:00 — Tresen ist jetzt immer ≤ 360 px: Bild + Name nebeneinander, Bestand und
+   Beschreibung darunter (früher erst ab Panel ≤ 1499 px). */
 #root .shopv2-counter-item {
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-areas: "cell name" "stock stock" "desc desc";
+  gap: 6px 12px;
   padding: 10px;
   border-style: solid;
   border-color: transparent;
@@ -894,32 +903,32 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 }
 
 #root .shopv2-counter-cell {
-  width: 112px;
-  height: 112px;
+  grid-area: cell;
+  width: 88px;
+  height: 88px;
   background: radial-gradient(circle, rgba(76, 83, 81, 0.36), rgba(6, 8, 9, 0.72));
 }
 
 #root .shopv2-counter-cell .item-cell-img {
-  max-width: 98px;
-  max-height: 98px;
+  max-width: 78px;
+  max-height: 78px;
 }
 
 #root .shopv2-counter-copy {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 5px;
+  display: contents;
 }
 
 #root .shopv2-counter-name {
+  grid-area: name;
+  align-self: center;
   font-family: var(--font-head);
-  font-size: clamp(17px, 1.15vw, 23px);
+  font-size: var(--fs-xl);
   line-height: 1.15;
 }
 
 #root .shopv2-counter-stock {
+  grid-area: stock;
+  justify-self: start;
   padding: 2px 7px;
   border: 1px solid rgba(115, 157, 125, 0.45);
   color: #82b88d;
@@ -929,6 +938,7 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 }
 
 #root .shopv2-counter-copy p {
+  grid-area: desc;
   margin: 2px 0 0;
   color: var(--muted);
   font-family: Georgia, serif;
@@ -1007,21 +1017,6 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
   text-align: center;
 }
 
-#root .shopv2-category-rail .shopv2-masterring-list {
-  display: grid;
-  gap: 6px;
-}
-
-#root .shopv2-category-rail .shopv2-buyback-row {
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  padding: 5px;
-}
-
-#root .shopv2-category-rail .shopv2-buyback-row > .ds-button {
-  grid-column: 1 / -1;
-}
-
 /* codex:2026-08-01T19:42:00+02:00 — Händlerkopf und Buy/Sell-Schalter als kompakte Thekenkante,
    damit die drei Arbeitszonen mehr Höhe erhalten, ohne die NPC-Persönlichkeit zu verlieren. */
 #root .shopv2-head > .npc-greeting {
@@ -1047,97 +1042,26 @@ p.shopv2-hint { font-size: 14px; flex-shrink: 0; }
 }
 
 /* codex:2026-08-01T19:42:00+02:00 — Sinnvolle Rückfallstufen.
-   claude:2026-10-17T11:20:00+02:00 — Stufen hängen jetzt an der Panelbreite (@container shopv2-pane)
-   statt an der Fensterbreite: Sidebar + offene Queue lassen bei 1366 px nur ≈ 700 px übrig.
-   ≥ 900 px: drei Zonen · 640–899 px: Warengruppen als Leiste über Auswahl + Tresen ·
-   < 640 px: alles untereinander, Tresen in der Folgezeile. Warengruppen bleiben vollständig sichtbar. */
-/* claude:2026-10-17T11:50:00+02:00 — Schmaler Tresen: Bild + Name nebeneinander, Bestand und
-   Beschreibung darunter über die volle Breite (vorher ≈130 px Textspalte, RU-Bestand ragte heraus). */
-@container shopv2-pane (max-width: 1499px) {
-  #root .shopv2-counter-item {
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas: "cell name" "stock stock" "desc desc";
-    row-gap: 6px;
-  }
-
-  #root .shopv2-counter-copy {
-    display: contents;
-  }
-
-  #root .shopv2-counter-item > .shopv2-counter-cell { grid-area: cell; }
-  #root .shopv2-counter-name { grid-area: name; align-self: center; }
-  #root .shopv2-counter-stock { grid-area: stock; justify-self: start; }
-  #root .shopv2-counter-copy p { grid-area: desc; }
-}
-
-@container shopv2-pane (max-width: 1199px) {
-  #root .shopv2-counter-item {
-    grid-template-columns: 88px minmax(0, 1fr);
-  }
-
-  #root .shopv2-counter-cell {
-    width: 88px;
-    height: 88px;
-  }
-
-  /* codex:2026-08-02T11:24:00+02:00 — Der zentrale ItemCell-Bildpfad skaliert im verdichteten Tresen mit seiner Spalte. */
-  #root .shopv2-counter-cell .item-cell-img {
-    max-width: 78px;
-    max-height: 78px;
-  }
-}
-
-@container shopv2-pane (max-width: 899px) {
-  #root .shopv2-buy-layout {
-    grid-template-columns: minmax(0, 1fr) clamp(260px, 40cqi, 300px);
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: var(--sp-2);
-  }
-
-  #root .shopv2-category-rail {
-    grid-column: 1 / -1;
-    padding: var(--sp-2);
-    overflow: visible;
-  }
-
-  #root .shopv2-category-rail > .shopv2-section-head {
-    display: none;
-  }
-
-  #root .shopv2-category-rail .shopv2-chiprow {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  #root .shopv2-chip {
-    width: auto;
-    flex: 1 1 auto;
-    min-height: 38px;
-  }
-
-  #root .shopv2-chip-label {
-    flex: 0 1 auto;
-  }
-
-  #root .shopv2-category-rail .shopv2-masterring-list {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
-}
-
+   claude:2026-10-17T11:20:00+02:00 — Stufen hängen an der Panelbreite (@container shopv2-pane).
+   claude:2026-10-17T20:30:00+02:00 — Mit der Warengruppen-Leiste bleibt nur EINE Stufe: < 640 px alles untereinander
+   (Leiste, Waren bzw. Inventar, Tresen), die Seite scrollt; die früheren 1499/1199/899-Stufen entfallen. */
 @container shopv2-pane (max-width: 639px) {
-  #root .shopv2-buy-layout {
+  #root .shopv2-buy-layout,
+  #root .shopv2-sell-layout {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
   }
 
   #root .shopv2-category-rail,
-  #root .shopv2-buy-counter {
+  #root .shopv2-buy-counter,
+  #root .shopv2-sell-aside {
     flex: 0 0 auto;
     overflow: visible;
   }
 
-  #root .shopv2-buy-scroll {
+  #root .shopv2-buy-scroll,
+  #root .shopv2-sell-main {
     flex: 1 0 300px;
   }
 

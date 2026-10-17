@@ -16,13 +16,16 @@
   flex-shrink: 0;
 }
 
-.mshop-toggle-btn.active {
-  color: var(--ds-gold-bright, #f0dca0);
-  box-shadow: 0 0 10px rgba(216, 184, 112, 0.30), inset 0 0 8px rgba(216, 184, 112, 0.10);
-  border-color: var(--gold);
-}
+/* claude:2026-10-17T20:30:00+02:00 — Der Umschalter ist jetzt `.btn-iron--sm` mit `.is-active`
+   (design-system.css); die eigene `.active`-Regel entfällt. */
 
-.mshop-hint-inline { margin: 0; }
+/* claude:2026-10-17T21:00:00+02:00 — Hinweis darf in der schmaleren Inventarspalte umbrechen
+   (`p.shopv2-hint` setzt flex-shrink:0 für die Tresen-Spalte; in dieser Zeile ragte er sonst heraus). */
+.mshop-toolbar .mshop-hint-inline {
+  flex: 1 1 18em;
+  min-width: 0;
+  margin: 0;
+}
 
 /* ─── Feste Aktions-Leiste (erscheint über dem Verkaufs-Grid, solange der
    Mass-Sell-Modus aktiv ist) ──────────────────────────────────────────────── */

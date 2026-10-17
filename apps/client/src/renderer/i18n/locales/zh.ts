@@ -1092,7 +1092,7 @@ export const zh: Record<string, string> = {
     "shop.sell100": "出售 ×100",
     "shop.sellAll": "全部出售",
     "shop.sellOne": "出售",
-    "shop.sellSelectHint": "在上方选择一件物品以出售。",
+    "shop.sellSelectHint": "从背包中选择一件物品以出售。",
     "shop.owned": "拥有 {n}",
     "shop.each": "每个",
     "shop.upgrades": "升级",

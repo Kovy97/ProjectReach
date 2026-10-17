@@ -1077,7 +1077,7 @@ export const ptBR: Record<string, string> = {
     "shop.sell100": "Vender ×100",
     "shop.sellAll": "Vender tudo",
     "shop.sellOne": "Vender",
-    "shop.sellSelectHint": "Selecione um item acima para vendê-lo.",
+    "shop.sellSelectHint": "Selecione um item do seu inventário para vendê-lo.",
     "shop.owned": "{n} em posse",
     "shop.each": "cada",
     "shop.upgrades": "Melhorias",

@@ -113,10 +113,6 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
     }, 4000);
   }
 
-  const selectedMaster = activeMasterId
-    ? (allMasters.find((m) => m.id === activeMasterId) ?? null)
-    : null;
-
   // ── Active task ──────────────────────────────────────────────────
   const task = getActiveTask(state);
   const taskMonster = task ? (content.monsters[task.monsterId] ?? null) : null;
@@ -165,16 +161,8 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
       )
     : [];
 
-  // ── Speech bubble text ────────────────────────────────────────────
-  const playerName = state.character.name;
-  let speechText: string;
-  if (!task) {
-    speechText = t("slayer.speech.noTask").replace("{name}", playerName);
-  } else if (task.progress >= task.required) {
-    speechText = t("slayer.speech.taskDone").replace("{name}", playerName);
-  } else {
-    speechText = t("slayer.speech.taskActive").replace("{name}", playerName);
-  }
+  // claude:2026-10-17T19:40:00+02:00 — Zweite Brenna-Sprechbox (slayer.speech.*) entfällt: Brenna
+  // spricht nur noch in der Begrüßung oben (Chef 17.10.), der Auftragszettel zeigt den Zustand selbst.
 
   function handleGetTask(): void {
     const masterId = activeMasterId ?? availableMasters[0]?.id;
@@ -246,99 +234,45 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
   // für Brenna — Elite > Spielerzustand (Todeszahl vor Serie) > Segen (bloodmoon/wildhunt).
   const slayerVoiceKey = resolveNpcVoiceKey("slayer", state);
 
+  // claude:2026-10-17T19:40:00+02:00 — Serien-Chip als eigener Baustein: steht jetzt auf dem
+  // Auftragszettel UND im leeren Zustand (dort motiviert er zum nächsten Auftrag).
+  const streakChip = state.slayerStreak > 0 ? (
+    <span className="slayer-task-reward-chip slayer-task-reward-chip--streak">
+      {STREAK_ICON_URL ? <img loading="lazy" decoding="async" src={STREAK_ICON_URL} alt="" className="ui-icon slayer-streak-icon" /> : "🔥"} {t("slayer.streak.chip")
+        .replace("{n}", String(state.slayerStreak))
+        .replace(
+          "{next}",
+          String(
+            Math.ceil((state.slayerStreak + 1) / SLAYER_STREAK_TOKEN_INTERVAL)
+              * SLAYER_STREAK_TOKEN_INTERVAL,
+          ),
+        )}
+    </span>
+  ) : null;
+
   return (
     <div className="slayer-page">
-      {/* Kopfbox entfernt (Chef): Name + Level stehen bereits oben in der Title-Bar (content-header). */}
+      {/* claude:2026-10-17T19:40:00+02:00 — Kopfzeile wie im Laden: Begrüßung | Punkte | Meister-
+          Reiter. Ersetzt die eigene Punkte-Zeile und die Porträt-Spalte (Brenna stand dort ein
+          drittes und viertes Mal, mit zweiter Sprechbox). */}
+      <div className="slayer-head">
+        {/* NPC-Begrüßung („Speaking Head", Chef-GO 2026-07-13; bleibt laut Chef 17.10.) — hier ECHT:
+            Brenna Aschenweide, Porträt + Name sind final. */}
+        <NpcGreeting
+          portraitSrc={getPortrait("slayermaster_brenna_ashwick")}
+          name={t("npc.slayer.name")}
+          lines={[t("npc.slayer.greet1"), t("npc.slayer.greet2"), t("npc.slayer.greet3")]}
+          priorityLine={
+            slayerVoiceKey
+              ? t(slayerVoiceKey)
+                  .replace("{zone}", activeEliteZoneName(state, tr) ?? "")
+                  .replace("{streak}", String(state.slayerStreak))
+              : null
+          }
+        />
 
-      {/* NPC-Begrüßung („Speaking Head", Chef-GO 2026-07-13) — hier ECHT: Brenna Aschenweide,
-          Porträt + Name sind final (kein Platzhalter wie auf Bank/Shop/Quests). */}
-      <NpcGreeting
-        portraitSrc={getPortrait("slayermaster_brenna_ashwick")}
-        name={t("npc.slayer.name")}
-        lines={[t("npc.slayer.greet1"), t("npc.slayer.greet2"), t("npc.slayer.greet3")]}
-        priorityLine={
-          slayerVoiceKey
-            ? t(slayerVoiceKey)
-                .replace("{zone}", activeEliteZoneName(state, tr) ?? "")
-                .replace("{streak}", String(state.slayerStreak))
-            : null
-        }
-      />
-
-      {/* ── Master tabs (DS wooden-frame buttons) ───────────────────── */}
-      {allMasters.length > 0 && (
-        <div className="slayer-master-tabs">
-          {allMasters.map((master) => {
-            const isAvailable = availableMasters.some((m) => m.id === master.id);
-            const isActive = activeMasterId === master.id;
-            const cls = [
-              "slayer-master-tab",
-              isActive ? "active" : "",
-              !isAvailable ? "locked" : "",
-            ].filter(Boolean).join(" ");
-            return (
-              <button
-                key={master.id}
-                className={cls}
-                onClick={() => { if (isAvailable) setActiveMasterId(master.id); }}
-                disabled={!isAvailable}
-                title={
-                  !isAvailable
-                    ? t("slayer.master.locked").replace("{n}", String(master.unlock.slayerLevel))
-                    : undefined
-                }
-              >
-                {!isAvailable && (
-                  <span aria-hidden="true">
-                    {LOCKED_ICON_URL
-                      ? <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" className="locked-icon-img" />
-                      : "🔒"}{" "}
-                  </span>
-                )}
-                {tr(master.name)}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* ── Dialog row: Portrait (left) + Task (right) ─────────────── */}
-      <div className="slayer-dialog-row">
-        {/* ── Left: Master portrait + speech (wooden-frame panel) ──── */}
-        <div className="slayer-dialog-col shop-panel">
-          {/* Portrait frame — full width, bottom-aligned image */}
-          <div className="slayer-portrait-area">
-            {selectedMaster ? (() => {
-              const url = getPortrait("slayermaster_" + selectedMaster.id);
-              return url ? (
-                <img loading="lazy" decoding="async" src={url} alt="" className="pixelart slayer-portrait-img" />
-              ) : SLAYER_FALLBACK_ICON_URL ? (
-                <img loading="lazy" decoding="async" src={SLAYER_FALLBACK_ICON_URL} alt="" className="slayer-portrait-fallback-img" />
-              ) : (
-                <span className="slayer-portrait-fallback" aria-hidden="true">💀</span>
-              );
-            })() : SLAYER_FALLBACK_ICON_URL ? (
-              <img loading="lazy" decoding="async" src={SLAYER_FALLBACK_ICON_URL} alt="" className="slayer-portrait-fallback-img" />
-            ) : (
-              <span className="slayer-portrait-fallback" aria-hidden="true">💀</span>
-            )}
-          </div>
-
-          {/* Nameplate: name + role below portrait */}
-          {selectedMaster && (
-            <div className="slayer-nameplate">
-              <div className="slayer-master-name">{tr(selectedMaster.name)}</div>
-              <div className="slayer-master-title muted">{t("slayer.master.title")}</div>
-            </div>
-          )}
-
-          {/* Speech box — parchment-style, fills remaining height */}
-          <div className="slayer-speech-box">{speechText}</div>
-        </div>
-
-        {/* ── Right: Points balance + Task panel ───────────────────── */}
-        <div className="slayer-task-col">
-          {/* Slayer Points — prominent full-width counter at top */}
+        <div className="slayer-head-side">
+          {/* Slayer-Punkte: einzige Anzeige der Seite (Skip-Kosten und Shop-Preise beziehen sich darauf). */}
           <div className="slayer-balance">
             <span className="slayer-balance-icon">
               {SLAYER_POINTS_ICON_URL
@@ -349,36 +283,79 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
             <span className="slayer-balance-label">{t("slayer.points")}</span>
           </div>
 
-          {task ? (
-            <div className="slayer-task-panel shop-panel">
-              {/* Monster info row */}
-              <div className="slayer-task-monster">
-                <div className="slayer-task-monster-img">
+          {/* ── Master tabs (DS wooden-frame buttons; bleiben laut Chef 17.10.) ── */}
+          {allMasters.length > 0 && (
+            <div className="slayer-master-tabs">
+              {allMasters.map((master) => {
+                const isAvailable = availableMasters.some((m) => m.id === master.id);
+                const isActive = activeMasterId === master.id;
+                const cls = [
+                  "slayer-master-tab",
+                  isActive ? "active" : "",
+                  !isAvailable ? "locked" : "",
+                ].filter(Boolean).join(" ");
+                return (
+                  <button
+                    key={master.id}
+                    className={cls}
+                    onClick={() => { if (isAvailable) setActiveMasterId(master.id); }}
+                    disabled={!isAvailable}
+                    title={
+                      !isAvailable
+                        ? t("slayer.master.locked").replace("{n}", String(master.unlock.slayerLevel))
+                        : undefined
+                    }
+                  >
+                    {!isAvailable && (
+                      <span aria-hidden="true">
+                        {LOCKED_ICON_URL
+                          ? <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" className="locked-icon-img" />
+                          : "🔒"}{" "}
+                      </span>
+                    )}
+                    {tr(master.name)}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Auftragszettel ──────────────────────────────────────────────
+          claude:2026-10-17T19:40:00+02:00 — EINE Karte, drei Zonen: Zielbild | Ziel, Fortschritt,
+          Belohnung | Aktionen. Der leere Zustand nutzt dieselben Zonen (Totenkopf | Hinweis |
+          „Neuen Auftrag holen") statt einer 400-px-Leerbox. Zonen-Umbruch per @container (slayer.css). */}
+      <div className={`slayer-task-panel shop-panel${task ? "" : " empty"}`}>
+        <div className="slayer-task-art">
+          {(() => {
+            const src = task ? getMonsterSrc(task.monsterId) : null;
+            if (src) return <img loading="lazy" decoding="async" src={src} alt="" className="pixelart slayer-task-art-img" />;
+            return SLAYER_FALLBACK_ICON_URL ? (
+              <img loading="lazy" decoding="async" src={SLAYER_FALLBACK_ICON_URL} alt="" className="slayer-task-empty-icon-img" />
+            ) : (
+              <span className="slayer-task-empty-icon" aria-hidden="true">💀</span>
+            );
+          })()}
+        </div>
+
+        {task ? (
+          <>
+            <div className="slayer-task-body">
+              <div className="slayer-task-monster-info">
+                <span className="slayer-task-monster-name">
+                  {taskMonster ? tr(taskMonster.name) : task.monsterId}
+                </span>
+                <span className="slayer-task-location muted">
                   {(() => {
-                    const src = getMonsterSrc(task.monsterId);
-                    if (src) return <img loading="lazy" decoding="async" src={src} alt="" className="pixelart" />;
-                    return SLAYER_FALLBACK_ICON_URL ? (
-                      <img loading="lazy" decoding="async" src={SLAYER_FALLBACK_ICON_URL} alt="" className="slayer-portrait-fallback-img" />
-                    ) : (
-                      <span aria-hidden="true">💀</span>
-                    );
+                    const towerFl = allFloors.find((f) => f.monsters.includes(task.monsterId));
+                    if (towerFl) return towerFloorLabel(task.monsterId);
+                    if (taskMonster?.zone) {
+                      const zone = content.zones.find((z) => z.id === taskMonster.zone);
+                      if (zone) return tr(zone.name);
+                    }
+                    return t("slayer.location.world");
                   })()}
-                </div>
-                <div className="slayer-task-monster-info">
-                  <span className="slayer-task-monster-name">
-                    {taskMonster ? tr(taskMonster.name) : task.monsterId}
-                  </span>
-                  <span className="slayer-task-location muted">
-                    {(() => {
-                      const towerFl = allFloors.find((f) => f.monsters.includes(task.monsterId));
-                      if (towerFl) return towerFloorLabel(task.monsterId);
-                      if (taskMonster?.zone) {
-                        const zone = content.zones.find((z) => z.id === taskMonster.zone);
-                        if (zone) return tr(zone.name);
-                      }
-                      return t("slayer.location.world");
-                    })()}
-                  </span>
                   {onNavigate && (
                     <button
                       className="slayer-locate-btn muted"
@@ -387,11 +364,10 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                       {t("slayer.task.goToMonster")}
                     </button>
                   )}
-                </div>
+                </span>
               </div>
 
-              {/* Progress bar — Chef-Fund 26.08.2026: gehört visuell zum "Zielmonster"-Block
-                  (Bild+Name+Fortschritt) direkt über den Kampf-Knöpfen, nicht mehr danach. */}
+              {/* Fortschritt gehört zum Zielblock (Chef-Fund 26.08.2026). */}
               <div className="slayer-task-progress">
                 <div className="slayer-task-progress-label">
                   <span>
@@ -413,17 +389,42 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                 </div>
               </div>
 
-              {/* Spieler-Report 1.0.2: beide Wege direkt vom Zettel, mit der Restmenge als Ziel.
-                  Vorher blieb nur der Sprung auf die Kampfseite — dort das Monster wiederfinden
-                  und die Restzahl selbst abzaehlen. Chef-Fund 26.08.2026 ("gehen unter"): eigene
-                  volle-Breite-Zeile direkt unter Fortschritt/VOR den Belohnungs-Chips, Primäraktion
-                  deutlich größer (slayer.css `.slayer-task-fight-row`). */}
+              {/* Kopfgeld auf dem Zettel (Fun-Sweep FF, Vesna V1-Anzeige): xpReward/pointReward sind beim
+                  Assign fixiert — hier nur anzeigen. Serie (Welle GG/KK) mit Countdown zum Bonus. */}
+              <div className="slayer-task-reward-row">
+                <span className="slayer-task-reward-label muted">{t("quests.rewards")}</span>
+                <span className="slayer-task-reward-chip slayer-task-reward-chip--xp">
+                  ✦ +{formatNum(task.xpReward)} {t("skill.t.xp")}
+                </span>
+                {slayerCampBonus > 0 ? (
+                  <HoverTip
+                    as="span"
+                    className="slayer-task-reward-chip slayer-task-reward-chip--pts"
+                    content={<div className="ct-tip-desc"><CampBoostNote kind="slayerPoints" value={slayerCampBonus} t={t} /></div>}
+                  >
+                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(task.pointReward))}
+                  </HoverTip>
+                ) : (
+                  <span className="slayer-task-reward-chip slayer-task-reward-chip--pts">
+                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(task.pointReward))}
+                  </span>
+                )}
+                {streakChip}
+              </div>
+            </div>
+
+            <div className="slayer-task-side">
+              {/* Requirement warning — direkt über den gesperrten Kampf-Knöpfen, die er erklärt. */}
+              {!reqMet && reqItemName && (
+                <div className="slayer-req-warning">
+                  {t("slayer.req.missing").replace("{item}", reqItemName)}
+                </div>
+              )}
+
+              {/* Spieler-Report 1.0.2: beide Kampf-Wege direkt vom Zettel, Restmenge als Ziel.
+                  Primär „Sofort kämpfen" = .btn-iron (größer), Sekundär „Einreihen" = .shop-citadel-btn. */}
               {taskRest > 0 && (
                 <div className="slayer-task-fight-row">
-                  {/* Chef-Fund 25.08. (1.1.0 live): "sehen aus wie Windows-Buttons" — `.btn` war
-                      nirgends in der CSS definiert, lief also auf dem nackten Browser-Default.
-                      Knopf-Vereinheitlichung 26.08.2026: Primaer (Sofort kaempfen) = `.btn-iron`,
-                      Sekundaer (Einreihen) = `.shop-citadel-btn`. */}
                   <button
                     className="btn-iron slayer-task-fight-btn"
                     onClick={handleTaskFightNow}
@@ -443,58 +444,6 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                 </div>
               )}
 
-              {/* Kopfgeld auf dem Zettel (Fun-Sweep FF, Vesna V1-Anzeige — slayer-vesna.md
-                  Befund 2: "Auf dem Auftragszettel selbst steht KEINE Belohnung"). xpReward/
-                  pointReward stehen schon im Task-Objekt (beim Assign deterministisch fixiert,
-                  s. SlayerTask-JSDoc) — hier nur anzeigen, kein neuer State. Die Punkte-
-                  Skalierungsformel ändert parallel Welle GG in der Engine; diese Zeile liest nur
-                  die fertig berechneten Felder, bleibt also kompatibel. */}
-              <div className="slayer-task-reward-row">
-                <span className="slayer-task-reward-label muted">{t("quests.rewards")}</span>
-                <span className="slayer-task-reward-chip slayer-task-reward-chip--xp">
-                  ✦ +{formatNum(task.xpReward)} {t("skill.t.xp")}
-                </span>
-                {slayerCampBonus > 0 ? (
-                  <HoverTip
-                    as="span"
-                    className="slayer-task-reward-chip slayer-task-reward-chip--pts"
-                    content={<div className="ct-tip-desc"><CampBoostNote kind="slayerPoints" value={slayerCampBonus} t={t} /></div>}
-                  >
-                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(task.pointReward))}
-                  </HoverTip>
-                ) : (
-                  <span className="slayer-task-reward-chip slayer-task-reward-chip--pts">
-                    <SlayerPtIcon /> {t("slayer.task.rewardPoints").replace("{n}", formatNum(task.pointReward))}
-                  </span>
-                )}
-                {/* Task-Streak sichtbar (Welle GG → UI, Fun-Sweep Programm Welle II §2): nur ab
-                    dem ersten abgeschlossenen Task dieser Serie — vorher gibt es nichts zu zeigen.
-                    Welle KK (Vesna-Retest, "Serien-Takt unsichtbar"): Countdown zum nächsten Bonus
-                    ergänzt — nächster Vielfacher von SLAYER_STREAK_TOKEN_INTERVAL (der Punkte-Bonus
-                    landet immer AUF einem Token-Intervall, s. shared/index.ts), aus der geteilten
-                    Konstante berechnet statt hartkodiert. */}
-                {state.slayerStreak > 0 && (
-                  <span className="slayer-task-reward-chip slayer-task-reward-chip--streak">
-                    {STREAK_ICON_URL ? <img loading="lazy" decoding="async" src={STREAK_ICON_URL} alt="" className="ui-icon slayer-streak-icon" /> : "🔥"} {t("slayer.streak.chip")
-                      .replace("{n}", String(state.slayerStreak))
-                      .replace(
-                        "{next}",
-                        String(
-                          Math.ceil((state.slayerStreak + 1) / SLAYER_STREAK_TOKEN_INTERVAL)
-                            * SLAYER_STREAK_TOKEN_INTERVAL,
-                        ),
-                      )}
-                  </span>
-                )}
-              </div>
-
-              {/* Requirement warning */}
-              {!reqMet && reqItemName && (
-                <div className="slayer-req-warning">
-                  {t("slayer.req.missing").replace("{item}", reqItemName)}
-                </div>
-              )}
-
               {/* Gratis-Skip der Trophäenwand III (Das Lager, Task #361) — siehe hasFreeSkipSource. */}
               {hasFreeSkipSource && (
                 <div className={`slayer-freeskip${freeSkipToday ? " is-available" : ""}`}>
@@ -502,8 +451,7 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                 </div>
               )}
 
-              {/* Action buttons — EIN Pfad (Skip Task, mit Confirm-Schritt bei Kosten > 0);
-                  s. handleSkipClick-Kommentar für die Konsolidierungs-Begründung. */}
+              {/* EIN Skip-Pfad mit Confirm-Schritt (s. handleSkipClick). */}
               {confirmCancel ? (
                 <div className="slayer-cancel-confirm">
                   <p className="slayer-cancel-confirm-text muted">
@@ -511,15 +459,13 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                       ? t("slayer.task.cancelConfirm").replace("{n}", String(skipCost))
                       : t("slayer.task.cancelConfirmFree")}
                   </p>
-                  {/* Streak-Bruch-Hinweis (Welle GG → UI, Fun-Sweep Programm Welle II §2): nur wenn
-                      es überhaupt eine Serie gibt UND dieser Skip bezahlt ist (die Gratis-Gnade
-                      unter SLAYER_SKIP_FREE_BELOW_LEVEL bricht die Serie nicht, s. skipTask). */}
+                  {/* Streak-Bruch-Hinweis: nur mit Serie UND bezahltem Skip (s. skipTask). */}
                   {state.slayerStreak > 0 && skipCost > 0 && (
                     <p className="slayer-cancel-streak-warning muted">
                       {t("slayer.task.streakSkipWarning")}
                     </p>
                   )}
-                  <div className="slayer-task-actions">
+                  <div className="slayer-task-actions-row">
                     <button
                       className="shop-citadel-btn"
                       onClick={executeSkipTask}
@@ -536,81 +482,74 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                   </div>
                 </div>
               ) : (
-                <div className="slayer-task-actions">
-                  <div className="slayer-task-actions-row">
+                <div className="slayer-task-actions-row">
+                  <button
+                    className="shop-citadel-btn"
+                    onClick={handleSkipClick}
+                    disabled={state.slayerPoints < skipCost}
+                    title={state.slayerPoints < skipCost ? t("slayer.shop.notEnough") : undefined}
+                  >
+                    {skipCost > 0
+                      ? t("slayer.task.skipCost").replace("{n}", String(skipCost))
+                      : t("slayer.task.skipFree")}
+                  </button>
+                  {/* Chef-GO 26.08.2026: nur sichtbar mit Bestand — s. taskTokenCount-Kommentar. */}
+                  {taskTokenCount > 0 && (
                     <button
-                      className="shop-citadel-btn"
-                      onClick={handleSkipClick}
-                      disabled={state.slayerPoints < skipCost}
-                      title={state.slayerPoints < skipCost ? t("slayer.shop.notEnough") : undefined}
+                      className="btn-iron btn-iron--sm"
+                      onClick={handleUseToken}
                     >
-                      {skipCost > 0
-                        ? t("slayer.task.skipCost").replace("{n}", String(skipCost))
-                        : t("slayer.task.skipFree")}
+                      {t("slayer.task.useToken").replace("{n}", String(taskTokenCount))}
                     </button>
-                    {/* Chef-GO 26.08.2026: nur sichtbar mit Bestand — s. taskTokenCount-Kommentar. */}
-                    {taskTokenCount > 0 && (
-                      <button
-                        className="btn-iron btn-iron--sm"
-                        onClick={handleUseToken}
-                      >
-                        {t("slayer.task.useToken").replace("{n}", String(taskTokenCount))}
-                      </button>
-                    )}
-                  </div>
+                  )}
                 </div>
               )}
             </div>
-          ) : (
-            /* Empty task panel */
-            <div className="slayer-task-panel shop-panel empty">
-              {SLAYER_FALLBACK_ICON_URL ? (
-                <img loading="lazy" decoding="async" src={SLAYER_FALLBACK_ICON_URL} alt="" className="slayer-task-empty-icon-img" />
-              ) : (
-                <span className="slayer-task-empty-icon" aria-hidden="true">💀</span>
-              )}
+          </>
+        ) : (
+          <>
+            <div className="slayer-task-body">
               <span className="slayer-task-empty-label">{t("slayer.task.none")}</span>
-              <p className="muted">{t("slayer.task.noneHint")}</p>
+              <p className="muted slayer-task-empty-hint">{t("slayer.task.noneHint")}</p>
+              {streakChip && <div className="slayer-task-reward-row">{streakChip}</div>}
+            </div>
+            <div className="slayer-task-side">
+              {/* Primäraktion des leeren Zettels = Standard-Knopf (.btn-iron), ohne !important-Größen. */}
               <button
-                className="shop-citadel-btn slayer-get-task-btn"
+                className="btn-iron slayer-get-task-btn"
                 onClick={handleGetTask}
                 disabled={availableMasters.length === 0}
               >
                 {t("slayer.task.getTask")}
               </button>
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
-      {/* Kopfgeld-Brett (Jagd-Paket Task 1) lebt seit Spieler-Feedback 0.2.2 Punkt 3 nicht mehr
-          hier fest verankert — ersetzt durch das schwebende Elite-Mini-Fenster
-          (components/EliteMiniWindow.tsx, app-weit in App.tsx gemountet), damit es keinen
-          Platz mehr im Hauptinterface belegt. BountyBoard.tsx entfernt. */}
+      {/* Kopfgeld-Brett (Jagd-Paket Task 1) lebt seit Spieler-Feedback 0.2.2 Punkt 3 im schwebenden
+          Elite-Mini-Fenster (components/EliteMiniWindow.tsx, app-weit in App.tsx gemountet). */}
 
       {/* ── Reward Shop ───────────────────────────────────────────── */}
-      {/* Chef-Fund 26.08.2026: eigene Basalt-Fläche (slayer-shop-panel, s. slayer.css) statt der
-          Holz-Textur von `.shop-panel` — klare Trennung zur Leder-Fläche der Karten darunter. */}
+      {/* Chef-Fund 26.08.2026: eigene Basalt-Fläche (slayer-shop-panel, s. slayer.css). */}
       <div className="shop-panel slayer-shop-panel">
         <SectionHead title={t("slayer.tab.shop")} />
         {(!content.slayerShop || content.slayerShop.length === 0) ? (
           <p className="muted slayer-rewards-empty">{t("slayer.shop.empty")}</p>
         ) : (
-          <div className="shop-items-grid slayer-shop-grid">
+          // claude:2026-10-17T19:40:00+02:00 — Kompakte Angebotszeilen (Bild | Name, Stufe | Preis)
+          // statt 360-px-Bildkarten; Spaltenzahl folgt der Panelbreite.
+          <div className="slayer-shop-grid">
             {slayerShopSorted.map((entry) => {
               const item = content.items[entry.itemId];
               if (!item) return null;
               const levelRequired = entry.slayerLevelRequired ?? 1;
               const levelOk = level >= levelRequired;
               const pointsOk = state.slayerPoints >= entry.cost;
-              // Kein invOk/canHold-Vorab-Check mehr (Alt-Bug): buySlayerShopItem lagert bei vollem
-              // Inventar automatisch ins Lager um (addItemOrBank) und erstattet die Punkte NUR, wenn
-              // wirklich beide Töpfe voll sind (no_space) — der seltene Fall landet als Fehlermeldung
-              // nach dem Klick statt den Button vorschnell zu sperren.
+              // Kein invOk/canHold-Vorab-Check (Alt-Bug): buySlayerShopItem lagert bei vollem Inventar
+              // ins Lager um und meldet no_space erst, wenn beide Töpfe voll sind.
               const canBuy = levelOk && pointsOk;
-              // "Preis rot" (Chef) nur für den leistbaren-aber-noch-gesperrten Fall gibt es nicht —
-              // rot markiert gezielt "freigeschaltet, aber (noch) nicht leistbar"; das Level-Lock
-              // dimmt bereits die ganze Karte (`slayer-card-locked`), braucht keine zweite Farbe.
+              // Rot nur für „freigeschaltet, aber (noch) nicht leistbar"; das Level-Lock dimmt die Karte.
               const tooExpensive = levelOk && !pointsOk;
 
               let disabledTitle: string | undefined;
@@ -623,13 +562,7 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
               const buyError = shopError?.itemId === entry.itemId ? shopError : null;
 
               return (
-                // Chef-Fund 26.08.2026 ("Karten uneinheitlich, komische Ränder für Rarity, Bild nutzt
-                // nur einen kleinen Teilbereich"): eigene `slayer-shop-*`-Kartenfamilie (slayer.css)
-                // statt der pages.css `shop-item-card`-Familie — deren Kartenhöhe wuchs mit der
-                // Namenslänge. Seltenheit zeigt sich NUR noch am Rahmen der Item-Zelle selbst
-                // (ItemCell setzt rarityClass(item.rarity) intern, s. components.css
-                // `body .item-cell.rarity-*`) — keine zweite, eigens gemalte Rarity-Kontur mehr auf
-                // der Karte.
+                // Seltenheit zeigt sich nur an der Farbwolke der Item-Zelle (Chef-Test 26.08.2026).
                 <div
                   key={entry.itemId}
                   className={`slayer-shop-card${!levelOk ? " slayer-card-locked" : ""}`}
@@ -647,28 +580,27 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
                       ) : undefined
                     }
                   />
-                  <div className="slayer-shop-card-body">
-                    <span className="slayer-shop-card-name">{tr(item.name)}</span>
-                    {/* Feste Fußzeile: Stufe links, Preis/Kaufen rechts — immer beide, ob gesperrt
-                        oder nicht (Chef: "Preis und Stufe in einer festen Fußzeile"). */}
-                    <div className="slayer-shop-card-footer">
+                  <span className="slayer-shop-card-name">{tr(item.name)}</span>
+                  {/* Feste Fußzeile: Stufe links, Preis/Kaufen rechts (Chef-Nachtrag). Ein Kauf-Fehler
+                      ersetzt für 4 s die Stufen-Angabe, damit die Zeilenhöhe nicht springt. */}
+                  <div className="slayer-shop-card-footer">
+                    {buyError ? (
+                      <span className="slayer-shop-card-error" role="alert">
+                        {t(`slayer.shop.reason.${buyError.reason}`)}
+                      </span>
+                    ) : (
                       <span className="slayer-shop-card-level muted">
                         {t("skill.levelShort").replace("{n}", String(levelRequired))}
                       </span>
-                      <button
-                        className={`btn-iron btn-iron--sm slayer-shop-buy-btn${tooExpensive ? " slayer-shop-buy-btn--tooExpensive" : ""}`}
-                        disabled={!canBuy}
-                        title={disabledTitle}
-                        onClick={() => handleBuyShopItem(entry.itemId)}
-                      >
-                        <SlayerPtIcon /> {entry.cost}
-                      </button>
-                    </div>
-                    {/* Reservierte Fehlerzeile (immer gerendert, leer ohne Fehler) — ein Kauf-Fehler
-                        darf die Kartenhöhe nicht kurzzeitig verschieben. */}
-                    <span className="slayer-shop-card-error-slot" role="alert">
-                      {buyError ? t(`slayer.shop.reason.${buyError.reason}`) : ""}
-                    </span>
+                    )}
+                    <button
+                      className={`btn-iron btn-iron--sm slayer-shop-buy-btn${tooExpensive ? " slayer-shop-buy-btn--tooExpensive" : ""}`}
+                      disabled={!canBuy}
+                      title={disabledTitle}
+                      onClick={() => handleBuyShopItem(entry.itemId)}
+                    >
+                      <SlayerPtIcon /> {entry.cost}
+                    </button>
                   </div>
                 </div>
               );

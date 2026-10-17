@@ -491,32 +491,17 @@
   gap: 14px;
 }
 
-.quest-shop-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.quest-shop-panel-title {
-  font-family: var(--font-head);
-  font-size: 19px;
-  color: var(--ds-gold-bright, #f0dca0);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
 .quest-shop-panel-desc {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: var(--fs-md);
+  line-height: 1.4;
 }
 
+/* claude:2026-10-17T20:10:00+02:00 — Angebotszeilen statt Hochkant-Karten: Spalten nach Panelbreite. */
 .quest-shop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  gap: var(--sp-3);
   padding: 4px;
 }
 
@@ -526,15 +511,19 @@
   border: 1.5px dashed var(--border);
 }
 
-/* ─── Offer-Karten (Task #284) — Citadel-Karte: Holzrahmen, Item-Bild, Bündel + Token-Preis ─── */
+/* ─── Offer-Zeilen (Task #284) — Citadel-Rahmen, Item-Bild + Bündel | Name / Preis · Kaufen ───
+   claude:2026-10-17T20:10:00+02:00 — vorher 250 px hohe Hochkant-Karte für ein 64-px-Bild. */
 .quest-shop-offer {
   position: relative;
   isolation: isolate;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  grid-template-areas: "img name name" "img price buy";
+  grid-template-rows: minmax(2.4em, auto) auto;
   align-items: center;
-  gap: 8px;
-  padding: 16px 12px 14px;
+  column-gap: var(--sp-3);
+  row-gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-2);
   border-style: solid;
   border-color: transparent;
   border-width: var(--frame-w);
@@ -546,7 +535,6 @@
   background:
     linear-gradient(rgba(24, 16, 8, 0.78), rgba(24, 16, 8, 0.78)),
     url("../assets/bg_black.webp") repeat;
-  text-align: center;
 }
 
 .quest-shop-offer--locked {
@@ -554,6 +542,7 @@
 }
 
 .quest-shop-offer-imgwrap {
+  grid-area: img;
   position: relative;
   width: 64px;
   height: 64px;
@@ -577,8 +566,8 @@
 /* Bündelgrößen-Badge — klebt unten rechts am Item-Bild (wie Stack-Zähler im Inventar). */
 .quest-shop-offer-qty {
   position: absolute;
-  right: -8px;
-  bottom: -4px;
+  right: -4px;
+  bottom: -2px;
   padding: 1px 7px;
   background: rgba(18, 12, 6, 0.92);
   border: 1.5px solid var(--border);
@@ -590,15 +579,25 @@
 }
 
 .quest-shop-offer-name {
+  grid-area: name;
+  align-self: end;
+  min-width: 0;
   font-family: var(--font-head);
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--ds-parch-ink, #e8d8b0);
-  line-height: 1.25;
-  min-height: 2.5em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* Preis + (bei zu wenig Marken) Hinweis; der Hinweis bricht unter den Preis, nie mitten im Wort. */
+.quest-shop-offer-price {
+  grid-area: price;
+  min-width: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  gap: 2px var(--sp-2);
 }
 
 /* Token-Preis — violette Token-Farbwelt wie das Balance-Badge. */
@@ -618,20 +617,14 @@
   color: #d9bdf2;
 }
 
-.quest-shop-buy-btn {
-  align-self: stretch;
-  text-align: center;
-  justify-content: center;
-}
-
-.quest-shop-buy-btn:disabled {
-  cursor: not-allowed;
-  filter: grayscale(0.7) brightness(0.75);
-  box-shadow: none;
+.btn-iron.quest-shop-buy-btn {
+  grid-area: buy;
+  min-width: 96px;
 }
 
 .quest-shop-offer-hint {
-  font-size: 13px;
+  font-size: var(--fs-xs);
+  line-height: 1.2;
 }
 
 /* Platz-Hinweis (Kauf trotz genug Tokens fehlgeschlagen → Inventar/Bank voll). */
@@ -659,99 +652,35 @@
   filter: brightness(1.15);
 }
 
-/* ─── Token-Shop-Regale (Chef-GO 25.08.2026 (1.1.0), #p13) — Muster .quest-strand* oben:
-   Kopfzeile mit Caret + Name + Zahl, offene Regale einklappbar, gesperrte Regale statisch
-   sichtbar mit Schloss + Gate-Hinweis (nie verstecken). ─────────────────────────────────── */
-.quest-shelf-list {
+/* ─── Regal-Reiter (#p13) ──────────────────────────────────────────────────
+   claude:2026-10-17T20:10:00+02:00 — Reiterleiste statt Akkordeon (aktuelles Regal vorgewählt).
+   Knöpfe = Standard `.btn-iron--sm` + `.is-active`; Name bricht an Wortgrenzen um. */
+.quest-shelf-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  flex: 0 0 auto;
 }
 
-.quest-shelf {
-  position: relative;
-  isolation: isolate;
-  border-style: solid;
-  border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  background:
-    linear-gradient(rgba(14, 9, 4, 0.68), rgba(14, 9, 4, 0.68)),
-    url("../assets/bg_black.webp") repeat;
-  padding: 10px 10px 12px;
-}
-
-/* Gesperrtes Regal: gedämpft statt eingefärbt (Muster .quest-shop-offer--locked) — Angebote
-   bleiben lesbar, wirken aber sichtbar "noch nicht dran". */
-.quest-shelf--locked {
-  filter: saturate(0.7) brightness(0.88);
-}
-
-.quest-shelf-head {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: none;
-  color: var(--ds-parch-ink, #e8d8b0);
-  text-align: left;
-  padding: 4px 4px 8px;
-  cursor: pointer;
-  font-family: var(--font-head);
-}
-
-.quest-shelf-head:hover { color: var(--gold, #d8c06a); }
-
-.quest-shelf-head--static {
-  cursor: default;
-}
-.quest-shelf-head--static:hover { color: var(--ds-parch-ink, #e8d8b0); }
-
-.quest-shelf-caret {
-  font-size: 11px;
-  width: 12px;
-  flex-shrink: 0;
-  text-align: center;
-  color: var(--muted);
-}
-
-.quest-shelf-lock {
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-/* Chef-Regel „nie abschneiden" (s. .quest-strand-name oben): Regal-Namen brechen um statt zu clippen. */
-.quest-shelf-name {
-  flex: 1;
+.quest-shelf-tab {
   min-width: 0;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  gap: var(--sp-2);
+}
+
+.quest-shelf-name {
+  min-width: 0;
   white-space: normal;
-  overflow-wrap: break-word;
-  color: var(--ds-gold-bright, #f0dca0);
-  text-transform: uppercase;
 }
 
 .quest-shelf-count {
-  font-size: 12px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-family: var(--font-info);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
 }
 
-.quest-shelf-gate-hint {
-  margin: -2px 4px 8px;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: normal;
-  overflow-wrap: break-word;
+.quest-shelf-tab.is-active .quest-shelf-count {
+  color: var(--gold);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1325,13 +1254,10 @@
   overflow: hidden;
 }
 
+/* claude:2026-10-17T20:10:00+02:00 — Das Raster sitzt jetzt IN der scrollenden Regal-Liste; der
+   frühere eigene Scroll-Vertrag (flex/overflow) entfällt. */
 .quests-contract-wall .quest-shop-grid {
-  grid-template-columns: repeat(auto-fill, minmax(clamp(170px, 12vw, 230px), 1fr));
   align-content: start;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-gutter: stable;
 }
 
 /* Chef 25.08.2026 (Test 1.1.0): "Der Reward-Shop ist nicht scrollbar." Die Regal-Liste kam mit
@@ -1351,7 +1277,6 @@
 }
 
 .quests-contract-wall .quest-shop-offer {
-  min-height: 250px;
   border: clamp(8px, 0.58vw, 12px) solid transparent;
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
   background:

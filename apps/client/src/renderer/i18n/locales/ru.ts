@@ -1092,7 +1092,7 @@ export const ru: Record<string, string> = {
     "shop.sell100": "Продать ×100",
     "shop.sellAll": "Продать всё",
     "shop.sellOne": "Продать",
-    "shop.sellSelectHint": "Выберите предмет выше, чтобы продать его.",
+    "shop.sellSelectHint": "Выберите предмет в инвентаре, чтобы продать его.",
     "shop.owned": "в наличии: {n}",
     "shop.each": "за штуку",
     "shop.upgrades": "Улучшения",

@@ -1079,7 +1079,7 @@ export const es: Record<string, string> = {
     "shop.sell100": "Vender ×100",
     "shop.sellAll": "Vender todo",
     "shop.sellOne": "Vender",
-    "shop.sellSelectHint": "Selecciona un objeto arriba para venderlo.",
+    "shop.sellSelectHint": "Selecciona un objeto de tu inventario para venderlo.",
     "shop.owned": "{n} en posesión",
     "shop.each": "cada uno",
     "shop.upgrades": "Mejoras",

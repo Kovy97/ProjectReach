@@ -174,13 +174,12 @@ function SectionHead({ title, count }: SectionHeadProps): JSX.Element {
   );
 }
 
-interface CatChipProps { active: boolean; icon: JSX.Element; label: string; count?: number; onClick: () => void }
-function CatChip({ active, icon, label, count, onClick }: CatChipProps): JSX.Element {
+interface CatChipProps { active: boolean; icon: JSX.Element; label: string; onClick: () => void }
+function CatChip({ active, icon, label, onClick }: CatChipProps): JSX.Element {
   return (
     <button className={`shopv2-chip${active ? " active" : ""}`} onClick={onClick}>
       <span className="shopv2-chip-icon">{icon}</span>
       <span className="shopv2-chip-label">{label}</span>
-      {count !== undefined && <span className="shopv2-chip-count">{count}</span>}
     </button>
   );
 }
@@ -318,7 +317,7 @@ function MasterRingRow({ entry }: { entry: ShopEntry }): JSX.Element | null {
         </span>
       </div>
       <button
-        className="ds-button ds-button--sm"
+        className="shop-citadel-btn"
         disabled={gold < entry.cost}
         onClick={() =>
           setPendingConfirm({
@@ -399,13 +398,14 @@ function BuyTab(): JSX.Element {
   };
 
   return (
-    // codex:2026-08-01T19:42:00+02:00 — Produktionsstruktur des freigegebenen „Mux' Counter“:
-    // Navigation links, scrollbarer Warenbestand mittig, stabiler Handelstresen rechts.
+    // codex:2026-08-01T19:42:00+02:00 — Produktionsstruktur des freigegebenen „Mux' Counter“.
     // claude:2026-10-17T11:20:00+02:00 — .shopv2-pane ist der Query-Container (Panelbreite statt Fenster).
+    // claude:2026-10-17T20:30:00+02:00 — Neu gegliedert (Chef 17.10.): Warengruppen als Leiste ÜBER der
+    // Arbeitsfläche statt eigener Spalte; darunter Warenraster (Aufwertungen zuerst) | Handelstresen.
+    // Leseweg: Gruppe → Ware → Preis/Menge → kaufen.
     <div className="shopv2-pane">
     <div className="shopv2-buy-layout">
-      <aside className="shopv2-category-rail">
-        <SectionHead title={t("shop.counter.departments")} />
+      <nav className="shopv2-category-rail" aria-label={t("shop.counter.departments")}>
         <div className="shopv2-chiprow">
         <CatChip
           active={activeCat === "all"}
@@ -419,19 +419,19 @@ function BuyTab(): JSX.Element {
           label={t("shop.upgrades")}
           onClick={() => selectCategory("upgrades")}
         />
+        {/* claude:2026-10-17T20:45:00+02:00 — Stückzahl nur noch am Regalkopf (stand doppelt auf dem Chip);
+            so passt die Leiste bei 1366 px in eine Zeile. */}
         {ACTIVE_CATEGORIES.map((cat) => (
           <CatChip
             key={cat}
             active={activeCat === cat}
             icon={<CategoryIcon itemId={CATEGORY_ICON_ITEM[cat]} />}
             label={CATEGORY_LABEL[cat]}
-            count={SHOP_BY_CATEGORY[cat].length}
             onClick={() => selectCategory(cat)}
           />
         ))}
         </div>
-        {activeCat === "all" && <MasterRingSection />}
-      </aside>
+      </nav>
 
       <main className="shopv2-buy-scroll">
         {showUpgrades && (
@@ -443,7 +443,7 @@ function BuyTab(): JSX.Element {
                   <BagIcon /> {t("shop.slotUpgrade").replace("{n}", String(SLOT_UPGRADE_AMOUNT))}
                 </span>
                 <button
-                  className="ds-button shopv2-upgrade-btn"
+                  className="btn-iron btn-iron--sm shopv2-upgrade-btn"
                   disabled={gold < upgradeCost}
                   onClick={() => buySlotUpgrade(state, content)}
                 >
@@ -461,7 +461,7 @@ function BuyTab(): JSX.Element {
                     : t("shop.autoEatMaxed").replace("{tier}", String(AUTO_EAT_MAX_TIER))}
                 </span>
                 <button
-                  className="ds-button shopv2-upgrade-btn"
+                  className="btn-iron btn-iron--sm shopv2-upgrade-btn"
                   disabled={autoEatCost === null || gold < autoEatCost}
                   onClick={() => buyAutoEatUpgrade(state)}
                 >
@@ -480,7 +480,7 @@ function BuyTab(): JSX.Element {
                     : t("bank.buySlotsMax")}
                 </span>
                 <button
-                  className="ds-button shopv2-upgrade-btn"
+                  className="btn-iron btn-iron--sm shopv2-upgrade-btn"
                   disabled={bankCost === null || gold < bankCost}
                   onClick={() => buyBankSlots(state)}
                 >
@@ -491,21 +491,31 @@ function BuyTab(): JSX.Element {
           </section>
         )}
 
-        {visibleCats.map((cat) => (
-          <section className="shopv2-section" key={cat}>
-            <SectionHead title={CATEGORY_LABEL[cat]} count={SHOP_BY_CATEGORY[cat].length} />
-            <div className="shopv2-grid">
-              {SHOP_BY_CATEGORY[cat].map((entry) => (
-                <BuyCard
-                  key={entry.itemId}
-                  entry={entry}
-                  selected={entry.itemId === selectedEntry?.itemId}
-                  onSelect={() => setSelectedBuyId(entry.itemId)}
-                />
-              ))}
-            </div>
-          </section>
-        ))}
+        {/* claude:2026-10-17T20:30:00+02:00 — Meisterring-Sicherheitsnetz zieht mit der Warengruppen-Spalte
+            ins Warenraster (direkt unter die Aufwertungen); weiterhin nur in „Alle" und nur bei Verlust. */}
+        {activeCat === "all" && <MasterRingSection />}
+
+        {/* claude:2026-10-17T20:45:00+02:00 — Warengruppen als nebeneinanderliegende Regale: kleine Gruppen
+            (Rüstung 1, Werkzeuge 3 …) teilen sich eine Zeile, statt je eine halbleere Zeile zu belegen. */}
+        {visibleCats.length > 0 && (
+          <div className="shopv2-shelves">
+            {visibleCats.map((cat) => (
+              <section className="shopv2-section" key={cat}>
+                <SectionHead title={CATEGORY_LABEL[cat]} count={SHOP_BY_CATEGORY[cat].length} />
+                <div className="shopv2-grid">
+                  {SHOP_BY_CATEGORY[cat].map((entry) => (
+                    <BuyCard
+                      key={entry.itemId}
+                      entry={entry}
+                      selected={entry.itemId === selectedEntry?.itemId}
+                      onSelect={() => setSelectedBuyId(entry.itemId)}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        )}
       </main>
 
       <aside className="shopv2-buy-counter">
@@ -848,8 +858,9 @@ function SellTab(): JSX.Element {
     <div className="shopv2-sell-layout">
       <div className="shopv2-sell-main">
         <div className="mshop-toolbar">
+          {/* claude:2026-10-17T20:30:00+02:00 — Standard-Knopf mit kanonischem Aktiv-Zustand (`.is-active`). */}
           <button
-            className={`ds-button ds-button--sm mshop-toggle-btn${massSellMode ? " active" : ""}`}
+            className={`btn-iron btn-iron--sm mshop-toggle-btn${massSellMode ? " is-active" : ""}`}
             disabled={sellEntries.length === 0 && !massSellMode}
             onClick={() => (massSellMode ? exitMassSellMode() : setMassSellMode(true))}
           >
@@ -935,8 +946,12 @@ function SellTab(): JSX.Element {
         )}
       </div>
 
+      {/* claude:2026-10-17T20:30:00+02:00 — Verkaufen spiegelt Kaufen: rechts derselbe Handelstresen (gleiche
+          Breite, gleicher Rahmen) mit Auswahl + Menge, darunter der Rückkauf. Vorher zwei flache
+          1-px-Kästen in anderer Breite. */}
       <aside className="shopv2-sell-aside">
-        <div className="shopv2-detail-box shopv2-sell-detail-panel">
+        <section className="shopv2-sell-detail-panel">
+          <SectionHead title={t("shop.counter.title")} />
           {/* Detail-Menü: Stacks → Mengen-Buttons. Container-Zellen (Varianten) öffnen stattdessen
               ihr eigenes Pouch-Modal (Klick auf die Zelle oben) und setzen nie `selectedSell` —
               dieses Menü zeigt also nur je einen reinen Stack. */}
@@ -999,10 +1014,10 @@ function SellTab(): JSX.Element {
               </div>
             );
           })()}
-        </div>
+        </section>
 
         {/* ── Buy-Back: zuletzt verkaufte Items/Instanzen zum Verkaufspreis zurückkaufen ── */}
-        <div className="shopv2-detail-box shopv2-buyback-panel">
+        <section className="shopv2-buyback-panel">
           <SectionHead title={t("shop.buyBack")} />
           {state.buyBack.length === 0 ? (
             <p className="shopv2-hint muted">{t("shop.buyBackEmpty")}</p>
@@ -1032,7 +1047,7 @@ function SellTab(): JSX.Element {
                       </span>
                     </div>
                     <button
-                      className="ds-button ds-button--sm"
+                      className="shop-citadel-btn"
                       disabled={state.character.gold < total}
                       onClick={() => buyBack(state, content, i)}
                     >
@@ -1043,7 +1058,7 @@ function SellTab(): JSX.Element {
               })}
             </div>
           )}
-        </div>
+        </section>
       </aside>
     </div>
     </div>

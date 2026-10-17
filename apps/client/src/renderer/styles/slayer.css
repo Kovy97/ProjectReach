@@ -1,8 +1,8 @@
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    SLAYER — Citadel-styled Slayer skill page:
-   master tabs · dialog column · task panel · balance strip ·
-   reward shop (YGO card layout) · tower grid
+   Kopfzeile (Begrüßung | Punkte | Meister-Reiter) · Auftragszettel (Bild | Ziel | Aktionen) ·
+   Belohnungs-Shop (kompakte Angebotszeilen)
    ═══════════════════════════════════════════════════════════ */
 
 /* ─── Page wrapper ───────────────────────────────────────── */
@@ -84,140 +84,43 @@
   cursor: not-allowed;
 }
 
-/* ─── Dialog row: portrait (fixed) + task (flexible) ─────── */
-/* claude:2026-10-17T11:30:00+02:00 — Porträtspalte wächst mit der Seite (220–300px) und stapelt
-   erst, wenn die SEITE schmal ist; vorher hielt sie 300px bis zu einem 800px-Fenster. */
-.slayer-dialog-row {
-  display: grid;
-  grid-template-columns: clamp(220px, 30%, 300px) minmax(0, 1fr);
-  gap: var(--sp-3);
-  align-items: stretch;   /* both columns grow to equal height */
-}
-
-@container slayer-page (max-width: 620px) {
-  .slayer-dialog-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* ─── Left: portrait column ──────────────────────────────── */
-/* shop-panel gives frame + bg. Override align-items so portrait
-   area and speech box stretch to the full panel width. */
-.slayer-dialog-col {
-  align-items: stretch;
-}
-
-/* Portrait frame: full-width, fixed height, bottom-anchored image */
-.slayer-portrait-area {
-  width: 100%;
-  height: 200px;
-  background: url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
+/* ─── Kopfzeile ──────────────────────────────────────────────
+   claude:2026-10-17T19:40:00+02:00 — Muster Laden (shop.css `.shopv2-head`): Begrüßung, Punkte und
+   Meister-Reiter in EINER Zeile, solange Platz ist (flex-wrap statt Fensterschwelle). Reicht die
+   Breite nicht, rutschen Punkte + Reiter in die Folgezeile (Punkte links, Reiter rechts). */
+.slayer-head {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-/* Portrait image — bottom-anchored (character stands at base of frame) */
-.slayer-portrait-img {
-  display: block;
-  width: auto;
-  height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-  object-position: center bottom;
-}
-
-.slayer-portrait-fallback {
-  font-size: 52px;
-  line-height: 1;
-  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  height: 100%;
+  gap: var(--sp-3) var(--sp-4);
 }
 
-/* Sweep 5, Finding 6: 💀-Emoji-Ersatz für fehlendes Master-/Monster-Bild — echtes
-   Slayer-Skull-Art (Sidebar-Icon) statt Emoji-Bruch, gedimmt/zentriert wie der Emoji-Fallback. */
-.slayer-portrait-fallback-img {
-  height: 60%;
-  max-width: 70%;
-  object-fit: contain;
-  opacity: 0.7;
-  align-self: center;
-}
-
-/* Nameplate: name + role subtitle centred below the portrait */
-.slayer-nameplate {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 2px 0;
-  flex-shrink: 0;
-}
-
-.slayer-master-name {
-  font-family: var(--font-head);
-  font-size: 18px;
-  color: var(--ds-gold-bright, #f0dca0);
-  letter-spacing: 0.5px;
-  text-align: center;
-}
-
-.slayer-master-title {
-  font-size: 12px;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-/* Copper-toned speech bubble — stretches to fill remaining panel height */
-.slayer-speech-box {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  width: 100%;
-  flex: 1;
-  background:
-    linear-gradient(rgba(30, 20, 8, 0.82), rgba(30, 20, 8, 0.82)),
-    url("../assets/bg_copper.webp") repeat;
-  border: 1px solid rgba(216, 184, 112, 0.30);
-  padding: 10px 12px;
-  font-size: 14px;
-  color: var(--ds-parch-ink, #e8d8b0);
-  font-style: italic;
-  line-height: 1.55;
-}
-
-/* ─── Right: task + points column ───────────────────────── */
-/* claude:2026-10-17T11:30:00+02:00 — min-width:0, damit lange Monsternamen neben dem 80px-Bild
-   umbrechen statt die Spalte zu sprengen. */
-.slayer-task-col {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.slayer-head > .npc-greeting {
+  flex: 999 1 340px;
   min-width: 0;
+  margin-bottom: 0;
 }
 
-/* ─── Slayer Points balance — full-width prominent counter ── */
+.slayer-head-side {
+  flex: 1 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+/* ─── Slayer-Punkte — kompakter Zähler in der Kopfzeile ───── */
+/* claude:2026-10-17T19:40:00+02:00 — vorher eigene Vollbreiten-Zeile über dem Auftrag. */
 .slayer-balance {
   position: relative;
   isolation: isolate;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 10px 20px;
+  gap: var(--sp-2);
+  padding: 6px 16px;
+  min-height: 48px;
   border-style: solid;
   border-color: transparent;
   border-width: var(--frame-w);
@@ -238,7 +141,7 @@
 
 .slayer-balance-amount {
   font-family: var(--font-head);
-  font-size: 26px;
+  font-size: var(--fs-2xl);
   font-weight: 700;
   color: var(--gold, #d8b870);
   letter-spacing: 1px;
@@ -246,102 +149,10 @@
 
 .slayer-balance-label {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 1.5px;
-}
-
-/* ─── Task panel ─────────────────────────────────────────── */
-/* shop-panel handles border, bg, padding, flex, gap. */
-.slayer-task-panel {
-  flex: 1;              /* fill remaining height in task-col */
-}
-
-.slayer-task-panel.empty {
-  align-items: center;
-  text-align: center;
-  padding: 32px 20px;
-}
-
-.slayer-task-empty-icon {
-  font-size: 40px;
-  line-height: 1;
-}
-
-/* Sweep 5, Finding 6: 💀-Emoji-Ersatz für "kein Task aktiv" — echtes Slayer-Skull-Art. */
-.slayer-task-empty-icon-img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  opacity: 0.75;
-}
-
-.slayer-task-empty-label {
-  font-family: var(--font-head);
-  font-size: 20px;
-  color: var(--ds-gold, #d8b870);
-}
-
-/* "Get New Task" — large prominent Citadel button */
-.slayer-get-task-btn {
-  font-size: 16px !important;
-  padding: 12px 28px !important;
-  min-height: 48px !important;
-  letter-spacing: 1px;
-  margin-top: 6px;
-}
-
-/* ─── Task monster row ───────────────────────────────────── */
-.slayer-task-monster {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-/* Monster thumbnail — wooden frame, 80×80 */
-.slayer-task-monster-img {
-  width: 80px;
-  height: 80px;
-  border-style: solid;
-  border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  background: var(--ds-metal-2, #140e0a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.slayer-task-monster-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.slayer-task-monster-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  padding-top: 4px;
-}
-
-.slayer-task-monster-name {
-  font-family: var(--font-head);
-  font-size: 18px;
-  color: var(--ds-parch-ink, #e8d8b0);
-}
-
-.slayer-task-location {
-  font-size: 13px;
 }
 
 /* "Go to Combat" inline text-link */
@@ -372,11 +183,12 @@
    Fortschritt/VOR den Belohnungs-Chips (klarer Abstand per margin-bottom), statt zwischen
    Monster-Info und Belohnungen unterzugehen. flex-wrap fängt schmale Breiten ab (untereinander
    statt Clip) — bei 1366×768 ist die Zeile (Basis 230px+150px+Gap) breit genug für nebeneinander. */
+/* claude:2026-10-17T19:40:00+02:00 — sitzt jetzt oben in der Aktionsspalte des Zettels: schmale
+   Spalte → beide Knöpfe untereinander (flex-wrap), Spalte unter dem Ziel → nebeneinander 2:1. */
 .slayer-task-fight-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 6px 0 18px;
+  gap: var(--sp-2);
   width: 100%;
 }
 /* Chef-Entscheid 26.08.2026: Primaeraktion "Sofort kaempfen" = .btn-iron, Sekundaeraktion
@@ -472,13 +284,6 @@
   font-weight: 600;
 }
 
-/* ─── Task action buttons ────────────────────────────────── */
-.slayer-task-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 /* Chef-GO 26.08.2026: "Marke einlösen" (Auftragsmarke, chronicle_task_token) sitzt neben
    "Überspringen" statt darunter — beide klein/sekundär, Zeile bricht bei schmalem Zettel um. */
 .slayer-task-actions-row {
@@ -547,33 +352,163 @@
   background-repeat: no-repeat, no-repeat, repeat;
 }
 
-/* ─── Reward-Shop-Karten ─────────────────────────────────────────────────
-   Chef-Fund 26.08.2026: "Karten sind uneinheitlich. Wegen längeren Namen ist bei manchen das
-   Bild größer und kleiner, gibt komische Ränder um die Rarity des Items zu displayen anstatt
-   es so zu machen wie im Item Shop oder im Inventar. Bild auch auf ganze Größe des Bild-
-   Containers nutzen." Eigene `slayer-shop-*`-Kartenfamilie (NICHT die pages.css
-   `shop-item-card`-Familie, deren Kartenhöhe mit der Namenslänge wuchs) — jede Sektion
-   (Bild/Name/Fußzeile) bekommt eine deterministische Größe, damit die Kartenhöhe unabhängig
-   vom Item-Namen konstant bleibt. */
-.slayer-shop-grid {
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 14px;
-  max-height: none;
-  overflow-y: visible;
-  padding-right: 0;
+/* ─── Auftragszettel: Bild | Ziel | Aktionen ───────────────────────────────
+   claude:2026-10-17T19:40:00+02:00 — EINE Karte statt Porträt-Spalte + Punkte-Zeile + Zettel. Das
+   Zielmonster ist das Hauptbild (vorher 80-px-Daumennagel); der leere Zustand nutzt dieselben
+   drei Zonen (Totenkopf | Hinweis | „Neuen Auftrag holen") statt einer 400-px-Leerbox.
+   Zonen brechen nach SEITENbreite um (@container slayer-page, s. unten). */
+.slayer-page .slayer-task-panel {
+  display: grid;
+  grid-template-columns: clamp(120px, 12cqi, 168px) minmax(0, 1fr) clamp(250px, 28cqi, 340px);
+  grid-template-areas: "art body side";
+  align-items: start;
+  gap: var(--sp-3) var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
 }
 
-/* Karte auf Leder statt Holz-Textur (Chef 26.08.: "kein Holz"). Der geschnitzte Holz-Eckrahmen
-   bleibt — das ist Struktur-Chrome des gesamten Citadel-UI (auch btn-iron etc.), kein
-   Holz-Flächen-Fill —, nur die Fläche dahinter wechselt auf texture-leather.webp (280px
-   gekachelt, wie item-wiki.css/menu.css: "Karten auf Leder"). */
-.slayer-shop-card {
-  position: relative;
+.slayer-task-art {
+  grid-area: art;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-style: solid;
+  border-color: transparent;
+  border-width: var(--frame-w);
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  background:
+    radial-gradient(ellipse at 50% 60%, rgba(137, 107, 68, 0.18), transparent 65%),
+    var(--ds-metal-2, #140e0a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.slayer-task-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Sweep 5, Finding 6: echtes Slayer-Skull-Art statt 💀-Emoji für „kein Auftrag" / fehlendes Bild. */
+.slayer-task-empty-icon-img {
+  width: 52%;
+  height: 52%;
+  object-fit: contain;
+  opacity: 0.75;
+}
+
+.slayer-task-empty-icon {
+  font-size: var(--fs-3xl);
+  line-height: 1;
+}
+
+.slayer-task-body {
+  grid-area: body;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px 10px 12px;
+  gap: var(--sp-3);
+}
+
+.slayer-task-side {
+  grid-area: side;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.slayer-task-monster-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.slayer-task-monster-name {
+  font-family: var(--font-head);
+  font-size: var(--fs-xl);
+  line-height: 1.2;
+  color: var(--ds-parch-ink, #e8d8b0);
+}
+
+/* Ort + „Zum Kampf" in einer Zeile (bricht an Wortgrenzen um). */
+.slayer-task-location {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+.slayer-task-empty-label {
+  font-family: var(--font-head);
+  font-size: var(--fs-xl);
+  color: var(--ds-gold, #d8b870);
+}
+
+.slayer-task-empty-hint {
+  margin: 0;
+  font-size: var(--fs-md);
+}
+
+/* Leerer Zettel: Inhalt vertikal mittig zum Totenkopf, Knopf so groß wie „Sofort kämpfen". */
+.slayer-page .slayer-task-panel.empty {
+  align-items: center;
+}
+
+.slayer-get-task-btn {
+  width: 100%;
+  min-height: 52px;
+}
+
+.slayer-task-side .slayer-req-warning,
+.slayer-task-side .slayer-freeskip {
+  margin: 0;
+}
+
+/* Seite mittelbreit (1366 + offene Warteschlange): Aktionen unter dem Ziel, volle Breite. */
+@container slayer-page (max-width: 899px) {
+  .slayer-page .slayer-task-panel {
+    grid-template-columns: clamp(96px, 16cqi, 136px) minmax(0, 1fr);
+    grid-template-areas: "art body" "side side";
+    gap: var(--sp-3) var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+  }
+}
+
+@container slayer-page (max-width: 520px) {
+  .slayer-page .slayer-task-panel {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+}
+
+/* ─── Belohnungs-Shop: kompakte Angebotszeilen ─────────────────────────────
+   claude:2026-10-17T19:40:00+02:00 — vorher 190-px-Bildkarten (≈360 px hoch), bei 1366×768 lag der
+   ganze Shop unter dem Rand. Jetzt Bild | Name + Fußzeile (Stufe | Preis-Knopf); die Höhe hängt
+   nicht am Namen (2 Zeilen Reserve). Spalten nach Panelbreite: ≈2 (1366 + Queue) bis 5 (1920). */
+.slayer-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  gap: var(--sp-3);
+}
+
+/* Leder-Fläche + Holz-Eckrahmen der Karte bleiben (Chef 26.08.: „kein Holz" als Fläche). */
+.slayer-shop-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-areas: "cell name" "cell foot";
+  grid-template-rows: minmax(2.4em, auto) auto;
+  align-items: center;
+  column-gap: var(--sp-3);
+  row-gap: var(--sp-1);
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-2);
   border-style: solid;
   border-color: transparent;
   border-width: var(--frame-w);
@@ -592,19 +527,13 @@
   filter: brightness(0.62);
 }
 
-/* Bildfläche: festes 1:1-Seitenverhältnis, unabhängig vom Namen — wächst/schrumpft nur mit der
-   Kartenbreite (Grid-Spalte), nie mit dem Textinhalt darunter. KEIN eigener Rahmen/Slot-Hintergrund
-   hier — die Karte selbst rahmt bereits; die Seltenheit zeigt sich einzig am Rahmen der Item-Zelle
-   selbst (ItemCell setzt rarityClass(item.rarity) automatisch, s. components.css
-   `body .item-cell.rarity-*`) statt eines zweiten, eigens gemalten Rarity-Rahmens/Balkens. */
+/* Bildfläche 72×72, kein eigener Rahmen (die Seltenheit zeigt die Farbwolke unten). */
 .slayer-shop-card .slayer-shop-cell {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  flex-shrink: 0;
+  grid-area: cell;
+  width: 72px;
+  height: 72px;
   background: transparent;
 }
-/* Bild füllt den Container (Chef: "nutzt aktuell nur einen kleinen Teilbereich") — 100%/100%,
-   kein Innen-Padding, das es auf einen Teil schrumpft; object-fit:contain hält die Proportionen. */
 .slayer-shop-card .slayer-shop-cell .item-cell-img {
   width: 100%;
   height: 100%;
@@ -613,15 +542,14 @@
   object-fit: contain;
 }
 .slayer-shop-card .slayer-shop-cell .item-cell-emoji {
-  font-size: 64px;
+  font-size: var(--fs-3xl);
 }
 
-/* Schloss-Badge auf dem Bild (ItemCell `overlay`-Prop) statt einer eigenen Text-Zeile, die die
-   Karte je nach Sperr-Status unterschiedlich hoch machte. */
+/* Schloss-Badge auf dem Bild (ItemCell `overlay`) statt einer eigenen Textzeile. */
 .slayer-shop-lockbadge {
   position: absolute;
-  top: 6px;
-  left: 6px;
+  top: 2px;
+  left: 2px;
   width: 20px;
   height: 20px;
   display: flex;
@@ -636,136 +564,60 @@
   opacity: 0.85;
 }
 
-.slayer-shop-card-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-width: 0;
-  gap: 6px;
-}
-
-/* Fester Namensblock — 2 Zeilen Reserveplatz (Muster shopv2-card-name, shop.css), nie geclippt;
-   nur echte Ausreißer wachsen minimal darüber hinaus statt gekappt zu werden. */
 .slayer-shop-card-name {
-  width: 100%;
-  min-height: 2.4em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  grid-area: name;
+  align-self: end;
+  min-width: 0;
   font-family: var(--font-head);
-  font-size: 14px;
+  font-size: var(--fs-md);
   font-weight: 700;
   line-height: 1.2;
   color: var(--text);
-  /* claude:2026-10-17T13:15:00+02:00 — word-break:break-word (≈ anywhere) entfernt: kein Bruch mitten im Wort. */
-  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 
-/* Feste Fußzeile: Stufe links, Preis/Kaufen rechts — IMMER beide, ob gesperrt oder nicht
-   (Chef-Nachtrag: "Preis und Stufe in einer festen Fußzeile"). */
+/* Feste Fußzeile: Stufe (bzw. für 4 s der Kauf-Fehler) links, Preis-Knopf rechts. */
 .slayer-shop-card-footer {
+  grid-area: foot;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  margin-top: auto;
+  gap: var(--sp-2);
+  min-width: 0;
 }
 
 .slayer-shop-card-level {
   font-family: var(--font-head);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.slayer-shop-buy-btn {
-  flex-shrink: 0;
+.slayer-shop-card-error {
+  min-width: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--danger, #c84a3a);
 }
 
-/* "Zu teuer" (freigeschaltet, aber nicht leistbar): Preis rot statt der neutralen Knopf-Schrift —
-   das Level-Lock dimmt bereits die ganze Karte, braucht keine zweite Farbe. Der geerbte
-   `.btn-iron[disabled]`-Graustich (grayscale(0.4)) wäscht Rot sichtbar Richtung Braun aus (per
-   getComputedStyle verifiziert: #c84a3a → rgb(168,90,82)) — hier NUR die Helligkeit dämpfen,
-   ohne die Sättigung zu killen, sonst ist "zu teuer" farblich kaum von "gesperrt" zu unterscheiden. */
+/* Zwei Klassen: schlägt die 120-px-Mindestbreite von `.btn-iron--sm` (Fußzeile hat ≈ 180 px). */
+.btn-iron.slayer-shop-buy-btn {
+  flex-shrink: 0;
+  min-width: 92px;
+}
+
+/* "Zu teuer" (freigeschaltet, aber nicht leistbar): Preis rot. Der geerbte `.btn-iron[disabled]`-
+   Graustich würde Rot Richtung Braun waschen — hier NUR die Helligkeit dämpfen. */
 .slayer-shop-buy-btn.slayer-shop-buy-btn--tooExpensive[disabled] {
   color: var(--danger, #c84a3a);
   filter: brightness(0.88);
 }
 
-/* Reservierte Fehlerzeile — feste Höhe, damit ein Kauf-Fehler (buySlayerShopItem-Reason,
-   s. SlayerPage.tsx handleBuyShopItem) die Kartenhöhe nicht kurzzeitig verschiebt (Auto-Clear
-   nach 4s). */
-.slayer-shop-card-error-slot {
-  display: block;
-  min-height: 13px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--danger, #c84a3a);
-  text-align: center;
-}
-
 .slayer-rewards-empty {
   padding: 12px 0;
   text-align: center;
-}
-
-/* ─── Tower-Etagen-Übersicht (unused; kept for compatibility) ─ */
-.slayer-tower-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-@media (max-width: 700px) {
-  .slayer-tower-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.slayer-floor-card {
-  background:
-    linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)),
-    url("../assets/bg_black.webp") repeat;
-  border-style: solid;
-  border-color: transparent;
-  border-width: var(--frame-w);
-  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
-  border-image-slice: 28 28 28 28;
-  border-image-width: 2.15 1.87 2.15 1.87;
-  border-image-outset: 0;
-  border-image-repeat: stretch;
-  border-radius: 0;
-  padding: 12px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: center;
-  text-align: center;
-  min-height: 90px;
-  justify-content: center;
-}
-
-.slayer-floor-card.locked {
-  filter: brightness(0.55);
-}
-
-.slayer-floor-header {
-  font-family: var(--font-head);
-  font-size: 15px;
-  color: var(--ds-gold, #d8b870);
-}
-
-.slayer-floor-range { font-size: 13px; }
-.slayer-floor-lock  { font-size: 12px; }
-
-/* ─── Combat area hint (footer) ──────────────────────────── */
-.slayer-tower-combat-hint {
-  margin-top: 4px;
-  font-size: 13px;
-  text-align: center;
-  font-style: italic;
 }
 
 /* ─── Tages-Gratis-Skip der Trophäenwand III (Das Lager, Task #361) ──────────
