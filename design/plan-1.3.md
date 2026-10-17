@@ -93,6 +93,8 @@ Patchnotes-Grundlage: `design/steam-post-1.2.4.txt` (Rabenfracht und Beutetisch 
 
 ## TODO: 1.2.4-Inhalte überarbeiten (Chef 17.10.)
 
+<!-- claude:2026-10-17T20:15:00+02:00 — Ü1-Ergebnis je Punkt nachgetragen (Review + Fixes 17.10., Belege = Commits). -->
+
 Chef: „Die ganzen Punkte müssen alle überarbeitet werden, weil das noch mit alten Modellen gemacht
 wurde.“ Nichts davon gilt als fertig, nur weil es gebaut und getestet ist. Jeder Punkt wird vor
 1.3.0 neu durchgesehen und bei Bedarf umgebaut.
@@ -108,18 +110,33 @@ wurde.“ Nichts davon gilt als fertig, nur weil es gebaut und getestet ist. Jed
 ohne Migrationslast. Das Kompat-Archiv reicht nur bis v86, dem echten Live-Stand. Ab dem
 1.3.0-Release ist das Format eingefroren.
 
-- [ ] Bank-Fächer-Raster inkl. Drag-Anzeige und „neue Beute hinten“ (`engine/bank.ts`, `pages/BankPage.tsx`, SAVE 87)
-- [ ] Inventar mit festen Fächern, Sortieren als Knopf, einmaliges Geradeziehen alter Saves (`engine/inventory.ts`)
-- [ ] Vierter Werkzeug-Slot + Werkzeuge außerhalb der Kits inkl. Migration (`engine/loadouts.ts`, `equipment.ts`, `persistence`)
-- [ ] Kit-Wechsel in der Kampf-Vorbereitung (`pages/CombatPage.tsx`, `EquipKitBar.tsx`)
-- [ ] Enzyklopädie (`components/EncyclopediaModal.tsx`, `styles/encyclopedia.css`, Einführungstour)
-- [ ] Kampf-HUD (Mira-Umsetzung, `combat.css`)
-- [ ] Rückkehr-Bildschirm „Der Beutetisch“ (Mira-Umsetzung, `pages/OfflinePopup.tsx`, `offline-stage.css`)
-- [ ] Rabenfracht zwischen Spielständen (`engine/mail.ts`, `CrossSaveTransferModal.tsx`, `main/saves.ts`, SAVE 88)
-- [ ] Seltener-Fund-Popup ohne Eigenherstellung (`components/Toasts.tsx`)
-- [ ] Fixes (Krypta, Ganzes Bestiarium, Kapitel 11, Schock-Immunität, `{pct}`). Auch hier prüfen, ob
+- [x] Bank-Fächer-Raster inkl. Drag-Anzeige und „neue Beute hinten“ (`engine/bank.ts`, `pages/BankPage.tsx`, SAVE 87)
+      **Nachgebessert:** rein verzauberte Lagerstücke bekamen kein Fach (`syncBankOrder`), neue Items hängen jetzt
+      hinten an (`40ee308`); Bank scrollt wieder, Drag auf leere Fächer auch aus dem Inventar (`518a83b`, `5bfbb81`).
+- [x] Inventar mit festen Fächern, Sortieren als Knopf, einmaliges Geradeziehen alter Saves (`engine/inventory.ts`)
+      **Nachgebessert:** Leerfächer und Reihenfolge korrigiert (`40ee308`). Grundkonzept behalten.
+- [x] Vierter Werkzeug-Slot + Werkzeuge außerhalb der Kits inkl. Migration (`engine/loadouts.ts`, `equipment.ts`, `persistence`)
+      **Nachgebessert:** `equipTool` ersetzt das Werkzeug desselben Berufs und respektiert den Zielslot, Test ergänzt (`40ee308`).
+- [x] Kit-Wechsel in der Kampf-Vorbereitung (`pages/CombatPage.tsx`, `EquipKitBar.tsx`)
+      **Behalten, aufgeräumt:** toter Kit-Scan und ungenutzte Fighter-Props entfernt (`40ee308`).
+- [x] Enzyklopädie (`components/EncyclopediaModal.tsx`, `styles/encyclopedia.css`, Einführungstour)
+      **Nachgebessert:** filtert Schlüssel und Altlasten (`40ee308`); Kopfleisten-Knopf heißt „Wiki“ (`518a83b`).
+- [x] Kampf-HUD (Mira-Umsetzung, `combat.css`)
+      **Nachgebessert:** HUD-Kurztexte als eigene Schlüssel in 7 Sprachen (`40ee308`); Rahmen/Struktur in UI-Runde 2 (`3dd1bd1`).
+- [x] Rückkehr-Bildschirm „Der Beutetisch“ (Mira-Umsetzung, `pages/OfflinePopup.tsx`, `offline-stage.css`)
+      **Behalten, ergänzt:** Zähler für übersprungene Warteschlangen-Einträge statt nur des letzten (K4, `bc5d5f0`).
+- [x] Rabenfracht zwischen Spielständen (`engine/mail.ts`, `CrossSaveTransferModal.tsx`, `main/saves.ts`, SAVE 88)
+      **Nachgebessert:** ein defektes Fracht-Journal sperrte alle Saves, jetzt wird es als `.broken-<zeit>` beiseitegelegt;
+      Sperrliste + `mintInstanceId` gegen doppelte Instanzen; SAVE 87/88 zu v87 zusammengelegt, v88-Testsaves laden (`40ee308`).
+- [x] Seltener-Fund-Popup ohne Eigenherstellung (`components/Toasts.tsx`)
+      **Nachgebessert:** unterdrückte echte Beute, sobald dasselbe Item einmal hergestellt war (`40ee308`).
+- [x] Fixes (Krypta, Ganzes Bestiarium, Kapitel 11, Schock-Immunität, `{pct}`). Auch hier prüfen, ob
       der Fix die Ursache trifft oder nur das Symptom.
-- [ ] Steam-Text 1.2.4 neu schreiben, sobald feststeht, was davon bleibt
+      **Behalten, Ursache getroffen:** Krypta/Bestiarium zählten Dungeon-Varianten mit (`053d4c9`, Helfer
+      `isDungeonVariantId` in `40ee308`); Kapitel 11 zählt über `dungeons_cleared` statt über den auch offen
+      laufenden Nekromanten; Schock prüft `monsterResists`; `sim-realistic` kennt `dungeons_cleared`.
+- [x] Steam-Text 1.2.4 neu schreiben, sobald feststeht, was davon bleibt
+      **Erledigt:** in `design/steam-post-1.3.0.txt` aufgegangen (Abschnitte BANK, BAGS AND TOOLS / INTERFACE / FIXES).
 
 Hinweis: Codex' Interface Reforged und die 56 ersetzten Bilder (beide 09./10.09.) gehören nicht zu
 1.2.4. Das Interface wird ohnehin im UI-Fundament überarbeitet; die Bilder hat der Chef am 10.09.
