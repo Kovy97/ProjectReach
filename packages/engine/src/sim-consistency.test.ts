@@ -239,6 +239,21 @@ const LADDER_BASELINE = new Set([
   // coreStatScore ignoriert das Trinity-Feld wardCapacity und sieht darum 2 → 0 — dasselbe Formel-Artefakt wie
   // reefscale_helm->chitin_helm / buckhide_boots->quietstep_boots oben; real ist der Lv-92-Drop um Faktor 12 stärker.
   "dimweave_leggings->rimebound_leggings",
+  // codex:2026-10-17T16:10:00+02:00 — 1.3.0 E5 (design/1.3.0-balance-e5-e6.md, Chef-GO 17.10.2026): acht
+  // neue Paare, alle mit den Zahlen der Spec. (a) Wert-Leiter: die neuen Craft-Sprossen auf 95 tragen den
+  // Spec-Wert 2500 und liegen damit unter älteren Chase-/Unique-Drops derselben Familie (stormcrest_staff
+  // 6000, frosthex_wand 4500, hoargrim_scepter 4000); umgekehrt sind die 95er-Chase-Drops (5000–9000)
+  // teurer als die godiron-Craftstufe auf 99 (3000/8800). Dasselbe „Drop lohnt sich"-Muster wie oben.
+  // (b) Score: hollowed_recurve (Chase 95, exakt godiron_shortbow-Kernwerte) liegt bewusst unter dem
+  // legendären skyfather_recurve (92, 6,04 DPS), den die Spec als heutigen Fernkampf-BiS benennt.
+  "stormcrest_staff->hollowelm_staff",
+  "wreathbound_staff->godiron_staff",
+  "spearthrower_longbow->godiron_longbow",
+  "skyfather_recurve->hollowed_recurve",
+  "frosthex_wand->hollowelm_wand",
+  "litany_wand->godiron_wand",
+  "hoargrim_scepter->mourncedar_scepter",
+  "emptied_shrine_focus->godiron_focus",
 ]);
 
 /** Akzeptierte Drop-Level-Gaps ("monster:item") — Zonen-Uniques bewusst unter Beute-Klasse. */

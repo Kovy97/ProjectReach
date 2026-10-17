@@ -66,6 +66,11 @@ export const content: ContentDB = {
     shadowpine_log: { id: "shadowpine_log", name: { en: "Shadowpine Log", de: "Schattenkiefer-Holz" }, type: "material", stackable: true, value: 280, rarity: "common", description: { en: "Pine that grew where the sun barely reaches, pale and cold to the touch even fresh-cut.", de: "Kiefer, gewachsen dort, wo die Sonne kaum hinreicht, blass und kalt selbst frisch geschlagen." } },
     bonewood_log: { id: "bonewood_log", name: { en: "Bonewood Log", de: "Knochenholz" }, type: "material", stackable: true, value: 520, rarity: "common" },
     godwood_log: { id: "godwood_log", name: { en: "Godwood Log", de: "Götzenholz" }, type: "material", stackable: true, value: 1000, rarity: "common" },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: Hölzer der Stufen 82/89/96 (design/1.3.0-balance-e5-e6.md). Abnehmer:
+    // Trauerzeder → Angel + Zepter, Hohlulme → Stab/Zauberstab (Runen), Weihrauchholz → Bögen + Angel.
+    mourncedar_log: { id: "mourncedar_log", name: { en: "Mourncedar Log", de: "Trauerzedernholz" }, type: "material", stackable: true, value: 450, rarity: "common" },
+    hollowelm_log: { id: "hollowelm_log", name: { en: "Hollow Elm Log", de: "Hohlulmenholz" }, type: "material", stackable: true, value: 610, rarity: "common" },
+    censerwood_log: { id: "censerwood_log", name: { en: "Censerwood Log", de: "Weihrauchholz" }, type: "material", stackable: true, value: 870, rarity: "common" },
     // ── Neue Holz-Tiers (Lücken-Füller L5/L15/L25/L38/L63/L78/L92) ───
     birchwood_log: { id: "birchwood_log", name: { en: "Birchwood Log", de: "Birkenholz" }, type: "material", stackable: true, value: 4 },
     willowbark_log: { id: "willowbark_log", name: { en: "Willowbark Log", de: "Weidenbark-Holz" }, type: "material", stackable: true, value: 12 },
@@ -100,6 +105,11 @@ export const content: ContentDB = {
     raw_wraithscale: { id: "raw_wraithscale", name: { en: "Raw Wraithscale", de: "Roher Geisterschupper" }, type: "material", stackable: true, value: 110, rarity: "common" },
     raw_abyssal_crawler: { id: "raw_abyssal_crawler", name: { en: "Raw Abyssal Crawler", de: "Roher Abgrund-Kriecher" }, type: "material", stackable: true, value: 200, rarity: "common" },
     raw_soulfish: { id: "raw_soulfish", name: { en: "Raw Soulfish", de: "Roher Seelenfisch" }, type: "material", stackable: true, value: 340, rarity: "common" },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: Fische der Stufen 82/89/94/99 (nur Heilspeisen, Chef-Entscheid 17.10.2026).
+    raw_ashpike: { id: "raw_ashpike", name: { en: "Raw Ashpike", de: "Roher Aschenhecht" }, type: "material", stackable: true, value: 125, rarity: "common" },
+    raw_dirgefin: { id: "raw_dirgefin", name: { en: "Raw Dirgefin", de: "Roher Klageflosser" }, type: "material", stackable: true, value: 170, rarity: "common" },
+    raw_ashen_sturgeon: { id: "raw_ashen_sturgeon", name: { en: "Raw Ashen Sturgeon", de: "Roher Aschenstör" }, type: "material", stackable: true, value: 250, rarity: "common" },
+    raw_idolscale: { id: "raw_idolscale", name: { en: "Raw Idolscale", de: "Roher Götzenschupper" }, type: "material", stackable: true, value: 400, rarity: "common" },
     // ── Neue Fische (ERFUNDEN: Lücken-Füller L25 und L60) ────────────────
     raw_shadowcarp: { id: "raw_shadowcarp", name: { en: "Raw Shadowcarp", de: "Roher Schattenkarpfen" }, type: "material", stackable: true, value: 18 },
     raw_crypteel: { id: "raw_crypteel", name: { en: "Raw Crypteel", de: "Roher Krypta-Aal" }, type: "material", stackable: true, value: 55, rarity: "common", description: { en: "An eel hauled from crypt-flooded water, cold and slick and unwilling to hold still.", de: "Ein Aal aus krypta-geflutetem Wasser, kalt und glitschig und keinesfalls stillzuhalten." } },
@@ -165,6 +175,12 @@ export const content: ContentDB = {
     cooked_wraithscale: { id: "cooked_wraithscale", name: { en: "Smoked Wraithscale", de: "Geräucherter Geisterschupper" }, type: "consumable", stackable: true, healAmount: 24, healPct: 0.125, rarity: "common", value: 165 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.125
     cooked_abyssal_crawler: { id: "cooked_abyssal_crawler", name: { en: "Braised Abyssal Crawler", de: "Geschmorter Abgrund-Kriecher" }, type: "consumable", stackable: true, healAmount: 35, healPct: 0.14, rarity: "common", value: 300 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.14
     cooked_soulfish: { id: "cooked_soulfish", name: { en: "Sanctified Soulfish", de: "Geläuterter Seelenfisch" }, type: "consumable", stackable: true, healAmount: 39, healPct: 0.145, rarity: "common", value: 500 }, // speisen-heilwerte-spec Teil 3: healPct 0.11→0.145
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: reine Heilspeisen ohne Buff (Chef-Entscheid 17.10.2026: der BiS-Builder wählt
+    // Essensbuffs ohne Levelfilter, ein Buffgericht auf 99 würde alle Pins auf CL 30/60/90 verschieben).
+    cooked_ashpike: { id: "cooked_ashpike", name: { en: "Grilled Ashpike", de: "Gegrillter Aschenhecht" }, type: "consumable", stackable: true, icon: "🐟", healAmount: 27, healPct: 0.13, rarity: "common", value: 180 },
+    cooked_dirgefin: { id: "cooked_dirgefin", name: { en: "Steamed Dirgefin", de: "Gedünsteter Klageflosser" }, type: "consumable", stackable: true, icon: "🐟", healAmount: 33, healPct: 0.137, rarity: "common", value: 250 },
+    cooked_ashen_sturgeon: { id: "cooked_ashen_sturgeon", name: { en: "Smoked Ashen Sturgeon", de: "Geräucherter Aschenstör" }, type: "consumable", stackable: true, icon: "🐟", healAmount: 37, healPct: 0.142, rarity: "common", value: 380 },
+    cooked_idolscale: { id: "cooked_idolscale", name: { en: "Consecrated Idolscale", de: "Geweihter Götzenschupper" }, type: "consumable", stackable: true, icon: "🐟", healAmount: 42, healPct: 0.15, rarity: "common", value: 600 },
     // ── Neue gekochte Fische (ERFUNDEN) ─────────────────────────────────
     cooked_shadowcarp: { id: "cooked_shadowcarp", name: { en: "Pan-fried Shadowcarp", de: "Gebratener Schattenkarpfen" }, type: "consumable", stackable: true, healAmount: 7, healPct: 0.07, value: 30 }, // speisen-heilwerte-spec Teil 3 (P6 value-Inversion-Fix): healPct 0.11→0.07, value 16→30 (roh 18 → ×1.67 statt ×0.89)
     cooked_crypteel: { id: "cooked_crypteel", name: { en: "Roasted Crypteel", de: "Gerösteter Krypta-Aal" }, type: "consumable", stackable: true, healAmount: 16, healPct: 0.10, rarity: "common", value: 88, curesPoison: true }, // speisen-heilwerte-spec Teil 3 (P5/P6): healPct 0.11→0.10, value 130→88 (×2.36-Ausreißer gefixt), + curesPoison (Auto-Eat-Pfad combat.ts:174-176 bereits vorhanden)
@@ -1764,6 +1780,10 @@ export const content: ContentDB = {
     grimwood_rod:      { id: "grimwood_rod",      name: { en: "Grimwood Rod",    de: "Düsterholz-Angel"    }, type: "tool", stackable: false, icon: "🎣", value: 220, tool: { skill: "fishing", speedMult: 0.77 }, requirements: { fishing: 25 }, rarity: "common" },
     bonesteel_rod:     { id: "bonesteel_rod",     name: { en: "Bonesteel Rod",   de: "Knochenstahl-Angel"  }, type: "tool", stackable: false, icon: "🎣", value: 500, tool: { skill: "fishing", speedMult: 0.68 }, requirements: { fishing: 45 }, rarity: "common" },
     void_rod:          { id: "void_rod",          name: { en: "Void Rod",        de: "Leerenangel"         }, type: "tool", stackable: false, icon: "🎣", value: 1100, tool: { skill: "fishing", speedMult: 0.58 }, requirements: { fishing: 65 }, rarity: "common" },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: Angelleiter über void_rod (0,58 @ 65) hinaus, Spiegel der Axtleiter
+    // (aetherium 0,54 / godiron 0,50). Gefertigt im Handwerk (rod_wood), berühren keinen Kampf-Pin.
+    mourncedar_rod: { id: "mourncedar_rod", name: { en: "Mourncedar Rod", de: "Trauerzedern-Angel" }, type: "tool", stackable: false, icon: "🎣", value: 2200, tool: { skill: "fishing", speedMult: 0.54 }, requirements: { fishing: 80 }, rarity: "common" },
+    censerwood_rod: { id: "censerwood_rod", name: { en: "Censerwood Rod", de: "Weihrauchholz-Angel" }, type: "tool", stackable: false, icon: "🎣", value: 4000, tool: { skill: "fishing", speedMult: 0.50 }, requirements: { fishing: 95 }, rarity: "common" },
 
     // ── Sicheln (Werkzeug: beschleunigen Sammeln/Foraging, wirken aus dem Inventar) ─
     crude_sickle:    { id: "crude_sickle",    name: { en: "Crude Sickle",      de: "Grobe Sichel"          }, type: "tool", stackable: false, icon: "🌾", value: 30,   tool: { skill: "foraging", speedMult: 0.93 } },
@@ -3393,7 +3413,8 @@ export const content: ContentDB = {
       name: { en: "Spectral Longbow", de: "Geisterlangbogen" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand",
       weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 11.8, damageMax: 19.8, attackIntervalMs: 3000, // P1-fix: rDmg 80→88, critDmg 0.30→0.33 (clear epic→legendary step); balance-pass3: 88→108 (must stay > godiron_longbow 102)
+      // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 5,27 → 5,70 Basis-DPS.
+      damageMin: 13.7, damageMax: 20.5, attackIntervalMs: 3000, // P1-fix: rDmg 80→88, critDmg 0.30→0.33 (clear epic→legendary step); balance-pass3: 88→108 (must stay > godiron_longbow 102)
       weaponEffect: { type: "bleed", chance: 0.35, magnitude: 8, durationMs: 7000 }, // balance-pass3 2026-07-01: ranged-endgame DoT (Armor+Regen-bypass), weaker than last_judgement/last_condemnation [balance-fix 2026-07-05: 2.2→8, Ganzzahl-Retune]
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
@@ -3411,7 +3432,8 @@ export const content: ContentDB = {
       name: { en: "Skarn Idol Staff", de: "Skarn-Götzen-Stab" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
-      damageMin: 11.3, damageMax: 17, spellFocus: 0.0032, attackIntervalMs: 3000,
+      // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 4,72 → 6,88 Basis-DPS, über godiron_staff (6,39).
+      damageMin: 16.5, damageMax: 24.8, spellFocus: 0.0032, attackIntervalMs: 3000,
       weaponEffect: { type: "burn", chance: 0.45, magnitude: 8, durationMs: 6500 }, // balance-fix 2026-07-05: magnitude 3.6→8 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 } ],
@@ -3462,7 +3484,8 @@ export const content: ContentDB = {
       name: { en: "Last Vengeance", de: "Die Letzte Vergeltung" },
       type: "equipment", stackable: false, icon: "🏹", slot: "mainhand",
       weaponStyle: "ranged", twoHanded: true, weaponType: "longbow",
-      damageMin: 11.9, damageMax: 19.8, attackIntervalMs: 3000, // P1-fix: rDmg 90→130 (+44%), critDmg 0.38→0.46 — clear godly leap over spectral_longbow (rDmg 88, now 108)
+      // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 5,28 → 6,08 Basis-DPS (Langbogen-Leiter voidwing < spectral < last < nameless).
+      damageMin: 14.6, damageMax: 21.9, attackIntervalMs: 3000, // P1-fix: rDmg 90→130 (+44%), critDmg 0.38→0.46 — clear godly leap over spectral_longbow (rDmg 88, now 108)
       weaponEffect: { type: "bleed", chance: 0.40, magnitude: 10, durationMs: 7000 }, // balance-pass3 2026-07-01: ranged-endgame DoT (Armor+Regen-bypass) [balance-fix 2026-07-05: 3→10, Ganzzahl-Retune]
       modifiers: { lck: 5 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 }, { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 } ],
@@ -3480,7 +3503,8 @@ export const content: ContentDB = {
       name: { en: "Last Condemnation", de: "Die Letzte Verdammnis" },
       type: "equipment", stackable: false, icon: "🪄", slot: "mainhand",
       weaponStyle: "magic", twoHanded: true, weaponType: "staff",
-      damageMin: 11.3, damageMax: 16.9, spellFocus: 0.0032, attackIntervalMs: 3000,
+      // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 4,70 → 7,33 Basis-DPS, über godiron_staff (6,39).
+      damageMin: 17.6, damageMax: 26.4, spellFocus: 0.0032, attackIntervalMs: 3000,
       weaponEffect: { type: "burn", chance: 0.60, magnitude: 10, durationMs: 7000 }, // balance-fix 2026-07-05: magnitude 4.8→10 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { wis: 7, lck: 5 },
       weaponEffects: [ { type: "surplus", chance: 1, magnitude: 0.2, durationMs: 0, threshold: 0.8 } ], // Zauberreserve (Chef-GO 28.08.2026, Spec §4): manaOnKill 6 entfernt — der Stab trägt mit surplus bereits einen zweiten Effekt
@@ -3545,6 +3569,207 @@ export const content: ContentDB = {
       description: {
         en: "Seven crowns hung broken from one chain — one for each of the Silent. Worn across the chest of the Crownless himself, until he chose to travel lighter.",
         de: "Sieben Kronen, zerbrochen an einer Kette — eine für jeden der Stillen. Getragen quer über der Brust des Kronenlosen selbst, bis er beschloss, leichter zu reisen.",
+      },
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 1.3.0 E5 — Waffen-Parität ab Stufe 95 (Fernkampf +9, Magie +9)
+    // codex:2026-10-17T15:30:00+02:00 — Zahlen 1:1 aus design/1.3.0-balance-e5-e6.md (R1–R9, M1–M9).
+    // Craft-Sprosse 95 = 5/9 zwischen den Stufen 90 und 99; Chase auf Req 95 = godiron-Kernwerte
+    // plus Effekt (Rare-Drop-Regel, Welt ≤ 0,1 %); Boss-Chase auf Req 99 = +20–30 % über Craft.
+    // Abweichung von der Spec: M4 „manaOnKill 3" heißt seit der Zauberreserve (28.08.2026)
+    // `wardOnKill` (gleiche Magnitude), manaOnKill existiert nicht mehr als Effektart.
+    // Bilder fehlen noch (Emoji-Fallback), Einträge in design/1.3.0-assets-sammlung.md.
+    // ═══════════════════════════════════════════════════════════════════
+    censerwood_shortbow: {
+      id: "censerwood_shortbow", name: { en: "Censerwood Shortbow", de: "Weihrauchholz-Kurzbogen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "shortbow",
+      damageMin: 11.4, damageMax: 15.7, attackIntervalMs: 2650, precision: 0.15,
+      weaponEffect: { type: "momentum", chance: 1, magnitude: 0.02, durationMs: 0, stacks: 8 },
+      modifiers: { dex: 1, lck: 2 },
+      requirements: { ranged: 95 }, value: 2500, rarity: "epic",
+    },
+    censerwood_longbow: {
+      id: "censerwood_longbow", name: { en: "Censerwood Longbow", de: "Weihrauchholz-Langbogen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "longbow",
+      damageMin: 11.3, damageMax: 17.3, attackIntervalMs: 3000, precision: 0.25,
+      weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
+      modifiers: { dex: 1, lck: 2 },
+      requirements: { ranged: 95 }, value: 2500, rarity: "epic",
+    },
+    hollowed_recurve: {
+      id: "hollowed_recurve", name: { en: "Hollowed Recurve", de: "Ausgehöhlter Recurvebogen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "shortbow",
+      damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15,
+      weaponEffect: { type: "firstStrike", chance: 1, magnitude: 1, durationMs: 0 },
+      modifiers: { lck: 2 },
+      requirements: { ranged: 95 }, value: 4500, rarity: "epic",
+    },
+    broodtalon_bow: {
+      id: "broodtalon_bow", name: { en: "Broodtalon Bow", de: "Brutklauen-Bogen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "shortbow",
+      damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15,
+      weaponEffect: { type: "bleed", chance: 0.35, magnitude: 6, durationMs: 6000 },
+      modifiers: { lck: 2 },
+      requirements: { ranged: 95 }, value: 5000, rarity: "epic",
+    },
+    chainbound_longbow: {
+      id: "chainbound_longbow", name: { en: "Chainbound Longbow", de: "Kettenbogen des Dieners" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "longbow",
+      damageMin: 12.7, damageMax: 19.0, attackIntervalMs: 3000, precision: 0.25,
+      weaponEffect: { type: "burn", chance: 0.35, magnitude: 6, durationMs: 6000 },
+      weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
+      modifiers: { lck: 2 },
+      requirements: { ranged: 95 }, value: 5000, rarity: "epic",
+    },
+    spearthrower_longbow: {
+      id: "spearthrower_longbow", name: { en: "Spearthrower Longbow", de: "Speerwerfer-Langbogen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "longbow",
+      damageMin: 12.7, damageMax: 19.0, attackIntervalMs: 3000, precision: 0.25,
+      weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
+      weaponEffects: [ { type: "everyNth", chance: 1, magnitude: 1, durationMs: 0, stacks: 4 } ],
+      modifiers: { lck: 2 },
+      requirements: { ranged: 95 }, value: 6000, rarity: "epic",
+    },
+    chiselled_recurve: {
+      id: "chiselled_recurve", name: { en: "Chiselled Recurve", de: "Gemeißelter Recurvebogen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "shortbow",
+      damageMin: 12.7, damageMax: 17.5, attackIntervalMs: 2650, precision: 0.15,
+      weaponEffect: { type: "cooldownOnKill", chance: 1, magnitude: 0, durationMs: 2000 },
+      modifiers: { dex: 1, lck: 2 },
+      requirements: { ranged: 95 }, value: 6000, rarity: "epic",
+    },
+    nameless_longbow: {
+      id: "nameless_longbow", name: { en: "Bow of the Nameless", de: "Bogen der Namenlosen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "longbow",
+      damageMin: 15.2, damageMax: 22.8, attackIntervalMs: 3000, precision: 0.25,
+      weaponEffect: { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 },
+      weaponEffects: [ { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 } ],
+      modifiers: { lck: 4 },
+      requirements: { ranged: 99 }, value: 26000, rarity: "legendary",
+      description: {
+        en: "Its grips are blank name tablets, its string a faded scribe's cord. Whatever it strikes down is not written down.",
+        de: "Die Griffschalen sind leere Namenstafeln, die Sehne eine verblasste Schreiberkordel. Was er niederstreckt, wird nicht verzeichnet.",
+      },
+    },
+    crownless_warbow: {
+      id: "crownless_warbow", name: { en: "Crownless Warbow", de: "Kriegsbogen des Kronenlosen" },
+      type: "equipment", stackable: false, icon: "🏹", slot: "mainhand", weaponStyle: "ranged", twoHanded: true,
+      weaponType: "shortbow",
+      damageMin: 16.5, damageMax: 22.8, attackIntervalMs: 2650, precision: 0.15,
+      weaponEffect: { type: "bleed", chance: 0.45, magnitude: 10, durationMs: 8000 },
+      weaponEffects: [ { type: "giantSlayer", chance: 1, magnitude: 0.20, durationMs: 0 } ],
+      modifiers: { lck: 6 },
+      requirements: { ranged: 99 }, value: 95000, rarity: "godly",
+      description: {
+        en: "A heavy bow of dark god-iron, its limbs set with broken crown points. Drazhan never needed to aim at anything small.",
+        de: "Ein wuchtiger Bogen aus dunklem Götzeneisen, die Wurfarme mit abgebrochenen Kronenzacken besetzt. Drazhan musste nie auf etwas Kleines zielen.",
+      },
+    },
+    hollowelm_staff: {
+      id: "hollowelm_staff", name: { en: "Hollowelm Staff", de: "Hohlulmen-Stab" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
+      weaponType: "staff",
+      damageMin: 12.6, damageMax: 18.9, spellFocus: 0.0032, attackIntervalMs: 2700, wardBreak: 0.30,
+      weaponEffect: { type: "frost", chance: 0.35, magnitude: 1, durationMs: 4000 },
+      magicTheme: "frost",
+      modifiers: { int: 1, wis: 1 },
+      requirements: { magic: 95 }, value: 2500, rarity: "epic",
+    },
+    hollowelm_wand: {
+      id: "hollowelm_wand", name: { en: "Hollowelm Wand", de: "Hohlulmen-Zauberstab" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
+      weaponType: "wand",
+      damageMin: 7.2, damageMax: 9.1, spellFocus: 0.0027, attackIntervalMs: 2580, wardBreak: 0.20,
+      weaponEffect: { type: "poison", chance: 0.35, magnitude: 7, durationMs: 5000 },
+      magicTheme: "poison",
+      requirements: { magic: 95 }, value: 2500, rarity: "epic",
+    },
+    mourncedar_scepter: {
+      id: "mourncedar_scepter", name: { en: "Mourncedar Scepter", de: "Trauerzedern-Zepter" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
+      weaponType: "scepter",
+      damageMin: 8.2, damageMax: 10.8, spellFocus: 0.0026, attackIntervalMs: 3000, wardBreak: 0.25,
+      weaponEffect: { type: "shock", chance: 0.3, magnitude: 0.3, durationMs: 4000 },
+      magicTheme: "shock",
+      requirements: { magic: 95 }, value: 2500, rarity: "epic",
+    },
+    idolpriest_censer: {
+      id: "idolpriest_censer", name: { en: "Priest's Censer", de: "Räuchergefäß des Priesters" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
+      weaponType: "scepter",
+      damageMin: 9.2, damageMax: 11.5, spellFocus: 0.0027, attackIntervalMs: 3000, wardBreak: 0.25,
+      weaponEffect: { type: "burn", chance: 0.35, magnitude: 6, durationMs: 6000 },
+      weaponEffects: [ { type: "wardOnKill", chance: 1, magnitude: 3, durationMs: 0 } ],
+      magicTheme: "fire",
+      modifiers: { wis: 2 },
+      requirements: { magic: 95 }, value: 5000, rarity: "epic",
+    },
+    litany_wand: {
+      id: "litany_wand", name: { en: "Litany Wand", de: "Litanei-Zauberstab" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
+      weaponType: "wand",
+      damageMin: 7.9, damageMax: 9.9, spellFocus: 0.0027, attackIntervalMs: 2580, wardBreak: 0.20,
+      weaponEffect: { type: "void", chance: 0.4, magnitude: 0.15, durationMs: 5800 },
+      weaponEffects: [ { type: "everyNth", chance: 1, magnitude: 1, durationMs: 0, stacks: 5 } ],
+      magicTheme: "void",
+      requirements: { magic: 95 }, value: 5000, rarity: "epic",
+    },
+    wreathbound_staff: {
+      id: "wreathbound_staff", name: { en: "Wreathbound Staff", de: "Kranzgebundener Stab" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
+      weaponType: "staff",
+      damageMin: 13.9, damageMax: 20.6, spellFocus: 0.0032, attackIntervalMs: 2700, wardBreak: 0.30,
+      weaponEffect: { type: "shock", chance: 0.3, magnitude: 0.3, durationMs: 4000 },
+      weaponEffects: [ { type: "giantSlayer", chance: 1, magnitude: 0.15, durationMs: 0 } ],
+      magicTheme: "shock",
+      modifiers: { int: 1, lck: 2 },
+      requirements: { magic: 95 }, value: 6000, rarity: "epic",
+    },
+    emptied_shrine_focus: {
+      id: "emptied_shrine_focus", name: { en: "Emptied Shrine Focus", de: "Fokus des leeren Schreins" },
+      type: "equipment", stackable: false, icon: "🔮", slot: "offhand", weaponStyle: "magic",
+      weaponType: "focus",
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.25, durationMs: 0 },
+      modifiers: { int: 6, wis: 8, lck: 2 },
+      requirements: { magic: 95 }, value: 9000, rarity: "epic",
+    },
+    expunger_chisel: {
+      id: "expunger_chisel", name: { en: "The Expunger's Chisel", de: "Meißel des Tilgers" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic",
+      weaponType: "scepter",
+      damageMin: 11.5, damageMax: 14.4, spellFocus: 0.0027, attackIntervalMs: 3000, wardBreak: 0.25,
+      weaponEffect: { type: "execute", chance: 1, magnitude: 0.25, durationMs: 0, threshold: 0.2 },
+      weaponEffects: [ { type: "void", chance: 0.45, magnitude: 0.15, durationMs: 6400 } ],
+      magicTheme: "void",
+      modifiers: { wis: 4, lck: 4 },
+      requirements: { magic: 99 }, value: 26000, rarity: "legendary",
+      description: {
+        en: "An overlong iron chisel, its grip wound with dusty scribe's cord. It was made to take things out of the world, and it still does.",
+        de: "Ein überlanger Eisenmeißel, der Griff mit staubiger Schreiberkordel umwickelt. Er wurde gemacht, um Dinge aus der Welt zu nehmen, und er tut es noch.",
+      },
+    },
+    crownless_stave: {
+      id: "crownless_stave", name: { en: "Crownless Stave", de: "Stab des Kronenlosen" },
+      type: "equipment", stackable: false, icon: "🪄", slot: "mainhand", weaponStyle: "magic", twoHanded: true,
+      weaponType: "staff",
+      damageMin: 16.7, damageMax: 24.7, spellFocus: 0.0032, attackIntervalMs: 2700, wardBreak: 0.30,
+      weaponEffect: { type: "burn", chance: 0.6, magnitude: 12, durationMs: 8000 },
+      weaponEffects: [ { type: "giantSlayer", chance: 1, magnitude: 0.20, durationMs: 0 } ],
+      magicTheme: "fire",
+      modifiers: { wis: 6, lck: 6 },
+      requirements: { magic: 99 }, value: 95000, rarity: "godly",
+      description: {
+        en: "A man-high stave of black god-iron, topped by a burst and empty crown setting. Its fire was borrowed once and never given back.",
+        de: "Ein mannshoher Stab aus schwarzem Götzeneisen, oben eine gesprengte, leere Kronenfassung. Sein Feuer war einmal geliehen und wurde nie zurückgegeben.",
       },
     },
 
@@ -6820,7 +7045,8 @@ export const content: ContentDB = {
     voidwing_greatbow: {
       id: "voidwing_greatbow", name: { en: "Voidwing Greatbow", de: "Leerenschwingen-Großbogen" },
       type: "equipment", stackable: false, slot: "mainhand", weaponStyle: "ranged", weaponType: "longbow", twoHanded: true,
-      damageMin: 11.9, damageMax: 19.8, attackIntervalMs: 3000, // balance-pass3: 92→112 (must stay > spectral_longbow 108)
+      // codex:2026-10-17T15:35:00+02:00 — 1.3.0 E5-Nachzug (Chef-GO 17.10.2026, design/1.3.0-balance-e5-e6.md): 5,28 → 5,55 Basis-DPS.
+      damageMin: 13.3, damageMax: 20.0, attackIntervalMs: 3000, // balance-pass3: 92→112 (must stay > spectral_longbow 108)
       weaponEffect: { type: "burn", chance: 0.40, magnitude: 8, durationMs: 6500 }, // balance-fix 2026-07-05: magnitude 3→8 (Ganzzahl, tier-gestuft nach Level/Rarity)
       modifiers: { lck: 4 },
       weaponEffects: [ { type: "eagleEye", chance: 1, magnitude: 0, durationMs: 0 } ],
@@ -8983,6 +9209,43 @@ export const content: ContentDB = {
         { itemId: "birds_nest", chance: 0.05, min: 1, max: 1 },
       ],
     },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: Holzfällen 82/89/96 (Leiter 70 · 78 · 82 · 85 · 89 · 92 · 96 · 99), XP C-600.
+    cut_mourncedar_tree: {
+      id: "cut_mourncedar_tree",
+      name: { en: "Mourncedar", de: "Trauerzeder" },
+      skill: "woodcutting",
+      durationMs: 7800,
+      xp: 653,
+      levelRequired: 82,
+      loot: [
+        { itemId: "mourncedar_log", chance: 1, min: 1, max: 1 },
+        { itemId: "birds_nest", chance: 0.043, min: 1, max: 1 },
+      ],
+    },
+    cut_hollowelm_tree: {
+      id: "cut_hollowelm_tree",
+      name: { en: "Hollow Elm", de: "Hohlulme" },
+      skill: "woodcutting",
+      durationMs: 8300,
+      xp: 982,
+      levelRequired: 89,
+      loot: [
+        { itemId: "hollowelm_log", chance: 1, min: 1, max: 1 },
+        { itemId: "birds_nest", chance: 0.046, min: 1, max: 1 },
+      ],
+    },
+    cut_censerwood_tree: {
+      id: "cut_censerwood_tree",
+      name: { en: "Censerwood Tree", de: "Weihrauchbaum" },
+      skill: "woodcutting",
+      durationMs: 8800,
+      xp: 1473,
+      levelRequired: 96,
+      loot: [
+        { itemId: "censerwood_log", chance: 1, min: 1, max: 1 },
+        { itemId: "birds_nest", chance: 0.049, min: 1, max: 1 },
+      ],
+    },
     // ── Neue Holzfäll-Aktionen (L5/L15/L25/L38/L63/L78/L92 — Lücken-Füller) ───────────
     // XP via Formel: target_xph(L) = 90·√(xpForLevel(L+1)−xpForLevel(L)); xp = round(xph·ms/3_600_000), min 1
     cut_birchwood_tree: {
@@ -9295,6 +9558,27 @@ export const content: ContentDB = {
       id: "catch_soulfish", name: { en: "Lure Soulfish", de: "Seelenfisch ködern" },
       skill: "fishing", durationMs: 12500, xp: 2198, levelRequired: 97,
       loot: [{ itemId: "raw_soulfish", chance: 0.7, min: 1, max: 1 }],
+    },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: Angeln 82/89/94/99 (Leiter 70 · 78 · 80 · 82 · 85 · 89 · 92 · 94 · 97 · 99), XP C-600.
+    catch_ashpike: {
+      id: "catch_ashpike", name: { en: "Net Ashpike", de: "Aschenhecht keschern" },
+      skill: "fishing", durationMs: 10000, xp: 837, levelRequired: 82,
+      loot: [{ itemId: "raw_ashpike", chance: 0.78, min: 1, max: 1 }],
+    },
+    catch_dirgefin: {
+      id: "catch_dirgefin", name: { en: "Angle Dirgefin", de: "Klageflosser angeln" },
+      skill: "fishing", durationMs: 11000, xp: 1302, levelRequired: 89,
+      loot: [{ itemId: "raw_dirgefin", chance: 0.76, min: 1, max: 1 }],
+    },
+    catch_ashen_sturgeon: {
+      id: "catch_ashen_sturgeon", name: { en: "Spear Ashen Sturgeon", de: "Aschenstör harpunieren" },
+      skill: "fishing", durationMs: 12000, xp: 1819, levelRequired: 94,
+      loot: [{ itemId: "raw_ashen_sturgeon", chance: 0.73, min: 1, max: 1 }],
+    },
+    catch_idolscale: {
+      id: "catch_idolscale", name: { en: "Lure Idolscale", de: "Götzenschupper ködern" },
+      skill: "fishing", durationMs: 13000, xp: 2524, levelRequired: 99,
+      loot: [{ itemId: "raw_idolscale", chance: 0.68, min: 1, max: 1 }],
     },
     // ── Neue Angelaktionen (ERFUNDEN: Lücken-Füller L25 und L60) ─────────
     catch_shadowcarp: {
@@ -9746,6 +10030,27 @@ export const content: ContentDB = {
       id: "cook_soulfish", name: { en: "Sanctify Soulfish", de: "Seelenfisch läutern" },
       skill: "cooking", category: "cook_fish", durationMs: 11500, xp: 2022, levelRequired: 97,
       inputs: [{ itemId: "raw_soulfish", qty: 1 }], loot: [{ itemId: "cooked_soulfish", chance: 1, min: 1, max: 1 }],
+    },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: Heilspeisen 82/89/94/99, 1 Portion, kein Buff.
+    cook_ashpike: {
+      id: "cook_ashpike", name: { en: "Grill Ashpike", de: "Aschenhecht grillen" },
+      skill: "cooking", category: "cook_fish", durationMs: 9000, xp: 753, levelRequired: 82,
+      inputs: [{ itemId: "raw_ashpike", qty: 1 }], loot: [{ itemId: "cooked_ashpike", chance: 1, min: 1, max: 1 }],
+    },
+    cook_dirgefin: {
+      id: "cook_dirgefin", name: { en: "Steam Dirgefin", de: "Klageflosser dünsten" },
+      skill: "cooking", category: "cook_fish", durationMs: 10000, xp: 1183, levelRequired: 89,
+      inputs: [{ itemId: "raw_dirgefin", qty: 1 }], loot: [{ itemId: "cooked_dirgefin", chance: 1, min: 1, max: 1 }],
+    },
+    cook_ashen_sturgeon: {
+      id: "cook_ashen_sturgeon", name: { en: "Smoke Ashen Sturgeon", de: "Aschenstör räuchern" },
+      skill: "cooking", category: "cook_fish", durationMs: 11000, xp: 1667, levelRequired: 94,
+      inputs: [{ itemId: "raw_ashen_sturgeon", qty: 1 }], loot: [{ itemId: "cooked_ashen_sturgeon", chance: 1, min: 1, max: 1 }],
+    },
+    cook_idolscale: {
+      id: "cook_idolscale", name: { en: "Consecrate Idolscale", de: "Götzenschupper weihen" },
+      skill: "cooking", category: "cook_fish", durationMs: 12000, xp: 2330, levelRequired: 99,
+      inputs: [{ itemId: "raw_idolscale", qty: 1 }], loot: [{ itemId: "cooked_idolscale", chance: 1, min: 1, max: 1 }],
     },
     // ── Neue Koch-Aktionen für neue Fische (ERFUNDEN) ─────────────────────
     cook_shadowcarp: {
@@ -11474,6 +11779,9 @@ export const content: ContentDB = {
     fletch_titanium_longbow: { id: "fletch_titanium_longbow", name: { en: "Carve Wraithwood Longbow", de: "Geisterholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_wraithwood", durationMs: 20500, xp: 1554, levelRequired: 80, inputs: [{ itemId: "wraithwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "titanium_longbow", chance: 1, min: 1, max: 1 }] },
     fletch_aetherium_longbow: { id: "fletch_aetherium_longbow", name: { en: "Carve Bonewood Longbow", de: "Knochenholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_bonewood", durationMs: 22500, xp: 2797, levelRequired: 90, inputs: [{ itemId: "bonewood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "aetherium_longbow", chance: 1, min: 1, max: 1 }] },
     fletch_godiron_longbow: { id: "fletch_godiron_longbow", name: { en: "Carve Godwood Longbow", de: "Götzenholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_godwood", durationMs: 26500, xp: 5144, levelRequired: 99, inputs: [{ itemId: "godwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "godiron_longbow", chance: 1, min: 1, max: 1 }] },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E5: Weihrauchholz-Sprosse auf 95 (R1/R2), Handwerk L96.
+    fletch_censerwood_shortbow: { id: "fletch_censerwood_shortbow", name: { en: "Carve Censerwood Shortbow", de: "Weihrauchholz-Kurzbogen schnitzen" }, skill: "leatherworking", category: "bow_censerwood", durationMs: 14000, xp: 2343, levelRequired: 96, inputs: [{ itemId: "censerwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "censerwood_shortbow", chance: 1, min: 1, max: 1 }] },
+    fletch_censerwood_longbow: { id: "fletch_censerwood_longbow", name: { en: "Carve Censerwood Longbow", de: "Weihrauchholz-Langbogen schnitzen" }, skill: "leatherworking", category: "bow_censerwood", durationMs: 24500, xp: 4100, levelRequired: 96, inputs: [{ itemId: "censerwood_log", qty: 6 }, { itemId: "bowstring", qty: 1 }], loot: [{ itemId: "censerwood_longbow", chance: 1, min: 1, max: 1 }] },
 
     // ── Fletching: Holzschilde (QA-Run3 Fix C) — tote Holztiers als Offhand-Schilde ────
     // XP via Formel: target_xph(L)=90·√(xpForLevel(L+1)−xpForLevel(L)); min 1
@@ -11529,6 +11837,19 @@ export const content: ContentDB = {
       skill: "leatherworking", category: "rod_wood", durationMs: 9000, xp: 165, levelRequired: 50,
       inputs: [{ itemId: "ironbark_log", qty: 5 }, { itemId: "bowstring", qty: 1 }, { itemId: "void_essence", qty: 1 }],
       loot: [{ itemId: "void_rod", chance: 1, min: 1, max: 1 }],
+    },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E6: Angeln aus den neuen Hölzern (Handwerk, rod_wood).
+    craft_mourncedar_rod: {
+      id: "craft_mourncedar_rod", name: { en: "Carve Mourncedar Rod", de: "Trauerzedern-Angel schnitzen" },
+      skill: "leatherworking", category: "rod_wood", durationMs: 10500, xp: 879, levelRequired: 82,
+      inputs: [{ itemId: "mourncedar_log", qty: 5 }, { itemId: "bowstring", qty: 1 }],
+      loot: [{ itemId: "mourncedar_rod", chance: 1, min: 1, max: 1 }],
+    },
+    craft_censerwood_rod: {
+      id: "craft_censerwood_rod", name: { en: "Carve Censerwood Rod", de: "Weihrauchholz-Angel schnitzen" },
+      skill: "leatherworking", category: "rod_wood", durationMs: 12500, xp: 2092, levelRequired: 96,
+      inputs: [{ itemId: "censerwood_log", qty: 5 }, { itemId: "bowstring", qty: 1 }],
+      loot: [{ itemId: "censerwood_rod", chance: 1, min: 1, max: 1 }],
     },
 
     // ── Leatherworking (hides → leather → light armor) ───────────────
@@ -12661,6 +12982,10 @@ export const content: ContentDB = {
     craft_titanium_wand: { id: "craft_titanium_wand", name: { en: "Craft Titanium Wand", de: "Titan-Zauberstab erschaffen" }, skill: "runecrafting", category: "rune_wands", durationMs: 16000, xp: 1213, levelRequired: 80, inputs: [{ itemId: "storm_essence", qty: 5 }, { itemId: "shock_rune", qty: 4 }, { itemId: "titanium_bar", qty: 1 }], loot: [{ itemId: "titanium_wand", chance: 1, min: 1, max: 1 }] }, // Blitz (war Leere-Zutaten): Zutatenwert 270→268
     craft_aetherium_wand: { id: "craft_aetherium_wand", name: { en: "Craft Aetherium Wand", de: "Aetherium-Zauberstab erschaffen" }, skill: "runecrafting", category: "rune_wands", durationMs: 17000, xp: 2114, levelRequired: 90, inputs: [{ itemId: "dim_essence", qty: 24 }, { itemId: "force_rune", qty: 30 }, { itemId: "aetherium_bar", qty: 1 }], loot: [{ itemId: "aetherium_wand", chance: 1, min: 1, max: 1 }] }, // Arkan (war Leere-Zutaten): Zutatenwert 405→384 (Arkan hat keine teure Essenz, s. Bericht)
     craft_godiron_wand: { id: "craft_godiron_wand", name: { en: "Craft Godiron Wand", de: "Götzeneisen-Zauberstab erschaffen" }, skill: "runecrafting", category: "rune_wands", durationMs: 19000, xp: 3341, levelRequired: 97, inputs: [{ itemId: "ember_essence", qty: 14 }, { itemId: "fire_rune", qty: 14 }, { itemId: "godiron_bar", qty: 1 }], loot: [{ itemId: "godiron_wand", chance: 1, min: 1, max: 1 }] }, // Feuer (war Leere-Zutaten): Zutatenwert 540→532
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E5: Magie-Sprosse 95 (M1–M3). Holz nur als Schaft-Zutat, keine neue Mechanik.
+    craft_hollowelm_staff: { id: "craft_hollowelm_staff", name: { en: "Craft Hollowelm Staff", de: "Hohlulmen-Stab erschaffen" }, skill: "runecrafting", category: "rune_staves", durationMs: 29000, xp: 4183, levelRequired: 93, inputs: [{ itemId: "frost_essence", qty: 6 }, { itemId: "frost_rune", qty: 6 }, { itemId: "aetherium_bar", qty: 2 }, { itemId: "hollowelm_log", qty: 4 }], loot: [{ itemId: "hollowelm_staff", chance: 1, min: 1, max: 1 }] },
+    craft_hollowelm_wand: { id: "craft_hollowelm_wand", name: { en: "Craft Hollowelm Wand", de: "Hohlulmen-Zauberstab erschaffen" }, skill: "runecrafting", category: "rune_wands", durationMs: 18000, xp: 2728, levelRequired: 94, inputs: [{ itemId: "shade_rune", qty: 12 }, { itemId: "void_essence", qty: 2 }, { itemId: "aetherium_bar", qty: 1 }, { itemId: "hollowelm_log", qty: 2 }], loot: [{ itemId: "hollowelm_wand", chance: 1, min: 1, max: 1 }] },
+    craft_mourncedar_scepter: { id: "craft_mourncedar_scepter", name: { en: "Craft Mourncedar Scepter", de: "Trauerzedern-Zepter erschaffen" }, skill: "runecrafting", category: "rune_wands", durationMs: 22000, xp: 3504, levelRequired: 95, inputs: [{ itemId: "storm_essence", qty: 6 }, { itemId: "shock_rune", qty: 6 }, { itemId: "aetherium_bar", qty: 1 }, { itemId: "mourncedar_log", qty: 3 }], loot: [{ itemId: "mourncedar_scepter", chance: 1, min: 1, max: 1 }] },
 
     // ── Tier-Foki (Focus, 12 Tiers, Runecrafting) ──────────────────
     // Stufe 1 „Fokus bauen" (#227 Focus-Rework): kampf-frei — Barren (Smithing/Mining ODER Shop
@@ -15530,6 +15855,8 @@ export const content: ContentDB = {
         { itemId: "void_essence", chance: 0.35, min: 1, max: 3 },
         { itemId: "soulopal", chance: 0.4, min: 1, max: 2 },
         { itemId: "crownless_blade", chance: 0.0025, min: 1, max: 1 },
+        { itemId: "crownless_warbow", chance: 0.0025, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (R9, Spiegel crownless_blade)
+        { itemId: "crownless_stave", chance: 0.0025, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M9, Spiegel crownless_blade)
       ],
     },
     // ═══════════════════════════════════════════════════════════════════
@@ -15555,6 +15882,7 @@ export const content: ContentDB = {
         { itemId: "idol_shard", chance: 0.25, min: 1, max: 1 },
         { itemId: "void_essence", chance: 0.12, min: 1, max: 1 },
         { itemId: "idolstep_sabatons", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "hollowed_recurve", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (R3)
       ],
     },
     skarn_whelp: {
@@ -15568,6 +15896,7 @@ export const content: ContentDB = {
         { itemId: "raw_dragonhide", chance: 0.18, min: 1, max: 1 },
         { itemId: "wyvern_scale", chance: 0.15, min: 1, max: 1 },
         { itemId: "aetherweave_leggings", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "broodtalon_bow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (R4)
       ],
     },
     forsaken_servant: {
@@ -15582,6 +15911,7 @@ export const content: ContentDB = {
         { itemId: "void_essence", chance: 0.2, min: 1, max: 1 },
         { itemId: "soulopal", chance: 0.08, min: 1, max: 1 },
         { itemId: "voidtouched_gauntlets", chance: 0.0002, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chainbound_longbow", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (R5)
       ],
     },
     idol_priest: {
@@ -15595,6 +15925,7 @@ export const content: ContentDB = {
         { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
         { itemId: "idol_shard", chance: 0.2, min: 1, max: 1 },
         { itemId: "idolbound_signet", chance: 0.00015, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "idolpriest_censer", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M4)
       ],
     },
     prayer_eater: {
@@ -15608,6 +15939,7 @@ export const content: ContentDB = {
         { itemId: "soulopal", chance: 0.15, min: 1, max: 1 },
         { itemId: "raw_shadowhide", chance: 0.15, min: 1, max: 1 },
         { itemId: "idol_shroud", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "litany_wand", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M5)
       ],
     },
     wreath_bearer: {
@@ -15622,6 +15954,7 @@ export const content: ContentDB = {
         { itemId: "godiron_bar", chance: 0.12, min: 1, max: 1 },
         { itemId: "onyx", chance: 0.05, min: 1, max: 1 },
         { itemId: "idol_crown", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wreathbound_staff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M6)
       ],
     },
     siege_idol: {
@@ -15638,6 +15971,7 @@ export const content: ContentDB = {
         { itemId: "idol_shard", chance: 0.35, min: 1, max: 2 },
         { itemId: "idolstep_sabatons", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "idol_aegis", chance: 0.00003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "spearthrower_longbow", chance: 0.0006, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (R6)
       ],
     },
 
@@ -15660,6 +15994,7 @@ export const content: ContentDB = {
         { itemId: "godiron_bar", chance: 0.12, min: 1, max: 1 },
         { itemId: "onyx", chance: 0.05, min: 1, max: 1 },
         { itemId: "idol_crown", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "wreathbound_staff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M6, Welle = Basis-Beute)
       ],
     },
     dg_prayer_eater: {
@@ -15674,6 +16009,7 @@ export const content: ContentDB = {
         { itemId: "soulopal", chance: 0.15, min: 1, max: 1 },
         { itemId: "raw_shadowhide", chance: 0.15, min: 1, max: 1 },
         { itemId: "idol_shroud", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "litany_wand", chance: 0.0008, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M5, Welle = Basis-Beute)
       ],
     },
     // Der Tilger: „über dem Letzten Götzen, in Drazhans Klasse, nicht darüber" (Lore §3). Werte zwischen
@@ -15696,6 +16032,8 @@ export const content: ContentDB = {
         { itemId: "onyx", chance: 0.5, min: 1, max: 2 },
         { itemId: "soulopal", chance: 0.4, min: 1, max: 2 },
         { itemId: "eye_of_the_idol", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "nameless_longbow", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (R8)
+        { itemId: "expunger_chisel", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (M8)
       ],
     },
 
@@ -17123,6 +17461,8 @@ export const content: ContentDB = {
         { itemId: "idol_aegis", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "last_idol_mantle", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "eye_of_the_idol", chance: 0.003, min: 1, max: 1, suffixChance: 0.30 },
+        { itemId: "chiselled_recurve", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (Kapellen-Abschluss)
+        { itemId: "emptied_shrine_focus", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (Kapellen-Abschluss)
       ],
       xp: 26000,
       gold: 9000,
@@ -17457,6 +17797,8 @@ export const content: ContentDB = {
     { id: "bow_shadowpine", name: { en: "Shadowpine Bows", de: "Schattenkiefer-Bögen" } },
     { id: "bow_wraithwood", name: { en: "Wraithwood Bows", de: "Geisterholz-Bögen" } },
     { id: "bow_bonewood", name: { en: "Bonewood Bows", de: "Knochenholz-Bögen" } },
+    // codex:2026-10-17T15:40:00+02:00 — 1.3.0 E5: Weihrauchholz-Bögen (Req 95, Handwerk L96).
+    { id: "bow_censerwood", name: { en: "Censerwood Bows", de: "Weihrauchholz-Bögen" } },
     { id: "bow_godwood", name: { en: "Godwood Bows", de: "Götzenholz-Bögen" } },
     // Runecrafting-Typen
     { id: "rune_runes", name: { en: "Shards", de: "Splitter" } },

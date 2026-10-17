@@ -616,8 +616,10 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
    * Ward als 1:1-EHP (Regen/Refill ignoriert), Enrage/DoTs/Auto-Eat ignoriert, One-Shot-Cap auf dem
    * Mittelwert angewandt.
    */
-  function expectedTtk(style: WeaponStyle, monsterId: string): { player: number; enemy: number } {
-    const b = bis(style, 90, "damage");
+  // codex:2026-10-17T16:00:00+02:00 — 1.3.0 E5: optionaler Level-Parameter für den CL-99-Paritäts-Pin unten
+  // (Default 90 = alle Bestands-Aufrufe bit-identisch).
+  function expectedTtk(style: WeaponStyle, monsterId: string, level = 90): { player: number; enemy: number } {
+    const b = bis(style, level, "damage");
     const st = computeStats(b.state, content);
     const m = content.monsters[monsterId]!;
     // Spieler → Gegner
@@ -860,6 +862,31 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
       expect(ttk.player, `TTK Spieler→${monsterId} (${style})`).toBeCloseTo(playerS, 2);
       expect(ttk.enemy, `TTK ${monsterId}→Spieler (${style})`).toBeCloseTo(enemyS, 1);
     }
+  });
+
+  it("CL-99-Parität je Stil (Chef-GO 17.10.2026, 1.3.0 E5): Waffen ab 95 + Chase-Nachzug", () => {
+    // codex:2026-10-17T16:00:00+02:00 — NEUER Pin (design/1.3.0-balance-e5-e6.md „Pins und Wächter",
+    // Chef-GO 17.10.2026: Nachzug JA, Fernkampf-Abstand bleibt als Stil-Eigenart). Gleiche Formel wie die
+    // TTK-Matrix oben, nur auf CL 99 (damage-BiS, alle Buffs). Die Pins auf CL 30/60/90 bewegen sich NICHT:
+    // jede neue Waffe trägt Req ≥ 95 und fällt durch requirementsOk. Erwartung laut Spec: Fernkampf/Nahkampf
+    // ≈ 0,73, Magie/Nahkampf ≈ 1,04 (vorher 0,69 / 0,97). Gemessen nach der Umsetzung: 0,74 / 1,08 — leicht
+    // über der Spec-Schätzung, Richtung wie beschlossen (BiS-Wahl R9 crownless_warbow / M9 crownless_stave).
+    // Spieler-TTK gegen drazhan 254,69 / 343,58 / 236,29 s, gegen last_idol 151,09 / 204,19 / 137,07 s
+    // (Spec: 255 / 349 / 245 bzw. 151 / 208 / 142).
+    expect(bis("ranged", 99, "damage").kit.mainhand).toBe("crownless_warbow");
+    expect(bis("magic", 99, "damage").kit.mainhand).toBe("crownless_stave");
+    const pins: Array<[WeaponStyle, number, number]> = [
+      ["melee", 254.69, 151.09],
+      ["ranged", 343.58, 204.19],
+      ["magic", 236.29, 137.07],
+    ];
+    for (const [style, drazhanS, lastIdolS] of pins) {
+      expect(expectedTtk(style, "drazhan", 99).player, `CL 99 ${style} → drazhan`).toBeCloseTo(drazhanS, 1);
+      expect(expectedTtk(style, "last_idol", 99).player, `CL 99 ${style} → last_idol`).toBeCloseTo(lastIdolS, 1);
+    }
+    const melee = expectedTtk("melee", "drazhan", 99).player;
+    expect(melee / expectedTtk("ranged", "drazhan", 99).player, "Parität Fernkampf/Nahkampf").toBeCloseTo(0.74, 2);
+    expect(melee / expectedTtk("magic", "drazhan", 99).player, "Parität Magie/Nahkampf").toBeCloseTo(1.08, 2);
   });
 
   it("MIN_HIT_CHANCE-Boden: selbst gegen den BiS-Evasion-Build fällt die Contest-Chance nie unter 10 %", () => {

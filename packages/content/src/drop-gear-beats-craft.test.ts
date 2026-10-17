@@ -88,6 +88,12 @@ const CRAFT_VALUE_EXEMPT = new Set<ItemId>([
   "choirbound_relic", // Req 72 → nächstes Tier titanium_staff (Req 80, jetzt Aether)
   "sorrow_staff", // Req 72 → nächstes Tier titanium_staff (Req 80, jetzt Aether)
   "stormcrest_staff", // Req 90 → nächstes Tier godiron_staff (Req 99, jetzt Leere)
+  // codex:2026-10-17T15:55:00+02:00 — 1.3.0 E5: mit mourncedar_scepter (Req 95) bekommt die Zepter-Familie
+  // ihre erste Craftsprosse seit stormcaller_rod (50). Die Zepter-Drops auf Req 70 hätten damit ein
+  // „nächstes Tier" 25 Stufen höher; der Vergleich ist dort sinnlos (Spec 1.3.0-balance-e5-e6.md
+  // ging von „besteht" aus, weil sie nur die 95er-Drops prüfte). Werte bleiben unverändert.
+  "frostbone_scepter", // Req 70 → nächstes Craft-Zepter erst mourncedar_scepter (Req 95)
+  "hoargrim_scepter", // Req 70 → nächstes Craft-Zepter erst mourncedar_scepter (Req 95)
 ]);
 
 function reqLevel(item: ItemDef): number {
