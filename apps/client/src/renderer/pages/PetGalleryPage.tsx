@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { content } from "@hearthforge/content";
-import { equipPet, ownedPetCount, ownsPet } from "@hearthforge/engine";
+import {
+  effectivePetDropChance,
+  equipPet,
+  equipSecondPet,
+  ownedPetCount,
+  ownsPet,
+  petPityProgress,
+  secondPetSlotUnlocked,
+} from "@hearthforge/engine";
 import type { PetDef, PetSkillEffect } from "@hearthforge/shared";
 import { PET_WHOLE_LEVEL_KINDS } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
@@ -100,6 +108,19 @@ export function PetGalleryPage(): JSX.Element {
   const [selectedPetId, setSelectedPetId] = useState(initialPetId);
   const selectedPet = allPets.find((pet) => pet.id === selectedPetId) ?? allPets[0];
   const activePet = equippedId ? content.pets[equippedId] : undefined;
+  // claude:2026-10-18T00:30:00+02:00 — Jagdbuch: zweiter Platz (Talent secondPetSlot) und effektive
+  // Chance inkl. Fährtenkunde. Sichtbar/aktiv nur mit Talent; Werte kommen aus der Engine.
+  const slot2Unlocked = secondPetSlotUnlocked(state, content);
+  const secondId = slot2Unlocked ? state.character.companionPetId2 : null;
+  const secondActivePet = secondId ? content.pets[secondId] : undefined;
+  /** Drop-Quote „1 / N“ (geschützte Leerzeichen) — fehlende Begleiter mit effektiver Chance inkl. Jagdbuch. */
+  const chanceFor = (pet: PetDef): { text: string; boosted: boolean } => {
+    const eff = ownsPet(state, pet.id) ? pet.dropChance : effectivePetDropChance(state, content, pet);
+    return {
+      text: `1\u00a0/\u00a0${formatNum(Math.round(1 / Math.max(eff, 1e-12)))}`,
+      boosted: eff > pet.dropChance,
+    };
+  };
 
   const sourceLabel = (pet: PetDef): string => {
     if (pet.source.kind === "combat") return t("companions.source.combat");
@@ -112,6 +133,9 @@ export function PetGalleryPage(): JSX.Element {
 
   const handleEquip = (petId: string | null): void => {
     equipPet(state, petId);
+  };
+  const handleEquipSecond = (petId: string | null): void => {
+    equipSecondPet(state, content, petId);
   };
 
   if (!selectedPet) {
@@ -128,6 +152,8 @@ export function PetGalleryPage(): JSX.Element {
   const selectedEquipped = equippedId === selectedPet.id;
   const selectedSrc = getPetSrc(selectedPet.id);
   const selectedBg = getZoneBackgroundCard(PET_ZONE_ID[selectedPet.id]);
+  const selectedSecond = secondId === selectedPet.id;
+  const pity = petPityProgress(state, content, selectedPet);
 
   return (
     <div className="pet-gallery-page pet-field-journal">
@@ -161,6 +187,24 @@ export function PetGalleryPage(): JSX.Element {
                 <span className="pet-slot-none">{t("companions.slot.none")}</span>
               )}
             </div>
+            {slot2Unlocked && (
+              <div className="pet-field-active">
+                <span className="pet-slot-label">{t("companions.slot2.label")}</span>
+                {secondActivePet ? (
+                  <>
+                    {getPetSrc(secondActivePet.id) ? (
+                      <img src={getPetSrc(secondActivePet.id)!} alt="" className="pet-field-active-img" />
+                    ) : PAW_ICON_URL ? (
+                      <img src={PAW_ICON_URL} alt="" className="pet-field-active-img" />
+                    ) : null}
+                    <span className="pet-slot-name">{tr(secondActivePet.name)}</span>
+                  </>
+                ) : (
+                  <span className="pet-slot-none">{t("companions.slot.none")}</span>
+                )}
+                <span className="pet-field-active-second">{t("companions.slot2.hint")}</span>
+              </div>
+            )}
           </div>
         </header>
       </section>
@@ -178,6 +222,7 @@ export function PetGalleryPage(): JSX.Element {
               const has = ownsPet(state, pet.id);
               const isSelected = selectedPet.id === pet.id;
               const isEquipped = equippedId === pet.id;
+              const isSecond = secondId === pet.id;
               const petSrc = getPetSrc(pet.id);
               return (
                 <button
@@ -200,12 +245,11 @@ export function PetGalleryPage(): JSX.Element {
                     <strong>{has ? tr(pet.name) : "???"}</strong>
                     <small>{sourceLabel(pet)}</small>
                     {/* claude:2026-10-17T13:00:00+02:00 — geschützte Leerzeichen: „1 / 60.000“ bricht nie mitten in der Quote. */}
-                    <small>{t("companions.dropChance").replace(
-                      "{pct}",
-                      `1\u00a0/\u00a0${formatNum(Math.round(1 / pet.dropChance))}`,
-                    )}</small>
+                    {/* claude:2026-10-18T00:30:00+02:00 — fehlende Begleiter: effektive Chance inkl. Jagdbuch. */}
+                    <small>{t("companions.dropChance").replace("{pct}", chanceFor(pet).text)}</small>
                   </span>
                   {isEquipped && <span className="pet-field-entry-mark">{t("companions.equipped")}</span>}
+                  {isSecond && <span className="pet-field-entry-mark">{t("companions.equipped2")}</span>}
                 </button>
               );
             })}
@@ -240,12 +284,32 @@ export function PetGalleryPage(): JSX.Element {
                 <h3>{selectedOwned ? tr(selectedPet.name) : "???"}</h3>
               </div>
               <span className="pet-field-drop">
-                {t("companions.dropChance").replace(
-                  "{pct}",
-                  `1 / ${formatNum(Math.round(1 / selectedPet.dropChance))}`,
+                {t("companions.dropChance").replace("{pct}", chanceFor(selectedPet).text)}
+                {chanceFor(selectedPet).boosted && (
+                  <span className="pet-field-book-note">{t("companions.dropChance.book")}</span>
                 )}
               </span>
             </div>
+
+            {/* claude:2026-10-18T00:30:00+02:00 — Pech-Schutz-Balken (Jagdbuch „Spur aufgenommen“). */}
+            {!selectedOwned && pity && (
+              <div className="pet-field-pity" title={t("companions.pity.hint")}>
+                <div className="pet-field-pity-label">
+                  <span>
+                    {t("companions.pity")
+                      .replace("{n}", formatNum(Math.min(pity.count, pity.threshold)))
+                      .replace("{max}", formatNum(pity.threshold))}
+                  </span>
+                  <span>{Math.floor((Math.min(pity.count, pity.threshold) / pity.threshold) * 100)}%</span>
+                </div>
+                <div className="bar">
+                  <div
+                    className="bar-fill"
+                    style={{ transform: `scaleX(${Math.min(1, pity.count / pity.threshold)})` }}
+                  />
+                </div>
+              </div>
+            )}
 
             {selectedOwned && selectedPet.description && (
               <p className="pet-field-description">{tr(selectedPet.description)}</p>
@@ -284,6 +348,7 @@ export function PetGalleryPage(): JSX.Element {
 
             {selectedOwned && (
               <div className="pet-field-actions">
+                <div className="pet-field-actions-row">
                 {selectedEquipped ? (
                   <button
                     type="button"
@@ -301,6 +366,27 @@ export function PetGalleryPage(): JSX.Element {
                     {t("companions.equip")}
                   </button>
                 )}
+                {/* claude:2026-10-18T00:30:00+02:00 — zweiter Platz: nur mit Talent, nie für den Platz-1-Begleiter. */}
+                {slot2Unlocked && !selectedEquipped && (
+                  selectedSecond ? (
+                    <button
+                      type="button"
+                      className="pet-card-btn pet-card-btn-unequip"
+                      onClick={() => handleEquipSecond(null)}
+                    >
+                      {t("companions.unequip2")}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="pet-card-btn pet-card-btn-equip"
+                      onClick={() => handleEquipSecond(selectedPet.id)}
+                    >
+                      {t("companions.equip2")}
+                    </button>
+                  )
+                )}
+                </div>
               </div>
             )}
           </div>

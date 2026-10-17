@@ -116,6 +116,9 @@ describe("Migration v83 → v84 (Taverne)", () => {
     // dieselbe Reihenfolge-Falle wie im Sanitize selbst: wer die Faecher zu frueh bildet, nimmt
     // eine Bank, die spaeter noch bereinigt wird, und erwartet Items, die es dann nicht mehr gibt.
     erwartet.state.bankOrder = Object.keys(erwartet.state.bank ?? {}).sort();
+    // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
+    Object.assign(erwartet.state, { talents: {}, petPity: {} });
+    erwartet.state.character.companionPetId2 = null;
     expect(withoutDiscovered(JSON.parse(serialize(s, raw.savedAt)) as SaveShape)).toEqual(withoutDiscovered(erwartet));
     const again = deserialize(serialize(s, raw.savedAt), content, raw.savedAt)!;
     expect(again.state).toEqual(s);
@@ -350,6 +353,9 @@ describe("v84-Fixture: Round-Trip mit befüllter Taverne", () => {
     // dieselbe Reihenfolge-Falle wie im Sanitize selbst: wer die Faecher zu frueh bildet, nimmt
     // eine Bank, die spaeter noch bereinigt wird, und erwartet Items, die es dann nicht mehr gibt.
     erwartet.state.bankOrder = Object.keys(erwartet.state.bank ?? {}).sort();
+    // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
+    Object.assign(erwartet.state, { talents: {}, petPity: {} });
+    erwartet.state.character.companionPetId2 = null;
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

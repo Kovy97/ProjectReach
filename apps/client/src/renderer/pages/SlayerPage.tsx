@@ -33,6 +33,7 @@ import { getUiIcon } from "../uiIcons";
 import { ItemCell } from "../components/ItemCell";
 import { HoverTip } from "../components/CitadelTip";
 import { NpcGreeting } from "../components/NpcGreeting";
+import { TalentTree } from "../components/TalentTree";
 import { activeEliteZoneName, resolveNpcVoiceKey } from "../util/npcVoice";
 
 const LOCKED_ICON_URL = getUiIcon("icon_locked");
@@ -147,6 +148,9 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
   // Ohne voll ausgebaute Trophäenwand bleibt die Zeile ganz weg (nichts zu versprechen).
   const hasFreeSkipSource = campKindAtMaxLevel(state, content, "slayerPoints");
   const freeSkipToday = campFreeSkipAvailable(state, content, todayStamp());
+
+  // claude:2026-10-18T00:30:00+02:00 — Jagdbuch-Baum (Content `talentTrees`, Id "slayer").
+  const slayerBook = (content.talentTrees ?? []).find((tree) => tree.id === "slayer") ?? null;
 
   // ── Tower floors (für Task-Standort-Label) ────────────────────────
   const allFloors = content.slayerTower ?? [];
@@ -608,6 +612,20 @@ export function SlayerPage({ onNavigate }: { onNavigate?: (id: string) => void }
           </div>
         )}
       </div>
+
+      {/* ── Jagdbuch (Talentbaum) ─────────────────────────────────────
+          claude:2026-10-18T00:30:00+02:00 — 1.3.0 Säule 0 (Chef 17.10.): Slayer-Punkte in dauerhafte
+          Account-Upgrades. Generische Komponente (TalentTree), unter Slayer 85 gesperrt mit Hinweis. */}
+      {slayerBook && (
+        <div className="shop-panel slayer-talent-panel">
+          <SectionHead title={tr(slayerBook.name)} />
+          <TalentTree
+            treeId={slayerBook.id}
+            lockedHint={t("slayer.book.locked").replace("{n}", String(slayerBook.unlock.level))}
+            currencyIcon={<SlayerPtIcon />}
+          />
+        </div>
+      )}
     </div>
   );
 }

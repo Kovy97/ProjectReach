@@ -121,6 +121,9 @@ export function createGame(
     // Der Stempel ist ein lokaler Kalendertag (YYYYMMDD, Muster quests.daily.day) — s.
     // engine/slayer.ts `campFreeSkipDay`.
     slayerFreeSkipDay: 0,
+    // claude:2026-10-18T00:30:00+02:00 — Talentbäume (Jagdbuch) + Pech-Schutz-Zähler: frisch leer.
+    talents: {},
+    petPity: {},
     bankInstances: [],
     nextInstanceSeq: 0,
     buyBack: [],

@@ -60,7 +60,7 @@ import {
 } from "@hearthforge/shared";
 import { emptyAttributeRecord } from "./attributes";
 import { levelFromXp } from "./leveling";
-import { petDamageReduction, petLifesteal, petSkillBoost, petSpellReserveMult } from "./pets";
+import { petDamageReduction, petLifesteal, petSkillBoost, petSpellReserveMult, secondPet } from "./pets";
 
 function clamp(value: number, min: number, max: number): number {
   // NaN-/Infinity-fest: ein nicht-endlicher Wert (z.B. aus einem manipulierten Save, der
@@ -140,6 +140,7 @@ export function createCharacter(input: CharacterCreation, now: number = Date.now
     ward: 0,
     buffs: [],
     companionPetId: null,
+    companionPetId2: null, // claude:2026-10-18T00:30:00+02:00 — zweiter Begleiter-Platz (Talent secondPetSlot)
     ownedPets: {},
     equippedInstances: {},
   };
@@ -283,6 +284,9 @@ function walkStatsKey(state: GameState, content: ContentDB, key: StatsCacheKey, 
   if (!visit(petId)) return false;
   if (!visit(petId && c.ownedPets?.[petId] ? 1 : 0)) return false;
   if (!visit(petId ? (content.pets?.[petId] ?? null) : null)) return false;
+  // claude:2026-10-18T00:30:00+02:00 — zweiter Begleiter-Platz: aufgelöstes Pet (Besitz + Talent +
+  // ≠ Platz 1 stecken in secondPet) — dessen skillEffect fließt über die pet*-Helfer in die Werte.
+  if (!visit(secondPet(state, content))) return false;
   // match-Modus: der gespeicherte Key muss exakt aufgebraucht sein (Längen-Gleichheit).
   return !match || i === key.length;
 }

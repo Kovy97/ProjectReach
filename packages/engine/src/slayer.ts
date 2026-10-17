@@ -29,6 +29,7 @@ import { campBoost, campKindAtMaxLevel } from "./camp";
 import { bankCount } from "./bank";
 import { nextFloat, nextInt } from "./rng";
 import { isZoneUnlocked } from "./zones";
+import { talentEffect } from "./talents";
 
 // ───────────────────────────────────────────────────────────────────────────
 // Slayer (Monsterjäger) — reine, deterministische Engine-Logik.
@@ -476,8 +477,12 @@ export function recordKillForSlayer(
       SLAYER_POINTS_TOTAL_BONUS_CAP,
       masterSlayerPointsBonus(state, content) + Math.max(0, campBoost(state, content, "slayerPoints")),
     );
-    state.slayerPoints +=
-      pointsBonus > 0 ? Math.round(task.pointReward * (1 + pointsBonus)) : task.pointReward;
+    const credited = pointsBonus > 0 ? Math.round(task.pointReward * (1 + pointsBonus)) : task.pointReward;
+    // claude:2026-10-18T00:30:00+02:00 — Talent `slayerPointsMult` (Jagdbuch „Jagdtempo“): +Anteil auf
+    // die Gutschrift NACH Etagen-Zuschlag (steckt in pointReward) und Meisterring/Trophäenwand; eigener
+    // Faktor außerhalb der ×1.5-Klemme. Ohne Talent exakt der Alt-Pfad.
+    const pace = Math.max(0, talentEffect(state, content, "slayerPointsMult"));
+    state.slayerPoints += pace > 0 ? Math.round(credited * (1 + pace)) : credited;
     state.slayerTasksCompleted++;
     state.slayerTask = null;
     // Task-Streak (Welle GG/slayer-vesna V2, SAVE 66): jeder Abschluss +1. Jeder

@@ -1,5 +1,5 @@
-import { DUNGEON_VARIANT_PREFIX } from "@hearthforge/shared";
-import type { ActionId, GameState, ItemId, MonsterDef, MonsterId } from "@hearthforge/shared";
+import { DUNGEON_VARIANT_PREFIX, isDungeonVariantId } from "@hearthforge/shared";
+import type { ActionId, ContentDB, GameState, ItemId, MonsterDef, MonsterFamily, MonsterId } from "@hearthforge/shared";
 
 /**
  * Spieler-Report 30.08.2026 ("Crypt dungeon ... shows as if I haven't"): Der Kampfschirm zeigte im
@@ -58,4 +58,45 @@ export function seenDropCount(state: GameState, monster: MonsterDef): { seen: nu
   let seen = 0;
   for (const roll of monster.loot) if (seenList.includes(roll.itemId)) seen++;
   return { seen, total };
+}
+
+// claude:2026-10-18T00:30:00+02:00 — Familien-Bestiarium (Talent `familyDamage`, Jagdbuch „Wissen“):
+// erreichbare Monster je Familie = alle Content-Monster der Familie OHNE `dg_`-Varianten (deren Kills
+// laufen auf die Basis-Id, ihr eigener Zähler bleibt 0 — Muster monstersDiscovered/zoneBestiaryMin).
+// Je ContentDB einmal gebaut (Content ist unveränderlich); der Kampfpfad fragt das je Treffer ab.
+const familyMonsterCache = new WeakMap<ContentDB, Map<MonsterFamily, MonsterId[]>>();
+
+function familyMonsters(content: ContentDB, family: MonsterFamily): MonsterId[] {
+  let byFamily = familyMonsterCache.get(content);
+  if (!byFamily) {
+    byFamily = new Map();
+    for (const m of Object.values(content.monsters)) {
+      if (!m.family || isDungeonVariantId(m.id)) continue;
+      const list = byFamily.get(m.family) ?? [];
+      list.push(m.id);
+      byFamily.set(m.family, list);
+    }
+    familyMonsterCache.set(content, byFamily);
+  }
+  return byFamily.get(family) ?? [];
+}
+
+/** Hat jedes erreichbare Monster dieser Familie ≥ 1 Kill? Familie ohne Monster ⇒ false. */
+export function familyBestiaryComplete(state: GameState, content: ContentDB, family: MonsterFamily): boolean {
+  const ids = familyMonsters(content, family);
+  if (ids.length === 0) return false;
+  for (const id of ids) if (monsterKills(state, id) < 1) return false;
+  return true;
+}
+
+/** Fortschritt für die UI: besiegte / erreichbare Monster der Familie. */
+export function familyBestiaryProgress(
+  state: GameState,
+  content: ContentDB,
+  family: MonsterFamily,
+): { killed: number; total: number } {
+  const ids = familyMonsters(content, family);
+  let killed = 0;
+  for (const id of ids) if (monsterKills(state, id) >= 1) killed++;
+  return { killed, total: ids.length };
 }

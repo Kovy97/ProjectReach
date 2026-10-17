@@ -13,6 +13,7 @@ import type {
 } from "@hearthforge/shared";
 import { PET_ABILITY_CAP, PET_ABILITY_MIN_INTERVAL_MS, PET_SKILL_EFFECT_CAP } from "@hearthforge/shared";
 import { nextFloat } from "./rng";
+import { talentEffect } from "./talents";
 
 /**
  * Pet-/Begleiter-System — reine, deterministische Helfer. Logic-Dev-Revier.
@@ -21,9 +22,9 @@ import { nextFloat } from "./rng";
  *  - `skillEffect`   — wirkt im Herkunfts-Skill (tick.ts Skilling-Pfad / computeStats),
  *  - `combatAbility` — getriggerte Kampf-Aktion (combat-dev löst sie via `petCombatAbility` aus).
  *
- * Pets sind eigene `PetDef`-Daten (KEIN Gear-Item, kein EquipSlot). Genau ein Pet
- * ist aktiv (`character.companionPetId`); besessene Pets liegen als Set in
- * `character.ownedPets`. Nur das ausgerüstete UND besessene Pet wirkt — kein Stacking.
+ * Pets sind eigene `PetDef`-Daten (KEIN Gear-Item, kein EquipSlot). Platz 1 (`character.companionPetId`)
+ * wirkt voll; Platz 2 (`companionPetId2`, Talent `secondPetSlot`) nur mit dem skillEffect — gleiche
+ * Effektart stapelt nicht (Maximum). Besessene Pets liegen als Set in `character.ownedPets`.
  *
  * Die Skill-Helfer (`petDoubleYieldBonus`, `petPreserveBonus`, `petThievingBonus`,
  * `petInstantActionChance`, `petSpellReserveMult`, `petLifesteal`, `petSkillBoost`,
@@ -46,11 +47,48 @@ export function equippedPet(state: GameState, content: ContentDB): PetDef | null
   return content.pets?.[id] ?? null;
 }
 
-/** PetSkillEffect, dessen Kind garantiert ein LEBENDES (nicht entferntes) Kind ist. */
-/** Skill-Effekt des aktiven Pets (oder null). (#276: Content ist vollständig auf die neue
+/**
+ * claude:2026-10-18T00:30:00+02:00 — Zweiter Begleiter-Platz (Talent `secondPetSlot`, Jagdbuch
+ * „Zweites Halsband“): liefert das Pet in Platz 2, wenn das Talent gekauft ist, das Pet besessen ist
+ * und nicht zugleich in Platz 1 steckt; sonst null. Platz 2 wirkt NUR über seinen `skillEffect`.
+ */
+export function secondPet(state: GameState, content: ContentDB): PetDef | null {
+  const id = state.character.companionPetId2;
+  if (!id || id === state.character.companionPetId) return null;
+  if (!state.character.ownedPets[id]) return null;
+  if (!secondPetSlotUnlocked(state, content)) return null;
+  return content.pets?.[id] ?? null;
+}
+
+/** Ist der zweite Begleiter-Platz freigeschaltet? (nur über talentEffect, nie über Knoten-Ids) */
+export function secondPetSlotUnlocked(state: GameState, content: ContentDB): boolean {
+  return talentEffect(state, content, "secondPetSlot") > 0;
+}
+
+/** Skill-Effekte beider Plätze (Platz 1 zuerst). (#276: Content ist vollständig auf die neue
  *  Taxonomie umgestellt; der frühere Legacy-skillXp-Filter ist mit dem Typ gestorben.) */
-function activeSkillEffect(state: GameState, content: ContentDB): PetSkillEffect | null {
-  return equippedPet(state, content)?.skillEffect ?? null;
+function activeSkillEffects(state: GameState, content: ContentDB): PetSkillEffect[] {
+  const out: PetSkillEffect[] = [];
+  const first = equippedPet(state, content);
+  if (first) out.push(first.skillEffect);
+  const second = secondPet(state, content);
+  if (second) out.push(second.skillEffect);
+  return out;
+}
+
+/**
+ * claude:2026-10-18T00:30:00+02:00 — Wert EINER Effektart über beide Plätze: gleiche Art stapelt nicht,
+ * es zählt der stärkere (Maximum). `skill` gesetzt ⇒ nur skill-freie oder auf diesen Skill gemünzte
+ * Effekte (Effekte verschiedener Skills treffen also nie im selben Aufruf zusammen).
+ */
+function bestOfKind(effects: PetSkillEffect[], kind: PetSkillEffectKind, skill?: SkillId): number {
+  let best = 0;
+  for (const eff of effects) {
+    if (eff.kind !== kind) continue;
+    if (skill !== undefined && eff.skill !== undefined && eff.skill !== skill) continue;
+    best = Math.max(best, capSkill(kind, eff.value ?? 0));
+  }
+  return best;
 }
 
 /** Combat-Ability des aktiven Pets (oder null). */
@@ -81,11 +119,12 @@ function skillScopedValue(
   kinds: PetSkillEffectKind[],
   skill: SkillId,
 ): number {
-  const eff = activeSkillEffect(state, content);
-  if (!eff) return 0;
-  if (!kinds.includes(eff.kind)) return 0;
-  if (eff.skill !== undefined && eff.skill !== skill) return 0;
-  return capSkill(eff.kind, eff.value ?? 0);
+  const effects = activeSkillEffects(state, content);
+  if (effects.length === 0) return 0;
+  // claude:2026-10-18T00:30:00+02:00 — je Art das Maximum beider Plätze, verschiedene Arten addieren.
+  let sum = 0;
+  for (const kind of kinds) sum += bestOfKind(effects, kind, skill);
+  return sum;
 }
 
 // ── Skilling-Effekte (tick.ts) ──────────────────────────────────────────────
@@ -151,9 +190,7 @@ export function petHuntDoubleRollsChance(state: GameState, content: ContentDB, s
  * Über `capSkill` geklemmt; 0 ohne passendes Pet. Gemeinsamer Pfad aller globalen Helfer.
  */
 function globalValue(state: GameState, content: ContentDB, kind: PetSkillEffectKind): number {
-  const eff = activeSkillEffect(state, content);
-  if (!eff || eff.kind !== kind) return 0;
-  return capSkill(kind, eff.value ?? 0);
+  return bestOfKind(activeSkillEffects(state, content), kind); // claude:2026-10-18T00:30:00+02:00 — beide Plätze, Maximum
 }
 
 /**
@@ -183,10 +220,13 @@ export function petLifesteal(state: GameState, content: ContentDB): number {
  * halben Level).
  */
 export function petSkillBoost(state: GameState, content: ContentDB, skill: BoostableCombatSkillId): number {
-  const eff = activeSkillEffect(state, content);
-  if (!eff || eff.kind !== "skillBoost") return 0;
-  if (eff.skill !== skill) return 0;
-  return Math.floor(capSkill("skillBoost", eff.value ?? 0));
+  // claude:2026-10-18T00:30:00+02:00 — beide Plätze; skillBoost braucht einen exakt passenden Skill.
+  let best = 0;
+  for (const eff of activeSkillEffects(state, content)) {
+    if (eff.kind !== "skillBoost" || eff.skill !== skill) continue;
+    best = Math.max(best, Math.floor(capSkill("skillBoost", eff.value ?? 0)));
+  }
+  return best;
 }
 
 /**
@@ -285,6 +325,8 @@ export function grantPet(state: GameState, petId: PetId): boolean {
   if (state.character.ownedPets[petId]) return false;
   state.character.ownedPets[petId] = true;
   if (state.character.companionPetId === null) state.character.companionPetId = petId;
+  // claude:2026-10-18T00:30:00+02:00 — Pech-Schutz-Zähler endet mit dem Erhalt (egal über welchen Pfad).
+  if (state.petPity) delete state.petPity[petId];
   return true;
 }
 
@@ -295,15 +337,61 @@ export function equipPet(state: GameState, petId: PetId | null): boolean {
     return true;
   }
   if (!state.character.ownedPets[petId]) return false; // nur besessene Pets ausrüstbar
+  // claude:2026-10-18T00:30:00+02:00 — derselbe Begleiter nie in beiden Plätzen: wechselt er von
+  // Platz 2 nach Platz 1, rückt der bisherige Platz-1-Begleiter in Platz 2 (Tausch, nichts geht verloren).
+  if (state.character.companionPetId2 === petId) state.character.companionPetId2 = state.character.companionPetId;
   state.character.companionPetId = petId;
   return true;
+}
+
+/**
+ * claude:2026-10-18T00:30:00+02:00 — Rüstet ein besessenes Pet in den zweiten Platz (oder null zum
+ * Ablegen). Nur mit Talent `secondPetSlot`; das Pet aus Platz 1 wird abgelehnt (kein Doppel-Platz).
+ */
+export function equipSecondPet(state: GameState, content: ContentDB, petId: PetId | null): boolean {
+  if (petId === null) {
+    state.character.companionPetId2 = null;
+    return true;
+  }
+  if (!secondPetSlotUnlocked(state, content)) return false;
+  if (!state.character.ownedPets[petId]) return false;
+  if (state.character.companionPetId === petId) return false;
+  state.character.companionPetId2 = petId;
+  return true;
+}
+
+/**
+ * claude:2026-10-18T00:30:00+02:00 — Effektive Drop-Chance eines Begleiters inkl. Talent
+ * `petChanceMult` (Jagdbuch „Fährtenkunde“), auf [0, 1] geklemmt. Ohne Talent exakt `dropChance`.
+ */
+export function effectivePetDropChance(state: GameState, content: ContentDB, pet: PetDef): number {
+  const base = Math.max(0, pet.dropChance);
+  const bonus = talentEffect(state, content, "petChanceMult");
+  return bonus > 0 ? Math.min(1, base * (1 + bonus)) : base;
+}
+
+/**
+ * claude:2026-10-18T00:30:00+02:00 — Pech-Schutz (Talent `petPity`, Jagdbuch „Spur aufgenommen“):
+ * Stand und Schwelle für einen noch fehlenden Begleiter, oder null ohne Talent / bei Chance 0.
+ * Schwelle = ceil(Faktor / effektive Chance); erreicht `count` sie, ist der nächste Wurf garantiert.
+ */
+export function petPityProgress(
+  state: GameState,
+  content: ContentDB,
+  pet: PetDef,
+): { count: number; threshold: number } | null {
+  const factor = talentEffect(state, content, "petPity");
+  if (factor <= 0) return null;
+  const chance = effectivePetDropChance(state, content, pet);
+  if (chance <= 0) return null;
+  return { count: state.petPity?.[pet.id] ?? 0, threshold: Math.ceil(factor / chance) };
 }
 
 // ── Rare-Drop-Mechanik (Skilling- UND Combat-Seite) ─────────────────────────
 
 /**
  * Unabhängiger Pet-Drop-Wurf für eine abgeschlossene Skilling-Aktion bzw. einen
- * Monster-Kill. PURES RNG, KEIN Pity. Zieht NUR dann einen `nextFloat`, wenn es
+ * Monster-Kill. Pity nur über das Talent `petPity`. Zieht NUR dann einen `nextFloat`, wenn es
  * für die Quelle ein passendes, noch NICHT besessenes Pet gibt — so bleibt die
  * RNG-Sequenz für frische States (ohne Pet-Content) bit-identisch.
  *
@@ -313,8 +401,9 @@ export function equipPet(state: GameState, petId: PetId | null): boolean {
  *    AKTIVEN Kampfstil des Spielers). Chef-Fix 2026-07-22: Combat-Pets sind an ihren Stil
  *    gebunden — nur Pets, deren `pet.source.style` dem übergebenen `style` entspricht, werfen.
  *
- * Effektive Chance = `pet.dropChance` (reines RNG, kein Luck-Modifier mehr im
- * Zwei-Effekt-Modell). Bei Treffer wird `grantPet` aufgerufen; der Aufrufer loggt.
+ * Effektive Chance = `effectivePetDropChance` (dropChance × Talent `petChanceMult`); mit Talent
+ * `petPity` zählt jeder Fehlwurf, ab der Schwelle ist der Wurf garantiert. Bei Treffer wird
+ * `grantPet` aufgerufen; der Aufrufer loggt.
  *
  * Determinismus-Vorsicht: Bei mehreren passenden, noch-nicht-besessenen Pets pro
  * Quelle wird pro Pet höchstens ein Wurf gezogen (ein gemeinsamer Wurf je Pet, in
@@ -340,9 +429,14 @@ export function tryPetDrop(
     if (src.kind === "skill" && source.kind === "skill" && src.skill !== source.skill) continue;
     if (src.kind === "combat" && source.kind === "combat" && src.style !== source.style) continue;
 
-    const chance = Math.max(0, pet.dropChance);
+    // claude:2026-10-18T00:30:00+02:00 — Talente: Chance ×(1+petChanceMult), Pech-Schutz-Garantie.
+    // Der nextFloat wird IMMER gezogen (auch bei Garantie) → RNG-Folge unabhängig vom Zählerstand;
+    // ohne Talente bit-identisch zum Altstand (Chance = dropChance, kein Zähler).
+    const chance = effectivePetDropChance(state, content, pet);
     if (chance <= 0) continue;
-    if (nextFloat(state.rng) <= chance) {
+    const pity = petPityProgress(state, content, pet);
+    const roll = nextFloat(state.rng);
+    if (roll <= chance || (pity !== null && pity.count >= pity.threshold)) {
       grantPet(state, id);
       // Breadcrumb für die UI-Benachrichtigung („Begleiter erhalten!"). Die seq kommt aus dem
       // monotonen Lebenszeit-Zähler `petDropSeq` — NICHT aus `lastPetDrop.seq`: die UI quittiert
@@ -353,6 +447,7 @@ export function tryPetDrop(
       state.lastPetDrop = { petId: id, seq: state.petDropSeq };
       return id;
     }
+    if (pity !== null) (state.petPity ??= {})[id] = pity.count + 1; // Fehlwurf zählt nur mit Talent
   }
   return null;
 }

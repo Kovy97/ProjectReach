@@ -114,6 +114,19 @@ function forEachLocalizableField(
   if (db.tavernTasks) for (const t of db.tavernTasks) visit(t, "line", "tavernTasks", t.id);
   // NICHT lokalisiert (kein name/description-Feld im Shape): shop, slayerShop, tokenShop (Angebote
   // zeigen nur das gekaufte Item — dessen Name ist bereits lokalisiert).
+  // claude:2026-10-18T00:30:00+02:00 — Talentbäume (Jagdbuch): Baum, Äste und Knoten; Ast-/Knoten-Ids
+  // sind nur je Baum eindeutig, daher `<baum>.<id>` als Schlüssel-Id.
+  if (db.talentTrees) {
+    for (const tree of db.talentTrees) {
+      visit(tree, "name", "talentTrees", tree.id);
+      if (tree.description) visit(tree, "description", "talentTrees", tree.id);
+      for (const b of tree.branches) visit(b, "name", "talentBranches", `${tree.id}.${b.id}`);
+      for (const n of tree.nodes) {
+        visit(n, "name", "talentNodes", `${tree.id}.${n.id}`);
+        visit(n, "description", "talentNodes", `${tree.id}.${n.id}`);
+      }
+    }
+  }
 }
 
 /**

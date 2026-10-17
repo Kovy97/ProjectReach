@@ -335,6 +335,7 @@
    Fremdbesitz (TABU). Die linke Meister-/Sprechblasen-Spalte (`.slayer-dialog-col`) ist NICHT
    Teil der Chef-Meldung und bleibt unverändert (Holz-Fläche wie zuvor). */
 .shop-panel.slayer-shop-panel,
+.shop-panel.slayer-talent-panel, /* claude:2026-10-18T00:30:00+02:00 — Jagdbuch */
 .slayer-task-panel.shop-panel {
   border-width: 11px;
   border-image-source: url("../assets/ui/gravewood/v3/frames/panel-frame.webp");

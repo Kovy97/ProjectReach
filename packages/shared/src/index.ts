@@ -705,6 +705,10 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //         Gold gehoeren nicht dazu). Kein neues GameState-Feld; haertet die Union-Variante im Mailbox-Sanitize.
 //     (f) Ein Bankfach gilt auch mit nur verzauberter Instanz im Lager als belegt (syncBankOrder).
 //     (v88 war nie live und ist in v87 aufgegangen; Test-Saves mit version 88 laden weiter.)
+//     (g) claude:2026-10-18T00:30:00+02:00 — TALENTBÄUME / JAGDBUCH (1.3.0, Chef 17.10.; v87 war nie
+//         live, daher kein Bump): `talents` ({}), `petPity` ({}) und `character.companionPetId2`
+//         (null) defaultet sanitizeState für JEDE Version. Unbekannte Bäume/Knoten fallen weg, Ränge
+//         auf maxRank gekappt, Pity nur für bekannte, nicht besessene Begleiter.
 export const SAVE_VERSION = 87;
 
 /**
@@ -4100,6 +4104,89 @@ export const SLAYER_STREAK_POINT_INTERVAL = 10;
  */
 export const SLAYER_MIN_TASK_POOL = 4;
 
+// ───────────────────────────────────────────────────────────────────────────
+// Talentbäume (1.3.0 Säule 0 „Das Jagdbuch“, Chef 17.10.2026: „Slayer-Buch als richtiges
+// Talentbaum-System, das wir später erweitern“). claude:2026-10-18T00:30:00+02:00
+// Generisch: Bäume und Knoten sind Content (`ContentDB.talentTrees`, packages/content/src/talents.ts),
+// die Engine kauft generisch (engine/talents.ts `buyTalent`) und Systeme lesen ihre Boni NUR über
+// `talentEffect(state, content, kind)` — nie über Knoten-Ids. Neue Wirkung = neue Art in der Union
+// unten + Leser im betroffenen System.
+// ───────────────────────────────────────────────────────────────────────────
+
+/**
+ * Wirkungsarten der Talentknoten. Werte je Rang stehen in `TalentNodeDef.effect.perRank`.
+ *  - `petChanceMult`      Anteil (0.2 = +20 %), multiplikativ auf `PetDef.dropChance` aller Begleiter.
+ *  - `petPity`            Pech-Schutz-Faktor: nach `Faktor × (1 / effektive Chance)` Fehlwürfen ist
+ *                         der nächste Wurf garantiert (Zähler `GameState.petPity`). 0 = aus.
+ *  - `slayerTaskRareMult` Anteil auf seltene Drops (Basis-Chance ≤ TALENT_RARE_DROP_MAX_BASE_CHANCE)
+ *                         beim Monster des AKTIVEN Slayer-Auftrags.
+ *  - `slayerPointsMult`   Anteil zusätzliche Slayer-Punkte je abgeschlossenem Auftrag.
+ *  - `familyDamage`       Anteil Schaden gegen Familien mit vollständigem Bestiarium.
+ *  - `secondPetSlot`      > 0 schaltet den zweiten Begleiter-Platz frei (nur Fertigkeits-Effekt).
+ */
+export type TalentEffectKind =
+  | "petChanceMult"
+  | "petPity"
+  | "slayerTaskRareMult"
+  | "slayerPointsMult"
+  | "familyDamage"
+  | "secondPetSlot";
+
+/** Aggregation je Art über alle gekauften Knoten aller Bäume: Summe, oder kleinster positiver Wert. */
+export const TALENT_EFFECT_AGGREGATION: Readonly<Record<TalentEffectKind, "sum" | "minPositive">> = {
+  petChanceMult: "sum",
+  petPity: "minPositive",
+  slayerTaskRareMult: "sum",
+  slayerPointsMult: "sum",
+  familyDamage: "sum",
+  secondPetSlot: "sum",
+};
+
+/** Anzeigeform je Art (UI): Prozent-Anteil, Faktor oder reiner Schalter. */
+export const TALENT_EFFECT_FORMAT: Readonly<Record<TalentEffectKind, "pct" | "mult" | "flag">> = {
+  petChanceMult: "pct",
+  petPity: "mult",
+  slayerTaskRareMult: "pct",
+  slayerPointsMult: "pct",
+  familyDamage: "pct",
+  secondPetSlot: "flag",
+};
+
+/** `slayerTaskRareMult` wirkt nur auf Loot-Einträge mit Basis-Chance ≤ 1/500 (Chef 17.10.). */
+export const TALENT_RARE_DROP_MAX_BASE_CHANCE = 1 / 500;
+
+/** Währung eines Talentbaums. Heute nur Slayer-Punkte (`GameState.slayerPoints`). */
+export type TalentCurrency = "slayerPoints";
+
+export interface TalentNodeDef {
+  id: string;
+  name: LocalizedString;
+  /** Wirkung in einem Satz; `{value}` wird von der UI durch den formatierten Rangwert ersetzt. */
+  description: LocalizedString;
+  /** Ast-Id (eine Spalte in der UI), verweist auf `TalentTreeDef.branches[].id`. */
+  branch: string;
+  /** Zeile im Ast (0 = oben). */
+  row: number;
+  maxRank: number;
+  /** Kosten je Rang, Index 0 = Rang 1. Länge = maxRank. */
+  costPerRank: number[];
+  /** Voraussetzungen (alle müssen erfüllt sein), Knoten desselben Baums. */
+  requires?: { node: string; rank: number }[];
+  effect: { kind: TalentEffectKind; perRank: number[] };
+}
+
+export interface TalentTreeDef {
+  id: string;
+  name: LocalizedString;
+  description?: LocalizedString;
+  /** Freischaltung: Skill-Stufe (z. B. slayer ≥ 85). */
+  unlock: { skill: SkillId; level: number };
+  currency: TalentCurrency;
+  /** Äste in Anzeige-Reihenfolge (Spalten). */
+  branches: { id: string; name: LocalizedString }[];
+  nodes: TalentNodeDef[];
+}
+
 /**
  * Ein Slayer-Master (OSRS-artiger Auftraggeber). Reine Content-Daten.
  * Freischaltung erfordert BEIDES: Kampf-Niveau (`combatLevel`) UND Slayer-Level.
@@ -5091,6 +5178,8 @@ export interface ContentDB {
    * Content-dev füllt den Katalog später; rein additive Content-Daten (kein persistierter State).
    */
   slayerShop?: SlayerShopEntry[];
+  /** claude:2026-10-18T00:30:00+02:00 — Talentbäume (Jagdbuch u. a.). OPTIONAL → Fehlen = keine Bäume. */
+  talentTrees?: TalentTreeDef[];
   /**
    * Affix-Katalog (Verzauberungen). OPTIONAL → Fehlen = keine Verzauberungen verfügbar; die Engine
    * (applyEnchant/computeStats/Naming) behandelt das defensiv. content-dev füllt es in Welle 2.
@@ -5204,8 +5293,14 @@ export interface CharacterState {
    */
   companionPetId: PetId | null;
   /**
+   * claude:2026-10-18T00:30:00+02:00 — Zweiter Begleiter-Platz (Talent `secondPetSlot`, Jagdbuch
+   * „Zweites Halsband“). Wirkt NUR mit seinem `skillEffect`, nie mit der Kampf-Fähigkeit. Invariante
+   * (sanitizeState): besessen, ≠ companionPetId, Talent gekauft — sonst null. Alt-Saves: null.
+   */
+  companionPetId2: PetId | null;
+  /**
    * Set der besessenen Pets (PetId → true). O(1)-Lookup, JSON-stabil. Wird über
-   * den Pet-Drop-Wurf (engine/pets.ts `tryPetDrop`) befüllt. KEIN Pity-Zähler nötig.
+   * den Pet-Drop-Wurf (engine/pets.ts `tryPetDrop`) befüllt. Pech-Schutz-Zähler: `GameState.petPity`.
    */
   ownedPets: Record<PetId, true>;
   /**
@@ -6431,6 +6526,18 @@ export interface GameState {
    * (kostet 0 Punkte, erhält die Streak — Präzedenz SLAYER_SKIP_FREE_BELOW_LEVEL). Alt-Saves: 0.
    */
   slayerFreeSkipDay: number;
+  /**
+   * claude:2026-10-18T00:30:00+02:00 — Gekaufte Talentränge: Baum-Id → Knoten-Id → Rang (≥ 1; Rang 0
+   * steht nicht drin). Sanitize verwirft unbekannte Bäume/Knoten und kappt auf `maxRank`;
+   * Voraussetzungen werden NICHT nachträglich erzwungen. Alt-Saves: {} (kein SAVE-Bump, v87 nie live).
+   */
+  talents: Record<string, Record<string, number>>;
+  /**
+   * claude:2026-10-18T00:30:00+02:00 — Pech-Schutz (Talent `petPity`): Fehlwürfe je noch NICHT
+   * besessenem Begleiter seit Kauf. Zählt nur mit gekauftem Talent; Eintrag fällt beim Erhalt weg
+   * (engine/pets.ts `grantPet`). Alt-Saves: {}.
+   */
+  petPity: Record<PetId, number>;
   /**
    * Gear-Vault (Instanz-Lager). Non-stackable `ItemInstance`n passen NICHT in die stackbare
    * `bank: Record<ItemId,number>`, daher separater Speicher. SAVE 37→38: Alt-Saves → [].

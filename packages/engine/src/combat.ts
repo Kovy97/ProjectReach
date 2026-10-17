@@ -90,6 +90,7 @@ import {
   AETHER_WARD_PIERCE,
   createElementalCounters,
   createElementalSideCounters,
+  TALENT_RARE_DROP_MAX_BASE_CHANCE,
 } from "@hearthforge/shared";
 import { nextFloat, nextInt } from "./rng";
 import { blessingChance, blessingMult, shrineAmplifiedMult } from "./blessing";
@@ -108,7 +109,8 @@ import { itemCount, removeItem } from "./inventory";
 import { grantLoot } from "./mail";
 import { applyConsumableBuff, useConsumable } from "./consumable";
 import { isHealPotion } from "./consume-gate";
-import { markDropSeen } from "./drops";
+import { familyBestiaryComplete, markDropSeen } from "./drops";
+import { talentEffect } from "./talents";
 import {
   type ActivePetAbility,
   petCombatAbility,
@@ -1077,6 +1079,11 @@ function onEnemyDefeated(
   // Basis-Id (Kill-Zähler, Slayer-Credit, Collection-Log unten). Normale Monster: creditId = id.
   const creditId = killCreditMonsterId(content, monster.id);
   state.monsterKills[creditId] = (state.monsterKills[creditId] ?? 0) + 1;
+  // claude:2026-10-18T00:30:00+02:00 — Talent `slayerTaskRareMult` (Jagdbuch „Beute“): VOR dem
+  // Slayer-Credit festhalten, ob dieses Monster das Ziel des AKTIVEN Auftrags ist — der letzte Kill
+  // schließt den Auftrag sonst vor dem Loot-Wurf und verlöre den Bonus.
+  const taskRareBonus =
+    state.slayerTask?.monsterId === creditId ? Math.max(0, talentEffect(state, content, "slayerTaskRareMult")) : 0;
   // Slayer-Task-Fortschritt (no-op ohne passenden Task). Rückgabe true = Task abgeschlossen.
   // Slayer-XP läuft über einen EIGENEN Vergabe-Pfad (grantSlayerXp, nicht unser addXp) → für die
   // Kill-Summary per Vorher/Nachher-Differenz erfassen (robust inkl. Task-Abschluss-Bonus).
@@ -1150,7 +1157,11 @@ function onEnemyDefeated(
   const lootChanceMult = lootChanceEffectMult(fx);
   const rollLootTable = (): void => {
     for (const roll of monster.loot) {
-      if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult * lootChanceMult)) {
+      // claude:2026-10-18T00:30:00+02:00 — Jagdbuch „Beute“: nur seltene Einträge (Basis ≤ 1/500) des
+      // Auftragsmonsters; derselbe Draw, nur die Schwelle wächst (Champion-Unikate/Begleiter laufen
+      // über eigene Würfe und bleiben unberührt). Ohne Talent ×1 ⇒ bit-identisch.
+      const taskMult = taskRareBonus > 0 && roll.chance <= TALENT_RARE_DROP_MAX_BASE_CHANCE ? 1 + taskRareBonus : 1;
+      if (nextFloat(state.rng) <= Math.min(1, roll.chance * rareDropMult * lootChanceMult * taskMult)) {
         let qty = nextInt(state.rng, roll.min, roll.max);
         // Drop-Suffix-Roll (Phase 2, #128 Abschluss — analog zum Craft-Pfad in tick.ts): jeder
         // gedroppte Equipment-Gegenstand kann einen WoW-Stil Random-Roll-Suffix bekommen. Chance:
@@ -2002,6 +2013,12 @@ function strikeEnemy(
   // multiplikativ nach den Spezial-Mods, vor Pet-Vuln/Ward. Beide 1 ohne Status ⇒ bit-identisch.
   const elementalMult = voidWeakenMult(cs.playerEffects) * burnVulnMult(cs.enemyEffects);
   if (elementalMult !== 1) damage = Math.max(1, Math.round(damage * elementalMult));
+  // claude:2026-10-18T00:30:00+02:00 — Talent `familyDamage` (Jagdbuch „Wissen“): +Anteil gegen
+  // Familien, deren erreichbare Monster alle ≥ 1 Kill im Bestiarium haben. Ohne Talent kein Lookup.
+  const familyBonus = monster.family ? talentEffect(state, content, "familyDamage") : 0;
+  if (familyBonus > 0 && familyBestiaryComplete(state, content, monster.family!)) {
+    damage = Math.max(1, Math.round(damage * (1 + familyBonus)));
+  }
   // Waffeneffekt-Bedingung (auch für Lichtsegen/Überspringen unten): Magie nur bei echtem Zauber,
   // sonst bei jedem Treffer (#286: Fernkampf hat keine Munitions-Bedingung mehr).
   const appliesEffect = stats.style === "magic" ? ctx.casts : true;

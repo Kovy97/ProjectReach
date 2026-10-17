@@ -194,6 +194,9 @@ describe("v86-Fixture: Round-Trip mit geteiltem Handwerk", () => {
     erwartet.state.character.equipment.tool4 = null;
     for (const kit of erwartet.state.equipKits) kit.equipment.tool4 = null;
     erwartet.state.bankOrder = Object.keys(erwartet.state.bank ?? {}).sort();
+    // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
+    Object.assign(erwartet.state, { talents: {}, petPity: {} });
+    erwartet.state.character.companionPetId2 = null;
     expect(JSON.parse(serialize(s, raw.savedAt))).toEqual(erwartet);
   });
 });

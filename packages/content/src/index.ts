@@ -1,5 +1,6 @@
 ﻿import type { ContentDB } from "@hearthforge/shared";
 import { applyContentLocales } from "./locales/apply";
+import { TALENT_TREES } from "./talents";
 
 /**
  * Platzhalter-Content, nur um das UI-Gerüst & die Engine durchticken zu lassen.
@@ -21265,6 +21266,8 @@ export const content: ContentDB = {
     { itemId: "slayer_hunters_elixir",  cost: 28,  slayerLevelRequired: 40 },
     { itemId: "slayer_war_brew",        cost: 110, slayerLevelRequired: 70 },
   ],
+  // claude:2026-10-18T00:30:00+02:00 — Talentbäume (Jagdbuch) leben in talents.ts; neue Bäume nur dort.
+  talentTrees: TALENT_TREES,
 
   // ── Affix-Katalog (Verzauberungs-Runen → Stat-Boni / Waffeneffekte) ──────
   // bonusByTier: EquipBonus je Tier (T1=Index 0). Für reine Effekt-Affixe = {}.

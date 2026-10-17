@@ -385,6 +385,9 @@ describe("v80-Release-Pin: Migrations- & Abdeckungs-Guard des 1.0.x-Vault-Fixtur
     erwartet.state.bankOrder = bankVorher.map((id) =>
       typeof bankNachher[id as keyof typeof bankNachher] === "number" ? id : null,
     );
+    // claude:2026-10-18T00:30:00+02:00 — Jagdbuch/Talentbäume (kein SAVE-Bump): sanitize ergänzt die Defaults.
+    Object.assign(erwartet.state, { talents: {}, petPity: {} });
+    erwartet.state.character.companionPetId2 = null;
     expect(JSON.parse(serialize(result!.state, raw.savedAt))).toEqual(erwartet);
   });
 

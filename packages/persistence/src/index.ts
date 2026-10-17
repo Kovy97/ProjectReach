@@ -84,7 +84,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotUnlocked, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -1021,6 +1021,52 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     (!content.pets[state.character.companionPetId] || !ownedPets[state.character.companionPetId])
   ) {
     state.character.companionPetId = null;
+  }
+
+  // — Talentbäume / Jagdbuch (1.3.0, kein SAVE-Bump: v87 war nie live) —
+  //   claude:2026-10-18T00:30:00+02:00 — `talents`: nur bekannte Bäume/Knoten, Rang ganzzahlig in
+  //   1..maxRank (gekappt), Rang 0 fällt weg; Voraussetzungen werden NICHT nachträglich erzwungen.
+  //   `petPity`: nur bekannte, noch NICHT besessene Begleiter, ganzzahlig ≥ 0. Zweiter Platz
+  //   `companionPetId2`: bekannt + besessen + ≠ Platz 1 + Talent `secondPetSlot` — sonst null.
+  //   Fehlende Felder (jeder Alt-Save) werden so zu {} / {} / null.
+  {
+    const rawTalents = state.talents as unknown;
+    const cleanTalents: Record<string, Record<string, number>> = {};
+    if (rawTalents && typeof rawTalents === "object") {
+      for (const tree of content.talentTrees ?? []) {
+        const rawTree = (rawTalents as Record<string, unknown>)[tree.id];
+        if (!rawTree || typeof rawTree !== "object") continue;
+        const ranks: Record<string, number> = {};
+        for (const node of tree.nodes) {
+          const r = Math.floor(clampFinite((rawTree as Record<string, unknown>)[node.id], 0, node.maxRank, 0));
+          if (r > 0) ranks[node.id] = r;
+        }
+        if (Object.keys(ranks).length > 0) cleanTalents[tree.id] = ranks;
+      }
+    }
+    state.talents = cleanTalents;
+
+    const rawPity = state.petPity as unknown;
+    const cleanPity: Record<string, number> = {};
+    if (rawPity && typeof rawPity === "object") {
+      for (const [id, v] of Object.entries(rawPity as Record<string, unknown>)) {
+        if (!content.pets[id] || ownedPets[id]) continue;
+        const n = finiteIntNonNeg(v, Number.MAX_SAFE_INTEGER, 0);
+        if (n > 0) cleanPity[id] = n;
+      }
+    }
+    state.petPity = cleanPity as typeof state.petPity;
+
+    const second = state.character.companionPetId2;
+    if (
+      typeof second !== "string" ||
+      !content.pets[second] ||
+      !ownedPets[second] ||
+      second === state.character.companionPetId ||
+      !secondPetSlotUnlocked(state, content)
+    ) {
+      state.character.companionPetId2 = null;
+    }
   }
 
   // — Aktive Aktion: gegen entfernte/unbekannte Aktionen nullen (defensiv, idempotent). content.actions

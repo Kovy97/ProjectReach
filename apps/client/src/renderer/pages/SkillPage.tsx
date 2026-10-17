@@ -16,6 +16,7 @@ import {
   projectQueue,
   projectedProducers,
   projectedRunsFrom,
+  secondPet,
   setActiveAction,
   setThievingRisk,
 } from "@hearthforge/engine";
@@ -182,7 +183,11 @@ function ActivePetSprite({ skillId }: { skillId: SkillId }): JSX.Element | null 
   const state = useGameState();
   const { t, tr } = useI18n();
   const equippedId = state.character.companionPetId;
-  const pet = equippedId ? content.pets[equippedId] : null;
+  // claude:2026-10-18T00:30:00+02:00 — zweiter Platz (Jagdbuch): wirkt dessen Passiv in diesem Skill
+  // und das Platz-1-Pet nicht, zeigt die Skill-Seite den Platz-2-Begleiter.
+  const first = equippedId ? content.pets[equippedId] ?? null : null;
+  const second = secondPet(state, content);
+  const pet = first?.skillEffect.skill !== skillId && second?.skillEffect.skill === skillId ? second : first;
   const relevant = !!pet && pet.skillEffect.skill === skillId;
 
   const lastXpRef = useRef<number | null>(null);

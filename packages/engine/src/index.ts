@@ -22,6 +22,7 @@ export * from "./bank";
 export * from "./drops";
 export * from "./quests";
 export * from "./pets";
+export * from "./talents";
 export * from "./capes";
 export * from "./farming";
 export * from "./hunting";
