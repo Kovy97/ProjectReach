@@ -6,6 +6,9 @@ export const ru: Record<string, string> = {
     "common.topNav": "Верхняя навигация",
     // codex:2026-09-10T10:35:00+02:00 — Reforged navigation accessibility and explicit queue material states.
     "sidebar.expandCombatSkills": "Развернуть боевые навыки",
+    "sidebar.combatStyle": "Стиль боя",
+    "sidebar.combatStyleHint": "Определяет, какой боевой навык тренируют твои бои. Нажми, чтобы изменить.",
+    "sidebar.combatTraining": "Тренируется",
     "sidebar.collapseCombatSkills": "Свернуть боевые навыки",
     "sidebar.resizeLabel": "Ширина боковой панели",
     "queue.row.materialExpected": "Материалы ожидаются",
@@ -2135,7 +2138,7 @@ export const ru: Record<string, string> = {
     "combat.dock.ariaLabel": "Настройка боя",
     "combat.dock.gear": "Снаряжение",
     "combat.dock.skills": "Навыки",
-    "combat.dock.style": "Стиль",
+    "combat.dock.style": "Стиль боя",
     "combat.dock.prep": "Подготовка",
     "combat.dock.activeBuffs": "Активные баффы",
     "combat.dock.noBuffs": "Нет активных баффов.",

@@ -7,6 +7,9 @@ export const fr: Record<string, string> = {
     "common.topNav": "Navigation supérieure",
     // codex:2026-09-10T10:35:00+02:00 — Reforged navigation accessibility and explicit queue material states.
     "sidebar.expandCombatSkills": "Développer les compétences de combat",
+    "sidebar.combatStyle": "Style de combat",
+    "sidebar.combatStyleHint": "Détermine quelle compétence de combat tes combats entraînent. Clique pour changer.",
+    "sidebar.combatTraining": "En entraînement",
     "sidebar.collapseCombatSkills": "Replier les compétences de combat",
     "sidebar.resizeLabel": "Largeur de la barre latérale",
     "queue.row.materialExpected": "Matériaux attendus",
@@ -2138,7 +2141,7 @@ export const fr: Record<string, string> = {
     "combat.dock.ariaLabel": "Configuration de combat",
     "combat.dock.gear": "Équipement",
     "combat.dock.skills": "Compétences",
-    "combat.dock.style": "Style",
+    "combat.dock.style": "Style de combat",
     "combat.dock.prep": "Préparation",
     "combat.dock.activeBuffs": "Bonus actifs",
     "combat.dock.noBuffs": "Aucun bonus actif.",

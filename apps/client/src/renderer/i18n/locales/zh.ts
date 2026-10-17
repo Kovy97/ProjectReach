@@ -7,6 +7,9 @@ export const zh: Record<string, string> = {
     "common.topNav": "顶部导航",
     // codex:2026-09-10T10:35:00+02:00 — Reforged navigation accessibility and explicit queue material states.
     "sidebar.expandCombatSkills": "展开战斗技能",
+    "sidebar.combatStyle": "战斗风格",
+    "sidebar.combatStyleHint": "决定你的战斗训练哪项战斗技能。点击即可更改。",
+    "sidebar.combatTraining": "训练中",
     "sidebar.collapseCombatSkills": "收起战斗技能",
     "sidebar.resizeLabel": "侧栏宽度",
     "queue.row.materialExpected": "材料待产出",
@@ -2134,7 +2137,7 @@ export const zh: Record<string, string> = {
     "combat.dock.ariaLabel": "战斗设置",
     "combat.dock.gear": "装备",
     "combat.dock.skills": "技能",
-    "combat.dock.style": "流派",
+    "combat.dock.style": "战斗风格",
     "combat.dock.prep": "准备",
     "combat.dock.activeBuffs": "生效中的增益",
     "combat.dock.noBuffs": "没有生效中的增益。",

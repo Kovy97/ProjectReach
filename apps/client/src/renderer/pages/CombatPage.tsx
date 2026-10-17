@@ -115,6 +115,9 @@ import {
   setCombatDockCollapsed,
   getCombatRecordCollapsed,
   setCombatRecordCollapsed,
+  getCombatDockTab,
+  setCombatDockTab,
+  COMBAT_DOCK_OPEN_EVENT,
 } from "../util/uiPrefs";
 // Task #333 (Chef-Feature "Kampf-Screen-Ergonomie"): Loadout-/Log-Panel-Maße + Log-Anzeigefilter —
 // s. util/uiPrefs.ts für die volle JSDoc-Begründung (reine Anzeige-Vorlieben, kein Save-State).
@@ -6333,7 +6336,18 @@ function CombatLoadoutBar({
   const { t, tr } = useI18n();
   const c = state.character;
   const stats = computeStats(state, content);
-  const [activeTab, setActiveTab] = useState<CombatDockTab>("gear");
+  // claude:2026-10-17T18:10:00+02:00 — Reiter wird gemerkt; die Sidebar-Zeile „Kampfstil“ öffnet
+  // das Dock gezielt auf „style“ (openCombatDockTab, util/uiPrefs.ts).
+  const [activeTab, setActiveTabState] = useState<CombatDockTab>(getCombatDockTab);
+  const setActiveTab = (tab: CombatDockTab): void => {
+    setActiveTabState(tab);
+    setCombatDockTab(tab);
+  };
+  useEffect(() => {
+    const onOpen = (e: Event): void => setActiveTabState((e as CustomEvent<CombatDockTab>).detail);
+    window.addEventListener(COMBAT_DOCK_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(COMBAT_DOCK_OPEN_EVENT, onOpen);
+  }, []);
 
   return (
     <div className={`combat-loadout combat-frontline-dock${collapsed ? " cl-dock--collapsed" : ""}`}>
@@ -6573,6 +6587,12 @@ export function CombatPage(): JSX.Element {
   // in <Battle> gereicht; der Zustand selbst wird trotzdem hier gehalten (dieselbe Quelle, falls
   // <Battle> je remounted).
   const [dockCollapsed, setDockCollapsed] = useState<boolean>(getCombatDockCollapsed);
+  // claude:2026-10-17T18:10:00+02:00 — „Kampfstil“ aus der Sidebar klappt ein eingeklapptes Dock auf.
+  useEffect(() => {
+    const onOpen = (): void => setDockCollapsed(false);
+    window.addEventListener(COMBAT_DOCK_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(COMBAT_DOCK_OPEN_EVENT, onOpen);
+  }, []);
   const toggleDockCollapsed = (): void => {
     setDockCollapsed((prev) => {
       const next = !prev;

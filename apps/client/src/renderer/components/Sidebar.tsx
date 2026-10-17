@@ -6,12 +6,13 @@ import { getSkillIcon } from "../skillIcons";
 import { useGameControl, useGameSelector, useGameState, tupleEquals } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { computeStats, levelFromXp, xpForLevel, combatLevel } from "@hearthforge/engine";
-import { COMBAT_SKILL_IDS } from "@hearthforge/shared";
+import { activeStanceMods, COMBAT_SKILL_IDS } from "@hearthforge/shared";
 import { content } from "@hearthforge/content";
 import { BlessingPanel } from "./BlessingPanel";
 import { skillBoostFor, SkillLevelText } from "./SkillLevel";
 import {
   getSidebarWidth,
+  openCombatDockTab,
   setSidebarWidth,
   SIDEBAR_WIDTH_DEFAULT,
   SIDEBAR_WIDTH_MAX,
@@ -308,7 +309,10 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
                     /* codex:2026-09-10T10:23:09+02:00 — Grid level column and accessible
                        selection/running labels also survive icon-only navigation. */
                     className={`sb-skill-btn sb-skill-btn--has-level ds-button${isActive ? " active" : ""}${isRunning ? " sb-skill-btn--running" : ""}`}
-                    onClick={() => onNavigate(page.id)}
+                    // claude:2026-10-17T18:10:00+02:00 — Chef 17.10.: Klick auf Kampf klappt die
+                    // Kampf-Fertigkeiten (samt Kampfstil-Zeile) automatisch auf; der Pfeil daneben
+                    // bleibt der Schalter zum Zuklappen.
+                    onClick={() => { onNavigate(page.id); setCombatOpen(true); }}
                     aria-current={isActive ? "page" : undefined}
                     aria-label={`${t(page.label)}. ${t("sidebar.combatLevel")} ${combatLvl}${isRunning ? `. ${t("sidebar.activityRunning").replace("{skill}", t(page.label))}` : ""}`}
                     data-guide-id={`sidebar.${page.id}`}
@@ -345,7 +349,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
                     ihre `useGameState()`-Abo (und die darin gerechnete `computeStats`) lebt damit
                     wirklich "hinter combatOpen" (nicht nur die Berechnung wie zuvor, s. Komponente
                     unten). */}
-                {combatOpen && <CombatSubskillsPanel />}
+                {combatOpen && <CombatSubskillsPanel onNavigate={onNavigate} />}
               </div>
             );
           }
@@ -431,13 +435,42 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
  * Sidebar re-renderte trotzdem bei jedem Tick — jetzt hängt gar keine Subskription mehr dran,
  * solange der Block eingeklappt ist.
  */
-function CombatSubskillsPanel(): JSX.Element {
+function CombatSubskillsPanel({ onNavigate }: { onNavigate: (id: string) => void }): JSX.Element {
   const state = useGameState();
-  const { tr } = useI18n();
+  const { t, tr } = useI18n();
   const stats = computeStats(state, content);
+  // claude:2026-10-17T18:10:00+02:00 — Chef 17.10.: „Es muss besser ersichtlich werden, wo man den
+  // Kampfstil ändert.“ Die Haltung der getragenen Waffe steht jetzt oben in der Liste und führt per
+  // Klick direkt zum Kampfstil-Reiter; die Fertigkeit, die sie trainiert, ist in der Liste markiert.
+  // Gleiche Quellen wie der Reiter selbst (CombatPage, Stance-Leiste) und die Engine-XP-Vergabe.
+  const c = state.character;
+  const stance =
+    stats.style === "ranged" ? c.rangedStance
+    : stats.style === "magic" ? c.magicStance
+    : c.combatStyle;
+  const stanceLabel = stats.style === "magic" && stance === "defensive" ? t("style.magicDefensive") : t(`style.${stance}`);
+  const trainingId = activeStanceMods(stats.style, c).xpSkill;
+  const trainingIcon = getSkillIcon(trainingId);
   return (
     // codex:2026-09-10T10:23:09+02:00 — Stable control target for the combat expander.
     <div className="sb-combat-subskills" id="sidebar-combat-skills">
+      <button
+        type="button"
+        className="sb-combat-style"
+        onClick={() => { openCombatDockTab("style"); onNavigate("combat"); }}
+        title={t("sidebar.combatStyleHint")}
+        aria-label={`${t("sidebar.combatStyle")}: ${stanceLabel}. ${t("sidebar.combatStyleHint")}`}
+        data-guide-id="sidebar.combatStyle"
+      >
+        <span className="sb-combat-style-icon" aria-hidden="true">
+          {trainingIcon ? <img loading="lazy" decoding="async" src={trainingIcon} alt="" /> : "⚔"}
+        </span>
+        <span className="sb-combat-style-text">
+          <span className="sb-combat-style-label">{t("sidebar.combatStyle")}</span>
+          <span className="sb-combat-style-value">{stanceLabel}</span>
+        </span>
+        <span className="sb-combat-style-chevron" aria-hidden="true">›</span>
+      </button>
       {COMBAT_SKILL_IDS.map((id) => {
         const skill = content.skills[id];
         const xp = state.skills[id]?.xp ?? 0;
@@ -452,7 +485,13 @@ function CombatSubskillsPanel(): JSX.Element {
         return (
           // codex:2026-09-10T10:23:09+02:00 — Compact rows retain translated names/levels
           // on focus/hover, including the existing equipment boost distinction.
-          <div key={id} className="sb-combat-row" tabIndex={0} title={`${skill ? tr(skill.name) : id}: ${lvl}/99${boost > 0 ? ` (${lvl + boost})` : ""}`} aria-label={`${skill ? tr(skill.name) : id}: ${lvl}/99${boost > 0 ? ` (${lvl + boost})` : ""}`}>
+          <div
+            key={id}
+            className={`sb-combat-row${id === trainingId ? " sb-combat-row--training" : ""}`}
+            tabIndex={0}
+            title={`${skill ? tr(skill.name) : id}: ${lvl}/99${boost > 0 ? ` (${lvl + boost})` : ""}${id === trainingId ? ` · ${t("sidebar.combatTraining")}` : ""}`}
+            aria-label={`${skill ? tr(skill.name) : id}: ${lvl}/99${boost > 0 ? ` (${lvl + boost})` : ""}${id === trainingId ? `. ${t("sidebar.combatTraining")}` : ""}`}
+          >
             <div className="sb-combat-icon-wrap">
               {icon
                 ? <img loading="lazy" decoding="async" src={icon} alt="" className="sb-combat-icon-img" />

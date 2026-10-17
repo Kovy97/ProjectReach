@@ -391,6 +391,40 @@ export function setCombatDockCollapsed(value: boolean): void {
   localStorage.setItem(COMBAT_DOCK_COLLAPSED_KEY, value ? "1" : "0");
 }
 
+// claude:2026-10-17T18:10:00+02:00 — Chef 17.10.: „Es muss besser ersichtlich werden, wo man den
+// Kampfstil ändert.“ Der Reiter des linken Kampf-Docks wird gemerkt, und die Sidebar kann das Dock
+// gezielt auf einem Reiter öffnen (Kampfstil). Reine Anzeige-Vorliebe, kein Save-State.
+export type CombatDockTabPref = "gear" | "skills" | "style" | "prep";
+const COMBAT_DOCK_TAB_KEY = "gr.combat.dockTab";
+/** Fensterweites Ereignis: Kampf-Dock auf einem Reiter öffnen (detail = CombatDockTabPref). */
+export const COMBAT_DOCK_OPEN_EVENT = "gr:combat-dock-open";
+
+/** Zuletzt gewählter Reiter des Kampf-Docks (Default: Ausrüstung). */
+export function getCombatDockTab(): CombatDockTabPref {
+  try {
+    const v = localStorage.getItem(COMBAT_DOCK_TAB_KEY);
+    return v === "skills" || v === "style" || v === "prep" ? v : "gear";
+  } catch {
+    return "gear";
+  }
+}
+
+export function setCombatDockTab(tab: CombatDockTabPref): void {
+  try {
+    localStorage.setItem(COMBAT_DOCK_TAB_KEY, tab);
+  } catch {
+    /* Vorliebe geht verloren, sonst kein Schaden */
+  }
+}
+
+/** Kampf-Dock ausgeklappt auf `tab` öffnen: wirkt sofort auf eine offene Kampfseite (Ereignis) und
+ *  beim nächsten Öffnen der Kampfseite (Vorlieben). */
+export function openCombatDockTab(tab: CombatDockTabPref): void {
+  setCombatDockTab(tab);
+  setCombatDockCollapsed(false);
+  window.dispatchEvent(new CustomEvent<CombatDockTabPref>(COMBAT_DOCK_OPEN_EVENT, { detail: tab }));
+}
+
 /** Ob der rechte Battle Record (Kampf-/Beute-Log + Sitzungsbilanz) eingeklappt ist — existiert nur
  *  in der aktiven Kampf-Ansicht (.battle-log-panel), Default: AUSGEKLAPPT. */
 export function getCombatRecordCollapsed(): boolean {

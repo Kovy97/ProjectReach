@@ -21,7 +21,7 @@ import {
   withdrawItem,
   withdrawItemGroup,
 } from "@hearthforge/engine";
-import { effectiveBankCapacity, moveBankSlot } from "@hearthforge/shared";
+import { effectiveBankCapacity, moveBankSlot, syncBankOrder } from "@hearthforge/shared";
 import type { ItemInstance } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -393,10 +393,71 @@ export function BankPage(): JSX.Element {
     // Umsortieren nur, wenn das Fach bekannt ist UND kein Filter laeuft: unter einem Filter ist die
     // Anzeige-Position nicht die echte, ein Zug landete sonst am falschen Fach.
     const umsortieren = from === "bank" && fromSlot !== undefined && !filterActive;
+    // claude:2026-10-17T18:40:00+02:00 — Chef 17.10.: „Wieso kann ich die Items nicht per Drag and Drop
+    // in leere Felder ziehen?“ Ein Stueck, das noch NICHT in der Bank liegt, landet beim Einlagern jetzt
+    // auf dem leeren Fach unter dem Zeiger statt hinten. Liegt es schon dort, stapelt es wie bisher auf
+    // sein eigenes Fach (ein Item hat genau ein Fach) — dann wird auch kein fremdes Fach markiert.
+    const einlagernAufFach =
+      from === "inv" && !filterActive && !(Array.isArray(state.bankOrder) && state.bankOrder.includes(itemId));
     let zielFach: number | null = null;
+    let lastX = startX;
+    let lastY = startY;
 
     const positionGhost = (x: number, y: number): void => {
       ghostEl.style.transform = `translate(${x + 16}px, ${y + 18}px)`;
+    };
+
+    const leeresFachAt = (idx: number | null): boolean =>
+      idx !== null &&
+      !!document.querySelector(`[data-bank-slot="${idx}"]`)?.classList.contains("bank-empty-slot");
+
+    // Ziel unter dem Zeiger neu bestimmen — aus onMove UND aus dem Mitscrollen (die Liste bewegt sich
+    // unter einem stillstehenden Zeiger weiter).
+    const updateTarget = (x: number, y: number): void => {
+      const zone = zoneAtPoint(x, y);
+      // Innerhalb der Bank ist das Ziehen ein UMSORTIEREN (SAVE 87), zwischen den Spalten ein
+      // Ein-/Auslagern. Beides laeuft ueber denselben Zug, nur das Ziel unterscheidet sich.
+      if (umsortieren && zone === "bank") zielFach = bankSlotAtPoint(x, y);
+      else if (einlagernAufFach && zone === "bank") {
+        const idx = bankSlotAtPoint(x, y);
+        zielFach = leeresFachAt(idx) ? idx : null;
+      } else zielFach = null;
+      setzeZiel(
+        zielFach !== null && zielFach !== fromSlot
+          ? document.querySelector<HTMLElement>(`[data-bank-slot="${zielFach}"]`)
+          : null,
+      );
+      const targetZone = zone !== null && zone !== from ? zone : null;
+      if (targetZone !== overZone) {
+        overZone = targetZone;
+        setZoneHighlight(itemId, overZone);
+      }
+    };
+
+    // claude:2026-10-17T18:40:00+02:00 — Mitscrollen: Nahe am oberen/unteren Rand der Lagerliste (oder
+    // knapp darueber/darunter) scrollt sie, damit auch Faecher ausserhalb des Sichtbereichs erreichbar
+    // sind. Tempo waechst mit der Naehe zum Rand.
+    const EDGE_PX = 56;
+    let scrollVel = 0;
+    let scrollRaf = 0;
+    const scrollStep = (): void => {
+      const grid = gridEl("bank");
+      if (!grid || scrollVel === 0) {
+        scrollRaf = 0;
+        return;
+      }
+      grid.scrollTop += scrollVel;
+      updateTarget(lastX, lastY);
+      scrollRaf = requestAnimationFrame(scrollStep);
+    };
+    const updateEdgeScroll = (x: number, y: number): void => {
+      const box = gridEl("bank")?.getBoundingClientRect();
+      scrollVel = 0;
+      if (box && x >= box.left && x <= box.right) {
+        if (y < box.top + EDGE_PX) scrollVel = -Math.min(18, Math.ceil((box.top + EDGE_PX - y) / 4));
+        else if (y > box.bottom - EDGE_PX) scrollVel = Math.min(18, Math.ceil((y - (box.bottom - EDGE_PX)) / 4));
+      }
+      if (scrollVel !== 0 && scrollRaf === 0) scrollRaf = requestAnimationFrame(scrollStep);
     };
 
     const cleanup = (): void => {
@@ -404,6 +465,8 @@ export function BankPage(): JSX.Element {
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onCancel);
       window.removeEventListener("keydown", onKey);
+      if (scrollRaf !== 0) cancelAnimationFrame(scrollRaf);
+      scrollVel = 0;
       ghostEl.remove();
       setzeZiel(null);
       quellEl?.classList.remove("bank-slot--source");
@@ -421,22 +484,11 @@ export function BankPage(): JSX.Element {
         quellEl?.classList.add("bank-slot--source");
         document.body.classList.add("bank-dragging-noselect");
       }
+      lastX = ev.clientX;
+      lastY = ev.clientY;
       positionGhost(ev.clientX, ev.clientY);
-      const zone = zoneAtPoint(ev.clientX, ev.clientY);
-      // Innerhalb der Bank ist das Ziehen ein UMSORTIEREN (SAVE 87), zwischen den Spalten ein
-      // Ein-/Auslagern. Beides laeuft ueber denselben Zug, nur das Ziel unterscheidet sich.
-      zielFach =
-        umsortieren && zone === "bank" ? bankSlotAtPoint(ev.clientX, ev.clientY) : null;
-      setzeZiel(
-        zielFach !== null && zielFach !== fromSlot
-          ? document.querySelector<HTMLElement>(`[data-bank-slot="${zielFach}"]`)
-          : null,
-      );
-      const targetZone = zone !== null && zone !== from ? zone : null;
-      if (targetZone !== overZone) {
-        overZone = targetZone;
-        setZoneHighlight(itemId, overZone);
-      }
+      updateTarget(ev.clientX, ev.clientY);
+      if (umsortieren || einlagernAufFach) updateEdgeScroll(ev.clientX, ev.clientY);
     };
 
     const finish = (commit: boolean): void => {
@@ -452,6 +504,14 @@ export function BankPage(): JSX.Element {
       if (overZone === "bank") {
         const res = depositItemGroup(state, content, itemId);
         if (res.deposited === 0 && res.instancesMoved === 0) gameAlert("bank.noSlot");
+        else if (einlagernAufFach && zielFach !== null && Array.isArray(state.bankOrder)) {
+          // Das neue Fach haengt die Engine hinten an — von dort auf das gewaehlte Fach tauschen.
+          // depositItemGroup traegt die Platzierung nicht selbst nach (das macht sonst erst der
+          // naechste Tick), deshalb hier sofort synchronisieren.
+          syncBankOrder(state);
+          const neu = state.bankOrder.indexOf(itemId);
+          if (neu >= 0 && neu !== zielFach) moveBankSlot(state, neu, zielFach);
+        }
       } else {
         const res = withdrawItemGroup(state, content, itemId);
         if (res.withdrawn === 0 && res.instancesMoved === 0) gameAlert("alert.noBagSpace");

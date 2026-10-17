@@ -4,6 +4,9 @@ export const ptBR: Record<string, string> = {
     "common.topNav": "Navegação superior",
     // codex:2026-09-10T10:35:00+02:00 — Reforged navigation accessibility and explicit queue material states.
     "sidebar.expandCombatSkills": "Expandir habilidades de combate",
+    "sidebar.combatStyle": "Estilo de combate",
+    "sidebar.combatStyleHint": "Define qual habilidade de combate suas lutas treinam. Clique para mudar.",
+    "sidebar.combatTraining": "Treinando",
     "sidebar.collapseCombatSkills": "Recolher habilidades de combate",
     "sidebar.resizeLabel": "Largura da barra lateral",
     "queue.row.materialExpected": "Materiais previstos",
@@ -2092,7 +2095,7 @@ export const ptBR: Record<string, string> = {
     "combat.dock.ariaLabel": "Configuração de combate",
     "combat.dock.gear": "Equipamento",
     "combat.dock.skills": "Habilidades",
-    "combat.dock.style": "Estilo",
+    "combat.dock.style": "Estilo de combate",
     "combat.dock.prep": "Preparação",
     "combat.dock.activeBuffs": "Bônus ativos",
     "combat.dock.noBuffs": "Nenhum bônus ativo.",

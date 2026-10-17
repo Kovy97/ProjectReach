@@ -309,6 +309,75 @@
   min-width: 0;
 }
 
+/* claude:2026-10-17T18:10:00+02:00 — Chef 17.10.: Kampfstil sichtbar machen. Erste Zeile der
+   aufgeklappten Kampf-Liste: derselbe Eisenrahmen + Material wie die Reiter, damit sie als Knopf
+   lesbar ist; Klick öffnet den Kampfstil-Reiter auf der Kampfseite. */
+#root .layout--reforged .sidebar .sb-combat-style {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  margin: 4px 0 6px;
+  padding: 4px 8px;
+  border: 4px solid transparent;
+  border-image: var(--chrome-frame) 96 / 8px 8px;
+  background: var(--chrome-nav-surface);
+  color: var(--chrome-text);
+  font-family: var(--font-head);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 10px #0008;
+}
+#root .layout--reforged .sidebar .sb-combat-style:hover {
+  color: #ffe5a2;
+  box-shadow: inset 0 0 12px #b9832b26, 0 0 6px #ba8a4538;
+}
+#root .layout--reforged .sidebar .sb-combat-style-icon {
+  display: flex;
+  width: 26px;
+  height: 26px;
+}
+#root .layout--reforged .sidebar .sb-combat-style-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+#root .layout--reforged .sidebar .sb-combat-style-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+#root .layout--reforged .sidebar .sb-combat-style-label {
+  font-size: var(--fs-xs);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--chrome-muted);
+}
+#root .layout--reforged .sidebar .sb-combat-style-value {
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  color: var(--chrome-gold);
+  overflow-wrap: normal;
+}
+#root .layout--reforged .sidebar .sb-combat-style-chevron {
+  font-size: var(--fs-xl);
+  line-height: 1;
+  color: var(--chrome-gold);
+}
+
+/* Die Fertigkeit, die der gewählte Kampfstil gerade trainiert. */
+#root .layout--reforged .sidebar .sb-combat-row--training {
+  margin-inline: -5px;
+  padding-inline: 3px 5px;
+  border-left: 2px solid var(--chrome-gold);
+  background: linear-gradient(90deg, #b9832b2e, transparent 85%);
+}
+#root .layout--reforged .sidebar .sb-combat-row--training .sb-combat-name {
+  color: var(--chrome-gold);
+}
+
 #root .layout--reforged .sidebar .sb-combat-icon-wrap {
   grid-column: 1;
   grid-row: 1 / 4;
@@ -542,8 +611,16 @@
 }
 
 @container sidebar (width < 150px) {
-  #root .layout--reforged .sidebar :is(.sb-skill-name, .sb-skill-level, .sb-blessing-textbox, .sb-footer-label, .sb-footer-drawer-label, .sb-combat-name, .sb-combat-bar, .sb-combat-level) {
+  #root .layout--reforged .sidebar :is(.sb-skill-name, .sb-skill-level, .sb-blessing-textbox, .sb-footer-label, .sb-footer-drawer-label, .sb-combat-name, .sb-combat-bar, .sb-combat-level, .sb-combat-style-text, .sb-combat-style-chevron) {
     display: none;
+  }
+
+  /* claude:2026-10-17T18:10:00+02:00 — Symbolleiste: Kampfstil bleibt als Symbol der trainierten
+     Fertigkeit erreichbar (Name/Haltung im Tooltip). */
+  #root .layout--reforged .sidebar .sb-combat-style {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    padding-inline: 0;
   }
 
   #root .layout--reforged .sidebar .sb-skill-btn {
