@@ -20515,7 +20515,9 @@ export const content: ContentDB = {
       combatAbility: {
         kind: "blockNextEnemyHit",
         name: { en: "Shield Wall", de: "Schildwall" },
-        intervalMs: 9000,
+        // claude:2026-10-17T21:30:00+02:00 — Chef 17.10. nach Wandprüfung: 9 s → 12 s (gegen 4-s-Schläger ≈44 % → ≈33 %
+        // geblockte Treffer; Tank CL 90 vs siege_idol aß 24 → 4 Essen je Kill). 37,5 %/min, bewusst unter dem 40–60-Band.
+        intervalMs: 12000,
       },
       role: "protection",
       source: { kind: "combat", style: "melee" },

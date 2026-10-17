@@ -4621,8 +4621,9 @@ const de: Record<keyof typeof en, string> = {
     "talent.reason.maxed": "Voll gelernt",
     "talent.reason.requires": "Benötigt {node} Rang {n}",
     "talent.reason.not_enough_currency": "Nicht genug Punkte",
-    "slayer.book.locked": "Ab Slayer-Stufe {n} gibt dir Brenna das Jagdbuch.",
-    "companions.dropChance.book": "inkl. Jagdbuch",
+    // claude:2026-10-17T21:30:00+02:00 — Chef 17.10.: Slayer-Baum heißt „Jägerkodex“ (Jagdbuch = Jagen-Skill).
+    "slayer.book.locked": "Ab Slayer-Stufe {n} gibt dir Brenna den Jägerkodex.",
+    "companions.dropChance.book": "inkl. Jägerkodex",
     "companions.pity": "Spur: {n} / {max} Versuche",
     "companions.pity.hint": "Ist der Balken voll, ist dein nächster Wurf garantiert.",
     "companions.slot2.label": "Zweites Halsband",

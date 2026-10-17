@@ -25,7 +25,8 @@ PETS, REWORKED
   suffixes when smithing.
 - In combat every pet has a clear role: control, protection, damage, loot or support.
 - Echo: every pet you own grants a quarter of its skill effect, even when it isn't equipped.
-- Carapace is now as common as the other combat pets (1/80,000) and stronger.
+- Carapace is now as common as the other combat pets (1/80,000). Its Shell Hide blunts more
+  damage, and Shield Wall comes a little less often (every 12 instead of 10 seconds).
 - Seven pets were too strong and have been toned down: Ashgut's healing, Hoarspite's stun,
   Gloomrat's theft, Carrionwing's double loot (no longer on champion uniques and pets), and the
   ward, shield and lifesteal of Glyphmaw, Vellumoth and Charnel, which made mages nearly

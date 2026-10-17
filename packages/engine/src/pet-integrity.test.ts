@@ -202,7 +202,7 @@ describe("pet integrity: Content-Guards (Skill-Passiv + getriggerte Ability)", (
       gorehound: ["lifesteal", undefined, 0.02, "executeBleed", 4500, 0.02, "damage"],
       carrionwing: ["doubleLoot", undefined, 0.05, "armorPierceHit", 4500, 0.09, "damage"],
       ironmaw: ["styleDamage", undefined, 0.03, "enemyAttackDelay", 5000, 750, "control"],
-      carapace: ["damageReduction", undefined, 0.05, "blockNextEnemyHit", 9000, undefined, "protection"],
+      carapace: ["damageReduction", undefined, 0.05, "blockNextEnemyHit", 12000, undefined, "protection"],
       pyreling: ["spellReserve", undefined, 0.05, "emberDetonate", 6000, 0.035, "damage"],
       hoarspite: ["wardCapacityPct", undefined, 0.06, "frostBite", 8000, 500, "control"],
       charnel: ["killHeal", undefined, 0.03, "lifestealBurst", 5000, 0.035, "protection"],
@@ -264,8 +264,9 @@ describe("pet integrity: Content-Guards (Skill-Passiv + getriggerte Ability)", (
     // Schutz: Schild/Block/Notration/Rettungsfaden ≤ 60 % maxHp/min.
     expect((pets.vellumoth!.combatAbility.value ?? 0) * (60000 / pets.vellumoth!.combatAbility.intervalMs)).toBeLessThanOrEqual(0.6);
     expect((pets.ashgut!.combatAbility.value ?? 0) * (60000 / pets.ashgut!.combatAbility.intervalMs)).toBeLessThanOrEqual(0.6);
-    // Schildwall: ein geblockter R-Treffer (7,5 % maxHp) je 9 s ⇒ 50 %/min.
-    expect(0.075 * (60000 / pets.carapace!.combatAbility.intervalMs)).toBeCloseTo(0.5, 3);
+    // claude:2026-10-17T21:30:00+02:00 — Chef 17.10.: Schildwall 12 s ⇒ ein geblockter R-Treffer (7,5 % maxHp) je 12 s
+    // ⇒ 37,5 %/min (bewusst unter dem Schutz-Band, Wandprüfung: Chitinpanzer allein senkte Essen je Kill 24 → 4).
+    expect(0.075 * (60000 / pets.carapace!.combatAbility.intervalMs)).toBeCloseTo(0.375, 3);
   });
 
   it("skill-gebundene skillEffect-Kinds haben einen gültigen Skill; globale Kinds sind skill-frei", () => {

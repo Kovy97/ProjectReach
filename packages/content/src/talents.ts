@@ -15,7 +15,9 @@ import type { TalentTreeDef } from "@hearthforge/shared";
 export const TALENT_TREES: TalentTreeDef[] = [
   {
     id: "slayer",
-    name: { en: "Slayer's Book", de: "Jagdbuch" },
+    // claude:2026-10-17T21:30:00+02:00 — Chef 17.10.: DE „Jägerkodex“ statt „Jagdbuch“ (kollidierte mit dem Jagdbuch des
+    // Jagen-Skills). Andere Sprachen unterschieden beide Bücher schon.
+    name: { en: "Slayer's Book", de: "Jägerkodex" },
     description: {
       en: "Brenna's ledger of the hunt. Slayer points spent here become permanent upgrades for your whole account.",
       de: "Brennas Buch der Jagd. Slayer-Punkte werden hier zu dauerhaften Verbesserungen für deinen ganzen Account.",
