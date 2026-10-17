@@ -1,5 +1,26 @@
 # Übergabe — Codex-Projektleitung
 
+### 17.10.2026 spätabends — Claude: UI-Runde 2b, J4-Anzeige, Apply 6, Wandprüfung
+
+<!-- claude:2026-10-17T21:10:00+02:00 -->
+
+Restpunkte 1.3.0 abgearbeitet (ohne Chef-Abnahme Ü2, die steht weiter aus):
+- **UI-Runde 2b** (`6961892`): Charakter, Verzaubern, New Haven, Post, Optionen, Wiki, Fertigkeitsübersicht nach
+  `design/ui-fundament/BRIEF-2-struktur.md` (Unterrahmen → 1-px-Goldlinien, inset-Doppellinien weg). ru: Marken-Shop-Hinweis
+  läuft nicht mehr über; Begleiter-Dossier mit sichtbarer Scrollleiste, Echo-Zeile in ru 1366 aber weiter nur per Scrollen
+  (≈150 px zu viel Text; Lösung bräuchte mehr Höhe oder kleinere Schrift ⇒ Chef). Bilder `apps/client/ui-audit/shots-struktur-e|f`.
+  Rarity-Innenringe der Enzyklopädie-Karten bewusst belassen (tragen Bedeutung).
+- **J4 auf dem Zettel** (`ca4220b`): `slayerTaskPointsPayout` ist die eine Quelle für Gutschrift, Auftragszettel und Toast.
+- **Apply 6** (`3bf7ccb`): BiS-Builder besitzt alle Begleiter (Echo) + zweiten Platz; Envelope neu gepinnt (Ward +1,5 %,
+  Boss→Spieler-TTK +1,2–2,4 %, Spieler-TTK gleich).
+- **Wandprüfung Defensiv-Kombi** (temporäre Sim, nicht eingecheckt): Chitinpanzer P1 + Aschbauch P2 bringt gegenüber
+  Chitinpanzer P1 + Echo nur ≈7 % weniger Essen je Kill; Glas-Builds CL 85 sterben gegen `siege_idol`/`wreath_bearer` mit
+  jeder Kombi. Auffällig: Chitinpanzer allein senkt beim Tank CL 90 gegen `siege_idol` (4-s-Schläge) das Essen je Kill von
+  23,9 auf 4,1 (Schildwall alle 9 s blockt ≈44 % der Treffer) ⇒ Beobachtung für den Chef, nicht geändert.
+- **Ü1-Checkliste** in `design/plan-1.3.md` mit Urteil je Punkt (`2ec3f89`); **Ü3** gegengeprüft: UI 0 fehlende Schlüssel,
+  Content-Overlays fehlen nur 18 Tavernen-Gastnamen (Taverne aus, Eigennamen).
+Geprüft: Engine 1751 + Envelope 32/32, Client 259/259, Typecheck, Build.
+
 ### 17.10.2026 abends — Claude: Meisterschafts-Untergrenze + Ring-Vollprüfung
 
 <!-- claude:2026-10-17T20:00:00+02:00 -->
