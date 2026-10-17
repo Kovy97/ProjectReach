@@ -1,4 +1,9 @@
-# 1.3 — Sammelliste (noch kein Plan)
+# 1.3 — Sammelliste
+
+> **17.10.2026: Plan steht.** 1.3.0 „Die Götzenhalle erwacht“. Chef-Entscheide: Endgame UND Story,
+> die Chronik geht in der Götzenhalle weiter; alle 5 Endgame-Punkte, am Ende eine Asset-Liste;
+> so schnell wie möglich; keine Auto-Flucht. Arbeitsauftrag: **`design/1.3.0-goal.md`**.
+> Diese Datei bleibt die Sammelliste mit Belegen.
 
 <!-- claude:2026-10-17T11:30:00+02:00 -->
 
