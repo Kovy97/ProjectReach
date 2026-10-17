@@ -84,7 +84,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -3678,7 +3678,14 @@ export function deserialize(
   // Jagen (SAVE 85): Fänge je Monster im Offline-Fenster — der Fallen-Tick (engine/hunting.ts) zählt in
   // diesen Sammler, weil der State selbst nur den JÜNGSTEN Fang je Platz trägt (kein neues Save-Feld nötig).
   const huntTally: HuntCatchTally = {};
-  const offlineTicks = advance(state, content, offlineMs, { offline: true, nowMs: now, huntTally });
+  // claude:2026-10-17T20:00:00+02:00 — K4: übersprungene Queue-Einträge im Fenster zählen (transient, kein Save-Feld)
+  const skipTally = beginQueueSkipTally(state);
+  let offlineTicks: ReturnType<typeof advance>;
+  try {
+    offlineTicks = advance(state, content, offlineMs, { offline: true, nowMs: now, huntTally });
+  } finally {
+    endQueueSkipTally(state);
+  }
 
   const itemsAfter = inventoryCounts(state);
   const items: Record<string, number> = {};
@@ -3775,6 +3782,8 @@ export function deserialize(
     .filter(([, n]) => n > 0)
     .map(([monsterId, count]) => ({ monsterId, count }));
   if (huntCatches.length > 0) offline.huntCatches = huntCatches;
+  // claude:2026-10-17T20:00:00+02:00 — K4: Anzahl übersprungener Queue-Einträge (fehlt bei 0)
+  if (skipTally.count > 0) offline.queueSkips = skipTally.count;
 
   // Offline fertiggestellte Lager-Bauten (SAVE 76, „Die Hände haben gearbeitet"): transient,
   // fehlt (statt leerem Array), wenn nichts fertig wurde — Muster kills/deaths/petDrops.

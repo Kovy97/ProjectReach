@@ -1220,7 +1220,9 @@ const en = {
     "combat.log.wardAbsorbedSuffix": "(+{amount} absorbed)",
     // Lichtsegen (Aether, review-1.2.0 P2, 29.08.2026): leiser Zusatz an der eigenen Treffer-Zeile,
     // wenn `wardRestored` > 0 (Muster wardAbsorbedSuffix) — kein eigenes Status-Ereignis.
-    "combat.log.lightblessing": "Lightblessing: +{amount} ward",
+    "combat.log.lightblessing": "Ward restored: +{amount}",
+    "itip.effectNoStack": "Does not stack, the strongest source counts",
+    "enchant.preview.duplicateEffect": "Already active from another equipped piece. Effects of the same kind do not stack, the strongest source counts.",
     "combat.floater.wardAbsorbed": "Absorbed",
     // Task #220: Klartext-Label für event.source bei lifesteal/kill/effect/ward (Trank/Food nutzen
     // stattdessen den lokalisierten Item-Namen, s. healSourceLabel in CombatPage.tsx).
@@ -1850,6 +1852,8 @@ const en = {
     "hunting.book.speciesCount": "{n}/{total} caught",
 
     "offline.hunt.title": "Hunting",
+
+    "offline.queueSkips": "{count} queue entries were skipped",
 
     // Slayer skill page
     "nav.slayer": "Slayer",
@@ -3807,7 +3811,9 @@ const de: Record<keyof typeof en, string> = {
     "combat.log.block": "Geblockt! −{amount}",
     "combat.log.wardAbsorbed": "Absorbiert! −{amount}",
     "combat.log.wardAbsorbedSuffix": "(+{amount} absorbiert)",
-    "combat.log.lightblessing": "Lichtsegen: +{amount} Ward",
+    "combat.log.lightblessing": "Ward aufgefüllt: +{amount}",
+    "itip.effectNoStack": "Stapelt nicht, die stärkste Quelle zählt",
+    "enchant.preview.duplicateEffect": "Dieser Effekt kommt schon von einem anderen ausgerüsteten Teil. Gleiche Effekte stapeln nicht, die stärkste Quelle zählt.",
     "combat.floater.wardAbsorbed": "Absorbiert",
     "combat.healSource.lifesteal": "Lebensraub",
     "combat.healSource.meleeLifesteal": "Nahkampf",
@@ -4401,6 +4407,8 @@ const de: Record<keyof typeof en, string> = {
     "hunting.book.speciesCount": "{n}/{total} gefangen",
 
     "offline.hunt.title": "Jagd",
+
+    "offline.queueSkips": "{count} Warteschlangen-Einträge wurden übersprungen",
 
     // Slayer-Seite
     "nav.slayer": "Slayer",

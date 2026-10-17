@@ -12,6 +12,26 @@ import { canEnterDungeon, startDungeon } from "./dungeon";
 import { actionInputsOnHand } from "./queueProjection";
 import { canFightMonster } from "./slayer";
 
+// claude:2026-10-17T20:00:00+02:00 — K4: nicht-persistierter Skip-Zähler je State (WeakMap), nur während eines
+// Offline-Catch-ups registriert; ersetzt kein Save-Feld. Reiner Beobachter, kein Einfluss auf Zustand/RNG.
+const queueSkipTallies = new WeakMap<GameState, { count: number }>();
+/** Startet die Zählung übersprungener Queue-Einträge für `state` (Offline-Catch-up). */
+export function beginQueueSkipTally(state: GameState): { count: number } {
+  const t = { count: 0 };
+  queueSkipTallies.set(state, t);
+  return t;
+}
+/** Beendet die Zählung. */
+export function endQueueSkipTally(state: GameState): void {
+  queueSkipTallies.delete(state);
+}
+/** Setzt `lastQueueSkip` und zählt den Skip mit, falls eine Zählung läuft. */
+export function setQueueSkip(state: GameState, skip: NonNullable<GameState["lastQueueSkip"]>): void {
+  state.lastQueueSkip = skip;
+  const t = queueSkipTallies.get(state);
+  if (t) t.count += 1;
+}
+
 /** Prüft, ob das Skill-Level für eine Aktion ausreicht. */
 export function actionLevelMet(state: GameState, content: ContentDB, actionId: ActionId): boolean {
   const action = content.actions[actionId];
@@ -597,23 +617,23 @@ export function advanceActionQueue(state: GameState, content: ContentDB): boolea
       const monsterId = next.monsterId;
       const monster = content.monsters[monsterId];
       if (!monster) {
-        state.lastQueueSkip = { monsterId, reason: "unknown_monster" };
+        setQueueSkip(state, { monsterId, reason: "unknown_monster" });
         continue;
       }
       if (monster.dungeonOnly) {
         // Enqueue lehnt dungeonOnly bereits ab — fängt Content-Drift (Monster wurde NACH dem
         // Einreihen zum Dungeon-only-Monster) und Alt-Saves ab.
-        state.lastQueueSkip = { monsterId, reason: "not_queueable" };
+        setQueueSkip(state, { monsterId, reason: "not_queueable" });
         continue;
       }
       if (!canFightMonster(state, content, monsterId)) {
-        state.lastQueueSkip = { monsterId, reason: "gate_locked" };
+        setQueueSkip(state, { monsterId, reason: "gate_locked" });
         continue;
       }
       if (!startCombat(state, content, monsterId)) {
         // Belt-and-suspenders: startCombat prüft dieselben Gates — sollte er trotzdem ablehnen,
         // den Eintrag als gesperrt ausweisen statt still zu verschlucken.
-        state.lastQueueSkip = { monsterId, reason: "gate_locked" };
+        setQueueSkip(state, { monsterId, reason: "gate_locked" });
         continue;
       }
       // Invariante `activeActionId === null ⇒ actionTarget === null`: startCombat räumt
@@ -630,11 +650,11 @@ export function advanceActionQueue(state: GameState, content: ContentDB): boolea
       const dungeonId = next.dungeonId;
       const dungeon = content.dungeons.find((d) => d.id === dungeonId);
       if (!dungeon || dungeon.encounters.length === 0) {
-        state.lastQueueSkip = { monsterId: FIGHT_QUEUE_ACTION_ID, dungeonId, reason: "unknown_dungeon" };
+        setQueueSkip(state, { monsterId: FIGHT_QUEUE_ACTION_ID, dungeonId, reason: "unknown_dungeon" });
         continue;
       }
       if (!canEnterDungeon(state, content, dungeonId) || !startDungeon(state, content, dungeonId)) {
-        state.lastQueueSkip = { monsterId: FIGHT_QUEUE_ACTION_ID, dungeonId, reason: "dungeon_locked" };
+        setQueueSkip(state, { monsterId: FIGHT_QUEUE_ACTION_ID, dungeonId, reason: "dungeon_locked" });
         continue;
       }
       state.actionTarget = null; // Invariante wie beim Kampf-Eintrag (startDungeon räumt sie ebenfalls)
@@ -652,7 +672,7 @@ export function advanceActionQueue(state: GameState, content: ContentDB): boolea
     // Queue weiterschaltete, blieb KEIN Hinweis zurück), sondern wie Kampf-/Dungeon-Gates mit
     // maschinenlesbarem Grund überspringen; die Kette läuft weiter. Zieht kein RNG.
     if (!actionInputsOnHand(state, nextAction)) {
-      state.lastQueueSkip = { monsterId: FIGHT_QUEUE_ACTION_ID, actionId: next.actionId, reason: "no_materials" };
+      setQueueSkip(state, { monsterId: FIGHT_QUEUE_ACTION_ID, actionId: next.actionId, reason: "no_materials" });
       continue;
     }
     setActiveAction(state, content, next.actionId, next.target ?? null);

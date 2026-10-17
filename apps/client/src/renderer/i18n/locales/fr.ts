@@ -1002,7 +1002,9 @@ export const fr: Record<string, string> = {
     "combat.shield": "Le bouclier absorbe {amount}",
     "combat.log.wardAbsorbed": "Absorbé ! −{amount}",
     "combat.log.wardAbsorbedSuffix": "(+{amount} absorbé)",
-    "combat.log.lightblessing": "Bénédiction de lumière : +{amount} de barrière",
+    "combat.log.lightblessing": "Barrière rendue : +{amount}",
+    "itip.effectNoStack": "Ne se cumule pas, la source la plus forte compte",
+    "enchant.preview.duplicateEffect": "Cet effet vient déjà d'une autre pièce équipée. Les effets du même type ne se cumulent pas, la source la plus forte compte.",
     "combat.floater.wardAbsorbed": "Absorbé",
     "combat.healSource.lifesteal": "Vol de vie",
     "combat.healSource.meleeLifesteal": "Corps à corps",
@@ -1574,6 +1576,8 @@ export const fr: Record<string, string> = {
     "hunting.book.speciesCount": "{n}/{total} capturées",
 
     "offline.hunt.title": "Chasse",
+
+    "offline.queueSkips": "{count} entrées de la file ont été ignorées",
 
     // Slayer skill page
     "nav.slayer": "Chasseur",

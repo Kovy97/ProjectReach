@@ -1276,6 +1276,13 @@ body .item-cell.rarity-godly {
   font-size: calc(var(--itip-fs-scale) * 16px);
   line-height: 1.48;
 }
+/* claude:2026-10-17T20:00:00+02:00 — K2: dezenter Stapel-Hinweis */
+.itip-effect-nostack {
+  display: block;
+  font-size: 0.8em;
+  font-style: normal;
+  opacity: 0.6;
+}
 .itip-effect-line + .itip-effect-line {
   margin-top: 7px;
 }

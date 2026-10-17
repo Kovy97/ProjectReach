@@ -988,7 +988,9 @@ export const es: Record<string, string> = {
     "combat.shield": "El escudo absorbe {amount}",
     "combat.log.wardAbsorbed": "¡Absorbido! −{amount}",
     "combat.log.wardAbsorbedSuffix": "(+{amount} absorbido)",
-    "combat.log.lightblessing": "Bendición de luz: +{amount} de guarda",
+    "combat.log.lightblessing": "Guarda restaurada: +{amount}",
+    "itip.effectNoStack": "No se acumula, cuenta la fuente más fuerte",
+    "enchant.preview.duplicateEffect": "Este efecto ya viene de otra pieza equipada. Los efectos del mismo tipo no se acumulan, cuenta la fuente más fuerte.",
     "combat.floater.wardAbsorbed": "Absorbido",
     "combat.healSource.lifesteal": "Robo de vida",
     "combat.healSource.meleeLifesteal": "Cuerpo a cuerpo",
@@ -1544,6 +1546,8 @@ export const es: Record<string, string> = {
     "hunting.book.speciesCount": "{n}/{total} capturadas",
 
     "offline.hunt.title": "Caza",
+
+    "offline.queueSkips": "Se omitieron {count} entradas de la cola",
 
     "nav.slayer": "Cazador",
     "slayer.master.title": "Maestro Cazador",

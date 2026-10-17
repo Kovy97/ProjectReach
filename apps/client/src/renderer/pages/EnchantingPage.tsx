@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { content } from "@hearthforge/content";
-import { applyEnchant, disenchant, enchantPreview, trinityGatePasses } from "@hearthforge/engine";
+import { applyEnchant, collectSpecialEffects, disenchant, enchantPreview, trinityGatePasses } from "@hearthforge/engine";
 import type { EnchantPreview, ItemStatView } from "@hearthforge/engine";
 import type {
   AffixDef,
@@ -23,6 +23,7 @@ import {
   enchantSlotsFor,
   getItemRarity,
   instanceDisplayName,
+  isStatusEffectType,
   runeAffix,
 } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
@@ -450,6 +451,20 @@ export function EnchantingPage(): JSX.Element {
     previewTarget && previewRuneId ? enchantPreview(content, previewTarget, previewRuneId) : null;
   const previewRows = enchantPreviewResult ? buildPreviewRows(enchantPreviewResult, t, tr) : [];
 
+  // claude:2026-10-17T20:00:00+02:00 — K3: Hinweis (kein Verbot), wenn der neue Spezialeffekt schon von einem ANDEREN
+  // ausgerüsteten Teil kommt; Kill-Flats summieren sich und bleiben ohne Warnung. Das gewählte Teil wird ausgeblendet.
+  let duplicateEffect = false;
+  if (enchantPreviewResult && enchantPreviewResult.addedProcs.length > 0) {
+    const ownSlot = selectedRef?.kind === "equipment" ? selectedRef.slot : null;
+    const others = ownSlot
+      ? { ...state, character: { ...state.character, equipment: { ...state.character.equipment, [ownSlot]: null } } }
+      : state;
+    const fxOther = collectSpecialEffects(others, content);
+    duplicateEffect = enchantPreviewResult.addedProcs.some(
+      (e) => !isStatusEffectType(e.type) && !["healOnKill", "wardOnKill", "cooldownOnKill"].includes(e.type) && !!fxOther[e.type],
+    );
+  }
+
   const canEnchant =
     selectedRef !== null && previewRuneId !== null && previewCost !== null &&
     !!enchantPreviewResult?.canApply && state.character.gold >= previewCost;
@@ -782,6 +797,8 @@ export function EnchantingPage(): JSX.Element {
                       ))}
                     </div>
                   )}
+
+                  {duplicateEffect && <div className="ench-cost muted">{t("enchant.preview.duplicateEffect")}</div>}
 
                   {/* Blockiert-Hinweis: WARUM der Enchant-Button unten deaktiviert ist (Rarity-Slot-Cap ·
                       Trinity-Klassen-Gate · Item-Typ-Mismatch) — eigene Vokabeln, s. `enchant.preview.blocked.*`. */}

@@ -1928,6 +1928,8 @@ export interface OfflineSummary {
   campRefined?: { buildingId: CampBuildingId; itemId: ItemId; qty: number }[];
   /** Jagen (SAVE 85): Fänge im Offline-Fenster je Monster. */
   huntCatches?: { monsterId: MonsterId; count: number }[];
+  /** claude:2026-10-17T20:00:00+02:00 — K4: übersprungene Queue-Einträge im Offline-Fenster (transient, fehlt bei 0). */
+  queueSkips?: number;
 }
 
 // ───────────────────────────────────────────────────────────────────────────

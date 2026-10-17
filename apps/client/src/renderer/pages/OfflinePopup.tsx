@@ -243,7 +243,7 @@ export function OfflinePopup({
     (o.campRefined?.length ?? 0) > 0 ||
     (o.huntCatches?.length ?? 0) > 0;
   const hasIncident =
-    (o.petDrops?.length ?? 0) > 0 || deaths > 0 || showStopHint || Boolean(lastStop);
+    (o.petDrops?.length ?? 0) > 0 || deaths > 0 || showStopHint || Boolean(lastStop) || (o.queueSkips ?? 0) > 0;
 
   return (
     <div className="modal-overlay" onClick={dismissOffline}>
@@ -350,6 +350,13 @@ export function OfflinePopup({
                 <div className="ofs-incident ofs-incident--warning">
                   <span className="ofs-incident-art">{WARNING_ICON_URL && <img src={WARNING_ICON_URL} alt="" />}</span>
                   <small>{t(`offline.combatStopped.${combatStopReason}`)}</small>
+                </div>
+              )}
+              {/* claude:2026-10-17T20:00:00+02:00 — K4: Anzahl übersprungener Queue-Einträge statt nur des letzten */}
+              {(o.queueSkips ?? 0) > 0 && (
+                <div className="ofs-incident ofs-incident--warning">
+                  <span className="ofs-incident-art">{WARNING_ICON_URL && <img src={WARNING_ICON_URL} alt="" />}</span>
+                  <small>{t("offline.queueSkips").replace("{count}", String(o.queueSkips))}</small>
                 </div>
               )}
               {lastStop && (

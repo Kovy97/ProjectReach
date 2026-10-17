@@ -2101,11 +2101,15 @@ function strikeEnemy(
   // Schadens (post-Mitigation, derselbe `damage` wie Lebensraub oben) füllt den eigenen Ward-Pool.
   // Still (kein pushLog — Ressourcen-Rückfluss-Familie loggt nicht, nur HP-Heal
   // tut das). Auf maxWard gedeckelt; ohne Stoff-Pool (maxWard=0) ein reiner No-op.
+  // claude:2026-10-17T20:00:00+02:00 — K1: tatsächlich aufgefüllter Siphon-Ward fließt in die Annotation wardRestored
+  let wardSiphonRestored = 0;
   if (fx.wardSiphon && damage > 0 && stats.maxWard > 0) {
+    const siphonBefore = state.character.ward;
     state.character.ward = Math.min(
       stats.maxWard,
       state.character.ward + Math.max(0, damage * fx.wardSiphon.magnitude),
     );
+    wardSiphonRestored = state.character.ward - siphonBefore;
   }
   // Lichtsegen (Aether, Elementar-Effekte): jeder gelandete Zauber füllt einen Anteil des EIGENEN
   // Ward-Maximums (magnitude; 0 ⇒ AETHER_WARD_ON_HIT). Ohne Stoff-Pool (maxWard 0) ein No-op; Magie nur
@@ -2153,7 +2157,10 @@ function strikeEnemy(
     rawDamage,
     mitigated,
     ...(wardAbsorbedThisHit > 0 ? { absorbed: wardAbsorbedThisHit } : {}),
-    ...(lightblessingWard > 0 ? { wardRestored: lightblessingWard } : {}),
+    // claude:2026-10-17T20:00:00+02:00 — K1: Lichtsegen + Ward-Siphon summiert, 1-Dezimal-Raster, nichts bei vollem Ward
+    ...(Math.round((lightblessingWard + wardSiphonRestored) * 10) / 10 > 0
+      ? { wardRestored: Math.round((lightblessingWard + wardSiphonRestored) * 10) / 10 }
+      : {}),
   });
 
   // Überspringen (Schock, Elementar-Effekte): ein KRITISCHER Treffer mit einer Schock-Waffe (Status-

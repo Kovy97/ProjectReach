@@ -5,7 +5,7 @@ import {
 const OUT_OF_COMBAT_WARD_REGEN_PCT = 0.05;
 import type { ActionDef } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
-import { advanceActionQueue, onQueuedDungeonCleared, requeueDungeonFront, requeueFightFront } from "./actions";
+import { advanceActionQueue, setQueueSkip, onQueuedDungeonCleared, requeueDungeonFront, requeueFightFront } from "./actions";
 import { nextFloat, nextInt } from "./rng";
 import { blessingMult, setShrineChanceBonus, shrineAmplifiedMult } from "./blessing";
 import { computeStats, syncProgression } from "./character";
@@ -461,7 +461,7 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
       const skipReason = reason === "defeated" ? "defeated" : reason === "stalemate" ? "stalemate" : null;
       if (state.queueFight !== null) {
         if (skipReason !== null) {
-          state.lastQueueSkip = { monsterId: state.queueFight.monsterId, reason: skipReason };
+          setQueueSkip(state, { monsterId: state.queueFight.monsterId, reason: skipReason });
           state.queueFight = null;
         } else {
           // Kampf endete OHNE Fail-stopReason und ohne erreichtes Ziel (z.B. ein Elite-Kampf
@@ -473,11 +473,11 @@ export function step(state: GameState, content: ContentDB, offline = false, nowM
         if (skipReason !== null) {
           // Dungeon-Lauf endete durch Tod/Patt (ein Clear hätte oben sofort neu gestartet oder die
           // Laufzeit geleert): der abgebrochene Lauf zählt nicht, die Rest-Läufe verfallen.
-          state.lastQueueSkip = {
+          setQueueSkip(state, {
             monsterId: "",
             dungeonId: state.queueDungeon.dungeonId,
             reason: skipReason === "defeated" ? "dungeon_defeated" : "dungeon_stalemate",
-          };
+          });
           state.queueDungeon = null;
         } else {
           requeueDungeonFront(state);

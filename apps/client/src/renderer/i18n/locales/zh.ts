@@ -1001,7 +1001,9 @@ export const zh: Record<string, string> = {
     "combat.shield": "护盾吸收了 {amount}",
     "combat.log.wardAbsorbed": "已吸收！−{amount}",
     "combat.log.wardAbsorbedSuffix": "（+{amount} 已吸收）",
-    "combat.log.lightblessing": "光之祝福：+{amount} 结界",
+    "combat.log.lightblessing": "结界恢复：+{amount}",
+    "itip.effectNoStack": "不叠加，取最强来源",
+    "enchant.preview.duplicateEffect": "此效果已由另一件已装备的物品提供。同类效果不叠加，取最强来源。",
     "combat.floater.wardAbsorbed": "已吸收",
     "combat.healSource.lifesteal": "生命偷取",
     "combat.healSource.meleeLifesteal": "近战",
@@ -1570,6 +1572,8 @@ export const zh: Record<string, string> = {
     "hunting.book.speciesCount": "{n}/{total} 已捕获",
 
     "offline.hunt.title": "狩猎",
+
+    "offline.queueSkips": "已跳过 {count} 个队列条目",
 
     // Slayer skill page
     "nav.slayer": "猎魔",

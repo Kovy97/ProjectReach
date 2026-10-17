@@ -1340,6 +1340,9 @@ function RuneEffectGroup({ item }: { item: ItemDef }): JSX.Element | null {
  * überschneidungsfrei — die 13 Ökonomie-Capes tragen nie `weaponEffect`, die 7 Kampf-Capes nie
  * `masterPerk`), gemeinsame Textquelle `masterPerkText` (auch MasteryCeremony nutzt sie).
  */
+// claude:2026-10-17T20:00:00+02:00 — K2: diese drei Kinds summieren sich über Quellen, daher kein Hinweis
+const NON_STACK_EXEMPT: ReadonlySet<string> = new Set(["healOnKill", "wardOnKill", "cooldownOnKill"]);
+
 function EffectBlock({ item }: { item: ItemDef }): JSX.Element | null {
   const { t, tr } = useI18n();
   const effects = effectiveWeaponEffects(item);
@@ -1358,7 +1361,13 @@ function EffectBlock({ item }: { item: ItemDef }): JSX.Element | null {
           <span className="itip-effect-icon" aria-hidden="true">
             {isStatusEffectType(e.type) ? statIcon(STATUS_UI[e.type] ?? "", statusEffectIcon(e.type)) : "✦"}
           </span>
-          <span>{weaponEffectProse(e, t)}</span>
+          <span>
+            {weaponEffectProse(e, t)}
+            {/* claude:2026-10-17T20:00:00+02:00 — K2: Spezialeffekte stapeln nicht (Regel combat.ts collectSpecialEffects), Kill-Flats summieren sich */}
+            {!isStatusEffectType(e.type) && !NON_STACK_EXEMPT.has(e.type) && (
+              <span className="itip-effect-nostack">{t("itip.effectNoStack")}</span>
+            )}
+          </span>
         </div>
       ))}
     </div>

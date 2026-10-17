@@ -1000,7 +1000,9 @@ export const ru: Record<string, string> = {
     "combat.shield": "Щит поглощает {amount}",
     "combat.log.wardAbsorbed": "Поглощено! −{amount}",
     "combat.log.wardAbsorbedSuffix": "(+{amount} поглощено)",
-    "combat.log.lightblessing": "Благословение света: +{amount} оберега",
+    "combat.log.lightblessing": "Оберег восстановлен: +{amount}",
+    "itip.effectNoStack": "Не суммируется, считается сильнейший источник",
+    "enchant.preview.duplicateEffect": "Этот эффект уже действует от другой надетой вещи. Одинаковые эффекты не суммируются, считается сильнейший источник.",
     "combat.floater.wardAbsorbed": "Поглощено",
     "combat.healSource.lifesteal": "Похищение жизни",
     "combat.healSource.meleeLifesteal": "Ближний бой",
@@ -1571,6 +1573,8 @@ export const ru: Record<string, string> = {
     "hunting.book.speciesCount": "{n}/{total} поймано",
 
     "offline.hunt.title": "Охота",
+
+    "offline.queueSkips": "Пропущено записей очереди: {count}",
 
     // Slayer skill page
     "nav.slayer": "Истребление",
