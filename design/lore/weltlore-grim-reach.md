@@ -445,7 +445,10 @@ Die Materialnamen des Contents tragen die Lore implizit — neue Texte sollen di
 | Morvane, der Bildner | Morvane the Graven | Verworfener Entwurf A — Götterkriege-Reserve (§ 11) |
 | Ophar, der Bleiche Hirte | Ophar, the Pale Shepherd | Verworfener Entwurf B — Götterkriege-Reserve (§ 11) |
 | Die Diener | The Servants | Dämonen-Funken des Widersachers (Imp, Schmiededämon …) |
-| Die Götterkriege | The God Wars | Nächstes Groß-Kapitel (Post-EA) |
+| Die Götterkriege | The God Wars | Nächstes Groß-Kapitel (Post-EA); Auftakt Kap. 22–27 in 1.3.0 (`band2-auftakt-1.3.0.md`) |
+| Der Tilger | The Expunger | Boss des Band-2-Auftakts: die Hand, die den Namen des Siebten schnitt (Chef-GO 2026-10-17; `the_expunger`) |
+| Die Getilgte Kapelle | The Expunged Chapel | Mini-Dungeon der Götzenhalle (`expunged_chapel`), Wellen „Die Prozession"/„Die Lücke" |
+| Götzenhülse · Skarnbrut · Verlassener Diener · Götzenpriester · Gebetsfresser · Kranzträger · Belagerungsgötze | Idol Husk · Skarn Whelp · Forsaken Servant · Idol Priest · Prayer Eater · Wreath Bearer · Siege Idol | Offene Wesen der Götzenhalle (1.3.0, IDs und Bestiariums-Zeilen in `band2-auftakt-1.3.0.md` § 5.7) |
 | Zurückgelassene Schätze | Treasures Left Behind | Loot-Rahmung des Endkampfs |
 | Der Bildersturz | The Idolfall | Historisches Ereignis: das Reach zerschlägt seine Götzen |
 | Der Orden der Grabwächter | The Order of the Grave Wardens | Untergegangener Orden; abgeleitet aus bestehenden Items |
