@@ -76,6 +76,9 @@ INTERFACE
 - Reworked Slayer page, shop and token shop. Your combat style now sits in the sidebar, one click
   from changing it.
 - A new combat HUD and a new return screen.
+- Calmer, cleaner pages: frames no longer show a light ring at their edges, fewer frames sit inside
+  other frames, and page headers follow one layout. The Slayer page now has tabs for the reward
+  shop and the Slayer's Book.
 
 FIXES
 
