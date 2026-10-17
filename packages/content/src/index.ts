@@ -5610,6 +5610,56 @@ export const content: ContentDB = {
         de: "Ein kristallines Amulett mit einem Leeren-Herold-Splitter. Ausstrahlung kalter, präziser Kraft über alle Kampfstile hinweg.",
       },
     },
+    // ── Slayer-Turm Etage 6–8: Punkte-Uniques (1.3.0 E3) ─────────────────────────────────────
+    // codex:2026-10-17T12:20:00+02:00 — je Etagen-Gate (85/90/95) ein Schmuckstück für den
+    // Slayer-Shop. Omni wie das Slayer-Set (str = dex = int, Omni-Boost erlaubt über das Präfix
+    // slayer_, itemization-guards.test.ts). Schmuck-Slots sind klassenfrei. Budget = über der
+    // Top-Craft-Stufe (Götzenjuwel) plus Effekt, aber in JEDER BiS-Wertung (balance-envelope-
+    // helpers scoreContribution: damage/crit/haste/tank/dodge/ward) unter dem heutigen Slot-
+    // Spitzenreiter, damit kein Envelope-Pin wandert; die Chase-Drops (Götzen-/Drazhan-Godlies)
+    // bleiben stärker. Namen und Flavor aus design/lore/slayer-tower-lore.md §3.6/§3.7 (Ring,
+    // Amulett); der Mantel nimmt Brennas Vorgänger aus §2.2 auf (Nachzug Lore-Bibel: lore-dev).
+    // Bilder fehlen noch (Emoji-Fallback), Einträge in design/1.3.0-assets-sammlung.md.
+    slayer_turnkey_ring: {
+      id: "slayer_turnkey_ring",
+      name: { en: "The Turnkey's Ring", de: "Der Schließerring" },
+      type: "equipment", stackable: false, icon: "💍",
+      slot: "ring1", rarity: "legendary",
+      modifiers: { str: 5, dex: 5, int: 5, con: 7, lck: 2 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
+      weaponEffect: { type: "antiRegen", chance: 1, magnitude: 0, durationMs: 0 },
+      requirements: { slayer: 85 }, value: 12000,
+      description: {
+        en: "The First Turnkey's ring, gone blind with rust and duty. It opens nothing anymore; it only ever held things shut. A foe that burns, bleeds or suffers poison cannot regenerate while you wear it.",
+        de: "Der Ring des Ersten Schließers, blind geworden von Rost und Pflicht. Er öffnet nichts mehr, er hat immer nur zugehalten. Wer brennt, blutet oder vergiftet ist, regeneriert nicht, solange du ihn trägst.",
+      },
+    },
+    slayer_predecessor_mantle: {
+      id: "slayer_predecessor_mantle",
+      name: { en: "The Predecessor's Mantle", de: "Der Mantel des Vorgängers" },
+      type: "equipment", stackable: false, icon: "🧥",
+      slot: "cape", rarity: "legendary",
+      modifiers: { str: 4, dex: 4, int: 4, con: 6, lck: 1 }, skillBoost: { attack: 3, ranged: 3, magic: 3 },
+      weaponEffect: { type: "desperation", chance: 1, magnitude: 0.3, durationMs: 0, threshold: 0.3 },
+      requirements: { slayer: 90 }, value: 15000,
+      description: {
+        en: "Brenna's predecessor wore it when he went down after something that had escaped. He never came back up, but the mantle turned up on the last stair. Below 30% health you deal 30% more damage.",
+        de: "Brennas Vorgänger trug ihn, als er einer entkommenen Sache hinab folgte. Er kam nie wieder herauf, doch der Mantel lag auf der letzten Treppe. Unter 30 % Leben verursachst du 30 % mehr Schaden.",
+      },
+    },
+    slayer_guest_right: {
+      id: "slayer_guest_right",
+      name: { en: "Guest-Right", de: "Das Gastrecht" },
+      type: "equipment", stackable: false, icon: "📿",
+      slot: "amulet", rarity: "legendary",
+      modifiers: { str: 6, dex: 6, int: 6, con: 8, lck: 2 }, skillBoost: { attack: 4, ranged: 4, magic: 4 },
+      bonus: { hpRegenPerSec: 0.2 },
+      weaponEffect: { type: "vengeance", chance: 1, magnitude: 0.3, durationMs: 0 },
+      requirements: { slayer: 95 }, value: 20000,
+      description: {
+        en: "A flat stone on a cord, colder than the hand that holds it. Its bearer was tolerated once, and some things below remember that. Whoever strikes you breaks guest-right: your next hit deals 30% more damage.",
+        de: "Ein flacher Stein an einer Schnur, kälter als die Hand, die ihn hält. Sein Träger wurde einmal geduldet, und manches da unten erinnert sich daran. Wer dich schlägt, bricht das Gastrecht: Dein nächster Treffer verursacht 30 % mehr Schaden.",
+      },
+    },
     // ── Slayer-Punkte-Sink: Verbrauchsgüter (run6-fix P1 — wiederkehrender Sink) ───────────
     slayer_combat_draught: {
       id: "slayer_combat_draught",
@@ -16026,6 +16076,245 @@ export const content: ContentDB = {
         { itemId: "aetherband_ring", chance: 0.00021, min: 1, max: 1, suffixChance: 0.30 },
       ],
     },
+    // ═══ SLAYER-TURM ETAGE 6–8 (1.3.0, E3) ═══
+    // codex:2026-10-17T11:40:00+02:00 — Turm-Spiegel `tower_<basis>` (Bild-Alias tower_ → Basis-Art,
+    // keine neuen Bilder). Loot/Resist/Inflict/Enrage/Intervall/Familie 1:1 wie die Basis
+    // (Klon-Guard tower-monsters.test.ts). Stärke laut Goal-Prompt E3: Etage 6 ≈ unteres Hochland,
+    // 7 ≈ oberes Hochland, 8 ≈ Götzen-Sanktum (HP/Schaden/effektive Genauigkeit der Welt-Gegenstücke;
+    // die Genauigkeit trägt den MONSTER_ACC_PER_LEVEL-Zuschlag schon in sich, weil L < 150 ihn nicht
+    // automatisch bekommt). Level bewusst 100–107 (Turm-Skala): ≥ GEAR_BAND_START (kein Skill-Band-
+    // Wall im Sim) und ≤ Kampflevel-Cap 99 + WORLD_TASK_LEVEL_MAX_OVER, damit assignTask die neuen
+    // Etagen am Cap überhaupt als Auftrag ziehen kann. XP je Kill auf die Turm-Ertragskurve von
+    // Etage 5 kalibriert (gemessen, s. Kommentar am slayerTower-Eintrag), nicht auf die Welt-Werte.
+    // Bewusst KEINE Spiegel der Sanktum-Wesen (idol_warden/aether_wraith/scale_skarn): deren
+    // Legendary-Zeilen (1–1,5 %) sind auf handgeklickte Dungeon-Läufe getunt, ein frei farmbarer
+    // Turm-Zwilling mit Pflicht-Loot-Parität wäre ein Beute-Leck.
+    tower_charred_doomknight: {
+      id: "tower_charred_doomknight", family: "undead", zone: "slayer_tower",
+      name: { en: "Charred Doomknight", de: "Verkohlter Schicksalsritter" },
+      slayerFloor: 6,
+      level: 100, maxHp: 1450, damage: 112, accuracy: 39, evasion: 5, defense: 135, defenseType: "armor", attackIntervalMs: 3400,
+      resist: ["frost", "bleed"],
+      inflict: { type: "burn", chance: 0.35, magnitude: 1, durationMs: 7000 },
+      enrage: { belowHpPct: 0.25, damageMult: 1.8 },
+      regen: 0.5, xp: 16800, gold: 0,
+      loot: [
+        { itemId: "godiron_ore", chance: 0.3, min: 1, max: 2 },
+        { itemId: "godiron_bar", chance: 0.12, min: 1, max: 1 },
+        { itemId: "forge_ember", chance: 0.4, min: 1, max: 2 },
+        { itemId: "void_essence", chance: 0.15, min: 1, max: 1 },
+        { itemId: "doomknight_cinderblade", chance: 0.00014, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "doomforged_band", chance: 0.0001, min: 1, max: 1, suffixChance: 0.3 },
+      ],
+    },
+    tower_voidhusk_crusher: {
+      id: "tower_voidhusk_crusher", zone: "slayer_tower",
+      name: { en: "Voidhusk Crusher", de: "Leeren-Zerschmetterer" },
+      slayerFloor: 6,
+      level: 101, maxHp: 1400, damage: 110, accuracy: 38, evasion: 4, defense: 120, defenseType: "armor", attackIntervalMs: 3600,
+      resist: ["shock", "burn"],
+      inflict: { type: "burn", chance: 0.3, magnitude: 1, durationMs: 6000 },
+      enrage: { belowHpPct: 0.3, damageMult: 1.65 },
+      regen: 0.4, xp: 17500, gold: 0,
+      loot: [
+        { itemId: "forge_ember", chance: 0.5, min: 1, max: 2 },
+        { itemId: "slag_carapace", chance: 0.25, min: 1, max: 1 },
+        { itemId: "godiron_ore", chance: 0.15, min: 1, max: 1 },
+        { itemId: "void_essence", chance: 0.1, min: 1, max: 1 },
+        { itemId: "slagweave_cape", chance: 0.0005, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "emberheart_amulet", chance: 0.00052, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "voidhusk_deadeye", chance: 0.0011, min: 1, max: 1, suffixChance: 0.3 },
+      ],
+    },
+    tower_gravecliff_specter: {
+      id: "tower_gravecliff_specter", family: "undead", zone: "slayer_tower",
+      name: { en: "Gravecliff Specter", de: "Klippengeist" },
+      slayerFloor: 6,
+      level: 100, maxHp: 660, damage: 118, accuracy: 40, evasion: 9, defense: 110, defenseType: "ward", wardCapacity: 760, attackIntervalMs: 2600,
+      resist: ["bleed", "poison"],
+      inflict: { type: "frost", chance: 0.28, magnitude: 1, durationMs: 5000 },
+      regen: 0.3, xp: 16600, gold: 0,
+      loot: [
+        { itemId: "feather", chance: 0.7, min: 10, max: 20 },
+        { itemId: "aether_essence", chance: 0.2, min: 1, max: 1 },
+        { itemId: "void_essence", chance: 0.08, min: 1, max: 1 },
+        { itemId: "soulopal", chance: 0.05, min: 1, max: 1 },
+        { itemId: "cloudwalker_boots", chance: 0.0005, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "godiron_bar", chance: 0.002, min: 1, max: 1 },
+      ],
+    },
+    tower_pit_spider: {
+      id: "tower_pit_spider", family: "beast", zone: "slayer_tower",
+      name: { en: "Pit Spider", de: "Grubenspinne" },
+      slayerFloor: 6,
+      level: 101, maxHp: 1050, damage: 108, accuracy: 40, evasion: 74, defense: 100, defenseType: "evasion", attackIntervalMs: 2800,
+      inflict: { type: "poison", chance: 0.4, magnitude: 1, durationMs: 8000 },
+      regen: 0.3, xp: 18600, gold: 0,
+      loot: [
+        { itemId: "spider_silk", chance: 0.6, min: 1, max: 3 },
+        { itemId: "deathmoss", chance: 0.25, min: 1, max: 1 },
+      ],
+    },
+    tower_roc_hunter: {
+      id: "tower_roc_hunter", family: "beast", zone: "slayer_tower",
+      name: { en: "Roc Hunter", de: "Roc-Jäger" },
+      slayerFloor: 6,
+      level: 102, maxHp: 1100, damage: 117, accuracy: 41, evasion: 78, defense: 104, defenseType: "evasion", attackIntervalMs: 2600,
+      regen: 0.4, xp: 19300, gold: 0,
+      loot: [
+        { itemId: "feather", chance: 1, min: 5, max: 12 },
+        { itemId: "raw_roc_drumstick", chance: 0.35, min: 1, max: 2 },
+        { itemId: "scarred_hide", chance: 0.3, min: 1, max: 1 },
+        { itemId: "storm_essence", chance: 0.12, min: 1, max: 1 },
+        { itemId: "stormhide_helm", chance: 0.0008, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "skygrip_gauntlets", chance: 0.0008, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "skytalon_recurve", chance: 0.0008, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "bowstring", chance: 0.0025, min: 1, max: 1 },
+      ],
+    },
+    tower_roc_storm: {
+      id: "tower_roc_storm", family: "beast", zone: "slayer_tower",
+      name: { en: "Storm Roc", de: "Sturm-Roc" },
+      slayerFloor: 7,
+      level: 104, maxHp: 1650, damage: 134, accuracy: 47, evasion: 74, defense: 111, defenseType: "evasion", attackIntervalMs: 2600,
+      inflict: { type: "shock", chance: 0.3, magnitude: 0.3, durationMs: 4000 },
+      enrage: { belowHpPct: 0.3, damageMult: 1.7 },
+      regen: 0.4, xp: 38000, gold: 0,
+      loot: [
+        { itemId: "feather", chance: 1, min: 12, max: 24 },
+        { itemId: "storm_essence", chance: 0.2, min: 1, max: 2 },
+        { itemId: "aether_essence", chance: 0.12, min: 1, max: 2 },
+        { itemId: "storm_mantle", chance: 0.0006, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "stormcore_pendant", chance: 0.0002, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "stormcrest_staff", chance: 0.0002, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "aetherium_bar", chance: 0.003, min: 1, max: 1 },
+      ],
+    },
+    tower_tide_siren: {
+      id: "tower_tide_siren", zone: "slayer_tower",
+      name: { en: "Tide Siren", de: "Gezeitensirene" },
+      slayerFloor: 7,
+      level: 103, maxHp: 950, damage: 140, accuracy: 48, evasion: 8, defense: 118, defenseType: "ward", wardCapacity: 1150, attackIntervalMs: 2800,
+      inflict: { type: "shock", chance: 0.25, magnitude: 0.25, durationMs: 4000 },
+      regen: 0.3, xp: 29600, gold: 0,
+      loot: [
+        { itemId: "raw_salmon", chance: 0.8, min: 1, max: 2 },
+        { itemId: "scarred_hide", chance: 0.25, min: 1, max: 1 },
+        { itemId: "storm_essence", chance: 0.12, min: 1, max: 1 },
+        { itemId: "tidewoven_leggings", chance: 0.0008, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "tidewalker_boots", chance: 0.0008, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "mariner_cloak", chance: 0.0006, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "siren_shockstaff", chance: 0.0008, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "void_rune", chance: 0.004, min: 2, max: 2 },
+        { itemId: "tidewrack_collar", chance: 0.06, min: 1, max: 1 },
+      ],
+    },
+    tower_abyssal_tide_serpent: {
+      id: "tower_abyssal_tide_serpent", family: "beast", zone: "slayer_tower",
+      name: { en: "Abyssal Tide Serpent", de: "Abyssale Gezeitenschlange" },
+      slayerFloor: 7,
+      level: 105, maxHp: 1750, damage: 138, accuracy: 49, evasion: 74, defense: 115, defenseType: "evasion", attackIntervalMs: 2800,
+      resist: ["burn", "bleed"],
+      inflict: { type: "frost", chance: 0.32, magnitude: 1, durationMs: 6000 },
+      regen: 0.4, xp: 41000, gold: 0,
+      loot: [
+        { itemId: "raw_lobster", chance: 0.6, min: 1, max: 3 },
+        { itemId: "scaled_leather", chance: 0.35, min: 1, max: 2 },
+        { itemId: "aether_essence", chance: 0.2, min: 1, max: 1 },
+        { itemId: "void_essence", chance: 0.12, min: 1, max: 1 },
+        { itemId: "abyssal_signet", chance: 0.0005, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "abyssal_tide_bow", chance: 0.0005, min: 1, max: 1, suffixChance: 0.3 },
+      ],
+    },
+    tower_highland_wyvern: {
+      id: "tower_highland_wyvern", family: "dragonkin", zone: "slayer_tower",
+      name: { en: "Highland Wyvern", de: "Hochland-Wyvern" },
+      slayerFloor: 7,
+      level: 103, maxHp: 2100, damage: 140, accuracy: 50, evasion: 8, defense: 120, defenseType: "armor", attackIntervalMs: 2500,
+      inflict: { type: "bleed", chance: 0.3, magnitude: 1, durationMs: 5000 },
+      enrage: { belowHpPct: 0.3, damageMult: 1.6 },
+      regen: 0.4, xp: 30900, gold: 0,
+      loot: [
+        { itemId: "feather", chance: 1, min: 10, max: 20 },
+        { itemId: "raw_wyvern_haunch", chance: 0.4, min: 1, max: 2 },
+        { itemId: "storm_essence", chance: 0.22, min: 1, max: 2 },
+        { itemId: "aether_essence", chance: 0.15, min: 1, max: 2 },
+        { itemId: "wyvern_scale", chance: 0.2, min: 1, max: 2 },
+        { itemId: "raw_dragonhide", chance: 0.1, min: 1, max: 1 },
+        { itemId: "wyvernscale_greaves", chance: 0.0002, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "wyvernscale_aegis", chance: 0.0002, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "aetherium_bar", chance: 0.003, min: 3, max: 3 },
+      ],
+    },
+    tower_roc_elder: {
+      id: "tower_roc_elder", family: "beast", zone: "slayer_tower",
+      name: { en: "Roc Elder", de: "Roc-Ältester" },
+      slayerFloor: 8,
+      level: 106, maxHp: 1850, damage: 155, accuracy: 57, evasion: 72, defense: 118, defenseType: "evasion", attackIntervalMs: 2800,
+      regen: 0.5, xp: 45200, gold: 0,
+      loot: [
+        { itemId: "feather", chance: 1, min: 8, max: 16 },
+        { itemId: "storm_essence", chance: 0.18, min: 1, max: 2 },
+        { itemId: "aether_essence", chance: 0.08, min: 1, max: 1 },
+        { itemId: "soulopal", chance: 0.08, min: 1, max: 1 },
+        { itemId: "skybreaker_greatsword", chance: 0.0004, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "aetherium_bar", chance: 0.003, min: 3, max: 3 },
+      ],
+    },
+    tower_frost_hexer: {
+      id: "tower_frost_hexer", family: "humanoid", zone: "slayer_tower",
+      name: { en: "Frost Hexer", de: "Eishexer" },
+      slayerFloor: 8,
+      level: 106, maxHp: 900, damage: 170, accuracy: 62, evasion: 6, defense: 130, defenseType: "ward", wardCapacity: 1750, attackIntervalMs: 3200,
+      resist: ["frost"],
+      regen: 0.4, xp: 42000, gold: 0,
+      loot: [
+        { itemId: "frost_essence", chance: 0.5, min: 1, max: 3 },
+        { itemId: "aether_essence", chance: 0.2, min: 1, max: 1 },
+        { itemId: "soulopal", chance: 0.1, min: 1, max: 1 },
+        { itemId: "frostplate_greaves", chance: 0.0004, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "frosthex_wand", chance: 0.0004, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "void_rune", chance: 0.003, min: 3, max: 3 },
+        { itemId: "hexer_frostweave_gloves", chance: 0.0004, min: 1, max: 1, suffixChance: 0.3 },
+      ],
+    },
+    tower_deep_kraken: {
+      id: "tower_deep_kraken", family: "beast", zone: "slayer_tower",
+      name: { en: "Deep Kraken", de: "Tiefenkrake" },
+      slayerFloor: 8,
+      level: 107, maxHp: 1900, damage: 152, accuracy: 63, evasion: 70, defense: 125, defenseType: "evasion", attackIntervalMs: 3000,
+      enrage: { belowHpPct: 0.3, damageMult: 1.6 },
+      regen: 0.4, xp: 50100, gold: 0,
+      loot: [
+        { itemId: "raw_lobster", chance: 0.85, min: 1, max: 3 },
+        { itemId: "scaled_leather", chance: 0.3, min: 1, max: 2 },
+        { itemId: "frost_essence", chance: 0.15, min: 1, max: 1 },
+        { itemId: "aether_essence", chance: 0.08, min: 1, max: 1 },
+        { itemId: "soulopal", chance: 0.06, min: 1, max: 1 },
+        { itemId: "krakenhide_cuirass", chance: 0.0007, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "kraken_maw", chance: 0.0007, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "pearl_of_the_deep", chance: 0.00071, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "titanium_bar", chance: 0.004, min: 3, max: 3 },
+      ],
+    },
+    tower_void_titan: {
+      id: "tower_void_titan", zone: "slayer_tower",
+      name: { en: "Void Titan", de: "Leeren-Titan" },
+      slayerFloor: 8,
+      level: 107, maxHp: 2500, damage: 168, accuracy: 60, evasion: 9, defense: 150, defenseType: "armor", attackIntervalMs: 3200,
+      resist: ["shock", "poison"],
+      inflict: { type: "shock", chance: 0.3, magnitude: 0.32, durationMs: 5000 },
+      enrage: { belowHpPct: 0.3, damageMult: 1.75 },
+      regen: 0.5, xp: 45200, gold: 0,
+      loot: [
+        { itemId: "void_essence", chance: 0.4, min: 1, max: 2 },
+        { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
+        { itemId: "godiron_ore", chance: 0.2, min: 1, max: 2 },
+        { itemId: "voidwing_greatbow", chance: 0.0002, min: 1, max: 1, suffixChance: 0.3 },
+        { itemId: "void_titan_mantle", chance: 0.00016, min: 1, max: 1, suffixChance: 0.3 },
+      ],
+    },
+    // ═══ ENDE SLAYER-TURM ETAGE 6–8 ═══
   },
   // ── Shop-Purge (CEO 2026-07-11): "Shop ist primär zum Verkaufen und zum Kauf von fundamentalen
   //    Items" — KEINE Shortcuts mehr, die eine Skill-Kette duplizieren. Raus: alle Barren
@@ -16289,6 +16578,9 @@ export const content: ContentDB = {
     { id: "ach_paragon_floor_20", name: { en: "Peak Contender", de: "Gipfelanwärter" }, description: { en: "Reach floor 20 of the Paragon Spire.", de: "Erreiche Etage 20 des Paragonturms." }, icon: "🗼", category: "combat", rarity: "legendary", condition: { type: "paragon_floor", count: 20 } },
     { id: "ach_paragon_floor_25", name: { en: "Sky's Edge", de: "Am Rand des Himmels" }, description: { en: "Reach floor 25 of the Paragon Spire.", de: "Erreiche Etage 25 des Paragonturms." }, icon: "🗼", category: "combat", rarity: "legendary", condition: { type: "paragon_floor", count: 25 } },
     { id: "ach_paragon_floor_30", name: { en: "Beyond the Ash-Sky", de: "Jenseits des Aschehimmels" }, description: { en: "Reach floor 30 of the Paragon Spire.", de: "Erreiche Etage 30 des Paragonturms." }, icon: "🗼", category: "combat", rarity: "legendary", condition: { type: "paragon_floor", count: 30 } },
+    // codex:2026-10-17T12:30:00+02:00 — 1.3.0 E4: Meilensteine zu den neuen Truhenstufen 50/100 (intern, kein Steam).
+    { id: "ach_paragon_floor_50", name: { en: "Higher Than Birds Fly", de: "Höher, als Vögel fliegen" }, description: { en: "Reach floor 50 of the Paragon Spire.", de: "Erreiche Etage 50 des Paragonturms." }, icon: "🗼", category: "combat", rarity: "legendary", condition: { type: "paragon_floor", count: 50 } },
+    { id: "ach_paragon_floor_100", name: { en: "The Hundredth Floor", de: "Die hundertste Etage" }, description: { en: "Reach floor 100 of the Paragon Spire.", de: "Erreiche Etage 100 des Paragonturms." }, icon: "🗼", category: "combat", rarity: "legendary", condition: { type: "paragon_floor", count: 100 } },
 
     // -- Combat: Tode (versteckt, Audit § 2.6) --
     { id: "ach_deaths_1", name: { en: "Ash to Ash", de: "Asche zu Asche" }, description: { en: "Fall in battle for the first time.", de: "Falle zum ersten Mal im Kampf." }, category: "combat", rarity: "common", hidden: true, condition: { type: "deaths", count: 1 } },
@@ -16321,14 +16613,21 @@ export const content: ContentDB = {
     // -- Exploration: Bestiarium gesamt (Steam: THE_WHOLE_BESTIARY = ach_bestiary_all) --
     { id: "ach_bestiary_25", name: { en: "Field Notes", de: "Feldnotizen" }, description: { en: "Defeat 25 different creatures.", de: "Besiege 25 verschiedene Wesen." }, icon: "📓", category: "exploration", rarity: "rare", condition: { type: "monsters_discovered", count: 25 } },
     { id: "ach_bestiary_50", name: { en: "Half the Bestiary", de: "Halbes Bestiarium" }, description: { en: "Defeat 50 different creatures.", de: "Besiege 50 verschiedene Wesen." }, icon: "📓", category: "exploration", rarity: "rare", condition: { type: "monsters_discovered", count: 50 } },
-    { id: "ach_bestiary_all", name: { en: "The Whole Bestiary", de: "Das ganze Bestiarium" }, description: { en: "Defeat every creature in the bestiary at least once.", de: "Besiege jedes Wesen im Bestiarium mindestens einmal." }, icon: "📕", category: "exploration", rarity: "legendary", condition: { type: "monsters_discovered", count: 105 } },
+    // codex:2026-10-17T12:40:00+02:00 — 105 → 118: die 13 Turm-Spiegel der Etagen 6–8 (1.3.0 E3) sind
+    // eigene Bestiarium-Einträge; zone-bestiary-dungeon-variants.test.ts verlangt count = sichtbare Wesen.
+    // Folge: der Steam-Erfolg THE_WHOLE_BESTIARY braucht jetzt Slayer 95 (Etage 8). Bereits freigeschaltet bleibt freigeschaltet.
+    { id: "ach_bestiary_all", name: { en: "The Whole Bestiary", de: "Das ganze Bestiarium" }, description: { en: "Defeat every creature in the bestiary at least once.", de: "Besiege jedes Wesen im Bestiarium mindestens einmal." }, icon: "📕", category: "exploration", rarity: "legendary", condition: { type: "monsters_discovered", count: 118 } },
 
     // -- Exploration: Slayer-Turm-Etagen (Name = Etagenname; Steam: THE_ABYSSAL_THRONE = ach_slayer_floor_5) --
-    { id: "ach_slayer_floor_1", name: { en: "The Plague Chambers", de: "Die Pestkammern" }, description: { en: "Slay a creature on floor 1 of the The Slayer Tower.", de: "Erlege ein Wesen auf Etage 1 des Der Slayer-Turms." }, category: "exploration", rarity: "common", condition: { type: "slayer_floor", count: 1 } },
-    { id: "ach_slayer_floor_2", name: { en: "The Mirror Halls", de: "Die Spiegelhallen" }, description: { en: "Slay a creature on floor 2 of the The Slayer Tower.", de: "Erlege ein Wesen auf Etage 2 des Der Slayer-Turms." }, category: "exploration", rarity: "uncommon", condition: { type: "slayer_floor", count: 2 } },
-    { id: "ach_slayer_floor_3", name: { en: "The Forge Abyss", de: "Die Schmiedeabgründe" }, description: { en: "Slay a creature on floor 3 of the The Slayer Tower.", de: "Erlege ein Wesen auf Etage 3 des Der Slayer-Turms." }, category: "exploration", rarity: "rare", condition: { type: "slayer_floor", count: 3 } },
-    { id: "ach_slayer_floor_4", name: { en: "The Whispering Void", de: "Die Flüsternde Leere" }, description: { en: "Slay a creature on floor 4 of the The Slayer Tower.", de: "Erlege ein Wesen auf Etage 4 des Der Slayer-Turms." }, category: "exploration", rarity: "rare", condition: { type: "slayer_floor", count: 4 } },
-    { id: "ach_slayer_floor_5", name: { en: "The Abyssal Throne", de: "Der Abyssale Thron" }, description: { en: "Slay a creature on floor 5 of the The Slayer Tower.", de: "Erlege ein Wesen auf Etage 5 des Der Slayer-Turms." }, category: "exploration", rarity: "epic", condition: { type: "slayer_floor", count: 5 } },
+    { id: "ach_slayer_floor_1", name: { en: "The Plague Chambers", de: "Die Pestkammern" }, description: { en: "Slay a creature on floor 1 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 1 des Slayer-Turms." }, category: "exploration", rarity: "common", condition: { type: "slayer_floor", count: 1 } },
+    { id: "ach_slayer_floor_2", name: { en: "The Mirror Halls", de: "Die Spiegelhallen" }, description: { en: "Slay a creature on floor 2 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 2 des Slayer-Turms." }, category: "exploration", rarity: "uncommon", condition: { type: "slayer_floor", count: 2 } },
+    { id: "ach_slayer_floor_3", name: { en: "The Forge Abyss", de: "Die Schmiedeabgründe" }, description: { en: "Slay a creature on floor 3 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 3 des Slayer-Turms." }, category: "exploration", rarity: "rare", condition: { type: "slayer_floor", count: 3 } },
+    { id: "ach_slayer_floor_4", name: { en: "The Whispering Void", de: "Die Flüsternde Leere" }, description: { en: "Slay a creature on floor 4 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 4 des Slayer-Turms." }, category: "exploration", rarity: "rare", condition: { type: "slayer_floor", count: 4 } },
+    { id: "ach_slayer_floor_5", name: { en: "The Abyssal Throne", de: "Der Abyssale Thron" }, description: { en: "Slay a creature on floor 5 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 5 des Slayer-Turms." }, category: "exploration", rarity: "epic", condition: { type: "slayer_floor", count: 5 } },
+    // codex:2026-10-17T12:30:00+02:00 — 1.3.0 E3: Etage 6–8, interne Erfolge (Steam-Set bleibt eingefroren).
+    { id: "ach_slayer_floor_6", name: { en: "The Unwritten Cells", de: "Die Unverzeichneten Zellen" }, description: { en: "Slay a creature on floor 6 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 6 des Slayer-Turms." }, category: "exploration", rarity: "epic", condition: { type: "slayer_floor", count: 6 } },
+    { id: "ach_slayer_floor_7", name: { en: "The Last Stair", de: "Die Letzte Treppe" }, description: { en: "Slay a creature on floor 7 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 7 des Slayer-Turms." }, category: "exploration", rarity: "legendary", condition: { type: "slayer_floor", count: 7 } },
+    { id: "ach_slayer_floor_8", name: { en: "The First Dark", de: "Das Erste Dunkel" }, description: { en: "Slay a creature on floor 8 of the Slayer Tower.", de: "Erlege ein Wesen auf Etage 8 des Slayer-Turms." }, category: "exploration", rarity: "legendary", condition: { type: "slayer_floor", count: 8 } },
 
     // -- Exploration: New Haven (Steam: NEW_HAVEN_RISES = ach_camp_levels_45) --
     { id: "ach_camp_first", name: { en: "First Stake", de: "Erster Pfahl" }, description: { en: "Raise your first building in New Haven.", de: "Errichte dein erstes Gebäude in New Haven." }, icon: "🏕", category: "exploration", rarity: "common", condition: { type: "camp_levels", count: 1 } },
@@ -16816,6 +17115,50 @@ export const content: ContentDB = {
           { itemId: "idolbound_signet", chance: 0.0096, min: 1, max: 1, suffixChance: 0.30 },
           { itemId: "aetherweave_leggings", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
           { itemId: "idolstep_sabatons", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 },
+        ],
+      },
+      // codex:2026-10-17T12:45:00+02:00 — 1.3.0 E4: drei Stufen über Etage 20 (Chef-Vorschlag 30/50/100).
+      // Jede Stufe rollt ZUSÄTZLICH zu allen darunter (paragon.ts rollParagonChest) und trägt die
+      // Chase-Leiter eine Stufe höher (Rare-Drop-Regel): E20 = Götzen-Legendaries der Sanktum-Truhe,
+      // E30 = Godlies des Letzten Götzen, E50 = Drazhans Godlies + Götzen-Ägide/-Mantel, E100 = alle
+      // Spitzen-Godlies mit spürbarer Chance. Nur Bestands-Items (keine neuen Bilder, Wiring-Audit
+      // kennt die Paragon-Truhe nicht als Quelle). Einordnung: mit der heutigen Formel (HP ×1,12 je
+      // Etage) bricht selbst der BiS-Tank bei E25 (design/balance-paragon-calibration.md) — E30+
+      // ist Prestige-Horizont, kein Farm-Pfad; die Chancen sind darauf und nicht auf Massen-Clears getunt.
+      {
+        minFloor: 30,
+        loot: [
+          { itemId: "idol_shard", chance: 1.0, min: 2, max: 4 },
+          { itemId: "idol_heart", chance: 0.25, min: 1, max: 1 },
+          { itemId: "last_judgement", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "last_vengeance", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "last_condemnation", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "eye_of_the_idol", chance: 0.012, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "sunder_crown", chance: 0.004, min: 1, max: 1, suffixChance: 0.30 },
+        ],
+      },
+      {
+        minFloor: 50,
+        loot: [
+          { itemId: "idol_heart", chance: 1.0, min: 1, max: 1 },
+          { itemId: "onyx", chance: 1.0, min: 2, max: 3 },
+          { itemId: "crownless_blade", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "sevenfold_crown_chain", chance: 0.006, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "idol_aegis", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "last_idol_mantle", chance: 0.01, min: 1, max: 1, suffixChance: 0.30 },
+        ],
+      },
+      {
+        minFloor: 100,
+        loot: [
+          { itemId: "idol_heart", chance: 1.0, min: 2, max: 3 },
+          { itemId: "soulopal", chance: 1.0, min: 4, max: 8 },
+          { itemId: "godiron_bar", chance: 1.0, min: 3, max: 5 },
+          { itemId: "crownless_blade", chance: 0.04, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "sevenfold_crown_chain", chance: 0.04, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "idol_aegis", chance: 0.04, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "last_idol_mantle", chance: 0.04, min: 1, max: 1, suffixChance: 0.30 },
+          { itemId: "sunder_crown", chance: 0.04, min: 1, max: 1, suffixChance: 0.30 },
         ],
       },
     ],
@@ -20161,6 +20504,35 @@ export const content: ContentDB = {
       slayerLevelRequired: 80,
       monsters: ["dread_knight", "soul_flayer", "void_herald", "abyssal_devourer", "tower_roc_void"],
     },
+    // codex:2026-10-17T11:40:00+02:00 — 1.3.0 E3: Etage 6–8 in Endgame-Stärke (Monster-Block
+    // „SLAYER-TURM ETAGE 6–8" oben). Namen nach design/lore/slayer-tower-lore.md: §3.6 Zellen,
+    // §3.7 Erstes Dunkel als unterste Etage (der Wirt „ist der Grund, warum der Turm nach unten ein
+    // Ende hat"); die Letzte Treppe dazwischen nimmt Brennas Zeile aus §3.7 auf („Bis zur letzten
+    // Treppe sperren wir ein"). Gates 85/90/95 im Fünferschritt nach der 80: Slayer 99 bleibt der
+    // Meisterring, die Etage-8-Aufträge zahlen noch auf den Weg dorthin ein.
+    // Messung (Kapitel-20-Craft-Loadout aus paragon-corridor.test.ts, je Stil 20 Sim-Min.):
+    // Etage 5 ≈ 8–11 s/Kill ≈ 800k XP/h; Hochland-Welt 100–300 s/Kill; Etage 6 jetzt 75–150 s,
+    // Etage 7 120–300 s, Etage 8 150–300 s (Nahkampf/Magie; Fernkampf stirbt ab Etage 7 wie in
+    // der Welt, s. E5-Waffenparität). XP je Kill = Ziel 600k/650k/700k XP/h (Etage 6/7/8) mal der
+    // gedämpften Kill-Zeit — wer eine Etage freischaltet, levelt Slayer nicht spürbar langsamer.
+    {
+      floor: 6,
+      name: { en: "The Unwritten Cells", de: "Die Unverzeichneten Zellen" },
+      slayerLevelRequired: 85,
+      monsters: ["tower_charred_doomknight", "tower_voidhusk_crusher", "tower_gravecliff_specter", "tower_pit_spider", "tower_roc_hunter"],
+    },
+    {
+      floor: 7,
+      name: { en: "The Last Stair", de: "Die Letzte Treppe" },
+      slayerLevelRequired: 90,
+      monsters: ["tower_roc_storm", "tower_tide_siren", "tower_abyssal_tide_serpent", "tower_highland_wyvern"],
+    },
+    {
+      floor: 8,
+      name: { en: "The First Dark", de: "Das Erste Dunkel" },
+      slayerLevelRequired: 95,
+      monsters: ["tower_roc_elder", "tower_frost_hexer", "tower_deep_kraken", "tower_void_titan"],
+    },
   ],
 
   // sweep6-batchE P2-1: Preis-Rekalibrierung. Die gesamte Preisliste stammte aus der 4-Master-Ära
@@ -20201,6 +20573,15 @@ export const content: ContentDB = {
     // erreichbar über Monster-Loot (Etage 1/3), die Helm-Rezeptkette (forge_tower_compound) bleibt
     // damit produzierbar.
     { itemId: "abyssal_core",     cost: 70,  slayerLevelRequired: 80 },
+    // ── Etage 6–8: Punkte-Uniques (1.3.0 E3) ────────────────────────────────────
+    // codex:2026-10-17T12:20:00+02:00 — Langzeit-Sparziele über dem Helm, je Etagen-Gate eins.
+    // Preise bewusst unter dem Spec-Vorschlag 1.500/2.500/4.000 (design/slayer-tower-rework-
+    // balance.md §4.4, kalkuliert mit 35–40 Pkt/h): Aufträge auf Etage 6–8 dauern pro Kill
+    // 10–40× länger als auf Etage 5, die Punkte je Auftrag bleiben flach — das Endgame-Einkommen
+    // sinkt. Nachmessen, sobald die Punkte-Skalierung (logic-dev) entschieden ist.
+    { itemId: "slayer_turnkey_ring",       cost: 1000, slayerLevelRequired: 85 },
+    { itemId: "slayer_predecessor_mantle", cost: 1500, slayerLevelRequired: 90 },
+    { itemId: "slayer_guest_right",        cost: 2200, slayerLevelRequired: 95 },
     // ── Tränke (wiederkehrende Senke) ────────────────────────────────────────
     // Keine maxPurchases → unbegrenzt kaufbar. Stufenleiter 12→28→110 Pkt (war 50→120→500, ÷~4,3),
     // klar differenziert (echte Buff-Werte, s. Item-Defs — P3-3 Text-Fix):
