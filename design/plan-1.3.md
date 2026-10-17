@@ -124,3 +124,9 @@ ohne Migrationslast. Das Kompat-Archiv reicht nur bis v86, dem echten Live-Stand
 Hinweis: Codex' Interface Reforged und die 56 ersetzten Bilder (beide 09./10.09.) gehören nicht zu
 1.2.4. Das Interface wird ohnehin im UI-Fundament überarbeitet; die Bilder hat der Chef am 10.09.
 einzeln abgenommen.
+
+## Chef-Entscheide 17.10. (Ü2, Rest)
+
+- Slayer-Seite bleibt ohne große Brenna-Porträtspalte.
+- Gold im Laden bleibt doppelt (Statusleiste + Laden-Kopf).
+- Abnahme 1.3.0 im Testspiel: steht aus (Chef testet noch).
