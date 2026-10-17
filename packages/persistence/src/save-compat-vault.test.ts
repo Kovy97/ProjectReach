@@ -101,6 +101,11 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  *
  * Das v85-Fixture wurde durch die reale Kette neu gepinnt (Präzedenz: synthetisch). Befüllte Vorlagen
  * → Kits (Items aus dem Inventar) deckt equip-kits-persistence.test.ts ab.
+ *
+ * claude:2026-10-17T22:40:00+02:00 — SAVE 87 (1.3.0; v87+v88 aus 1.2.4 zusammengelegt, beide nie live):
+ * `v87-synthetic-1.3.0.json` ist SYNTHETISCH (createGame + serialize): Bankfächer MIT Lücken (`bankOrder`),
+ * belegter vierter Werkzeug-Slot `tool4`, Rabenfracht-Sendung (`kind: "transfer"`) und Kills auf neue
+ * Götzenhallen-Wesen. Beim 1.3.0-Release durch einen echten Spielstand ergänzen.
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
