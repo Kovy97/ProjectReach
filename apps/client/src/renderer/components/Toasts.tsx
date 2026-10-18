@@ -17,7 +17,8 @@ import { type CombatFxLevel, getCombatFxLevel } from "../util/uiPrefs";
 import { getUiIcon } from "../uiIcons";
 import { getCampImage } from "../campArt";
 import { getItemImage } from "../items";
-import { formatNum, romanLevel } from "../util/format";
+// claude:2026-10-19T05:10:00+02:00 — Droprate über den gemeinsamen, sprachabhängigen Formatierer (EN zeigte "0,00 %").
+import { formatDropPct, formatNum, romanLevel } from "../util/format";
 import { msUntilMidnight, todayStamp } from "../util/dayStamp";
 import { tavernGuestDef, tavernRefresh } from "../tavernApi";
 import { getEliteMonsterSrc } from "../monsters";
@@ -1437,8 +1438,3 @@ function dropChanceFor(itemId: string): number | null {
   return best;
 }
 
-function formatDropPct(chance: number): string {
-  const pct = chance * 100;
-  const digits = pct >= 10 ? 0 : pct >= 1 ? 1 : 2;
-  return `${pct.toFixed(digits).replace(".", ",")} %`;
-}
