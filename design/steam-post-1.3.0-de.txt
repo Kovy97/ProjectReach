@@ -104,8 +104,9 @@ OBERFLÄCHE
 - Überarbeitet: die Slayer-Seite, der Laden und der Laden für Aufgabenmarken. Dein Kampfstil sitzt
   jetzt in der Seitenleiste, nur einen Klick vom Wechsel entfernt.
 - Ein neues Kampf-HUD und ein neuer Rückkehr-Bildschirm.
-- Ein neuer Steinhintergrund hinter jeder Seite, und alle neuen Kreaturen, Waffen, Bäume und Fische
-  kommen mit eigenen gemalten Bildern.
+- Ein neuer gemalter Look: frische Texturen und Rahmen für Knöpfe, Karten und Flächen, ein neuer
+  Steinhintergrund hinter jeder Seite und eine aufgeräumte Charakterseite mit größerem Porträt. Alle
+  neuen Kreaturen, Waffen, Bäume und Fische kommen mit eigenen gemalten Bildern.
 - Ruhigere, aufgeräumtere Seiten: Rahmen zeigen an ihren Kanten keinen hellen Ring mehr, weniger
   Rahmen stecken in anderen Rahmen, und Seitenköpfe folgen einem einheitlichen Aufbau. Die
   Slayer-Seite hat jetzt Tabs für den Belohnungs-Shop und den Jägerkodex.

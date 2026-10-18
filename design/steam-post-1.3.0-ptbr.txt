@@ -104,8 +104,9 @@ INTERFACE
 - Página do Caçador, loja e loja de fichas renovadas. Seu estilo de combate agora fica na barra
   lateral, a um clique de ser trocado.
 - Um novo HUD de combate e uma nova tela de retorno.
-- Um novo fundo de pedra atrás de cada página, e cada criatura, arma, árvore e peixe novos chegam
-  com sua própria arte pintada.
+- Um novo visual pintado: texturas e molduras novas para botões, cartas e painéis, um novo fundo de
+  pedra atrás de cada página e uma página de personagem mais organizada, com um retrato maior. Cada
+  criatura, arma, árvore e peixe novos chegam com sua própria arte pintada.
 - Páginas mais calmas e limpas: as molduras não mostram mais um anel claro nas bordas, há menos
   molduras dentro de outras molduras e os cabeçalhos das páginas seguem um único layout. A página do
   Caçador agora tem abas para a loja de recompensas e o Livro do Caçador.

@@ -107,8 +107,10 @@ INTERFACE
 - Page du Chasseur, boutique et boutique des jetons remaniées. Ton style de combat se trouve
   maintenant dans la barre latérale, à un clic d'en changer.
 - Un nouveau HUD de combat et un nouvel écran de retour.
-- Un nouveau fond de pierre derrière chaque page, et chaque nouvelle créature, arme, arbre et
-  poisson arrive avec sa propre illustration peinte.
+- Un nouveau style peint : de nouvelles textures et de nouveaux cadres pour les boutons, les cartes
+  et les panneaux, un nouveau fond de pierre derrière chaque page et une fiche de personnage plus
+  claire avec un portrait plus grand. Chaque nouvelle créature, arme, arbre et poisson arrive avec
+  sa propre illustration peinte.
 - Des pages plus calmes et plus nettes : les cadres n'affichent plus d'anneau clair sur leurs bords,
   moins de cadres sont imbriqués dans d'autres cadres, et les en-têtes de page suivent une seule
   mise en page. La page du Chasseur a désormais des onglets pour la boutique de récompenses et le
