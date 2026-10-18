@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knopf-Editor</title>
+<!-- claude:2026-10-19T02:00:00+02:00 — Chef 19.10.: Dev-Tool „Button-Textur-Editor“. Hintergrund + Rahmen wählen,
+     Textur-Größe/Drehung/Farbe einstellen, als JSON-Knopf speichern und an Claude übergeben (lokal öffnen). -->
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<style>
+  :root { --gold: #e4cc83; --gold-hi: #ffe29b; --line: rgba(216, 184, 112, 0.22); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0d0e10; color: var(--gold); font-family: Georgia, serif; font-size: 14px; }
+  .app { display: grid; grid-template-columns: 360px 1fr; min-height: 100vh; }
+  aside { background: #131418; border-right: 1px solid var(--line); padding: 14px 16px 30px; overflow-y: auto; max-height: 100vh; position: sticky; top: 0; }
+  h1 { font-family: "IM Fell English SC", serif; font-weight: 400; font-size: 24px; margin: 0 0 4px; }
+  .hint { color: #a99b7c; font-size: 12.5px; margin: 0 0 10px; }
+  fieldset { border: 1px solid var(--line); margin: 12px 0 0; padding: 8px 10px 10px; }
+  legend { font-family: "IM Fell English SC", serif; font-size: 17px; padding: 0 6px; color: var(--gold-hi); }
+  .f { display: grid; grid-template-columns: 112px 1fr 52px; gap: 6px; align-items: center; margin: 6px 0; }
+  .f > span:last-child { text-align: right; color: #cdbb8e; font-variant-numeric: tabular-nums; }
+  .f2 { display: grid; grid-template-columns: 112px 1fr; gap: 6px; align-items: center; margin: 6px 0; }
+  select, input[type=text], input[type=file], textarea { width: 100%; background: #0c0d10; color: var(--gold); border: 1px solid var(--line); padding: 4px 6px; font: inherit; font-size: 13px; }
+  input[type=range] { width: 100%; accent-color: #c9a35b; }
+  input[type=color] { width: 44px; height: 24px; border: 1px solid var(--line); background: none; padding: 0; }
+  .quick { display: flex; gap: 4px; margin: 2px 0 4px 118px; }
+  .quick button, .bar button { font: inherit; font-size: 12.5px; color: var(--gold); background: #1c1d22; border: 1px solid var(--line); padding: 3px 8px; cursor: pointer; }
+  .quick button:hover, .bar button:hover { background: #2a2a30; }
+  .bar { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .bar button.main { background: #4a3a1c; border-color: #c9a35b; color: var(--gold-hi); font-size: 14px; padding: 6px 12px; }
+  textarea { height: 150px; font-family: Consolas, monospace; font-size: 11.5px; margin-top: 8px; }
+  main { padding: 18px 22px 40px; }
+  .stagebar { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .stage { padding: 22px; border: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 22px 26px; align-items: flex-start; }
+  .stage.stone { background: linear-gradient(rgba(14,14,16,.6), rgba(14,14,16,.6)), url("../../apps/client/src/renderer/assets/bg_tileable_stone_dark.webp") 0 0 / 512px repeat; }
+  .stage.dark { background: #15161a; }
+  .stage.light { background: #8b8378; }
+  .item { display: flex; flex-direction: column; gap: 6px; }
+  .item small { color: #a99b7c; font-size: 12px; }
+  /* Knopf: Hintergrund-Ebene (gedreht/gefiltert) + Schatten + Rahmen oben drauf, alles innerhalb der Box. */
+  .kbtn { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-family: "IM Fell English SC", serif; color: var(--txt, var(--gold)); font-size: var(--fs, 20px); user-select: none; }
+  .kbtn .bg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+    background-image: var(--tex); background-size: var(--tile, 640px) var(--tile, 640px); background-position: var(--ox, 0px) var(--oy, 0px);
+    filter: brightness(var(--br, 1)) contrast(var(--ct, 1)) saturate(var(--sa, 1)) hue-rotate(var(--hue, 0deg)); }
+  .kbtn .tint { position: absolute; inset: 0; background: var(--tintc, #000); opacity: var(--tinto, 0); mix-blend-mode: var(--blend, multiply); }
+  .kbtn .shade { position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(168,119,56, var(--glow, .17)), transparent 75%),
+                linear-gradient(rgba(6,7,8, var(--dt, .06)), rgba(2,3,4, var(--db, .28))); }
+  .kbtn .frame { position: absolute; inset: calc(var(--outset, 0px) * -1); border: var(--fw, 12px) solid transparent;
+    border-image: var(--frame) var(--slice, 96) / var(--fw, 12px) var(--frep, round); pointer-events: none; }
+  .kbtn.noframe .frame { display: none; }
+  .kbtn .lbl { position: relative; padding: 0 16px; text-shadow: var(--tsh, 0 2px 3px rgba(0,0,0,.85)); white-space: nowrap; }
+  .kbtn.side { justify-content: space-between; }
+  .kbtn.side .lbl:last-child { font-size: .8em; opacity: .85; }
+  .kbtn:hover { color: #ffe5a2; }
+  .kbtn:hover .shade { background: radial-gradient(ellipse at 50% 0%, rgba(185,131,43, calc(var(--glow, .17) + .12)), transparent 80%),
+                linear-gradient(rgba(6,7,8, var(--dt, .06)), rgba(2,3,4, var(--db, .28))); }
+  .kbtn.active { color: var(--gold-hi); }
+  .kbtn.active .shade { background: radial-gradient(ellipse at 50% 100%, rgba(183,119,35, .32), transparent 85%),
+                linear-gradient(rgba(33,23,12, var(--dt, .06)), rgba(16,11,6, calc(var(--db, .28) - .06))); }
+  .kbtn.active::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: calc(var(--fw, 12px) * .6); height: 2px; background: #d1a24f; }
+  .saved { color: #9fd18a; font-size: 12.5px; margin-left: 6px; }
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <h1>Knopf-Editor</h1>
+  <p class="hint">Hintergrund und Rahmen wählen, einstellen, als Knopf speichern. Die JSON-Datei landet im Download-Ordner; sag Claude einfach den Namen.</p>
+
+  <fieldset><legend>Hintergrund</legend>
+    <div class="f2"><label>Textur</label><select id="tex"></select></div>
+    <div class="f2"><label>Eigene Textur</label><input type="file" id="texFile" accept="image/*"></div>
+    <div class="f"><label>Kachelgröße</label><input type="range" id="tile" min="32" max="2048" step="16" value="640"><span id="tileV"></span></div>
+    <div class="f"><label>Drehung</label><input type="range" id="rot" min="0" max="359" value="0"><span id="rotV"></span></div>
+    <div class="quick"><button data-rot="0">0°</button><button data-rot="90">90°</button><button data-rot="180">180°</button><button data-rot="270">270°</button></div>
+    <div class="f"><label>Versatz X</label><input type="range" id="ox" min="-600" max="600" value="0"><span id="oxV"></span></div>
+    <div class="f"><label>Versatz Y</label><input type="range" id="oy" min="-600" max="600" value="0"><span id="oyV"></span></div>
+    <div class="f"><label>Helligkeit</label><input type="range" id="br" min="20" max="200" value="100"><span id="brV"></span></div>
+    <div class="f"><label>Kontrast</label><input type="range" id="ct" min="20" max="250" value="100"><span id="ctV"></span></div>
+    <div class="f"><label>Sättigung</label><input type="range" id="sa" min="0" max="200" value="100"><span id="saV"></span></div>
+    <div class="f"><label>Farbton</label><input type="range" id="hue" min="-180" max="180" value="0"><span id="hueV"></span></div>
+    <div class="f"><label>Tönung</label><input type="range" id="tinto" min="0" max="100" value="0"><span id="tintoV"></span></div>
+    <div class="f2"><label>Tönungsfarbe</label><span><input type="color" id="tintc" value="#3a2a14"> <select id="blend" style="width:auto"><option>multiply</option><option>overlay</option><option>color</option><option>soft-light</option></select></span></div>
+    <div class="f"><label>Dunkel oben</label><input type="range" id="dt" min="0" max="90" value="6"><span id="dtV"></span></div>
+    <div class="f"><label>Dunkel unten</label><input type="range" id="db" min="0" max="95" value="28"><span id="dbV"></span></div>
+    <div class="f"><label>Goldschein</label><input type="range" id="glow" min="0" max="60" value="17"><span id="glowV"></span></div>
+  </fieldset>
+
+  <fieldset><legend>Rahmen</legend>
+    <div class="f2"><label>Rahmen</label><select id="frame"></select></div>
+    <div class="f2"><label>Eigener Rahmen</label><input type="file" id="frameFile" accept="image/*"></div>
+    <div class="f"><label>Schnitt (Slice)</label><input type="range" id="slice" min="1" max="250" value="96"><span id="sliceV"></span></div>
+    <div class="f"><label>Breite</label><input type="range" id="fw" min="2" max="48" value="12"><span id="fwV"></span></div>
+    <div class="f"><label>Überstand</label><input type="range" id="outset" min="0" max="12" value="0"><span id="outsetV"></span></div>
+    <div class="f2"><label>Kanten</label><select id="frep"><option value="round">kacheln (round)</option><option value="stretch">dehnen (stretch)</option><option value="repeat">wiederholen</option><option value="space">verteilen</option></select></div>
+  </fieldset>
+
+  <fieldset><legend>Schrift</legend>
+    <div class="f2"><label>Text</label><input type="text" id="label" value="Holzfällen"></div>
+    <div class="f"><label>Größe</label><input type="range" id="fs" min="11" max="34" value="20"><span id="fsV"></span></div>
+    <div class="f2"><label>Farbe</label><input type="color" id="txt" value="#e4cc83"></div>
+  </fieldset>
+
+  <fieldset><legend>Speichern</legend>
+    <div class="f2"><label>Name</label><input type="text" id="name" value="sidebar-moos-holz"></div>
+    <div class="bar">
+      <button class="main" id="save">Als Knopf speichern</button>
+      <button id="copy">JSON kopieren</button>
+      <button id="reset">Zurücksetzen</button>
+      <label class="quick" style="margin:0"><button id="loadBtn" type="button">Knopf laden</button><input type="file" id="loadFile" accept=".json,application/json" hidden></label>
+    </div>
+    <span id="savedMsg" class="saved"></span>
+    <textarea id="json" readonly></textarea>
+  </fieldset>
+</aside>
+
+<main>
+  <div class="stagebar">
+    <span style="font-family:'IM Fell English SC',serif;font-size:20px">Vorschau</span>
+    <label>Bühne <select id="stage"><option value="stone">Spiel-Hintergrund</option><option value="dark">Dunkel</option><option value="light">Hell</option></select></label>
+  </div>
+  <div class="stage stone" id="stageEl"></div>
+</main>
+</div>
+
+<script>
+const A = "../../apps/client/src/renderer/assets/";
+const D = "file:///C:/Users/MSchu/Downloads/";
+const TEXTURES = [
+  ["— Im Spiel —", null],
+  ["Moos (Navigation)", A + "ui/gravewood/textures/texture-moss-nav.webp"],
+  ["Holz quer (Navigation)", A + "ui/gravewood/textures/texture-wood-nav.webp"],
+  ["Basalt", A + "ui/gravewood/v3/textures/texture-basalt.webp"],
+  ["Holz (Gravewood)", A + "ui/gravewood/textures/texture-gravewood.webp"],
+  ["Holz (Planken-Ersatz)", A + "bg_tileable_wood.webp"],
+  ["Leder", A + "ui/gravewood/textures/texture-leather.webp"],
+  ["Leder dunkel", A + "bg_tileable_leather.webp"],
+  ["Linen", A + "ui/gravewood/textures/texture-umber-cloth.webp"],
+  ["Copper", A + "ui/gravewood/textures/texture-smoky-bronze.webp"],
+  ["Stone light (Schiefer)", A + "ui/gravewood/v3/textures/texture-cold-slate.webp"],
+  ["Stone light (hell)", A + "ui/gravewood/v3/textures/texture-ash-stone.webp"],
+  ["Stein dunkel", A + "bg_tileable_stone_dark.webp"],
+  ["Pergament", A + "ui/gravewood/textures/texture-parchment.webp"],
+  ["— Neu, roh (Downloads) —", null],
+  ["Wood", D + "texture_new_wood.png"], ["Wood 2", D + "texture_new_wood2.png"], ["Wood 3", D + "texture_new_wood3.png"],
+  ["Basalt (roh)", D + "texture_new_basalt.png"], ["Stein dunkel (roh)", D + "GrimReach_Stone_DarkFantasy_Seamless_1024.png"],
+  ["Stone light (roh)", D + "texture_new_stone_light.png"], ["Leather (roh)", D + "Texture_new_Leather.png"],
+  ["Linen (roh)", D + "texture_new_linen.png"], ["Copper (roh)", D + "texture_new_copper.png"],
+  ["Moss (roh)", D + "texture_new_moss.png"], ["Dirt", D + "texture_new_dirt.png"], ["Parchment (roh)", D + "Texture_new_Parchment.png"],
+];
+const FRAMES = [
+  ["Eisen (Spiel)", A + "ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp", 96, 12],
+  ["Holz (Spiel)", A + "ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp", 28, 10],
+  ["Panel-Rahmen (Gravewood)", A + "ui/gravewood/v3/frames/panel-frame.webp", 48, 11],
+  ["Karten-Rahmen (Gravewood)", A + "ui/gravewood/v3/frames/card-frame.webp", 48, 11],
+  ["Slot-Rahmen (Original)", D + "GrimReach_Inventory_Slot_9Slice.png", 60, 12],
+  ["Eisen-Streifen (Original)", D + "GrimReach_Iron_Frame_9Slice (1).png", 32, 12],
+  ["Holz-Streifen (Original)", D + "GrimReach_Wood_Frame_9Slice.png", 42, 12],
+  ["Kein Rahmen", "", 1, 0],
+];
+const PREVIEWS = [
+  ["Sidebar-Knopf", 290, 58, "side"], ["Sidebar aktiv", 290, 58, "side active"],
+  ["Topbar-Reiter", 170, 46, ""], ["Topbar aktiv", 170, 46, "active"],
+  ["Kleiner Knopf", 124, 38, ""], ["Slot / Quadrat", 76, 76, "sq"],
+  ["Breite Leiste", 540, 52, ""], ["Karte", 300, 170, ""],
+];
+const $ = (id) => document.getElementById(id);
+const RANGES = { tile: "px", rot: "°", ox: "px", oy: "px", br: "%", ct: "%", sa: "%", hue: "°", tinto: "%", dt: "%", db: "%", glow: "%", slice: "", fw: "px", outset: "px", fs: "px" };
+let customTex = null, customFrame = null;
+const DEFAULTS = {};
+
+for (const [n, u] of TEXTURES) { const o = new Option(n, u ?? ""); if (!u) o.disabled = true; $("tex").add(o); }
+for (const [n, u, s, w] of FRAMES) { const o = new Option(n, u); o.dataset.slice = s; o.dataset.fw = w; $("frame").add(o); }
+// Startwerte wie im Spiel seit 19.10.: Moos + Holzrahmen (Sidebar/Topbar)
+$("tex").value = TEXTURES[1][1]; $("frame").value = FRAMES[1][1]; $("slice").value = 28; $("fw").value = 10;
+document.querySelectorAll("aside input, aside select").forEach((el) => { if (el.id && el.type !== "file") DEFAULTS[el.id] = el.value; });
+
+const stage = $("stageEl");
+for (const [title, w, h, cls] of PREVIEWS) {
+  const it = document.createElement("div"); it.className = "item";
+  const b = document.createElement("div"); b.className = "kbtn " + cls; b.style.width = w + "px"; b.style.height = h + "px";
+  b.innerHTML = `<div class="bg" style="width:${2 * Math.max(w, h)}px;height:${2 * Math.max(w, h)}px"></div><div class="tint"></div><div class="shade"></div><div class="frame"></div>` +
+    (cls.includes("side") ? `<span class="lbl lab"></span><span class="lbl">97/99</span>` : cls === "sq" ? "" : `<span class="lbl lab"></span>`);
+  it.append(b); const s = document.createElement("small"); s.textContent = `${title} · ${w}×${h}`; it.append(s); stage.append(it);
+}
+
+function state() {
+  const g = (id) => Number($(id).value);
+  return {
+    name: $("name").value.trim() || "knopf",
+    background: { texture: customTex ? "(eigene Datei: " + customTex.name + ")" : $("tex").value, tileSize: g("tile"), rotation: g("rot"),
+      offsetX: g("ox"), offsetY: g("oy"), brightness: g("br") / 100, contrast: g("ct") / 100, saturation: g("sa") / 100, hue: g("hue"),
+      tint: { color: $("tintc").value, strength: g("tinto") / 100, blend: $("blend").value },
+      darkenTop: g("dt") / 100, darkenBottom: g("db") / 100, goldGlow: g("glow") / 100 },
+    frame: { image: customFrame ? "(eigene Datei: " + customFrame.name + ")" : $("frame").value, slice: g("slice"), width: g("fw"), outset: g("outset"), repeat: $("frep").value },
+    text: { label: $("label").value, size: g("fs"), color: $("txt").value },
+    savedAt: new Date().toISOString(),
+  };
+}
+function apply() {
+  for (const [id, unit] of Object.entries(RANGES)) $(id + "V").textContent = $(id).value + unit;
+  const r = document.documentElement.style, g = (id) => Number($(id).value);
+  const tex = customTex ? customTex.url : $("tex").value;
+  const fr = customFrame ? customFrame.url : $("frame").value;
+  r.setProperty("--tex", `url("${tex}")`); r.setProperty("--tile", g("tile") + "px"); r.setProperty("--rot", g("rot") + "deg");
+  r.setProperty("--ox", g("ox") + "px"); r.setProperty("--oy", g("oy") + "px");
+  r.setProperty("--br", g("br") / 100); r.setProperty("--ct", g("ct") / 100); r.setProperty("--sa", g("sa") / 100); r.setProperty("--hue", g("hue") + "deg");
+  r.setProperty("--tintc", $("tintc").value); r.setProperty("--tinto", g("tinto") / 100); r.setProperty("--blend", $("blend").value);
+  r.setProperty("--dt", g("dt") / 100); r.setProperty("--db", g("db") / 100); r.setProperty("--glow", g("glow") / 100);
+  r.setProperty("--frame", fr ? `url("${fr}")` : "none"); r.setProperty("--slice", g("slice")); r.setProperty("--fw", g("fw") + "px");
+  r.setProperty("--outset", g("outset") + "px"); r.setProperty("--frep", $("frep").value);
+  r.setProperty("--fs", g("fs") + "px"); r.setProperty("--txt", $("txt").value);
+  document.querySelectorAll(".kbtn").forEach((b) => b.classList.toggle("noframe", !fr));
+  document.querySelectorAll(".kbtn .lab").forEach((l) => (l.textContent = $("label").value));
+  $("json").value = JSON.stringify(state(), null, 2);
+  try { localStorage.setItem("knopf-editor", JSON.stringify(Object.fromEntries(Object.keys(DEFAULTS).map((k) => [k, $(k).value])))); } catch {}
+}
+document.querySelectorAll("aside input:not([type=file]), aside select").forEach((el) => el.addEventListener("input", apply));
+$("frame").addEventListener("change", () => { customFrame = null; const o = $("frame").selectedOptions[0]; $("slice").value = o.dataset.slice; $("fw").value = o.dataset.fw; apply(); });
+$("tex").addEventListener("change", () => { customTex = null; apply(); });
+document.querySelectorAll("[data-rot]").forEach((b) => b.addEventListener("click", () => { $("rot").value = b.dataset.rot; apply(); }));
+$("stage").addEventListener("change", () => (stage.className = "stage " + $("stage").value));
+function readFile(input, cb) { const f = input.files?.[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => cb({ name: f.name, url: rd.result }); rd.readAsDataURL(f); }
+$("texFile").addEventListener("change", () => readFile($("texFile"), (x) => { customTex = x; apply(); }));
+$("frameFile").addEventListener("change", () => readFile($("frameFile"), (x) => { customFrame = x; apply(); }));
+$("save").addEventListener("click", () => {
+  const s = state(); const blob = new Blob([JSON.stringify(s, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `knopf-${s.name}.json`; a.click();
+  $("savedMsg").textContent = `Gespeichert als knopf-${s.name}.json (Download-Ordner)`;
+});
+$("copy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText($("json").value); $("savedMsg").textContent = "JSON kopiert"; }
+  catch { $("json").select(); document.execCommand("copy"); $("savedMsg").textContent = "JSON markiert und kopiert"; }
+});
+$("reset").addEventListener("click", () => { customTex = customFrame = null; for (const [k, v] of Object.entries(DEFAULTS)) $(k).value = v; apply(); });
+$("loadBtn").addEventListener("click", () => $("loadFile").click());
+$("loadFile").addEventListener("change", () => { const f = $("loadFile").files?.[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => {
+  try {
+    const s = JSON.parse(rd.result);
+    const b = s.background, f = s.frame, t = s.text;
+    if (!String(b.texture).startsWith("(")) $("tex").value = b.texture;
+    Object.assign($("tile"), { value: b.tileSize }); $("rot").value = b.rotation; $("ox").value = b.offsetX; $("oy").value = b.offsetY;
+    $("br").value = Math.round(b.brightness * 100); $("ct").value = Math.round(b.contrast * 100); $("sa").value = Math.round(b.saturation * 100); $("hue").value = b.hue;
+    $("tintc").value = b.tint.color; $("tinto").value = Math.round(b.tint.strength * 100); $("blend").value = b.tint.blend;
+    $("dt").value = Math.round(b.darkenTop * 100); $("db").value = Math.round(b.darkenBottom * 100); $("glow").value = Math.round(b.goldGlow * 100);
+    if (!String(f.image).startsWith("(")) $("frame").value = f.image;
+    $("slice").value = f.slice; $("fw").value = f.width; $("outset").value = f.outset; $("frep").value = f.repeat;
+    $("label").value = t.label; $("fs").value = t.size; $("txt").value = t.color; $("name").value = s.name;
+    customTex = customFrame = null; apply(); $("savedMsg").textContent = "Knopf geladen";
+  } catch (e) { $("savedMsg").textContent = "Datei nicht lesbar"; }
+}; rd.readAsText(f); });
+try { const st = JSON.parse(localStorage.getItem("knopf-editor") || "null"); if (st) for (const [k, v] of Object.entries(st)) if ($(k)) $(k).value = v; } catch {}
+apply();
+</script>
+</body>
+</html>
