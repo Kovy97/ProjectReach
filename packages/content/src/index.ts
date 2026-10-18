@@ -15877,7 +15877,7 @@ export const content: ContentDB = {
       name: { en: "Idol Husk", de: "Götzenhülse" },
       level: 244, maxHp: 2100, damage: 148, accuracy: 24, evasion: 4, defense: 140, defenseType: "armor", attackIntervalMs: 3400,
       resist: ["poison"],
-      regen: 0.3, xp: 6300, gold: 0,
+      regen: 0.3, xp: 9300, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V1 (Chef 19.10.): 6300 → 9300, Halle ≈ 680k XP/h
       loot: [
         { itemId: "godiron_ore", chance: 0.3, min: 1, max: 2 },
         { itemId: "idol_shard", chance: 0.25, min: 1, max: 1 },
@@ -15889,9 +15889,9 @@ export const content: ContentDB = {
     skarn_whelp: {
       id: "skarn_whelp", family: "dragonkin", zone: "idolhall",
       name: { en: "Skarn Whelp", de: "Skarnbrut" },
-      level: 247, maxHp: 1500, damage: 150, accuracy: 24, evasion: 68, defense: 125, defenseType: "evasion", attackIntervalMs: 2600,
+      level: 247, maxHp: 1500, damage: 140, accuracy: 24, evasion: 68, defense: 125, defenseType: "evasion", attackIntervalMs: 2600,
       inflict: { type: "bleed", chance: 0.3, magnitude: 1, durationMs: 5000 },
-      regen: 0.4, xp: 6600, gold: 0,
+      regen: 0.4, xp: 9500, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V2/V3 (Chef 19.10.): XP 6600 → 9500, Schaden 150 → 140
       loot: [
         { itemId: "scaled_leather", chance: 0.4, min: 1, max: 2 },
         { itemId: "raw_dragonhide", chance: 0.18, min: 1, max: 1 },
@@ -15906,7 +15906,7 @@ export const content: ContentDB = {
       level: 250, maxHp: 800, damage: 156, accuracy: 24, evasion: 6, defense: 126, defenseType: "ward", wardCapacity: 1250, attackIntervalMs: 2800,
       resist: ["burn"],
       inflict: { type: "burn", chance: 0.3, magnitude: 1, durationMs: 6000 },
-      xp: 7400, gold: 0,
+      xp: 10000, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V4 (Chef 19.10.): 7400 → 10000
       loot: [
         { itemId: "forge_ember", chance: 0.4, min: 1, max: 2 },
         { itemId: "void_essence", chance: 0.2, min: 1, max: 1 },
@@ -15920,7 +15920,7 @@ export const content: ContentDB = {
       name: { en: "Idol Priest", de: "Götzenpriester" },
       level: 253, maxHp: 850, damage: 160, accuracy: 25, evasion: 5, defense: 128, defenseType: "ward", wardCapacity: 1400, attackIntervalMs: 3000,
       inflict: { type: "poison", chance: 0.3, magnitude: 1, durationMs: 6000 },
-      xp: 8000, gold: 0,
+      xp: 11000, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V5 (Chef 19.10.): 8000 → 11000
       loot: [
         { itemId: "aether_rune", chance: 0.3, min: 1, max: 3 },
         { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
@@ -15934,7 +15934,7 @@ export const content: ContentDB = {
       name: { en: "Prayer Eater", de: "Gebetsfresser" },
       level: 257, maxHp: 2900, damage: 160, accuracy: 25, evasion: 3, defense: 135, defenseType: "armor", attackIntervalMs: 3600,
       resist: ["poison", "bleed"],
-      regen: 0.8, xp: 9200, gold: 0,
+      regen: 0.8, xp: 12400, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V6 (Chef 19.10.): 9200 → 12400
       loot: [
         { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
         { itemId: "soulopal", chance: 0.15, min: 1, max: 1 },
@@ -15949,7 +15949,7 @@ export const content: ContentDB = {
       level: 261, maxHp: 2700, damage: 170, accuracy: 25, evasion: 5, defense: 160, defenseType: "armor", attackIntervalMs: 3200,
       resist: ["poison"],
       inflict: { type: "shock", chance: 0.25, magnitude: 0.3, durationMs: 4000 },
-      xp: 9800, gold: 0,
+      xp: 12700, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V7 (Chef 19.10.): 9800 → 12700
       loot: [
         { itemId: "idol_shard", chance: 0.3, min: 1, max: 2 },
         { itemId: "godiron_bar", chance: 0.12, min: 1, max: 1 },
@@ -15964,11 +15964,11 @@ export const content: ContentDB = {
       level: 266, maxHp: 3400, damage: 185, accuracy: 26, evasion: 2, defense: 165, defenseType: "armor", attackIntervalMs: 4000,
       resist: ["poison", "bleed"],
       enrage: { belowHpPct: 0.3, damageMult: 1.5 },
-      regen: 0.5, xp: 12500, gold: 0,
+      regen: 0.5, xp: 16000, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V8 (Chef 19.10.): 12500 → 16000
       loot: [
-        { itemId: "godiron_ore", chance: 0.4, min: 1, max: 3 },
+        { itemId: "godiron_ore", chance: 0.3, min: 1, max: 2 }, // claude:2026-10-19T08:00:00+02:00 — Balance V11 (Chef 19.10.): 0,40×1–3 → 0,30×1–2
         { itemId: "godiron_bar", chance: 0.15, min: 1, max: 2 },
-        { itemId: "onyx", chance: 0.08, min: 1, max: 1 },
+        { itemId: "onyx", chance: 0.06, min: 1, max: 1 }, // claude:2026-10-19T08:00:00+02:00 — Balance V12 (Chef 19.10.): 0,08 → 0,06
         { itemId: "idol_shard", chance: 0.35, min: 1, max: 2 },
         { itemId: "idolstep_sabatons", chance: 0.0003, min: 1, max: 1, suffixChance: 0.30 },
         { itemId: "idol_aegis", chance: 0.00003, min: 1, max: 1, suffixChance: 0.30 },
@@ -15989,7 +15989,7 @@ export const content: ContentDB = {
       level: 261, maxHp: 3645, damage: 187, accuracy: 25, evasion: 5, defense: 160, defenseType: "armor", attackIntervalMs: 3200,
       resist: ["poison"],
       inflict: { type: "shock", chance: 0.25, magnitude: 0.3, durationMs: 4000 },
-      xp: 13230, gold: 0,
+      xp: 17145, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V9 (Chef 19.10.): Basis 12700 × 1,35
       loot: [
         { itemId: "idol_shard", chance: 0.3, min: 1, max: 2 },
         { itemId: "godiron_bar", chance: 0.12, min: 1, max: 1 },
@@ -16004,7 +16004,7 @@ export const content: ContentDB = {
       dungeonOnly: true,
       level: 257, maxHp: 3915, damage: 176, accuracy: 25, evasion: 3, defense: 135, defenseType: "armor", attackIntervalMs: 3600,
       resist: ["poison", "bleed"],
-      regen: 0.8, xp: 12420, gold: 0,
+      regen: 0.8, xp: 16740, gold: 0, // claude:2026-10-19T08:00:00+02:00 — Balance V10 (Chef 19.10.): Basis 12400 × 1,35
       loot: [
         { itemId: "aether_essence", chance: 0.3, min: 1, max: 2 },
         { itemId: "soulopal", chance: 0.15, min: 1, max: 1 },
@@ -16024,7 +16024,7 @@ export const content: ContentDB = {
       resist: ["poison", "frost"],
       regen: 1.2,
       inflict: { type: "bleed", chance: 0.3, magnitude: 1.3, durationMs: 6000 },
-      enrage: { belowHpPct: 0.2, damageMult: 1.3 },
+      enrage: { belowHpPct: 0.25, damageMult: 1.5 }, // claude:2026-10-19T08:00:00+02:00 — Balance V13 (Chef 19.10.): 0,20×1,30 → 0,25×1,50 (Thron-Niveau)
       xp: 75000, gold: 0,
       loot: [
         { itemId: "aether_rune", chance: 0.8, min: 3, max: 6 },
@@ -17466,7 +17466,7 @@ export const content: ContentDB = {
         { itemId: "emptied_shrine_focus", chance: 0.015, min: 1, max: 1, suffixChance: 0.30 }, // codex:2026-10-17T15:45:00+02:00 — 1.3.0 E5-Chase (Kapellen-Abschluss)
       ],
       xp: 26000,
-      gold: 9000,
+      gold: 12000, // claude:2026-10-19T08:00:00+02:00 — Balance V14 (Chef 19.10.): 9000 → 12000
     },
     {
       // Endgame-Re-Tiering (Chef-GO 2026-07-10): Gate 20→55 — Dungeons sind Endgame-Content,
