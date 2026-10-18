@@ -49,6 +49,13 @@ Nebenbei: Droprate im Fund-Toast nutzt jetzt den sprachabhängigen Formatierer (
 New Haven Material-Hierarchie (`0c3df7b`, ui-dev; Popup/Baumenü/Karten-Bühne nicht visuell geprüft, Clip-Audit-
 Szenen erreichen diese Zustände nicht).
 
+**Nachtrag 19.10. (claude:2026-10-19T08:30:00+02:00):** Chef-Entscheide Balance: V1–V14 aus
+`design/1.3.0-balance-encounter.md` übernommen (`cb5cfea`: Hallen-XP, Skarnbrut 140, Siege-Idol-Beute, Tilger-Raserei
+0,25×1,50, Kapellen-Gold 12.000). Paragon-Text bleibt auf Chef-Wunsch unverändert („Patchnotes nichts mehr ändern, habe
+ich so schon abgespeichert“), Stufen 50/100 bleiben im Spiel. Endprüfung danach: Typecheck 5/5, Engine 1807, Content 310,
+Persistence 453 inkl. Vault, Client 261, Build grün. Testspiel (isoliertes Profil) mit diesem Stand neu gestartet;
+echte Spielstände per SHA1 unverändert. Offen: Chef-Freigabe dieses Stands im Testspiel, Push/Merge/Upload nur auf GO.
+
 ### 18.10.2026 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
