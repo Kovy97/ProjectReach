@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:30:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /*
  * Gravewood Action Cards — nur Informationskacheln, Produces-Zeile und Mengenaktionen.
@@ -29,7 +30,7 @@
   background:
     radial-gradient(circle at 50% 15%, rgba(213, 155, 76, 0.2), transparent 58%),
     linear-gradient(rgba(20, 13, 8, 0.62), rgba(10, 8, 7, 0.74)),
-    var(--gw-action-bronze) center / 256px 256px repeat !important;
+    var(--gw-action-bronze) center / 640px 640px repeat !important;
 }
 
 #root .skillcard-tile small {
@@ -54,9 +55,11 @@
   padding: 8px 10px !important;
   margin-top: 8px;
   border: 1px solid rgba(142, 99, 52, 0.68);
+  /* claude:2026-10-18T23:30:00+02:00 — Chef 18.10.: Leder im Produces-Feld gefällt nicht → ruhige Basalt-Leinwand der
+     Karte, groß gekachelt, leicht abgedunkelt (Item-Symbol bleibt der Blickfang). */
   background:
-    linear-gradient(rgba(13, 9, 6, 0.24), rgba(13, 9, 6, 0.38)),
-    var(--gw-action-leather) center / 256px 256px repeat !important;
+    linear-gradient(rgba(10, 10, 12, 0.28), rgba(10, 10, 12, 0.4)),
+    var(--gw-action-canvas) center / 640px 640px repeat !important;
   font-size: clamp(15px, 3.6cqw, 19px);
 }
 
@@ -215,21 +218,21 @@
   border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(20, 44, 18, 0.36), rgba(11, 24, 10, 0.46)),
-    var(--gw-action-leather) center / 256px 256px repeat;
+    var(--gw-action-leather) center / 640px 640px repeat;
   overflow: hidden;
 }
 
 #root .skillcard-resource-rack .mat-chip.lacking {
   background:
     linear-gradient(rgba(48, 16, 12, 0.42), rgba(28, 9, 7, 0.5)),
-    var(--gw-action-leather) center / 256px 256px repeat;
+    var(--gw-action-leather) center / 640px 640px repeat;
 }
 
 #root .skillcard-resource-empty {
   opacity: 0.34;
   background:
     linear-gradient(rgba(17, 17, 16, 0.58), rgba(10, 10, 9, 0.66)),
-    var(--gw-action-leather) center / 256px 256px repeat;
+    var(--gw-action-leather) center / 640px 640px repeat;
 }
 
 #root .skillcard-resource-rack .mat-img {
@@ -261,14 +264,14 @@
   border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(16, 11, 7, 0.48), rgba(10, 8, 7, 0.6)),
-    var(--gw-action-leather) center / 256px 256px repeat;
+    var(--gw-action-leather) center / 640px 640px repeat;
   overflow: hidden;
 }
 
 #root .skillcard-state-slot.active {
   background:
     linear-gradient(rgba(48, 16, 12, 0.45), rgba(28, 9, 7, 0.54)),
-    var(--gw-action-leather) center / 256px 256px repeat;
+    var(--gw-action-leather) center / 640px 640px repeat;
 }
 
 #root .skillcard-state-slot.blocked:not(.active) {
@@ -323,7 +326,7 @@
   border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(12, 9, 6, 0.58), rgba(7, 6, 5, 0.68)),
-    var(--gw-action-leather) center / 256px 256px repeat;
+    var(--gw-action-leather) center / 640px 640px repeat;
 }
 
 #root .skillcard-mastery :is(.mastery-label, .mastery-bonus) {
@@ -357,7 +360,7 @@
   border-image-width: 4px;
   background:
     linear-gradient(rgba(3, 7, 10, 0.5), rgba(2, 4, 6, 0.68)),
-    var(--gw-action-canvas) center / 192px 192px repeat;
+    var(--gw-action-canvas) center / 480px 480px repeat;
 }
 
 #root .skillcard-mastery .mastery-bar .bar-fill {
@@ -388,7 +391,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
   background:
     linear-gradient(rgba(6, 9, 11, 0.34), rgba(2, 4, 5, 0.58)),
-    var(--gw-action-canvas) center / 192px 192px repeat;
+    var(--gw-action-canvas) center / 480px 480px repeat;
   background-origin: border-box;
   background-clip: border-box;
 }
@@ -400,7 +403,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(6px * 2.125);
   background:
     linear-gradient(rgba(4, 5, 6, 0.72), rgba(9, 10, 11, 0.82)),
-    var(--gw-action-canvas) center / 192px 192px repeat;
+    var(--gw-action-canvas) center / 480px 480px repeat;
   background-origin: border-box;
   background-clip: border-box;
   color: #e3d7b5;

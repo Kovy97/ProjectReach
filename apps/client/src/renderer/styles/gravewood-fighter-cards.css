@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:30:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /*
  * Frontline Candidate — Chef-Auswahl 10 aus den Fight-Card-Studien vom 2026-08-03.
  * Ausschließlich visuelle Überschreibung der bestehenden MonsterCard-Datenstruktur.
@@ -260,7 +261,7 @@
   border: 1px solid rgba(138, 102, 57, 0.5);
   background:
     linear-gradient(90deg, rgba(42, 18, 14, 0.34), rgba(10, 14, 16, 0.86), rgba(12, 27, 34, 0.34)),
-    var(--fc-surface) 0 0 / 128px 128px repeat;
+    var(--fc-surface) 0 0 / 320px 320px repeat;
   color: var(--text);
   font-family: var(--font-info);
   font-size: clamp(11px, 3.55cqw, 15px);

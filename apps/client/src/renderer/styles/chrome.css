@@ -272,7 +272,7 @@
   overflow: hidden;
   border: 1px solid rgba(150, 107, 55, .72);
   border-radius: 2px;
-  background: #0b0c0e var(--gw-control-surface) left center / 256px repeat;
+  background: #0b0c0e var(--gw-control-surface) left center / 640px repeat;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, .82), 0 1px 0 rgba(218, 166, 89, .12);
 }
 #root .layout--reforged .hs-bar::after {
