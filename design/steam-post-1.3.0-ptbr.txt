@@ -1,0 +1,124 @@
+Grim Reach 1.3.0 - The Idol Hall Awakens (O Salão do Ídolo desperta)
+
+Caçadores,
+
+Drazhan recuou, mas o salão dele nunca parou de trabalhar. Esta atualização traz o Livro do Caçador,
+uma árvore de talentos para a sua caçada, reformula todos os companheiros e adiciona a Queda das
+Cinzas, um jeito de recomeçar mais forte. Ela abre o Salão do Ídolo, continua a Crônica das Cinzas e
+eleva o teto do endgame em todas as frentes. Também traz tudo o que estava esperando nos bastidores:
+espaços de banco de verdade, uma wiki com todos os itens, um novo HUD de combate e uma interface
+mais limpa. Os saves continuam compatíveis, como sempre.
+
+O LIVRO DO CAÇADOR
+
+- A partir do nível 85 de Caçador, você gasta Pontos de Caçador no Livro do Caçador, uma árvore de
+  talentos com melhorias permanentes para toda a sua conta.
+- Rastreamento dobra sua chance de conseguir companheiros ao longo de cinco níveis. Na trilha
+  garante um companheiro quando você passa o dobro do tempo esperado sem ele.
+- Mais drops raros dos monstros da sua tarefa, mais Pontos de Caçador por tarefa e dano bônus contra
+  as famílias cujo bestiário você completou.
+- O último nó, Segunda coleira, abre um segundo espaço de companheiro para efeitos passivos.
+
+COMPANHEIROS, RENOVADOS
+
+- Os 23 companheiros agora têm um efeito próprio em vez de "alguns por cento a mais".
+  Mandíbula-de-Rocha encontra gemas ao minerar, Branquia-Podre puxa peixes melhores, Espectro-Gema
+  às vezes lapida um grau acima e Demônio-de-Escória adiciona sufixos na Ferraria.
+- Em combate, cada companheiro tem uma função clara: controle, proteção, dano, saque ou suporte.
+- Eco: cada companheiro que você possui concede um quarto do seu efeito passivo, mesmo sem estar
+  equipado.
+- Carapace agora é tão comum quanto os outros companheiros de combate (1/80.000). Sua Pele de casco
+  amortece mais dano, e a Muralha de escudos vem um pouco menos (a cada 12 segundos em vez de 10).
+- Sete companheiros eram fortes demais e foram reduzidos: a cura de Tripa-de-Cinza, o atordoamento
+  de Rancor-Gélido, o roubo de Rato-Sombrio, o saque duplicado de Asa-de-Carniça (que não vale mais
+  para itens únicos de campeão nem para companheiros), e a guarda, o escudo e o roubo de vida de
+  Bocarra-Glifo, Mariposa-de-Velino e Ossário, que deixavam os magos quase intocáveis. Nenhum
+  companheiro concede mais XP bônus.
+
+A QUEDA DAS CINZAS (PRESTÍGIO)
+
+- Quando você tiver quatro habilidades no 99 e tiver concluído o capítulo 21 da Crônica, pode mandar
+  seu personagem pelas cinzas no Altar dos Fragmentos. Níveis, equipamento, ouro e a Crônica
+  recomeçam do zero.
+- Seus companheiros, sua maestria, o Livro do Caçador, suas conquistas e seu bestiário ficam com
+  você.
+- Cada Queda das Cinzas concede Cicatrizes para o Livro das Cicatrizes: subida de nível mais rápida
+  no caminho de volta, ouro, ferramentas e equipamento escolhido para a próxima jornada, capítulos
+  da Crônica já vividos concluídos com um clique e pequenos bônus de combate permanentes. Cada
+  jornada vai mais rápido que a anterior.
+- Ao atravessar as cinzas, uma crônica da jornada mostra o que você conquistou, dos seus níveis aos
+  monstros que abateu, e exatamente como suas Cicatrizes se somam.
+- Antes de você atravessar as cinzas, o jogo faz um backup automático do seu save.
+
+O SALÃO DO ÍDOLO ESTÁ ABERTO
+
+- O Salão do Ídolo agora é um território de caça aberto com sete criaturas novas, com força entre a
+  das Terras Altas e a do Santuário.
+- Seus dois campeões, o Nono Guardião e Véuoco, finalmente podem ser caçados.
+
+A CRÔNICA CONTINUA
+
+- Seis capítulos novos (do 22 ao 27) levam você pelo salão até a Capela Expurgada, uma nova
+  minimasmorra. Lá, algo ainda trabalha nas paredes.
+
+MAIS ALTURA NO ENDGAME
+
+- Os andares 6 a 8 da Torre do Caçador, com toda a força do endgame (nível de Caçador 85, 90 e 95),
+  e três recompensas novas na loja do Caçador. As tarefas nesses andares rendem mais pontos na mesma
+  medida.
+- Novos níveis de baú na Torre do Paragon a partir dos andares 25, 50 e 100.
+- 18 armas novas à distância e de magia a partir do nível 95, para que os dois estilos tenham tantas
+  opções de endgame quanto o corpo a corpo. Cinco armas raras de nível 99 que já existiam agora
+  ficam acima das suas equivalentes fabricadas.
+- Corte de Lenha e Pesca chegam ao 99 como se deve: três árvores novas, quatro peixes novos com
+  pratos correspondentes e duas varas novas.
+
+QUALIDADE DE VIDA
+
+- A Maestria não leva mais uma eternidade em ações simples. A partir do nível de maestria 50, cada
+  ação rende pelo menos 60 de XP de maestria por segundo do seu tempo base, então a Árvore Comum vai
+  de 78 a 99 em cerca de 23 horas em vez de 950. Abaixo do nível 50 e na Reserva de Maestria nada
+  muda.
+- O registro de combate agora mostra a guarda que você recupera quando parte do seu dano flui para
+  ela.
+- As cartas de item avisam quando um efeito não acumula. Só vale a fonte mais forte, exceto os bônus
+  de cura, guarda e recuperação ao abater, que se somam.
+- O Encantamento avisa quando o efeito já vem de outra peça.
+- O relatório de retorno conta quantas entradas da fila foram ignoradas enquanto você esteve fora.
+
+BANCO, BOLSAS E FERRAMENTAS
+
+- O banco e o inventário têm espaços de verdade que lembram onde cada coisa está. Arraste qualquer
+  pilha para qualquer espaço vazio, também direto das suas bolsas, e a lista rola enquanto você
+  arrasta. O saque novo vai para o fim.
+- Um quarto espaço de ferramenta. As ferramentas não pertencem mais aos kits de equipamento e ficam
+  com o seu personagem.
+- As melhorias do banco agora são vendidas na loja, ao lado da melhoria de inventário.
+- Frete por corvo: envie itens entre os seus próprios espaços de save.
+
+INTERFACE
+
+- Uma wiki com todos os itens, no canto superior direito.
+- Uma barra superior mais fina, com mais espaço para a página, e páginas que se adaptam ao espaço
+  que você realmente tem. Chega de palavras cortadas ao meio, em qualquer idioma.
+- Página do Caçador, loja e loja de fichas renovadas. Seu estilo de combate agora fica na barra
+  lateral, a um clique de ser trocado.
+- Um novo HUD de combate e uma nova tela de retorno.
+- Um novo fundo de pedra atrás de cada página, e cada criatura, arma, árvore e peixe novos chegam
+  com sua própria arte pintada.
+- Páginas mais calmas e limpas: as molduras não mostram mais um anel claro nas bordas, há menos
+  molduras dentro de outras molduras e os cabeçalhos das páginas seguem um único layout. A página do
+  Caçador agora tem abas para a loja de recompensas e o Livro do Caçador.
+
+CORREÇÕES
+
+- As conquistas de bestiário da Cripta agora podem ser obtidas. Saves que já têm os abates as
+  desbloqueiam no primeiro tick.
+- "O bestiário completo" só conta as criaturas que você realmente consegue alcançar (agora 126).
+- O capítulo 11 não se conclui mais sozinho antes de você entrar na masmorra.
+- O Choque agora respeita as imunidades.
+- O marcador "{pct}" não aparece mais nas descrições de efeitos.
+- O aviso de achado raro não esconde mais saque de verdade depois que você fabrica o mesmo item.
+- Equipamento encantado no banco ganha seu próprio espaço.
+
+Como sempre: se algo parecer errado, me conte aqui ou pelo botão de relatar bug nas opções.

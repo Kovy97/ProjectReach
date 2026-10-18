@@ -1,0 +1,126 @@
+Grim Reach 1.3.0 - The Idol Hall Awakens (Die Götzenhalle erwacht)
+
+Jäger,
+
+Drazhan hat sich zurückgezogen, aber seine Halle hat nie aufgehört zu arbeiten. Dieses Update bringt
+den Jägerkodex, einen Talentbaum für deine Jagd, überarbeitet jeden Begleiter und führt den
+Aschesturz ein, einen Weg, stärker von vorn zu beginnen. Es öffnet die Götzenhalle, setzt die
+Aschechronik fort und hebt die Obergrenze des Endgames auf ganzer Linie an. Außerdem kommt alles,
+was schon in den Startlöchern stand: echte Bankplätze, ein Wiki zu jedem Item, ein neues Kampf-HUD
+und eine aufgeräumtere Oberfläche. Spielstände bleiben wie immer kompatibel.
+
+DER JÄGERKODEX
+
+- Ab Slayer-Stufe 85 gibst du Slayer-Punkte im Jägerkodex aus, einem Talentbaum mit dauerhaften
+  Verbesserungen für deinen ganzen Account.
+- Fährtenkunde verdoppelt über fünf Ränge deine Chance auf Begleiter. Spur aufgenommen garantiert
+  dir einen Begleiter, sobald du doppelt so lange wie erwartet ohne einen geblieben bist.
+- Mehr seltene Drops von Auftragsmonstern, mehr Slayer-Punkte pro Auftrag und Bonusschaden gegen
+  Monsterfamilien, deren Bestiarium du vervollständigt hast.
+- Der letzte Knoten, Zweites Halsband, öffnet einen zweiten Begleiter-Platz für passive Effekte.
+
+BEGLEITER, ÜBERARBEITET
+
+- Alle 23 Begleiter haben jetzt einen eigenen Effekt statt „ein paar Prozent mehr“. Felsschlund
+  findet beim Bergbau Edelsteine, Kiemenfäule zieht bessere Fische an Land, Edelsteinwicht schleift
+  manchmal eine Stufe höher, Schlackenscheusal verleiht beim Schmieden Suffixe.
+- Im Kampf hat jeder Begleiter eine klare Rolle: Kontrolle, Schutz, Schaden, Beute oder
+  Unterstützung.
+- Echo: Jeder Begleiter, den du besitzt, gibt dir ein Viertel seines passiven Effekts, auch wenn er
+  nicht ausgerüstet ist.
+- Chitinpanzer ist jetzt so häufig wie die anderen Kampfbegleiter (1/80.000). Seine Panzerhaut
+  dämpft mehr Schaden, und Schildwall kommt etwas seltener (alle 12 statt alle 10 Sekunden).
+- Sieben Begleiter waren zu stark und wurden abgeschwächt: die Heilung von Aschbauch, die Betäubung
+  von Frostgroll, der Diebstahl von Düsterratte, die doppelte Beute von Aasschwinge (nicht mehr bei
+  Champion-Unikaten und Begleitern) sowie Ward, Schild und Lebensraub von Glyphenschlund, Pergamotte
+  und Beinzehrer, die Magier fast unantastbar gemacht haben. Kein Begleiter gibt mehr Bonus-XP.
+
+DER ASCHESTURZ (PRESTIGE)
+
+- Sobald vier Fertigkeiten auf 99 stehen und Chronik-Kapitel 21 abgeschlossen ist, kannst du deinen
+  Charakter am Scherbenaltar durch die Asche schicken. Stufen, Ausrüstung, Gold und die Chronik
+  beginnen von vorn.
+- Deine Begleiter, deine Meisterschaft, der Jägerkodex, deine Erfolge und das Bestiarium bleiben dir
+  erhalten.
+- Jeder Aschesturz bringt Narben für das Narbenbuch: schnelleres Leveln auf dem Rückweg, Gold,
+  Werkzeuge und ausgewählte Ausrüstung für den nächsten Durchgang, bereits erlebte Chronik-Kapitel
+  per Klick und kleine dauerhafte Kampfboni. Jeder Durchgang geht schneller als der letzte.
+- Wenn du in die Asche gehst, zeigt dir die Chronik dieses Durchgangs, was du erreicht hast, von
+  deinen Stufen bis zu den erlegten Monstern, und genau, wie sich deine Narben zusammensetzen.
+- Vor dem Aschesturz wird dein Spielstand automatisch gesichert.
+
+DIE GÖTZENHALLE IST OFFEN
+
+- Die Götzenhalle ist jetzt ein offenes Jagdgebiet mit sieben neuen Kreaturen, von der Stärke her
+  zwischen dem Hochland und dem Sanktum.
+- Ihre beiden Champions, der Neunte Wächter und Hohlschleier, können endlich gejagt werden.
+
+DIE CHRONIK GEHT WEITER
+
+- Sechs neue Kapitel (22 bis 27) führen durch die Halle und in die Getilgte Kapelle, einen neuen
+  Mini-Dungeon. Dort arbeitet noch etwas an den Wänden.
+
+EIN HÖHERES ENDGAME
+
+- Etagen 6 bis 8 des Slayer-Turms in voller Endgame-Stärke (Slayer-Stufe 85, 90 und 95), mit drei
+  neuen Angeboten im Belohnungs-Shop der Slayer-Seite. Aufträge auf diesen Etagen bringen
+  entsprechend mehr Punkte.
+- Neue Stufen der Paragon-Truhen ab den Etagen 25, 50 und 100.
+- 18 neue Fernkampf- und Magiewaffen ab Stufe 95, damit beide Stile im Endgame so viele Optionen
+  haben wie der Nahkampf. Fünf bestehende seltene Waffen der Stufe 99 liegen jetzt über ihren
+  hergestellten Gegenstücken.
+- Holzfällen und Angeln reichen jetzt richtig bis 99: drei neue Bäume, vier neue Fische mit
+  passenden Gerichten und zwei neue Angelruten.
+
+KOMFORT
+
+- Meisterschaft dauert bei billigen Aktionen nicht mehr ewig. Ab Meisterschaftsstufe 50 bringt jede
+  Aktion mindestens 60 Meisterschafts-XP pro Sekunde ihrer Grunddauer. So steigt die Meisterschaft
+  für „Normaler Baum“ in etwa 23 statt 950 Stunden von 78 auf 99. Unter Stufe 50 und im
+  Meisterschafts-Pool ändert sich nichts.
+- Wenn dein Schaden deinen Ward auffüllt (Rune des Schleiertrinkers), steht das jetzt im
+  Kampfprotokoll.
+- Item-Karten zeigen dir, wenn ein Effekt nicht stapelt. Nur die stärkste Quelle zählt, außer bei
+  den Kill-Boni für Heilung, Ward und Erholungspause, die sich addieren.
+- Beim Verzaubern wirst du gewarnt, wenn der Effekt schon von einem anderen Teil kommt.
+- Der Rückkehrbericht zählt, wie viele Warteschlangen-Einträge übersprungen wurden, während du weg
+  warst.
+
+BANK, TASCHEN UND WERKZEUGE
+
+- Bank und Inventar haben echte Plätze, die sich merken, wo etwas liegt. Zieh jeden Stapel auf jeden
+  freien Platz, auch direkt aus deinen Taschen, und die Liste scrollt mit, während du ziehst. Neue
+  Beute kommt ans Ende.
+- Ein vierter Werkzeug-Slot. Werkzeuge gehören nicht mehr zu Ausrüstungs-Kits und bleiben bei deinem
+  Charakter.
+- Bank-Erweiterungen gibt es jetzt im Laden, neben dem Inventar-Upgrade.
+- Rabenfracht: Schick Items zwischen deinen eigenen Spielständen hin und her.
+
+OBERFLÄCHE
+
+- Ein Wiki zu jedem Item, oben rechts.
+- Eine schlankere Kopfleiste mit mehr Platz für die Seite, und Seiten, die sich an den Platz
+  anpassen, den du wirklich hast. Keine halbierten Wörter mehr, in keiner Sprache.
+- Überarbeitet: die Slayer-Seite, der Laden und der Laden für Aufgabenmarken. Dein Kampfstil sitzt
+  jetzt in der Seitenleiste, nur einen Klick vom Wechsel entfernt.
+- Ein neues Kampf-HUD und ein neuer Rückkehr-Bildschirm.
+- Ein neuer Steinhintergrund hinter jeder Seite, und alle neuen Kreaturen, Waffen, Bäume und Fische
+  kommen mit eigenen gemalten Bildern.
+- Ruhigere, aufgeräumtere Seiten: Rahmen zeigen an ihren Kanten keinen hellen Ring mehr, weniger
+  Rahmen stecken in anderen Rahmen, und Seitenköpfe folgen einem einheitlichen Aufbau. Die
+  Slayer-Seite hat jetzt Tabs für den Belohnungs-Shop und den Jägerkodex.
+
+FEHLERBEHEBUNGEN
+
+- Die Bestiariums-Erfolge der Krypta lassen sich jetzt erspielen. Spielstände, die die Kills schon
+  haben, schalten sie beim ersten Tick frei.
+- „Das ganze Bestiarium“ zählt nur noch Kreaturen, die du tatsächlich erreichen kannst (jetzt 126).
+- Kapitel 11 schließt sich nicht mehr von selbst ab, bevor du den Dungeon betrittst.
+- Schock beachtet jetzt Immunitäten.
+- Der Platzhalter "{pct}" in Effektbeschreibungen ist verschwunden.
+- Das Popup „Seltener Fund!“ verdeckt keine echte Beute mehr, nachdem du dasselbe Item hergestellt
+  hast.
+- Verzauberte Ausrüstung in der Bank bekommt einen eigenen Platz.
+
+Wie immer: Wenn dir etwas komisch vorkommt, sag es mir hier oder über den Knopf „Bug melden“ in den
+Optionen.

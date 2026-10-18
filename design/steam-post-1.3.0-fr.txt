@@ -1,0 +1,131 @@
+Grim Reach 1.3.0 - The Idol Hall Awakens (La Halle de l'Idole s'éveille)
+
+Chasseurs,
+
+Drazhan s'est retiré, mais sa halle n'a jamais cessé de travailler. Cette mise à jour apporte le
+Livre du Chasseur, un arbre de talents pour ta traque, remanie tous les compagnons et ajoute la
+Chute des Cendres, une façon de recommencer plus fort. Elle ouvre la Halle de l'Idole, poursuit la
+Chronique des Cendres et relève le plafond de la fin de jeu sur toute la ligne. Elle apporte aussi
+tout ce qui attendait en coulisses : de vrais emplacements de banque, un wiki de chaque objet, un
+nouveau HUD de combat et une interface plus nette. Les sauvegardes restent compatibles, comme
+toujours.
+
+LE LIVRE DU CHASSEUR
+
+- Dès le niveau 85 de Chasseur, tu dépenses tes points de chasseur dans le Livre du Chasseur, un
+  arbre de talents qui donne des améliorations permanentes à tout ton compte.
+- Pistage double, sur cinq rangs, ta chance d'obtenir un compagnon. Sur la piste te garantit un
+  compagnon dès que tu as passé deux fois le temps attendu sans en trouver.
+- Plus de butin rare sur les monstres de tes tâches, plus de points de chasseur par tâche, et des
+  dégâts bonus contre les familles dont tu as complété le bestiaire.
+- Le dernier nœud, Second collier, ouvre un second emplacement de compagnon pour les effets passifs.
+
+COMPAGNONS, REMANIÉS
+
+- Les 23 compagnons ont désormais chacun leur propre effet au lieu de « quelques pour cent de
+  plus ». Rocgueule trouve des gemmes au minage, Ouïepourrie remonte de meilleurs poissons,
+  Spectregemme taille parfois un rang au-dessus, Scoriedémon ajoute des suffixes à la forge.
+- En combat, chaque compagnon a un rôle clair : contrôle, protection, dégâts, butin ou soutien.
+- Écho : chaque compagnon que tu possèdes t'accorde un quart de son effet passif, même s'il n'est
+  pas équipé.
+- Carapace tombe désormais aussi souvent que les autres compagnons de combat (1/80 000). Sa Peau de
+  carapace atténue davantage de dégâts, et Mur de boucliers revient un peu moins souvent (toutes les
+  12 secondes au lieu de 10).
+- Sept compagnons étaient trop forts et ont été affaiblis : les soins de Cendreboyau,
+  l'étourdissement de Givrerancune, le vol de Rat-lugubre, le double butin d'Aile-charogne (qui ne
+  s'applique plus aux objets uniques de champion ni aux compagnons), ainsi que la barrière, le
+  bouclier et le vol de vie de Glyphegueule, Vélimite et Charnier, qui rendaient les mages presque
+  intouchables. Plus aucun compagnon n'accorde d'XP bonus.
+
+LA CHUTE DES CENDRES (PRESTIGE)
+
+- Dès que quatre compétences sont au niveau 99 et que le chapitre 21 de la Chronique est terminé, tu
+  peux envoyer ton personnage à travers la cendre à l'Autel des Éclats. Les niveaux, l'équipement,
+  l'or et la Chronique repartent de zéro.
+- Tes compagnons, ta maîtrise, le Livre du Chasseur, tes succès et ton bestiaire restent avec toi.
+- Chaque Chute des Cendres rapporte des Cicatrices pour le Livre des Cicatrices : une progression
+  plus rapide sur le chemin du retour, de l'or, des outils et de l'équipement choisi pour le
+  prochain parcours, les chapitres de la Chronique déjà vécus terminés en un clic, et de petits
+  bonus de combat permanents. Chaque parcours va plus vite que le précédent.
+- Quand tu entres dans la cendre, la Chronique de ce parcours te montre ce que tu as accompli, de
+  tes niveaux aux monstres que tu as tués, et exactement comment tes Cicatrices s'additionnent.
+- Ta sauvegarde est copiée automatiquement avant la Chute des Cendres.
+
+LA HALLE DE L'IDOLE EST OUVERTE
+
+- La Halle de l'Idole est désormais un terrain de chasse ouvert avec sept nouvelles créatures, d'une
+  force située entre les Hautes Terres et le Sanctuaire.
+- Ses deux champions, le Neuvième Gardien et Voile-Creux, peuvent enfin être chassés.
+
+LA CHRONIQUE CONTINUE
+
+- Six nouveaux chapitres (22 à 27) traversent la halle et mènent à la Chapelle effacée, un nouveau
+  mini-donjon. Quelque chose y travaille encore sur les murs.
+
+UNE FIN DE JEU PLUS HAUTE
+
+- Les étages 6 à 8 de la Tour du Chasseur à pleine puissance de fin de jeu (niveaux 85, 90 et 95 de
+  Chasseur), avec trois nouveaux articles dans la boutique de récompenses du Chasseur. Les tâches de
+  ces étages rapportent plus de points en conséquence.
+- Nouveaux paliers de coffres-jalons du Paragon à partir des étages 25, 50 et 100.
+- 18 nouvelles armes à distance et de magie à partir du niveau 95, pour que les deux styles aient
+  autant d'options de fin de jeu que la mêlée. Cinq armes rares existantes de niveau 99 passent
+  au-dessus de leurs équivalents fabriqués.
+- Le Bûcheronnage et la Pêche vont désormais vraiment jusqu'à 99 : trois nouveaux arbres, quatre
+  nouveaux poissons avec les plats assortis, et deux nouvelles cannes à pêche.
+
+CONFORT DE JEU
+
+- La maîtrise ne prend plus une éternité sur les actions bon marché. À partir du niveau de
+  maîtrise 50, chaque action rapporte au moins 60 XP de maîtrise par seconde de sa durée de base. La
+  maîtrise d'« Arbre ordinaire » passe ainsi de 78 à 99 en environ 23 heures au lieu de 950. Rien ne
+  change en dessous du niveau 50 ni dans la réserve de maîtrise.
+- Quand tes dégâts alimentent ta barrière (Rune du Buveur de Voile), cela apparaît désormais dans le
+  journal de combat.
+- Les fiches d'objet t'indiquent quand un effet ne se cumule pas. Seule la source la plus forte
+  compte, sauf pour les bonus de soin, de barrière et de récupération à l'élimination, qui
+  s'additionnent.
+- L'enchantement t'avertit quand l'effet vient déjà d'une autre pièce.
+- Le rapport de retour compte les entrées de la file qui ont été ignorées pendant ton absence.
+
+BANQUE, SACS ET OUTILS
+
+- La banque et l'inventaire ont de vrais emplacements qui retiennent où se trouvent les choses. Fais
+  glisser n'importe quelle pile sur n'importe quel emplacement vide, même directement depuis tes
+  sacs, et la liste défile pendant le glisser-déposer. Le nouveau butin se range à la fin.
+- Un quatrième emplacement d'outil. Les outils ne font plus partie des kits d'équipement et restent
+  avec ton personnage.
+- Les agrandissements de banque sont désormais vendus à la boutique, à côté de l'amélioration
+  d'inventaire.
+- Fret par corbeau : envoie des objets entre tes propres emplacements de sauvegarde.
+
+INTERFACE
+
+- Un wiki de chaque objet, en haut à droite.
+- Un en-tête plus fin qui laisse plus de place à la page, et des pages qui s'adaptent à l'espace
+  dont tu disposes vraiment. Plus de mots coupés en deux, dans aucune langue.
+- Page du Chasseur, boutique et boutique des jetons remaniées. Ton style de combat se trouve
+  maintenant dans la barre latérale, à un clic d'en changer.
+- Un nouveau HUD de combat et un nouvel écran de retour.
+- Un nouveau fond de pierre derrière chaque page, et chaque nouvelle créature, arme, arbre et
+  poisson arrive avec sa propre illustration peinte.
+- Des pages plus calmes et plus nettes : les cadres n'affichent plus d'anneau clair sur leurs bords,
+  moins de cadres sont imbriqués dans d'autres cadres, et les en-têtes de page suivent une seule
+  mise en page. La page du Chasseur a désormais des onglets pour la boutique de récompenses et le
+  Livre du Chasseur.
+
+CORRECTIFS
+
+- Les succès de bestiaire de La Crypte peuvent désormais être obtenus. Les sauvegardes qui ont déjà
+  les éliminations les débloquent au premier tick.
+- « Le bestiaire complet » ne compte plus que les créatures que tu peux réellement atteindre (126
+  désormais).
+- Le chapitre 11 ne se termine plus tout seul avant que tu entres dans le donjon.
+- L'électrisation respecte désormais les immunités.
+- Le marqueur "{pct}" dans les descriptions d'effets a disparu.
+- La fenêtre « Trouvaille rare ! » ne masque plus le vrai butin une fois que tu as fabriqué le même
+  objet.
+- L'équipement enchanté dans la banque obtient son propre emplacement.
+
+Comme toujours : si quelque chose cloche, dis-le-moi ici ou via le bouton « Signaler un bug » dans
+les options.
