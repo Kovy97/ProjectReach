@@ -56,6 +56,11 @@ echte Spielstände per SHA1 unverändert. Offen: Chef-Freigabe dieses Stands im 
 BuildID 26033657, setlive leer (Chef schaltet live), Übergabe `UPLOAD-FERTIG.txt`. `main` auf den Release-Stand
 vorgespult, Tag `v1.3.0`, in vier Fast-Forward-Etappen nach GitHub gepusht (2-GB-Push-Grenze).
 
+**PAUSE 19.10. ~00:25 (claude:2026-10-19T00:25:00+02:00), Chef: „Hier pausieren“.** Trailer v2 (dynamisch) mitten im
+Bau gestoppt: Skript `apps/client/ui-audit/mkt-1.3.0-trailer-v2.mjs` (unversioniert), 16 Clips in
+`marketing/1.3.0-media/trailer/v2/clips/`; offen: Item-Karten-Clip, Schnitt v2, Endkontrolle. Painterly-Asset-Audit
+(veraltete Piktogramme, Unterseiten-Hintergrund, alte Rahmen/Knöpfe) wartet auf Chef-Entscheid. Keine Prozesse laufen.
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
