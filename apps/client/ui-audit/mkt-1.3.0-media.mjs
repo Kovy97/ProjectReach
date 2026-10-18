@@ -18,14 +18,14 @@
 import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "@playwright/test";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIR = join(__dirname, "..");
 const CONFIG_PATH = join(__dirname, "sim-harness.vite.config.mjs");
 const PORT = 5394;
-const BASE_URL = `http://localhost:${PORT}`;
+export const BASE_URL = `http://localhost:${PORT}`;
 const OUT_ROOT = "G:\\GameDev\\marketing\\1.3.0-media";
 const SHOT_DIR = join(OUT_ROOT, "screenshots");
 mkdirSync(SHOT_DIR, { recursive: true });
@@ -33,11 +33,11 @@ mkdirSync(SHOT_DIR, { recursive: true });
 const STD = { width: 1920, height: 1080 };
 const XP99 = 13034431;
 /** Mausparkplatz ohne Hover-Ziel (0.3.0-Lehre: ein loser Tooltip ruiniert den Shot). */
-const PARK = { x: 1915, y: 1075 };
+export const PARK = { x: 1915, y: 1075 };
 let lastPage = null;
 
 // ── Dev-Server ───────────────────────────────────────────────────────────────────────────────
-function startDevServer() {
+export function startDevServer() {
   const viteBin = join(CLIENT_DIR, "node_modules", "vite", "bin", "vite.js");
   const child = spawn(process.execPath, [viteBin, "dev", "--config", CONFIG_PATH, "--port", String(PORT), "--strictPort"], {
     cwd: CLIENT_DIR,
@@ -50,7 +50,7 @@ function startDevServer() {
   return { child, getOutput: () => out };
 }
 
-async function waitForServer(url, timeoutMs = 40000) {
+export async function waitForServer(url, timeoutMs = 40000) {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     try {
@@ -76,7 +76,7 @@ export function evalDebug(page, fn, arg = null) {
   );
 }
 
-async function dismissAnyTour(page, maxTries = 5) {
+export async function dismissAnyTour(page, maxTries = 5) {
   for (let i = 0; i < maxTries; i++) {
     const skip = page.locator(".guide-bubble-skip");
     if ((await skip.count()) === 0) return;
@@ -87,7 +87,7 @@ async function dismissAnyTour(page, maxTries = 5) {
 
 /** Schaustück-Zustand: Idol-Ausrüstung (Nahkampf-Ritter passend zum Porträt), Kapitel 1–27 eingelöst,
  *  Kampf-/Sammel-99er, alle Begleiter, Jägerkodex teilweise gelernt. Nur im Browser-State, nie gespeichert. */
-const LISTS = {
+export const LISTS = {
   chron: Array.from({ length: 27 }, (_, i) => `chronicle_${String(i + 1).padStart(2, "0")}`),
   pets: ["rotbark", "cragmaw", "gillrot", "witherling", "sporewretch", "gloomrat", "slagfiend", "ashgut", "quillshrike", "flayling", "gemwraith", "glyphmaw", "hemlock", "vellumoth", "gorehound", "ironmaw", "carapace", "carrionwing", "pyreling", "hoarspite", "charnel", "booted_tomcat", "silkweaver"],
 };
@@ -157,7 +157,7 @@ function patchedFixtureJson(name, fresh) {
 
 /** Schließt Zeremonien/Offline-Bilanz und blendet bis hierher aufgelaufene Toasts aus (Lade-/Patch-Folgen,
  *  z. B. frisch erreichte Erfolge). Spätere, absichtlich ausgelöste Toasts bleiben sichtbar. */
-async function clearOverlays(page) {
+export async function clearOverlays(page) {
   for (let i = 0; i < 12; i++) {
     const btn = page.locator(".mwc-next-btn, .dcc-next-btn, .chdef-close, .ofs-collect, [class*='ceremony'] button.ds-button").first();
     if ((await btn.count()) === 0 || !(await btn.isVisible().catch(() => false))) break;
@@ -167,8 +167,10 @@ async function clearOverlays(page) {
   await page.evaluate(() => document.querySelectorAll(".toast").forEach((el) => el.setAttribute("data-mkt-old", "1")));
 }
 
-async function openGame(browser, { fixture = "endgame", slot = false, dsf = 2 } = {}) {
+export async function openGame(browser, { fixture = "endgame", slot = false, dsf = 2, clock = false, skipIntro = true, query = "", clear = true } = {}) {
   const context = await browser.newContext({ viewport: STD, deviceScaleFactor: dsf });
+  // Trailer: Spielzeit über Playwrights Uhr steuerbar (läuft bis pauseAt normal mit).
+  if (clock) await context.clock.install({ time: Date.now() });
   const saveJson = slot ? patchedFixtureJson(fixture, true) : null;
   if (!slot) {
     const body = patchedFixtureJson(fixture, false);
@@ -192,9 +194,10 @@ async function openGame(browser, { fixture = "endgame", slot = false, dsf = 2 } 
     const add = () => { const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st); };
     if (document.head) add(); else document.addEventListener("DOMContentLoaded", add);
   });
-  await page.goto(slot ? BASE_URL : `${BASE_URL}/?fixture=${encodeURIComponent(fixture)}`, { waitUntil: "load" });
+  await page.goto(slot ? BASE_URL : `${BASE_URL}/?fixture=${encodeURIComponent(fixture)}${query}`, { waitUntil: "load" });
   if (slot) {
     await page.waitForSelector(".menu", { timeout: 15000 });
+    if (!skipIntro) return { context, page, errors, menu: true }; // Trailer-Auftakt: Glut + Einblendung selbst aufnehmen
     await page.mouse.click(5, 5).catch(() => {}); // Intro überspringen
     await page.waitForTimeout(3500); // Menü-Einblendung (2,6 s) abwarten
     return { context, page, errors, menu: true };
@@ -205,13 +208,13 @@ async function openGame(browser, { fixture = "endgame", slot = false, dsf = 2 } 
   await page.waitForTimeout(2000);
   await evalDebug(page, showcase, LISTS);
   await page.waitForTimeout(2200); // Erfolge/Meilensteine aus dem Patch aufschlagen lassen …
-  await clearOverlays(page); // … und wegräumen
+  if (clear) await clearOverlays(page); // … und wegräumen
   await dismissAnyTour(page);
   return { context, page, errors };
 }
 
 /** Aus dem Menü per „Continue“ in den Slot-Spielstand (nötig für den echten Aufstieg: Sicherung über localStorage). */
-async function continueFromMenu(page) {
+export async function continueFromMenu(page) {
   await page.locator(".continue-card").last().click({ timeout: 8000 });
   await page.waitForSelector('[data-guide-id^="sidebar."]', { timeout: 20000 });
   await page.waitForFunction(() => !!window.__hfDebug, null, { timeout: 8000 });
@@ -223,7 +226,7 @@ async function continueFromMenu(page) {
   await dismissAnyTour(page);
 }
 
-async function gotoPage(page, id) {
+export async function gotoPage(page, id) {
   const sidebarSel = `[data-guide-id="sidebar.${id}"]`;
   const topbarSel = `[data-guide-id="topbar.${id}"]`;
   const sel = (await page.locator(sidebarSel).count()) > 0 ? sidebarSel : topbarSel;
@@ -232,7 +235,7 @@ async function gotoPage(page, id) {
   await dismissAnyTour(page);
 }
 
-async function fightNow(page, zoneId, monsterId) {
+export async function fightNow(page, zoneId, monsterId) {
   await gotoPage(page, "combat");
   const zone = page.locator(`[data-bot-zone="${zoneId}"]`).first();
   if ((await zone.count()) === 0) {
@@ -261,7 +264,7 @@ async function finalizeTo1080p(rawPath, finalPath) {
   rmSync(rawPath, { force: true });
 }
 
-async function shot(page, name) {
+export async function shot(page, name) {
   const finalPath = join(SHOT_DIR, `${name}.png`);
   const rawPath = join(SHOT_DIR, `_raw-${name}.png`);
   await page.screenshot({ path: rawPath, fullPage: false });
@@ -512,7 +515,10 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error("FATAL:", err);
-  process.exit(1);
-});
+// Nur als Skript starten, nicht beim Import durch mkt-1.3.0-trailer.mjs.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((err) => {
+    console.error("FATAL:", err);
+    process.exit(1);
+  });
+}

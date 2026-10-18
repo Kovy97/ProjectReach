@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trailer Cards</title>
+<!-- claude:2026-10-19T06:00:00+02:00 — Texttafeln/Schlusskarte für den 1.3.0-Trailer (Aufnahme per mkt-1.3.0-trailer.mjs).
+     Animationen starten erst mit body.go, damit die Aufnahme sie ab Frame 0 auf ihre virtuelle Zeit setzt. -->
+<style>
+  @font-face { font-family: "IM Fell English SC"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/IMFellEnglishSC-Regular.ttf"); }
+  @font-face { font-family: "Cinzel"; src: url("file:///G:/GameDev/apps/client/src/renderer/fonts/Cinzel-Regular.ttf"); }
+  :root { --gold: #e4cc83; --gold-hi: #ffe7a6; --ember: #ff8a3c; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #050505; }
+  .stage { position: absolute; inset: 0; overflow: hidden; }
+  .stone {
+    position: absolute; inset: -80px;
+    background: url("file:///G:/GameDev/apps/client/src/renderer/assets/bg_tileable_stone_dark.webp") 0 0 / 640px repeat;
+    filter: brightness(0.42) saturate(0.85);
+  }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 30%, rgba(0,0,0,.78) 100%); }
+  .glow { position: absolute; left: 50%; top: 50%; width: 1400px; height: 520px; transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center, rgba(196, 120, 40, .16), rgba(0,0,0,0) 70%); opacity: 0; }
+  .title {
+    position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-60%);
+    text-align: center; color: var(--gold); font-family: "IM Fell English SC", Georgia, serif;
+    font-size: 84px; letter-spacing: .2em; text-indent: .2em; opacity: 0; filter: blur(8px);
+    text-shadow: 0 4px 18px rgba(0,0,0,.9), 0 0 32px rgba(214, 150, 60, .25);
+  }
+  .title.small { font-size: 72px; }
+  .rule { position: absolute; left: 50%; top: calc(50% + 62px); height: 2px; width: 0; transform: translateX(-50%);
+    background: linear-gradient(90deg, rgba(228,204,131,0), rgba(228,204,131,.9), rgba(228,204,131,0)); }
+  .sub { position: absolute; left: 0; right: 0; top: calc(50% + 92px); text-align: center; color: #cdb98a;
+    font-family: "Cinzel", Georgia, serif; font-size: 30px; letter-spacing: .3em; text-indent: .3em; opacity: 0; }
+  .ember { position: absolute; bottom: -20px; width: 5px; height: 5px; border-radius: 50%;
+    background: radial-gradient(circle, #ffd28a 0%, var(--ember) 45%, rgba(255,120,40,0) 70%); opacity: 0; }
+
+  body.go .stone { animation: drift 7s linear forwards; }
+  body.go .glow { animation: fadein 1.6s ease-out .2s forwards; }
+  body.go .title { animation: reveal 1.25s cubic-bezier(.2,.7,.2,1) .25s forwards; }
+  body.go .rule { animation: rule 1.1s cubic-bezier(.3,.7,.2,1) .7s forwards; }
+  body.go .sub { animation: fadein 1s ease-out 1.1s forwards; }
+  body.go .ember { animation: rise var(--d) linear var(--delay) infinite; }
+  @keyframes drift { from { transform: translate(0,0) scale(1.0); } to { transform: translate(-40px,-18px) scale(1.04); } }
+  @keyframes fadein { to { opacity: 1; } }
+  @keyframes reveal { 0% { opacity: 0; filter: blur(8px); letter-spacing: .32em; text-indent: .32em; }
+                      100% { opacity: 1; filter: blur(0); letter-spacing: .2em; text-indent: .2em; } }
+  @keyframes rule { to { width: 760px; } }
+  @keyframes rise { 0% { transform: translate(0,0); opacity: 0; } 12% { opacity: .9; } 80% { opacity: .5; }
+                    100% { transform: translate(var(--x), -1120px); opacity: 0; } }
+
+  /* Schlusskarte */
+  .end .bg { position: absolute; inset: 0; background: url("file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_highlands_1920.webp") center / cover no-repeat; transform-origin: 50% 40%; }
+  .end .shade { position: absolute; inset: 0; background:
+      radial-gradient(ellipse at 50% 38%, rgba(0,0,0,0) 30%, rgba(0,0,0,.55) 100%),
+      linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.35) 60%, rgba(0,0,0,.82) 100%); }
+  .end .logo { position: absolute; left: 50%; top: 9%; width: 1000px; transform: translateX(-50%) scale(.94); opacity: 0;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,.85)); }
+  .end .tag { position: absolute; left: 0; right: 0; top: 66%; text-align: center; color: var(--gold-hi);
+    font-family: "IM Fell English SC", Georgia, serif; font-size: 58px; letter-spacing: .2em; text-indent: .2em; opacity: 0;
+    text-shadow: 0 4px 16px rgba(0,0,0,.95); }
+  .end .tag small { display: block; font-family: "Cinzel", Georgia, serif; font-size: 26px; letter-spacing: .42em; text-indent: .42em; color: #d8c38e; margin-bottom: 10px; }
+  .end .cta { position: absolute; left: 0; right: 0; top: 82%; text-align: center; color: #f1e2b8;
+    font-family: "Cinzel", Georgia, serif; font-size: 34px; letter-spacing: .32em; text-indent: .32em; opacity: 0;
+    text-shadow: 0 3px 12px rgba(0,0,0,.95); }
+  .end .cta b { color: var(--gold-hi); font-weight: 400; }
+  body.go.end .bg { animation: push 9s cubic-bezier(.25,.1,.25,1) forwards; }
+  body.go.end .logo { animation: logo 1.6s cubic-bezier(.2,.7,.2,1) .5s forwards; }
+  body.go.end .tag { animation: fadein 1.1s ease-out 2.0s forwards; }
+  body.go.end .cta { animation: fadein 1.1s ease-out 3.0s forwards; }
+  @keyframes push { from { transform: scale(1.0); } to { transform: scale(1.07); } }
+  @keyframes logo { to { opacity: 1; transform: translateX(-50%) scale(1); } }
+</style>
+</head>
+<body>
+<div class="stage" id="card">
+  <div class="stone"></div>
+  <div class="glow"></div>
+  <div class="vignette"></div>
+  <div id="embers"></div>
+  <div class="title" id="t"></div>
+  <div class="rule"></div>
+  <div class="sub" id="s"></div>
+</div>
+<div class="stage end-stage" id="end" hidden>
+  <div class="bg"></div>
+  <div class="shade"></div>
+  <div id="embers2"></div>
+  <img class="logo" src="file:///G:/GameDev/apps/client/src/renderer/assets/ui/mainmenu_logo_painterly.webp" alt="">
+  <!-- claude:2026-10-19T06:40:00+02:00 — Chef: allgemein zum ganzen Spiel, kein Update-/Early-Access-Bezug. -->
+  <div class="tag">A Dark Fantasy Idle RPG</div>
+  <div class="cta">AVAILABLE NOW ON <b>STEAM</b></div>
+</div>
+<script>
+  // Feste Funken-Verteilung (kein Zufall: jede Aufnahme gleich).
+  function embers(host, n) {
+    for (let i = 0; i < n; i++) {
+      const e = document.createElement("div");
+      e.className = "ember";
+      const x = (i * 397) % 1920, dur = 5.5 + ((i * 7) % 6) * 0.6, delay = -((i * 1.37) % dur);
+      e.style.left = x + "px";
+      e.style.setProperty("--d", dur + "s");
+      e.style.setProperty("--delay", delay + "s");
+      e.style.setProperty("--x", (((i * 53) % 160) - 80) + "px");
+      const sz = 3 + (i % 4);
+      e.style.width = e.style.height = sz + "px";
+      host.appendChild(e);
+    }
+  }
+  const q = new URLSearchParams(location.search);
+  if (q.get("mode") === "end") {
+    document.getElementById("card").hidden = true;
+    document.getElementById("end").hidden = false;
+    document.body.classList.add("end");
+    embers(document.getElementById("embers2"), 26);
+  } else {
+    document.getElementById("t").textContent = q.get("t") || "";
+    document.getElementById("s").textContent = q.get("s") || "";
+    if ((q.get("t") || "").length > 22) document.getElementById("t").classList.add("small");
+    embers(document.getElementById("embers"), 22);
+  }
+</script>
+</body>
+</html>
