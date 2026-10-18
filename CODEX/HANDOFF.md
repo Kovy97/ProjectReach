@@ -1,5 +1,23 @@
 # Übergabe — Codex-Projektleitung
 
+### 18.10.2026 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
+
+<!-- claude:2026-10-18T15:30:00+02:00 -->
+
+Chef 17.10.: 1.3.0-Stand abgenommen, „mehr für 1.3“ → acht kleine Vorschläge abgelehnt, gewählt **Prestige mit Neustart und
+Dauerboni**. Gebaut als **„Der Aschesturz“** (Set C, lore-dev): Währung Narben, Baum Narbenbuch (12 Knoten), Ort
+Scherbenaltar, Zähler Aschekerbe. Freischaltung 4×99 + Kapitel 21; bleibt: Begleiter/Echo, Meisterschaft, Jägerkodex (wirkt
+erst wieder ab Slayer 85), Erfolge, Bestiarium, Wiki; Rabenfracht- und Altpost-Empfang gesperrt bis wieder 4×99.
+Konzept/Entscheide `design/1.3-prestige-konzept.md`, Balance `design/1.3-prestige-balance.md` (1. Durchgang ≈ 360 h, 2. ≈ 65 %),
+Namen `design/lore/prestige-namen-1.3.md`. Commits: B1 `67065e5` (SAVE 88, `ascend`, Wächterliste, Quest-Laufanker,
+`backupPreAscend`), B2 `e164648` (Knoten-Effekte, Formel, Erinnerung, Alte Pfade, Erbstück/Truhe), Übersetzungen `b59f9bd`
+(RU-Bogen heißt jetzt „Пепельный дождь“), UI `493abbf` (Scherbenaltar-Seite, Ablauf speichern → Sicherung → Aufstieg →
+speichern, Asche-Überblendung), Asset-Nachtrag `dc2d559` (16 Bilder; Jägerkodex-Symbole liegen unter `ui/talents/slayer/`).
+Hinweis: logic-dev hat in B2 kleine Eingriffe in `combat.ts` gemacht (XP-/Gold-/Schadensfaktoren) → bei Combat-Arbeit beachten.
+Geprüft: Typecheck 5/5, Engine 1798, Content 310, Persistence 448 inkl. Vault v88, Client 261, Build.
+Offen: Chef-Test im Testspiel (Testkopie Slot 5 im isolierten Profil auf Kapitel 21 gesetzt, Original-Kopie gesichert im
+Scratchpad), Backup-Fehlerpfade nur per Code gebaut, Bilder laut Asset-Liste.
+
 ### 17.10.2026 nachts — Claude: Chef-Entscheide umgesetzt
 
 <!-- claude:2026-10-17T21:45:00+02:00 -->
