@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { content } from "@hearthforge/content";
-import { findTalentTree, levelFromXp, prestigeAscendPreview } from "@hearthforge/engine";
+import { findTalentTree, levelFromXp, prestigeAscendPreview, prestigePointsLedger } from "@hearthforge/engine";
 import type { PrestigeAscendPreview, PrestigeHeirloomCandidate, PrestigeItemRef } from "@hearthforge/engine";
 import { PRESTIGE_SKILL_LEVEL, PRESTIGE_TALENT_TREE_ID, PRESTIGE_UNLOCK_QUEST_ID } from "@hearthforge/shared";
 import type { GameState, ItemId } from "@hearthforge/shared";
@@ -10,6 +10,7 @@ import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
 import { getAltarScene, getBookOfScarsArt, getScarCurrencyArt } from "../prestigeArt";
 import { formatNum, formatPlaytime } from "../util/format";
+import { buildLedgerRows } from "../util/prestigeLedger";
 import { runWithScreenFade } from "../util/screenFade";
 import { NpcSpeechBubble } from "../components/NpcGreeting";
 import { TalentTree } from "../components/TalentTree";
@@ -87,11 +88,11 @@ function PickCard({ itemId, label, sub, selected, disabled, onClick }: PickProps
   );
 }
 
-function BreakdownRow({ label, value, strong }: { label: string; value: number; strong?: boolean }): JSX.Element {
+function BreakdownRow({ label, value, strong, muted }: { label: string; value: number; strong?: boolean; muted?: boolean }): JSX.Element {
   return (
-    <div className={`prestige-row${strong ? " prestige-row--total" : ""}`}>
+    <div className={`prestige-row${strong ? " prestige-row--total" : ""}${muted ? " prestige-row--sub" : ""}`}>
       <span className="prestige-row-label">{label}</span>
-      <span className="prestige-row-value">{strong ? <ScarGlyph size={18} /> : "+"} {formatNum(value)}</span>
+      <span className="prestige-row-value">{strong ? <ScarGlyph size={18} /> : muted ? "" : "+"} {formatNum(value)}</span>
     </div>
   );
 }
@@ -206,19 +207,10 @@ function AltarTab({ preview }: { preview: PrestigeAscendPreview }): JSX.Element 
           <section className="prestige-block">
             <SectionHead title={t("prestige.preview.title")} />
             <div className="prestige-rows">
-              <BreakdownRow label={t("prestige.preview.base")} value={points.fromBase} />
-              <BreakdownRow label={t("prestige.preview.skills").replace("{n}", String(points.skills99))} value={points.fromSkills} />
-              {points.fromTotalLevel > 0 && (
-                <BreakdownRow label={t("prestige.preview.totalLevel").replace("{n}", formatNum(points.totalLevel))} value={points.fromTotalLevel} />
-              )}
-              {points.fromChronicle > 0 && (
-                <BreakdownRow label={t("prestige.preview.chapters").replace("{n}", String(points.lateChapters))} value={points.fromChronicle} />
-              )}
-              {points.fromParagon > 0 && (
-                <BreakdownRow label={t("prestige.preview.paragon").replace("{n}", String(points.paragonBest))} value={points.fromParagon} />
-              )}
-              {points.fromMult > 0 && <BreakdownRow label={t("prestige.preview.mult")} value={points.fromMult} />}
-              <BreakdownRow label={t("prestige.preview.total")} value={points.total} strong />
+              {/* claude:2026-10-18T20:30:00+02:00 — dieselben Zeilen und Texte wie die Bilanz im Aufstiegs-Fenster (Welle E2). */}
+              {buildLedgerRows(prestigePointsLedger(points), t).map((row) => (
+                <BreakdownRow key={row.key} label={row.label} value={row.value} strong={row.kind === "total"} muted={row.kind === "subtotal"} />
+              ))}
             </div>
           </section>
 
@@ -381,6 +373,16 @@ function AltarTab({ preview }: { preview: PrestigeAscendPreview }): JSX.Element 
                   .replace("{level}", formatNum(rec.totalLevel))
                   .replace("{skills}", String(rec.skills99))
                   .replace("{time}", formatPlaytime(rec.activePlayMs))}
+                {/* claude:2026-10-18T20:30:00+02:00 — Bilanz des Durchgangs, falls gespeichert (Einträge ohne `tally` bleiben wie bisher). */}
+                {rec.tally && (
+                  <span className="muted prestige-history-tally">
+                    {t("prestige.history.tally")
+                      .replace("{kills}", formatNum(rec.tally.kills))
+                      .replace("{dungeons}", formatNum(rec.tally.dungeons))
+                      .replace("{achievements}", formatNum(rec.tally.achievements))
+                      .replace("{pets}", formatNum(rec.tally.petsFound))}
+                  </span>
+                )}
               </li>
             ))}
           </ul>

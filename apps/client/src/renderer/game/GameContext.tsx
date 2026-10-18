@@ -12,7 +12,8 @@ import {
 import type { ReactNode } from "react";
 import type { GameState, OfflineSummary, SaveSlot } from "@hearthforge/shared";
 import { MAX_OFFLINE_MS } from "@hearthforge/shared";
-import { advance, ascend, createGame, prestigeAscendCheck, transferInventoryItemsToSave } from "@hearthforge/engine";
+import { advance, ascend, createGame, prestigeAscendCheck, prestigeRunSummary, transferInventoryItemsToSave } from "@hearthforge/engine";
+import type { PrestigeRunSummary } from "@hearthforge/engine";
 import type {
   CrossSaveTransferResult,
   CrossSaveTransferSelection,
@@ -42,6 +43,11 @@ export type AscendRunResult =
 export interface AscendAwakening {
   count: number;
   points: number;
+  /**
+   * claude:2026-10-18T20:30:00+02:00 — Bilanz des beendeten Durchgangs (Welle E2), VOR `ascend` berechnet; das
+   * Aufstiegs-Fenster zeigt sie in Phase 1 (AscendLedger), danach den Erwachens-Text. `null` = nur Erwachen.
+   */
+  summary: PrestigeRunSummary | null;
 }
 
 /**
@@ -329,6 +335,8 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       // (2) Sicherung unter dem Slot-Lock; nur "pre-ascend" erlaubt den Aufstieg.
       if ((await backupPreAscend(slot)) !== "pre-ascend") return { ok: false, reason: "backup_failed" };
       // (3) Aufstieg (ersetzt den State IN PLACE), (4) sofort speichern.
+      // claude:2026-10-18T20:30:00+02:00 — Bilanz zuerst: danach beschreibt der State den neuen, leeren Durchgang.
+      const summary = prestigeRunSummary(s, content);
       if (!ascend(s, content, choice)) return { ok: false, reason: "locked" };
       const prestige = s.prestige;
       const gained = prestige.history[prestige.history.length - 1]?.points ?? 0;
@@ -339,7 +347,7 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
         console.error("Aufstieg: Speichern des Neustands fehlgeschlagen (Autosave versucht es erneut):", error);
       }
       setDebugHook(s);
-      setAscendAwakening({ count: prestige.count, points: gained });
+      setAscendAwakening({ count: prestige.count, points: gained, summary });
       // (5) Baum remounten: alle Snapshot-Refs (DeathPopup/Toasts/Level-Diffs) starten frisch wie beim Laden.
       setSessionEpoch((e) => e + 1);
       setTick((t) => t + 1);
