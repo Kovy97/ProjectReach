@@ -4139,3 +4139,115 @@
   background: rgba(216, 184, 112, 0.1);
   border-bottom-color: rgba(216, 184, 112, 0.68);
 }
+
+/* ─── claude:2026-10-19T05:00:00+02:00 — New Haven Materialien (Chef 19.10.: „überall dieselbe Textur") ───
+   Material-Hierarchie statt einer Fläche: Rahmen/Karte = Basalt (nur .nh-map-stage), Register = kalter Schiefer,
+   Detail = Aschestein, Zeilen = Holz, Vorschau-Bühne = Bronze/Erde, Info-Kästen = Stoff, Leisten/Maxed = Leder,
+   Kopfleiste = dunkles Gravewood. Alle Kacheln >= 600px (Quellbild 1254px), repeat, Abdunklung per Gradient davor. */
+
+/* claude:2026-10-19T05:00:00+02:00 — Register-Spalte: ruhiger kalter Schiefer, stark abgedunkelt */
+.nh-list-register {
+  background:
+    linear-gradient(rgba(8, 10, 12, 0.5), rgba(5, 6, 8, 0.66)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") top left / 700px 700px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Detail-Panel: Aschestein (heller, wärmer abgedunkelt) setzt sich vom Register ab */
+.nh-list-detail {
+  background:
+    linear-gradient(rgba(14, 12, 9, 0.7), rgba(8, 7, 6, 0.8)),
+    url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp") top left / 700px 700px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Listenzeilen: Holz; aktive/gehoverte Zeile wärmer und heller */
+.nh-list-row {
+  background:
+    linear-gradient(rgba(10, 7, 4, 0.3), rgba(10, 7, 4, 0.4)),
+    url("../assets/bg_tileable_wood.webp") top left / 640px 640px repeat;
+}
+
+.nh-list-row:hover,
+.nh-list-row:focus-visible,
+.nh-list-row.is-selected {
+  background:
+    linear-gradient(rgba(216, 184, 112, 0.16), rgba(216, 150, 70, 0.1)),
+    linear-gradient(rgba(10, 7, 4, 0.1), rgba(10, 7, 4, 0.18)),
+    url("../assets/bg_tileable_wood.webp") top left / 640px 640px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Vorschau-Bühne: erdiger Bronzegrund, Gebäude steht davor statt auf Kohle */
+.nh-list-detail-art {
+  background:
+    radial-gradient(ellipse at 50% 72%, rgba(190, 140, 70, 0.2), transparent 68%),
+    linear-gradient(rgba(10, 8, 4, 0.66), rgba(6, 5, 3, 0.8)),
+    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") center / 640px 640px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Jetzt/Nächste-Infokästen: Stoff */
+.nh-list-effect-flow {
+  background:
+    linear-gradient(rgba(10, 7, 4, 0.55), rgba(6, 4, 3, 0.66)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 640px 640px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Kostenkarte: Leder; Fortschrittsbox: dunkles Holz (nie gleiches Material wie Nachbar) */
+.nh-list-costs {
+  background:
+    linear-gradient(rgba(10, 6, 3, 0.5), rgba(6, 4, 2, 0.62)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") center / 640px 640px repeat;
+}
+
+.nh-list-progress {
+  background:
+    linear-gradient(rgba(6, 5, 4, 0.5), rgba(4, 3, 3, 0.62)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 640px 640px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Fußleiste „Geplant" und „Voll ausgebaut"-Leiste: Leder */
+.nh-list-shell > .nh-queue-strip {
+  background:
+    linear-gradient(rgba(10, 6, 3, 0.42), rgba(6, 4, 2, 0.56)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") top left / 640px 640px repeat;
+}
+
+.nh-list-row-action.is-maxed:disabled,
+.nh-list-primary.is-maxed:disabled {
+  background:
+    linear-gradient(rgba(30, 24, 20, 0.34), rgba(10, 8, 6, 0.46)),
+    url("../assets/ui/gravewood/textures/texture-leather.webp") center / 640px 640px repeat !important;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Kopfleiste (Karte/Liste/Nacht): dunkles Gravewood-Holz statt Basalt */
+.nh-view-controls {
+  background:
+    linear-gradient(rgba(8, 7, 6, 0.5), rgba(4, 3, 3, 0.66)),
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 640px 640px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Baumenü: kalter Schiefer wie Register (Basalt bleibt nur an .nh-map-stage) */
+.nh-buildmenu {
+  background:
+    linear-gradient(rgba(8, 10, 12, 0.5), rgba(5, 6, 8, 0.66)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 700px 700px repeat;
+}
+
+/* claude:2026-10-19T05:00:00+02:00 — Gebäude-Popup: Holz; Effektkästen darin und auf der Karte: Stoff */
+.nh-popup {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%),
+    linear-gradient(rgba(9, 7, 5, 0.6), rgba(3, 3, 3, 0.82)),
+    url("../assets/bg_tileable_wood.webp") center / 800px 800px repeat !important;
+}
+
+.nh-effects,
+.nh-popup .nh-effects {
+  background:
+    linear-gradient(rgba(10, 7, 4, 0.5), rgba(6, 4, 3, 0.64)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 640px 640px repeat;
+}
+
+.nh-popup .nh-effect {
+  background:
+    linear-gradient(rgba(10, 7, 4, 0.52), rgba(6, 4, 3, 0.66)),
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 600px 600px repeat;
+}
