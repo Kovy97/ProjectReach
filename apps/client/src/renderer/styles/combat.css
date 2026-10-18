@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    COMBAT — zone select, monster cards, battle, fighters,
@@ -828,7 +829,7 @@
   border-image-repeat: stretch;
   background:
     linear-gradient(rgba(8, 5, 2, 0.66), rgba(8, 5, 2, 0.66)),
-    url("../assets/bg_tileable_wood.webp") center / 130px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 325px repeat;
   border-radius: 0;
   font-family: var(--font-head);
   box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.5);
@@ -1339,7 +1340,7 @@
   /* Eigene Holztextur + dunkles Overlay (lesbar) statt flacher Box. */
   background:
     linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)),
-    url("../assets/bg_tileable_wood.webp") center / 130px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 325px repeat;
   /* Holz-9-Slice-Rahmen wie die Karten/Panels (Design-System). */
   border-style: solid;
   border-color: transparent;
@@ -1429,7 +1430,7 @@
   height: 34px;
   background:
     linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)),
-    url("../assets/bg_tileable_wood.webp") center / 130px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 325px repeat;
   border-style: solid;
   border-color: transparent;
   border-width: var(--frame-w);
@@ -1466,7 +1467,7 @@
   padding: 5px 11px;
   background:
     linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)),
-    url("../assets/bg_tileable_wood.webp") center / 130px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 325px repeat;
   border-style: solid;
   border-color: transparent;
   border-width: var(--frame-w);
@@ -3972,7 +3973,7 @@
   padding: 3px 9px;
   background:
     linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)),
-    url("../assets/bg_tileable_wood.webp") center / 130px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 325px repeat;
   border-style: solid;
   border-color: transparent;
   border-width: var(--frame-w);
@@ -4691,7 +4692,7 @@
   inset: auto;
   z-index: 2;
   background: linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)),
-    url("../assets/bg_tileable_wood.webp") center / 320px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 800px repeat;
   /* Chef-Fix (2026-07-02): die goldene Trennlinie ersetzt durch einen Holzrahmen-Streifen —
      dasselbe 9-Slice-Wood-Asset wie der Kartenrahmen selbst, nur oben angewandt (links/rechts/
      unten-Breite 0 → nur der obere Mittel-Streifen rendert), statt einer separaten Gold-Linie. */
@@ -4769,7 +4770,7 @@
   min-height: clamp(58px, 15cqw, 88px);
   padding: clamp(8px, 3cqw, 14px) clamp(4px, 2cqw, 8px);
   background: linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.5)), url("../assets/bg_black.webp") repeat;
-  background-size: 100% 100%, 120px;
+  background-size:100% 100%, 600px;
   border-style: solid;
   border-color: transparent;
   border-width: var(--frame-w);
@@ -5665,7 +5666,7 @@
   background:
     linear-gradient(rgba(20, 16, 11, 0.97), rgba(11, 9, 7, 0.98)),
     url("../assets/bg_black.webp") repeat;
-  background-size: auto, 200px;
+  background-size:auto, 1000px;
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
@@ -6689,7 +6690,7 @@
   background-image:
     linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
-  background-size: auto, 192px 192px;
+  background-size:auto, 480px 480px;
   background-repeat: no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;

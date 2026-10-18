@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    PAGES — shop, bank, toast, stats/options/bestiary,
@@ -864,7 +865,7 @@ body.bank-dragging-noselect {
   background:
     linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)),
     url("../assets/bg_tileable_leather.webp") repeat;
-  background-size: auto, 320px 320px; /* Chef-Umbau 2026-07-24 v2: Leder („Taschen-Look"), Kachel klein */
+  background-size:auto, 800px 800px; /* Chef-Umbau 2026-07-24 v2: Leder („Taschen-Look"), Kachel klein */
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
@@ -881,7 +882,7 @@ body.bank-dragging-noselect {
   background:
     linear-gradient(rgba(60, 42, 22, 0.16), rgba(60, 42, 22, 0.22)),
     url("../assets/bg_tileable_leather.webp") repeat;
-  background-size: auto, 320px 320px;
+  background-size:auto, 800px 800px;
   box-shadow: 0 0 10px rgba(154, 128, 96, 0.22);
 }
 
@@ -1027,7 +1028,7 @@ body.bank-dragging-noselect {
   padding: 5px 11px;
   background:
     linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)),
-    url("../assets/bg_tileable_wood.webp") center / 130px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 325px repeat;
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
@@ -1072,7 +1073,7 @@ body.bank-dragging-noselect {
   padding: 14px 16px 16px;
   background:
     linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)),
-    url("../assets/bg_tileable_wood.webp") center / 320px repeat;
+    url("../assets/bg_tileable_wood.webp") center / 800px repeat;
   border-style: solid;
   border-color: transparent;
   border-width: 6px 0 0 0;
@@ -4579,7 +4580,7 @@ body.bank-dragging-noselect {
   /* Chef 25.07.: Shop von Stein auf Holz — exakt das Options-Rezept (280px = „feiner"-Standard). */
   background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)),
     url("../assets/bg_tileable_wood.webp") repeat;
-  background-size: auto, 280px 280px;
+  background-size:auto, 700px 700px;
   align-self: flex-start;
 }
 
@@ -4621,7 +4622,7 @@ body.bank-dragging-noselect {
   /* Chef 25.07.: Shop von Stein auf Holz — exakt das Options-Rezept (280px = „feiner"-Standard). */
   background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)),
     url("../assets/bg_tileable_wood.webp") repeat;
-  background-size: auto, 280px 280px;
+  background-size:auto, 700px 700px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -5257,7 +5258,7 @@ body.bank-dragging-noselect {
   border: 1px solid rgba(133, 105, 67, 0.64);
   background:
     linear-gradient(rgba(8, 10, 12, 0.82), rgba(12, 10, 8, 0.88)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px 256px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 640px 640px repeat;
 }
 
 .bank-ledger .npc-bubble--tail-left::before,
@@ -5286,7 +5287,7 @@ body.bank-dragging-noselect {
   flex-wrap: nowrap;
   background:
     linear-gradient(rgba(8, 10, 12, 0.72), rgba(8, 10, 12, 0.78)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 256px 256px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 640px 640px repeat;
 }
 
 /* 1.0-Fixrunde FIX 2 (Chef-Sweep): der Einleitungssatz wurde bei schmalerer Fensterbreite hart
@@ -5321,7 +5322,7 @@ body.bank-dragging-noselect {
   border: 1px solid rgba(124, 91, 52, 0.56);
   background:
     linear-gradient(rgba(7, 9, 11, 0.72), rgba(7, 9, 11, 0.82)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px 256px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 640px 640px repeat;
 }
 
 .bank-page .bank-filter-row > :first-child {
@@ -5381,13 +5382,13 @@ body.bank-dragging-noselect {
   border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / clamp(8px, 0.62vw, 12px) stretch;
   background:
     linear-gradient(rgba(8, 10, 12, 0.7), rgba(7, 8, 10, 0.82)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 320px 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 800px 800px repeat;
 }
 
 .bank-page .bank-ledger-panel--storage {
   background:
     linear-gradient(rgba(16, 12, 8, 0.68), rgba(8, 9, 10, 0.82)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 800px 800px repeat;
 }
 
 /* claude:2026-10-18T12:00:00+02:00 — R1: panel-frame.webp / card-frame.webp haben eine transparente

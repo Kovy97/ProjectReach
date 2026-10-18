@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════════════════════
    ACTION-QUEUE-PANEL — angedockte Spalte rechts (Chef-Wunsch), spiegelbildlich
@@ -21,7 +22,7 @@
      statt des dunklen Holz-Grunds — beide Dock-Panels wirken jetzt wie ein Paar. */
   background:
     linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
-    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+    url("../assets/bg_sidebar.webp") top left / 782px repeat;
   overflow: hidden;
 }
 
@@ -419,7 +420,7 @@
   background:
     linear-gradient(rgba(16, 10, 5, 0.45), rgba(16, 10, 5, 0.52)),
     url("../assets/bg_tileable_wood.webp") repeat;
-  background-size: auto, 280px 280px;
+  background-size:auto, 700px 700px;
   border-style: solid;
   border-color: transparent;
   border-width: 3px;
@@ -781,7 +782,7 @@
   border-left: 0;
   background:
     linear-gradient(rgba(6, 8, 10, 0.36), rgba(2, 4, 5, 0.62)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
 }
 
 .queue-panel::before {
@@ -800,7 +801,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 0 0 calc(6px * 2.125) 0;
   background:
     linear-gradient(rgba(15, 18, 19, 0.3), rgba(4, 6, 7, 0.58)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
 }
 
 .queue-panel-body {
@@ -816,7 +817,7 @@
   background:
     radial-gradient(circle at 50% 0%, rgba(160, 108, 52, 0.18), transparent 70%),
     linear-gradient(rgba(12, 15, 17, 0.38), rgba(3, 5, 6, 0.66)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
   background-origin: border-box;
   background-clip: border-box;
 }
@@ -835,7 +836,7 @@
   border-color: transparent;
   background:
     linear-gradient(90deg, rgba(79, 38, 18, 0.7), rgba(20, 15, 12, 0.72)),
-    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 256px 256px repeat;
+    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 640px 640px repeat;
   box-shadow: inset 4px 0 #b57a37, 0 0 14px rgba(171, 94, 33, 0.22);
 }
 
@@ -869,7 +870,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125);
   background:
     linear-gradient(rgba(10, 13, 15, 0.36), rgba(3, 5, 6, 0.64)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
   background-origin: border-box;
   background-clip: border-box;
 }
@@ -915,7 +916,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(3px * 2.125);
   background:
     linear-gradient(rgba(6, 8, 9, 0.34), rgba(2, 3, 4, 0.64)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
 }
 
 .queue-panel-paused,
@@ -923,7 +924,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(6px * 2.125);
   background:
     linear-gradient(rgba(52, 25, 13, 0.48), rgba(16, 9, 7, 0.68)),
-    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 256px 256px repeat;
+    url("../assets/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 640px 640px repeat;
 }
 
 /* codex:2026-08-03T08:24:00+02:00 — Lesbarkeit bei 1920×1080: kurze Fantasy-Überschriften

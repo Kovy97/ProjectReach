@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    BUG REPORT — entry banners (Options/Main Menu) + report dialog
@@ -303,7 +304,7 @@
   border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 22px;
   background:
     linear-gradient(90deg, rgba(45, 18, 13, 0.36), rgba(7, 11, 14, 0.7)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 560px 560px repeat;
   background-origin: border-box;
   background-clip: border-box;
 }
@@ -334,7 +335,7 @@
   background:
     radial-gradient(ellipse at 18% 0%, rgba(139, 81, 36, 0.14), transparent 48%),
     linear-gradient(rgba(5, 8, 10, 0.22), rgba(4, 6, 8, 0.46)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 256px 256px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 640px 640px repeat;
 }
 
 #root .bugreport-title {
@@ -371,7 +372,7 @@
   border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
   background:
     linear-gradient(rgba(8, 12, 14, 0.42), rgba(6, 8, 10, 0.58)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 560px 560px repeat;
 }
 
 #root .bugreport-auto-block {
@@ -396,7 +397,7 @@
     linear-gradient(rgba(3, 5, 6, 0.16), rgba(2, 3, 4, 0.56)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   background-position: center, center, 0 0;
-  background-size: auto, auto, 224px 224px;
+  background-size:auto, auto, 560px 560px;
   background-repeat: no-repeat, no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;

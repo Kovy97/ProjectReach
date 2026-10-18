@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    OPTIONS PAGE — Citadel layout rework (Task #270)
@@ -38,7 +39,7 @@
     radial-gradient(ellipse 90% 140% at 8% 15%, rgba(216, 192, 106, 0.09), transparent 62%),
     linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)),
     url("../assets/bg_tileable_wood.webp") repeat;
-  background-size: auto, auto, 280px 280px; /* Chef 24.07.: Textur feiner (Kachel klein) */
+  background-size:auto, auto, 700px 700px; /* Chef 24.07.: Textur feiner (Kachel klein) */
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
@@ -89,7 +90,7 @@
 .opz-section {
   /* Chef 2026-07-23: Holz statt Stein (gekachelt, nie gestretcht — BG-Textur-Regel). */
   background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/bg_tileable_wood.webp") repeat;
-  background-size: auto, 280px 280px; /* Chef 24.07.: Textur feiner */
+  background-size:auto, 700px 700px; /* Chef 24.07.: Textur feiner */
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
@@ -395,7 +396,7 @@
     linear-gradient(rgba(6, 9, 11, 0.18), rgba(4, 6, 8, 0.42)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
   background-position: center, center, 0 0;
-  background-size: auto, auto, 256px 256px;
+  background-size:auto, auto, 640px 640px;
   background-repeat: no-repeat, no-repeat, repeat;
 }
 
@@ -477,7 +478,7 @@
     linear-gradient(rgba(3, 5, 6, 0.2), rgba(2, 3, 4, 0.58)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   background-position: center, center, 0 0;
-  background-size: auto, auto, 224px 224px;
+  background-size:auto, auto, 560px 560px;
   background-repeat: no-repeat, no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;

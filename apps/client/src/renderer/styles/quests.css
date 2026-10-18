@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    QUEST BOARD — page-scoped stylesheet (Task #274)
@@ -1396,7 +1397,7 @@
   background-image:
     linear-gradient(rgba(6, 9, 11, 0.4), rgba(4, 6, 8, 0.6)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
-  background-size: auto, 256px 256px;
+  background-size:auto, 640px 640px;
   background-repeat: no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;
@@ -1411,7 +1412,7 @@
   background-image:
     linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
-  background-size: auto, 256px 256px;
+  background-size:auto, 640px 640px;
   background-repeat: no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;

@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    New Haven — Lager-Screen (0.3.0 „Das Lager", Task #361)
@@ -1013,7 +1014,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(5px * 2.125);
   background:
     linear-gradient(rgba(13, 16, 17, 0.35), rgba(4, 6, 7, 0.72)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
   background-origin: border-box;
   background-clip: border-box;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.62);
@@ -1916,7 +1917,7 @@
   background:
     radial-gradient(ellipse at 50% 70%, rgba(70, 82, 88, 0.2), transparent 66%),
     linear-gradient(rgba(4, 6, 7, 0.62), rgba(3, 4, 5, 0.82)),
-    url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 256px 256px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 640px 640px repeat;
 }
 
 .nh-art-img {
@@ -2184,14 +2185,14 @@
   background:
     radial-gradient(ellipse at 50% 0%, rgba(147, 91, 40, 0.12), transparent 52%),
     linear-gradient(rgba(10, 9, 8, 0.66), rgba(4, 5, 6, 0.86)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 800px 800px repeat;
 }
 
 .nh-grid > .nh-card.is-built {
   background:
     radial-gradient(ellipse at 50% 0%, rgba(184, 112, 43, 0.16), transparent 55%),
     linear-gradient(rgba(13, 10, 8, 0.6), rgba(4, 5, 6, 0.84)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 800px 800px repeat;
 }
 
 /* UI-Fix 26.08.: der schmale 4-Spalten-Fall (≤1400px, s. Media-Query oben) wickelt spuerbar mehr
@@ -2263,7 +2264,7 @@
   background:
     radial-gradient(ellipse at 50% 66%, rgba(95, 77, 54, 0.16), transparent 68%),
     linear-gradient(rgba(10, 12, 13, 0.22), rgba(3, 4, 5, 0.5)),
-    url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 320px 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 800px 800px repeat;
 }
 
 .nh-card .nh-art-img {
@@ -2309,7 +2310,7 @@
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 700px 700px repeat;
 }
 
 .nh-effect {
@@ -2362,7 +2363,7 @@
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(15, 10, 7, 0.64), rgba(6, 5, 4, 0.82)),
-    url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 280px 280px repeat;
+    url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 700px 700px repeat;
 }
 
 /* Chef-Vorgabe 26.08.: "Kosten/Zeit"-Text in der Bau-Leiste ≥ 14px, in der (deutlich breiteren)
@@ -2384,13 +2385,13 @@
   border-image: none !important;
   background:
     linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.52)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 180px 180px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 450px 450px repeat !important;
 }
 
 .nh-card .mat-chip.lacking {
   background:
     linear-gradient(rgba(72, 18, 15, 0.28), rgba(24, 7, 7, 0.54)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 180px 180px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 450px 450px repeat !important;
 }
 
 /* Chef-Vorgabe 26.08.: "0/40"-Mengentext ≥ 14px in der Bau-Leiste — skills.css' geteilter
@@ -2409,7 +2410,7 @@
   background:
     radial-gradient(ellipse at 50% 0%, rgba(177, 113, 49, 0.13), transparent 68%),
     linear-gradient(rgba(9, 12, 14, 0.12), rgba(3, 5, 6, 0.4)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 190px 190px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 475px 475px repeat !important;
   color: #eadab8;
   font-size: clamp(13px, 3.8cqw, 18px);
   line-height: 1.15;
@@ -2430,7 +2431,7 @@
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   background:
     linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.62)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 700px 700px repeat;
 }
 
 /* codex:2026-08-01T09:30:10+02:00 — Popup-Fassung: echte adaptive Breite, vollständiger Flavor,
@@ -2446,7 +2447,7 @@
   background:
     radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%),
     linear-gradient(rgba(9, 9, 8, 0.7), rgba(3, 4, 5, 0.9)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px 360px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 900px 900px repeat !important;
 }
 
 /* Chef-Feedback 26.08. ("Info-Cards sollen groesser sein"): DER Fund dazu — `.modal` (modals.css,
@@ -2475,7 +2476,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(clamp(7px, 2cqw, 10px) * 2.125);
   background:
     linear-gradient(rgba(45, 16, 13, 0.3), rgba(10, 7, 7, 0.5)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 128px 128px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
   cursor: pointer;
 }
 
@@ -2546,7 +2547,7 @@
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 700px 700px repeat;
 }
 
 /* codex:2026-08-01T09:30:10+02:00 — Der Action-Slot ist der einzige Kostenrahmen im Popup;
@@ -2574,7 +2575,7 @@
 .nh-popup-actions .nh-demolish-btn {
   background:
     linear-gradient(rgba(86, 18, 14, 0.35), rgba(25, 7, 7, 0.58)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 190px 190px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 475px 475px repeat !important;
 }
 
 @media (max-width: 1180px) {
@@ -2685,7 +2686,7 @@
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
   background:
     linear-gradient(rgba(10, 13, 15, 0.46), rgba(3, 5, 6, 0.68)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 240px 240px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 600px 600px repeat;
 }
 
 .nh-popup .nh-effect-label {
@@ -2751,7 +2752,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
   background:
     linear-gradient(rgba(8, 9, 10, 0.62), rgba(3, 4, 5, 0.78)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 750px 750px repeat;
 }
 
 .nh-view-tabbar {
@@ -2769,7 +2770,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125);
   background:
     linear-gradient(rgba(12, 13, 14, 0.35), rgba(3, 4, 5, 0.62)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 220px 220px repeat;
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 550px 550px repeat;
   font-size: clamp(12px, 0.8vw, 16px);
   line-height: 1.1;
   text-align: center;
@@ -2780,7 +2781,7 @@
 .nh-view-controls .nh-view-tab.active {
   background:
     linear-gradient(rgba(104, 68, 28, 0.2), rgba(20, 15, 9, 0.48)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 220px 220px repeat;
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 550px 550px repeat;
 }
 
 .nh-view-controls .nh-view-tab:disabled {
@@ -2819,7 +2820,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
   background:
     linear-gradient(rgba(5, 6, 7, 0.54), rgba(2, 3, 4, 0.74)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 800px 800px repeat;
 }
 
 .nh-map {
@@ -2855,7 +2856,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
   background:
     linear-gradient(rgba(9, 10, 11, 0.48), rgba(3, 4, 5, 0.72)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 750px 750px repeat;
 }
 
 .nh-buildmenu-title {
@@ -2883,7 +2884,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
   background:
     linear-gradient(rgba(25, 18, 11, 0.32), rgba(5, 6, 7, 0.62)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 575px 575px repeat;
 }
 
 .nh-buildmenu-item:hover:not(.is-locked),
@@ -2891,7 +2892,7 @@
   filter: brightness(1.1);
   background:
     linear-gradient(rgba(92, 57, 23, 0.2), rgba(8, 7, 6, 0.55)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 575px 575px repeat;
 }
 
 .nh-buildmenu-item.is-locked {
@@ -3003,7 +3004,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
   background:
     linear-gradient(rgba(26, 17, 9, 0.42), rgba(4, 5, 6, 0.68)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 575px 575px repeat;
 }
 
 @media (max-width: 1180px) {
@@ -3127,7 +3128,7 @@
      Materialwechsel; die einzelnen Gebäudekarten behalten separat ihre Topbar-Textur. */
   background:
     linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
-    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+    url("../assets/bg_sidebar.webp") top left / 782px repeat;
 }
 
 .nh-list-register {
@@ -3175,7 +3176,7 @@
      Verdunkelung und 313-px-Kachelung. */
   background:
     linear-gradient(rgba(10, 12, 15, 0.30), rgba(10, 12, 15, 0.30)),
-    url("../assets/bg_topbar.webp") top left / 313px repeat;
+    url("../assets/bg_topbar.webp") top left / 782px repeat;
   cursor: pointer;
 }
 
@@ -3189,7 +3190,7 @@
   outline: none;
   background:
     linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)),
-    url("../assets/bg_topbar.webp") top left / 313px repeat;
+    url("../assets/bg_topbar.webp") top left / 782px repeat;
   filter: brightness(1.08);
   box-shadow: inset 4px 0 0 var(--ds-gold, #d8b870), inset 0 0 18px rgba(209, 157, 75, 0.1);
 }
@@ -3527,7 +3528,7 @@
      Queue-Karten selbst bleiben dunkler, damit die Baufolge darauf lesbar bleibt. */
   background:
     linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
-    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+    url("../assets/bg_sidebar.webp") top left / 782px repeat;
 }
 
 .nh-list-shell > .nh-queue-strip .nh-queue-list {
@@ -3585,7 +3586,7 @@
   color: #a9db92 !important;
   background:
     linear-gradient(rgba(48, 92, 39, 0.32), rgba(12, 32, 15, 0.42)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 450px 450px repeat !important;
   box-shadow: inset 0 0 16px rgba(113, 188, 84, 0.16), 0 0 7px rgba(86, 155, 68, 0.12);
 }
 
@@ -3594,7 +3595,7 @@
   color: #ebcd75 !important;
   background:
     linear-gradient(rgba(119, 78, 27, 0.3), rgba(39, 26, 11, 0.44)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 450px 450px repeat !important;
   box-shadow: inset 0 0 14px rgba(205, 153, 69, 0.14);
 }
 
@@ -3605,7 +3606,7 @@
   filter: saturate(0.58) brightness(0.78);
   background:
     linear-gradient(rgba(91, 31, 27, 0.25), rgba(30, 11, 10, 0.4)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 450px 450px repeat !important;
   box-shadow: inset 0 0 13px rgba(168, 61, 51, 0.13);
 }
 
@@ -3617,7 +3618,7 @@
   filter: saturate(0.58) brightness(0.83);
   background:
     linear-gradient(rgba(41, 51, 57, 0.28), rgba(12, 16, 18, 0.44)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 450px 450px repeat !important;
 }
 
 .nh-list-shell > .nh-queue-strip .nh-queue-waiting {
@@ -3749,7 +3750,7 @@
   background:
     radial-gradient(ellipse at 46% 0%, rgba(159, 101, 44, 0.13), transparent 46%),
     linear-gradient(rgba(8, 9, 9, 0.72), rgba(3, 4, 5, 0.92)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 800px 800px repeat;
   overflow: hidden;
 }
 
@@ -3867,7 +3868,7 @@
   border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 2.15 1.87 2.15 1.87;
   background:
     linear-gradient(rgba(15, 11, 8, 0.58), rgba(3, 4, 5, 0.78)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 700px 700px repeat;
 }
 
 .nh-refinery-register {
@@ -4109,7 +4110,7 @@
   background:
     linear-gradient(rgba(216, 184, 112, 0.12), rgba(216, 184, 112, 0.12)),
     linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)),
-    url("../assets/bg_topbar.webp") top left / 313px repeat;
+    url("../assets/bg_topbar.webp") top left / 782px repeat;
   box-shadow: 0 0 12px rgba(216, 184, 112, 0.22);
 }
 

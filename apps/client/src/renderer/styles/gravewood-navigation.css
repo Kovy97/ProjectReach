@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* claude:2026-10-17T12:25:00+02:00 — UI-Fundament: alle .topbar*-Regeln dieser Datei entfernt. Die
    Reiterleiste steht vollständig in chrome.css; die hier gestapelten !important-Generationen
@@ -291,7 +292,7 @@
     linear-gradient(rgba(8, 10, 11, 0.32), rgba(4, 5, 6, 0.48)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") !important;
   background-position: center, 0 0 !important;
-  background-size: auto, 192px 192px !important;
+  background-size:auto, 480px 480px !important;
   background-repeat: no-repeat, repeat !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.34) !important;
   transform: none !important;
@@ -621,7 +622,7 @@
     linear-gradient(rgba(7, 7, 8, 0.22), rgba(3, 3, 4, 0.42)),
     url("../assets/ui/gravewood/textures/texture-gravewood.webp");
   background-position: center, 0 0;
-  background-size: auto, 320px 320px;
+  background-size:auto, 800px 800px;
   background-repeat: no-repeat, repeat;
 }
 

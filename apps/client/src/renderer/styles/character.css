@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    CHARACTER — old char-sheet, new cs-* char-sheet, portrait picker.
@@ -914,7 +915,7 @@
   background:
     linear-gradient(rgba(9, 11, 17, 0.88), rgba(5, 7, 12, 0.92)),
     url("../assets/bg_black.webp") repeat;
-  background-size: auto, 200px;
+  background-size:auto, 1000px;
 }
 /* Stats-Panel: dunklerer, kühl getönter Hintergrund (anders als bg_black) →
    weiße Texte + 2×-Icons knallen besser. Holz-ds-frame-Rahmen bleibt.
@@ -923,7 +924,7 @@
   background:
     linear-gradient(rgba(9, 11, 17, 0.88), rgba(5, 7, 12, 0.92)),
     url("../assets/bg_black.webp") repeat;
-  background-size: auto, 200px;
+  background-size:auto, 1000px;
 }
 
 .cs-col {
@@ -1180,7 +1181,7 @@
   background:
     linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)),
     url("../assets/bg_black.webp") repeat;
-  background-size: auto, 200px;
+  background-size:auto, 1000px;
   flex-shrink: 0;
 }
 
@@ -1249,7 +1250,7 @@
   background:
     linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.28)),
     url("../assets/bg_black.webp") repeat;
-  background-size: auto, 200px;
+  background-size:auto, 1000px;
   border-top: 1px solid rgba(216,192,106,0.12);
 }
 
@@ -1323,7 +1324,7 @@
     radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--attr-color, var(--gold)) 20%, transparent) 0%, transparent 68%),
     linear-gradient(rgba(0,0,0,0.34), rgba(0,0,0,0.54)),
     url("../assets/bg_black.webp") repeat;
-  background-size: 100% 100%, auto, 160px;
+  background-size:100% 100%, auto, 800px;
   /* 1.1.0-Schattenpolitur (Befund B1): Hier lagen drei Schattenlagen auf sechs Pixeln,
      unter einem border-image, das die Kante bereits zeichnet. Der Farbring bleibt — er ist
      der Attribut-Farbcode und die einzige Lage, die etwas AUSSAGT. Die beiden Innen-Vignetten
@@ -1700,7 +1701,7 @@
   background:
     linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)),
     url("../assets/bg_black.webp") repeat;
-  background-size: auto, 200px;
+  background-size:auto, 1000px;
 }
 
 .cs-doll-wrap {

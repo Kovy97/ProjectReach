@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    DESIGN SYSTEM — Citadel RPG GUI tokens + ds-* components
@@ -533,7 +534,7 @@
   background-image:
     linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
-  background-size: auto, 192px 192px;
+  background-size:auto, 480px 480px;
   background-repeat: no-repeat, repeat;
   color: #ead8a0;
   font-family: var(--font-head);
@@ -590,7 +591,7 @@
   background-image:
     linear-gradient(rgba(216, 192, 106, 0.2), rgba(3, 5, 6, 0.42)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
-  background-size: auto, 192px 192px;
+  background-size:auto, 480px 480px;
   background-repeat: no-repeat, repeat;
   color: var(--gold);
   text-shadow: 0 1px 2px #000, 0 0 10px rgba(216, 192, 106, 0.25);

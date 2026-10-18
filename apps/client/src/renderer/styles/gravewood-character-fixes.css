@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /*
  * Character — ausschließlich Geometriekorrektur des mittleren Equipment/Stats-Owners.
@@ -60,7 +61,7 @@
     linear-gradient(rgba(8, 5, 3, 0.28), rgba(4, 3, 2, 0.5)),
     url("../assets/ui/gravewood/textures/texture-umber-cloth.webp");
   background-position: center, center, 0 0;
-  background-size: auto, auto, 256px 256px;
+  background-size:auto, auto, 640px 640px;
   background-repeat: no-repeat, no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;

@@ -1,20 +1,21 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-09-10T10:35:00+02:00 — Reforged Shell: echter Bestands-Ironframe,
    gedämpfte Materialien, lesbare Informationen. Keine Seiten-/Modal-Neugestaltung. */
 #root .layout--reforged {
   --chrome-frame: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
-  --chrome-shell: linear-gradient(rgba(16, 13, 11, .55), rgba(12, 12, 11, .75)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 256px repeat;
-  --chrome-surface: linear-gradient(rgba(11, 15, 17, .73), rgba(11, 14, 15, .85)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px repeat;
+  --chrome-shell: linear-gradient(rgba(16, 13, 11, .55), rgba(12, 12, 11, .75)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 640px repeat;
+  --chrome-surface: linear-gradient(rgba(11, 15, 17, .73), rgba(11, 14, 15, .85)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 640px repeat;
   --chrome-text: #ded6c6;
   --chrome-muted: #a7a89e;
   --chrome-gold: #d8c06a;
   /* codex:2026-09-10T11:12:00+02:00 — Chefkorrektur: Navigation trägt wieder sichtbares Material und warmes Licht, nicht die flache Datenfläche. */
-  --chrome-nav-shell: linear-gradient(rgba(15, 10, 7, .18), rgba(8, 7, 6, .36)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 320px repeat;
+  --chrome-nav-shell: linear-gradient(rgba(15, 10, 7, .18), rgba(8, 7, 6, .36)), url("../assets/ui/gravewood/textures/texture-gravewood.webp") center / 800px repeat;
   /* claude:2026-10-18T22:00:00+02:00 — Chef 18.10.: Sidebar- und Topbar-Knöpfe aus dem neuen Holz statt Basalt. Eigene Knopf-
      Fassung `texture-wood-nav` (Maserung quer gedreht, Helligkeit wie die alte Basalt-Fläche ⇒ Goldschrift gleich lesbar). */
-  --chrome-nav-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/textures/texture-wood-nav.webp") center / 256px repeat;
-  --chrome-nav-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-wood-nav.webp") center / 256px repeat;
+  --chrome-nav-surface: radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%), linear-gradient(rgba(8, 11, 13, .06), rgba(2, 4, 5, .28)), url("../assets/ui/gravewood/textures/texture-wood-nav.webp") center / 640px repeat;
+  --chrome-nav-selected: radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%), linear-gradient(rgba(33, 23, 12, .16), rgba(16, 11, 6, .22)), url("../assets/ui/gravewood/textures/texture-wood-nav.webp") center / 640px repeat;
   /* claude:2026-10-17T12:00:00+02:00 — Vertiefte Basalt-Mulde der Statuszellen (Quiet-Citadel-Material). */
-  --chrome-well: linear-gradient(rgba(58, 31, 19, .36), rgba(9, 12, 14, .72)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px repeat;
+  --chrome-well: linear-gradient(rgba(58, 31, 19, .36), rgba(9, 12, 14, .72)), url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px repeat;
 }
 
 /* codex:2026-09-10T10:35:00+02:00 — Maßgeblich ist der Platz ZWISCHEN Sidebar/Queue,

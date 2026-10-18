@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════
    BESTIARY — "REISE DURCH DEN REACH" (Konzept 4, Chef-Wahl 2026-08-03)
    Bindende Vorlage: design/mockups/bestiary-2026-08-03/concept-4-reise.{html,css,js} (+ Screenshots).
@@ -42,7 +43,7 @@
     linear-gradient(rgba(6, 9, 11, 0.2), rgba(3, 5, 6, 0.5)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   background-position: center, center, 0 0;
-  background-size: auto, auto, 224px 224px;
+  background-size:auto, auto, 560px 560px;
   background-repeat: no-repeat, no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;
@@ -164,7 +165,7 @@
     linear-gradient(rgba(6, 9, 11, 0.2), rgba(3, 5, 6, 0.5)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   background-position: center, center, 0 0;
-  background-size: auto, auto, 224px 224px;
+  background-size:auto, auto, 560px 560px;
   background-repeat: no-repeat, no-repeat, repeat;
   background-origin: border-box;
   background-clip: border-box;
@@ -262,7 +263,7 @@
   background:
     linear-gradient(rgba(18, 12, 7, 0.5), rgba(8, 5, 3, 0.7)),
     url("../assets/ui/gravewood/textures/texture-leather.webp") repeat;
-  background-size: auto, 280px 280px;
+  background-size:auto, 700px 700px;
   /* claude:2026-10-18T11:30:00+02:00 — R1: Leder/Abdunklung über die ganze Box, kein Versatz im Rahmenstreifen. */
   background-origin: border-box;
   background-clip: border-box;

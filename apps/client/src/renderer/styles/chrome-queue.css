@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-09-10T10:21:18+02:00 — Interface Reforged: ein tragender Eisenrahmen,
    ruhige Auftragszeilen und ein einziger Scrollviewport. Nur der beauftragte Layout-Scope;
    Engine-Zustände, echte Bilder, Nummerierung und Pointer-Drag bleiben unverändert.
@@ -357,7 +358,7 @@
   border-radius: 0;
   background:
     linear-gradient(rgba(6, 8, 9, 0.34), rgba(2, 3, 4, 0.64)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
   box-shadow: none;
   font-family: var(--font-info);
   font-size: 12px;

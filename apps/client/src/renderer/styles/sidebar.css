@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    SIDEBAR — legacy nav structure + redesigned sb-* sidebar
@@ -37,7 +38,7 @@
      — gekachelt, nativ (kein Stretch); leichte Abdunklung für Button-Kontrast. */
   background:
     linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)),
-    url("../assets/bg_sidebar.webp") top left / 313px repeat;
+    url("../assets/bg_sidebar.webp") top left / 782px repeat;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -1501,7 +1502,7 @@
   border-radius: 0;
   background:
     linear-gradient(rgba(8, 11, 13, 0.14), rgba(2, 4, 5, 0.34)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 480px 480px repeat;
   color: var(--gold, #d8c06a);
   font-family: var(--font-head);
   font-size: clamp(10px, calc(12px * var(--sb-scale-eff)), 19px);

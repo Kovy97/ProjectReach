@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ══════════════════════════════════════════════════════════════════════════════════════════
    ENZYKLOPÄDIE (Chef-Auftrag 31.08.2026; Konzept + Mockup in design/enzyklopaedie/)
 
@@ -145,7 +146,7 @@
   border-right: 1px solid rgba(183, 128, 61, 0.38);
   background:
     linear-gradient(90deg, rgba(38, 26, 17, 0.76), rgba(9, 10, 11, 0.82)),
-    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 256px repeat;
+    url("../assets/ui/gravewood/textures/texture-umber-cloth.webp") center / 640px repeat;
 }
 
 .encp-cat {
@@ -208,7 +209,7 @@
   padding: 16px 20px;
   background:
     linear-gradient(rgba(6, 7, 8, 0.7), rgba(8, 8, 8, 0.78)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 750px repeat;
 }
 
 .encp-grid {

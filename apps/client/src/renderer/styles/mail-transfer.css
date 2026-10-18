@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-31T22:38:00+02:00 — Cross-Save-Rabenfracht, Chefwahl 04 „Zwei Lager".
    Vollhohes Arbeitsmodal: Quellinventar und Frachtpaket tragen gleiches Gewicht, die eiserne
    Ashen-Iron-Hierarchie bleibt auch auf kleinen Viewports lesbar und intern scrollbar. */
@@ -107,7 +108,7 @@
   border: 1px solid rgba(144, 112, 67, 0.55);
   background:
     linear-gradient(90deg, rgba(43, 33, 24, 0.68), rgba(12, 14, 15, 0.87)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 900px repeat;
   box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.56);
 }
 
@@ -161,7 +162,7 @@
   border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(3px * 2.125) round;
   background:
     linear-gradient(rgba(12, 14, 15, 0.82), rgba(7, 9, 10, 0.93)),
-    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 420px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 1050px repeat;
 }
 
 .cst-ledger-head {
@@ -362,7 +363,7 @@
   border: 1px solid #493c2e;
   background:
     linear-gradient(90deg, rgba(55, 39, 24, 0.32), rgba(6, 8, 9, 0.7)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 800px repeat;
 }
 
 .cst-package-row .cst-item-art {

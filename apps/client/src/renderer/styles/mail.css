@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════
    MAIL / POSTFACH — WoW-artiges Postfach (packages/engine/src/mail.ts)
    Liste (links) + geöffnete Nachricht mit Anhänge-Grid (rechts). Reuses die globalen Citadel-
@@ -35,7 +36,7 @@
   border: 1px solid rgba(130, 101, 60, 0.48);
   background:
     linear-gradient(90deg, rgba(47, 34, 21, 0.46), rgba(7, 9, 10, 0.86)),
-    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 420px repeat;
+    url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") center / 1050px repeat;
 }
 
 .mail-page-actions > div {

@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    SLAYER — Citadel-styled Slayer skill page:
@@ -349,7 +350,7 @@
     linear-gradient(rgba(6, 9, 11, 0.32), rgba(4, 6, 8, 0.58)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp");
   background-position: center, center, 0 0;
-  background-size: auto, auto, 256px 256px;
+  background-size:auto, auto, 640px 640px;
   background-repeat: no-repeat, no-repeat, repeat;
   /* claude:2026-10-18T10:30:00+02:00 — Chef 18.10. „Layer-Probleme bei jedem Container": Der Verlauf
      lag nur auf der padding-box, der 11-px-Rahmenstreifen zeigte rohen Basalt ⇒ heller Ring wie eine
@@ -523,7 +524,7 @@
   background-image:
     linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
     url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
-  background-size: auto, 256px 256px;
+  background-size:auto, 640px 640px;
   background-origin: border-box;
   background-clip: border-box;
 }

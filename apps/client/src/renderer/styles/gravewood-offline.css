@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /*
  * Gravewood Offline — ausschließlich die vom Chef freigegebenen Berichtskarten
@@ -37,7 +38,7 @@
   background-color: #15110e !important;
   background-image: url("../assets/ui/gravewood/textures/texture-gravewood.webp") !important;
   background-position: center !important;
-  background-size: 256px 256px !important;
+  background-size:640px 640px !important;
   background-repeat: repeat !important;
   background-origin: border-box !important;
   background-clip: border-box !important;
