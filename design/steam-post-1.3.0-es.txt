@@ -7,7 +7,21 @@ Cazador, un árbol de talentos para tu cacería, renueva a todos los compañeros
 Ceniza, una forma de empezar de nuevo más fuerte. Abre el Salón del Ídolo, continúa la Crónica de
 las Cenizas y eleva el techo del endgame en todos los frentes. También trae todo lo que esperaba
 entre bastidores: ranuras de banco de verdad, un wiki con todos los objetos, un nuevo HUD de combate
-y una interfaz más limpia. Las partidas guardadas siguen siendo compatibles como siempre.
+y una interfaz completamente renovada con un nuevo estilo pintado. Las partidas guardadas siguen
+siendo compatibles como siempre.
+
+UN NUEVO ESTILO PINTADO
+
+- Toda la interfaz tiene un nuevo estilo pintado a mano: texturas nuevas para botones, cartas y
+  paneles, marcos nuevos de madera y de hierro, y un nuevo fondo de piedra detrás de cada página.
+- Un nuevo menú principal con una vista pintada de Las Tierras Altas y un logo nuevo. Las
+  pantallas ultrapanorámicas tienen su propia versión ancha de la imagen.
+- Botones de madera en la barra lateral y la cabecera, y cartas de habilidad con marcos de madera
+  y de hierro.
+- Una página de personaje más ordenada, con un retrato más grande y una cuadrícula de atributos
+  más tranquila.
+- Una nueva bolsa pintada a mano detrás de tu inventario.
+- Cada criatura, arma, árbol y pez nuevos llegan con su propia ilustración pintada.
 
 EL LIBRO DEL CAZADOR
 
@@ -104,9 +118,6 @@ INTERFAZ
 - Página del Cazador, tienda y tienda de fichas renovadas. Tu estilo de combate está ahora en la
   barra lateral, a un clic de cambiarlo.
 - Un nuevo HUD de combate y una nueva pantalla de regreso.
-- Un nuevo estilo pintado: texturas y marcos nuevos para botones, cartas y paneles, un nuevo fondo
-  de piedra detrás de cada página y una página de personaje más ordenada con un retrato más grande.
-  Cada criatura, arma, árbol y pez nuevos llegan con su propia ilustración pintada.
 - Páginas más tranquilas y limpias: los marcos ya no muestran un anillo claro en los bordes, hay
   menos marcos dentro de otros marcos y las cabeceras de página siguen un mismo diseño. La página
   del Cazador tiene ahora pestañas para la tienda de recompensas y el Libro del Cazador.

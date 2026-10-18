@@ -7,7 +7,20 @@ uma árvore de talentos para a sua caçada, reformula todos os companheiros e ad
 Cinzas, um jeito de recomeçar mais forte. Ela abre o Salão do Ídolo, continua a Crônica das Cinzas e
 eleva o teto do endgame em todas as frentes. Também traz tudo o que estava esperando nos bastidores:
 espaços de banco de verdade, uma wiki com todos os itens, um novo HUD de combate e uma interface
-mais limpa. Os saves continuam compatíveis, como sempre.
+totalmente reformulada em um novo estilo pintado. Os saves continuam compatíveis, como sempre.
+
+UM NOVO VISUAL PINTADO
+
+- Toda a interface ganhou um novo estilo pintado à mão: texturas novas para botões, cartas e
+  painéis, molduras novas de madeira e de ferro e um novo fundo de pedra atrás de cada página.
+- Um novo menu principal, com uma vista pintada das Terras Altas e um logo novo. Telas ultrawide
+  ganham sua própria versão larga da imagem.
+- Botões de madeira na barra lateral e no cabeçalho, e cartas de habilidade com molduras de
+  madeira e de ferro.
+- Uma página de personagem mais organizada, com um retrato maior e uma grade de atributos mais
+  calma.
+- Uma nova bolsa pintada à mão atrás do seu inventário.
+- Cada criatura, arma, árvore e peixe novos chegam com sua própria arte pintada.
 
 O LIVRO DO CAÇADOR
 
@@ -104,9 +117,6 @@ INTERFACE
 - Página do Caçador, loja e loja de fichas renovadas. Seu estilo de combate agora fica na barra
   lateral, a um clique de ser trocado.
 - Um novo HUD de combate e uma nova tela de retorno.
-- Um novo visual pintado: texturas e molduras novas para botões, cartas e painéis, um novo fundo de
-  pedra atrás de cada página e uma página de personagem mais organizada, com um retrato maior. Cada
-  criatura, arma, árvore e peixe novos chegam com sua própria arte pintada.
 - Páginas mais calmas e limpas: as molduras não mostram mais um anel claro nas bordas, há menos
   molduras dentro de outras molduras e os cabeçalhos das páginas seguem um único layout. A página do
   Caçador agora tem abas para a loja de recompensas e o Livro do Caçador.

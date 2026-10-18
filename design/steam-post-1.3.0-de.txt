@@ -7,7 +7,19 @@ den Jägerkodex, einen Talentbaum für deine Jagd, überarbeitet jeden Begleiter
 Aschesturz ein, einen Weg, stärker von vorn zu beginnen. Es öffnet die Götzenhalle, setzt die
 Aschechronik fort und hebt die Obergrenze des Endgames auf ganzer Linie an. Außerdem kommt alles,
 was schon in den Startlöchern stand: echte Bankplätze, ein Wiki zu jedem Item, ein neues Kampf-HUD
-und eine aufgeräumtere Oberfläche. Spielstände bleiben wie immer kompatibel.
+und eine komplett überarbeitete Oberfläche in einem neuen, gemalten Stil. Spielstände bleiben wie
+immer kompatibel.
+
+EIN NEUER, GEMALTER LOOK
+
+- Die ganze Oberfläche hat einen neuen, handgemalten Stil: neue Texturen für Knöpfe, Karten und
+  Flächen, neue Holz- und Eisenrahmen und ein neuer Steinhintergrund hinter jeder Seite.
+- Ein neues Hauptmenü mit einem gemalten Blick über das Hochland und einem neuen Logo.
+  Ultrawide-Bildschirme bekommen eine eigene, breite Fassung des Bildes.
+- Holzknöpfe in Seitenleiste und Kopfleiste, Skill-Karten mit Holz- und Eisenrahmen.
+- Eine aufgeräumte Charakterseite mit größerem Porträt und ruhigem Attribut-Raster.
+- Eine neue, handgemalte Tasche hinter deinem Inventar.
+- Alle neuen Kreaturen, Waffen, Bäume und Fische kommen mit eigenen gemalten Bildern.
 
 DER JÄGERKODEX
 
@@ -104,9 +116,6 @@ OBERFLÄCHE
 - Überarbeitet: die Slayer-Seite, der Laden und der Laden für Aufgabenmarken. Dein Kampfstil sitzt
   jetzt in der Seitenleiste, nur einen Klick vom Wechsel entfernt.
 - Ein neues Kampf-HUD und ein neuer Rückkehr-Bildschirm.
-- Ein neuer gemalter Look: frische Texturen und Rahmen für Knöpfe, Karten und Flächen, ein neuer
-  Steinhintergrund hinter jeder Seite und eine aufgeräumte Charakterseite mit größerem Porträt. Alle
-  neuen Kreaturen, Waffen, Bäume und Fische kommen mit eigenen gemalten Bildern.
 - Ruhigere, aufgeräumtere Seiten: Rahmen zeigen an ihren Kanten keinen hellen Ring mehr, weniger
   Rahmen stecken in anderen Rahmen, und Seitenköpfe folgen einem einheitlichen Aufbau. Die
   Slayer-Seite hat jetzt Tabs für den Belohnungs-Shop und den Jägerkodex.

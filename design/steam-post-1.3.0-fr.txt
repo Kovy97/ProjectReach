@@ -7,8 +7,22 @@ Livre du Chasseur, un arbre de talents pour ta traque, remanie tous les compagno
 Chute des Cendres, une façon de recommencer plus fort. Elle ouvre la Halle de l'Idole, poursuit la
 Chronique des Cendres et relève le plafond de la fin de jeu sur toute la ligne. Elle apporte aussi
 tout ce qui attendait en coulisses : de vrais emplacements de banque, un wiki de chaque objet, un
-nouveau HUD de combat et une interface plus nette. Les sauvegardes restent compatibles, comme
-toujours.
+nouveau HUD de combat et une interface entièrement retravaillée dans un nouveau style peint. Les
+sauvegardes restent compatibles, comme toujours.
+
+UN NOUVEAU STYLE PEINT
+
+- Toute l'interface adopte un nouveau style peint à la main : de nouvelles textures pour les
+  boutons, les cartes et les panneaux, de nouveaux cadres en bois et en fer, et un nouveau fond de
+  pierre derrière chaque page.
+- Un nouveau menu principal, avec une vue peinte sur les Hautes Terres et un nouveau logo. Les
+  écrans ultra-larges ont leur propre version large de l'image.
+- Des boutons en bois dans la barre latérale et l'en-tête, et des cartes de compétence avec des
+  cadres en bois et en fer.
+- Une fiche de personnage plus claire, avec un portrait plus grand et une grille d'attributs plus
+  calme.
+- Un nouveau sac peint à la main derrière ton inventaire.
+- Chaque nouvelle créature, arme, arbre et poisson arrive avec sa propre illustration peinte.
 
 LE LIVRE DU CHASSEUR
 
@@ -107,10 +121,6 @@ INTERFACE
 - Page du Chasseur, boutique et boutique des jetons remaniées. Ton style de combat se trouve
   maintenant dans la barre latérale, à un clic d'en changer.
 - Un nouveau HUD de combat et un nouvel écran de retour.
-- Un nouveau style peint : de nouvelles textures et de nouveaux cadres pour les boutons, les cartes
-  et les panneaux, un nouveau fond de pierre derrière chaque page et une fiche de personnage plus
-  claire avec un portrait plus grand. Chaque nouvelle créature, arme, arbre et poisson arrive avec
-  sa propre illustration peinte.
 - Des pages plus calmes et plus nettes : les cadres n'affichent plus d'anneau clair sur leurs bords,
   moins de cadres sont imbriqués dans d'autres cadres, et les en-têtes de page suivent une seule
   mise en page. La page du Chasseur a désormais des onglets pour la boutique de récompenses et le

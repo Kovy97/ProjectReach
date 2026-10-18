@@ -6,7 +6,19 @@ Drazhan withdrew, but his hall never stopped working. This update brings the Sla
 tree for your hunt, reworks every pet and adds the Cinderfall, a way to start over stronger. It
 opens the Idol Hall, continues the Ash Chronicle and raises the ceiling of the endgame across the
 board. It also brings everything that was waiting in the wings: real bank slots, a Wiki of every
-item, a new combat HUD and a cleaner interface. Saves stay compatible as always.
+item, a new combat HUD and a completely reworked interface in a new painted style. Saves stay
+compatible as always.
+
+A NEW PAINTED LOOK
+
+- The whole interface has a new hand-painted style: new textures for buttons, cards and panels,
+  new wooden and iron frames, and a new stone backdrop behind every page.
+- A new main menu with a painted view over the Highlands and a new logo. Ultrawide screens get
+  their own wide version of the picture.
+- Wooden buttons in the sidebar and header, and skill cards with wooden and iron frames.
+- A tidier character page with a bigger portrait and a calm attribute grid.
+- A new hand-painted bag behind your inventory.
+- Every new creature, weapon, tree and fish arrives with its own painted art.
 
 THE SLAYER'S BOOK
 
@@ -92,9 +104,6 @@ INTERFACE
 - Reworked Slayer page, shop and token shop. Your combat style now sits in the sidebar, one click
   from changing it.
 - A new combat HUD and a new return screen.
-- A new painted look: fresh textures and frames for buttons, cards and panels, a new stone
-  backdrop behind every page, and a tidier character page with a bigger portrait. Every new
-  creature, weapon, tree and fish arrives with its own painted art.
 - Calmer, cleaner pages: frames no longer show a light ring at their edges, fewer frames sit inside
   other frames, and page headers follow one layout. The Slayer page now has tabs for the reward
   shop and the Slayer's Book.
