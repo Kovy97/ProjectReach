@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
 import type { GameState } from "@hearthforge/shared";
-import { PRESTIGE_HISTORY_MAX, SAVE_VERSION, defaultPrestigeState } from "@hearthforge/shared";
+import { PRESTIGE_HISTORY_MAX, PRESTIGE_UNLOCK_QUEST_ID, SAVE_VERSION, defaultPrestigeRunBaseline, defaultPrestigeState } from "@hearthforge/shared";
 import {
   PRESTIGE_CHARACTER_FIELDS,
   PRESTIGE_STATE_FIELDS,
@@ -12,6 +12,8 @@ import {
   createGame,
   mailCollectBlocked,
   prestigeFreightLocked,
+  prestigeRunCounters,
+  prestigeRunSummary,
   questObjectiveProgress,
   questStatus,
   secondPetSlotUnlocked,
@@ -88,6 +90,9 @@ describe("Sanitize prestige", () => {
       count: 2,
       points: 12,
       pointsSpent: 0,
+      // claude:2026-10-18T19:40:00+02:00 — Welle E1: ohne `runStart` zählt alles ab Spielbeginn, nur die Spielzeit
+      // kommt exakt aus dem jüngsten Historien-Eintrag.
+      runStart: { kills: 0, dungeons: 0, achievements: 0, pets: 0, slayerTasks: 0, activePlayMs: 2000 },
       history: [
         { count: 1, points: 40, totalLevel: 1010, skills99: 4, activePlayMs: 1000 },
         { count: 4, points: 50, totalLevel: 1100, skills99: 5, activePlayMs: 2000 },
@@ -119,9 +124,12 @@ describe("Sanitize prestige", () => {
 
   it("gültiger Zustand ist ein Fixpunkt (Round-Trip byte-gleich)", () => {
     const s = base();
-    s.prestige = { count: 2, points: 7, pointsSpent: 93, history: [
+    // claude:2026-10-18T19:40:00+02:00 — Welle E1: mit `runStart` und einem Eintrag mit, einem ohne `tally`.
+    s.prestige = { count: 2, points: 7, pointsSpent: 93, runStart: { kills: 900, dungeons: 4, achievements: 12, pets: 3, slayerTasks: 6, activePlayMs: 20 }, history: [
       { count: 1, points: 50, totalLevel: 1040, skills99: 4, activePlayMs: 10 },
-      { count: 2, points: 50, totalLevel: 1050, skills99: 4, activePlayMs: 20 },
+      { count: 2, points: 50, totalLevel: 1050, skills99: 4, activePlayMs: 20, tally: {
+        playMs: 10, chronicleChapter: 23, questsClaimed: 31, kills: 500, dungeons: 2, achievements: 7, petsFound: 1, slayerTasks: 4, paragonBest: 15, gold: 123_456,
+      } },
     ] };
     const at = 1_760_000_000_000;
     const once = serialize(deserialize(serialize(s, at), content, at)!.state, at);
@@ -228,5 +236,123 @@ describe("Welle B2: Post-Sperre-Flag, Narbenbuch, Jägerkodex-Gate über Save/Lo
     expect(talentEffect(back, content, "prestigeEarlyXp")).toBeCloseTo(0.2, 12);
     expect(back.mailbox[0]!.prestigeHeld).toBe(true);
     expect(mailCollectBlocked(back, content, back.mailbox[0]!)).toBe("prestige_locked");
+  });
+});
+
+// claude:2026-10-18T19:40:00+02:00 — Prestige Welle E1 (Aufstiegs-Bilanz, Format-Nachtrag SAVE 88 ohne Bump):
+// `prestige.runStart` und `PrestigeRecord.tally` überstehen Laden/Speichern; Test-Saves vor E1 laden weiter.
+describe("Welle E1: Baselines (runStart) und Bilanz (tally) über Save/Load", () => {
+  const at = 1_760_000_000_000;
+  const base = (): GameState => createGame({ name: "T" }, content, 1);
+  const TALLY = { playMs: 10, chronicleChapter: 23, questsClaimed: 31, kills: 500, dungeons: 2, achievements: 7, petsFound: 1, slayerTasks: 4, paragonBest: 15, gold: 123_456 };
+
+  it("tally: nur vollständig gültig übernommen (Fremdschlüssel fallen weg); kaputte Bilanz entfällt, der Eintrag bleibt", () => {
+    const s = base();
+    const entry = (count: number, tally: unknown): Record<string, unknown> => ({ count, points: 50, totalLevel: 1050, skills99: 4, activePlayMs: count * 10, tally });
+    (s as unknown as { prestige: unknown }).prestige = {
+      count: 5,
+      points: 0,
+      pointsSpent: 0,
+      runStart: { kills: 1, dungeons: 2, achievements: 3, pets: 4, slayerTasks: 5, activePlayMs: 50 },
+      history: [
+        entry(1, { ...TALLY, extra: 9 }),
+        entry(2, { ...TALLY, kills: -1 }),
+        entry(3, { ...TALLY, gold: 1.5 }),
+        entry(4, "x"),
+        entry(5, (({ gold: _g, ...rest }) => rest)(TALLY)),
+      ],
+    };
+    const back = loadState(s);
+    expect(back.prestige.history.map((h) => h.count)).toEqual([1, 2, 3, 4, 5]);
+    expect(back.prestige.history[0]!.tally).toEqual(TALLY);
+    expect(Object.keys(back.prestige.history[0]!.tally!)).toEqual(Object.keys(TALLY));
+    for (const h of back.prestige.history.slice(1)) expect("tally" in h, `Eintrag ${h.count}`).toBe(false);
+    expect(back.prestige.runStart).toEqual({ kills: 1, dungeons: 2, achievements: 3, pets: 4, slayerTasks: 5, activePlayMs: 50 });
+  });
+
+  it("runStart: kaputte Werte ⇒ 0, Fremdschlüssel fallen weg; fehlt/kein Objekt ⇒ Default (Spielzeit aus der Historie)", () => {
+    const s = base();
+    s.prestige = {
+      count: 1,
+      points: 0,
+      pointsSpent: 0,
+      runStart: { kills: -5, dungeons: Number.NaN, achievements: 2.7, pets: "x", slayerTasks: 3, activePlayMs: 99, extra: 1 } as never,
+      history: [{ count: 1, points: 40, totalLevel: 1010, skills99: 4, activePlayMs: 777 }],
+    };
+    expect(loadState(s).prestige.runStart).toEqual({ kills: 0, dungeons: 0, achievements: 2, pets: 0, slayerTasks: 3, activePlayMs: 99 });
+    for (const v of [undefined, null, 7, [1, 2]]) {
+      const t = structuredClone(s) as unknown as { prestige: Record<string, unknown> };
+      if (v === undefined) delete t.prestige.runStart;
+      else t.prestige.runStart = v;
+      expect(loadState(t).prestige.runStart, String(v)).toEqual({ ...defaultPrestigeRunBaseline(), activePlayMs: 777 });
+    }
+    // Erster Durchgang ohne Historie: alles 0.
+    const fresh = base() as unknown as { prestige: Record<string, unknown> };
+    delete fresh.prestige.runStart;
+    expect(loadState(fresh).prestige.runStart).toEqual(defaultPrestigeRunBaseline());
+  });
+
+  it("nach einem echten Aufstieg: Baselines und Bilanz überstehen Save/Load byte-gleich, die Bilanz des neuen Durchgangs bleibt gleich", () => {
+    const s = base();
+    for (const id of Object.keys(content.skills).slice(0, 4)) s.skills[id] = { xp: xpForLevel(99) };
+    s.quests.claimed.push(PRESTIGE_UNLOCK_QUEST_ID);
+    s.monsterKills = { goblin: 300 };
+    s.dungeonsCleared = { [content.dungeons[0]!.id]: 2 };
+    s.achievements = content.achievements.slice(0, 3).map((a) => a.id);
+    s.slayerTasksCompleted = 9;
+    s.elapsedMs = 150_000; // Invariante activePlayMs ≤ elapsedMs (sanitize)
+    s.activePlayMs = 123_000;
+    const before = prestigeRunSummary(s, content);
+    const counters = prestigeRunCounters(s);
+    expect(ascend(s, content)).toBe(true);
+    s.monsterKills.goblin = 310; // etwas Fortschritt im zweiten Durchgang
+
+    // Fixpunkt ab dem ersten Laden (der erste Load setzt unabhängig von E1 `dungeonsUnlocked` aus der
+    // Lebenszeit-Regel „Cleared ⇒ Unlocked"; Befund an die Leitung gemeldet, hier bewusst nicht festgeschrieben).
+    const back = deserialize(serialize(s, at), content, at)!.state;
+    const once = serialize(back, at);
+    expect(serialize(deserialize(once, content, at)!.state, at)).toBe(once);
+    expect(back.prestige).toEqual(s.prestige);
+    expect(back.prestige.runStart).toEqual(counters);
+    expect(back.prestige.history[0]!.tally).toMatchObject({ kills: 300, dungeons: 2, achievements: before.achievements, slayerTasks: 9, playMs: 123_000 });
+    expect(back.prestige.history[0]!.points).toBe(before.points.total);
+    expect(prestigeRunSummary(back, content)).toEqual(prestigeRunSummary(s, content));
+    expect(prestigeRunSummary(back, content).kills).toBe(10);
+  });
+
+  it("v88-Fixture: Baselines des echten Aufstiegs gepinnt; Test-Save vor E1 (ohne runStart) lädt weiter", () => {
+    const { json, raw } = read("v88-synthetic-1.3.0.json");
+    const s = deserialize(json, content, raw.savedAt)!.state;
+    // Zählerstände beim Aufstieg der Fixture-Kette (danach nur 40 Kupfererz gesammelt, keine Kills/Dungeons).
+    expect(s.prestige.runStart).toEqual({ kills: 4689, dungeons: 0, achievements: 0, pets: 2, slayerTasks: 0, activePlayMs: 1_440_000_000 });
+    expect(prestigeRunCounters(s)).toEqual(s.prestige.runStart);
+    const sum = prestigeRunSummary(s, content);
+    expect(sum.run).toBe(2);
+    expect(sum.kills).toBe(0);
+    expect(sum.playMs).toBe(0);
+    // Der Historien-Eintrag stammt aus der Zeit vor E1 und trägt (ehrlich) keine Bilanz.
+    expect(s.prestige.history[0]!.tally).toBeUndefined();
+
+    const old = JSON.parse(json) as SaveShape;
+    delete (old.state.prestige as unknown as Record<string, unknown>).runStart;
+    const legacy = deserialize(JSON.stringify(old), content, raw.savedAt)!.state;
+    expect(legacy.prestige.runStart).toEqual({ ...defaultPrestigeRunBaseline(), activePlayMs: 1_440_000_000 });
+    expect(legacy.prestige.history).toEqual(s.prestige.history);
+    expect(prestigeRunSummary(legacy, content).kills).toBe(4689); // ohne Baseline: seit Spielbeginn
+  });
+});
+
+// claude:2026-10-18T20:30:00+02:00 — Befund E1: „geräumt ⇒ offen“ darf nach einem Aufstieg nicht greifen.
+describe("Dungeon-Freischaltung nach dem Aschesturz", () => {
+  it("ohne Aufstieg öffnet ein geräumter Dungeon beim Laden (Bestandsschutz), nach einem Aufstieg nicht", () => {
+    const fresh = createGame({ name: "T" }, content, 1);
+    fresh.dungeonsCleared = { crypt_depths: 3 };
+    fresh.dungeonsUnlocked = {};
+    expect(loadState(JSON.parse(JSON.stringify(fresh))).dungeonsUnlocked.crypt_depths).toBe(true);
+    const asc = createGame({ name: "T" }, content, 1);
+    asc.dungeonsCleared = { crypt_depths: 3 };
+    asc.dungeonsUnlocked = {};
+    asc.prestige = { ...asc.prestige, count: 1 };
+    expect(loadState(JSON.parse(JSON.stringify(asc))).dungeonsUnlocked.crypt_depths).toBeUndefined();
   });
 });

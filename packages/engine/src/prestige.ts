@@ -7,7 +7,10 @@ import type {
   ItemId,
   ItemInstance,
   PrestigeRecord,
+  PrestigeRunBaseline,
+  PrestigeRunTally,
   QuestDef,
+  SkillId,
   WeaponStyle,
 } from "@hearthforge/shared";
 import {
@@ -26,12 +29,14 @@ import {
   PRESTIGE_RECALL_GOLD_MULT,
   PRESTIGE_RECALL_MAX_CHAPTER,
   PRESTIGE_REQUIRED_99,
+  PRESTIGE_RUN_TALLY_KEYS,
   PRESTIGE_SKILL_LEVEL,
   PRESTIGE_STASH_STACK_CAP,
   PRESTIGE_TOTAL_LEVEL_STEP,
   PRESTIGE_TOTAL_LEVEL_THRESHOLD,
   PRESTIGE_UNLOCK_QUEST_ID,
   chronicleChapterNumber,
+  defaultPrestigeRunBaseline,
   defaultPrestigeState,
   isCrossSaveTransferBlocked,
   isToolSlot,
@@ -718,6 +723,160 @@ function keptTools(
   return { plain, instances };
 }
 
+// ── Bilanz des Durchgangs (Welle E1) ───────────────────────────────────────
+// claude:2026-10-18T19:40:00+02:00 — Chef-Wunsch 18.10.: animiertes Aufstiegs-Fenster mit den Errungenschaften
+// des Durchgangs und der Narben-Zusammensetzung. „Dieser Durchgang" = Lebenszeit-Zähler − `prestige.runStart`
+// (von `ascend` geschrieben; ohne Baseline = seit Spielbeginn). Rein lesend, deterministisch, kein RNG.
+
+/**
+ * Stabile Zeilen-Schlüssel der Narben-Aufschlüsselung, in Anzeige-Reihenfolge (UI: `t("prestige.points." + key)`):
+ *  - `base`           Grundbetrag je Aufstieg (`PRESTIGE_POINTS_BASE`), ohne `amount`.
+ *  - `skills99`       die ersten `PRESTIGE_POINTS_CORE_99` Fertigkeiten auf 99; amount = Zahl, je `PRESTIGE_POINTS_PER_99`.
+ *  - `skills99Extra`  jede weitere Fertigkeit auf 99; amount = Zahl, je `PRESTIGE_POINTS_PER_EXTRA_99`.
+ *  - `totalLevel`     amount = Gesamtstufe; Punkte je volle `PRESTIGE_TOTAL_LEVEL_STEP` über `PRESTIGE_TOTAL_LEVEL_THRESHOLD`.
+ *  - `chronicle`      amount = eingelöste Kapitel ab `PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER`; je `PRESTIGE_POINTS_PER_LATE_CHAPTER`.
+ *  - `paragon`        amount = beste Paragon-Etage; Punkte je volle `PRESTIGE_PARAGON_FLOOR_STEP`, gedeckelt `PRESTIGE_PARAGON_POINTS_CAP`.
+ */
+export type PrestigePointsLineKey = "base" | "skills99" | "skills99Extra" | "totalLevel" | "chronicle" | "paragon";
+
+/** Feste Reihenfolge der Zeilen (jede Zeile ist IMMER enthalten, auch mit 0 Punkten; die UI darf 0-Zeilen ausblenden). */
+export const PRESTIGE_POINTS_LINE_KEYS: readonly PrestigePointsLineKey[] = [
+  "base",
+  "skills99",
+  "skills99Extra",
+  "totalLevel",
+  "chronicle",
+  "paragon",
+];
+
+/** Eine Zeile der Aufschlüsselung: Menge/Basiswert (fehlt bei `base`) und die daraus entstehenden Narben. */
+export interface PrestigePointsLine {
+  key: PrestigePointsLineKey;
+  amount?: number;
+  points: number;
+}
+
+/**
+ * Zeilenweise Narben-Aufschlüsselung für die Animation. Invariante: Σ lines.points = subtotal,
+ * subtotal + fromMult = total, total = Gutschrift von `ascend` (beides aus `prestigePointsPreview`).
+ */
+export interface PrestigePointsLedger {
+  lines: PrestigePointsLine[];
+  /** Summe der Zeilen vor dem Knoten-Multiplikator. */
+  subtotal: number;
+  /** Anteil „Der tiefere Schnitt" (`prestigePointsMult`, z. B. 0.25), 0 ohne Rang. */
+  mult: number;
+  /** Zuschlag durch `mult` (ganzzahlig, = total − subtotal). */
+  fromMult: number;
+  /** Gutschrift dieses Aufstiegs. */
+  total: number;
+}
+
+/**
+ * Bilanz des laufenden Durchgangs (vor dem Aufstieg aufzurufen). Die Felder von `PrestigeRunTally` (shared)
+ * gelten für DIESEN Durchgang; `ascend` legt genau diese Teilmenge als `PrestigeRecord.tally` ab.
+ */
+export interface PrestigeRunSummary extends PrestigeRunTally {
+  /** Nummer dieses Durchgangs (= prestige.count + 1). */
+  run: number;
+  /** Gesamtstufe. */
+  totalLevel: number;
+  /** Alle Fertigkeiten in `content.skills`-Reihenfolge mit Stufe. */
+  skills: Array<{ id: SkillId; level: number }>;
+  /** Fertigkeiten auf `PRESTIGE_SKILL_LEVEL` (gleiche Reihenfolge). */
+  skills99: SkillId[];
+  /** Narben-Aufschlüsselung (identisch zur Gutschrift von `ascend`). */
+  points: PrestigePointsLedger;
+}
+
+function sumCounts(rec: Readonly<Record<string, number>> | undefined): number {
+  let n = 0;
+  for (const v of Object.values(rec ?? {})) n += positiveInt(v);
+  return n;
+}
+
+/**
+ * Aktuelle Lebenszeit-Zähler in Baseline-Form (Summe Kills, Summe Dungeon-Abschlüsse, Erfolge, Begleiter,
+ * Slayer-Aufträge, aktive Spielzeit). `ascend` schreibt genau das als `prestige.runStart` des neuen Durchgangs.
+ */
+export function prestigeRunCounters(state: GameState): PrestigeRunBaseline {
+  let pets = 0;
+  for (const v of Object.values(state.character?.ownedPets ?? {})) if (v === true) pets++;
+  return {
+    kills: sumCounts(state.monsterKills),
+    dungeons: sumCounts(state.dungeonsCleared),
+    achievements: new Set(state.achievements ?? []).size,
+    pets,
+    slayerTasks: positiveInt(state.slayerTasksCompleted),
+    activePlayMs: positiveInt(state.activePlayMs),
+  };
+}
+
+/** Aus der Vorschau-Aufschlüsselung die Zeilen für die Animation (gleiche Zahlen, nur zeilenweise). */
+export function prestigePointsLedger(b: PrestigePointsBreakdown): PrestigePointsLedger {
+  const core = Math.min(b.skills99, PRESTIGE_POINTS_CORE_99);
+  const extra = Math.max(0, b.skills99 - PRESTIGE_POINTS_CORE_99);
+  const lines: PrestigePointsLine[] = [
+    { key: "base", points: b.fromBase },
+    { key: "skills99", amount: core, points: core * PRESTIGE_POINTS_PER_99 },
+    { key: "skills99Extra", amount: extra, points: extra * PRESTIGE_POINTS_PER_EXTRA_99 },
+    { key: "totalLevel", amount: b.totalLevel, points: b.fromTotalLevel },
+    { key: "chronicle", amount: b.lateChapters, points: b.fromChronicle },
+    { key: "paragon", amount: b.paragonBest, points: b.fromParagon },
+  ];
+  return { lines, subtotal: b.subtotal, mult: b.pointsMult, fromMult: b.fromMult, total: b.total };
+}
+
+function buildRunSummary(state: GameState, content: ContentDB, breakdown: PrestigePointsBreakdown): PrestigeRunSummary {
+  const now = prestigeRunCounters(state);
+  const base = state.prestige?.runStart ?? defaultPrestigeRunBaseline();
+  const since = (cur: number, start: unknown): number => Math.max(0, cur - positiveInt(start));
+
+  const skills = Object.keys(content.skills).map((id) => ({ id, level: levelFromXp(state.skills[id]?.xp ?? 0) }));
+  const skills99 = skills.filter((s) => s.level >= PRESTIGE_SKILL_LEVEL).map((s) => s.id);
+
+  // Höchstes Chronik-Kapitel: nur Quests, die der Content kennt (wie der Chronik-Bonus der Punkte).
+  const known = new Set(content.quests.map((q) => q.id));
+  let chronicleChapter = 0;
+  for (const id of state.quests?.claimed ?? []) {
+    const chapter = chronicleChapterNumber(id);
+    if (chapter !== null && known.has(id) && chapter > chronicleChapter) chronicleChapter = chapter;
+  }
+
+  return {
+    run: positiveInt(state.prestige?.count) + 1,
+    playMs: since(now.activePlayMs, base.activePlayMs),
+    totalLevel: breakdown.totalLevel,
+    skills,
+    skills99,
+    chronicleChapter,
+    questsClaimed: questsClaimedCount(state),
+    kills: since(now.kills, base.kills),
+    dungeons: since(now.dungeons, base.dungeons),
+    achievements: since(now.achievements, base.achievements),
+    petsFound: since(now.pets, base.pets),
+    slayerTasks: since(now.slayerTasks, base.slayerTasks),
+    paragonBest: breakdown.paragonBest,
+    gold: positiveInt(state.character?.gold),
+    points: prestigePointsLedger(breakdown),
+  };
+}
+
+/**
+ * Bilanz des AKTUELLEN Durchgangs für das Aufstiegs-Fenster (vor `ascend` aufrufen; danach beschreibt sie den
+ * neuen, leeren Durchgang). Rein lesend, deterministisch. `points.total` ist exakt die Gutschrift von `ascend`.
+ */
+export function prestigeRunSummary(state: GameState, content: ContentDB): PrestigeRunSummary {
+  return buildRunSummary(state, content, prestigePointsPreview(state, content));
+}
+
+/** Kompakte Teilmenge der Bilanz für den Historien-Eintrag (feste Schlüssel-Reihenfolge = Save-Form). */
+function runTallyOf(s: PrestigeRunSummary): PrestigeRunTally {
+  const tally = {} as PrestigeRunTally;
+  for (const k of PRESTIGE_RUN_TALLY_KEYS) tally[k] = s[k];
+  return tally;
+}
+
 // ── Erinnerung („Bekannte Seiten", prestigeChronicleRecall) ───────────────
 // claude:2026-10-18T12:00:00+02:00 — Chef 18.10. Punkt 6: nur Kapitel 1–18, halbes Gold, keine Marken und
 // keine Gegenstände; nie 19 (`last_idol`), 20 (`drazhan`), 21 (Paragon 5) oder Band 2 („Kampf ist fundamental").
@@ -839,6 +998,10 @@ function startingStyleOf(state: GameState, content: ContentDB): WeaponStyle {
  * alten Stand, `nextInstanceSeq` bleibt; bei einer Kollision mit dem Neustand würde neu geprägt). `choice`
  * fehlt ⇒ Vorgabe der Vorschau (`heirloomDefault`/`stashDefault`). Post mit Inhalt wird `prestigeHeld`.
  *
+ * claude:2026-10-18T19:40:00+02:00 — Welle E1: schreibt `prestige.runStart` (Zählerstände beim Aufstieg) und
+ * hängt die kompakte Bilanz (`prestigeRunSummary` → `PrestigeRecord.tally`) an den Historien-Eintrag. Das
+ * Aufstiegs-Fenster ruft `prestigeRunSummary` VOR diesem Aufruf.
+ *
  * Aufrufer (Welle D): VOR dem Aufruf den Spielstand speichern und die Sicherung auslösen (IPC-Kanal, z. B.
  * `saves:backupPreAscend`, legt Welle D an; Main-Funktion apps/client/src/main/saveBackups.ts
  * `backupPreAscend`), nur bei Ergebnis `"pre-ascend"` aufsteigen und danach sofort speichern.
@@ -849,6 +1012,10 @@ export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAs
   const preview = prestigePointsPreview(state, content);
   const old = state;
   const oldPrestige = old.prestige ?? defaultPrestigeState();
+  // claude:2026-10-18T19:40:00+02:00 — Welle E1: Bilanz aus derselben Vorschau (Gutschrift == Aufschlüsselung)
+  // und die Zählerstände beim Aufstieg (= Baseline des neuen Durchgangs), beides aus dem ALTEN Stand.
+  const runSummary = buildRunSummary(old, content, preview);
+  const runStart = prestigeRunCounters(old);
 
   // Narbenbuch-Auswahl aus dem ALTEN Stand (Ränge bleiben ohnehin, gelesen wird vor dem Umbau).
   const ledger = buildLedger(old, content);
@@ -938,11 +1105,13 @@ export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAs
     totalLevel: preview.totalLevel,
     skills99: preview.skills99,
     activePlayMs: Math.max(0, Math.floor(old.activePlayMs ?? 0)),
+    tally: runTallyOf(runSummary), // claude:2026-10-18T19:40:00+02:00 — Welle E1, ohne Echtzeit-Stempel
   };
   next.prestige = {
     count: oldPrestige.count + 1,
     points: oldPrestige.points + preview.total,
     pointsSpent: oldPrestige.pointsSpent,
+    runStart, // claude:2026-10-18T19:40:00+02:00 — Welle E1: „dieser Durchgang" zählt ab hier
     history: [...oldPrestige.history, record],
   };
 

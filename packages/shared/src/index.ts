@@ -719,6 +719,12 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //        nachgezogen): optionales Mail-Flag `MailMessageBase.prestigeHeld: true` (Post-Sperre, Chef 18.10.: Post,
 //        die beim Aufstieg im Postfach lag, bleibt bis zu den nächsten 4×99 gesperrt; nichts wird gelöscht).
 //        sanitizeState übernimmt es nur als exakt `true`; fehlt es (jeder Alt-Save), ist die Mail ungesperrt.
+//        NACHTRAG Welle E1 (claude:2026-10-18T19:40:00+02:00; v88 weiter nie live, daher KEIN Bump, Vault-Fixture
+//        v88 nachgezogen): `prestige.runStart: PrestigeRunBaseline` (Lebenszeit-Zähler beim Beginn des laufenden
+//        Durchgangs, Quelle der Aufstiegs-Bilanz) und optional `PrestigeRecord.tally: PrestigeRunTally` (kompakte
+//        Bilanz je Historien-Eintrag). sanitizeState defaultet `runStart` für JEDE Version (alle Zähler 0 = seit
+//        Spielbeginn; `activePlayMs` aus dem jüngsten Historien-Eintrag, der genau diesen Wert festhält) und
+//        übernimmt `tally` nur vollständig gültig; Einträge ohne `tally` (Test-Saves vor E1) bleiben erhalten.
 export const SAVE_VERSION = 88;
 
 /**
@@ -6516,7 +6522,95 @@ export interface PrestigeRecord {
   skills99: number;
   /** `GameState.activePlayMs` zum Zeitpunkt des Aufstiegs (Lebenszeit, nicht je Durchgang). */
   activePlayMs: number;
+  /**
+   * claude:2026-10-18T19:40:00+02:00 — Welle E1: kompakte Bilanz des beendeten Durchgangs (Liste „Frühere
+   * Aschestürze"). Fehlt bei Einträgen, die vor E1 geschrieben wurden (nur Test-Saves, v88 war nie live).
+   */
+  tally?: PrestigeRunTally;
 }
+
+// claude:2026-10-18T19:40:00+02:00 — Welle E1 (Chef-Wunsch 18.10.: animiertes Aufstiegs-Fenster mit den
+// Errungenschaften des Durchgangs und der Narben-Zusammensetzung). Persistiert werden nur die Baselines und
+// die kompakte Bilanz; die volle Bilanz rechnet engine/prestige.ts `prestigeRunSummary` rein lesend.
+
+/**
+ * Lebenszeit-Zähler, die den Aufstieg überleben, festgehalten beim Beginn des laufenden Durchgangs
+ * (`PrestigeState.runStart`, geschrieben von `ascend`). „Dieser Durchgang" = aktueller Zähler − Wert hier
+ * (nie negativ). Alles 0 (erster Durchgang) = seit Spielbeginn. Ganzzahlig ≥ 0.
+ */
+export interface PrestigeRunBaseline {
+  /** Summe aller `GameState.monsterKills` (Bestiarium). */
+  kills: number;
+  /** Summe aller `GameState.dungeonsCleared`. */
+  dungeons: number;
+  /** Zahl freigeschalteter Erfolge (`GameState.achievements`). */
+  achievements: number;
+  /** Zahl besessener Begleiter (`character.ownedPets`). */
+  pets: number;
+  /** `GameState.slayerTasksCompleted`. */
+  slayerTasks: number;
+  /** `GameState.activePlayMs`. */
+  activePlayMs: number;
+}
+
+/** Frische Baseline (erster Durchgang, Migration, Sanitize-Default): alles 0 = seit Spielbeginn. */
+export function defaultPrestigeRunBaseline(): PrestigeRunBaseline {
+  return { kills: 0, dungeons: 0, achievements: 0, pets: 0, slayerTasks: 0, activePlayMs: 0 };
+}
+
+/**
+ * Kompakte Bilanz eines Durchgangs (Historien-Eintrag `PrestigeRecord.tally`; zugleich Kern von
+ * engine `PrestigeRunSummary`). Alle Werte ganzzahlig ≥ 0, ohne Echtzeit-Stempel.
+ */
+export interface PrestigeRunTally {
+  /** Aktiv gespielte Zeit dieses Durchgangs in ms (`activePlayMs` − Baseline). */
+  playMs: number;
+  /** Höchstes eingelöstes Chronik-Kapitel dieses Durchgangs (0 = keines). */
+  chronicleChapter: number;
+  /** Eingelöste Quests dieses Durchgangs (verschiedene IDs; Quests starten beim Aufstieg neu). */
+  questsClaimed: number;
+  /** Monster-Kills dieses Durchgangs. */
+  kills: number;
+  /** Dungeon-Abschlüsse dieses Durchgangs. */
+  dungeons: number;
+  /** In diesem Durchgang neu freigeschaltete Erfolge. */
+  achievements: number;
+  /** In diesem Durchgang neu gefundene Begleiter. */
+  petsFound: number;
+  /** In diesem Durchgang abgeschlossene Slayer-Aufträge. */
+  slayerTasks: number;
+  /** Beste Paragon-Etage dieses Durchgangs (`paragon.best`, wird beim Aufstieg zurückgesetzt). */
+  paragonBest: number;
+  /** Gold zum Zeitpunkt der Bilanz (geht beim Aufstieg). */
+  gold: number;
+}
+
+// claude:2026-10-18T19:40:00+02:00 — Schlüssel-Listen (= Save-Reihenfolge) für Sanitize und Engine. Die
+// vollständigen Records erzwingen im Typecheck, dass ein neues Feld hier eingetragen wird.
+const PRESTIGE_RUN_BASELINE_FIELDS: Readonly<Record<keyof PrestigeRunBaseline, true>> = {
+  kills: true,
+  dungeons: true,
+  achievements: true,
+  pets: true,
+  slayerTasks: true,
+  activePlayMs: true,
+};
+const PRESTIGE_RUN_TALLY_FIELDS: Readonly<Record<keyof PrestigeRunTally, true>> = {
+  playMs: true,
+  chronicleChapter: true,
+  questsClaimed: true,
+  kills: true,
+  dungeons: true,
+  achievements: true,
+  petsFound: true,
+  slayerTasks: true,
+  paragonBest: true,
+  gold: true,
+};
+/** Felder von `PrestigeRunBaseline` in Save-Reihenfolge. */
+export const PRESTIGE_RUN_BASELINE_KEYS = Object.keys(PRESTIGE_RUN_BASELINE_FIELDS) as readonly (keyof PrestigeRunBaseline)[];
+/** Felder von `PrestigeRunTally` in Save-Reihenfolge. */
+export const PRESTIGE_RUN_TALLY_KEYS = Object.keys(PRESTIGE_RUN_TALLY_FIELDS) as readonly (keyof PrestigeRunTally)[];
 
 /** Persistierter Prestige-Zustand (`GameState.prestige`, SAVE 88). Überlebt jeden Aufstieg. */
 export interface PrestigeState {
@@ -6526,12 +6620,14 @@ export interface PrestigeState {
   points: number;
   /** Lebenszeit-Summe ausgegebener Punkte. Verdient insgesamt = points + pointsSpent. */
   pointsSpent: number;
+  /** claude:2026-10-18T19:40:00+02:00 — Welle E1: Zählerstände beim Beginn des laufenden Durchgangs. */
+  runStart: PrestigeRunBaseline;
   history: PrestigeRecord[];
 }
 
-/** Frischer Prestige-Zustand (createGame + Migration v87 → v88). */
+/** Frischer Prestige-Zustand (createGame + Migration v87 → v88). claude:2026-10-18T19:40:00+02:00 — mit `runStart`. */
 export function defaultPrestigeState(): PrestigeState {
-  return { count: 0, points: 0, pointsSpent: 0, history: [] };
+  return { count: 0, points: 0, pointsSpent: 0, runStart: defaultPrestigeRunBaseline(), history: [] };
 }
 
 /**

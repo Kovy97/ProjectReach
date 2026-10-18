@@ -276,11 +276,33 @@ describe("Aufstieg", () => {
     expect(questRest).toEqual(freshRest);
     expect(Object.keys(repeatBaseline).length).toBeGreaterThan(0);
 
+    // claude:2026-10-18T19:40:00+02:00 — Welle E1: Baselines = Zählerstände beim Aufstieg, Bilanz im Historien-Eintrag.
     expect(s.prestige).toEqual({
       count: 1,
       points: preview.total,
       pointsSpent: 0,
-      history: [{ count: 1, points: preview.total, totalLevel: preview.totalLevel, skills99: 4, activePlayMs: 8_000_000 }],
+      runStart: { kills: 4626, dungeons: 3, achievements: 5, pets: 2, slayerTasks: 41, activePlayMs: 8_000_000 },
+      history: [
+        {
+          count: 1,
+          points: preview.total,
+          totalLevel: preview.totalLevel,
+          skills99: 4,
+          activePlayMs: 8_000_000,
+          tally: {
+            playMs: 8_000_000,
+            chronicleChapter: 23,
+            questsClaimed: 4,
+            kills: 4626,
+            dungeons: 3,
+            achievements: 5,
+            petsFound: 2,
+            slayerTasks: 41,
+            paragonBest: 37,
+            gold: 1_234_567,
+          },
+        },
+      ],
     });
   });
 

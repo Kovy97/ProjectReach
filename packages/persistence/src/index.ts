@@ -14,6 +14,8 @@ import type {
   MailMessage,
   OfflineSummary,
   PetId,
+  PrestigeRecord,
+  PrestigeRunTally,
   QueuedAction,
   SaveSummary,
 } from "@hearthforge/shared";
@@ -77,6 +79,8 @@ import {
   defaultParagonState,
   defaultPrestigeState,
   PRESTIGE_HISTORY_MAX,
+  PRESTIGE_RUN_BASELINE_KEYS, // claude:2026-10-18T19:40:00+02:00 — Prestige Welle E1
+  PRESTIGE_RUN_TALLY_KEYS,
   defaultQuestState,
   defaultSettings,
   emptyFarmPlot,
@@ -1093,19 +1097,41 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
           const isInt = (v: unknown): v is number => typeof v === "number" && Number.isSafeInteger(v) && v >= 0;
           if (!isInt(rec.count) || rec.count < 1) continue;
           if (!isInt(rec.points) || !isInt(rec.totalLevel) || !isInt(rec.skills99) || !isInt(rec.activePlayMs)) continue;
-          clean.history.push({
+          const entry: PrestigeRecord = {
             count: rec.count,
             points: rec.points,
             totalLevel: rec.totalLevel,
             skills99: rec.skills99,
             activePlayMs: rec.activePlayMs,
-          });
+          };
+          // claude:2026-10-18T19:40:00+02:00 — Welle E1: Bilanz nur vollständig gültig (alle Felder ganzzahlig ≥ 0),
+          // sonst entfällt nur sie; der Eintrag selbst bleibt (Test-Saves vor E1 haben keine).
+          const t = rec.tally;
+          if (t && typeof t === "object") {
+            const v = t as Record<string, unknown>;
+            if (PRESTIGE_RUN_TALLY_KEYS.every((k) => isInt(v[k]))) {
+              const tally = {} as PrestigeRunTally;
+              for (const k of PRESTIGE_RUN_TALLY_KEYS) tally[k] = v[k] as number;
+              entry.tally = tally;
+            }
+          }
+          clean.history.push(entry);
         }
         if (clean.history.length > PRESTIGE_HISTORY_MAX) {
           clean.history = clean.history.slice(clean.history.length - PRESTIGE_HISTORY_MAX);
         }
       }
       clean.count = Math.max(clean.count, clean.history.length);
+      // claude:2026-10-18T19:40:00+02:00 — Welle E1: Baselines des laufenden Durchgangs. Fehlt das Objekt
+      // (Test-Saves vor E1), gelten alle Zähler ab Spielbeginn (0); nur `activePlayMs` ist exakt rekonstruierbar
+      // (der jüngste Historien-Eintrag hält genau den Stand beim Aufstieg fest). Einzelne kaputte Werte ⇒ 0.
+      const rs = r.runStart;
+      if (rs && typeof rs === "object" && !Array.isArray(rs)) {
+        const b = rs as Record<string, unknown>;
+        for (const k of PRESTIGE_RUN_BASELINE_KEYS) clean.runStart[k] = finiteIntNonNeg(b[k], Number.MAX_SAFE_INTEGER, 0);
+      } else if (clean.history.length > 0) {
+        clean.runStart.activePlayMs = clean.history[clean.history.length - 1]!.activePlayMs;
+      }
     }
     state.prestige = clean;
   }
@@ -1810,7 +1836,11 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
     }
     state.dungeonsUnlocked = cleanUnlocked;
     // (2) Cleared ⇒ Unlocked (Migrationspfad a; heilt auch Save-Edits, die den Unlock entfernen).
-    for (const [id, n] of Object.entries(state.dungeonsCleared ?? {})) {
+    // claude:2026-10-18T20:30:00+02:00 — NUR ohne Aufstieg: `dungeonsCleared` ist ein Lebenszeit-Zähler und überlebt den
+    // Aschesturz; sonst öffnete jeder Load nach einem Aufstieg alle früher geräumten Dungeons wieder (Quest-Gates und
+    // Reset ausgehebelt, Knoten „Alte Pfade“ wirkungslos). Befund Welle E1, 6/6 Dungeons. Ohne Aufstieg bit-identisch.
+    const ascended = typeof state.prestige?.count === "number" && state.prestige.count > 0;
+    for (const [id, n] of ascended ? [] : Object.entries(state.dungeonsCleared ?? {})) {
       if (typeof n === "number" && Number.isFinite(n) && n > 0 && knownDungeon(id)) {
         cleanUnlocked[id] = true;
       }

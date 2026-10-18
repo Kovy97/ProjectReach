@@ -112,6 +112,9 @@ function ohneWerkzeuge<T extends object>(equipment: T): T {
  * v87-Fixture → 5×99 + Kapitel 21/22 + Begleiter/Jagdbuch/Meisterschaft → `ascend` → etwas Fortschritt im
  * zweiten Durchgang → serialize (Fixpunkt). Trägt damit `prestige.count = 1` samt Historie, Quest-Laufanker in
  * `quests.repeatBaseline` und die gesperrte Rabenfracht. Die Detailprüfungen stehen in prestige-persistence.test.ts.
+ * claude:2026-10-18T19:40:00+02:00 — Format-Nachtrag Welle E1 (kein Bump, v88 nie live): Fixture um
+ * `prestige.runStart` ergänzt (Zählerstände beim Aufstieg der Kette, belegt durch Laufanker und unveränderte
+ * Lebenszeit-Zähler); der Historien-Eintrag bleibt bewusst ohne `tally` (vor E1 geschrieben, nichts erfunden).
  */
 const VAULT_DIR = join(__dirname, "..", "fixtures", "save-compat");
 
