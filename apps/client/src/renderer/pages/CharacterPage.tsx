@@ -450,15 +450,17 @@ export function CharacterPage(): JSX.Element {
               <path d="M12 3l5.2 5.2h-3.2V15h-4V8.2H6.8L12 3z M4.5 17.5h15V21h-15v-3.5z" fill="currentColor" />
             </svg>
           </button>
-          {/* claude:2026-10-18T14:00:00+02:00 — Aschekerbe: eine Kerbe je Aschesturz, oben mittig zwischen den Knöpfen. */}
-          <AshNotch count={state.prestige?.count ?? 0} className="ash-notch--portrait" />
           {portraitSrc ? (
             <img loading="lazy" decoding="async" className="cs-portrait-img" src={portraitSrc} alt={c.name} />
           ) : (
             <div className="cs-portrait-placeholder">👤</div>
           )}
           <div className="cs-nameplate">
-            <span className="cs-hero-name">{c.name}</span>
+            {/* claude:2026-10-19T10:00:00+02:00 — Aschekerbe klein inline neben dem Namen statt als lose Box oben mittig (Chef 18.10.: zu viele Container). */}
+            <span className="cs-hero-namerow">
+              <span className="cs-hero-name">{c.name}</span>
+              <AshNotch count={state.prestige?.count ?? 0} className="ash-notch--inline" />
+            </span>
             <span className="cs-hero-level">{t("char.totalLevel").replace("{n}", String(c.totalLevel))}</span>
           </div>
         </div>

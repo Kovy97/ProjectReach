@@ -3044,3 +3044,135 @@
   border-image: none;
   border-color: rgba(216, 192, 106, 0.35);
 }
+
+/* ── claude:2026-10-19T10:00:00+02:00 — Charakter-Spalte links beruhigt (Chef 18.10.: „unglaublich viele
+   Container", „ordentlich und ansehnlich", „Wald behalten, nur dunkler"). Alles auf .cs-col-left begrenzt:
+   AttributesGrid läuft read-only auch im Kampf-Log-Reiter „Ausrüstung" und bleibt dort unverändert. ───── */
+
+/* (1) Wald dunkler: kühle Lasur (multiply ≈ -38 %, leicht entsättigt) + Vignette (Mitte um die Figur heller). */
+.cs-col-left .cs-portrait-wrap {
+  background:
+    radial-gradient(ellipse at 50% 55%, rgba(6, 8, 10, 0) 38%, rgba(6, 8, 10, 0.72) 100%),
+    linear-gradient(rgb(138, 150, 162), rgb(138, 150, 162)),
+    url("../assets/bg_charscreen.webp") center / cover no-repeat,
+    #0b0f0e;
+  background-blend-mode: normal, multiply, normal, normal;
+  /* (5) Höhe, die Attribute und Vitals frei geben, gehört dem Porträt (kein 34.5vh-Deckel mehr). */
+  max-height: none;
+}
+/* (5) Figur ganz sichtbar, unten verankert, weder beschnitten noch gestreckt. */
+.cs-col-left .cs-portrait-img {
+  object-position: center bottom;
+  transform: none;
+}
+
+/* (2) Namensschild: Name + Aschekerbe in einer Zeile. */
+.cs-hero-namerow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+/* (3) Lebensbalken: keine eigenen Linien, kompakt direkt unter dem Porträt. */
+.cs-col-left .cs-vitals {
+  border: 0;
+  margin: 0;
+  padding: 6px 12px 4px;
+  gap: 3px;
+}
+
+/* (4) Attribute: EINE Fläche, 3×2 ohne Einzelrahmen. Trenner = 1-px-Goldlinien (rechts/unten je Zelle;
+   Überstand am Außenrand wird per clip-path abgeschnitten, dadurch stimmt es für jede Spaltenzahl). */
+.cs-col-left .cs-attr-section {
+  container: cs-attrs / inline-size; /* Spaltenzahl nach Spaltenbreite, s. @container unten */
+  flex-grow: 0;
+  border-top: 0;
+  padding: 2px 12px 8px;
+}
+.cs-col-left .cs-attr-grid {
+  flex: 0 0 auto;
+  gap: 0;
+  margin: 0 -1px -1px 0;
+  clip-path: inset(0 1px 1px 0);
+}
+.cs-col-left .cs-attr-card {
+  container-type: normal;
+  min-height: 60px;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 0;
+  padding: 6px 8px 6px 10px;
+  text-align: left;
+  border: 0;
+  border-right: 1px solid rgba(216, 192, 106, 0.18);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.18);
+  background: none;
+  /* schmaler Farbakzent links in der Attributfarbe */
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--attr-color, var(--gold)) 60%, transparent);
+  transition: box-shadow 0.15s, background-color 0.15s;
+}
+.cs-col-left .cs-attr-card:hover,
+.cs-col-left .cs-attr-card:focus-visible {
+  transform: none;
+  border-color: rgba(216, 192, 106, 0.18);
+  background-color: color-mix(in srgb, var(--attr-color, var(--gold)) 10%, transparent);
+  box-shadow:
+    inset 2px 0 0 var(--attr-color, var(--gold)),
+    inset 0 0 22px color-mix(in srgb, var(--attr-color, var(--gold)) 24%, transparent);
+}
+/* Symbol links (war Wasserzeichen im Kartenhintergrund). */
+.cs-col-left .cs-attr-card::after {
+  position: static;
+  transform: none;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 40px;
+  height: 40px;
+  background-position: center;
+  opacity: 0.9;
+}
+.cs-col-left .cs-attr-card:hover::after { opacity: 1; }
+.cs-col-left .cs-attr-card-name {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+  width: auto;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.1;
+  letter-spacing: 0.4px;
+  text-transform: none;
+  font-variant: small-caps;
+  color: color-mix(in srgb, var(--gold) 72%, #8a7d5a);
+  overflow-wrap: anywhere;
+}
+.cs-col-left .cs-attr-card-val {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+  justify-content: flex-start;
+  flex: none;
+  font-size: clamp(26px, 3.6vh, 36px);
+}
+
+/* Schmale Charakterspalte (z. B. 1920: ~430 px): drei Zellen mit Symbol + Name hätten ~80 px Namensbreite
+   („KONSTITUTION" bräche) — dann 2×3 statt 3×2; in der breiten Bandansicht (≤900 px Panel) bleibt 3×2. */
+@container cs-attrs (max-width: 520px) {
+  .cs-col-left .cs-attr-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+}
+
+/* claude:2026-10-19T10:00:00+02:00 — Bandansicht (Porträt links, Rest rechts): die Attribute füllen die Restspalte,
+   statt dass unter ihnen leere Fläche bleibt. */
+@container cs-page (max-width: 1239px) {
+  .cs-col-left .cs-attr-section { flex-grow: 1; }
+  .cs-col-left .cs-attr-grid { flex: 1 1 auto; grid-template-rows: repeat(2, 1fr); }
+}

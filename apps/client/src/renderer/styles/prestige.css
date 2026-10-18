@@ -759,3 +759,16 @@
   .alg-skills { grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 7px 14px; }
   .alg-row { padding: 8px var(--sp-2); }
 }
+
+/* claude:2026-10-19T10:00:00+02:00 — Aschekerbe inline im Namensschild (Charakterseite): klein, ohne eigene Box. */
+.ash-notch--inline {
+  padding: 0;
+  gap: 4px;
+  pointer-events: auto; /* .cs-nameplate selbst ist pointer-events:none; der Titel-Tooltip soll bleiben */
+}
+/* Das Bild (512×512) trägt viel transparenten Rand: größer rendern, Rand per Margin wegnehmen, dunkles Eisen
+   per Aufhellung + goldenem Schein vom Waldton lösen. */
+.ash-notch--inline .ash-notch-art { height: 52px; width: 52px; margin: -17px -10px; filter: brightness(1.8) contrast(1.1) drop-shadow(0 0 3px rgba(216, 192, 106, 0.55)); }
+.ash-notch--inline .ash-notch-cuts { height: 18px; gap: 3px; }
+.ash-notch--inline .ash-notch-cut { width: 4px; height: 16px; }
+.ash-notch--inline .ash-notch-num { font-size: var(--fs-sm, 14px); }
