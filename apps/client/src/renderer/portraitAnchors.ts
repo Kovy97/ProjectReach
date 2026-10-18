@@ -277,6 +277,8 @@ export const PORTRAIT_ANCHORS: Record<string, PortraitAnchor> = {
   "npc_eske": { staff: false, facing: "right", magic: { x: 0.55, y: 0.60 }, hand: { x: 0.55, y: 0.60 } }, // NPC-Bueste, keine Hand sichtbar
   "npc_mux": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar
   "npc_shairi": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar
+  // claude:2026-10-18T19:30:00+02:00 — 1.3.0-Lieferung: Porträt des Tilgers (NPC-Büste, kämpft als Porträt nie).
+  "npc_the_expunger": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar
   "npc_urga": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar
   "npc_voss": { staff: false, facing: "right", magic: { x: 0.31, y: 0.76 }, hand: { x: 0.31, y: 0.76 } }, // NPC-Bueste
   "npc_warden": { staff: false, facing: "right", magic: { x: 0.50, y: 0.65 }, hand: { x: 0.50, y: 0.65 } }, // NPC-Bueste, keine Hand sichtbar

@@ -8,7 +8,7 @@ import { useGameControl, useGameState } from "../game/GameContext";
 import type { AscendRunResult } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { getItemImage, rarityClass } from "../items";
-import { getAltarScene, getBookOfScarsArt } from "../prestigeArt";
+import { getAltarScene, getBookOfScarsArt, getScarCurrencyArt } from "../prestigeArt";
 import { formatNum, formatPlaytime } from "../util/format";
 import { runWithScreenFade } from "../util/screenFade";
 import { NpcSpeechBubble } from "../components/NpcGreeting";
@@ -25,6 +25,9 @@ import "../styles/prestige.css";
 
 /** Kleines Narben-Zeichen (zwei gekreuzte Kerben) als Währungs-Symbol; reines SVG, keine Bilddatei nötig. */
 export function ScarGlyph({ size = 16 }: { size?: number }): JSX.Element {
+  // claude:2026-10-18T19:00:00+02:00 — liegt `scar_currency.webp` vor, zeigt das Symbol das gemalte Bild (gleiche Größe).
+  const art = getScarCurrencyArt();
+  if (art) return <img className="prestige-scar-glyph prestige-scar-art" src={art} width={size} height={size} alt="" aria-hidden="true" />;
   return (
     <svg className="prestige-scar-glyph" width={size} height={size} viewBox="0 0 16 16" aria-hidden="true">
       <path d="M3 13 L13 3" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none" />

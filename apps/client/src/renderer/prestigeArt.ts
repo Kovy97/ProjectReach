@@ -36,3 +36,10 @@ export function getAshNotchArt(): string | null {
 export function getBookOfScarsArt(): string | null {
   return BY_NAME["book_of_scars"] ?? null;
 }
+
+// claude:2026-10-18T19:00:00+02:00 — Chef 18.10. („Asset-Liste für alle neuen Elemente“): Währungssymbol der Narben
+// als optionales Bild `assets/ui/prestige/scar_currency.webp`; ohne Datei bleibt das SVG-Zeichen (ScarGlyph).
+/** Währungssymbol „Narben“ (oder null: SVG-Fallback). */
+export function getScarCurrencyArt(): string | null {
+  return BY_NAME["scar_currency"] ?? null;
+}
