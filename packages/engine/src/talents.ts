@@ -31,9 +31,16 @@ export function talentRank(state: GameState, treeId: string, nodeId: string): nu
   return Number.isFinite(r) && r > 0 ? Math.floor(r) : 0;
 }
 
-/** Ist der Baum freigeschaltet (Skill-Stufe erreicht)? */
+/**
+ * Ist der Baum freigeschaltet? ALLE gesetzten Bedingungen von `tree.unlock` müssen gelten: Skill-Stufe
+ * (`skill` + `level`) und — claude:2026-10-18T12:00:00+02:00, Narbenbuch — Zahl der Aufstiege
+ * (`prestigeCount`, aus `state.prestige.count`, defensiv 0 für handgebaute Alt-States).
+ */
 export function talentTreeUnlocked(state: GameState, tree: TalentTreeDef): boolean {
-  return levelFromXp(state.skills[tree.unlock.skill]?.xp ?? 0) >= tree.unlock.level;
+  const u = tree.unlock;
+  if (u.skill !== undefined && levelFromXp(state.skills[u.skill]?.xp ?? 0) < (u.level ?? 0)) return false;
+  if (u.prestigeCount !== undefined && (state.prestige?.count ?? 0) < u.prestigeCount) return false;
+  return true;
 }
 
 /** Guthaben der Baum-Währung. */
@@ -127,8 +134,25 @@ export function buyTalent(state: GameState, content: ContentDB, treeId: string, 
  * EINZIGE Lese-API für Talent-Boni: Wert der Wirkungsart über alle gekauften Knoten aller Bäume,
  * aggregiert laut `TALENT_EFFECT_AGGREGATION` (Summe bzw. kleinster positiver Wert). 0 ohne Talente
  * (früher Ausstieg — der Kampf-/Tick-Pfad ruft das häufig).
+ *
+ * claude:2026-10-18T12:00:00+02:00 — Nur FREIGESCHALTETE Bäume wirken (Chef 18.10.: der Jägerkodex wirkt
+ * nach einem Aufstieg erst wieder ab Slayer 85). Ohne Aufstieg bit-identisch: Ränge lassen sich nur in
+ * freigeschalteten Bäumen kaufen, und Skill-XP sinkt nie. Gekaufte Ränge bleiben gespeichert (`talentRank`).
  */
 export function talentEffect(state: GameState, content: ContentDB, kind: TalentEffectKind): number {
+  return aggregateTalentEffect(state, content, kind, true);
+}
+
+/**
+ * Wie `talentEffect`, aber OHNE Freischalt-Gate: der Wert aller gekauften Ränge. Nur für Besitz-Fragen
+ * (z. B. darf der Spielstand die Wahl im zweiten Begleiter-Platz behalten, während der Jägerkodex nach einem
+ * Aufstieg ruht), nie für Wirkungen. claude:2026-10-18T12:00:00+02:00
+ */
+export function talentEffectOwned(state: GameState, content: ContentDB, kind: TalentEffectKind): number {
+  return aggregateTalentEffect(state, content, kind, false);
+}
+
+function aggregateTalentEffect(state: GameState, content: ContentDB, kind: TalentEffectKind, gated: boolean): number {
   const owned = state.talents;
   if (!owned) return 0;
   const mode = TALENT_EFFECT_AGGREGATION[kind];
@@ -137,6 +161,7 @@ export function talentEffect(state: GameState, content: ContentDB, kind: TalentE
   for (const tree of talentTrees(content)) {
     const ranks = owned[tree.id];
     if (!ranks) continue;
+    if (gated && !talentTreeUnlocked(state, tree)) continue;
     for (const node of tree.nodes) {
       if (node.effect.kind !== kind) continue;
       const v = talentValueAtRank(node, talentRank(state, tree.id, node.id));

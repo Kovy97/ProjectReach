@@ -24,6 +24,7 @@ import { addItemOrBank, freeSlots, MAX_STACK, removeItem } from "./inventory";
 import { createRng, nextInt } from "./rng";
 import { isZoneUnlocked } from "./zones";
 import { isDungeonUnlocked } from "./dungeon";
+import { applyGoldFind } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
 
 /**
  * Roher (absoluter) Fortschrittswert eines Objectives — gelesen aus BEREITS VORHANDENEN
@@ -287,7 +288,8 @@ export function claimQuest(state: GameState, content: ContentDB, questId: string
   // einlösbar). Sonst gingen Items verloren und die einmalige Quest wäre verbraucht.
   if (r.items && r.items.length > 0 && !canHoldRewards(state, content, r.items)) return false;
 
-  if (r.gold) state.character.gold += r.gold;
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Elsternauge" (goldFindPct): ohne Rang exakt r.gold.
+  if (r.gold) state.character.gold += applyGoldFind(state, content, r.gold);
   // Quest-Tokens (Task #271, SAVE_VERSION 56): zusätzlich zur normalen Reward-Pipeline. Fehlendes
   // Feld / ungültiger Wert (≤0, NaN) ⇒ 0 Tokens — kein Bruch für bestehende Quest-Defs.
   if (

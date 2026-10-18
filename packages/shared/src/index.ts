@@ -715,6 +715,10 @@ export const MAX_OFFLINE_MS = 8 * 60 * 60 * 1000;
 //        migrateState setzt es für < 88 auf `defaultPrestigeState()`; sanitizeState härtet es für JEDE Version
 //        (auch alte Test-Saves, die schon einmal „88" trugen, als v88 noch in v87 aufging). Neue
 //        `TalentCurrency "prestigePoints"` (Saldo = `prestige.points`). Kein Item-Rename, keine ID-Änderung.
+//        NACHTRAG Welle B2 (claude:2026-10-18T12:00:00+02:00; v88 war nie live, daher KEIN Bump, Vault-Fixture v88
+//        nachgezogen): optionales Mail-Flag `MailMessageBase.prestigeHeld: true` (Post-Sperre, Chef 18.10.: Post,
+//        die beim Aufstieg im Postfach lag, bleibt bis zu den nächsten 4×99 gesperrt; nichts wird gelöscht).
+//        sanitizeState übernimmt es nur als exakt `true`; fehlt es (jeder Alt-Save), ist die Mail ungesperrt.
 export const SAVE_VERSION = 88;
 
 /**
@@ -3329,6 +3333,13 @@ export interface MailMessageBase {
   items: MailAttachment[];
   /** Nicht stapelbare Item-Instanzen (verzaubert/gesuffixt), je ein Unikat. */
   instances: ItemInstance[];
+  /**
+   * claude:2026-10-18T12:00:00+02:00 — Post-Sperre (Prestige Welle B2, Chef 18.10.2026): `true` = diese Mail
+   * lag mit Inhalt im Postfach, als der Spielstand aufstieg (`ascend` setzt es). Solche Post ist wie die
+   * Rabenfracht gesperrt (`prestige_locked`), bis wieder `PRESTIGE_REQUIRED_99` Fertigkeiten auf 99 stehen;
+   * nichts wird gelöscht. Fehlt (Normalfall) = ungesperrt. Neuer Überlauf hängt nie an eine gehaltene Mail an.
+   */
+  prestigeHeld?: true;
 }
 
 /**
@@ -4260,6 +4271,22 @@ export const SLAYER_MIN_TASK_POOL = 4;
  *  - `slayerPointsMult`   Anteil zusätzliche Slayer-Punkte je abgeschlossenem Auftrag.
  *  - `familyDamage`       Anteil Schaden gegen Familien mit vollständigem Bestiarium.
  *  - `secondPetSlot`      > 0 schaltet den zweiten Begleiter-Platz frei (nur Fertigkeits-Effekt).
+ *
+ * claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Prestige-Baum, Welle B2, design/1.3-prestige-balance.md § 5).
+ * Leser: engine/prestige.ts (`ascend`, Vorschau, Erinnerung), engine/prestige-effects.ts (XP/Gold/Schaden).
+ *  - `prestigeStartingGold`    Gold, mit dem der neue Durchgang startet (ganzzahlig).
+ *  - `prestigeKeepTools`       > 0: alle Werkzeuge überstehen den Aufstieg (landen im Lager).
+ *  - `prestigeKeepBankStacks`  Zahl der Stapel (Material/Verbrauchsgut), je ≤ PRESTIGE_STASH_STACK_CAP Stück.
+ *  - `prestigeKeepEquipment`   Zahl der Ausrüstungsteile (Anforderung ≥ PRESTIGE_HEIRLOOM_MIN_REQUIREMENT).
+ *  - `prestigeEarlyXp`         Anteil Fertigkeits-XP auf Stufe 1..PRESTIGE_EARLY_XP_LEVEL_CAP−1.
+ *  - `prestigeMasteredXp`      Anteil Fertigkeits-XP bis PRESTIGE_MASTERED_XP_LEVEL_CAP für Fertigkeiten mit
+ *                              freigeschaltetem Erfolg `ach_skill_<id>_99` (prestigeMasteredAchievementId).
+ *  - `prestigeChronicleRecall` > 0: erlebte Chronik-Kapitel ≤ PRESTIGE_RECALL_MAX_CHAPTER per Klick abschließen.
+ *  - `prestigeDungeonRecall`   > 0: Dungeons mit Lebenszeit-Clear (`dungeonsCleared`) sind sofort offen.
+ *  - `maxHpPct`                Anteil maximales Leben (computeStats).
+ *  - `damagePct`               Anteil Spielerschaden (computeStats-Schadensspanne + eigene DoT-Ticks/Dornen).
+ *  - `goldFindPct`             Anteil Gold-Einnahmen (Aktionen, Kills, Dungeons, Quests, Jagd, Taverne), NIE Verkauf.
+ *  - `prestigePointsMult`      Anteil zusätzlicher Prestige-Punkte künftiger Aufstiege.
  */
 export type TalentEffectKind =
   | "petChanceMult"
@@ -4267,7 +4294,19 @@ export type TalentEffectKind =
   | "slayerTaskRareMult"
   | "slayerPointsMult"
   | "familyDamage"
-  | "secondPetSlot";
+  | "secondPetSlot"
+  | "prestigeStartingGold"
+  | "prestigeKeepTools"
+  | "prestigeKeepBankStacks"
+  | "prestigeKeepEquipment"
+  | "prestigeEarlyXp"
+  | "prestigeMasteredXp"
+  | "prestigeChronicleRecall"
+  | "prestigeDungeonRecall"
+  | "maxHpPct"
+  | "damagePct"
+  | "goldFindPct"
+  | "prestigePointsMult";
 
 /** Aggregation je Art über alle gekauften Knoten aller Bäume: Summe, oder kleinster positiver Wert. */
 export const TALENT_EFFECT_AGGREGATION: Readonly<Record<TalentEffectKind, "sum" | "minPositive">> = {
@@ -4277,16 +4316,47 @@ export const TALENT_EFFECT_AGGREGATION: Readonly<Record<TalentEffectKind, "sum" 
   slayerPointsMult: "sum",
   familyDamage: "sum",
   secondPetSlot: "sum",
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch: alle Arten summieren (Balance § 5).
+  prestigeStartingGold: "sum",
+  prestigeKeepTools: "sum",
+  prestigeKeepBankStacks: "sum",
+  prestigeKeepEquipment: "sum",
+  prestigeEarlyXp: "sum",
+  prestigeMasteredXp: "sum",
+  prestigeChronicleRecall: "sum",
+  prestigeDungeonRecall: "sum",
+  maxHpPct: "sum",
+  damagePct: "sum",
+  goldFindPct: "sum",
+  prestigePointsMult: "sum",
 };
 
-/** Anzeigeform je Art (UI): Prozent-Anteil, Faktor oder reiner Schalter. */
-export const TALENT_EFFECT_FORMAT: Readonly<Record<TalentEffectKind, "pct" | "mult" | "flag">> = {
+/**
+ * Anzeigeform je Art (UI): Prozent-Anteil, Faktor, reiner Schalter oder — claude:2026-10-18T12:00:00+02:00,
+ * Narbenbuch — ganze Zahl (`int`: Gold, Stapel, Teile; UI formatiert als Zahl ohne Einheit).
+ */
+export type TalentEffectFormat = "pct" | "mult" | "flag" | "int";
+
+export const TALENT_EFFECT_FORMAT: Readonly<Record<TalentEffectKind, TalentEffectFormat>> = {
   petChanceMult: "pct",
   petPity: "mult",
   slayerTaskRareMult: "pct",
   slayerPointsMult: "pct",
   familyDamage: "pct",
   secondPetSlot: "flag",
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Balance § 5).
+  prestigeStartingGold: "int",
+  prestigeKeepTools: "flag",
+  prestigeKeepBankStacks: "int",
+  prestigeKeepEquipment: "int",
+  prestigeEarlyXp: "pct",
+  prestigeMasteredXp: "pct",
+  prestigeChronicleRecall: "flag",
+  prestigeDungeonRecall: "flag",
+  maxHpPct: "pct",
+  damagePct: "pct",
+  goldFindPct: "pct",
+  prestigePointsMult: "pct",
 };
 
 /** `slayerTaskRareMult` wirkt nur auf Loot-Einträge mit Basis-Chance ≤ 1/500 (Chef 17.10.). */
@@ -4315,12 +4385,27 @@ export interface TalentNodeDef {
   effect: { kind: TalentEffectKind; perRank: number[] };
 }
 
+/**
+ * Freischaltung eines Talentbaums: ALLE angegebenen Bedingungen müssen gelten (fehlende = keine Hürde).
+ * claude:2026-10-18T12:00:00+02:00 — um `prestigeCount` erweitert (Narbenbuch: mindestens ein Aufstieg).
+ * Ein gesperrter Baum ist weder kaufbar noch WIRKSAM (`talentEffect` überspringt ihn, Chef 18.10.: der
+ * Jägerkodex wirkt nach einem Aufstieg erst wieder ab Slayer 85).
+ */
+export interface TalentTreeUnlock {
+  /** Skill, dessen Stufe geprüft wird (nur zusammen mit `level`). */
+  skill?: SkillId;
+  /** Mindeststufe von `skill` (z. B. slayer ≥ 85). */
+  level?: number;
+  /** Mindestzahl Aufstiege (`GameState.prestige.count`). */
+  prestigeCount?: number;
+}
+
 export interface TalentTreeDef {
   id: string;
   name: LocalizedString;
   description?: LocalizedString;
-  /** Freischaltung: Skill-Stufe (z. B. slayer ≥ 85). */
-  unlock: { skill: SkillId; level: number };
+  /** Freischaltung: Skill-Stufe (z. B. slayer ≥ 85) und/oder Zahl der Aufstiege. */
+  unlock: TalentTreeUnlock;
   currency: TalentCurrency;
   /** Äste in Anzeige-Reihenfolge (Spalten). */
   branches: { id: string; name: LocalizedString }[];
@@ -6364,12 +6449,21 @@ export const PRESTIGE_REQUIRED_99 = 4;
 export const PRESTIGE_SKILL_LEVEL = 99;
 /** Freischaltung: diese Chronik-Quest muss eingelöst sein (Ende Band 1, Chef-Entscheid 1). */
 export const PRESTIGE_UNLOCK_QUEST_ID = "chronicle_21";
-/** Punkte je Fertigkeit auf `PRESTIGE_SKILL_LEVEL` (Konzept-Skizze: 10). */
-export const PRESTIGE_POINTS_PER_99 = 10;
+// claude:2026-10-18T12:00:00+02:00 — Siegel-Formel kalibriert (design/1.3-prestige-balance.md § 4, Chef 18.10.):
+//   floor( (BASE + PER_99·min(n99, CORE) + PER_EXTRA_99·max(0, n99 − CORE) + floor(max(0, TL − 1000) / 50)
+//           + 2·Kapitel ≥ 22 + min(PARAGON_CAP, floor(Paragon-Best / 10))) × (1 + prestigePointsMult) ).
+/** Grundbetrag je Aufstieg (macht frühen Aufstieg effizient). */
+export const PRESTIGE_POINTS_BASE = 10;
+/** Punkte je Fertigkeit auf `PRESTIGE_SKILL_LEVEL`, für die ersten `PRESTIGE_POINTS_CORE_99` (Balance § 4: 8). */
+export const PRESTIGE_POINTS_PER_99 = 8;
+/** Zahl der voll bezahlten 99er (= `PRESTIGE_REQUIRED_99`). */
+export const PRESTIGE_POINTS_CORE_99 = 4;
+/** Punkte je weiterer Fertigkeit auf 99 (über `PRESTIGE_POINTS_CORE_99` hinaus). */
+export const PRESTIGE_POINTS_PER_EXTRA_99 = 3;
 /** Gesamtstufen-Bonus: erst oberhalb dieser Gesamtstufe … */
 export const PRESTIGE_TOTAL_LEVEL_THRESHOLD = 1000;
-/** … je volle so viele Gesamtstufen … */
-export const PRESTIGE_TOTAL_LEVEL_STEP = 25;
+/** … je volle so viele Gesamtstufen (Balance § 4: 50, max. +23) … */
+export const PRESTIGE_TOTAL_LEVEL_STEP = 50;
 /** … so viele Punkte. */
 export const PRESTIGE_POINTS_PER_TOTAL_LEVEL_STEP = 1;
 /** Chronik-Bonus: eingelöste Kapitel ab dieser Nummer (Band 2) zählen … */
@@ -6380,8 +6474,32 @@ export const PRESTIGE_POINTS_PER_LATE_CHAPTER = 2;
 export const PRESTIGE_PARAGON_FLOOR_STEP = 10;
 /** … so viele Punkte. */
 export const PRESTIGE_POINTS_PER_PARAGON_STEP = 1;
+/** Deckel des Paragon-Anteils (Paragon ist endlos, Punkte nicht; Balance § 4). */
+export const PRESTIGE_PARAGON_POINTS_CAP = 10;
 /** Sanitize-Deckel der Historie (Schutz gegen aufgeblähte/manipulierte Saves). */
 export const PRESTIGE_HISTORY_MAX = 1000;
+
+// claude:2026-10-18T12:00:00+02:00 — Regel-Konstanten der Narbenbuch-Knoten (Balance § 5, Chef 18.10. Punkt 6).
+/** Lehrjahre (`prestigeEarlyXp`) wirkt auf Stufe 1 bis unter diese Stufe. */
+export const PRESTIGE_EARLY_XP_LEVEL_CAP = 80;
+/** Handgedächtnis (`prestigeMasteredXp`) wirkt bis unter diese Stufe (XP über 99 bleibt unberührt). */
+export const PRESTIGE_MASTERED_XP_LEVEL_CAP = 99;
+/** Erinnerung (`prestigeChronicleRecall`): höchstens bis zu diesem Chronik-Kapitel (nie Bosskapitel/Band 2). */
+export const PRESTIGE_RECALL_MAX_CHAPTER = 18;
+/** Erinnerung zahlt diesen Anteil des Kapitel-Golds (abgerundet); keine Marken, keine Gegenstände. */
+export const PRESTIGE_RECALL_GOLD_MULT = 0.5;
+/** Vergrabene Truhe (`prestigeKeepBankStacks`): höchstens so viele Stück je behaltenem Stapel. */
+export const PRESTIGE_STASH_STACK_CAP = 50;
+/** Erbstück (`prestigeKeepEquipment`): nur Teile mit einer Anforderung von mindestens dieser Stufe. */
+export const PRESTIGE_HEIRLOOM_MIN_REQUIREMENT = 80;
+
+/**
+ * Erfolg, der eine Fertigkeit für Handgedächtnis als „schon einmal gemeistert" ausweist (bleibt beim Aufstieg,
+ * kein eigenes Save-Feld; Balance § 5). claude:2026-10-18T12:00:00+02:00
+ */
+export function prestigeMasteredAchievementId(skillId: SkillId): string {
+  return `ach_skill_${skillId}_99`;
+}
 
 /**
  * Ein abgeschlossener Aufstieg (Historie). Bewusst OHNE Echtzeit-Stempel — die Engine erzeugt keine Uhrzeit;

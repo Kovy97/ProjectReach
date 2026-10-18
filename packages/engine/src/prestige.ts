@@ -1,30 +1,60 @@
-import type { CharacterState, ContentDB, GameState, PrestigeRecord, WeaponStyle } from "@hearthforge/shared";
+import type {
+  CharacterState,
+  ContentDB,
+  EquipSlot,
+  GameState,
+  ItemDef,
+  ItemId,
+  ItemInstance,
+  PrestigeRecord,
+  QuestDef,
+  WeaponStyle,
+} from "@hearthforge/shared";
 import {
+  EQUIP_SLOTS,
   PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER,
+  PRESTIGE_HEIRLOOM_MIN_REQUIREMENT,
   PRESTIGE_PARAGON_FLOOR_STEP,
+  PRESTIGE_PARAGON_POINTS_CAP,
+  PRESTIGE_POINTS_BASE,
+  PRESTIGE_POINTS_CORE_99,
   PRESTIGE_POINTS_PER_99,
+  PRESTIGE_POINTS_PER_EXTRA_99,
   PRESTIGE_POINTS_PER_LATE_CHAPTER,
   PRESTIGE_POINTS_PER_PARAGON_STEP,
   PRESTIGE_POINTS_PER_TOTAL_LEVEL_STEP,
+  PRESTIGE_RECALL_GOLD_MULT,
+  PRESTIGE_RECALL_MAX_CHAPTER,
   PRESTIGE_REQUIRED_99,
   PRESTIGE_SKILL_LEVEL,
+  PRESTIGE_STASH_STACK_CAP,
   PRESTIGE_TOTAL_LEVEL_STEP,
   PRESTIGE_TOTAL_LEVEL_THRESHOLD,
   PRESTIGE_UNLOCK_QUEST_ID,
   chronicleChapterNumber,
   defaultPrestigeState,
+  isCrossSaveTransferBlocked,
+  isToolSlot,
+  syncBankOrder,
 } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { nextFloat } from "./rng";
 import { computeStats, totalLevel } from "./character";
 import { createGame } from "./state";
-import { questRunBaselines, questStatus } from "./quests";
+import { questRunBaselines, questStatus, questUnlocked } from "./quests";
+import { mintInstanceId } from "./enchant";
+import { talentEffect } from "./talents";
 
 // ───────────────────────────────────────────────────────────────────────────
 // claude:2026-10-17T23:30:00+02:00 — PRESTIGE-FUNDAMENT (1.3, Welle B1, SAVE 88).
 // Konzept: design/1.3-prestige-konzept.md inkl. „Chef-Entscheide 17.10.2026 abends". Interne IDs neutral
 // (`prestige`, Währung `prestigePoints`, Baum `prestige`); Spielertexte/UI folgen in Welle D, Knoten-
 // Wirkungen in Welle B2. Rein & deterministisch: kein Math.random, kein Date.now, kein I/O.
+//
+// claude:2026-10-18T12:00:00+02:00 — Welle B2 („Der Aschesturz", Chef-Entscheide 18.10.): kalibrierte
+// Punkte-Formel (Balance § 4), Narbenbuch-Knoten im Aufstieg (Grabmünzen, Schwielen, Vergrabene Truhe,
+// Erbstück) samt Spielerauswahl + Vorschau, Erinnerung (Kapitel 1–18), Post-Sperre. Laufende Wirkungen
+// (XP/Gold/Schaden/Leben) leben in prestige-effects.ts, „Alte Pfade" in dungeon.ts `isDungeonUnlocked`.
 // ───────────────────────────────────────────────────────────────────────────
 
 /** Einstufung eines State-Felds beim Aufstieg: bleibt (`keep`) oder zurück auf den Neuzustand (`reset`). */
@@ -66,7 +96,7 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   lastApMilestone: "keep",
   apCeremonyPending: "keep",
   monsterKills: "keep", // Bestiarium
-  dungeonsCleared: "keep", // Lebenszeit-Zähler (Erfolge); Quests messen per Laufanker ab dem Aufstieg
+  dungeonsCleared: "keep", // Lebenszeit-Zähler (Erfolge, „Alte Pfade"); Quests messen per Laufanker ab dem Aufstieg
   dungeonsUnlocked: "reset", // „freigeschaltete Dungeons: zurück"
   lastDungeonUnlock: "reset",
   legacyZoneGrants: "reset", // Bestandsschutz für Alt-Saves; im neuen Durchgang gelten die Chronik-Gates
@@ -77,7 +107,7 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   stunMs: "reset",
   thievingRisk: "keep", // Spieler-Modus (Einstellung)
   mastery: "keep", // Chef-Entscheid 2
-  bank: "reset",
+  bank: "reset", // Ausnahmen über Narbenbuch-Knoten (Vergrabene Truhe, Erbstück, Schwielen) landen im neuen Lager
   bankOrder: "reset",
   bankSlotsPurchased: "reset", // mit Gold gekauft (Gold zurück)
   seenDrops: "keep", // Wiki-Funde
@@ -98,13 +128,13 @@ export const PRESTIGE_STATE_FIELDS: Readonly<Record<keyof GameState, PrestigeFie
   slayerStreakSeq: "keep",
   lastSlayerStreakBonus: "reset",
   slayerFreeSkipDay: "reset", // hängt am Lager (Trophäenwand), das zurückgesetzt wird
-  talents: "keep", // alle Bäume inkl. Jägerkodex und Prestige-Baum
+  talents: "keep", // alle Bäume inkl. Jägerkodex (wirkt erst wieder ab Slayer 85) und Narbenbuch
   petPity: "keep",
   bankInstances: "reset",
   nextInstanceSeq: "keep", // Instanz-IDs im behaltenen Postfach dürfen nie neu vergeben werden
   buyBack: "reset",
   onboarding: "keep",
-  mailbox: "keep", // Rabenfracht darin bleibt gesperrt (prestigeFreightLocked)
+  mailbox: "keep", // Post mit Inhalt wird beim Aufstieg `prestigeHeld` (gesperrt wie Rabenfracht)
   mailSeq: "keep",
   eliteRng: "reset", // aus dem neuen Seed abgeleitet (createGame)
   eliteZones: "reset",
@@ -140,7 +170,7 @@ export const PRESTIGE_CHARACTER_FIELDS: Readonly<Record<keyof CharacterState, Pr
   autoEatTier: "reset", // mit Gold gekauft
   autoEatThreshold: "keep", // Regler, wirkt nur auf Max-Stufe
   autoPotion: "reset", // enthält den gekauften Auto-Rebuff und eine Item-Wahl
-  gold: "reset",
+  gold: "reset", // Startgold über Narbenbuch „Grabmünzen"
   questTokens: "reset", // „Marken: zurück"
   mana: "reset",
   ward: "reset",
@@ -197,28 +227,41 @@ export function prestigeUnlock(state: GameState, content: ContentDB): PrestigeUn
 }
 
 export interface PrestigePointsBreakdown {
+  /** Grundbetrag je Aufstieg (`PRESTIGE_POINTS_BASE`). */
+  fromBase: number;
   skills99: number;
+  /** 99er-Anteil: die ersten `PRESTIGE_POINTS_CORE_99` voll, jeder weitere mit `PRESTIGE_POINTS_PER_EXTRA_99`. */
   fromSkills: number;
   totalLevel: number;
   fromTotalLevel: number;
   /** Eingelöste Chronik-Kapitel ab `PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER` in diesem Durchgang. */
   lateChapters: number;
   fromChronicle: number;
-  /** Paragon-Bestetage dieses Durchgangs (`paragon.best`, wird beim Aufstieg zurückgesetzt). */
+  /** Paragon-Bestetagen dieses Durchgangs (`paragon.best`, wird beim Aufstieg zurückgesetzt). */
   paragonBest: number;
+  /** Paragon-Anteil, gedeckelt auf `PRESTIGE_PARAGON_POINTS_CAP`. */
   fromParagon: number;
+  /** Summe vor dem Knoten-Multiplikator. */
+  subtotal: number;
+  /** Anteil aus `prestigePointsMult` („Der tiefere Schnitt"), 0 ohne Rang. */
+  pointsMult: number;
+  /** Zuschlag durch `pointsMult` (= total − subtotal). */
+  fromMult: number;
+  /** Gutschrift dieses Aufstiegs: floor(subtotal × (1 + pointsMult)). */
   total: number;
 }
 
 /**
- * Punkte-Vorschau für den Altar (Konzept „Aschesiegel", Werte kalibriert der balance-designer über die
- * PRESTIGE_*-Konstanten in shared): je 99er; je volle Stufen-Schritte über der Gesamtstufen-Schwelle; je
- * eingelöstem Band-2-Kapitel; je volle Paragon-Etagen-Schritte. Ganzzahlig, rein lesend. Multiplikatoren aus
- * Baum-Knoten (z. B. „Zweiter Funke") kommen in Welle B2 hinzu.
+ * Punkte-Vorschau für den Altar. claude:2026-10-18T12:00:00+02:00 — kalibrierte Formel (Balance § 4):
+ * floor( (BASE + PER_99·min(n99, CORE) + PER_EXTRA_99·max(0, n99 − CORE) + floor(max(0, TL − 1000) / 50)
+ *         + 2·Kapitel ≥ 22 + min(10, floor(Paragon-Best / 10))) × (1 + prestigePointsMult) ).
+ * Ganzzahlig, rein lesend; alle Zahlen über die PRESTIGE_*-Konstanten in shared.
  */
 export function prestigePointsPreview(state: GameState, content: ContentDB): PrestigePointsBreakdown {
+  const fromBase = PRESTIGE_POINTS_BASE;
   const skills99 = prestigeSkills99(state, content);
-  const fromSkills = skills99 * PRESTIGE_POINTS_PER_99;
+  const core = Math.min(skills99, PRESTIGE_POINTS_CORE_99);
+  const fromSkills = core * PRESTIGE_POINTS_PER_99 + Math.max(0, skills99 - PRESTIGE_POINTS_CORE_99) * PRESTIGE_POINTS_PER_EXTRA_99;
 
   const level = totalLevel(state, content);
   const over = Math.max(0, level - PRESTIGE_TOTAL_LEVEL_THRESHOLD);
@@ -235,9 +278,19 @@ export function prestigePointsPreview(state: GameState, content: ContentDB): Pre
 
   const best = state.paragon?.best ?? 0;
   const paragonBest = Number.isFinite(best) && best > 0 ? Math.floor(best) : 0;
-  const fromParagon = Math.floor(paragonBest / PRESTIGE_PARAGON_FLOOR_STEP) * PRESTIGE_POINTS_PER_PARAGON_STEP;
+  const fromParagon = Math.min(
+    PRESTIGE_PARAGON_POINTS_CAP,
+    Math.floor(paragonBest / PRESTIGE_PARAGON_FLOOR_STEP) * PRESTIGE_POINTS_PER_PARAGON_STEP,
+  );
+
+  const subtotal = fromBase + fromSkills + fromTotalLevel + fromChronicle + fromParagon;
+  const mult = talentEffect(state, content, "prestigePointsMult");
+  const pointsMult = Number.isFinite(mult) && mult > 0 ? mult : 0;
+  // Winziger Epsilon gegen Darstellungsfehler (z. B. 0,1-Schritte); bei den Content-Werten (0,25) exakt.
+  const total = pointsMult > 0 ? Math.floor(subtotal * (1 + pointsMult) + 1e-9) : subtotal;
 
   return {
+    fromBase,
     skills99,
     fromSkills,
     totalLevel: level,
@@ -246,7 +299,10 @@ export function prestigePointsPreview(state: GameState, content: ContentDB): Pre
     fromChronicle,
     paragonBest,
     fromParagon,
-    total: fromSkills + fromTotalLevel + fromChronicle + fromParagon,
+    subtotal,
+    pointsMult,
+    fromMult: total - subtotal,
+    total,
   };
 }
 
@@ -254,10 +310,504 @@ export function prestigePointsPreview(state: GameState, content: ContentDB): Pre
  * Rabenfracht-Sperre (Chef-Entscheid 3): im Durchgang nach einem Aufstieg darf der Spielstand keine Fracht
  * EMPFANGEN oder einlösen, bis wieder `PRESTIGE_REQUIRED_99` Fertigkeiten auf 99 stehen. Versand bleibt
  * erlaubt. Kein eigenes Flag: abgeleitet aus `prestige.count` und den Skills (XP sinkt nie, also öffnet die
- * Sperre einmal und bleibt offen bis zum nächsten Aufstieg). Gelesen von engine/mail.ts.
+ * Sperre einmal und bleibt offen bis zum nächsten Aufstieg). Gelesen von engine/mail.ts — dort seit Welle B2
+ * auch für jede beim Aufstieg gehaltene Post (`MailMessage.prestigeHeld`, Chef 18.10.).
  */
 export function prestigeFreightLocked(state: GameState, content: ContentDB): boolean {
   return (state.prestige?.count ?? 0) > 0 && prestigeSkills99(state, content) < PRESTIGE_REQUIRED_99;
+}
+
+// ── Narbenbuch: was über den Aufstieg kommt (Welle B2) ─────────────────────
+// claude:2026-10-18T12:00:00+02:00 — Besitz-Ledger, Kandidaten, Vorgaben und Prüfung der Spielerauswahl.
+
+/** Wo ein Stück gerade liegt (Anzeige + Sortierung der Vorgabe: getragen zuerst). */
+export type PrestigeItemLocation = "equipped" | "kit" | "inventory" | "bank";
+
+/** Verweis auf ein Stück: Basis-Item, bei verzauberten/gesuffixten Teilen zusätzlich die Instanz-ID. */
+export interface PrestigeItemRef {
+  itemId: ItemId;
+  instanceId?: string;
+}
+
+/** Ein wählbares Erbstück (Ausrüstung mit Anforderung ≥ `PRESTIGE_HEIRLOOM_MIN_REQUIREMENT`). */
+export interface PrestigeHeirloomCandidate extends PrestigeItemRef {
+  /** Höchste Fertigkeits-Anforderung des Teils. */
+  requirement: number;
+  /** Bester Fundort (getragen > anderes Kit > Inventar > Lager). */
+  location: PrestigeItemLocation;
+  /** Besessene Stücke: Instanz immer 1; ein einfaches Item darf so oft gewählt werden. */
+  count: number;
+}
+
+/** Ein wählbarer Stapel der Vergrabenen Truhe (Material/Verbrauchsgut aus Inventar + Lager). */
+export interface PrestigeStashCandidate {
+  itemId: ItemId;
+  /** Besessene Menge (Inventar + Lager). */
+  owned: number;
+  /** Was mitkäme: min(owned, PRESTIGE_STASH_STACK_CAP). */
+  keep: number;
+}
+
+/** Spielerauswahl für den Aufstieg. Fehlt ein Feld, gilt die deterministische Vorgabe der Vorschau. */
+export interface PrestigeAscendChoice {
+  /** Erbstücke (höchstens `prestigeKeepEquipment` Stück; ein einfaches Item mehrfach = mehrere Stücke). */
+  heirlooms?: PrestigeItemRef[];
+  /** Stapel der Vergrabenen Truhe (höchstens `prestigeKeepBankStacks` verschiedene Item-IDs). */
+  stash?: ItemId[];
+}
+
+/**
+ * Stabile Fehlschlag-Codes von `prestigeAscendCheck` (UI: `t("prestige.reason." + code)`, Welle D):
+ *  - `locked`             Freischaltung (4×99 + Kapitel 21) fehlt.
+ *  - `heirloom_too_many`  mehr Erbstücke gewählt als Rang erlaubt.
+ *  - `heirloom_invalid`   ein gewähltes Erbstück ist nicht (mehr) wählbar oder öfter gewählt als besessen.
+ *  - `stash_too_many`     mehr Stapel gewählt als Rang erlaubt.
+ *  - `stash_invalid`      ein gewählter Stapel ist nicht wählbar oder doppelt.
+ */
+export type PrestigeAscendReason = "locked" | "heirloom_too_many" | "heirloom_invalid" | "stash_too_many" | "stash_invalid";
+
+export interface PrestigeAscendCheck {
+  ok: boolean;
+  reason?: PrestigeAscendReason;
+}
+
+interface LedgerInstance {
+  inst: ItemInstance;
+  location: PrestigeItemLocation;
+}
+
+/** Alles, was der Spielstand an Gegenständen besitzt (ohne Postfach), in deterministischer Reihenfolge. */
+interface Ledger {
+  /** Einfache Stücke je Item-ID (getragen, andere Kits, Inventar, Lager). */
+  plain: Map<ItemId, number>;
+  /** Bester Fundort je einfacher Item-ID. */
+  plainLocation: Map<ItemId, PrestigeItemLocation>;
+  /** Einfache Stücke nur aus Inventar + Lager (Quelle der Vergrabenen Truhe). */
+  stackable: Map<ItemId, number>;
+  instances: LedgerInstance[];
+}
+
+const LOCATION_RANK: Readonly<Record<PrestigeItemLocation, number>> = { equipped: 0, kit: 1, inventory: 2, bank: 3 };
+
+function positiveInt(v: unknown): number {
+  return typeof v === "number" && Number.isFinite(v) && v > 0 ? Math.floor(v) : 0;
+}
+
+function buildLedger(state: GameState, content: ContentDB): Ledger {
+  const plain = new Map<ItemId, number>();
+  const plainLocation = new Map<ItemId, PrestigeItemLocation>();
+  const stackable = new Map<ItemId, number>();
+  const instances: LedgerInstance[] = [];
+  const addPlain = (id: ItemId | null | undefined, qty: number, location: PrestigeItemLocation): void => {
+    if (!id || !content.items[id] || qty <= 0) return;
+    plain.set(id, (plain.get(id) ?? 0) + qty);
+    const prev = plainLocation.get(id);
+    if (prev === undefined || LOCATION_RANK[location] < LOCATION_RANK[prev]) plainLocation.set(id, location);
+    if (location === "inventory" || location === "bank") stackable.set(id, (stackable.get(id) ?? 0) + qty);
+  };
+  const addInstance = (inst: ItemInstance | undefined, location: PrestigeItemLocation): void => {
+    if (!inst || typeof inst.instanceId !== "string" || !content.items[inst.baseItemId]) return;
+    instances.push({ inst, location });
+  };
+  const addKit = (
+    equipment: Partial<Record<EquipSlot, ItemId | null>> | undefined,
+    equipped: Partial<Record<EquipSlot, ItemInstance>> | undefined,
+    location: PrestigeItemLocation,
+  ): void => {
+    for (const slot of EQUIP_SLOTS) {
+      const id = equipment?.[slot];
+      if (!id) continue;
+      const inst = equipped?.[slot];
+      if (inst && inst.baseItemId === id) addInstance(inst, location);
+      else addPlain(id, 1, location);
+    }
+  };
+
+  // Getragen (Wahrheit des aktiven Kits), dann die inaktiven Kits (besitzen eigene Teile).
+  addKit(state.character.equipment, state.character.equippedInstances, "equipped");
+  (state.equipKits ?? []).forEach((kit, i) => {
+    if (i !== state.activeKit && kit) addKit(kit.equipment, kit.equippedInstances, "kit");
+  });
+  for (const slot of state.inventory?.slots ?? []) {
+    if (!slot) continue;
+    if (slot.instance) addInstance(slot.instance, "inventory");
+    else addPlain(slot.itemId, positiveInt(slot.qty), "inventory");
+  }
+  for (const inst of state.inventory?.instances ?? []) addInstance(inst, "inventory");
+  for (const [id, qty] of Object.entries(state.bank ?? {})) addPlain(id, positiveInt(qty), "bank");
+  for (const inst of state.bankInstances ?? []) addInstance(inst, "bank");
+  return { plain, plainLocation, stackable, instances };
+}
+
+/** Höchste Fertigkeits-Anforderung eines Items (0 ohne Anforderung). */
+export function itemMaxRequirement(item: ItemDef | undefined): number {
+  let max = 0;
+  for (const v of Object.values(item?.requirements ?? {})) {
+    if (typeof v === "number" && Number.isFinite(v) && v > max) max = v;
+  }
+  return max;
+}
+
+/**
+ * Darf dieses Item ein Erbstück werden? Ausrüstung mit Nicht-Werkzeug-Slot, Anforderung ≥ 80 (Chef 18.10.,
+ * Chase-Teile ohne Anforderung bleiben außen vor), nicht spielstand-gebunden (Meisterringe/Schlüssel:
+ * isCrossSaveTransferBlocked — ein Meisterring kommt bei erneutem 99 ohnehin wieder).
+ */
+export function prestigeHeirloomEligible(item: ItemDef | undefined): boolean {
+  if (!item || item.type !== "equipment" || !item.slot || isToolSlot(item.slot)) return false;
+  if (isCrossSaveTransferBlocked(item.id)) return false;
+  return itemMaxRequirement(item) >= PRESTIGE_HEIRLOOM_MIN_REQUIREMENT;
+}
+
+/**
+ * Darf dieses Item in die Vergrabene Truhe? Nur Materialien und Verbrauchsgüter; Ausrüstung und Werkzeuge
+ * haben eigene Knoten, Schlüssel/Meisterringe (isCrossSaveTransferBlocked) bleiben gesperrt. Marken sind
+ * keine Items (`character.questTokens`) und gehen ohnehin zurück.
+ */
+export function prestigeStashEligible(item: ItemDef | undefined): boolean {
+  if (!item || item.tool || item.slot) return false;
+  if (item.type !== "material" && item.type !== "consumable") return false;
+  return !isCrossSaveTransferBlocked(item.id);
+}
+
+function heirloomCandidates(ledger: Ledger, content: ContentDB): PrestigeHeirloomCandidate[] {
+  const out: PrestigeHeirloomCandidate[] = [];
+  for (const { inst, location } of ledger.instances) {
+    const item = content.items[inst.baseItemId];
+    if (!prestigeHeirloomEligible(item)) continue;
+    out.push({ itemId: inst.baseItemId, instanceId: inst.instanceId, requirement: itemMaxRequirement(item), location, count: 1 });
+  }
+  for (const [itemId, count] of ledger.plain) {
+    const item = content.items[itemId];
+    if (!prestigeHeirloomEligible(item)) continue;
+    out.push({ itemId, requirement: itemMaxRequirement(item), location: ledger.plainLocation.get(itemId) ?? "bank", count });
+  }
+  // Vorgabe-Reihenfolge: höchste Anforderung, getragen zuerst, Instanz (verzaubert) vor einfachem Stück, dann IDs.
+  out.sort(
+    (a, b) =>
+      b.requirement - a.requirement ||
+      LOCATION_RANK[a.location] - LOCATION_RANK[b.location] ||
+      (a.instanceId ? 0 : 1) - (b.instanceId ? 0 : 1) ||
+      (a.itemId < b.itemId ? -1 : a.itemId > b.itemId ? 1 : 0) ||
+      ((a.instanceId ?? "") < (b.instanceId ?? "") ? -1 : (a.instanceId ?? "") > (b.instanceId ?? "") ? 1 : 0),
+  );
+  return out;
+}
+
+function stashCandidates(ledger: Ledger, content: ContentDB): PrestigeStashCandidate[] {
+  const out: PrestigeStashCandidate[] = [];
+  for (const [itemId, owned] of ledger.stackable) {
+    if (!prestigeStashEligible(content.items[itemId])) continue;
+    out.push({ itemId, owned, keep: Math.min(owned, PRESTIGE_STASH_STACK_CAP) });
+  }
+  // Vorgabe-Reihenfolge: Wert der mitkommenden Menge (Itemwert × keep), dann Item-ID.
+  const worth = (c: PrestigeStashCandidate): number => (content.items[c.itemId]?.value ?? 0) * c.keep;
+  out.sort((a, b) => worth(b) - worth(a) || (a.itemId < b.itemId ? -1 : a.itemId > b.itemId ? 1 : 0));
+  return out;
+}
+
+function rankCount(state: GameState, content: ContentDB, kind: "prestigeKeepEquipment" | "prestigeKeepBankStacks"): number {
+  return positiveInt(talentEffect(state, content, kind));
+}
+
+function defaultHeirlooms(candidates: readonly PrestigeHeirloomCandidate[], slots: number): PrestigeItemRef[] {
+  return candidates.slice(0, slots).map((c) => (c.instanceId ? { itemId: c.itemId, instanceId: c.instanceId } : { itemId: c.itemId }));
+}
+
+function defaultStash(candidates: readonly PrestigeStashCandidate[], slots: number): ItemId[] {
+  return candidates.slice(0, slots).map((c) => c.itemId);
+}
+
+function validateHeirlooms(
+  picks: readonly PrestigeItemRef[],
+  candidates: readonly PrestigeHeirloomCandidate[],
+  slots: number,
+): PrestigeAscendReason | null {
+  if (picks.length > slots) return "heirloom_too_many";
+  const usedPlain = new Map<ItemId, number>();
+  const usedInst = new Set<string>();
+  for (const pick of picks) {
+    if (!pick || typeof pick.itemId !== "string") return "heirloom_invalid";
+    if (pick.instanceId !== undefined) {
+      if (usedInst.has(pick.instanceId)) return "heirloom_invalid";
+      const hit = candidates.find((c) => c.instanceId === pick.instanceId && c.itemId === pick.itemId);
+      if (!hit) return "heirloom_invalid";
+      usedInst.add(pick.instanceId);
+    } else {
+      const hit = candidates.find((c) => !c.instanceId && c.itemId === pick.itemId);
+      const used = (usedPlain.get(pick.itemId) ?? 0) + 1;
+      if (!hit || used > hit.count) return "heirloom_invalid";
+      usedPlain.set(pick.itemId, used);
+    }
+  }
+  return null;
+}
+
+function validateStash(picks: readonly ItemId[], candidates: readonly PrestigeStashCandidate[], slots: number): PrestigeAscendReason | null {
+  if (picks.length > slots) return "stash_too_many";
+  const seen = new Set<ItemId>();
+  for (const id of picks) {
+    if (typeof id !== "string" || seen.has(id) || !candidates.some((c) => c.itemId === id)) return "stash_invalid";
+    seen.add(id);
+  }
+  return null;
+}
+
+/**
+ * Prüft einen Aufstieg samt Spielerauswahl ohne State-Änderung. Reihenfolge der Gründe: locked →
+ * Erbstücke → Truhe. Eine fehlende Auswahl (undefined) ist immer gültig (dann gilt die Vorgabe).
+ */
+export function prestigeAscendCheck(state: GameState, content: ContentDB, choice?: PrestigeAscendChoice): PrestigeAscendCheck {
+  if (!prestigeUnlock(state, content).ok) return { ok: false, reason: "locked" };
+  if (choice?.heirlooms === undefined && choice?.stash === undefined) return { ok: true };
+  const ledger = buildLedger(state, content);
+  if (choice.heirlooms !== undefined) {
+    const bad = validateHeirlooms(choice.heirlooms, heirloomCandidates(ledger, content), rankCount(state, content, "prestigeKeepEquipment"));
+    if (bad) return { ok: false, reason: bad };
+  }
+  if (choice.stash !== undefined) {
+    const bad = validateStash(choice.stash, stashCandidates(ledger, content), rankCount(state, content, "prestigeKeepBankStacks"));
+    if (bad) return { ok: false, reason: bad };
+  }
+  return { ok: true };
+}
+
+/** Geht/Bleibt-Zahlen für die Altar-Liste (Welle D rendert daraus Zeilen; Felder: PRESTIGE_*_FIELDS). */
+export interface PrestigeAscendSummary {
+  goes: {
+    gold: number;
+    questTokens: number;
+    slayerPoints: number;
+    totalLevel: number;
+    /** Getragene Teile (aktives Kit, ohne Werkzeuge). */
+    equippedPieces: number;
+    /** Verschiedene Item-Arten in Inventar + Lager. */
+    itemKinds: number;
+    /** Verzauberte/gesuffixte Stücke (alle Orte außer Post). */
+    instances: number;
+    /** Eingelöste Chronik-Kapitel und andere Quests dieses Durchgangs. */
+    questsClaimed: number;
+  };
+  stays: {
+    pets: number;
+    masteryActions: number;
+    achievements: number;
+    /** Gekaufte Talentränge aller Bäume (Jägerkodex wirkt erst wieder ab Slayer 85). */
+    talentRanks: number;
+    /** Post mit Inhalt, die beim Aufstieg gesperrt mitgeht (`prestigeHeld`). */
+    heldMail: number;
+  };
+}
+
+/** Alles, was der Altar vor der Bestätigung braucht (rein lesend, deterministisch). */
+export interface PrestigeAscendPreview {
+  unlock: PrestigeUnlockCheck;
+  points: PrestigePointsBreakdown;
+  /** Startgold des neuen Durchgangs (Grabmünzen, `prestigeStartingGold`). */
+  startingGold: number;
+  /** Schwielen (`prestigeKeepTools`): alle Werkzeuge gehen mit ins neue Lager. */
+  keepTools: boolean;
+  /** Werkzeuge, die mitgingen (Menge je Item-ID; leer ohne `keepTools`). Erbstücke zählen nicht doppelt. */
+  tools: Array<{ itemId: ItemId; qty: number }>;
+  /** Erbstück-Plätze (`prestigeKeepEquipment`). */
+  heirloomSlots: number;
+  heirloomCandidates: PrestigeHeirloomCandidate[];
+  /** Vorgabe, wenn der Spieler nichts wählt (die ersten Kandidaten, je eines). */
+  heirloomDefault: PrestigeItemRef[];
+  /** Truhen-Plätze (`prestigeKeepBankStacks`). */
+  stashSlots: number;
+  /** Deckel je Stapel (`PRESTIGE_STASH_STACK_CAP`). */
+  stashStackCap: number;
+  stashCandidates: PrestigeStashCandidate[];
+  stashDefault: ItemId[];
+  summary: PrestigeAscendSummary;
+}
+
+function countTalentRanks(state: GameState): number {
+  let n = 0;
+  for (const tree of Object.values(state.talents ?? {})) {
+    for (const r of Object.values(tree ?? {})) n += positiveInt(r);
+  }
+  return n;
+}
+
+function questsClaimedCount(state: GameState): number {
+  return new Set(state.quests?.claimed ?? []).size;
+}
+
+function mailHasContent(m: { items: unknown[]; instances: unknown[] }): boolean {
+  return (m.items?.length ?? 0) > 0 || (m.instances?.length ?? 0) > 0;
+}
+
+/**
+ * Altar-Vorschau (Welle D baut darauf): Freischaltung, Punkte-Aufschlüsselung, Startgold, Werkzeuge,
+ * wählbare Erbstücke/Stapel samt Maxima und Vorgabe, Geht/Bleibt-Zahlen. Rein lesend.
+ */
+export function prestigeAscendPreview(state: GameState, content: ContentDB): PrestigeAscendPreview {
+  const ledger = buildLedger(state, content);
+  const heirloomSlots = rankCount(state, content, "prestigeKeepEquipment");
+  const stashSlots = rankCount(state, content, "prestigeKeepBankStacks");
+  const hc = heirloomCandidates(ledger, content);
+  const sc = stashCandidates(ledger, content);
+  const heirloomDefault = defaultHeirlooms(hc, heirloomSlots);
+  const keepTools = talentEffect(state, content, "prestigeKeepTools") > 0;
+  const tools = keepTools ? keptTools(ledger, content, heirloomDefault).plain : [];
+  let equippedPieces = 0;
+  for (const slot of EQUIP_SLOTS) if (!isToolSlot(slot) && state.character.equipment?.[slot]) equippedPieces++;
+  const itemKinds = new Set<ItemId>(ledger.stackable.keys());
+  return {
+    unlock: prestigeUnlock(state, content),
+    points: prestigePointsPreview(state, content),
+    startingGold: positiveInt(talentEffect(state, content, "prestigeStartingGold")),
+    keepTools,
+    tools,
+    heirloomSlots,
+    heirloomCandidates: hc,
+    heirloomDefault,
+    stashSlots,
+    stashStackCap: PRESTIGE_STASH_STACK_CAP,
+    stashCandidates: sc,
+    stashDefault: defaultStash(sc, stashSlots),
+    summary: {
+      goes: {
+        gold: Math.max(0, Math.floor(state.character.gold ?? 0)),
+        questTokens: Math.max(0, Math.floor(state.character.questTokens ?? 0)),
+        slayerPoints: Math.max(0, Math.floor(state.slayerPoints ?? 0)),
+        totalLevel: totalLevel(state, content),
+        equippedPieces,
+        itemKinds: itemKinds.size,
+        instances: ledger.instances.length,
+        questsClaimed: questsClaimedCount(state),
+      },
+      stays: {
+        pets: Object.keys(state.character.ownedPets ?? {}).length,
+        masteryActions: Object.keys(state.mastery ?? {}).length,
+        achievements: (state.achievements ?? []).length,
+        talentRanks: countTalentRanks(state),
+        heldMail: (state.mailbox ?? []).filter(mailHasContent).length,
+      },
+    },
+  };
+}
+
+/**
+ * Werkzeuge, die Schwielen mitnimmt: jedes Stück mit `ItemDef.tool` im Besitz, abzüglich der als Erbstück
+ * gewählten (kein Doppel-Behalten eines Doppelnutzen-Teils). Einfache Stücke je ID summiert, Instanzen einzeln.
+ */
+function keptTools(
+  ledger: Ledger,
+  content: ContentDB,
+  heirlooms: readonly PrestigeItemRef[],
+): { plain: Array<{ itemId: ItemId; qty: number }>; instances: ItemInstance[] } {
+  const takenPlain = new Map<ItemId, number>();
+  const takenInst = new Set<string>();
+  for (const h of heirlooms) {
+    if (h.instanceId !== undefined) takenInst.add(h.instanceId);
+    else takenPlain.set(h.itemId, (takenPlain.get(h.itemId) ?? 0) + 1);
+  }
+  const plain: Array<{ itemId: ItemId; qty: number }> = [];
+  for (const [itemId, qty] of ledger.plain) {
+    if (!content.items[itemId]?.tool) continue;
+    const rest = qty - (takenPlain.get(itemId) ?? 0);
+    if (rest > 0) plain.push({ itemId, qty: rest });
+  }
+  const instances: ItemInstance[] = [];
+  for (const { inst } of ledger.instances) {
+    if (content.items[inst.baseItemId]?.tool && !takenInst.has(inst.instanceId)) instances.push(inst);
+  }
+  return { plain, instances };
+}
+
+// ── Erinnerung („Bekannte Seiten", prestigeChronicleRecall) ───────────────
+// claude:2026-10-18T12:00:00+02:00 — Chef 18.10. Punkt 6: nur Kapitel 1–18, halbes Gold, keine Marken und
+// keine Gegenstände; nie 19 (`last_idol`), 20 (`drazhan`), 21 (Paragon 5) oder Band 2 („Kampf ist fundamental").
+// „Erlebt": jeder Aufstieg verlangt eingelöstes Kapitel 21, und die Chronik ist eine lineare `requires`-Kette;
+// mit `prestige.count ≥ 1` hat der Spielstand also jedes Kapitel ≤ 21 schon einmal abgeschlossen.
+
+/**
+ * Stabile Fehlschlag-Codes der Erinnerung (UI: `t("prestige.recall." + code)`):
+ *  - `no_talent`        Knoten „Bekannte Seiten" nicht gekauft (oder noch kein Aufstieg).
+ *  - `not_recallable`   keine Chronik-Quest oder Kapitel > PRESTIGE_RECALL_MAX_CHAPTER.
+ *  - `claimed`          Kapitel in diesem Durchgang schon eingelöst.
+ *  - `locked`           Vorgänger-Kapitel noch offen (Reihenfolge der Chronik).
+ */
+export type PrestigeRecallReason = "no_talent" | "not_recallable" | "claimed" | "locked";
+
+export interface PrestigeRecallResult {
+  ok: boolean;
+  reason?: PrestigeRecallReason;
+  /** Gutgeschriebenes Gold (floor(Kapitel-Gold × PRESTIGE_RECALL_GOLD_MULT)). */
+  gold?: number;
+}
+
+function recallableQuest(content: ContentDB, questId: string): QuestDef | null {
+  const chapter = chronicleChapterNumber(questId);
+  if (chapter === null || chapter < 1 || chapter > PRESTIGE_RECALL_MAX_CHAPTER) return null;
+  const quest = content.quests.find((q) => q.id === questId);
+  if (!quest || quest.repeatable || quest.daily) return null;
+  return quest;
+}
+
+/** Hat der Spielstand die Erinnerung (Knoten gekauft UND mindestens ein Aufstieg)? */
+export function prestigeRecallAvailable(state: GameState, content: ContentDB): boolean {
+  return (state.prestige?.count ?? 0) > 0 && talentEffect(state, content, "prestigeChronicleRecall") > 0;
+}
+
+/** Prüft die Erinnerung eines Kapitels ohne State-Änderung (Gold = Vorschau der Gutschrift). */
+export function prestigeRecallCheck(state: GameState, content: ContentDB, questId: string): PrestigeRecallResult {
+  if (!prestigeRecallAvailable(state, content)) return { ok: false, reason: "no_talent" };
+  const quest = recallableQuest(content, questId);
+  if (!quest) return { ok: false, reason: "not_recallable" };
+  if (state.quests.claimed.includes(questId)) return { ok: false, reason: "claimed" };
+  if (!questUnlocked(state, quest)) return { ok: false, reason: "locked" };
+  return { ok: true, gold: Math.floor(Math.max(0, quest.rewards.gold ?? 0) * PRESTIGE_RECALL_GOLD_MULT) };
+}
+
+/**
+ * Schließt ein erlebtes Chronik-Kapitel per Klick ab: als eingelöst markiert (öffnet Zonen-/Dungeon-Gates
+ * und das nächste Kapitel wie ein normaler Claim), zahlt halbes Gold, KEINE Marken, KEINE Gegenstände, keine
+ * XP und keinen Gold-Einnahmen-Bonus. Bei Fehlschlag bleibt der State unverändert. Kein RNG.
+ */
+export function prestigeRecallChapter(state: GameState, content: ContentDB, questId: string): PrestigeRecallResult {
+  const check = prestigeRecallCheck(state, content, questId);
+  if (!check.ok) return check;
+  state.quests.claimed.push(questId);
+  const i = state.quests.completed.indexOf(questId);
+  if (i >= 0) state.quests.completed.splice(i, 1);
+  state.character.gold += check.gold ?? 0;
+  return check;
+}
+
+/**
+ * Kapitel, die sich JETZT der Reihe nach per Erinnerung abschließen ließen (Chronik-Reihenfolge; das erste
+ * ist sofort wählbar, jedes weitere nach seinem Vorgänger). Leer ohne Knoten. Rein lesend.
+ */
+export function prestigeRecallableChapters(state: GameState, content: ContentDB): string[] {
+  if (!prestigeRecallAvailable(state, content)) return [];
+  const chapters = content.quests
+    .filter((q) => recallableQuest(content, q.id) && !state.quests.claimed.includes(q.id))
+    .sort((a, b) => (chronicleChapterNumber(a.id) ?? 0) - (chronicleChapterNumber(b.id) ?? 0));
+  const reachable = new Set(state.quests.claimed);
+  const out: string[] = [];
+  for (const q of chapters) {
+    if (!(q.requires ?? []).every((id) => reachable.has(id))) break;
+    out.push(q.id);
+    reachable.add(q.id);
+  }
+  return out;
+}
+
+/** „Alle erlebten Kapitel abschließen" in einem Klick: ruft `prestigeRecallChapter` der Reihe nach. */
+export function prestigeRecallChronicle(state: GameState, content: ContentDB): { chapters: string[]; gold: number } {
+  const chapters: string[] = [];
+  let gold = 0;
+  for (const id of prestigeRecallableChapters(state, content)) {
+    const r = prestigeRecallChapter(state, content, id);
+    if (!r.ok) break;
+    chapters.push(id);
+    gold += r.gold ?? 0;
+  }
+  return { chapters, gold };
 }
 
 // ── Aufstieg ───────────────────────────────────────────────────────────────
@@ -275,25 +825,41 @@ function startingStyleOf(state: GameState, content: ContentDB): WeaponStyle {
 }
 
 /**
- * Aufstieg: nur wenn `prestigeUnlock(...).ok`, sonst `false` und der State bleibt unangetastet. Baut den
+ * Aufstieg: nur wenn `prestigeAscendCheck(...).ok`, sonst `false` und der State bleibt unangetastet. Baut den
  * Neustand über `createGame` (Startausrüstung des Stils der getragenen Haupthand, Starter-Paket wie bei der
  * echten Charaktererstellung, Name/Porträt/Erstellungszeit übernommen), kopiert die Bleibe-Felder laut
  * Wächterliste, setzt die Quest-Laufanker, schreibt `prestige` fort (count+1, Punkte laut Vorschau,
  * Historien-Eintrag) und rechnet die abgeleiteten Charakterwerte neu. Der übergebene State wird IN PLACE
- * ersetzt (Referenz bleibt gültig, Muster aller Engine-Verben). Deterministisch: gleicher Eingangs-State ⇒
- * byte-gleicher Neustand.
+ * ersetzt (Referenz bleibt gültig, Muster aller Engine-Verben). Deterministisch: gleicher Eingangs-State und
+ * gleiche Auswahl ⇒ byte-gleicher Neustand.
+ *
+ * claude:2026-10-18T12:00:00+02:00 — Welle B2, Narbenbuch: Startgold (Grabmünzen), Werkzeuge (Schwielen),
+ * Erbstücke und Truhen-Stapel landen im NEUEN Lager (Erbstücke verlangen Stufe ≥ 80, können also nicht
+ * getragen starten); verzauberte/gesuffixte Stücke behalten Affixe, Suffix und ihre Instanz-ID (eindeutig im
+ * alten Stand, `nextInstanceSeq` bleibt; bei einer Kollision mit dem Neustand würde neu geprägt). `choice`
+ * fehlt ⇒ Vorgabe der Vorschau (`heirloomDefault`/`stashDefault`). Post mit Inhalt wird `prestigeHeld`.
  *
  * Aufrufer (Welle D): VOR dem Aufruf den Spielstand speichern und die Sicherung auslösen (IPC-Kanal, z. B.
  * `saves:backupPreAscend`, legt Welle D an; Main-Funktion apps/client/src/main/saveBackups.ts
  * `backupPreAscend`), nur bei Ergebnis `"pre-ascend"` aufsteigen und danach sofort speichern.
  */
-export function ascend(state: GameState, content: ContentDB): boolean {
-  const unlock = prestigeUnlock(state, content);
-  if (!unlock.ok) return false;
+export function ascend(state: GameState, content: ContentDB, choice?: PrestigeAscendChoice): boolean {
+  if (!prestigeAscendCheck(state, content, choice).ok) return false;
 
   const preview = prestigePointsPreview(state, content);
   const old = state;
   const oldPrestige = old.prestige ?? defaultPrestigeState();
+
+  // Narbenbuch-Auswahl aus dem ALTEN Stand (Ränge bleiben ohnehin, gelesen wird vor dem Umbau).
+  const ledger = buildLedger(old, content);
+  const heirloomSlots = rankCount(old, content, "prestigeKeepEquipment");
+  const stashSlots = rankCount(old, content, "prestigeKeepBankStacks");
+  const hc = heirloomCandidates(ledger, content);
+  const sc = stashCandidates(ledger, content);
+  const heirlooms = choice?.heirlooms ?? defaultHeirlooms(hc, heirloomSlots);
+  const stash = choice?.stash ?? defaultStash(sc, stashSlots);
+  const startingGold = positiveInt(talentEffect(old, content, "prestigeStartingGold"));
+  const tools = talentEffect(old, content, "prestigeKeepTools") > 0 ? keptTools(ledger, content, heirlooms) : { plain: [], instances: [] };
 
   const next = createGame(
     {
@@ -327,6 +893,44 @@ export function ascend(state: GameState, content: ContentDB): boolean {
 
   // Quests: Neuzustand, aber einmalige wie wiederholbare Quests messen ab dem Zählerstand beim Aufstieg.
   next.quests.repeatBaseline = questRunBaselines(next, content);
+
+  // ── Narbenbuch: Grabmünzen, Schwielen, Erbstück, Vergrabene Truhe → neues Lager ──
+  next.character.gold += startingGold;
+  const usedIds = new Set<string>();
+  for (const m of next.mailbox ?? []) for (const inst of m.instances) usedIds.add(inst.instanceId);
+  for (const inst of next.inventory.instances) usedIds.add(inst.instanceId);
+  for (const inst of next.bankInstances) usedIds.add(inst.instanceId);
+  const keepInstance = (inst: ItemInstance): void => {
+    // Die Instanz wandert als Referenz (ihre alten Behälter verschwinden mit dem Altstand); nur bei einer
+    // ID-Kollision mit dem Neustand bekommt eine flache Kopie eine frisch geprägte ID.
+    const moved = usedIds.has(inst.instanceId) ? { ...inst, instanceId: mintInstanceId(next) } : inst;
+    usedIds.add(moved.instanceId);
+    next.bankInstances.push(moved);
+  };
+  const keepPlain = (itemId: ItemId, qty: number): void => {
+    if (qty <= 0 || !content.items[itemId]) return;
+    next.bank[itemId] = (next.bank[itemId] ?? 0) + qty;
+  };
+  const instById = new Map(ledger.instances.map((e) => [e.inst.instanceId, e.inst] as const));
+  for (const h of heirlooms) {
+    if (h.instanceId !== undefined) {
+      const inst = instById.get(h.instanceId);
+      if (inst) keepInstance(inst);
+    } else keepPlain(h.itemId, 1);
+  }
+  for (const t of tools.plain) keepPlain(t.itemId, t.qty);
+  for (const inst of tools.instances) keepInstance(inst);
+  for (const itemId of stash) {
+    const c = sc.find((x) => x.itemId === itemId);
+    if (c) keepPlain(itemId, c.keep);
+  }
+  syncBankOrder(next);
+
+  // Post-Sperre (Chef 18.10.): jede Mail mit Inhalt, die jetzt im Postfach liegt, bleibt bis zu den nächsten
+  // 4×99 gesperrt (`mailCollectBlocked`); gelöscht wird nichts. Briefe ohne Geschenk bleiben lesbar.
+  for (const m of next.mailbox ?? []) {
+    if (mailHasContent(m)) m.prestigeHeld = true;
+  }
 
   const record: PrestigeRecord = {
     count: oldPrestige.count + 1,

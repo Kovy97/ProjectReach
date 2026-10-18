@@ -123,6 +123,9 @@ import { applyConsumableBuff, useConsumable } from "./consumable";
 import { isHealPotion } from "./consume-gate";
 import { familyBestiaryComplete, markDropSeen } from "./drops";
 import { talentEffect } from "./talents";
+// claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Prestige Welle B2, Auftrag Logic-Dev mit Revier engine/**):
+// XP-, Gold- und Schadensfaktoren; jeder ist ohne Ränge exakt 1 (bit-identisch).
+import { goldFindMult, prestigeSkillXpMult, talentDamageMult } from "./prestige-effects";
 import {
   type ActivePetAbility,
   petCombatAbility,
@@ -330,11 +333,13 @@ function addXp(
   // auch im Kampf (1.10 → 1.13 bei Stufe III) — Muster tick.ts skillingStep. Ohne nowMs bzw. an
   // Nicht-mistvigil-Tagen ist die Basis 1 und shrineAmplifiedMult lässt sie unverändert
   // (bit-identisch zum Vorher-Zustand, kein RNG).
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Lehrjahre/Handgedächtnis): letzter Faktor, ohne Ränge 1.
   const granted =
     amount
     * earlyXpMult(levelFromXp(skill.xp))
     * shrineAmplifiedMult(blessingMult(nowMs, "xp"), campShrineBonus(state, content))
-    * combatXpEffectMult(fx);
+    * combatXpEffectMult(fx)
+    * prestigeSkillXpMult(state, content, skillId, skill.xp);
   skill.xp += granted;
   // Encounter-XP-Akkumulator für die Kill-Summary (`lastKill.xpBySkill`): sammelt die TATSÄCHLICH
   // vergebene XP (nach allen Multiplikatoren) je Skill seit dem Spawn des aktuellen Gegners. Wird
@@ -1162,7 +1167,10 @@ function onEnemyDefeated(
     // Blessings of the Reach ("greed", §gold): +% auf JEDE Gold-Vergabe — reine Arithmetik, kein
     // zusätzlicher RNG-Draw (Determinismus/offline==online unberührt). Schrein der Stillen
     // (Chef-Entscheid 2026-08-03): Bonus-Anteil verstärkt (1.20 → 1.26 bei Stufe III).
-    g = Math.round(g * shrineAmplifiedMult(blessingMult(nowMs, "gold"), campShrineBonus(state, content)));
+    // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Elsternauge" (goldFindPct): letzter Faktor, ohne Rang 1.
+    g = Math.round(
+      g * shrineAmplifiedMult(blessingMult(nowMs, "gold"), campShrineBonus(state, content)) * goldFindMult(state, content),
+    );
     state.character.gold += g;
     if (g > 0) pushLog(cs, { by: "player", kind: "gold", amount: g });
     return g;
@@ -1582,8 +1590,9 @@ function grantDungeonRewards(
     // der Erst-Clear-Bonus unten (zweite Gutschrift desselben Betrags) denselben Segens-Betrag
     // dupliziert statt den Multiplikator ein zweites Mal anzuwenden. Schrein der Stillen
     // (Chef-Entscheid 2026-08-03): Bonus-Anteil verstärkt (1.20 → 1.26 bei Stufe III).
+    // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Elsternauge" (goldFindPct): letzter Faktor, ohne Rang 1.
     const goldAmt = Math.round(
-      dungeon.gold * shrineAmplifiedMult(blessingMult(nowMs, "gold"), campShrineBonus(state, content)),
+      dungeon.gold * shrineAmplifiedMult(blessingMult(nowMs, "gold"), campShrineBonus(state, content)) * goldFindMult(state, content),
     );
     state.character.gold += goldAmt;
     pushLog(cs, { by: "player", kind: "gold", amount: goldAmt });
@@ -1797,6 +1806,8 @@ function tickEnemyEffects(
   fx: SpecialEffects,
   monster?: MonsterDef,
   petKind?: ActivePetAbility["kind"],
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch-Schadensfaktor (talentDamageMult), vom Aufrufer mit content berechnet.
+  talentDmgMult = 1,
 ): { frost: boolean } {
   const cs = state.combat;
   let frost = false;
@@ -1817,7 +1828,8 @@ function tickEnemyEffects(
   const poisonStacks = poisonStacksOf(cs, "enemy");
   // gutter (Ausweider, §2.1): eigene DoT-Ticks am Gegner (burn/bleed/poison — alle vom Spieler/Pet
   // appliziert) schlagen um +Anteil härter. Kein RNG.
-  const dotMult = fx.gutter ? 1 + Math.max(0, fx.gutter.magnitude) : 1;
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Narbenfaust" (damagePct): auch eigene DoT-Ticks; ohne Rang ×1.
+  const dotMult = (fx.gutter ? 1 + Math.max(0, fx.gutter.magnitude) : 1) * talentDmgMult;
   // Status-vs-Ward-Konter (Chef-Design, s. STATUS_VS_WARD_MULT-Doku in shared): TRAIT-basiert auf
   // `wardCapacity > 0` — gilt den GESAMTEN Kampf über, auch nach Ward-Bruch (nicht an den aktuellen
   // Pool-Stand `cs.enemyWard` gekoppelt). DoT-Ticks schlagen unten ohnehin schon direkt auf `enemyHp`
@@ -2533,7 +2545,7 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
   // Handschuhe 2000 ms = 4000 ms < KILL_COOLDOWN_MS), aber ein Content-/Tuning-Drop macht den Pfad scharf. Der Normalkampf-Respawn behält dieselbe monsterId → weiter erlaubt.
   // claude:2026-10-18T02:00:00+02:00 — das aktive Pet-Kind einmal je Tick (Brand-/Blutungs-Modifikatoren, Gegner-Tempo).
   const activePetKind = petCombatAbility(state, content)?.kind;
-  const status = tickEnemyEffects(state, fx, monster, activePetKind);
+  const status = tickEnemyEffects(state, fx, monster, activePetKind, talentDamageMult(state, content));
   if (cs.enemyHp <= 0) onEnemyDefeated(state, content, monster, stats, fx, nowMs);
   if (cs.monsterId !== monster.id || killCooldownActive(cs)) return;
 
@@ -2758,7 +2770,11 @@ export function combatStep(state: GameState, content: ContentDB, nowMs?: number)
           // (unmitigiert — „X Schaden"). Kill-Fall wird nach dem Spieler-Überlebens-Check behandelt.
           if (fx.thorns && fx.thorns.magnitude > 0) {
             // Glut: auch Dornen-Rückschaden trifft ein brennendes Ziel härter („aus allen Quellen").
-            const thornsDmg = Math.max(1, Math.round(fx.thorns.magnitude * burnVulnMult(cs.enemyEffects)));
+            // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Narbenfaust" (damagePct): letzter Faktor, ohne Rang 1.
+            const thornsDmg = Math.max(
+              1,
+              Math.round(fx.thorns.magnitude * burnVulnMult(cs.enemyEffects) * talentDamageMult(state, content)),
+            );
             cs.enemyHp -= thornsDmg;
             pushLog(cs, { by: "player", kind: "hit", amount: thornsDmg });
           }

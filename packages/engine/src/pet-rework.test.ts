@@ -62,6 +62,8 @@ function unlockSecondSlot(s: GameState, c: ContentDB): void {
     for (const node of tree.nodes) {
       if (node.effect.kind === "secondPetSlot") {
         (s.talents ??= {})[tree.id] = { ...(s.talents?.[tree.id] ?? {}), [node.id]: 1 };
+        // claude:2026-10-18T12:00:00+02:00 — ein Baum wirkt nur freigeschaltet (Jägerkodex ab Slayer 85, Welle B2).
+        if (tree.unlock.skill && tree.unlock.level) setSkillLevel(s, tree.unlock.skill, Math.max(tree.unlock.level, 1));
         return;
       }
     }

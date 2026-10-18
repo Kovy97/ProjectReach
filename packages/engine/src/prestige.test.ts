@@ -3,7 +3,11 @@ import { content } from "@hearthforge/content";
 import type { ContentDB, GameState, MailMessage, TalentTreeDef } from "@hearthforge/shared";
 import {
   PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER,
+  PRESTIGE_PARAGON_POINTS_CAP,
+  PRESTIGE_POINTS_BASE,
+  PRESTIGE_POINTS_CORE_99,
   PRESTIGE_POINTS_PER_99,
+  PRESTIGE_POINTS_PER_EXTRA_99,
   PRESTIGE_POINTS_PER_LATE_CHAPTER,
   PRESTIGE_POINTS_PER_PARAGON_STEP,
   PRESTIGE_PARAGON_FLOOR_STEP,
@@ -195,7 +199,9 @@ describe("Punkte-Vorschau", () => {
     const late = ["chronicle_22", "chronicle_23"].length; // chronicle_05 zählt nicht, chronicle_24 nur erfüllt
     expect(PRESTIGE_CHRONICLE_BONUS_FROM_CHAPTER).toBe(22);
     expect(p.skills99).toBe(6);
-    expect(p.fromSkills).toBe(6 * PRESTIGE_POINTS_PER_99);
+    // claude:2026-10-18T12:00:00+02:00 — Welle B2: kalibrierte Formel (Grundbetrag, abgestufte 99er, Paragon-Deckel).
+    expect(p.fromBase).toBe(PRESTIGE_POINTS_BASE);
+    expect(p.fromSkills).toBe(PRESTIGE_POINTS_CORE_99 * PRESTIGE_POINTS_PER_99 + (6 - PRESTIGE_POINTS_CORE_99) * PRESTIGE_POINTS_PER_EXTRA_99);
     expect(p.totalLevel).toBe(tl);
     expect(p.fromTotalLevel).toBe(
       Math.floor(Math.max(0, tl - PRESTIGE_TOTAL_LEVEL_THRESHOLD) / PRESTIGE_TOTAL_LEVEL_STEP) * PRESTIGE_POINTS_PER_TOTAL_LEVEL_STEP,
@@ -203,8 +209,12 @@ describe("Punkte-Vorschau", () => {
     expect(p.lateChapters).toBe(late);
     expect(p.fromChronicle).toBe(late * PRESTIGE_POINTS_PER_LATE_CHAPTER);
     expect(p.paragonBest).toBe(37);
-    expect(p.fromParagon).toBe(Math.floor(37 / PRESTIGE_PARAGON_FLOOR_STEP) * PRESTIGE_POINTS_PER_PARAGON_STEP);
-    expect(p.total).toBe(p.fromSkills + p.fromTotalLevel + p.fromChronicle + p.fromParagon);
+    expect(p.fromParagon).toBe(
+      Math.min(PRESTIGE_PARAGON_POINTS_CAP, Math.floor(37 / PRESTIGE_PARAGON_FLOOR_STEP) * PRESTIGE_POINTS_PER_PARAGON_STEP),
+    );
+    expect(p.subtotal).toBe(p.fromBase + p.fromSkills + p.fromTotalLevel + p.fromChronicle + p.fromParagon);
+    expect(p.pointsMult).toBe(0);
+    expect(p.total).toBe(p.subtotal);
   });
 
   it("Gesamtstufen-Bonus greift erst über der Schwelle", () => {
@@ -212,7 +222,7 @@ describe("Punkte-Vorschau", () => {
     for (const id of SKILLS) setLevel(s, id, 99);
     const p = prestigePointsPreview(s, content);
     expect(p.totalLevel).toBe(SKILLS.length * 99);
-    expect(p.fromTotalLevel).toBe(Math.floor((SKILLS.length * 99 - 1000) / 25));
+    expect(p.fromTotalLevel).toBe(Math.floor((SKILLS.length * 99 - 1000) / PRESTIGE_TOTAL_LEVEL_STEP));
     expect(prestigePointsPreview(fresh(), content).fromTotalLevel).toBe(0);
   });
 });
@@ -233,9 +243,11 @@ describe("Aufstieg", () => {
     );
 
     for (const key of PRESTIGE_KEEP_FIELDS) {
-      if (key === "prestige" || key === "discoveredItems") continue;
+      if (key === "prestige" || key === "discoveredItems" || key === "mailbox") continue;
       expect(s[key], `KEEP ${key}`).toEqual(old[key]);
     }
+    // claude:2026-10-18T12:00:00+02:00 — Post-Sperre (Welle B2): dieselben Mails, jede mit Inhalt trägt `prestigeHeld`.
+    expect(s.mailbox).toEqual(old.mailbox.map((m) => ({ ...m, prestigeHeld: true })));
     for (const key of PRESTIGE_RESET_FIELDS) {
       if (key === "character" || key === "quests") continue;
       expect(s[key], `RESET ${key}`).toEqual(ref[key]);
@@ -366,7 +378,9 @@ describe("Talent-Währung prestigePoints", () => {
       },
     ],
   };
-  const withTree: ContentDB = { ...content, talentTrees: [...(content.talentTrees ?? []), TREE] };
+  // claude:2026-10-18T12:00:00+02:00 — der Content trägt seit Welle B2 selbst einen Baum `prestige` (Narbenbuch);
+  // dieser Test ersetzt ihn durch einen Minimalbaum, um nur die Währungsmechanik zu prüfen.
+  const withTree: ContentDB = { ...content, talentTrees: [...(content.talentTrees ?? []).filter((t) => t.id !== "prestige"), TREE] };
 
   it("Saldo = prestige.points; Kauf senkt das Guthaben und zählt pointsSpent hoch; Slayer-Punkte unberührt", () => {
     const s = fresh();
@@ -434,23 +448,30 @@ describe("Rabenfracht-Sperre nach dem Aufstieg", () => {
     expect(ok.ok).toBe(true);
   });
 
-  it("bereits liegende Fracht bleibt liegen (nicht gelöscht), anderes Postfach lässt sich abholen", () => {
+  // claude:2026-10-18T12:00:00+02:00 — Welle B2 (Chef 18.10. Punkt 4): auch jede andere Post, die beim Aufstieg mit
+  // Inhalt im Postfach lag (hier der Brief mit 3× Garnelen), ist gesperrt; Post NACH dem Aufstieg nicht.
+  it("bereits liegende Fracht UND gehaltene Post bleiben liegen (nicht gelöscht); neue Post lässt sich abholen", () => {
     const s = ready();
     expect(ascend(s, content)).toBe(true);
     const freight = clone(s.mailbox.find((m) => m.kind === "transfer")!);
+    const letter = clone(s.mailbox.find((m) => m.kind === "letter")!);
+    expect(letter.prestigeHeld).toBe(true);
 
     expect(collectMail(s, content, freight.id)).toEqual({ collected: 0, partial: false, blocked: "prestige_locked" });
     expect(s.mailbox.find((m) => m.id === freight.id)).toEqual(freight);
+    expect(collectMail(s, content, letter.id)).toEqual({ collected: 0, partial: false, blocked: "prestige_locked" });
 
+    sendLetter(s, "warden", "mail.letter.test", [{ itemId: "cooked_shrimp", qty: 2 }]);
     const all = collectAllMail(s, content);
     expect(all.blocked).toBe("prestige_locked");
-    expect(all.collected).toBe(3); // der Brief mit 3× Garnelen
-    expect(s.mailbox.map((m) => m.kind)).toEqual(["transfer"]);
+    expect(all.collected).toBe(2); // nur der neue Brief
+    expect(s.mailbox.map((m) => m.id)).toEqual([freight.id, letter.id]);
 
     for (const id of SKILLS.slice(0, 4)) setLevel(s, id, 99);
     const r = collectMail(s, content, freight.id);
     expect(r.blocked).toBeUndefined();
     expect(r.collected).toBe(3); // 2× Onyx + 1 Instanz
+    expect(collectMail(s, content, letter.id).collected).toBe(3);
     expect(s.mailbox).toEqual([]);
   });
 

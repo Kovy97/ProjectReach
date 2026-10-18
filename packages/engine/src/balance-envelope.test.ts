@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { content } from "@hearthforge/content";
-import type { ItemInstance, WeaponStyle } from "@hearthforge/shared";
+import type { GameState, ItemInstance, WeaponStyle } from "@hearthforge/shared";
 import {
   ARMOR_PEN_CAP,
   ATTACK_INTERVAL_FLOOR_MS,
@@ -624,8 +624,12 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
   // codex:2026-10-17T16:00:00+02:00 — 1.3.0 E5: optionaler Level-Parameter für den CL-99-Paritäts-Pin unten
   // (Default 90 = alle Bestands-Aufrufe bit-identisch).
   function expectedTtk(style: WeaponStyle, monsterId: string, level = 90): { player: number; enemy: number } {
-    const b = bis(style, level, "damage");
-    const st = computeStats(b.state, content);
+    return expectedTtkOf(bis(style, level, "damage").state, monsterId);
+  }
+  // claude:2026-10-18T12:00:00+02:00 — dieselbe Formel auf einem beliebigen Spielstand (Narbenbuch-Pin unten);
+  // expectedTtk delegiert unverändert hierher, die Bestands-Pins rechnen bit-identisch.
+  function expectedTtkOf(state: GameState, monsterId: string): { player: number; enemy: number } {
+    const st = computeStats(state, content);
     const m = content.monsters[monsterId]!;
     // Spieler → Gegner
     const hcP = hitChance(st.accuracy, m.evasion * (1 - st.precision));
@@ -900,6 +904,33 @@ describe("Balance-Envelope §5: Messmatrix (Evasion/Tempo/TTK, gezähmt #301)", 
     // claude:2026-10-18T02:00:00+02:00 — 1.3.0: der stärkere Nahkampf-Begleiter verschiebt die Verhältnisse 0,74→0,72 / 1,08→1,05.
     expect(melee / expectedTtk("ranged", "drazhan", 99).player, "Parität Fernkampf/Nahkampf").toBeCloseTo(0.72, 2);
     expect(melee / expectedTtk("magic", "drazhan", 99).player, "Parität Magie/Nahkampf").toBeCloseTo(1.05, 2);
+  });
+
+  it("Narbenbuch-Macht-Ast voll (Leben +5 %, Schaden +5 %, Gold +5 %) verschiebt TTK höchstens 5 % (Balance § 7)", () => {
+    // claude:2026-10-18T12:00:00+02:00 — Prestige Welle B2: die Pins oben bleiben die kodexfreie Basis
+    // (buildBisCharacter kauft keine Narbenbuch-Ränge). Hier derselbe BiS-Stand mit vollem Macht-Ast im
+    // zweiten Durchgang (Baum freigeschaltet): Quote Leben ≤ 1,05, Schaden ≤ 1,05, Spieler-TTK ≥ 0,952,
+    // Gegner-TTK ≤ 1,05 je Stil, gegen die CL-90-Matrix und die CL-99-Bosse.
+    const cases: Array<[WeaponStyle, number, string]> = [];
+    for (const style of STYLES) {
+      for (const mid of ["idol_warden", "last_idol"]) cases.push([style, 90, mid]);
+      for (const mid of ["drazhan", "last_idol"]) cases.push([style, 99, mid]);
+    }
+    for (const [style, lvl, monsterId] of cases) {
+      const base = bis(style, lvl, "damage").state;
+      const scarred = structuredClone(base);
+      scarred.prestige = { ...scarred.prestige, count: 1 };
+      scarred.talents = { ...scarred.talents, prestige: { maxHp: 5, damage: 5, goldFind: 1 } };
+      const a = computeStats(base, content);
+      const b = computeStats(scarred, content);
+      const tag = `${style} CL ${lvl} vs ${monsterId}`;
+      expect(b.maxHp / a.maxHp, `Leben ${tag}`).toBeLessThanOrEqual(1.05 + 1e-12);
+      expect(b.attackDamage / a.attackDamage, `Schaden ${tag}`).toBeLessThanOrEqual(1.05 + 1e-12);
+      const ta = expectedTtkOf(base, monsterId);
+      const tb = expectedTtkOf(scarred, monsterId);
+      expect(tb.player / ta.player, `Spieler-TTK ${tag}`).toBeGreaterThanOrEqual(0.952);
+      expect(tb.enemy / ta.enemy, `Gegner-TTK ${tag}`).toBeLessThanOrEqual(1.05 + 1e-12);
+    }
   });
 
   it("MIN_HIT_CHANCE-Boden: selbst gegen den BiS-Evasion-Build fällt die Contest-Chance nie unter 10 %", () => {

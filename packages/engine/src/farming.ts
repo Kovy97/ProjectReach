@@ -8,6 +8,7 @@ import { buffGatherXpMult } from "./consumable";
 import { petGrowSpeed, tryPetDrop } from "./pets";
 import { masterCropSpeedBonus } from "./capes";
 import { campBoost } from "./camp";
+import { prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
 
 // ───────────────────────────────────────────────────────────────────────────
 // Passives Plot-/Farming-System (design/skills/farming-plots-plan.md).
@@ -114,7 +115,8 @@ function grantHarvest(state: GameState, content: ContentDB, c: CropDef, plot: Fa
   const skill = (state.skills.farming ??= { xp: 0 });
   // Passive Skilling-XP. Aktive Sammel-Tonika (gatherXpMult) multiplizieren wie bei Aktionen.
   // buffGatherXpMult zieht KEIN RNG → ohne Buff bit-identisch (Faktor 1).
-  skill.xp += c.xp * buffGatherXpMult(state, content);
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Lehrjahre/Handgedächtnis): letzter Faktor, ohne Ränge 1.
+  skill.xp += c.xp * buffGatherXpMult(state, content) * prestigeSkillXpMult(state, content, "farming", skill.xp);
 
   // Ertrag: ein nextInt-Zug pro Ernte (Plots speisen KEINE Mastery → kein Doppelertrag-Wurf, CEO #4).
   const qty = nextInt(state.rng, c.yieldMin, c.yieldMax);

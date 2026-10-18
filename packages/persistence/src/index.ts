@@ -86,7 +86,7 @@ import {
 } from "@hearthforge/shared";
 import type { EliteZoneState, FarmPlot, HuntCatch, HuntTrap } from "@hearthforge/shared";
 import type { HuntCatchTally } from "@hearthforge/engine";
-import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotUnlocked, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
+import { MAX_STACK, compactInventory, actionInputsOnHand, addItemOrBank, advance, beginQueueSkipTally, endQueueSkipTally, canEnterDungeon, canFightMonster, computeStats, createRng, deriveEliteRngSeed, discoverPossessedItems, effectiveCapacity, grantLoot, grantLootInstance, grantPendingCapes, initEliteZonesStaggered, isDungeonUnlocked, isEliteZoneHuntable, isRefineRecipe, isZoneUnlocked, killCreditMonsterId, levelFromXp, refineAccCapMs, refineKindOf, secondPetSlotOwned, sendLetter, stopCombat, syncActiveKit, unlockParagonTower } from "@hearthforge/engine";
 
 /**
  * MAXIMAL MÖGLICHES Offline-Fenster (8 h Basis + 3 h Wachturm-Vollausbau) — die Korruptions-Klemme
@@ -1065,7 +1065,9 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       !content.pets[second] ||
       !ownedPets[second] ||
       second === state.character.companionPetId ||
-      !secondPetSlotUnlocked(state, content)
+      // claude:2026-10-18T12:00:00+02:00 — gekauft genügt (ohne Freischalt-Gate): nach einem Aufstieg ruht der
+      // Jägerkodex bis Slayer 85, die Wahl im zweiten Platz bleibt aber erhalten (wirkt erst wieder ab 85).
+      !secondPetSlotOwned(state, content)
     ) {
       state.character.companionPetId2 = null;
     }
@@ -1688,9 +1690,14 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
       const items = stackMailItems(m.items);
       const instances = sanitizeMailInstances(m.instances);
 
+      // claude:2026-10-18T12:00:00+02:00 — Post-Sperre (SAVE 88 Nachtrag B2): nur exakt `true` überlebt, und nur an
+      // einer Mail mit Inhalt (eine leere Mail ist nichts, was gesperrt sein könnte). Anhängen als LETZTES Feld,
+      // damit Mails ohne Flag byte-gleich bleiben.
+      const held = m.prestigeHeld === true && (items.length > 0 || instances.length > 0);
+
       if (m.kind === "overflow") {
         if (items.length === 0 && instances.length === 0) continue;
-        cleanMail.push({ id: m.id, kind: "overflow", createdSeq, items, instances });
+        cleanMail.push({ id: m.id, kind: "overflow", createdSeq, items, instances, ...(held ? { prestigeHeld: true as const } : {}) });
         continue;
       }
 
@@ -1700,7 +1707,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
         if ((from !== "brenna" && from !== "warden") || typeof textKey !== "string" || textKey.length === 0) {
           continue;
         }
-        cleanMail.push({ id: m.id, kind: "letter", createdSeq, items, instances, from, textKey });
+        cleanMail.push({ id: m.id, kind: "letter", createdSeq, items, instances, from, textKey, ...(held ? { prestigeHeld: true as const } : {}) });
         continue;
       }
 
@@ -1717,6 +1724,7 @@ function sanitizeState(state: GameState, content: ContentDB): GameState {
           items,
           instances,
           fromSaveName: fromSaveName.trim().slice(0, 64),
+          ...(held ? { prestigeHeld: true as const } : {}),
         });
       }
       // unbekannte Mail-Sorte → raus (Muster actionQueue)

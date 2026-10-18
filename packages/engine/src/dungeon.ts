@@ -2,6 +2,7 @@ import type { ContentDB, GameState, ItemId } from "@hearthforge/shared";
 import { createPetAbilityRuntime, PARAGON_DUNGEON_ID, PARAGON_KEY_ITEM_ID } from "@hearthforge/shared";
 import { levelFromXp } from "./leveling";
 import { isZoneUnlocked } from "./zones";
+import { talentEffect } from "./talents"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Alte Pfade"
 
 /**
  * Kampf-Niveau — fokus-belohnend (OSRS-artig) statt stumpfem 7er-Ø.
@@ -86,6 +87,11 @@ export function isDungeonUnlocked(state: GameState, contentOrId: ContentDB | str
   if (dungeonId === PARAGON_DUNGEON_ID) return false;
   const d = content.dungeons.find((x) => x.id === dungeonId);
   if (!d) return false;
+  // claude:2026-10-18T12:00:00+02:00 — (b2) Narbenbuch „Alte Pfade" (`prestigeDungeonRecall`): ein Dungeon mit
+  // Lebenszeit-Clear (`dungeonsCleared`, bleibt beim Aufstieg) ist sofort offen und überstimmt Quest- UND
+  // Zonen-Gate wie der Bestandsschutz (a). Der Paragonturm ist oben schon ausgenommen. Erst der billige
+  // Zähler-Check, dann der Talent-Lookup; ohne Rang bit-identisch.
+  if ((state.dungeonsCleared?.[dungeonId] ?? 0) > 0 && talentEffect(state, content, "prestigeDungeonRecall") > 0) return true;
   // (c) Kohärenz: ein Dungeon in gesperrter Trägerzone bleibt gesperrt.
   if (d.zone && !isZoneUnlocked(state, content, d.zone)) return false;
   const req = d.requiresQuest;

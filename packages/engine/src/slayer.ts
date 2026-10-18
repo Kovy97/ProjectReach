@@ -30,6 +30,7 @@ import { bankCount } from "./bank";
 import { nextFloat, nextInt } from "./rng";
 import { isZoneUnlocked } from "./zones";
 import { talentEffect } from "./talents";
+import { prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
 
 // ───────────────────────────────────────────────────────────────────────────
 // Slayer (Monsterjäger) — reine, deterministische Engine-Logik.
@@ -454,11 +455,14 @@ export function assignTask(
   return task;
 }
 
-/** Interner XP-Grant (repliziert combat.addXp: Frühgame-Verstärker, kein RNG). */
-function grantSlayerXp(state: GameState, amount: number): void {
+/**
+ * Interner XP-Grant (repliziert combat.addXp: Frühgame-Verstärker, kein RNG).
+ * claude:2026-10-18T12:00:00+02:00 — plus Narbenbuch-Faktor (Lehrjahre/Handgedächtnis), ohne Ränge exakt 1.
+ */
+function grantSlayerXp(state: GameState, content: ContentDB, amount: number): void {
   if (amount <= 0) return;
   const skill = (state.skills["slayer"] ??= { xp: 0 });
-  skill.xp += amount * earlyXpMult(levelFromXp(skill.xp));
+  skill.xp += amount * earlyXpMult(levelFromXp(skill.xp)) * prestigeSkillXpMult(state, content, "slayer", skill.xp);
 }
 
 /** Pro-Kill-Slayer-XP eines Task-Monsters = round(monster.xp * SLAYER_XP_KILL_FACTOR). */
@@ -487,11 +491,11 @@ export function recordKillForSlayer(
   if (!task || task.monsterId !== monsterId) return false;
   if (!slayerRequirementMet(state, content, monsterId)) return false;
 
-  grantSlayerXp(state, perKillSlayerXp(content, monsterId)); // Pro-Kill-XP für jeden Kill
+  grantSlayerXp(state, content, perKillSlayerXp(content, monsterId)); // Pro-Kill-XP für jeden Kill
 
   task.progress++;
   if (task.progress >= task.required) {
-    grantSlayerXp(state, task.xpReward); // Abschluss-Bonus zusätzlich
+    grantSlayerXp(state, content, task.xpReward); // Abschluss-Bonus zusätzlich
     // claude:2026-10-17T20:30:00+02:00 — Gutschrift über slayerTaskPointsPayout (EINE Quelle für Engine,
     // Auftragszettel und Abschluss-Toast; vorher zeigte die UI nur den rohen pointReward). Bit-identisch.
     state.slayerPoints += slayerTaskPointsPayout(state, content, task.pointReward);

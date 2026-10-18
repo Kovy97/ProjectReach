@@ -24,6 +24,7 @@ import { evaluateQuests } from "./quests";
 import { tickFarmPlots } from "./farming";
 import { tickHuntTraps, type HuntCatchTally } from "./hunting";
 import { tryCraftSuffix } from "./suffix";
+import { goldFindMult, prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
 import { markActionDropSeen } from "./drops";
 import {
   petBonusFind,
@@ -170,11 +171,13 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
   // liefert 1 ohne `nowMs` (alle Alt-Aufrufer/Tests/Sim-Läufe bleiben bit-identisch).
   // Schrein der Stillen (Task #359): verstärkt den Bonus-Anteil des mistvigil-XP-Segens
   // (1.10 → 1.13 bei Stufe III). Ohne Schrein/ohne aktiven XP-Segen exakt der Alt-Wert.
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Lehrjahre/Handgedächtnis): letzter Faktor, ohne Ränge exakt 1.
   skill.xp +=
     action.xp
     * buffGatherXpMult(state, content)
     * rewardMult
-    * shrineAmplifiedMult(blessingMult(nowMs, "xp"), campShrineBonus(state, content));
+    * shrineAmplifiedMult(blessingMult(nowMs, "xp"), campShrineBonus(state, content))
+    * prestigeSkillXpMult(state, content, action.skill, skill.xp);
 
   // Sammel-Aktionen (Mining/Woodcutting/Fishing/Foraging-Adern) haben KEINE `inputs` → für sie hat
   // die Preservation-Achse nichts zu sparen: der oben stehende `if (action.inputs)`-Zweig läuft nie,
@@ -220,10 +223,12 @@ function completeAction(state: GameState, content: ContentDB, action: ActionDef,
     // bereits gewürfelten Betrag, kein zusätzlicher RNG-Draw (Determinismus/offline==online).
     // Schrein der Stillen (Task #359): verstärkt den Bonus-Anteil des greed-Gold-Segens
     // (1.20 → 1.26 bei Stufe III) — reine Arithmetik auf dem bereits gewürfelten Betrag.
+    // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Elsternauge" (goldFindPct): letzter Faktor, ohne Rang exakt 1.
     state.character.gold += Math.round(
       nextInt(state.rng, action.gold.min, action.gold.max)
         * rewardMult
-        * shrineAmplifiedMult(blessingMult(nowMs, "gold"), campShrineBonus(state, content)),
+        * shrineAmplifiedMult(blessingMult(nowMs, "gold"), campShrineBonus(state, content))
+        * goldFindMult(state, content),
     );
   }
 

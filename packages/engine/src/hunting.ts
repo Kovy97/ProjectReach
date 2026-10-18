@@ -23,6 +23,7 @@ import { isZoneUnlocked } from "./zones";
 import { tryCraftSuffix } from "./suffix";
 import { petHuntDoubleRollsChance, tryPetDrop } from "./pets";
 import { masterDoubleYieldBonus } from "./capes";
+import { goldFindMult, prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
 
 // ───────────────────────────────────────────────────────────────────────────
 // Jagen (1.2.0 „Fasern und Fallen", SAVE_VERSION 85 — design/handwerk-fasern-jagen/spec-technik.md §3,
@@ -278,7 +279,8 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
   // 3. Gold: derselbe Streuungs-Wurf wie im Kill-Pfad (combat.ts rollKillGold), dann ×HUNT_LOOT_ROLLS
   //    (bewusst NICHT verdoppelt — Leons Glück gilt der Beutetabelle, nicht der Börse).
   const goldRoll = monster.gold + nextInt(state.rng, 0, Math.ceil(monster.gold * 0.4));
-  const gold = Math.max(0, Math.round(goldRoll * HUNT_LOOT_ROLLS));
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Elsternauge" (goldFindPct): letzter Faktor, ohne Rang 1.
+  const gold = Math.max(0, Math.round(goldRoll * HUNT_LOOT_ROLLS * goldFindMult(state, content)));
   state.character.gold += gold;
 
   // 4. Leon (Chef 28.08.2026, Kind huntDoubleRolls): EIN nextFloat NUR mit aktivem Pet dieses Kinds auf
@@ -329,7 +331,12 @@ function grantCatch(state: GameState, content: ContentDB, zone: HuntZoneDef, mon
   // Chef 28.08.2026: Kampf-XP des gefangenen Monsters ×HUNT_XP_PER_CATCH (huntCatchXp), Erstfang jeder Art ×HUNT_FIRST_CATCH_MULT.
   const byId = (state.stats.huntCatchesById ??= {});
   const first = (byId[monster.id] ?? 0) === 0;
-  skill.xp += huntCatchXp(monster.xp) * (first ? HUNT_FIRST_CATCH_MULT : 1) * buffGatherXpMult(state, content);
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Lehrjahre/Handgedächtnis): letzter Faktor, ohne Ränge 1.
+  skill.xp +=
+    huntCatchXp(monster.xp)
+    * (first ? HUNT_FIRST_CATCH_MULT : 1)
+    * buffGatherXpMult(state, content)
+    * prestigeSkillXpMult(state, content, HUNTING_SKILL_ID, skill.xp);
   byId[monster.id] = (byId[monster.id] ?? 0) + 1;
 
   state.huntCatchSeq += 1;

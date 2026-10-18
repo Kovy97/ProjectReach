@@ -23,7 +23,11 @@ import { familyBestiaryComplete } from "./drops";
 const TREE = "slayer";
 
 function game(c: ContentDB = content, seed = 1): GameState {
-  return createGame({ name: "T", baseAttributes: { str: 80, dex: 80, con: 80 } }, c, seed);
+  const s = createGame({ name: "T", baseAttributes: { str: 80, dex: 80, con: 80 } }, c, seed);
+  // claude:2026-10-18T12:00:00+02:00 — Ränge setzen die Tests direkt (ohne Kauf); seit Welle B2 wirkt ein Baum nur
+  // freigeschaltet (Jägerkodex ab Slayer 85, Chef 18.10.). Ein echter Käufer steht immer ≥ 85, also hier auch.
+  s.skills.slayer = { xp: xpForLevel(85) };
+  return s;
 }
 
 function slayerLevel(s: GameState, level: number): void {

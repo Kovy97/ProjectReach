@@ -41,6 +41,7 @@ import { combatLevel, isDungeonUnlocked } from "./dungeon";
 import { slayerRequirementMet } from "./slayer";
 import { syncProgression, totalLevel } from "./character";
 import { isEliteVariantHuntable } from "./elites";
+import { goldFindMult, prestigeSkillXpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
 
 /**
  * Die Taverne (1.2.0 „Alive", SAVE_VERSION 84 — design/1.2.0-alive/taverne-spec-technik.md, bindend).
@@ -968,7 +969,8 @@ function takeFromStock(state: GameState, itemId: ItemId, qty: number): number {
 function grantTavernXp(state: GameState, content: ContentDB, skill: SkillId, xp: number): void {
   if (!(xp > 0)) return;
   const entry = (state.skills[skill] ??= { xp: 0 });
-  entry.xp += xp;
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch (Lehrjahre/Handgedächtnis): ohne Ränge exakt xp.
+  entry.xp += xp * prestigeSkillXpMult(state, content, skill, entry.xp);
   syncProgression(state, content);
 }
 
@@ -1021,7 +1023,8 @@ export function deliverTavernTask(state: GameState, content: ContentDB, seat: nu
     state.stats.itemsGathered += 1;
     crates.push(crateId);
   } else {
-    gold = Math.max(0, Math.round(task.rewardGold));
+    // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Elsternauge" (goldFindPct): ohne Rang exakt der Alt-Wert.
+    gold = Math.max(0, Math.round(task.rewardGold * goldFindMult(state, content)));
     state.character.gold += gold;
     for (const { id, qty } of task.rewardItems) {
       if (!content.items[id] || !(qty > 0)) continue;

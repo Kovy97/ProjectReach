@@ -17,6 +17,8 @@ import { prestigeFreightLocked } from "./prestige";
  * später `t("mail.blocked." + code)`, Welle D):
  *  - `prestige_locked`  Rabenfracht (`kind: "transfer"`) im Durchgang nach einem Prestige-Aufstieg, solange
  *                       noch nicht wieder `PRESTIGE_REQUIRED_99` Fertigkeiten auf 99 stehen (Chef-Entscheid 3).
+ *                       claude:2026-10-18T12:00:00+02:00 — dieselbe Sperre gilt für JEDE Mail, die beim Aufstieg
+ *                       mit Inhalt im Postfach lag (`prestigeHeld`, Überlauf-Post, Briefe mit Geschenk; Chef 18.10.).
  */
 export type MailCollectBlockReason = "prestige_locked";
 
@@ -25,7 +27,8 @@ export type MailCollectBlockReason = "prestige_locked";
  * unverändert liegen (nichts wird gelöscht) und öffnen sich, sobald die Bedingung erfüllt ist. Rein lesend.
  */
 export function mailCollectBlocked(state: GameState, content: ContentDB, mail: MailMessage): MailCollectBlockReason | null {
-  if (mail.kind === "transfer" && prestigeFreightLocked(state, content)) return "prestige_locked";
+  // claude:2026-10-18T12:00:00+02:00 — Post-Sperre: gehaltene Post (`prestigeHeld`) wie Rabenfracht.
+  if ((mail.kind === "transfer" || mail.prestigeHeld === true) && prestigeFreightLocked(state, content)) return "prestige_locked";
   return null;
 }
 
@@ -57,7 +60,9 @@ function mintMailSeq(state: GameState): { id: string; seq: number } {
  */
 function findOrCreateOverflowMail(state: GameState): MailMessage {
   const mailbox = (state.mailbox ??= []);
-  const existing = mailbox.find((m) => m.kind === "overflow");
+  // claude:2026-10-18T12:00:00+02:00 — eine beim Aufstieg gehaltene Überlauf-Mail (`prestigeHeld`) nimmt keinen
+  // neuen Überlauf auf: sonst wäre frischer Loot des neuen Durchgangs mitgesperrt. Neuer Überlauf ⇒ neue Mail.
+  const existing = mailbox.find((m) => m.kind === "overflow" && m.prestigeHeld !== true);
   if (existing) return existing;
   const { id, seq } = mintMailSeq(state);
   const mail: MailMessage = { id, kind: "overflow", createdSeq: seq, items: [], instances: [] };

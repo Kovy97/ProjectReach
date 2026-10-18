@@ -69,6 +69,7 @@ import {
   petWardCapacityPct,
   secondPet,
 } from "./pets";
+import { talentDamageMult, talentMaxHpMult } from "./prestige-effects"; // claude:2026-10-18T12:00:00+02:00 — Narbenbuch
 
 function clamp(value: number, min: number, max: number): number {
   // NaN-/Infinity-fest: ein nicht-endlicher Wert (z.B. aus einem manipulierten Save, der
@@ -303,6 +304,10 @@ function walkStatsKey(state: GameState, content: ContentDB, key: StatsCacheKey, 
   // claude:2026-10-18T00:30:00+02:00 — zweiter Begleiter-Platz: aufgelöstes Pet (Besitz + Talent +
   // ≠ Platz 1 stecken in secondPet) — dessen skillEffect fließt über die pet*-Helfer in die Werte.
   if (!visit(secondPet(state, content))) return false;
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch-Faktoren (Leben/Schaden) als wirksame Eingabe: sie hängen an
+  // Talent-Rängen UND an der Baum-Freischaltung (prestige.count), beides sonst nicht im Fingerprint.
+  if (!visit(talentMaxHpMult(state, content))) return false;
+  if (!visit(talentDamageMult(state, content))) return false;
   // match-Modus: der gespeicherte Key muss exakt aufgebraucht sein (Längen-Gleichheit).
   return !match || i === key.length;
 }
@@ -682,6 +687,13 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     attackDamageMin *= 1 + petStyleDmg;
     attackDamageMax *= 1 + petStyleDmg;
   }
+  // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Narbenfaust" (damagePct): die GANZE Spanne des aktiven Stils
+  // (jeder Treffer inkl. Krit/Überspringen; DoT-Ticks/Dornen in combat.ts). Ohne Rang kein Faktor (bit-identisch).
+  const talentDmg = talentDamageMult(state, content);
+  if (talentDmg !== 1) {
+    attackDamageMin *= talentDmg;
+    attackDamageMax *= talentDmg;
+  }
   // Mittel der Spanne = einzige Budget-/Anzeige-Quelle (Legacy: ≈ alter Flat, Abweichung < 0,002 %).
   const attackDamage = (attackDamageMin + attackDamageMax) / 2;
 
@@ -745,7 +757,8 @@ function computeStatsUncached(state: GameState, content: ContentDB): DerivedStat
     // damit ist jeder +1-Boost/-Punkt sichtbar (P3-Fix §8.1). combat.ts rollt in derselben Spanne.
     maxHit: attackDamageMax,
     minHit: attackDamageMin,
-    maxHp: 5 + attr.con * 2 + (sVitality - 1) * 0.3 + eq.maxHp,
+    // claude:2026-10-18T12:00:00+02:00 — Narbenbuch „Narbengewebe" (maxHpPct): ×(1 + Anteil), ohne Rang ×1.
+    maxHp: (5 + attr.con * 2 + (sVitality - 1) * 0.3 + eq.maxHp) * talentMaxHpMult(state, content),
     // Zauberreserve (s. Herleitung oben; Feldname bleibt `maxMana`, UI-Label „Zauberreserve").
     maxMana,
     // Haltungs-Boni aus der Reserve (immer berechnet für den Tooltip; angewandt je Haltung oben) und

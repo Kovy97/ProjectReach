@@ -7,11 +7,16 @@ import { PRESTIGE_HISTORY_MAX, SAVE_VERSION, defaultPrestigeState } from "@heart
 import {
   PRESTIGE_CHARACTER_FIELDS,
   PRESTIGE_STATE_FIELDS,
+  ascend,
   collectMail,
   createGame,
+  mailCollectBlocked,
   prestigeFreightLocked,
   questObjectiveProgress,
   questStatus,
+  secondPetSlotUnlocked,
+  talentEffect,
+  xpForLevel,
 } from "@hearthforge/engine";
 import { deserialize, serialize } from "./index";
 
@@ -143,6 +148,8 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     // Rabenfracht liegt noch im Postfach, ist aber gesperrt (zweiter Durchgang, noch keine 4×99).
     const freight = s.mailbox.find((m) => m.kind === "transfer");
     expect(freight).toBeDefined();
+    // claude:2026-10-18T12:00:00+02:00 — Welle B2 (Format-Nachtrag v88): die beim Aufstieg gehaltene Post trägt das Flag.
+    expect(freight!.prestigeHeld).toBe(true);
     expect(prestigeFreightLocked(s, content)).toBe(true);
     expect(collectMail(s, content, freight!.id).blocked).toBe("prestige_locked");
     // Quest-Laufanker: Kapitel 1 (Sammeln) zählt nur, was im zweiten Durchgang gesammelt wurde (40 Kupfererz),
@@ -165,5 +172,61 @@ describe("v88-Vault-Fixture (nach einem echten Aufstieg gepinnt)", () => {
     expect(Object.keys(PRESTIGE_STATE_FIELDS).filter((k) => !stateKeys.includes(k))).toEqual([]);
     const charKeys = Object.keys(raw.state.character);
     expect(charKeys.filter((k) => !(k in PRESTIGE_CHARACTER_FIELDS))).toEqual([]);
+  });
+});
+
+// claude:2026-10-18T12:00:00+02:00 — Prestige Welle B2: Post-Sperre-Flag, Narbenbuch-Ränge und die ruhende
+// Platz-2-Wahl des Jägerkodex überstehen Laden/Speichern (SAVE 88, Format-Nachtrag ohne neue Version).
+describe("Welle B2: Post-Sperre-Flag, Narbenbuch, Jägerkodex-Gate über Save/Load", () => {
+  const at = 1_760_000_000_000;
+  const base = (): GameState => createGame({ name: "T" }, content, 1);
+
+  it("prestigeHeld: nur exakt true und nur an Mail mit Inhalt überlebt; Round-Trip ist Fixpunkt", () => {
+    const s = base();
+    (s as unknown as { mailbox: unknown[] }).mailbox = [
+      { id: "mail_0", kind: "overflow", createdSeq: 0, items: [{ itemId: "onyx", qty: 2 }], instances: [], prestigeHeld: true },
+      { id: "mail_1", kind: "letter", createdSeq: 1, items: [], instances: [], from: "warden", textKey: "mail.letter.test", prestigeHeld: true },
+      { id: "mail_2", kind: "overflow", createdSeq: 2, items: [{ itemId: "onyx", qty: 1 }], instances: [], prestigeHeld: "yes" },
+      { id: "mail_3", kind: "transfer", createdSeq: 3, items: [{ itemId: "onyx", qty: 1 }], instances: [], fromSaveName: "Z", prestigeHeld: 1 },
+      { id: "mail_4", kind: "letter", createdSeq: 4, items: [{ itemId: "onyx", qty: 1 }], instances: [], from: "brenna", textKey: "mail.letter.x", prestigeHeld: true },
+    ];
+    s.mailSeq = 5;
+    const back = loadState(s);
+    expect(back.mailbox.map((m) => [m.id, m.prestigeHeld ?? null])).toEqual([
+      ["mail_0", true],
+      ["mail_1", null], // Brief ohne Geschenk: nichts zu sperren
+      ["mail_2", null],
+      ["mail_3", null],
+      ["mail_4", true],
+    ]);
+    const once = serialize(back, at);
+    const twice = serialize(deserialize(once, content, at)!.state, at);
+    expect(twice).toBe(once);
+  });
+
+  it("nach einem Aufstieg: Narbenbuch-Ränge bleiben, Platz-2-Wahl bleibt trotz ruhendem Jägerkodex, gehaltene Post bleibt gesperrt", () => {
+    const s = base();
+    const skills = Object.keys(content.skills);
+    for (const id of skills.slice(0, 4)) s.skills[id] = { xp: xpForLevel(99) };
+    s.skills.slayer = { xp: xpForLevel(90) };
+    s.quests.claimed.push("chronicle_21");
+    const pets = Object.keys(content.pets);
+    s.character.ownedPets = { [pets[0]!]: true, [pets[1]!]: true };
+    s.character.companionPetId = pets[0]!;
+    s.character.companionPetId2 = pets[1]!;
+    s.prestige.count = 1;
+    s.talents = { slayer: { tracking: 5, collar: 1 }, prestige: { earlyXp: 2, maxHp: 1 } };
+    s.mailbox = [{ id: "mail_0", kind: "overflow", createdSeq: 0, items: [{ itemId: "onyx", qty: 2 }], instances: [] }];
+    s.mailSeq = 1;
+    expect(ascend(s, content)).toBe(true);
+    expect(s.prestige.count).toBe(2);
+
+    const back = loadState(JSON.parse(serialize(s, at)).state);
+    expect(back.talents).toEqual({ slayer: { tracking: 5, collar: 1 }, prestige: { earlyXp: 2, maxHp: 1 } });
+    expect(back.character.companionPetId2).toBe(pets[1]);
+    expect(secondPetSlotUnlocked(back, content)).toBe(false); // Slayer wieder 1 ⇒ Kodex ruht
+    expect(talentEffect(back, content, "prestigeEarlyXp")).toBeCloseTo(0.2, 12);
+    expect(back.mailbox[0]!.prestigeHeld).toBe(true);
+    expect(mailCollectBlocked(back, content, back.mailbox[0]!)).toBe("prestige_locked");
   });
 });

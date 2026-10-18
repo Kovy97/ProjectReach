@@ -22,7 +22,7 @@ import {
   PET_SKILL_EFFECT_CAP,
 } from "@hearthforge/shared";
 import { nextFloat } from "./rng";
-import { talentEffect } from "./talents";
+import { talentEffect, talentEffectOwned } from "./talents";
 
 /**
  * Pet-/Begleiter-System — reine, deterministische Helfer. Logic-Dev-Revier.
@@ -71,6 +71,15 @@ export function secondPet(state: GameState, content: ContentDB): PetDef | null {
 /** Ist der zweite Begleiter-Platz freigeschaltet? (nur über talentEffect, nie über Knoten-Ids) */
 export function secondPetSlotUnlocked(state: GameState, content: ContentDB): boolean {
   return talentEffect(state, content, "secondPetSlot") > 0;
+}
+
+/**
+ * claude:2026-10-18T12:00:00+02:00 — Ist das Talent für den zweiten Platz GEKAUFT (ohne Freischalt-Gate)?
+ * Nach einem Aufstieg ruht der Jägerkodex bis Slayer 85 (Chef 18.10.): der Platz wirkt dann nicht
+ * (`secondPet` → null), die Wahl bleibt aber gespeichert. Leser: persistence-Sanitize von `companionPetId2`.
+ */
+export function secondPetSlotOwned(state: GameState, content: ContentDB): boolean {
+  return talentEffectOwned(state, content, "secondPetSlot") > 0;
 }
 
 /**
