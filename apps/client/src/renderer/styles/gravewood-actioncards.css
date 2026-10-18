@@ -667,3 +667,21 @@
     linear-gradient(rgba(60, 16, 10, 0.34), rgba(20, 5, 4, 0.5)),
     var(--gw-action-canvas);
 }
+
+/* claude:2026-10-19T00:10:00+02:00 — Chef 18.10. (Bild Skill-Karte): Werte-Kacheln (XP, XP/H, Zeit, Ertrag/H) bekommen
+   wieder den Holzrahmen, etwas dünner als der Kartenrahmen (6 px statt ~8,6 px); das Produces-/Beute-Feld bekommt den
+   Eisenrahmen. Beide Rahmen kacheln (round), ihre Kanten sind nahtlos mit Gehrungsecken. Mehrfach-Klasse hebt die
+   Spezifität über die Runde-2-Regel (1-px-Goldlinie, !important) weiter oben. */
+#root .skillcard .skillcard-tile.skillcard-tile.skillcard-tile {
+  border: 3px solid transparent !important;
+  border-image: var(--gw-action-frame) 28 / 6px round !important;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+#root .skillcard .skillcard-output-zone .skillcard-produces.skillcard-produces.skillcard-produces,
+#root .skillcard .skillcard-output-zone .skillcard-loot.skillcard-loot.skillcard-loot {
+  border: 4px solid transparent !important;
+  border-image: url("../assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 96 / 9px round !important;
+  background-origin: border-box;
+  background-clip: border-box;
+}
