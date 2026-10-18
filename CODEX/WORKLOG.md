@@ -36,6 +36,15 @@ Sidebar-Liste unter Sticky-Zonenkarte gescrollt bzw. Bankzahl unter offenem Tool
 Balance-Messung fertig (`design/1.3.0-balance-encounter.md`, V1–V15 alles Chef-Entscheide, nichts angewendet). Release-
 relevant: Patchnotes werben „Paragon-Truhen ab 25, 50 und 100“, 50/100 sind laut Sim unerreichbar → Chef-Entscheid E4.
 
+**Nachtrag 19.10. früh (claude:2026-10-19T07:40:00+02:00):** Store-Medien. 12 Screenshots EN 1920×1080
+(`marketing/1.3.0-media/screenshots/`, Skript `apps/client/ui-audit/mkt-1.3.0-media.mjs`, Fixture-Vorpatch gegen
+Fund-Toasts) und 60-s-Trailer ohne Ton, allgemein zum Spiel (Chef: kein Early Access, kein Update-Bezug):
+`marketing/1.3.0-media/trailer/GrimReach-Trailer-1080p30-ohne-Ton.mp4` + `SCHNITTLISTE.md` (Bild-für-Bild über
+Playwright-Uhr, `mkt-1.3.0-trailer.mjs`, Schnitt `mkt-1.3.0-trailer-assemble.py`). Videos nicht in Git (Größe).
+Nebenbei: Droprate im Fund-Toast nutzt jetzt den sprachabhängigen Formatierer (`acdbc3d`, EN zeigte „0,00 %“);
+New Haven Material-Hierarchie (`0c3df7b`, ui-dev; Popup/Baumenü/Karten-Bühne nicht visuell geprüft, Clip-Audit-
+Szenen erreichen diese Zustände nicht).
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
