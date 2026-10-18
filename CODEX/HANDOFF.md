@@ -1,5 +1,36 @@
 # Übergabe — Codex-Projektleitung
 
+### 18.10.2026 — Codex: alle 73 Assets fertig, Bogenkorrektur und Aschesturz-Nachtrag
+
+<!-- codex:2026-10-18T17:21:48.717Z -->
+
+- Vollständiger Chefauftrag `design/1.3.0-assets.md`: **73 Motive / 78 WebPs**. Nach den zunächst fertigen 57 Motiven wurde beim Schlussabgleich der neue Aschesturz-Nachtrag mit weiteren 16 erkannt und ebenfalls produziert. Die MD zählt nun alle Nachträge korrekt; 73 Häkchen gesetzt. [Galerie](assets/1.3.0-2026-10-18/REVIEW.html) · [ZIP](assets/1.3.0-2026-10-18/1.3.0-assets-complete.zip) · [Prüfbericht](assets/1.3.0-2026-10-18/INDEPENDENT-REVIEW.md)
+- Lieferung: `CODEX/assets/1.3.0-2026-10-18/delivery-complete/` und `1.3.0-assets-complete.zip`. Das frühere `delivery/` / `1.3.0-assets.zip` mit 57 Motiven / 62 Dateien bleibt als Zwischenstand erhalten. Für die Gesamtlieferung das neue Archiv verwenden.
+- Chefkritik an Sehnen umgesetzt: `broodtalon_bow` und `chainbound_longbow` neu erzeugt; alle neun Bögen auf eine gerade, an beiden Nocken gebundene Sehne ohne Griffkontakt kontrolliert. Abgenommene Bogenbytes seitdem unverändert.
+- Built-in ImageGen, einzelne Motive, natives Alpha ohne Keying/Hintergrundentfernen; deckende Szenen RGB. Rohoriginale bytegleich gesichert, verworfene Fassungen erhalten. WebP q92 / Alphaqualität100, genaue Maße und IDs. QA mit beiden Nachbarn, Zielgrößen und Hell/Dunkel/Signal; alle 73 Motive unabhängig ohne offene materielle Findings bestanden.
+- Alle 78 Lieferkopien und ZIP-Einträge bytegleich gegen Manifest geprüft. 150 erfasste Runtime-Ziel-/Referenzpfade unverändert. Keine Runtime-/Save-/Versionsänderung, kein Live-Spiel, keine Builds oder Spieltests, kein Commit/Push/Release. Vorhandene Diffs erhalten.
+- Der aktualisierte Brief korrigiert Jägerkodex auf `ui/talents/slayer/<id>.webp`, entsprechend dem vorhandenen Talent-Loader; dieselben sechs Bilddateien werden im korrekten Unterordner geliefert. Prestige-Knoten liegen unter `ui/talents/prestige/`. Der Loader wurde nicht geändert.
+- Der zeitweilige Tool-Freigabeblock für Magiewaffen ist durch Chefantwort „Ja, alle Assets fertigstellen“ geklärt; kein offener Produktionsblocker.
+- Zentrale JSON-Nachweise (Marker im Staging-README und kommentierten Arbeitshilfen): `CODEX/assets/1.3.0-2026-10-18/MANIFEST.json`, `CODEX/assets/1.3.0-2026-10-18/AUDIT.json`, `CODEX/assets/1.3.0-2026-10-18/ARCHIVE-AUDIT.json`, `CODEX/work/1.3.0-assets-2026-10-18/spec.json`, `CODEX/work/1.3.0-assets-2026-10-18/runtime-baseline.json`. Gruppen-Nachweise sind je Motiv im Manifest mit exaktem Pfad aufgeführt. Vorherige Spezifikations-/Auditstände bleiben als `*-initial*.json` erhalten.
+- Briefrevision gesichert in `CODEX/work/1.3.0-assets-2026-10-18/brief-expanded-2026-10-18.md`. Arbeitshelfer und Scope-Historie im selben Ordner; Initial-`prepare.mjs` nicht zum Überschreiben der Baseline erneut starten. Branch `test-ui-fundament`; keine ungeprüften Release-Aussagen übernommen.
+
+
+### 19.10.2026 — Claude: 1.3.0 vom Chef abgenommen, Painterly-UI
+
+<!-- claude:2026-10-19T03:00:00+02:00 -->
+
+**Chef 19.10.: „Das Update ist fertig!“** 1.3.0 inhaltlich abgenommen. Seit dem letzten Eintrag dazugekommen:
+Bilanz-Fenster beim Aschesturz (`17b2131`, `9bd9e6c`, Fix: geräumte Dungeons öffneten nach Aufstieg wieder), 73 Bilder von
+Codex eingebunden (`d83cf62`), Painterly-UI: neue Texturen auf allen Flächen (tonwert-angeglichen, Kacheln 2,5× größer),
+Holz-/Eisenrahmen mit gespiegelten Gehrungsecken + nahtlosen langen Kanten (round, Eisen geglättet), Sidebar/Topbar nach
+Chef-Preset aus dem Knopf-Editor (`design/ui-fundament/button-editor.html`, Preset `knopf-sidebar-moos-holz.json`: Wood 2 +
+Holzstreifen), Charakter-Spalte aufgeräumt (`6e68bd0`), Skill-Karten Werte-Kacheln Holz/Produces Eisen, Inventar-Slots
+auf Chef-Wunsch wieder die alten (`3330bda`). Alte Texturen/Rahmen: `ASSETS/archive/textures-2026-10-18/`. Texturen-Demo:
+`design/ui-fundament/texture-button-demo.html`. Patchnotes + Steam-Post 7 Sprachen final (`d1f66d1`).
+Endprüfung: Typecheck 5/5, Engine 1807, Content 310, Persistence 453 inkl. Vault v88, Client 261, Build grün.
+Offen: Balance-Messung der neuen Encounter (läuft, `design/1.3.0-balance-encounter.md`), Clip-Audit de/ru (läuft),
+Asset `scar_currency` (Nachtrag 2), Upload/Push/Merge nur auf Chef-GO.
+
 ### 18.10.2026 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->

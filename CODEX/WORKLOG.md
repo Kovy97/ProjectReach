@@ -1,5 +1,32 @@
 # Codex-Arbeitslog
 
+## 2026-10-18 — Codex: 73 Motive / 78 Dateien vollständig geliefert
+
+<!-- codex:2026-10-18T17:21:48.717Z -->
+
+Aktuelle Asset-MD einschließlich 16 neu nachgetragenen Aschesturz-Motiven abgearbeitet. Root und Fachagenten produzierten die Motive mit ImageGen; unabhängige Bildprüfung aller 73 Motive bestanden. Krallen- und Kettenbogen nach Chefkritik neu erzeugt; alle neun Sehnen geprüft. Originale und verworfene Fassungen erhalten.
+
+Bestanden: native Alpha-/RGB-Kanäle, Maße/IDs, Nachbar- und Zielgrößen-QA, Quellidentität, 78 bytegleiche Lieferkopien und ZIP-Einträge sowie 150 unveränderte Runtime-Ziel-/Referenzpfade. Galerie, Manifest, Archiv und 73 MD-Häkchen fertig. [Galerie](assets/1.3.0-2026-10-18/REVIEW.html) · [ZIP](assets/1.3.0-2026-10-18/1.3.0-assets-complete.zip) · [Prüfbericht](assets/1.3.0-2026-10-18/INDEPENDENT-REVIEW.md)
+
+Aktueller Jägerkodex-Pfad `ui/talents/slayer/` und Prestige-Pfad `ui/talents/prestige/` eingehalten. Ausschließlich Staging; kein Spielstart, Build, Save-/Gameplaytest oder Release. Vorhandene Arbeit erhalten, kein Commit.
+
+
+## 2026-10-19 — Claude: 1.3.0 vom Chef abgenommen, Painterly-UI
+
+<!-- claude:2026-10-19T03:00:00+02:00 -->
+
+**Chef 19.10.: „Das Update ist fertig!“** 1.3.0 inhaltlich abgenommen. Seit dem letzten Eintrag dazugekommen:
+Bilanz-Fenster beim Aschesturz (`17b2131`, `9bd9e6c`, Fix: geräumte Dungeons öffneten nach Aufstieg wieder), 73 Bilder von
+Codex eingebunden (`d83cf62`), Painterly-UI: neue Texturen auf allen Flächen (tonwert-angeglichen, Kacheln 2,5× größer),
+Holz-/Eisenrahmen mit gespiegelten Gehrungsecken + nahtlosen langen Kanten (round, Eisen geglättet), Sidebar/Topbar nach
+Chef-Preset aus dem Knopf-Editor (`design/ui-fundament/button-editor.html`, Preset `knopf-sidebar-moos-holz.json`: Wood 2 +
+Holzstreifen), Charakter-Spalte aufgeräumt (`6e68bd0`), Skill-Karten Werte-Kacheln Holz/Produces Eisen, Inventar-Slots
+auf Chef-Wunsch wieder die alten (`3330bda`). Alte Texturen/Rahmen: `ASSETS/archive/textures-2026-10-18/`. Texturen-Demo:
+`design/ui-fundament/texture-button-demo.html`. Patchnotes + Steam-Post 7 Sprachen final (`d1f66d1`).
+Endprüfung: Typecheck 5/5, Engine 1807, Content 310, Persistence 453 inkl. Vault v88, Client 261, Build grün.
+Offen: Balance-Messung der neuen Encounter (läuft, `design/1.3.0-balance-encounter.md`), Clip-Audit de/ru (läuft),
+Asset `scar_currency` (Nachtrag 2), Upload/Push/Merge nur auf Chef-GO.
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->

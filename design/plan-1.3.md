@@ -185,7 +185,7 @@ Empfehlung Claude: 1 + 3 + 5 als Schlagzeilen-Erweiterung („Die Götzenhalle e
 
 - Slayer-Seite bleibt ohne große Brenna-Porträtspalte.
 - Gold im Laden bleibt doppelt (Statusleiste + Laden-Kopf).
-- Abnahme 1.3.0 im Testspiel: **erteilt 17.10. abends** („Ja ist okay, aber wir sind noch nicht fertig, mehr Vorschläge für 1.3!“).
+- **Abnahme 1.3.0 komplett: Chef 19.10. „Das Update ist fertig!“** (inkl. Aschesturz, Bilanz-Fenster, Painterly-UI). Davor: Abnahme 1.3.0 im Testspiel: **erteilt 17.10. abends** („Ja ist okay, aber wir sind noch nicht fertig, mehr Vorschläge für 1.3!“).
 - Abends 17.10. (Fragen nach UI-Runde 2b und Wandprüfung): Schildwall des Chitinpanzers 9 → 12 s; Slayer-Baum heißt
   DE „Jägerkodex“ (EN bleibt „Slayer's Book“); Gegnerkarten-Bild bleibt `cover` im Artwork-Fenster + `bottom center`
   (Festlegung 25.07. bestätigt); Begleiter-Dossier ru 1366: bleibt scrollbar, Schrift bleibt groß.
