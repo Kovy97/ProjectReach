@@ -4189,7 +4189,7 @@ export const zh: Record<string, string> = {
   "talentNodes:prestige.earlyXp:description": "80 级以下的技能经验提高 {value}。学过一次的东西，第二次学得更快。",
   "talentNodes:prestige.chronicleRecall:name": "熟悉的书页",
   "talentNodes:prestige.chronicleRecall:description": "已经历过的编年史第 1 至 18 章可一键完成，获得一半金币，但没有代币和物品。你亲历过的章节，编年史不会再给你读一遍。",
-  "talentNodes:prestige.masteredXp:name": "肌肉记忆",
+  "talentNodes:prestige.masteredXp:name": "第二天性",
   "talentNodes:prestige.masteredXp:description": "曾经精通过的技能在 99 级之前获得的经验提高 {value}。双手仍记得该伸向何处。",
   "talentNodes:prestige.dungeonRecall:name": "旧日之路",
   "talentNodes:prestige.dungeonRecall:description": "在以往周目中通关过的地下城立即向你开放。你清理过的大门认得你。",

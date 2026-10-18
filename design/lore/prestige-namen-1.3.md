@@ -153,6 +153,27 @@ Hinweise: „Schwielen" ist die Narben-Lesart von Werkzeugen, die bleiben; wer e
 | Der Scherbenaltar | The Shard Altar | Altar in der Götzenhalle, gebaut aus den Scherben des Bildersturzes |
 | Aschekerbe | Ash Notch | Zähler am Porträt; eine Kerbe je Aschesturz |
 | Was bleibt · Der kurze Weg · Gezeichnet · Schlussstein | What Remains · The Short Road · Marked · Keystone | Äste des Narbenbuchs |
+| Handgedächtnis | Second Nature (Vorschlag § 9.1; im Content vorläufig „Muscle Memory") | Knoten im Ast „Der kurze Weg": Fertigkeiten, die schon einmal auf 99 standen, lernen sich schneller zurück |
+
+### § 6.1 Die fünf weiteren Sprachen (Nachtrag 18.10.)
+
+Ist-Stand aus `packages/content/src/locales/{zh,ru,es,fr,ptBR}.ts` (Schlüssel `talentTrees:prestige*`, `talentBranches:prestige.*`, `talentNodes:prestige.*`). Einträge mit **(V)** sind Vorschläge und stehen noch nicht im Content; Begründungen in § 9. Spaltenreihenfolge wie in `design/i18n-glossary.md`.
+
+| Deutsch | ZH-Hans | RU | ES | PT-BR | FR |
+|---|---|---|---|---|---|
+| Der Aschesturz | 烬落 | Пеплопад (Kollision mit dem Bogen, § 9.3 Nr. 2) | Caída de Ceniza | Queda das Cinzas | Chute des Cendres |
+| Narben | 伤痕 | Шрамы | Cicatrices | Cicatrizes | Cicatrices |
+| Das Narbenbuch | 伤痕之书 | Книга шрамов | Libro de las Cicatrices | Livro das Cicatrizes | Livre des Cicatrices |
+| Der Scherbenaltar | 碎片祭坛 | Алтарь осколков | Altar de los Fragmentos | Altar dos Fragmentos | Autel des Éclats |
+| Aschekerbe | 灰烬刻痕 (V) | Пепельная зарубка (V) | Muesca de ceniza (V) | Entalhe de cinzas (V) | Encoche de cendre (V) |
+| Was bleibt | 所留之物 | Что остаётся | Lo que queda | O que resta | Ce qui reste |
+| Der kurze Weg | 捷径 | Короткий путь | El camino corto | O caminho curto | Le chemin court |
+| Gezeichnet | 烙痕 | Отмеченный | Marcado | Marcado | Marqué |
+| Schlussstein | 拱心石 | Замковый камень | Piedra clave | Pedra-chave | Clé de voûte |
+| Handgedächtnis | 第二天性 (V) | Вторая натура (V) | Segunda naturaleza (V) | Segunda natureza (V) | Seconde nature (V) |
+| Durchgang (Hilfswort in allen Knotentexten) | 周目 | прохождение | partida | partida | partie |
+
+Bestandsbegriffe, an denen die Übersetzungen hängen und die sie treffen: Jägerkodex = 猎魔之书 / Книга охотника / Libro del Cazador / Livro do Caçador / Livre du Chasseur; Götzensplitter = 神像碎片 / Осколок Идола / Fragmento de ídolo / Fragmento de Ídolo / Éclat d'idole; Wächter = 守望者 / Страж / Guardián / Guardião / Gardien; Chronik = 编年史 / Хроника / Crónica / Crônica / Chronique; Aufgabenmarken (Client `quests.tokens.label`) = 任务代币 / Жетоны заданий / Fichas de misión / Fichas de missão / Jetons de quête.
 
 ## § 7 Asset-Hinweise (für die Asset-Liste des Chefs, Dateinamen nach Loader-Vertrag durch ui-dev)
 
@@ -166,3 +187,51 @@ Hinweise: „Schwielen" ist die Narben-Lesart von Werkzeugen, die bleiben; wer e
 2. **EN-Systemname:** „The Cinderfall" (Empfehlung) oder das schlichtere „The Shattering"? Beides ist frei; „Ashfall" ist vom Bogen belegt.
 3. **Schrein der Stillen (Lager):** Soll sein Beschreibungstext später auf den Hallen-Altar verweisen? Das wäre eine Content-Änderung (content-dev), kein Muss.
 4. **Zähler-Form:** Kerbe im Porträtrahmen (Empfehlung, § 7) oder Glyphe mit Zahl, wie im Konzept als „Aschestern" skizziert?
+
+## § 9 Nachtrag 18.10.
+
+Der Chef hat am 18.10. Set C „Der Aschesturz" gewählt. Der Engine-Agent hat das Narbenbuch in `packages/content/src/talents.ts` (Baum `prestige`) eingetragen und die Texte in fünf Sprachen nachgezogen. Dieser Nachtrag beantwortet zwei Fragen: Wie heißt der neue Knoten „Handgedächtnis", und stimmen die fünf Übersetzungen mit Set C und dem Glossar überein. Geprüft wurde nur lesend; nichts davon ist in Content oder Code geändert.
+
+### § 9.1 Der Knoten „Handgedächtnis"
+
+**Deutsch: Handgedächtnis bleibt.** Das Wort ist kurz, körperlich und sitzt im Ast „Der kurze Weg" genau richtig: Lehrjahre, Bekannte Seiten, Handgedächtnis, Alte Pfade. Es führt den Hände-Faden von „Schwielen" und von der Bestätigungszeile in § 4.3 („das Wissen deiner Hände") weiter, ohne ihn zu wiederholen. Die eingetragene Flavorzeile („Die Hände wissen noch, wohin sie greifen.") passt und bleibt.
+
+**Englisch: „Second Nature" statt „Muscle Memory".** „Muscle memory" ist ein Begriff aus Sportphysiologie und Fitnessjargon; er liest sich im Mund des Wächters modern (Kanonregel 2). „Second nature" ist dagegen alt, trägt dieselbe Bedeutung (etwas so oft getan, dass der Körper es ohne Nachdenken kann) und spielt leise mit dem zweiten Durchgang. Als Knotenreihe: Apprentice Years, Familiar Pages, Second Nature, Old Paths. Die EN-Flavorzeile („Your hands still know where to reach.") bleibt unverändert.
+
+Alternative, falls der Chef das Hände-Bild auch im Englischen will: **„Knowing Hands".** Verworfen: „Master's Hands", weil der Erfolg `ach_mastery_25` schon „Hands of the Master / Hände des Meisters" heißt und in RU/ES/FR/PT-BR bereits als „Руки мастера / Manos de maestro / Mains de maître / Mãos de mestre" übersetzt ist; „Old Hands", weil im selben Ast schon „Old Paths" steht.
+
+Übersetzungen für „Second Nature" (alle fünf sind feste Redewendungen ihrer Sprache und im Content frei): RU „Вторая натура", ZH „第二天性", ES „Segunda naturaleza", FR „Seconde nature", PT-BR „Segunda natureza". Falls „Knowing Hands": RU „Знающие руки", ZH „识路之手" (nicht „熟手", das tragen rund zwanzig Erfolge), ES „Manos que saben", FR „Mains qui savent", PT-BR „Mãos que sabem".
+
+### § 9.2 Prüfbefund der fünf Sprachen
+
+Gesamturteil: Die Übersetzungen tragen den Ton. Die Sätze sind kurz, der Wächter spricht in der zweiten Person, die Flavorzeilen sind mitübersetzt statt gestrichen, und in keiner der fünf Sprachen steht ein Gedankenstrich. Die Anbindung an den Bestand ist sauber: Das Narbenbuch spiegelt in allen fünf Sprachen das Wort des Jägerkodex (Buch + Genitiv), der Scherbenaltar nutzt überall das Wort des Götzensplitters, Wächter und Chronik entsprechen den Aschechronik-Quests, Bank und Marken den Client-Labels (Ausnahme FR, unten). Der Systemname ist in jeder Sprache in allen fünf Vorkommen gleich geschrieben.
+
+| Sprache | Aschesturz | Narben | Narbenbuch | Scherbenaltar | Aschekerbe |
+|---|---|---|---|---|---|
+| RU | Пеплопад → **Kollision:** der Bogen `items:ashfall_recurve:name` heißt schon „Лук «Пеплопад»". Vorschlag: Systemname behalten, Bogen umbenennen (§ 9.3 Nr. 2); Rückfall „Испепеление" | Шрамы, bleibt | Книга шрамов, bleibt | Алтарь осколков, bleibt | fehlt → Пепельная зарубка |
+| ZH | 烬落, bleibt (der Bogen heißt 落灰反曲弓, kein Konflikt) | 伤痕, bleibt | 伤痕之书, bleibt | 碎片祭坛, bleibt | fehlt → 灰烬刻痕 |
+| ES | Caída de Ceniza, bleibt | Cicatrices, bleibt | Libro de las Cicatrices, bleibt | Altar de los Fragmentos, bleibt | fehlt → Muesca de ceniza |
+| PT-BR | Queda das Cinzas, bleibt | Cicatrizes, bleibt | Livro das Cicatrizes, bleibt | Altar dos Fragmentos, bleibt | fehlt → Entalhe de cinzas |
+| FR | Chute des Cendres, bleibt | Cicatrices, bleibt | Livre des Cicatrices, bleibt | Autel des Éclats, bleibt | fehlt → Encoche de cendre |
+
+Zur Aschekerbe: Sie ist ein UI-Wort (Porträtzähler) und steht noch in keiner Content-Datei; die Vorschläge gehören ins Glossar für ui-dev (§ 6.1). Zum Systemnamen: Alle fünf Sprachen übersetzen „Asche" statt „Cinder", was richtig ist, weil das Deutsche Aschesturz heißt und das Englische „Cinder" nur dem Bogen ausweicht. Vier Sprachen sind dabei selbst dem Bogen ausgewichen; nur das Russische hat exakt das Wort des Bogens getroffen.
+
+Eigenheiten, die bleiben dürfen: RU „Рубцовая ткань" (Narbengewebe) neben „шрамы" (Narben) ist die korrekte medizinische Form, kein Widerspruch. ZH „烙痕" für „Gezeichnet" trägt die Brand-Lesart und passt zum Aschesturz. ZH „周目" für Durchgang ist Spielerjargon, aber dasselbe Register wie das englische „run". RU „Глубокий надрез" verliert den Komparativ aus „The Deeper Cut"; die Flavorzeile („режет глубже") trägt ihn, und ein russischer Komparativ im Titel wäre sperrig.
+
+### § 9.3 Korrekturen je Schlüssel
+
+1. **Muss, FR** `talentNodes:prestige.chronicleRecall:description`: „sans marques ni objets" → „sans jetons ni objets". Der Client nennt die Aufgabenmarken „Jetons de quête" (`quests.tokens.label`); „marques" ist dort nicht belegt. RU (жетонов), ZH (代币), ES (fichas) und PT-BR (fichas) treffen den Client-Begriff.
+2. **Muss, RU, Chef-Entscheid** (Kollision Пеплопад). Option A, Empfehlung: `items:ashfall_recurve:name` „Лук «Пеплопад»" → „Лук «Пепельный дождь»" (Aschenregen, im Content frei); alle Narbenbuch-Schlüssel bleiben, weil „Пеплопад" das beste Wort für das System ist und ein Dutzend Mal im Spiel stehen wird, der Bogen einmal. Das ändert eine ausgelieferte RU-Zeichenkette, daher Chef-Sache. Option B, falls der Bogen unantastbar ist: in `talentTrees:prestige:description` sowie den Beschreibungen `keepTools`, `keepBankStacks`, `keepEquipment` und `pointsBoost` „Пеплопад" → „Испепеление" (Einäscherung; Formen: „о каждом Испепелении", „переживают Испепеление", „Каждое следующее Испепеление приносит").
+3. **Folgeänderung nach GO zu § 9.1**, `talentNodes:prestige.masteredXp:name` in fünf Dateien: RU „Мышечная память" → „Вторая натура"; ZH „肌肉记忆" → „第二天性"; ES „Memoria muscular" → „Segunda naturaleza"; FR „Mémoire musculaire" → „Seconde nature"; PT-BR „Memória muscular" → „Segunda natureza". Die Beschreibungen bleiben.
+4. **Kann, ES und PT-BR** `talentNodes:prestige.damage:name`: „Puño marcado" → „Puño cicatrizado", „Punho marcado" → „Punho cicatrizado". Der Ast heißt in beiden Sprachen schon „Marcado"; das Englische hat „Scarred Fist", das Französische „balafré". Das Narbenwort gehört in den Knoten.
+5. **Kann, FR** `talentNodes:prestige.keepTools:name`: „Cals" → „Callosités". „Cals" ist korrekt, aber so selten, dass es wie ein Tippfehler aussieht.
+
+**Nebenbefund DE** (nicht mein Revier, Empfehlung an content-dev): `talentNodes:prestige.keepTools:description` sagt „warten im Lager"; die Bank heißt im deutschen Client „Bank" (`nav.bank`), und „Lager" ist seit 0.3.0 das Lager des Spielers. Vorschlag: „und warten in der Bank". Das Englische („wait in your bank") und alle fünf Übersetzungen haben die Bank.
+
+Summe: fünf Korrekturvorschläge (zwei Muss, eine Folgeänderung nach GO, zwei Kann), dazu ein DE-Nebenbefund.
+
+### § 9.4 Offene Fragen an den Chef (Nachtrag)
+
+1. **EN-Name für Handgedächtnis:** „Second Nature" (Empfehlung) oder „Knowing Hands"? Oder bleibt „Muscle Memory"?
+2. **RU-Kollision:** Option A (Bogen wird „Лук «Пепельный дождь»") oder Option B (Systemname „Испепеление")?
+3. **Kann-Korrekturen 4 und 5** mitnehmen oder lassen?

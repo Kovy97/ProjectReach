@@ -1390,7 +1390,8 @@ export const ru: Record<string, string> = {
   "items:ashen_gauntlets:name": "Пепельные латные рукавицы",
   "items:ashen_reaper:description": "Выкован в горниле-утробе Пепельного Тирана. Лезвие дымится от жара.",
   "items:ashen_reaper:name": "Пепельный жнец",
-  "items:ashfall_recurve:name": "Лук «Пеплопад»",
+  // claude:2026-10-18T11:00:00+02:00 — Chef 18.10.: Bogen weicht dem Systemnamen „Пеплопад“ (Aschesturz, lore § 9.3).
+  "items:ashfall_recurve:name": "Лук «Пепельный дождь»",
   "items:ashfen_buckler:name": "Баклер из пепельной топи",
   "items:ashfen_log:name": "Бревно из пепельной топи",
   "items:ashplate_cuirass:name": "Пепельная кираса",
@@ -4187,7 +4188,7 @@ export const ru: Record<string, string> = {
   "talentNodes:prestige.earlyXp:description": "На {value} больше опыта навыков ниже 80 уровня. Что однажды выучил, во второй раз учишь быстрее.",
   "talentNodes:prestige.chronicleRecall:name": "Знакомые страницы",
   "talentNodes:prestige.chronicleRecall:description": "Прожитые главы Хроники с 1 по 18 можно завершить одним щелчком, за половину золота и без жетонов и предметов. Хроника не читает тебе дважды главу, которую ты уже прожил.",
-  "talentNodes:prestige.masteredXp:name": "Мышечная память",
+  "talentNodes:prestige.masteredXp:name": "Вторая натура",
   "talentNodes:prestige.masteredXp:description": "На {value} больше опыта до 99 уровня в навыках, которые ты уже однажды освоил. Руки всё ещё помнят, куда тянуться.",
   "talentNodes:prestige.dungeonRecall:name": "Старые тропы",
   "talentNodes:prestige.dungeonRecall:description": "Подземелья, зачищенные в прошлом прохождении, сразу открыты для тебя. Врата, которые ты однажды зачистил, тебя узнают.",

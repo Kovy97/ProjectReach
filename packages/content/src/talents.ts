@@ -118,7 +118,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
   // Interne IDs neutral (Baum `prestige`, Währung `prestigePoints`); Knoten-IDs, Zeilen, Kosten, Werte und
   // Voraussetzungen exakt nach design/1.3-prestige-balance.md § 5, OHNE `queueSlot` (Rabenvorrat gestrichen,
   // Chef 18.10. Punkt 5). Namen und Flavor aus design/lore/prestige-namen-1.3.md § 5 (Set C); „Handgedächtnis"
-  // ist Chef-Name (18.10. Punkt 2), EN „Muscle Memory" vorläufig. Summe 489 Narben (Balance 504 − 15).
+  // ist Chef-Name (18.10. Punkt 2), EN „Second Nature" (Chef 18.10., lore § 9.1). Summe 489 Narben (Balance 504 − 15).
   // Freischaltung: mindestens ein Aufstieg (Narben gibt es ohnehin nur aus dem Aschesturz).
   {
     id: "prestige",
@@ -154,7 +154,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
         name: { en: "Calluses", de: "Schwielen" },
         description: {
           en: "All your tools survive the Cinderfall and wait in your bank. Hands do not forget their tools.",
-          de: "Alle deine Werkzeuge überstehen den Aschesturz und warten im Lager. Die Hände vergessen ihr Werkzeug nicht.",
+          de: "Alle deine Werkzeuge überstehen den Aschesturz und warten in der Bank. Die Hände vergessen ihr Werkzeug nicht.",
         },
         branch: "legacy",
         row: 1,
@@ -220,7 +220,7 @@ export const TALENT_TREES: TalentTreeDef[] = [
       },
       {
         id: "masteredXp",
-        name: { en: "Muscle Memory", de: "Handgedächtnis" },
+        name: { en: "Second Nature", de: "Handgedächtnis" }, // claude:2026-10-18T11:00:00+02:00 — Chef 18.10.: EN „Second Nature“ (lore § 9.1)
         description: {
           en: "{value} more skill XP up to level 99 in skills you have mastered before. Your hands still know where to reach.",
           de: "{value} mehr Fertigkeits-XP bis Stufe 99 in Fertigkeiten, die du schon einmal gemeistert hast. Die Hände wissen noch, wohin sie greifen.",
