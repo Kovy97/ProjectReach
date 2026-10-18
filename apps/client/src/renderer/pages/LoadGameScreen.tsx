@@ -4,7 +4,8 @@ import { useI18n } from "../i18n";
 import { getPortraitSrc } from "../portraits";
 import { formatLastPlayed, formatPlaytime } from "../util/format";
 import { SlotThumb } from "../components/SlotThumb";
-import menuLogo from "../assets/ui/mainmenu_logo.webp";
+// claude:2026-10-19T02:45:00+02:00 — Chef 19.10.: gemaltes Logo wie im Hauptmenü.
+import menuLogo from "../assets/ui/mainmenu_logo_painterly.webp";
 
 /**
  * Load-Game-Screen — eigener Vollbild-Screen statt des früheren Aufklapp-Panels im Hauptmenü

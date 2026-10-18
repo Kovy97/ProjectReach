@@ -9,7 +9,8 @@ import { PortraitPickerModal } from "../components/PortraitPickerModal";
 import { useGameControl } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { runWithScreenFade } from "../util/screenFade";
-import menuLogo from "../assets/ui/mainmenu_logo.webp";
+// claude:2026-10-19T02:45:00+02:00 — Chef 19.10.: gemaltes Logo wie im Hauptmenü.
+import menuLogo from "../assets/ui/mainmenu_logo_painterly.webp";
 // Frontline-Registry-Rework (Chef-Auftrag 26.08.2026, Vorlage Mira "Character Creation 03 ·
 // Frontline Registry"): die Stil-Karten zeigen jetzt dieselben Illustrationen wie Miras Mockup
 // statt der kleinen Attribut-Schaden-Icons — statischer Import statt getUiIcon (liegt außerhalb

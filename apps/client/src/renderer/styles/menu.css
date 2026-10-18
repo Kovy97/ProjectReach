@@ -34,6 +34,15 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  /* claude:2026-10-19T02:45:00+02:00 — Chef 19.10.: gemalte Highlands-Kulisse; ab 2:1 (21:9, z. B.
+     3440x1440) die eigene Breitbild-Fassung, sonst die 16:9-Fassung. Es lädt nur das passende Bild. */
+  background-image: url("../assets/ui/mainmenu_highlands_1920.webp");
+}
+
+@media (min-aspect-ratio: 2/1) {
+  .menu-bg {
+    background-image: url("../assets/ui/mainmenu_highlands_3440.webp");
+  }
 }
 
 /* Vignette + stärkerer Verlauf unten für die Lesbarkeit der Nav über dem Artwork. Das frühere

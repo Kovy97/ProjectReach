@@ -14,8 +14,9 @@ import iconFont from "../assets/ui/system-icons/font.svg";
 import { FontPreview } from "./FontPreview";
 // War-Table-Rework (Chef-Auftrag 26.08.2026, Vorlage Mira "Main Menu 02 War Table"): die volle
 // Kulisse ersetzt das frühere Hero-Panorama — Welt + physischer Kartentisch in einer Komposition.
-import warTableBg from "../assets/ui/mainmenu_war_table.webp";
-import menuLogo from "../assets/ui/mainmenu_logo.webp";
+// claude:2026-10-19T02:45:00+02:00 — Chef 19.10.: neues gemaltes Hauptmenü (Highlands). Die Kulisse wählt menu.css per
+// Seitenverhältnis (16:9 oder 21:9); die War-Table-Datei bleibt im Bestand.
+import menuLogo from "../assets/ui/mainmenu_logo_painterly.webp";
 import emblCompass from "../assets/ui/emblem_compass.svg";
 import emblWaxseal from "../assets/ui/emblem_waxseal.svg";
 import emblGear from "../assets/ui/emblem_gear.svg";
@@ -199,7 +200,7 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
     <div className={`menu menu--war-table${panel !== null ? ` menu--panel-${panel}` : ""}${revealed ? "" : " menu--intro-pending"}`}>
       {/* Hero-Artwork als eigene Ebene (statt Inline-Background direkt auf .menu) — so kann sie
           unabhängig von Vignette/FX/Content unabhängig behandelt werden. */}
-      <div className="menu-bg" style={{ backgroundImage: `url("${warTableBg}")` }} />
+      <div className="menu-bg" />
       <AmbientEmbers />
 
       {/* Spiel-Logo — oben mittig, GLEICHE Position/Größe in jedem Zustand (Dossier oder Panel
