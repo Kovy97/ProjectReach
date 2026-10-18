@@ -27,6 +27,15 @@ Endprüfung: Typecheck 5/5, Engine 1807, Content 310, Persistence 453 inkl. Vaul
 Offen: Balance-Messung der neuen Encounter (läuft, `design/1.3.0-balance-encounter.md`), Clip-Audit de/ru (läuft),
 Asset `scar_currency` (Nachtrag 2), Upload/Push/Merge nur auf Chef-GO.
 
+**Nachtrag 19.10. (claude:2026-10-19T03:20:00+02:00):** Eisenrahmen Mittelstufe + neue Inventartasche (`06c951c`).
+Patchnotes 7 Sprachen: eigener Abschnitt „Ein neuer, gemalter Look“ oben + Einleitung (`153dc88`). Neues Hauptmenü
+(`9c765a2`): Highlands-Kulisse 16:9, ab Seitenverhältnis 2:1 eigene 3440×1440-Fassung (CSS-Media-Query in `menu.css`),
+gemaltes Logo `mainmenu_logo_painterly.webp` auch auf Neues Spiel/Laden/Charaktererstellung; War-Table + altes Logo bleiben
+im Bestand. Render 1366/1920/3440 geprüft, Clip-Audit 0 Funde. Clip-Audit 1.3.0 (17 Funde 1366, de/ru) per Beleg geprüft:
+Sidebar-Liste unter Sticky-Zonenkarte gescrollt bzw. Bankzahl unter offenem Tooltip, keine echten Abschneidungen.
+Balance-Messung fertig (`design/1.3.0-balance-encounter.md`, V1–V15 alles Chef-Entscheide, nichts angewendet). Release-
+relevant: Patchnotes werben „Paragon-Truhen ab 25, 50 und 100“, 50/100 sind laut Sim unerreichbar → Chef-Entscheid E4.
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
