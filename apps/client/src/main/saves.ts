@@ -5,6 +5,7 @@ import { MAX_SAVE_SLOTS, SAVE_VERSION } from "@hearthforge/shared";
 import {
   atomicWriteFile,
   backupBeforeWrite,
+  backupPreAscend, // claude:2026-10-18T14:00:00+02:00 — Prestige-Aufstieg (Welle D)
   backupPreDelete,
   backupPreMigration,
   cleanupTmpFiles,
@@ -238,6 +239,15 @@ export function registerSaveHandlers(): void {
       }
       await rm(slotPath(id), { force: true });
     });
+  });
+
+  // claude:2026-10-18T14:00:00+02:00 — Prestige „Der Aschesturz" (1.3 Welle D): Snapshot VOR dem Aufstieg.
+  // Vertrag (saveBackups.ts backupPreAscend): der Renderer hat den Stand per `saves:write` gespeichert und
+  // abgewartet; hier läuft die Kopie unter DEMSELBEN Slot-Lock (kein Autosave kann dazwischen schreiben).
+  // Nur das Ergebnis "pre-ascend" erlaubt den Aufstieg; jede andere Antwort (oder ein Fehler) bricht ihn ab.
+  ipcMain.handle("saves:backupPreAscend", async (_event, id: number) => {
+    await awaitRecovery();
+    return withSlotLock(assertSlotId(id), () => backupPreAscend(backupPaths(), id));
   });
 
   // Paket D — Selbstheilung: Backup-Liste eines Slots (neueste zuerst, roher Inhalt). Der

@@ -54,6 +54,7 @@ import { statIcon } from "../statIcons";
 import { hasSeenNewItemBadge, markNewItemBadgeSeen } from "../util/discoveryBadge";
 import { formatNum, formatSeconds1, formatStat } from "../util/format";
 import { processPortraitFile } from "../util/portraitUpload";
+import { AshNotch } from "../components/AshNotch"; // claude:2026-10-18T14:00:00+02:00 — Aschekerbe am Porträt
 import { getInvFilterCat, setInvFilterCat } from "../util/uiPrefs";
 
 // ── types ────────────────────────────────────────────────────────────────────
@@ -449,6 +450,8 @@ export function CharacterPage(): JSX.Element {
               <path d="M12 3l5.2 5.2h-3.2V15h-4V8.2H6.8L12 3z M4.5 17.5h15V21h-15v-3.5z" fill="currentColor" />
             </svg>
           </button>
+          {/* claude:2026-10-18T14:00:00+02:00 — Aschekerbe: eine Kerbe je Aschesturz, oben mittig zwischen den Knöpfen. */}
+          <AshNotch count={state.prestige?.count ?? 0} className="ash-notch--portrait" />
           {portraitSrc ? (
             <img loading="lazy" decoding="async" className="cs-portrait-img" src={portraitSrc} alt={c.name} />
           ) : (

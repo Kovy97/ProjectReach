@@ -1,0 +1,515 @@
+/* ─── Scherbenaltar (Prestige "Der Aschesturz", 1.3 Welle D) ──────────────────────────────────────
+   claude:2026-10-18T14:00:00+02:00 — Seite im Muster der Slayer-Seite: Banner mit Altar-Szene und Stimme des
+   Waechters, darunter dieselbe Basalt-Flaeche (`.shop-panel.slayer-shop-panel`) mit den Reiter-Knoepfen
+   `.slayer-lower-tab`. Material bleibt: Gravewood-Karten, Eisenknoepfe (`.btn-iron`, `.shop-citadel-btn`),
+   Holz-Eckrahmen am Narben-Stand. Kein Leuchten; Farbwelt Schiefer, Rost, Knochen, Aschgrau (lore § 7). */
+
+.prestige-page {
+  /* Container-Name der Slayer-Seite: TalentTree stapelt seine Aeste nach Seitenbreite (talent-tree.css). */
+  container: slayer-page / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* ─── Altar-Szene ─────────────────────────────────────────── */
+.prestige-scene {
+  position: relative;
+  isolation: isolate;
+  min-height: 150px;
+  display: flex;
+  align-items: flex-end;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 11px;
+  border-image: url("../assets/ui/gravewood/v3/frames/panel-frame.webp") 48 / 11px;
+  background-color: #0e1112;
+  background-size: cover;
+  background-position: center 60%;
+  background-origin: border-box;
+  background-clip: border-box;
+  overflow: hidden;
+}
+.prestige-scene-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgba(8, 9, 10, 0.2), rgba(8, 9, 10, 0.78)),
+    radial-gradient(ellipse at 50% 100%, rgba(120, 116, 108, 0.14), transparent 70%);
+}
+.prestige-scene-body {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+}
+.prestige-scene-body .npc-bubble {
+  flex: 1 1 360px;
+  max-width: 920px;
+}
+
+.prestige-balance {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding: 6px 16px;
+  min-height: 48px;
+  border-style: solid;
+  border-color: transparent;
+  border-width: var(--frame-w);
+  border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+  background:
+    linear-gradient(rgba(18, 12, 6, 0.8), rgba(18, 12, 6, 0.8)),
+    url("../assets/bg_black.webp") repeat;
+  color: var(--gold, #d8c06a);
+}
+.prestige-balance-amount {
+  font-family: var(--font-head);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.prestige-balance-label {
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.prestige-balance-count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-left: var(--sp-2);
+  padding-left: var(--sp-3);
+  border-left: 1px solid rgba(216, 192, 106, 0.22);
+}
+.prestige-scar-glyph {
+  flex-shrink: 0;
+  color: #b8794a;
+}
+.prestige-tab-art {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-right: var(--sp-2);
+  vertical-align: middle;
+}
+
+/* ─── Altar-Reiter ────────────────────────────────────────── */
+.prestige-altar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.prestige-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+.prestige-note {
+  margin: 0;
+  line-height: 1.4;
+}
+.prestige-sub-title {
+  margin: var(--sp-2) 0 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #d9c79f;
+}
+
+/* Voraussetzungen */
+.prestige-reqs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.prestige-req {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: #a9b1b2;
+}
+.prestige-req.is-done {
+  color: #e8c77a;
+}
+.prestige-req-mark {
+  width: 1.4em;
+  text-align: center;
+  flex-shrink: 0;
+}
+.prestige-req-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+  padding-left: calc(1.4em + var(--sp-2));
+}
+.prestige-chip {
+  padding: 2px 10px;
+  border: 1px solid rgba(155, 112, 62, 0.55);
+  background: rgba(8, 10, 11, 0.62);
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  color: #d9c79f;
+}
+
+/* Narben-Vorschau */
+.prestige-rows {
+  display: flex;
+  flex-direction: column;
+  max-width: 560px;
+}
+.prestige-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: 5px var(--sp-2);
+  border-bottom: 1px solid rgba(216, 192, 106, 0.12);
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: var(--text);
+}
+.prestige-row-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--gold, #d8c06a);
+  white-space: nowrap;
+}
+.prestige-row--total {
+  margin-top: var(--sp-1);
+  border-bottom: 0;
+  border-top: 1px solid rgba(216, 192, 106, 0.4);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+/* Auswahlkarten (Erbstuecke, Vergrabene Truhe) */
+.prestige-picks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--sp-2);
+}
+.prestige-picks--scroll {
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: var(--sp-1);
+}
+.prestige-pick-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+.prestige-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  min-width: 0;
+  padding: var(--sp-1) var(--sp-2);
+  border-style: solid;
+  border-color: transparent;
+  border-width: 6px;
+  border-image: url("../assets/ui/gravewood/v3/frames/card-frame.webp") 48 / 6px;
+  background-color: #0b0f11;
+  background-image:
+    linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-origin: border-box;
+  background-clip: border-box;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+.prestige-pick:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+.prestige-pick:disabled {
+  cursor: not-allowed;
+  filter: brightness(0.6) saturate(0.7);
+}
+.prestige-pick.is-selected {
+  background-image:
+    linear-gradient(rgba(70, 46, 14, 0.42), rgba(5, 8, 10, 0.3)),
+    url("../assets/ui/gravewood/v3/textures/texture-cold-slate.webp");
+}
+.prestige-pick-img {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+.prestige-pick-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.prestige-pick-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.prestige-pick-name {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.prestige-pick-sub {
+  font-size: var(--fs-sm);
+  line-height: 1.25;
+}
+.prestige-pick-check {
+  flex-shrink: 0;
+  width: 1.3em;
+  text-align: center;
+  font-weight: 700;
+  color: #e8c77a;
+}
+.prestige-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  align-self: flex-start;
+}
+.prestige-stepper-n {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  min-width: 3.5em;
+  text-align: center;
+}
+
+/* Geht / Bleibt */
+.prestige-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-4);
+}
+@container slayer-page (max-width: 899px) {
+  .prestige-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.prestige-split-col {
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid rgba(216, 192, 106, 0.16);
+  background: rgba(6, 8, 9, 0.5);
+}
+.prestige-split-col--goes {
+  border-left: 3px solid #8a4a2b;
+}
+.prestige-split-col--stays {
+  border-left: 3px solid #6f8a68;
+}
+.prestige-split-col .prestige-sub-title {
+  margin-top: 0;
+}
+.prestige-list {
+  margin: var(--sp-1) 0 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  line-height: 1.35;
+  color: var(--text);
+}
+
+/* Bestaetigung */
+.prestige-confirm-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  max-width: 560px;
+}
+.prestige-confirm-prompt {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: #d9c79f;
+}
+.prestige-confirm-input {
+  min-height: 44px;
+  padding: 6px var(--sp-3);
+  border: 1px solid var(--border, #333c44);
+  background: rgba(5, 8, 10, 0.8);
+  color: var(--text);
+  font-family: var(--font-head);
+  font-size: var(--fs-lg);
+}
+.prestige-confirm-input:focus {
+  outline: 2px solid rgba(216, 192, 106, 0.55);
+  outline-offset: 1px;
+}
+.prestige-error {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid rgba(190, 80, 60, 0.6);
+  background: rgba(60, 16, 10, 0.5);
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: #e9a591;
+}
+.prestige-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.prestige-confirm-gain {
+  font-family: var(--font-head);
+}
+
+/* ─── Erinnerung (Chronik-Reiter) ─────────────────────────── */
+.prestige-recall {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid rgba(155, 112, 62, 0.48);
+  background: rgba(8, 10, 11, 0.62);
+}
+.chronicle-tab-head .prestige-recall {
+  flex: 1 1 100%;
+  align-self: stretch;
+}
+.prestige-recall-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.prestige-recall-title {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #d9c79f;
+}
+.prestige-recall-done {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: #e8c77a;
+}
+
+/* ─── Post-Sperre ─────────────────────────────────────────── */
+.mail-blocked-note {
+  margin: 0 0 var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid rgba(155, 112, 62, 0.55);
+  background: rgba(8, 10, 11, 0.62);
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  color: #d9c79f;
+}
+.mail-row-lock {
+  color: #c9a46a;
+}
+
+/* ─── Aschekerbe (Portraet-Zaehler) ───────────────────────── */
+.ash-notch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.ash-notch-art {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+.ash-notch-cuts {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+}
+/* Fallback ohne Bild: Kerben aus Eisen und Rost, schraeg in den Rahmen geschlagen. */
+.ash-notch-cut {
+  display: block;
+  width: 5px;
+  height: 22px;
+  transform: skewX(-22deg);
+  background: linear-gradient(90deg, #15100d 0%, #6b3b22 45%, #2a2019 100%);
+  border: 1px solid #0a0807;
+  box-shadow: inset 0 0 0 1px rgba(184, 121, 74, 0.28);
+}
+.ash-notch-num {
+  font-family: var(--font-head);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: #d9c79f;
+  text-shadow: 0 1px 2px #000;
+}
+.ash-notch--portrait {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  padding: 4px 10px;
+  background: linear-gradient(rgba(18, 14, 11, 0.82), rgba(10, 8, 7, 0.82));
+  border: 1px solid #3a2a1e;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+.ash-notch--large .ash-notch-art {
+  height: 48px;
+}
+.ash-notch--large .ash-notch-cuts {
+  height: 44px;
+}
+.ash-notch--large .ash-notch-cut {
+  width: 8px;
+  height: 40px;
+}
+
+/* ─── Erwachen nach dem Aufstieg ──────────────────────────── */
+.prestige-awakening {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  max-width: min(640px, 92vw);
+  text-align: center;
+}
+.prestige-awakening-title {
+  margin: 0;
+  font-family: var(--font-head);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold, #d8c06a);
+}
+.prestige-awakening-gain {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: var(--fs-lg);
+  color: #e8c77a;
+}

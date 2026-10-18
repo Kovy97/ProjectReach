@@ -71,3 +71,21 @@ export async function readSlotBackups(id: number): Promise<SaveBackupEntry[]> {
 export async function openBackupsFolder(): Promise<void> {
   if (bridge?.openBackupsFolder) return bridge.openBackupsFolder();
 }
+
+/**
+ * claude:2026-10-18T14:00:00+02:00 — Sicherung VOR dem Prestige-Aufstieg (Welle D). Electron: Main kopiert die
+ * soeben gespeicherte Slot-Datei unter dem Slot-Lock (`saves:backupPreAscend`); nur "pre-ascend" erlaubt den
+ * Aufstieg. Web-Build (Harness/Audit, keine Datei-Backups): eine Kopie des Slot-Strings unter
+ * `hearthforge:save:<id>:pre-ascend`; schlägt das Schreiben fehl (Kontingent), gilt es als "failed".
+ */
+export async function backupPreAscend(id: number): Promise<"pre-ascend" | "no-existing" | "skipped-corrupt" | "failed"> {
+  try {
+    if (bridge?.backupPreAscend) return await bridge.backupPreAscend(id);
+    const raw = localStorage.getItem(lsKey(id));
+    if (raw === null) return "no-existing";
+    localStorage.setItem(`${lsKey(id)}:pre-ascend`, raw);
+    return "pre-ascend";
+  } catch {
+    return "failed";
+  }
+}

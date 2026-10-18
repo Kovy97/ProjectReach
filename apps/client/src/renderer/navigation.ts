@@ -19,7 +19,8 @@ export type NavView =
   | "enchanting"
   | "newhaven"
   | "tavern"
-  | "mail";
+  | "mail"
+  | "prestige"; // claude:2026-10-18T14:00:00+02:00 — Scherbenaltar (Der Aschesturz, 1.3)
 
 export interface NavPage {
   id: string;
@@ -137,6 +138,13 @@ export const navigation: NavSection[] = [
       { id: "achievements", label: "nav.achievements", icon: "🏆", view: "achievements", placement: "topbar" },
       // Statistics in die Sidebar heruntergezogen (Task #224); Shop/Bank nehmen ihren
       // früheren Platz in der Top Bar ein.
+      // claude:2026-10-18T14:00:00+02:00 — Scherbenaltar (Prestige „Der Aschesturz", 1.3 Welle D). Platz: Sektion
+      // „other" direkt über Statistik, weil es eine Meta-Seite über den ganzen Durchgang ist (kein Skill, kein
+      // Ort) und die Skill-Liste mit 20+ Zeilen nicht noch länger wird; erscheint in der Sidebar nur, wenn
+      // Kapitel 21 eingelöst ist ODER schon ein Aufstieg stattfand (Filter in Sidebar.tsx, `prestigeNavVisible`).
+      // Die Ziffern-Hotkeys (1 bis 9) bleiben unberührt, der Eintrag steht weit hinter Platz 9.
+      // Emoji-Fallback 🕯️ bis `sidebaricon_prestige.webp` liegt (Auto-Discovery, sidebarIcons.ts).
+      { id: "prestige", label: "nav.prestige", icon: "🕯️", view: "prestige" },
       { id: "stats",   label: "nav.stats",   icon: "📊", view: "stats"   },
       // Postfach (SAVE_VERSION 71, WoW-artiger Überlauf-Puffer): eigener Footer-Button
       // ZWISCHEN Main Menu und Options (Chef-Vorgabe) — siehe SidebarFooter. Nur hier registriert,

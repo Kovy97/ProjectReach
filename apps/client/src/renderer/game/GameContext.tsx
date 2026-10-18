@@ -12,17 +12,37 @@ import {
 import type { ReactNode } from "react";
 import type { GameState, OfflineSummary, SaveSlot } from "@hearthforge/shared";
 import { MAX_OFFLINE_MS } from "@hearthforge/shared";
-import { advance, createGame, transferInventoryItemsToSave } from "@hearthforge/engine";
-import type { CrossSaveTransferResult, CrossSaveTransferSelection } from "@hearthforge/engine";
+import { advance, ascend, createGame, prestigeAscendCheck, transferInventoryItemsToSave } from "@hearthforge/engine";
+import type {
+  CrossSaveTransferResult,
+  CrossSaveTransferSelection,
+  PrestigeAscendChoice,
+  PrestigeAscendReason,
+} from "@hearthforge/engine";
 import { getDevSpeed } from "../devSpeed";
 import type { CharacterCreation } from "@hearthforge/engine";
 import { deserialize, parseSummary, serialize } from "@hearthforge/persistence";
 import { content } from "@hearthforge/content";
 import { baueDemoOfflineSummary } from "../devOfflineDemo";
-import { readAllSlots, readSlot, readSlotBackups, removeSlot, writeSlot, writeSlotPair } from "../saves";
+import { backupPreAscend, readAllSlots, readSlot, readSlotBackups, removeSlot, writeSlot, writeSlotPair } from "../saves";
 import { buildOfflineTestSummary, fetchFixtureJson, getFixtureParam, getOfflineTestParam } from "./fixtureLoader";
 
 export type Screen = "menu" | "creating" | "playing";
+
+/**
+ * claude:2026-10-18T14:00:00+02:00 — Ergebnis von `ascendRun` (Prestige „Der Aschesturz", Welle D). Die Gründe der
+ * Engine-Prüfung kommen unverändert durch (UI: `t("prestige.reason." + code)`); dazu die Ablauf-Fehler
+ * `no_active_save`, `busy`, `backup_failed` (Sicherung nicht angelegt, nichts verändert) und `write_failed`.
+ */
+export type AscendRunResult =
+  | { ok: true }
+  | { ok: false; reason: PrestigeAscendReason | "no_active_save" | "busy" | "backup_failed" | "write_failed" };
+
+/** Stand für den Erwachens-Text nach einem Aufstieg (überlebt den Baum-Remount, Muster `importSuccess`). */
+export interface AscendAwakening {
+  count: number;
+  points: number;
+}
 
 /**
  * Renderer-lokale Erweiterung von `OfflineSummary` (Welle AA, Welcome-Back-Polish): trägt zwei
@@ -160,6 +180,16 @@ interface GameControl {
    * (screen-Wechsel menu→playing) — nur der Import tauschte den State im laufenden Screen.
    */
   sessionEpoch: number;
+  /**
+   * claude:2026-10-18T14:00:00+02:00 — Prestige-Aufstieg (Welle D). Ablauf: speichern und abwarten → Sicherung
+   * (IPC `saves:backupPreAscend`, nur "pre-ascend" erlaubt weiter) → `ascend` → sofort speichern → Baum remounten
+   * (`sessionEpoch`, setzt alle Zähler-Refs von Toasts/Popups wie beim Laden zurück) → `ascendAwakening` setzen.
+   * Scheitert ein Schritt vor `ascend`, bleibt der Spielstand unverändert.
+   */
+  ascendRun: (choice: PrestigeAscendChoice) => Promise<AscendRunResult>;
+  /** Erwachens-Text-Stand nach einem Aufstieg; null, wenn keiner offen ist. */
+  ascendAwakening: AscendAwakening | null;
+  dismissAscendAwakening: () => void;
 }
 
 /** Live-Context: ändert sich pro Frame. Nur Verbraucher hiervon re-rendern laufend. */
@@ -225,6 +255,9 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
   const [sessionEpoch, setSessionEpoch] = useState(0);
   // Import-Erfolgs-Hinweis: s. GameControl.importSuccess-Doc.
   const [importSuccess, setImportSuccess] = useState(false);
+  // claude:2026-10-18T14:00:00+02:00 — Erwachens-Text nach dem Aufstieg: s. GameControl.ascendAwakening-Doc.
+  const [ascendAwakening, setAscendAwakening] = useState<AscendAwakening | null>(null);
+  const dismissAscendAwakening = useCallback(() => setAscendAwakening(null), []);
 
   const dismissSaveRecovery = useCallback(() => setSaveRecovery(null), []);
   const dismissImportSuccess = useCallback(() => setImportSuccess(false), []);
@@ -273,6 +306,50 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
     // callback), see GameControl.saveTick doc.
     setSaveTick((t) => t + 1);
   }, []);
+
+  // claude:2026-10-18T14:00:00+02:00 — Prestige-Aufstieg (Welle D, Vertrag in engine/prestige.ts `ascend` und
+  // main/saveBackups.ts `backupPreAscend`). `transferBusyRef` hält Autosaves während des Ablaufs an, damit nichts
+  // zwischen Sicherung und Neustand in den Slot schreibt.
+  const ascendRun = useCallback(async (choice: PrestigeAscendChoice): Promise<AscendRunResult> => {
+    const s = stateRef.current;
+    const slot = activeSlotRef.current;
+    if (!s || slot === null) return { ok: false, reason: "no_active_save" };
+    if (transferBusyRef.current) return { ok: false, reason: "busy" };
+    const check = prestigeAscendCheck(s, content, choice);
+    if (!check.ok) return { ok: false, reason: check.reason ?? "locked" };
+    transferBusyRef.current = true;
+    try {
+      // (1) aktuellen Stand speichern und abwarten.
+      try {
+        await writeSlot(slot, serialize(s));
+      } catch (error) {
+        console.error("Aufstieg: Speichern vor der Sicherung fehlgeschlagen:", error);
+        return { ok: false, reason: "write_failed" };
+      }
+      // (2) Sicherung unter dem Slot-Lock; nur "pre-ascend" erlaubt den Aufstieg.
+      if ((await backupPreAscend(slot)) !== "pre-ascend") return { ok: false, reason: "backup_failed" };
+      // (3) Aufstieg (ersetzt den State IN PLACE), (4) sofort speichern.
+      if (!ascend(s, content, choice)) return { ok: false, reason: "locked" };
+      const prestige = s.prestige;
+      const gained = prestige.history[prestige.history.length - 1]?.points ?? 0;
+      try {
+        await writeSlot(slot, serialize(s));
+      } catch (error) {
+        // Der Neustand lebt im Speicher; das nächste Autosave holt das Schreiben nach, die Sicherung liegt vor.
+        console.error("Aufstieg: Speichern des Neustands fehlgeschlagen (Autosave versucht es erneut):", error);
+      }
+      setDebugHook(s);
+      setAscendAwakening({ count: prestige.count, points: gained });
+      // (5) Baum remounten: alle Snapshot-Refs (DeathPopup/Toasts/Level-Diffs) starten frisch wie beim Laden.
+      setSessionEpoch((e) => e + 1);
+      setTick((t) => t + 1);
+      notifyTick();
+      setSaveTick((t) => t + 1);
+      return { ok: true };
+    } finally {
+      transferBusyRef.current = false;
+    }
+  }, [notifyTick]);
 
   // codex:2026-08-31T22:04:00+02:00 — Echtdaten-Transfer: Ziel ohne Offline-Tick laden, beide
   // Zustände klonen/mutieren und erst NACH journalgeschütztem Paar-Commit live übernehmen.
@@ -699,6 +776,9 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       importSuccess,
       dismissImportSuccess,
       getState,
+      ascendRun,
+      ascendAwakening,
+      dismissAscendAwakening,
     }),
     [
       screen,
@@ -725,6 +805,9 @@ export function GameProvider({ children }: { children: ReactNode }): JSX.Element
       importSuccess,
       dismissImportSuccess,
       getState,
+      ascendRun,
+      ascendAwakening,
+      dismissAscendAwakening,
     ],
   );
 

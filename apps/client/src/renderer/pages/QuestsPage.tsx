@@ -7,6 +7,7 @@ import {
   isDailyClaimed,
   isShelfOpen,
   objectiveProgress,
+  questObjectiveProgress,
   questStatus,
   questTokenBalance,
   refreshDailyQuests,
@@ -33,6 +34,7 @@ import {
 import { deriveQuestStrands, questSpeaker } from "../util/questStrands";
 import { msUntilMidnight, todayStamp } from "../util/dayStamp";
 import { consumeRequestedQuestsTab } from "../navigation";
+import { PrestigeRecallBar } from "../components/PrestigeRecallBar"; // claude:2026-10-18T14:00:00+02:00
 import "../styles/quests.css";
 import "../styles/chronicle.css";
 
@@ -728,6 +730,9 @@ function ChronicleStoryTab({
             .replace("{n}", String(active ? active.chapter : claimedChapters.length))
             .replace("{total}", String(chapters.length))}
         </span>
+        {/* claude:2026-10-18T14:00:00+02:00 — Erinnerung (Narbenbuch „Bekannte Seiten"), nur mit gekauftem Knoten. In der
+            Kopfzeile statt als eigenes Kind: die Contract-Wall-Variante legt .chronicle-tab als Raster mit festen Zeilen an. */}
+        <PrestigeRecallBar />
       </header>
 
       {active ? (
@@ -777,7 +782,8 @@ function ChronicleStoryTab({
               <ChronicleObjectiveRow
                 key={i}
                 obj={obj}
-                progress={objectiveProgress(state, content, obj)}
+                /* claude:2026-10-18T14:00:00+02:00 — nach einem Aufstieg zählt der Laufanker (Lebenszeit-Summen bleiben). */
+                progress={questObjectiveProgress(state, content, active.quest, i)}
                 t={t}
                 tr={tr}
               />
@@ -930,7 +936,8 @@ function ContractDetailStage({
             <ChronicleObjectiveRow
               key={i}
               obj={obj}
-              progress={objectiveProgress(state, content, obj)}
+              /* claude:2026-10-18T14:00:00+02:00 — Laufanker nach einem Aufstieg (questObjectiveProgress). */
+              progress={questObjectiveProgress(state, content, quest, i)}
               t={t}
               tr={tr}
             />

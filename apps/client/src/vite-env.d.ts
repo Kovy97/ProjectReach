@@ -34,6 +34,9 @@ interface SaveBackupEntry {
   json: string;
 }
 
+/** claude:2026-10-18T14:00:00+02:00 — Ergebnis von `saves:backupPreAscend` (main/saveBackups.ts PreAscendBackupResult). */
+type PreAscendBackupResult = "pre-ascend" | "no-existing" | "skipped-corrupt";
+
 interface SavesBridge {
   readAll(): Promise<Array<string | null>>;
   read(slotId: number): Promise<string | null>;
@@ -45,6 +48,8 @@ interface SavesBridge {
   readBackups(slotId: number): Promise<SaveBackupEntry[]>;
   /** Öffnet `backups\` im Datei-Explorer (Optionen → Spielstand-Daten, Task #288 E). */
   openBackupsFolder(): Promise<void>;
+  /** claude:2026-10-18T14:00:00+02:00 — Sicherung vor dem Prestige-Aufstieg; nur "pre-ascend" erlaubt ihn. */
+  backupPreAscend(slotId: number): Promise<PreAscendBackupResult>;
 }
 
 interface ZoneMapWriteResult {

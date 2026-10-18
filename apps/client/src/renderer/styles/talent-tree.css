@@ -129,6 +129,17 @@
   gap: var(--sp-2);
 }
 
+/* claude:2026-10-18T14:00:00+02:00 — optionales Knotensymbol (Auto-Discovery talents/<baum>/<knoten>.webp). */
+.talent-node-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.talent-node-head .talent-node-name {
+  margin-right: auto;
+}
+
 .talent-node-name {
   font-family: var(--font-head);
   font-size: var(--fs-md);

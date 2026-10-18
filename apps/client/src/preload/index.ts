@@ -30,6 +30,9 @@ contextBridge.exposeInMainWorld("hearthforge", {
     /** Selbstheilung (Task #288 D): Backups eines Slots, neueste zuerst, roher JSON-Inhalt. */
     readBackups: (slotId: number): Promise<SaveBackupEntry[]> =>
       ipcRenderer.invoke("saves:readBackups", slotId),
+    /** claude:2026-10-18T14:00:00+02:00 — Sicherung vor dem Prestige-Aufstieg; nur "pre-ascend" erlaubt ihn. */
+    backupPreAscend: (slotId: number): Promise<PreAscendBackupResult> =>
+      ipcRenderer.invoke("saves:backupPreAscend", slotId),
     /** Optionen → „Backup-Ordner öffnen" (Task #288 E). */
     openBackupsFolder: (): Promise<void> => ipcRenderer.invoke("saves:openBackupsFolder"),
   },

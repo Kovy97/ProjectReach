@@ -76,6 +76,8 @@ import { PetGalleryPage } from "./pages/PetGalleryPage";
 import { FarmPage } from "./pages/FarmPage";
 import { HuntingPage } from "./pages/HuntingPage";
 import { SlayerPage } from "./pages/SlayerPage";
+import { PrestigePage } from "./pages/PrestigePage"; // claude:2026-10-18T14:00:00+02:00 — Scherbenaltar
+import { AscendAwakening } from "./components/AscendAwakening";
 import { EnchantingPage } from "./pages/EnchantingPage";
 import { MailPage } from "./pages/MailPage";
 import { NewHavenPage } from "./pages/NewHavenPage";
@@ -139,6 +141,8 @@ function PageContent({
       return <EnchantingPage />;
     case "newhaven":
       return <NewHavenPage onNavigate={onNavigate} />;
+    case "prestige":
+      return <PrestigePage />; // claude:2026-10-18T14:00:00+02:00
     case "tavern":
       // Release-Schalter: ohne Taverne landet die (unerreichbare) Route auf New Haven.
       return TAVERN_ENABLED ? <TavernPage onNavigate={onNavigate} /> : <NewHavenPage onNavigate={onNavigate} />;
@@ -1023,6 +1027,8 @@ function MainLayout(): JSX.Element {
       <ChampionDefeatCeremony />
       <ApMilestoneCeremony />
       <DeathPopup />
+      {/* claude:2026-10-18T14:00:00+02:00 — Erwachens-Text nach dem Aschesturz (Zustand in GameContext, überlebt den Remount). */}
+      <AscendAwakening />
       <StalematePopup />
       <OnboardingGuide onOpenBugReport={() => setShowBugReport(true)} />
       {/* Versions-„Was ist neu"-Touren (Chef-Auftrag 2026-07-21, v2 Release-Fix-Welle Agent B

@@ -12,19 +12,23 @@
  * mitgetauscht und die Animation abreißen.
  */
 
-type Listener = (opacity: number) => void;
+type Listener = (opacity: number, tone: ScreenFadeTone) => void;
+
+/** claude:2026-10-18T14:00:00+02:00 — "ash": aschgraue Überblendung für den Prestige-Aufstieg (Der Aschesturz). */
+export type ScreenFadeTone = "black" | "ash";
 
 let opacity = 0;
+let tone: ScreenFadeTone = "black";
 const listeners = new Set<Listener>();
 
 function notify(): void {
-  for (const listener of listeners) listener(opacity);
+  for (const listener of listeners) listener(opacity, tone);
 }
 
 /** `<ScreenFade/>` abonniert hierüber die aktuelle Deckkraft (0 = unsichtbar, 1 = Schwarzbild). */
 export function subscribeScreenFade(listener: Listener): () => void {
   listeners.add(listener);
-  listener(opacity);
+  listener(opacity, tone);
   return () => listeners.delete(listener);
 }
 
@@ -46,10 +50,15 @@ const SCREEN_FADE_MS_REDUCED = 120;
  * Blendet auf Schwarz, ruft währenddessen `duringBlack` auf (z. B. `loadGame`/`startNewGame` —
  * darf ein Promise zurückgeben, der Fade-Out wartet darauf) und blendet danach wieder auf.
  */
-export async function runWithScreenFade(duringBlack: () => void | Promise<void>): Promise<void> {
+export async function runWithScreenFade(
+  duringBlack: () => void | Promise<void>,
+  options: { tone?: ScreenFadeTone } = {},
+): Promise<void> {
   const reduced = prefersReducedMotion();
-  const holdMs = reduced ? SCREEN_FADE_MS_REDUCED : SCREEN_FADE_MS;
+  // claude:2026-10-18T14:00:00+02:00 — Der Aufstieg hält die Asche länger als ein Menü-Wechsel (Wärme statt Schnitt).
+  const holdMs = reduced ? SCREEN_FADE_MS_REDUCED : options.tone === "ash" ? SCREEN_FADE_MS * 3 : SCREEN_FADE_MS;
 
+  tone = options.tone ?? "black";
   opacity = 1;
   notify();
   await wait(holdMs);
@@ -62,4 +71,7 @@ export async function runWithScreenFade(duringBlack: () => void | Promise<void>)
 
   opacity = 0;
   notify();
+  // Ton erst nach dem Ausblenden zurücksetzen, sonst springt die Farbe mitten im Auslaufen.
+  const resetAfter = tone === "ash" ? 1000 : 0;
+  if (resetAfter > 0) window.setTimeout(() => { tone = "black"; }, resetAfter);
 }

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { getSidebarPages } from "../navigation";
+import { prestigeNavVisible } from "../util/prestigeNav";
 import { getSidebarIcon } from "../sidebarIcons";
 import { getSkillIcon } from "../skillIcons";
 import { useGameControl, useGameSelector, useGameState, tupleEquals } from "../game/GameContext";
@@ -41,7 +42,10 @@ interface SidebarProps {
 
 export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element {
   const { t } = useI18n();
-  const pages = getSidebarPages();
+  // claude:2026-10-18T14:00:00+02:00 — Scherbenaltar-Eintrag erst sichtbar, wenn das Ziel erreichbar ist
+  // (Kapitel 21 eingelöst oder schon ein Aufstieg); Frühspieler sehen ihn nicht.
+  const showPrestige = useGameSelector(prestigeNavVisible);
+  const pages = getSidebarPages().filter((p) => p.id !== "prestige" || showPrestige);
 
   // Local collapse state for combat sub-skills
   const [combatOpen, setCombatOpen] = useState(false);

@@ -23,6 +23,21 @@ import { getUiIcon } from "../uiIcons";
 
 const LOCKED_ICON_URL = getUiIcon("icon_locked");
 
+// claude:2026-10-18T14:00:00+02:00 — Knotensymbole per Auto-Discovery: `assets/ui/talents/<baumId>/<knotenId>.webp`
+// (z. B. `talents/prestige/startingGold.webp`). Fehlt die Datei, bleibt der Knoten ohne Symbol (kein Fehler).
+const NODE_ICONS = import.meta.glob<string>("../assets/ui/talents/*/*.{png,webp}", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const NODE_ICON_BY_KEY: Record<string, string> = {};
+for (const [path, url] of Object.entries(NODE_ICONS)) {
+  const parts = path.split("/");
+  const file = parts.pop()?.replace(/\.(png|webp)$/, "");
+  const tree = parts.pop();
+  if (file && tree) NODE_ICON_BY_KEY[`${tree}/${file}`] = url;
+}
+
 type TFn = (key: string) => string;
 
 /** Formatiert einen Rangwert je Wirkungsart (TALENT_EFFECT_FORMAT). */
@@ -32,6 +47,9 @@ export function formatTalentValue(kind: TalentEffectKind, value: number, t: TFn)
       return t("talent.fmt.pct").replace("{n}", formatPct1(value));
     case "mult":
       return t("talent.fmt.mult").replace("{n}", formatNum(value));
+    // claude:2026-10-18T14:00:00+02:00 — Ganzzahlen (Gold, Stapel, Teile) im Narbenbuch.
+    case "int":
+      return formatNum(value);
     default:
       return "";
   }
@@ -103,6 +121,9 @@ export function TalentTree({ treeId, lockedHint, currencyIcon }: TalentTreeProps
         {linkedUp && <span className={`talent-link${linkMet ? " is-met" : ""}`} aria-hidden="true" />}
         <article className={`talent-node is-${st}`}>
           <header className="talent-node-head">
+            {NODE_ICON_BY_KEY[`${tree!.id}/${node.id}`] && (
+              <img loading="lazy" decoding="async" src={NODE_ICON_BY_KEY[`${tree!.id}/${node.id}`]} alt="" className="talent-node-icon" />
+            )}
             <span className="talent-node-name">{tr(node.name)}</span>
             {st === "locked" && LOCKED_ICON_URL && (
               <img loading="lazy" decoding="async" src={LOCKED_ICON_URL} alt="" className="talent-node-lock" />

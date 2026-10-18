@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { content } from "@hearthforge/content";
-import { collectAllMail, collectMail } from "@hearthforge/engine";
+import { collectAllMail, collectMail, mailCollectBlocked } from "@hearthforge/engine";
+import type { MailCollectBlockReason } from "@hearthforge/engine";
 import type { MailLetterSender, MailMessage } from "@hearthforge/shared";
 import { useGameState } from "../game/GameContext";
 import { useI18n } from "../i18n";
@@ -63,11 +64,14 @@ function MailRow({
   active,
   onClick,
   t,
+  blocked,
 }: {
   mail: MailMessage;
   active: boolean;
   onClick: () => void;
   t: (k: string) => string;
+  /** claude:2026-10-18T14:00:00+02:00 — Sperrgrund (Prestige): die Zeile trägt einen Schloss-Hinweis. */
+  blocked?: MailCollectBlockReason | null;
 }): JSX.Element {
   return (
     <button
@@ -93,6 +97,7 @@ function MailRow({
               {t("mail.itemCount").replace("{n}", String(mailUnitCount(mail)))}
             </>
           )}
+          {blocked && <span className="mail-row-lock"> · {t("mail.blocked.badge")}</span>}
         </span>
       </span>
     </button>
@@ -103,10 +108,13 @@ function MailDetail({
   mail,
   onCollect,
   t,
+  blocked,
 }: {
   mail: MailMessage;
   onCollect: () => void;
   t: (k: string) => string;
+  /** claude:2026-10-18T14:00:00+02:00 — Sperrgrund (Prestige `prestige_locked`): Abholen ist gesperrt, nichts geht verloren. */
+  blocked?: MailCollectBlockReason | null;
 }): JSX.Element {
   const hasAttachments = mailUnitCount(mail) > 0;
   return (
@@ -137,7 +145,7 @@ function MailDetail({
               {t("mail.itemCount").replace("{n}", String(mailUnitCount(mail)))}
             </span>
           </div>
-          <button type="button" className="shop-citadel-btn" onClick={onCollect}>
+          <button type="button" className="shop-citadel-btn" onClick={onCollect} disabled={!!blocked} title={blocked ? t(`mail.blocked.${blocked}`) : undefined}>
             {t("mail.collectOne")}
           </button>
         </div>
@@ -152,12 +160,15 @@ function MailDetail({
           Überlauf-Mail (s. `MailMessage`-JSDoc) und zeigen den Sammeln-Button hier direkt über dem
           Grid (der Kopf trägt bei ihnen schon die Absender-Zeile, keinen zweiten); Überlauf-Post
           behält ihren Button im bestehenden Kopf oben. */}
+      {blocked && hasAttachments && (
+        <p className="mail-blocked-note" role="status">{t(`mail.blocked.${blocked}`)}</p>
+      )}
       {hasAttachments && (
         <>
           {mail.kind === "letter" ? (
             <div className="mail-letter-attach-head">
               <span className="mail-attachments-label">{t("mail.attachments")}</span>
-              <button type="button" className="shop-citadel-btn shop-citadel-btn--sm" onClick={onCollect}>
+              <button type="button" className="shop-citadel-btn shop-citadel-btn--sm" onClick={onCollect} disabled={!!blocked} title={blocked ? t(`mail.blocked.${blocked}`) : undefined}>
                 {t("mail.collectOne")}
               </button>
             </div>
@@ -197,11 +208,14 @@ export function MailPage(): JSX.Element {
   // ausgewählte Mail vollständig geleert und damit aus `state.mailbox` entfernt hat.
   const selected = mailbox.find((m) => m.id === selectedId) ?? mailbox[0] ?? null;
 
-  const flashPartialNotice = (): void => {
+  const flashNotice = (text: string): void => {
     if (noticeTimerRef.current !== null) window.clearTimeout(noticeTimerRef.current);
-    setNotice(t("mail.partialNotice"));
+    setNotice(text);
     noticeTimerRef.current = window.setTimeout(() => setNotice(null), 4000);
   };
+  const flashPartialNotice = (): void => flashNotice(t("mail.partialNotice"));
+  // claude:2026-10-18T14:00:00+02:00 — Sperrhinweis statt „Inventar voll": `blocked` kommt aus collectMail/collectAllMail.
+  const flashBlockedNotice = (code: MailCollectBlockReason): void => flashNotice(t(`mail.blocked.${code}`));
 
   // codex:2026-08-31T22:38:00+02:00 — Versand ist auch bei leerem Postfach erreichbar; der alte
   // Early-Return hätte das wichtigste neue Verb ausgerechnet im normalen Leerzustand versteckt.
@@ -236,7 +250,8 @@ export function MailPage(): JSX.Element {
                 className="shop-citadel-btn shop-citadel-btn--sm"
                 onClick={() => {
                   const res = collectAllMail(state, content);
-                  if (res.partial) flashPartialNotice();
+                  if (res.blocked) flashBlockedNotice(res.blocked);
+                  else if (res.partial) flashPartialNotice();
                 }}
               >
                 {t("mail.collectAll")}
@@ -250,6 +265,7 @@ export function MailPage(): JSX.Element {
                   active={mail.id === selected?.id}
                   onClick={() => setSelectedId(mail.id)}
                   t={t}
+                  blocked={mailUnitCount(mail) > 0 ? mailCollectBlocked(state, content, mail) : null}
                 />
               ))}
             </div>
@@ -259,9 +275,11 @@ export function MailPage(): JSX.Element {
               <MailDetail
                 mail={selected}
                 t={t}
+                blocked={mailCollectBlocked(state, content, selected)}
                 onCollect={() => {
                   const res = collectMail(state, content, selected.id);
-                  if (res.partial) flashPartialNotice();
+                  if (res.blocked) flashBlockedNotice(res.blocked);
+                  else if (res.partial) flashPartialNotice();
                 }}
               />
             )}

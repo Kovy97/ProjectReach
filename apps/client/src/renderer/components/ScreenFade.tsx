@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { subscribeScreenFade } from "../util/screenFade";
+import type { ScreenFadeTone } from "../util/screenFade";
 
 /**
  * Wiederverwendbare Bildschirm-Überblendung (Chef-Kurswechsel 26.08.2026) — ein schwarzes
@@ -13,10 +14,12 @@ import { subscribeScreenFade } from "../util/screenFade";
  */
 export function ScreenFade(): JSX.Element {
   const [opacity, setOpacity] = useState(0);
-  useEffect(() => subscribeScreenFade(setOpacity), []);
+  // claude:2026-10-18T14:00:00+02:00 — Ton "ash" für den Prestige-Aufstieg (screen-fade.css `.screen-fade--ash`).
+  const [tone, setTone] = useState<ScreenFadeTone>("black");
+  useEffect(() => subscribeScreenFade((o, t) => { setOpacity(o); setTone(t); }), []);
   return (
     <div
-      className="screen-fade"
+      className={`screen-fade${tone === "ash" ? " screen-fade--ash" : ""}`}
       style={{ opacity, pointerEvents: opacity > 0 ? "auto" : "none" }}
       aria-hidden="true"
     />

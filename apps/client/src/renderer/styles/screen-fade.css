@@ -11,6 +11,14 @@
   transition: opacity 0.35s ease;
 }
 
+/* claude:2026-10-18T14:00:00+02:00 — Asche-Überblendung des Prestige-Aufstiegs: kaltes Aschgrau mit dunklem Rand
+   statt reinem Schwarz, langsamer Ein- und Auslauf. */
+.screen-fade.screen-fade--ash {
+  background:
+    radial-gradient(ellipse at 50% 55%, rgba(92, 88, 82, 0.55) 0%, rgba(40, 38, 35, 0.9) 55%, #0b0a09 100%);
+  transition: opacity 0.9s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .screen-fade {
     transition: none;

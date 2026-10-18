@@ -69,6 +69,7 @@
 
 /* 11. Slayer skill page */
 @import "./slayer.css";
+@import "./prestige.css"; /* claude:2026-10-18T14:00:00+02:00 - Scherbenaltar / Aschesturz */
 @import "./talent-tree.css"; /* claude:2026-10-18T00:30:00+02:00 — Talentbaum (Jagdbuch) */
 
 /* 11b. Variant Pouch modal + rows (Task #246 Phase C — container-cell inventory variants) */
