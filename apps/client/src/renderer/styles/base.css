@@ -228,13 +228,17 @@ body {
      `bg_tileable_stone` (nicht das alte raue Grau von vor dem 09.07.). Die Content-Panels/Docks sind
      jetzt HOLZ → Holz-Panels auf einer Steinwand. GEKACHELT, kein Stretch (Standing Rule). Neutral-
      dunkle Abdunklung, damit der Stein grau bleibt (nicht braun) und Panels/Text lesbar bleiben. */
+  /* claude:2026-10-18T21:00:00+02:00 — Chef 18.10.: neue Steintextur `bg_tileable_stone_dark` (1024, seamless geprüft:
+     Ränder pixelgleich, keine Randabdunklung). Sie ist heller/kontrastreicher als die alte (Helligkeit 45 statt 27), darum
+     Abdunklung 0.42 → 0.60 (Endhelligkeit ≈ wie bisher, Struktur etwas sichtbarer); Kachel 512 px = halbe Größe, damit die
+     Steine ähnlich groß wirken und die Wiederholung auf großen Flächen nicht auffällt. Alte Datei bleibt im Bestand. */
   background:
-    linear-gradient(rgba(14, 14, 16, 0.42), rgba(14, 14, 16, 0.42)),
+    linear-gradient(rgba(14, 14, 16, 0.6), rgba(14, 14, 16, 0.6)),
     /* codex:2026-07-31T00:32:37+02:00 — Kein `fixed`-Attachment: bei großen
        Viewports musste Chromium die Steinfläche sonst bei vielen UI-Paints neu zusammensetzen. */
-    url("../assets/bg_tileable_stone.webp") top left repeat scroll,
+    url("../assets/bg_tileable_stone_dark.webp") top left repeat scroll,
     var(--bg);
-  background-size: auto, 450px 450px;
+  background-size: auto, 512px 512px;
   color: var(--text);
 }
 
