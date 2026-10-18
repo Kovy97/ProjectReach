@@ -1,82 +1,51 @@
 UPLOAD FERTIG
 =============
 
-Grim Reach 1.2.3 liegt im Depot.
+Grim Reach 1.3.0 "The Idol Hall Awakens" liegt im Depot.
 
-  BuildID     25036037   (ersetzt 25032454/25026461 = 1.2.2 und 25019798 = 1.2.1)
-  Zeit        31.08.2026, 14:19
+  BuildID     26033657   (ersetzt 25036037 = 1.2.3)
+  Zeit        18.10.2026, 23:39 (steamcmd-Zeitstempel)
   Depot       4915451 (App 4915450)
-  Paket       apps/client/release/win-unpacked, Exe-Version 1.2.3.0
+  Paket       apps/client/release/win-unpacked, Version 1.3.0
   setlive     LEER - der Build ist NICHT live, das schaltest du in Steamworks
+  Git         main = Tag v1.3.0 (GitHub Kovy97/ProjectReach)
 
-Verifiziert ueber steam/output/app_build_4915450.log:
-"Successfully finished AppID 4915450 build (BuildID 25036037)."
+Verifiziert ueber die steamcmd-Ausgabe:
+"Successfully finished AppID 4915450 build (BuildID 26033657)."
+
+Vor dem Upload geprueft (auf genau diesem Stand):
+  Typecheck 5/5, Engine 1807, Content 310, Persistence 453 inkl. Save-Vault (v56 ... v88),
+  Client 261, Produktions-Build gruen. Im Paket nachgewiesen: aktuelles Renderer-Bundle
+  mit den Balance-Werten vom 19.10. SAVE_VERSION 88 mit Migration aus allen ausgelieferten Versionen.
 
 
 WAS DU NOCH TUN MUSST
 ---------------------
-1. Steamworks -> SteamPipe -> Builds -> Build <neu> -> Branch "default" -> live setzen.
-2. Steam-Post veroeffentlichen. Text liegt fertig (nur Englisch):
-   G:\GameDev\design\steam-post-1.2.3.txt
+1. Steamworks -> SteamPipe -> Builds -> Build 26033657 -> Branch "default" -> live setzen.
+2. Steam-Post veroeffentlichen. Texte liegen fertig (so wie von dir gespeichert, 7 Sprachen):
+   G:\GameDev\design\steam-post-1.3.0.txt (EN) und steam-post-1.3.0-de/-fr/-es/-ptbr/-ru/-zh.txt
 3. Anwendung -> Veroeffentlichen.
 
-
-WAS IN 1.2.3 DRIN IST
----------------------
-Offline-Rueckkehr neu gestaltet (Umsetzung Mira, Variante 02 "Der Beutetisch" nach deiner Freigabe)
-  * Die Rueckkehr-Ansicht ist keine lange Spalte mehr, sondern eine Flaeche: Beute in der Mitte als
-    Hauptbuehne, Fortschritt und Siedlungsarbeit als schmalere Register daneben.
-  * Mehrere gleichzeitige Ereignisse bleiben sichtbar - Begleiterfund, Tod und Arbeitsstopp
-    konkurrierten vorher um denselben Platz, einer verdeckte die anderen.
-  * Leere Gruppen entfernen ihre Spalte, statt ein Loch zu lassen.
-  * Drei Spalten, bei schmalen Fenstern zwei, dann eine.
-  * offline-stage.css ist dabei um netto rund 600 Zeilen geschrumpft.
-  * Am Ertrag aendert sich NICHTS - reine Darstellung.
-  * Neuer Textschluessel in allen sieben Sprachen (diesmal von Mira vollstaendig geliefert).
-
-Nur fuer dich (nicht in den Patchnotes): Dev-Zeitraffer hat einen Knopf, der genau diese Buehne
-mit Demo-Daten in jedem Abschnitt oeffnet - damit laesst sich der Umbau ohne acht Stunden
-Abwesenheit begutachten. Haengt hinter devToolsAllowed, im ausgelieferten Spiel nicht vorhanden.
-
-ALLES DARUNTER IST BEREITS MIT 1.2.2 LIVE - hier nur noch zur Nachlese:
-
-Dungeon-Beutezaehler (Spieler-Report)
-  * Der Kampfschirm zeigte im Dungeon dauerhaft "0/6" und schwarze Silhouetten, egal wie viel schon
-    erbeutet war. Dungeon-Gegner tragen eine Varianten-Id; der Kill schrieb den Fund korrekt unter
-    dem Grundmonster, die Anzeige suchte ihn unter der Varianten-Id und fand nie etwas. Ausserhalb
-    von Dungeons faellt das nicht auf, weil dort beide Ids gleich sind.
-  * Bestehende Funde erscheinen ab sofort korrekt, niemand muss nachfarmen.
-  * Fuenf Guard-Tests halten das fest.
-
-Meisterringe kalibriert (Spieler-Report + dein GO)
-  * Der legendaere Blademaster's Ring (Attack 99, 50.000 Gold) gab weniger Staerke als ein Ruby Ring
-    (Stufe 34, 640 Gold). Das galt fuer alle 23: 3 bis 5 Attributpunkte, waehrend das Schmuck-Rework
-    die Craft-Leiter auf 17 angehoben hatte.
-  * Neu und bewusst HINTER den Endgame-Ringen: Kampfringe 12, Skilling-Ringe 9 neben ihrem Perk,
-    Ring der Vollendung 16. Godgem (17) und Ninth Warden (25) bleiben oben.
-
-Item-Karte auf Russisch (Spieler-Report zu den Tonika)
-  * Die Knopfleiste war auf 520px gedeckelt, obwohl die Karte 779px breit ist - die laengeren
-    russischen Beschriftungen liefen ueber den Rand, "Verkaufen" war abgeschnitten. Deckel auf 720px,
-    Umbruch als Netz fuer noch laengere Sprachen.
+Store-Medien (fuer die Store-Seite, nicht Teil des Builds):
+   Screenshots  G:\GameDev\marketing\1.3.0-media\screenshots\  (12 Stueck, EN, 1920x1080)
+   Trailer      G:\GameDev\marketing\1.3.0-media\trailer\GrimReach-Trailer-1080p30-ohne-Ton.mp4
+                (60 s, ohne Ton, Schnittliste daneben)
 
 
-SAVE-KOMPATIBILITAET
---------------------
-SAVE_VERSION bleibt 86, keine Migration. Kompat-Vault gruen (42 Tests, jede je ausgelieferte
-Save-Version laedt verlustfrei).
+WAS IN 1.3.0 DRIN IST (Kurzfassung, Details im Steam-Post)
+-----------------------------------------------------------
+  * Neuer gemalter Look: Texturen, Holz-/Eisenrahmen, Holzknoepfe, neues Hauptmenue (Highlands,
+    eigene 21:9-Fassung), neues Logo, aufgeraeumte Charakterseite, neue Inventartasche,
+    New Haven mit eigenen Materialien.
+  * Jaegerkodex (Slayer-Talentbaum ab Slayer 85), alle 23 Begleiter ueberarbeitet (Echo).
+  * Der Aschesturz (Prestige): 4x99 + Kapitel 21, Narbenbuch, Bilanzfenster beim Aufstieg,
+    automatische Sicherung vor dem Aufstieg.
+  * Goetzenhalle offen (7 Wesen, 2 Champions), Chronik 22-27 mit der Getilgten Kapelle,
+    Slayer-Turm 6-8, Paragon-Truhen ueber Etage 20, 18 Waffen ab Stufe 95, Holz/Fisch bis 99.
+  * Komfort: Meisterschaft ab Stufe 50 mit Mindest-XP, Ward Leech im Protokoll, Hinweise zu
+    nicht stapelnden Effekten, echte Bank-Plaetze, vierter Werkzeugplatz, Rabenfracht.
+  * Balance 19.10.: Goetzenhalle mehr XP, Kapelle haerter und lohnender.
+  * Fixes u. a.: Krypta-Erfolge, Bestiarium-Zaehlung, Kapitel 11, Droprate-Anzeige im Fund-Toast.
 
-
-GATES (alle gruen vor dem Upload)
----------------------------------
-  Content 302, Engine 1654 (5 neue), Persistence 421, Client 226
-  Typecheck 5/5 Pakete, Build gruen
-
-
-NICHT ENTHALTEN
----------------
-  * Schriftumschaltung und Auto-Flucht - weiter offen, s. design/offen-1.2.1.md.
-  * Elder Bear: KEIN Fehler. Er ist der Boss von "The Wildwood Hunt" und darum bewusst nicht in der
-    Zonenliste (dungeonOnly). Verwirrend ist nur, dass seine Boss-Welle im Dungeon "Der Alte vom
-    Wildwald" heisst - der Name "Altbaer" taucht dort nirgends auf. Vorschlag fuer spaeter: den
-    Monsternamen an der Boss-Welle mitzeigen.
+Hinweis: Die Patchnotes nennen Paragon-Truhen ab Etage 25, 50 und 100. Die Stufen 50/100 sind im
+Spiel, laut Balance-Messung aber derzeit nicht erreichbar (design/1.3.0-balance-encounter.md, Abschnitt 4).

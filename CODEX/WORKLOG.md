@@ -52,6 +52,10 @@ ich so schon abgespeichert“), Stufen 50/100 bleiben im Spiel. Endprüfung dana
 Persistence 453 inkl. Vault, Client 261, Build grün. Testspiel (isoliertes Profil) mit diesem Stand neu gestartet;
 echte Spielstände per SHA1 unverändert. Offen: Chef-Freigabe dieses Stands im Testspiel, Push/Merge/Upload nur auf GO.
 
+**Nachtrag 19.10. (claude:2026-10-19T09:00:00+02:00):** Chef-GO („Ist freigegeben. Go!“): 1.3.0 hochgeladen,
+BuildID 26033657, setlive leer (Chef schaltet live), Übergabe `UPLOAD-FERTIG.txt`. `main` auf den Release-Stand
+vorgespult, Tag `v1.3.0`, in vier Fast-Forward-Etappen nach GitHub gepusht (2-GB-Push-Grenze).
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
