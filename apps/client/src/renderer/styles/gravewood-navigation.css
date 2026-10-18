@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* claude:2026-10-17T12:25:00+02:00 — UI-Fundament: alle .topbar*-Regeln dieser Datei entfernt. Die
@@ -630,6 +631,7 @@
    Navigationsschalen: Die 28-px-Ecken schließen nun direkt an die geraden Holzleisten an. */
 #root .sidebar::before {
   border-image-source: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") !important;
+  border-image-repeat: round !important;
 }
 
 /* codex:2026-08-01T09:08:19+02:00 — Der schmale Kampfausklapper gehört vollständig zur

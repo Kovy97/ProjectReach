@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -32,7 +33,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   background:
     linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
     url("../assets/bg_black.webp") repeat;
@@ -245,7 +246,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   border-radius: 0;
   background:
     linear-gradient(rgba(60, 40, 8, 0.70), rgba(40, 26, 6, 0.85)),
@@ -317,7 +318,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   pointer-events: none;
   z-index: 1;
 }
@@ -359,7 +360,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   background:
     linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)),
     url("../assets/bg_black.webp") repeat;
@@ -417,7 +418,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   background:
     linear-gradient(rgba(40, 24, 52, 0.55), rgba(40, 24, 52, 0.55)),
     url("../assets/bg_black.webp") repeat;
@@ -482,7 +483,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   background:
     linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)),
     url("../assets/bg_black.webp") repeat;
@@ -532,7 +533,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   background:
     linear-gradient(rgba(24, 16, 8, 0.78), rgba(24, 16, 8, 0.78)),
     url("../assets/bg_black.webp") repeat;
@@ -775,7 +776,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   background:
     linear-gradient(rgba(14, 9, 4, 0.68), rgba(14, 9, 4, 0.68)),
     url("../assets/bg_black.webp") repeat;
@@ -971,7 +972,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: clamp(7px, 0.78vw, 11px);
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 fill stretch;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 fill round;
   background:
     linear-gradient(rgba(8, 11, 12, 0.86), rgba(5, 7, 8, 0.94)),
     url("../assets/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
@@ -1440,7 +1441,7 @@
 /* Marken-Zähler: gleiches Kopf-Chip-Rezept wie .slayer-balance / .shopv2-balance (Holzrahmen, dunkler Grund). */
 .quests-contract-wall .quests-header .quest-token-badge {
   border: var(--frame-w) solid transparent;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 stretch;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   background:
     linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)),
     url("../assets/bg_black.webp") repeat;

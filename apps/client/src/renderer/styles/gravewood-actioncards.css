@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:30:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /*
@@ -26,7 +27,7 @@
   border-style: solid !important;
   border-color: transparent !important;
   border-width: 4px !important;
-  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 round !important;
   background:
     radial-gradient(circle at 50% 15%, rgba(213, 155, 76, 0.2), transparent 58%),
     linear-gradient(rgba(20, 13, 8, 0.62), rgba(10, 8, 7, 0.74)),
@@ -187,7 +188,7 @@
   margin: 0;
   padding: 6px 8px !important;
   border: 3px solid transparent;
-  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 round;
   overflow-y: auto;
   align-content: flex-start;
 }
@@ -215,7 +216,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 3px;
-  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 round;
   background:
     linear-gradient(rgba(20, 44, 18, 0.36), rgba(11, 24, 10, 0.46)),
     var(--gw-action-leather) center / 640px 640px repeat;
@@ -261,7 +262,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 3px;
-  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 round;
   background:
     linear-gradient(rgba(16, 11, 7, 0.48), rgba(10, 8, 7, 0.6)),
     var(--gw-action-leather) center / 640px 640px repeat;
@@ -323,7 +324,7 @@
   align-self: stretch;
   padding: 5px 8px;
   border: 3px solid transparent;
-  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 round;
   background:
     linear-gradient(rgba(12, 9, 6, 0.58), rgba(7, 6, 5, 0.68)),
     var(--gw-action-leather) center / 640px 640px repeat;

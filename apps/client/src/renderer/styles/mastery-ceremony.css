@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
    MASTERY CEREMONY — Meisterweihe (Level 99, design/master-capes-konzept.md §3).
@@ -76,7 +77,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 12px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   background:
     linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)),
     url("../assets/bg_black.webp") repeat;

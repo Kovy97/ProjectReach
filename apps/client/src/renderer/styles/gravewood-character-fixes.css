@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /*
@@ -44,7 +45,7 @@
   border-image-slice: 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   border-radius: 0;
   box-shadow: none;
 }

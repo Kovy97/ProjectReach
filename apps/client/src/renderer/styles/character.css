@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* codex:2026-08-01T09:30:10+02:00 — Alle Holz-9-Slice-Bindungen dieser Datei nutzen den nahtbereinigten Runtime-Alias. */
 /* ═══════════════════════════════════════════════════════════
@@ -283,7 +284,7 @@
   border-radius: 0;
   border-style: solid;
   border-width: 3px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   background: var(--slot);
   overflow: hidden;
 }
@@ -1036,7 +1037,7 @@
   /* Prominenter Holz-9-Slice-Rahmen ums Charakter-Portrait — größer für mehr Präsenz. */
   border-style: solid;
   border-width: 8px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
 }
 
 /* Task #283: kurze Fensterhöhen-Overrides (Chef-Testauflösung 1280×720) leben gesammelt am
@@ -1090,7 +1091,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   border-radius: 0;
   background:
     linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)),
@@ -1177,7 +1178,7 @@
   margin: 0 0 6px;
   border-style: solid;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   background:
     linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)),
     url("../assets/bg_black.webp") repeat;
@@ -1319,7 +1320,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   background:
     radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--attr-color, var(--gold)) 20%, transparent) 0%, transparent 68%),
     linear-gradient(rgba(0,0,0,0.34), rgba(0,0,0,0.54)),
@@ -2161,7 +2162,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   border-radius: 0;
   background-color: transparent;
   background-image:
@@ -2228,7 +2229,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   border-radius: 0;
   background:
     linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)),
@@ -2356,7 +2357,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 5px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   background: transparent;
   pointer-events: none;
   z-index: 1;
@@ -2381,7 +2382,7 @@
   /* Holz-9-Slice-Rahmen statt simplem gold-glow inset-shadow. */
   border-style: solid;
   border-width: 4px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   border-radius: 0;
   box-shadow: inset 0 0 10px rgba(0,0,0,0.55);
   display: flex;
@@ -2487,7 +2488,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 3px;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 ;
+  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 round;
   background: transparent;
   pointer-events: none;
   z-index: 1;
@@ -2784,7 +2785,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   background: transparent;
   pointer-events: none;
   z-index: 1;

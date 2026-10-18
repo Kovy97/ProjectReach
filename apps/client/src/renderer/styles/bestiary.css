@@ -1,3 +1,4 @@
+/* claude:2026-10-18T23:50:00+02:00 — Holz-9-Slice (Chef 18.10. „sehr stretchy“): Kanten kacheln (round) statt dehnen; die Kantenstücke im Atlas sind nahtlos. */
 /* claude:2026-10-18T23:10:00+02:00 — Painterly-Maßstab (Chef 18.10.): Texturkacheln vergrößert. */
 /* ═══════════════════════════════════════════════════════════
    BESTIARY — "REISE DURCH DEN REACH" (Konzept 4, Chef-Wahl 2026-08-03)
@@ -256,7 +257,7 @@
   border-image-slice: 28 28 28 28;
   border-image-width: 2.15 1.87 2.15 1.87;
   border-image-outset: 0;
-  border-image-repeat: stretch;
+  border-image-repeat: round;
   /* Karte auf Leder statt Holz-Fläche (Chef 26.08.: "kein Holz") — der geschnitzte Eckrahmen
      bleibt Struktur-Chrome des Citadel-UI, nur die Fläche dahinter wechselt (Muster
      `slayer-shop-card`/item-wiki.css: "Karten auf Leder", 280px gekachelt, nie gestreckt). */
