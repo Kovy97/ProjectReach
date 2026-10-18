@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Texturen hinter Knöpfen</title>
+<!-- claude:2026-10-19T00:40:00+02:00 — Chef 19.10.: Demo, alle Texturen hinter Spielknöpfen (lokal öffnen). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #e4cc83;
+    --gold-hi: #ffe29b;
+    --bg: #0e0f11;
+    --panel: #15161a;
+    --line: rgba(216, 184, 112, 0.22);
+    --dark: 0.18;
+    --tile: 640px;
+    --iron: url("../../apps/client/src/renderer/assets/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+    --wood: url("../../apps/client/src/renderer/assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(rgba(14, 14, 16, 0.6), rgba(14, 14, 16, 0.6)),
+      url("../../apps/client/src/renderer/assets/bg_tileable_stone_dark.webp") 0 0 / 512px repeat, var(--bg);
+    color: var(--gold);
+    font-family: "IM Fell English SC", Georgia, serif;
+  }
+  header {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center;
+    padding: 14px 20px;
+    background: rgba(10, 10, 12, 0.92);
+    border-bottom: 1px solid var(--line);
+  }
+  header h1 { margin: 0; font-size: 26px; font-weight: 400; letter-spacing: 1px; }
+  .ctl { display: flex; align-items: center; gap: 10px; font-size: 17px; }
+  .ctl input[type=range] { width: 160px; accent-color: #c9a35b; }
+  .seg { display: inline-flex; border: 1px solid var(--line); }
+  .seg button {
+    font: inherit; font-size: 16px; color: var(--gold); background: transparent; border: 0;
+    padding: 5px 12px; cursor: pointer;
+  }
+  .seg button.on { background: rgba(201, 163, 91, 0.22); color: var(--gold-hi); }
+  main { padding: 18px 20px 40px; }
+  h2 { font-weight: 400; font-size: 22px; margin: 22px 0 6px; letter-spacing: 1px; }
+  .note { color: #b9a77d; font-family: Georgia, serif; font-size: 15px; margin: 0 0 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+  .card {
+    background: rgba(18, 18, 22, 0.82);
+    border: 1px solid var(--line);
+    padding: 12px 14px 14px;
+  }
+  .card h3 { margin: 0 0 2px; font-weight: 400; font-size: 19px; color: var(--gold-hi); }
+  .card .src { font-family: Georgia, serif; font-size: 12.5px; color: #9c8f73; margin-bottom: 10px; word-break: break-all; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; min-height: 54px; margin: 8px 0 0;
+    font: inherit; font-size: 20px; color: var(--gold);
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.85);
+    border: 6px solid transparent;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(168, 119, 56, .17), transparent 75%),
+      linear-gradient(rgba(8, 9, 10, var(--dark)), rgba(2, 3, 4, calc(var(--dark) + .2))),
+      var(--tex) center / var(--tile) var(--tile) repeat;
+    background-origin: border-box; background-clip: border-box;
+    cursor: pointer;
+    box-shadow: inset 0 0 14px #0008, 0 3px 5px #0008;
+  }
+  body[data-frame=iron] .btn { border-image: var(--iron) 96 / 13px 12px round; }
+  body[data-frame=wood] .btn { border-image: var(--wood) 28 / 9px round; }
+  .btn:hover { color: #ffe5a2; box-shadow: inset 0 0 14px #b9832b26, 0 0 7px #ba8a4538, 0 3px 5px #0008; }
+  .btn.active {
+    color: var(--gold-hi);
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(183, 119, 35, .29), transparent 85%),
+      linear-gradient(rgba(33, 23, 12, var(--dark)), rgba(16, 11, 6, calc(var(--dark) + .06))),
+      var(--tex) center / var(--tile) var(--tile) repeat;
+    background-origin: border-box; background-clip: border-box;
+    box-shadow: inset 0 -2px #d1a24f, inset 0 0 18px #b37c292b, 0 3px 6px #0009;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .row .btn { min-height: 44px; font-size: 17px; letter-spacing: 1px; }
+  .side { justify-content: space-between; padding: 0 14px; }
+  .side small { font-size: 16px; opacity: .85; }
+  .swatch { height: 70px; margin-top: 10px; background: var(--tex) center / var(--tile) var(--tile) repeat; border: 1px solid var(--line); }
+</style>
+</head>
+<body data-frame="iron">
+<header>
+  <h1>Texturen hinter Knöpfen</h1>
+  <div class="ctl">Rahmen
+    <span class="seg" id="frame"><button data-v="iron" class="on">Eisen</button><button data-v="wood">Holz</button></span>
+  </div>
+  <label class="ctl">Abdunklung <input id="dark" type="range" min="0" max="70" value="18"> <span id="darkv">18 %</span></label>
+  <label class="ctl">Kachel <input id="tile" type="range" min="256" max="1280" step="64" value="640"> <span id="tilev">640 px</span></label>
+</header>
+<main>
+  <h2>Im Spiel (tonwert-angeglichen)</h2>
+  <p class="note">So wie die Texturen jetzt im Spiel liegen: Helligkeit wie die alten Flächen, Kontrast höchstens verdoppelt.</p>
+  <div class="grid" id="game"></div>
+  <h2>Neu, roh aus dem Download-Ordner</h2>
+  <p class="note">Die gelieferten Originale ohne Angleichung, inklusive Wood 2, Wood 3 und Dirt, die noch nirgends eingesetzt sind.</p>
+  <div class="grid" id="raw"></div>
+</main>
+<script>
+  const A = "../../apps/client/src/renderer/assets/";
+  const D = "file:///C:/Users/MSchu/Downloads/";
+  const GAME = [
+    ["Holz (Navigation, quer)", A + "ui/gravewood/textures/texture-wood-nav.webp"],
+    ["Basalt", A + "ui/gravewood/v3/textures/texture-basalt.webp"],
+    ["Holz (Gravewood)", A + "ui/gravewood/textures/texture-gravewood.webp"],
+    ["Holz (Planken-Ersatz)", A + "bg_tileable_wood.webp"],
+    ["Leder (Gravewood)", A + "ui/gravewood/textures/texture-leather.webp"],
+    ["Leder (dunkel)", A + "bg_tileable_leather.webp"],
+    ["Linen (Stoff)", A + "ui/gravewood/textures/texture-umber-cloth.webp"],
+    ["Copper (Bronze)", A + "ui/gravewood/textures/texture-smoky-bronze.webp"],
+    ["Stone light (Schiefer)", A + "ui/gravewood/v3/textures/texture-cold-slate.webp"],
+    ["Stone light (hell)", A + "ui/gravewood/v3/textures/texture-ash-stone.webp"],
+    ["Stein dunkel (Hintergrund)", A + "bg_tileable_stone_dark.webp"],
+    ["Moos (Palette Grün)", A + "bg_green.webp"],
+    ["Pergament", A + "ui/gravewood/textures/texture-parchment.webp"],
+  ];
+  const RAW = [
+    ["Wood", D + "texture_new_wood.png"], ["Wood 2", D + "texture_new_wood2.png"], ["Wood 3", D + "texture_new_wood3.png"],
+    ["Basalt", D + "texture_new_basalt.png"], ["Stein dunkel", D + "GrimReach_Stone_DarkFantasy_Seamless_1024.png"],
+    ["Stone light", D + "texture_new_stone_light.png"], ["Leather", D + "Texture_new_Leather.png"], ["Linen", D + "texture_new_linen.png"],
+    ["Copper", D + "texture_new_copper.png"], ["Moss", D + "texture_new_moss.png"], ["Dirt", D + "texture_new_dirt.png"],
+    ["Parchment", D + "Texture_new_Parchment.png"],
+  ];
+  function card(name, url) {
+    const el = document.createElement("div");
+    el.className = "card";
+    el.style.setProperty("--tex", `url("${url}")`);
+    el.innerHTML = `<h3>${name}</h3><div class="src">${url.split("/").slice(-2).join("/")}</div>
+      <button class="btn side">Holzfällen <small>97/99</small></button>
+      <button class="btn side active">Schmieden <small>97/99</small></button>
+      <div class="row"><button class="btn">Charakter</button><button class="btn active">Bank</button></div>
+      <div class="swatch" title="Fläche ohne Rahmen"></div>`;
+    return el;
+  }
+  for (const [n, u] of GAME) document.getElementById("game").append(card(n, u));
+  for (const [n, u] of RAW) document.getElementById("raw").append(card(n, u));
+  document.querySelectorAll("#frame button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("#frame button").forEach((x) => x.classList.toggle("on", x === b));
+    document.body.dataset.frame = b.dataset.v;
+  }));
+  const dark = document.getElementById("dark"), tile = document.getElementById("tile");
+  dark.addEventListener("input", () => { document.documentElement.style.setProperty("--dark", dark.value / 100); document.getElementById("darkv").textContent = dark.value + " %"; });
+  tile.addEventListener("input", () => { document.documentElement.style.setProperty("--tile", tile.value + "px"); document.getElementById("tilev").textContent = tile.value + " px"; });
+</script>
+</body>
+</html>
