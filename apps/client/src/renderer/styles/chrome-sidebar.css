@@ -83,7 +83,7 @@
   padding: 4px 5px !important;
   border: 6px solid transparent !important;
   /* claude:2026-10-19T01:00:00+02:00 — Chef 19.10. (Demo): Sidebar-Knöpfe mit Holzrahmen + Moos. */
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 10px / 0 round !important;
+  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / 11px / 0 round !important; /* claude:2026-10-19T02:30:00+02:00 — Knopf-Editor-Preset */
   background: var(--chrome-nav-surface) !important;
   background-origin: border-box !important;
   background-clip: border-box !important;
@@ -323,7 +323,7 @@
   margin: 4px 0 6px;
   padding: 4px 8px;
   border: 4px solid transparent;
-  border-image: url("../assets/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 8px round; /* claude:2026-10-19T01:00:00+02:00 — Kampfstil-Knopf wie die Sidebar-Knöpfe */
+  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / 11px round; /* claude:2026-10-19T01:00:00+02:00 — Kampfstil-Knopf wie die Sidebar-Knöpfe */
   background: var(--chrome-nav-surface);
   color: var(--chrome-text);
   font-family: var(--font-head);
