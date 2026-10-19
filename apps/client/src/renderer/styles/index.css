@@ -123,6 +123,12 @@
 @import "./chrome-sidebar.css";
 @import "./chrome-queue.css";
 
+/* claude:2026-10-19T10:15:00+02:00 — Chef 19.10.: Oberflächen-Stil „Classic“ (Look von 1.2.3), s. uiStyle.ts.
+   classic-skin.css: alte Texturen/Rahmen seitenweit, nur unter :root[data-ui-style="classic"] (generiert).
+   classic-chrome.css: Seitenleiste, Reiterleiste und Kopfzeile von 1.2.3, nur unter .layout--classic. */
+@import "./classic-skin.css";
+@import "./classic-chrome.css";
+
 /* Dev-Zeitraffer: Knopf für die Offline-Demo (Chef-Auftrag 31.08.2026). Bewusst schlicht und
    klar vom Zurücksetzen-Knopf getrennt — das Panel ist ein Werkzeug, kein Spielelement. */
 .devspeed-demo {

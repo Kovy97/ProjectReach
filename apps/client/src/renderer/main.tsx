@@ -10,11 +10,14 @@ import { App } from "./App";
 // in `pnpm build` toter, vom Minifier entfernter Code (s. Abschlussbericht "Bundle-Grep").
 import { getSceneBuilderZoneId, SceneBuilderApp } from "./components/arena25d/builder";
 import { initFontChoice } from "./fontChoice";
+// claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil (Reforged/Classic) vor dem ersten Render setzen, s. uiStyle.ts.
+import { initUiStyle } from "./uiStyle";
 import "./styles/index.css";
 
 // Schriftwahl VOR dem ersten Render anwenden (Chef 31.08.2026), damit die Oberflaeche
 // nicht sichtbar von der Vorgabe auf die gewaehlte Schrift umspringt.
 initFontChoice();
+initUiStyle();
 
 const root = document.getElementById("root");
 if (!root) throw new Error("#root nicht gefunden");

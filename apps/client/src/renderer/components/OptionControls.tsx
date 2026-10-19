@@ -46,6 +46,7 @@ import {
   setzeFontChoice,
 } from "../fontChoice";
 import type { FontChoice } from "../fontChoice";
+import { UI_STYLES, UI_STYLE_LABEL_KEY, setzeUiStyle, useUiStyle } from "../uiStyle";
 import "../styles/options.css";
 
 /** Eisenrahmen-Knopf einer Segment-/Umschalter-/Auswahl-Reihe (Chef-Entscheid 25.08.2026:
@@ -183,6 +184,8 @@ export function DisplayAudioPrefs(): JSX.Element {
   // Schriftwahl (Chef 31.08.2026): reine Anzeige-Einstellung im localStorage, kein SAVE-Bump —
   // dieselbe Mechanik wie die Sprachwahl. Begruendung in renderer/fontChoice.ts.
   const [font, setFontState] = useState<FontChoice>(ladeFontChoice);
+  // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Oberflächen-Stil Reforged/Classic (uiStyle.ts), wirkt sofort.
+  const uiStyle = useUiStyle();
 
   // Tatsächlichen Fensterzustand beim Öffnen abgleichen + live aktualisieren (z. B. nach F11).
   useEffect(() => {
@@ -215,6 +218,15 @@ export function DisplayAudioPrefs(): JSX.Element {
     <>
       {/* ─── Anzeige: Startmodus + Vollbild + Tooltip-Popup + Kampf-Effekte ─── */}
       <OptSection icon={<img src={iconDisplay} alt="" className="opz-system-icon" />} title={t("options.display")}>
+        <OptRow label={t("options.uiStyle")} hint={t("options.uiStyleHint")}>
+          <div className="opz-segment">
+            {UI_STYLES.map((stil) => (
+              <button key={stil} className={optBtnCls(uiStyle === stil)} onClick={() => setzeUiStyle(stil)}>
+                {t(UI_STYLE_LABEL_KEY[stil])}
+              </button>
+            ))}
+          </div>
+        </OptRow>
         {/* Start-Fenstermodus (Chef-Auftrag 2026-07-23): eigene Zeile, eigenständig vom
             Live-Vollbild-Toggle direkt darunter — bestimmt das Fenster beim NÄCHSTEN Start. */}
         <OptRow label={t("options.windowMode")} hint={t("options.windowModeHint")}>

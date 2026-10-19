@@ -82,6 +82,8 @@ import { EnchantingPage } from "./pages/EnchantingPage";
 import { MailPage } from "./pages/MailPage";
 import { NewHavenPage } from "./pages/NewHavenPage";
 import { TavernPage } from "./pages/TavernPage";
+// claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil Reforged/Classic (Chef 19.10.).
+import { useUiStyle } from "./uiStyle";
 
 const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
 const INVENTORY_ICON_URL = getUiIcon("icon_inventory");
@@ -761,6 +763,7 @@ function MainLayout(): JSX.Element {
     closeItemTooltip();
   }, []);
   const [activePageId, setActivePageId] = useState("character");
+  const uiStyle = useUiStyle();
   const page = findPage(activePageId);
   // Wiki→Rezept-Sprung (util/skillJump.ts): ItemWikiModalOverlay sitzt außerhalb dieses
   // Baums (s. App.tsx-Wurzel unten) und kann activePageId nicht direkt setzen — ein Klick auf
@@ -950,7 +953,8 @@ function MainLayout(): JSX.Element {
 
   return (
     // codex:2026-09-10T10:35:00+02:00 — Lokaler Shell-Scope; andere Panels/Modale behalten ihren Bestandsstil.
-    <div className="layout layout--reforged">
+    // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Stil umschaltbar (Reforged/Classic), s. uiStyle.ts.
+    <div className={`layout layout--${uiStyle}`}>
       <Sidebar activePageId={activePageId} onNavigate={setActivePageId} />
       <main className="content">
         <div className="topbar-area" ref={topBarAreaRef}>
