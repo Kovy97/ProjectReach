@@ -1,0 +1,34 @@
+Grim Reach 1.3.1 - Choose Your Interface
+
+Hunters,
+
+thank you for all the feedback on the new interface from 1.3.0. Many of you preferred the old look,
+and many of you missed how the sidebar and the top bar used to grow with your screen. This small
+update addresses both. Saves stay compatible as always.
+
+CHOOSE YOUR INTERFACE STYLE
+
+- You can now switch between two interface styles at any time. Reforged is the new painted look
+  from 1.3.0. Classic is the interface as it was before the update.
+- Switch it in the main menu (top right, next to the languages) or in Options under Display,
+  "Interface style". The change applies immediately, no restart needed, and your choice is remembered.
+- Classic brings back the old sidebar with its steel-framed buttons, the old tab bar and header,
+  the old textures and frames, the war table main menu and the old logo.
+- Everything that came with 1.3.0 works in both styles: the Idol Hall, the Slayer's Book, the
+  reworked pets, the Cinderfall, bank slots, the Wiki and the new combat HUD.
+
+THE SIDEBAR AND TOP BAR SCALE AGAIN
+
+- Drag the sidebar wider and its buttons, icons and names grow with it again, in both styles.
+- The height handle of the top bar scales its tabs again, frames and spacing included.
+- This is how many of you fit the game to your resolution, and 1.3.0 took it away. Sorry about
+  that, it is back now.
+
+SMALL CHANGES TO REFORGED
+
+- Thinner frames around the sidebar and top bar buttons.
+- A dark wooden backdrop with a soft vignette replaces the stone wall behind the pages.
+
+Your save is not touched by any of this. The style you pick is a display setting only.
+
+As always: if something looks off, tell me here or through the bug report button in the options.

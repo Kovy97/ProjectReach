@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"4915450"
-	"desc"	"Grim Reach 1.3.0 (Die Goetzenhalle erwacht: Goetzenhalle, Chronik 22-27, Aschesturz/Prestige, Jaegerkodex, Begleiter-Rework, gemalter Look, Slayer-Turm 6-8, Waffen 95+, Holz/Fisch 80-99)"
+	"desc"	"Grim Reach 1.3.1 (UI-Stil waehlbar: Reforged oder Classic wie 1.2.3, Seiten- und Kopfleiste wieder dynamisch skalierbar)"
 	"buildoutput"	"G:\GameDev\steam\output\"
 	"contentroot"	"G:\GameDev\apps\client\release\win-unpacked\"
 	"setlive"	""
