@@ -81,6 +81,8 @@ Content 310, Engine 1807, Persistence 453 inkl. Vault, Client 261, Build grün; 
 **BuildID 26058141**, setlive leer (Chef schaltet live), Übergabe `UPLOAD-FERTIG.txt`. `main` vorgespult, Tag `v1.3.1`.
 SAVE_VERSION bleibt 88. Vorgabe-Stil bleibt reforged.
 
+**19.10. (claude:2026-10-19T20:40:00+02:00) — Ziel design/1.3.0-goal.md abgeschlossen.** Chef: „Ist abgnommen!“ (1.3.0 im Testprofil gespielt und freigegeben). Alle Punkte unter „Fertig, wenn“ erfüllt.
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
