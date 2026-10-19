@@ -93,6 +93,25 @@ def parse(css: str):
     return nodes
 
 
+def split_top(prelude: str) -> list[str]:
+    """Selektorliste nur an Kommas auf oberster Ebene trennen (nicht in :is(…)/:not(…)/:where(…))."""
+    # claude:2026-10-19T19:45:00+02:00 — Fix: vorher wurde auch innerhalb von :is( … ) getrennt; der Browser
+    # verwarf diese Regeln dann komplett (u. a. die Stahlrahmen der Seitenleisten-Knöpfe und Reiter).
+    out, depth, cur = [], 0, ""
+    for ch in prelude:
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+        if ch == "," and depth == 0:
+            out.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    out.append(cur)
+    return out
+
+
 def scope_selector(sel: str) -> str:
     s = sel.strip()
     if not s:
@@ -141,7 +160,7 @@ def emit(nodes, keyframes, filt, out, indent=""):
         else:
             if filt is not None and not filt.search(prelude):
                 continue
-            sels = [scope_selector(x) for x in prelude.split(",")]
+            sels = [scope_selector(x) for x in split_top(prelude)]
             body = fix_urls(payload)
             for name in keyframes:
                 body = re.sub(rf"(animation(?:-name)?\s*:[^;]*?)\b{re.escape(name)}\b", rf"\1{name}--classic", body)

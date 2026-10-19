@@ -848,9 +848,9 @@
 }
 :root[data-ui-style="classic"] #root .content-header--quiet-citadel :is(
   .header-charinfo,
-:root[data-ui-style="classic"] .gamestats-row--activity,
-:root[data-ui-style="classic"] .gamestats-row--meta,
-:root[data-ui-style="classic"] .gamestats-activity-bars
+  .gamestats-row--activity,
+  .gamestats-row--meta,
+  .gamestats-activity-bars
 ) {
   font-family: var(--font-info);
   font-variant-numeric: lining-nums tabular-nums;
@@ -858,15 +858,14 @@
 }
 :root[data-ui-style="classic"] #root .content-header--quiet-citadel :is(
   .header-charinfo-stat,
-:root[data-ui-style="classic"] .activity,
-:root[data-ui-style="classic"] .slots-display,
-:root[data-ui-style="classic"] .gold-display,
-:root[data-ui-style="classic"] .tb-bar-labels
+  .activity,
+  .slots-display,
+  .gold-display,
+  .tb-bar-labels
 ) {
   font-family: var(--font-info);
 }
-:root[data-ui-style="classic"] #root .content-header--quiet-citadel .gamestats-activity-bars :is(.tb-bar-labels,
-:root[data-ui-style="classic"] span) {
+:root[data-ui-style="classic"] #root .content-header--quiet-citadel .gamestats-activity-bars :is(.tb-bar-labels, span) {
   font-family: var(--font-info);
   letter-spacing: 0.025em;
 }
@@ -2277,12 +2276,9 @@
   --gw-nav-frame: url("../assets/ui/gravewood/v3/frames/button-frame.webp");
   --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
 }
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item),
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item):hover,
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item).active {
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item),
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item):hover,
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item).active {
   border-style: solid;
   border-color: transparent;
   border-width: 4px 8px;
@@ -2299,13 +2295,11 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   filter: none;
 }
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item):not(:disabled):hover {
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item):not(:disabled):hover {
   border-image-source: var(--gw-nav-frame);
   filter: brightness(1.09) saturate(1.03);
 }
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item).active {
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item).active {
   border-image-source: var(--gw-nav-frame) !important;
   background-image:
     linear-gradient(rgba(91, 58, 22, 0.3), rgba(54, 31, 13, 0.34)),
@@ -2317,17 +2311,16 @@
     inset 0 0 0 1px rgba(215, 157, 76, 0.18),
     0 2px 4px rgba(0, 0, 0, 0.3);
 }
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item):not(:disabled):active {
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item):not(:disabled):active {
   border-image-source: var(--gw-nav-frame);
   filter: brightness(0.9) saturate(0.94);
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ) {
   border-style: solid;
   border-color: transparent;
@@ -2345,28 +2338,28 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 )::before {
   content: none;
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):not(:disabled):hover {
   filter: brightness(1.09) saturate(1.03);
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):not(:disabled):active {
   filter: brightness(0.9) saturate(0.94);
   transform: translateY(1px) scale(0.985);
@@ -2380,23 +2373,23 @@
 @media (prefers-reduced-motion: reduce) {
   :root[data-ui-style="classic"] #root :is(
     .sb-skill-btn,
-  :root[data-ui-style="classic"] .topbar-item,
-  :root[data-ui-style="classic"] .sb-footer-save,
-  :root[data-ui-style="classic"] .sb-footer-menu,
-  :root[data-ui-style="classic"] .sb-footer-mail,
-  :root[data-ui-style="classic"] .sb-footer-options,
-  :root[data-ui-style="classic"] .sb-footer-quit
+    .topbar-item,
+    .sb-footer-save,
+    .sb-footer-menu,
+    .sb-footer-mail,
+    .sb-footer-options,
+    .sb-footer-quit
   ) {
     transform: none;
   }
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-skill-btn,
-:root[data-ui-style="classic"] .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ) {
   --gw-nav-frame: url("../assets/ui/gravewood/buttons/alternate/alternate-normal.webp");
   --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
@@ -2420,11 +2413,11 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-skill-btn,
-:root[data-ui-style="classic"] .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ) {
   --gw-nav-frame: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
   --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
@@ -2493,19 +2486,16 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-skill-btn,
-:root[data-ui-style="classic"] .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit,
-:root[data-ui-style="classic"] .topbar-item
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit,
+  .topbar-item
 ),
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item):hover,
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item):active,
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item).active {
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item):hover,
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item):active,
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item).active {
   --gw-nav-surface: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
   background-color: #111416 !important;
   background-image:
@@ -2601,24 +2591,24 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ),
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):hover,
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):active {
   --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
   background-color: #1b120c !important;
@@ -2666,24 +2656,24 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ),
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):hover,
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):active {
   --gw-nav-surface: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
   background-color: #170b0b !important;
@@ -2697,19 +2687,16 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item,
-:root[data-ui-style="classic"] .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .topbar-item,
+  .sb-footer-save,
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ),
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item):hover,
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item):active,
-:root[data-ui-style="classic"] #root :is(.sb-skill-btn,
-:root[data-ui-style="classic"] .topbar-item).active {
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item):hover,
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item):active,
+:root[data-ui-style="classic"] #root :is(.sb-skill-btn, .topbar-item).active {
   background-origin: border-box !important;
   background-clip: border-box !important;
 }
@@ -2773,24 +2760,24 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ),
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):hover,
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):active {
   --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-smoky-bronze.webp");
   background-color: #3a2419 !important;
@@ -3042,24 +3029,24 @@
 }
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ),
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):hover,
 :root[data-ui-style="classic"] #root :is(
   .sb-footer-save,
-:root[data-ui-style="classic"] .sb-footer-menu,
-:root[data-ui-style="classic"] .sb-footer-mail,
-:root[data-ui-style="classic"] .sb-footer-options,
-:root[data-ui-style="classic"] .sb-footer-quit
+  .sb-footer-menu,
+  .sb-footer-mail,
+  .sb-footer-options,
+  .sb-footer-quit
 ):active {
   --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
   background-color: #160d09 !important;
