@@ -28,12 +28,12 @@
    claude:2026-10-17T12:00:00+02:00 — `--tb-k` = 1 beim Standard des Höhenreglers (168 px ⇒
    --tb-scale 1.18). Alle Maße unten sind für diesen Standard gesetzt und folgen dem Regler. */
 #root .layout--reforged .topbar-area {
-  container: game-content / inline-size;
+  container: game-content / inline-size; /* claude:2026-10-19T10:30:00+02:00 — Chef 19.10.: Kopfleiste skaliert wieder mit dem Regler (Abstaende/Rahmen an --tb-k) */
   --tb-k: calc(var(--tb-scale, 1.18) / 1.18);
   --hs-fs: clamp(var(--fs-sm), calc(var(--fs-md) * var(--tb-k)), var(--fs-xl));
   --hs-fs-meta: clamp(var(--fs-xs), calc(var(--fs-sm) * var(--tb-k)), var(--fs-lg));
   min-width: 0;
-  padding-bottom: 4px;
+  padding-bottom: calc(4px * var(--tb-k));
   background: var(--chrome-nav-shell);
 }
 
@@ -46,10 +46,10 @@
 #root .layout--reforged .topbar {
   display: flex;
   align-items: stretch;
-  gap: 6px;
+  gap: 6px; /* claude:2026-10-19T12:20:00+02:00 — seitlich fest, s. .topbar-item */
   height: auto;
   min-width: 0;
-  padding: 6px 8px 4px;
+  padding: calc(6px * var(--tb-k)) 8px calc(4px * var(--tb-k));
   overflow: hidden;
   background: none;
   border: 0;
@@ -65,15 +65,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: calc(6px * var(--tb-k));
   width: 100%;
   min-width: max-content;
   min-height: clamp(36px, calc(44px * var(--tb-k)), 64px);
-  padding: 2px 14px;
-  border: 6px solid transparent;
+  padding: calc(2px * var(--tb-k)) 14px; /* claude:2026-10-19T12:20:00+02:00 — seitlich fest: sonst kippt die Reihe bei großer Kopfleiste in die kompakte Dichte (kleinere Schrift) */
+  border: calc(6px * var(--tb-k)) solid transparent;
   /* claude:2026-10-19T02:30:00+02:00 — Chef 19.10. Knopf-Editor „knopf-sidebar-moos-holz“: Wood 2 (Kachel 304, Versatz 110/37,
      Tönung #3a2a14 26 % eingebacken) + Original-Holzstreifen (Slice 47, 11 px, round). */
-  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / 11px round;
+  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / calc(11px * var(--tb-k)) round;
   border-radius: 0;
   background: var(--chrome-nav-surface);
   color: #e4cc83;
@@ -113,8 +113,8 @@
 }
 #root .layout--reforged .topbar-icon { display: none; }
 /* Claim-Punkt sitzt auf der Rahmenecke statt über der Beschriftung („Aufga●en"). */
-#root .layout--reforged .topbar-claim-dot { top: -3px; right: -3px; }
-#root .layout--reforged .topbar-item.topbar-help-btn { padding: 2px 12px; }
+#root .layout--reforged .topbar-claim-dot { top: calc(-3px * var(--tb-k)); right: calc(-3px * var(--tb-k)); }
+#root .layout--reforged .topbar-item.topbar-help-btn { padding: calc(2px * var(--tb-k)) 12px; }
 /* claude:2026-10-17T17:30:00+02:00 — „Wiki“ als Beschriftung (Chef 17.10.); das „?“ erscheint nur
    noch in der Symbol-Stufe, wo alle Reiter ihre Beschriftung abgeben. */
 #root .layout--reforged .topbar-help-glyph {
@@ -161,12 +161,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 8px;
+  gap: calc(4px * var(--tb-k)) calc(8px * var(--tb-k));
   min-width: 0;
-  margin: 0 8px;
-  padding: 3px 6px;
-  border: 4px solid transparent;
-  border-image: var(--chrome-frame) 96 / 8px;
+  margin: 0 calc(8px * var(--tb-k));
+  padding: calc(3px * var(--tb-k)) calc(6px * var(--tb-k));
+  border: calc(4px * var(--tb-k)) solid transparent;
+  border-image: var(--chrome-frame) 96 / calc(8px * var(--tb-k));
   background: var(--chrome-surface);
   color: var(--chrome-text);
   font-family: var(--font-info);
@@ -202,7 +202,7 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
-  padding: 0 6px 0 4px;
+  padding: 0 calc(6px * var(--tb-k)) 0 calc(4px * var(--tb-k));
 }
 #root .layout--reforged .hs-name {
   font-family: var(--font-head);
@@ -214,11 +214,11 @@
 #root .layout--reforged .hs-levels {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 12px;
+  gap: 0 calc(12px * var(--tb-k));
   font-size: var(--hs-fs-meta);
   color: var(--chrome-muted);
 }
-#root .layout--reforged .hs-level { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+#root .layout--reforged .hs-level { display: inline-flex; align-items: center; gap: calc(4px * var(--tb-k)); white-space: nowrap; }
 #root .layout--reforged .hs-level b { color: var(--chrome-text); }
 
 /* Aktivität + XP: Basalt-Mulden, Zeile 1 Text | Nebeninfo, Zeile 2 Leiste. Jede Zelle ist ein
@@ -228,9 +228,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 2px 10px;
+  gap: 2px calc(10px * var(--tb-k));
   min-height: 0;
-  padding: 2px 10px 4px;
+  padding: 2px calc(10px * var(--tb-k)) calc(4px * var(--tb-k));
   border: 1px solid rgba(151, 106, 55, .55);
   background: var(--chrome-well);
   box-shadow: inset 0 0 10px rgba(0, 0, 0, .5);
@@ -306,7 +306,7 @@
 #root .layout--reforged .hs-hp {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: calc(6px * var(--tb-k));
   min-width: 0;
   height: clamp(10px, calc(12px * var(--tb-k)), 18px);
 }
@@ -352,9 +352,9 @@
 #root .layout--reforged .hs-slayer-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: calc(4px * var(--tb-k));
   min-width: 0;
-  padding: 2px 10px;
+  padding: 2px calc(10px * var(--tb-k));
   border: 1px solid rgba(151, 106, 55, .45);
   background: var(--chrome-well);
   font-size: var(--hs-fs-meta);
@@ -370,8 +370,8 @@
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 4px;
+  gap: calc(12px * var(--tb-k));
+  padding: 0 calc(4px * var(--tb-k));
   white-space: nowrap;
 }
 #root .layout--reforged .hs-slots { color: var(--chrome-text); }
@@ -387,9 +387,9 @@
   min-width: 0;
   min-height: 0;
   height: clamp(28px, calc(32px * var(--tb-k)), 44px);
-  padding: 0 12px;
-  border-width: 6px;
-  border-image-width: calc(6px * 2.125);
+  padding: 0 calc(12px * var(--tb-k));
+  border-width: calc(6px * var(--tb-k));
+  border-image-width: calc(6px * var(--tb-k) * 2.125);
   font-size: var(--hs-fs-meta);
   white-space: nowrap;
 }

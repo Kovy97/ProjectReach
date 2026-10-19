@@ -143,6 +143,10 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
       const TARGET = 19;
       const FLOOR = 15;
       const MIN_SINGLE = 12;
+      // claude:2026-10-19T12:10:00+02:00 — Chef 19.10.: die Leiste skaliert wieder mit der Breite
+      // (chrome-sidebar.css: Schrift = --chrome-sidebar-name-size × --sb-scale-eff). Gerechnet wird
+      // darum in Basis-Pixeln (Faktor 1); nur die Inline-Größe einzelner Namen ist absolut.
+      const k = Math.max(1, Number(el.style.getPropertyValue("--sb-scale")) || 1);
       el.style.setProperty("--chrome-sidebar-name-size", `${TARGET}px`);
       const names = Array.from(el.querySelectorAll<HTMLElement>(".sb-skill-name"));
       for (const name of names) {
@@ -162,7 +166,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
           widest = Math.max(widest, range.getBoundingClientRect().width);
         }
         const size = parseFloat(getComputedStyle(name).fontSize) || TARGET;
-        return widest > 0 ? size * Math.max(0, slot - 1) / widest : null;
+        return widest > 0 ? size * Math.max(0, slot - 1) / widest / k : null;
       };
       const needs: { name: HTMLElement; size: number }[] = [];
       for (const name of names) {
@@ -180,7 +184,7 @@ export function Sidebar({ activePageId, onNavigate }: SidebarProps): JSX.Element
           btn.dataset.wideName = "1";
           n.size = need(n.name) ?? n.size; // in der neuen, breiteren Spalte nachmessen
         }
-        if (n.size < shared) n.name.style.fontSize = `${Math.max(MIN_SINGLE, Math.floor(n.size * 10) / 10)}px`;
+        if (n.size < shared) n.name.style.fontSize = `${Math.max(MIN_SINGLE, Math.floor(n.size * 10) / 10) * k}px`;
       }
       range.detach();
       checkNavScrollable();

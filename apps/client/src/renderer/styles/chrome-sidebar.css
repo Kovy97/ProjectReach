@@ -3,11 +3,11 @@
    Shared frame/surface tokens are supplied by chrome.css. */
 #root .layout--reforged .sidebar {
   --sb-vscale: 1;
-  --sb-scale-eff: 1;
-  --chrome-sidebar-name-size: 19px;
+  --sb-scale-eff: max(1, var(--sb-scale, 1)); /* claude:2026-10-19T10:30:00+02:00 — Chef 19.10.: Seitenleiste skaliert wieder mit der Breite */
+  --chrome-sidebar-name-size: 19px; /* Basis-px (Faktor 1); Sidebar.tsx fitNames setzt ihn inline, die Schrift multipliziert mit --sb-scale-eff */
   box-sizing: border-box;
   min-height: 0;
-  padding: 4px 0 4px;
+  padding: calc(4px * var(--sb-scale-eff)) 0 calc(4px * var(--sb-scale-eff));
   border: 0;
   /* codex:2026-09-10T11:12:00+02:00 — Sichtbare Gravewood-Struktur wie die Spielnavigation im Bestand. */
   background: var(--chrome-nav-shell) !important;
@@ -22,7 +22,7 @@
    both its decorative frame and resize handle. Rows never shrink with viewport height. */
 #root .layout--reforged .sidebar .sb-nav {
   flex: 1 1 0;
-  min-height: 48px;
+  min-height: calc(48px * var(--sb-scale-eff));
   /* codex:2026-09-10T11:12:00+02:00 — Symmetrische Ränder inklusive Scrollgutter halten das Register in der Sidebar-Mitte.
      claude:2026-10-17T12:50:00+02:00 — Echte Scrollzone: Abstand zu Segensbanner und Menü-Lasche,
      und Einträge blenden an der Kante aus, an der noch mehr folgt (Sidebar.tsx setzt
@@ -32,11 +32,11 @@
   --sb-fade-bottom: 0px;
   /* claude:2026-10-17T13:50:00+02:00 — Rinne nur rechts (6 px, s. ::-webkit-scrollbar), dafür
      links 6 px mehr Rand: Register bleibt mittig, der Name gewinnt die zweite Rinne (≈ 10 px). */
-  margin: 4px 3px 6px 9px;
-  padding: 6px 2px;
+  margin: calc(4px * var(--sb-scale-eff)) calc(3px * var(--sb-scale-eff)) calc(6px * var(--sb-scale-eff)) calc(9px * var(--sb-scale-eff));
+  padding: calc(6px * var(--sb-scale-eff)) 2px;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--sb-fade-top), #000 calc(100% - var(--sb-fade-bottom)), transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, #000 var(--sb-fade-top), #000 calc(100% - var(--sb-fade-bottom)), transparent 100%);
-  gap: 5px;
+  gap: calc(5px * var(--sb-scale-eff));
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-gutter: stable;
@@ -76,14 +76,14 @@
   position: relative;
   flex-shrink: 0;
   min-width: 0;
-  min-height: 58px !important;
+  min-height: calc(58px * var(--sb-scale-eff)) !important;
   /* claude:2026-10-17T12:50:00+02:00 — 58 px Mindesthöhe (Chef 10.09.); zweizeilige Namen
      (Umbruch nur an Wortgrenzen) dürfen den Knopf wachsen lassen. */
   height: auto;
-  padding: 4px 5px !important;
-  border: 6px solid transparent !important;
+  padding: calc(4px * var(--sb-scale-eff)) calc(5px * var(--sb-scale-eff)) !important;
+  border: calc(6px * var(--sb-scale-eff)) solid transparent !important;
   /* claude:2026-10-19T01:00:00+02:00 — Chef 19.10. (Demo): Sidebar-Knöpfe mit Holzrahmen + Moos. */
-  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / 11px / 0 round !important; /* claude:2026-10-19T02:30:00+02:00 — Knopf-Editor-Preset */
+  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / calc(11px * var(--sb-scale-eff)) / 0 round !important; /* claude:2026-10-19T02:30:00+02:00 — Knopf-Editor-Preset */
   background: var(--chrome-nav-surface) !important;
   background-origin: border-box !important;
   background-clip: border-box !important;
@@ -99,22 +99,22 @@
 #root .layout--reforged .sidebar .sb-skill-btn {
   display: grid;
   /* codex:2026-09-10T11:12:00+02:00 — Gleich breite äußere Spalten zentrieren den Namen wirklich, auch ohne Level. */
-  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  grid-template-columns: calc(32px * var(--sb-scale-eff)) minmax(0, 1fr) calc(32px * var(--sb-scale-eff));
   align-items: center;
-  column-gap: 4px;
+  column-gap: calc(4px * var(--sb-scale-eff));
   text-align: center;
   overflow: visible;
 }
 
 #root .layout--reforged .sidebar .sb-skill-btn--has-level {
-  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  grid-template-columns: calc(32px * var(--sb-scale-eff)) minmax(0, 1fr) calc(32px * var(--sb-scale-eff));
 }
 /* claude:2026-10-17T13:50:00+02:00 — Passt ein einzelnes Wort selbst bei 15 px nicht neben
    Symbol und Levelspalte (RU „Собирательство"), gibt nur DIESER Knopf die Levelspalte ab:
    das Level rückt rechtsbündig unter den Namen (rechts unten wie im Bestand vor dem 10.09.),
    der Name nimmt die Spalte (Sidebar.tsx setzt data-wide-name). Nie Umbruch mitten im Wort. */
 #root .layout--reforged .sidebar .sb-skill-btn[data-wide-name] {
-  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-columns: calc(32px * var(--sb-scale-eff)) minmax(0, 1fr);
   grid-template-rows: auto auto;
   align-content: center;
   row-gap: 1px;
@@ -139,7 +139,7 @@
   width: auto;
   padding: 0;
   font-family: var(--font-head);
-  font-size: var(--chrome-sidebar-name-size);
+  font-size: calc(var(--chrome-sidebar-name-size) * var(--sb-scale-eff));
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: 0;
@@ -159,21 +159,21 @@
   inset: auto !important;
   grid-column: 1;
   grid-row: 1;
-  width: 32px !important;
-  height: 32px;
+  width: calc(32px * var(--sb-scale-eff)) !important;
+  height: calc(32px * var(--sb-scale-eff));
   overflow: visible !important;
   opacity: 1;
   filter: none;
 }
 
 #root .layout--reforged .sidebar .sb-skill-icon-img {
-  width: 32px !important;
-  height: 32px !important;
+  width: calc(32px * var(--sb-scale-eff)) !important;
+  height: calc(32px * var(--sb-scale-eff)) !important;
   object-fit: contain;
 }
 
 #root .layout--reforged .sidebar .sb-skill-icon-fallback {
-  font-size: 23px;
+  font-size: calc(23px * var(--sb-scale-eff));
 }
 
 #root .layout--reforged .sidebar .sb-skill-level {
@@ -183,7 +183,7 @@
   grid-column: 3;
   min-width: 0;
   font-family: var(--font-info, var(--font-head)) !important;
-  font-size: 12px !important;
+  font-size: calc(12px * var(--sb-scale-eff)) !important;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -197,7 +197,7 @@
   content: "" !important;
   display: block !important;
   position: absolute;
-  inset: auto 10px 2px;
+  inset: auto calc(10px * var(--sb-scale-eff)) 2px;
   width: auto;
   height: 1px;
   border: 0;
@@ -233,14 +233,14 @@
   align-items: center;
   justify-content: center;
   top: 0;
-  left: 23px;
-  width: 13px;
-  height: 13px;
+  left: calc(23px * var(--sb-scale-eff));
+  width: calc(13px * var(--sb-scale-eff));
+  height: calc(13px * var(--sb-scale-eff));
   border: 1px solid #e3bd75;
   border-radius: 50%;
   background: #2c2113;
   color: #f0ce86;
-  font: 8px/1 sans-serif;
+  font: calc(8px * var(--sb-scale-eff))/1 sans-serif;
   box-shadow: 0 0 7px #e4b35966;
   animation: none;
 }
@@ -250,7 +250,7 @@
 #root .layout--reforged .sidebar .sb-combat-section {
   flex: 0 0 auto;
   min-width: 0;
-  gap: 3px;
+  gap: calc(3px * var(--sb-scale-eff));
 }
 
 #root .layout--reforged .sidebar .sb-combat-btn-row {
@@ -270,11 +270,11 @@
   /* codex:2026-09-10T11:18:00+02:00 — Eigener bedienbarer Pfeil unter dem Kampflvl, keine verschobene Titelachse. */
   display: flex;
   position: absolute;
-  right: 9px;
-  bottom: 5px;
-  width: 24px !important;
-  height: 24px;
-  min-height: 24px !important;
+  right: calc(9px * var(--sb-scale-eff));
+  bottom: calc(5px * var(--sb-scale-eff));
+  width: calc(24px * var(--sb-scale-eff)) !important;
+  height: calc(24px * var(--sb-scale-eff));
+  min-height: calc(24px * var(--sb-scale-eff)) !important;
   border: 0 !important;
   border-image: none !important;
   background: none !important;
@@ -283,7 +283,7 @@
 }
 
 #root .layout--reforged .sidebar .sb-combat-toggle-chevron {
-  font-size: 15px;
+  font-size: calc(15px * var(--sb-scale-eff));
   color: var(--chrome-muted);
   filter: none;
 }
@@ -296,7 +296,7 @@
   display: block;
   min-width: 0;
   margin: 0 2px;
-  padding: 2px 5px;
+  padding: 2px calc(5px * var(--sb-scale-eff));
   border-left: 1px solid #a28a565c;
   border-radius: 0;
   background: #0b0d0ddd;
@@ -304,9 +304,9 @@
 
 #root .layout--reforged .sidebar .sb-combat-row {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 2px 6px;
-  padding: 6px 0;
+  grid-template-columns: calc(24px * var(--sb-scale-eff)) minmax(0, 1fr);
+  gap: 2px calc(6px * var(--sb-scale-eff));
+  padding: calc(6px * var(--sb-scale-eff)) 0;
   min-width: 0;
 }
 
@@ -315,15 +315,15 @@
    lesbar ist; Klick öffnet den Kampfstil-Reiter auf der Kampfseite. */
 #root .layout--reforged .sidebar .sb-combat-style {
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) auto;
+  grid-template-columns: calc(26px * var(--sb-scale-eff)) minmax(0, 1fr) auto;
   align-items: center;
-  gap: 6px;
+  gap: calc(6px * var(--sb-scale-eff));
   width: 100%;
   min-width: 0;
-  margin: 4px 0 6px;
-  padding: 4px 8px;
-  border: 4px solid transparent;
-  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / 11px round; /* claude:2026-10-19T01:00:00+02:00 — Kampfstil-Knopf wie die Sidebar-Knöpfe */
+  margin: calc(4px * var(--sb-scale-eff)) 0 calc(6px * var(--sb-scale-eff));
+  padding: calc(4px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff));
+  border: calc(4px * var(--sb-scale-eff)) solid transparent;
+  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / calc(11px * var(--sb-scale-eff)) round; /* claude:2026-10-19T01:00:00+02:00 — Kampfstil-Knopf wie die Sidebar-Knöpfe */
   background: var(--chrome-nav-surface);
   color: var(--chrome-text);
   font-family: var(--font-head);
@@ -337,8 +337,8 @@
 }
 #root .layout--reforged .sidebar .sb-combat-style-icon {
   display: flex;
-  width: 26px;
-  height: 26px;
+  width: calc(26px * var(--sb-scale-eff));
+  height: calc(26px * var(--sb-scale-eff));
 }
 #root .layout--reforged .sidebar .sb-combat-style-icon img {
   width: 100%;
@@ -351,27 +351,27 @@
   min-width: 0;
 }
 #root .layout--reforged .sidebar .sb-combat-style-label {
-  font-size: var(--fs-xs);
+  font-size: calc(var(--fs-xs) * var(--sb-scale-eff));
   letter-spacing: .04em;
   text-transform: uppercase;
   color: var(--chrome-muted);
 }
 #root .layout--reforged .sidebar .sb-combat-style-value {
-  font-size: var(--fs-sm);
+  font-size: calc(var(--fs-sm) * var(--sb-scale-eff));
   line-height: 1.2;
   color: var(--chrome-gold);
   overflow-wrap: normal;
 }
 #root .layout--reforged .sidebar .sb-combat-style-chevron {
-  font-size: var(--fs-xl);
+  font-size: calc(var(--fs-xl) * var(--sb-scale-eff));
   line-height: 1;
   color: var(--chrome-gold);
 }
 
 /* Die Fertigkeit, die der gewählte Kampfstil gerade trainiert. */
 #root .layout--reforged .sidebar .sb-combat-row--training {
-  margin-inline: -5px;
-  padding-inline: 3px 5px;
+  margin-inline: calc(-5px * var(--sb-scale-eff));
+  padding-inline: calc(3px * var(--sb-scale-eff)) calc(5px * var(--sb-scale-eff));
   border-left: 2px solid var(--chrome-gold);
   background: linear-gradient(90deg, #b9832b2e, transparent 85%);
 }
@@ -382,15 +382,15 @@
 #root .layout--reforged .sidebar .sb-combat-icon-wrap {
   grid-column: 1;
   grid-row: 1 / 4;
-  width: 24px;
-  height: 24px;
+  width: calc(24px * var(--sb-scale-eff));
+  height: calc(24px * var(--sb-scale-eff));
   border: 0;
   background: none;
 }
 
 #root .layout--reforged .sidebar .sb-combat-icon-img {
-  width: 24px;
-  height: 24px;
+  width: calc(24px * var(--sb-scale-eff));
+  height: calc(24px * var(--sb-scale-eff));
 }
 
 #root .layout--reforged .sidebar .sb-combat-name {
@@ -399,7 +399,7 @@
   grid-row: 1;
   min-width: 0;
   width: auto;
-  font-size: 13px;
+  font-size: calc(13px * var(--sb-scale-eff));
   line-height: 1.15;
   white-space: normal;
   /* claude:2026-10-17T12:50:00+02:00 — nur an Wortgrenzen umbrechen (war: anywhere). */
@@ -412,7 +412,7 @@
   display: block;
   grid-column: 2;
   grid-row: 2;
-  font-size: 12px;
+  font-size: calc(12px * var(--sb-scale-eff));
   text-align: left;
   color: var(--chrome-muted);
 }
@@ -429,7 +429,7 @@
 /* codex:2026-09-10T10:23:09+02:00 — Blessing art has bounded visual weight, while the
    translated effect remains real in-flow text. Long names cannot fall outside a fixed card. */
 #root .layout--reforged .sidebar .sb-blessing {
-  margin: 0 5px;
+  margin: 0 calc(5px * var(--sb-scale-eff));
   border: 0;
   box-shadow: none;
 }
@@ -439,11 +439,11 @@
   display: flex;
   align-items: flex-end;
   aspect-ratio: auto;
-  min-height: clamp(104px, 16vh, 148px);
+  min-height: clamp(calc(104px * var(--sb-scale-eff)), 16vh, calc(148px * var(--sb-scale-eff)));
   max-height: none;
-  padding: 36px 6px 7px;
-  border: 3px solid transparent;
-  border-image: var(--chrome-frame) 96 / 6px / 0 stretch;
+  padding: calc(36px * var(--sb-scale-eff)) calc(6px * var(--sb-scale-eff)) calc(7px * var(--sb-scale-eff));
+  border: calc(3px * var(--sb-scale-eff)) solid transparent;
+  border-image: var(--chrome-frame) 96 / calc(6px * var(--sb-scale-eff)) / 0 stretch;
   overflow: visible;
 }
 
@@ -452,13 +452,13 @@
   display: flex;
   width: 100%;
   min-width: 0;
-  padding: 5px 3px;
-  gap: 3px;
+  padding: calc(5px * var(--sb-scale-eff)) calc(3px * var(--sb-scale-eff));
+  gap: calc(3px * var(--sb-scale-eff));
   background: #080909b8;
 }
 
 #root .layout--reforged .sidebar .sb-blessing-name {
-  font-size: 14px;
+  font-size: calc(14px * var(--sb-scale-eff));
   line-height: 1.2;
   letter-spacing: 0;
   text-transform: none;
@@ -467,7 +467,7 @@
 }
 
 #root .layout--reforged .sidebar .sb-blessing-effect {
-  font-size: 13px;
+  font-size: calc(13px * var(--sb-scale-eff));
   line-height: 1.2;
   overflow-wrap: normal; /* claude:2026-10-17T12:50:00+02:00 — war: anywhere */
   color: var(--chrome-text);
@@ -480,21 +480,21 @@
   inset: auto;
   flex: 0 0 auto;
   width: auto;
-  margin: 0 8px;
+  margin: 0 calc(8px * var(--sb-scale-eff));
   padding: 0;
   pointer-events: auto;
 }
 
 #root .layout--reforged .sidebar .sb-footer-drawer-tab {
   box-sizing: border-box;
-  width: min(78%, 220px);
-  min-height: 34px;
-  padding: 4px 8px;
-  border: 3px solid transparent;
-  border-image: var(--chrome-frame) 96 / 7px / 0 stretch;
+  width: min(78%, calc(220px * var(--sb-scale-eff)));
+  min-height: calc(34px * var(--sb-scale-eff));
+  padding: calc(4px * var(--sb-scale-eff)) calc(8px * var(--sb-scale-eff));
+  border: calc(3px * var(--sb-scale-eff)) solid transparent;
+  border-image: var(--chrome-frame) 96 / calc(7px * var(--sb-scale-eff)) / 0 stretch;
   background: var(--chrome-surface) !important;
   color: var(--chrome-text);
-  font-size: 14px;
+  font-size: calc(14px * var(--sb-scale-eff));
   line-height: 1.15;
   letter-spacing: 0;
   text-transform: none;
@@ -506,15 +506,15 @@
   box-sizing: border-box;
   height: auto;
   max-height: min(290px, calc(44vh - 42px));
-  padding: 6px 3px;
-  gap: 3px;
+  padding: calc(6px * var(--sb-scale-eff)) calc(3px * var(--sb-scale-eff));
+  gap: calc(3px * var(--sb-scale-eff));
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: #8c7953 #151411;
-  border: 3px solid transparent;
-  border-image: var(--chrome-frame) 96 / 6px / 0 stretch;
+  border: calc(3px * var(--sb-scale-eff)) solid transparent;
+  border-image: var(--chrome-frame) 96 / calc(6px * var(--sb-scale-eff)) / 0 stretch;
   background: var(--chrome-shell) !important;
   transition: opacity 120ms ease;
 }
@@ -523,15 +523,15 @@
   box-sizing: border-box;
   flex: 0 0 auto;
   justify-content: flex-start;
-  gap: 6px;
-  min-height: 40px;
-  padding: 5px 6px;
+  gap: calc(6px * var(--sb-scale-eff));
+  min-height: calc(40px * var(--sb-scale-eff));
+  padding: calc(5px * var(--sb-scale-eff)) calc(6px * var(--sb-scale-eff));
   /* codex:2026-09-10T10:43:00+02:00 — Legacy-Footerframes sind important; derselbe Iron-Vertrag muss hier gewinnen. */
-  border: 3px solid transparent !important;
-  border-image: var(--chrome-frame) 96 / 6px / 0 stretch !important;
+  border: calc(3px * var(--sb-scale-eff)) solid transparent !important;
+  border-image: var(--chrome-frame) 96 / calc(6px * var(--sb-scale-eff)) / 0 stretch !important;
   background: var(--chrome-surface) !important;
   color: var(--chrome-text);
-  font-size: 14px;
+  font-size: calc(14px * var(--sb-scale-eff));
   line-height: 1.2;
   letter-spacing: 0;
   text-transform: none;
@@ -551,12 +551,12 @@
 }
 
 #root .layout--reforged .sidebar .sb-footer-emblem-img {
-  width: 22px;
-  height: 22px;
+  width: calc(22px * var(--sb-scale-eff));
+  height: calc(22px * var(--sb-scale-eff));
 }
 
 #root .layout--reforged .sidebar .sb-footer-mail {
-  padding-right: 22px;
+  padding-right: calc(22px * var(--sb-scale-eff));
 }
 
 #root .layout--reforged .sidebar .sb-footer-quit:hover {
