@@ -84,6 +84,9 @@ import { NewHavenPage } from "./pages/NewHavenPage";
 import { TavernPage } from "./pages/TavernPage";
 // claude:2026-10-19T10:05:00+02:00 — Oberflächen-Stil Reforged/Classic (Chef 19.10.).
 import { useUiStyle } from "./uiStyle";
+import { SidebarClassic } from "./components/SidebarClassic";
+import { TopBarClassic } from "./components/TopBarClassic";
+import { ClassicContentHeader } from "./components/ClassicHeader";
 
 const GOLD_ICON_URL = getUiIcon("icon_goldcoin");
 const INVENTORY_ICON_URL = getUiIcon("icon_inventory");
@@ -955,16 +958,30 @@ function MainLayout(): JSX.Element {
     // codex:2026-09-10T10:35:00+02:00 — Lokaler Shell-Scope; andere Panels/Modale behalten ihren Bestandsstil.
     // claude:2026-10-19T10:05:00+02:00 — Chef 19.10.: Stil umschaltbar (Reforged/Classic), s. uiStyle.ts.
     <div className={`layout layout--${uiStyle}`}>
-      <Sidebar activePageId={activePageId} onNavigate={setActivePageId} />
+      {/* claude:2026-10-19T11:00:00+02:00 — Classic (Look von 1.2.3): eigene Seitenleiste, Reiterleiste und
+          Kopfzeile „Quiet Citadel“; Reforged: die 1.3-Chrome. Höhenregler, Inhalt und Fenster sind gemeinsam. */}
+      {uiStyle === "classic" ? (
+        <SidebarClassic activePageId={activePageId} onNavigate={setActivePageId} />
+      ) : (
+        <Sidebar activePageId={activePageId} onNavigate={setActivePageId} />
+      )}
       <main className="content">
         <div className="topbar-area" ref={topBarAreaRef}>
-          <TopBar activePageId={activePageId} onNavigate={setActivePageId} />
+          {uiStyle === "classic" ? (
+            <TopBarClassic activePageId={activePageId} onNavigate={setActivePageId} />
+          ) : (
+            <TopBar activePageId={activePageId} onNavigate={setActivePageId} />
+          )}
+          {uiStyle === "classic" && (
+            <ClassicContentHeader page={page} viewedSkillId={viewedSkillId} onNavigate={setActivePageId} />
+          )}
           {/* codex:2026-08-01T16:06:12+02:00 — Chef-GO: Info-Bar-Konzept 05 "Quiet Citadel".
               claude:2026-10-17T11:30:00+02:00 — UI-Fundament: EINE kompakte Statusleiste (hs-*)
               statt Name-Block + Aktivitätszeile + zwei beschrifteter Leisten untereinander:
               Name · Kampf-Lv · Ges.-Lv | Aktivität mit Fortschritt | XP des verfolgten Skills |
               Slayer | Inventar/Gold | Stop. Jede Information genau einmal; ActionProgressBar und
               LevelXpBar behalten ihre eigenen Perf-Gates, nur ihr Ort ändert sich. */}
+          {uiStyle !== "classic" && (
           <header className="hs-strip">
             {/* Seitenname nur für Assistenztechnik — sichtbar steht er bereits im aktiven Reiter
                 bzw. Sidebar-Eintrag. */}
@@ -977,6 +994,7 @@ function MainLayout(): JSX.Element {
             />
             <LevelXpBar viewedSkillId={viewedSkillId} />
           </header>
+          )}
           {/* Chef-Feature 2026-07-23: Drag-Handle an der Unterkante der TopBar — Ziehen ändert die
               Höhe stufenlos (114–256px), Doppelklick resettet auf den Default (168px). Liegt
               INNERHALB der TopBar-Bounds (bottom:0, s. topbar.css .tb-resize-handle) — analog zum

@@ -5,7 +5,8 @@ import { getPortraitSrc } from "../portraits";
 import { formatLastPlayed, formatPlaytime } from "../util/format";
 import { SlotThumb } from "../components/SlotThumb";
 // claude:2026-10-19T02:45:00+02:00 — Chef 19.10.: gemaltes Logo wie im Hauptmenü.
-import menuLogo from "../assets/ui/mainmenu_logo_painterly.webp";
+// claude:2026-10-19T11:30:00+02:00 — Logo folgt dem Oberflächen-Stil (Classic/Reforged).
+import { useMenuLogo } from "../components/menuLogo";
 
 /**
  * Load-Game-Screen — eigener Vollbild-Screen statt des früheren Aufklapp-Panels im Hauptmenü
@@ -26,6 +27,7 @@ interface LoadGameScreenProps {
 }
 
 export function LoadGameScreen({ slots, onBack, onLoad, onDeleteSlot, onBeginNew }: LoadGameScreenProps): JSX.Element {
+  const menuLogo = useMenuLogo();
   const { t } = useI18n();
   const [selectedId, setSelectedId] = useState<number>(() => {
     const filled = slots.filter((s) => s.summary);

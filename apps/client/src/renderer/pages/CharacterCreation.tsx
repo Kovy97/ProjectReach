@@ -10,7 +10,8 @@ import { useGameControl } from "../game/GameContext";
 import { useI18n } from "../i18n";
 import { runWithScreenFade } from "../util/screenFade";
 // claude:2026-10-19T02:45:00+02:00 — Chef 19.10.: gemaltes Logo wie im Hauptmenü.
-import menuLogo from "../assets/ui/mainmenu_logo_painterly.webp";
+// claude:2026-10-19T11:30:00+02:00 — Logo folgt dem Oberflächen-Stil (Classic/Reforged).
+import { useMenuLogo } from "../components/menuLogo";
 // Frontline-Registry-Rework (Chef-Auftrag 26.08.2026, Vorlage Mira "Character Creation 03 ·
 // Frontline Registry"): die Stil-Karten zeigen jetzt dieselben Illustrationen wie Miras Mockup
 // statt der kleinen Attribut-Schaden-Icons — statischer Import statt getUiIcon (liegt außerhalb
@@ -131,6 +132,7 @@ function ArchetypeGrid({ race, group, sex, value, onSelect }: ArchetypeGridProps
 const DEFAULT_ARCHETYPE_PORTRAIT = portraitIdFor("human", "warrior", "m");
 
 export function CharacterCreation(): JSX.Element {
+  const menuLogo = useMenuLogo();
   const { createCharacter, cancelCreation } = useGameControl();
   const { t } = useI18n();
   const [name, setName] = useState("");

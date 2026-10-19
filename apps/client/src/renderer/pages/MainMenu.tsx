@@ -16,7 +16,9 @@ import { FontPreview } from "./FontPreview";
 // Kulisse ersetzt das frühere Hero-Panorama — Welt + physischer Kartentisch in einer Komposition.
 // claude:2026-10-19T02:45:00+02:00 — Chef 19.10.: neues gemaltes Hauptmenü (Highlands). Die Kulisse wählt menu.css per
 // Seitenverhältnis (16:9 oder 21:9); die War-Table-Datei bleibt im Bestand.
-import menuLogo from "../assets/ui/mainmenu_logo_painterly.webp";
+// claude:2026-10-19T11:30:00+02:00 — Logo folgt dem Oberflächen-Stil (Classic/Reforged).
+import { useMenuLogo } from "../components/menuLogo";
+import { UI_STYLES, UI_STYLE_LABEL_KEY, setzeUiStyle, useUiStyle } from "../uiStyle";
 import emblCompass from "../assets/ui/emblem_compass.svg";
 import emblWaxseal from "../assets/ui/emblem_waxseal.svg";
 import emblGear from "../assets/ui/emblem_gear.svg";
@@ -73,6 +75,8 @@ const PANEL_ICON: Record<Panel, string | null> = {
  * außer der Intro-Sequenz selbst, inkl. jeder Rückkehr zum Menü innerhalb derselben Session).
  */
 export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.Element {
+  const menuLogo = useMenuLogo();
+  const uiStyle = useUiStyle();
   const { slots, startNewGame, loadGame, deleteSlot } = useGameControl();
   const { t, locale, setLocale } = useI18n();
   const [showFonts, setShowFonts] = useState(false);
@@ -217,6 +221,18 @@ export function MainMenu({ revealed = true }: { revealed?: boolean } = {}): JSX.
             onClick={() => setLocale(l)}
           >
             {l.toUpperCase()}
+          </button>
+        ))}
+        {/* claude:2026-10-19T11:30:00+02:00 — Chef 19.10.: Oberflächen-Stil direkt im Hauptmenü umschaltbar. */}
+        <span className="menu-lang-sep" aria-hidden="true" />
+        {UI_STYLES.map((stil) => (
+          <button
+            key={stil}
+            className={optBtnCls(uiStyle === stil)}
+            onClick={() => setzeUiStyle(stil)}
+            title={t("options.uiStyle")}
+          >
+            {t(UI_STYLE_LABEL_KEY[stil])}
           </button>
         ))}
       </div>

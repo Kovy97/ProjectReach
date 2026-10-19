@@ -45,6 +45,16 @@
   }
 }
 
+/* claude:2026-10-19T11:30:00+02:00 — Classic-Stil (Look von 1.2.3): Kriegstisch-Kulisse wie damals. */
+:root[data-ui-style="classic"] .menu-bg {
+  background-image: url("../assets/ui/mainmenu_war_table.webp");
+}
+
+/* Trenner zwischen Sprachen und Stil-Umschalter in der Knopfreihe oben rechts. */
+.menu-lang-sep {
+  width: 10px;
+}
+
 /* Vignette + stärkerer Verlauf unten für die Lesbarkeit der Nav über dem Artwork. Das frühere
    warme Zentrum-Glühen (fürs alte Schild-Emblem-Hero positioniert) ist raus — das Welt-Panorama
    (Chef-Wallpaper 2026-07-13) bringt seine eigene Lichtführung mit (Lagerfeuer unten links). */
