@@ -413,6 +413,11 @@ export const ptBR: Record<string, string> = {
     "options.uiStyleHint": "Clássico traz de volta a barra lateral, as abas e o cabeçalho de antes da 1.3. Os dois estilos acompanham a alça da barra lateral e o ajuste de altura do cabeçalho.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Clássico",
+    // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
+    "header.stopCombat": "Encerrar Luta",
+    "skill.doing": "Em andamento",
+    "topbar.bar.inCombat": "Em Combate",
+    "topbar.bar.noActiveSkill": "Nenhuma perícia ativa",
     "options.font.atmosphere": "Atmosfera",
     "options.font.atmosphere.note": "A fonte da casa. Impressão antiga, traço áspero.",
     "options.font.book": "Livro",

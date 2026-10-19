@@ -480,6 +480,11 @@ const en = {
     "options.uiStyleHint": "Classic brings back the sidebar, tab bar and header from before 1.3. Both styles scale with the sidebar handle and the header height handle.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Classic",
+    // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
+    "header.stopCombat": "End Fight",
+    "skill.doing": "In progress",
+    "topbar.bar.inCombat": "In Combat",
+    "topbar.bar.noActiveSkill": "No active skill",
     "options.font.atmosphere": "Atmosphere",
     "options.font.atmosphere.note": "The house font. Old print, rough edges.",
     "options.font.book": "Book",
@@ -3324,6 +3329,11 @@ const de: Record<keyof typeof en, string> = {
     "options.uiStyleHint": "Klassisch bringt Seitenleiste, Reiterleiste und Kopfzeile von vor 1.3 zurück. Beide Stile wachsen mit dem Griff der Seitenleiste und dem Höhenregler der Kopfleiste.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Klassisch",
+    // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
+    "header.stopCombat": "Kampf abbrechen",
+    "skill.doing": "Läuft gerade",
+    "topbar.bar.inCombat": "Im Kampf",
+    "topbar.bar.noActiveSkill": "Keine aktive Fertigkeit",
     "options.font.atmosphere": "Atmosphäre",
     "options.font.atmosphere.note": "Die Hausschrift. Alter Buchdruck, raue Kanten.",
     "options.font.book": "Buch",

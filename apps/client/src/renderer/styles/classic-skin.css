@@ -1,1 +1,2843 @@
-/* claude:2026-10-19T10:15:00+02:00 — Classic-Haut (generiert, s. ui-audit/gen-classic-skin.py). Platzhalter. */
+/* claude:2026-10-19T10:30:00+02:00 - Classic-Haut (Look von 1.2.3). GENERIERT von ui-audit/gen-classic-skin.py,
+   NICHT von Hand aendern. Nur Hintergrund-/Rahmen-Deklarationen (background*, border-image*), alle Regeln unter
+   :root[data-ui-style="classic"]; Quelle der Werte: git show ec86af5:styles/<datei>, Bilder aus assets/classic/. */
+:root[data-ui-style="classic"] body {
+  background: linear-gradient(rgba(14, 14, 16, 0.42), rgba(14, 14, 16, 0.42)), url("../assets/bg_tileable_stone.webp") top left repeat scroll, var(--bg);
+  background-size: auto, 450px 450px;
+}
+:root[data-ui-style="classic"] .ds-frame {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .ds-frame--headed {
+  background: url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ds-button {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ds-button::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .ds-button:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ds-button:active,
+:root[data-ui-style="classic"] .ds-button.active {
+  background: linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .btn-iron {
+  background-color: #111315;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .btn-iron.is-active {
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  background-color: #2a2113;
+  background-image: linear-gradient(rgba(216, 192, 106, 0.44), rgba(122, 92, 44, 0.26)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] .content-body-frame::after {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .sidebar {
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), url("../assets/classic/bg_sidebar.webp") top left / 313px repeat;
+}
+:root[data-ui-style="classic"] .sidebar::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .sb-blessing-card {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .sb-footer {
+  background: transparent;
+}
+:root[data-ui-style="classic"] .sb-footer-save,
+:root[data-ui-style="classic"] .sb-footer-menu,
+:root[data-ui-style="classic"] .sb-footer-mail,
+:root[data-ui-style="classic"] .sb-footer-options,
+:root[data-ui-style="classic"] .sb-footer-quit {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .sb-footer-save::before,
+:root[data-ui-style="classic"] .sb-footer-menu::before,
+:root[data-ui-style="classic"] .sb-footer-mail::before,
+:root[data-ui-style="classic"] .sb-footer-options::before,
+:root[data-ui-style="classic"] .sb-footer-quit::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .sb-footer-save:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .sb-footer-save:active {
+  background: linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .sb-footer-menu:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .sb-footer-mail:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .sb-footer-options:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .sb-footer-quit:hover {
+  background: linear-gradient(rgba(45, 10, 8, 0.55), rgba(45, 10, 8, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .sb-footer-drawer-tab {
+  background: linear-gradient(rgba(8, 11, 13, 0.14), rgba(2, 4, 5, 0.34)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(8px * var(--sb-scale-eff) * 2.125);
+}
+:root[data-ui-style="classic"] .sb-footer-actions {
+  background: linear-gradient(rgba(5, 4, 2, 0.82), rgba(5, 4, 2, 0.94)), url("../assets/classic/bg_black.webp") top left repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .menu-panel {
+  background: linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .hf-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hf-btn::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .hf-btn:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hf-btn:active {
+  background: linear-gradient(rgba(80, 55, 15, 0.55), rgba(80, 55, 15, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hf-btn--primary {
+  background: linear-gradient(rgba(58, 42, 12, 0.8), rgba(58, 42, 12, 0.8)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hf-btn--primary:hover {
+  background: linear-gradient(rgba(88, 64, 18, 0.75), rgba(88, 64, 18, 0.75)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hf-btn--danger {
+  background: linear-gradient(rgba(48, 8, 6, 0.76), rgba(48, 8, 6, 0.76)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hf-btn--danger:hover {
+  background: linear-gradient(rgba(80, 16, 10, 0.68), rgba(80, 16, 10, 0.68)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hf-btn--danger:active {
+  background: linear-gradient(rgba(100, 22, 14, 0.72), rgba(100, 22, 14, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .save-dossier {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .active-relic {
+  background: linear-gradient(135deg, rgba(20, 19, 17, 0.95), rgba(8, 9, 9, 0.97)), url("../assets/classic/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .new-relic-copy {
+  background: linear-gradient(rgba(32, 29, 25, 0.94), rgba(16, 16, 15, 0.98)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  background-size: auto, 260px 260px;
+}
+:root[data-ui-style="classic"] .load-dossier-info {
+  background: linear-gradient(135deg, rgba(27, 27, 25, 0.98), rgba(11, 12, 12, 0.98)), url("../assets/classic/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+}
+:root[data-ui-style="classic"] .slot-thumb {
+  background: linear-gradient(rgba(20, 19, 17, 0.68), rgba(8, 9, 9, 0.86)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 220px 220px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .creation-portrait-upload-btn {
+  background-color: #111315;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 160px 160px;
+  background-repeat: no-repeat, repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .creation-form-pane {
+  background: linear-gradient(rgba(13, 14, 14, 0.96), rgba(10, 11, 11, 0.985)), url("../assets/classic/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+}
+:root[data-ui-style="classic"] .creation-input {
+  background-color: #111315;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 200px 200px;
+  background-repeat: no-repeat, repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .creation-style-card {
+  background: linear-gradient(145deg, rgba(33, 31, 28, 0.7), rgba(16, 17, 17, 0.86)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 220px 220px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .creation-portrait-cell {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .portrait-gallery-grid .portrait-thumb {
+  background: url("../assets/bg_charscreen.webp") center / cover no-repeat, #0e1210;
+}
+:root[data-ui-style="classic"] .vital-bar {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .cs-col-stats {
+  background: linear-gradient(rgba(9, 11, 17, 0.88), rgba(5, 7, 12, 0.92)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: auto, 200px;
+}
+:root[data-ui-style="classic"] .cs-col-mid {
+  background-image: url("../assets/classic/bg_equipment.webp");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+:root[data-ui-style="classic"] .cs-portrait-wrap {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .cs-portrait-settings-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cs-vitals {
+  background: linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: auto, 200px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .cs-attr-section {
+  background: linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.28)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: auto, 200px;
+}
+:root[data-ui-style="classic"] .cs-attr-card {
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--attr-color, var(--gold)) 20%, transparent) 0%, transparent 68%), linear-gradient(rgba(0,0,0,0.34), rgba(0,0,0,0.54)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: 100% 100%, auto, 160px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .cs-col-left {
+  background: linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: auto, 200px;
+}
+:root[data-ui-style="classic"] .cs-col-right {
+  background: linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)), url("../assets/classic/bagpack_background.webp") center / cover no-repeat;
+}
+:root[data-ui-style="classic"] .cs-sort-select {
+  background-color: transparent;
+  background-image: linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)), url("../assets/classic/bg_black.webp"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0L10 0L5 6Z' fill='%23d8b870'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, repeat, no-repeat;
+  background-position: 0 0, 0 0, right 9px center;
+  background-size: auto, auto, 9px 6px;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cs-inv-search {
+  background: linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cs-detail-panel {
+  background: linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .cs-detail-panel::before {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .cs-detail-img-wrap {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .cs-detail-meta {
+  background: linear-gradient(rgba(0,0,0,0.50), rgba(0,0,0,0.50)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .cs-detail-meta::after {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .cs-tab-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .cs-tab-btn::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cs-tab-btn:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .cs-tab-btn.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .portrait-gallery-grid .portrait-thumb {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .portrait-gallery-grid .portrait-thumb.active {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .category-header {
+  background: linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)), url("../assets/classic/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .category-header:hover {
+  background: linear-gradient(rgba(60, 42, 22, 0.16), rgba(60, 42, 22, 0.22)), url("../assets/classic/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+}
+:root[data-ui-style="classic"] .skillcard {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .skillcard-lvl {
+  background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skillcard-invcount {
+  background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skillcard-tile {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .skillcard-loot {
+  background: linear-gradient(rgba(10, 8, 6, 0.5), rgba(10, 8, 6, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .mat-chip {
+  background: linear-gradient(rgba(20, 44, 18, 0.45), rgba(11, 24, 10, 0.52)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .mat-chip.lacking {
+  background: linear-gradient(rgba(48, 16, 12, 0.46), rgba(28, 9, 7, 0.54)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .mat-chip.will-have,
+:root[data-ui-style="classic"] #root .skillcard-resource-rack .mat-chip.will-have {
+  background: linear-gradient(rgba(64, 50, 12, 0.46), rgba(38, 29, 6, 0.56)), var(--gw-action-leather, url("../assets/classic/bg_black.webp")) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .craftable {
+  background: linear-gradient(rgba(20, 44, 18, 0.42), rgba(11, 24, 10, 0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .craftable.none {
+  background: linear-gradient(rgba(48, 16, 12, 0.44), rgba(28, 9, 7, 0.52)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .skillcard.locked .craftable {
+  background: linear-gradient(rgba(28, 26, 22, 0.42), rgba(14, 13, 11, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .skillcard-cta {
+  background: linear-gradient(rgba(8, 6, 4, 0.5), rgba(8, 6, 4, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skillcard-cta.stop {
+  background: linear-gradient(rgba(42, 12, 8, 0.42), rgba(42, 12, 8, 0.42)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .skillcard-mastery {
+  background: linear-gradient(rgba(8, 6, 4, 0.60), rgba(8, 6, 4, 0.60)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .skill-active-pet {
+  background: linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-tabs {
+  background: linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ms2-tab {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ms2-tab:hover {
+  background: linear-gradient(rgba(28, 18, 8, 0.40), rgba(28, 18, 8, 0.40)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-tab--active {
+  background: linear-gradient(rgba(32, 22, 8, 0.75), rgba(32, 22, 8, 0.75)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-skill-block {
+  background: linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ms2-skill-emblem {
+  background: linear-gradient(rgba(10, 12, 15, 0.65), rgba(10, 12, 15, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-skill-badge {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ms2-skill-badge.ms2-rarity--uncommon {
+  background: linear-gradient(rgba(14, 22, 36, 0.65), rgba(10, 16, 28, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-skill-badge.ms2-rarity--rare {
+  background: linear-gradient(rgba(32, 26, 8, 0.65), rgba(20, 16, 4, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-skill-badge.ms2-rarity--epic {
+  background: linear-gradient(rgba(30, 12, 42, 0.65), rgba(18, 7, 26, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-skill-badge.ms2-rarity--legendary {
+  background: linear-gradient(rgba(38, 18, 6, 0.65), rgba(24, 11, 3, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .ms2-pool-bar {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ms2-action-bar {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skill-head {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .skill-level-badge {
+  background: linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skill-active {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .skilloverview-page .panel {
+  background: linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skilloverview-card {
+  background: linear-gradient(rgba(28, 17, 9, 0.55), rgba(18, 11, 6, 0.68)), url("../assets/classic/bg_tileable_wood.webp") center / 260px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skilloverview-icon-wrap {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skilloverview-level {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skilloverview-bar {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skill-head .bar.tall,
+:root[data-ui-style="classic"] .skill-active .bar.tall,
+:root[data-ui-style="classic"] .skillcard-bar,
+:root[data-ui-style="classic"] .mastery-bar {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .farm-info-bar {
+  background: linear-gradient(rgba(8, 6, 4, 0.60), rgba(8, 6, 4, 0.60)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .plot-card {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .plot-bar {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .farm-picker-card {
+  background: linear-gradient(rgba(28, 17, 9, 0.58), rgba(18, 11, 6, 0.7)), url("../assets/classic/bg_tileable_wood.webp") center / 260px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .farm-catalogue-card {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .slayer-target-badge {
+  background: linear-gradient(rgba(40, 30, 12, 0.55), rgba(20, 14, 6, 0.7)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .zone-card {
+  background: linear-gradient(rgba(10, 12, 15, 0.55), rgba(10, 12, 15, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .dungeon-locked-hint {
+  background: linear-gradient(rgba(10, 8, 6, 0.55), rgba(10, 8, 6, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .dungeon-progress {
+  background: linear-gradient(rgba(8, 5, 2, 0.66), rgba(8, 5, 2, 0.66)), url("../assets/classic/bg_tileable_wood.webp") center / 130px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28 fill;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .dungeon-wave-announce {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .monster-card-footer {
+  background: linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)), url("../assets/classic/bg_tileable_wood.webp") center / 320px repeat;
+}
+:root[data-ui-style="classic"] .monster-card-level-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), url("../assets/classic/bg_tileable_wood.webp") center / 130px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .mc-trait-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), url("../assets/classic/bg_tileable_wood.webp") center / 130px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .monster-card-xp-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), url("../assets/classic/bg_tileable_wood.webp") center / 130px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .battle {
+  background: linear-gradient(rgba(8, 6, 4, 0.5), rgba(8, 6, 4, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .battle-stance-btn {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-arena {
+  background: linear-gradient(rgba(8, 9, 10, 0.44), rgba(5, 4, 3, 0.68)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .fighter-sub-drops {
+  background: linear-gradient(rgba(10, 8, 6, 0.55), rgba(10, 8, 6, 0.6)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+@container (max-width: 460px) {
+  :root[data-ui-style="classic"] .fighter-sub-drops-grid {
+    background: linear-gradient(rgba(10, 8, 6, 0.85), rgba(10, 8, 6, 0.88)), url("../assets/classic/bg_black.webp") repeat;
+    border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  }
+}
+:root[data-ui-style="classic"] .battle-log-tab {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-log-tab::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .battle-log-tab:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-log-tab.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-controls {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28 fill;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .battle-log-panel {
+  background: linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-image-width: var(--frame-w);
+}
+:root[data-ui-style="classic"] .fighter-nameplate {
+  background: linear-gradient(rgba(7, 8, 9, 0.9), rgba(14, 10, 7, 0.94)), url("../assets/classic/ui/gravewood/textures/texture-smoky-bronze.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+}
+:root[data-ui-style="classic"] .fighter-level-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), url("../assets/classic/bg_tileable_wood.webp") center / 130px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cbar.cbar-hp,
+:root[data-ui-style="classic"] .cbar.cbar-enemy-hp,
+:root[data-ui-style="classic"] .cbar.cbar-mana,
+:root[data-ui-style="classic"] .cbar.cbar-ward,
+:root[data-ui-style="classic"] .cbar.cbar-timer {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .combat-quick {
+  background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .monster-card {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .zone-card {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cl-section {
+  background: linear-gradient(rgba(14, 9, 4, 0.74), rgba(14, 9, 4, 0.74)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cl-stance {
+  background: linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+}
+:root[data-ui-style="classic"] .cl-slot {
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+}
+:root[data-ui-style="classic"] .cl-skill {
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+}
+:root[data-ui-style="classic"] .cl-food-slot {
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+}
+:root[data-ui-style="classic"] .cl-food-btn {
+  background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+}
+:root[data-ui-style="classic"] .cl-autoeat-upgrade {
+  background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .cl-potion-rebuff-unlock {
+  background: linear-gradient(rgba(8, 8, 8, 0.76), rgba(15, 10, 6, 0.84)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+  border-image-width: var(--frame-w);
+}
+:root[data-ui-style="classic"] .zone-back {
+  background: linear-gradient(rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .monster-card-footer {
+  background: linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)), url("../assets/classic/bg_tileable_wood.webp") center / 320px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .monster-card-stats.stat-line .stat-line-item {
+  background: linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: 100% 100%, 120px;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .kill-summary-card {
+  background: linear-gradient(rgba(10, 12, 15, 0.9), rgba(10, 12, 15, 0.9)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .battle-log-settings-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-log-settings-btn::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .battle-log-settings-btn:hover,
+:root[data-ui-style="classic"] .battle-log-settings-btn.open {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-log-settings-pop {
+  background: linear-gradient(rgba(20, 16, 11, 0.97), rgba(11, 9, 7, 0.98)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: auto, 200px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .combat-select:not(.is-map-mode) {
+  background: linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+  border-image-width: var(--frame-w);
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock {
+  background: linear-gradient(rgba(8, 10, 11, 0.76), rgba(10, 7, 4, 0.84)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") repeat;
+}
+:root[data-ui-style="classic"] .cl-dock-tab {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(5px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .cl-dock-pane-gear .cl-gear-doll,
+:root[data-ui-style="classic"] .cl-dock-pane-gear .cs-stats-scroll {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .battle-loadout-col,
+:root[data-ui-style="classic"] .battle-log-panel,
+:root[data-ui-style="classic"] .battle-arena {
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .battle-arena {
+  background: linear-gradient(rgba(8, 9, 10, 0.44), rgba(5, 4, 3, 0.68)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-log-panel {
+  background: linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+:root[data-ui-style="classic"] .fighter-nameplate {
+  background: linear-gradient(rgba(7, 8, 9, 0.9), rgba(14, 10, 7, 0.94)), url("../assets/classic/ui/gravewood/textures/texture-smoky-bronze.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+}
+:root[data-ui-style="classic"] .battle .combat-stop-btn {
+  background: linear-gradient(rgba(57, 13, 10, 0.34), rgba(10, 8, 7, 0.86)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .battle .combat-stop-btn:hover {
+  background: linear-gradient(rgba(96, 24, 17, 0.48), rgba(19, 11, 8, 0.9)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+}
+:root[data-ui-style="classic"] .battle-hud-ribbon {
+  background: linear-gradient(90deg, rgba(7, 8, 8, 0.94), rgba(22, 18, 13, 0.9) 62%, rgba(7, 8, 8, 0.94)), url("../assets/classic/ui/gravewood/textures/texture-smoky-bronze.webp") repeat;
+}
+:root[data-ui-style="classic"] .battle-hud-ribbon-details {
+  background: linear-gradient(rgba(8, 9, 9, 0.97), rgba(15, 11, 7, 0.98)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+:root[data-ui-style="classic"] #root .combat-page .zone-back {
+  background-color: #111315;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(4px * 2.125);
+}
+:root[data-ui-style="classic"] .bank-head {
+  background: linear-gradient(rgba(10, 12, 15, 0.4), rgba(10, 12, 15, 0.45)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .toast {
+  background: linear-gradient(rgba(14, 9, 4, 0.92), rgba(14, 9, 4, 0.92)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .stats-page .panel {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .bestiary-page .panel {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .status-legend {
+  background: linear-gradient(rgba(10,12,15,0.35), rgba(10,12,15,0.40)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .bestiary-zone-header {
+  background: linear-gradient(rgba(16, 10, 5, 0.14), rgba(16, 10, 5, 0.2)), url("../assets/classic/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .bestiary-zone-header:hover {
+  background: linear-gradient(rgba(60, 42, 22, 0.16), rgba(60, 42, 22, 0.22)), url("../assets/classic/bg_tileable_leather.webp") repeat;
+  background-size: auto, 320px 320px;
+}
+:root[data-ui-style="classic"] .bestiary-card {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .bestiary-card-level-badge {
+  background: linear-gradient(rgba(22, 13, 7, 0.82), rgba(12, 8, 4, 0.9)), url("../assets/classic/bg_tileable_wood.webp") center / 130px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .bestiary-card-footer {
+  background: linear-gradient(rgba(28, 17, 9, 0.80), rgba(18, 11, 6, 0.88)), url("../assets/classic/bg_tileable_wood.webp") center / 320px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .bestiary-drops {
+  background: linear-gradient(rgba(10, 8, 6, 0.5), rgba(10, 8, 6, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .options-page .panel {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ach2-page-header {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ach2-stat-card {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ach2-controls {
+  background: linear-gradient(rgba(10,12,15,0.45), rgba(10,12,15,0.50)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ach2-card {
+  background: linear-gradient(rgba(48,16,12,0.46), rgba(28,9,7,0.52)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ach2-card--unlocked {
+  background: linear-gradient(rgba(20,44,18,0.45), rgba(11,24,10,0.50)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-gallery-page .panel {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/classic/bg_tileable_wood.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-slot-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-slot-btn::before {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-slot-btn:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-select-panel {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/classic/bg_tileable_wood.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-card {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/classic/bg_tileable_wood.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-card-portrait {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-equipped-badge {
+  background: linear-gradient(rgba(10,12,15,0.55), rgba(10,12,15,0.60)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-effect-tag {
+  background: linear-gradient(rgba(10,12,15,0.50), rgba(10,12,15,0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-card-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.72), rgba(18, 12, 6, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-card-btn::before {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-card-btn-equip:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-card-btn-unequip:hover {
+  background: linear-gradient(rgba(40, 10, 8, 0.55), rgba(40, 10, 8, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-field-header,
+:root[data-ui-style="classic"] .pet-field-index,
+:root[data-ui-style="classic"] .pet-field-detail,
+:root[data-ui-style="classic"] .pet-field-empty {
+  background: linear-gradient(rgba(10, 13, 14, 0.84), rgba(8, 10, 11, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 fill stretch;
+}
+:root[data-ui-style="classic"] .pet-field-active {
+  background: linear-gradient(rgba(12, 14, 15, 0.76), rgba(7, 9, 10, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .pet-field-entry {
+  background: linear-gradient(rgba(13, 16, 17, 0.85), rgba(8, 10, 11, 0.92)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .pet-field-entry.is-selected {
+  background: linear-gradient(rgba(58, 45, 26, 0.72), rgba(20, 19, 16, 0.9)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-field-stage {
+  background: radial-gradient(ellipse at 50% 44%, rgba(55, 68, 69, 0.8), rgba(9, 11, 12, 0.96) 68%), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .pet-field-effects {
+  background: linear-gradient(rgba(10, 13, 14, 0.74), rgba(7, 9, 10, 0.88)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+}
+:root[data-ui-style="classic"] .pet-field-journal .pet-card-btn {
+  background: linear-gradient(rgba(20, 23, 23, 0.72), rgba(9, 11, 12, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .pet-field-journal .pet-card-btn-unequip {
+  background: linear-gradient(rgba(59, 23, 19, 0.52), rgba(22, 12, 11, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .enchant-panel {
+  background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .enchant-item-row {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .enchant-preview {
+  background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .enchant-preview-item {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .enchant-preview-statblock {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .shop-balance {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/classic/bg_tileable_wood.webp") repeat;
+  background-size: auto, 280px 280px;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shop-panel {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/classic/bg_tileable_wood.webp") repeat;
+  background-size: auto, 280px 280px;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shop-item-card {
+  background: linear-gradient(rgba(12, 8, 4, 0.88), rgba(12, 8, 4, 0.88)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shop-item-image-area {
+  background: radial-gradient(ellipse 80% 70% at 50% 42%, rgba(216,192,106,0.06), transparent 72%), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shop-citadel-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shop-citadel-btn::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shop-citadel-btn:hover:not(:disabled) {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .bank-ledger .npc-bubble {
+  background: linear-gradient(rgba(8, 10, 12, 0.82), rgba(12, 10, 8, 0.88)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .bank-page .bank-head {
+  background: linear-gradient(rgba(8, 10, 12, 0.72), rgba(8, 10, 12, 0.78)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .bank-page .bank-filter-row {
+  background: linear-gradient(rgba(7, 9, 11, 0.72), rgba(7, 9, 11, 0.82)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .bank-page .bank-ledger-panel {
+  background: linear-gradient(rgba(8, 10, 12, 0.7), rgba(7, 8, 10, 0.82)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 320px 320px repeat;
+}
+:root[data-ui-style="classic"] .bank-page .bank-ledger-panel--storage {
+  background: linear-gradient(rgba(16, 12, 8, 0.68), rgba(8, 9, 10, 0.82)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+:root[data-ui-style="classic"] .item-tooltip {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ct-tip {
+  background: linear-gradient(rgba(20,16,11,0.97), rgba(11,9,7,0.98)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: auto, 200px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .item-tooltip.itip-panel {
+  background: linear-gradient(90deg, rgba(7, 7, 7, 0.94), rgba(27, 19, 12, 0.9) 48%, rgba(8, 8, 8, 0.95)), url("../assets/classic/bg_tileable_wood.webp") 0 0 / 320px 320px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  border-image-width: 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .itip-stage {
+  background: url("../assets/classic/bg_equipment.webp") center / 100% 100% no-repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .itip-body {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .itip-body::before {
+  background: linear-gradient(rgba(8, 7, 6, 0.86), rgba(8, 7, 6, 0.86)), url("../assets/classic/attribute_bg.webp") repeat;
+  background-size: auto, 180px;
+}
+:root[data-ui-style="classic"] .itip-badge {
+  background: linear-gradient(rgba(8, 6, 4, 0.65), rgba(8, 6, 4, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .itip-tag {
+  background: linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .itip-effect-block {
+  background: linear-gradient(rgba(10, 8, 6, 0.6), rgba(10, 8, 6, 0.6)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .item-tooltip.itip-panel {
+  background: linear-gradient(90deg, rgba(7, 7, 7, 0.94), rgba(27, 19, 12, 0.9) 48%, rgba(8, 8, 8, 0.95)), url("../assets/classic/bg_tileable_wood.webp") 0 0 / 320px 320px repeat;
+}
+:root[data-ui-style="classic"] .itip-warbanner-main {
+  background: linear-gradient(rgba(10, 9, 8, 0.68), rgba(10, 8, 6, 0.82)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 280px 280px repeat;
+}
+:root[data-ui-style="classic"] .itip-warbanner-main .itip-stage {
+  background: radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--rarity-col, var(--gold)) 14%, transparent), transparent 68%), linear-gradient(rgba(12, 14, 15, 0.56), rgba(7, 8, 9, 0.78)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 192px 192px repeat;
+}
+:root[data-ui-style="classic"] #root .itip-warbanner-record .itip-special-effect {
+  background: linear-gradient(90deg, rgba(88, 35, 12, 0.34), rgba(24, 15, 10, 0.74)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 240px 240px repeat;
+}
+:root[data-ui-style="classic"] .cs-detail-affix-tag {
+  background: linear-gradient(rgba(216,192,106,0.08), rgba(216,192,106,0.08)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .active-buff-chip {
+  background: linear-gradient(rgba(216, 192, 106, 0.08), rgba(216, 192, 106, 0.08)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .itip-warbanner-record .itip-effect-block {
+  background: linear-gradient(90deg, rgba(27, 20, 13, 0.88), rgba(8, 10, 11, 0.9)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 240px 240px repeat;
+}
+:root[data-ui-style="classic"] #root .item-tooltip.itip-panel .it-action-btn {
+  background-color: #101315;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.13), transparent 72%), linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.34)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, auto, 192px 192px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(16px * 2.125);
+}
+:root[data-ui-style="classic"] .modal {
+  background: linear-gradient(rgba(10, 12, 15, 0.55), rgba(10, 12, 15, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skillguide-head-icon {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .skillguide-level-badge {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .death-modal-icon {
+  background: radial-gradient(ellipse at 50% 40%, rgba(196, 60, 40, 0.18) 0%, transparent 70%), linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .stalemate-modal .death-modal-icon {
+  background: radial-gradient(ellipse at 50% 40%, rgba(216, 192, 106, 0.2) 0%, transparent 70%), linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+}
+:root[data-ui-style="classic"] .quit-confirm-icon {
+  background: radial-gradient(ellipse at 50% 40%, rgba(196, 60, 40, 0.18) 0%, transparent 70%), linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/classic/bg_black.webp");
+  background-size: cover;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .slayer-master-tab {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .slayer-master-tab::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .slayer-master-tab:hover:not(:disabled) {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .slayer-master-tab.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .slayer-balance {
+  background: linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shop-panel.slayer-shop-panel {
+  background-color: #111518;
+  background-image: radial-gradient(ellipse at 15% 0%, rgba(140, 86, 39, 0.10), transparent 55%), linear-gradient(rgba(6, 9, 11, 0.32), rgba(4, 6, 8, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 256px 256px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: initial;
+  background-clip: initial;
+}
+:root[data-ui-style="classic"] .shop-panel.slayer-talent-panel {
+  background-color: #111518;
+  background-image: radial-gradient(ellipse at 15% 0%, rgba(140, 86, 39, 0.10), transparent 55%), linear-gradient(rgba(6, 9, 11, 0.32), rgba(4, 6, 8, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 256px 256px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .slayer-task-panel.shop-panel {
+  background-color: #111518;
+  background-image: radial-gradient(ellipse at 15% 0%, rgba(140, 86, 39, 0.10), transparent 55%), linear-gradient(rgba(6, 9, 11, 0.32), rgba(4, 6, 8, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 256px 256px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: initial;
+  background-clip: initial;
+}
+:root[data-ui-style="classic"] .slayer-shop-card {
+  background: linear-gradient(rgba(18, 12, 7, 0.58), rgba(8, 5, 3, 0.74)), url("../assets/classic/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+}
+:root[data-ui-style="classic"] .slayer-lower-tab {
+  background: linear-gradient(rgba(14, 17, 18, 0.86), rgba(7, 9, 10, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .slayer-lower-tab.is-active {
+  background: linear-gradient(rgba(75, 53, 25, 0.69), rgba(18, 16, 13, 0.92)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+:root[data-ui-style="classic"] .prestige-balance {
+  background: linear-gradient(rgba(18, 12, 6, 0.8), rgba(18, 12, 6, 0.8)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .prestige-pick {
+  background-color: #0b0f11;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .prestige-pick.is-selected {
+  background-image: linear-gradient(rgba(70, 46, 14, 0.42), rgba(5, 8, 10, 0.3)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+}
+:root[data-ui-style="classic"] .modal.prestige-bilanz {
+  background: linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 stretch;
+}
+:root[data-ui-style="classic"] .talent-node {
+  background-color: #0b0f11;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .talent-node.is-available {
+  background-image: linear-gradient(rgba(70, 46, 14, 0.38), rgba(5, 8, 10, 0.3)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+}
+:root[data-ui-style="classic"] .talent-node.is-maxed {
+  background-image: linear-gradient(rgba(60, 42, 14, 0.42), rgba(14, 9, 4, 0.6)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+}
+:root[data-ui-style="classic"] .pouch-head-icon {
+  background: linear-gradient(rgba(10, 8, 6, 0.6), rgba(10, 8, 6, 0.6)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .modal.pouch-modal {
+  background: linear-gradient(rgba(18, 13, 9, 0.22), rgba(4, 4, 4, 0.5)), url("../assets/classic/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+}
+:root[data-ui-style="classic"] .pouch-head {
+  background: linear-gradient(90deg, rgba(27, 18, 12, 0.86), rgba(10, 10, 10, 0.72)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") 0 0 / 256px 256px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125;
+}
+:root[data-ui-style="classic"] .pouch-row {
+  background: linear-gradient(rgba(70, 66, 60, 0.30), rgba(10, 9, 8, 0.55)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 280px 280px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .pouch-row.pouch-row-equipped {
+  background: linear-gradient(rgba(216, 192, 106, 0.16), rgba(10, 9, 8, 0.55)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 280px 280px;
+}
+:root[data-ui-style="classic"] .iwk-panel {
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .iwk-ribbon {
+  background: linear-gradient(rgba(4, 4, 4, 0.5), rgba(20, 13, 8, 0.5)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") repeat;
+  background-size: auto, 320px 320px;
+}
+:root[data-ui-style="classic"] .encp-rail {
+  background: linear-gradient(90deg, rgba(38, 26, 17, 0.76), rgba(9, 10, 11, 0.82)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 256px repeat;
+}
+:root[data-ui-style="classic"] .encp-grid-wrap {
+  background: linear-gradient(rgba(6, 7, 8, 0.7), rgba(8, 8, 8, 0.78)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px repeat;
+}
+:root[data-ui-style="classic"] .encp-card {
+  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 stretch;
+}
+:root[data-ui-style="classic"] .guide-bubble {
+  background: linear-gradient(rgba(10, 12, 15, 0.7), rgba(10, 12, 15, 0.7)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] {
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn {
+  background-color: #17120e !important;
+  background-image: var(--gw-nav-surface) !important;
+  background-position: center !important;
+  background-size: 102.4px 102.4px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover {
+  background-color: #17120e !important;
+  background-image: var(--gw-nav-surface) !important;
+  background-position: center !important;
+  background-size: 102.4px 102.4px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-repeat: initial !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-image: var(--gw-nav-surface) !important;
+  background-color: initial !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  background-repeat: initial !important;
+  background-origin: initial !important;
+  background-clip: initial !important;
+  border-image: var(--gw-nav-frame) 64 120 64 120 / 6px 14px !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn:not(:disabled):hover {
+  border-image-source: var(--gw-nav-frame);
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-image: var(--gw-nav-surface) !important;
+  background-size: initial !important;
+  background-repeat: initial !important;
+  border-image-source: var(--gw-nav-frame) !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn:not(:disabled):active {
+  border-image-source: var(--gw-nav-frame);
+}
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ) {
+  background-color: #17120e;
+  background-image: var(--gw-nav-surface);
+  background-position: center;
+  background-size: 256px 256px;
+  background-repeat: repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: var(--gw-nav-frame) 64 120 64 120 / 5px 12px;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] #root :is( .sb-skill-btn, .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ) {
+  background-image: var(--gw-nav-surface) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
+}
+:root[data-ui-style="classic"] #root :is( .sb-skill-btn, .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ) {
+  background-image: var(--gw-nav-surface) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  --gw-nav-frame: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover {
+  border-image-source: var(--gw-nav-frame) !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn {
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-image: var(--gw-nav-surface) !important;
+}
+:root[data-ui-style="classic"] #root :is( .sb-skill-btn, .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ) {
+  background-image: var(--gw-nav-surface) !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-color: initial !important;
+  background-position: initial !important;
+  background-origin: initial !important;
+  background-clip: initial !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover {
+  background-color: #111416 !important;
+  background-image: linear-gradient(rgba(8, 10, 11, 0.32), rgba(4, 5, 6, 0.48)), var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 76.8px 76.8px !important;
+  background-repeat: no-repeat, repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn:active {
+  background-color: #111416 !important;
+  background-image: linear-gradient(rgba(8, 10, 11, 0.32), rgba(4, 5, 6, 0.48)), var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, 76.8px 76.8px !important;
+  background-repeat: no-repeat, repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-image: var(--gw-nav-surface) !important;
+  background-color: initial !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  background-repeat: initial !important;
+  background-origin: initial !important;
+  background-clip: initial !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn,
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover,
+:root[data-ui-style="classic"] #root .sb-skill-btn:active,
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  border-image-source: var(--gw-nav-frame) !important;
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn,
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover,
+:root[data-ui-style="classic"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="classic"] #root .sb-skill-btn:active,
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-color: #100b08 !important;
+  background-image: linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)), var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, repeat !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
+}
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  background-color: #160d09 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(151, 87, 41, 0.11), transparent 72%), linear-gradient(rgba(22, 10, 7, 0.22), rgba(5, 3, 3, 0.48)), var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 224px 224px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-blend-mode: normal !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn,
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover,
+:root[data-ui-style="classic"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="classic"] #root .sb-skill-btn:active,
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-color: #100b08 !important;
+  background-image: linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)), var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, repeat !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
+  --gw-nav-surface: url("../assets/classic/bg_tileable_wood.webp");
+}
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  background-color: #160d09 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(151, 87, 41, 0.11), transparent 72%), linear-gradient(rgba(22, 10, 7, 0.22), rgba(5, 3, 3, 0.48)), var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 224px 224px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-blend-mode: normal !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn,
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover,
+:root[data-ui-style="classic"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="classic"] #root .sb-skill-btn:active,
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-color: #100b08 !important;
+  background-image: linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)), var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, repeat !important;
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
+  --gw-nav-surface: url("../assets/classic/bg_tileable_wood.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn,
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover,
+:root[data-ui-style="classic"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="classic"] #root .sb-skill-btn:active,
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-color: #100b08 !important;
+  background-image: linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)), var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, repeat !important;
+  --gw-nav-surface: url("../assets/classic/bg_tileable_wood.webp");
+}
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  background-color: #160d09 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(151, 87, 41, 0.11), transparent 72%), linear-gradient(rgba(22, 10, 7, 0.22), rgba(5, 3, 3, 0.48)), var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 224px 224px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-blend-mode: normal !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn,
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover,
+:root[data-ui-style="classic"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="classic"] #root .sb-skill-btn:active,
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  border-image: var(--gw-nav-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+  border-image-width: 2.15 1.87 2.15 1.87 !important;
+  --gw-nav-frame: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+}
+:root[data-ui-style="classic"] #root .sb-skill-btn,
+:root[data-ui-style="classic"] #root .sb-skill-btn:hover,
+:root[data-ui-style="classic"] #root .sb-skill-btn:focus-visible,
+:root[data-ui-style="classic"] #root .sb-skill-btn:active,
+:root[data-ui-style="classic"] #root .sb-skill-btn.active {
+  background-color: #100b08 !important;
+  background-image: linear-gradient(rgba(17, 10, 6, 0.24), rgba(5, 4, 3, 0.38)), var(--gw-nav-surface) !important;
+  background-position: center, 0 0 !important;
+  background-size: auto, var(--gw-nav-tile-size) var(--gw-nav-tile-size) !important;
+  background-repeat: no-repeat, repeat !important;
+  --gw-nav-surface: url("../assets/classic/bg_tileable_wood.webp");
+}
+:root[data-ui-style="classic"] #root .sidebar {
+  background-color: #100b08;
+  background-image: linear-gradient(rgba(7, 7, 8, 0.22), rgba(3, 3, 4, 0.42)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
+  background-position: center, 0 0;
+  background-size: auto, 320px 320px;
+  background-repeat: no-repeat, repeat;
+}
+:root[data-ui-style="classic"] #root .sidebar::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="classic"] #root .sb-combat-toggle,
+:root[data-ui-style="classic"] #root .sb-combat-toggle:hover,
+:root[data-ui-style="classic"] #root .sb-combat-toggle:focus-visible,
+:root[data-ui-style="classic"] #root .sb-combat-toggle:active,
+:root[data-ui-style="classic"] #root .sb-combat-toggle.open {
+  background-color: #101315 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(164, 112, 55, 0.11), transparent 72%), linear-gradient(rgba(8, 11, 13, 0.08), rgba(2, 4, 5, 0.32)), var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 176px 176px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  border-image-source: var(--gw-nav-frame) !important;
+  border-image-slice: 96 !important;
+  border-image-width: clamp(9px, calc(12px * var(--sb-scale-eff, 1)), 17px) !important;
+  border-image-outset: 0 !important;
+  border-image-repeat: repeat !important;
+  --gw-nav-frame: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ),
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):hover,
+:root[data-ui-style="classic"] #root :is( .sb-footer-save, .sb-footer-menu, .sb-footer-mail, .sb-footer-options, .sb-footer-quit ):active {
+  background-color: #160d09 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(151, 87, 41, 0.11), transparent 72%), linear-gradient(rgba(22, 10, 7, 0.22), rgba(5, 3, 3, 0.48)), var(--gw-nav-surface) !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 224px 224px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-blend-mode: normal !important;
+  --gw-nav-surface: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
+}
+:root[data-ui-style="classic"] {
+  --gw-control-surface: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
+}
+:root[data-ui-style="classic"] ::-webkit-scrollbar-track:horizontal,
+:root[data-ui-style="classic"] ::-webkit-scrollbar-corner {
+  background: var(--gw-control-surface) center / 64px 64px repeat !important;
+}
+:root[data-ui-style="classic"] {
+  --gw-offline-leather: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
+}
+:root[data-ui-style="classic"] #root :is(.offline-stage-duration, .ofs-warden, .ofs-skill-row) {
+  background-color: #15110e !important;
+  background-image: var(--gw-offline-leather) !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+}
+:root[data-ui-style="classic"] #root .ofs-collect,
+:root[data-ui-style="classic"] #root .ofs-collect:hover,
+:root[data-ui-style="classic"] #root .ofs-collect:active {
+  background-color: #15110e !important;
+  background-image: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") !important;
+  background-position: center !important;
+  background-size: 256px 256px !important;
+  background-repeat: repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 !important;
+  border-image-repeat: stretch !important;
+}
+:root[data-ui-style="classic"] #root .cs-grid > .cs-col-left {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] #root .cs-col-mid-stack > .cs-col-tabpanel {
+  border-image-width: 14px;
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+}
+:root[data-ui-style="classic"] #root .cs-grid > .cs-col-right {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] #root .cs-col-mid-stack > .cs-col-tabpanel {
+  background-color: #130e0a !important;
+  background-image: radial-gradient(ellipse at 50% 10%, rgba(151, 91, 40, 0.13), transparent 58%), linear-gradient(rgba(8, 5, 3, 0.28), rgba(4, 3, 2, 0.5)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") !important;
+  background-position: center, center, 0 0 !important;
+  background-size: auto, auto, 256px 256px !important;
+  background-repeat: no-repeat, no-repeat, repeat !important;
+  background-origin: border-box !important;
+  background-clip: border-box !important;
+}
+:root[data-ui-style="classic"] #root .cs-grid > .cs-col-right {
+  background-color: #160f0a;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("../assets/classic/bagpack_background.webp");
+  background-position: center, center;
+  background-size: 100% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] {
+  --gw-action-frame: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  --gw-action-bronze: url("../assets/classic/ui/gravewood/textures/texture-smoky-bronze.webp");
+  --gw-action-wood: url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp");
+  --gw-action-leather: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
+  --gw-action-canvas: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] #root .skillcard-tile {
+  background: radial-gradient(circle at 50% 15%, rgba(213, 155, 76, 0.2), transparent 58%), linear-gradient(rgba(20, 13, 8, 0.62), rgba(10, 8, 7, 0.74)), var(--gw-action-bronze) center / 256px 256px repeat !important;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87 !important;
+  border-image-width: var(--frame-w) !important;
+}
+:root[data-ui-style="classic"] #root .skillcard-produces {
+  background: linear-gradient(rgba(13, 9, 6, 0.24), rgba(13, 9, 6, 0.38)), var(--gw-action-leather) center / 256px 256px repeat !important;
+}
+:root[data-ui-style="classic"] #root .skillcard-craft-cta .skillcard-cta.qty {
+  background-color: #111315 !important;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), var(--gw-action-canvas) !important;
+  background-size: auto, 192px 192px !important;
+  background-repeat: no-repeat, repeat !important;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(4px * 2.125) !important;
+  border-image-width: var(--frame-w) !important;
+}
+:root[data-ui-style="classic"] #root .skillcard-output-zone :is(.skillcard-loot, .skillcard-produces) {
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] #root .skillcard-resource-rack .mat-chip,
+:root[data-ui-style="classic"] #root .skillcard-resource-empty {
+  background: linear-gradient(rgba(20, 44, 18, 0.36), rgba(11, 24, 10, 0.46)), var(--gw-action-leather) center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] #root .skillcard-resource-rack .mat-chip.lacking {
+  background: linear-gradient(rgba(48, 16, 12, 0.42), rgba(28, 9, 7, 0.5)), var(--gw-action-leather) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] #root .skillcard-resource-empty {
+  background: linear-gradient(rgba(17, 17, 16, 0.58), rgba(10, 10, 9, 0.66)), var(--gw-action-leather) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] #root .skillcard-state-slot {
+  background: linear-gradient(rgba(16, 11, 7, 0.48), rgba(10, 8, 7, 0.6)), var(--gw-action-leather) center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] #root .skillcard-state-slot.active {
+  background: linear-gradient(rgba(48, 16, 12, 0.45), rgba(28, 9, 7, 0.54)), var(--gw-action-leather) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] #root .skillcard-mastery {
+  background: linear-gradient(rgba(12, 9, 6, 0.58), rgba(7, 6, 5, 0.68)), var(--gw-action-leather) center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] #root .skillcard-mastery .mastery-bar {
+  background: linear-gradient(rgba(3, 7, 10, 0.5), rgba(2, 4, 6, 0.68)), var(--gw-action-canvas) center / 192px 192px repeat;
+}
+:root[data-ui-style="classic"] #root .skill-search-bar {
+  background: linear-gradient(rgba(6, 9, 11, 0.34), rgba(2, 4, 5, 0.58)), var(--gw-action-canvas) center / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] #root .skill-search-bar .invf-search {
+  background: linear-gradient(rgba(4, 5, 6, 0.72), rgba(9, 10, 11, 0.82)), var(--gw-action-canvas) center / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(6px * 2.125);
+}
+:root[data-ui-style="classic"] #root .farm-page .skillcard-cta {
+  background-color: #111315;
+  background-image: linear-gradient(rgba(38, 24, 13, 0.16), rgba(3, 5, 6, 0.42)), var(--gw-action-canvas);
+  background-size: auto, 76.8px 76.8px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / calc(4px * 2.125);
+}
+:root[data-ui-style="classic"] #root .farm-page .skillcard-cta.stop {
+  background-image: linear-gradient(rgba(60, 16, 10, 0.34), rgba(20, 5, 4, 0.5)), var(--gw-action-canvas);
+}
+:root[data-ui-style="classic"] #root .skillcard .skillcard-tile.skillcard-tile.skillcard-tile {
+  border-image: var(--gw-action-frame) 28 / 6px stretch !important;
+}
+:root[data-ui-style="classic"] #root .skillcard .skillcard-output-zone .skillcard-produces.skillcard-produces.skillcard-produces {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 9px stretch !important;
+}
+:root[data-ui-style="classic"] #root .skillcard .skillcard-output-zone .skillcard-loot.skillcard-loot.skillcard-loot {
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 9px stretch !important;
+}
+:root[data-ui-style="classic"] #root .monster-card {
+  background-color: #0c0f10;
+  background-image: linear-gradient(rgba(7, 9, 10, 0.74), rgba(4, 5, 6, 0.9)), var(--fc-surface);
+  background-position: center, 0 0;
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+  border-image: var(--fc-frame) 28 / 2.15 1.87 2.15 1.87 / 0 stretch;
+  --fc-frame: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  --fc-surface: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] #root .monster-card-xp-badge,
+:root[data-ui-style="classic"] #root .monster-card-level-badge,
+:root[data-ui-style="classic"] #root .mc-trait-badge {
+  background-color: rgba(7, 9, 10, 0.9);
+  background-image: linear-gradient(rgba(8, 10, 11, 0.22), rgba(4, 5, 6, 0.56)), var(--fc-surface);
+  background-position: center, 0 0;
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
+  border-image-source: var(--fc-frame);
+  border-image-repeat: initial;
+}
+:root[data-ui-style="classic"] #root .monster-card-footer {
+  background-color: #0c0f10;
+  background-image: linear-gradient(rgba(8, 10, 11, 0.72), rgba(3, 4, 5, 0.9)), var(--fc-surface);
+  background-position: center, 0 0;
+  background-size: auto, 192px 192px;
+  background-repeat: no-repeat, repeat;
+}
+:root[data-ui-style="classic"] #root .monster-card-prognosis {
+  background: linear-gradient(90deg, rgba(42, 18, 14, 0.34), rgba(10, 14, 16, 0.86), rgba(12, 27, 34, 0.34)), var(--fc-surface) 0 0 / 128px 128px repeat;
+}
+:root[data-ui-style="classic"] #root .monster-card.elite-monster-card {
+  border-image-source: var(--fc-frame);
+  border-image-repeat: initial;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock {
+  background: linear-gradient(rgba(8, 8, 8, 0.86), rgba(15, 10, 6, 0.9)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+  border-image-width: var(--frame-w);
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-dock-toggle {
+  background: linear-gradient(rgba(5, 6, 7, 0.9), rgba(13, 15, 16, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-dock-tab {
+  background: linear-gradient(rgba(26, 30, 31, 0.72), rgba(9, 11, 12, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-dock-tab.active {
+  background: linear-gradient(rgba(69, 48, 24, 0.48), rgba(13, 15, 16, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-section,
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll,
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-dock-pane-gear .cs-stats-scroll {
+  background: linear-gradient(rgba(5, 7, 8, 0.86), rgba(2, 3, 4, 0.92)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-dock-pane-gear .cl-gear-doll {
+  background: linear-gradient(90deg, transparent 49.55%, rgba(207, 154, 76, 0.3) 49.55% 50.45%, transparent 50.45%), linear-gradient(rgba(3, 4, 5, 0.74), rgba(2, 3, 4, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-skill,
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-stance,
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-food-item,
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-potion-item {
+  background: linear-gradient(90deg, rgba(15, 18, 19, 0.92), rgba(6, 8, 9, 0.82)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-stance.active {
+  background: linear-gradient(90deg, rgba(104, 64, 23, 0.38), rgba(7, 9, 10, 0.9) 62%), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-food-slot {
+  background: radial-gradient(circle at 50% 45%, rgba(96, 104, 103, 0.3), rgba(6, 8, 9, 0.94) 72%), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(5px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-food-btn {
+  background: radial-gradient(circle, rgba(63, 70, 70, 0.32), rgba(6, 8, 9, 0.92) 72%), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .combat-frontline-dock .cl-autoeat-upgrade {
+  background: linear-gradient(rgba(18, 20, 21, 0.78), rgba(5, 7, 8, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image-source: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  border-image-slice: 96;
+  border-image-width: var(--frame-w);
+}
+:root[data-ui-style="classic"] .combat-frontline-dock.cl-dock--collapsed {
+  background: linear-gradient(90deg, rgba(4, 5, 6, 0.96), rgba(27, 29, 29, 0.94) 50%, rgba(4, 5, 6, 0.96)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .achv-hero {
+  background: radial-gradient(ellipse 90% 140% at 8% 15%, rgba(216, 192, 106, 0.10), transparent 62%), linear-gradient(rgba(10, 12, 15, 0.48), rgba(10, 12, 15, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .achv-milestone-strip {
+  background: linear-gradient(rgba(10, 12, 15, 0.4), rgba(10, 12, 15, 0.4)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .achv-controls {
+  background: linear-gradient(rgba(10, 12, 15, 0.45), rgba(10, 12, 15, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .achv-filter-group {
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .achv-card {
+  background: linear-gradient(rgba(8, 9, 11, 0.58), rgba(8, 9, 11, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .achv-card--unlocked {
+  background: linear-gradient(160deg, rgba(96, 70, 24, 0.30), rgba(10, 10, 12, 0.62) 60%), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .queue-panel {
+  background: linear-gradient(rgba(6, 8, 10, 0.36), rgba(2, 4, 5, 0.62)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+}
+:root[data-ui-style="classic"] .queue-panel::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(10px * 2.125);
+}
+:root[data-ui-style="classic"] .queue-panel-header {
+  background: radial-gradient(circle at 50% 0%, rgba(160, 108, 52, 0.18), transparent 70%), linear-gradient(rgba(12, 15, 17, 0.38), rgba(3, 5, 6, 0.66)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .queue-panel-paused {
+  background: linear-gradient(rgba(42, 12, 8, 0.38), rgba(42, 12, 8, 0.38)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .queue-panel-resume-btn {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .queue-panel-clear {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .queue-panel-blocked {
+  background: linear-gradient(rgba(46, 32, 10, 0.42), rgba(46, 32, 10, 0.42)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .queue-panel-blocked-btn {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .queue-row {
+  background-size: auto, 280px 280px;
+  background: linear-gradient(rgba(10, 13, 15, 0.36), rgba(3, 5, 6, 0.64)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125);
+}
+:root[data-ui-style="classic"] .queue-row-btn {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .queue-rail-icon-box {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .queue-panel {
+  background: linear-gradient(rgba(6, 8, 10, 0.36), rgba(2, 4, 5, 0.62)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+}
+:root[data-ui-style="classic"] .queue-panel::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(10px * 2.125);
+}
+:root[data-ui-style="classic"] .queue-panel-toggle {
+  background: linear-gradient(rgba(15, 18, 19, 0.3), rgba(4, 6, 7, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 0 0 calc(6px * 2.125) 0;
+}
+:root[data-ui-style="classic"] .queue-panel-header {
+  background: radial-gradient(circle at 50% 0%, rgba(160, 108, 52, 0.18), transparent 70%), linear-gradient(rgba(12, 15, 17, 0.38), rgba(3, 5, 6, 0.66)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .queue-panel-active .queue-row {
+  background: linear-gradient(90deg, rgba(79, 38, 18, 0.7), rgba(20, 15, 12, 0.72)), url("../assets/classic/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .queue-row {
+  background-size: auto, 280px 280px;
+  background: linear-gradient(rgba(10, 13, 15, 0.36), rgba(3, 5, 6, 0.64)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125);
+}
+:root[data-ui-style="classic"] .queue-row-btn,
+:root[data-ui-style="classic"] .queue-panel-resume-btn,
+:root[data-ui-style="classic"] .queue-panel-clear,
+:root[data-ui-style="classic"] .queue-panel-blocked-btn {
+  background: linear-gradient(rgba(6, 8, 9, 0.34), rgba(2, 3, 4, 0.64)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(3px * 2.125);
+}
+:root[data-ui-style="classic"] .queue-panel-paused,
+:root[data-ui-style="classic"] .queue-panel-blocked {
+  background: linear-gradient(rgba(52, 25, 13, 0.48), rgba(16, 9, 7, 0.68)), url("../assets/classic/ui/gravewood/textures/texture-smoky-bronze.webp") 0 0 / 256px 256px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(6px * 2.125);
+}
+:root[data-ui-style="classic"] .bjw-head {
+  background: linear-gradient(180deg, rgba(20, 22, 26, 0.9), rgba(11, 12, 14, 0.65));
+}
+:root[data-ui-style="classic"] .bjw-controls .shop-citadel-btn.is-active {
+  background: linear-gradient(rgba(60, 40, 8, 0.6), rgba(60, 40, 8, 0.6)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .bjw-zone {
+  background-color: #0d0f11;
+  background-image: radial-gradient(ellipse at 14% 0%, rgba(141, 78, 31, 0.16), transparent 54%), linear-gradient(rgba(6, 9, 11, 0.2), rgba(3, 5, 6, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 224px 224px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .bjw-card {
+  background: linear-gradient(rgba(18, 12, 7, 0.5), rgba(8, 5, 3, 0.7)), url("../assets/classic/ui/gravewood/textures/texture-leather.webp") repeat;
+  background-size: auto, 280px 280px;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .bugreport-entry-banner {
+  background: linear-gradient(rgba(216, 192, 106, 0.1), rgba(10, 12, 15, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .bugreport-entry-banner:hover {
+  background: linear-gradient(rgba(216, 192, 106, 0.2), rgba(10, 12, 15, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] #root .bugreport-entry-banner {
+  background: linear-gradient(90deg, rgba(45, 18, 13, 0.36), rgba(7, 11, 14, 0.7)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] #root .bugreport-modal {
+  background: radial-gradient(ellipse at 18% 0%, rgba(139, 81, 36, 0.14), transparent 48%), linear-gradient(rgba(5, 8, 10, 0.22), rgba(4, 6, 8, 0.46)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 256px 256px repeat;
+  background-color: #090b0c;
+  background-image: radial-gradient(ellipse at 18% 0%, rgba(141, 78, 31, 0.2), transparent 50%), linear-gradient(rgba(3, 5, 6, 0.16), rgba(2, 3, 4, 0.56)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 224px 224px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] #root .bugreport-dropzone {
+  background: linear-gradient(rgba(8, 12, 14, 0.42), rgba(6, 8, 10, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 224px 224px repeat;
+}
+:root[data-ui-style="classic"] #root .bugreport-modal {
+  background: radial-gradient(ellipse at 18% 0%, rgba(139, 81, 36, 0.14), transparent 48%), linear-gradient(rgba(5, 8, 10, 0.22), rgba(4, 6, 8, 0.46)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") 0 0 / 256px 256px repeat;
+  background-color: #090b0c;
+  background-image: radial-gradient(ellipse at 18% 0%, rgba(141, 78, 31, 0.2), transparent 50%), linear-gradient(rgba(3, 5, 6, 0.16), rgba(2, 3, 4, 0.56)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 224px 224px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .chdef-card {
+  background: linear-gradient(rgba(8, 6, 4, 0.86), rgba(8, 6, 4, 0.86)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .chdef-portrait-frame {
+  background: linear-gradient(rgba(18, 12, 6, 0.5), rgba(18, 12, 6, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .chronicle-stage {
+  background: linear-gradient(rgba(24, 16, 6, 0.82), rgba(14, 9, 4, 0.86)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .chronicle-stage {
+  background: linear-gradient(rgba(12, 15, 16, 0.82), rgba(6, 8, 9, 0.95)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .chronicle-obj {
+  background: linear-gradient(rgba(9, 12, 13, 0.78), rgba(5, 7, 8, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .chronicle-obj--done {
+  background: linear-gradient(rgba(22, 49, 29, 0.54), rgba(6, 10, 8, 0.91)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .chronicle-history {
+  background: linear-gradient(rgba(21, 16, 12, 0.8), rgba(7, 9, 10, 0.94)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .chronicle-obj {
+  background: linear-gradient(rgba(9, 12, 13, 0.78), rgba(5, 7, 8, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .chronicle-obj--done {
+  background: linear-gradient(rgba(22, 49, 29, 0.54), rgba(6, 10, 8, 0.91)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+}
+:root[data-ui-style="classic"] .dcc-card {
+  background: linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  background-size: auto, auto;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .emw-panel {
+  background: linear-gradient(rgba(14, 9, 4, 0.92), rgba(14, 9, 4, 0.92)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .emw-collapse-btn {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .emw-art {
+  background: url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .ench-altar-socket {
+  background: url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .hunt-head {
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .hunt-head-stat {
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 200px 200px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .hunt-trap-card {
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .hzp-modal {
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.72)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .hzp-stat {
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 200px 200px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .hbk-search {
+  background: linear-gradient(rgba(18, 12, 6, 0.6), rgba(18, 12, 6, 0.6)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 200px 200px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .hbk-zone {
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .hunt-page .category-header {
+  background: linear-gradient(rgba(40, 34, 26, 0.22), rgba(4, 4, 4, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .hunt-page .category-header:hover {
+  background: linear-gradient(rgba(60, 46, 26, 0.2), rgba(4, 4, 4, 0.44)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  background-size: auto, 240px 240px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .invf-chip {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .invf-chip::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .invf-chip:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .invf-chip.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .cst-modal {
+  background: linear-gradient(rgba(8, 10, 11, 0.91), rgba(6, 7, 8, 0.96)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") center / 216px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(4px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .cst-save-card {
+  background: linear-gradient(90deg, rgba(43, 33, 24, 0.68), rgba(12, 14, 15, 0.87)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px repeat;
+}
+:root[data-ui-style="classic"] .cst-target-card {
+  background: linear-gradient(90deg, rgba(43, 33, 24, 0.68), rgba(12, 14, 15, 0.87)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px repeat;
+}
+:root[data-ui-style="classic"] .cst-ledger {
+  background: linear-gradient(rgba(12, 14, 15, 0.82), rgba(7, 9, 10, 0.93)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 420px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(3px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .cst-package-row {
+  background: linear-gradient(90deg, rgba(55, 39, 24, 0.32), rgba(6, 8, 9, 0.7)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px repeat;
+}
+:root[data-ui-style="classic"] .cst-review-card {
+  background: linear-gradient(rgba(21, 19, 16, 0.94), rgba(8, 10, 11, 0.98)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") center / 200px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(4px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .cst-state-card {
+  background: linear-gradient(rgba(21, 19, 16, 0.94), rgba(8, 10, 11, 0.98)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") center / 200px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(4px * 2.125) stretch;
+}
+:root[data-ui-style="classic"] .mail-page-actions {
+  background: linear-gradient(90deg, rgba(47, 34, 21, 0.46), rgba(7, 9, 10, 0.86)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 420px repeat;
+}
+:root[data-ui-style="classic"] .mail-detail-panel--letter {
+  background: linear-gradient(160deg, var(--ds-parch-mid, #261e14), var(--ds-parch-dark, #16120c)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .mshop-bar {
+  background: linear-gradient(rgba(40, 28, 8, 0.55), rgba(40, 28, 8, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .mshop-mode-card {
+  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .mshop-mode-card:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .mshop-result-banner {
+  background: linear-gradient(rgba(20, 14, 6, 0.92), rgba(20, 14, 6, 0.92)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .mwc-card {
+  background: linear-gradient(rgba(8, 6, 4, 0.55), rgba(8, 6, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .mwc-cape-art-frame {
+  background: linear-gradient(rgba(18, 12, 6, 0.62), rgba(18, 12, 6, 0.62)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .nh-crew {
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .nh-card {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.78)), var(--gw-action-leather) center / 256px 256px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-repeat: stretch;
+  border-image-width: var(--frame-w);
+}
+:root[data-ui-style="classic"] .nh-card.is-built {
+  background: radial-gradient(ellipse at 50% 0%, rgba(188, 126, 54, 0.12), transparent 58%), linear-gradient(rgba(13, 9, 6, 0.65), rgba(7, 6, 5, 0.78)), var(--gw-action-leather) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-art {
+  background: radial-gradient(ellipse at 50% 70%, rgba(70, 82, 88, 0.2), transparent 66%), linear-gradient(rgba(4, 6, 7, 0.62), rgba(3, 4, 5, 0.82)), url("../assets/classic/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-view-tab {
+  background: linear-gradient(rgba(18, 12, 6, 0.7), rgba(18, 12, 6, 0.7)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .nh-view-tab::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .nh-view-tab:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .nh-view-tab.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .nh-map {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(clamp(7px, 0.65vw, 11px) * 2.125);
+}
+:root[data-ui-style="classic"] .nh-map-object-tools {
+  background: linear-gradient(rgba(13, 16, 17, 0.35), rgba(4, 6, 7, 0.72)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") 0 0 / 192px 192px repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(5px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-buildmenu {
+  background: linear-gradient(rgba(9, 10, 11, 0.48), rgba(3, 4, 5, 0.72)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-place-banner {
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .nh-popup {
+  background: radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%), linear-gradient(rgba(9, 9, 8, 0.7), rgba(3, 4, 5, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px 360px repeat !important;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 !important;
+}
+:root[data-ui-style="classic"] .nh-popup :is(.nh-costs, .nh-progress, .nh-refine) {
+  background: linear-gradient(rgba(9, 7, 5, 0.66), rgba(5, 5, 4, 0.76)), var(--gw-action-leather) center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-popup :is(.nh-build-btn, .nh-cancel-btn, .nh-demolish-btn, .nh-refine-btn) {
+  background: radial-gradient(ellipse at 50% 0%, rgba(207, 151, 72, 0.12), transparent 64%), var(--gw-action-wood) center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-popup :is(.nh-cancel-btn, .nh-demolish-btn) {
+  background: linear-gradient(rgba(72, 16, 12, 0.3), rgba(31, 9, 7, 0.38)), var(--gw-action-wood) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-buildmenu-item {
+  background: linear-gradient(rgba(25, 18, 11, 0.32), rgba(5, 6, 7, 0.62)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-card {
+  background: linear-gradient(rgba(8, 6, 4, 0.72), rgba(8, 6, 4, 0.78)), var(--gw-action-leather) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-card.is-built {
+  background: radial-gradient(ellipse at 50% 0%, rgba(188, 126, 54, 0.12), transparent 58%), linear-gradient(rgba(13, 9, 6, 0.65), rgba(7, 6, 5, 0.78)), var(--gw-action-leather) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-effect {
+  background: transparent;
+  border-image-width: var(--frame-w);
+  border-image: none;
+}
+:root[data-ui-style="classic"] .nh-build-btn {
+  background: radial-gradient(ellipse at 50% 0%, rgba(207, 151, 72, 0.13), transparent 64%), var(--gw-action-wood) center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-grid > .nh-card {
+  background: radial-gradient(ellipse at 50% 0%, rgba(147, 91, 40, 0.12), transparent 52%), linear-gradient(rgba(10, 9, 8, 0.66), rgba(4, 5, 6, 0.86)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-grid > .nh-card.is-built {
+  background: radial-gradient(ellipse at 50% 0%, rgba(184, 112, 43, 0.16), transparent 55%), linear-gradient(rgba(13, 10, 8, 0.6), rgba(4, 5, 6, 0.84)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+:root[data-ui-style="classic"] .nh-art {
+  background: radial-gradient(ellipse at 50% 70%, rgba(70, 82, 88, 0.2), transparent 66%), linear-gradient(rgba(4, 6, 7, 0.62), rgba(3, 4, 5, 0.82)), url("../assets/classic/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-card-action-slot {
+  background: linear-gradient(rgba(15, 10, 7, 0.64), rgba(6, 5, 4, 0.82)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") center / 280px 280px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-card-function-slot > .nh-refine {
+  background: linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.62)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+}
+:root[data-ui-style="classic"] .nh-popup .nh-art {
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-move-btn,
+:root[data-ui-style="classic"] .nh-demolish-btn {
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-move-btn {
+  background: radial-gradient(ellipse at 50% 0%, rgba(207, 151, 72, 0.15), transparent 64%), var(--gw-action-wood) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-grid > .nh-card {
+  background: radial-gradient(ellipse at 50% 0%, rgba(147, 91, 40, 0.12), transparent 52%), linear-gradient(rgba(10, 9, 8, 0.66), rgba(4, 5, 6, 0.86)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-grid > .nh-card.is-built {
+  background: radial-gradient(ellipse at 50% 0%, rgba(184, 112, 43, 0.16), transparent 55%), linear-gradient(rgba(13, 10, 8, 0.6), rgba(4, 5, 6, 0.84)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+}
+:root[data-ui-style="classic"] .nh-card .nh-art {
+  background: radial-gradient(ellipse at 50% 66%, rgba(95, 77, 54, 0.16), transparent 68%), linear-gradient(rgba(10, 12, 13, 0.22), rgba(3, 4, 5, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-ash-stone.webp") center / 320px 320px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-effects {
+  background: linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-card-action-slot {
+  background: linear-gradient(rgba(15, 10, 7, 0.64), rgba(6, 5, 4, 0.82)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") center / 280px 280px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-card .mat-chip {
+  background: linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.52)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-card .mat-chip.lacking {
+  background: linear-gradient(rgba(72, 18, 15, 0.28), rgba(24, 7, 7, 0.54)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-card :is(.nh-build-btn, .nh-cancel-btn, .nh-refine-btn),
+:root[data-ui-style="classic"] .nh-popup-actions :is(.nh-move-btn, .nh-demolish-btn) {
+  background: radial-gradient(ellipse at 50% 0%, rgba(177, 113, 49, 0.13), transparent 68%), linear-gradient(rgba(9, 12, 14, 0.12), rgba(3, 5, 6, 0.4)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 190px 190px repeat !important;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(clamp(8px, 2.6cqw, 12px) * 2.125) !important;
+}
+:root[data-ui-style="classic"] .nh-card-function-slot > .nh-refine {
+  background: linear-gradient(rgba(9, 12, 14, 0.34), rgba(3, 5, 6, 0.62)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+}
+:root[data-ui-style="classic"] .nh-popup {
+  background: radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%), linear-gradient(rgba(9, 9, 8, 0.7), rgba(3, 4, 5, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px 360px repeat !important;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 !important;
+}
+:root[data-ui-style="classic"] .nh-popup-close {
+  background: linear-gradient(rgba(45, 16, 13, 0.3), rgba(10, 7, 7, 0.5)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 128px 128px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(clamp(7px, 2cqw, 10px) * 2.125);
+  border-image-width: clamp(5px, 1.2cqw, 7px);
+}
+:root[data-ui-style="classic"] .nh-popup .nh-effects {
+  background: transparent;
+  border-image: none;
+}
+:root[data-ui-style="classic"] .nh-popup-actions .nh-demolish-btn {
+  background: linear-gradient(rgba(86, 18, 14, 0.35), rgba(25, 7, 7, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 190px 190px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-move-banner {
+  background: linear-gradient(rgba(20, 14, 8, 0.58), rgba(7, 6, 5, 0.76)), var(--gw-action-leather) center / 256px 256px repeat;
+  border-image: var(--gw-action-frame) 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-popup .nh-effect {
+  background: linear-gradient(rgba(10, 13, 15, 0.46), rgba(3, 5, 6, 0.68)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 240px 240px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-view-controls {
+  background: linear-gradient(rgba(8, 9, 10, 0.62), rgba(3, 4, 5, 0.78)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-view-controls .nh-view-tab {
+  background: linear-gradient(rgba(12, 13, 14, 0.35), rgba(3, 4, 5, 0.62)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 220px 220px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(7px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-view-controls .nh-view-tab:hover:not(:disabled),
+:root[data-ui-style="classic"] .nh-view-controls .nh-view-tab.active {
+  background: linear-gradient(rgba(104, 68, 28, 0.2), rgba(20, 15, 9, 0.48)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 220px 220px repeat;
+}
+:root[data-ui-style="classic"] .nh-map-stage {
+  background: linear-gradient(rgba(5, 6, 7, 0.54), rgba(2, 3, 4, 0.74)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-map {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(clamp(7px, 0.65vw, 11px) * 2.125);
+}
+:root[data-ui-style="classic"] .nh-buildmenu {
+  background: linear-gradient(rgba(9, 10, 11, 0.48), rgba(3, 4, 5, 0.72)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-repeat: stretch;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-buildmenu-item {
+  background: linear-gradient(rgba(25, 18, 11, 0.32), rgba(5, 6, 7, 0.62)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-buildmenu-item:hover:not(.is-locked),
+:root[data-ui-style="classic"] .nh-buildmenu-item.is-active {
+  background: linear-gradient(rgba(92, 57, 23, 0.2), rgba(8, 7, 6, 0.55)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+}
+:root[data-ui-style="classic"] .nh-place-banner,
+:root[data-ui-style="classic"] .nh-move-banner {
+  background: linear-gradient(rgba(26, 17, 9, 0.42), rgba(4, 5, 6, 0.68)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 230px 230px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(8px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-list-register,
+:root[data-ui-style="classic"] .nh-list-detail {
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), url("../assets/classic/bg_sidebar.webp") top left / 313px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-list-row {
+  background: linear-gradient(rgba(10, 12, 15, 0.30), rgba(10, 12, 15, 0.30)), url("../assets/classic/bg_topbar.webp") top left / 313px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-list-row:hover,
+:root[data-ui-style="classic"] .nh-list-row:focus-visible,
+:root[data-ui-style="classic"] .nh-list-row.is-selected {
+  background: linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)), url("../assets/classic/bg_topbar.webp") top left / 313px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-shell > .nh-queue-strip {
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), url("../assets/classic/bg_sidebar.webp") top left / 313px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(9px * 2.125);
+}
+:root[data-ui-style="classic"] .nh-list-row-action.is-buildable,
+:root[data-ui-style="classic"] .nh-list-primary.is-buildable {
+  background: linear-gradient(rgba(48, 92, 39, 0.32), rgba(12, 32, 15, 0.42)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-list-row-action.is-queueable,
+:root[data-ui-style="classic"] .nh-list-primary.is-queueable {
+  background: linear-gradient(rgba(119, 78, 27, 0.3), rgba(39, 26, 11, 0.44)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-list-row-action.is-unavailable:disabled,
+:root[data-ui-style="classic"] .nh-list-primary.is-unavailable:disabled {
+  background: linear-gradient(rgba(91, 31, 27, 0.25), rgba(30, 11, 10, 0.4)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-list-row-action.is-building:disabled,
+:root[data-ui-style="classic"] .nh-list-row-action.is-maxed:disabled,
+:root[data-ui-style="classic"] .nh-list-primary.is-maxed:disabled {
+  background: linear-gradient(rgba(41, 51, 57, 0.28), rgba(12, 16, 18, 0.44)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .modal.nh-refinery-modal {
+  background: radial-gradient(ellipse at 46% 0%, rgba(159, 101, 44, 0.13), transparent 46%), linear-gradient(rgba(8, 9, 9, 0.72), rgba(3, 4, 5, 0.92)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 320px 320px repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / calc(clamp(9px, 0.85vw, 13px) * 2.125);
+}
+:root[data-ui-style="classic"] .nh-refinery-register,
+:root[data-ui-style="classic"] .nh-refinery-process {
+  background: linear-gradient(rgba(15, 11, 8, 0.58), rgba(3, 4, 5, 0.78)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .nh-list-row:hover,
+:root[data-ui-style="classic"] .nh-list-row:focus-visible,
+:root[data-ui-style="classic"] .nh-list-row.is-selected {
+  background: linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)), url("../assets/classic/bg_topbar.webp") top left / 313px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-register {
+  background: linear-gradient(rgba(8, 10, 12, 0.5), rgba(5, 6, 8, 0.66)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") top left / 280px 280px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-detail {
+  background: linear-gradient(rgba(14, 12, 9, 0.7), rgba(8, 7, 6, 0.8)), url("../assets/classic/ui/gravewood/v3/textures/texture-ash-stone.webp") top left / 280px 280px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-row {
+  background: linear-gradient(rgba(10, 12, 15, 0.30), rgba(10, 12, 15, 0.30)), url("../assets/classic/bg_topbar.webp") top left / 313px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-row:hover,
+:root[data-ui-style="classic"] .nh-list-row:focus-visible,
+:root[data-ui-style="classic"] .nh-list-row.is-selected {
+  background: linear-gradient(rgba(10, 12, 15, 0.22), rgba(10, 12, 15, 0.22)), url("../assets/classic/bg_topbar.webp") top left / 313px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-detail-art {
+  background: radial-gradient(ellipse at 50% 72%, rgba(151, 112, 65, 0.14), transparent 68%), rgba(3, 4, 5, 0.66);
+}
+:root[data-ui-style="classic"] .nh-list-effect-flow {
+  background: linear-gradient(rgba(10, 7, 4, 0.55), rgba(6, 4, 3, 0.66)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-costs {
+  background: linear-gradient(rgba(10, 6, 3, 0.5), rgba(6, 4, 2, 0.62)), url("../assets/classic/ui/gravewood/textures/texture-leather.webp") center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-progress {
+  background: linear-gradient(rgba(6, 5, 4, 0.5), rgba(4, 3, 3, 0.62)), url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp") center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-shell > .nh-queue-strip {
+  background: linear-gradient(rgba(10, 12, 15, 0.25), rgba(10, 12, 15, 0.25)), url("../assets/classic/bg_sidebar.webp") top left / 313px repeat;
+}
+:root[data-ui-style="classic"] .nh-list-row-action.is-maxed:disabled {
+  background: linear-gradient(rgba(41, 51, 57, 0.28), rgba(12, 16, 18, 0.44)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-list-primary.is-maxed:disabled {
+  background: linear-gradient(rgba(41, 51, 57, 0.28), rgba(12, 16, 18, 0.44)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 180px 180px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-view-controls {
+  background: linear-gradient(rgba(8, 9, 10, 0.62), rgba(3, 4, 5, 0.78)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+}
+:root[data-ui-style="classic"] .nh-buildmenu {
+  background: linear-gradient(rgba(9, 10, 11, 0.48), rgba(3, 4, 5, 0.72)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 300px 300px repeat;
+}
+:root[data-ui-style="classic"] .nh-popup {
+  background: radial-gradient(ellipse at 50% 0%, rgba(153, 92, 39, 0.13), transparent 48%), linear-gradient(rgba(9, 9, 8, 0.7), rgba(3, 4, 5, 0.9)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") center / 360px 360px repeat !important;
+}
+:root[data-ui-style="classic"] .nh-effects {
+  background: linear-gradient(rgba(10, 13, 15, 0.42), rgba(3, 5, 6, 0.65)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 280px 280px repeat;
+}
+:root[data-ui-style="classic"] .nh-popup .nh-effects {
+  background: transparent;
+}
+:root[data-ui-style="classic"] .nh-popup .nh-effect {
+  background: linear-gradient(rgba(10, 13, 15, 0.46), rgba(3, 5, 6, 0.68)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") center / 240px 240px repeat;
+}
+:root[data-ui-style="classic"] .npc-greeting-head {
+  background: linear-gradient(rgba(18, 12, 6, 0.6), rgba(18, 12, 6, 0.6)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .npc-bubble {
+  background: linear-gradient(rgba(30, 21, 12, 0.92), rgba(19, 13, 8, 0.95)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .offline-stage {
+  background: linear-gradient(rgba(14, 9, 4, 0.60), rgba(14, 9, 4, 0.60)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+  --ofs-iron: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --ofs-stone: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  --ofs-slate: url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  --ofs-leather: url("../assets/classic/ui/gravewood/textures/texture-leather.webp");
+}
+:root[data-ui-style="classic"] .ofs-summary-bar {
+  background: linear-gradient(rgba(5, 7, 8, .46), rgba(0, 0, 0, .66)), var(--ofs-slate) center / 100px repeat;
+  border-image: var(--ofs-iron) 85 / 15px stretch;
+}
+:root[data-ui-style="classic"] .ofs-event-ribbon {
+  background: linear-gradient(90deg, rgba(53, 30, 17, .4), rgba(12, 9, 7, .74)), var(--ofs-leather) center / 128px repeat;
+  border-image: var(--ofs-iron) 85 / 18px stretch;
+}
+:root[data-ui-style="classic"] .ofs-report-column {
+  background: linear-gradient(rgba(5, 7, 8, .43), rgba(0, 0, 0, .73)), var(--ofs-slate) center / 100px repeat;
+  border-image: var(--ofs-iron) 85 / 15px stretch;
+}
+:root[data-ui-style="classic"] .ofs-loot-item {
+  border-image: var(--ofs-iron) 85 / 12px stretch;
+}
+:root[data-ui-style="classic"] .ofs-empty {
+  background: linear-gradient(rgba(10, 12, 15, 0.4), rgba(10, 12, 15, 0.4)), url("../assets/bg_tileable_stone.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .opz-header {
+  background: radial-gradient(ellipse 90% 140% at 8% 15%, rgba(216, 192, 106, 0.09), transparent 62%), linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/classic/bg_tileable_wood.webp") repeat;
+  background-size: auto, auto, 280px 280px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .opz-section {
+  background: linear-gradient(rgba(16, 10, 5, 0.55), rgba(16, 10, 5, 0.62)), url("../assets/classic/bg_tileable_wood.webp") repeat;
+  background-size: auto, 280px 280px;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] #root :is(.opz-header, .opz-section) {
+  background-color: #090b0c;
+  background-image: radial-gradient(ellipse at 14% 0%, rgba(141, 78, 31, 0.2), transparent 54%), linear-gradient(rgba(3, 5, 6, 0.2), rgba(2, 3, 4, 0.58)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-position: center, center, 0 0;
+  background-size: auto, auto, 224px 224px;
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .pet-celebration-card {
+  background: linear-gradient(rgba(10, 8, 5, 0.5), rgba(10, 8, 5, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .pet-celebration-effects {
+  background: linear-gradient(rgba(8, 6, 4, 0.5), rgba(8, 6, 4, 0.5)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .quest-card {
+  background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quest-claim-btn {
+  background: linear-gradient(rgba(60, 40, 8, 0.70), rgba(40, 26, 6, 0.85)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quests-tab-btn {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .quests-tab-btn::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quests-tab-btn:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .quests-tab-btn--active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .daily-reset-countdown {
+  background: linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quest-token-badge {
+  background: linear-gradient(rgba(40, 24, 52, 0.55), rgba(40, 24, 52, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quest-shop-panel {
+  background: linear-gradient(rgba(14, 9, 4, 0.72), rgba(14, 9, 4, 0.72)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quest-shop-offer {
+  background: linear-gradient(rgba(24, 16, 8, 0.78), rgba(24, 16, 8, 0.78)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quest-strand {
+  background: linear-gradient(rgba(14, 9, 4, 0.68), rgba(14, 9, 4, 0.68)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quests-command-header,
+:root[data-ui-style="classic"] .quests-contract-wall .quests-content {
+  background: linear-gradient(rgba(8, 11, 12, 0.86), rgba(5, 7, 8, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 fill stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quests-command-header {
+  background: linear-gradient(90deg, rgba(9, 12, 13, 0.91), rgba(29, 20, 12, 0.78)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quests-tab-btn {
+  background: linear-gradient(rgba(14, 17, 18, 0.86), rgba(7, 9, 10, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quests-tab-btn:hover {
+  background: linear-gradient(rgba(31, 34, 33, 0.72), rgba(9, 11, 12, 0.92)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quests-tab-btn--active {
+  background: linear-gradient(rgba(75, 53, 25, 0.69), rgba(18, 16, 13, 0.92)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .daily-reset-countdown {
+  background: linear-gradient(rgba(26, 19, 11, 0.76), rgba(8, 10, 10, 0.93)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quest-master,
+:root[data-ui-style="classic"] .quests-contract-wall .quest-detail {
+  background: linear-gradient(rgba(11, 14, 15, 0.82), rgba(6, 8, 9, 0.94)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quest-strand {
+  background: linear-gradient(rgba(21, 16, 12, 0.78), rgba(8, 10, 10, 0.94)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quest-card {
+  background: linear-gradient(rgba(18, 15, 12, 0.78), rgba(7, 9, 10, 0.94)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quest-shop-panel {
+  background: linear-gradient(rgba(12, 15, 16, 0.84), rgba(6, 8, 9, 0.95)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quest-shop-offer {
+  background: linear-gradient(rgba(21, 16, 12, 0.76), rgba(7, 9, 10, 0.94)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quest-claim-btn {
+  background: linear-gradient(rgba(57, 42, 23, 0.72), rgba(12, 13, 12, 0.93)), url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 fill / 2.125 stretch;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quests-content {
+  background-color: #0d1114;
+  background-image: linear-gradient(rgba(6, 9, 11, 0.4), rgba(4, 6, 8, 0.6)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .quests-contract-wall :is(.quest-strand, .quest-card, .quest-shop-offer) {
+  background-color: #0b0f11;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quest-card--completed {
+  background-image: linear-gradient(rgba(22, 49, 29, 0.42), rgba(5, 8, 10, 0.3)), url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp");
+}
+:root[data-ui-style="classic"] .quests-contract-wall .quests-header .quest-token-badge {
+  background: linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)), url("../assets/classic/bg_black.webp") repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87 stretch;
+}
+:root[data-ui-style="classic"] .qam-modal {
+  background: linear-gradient(rgba(40, 34, 26, 0.26), rgba(4, 4, 4, 0.7)), url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp") repeat;
+  border-image: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp") 85 / 2.125 round;
+}
+:root[data-ui-style="classic"] .shopv2-balance {
+  background: linear-gradient(rgba(28, 18, 6, 0.75), rgba(28, 18, 6, 0.75)), url("../assets/classic/bg_black.webp") repeat;
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shopv2-maintab {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shopv2-maintab::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shopv2-maintab:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shopv2-maintab.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shopv2-chip {
+  background: linear-gradient(rgba(18, 12, 6, 0.70), rgba(18, 12, 6, 0.70)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shopv2-chip::before {
+  border-image-source: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp");
+  border-image-slice: 28 28 28 28;
+  border-image-width: 2.15 1.87 2.15 1.87;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+}
+:root[data-ui-style="classic"] .shopv2-chip:hover {
+  background: linear-gradient(rgba(35, 24, 10, 0.55), rgba(35, 24, 10, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shopv2-chip.active {
+  background: linear-gradient(rgba(60, 40, 8, 0.65), rgba(60, 40, 8, 0.65)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shopv2-upgrade-card {
+  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+}
+:root[data-ui-style="classic"] .shopv2-card {
+  background: linear-gradient(rgba(14, 9, 4, 0.55), rgba(14, 9, 4, 0.55)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] #root .shopv2-buy-counter {
+  background-color: #0d1114;
+  background-image: linear-gradient(rgba(9, 12, 14, 0.7), rgba(9, 12, 14, 0.7)), var(--gw-texture-cold-slate, url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+  background-repeat: repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] #root .shopv2-sell-aside {
+  background-color: #0d1114;
+  background-image: linear-gradient(rgba(9, 12, 14, 0.7), rgba(9, 12, 14, 0.7)), var(--gw-texture-cold-slate, url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+  background-repeat: repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] #root .shopv2-chip {
+  background-color: #111619;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.42), rgba(5, 8, 10, 0.42)), var(--gw-texture-cold-slate, url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+}
+:root[data-ui-style="classic"] #root .shopv2-chip:hover {
+  background-image: linear-gradient(rgba(86, 60, 30, 0.18), rgba(20, 23, 23, 0.34)), var(--gw-texture-cold-slate, url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+}
+:root[data-ui-style="classic"] #root .shopv2-chip.active {
+  background-image: linear-gradient(rgba(117, 75, 25, 0.28), rgba(22, 22, 20, 0.4)), var(--gw-texture-cold-slate, url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+}
+:root[data-ui-style="classic"] #root .shopv2-buy-scroll {
+  background-color: #0d1114;
+  background-image: linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)), var(--gw-texture-basalt, url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 320px 320px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] #root .shopv2-sell-main {
+  background-color: #0d1114;
+  background-image: linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)), var(--gw-texture-basalt, url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 320px 320px;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] #root .shopv2-card {
+  background-color: #17110c;
+  background-image: linear-gradient(180deg, rgba(6, 7, 7, 0.18), rgba(10, 6, 3, 0.58)), var(--gw-texture-gravewood, url("../assets/classic/ui/gravewood/textures/texture-gravewood.webp"));
+  background-size: auto, 256px 256px;
+  background-repeat: repeat;
+  background-origin: padding-box;
+  background-clip: padding-box;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] #root .shopv2-counter-item {
+  background-color: #0b0f11;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), var(--gw-texture-cold-slate, url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+}
+:root[data-ui-style="classic"] #root .shopv2-head > .npc-greeting {
+  background: linear-gradient(90deg, rgba(12, 15, 16, 0.96), rgba(31, 24, 17, 0.84)), var(--gw-texture-basalt, url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp"));
+}
+:root[data-ui-style="classic"] #root .shopv2-buy-counter {
+  background-image: linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)), var(--gw-texture-basalt, url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 320px 320px;
+}
+:root[data-ui-style="classic"] #root .shopv2-sell-aside {
+  background-image: linear-gradient(rgba(8, 11, 13, 0.52), rgba(8, 11, 13, 0.52)), var(--gw-texture-basalt, url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp"));
+  background-size: auto, 320px 320px;
+}
+:root[data-ui-style="classic"] #root :is(.shopv2-card, .shopv2-upgrade-card, .shopv2-buyback-row, .shopv2-counter-item) {
+  background-color: #0b0f11;
+  background-image: linear-gradient(rgba(5, 8, 10, 0.3), rgba(5, 8, 10, 0.3)), var(--gw-texture-cold-slate, url("../assets/classic/ui/gravewood/v3/textures/texture-cold-slate.webp"));
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  background-origin: border-box;
+  background-clip: border-box;
+}
+:root[data-ui-style="classic"] .stx-section {
+  background: linear-gradient(rgba(10, 12, 15, 0.46), rgba(10, 12, 15, 0.52)), url("../assets/classic/bg_black.webp") repeat;
+  border-image: url("../assets/classic/ui/citadel/9-slice-box-3/wooden_frame_with_corners_seamless.webp") 28 28 28 28 / 2.15 1.87 2.15 1.87;
+}
+:root[data-ui-style="classic"] .achv-page--warden {
+  --achv-ledger-frame: url("../assets/classic/ui/gravewood/frames/nav-bronze-lipped-iron-9slice.webp");
+  --achv-ledger-cloth: url("../assets/classic/ui/gravewood/textures/texture-umber-cloth.webp");
+  --achv-ledger-stone: url("../assets/classic/ui/gravewood/v3/textures/texture-basalt.webp");
+}
+:root[data-ui-style="classic"] .achv-page--warden .achv-hero {
+  background: radial-gradient(ellipse 72% 180% at 10% 10%, rgba(187, 120, 48, 0.12), transparent 62%), linear-gradient(rgba(9, 10, 11, 0.58), rgba(7, 8, 9, 0.76)), var(--achv-ledger-cloth) center / 280px 280px repeat;
+  border-image: var(--achv-ledger-frame) 28 / 10px;
+}
+:root[data-ui-style="classic"] .achv-ledger-shell {
+  background: linear-gradient(rgba(6, 7, 8, 0.82), rgba(9, 8, 7, 0.88)), var(--achv-ledger-cloth) center / 280px 280px repeat;
+  border-image: var(--achv-ledger-frame) 28 / 10px;
+}
+:root[data-ui-style="classic"] .achv-ledger-rail {
+  background: linear-gradient(90deg, rgba(38, 26, 17, 0.76), rgba(9, 10, 11, 0.82)), var(--achv-ledger-cloth) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .achv-page--warden .achv-milestone-strip {
+  background: linear-gradient(rgba(61, 38, 20, 0.48), rgba(11, 11, 11, 0.74)), var(--achv-ledger-cloth) center / 220px 220px repeat;
+}
+:root[data-ui-style="classic"] .achv-ledger-main {
+  background: linear-gradient(rgba(6, 7, 8, 0.7), rgba(8, 8, 8, 0.78)), var(--achv-ledger-stone) center / 300px 300px repeat;
+}
+:root[data-ui-style="classic"] .achv-page--warden .achv-card {
+  background: linear-gradient(90deg, rgba(25, 22, 19, 0.88), rgba(7, 8, 9, 0.86)), var(--achv-ledger-cloth) center / 240px 240px repeat;
+}
+:root[data-ui-style="classic"] .achv-page--warden .achv-card--unlocked {
+  background: linear-gradient(90deg, rgba(82, 57, 25, 0.36), rgba(8, 9, 10, 0.86) 58%), var(--achv-ledger-cloth) center / 240px 240px repeat;
+}
+:root[data-ui-style="classic"] .achv-ledger-detail {
+  background: linear-gradient(90deg, rgba(10, 11, 12, 0.9), rgba(35, 24, 15, 0.78)), var(--achv-ledger-cloth) center / 256px 256px repeat;
+}
+:root[data-ui-style="classic"] .achv-ledger-detail-plaque {
+  background: radial-gradient(circle at 50% 10%, rgba(154, 100, 39, 0.16), transparent 34%), linear-gradient(rgba(7, 8, 9, 0.82), rgba(10, 9, 8, 0.9)), var(--achv-ledger-stone) center / 300px 300px repeat;
+  border-image: var(--achv-ledger-frame) 28 / 9px;
+}

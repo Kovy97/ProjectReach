@@ -415,6 +415,11 @@ export const es: Record<string, string> = {
     "options.uiStyleHint": "Clásico recupera la barra lateral, las pestañas y la cabecera de antes de la 1.3. Ambos estilos se adaptan al tirador de la barra lateral y al ajuste de altura de la cabecera.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Clásico",
+    // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
+    "header.stopCombat": "Terminar combate",
+    "skill.doing": "En curso",
+    "topbar.bar.inCombat": "En combate",
+    "topbar.bar.noActiveSkill": "Sin habilidad activa",
     "options.font.atmosphere": "Atmósfera",
     "options.font.atmosphere.note": "La fuente de la casa. Imprenta antigua, trazo áspero.",
     "options.font.book": "Libro",

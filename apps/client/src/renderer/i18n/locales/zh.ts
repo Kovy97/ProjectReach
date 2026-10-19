@@ -419,6 +419,11 @@ export const zh: Record<string, string> = {
     "options.uiStyleHint": "经典风格恢复 1.3 之前的侧边栏、标签栏和顶栏。两种风格都会随侧边栏拖柄和顶栏高度调节一起缩放。",
     "options.uiStyle.reforged": "重铸",
     "options.uiStyle.classic": "经典",
+    // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
+    "header.stopCombat": "结束战斗",
+    "skill.doing": "进行中",
+    "topbar.bar.inCombat": "战斗中",
+    "topbar.bar.noActiveSkill": "无进行中的技能",
     "options.font.atmosphere": "氛围",
     "options.font.atmosphere.note": "默认字体。古旧印刷，边缘粗粝。",
     "options.font.book": "书卷",

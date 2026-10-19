@@ -418,6 +418,11 @@ export const ru: Record<string, string> = {
     "options.uiStyleHint": "Классический возвращает боковую панель, вкладки и шапку, как до версии 1.3. Оба стиля масштабируются ручкой боковой панели и регулятором высоты шапки.",
     "options.uiStyle.reforged": "Reforged",
     "options.uiStyle.classic": "Классический",
+    // claude:2026-10-19T11:45:00+02:00 — für die Classic-Kopfzeile (1.2.3) zurückgeholt.
+    "header.stopCombat": "Закончить бой",
+    "skill.doing": "В процессе",
+    "topbar.bar.inCombat": "В бою",
+    "topbar.bar.noActiveSkill": "Нет активного навыка",
     "options.font.atmosphere": "Атмосфера",
     "options.font.atmosphere.note": "Фирменный шрифт. Старая печать, грубые края.",
     "options.font.book": "Книжный",
