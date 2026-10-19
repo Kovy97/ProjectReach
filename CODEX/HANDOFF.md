@@ -65,6 +65,17 @@ Bau gestoppt: Skript `apps/client/ui-audit/mkt-1.3.0-trailer-v2.mjs` (unversioni
 `marketing/1.3.0-media/trailer/v2/clips/`; offen: Item-Karten-Clip, Schnitt v2, Endkontrolle. Painterly-Asset-Audit
 (veraltete Piktogramme, Unterseiten-Hintergrund, alte Rahmen/Knöpfe) wartet auf Chef-Entscheid. Keine Prozesse laufen.
 
+**19.10. (claude:2026-10-19T12:40:00+02:00) — Zwei UI-Stile Reforged/Classic (Chef: viel schlechtes Feedback zur 1.3-Oberfläche).**
+Umschalter im Hauptmenü (oben rechts) und in den Optionen, sofort wirksam, localStorage `hearthforge:uiStyle`
+(`uiStyle.ts`, kein SAVE-Bump, Vorgabe reforged). Classic = Look von 1.2.3: `SidebarClassic.tsx`, `TopBarClassic.tsx`
+(+ Wiki-Reiter), `ClassicHeader.tsx` (Kopfzeile Quiet Citadel), `classic-chrome.css` (gen-classic-chrome.py, 1.2.3-Styles
+unter `:root[data-ui-style=classic]`), `classic-skin.css` (gen-classic-skin.py, 1.2.3-Texturen/Rahmen seitenweit),
+1.2.3-Grafikkopien `assets/classic/**`, Kriegstisch + altes Logo. Reforged wieder dynamisch (Seitenleiste mit Breite,
+Kopfleiste mit Höhenregler; Ursache war `--sb-scale-eff: 1` aus der Reforged-Leiste vom 10.09.). Commits eda3307,
+257146f, af96423, f11cf14. Prüfung: Typecheck, Client 261, Build, Clip-Audit Reforged 0 Funde, Sichtprüfung beider Stile
+1366/1920/2560, EN/RU, Leiste 240/420, Kopfleiste 114/168/256, Live-Umschalten ohne Konsolenfehler.
+Offen: Chef-Abnahme, Vorgabe-Stil, Patchnotes/Upload 1.3.1 nur auf GO.
+
 ### 18.10.2026 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
