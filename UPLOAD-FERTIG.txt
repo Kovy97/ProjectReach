@@ -1,51 +1,51 @@
 UPLOAD FERTIG
 =============
 
-Grim Reach 1.3.0 "The Idol Hall Awakens" liegt im Depot.
+Grim Reach 1.3.1 liegt im Depot.
 
-  BuildID     26033657   (ersetzt 25036037 = 1.2.3)
-  Zeit        18.10.2026, 23:39 (steamcmd-Zeitstempel)
+  BuildID     26058141   (ersetzt 26033657 = 1.3.0)
+  Zeit        19.10.2026, 20:12 (steamcmd-Zeitstempel)
   Depot       4915451 (App 4915450)
-  Paket       apps/client/release/win-unpacked, Version 1.3.0
+  Paket       apps/client/release/win-unpacked, Version 1.3.1
   setlive     LEER - der Build ist NICHT live, das schaltest du in Steamworks
-  Git         main = Tag v1.3.0 (GitHub Kovy97/ProjectReach)
+  Git         main = Tag v1.3.1 (GitHub Kovy97/ProjectReach)
 
 Verifiziert ueber die steamcmd-Ausgabe:
-"Successfully finished AppID 4915450 build (BuildID 26033657)."
+"Successfully finished AppID 4915450 build (BuildID 26058141)."
 
 Vor dem Upload geprueft (auf genau diesem Stand):
   Typecheck 5/5, Engine 1807, Content 310, Persistence 453 inkl. Save-Vault (v56 ... v88),
-  Client 261, Produktions-Build gruen. Im Paket nachgewiesen: aktuelles Renderer-Bundle
-  mit den Balance-Werten vom 19.10. SAVE_VERSION 88 mit Migration aus allen ausgelieferten Versionen.
+  Client 261, Produktions-Build gruen. Im Paket nachgewiesen: Version 1.3.1, Renderer-CSS
+  bytegleich mit dem frischen Build (Classic-Regeln + Reforged-Holzwand enthalten).
+  SAVE_VERSION bleibt 88, keine Migration. Der UI-Stil liegt nur lokal (localStorage).
 
 
 WAS DU NOCH TUN MUSST
 ---------------------
-1. Steamworks -> SteamPipe -> Builds -> Build 26033657 -> Branch "default" -> live setzen.
-2. Steam-Post veroeffentlichen. Texte liegen fertig (so wie von dir gespeichert, 7 Sprachen):
-   G:\GameDev\design\steam-post-1.3.0.txt (EN) und steam-post-1.3.0-de/-fr/-es/-ptbr/-ru/-zh.txt
+1. Steamworks -> SteamPipe -> Builds -> Build 26058141 -> Branch "default" -> live setzen.
+   (1.3.1 enthaelt alles aus 1.3.0. Falls 1.3.0 noch nicht live war, reicht es, 1.3.1 live
+   zu setzen.)
+2. Steam-Post veroeffentlichen (Englisch):
+   G:\GameDev\design\steam-post-1.3.1.txt
+   Falls 1.3.0 noch nicht angekuendigt war: zuerst die 1.3.0-Posts
+   (design/steam-post-1.3.0*.txt, 7 Sprachen), dann diesen.
 3. Anwendung -> Veroeffentlichen.
 
-Store-Medien (fuer die Store-Seite, nicht Teil des Builds):
-   Screenshots  G:\GameDev\marketing\1.3.0-media\screenshots\  (12 Stueck, EN, 1920x1080)
-   Trailer      G:\GameDev\marketing\1.3.0-media\trailer\GrimReach-Trailer-1080p30-ohne-Ton.mp4
-                (60 s, ohne Ton, Schnittliste daneben)
+
+WAS IN 1.3.1 DRIN IST
+---------------------
+  * Zwei UI-Stile, jederzeit umschaltbar (Hauptmenue oben rechts oder Optionen -> Anzeige ->
+    Oberflaechenstil), sofort wirksam:
+      Reforged = gemalter Look von 1.3.0 (Vorgabe)
+      Classic  = Oberflaeche wie vor dem Update (1.2.3): Seitenleiste mit Stahlrahmen-Knoepfen,
+                 alte Reiterleiste und Kopfzeile, alte Texturen/Rahmen, Kriegstisch-Hauptmenue,
+                 altes Logo.
+  * Seitenleiste und Kopfleiste skalieren wieder dynamisch (Leiste breiter ziehen = Knoepfe,
+    Icons, Namen wachsen; Hoehenregler der Kopfleiste skaliert die Reiter), in beiden Stilen.
+  * Reforged: duennere Knopfrahmen in Seiten- und Kopfleiste, dunkle Holzwand mit Vignette
+    statt Steinwand hinter den Seiten.
 
 
-WAS IN 1.3.0 DRIN IST (Kurzfassung, Details im Steam-Post)
------------------------------------------------------------
-  * Neuer gemalter Look: Texturen, Holz-/Eisenrahmen, Holzknoepfe, neues Hauptmenue (Highlands,
-    eigene 21:9-Fassung), neues Logo, aufgeraeumte Charakterseite, neue Inventartasche,
-    New Haven mit eigenen Materialien.
-  * Jaegerkodex (Slayer-Talentbaum ab Slayer 85), alle 23 Begleiter ueberarbeitet (Echo).
-  * Der Aschesturz (Prestige): 4x99 + Kapitel 21, Narbenbuch, Bilanzfenster beim Aufstieg,
-    automatische Sicherung vor dem Aufstieg.
-  * Goetzenhalle offen (7 Wesen, 2 Champions), Chronik 22-27 mit der Getilgten Kapelle,
-    Slayer-Turm 6-8, Paragon-Truhen ueber Etage 20, 18 Waffen ab Stufe 95, Holz/Fisch bis 99.
-  * Komfort: Meisterschaft ab Stufe 50 mit Mindest-XP, Ward Leech im Protokoll, Hinweise zu
-    nicht stapelnden Effekten, echte Bank-Plaetze, vierter Werkzeugplatz, Rabenfracht.
-  * Balance 19.10.: Goetzenhalle mehr XP, Kapelle haerter und lohnender.
-  * Fixes u. a.: Krypta-Erfolge, Bestiarium-Zaehlung, Kapitel 11, Droprate-Anzeige im Fund-Toast.
-
-Hinweis: Die Patchnotes nennen Paragon-Truhen ab Etage 25, 50 und 100. Die Stufen 50/100 sind im
-Spiel, laut Balance-Messung aber derzeit nicht erreichbar (design/1.3.0-balance-encounter.md, Abschnitt 4).
+VORHERIGER BUILD
+----------------
+  1.3.0 "The Idol Hall Awakens": BuildID 26033657 (18.10.2026), Tag v1.3.0.

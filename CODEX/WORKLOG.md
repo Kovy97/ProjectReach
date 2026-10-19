@@ -72,6 +72,15 @@ Kopfleiste mit Höhenregler; Ursache war `--sb-scale-eff: 1` aus der Reforged-Le
 1366/1920/2560, EN/RU, Leiste 240/420, Kopfleiste 114/168/256, Live-Umschalten ohne Konsolenfehler.
 Offen: Chef-Abnahme, Vorgabe-Stil, Patchnotes/Upload 1.3.1 nur auf GO.
 
+**19.10. (claude:2026-10-19T20:20:00+02:00) — 1.3.1 im Depot (Chef: „So wie es ist passt es - Pushe dass als 1.3.1 update“).**
+Nachträge seit dem Eintrag oben: Reforged-Knopfrahmen 50 % dünner + Holzwand mit Vignette statt Stein (a732762), Fix
+Classic: gen-classic-chrome.py trennte Selektorlisten auch in `:is()`, Browser verwarf 36 Regeln, Seitenleisten-Knöpfe
+und Reiter zeigten Holz statt Stahl (7f0c306, `split_top`). Classic-Ausrüstungscontainer ohne Holzrahmen wie 1.2.0,
+vom Chef so abgenommen. Version 1.3.1 + EN-Patchnotes `design/steam-post-1.3.1.txt` (bf13c5e). Gates: Typecheck 5/5,
+Content 310, Engine 1807, Persistence 453 inkl. Vault, Client 261, Build grün; Paket-CSS bytegleich mit Build.
+**BuildID 26058141**, setlive leer (Chef schaltet live), Übergabe `UPLOAD-FERTIG.txt`. `main` vorgespult, Tag `v1.3.1`.
+SAVE_VERSION bleibt 88. Vorgabe-Stil bleibt reforged.
+
 ## 2026-10-18 — Claude: Prestige „Der Aschesturz“ (1.3-Erweiterung)
 
 <!-- claude:2026-10-18T15:30:00+02:00 -->
