@@ -242,6 +242,19 @@ body {
   color: var(--text);
 }
 
+/* claude:2026-10-19T18:50:00+02:00 — Chef 19.10. (Versuch): im Reforged-Stil eine Holzwand statt Stein, mit Vignette.
+   Gemaltes Holz `bg_tileable_wood` (senkrechte Maserung, Kachel 800 px), warm-dunkel abgedunkelt, damit die Holz-Panels
+   davor abgesetzt bleiben; die Vignette dunkelt die Ränder ab. Classic behält den Stein von 1.2.3 (classic-skin.css).
+   Zurück zum Stein: diese Regel entfernen. */
+:root[data-ui-style="reforged"] body {
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(0, 0, 0, 0) 38%, rgba(0, 0, 0, 0.62) 100%),
+    linear-gradient(rgba(12, 9, 7, 0.5), rgba(12, 9, 7, 0.5)),
+    url("../assets/bg_tileable_wood.webp") top left repeat scroll,
+    var(--bg);
+  background-size: auto, auto, 800px 800px;
+}
+
 /* Formular-Elemente erben Font/Gewicht nicht automatisch → erzwingen. */
 button,
 input,

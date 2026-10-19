@@ -70,10 +70,10 @@
   min-width: max-content;
   min-height: clamp(36px, calc(44px * var(--tb-k)), 64px);
   padding: calc(2px * var(--tb-k)) 14px; /* claude:2026-10-19T12:20:00+02:00 — seitlich fest: sonst kippt die Reihe bei großer Kopfleiste in die kompakte Dichte (kleinere Schrift) */
-  border: calc(6px * var(--tb-k)) solid transparent;
+  border: calc(3px * var(--tb-k)) solid transparent; /* claude:2026-10-19T18:40:00+02:00 — Chef 19.10.: Rahmen der Reforged-Knöpfe 50 % dünner (11 → 5,5 px Bild, 6 → 3 px Rand). */
   /* claude:2026-10-19T02:30:00+02:00 — Chef 19.10. Knopf-Editor „knopf-sidebar-moos-holz“: Wood 2 (Kachel 304, Versatz 110/37,
      Tönung #3a2a14 26 % eingebacken) + Original-Holzstreifen (Slice 47, 11 px, round). */
-  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / calc(11px * var(--tb-k)) round;
+  border-image: url("../assets/ui/gravewood/frames/wood-frame-strip.webp") 47 / calc(5.5px * var(--tb-k)) round;
   border-radius: 0;
   background: var(--chrome-nav-surface);
   color: #e4cc83;
